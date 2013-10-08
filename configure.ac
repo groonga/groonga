@@ -1214,7 +1214,7 @@ examples_dictionarydir="\$(examplesdir)/dictionary"
 AC_SUBST(examples_dictionarydir)
 
 # for ruby scripts
-relative_ruby_scriptsdir_base="\$(PACKAGE)/ruby_scripts"
+relative_ruby_scriptsdir_base="\$(PACKAGE)/scripts/ruby"
 AC_SUBST(relative_ruby_scriptsdir_base)
 ruby_scriptsdir="\${libdir}/\$(relative_ruby_scriptsdir_base)"
 AC_SUBST(ruby_scriptsdir)
