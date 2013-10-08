@@ -94,6 +94,13 @@ grn_mrb_open_script(grn_ctx *ctx, const char *path)
 
   strcat(expanded_path, path);
   script_file = fopen(expanded_path, "r");
+  if (!script_file) {
+    char message[BUFFER_SIZE];
+    snprintf(message, BUFFER_SIZE - 1,
+             "fopen: failed to open mruby script file: <%s>", path);
+    SERR(message);
+    return NULL;
+  }
 
   return script_file;
 }
@@ -114,9 +121,8 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
   file = grn_mrb_open_script(ctx, path);
   if (!file) {
     mrb_value exception;
-    char message[BUFFER_SIZE];
-    snprintf(message, BUFFER_SIZE - 1, "can't find script: <%s>", path);
-    exception = mrb_exc_new(mrb, E_ARGUMENT_ERROR, message, strlen(message));
+    exception = mrb_exc_new(mrb, E_ARGUMENT_ERROR,
+                            ctx->errbuf, strlen(ctx->errbuf));
     mrb->exc = mrb_obj_ptr(exception);
     return mrb_nil_value();
   }
