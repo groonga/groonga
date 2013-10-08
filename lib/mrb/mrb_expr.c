@@ -24,6 +24,7 @@
 
 #include "../expr.h"
 #include "../util.h"
+#include "../mrb.h"
 #include "mrb_expr.h"
 
 static scan_info **
@@ -347,6 +348,7 @@ grn_mrb_expr_init(grn_ctx *ctx)
 
   mrb_define_class_method(mrb, module,
                           "build", mrb_grn_expr_build, MRB_ARGS_REQ(4));
+  grn_mrb_load(ctx, "expr.rb");
 }
 
 scan_info **

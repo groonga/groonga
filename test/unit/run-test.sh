@@ -58,6 +58,9 @@ CUTTER_ARGS="$CUTTER_ARGS --exclude-file test-performance.so"
 GRN_PLUGINS_DIR="$top_dir/plugins"
 export GRN_PLUGINS_DIR
 
+GRN_RUBY_SCRIPTS_DIR="$top_dir/lib/mrb/ruby_scripts"
+export GRN_RUBY_SCRIPTS_DIR
+
 case `uname` in
     Darwin)
 	DYLD_LIBRARY_PATH="$top_dir/lib/.libs:$DYLD_LIBRARY_PATH"

@@ -26,6 +26,103 @@
 #endif
 
 #ifdef GRN_WITH_MRUBY
+#ifdef WIN32
+static char *win32_ruby_scripts_dir = NULL;
+static char win32_ruby_scripts_dir_buffer[PATH_MAX];
+static const char *
+grn_mrb_get_system_ruby_scripts_dir(void)
+{
+  if (!win32_ruby_scripts_dir) {
+    const char *base_dir;
+    const char *relative_path = GRN_RELATIVE_RUBY_SCRIPTS_DIR;
+    char *path;
+    size_t base_dir_length;
+
+    base_dir = grn_win32_base_dir();
+    base_dir_length = strlen(base_dir);
+    strcpy(win32_ruby_scripts_dir_buffer, base_dir);
+    strcat(win32_ruby_scripts_dir_buffer, "/");
+    strcat(win32_ruby_scripts_dir_buffer, relative_path);
+    win32_ruby_scripts_dir = win32_ruby_scripts_dir_buffer;
+  }
+  return win32_ruby_scripts_dir;
+}
+
+#else /* WIN32 */
+static const char *
+grn_mrb_get_system_ruby_scripts_dir(void)
+{
+  return GRN_RUBY_SCRIPTS_DIR;
+}
+#endif /* WIN32 */
+
+static FILE *
+grn_mrb_open_script(grn_ctx *ctx, const char *name)
+{
+  const char *ruby_scripts_dir;
+  char dir_last_char;
+  char path[PATH_MAX];
+  int name_length, max_name_length;
+  FILE *script_file;
+
+  GRN_API_ENTER;
+  if (name[0] == '/') {
+    path[0] = '\0';
+  } else {
+    ruby_scripts_dir = getenv("GRN_RUBY_SCRIPTS_DIR");
+    if (!ruby_scripts_dir) {
+      ruby_scripts_dir = grn_mrb_get_system_ruby_scripts_dir();
+    }
+    strcpy(path, ruby_scripts_dir);
+
+    dir_last_char = ruby_scripts_dir[strlen(path) - 1];
+    if (dir_last_char != '/') {
+      strcat(path, "/");
+    }
+  }
+
+  name_length = strlen(name);
+  max_name_length = PATH_MAX - strlen(path) - 1;
+  if (name_length > max_name_length) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "script name is too long: %d (max: %d) <%s%s>",
+        name_length, max_name_length,
+        path, name);
+  } else {
+    strcat(path, name);
+    script_file = fopen(path, "r");
+  }
+
+  GRN_API_RETURN(script_file);
+}
+
+mrb_value
+grn_mrb_load(grn_ctx *ctx, const char *name)
+{
+  mrb_state *mrb = ctx->impl->mrb.state;
+  int n;
+  FILE *fp;
+  mrb_value result;
+  struct mrb_parser_state *parser;
+
+  if (!mrb) {
+    return mrb_nil_value();
+  }
+  if (!(fp = grn_mrb_open_script(ctx, name))) {
+    return mrb_nil_value();
+  }
+
+  parser = mrb_parse_file(mrb, fp, NULL);
+  n = mrb_generate_code(mrb, parser);
+  result = mrb_run(mrb,
+                   mrb_proc_new(mrb, mrb->irep[n]),
+                   mrb_top_self(mrb));
+  mrb_parser_free(parser);
+  fclose(fp);
+
+  return result;
+}
+
 mrb_value
 grn_mrb_eval(grn_ctx *ctx, const char *script, int script_length)
 {
