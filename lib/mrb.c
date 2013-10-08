@@ -65,7 +65,7 @@ grn_mrb_open_script(grn_ctx *ctx, const char *path)
   char dir_last_char;
   char expanded_path[PATH_MAX];
   int path_length, max_path_length;
-  FILE *script_file;
+  FILE *script_file = NULL;
 
   if (path[0] == '/') {
     expanded_path[0] = '\0';
