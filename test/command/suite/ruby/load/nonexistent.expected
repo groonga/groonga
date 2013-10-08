@@ -1,0 +1,4 @@
+register ruby/load
+[[0,0.0,0.0],true]
+ruby_load "nonexistent.rb"
+[[0,0.0,0.0],{"exception":{"message":"can't find script: <nonexistent.rb>"}}]

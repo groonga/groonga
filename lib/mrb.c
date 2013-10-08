@@ -25,6 +25,8 @@
 # include <mruby/string.h>
 #endif
 
+#define BUFFER_SIZE 2048
+
 #ifdef GRN_WITH_MRUBY
 #ifdef WIN32
 static char *win32_ruby_scripts_dir = NULL;
@@ -109,6 +111,11 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
     return mrb_nil_value();
   }
   if (!(fp = grn_mrb_open_script(ctx, path))) {
+    mrb_value exception;
+    char message[BUFFER_SIZE];
+    snprintf(message, BUFFER_SIZE - 1, "can't find script: <%s>", path);
+    exception = mrb_exc_new(mrb, E_ARGUMENT_ERROR, message, strlen(message));
+    mrb->exc = mrb_obj_ptr(exception);
     return mrb_nil_value();
   }
 
