@@ -89,10 +89,11 @@ grn_mrb_open_script(grn_ctx *ctx, const char *path)
         "script path is too long: %d (max: %d) <%s%s>",
         path_length, max_path_length,
         expanded_path, path);
-  } else {
-    strcat(expanded_path, path);
-    script_file = fopen(expanded_path, "r");
+    return NULL;
   }
+
+  strcat(expanded_path, path);
+  script_file = fopen(expanded_path, "r");
 
   return script_file;
 }
