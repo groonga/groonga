@@ -59,39 +59,39 @@ grn_mrb_get_system_ruby_scripts_dir(void)
 #endif /* WIN32 */
 
 static FILE *
-grn_mrb_open_script(grn_ctx *ctx, const char *name)
+grn_mrb_open_script(grn_ctx *ctx, const char *path)
 {
   const char *ruby_scripts_dir;
   char dir_last_char;
-  char path[PATH_MAX];
-  int name_length, max_name_length;
+  char expanded_path[PATH_MAX];
+  int path_length, max_path_length;
   FILE *script_file;
 
-  if (name[0] == '/') {
-    path[0] = '\0';
+  if (path[0] == '/') {
+    expanded_path[0] = '\0';
   } else {
     ruby_scripts_dir = getenv("GRN_RUBY_SCRIPTS_DIR");
     if (!ruby_scripts_dir) {
       ruby_scripts_dir = grn_mrb_get_system_ruby_scripts_dir();
     }
-    strcpy(path, ruby_scripts_dir);
+    strcpy(expanded_path, ruby_scripts_dir);
 
-    dir_last_char = ruby_scripts_dir[strlen(path) - 1];
+    dir_last_char = ruby_scripts_dir[strlen(expanded_path) - 1];
     if (dir_last_char != '/') {
-      strcat(path, "/");
+      strcat(expanded_path, "/");
     }
   }
 
-  name_length = strlen(name);
-  max_name_length = PATH_MAX - strlen(path) - 1;
-  if (name_length > max_name_length) {
+  path_length = strlen(path);
+  max_path_length = PATH_MAX - strlen(expanded_path) - 1;
+  if (path_length > max_path_length) {
     ERR(GRN_INVALID_ARGUMENT,
-        "script name is too long: %d (max: %d) <%s%s>",
-        name_length, max_name_length,
-        path, name);
+        "script path is too long: %d (max: %d) <%s%s>",
+        path_length, max_path_length,
+        expanded_path, path);
   } else {
-    strcat(path, name);
-    script_file = fopen(path, "r");
+    strcat(expanded_path, path);
+    script_file = fopen(expanded_path, "r");
   }
 
   return script_file;
