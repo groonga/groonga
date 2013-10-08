@@ -1,0 +1,2 @@
+load_la_SOURCES =				\
+	load.c

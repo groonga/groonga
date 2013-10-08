@@ -20,7 +20,10 @@ LIBS =						\
 	$(MESSAGE_PACK_LIBS)
 
 if WITH_MRUBY
-ruby_plugins_LTLIBRARIES = eval.la
+ruby_plugins_LTLIBRARIES =			\
+	eval.la					\
+	load.la
 endif
 
-include sources.am
+include eval_sources.am
+include load_sources.am
