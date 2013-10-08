@@ -121,12 +121,13 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
   }
 
   parser = mrb_parse_file(mrb, file, NULL);
+  fclose(file);
+
   n = mrb_generate_code(mrb, parser);
   result = mrb_run(mrb,
                    mrb_proc_new(mrb, mrb->irep[n]),
                    mrb_top_self(mrb));
   mrb_parser_free(parser);
-  fclose(file);
 
   return result;
 }
