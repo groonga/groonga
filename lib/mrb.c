@@ -97,7 +97,7 @@ grn_mrb_open_script(grn_ctx *ctx, const char *name)
 }
 
 mrb_value
-grn_mrb_load(grn_ctx *ctx, const char *name)
+grn_mrb_load(grn_ctx *ctx, const char *path)
 {
   mrb_state *mrb = ctx->impl->mrb.state;
   int n;
@@ -108,7 +108,7 @@ grn_mrb_load(grn_ctx *ctx, const char *name)
   if (!mrb) {
     return mrb_nil_value();
   }
-  if (!(fp = grn_mrb_open_script(ctx, name))) {
+  if (!(fp = grn_mrb_open_script(ctx, path))) {
     return mrb_nil_value();
   }
 
