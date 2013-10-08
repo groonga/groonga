@@ -102,7 +102,7 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
 {
   mrb_state *mrb = ctx->impl->mrb.state;
   int n;
-  FILE *fp;
+  FILE *file;
   mrb_value result;
   struct mrb_parser_state *parser;
 
@@ -110,8 +110,8 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
     return mrb_nil_value();
   }
 
-  fp = grn_mrb_open_script(ctx, path);
-  if (!fp) {
+  file = grn_mrb_open_script(ctx, path);
+  if (!file) {
     mrb_value exception;
     char message[BUFFER_SIZE];
     snprintf(message, BUFFER_SIZE - 1, "can't find script: <%s>", path);
@@ -120,13 +120,13 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
     return mrb_nil_value();
   }
 
-  parser = mrb_parse_file(mrb, fp, NULL);
+  parser = mrb_parse_file(mrb, file, NULL);
   n = mrb_generate_code(mrb, parser);
   result = mrb_run(mrb,
                    mrb_proc_new(mrb, mrb->irep[n]),
                    mrb_top_self(mrb));
   mrb_parser_free(parser);
-  fclose(fp);
+  fclose(file);
 
   return result;
 }
