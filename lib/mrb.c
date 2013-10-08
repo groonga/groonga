@@ -162,6 +162,10 @@ grn_mrb_to_grn(grn_ctx *ctx, mrb_value mrb_object, grn_obj *grn_object)
       GRN_BOOL_SET(ctx, grn_object, GRN_FALSE);
     }
     break;
+  case MRB_TT_TRUE :
+    grn_obj_reinit(ctx, grn_object, GRN_DB_BOOL, 0);
+    GRN_BOOL_SET(ctx, grn_object, GRN_TRUE);
+    break;
   case MRB_TT_FIXNUM :
     grn_obj_reinit(ctx, grn_object, GRN_DB_INT32, 0);
     GRN_INT32_SET(ctx, grn_object, mrb_fixnum(mrb_object));
