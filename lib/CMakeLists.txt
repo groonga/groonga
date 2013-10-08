@@ -55,3 +55,13 @@ install(TARGETS libgroonga
   ARCHIVE DESTINATION "${LIB_DIR}"
   LIBRARY DESTINATION "${LIB_DIR}"
   RUNTIME DESTINATION "${BIN_DIR}")
+
+if(GRN_WITH_MRUBY)
+  read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mrb/scripts/sources.am
+    RUBY_SCRIPTS)
+  string(REGEX REPLACE "([^;]+)" "mrb/scripts/\\1"
+    RUBY_SCRIPTS "${RUBY_SCRIPTS}")
+  install(
+    FILES ${RUBY_SCRIPTS}
+    DESTINATION "${GRN_RELATIVE_RUBY_SCRIPTS_DIR}")
+endif()

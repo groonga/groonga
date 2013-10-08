@@ -1,3 +1,6 @@
+SUBDIRS =					\
+	scripts
+
 AM_CPPFLAGS =					\
 	-I$(top_builddir)			\
 	-I$(top_srcdir)/include			\
@@ -10,7 +13,6 @@ AM_CFLAGS =					\
 	$(MRUBY_CFLAGS)
 
 noinst_LTLIBRARIES = libgrnmrb.la
-ruby_scripts_DATA = scripts/expr.rb
 
 include sources.am
 
