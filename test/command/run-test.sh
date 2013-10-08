@@ -38,7 +38,7 @@ export GRN_PLUGINS_DIR
 GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE="$top_dir/test/command/tmp/synonyms.tsv"
 export GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE
 
-GRN_RUBY_SCRIPTS_DIR="$top_dir/lib/mrb/ruby_scripts"
+GRN_RUBY_SCRIPTS_DIR="$top_dir/lib/mrb/scripts"
 export GRN_RUBY_SCRIPTS_DIR
 
 case `uname` in

@@ -10,7 +10,7 @@ AM_CFLAGS =					\
 	$(MRUBY_CFLAGS)
 
 noinst_LTLIBRARIES = libgrnmrb.la
-ruby_scripts_DATA = ruby_scripts/expr.rb
+ruby_scripts_DATA = scripts/expr.rb
 
 include sources.am
 
