@@ -109,7 +109,9 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
   if (!mrb) {
     return mrb_nil_value();
   }
-  if (!(fp = grn_mrb_open_script(ctx, path))) {
+
+  fp = grn_mrb_open_script(ctx, path);
+  if (!fp) {
     mrb_value exception;
     char message[BUFFER_SIZE];
     snprintf(message, BUFFER_SIZE - 1, "can't find script: <%s>", path);
