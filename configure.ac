@@ -1213,6 +1213,12 @@ AC_SUBST(examplesdir)
 examples_dictionarydir="\$(examplesdir)/dictionary"
 AC_SUBST(examples_dictionarydir)
 
+# for ruby script
+relative_ruby_scriptsdir_base="\$(PACKAGE)/ruby_scripts"
+AC_SUBST(relative_ruby_scriptsdir_base)
+ruby_scriptsdir="\${libdir}/\$(relative_ruby_scriptsdir_base)"
+AC_SUBST(ruby_scriptsdir)
+
 # for document root
 GRN_DEFAULT_DOCUMENT_ROOT_BASE="html/admin"
 GRN_DEFAULT_DOCUMENT_ROOT="\${pkgdatadir}/\${GRN_DEFAULT_DOCUMENT_ROOT_BASE}"
@@ -1230,6 +1236,8 @@ GRN_DEFS=""
 GRN_DEFS="$GRN_DEFS -DGRN_DLL_FILENAME=L\\\"\"\$(GRN_DLL_FILENAME)\"\\\""
 GRN_DEFS="$GRN_DEFS -DGRN_PLUGINS_DIR=\\\"\"\$(pluginsdir)\"\\\""
 GRN_DEFS="$GRN_DEFS -DGRN_RELATIVE_PLUGINS_DIR=\\\"\"\$(relative_pluginsdir)\"\\\""
+GRN_DEFS="$GRN_DEFS -DGRN_RUBY_SCRIPTS_DIR=\\\"\"\$(ruby_scriptsdir)\"\\\""
+GRN_DEFS="$GRN_DEFS -DGRN_RELATIVE_RUBY_SCRIPTS_DIR=\\\"\"\$(relative_ruby_scriptsdir)\"\\\""
 GRN_DEFS="$GRN_DEFS -DGRN_LOG_PATH=\\\"\"\$(grn_log_path)\"\\\""
 GRN_DEFS="$GRN_DEFS -DGRN_DEFAULT_DOCUMENT_ROOT=\\\"\"\$(GRN_DEFAULT_DOCUMENT_ROOT)\"\\\""
 GRN_DEFS="$GRN_DEFS -DGRN_DEFAULT_RELATIVE_DOCUMENT_ROOT=\\\"\"\$(GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT)\"\\\""
