@@ -154,6 +154,13 @@ grn_mrb_to_grn(grn_ctx *ctx, mrb_value mrb_object, grn_obj *grn_object)
   grn_rc rc = GRN_SUCCESS;
 
   switch (mrb_type(mrb_object)) {
+  case MRB_TT_FALSE :
+    if (mrb_nil_p(mrb_object)) {
+      grn_obj_reinit(ctx, grn_object, GRN_DB_VOID, 0);
+    } else {
+      rc = GRN_INVALID_ARGUMENT;
+    }
+    break;
   case MRB_TT_FIXNUM :
     grn_obj_reinit(ctx, grn_object, GRN_DB_INT32, 0);
     GRN_INT32_SET(ctx, grn_object, mrb_fixnum(mrb_object));
