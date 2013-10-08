@@ -67,7 +67,6 @@ grn_mrb_open_script(grn_ctx *ctx, const char *name)
   int name_length, max_name_length;
   FILE *script_file;
 
-  GRN_API_ENTER;
   if (name[0] == '/') {
     path[0] = '\0';
   } else {
@@ -95,7 +94,7 @@ grn_mrb_open_script(grn_ctx *ctx, const char *name)
     script_file = fopen(path, "r");
   }
 
-  GRN_API_RETURN(script_file);
+  return script_file;
 }
 
 mrb_value
