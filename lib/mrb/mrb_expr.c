@@ -37,6 +37,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
   scan_info **sis, *si = NULL;
   grn_expr_code *c, *ce;
   grn_expr *e = (grn_expr *)expr;
+  mrb_state *mrb = ctx->impl->mrb.state;
 
   if (!(var = grn_expr_get_var_by_offset(ctx, expr, 0))) { return NULL; }
   for (stat = SCAN_START, c = e->codes, ce = &e->codes[e->codes_curr]; c < ce; c++) {
@@ -142,16 +143,28 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                     int32_t weight = grn_expr_code_get_weight(ctx, ec);
                     grn_scan_info_set_flags(si, grn_scan_info_get_flags(si) | SCAN_ACCESSOR);
                     if (((grn_accessor *)ec->value)->next) {
-                      grn_scan_info_put_index(ctx, si, ec->value, sid, weight);
+                      mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "put_index", 4,
+                                  mrb_cptr_value(mrb, si),
+                                  mrb_cptr_value(mrb, ec->value),
+                                  mrb_fixnum_value(sid),
+                                  mrb_fixnum_value(weight));
                     } else {
-                      grn_scan_info_put_index(ctx, si, index, sid, weight);
+                      mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "put_index", 4,
+                                  mrb_cptr_value(mrb, si),
+                                  mrb_cptr_value(mrb, index),
+                                  mrb_fixnum_value(sid),
+                                  mrb_fixnum_value(weight));
                     }
                   }
                   break;
                 case GRN_COLUMN_FIX_SIZE :
                 case GRN_COLUMN_VAR_SIZE :
                   if (grn_column_index(ctx, ec->value, c->op, &index, 1, &sid)) {
-                    grn_scan_info_put_index(ctx, si, index, sid, grn_expr_code_get_weight(ctx, ec));
+                    mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "put_index", 4,
+                                mrb_cptr_value(mrb, si),
+                                mrb_cptr_value(mrb, index),
+                                mrb_fixnum_value(sid),
+                                mrb_fixnum_value(grn_expr_code_get_weight(ctx, ec)));
                   }
                   break;
                 case GRN_COLUMN_INDEX :
@@ -165,22 +178,38 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                     j -= 2;
                     ec += 2;
                   }
-                  grn_scan_info_put_index(ctx, si, index, sid, grn_expr_code_get_weight(ctx, ec));
+                  mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "put_index", 4,
+                              mrb_cptr_value(mrb, si),
+                              mrb_cptr_value(mrb, index),
+                              mrb_fixnum_value(sid),
+                              mrb_fixnum_value(grn_expr_code_get_weight(ctx, ec)));
                   break;
                 }
               }
             }
           } else if (GRN_DB_OBJP(*p)) {
             if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
-              grn_scan_info_put_index(ctx, si, index, sid, 1);
+              mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "put_index", 4,
+                          mrb_cptr_value(mrb, si),
+                          mrb_cptr_value(mrb, index),
+                          mrb_fixnum_value(sid),
+                          mrb_fixnum_value(1));
             }
           } else if (GRN_ACCESSORP(*p)) {
             grn_scan_info_set_flags(si, grn_scan_info_get_flags(si) | SCAN_ACCESSOR);
             if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
               if (((grn_accessor *)(*p))->next) {
-                grn_scan_info_put_index(ctx, si, *p, sid, 1);
+                mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "put_index", 4,
+                            mrb_cptr_value(mrb, si),
+                            mrb_cptr_value(mrb, *p),
+                            mrb_fixnum_value(sid),
+                            mrb_fixnum_value(1));
               } else {
-                grn_scan_info_put_index(ctx, si, index, sid, 1);
+                mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "put_index", 4,
+                            mrb_cptr_value(mrb, si),
+                            mrb_cptr_value(mrb, index),
+                            mrb_fixnum_value(sid),
+                            mrb_fixnum_value(1));
               }
             }
           } else {
@@ -281,12 +310,20 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
           for (k = 0; (arg = grn_scan_info_get_arg(ctx, si, k)) ; k++) {
             if (GRN_DB_OBJP(*p)) {
               if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
-                grn_scan_info_put_index(ctx, si, index, sid, 1);
+                mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "put_index", 4,
+                            mrb_cptr_value(mrb, si),
+                            mrb_cptr_value(mrb, index),
+                            mrb_fixnum_value(sid),
+                            mrb_fixnum_value(1));
               }
             } else if (GRN_ACCESSORP(*p)) {
               grn_scan_info_set_flags(si, grn_scan_info_get_flags(si) | SCAN_ACCESSOR);
               if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
-                grn_scan_info_put_index(ctx, si, index, sid, 1);
+                mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "put_index", 4,
+                            mrb_cptr_value(mrb, si),
+                            mrb_cptr_value(mrb, index),
+                            mrb_fixnum_value(sid),
+                            mrb_fixnum_value(1));
               }
             } else {
               grn_scan_info_set_query(si, *p);
@@ -340,6 +377,23 @@ mrb_grn_expr_build(mrb_state *mrb, mrb_value self)
   return mrb_cptr_value(mrb, sis);
 }
 
+static mrb_value
+mrb_grn_scan_info_put_index(mrb_state *mrb, mrb_value self)
+{
+  int sid;
+  int32_t weight;
+  scan_info *si;
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *obj;
+  mrb_value mrb_si, mrb_obj;
+
+  mrb_get_args(mrb, "ooii", &mrb_si, &mrb_obj, &sid, &weight);
+  si = mrb_cptr(mrb_si);
+  obj = mrb_cptr(mrb_obj);
+  grn_scan_info_put_index(ctx, si, obj, sid, weight);
+  return self;
+}
+
 void
 grn_mrb_expr_init(grn_ctx *ctx)
 {
@@ -348,6 +402,8 @@ grn_mrb_expr_init(grn_ctx *ctx)
 
   mrb_define_class_method(mrb, module,
                           "build", mrb_grn_expr_build, MRB_ARGS_REQ(4));
+  mrb_define_class_method(mrb, module,
+                          "put_index", mrb_grn_scan_info_put_index, MRB_ARGS_REQ(4));
   grn_mrb_load(ctx, "expression.rb");
 }
 
