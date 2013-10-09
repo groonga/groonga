@@ -58,7 +58,7 @@ CUTTER_ARGS="$CUTTER_ARGS --exclude-file test-performance.so"
 GRN_PLUGINS_DIR="$top_dir/plugins"
 export GRN_PLUGINS_DIR
 
-GRN_RUBY_SCRIPTS_DIR="$top_dir/lib/mrb/ruby_scripts"
+GRN_RUBY_SCRIPTS_DIR="$top_dir/lib/mrb/scripts"
 export GRN_RUBY_SCRIPTS_DIR
 
 case `uname` in
