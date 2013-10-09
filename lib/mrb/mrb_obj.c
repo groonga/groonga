@@ -31,7 +31,7 @@ grn_mrb_obj_init(grn_ctx *ctx)
   struct RClass *module = ctx->impl->mrb.module;
   struct RClass *klass;
 
-  klass = mrb_define_class_under(mrb, module, "Groonga", mrb->object_class);
-  MRB_SET_INSTANCE_TT(klass, MRB_TT_STRING);
+  klass = mrb_define_class_under(mrb, module, "Object", mrb->object_class);
+  MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
 }
 #endif
