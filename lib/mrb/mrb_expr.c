@@ -30,6 +30,7 @@
 #include "mrb_expr.h"
 
 static struct mrb_data_type mrb_grn_scan_info_type = { "Groonga::ScanInfo", NULL };
+static struct mrb_data_type mrb_grn_expr_code_type = { "Groonga::ExpressionCode", NULL };
 
 static mrb_value
 mrb_grn_scan_info_new(mrb_state *mrb, scan_info *ptr)
@@ -42,6 +43,20 @@ mrb_grn_scan_info_new(mrb_state *mrb, scan_info *ptr)
   mrb_ptr = mrb_cptr_value(mrb, ptr);
   klass = mrb_class_ptr(mrb_const_get(mrb, mrb_obj_value(module),
                                       mrb_intern(mrb, "ScanInfo")));
+  return mrb_obj_new(mrb, klass, 1, &mrb_ptr);
+}
+
+static mrb_value
+mrb_grn_expr_code_new(mrb_state *mrb, grn_expr_code *ptr)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  struct RClass *module = ctx->impl->mrb.module;
+  struct RClass *klass;
+  mrb_value mrb_ptr;
+
+  mrb_ptr = mrb_cptr_value(mrb, ptr);
+  klass = mrb_class_ptr(mrb_const_get(mrb, mrb_obj_value(module),
+                                      mrb_intern(mrb, "ExpressionCode")));
   return mrb_obj_new(mrb, klass, 1, &mrb_ptr);
 }
 
@@ -155,13 +170,13 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
             grn_expr_code *ec;
             grn_expr *e = (grn_expr *)(*p);
             for (j = e->codes_curr, ec = e->codes; j--; ec++) {
+              int32_t weight;
+              mrb_value mrb_ec = mrb_grn_expr_code_new(mrb, ec);
               if (ec->value) {
                 switch (ec->value->header.type) {
                 case GRN_ACCESSOR :
                   if (grn_column_index(ctx, ec->value, c->op, &index, 1, &sid)) {
-                    int32_t weight = mrb_fixnum(
-                      mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "weight", 1,
-                                  mrb_cptr_value(mrb, ec)));
+                    weight = mrb_fixnum(mrb_funcall(mrb, mrb_ec, "weight", 0));
                     grn_scan_info_set_flags(si, grn_scan_info_get_flags(si) | SCAN_ACCESSOR);
                     mrb_si = mrb_grn_scan_info_new(mrb, si);
                     if (((grn_accessor *)ec->value)->next) {
@@ -180,9 +195,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                 case GRN_COLUMN_FIX_SIZE :
                 case GRN_COLUMN_VAR_SIZE :
                   if (grn_column_index(ctx, ec->value, c->op, &index, 1, &sid)) {
-                    int32_t weight = mrb_fixnum(
-                      mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "weight", 1,
-                                  mrb_cptr_value(mrb, ec)));
+                    weight = mrb_fixnum(mrb_funcall(mrb, mrb_ec, "weight", 0));
                     mrb_si = mrb_grn_scan_info_new(mrb, si);
                     mrb_funcall(mrb, mrb_si, "put_index", 3,
                                 mrb_cptr_value(mrb, index),
@@ -201,16 +214,12 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                     j -= 2;
                     ec += 2;
                   }
-                  {
-                    int32_t weight = mrb_fixnum(
-                      mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "weight", 1,
-                                  mrb_cptr_value(mrb, ec)));
-                    mrb_si = mrb_grn_scan_info_new(mrb, si);
-                    mrb_funcall(mrb, mrb_si, "put_index", 3,
-                                mrb_cptr_value(mrb, index),
-                                mrb_fixnum_value(sid),
-                                mrb_fixnum_value(weight));
-                  }
+                  weight = mrb_fixnum(mrb_funcall(mrb, mrb_ec, "weight", 0));
+                  mrb_si = mrb_grn_scan_info_new(mrb, si);
+                  mrb_funcall(mrb, mrb_si, "put_index", 3,
+                              mrb_cptr_value(mrb, index),
+                              mrb_fixnum_value(sid),
+                              mrb_fixnum_value(weight));
                   break;
                 }
               }
@@ -417,6 +426,17 @@ mrb_grn_scan_info_initialize(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_expr_code_initialize(mrb_state *mrb, mrb_value self)
+{
+  mrb_value mrb_ptr;
+
+  mrb_get_args(mrb, "o", &mrb_ptr);
+  DATA_TYPE(self) = &mrb_grn_expr_code_type;
+  DATA_PTR(self) = mrb_cptr(mrb_ptr);
+  return self;
+}
+
+static mrb_value
 mrb_grn_scan_info_put_index(mrb_state *mrb, mrb_value self)
 {
   int sid;
@@ -436,13 +456,9 @@ mrb_grn_scan_info_put_index(mrb_state *mrb, mrb_value self)
 static mrb_value
 mrb_grn_expr_code_get_weight(mrb_state *mrb, mrb_value self)
 {
-  int32_t weight;
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
-  mrb_value mrb_ec;
 
-  mrb_get_args(mrb, "o", &mrb_ec);
-  weight = grn_expr_code_get_weight(ctx, mrb_cptr(mrb_ec));
-  return mrb_fixnum_value(weight);
+  return mrb_fixnum_value(grn_expr_code_get_weight(ctx, DATA_PTR(self)));
 }
 
 void
@@ -460,8 +476,10 @@ grn_mrb_expr_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "initialize", mrb_grn_scan_info_initialize, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "put_index", mrb_grn_scan_info_put_index, MRB_ARGS_REQ(3));
 
-  mrb_define_class_method(mrb, module,
-                          "weight", mrb_grn_expr_code_get_weight, MRB_ARGS_REQ(1));
+  klass = mrb_define_class_under(mrb, module, "ExpressionCode", mrb->object_class);
+  MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
+  mrb_define_method(mrb, klass, "initialize", mrb_grn_expr_code_initialize, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "weight", mrb_grn_expr_code_get_weight, MRB_ARGS_NONE());
   grn_mrb_load(ctx, "expression.rb");
 }
 
