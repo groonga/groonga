@@ -159,7 +159,9 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                 switch (ec->value->header.type) {
                 case GRN_ACCESSOR :
                   if (grn_column_index(ctx, ec->value, c->op, &index, 1, &sid)) {
-                    int32_t weight = grn_expr_code_get_weight(ctx, ec);
+                    int32_t weight = mrb_fixnum(
+                      mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "weight", 1,
+                                  mrb_cptr_value(mrb, ec)));
                     grn_scan_info_set_flags(si, grn_scan_info_get_flags(si) | SCAN_ACCESSOR);
                     mrb_si = mrb_grn_scan_info_new(mrb, si);
                     if (((grn_accessor *)ec->value)->next) {
@@ -178,11 +180,14 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                 case GRN_COLUMN_FIX_SIZE :
                 case GRN_COLUMN_VAR_SIZE :
                   if (grn_column_index(ctx, ec->value, c->op, &index, 1, &sid)) {
+                    int32_t weight = mrb_fixnum(
+                      mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "weight", 1,
+                                  mrb_cptr_value(mrb, ec)));
                     mrb_si = mrb_grn_scan_info_new(mrb, si);
                     mrb_funcall(mrb, mrb_si, "put_index", 3,
                                 mrb_cptr_value(mrb, index),
                                 mrb_fixnum_value(sid),
-                                mrb_fixnum_value(grn_expr_code_get_weight(ctx, ec)));
+                                mrb_fixnum_value(weight));
                   }
                   break;
                 case GRN_COLUMN_INDEX :
@@ -196,11 +201,16 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                     j -= 2;
                     ec += 2;
                   }
-                  mrb_si = mrb_grn_scan_info_new(mrb, si);
-                  mrb_funcall(mrb, mrb_si, "put_index", 3,
-                              mrb_cptr_value(mrb, index),
-                              mrb_fixnum_value(sid),
-                              mrb_fixnum_value(grn_expr_code_get_weight(ctx, ec)));
+                  {
+                    int32_t weight = mrb_fixnum(
+                      mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "weight", 1,
+                                  mrb_cptr_value(mrb, ec)));
+                    mrb_si = mrb_grn_scan_info_new(mrb, si);
+                    mrb_funcall(mrb, mrb_si, "put_index", 3,
+                                mrb_cptr_value(mrb, index),
+                                mrb_fixnum_value(sid),
+                                mrb_fixnum_value(weight));
+                  }
                   break;
                 }
               }
@@ -423,6 +433,18 @@ mrb_grn_scan_info_put_index(mrb_state *mrb, mrb_value self)
   return self;
 }
 
+static mrb_value
+mrb_grn_expr_code_get_weight(mrb_state *mrb, mrb_value self)
+{
+  int32_t weight;
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_value mrb_ec;
+
+  mrb_get_args(mrb, "o", &mrb_ec);
+  weight = grn_expr_code_get_weight(ctx, mrb_cptr(mrb_ec));
+  return mrb_fixnum_value(weight);
+}
+
 void
 grn_mrb_expr_init(grn_ctx *ctx)
 {
@@ -437,6 +459,9 @@ grn_mrb_expr_init(grn_ctx *ctx)
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
   mrb_define_method(mrb, klass, "initialize", mrb_grn_scan_info_initialize, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "put_index", mrb_grn_scan_info_put_index, MRB_ARGS_REQ(3));
+
+  mrb_define_class_method(mrb, module,
+                          "weight", mrb_grn_expr_code_get_weight, MRB_ARGS_REQ(1));
   grn_mrb_load(ctx, "expression.rb");
 }
 
