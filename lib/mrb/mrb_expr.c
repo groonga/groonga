@@ -47,17 +47,17 @@ mrb_grn_scan_info_new(mrb_state *mrb, scan_info *scan_info)
 }
 
 static mrb_value
-mrb_grn_expr_code_new(mrb_state *mrb, grn_expr_code *ptr)
+mrb_grn_expr_code_new(mrb_state *mrb, grn_expr_code *code)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   struct RClass *module = ctx->impl->mrb.module;
   struct RClass *klass;
-  mrb_value mrb_ptr;
+  mrb_value mrb_code;
 
-  mrb_ptr = mrb_cptr_value(mrb, ptr);
+  mrb_code = mrb_cptr_value(mrb, code);
   klass = mrb_class_ptr(mrb_const_get(mrb, mrb_obj_value(module),
                                       mrb_intern(mrb, "ExpressionCode")));
-  return mrb_obj_new(mrb, klass, 1, &mrb_ptr);
+  return mrb_obj_new(mrb, klass, 1, &mrb_code);
 }
 
 static scan_info **
