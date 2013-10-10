@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-23 15:32\n"
+"POT-Creation-Date: 2013-10-10 14:31+0900\n"
 "PO-Revision-Date: 2011-05-09 00:37+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -303,3 +303,123 @@ msgid ""
 "この場合も対策方法1同様、検索ノイズが上位に現れる可能性が高くなることに注意し"
 "てください。検索ノイズが多くなった場合は指定する値を低くする必要があります。"
 msgstr ""
+
+# 0388eb9de3944ec1872713c3918d56f3
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:6
+msgid "How to avoid mmap Cannot allocate memory error"
+msgstr "mmap Cannot allocate memoryエラーを回避するには"
+
+# de633379d7914913ada1348159f4eddc
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:9
+msgid "Example"
+msgstr "例"
+
+# 1a41b26df2494378bff6f77449fa8c8a
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:11
+msgid "There is a case following mmap error in log file:"
+msgstr "ログファイルに以下のようなmmapエラーが存在する場合があります。::"
+
+# 3ea700048f204d66a70a90e49e687a23
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:13
+msgid ""
+"2013-06-04 08:19:34.835218|A|4e86e700|mmap(4194304,551,432017408)=Cannot "
+"allocate memory <13036498944>"
+msgstr ""
+
+# e2a5775e15ac4edfa2695587ef6b3753
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:15
+msgid ""
+"Note that <13036498944> means total size of mmap (almost 12GB) in this case."
+msgstr ""
+"<13036498944> はこの場合mmapの合計サイズ(約12GB)です。"
+
+# 3dd04f393d2f42ed8e8e0337831fbd5f
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:18
+msgid "Solution"
+msgstr "対策方法"
+
+# a436e19ac3704a298a60be384184d541
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:20
+msgid "So you need to confirm following point of views."
+msgstr "以下の観点を確認する必要があります。"
+
+# dde18f8647e44eca92200b72cf902ad6
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:22
+msgid "Are there enough free memory?"
+msgstr "十分なメモリの空きが存在するか?"
+
+# 370997c630184192acdc8c9e4d2e692b
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:23
+msgid "Are maximum number of mappings exceeded?"
+msgstr "マッピング最大数を超過していないか?"
+
+# 6d61422d71f044399be7a4dc978fe1df
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:25
+msgid "To check there are enough free memory, you can use vmstat command."
+msgstr ""
+"十分な空きメモリがあるかを調べるために、vmstat コマンドを使うことができます。"
+
+# 742e2710f0464264a2bad672452d0ded
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:27
+msgid ""
+"To check whether maximum number of mappings are exceeded, you can "
+"investigate the value of vm.max_map_count."
+msgstr ""
+"最大マッピング数を超過しているかどうかを確認するために、 vm.max_map_count の値を調べることができます。"
+
+# bd0ab482a0f641f795a62c98ae8c4d39
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:29
+msgid ""
+"If this issue is fixed by modifying the value of vm.max_map_count, it's "
+"exactly the reason."
+msgstr ""
+"もしこの問題が vm.max_map_count の値を調整することで解決するなら、これが原因です。"
+
+# 6413ead1cbea40ff82f0475e577b43fe
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:31
+msgid ""
+"As groonga allocates memory chunks each 256KB, you can estimate the size of "
+"database you can handle by following formula:"
+msgstr ""
+"groongaはメモリを256KBごとに確保するので、扱えるデータベースのサイズを以下の式で見積ることができます:"
+
+# 2100e811a8414b78b55adfe15fcb9060
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:33
+msgid "(database size) = vm.max_map_count * (memory chunks)"
+msgstr ""
+
+# a14b2a919ed14580ab90230aacdf1b1d
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:35
+msgid ""
+"If you want to handle over 16GB groonga database, you must specify at least "
+"65536 as the value of vm.max_map_count:"
+msgstr ""
+"16GBを超えるデータベースを扱うには、少くとも65536を vm.max_map_count の値として設定しないといけません。"
+
+# 37b6d115674e4fd38b13364967ad5b7c
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:37
+msgid "database size (16GB) = vm.max_map_count (65536) * memory chunks (256KB)"
+msgstr ""
+
+# b25665b0c14f47faa78cecad4fe65be1
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:39
+msgid ""
+"You can modify vm.max_map_count temporary by sudo sysctl -w vm."
+"max_map_count=65536."
+msgstr ""
+"sudo sysctl -w vm.max_map_count=65536 で一時的に vm.max_map_count を調整することができます。"
+
+# 4bfb70778b4d4551bfbcfc5870525e9a
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:41
+msgid ""
+"Then save the configuration value to /etc/sysctl.conf or /etc/sysctl.d/*."
+"conf."
+msgstr ""
+"その後、設定値を /etc/sysctl.conf もしくは `/etc/sysctl.d/*.conf` へと保存します。"
+
+# 2c6dceaf0c8c429db46f6fdbe61cdc4a
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:43
+msgid ""
+"See :doc:`/reference/tuning` documentation about tuning related parameters."
+msgstr ""
+"チューニング関連のパラメータについては、 :doc:`/reference/tuning` のドキュメントを参照してください。"
