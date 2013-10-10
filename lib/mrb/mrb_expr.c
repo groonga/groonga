@@ -434,11 +434,11 @@ mrb_grn_scan_info_initialize(mrb_state *mrb, mrb_value self)
 static mrb_value
 mrb_grn_expr_code_initialize(mrb_state *mrb, mrb_value self)
 {
-  mrb_value mrb_ptr;
+  mrb_value mrb_code;
 
-  mrb_get_args(mrb, "o", &mrb_ptr);
+  mrb_get_args(mrb, "o", &mrb_code);
   DATA_TYPE(self) = &mrb_grn_expr_code_type;
-  DATA_PTR(self) = mrb_cptr(mrb_ptr);
+  DATA_PTR(self) = mrb_cptr(mrb_code);
   return self;
 }
 
