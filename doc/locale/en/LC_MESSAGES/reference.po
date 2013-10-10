@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-02 15:22+0900\n"
+"POT-Creation-Date: 2013-10-10 13:20+0900\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -338,6 +338,7 @@ msgstr ""
 #: ../../../source/reference/normalizers.txt:12
 #: ../../../source/reference/query_expanders/tsv.txt:9
 #: ../../../source/reference/tables.txt:9
+#: ../../../source/reference/tuning.txt:9
 msgid "Summary"
 msgstr "Summary"
 
@@ -3578,6 +3579,7 @@ msgstr ""
 #: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:43
 #: ../../../source/reference/functions/query.txt:162
 #: ../../../source/reference/functions/snippet_html.txt:108
+#: ../../../source/reference/tuning.txt:176
 msgid "TODO"
 msgstr "TODO"
 
@@ -4146,6 +4148,7 @@ msgstr ""
 #: ../../../source/reference/functions/html_untag.txt:67
 #: ../../../source/reference/functions/query.txt:107
 #: ../../../source/reference/functions/sub_filter.txt:98
+#: ../../../source/reference/tuning.txt:15
 msgid "Parameters"
 msgstr "Parameters"
 
@@ -17670,6 +17673,249 @@ msgstr ""
 msgid "TokenUnigram"
 msgstr ""
 
+# 98e5b8ea0d354ce6bfba6f954e99f82f
+#: ../../../source/reference/tuning.txt:6
+msgid "Tuning"
+msgstr ""
+
+# 971cf29a02b34cc9a23453bfd554146a
+#: ../../../source/reference/tuning.txt:11
+msgid ""
+"There are some tuning parameters for improving groonga performance or "
+"handling a large database."
+msgstr ""
+
+# aa6c5a1abc844a978f87b2dd33b26dc6
+#: ../../../source/reference/tuning.txt:17
+msgid "This section describes parameters."
+msgstr ""
+
+# 66ec3c63e5704b7db416a6694a96041a
+#: ../../../source/reference/tuning.txt:22
+msgid "The max number of open files per process"
+msgstr ""
+
+# b9b89f0757e94a3eac4fbc3fff173f11
+# 5c1f24942c3a40f7bb84958ba13bbbee
+#: ../../../source/reference/tuning.txt:24
+#: ../../../source/reference/tuning.txt:64
+msgid "This parameter is for handling a large database."
+msgstr ""
+
+# 11ba2b331dea41f4bd365b2eeeda8c2e
+#: ../../../source/reference/tuning.txt:26
+msgid ""
+"Groonga creates one or more files per table and colum. If your database has "
+"many tables and columns, groonga process needs to open many files."
+msgstr ""
+
+# 6e4b66495caf4db0ab5e9e543c4a2026
+#: ../../../source/reference/tuning.txt:30
+msgid ""
+"System limits the max number of open files per process. So you need to relax "
+"the limitation."
+msgstr ""
+
+# ca1d8c7dd4ad457989ca9e0ab8aee619
+#: ../../../source/reference/tuning.txt:33
+msgid ""
+"Here is an expression that compute how many files are opened by groonga::"
+msgstr ""
+
+# 2c1116c047a249269a2270188225710e
+# 2c1116c047a249269a2270188225710e
+# 2c1116c047a249269a2270188225710e
+# 2c1116c047a249269a2270188225710e
+# 2c1116c047a249269a2270188225710e
+# 2c1116c047a249269a2270188225710e
+# 2c1116c047a249269a2270188225710e
+# 2c1116c047a249269a2270188225710e
+# 2c1116c047a249269a2270188225710e
+# 2c1116c047a249269a2270188225710e
+# b8b481fc700a4070979cf73e56bd9031
+# efa9ee514a0048a6a51f0ccea9327f05
+# 2c1116c047a249269a2270188225710e
+# 2c1116c047a249269a2270188225710e
+# 2c1116c047a249269a2270188225710e
+# e13a2895bf5b45d694a5ccd36dbfd75a
+# e13a2895bf5b45d694a5ccd36dbfd75a
+# e13a2895bf5b45d694a5ccd36dbfd75a
+# e13a2895bf5b45d694a5ccd36dbfd75a
+# e13a2895bf5b45d694a5ccd36dbfd75a
+# e13a2895bf5b45d694a5ccd36dbfd75a
+# e13a2895bf5b45d694a5ccd36dbfd75a
+# e13a2895bf5b45d694a5ccd36dbfd75a
+#: ../../../source/reference/tuning.txt:42
+msgid "Here is an example schema::"
+msgstr ""
+
+# 200892016cd6469cba0fc17146add64c
+#: ../../../source/reference/tuning.txt:51
+msgid "This example opens at least 11 files::"
+msgstr ""
+
+# a6a765357f094b178d3f18302d269239
+#: ../../../source/reference/tuning.txt:62
+msgid "Memory usage"
+msgstr ""
+
+# 2e1d2452d43c4bd2812af6f45b98748d
+#: ../../../source/reference/tuning.txt:66
+msgid ""
+"Groonga maps database files onto memory and accesses to them. Groonga "
+"doesn't maps unnecessary files onto memory until they are nneded."
+msgstr ""
+
+# bd1e83ddc9394610903f5bc591cfeefc
+#: ../../../source/reference/tuning.txt:69
+msgid ""
+"If you access to all data in database, all database files are mapped onto "
+"memory.  If total size of your database files is 6GiB, your groonga process "
+"uses 6GiB memory."
+msgstr ""
+
+# 1e2cccd34a5649d09ff6964a06adb2b6
+#: ../../../source/reference/tuning.txt:73
+msgid ""
+"Normally, your all database files aren't mapped onto memry. But is may be "
+"occurred. It is an example case that you dump your database."
+msgstr ""
+
+# 03a894e9e9b64300848b39df5cd8a561
+#: ../../../source/reference/tuning.txt:76
+msgid "You must have memory and swap that is larger than database."
+msgstr ""
+
+# 56feae28b5374dd081d181e8a1a3d157
+#: ../../../source/reference/tuning.txt:81
+msgid "Linux"
+msgstr ""
+
+# aa6c5a1abc844a978f87b2dd33b26dc6
+#: ../../../source/reference/tuning.txt:83
+msgid "This section describes how to configure parameters on Linux."
+msgstr ""
+
+# 560b368f443b4b378c686c018bb59bc2
+#: ../../../source/reference/tuning.txt:88
+msgid "nofile"
+msgstr ""
+
+# 195852b679014df3bbb2f9d951ca453f
+#: ../../../source/reference/tuning.txt:90
+msgid ""
+"You can relax the :ref:`tuning-max-n-open-files` parameter by creating a "
+"configuration file ``/etc/security/limits.d/groonga.conf`` that has the "
+"following content::"
+msgstr ""
+
+# aa25c179dfe542ef958db34e5b01f02f
+#: ../../../source/reference/tuning.txt:97
+msgid ""
+"If you run ``groonga`` process by ``groonga`` user and your groonga process "
+"needs to open less than 10000 files, use the following configuration::"
+msgstr ""
+
+# 6cd4e9e1d40e401886cf223dd93ba54d
+#: ../../../source/reference/tuning.txt:104
+msgid ""
+"The configuration is applied after your groonga service is restarted or re-"
+"login as your groonga user."
+msgstr ""
+
+# feb303b72ea84c54afa971079a03788b
+#: ../../../source/reference/tuning.txt:110
+msgid "vm.overcommit_memory"
+msgstr ""
+
+# 553afee726e640e3b2c6659ffedcab02
+#: ../../../source/reference/tuning.txt:112
+msgid ""
+"This is :ref:`tuning-memory-usage` related parameter. You can handle a "
+"database that is larger than your memory and swap by setting ``vm."
+"overcommit_memory`` kernel parameter to 1. 1 means that groonga can always "
+"map database files onto memory. It is no problem until groonga touch mapped "
+"database files that their size is larger than memory and swap. Groonga "
+"recommends the configuration."
+msgstr ""
+
+# abd4df4ea3f54c308ea81005d4e316ad
+#: ../../../source/reference/tuning.txt:119
+msgid ""
+"See `Linux kernel documentaion about overcommit <https://www.kernel.org/doc/"
+"Documentation/vm/overcommit-accounting>`_ about ``vm.overcommit_memory`` "
+"parameter details."
+msgstr ""
+
+# 7265ab03b1c749eaab2d3889bfa31920
+#: ../../../source/reference/tuning.txt:123
+msgid ""
+"You can set the configuration by putting a configuration file ``/etc/sysctl."
+"d/groonga.conf`` that has the following content::"
+msgstr ""
+
+# da744a3e9e5e4b86bb1ee21f1027ebe1
+# bb898f21696347c58e1cac7bb99c6c02
+#: ../../../source/reference/tuning.txt:128
+#: ../../../source/reference/tuning.txt:161
+msgid ""
+"The configuration can be applied by restarting your system or run the "
+"following command::"
+msgstr ""
+
+# ad27c1d4de6f4ad4ada4a75b259fdb0e
+#: ../../../source/reference/tuning.txt:137
+msgid "vm.max_map_count"
+msgstr ""
+
+# d9cbebbd30124db4b7f6c90385e93839
+#: ../../../source/reference/tuning.txt:139
+msgid ""
+"This is :ref:`tuning-memory-usage` related parameter. You can handle a 16GiB "
+"or more larger size database by increasing ``vm.max_map_count`` kernel "
+"parameter. The parameter limits the max number of memory maps."
+msgstr ""
+
+# 92f56a42c8e4466aac7747e280f6e97c
+#: ../../../source/reference/tuning.txt:143
+msgid ""
+"The default value of the kernel parameter may be 65530 or 65536. Groonga "
+"maps 256KiB memory chunk at one time. If a database is larger than 16GiB, "
+"groonga reaches the limitation. (``256KiB * 65536 = 16GiB``)"
+msgstr ""
+
+# 3e7c74e88c0e46c7a647f8092ced8d44
+#: ../../../source/reference/tuning.txt:147
+msgid ""
+"You needs to increase the value of the kernel parameter to handle 16GiB or "
+"more larger size database. For example, you can handle almost 32GiB size "
+"database by ``65536 * 2 = 131072``. You can set the configuration by putting "
+"a configuration file ``/etc/sysctl.d/groonga.conf`` that has the following "
+"content::"
+msgstr ""
+
+# 84ed446406e8461b90d97b99ae32cd6f
+#: ../../../source/reference/tuning.txt:155
+msgid ""
+"Note that your real confiugration file will be the following because you "
+"already have ``vm.overcommit_memory`` configuration::"
+msgstr ""
+
+# 09aafe9d7e7447b1a2569f9e11b1467a
+#: ../../../source/reference/tuning.txt:167
+msgid "FreeBSD"
+msgstr ""
+
+# aa6c5a1abc844a978f87b2dd33b26dc6
+#: ../../../source/reference/tuning.txt:169
+msgid "This section describes how to configure parameters on FreeBSD."
+msgstr ""
+
+# d6925f47833d41f895f507b2c3f20bd2
+#: ../../../source/reference/tuning.txt:174
+msgid "kern.maxfileperproc"
+msgstr ""
+
 # dac8495fc14741759ef8d5dc2208f627
 #: ../../../source/reference/types.txt:6
 msgid "データ型"
@@ -18062,67 +18308,13 @@ msgstr ""
 msgid "Object型はv1.2でサポートされます。"
 msgstr "Object型はv1.2でサポートされます。"
 
-# 8e91fbc2746341169c27948089409f5c
-#~ msgid "json"
-#~ msgstr "json"
+# 68baf1cf0b444232a1fa7299c43fc58a
+#~ msgid "column_create"
+#~ msgstr "column_create"
 
-# 5422fde6ce3d4b03926ae9c28a568c8e
-#~ msgid ""
-#~ "クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
-#~ "は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
-#~ msgstr ""
-#~ "クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
-#~ "は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
-
-# 31ae96ec89454ccd8461b3be13376d57
-#~ msgid ""
-#~ "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
-#~ msgstr ""
-#~ "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
-
-# 782f01979fbc4d54b4b22525168fdcb3
-#~ msgid ""
-#~ "groonga組込コマンドの一つであるcache_limitについて説明します。組込コマンド"
-#~ "は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバ"
-#~ "にリクエストを送信することによって実行します。"
-#~ msgstr ""
-#~ "groonga組込コマンドの一つであるcache_limitについて説明します。組込コマンド"
-#~ "は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバ"
-#~ "にリクエストを送信することによって実行します。"
-
-# 1fa38310321a4d9f8f5dcb5d3b9ebe5e
-#~ msgid "cache_limit - cacheサイズの設定・取得"
-#~ msgstr "cache_limit - cacheサイズの設定・取得"
-
-# ae3fed01f9fd4e7e9a541995a8dcf986
-#~ msgid ""
-#~ "script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを"
-#~ "指定する場合は、id及びkeyパラメータを指定してはいけません。"
-#~ msgstr ""
-#~ "script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを"
-#~ "指定する場合は、id及びkeyパラメータを指定してはいけません。"
-
-# 1348fc0305b9412b840d4a9371faa2da
-#~ msgid ""
-#~ "削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパ"
-#~ "ラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
-#~ msgstr ""
-#~ "削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパ"
-#~ "ラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
-
-# 43e0750371c644d8833d1a01a72e4ced
-#~ msgid "レコードを削除しようとするテーブルの名前を指定します。"
-#~ msgstr "レコードを削除しようとするテーブルの名前を指定します。"
-
-# bb54bdbab7684c0e940229f834bdfe82
-#~ msgid "テーブルEntryからレコードを削除します。::"
-#~ msgstr "テーブルEntryからレコードを削除します。::"
-
-# d295da1d724849a8a4c12e499c4e5ef1
-#~ msgid ""
-#~ "deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
-#~ msgstr ""
-#~ "deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
+# 17b5fc3339cb402db375a8fb03389871
+#~ msgid "delete - 一件のレコードの削除"
+#~ msgstr "delete - 一件のレコードの削除"
 
 # 9ee33aa44c21410eb720de969556dde0
 #~ msgid ""
@@ -18134,10 +18326,64 @@ msgstr "Object型はv1.2でサポートされます。"
 #~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
 #~ "クエストを送信することによって実行します。"
 
-# 17b5fc3339cb402db375a8fb03389871
-#~ msgid "delete - 一件のレコードの削除"
-#~ msgstr "delete - 一件のレコードの削除"
+# d295da1d724849a8a4c12e499c4e5ef1
+#~ msgid ""
+#~ "deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
+#~ msgstr ""
+#~ "deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
 
-# 68baf1cf0b444232a1fa7299c43fc58a
-#~ msgid "column_create"
-#~ msgstr "column_create"
+# bb54bdbab7684c0e940229f834bdfe82
+#~ msgid "テーブルEntryからレコードを削除します。::"
+#~ msgstr "テーブルEntryからレコードを削除します。::"
+
+# 43e0750371c644d8833d1a01a72e4ced
+#~ msgid "レコードを削除しようとするテーブルの名前を指定します。"
+#~ msgstr "レコードを削除しようとするテーブルの名前を指定します。"
+
+# 1348fc0305b9412b840d4a9371faa2da
+#~ msgid ""
+#~ "削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパ"
+#~ "ラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
+#~ msgstr ""
+#~ "削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパ"
+#~ "ラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
+
+# ae3fed01f9fd4e7e9a541995a8dcf986
+#~ msgid ""
+#~ "script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを"
+#~ "指定する場合は、id及びkeyパラメータを指定してはいけません。"
+#~ msgstr ""
+#~ "script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを"
+#~ "指定する場合は、id及びkeyパラメータを指定してはいけません。"
+
+# 1fa38310321a4d9f8f5dcb5d3b9ebe5e
+#~ msgid "cache_limit - cacheサイズの設定・取得"
+#~ msgstr "cache_limit - cacheサイズの設定・取得"
+
+# 782f01979fbc4d54b4b22525168fdcb3
+#~ msgid ""
+#~ "groonga組込コマンドの一つであるcache_limitについて説明します。組込コマンド"
+#~ "は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバ"
+#~ "にリクエストを送信することによって実行します。"
+#~ msgstr ""
+#~ "groonga組込コマンドの一つであるcache_limitについて説明します。組込コマンド"
+#~ "は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバ"
+#~ "にリクエストを送信することによって実行します。"
+
+# 31ae96ec89454ccd8461b3be13376d57
+#~ msgid ""
+#~ "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
+#~ msgstr ""
+#~ "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
+
+# 5422fde6ce3d4b03926ae9c28a568c8e
+#~ msgid ""
+#~ "クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
+#~ "は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
+#~ msgstr ""
+#~ "クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
+#~ "は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
+
+# 8e91fbc2746341169c27948089409f5c
+#~ msgid "json"
+#~ msgstr "json"
