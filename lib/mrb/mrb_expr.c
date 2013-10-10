@@ -29,8 +29,14 @@
 #include "../mrb.h"
 #include "mrb_expr.h"
 
-static struct mrb_data_type mrb_grn_scan_info_type = { "Groonga::ScanInfo", NULL };
-static struct mrb_data_type mrb_grn_expr_code_type = { "Groonga::ExpressionCode", NULL };
+static struct mrb_data_type mrb_grn_scan_info_type = {
+  "Groonga::ScanInfo",
+  NULL
+};
+static struct mrb_data_type mrb_grn_expr_code_type = {
+  "Groonga::ExpressionCode",
+  NULL
+};
 
 static mrb_value
 mrb_grn_scan_info_new(mrb_state *mrb, scan_info *scan_info)
