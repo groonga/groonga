@@ -33,17 +33,17 @@ static struct mrb_data_type mrb_grn_scan_info_type = { "Groonga::ScanInfo", NULL
 static struct mrb_data_type mrb_grn_expr_code_type = { "Groonga::ExpressionCode", NULL };
 
 static mrb_value
-mrb_grn_scan_info_new(mrb_state *mrb, scan_info *ptr)
+mrb_grn_scan_info_new(mrb_state *mrb, scan_info *scan_info)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   struct RClass *module = ctx->impl->mrb.module;
   struct RClass *klass;
-  mrb_value mrb_ptr;
+  mrb_value mrb_scan_info;
 
-  mrb_ptr = mrb_cptr_value(mrb, ptr);
+  mrb_scan_info = mrb_cptr_value(mrb, scan_info);
   klass = mrb_class_ptr(mrb_const_get(mrb, mrb_obj_value(module),
                                       mrb_intern(mrb, "ScanInfo")));
-  return mrb_obj_new(mrb, klass, 1, &mrb_ptr);
+  return mrb_obj_new(mrb, klass, 1, &mrb_scan_info);
 }
 
 static mrb_value
