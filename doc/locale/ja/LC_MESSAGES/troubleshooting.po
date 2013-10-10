@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-10-10 14:31+0900\n"
-"PO-Revision-Date: 2011-05-09 00:37+0900\n"
+"PO-Revision-Date: 2013-10-10 21:47+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -346,12 +346,12 @@ msgstr "以下の観点を確認する必要があります。"
 # dde18f8647e44eca92200b72cf902ad6
 #: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:22
 msgid "Are there enough free memory?"
-msgstr "十分なメモリの空きが存在するか?"
+msgstr "十分なメモリの空きが存在するか？"
 
 # 370997c630184192acdc8c9e4d2e692b
 #: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:23
 msgid "Are maximum number of mappings exceeded?"
-msgstr "マッピング最大数を超過していないか?"
+msgstr "マッピング最大数を超過していないか？"
 
 # 6d61422d71f044399be7a4dc978fe1df
 #: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:25
