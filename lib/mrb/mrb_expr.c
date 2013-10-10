@@ -449,13 +449,13 @@ mrb_grn_scan_info_put_index(mrb_state *mrb, mrb_value self)
   int32_t weight;
   scan_info *si;
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
-  grn_obj *obj;
-  mrb_value mrb_obj;
+  grn_obj *index;
+  mrb_value mrb_index;
 
-  mrb_get_args(mrb, "oii", &mrb_obj, &sid, &weight);
+  mrb_get_args(mrb, "oii", &mrb_index, &sid, &weight);
   si = DATA_PTR(self);
-  obj = mrb_cptr(mrb_obj);
-  grn_scan_info_put_index(ctx, si, obj, sid, weight);
+  index = mrb_cptr(mrb_index);
+  grn_scan_info_put_index(ctx, si, index, sid, weight);
   return self;
 }
 
