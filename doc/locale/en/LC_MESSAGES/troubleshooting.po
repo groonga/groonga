@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-28 14:44\n"
+"POT-Creation-Date: 2013-10-10 14:29+0900\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -432,3 +432,114 @@ msgid ""
 msgstr ""
 "この場合も対策方法1同様、検索ノイズが上位に現れる可能性が高くなることに注意し"
 "てください。検索ノイズが多くなった場合は指定する値を低くする必要があります。"
+
+# 76adc621040f453b94483b163d43721a
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:6
+msgid "How to avoid mmap Cannot allocate memory error"
+msgstr ""
+
+# 5828cde9e429412496c48cdb8cbe9639
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:9
+msgid "Example"
+msgstr ""
+
+# 8dfcb16077644c839f2b3b66661bba06
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:11
+msgid "There is a case following mmap error in log file:"
+msgstr ""
+
+# 79234702dd1e4461b28a6c0a129cb9fa
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:13
+msgid ""
+"2013-06-04 08:19:34.835218|A|4e86e700|mmap(4194304,551,432017408)=Cannot "
+"allocate memory <13036498944>"
+msgstr ""
+
+# 4ae5641ea9ed47f69db482535f21bb6e
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:15
+msgid ""
+"Note that <13036498944> means total size of mmap (almost 12GB) in this case."
+msgstr ""
+
+# 7466a0fa39994bff9da328b6abf5e0c7
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:18
+msgid "Solution"
+msgstr ""
+
+# 79694d0a62094ca7917edb9cca1b2eda
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:20
+msgid "So you need to confirm following point of views."
+msgstr ""
+
+# 914e1406c981413d824ac169244b6ee0
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:22
+msgid "Are there enough free memory?"
+msgstr ""
+
+# 5e4930f5a28143c19ce0f8f13cfc6e96
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:23
+msgid "Are maximum number of mappings exceeded?"
+msgstr ""
+
+# dbd23f33f4a74c72812b51a67751da43
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:25
+msgid "To check there are enough free memory, you can use vmstat command."
+msgstr ""
+
+# ab74545412c64e2b9c142d031f086f01
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:27
+msgid ""
+"To check whether maximum number of mappings are exceeded, you can "
+"investigate the value of vm.max_map_count."
+msgstr ""
+
+# 7f0d7088ae324eedb7171e40b97e40ff
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:29
+msgid ""
+"If this issue is fixed by modifying the value of vm.max_map_count, it's "
+"exactly the reason."
+msgstr ""
+
+# a1558638d0fe463f983d968b5a70d635
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:31
+msgid ""
+"As groonga allocates memory chunks each 256KB, you can estimate the size of "
+"database you can handle by following formula:"
+msgstr ""
+
+# 701988c8cc8244ff9b20e19b0001d4ac
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:33
+msgid "(database size) = vm.max_map_count * (memory chunks)"
+msgstr ""
+
+# 5f0b4fa1576043d09070d3543b3de6e3
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:35
+msgid ""
+"If you want to handle over 16GB groonga database, you must specify at least "
+"65536 as the value of vm.max_map_count:"
+msgstr ""
+
+# ea086311738d4540aea9df7858a9f1c7
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:37
+msgid "database size (16GB) = vm.max_map_count (65536) * memory chunks (256KB)"
+msgstr ""
+
+# 9ce4884ddf0e4039a95e5fb71605cfa7
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:39
+msgid ""
+"You can modify vm.max_map_count temporary by sudo sysctl -w vm."
+"max_map_count=65536."
+msgstr ""
+
+# 900879f7c67a45078e3121ae0747d332
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:41
+msgid ""
+"Then save the configuration value to /etc/sysctl.conf or /etc/sysctl.d/*."
+"conf."
+msgstr ""
+
+# ce93736db00d4069a578ca0fc9555b04
+#: ../../../source/troubleshooting/mmap_cannot_allocate_memory.txt:43
+msgid ""
+"See :doc:`/reference/tuning` documentation about tuning related parameters."
+msgstr ""
