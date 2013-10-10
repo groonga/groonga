@@ -220,6 +220,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                     j -= 2;
                     ec += 2;
                   }
+                  mrb_ec = mrb_grn_expr_code_new(mrb, ec);
                   weight = mrb_fixnum(mrb_funcall(mrb, mrb_ec, "weight", 0));
                   mrb_si = mrb_grn_scan_info_new(mrb, si);
                   mrb_funcall(mrb, mrb_si, "put_index", 3,
