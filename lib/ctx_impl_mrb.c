@@ -21,6 +21,7 @@
 
 #include "mrb/mrb_obj.h"
 #include "mrb/mrb_expr.h"
+#include "mrb/mrb_accessor.h"
 
 #ifdef GRN_WITH_MRUBY
 static void
@@ -33,6 +34,7 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
 
   grn_mrb_obj_init(ctx);
   grn_mrb_expr_init(ctx);
+  grn_mrb_accessor_init(ctx);
 }
 
 void

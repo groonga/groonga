@@ -16,19 +16,21 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef GRN_MRB_OBJ_H
-#define GRN_MRB_OBJ_H
+#ifndef GRN_MRB_ACCESSOR_H
+#define GRN_MRB_ACCESSOR_H
 
 #include "../ctx.h"
+#include "../db.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void grn_mrb_obj_init(grn_ctx *ctx);
+mrb_value mrb_grn_accessor_new(mrb_state *mrb, grn_accessor *accessor);
+void grn_mrb_accessor_init(grn_ctx *ctx);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* GRN_MRB_OBJ_H */
+#endif /* GRN_MRB_ACCESSOR_H */
