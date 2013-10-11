@@ -20,11 +20,13 @@
 #define GRN_MRB_OBJ_H
 
 #include "../ctx.h"
+#include "../db.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+mrb_value mrb_grn_accessor_new(mrb_state *mrb, grn_accessor *accessor);
 void grn_mrb_obj_init(grn_ctx *ctx);
 
 #ifdef __cplusplus
