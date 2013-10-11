@@ -27,6 +27,7 @@
 #include "../expr.h"
 #include "../util.h"
 #include "../mrb.h"
+#include "mrb_obj.h"
 #include "mrb_expr.h"
 
 static struct mrb_data_type mrb_grn_scan_info_type = {
@@ -182,13 +183,12 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                 case GRN_ACCESSOR :
                   if (grn_column_index(ctx, ec->value, c->op, &index, 1, &sid)) {
                     mrb_value mrb_ec = mrb_grn_expr_code_new(mrb, ec);
-                    mrb_value mrb_accessor_next;
+                    mrb_value mrb_accessor;
                     weight = mrb_fixnum(mrb_funcall(mrb, mrb_ec, "weight", 0));
                     grn_scan_info_set_flags(si, grn_scan_info_get_flags(si) | SCAN_ACCESSOR);
                     mrb_si = mrb_grn_scan_info_new(mrb, si);
-                    mrb_accessor_next = mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "next", 1,
-                                                    mrb_cptr_value(mrb, ec->value));
-                    if (!mrb_nil_p(mrb_accessor_next)) {
+                    mrb_accessor = mrb_grn_accessor_new(mrb, (grn_accessor *)ec->value);
+                    if (!mrb_nil_p(mrb_funcall(mrb, mrb_accessor, "next", 0))) {
                       mrb_funcall(mrb, mrb_si, "put_index", 3,
                                   mrb_cptr_value(mrb, ec->value),
                                   mrb_fixnum_value(sid),
@@ -248,9 +248,8 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
           } else if (GRN_ACCESSORP(*p)) {
             grn_scan_info_set_flags(si, grn_scan_info_get_flags(si) | SCAN_ACCESSOR);
             if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
-              mrb_value mrb_accessor_next = mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "next", 1,
-                                                        mrb_cptr_value(mrb, *p));
-              if (!mrb_nil_p(mrb_accessor_next)) {
+              mrb_value mrb_accessor = mrb_grn_accessor_new(mrb, (grn_accessor *)*p);
+              if (!mrb_nil_p(mrb_funcall(mrb, mrb_accessor, "next", 0))) {
                 mrb_si = mrb_grn_scan_info_new(mrb, si);
                 mrb_funcall(mrb, mrb_si, "put_index", 3,
                             mrb_cptr_value(mrb, *p),
@@ -476,18 +475,6 @@ mrb_grn_expr_code_get_weight(mrb_state *mrb, mrb_value self)
   return mrb_fixnum_value(grn_expr_code_get_weight(ctx, DATA_PTR(self)));
 }
 
-static mrb_value
-mrb_grn_accessor_next(mrb_state *mrb, mrb_value self)
-{
-  grn_accessor *accessor;
-  mrb_value mrb_accessor;
-
-  mrb_get_args(mrb, "o", &mrb_accessor);
-  accessor = mrb_cptr(mrb_accessor);
-  if (!accessor->next) { return mrb_nil_value(); }
-  return mrb_cptr_value(mrb, accessor->next);
-}
-
 void
 grn_mrb_expr_init(grn_ctx *ctx)
 {
@@ -497,7 +484,6 @@ grn_mrb_expr_init(grn_ctx *ctx)
 
   mrb_define_class_method(mrb, module,
                           "build", mrb_grn_expr_build, MRB_ARGS_REQ(4));
-  mrb_define_class_method(mrb, module, "next", mrb_grn_accessor_next, MRB_ARGS_REQ(1));
 
   klass = mrb_define_class_under(mrb, module, "ScanInfo", mrb->object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
