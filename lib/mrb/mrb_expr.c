@@ -165,8 +165,9 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
     case GRN_OP_GEO_WITHINP8 :
     case GRN_OP_TERM_EXTRACT :
       stat = SCAN_START;
-      grn_scan_info_set_op(si, c->op);
-      grn_scan_info_set_end(si, c - e->codes);
+      mrb_si = mrb_grn_scan_info_new(mrb, si);
+      mrb_funcall(mrb, mrb_si, "op=", 1, mrb_fixnum_value(c->op));
+      mrb_funcall(mrb, mrb_si, "end=", 1, mrb_fixnum_value(c - e->codes));
       sis[i++] = si;
       {
         int sid, k;
@@ -351,8 +352,9 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
       }
       if ((c->flags & GRN_EXPR_CODE_RELATIONAL_EXPRESSION) || c + 1 == ce) {
         stat = SCAN_START;
-        grn_scan_info_set_op(si, c->op);
-        grn_scan_info_set_end(si, c - e->codes);
+        mrb_si = mrb_grn_scan_info_new(mrb, si);
+        mrb_funcall(mrb, mrb_si, "op=", 1, mrb_fixnum_value(c->op));
+        mrb_funcall(mrb, mrb_si, "end=", 1, mrb_fixnum_value(c - e->codes));
         sis[i++] = si;
         /* better index resolving framework for functions should be implemented */
         {
@@ -468,6 +470,30 @@ mrb_grn_scan_info_put_index(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_scan_info_set_op(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  grn_operator op;
+
+  mrb_get_args(mrb, "i", &op);
+  si = DATA_PTR(self);
+  grn_scan_info_set_op(si, op);
+  return self;
+}
+
+static mrb_value
+mrb_grn_scan_info_set_end(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  int end;
+
+  mrb_get_args(mrb, "i", &end);
+  si = DATA_PTR(self);
+  grn_scan_info_set_end(si, end);
+  return self;
+}
+
+static mrb_value
 mrb_grn_expr_code_get_weight(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -489,6 +515,8 @@ grn_mrb_expr_init(grn_ctx *ctx)
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
   mrb_define_method(mrb, klass, "initialize", mrb_grn_scan_info_initialize, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "put_index", mrb_grn_scan_info_put_index, MRB_ARGS_REQ(3));
+  mrb_define_method(mrb, klass, "op=", mrb_grn_scan_info_set_op, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "end=", mrb_grn_scan_info_set_end, MRB_ARGS_REQ(1));
 
   klass = mrb_define_class_under(mrb, module, "ExpressionCode", mrb->object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
