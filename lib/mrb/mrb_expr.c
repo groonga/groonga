@@ -27,7 +27,7 @@
 #include "../expr.h"
 #include "../util.h"
 #include "../mrb.h"
-#include "mrb_obj.h"
+#include "mrb_accessor.h"
 #include "mrb_expr.h"
 
 static struct mrb_data_type mrb_grn_scan_info_type = {
