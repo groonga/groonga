@@ -26,3 +26,6 @@ case "${BUILD_TOOL}" in
 	cmake . ${cmake_args}
 	;;
 esac
+
+n_processors="$(grep '^processor' /proc/cpuinfo | wc -l)"
+make -j${n_processors} > /dev/null
