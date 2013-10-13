@@ -582,6 +582,61 @@ ngx_http_groonga_send_lines(grn_ctx *context,
 }
 
 static ngx_int_t
+ngx_http_groonga_join_request_body_chain(ngx_http_request_t *r,
+                                         ngx_chain_t *chain,
+                                         u_char **out_start,
+                                         u_char **out_end)
+{
+  ngx_int_t rc;
+
+  ngx_log_t *log = r->connection->log;
+
+  ngx_chain_t *current;
+  u_char *out;
+  size_t out_size;
+
+  u_char *out_cursor;
+  ngx_buf_t *buffer;
+  size_t buffer_size;
+
+  out_size = 0;
+  for (current = chain; current; current = current->next) {
+    out_size += ngx_buf_size(current->buf);
+  }
+  out = ngx_palloc(r->pool, out_size);
+  if ( ! out) {
+    ngx_log_error(NGX_LOG_ERR, log, 0,
+                  "http_groonga: failed to allocate memory for request body");
+    return NGX_ERROR;
+  }
+
+  out_cursor = out;
+  for (current = chain; current; current = current->next) {
+    buffer = current->buf;
+    buffer_size = ngx_buf_size(current->buf);
+
+    if (buffer->file) {
+      rc = ngx_read_file(buffer->file, out_cursor, buffer_size, 0);
+      if (rc < 0) {
+        ngx_log_error(NGX_LOG_ERR, log, 0,
+                      "http_groonga: failed to read a request body stored in a file");
+        return rc;
+      }
+
+    } else {
+      ngx_memcpy(out_cursor, buffer->pos, buffer_size);
+
+    }
+    out_cursor += buffer_size;
+  }
+
+  *out_start = out;
+  *out_end = out + out_size;
+
+  return NGX_OK;
+}
+
+static ngx_int_t
 ngx_http_groonga_handler_process_body(ngx_http_request_t *r,
                                       ngx_http_groonga_handler_data_t *data)
 {
@@ -590,8 +645,8 @@ ngx_http_groonga_handler_process_body(ngx_http_request_t *r,
   grn_ctx *context;
 
   ngx_buf_t *body;
-  u_char *file_contents;
-  size_t file_size;
+  u_char *body_data;
+  u_char *body_data_end;
 
   context = &(data->context);
 
@@ -602,16 +657,17 @@ ngx_http_groonga_handler_process_body(ngx_http_request_t *r,
     return NGX_HTTP_BAD_REQUEST;
   }
 
-  if (body->file) {
-    file_size = body->file->offset;
-    file_contents = ngx_palloc(r->pool, file_size);
-    rc = ngx_read_file(body->file, file_contents, file_size, 0);
+  rc = ngx_http_groonga_join_request_body_chain(r,
+                                                r->request_body->bufs,
+                                                &body_data,
+                                                &body_data_end);
 
-    rc = ngx_http_groonga_send_lines(context, r, file_contents, file_contents + file_size);
-    ngx_pfree(r->pool, file_contents);
-  } else {
-    rc = ngx_http_groonga_send_lines(context, r, body->pos, body->last);
+  if (rc != NGX_OK) {
+    return rc;
   }
+
+  rc = ngx_http_groonga_send_lines(context, r, body_data, body_data_end);
+  ngx_pfree(r->pool, body_data);
 
   return rc;
 }
