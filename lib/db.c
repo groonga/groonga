@@ -6709,12 +6709,136 @@ remove_columns(grn_ctx *ctx, grn_obj *obj)
 }
 
 static void
+_grn_obj_remove_db_index_columns(grn_ctx *ctx, grn_obj *db)
+{
+  grn_table_cursor *cur;
+  if ((cur = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1, 0))) {
+    grn_id id;
+    while ((id = grn_table_cursor_next_inline(ctx, cur)) != GRN_ID_NIL) {
+      grn_obj *obj = grn_ctx_at(ctx, id);
+      if (obj && obj->header.type == GRN_COLUMN_INDEX) {
+        _grn_obj_remove(ctx, obj);
+      }
+    }
+    grn_table_cursor_close(ctx, cur);
+  }
+}
+
+static void
+_grn_obj_remove_db_reference_columns(grn_ctx *ctx, grn_obj *db)
+{
+  grn_table_cursor *cur;
+  if ((cur = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1, 0))) {
+    grn_id id;
+    while ((id = grn_table_cursor_next_inline(ctx, cur)) != GRN_ID_NIL) {
+      grn_obj *obj = grn_ctx_at(ctx, id);
+      grn_obj *range = NULL;
+
+      if (!obj) {
+        continue;
+      }
+
+      switch (obj->header.type) {
+      case GRN_COLUMN_FIX_SIZE :
+      case GRN_COLUMN_VAR_SIZE :
+        if (!DB_OBJ(obj)->range) {
+          break;
+        }
+
+        range = grn_ctx_at(ctx, DB_OBJ(obj)->range);
+        if (!range) {
+          break;
+        }
+
+        switch (range->header.type) {
+          case GRN_TABLE_NO_KEY :
+          case GRN_TABLE_HASH_KEY :
+          case GRN_TABLE_PAT_KEY :
+          case GRN_TABLE_DAT_KEY :
+            _grn_obj_remove(ctx, obj);
+            break;
+        }
+        break;
+      }
+    }
+    grn_table_cursor_close(ctx, cur);
+  }
+}
+
+static void
+_grn_obj_remove_db_reference_tables(grn_ctx *ctx, grn_obj *db)
+{
+  grn_table_cursor *cur;
+  if ((cur = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1, 0))) {
+    grn_id id;
+    while ((id = grn_table_cursor_next_inline(ctx, cur)) != GRN_ID_NIL) {
+      grn_obj *obj = grn_ctx_at(ctx, id);
+      grn_obj *domain = NULL;
+
+      if (!obj) {
+        continue;
+      }
+
+      switch (obj->header.type) {
+      case GRN_TABLE_HASH_KEY :
+      case GRN_TABLE_PAT_KEY :
+      case GRN_TABLE_DAT_KEY :
+        if (!obj->header.domain) {
+          break;
+        }
+
+        domain = grn_ctx_at(ctx, obj->header.domain);
+        if (!domain) {
+          break;
+        }
+
+        switch (domain->header.type) {
+          case GRN_TABLE_NO_KEY :
+          case GRN_TABLE_HASH_KEY :
+          case GRN_TABLE_PAT_KEY :
+          case GRN_TABLE_DAT_KEY :
+            _grn_obj_remove(ctx, obj);
+            break;
+        }
+        break;
+      }
+    }
+    grn_table_cursor_close(ctx, cur);
+  }
+}
+
+static void
+_grn_obj_remove_db_all_tables(grn_ctx *ctx, grn_obj *db)
+{
+  grn_table_cursor *cur;
+  if ((cur = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1, 0))) {
+    grn_id id;
+    while ((id = grn_table_cursor_next_inline(ctx, cur)) != GRN_ID_NIL) {
+      grn_obj *obj = grn_ctx_at(ctx, id);
+
+      if (!obj) {
+        continue;
+      }
+
+      switch (obj->header.type) {
+      case GRN_TABLE_NO_KEY :
+      case GRN_TABLE_HASH_KEY :
+      case GRN_TABLE_PAT_KEY :
+      case GRN_TABLE_DAT_KEY :
+        _grn_obj_remove(ctx, obj);
+        break;
+      }
+    }
+    grn_table_cursor_close(ctx, cur);
+  }
+}
+
+static void
 _grn_obj_remove_db(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
                    const char *path)
 {
   const char *io_spath;
   char *spath;
-  grn_table_cursor *cur;
   grn_db *s = (grn_db *)db;
 
   if (s->specs &&
@@ -6727,21 +6851,11 @@ _grn_obj_remove_db(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
     spath = NULL;
   }
 
-  if ((cur = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0, 0, -1, 0))) {
-    while ((id = grn_table_cursor_next_inline(ctx, cur)) != GRN_ID_NIL) {
-      grn_obj *tbl = grn_ctx_at(ctx, id);
-      if (tbl) {
-        switch (tbl->header.type) {
-        case GRN_TABLE_HASH_KEY :
-        case GRN_TABLE_PAT_KEY:
-        case GRN_TABLE_DAT_KEY:
-        case GRN_TABLE_NO_KEY:
-          _grn_obj_remove(ctx, tbl);
-        }
-      }
-    }
-    grn_table_cursor_close(ctx, cur);
-  }
+  _grn_obj_remove_db_index_columns(ctx, db);
+  _grn_obj_remove_db_reference_columns(ctx, db);
+  _grn_obj_remove_db_reference_tables(ctx, db);
+  _grn_obj_remove_db_all_tables(ctx, db);
+
   grn_obj_close(ctx, obj);
 
   if (spath) {
