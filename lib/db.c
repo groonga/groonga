@@ -6840,6 +6840,7 @@ _grn_obj_remove_db(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
   const char *io_spath;
   char *spath;
   grn_db *s = (grn_db *)db;
+  unsigned char key_type;
 
   if (s->specs &&
       (io_spath = grn_obj_path(ctx, (grn_obj *)s->specs)) && *io_spath != '\0') {
@@ -6850,6 +6851,8 @@ _grn_obj_remove_db(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
   } else {
     spath = NULL;
   }
+
+  key_type = s->keys->header.type;
 
   _grn_obj_remove_db_index_columns(ctx, db);
   _grn_obj_remove_db_reference_columns(ctx, db);
@@ -6863,7 +6866,16 @@ _grn_obj_remove_db(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
     GRN_FREE(spath);
   }
 
-  if (path) { grn_pat_remove(ctx, path); }
+  if (path) {
+    switch (key_type) {
+    case GRN_TABLE_PAT_KEY :
+      grn_pat_remove(ctx, path);
+      break;
+    case GRN_TABLE_DAT_KEY :
+      grn_dat_remove(ctx, path);
+      break;
+    }
+  }
 }
 
 static grn_bool
