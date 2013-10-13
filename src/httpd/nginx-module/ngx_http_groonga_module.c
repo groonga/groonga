@@ -604,7 +604,7 @@ ngx_http_groonga_join_request_body_chain(ngx_http_request_t *r,
     out_size += ngx_buf_size(current->buf);
   }
   out = ngx_palloc(r->pool, out_size);
-  if ( ! out) {
+  if (!out) {
     ngx_log_error(NGX_LOG_ERR, log, 0,
                   "http_groonga: failed to allocate memory for request body");
     return NGX_ERROR;
