@@ -622,10 +622,8 @@ ngx_http_groonga_join_request_body_chain(ngx_http_request_t *r,
                       "http_groonga: failed to read a request body stored in a file");
         return rc;
       }
-
     } else {
       ngx_memcpy(out_cursor, buffer->pos, buffer_size);
-
     }
     out_cursor += buffer_size;
   }
@@ -661,7 +659,6 @@ ngx_http_groonga_handler_process_body(ngx_http_request_t *r,
                                                 r->request_body->bufs,
                                                 &body_data,
                                                 &body_data_end);
-
   if (rc != NGX_OK) {
     return rc;
   }
