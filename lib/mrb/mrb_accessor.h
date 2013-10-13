@@ -27,8 +27,8 @@ extern "C" {
 #endif
 
 #ifdef GRN_WITH_MRUBY
-mrb_value mrb_grn_accessor_new(mrb_state *mrb, grn_accessor *accessor);
 void grn_mrb_accessor_init(grn_ctx *ctx);
+mrb_value mrb_grn_accessor_new(mrb_state *mrb, grn_accessor *accessor);
 #endif
 
 #ifdef __cplusplus
