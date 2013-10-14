@@ -24,13 +24,14 @@ It is usefull for you to check the results of normalizer.
 Syntax
 --------
 
-``normalize`` commands takes two parameters - ``normalizer`` and ``string``.
-Both of them are required.
+``normalize`` commands has two required parameters. They are
+``normalizer`` and ``string``.
 
 ::
 
- normalize normalizer string
-
+  normalize normalizer
+            string
+            [flags=NONE]
 
 Usage
 -----
@@ -54,30 +55,100 @@ There are required parameters, ``normalizer`` and ``string``.
 ``normalizer``
 """"""""""""""
 
-It specifies the name of normalizer.
-Currently, ``normalize`` command accepts ``NormalizerAuto`` or ``NormalizerNFKC51`` as built-in normalizer.
-If you want to try another normalizer, you need to register additional normalizer plugin by ``register`` command.
+It specifies the normalizer name. ``normalize`` command uses the
+normalizer that is named ``normalizer``.
+
+See :doc:`/reference/normalizers` about built-in normalizers.
+
+Here is an example to use built-in ``NormalizerAuto`` normalizer.
+
+TODO
+
+If you want to use other normalizers, you need to register additional
+normalizer plugin by :doc:`register` command. For example, you can use
+MySQL compatible normalizer by registering `groonga-normalizer-mysql
+<https://github.com/groonga/groonga-normalizer-mysql>`_.
 
 ``string``
 """"""""""
 
 It specifies any string which you want to normalize.
 
+If you want to include spaces in ``string``, you need to quote
+``string`` by single quotation (``'``) or double quotation (``"``).
+
+Here is an example to use spaces in ``string``.
+
+TODO
+
+Optional parameters
+^^^^^^^^^^^^^^^^^^^
+
+There are optional parameters.
+
+``flags``
+"""""""""
+
+It specifies a normalization customize options. You can specify
+multiple options separated by "``|``". For example,
+``REMOVE_BLANK|WITH_TYPES``.
+
+Here are available flags.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Flag
+     - Description
+   * - ``NONE``
+     - Just ignored.
+   * - ``REMOVE_BLANK``
+     - TODO
+   * - ``WITH_TYPES``
+     - TODO
+   * - ``WITH_CHECKS``
+     - TODO
+   * - ``REMOVE_TOKENIZED_DELIMITER``
+     - TODO
+
+Here is an example that uses ``REMOVE_BLANK``.
+
+TODO
+
+Here is an example that uses ``WITH_TYPES``.
+
+TODO
+
+Here is an example that uses ``REMOVE_TOKENIZED_DELIMITER``.
+
+TODO
+
 Return value
 ------------
 
 ::
 
- [HEADER, normalized]
+  [HEADER, normalized_text]
 
 ``HEADER``
 
   The format of HEADER is [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, ELAPSED_TIME].
   See :doc:`/reference/command/output_format` about HEADER.
 
-``normalized``
+``normalized_text``
 
-  normalized is the normalized text by the specified normalizer.
+  ``normalized_text`` is an object that has the following attributes.
+
+  .. list-table::
+     :header-rows: 1
+
+     * - Name
+       - Description
+     * - ``normalized``
+       - The normalized text.
+     * - ``types``
+       - An array of types of the normalized text. The N-th ``types`` shows
+         the type of the N-th character in ``normalized``.
 
 See also
 --------
