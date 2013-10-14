@@ -66,8 +66,8 @@ Here is an example to use built-in ``TokenTrigram`` tokenizer.
 
 If you want to use other tokenizers, you need to register additional
 tokenizer plugin by :doc:`register` command. For example, you can use
-MySQL compatible normalizer by registering `groonga-normalizer-mysql
-<https://github.com/groonga/groonga-normalizer-mysql>`_.
+`KyTea <http://www.phontron.com/kytea/>`_ based tokenizer by
+registering ``tokenizers/kytea``.
 
 ``string``
 """"""""""
