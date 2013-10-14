@@ -131,5 +131,6 @@ cmake_install.cmake
 /test/unit/tmp
 /test/command/grntest
 /test/command/groonga-command
+/test/command/groonga-command-parser
 /*.tar.gz
 /tmp
