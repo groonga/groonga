@@ -2,7 +2,7 @@ table_create Values TABLE_NO_KEY
 
 load --table Values
 [
-[]
+{}
 ]
 
 select Values \

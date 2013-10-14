@@ -3,7 +3,7 @@ column_create Values output COLUMN_SCALAR Float
 
 load --table Values
 [
-[]
+{}
 ]
 
 select Values \
