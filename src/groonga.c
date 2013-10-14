@@ -644,7 +644,6 @@ start_service(grn_ctx *ctx, const char *db_path,
 }
 
 typedef struct {
-  grn_obj body;
   grn_msg *msg;
 } ht_context;
 
@@ -654,39 +653,39 @@ h_output(grn_ctx *ctx, int flags, void *arg)
   grn_rc expr_rc = ctx->rc;
   ht_context *hc = (ht_context *)arg;
   grn_sock fd = hc->msg->u.fd;
-  grn_obj *body = &hc->body;
-  grn_obj head, foot, *outbuf = ctx->impl->outbuf;
+  grn_obj header, head, foot, *outbuf = ctx->impl->outbuf;
   if (!(flags & GRN_CTX_TAIL)) { return; }
+  GRN_TEXT_INIT(&header, 0);
   GRN_TEXT_INIT(&head, 0);
   GRN_TEXT_INIT(&foot, 0);
   output_envelope(ctx, expr_rc, &head, outbuf, &foot);
   switch (expr_rc) {
   case GRN_SUCCESS :
-    GRN_TEXT_SETS(ctx, body, "HTTP/1.1 200 OK\r\n");
+    GRN_TEXT_SETS(ctx, &header, "HTTP/1.1 200 OK\r\n");
     break;
   case GRN_INVALID_ARGUMENT :
-    GRN_TEXT_SETS(ctx, body, "HTTP/1.1 400 Bad Request\r\n");
+    GRN_TEXT_SETS(ctx, &header, "HTTP/1.1 400 Bad Request\r\n");
     break;
   case GRN_NO_SUCH_FILE_OR_DIRECTORY :
-    GRN_TEXT_SETS(ctx, body, "HTTP/1.1 404 Not Found\r\n");
+    GRN_TEXT_SETS(ctx, &header, "HTTP/1.1 404 Not Found\r\n");
     break;
   default :
-    GRN_TEXT_SETS(ctx, body, "HTTP/1.1 500 Internal Server Error\r\n");
+    GRN_TEXT_SETS(ctx, &header, "HTTP/1.1 500 Internal Server Error\r\n");
     break;
   }
-  GRN_TEXT_PUTS(ctx, body, "Connection: close\r\n");
-  GRN_TEXT_PUTS(ctx, body, "Content-Type: ");
-  GRN_TEXT_PUTS(ctx, body, grn_ctx_get_mime_type(ctx));
-  GRN_TEXT_PUTS(ctx, body, "\r\nContent-Length: ");
-  grn_text_lltoa(ctx, body,
+  GRN_TEXT_PUTS(ctx, &header, "Connection: close\r\n");
+  GRN_TEXT_PUTS(ctx, &header, "Content-Type: ");
+  GRN_TEXT_PUTS(ctx, &header, grn_ctx_get_mime_type(ctx));
+  GRN_TEXT_PUTS(ctx, &header, "\r\nContent-Length: ");
+  grn_text_lltoa(ctx, &header,
                  GRN_TEXT_LEN(&head) + GRN_TEXT_LEN(outbuf) + GRN_TEXT_LEN(&foot));
-  GRN_TEXT_PUTS(ctx, body, "\r\n\r\n");
+  GRN_TEXT_PUTS(ctx, &header, "\r\n\r\n");
   {
     ssize_t ret, len;
 #ifdef WIN32
     WSABUF wsabufs[4];
-    wsabufs[0].buf = GRN_TEXT_VALUE(body);
-    wsabufs[0].len = GRN_TEXT_LEN(body);
+    wsabufs[0].buf = GRN_TEXT_VALUE(&header);
+    wsabufs[0].len = GRN_TEXT_LEN(&header);
     wsabufs[1].buf = GRN_TEXT_VALUE(&head);
     wsabufs[1].len = GRN_TEXT_LEN(&head);
     wsabufs[2].buf = GRN_TEXT_VALUE(outbuf);
@@ -706,8 +705,8 @@ h_output(grn_ctx *ctx, int flags, void *arg)
     msg.msg_control = NULL;
     msg.msg_controllen = 0;
     msg.msg_flags = 0;
-    msg_iov[0].iov_base = GRN_TEXT_VALUE(body);
-    msg_iov[0].iov_len = GRN_TEXT_LEN(body);
+    msg_iov[0].iov_base = GRN_TEXT_VALUE(&header);
+    msg_iov[0].iov_len = GRN_TEXT_LEN(&header);
     msg_iov[1].iov_base = GRN_TEXT_VALUE(&head);
     msg_iov[1].iov_len = GRN_TEXT_LEN(&head);
     msg_iov[2].iov_base = GRN_TEXT_VALUE(outbuf);
@@ -718,7 +717,7 @@ h_output(grn_ctx *ctx, int flags, void *arg)
       SERR("sendmsg");
     }
 #endif /* WIN32 */
-    len = GRN_TEXT_LEN(body) + GRN_TEXT_LEN(&head) +
+    len = GRN_TEXT_LEN(&header) + GRN_TEXT_LEN(&head) +
       GRN_TEXT_LEN(outbuf) + GRN_TEXT_LEN(&foot);
     if (ret != len) {
       GRN_LOG(&grn_gctx, GRN_LOG_NOTICE,
@@ -726,10 +725,10 @@ h_output(grn_ctx *ctx, int flags, void *arg)
               (long long int)ret, (long long int)len);
     }
   }
-  GRN_BULK_REWIND(body);
   GRN_BULK_REWIND(outbuf);
   GRN_OBJ_FIN(ctx, &foot);
   GRN_OBJ_FIN(ctx, &head);
+  GRN_OBJ_FIN(ctx, &header);
 }
 
 static void
@@ -1369,7 +1368,6 @@ h_worker(void *arg)
   ht_context hc;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
-  GRN_TEXT_INIT(&hc.body, 0);
   grn_ctx_use(ctx, (grn_obj *)arg);
   grn_ctx_recv_handler_set(ctx, h_output, &hc);
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)", nfthreads, nthreads + 1);
@@ -1394,7 +1392,6 @@ exit :
   nthreads--;
   MUTEX_UNLOCK(q_mutex);
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)", nfthreads, nthreads);
-  GRN_OBJ_FIN(ctx, &hc.body);
   grn_ctx_fin(ctx);
   return NULL;
 }
