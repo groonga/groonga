@@ -10,7 +10,7 @@ load --table Memos
 {"_key": "Mroonga and Tritonn"}
 ]
 [[0,0.0,0.0],2]
-select Memos --match_columns _key --query '\\(mroonga\\)'
+select Memos --match_columns _key --query '\(mroonga\)'
 [
   [
     0,
