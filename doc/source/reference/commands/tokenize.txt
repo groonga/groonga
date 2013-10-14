@@ -58,7 +58,7 @@ tokenizer that is named ``tokenizer``.
 
 See :doc:`/reference/tokenizers` about built-in tokenizers.
 
-Here is an example to use ``TokenTrigram`` tokenizer.
+Here is an example to use built-in ``TokenTrigram`` tokenizer.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/tokenize/tokenizer_token_trigram.log
