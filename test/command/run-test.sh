@@ -72,6 +72,7 @@ else
 fi
 
 groonga_command_dir="$BASE_DIR/groonga-command"
+groonga_command_parser_dir="$BASE_DIR/groonga-command-parser"
 
 have_targets="false"
 use_gdb="false"
@@ -124,6 +125,7 @@ export TZ=Asia/Tokyo
 $RUBY \
     -I "$grntest_dir/lib" \
     -I "$groonga_command_dir/lib" \
+    -I "$groonga_command_parser_dir/lib" \
     "$grntest_dir/bin/grntest" \
     --groonga "$GROONGA" \
     --groonga-httpd "$GROONGA_HTTPD" \
