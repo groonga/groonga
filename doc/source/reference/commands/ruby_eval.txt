@@ -18,7 +18,7 @@ Syntax
 
 ``ruby_eval`` has one required parameter::
 
-  ruby_eval ruby_script
+  ruby_eval script
 
 Usage
 -----
@@ -42,8 +42,8 @@ Parameters
 
 This section describes all parameters.
 
-``ruby_script``
-"""""""""""""""
+``script``
+""""""""""
 
 It specifies the Ruby script which you want to evaluate.
 
