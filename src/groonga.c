@@ -659,33 +659,28 @@ h_output(grn_ctx *ctx, int flags, void *arg)
   if (!(flags & GRN_CTX_TAIL)) { return; }
   GRN_TEXT_INIT(&head, 0);
   GRN_TEXT_INIT(&foot, 0);
-  if (!expr_rc) {
-    output_envelope(ctx, expr_rc, &head, outbuf, &foot);
+  output_envelope(ctx, expr_rc, &head, outbuf, &foot);
+  switch (expr_rc) {
+  case GRN_SUCCESS :
     GRN_TEXT_SETS(ctx, body, "HTTP/1.1 200 OK\r\n");
-    GRN_TEXT_PUTS(ctx, body, "Connection: close\r\n");
-    GRN_TEXT_PUTS(ctx, body, "Content-Type: ");
-    GRN_TEXT_PUTS(ctx, body, grn_ctx_get_mime_type(ctx));
-    GRN_TEXT_PUTS(ctx, body, "\r\nContent-Length: ");
-    grn_text_lltoa(ctx, body,
-                   GRN_TEXT_LEN(&head) + GRN_TEXT_LEN(outbuf) + GRN_TEXT_LEN(&foot));
-    GRN_TEXT_PUTS(ctx, body, "\r\n\r\n");
-  } else {
-    output_envelope(ctx, expr_rc, &head, outbuf, &foot);
-    switch (expr_rc) {
-    case GRN_INVALID_ARGUMENT :
-      GRN_TEXT_SETS(ctx, body, "HTTP/1.1 400 Bad Request\r\n");
-      break;
-    case GRN_NO_SUCH_FILE_OR_DIRECTORY :
-      GRN_TEXT_SETS(ctx, body, "HTTP/1.1 404 Not Found\r\n");
-      break;
-    default :
-      GRN_TEXT_SETS(ctx, body, "HTTP/1.1 500 Internal Server Error\r\n");
-      break;
-    }
-    GRN_TEXT_PUTS(ctx, body, "Content-Type: ");
-    GRN_TEXT_PUTS(ctx, body, grn_ctx_get_mime_type(ctx));
-    GRN_TEXT_PUTS(ctx, body, "\r\n\r\n");
+    break;
+  case GRN_INVALID_ARGUMENT :
+    GRN_TEXT_SETS(ctx, body, "HTTP/1.1 400 Bad Request\r\n");
+    break;
+  case GRN_NO_SUCH_FILE_OR_DIRECTORY :
+    GRN_TEXT_SETS(ctx, body, "HTTP/1.1 404 Not Found\r\n");
+    break;
+  default :
+    GRN_TEXT_SETS(ctx, body, "HTTP/1.1 500 Internal Server Error\r\n");
+    break;
   }
+  GRN_TEXT_PUTS(ctx, body, "Connection: close\r\n");
+  GRN_TEXT_PUTS(ctx, body, "Content-Type: ");
+  GRN_TEXT_PUTS(ctx, body, grn_ctx_get_mime_type(ctx));
+  GRN_TEXT_PUTS(ctx, body, "\r\nContent-Length: ");
+  grn_text_lltoa(ctx, body,
+                 GRN_TEXT_LEN(&head) + GRN_TEXT_LEN(outbuf) + GRN_TEXT_LEN(&foot));
+  GRN_TEXT_PUTS(ctx, body, "\r\n\r\n");
   {
     ssize_t ret, len;
 #ifdef WIN32
