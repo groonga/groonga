@@ -672,10 +672,16 @@ h_output(grn_ctx *ctx, int flags, void *arg)
   } else {
     GRN_BULK_REWIND(outbuf);
     output_envelope(ctx, expr_rc, &head, outbuf, &foot);
-    if (expr_rc == GRN_NO_SUCH_FILE_OR_DIRECTORY) {
+    switch (expr_rc) {
+    case GRN_INVALID_ARGUMENT :
+      GRN_TEXT_SETS(ctx, body, "HTTP/1.1 400 Bad Request\r\n");
+      break;
+    case GRN_NO_SUCH_FILE_OR_DIRECTORY :
       GRN_TEXT_SETS(ctx, body, "HTTP/1.1 404 Not Found\r\n");
-    } else {
+      break;
+    default :
       GRN_TEXT_SETS(ctx, body, "HTTP/1.1 500 Internal Server Error\r\n");
+      break;
     }
     GRN_TEXT_PUTS(ctx, body, "Content-Type: ");
     GRN_TEXT_PUTS(ctx, body, grn_ctx_get_mime_type(ctx));
