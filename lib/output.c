@@ -1583,7 +1583,6 @@ grn_output_envelope(grn_ctx *ctx,
                     grn_obj *foot,
                     const char *file,
                     int line)
-
 {
   double started, finished, elapsed;
   grn_obj *expr = NULL;
