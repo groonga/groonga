@@ -11,4 +11,4 @@ load --table Memos
 {"_key": "(groonga) Upgraded!"}
 ]
 
-select Memos --match_columns _key --query '\(groonga\)*'
+select Memos --match_columns _key --query '\\(groonga\\)*'

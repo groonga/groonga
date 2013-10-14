@@ -11,4 +11,4 @@ load --table Memos
 {"_key": "Mroonga and Tritonn"}
 ]
 
-select Memos --match_columns _key --query '\(mroonga\)'
+select Memos --match_columns _key --query '\\(mroonga\\)'
