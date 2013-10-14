@@ -2577,8 +2577,10 @@ static grn_obj *
 proc_cache_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_cache *cache;
+  unsigned int current_max_n_entries;
+
   cache = grn_cache_current_get(ctx);
-  GRN_OUTPUT_INT64(grn_cache_get_max_n_entries(ctx, cache));
+  current_max_n_entries = grn_cache_get_max_n_entries(ctx, cache);
   if (GRN_TEXT_LEN(VAR(0))) {
     const char *rest;
     uint32_t max = grn_atoui(GRN_TEXT_VALUE(VAR(0)),
@@ -2590,6 +2592,9 @@ proc_cache_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
           "max value is invalid unsigned integer format: <%.*s>",
           (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
     }
+  }
+  if (ctx->rc == GRN_SUCCESS) {
+    GRN_OUTPUT_INT64(current_max_n_entries);
   }
   return NULL;
 }
