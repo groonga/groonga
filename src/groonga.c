@@ -356,7 +356,11 @@ c_output(grn_ctx *ctx)
       GRN_TEXT_INIT(&head, 0);
       GRN_TEXT_INIT(&body, GRN_OBJ_DO_SHALLOW_COPY);
       GRN_TEXT_INIT(&foot, 0);
-      GRN_TEXT_SET(ctx, &body, str, str_len);
+      if (ctx->rc == GRN_SUCCESS) {
+        GRN_TEXT_SET(ctx, &body, str, str_len);
+      } else {
+        ERR(ctx->rc, "%.*s", str_len, str);
+      }
       output_envelope(ctx, ctx->rc, &head, &body, &foot);
       fwrite(GRN_TEXT_VALUE(&head), 1, GRN_TEXT_LEN(&head), output);
       fwrite(GRN_TEXT_VALUE(&body), 1, GRN_TEXT_LEN(&body), output);
@@ -1528,7 +1532,7 @@ g_output(grn_ctx *ctx, int flags, void *arg)
   msg->header.proto = req->header.proto == GRN_COM_PROTO_MBREQ
     ? GRN_COM_PROTO_MBRES : req->header.proto;
   if (ctx->rc != GRN_SUCCESS && GRN_BULK_VSIZE(ctx->impl->outbuf) == 0) {
-    grn_ctx_output_cstr(ctx, ctx->errbuf);
+    GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, ctx->errbuf);
   }
   if (grn_msg_send(ctx, (grn_obj *)msg,
                    (flags & GRN_CTX_MORE) ? GRN_CTX_MORE : GRN_CTX_TAIL)) {
