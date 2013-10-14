@@ -72,9 +72,10 @@ registering ``tokenizers/kytea``.
 ``string``
 """"""""""
 
-It specifies any string which you want to tokenize. If you want to
-include spaces in ``string``, you need to quote ``string`` by
-single quotation (``'``) or double quotation (``"``).
+It specifies any string which you want to tokenize.
+
+If you want to include spaces in ``string``, you need to quote
+``string`` by single quotation (``'``) or double quotation (``"``).
 
 Here is an example to use spaces in ``string``.
 
