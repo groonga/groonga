@@ -670,7 +670,6 @@ h_output(grn_ctx *ctx, int flags, void *arg)
                    GRN_TEXT_LEN(&head) + GRN_TEXT_LEN(outbuf) + GRN_TEXT_LEN(&foot));
     GRN_TEXT_PUTS(ctx, body, "\r\n\r\n");
   } else {
-    GRN_BULK_REWIND(outbuf);
     output_envelope(ctx, expr_rc, &head, outbuf, &foot);
     switch (expr_rc) {
     case GRN_INVALID_ARGUMENT :
