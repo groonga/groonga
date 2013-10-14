@@ -72,7 +72,17 @@ else
 fi
 
 groonga_command_dir="$BASE_DIR/groonga-command"
+if ! test -d "$groonga_command_dir"; then
+    git clone --depth 1 \
+	git://github.com/groonga/groonga-command "$groonga_command_dir"
+fi
+
 groonga_command_parser_dir="$BASE_DIR/groonga-command-parser"
+if ! test -d "$groonga_command_parser_dir"; then
+    git clone --depth 1 \
+	git://github.com/groonga/groonga-command-parser \
+	"$groonga_command_parser_dir"
+fi
 
 have_targets="false"
 use_gdb="false"
