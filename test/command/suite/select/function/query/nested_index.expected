@@ -55,7 +55,7 @@ load --table Users
 {"_key": "calros", "blogs": ["Carlog"]}
 ]
 [[0,0.0,0.0],3]
-select Users   --filter 'sub_filter(blogs.entries, "query(\\"Terms.entries_content_index * 20 || LooseTerms.entries_content_index * 5\\", \\"groonga\\")")'   --output_columns '_key, blogs.entries.content, _score'
+select Users   --filter 'sub_filter(blogs.entries, "query(\"Terms.entries_content_index * 20 || LooseTerms.entries_content_index * 5\", \"groonga\")")'   --output_columns '_key, blogs.entries.content, _score'
 [
   [
     0,
