@@ -1033,7 +1033,7 @@ ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
   ngx_conf_merge_str_value(conf->database_path, prev->database_path, NULL);
   ngx_conf_merge_value(conf->database_auto_create,
                        prev->database_auto_create,
-                       GRN_FALSE);
+                       GRN_TRUE);
   ngx_conf_merge_size_value(conf->cache_limit, prev->cache_limit,
                             GRN_CACHE_DEFAULT_MAX_N_ENTRIES);
 
