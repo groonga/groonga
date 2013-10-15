@@ -2013,6 +2013,8 @@ grn_cache_open(grn_ctx *ctx)
                                 sizeof(grn_cache_entry), GRN_OBJ_KEY_VAR_SIZE);
   MUTEX_INIT(cache->mutex);
   cache->max_nentries = GRN_CACHE_DEFAULT_MAX_N_ENTRIES;
+  cache->nfetches = 0;
+  cache->nhits = 0;
 
 exit :
   GRN_API_RETURN(cache);
