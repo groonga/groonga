@@ -1276,6 +1276,8 @@ ngx_http_groonga_init_process(ngx_cycle_t *cycle)
     return NGX_ERROR;
   }
 
+  grn_set_segv_handler();
+
   http_conf =
     (ngx_http_conf_ctx_t *)ngx_get_conf(cycle->conf_ctx, ngx_http_module);
 
