@@ -288,10 +288,10 @@ AC_CONFIG_FILES([
   test/unit/story/Makefile
   test/unit/groonga-benchmark/Makefile
   test/command/Makefile
-  test/benchmark/Makefile
-  test/benchmark/fixtures/Makefile
-  test/benchmark/fixtures/geo-select/Makefile
-  test/benchmark/lib/Makefile
+  benchmark/Makefile
+  benchmark/fixtures/Makefile
+  benchmark/fixtures/geo-select/Makefile
+  benchmark/lib/Makefile
   vendor/Makefile
   vendor/mruby/Makefile
 ])

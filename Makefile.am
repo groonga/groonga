@@ -13,6 +13,7 @@ SUBDIRS =					\
 	src					\
 	examples				\
 	test					\
+	benchmark				\
 	packages				\
 	data					\
 	tools					\

@@ -1,4 +1,3 @@
 SUBDIRS =					\
 	unit					\
-	command					\
-	benchmark
+	command
