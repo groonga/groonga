@@ -195,3 +195,25 @@ following command::
   {"sequence": "1", "time": 1312950804.76057, "item": "engin"},
   {"sequence": "1", "time": 1312950805.86057, "item": "engine", "type": "submit"}
   ]
+
+How to update RK reading data
+-----------------------------
+
+Groonga requires its reading for RK search, so load reading data in the advance.
+
+Here is the sample RK data to complete "エンジン" which means engine in english::
+
+.. groonga-command
+.. include:: ../example/suggest/update-rk-data.log
+.. load --table item_query
+.. [
+.. {"_key":"engine", "kana":"エンジン"}
+.. ]
+
+Then you can complete registered word "engine" by RK input - "エン".
+
+.. groonga-command
+.. include:: ../example/suggest/complete-rk-engine.log
+.. suggest --table item_query --column kana --types complete --frequency_threshold 1 --query エン
+
+Without loading above RK data, you can't complete registered word "engine" by query which contains Katakana - "エン".
