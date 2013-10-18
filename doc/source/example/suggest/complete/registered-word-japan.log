@@ -1,0 +1,7 @@
+Execution example::
+
+  load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
+  [
+  {"sequence": "1", "time": 1312950805.86058, "item": "日本", "type": "submit"}
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 1]

@@ -1,0 +1,93 @@
+Execution example::
+
+  load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
+  [
+  {"sequence": "1", "time": 1312950805.86059, "item": "日本語", "type": "submit"}
+  {"sequence": "1", "time": 1312950805.86060, "item": "日本人", "type": "submit"}
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 2]
+  load --table item_query
+  [
+  {"_key":"日本語", "kana":"ニホンゴ"}
+  {"_key":"日本人", "kana":"ニホンジン"}
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 2]
+  suggest --table item_query --column kana --types complete --frequency_threshold 1 --query nihon
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   {
+  #     "complete": [
+  #       [
+  #         3
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "_score", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         "日本", 
+  #         2
+  #       ], 
+  #       [
+  #         "日本人", 
+  #         2
+  #       ], 
+  #       [
+  #         "日本語", 
+  #         2
+  #       ]
+  #     ]
+  #   }
+  # ]
+  load --table item_query
+  [
+  {"_key":"日本人", "boost": 100},
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 1]
+  suggest --table item_query --column kana --types complete --frequency_threshold 1 --query nihon
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   {
+  #     "complete": [
+  #       [
+  #         3
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "_score", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         "日本人", 
+  #         102
+  #       ], 
+  #       [
+  #         "日本", 
+  #         2
+  #       ], 
+  #       [
+  #         "日本語", 
+  #         2
+  #       ]
+  #     ]
+  #   }
+  # ]

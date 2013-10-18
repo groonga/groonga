@@ -199,21 +199,66 @@ following command::
 How to update RK reading data
 -----------------------------
 
-Groonga requires its reading for RK search, so load reading data in the advance.
+Groonga requires registered word and its reading for RK search, so load such data in the advance.
 
-Here is the sample RK data to complete "エンジン" which means engine in english::
+
+Here is the example to register "日本" which means Japanese in english.
 
 .. groonga-command
-.. include:: ../example/suggest/update-rk-data.log
-.. load --table item_query
+.. include:: ../example/suggest/complete/registered-word-japan.log
+.. load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
 .. [
-.. {"_key":"engine", "kana":"エンジン"}
+.. {"sequence": "1", "time": 1312950805.86058, "item": "日本", "type": "submit"}
 .. ]
 
-Then you can complete registered word "engine" by RK input - "エン".
+
+Here is the example to update RK data to complete "日本".
 
 .. groonga-command
-.. include:: ../example/suggest/complete-rk-engine.log
-.. suggest --table item_query --column kana --types complete --frequency_threshold 1 --query エン
+.. include:: ../example/suggest/complete/update-rk-data.log
+.. load --table item_query
+.. [
+.. {"_key":"日本", "kana":["ニホン", "ニッポン"]}
+.. ]
 
-Without loading above RK data, you can't complete registered word "engine" by query which contains Katakana - "エン".
+Then you can complete registered word "日本" by RK input - "nihon".
+
+.. groonga-command
+.. include:: ../example/suggest/complete/rk-search-nihon.log
+.. suggest --table item_query --column kana --types complete --frequency_threshold 1 --query nihon
+
+Without loading above RK data, you can't complete registered word "日本" by query - "nihon".
+
+As the column type of item_query table is VECTOR_COLUMN, you can register multiple readings for registered word.
+
+This is the reason that you can also complete the registered word "日本" by query - "nippon".
+
+.. groonga-command
+.. include:: ../example/suggest/complete/rk-search-nippon.log
+.. suggest --table item_query --column kana --types complete --frequency_threshold 1 --query nippon
+
+This feature is very convenient because you can search registered word even though Japanese IM is disabled.
+
+If there are multiple candidates as completed result, you can customize priority to set the value of "boost" column in item_query table.
+
+Here is the example to customize priority for RK search.
+
+.. groonga-command
+.. include:: ../example/suggest/complete/registered-word-japanese.log
+.. load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
+.. [
+.. {"sequence": "1", "time": 1312950805.86059, "item": "日本語", "type": "submit"}
+.. {"sequence": "1", "time": 1312950805.86060, "item": "日本人", "type": "submit"}
+.. ]
+.. load --table item_query
+.. [
+.. {"_key":"日本語", "kana":"ニホンゴ"}
+.. {"_key":"日本人", "kana":"ニホンジン"}
+.. ]
+.. suggest --table item_query --column kana --types complete --frequency_threshold 1 --query nihon
+.. load --table item_query
+.. [
+.. {"_key":"日本人", "boost": 100},
+.. ]
+.. suggest --table item_query --column kana --types complete --frequency_threshold 1 --query nihon
+
