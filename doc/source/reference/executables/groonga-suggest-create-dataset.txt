@@ -46,5 +46,5 @@ SEE ALSO
 --------
 
 :doc:`/suggest`
-.. : doc:`groonga-suggest-httpd`
-.. : doc:`groonga-suggest-learner`
+:doc:`groonga-suggest-httpd`
+:doc:`groonga-suggest-learner`
