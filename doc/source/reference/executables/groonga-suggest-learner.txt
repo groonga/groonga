@@ -1,0 +1,40 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+groonga-suggest-learner
+=======================
+
+Summary
+-------
+
+TODO
+
+Synopsis
+--------
+
+::
+
+  groonga-suggest-learner [options] database_path
+
+Usage
+-----
+
+TODO
+
+Options
+-------
+
+TODO
+
+Parameters
+----------
+
+There is one required parameter - ``database_path``.
+
+``database_path``
+^^^^^^^^^^^^^^^^^
+
+Specifies the path to a groonga database.
+
+

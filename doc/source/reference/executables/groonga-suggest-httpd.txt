@@ -1,0 +1,37 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+groonga-suggest-httpd
+=====================
+
+Summary
+-------
+
+TODO
+
+Synopsis
+--------
+
+::
+
+  groonga-suggest-httpd [options] database_path
+
+Usage
+-----
+
+TODO
+
+Options
+-------
+
+
+Parameters
+----------
+
+There is one required parameter - ``database_path``.
+
+``database_path``
+^^^^^^^^^^^^^^^^^^^
+
+Specifies the path to a groonga database.
