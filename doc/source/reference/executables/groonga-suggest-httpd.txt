@@ -25,6 +25,37 @@ TODO
 Options
 -------
 
+.. cmdoption:: -p, --port
+
+   Specify http server port number. The default value is 8080.
+
+.. cmdoption:: -t, --n-threads
+
+   Specify number of threads. The default value is 8.
+
+.. cmdoption:: -s, --send-endpoint
+
+   Specify endpoint for sender.
+
+.. cmdoption:: -r, --receive-endpoint
+
+   Specify endpoint for receiver.
+
+.. cmdoption:: -l, --log-base-path
+
+   Specify path prefix of log.
+
+.. cmdoption:: --n-lines-per-log-file
+
+   Specify the number of lines in a log file. The default value is 1,000,000.
+
+.. cmdoption:: -d, --daemon
+
+   Specify this option to daemonize.
+
+.. cmdoption:: --disable-max-fd-check
+
+   Specify this option to disable checking max fd on start.
 
 Parameters
 ----------
