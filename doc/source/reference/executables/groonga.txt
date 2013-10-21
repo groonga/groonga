@@ -189,9 +189,6 @@ You can write command list with continuous line which is represented by '\\' cha
  ``column_remove``
    テーブルに定義されているカラムを削除します。
 
- ``view_add``
-   VIEW型のテーブルに要素となるテーブルを定義します。
-
  ``load``
    テーブルにレコードを挿入します。
 
