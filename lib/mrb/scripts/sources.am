@@ -1,2 +1,4 @@
+if WITH_MRUBY
 ruby_scripts_DATA =				\
 	expression.rb
+endif
