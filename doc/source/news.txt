@@ -5,6 +5,55 @@
 News
 ====
 
+.. _release-3-0-9:
+
+Release 3.0.9 - 2013/10/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [doc][httpd] Added documentation about :ref:`groonga-database-auto-create` directive.
+* [httpd] Added :ref:`groonga-cache-limit` directive.
+* [doc] Addned description why zlib/lzo compression are disabled by default. [groonga-dev, 01845] [Suggested by Naoya Murakami]  
+* Remove a restriction related to RLIMIT_NOFILE on HTTP server.
+  It enables HTTP server process to handle over 4096 files.
+* [experimental] Added some API to integrate mruby into groonga. [GitHub#109, #110, #111, #112, #113, #114, #115, #116, #117, #118] [Patch by wanabe]
+* [travis] Supported CMake build on Travis-CI.
+* [doc] Added documentation about :doc:`reference/tuning`.
+* [experimental] Added :doc:`ruby_load` command.
+* [httpd] Supported multiple buffered body of POST request.
+  The load command caused timeout in such a case. [GitHub #120] [Patch by Motoi Washida]
+* [gqtp] Supported error message. The body is changed to return
+  raw text insted of double quoted text. This is incompatible changes.
+* [http] Supported "400 Bad request" for invalid argument error.
+* [doc] Added examples for :doc:`/suggest/completion`
+
+Fixes
+^^^^^
+
+* Fixed a bug that it cause SEGV by arithmetic overflow.
+  TODO:
+* Fixed needless lock for creating table.
+  This change fixes a performance regression instroduced at Groonga 3.0.5.
+* Fixed a bug that database which has reference column can't be removed.
+  It affects the case that indexed tables/columns and referenced tables
+  are removed at first, then remove operation to index columns and
+  reference columns fails. [Reported by Eito Katagiri] [GitHub Rroonga #13]
+* Fixed a bug that removing database which uses DAT key may remain garbage.
+* [http] Fixed a small memory leak which is caused by shared HTTP header buffer in the same worker thread.
+* [httpd] Fixed a bug that :ref:`groonga-database-auto-create` parameter
+  isn't inherited. It means that these parameters are just ignored in non location blocks.
+* Fixed a bug that status command may returns invalid cache hit rate.
+
+Thanks
+^^^^^^
+
+* Naoya Murakami
+* wanabe
+* Motoi Washida
+* Eito Katagiri
+
 .. _release-3-0-8:
 
 Release 3.0.8 - 2013/09/29
