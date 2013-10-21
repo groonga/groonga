@@ -138,6 +138,8 @@ Context
 Specifies the path to a groonga database. This is the required
 directive.
 
+.. _groonga-database-auto-create:
+
 ``groonga_database_auto_create``
 """"""""""""""""""""""""""""""""
 
