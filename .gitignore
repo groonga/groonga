@@ -84,6 +84,7 @@ cmake_install.cmake
 /benchmark/bench-normalize
 /benchmark/bench-geo-distance
 /benchmark/bench-table-factory
+/benchmark/bench-ctx-create
 /packages/apt/debian/groonga-keyring.postrm
 /packages/apt/repositories/debian/pool/*/*/*/*/*.diff.gz
 /packages/apt/repositories/debian/pool/*/*/*/*/*.tar.gz

@@ -8,7 +8,8 @@ if WITH_BENCHMARK
 noinst_PROGRAMS =		\
 	bench-table-factory	\
 	bench-geo-distance	\
-	bench-geo-select
+	bench-geo-select	\
+	bench-ctx-create
 endif
 
 AM_CPPFLAGS =			\
@@ -35,10 +36,14 @@ nodist_EXTRA_bench_geo_distance_SOURCES = $(NONEXISTENT_CXX_SOURCE)
 bench_geo_select_SOURCES = bench-geo-select.c
 nodist_EXTRA_bench_geo_select_SOURCES = $(NONEXISTENT_CXX_SOURCE)
 
+bench_ctx_create_SOURCES = bench-ctx-create.c
+nodist_EXTRA_bench_ctx_create_SOURCES = $(NONEXISTENT_CXX_SOURCE)
+
 benchmarks =					\
 	run-bench-table-factory			\
 	run-bench-geo-distance			\
-	run-bench-geo-select
+	run-bench-geo-select			\
+	run-bench-ctx-create
 
 run-bench-table-factory: bench-table-factory
 	@echo $@:
@@ -55,5 +60,9 @@ run-bench-geo-select: bench-geo-select
 	  GROONGA="$(GROONGA)"			\
 	  srcdir="$(srcdir)"			\
 	  $(srcdir)/bench-geo-select.sh
+
+run-bench-ctx-create: bench-ctx-create
+	@echo $@:
+	./bench-ctx-create
 
 benchmark: $(benchmarks)
