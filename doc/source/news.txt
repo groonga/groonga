@@ -15,7 +15,7 @@ Improvements
 
 * [doc][httpd] Added documentation about :ref:`groonga-database-auto-create` directive.
 * [httpd] Added :ref:`groonga-cache-limit` directive.
-* [doc] Addned description why zlib/lzo compression are disabled by default. [groonga-dev, 01845] [Suggested by Naoya Murakami]  
+* [doc] Added description why zlib/lzo compression are disabled by default. [groonga-dev, 01845] [Suggested by Naoya Murakami]  
 * Remove a restriction related to RLIMIT_NOFILE on HTTP server.
   It enables HTTP server process to handle over 4096 files.
 * [experimental] Added some API to integrate mruby into groonga. [GitHub#109, #110, #111, #112, #113, #114, #115, #116, #117, #118] [Patch by wanabe]
