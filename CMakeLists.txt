@@ -89,6 +89,8 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     "${GRN_NO_WARNING_COMPILE_FLAGS} -Wno-unused-parameter")
   set(GRN_NO_WARNING_COMPILE_FLAGS
     "${GRN_NO_WARNING_COMPILE_FLAGS} -Wno-sign-compare")
+  set(GRN_NO_WARNING_COMPILE_FLAGS
+    "${GRN_NO_WARNING_COMPILE_FLAGS} -Wno-missing-field-initializers")
   set(GRN_C_COMPILE_FLAGS "${GRN_NO_WARNING_COMPILE_FLAGS} -Wno-pointer-sign")
   set(GRN_CXX_COMPILE_FLAGS "${GRN_NO_WARNING_COMPILE_FLAGS} -fexceptions")
 endif()
