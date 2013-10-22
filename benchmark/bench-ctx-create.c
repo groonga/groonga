@@ -17,12 +17,14 @@
 */
 
 /*
-  Groonga: a4f613dc6c6c07e1b695a0065c6fbc8e5f18022b
+  Groonga: 4851bf7c20fd37e7c40f350dade3716d3e210805
   CFLAGS: -O0 -g3
   % (cd benchmark/ && make --quiet run-bench-ctx-create)
   run-bench-ctx-create:
-     with mruby:    464KB
-  without mruby:      0KB
+  ./bench-ctx-create
+                   (time)
+    with    mruby: 404KB (0.1260ms)
+    without mruby:  36KB (0.0610ms)
 */
 
 #include <stdlib.h>
@@ -31,11 +33,12 @@
 
 #include <groonga.h>
 
-typedef void (*BenchFunc)         (gpointer user_data);
+#include "lib/benchmark.h"
 
 typedef struct _BenchmarkData {
   grn_ctx context;
   grn_obj *database;
+  guint memory_usage_before;
 } BenchmarkData;
 
 static guint
@@ -85,23 +88,20 @@ bench_without_mruby(gpointer user_data)
 }
 
 static void
+bench_setup(gpointer user_data)
+{
+  BenchmarkData *data = user_data;
+
+  data->memory_usage_before = get_memory_usage();
+}
+
+static void
 bench_teardown(gpointer user_data)
 {
   BenchmarkData *data = user_data;
 
   grn_ctx_fin(&(data->context));
-}
-
-static void
-bench(const gchar *label, BenchFunc bench_func, BenchFunc teardown_func,
-      gpointer user_data)
-{
-  guint memory_usage_before;
-
-  memory_usage_before = get_memory_usage();
-  bench_func(user_data);
-  g_print("%s: %6dKB\n", label, get_memory_usage() - memory_usage_before);
-  teardown_func(user_data);
+  g_print("%3dKB ", get_memory_usage() - data->memory_usage_before);
 }
 
 static gchar *
@@ -144,15 +144,30 @@ main(int argc, gchar **argv)
 {
   grn_ctx context;
   BenchmarkData data;
+  BenchReporter *reporter;
+  gint n = 1;
 
   grn_init();
+  bench_init(&argc, &argv);
 
   grn_ctx_init(&context, 0);
 
   data.database = setup_database(&context);
 
-  bench("   with mruby", bench_with_mruby,    bench_teardown, &data);
-  bench("without mruby", bench_without_mruby, bench_teardown, &data);
+  reporter = bench_reporter_new();
+
+#define REGISTER(label, bench_function)                 \
+  bench_reporter_register(reporter, label, n,           \
+                          bench_setup,                  \
+                          bench_function,               \
+                          bench_teardown,               \
+                          &data)
+  REGISTER("with    mruby", bench_with_mruby);
+  REGISTER("without mruby", bench_without_mruby);
+#undef REGISTER
+
+  bench_reporter_run(reporter);
+  g_object_unref(reporter);
 
   teardown_database(&context, data.database);
 
