@@ -175,6 +175,23 @@ print_label(BenchReporterPrivate *priv, BenchItem *item, gint max_label_length)
 }
 
 static void
+report_elapsed(gdouble elapsed_time)
+{
+  gdouble one_second = 1.0;
+  gdouble one_millisecond = one_second / 1000.0;
+  gdouble one_microsecond = one_millisecond / 1000.0;
+
+  if (elapsed_time < one_microsecond) {
+    g_print("(%.8fms)", elapsed_time * 1000.0);
+  } else if (elapsed_time < one_millisecond) {
+    g_print("(%.4fms)", elapsed_time * 1000.0);
+  } else {
+    g_print("(%.4fs)", elapsed_time);
+  }
+  g_print("\n");
+}
+
+static void
 run_item(BenchReporterPrivate *priv, BenchItem *item, gint max_label_length)
 {
   GTimer *timer;
@@ -195,7 +212,7 @@ run_item(BenchReporterPrivate *priv, BenchItem *item, gint max_label_length)
       item->bench_teardown(item->data);
   }
 
-  g_print("(%g)\n", g_timer_elapsed(timer, NULL));
+  report_elapsed(g_timer_elapsed(timer, NULL));
 
   g_timer_destroy(timer);
 }
