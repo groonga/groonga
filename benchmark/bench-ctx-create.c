@@ -18,7 +18,7 @@
 
 /*
   Groonga: a4f613dc6c6c07e1b695a0065c6fbc8e5f18022b
-  CFLAGS: -O0 -ggdb3
+  CFLAGS: -O0 -g3
   % (cd benchmark/ && make --quiet run-bench-ctx-create)
   run-bench-ctx-create:
      with mruby:    464KB
