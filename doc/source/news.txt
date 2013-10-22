@@ -28,6 +28,7 @@ Improvements
   raw text insted of double quoted text. This is incompatible changes.
 * [http] Supported "400 Bad request" for invalid argument error.
 * [doc] Added examples for :doc:`/suggest/completion`
+* Supported Ubuntu 13.10 (Saucy Salamander).
 
 Fixes
 ^^^^^
