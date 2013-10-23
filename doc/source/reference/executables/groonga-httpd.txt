@@ -325,6 +325,35 @@ see http://wiki.nginx.org/CoreModule#worker_processes.
 
 By default, this is set to 1. It is nginx's default.
 
+.. _groonga-cache-limit:
+
+``groonga_cache_limit``
+"""""""""""""""""""""""
+
+This directive is introduced to customize cache limit for each worker process.
+
+Synopsis::
+
+  groonga_cache_limit CACHE_LIMIT;
+
+Default
+  100
+
+Context
+  ``http``, ``server``, ``location``
+
+Specifies groonga's limit of query cache in the ``http``, ``server`` or
+``location`` block. The default value is 100.
+You can disable query cache to specify 0 to ``groonga_cache_limit`` explicitly.
+
+Examples::
+
+  location /d/ {
+    groonga on;
+    # You can customize query cache limit for groonga.
+    groonga_cache_limit 100;
+  }
+
 ``proxy_cache``
 """""""""""""""
 
