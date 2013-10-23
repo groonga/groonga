@@ -204,6 +204,46 @@ Install groonga-normalizer-mysql package::
 
   % sudo apt-get -y install groonga-normalizer-mysql
 
+13.10 Saucy Salamander
+----------------------
+
+Add the Groonga apt repository.
+
+/etc/apt/sources.list.d/groonga.list::
+
+  deb http://packages.groonga.org/ubuntu/ saucy universe
+  deb-src http://packages.groonga.org/ubuntu/ saucy universe
+
+Install::
+
+  % sudo apt-get update
+  % sudo apt-get -y --allow-unauthenticated install groonga-keyring
+  % sudo apt-get update
+  % sudo apt-get -y install groonga
+
+If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
+tokenizer, install groonga-tokenizer-mecab package.
+
+Install groonga-tokenizer-mecab package::
+
+  % sudo apt-get -y install groonga-tokenizer-mecab
+
+There is a package that provides `Munin
+<http://munin-monitoring.org/>`_ plugins. If you want to monitor
+Groonga status by Munin, install groonga-munin-plugins package.
+
+Install groonga-munin-plugins package::
+
+  % sudo apt-get -y install groonga-munin-plugins
+
+There is a package that provides MySQL compatible normalizer as
+Groonga plugins.
+If you want to use that one, install groonga-normalizer-mysql package.
+
+Install groonga-normalizer-mysql package::
+
+  % sudo apt-get -y install groonga-normalizer-mysql
+
 Build from source
 -----------------
 
