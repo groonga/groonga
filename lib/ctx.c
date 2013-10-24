@@ -92,7 +92,7 @@ grn_timeval_now(grn_ctx *ctx, grn_timeval *tv)
   if (clock_gettime(CLOCK_REALTIME, &t)) {
     SERR("clock_gettime");
   } else {
-    tv->tv_sec = (int32_t) t.tv_sec;
+    tv->tv_sec = t.tv_sec;
     tv->tv_nsec = t.tv_nsec;
   }
   return ctx->rc;
@@ -102,7 +102,7 @@ grn_timeval_now(grn_ctx *ctx, grn_timeval *tv)
   struct _timeb tb;
   time(&t);
   _ftime(&tb);
-  tv->tv_sec = (int32_t) t;
+  tv->tv_sec = t;
   tv->tv_nsec = tb.millitm * (GRN_TIME_NSEC_PER_SEC / 1000);
   return GRN_SUCCESS;
 #else /* WIN32 */
@@ -110,7 +110,7 @@ grn_timeval_now(grn_ctx *ctx, grn_timeval *tv)
   if (gettimeofday(&t, NULL)) {
     SERR("gettimeofday");
   } else {
-    tv->tv_sec = (int32_t) t.tv_sec;
+    tv->tv_sec = t.tv_sec;
     tv->tv_nsec = GRN_TIME_USEC_TO_NSEC(t.tv_usec);
   }
   return ctx->rc;
@@ -187,7 +187,7 @@ grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv)
   }
   r1 = r2;
 
-  if ((tv->tv_sec = (int32_t) mktime(&tm)) == -1) { return GRN_INVALID_ARGUMENT; }
+  if ((tv->tv_sec = mktime(&tm)) == -1) { return GRN_INVALID_ARGUMENT; }
   if ((r1 + 1) < rend && *r1 == '.') { r1++; }
   uv = grn_atoi(r1, rend, &r2);
   while (r2 < r1 + 6) {
