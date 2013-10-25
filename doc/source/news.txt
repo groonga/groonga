@@ -34,7 +34,9 @@ Fixes
 ^^^^^
 
 * Fixed a bug that it cause SEGV by arithmetic overflow.
-  TODO:
+  This problem occurs when the size of indexes exceeds
+  the size of virtual memory. [groonga-dev,01661]
+  [Reported by Naoya Murakami]
 * Fixed needless lock for creating table.
   This change fixes a performance regression instroduced at Groonga 3.0.5.
 * Fixed a bug that database which has reference column can't be removed.
@@ -46,6 +48,8 @@ Fixes
 * [httpd] Fixed a bug that :ref:`groonga-database-auto-create` parameter
   isn't inherited. It means that these parameters are just ignored in non location blocks.
 * Fixed a bug that status command may returns invalid cache hit rate.
+* Fix a bug that casting to Time may causes overflow issue.
+  It affects the case that assignment of the Time value which indicate over 32bit value.
 
 Thanks
 ^^^^^^
