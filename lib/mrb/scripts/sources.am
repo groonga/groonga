@@ -1,4 +1,2 @@
-if WITH_MRUBY
-ruby_scripts_DATA =				\
+RUBY_SCRIPT_FILES =				\
 	expression.rb
-endif
