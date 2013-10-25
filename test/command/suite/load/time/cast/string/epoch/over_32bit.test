@@ -1,0 +1,9 @@
+table_create Logs TABLE_NO_KEY
+column_create Logs created_at COLUMN_SCALAR Time
+
+load --table Logs
+[
+{"created_at": "4417945200"}
+]
+
+select Logs
