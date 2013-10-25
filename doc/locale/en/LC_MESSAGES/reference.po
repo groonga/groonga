@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-23 17:24+0900\n"
+"POT-Creation-Date: 2013-10-25 17:23+0900\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -325,6 +325,7 @@ msgstr ""
 #: ../../../source/reference/commands/normalize.txt:17
 #: ../../../source/reference/commands/register.txt:12
 #: ../../../source/reference/commands/ruby_eval.txt:12
+#: ../../../source/reference/commands/ruby_load.txt:12
 #: ../../../source/reference/commands/select.txt:12
 #: ../../../source/reference/commands/table_create.txt:12
 #: ../../../source/reference/commands/tokenize.txt:12
@@ -3415,6 +3416,7 @@ msgstr ""
 #: ../../../source/reference/commands/delete.txt:109
 #: ../../../source/reference/commands/normalize.txt:133
 #: ../../../source/reference/commands/ruby_eval.txt:58
+#: ../../../source/reference/commands/ruby_load.txt:58
 #: ../../../source/reference/commands/tokenize.txt:175
 #: ../../../source/reference/commands/truncate.txt:65
 msgid "``HEADER``"
@@ -3613,6 +3615,7 @@ msgstr ""
 #: ../../../source/reference/commands/load.txt:98
 #: ../../../source/reference/commands/normalize.txt:154
 #: ../../../source/reference/commands/ruby_eval.txt:70
+#: ../../../source/reference/commands/ruby_load.txt:69
 #: ../../../source/reference/commands/select.txt:906
 #: ../../../source/reference/commands/table_create.txt:280
 #: ../../../source/reference/commands/tokenize.txt:195
@@ -4077,6 +4080,7 @@ msgstr ""
 #: ../../../source/reference/commands/normalize.txt:25
 #: ../../../source/reference/commands/register.txt:27
 #: ../../../source/reference/commands/ruby_eval.txt:17
+#: ../../../source/reference/commands/ruby_load.txt:17
 #: ../../../source/reference/commands/select.txt:21
 #: ../../../source/reference/commands/table_create.txt:18
 #: ../../../source/reference/commands/tokenize.txt:18
@@ -4106,6 +4110,7 @@ msgstr ""
 #: ../../../source/reference/commands/normalize.txt:37
 #: ../../../source/reference/commands/register.txt:34
 #: ../../../source/reference/commands/ruby_eval.txt:24
+#: ../../../source/reference/commands/ruby_load.txt:24
 #: ../../../source/reference/commands/select.txt:47
 #: ../../../source/reference/commands/table_create.txt:31
 #: ../../../source/reference/commands/tokenize.txt:30
@@ -4158,6 +4163,7 @@ msgstr ""
 #: ../../../source/reference/commands/load.txt:24
 #: ../../../source/reference/commands/normalize.txt:46
 #: ../../../source/reference/commands/ruby_eval.txt:41
+#: ../../../source/reference/commands/ruby_load.txt:41
 #: ../../../source/reference/commands/select.txt:199
 #: ../../../source/reference/commands/table_create.txt:154
 #: ../../../source/reference/commands/tokenize.txt:44
@@ -4176,6 +4182,7 @@ msgstr "Parameters"
 #: ../../../source/reference/commands/cache_limit.txt:56
 #: ../../../source/reference/commands/load.txt:26
 #: ../../../source/reference/commands/ruby_eval.txt:43
+#: ../../../source/reference/commands/ruby_load.txt:43
 #: ../../../source/reference/commands/table_create.txt:156
 msgid "This section describes all parameters."
 msgstr ""
@@ -4209,6 +4216,7 @@ msgstr ""
 #: ../../../source/reference/commands/normalize.txt:127
 #: ../../../source/reference/commands/register.txt:51
 #: ../../../source/reference/commands/ruby_eval.txt:51
+#: ../../../source/reference/commands/ruby_load.txt:51
 #: ../../../source/reference/commands/table_create.txt:269
 #: ../../../source/reference/commands/tokenize.txt:167
 #: ../../../source/reference/commands/truncate.txt:59
@@ -4228,6 +4236,7 @@ msgstr ""
 # 302f21aa293641d195a24eb6074efbc6
 #: ../../../source/reference/commands/cache_limit.txt:76
 #: ../../../source/reference/commands/ruby_eval.txt:60
+#: ../../../source/reference/commands/ruby_load.txt:60
 #: ../../../source/reference/commands/tokenize.txt:177
 msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
 msgstr ""
@@ -6860,6 +6869,85 @@ msgstr ""
 msgid ""
 "``ruby_eval`` supports only a number for evaluated value for now. Supported "
 "types will be increased in the future."
+msgstr ""
+
+# a0b93b99955541f1a6dae0b50763a369
+#: ../../../source/reference/commands/ruby_load.txt:9
+msgid "``ruby_load``"
+msgstr ""
+
+# 49648c1e9f274656b15b202b1fade1b6
+#: ../../../source/reference/commands/ruby_load.txt:14
+msgid "``ruby_load`` command loads specified Ruby script."
+msgstr ""
+
+# aad3759420f548b99a0ec55dd81d28bf
+#: ../../../source/reference/commands/ruby_load.txt:19
+msgid "``ruby_load`` has one required parameter::"
+msgstr ""
+
+# 914406c1044647efb0f640985d28a289
+#: ../../../source/reference/commands/ruby_load.txt:26
+msgid ""
+"You can load any script file which mruby supports by calling ``ruby_load``."
+msgstr ""
+
+# bcc612a9fd0e431b968c90fdeccf31b8
+#: ../../../source/reference/commands/ruby_load.txt:28
+msgid "Here is an example that just load ``expression.rb`` as Ruby script."
+msgstr ""
+
+# 981660804eaf49abb973f2a973958154
+#: ../../../source/reference/commands/ruby_load.txt:35
+msgid "Register ``ruby/load`` plugin to use ``ruby_load`` command in advance."
+msgstr ""
+
+# 2e48a01a54e54c539ba29ad3aa055297
+#: ../../../source/reference/commands/ruby_load.txt:37
+msgid ""
+"Note that ``ruby_load`` is implemented as an experimental plugin, and the "
+"specification may be changed in the future."
+msgstr ""
+
+# 3f256f3d2a5f449cbc13b6a362618ea5
+# a53025dea1d94ebe99fc1555b8b1b6ea
+#: ../../../source/reference/commands/ruby_load.txt:46
+msgid "``script_path``"
+msgstr ""
+
+# 3bbc34d6e1fd419c905a8a3ca4c616ae
+#: ../../../source/reference/commands/ruby_load.txt:48
+msgid "It specifies the Ruby script path which you want to load."
+msgstr ""
+
+# 01bf1e043b1d4083b79f42fe7c393703
+#: ../../../source/reference/commands/ruby_load.txt:53
+msgid ""
+"``ruby_load`` returns the loaded result with metadata such as exception "
+"information (Including metadata isn't implemented yet)::"
+msgstr ""
+
+# 5b5640ace74e4c708a954a2f8bbe21bc
+#: ../../../source/reference/commands/ruby_load.txt:62
+msgid "``LOADED_VALUE``"
+msgstr ""
+
+# 4003aa8f495e4d69abdd764bc1223ff2
+#: ../../../source/reference/commands/ruby_load.txt:64
+msgid "``LOADED_VALUE`` is the loaded value of ruby script."
+msgstr ""
+
+# 953764d551d54c0faa06b87db7497498
+#: ../../../source/reference/commands/ruby_load.txt:66
+msgid ""
+"``ruby_load`` just return ``null`` as ``LOADED_VALUE`` for now, it will be "
+"supported in the future."
+msgstr ""
+
+# 257a8b1e0a424cf3807162e2534d2837
+# 73ec2c3dc21241d5b0b795816605eeb2
+#: ../../../source/reference/commands/ruby_load.txt:71
+msgid ":doc:`/reference/commands/ruby_eval`"
 msgstr ""
 
 # 5a34f34403204e66ab5c667346b7ae0e
@@ -18572,71 +18660,13 @@ msgstr ""
 msgid "Object型はv1.2でサポートされます。"
 msgstr "Object型はv1.2でサポートされます。"
 
-# 67d43cef5b5d4b118d9396d454ee4544
-#~ msgid "VIEW型のテーブルに要素となるテーブルを定義します。"
-#~ msgstr "VIEW型のテーブルに要素となるテーブルを定義します。"
+# 68baf1cf0b444232a1fa7299c43fc58a
+#~ msgid "column_create"
+#~ msgstr "column_create"
 
-# 8e91fbc2746341169c27948089409f5c
-#~ msgid "json"
-#~ msgstr "json"
-
-# 5422fde6ce3d4b03926ae9c28a568c8e
-#~ msgid ""
-#~ "クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
-#~ "は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
-#~ msgstr ""
-#~ "クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
-#~ "は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
-
-# 31ae96ec89454ccd8461b3be13376d57
-#~ msgid ""
-#~ "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
-#~ msgstr ""
-#~ "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
-
-# 782f01979fbc4d54b4b22525168fdcb3
-#~ msgid ""
-#~ "groonga組込コマンドの一つであるcache_limitについて説明します。組込コマンド"
-#~ "は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバ"
-#~ "にリクエストを送信することによって実行します。"
-#~ msgstr ""
-#~ "groonga組込コマンドの一つであるcache_limitについて説明します。組込コマンド"
-#~ "は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバ"
-#~ "にリクエストを送信することによって実行します。"
-
-# 1fa38310321a4d9f8f5dcb5d3b9ebe5e
-#~ msgid "cache_limit - cacheサイズの設定・取得"
-#~ msgstr "cache_limit - cacheサイズの設定・取得"
-
-# ae3fed01f9fd4e7e9a541995a8dcf986
-#~ msgid ""
-#~ "script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを"
-#~ "指定する場合は、id及びkeyパラメータを指定してはいけません。"
-#~ msgstr ""
-#~ "script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを"
-#~ "指定する場合は、id及びkeyパラメータを指定してはいけません。"
-
-# 1348fc0305b9412b840d4a9371faa2da
-#~ msgid ""
-#~ "削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパ"
-#~ "ラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
-#~ msgstr ""
-#~ "削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパ"
-#~ "ラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
-
-# 43e0750371c644d8833d1a01a72e4ced
-#~ msgid "レコードを削除しようとするテーブルの名前を指定します。"
-#~ msgstr "レコードを削除しようとするテーブルの名前を指定します。"
-
-# bb54bdbab7684c0e940229f834bdfe82
-#~ msgid "テーブルEntryからレコードを削除します。::"
-#~ msgstr "テーブルEntryからレコードを削除します。::"
-
-# d295da1d724849a8a4c12e499c4e5ef1
-#~ msgid ""
-#~ "deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
-#~ msgstr ""
-#~ "deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
+# 17b5fc3339cb402db375a8fb03389871
+#~ msgid "delete - 一件のレコードの削除"
+#~ msgstr "delete - 一件のレコードの削除"
 
 # 9ee33aa44c21410eb720de969556dde0
 #~ msgid ""
@@ -18648,10 +18678,68 @@ msgstr "Object型はv1.2でサポートされます。"
 #~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
 #~ "クエストを送信することによって実行します。"
 
-# 17b5fc3339cb402db375a8fb03389871
-#~ msgid "delete - 一件のレコードの削除"
-#~ msgstr "delete - 一件のレコードの削除"
+# d295da1d724849a8a4c12e499c4e5ef1
+#~ msgid ""
+#~ "deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
+#~ msgstr ""
+#~ "deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
 
-# 68baf1cf0b444232a1fa7299c43fc58a
-#~ msgid "column_create"
-#~ msgstr "column_create"
+# bb54bdbab7684c0e940229f834bdfe82
+#~ msgid "テーブルEntryからレコードを削除します。::"
+#~ msgstr "テーブルEntryからレコードを削除します。::"
+
+# 43e0750371c644d8833d1a01a72e4ced
+#~ msgid "レコードを削除しようとするテーブルの名前を指定します。"
+#~ msgstr "レコードを削除しようとするテーブルの名前を指定します。"
+
+# 1348fc0305b9412b840d4a9371faa2da
+#~ msgid ""
+#~ "削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパ"
+#~ "ラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
+#~ msgstr ""
+#~ "削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパ"
+#~ "ラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
+
+# ae3fed01f9fd4e7e9a541995a8dcf986
+#~ msgid ""
+#~ "script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを"
+#~ "指定する場合は、id及びkeyパラメータを指定してはいけません。"
+#~ msgstr ""
+#~ "script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを"
+#~ "指定する場合は、id及びkeyパラメータを指定してはいけません。"
+
+# 1fa38310321a4d9f8f5dcb5d3b9ebe5e
+#~ msgid "cache_limit - cacheサイズの設定・取得"
+#~ msgstr "cache_limit - cacheサイズの設定・取得"
+
+# 782f01979fbc4d54b4b22525168fdcb3
+#~ msgid ""
+#~ "groonga組込コマンドの一つであるcache_limitについて説明します。組込コマンド"
+#~ "は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバ"
+#~ "にリクエストを送信することによって実行します。"
+#~ msgstr ""
+#~ "groonga組込コマンドの一つであるcache_limitについて説明します。組込コマンド"
+#~ "は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバ"
+#~ "にリクエストを送信することによって実行します。"
+
+# 31ae96ec89454ccd8461b3be13376d57
+#~ msgid ""
+#~ "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
+#~ msgstr ""
+#~ "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
+
+# 5422fde6ce3d4b03926ae9c28a568c8e
+#~ msgid ""
+#~ "クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
+#~ "は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
+#~ msgstr ""
+#~ "クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
+#~ "は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
+
+# 8e91fbc2746341169c27948089409f5c
+#~ msgid "json"
+#~ msgstr "json"
+
+# 67d43cef5b5d4b118d9396d454ee4544
+#~ msgid "VIEW型のテーブルに要素となるテーブルを定義します。"
+#~ msgstr "VIEW型のテーブルに要素となるテーブルを定義します。"
