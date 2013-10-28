@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-23 15:32\n"
+"POT-Creation-Date: 2013-10-21 18:24+0900\n"
 "PO-Revision-Date: 2012-07-23 17:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -21,6 +21,11 @@ msgstr ""
 # a80709435af3475aa9c35c0a4fde59bd
 #: ../../../source/example/completion-1.log:1
 #: ../../../source/example/correction-1.log:1
+#: ../../../source/example/suggest/complete/registered-word-japan.log:1
+#: ../../../source/example/suggest/complete/registered-word-japanese.log:1
+#: ../../../source/example/suggest/complete/rk-search-nihon.log:1
+#: ../../../source/example/suggest/complete/rk-search-nippon.log:1
+#: ../../../source/example/suggest/complete/update-rk-data.log:1
 #: ../../../source/example/suggestion-1.log:1
 msgid "Execution example::"
 msgstr "実行例::"
@@ -77,7 +82,7 @@ msgstr "どのように動作するか"
 # da9d503c8f4c4832abe547e4fcdef604
 # ee953a56cf3a4ce9af270544181bca70
 #: ../../../source/suggest/completion.txt:16
-#: ../../../source/suggest/completion.txt:143
+#: ../../../source/suggest/completion.txt:145
 #: ../../../source/suggest/correction.txt:16
 #: ../../../source/suggest/correction.txt:89
 #: ../../../source/suggest/suggestion.txt:16
@@ -146,17 +151,26 @@ msgstr ""
 "ユーザの入力が\"ni\"でも\"二\"でも\"に\"でも\"日本\"を見つけることができま"
 "す。"
 
+# aff48cb7fa80451180a6c92cf38b9258
+#: ../../../source/suggest/completion.txt:40
+msgid ""
+"If you create dataset which is named as example by :doc:`/reference/"
+"executables/groonga-suggest-create-dataset` command, you can update pairs of "
+"registered word and its reading by loading data to '_key' and 'kana' column "
+"of item_example table explicitly for prefix RK search."
+msgstr ""
+
 # 9ed0b29d41de408d9260f60a2e522720
 # 582698b34cfc4f98aaf01e97783cae3d
 # 77105e986cb2481eaa36831b1896fbb8
-#: ../../../source/suggest/completion.txt:41
+#: ../../../source/suggest/completion.txt:43
 #: ../../../source/suggest/correction.txt:29
 #: ../../../source/suggest/suggestion.txt:28
 msgid "Cooccurrence search"
 msgstr "共起検索"
 
 # b4d542ba13254115ac3e0d1744947ef5
-#: ../../../source/suggest/completion.txt:43
+#: ../../../source/suggest/completion.txt:45
 msgid ""
 "Cooccurrence search can find registered words from user's partial input. It "
 "uses user input sequences that will be learned from query logs, access logs "
@@ -167,7 +181,7 @@ msgstr ""
 "やアクセスログなどから学習します。"
 
 # 3411dbbeeae04bc28de2a0b96cf3cf39
-#: ../../../source/suggest/completion.txt:47
+#: ../../../source/suggest/completion.txt:49
 msgid "For example, there is the following user input sequence:"
 msgstr "例えば、以下のようなユーザの入力シーケンスがあるとします。"
 
@@ -175,15 +189,15 @@ msgstr "例えば、以下のようなユーザの入力シーケンスがある
 # 75ec559139154170a3c640ecd27dfdeb
 # 88f576cb97b84a2ba8e277adc66737a1
 # ad5ab82e2bfe4b698573a86702284e6a
-#: ../../../source/suggest/completion.txt:50
-#: ../../../source/suggest/completion.txt:84
+#: ../../../source/suggest/completion.txt:52
+#: ../../../source/suggest/completion.txt:86
 #: ../../../source/suggest/correction.txt:49
 #: ../../../source/suggest/suggestion.txt:47
 msgid "input"
 msgstr "入力"
 
 # aab717a62b314abeb7552e6707342fb3
-#: ../../../source/suggest/completion.txt:50
+#: ../../../source/suggest/completion.txt:52
 msgid "submit"
 msgstr "検索実行"
 
@@ -198,52 +212,52 @@ msgstr "検索実行"
 # 271fef7e4fbd4cbcaf5b6600ef812d17
 # 131685fe3b3a4a5489166cde58d9d706
 # be97230c4cee4a0fa0c2ca33f7520985
-#: ../../../source/suggest/completion.txt:52
 #: ../../../source/suggest/completion.txt:54
 #: ../../../source/suggest/completion.txt:56
 #: ../../../source/suggest/completion.txt:58
 #: ../../../source/suggest/completion.txt:60
-#: ../../../source/suggest/completion.txt:64
+#: ../../../source/suggest/completion.txt:62
 #: ../../../source/suggest/completion.txt:66
 #: ../../../source/suggest/completion.txt:68
 #: ../../../source/suggest/completion.txt:70
 #: ../../../source/suggest/completion.txt:72
 #: ../../../source/suggest/completion.txt:74
+#: ../../../source/suggest/completion.txt:76
 msgid "no"
 msgstr "していない"
 
 # 491ba9c0a20b40e8bd69286d43218b49
 # 9f2823d31be44783904990f5c90dae02
-#: ../../../source/suggest/completion.txt:52
-#: ../../../source/suggest/completion.txt:86
+#: ../../../source/suggest/completion.txt:54
+#: ../../../source/suggest/completion.txt:88
 msgid "s"
 msgstr ""
 
 # 47dad9d2a3384f24a0b14b723e4c493b
 # c45e19fedbd2469f9e226354f8baa382
-#: ../../../source/suggest/completion.txt:54
-#: ../../../source/suggest/completion.txt:88
+#: ../../../source/suggest/completion.txt:56
+#: ../../../source/suggest/completion.txt:90
 msgid "se"
 msgstr ""
 
 # 8f86737603cf40808921af4ccbc45ac6
 # 72222d353e70471e954f8bcb1c636b90
-#: ../../../source/suggest/completion.txt:56
-#: ../../../source/suggest/completion.txt:90
+#: ../../../source/suggest/completion.txt:58
+#: ../../../source/suggest/completion.txt:92
 msgid "sea"
 msgstr ""
 
 # a17de23c0b014f27b40cd3991c051d5f
 # c6d357631d7d419bb6ae6d848f7fc790
-#: ../../../source/suggest/completion.txt:58
-#: ../../../source/suggest/completion.txt:92
+#: ../../../source/suggest/completion.txt:60
+#: ../../../source/suggest/completion.txt:94
 msgid "sear"
 msgstr ""
 
 # bbb3dfaa913e44b69673b99e149cfdba
 # 5fa6299bda0443bda052f176dc006b0f
-#: ../../../source/suggest/completion.txt:60
-#: ../../../source/suggest/completion.txt:94
+#: ../../../source/suggest/completion.txt:62
+#: ../../../source/suggest/completion.txt:96
 msgid "searc"
 msgstr ""
 
@@ -257,12 +271,12 @@ msgstr ""
 # 2c7c5449cf4b48348951d22896897d3d
 # c607c619ad1a411ca43ba39bc54a7b3e
 # 504367867b9d4067aaec74ebef2bc2c9
-#: ../../../source/suggest/completion.txt:62
-#: ../../../source/suggest/completion.txt:86
+#: ../../../source/suggest/completion.txt:64
 #: ../../../source/suggest/completion.txt:88
 #: ../../../source/suggest/completion.txt:90
 #: ../../../source/suggest/completion.txt:92
 #: ../../../source/suggest/completion.txt:94
+#: ../../../source/suggest/completion.txt:96
 #: ../../../source/suggest/correction.txt:51
 #: ../../../source/suggest/introduction.txt:78
 #: ../../../source/suggest/suggestion.txt:49
@@ -272,43 +286,43 @@ msgstr ""
 
 # d3708cc35ae64675827a0301ba8fbe9c
 # 462133a2b6db4555aa28e39d4762c20c
-#: ../../../source/suggest/completion.txt:62
-#: ../../../source/suggest/completion.txt:78
+#: ../../../source/suggest/completion.txt:64
+#: ../../../source/suggest/completion.txt:80
 msgid "yes"
 msgstr "した"
 
 # 27e47dfc207c4cd783e0175bafe2dd66
 # 25b2934ca83b4aea84f03e07e8b1e8e9
-#: ../../../source/suggest/completion.txt:64
-#: ../../../source/suggest/completion.txt:96
+#: ../../../source/suggest/completion.txt:66
+#: ../../../source/suggest/completion.txt:98
 msgid "e"
 msgstr ""
 
 # 465525374ad4489b954606969f020c2d
 # 405e2e7f0e7f4dcfa94634c81a44bfb8
-#: ../../../source/suggest/completion.txt:66
-#: ../../../source/suggest/completion.txt:98
+#: ../../../source/suggest/completion.txt:68
+#: ../../../source/suggest/completion.txt:100
 msgid "en"
 msgstr ""
 
 # 16e1bfd746d947adb81c20d788609377
 # 0a9d91580dd9406ab908533109b2b516
-#: ../../../source/suggest/completion.txt:68
-#: ../../../source/suggest/completion.txt:100
+#: ../../../source/suggest/completion.txt:70
+#: ../../../source/suggest/completion.txt:102
 msgid "eng"
 msgstr ""
 
 # e40623d4095547f6a698e7ea85971805
 # c125ab653037437592510989f11cb279
-#: ../../../source/suggest/completion.txt:70
-#: ../../../source/suggest/completion.txt:102
+#: ../../../source/suggest/completion.txt:72
+#: ../../../source/suggest/completion.txt:104
 msgid "engi"
 msgstr ""
 
 # dbb8140210164d24a553e5147ee1cb4e
 # 711b499ebeee400788f72277c52583de
-#: ../../../source/suggest/completion.txt:72
-#: ../../../source/suggest/completion.txt:104
+#: ../../../source/suggest/completion.txt:74
+#: ../../../source/suggest/completion.txt:106
 msgid "engin"
 msgstr ""
 
@@ -323,43 +337,43 @@ msgstr ""
 # 57ca5b15917f4a8da58b276d539a565d
 # 21f0b3249f8f44008d6aa01685c8bfd9
 # 68981c7eb6b545a888184fa58e2effb6
-#: ../../../source/suggest/completion.txt:74
-#: ../../../source/suggest/completion.txt:78
-#: ../../../source/suggest/completion.txt:96
+#: ../../../source/suggest/completion.txt:76
+#: ../../../source/suggest/completion.txt:80
 #: ../../../source/suggest/completion.txt:98
 #: ../../../source/suggest/completion.txt:100
 #: ../../../source/suggest/completion.txt:102
 #: ../../../source/suggest/completion.txt:104
 #: ../../../source/suggest/completion.txt:106
 #: ../../../source/suggest/completion.txt:108
+#: ../../../source/suggest/completion.txt:110
 #: ../../../source/suggest/suggestion.txt:51
 msgid "engine"
 msgstr ""
 
 # 01f9583246f64a89912206b9da27b9ae
 # 6304fd64aae947b2ad36fc84766d08b2
-#: ../../../source/suggest/completion.txt:76
-#: ../../../source/suggest/completion.txt:108
+#: ../../../source/suggest/completion.txt:78
+#: ../../../source/suggest/completion.txt:110
 msgid "enginen"
 msgstr ""
 
 # 831d5129e1e9495fa8db1ec4da78239c
-#: ../../../source/suggest/completion.txt:76
+#: ../../../source/suggest/completion.txt:78
 msgid "no (typo!)"
 msgstr "していない（入力ミス！）"
 
 # 70da73db787b444fa868ea08b0c7d598
-#: ../../../source/suggest/completion.txt:81
+#: ../../../source/suggest/completion.txt:83
 msgid "Groonga creates the following completion pairs:"
 msgstr "groongaは以下のような補完ペアを作ります。:"
 
 # 9bc9abc19d4b4b5eb8df89459609e31a
-#: ../../../source/suggest/completion.txt:84
+#: ../../../source/suggest/completion.txt:86
 msgid "completed word"
 msgstr "補完語"
 
 # 82fe6d332c1e41ffa08f89c4100e86c0
-#: ../../../source/suggest/completion.txt:111
+#: ../../../source/suggest/completion.txt:113
 msgid ""
 "All user not-submitted inputs (e.g. \"s\", \"se\" and so on) before each an "
 "user submission maps to the submitted input (e.g. \"search\")."
@@ -368,7 +382,7 @@ msgstr ""
 "した語（例では\"search\"）に対応付けます。"
 
 # 3613d2ea23904a5c96beaa385e926dc7
-#: ../../../source/suggest/completion.txt:115
+#: ../../../source/suggest/completion.txt:117
 msgid ""
 "To be precise, this description isn't correct because it omits about time "
 "stamp. Groonga doesn't case about \"all user not-submitted inputs before "
@@ -382,7 +396,7 @@ msgstr ""
 "ます。検索実行時から1分より前の入力は使われません。"
 
 # 0062f0e9d21746d6bf7c1b8dcba4ad16
-#: ../../../source/suggest/completion.txt:123
+#: ../../../source/suggest/completion.txt:125
 msgid ""
 "If an user inputs \"sea\" and cooccurrence search returns \"search\" because "
 "\"sea\" is in input column and corresponding completed word column value is "
@@ -393,12 +407,12 @@ msgstr ""
 "いう値が入っているからです。"
 
 # c31f1a98c9784f508c4008d71a79780e
-#: ../../../source/suggest/completion.txt:128
+#: ../../../source/suggest/completion.txt:130
 msgid "Prefix search"
 msgstr "前方一致検索"
 
 # 347ab3d462fb4118bd0845f75f8b0ef5
-#: ../../../source/suggest/completion.txt:130
+#: ../../../source/suggest/completion.txt:132
 msgid ""
 "Prefix search can find registered word that start with user's input. This "
 "search doesn't care about romaji, katakana and hiragana not like Prefix RK "
@@ -409,7 +423,7 @@ msgstr ""
 "ん。"
 
 # 738bf820ee2c482aa61b90975be1ff94
-#: ../../../source/suggest/completion.txt:134
+#: ../../../source/suggest/completion.txt:136
 msgid ""
 "This search isn't always ran. It's just ran when it's requested explicitly "
 "or both prefix RK search and cooccurrence search return nothing."
@@ -419,7 +433,7 @@ msgstr ""
 "されます。"
 
 # 42b839f545d04be095324811c38b4bd7
-#: ../../../source/suggest/completion.txt:138
+#: ../../../source/suggest/completion.txt:140
 msgid ""
 "For example, there is a registered word \"search\". An user can find \"search"
 "\" by \"s\", \"se\", \"sea\", \"sear\", \"searc\" and \"search\"."
@@ -429,16 +443,16 @@ msgstr ""
 "きます。"
 
 # 4941066c272e4c8d9fea28523b205609
-#: ../../../source/suggest/completion.txt:156
+#: ../../../source/suggest/completion.txt:158
 msgid ""
 "Groonga provides :doc:`/reference/commands/suggest` command to use "
 "completion. `--type complete` option requests completion."
 msgstr ""
-"groongaは補完機能を使うために :doc:`/reference/commands/suggest` コマンドを用意していま"
-"す。 `--type complete` オプションを使うと補完機能を利用できます。"
+"groongaは補完機能を使うために :doc:`/reference/commands/suggest` コマンドを用"
+"意しています。 `--type complete` オプションを使うと補完機能を利用できます。"
 
 # 5c176e739a484fccb0d12746750fbab9
-#: ../../../source/suggest/completion.txt:159
+#: ../../../source/suggest/completion.txt:161
 msgid "For example, here is an command to get completion results by \"en\":"
 msgstr ""
 "例えば、\"en\"と入力したときの補完結果を取得するコマンドは以下のようになりま"
@@ -447,7 +461,7 @@ msgstr ""
 # 1479bcdde8054e3da23503068569bf0a
 # c26f244cc9ca4468a3aca3d7a1e4f23b
 # 6345ddbd230d4d238156cfeed78aeabf
-#: ../../../source/suggest/completion.txt:167
+#: ../../../source/suggest/completion.txt:169
 #: ../../../source/suggest/correction.txt:115
 #: ../../../source/suggest/suggestion.txt:95
 msgid "How it learns"
@@ -455,7 +469,7 @@ msgstr "学習方法"
 
 # 362e933a296d45e584ac22254ac9e239
 # a9d1133f88464775aabb3d8cd28662f4
-#: ../../../source/suggest/completion.txt:169
+#: ../../../source/suggest/completion.txt:171
 #: ../../../source/suggest/suggestion.txt:97
 msgid ""
 "Cooccurrence search uses learned data. They are based on query logs, access "
@@ -468,7 +482,7 @@ msgstr ""
 
 # 39cbb6cf047841f3a6b7186d2ccfbbb1
 # 3a0ae79c6cce423cadea6e018cf8cc81
-#: ../../../source/suggest/completion.txt:174
+#: ../../../source/suggest/completion.txt:176
 #: ../../../source/suggest/suggestion.txt:102
 msgid ""
 "For example, an user wants to search by \"engine\". The user inputs the "
@@ -478,42 +492,110 @@ msgstr ""
 "スで検索クエリを入力したとします。:"
 
 # 161cb0041a5c42d3a6a17335fca6ef18
-#: ../../../source/suggest/completion.txt:177
+#: ../../../source/suggest/completion.txt:179
 msgid "2011-08-10T13:33:23+09:00: e"
 msgstr ""
 
 # b54daed272614a9cb346438de903f3ad
-#: ../../../source/suggest/completion.txt:178
+#: ../../../source/suggest/completion.txt:180
 msgid "2011-08-10T13:33:23+09:00: en"
 msgstr ""
 
 # d3f458c5ab864f2f8919de1152238000
-#: ../../../source/suggest/completion.txt:179
+#: ../../../source/suggest/completion.txt:181
 msgid "2011-08-10T13:33:24+09:00: eng"
 msgstr ""
 
 # 41996e9df3be4b8487e5bd3b58eae859
-#: ../../../source/suggest/completion.txt:180
+#: ../../../source/suggest/completion.txt:182
 msgid "2011-08-10T13:33:24+09:00: engi"
 msgstr ""
 
 # 3389529aea6b4f2d995200c3e32e21ae
-#: ../../../source/suggest/completion.txt:181
+#: ../../../source/suggest/completion.txt:183
 msgid "2011-08-10T13:33:24+09:00: engin"
 msgstr ""
 
 # b251c458da8e4bf79e406c4f84211260
-#: ../../../source/suggest/completion.txt:182
+#: ../../../source/suggest/completion.txt:184
 msgid "2011-08-10T13:33:25+09:00: engine (submit!)"
 msgstr "2011-08-10T13:33:25+09:00: engine （検索実行！）"
 
 # dbb4c761346148d1a642a3b75dcec448
 # 206a54180da948c8bded82c7568fc48b
-#: ../../../source/suggest/completion.txt:184
+#: ../../../source/suggest/completion.txt:186
 #: ../../../source/suggest/correction.txt:134
 msgid ""
 "Groonga can be learned from the input sequence by the following command::"
 msgstr "以下のコマンドでこの入力シーケンスから学習できます。::"
+
+# 32d9c9404bbd4ad1959b1dd7915a87b8
+#: ../../../source/suggest/completion.txt:200
+msgid "How to update RK reading data"
+msgstr ""
+
+# ffe7ad1c116347c18bb3a4c0172518db
+#: ../../../source/suggest/completion.txt:202
+msgid ""
+"Groonga requires registered word and its reading for RK search, so load such "
+"data in the advance."
+msgstr ""
+
+# 3f3f944b7c4f4274893dc6de48e3a714
+#: ../../../source/suggest/completion.txt:205
+msgid ""
+"Here is the example to register \"日本\" which means Japanese in english."
+msgstr ""
+
+# 305f9d8652914f2384f7bdafa15bef3c
+#: ../../../source/suggest/completion.txt:215
+msgid "Here is the example to update RK data to complete \"日本\"."
+msgstr ""
+
+# 21e1d3b5859147da8916816229f3ec24
+#: ../../../source/suggest/completion.txt:224
+msgid "Then you can complete registered word \"日本\" by RK input - \"nihon\"."
+msgstr ""
+
+# 484ba4ebca0242a6ababc0c03cdcd0f4
+#: ../../../source/suggest/completion.txt:230
+msgid ""
+"Without loading above RK data, you can't complete registered word \"日本\" "
+"by query - \"nihon\"."
+msgstr ""
+
+# b0540f5fa8724d89bc7e784939267779
+#: ../../../source/suggest/completion.txt:232
+msgid ""
+"As the column type of item_query table is VECTOR_COLUMN, you can register "
+"multiple readings for registered word."
+msgstr ""
+
+# b3c8f8ddec1e4bb68b9969b4e9ecfb27
+#: ../../../source/suggest/completion.txt:234
+msgid ""
+"This is the reason that you can also complete the registered word \"日本\" "
+"by query - \"nippon\"."
+msgstr ""
+
+# c134bad7e4364f72a26457bc0e305c58
+#: ../../../source/suggest/completion.txt:240
+msgid ""
+"This feature is very convenient because you can search registered word even "
+"though Japanese IM is disabled."
+msgstr ""
+
+# ded9d04c08984b02817d134701b3049a
+#: ../../../source/suggest/completion.txt:242
+msgid ""
+"If there are multiple candidates as completed result, you can customize "
+"priority to set the value of \"boost\" column in item_query table."
+msgstr ""
+
+# be09f267126543ec805b7d28298cef83
+#: ../../../source/suggest/completion.txt:244
+msgid "Here is the example to customize priority for RK search."
+msgstr ""
 
 # d127f506557a42d0b4623a56a33138bd
 # 81687ca4832041c7b0922b91ddc72bcc
@@ -642,9 +724,9 @@ msgid ""
 msgstr ""
 "類似検索はユーザの入力をトークナイズし、同じトークンを含んだ登録済みの語を検"
 "索します。トークナイズにはTokenBigramトークナイザーを使います。これは :doc:`/"
-"reference/executables/groonga-suggest-create-dataset` が作るサジェストデータセットス"
-"キーマではデフォルトトークナイザーとしてTokenBigramトークナイザーを使っている"
-"からです。"
+"reference/executables/groonga-suggest-create-dataset` が作るサジェストデータ"
+"セットスキーマではデフォルトトークナイザーとしてTokenBigramトークナイザーを"
+"使っているからです。"
 
 # a9ac3f68379a4ccabc3b9a6b15666353
 #: ../../../source/suggest/correction.txt:72
@@ -686,8 +768,8 @@ msgid ""
 "Groonga provides :doc:`/reference/commands/suggest` command to use "
 "correction. `--type correct` option requests corrections."
 msgstr ""
-"groongaは補正機能を使うために :doc:`/reference/commands/suggest` コマンドを用意していま"
-"す。 `--type correct` オプションを使うと補正機能を利用できます。"
+"groongaは補正機能を使うために :doc:`/reference/commands/suggest` コマンドを用"
+"意しています。 `--type correct` オプションを使うと補正機能を利用できます。"
 
 # 4039b51af5424222a1a4ceb57340fec8
 #: ../../../source/suggest/correction.txt:107
@@ -1082,8 +1164,8 @@ msgid ""
 "Groonga provides :doc:`/reference/commands/suggest` command to use "
 "suggestion. `--type suggest` option requests suggestion"
 msgstr ""
-"groongaは提案機能を使うために :doc:`/reference/commands/suggest` コマンドを用意していま"
-"す。 `--type suggest` オプションを使うと提案機能を利用できます。"
+"groongaは提案機能を使うために :doc:`/reference/commands/suggest` コマンドを用"
+"意しています。 `--type suggest` オプションを使うと提案機能を利用できます。"
 
 # f34dff8561634141a09b2334c56879d0
 #: ../../../source/suggest/suggestion.txt:87

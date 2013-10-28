@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-02 15:21+0900\n"
+"POT-Creation-Date: 2013-10-23 14:55+0900\n"
 "PO-Revision-Date: 2013-04-03 13:30+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -83,7 +83,8 @@ msgstr ""
 #: ../../../source/install/ubuntu.txt:36 ../../../source/install/ubuntu.txt:83
 #: ../../../source/install/ubuntu.txt:130
 #: ../../../source/install/ubuntu.txt:177
-#: ../../../source/install/ubuntu.txt:228
+#: ../../../source/install/ubuntu.txt:217
+#: ../../../source/install/ubuntu.txt:268
 #: ../../../source/install/windows.txt:100
 msgid "Install::"
 msgstr "インストール::"
@@ -105,6 +106,7 @@ msgstr "インストール::"
 #: ../../../source/install/ubuntu.txt:90
 #: ../../../source/install/ubuntu.txt:137
 #: ../../../source/install/ubuntu.txt:184
+#: ../../../source/install/ubuntu.txt:224
 msgid ""
 "If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer, "
 "install groonga-tokenizer-mecab package."
@@ -129,6 +131,7 @@ msgstr ""
 #: ../../../source/install/ubuntu.txt:93
 #: ../../../source/install/ubuntu.txt:140
 #: ../../../source/install/ubuntu.txt:187
+#: ../../../source/install/ubuntu.txt:227
 msgid "Install groonga-tokenizer-mecab package::"
 msgstr "groonga-tokenizer-mecabパッケージのインストール::"
 
@@ -231,6 +234,7 @@ msgstr "EPELリポジトリを有効にする（環境非依存）::"
 #: ../../../source/install/ubuntu.txt:101
 #: ../../../source/install/ubuntu.txt:148
 #: ../../../source/install/ubuntu.txt:195
+#: ../../../source/install/ubuntu.txt:235
 msgid "Install groonga-munin-plugins package::"
 msgstr "groonga-munin-pluginsパッケージのインストール::"
 
@@ -274,6 +278,7 @@ msgstr ""
 #: ../../../source/install/ubuntu.txt:109
 #: ../../../source/install/ubuntu.txt:156
 #: ../../../source/install/ubuntu.txt:203
+#: ../../../source/install/ubuntu.txt:243
 msgid "Install groonga-normalizer-mysql package::"
 msgstr "groonga-normalizer-mysqlパッケージのインストール::"
 
@@ -307,7 +312,7 @@ msgstr ""
 #: ../../../source/install/fedora.txt:77
 #: ../../../source/install/mac_os_x.txt:37
 #: ../../../source/install/others.txt:72
-#: ../../../source/install/ubuntu.txt:208
+#: ../../../source/install/ubuntu.txt:248
 #: ../../../source/install/windows.txt:65
 msgid "Build from source"
 msgstr "ソースからビルド"
@@ -320,7 +325,7 @@ msgstr "ソースからビルド"
 #: ../../../source/install/debian.txt:182
 #: ../../../source/install/fedora.txt:79
 #: ../../../source/install/solaris.txt:14
-#: ../../../source/install/ubuntu.txt:210
+#: ../../../source/install/ubuntu.txt:250
 msgid "Install required packages to build groonga::"
 msgstr "groongaをビルドするために必要なパッケージをインストールします::"
 
@@ -334,7 +339,7 @@ msgstr "groongaをビルドするために必要なパッケージをインス�
 #: ../../../source/install/fedora.txt:83
 #: ../../../source/install/mac_os_x.txt:41
 #: ../../../source/install/solaris.txt:18
-#: ../../../source/install/ubuntu.txt:214
+#: ../../../source/install/ubuntu.txt:254
 msgid "Download source::"
 msgstr "ソースをダウンロードします::"
 
@@ -347,7 +352,7 @@ msgstr "ソースをダウンロードします::"
 #: ../../../source/install/debian.txt:192
 #: ../../../source/install/fedora.txt:89
 #: ../../../source/install/mac_os_x.txt:47
-#: ../../../source/install/ubuntu.txt:220
+#: ../../../source/install/ubuntu.txt:260
 msgid "Configure (see :ref:`source-configure` about ``configure`` options)::"
 msgstr ""
 "configureを実行します（ ``configure`` のオプションについては :ref:`source-"
@@ -363,7 +368,7 @@ msgstr ""
 #: ../../../source/install/fedora.txt:93
 #: ../../../source/install/mac_os_x.txt:51
 #: ../../../source/install/solaris.txt:31
-#: ../../../source/install/ubuntu.txt:224
+#: ../../../source/install/ubuntu.txt:264
 #: ../../../source/install/windows.txt:96
 msgid "Build::"
 msgstr "ビルド::"
@@ -408,6 +413,7 @@ msgstr "groongaのaptリポジトリを追加します。"
 #: ../../../source/install/ubuntu.txt:31 ../../../source/install/ubuntu.txt:78
 #: ../../../source/install/ubuntu.txt:125
 #: ../../../source/install/ubuntu.txt:172
+#: ../../../source/install/ubuntu.txt:212
 msgid "/etc/apt/sources.list.d/groonga.list::"
 msgstr ""
 
@@ -929,7 +935,8 @@ msgid ""
 "issues/6>`_. This issue is not nothing to do with updating column value."
 msgstr ""
 "無効となっている理由は、カラムの値を参照するときにメモリリークするためです。"
-"これは既知の問題 `GitHub#6 <https://github.com/groonga/groonga/issues/6>`_ です。この問題はカラムの更新とは関係ありません。"
+"これは既知の問題 `GitHub#6 <https://github.com/groonga/groonga/issues/6>`_ で"
+"す。この問題はカラムの更新とは関係ありません。"
 
 # bfdc5fa9f86041bfa8b673142dc66c9a
 #: ../../../source/install/others.txt:187
@@ -1227,6 +1234,50 @@ msgstr ""
 #: ../../../source/install/ubuntu.txt:161
 msgid "13.04 Raring Ringtail"
 msgstr ""
+
+# 161fad58cef448c698df3d188d57135d
+#: ../../../source/install/ubuntu.txt:208
+msgid "13.10 Saucy Salamander"
+msgstr ""
+
+# a177637550694587b307f796d25070e6
+# e5ad45a179564292b326644296227d76
+# 661dd17421374bfea77d290d9f8db499
+# e1119dd9699c42f9b2f84a09bb3cff62
+# 27dd3bccb69f4029ae52c4e3589784a3
+# 0fe49fdfc88442df8d0bbe5331c3c41b
+# 70d353f5aba14e699bb41bca2a294a0a
+#: ../../../source/install/ubuntu.txt:210
+msgid "Add the Groonga apt repository."
+msgstr "Groongaのaptリポジトリを追加します。"
+
+# 10346c91fc6942b992466dee4401c3dd
+# 9dbb644c0f304e798c8e769c455bf241
+# 1e86d7554f0348b0a5c65b70c7f987bd
+# 68faa6af5dcb440a93b1d0836303f4d9
+#: ../../../source/install/ubuntu.txt:231
+msgid ""
+"There is a package that provides `Munin <http://munin-monitoring.org/>`_ "
+"plugins. If you want to monitor Groonga status by Munin, install groonga-"
+"munin-plugins package."
+msgstr ""
+"`Munin <http://munin-monitoring.org/>`_ プラグインを提供するパッケージもあり"
+"ます。MuninでGroongaの状態をモニターしたい場合は、groonga-munin-pluginsパッ"
+"ケージをインストールしてください。"
+
+# 10346c91fc6942b992466dee4401c3dd
+# 9dbb644c0f304e798c8e769c455bf241
+# 1e86d7554f0348b0a5c65b70c7f987bd
+# 68faa6af5dcb440a93b1d0836303f4d9
+#: ../../../source/install/ubuntu.txt:239
+msgid ""
+"There is a package that provides MySQL compatible normalizer as Groonga "
+"plugins. If you want to use that one, install groonga-normalizer-mysql "
+"package."
+msgstr ""
+"MySQL互換のノーマライザーをGroongaのプラグインとして提供するパッケージがあり"
+"ます。MySQL互換のノーマライザーを使うには ``groonga-normalizer-mysql`` パッ"
+"ケージをインストールしてください。"
 
 # 006df75ef60e44d5a293e79addc40daa
 #: ../../../source/install/windows.txt:6

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-02 15:21+0900\n"
-"PO-Revision-Date: 2013-09-27 12:46+0900\n"
+"POT-Creation-Date: 2013-10-25 19:03+0900\n"
+"PO-Revision-Date: 2013-10-28 11:25+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -265,11 +265,14 @@ msgstr ""
 #: ../../../source/reference/commands/normalize.txt:17
 #: ../../../source/reference/commands/register.txt:12
 #: ../../../source/reference/commands/ruby_eval.txt:12
+#: ../../../source/reference/commands/ruby_load.txt:12
 #: ../../../source/reference/commands/select.txt:12
 #: ../../../source/reference/commands/table_create.txt:12
 #: ../../../source/reference/commands/tokenize.txt:12
 #: ../../../source/reference/commands/truncate.txt:12
 #: ../../../source/reference/executables/groonga-httpd.txt:9
+#: ../../../source/reference/executables/groonga-suggest-httpd.txt:9
+#: ../../../source/reference/executables/groonga-suggest-learner.txt:9
 #: ../../../source/reference/functions/geo_distance.txt:13
 #: ../../../source/reference/functions/html_untag.txt:12
 #: ../../../source/reference/functions/query.txt:12
@@ -278,6 +281,7 @@ msgstr ""
 #: ../../../source/reference/normalizers.txt:12
 #: ../../../source/reference/query_expanders/tsv.txt:9
 #: ../../../source/reference/tables.txt:9
+#: ../../../source/reference/tuning.txt:9
 msgid "Summary"
 msgstr "概要"
 
@@ -3384,9 +3388,10 @@ msgstr "``BODY`` に相当する部分は以下です::"
 #: ../../../source/reference/commands/column_create.txt:95
 #: ../../../source/reference/commands/column_rename.txt:71
 #: ../../../source/reference/commands/delete.txt:109
-#: ../../../source/reference/commands/normalize.txt:73
+#: ../../../source/reference/commands/normalize.txt:133
 #: ../../../source/reference/commands/ruby_eval.txt:58
-#: ../../../source/reference/commands/tokenize.txt:174
+#: ../../../source/reference/commands/ruby_load.txt:58
+#: ../../../source/reference/commands/tokenize.txt:175
 #: ../../../source/reference/commands/truncate.txt:65
 msgid "``HEADER``"
 msgstr ""
@@ -3584,11 +3589,26 @@ msgstr "XML"
 # 08dc9ef73719413c94ae0d5f08ba39d3
 #: ../../../source/reference/command/output_format.txt:217
 #: ../../../source/reference/command/output_format.txt:222
-#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:33
-#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:38
-#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:43
+#: ../../../source/reference/commands/normalize.txt:65
+#: ../../../source/reference/commands/normalize.txt:82
+#: ../../../source/reference/commands/normalize.txt:106
+#: ../../../source/reference/commands/normalize.txt:108
+#: ../../../source/reference/commands/normalize.txt:110
+#: ../../../source/reference/commands/normalize.txt:112
+#: ../../../source/reference/commands/normalize.txt:116
+#: ../../../source/reference/commands/normalize.txt:120
+#: ../../../source/reference/commands/normalize.txt:124
+#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:46
+#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:51
+#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:56
+#: ../../../source/reference/executables/groonga-suggest-httpd.txt:11
+#: ../../../source/reference/executables/groonga-suggest-httpd.txt:23
+#: ../../../source/reference/executables/groonga-suggest-learner.txt:11
+#: ../../../source/reference/executables/groonga-suggest-learner.txt:23
+#: ../../../source/reference/executables/groonga-suggest-learner.txt:28
 #: ../../../source/reference/functions/query.txt:162
 #: ../../../source/reference/functions/snippet_html.txt:108
+#: ../../../source/reference/tuning.txt:176
 msgid "TODO"
 msgstr ""
 
@@ -3604,11 +3624,12 @@ msgstr ""
 #: ../../../source/reference/commands/cache_limit.txt:84
 #: ../../../source/reference/commands/delete.txt:120
 #: ../../../source/reference/commands/load.txt:98
-#: ../../../source/reference/commands/normalize.txt:83
+#: ../../../source/reference/commands/normalize.txt:154
 #: ../../../source/reference/commands/ruby_eval.txt:70
+#: ../../../source/reference/commands/ruby_load.txt:69
 #: ../../../source/reference/commands/select.txt:906
 #: ../../../source/reference/commands/table_create.txt:280
-#: ../../../source/reference/commands/tokenize.txt:194
+#: ../../../source/reference/commands/tokenize.txt:195
 #: ../../../source/reference/functions/query.txt:167
 #: ../../../source/reference/functions/snippet_html.txt:118
 #: ../../../source/reference/functions/sub_filter.txt:134
@@ -4093,6 +4114,7 @@ msgstr ""
 #: ../../../source/reference/commands/normalize.txt:25
 #: ../../../source/reference/commands/register.txt:27
 #: ../../../source/reference/commands/ruby_eval.txt:17
+#: ../../../source/reference/commands/ruby_load.txt:17
 #: ../../../source/reference/commands/select.txt:21
 #: ../../../source/reference/commands/table_create.txt:18
 #: ../../../source/reference/commands/tokenize.txt:18
@@ -4119,14 +4141,17 @@ msgstr "``cache_limit`` には省略可能な引数が1つあります::"
 #: ../../../source/reference/commands/column_rename.txt:26
 #: ../../../source/reference/commands/delete.txt:32
 #: ../../../source/reference/commands/load.txt:70
-#: ../../../source/reference/commands/normalize.txt:36
+#: ../../../source/reference/commands/normalize.txt:37
 #: ../../../source/reference/commands/register.txt:34
 #: ../../../source/reference/commands/ruby_eval.txt:24
+#: ../../../source/reference/commands/ruby_load.txt:24
 #: ../../../source/reference/commands/select.txt:47
 #: ../../../source/reference/commands/table_create.txt:31
 #: ../../../source/reference/commands/tokenize.txt:30
 #: ../../../source/reference/commands/truncate.txt:26
 #: ../../../source/reference/executables/groonga-httpd.txt:30
+#: ../../../source/reference/executables/groonga-suggest-httpd.txt:21
+#: ../../../source/reference/executables/groonga-suggest-learner.txt:21
 #: ../../../source/reference/functions/geo_distance.txt:31
 #: ../../../source/reference/functions/html_untag.txt:36
 #: ../../../source/reference/functions/query.txt:40
@@ -4176,16 +4201,20 @@ msgstr ""
 #: ../../../source/reference/commands/column_rename.txt:45
 #: ../../../source/reference/commands/delete.txt:82
 #: ../../../source/reference/commands/load.txt:24
-#: ../../../source/reference/commands/normalize.txt:45
+#: ../../../source/reference/commands/normalize.txt:46
 #: ../../../source/reference/commands/ruby_eval.txt:41
+#: ../../../source/reference/commands/ruby_load.txt:41
 #: ../../../source/reference/commands/select.txt:199
 #: ../../../source/reference/commands/table_create.txt:154
 #: ../../../source/reference/commands/tokenize.txt:44
 #: ../../../source/reference/commands/truncate.txt:44
+#: ../../../source/reference/executables/groonga-suggest-httpd.txt:61
+#: ../../../source/reference/executables/groonga-suggest-learner.txt:31
 #: ../../../source/reference/functions/geo_distance.txt:146
 #: ../../../source/reference/functions/html_untag.txt:67
 #: ../../../source/reference/functions/query.txt:107
 #: ../../../source/reference/functions/sub_filter.txt:98
+#: ../../../source/reference/tuning.txt:15
 msgid "Parameters"
 msgstr "引数"
 
@@ -4193,6 +4222,7 @@ msgstr "引数"
 #: ../../../source/reference/commands/cache_limit.txt:56
 #: ../../../source/reference/commands/load.txt:26
 #: ../../../source/reference/commands/ruby_eval.txt:43
+#: ../../../source/reference/commands/ruby_load.txt:43
 #: ../../../source/reference/commands/table_create.txt:156
 msgid "This section describes all parameters."
 msgstr "このセクションではすべての引数について説明します。"
@@ -4226,11 +4256,12 @@ msgstr ""
 #: ../../../source/reference/commands/column_rename.txt:65
 #: ../../../source/reference/commands/delete.txt:103
 #: ../../../source/reference/commands/load.txt:88
-#: ../../../source/reference/commands/normalize.txt:67
+#: ../../../source/reference/commands/normalize.txt:127
 #: ../../../source/reference/commands/register.txt:51
 #: ../../../source/reference/commands/ruby_eval.txt:51
+#: ../../../source/reference/commands/ruby_load.txt:51
 #: ../../../source/reference/commands/table_create.txt:269
-#: ../../../source/reference/commands/tokenize.txt:166
+#: ../../../source/reference/commands/tokenize.txt:167
 #: ../../../source/reference/commands/truncate.txt:59
 #: ../../../source/reference/functions/geo_distance.txt:293
 #: ../../../source/reference/functions/html_untag.txt:77
@@ -4248,7 +4279,8 @@ msgstr "``cache_limit`` は現在の最大クエリーキャッシュエント�
 # 7076e42ec8ef4557b5a1a22d51cab92d
 #: ../../../source/reference/commands/cache_limit.txt:76
 #: ../../../source/reference/commands/ruby_eval.txt:60
-#: ../../../source/reference/commands/tokenize.txt:176
+#: ../../../source/reference/commands/ruby_load.txt:60
+#: ../../../source/reference/commands/tokenize.txt:177
 msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
 msgstr ""
 "``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
@@ -4670,9 +4702,10 @@ msgstr ""
 #: ../../../source/reference/commands/check.txt:49
 #: ../../../source/reference/commands/column_create.txt:50
 #: ../../../source/reference/commands/column_list.txt:63
+#: ../../../source/reference/commands/normalize.txt:90
 #: ../../../source/reference/commands/table_create.txt:179
 #: ../../../source/reference/commands/table_list.txt:58
-#: ../../../source/reference/commands/tokenize.txt:130
+#: ../../../source/reference/commands/tokenize.txt:131
 msgid "``flags``"
 msgstr ""
 
@@ -4920,7 +4953,7 @@ msgstr ""
 #: ../../../source/reference/commands_not_implemented/add.txt:92
 #: ../../../source/reference/commands_not_implemented/get.txt:68
 #: ../../../source/reference/commands_not_implemented/set.txt:94
-#: ../../../source/reference/executables/groonga.txt:221
+#: ../../../source/reference/executables/groonga.txt:218
 #: ../../../source/reference/functions/edit_distance.txt:44
 #: ../../../source/reference/functions/geo_in_circle.txt:73
 #: ../../../source/reference/functions/geo_in_rectangle.txt:47
@@ -5197,11 +5230,10 @@ msgid ""
 "github.com/groonga/groonga/issues/6>`_ when refers the value of column. This "
 "issue occurs both of them (zlib and lzo)."
 msgstr ""
-"カラムの値を圧縮するためのフラグが2つあります。ただしそれらのフラグを"
-"指定することは今のところできません。これはカラムの値を参照するときに"
-"メモリリークする問題 `GitHub#6"
-" <https://github.com/groonga/groonga/issues/6>`_ があるためです。 "
-"この問題はzlib、lzoいずれでも発生します。"
+"カラムの値を圧縮するためのフラグが2つあります。ただしそれらのフラグを指定する"
+"ことは今のところできません。これはカラムの値を参照するときにメモリリークする"
+"問題 `GitHub#6 <https://github.com/groonga/groonga/issues/6>`_ があるためで"
+"す。 この問題はzlib、lzoいずれでも発生します。"
 
 # 1b150e51b1db443f8b42019698c7468f
 #: ../../../source/reference/commands/column_create.txt:63
@@ -5214,8 +5246,8 @@ msgid ""
 "Reserved. Compress the value of column by using zlib. This flag is disabled "
 "feature even if you build groonga with ``--with-zlib``."
 msgstr ""
-"予約済み。zlibを使ってカラムの値を圧縮します。このフラグはgroongaを "
-"``--with-zlib`` つきでビルドしても使えません。"
+"予約済み。zlibを使ってカラムの値を圧縮します。このフラグはgroongaを ``--with-"
+"zlib`` つきでビルドしても使えません。"
 
 # 96f39751140b4fdc84c4fd79e29335b3
 #: ../../../source/reference/commands/column_create.txt:66
@@ -5228,8 +5260,8 @@ msgid ""
 "Reserved. Compress the value of column by using lzo. This flag is disabled "
 "feature even if you build groonga with ``--with-lzo``."
 msgstr ""
-"予約済み。lzoを使ってカラムの値を圧縮します。このフラグはgroongaを "
-"``--with-lzo`` つきでビルドしても使えません。"
+"予約済み。lzoを使ってカラムの値を圧縮します。このフラグはgroongaを ``--with-"
+"lzo`` つきでビルドしても使えません。"
 
 # afdb31ce94c04731ad99c315676f743d
 #: ../../../source/reference/commands/column_create.txt:68
@@ -5302,7 +5334,7 @@ msgstr ""
 #: ../../../source/reference/commands/column_create.txt:97
 #: ../../../source/reference/commands/column_rename.txt:73
 #: ../../../source/reference/commands/delete.txt:111
-#: ../../../source/reference/commands/normalize.txt:75
+#: ../../../source/reference/commands/normalize.txt:135
 #: ../../../source/reference/commands/truncate.txt:67
 msgid ""
 "The format of HEADER is [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, "
@@ -5320,7 +5352,6 @@ msgstr ""
 # b4c2d2eac3a8464994477107d6cd11eb
 # 30c269e4bd054949b890b77cc0df99cd
 #: ../../../source/reference/commands/column_create.txt:102
-#, fuzzy
 msgid "If command is succeeded, it returns true on success, false otherwise."
 msgstr ""
 "コマンドの実行が成功するとtrueを返します。失敗するとエラーとしてfalseを返しま"
@@ -5557,7 +5588,7 @@ msgstr "このセクションでは ``column_rename`` の引数について説�
 # 41a5ec8bf94e4a5a87e2cbcb48e5a10e
 # 852d1057fa6546bc9ab1ff1a04d6f857
 #: ../../../source/reference/commands/column_rename.txt:50
-#: ../../../source/reference/commands/normalize.txt:50
+#: ../../../source/reference/commands/normalize.txt:51
 #: ../../../source/reference/commands/select.txt:204
 #: ../../../source/reference/commands/truncate.txt:49
 #: ../../../source/reference/functions/geo_distance.txt:149
@@ -6065,7 +6096,7 @@ msgstr ""
 
 # c4ef53521aa74d0e804ccd440321b2c5
 #: ../../../source/reference/commands/load.txt:9
-#: ../../../source/reference/executables/groonga.txt:196
+#: ../../../source/reference/executables/groonga.txt:193
 msgid "``load``"
 msgstr ""
 
@@ -6432,71 +6463,213 @@ msgstr ""
 # 175ddfb1298649878c537595a2683fc5
 #: ../../../source/reference/commands/normalize.txt:27
 msgid ""
-"``normalize`` commands takes two parameters - ``normalizer`` and ``string``. "
-"Both of them are required."
+"``normalize`` commands has two required parameters. They are ``normalizer`` "
+"and ``string``."
 msgstr ""
 "``normalize`` コマンドは ``normalizer`` と ``string`` という二つの引数をとり"
 "ます。これらの引数はどちらも必須です。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
-#: ../../../source/reference/commands/normalize.txt:38
+#: ../../../source/reference/commands/normalize.txt:39
 msgid "Here is a simple example of ``normalize`` command."
 msgstr "以下は ``normalize`` コマンドの簡単な使用例です。"
 
 # e92758beef824130ab42669342c10d50
-#: ../../../source/reference/commands/normalize.txt:47
+#: ../../../source/reference/commands/normalize.txt:48
 msgid "This section describes parameters of ``normalizer``."
 msgstr "このセクションでは ``normalizer`` の引数について説明します。"
 
 # b90bfd8b177440e6b2a2ff7f128303f9
-#: ../../../source/reference/commands/normalize.txt:52
+#: ../../../source/reference/commands/normalize.txt:53
 msgid "There are required parameters, ``normalizer`` and ``string``."
 msgstr "必須引数は二つあります。 ``normalizer`` と ``string`` です。"
 
 # 6b1754c3e5be4f51a74d6a2bb467702d
-#: ../../../source/reference/commands/normalize.txt:55
+#: ../../../source/reference/commands/normalize.txt:56
 #: ../../../source/reference/commands/table_create.txt:257
-#: ../../../source/reference/commands/tokenize.txt:91
+#: ../../../source/reference/commands/tokenize.txt:92
 msgid "``normalizer``"
 msgstr ""
 
-# 448c01bf71e445e4b8cf64f75eb74821
-#: ../../../source/reference/commands/normalize.txt:57
+# 29cc550d3f8c4ef5a51de55f4a0c04b8
+#: ../../../source/reference/commands/normalize.txt:58
 msgid ""
-"It specifies the name of normalizer. Currently, ``normalize`` command "
-"accepts ``NormalizerAuto`` or ``NormalizerNFKC51`` as built-in normalizer. "
-"If you want to try another normalizer, you need to register additional "
-"normalizer plugin by ``register`` command."
-msgstr ""
-"ノーマライザーの名前を指定します。今のところ ``normalize`` コマンドは "
-"``NormalizerAuto`` もしくは ``NormalizerNFKC51`` を組み込みノーマライザーとし"
-"て受けつけます。もし他のノーマライザーを使いたい場合には、追加したいノーマラ"
-"イザーを :doc:`/reference/commands/register` コマンドで登録する必要がありま"
-"す。"
+"It specifies the normalizer name. ``normalize`` command uses the normalizer "
+"that is named ``normalizer``."
+msgstr "ノーマライザー名を指定します。 ``normalize`` コマンドは ``normalizer`` で指定された名前のノーマライザーを使います。"
+
+# bde897b0ca22430eb927c3f3d85d70d2
+#: ../../../source/reference/commands/normalize.txt:61
+msgid "See :doc:`/reference/normalizers` about built-in normalizers."
+msgstr "組み込みのノーマライザーの一覧は :doc:`/reference/normalizers` にあります。"
+
+# b993c6521463466f8f42d9a4e7e5107f
+#: ../../../source/reference/commands/normalize.txt:63
+msgid "Here is an example to use built-in ``NormalizerAuto`` normalizer."
+msgstr "以下は ``NormalizerAuto`` ノーマライザーを使う例です。"
+
+# b686f5c8ed164c7799a1941e4e17f8d3
+#: ../../../source/reference/commands/normalize.txt:67
+msgid ""
+"If you want to use other normalizers, you need to register additional "
+"normalizer plugin by :doc:`register` command. For example, you can use MySQL "
+"compatible normalizer by registering `groonga-normalizer-mysql <https://"
+"github.com/groonga/groonga-normalizer-mysql>`_."
+msgstr "他のノーマライザーを使いたい場合は、 :doc:`register` コマンドでノーマライザープラグインを登録する必要があります。例えば、 `groonga-normalizer-mysql <https://github.com/groonga/groonga-normalizer-mysql>`_ を登録することでMySQL互換の正規化方法を使うことができます。"
 
 # cb0a853b357a4c649782dcd24af78d02
-#: ../../../source/reference/commands/normalize.txt:62
+#: ../../../source/reference/commands/normalize.txt:73
 #: ../../../source/reference/commands/tokenize.txt:73
 msgid "``string``"
 msgstr ""
 
 # b0b25f3e15764cb184fbc1aad1979089
-#: ../../../source/reference/commands/normalize.txt:64
+#: ../../../source/reference/commands/normalize.txt:75
 msgid "It specifies any string which you want to normalize."
 msgstr "正規化したい文字列を指定します。"
 
+# c5230aa2d8c347f594cc9829a4362cc4
+#: ../../../source/reference/commands/normalize.txt:77
+#: ../../../source/reference/commands/tokenize.txt:77
+msgid ""
+"If you want to include spaces in ``string``, you need to quote ``string`` by "
+"single quotation (``'``) or double quotation (``\"``)."
+msgstr "``string`` の中に文字列を含める場合は、シングルクォート（ ``'`` ）またはダブルクォート（ ``\"`` ）で ``string`` をクォートする必要があります。"
+
+# b993c6521463466f8f42d9a4e7e5107f
+#: ../../../source/reference/commands/normalize.txt:80
+#: ../../../source/reference/commands/tokenize.txt:80
+msgid "Here is an example to use spaces in ``string``."
+msgstr "``string`` の中で空白を使う例です。"
+
+# 063b335227cc45469a645aec28feca86
+#: ../../../source/reference/commands/normalize.txt:85
+#: ../../../source/reference/commands/tokenize.txt:87
+msgid "Optional parameters"
+msgstr "省略可能引数"
+
+# 063b335227cc45469a645aec28feca86
+#: ../../../source/reference/commands/normalize.txt:87
+#: ../../../source/reference/commands/tokenize.txt:89
+msgid "There are optional parameters."
+msgstr "いくつか省略可能な引数があります。"
+
+# 43f9006f36dc46c5a8dec760dfb216c7
+#: ../../../source/reference/commands/normalize.txt:92
+msgid ""
+"It specifies a normalization customize options. You can specify multiple "
+"options separated by \"``|``\". For example, ``REMOVE_BLANK|WITH_TYPES``."
+msgstr "ノーマライズ処理をカスタマイズするオプションを指定します。「 ``|`` 」で区切って複数のオプションを指定することができます。例えば、 ``REMOVE_BLANK|WITH_TYPES`` というように指定できます。"
+
+# 77b120c7869549b5855bc906a84570a2
+#: ../../../source/reference/commands/normalize.txt:96
+#: ../../../source/reference/commands/tokenize.txt:137
+msgid "Here are available flags."
+msgstr "指定可能なフラグは以下の通りです。"
+
+# c6b62e53fc90490f8a62f874d7dfcb0c
+#: ../../../source/reference/commands/normalize.txt:101
+#: ../../../source/reference/commands/tokenize.txt:142
+msgid "Flag"
+msgstr "フラグ"
+
+# 071bf66b5e09468dbeb9affc7997a57f
+#: ../../../source/reference/commands/normalize.txt:102
+#: ../../../source/reference/commands/normalize.txt:146
+#: ../../../source/reference/commands/tokenize.txt:143
+#: ../../../source/reference/commands/tokenize.txt:188
+msgid "Description"
+msgstr "説明"
+
+# 16fa022451e44ffc967f3f7547e8167e
+#: ../../../source/reference/commands/normalize.txt:103
+#: ../../../source/reference/commands/select.txt:473
+#: ../../../source/reference/commands/tokenize.txt:144
+msgid "``NONE``"
+msgstr ""
+
+# f46c1572d71d462f89c7a301846c604e
+#: ../../../source/reference/commands/normalize.txt:104
+#: ../../../source/reference/commands/tokenize.txt:145
+msgid "Just ignored."
+msgstr "無視されます。"
+
+# f881687f93fb4bdb9c78392fa1ea2c3f
+#: ../../../source/reference/commands/normalize.txt:105
+msgid "``REMOVE_BLANK``"
+msgstr ""
+
+# a1477d1639a34157b61e01c5af224788
+#: ../../../source/reference/commands/normalize.txt:107
+msgid "``WITH_TYPES``"
+msgstr ""
+
+# 0a65227eccdf4bb2ae62f467ce2a9181
+#: ../../../source/reference/commands/normalize.txt:109
+msgid "``WITH_CHECKS``"
+msgstr ""
+
+# 5a2e1436dfa44de6b028707274e7573b
+#: ../../../source/reference/commands/normalize.txt:111
+msgid "``REMOVE_TOKENIZED_DELIMITER``"
+msgstr ""
+
+# 1ccd84b3f15a4567b23bb0e7d8c66fcd
+#: ../../../source/reference/commands/normalize.txt:114
+msgid "Here is an example that uses ``REMOVE_BLANK``."
+msgstr "以下は ``REMOVE_BLANK`` を使った例です。"
+
+# 1ccd84b3f15a4567b23bb0e7d8c66fcd
+#: ../../../source/reference/commands/normalize.txt:118
+msgid "Here is an example that uses ``WITH_TYPES``."
+msgstr "以下は ``WITH_TYPES`` を使った例です。"
+
+# 1ccd84b3f15a4567b23bb0e7d8c66fcd
+#: ../../../source/reference/commands/normalize.txt:122
+msgid "Here is an example that uses ``REMOVE_TOKENIZED_DELIMITER``."
+msgstr "以下は ``REMOVE_TOKENIZED_DELIMITER`` を使った例です。"
+
+# 2754d1ed01284818aa4f0a49af0678ac
+#: ../../../source/reference/commands/normalize.txt:138
+msgid "``normalized_text``"
+msgstr ""
+
+# 4db16b20796047df8b95c3c9e628be0f
+#: ../../../source/reference/commands/normalize.txt:140
+msgid "``normalized_text`` is an object that has the following attributes."
+msgstr "``normalized_text`` はオブジェクトです。このオブジェクトは以下の属性を持っています。"
+
+# db62dc6e491a46edb2b609114cfae5f8
+#: ../../../source/reference/commands/normalize.txt:145
+#: ../../../source/reference/commands/tokenize.txt:187
+msgid "Name"
+msgstr "名前"
+
 # a2f5fdf4c9754afa8095b1729265d517
-#: ../../../source/reference/commands/normalize.txt:78
+#: ../../../source/reference/commands/normalize.txt:147
 msgid "``normalized``"
 msgstr ""
 
-# f21982b8504d499fa39e4e6c4be6923e
-#: ../../../source/reference/commands/normalize.txt:80
-msgid "normalized is the normalized text by the specified normalizer."
-msgstr "normalizedは指定したノーマライザーによる正規化されたテキストです。"
+# 219b3f424bab44e193cf7fbfafb48dcc
+#: ../../../source/reference/commands/normalize.txt:148
+msgid "The normalized text."
+msgstr "正規化されたテキスト。"
+
+# c6705133119f484883c843674750b307
+#: ../../../source/reference/commands/normalize.txt:149
+#: ../../../source/reference/commands/suggest.txt:68
+msgid "``types``"
+msgstr ""
+
+# 832ffca2537f41638ab333fb94ea17ac
+#: ../../../source/reference/commands/normalize.txt:150
+msgid ""
+"An array of types of the normalized text. The N-th ``types`` shows the type "
+"of the N-th character in ``normalized``."
+msgstr ""
 
 # c1eec2803b574b0bbe9bde8177d0c14c
-#: ../../../source/reference/commands/normalize.txt:85
+#: ../../../source/reference/commands/normalize.txt:156
 #: ../../../source/reference/commands/table_create.txt:285
 msgid ":doc:`/reference/normalizers`"
 msgstr ""
@@ -6651,9 +6824,9 @@ msgstr ""
 "``ruby_eval`` コマンドは実験的なプラグインです。このコマンドは将来的に変更さ"
 "れるかも知れません。"
 
-# a5788c0ce60a4ccc8d309f5c938f8418
+# 21b7e799ffee4cabbad0d3ffa0386de3
 #: ../../../source/reference/commands/ruby_eval.txt:46
-msgid "``ruby_script``"
+msgid "``script``"
 msgstr ""
 
 # b0b25f3e15764cb184fbc1aad1979089
@@ -6689,9 +6862,86 @@ msgstr ""
 "今のところ、 ``ruby_eval`` は評価された値として数値だけサポートしています。サ"
 "ポートしている型は今後増えていく予定です。"
 
+# 5df17a848ab649dc9e15ec8779ee0980
+#: ../../../source/reference/commands/ruby_load.txt:9
+msgid "``ruby_load``"
+msgstr ""
+
+# e8e779bcb974490195fc71a1f760789e
+#: ../../../source/reference/commands/ruby_load.txt:14
+msgid "``ruby_load`` command loads specified Ruby script."
+msgstr "``ruby_load`` コマンドは指定したRubyスクリプトを読み込みます。"
+
+# 1ce42bdc29594a019e7d0db71d6a3135
+#: ../../../source/reference/commands/ruby_load.txt:19
+msgid "``ruby_load`` has one required parameter::"
+msgstr "``ruby_load`` には必須な引数が1つあります::"
+
+# f54f561162d74634a26200e953d89792
+#: ../../../source/reference/commands/ruby_load.txt:26
+msgid ""
+"You can load any script file which mruby supports by calling ``ruby_load``."
+msgstr "``ruby_load`` を使ってmrubyがサポートしているスクリプトを読み込むことができます。"
+
+# b993c6521463466f8f42d9a4e7e5107f
+#: ../../../source/reference/commands/ruby_load.txt:28
+msgid "Here is an example that just load ``expression.rb`` as Ruby script."
+msgstr "Rubyスクリプトとして ``expression.rb`` を単に読むこむ例です。"
+
+# 1af70f334ecb48259529332b1844c52d
+#: ../../../source/reference/commands/ruby_load.txt:35
+msgid "Register ``ruby/load`` plugin to use ``ruby_load`` command in advance."
+msgstr "``ruby_load`` コマンドを使うには事前に ``ruby/load`` プラグインを登録します。"
+
+# 50d4a5927b81445f840f51e9605db852
+#: ../../../source/reference/commands/ruby_load.txt:37
+msgid ""
+"Note that ``ruby_load`` is implemented as an experimental plugin, and the "
+"specification may be changed in the future."
+msgstr "``ruby_load`` コマンドは実験的なプラグインです。このコマンドは将来的に変更されるかも知れません。"
+
+# 8be197a1c2584bcab11fddfe1d9fba0f
+#: ../../../source/reference/commands/ruby_load.txt:46
+msgid "``script_path``"
+msgstr ""
+
+# b0b25f3e15764cb184fbc1aad1979089
+#: ../../../source/reference/commands/ruby_load.txt:48
+msgid "It specifies the Ruby script path which you want to load."
+msgstr "読み込みたいrubyスクリプトを指定します。"
+
+# 8f711b2d68dd419491c7265e713b66d6
+#: ../../../source/reference/commands/ruby_load.txt:53
+msgid ""
+"``ruby_load`` returns the loaded result with metadata such as exception "
+"information (Including metadata isn't implemented yet)::"
+msgstr "``ruby_load`` は例外情報などのメタデータつきで読み込んだ結果を返します（メタデータはまだ実装されていないので今のところ含まれません）::"
+
+# a7bb3a929c1341aa9801f25877159ab4
+#: ../../../source/reference/commands/ruby_load.txt:62
+msgid "``LOADED_VALUE``"
+msgstr ""
+
+# 6690fd57ac564fd7a989f873a34cc773
+#: ../../../source/reference/commands/ruby_load.txt:64
+msgid "``LOADED_VALUE`` is the loaded value of ruby script."
+msgstr "``LOADED_VALUE`` はrubyスクリプトを読み込んだ結果です。"
+
+# 4e7119460a2c49e4b648c46ec3f5b9d5
+#: ../../../source/reference/commands/ruby_load.txt:66
+msgid ""
+"``ruby_load`` just return ``null`` as ``LOADED_VALUE`` for now, it will be "
+"supported in the future."
+msgstr "``ruby_load`` は ``LOADED_VALUE`` としていまのところは単に ``null`` を返します。将来的には ``LOADED_VALUE`` がサポートされる予定です。"
+
+# 7076e42ec8ef4557b5a1a22d51cab92d
+#: ../../../source/reference/commands/ruby_load.txt:71
+msgid ":doc:`/reference/commands/ruby_eval`"
+msgstr ""
+
 # e9574c3225e149989e5c56875a3bf7a7
 #: ../../../source/reference/commands/select.txt:9
-#: ../../../source/reference/executables/groonga.txt:199
+#: ../../../source/reference/executables/groonga.txt:196
 msgid "``select``"
 msgstr ""
 
@@ -7465,12 +7715,6 @@ msgstr ""
 # e775a4133b6446a090683176a49087ce
 #: ../../../source/reference/commands/select.txt:472
 msgid "``ALLOW_LEADING_NOT``"
-msgstr ""
-
-# 16fa022451e44ffc967f3f7547e8167e
-#: ../../../source/reference/commands/select.txt:473
-#: ../../../source/reference/commands/tokenize.txt:143
-msgid "``NONE``"
 msgstr ""
 
 # 4f6cb23b3eea4f52967e68bd3e3adaac
@@ -8429,7 +8673,7 @@ msgstr ""
 
 # ce7d9de80ef549e5bf877ec01529d0dd
 #: ../../../source/reference/commands/suggest.txt:38
-#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:26
+#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:39
 msgid "OPTIONS"
 msgstr "オプション"
 
@@ -8495,11 +8739,6 @@ msgstr "補正候補と提案候補を返します::"
 #: ../../../source/reference/commands/suggest.txt:66
 msgid "It returns complete, correction and suggestion::"
 msgstr "補完候補と補正候補と提案候補を返します::"
-
-# c6705133119f484883c843674750b307
-#: ../../../source/reference/commands/suggest.txt:68
-msgid "``types``"
-msgstr ""
 
 # 985ad3050dc94aa2af334799d30a6280
 #: ../../../source/reference/commands/suggest.txt:71
@@ -8751,7 +8990,7 @@ msgstr ""
 
 # b6413e09d91345aeacffb24f7f75ac87
 #: ../../../source/reference/commands/suggest.txt:199
-#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:41
+#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:54
 msgid "EXAMPLE"
 msgstr "例"
 
@@ -8792,7 +9031,7 @@ msgstr "以下は補完・補正・提案を混ぜた例です。"
 
 # 33bfc7742f5d470480ab25360297ded1
 #: ../../../source/reference/commands/suggest.txt:267
-#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:46
+#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:59
 msgid "SEE ALSO"
 msgstr "参考"
 
@@ -9429,7 +9668,7 @@ msgstr ""
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/commands/table_create.txt:284
-#: ../../../source/reference/commands/tokenize.txt:196
+#: ../../../source/reference/commands/tokenize.txt:197
 msgid ":doc:`/reference/tokenizers`"
 msgstr ""
 
@@ -9660,50 +9899,25 @@ msgstr ""
 
 # b993c6521463466f8f42d9a4e7e5107f
 #: ../../../source/reference/commands/tokenize.txt:61
-msgid "Here is an example to use ``TokenTrigram`` tokenizer."
-msgstr "以下は ``TokenTrigram`` トークナイザーを使う例です。"
+msgid "Here is an example to use built-in ``TokenTrigram`` tokenizer."
+msgstr "以下は組み込みの ``TokenTrigram`` トークナイザーを使う例です。"
 
 # b686f5c8ed164c7799a1941e4e17f8d3
 #: ../../../source/reference/commands/tokenize.txt:67
 msgid ""
 "If you want to use other tokenizers, you need to register additional "
-"tokenizer plugin by :doc:`register` command. For example, you can use MySQL "
-"compatible normalizer by registering `groonga-normalizer-mysql <https://"
-"github.com/groonga/groonga-normalizer-mysql>`_."
-msgstr ""
-"他のトークナイザーを使いたい場合は、 :doc:`register` コマンドでトークナイザー"
-"プラグインを登録する必要があります。例えば、 `groonga-normalizer-mysql "
-"<https://github.com/groonga/groonga-normalizer-mysql>`_ を登録することでMySQL"
-"互換の正規化方法を使うことができます。"
+"tokenizer plugin by :doc:`register` command. For example, you can use `KyTea "
+"<http://www.phontron.com/kytea/>`_ based tokenizer by registering "
+"``tokenizers/kytea``."
+msgstr "他のトークナイザーを使いたい場合は、 :doc:`register` コマンドでトークナイザープラグインを登録する必要があります。例えば、 `KyTea <http://www.phontron.com/kytea/>`_ ベースのトークナイザーを ``tokenizers/kytea`` を登録することで使えます。"
 
-# c5230aa2d8c347f594cc9829a4362cc4
+# b0b25f3e15764cb184fbc1aad1979089
 #: ../../../source/reference/commands/tokenize.txt:75
-msgid ""
-"It specifies any string which you want to tokenize. If you want to include "
-"spaces in ``string``, you need to quote ``string`` by single quotation "
-"(``'``) or double quotation (``\"``)."
-msgstr ""
-"トークナイズしたい文字列を指定します。 ``string`` の中に文字列を含める場合"
-"は、シングルクォート（ ``'`` ）またはダブルクォート（ ``\"`` ）で ``string`` "
-"をクォートする必要があります。"
-
-# b993c6521463466f8f42d9a4e7e5107f
-#: ../../../source/reference/commands/tokenize.txt:79
-msgid "Here is an example to use spaces in ``string``."
-msgstr "``string`` の中で空白を使う例です。"
-
-# 063b335227cc45469a645aec28feca86
-#: ../../../source/reference/commands/tokenize.txt:86
-msgid "Optional parameters"
-msgstr "省略可能引数"
-
-# 063b335227cc45469a645aec28feca86
-#: ../../../source/reference/commands/tokenize.txt:88
-msgid "There are optional parameters."
-msgstr "いくつか省略可能な引数があります。"
+msgid "It specifies any string which you want to tokenize."
+msgstr "トークナイズしたい文字列を指定します。"
 
 # 4db07dbb92534c5b89959390e506bda8
-#: ../../../source/reference/commands/tokenize.txt:93
+#: ../../../source/reference/commands/tokenize.txt:94
 msgid ""
 "It specifies the normalizer name. ``tokenize`` command uses the normalizer "
 "that is named ``normalizer``. Normalizer is important for N-gram family "
@@ -9714,7 +9928,7 @@ msgstr ""
 "関連のトークナイザーにとってとても重要です。"
 
 # 990c75c1519a44df8c7f9ffc24611218
-#: ../../../source/reference/commands/tokenize.txt:97
+#: ../../../source/reference/commands/tokenize.txt:98
 msgid ""
 "Normalizer detects character type for each character while normalizing. N-"
 "gram family tokenizers use character types while tokenizing."
@@ -9723,12 +9937,12 @@ msgstr ""
 "トークナイザーはトークナイズ中に文字の種類を利用します。"
 
 # b993c6521463466f8f42d9a4e7e5107f
-#: ../../../source/reference/commands/tokenize.txt:101
+#: ../../../source/reference/commands/tokenize.txt:102
 msgid "Here is an example that doesn't use normalizer."
 msgstr "以下はノーマライザーを使わない例です。"
 
 # 4dfb6f69a82340d0b6340ff1ca1ff7f7
-#: ../../../source/reference/commands/tokenize.txt:107
+#: ../../../source/reference/commands/tokenize.txt:108
 msgid ""
 "All alphabets are tokenized by two characters. For example, ``Fu`` is a "
 "token."
@@ -9737,12 +9951,12 @@ msgstr ""
 "1つのトークンになっています。"
 
 # b993c6521463466f8f42d9a4e7e5107f
-#: ../../../source/reference/commands/tokenize.txt:110
+#: ../../../source/reference/commands/tokenize.txt:111
 msgid "Here is an example that uses normalizer."
 msgstr "以下はノーマライザーを使う例です。"
 
 # 5ec8bb421d6e4d60b42d4ae53129662c
-#: ../../../source/reference/commands/tokenize.txt:116
+#: ../../../source/reference/commands/tokenize.txt:117
 msgid ""
 "Continuous alphabets are tokenized as one token. For example, ``fulltext`` "
 "is a token."
@@ -9751,7 +9965,7 @@ msgstr ""
 "``fulltext`` で1つのトークンになっています。"
 
 # aac9904bc11742e395cd0e474741cf7b
-#: ../../../source/reference/commands/tokenize.txt:119
+#: ../../../source/reference/commands/tokenize.txt:120
 msgid ""
 "If you want to tokenize by two characters with noramlizer, use "
 "``TokenBigramSplitSymbolAlpha``."
@@ -9760,7 +9974,7 @@ msgstr ""
 "``TokenBigramSplitSymbolAlpha`` を使って下さい。"
 
 # c5d76668782f4cd8ad4b9cd6ca272ff1
-#: ../../../source/reference/commands/tokenize.txt:126
+#: ../../../source/reference/commands/tokenize.txt:127
 msgid ""
 "All alphabets are tokenized by two characters. And they are normalized to "
 "lower case characters. For example, ``fu`` is a token."
@@ -9770,7 +9984,7 @@ msgstr ""
 "ています。"
 
 # 43f9006f36dc46c5a8dec760dfb216c7
-#: ../../../source/reference/commands/tokenize.txt:132
+#: ../../../source/reference/commands/tokenize.txt:133
 msgid ""
 "It specifies a tokenization customize options. You can specify multiple "
 "options separated by \"``|``\". For example, ``NONE|"
@@ -9780,34 +9994,13 @@ msgstr ""
 "て複数のオプションを指定することができます。例えば、 ``NONE|"
 "ENABLE_TOKENIZED_DELIMITER`` というように指定できます。"
 
-# 77b120c7869549b5855bc906a84570a2
-#: ../../../source/reference/commands/tokenize.txt:136
-msgid "Here are available flags."
-msgstr "指定可能なフラグは以下の通りです。"
-
-# c6b62e53fc90490f8a62f874d7dfcb0c
-#: ../../../source/reference/commands/tokenize.txt:141
-msgid "Flag"
-msgstr "フラグ"
-
-# 071bf66b5e09468dbeb9affc7997a57f
-#: ../../../source/reference/commands/tokenize.txt:142
-#: ../../../source/reference/commands/tokenize.txt:187
-msgid "Description"
-msgstr "説明"
-
-# f46c1572d71d462f89c7a301846c604e
-#: ../../../source/reference/commands/tokenize.txt:144
-msgid "Just ignored."
-msgstr "無視されます。"
-
 # bbb723ca24b64e95a8785cd43461e8d1
-#: ../../../source/reference/commands/tokenize.txt:145
+#: ../../../source/reference/commands/tokenize.txt:146
 msgid "``ENABLE_TOKENIZED_DELIMITER``"
 msgstr ""
 
 # bde897b0ca22430eb927c3f3d85d70d2
-#: ../../../source/reference/commands/tokenize.txt:146
+#: ../../../source/reference/commands/tokenize.txt:147
 msgid ""
 "Enables tokenized delimiter. See :doc:`/reference/tokenizers` about "
 "tokenized delimiter details."
@@ -9816,12 +10009,12 @@ msgstr ""
 "は :doc:`/reference/tokenizers` を参照してください。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
-#: ../../../source/reference/commands/tokenize.txt:149
+#: ../../../source/reference/commands/tokenize.txt:150
 msgid "Here is an example that uses ``ENABLE_TOKENIZED_DELIMITER``."
 msgstr "以下は ``ENABLE_TOKENIZED_DELIMITER`` を使った例です。"
 
 # de4e1da50f6545629623eb92dc5f5a0c
-#: ../../../source/reference/commands/tokenize.txt:155
+#: ../../../source/reference/commands/tokenize.txt:156
 msgid ""
 "``TokenDelimit`` tokenizer is one of tokenized delimiter supported "
 "tokenizer. ``ENABLE_TOKENIZED_DELIMITER`` enables tokenized delimiter. "
@@ -9843,7 +10036,7 @@ msgstr ""
 "切ってトークナイズします。"
 
 # 8c5b89736ac54de3baaf7ae793b13102
-#: ../../../source/reference/commands/tokenize.txt:168
+#: ../../../source/reference/commands/tokenize.txt:169
 msgid ""
 "``tokenize`` command returns tokenized tokens. Each token has some "
 "attributes except token itself. The attributes will be increased in the "
@@ -9854,12 +10047,12 @@ msgstr ""
 "可能性があります::"
 
 # af3b497bdf704e1e9343a4d4e111054e
-#: ../../../source/reference/commands/tokenize.txt:178
+#: ../../../source/reference/commands/tokenize.txt:179
 msgid "``tokens``"
 msgstr ""
 
 # 4db16b20796047df8b95c3c9e628be0f
-#: ../../../source/reference/commands/tokenize.txt:180
+#: ../../../source/reference/commands/tokenize.txt:181
 msgid ""
 "``tokens`` is an array of token. Token is an object that has the following "
 "attributes."
@@ -9867,28 +10060,23 @@ msgstr ""
 "``tokens`` はトークンの配列です。トークンは以下の属性を持ったオブジェクトで"
 "す。"
 
-# db62dc6e491a46edb2b609114cfae5f8
-#: ../../../source/reference/commands/tokenize.txt:186
-msgid "Name"
-msgstr "名前"
-
 # e141def53e0546c8bbaa927921aba648
-#: ../../../source/reference/commands/tokenize.txt:188
+#: ../../../source/reference/commands/tokenize.txt:189
 msgid "``value``"
 msgstr ""
 
 # bf16170a23664153b8943d26f928a91a
-#: ../../../source/reference/commands/tokenize.txt:189
+#: ../../../source/reference/commands/tokenize.txt:190
 msgid "Token itself."
 msgstr "トークン自身"
 
 # fafc24576e02466ab1847b4119009a82
-#: ../../../source/reference/commands/tokenize.txt:190
+#: ../../../source/reference/commands/tokenize.txt:191
 msgid "``position``"
 msgstr ""
 
 # 3eafa658ce6847d5833a2fa280a0a74d
-#: ../../../source/reference/commands/tokenize.txt:191
+#: ../../../source/reference/commands/tokenize.txt:192
 msgid "The N-th token."
 msgstr "N番目のトークン。"
 
@@ -10779,6 +10967,8 @@ msgstr ""
 
 # d4b690f7a4614baaa6dc658020f511fd
 #: ../../../source/reference/executables/groonga-httpd.txt:23
+#: ../../../source/reference/executables/groonga-suggest-httpd.txt:14
+#: ../../../source/reference/executables/groonga-suggest-learner.txt:14
 msgid "Synopsis"
 msgstr "書式"
 
@@ -10889,11 +11079,12 @@ msgstr ""
 # d4b690f7a4614baaa6dc658020f511fd
 #: ../../../source/reference/executables/groonga-httpd.txt:100
 #: ../../../source/reference/executables/groonga-httpd.txt:128
-#: ../../../source/reference/executables/groonga-httpd.txt:144
-#: ../../../source/reference/executables/groonga-httpd.txt:170
-#: ../../../source/reference/executables/groonga-httpd.txt:219
-#: ../../../source/reference/executables/groonga-httpd.txt:246
-#: ../../../source/reference/executables/groonga-httpd.txt:272
+#: ../../../source/reference/executables/groonga-httpd.txt:146
+#: ../../../source/reference/executables/groonga-httpd.txt:172
+#: ../../../source/reference/executables/groonga-httpd.txt:221
+#: ../../../source/reference/executables/groonga-httpd.txt:248
+#: ../../../source/reference/executables/groonga-httpd.txt:274
+#: ../../../source/reference/executables/groonga-httpd.txt:335
 msgid "Synopsis::"
 msgstr "書式::"
 
@@ -10902,11 +11093,12 @@ msgstr "書式::"
 # fd94a3ad9d884e4d86821964d24c1fda
 #: ../../../source/reference/executables/groonga-httpd.txt:105
 #: ../../../source/reference/executables/groonga-httpd.txt:133
-#: ../../../source/reference/executables/groonga-httpd.txt:149
-#: ../../../source/reference/executables/groonga-httpd.txt:175
-#: ../../../source/reference/executables/groonga-httpd.txt:224
-#: ../../../source/reference/executables/groonga-httpd.txt:251
-#: ../../../source/reference/executables/groonga-httpd.txt:277
+#: ../../../source/reference/executables/groonga-httpd.txt:151
+#: ../../../source/reference/executables/groonga-httpd.txt:177
+#: ../../../source/reference/executables/groonga-httpd.txt:226
+#: ../../../source/reference/executables/groonga-httpd.txt:253
+#: ../../../source/reference/executables/groonga-httpd.txt:279
+#: ../../../source/reference/executables/groonga-httpd.txt:340
 msgid "Default"
 msgstr ""
 
@@ -10920,18 +11112,19 @@ msgstr ""
 # 5a9d60ad2b34426f896d17f93bf8d3b0
 #: ../../../source/reference/executables/groonga-httpd.txt:108
 #: ../../../source/reference/executables/groonga-httpd.txt:136
-#: ../../../source/reference/executables/groonga-httpd.txt:152
-#: ../../../source/reference/executables/groonga-httpd.txt:178
-#: ../../../source/reference/executables/groonga-httpd.txt:227
-#: ../../../source/reference/executables/groonga-httpd.txt:254
-#: ../../../source/reference/executables/groonga-httpd.txt:280
+#: ../../../source/reference/executables/groonga-httpd.txt:154
+#: ../../../source/reference/executables/groonga-httpd.txt:180
+#: ../../../source/reference/executables/groonga-httpd.txt:229
+#: ../../../source/reference/executables/groonga-httpd.txt:256
+#: ../../../source/reference/executables/groonga-httpd.txt:282
+#: ../../../source/reference/executables/groonga-httpd.txt:343
 msgid "Context"
 msgstr ""
 
 # 2b493a9f157e42c79fb981e45da3700b
 # 2b493a9f157e42c79fb981e45da3700b
 #: ../../../source/reference/executables/groonga-httpd.txt:108
-#: ../../../source/reference/executables/groonga-httpd.txt:178
+#: ../../../source/reference/executables/groonga-httpd.txt:180
 msgid "``location``"
 msgstr ""
 
@@ -10974,9 +11167,10 @@ msgstr ""
 # 88d7c6252ccb429da20f5339c8f93636
 # c3c3a11dd629453b8ef82804046dcf60
 #: ../../../source/reference/executables/groonga-httpd.txt:113
-#: ../../../source/reference/executables/groonga-httpd.txt:233
-#: ../../../source/reference/executables/groonga-httpd.txt:259
-#: ../../../source/reference/executables/groonga-httpd.txt:287
+#: ../../../source/reference/executables/groonga-httpd.txt:235
+#: ../../../source/reference/executables/groonga-httpd.txt:261
+#: ../../../source/reference/executables/groonga-httpd.txt:289
+#: ../../../source/reference/executables/groonga-httpd.txt:349
 msgid "Examples::"
 msgstr "例::"
 
@@ -10992,10 +11186,11 @@ msgstr ""
 
 # 1ecf5b2d084d4f448328f0e24a654a19
 #: ../../../source/reference/executables/groonga-httpd.txt:136
-#: ../../../source/reference/executables/groonga-httpd.txt:152
-#: ../../../source/reference/executables/groonga-httpd.txt:227
-#: ../../../source/reference/executables/groonga-httpd.txt:254
-#: ../../../source/reference/executables/groonga-httpd.txt:280
+#: ../../../source/reference/executables/groonga-httpd.txt:154
+#: ../../../source/reference/executables/groonga-httpd.txt:229
+#: ../../../source/reference/executables/groonga-httpd.txt:256
+#: ../../../source/reference/executables/groonga-httpd.txt:282
+#: ../../../source/reference/executables/groonga-httpd.txt:343
 msgid "``http``, ``server``, ``location``"
 msgstr ""
 
@@ -11006,17 +11201,17 @@ msgid ""
 msgstr "groongaデータベースのパスを指定します。このディレクティブは必須です。"
 
 # 40f769141df54214b46343425b704c1e
-#: ../../../source/reference/executables/groonga-httpd.txt:142
+#: ../../../source/reference/executables/groonga-httpd.txt:144
 msgid "``groonga_database_auto_create``"
 msgstr ""
 
 # 076c01a1596947eaa5fd974dab509feb
-#: ../../../source/reference/executables/groonga-httpd.txt:149
+#: ../../../source/reference/executables/groonga-httpd.txt:151
 msgid "``groonga_database_auto_create on;``"
 msgstr ""
 
 # c323d1eb984b4352b38edd382e611b73
-#: ../../../source/reference/executables/groonga-httpd.txt:154
+#: ../../../source/reference/executables/groonga-httpd.txt:156
 msgid ""
 "Specifies whether groonga database is created automatically or not. If the "
 "value is ``on`` and the groonga database specified by :ref:`groonga-"
@@ -11029,7 +11224,7 @@ msgstr ""
 "ている場合は何もしません。"
 
 # 206cb401e9b6450ab20a4aea52e980db
-#: ../../../source/reference/executables/groonga-httpd.txt:160
+#: ../../../source/reference/executables/groonga-httpd.txt:162
 msgid ""
 "If parent directory doesn't exist, parent directory is also created "
 "recursively."
@@ -11037,23 +11232,23 @@ msgstr ""
 "もし、親ディレクトリが存在しな場合は再帰的に親ディレクトリも作成します。"
 
 # fc4f04d4a8024bbab90a7f57766ec620
-#: ../../../source/reference/executables/groonga-httpd.txt:163
+#: ../../../source/reference/executables/groonga-httpd.txt:165
 msgid ""
 "The default value is ``on``. Normally, the value doesn't need to be changed."
 msgstr "デフォルト値は ``on`` です。通常、この値を変更する必要はありません。"
 
 # ae6fd0bed9f44cef821a1287f3971e34
-#: ../../../source/reference/executables/groonga-httpd.txt:168
+#: ../../../source/reference/executables/groonga-httpd.txt:170
 msgid "``groonga_base_path``"
 msgstr ""
 
 # 75c38df430b54c44844526068cb9d03b
-#: ../../../source/reference/executables/groonga-httpd.txt:175
+#: ../../../source/reference/executables/groonga-httpd.txt:177
 msgid "The same value as ``location`` name."
 msgstr "``location`` の名前と同じ値。"
 
 # c752e5e56eef45c1a362b9e949053639
-#: ../../../source/reference/executables/groonga-httpd.txt:180
+#: ../../../source/reference/executables/groonga-httpd.txt:182
 msgid ""
 "Specifies the base path in URI. groonga uses ``/d/command?"
 "parameter1=value1&...`` path to run ``command``. The form of path in used in "
@@ -11074,7 +11269,7 @@ msgstr ""
 "できます。"
 
 # 0d2844180960454fa14c4e7c5c196c79
-#: ../../../source/reference/executables/groonga-httpd.txt:189
+#: ../../../source/reference/executables/groonga-httpd.txt:191
 msgid ""
 "Nomally, this directive isn't needed. It is needed for per command "
 "configuration."
@@ -11083,7 +11278,7 @@ msgstr ""
 "毎に設定をしたい場合に使います。"
 
 # b58131dc80f1422aabd04ed4e3d46244
-#: ../../../source/reference/executables/groonga-httpd.txt:192
+#: ../../../source/reference/executables/groonga-httpd.txt:194
 msgid ""
 "Here is an example configuration to add authorization to :doc:`/reference/"
 "commands/shutdown` command::"
@@ -11092,17 +11287,17 @@ msgstr ""
 "す。::"
 
 # 40f769141df54214b46343425b704c1e
-#: ../../../source/reference/executables/groonga-httpd.txt:217
+#: ../../../source/reference/executables/groonga-httpd.txt:219
 msgid "``groonga_log_path``"
 msgstr ""
 
 # 99f878b51f2344e0a2b25054b7feca08
-#: ../../../source/reference/executables/groonga-httpd.txt:224
+#: ../../../source/reference/executables/groonga-httpd.txt:226
 msgid "``/var/log/groonga/httpd/groonga.log``"
 msgstr ""
 
 # 84e5794178ca41398059200480d2dc7a
-#: ../../../source/reference/executables/groonga-httpd.txt:229
+#: ../../../source/reference/executables/groonga-httpd.txt:231
 msgid ""
 "Specifies groonga log path in the ``http``, ``server`` or ``location`` "
 "block. The default is ``/var/log/groonga/httpd/groonga.log``. You can "
@@ -11113,17 +11308,17 @@ msgstr ""
 "無効にするには ``off`` を指定します。"
 
 # cb690f10ae4f46b78e0f36f19ecc2ee8
-#: ../../../source/reference/executables/groonga-httpd.txt:244
+#: ../../../source/reference/executables/groonga-httpd.txt:246
 msgid "``groonga_log_level``"
 msgstr ""
 
 # 8bc8ecf3b5b742bfac7c21ba17dce19a
-#: ../../../source/reference/executables/groonga-httpd.txt:251
+#: ../../../source/reference/executables/groonga-httpd.txt:253
 msgid "``notice``"
 msgstr ""
 
 # 84e5794178ca41398059200480d2dc7a
-#: ../../../source/reference/executables/groonga-httpd.txt:256
+#: ../../../source/reference/executables/groonga-httpd.txt:258
 msgid ""
 "Specifies groonga log level in the ``http``, ``server`` or ``location`` "
 "block. The default is ``notice``. You can disable logging by specifying "
@@ -11134,17 +11329,17 @@ msgstr ""
 "効にできます。"
 
 # 9f74414de2b24e62ba5128b57b7ce8ba
-#: ../../../source/reference/executables/groonga-httpd.txt:270
+#: ../../../source/reference/executables/groonga-httpd.txt:272
 msgid "``groonga_query_log_path``"
 msgstr ""
 
 # effdeb698fd646d6a982f4d9dc72c565
-#: ../../../source/reference/executables/groonga-httpd.txt:277
+#: ../../../source/reference/executables/groonga-httpd.txt:279
 msgid "``/var/log/groonga/httpd/groonga-query.log``"
 msgstr ""
 
 # 84e5794178ca41398059200480d2dc7a
-#: ../../../source/reference/executables/groonga-httpd.txt:282
+#: ../../../source/reference/executables/groonga-httpd.txt:284
 msgid ""
 "Specifies groonga's query log path in the ``http``, ``server`` or "
 "``location`` block. The default is ``/var/log/groonga/httpd/groonga-query."
@@ -11155,22 +11350,22 @@ msgstr ""
 "log`` です。ログを無効にするには ``off`` を指定します。"
 
 # e66cf87090b848429bfa44803be4f256
-#: ../../../source/reference/executables/groonga-httpd.txt:295
+#: ../../../source/reference/executables/groonga-httpd.txt:297
 msgid "Query log is useful for the following cases:"
 msgstr "クエリーログは以下のようなケースで有用です:"
 
 # 4da3b55827e142fc8d96ff45e4c5c12d
-#: ../../../source/reference/executables/groonga-httpd.txt:297
+#: ../../../source/reference/executables/groonga-httpd.txt:299
 msgid "Detecting slow query."
 msgstr "スロークエリーを見つける。"
 
 # 9f0a8a1fb75a46219e56ba8e4dcca7a1
-#: ../../../source/reference/executables/groonga-httpd.txt:298
+#: ../../../source/reference/executables/groonga-httpd.txt:300
 msgid "Debugging."
 msgstr "デバッグ。"
 
 # 06c019bf49594d49b4dd749c7ae589da
-#: ../../../source/reference/executables/groonga-httpd.txt:300
+#: ../../../source/reference/executables/groonga-httpd.txt:302
 msgid ""
 "You can analyze your query log by `groonga-query-log package <https://github."
 "com/groonga/groonga-query-log>`_. The package provides useful tools."
@@ -11180,7 +11375,7 @@ msgstr ""
 "ます。"
 
 # 587ecdca941749e6aa6fc86bb8b32e24
-#: ../../../source/reference/executables/groonga-httpd.txt:304
+#: ../../../source/reference/executables/groonga-httpd.txt:306
 msgid ""
 "For example, there is a tool that analyzing your query log. It can detect "
 "slow queries from your query log. There is a tool that replaying same "
@@ -11193,24 +11388,24 @@ msgstr ""
 "羅的にテストすることができます。"
 
 # e071414d35f94a4bbc0b26a58ea9d666
-#: ../../../source/reference/executables/groonga-httpd.txt:310
+#: ../../../source/reference/executables/groonga-httpd.txt:312
 msgid "Performance related directives"
 msgstr "性能関連のディレクティブ"
 
 # cd4956eac02746dc8b3ab4dd7282db93
-#: ../../../source/reference/executables/groonga-httpd.txt:312
+#: ../../../source/reference/executables/groonga-httpd.txt:314
 msgid ""
 "The following directives are related to the performance of groonga-httpd."
 msgstr ""
 "以下のディレクティブはgronoga-httpdの性能に関連しているディレクティブです。"
 
 # 4ee50b0026474705abd02b957d01935a
-#: ../../../source/reference/executables/groonga-httpd.txt:315
+#: ../../../source/reference/executables/groonga-httpd.txt:317
 msgid "``worker_processes``"
 msgstr ""
 
 # fe1cf4dcd10b4524891de86128eba10d
-#: ../../../source/reference/executables/groonga-httpd.txt:317
+#: ../../../source/reference/executables/groonga-httpd.txt:319
 msgid ""
 "For optimum performance, set this to be equal to the number of CPUs or "
 "cores. In many cases, groonga queries may be CPU-intensive work, so to fully "
@@ -11222,7 +11417,7 @@ msgstr ""
 "る必要があります。"
 
 # 270d574b530641ff92d7e897cffc775f
-#: ../../../source/reference/executables/groonga-httpd.txt:321
+#: ../../../source/reference/executables/groonga-httpd.txt:323
 msgid ""
 "This isn't a groonga-httpd specific directive, but an nginx's one. For "
 "details, see http://wiki.nginx.org/CoreModule#worker_processes."
@@ -11232,17 +11427,42 @@ msgstr ""
 "してください。"
 
 # 1c978a3757964495a15bfe4d776e5274
-#: ../../../source/reference/executables/groonga-httpd.txt:324
+#: ../../../source/reference/executables/groonga-httpd.txt:326
 msgid "By default, this is set to 1. It is nginx's default."
 msgstr "デフォルトで、このディレクティブには1が設定されています。"
 
+# 9b9133b9daba4e5bb96af644670f9e59
+#: ../../../source/reference/executables/groonga-httpd.txt:331
+msgid "``groonga_cache_limit``"
+msgstr ""
+
+# 002d9cecc5f840a89561fdfca2a44cb6
+#: ../../../source/reference/executables/groonga-httpd.txt:333
+msgid ""
+"This directive is introduced to customize cache limit for each worker "
+"process."
+msgstr ""
+
+# a2b5169d9914418b9f9558e5a467d988
+#: ../../../source/reference/executables/groonga-httpd.txt:340
+msgid "100"
+msgstr ""
+
+# 84e5794178ca41398059200480d2dc7a
+#: ../../../source/reference/executables/groonga-httpd.txt:345
+msgid ""
+"Specifies groonga's limit of query cache in the ``http``, ``server`` or "
+"``location`` block. The default value is 100. You can disable query cache to "
+"specify 0 to ``groonga_cache_limit`` explicitly."
+msgstr "Groongaのクエリキャッシュの制限を ``http`` 、 ``server`` もしくは ``location`` ブロックで指定します。デフォルトは ``100`` です。 ``0`` を指定することで ``groonga_cache_limit`` を明示的に無効にできます。"
+
 # 3a18063520a04acc9a107d556534610e
-#: ../../../source/reference/executables/groonga-httpd.txt:327
+#: ../../../source/reference/executables/groonga-httpd.txt:358
 msgid "``proxy_cache``"
 msgstr ""
 
 # 96b0a4d9d766453bacf0aecc3a657d34
-#: ../../../source/reference/executables/groonga-httpd.txt:329
+#: ../../../source/reference/executables/groonga-httpd.txt:360
 msgid ""
 "In short, you can use nginx's reverse proxy and cache mechanism instead of "
 "groonga's built-in query cache feature."
@@ -11251,12 +11471,12 @@ msgstr ""
 "プロ機とキャッシュの仕組みを使うこともできます。"
 
 # 8f1c2a65616e4af7ad52a4d83386d102
-#: ../../../source/reference/executables/groonga-httpd.txt:333
+#: ../../../source/reference/executables/groonga-httpd.txt:364
 msgid "Query cache"
 msgstr "クエリーキャッシュ"
 
 # a31cd12b3d704dda9e9ec73fef1a9f42
-#: ../../../source/reference/executables/groonga-httpd.txt:335
+#: ../../../source/reference/executables/groonga-httpd.txt:366
 msgid ""
 "Groonga has query cache feature for :doc:`/reference/commands/select` "
 "command. The feature improves performance in many cases."
@@ -11265,7 +11485,7 @@ msgstr ""
 "能を提供しています。この機能は多くのケースで性能向上を実現します。"
 
 # a1446ef2c2954634aea7c0109b5b43fa
-#: ../../../source/reference/executables/groonga-httpd.txt:338
+#: ../../../source/reference/executables/groonga-httpd.txt:369
 msgid ""
 "Query cache feature works well on groonga-httpd except you use :doc:`/"
 "reference/commands/cache_limit` command on 2 or more workers. Normally, :doc:"
@@ -11278,7 +11498,7 @@ msgstr ""
 "で、多くの場合は問題がありません。"
 
 # 8f24cd4ac2cc4aeeb4a7cba5f789664d
-#: ../../../source/reference/executables/groonga-httpd.txt:343
+#: ../../../source/reference/executables/groonga-httpd.txt:374
 msgid ""
 "Here is a description about a problem of using :doc:`/reference/commands/"
 "cache_limit` command on 2 or more workers."
@@ -11287,7 +11507,7 @@ msgstr ""
 "問題点を説明します。"
 
 # 78187cb2bed34a22afe01b83d35787d7
-#: ../../../source/reference/executables/groonga-httpd.txt:346
+#: ../../../source/reference/executables/groonga-httpd.txt:377
 msgid ""
 "Groonga's query cache is available in the same process. It means that "
 "workers can't share the cache. If you don't change cache size, it isn't a "
@@ -11300,17 +11520,17 @@ msgstr ""
 "cache_limit` コマンドでキャッシュサイズを変更したいなら問題になります。"
 
 # 1445fa92c2ec4be193aad7b62134b061
-#: ../../../source/reference/executables/groonga-httpd.txt:351
+#: ../../../source/reference/executables/groonga-httpd.txt:382
 msgid "There is no portable ways to change cache size for all workers."
 msgstr "すべてのワーカーのキャッシュサイズを変更する汎用的な方法がないのです。"
 
 # 71805bb14b824fd78e52ee84a65b09f8
-#: ../../../source/reference/executables/groonga-httpd.txt:353
+#: ../../../source/reference/executables/groonga-httpd.txt:384
 msgid "For example, there are 3 workers::"
 msgstr "例えば、3ワーカーいるとします::"
 
 # fe56b7e376264663865b5f991f5cde47
-#: ../../../source/reference/executables/groonga-httpd.txt:359
+#: ../../../source/reference/executables/groonga-httpd.txt:390
 msgid ""
 "The client requests :doc:`/reference/commands/cache_limit` command and the "
 "worker 1 receives it::"
@@ -11319,7 +11539,7 @@ msgstr ""
 "し、worker 1が受け取りました::"
 
 # 65e71d2f631942cdb22b4476ff600ef9
-#: ../../../source/reference/executables/groonga-httpd.txt:366
+#: ../../../source/reference/executables/groonga-httpd.txt:397
 msgid ""
 "The client requests :doc:`/reference/commands/cache_limit` command again and "
 "the worker 1 receives it again::"
@@ -11328,7 +11548,7 @@ msgstr ""
 "エストし、またworker 1が受け取りました::"
 
 # d1440d7432af404f9e4702df39142148
-#: ../../../source/reference/executables/groonga-httpd.txt:373
+#: ../../../source/reference/executables/groonga-httpd.txt:404
 msgid ""
 "In this case, the worker 2 and the worker 3 aren't received any requests. So "
 "they don't change cache size."
@@ -11337,7 +11557,7 @@ msgstr ""
 "これらのワーカーのキャッシュサイズは変更されていません。"
 
 # 9a69a015b5214b5582aa6cd97e2b610c
-#: ../../../source/reference/executables/groonga-httpd.txt:376
+#: ../../../source/reference/executables/groonga-httpd.txt:407
 msgid ""
 "You can't choose a worker. So you can't change cache sizes of all workers "
 "by :doc:`/reference/commands/cache_limit` command."
@@ -11347,19 +11567,19 @@ msgstr ""
 "いのです。"
 
 # ca97235766774a6f9210802caef1121b
-#: ../../../source/reference/executables/groonga-httpd.txt:380
+#: ../../../source/reference/executables/groonga-httpd.txt:411
 msgid "Reverse proxy and cache"
 msgstr "リバースプロキシとキャッシュ"
 
 # 325d8679b6fc479692e93d04c3d68c4d
-#: ../../../source/reference/executables/groonga-httpd.txt:382
+#: ../../../source/reference/executables/groonga-httpd.txt:413
 msgid "You can use nginx's reverse proxy and cache feature for query cache::"
 msgstr ""
 "nginxのリバースプロキシ機能とキャッシュ機能を使ってクエリーキャッシュを実現で"
 "きます::"
 
 # 379c5d9eabcb485897f5ff72253d8deb
-#: ../../../source/reference/executables/groonga-httpd.txt:388
+#: ../../../source/reference/executables/groonga-httpd.txt:419
 msgid ""
 "You can use the same cache configuration for all workers but you can't "
 "change cache configuration dynamically by HTTP."
@@ -11368,39 +11588,39 @@ msgstr ""
 "動的にキャッシュの設定を変更することはできません。"
 
 # b7ad6340acde466e9b4d1006f2f4bac3
-#: ../../../source/reference/executables/groonga-httpd.txt:391
+#: ../../../source/reference/executables/groonga-httpd.txt:422
 msgid "Here is a sample configuration::"
 msgstr "以下はサンプルの設定です::"
 
 # 9478dbe384944871a05d6fc19adb519b
-#: ../../../source/reference/executables/groonga-httpd.txt:426
+#: ../../../source/reference/executables/groonga-httpd.txt:457
 msgid "See the following nginx documentations for parameter details:"
 msgstr "パラメーターの詳細は以下のnginxのドキュメントを見てください:"
 
 # 6c22e62e3c324fda854b6e0e73cfb590
-#: ../../../source/reference/executables/groonga-httpd.txt:428
+#: ../../../source/reference/executables/groonga-httpd.txt:459
 msgid ""
 "http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_cache_path"
 msgstr ""
 
 # 6bb2037c2d3a4a4a812b5bc71468a0c2
-#: ../../../source/reference/executables/groonga-httpd.txt:429
+#: ../../../source/reference/executables/groonga-httpd.txt:460
 msgid ""
 "http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_cache_valid"
 msgstr ""
 
 # 1d369724db0546f2ba3c7dbe508057a0
-#: ../../../source/reference/executables/groonga-httpd.txt:430
+#: ../../../source/reference/executables/groonga-httpd.txt:461
 msgid "http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_cache"
 msgstr ""
 
 # 1d76d5a973b24a65b1996c83ad3a9f1c
-#: ../../../source/reference/executables/groonga-httpd.txt:431
+#: ../../../source/reference/executables/groonga-httpd.txt:462
 msgid "http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass"
 msgstr ""
 
 # 41e80cb945b946b898844ae9f82955ed
-#: ../../../source/reference/executables/groonga-httpd.txt:433
+#: ../../../source/reference/executables/groonga-httpd.txt:464
 msgid ""
 "Note that you need to remove cache files created by nginx by hand after you "
 "load new data to groonga. For the above sample configuration, run the "
@@ -11411,7 +11631,7 @@ msgstr ""
 "のコマンドでキャッシュを消せます::"
 
 # 149997d06c0f46f5936b538583c037b9
-#: ../../../source/reference/executables/groonga-httpd.txt:440
+#: ../../../source/reference/executables/groonga-httpd.txt:471
 msgid ""
 "If you use groonga's query cache feature, you don't need to expire cache by "
 "hand. It is done automatically."
@@ -11420,12 +11640,12 @@ msgstr ""
 "ません。自動で失効します。"
 
 # e914b6c5fd6143e684506e61b4b424d4
-#: ../../../source/reference/executables/groonga-httpd.txt:444
+#: ../../../source/reference/executables/groonga-httpd.txt:475
 msgid "Available nginx modules"
 msgstr "利用可能なnginxモジュール"
 
 # 177bb78187954c29b18c36cef58b6745
-#: ../../../source/reference/executables/groonga-httpd.txt:446
+#: ../../../source/reference/executables/groonga-httpd.txt:477
 msgid ""
 "All standard HTTP modules are available. HttpRewriteModule is disabled when "
 "you don't have PCRE (Perl Compatible Regular Expressions). For the list of "
@@ -11576,30 +11796,158 @@ msgid ""
 "suggestion dataset."
 msgstr ""
 
+# 12bd9afe09e6479889aac4a1f4b39056
+#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:25
+msgid "This command generates some tables and columns for :doc:`/suggest`."
+msgstr ""
+
+# 2aa1ef6769c5451eb683b06364fbadfb
+#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:27
+msgid ""
+"Here is the list of such tables. If you specify 'query' as dataset name, "
+"following '_DATASET' suffix are replaced. Thus, 'item_query', 'pair_query', "
+"'sequence_query', 'event_query' tables are generated."
+msgstr ""
+
+# c15615560b6b4db88a8979ad7171ee0e
+#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:29
+msgid "event_type"
+msgstr ""
+
+# ba5451cd532f4a91af4cfe774d15036c
+#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:30
+msgid "bigram"
+msgstr ""
+
+# 0a2dbd5b9bcb4dbaa60c575ef03cfd9d
+#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:31
+msgid "kana"
+msgstr ""
+
+# 3353cd184019413ebcb909d1ff25e8f1
+#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:32
+msgid "item_DATASET"
+msgstr ""
+
+# 0fd07e348f9b42e38faf6467a91e1d07
+#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:33
+msgid "pair_DATASET"
+msgstr ""
+
+# efa534978db24be4af1e848c3d917006
+#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:34
+msgid "sequence_DATASET"
+msgstr ""
+
+# 030adf357922441b976d377939088a37
+#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:35
+msgid "event_DATASET"
+msgstr ""
+
+# 6d9008c42d25420796173456bb7cd912
+#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:36
+msgid "configuration"
+msgstr "設定ディレクティブ"
+
 # a523032a836a4d49acb8be1bfa7c1009
 # eb7f70c5207b4fef830df98488b7e8fe
-#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:28
+#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:41
 msgid "None."
 msgstr ""
 
 # 191fb70f12f94b918516f67ee8e9e4c9
 # 78764bc9ae8b4dcda70b8a32efb280cd
-#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:31
+#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:44
 msgid "EXIT STATUS"
 msgstr ""
 
 # 657bc0812cae4a378ebce204406a3549
 # 4b37d30c1a9c4438b894c17b1ab4ae36
-#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:36
+#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:49
 msgid "FILES"
 msgstr ""
 
-# 1f6dcad4018e41a0be5b585a14aded03
-# 286240bd76cf44838d656464d386005e
-#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:48
+# e1cb2cee3d7b4852b3b3163f342c3967
+#: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:61
 msgid ""
-":doc:`/suggest` .. : doc:`groonga-suggest-httpd` .. : doc:`groonga-suggest-"
-"learner`"
+":doc:`/suggest` :doc:`groonga-suggest-httpd` :doc:`groonga-suggest-learner`"
+msgstr ""
+
+# 30a59caadcea49efb387ad7c426f8a14
+#: ../../../source/reference/executables/groonga-suggest-httpd.txt:6
+msgid "groonga-suggest-httpd"
+msgstr ""
+
+# c7204b472bc14f2cbae8c9baef31ee99
+# a35388b0276d48ab86e59678e8298ab6
+#: ../../../source/reference/executables/groonga-suggest-httpd.txt:26
+#: ../../../source/reference/executables/groonga-suggest-learner.txt:26
+msgid "Options"
+msgstr ""
+
+# 57e743a3a3fd486ea11323c71fff131a
+#: ../../../source/reference/executables/groonga-suggest-httpd.txt:30
+msgid "Specify http server port number. The default value is 8080."
+msgstr ""
+
+# 8c9b87d046334061b7270b6c3054862f
+#: ../../../source/reference/executables/groonga-suggest-httpd.txt:34
+msgid "Specify number of threads. The default value is 8."
+msgstr ""
+
+# cac380284d7e465f9aabe2f40473a17c
+#: ../../../source/reference/executables/groonga-suggest-httpd.txt:38
+msgid "Specify endpoint for sender."
+msgstr ""
+
+# e971a35b36084a7cb126b049c574b5d2
+#: ../../../source/reference/executables/groonga-suggest-httpd.txt:42
+msgid "Specify endpoint for receiver."
+msgstr ""
+
+# 4dedaf4d617c4f37be081e43d01d3d61
+#: ../../../source/reference/executables/groonga-suggest-httpd.txt:46
+msgid "Specify path prefix of log."
+msgstr ""
+
+# 6dca04b099ea4df6a0da5a9bce0f84ba
+#: ../../../source/reference/executables/groonga-suggest-httpd.txt:50
+msgid ""
+"Specify the number of lines in a log file. The default value is 1,000,000."
+msgstr ""
+
+# f50fa9cb0e0b4a628f2174f17dc46785
+#: ../../../source/reference/executables/groonga-suggest-httpd.txt:54
+msgid "Specify this option to daemonize."
+msgstr ""
+
+# 9606e35e4b5a4cf79df765a08180d65c
+#: ../../../source/reference/executables/groonga-suggest-httpd.txt:58
+msgid "Specify this option to disable checking max fd on start."
+msgstr ""
+
+# 75c38df430b54c44844526068cb9d03b
+#: ../../../source/reference/executables/groonga-suggest-httpd.txt:63
+#: ../../../source/reference/executables/groonga-suggest-learner.txt:33
+msgid "There is one required parameter - ``database_path``."
+msgstr "``database_path`` だけが必須の引数です。"
+
+# b233fb3770f2435f8f06235f9f358b27
+# 1224c3e411684c46a0f08d736896fe85
+#: ../../../source/reference/executables/groonga-suggest-httpd.txt:66
+#: ../../../source/reference/executables/groonga-suggest-learner.txt:36
+msgid "``database_path``"
+msgstr ""
+
+# 6fcfa307e73a4d958ab3dce70d1b854e
+#: ../../../source/reference/executables/groonga-suggest-httpd.txt:68
+#: ../../../source/reference/executables/groonga-suggest-learner.txt:38
+msgid "Specifies the path to a groonga database."
+msgstr "groongaデータベースのパスを指定します。"
+
+# 3ea867d2e15b477080659a0a79a20c22
+#: ../../../source/reference/executables/groonga-suggest-learner.txt:6
+msgid "groonga-suggest-learner"
 msgstr ""
 
 # 1421ad2b40c04f899f22b0f9e4ed1d91
@@ -11889,108 +12237,98 @@ msgstr ""
 msgid "テーブルに定義されているカラムを削除します。"
 msgstr ""
 
-# e190153bb37e4d2184b76656f6adfe51
-#: ../../../source/reference/executables/groonga.txt:193
-msgid "VIEW型のテーブルに要素となるテーブルを定義します。"
-msgstr ""
-
-# f6b5ce493bd245628116df39f4546e98
-#: ../../../source/reference/executables/groonga.txt:193
-msgid "``view_add``"
-msgstr ""
-
 # 411c946f0be94778b817f9be372129bd
-#: ../../../source/reference/executables/groonga.txt:196
+#: ../../../source/reference/executables/groonga.txt:193
 msgid "テーブルにレコードを挿入します。"
 msgstr ""
 
 # 706fa164d49d4466a161bb283f63d13c
-#: ../../../source/reference/executables/groonga.txt:199
+#: ../../../source/reference/executables/groonga.txt:196
 msgid "テーブルに含まれるレコードを検索して表示します。"
 msgstr ""
 
 # cdd902a03b304d2c833322d00abb623d
-#: ../../../source/reference/executables/groonga.txt:202
+#: ../../../source/reference/executables/groonga.txt:199
 msgid "``define_selector``"
 msgstr ""
 
 # 4718b7c8e1e544c99f67a7cad2770262
-#: ../../../source/reference/executables/groonga.txt:202
+#: ../../../source/reference/executables/groonga.txt:199
 msgid "検索条件をカスタマイズした新たな検索コマンドを定義します。"
 msgstr ""
 
 # 5dafe59394484572812e1fb2f5520b52
-#: ../../../source/reference/executables/groonga.txt:205
+#: ../../../source/reference/executables/groonga.txt:202
 msgid "``quit``"
 msgstr ""
 
 # 72bc9c29a9724633b7fe829cf11ad4d0
-#: ../../../source/reference/executables/groonga.txt:205
+#: ../../../source/reference/executables/groonga.txt:202
 msgid "データベースとのセッションを終了します。"
 msgstr ""
 
 # e762fdaa976844d99174991e15d79eea
-#: ../../../source/reference/executables/groonga.txt:208
+#: ../../../source/reference/executables/groonga.txt:205
 msgid "``shutdown``"
 msgstr ""
 
 # b41457d84ff74e448918c588a3b16357
-#: ../../../source/reference/executables/groonga.txt:208
+#: ../../../source/reference/executables/groonga.txt:205
 msgid "サーバ(デーモン)プロセスを停止します。"
 msgstr ""
 
 # 95a64dab455740f99ea4b34cb8041acc
-#: ../../../source/reference/executables/groonga.txt:211
+#: ../../../source/reference/executables/groonga.txt:208
 msgid "``log_level``"
 msgstr ""
 
 # 363fc05bdb094880bc97d0ea827022ec
-#: ../../../source/reference/executables/groonga.txt:211
+#: ../../../source/reference/executables/groonga.txt:208
 msgid "ログ出力レベルを設定します。"
 msgstr ""
 
 # b34bd800ce73496fa78e7ae32f6873c5
-#: ../../../source/reference/executables/groonga.txt:214
+#: ../../../source/reference/executables/groonga.txt:211
 msgid "``log_put``"
 msgstr ""
 
 # 305f24ddaddd4d55a594801a6a877310
-#: ../../../source/reference/executables/groonga.txt:214
+#: ../../../source/reference/executables/groonga.txt:211
 msgid "ログ出力を行います。"
 msgstr ""
 
 # cbb234a59df94393b473d409c8044244
-#: ../../../source/reference/executables/groonga.txt:217
+#: ../../../source/reference/executables/groonga.txt:214
 msgid "ロックを解除します。"
 msgstr ""
 
 # 65ed7729797341a3a814345d71d70367
-#: ../../../source/reference/executables/groonga.txt:218
+#: ../../../source/reference/executables/groonga.txt:215
 msgid "``clearlock``"
 msgstr ""
 
 # bc4b67998f6344c8bef819afa6fb59cf
-#: ../../../source/reference/executables/groonga.txt:223
+#: ../../../source/reference/executables/groonga.txt:220
 msgid "新しいデータベースを作成します。::"
 msgstr ""
 
 # 742ed4d07d9145cdbafd756de32aa195
-#: ../../../source/reference/executables/groonga.txt:228
+#: ../../../source/reference/executables/groonga.txt:225
 msgid "作成済みのデータベースにテーブルを定義します。::"
 msgstr ""
 
 # d2c98e3a1203440ea3400d045bf6d99f
-#: ../../../source/reference/executables/groonga.txt:234
+#: ../../../source/reference/executables/groonga.txt:231
 msgid "サーバを起動します。::"
 msgstr ""
 
 # 8b17e697f28a475e80c4e0fc4985c7d6
-#: ../../../source/reference/executables/groonga.txt:239
+#: ../../../source/reference/executables/groonga.txt:236
 msgid "httpサーバとして起動します。::"
 msgstr ""
 
 # baba0d372d6f47008f59dc8786df686f
-#: ../../../source/reference/executables/groonga.txt:244
+#: ../../../source/reference/executables/groonga.txt:241
 msgid "サーバに接続し、テーブル一覧を表示します。::"
 msgstr ""
 
@@ -17994,6 +18332,241 @@ msgstr ""
 msgid "TokenUnigram"
 msgstr ""
 
+# deed661c36e546d4ad02c9d253b80219
+#: ../../../source/reference/tuning.txt:6
+msgid "Tuning"
+msgstr ""
+
+# e88cecf48d9149cfae84975640ebd4cb
+#: ../../../source/reference/tuning.txt:11
+msgid ""
+"There are some tuning parameters for improving groonga performance or "
+"handling a large database."
+msgstr ""
+
+# e92758beef824130ab42669342c10d50
+#: ../../../source/reference/tuning.txt:17
+msgid "This section describes parameters."
+msgstr "このセクションではすべての引数について説明します。"
+
+# 67c2e42c2f1e42cf95a8674507e1a2f2
+#: ../../../source/reference/tuning.txt:22
+msgid "The max number of open files per process"
+msgstr ""
+
+# 2e0fb0f780e0433c9c5e31f6802218b3
+# e8aedc0fd14744a780a7470776c21fc3
+#: ../../../source/reference/tuning.txt:24
+#: ../../../source/reference/tuning.txt:64
+msgid "This parameter is for handling a large database."
+msgstr ""
+
+# 185b56ca9d00490bbc3ee556af9c96d5
+#: ../../../source/reference/tuning.txt:26
+msgid ""
+"Groonga creates one or more files per table and colum. If your database has "
+"many tables and columns, groonga process needs to open many files."
+msgstr ""
+
+# ba29b3f278694bc8bc359b25fb45bb9a
+#: ../../../source/reference/tuning.txt:30
+msgid ""
+"System limits the max number of open files per process. So you need to relax "
+"the limitation."
+msgstr ""
+
+# 8933d88d79204330af8b368522b8a00d
+#: ../../../source/reference/tuning.txt:33
+msgid ""
+"Here is an expression that compute how many files are opened by groonga::"
+msgstr ""
+
+# 66118ec4f5df49de8fe063dccd69c0fb
+# c42ed95cabcd456da899b9f068eba075
+# 94f458e8530046a393684dc097170d21
+# ca3e6750ea7042ea90ab6e4630c445bd
+# a734159306714f07871b4b9beadd3cdd
+# 8c73bdfed90e44c698e8976d7ed32ecc
+# f4b7f86f4c3949f3acf09025710d5d8f
+# 02211c315a65446b9465708bbfb50907
+# 05d3b38df8084ff99224d4e9721423eb
+# 0b360a2a047e41fc96447e110fde492b
+# 72a1d8c67c88481b8df80fb40cbc866a
+# 66be396b45984f1d866d5b15b40ffcc9
+# fc7e5c9cacbb40c6aedf2f62640e5a99
+# 19e209544d5847f8815d405ec8fb28e7
+#: ../../../source/reference/tuning.txt:42
+msgid "Here is an example schema::"
+msgstr "以下はスキーマの例です。"
+
+# e14dc6a99a65423dbab6c6258010af35
+#: ../../../source/reference/tuning.txt:51
+msgid "This example opens at least 11 files::"
+msgstr ""
+
+# ad98f4b20c8347129c08aa38f1ee319a
+#: ../../../source/reference/tuning.txt:62
+msgid "Memory usage"
+msgstr "メモリ使用量"
+
+# e1849a06dda44e4096f51272b1b06dc1
+#: ../../../source/reference/tuning.txt:66
+msgid ""
+"Groonga maps database files onto memory and accesses to them. Groonga "
+"doesn't maps unnecessary files onto memory until they are nneded."
+msgstr ""
+
+# c43ebffab8264de7a5d8a4a6bf46f180
+#: ../../../source/reference/tuning.txt:69
+msgid ""
+"If you access to all data in database, all database files are mapped onto "
+"memory.  If total size of your database files is 6GiB, your groonga process "
+"uses 6GiB memory."
+msgstr ""
+
+# 3e92d263f3e54bbc9f63af16e09106fe
+#: ../../../source/reference/tuning.txt:73
+msgid ""
+"Normally, your all database files aren't mapped onto memry. But is may be "
+"occurred. It is an example case that you dump your database."
+msgstr ""
+
+# ab5cacf5264240d1acd27c84fabf58b4
+#: ../../../source/reference/tuning.txt:76
+msgid "You must have memory and swap that is larger than database."
+msgstr ""
+
+# 74d834b0f6474b4484c07b336ccf1f0b
+#: ../../../source/reference/tuning.txt:81
+msgid "Linux"
+msgstr ""
+
+# e92758beef824130ab42669342c10d50
+#: ../../../source/reference/tuning.txt:83
+msgid "This section describes how to configure parameters on Linux."
+msgstr "このセクションではLinux上で引数をカスタマイズする方法について説明します。"
+
+# 0e44f5bad67745e3a6689809f22ea178
+#: ../../../source/reference/tuning.txt:88
+msgid "nofile"
+msgstr ""
+
+# 1798fa72e46a44e2800bb0a1a84833b5
+#: ../../../source/reference/tuning.txt:90
+msgid ""
+"You can relax the :ref:`tuning-max-n-open-files` parameter by creating a "
+"configuration file ``/etc/security/limits.d/groonga.conf`` that has the "
+"following content::"
+msgstr ""
+
+# 0503080f88c14c069d8fab9f39937e0a
+#: ../../../source/reference/tuning.txt:97
+msgid ""
+"If you run ``groonga`` process by ``groonga`` user and your groonga process "
+"needs to open less than 10000 files, use the following configuration::"
+msgstr ""
+
+# 7d7af48fc0224fa68355d9c19f6da9f2
+#: ../../../source/reference/tuning.txt:104
+msgid ""
+"The configuration is applied after your groonga service is restarted or re-"
+"login as your groonga user."
+msgstr ""
+
+# df19b90aedb4467a8278fe5a2a59c8e7
+#: ../../../source/reference/tuning.txt:110
+msgid "vm.overcommit_memory"
+msgstr ""
+
+# 786a97badc174c6780eb8195fbd16c41
+#: ../../../source/reference/tuning.txt:112
+msgid ""
+"This is :ref:`tuning-memory-usage` related parameter. You can handle a "
+"database that is larger than your memory and swap by setting ``vm."
+"overcommit_memory`` kernel parameter to 1. 1 means that groonga can always "
+"map database files onto memory. It is no problem until groonga touch mapped "
+"database files that their size is larger than memory and swap. Groonga "
+"recommends the configuration."
+msgstr ""
+
+# f9dce58e1c204fb2aca75557196d003c
+#: ../../../source/reference/tuning.txt:119
+msgid ""
+"See `Linux kernel documentaion about overcommit <https://www.kernel.org/doc/"
+"Documentation/vm/overcommit-accounting>`_ about ``vm.overcommit_memory`` "
+"parameter details."
+msgstr ""
+
+# 61479c9331124d939a7e82acd30e49df
+#: ../../../source/reference/tuning.txt:123
+msgid ""
+"You can set the configuration by putting a configuration file ``/etc/sysctl."
+"d/groonga.conf`` that has the following content::"
+msgstr ""
+
+# 7964741b9a784d0da57a6b72403ce53a
+# 2b8aadcf3ebb4a5c91dd55759e28a525
+# 350c8712dd04444d911b31ae592ba01c
+#: ../../../source/reference/tuning.txt:128
+#: ../../../source/reference/tuning.txt:161
+msgid ""
+"The configuration can be applied by restarting your system or run the "
+"following command::"
+msgstr "設定した内容はシステムを再起動するか、次のコマンドを実行することで反映されます。::"
+
+# 962a425daaf9456fadb8ea39606b4653
+#: ../../../source/reference/tuning.txt:137
+msgid "vm.max_map_count"
+msgstr ""
+
+# a9459970c4504a22be5dc04ee82a65d8
+#: ../../../source/reference/tuning.txt:139
+msgid ""
+"This is :ref:`tuning-memory-usage` related parameter. You can handle a 16GiB "
+"or more larger size database by increasing ``vm.max_map_count`` kernel "
+"parameter. The parameter limits the max number of memory maps."
+msgstr ""
+
+# 1065f08a3d514637b6923069c7a37bba
+#: ../../../source/reference/tuning.txt:143
+msgid ""
+"The default value of the kernel parameter may be 65530 or 65536. Groonga "
+"maps 256KiB memory chunk at one time. If a database is larger than 16GiB, "
+"groonga reaches the limitation. (``256KiB * 65536 = 16GiB``)"
+msgstr ""
+
+# be529397600448c6847dad41d6c85101
+#: ../../../source/reference/tuning.txt:147
+msgid ""
+"You needs to increase the value of the kernel parameter to handle 16GiB or "
+"more larger size database. For example, you can handle almost 32GiB size "
+"database by ``65536 * 2 = 131072``. You can set the configuration by putting "
+"a configuration file ``/etc/sysctl.d/groonga.conf`` that has the following "
+"content::"
+msgstr ""
+
+# 3f294136ecdc44d4a4d6e2eed0977265
+#: ../../../source/reference/tuning.txt:155
+msgid ""
+"Note that your real confiugration file will be the following because you "
+"already have ``vm.overcommit_memory`` configuration::"
+msgstr ""
+
+# bdb7ccb69bbc4dfe8c90ee371d8880cf
+#: ../../../source/reference/tuning.txt:167
+msgid "FreeBSD"
+msgstr ""
+
+# e92758beef824130ab42669342c10d50
+#: ../../../source/reference/tuning.txt:169
+msgid "This section describes how to configure parameters on FreeBSD."
+msgstr "このセクションではFreeBSD上で引数をカスタマイズする方法を説明します。"
+
+# 122941fa438f4b68898d3898a88609eb
+#: ../../../source/reference/tuning.txt:174
+msgid "kern.maxfileperproc"
+msgstr ""
+
 # e894e0b4055d4326950e62c6222fb31c
 #: ../../../source/reference/types.txt:6
 msgid "データ型"
@@ -18351,3 +18924,20 @@ msgstr ""
 #: ../../../source/reference/types.txt:129
 msgid "Object型はv1.2でサポートされます。"
 msgstr ""
+
+# 448c01bf71e445e4b8cf64f75eb74821
+#~ msgid ""
+#~ "It specifies the name of normalizer. Currently, ``normalize`` command "
+#~ "accepts ``NormalizerAuto`` or ``NormalizerNFKC51`` as built-in "
+#~ "normalizer. If you want to try another normalizer, you need to register "
+#~ "additional normalizer plugin by ``register`` command."
+#~ msgstr ""
+#~ "ノーマライザーの名前を指定します。今のところ ``normalize`` コマンドは "
+#~ "``NormalizerAuto`` もしくは ``NormalizerNFKC51`` を組み込みノーマライザー"
+#~ "として受けつけます。もし他のノーマライザーを使いたい場合には、追加したい"
+#~ "ノーマライザーを :doc:`/reference/commands/register` コマンドで登録する必"
+#~ "要があります。"
+
+# f21982b8504d499fa39e4e6c4be6923e
+#~ msgid "normalized is the normalized text by the specified normalizer."
+#~ msgstr "normalizedは指定したノーマライザーによる正規化されたテキストです。"
