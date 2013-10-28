@@ -62,7 +62,7 @@ source_suffix = '.txt'
 master_doc = 'index'
 
 # General information about the project.
-project = u'groonga'
+project = u'Groonga'
 copyright = u'2009-' + unicode(datetime.today().year) + ', Brazil, Inc'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -224,7 +224,7 @@ htmlhelp_basename = 'groongadoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'groonga.tex', unicode(_('groonga documentation'), "utf-8"),
+  ('index', 'groonga.tex', unicode(_('Groonga documentation'), "utf-8"),
    u'Brazil, Inc', 'manual'),
 ]
 
@@ -248,9 +248,9 @@ latex_documents = [
 # -- Options for rst2pdf output --------------------------------------------------
 pdf_documents = [
   ('index',
-   u'groonga-%s' % (release,),
+   u'Groonga-%s' % (release,),
    html_title,
-   unicode(_('groonga project'), "utf-8"))
+   unicode(_('Groonga Project'), "utf-8"))
 ]
 pdf_stylesheets = ['sphinx', 'kerning', 'a4']
 if 'language' in dir():
@@ -267,6 +267,6 @@ pdf_break_level = 2
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'groonga', unicode(_('groonga documentation'), "utf-8"),
-     [u'groonga project'], 1)
+    ('index', 'Groonga', unicode(_('Groonga documentation'), "utf-8"),
+     [u'Groonga Project'], 1)
 ]
