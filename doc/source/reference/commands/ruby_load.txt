@@ -43,7 +43,7 @@ Parameters
 This section describes all parameters.
 
 ``path``
-"""""""""""""""
+""""""""
 
 It specifies the Ruby script path which you want to load.
 
