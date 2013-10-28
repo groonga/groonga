@@ -18,7 +18,7 @@ Syntax
 
 ``ruby_load`` has one required parameter::
 
-  ruby_load script_path
+  ruby_load path
 
 Usage
 -----
@@ -42,7 +42,7 @@ Parameters
 
 This section describes all parameters.
 
-``script_path``
+``path``
 """""""""""""""
 
 It specifies the Ruby script path which you want to load.
