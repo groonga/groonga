@@ -518,7 +518,7 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         break;
       case GRN_ACCESSOR_GET_VALUE :
         grn_obj_get_value(ctx, a->obj, id, &buf);
-        buf.header.domain = GRN_DB_INT32; /* fix me */
+        buf.header.domain = DB_OBJ(a->obj)->range;
         break;
       case GRN_ACCESSOR_GET_SCORE :
         grn_obj_get_value(ctx, a->obj, id, &buf);

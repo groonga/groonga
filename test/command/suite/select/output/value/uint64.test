@@ -1,0 +1,7 @@
+table_create Values TABLE_NO_KEY --value_type UInt64
+load --table Values
+[
+{"_value": 2147583647}
+]
+
+select Values --output_columns _value

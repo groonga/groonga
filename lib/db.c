@@ -4383,7 +4383,11 @@ grn_obj_get_range_info(grn_ctx *ctx, grn_obj *obj,
       case GRN_ACCESSOR_GET_ID :
         *range_id = GRN_DB_UINT32;
         break;
-      case GRN_ACCESSOR_GET_VALUE :/* fix me */
+      case GRN_ACCESSOR_GET_VALUE :
+        if (GRN_DB_OBJP(a->obj)) {
+          *range_id = DB_OBJ(a->obj)->range;
+        }
+        break;
       case GRN_ACCESSOR_GET_SCORE :
       case GRN_ACCESSOR_GET_NSUBRECS :
         *range_id = GRN_DB_INT32;
