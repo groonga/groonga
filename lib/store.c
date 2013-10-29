@@ -800,6 +800,25 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
   int64_t buf;
   grn_io_win iw;
   grn_ja_einfo einfo;
+
+  if (grn_ja_skip_same_value_put &&
+      (flags & GRN_OBJ_SET_MASK) == GRN_OBJ_SET &&
+      value_len > 0) {
+    grn_io_win jw;
+    uint32_t old_len;
+    void *old_value;
+    grn_bool same_value = GRN_FALSE;
+
+    old_value = grn_ja_ref(ctx, ja, id, &jw, &old_len);
+    if (value_len == old_len && memcmp(value, old_value, value_len) == 0) {
+      same_value = GRN_TRUE;
+    }
+    grn_ja_unref(ctx, &jw);
+    if (same_value) {
+      return GRN_SUCCESS;
+    }
+  }
+
   switch (flags & GRN_OBJ_SET_MASK) {
   case GRN_OBJ_APPEND :
     if (value_len) {
