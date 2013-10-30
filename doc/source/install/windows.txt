@@ -5,8 +5,8 @@
 Windows
 =======
 
-This section describes how to install groonga on Windows. You can
-install groogna by extracting a zip package or running an installer.
+This section describes how to install Groonga on Windows. You can
+install Groogna by extracting a zip package or running an installer.
 
 We distribute both 32-bit and 64-bit packages but we strongly
 recommend a 64-bit package for server. You should use a 32-bit package
@@ -64,7 +64,7 @@ Then extract it.
 Build from source
 -----------------
 
-First, you need to install required tools for building groonga on
+First, you need to install required tools for building Groonga on
 Windows. Here are required tools:
 
   * `Microsoft Visual Studio 2010 Express
@@ -83,7 +83,7 @@ Visual Studio 2010 Express and download it by default browser::
 
 Then extract it.
 
-Move to the groonga's source folder::
+Move to the Groonga's source folder::
 
   > cd c:\Users\%USERNAME%\Downloads\groonga-3.0.9
 
