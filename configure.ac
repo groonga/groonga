@@ -705,7 +705,7 @@ AC_ARG_ENABLE(benchmark,
 if test "x$enable_benchmark" = "xno"; then
   benchmark_available="no"
 else
-  REQUIRED_GLIB_VERSION=2.8.0
+  REQUIRED_GLIB_VERSION=2.14.0
   m4_ifdef([AM_PATH_GLIB_2_0],
            [AM_PATH_GLIB_2_0($REQUIRED_GLIB_VERSION,
                              [benchmark_available="yes"],
