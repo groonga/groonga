@@ -576,7 +576,15 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
         ? GRN_TOKEN_DONE : GRN_TOKEN_DOING;
       token->force_prefix = 0;
       if (token->curr_size == 0) {
-        GRN_LOG(ctx, GRN_WARN, "[token_next] ignore an empty token.");
+        char tokenizer_name[GRN_TABLE_MAX_KEY_SIZE];
+        int tokenizer_name_length;
+        tokenizer_name_length =
+          grn_obj_name(ctx, token->tokenizer,
+                       tokenizer_name, GRN_TABLE_MAX_KEY_SIZE);
+        GRN_LOG(ctx, GRN_WARN,
+                "[token_next] ignore an empty token: <%.*s>: <%.*s>",
+                tokenizer_name_length, tokenizer_name,
+                token->orig_blen, token->orig);
         continue;
       }
       if (token->curr_size > GRN_TABLE_MAX_KEY_SIZE) {

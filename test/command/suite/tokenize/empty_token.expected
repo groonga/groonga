@@ -1,0 +1,3 @@
+tokenize TokenDelimit "aB￾￾c" NormalizerAuto ENABLE_TOKENIZED_DELIMITER
+[[0,0.0,0.0],[{"value":"ab","position":0},{"value":"c","position":1}]]
+#|w| [token_next] ignore an empty token: <TokenDelimit>: <aB￾￾c>
