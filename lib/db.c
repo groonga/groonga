@@ -5239,7 +5239,7 @@ call_hook(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags)
           default_set_value_hook(ctx, 1, &obj, &pctx.user_data);
         }
         if (ctx->rc) {
-          grn_bulk_fin(ctx, oldvalue);
+          grn_obj_close(ctx, oldvalue);
           return 1;
         }
         hooks = hooks->next;
@@ -5281,7 +5281,7 @@ call_hook_for_build(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int f
           default_set_value_hook(ctx, 1, &obj, &pctx.user_data);
         }
         if (ctx->rc) {
-          grn_bulk_fin(ctx, &oldvalue);
+          grn_obj_close(ctx, &oldvalue);
           return 1;
         }
         hooks = hooks->next;
