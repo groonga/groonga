@@ -5214,7 +5214,7 @@ call_hook(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags)
       if ((ov && v && os == s && !memcmp(ov, v, s)) &&
           !(obj->header.type == GRN_COLUMN_FIX_SIZE &&
             grn_bulk_is_zero(ctx, value))) {
-        grn_bulk_fin(ctx, oldvalue);
+        grn_obj_close(ctx, oldvalue);
         return 0;
       }
     }

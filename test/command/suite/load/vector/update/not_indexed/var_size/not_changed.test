@@ -1,0 +1,10 @@
+table_create Bookmarks TABLE_HASH_KEY ShortText
+column_create Bookmarks tags COLUMN_VECTOR ShortText
+
+load --table Bookmarks
+[
+{"_key": "http://groonga.org/", "tags": [""]},
+{"_key": "http://groonga.org/", "tags": [""]}
+]
+
+select Bookmarks

@@ -1,0 +1,46 @@
+table_create Bookmarks TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Bookmarks tags COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+load --table Bookmarks
+[
+{"_key": "http://groonga.org/", "tags": [""]},
+{"_key": "http://groonga.org/", "tags": [""]}
+]
+[[0,0.0,0.0],2]
+select Bookmarks
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tags",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "http://groonga.org/",
+        [
+          ""
+        ]
+      ]
+    ]
+  ]
+]
