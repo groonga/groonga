@@ -93,12 +93,12 @@ class Key {
   }
 
  private:
-  const UInt32 id_and_length_low_;
-  const UInt8 length_high_;
-  const UInt8 buf_[3];
+  UInt32 id_and_length_low_;
+  UInt8 length_high_;
+  UInt8 buf_[3];
 
   // Disallows instantiation.
-  Key() : id_and_length_low_(INVALID_KEY_ID << 4), length_high_(0), buf_() {}
+  Key() : id_and_length_low_(INVALID_KEY_ID << 4), length_high_(0) {}
   ~Key() {}
 
   // Disallows copy and assignment.

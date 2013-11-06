@@ -38,9 +38,7 @@ class Header {
         max_num_blocks_(0),
         next_key_pos_(0),
         key_buf_size_(0),
-        leaders_(),
-        status_flags_(0),
-        reserved_() {
+        status_flags_(0) {
     for (UInt32 i = 0; i <= MAX_BLOCK_LEVEL; ++i) {
       leaders_[i] = INVALID_LEADER;
     }
