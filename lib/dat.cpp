@@ -464,7 +464,7 @@ grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
       *added = res ? 1 : 0;
     }
     return trie->get_key(key_pos).id();
-  } catch (const grn::dat::SizeError &ex) {
+  } catch (const grn::dat::SizeError &) {
     if (!grn_dat_rebuild_trie(ctx, dat)) {
       return GRN_ID_NIL;
     }
@@ -614,7 +614,7 @@ grn_dat_update_by_id(grn_ctx *ctx, grn_dat *dat, grn_id src_key_id,
       if (!trie->update(src_key_id, dest_key, dest_key_size)) {
         return GRN_INVALID_ARGUMENT;
       }
-    } catch (const grn::dat::SizeError &ex) {
+    } catch (const grn::dat::SizeError &) {
       if (!grn_dat_rebuild_trie(ctx, dat)) {
         return ctx->rc;
       }
@@ -649,7 +649,7 @@ grn_dat_update(grn_ctx *ctx, grn_dat *dat,
       if (!trie->update(src_key, src_key_size, dest_key, dest_key_size)) {
         return GRN_INVALID_ARGUMENT;
       }
-    } catch (const grn::dat::SizeError &ex) {
+    } catch (const grn::dat::SizeError &) {
       if (!grn_dat_rebuild_trie(ctx, dat)) {
         return ctx->rc;
       }
