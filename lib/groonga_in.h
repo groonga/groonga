@@ -113,8 +113,10 @@
 #include <sys/types.h>
 
 #ifndef __GNUC__
-#define PATH_MAX (MAX_PATH - 1)
-#define inline _inline
+# define PATH_MAX (MAX_PATH - 1)
+# ifndef __cplusplus
+#  define inline _inline
+# endif
 #endif
 
 #define snprintf(str, size, ...) _snprintf(str, size, __VA_ARGS__)
