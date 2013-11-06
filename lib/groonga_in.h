@@ -154,16 +154,6 @@
 #define MSG_WAITALL 0 /* before Vista, not supported... */
 #define SHUT_RDWR SD_BOTH
 
-#ifdef HAVE_FPCLASSIFY
-# define CASE_FP_NAN case FP_NAN:
-# define CASE_FP_INFINITE case FP_INFINITE:
-#else
-# define HAVE_FPCLASSIFY 1
-# define fpclassify _fpclass
-# define CASE_FP_NAN case _FPCLASS_SNAN: case _FPCLASS_QNAN:
-# define CASE_FP_INFINITE case _FPCLASS_NINF: case _FPCLASS_PINF:
-#endif /* HAVE_FPCLASSIFY */
-
 typedef SOCKET grn_sock;
 #define grn_sock_close(sock) closesocket(sock)
 
@@ -199,19 +189,6 @@ typedef unsigned char uint_least8_t;
 typedef int grn_sock;
 # define grn_sock_close(sock) close(sock)
 # define CALLBACK
-
-# ifdef HAVE_FPCLASSIFY
-#  define CASE_FP_NAN case FP_NAN:
-#  define CASE_FP_INFINITE case FP_INFINITE:
-# else
-#  if (defined(__sun) && defined(__SVR4)) /* SUN */
-#   define HAVE_FPCLASSIFY 1
-#   include <ieeefp.h>
-#   define fpclassify fpclass
-#   define CASE_FP_NAN case FP_SNAN: case FP_QNAN:
-#   define CASE_FP_INFINITE case FP_NINF: case FP_PINF:
-#  endif /* SUN */
-# endif /* HAVE_FPCLASSIFY */
 
 #endif /* WIN32 */
 

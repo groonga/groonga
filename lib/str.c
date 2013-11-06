@@ -2099,10 +2099,10 @@ grn_text_ftoa(grn_ctx *ctx, grn_obj *buf, double d)
   }
 #ifdef HAVE_FPCLASSIFY
   switch (fpclassify(d)) {
-  CASE_FP_NAN
+  case FP_NAN :
     GRN_TEXT_PUTS(ctx, buf, "#<nan>");
     break;
-  CASE_FP_INFINITE
+  case FP_INFINITE :
     GRN_TEXT_PUTS(ctx, buf, d > 0 ? "#i1/0" : "#i-1/0");
     break;
   default :
