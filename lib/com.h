@@ -124,7 +124,7 @@ struct _grn_com {
   uint16_t sid;
   uint8_t has_sid;
   uint8_t closed;
-  grn_com_queue new;
+  grn_com_queue new_;
   grn_com_event *ev;
   void *opaque;
   grn_bool accepting;

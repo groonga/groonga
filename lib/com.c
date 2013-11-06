@@ -187,7 +187,7 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
   grn_msg *m = (grn_msg *)msg;
   grn_com *peer = m->u.peer;
   grn_com_header *header = &m->header;
-  if (GRN_COM_QUEUE_EMPTYP(&peer->new)) {
+  if (GRN_COM_QUEUE_EMPTYP(&peer->new_)) {
     switch (header->proto) {
     case GRN_COM_PROTO_HTTP :
       {
@@ -236,7 +236,7 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
     }
   }
   MUTEX_LOCK(peer->ev->mutex);
-  rc = grn_com_queue_enque(ctx, &peer->new, (grn_com_queue_entry *)msg);
+  rc = grn_com_queue_enque(ctx, &peer->new_, (grn_com_queue_entry *)msg);
   COND_SIGNAL(peer->ev->cond);
   MUTEX_UNLOCK(peer->ev->mutex);
   return rc;
@@ -516,7 +516,7 @@ grn_com_receiver(grn_ctx *ctx, grn_com *com)
     ncs->has_sid = 0;
     ncs->closed = 0;
     ncs->opaque = NULL;
-    GRN_COM_QUEUE_INIT(&ncs->new);
+    GRN_COM_QUEUE_INIT(&ncs->new_);
     // GRN_LOG(ctx, GRN_LOG_NOTICE, "accepted (%d)", fd);
     return;
   } else {
@@ -1089,7 +1089,7 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
     cs->has_sid = 0;
     cs->closed = 0;
     cs->opaque = NULL;
-    GRN_COM_QUEUE_INIT(&cs->new);
+    GRN_COM_QUEUE_INIT(&cs->new_);
   } else {
     if (!(cs = GRN_MALLOC(sizeof(grn_com)))) { goto exit; }
     cs->fd = lfd;
