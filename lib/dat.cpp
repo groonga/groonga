@@ -688,7 +688,7 @@ grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
     return 0;
   }
 
-  int num_scan_hits = 0;
+  unsigned int num_scan_hits = 0;
   try {
     if (dat->normalizer) {
       int flags = GRN_STRING_WITH_CHECKS;
@@ -775,7 +775,7 @@ grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
         "grn::dat::lcp_search failed");
     return -1;
   }
-  return num_scan_hits;
+  return static_cast<int>(num_scan_hits);
 }
 
 grn_id
