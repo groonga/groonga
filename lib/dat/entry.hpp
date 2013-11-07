@@ -26,7 +26,7 @@ namespace dat {
 // The most significant bit represents whether or not the entry is valid.
 // A valid entry stores the position of its associated key and an invalid entry
 // stores the index of the next invalid entry.
-class Entry {
+class GRN_DAT_API Entry {
  public:
   Entry() : value_(0) {}
 

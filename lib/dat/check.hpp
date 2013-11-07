@@ -23,7 +23,7 @@
 namespace grn {
 namespace dat {
 
-class Check {
+class GRN_DAT_API Check {
  public:
   Check() : value_(0) {}
 

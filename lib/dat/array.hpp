@@ -25,7 +25,7 @@ namespace dat {
 
 // This class is used to detect an out-of-range access in debug mode.
 template <typename T>
-class Array {
+class GRN_DAT_API Array {
  public:
   Array() : ptr_(NULL), size_(0) {}
   Array(void *ptr, UInt32 size) : ptr_(static_cast<T *>(ptr)), size_(size) {

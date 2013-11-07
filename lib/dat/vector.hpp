@@ -26,7 +26,7 @@ namespace grn {
 namespace dat {
 
 template <typename T>
-class Vector {
+class GRN_DAT_API Vector {
  public:
   Vector() : buf_(NULL), size_(0), capacity_(0) {}
   ~Vector() {

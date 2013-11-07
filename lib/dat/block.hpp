@@ -23,7 +23,7 @@
 namespace grn {
 namespace dat {
 
-class Block {
+class GRN_DAT_API Block {
  public:
   Block() : next_(0), prev_(0), first_phantom_(0), num_phantoms_(0) {}
 

@@ -25,7 +25,7 @@
 namespace grn {
 namespace dat {
 
-class Node {
+class GRN_DAT_API Node {
  public:
   Node() : base_(), check_() {}
 

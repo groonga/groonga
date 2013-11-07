@@ -23,7 +23,7 @@
 namespace grn {
 namespace dat {
 
-class Key {
+class GRN_DAT_API Key {
  public:
   const UInt8 &operator[](UInt32 i) const {
     GRN_DAT_DEBUG_THROW_IF(i >= length());

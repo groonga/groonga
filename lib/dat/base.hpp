@@ -26,7 +26,7 @@ namespace dat {
 // The most significant bit represents whether or not the node is a linker.
 // BASE of a linker represents the position of its associated key and BASE of
 // a non-linker represents the offset to its child nodes.
-class Base {
+class GRN_DAT_API Base {
  public:
   Base() : value_(0) {}
 

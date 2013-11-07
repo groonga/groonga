@@ -23,7 +23,7 @@
 namespace grn {
 namespace dat {
 
-class Header {
+class GRN_DAT_API Header {
  public:
   Header()
       : file_size_(0),

@@ -23,7 +23,7 @@
 namespace grn {
 namespace dat {
 
-class Cursor {
+class GRN_DAT_API Cursor {
  public:
   Cursor() {}
   virtual ~Cursor() {}

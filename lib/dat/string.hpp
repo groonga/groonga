@@ -23,7 +23,7 @@
 namespace grn {
 namespace dat {
 
-class String {
+class GRN_DAT_API String {
  public:
   String()
       : ptr_(NULL),
