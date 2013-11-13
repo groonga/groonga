@@ -321,7 +321,7 @@ complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
                                 &normalized,
                                 &normalized_length_in_bytes,
                                 NULL);
-            /* FIXME: support index selection */
+      /* FIXME: support index selection */
       if (grn_column_index(ctx, col, GRN_OP_PREFIX, &index, 1, NULL)) {
         if ((cur = grn_table_cursor_open(ctx, grn_ctx_at(ctx, index->header.domain),
                                          normalized,
