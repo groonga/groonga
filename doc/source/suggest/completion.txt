@@ -37,7 +37,11 @@ For example, there is a registered word "日本". And "ニホン"
 (it must be katakana) is registered as its reading. An user
 can find "日本" by "ni", "二" or "に".
 
-If you create dataset which is named as example by :doc:`/reference/executables/groonga-suggest-create-dataset` command, you can update pairs of registered word and its reading by loading data to '_key' and 'kana' column of item_example table explicitly for prefix RK search.
+If you create dataset which is named as example by
+:doc:`/reference/executables/groonga-suggest-create-dataset` command,
+you can update pairs of registered word and its reading by loading
+data to '_key' and 'kana' column of item_example table explicitly for
+prefix RK search.
 
 Cooccurrence search
 ^^^^^^^^^^^^^^^^^^^
@@ -227,19 +231,25 @@ Then you can complete registered word "日本" by RK input - "nihon".
 .. include:: ../example/suggest/complete/rk-search-nihon.log
 .. suggest --table item_query --column kana --types complete --frequency_threshold 1 --query nihon
 
-Without loading above RK data, you can't complete registered word "日本" by query - "nihon".
+Without loading above RK data, you can't complete registered word "日本"
+by query - "nihon".
 
-As the column type of item_query table is VECTOR_COLUMN, you can register multiple readings for registered word.
+As the column type of item_query table is VECTOR_COLUMN, you can
+register multiple readings for registered word.
 
-This is the reason that you can also complete the registered word "日本" by query - "nippon".
+This is the reason that you can also complete the registered word "日本"
+by query - "nippon".
 
 .. groonga-command
 .. include:: ../example/suggest/complete/rk-search-nippon.log
 .. suggest --table item_query --column kana --types complete --frequency_threshold 1 --query nippon
 
-This feature is very convenient because you can search registered word even though Japanese IM is disabled.
+This feature is very convenient because you can search registered word
+even though Japanese IM is disabled.
 
-If there are multiple candidates as completed result, you can customize priority to set the value of "boost" column in item_query table.
+If there are multiple candidates as completed result, you can
+customize priority to set the value of "boost" column in item_query
+table.
 
 Here is the example to customize priority for RK search.
 
