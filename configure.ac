@@ -329,18 +329,6 @@ if test "x$grn_debug" != "xno"; then
 fi
 AC_SUBST(grn_debug)
 
-# AIO
-AC_ARG_ENABLE(aio,
-  [AS_HELP_STRING([--enable-aio],
-                  [use aio/dio based cache. [default=no]])],
-  ,
-  [enable_aio="no"])
-if test "x$enable_aio" != "xno"; then
-  AC_DEFINE(_XOPEN_SOURCE, [600], [Define to 600 for use AIO.])
-  AC_SEARCH_LIBS(nanosleep, rt, [], [AC_MSG_ERROR("No librt found")])
-  AC_DEFINE(USE_AIO, [1], [use AIO/DIO])
-fi
-
 AC_SEARCH_LIBS(log, m, [], [AC_MSG_ERROR("No libm found")])
 AC_MSG_CHECKING([for fpclassify])
 AC_LINK_IFELSE(

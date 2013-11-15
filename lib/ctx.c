@@ -1259,21 +1259,6 @@ grn_init(void)
     GRN_LOG(ctx, GRN_LOG_CRIT, "pagesize=%x", grn_pagesize);
   }
   // expand_stack();
-#ifdef USE_AIO
-  if (getenv("GRN_DEBUG_PRINT")) {
-    grn_debug_print = atoi(getenv("GRN_DEBUG_PRINT"));
-  } else {
-    grn_debug_print = 0;
-  }
-  if (getenv("GRN_AIO_ENABLED")) {
-    grn_aio_enabled = atoi(getenv("GRN_AIO_ENABLED"));
-  } else {
-    grn_aio_enabled = 0;
-  }
-  if (grn_aio_enabled) {
-    GRN_LOG(ctx, GRN_LOG_NOTICE, "AIO and DIO enabled");
-  }
-#endif /* USE_AIO */
 #ifdef USE_FAIL_MALLOC
   if (getenv("GRN_FMALLOC_PROB")) {
     grn_fmalloc_prob = strtod(getenv("GRN_FMALLOC_PROB"), 0) * RAND_MAX;

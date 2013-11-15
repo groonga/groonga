@@ -4090,79 +4090,6 @@ exit :
   return c;
 }
 
-#ifdef USE_AIO
-grn_ii_cursor *
-grn_ii_cursor_openv1(grn_ii *ii, grn_id tid)
-{
-  grn_ii_cursor *c  = NULL;
-  uint32_t pos, *a = array_at(ctx, ii, tid);
-  if (!a) { return NULL; }
-  if (!(pos = a[0])) { goto exit; }
-  if (!(c = GRN_MALLOC(sizeof(grn_ii_cursor)))) { goto exit; }
-  memset(c, 0, sizeof(grn_ii_cursor));
-  c->ii = ii;
-  if (pos & 1) {
-    c->stat = 0;
-    if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
-      c->pb.rid = BIT31_12(pos);
-      c->pb.sid = BIT11_01(pos);
-    } else {
-      c->pb.rid = pos >> 1;
-      c->pb.sid = 1;
-    }
-    c->pb.tf = 1;
-    c->pb.weight = 0;
-    c->pb.pos = a[1];
-  } else {
-    buffer_term *bt;
-    c->pb.rid = 0; c->pb.sid = 0;
-    if ((c->buffer_pseg = buffer_open(ctx, ii, pos, &bt, &c->buf)) == NOT_ASSIGNED) {
-      GRN_FREE(c);
-      c = NULL;
-      goto exit;
-    }
-    c->iw.io = ii->chunk;
-    c->iw.mode = grn_io_rdonly;
-    c->iw.segment = c->buf->header.chunk;
-    c->iw.offset = bt->pos_in_chunk;
-    c->iw.size = bt->size_in_chunk;
-    c->nextb = bt->pos_in_buffer;
-    c->stat = CHUNK_USED|BUFFER_USED;
-  }
-exit :
-  array_unref(ii, tid);
-  return c;
-}
-
-grn_rc
-grn_ii_cursor_openv2(grn_ctx *ctx, grn_ii_cursor **cursors, int ncursors)
-{
-  grn_rc rc = GRN_SUCCESS;
-  int i, j = 0;
-  grn_ii_cursor *c;
-  grn_io_win **iws = GRN_MALLOC(sizeof(grn_io_win *) * ncursors);
-  if (!iws) { return GRN_NO_MEMORY_AVAILABLE; }
-  for (i = 0; i < ncursors; i++) {
-    c = cursors[i];
-    if (c->stat && c->iw.size && c->iw.segment != NOT_ASSIGNED) {
-      iws[j++] = &c->iw;
-    }
-  }
-  if (j) { rc = grn_io_win_mapv(iws, ctx, j); }
-  for (i = 0; i < ncursors; i++) {
-    c = cursors[i];
-    if (c->iw.addr) {
-      c->cp = c->iw.addr + c->iw.diff;
-      c->cpe = c->cp + c->iw.size;
-      c->pc.rid = 0;
-      c->pc.sid = 0;
-    }
-  }
-  GRN_FREE(iws);
-  return rc;
-}
-#endif /* USE_AIO */
-
 grn_ii_posting *
 grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
 {
@@ -4548,15 +4475,6 @@ cursor_heap_push(grn_ctx *ctx, cursor_heap *h, grn_ii *ii, grn_id tid, uint32_t 
     h->n_bins = max;
     h->bins = bins;
   }
-#ifdef USE_AIO
-  if (grn_aio_enabled) {
-    if (!(c = grn_ii_cursor_openv1(ii, tid))) {
-      GRN_LOG(ctx, GRN_LOG_ERROR, "cursor open failed");
-      return ctx->rc;
-    }
-    h->bins[h->n_entries++] = c;
-  } else
-#endif /* USE_AIO */
   {
     if (!(c = grn_ii_cursor_open(ctx, ii, tid, GRN_ID_NIL, GRN_ID_MAX,
                                  ii->n_elements, 0))) {
@@ -4589,38 +4507,6 @@ static inline grn_rc
 cursor_heap_push2(cursor_heap *h)
 {
   grn_rc rc = GRN_SUCCESS;
-#ifdef USE_AIO
-  if (grn_aio_enabled) {
-    int i, j, n, n2;
-    grn_ii_cursor *c, *c2;
-    if (h && h->n_entries) {
-      rc = grn_ii_cursor_openv2(ctx, h->bins, h->n_entries);
-      GRN_ASSERT(rc);
-      for (i = 0, j = 0; i < h->n_entries; i++) {
-        c = h->bins[i];
-        if (!grn_ii_cursor_next(ctx, c)) {
-          grn_ii_cursor_close(ctx, c);
-          continue;
-        }
-        if (!grn_ii_cursor_next_pos(ctx, c)) {
-          GRN_LOG(ctx, GRN_LOG_ERROR, "invalid ii_cursor b");
-          grn_ii_cursor_close(ctx, c);
-          continue;
-        }
-        n = j++;
-        while (n) {
-          n2 = (n - 1) >> 1;
-          c2 = h->bins[n2];
-          if (GRN_II_CURSOR_CMP(c, c2)) { break; }
-          h->bins[n] = c2;
-          n = n2;
-        }
-        h->bins[n] = c;
-      }
-      h->n_entries = j;
-    }
-  }
-#endif /* USE_AIO */
   return rc;
 }
 

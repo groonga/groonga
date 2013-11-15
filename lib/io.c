@@ -940,160 +940,6 @@ grn_io_win_map(grn_io *io, grn_ctx *ctx, grn_io_win *iw, uint32_t segment,
   return iw->addr;
 }
 
-#ifdef USE_AIO
-grn_rc
-grn_io_win_mapv(grn_io_win **list, grn_ctx *ctx, int nent)
-{
-  int i;
-  grn_io_win *iw;
-  struct aiocb *iocbs[MAX_REQUEST];
-  struct aiocb iocb[MAX_REQUEST];
-  CacheIOOper oper[MAX_REQUEST];
-  int count = 0;
-
-  grn_io_win **clist = list;
-  int cl = 0;
-
-retry:
-  for (i = 0; i < nent; i++) {
-    iw = list[i];
-    if (grn_aio_enabled && iw->mode == grn_io_rdonly) {
-        /* this block is same as grn_io_win_map() */
-        grn_io *io = iw->io;
-        uint32_t segment = iw->segment, offset = iw->offset, size = iw->size;
-        byte *p;
-        off_t pos, base;
-        int fno;
-        uint32_t nseg, bseg;
-        uint32_t segment_size = io->header->segment_size;
-        uint32_t segments_per_file = GRN_IO_FILE_SIZE / segment_size;
-        fileinfo *fi;
-        iw->diff = 0;
-        if (offset >= segment_size) {
-            segment += offset / segment_size;
-            offset = offset % segment_size;
-        }
-        nseg = (offset + size + segment_size - 1) / segment_size;
-        bseg = segment + io->base_seg;
-        fno = bseg / segments_per_file;
-        base = fno ? 0 : io->base - (uint64_t)segment_size * io->base_seg;
-        pos = (uint64_t)segment_size * (bseg % segments_per_file) + offset + base;
-        if (!size || !io || segment + nseg > io->header->max_segment ||
-            fno != (bseg + nseg - 1) / segments_per_file) {
-          return GRN_FILE_CORRUPT;
-        }
-        fi = &io->fis[fno];
-        if (!grn_opened(fi)) {
-            char path[PATH_MAX];
-            gen_pathname(io->path, path, fno);
-            if (grn_open(ctx, fi, path, O_RDWR|O_CREAT|O_DIRECT, GRN_IO_FILE_SIZE)) {
-                return ctx->rc;
-            }
-        }
-        {
-            /* AIO + DIO + cache hack */
-            /* calc alignment */
-            // todo : calculate curr_size.
-            off_t voffset = pos - (pos % MEM_ALIGN);
-            uint32_t vsize = pos + size;
-
-            vsize = ((vsize - 1) / MEM_ALIGN + 1) * MEM_ALIGN;
-            vsize = vsize - voffset;
-
-            /* diff of aligned offset */
-            iw->diff = pos - voffset;
-
-            dp ("pos: %lu, allocate: %d, really needed: %d\n", voffset, vsize, size);
-            memset(&oper[count], 0, sizeof(CacheIOOper));
-            memset(&iocb[count], 0, sizeof(struct aiocb));
-            oper[count].iocb = &iocb[count];
-            iocb[count].aio_fildes = fi->fd;
-            iocb[count].aio_lio_opcode = LIO_READ;
-
-            if (vsize <= MEM_ALIGN &&
-                (p = grn_cache_read (&oper[count], fi->dev, fi->inode, voffset, vsize)) != NULL) {
-                /* use cache process  */
-                iw->cached = oper[count].cd->num;
-
-                /* Cache require aio_read() or
-                   already aio_read() by other process */
-                if (oper[count].read == 1) {
-                    iocbs[count] = &iocb[count];
-                    count++; /* aio count */
-                } else if (oper[count].cd->flag == CACHE_READ) {
-                    /* this iw is ignored in this loop.
-                       should re-check after AIO */
-                    clist[cl++] = iw;
-                }
-            } else {
-                /* This size cannot use Cache */
-                dp ("Wont use cache offset=%lu size=%u\n", voffset, vsize);
-
-                /* allocate aligned memory */
-                if (posix_memalign(&p, MEM_ALIGN, vsize) != 0) {
-                  SERR("posix_memalign");
-                  return ctx->rc;
-                }
-                iocb[count].aio_buf = p;
-                iocb[count].aio_nbytes = vsize;
-                iocb[count].aio_offset = voffset;
-                iocbs[count] = &iocb[count];
-
-                /* This is not cached  */
-                oper[count].cd = NULL;
-                iw->cached = -1;
-
-                /* aio count up */
-                count++;
-            }
-            iw->addr = p;
-            iw->segment = segment;
-            iw->offset = offset;
-            iw->nseg = nseg;
-            iw->size = size;
-            iw->pos = pos;
-        } /* End  AIO + DIO + cache hack */
-    } else {
-        if (!grn_io_win_map(iw->io, ctx, iw, iw->segment, iw->offset, iw->size, iw->mode)) {
-            return ctx->rc;
-        }
-    }
-  }
-
-  if (grn_aio_enabled) {
-      if (count > 0) {
-          int c;
-
-          /* aio_read () */
-          if (lio_listio (LIO_WAIT, iocbs, count, NULL) < 0) {
-              SERR("lio_listio");
-              return ctx->rc;
-          }
-          for (c=0;c<count;c++) {
-              /* cache data is now VALID */
-              if (oper[c].cd) oper[c].cd->flag = CACHE_VALID;
-          }
-      }
-      if (cl > 0) {
-          /*
-           *  if previous loop have CACHE_READ CacheData,
-           *  it should retry.
-           */
-          dp ("-- Validate Reading state CacheData (%d) --\n", cl);
-          /* update list and nent for loop */
-          list = clist; /* list of iw which use CACHE_READ CacheData */
-          nent = cl;    /* number of iw */
-          cl = 0;
-          count = 0;
-          grn_nanosleep(1000);
-          goto retry;
-      } else
-          dp("-- No Reading state CacheData. --\n");
-  }
-  return GRN_SUCCESS;
-}
-#endif /* USE_AIO */
-
 grn_rc
 grn_io_win_unmap(grn_io_win *iw)
 {
@@ -1105,18 +951,7 @@ grn_io_win_unmap(grn_io_win *iw)
   int nseg = iw->nseg;
   switch (iw->mode) {
   case grn_io_rdonly:
-#ifdef USE_AIO
-    /* VA hack */
-    if (!grn_aio_enabled || (iw->cached < 0 && iw->addr)) { GRN_FREE(iw->addr); }
-    else if (iw->cached >= 0){
-      /* this data is cached */
-      grn_cache_data_unref (iw->cached);
-      iw->cached = -1;
-    }
-    /* end VA hack */
-#else /* USE_AIO */
     if (iw->addr) { GRN_FREE(iw->addr); }
-#endif /* USE_AIO */
     iw->addr = NULL;
     break;
   case grn_io_rdwr:
@@ -1129,13 +964,6 @@ grn_io_win_unmap(grn_io_win *iw)
       } else {
         //GRN_IO_SEG_UNREF(io, iw->segment);
       }
-#ifdef USE_AIO
-      if (grn_aio_enabled) {
-        int fno = (iw->segment + io->base_seg) / segments_per_file;
-        fileinfo *fi = &io->fis[fno];
-        grn_cache_mark_invalid(fi->dev, fi->inode, iw->pos, iw->size);
-      }
-#endif /* USE_AIO */
     }
     iw->addr = NULL;
     break;
@@ -1157,11 +985,6 @@ grn_io_win_unmap(grn_io_win *iw)
           if (!iw->cached) { GRN_FREE(iw->addr); }
           iw->addr = NULL;
         }
-#ifdef USE_AIO
-        if (grn_aio_enabled) {
-          grn_cache_mark_invalid(fi->dev, fi->inode, iw->pos, iw->size);
-        }
-#endif /* USE_AIO */
       }
     }
     break;
