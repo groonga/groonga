@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-09 22:35+0900\n"
+"POT-Creation-Date: 2013-11-15 11:18+0900\n"
 "PO-Revision-Date: 2011-05-22 21:45+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -23,11 +23,13 @@ msgid "%(project)s v%(release)s documentation"
 msgstr "%(project)s v%(release)sドキュメント"
 
 #: ../../../source/conf.py:227 ../../../source/conf.py:270
-msgid "groonga documentation"
+#, fuzzy
+msgid "Groonga documentation"
 msgstr "groongaのドキュメント"
 
 #: ../../../source/conf.py:253
-msgid "groonga project"
+#, fuzzy
+msgid "Groonga Project"
 msgstr "groongaプロジェクト"
 
 #~ msgid "groonga Documentation"

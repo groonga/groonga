@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-23 14:55+0900\n"
-"PO-Revision-Date: 2013-04-03 13:30+0900\n"
+"POT-Creation-Date: 2013-11-15 11:08+0900\n"
+"PO-Revision-Date: 2013-11-15 11:21+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -85,7 +85,7 @@ msgstr ""
 #: ../../../source/install/ubuntu.txt:177
 #: ../../../source/install/ubuntu.txt:217
 #: ../../../source/install/ubuntu.txt:268
-#: ../../../source/install/windows.txt:100
+#: ../../../source/install/windows.txt:85
 msgid "Install::"
 msgstr "インストール::"
 
@@ -313,7 +313,7 @@ msgstr ""
 #: ../../../source/install/mac_os_x.txt:37
 #: ../../../source/install/others.txt:72
 #: ../../../source/install/ubuntu.txt:248
-#: ../../../source/install/windows.txt:65
+#: ../../../source/install/windows.txt:56
 msgid "Build from source"
 msgstr "ソースからビルド"
 
@@ -369,7 +369,7 @@ msgstr ""
 #: ../../../source/install/mac_os_x.txt:51
 #: ../../../source/install/solaris.txt:31
 #: ../../../source/install/ubuntu.txt:264
-#: ../../../source/install/windows.txt:96
+#: ../../../source/install/windows.txt:81
 msgid "Build::"
 msgstr "ビルド::"
 
@@ -1285,9 +1285,10 @@ msgid "Windows"
 msgstr ""
 
 #: ../../../source/install/windows.txt:8
+#, fuzzy
 msgid ""
-"This section describes how to install groonga on Windows. You can install "
-"groogna by extracting a zip package or running an installer."
+"This section describes how to install Groonga on Windows. You can install "
+"Groogna by extracting a zip package or running an installer."
 msgstr ""
 "このセクションではWindows上でgroongaをインストールする方法を説明します。"
 "groongaをインストールするにはzipパッケージを展開する方法とインストーラーを実"
@@ -1299,56 +1300,43 @@ msgstr "インストーラー"
 
 # 199f1495da32436781c52805f905f840
 #: ../../../source/install/windows.txt:20
+#, fuzzy
 msgid ""
 "For 32-bit environment, download x86 executable binary from packages.groonga."
-"org."
+"org:"
 msgstr ""
 "32-bit環境の場合は、x86のバイナリをpackages.groonga.orgからダウンロードしてく"
 "ださい。"
 
-# b9adadd932844db8b8e5029dd9369f76
-# 4ae442478aea41c2bdc4e47312f81fbe
-#: ../../../source/install/windows.txt:22
-#: ../../../source/install/windows.txt:46
-msgid "You can download such a binary by command line operation."
-msgstr "コマンドラインの操作でバイナリをダウンロードすることができます。"
-
-# 01d7d007dd884edc83192c3e967e2807
-#: ../../../source/install/windows.txt:24
-msgid ""
-"Start command prompt ``cmd.exe`` and download x86 executable binary by "
-"default browser::"
+# 02adcb7b15174660905e048fed0dfd97
+#: ../../../source/install/windows.txt:23
+msgid "http://packages.groonga.org/windows/groonga/groonga-3.0.9-x86.exe"
 msgstr ""
-"コマンドプロンプト ``cmd.exe`` を起動し、x86バイナリをブラウザを使ってダウン"
-"ロードします。::"
 
 # 41dd51a424d84b689b3045c13bedcaf8
 # f4e25cdf10274f6787fc4e91e0fd91cb
-#: ../../../source/install/windows.txt:28
-#: ../../../source/install/windows.txt:37
+#: ../../../source/install/windows.txt:25
+#: ../../../source/install/windows.txt:32
 msgid "Then run it."
 msgstr "その後、バイナリを実行します。"
 
 # 1e7006b3ede54a4e9127105fb064091d
-#: ../../../source/install/windows.txt:31
+#: ../../../source/install/windows.txt:27
+#, fuzzy
 msgid ""
-"For 64-bit environment, download x64 executable binary from packages.groonga."
-"org."
+"For 64-bit environment, download x64 executable binary from packages.goronga."
+"org:"
 msgstr ""
 "64-bit環境の場合は、x64のバイナリをpackages.groonga.orgからダウンロードしてく"
 "ださい。"
 
-# 9887f08227894d64a29f9e0aceec20dd
-#: ../../../source/install/windows.txt:33
-msgid ""
-"Start command prompt ``cmd.exe`` and download x64 executable binary by "
-"default browser::"
+# 0d89774313144d1a9d51d67fafcab74f
+#: ../../../source/install/windows.txt:30
+msgid "http://packages.groonga.org/windows/groonga/groonga-3.0.9-x64.exe"
 msgstr ""
-"コマンドプロンプト ``cmd.exe`` を起動し、x64バイナリをブラウザを使ってダウン"
-"ロードします。::"
 
 # ec57e50c1c624fabb14313a143a0d9fb
-#: ../../../source/install/windows.txt:39
+#: ../../../source/install/windows.txt:34
 msgid ""
 "Use command prompt for :doc:`/reference/executables/groonga` installed in "
 "start menu."
@@ -1357,108 +1345,93 @@ msgstr ""
 "プトがインストールされるのでそれを使ってください。"
 
 # d8c961cd55d94e049fd91093cb591128
-#: ../../../source/install/windows.txt:42
+#: ../../../source/install/windows.txt:37
 msgid "zip"
 msgstr ""
 
 # 199f1495da32436781c52805f905f840
-#: ../../../source/install/windows.txt:44
+#: ../../../source/install/windows.txt:39
+#, fuzzy
 msgid ""
-"For 32-bit environment, download x86 zip archive from packages.groonga.org."
+"For 32-bit environment, download x86 zip archive from packages.groonga.org:"
 msgstr ""
 "32-bit環境の場合は、x86のzipアーカイブをpackages.groonga.orgからダウンロード"
 "してください。"
 
-# e6b7eff631f3498485fad483941885fe
-#: ../../../source/install/windows.txt:48
-msgid ""
-"Start command prompt ``cmd.exe`` and download x86 zip archive by default "
-"browser::"
+# 02adcb7b15174660905e048fed0dfd97
+#: ../../../source/install/windows.txt:42
+msgid "http://packages.groonga.org/windows/groonga/groonga-3.0.9-x86.zip"
 msgstr ""
-"コマンドプロンプト ``cmd.exe`` を起動し、x86バイナリをブラウザを使ってダウン"
-"ロードします。::"
 
 # 5522eaec16b94e5c82c0c2ee1c97249e
 # ef1453ffea8044e6aaf724c63a6e85d1
-#: ../../../source/install/windows.txt:52
-#: ../../../source/install/windows.txt:60
-#: ../../../source/install/windows.txt:84
+#: ../../../source/install/windows.txt:44
+#: ../../../source/install/windows.txt:51
+#: ../../../source/install/windows.txt:69
 msgid "Then extract it."
 msgstr "その後、アーカイブを展開します。"
 
 # 1e7006b3ede54a4e9127105fb064091d
-#: ../../../source/install/windows.txt:54
+#: ../../../source/install/windows.txt:46
+#, fuzzy
 msgid ""
-"For 64-bit environment, download x64 zip archive from packages.groonga.org."
+"For 64-bit environment, download x64 zip archive from packages.groonga.org:"
 msgstr ""
 "64-bit環境の場合は、x64のzipアーカイブをpackages.groonga.orgからダウンロード"
 "してください。"
 
-# bf87d1cbe52c4b9e8231fdef6aa0f278
-#: ../../../source/install/windows.txt:56
-msgid ""
-"Start command prompt ``cmd.exe`` and download x64 zip archive by default "
-"browser::"
+# 0d89774313144d1a9d51d67fafcab74f
+#: ../../../source/install/windows.txt:49
+msgid "http://packages.groonga.org/windows/groonga/groonga-3.0.9-x64.zip"
 msgstr ""
-"コマンドプロンプト ``cmd.exe`` を起動し、x64バイナリをブラウザを使ってダウン"
-"ロードします。::"
 
 # 8820fc4404434f5b8b0b1c2d71213e30
-#: ../../../source/install/windows.txt:62
+#: ../../../source/install/windows.txt:53
 msgid ":doc:`/reference/executables/groonga` is in ``bin`` folder."
 msgstr ""
 ":doc:`/reference/executables/groonga` は ``bin`` フォルダーにあります。"
 
 # b0c7ac11a34f4e659e2ba5a73c9ce0af
-#: ../../../source/install/windows.txt:67
+#: ../../../source/install/windows.txt:58
+#, fuzzy
 msgid ""
-"First, you need to install required tools for building groonga on Windows. "
+"First, you need to install required tools for building Groonga on Windows. "
 "Here are required tools:"
 msgstr ""
 "まずWindows上でgroongaをビルドするために必須のツールをインストールします。以"
 "下が必須のツールです。"
 
 # 8785eb17a7ed4a81b75550225a0ef00a
-#: ../../../source/install/windows.txt:70
+#: ../../../source/install/windows.txt:61
 msgid ""
 "`Microsoft Visual Studio 2010 Express <http://www.microsoft.com/japan/msdn/"
 "vstudio/express/>`_"
 msgstr ""
 
 # 8c34f7ea568a445aa2eac661a7201a81
-#: ../../../source/install/windows.txt:72
+#: ../../../source/install/windows.txt:63
 msgid "`CMake <http://www.cmake.org/>`_"
 msgstr ""
 
 # 199f1495da32436781c52805f905f840
-#: ../../../source/install/windows.txt:74
-msgid "Download zipped source from packages.groonga.org."
+#: ../../../source/install/windows.txt:65
+#, fuzzy
+msgid "Download zipped source from packages.groonga.org:"
 msgstr "zipアーカイブをpackages.groonga.orgからダウンロードしてください。"
 
-# b9adadd932844db8b8e5029dd9369f76
-# 4ae442478aea41c2bdc4e47312f81fbe
-#: ../../../source/install/windows.txt:76
-msgid "You can download such a zipped source file by command line operation."
+# 0d89774313144d1a9d51d67fafcab74f
+#: ../../../source/install/windows.txt:67
+msgid "http://packages.groonga.org/source/groonga/groonga-3.0.9.zip"
 msgstr ""
-"コマンドラインの操作でzipソースファイルをダウンロードすることができます。"
-
-# 49a6d04509ea401db47310ba67cc6116
-#: ../../../source/install/windows.txt:78
-msgid ""
-"Start ``Visual Studio Command Prompt (2010)`` installed by Microsoft Visual "
-"Studio 2010 Express and download it by default browser::"
-msgstr ""
-"Microsoft Visual Studio 2010 Expressがインストールする ``Visual Studio コマン"
-"ド プロンプト (2010)`` を実行して、groongaのソースをブラウザでダウンロードし"
-"てください::"
 
 # 1906fb2bad3d4db99362852684c376c5
-#: ../../../source/install/windows.txt:86
-msgid "Move to the groonga's source folder::"
+#: ../../../source/install/windows.txt:71
+#, fuzzy
+msgid "Move to the Groonga's source folder::"
 msgstr "groongaのソースフォルダへと移動します::"
 
 # 14b6ec65c0e64051bb1aceabc665c7d1
-#: ../../../source/install/windows.txt:90
+#: ../../../source/install/windows.txt:75
 msgid ""
 "Configure by ``cmake``. The following commnad line is for 64-bit version. To "
 "build 32-bit version, use ``-G \"Visual Studio 10\"`` parameter instead::"
@@ -1468,7 +1441,7 @@ msgstr ""
 "に ``-G \"Visual Studio 10\"`` パラメーターを指定してください::"
 
 # 607b3624ab724f1eb01bfef59b92d8c9
-#: ../../../source/install/windows.txt:104
+#: ../../../source/install/windows.txt:89
 msgid ""
 "After the above steps, :doc:`/reference/executables/groonga` is found in ``c:"
 "\\groonga\\bin\\groonga.exe``."
