@@ -17,22 +17,17 @@ size data.
 Installer
 ---------
 
-For 32-bit environment, download x86 executable binary from packages.groonga.org.
+For 32-bit environment, download x86 executable binary from
+packages.groonga.org:
 
-You can download such a binary by command line operation.
-
-Start command prompt ``cmd.exe`` and download x86 executable binary by default browser::
-
-  > "c:\\Program Files\\Internet Explorer\\iexplore.exe" http://packages.groonga.org/windows/groonga/groonga-3.0.9-x86.exe
+  * http://packages.groonga.org/windows/groonga/groonga-3.0.9-x86.exe
 
 Then run it.
 
+For 64-bit environment, download x64 executable binary from
+packages.goronga.org:
 
-For 64-bit environment, download x64 executable binary from packages.groonga.org.
-
-Start command prompt ``cmd.exe`` and download x64 executable binary by default browser::
-
-  > "c:\\Program Files\\Internet Explorer\\iexplore.exe" http://packages.groonga.org/windows/groonga/groonga-3.0.9-x64.exe
+  * http://packages.groonga.org/windows/groonga/groonga-3.0.9-x64.exe
 
 Then run it.
 
@@ -41,21 +36,17 @@ Use command prompt for :doc:`/reference/executables/groonga` installed in start 
 zip
 ---
 
-For 32-bit environment, download x86 zip archive from packages.groonga.org.
+For 32-bit environment, download x86 zip archive from
+packages.groonga.org:
 
-You can download such a binary by command line operation.
-
-Start command prompt ``cmd.exe`` and download x86 zip archive by default browser::
-
-  > "c:\\Program Files\\Internet Explorer\\iexplore.exe" http://packages.groonga.org/windows/groonga/groonga-3.0.9-x86.zip
+  * http://packages.groonga.org/windows/groonga/groonga-3.0.9-x86.zip
 
 Then extract it.
 
-For 64-bit environment, download x64 zip archive from packages.groonga.org.
+For 64-bit environment, download x64 zip archive from
+packages.groonga.org:
 
-Start command prompt ``cmd.exe`` and download x64 zip archive by default browser::
-
-  > "c:\\Program Files\\Internet Explorer\\iexplore.exe" http://packages.groonga.org/windows/groonga/groonga-3.0.9-x64.zip
+  * http://packages.groonga.org/windows/groonga/groonga-3.0.9-x64.zip
 
 Then extract it.
 
@@ -71,15 +62,9 @@ Windows. Here are required tools:
     <http://www.microsoft.com/japan/msdn/vstudio/express/>`_
   * `CMake <http://www.cmake.org/>`_
 
-Download zipped source from packages.groonga.org.
+Download zipped source from packages.groonga.org:
 
-You can download such a zipped source file by command line operation.
-
-Start ``Visual Studio Command Prompt (2010)`` installed by Microsoft
-Visual Studio 2010 Express and download it by default browser::
-
-  > cd c:\Users\%USERNAME%\Downloads
-  > "c:\\Program Files\\Internet Explorer\\iexplore.exe" http://packages.groonga.org/source/groonga/groonga-3.0.9.zip
+  * http://packages.groonga.org/source/groonga/groonga-3.0.9.zip
 
 Then extract it.
 
