@@ -31,7 +31,8 @@ packages.goronga.org:
 
 Then run it.
 
-Use command prompt for :doc:`/reference/executables/groonga` installed in start menu.
+Use command prompt in start menu to run
+:doc:`/reference/executables/groonga`.
 
 zip
 ---
@@ -50,7 +51,7 @@ packages.groonga.org:
 
 Then extract it.
 
-:doc:`/reference/executables/groonga` is in ``bin`` folder.
+You can find :doc:`/reference/executables/groonga` in ``bin`` folder.
 
 Build from source
 -----------------
