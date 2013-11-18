@@ -180,10 +180,16 @@ if(WIN32)
   if(NOT ${HAVE_WINSOCK2_H})
     message(FATAL_ERROR "No winsock2.h found")
   endif()
-  ac_check_lib(ws2_32 select)
-  if(NOT ${HAVE_LIBWS2_32})
-    message(FATAL_ERROR "select() isn't found in ws2_32.lib")
-  endif()
+
+  # FIXME: CMake couldn't detect ws2_32.lib on Windows 8 64bit.
+  # It may be caused by missing library search path for ws2_32.lib.
+  # It seems that Visual Studio (devenv.exe) can find it but link.exe
+  # can't. "cmake --build" can find it because it uses Visual Studio
+  # internally. So we assume that we always have ws2_32.lib on Windows.
+  # ac_check_lib(ws2_32 select)
+  set(HAVE_LIBWS2_32 TRUE)
+  set(WS2_32_LIBS "ws2_32.lib")
+
   set(USE_SELECT TRUE)
 else()
   ac_check_headers(sys/epoll.h)
