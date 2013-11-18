@@ -308,24 +308,15 @@ complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
   if ((res = grn_table_create(ctx, NULL, 0, NULL,
                               GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, items, NULL))) {
     grn_id tid = grn_table_get(ctx, items, TEXT_VALUE_LEN(query));
-    grn_obj *string;
-    if (GRN_TEXT_LEN(query) &&
-        (string = grn_string_open(ctx, TEXT_VALUE_LEN(query),
-                                  GRN_NORMALIZER_AUTO, 0))) {
+    if (GRN_TEXT_LEN(query)) {
       grn_table_cursor *cur;
       /* RK search + prefix search */
       grn_obj *index;
-      const char *normalized;
-      unsigned int normalized_length_in_bytes;
-      grn_string_get_normalized(ctx, string,
-                                &normalized,
-                                &normalized_length_in_bytes,
-                                NULL);
       /* FIXME: support index selection */
       if (grn_column_index(ctx, col, GRN_OP_PREFIX, &index, 1, NULL)) {
         if ((cur = grn_table_cursor_open(ctx, grn_ctx_at(ctx, index->header.domain),
-                                         normalized,
-                                         normalized_length_in_bytes,
+                                         GRN_TEXT_VALUE(query),
+                                         GRN_TEXT_LEN(query),
                                          NULL, 0, 0, -1,
                                          GRN_CURSOR_PREFIX|GRN_CURSOR_RK))) {
           grn_id id;
@@ -356,8 +347,8 @@ complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
            (prefix_search_mode == GRN_SUGGEST_SEARCH_AUTO &&
             !grn_table_size(ctx, res))) &&
           (cur = grn_table_cursor_open(ctx, items,
-                                       normalized,
-                                       normalized_length_in_bytes,
+                                       GRN_TEXT_VALUE(query),
+                                       GRN_TEXT_LEN(query),
                                        NULL, 0, 0, -1, GRN_CURSOR_PREFIX))) {
         grn_id id;
         while ((id = grn_table_cursor_next(ctx, cur))) {
@@ -366,7 +357,6 @@ complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
         }
         grn_table_cursor_close(ctx, cur);
       }
-      grn_obj_close(ctx, string);
     }
     output(ctx, items, res, tid, sortby, output_columns, offset, limit);
     grn_obj_close(ctx, res);
