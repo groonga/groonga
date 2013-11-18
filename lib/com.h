@@ -157,8 +157,8 @@ struct _grn_com_event {
 #endif /* USE_SELECT */
 };
 
-grn_rc grn_com_init(void);
-void grn_com_fin(void);
+GRN_API grn_rc grn_com_init(void);
+GRN_API void grn_com_fin(void);
 GRN_API grn_rc grn_com_event_init(grn_ctx *ctx, grn_com_event *ev, int max_nevents, int data_size);
 GRN_API grn_rc grn_com_event_fin(grn_ctx *ctx, grn_com_event *ev);
 GRN_API grn_rc grn_com_event_start_accept(grn_ctx *ctx, grn_com_event *ev);
@@ -200,7 +200,7 @@ GRN_API grn_rc grn_com_close(grn_ctx *ctx, grn_com *com);
 
 GRN_API grn_rc grn_com_send(grn_ctx *ctx, grn_com *cs,
                             grn_com_header *header, const char *body, uint32_t size, int flags);
-grn_rc grn_com_recv(grn_ctx *ctx, grn_com *cs, grn_com_header *header, grn_obj *buf);
+GRN_API grn_rc grn_com_recv(grn_ctx *ctx, grn_com *cs, grn_com_header *header, grn_obj *buf);
 GRN_API grn_rc grn_com_send_http(grn_ctx *ctx, grn_com *cs, const char *path, uint32_t path_len, int flags);
 
 /******* grn_msg ********/
@@ -249,9 +249,9 @@ GRN_VAR grn_hash *grn_edges;
 GRN_API void grn_edges_init(grn_ctx *ctx, void (*dispatcher)(grn_ctx *ctx, grn_edge *edge));
 GRN_API void grn_edges_fin(grn_ctx *ctx);
 GRN_API grn_edge *grn_edges_add(grn_ctx *ctx, grn_com_addr *addr, int *added);
-grn_edge *grn_edges_add_communicator(grn_ctx *ctx, grn_com_addr *addr);
+GRN_API grn_edge *grn_edges_add_communicator(grn_ctx *ctx, grn_com_addr *addr);
 GRN_API void grn_edges_delete(grn_ctx *ctx, grn_edge *edge);
-void grn_edge_dispatch(grn_ctx *ctx, grn_edge *edge, grn_obj *msg);
+GRN_API void grn_edge_dispatch(grn_ctx *ctx, grn_edge *edge, grn_obj *msg);
 
 #ifdef __cplusplus
 }
