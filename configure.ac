@@ -1152,6 +1152,7 @@ expanded_relative_pluginsdir_base="${PACKAGE}/plugins"
 AC_SUBST(expanded_relative_pluginsdir_base)
 
 relative_pluginsdir="lib/\$(relative_pluginsdir_base)"
+AC_SUBST(relative_pluginsdir)
 
 pluginsdir="\${libdir}/\$(relative_pluginsdir_base)"
 AC_SUBST(pluginsdir)
