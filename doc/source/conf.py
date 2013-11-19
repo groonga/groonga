@@ -267,6 +267,6 @@ pdf_break_level = 2
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'Groonga', unicode(_('Groonga documentation'), "utf-8"),
+    ('index', 'groonga', unicode(_('Groonga documentation'), "utf-8"),
      [u'Groonga Project'], 1)
 ]
