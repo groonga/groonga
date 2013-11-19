@@ -181,7 +181,7 @@ static const char *opstrs[] = {
   "GET_REF",
   "GET_VALUE",
   "AND",
-  "BUT",
+  "AND_NOT",
   "OR",
   "ASSIGN",
   "STAR_ASSIGN",
