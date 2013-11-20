@@ -27,11 +27,13 @@
 void
 grn_mrb_obj_init(grn_ctx *ctx)
 {
-  mrb_state *mrb = ctx->impl->mrb.state;
-  struct RClass *module = ctx->impl->mrb.module;
+  grn_mrb_data *data = &(ctx->impl->mrb);
+  mrb_state *mrb = data->state;
+  struct RClass *module = data->module;
   struct RClass *klass;
 
   klass = mrb_define_class_under(mrb, module, "Object", mrb->object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
+  data->object_class = klass;
 }
 #endif

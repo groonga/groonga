@@ -70,11 +70,12 @@ mrb_grn_accessor_next(mrb_state *mrb, mrb_value self)
 void
 grn_mrb_accessor_init(grn_ctx *ctx)
 {
-  mrb_state *mrb = ctx->impl->mrb.state;
-  struct RClass *module = ctx->impl->mrb.module;
+  grn_mrb_data *data = &(ctx->impl->mrb);
+  mrb_state *mrb = data->state;
+  struct RClass *module = data->module;
   struct RClass *klass;
 
-  klass = mrb_define_class_under(mrb, module, "Accessor", mrb->object_class);
+  klass = mrb_define_class_under(mrb, module, "Accessor", data->object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
   mrb_define_method(mrb, klass, "initialize", mrb_grn_accessor_initialize, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "next", mrb_grn_accessor_next, MRB_ARGS_NONE());

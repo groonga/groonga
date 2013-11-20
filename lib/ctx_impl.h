@@ -97,6 +97,7 @@ typedef struct _grn_mrb_data grn_mrb_data;
 struct _grn_mrb_data {
   mrb_state *state;
   struct RClass *module;
+  struct RClass *object_class;
 };
 #endif
 
