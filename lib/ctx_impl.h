@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2012 Brazil
+  Copyright(C) 2009-2013 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -92,6 +92,14 @@ struct _grn_alloc_info
 };
 #endif
 
+#ifdef GRN_WITH_MRUBY
+typedef struct _grn_mrb_data grn_mrb_data;
+struct _grn_mrb_data {
+  mrb_state *state;
+  struct RClass *module;
+};
+#endif
+
 struct _grn_ctx_impl {
   grn_encoding encoding;
 
@@ -176,10 +184,7 @@ struct _grn_ctx_impl {
   msgpack_packer msgpacker;
 #endif
 #ifdef GRN_WITH_MRUBY
-  struct {
-    mrb_state *state;
-    struct RClass *module;
-  } mrb;
+  grn_mrb_data mrb;
 #endif
 };
 
