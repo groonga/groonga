@@ -1,6 +1,8 @@
 libgrnmrb_la_SOURCES =				\
 	mrb_accessor.c				\
 	mrb_accessor.h				\
+	mrb_column.c				\
+	mrb_column.h				\
 	mrb_expr.c				\
 	mrb_expr.h				\
 	mrb_obj.c				\
