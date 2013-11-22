@@ -5,6 +5,47 @@
 News
 ====
 
+.. _release-3-1-0:
+
+Release 3.1.0 - 2013/11/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [experimental] Supported an option to skip updating for the same value.
+  It is enabled by setting GRN_JA_SKIP_SAME_VALUE_PUT=yes as environment variable.
+* Improved to show tokenizer and original text in empty token warning message.
+  It shows actual token, so it helps you to investigate token related issue.
+* Dropped broken AIO support. [#2054] [Reported by sho MINAGAWA]
+* [windows] Supported build with Visual Studio Express 2008. [#1964 the 21th comment]
+  It is aimed to promote bundling Mroonga with MariaDB in the future.
+
+Fixes
+^^^^^
+
+* Fixed a bug that type of "_value" column is treated as Int32.
+  It causes the case that the value of "_value" column is casted unexpectedly.
+  [Reported by Genki Takiuchi]
+* Fixed to require GLib 2.14.0 or later for benchmark program.
+  The benchmark program is changed to use GRegex which requires GLib 2.14.0 or later.
+  It affects users who compile Groonga with '--enable-benchmark' configuration.
+  [groonga-dev,01890] [Reported by WING]
+* Fixed a memory leak on updating an empty column vector with the same value.
+* Fixed a memory leak on updating index for column vector.
+  It affects the case if you store the value of column which has invalid UTF-8 byte
+  sequence.
+* [plugin][windows] Fixed the issue that register command fails without
+  'lib/groonga/plugins'. [Reported by @yito]
+
+Thanks
+^^^^^^
+
+* sho MINAGAWA
+* Genki Takiuchi
+* WING
+* @yito
+
 .. _release-3-0-9:
 
 Release 3.0.9 - 2013/10/29
