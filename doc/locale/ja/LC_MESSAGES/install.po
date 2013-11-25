@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-15 11:22+0900\n"
+"POT-Creation-Date: 2013-11-25 15:37+0900\n"
 "PO-Revision-Date: 2013-11-15 11:25+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -1306,9 +1306,9 @@ msgstr ""
 "32-bit環境の場合は、x86のバイナリをpackages.groonga.orgからダウンロードしてく"
 "ださい。"
 
-# 02adcb7b15174660905e048fed0dfd97
+# bf9d5fd0fdc841beac2f95cc92d0cfb1
 #: ../../../source/install/windows.txt:23
-msgid "http://packages.groonga.org/windows/groonga/groonga-3.0.9-x86.exe"
+msgid "http://packages.groonga.org/windows/groonga/groonga-3.1.0-x86.exe"
 msgstr ""
 
 # 41dd51a424d84b689b3045c13bedcaf8
@@ -1327,9 +1327,9 @@ msgstr ""
 "64-bit環境の場合は、x64のバイナリをpackages.groonga.orgからダウンロードしてく"
 "ださい。"
 
-# 0d89774313144d1a9d51d67fafcab74f
+# 6f3dc09b4e8a4e1ea75f5906fa02e0c9
 #: ../../../source/install/windows.txt:30
-msgid "http://packages.groonga.org/windows/groonga/groonga-3.0.9-x64.exe"
+msgid "http://packages.groonga.org/windows/groonga/groonga-3.1.0-x64.exe"
 msgstr ""
 
 # ec57e50c1c624fabb14313a143a0d9fb
@@ -1337,7 +1337,9 @@ msgstr ""
 msgid ""
 "Use command prompt in start menu to run :doc:`/reference/executables/"
 "groonga`."
-msgstr "スタートメニュー内にあるコマンドプロンプトを使って :doc:`/reference/executables/groonga` を起動してください。"
+msgstr ""
+"スタートメニュー内にあるコマンドプロンプトを使って :doc:`/reference/"
+"executables/groonga` を起動してください。"
 
 # d8c961cd55d94e049fd91093cb591128
 #: ../../../source/install/windows.txt:38
@@ -1352,9 +1354,9 @@ msgstr ""
 "32-bit環境の場合は、x86のzipアーカイブをpackages.groonga.orgからダウンロード"
 "してください。"
 
-# 02adcb7b15174660905e048fed0dfd97
+# ae5e913899294189820751468f5b5be8
 #: ../../../source/install/windows.txt:43
-msgid "http://packages.groonga.org/windows/groonga/groonga-3.0.9-x86.zip"
+msgid "http://packages.groonga.org/windows/groonga/groonga-3.1.0-x86.zip"
 msgstr ""
 
 # 5522eaec16b94e5c82c0c2ee1c97249e
@@ -1373,22 +1375,26 @@ msgstr ""
 "64-bit環境の場合は、x64のzipアーカイブをpackages.groonga.orgからダウンロード"
 "してください。"
 
-# 0d89774313144d1a9d51d67fafcab74f
+# e33c0c13f5ac46f49037f063a15c344a
 #: ../../../source/install/windows.txt:50
-msgid "http://packages.groonga.org/windows/groonga/groonga-3.0.9-x64.zip"
+msgid "http://packages.groonga.org/windows/groonga/groonga-3.1.0-x64.zip"
 msgstr ""
 
 # 8820fc4404434f5b8b0b1c2d71213e30
 #: ../../../source/install/windows.txt:54
 msgid "You can find :doc:`/reference/executables/groonga` in ``bin`` folder."
-msgstr "``bin`` フォルダーに :doc:`/reference/executables/groonga` があるのでそれを起動してください。"
+msgstr ""
+"``bin`` フォルダーに :doc:`/reference/executables/groonga` があるのでそれを起"
+"動してください。"
 
 # b0c7ac11a34f4e659e2ba5a73c9ce0af
 #: ../../../source/install/windows.txt:59
 msgid ""
 "First, you need to install required tools for building Groonga on Windows. "
 "Here are required tools:"
-msgstr "まずWindows上でGroongaをビルドするために必須のツールをインストールします。以下が必須のツールです。"
+msgstr ""
+"まずWindows上でGroongaをビルドするために必須のツールをインストールします。以"
+"下が必須のツールです。"
 
 # 8785eb17a7ed4a81b75550225a0ef00a
 #: ../../../source/install/windows.txt:62
@@ -1407,9 +1413,9 @@ msgstr ""
 msgid "Download zipped source from packages.groonga.org:"
 msgstr "zipアーカイブをpackages.groonga.orgからダウンロードしてください。"
 
-# 0d89774313144d1a9d51d67fafcab74f
+# e33c0c13f5ac46f49037f063a15c344a
 #: ../../../source/install/windows.txt:68
-msgid "http://packages.groonga.org/source/groonga/groonga-3.0.9.zip"
+msgid "http://packages.groonga.org/source/groonga/groonga-3.1.0.zip"
 msgstr ""
 
 # 1906fb2bad3d4db99362852684c376c5

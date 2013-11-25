@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-15 11:08+0900\n"
+"POT-Creation-Date: 2013-11-25 15:37+0900\n"
 "PO-Revision-Date: 2013-10-28 11:25+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -63,6 +63,7 @@ msgstr ""
 #: ../../../source/example/reference/commands/normalize/normalizer_auto_ascii.log:1
 #: ../../../source/example/reference/commands/register/query_expanders_tsv.log:1
 #: ../../../source/example/reference/commands/ruby_eval/calc.log:1
+#: ../../../source/example/reference/commands/ruby_load/load.log:1
 #: ../../../source/example/reference/commands/select/filter_equal.log:1
 #: ../../../source/example/reference/commands/select/filter_less_than.log:1
 #: ../../../source/example/reference/commands/select/limit_negative.log:1
@@ -410,8 +411,8 @@ msgstr "リファレンス"
 #: ../../../source/reference/api/grn_cache.txt:56
 msgid ""
 "It is an opaque cache object. You can create a ``grn_cache`` by :c:func:"
-"`grn_cache_open()` and free the created object by :c:func:"
-"`grn_cache_close()`."
+"`grn_cache_open()` and free the created object by :c:func:`grn_cache_close()"
+"`."
 msgstr ""
 
 # d63c7815788f435abe531c85072637c7
@@ -1029,10 +1030,10 @@ msgid ""
 ":c:func:`grn_ctx_init()` で初期化された :c:type:`grn_ctx` オブジェクトは構造"
 "体の実体をAPIの呼び元で確保するのに対して、 :c:func:`grn_ctx_open()` では"
 "groongaライブラリの内部で、実体を確保します。 どちらで初期化された :c:type:"
-"`grn_ctx` も、 :c:func:`grn_ctx_fin()` で解放できます。 :c:func:"
-"`grn_ctx_open()` で確保した :c:type:`grn_ctx` 構造体に関しては、:c:func:"
-"`grn_ctx_fin()` で解放した後に、その :c:type:`grn_ctx` で作成した :c:type:"
-"`grn_obj` を :c:func:`grn_obj_close()` によって解放しても問題ありません。"
+"`grn_ctx` も、 :c:func:`grn_ctx_fin()` で解放できます。 :c:func:`grn_ctx_open"
+"()` で確保した :c:type:`grn_ctx` 構造体に関しては、:c:func:`grn_ctx_fin()` で"
+"解放した後に、その :c:type:`grn_ctx` で作成した :c:type:`grn_obj` を :c:func:"
+"`grn_obj_close()` によって解放しても問題ありません。"
 msgstr ""
 
 # 8d8f6d02f9e342449659ad873ed4bde0
@@ -12498,10 +12499,10 @@ msgstr ""
 "groongaは三つの組み込み関数を距離の計算のために提供しています。 "
 "``geo_distance()`` 、 ``geo_distance2()`` 、 ``geo_distance3()`` です。これら"
 "の違いは距離の計算アルゴリズムにあります。 ``geo_distance2()`` と "
-"``geo_distance3()`` はバージョン1.2.9より非推奨となりました。 "
-"``geo_distance2(point1, point2)`` の代りに ``geo_distance(point1, point2, "
-"\"sphere\")`` を使用してください。 ``geo_distance3(point1, point2)`` の代り"
-"に ``geo_distance(point1, point2, \"ellipsoid\")`` を使用してください。"
+"``geo_distance3()`` はバージョン1.2.9より非推奨となりました。 ``geo_distance2"
+"(point1, point2)`` の代りに ``geo_distance(point1, point2, \"sphere\")`` を使"
+"用してください。 ``geo_distance3(point1, point2)`` の代りに ``geo_distance"
+"(point1, point2, \"ellipsoid\")`` を使用してください。"
 
 # e104cc660d534e88a06a49ffa76f81d6
 #: ../../../source/reference/functions/geo_distance.txt:49
@@ -12793,12 +12794,12 @@ msgstr ""
 #: ../../../source/reference/functions/geo_distance.txt:226
 msgid ""
 "This sample shows the value of distance across meridian. The return value of "
-"``geo_distance(\"175904000x8464000\", \"145508000x-13291000\", \"rectangle"
-"\")`` is the value of distance from Paris, Flance to Madrid, Spain."
+"``geo_distance(\"175904000x8464000\", \"145508000x-13291000\", \"rectangle\")"
+"`` is the value of distance from Paris, Flance to Madrid, Spain."
 msgstr ""
-"このサンプルは子午線をまたいだ場合の距離を示します。 "
-"``geo_distance(\"175904000x8464000\", \"145508000x-13291000\", \"rectangle"
-"\")`` はパリ(フランス)からマドリード(スペイン)間の距離を返します。"
+"このサンプルは子午線をまたいだ場合の距離を示します。 ``geo_distance"
+"(\"175904000x8464000\", \"145508000x-13291000\", \"rectangle\")`` はパリ(フラ"
+"ンス)からマドリード(スペイン)間の距離を返します。"
 
 # 3da492876e11411b85efe3c8d6ab6d9f
 #: ../../../source/reference/functions/geo_distance.txt:233
@@ -12808,10 +12809,9 @@ msgid ""
 "\"rectangle\")`` is the value of distance from New York, The United Status "
 "to Brasillia, Brasil."
 msgstr ""
-"このサンプルは赤道をまたいだ場合の距離を示します。 "
-"``geo_distance(\"146566000x-266422000\", \"-56880000x-172310000\", "
-"\"rectangle\")`` はニューヨーク(アメリカ)からブラジリア(ブラジル)間の距離を返"
-"します。"
+"このサンプルは赤道をまたいだ場合の距離を示します。 ``geo_distance"
+"(\"146566000x-266422000\", \"-56880000x-172310000\", \"rectangle\")`` は"
+"ニューヨーク(アメリカ)からブラジリア(ブラジル)間の距離を返します。"
 
 # 25a3e01452314176a4e613e60ee14524
 #: ../../../source/reference/functions/geo_distance.txt:240
@@ -12821,9 +12821,9 @@ msgid ""
 "\"rectangle\")`` is the value of distance from Beijin, China to San "
 "Francisco, The United States."
 msgstr ""
-"このサンプルは日付変更線をまたいだ場合の距離を示します。 "
-"``geo_distance(\"143660000x419009000\", \"135960000x-440760000\", \"rectangle"
-"\")`` は北京(中国)からサンフランシスコ(アメリカ)間の距離を返します。"
+"このサンプルは日付変更線をまたいだ場合の距離を示します。 ``geo_distance"
+"(\"143660000x419009000\", \"135960000x-440760000\", \"rectangle\")`` は北京"
+"(中国)からサンフランシスコ(アメリカ)間の距離を返します。"
 
 # 09f03cbda1dd47ab816d7837212ddce6
 #: ../../../source/reference/functions/geo_distance.txt:245
@@ -14020,9 +14020,9 @@ msgstr "以下が特別な文字のリストです:"
 # 5a7b374cb3a74a998ab08a146adaade0
 #: ../../../source/reference/grn_expr/query_syntax.txt:81
 msgid ""
-"``[space]`` (escaped as ``[backslash][space]``) (You should substitute "
-"``[space]`` with a white space character that is 0x20 in ASCII and "
-"``[backslash]`` with ``\\\\``.)"
+"``[space]`` (escaped as ``[backslash][space]``) (You should substitute ``"
+"[space]`` with a white space character that is 0x20 in ASCII and ``"
+"[backslash]`` with ``\\\\``.)"
 msgstr ""
 "``[space]`` （ ``[backslash][space]`` とエスケープする。）（ ``[space]`` を"
 "ASCIIで言えば0x20の空白文字に置き換えて、 ``[backslash]`` を ``\\\\`` に置き"
@@ -14358,8 +14358,8 @@ msgid ""
 "search condition`` and ``full text search condition (with explicit match "
 "column)``. ``Phrase search condition`` supports advanced match columns but "
 "``phrase search condition (with explicit match column)`` isn't supported. "
-"See description of ``full text search condition (with explicit match "
-"column)`` about advanced match columns."
+"See description of ``full text search condition (with explicit match column)"
+"`` about advanced match columns."
 msgstr ""
 "``フレーズ検索条件`` と ``フレーズ検索条件（マッチカラム指定あり）`` は ``全"
 "文検索条件`` と ``全文検索条件（マッチカラム指定あり）`` の関係と似ていま"
@@ -17704,8 +17704,8 @@ msgstr "クエリーが ``mroonga search`` のときのクエリー展開の例�
 msgid ""
 "It is important that registered words (``groonga`` and ``mroonga``) are only "
 "expanded to synonyms and not registered words (``search``) are not expanded. "
-"Query expansion isn't occurred recursively. ``groonga`` is appeared in "
-"``(mroonga OR (groonga MySQL))`` as query expansion result but it isn't "
+"Query expansion isn't occurred recursively. ``groonga`` is appeared in ``"
+"(mroonga OR (groonga MySQL))`` as query expansion result but it isn't "
 "expanded."
 msgstr ""
 "登録されている単語だけ（ここでは ``groonga`` と ``mroonga`` ）クエリー展開さ"
@@ -18955,10 +18955,6 @@ msgstr ""
 msgid "Object型はv1.2でサポートされます。"
 msgstr ""
 
-# f21982b8504d499fa39e4e6c4be6923e
-#~ msgid "normalized is the normalized text by the specified normalizer."
-#~ msgstr "normalizedは指定したノーマライザーによる正規化されたテキストです。"
-
 # 448c01bf71e445e4b8cf64f75eb74821
 #~ msgid ""
 #~ "It specifies the name of normalizer. Currently, ``normalize`` command "
@@ -18971,3 +18967,7 @@ msgstr ""
 #~ "として受けつけます。もし他のノーマライザーを使いたい場合には、追加したい"
 #~ "ノーマライザーを :doc:`/reference/commands/register` コマンドで登録する必"
 #~ "要があります。"
+
+# f21982b8504d499fa39e4e6c4be6923e
+#~ msgid "normalized is the normalized text by the specified normalizer."
+#~ msgstr "normalizedは指定したノーマライザーによる正規化されたテキストです。"
