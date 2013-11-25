@@ -415,7 +415,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/truncate.txt \
 	$(top_srcdir)/doc/source/reference/command.txt \
 	$(top_srcdir)/doc/source/reference/executables/grnslap.txt \
-	$(top_srcdir)/doc/source/reference/executables/grntest.txt \
+	$(top_srcdir)/doc/source/reference/executables/groonga-benchmark.txt \
 	$(top_srcdir)/doc/source/reference/executables/groonga-httpd.txt \
 	$(top_srcdir)/doc/source/reference/executables/groonga-server-http.txt \
 	$(top_srcdir)/doc/source/reference/executables/groonga-suggest-create-dataset.txt \
@@ -912,7 +912,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/truncate.txt \
 	source/reference/command.txt \
 	source/reference/executables/grnslap.txt \
-	source/reference/executables/grntest.txt \
+	source/reference/executables/groonga-benchmark.txt \
 	source/reference/executables/groonga-httpd.txt \
 	source/reference/executables/groonga-server-http.txt \
 	source/reference/executables/groonga-suggest-create-dataset.txt \
@@ -1167,7 +1167,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/tokenize.html \
 	html/reference/commands/truncate.html \
 	html/reference/executables/grnslap.html \
-	html/reference/executables/grntest.html \
+	html/reference/executables/groonga-benchmark.html \
 	html/reference/executables/groonga.html \
 	html/reference/executables/groonga-httpd.html \
 	html/reference/executables/groonga-server-http.html \
@@ -1304,7 +1304,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/truncate.txt \
 	html/_sources/reference/command.txt \
 	html/_sources/reference/executables/grnslap.txt \
-	html/_sources/reference/executables/grntest.txt \
+	html/_sources/reference/executables/groonga-benchmark.txt \
 	html/_sources/reference/executables/groonga-httpd.txt \
 	html/_sources/reference/executables/groonga-server-http.txt \
 	html/_sources/reference/executables/groonga-suggest-create-dataset.txt \
