@@ -8,14 +8,14 @@ Execution example::
   #     0.000355720520019531
   #   ], 
   #   {
-  #     "uptime": 50, 
+  #     "uptime": 0, 
   #     "max_command_version": 2, 
-  #     "n_queries": 39, 
+  #     "n_queries": 0, 
   #     "cache_hit_rate": 0.0, 
-  #     "version": "3.0.7", 
-  #     "alloc_count": 300, 
+  #     "version": "3.1.0", 
+  #     "alloc_count": 290, 
   #     "command_version": 1, 
-  #     "starttime": 1377493297, 
+  #     "starttime": 1385359891, 
   #     "default_command_version": 1
   #   }
   # ]
