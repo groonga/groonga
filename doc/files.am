@@ -27,6 +27,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/normalize/normalizer_auto_ascii.log \
 	$(top_srcdir)/doc/source/example/reference/commands/register/query_expanders_tsv.log \
 	$(top_srcdir)/doc/source/example/reference/commands/ruby_eval/calc.log \
+	$(top_srcdir)/doc/source/example/reference/commands/ruby_load/load.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/filter_equal.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/filter_less_than.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/limit_negative.log \
@@ -523,6 +524,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/normalize/normalizer_auto_ascii.log \
 	source/example/reference/commands/register/query_expanders_tsv.log \
 	source/example/reference/commands/ruby_eval/calc.log \
+	source/example/reference/commands/ruby_load/load.log \
 	source/example/reference/commands/select/filter_equal.log \
 	source/example/reference/commands/select/filter_less_than.log \
 	source/example/reference/commands/select/limit_negative.log \
