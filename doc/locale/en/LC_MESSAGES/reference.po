@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-25 17:23+0900\n"
+"POT-Creation-Date: 2013-11-25 13:41+0900\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -124,6 +124,7 @@ msgstr ""
 #: ../../../source/example/reference/commands/normalize/normalizer_auto_ascii.log:1
 #: ../../../source/example/reference/commands/register/query_expanders_tsv.log:1
 #: ../../../source/example/reference/commands/ruby_eval/calc.log:1
+#: ../../../source/example/reference/commands/ruby_load/load.log:1
 #: ../../../source/example/reference/commands/select/filter_equal.log:1
 #: ../../../source/example/reference/commands/select/filter_less_than.log:1
 #: ../../../source/example/reference/commands/select/limit_negative.log:1
@@ -5407,6 +5408,7 @@ msgstr "カラム名"
 # 3f256f3d2a5f449cbc13b6a362618ea5
 # a53025dea1d94ebe99fc1555b8b1b6ea
 #: ../../../source/reference/commands/column_list.txt:55
+#: ../../../source/reference/commands/ruby_load.txt:46
 #: ../../../source/reference/commands/table_list.txt:54
 msgid "``path``"
 msgstr "``path``"
@@ -6907,12 +6909,6 @@ msgstr ""
 msgid ""
 "Note that ``ruby_load`` is implemented as an experimental plugin, and the "
 "specification may be changed in the future."
-msgstr ""
-
-# 3f256f3d2a5f449cbc13b6a362618ea5
-# a53025dea1d94ebe99fc1555b8b1b6ea
-#: ../../../source/reference/commands/ruby_load.txt:46
-msgid "``script_path``"
 msgstr ""
 
 # 3bbc34d6e1fd419c905a8a3ca4c616ae
@@ -18660,57 +18656,27 @@ msgstr ""
 msgid "Object型はv1.2でサポートされます。"
 msgstr "Object型はv1.2でサポートされます。"
 
-# 68baf1cf0b444232a1fa7299c43fc58a
-#~ msgid "column_create"
-#~ msgstr "column_create"
+# 67d43cef5b5d4b118d9396d454ee4544
+#~ msgid "VIEW型のテーブルに要素となるテーブルを定義します。"
+#~ msgstr "VIEW型のテーブルに要素となるテーブルを定義します。"
 
-# 17b5fc3339cb402db375a8fb03389871
-#~ msgid "delete - 一件のレコードの削除"
-#~ msgstr "delete - 一件のレコードの削除"
+# 8e91fbc2746341169c27948089409f5c
+#~ msgid "json"
+#~ msgstr "json"
 
-# 9ee33aa44c21410eb720de969556dde0
+# 5422fde6ce3d4b03926ae9c28a568c8e
 #~ msgid ""
-#~ "groonga組込コマンドの一つであるdeleteについて説明します。組込コマンドは、"
-#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
-#~ "クエストを送信することによって実行します。"
+#~ "クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
+#~ "は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
 #~ msgstr ""
-#~ "groonga組込コマンドの一つであるdeleteについて説明します。組込コマンドは、"
-#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
-#~ "クエストを送信することによって実行します。"
+#~ "クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
+#~ "は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
 
-# d295da1d724849a8a4c12e499c4e5ef1
+# 31ae96ec89454ccd8461b3be13376d57
 #~ msgid ""
-#~ "deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
+#~ "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
 #~ msgstr ""
-#~ "deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
-
-# bb54bdbab7684c0e940229f834bdfe82
-#~ msgid "テーブルEntryからレコードを削除します。::"
-#~ msgstr "テーブルEntryからレコードを削除します。::"
-
-# 43e0750371c644d8833d1a01a72e4ced
-#~ msgid "レコードを削除しようとするテーブルの名前を指定します。"
-#~ msgstr "レコードを削除しようとするテーブルの名前を指定します。"
-
-# 1348fc0305b9412b840d4a9371faa2da
-#~ msgid ""
-#~ "削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパ"
-#~ "ラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
-#~ msgstr ""
-#~ "削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパ"
-#~ "ラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
-
-# ae3fed01f9fd4e7e9a541995a8dcf986
-#~ msgid ""
-#~ "script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを"
-#~ "指定する場合は、id及びkeyパラメータを指定してはいけません。"
-#~ msgstr ""
-#~ "script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを"
-#~ "指定する場合は、id及びkeyパラメータを指定してはいけません。"
-
-# 1fa38310321a4d9f8f5dcb5d3b9ebe5e
-#~ msgid "cache_limit - cacheサイズの設定・取得"
-#~ msgstr "cache_limit - cacheサイズの設定・取得"
+#~ "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
 
 # 782f01979fbc4d54b4b22525168fdcb3
 #~ msgid ""
@@ -18722,24 +18688,54 @@ msgstr "Object型はv1.2でサポートされます。"
 #~ "は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバ"
 #~ "にリクエストを送信することによって実行します。"
 
-# 31ae96ec89454ccd8461b3be13376d57
+# 1fa38310321a4d9f8f5dcb5d3b9ebe5e
+#~ msgid "cache_limit - cacheサイズの設定・取得"
+#~ msgstr "cache_limit - cacheサイズの設定・取得"
+
+# ae3fed01f9fd4e7e9a541995a8dcf986
 #~ msgid ""
-#~ "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
+#~ "script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを"
+#~ "指定する場合は、id及びkeyパラメータを指定してはいけません。"
 #~ msgstr ""
-#~ "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
+#~ "script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを"
+#~ "指定する場合は、id及びkeyパラメータを指定してはいけません。"
 
-# 5422fde6ce3d4b03926ae9c28a568c8e
+# 1348fc0305b9412b840d4a9371faa2da
 #~ msgid ""
-#~ "クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
-#~ "は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
+#~ "削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパ"
+#~ "ラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
 #~ msgstr ""
-#~ "クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
-#~ "は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
+#~ "削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパ"
+#~ "ラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
 
-# 8e91fbc2746341169c27948089409f5c
-#~ msgid "json"
-#~ msgstr "json"
+# 43e0750371c644d8833d1a01a72e4ced
+#~ msgid "レコードを削除しようとするテーブルの名前を指定します。"
+#~ msgstr "レコードを削除しようとするテーブルの名前を指定します。"
 
-# 67d43cef5b5d4b118d9396d454ee4544
-#~ msgid "VIEW型のテーブルに要素となるテーブルを定義します。"
-#~ msgstr "VIEW型のテーブルに要素となるテーブルを定義します。"
+# bb54bdbab7684c0e940229f834bdfe82
+#~ msgid "テーブルEntryからレコードを削除します。::"
+#~ msgstr "テーブルEntryからレコードを削除します。::"
+
+# d295da1d724849a8a4c12e499c4e5ef1
+#~ msgid ""
+#~ "deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
+#~ msgstr ""
+#~ "deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
+
+# 9ee33aa44c21410eb720de969556dde0
+#~ msgid ""
+#~ "groonga組込コマンドの一つであるdeleteについて説明します。組込コマンドは、"
+#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
+#~ "クエストを送信することによって実行します。"
+#~ msgstr ""
+#~ "groonga組込コマンドの一つであるdeleteについて説明します。組込コマンドは、"
+#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
+#~ "クエストを送信することによって実行します。"
+
+# 17b5fc3339cb402db375a8fb03389871
+#~ msgid "delete - 一件のレコードの削除"
+#~ msgstr "delete - 一件のレコードの削除"
+
+# 68baf1cf0b444232a1fa7299c43fc58a
+#~ msgid "column_create"
+#~ msgstr "column_create"

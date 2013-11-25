@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-23 17:24+0900\n"
-"PO-Revision-Date: 2012-07-23 17:58+0900\n"
+"POT-Creation-Date: 2013-11-25 13:41+0900\n"
+"PO-Revision-Date: 2013-11-25 14:32+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -112,7 +112,7 @@ msgstr "CentOS 5"
 #: ../../../source/install/ubuntu.txt:177
 #: ../../../source/install/ubuntu.txt:217
 #: ../../../source/install/ubuntu.txt:268
-#: ../../../source/install/windows.txt:100
+#: ../../../source/install/windows.txt:86
 msgid "Install::"
 msgstr "Install::"
 
@@ -349,7 +349,7 @@ msgstr ""
 #: ../../../source/install/mac_os_x.txt:37
 #: ../../../source/install/others.txt:72
 #: ../../../source/install/ubuntu.txt:248
-#: ../../../source/install/windows.txt:65
+#: ../../../source/install/windows.txt:57
 msgid "Build from source"
 msgstr "Build from source"
 
@@ -406,7 +406,7 @@ msgstr "Configure (see :ref:`source-configure` about ``configure`` options)::"
 #: ../../../source/install/mac_os_x.txt:51
 #: ../../../source/install/solaris.txt:31
 #: ../../../source/install/ubuntu.txt:264
-#: ../../../source/install/windows.txt:96
+#: ../../../source/install/windows.txt:82
 msgid "Build::"
 msgstr "Build::"
 
@@ -1309,123 +1309,102 @@ msgstr "Windows"
 # 5636ea4b5ea048f19b7ec69d39cd071b
 #: ../../../source/install/windows.txt:8
 msgid ""
-"This section describes how to install groonga on Windows. You can install "
-"groogna by extracting a zip package or running an installer."
+"This section describes how to install Groonga on Windows. You can install "
+"Groogna by extracting a zip package or running an installer."
 msgstr ""
-"This section describes how to install groonga on Windows. You can install "
-"groogna by extracting a zip package or running an installer."
 
 # cefb88cd7ba34435a9bc48cc25e33b75
 #: ../../../source/install/windows.txt:18
 msgid "Installer"
 msgstr "Installer"
 
-# 63379d027d854a70b04771bbdd9b95e4
+# 02abb4201a534682aaeda21192e07a81
 #: ../../../source/install/windows.txt:20
 msgid ""
 "For 32-bit environment, download x86 executable binary from packages.groonga."
-"org."
+"org:"
 msgstr ""
 
-# 7a54f8e7f2b547ee8257f8bb8bdab5a2
-# 01ca7e9469ad415ebe7b036f29197a5f
-#: ../../../source/install/windows.txt:22
-#: ../../../source/install/windows.txt:46
-msgid "You can download such a binary by command line operation."
-msgstr ""
-
-# 017d706ca4444c4d8bd73352c3d00357
-#: ../../../source/install/windows.txt:24
-msgid ""
-"Start command prompt ``cmd.exe`` and download x86 executable binary by "
-"default browser::"
+# 05eacf0057184424abc900d4c13e2206
+#: ../../../source/install/windows.txt:23
+msgid "http://packages.groonga.org/windows/groonga/groonga-3.1.0-x86.exe"
 msgstr ""
 
 # 0d0d20c9217241329dfb1136cde7788b
 # b4c730d4c7d144f998f4a7ed18b310c4
-#: ../../../source/install/windows.txt:28
-#: ../../../source/install/windows.txt:37
+#: ../../../source/install/windows.txt:25
+#: ../../../source/install/windows.txt:32
 msgid "Then run it."
 msgstr ""
 
-# 6cf22c9e52fe4e6f913757017901f4de
-#: ../../../source/install/windows.txt:31
+# 1355942c262e4e21a4b7a3f66eb92f9c
+#: ../../../source/install/windows.txt:27
 msgid ""
-"For 64-bit environment, download x64 executable binary from packages.groonga."
-"org."
+"For 64-bit environment, download x64 executable binary from packages.goronga."
+"org:"
 msgstr ""
 
-# 0292b1f97019490cb6b8914a9351d7bd
-#: ../../../source/install/windows.txt:33
-msgid ""
-"Start command prompt ``cmd.exe`` and download x64 executable binary by "
-"default browser::"
+# e0eb943238734138975bd20bb3ea6557
+#: ../../../source/install/windows.txt:30
+msgid "http://packages.groonga.org/windows/groonga/groonga-3.1.0-x64.exe"
 msgstr ""
 
 # 1a1a6987d02246789520e645b90d254c
-#: ../../../source/install/windows.txt:39
+#: ../../../source/install/windows.txt:34
 msgid ""
-"Use command prompt for :doc:`/reference/executables/groonga` installed in "
-"start menu."
+"Use command prompt in start menu to run :doc:`/reference/executables/"
+"groonga`."
 msgstr ""
-"Use command prompt for :doc:`/reference/executables/groonga` installed in "
-"start menu."
 
 # dd06b83775b64eee9fd394f9029d5f76
-#: ../../../source/install/windows.txt:42
+#: ../../../source/install/windows.txt:38
 msgid "zip"
 msgstr "zip"
 
-# 63379d027d854a70b04771bbdd9b95e4
-#: ../../../source/install/windows.txt:44
+# 6928d606478044fd9ca6368c68ba59e2
+#: ../../../source/install/windows.txt:40
 msgid ""
-"For 32-bit environment, download x86 zip archive from packages.groonga.org."
+"For 32-bit environment, download x86 zip archive from packages.groonga.org:"
 msgstr ""
 
-# 0501a3c687db4b688dff4bd9139c4cb8
-#: ../../../source/install/windows.txt:48
-msgid ""
-"Start command prompt ``cmd.exe`` and download x86 zip archive by default "
-"browser::"
+# 67cac02c12144b759cf857abe7c1d928
+#: ../../../source/install/windows.txt:43
+msgid "http://packages.groonga.org/windows/groonga/groonga-3.1.0-x86.zip"
 msgstr ""
 
 # fbdd2f940ec14ad9b69257b422558df3
 # 7ea5ad637237489b8f3c544dc1f60415
+#: ../../../source/install/windows.txt:45
 #: ../../../source/install/windows.txt:52
-#: ../../../source/install/windows.txt:60
-#: ../../../source/install/windows.txt:84
+#: ../../../source/install/windows.txt:70
 msgid "Then extract it."
 msgstr ""
 
-# 6cf22c9e52fe4e6f913757017901f4de
-#: ../../../source/install/windows.txt:54
+# 42cf18e71dcf437bbb98fa14bdf6f184
+#: ../../../source/install/windows.txt:47
 msgid ""
-"For 64-bit environment, download x64 zip archive from packages.groonga.org."
+"For 64-bit environment, download x64 zip archive from packages.groonga.org:"
 msgstr ""
 
-# 51e5d0271bc74e46bcf881ea1b7722be
-#: ../../../source/install/windows.txt:56
-msgid ""
-"Start command prompt ``cmd.exe`` and download x64 zip archive by default "
-"browser::"
+# 7d5c7a9e09fb4220833dbab5ad38af04
+#: ../../../source/install/windows.txt:50
+msgid "http://packages.groonga.org/windows/groonga/groonga-3.1.0-x64.zip"
 msgstr ""
 
 # 1a7c217b0fe64a4189130131f8cd80b5
-#: ../../../source/install/windows.txt:62
-msgid ":doc:`/reference/executables/groonga` is in ``bin`` folder."
-msgstr ":doc:`/reference/executables/groonga` is in ``bin`` folder."
+#: ../../../source/install/windows.txt:54
+msgid "You can find :doc:`/reference/executables/groonga` in ``bin`` folder."
+msgstr ""
 
 # 863d4e88ab08469bb3a821ca662493e3
-#: ../../../source/install/windows.txt:67
+#: ../../../source/install/windows.txt:59
 msgid ""
-"First, you need to install required tools for building groonga on Windows. "
+"First, you need to install required tools for building Groonga on Windows. "
 "Here are required tools:"
 msgstr ""
-"First, you need to install required tools for building groonga on Windows. "
-"Here are required tools:"
 
 # f8c76b00b6dc4372bb2acf68d952975d
-#: ../../../source/install/windows.txt:70
+#: ../../../source/install/windows.txt:62
 msgid ""
 "`Microsoft Visual Studio 2010 Express <http://www.microsoft.com/japan/msdn/"
 "vstudio/express/>`_"
@@ -1434,34 +1413,27 @@ msgstr ""
 "vstudio/express/>`_"
 
 # bb30986b623d4cf6b415e7c88bb65e32
-#: ../../../source/install/windows.txt:72
+#: ../../../source/install/windows.txt:64
 msgid "`CMake <http://www.cmake.org/>`_"
 msgstr "`CMake <http://www.cmake.org/>`_"
 
-# 902db22e4e364c3b91f1aac992db4cf7
-#: ../../../source/install/windows.txt:74
-msgid "Download zipped source from packages.groonga.org."
+# f112c6b9e9ba4a78bee51b956013470d
+#: ../../../source/install/windows.txt:66
+msgid "Download zipped source from packages.groonga.org:"
 msgstr ""
 
-# 51d5179dfac040e28858a83a55d2c225
-#: ../../../source/install/windows.txt:76
-msgid "You can download such a zipped source file by command line operation."
+# 67cac02c12144b759cf857abe7c1d928
+#: ../../../source/install/windows.txt:68
+msgid "http://packages.groonga.org/source/groonga/groonga-3.1.0.zip"
 msgstr ""
 
-# 53fb3cc4ea6b4d4e963c26a6fad4072b
-#: ../../../source/install/windows.txt:78
-msgid ""
-"Start ``Visual Studio Command Prompt (2010)`` installed by Microsoft Visual "
-"Studio 2010 Express and download it by default browser::"
-msgstr ""
-
-# 75d8b4ff6d5444b594486b79087532dd
-#: ../../../source/install/windows.txt:86
-msgid "Move to the groonga's source folder::"
+# 54b1397d01e341e8aa6d554189cee83b
+#: ../../../source/install/windows.txt:72
+msgid "Move to the Groonga's source folder::"
 msgstr ""
 
 # d7941dc1d482408e987e000329e56801
-#: ../../../source/install/windows.txt:90
+#: ../../../source/install/windows.txt:76
 msgid ""
 "Configure by ``cmake``. The following commnad line is for 64-bit version. To "
 "build 32-bit version, use ``-G \"Visual Studio 10\"`` parameter instead::"
@@ -1470,7 +1442,7 @@ msgstr ""
 "build 32-bit version, use ``-G \"Visual Studio 10\"`` parameter instead::"
 
 # 58228c67497644cdbb85e90fb3c8d284
-#: ../../../source/install/windows.txt:104
+#: ../../../source/install/windows.txt:90
 msgid ""
 "After the above steps, :doc:`/reference/executables/groonga` is found in ``c:"
 "\\groonga\\bin\\groonga.exe``."
