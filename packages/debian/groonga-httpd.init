@@ -41,6 +41,8 @@ DEFAULT_FILE=/etc/default/groonga-httpd
 
 [ "$ENABLE" = "yes" ] || exit 0
 
+[ -n "$GRN_JA_SKIP_SAME_VALUE_PUT" ] && export GRN_JA_SKIP_SAME_VALUE_PUT=yes
+
 mkdir -p $(dirname ${PIDFILE})
 
 if [ -n "${USER}" ]; then

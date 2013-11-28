@@ -44,6 +44,10 @@ fi
 DAEMON_ARGS=""
 GROONGA_ARGS="-d"
 
+if [ -n "${GRN_JA_SKIP_SAME_VALUE_PUT}" ]; then
+    export GRN_JA_SKIP_SAME_VALUE_PUT=yes
+fi
+
 if [ -n "${USER}" ]; then
 	if ! getent passwd | grep -q "^${USER}:"; then
 		echo "$0: user for running $prog doesn't exist: ${USER}" >&2

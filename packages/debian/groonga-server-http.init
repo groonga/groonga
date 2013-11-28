@@ -44,6 +44,8 @@ DEFAULT_FILE=/etc/default/groonga-server-http
 
 [ "$ENABLE" = "yes" ] || exit 0
 
+[ -n "$GRN_JA_SKIP_SAME_VALUE_PUT" ] && export GRN_JA_SKIP_SAME_VALUE_PUT=yes
+
 DAEMON_ARGS="-d --pid-path ${PIDFILE}"
 if [ -n "${ADDRESS}" ]; then
     DAEMON_ARGS="${DAEMON_ARGS} --bind-address ${ADDRESS}"
