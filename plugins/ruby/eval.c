@@ -22,6 +22,7 @@ static grn_obj *
 command_ruby_eval(grn_ctx *ctx, int nargs, grn_obj **args,
                   grn_user_data *user_data)
 {
+  mrb_state *mrb = ctx->impl->mrb.state;
   grn_obj *script;
   mrb_value result;
 
@@ -44,6 +45,7 @@ command_ruby_eval(grn_ctx *ctx, int nargs, grn_obj **args,
     break;
   }
 
+  mrb->exc = NULL;
   result = grn_mrb_eval(ctx, GRN_TEXT_VALUE(script), GRN_TEXT_LEN(script));
   output_result(ctx, result);
 
