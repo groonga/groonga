@@ -69,9 +69,6 @@ else
 fi
 
 case $(lsb_release -s -c) in
-    squeeze|lucid)
-	ruby -i'' -ne 'print $_ unless /libzmq/' /tmp/${PACKAGE}-debian/control
-	;;
     jessie|sid)
 	DEPENDED_PACKAGES="${DEPENDED_PACKAGES} libzmq3-dev"
 	ruby -i'' -ne 'print $_.gsub(/libzmq/, "libzmq3")' /tmp/${PACKAGE}-debian/control
