@@ -116,7 +116,7 @@ can always map database files onto memory. It is no problem until
 groonga touch mapped database files that their size is larger than
 memory and swap. Groonga recommends the configuration.
 
-See `Linux kernel documentaion about overcommit
+See `Linux kernel documentation about overcommit
 <https://www.kernel.org/doc/Documentation/vm/overcommit-accounting>`_
 about ``vm.overcommit_memory`` parameter details.
 
