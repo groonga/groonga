@@ -60,7 +60,7 @@ Form::
 
   groonga [-p PORT_NUMBER] -c [HOST_NAME_OR_IP_ADDRESS]
 
-This command establishes a connection with a gqtp server and then enters into interactive mode. HOST_NAME_OR_IP_ADDRESS specifies the hostname or the IP address of the server. If not specifed, groonga uses the default hostname "localhost". The `-p` option and its argument, PORT_NUMBER, specify the port number of the server. If not specified, groonga uses the default port number 10041.
+This command establishes a connection with a gqtp server and then enters into interactive mode. HOST_NAME_OR_IP_ADDRESS specifies the hostname or the IP address of the server. If not specified, groonga uses the default hostname "localhost". The `-p` option and its argument, PORT_NUMBER, specify the port number of the server. If not specified, groonga uses the default port number 10041.
 
 .. groonga-command
 .. include:: ../example/tutorial/network-1.log
