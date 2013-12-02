@@ -591,7 +591,7 @@ Here is a sample substitution table to show a simple
 ``Thesaurus`` substitution table has two synonyms, ``"mroonga"`` and
 ``"groonga"``. If an user searches with ``"mroonga"``, groonga
 searches with ``"((mroonga) OR (tritonn) OR (groonga mysql))"``. If an
-user searches with ``"groonga"``, groonga searchs with ``"((groonga)
+user searches with ``"groonga"``, groonga searches with ``"((groonga)
 OR (senna))"``. Nomrally, it's good idea that substitution table has
 ``KEY_NORMALIZE`` flag. If the flag is used, substitute target word is
 matched in case insensitive manner.
