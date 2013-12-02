@@ -78,7 +78,6 @@ Description: Fulltext search engine. (meta-package for GQTP server use)
  .
  This package depends all groonga related package for server use.
 
-
 Package: libgroonga-dev
 Section: libdevel
 Architecture: any
