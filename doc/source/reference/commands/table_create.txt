@@ -172,7 +172,7 @@ Here are available characters:
   character.)
 
 You need to create a name with one or more the above chracters. Note
-that you cannot use ``_`` as the first charcter such as
+that you cannot use ``_`` as the first character such as
 ``_name``.
 
 ``flags``

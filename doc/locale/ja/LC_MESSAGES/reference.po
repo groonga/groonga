@@ -9431,7 +9431,7 @@ msgstr ""
 #: ../../../source/reference/commands/table_create.txt:174
 msgid ""
 "You need to create a name with one or more the above chracters. Note that "
-"you cannot use ``_`` as the first charcter such as ``_name``."
+"you cannot use ``_`` as the first character such as ``_name``."
 msgstr ""
 "上記の文字を1つ以上使って名前を決めます。 ``_name`` というように、最初の文字"
 "に ``_`` を使えないことに注意してください。"
