@@ -16,46 +16,6 @@ size data.
 
 .. include:: server-use.inc
 
-squeeze
--------
-
-Add the groonga apt repository.
-
-/etc/apt/sources.list.d/groonga.list::
-
-  deb http://packages.groonga.org/debian/ squeeze main
-  deb-src http://packages.groonga.org/debian/ squeeze main
-
-Install::
-
-  % sudo aptitude update
-  % sudo aptitude -V -D -y --allow-untrusted install groonga-keyring
-  % sudo aptitude update
-  % sudo aptitude -V -D -y install groonga
-
-If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
-tokenizer, install groonga-tokenizer-mecab package.
-
-Install groonga-tokenizer-mecab package::
-
-  % sudo aptitude -V -D -y install groonga-tokenizer-mecab
-
-There is a package that provides `Munin
-<http://munin-monitoring.org/>`_ plugins. If you want to monitor
-groonga status by Munin, install groonga-munin-plugins package.
-
-Install groonga-munin-plugins package::
-
-  % sudo aptitude -V -D -y install groonga-munin-plugins
-
-There is a package that provides MySQL compatible normalizer as
-groonga plugins.
-If you want to use that one, install groonga-normalizer-mysql package.
-
-Install groonga-normalizer-mysql package::
-
-  % sudo aptitude -V -D -y install groonga-normalizer-mysql
-
 wheezy
 ------
 
