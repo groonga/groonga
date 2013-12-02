@@ -6456,7 +6456,7 @@ msgstr ""
 # c91014bfde6f49d88b266f07400015cb
 #: ../../../source/reference/commands/normalize.txt:21
 msgid ""
-"There is no need to create table to use ``normalize`` command. It is usefull "
+"There is no need to create table to use ``normalize`` command. It is useful "
 "for you to check the results of normalizer."
 msgstr ""
 "``normalize`` コマンドを使うのにテーブルを作成する必要はありません。このコマ"

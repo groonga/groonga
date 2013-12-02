@@ -19,7 +19,7 @@ Summary
 ``normalize`` command normalizes text by the specified normalizer.
 
 There is no need to create table to use ``normalize`` command.
-It is usefull for you to check the results of normalizer.
+It is useful for you to check the results of normalizer.
 
 Syntax
 --------
