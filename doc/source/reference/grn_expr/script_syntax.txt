@@ -964,7 +964,7 @@ registered as keys of the table of ``_key``.
 
 Note that the table must be patricia trie (``TABLE_PAT_KEY``) or
 double array trie (``TABLE_DAT_KEY``). You can't use hash table
-(``TABLE_HASH_KEY``) and array (``TABLE_NO_KEY``) becuase they don't
+(``TABLE_HASH_KEY``) and array (``TABLE_NO_KEY``) because they don't
 support longest common prefix search. Longest common prefix search is
 used to implement the operator.
 
