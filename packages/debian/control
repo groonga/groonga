@@ -16,7 +16,6 @@ Standards-Version: 3.9.3
 Homepage: http://groonga.org/
 
 Package: groonga
-Section: database
 Architecture: any
 Depends:
   ${misc:Depends},
@@ -31,7 +30,6 @@ Description: Fulltext search engine. (meta-package for library use)
  This package depends all groonga related package for library use.
 
 Package: groonga-server-common
-Section: database
 Architecture: any
 Depends:
   ${misc:Depends},
@@ -45,7 +43,6 @@ Description: Fulltext search engine. (meta-package for server use)
  This package provides common settings for server use.
 
 Package: groonga-server-http
-Section: database
 Architecture: any
 Replaces: groonga-server (<< 2.0.7-1)
 Breaks: groonga-server (<< 2.0.7-1)
@@ -63,7 +60,6 @@ Description: Fulltext search engine. (meta-package for HTTP server use)
  This package depends all groonga related package for server use.
 
 Package: groonga-server-gqtp
-Section: database
 Architecture: any
 Replaces: groonga-server (<< 2.0.7-1)
 Breaks: groonga-server (<< 2.0.7-1)
@@ -139,7 +135,6 @@ Description: Suggest plugin for groonga.
  This package provides suggest plugin.
 
 Package: groonga-bin
-Section: database
 Architecture: any
 Replaces: groonga (<< 1.2.0-1)
 Breaks: groonga (<< 1.2.0-1)
@@ -154,7 +149,6 @@ Description: Commands for groonga.
  This package provides 'groonga' command.
 
 Package: groonga-httpd
-Section: database
 Architecture: any
 Replaces: groonga (<< 1.2.0-1)
 Breaks: groonga (<< 1.2.0-1)
@@ -183,7 +177,6 @@ Description: Documentation of groonga.
  This package provides documentation of groonga.
 
 Package: groonga-examples
-Section: database
 Architecture: any
 Depends:
   ${misc:Depends},
