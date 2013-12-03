@@ -21,8 +21,36 @@
 #ifdef GRN_WITH_MRUBY
 #include <mruby.h>
 #include <mruby/class.h>
+#include <mruby/data.h>
 
 #include "mrb_ctx.h"
+#include "mrb_converter.h"
+
+static mrb_value
+ctx_class_instance(mrb_state *mrb, mrb_value klass)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_value mrb_ctx;
+
+  mrb_ctx = mrb_obj_value(mrb_obj_alloc(mrb, MRB_TT_DATA, mrb_class_ptr(klass)));
+  DATA_PTR(mrb_ctx) = ctx;
+
+  return mrb_ctx;
+}
+
+static mrb_value
+ctx_array_reference(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *object;
+  char *name;
+  int name_length;
+
+  mrb_get_args(mrb, "s", &name, &name_length);
+  object = grn_ctx_get(ctx, name, name_length);
+
+  return grn_mrb_value_from_grn_obj(mrb, object);
+}
 
 void
 grn_mrb_ctx_init(grn_ctx *ctx)
@@ -34,5 +62,10 @@ grn_mrb_ctx_init(grn_ctx *ctx)
 
   klass = mrb_define_class_under(mrb, module, "Context", mrb->object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
+
+  mrb_define_class_method(mrb, klass, "instance",
+                          ctx_class_instance, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, klass, "[]", ctx_array_reference, MRB_ARGS_REQ(1));
 }
 #endif

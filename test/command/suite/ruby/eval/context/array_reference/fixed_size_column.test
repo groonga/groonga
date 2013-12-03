@@ -1,0 +1,8 @@
+#@on-error omit
+register ruby/eval
+#@on-error default
+
+table_create Users TABLE_NO_KEY
+column_create Users age COLUMN_SCALAR UInt8
+
+ruby_eval "Groonga::Context.instance['Users.age'].name"
