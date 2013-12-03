@@ -19,6 +19,7 @@
 #include "ctx_impl_mrb.h"
 #include "ctx_impl.h"
 
+#include "mrb.h"
 #include "mrb/mrb_ctx.h"
 #include "mrb/mrb_obj.h"
 #include "mrb/mrb_column.h"
@@ -43,6 +44,12 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   grn_mrb_accessor_init(ctx);
 }
 
+static void
+grn_ctx_impl_mrb_init_eval(grn_ctx *ctx)
+{
+  grn_mrb_load(ctx, "eval_context.rb");
+}
+
 void
 grn_ctx_impl_mrb_init(grn_ctx *ctx)
 {
@@ -54,6 +61,7 @@ grn_ctx_impl_mrb_init(grn_ctx *ctx)
   } else {
     ctx->impl->mrb.state = mrb_open();
     grn_ctx_impl_mrb_init_bindings(ctx);
+    grn_ctx_impl_mrb_init_eval(ctx);
   }
 }
 

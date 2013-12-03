@@ -1,2 +1,3 @@
 RUBY_SCRIPT_FILES =				\
+	eval_context.rb				\
 	expression.rb
