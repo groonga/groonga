@@ -21,8 +21,23 @@
 #ifdef GRN_WITH_MRUBY
 #include <mruby.h>
 #include <mruby/class.h>
+#include <mruby/data.h>
 
 #include "mrb_obj.h"
+
+static mrb_value
+object_get_name(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *object;
+  char name[GRN_TABLE_MAX_KEY_SIZE];
+  int name_length;
+
+  object = DATA_PTR(self);
+  name_length = grn_obj_name(ctx, object, name, GRN_TABLE_MAX_KEY_SIZE);
+
+  return mrb_str_new(mrb, name, name_length);
+}
 
 void
 grn_mrb_obj_init(grn_ctx *ctx)
@@ -35,5 +50,7 @@ grn_mrb_obj_init(grn_ctx *ctx)
   klass = mrb_define_class_under(mrb, module, "Object", mrb->object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
   data->object_class = klass;
+
+  mrb_define_method(mrb, klass, "name", object_get_name, MRB_ARGS_NONE());
 }
 #endif
