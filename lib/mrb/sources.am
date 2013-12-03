@@ -3,6 +3,8 @@ libgrnmrb_la_SOURCES =				\
 	mrb_accessor.h				\
 	mrb_column.c				\
 	mrb_column.h				\
+	mrb_converter.c				\
+	mrb_converter.h				\
 	mrb_ctx.c				\
 	mrb_ctx.h				\
 	mrb_expr.c				\
