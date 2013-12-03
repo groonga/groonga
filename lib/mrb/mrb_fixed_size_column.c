@@ -33,7 +33,7 @@ grn_mrb_fixed_size_column_init(grn_ctx *ctx)
   struct RClass *column_class;
   struct RClass *klass;
 
-  column_class = mrb_class_get_under(mrb, data->object_class, "Column");
+  column_class = mrb_class_get_under(mrb, module, "Column");
   klass = mrb_define_class_under(mrb, module, "FixedSizeColumn", column_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
 }
