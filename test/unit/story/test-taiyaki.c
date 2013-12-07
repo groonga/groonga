@@ -230,7 +230,7 @@ test_in_rectangle_over_border(void)
   grn_test_assert_send_command_error(
     context,
     GRN_FUNCTION_NOT_IMPLEMENTED,
-    "geo_in_rectangle(): negative coordinate is not implemented.",
+    "geo_in_rectangle(): the Southern Hemisphere is not implemented.",
     "select Shops "
     "--sortby '+name' "
     "--output_columns 'name, location' "
