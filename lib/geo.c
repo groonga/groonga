@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2012 Brazil
+/* Copyright(C) 2009-2013 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1865,8 +1865,8 @@ grn_geo_in_circle(grn_ctx *ctx, grn_obj *point, grn_obj *center,
     case GRN_DB_WGS84_GEO_POINT :
       if (domain != radius_or_point->header.domain) { /* todo */ goto exit; }
       r = d <= distance_raw_func(ctx,
-                          GRN_GEO_POINT_VALUE_RAW(radius_or_point),
-                          GRN_GEO_POINT_VALUE_RAW(center));
+                                 GRN_GEO_POINT_VALUE_RAW(radius_or_point),
+                                 GRN_GEO_POINT_VALUE_RAW(center));
       break;
     default :
       goto exit;
