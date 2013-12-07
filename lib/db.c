@@ -4798,9 +4798,9 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, grn_bool addp)
               }
             }
             if (!rc && cur == str_end) {
-              if ((-GRN_GEO_MAX_LATITUDE <= latitude &&
+              if ((GRN_GEO_MIN_LATITUDE <= latitude &&
                    latitude <= GRN_GEO_MAX_LATITUDE) &&
-                  (-GRN_GEO_MAX_LONGITUDE <= longitude &&
+                  (GRN_GEO_MIN_LONGITUDE <= longitude &&
                    longitude <= GRN_GEO_MAX_LONGITUDE)) {
                 GRN_GEO_POINT_SET(ctx, dest, latitude, longitude);
               } else {
