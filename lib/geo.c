@@ -1057,18 +1057,23 @@ in_rectangle_data_validate(grn_ctx *ctx,
   top_left = data->top_left;
   bottom_right = data->bottom_right;
 
-  if (top_left->latitude < 0 || bottom_right->latitude < 0) {
-    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-        "%s: the Southern Hemisphere is not implemented.", process_name);
-    return;
-  }
-
   if (top_left->latitude >= GRN_GEO_MAX_LATITUDE) {
     ERR(GRN_INVALID_ARGUMENT,
         "%s: top left point's latitude is too big: "
         "<%d>(max:%d): (%d,%d) (%d,%d)",
         process_name,
         GRN_GEO_MAX_LATITUDE, top_left->latitude,
+        top_left->latitude, top_left->longitude,
+        bottom_right->latitude, bottom_right->longitude);
+    return;
+  }
+
+  if (top_left->latitude <= GRN_GEO_MIN_LATITUDE) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s: top left point's latitude is too small: "
+        "<%d>(min:%d): (%d,%d) (%d,%d)",
+        process_name,
+        GRN_GEO_MIN_LATITUDE, top_left->latitude,
         top_left->latitude, top_left->longitude,
         bottom_right->latitude, bottom_right->longitude);
     return;
@@ -1102,6 +1107,17 @@ in_rectangle_data_validate(grn_ctx *ctx,
         "<%d>(max:%d): (%d,%d) (%d,%d)",
         process_name,
         GRN_GEO_MAX_LATITUDE, bottom_right->latitude,
+        top_left->latitude, top_left->longitude,
+        bottom_right->latitude, bottom_right->longitude);
+    return;
+  }
+
+  if (bottom_right->latitude <= GRN_GEO_MIN_LATITUDE) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s: bottom right point's latitude is too small: "
+        "<%d>(min:%d): (%d,%d) (%d,%d)",
+        process_name,
+        GRN_GEO_MIN_LATITUDE, bottom_right->latitude,
         top_left->latitude, top_left->longitude,
         bottom_right->latitude, bottom_right->longitude);
     return;

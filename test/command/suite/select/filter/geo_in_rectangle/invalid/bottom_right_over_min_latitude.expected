@@ -2,14 +2,14 @@ select LandMarks --filter 'geo_in_rectangle(point, "0x0", "-90.0x0")'
 [
   [
     [
-      -38,
+      -22,
       0.0,
       0.0
     ],
-    "geo_in_rectangle(): the Southern Hemisphere is not implemented."
+    "geo_in_rectangle(): bottom right point's latitude is too small: <-324000000>(min:-324000000): (0,0) (-324000000,0)"
   ],
   [
 
   ]
 ]
-#|e| geo_in_rectangle(): the Southern Hemisphere is not implemented.
+#|e| geo_in_rectangle(): bottom right point's latitude is too small: <-324000000>(min:-324000000): (0,0) (-324000000,0)
