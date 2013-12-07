@@ -997,6 +997,57 @@ grn_selector_geo_in_rectangle(grn_ctx *ctx, grn_obj *table, grn_obj *index,
 }
 
 static void
+in_rectangle_data_fill(grn_ctx *ctx, grn_obj *index,
+                       grn_obj *top_left_point,
+                       grn_obj *bottom_right_point,
+                       const char *process_name,
+                       in_rectangle_data *data)
+{
+  grn_id domain;
+
+  data->pat = grn_ctx_at(ctx, index->header.domain);
+  domain = data->pat->header.domain;
+  if (domain != GRN_DB_TOKYO_GEO_POINT && domain != GRN_DB_WGS84_GEO_POINT) {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size = 0;
+    grn_obj *domain_object;
+    domain_object = grn_ctx_at(ctx, domain);
+    if (domain_object) {
+      name_size = grn_obj_name(ctx, domain_object, name, GRN_TABLE_MAX_KEY_SIZE);
+      grn_obj_unlink(ctx, domain_object);
+    } else {
+      strcpy(name, "(null)");
+      name_size = strlen(name);
+    }
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s: index table must be "
+        "TokyoGeoPoint or WGS84GeoPoint key type table: <%.*s>",
+        process_name, name_size, name);
+    return;
+  }
+
+  if (top_left_point->header.domain != domain) {
+    grn_obj_reinit(ctx, &(data->top_left_point_buffer), domain, GRN_BULK);
+    if (grn_obj_cast(ctx, top_left_point, &(data->top_left_point_buffer),
+                     GRN_FALSE)) {
+      return;
+    }
+    top_left_point = &(data->top_left_point_buffer);
+  }
+  data->top_left = GRN_GEO_POINT_VALUE_RAW(top_left_point);
+
+  if (bottom_right_point->header.domain != domain) {
+    grn_obj_reinit(ctx, &(data->bottom_right_point_buffer), domain, GRN_BULK);
+    if (grn_obj_cast(ctx, bottom_right_point, &(data->bottom_right_point_buffer),
+                     GRN_FALSE)) {
+      return;
+    }
+    bottom_right_point = &(data->bottom_right_point_buffer);
+  }
+  data->bottom_right = GRN_GEO_POINT_VALUE_RAW(bottom_right_point);
+}
+
+static void
 in_rectangle_data_validate(grn_ctx *ctx,
                            const char *process_name,
                            in_rectangle_data *data)
@@ -1121,53 +1172,16 @@ in_rectangle_data_prepare(grn_ctx *ctx, grn_obj *index,
                           const char *process_name,
                           in_rectangle_data *data)
 {
-  grn_id domain;
-
   if (!index) {
     ERR(GRN_INVALID_ARGUMENT, "%s: index column is missing", process_name);
     goto exit;
   }
 
-  data->pat = grn_ctx_at(ctx, index->header.domain);
-  domain = data->pat->header.domain;
-  if (domain != GRN_DB_TOKYO_GEO_POINT && domain != GRN_DB_WGS84_GEO_POINT) {
-    char name[GRN_TABLE_MAX_KEY_SIZE];
-    int name_size = 0;
-    grn_obj *domain_object;
-    domain_object = grn_ctx_at(ctx, domain);
-    if (domain_object) {
-      name_size = grn_obj_name(ctx, domain_object, name, GRN_TABLE_MAX_KEY_SIZE);
-      grn_obj_unlink(ctx, domain_object);
-    } else {
-      strcpy(name, "(null)");
-      name_size = strlen(name);
-    }
-    ERR(GRN_INVALID_ARGUMENT,
-        "%s: index table must be "
-        "TokyoGeoPoint or WGS84GeoPoint key type table: <%.*s>",
-        process_name, name_size, name);
+  in_rectangle_data_fill(ctx, index, top_left_point, bottom_right_point,
+                         process_name, data);
+  if (ctx->rc != GRN_SUCCESS) {
     goto exit;
   }
-
-  if (top_left_point->header.domain != domain) {
-    grn_obj_reinit(ctx, &(data->top_left_point_buffer), domain, GRN_BULK);
-    if (grn_obj_cast(ctx, top_left_point, &(data->top_left_point_buffer),
-                     GRN_FALSE)) {
-      goto exit;
-    }
-    top_left_point = &(data->top_left_point_buffer);
-  }
-  data->top_left = GRN_GEO_POINT_VALUE_RAW(top_left_point);
-
-  if (bottom_right_point->header.domain != domain) {
-    grn_obj_reinit(ctx, &(data->bottom_right_point_buffer), domain, GRN_BULK);
-    if (grn_obj_cast(ctx, bottom_right_point, &(data->bottom_right_point_buffer),
-                     GRN_FALSE)) {
-      goto exit;
-    }
-    bottom_right_point = &(data->bottom_right_point_buffer);
-  }
-  data->bottom_right = GRN_GEO_POINT_VALUE_RAW(bottom_right_point);
 
   in_rectangle_data_validate(ctx, process_name, data);
   if (ctx->rc != GRN_SUCCESS) {
