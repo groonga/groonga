@@ -1,0 +1,4 @@
+#@include fixture/geo/in_rectangle/south_east.grn
+
+select LandMarks --sortby '_id' --output_columns 'point' --limit -1 \
+  --filter 'geo_in_rectangle(point, "-2x1", "-4x3") > 0'
