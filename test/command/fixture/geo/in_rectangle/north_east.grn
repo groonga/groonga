@@ -1,6 +1,6 @@
-#@disable-logging
 #@include fixture/geo/in_rectangle/ddl.grn
 
+#@disable-logging
 load --table LandMarks
 [
 ["point"],
@@ -261,5 +261,4 @@ load --table LandMarks
 ["15x14"],
 ["15x15"]
 ]
-
 #@enable-logging

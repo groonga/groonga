@@ -22,11 +22,6 @@
 #include "../lib/grn-assertions.h"
 
 void test_in_circle(void);
-void test_in_rectangle_over_border(void);
-void test_in_rectangle_over_top_left_latitude(void);
-void test_in_rectangle_over_top_left_longitude(void);
-void test_in_rectangle_over_bottom_right_latitude(void);
-void test_in_rectangle_over_bottom_right_longitude(void);
 void test_sort(void);
 void test_filter_by_tag_and_sort_by_distance_from_tokyo_tocho(void);
 void test_in_circle_and_tag(void);
@@ -129,84 +124,6 @@ test_in_circle(void)
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         distance,
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude))));
-}
-
-void
-test_in_rectangle_over_border(void)
-{
-  grn_test_assert_send_command_error(
-    context,
-    GRN_FUNCTION_NOT_IMPLEMENTED,
-    "geo_in_rectangle(): the Southern Hemisphere is not implemented.",
-    "select Shops "
-    "--sortby '+name' "
-    "--output_columns 'name, location' "
-    "--filter 'geo_in_rectangle(location, "
-    "\"35.73360x-139.7394\", \"-35.62614x139.7714\")'");
-}
-
-void
-test_in_rectangle_over_top_left_latitude(void)
-{
-  grn_test_assert_send_command_error(
-    context,
-    GRN_INVALID_ARGUMENT,
-    "geo_in_rectangle(): top left point's latitude is too big: "
-    "<324000000>(max:324000000): "
-    "(324000000,503061840) (128254104,50317704",
-    "select Shops "
-    "--sortby '+name' "
-    "--output_columns 'name, location' "
-    "--filter "
-    "'geo_in_rectangle(location, \"90.0x139.7394\", \"35.62614x139.7714\")'");
-}
-
-void
-test_in_rectangle_over_top_left_longitude(void)
-{
-  grn_test_assert_send_command_error(
-    context,
-    GRN_INVALID_ARGUMENT,
-    "geo_in_rectangle(): top left point's longitude is too big: "
-    "<648000000>(max:648000000): "
-    "(128640960,648000000) (128254104,5031770",
-    "select Shops "
-    "--sortby '+name' "
-    "--output_columns 'name, location' "
-    "--filter "
-    "'geo_in_rectangle(location, \"35.73360x180.0\", \"35.62614x139.7714\")'");
-}
-
-void
-test_in_rectangle_over_bottom_right_latitude(void)
-{
-  grn_test_assert_send_command_error(
-    context,
-    GRN_INVALID_ARGUMENT,
-    "geo_in_rectangle(): bottom right point's latitude is too big: "
-    "<324000000>(max:324000000): "
-    "(128640960,503061840) (324000000,5031",
-    "select Shops "
-    "--sortby '+name' "
-    "--output_columns 'name, location' "
-    "--filter "
-    "'geo_in_rectangle(location, \"35.73360x139.7394\", \"90.0x139.7714\")'");
-}
-
-void
-test_in_rectangle_over_bottom_right_longitude(void)
-{
-  grn_test_assert_send_command_error(
-    context,
-    GRN_INVALID_ARGUMENT,
-    "geo_in_rectangle(): bottom right point's longitude is too big: "
-    "<648000000>(max:648000000): "
-    "(128640960,503061840) (128254104,648",
-    "select Shops "
-    "--sortby '+name' "
-    "--output_columns 'name, location' "
-    "--filter "
-    "'geo_in_rectangle(location, \"35.73360x139.7394\", \"35.62614x180.0\")'");
 }
 
 void

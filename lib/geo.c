@@ -1088,7 +1088,7 @@ in_rectangle_data_validate(grn_ctx *ctx,
   if (top_left->longitude <= GRN_GEO_MIN_LONGITUDE) {
     ERR(GRN_INVALID_ARGUMENT,
         "%s: top left point's longitude is too small: "
-        "<%d>(max:%d): (%d,%d) (%d,%d)",
+        "<%d>(min:%d): (%d,%d) (%d,%d)",
         process_name,
         GRN_GEO_MIN_LONGITUDE, top_left->longitude,
         top_left->latitude, top_left->longitude,
@@ -1121,7 +1121,7 @@ in_rectangle_data_validate(grn_ctx *ctx,
   if (bottom_right->longitude <= GRN_GEO_MIN_LONGITUDE) {
     ERR(GRN_INVALID_ARGUMENT,
         "%s: bottom right point's longitude is too small: "
-        "<%d>(max:%d): (%d,%d) (%d,%d)",
+        "<%d>(min:%d): (%d,%d) (%d,%d)",
         process_name,
         GRN_GEO_MIN_LONGITUDE, bottom_right->longitude,
         top_left->latitude, top_left->longitude,

@@ -1,0 +1,3 @@
+#@include fixture/geo/in_rectangle/ddl.grn
+
+select LandMarks --filter 'geo_in_rectangle(point, "0x0", "-90.0x0")'

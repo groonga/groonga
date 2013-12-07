@@ -1,0 +1,15 @@
+select LandMarks --filter 'geo_in_rectangle(point, "-90.0x0", "0x0")'
+[
+  [
+    [
+      -38,
+      0.0,
+      0.0
+    ],
+    "geo_in_rectangle(): the Southern Hemisphere is not implemented."
+  ],
+  [
+
+  ]
+]
+#|e| geo_in_rectangle(): the Southern Hemisphere is not implemented.

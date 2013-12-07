@@ -1,0 +1,15 @@
+select LandMarks --filter 'geo_in_rectangle(point, "0x0", "0x180.0")'
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "geo_in_rectangle(): bottom right point's longitude is too big: <648000000>(max:648000000): (0,0) (0,648000000)"
+  ],
+  [
+
+  ]
+]
+#|e| geo_in_rectangle(): bottom right point's longitude is too big: <648000000>(max:648000000): (0,0) (0,648000000)
