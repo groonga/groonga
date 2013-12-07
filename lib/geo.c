@@ -996,7 +996,7 @@ grn_selector_geo_in_rectangle(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   return ctx->rc;
 }
 
-static grn_rc
+static void
 in_rectangle_data_validate(grn_ctx *ctx,
                            const char *process_name,
                            in_rectangle_data *data)
@@ -1010,7 +1010,7 @@ in_rectangle_data_validate(grn_ctx *ctx,
       bottom_right->latitude < 0 || bottom_right->longitude < 0) {
     ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
         "%s: negative coordinate is not implemented.", process_name);
-    goto exit;
+    return;
   }
 
   if (top_left->latitude >= GRN_GEO_MAX_LATITUDE) {
@@ -1021,7 +1021,7 @@ in_rectangle_data_validate(grn_ctx *ctx,
         GRN_GEO_MAX_LATITUDE, top_left->latitude,
         top_left->latitude, top_left->longitude,
         bottom_right->latitude, bottom_right->longitude);
-    goto exit;
+    return;
   }
 
   if (top_left->longitude >= GRN_GEO_MAX_LONGITUDE) {
@@ -1032,7 +1032,7 @@ in_rectangle_data_validate(grn_ctx *ctx,
         GRN_GEO_MAX_LONGITUDE, top_left->longitude,
         top_left->latitude, top_left->longitude,
         bottom_right->latitude, bottom_right->longitude);
-    goto exit;
+    return;
   }
 
   if (bottom_right->latitude >= GRN_GEO_MAX_LATITUDE) {
@@ -1043,7 +1043,7 @@ in_rectangle_data_validate(grn_ctx *ctx,
         GRN_GEO_MAX_LATITUDE, bottom_right->latitude,
         top_left->latitude, top_left->longitude,
         bottom_right->latitude, bottom_right->longitude);
-    goto exit;
+    return;
   }
 
   if (bottom_right->longitude >= GRN_GEO_MAX_LONGITUDE) {
@@ -1054,11 +1054,8 @@ in_rectangle_data_validate(grn_ctx *ctx,
         GRN_GEO_MAX_LONGITUDE, bottom_right->longitude,
         top_left->latitude, top_left->longitude,
         bottom_right->latitude, bottom_right->longitude);
-    goto exit;
+    return;
   }
-
-exit :
-  return ctx->rc;
 }
 
 static void
@@ -1172,7 +1169,8 @@ in_rectangle_data_prepare(grn_ctx *ctx, grn_obj *index,
   }
   data->bottom_right = GRN_GEO_POINT_VALUE_RAW(bottom_right_point);
 
-  if (in_rectangle_data_validate(ctx, process_name, data) != GRN_SUCCESS) {
+  in_rectangle_data_validate(ctx, process_name, data);
+  if (ctx->rc != GRN_SUCCESS) {
     goto exit;
   }
 
