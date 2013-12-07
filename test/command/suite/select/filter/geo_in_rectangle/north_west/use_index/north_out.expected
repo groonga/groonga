@@ -1,0 +1,39 @@
+select LandMarks --sortby '_id' --output_columns 'point' --limit -1   --filter 'geo_in_rectangle(point, "4x-4", "2x-3")'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        6
+      ],
+      [
+        [
+          "point",
+          "WGS84GeoPoint"
+        ]
+      ],
+      [
+        "2x-3"
+      ],
+      [
+        "2x-4"
+      ],
+      [
+        "3x-3"
+      ],
+      [
+        "3x-4"
+      ],
+      [
+        "4x-3"
+      ],
+      [
+        "4x-4"
+      ]
+    ]
+  ]
+]
