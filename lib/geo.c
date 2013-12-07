@@ -1882,10 +1882,10 @@ grn_bool
 grn_geo_in_rectangle_raw(grn_ctx *ctx, grn_geo_point *point,
                          grn_geo_point *top_left, grn_geo_point *bottom_right)
 {
-    return ((top_left->longitude <= point->longitude) &&
-            (point->longitude <= bottom_right->longitude) &&
-            (bottom_right->latitude <= point->latitude) &&
-            (point->latitude <= top_left->latitude));
+  return ((top_left->longitude <= point->longitude) &&
+          (point->longitude <= bottom_right->longitude) &&
+          (bottom_right->latitude <= point->latitude) &&
+          (point->latitude <= top_left->latitude));
 }
 
 grn_bool
