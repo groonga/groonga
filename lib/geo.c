@@ -1061,6 +1061,62 @@ exit :
   return ctx->rc;
 }
 
+static void
+in_rectangle_data_compute(grn_ctx *ctx, in_rectangle_data *data)
+{
+  int latitude_distance, longitude_distance;
+  int diff_bit;
+  grn_geo_point base;
+  grn_geo_point *top_left, *bottom_right;
+  grn_geo_point *geo_point_input;
+  uint8_t geo_key_input[sizeof(grn_geo_point)];
+  uint8_t geo_key_base[sizeof(grn_geo_point)];
+  uint8_t geo_key_top_left[sizeof(grn_geo_point)];
+  uint8_t geo_key_bottom_right[sizeof(grn_geo_point)];
+
+  top_left = data->top_left;
+  bottom_right = data->bottom_right;
+
+  latitude_distance = top_left->latitude - bottom_right->latitude;
+  longitude_distance = bottom_right->longitude - top_left->longitude;
+  if (latitude_distance > longitude_distance) {
+    geo_point_input = bottom_right;
+    base.latitude = bottom_right->latitude;
+    base.longitude = bottom_right->longitude - longitude_distance;
+  } else {
+    geo_point_input = top_left;
+    base.latitude = top_left->latitude - latitude_distance;
+    base.longitude = top_left->longitude;
+  }
+  grn_gton(geo_key_input, geo_point_input, sizeof(grn_geo_point));
+  grn_gton(geo_key_base, &base, sizeof(grn_geo_point));
+  diff_bit = compute_diff_bit(geo_key_input, geo_key_base);
+  compute_min_and_max(&base, diff_bit, &(data->min), &(data->max));
+
+  grn_gton(geo_key_top_left, top_left, sizeof(grn_geo_point));
+  grn_gton(geo_key_bottom_right, bottom_right, sizeof(grn_geo_point));
+  data->rectangle_common_bit =
+    compute_diff_bit(geo_key_top_left, geo_key_bottom_right) - 1;
+  compute_min_and_max_key(geo_key_top_left, data->rectangle_common_bit + 1,
+                          data->rectangle_common_key, NULL);
+
+#ifdef GEO_DEBUG
+  printf("base:         ");
+  grn_p_geo_point(ctx, &base);
+  printf("min:          ");
+  grn_p_geo_point(ctx, &(data->min));
+  printf("max:          ");
+  grn_p_geo_point(ctx, &(data->max));
+  printf("top-left:     ");
+  grn_p_geo_point(ctx, top_left);
+  printf("bottom-right: ");
+  grn_p_geo_point(ctx, bottom_right);
+  printf("rectangle-common-bit:%10d\n", data->rectangle_common_bit);
+  printf("distance(latitude):  %10d\n", latitude_distance);
+  printf("distance(longitude): %10d\n", longitude_distance);
+#endif
+}
+
 static grn_rc
 in_rectangle_data_prepare(grn_ctx *ctx, grn_obj *index,
                           grn_obj *top_left_point,
@@ -1120,58 +1176,9 @@ in_rectangle_data_prepare(grn_ctx *ctx, grn_obj *index,
     goto exit;
   }
 
-  {
-    int latitude_distance, longitude_distance;
-    int diff_bit;
-    grn_geo_point base;
-    grn_geo_point *top_left, *bottom_right;
-    grn_geo_point *geo_point_input;
-    uint8_t geo_key_input[sizeof(grn_geo_point)];
-    uint8_t geo_key_base[sizeof(grn_geo_point)];
-    uint8_t geo_key_top_left[sizeof(grn_geo_point)];
-    uint8_t geo_key_bottom_right[sizeof(grn_geo_point)];
-
-    top_left = data->top_left;
-    bottom_right = data->bottom_right;
-
-    latitude_distance = top_left->latitude - bottom_right->latitude;
-    longitude_distance = bottom_right->longitude - top_left->longitude;
-    if (latitude_distance > longitude_distance) {
-      geo_point_input = bottom_right;
-      base.latitude = bottom_right->latitude;
-      base.longitude = bottom_right->longitude - longitude_distance;
-    } else {
-      geo_point_input = top_left;
-      base.latitude = top_left->latitude - latitude_distance;
-      base.longitude = top_left->longitude;
-    }
-    grn_gton(geo_key_input, geo_point_input, sizeof(grn_geo_point));
-    grn_gton(geo_key_base, &base, sizeof(grn_geo_point));
-    diff_bit = compute_diff_bit(geo_key_input, geo_key_base);
-    compute_min_and_max(&base, diff_bit, &(data->min), &(data->max));
-
-    grn_gton(geo_key_top_left, top_left, sizeof(grn_geo_point));
-    grn_gton(geo_key_bottom_right, bottom_right, sizeof(grn_geo_point));
-    data->rectangle_common_bit =
-      compute_diff_bit(geo_key_top_left, geo_key_bottom_right) - 1;
-    compute_min_and_max_key(geo_key_top_left, data->rectangle_common_bit + 1,
-                            data->rectangle_common_key, NULL);
-
-#ifdef GEO_DEBUG
-    printf("base:         ");
-    grn_p_geo_point(ctx, &base);
-    printf("min:          ");
-    grn_p_geo_point(ctx, &(data->min));
-    printf("max:          ");
-    grn_p_geo_point(ctx, &(data->max));
-    printf("top-left:     ");
-    grn_p_geo_point(ctx, top_left);
-    printf("bottom-right: ");
-    grn_p_geo_point(ctx, bottom_right);
-    printf("rectangle-common-bit:%10d\n", data->rectangle_common_bit);
-    printf("distance(latitude):  %10d\n", latitude_distance);
-    printf("distance(longitude): %10d\n", longitude_distance);
-#endif
+  in_rectangle_data_compute(ctx, data);
+  if (ctx->rc != GRN_SUCCESS) {
+    goto exit;
   }
 
 exit :
