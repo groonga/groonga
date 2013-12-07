@@ -1,15 +1,15 @@
-select Shops   --output_columns 'name'   --limit 0   --filter 'geo_in_rectangle(location, "128429532x-503148672", "128429532x503148672") &&             (area == "area0005" || area == "area0014") &&             (tags @ "天然" || tags @ "和菓子")'
+select Shops   --output_columns 'name'   --limit 0   --filter 'geo_in_rectangle(location, "90.0x180.0", "90.0x180.0") &&             (area == "area0005" || area == "area0014") &&             (tags @ "天然" || tags @ "和菓子")'
 [
   [
     [
-      -38,
+      -22,
       0.0,
       0.0
     ],
-    "geo_in_rectangle(): negative coordinate is not implemented."
+    "geo_in_rectangle(): top left point's latitude is too big: <324000000>(max:324000000): (324000000,648000000) (324000000,64800000"
   ],
   [
 
   ]
 ]
-#|e| geo_in_rectangle(): negative coordinate is not implemented.
+#|e| geo_in_rectangle(): top left point's latitude is too big: <324000000>(max:324000000): (324000000,648000000) (324000000,648000000)
