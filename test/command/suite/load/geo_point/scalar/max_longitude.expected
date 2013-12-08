@@ -1,13 +1,13 @@
-table_create Shops TABLE_HASH_KEY ShortText
+table_create LandMarks TABLE_NO_KEY
 [[0,0.0,0.0],true]
-column_create Shops location COLUMN_SCALAR WGS84GeoPoint
+column_create LandMarks location COLUMN_SCALAR WGS84GeoPoint
 [[0,0.0,0.0],true]
-load --table Shops
+load --table LandMarks
 [
-{"_key": "たかね", "location": "128514964x648000000"}
+{"location": "128514964x648000000"}
 ]
 [[0,0.0,0.0],1]
-select Shops
+select LandMarks
 [
   [
     0,
@@ -25,17 +25,12 @@ select Shops
           "UInt32"
         ],
         [
-          "_key",
-          "ShortText"
-        ],
-        [
           "location",
           "WGS84GeoPoint"
         ]
       ],
       [
         1,
-        "たかね",
         "128514964x648000000"
       ]
     ]

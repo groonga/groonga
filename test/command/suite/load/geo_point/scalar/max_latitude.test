@@ -1,9 +1,9 @@
-table_create Shops TABLE_HASH_KEY ShortText
-column_create Shops location COLUMN_SCALAR WGS84GeoPoint
+table_create LandMarks TABLE_NO_KEY
+column_create LandMarks location COLUMN_SCALAR WGS84GeoPoint
 
-load --table Shops
+load --table LandMarks
 [
-{"_key": "たかね", "location": "324000000x502419287"}
+{"location": "324000000x502419287"}
 ]
 
-select Shops
+select LandMarks
