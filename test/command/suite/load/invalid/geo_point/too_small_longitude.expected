@@ -4,10 +4,10 @@ column_create LandMarks location COLUMN_SCALAR WGS84GeoPoint
 [[0,0.0,0.0],true]
 load --table LandMarks
 [
-{"location": "1x-648000001"}
+{"location": "1x-648000000"}
 ]
 [[0,0.0,0.0],1]
-#|e| <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"1x-648000001">
-#|e| [table][load] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"1x-648000001">: key: <(NULL)>, column: <location>, value: <"1x-648000001">
+#|e| <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"1x-648000000">
+#|e| [table][load] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"1x-648000000">: key: <(NULL)>, column: <location>, value: <"1x-648000000">
 select LandMarks
 [[0,0.0,0.0],[[[1],[["_id","UInt32"],["location","WGS84GeoPoint"]],[1,"0x0"]]]]

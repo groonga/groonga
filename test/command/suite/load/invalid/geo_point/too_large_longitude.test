@@ -3,7 +3,7 @@ column_create LandMarks location COLUMN_SCALAR WGS84GeoPoint
 
 load --table LandMarks
 [
-{"location": "1x648000001"}
+{"location": "1x648000000"}
 ]
 
 select LandMarks
