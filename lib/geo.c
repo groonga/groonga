@@ -22,13 +22,13 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define GRN_GEO_IN_NORTH_EAST(point) \
+#define GRN_GEO_POINT_IN_NORTH_EAST(point) \
   ((point)->latitude >= 0 && (point)->longitude >= 0)
-#define GRN_GEO_IN_NORTH_WEST(point) \
+#define GRN_GEO_POINT_IN_NORTH_WEST(point) \
   ((point)->latitude >= 0 && (point)->longitude < 0)
-#define GRN_GEO_IN_SOUTH_WEST(point) \
+#define GRN_GEO_POINT_IN_SOUTH_WEST(point) \
   ((point)->latitude < 0 && (point)->longitude < 0)
-#define GRN_GEO_IN_SOUTH_EAST(point) \
+#define GRN_GEO_POINT_IN_SOUTH_EAST(point) \
   ((point)->latitude < 0 && (point)->longitude >= 0)
 
 typedef struct {
@@ -1307,8 +1307,8 @@ extract_rectangle_in_area(grn_ctx *ctx,
 
   switch (area_type) {
   case GRN_GEO_AREA_NORTH_EAST :
-    if (GRN_GEO_IN_NORTH_EAST(top_left) ||
-        GRN_GEO_IN_NORTH_EAST(bottom_right)) {
+    if (GRN_GEO_POINT_IN_NORTH_EAST(top_left) ||
+        GRN_GEO_POINT_IN_NORTH_EAST(bottom_right)) {
       area_top_left->latitude     = MAX(top_left->latitude,      0);
       area_bottom_right->latitude = MAX(bottom_right->latitude,  0);
       if (top_left->longitude > 0 && bottom_right->longitude < 0) {
@@ -1323,8 +1323,8 @@ extract_rectangle_in_area(grn_ctx *ctx,
     }
     break;
   case GRN_GEO_AREA_NORTH_WEST :
-    if (GRN_GEO_IN_NORTH_WEST(top_left) ||
-        GRN_GEO_IN_NORTH_WEST(bottom_right)) {
+    if (GRN_GEO_POINT_IN_NORTH_WEST(top_left) ||
+        GRN_GEO_POINT_IN_NORTH_WEST(bottom_right)) {
       area_top_left->latitude     = MAX(top_left->latitude,       0);
       area_bottom_right->latitude = MAX(bottom_right->latitude,   0);
       if (top_left->longitude > 0 && bottom_right->longitude < 0) {
@@ -1339,8 +1339,8 @@ extract_rectangle_in_area(grn_ctx *ctx,
     }
     break;
   case GRN_GEO_AREA_SOUTH_WEST :
-    if (GRN_GEO_IN_SOUTH_WEST(top_left) ||
-        GRN_GEO_IN_SOUTH_WEST(bottom_right)) {
+    if (GRN_GEO_POINT_IN_SOUTH_WEST(top_left) ||
+        GRN_GEO_POINT_IN_SOUTH_WEST(bottom_right)) {
       area_top_left->latitude      = MIN(top_left->latitude,      -1);
       area_top_left->longitude     = MIN(top_left->longitude,     -1);
       area_bottom_right->latitude  = MIN(bottom_right->latitude,  -1);
@@ -1350,8 +1350,8 @@ extract_rectangle_in_area(grn_ctx *ctx,
     }
     break;
   case GRN_GEO_AREA_SOUTH_EAST :
-    if (GRN_GEO_IN_SOUTH_EAST(top_left) ||
-        GRN_GEO_IN_SOUTH_EAST(bottom_right)) {
+    if (GRN_GEO_POINT_IN_SOUTH_EAST(top_left) ||
+        GRN_GEO_POINT_IN_SOUTH_EAST(bottom_right)) {
       area_top_left->latitude      = MIN(top_left->latitude,      -1);
       area_top_left->longitude     = MAX(top_left->longitude,      0);
       area_bottom_right->latitude  = MIN(bottom_right->latitude,  -1);
