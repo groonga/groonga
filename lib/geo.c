@@ -22,6 +22,15 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define GRN_GEO_IN_NORTH_EAST(point) \
+  ((point)->latitude >= 0 && (point)->longitude >= 0)
+#define GRN_GEO_IN_NORTH_WEST(point) \
+  ((point)->latitude >= 0 && (point)->longitude < 0)
+#define GRN_GEO_IN_SOUTH_WEST(point) \
+  ((point)->latitude < 0 && (point)->longitude < 0)
+#define GRN_GEO_IN_SOUTH_EAST(point) \
+  ((point)->latitude < 0 && (point)->longitude >= 0)
+
 typedef struct {
   grn_id id;
   double d;
@@ -39,11 +48,14 @@ typedef struct {
   grn_obj bottom_right_point_buffer;
   grn_geo_point *top_left;
   grn_geo_point *bottom_right;
+} in_rectangle_data;
+
+typedef struct {
   grn_geo_point min;
   grn_geo_point max;
   int rectangle_common_bit;
   uint8_t rectangle_common_key[sizeof(grn_geo_point)];
-} in_rectangle_data;
+} in_rectangle_area_data;
 
 static int
 compute_diff_bit(uint8_t *geo_key1, uint8_t *geo_key2)
@@ -1147,20 +1159,19 @@ in_rectangle_data_validate(grn_ctx *ctx,
 }
 
 static void
-in_rectangle_data_compute(grn_ctx *ctx, in_rectangle_data *data)
+in_rectangle_area_data_compute(grn_ctx *ctx,
+                               grn_geo_point *top_left,
+                               grn_geo_point *bottom_right,
+                               in_rectangle_area_data *data)
 {
   int latitude_distance, longitude_distance;
   int diff_bit;
   grn_geo_point base;
-  grn_geo_point *top_left, *bottom_right;
   grn_geo_point *geo_point_input;
   uint8_t geo_key_input[sizeof(grn_geo_point)];
   uint8_t geo_key_base[sizeof(grn_geo_point)];
   uint8_t geo_key_top_left[sizeof(grn_geo_point)];
   uint8_t geo_key_bottom_right[sizeof(grn_geo_point)];
-
-  top_left = data->top_left;
-  bottom_right = data->bottom_right;
 
   latitude_distance = top_left->latitude - bottom_right->latitude;
   longitude_distance = bottom_right->longitude - top_left->longitude;
@@ -1225,11 +1236,6 @@ in_rectangle_data_prepare(grn_ctx *ctx, grn_obj *index,
     goto exit;
   }
 
-  in_rectangle_data_compute(ctx, data);
-  if (ctx->rc != GRN_SUCCESS) {
-    goto exit;
-  }
-
 exit :
   return ctx->rc;
 }
@@ -1272,6 +1278,120 @@ exit :
   ((((uint8_t *)(a))[((n_bit) / 8)] &\
     (1 << (7 - ((n_bit) % 8)))) >> (1 << (7 - ((n_bit) % 8))))
 
+static grn_bool
+extract_rectangle_in_area(grn_ctx *ctx,
+                          grn_geo_area_type area_type,
+                          const grn_geo_point *top_left,
+                          const grn_geo_point *bottom_right,
+                          grn_geo_point *area_top_left,
+                          grn_geo_point *area_bottom_right)
+{
+  grn_bool out_of_area = GRN_FALSE;
+
+  switch (area_type) {
+  case GRN_GEO_AREA_NORTH_EAST :
+    if (GRN_GEO_IN_NORTH_EAST(top_left) ||
+        GRN_GEO_IN_NORTH_EAST(bottom_right)) {
+      area_top_left->latitude      = MAX(top_left->latitude,      0);
+      area_top_left->longitude     = MAX(top_left->longitude,     0);
+      area_bottom_right->latitude  = MAX(bottom_right->latitude,  0);
+      area_bottom_right->longitude = MAX(bottom_right->longitude, 0);
+    } else {
+      out_of_area = GRN_TRUE;
+    }
+    break;
+  case GRN_GEO_AREA_NORTH_WEST :
+    if (GRN_GEO_IN_NORTH_WEST(top_left) ||
+        GRN_GEO_IN_NORTH_WEST(bottom_right)) {
+      area_top_left->latitude      = MAX(top_left->latitude,       0);
+      area_top_left->longitude     = MIN(top_left->longitude,     -1);
+      area_bottom_right->latitude  = MAX(bottom_right->latitude,   0);
+      area_bottom_right->longitude = MIN(bottom_right->longitude, -1);
+    } else {
+      out_of_area = GRN_TRUE;
+    }
+    break;
+  case GRN_GEO_AREA_SOUTH_WEST :
+    if (GRN_GEO_IN_SOUTH_WEST(top_left) ||
+        GRN_GEO_IN_SOUTH_WEST(bottom_right)) {
+      area_top_left->latitude      = MIN(top_left->latitude,      -1);
+      area_top_left->longitude     = MIN(top_left->longitude,     -1);
+      area_bottom_right->latitude  = MIN(bottom_right->latitude,  -1);
+      area_bottom_right->longitude = MIN(bottom_right->longitude, -1);
+    } else {
+      out_of_area = GRN_TRUE;
+    }
+    break;
+  case GRN_GEO_AREA_SOUTH_EAST :
+    if (GRN_GEO_IN_SOUTH_EAST(top_left) ||
+        GRN_GEO_IN_SOUTH_EAST(bottom_right)) {
+      area_top_left->latitude      = MIN(top_left->latitude,      -1);
+      area_top_left->longitude     = MAX(top_left->longitude,      0);
+      area_bottom_right->latitude  = MIN(bottom_right->latitude,  -1);
+      area_bottom_right->longitude = MAX(bottom_right->longitude,  0);
+    } else {
+      out_of_area = GRN_TRUE;
+    }
+    break;
+  default :
+    out_of_area = GRN_TRUE;
+    break;
+  }
+
+  return out_of_area;
+}
+
+static void
+grn_geo_cursor_area_init(grn_ctx *ctx,
+                         grn_geo_cursor_area *area,
+                         grn_geo_area_type area_type,
+                         const grn_geo_point *top_left,
+                         const grn_geo_point *bottom_right)
+{
+  grn_geo_point area_top_left, area_bottom_right;
+  in_rectangle_area_data data;
+  grn_geo_cursor_entry *entry;
+  grn_bool out_of_area;
+
+  out_of_area = extract_rectangle_in_area(ctx,
+                                          area_type,
+                                          top_left,
+                                          bottom_right,
+                                          &area_top_left,
+                                          &area_bottom_right);
+  if (out_of_area) {
+    area->current_entry = -1;
+    return;
+  }
+
+  area->current_entry = 0;
+  memcpy(&(area->top_left), &area_top_left, sizeof(grn_geo_point));
+  memcpy(&(area->bottom_right), &area_bottom_right, sizeof(grn_geo_point));
+  grn_gton(area->top_left_key, &area_top_left, sizeof(grn_geo_point));
+  grn_gton(area->bottom_right_key, &area_bottom_right, sizeof(grn_geo_point));
+
+  entry = &(area->entries[area->current_entry]);
+  in_rectangle_area_data_compute(ctx,
+                                 &area_top_left,
+                                 &area_bottom_right,
+                                 &data);
+  entry->target_bit = data.rectangle_common_bit;
+  memcpy(entry->key, data.rectangle_common_key, sizeof(grn_geo_point));
+  entry->status_flags =
+    GRN_GEO_CURSOR_ENTRY_STATUS_TOP_INCLUDED |
+    GRN_GEO_CURSOR_ENTRY_STATUS_BOTTOM_INCLUDED |
+    GRN_GEO_CURSOR_ENTRY_STATUS_LEFT_INCLUDED |
+    GRN_GEO_CURSOR_ENTRY_STATUS_RIGHT_INCLUDED;
+  if (data.min.latitude == area_bottom_right.latitude &&
+      data.max.latitude == area_top_left.latitude) {
+    entry->status_flags |= GRN_GEO_CURSOR_ENTRY_STATUS_LATITUDE_INNER;
+  }
+  if (data.min.longitude == area_top_left.longitude &&
+      data.max.longitude == area_bottom_right.longitude) {
+    entry->status_flags |= GRN_GEO_CURSOR_ENTRY_STATUS_LONGITUDE_INNER;
+  }
+}
+
 grn_obj *
 grn_geo_cursor_open_in_rectangle(grn_ctx *ctx,
                                  grn_obj *index,
@@ -1302,32 +1422,21 @@ grn_geo_cursor_open_in_rectangle(grn_ctx *ctx,
   cursor->index = index;
   memcpy(&(cursor->top_left), data.top_left, sizeof(grn_geo_point));
   memcpy(&(cursor->bottom_right), data.bottom_right, sizeof(grn_geo_point));
-  grn_gton(cursor->top_left_key, data.top_left, sizeof(grn_geo_point));
-  grn_gton(cursor->bottom_right_key, data.bottom_right, sizeof(grn_geo_point));
   cursor->pat_cursor = NULL;
   cursor->ii_cursor = NULL;
   cursor->offset = offset;
   cursor->rest = limit;
 
-  cursor->current_entry = 0;
+  cursor->current_area = GRN_GEO_AREA_NORTH_EAST;
   {
-    grn_geo_cursor_entry *entry;
-
-    entry = &(cursor->entries[cursor->current_entry]);
-    entry->target_bit = data.rectangle_common_bit;
-    memcpy(entry->key, data.rectangle_common_key, sizeof(grn_geo_point));
-    entry->status_flags =
-      GRN_GEO_CURSOR_ENTRY_STATUS_TOP_INCLUDED |
-      GRN_GEO_CURSOR_ENTRY_STATUS_BOTTOM_INCLUDED |
-      GRN_GEO_CURSOR_ENTRY_STATUS_LEFT_INCLUDED |
-      GRN_GEO_CURSOR_ENTRY_STATUS_RIGHT_INCLUDED;
-    if (data.min.latitude == data.bottom_right->latitude &&
-        data.max.latitude == data.top_left->latitude) {
-      entry->status_flags |= GRN_GEO_CURSOR_ENTRY_STATUS_LATITUDE_INNER;
-    }
-    if (data.min.longitude == data.top_left->longitude &&
-        data.max.longitude == data.bottom_right->longitude) {
-      entry->status_flags |= GRN_GEO_CURSOR_ENTRY_STATUS_LONGITUDE_INNER;
+    grn_geo_area_type area_type;
+    const grn_geo_point *top_left = &(cursor->top_left);
+    const grn_geo_point *bottom_right = &(cursor->bottom_right);
+    for (area_type = GRN_GEO_AREA_NORTH_EAST;
+         area_type < GRN_GEO_AREA_LAST;
+         area_type++) {
+      grn_geo_cursor_area_init(ctx, &(cursor->areas[area_type]),
+                               area_type, top_left, bottom_right);
     }
   }
   {
@@ -1378,7 +1487,9 @@ grn_geo_cursor_entry_next_push(grn_ctx *ctx,
                                      GRN_CURSOR_PREFIX|GRN_CURSOR_SIZE_BY_BIT);
   if (pat_cursor) {
     if (grn_table_cursor_next(ctx, pat_cursor)) {
-      next_entry = &(cursor->entries[++cursor->current_entry]);
+      grn_geo_cursor_area *area;
+      area = &(cursor->areas[cursor->current_area]);
+      next_entry = &(area->entries[++area->current_entry]);
       memcpy(next_entry, entry, sizeof(grn_geo_cursor_entry));
       pushed = GRN_TRUE;
     }
@@ -1393,16 +1504,28 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
                           grn_geo_cursor_in_rectangle *cursor,
                           grn_geo_cursor_entry *entry)
 {
-  uint8_t *top_left_key = cursor->top_left_key;
-  uint8_t *bottom_right_key = cursor->bottom_right_key;
+  uint8_t *top_left_key;
+  uint8_t *bottom_right_key;
   int max_target_bit = GRN_GEO_KEY_MAX_BITS - cursor->minimum_reduce_bit;
+  grn_geo_cursor_area *area = NULL;
 
-  if (cursor->current_entry < 0) {
+  while (cursor->current_area < GRN_GEO_AREA_LAST) {
+    area = &(cursor->areas[cursor->current_area]);
+    if (area->current_entry >= 0) {
+      break;
+    }
+    cursor->current_area++;
+    area = NULL;
+  }
+
+  if (!area) {
     return GRN_FALSE;
   }
 
+  top_left_key = area->top_left_key;
+  bottom_right_key = area->bottom_right_key;
   memcpy(entry,
-         &(cursor->entries[cursor->current_entry--]),
+         &(area->entries[area->current_entry--]),
          sizeof(grn_geo_cursor_entry));
   while (GRN_TRUE) {
     grn_geo_cursor_entry next_entry0, next_entry1;
@@ -1581,9 +1704,9 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
 
       printf("%d: pushed\n", entry->target_bit);
       printf("stack:\n");
-      for (i = cursor->current_entry; i >= 0; i--) {
+      for (i = area->current_entry; i >= 0; i--) {
         grn_geo_cursor_entry *stack_entry;
-        stack_entry = &(cursor->entries[i]);
+        stack_entry = &(area->entries[i]);
         printf("%2d: ", i);
         inspect_key(ctx, stack_entry->key);
         printf("    ");
@@ -1591,7 +1714,7 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
       }
 #endif
       memcpy(entry,
-             &(cursor->entries[cursor->current_entry--]),
+             &(area->entries[area->current_entry--]),
              sizeof(grn_geo_cursor_entry));
 #ifdef GEO_DEBUG
       printf("%d: pop entry\n", entry->target_bit);
@@ -1838,6 +1961,7 @@ grn_geo_estimate_in_rectangle(grn_ctx *ctx,
     int total_latitude_distance, total_longitude_distance;
     double select_ratio;
     double estimated_n_records;
+    in_rectangle_area_data area_data;
 
     rc = geo_point_get(ctx, data.pat, GRN_CURSOR_ASCENDING, &min);
     if (!rc) {
@@ -1853,8 +1977,14 @@ grn_geo_estimate_in_rectangle(grn_ctx *ctx,
       goto exit;
     }
 
-    select_latitude_distance = abs(data.max.latitude - data.min.latitude);
-    select_longitude_distance = abs(data.max.longitude - data.min.longitude);
+    in_rectangle_area_data_compute(ctx,
+                                   data.top_left,
+                                   data.bottom_right,
+                                   &area_data);
+    select_latitude_distance =
+      abs(area_data.max.latitude - area_data.min.latitude);
+    select_longitude_distance =
+      abs(area_data.max.longitude - area_data.min.longitude);
     total_latitude_distance = abs(max.latitude - min.latitude);
     total_longitude_distance = abs(max.longitude - min.longitude);
 

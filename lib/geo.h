@@ -74,6 +74,16 @@ typedef enum {
   GRN_GEO_CURSOR_ENTRY_STATUS_LONGITUDE_INNER = 1 << 5
 } grn_geo_cursor_entry_status_flag;
 
+typedef enum {
+  GRN_GEO_AREA_NORTH_EAST,
+  GRN_GEO_AREA_NORTH_WEST,
+  GRN_GEO_AREA_SOUTH_WEST,
+  GRN_GEO_AREA_SOUTH_EAST,
+  GRN_GEO_AREA_LAST
+} grn_geo_area_type;
+
+#define GRN_GEO_N_AREAS GRN_GEO_AREA_LAST
+
 typedef struct {
   uint8_t key[sizeof(grn_geo_point)];
   int target_bit;
@@ -81,21 +91,28 @@ typedef struct {
 } grn_geo_cursor_entry;
 
 typedef struct {
+  grn_geo_point top_left;
+  grn_geo_point bottom_right;
+  uint8_t top_left_key[sizeof(grn_geo_point)];
+  uint8_t bottom_right_key[sizeof(grn_geo_point)];
+  int current_entry;
+  grn_geo_cursor_entry entries[GRN_GEO_KEY_MAX_BITS];
+} grn_geo_cursor_area;
+
+typedef struct {
   grn_db_obj obj;
   grn_obj *pat;
   grn_obj *index;
   grn_geo_point top_left;
   grn_geo_point bottom_right;
-  uint8_t top_left_key[sizeof(grn_geo_point)];
-  uint8_t bottom_right_key[sizeof(grn_geo_point)];
   grn_geo_point current;
   grn_table_cursor *pat_cursor;
   grn_ii_cursor *ii_cursor;
   int offset;
   int rest;
-  grn_geo_cursor_entry entries[GRN_GEO_KEY_MAX_BITS];
-  int current_entry;
   int minimum_reduce_bit;
+  grn_geo_area_type current_area;
+  grn_geo_cursor_area areas[GRN_GEO_N_AREAS];
 } grn_geo_cursor_in_rectangle;
 
 grn_rc grn_geo_cursor_close(grn_ctx *ctx, grn_obj *geo_cursor);
