@@ -31,7 +31,7 @@
 #define GRN_GEO_POINT_IN_SOUTH_EAST(point) \
   ((point)->latitude < 0 && (point)->longitude >= 0)
 
-#define GRN_GEO_LOGITUDE_IS_WRAPPED(top_left, bottom_right) \
+#define GRN_GEO_LONGITUDE_IS_WRAPPED(top_left, bottom_right) \
   ((top_left)->longitude > 0 && (bottom_right)->longitude < 0)
 
 typedef struct {
@@ -1314,7 +1314,7 @@ extract_rectangle_in_area(grn_ctx *ctx,
         GRN_GEO_POINT_IN_NORTH_EAST(bottom_right)) {
       area_top_left->latitude     = MAX(top_left->latitude,      0);
       area_bottom_right->latitude = MAX(bottom_right->latitude,  0);
-      if (GRN_GEO_LOGITUDE_IS_WRAPPED(top_left, bottom_right)) {
+      if (GRN_GEO_LONGITUDE_IS_WRAPPED(top_left, bottom_right)) {
         area_top_left->longitude     = top_left->longitude;
         area_bottom_right->longitude = GRN_GEO_MAX_LONGITUDE;
       } else {
@@ -1330,7 +1330,7 @@ extract_rectangle_in_area(grn_ctx *ctx,
         GRN_GEO_POINT_IN_NORTH_WEST(bottom_right)) {
       area_top_left->latitude     = MAX(top_left->latitude,       0);
       area_bottom_right->latitude = MAX(bottom_right->latitude,   0);
-      if (GRN_GEO_LOGITUDE_IS_WRAPPED(top_left, bottom_right)) {
+      if (GRN_GEO_LONGITUDE_IS_WRAPPED(top_left, bottom_right)) {
         area_top_left->longitude     = GRN_GEO_MIN_LONGITUDE;
         area_bottom_right->longitude = bottom_right->longitude;
       } else {
@@ -1346,7 +1346,7 @@ extract_rectangle_in_area(grn_ctx *ctx,
         GRN_GEO_POINT_IN_SOUTH_WEST(bottom_right)) {
       area_top_left->latitude     = MIN(top_left->latitude,      -1);
       area_bottom_right->latitude = MIN(bottom_right->latitude,  -1);
-      if (GRN_GEO_LOGITUDE_IS_WRAPPED(top_left, bottom_right)) {
+      if (GRN_GEO_LONGITUDE_IS_WRAPPED(top_left, bottom_right)) {
         area_top_left->longitude     = GRN_GEO_MIN_LONGITUDE;
         area_bottom_right->longitude = bottom_right->longitude;
       } else {
@@ -1362,7 +1362,7 @@ extract_rectangle_in_area(grn_ctx *ctx,
         GRN_GEO_POINT_IN_SOUTH_EAST(bottom_right)) {
       area_top_left->latitude     = MIN(top_left->latitude,      -1);
       area_bottom_right->latitude = MIN(bottom_right->latitude,  -1);
-      if (GRN_GEO_LOGITUDE_IS_WRAPPED(top_left, bottom_right)) {
+      if (GRN_GEO_LONGITUDE_IS_WRAPPED(top_left, bottom_right)) {
         area_top_left->longitude     = top_left->longitude;
         area_bottom_right->longitude = GRN_GEO_MAX_LONGITUDE;
       } else {
@@ -2126,7 +2126,7 @@ grn_geo_in_rectangle_raw(grn_ctx *ctx, grn_geo_point *point,
     return GRN_FALSE;
   }
 
-  if (GRN_GEO_LOGITUDE_IS_WRAPPED(top_left, bottom_right)) {
+  if (GRN_GEO_LONGITUDE_IS_WRAPPED(top_left, bottom_right)) {
     if (point->longitude >= top_left->longitude) {
       return GRN_TRUE;
     }
