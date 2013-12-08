@@ -1,0 +1,4 @@
+#@disable-logging
+#@include fixture/geo/sort/ddl.grn
+#@include fixture/geo/sort/data.grn
+#@enable-logging

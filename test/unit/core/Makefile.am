@@ -17,7 +17,6 @@ noinst_LTLIBRARIES =				\
 	test-public-context.la			\
 	test-table.la				\
 	test-table-patricia-trie-cursor.la	\
-	test-table-sort-geo.la			\
 	test-column.la				\
 	test-database.la			\
 	test-database-create.la			\
@@ -106,7 +105,6 @@ test_stress_la_SOURCES			= test-stress.c
 test_public_context_la_SOURCES		= test-public-context.c
 test_table_la_SOURCES			= test-table.c
 test_table_patricia_trie_cursor_la_SOURCES	= test-table-patricia-trie-cursor.c
-test_table_sort_geo_la_SOURCES		= test-table-sort-geo.c
 test_column_la_SOURCES			= test-column.c
 test_database_la_SOURCES		= test-database.c
 test_database_create_la_SOURCES		= test-database-create.c
