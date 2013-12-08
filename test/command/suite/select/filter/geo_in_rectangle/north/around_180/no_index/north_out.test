@@ -1,0 +1,4 @@
+#@include fixture/geo/in_rectangle/north/around_180.grn
+
+select LandMarks --sortby '_id' --output_columns 'point' --limit -1 \
+  --filter 'geo_in_rectangle(point, "4x647999998", "2x-647999998") > 0'

@@ -2079,10 +2079,30 @@ grn_bool
 grn_geo_in_rectangle_raw(grn_ctx *ctx, grn_geo_point *point,
                          grn_geo_point *top_left, grn_geo_point *bottom_right)
 {
-  return ((top_left->longitude <= point->longitude) &&
-          (point->longitude <= bottom_right->longitude) &&
-          (bottom_right->latitude <= point->latitude) &&
-          (point->latitude <= top_left->latitude));
+  if (point->latitude > top_left->latitude) {
+    return GRN_FALSE;
+  }
+  if (point->latitude < bottom_right->latitude) {
+    return GRN_FALSE;
+  }
+
+  if (top_left->longitude > 0 && bottom_right->longitude < 0) {
+    if (point->longitude >= top_left->longitude) {
+      return GRN_TRUE;
+    }
+    if (point->longitude <= bottom_right->longitude) {
+      return GRN_TRUE;
+    }
+    return GRN_FALSE;
+  } else {
+    if (point->longitude < top_left->longitude) {
+      return GRN_FALSE;
+    }
+    if (point->longitude > bottom_right->longitude) {
+      return GRN_FALSE;
+    }
+    return GRN_TRUE;
+  }
 }
 
 grn_bool
