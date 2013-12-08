@@ -6,10 +6,10 @@ select LandMarks --filter 'geo_in_rectangle(point, "0x0", "0x-180.0")'
       0.0,
       0.0
     ],
-    "geo_in_rectangle(): bottom right point's longitude is too small: <-648000000>(min:-648000000): (0,0) (0,-648000000)"
+    "geo_in_rectangle(): failed to cast to WGS84GeoPoint: <0x-180.0>"
   ],
   [
 
   ]
 ]
-#|e| geo_in_rectangle(): bottom right point's longitude is too small: <-648000000>(min:-648000000): (0,0) (0,-648000000)
+#|e| geo_in_rectangle(): failed to cast to WGS84GeoPoint: <0x-180.0>

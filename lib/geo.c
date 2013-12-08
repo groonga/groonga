@@ -1016,6 +1016,7 @@ in_rectangle_data_fill(grn_ctx *ctx, grn_obj *index,
                        in_rectangle_data *data)
 {
   grn_id domain;
+  const char *domain_name;
 
   data->pat = grn_ctx_at(ctx, index->header.domain);
   domain = data->pat->header.domain;
@@ -1038,10 +1039,21 @@ in_rectangle_data_fill(grn_ctx *ctx, grn_obj *index,
     return;
   }
 
+  if (domain == GRN_DB_TOKYO_GEO_POINT) {
+    domain_name = "TokyoGeoPoint";
+  } else {
+    domain_name = "WGS84GeoPoint";
+  }
+
   if (top_left_point->header.domain != domain) {
     grn_obj_reinit(ctx, &(data->top_left_point_buffer), domain, GRN_BULK);
     if (grn_obj_cast(ctx, top_left_point, &(data->top_left_point_buffer),
                      GRN_FALSE)) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s: failed to cast to %s: <%.*s>",
+          process_name, domain_name,
+          (int)GRN_TEXT_LEN(top_left_point),
+          GRN_TEXT_VALUE(top_left_point));
       return;
     }
     top_left_point = &(data->top_left_point_buffer);
@@ -1052,6 +1064,11 @@ in_rectangle_data_fill(grn_ctx *ctx, grn_obj *index,
     grn_obj_reinit(ctx, &(data->bottom_right_point_buffer), domain, GRN_BULK);
     if (grn_obj_cast(ctx, bottom_right_point, &(data->bottom_right_point_buffer),
                      GRN_FALSE)) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s: failed to cast to %s: <%.*s>",
+          process_name, domain_name,
+          (int)GRN_TEXT_LEN(bottom_right_point),
+          GRN_TEXT_VALUE(bottom_right_point));
       return;
     }
     bottom_right_point = &(data->bottom_right_point_buffer);
