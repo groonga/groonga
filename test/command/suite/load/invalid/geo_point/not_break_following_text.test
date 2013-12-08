@@ -1,8 +1,8 @@
-table_create Shops TABLE_HASH_KEY ShortText
-column_create Shops location COLUMN_SCALAR WGS84GeoPoint
-column_create Shops code COLUMN_SCALAR ShortText
+table_create LandMarks TABLE_HASH_KEY ShortText
+column_create LandMarks location COLUMN_SCALAR WGS84GeoPoint
+column_create LandMarks code COLUMN_SCALAR ShortText
 
-load --table Shops
+load --table LandMarks
 [
 {"_key":"a","location":"x","code":"a0000000"},
 {"_key":"b","location":"x","code":"b0000000"},
@@ -14,4 +14,4 @@ load --table Shops
 {"_key":"b","location":"x","code":"b0000006"}
 ]
 
-select Shops --filter 'code == "a0000000"' --output_columns _key
+select LandMarks --filter 'code == "a0000000"' --output_columns _key

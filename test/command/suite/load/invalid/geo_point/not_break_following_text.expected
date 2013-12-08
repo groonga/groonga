@@ -1,10 +1,10 @@
-table_create Shops TABLE_HASH_KEY ShortText
+table_create LandMarks TABLE_HASH_KEY ShortText
 [[0,0.0,0.0],true]
-column_create Shops location COLUMN_SCALAR WGS84GeoPoint
+column_create LandMarks location COLUMN_SCALAR WGS84GeoPoint
 [[0,0.0,0.0],true]
-column_create Shops code COLUMN_SCALAR ShortText
+column_create LandMarks code COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
-load --table Shops
+load --table LandMarks
 [
 {"_key":"a","location":"x","code":"a0000000"},
 {"_key":"b","location":"x","code":"b0000000"},
@@ -16,14 +16,14 @@ load --table Shops
 {"_key":"b","location":"x","code":"b0000006"}
 ]
 [[0,0.0,0.0],8]
-#|e| <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">
-#|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"a">, column: <location>, value: <"x">
-#|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
-#|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
-#|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
-#|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
-#|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
-#|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
-#|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
-select Shops --filter 'code == "a0000000"' --output_columns _key
+#|e| <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">
+#|e| [table][load] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"a">, column: <location>, value: <"x">
+#|e| [table][load] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
+#|e| [table][load] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
+#|e| [table][load] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
+#|e| [table][load] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
+#|e| [table][load] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
+#|e| [table][load] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
+#|e| [table][load] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
+select LandMarks --filter 'code == "a0000000"' --output_columns _key
 [[0,0.0,0.0],[[[1],[["_key","ShortText"]],["a"]]]]

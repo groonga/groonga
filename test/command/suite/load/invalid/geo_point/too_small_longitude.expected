@@ -1,45 +1,13 @@
-table_create Shops TABLE_HASH_KEY ShortText
+table_create LandMarks TABLE_NO_KEY
 [[0,0.0,0.0],true]
-column_create Shops location COLUMN_SCALAR WGS84GeoPoint
+column_create LandMarks location COLUMN_SCALAR WGS84GeoPoint
 [[0,0.0,0.0],true]
-load --table Shops
+load --table LandMarks
 [
-{"_key": "Statue of Liberty", "location": "40.689167x-648000001"}
+{"location": "1x-648000001"}
 ]
 [[0,0.0,0.0],1]
-#|e| <Shops.location>: failed to cast to <WGS84GeoPoint>: <"40.689167x-648000001">
-#|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"40.689167x-648000001">: key: <"Statue of Liberty">, column: <location>, value: <"40.689167x-648000001">
-select Shops
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        1
-      ],
-      [
-        [
-          "_id",
-          "UInt32"
-        ],
-        [
-          "_key",
-          "ShortText"
-        ],
-        [
-          "location",
-          "WGS84GeoPoint"
-        ]
-      ],
-      [
-        1,
-        "Statue of Liberty",
-        "0x0"
-      ]
-    ]
-  ]
-]
+#|e| <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"1x-648000001">
+#|e| [table][load] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"1x-648000001">: key: <(NULL)>, column: <location>, value: <"1x-648000001">
+select LandMarks
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["location","WGS84GeoPoint"]],[1,"0x0"]]]]
