@@ -1344,10 +1344,15 @@ extract_rectangle_in_area(grn_ctx *ctx,
   case GRN_GEO_AREA_SOUTH_WEST :
     if (GRN_GEO_POINT_IN_SOUTH_WEST(top_left) ||
         GRN_GEO_POINT_IN_SOUTH_WEST(bottom_right)) {
-      area_top_left->latitude      = MIN(top_left->latitude,      -1);
-      area_top_left->longitude     = MIN(top_left->longitude,     -1);
-      area_bottom_right->latitude  = MIN(bottom_right->latitude,  -1);
-      area_bottom_right->longitude = MIN(bottom_right->longitude, -1);
+      area_top_left->latitude     = MIN(top_left->latitude,      -1);
+      area_bottom_right->latitude = MIN(bottom_right->latitude,  -1);
+      if (GRN_GEO_LOGITUDE_IS_WRAPPED(top_left, bottom_right)) {
+        area_top_left->longitude     = GRN_GEO_MIN_LONGITUDE;
+        area_bottom_right->longitude = bottom_right->longitude;
+      } else {
+        area_top_left->longitude     = MIN(top_left->longitude,     -1);
+        area_bottom_right->longitude = MIN(bottom_right->longitude, -1);
+      }
     } else {
       out_of_area = GRN_TRUE;
     }
@@ -1355,10 +1360,15 @@ extract_rectangle_in_area(grn_ctx *ctx,
   case GRN_GEO_AREA_SOUTH_EAST :
     if (GRN_GEO_POINT_IN_SOUTH_EAST(top_left) ||
         GRN_GEO_POINT_IN_SOUTH_EAST(bottom_right)) {
-      area_top_left->latitude      = MIN(top_left->latitude,      -1);
-      area_top_left->longitude     = MAX(top_left->longitude,      0);
-      area_bottom_right->latitude  = MIN(bottom_right->latitude,  -1);
-      area_bottom_right->longitude = MAX(bottom_right->longitude,  0);
+      area_top_left->latitude     = MIN(top_left->latitude,      -1);
+      area_bottom_right->latitude = MIN(bottom_right->latitude,  -1);
+      if (GRN_GEO_LOGITUDE_IS_WRAPPED(top_left, bottom_right)) {
+        area_top_left->longitude     = top_left->longitude;
+        area_bottom_right->longitude = GRN_GEO_MAX_LONGITUDE;
+      } else {
+        area_top_left->longitude     = MAX(top_left->longitude,      0);
+        area_bottom_right->longitude = MAX(bottom_right->longitude,  0);
+      }
     } else {
       out_of_area = GRN_TRUE;
     }
