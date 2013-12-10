@@ -6,10 +6,10 @@ select Shops   --output_columns 'name'   --limit 0   --filter 'geo_in_rectangle(
       0.0,
       0.0
     ],
-    "geo_in_rectangle(): top left point's latitude is too big: <324000000>(max:324000000): (324000000,648000000) (324000000,64800000"
+    "geo_in_rectangle(): failed to cast to WGS84GeoPoint: <90.0x180.0>"
   ],
   [
 
   ]
 ]
-#|e| geo_in_rectangle(): top left point's latitude is too big: <324000000>(max:324000000): (324000000,648000000) (324000000,648000000)
+#|e| geo_in_rectangle(): failed to cast to WGS84GeoPoint: <90.0x180.0>
