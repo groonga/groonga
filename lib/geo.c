@@ -1309,8 +1309,10 @@ extract_rectangle_in_area(grn_ctx *ctx,
   grn_bool out_of_area = GRN_FALSE;
   grn_bool cover_all_areas = GRN_FALSE;
 
-  if (GRN_GEO_POINT_IN_NORTH_WEST(top_left) &&
-      GRN_GEO_POINT_IN_SOUTH_EAST(bottom_right)) {
+  if ((GRN_GEO_POINT_IN_NORTH_WEST(top_left) &&
+       GRN_GEO_POINT_IN_SOUTH_EAST(bottom_right)) ||
+      (GRN_GEO_POINT_IN_NORTH_EAST(top_left) &&
+       GRN_GEO_POINT_IN_SOUTH_WEST(bottom_right))) {
     cover_all_areas = GRN_TRUE;
   }
 
