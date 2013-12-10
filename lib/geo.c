@@ -1307,10 +1307,17 @@ extract_rectangle_in_area(grn_ctx *ctx,
                           grn_geo_point *area_bottom_right)
 {
   grn_bool out_of_area = GRN_FALSE;
+  grn_bool cover_all_areas = GRN_FALSE;
+
+  if (GRN_GEO_POINT_IN_NORTH_WEST(top_left) &&
+      GRN_GEO_POINT_IN_SOUTH_EAST(bottom_right)) {
+    cover_all_areas = GRN_TRUE;
+  }
 
   switch (area_type) {
   case GRN_GEO_AREA_NORTH_EAST :
-    if (GRN_GEO_POINT_IN_NORTH_EAST(top_left) ||
+    if (cover_all_areas ||
+        GRN_GEO_POINT_IN_NORTH_EAST(top_left) ||
         GRN_GEO_POINT_IN_NORTH_EAST(bottom_right)) {
       area_top_left->latitude     = MAX(top_left->latitude,      0);
       area_bottom_right->latitude = MAX(bottom_right->latitude,  0);
@@ -1326,7 +1333,8 @@ extract_rectangle_in_area(grn_ctx *ctx,
     }
     break;
   case GRN_GEO_AREA_NORTH_WEST :
-    if (GRN_GEO_POINT_IN_NORTH_WEST(top_left) ||
+    if (cover_all_areas ||
+        GRN_GEO_POINT_IN_NORTH_WEST(top_left) ||
         GRN_GEO_POINT_IN_NORTH_WEST(bottom_right)) {
       area_top_left->latitude     = MAX(top_left->latitude,       0);
       area_bottom_right->latitude = MAX(bottom_right->latitude,   0);
@@ -1342,7 +1350,8 @@ extract_rectangle_in_area(grn_ctx *ctx,
     }
     break;
   case GRN_GEO_AREA_SOUTH_WEST :
-    if (GRN_GEO_POINT_IN_SOUTH_WEST(top_left) ||
+    if (cover_all_areas ||
+        GRN_GEO_POINT_IN_SOUTH_WEST(top_left) ||
         GRN_GEO_POINT_IN_SOUTH_WEST(bottom_right)) {
       area_top_left->latitude     = MIN(top_left->latitude,      -1);
       area_bottom_right->latitude = MIN(bottom_right->latitude,  -1);
@@ -1358,7 +1367,8 @@ extract_rectangle_in_area(grn_ctx *ctx,
     }
     break;
   case GRN_GEO_AREA_SOUTH_EAST :
-    if (GRN_GEO_POINT_IN_SOUTH_EAST(top_left) ||
+    if (cover_all_areas ||
+        GRN_GEO_POINT_IN_SOUTH_EAST(top_left) ||
         GRN_GEO_POINT_IN_SOUTH_EAST(bottom_right)) {
       area_top_left->latitude     = MIN(top_left->latitude,      -1);
       area_bottom_right->latitude = MIN(bottom_right->latitude,  -1);
