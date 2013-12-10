@@ -2,8 +2,6 @@
 
 set -e
 
-prevver="$2"
-
 add_system_user() {
     if ! getent passwd groonga >/dev/null; then
         adduser --group --system --home /var/lib/groonga groonga
@@ -11,14 +9,10 @@ add_system_user() {
 }
 
 fixperms() {
-    dpkg-statoverride --list /var/run/groonga >/dev/null || \
-        dpkg-statoverride --update --add groonga groonga 0755 /var/run/groonga
-    dpkg-statoverride --list /var/lib/groonga >/dev/null || \
-        dpkg-statoverride --update --add groonga groonga 0755 /var/lib/groonga
-    dpkg-statoverride --list /etc/groonga >/dev/null || \
-        dpkg-statoverride --update --add groonga groonga 0755 /etc/groonga
-    dpkg-statoverride --list /var/log/groonga >/dev/null || \
-        dpkg-statoverride --update --add groonga groonga 0755 /var/log/groonga
+    for target in /var/run/groonga /var/lib/groonga /etc/groonga /var/log/groonga
+    do
+	dpkg-statoverride --list $target >/dev/null || dpkg-statoverride --update --add groonga groonga 0755 $target
+    done
 }
 
 create_database() {

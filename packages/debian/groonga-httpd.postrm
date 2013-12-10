@@ -3,13 +3,10 @@
 set -e
 
 if [ "$1" = "purge" ]; then
-    rm -f /var/run/groonga/*
-    rm -rf /var/log/groonga/httpd/*
-    dpkg-statoverride --remove /var/log/groonga/httpd
-    rm -rf /etc/groonga/httpd/logs/*
-    dpkg-statoverride --remove /etc/groonga/httpd/logs
-    rm -rf /etc/groonga/httpd/*
-    dpkg-statoverride --remove /etc/groonga/httpd
+    for target in /var/log/groonga/httpd /etc/groonga/httpd/logs /etc/groonga/httpd
+    do
+	dpkg-statoverride --remove $target; rm -rf $target
+    done
 fi
 
 #DEBHELPER#

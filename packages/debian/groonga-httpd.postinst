@@ -2,15 +2,11 @@
 
 set -e
 
-prevver="$2"
-
 fixperms() {
-    dpkg-statoverride --list /etc/groonga/httpd >/dev/null || \
-        dpkg-statoverride --update --add groonga groonga 0755 /etc/groonga/httpd
-    dpkg-statoverride --list /etc/groonga/httpd/logs >/dev/null || \
-        dpkg-statoverride --update --add groonga groonga 0755 /etc/groonga/httpd/logs
-    dpkg-statoverride --list /var/log/groonga/httpd >/dev/null || \
-        dpkg-statoverride --update --add groonga groonga 0755 /var/log/groonga/httpd
+    for target in /etc/groonga/httpd /etc/groonga/httpd/logs /var/log/groonga/httpd
+    do
+	dpkg-statoverride --list $target >/dev/null || dpkg-statoverride --update --add groonga groonga 0755 $target
+    done
 }
 
 case "$1" in
