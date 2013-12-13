@@ -1,0 +1,7 @@
+#@disable-logging
+table_create LandMarks TABLE_NO_KEY
+column_create LandMarks point COLUMN_SCALAR WGS84GeoPoint
+
+table_create Points TABLE_PAT_KEY WGS84GeoPoint
+column_create Points land_mark_index COLUMN_INDEX LandMarks point
+#@enable-logging
