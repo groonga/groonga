@@ -8,7 +8,7 @@ Build-Depends:
   zlib1g-dev,
   liblzo2-dev,
   libmsgpack-dev,
-  libzmq-dev,
+  libzmq3-dev | libzmq-dev,
   libevent-dev,
   libmecab-dev,
   libpcre3-dev

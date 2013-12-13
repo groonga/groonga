@@ -71,7 +71,6 @@ fi
 case $(lsb_release -s -c) in
     jessie|sid)
 	DEPENDED_PACKAGES="${DEPENDED_PACKAGES} libzmq3-dev"
-	ruby -i'' -ne 'print $_.gsub(/libzmq/, "libzmq3")' /tmp/${PACKAGE}-debian/control
 	;;
     *)
 	DEPENDED_PACKAGES="${DEPENDED_PACKAGES} libzmq-dev"
