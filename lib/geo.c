@@ -920,13 +920,15 @@ grn_geo_select_in_circle(grn_ctx *ctx, grn_obj *index,
   case GRN_DB_TEXT :
   case GRN_DB_LONG_TEXT :
     GRN_OBJ_INIT(&point_on_circle_, GRN_BULK, 0, domain);
-    if (grn_obj_cast(ctx, point_on_circle, &point_on_circle_, GRN_FALSE)) { goto exit; }
+    if (grn_obj_cast(ctx, distance, &point_on_circle_, GRN_FALSE)) { goto exit; }
     point_on_circle = &point_on_circle_;
     /* fallthru */
   case GRN_DB_TOKYO_GEO_POINT :
   case GRN_DB_WGS84_GEO_POINT :
-    if (domain != distance->header.domain) { /* todo */ goto exit; }
-    if (!point_on_circle) { point_on_circle = distance; }
+    if (!point_on_circle) {
+      if (domain != distance->header.domain) { /* todo */ goto exit; }
+      point_on_circle = distance;
+    }
     GRN_GEO_POINT_VALUE(point_on_circle,
                         on_circle.latitude, on_circle.longitude);
     d = distance_raw_func(ctx, center, &on_circle);
