@@ -393,7 +393,9 @@ correct(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
          (similar_search_mode == GRN_SUGGEST_SEARCH_AUTO &&
           max_score < frequency_threshold))) {
       grn_obj *key, *index;
-      if ((key = grn_obj_column(ctx, items, CONST_STR_LEN("_key")))) {
+      if ((key = grn_obj_column(ctx, items,
+                                GRN_COLUMN_NAME_KEY,
+                                GRN_COLUMN_NAME_KEY_LEN))) {
         if (grn_column_index(ctx, key, GRN_OP_MATCH, &index, 1, NULL)) {
           grn_select_optarg optarg;
           memset(&optarg, 0, sizeof(grn_select_optarg));
@@ -445,8 +447,12 @@ correct(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
             GRN_EXPR_CREATE_FOR_QUERY(ctx, res, expr, var);
             if (expr) {
               grn_table_cursor *tc;
-              grn_obj *score = grn_obj_column(ctx, res, CONST_STR_LEN("_score"));
-              grn_obj *key = grn_obj_column(ctx, res, CONST_STR_LEN("_key"));
+              grn_obj *score = grn_obj_column(ctx, res,
+                                              GRN_COLUMN_NAME_SCORE,
+                                              GRN_COLUMN_NAME_SCORE_LEN);
+              grn_obj *key = grn_obj_column(ctx, res,
+                                            GRN_COLUMN_NAME_KEY,
+                                            GRN_COLUMN_NAME_KEY_LEN);
               grn_expr_append_obj(ctx, expr,
                                   score,
                                   GRN_OP_GET_VALUE, 1);

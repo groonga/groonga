@@ -2721,7 +2721,9 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
         if (table && table->header.type != GRN_TABLE_NO_KEY) {
           /* todo : temporal patch. grn_table_at() is kinda costful... */
           if (grn_table_at(ctx, table, id)) {
-            grn_obj *accessor = grn_obj_column(ctx, table, "_key", 4);
+            grn_obj *accessor = grn_obj_column(ctx, table,
+                                               GRN_COLUMN_NAME_KEY,
+                                               GRN_COLUMN_NAME_KEY_LEN);
             if (accessor) {
               grn_obj_get_value(ctx, accessor, id, &buf);
               grn_obj_unlink(ctx, accessor);
@@ -2952,7 +2954,9 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
     } else {
       int i;
       grn_id id;
-      grn_obj *column = grn_obj_column(ctx, obj, "_key", 4);
+      grn_obj *column = grn_obj_column(ctx, obj,
+                                       GRN_COLUMN_NAME_KEY,
+                                       GRN_COLUMN_NAME_KEY_LEN);
       grn_table_cursor *tc = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0,
                                                    0, -1, GRN_CURSOR_ASCENDING);
       GRN_TEXT_PUTC(ctx, bulk, '[');

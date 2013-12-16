@@ -261,7 +261,9 @@ send_handler(void *zmq_send_sock, grn_ctx *ctx)
                 msgpack_pack_raw_body(&pk, name_buf, name_len);
 
                 msgpack_pack_raw(&pk, 4);
-                msgpack_pack_raw_body(&pk, CONST_STR_LEN("_key"));
+                msgpack_pack_raw_body(&pk,
+                                      GRN_COLUMN_NAME_KEY,
+                                      GRN_COLUMN_NAME_KEY_LEN);
                 key_len = grn_table_cursor_get_key(ctx, tc, (void **)&key);
                 msgpack_pack_raw(&pk, key_len);
                 msgpack_pack_raw_body(&pk, key, key_len);
@@ -330,7 +332,9 @@ send_handler(void *zmq_send_sock, grn_ctx *ctx)
                 msgpack_pack_raw_body(&pk, name_buf, name_len);
 
                 msgpack_pack_raw(&pk, 4);
-                msgpack_pack_raw_body(&pk, CONST_STR_LEN("_key"));
+                msgpack_pack_raw_body(&pk,
+                                      GRN_COLUMN_NAME_KEY,
+                                      GRN_COLUMN_NAME_KEY_LEN);
                 grn_table_cursor_get_key(ctx, tc, (void **)&key);
                 msgpack_pack_uint64(&pk, *key);
 

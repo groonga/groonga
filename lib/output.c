@@ -721,7 +721,9 @@ grn_output_bulk(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       grn_obj *table = grn_ctx_at(ctx, bulk->header.domain);
       grn_id id = GRN_RECORD_VALUE(bulk);
       if (table && table->header.type != GRN_TABLE_NO_KEY) {
-        grn_obj *accessor = grn_obj_column(ctx, table, "_key", 4);
+        grn_obj *accessor = grn_obj_column(ctx, table,
+                                           GRN_COLUMN_NAME_KEY,
+                                           GRN_COLUMN_NAME_KEY_LEN);
         if (accessor) {
           if (id == GRN_ID_NIL) {
             grn_obj_reinit_for(ctx, &buf, accessor);
@@ -1263,7 +1265,9 @@ grn_output_table(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     grn_output_array_close(ctx, outbuf, output_type);
   } else {
     int i;
-    grn_obj *column = grn_obj_column(ctx, table, "_key", 4);
+    grn_obj *column = grn_obj_column(ctx, table,
+                                     GRN_COLUMN_NAME_KEY,
+                                     GRN_COLUMN_NAME_KEY_LEN);
     grn_table_cursor *tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0,
                                                  0, -1, GRN_CURSOR_ASCENDING);
     grn_output_array_open(ctx, outbuf, output_type, "HIT", -1);

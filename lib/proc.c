@@ -1465,7 +1465,9 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
     int column_list_size = -1;
 #ifdef GRN_WITH_MESSAGE_PACK
     column_list_size = 1; /* [header, (key), (COLUMNS)] */
-    if ((col = grn_obj_column(ctx, table, KEY_NAME, sizeof(KEY_NAME)-1))) {
+    if ((col = grn_obj_column(ctx, table,
+                              GRN_COLUMN_NAME_KEY,
+                              GRN_COLUMN_NAME_KEY_LEN))) {
       column_list_size++;
       grn_obj_unlink(ctx, col);
     }
@@ -1513,7 +1515,9 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
       GRN_OUTPUT_CSTR("ShortText");
       GRN_OUTPUT_ARRAY_CLOSE();
       GRN_OUTPUT_ARRAY_CLOSE();
-      if ((col = grn_obj_column(ctx, table, KEY_NAME, sizeof(KEY_NAME)-1))) {
+      if ((col = grn_obj_column(ctx, table,
+                                GRN_COLUMN_NAME_KEY,
+                                GRN_COLUMN_NAME_KEY_LEN))) {
         int name_len;
         char name_buf[GRN_TABLE_MAX_KEY_SIZE];
         grn_id id;
@@ -1522,7 +1526,7 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
         GRN_OUTPUT_ARRAY_OPEN("COLUMN", 8);
         id = grn_obj_id(ctx, table);
         GRN_OUTPUT_INT64(id);
-        GRN_OUTPUT_CSTR(KEY_NAME);
+        GRN_OUTPUT_CSTR(GRN_COLUMN_NAME_KEY);
         GRN_OUTPUT_CSTR("");
         GRN_OUTPUT_CSTR("");
         grn_column_create_flags_to_text(ctx, &buf, 0);
@@ -2063,7 +2067,7 @@ dump_index_column_sources(grn_ctx *ctx, grn_obj *outbuf, grn_obj *column)
       case GRN_TABLE_PAT_KEY:
       case GRN_TABLE_DAT_KEY:
       case GRN_TABLE_HASH_KEY:
-        GRN_TEXT_PUTS(ctx, outbuf, "_key");
+        GRN_TEXT_PUT(ctx, outbuf, GRN_COLUMN_NAME_KEY, GRN_COLUMN_NAME_KEY_LEN);
         break;
       default:
         dump_column_name(ctx, outbuf, source);
@@ -2206,11 +2210,15 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
     if (((table->header.type == GRN_TABLE_HASH_KEY ||
           table->header.type == GRN_TABLE_PAT_KEY ||
           table->header.type == GRN_TABLE_DAT_KEY) &&
-         GRN_TEXT_LEN(&column_name) == 3 &&
-         !memcmp(GRN_TEXT_VALUE(&column_name), "_id", 3)) ||
+         GRN_TEXT_LEN(&column_name) == GRN_COLUMN_NAME_ID_LEN &&
+         !memcmp(GRN_TEXT_VALUE(&column_name),
+                 GRN_COLUMN_NAME_ID,
+                 GRN_COLUMN_NAME_ID_LEN)) ||
         (table->header.type == GRN_TABLE_NO_KEY &&
-         GRN_TEXT_LEN(&column_name) == 4 &&
-         !memcmp(GRN_TEXT_VALUE(&column_name), "_key", 4))) {
+         GRN_TEXT_LEN(&column_name) == GRN_COLUMN_NAME_KEY_LEN &&
+         !memcmp(GRN_TEXT_VALUE(&column_name),
+                 GRN_COLUMN_NAME_KEY,
+                 GRN_COLUMN_NAME_KEY_LEN))) {
       continue;
     }
     GRN_PTR_PUT(ctx, &use_columns, columns[i]);
@@ -2254,8 +2262,10 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
       column = *((grn_obj **)GRN_BULK_HEAD(&use_columns) + j);
       GRN_BULK_REWIND(&column_name);
       grn_column_name_(ctx, column, &column_name);
-      if (GRN_TEXT_LEN(&column_name) == 6 &&
-          !memcmp(GRN_TEXT_VALUE(&column_name), "_value", 6)) {
+      if (GRN_TEXT_LEN(&column_name) == GRN_COLUMN_NAME_VALUE_LEN &&
+          !memcmp(GRN_TEXT_VALUE(&column_name),
+                  GRN_COLUMN_NAME_VALUE,
+                  GRN_COLUMN_NAME_VALUE_LEN)) {
         is_value_column = 1;
       } else {
         is_value_column = 0;

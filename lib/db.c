@@ -4090,7 +4090,10 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
       if (len < 2) { goto exit; }
       switch (name[1]) {
       case 'k' : /* key */
-        if (len != 4 || memcmp(name, "_key", 4)) { goto exit; }
+        if (len != GRN_COLUMN_NAME_KEY_LEN ||
+            memcmp(name, GRN_COLUMN_NAME_KEY, GRN_COLUMN_NAME_KEY_LEN)) {
+          goto exit;
+        }
         for (rp = &res; !done; rp = &(*rp)->next) {
           *rp = accessor_new(ctx);
           (*rp)->obj = obj;
@@ -4132,7 +4135,10 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
         }
         break;
       case 'i' : /* id */
-        if (len != 3 || memcmp(name, "_id", 3)) { goto exit; }
+        if (len != GRN_COLUMN_NAME_ID_LEN ||
+            memcmp(name, GRN_COLUMN_NAME_ID, GRN_COLUMN_NAME_ID_LEN)) {
+          goto exit;
+        }
         for (rp = &res; !done; rp = &(*rp)->next) {
           *rp = accessor_new(ctx);
           (*rp)->obj = obj;
@@ -4167,7 +4173,10 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
         }
         break;
       case 'v' : /* value */
-        if (len != 6 || memcmp(name, "_value", 6)) { goto exit; }
+        if (len != GRN_COLUMN_NAME_VALUE_LEN ||
+            memcmp(name, GRN_COLUMN_NAME_VALUE, GRN_COLUMN_NAME_VALUE_LEN)) {
+          goto exit;
+        }
         for (rp = &res; !done; rp = &(*rp)->next) {
           *rp = accessor_new(ctx);
           (*rp)->obj = obj;
@@ -4215,7 +4224,10 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
         }
         break;
       case 's' : /* score */
-        if (len != 6 || memcmp(name, "_score", 6)) { goto exit; }
+        if (len != GRN_COLUMN_NAME_SCORE_LEN ||
+            memcmp(name, GRN_COLUMN_NAME_SCORE, GRN_COLUMN_NAME_SCORE_LEN)) {
+          goto exit;
+        }
         for (rp = &res; !done; rp = &(*rp)->next) {
           *rp = accessor_new(ctx);
           (*rp)->obj = obj;
@@ -4250,7 +4262,12 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
         }
         break;
       case 'n' : /* nsubrecs */
-        if (len != 9 || memcmp(name, "_nsubrecs", 9)) { goto exit; }
+        if (len != GRN_COLUMN_NAME_NSUBRECS_LEN ||
+            memcmp(name,
+                   GRN_COLUMN_NAME_NSUBRECS,
+                   GRN_COLUMN_NAME_NSUBRECS_LEN)) {
+          goto exit;
+        }
         for (rp = &res; !done; rp = &(*rp)->next) {
           *rp = accessor_new(ctx);
           (*rp)->obj = obj;
@@ -7997,19 +8014,19 @@ grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size)
     for (a = (grn_accessor *)obj; a; a = a->next) {
       switch (a->action) {
       case GRN_ACCESSOR_GET_ID :
-        name = "_id";
+        name = GRN_COLUMN_NAME_ID;
         break;
       case GRN_ACCESSOR_GET_KEY :
-        name = "_key";
+        name = GRN_COLUMN_NAME_KEY;
         break;
       case GRN_ACCESSOR_GET_VALUE :
-        name = "_value";
+        name = GRN_COLUMN_NAME_VALUE;
         break;
       case GRN_ACCESSOR_GET_SCORE :
-        name = "_score";
+        name = GRN_COLUMN_NAME_SCORE;
         break;
       case GRN_ACCESSOR_GET_NSUBRECS :
-        name = "_nsubrecs";
+        name = GRN_COLUMN_NAME_NSUBRECS;
         break;
       case GRN_ACCESSOR_GET_COLUMN_VALUE :
       case GRN_ACCESSOR_GET_DB_OBJ :
@@ -8050,23 +8067,29 @@ grn_column_name_(grn_ctx *ctx, grn_obj *obj, grn_obj *buf)
     for (a = (grn_accessor *)obj; a; a = a->next) {
       switch (a->action) {
       case GRN_ACCESSOR_GET_ID :
-        GRN_TEXT_PUTS(ctx, buf, "_id");
+        GRN_TEXT_PUT(ctx, buf, GRN_COLUMN_NAME_ID, GRN_COLUMN_NAME_ID_LEN);
         break;
       case GRN_ACCESSOR_GET_KEY :
         if (!a->next) {
-          GRN_TEXT_PUTS(ctx, buf, "_key");
+          GRN_TEXT_PUT(ctx, buf, GRN_COLUMN_NAME_KEY, GRN_COLUMN_NAME_KEY_LEN);
         }
         break;
       case GRN_ACCESSOR_GET_VALUE :
         if (!a->next) {
-          GRN_TEXT_PUTS(ctx, buf, "_value");
+          GRN_TEXT_PUT(ctx, buf,
+                       GRN_COLUMN_NAME_VALUE,
+                       GRN_COLUMN_NAME_VALUE_LEN);
         }
         break;
       case GRN_ACCESSOR_GET_SCORE :
-        GRN_TEXT_PUTS(ctx, buf, "_score");
+        GRN_TEXT_PUT(ctx, buf,
+                     GRN_COLUMN_NAME_SCORE,
+                     GRN_COLUMN_NAME_SCORE_LEN);
         break;
       case GRN_ACCESSOR_GET_NSUBRECS :
-        GRN_TEXT_PUTS(ctx, buf, "_nsubrecs");
+        GRN_TEXT_PUT(ctx, buf,
+                     GRN_COLUMN_NAME_NSUBRECS,
+                     GRN_COLUMN_NAME_NSUBRECS_LEN);
         break;
       case GRN_ACCESSOR_GET_COLUMN_VALUE :
         grn_column_name_(ctx, a->obj, buf);
@@ -9144,7 +9167,9 @@ grn_obj_columns(grn_ctx *ctx, grn_obj *table,
           {
             grn_obj *type = grn_ctx_at(ctx, table->header.domain);
             if (GRN_OBJ_TABLEP(type)) {
-              grn_obj *ai = grn_obj_column(ctx, table, "_id", 3);
+              grn_obj *ai = grn_obj_column(ctx, table,
+                                           GRN_COLUMN_NAME_ID,
+                                           GRN_COLUMN_NAME_ID_LEN);
               if (ai) {
                 if (ai->header.type == GRN_ACCESSOR) {
                   cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
@@ -9286,7 +9311,8 @@ grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned int str_size
           if ((k->key = grn_obj_column(ctx, table, p, r - p))) {
             k++;
           } else {
-            if (r - p == 6 && memcmp(p, "_score", 6) == 0) {
+            if (r - p == GRN_COLUMN_NAME_SCORE_LEN &&
+                memcmp(p, GRN_COLUMN_NAME_SCORE, GRN_COLUMN_NAME_SCORE_LEN) == 0) {
               GRN_LOG(ctx, GRN_WARN,
                       "ignore invalid sort key: <%.*s>(<%.*s>)",
                       (int)(r - p), p, str_size, str);
@@ -9582,8 +9608,10 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
             char *column_name = GRN_TEXT_VALUE(value);
             unsigned int column_name_size = GRN_TEXT_LEN(value);
             if (value->header.domain == GRN_DB_TEXT &&
-                (name_equal(column_name, column_name_size, KEY_NAME) ||
-                 name_equal(column_name, column_name_size, ID_NAME))) {
+                (name_equal(column_name, column_name_size,
+                            GRN_COLUMN_NAME_KEY) ||
+                 name_equal(column_name, column_name_size,
+                            GRN_COLUMN_NAME_ID))) {
               if (loader->key_offset != -1) {
                 GRN_LOG(ctx, GRN_LOG_ERROR,
                         "duplicated key columns: <%.*s> at %d and <%.*s> at %i",
@@ -9719,8 +9747,10 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
             char *column_name = GRN_TEXT_VALUE(v);
             unsigned int column_name_size = GRN_TEXT_LEN(v);
             if (v->header.domain == GRN_DB_TEXT &&
-                (name_equal(column_name, column_name_size, KEY_NAME) ||
-                 name_equal(column_name, column_name_size, ID_NAME))) {
+                (name_equal(column_name, column_name_size,
+                            GRN_COLUMN_NAME_KEY) ||
+                 name_equal(column_name, column_name_size,
+                            GRN_COLUMN_NAME_ID))) {
               if (key_column_name) {
                 GRN_LOG(ctx, GRN_LOG_ERROR, "duplicated key columns: %.*s and %.*s",
                         (int)GRN_TEXT_LEN(key_column_name),
