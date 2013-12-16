@@ -481,7 +481,7 @@ GRN_API grn_obj *grn_proc_get_info(grn_ctx *ctx, grn_user_data *user_data,
                                    grn_expr_var **vars, unsigned int *nvars, grn_obj **caller);
 
 /*-------------------------------------------------------------
- * table操作のための関数
+ * API for table
  */
 
 #define GRN_TABLE_MAX_KEY_SIZE         (0x1000)
@@ -718,7 +718,7 @@ GRN_API grn_obj *grn_obj_column(grn_ctx *ctx, grn_obj *table,
 GRN_API unsigned int grn_table_size(grn_ctx *ctx, grn_obj *table);
 
 /*-------------------------------------------------------------
- * column操作のための関数
+ * API for column
  */
 
 GRN_API grn_obj *grn_column_create(grn_ctx *ctx, grn_obj *table,
@@ -735,7 +735,7 @@ GRN_API grn_rc grn_column_index_update(grn_ctx *ctx, grn_obj *column,
 GRN_API grn_obj *grn_column_table(grn_ctx *ctx, grn_obj *column);
 
 /*-------------------------------------------------------------
- * db, table, columnの全てまたは幾つかで共通に使用できる関数
+ * API for db, table and/or column
  */
 
 typedef enum {
@@ -876,7 +876,7 @@ GRN_API unsigned int grn_vector_get_element(grn_ctx *ctx, grn_obj *vector,
                                             unsigned int *weight, grn_id *domain);
 
 /*-------------------------------------------------------------
- * hook操作のための関数
+ * API for hook
  */
 
 GRN_API int grn_proc_call_next(grn_ctx *ctx, grn_obj *exec_info, grn_obj *in, grn_obj *out);
