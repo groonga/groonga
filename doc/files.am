@@ -191,11 +191,12 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/tutorial/data-7.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-8.log \
 	$(top_srcdir)/doc/source/example/tutorial/drilldown-1.log \
-	$(top_srcdir)/doc/source/example/tutorial/drilldown-2.log \
-	$(top_srcdir)/doc/source/example/tutorial/drilldown-3.log \
-	$(top_srcdir)/doc/source/example/tutorial/drilldown-4.log \
-	$(top_srcdir)/doc/source/example/tutorial/drilldown-5.log \
-	$(top_srcdir)/doc/source/example/tutorial/drilldown-6.log \
+	$(top_srcdir)/doc/source/example/tutorial/drilldown-country.log \
+	$(top_srcdir)/doc/source/example/tutorial/drilldown-domain.log \
+	$(top_srcdir)/doc/source/example/tutorial/drilldown-limit.log \
+	$(top_srcdir)/doc/source/example/tutorial/drilldown-multiple-column.log \
+	$(top_srcdir)/doc/source/example/tutorial/drilldown-output-columns.log \
+	$(top_srcdir)/doc/source/example/tutorial/drilldown-sortby.log \
 	$(top_srcdir)/doc/source/example/tutorial/index-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/index-2.log \
 	$(top_srcdir)/doc/source/example/tutorial/index-3.log \
@@ -688,11 +689,12 @@ source_files_relative_from_doc_dir = \
 	source/example/tutorial/data-7.log \
 	source/example/tutorial/data-8.log \
 	source/example/tutorial/drilldown-1.log \
-	source/example/tutorial/drilldown-2.log \
-	source/example/tutorial/drilldown-3.log \
-	source/example/tutorial/drilldown-4.log \
-	source/example/tutorial/drilldown-5.log \
-	source/example/tutorial/drilldown-6.log \
+	source/example/tutorial/drilldown-country.log \
+	source/example/tutorial/drilldown-domain.log \
+	source/example/tutorial/drilldown-limit.log \
+	source/example/tutorial/drilldown-multiple-column.log \
+	source/example/tutorial/drilldown-output-columns.log \
+	source/example/tutorial/drilldown-sortby.log \
 	source/example/tutorial/index-1.log \
 	source/example/tutorial/index-2.log \
 	source/example/tutorial/index-3.log \
