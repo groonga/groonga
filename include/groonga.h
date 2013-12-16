@@ -722,15 +722,15 @@ GRN_API unsigned int grn_table_size(grn_ctx *ctx, grn_obj *table);
  */
 
 #define GRN_COLUMN_NAME_ID            "_id"
-#define GRN_COLUMN_NAME_ID_SIZE       (sizeof(GRN_COLUMN_NAME_ID) - 1)
+#define GRN_COLUMN_NAME_ID_LEN        (sizeof(GRN_COLUMN_NAME_ID) - 1)
 #define GRN_COLUMN_NAME_KEY           "_key"
-#define GRN_COLUMN_NAME_KEY_SIZE      (sizeof(GRN_COLUMN_NAME_KEY) - 1)
+#define GRN_COLUMN_NAME_KEY_LEN       (sizeof(GRN_COLUMN_NAME_KEY) - 1)
 #define GRN_COLUMN_NAME_VALUE         "_value"
-#define GRN_COLUMN_NAME_VALUE_SIZE    (sizeof(GRN_COLUMN_NAME_VALUE) - 1)
+#define GRN_COLUMN_NAME_VALUE_LEN     (sizeof(GRN_COLUMN_NAME_VALUE) - 1)
 #define GRN_COLUMN_NAME_SCORE         "_score"
-#define GRN_COLUMN_NAME_SCORE_SIZE    (sizeof(GRN_COLUMN_NAME_SCORE) - 1)
+#define GRN_COLUMN_NAME_SCORE_LEN     (sizeof(GRN_COLUMN_NAME_SCORE) - 1)
 #define GRN_COLUMN_NAME_NSUBRECS      "_nsubrecs"
-#define GRN_COLUMN_NAME_NSUBRECS_SIZE (sizeof(GRN_COLUMN_NAME_NSUBRECS) - 1)
+#define GRN_COLUMN_NAME_NSUBRECS_LEN  (sizeof(GRN_COLUMN_NAME_NSUBRECS) - 1)
 
 GRN_API grn_obj *grn_column_create(grn_ctx *ctx, grn_obj *table,
                                    const char *name, unsigned int name_size,

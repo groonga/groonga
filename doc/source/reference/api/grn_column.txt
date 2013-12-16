@@ -22,15 +22,15 @@ Reference
 
    It returns the name of :doc:`/reference/pseudo_column` ``_id``.
 
-   It is useful to use with :c:macro:`GRN_COLUMN_NAME_ID_SIZE` like
+   It is useful to use with :c:macro:`GRN_COLUMN_NAME_ID_LEN` like
    the following:
 
        grn_obj *id_column;
-       id_column = grn_ctx_get(ctx, GRN_COLUMN_NAME_ID, GRN_COLUMN_NAME_ID_SIZE);
+       id_column = grn_ctx_get(ctx, GRN_COLUMN_NAME_ID, GRN_COLUMN_NAME_ID_LEN);
 
    Since 3.1.1.
 
-.. c:macro:: GRN_COLUMN_NAME_ID_SIZE
+.. c:macro:: GRN_COLUMN_NAME_ID_LEN
 
    It returns the byte size of :c:macro:`GRN_COLUMN_NAME_ID`.
 
@@ -40,15 +40,15 @@ Reference
 
    It returns the name of :doc:`/reference/pseudo_column` ``_key``.
 
-   It is useful to use with :c:macro:`GRN_COLUMN_NAME_KEY_SIZE` like
+   It is useful to use with :c:macro:`GRN_COLUMN_NAME_KEY_LEN` like
    the following:
 
        grn_obj *key_column;
-       key_column = grn_ctx_get(ctx, GRN_COLUMN_NAME_KEY, GRN_COLUMN_NAME_KEY_SIZE);
+       key_column = grn_ctx_get(ctx, GRN_COLUMN_NAME_KEY, GRN_COLUMN_NAME_KEY_LEN);
 
    Since 3.1.1.
 
-.. c:macro:: GRN_COLUMN_NAME_KEY_SIZE
+.. c:macro:: GRN_COLUMN_NAME_KEY_LEN
 
    It returns the byte size of :c:macro:`GRN_COLUMN_NAME_KEY`.
 
@@ -58,15 +58,15 @@ Reference
 
    It returns the name of :doc:`/reference/pseudo_column` ``_value``.
 
-   It is useful to use with :c:macro:`GRN_COLUMN_NAME_VALUE_SIZE` like
+   It is useful to use with :c:macro:`GRN_COLUMN_NAME_VALUE_LEN` like
    the following:
 
        grn_obj *value_column;
-       value_column = grn_ctx_get(ctx, GRN_COLUMN_NAME_VALUE, GRN_COLUMN_NAME_VALUE_SIZE);
+       value_column = grn_ctx_get(ctx, GRN_COLUMN_NAME_VALUE, GRN_COLUMN_NAME_VALUE_LEN);
 
    Since 3.1.1.
 
-.. c:macro:: GRN_COLUMN_NAME_VALUE_SIZE
+.. c:macro:: GRN_COLUMN_NAME_VALUE_LEN
 
    It returns the byte size of :c:macro:`GRN_COLUMN_NAME_VALUE`.
 
@@ -76,15 +76,15 @@ Reference
 
    It returns the name of :doc:`/reference/pseudo_column` ``_score``.
 
-   It is useful to use with :c:macro:`GRN_COLUMN_NAME_SCORE_SIZE` like
+   It is useful to use with :c:macro:`GRN_COLUMN_NAME_SCORE_LEN` like
    the following:
 
        grn_obj *score_column;
-       score_column = grn_ctx_get(ctx, GRN_COLUMN_NAME_SCORE, GRN_COLUMN_NAME_SCORE_SIZE);
+       score_column = grn_ctx_get(ctx, GRN_COLUMN_NAME_SCORE, GRN_COLUMN_NAME_SCORE_LEN);
 
    Since 3.1.1.
 
-.. c:macro:: GRN_COLUMN_NAME_SCORE_SIZE
+.. c:macro:: GRN_COLUMN_NAME_SCORE_LEN
 
    It returns the byte size of :c:macro:`GRN_COLUMN_NAME_SCORE`.
 
@@ -94,15 +94,15 @@ Reference
 
    It returns the name of :doc:`/reference/pseudo_column` ``_nsubrecs``.
 
-   It is useful to use with :c:macro:`GRN_COLUMN_NAME_NSUBRECS_SIZE` like
+   It is useful to use with :c:macro:`GRN_COLUMN_NAME_NSUBRECS_LEN` like
    the following:
 
        grn_obj *nsubrecs_column;
-       nsubrecs_column = grn_ctx_get(ctx, GRN_COLUMN_NAME_NSUBRECS, GRN_COLUMN_NAME_NSUBRECS_SIZE);
+       nsubrecs_column = grn_ctx_get(ctx, GRN_COLUMN_NAME_NSUBRECS, GRN_COLUMN_NAME_NSUBRECS_LEN);
 
    Since 3.1.1.
 
-.. c:macro:: GRN_COLUMN_NAME_NSUBRECS_SIZE
+.. c:macro:: GRN_COLUMN_NAME_NSUBRECS_LEN
 
    It returns the byte size of :c:macro:`GRN_COLUMN_NAME_NSUBRECS`.
 
