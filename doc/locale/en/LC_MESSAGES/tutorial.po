@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-19 19:11+0900\n"
-"PO-Revision-Date: 2012-07-23 17:58+0900\n"
+"POT-Creation-Date: 2013-12-17 13:02+0900\n"
+"PO-Revision-Date: 2013-12-17 14:20+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -97,11 +97,12 @@ msgstr ""
 #: ../../../source/example/tutorial/data-7.log:1
 #: ../../../source/example/tutorial/data-8.log:1
 #: ../../../source/example/tutorial/drilldown-1.log:1
-#: ../../../source/example/tutorial/drilldown-2.log:1
-#: ../../../source/example/tutorial/drilldown-3.log:1
-#: ../../../source/example/tutorial/drilldown-4.log:1
-#: ../../../source/example/tutorial/drilldown-5.log:1
-#: ../../../source/example/tutorial/drilldown-6.log:1
+#: ../../../source/example/tutorial/drilldown-country.log:1
+#: ../../../source/example/tutorial/drilldown-domain.log:1
+#: ../../../source/example/tutorial/drilldown-limit.log:1
+#: ../../../source/example/tutorial/drilldown-multiple-column.log:1
+#: ../../../source/example/tutorial/drilldown-output-columns.log:1
+#: ../../../source/example/tutorial/drilldown-sortby.log:1
 #: ../../../source/example/tutorial/index-1.log:1
 #: ../../../source/example/tutorial/index-2.log:1
 #: ../../../source/example/tutorial/index-3.log:1
@@ -526,84 +527,216 @@ msgstr ""
 "the primary keys and the titles are output as arrays because links._key and "
 "links.title are specified to the `output_columns` parameter."
 
-# faf75afb9d2d4278b0fe34153d965f84
-#: ../../../source/tutorial/drilldown.txt:11
-msgid "ドリルダウン"
-msgstr "ドリルダウン"
+# 5442d70575734e768bf673225054a066
+#: ../../../source/tutorial/drilldown.txt:0
+msgid "Drilldown by ``domain`` column"
+msgstr ""
 
-# cccf703ed3d6459ab98048a20c592a3a
+# 2fda355d293744d190a2d28d503ba68e
+#: ../../../source/tutorial/drilldown.txt:11
+msgid "Drilldown"
+msgstr ""
+
+# 4079a1e36549437992d1ba1ead900c34
 #: ../../../source/tutorial/drilldown.txt:13
 msgid ""
-"groongaでは、特定のカラム値で検索結果をグループ化することができます。これをド"
-"リルダウンと呼びます。"
+"There is a case that you want to know summary of search result. For example, "
+"it is the case that searching the number of records which belongs to "
+"specific category. Selecting a category at first, then investigate further "
+"in detail is a reasonable way."
 msgstr ""
-"groongaでは、特定のカラム値で検索結果をグループ化することができます。これをド"
-"リルダウンと呼びます。"
 
-# 1b2ea7399ccc4aabbe5c2af93017b3e1
-#: ../../../source/tutorial/drilldown.txt:15
+# 771501ad646e4f0ebe46e5d311b3d457
+#: ../../../source/tutorial/drilldown.txt:17
 msgid ""
-"Siteテーブルに２つのカラムを追加します。TLDドメイン名を格納するdomainカラム"
-"と、国名を格納するcountryカラムです。これらのカラムの型は、それぞれドメイン名"
-"を主キーとするSiteDomainテーブルと、国名を主キーとするSiteCountryテーブルとし"
-"ます。"
+"To achive such a purpose, Groonga provides the feature which groups search "
+"results by the value of specific column. In Groonga, this feature is called "
+"``drilldown``."
 msgstr ""
-"Siteテーブルに２つのカラムを追加します。TLDドメイン名を格納するdomainカラム"
-"と、国名を格納するcountryカラムです。これらのカラムの型は、それぞれドメイン名"
-"を主キーとするSiteDomainテーブルと、国名を主キーとするSiteCountryテーブルとし"
-"ます。"
 
-# 2c2d5ec457c74758a33ad52580fdb5fa
-#: ../../../source/tutorial/drilldown.txt:36
-msgid "domainカラムとcountryカラムでドリルダウンを行う例を以下に示します。"
-msgstr "domainカラムとcountryカラムでドリルダウンを行う例を以下に示します。"
+# 88500b4b3afd4fa594e13fc8135659e5
+#: ../../../source/tutorial/drilldown.txt:20
+msgid "Here is the concrete examples how to use this feature."
+msgstr ""
 
-# 5e29383a15644677954b77ef47777067
-#: ../../../source/tutorial/drilldown.txt:42
+# b0df99484331467f8aa0f66d9a81f070
+#: ../../../source/tutorial/drilldown.txt:22
 msgid ""
-"テーブル型を持つカラムに対してドリルダウンを行った場合、参照先のテーブルに存"
-"在するカラム値を取得することもできます。ドリルダウンを行ったテーブルには、"
-"_nsubrecsという仮想的なカラムが追加されます。このカラムには、グループ化された"
-"レコード数が入ります。"
+"In this example, we add two columns to ``Site`` table. ``domain`` column is "
+"used for TLD (top level domain). ``country`` column is used for country "
+"name. The type of these columns are ``SiteDomain`` table which uses domain "
+"name as a primary key and ``SiteCountry`` table which uses country name as a "
+"primary key."
 msgstr ""
-"テーブル型を持つカラムに対してドリルダウンを行った場合、参照先のテーブルに存"
-"在するカラム値を取得することもできます。ドリルダウンを行ったテーブルには、"
-"_nsubrecsという仮想的なカラムが追加されます。このカラムには、グループ化された"
-"レコード数が入ります。"
 
-# b660b9c2e6c1443ea88f6bdff9b35a08
-#: ../../../source/tutorial/drilldown.txt:48
+# a94d699ee5d246ae963acd1eb7bc41a9
+#: ../../../source/tutorial/drilldown.txt:43
 msgid ""
-"複数のカラムに対してドリルダウンを行うことができます。複数のカラムに対してド"
-"リルダウンを行う場合には、drilldownパラメータにカラム名をカンマ区切りで与えま"
-"す。"
+"Here is a example of drilldown with ``domain`` column. Three kind of values "
+"are used in ``domain`` column - \".org\", \".net\" and \".com\"."
 msgstr ""
-"複数のカラムに対してドリルダウンを行うことができます。複数のカラムに対してド"
-"リルダウンを行う場合には、drilldownパラメータにカラム名をカンマ区切りで与えま"
-"す。"
 
-# a7a846c92175442eb500190c29944a45
-#: ../../../source/tutorial/drilldown.txt:54
-msgid ""
-"ドリルダウン結果を並びかえることができます。例えば、_nsubrecsパラメータの降順"
-"で並び替えることができます。"
+# 1ae3f40faa4443fca912062abb456176
+#: ../../../source/tutorial/drilldown.txt:50
+msgid "Here is a summary of above query."
 msgstr ""
-"ドリルダウン結果を並びかえることができます。例えば、_nsubrecsパラメータの降順"
-"で並び替えることができます。"
 
-# 25f37a574a2d4d898923c16c0f455744
+# 2e3d24845e4849209726622e140a897a
+#: ../../../source/tutorial/drilldown.txt:55
+msgid "Group by"
+msgstr ""
+
+# 081480ab27214e2eb743fe6848a58cef
+#: ../../../source/tutorial/drilldown.txt:56
+msgid "The number of group records"
+msgstr ""
+
+# 93c84c5ac45b4737a992960ec7b6c8d4
+#: ../../../source/tutorial/drilldown.txt:57
+msgid "Group records means following records"
+msgstr ""
+
+# 1fb756b46a39495eb2fe8267790b2062
+#: ../../../source/tutorial/drilldown.txt:58
+msgid ".org"
+msgstr ""
+
+# 9313f04b20ea43f99e1b36fd5c4de57f
+# 7e9df24a485c4fd4a77485f1d927be7e
+# d5e4417425504db186b99dfe2f6cd34b
+#: ../../../source/tutorial/drilldown.txt:59
+#: ../../../source/tutorial/drilldown.txt:64
+#: ../../../source/tutorial/drilldown.txt:69
+msgid "3"
+msgstr ""
+
+# 5b843932416848f583b1f352cc6744af
 #: ../../../source/tutorial/drilldown.txt:60
-msgid ""
-"ドリルダウン結果は、デフォルトでは10件のみ表示されます。drilldown_offsetパラ"
-"メータと、drilldown_limitパラメータによって、offsetとlimitを指定することがで"
-"きます。"
+msgid "http://example.org/"
 msgstr ""
-"ドリルダウン結果は、デフォルトでは10件のみ表示されます。drilldown_offsetパラ"
-"メータと、drilldown_limitパラメータによって、offsetとlimitを指定することがで"
-"きます。"
+
+# e459bcc8f5be4d39ab268376f10fe882
+#: ../../../source/tutorial/drilldown.txt:61
+msgid "http://example.org/aba"
+msgstr ""
+
+# 2039664ca808484992b730d5d1505603
+#: ../../../source/tutorial/drilldown.txt:62
+msgid "http://example.org/gat"
+msgstr ""
+
+# 0de96a61b6cb4420a9f62ed00d89fb9d
+#: ../../../source/tutorial/drilldown.txt:63
+msgid ".net"
+msgstr ""
+
+# 7f4e28543aa14072924503670ae87198
+#: ../../../source/tutorial/drilldown.txt:65
+msgid "http://example.net/"
+msgstr ""
+
+# 8b65b6bf70e944bd9d335494629221c6
+#: ../../../source/tutorial/drilldown.txt:66
+msgid "http://example.net/afr"
+msgstr ""
+
+# a3ecbeac2ba74bdfb2c7ae408dbefc5c
+#: ../../../source/tutorial/drilldown.txt:67
+msgid "http://example.net/atv"
+msgstr ""
+
+# 58bb17e73cf24be3b68c6a388a9df983
+#: ../../../source/tutorial/drilldown.txt:68
+msgid ".com"
+msgstr ""
+
+# 4df5378f28294808bfddc8b977ee6dde
+#: ../../../source/tutorial/drilldown.txt:70
+msgid "http://example.com/"
+msgstr ""
+
+# cb7b34a30f3c4837bf05c7c7934a48ca
+#: ../../../source/tutorial/drilldown.txt:71
+msgid "http://example.com/rab"
+msgstr ""
+
+# 8ae22b46c9d44e2ea402dc4c7278ddb3
+#: ../../../source/tutorial/drilldown.txt:72
+msgid "http://example.com/vdw"
+msgstr ""
+
+# eb0c1708c5be4f58a71a394a65b01c0d
+#: ../../../source/tutorial/drilldown.txt:75
+msgid ""
+"The value of drilldown are returned as the value of ``_nsubrecs`` column. In "
+"this case, ``Site`` table is grouped by \".org\", \".net\", \".com\" domain. "
+"``_nsubrecs`` shows that each three domain has three records."
+msgstr ""
+
+# 8669eed164924aa28a1cd7ab1d07128d
+#: ../../../source/tutorial/drilldown.txt:77
+msgid ""
+"If you execute drildown to the column which has table as a type, you can get "
+"the value of column which is stored in referenced table. ``_nsubrecs`` "
+"pseudo column is added to the table which is used for drilldown. this pseudo "
+"column stores the number of records which is grouped by."
+msgstr ""
+
+# 3a19b81d6b7644d398ab689ddc8affc4
+#: ../../../source/tutorial/drilldown.txt:80
+msgid ""
+"Then, investigate referenced table in detail. As ``Site`` table use "
+"``SiteDomain`` table as column type of ``domain``, you can use ``--"
+"drilldown_output_columns`` to know detail of referenced column."
+msgstr ""
+
+# b0ae08e9993943a3964dd68a52d4d2f7
+#: ../../../source/tutorial/drilldown.txt:86
+msgid ""
+"Now, you can see detail of each grouped domain, drilldown by ``country`` "
+"column which has \".org\" as column value."
+msgstr ""
+
+# 6842fe705d5a4cf99d1017c242e5d305
+#: ../../../source/tutorial/drilldown.txt:93
+msgid "Drilldown with multiple column"
+msgstr ""
+
+# 8afe6d4f78614cd8829b04bf11ce5151
+#: ../../../source/tutorial/drilldown.txt:95
+msgid ""
+"Drilldown feature supports multiple column. Use comma separated multiple "
+"column names as ``drildown`` parameter. You can get the each result of "
+"drilldown at once."
+msgstr ""
+
+# f97dd651d840431cb03fe8eebc4268b3
+#: ../../../source/tutorial/drilldown.txt:104
+msgid "Sorting drildown results"
+msgstr ""
+
+# 2dc2cadcc84b471bb61ee734b87d6ac0
+#: ../../../source/tutorial/drilldown.txt:106
+msgid ""
+"Use ``--drilldown_sortby`` if you want to sort the result of drilldown. For "
+"example, specify ``_nsubrecs`` as descending order."
+msgstr ""
+
+# 47fc5d9538c74eb2bd7f78a9b0b0f624
+#: ../../../source/tutorial/drilldown.txt:114
+msgid "limits drildown results"
+msgstr ""
+
+# a694f44741144d6ca59991606e0e4545
+#: ../../../source/tutorial/drilldown.txt:116
+msgid ""
+"The number of drilldown results is limited to 10 as a default. Use "
+"``drilldown_limits`` and ``drilldown_offset`` parameter to customize "
+"orilldown results."
+msgstr ""
 
 # 33e92b42f72e434aa1b5a4061132ffa7
-#: ../../../source/tutorial/drilldown.txt:66
+#: ../../../source/tutorial/drilldown.txt:122
 msgid ""
 "文字列型のカラムに対するドリルダウンは、他の型でのドリルダウンに比べて低速で"
 "す。文字列でのドリルダウンを行いたい場合には、このチュートリアルのように、文"
@@ -2542,17 +2675,11 @@ msgstr "You can run groonga as a gqtp client as follows:"
 msgid ""
 "This command establishes a connection with a gqtp server and then enters "
 "into interactive mode. HOST_NAME_OR_IP_ADDRESS specifies the hostname or the "
-"IP address of the server. If not specifed, groonga uses the default hostname "
-"\"localhost\". The `-p` option and its argument, PORT_NUMBER, specify the "
-"port number of the server. If not specified, groonga uses the default port "
-"number 10041."
+"IP address of the server. If not specified, groonga uses the default "
+"hostname \"localhost\". The `-p` option and its argument, PORT_NUMBER, "
+"specify the port number of the server. If not specified, groonga uses the "
+"default port number 10041."
 msgstr ""
-"This command establishes a connection with a gqtp server and then enters "
-"into interactive mode. HOST_NAME_OR_IP_ADDRESS specifies the hostname or the "
-"IP address of the server. If not specifed, groonga uses the default hostname "
-"\"localhost\". The `-p` option and its argument, PORT_NUMBER, specify the "
-"port number of the server. If not specified, groonga uses the default port "
-"number 10041."
 
 # 6e9832216e1049e281642be6ec5e292d
 #: ../../../source/tutorial/network.txt:72
@@ -3152,3 +3279,71 @@ msgid ""
 msgstr ""
 "また、経緯度が指定の矩形領域内であるかどうかを判定する :doc:`/reference/"
 "functions/geo_in_rectangle` 関数も存在します。"
+
+# faf75afb9d2d4278b0fe34153d965f84
+#~ msgid "ドリルダウン"
+#~ msgstr "ドリルダウン"
+
+# cccf703ed3d6459ab98048a20c592a3a
+#~ msgid ""
+#~ "groongaでは、特定のカラム値で検索結果をグループ化することができます。これ"
+#~ "をドリルダウンと呼びます。"
+#~ msgstr ""
+#~ "groongaでは、特定のカラム値で検索結果をグループ化することができます。これ"
+#~ "をドリルダウンと呼びます。"
+
+# 1b2ea7399ccc4aabbe5c2af93017b3e1
+#~ msgid ""
+#~ "Siteテーブルに２つのカラムを追加します。TLDドメイン名を格納するdomainカラ"
+#~ "ムと、国名を格納するcountryカラムです。これらのカラムの型は、それぞれドメ"
+#~ "イン名を主キーとするSiteDomainテーブルと、国名を主キーとするSiteCountry"
+#~ "テーブルとします。"
+#~ msgstr ""
+#~ "Siteテーブルに２つのカラムを追加します。TLDドメイン名を格納するdomainカラ"
+#~ "ムと、国名を格納するcountryカラムです。これらのカラムの型は、それぞれドメ"
+#~ "イン名を主キーとするSiteDomainテーブルと、国名を主キーとするSiteCountry"
+#~ "テーブルとします。"
+
+# 2c2d5ec457c74758a33ad52580fdb5fa
+#~ msgid "domainカラムとcountryカラムでドリルダウンを行う例を以下に示します。"
+#~ msgstr "domainカラムとcountryカラムでドリルダウンを行う例を以下に示します。"
+
+# 5e29383a15644677954b77ef47777067
+#~ msgid ""
+#~ "テーブル型を持つカラムに対してドリルダウンを行った場合、参照先のテーブルに"
+#~ "存在するカラム値を取得することもできます。ドリルダウンを行ったテーブルに"
+#~ "は、_nsubrecsという仮想的なカラムが追加されます。このカラムには、グループ"
+#~ "化されたレコード数が入ります。"
+#~ msgstr ""
+#~ "テーブル型を持つカラムに対してドリルダウンを行った場合、参照先のテーブルに"
+#~ "存在するカラム値を取得することもできます。ドリルダウンを行ったテーブルに"
+#~ "は、_nsubrecsという仮想的なカラムが追加されます。このカラムには、グループ"
+#~ "化されたレコード数が入ります。"
+
+# b660b9c2e6c1443ea88f6bdff9b35a08
+#~ msgid ""
+#~ "複数のカラムに対してドリルダウンを行うことができます。複数のカラムに対して"
+#~ "ドリルダウンを行う場合には、drilldownパラメータにカラム名をカンマ区切りで"
+#~ "与えます。"
+#~ msgstr ""
+#~ "複数のカラムに対してドリルダウンを行うことができます。複数のカラムに対して"
+#~ "ドリルダウンを行う場合には、drilldownパラメータにカラム名をカンマ区切りで"
+#~ "与えます。"
+
+# a7a846c92175442eb500190c29944a45
+#~ msgid ""
+#~ "ドリルダウン結果を並びかえることができます。例えば、_nsubrecsパラメータの"
+#~ "降順で並び替えることができます。"
+#~ msgstr ""
+#~ "ドリルダウン結果を並びかえることができます。例えば、_nsubrecsパラメータの"
+#~ "降順で並び替えることができます。"
+
+# 25f37a574a2d4d898923c16c0f455744
+#~ msgid ""
+#~ "ドリルダウン結果は、デフォルトでは10件のみ表示されます。drilldown_offsetパ"
+#~ "ラメータと、drilldown_limitパラメータによって、offsetとlimitを指定すること"
+#~ "ができます。"
+#~ msgstr ""
+#~ "ドリルダウン結果は、デフォルトでは10件のみ表示されます。drilldown_offsetパ"
+#~ "ラメータと、drilldown_limitパラメータによって、offsetとlimitを指定すること"
+#~ "ができます。"
