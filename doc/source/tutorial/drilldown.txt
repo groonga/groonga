@@ -10,12 +10,18 @@
 Drilldown
 =========
 
-There is a case that you want to know summary of search result.
-For example, it is the case that searching the number of records which belongs to specific category.
-Selecting a category at first, then investigate further in detail is a reasonable way.
+You learned how to filter search results and sort ones in the previous sections.
+Now that you can search as you likes, but how do you summarize the number of records which has specific value in the column?
 
-To achive such a purpose, Groonga provides the feature which groups search results by the value of specific column.
-In Groonga, this feature is called ``drilldown``.
+As you know, there is a naive solution to execute query by every the value of column, then you can get the number of records as a result. It is a simple way, but it is not reasonable to many records.
+
+If you are familiar with SQL, you will doubt with "Is there a similar SQL functionality to ``GROUP BY`` in Groonga?".
+
+Of course, Groonga provides such a functionality. It's called as ``drilldown``.
+
+``drilldown`` enables you to get the number of records which belongs to specific the value of column at once.
+
+To illustrate this feature, imagine the case that classification by domain and grouping by country that domain belongs to.
 
 Here is the concrete examples how to use this feature.
 
