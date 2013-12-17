@@ -103,7 +103,7 @@ You can get the each result of drilldown at once.
 Sorting drildown results
 ------------------------
 
-Use ``--drilldown_sortby`` if you want to sort the result of drilldown. For example, specify ``_nsubrecs`` as descending order.
+Use ``--drilldown_sortby`` if you want to sort the result of drilldown. For example, specify ``_nsubrecs`` as ascending order.
 
 .. groonga-command
 .. include:: ../example/tutorial/drilldown-sortby.log
