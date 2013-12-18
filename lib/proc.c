@@ -4101,6 +4101,221 @@ func_html_untag(grn_ctx *ctx, int nargs, grn_obj **args,
   return text;
 }
 
+static grn_bool
+grn_text_equal_cstr(grn_ctx *ctx, grn_obj *text, const char *cstr)
+{
+  int cstr_len;
+
+  cstr_len = strlen(cstr);
+  return (GRN_TEXT_LEN(text) == cstr_len &&
+          strncmp(GRN_TEXT_VALUE(text), cstr, cstr_len) == 0);
+}
+
+typedef enum {
+  BETWEEN_BORDER_INVALID,
+  BETWEEN_BORDER_INCLUDE,
+  BETWEEN_BORDER_EXCLUDE
+} between_border_type;
+
+typedef struct {
+  grn_obj *value;
+  grn_obj *min;
+  between_border_type min_border_type;
+  grn_obj *max;
+  between_border_type max_border_type;
+} between_data;
+
+static between_border_type
+between_parse_border(grn_ctx *ctx, grn_obj *border,
+                     const char *argument_description)
+{
+  grn_obj inspected;
+
+  /* TODO: support other text types */
+  if (border->header.domain == GRN_DB_TEXT) {
+    if (grn_text_equal_cstr(ctx, border, "include")) {
+      return BETWEEN_BORDER_INCLUDE;
+    } else if (grn_text_equal_cstr(ctx, border, "exclude")) {
+      return BETWEEN_BORDER_EXCLUDE;
+    }
+  }
+
+  GRN_TEXT_INIT(&inspected, 0);
+  grn_inspect(ctx, &inspected, border);
+  ERR(GRN_INVALID_ARGUMENT,
+      "between(): %s must be \"include\" or \"exclude\": <%.*s>",
+      argument_description,
+      (int)GRN_TEXT_LEN(&inspected),
+      GRN_TEXT_VALUE(&inspected));
+  grn_obj_unlink(ctx, &inspected);
+
+  return BETWEEN_BORDER_INVALID;
+}
+
+static grn_rc
+between_parse_args(grn_ctx *ctx, int nargs, grn_obj **args, between_data *data)
+{
+  grn_rc rc = GRN_SUCCESS;
+  grn_obj *min_border;
+  grn_obj *max_border;
+
+  if (nargs != 5) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "between(): wrong number of arguments (%d for 5)", nargs);
+    rc = ctx->rc;
+    goto exit;
+  }
+
+  data->value = args[0];
+  data->min   = args[1];
+  min_border  = args[2];
+  data->max   = args[3];
+  max_border  = args[4];
+
+  data->min_border_type =
+    between_parse_border(ctx, min_border, "the 3rd argument (min_border)");
+  if (data->min_border_type == BETWEEN_BORDER_INVALID) {
+    rc = ctx->rc;
+    goto exit;
+  }
+
+  data->max_border_type =
+    between_parse_border(ctx, max_border, "the 5th argument (max_border)");
+  if (data->max_border_type == BETWEEN_BORDER_INVALID) {
+    rc = ctx->rc;
+    goto exit;
+  }
+
+exit :
+  return rc;
+}
+
+static grn_obj *
+func_between(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_rc rc = GRN_SUCCESS;
+  grn_obj *found;
+  between_data data;
+  grn_obj *condition = NULL;
+  grn_obj *variable;
+  grn_obj *table;
+  grn_obj *between_expr;
+  grn_obj *between_variable;
+  grn_obj *result;
+
+  found = GRN_PROC_ALLOC(GRN_DB_BOOL, 0);
+  if (!found) {
+    return NULL;
+  }
+  GRN_BOOL_SET(ctx, found, GRN_FALSE);
+
+  grn_proc_get_info(ctx, user_data, NULL, NULL, &condition);
+  if (!condition) {
+    return found;
+  }
+
+  variable = grn_expr_get_var_by_offset(ctx, condition, 0);
+  if (!variable) {
+    return found;
+  }
+
+  rc = between_parse_args(ctx, nargs, args, &data);
+  if (rc != GRN_SUCCESS) {
+    return found;
+  }
+
+  table = grn_ctx_at(ctx, variable->header.domain);
+  if (!table) {
+    return found;
+  }
+  GRN_EXPR_CREATE_FOR_QUERY(ctx, table, between_expr, between_variable);
+  if (!between_expr) {
+    grn_obj_unlink(ctx, table);
+    return found;
+  }
+
+  grn_expr_append_obj(ctx, between_expr, data.value, GRN_OP_PUSH, 1);
+  grn_expr_append_obj(ctx, between_expr, data.min, GRN_OP_PUSH, 1);
+  if (data.min_border_type == BETWEEN_BORDER_INCLUDE) {
+    grn_expr_append_op(ctx, between_expr, GRN_OP_GREATER_EQUAL, 2);
+  } else {
+    grn_expr_append_op(ctx, between_expr, GRN_OP_GREATER, 2);
+  }
+
+  grn_expr_append_obj(ctx, between_expr, data.value, GRN_OP_PUSH, 1);
+  grn_expr_append_obj(ctx, between_expr, data.max, GRN_OP_PUSH, 1);
+  if (data.max_border_type == BETWEEN_BORDER_INCLUDE) {
+    grn_expr_append_op(ctx, between_expr, GRN_OP_LESS_EQUAL, 2);
+  } else {
+    grn_expr_append_op(ctx, between_expr, GRN_OP_LESS, 2);
+  }
+
+  grn_expr_append_op(ctx, between_expr, GRN_OP_AND, 2);
+
+  GRN_RECORD_SET(ctx, between_variable, GRN_RECORD_VALUE(variable));
+  result = grn_expr_exec(ctx, between_expr, 0);
+  if (result && GRN_UINT32_VALUE(result) > 0) {
+    GRN_BOOL_SET(ctx, found, GRN_TRUE);
+  }
+
+  grn_obj_unlink(ctx, between_expr);
+  grn_obj_unlink(ctx, table);
+
+  return found;
+}
+
+static grn_rc
+selector_between(grn_ctx *ctx, grn_obj *table, grn_obj *index,
+                 int nargs, grn_obj **args,
+                 grn_obj *res, grn_operator op)
+{
+  grn_rc rc = GRN_SUCCESS;
+  int offset = 0;
+  int limit = -1;
+  int flags = GRN_CURSOR_ASCENDING | GRN_CURSOR_BY_ID;
+  between_data data;
+  grn_obj *index_table;
+  grn_table_cursor *cursor;
+  grn_id id;
+
+  if (!index) {
+    return GRN_INVALID_ARGUMENT;
+  }
+
+  rc = between_parse_args(ctx, nargs - 1, args + 1, &data);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+
+  if (data.min_border_type == BETWEEN_BORDER_EXCLUDE) {
+    flags |= GRN_CURSOR_GT;
+  }
+  if (data.max_border_type == BETWEEN_BORDER_EXCLUDE) {
+    flags |= GRN_CURSOR_LT;
+  }
+
+  index_table = grn_ctx_at(ctx, index->header.domain);
+  /* TODO: min/max cast */
+  cursor = grn_table_cursor_open(ctx, index_table,
+                                 GRN_BULK_HEAD(data.min),
+                                 GRN_BULK_VSIZE(data.min),
+                                 GRN_BULK_HEAD(data.max),
+                                 GRN_BULK_VSIZE(data.max),
+                                 offset, limit, flags);
+  if (cursor) {
+    while ((id = grn_table_cursor_next(ctx, cursor))) {
+      grn_ii_at(ctx, (grn_ii *)index, id, (grn_hash *)res, op);
+    }
+    grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
+    grn_table_cursor_close(ctx, cursor);
+  } else {
+    rc = ctx->rc;
+  }
+  grn_obj_unlink(ctx, index_table);
+
+  return rc;
+}
+
 #define DEF_VAR(v,name_str) do {\
   (v).name = (name_str);\
   (v).name_size = GRN_STRLEN(name_str);\
@@ -4310,4 +4525,12 @@ grn_db_init_builtin_query(grn_ctx *ctx)
 
   grn_proc_create(ctx, "html_untag", -1, GRN_PROC_FUNCTION,
                   func_html_untag, NULL, NULL, 0, NULL);
+
+  {
+    grn_obj *selector_proc;
+
+    selector_proc = grn_proc_create(ctx, "between", -1, GRN_PROC_FUNCTION,
+                                    func_between, NULL, NULL, 0, NULL);
+    grn_proc_set_selector(ctx, selector_proc, selector_between);
+  }
 }

@@ -1,0 +1,52 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users age COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "alice",  "age": 17},
+{"_key": "bob",    "age": 18},
+{"_key": "calros", "age": 19},
+{"_key": "dave",   "age": 20},
+{"_key": "eric",   "age": 21}
+]
+[[0,0.0,0.0],5]
+select Users --filter 'between(age, 18, "include", 20, "exclude")'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "age",
+          "Int32"
+        ]
+      ],
+      [
+        2,
+        "bob",
+        18
+      ],
+      [
+        3,
+        "calros",
+        19
+      ]
+    ]
+  ]
+]
