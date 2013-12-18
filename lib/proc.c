@@ -3697,6 +3697,85 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
   return snippets;
 }
 
+typedef struct {
+  grn_obj *found;
+  grn_obj *table;
+  grn_obj *records;
+} selector_to_function_data;
+
+static grn_bool
+selector_to_function_data_init(grn_ctx *ctx,
+                               selector_to_function_data *data,
+                               grn_user_data *user_data)
+{
+  grn_obj *condition = NULL;
+  grn_obj *variable;
+
+  data->table = NULL;
+  data->records = NULL;
+
+  data->found = GRN_PROC_ALLOC(GRN_DB_BOOL, 0);
+  if (!data->found) {
+    return GRN_FALSE;
+  }
+  GRN_BOOL_SET(ctx, data->found, GRN_FALSE);
+
+  grn_proc_get_info(ctx, user_data, NULL, NULL, &condition);
+  if (!condition) {
+    return GRN_FALSE;
+  }
+
+  variable = grn_expr_get_var_by_offset(ctx, condition, 0);
+  if (!variable) {
+    return GRN_FALSE;
+  }
+
+  data->table = grn_ctx_at(ctx, variable->header.domain);
+  if (!data->table) {
+    return GRN_FALSE;
+  }
+
+  data->records = grn_table_create(ctx, NULL, 0, NULL,
+                                   GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                   data->table, NULL);
+  if (!data->records) {
+    return GRN_FALSE;
+  }
+
+  {
+    grn_rset_posinfo pi;
+    unsigned int key_size;
+    memset(&pi, 0, sizeof(grn_rset_posinfo));
+    pi.rid = GRN_RECORD_VALUE(variable);
+    key_size = ((grn_hash *)(data->records))->key_size;
+    if (grn_table_add(ctx, data->records, &pi, key_size, NULL) == GRN_ID_NIL) {
+      return GRN_FALSE;
+    }
+  }
+
+  return GRN_TRUE;
+}
+
+static void
+selector_to_function_data_selected(grn_ctx *ctx,
+                                   selector_to_function_data *data)
+{
+  GRN_BOOL_SET(ctx, data->found, grn_table_size(ctx, data->records) > 0);
+}
+
+static void
+selector_to_function_data_fin(grn_ctx *ctx,
+                              selector_to_function_data *data)
+{
+  if (data->records) {
+    grn_obj_unlink(ctx, data->records);
+  }
+
+  if (data->table) {
+    grn_obj_unlink(ctx, data->table);
+  }
+}
+
 static grn_rc
 run_query(grn_ctx *ctx, grn_obj *table,
           int nargs, grn_obj **args,
@@ -3801,61 +3880,18 @@ exit:
 static grn_obj *
 func_query(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_obj *found;
-  grn_obj *condition = NULL;
-  grn_obj *variable;
-  grn_obj *table = NULL;
-  grn_obj *res = NULL;
+  selector_to_function_data data;
 
-  found = GRN_PROC_ALLOC(GRN_DB_BOOL, 0);
-  if (!found) {
-    goto exit;
-  }
-  GRN_BOOL_SET(ctx, found, GRN_FALSE);
-
-  grn_proc_get_info(ctx, user_data, NULL, NULL, &condition);
-  if (!condition) {
-    goto exit;
-  }
-
-  variable = grn_expr_get_var_by_offset(ctx, condition, 0);
-  if (!variable) {
-    goto exit;
-  }
-
-  table = grn_ctx_at(ctx, variable->header.domain);
-  if (!table) {
-    goto exit;
-  }
-
-  res = grn_table_create(ctx, NULL, 0, NULL,
-                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL);
-  if (!res) {
-    goto exit;
-  }
-  {
-    grn_rset_posinfo pi;
-    unsigned int key_size;
-    memset(&pi, 0, sizeof(grn_rset_posinfo));
-    pi.rid = GRN_RECORD_VALUE(variable);
-    key_size = ((grn_hash *)res)->key_size;
-    if (grn_table_add(ctx, res, &pi, key_size, NULL) == GRN_ID_NIL) {
-      goto exit;
+  if (selector_to_function_data_init(ctx, &data, user_data)) {
+    grn_rc rc;
+    rc = run_query(ctx, data.table, nargs, args, data.records, GRN_OP_AND);
+    if (rc == GRN_SUCCESS) {
+      selector_to_function_data_selected(ctx, &data);
     }
   }
-  if (run_query(ctx, table, nargs, args, res, GRN_OP_AND) == GRN_SUCCESS) {
-    GRN_BOOL_SET(ctx, found, grn_table_size(ctx, res) > 0);
-  }
+  selector_to_function_data_fin(ctx, &data);
 
-exit:
-  if (res) {
-    grn_obj_unlink(ctx, res);
-  }
-  if (table) {
-    grn_obj_unlink(ctx, table);
-  }
-
-  return found;
+  return data.found;
 }
 
 static grn_rc
@@ -3969,61 +4005,18 @@ exit:
 static grn_obj *
 func_sub_filter(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_obj *found;
-  grn_obj *condition = NULL;
-  grn_obj *variable;
-  grn_obj *table = NULL;
-  grn_obj *res = NULL;
+  selector_to_function_data data;
 
-  found = GRN_PROC_ALLOC(GRN_DB_BOOL, 0);
-  if (!found) {
-    goto exit;
-  }
-  GRN_BOOL_SET(ctx, found, GRN_FALSE);
-
-  grn_proc_get_info(ctx, user_data, NULL, NULL, &condition);
-  if (!condition) {
-    goto exit;
-  }
-
-  variable = grn_expr_get_var_by_offset(ctx, condition, 0);
-  if (!variable) {
-    goto exit;
-  }
-
-  table = grn_ctx_at(ctx, variable->header.domain);
-  if (!table) {
-    goto exit;
-  }
-
-  res = grn_table_create(ctx, NULL, 0, NULL,
-                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL);
-  if (!res) {
-    goto exit;
-  }
-  {
-    grn_rset_posinfo pi;
-    unsigned int key_size;
-    memset(&pi, 0, sizeof(grn_rset_posinfo));
-    pi.rid = GRN_RECORD_VALUE(variable);
-    key_size = ((grn_hash *)res)->key_size;
-    if (grn_table_add(ctx, res, &pi, key_size, NULL) == GRN_ID_NIL) {
-      goto exit;
+  if (selector_to_function_data_init(ctx, &data, user_data)) {
+    grn_rc rc;
+    rc = run_sub_filter(ctx, data.table, nargs, args, data.records, GRN_OP_AND);
+    if (rc == GRN_SUCCESS) {
+      selector_to_function_data_selected(ctx, &data);
     }
   }
-  if (run_sub_filter(ctx, table, nargs, args, res, GRN_OP_AND) == GRN_SUCCESS) {
-    GRN_BOOL_SET(ctx, found, grn_table_size(ctx, res) > 0);
-  }
+  selector_to_function_data_fin(ctx, &data);
 
-exit:
-  if (res) {
-    grn_obj_unlink(ctx, res);
-  }
-  if (table) {
-    grn_obj_unlink(ctx, table);
-  }
-
-  return found;
+  return data.found;
 }
 
 static grn_rc
