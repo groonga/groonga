@@ -17,10 +17,10 @@ Travis CI.
 Configuration
 -------------
 
-Travis CI is running on 32-bit Ubuntu 11.10. (See `Travis CI: About
+Travis CI is running on 64-bit Ubuntu 12.04 LTS Server Edition. (See `Travis CI: About
 Travis CI Environment
 <http://about.travis-ci.org/docs/user/ci-environment/>`_.)  You can
-use apt-line for Ubuntu 11.10 provided by groonga project to install
+use apt-line for Ubuntu 12.04 LTS provided by groonga project to install
 groonga on Travis CI.
 
 You can custom build lifecycle by ``.travis.yml``. (See `Travis CI:
