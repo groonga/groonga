@@ -4,9 +4,11 @@ Upstream-Contact: Groonga Project <packages@groonga.org>
 Source: http://packages.groonga.org/source/groonga/
 
 Files: *
-License: LGPL-2.1
 Copyright: Copyright 2009-2013 Brazil
+License: LGPL-2.1
+ See /usr/share/common-licenses/LGPL-2.1 for the full license text.
 
 Files: debian/*
-License: LGPL-2.1
 Copyright: Copyright 2011 Kouhei Sutou <kou@clear-code.com>
+License: LGPL-2.1
+ See /usr/share/common-licenses/LGPL-2.1 for the full license text.
