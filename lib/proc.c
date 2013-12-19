@@ -4333,7 +4333,7 @@ selector_between(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   }
 
   index_table = grn_ctx_at(ctx, index->header.domain);
-  if (data.min->header.type == index_table->header.domain) {
+  if (data.min->header.domain == index_table->header.domain) {
     used_min = data.min;
   } else {
     used_min = &casted_min;
@@ -4343,7 +4343,7 @@ selector_between(grn_ctx *ctx, grn_obj *table, grn_obj *index,
       goto exit;
     }
   }
-  if (data.max->header.type == index_table->header.domain) {
+  if (data.max->header.domain == index_table->header.domain) {
     used_max = data.max;
   } else {
     used_max = &casted_max;
