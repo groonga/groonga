@@ -65,14 +65,14 @@ msgstr "Configuration"
 # 3c2876acdfa94e50846d681d3c6cc5d0
 #: ../../../source/development/travis-ci.txt:20
 msgid ""
-"Travis CI is running on 32-bit Ubuntu 11.10. (See `Travis CI: About Travis "
+"Travis CI is running on 64-bit Ubuntu 12.04 LTS Server Edition. (See `Travis CI: About Travis "
 "CI Environment <http://about.travis-ci.org/docs/user/ci-environment/>`_.)  "
-"You can use apt-line for Ubuntu 11.10 provided by groonga project to install "
+"You can use apt-line for Ubuntu 12.04 LTS provided by groonga project to install "
 "groonga on Travis CI."
 msgstr ""
-"Travis CI is running on 32-bit Ubuntu 11.10. (See `Travis CI: About Travis "
+"Travis CI is running on 64-bit Ubuntu 12.04 LTS Server Edition. (See `Travis CI: About Travis "
 "CI Environment <http://about.travis-ci.org/docs/user/ci-environment/>`_.)  "
-"You can use apt-line for Ubuntu 11.10 provided by groonga project to install "
+"You can use apt-line for Ubuntu 12.04 LTS provided by groonga project to install "
 "groonga on Travis CI."
 
 # 8bbd47f3a4b14f4f88fd06001615f178
