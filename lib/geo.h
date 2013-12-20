@@ -26,11 +26,11 @@
 
 #ifdef WIN32
 #define _USE_MATH_DEFINES
-# if !defined MAX
+# ifndef MAX
 #  define MAX(a, b) ((a) > (b) ? (a) : (b))
 # endif
 
-# if !defined MIN
+# ifndef MIN
 #  define MIN(a, b) ((a) < (b) ? (a) : (b))
 # endif
 #endif /* WIN32 */
