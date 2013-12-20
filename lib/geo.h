@@ -25,7 +25,7 @@
 #include "db.h"
 
 #ifdef WIN32
-#define _USE_MATH_DEFINES
+# define _USE_MATH_DEFINES
 # ifndef MAX
 #  define MAX(a, b) ((a) > (b) ? (a) : (b))
 # endif
