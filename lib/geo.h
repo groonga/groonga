@@ -26,13 +26,13 @@
 
 #ifdef WIN32
 #define _USE_MATH_DEFINES
-#  if !defined MAX
+# if !defined MAX
 #  define MAX(a, b) ((a) > (b) ? (a) : (b))
-#  endif
+# endif
 
-#  if !defined MIN
+# if !defined MIN
 #  define MIN(a, b) ((a) < (b) ? (a) : (b))
-#  endif
+# endif
 #endif /* WIN32 */
 #include <math.h>
 
