@@ -5,6 +5,45 @@
 News
 ====
 
+.. _release-3-1-1:
+
+Release 3.1.1 - 2013/12/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [deb] Refined Groonga packages for Debian policy. [groonga-dev,01930]
+  [Suggested by Hideki Yamane]
+* [deb] Dropped Debian 6.0 (squeeze) support.
+* [deb] Dropped Ubuntu 10.04 (lucid) support.
+* Improved interoperability with mruby.
+* Supported :doc:/reference/functions/geo_in_rectangle in the whole world.
+* Supported error report when failed to casting invalid value of geo point type.
+* Exported some macros which is used for accessing pseudo column names.
+  [groonga-dev,1999] [Suggested by whombx]
+* [doc] Refined drilldown documentation. [Reported by @Yahppo]
+* Supported :doc:/reference/functions/between function which is used for
+  filtering the column value in specific range.
+* [doc] Updated Travis CI envrinment information. [Patch by cosmo0920]
+* [rpm][fedora] Dropped Fedora 19.
+* [rpm][fedora] Supported Fedora 20.
+
+Fixes
+^^^^^
+
+* [munin] Fixed the wrong port number which is specified for GQTP.
+* [geo_in_circle] Fixed a bug that if you specify "LONGITUDExLATITUDE" as
+  the 3rd argument of :doc:/reference/functions/geo_in_circle, Groonga crashes.
+
+Thanks
+^^^^^^
+
+* Hideki Yamane
+* whombx
+* @Yappo
+* cosmo0920
+
 .. _release-3-1-0:
 
 Release 3.1.0 - 2013/11/29
