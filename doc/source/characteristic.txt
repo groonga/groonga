@@ -61,7 +61,7 @@ The basic functions of Groonga are provided in a C library and any application c
 Groonga server
 --------------
 
-Groonga provides a built-in server command which supports HTTP, the memcached binary protocol and the Groonga query transfer protocol (gqtp). Also, a Groonga server supports query caching, which significantly reduces response time for repeated read queries. Using this command, Groonga is available even on a server that does not allow you to install new libraries.
+Groonga provides a built-in server command which supports HTTP, the memcached binary protocol and the Groonga Query Transfer Protocol (GQTP). Also, a Groonga server supports query caching, which significantly reduces response time for repeated read queries. Using this command, Groonga is available even on a server that does not allow you to install new libraries.
 
 Groonga storage engine
 ----------------------

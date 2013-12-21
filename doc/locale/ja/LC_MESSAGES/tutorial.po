@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-12-17 15:20+0900\n"
-"PO-Revision-Date: 2013-12-17 15:28+0900\n"
+"PO-Revision-Date: 2013-12-21 14:00+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -2341,30 +2341,30 @@ msgstr "リモートアクセス"
 #: ../../../source/tutorial/network.txt:13
 msgid ""
 "You can use groonga as a server which allows remote access. Groonga supports "
-"the original protocol (gqtp), the memcached binary protocol and HTTP."
+"the original protocol (GQTP), the memcached binary protocol and HTTP."
 msgstr ""
 "groongaをサーバとして起動することにより、ネットワークを介してデータベースにア"
-"クセスできるようになります。groongaがサポートしているプロトコルは、groongaの"
-"専用プロトコルであるgqtp、memcachedバイナリプロトコル、HTTPの三種類です。"
+"クセスできるようになります。groongaがサポートしているプロトコルは、Groongaの"
+"専用プロトコルであるGQTP、memcachedバイナリプロトコル、HTTPの三種類です。"
 
 # 25314998f8a44c8ca314c0ce7808341f
 #: ../../../source/tutorial/network.txt:16
-msgid "Groonga query transfer protocol (gqtp)"
-msgstr "groonga専用プロトコル（gqtp）"
+msgid "Groonga Query Transfer Protocol (GQTP)"
+msgstr "Groonga専用プロトコル（GQTP）"
 
 #: ../../../source/tutorial/network.txt:19
-msgid "How to run a gqtp server"
-msgstr "gqtpサーバの起動"
+msgid "How to run a GQTP server"
+msgstr "GQTPサーバの起動"
 
 # d6b116c322594360b727ea6cbc5da918
 #: ../../../source/tutorial/network.txt:21
 msgid ""
-"Groonga has a special protocol, named groonga query transfer ptorotocl "
-"(gqtp), for remote access to a database. The following form shows how to run "
-"groonga as a gqtp server."
+"Groonga has a special protocol, named Groonga Query Transfer Protocol "
+"(GQTP), for remote access to a database. The following form shows how to run "
+"groonga as a GQTP server."
 msgstr ""
-"groongaには、専用のプロトコルであるgqtpが存在します。gqtpを用いることにより、"
-"データベースへとリモートアクセスすることができます。以下の書式はgqtpサーバの"
+"groongaには、専用のプロトコルであるgqtpが存在します。GQTPを用いることにより、"
+"データベースへとリモートアクセスすることができます。以下の書式はGQTPサーバの"
 "起動方法を示しています。"
 
 # ec85c284500e4549b3ad9b977c5ca2aa
@@ -2391,16 +2391,16 @@ msgstr ""
 
 # 5c086abd44eb4e40be44306cf06e1f13
 #: ../../../source/tutorial/network.txt:38
-msgid "How to run a gqtp daemon"
-msgstr "gqtpデーモンの起動"
+msgid "How to run a GQTP daemon"
+msgstr "GQTPデーモンの起動"
 
 # aba6954242c14501bd3a285d08a7f9b8
 #: ../../../source/tutorial/network.txt:40
 msgid ""
-"You can also run a gqtp server as a daemon by using the `-d` option, instead "
+"You can also run a GQTP server as a daemon by using the `-d` option, instead "
 "of the `-s` option."
 msgstr ""
-"gqtpサーバはデーモンとして起動することができます。オプションとして、 `-s` の"
+"GQTPサーバはデーモンとして起動することができます。オプションとして、 `-s` の"
 "代わりに `-d` を与えてください。"
 
 # 3c5469f173484ec8ba39c2245ed9455a
@@ -2416,18 +2416,18 @@ msgstr ""
 
 # 5c086abd44eb4e40be44306cf06e1f13
 #: ../../../source/tutorial/network.txt:55
-msgid "How to run a gqtp client"
-msgstr "gqtpサーバへの接続"
+msgid "How to run a GQTP client"
+msgstr "GQTPサーバへの接続"
 
 # f5ec19849c3d416b9704b474f9716929
 #: ../../../source/tutorial/network.txt:57
-msgid "You can run groonga as a gqtp client as follows:"
-msgstr "gqtpサーバに接続するクライアントは、以下のように起動します。"
+msgid "You can run groonga as a GQTP client as follows:"
+msgstr "GQTPサーバに接続するクライアントは、以下のように起動します。"
 
 # abf4e97bb050457ba3d7c2543db16c19
 #: ../../../source/tutorial/network.txt:63
 msgid ""
-"This command establishes a connection with a gqtp server and then enters "
+"This command establishes a connection with a GQTP server and then enters "
 "into interactive mode. HOST_NAME_OR_IP_ADDRESS specifies the hostname or the "
 "IP address of the server. If not specified, groonga uses the default "
 "hostname \"localhost\". The `-p` option and its argument, PORT_NUMBER, "
@@ -2449,15 +2449,15 @@ msgstr "対話モードでは、標準入力からコマンドを読み込んで
 
 # 5c086abd44eb4e40be44306cf06e1f13
 #: ../../../source/tutorial/network.txt:75
-msgid "How to terminate a gqtp server"
-msgstr "gqtpサーバの終了"
+msgid "How to terminate a GQTP server"
+msgstr "GQTPサーバの終了"
 
 #: ../../../source/tutorial/network.txt:77
 msgid ""
-"You can terminate a gqtp server with a :doc:`/reference/commands/shutdown` "
+"You can terminate a GQTP server with a :doc:`/reference/commands/shutdown` "
 "command."
 msgstr ""
-"gqtpサーバを終了する安全は方法は、クライアントを起動して :doc:`/reference/"
+"GQTPサーバを終了する安全は方法は、クライアントを起動して :doc:`/reference/"
 "commands/shutdown` を発行することです。"
 
 # ca13b09553e6473d9628d6ad2eed0ce7

@@ -10,15 +10,15 @@
 Remote access
 =============
 
-You can use groonga as a server which allows remote access. Groonga supports the original protocol (gqtp), the memcached binary protocol and HTTP.
+You can use groonga as a server which allows remote access. Groonga supports the original protocol (GQTP), the memcached binary protocol and HTTP.
 
-Groonga query transfer protocol (gqtp)
+Groonga Query Transfer Protocol (GQTP)
 --------------------------------------
 
-How to run a gqtp server
+How to run a GQTP server
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-Groonga has a special protocol, named groonga query transfer ptorotocl (gqtp), for remote access to a database. The following form shows how to run groonga as a gqtp server.
+Groonga has a special protocol, named Groonga Query Transfer Protocol (GQTP), for remote access to a database. The following form shows how to run groonga as a gqtp server.
 
 Form::
 
@@ -34,10 +34,10 @@ Execution example::
   Ctrl-c
   %
 
-How to run a gqtp daemon
+How to run a GQTP daemon
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can also run a gqtp server as a daemon by using the `-d` option, instead of the `-s` option.
+You can also run a GQTP server as a daemon by using the `-d` option, instead of the `-s` option.
 
 Form::
 
@@ -51,16 +51,16 @@ Execution example::
   12345
   %
 
-How to run a gqtp client
+How to run a GQTP client
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can run groonga as a gqtp client as follows:
+You can run groonga as a GQTP client as follows:
 
 Form::
 
   groonga [-p PORT_NUMBER] -c [HOST_NAME_OR_IP_ADDRESS]
 
-This command establishes a connection with a gqtp server and then enters into interactive mode. HOST_NAME_OR_IP_ADDRESS specifies the hostname or the IP address of the server. If not specified, groonga uses the default hostname "localhost". The `-p` option and its argument, PORT_NUMBER, specify the port number of the server. If not specified, groonga uses the default port number 10041.
+This command establishes a connection with a GQTP server and then enters into interactive mode. HOST_NAME_OR_IP_ADDRESS specifies the hostname or the IP address of the server. If not specified, groonga uses the default hostname "localhost". The `-p` option and its argument, PORT_NUMBER, specify the port number of the server. If not specified, groonga uses the default port number 10041.
 
 .. groonga-command
 .. include:: ../example/tutorial/network-1.log
@@ -71,10 +71,10 @@ This command establishes a connection with a gqtp server and then enters into in
 
 In interactive mode, groonga reads commands from the standard input and executes them one by one.
 
-How to terminate a gqtp server
+How to terminate a GQTP server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can terminate a gqtp server with a :doc:`/reference/commands/shutdown` command.
+You can terminate a GQTP server with a :doc:`/reference/commands/shutdown` command.
 
 .. groonga-command
 .. include:: ../example/tutorial/network-2.log
