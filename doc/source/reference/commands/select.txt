@@ -205,6 +205,8 @@ Required parameter
 
 There is a required parameter, ``table``.
 
+.. _select-table:
+
 ``table``
 """""""""
 
