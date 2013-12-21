@@ -23,7 +23,7 @@ msgstr "制限事項"
 
 #: ../../../source/limitations.txt:8
 msgid "Groonga has some limitations."
-msgstr "groongaにはいくつか制限事項があります。"
+msgstr "Groongaにはいくつか制限事項があります。"
 
 #: ../../../source/limitations.txt:11
 msgid "Limitations of table"
