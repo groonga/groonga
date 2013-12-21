@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-12-21 18:12+0900\n"
-"PO-Revision-Date: 2013-12-21 14:00+0900\n"
+"PO-Revision-Date: 2013-12-21 18:42+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -2381,11 +2381,10 @@ msgstr "GQTPサーバの起動"
 
 # d6b116c322594360b727ea6cbc5da918
 #: ../../../source/tutorial/network.txt:21
-#, fuzzy
 msgid ""
 "Groonga has a special protocol, named Groonga Query Transfer Protocol "
 "(GQTP), for remote access to a database. The following form shows how to run "
-"groonga as a gqtp server."
+"groonga as a GQTP server."
 msgstr ""
 "groongaには、専用のプロトコルであるgqtpが存在します。GQTPを用いることにより、"
 "データベースへとリモートアクセスすることができます。以下の書式はGQTPサーバの"

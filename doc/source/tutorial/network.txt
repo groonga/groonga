@@ -18,7 +18,7 @@ Groonga Query Transfer Protocol (GQTP)
 How to run a GQTP server
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-Groonga has a special protocol, named Groonga Query Transfer Protocol (GQTP), for remote access to a database. The following form shows how to run groonga as a gqtp server.
+Groonga has a special protocol, named Groonga Query Transfer Protocol (GQTP), for remote access to a database. The following form shows how to run groonga as a GQTP server.
 
 Form::
 
