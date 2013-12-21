@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-25 15:37+0900\n"
+"POT-Creation-Date: 2013-12-21 18:12+0900\n"
 "PO-Revision-Date: 2013-11-15 11:25+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -73,8 +73,7 @@ msgstr ""
 #: ../../../source/install/centos.txt:168
 #: ../../../source/install/debian.txt:29 ../../../source/install/debian.txt:69
 #: ../../../source/install/debian.txt:109
-#: ../../../source/install/debian.txt:149
-#: ../../../source/install/debian.txt:200
+#: ../../../source/install/debian.txt:160
 #: ../../../source/install/fedora.txt:32 ../../../source/install/fedora.txt:97
 #: ../../../source/install/mac_os_x.txt:23
 #: ../../../source/install/mac_os_x.txt:32
@@ -82,9 +81,8 @@ msgstr ""
 #: ../../../source/install/solaris.txt:41
 #: ../../../source/install/ubuntu.txt:36 ../../../source/install/ubuntu.txt:83
 #: ../../../source/install/ubuntu.txt:130
-#: ../../../source/install/ubuntu.txt:177
-#: ../../../source/install/ubuntu.txt:217
-#: ../../../source/install/ubuntu.txt:268
+#: ../../../source/install/ubuntu.txt:170
+#: ../../../source/install/ubuntu.txt:221
 #: ../../../source/install/windows.txt:86
 msgid "Install::"
 msgstr "インストール::"
@@ -101,12 +99,10 @@ msgstr "インストール::"
 #: ../../../source/install/centos.txt:28 ../../../source/install/centos.txt:94
 #: ../../../source/install/debian.txt:36 ../../../source/install/debian.txt:76
 #: ../../../source/install/debian.txt:116
-#: ../../../source/install/debian.txt:156
 #: ../../../source/install/fedora.txt:43 ../../../source/install/ubuntu.txt:43
 #: ../../../source/install/ubuntu.txt:90
 #: ../../../source/install/ubuntu.txt:137
-#: ../../../source/install/ubuntu.txt:184
-#: ../../../source/install/ubuntu.txt:224
+#: ../../../source/install/ubuntu.txt:177
 msgid ""
 "If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer, "
 "install groonga-tokenizer-mecab package."
@@ -126,12 +122,10 @@ msgstr ""
 #: ../../../source/install/centos.txt:31 ../../../source/install/centos.txt:97
 #: ../../../source/install/debian.txt:39 ../../../source/install/debian.txt:79
 #: ../../../source/install/debian.txt:119
-#: ../../../source/install/debian.txt:159
 #: ../../../source/install/fedora.txt:46 ../../../source/install/ubuntu.txt:46
 #: ../../../source/install/ubuntu.txt:93
 #: ../../../source/install/ubuntu.txt:140
-#: ../../../source/install/ubuntu.txt:187
-#: ../../../source/install/ubuntu.txt:227
+#: ../../../source/install/ubuntu.txt:180
 msgid "Install groonga-tokenizer-mecab package::"
 msgstr "groonga-tokenizer-mecabパッケージのインストール::"
 
@@ -171,11 +165,9 @@ msgstr "あるいはJuman辞書をインストールします::"
 #: ../../../source/install/centos.txt:111
 #: ../../../source/install/debian.txt:43 ../../../source/install/debian.txt:83
 #: ../../../source/install/debian.txt:123
-#: ../../../source/install/debian.txt:163
 #: ../../../source/install/fedora.txt:60 ../../../source/install/ubuntu.txt:50
 #: ../../../source/install/ubuntu.txt:97
 #: ../../../source/install/ubuntu.txt:144
-#: ../../../source/install/ubuntu.txt:191
 msgid ""
 "There is a package that provides `Munin <http://munin-monitoring.org/>`_ "
 "plugins. If you want to monitor groonga status by Munin, install groonga-"
@@ -229,12 +221,10 @@ msgstr "EPELリポジトリを有効にする（環境非依存）::"
 #: ../../../source/install/centos.txt:135
 #: ../../../source/install/debian.txt:47 ../../../source/install/debian.txt:87
 #: ../../../source/install/debian.txt:127
-#: ../../../source/install/debian.txt:167
 #: ../../../source/install/fedora.txt:64 ../../../source/install/ubuntu.txt:54
 #: ../../../source/install/ubuntu.txt:101
 #: ../../../source/install/ubuntu.txt:148
-#: ../../../source/install/ubuntu.txt:195
-#: ../../../source/install/ubuntu.txt:235
+#: ../../../source/install/ubuntu.txt:188
 msgid "Install groonga-munin-plugins package::"
 msgstr "groonga-munin-pluginsパッケージのインストール::"
 
@@ -246,11 +236,9 @@ msgstr "groonga-munin-pluginsパッケージのインストール::"
 #: ../../../source/install/centos.txt:139
 #: ../../../source/install/debian.txt:51 ../../../source/install/debian.txt:91
 #: ../../../source/install/debian.txt:131
-#: ../../../source/install/debian.txt:171
 #: ../../../source/install/fedora.txt:68 ../../../source/install/ubuntu.txt:58
 #: ../../../source/install/ubuntu.txt:105
 #: ../../../source/install/ubuntu.txt:152
-#: ../../../source/install/ubuntu.txt:199
 msgid ""
 "There is a package that provides MySQL compatible normalizer as groonga "
 "plugins. If you want to use that one, install groonga-normalizer-mysql "
@@ -273,12 +261,10 @@ msgstr ""
 #: ../../../source/install/centos.txt:143
 #: ../../../source/install/debian.txt:55 ../../../source/install/debian.txt:95
 #: ../../../source/install/debian.txt:135
-#: ../../../source/install/debian.txt:175
 #: ../../../source/install/fedora.txt:72 ../../../source/install/ubuntu.txt:62
 #: ../../../source/install/ubuntu.txt:109
 #: ../../../source/install/ubuntu.txt:156
-#: ../../../source/install/ubuntu.txt:203
-#: ../../../source/install/ubuntu.txt:243
+#: ../../../source/install/ubuntu.txt:196
 msgid "Install groonga-normalizer-mysql package::"
 msgstr "groonga-normalizer-mysqlパッケージのインストール::"
 
@@ -308,11 +294,11 @@ msgstr ""
 # bd816ffe992d4c6fb4f5545d11322eae
 # fb0c883dae63470091289ff8228987c3
 #: ../../../source/install/centos.txt:148
-#: ../../../source/install/debian.txt:180
+#: ../../../source/install/debian.txt:140
 #: ../../../source/install/fedora.txt:77
 #: ../../../source/install/mac_os_x.txt:37
 #: ../../../source/install/others.txt:72
-#: ../../../source/install/ubuntu.txt:248
+#: ../../../source/install/ubuntu.txt:201
 #: ../../../source/install/windows.txt:57
 msgid "Build from source"
 msgstr "ソースからビルド"
@@ -322,10 +308,10 @@ msgstr "ソースからビルド"
 # c46c238f2623468bbdfd5b448e136f97
 # aa5978964c284e878ed8482ac448b006
 #: ../../../source/install/centos.txt:150
-#: ../../../source/install/debian.txt:182
+#: ../../../source/install/debian.txt:142
 #: ../../../source/install/fedora.txt:79
 #: ../../../source/install/solaris.txt:14
-#: ../../../source/install/ubuntu.txt:250
+#: ../../../source/install/ubuntu.txt:203
 msgid "Install required packages to build groonga::"
 msgstr "groongaをビルドするために必要なパッケージをインストールします::"
 
@@ -335,11 +321,11 @@ msgstr "groongaをビルドするために必要なパッケージをインス�
 # 9783c9fc02b1418189f14d16ccc6ae3b
 # 6e465d126c794fc793ee16a314cc7e67
 #: ../../../source/install/centos.txt:154
-#: ../../../source/install/debian.txt:186
+#: ../../../source/install/debian.txt:146
 #: ../../../source/install/fedora.txt:83
 #: ../../../source/install/mac_os_x.txt:41
 #: ../../../source/install/solaris.txt:18
-#: ../../../source/install/ubuntu.txt:254
+#: ../../../source/install/ubuntu.txt:207
 msgid "Download source::"
 msgstr "ソースをダウンロードします::"
 
@@ -349,10 +335,10 @@ msgstr "ソースをダウンロードします::"
 # 45ccfcf011c1486a9446454c9ae7a0b2
 # 2121faf11be846b29749b58e87108d6f
 #: ../../../source/install/centos.txt:160
-#: ../../../source/install/debian.txt:192
+#: ../../../source/install/debian.txt:152
 #: ../../../source/install/fedora.txt:89
 #: ../../../source/install/mac_os_x.txt:47
-#: ../../../source/install/ubuntu.txt:260
+#: ../../../source/install/ubuntu.txt:213
 msgid "Configure (see :ref:`source-configure` about ``configure`` options)::"
 msgstr ""
 "configureを実行します（ ``configure`` のオプションについては :ref:`source-"
@@ -364,11 +350,11 @@ msgstr ""
 # ad70634b7f5149b48083a7724ba098ed
 # 5d6ad8356b754a9390a4a4604bd1d6d5
 #: ../../../source/install/centos.txt:164
-#: ../../../source/install/debian.txt:196
+#: ../../../source/install/debian.txt:156
 #: ../../../source/install/fedora.txt:93
 #: ../../../source/install/mac_os_x.txt:51
 #: ../../../source/install/solaris.txt:31
-#: ../../../source/install/ubuntu.txt:264
+#: ../../../source/install/ubuntu.txt:217
 #: ../../../source/install/windows.txt:82
 msgid "Build::"
 msgstr "ビルド::"
@@ -386,9 +372,9 @@ msgstr ""
 "このセクションではDebian GNU/Linux上でgroonga関連のdebパッケージをインストー"
 "ルする方法を説明します。これらのパッケージは ``apt`` でインストールできます。"
 
-# beff4861ca9a41fd8ddc754d8b18331d
+# 0ffb077c4da54f15a5de1ea3b6b2195b
 #: ../../../source/install/debian.txt:20
-msgid "squeeze"
+msgid "wheezy"
 msgstr ""
 
 # a177637550694587b307f796d25070e6
@@ -400,35 +386,26 @@ msgstr ""
 # 70d353f5aba14e699bb41bca2a294a0a
 #: ../../../source/install/debian.txt:22 ../../../source/install/debian.txt:62
 #: ../../../source/install/debian.txt:102
-#: ../../../source/install/debian.txt:142
 #: ../../../source/install/ubuntu.txt:29 ../../../source/install/ubuntu.txt:76
 #: ../../../source/install/ubuntu.txt:123
-#: ../../../source/install/ubuntu.txt:170
 msgid "Add the groonga apt repository."
 msgstr "groongaのaptリポジトリを追加します。"
 
 #: ../../../source/install/debian.txt:24 ../../../source/install/debian.txt:64
 #: ../../../source/install/debian.txt:104
-#: ../../../source/install/debian.txt:144
 #: ../../../source/install/ubuntu.txt:31 ../../../source/install/ubuntu.txt:78
 #: ../../../source/install/ubuntu.txt:125
-#: ../../../source/install/ubuntu.txt:172
-#: ../../../source/install/ubuntu.txt:212
+#: ../../../source/install/ubuntu.txt:165
 msgid "/etc/apt/sources.list.d/groonga.list::"
 msgstr ""
 
-# 0ffb077c4da54f15a5de1ea3b6b2195b
-#: ../../../source/install/debian.txt:60
-msgid "wheezy"
-msgstr ""
-
 # 5ad17538fd024d71b35c55ce467e1156
-#: ../../../source/install/debian.txt:100
+#: ../../../source/install/debian.txt:60
 msgid "jessie"
 msgstr ""
 
 # ddd03d49241946549bce9a54d97017f2
-#: ../../../source/install/debian.txt:140
+#: ../../../source/install/debian.txt:100
 msgid "sid"
 msgstr ""
 
@@ -463,9 +440,9 @@ msgstr ""
 "のyumリポジトリを使います。将来的には ``groonga-normalizer-mysql`` もFedora公"
 "式のyumリポジトリで提供することを計画しています。"
 
-# 427ca358ad3943ca9c5e8e1c31238b15
+# 732b64b6198545baac59974de7b7e7fd
 #: ../../../source/install/fedora.txt:30
-msgid "Fedora 19"
+msgid "Fedora 20"
 msgstr ""
 
 # 80ad432285074eecb34524a8eaf53cca
@@ -1204,9 +1181,9 @@ msgstr ""
 "このセクションではUbuntu上でgroonga関連のdebパッケージをインストールする方法"
 "を説明します。これらのパッケージは ``apt`` でインストールできます。"
 
-# d40473a628b5448094d61506aa2288d5
+# e965ab7beab74a84af33efbafac719a1
 #: ../../../source/install/ubuntu.txt:20
-msgid "10.04 LTS Lucid Lynx"
+msgid "12.04 LTS Precise Pangolin"
 msgstr ""
 
 # 9e64cf5dc29d4ea8839dafc24965d2f6
@@ -1215,28 +1192,22 @@ msgstr ""
 # 3ec354ea215c4202a007b25f19f29fa7
 #: ../../../source/install/ubuntu.txt:24 ../../../source/install/ubuntu.txt:71
 #: ../../../source/install/ubuntu.txt:118
-#: ../../../source/install/ubuntu.txt:165
 msgid "Enable the universe repository to install groonga::"
 msgstr ""
 "groongaをインストールするためにuniverseリポジトリを有効にしてください::"
 
-# e965ab7beab74a84af33efbafac719a1
-#: ../../../source/install/ubuntu.txt:67
-msgid "12.04 LTS Precise Pangolin"
-msgstr ""
-
 # b4dbf30424aa404090cc145aae930f99
-#: ../../../source/install/ubuntu.txt:114
+#: ../../../source/install/ubuntu.txt:67
 msgid "12.10 Quantal Quetzal"
 msgstr ""
 
 # 634b5d3f35134ed6bd24e302cd4ca23f
-#: ../../../source/install/ubuntu.txt:161
+#: ../../../source/install/ubuntu.txt:114
 msgid "13.04 Raring Ringtail"
 msgstr ""
 
 # 161fad58cef448c698df3d188d57135d
-#: ../../../source/install/ubuntu.txt:208
+#: ../../../source/install/ubuntu.txt:161
 msgid "13.10 Saucy Salamander"
 msgstr ""
 
@@ -1247,7 +1218,7 @@ msgstr ""
 # 27dd3bccb69f4029ae52c4e3589784a3
 # 0fe49fdfc88442df8d0bbe5331c3c41b
 # 70d353f5aba14e699bb41bca2a294a0a
-#: ../../../source/install/ubuntu.txt:210
+#: ../../../source/install/ubuntu.txt:163
 msgid "Add the Groonga apt repository."
 msgstr "Groongaのaptリポジトリを追加します。"
 
@@ -1255,7 +1226,7 @@ msgstr "Groongaのaptリポジトリを追加します。"
 # 9dbb644c0f304e798c8e769c455bf241
 # 1e86d7554f0348b0a5c65b70c7f987bd
 # 68faa6af5dcb440a93b1d0836303f4d9
-#: ../../../source/install/ubuntu.txt:231
+#: ../../../source/install/ubuntu.txt:184
 msgid ""
 "There is a package that provides `Munin <http://munin-monitoring.org/>`_ "
 "plugins. If you want to monitor Groonga status by Munin, install groonga-"
@@ -1269,7 +1240,7 @@ msgstr ""
 # 9dbb644c0f304e798c8e769c455bf241
 # 1e86d7554f0348b0a5c65b70c7f987bd
 # 68faa6af5dcb440a93b1d0836303f4d9
-#: ../../../source/install/ubuntu.txt:239
+#: ../../../source/install/ubuntu.txt:192
 msgid ""
 "There is a package that provides MySQL compatible normalizer as Groonga "
 "plugins. If you want to use that one, install groonga-normalizer-mysql "
@@ -1306,9 +1277,9 @@ msgstr ""
 "32-bit環境の場合は、x86のバイナリをpackages.groonga.orgからダウンロードしてく"
 "ださい。"
 
-# bf9d5fd0fdc841beac2f95cc92d0cfb1
+# 02adcb7b15174660905e048fed0dfd97
 #: ../../../source/install/windows.txt:23
-msgid "http://packages.groonga.org/windows/groonga/groonga-3.1.0-x86.exe"
+msgid "http://packages.groonga.org/windows/groonga/groonga-3.1.1-x86.exe"
 msgstr ""
 
 # 41dd51a424d84b689b3045c13bedcaf8
@@ -1327,9 +1298,9 @@ msgstr ""
 "64-bit環境の場合は、x64のバイナリをpackages.groonga.orgからダウンロードしてく"
 "ださい。"
 
-# 6f3dc09b4e8a4e1ea75f5906fa02e0c9
+# 0d89774313144d1a9d51d67fafcab74f
 #: ../../../source/install/windows.txt:30
-msgid "http://packages.groonga.org/windows/groonga/groonga-3.1.0-x64.exe"
+msgid "http://packages.groonga.org/windows/groonga/groonga-3.1.1-x64.exe"
 msgstr ""
 
 # ec57e50c1c624fabb14313a143a0d9fb
@@ -1354,9 +1325,9 @@ msgstr ""
 "32-bit環境の場合は、x86のzipアーカイブをpackages.groonga.orgからダウンロード"
 "してください。"
 
-# ae5e913899294189820751468f5b5be8
+# 02adcb7b15174660905e048fed0dfd97
 #: ../../../source/install/windows.txt:43
-msgid "http://packages.groonga.org/windows/groonga/groonga-3.1.0-x86.zip"
+msgid "http://packages.groonga.org/windows/groonga/groonga-3.1.1-x86.zip"
 msgstr ""
 
 # 5522eaec16b94e5c82c0c2ee1c97249e
@@ -1375,9 +1346,9 @@ msgstr ""
 "64-bit環境の場合は、x64のzipアーカイブをpackages.groonga.orgからダウンロード"
 "してください。"
 
-# e33c0c13f5ac46f49037f063a15c344a
+# 0d89774313144d1a9d51d67fafcab74f
 #: ../../../source/install/windows.txt:50
-msgid "http://packages.groonga.org/windows/groonga/groonga-3.1.0-x64.zip"
+msgid "http://packages.groonga.org/windows/groonga/groonga-3.1.1-x64.zip"
 msgstr ""
 
 # 8820fc4404434f5b8b0b1c2d71213e30
@@ -1413,9 +1384,9 @@ msgstr ""
 msgid "Download zipped source from packages.groonga.org:"
 msgstr "zipアーカイブをpackages.groonga.orgからダウンロードしてください。"
 
-# e33c0c13f5ac46f49037f063a15c344a
+# 0d89774313144d1a9d51d67fafcab74f
 #: ../../../source/install/windows.txt:68
-msgid "http://packages.groonga.org/source/groonga/groonga-3.1.0.zip"
+msgid "http://packages.groonga.org/source/groonga/groonga-3.1.1.zip"
 msgstr ""
 
 # 1906fb2bad3d4db99362852684c376c5

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-17 15:20+0900\n"
+"POT-Creation-Date: 2013-12-21 18:12+0900\n"
 "PO-Revision-Date: 2013-12-21 14:00+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -477,36 +477,57 @@ msgstr "``domain`` カラムによるドリルダウン"
 msgid "Drilldown"
 msgstr "ドリルダウン"
 
-# 7eab6bb6e65742f3aa8a074afd260b7e
+# 7a5ae65c70ea4954a4a13b6a236c036b
 #: ../../../source/tutorial/drilldown.txt:13
 msgid ""
-"There is a case that you want to know summary of search result. For example, "
-"it is the case that searching the number of records which belongs to "
-"specific category. Selecting a category at first, then investigate further "
-"in detail is a reasonable way."
+"You learned how to filter search results and sort ones in the previous "
+"sections. Now that you can search as you likes, but how do you summarize the "
+"number of records which has specific value in the column?"
 msgstr ""
-"検索結果の集計結果を知りたくなることがあります。例えば特定のカテゴリに属する"
-"レコードの数を知りたいような場合です。集計結果を見て、カテゴリを最初に選択し"
-"てから詳細を調べるというのはよくあるやり方です。"
 
-# f0ff674a83b5479baa277025edb1c1a5
-#: ../../../source/tutorial/drilldown.txt:17
+# d86dc365d86e4e56ba7bc730acd75fec
+#: ../../../source/tutorial/drilldown.txt:16
 msgid ""
-"To achive such a purpose, Groonga provides the feature which groups search "
-"results by the value of specific column. In Groonga, this feature is called "
+"As you know, there is a naive solution to execute query by every the value "
+"of column, then you can get the number of records as a result. It is a "
+"simple way, but it is not reasonable to many records."
+msgstr ""
+
+# 64c11c6082bb46969fc60f2e9e9d67a0
+#: ../../../source/tutorial/drilldown.txt:18
+msgid ""
+"If you are familiar with SQL, you will doubt with \"Is there a similar SQL "
+"functionality to ``GROUP BY`` in Groonga?\"."
+msgstr ""
+
+# e6e95508b508459681bad09053420a94
+#: ../../../source/tutorial/drilldown.txt:20
+msgid ""
+"Of course, Groonga provides such a functionality. It's called as "
 "``drilldown``."
 msgstr ""
-"そういった目的を達成するために、Groongaでは特定のカラムの値で検索結果をまとめ"
-"る機能を提供しています。Groongaではその機能のことをドリルダウンと呼んでいま"
-"す。"
+
+# 38ed942c7bbd43c59e5321797de02e79
+#: ../../../source/tutorial/drilldown.txt:22
+msgid ""
+"``drilldown`` enables you to get the number of records which belongs to "
+"specific the value of column at once."
+msgstr ""
+
+# 3aaae4de2d8240fda6b1da1598609ca5
+#: ../../../source/tutorial/drilldown.txt:24
+msgid ""
+"To illustrate this feature, imagine the case that classification by domain "
+"and grouping by country that domain belongs to."
+msgstr ""
 
 # e405f76fd24a4e7f847ddb62b6b94316
-#: ../../../source/tutorial/drilldown.txt:20
+#: ../../../source/tutorial/drilldown.txt:26
 msgid "Here is the concrete examples how to use this feature."
 msgstr "この機能を使った具体的な例を示します。"
 
 # f023fe30f2f54946b3bb556760917cbb
-#: ../../../source/tutorial/drilldown.txt:22
+#: ../../../source/tutorial/drilldown.txt:28
 msgid ""
 "In this example, we add two columns to ``Site`` table. ``domain`` column is "
 "used for TLD (top level domain). ``country`` column is used for country "
@@ -520,7 +541,7 @@ msgstr ""
 "名を主キーとする ``SiteCountry`` テーブルです。"
 
 # 3b34a859fc4940e2b2dbcbb0e57e55a2
-#: ../../../source/tutorial/drilldown.txt:43
+#: ../../../source/tutorial/drilldown.txt:49
 msgid ""
 "Here is a example of drilldown with ``domain`` column. Three kind of values "
 "are used in ``domain`` column - \".org\", \".net\" and \".com\"."
@@ -529,96 +550,96 @@ msgstr ""
 "では使われています。\".org\"、\".net\"そして\".com\"です。"
 
 # 875768b2815a4583b0abc65c4d60ddb1
-#: ../../../source/tutorial/drilldown.txt:50
+#: ../../../source/tutorial/drilldown.txt:56
 msgid "Here is a summary of above query."
 msgstr "上記のクエリの集計結果です。"
 
 # 08f4bf9c6f644f4c8099830b63fff88f
-#: ../../../source/tutorial/drilldown.txt:55
+#: ../../../source/tutorial/drilldown.txt:61
 msgid "Group by"
 msgstr "グループ化するカラムの値"
 
 # c85fd78d517a4299957c969d8000a285
-#: ../../../source/tutorial/drilldown.txt:56
+#: ../../../source/tutorial/drilldown.txt:62
 msgid "The number of group records"
 msgstr "グループ化されたレコード数"
 
 # a62187dff85b4721bdba07a81326342d
-#: ../../../source/tutorial/drilldown.txt:57
+#: ../../../source/tutorial/drilldown.txt:63
 msgid "Group records means following records"
 msgstr "グループ化されたレコードは次のとおり"
 
 # 22d4f6d363b04abc974c034eff26a949
-#: ../../../source/tutorial/drilldown.txt:58
+#: ../../../source/tutorial/drilldown.txt:64
 msgid ".org"
 msgstr ""
 
 # c523ff839b4744fb8d3124c3a20ada6e
 # d26f5e4e1ee341569cb0853fc46df89c
 # 737209b4e6f5400788acfe2d76fbef39
-#: ../../../source/tutorial/drilldown.txt:59
-#: ../../../source/tutorial/drilldown.txt:64
-#: ../../../source/tutorial/drilldown.txt:69
+#: ../../../source/tutorial/drilldown.txt:65
+#: ../../../source/tutorial/drilldown.txt:70
+#: ../../../source/tutorial/drilldown.txt:75
 msgid "3"
 msgstr ""
 
 # ee8de53f22be4a0c9bdaa261289b9aaf
-#: ../../../source/tutorial/drilldown.txt:60
+#: ../../../source/tutorial/drilldown.txt:66
 msgid "http://example.org/"
 msgstr ""
 
 # eaa188b424db4aa3982e86b0e1be1c1c
-#: ../../../source/tutorial/drilldown.txt:61
+#: ../../../source/tutorial/drilldown.txt:67
 msgid "http://example.org/aba"
 msgstr ""
 
 # b218190a56f649bfbaa3ba7b896e9b30
-#: ../../../source/tutorial/drilldown.txt:62
+#: ../../../source/tutorial/drilldown.txt:68
 msgid "http://example.org/gat"
 msgstr ""
 
 # f421ec1498024ad78db9ebe703cb1aee
-#: ../../../source/tutorial/drilldown.txt:63
+#: ../../../source/tutorial/drilldown.txt:69
 msgid ".net"
 msgstr ""
 
 # 6aca36b9f7f445e490f19f71646cd42b
-#: ../../../source/tutorial/drilldown.txt:65
+#: ../../../source/tutorial/drilldown.txt:71
 msgid "http://example.net/"
 msgstr ""
 
 # e42f387cd71e4cde88103ec723cd8715
-#: ../../../source/tutorial/drilldown.txt:66
+#: ../../../source/tutorial/drilldown.txt:72
 msgid "http://example.net/afr"
 msgstr ""
 
 # 7ef1ccdcfe3c4175b98bd7aeafd44586
-#: ../../../source/tutorial/drilldown.txt:67
+#: ../../../source/tutorial/drilldown.txt:73
 msgid "http://example.net/atv"
 msgstr ""
 
 # 4cc3161e00ed499891b1383dab1e53de
-#: ../../../source/tutorial/drilldown.txt:68
+#: ../../../source/tutorial/drilldown.txt:74
 msgid ".com"
 msgstr ""
 
 # 7b38924da3b84348a60674cdd02ec859
-#: ../../../source/tutorial/drilldown.txt:70
+#: ../../../source/tutorial/drilldown.txt:76
 msgid "http://example.com/"
 msgstr ""
 
 # 4759deffe0b14f9faf873eccf1394f8e
-#: ../../../source/tutorial/drilldown.txt:71
+#: ../../../source/tutorial/drilldown.txt:77
 msgid "http://example.com/rab"
 msgstr ""
 
 # 5c000fc7941b4f59ad3a37742dff252e
-#: ../../../source/tutorial/drilldown.txt:72
+#: ../../../source/tutorial/drilldown.txt:78
 msgid "http://example.com/vdw"
 msgstr ""
 
 # a81dc68b661a4da6a38579f761ee9284
-#: ../../../source/tutorial/drilldown.txt:75
+#: ../../../source/tutorial/drilldown.txt:81
 msgid ""
 "The value of drilldown are returned as the value of ``_nsubrecs`` column. In "
 "this case, ``Site`` table is grouped by \".org\", \".net\", \".com\" domain. "
@@ -630,7 +651,7 @@ msgstr ""
 "ことを意味します。"
 
 # 0402232364074db8a5233a051fbab716
-#: ../../../source/tutorial/drilldown.txt:77
+#: ../../../source/tutorial/drilldown.txt:83
 msgid ""
 "If you execute drildown to the column which has table as a type, you can get "
 "the value of column which is stored in referenced table. ``_nsubrecs`` "
@@ -643,7 +664,7 @@ msgstr ""
 "されたレコード数が入ります。"
 
 # bf8ec33c7f2e4267b75dfec5d5425668
-#: ../../../source/tutorial/drilldown.txt:80
+#: ../../../source/tutorial/drilldown.txt:86
 msgid ""
 "Then, investigate referenced table in detail. As ``Site`` table use "
 "``SiteDomain`` table as column type of ``domain``, you can use ``--"
@@ -654,7 +675,7 @@ msgstr ""
 "drilldown_output_columns`` を参照されているカラムの詳細を知るのに使えます。"
 
 # b30522dfe83e40be84fea4ffa571e5e2
-#: ../../../source/tutorial/drilldown.txt:86
+#: ../../../source/tutorial/drilldown.txt:92
 msgid ""
 "Now, you can see detail of each grouped domain, drilldown by ``country`` "
 "column which has \".org\" as column value."
@@ -664,12 +685,12 @@ msgstr ""
 "う。"
 
 # f2aef14711a545b08c584672703126ee
-#: ../../../source/tutorial/drilldown.txt:93
+#: ../../../source/tutorial/drilldown.txt:99
 msgid "Drilldown with multiple column"
 msgstr "複数のカラムでドリルダウン"
 
 # bb1c0026100e488a92b412ee7935b035
-#: ../../../source/tutorial/drilldown.txt:95
+#: ../../../source/tutorial/drilldown.txt:101
 msgid ""
 "Drilldown feature supports multiple column. Use comma separated multiple "
 "column names as ``drildown`` parameter. You can get the each result of "
@@ -680,24 +701,26 @@ msgstr ""
 "得できます。"
 
 # 75a7b7fc10ab490c85ecd4d598d16f99
-#: ../../../source/tutorial/drilldown.txt:104
+#: ../../../source/tutorial/drilldown.txt:110
 msgid "Sorting drildown results"
 msgstr "ドリルダウン結果をソートする"
 
 # 06f20df5fff44a5f8afcd1b8f114a1d8
-#: ../../../source/tutorial/drilldown.txt:106
+#: ../../../source/tutorial/drilldown.txt:112
 msgid ""
 "Use ``--drilldown_sortby`` if you want to sort the result of drilldown. For "
 "example, specify ``_nsubrecs`` as ascending order."
-msgstr "ドリルダウン結果をソートしたい場合には ``--drilldown_sortby`` を使います。指定した ``_nsubrecs`` カラムを昇順でソートします。"
+msgstr ""
+"ドリルダウン結果をソートしたい場合には ``--drilldown_sortby`` を使います。指"
+"定した ``_nsubrecs`` カラムを昇順でソートします。"
 
 # 711a8e88049347fe8047f40f4175df8f
-#: ../../../source/tutorial/drilldown.txt:114
+#: ../../../source/tutorial/drilldown.txt:120
 msgid "limits drildown results"
 msgstr "ドリルダウン結果の制限"
 
 # 387020d3b42644c7af4ad609f3e0c3dc
-#: ../../../source/tutorial/drilldown.txt:116
+#: ../../../source/tutorial/drilldown.txt:122
 msgid ""
 "The number of drilldown results is limited to 10 as a default. Use "
 "``drilldown_limits`` and ``drilldown_offset`` parameter to customize "
@@ -707,7 +730,7 @@ msgstr ""
 "``drilldown_offset`` パラメータをドリルダウン結果をカスタマイズするのに使いま"
 "す。"
 
-#: ../../../source/tutorial/drilldown.txt:122
+#: ../../../source/tutorial/drilldown.txt:128
 msgid ""
 "文字列型のカラムに対するドリルダウンは、他の型でのドリルダウンに比べて低速で"
 "す。文字列でのドリルダウンを行いたい場合には、このチュートリアルのように、文"
@@ -2358,10 +2381,11 @@ msgstr "GQTPサーバの起動"
 
 # d6b116c322594360b727ea6cbc5da918
 #: ../../../source/tutorial/network.txt:21
+#, fuzzy
 msgid ""
 "Groonga has a special protocol, named Groonga Query Transfer Protocol "
 "(GQTP), for remote access to a database. The following form shows how to run "
-"groonga as a GQTP server."
+"groonga as a gqtp server."
 msgstr ""
 "groongaには、専用のプロトコルであるgqtpが存在します。GQTPを用いることにより、"
 "データベースへとリモートアクセスすることができます。以下の書式はGQTPサーバの"
@@ -2903,3 +2927,24 @@ msgid ""
 "また、経緯度が指定の矩形領域内であるかどうかを判定する :doc:`/reference/"
 "functions/geo_in_rectangle` 関数も存在します。"
 msgstr ""
+
+# f0ff674a83b5479baa277025edb1c1a5
+#~ msgid ""
+#~ "To achive such a purpose, Groonga provides the feature which groups "
+#~ "search results by the value of specific column. In Groonga, this feature "
+#~ "is called ``drilldown``."
+#~ msgstr ""
+#~ "そういった目的を達成するために、Groongaでは特定のカラムの値で検索結果をま"
+#~ "とめる機能を提供しています。Groongaではその機能のことをドリルダウンと呼ん"
+#~ "でいます。"
+
+# 7eab6bb6e65742f3aa8a074afd260b7e
+#~ msgid ""
+#~ "There is a case that you want to know summary of search result. For "
+#~ "example, it is the case that searching the number of records which "
+#~ "belongs to specific category. Selecting a category at first, then "
+#~ "investigate further in detail is a reasonable way."
+#~ msgstr ""
+#~ "検索結果の集計結果を知りたくなることがあります。例えば特定のカテゴリに属す"
+#~ "るレコードの数を知りたいような場合です。集計結果を見て、カテゴリを最初に選"
+#~ "択してから詳細を調べるというのはよくあるやり方です。"
