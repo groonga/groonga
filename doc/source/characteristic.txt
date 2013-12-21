@@ -2,24 +2,24 @@
 
 .. highlightlang:: none
 
-Characteristics of groonga
+Characteristics of Groonga
 ==========================
 
 Groonga overview
 ----------------
 
-Groonga is a fast and accurate full text search engine based on inverted index. One of the characteristics of groonga is that a newly registered document instantly appears in search results. Also, groonga allows updates without read locks. These characteristics result in superior performance on real-time applications.
+Groonga is a fast and accurate full text search engine based on inverted index. One of the characteristics of Groonga is that a newly registered document instantly appears in search results. Also, Groonga allows updates without read locks. These characteristics result in superior performance on real-time applications.
 
-Groonga is also a column-oriented database management system (DBMS). Compared with well-known row-oriented systems, such as MySQL and PostgreSQL, column-oriented systems are more suited for aggregate queries. Due to this advantage, groonga can cover weakness of row-oriented systems.
+Groonga is also a column-oriented database management system (DBMS). Compared with well-known row-oriented systems, such as MySQL and PostgreSQL, column-oriented systems are more suited for aggregate queries. Due to this advantage, Groonga can cover weakness of row-oriented systems.
 
-The basic functions of groonga are provided in a C library. Also, libraries for using groonga in other languages, such as Ruby, are provided by related projects. In addition, groonga-based storage engines are provided for MySQL and PostgreSQL. These libraries and storage engines allow any application to use groonga. See `usage examples <http://groonga.org/users/>`_.
+The basic functions of Groonga are provided in a C library. Also, libraries for using Groonga in other languages, such as Ruby, are provided by related projects. In addition, groonga-based storage engines are provided for MySQL and PostgreSQL. These libraries and storage engines allow any application to use Groonga. See `usage examples <http://groonga.org/users/>`_.
 
 Full text search and Instant update
 -----------------------------------
 
 In widely used DBMSs, updates are immediately processed, for example, a newly registered record appears in the result of the next query. In contrast, some full text search engines do not support instant updates, because it is difficult to dynamically update inverted indexes, the underlying data structure.
 
-Groonga also uses inverted indexes but supports instant updates. In addition, groonga allows you to search documents even when updating the document collection. Due to these superior characteristics, groonga is very flexible as a full text search engine. Also, groonga always shows good performance because it divides a large task, inverted index merging, into smaller tasks.
+Groonga also uses inverted indexes but supports instant updates. In addition, Groonga allows you to search documents even when updating the document collection. Due to these superior characteristics, Groonga is very flexible as a full text search engine. Also, Groonga always shows good performance because it divides a large task, inverted index merging, into smaller tasks.
 
 Column store and aggregate query
 --------------------------------
@@ -28,7 +28,7 @@ People can collect more than enough data in the Internet era. However, it is dif
 
 An aggregate query groups search results by specified column values and then counts the number of records in each group. For example, an aggregate query in which a location column is specified counts the number of records per location. Making a graph from the result of an aggregate query against a date column is an easy way to visualize changes over time. Also, a combination of refinement by location and an aggregate query against a date column allows visualization of changes over time in specific location. Thus refinement and aggregation are important to perform data mining.
 
-A column-oriented architecture allows groonga to efficiently process aggregate queries because a column-oriented database, which stores records by column, allows an aggregate query to access only a specified column. On the other hand, an aggregate query on a row-oriented database, which stores records by row, has to access neighbor columns, even though those columns are not required.
+A column-oriented architecture allows Groonga to efficiently process aggregate queries because a column-oriented database, which stores records by column, allows an aggregate query to access only a specified column. On the other hand, an aggregate query on a row-oriented database, which stores records by row, has to access neighbor columns, even though those columns are not required.
 
 Inverted index and tokenizer
 ----------------------------
@@ -44,26 +44,26 @@ Sharable storage and read lock-free
 
 Multi-core processors are mainstream today and the number of cores per processor is increasing. In order to exploit multiple cores, executing multiple queries in parallel or dividing a query into sub-queries for parallel processing is becoming more important.
 
-A database of groonga can be shared with multiple threads/processes. Also, multiple threads/processes can execute read queries in parallel even when another thread/process is executing an update query because groonga uses read lock-free data structures. This feature is suited to a real-time application that needs to update a database while executing read queries. In addition, groonga allows you to build flexible systems. For example, a database can receive read queries through the built-in HTTP server of groonga while accepting update queries through MySQL.
+A database of Groonga can be shared with multiple threads/processes. Also, multiple threads/processes can execute read queries in parallel even when another thread/process is executing an update query because Groonga uses read lock-free data structures. This feature is suited to a real-time application that needs to update a database while executing read queries. In addition, Groonga allows you to build flexible systems. For example, a database can receive read queries through the built-in HTTP server of Groonga while accepting update queries through MySQL.
 
 Geo-location (latitude and longitude) search
 --------------------------------------------
 
 Location services are getting more convenient because of mobile devices with GPS. For example, if you are going to have lunch or dinner at a nearby restaurant, a local search service for restaurants may be very useful, and for such services, fast geo-location search is becoming more important.
 
-Groonga provides inverted index-based fast geo-location search, which supports a query to find points in a rectangle or circle. Groonga gives high priority to points near the center of an area. Also, groonga supports distance measurement and you can sort points by distance from any point.
+Groonga provides inverted index-based fast geo-location search, which supports a query to find points in a rectangle or circle. Groonga gives high priority to points near the center of an area. Also, Groonga supports distance measurement and you can sort points by distance from any point.
 
 Groonga library
 ---------------
 
-The basic functions of groonga are provided in a C library and any application can use groonga as a full text search engine or a column-oriented database. Also, libraries for languages other than C/C++, such as Ruby, are provided in related projects. See `related projects <http://groonga.org/related-projects.html>`_ for details.
+The basic functions of Groonga are provided in a C library and any application can use Groonga as a full text search engine or a column-oriented database. Also, libraries for languages other than C/C++, such as Ruby, are provided in related projects. See `related projects <http://groonga.org/related-projects.html>`_ for details.
 
 Groonga server
 --------------
 
-Groonga provides a built-in server command which supports HTTP, the memcached binary protocol and the groonga query transfer protocol (gqtp). Also, a groonga server supports query caching, which significantly reduces response time for repeated read queries. Using this command, groonga is available even on a server that does not allow you to install new libraries.
+Groonga provides a built-in server command which supports HTTP, the memcached binary protocol and the Groonga query transfer protocol (gqtp). Also, a Groonga server supports query caching, which significantly reduces response time for repeated read queries. Using this command, Groonga is available even on a server that does not allow you to install new libraries.
 
 Groonga storage engine
 ----------------------
 
-Groonga works not only as an independent column-oriented DBMS but also as storage engines of well-known DBMSs. For example, `mroonga <http://mroonga.org/>`_ is a MySQL pluggable storage engine using groonga. By using mroonga, you can use groonga for column-oriented storage and full text search. A combination of a built-in storage engine, MyISAM or InnoDB, and a groonga-based full text search engine is also available. All the combinations have good and bad points and the best one depends on the application. See `related projects <http://groonga.org/related-projects.html>`_ for details.
+Groonga works not only as an independent column-oriented DBMS but also as storage engines of well-known DBMSs. For example, `mroonga <http://mroonga.org/>`_ is a MySQL pluggable storage engine using Groonga. By using mroonga, you can use Groonga for column-oriented storage and full text search. A combination of a built-in storage engine, MyISAM or InnoDB, and a groonga-based full text search engine is also available. All the combinations have good and bad points and the best one depends on the application. See `related projects <http://groonga.org/related-projects.html>`_ for details.
