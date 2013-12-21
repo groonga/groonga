@@ -5,13 +5,13 @@
 Community
 =========
 
-There are some places for sharing groonga information.
+There are some places for sharing Groonga information.
 We welcome you to join our community.
 
 Mailing List
 ------------
 
-There are mailing lists for discussion about groonga.
+There are mailing lists for discussion about Groonga.
 
 For English speakers
   `groonga-talk@lists.sourceforge.net <http://lists.sourceforge.net/mailman/listinfo/groonga-talk>`_
@@ -22,16 +22,16 @@ For Japanese speakers
 Twitter
 -------
 
-`@groonga <https://twitter.com/groonga/>`_ tweets groonga related
+`@groonga <https://twitter.com/groonga/>`_ tweets Groonga related
 information.
 
-Please follow the account to get the latest groonga related
+Please follow the account to get the latest Groonga related
 information!
 
 Facebook
 --------
 
-`groonga page on Facebook <http://www.facebook.com/groonga>`_ shares
-groonga related information.
+`Groonga page on Facebook <http://www.facebook.com/groonga>`_ shares
+Groonga related information.
 
-Please like the page to get the latest groonga related information!
+Please like the page to get the latest Groonga related information!
