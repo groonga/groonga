@@ -857,14 +857,14 @@ msgstr "基本的な操作"
 # 7a5094c3e47443369b7daf194fe51c68
 #: ../../../source/tutorial/introduction.txt:11
 msgid ""
-"A groonga package provides a C library (libgroonga) and a command line tool "
-"(groonga). This tutorial explains how to use the command line tool, with "
+"A Groonga package provides a C library (libgroonga) and a command line tool "
+"(Groonga). This tutorial explains how to use the command line tool, with "
 "which you can create/operate databases, start a server, establish a "
 "connection with a server, etc."
 msgstr ""
-"groongaには、Cのライブラリとして使用する方法と、groonga実行ファイルを通して使"
-"用する方法があります。本チュートリアルでは、groonga実行ファイルを使用する方法"
-"について説明します。groonga実行ファイルを使って、データベースの作成・操作・"
+"Groongaには、Cのライブラリとして使用する方法と、Groonga実行ファイルを通して使"
+"用する方法があります。本チュートリアルでは、Groonga実行ファイルを使用する方法"
+"について説明します。Groonga実行ファイルを使って、データベースの作成・操作・"
 "サーバの起動・サーバへの接続などの操作が行えます。"
 
 # 2053368aefe74a5d9363bf95cb157d4a
@@ -875,10 +875,10 @@ msgstr "データベースの作成"
 # 6f92cc5132bb4166890341665e393217
 #: ../../../source/tutorial/introduction.txt:16
 msgid ""
-"The first step to using groonga is to create a new database. The following "
+"The first step to using Groonga is to create a new database. The following "
 "shows how to do it."
 msgstr ""
-"groongaユーザへの第一歩はデータベースの作成です。まずは以下の書式をご覧くださ"
+"Groongaユーザへの第一歩はデータベースの作成です。まずは以下の書式をご覧くださ"
 "い。"
 
 #: ../../../source/tutorial/introduction.txt:18
@@ -910,7 +910,7 @@ msgstr ""
 #: ../../../source/tutorial/introduction.txt:24
 msgid ""
 "This command creates a new database and then enters into interactive mode in "
-"which groonga prompts you to enter commands for operating that database. You "
+"which Groonga prompts you to enter commands for operating that database. You "
 "can terminate this mode with Ctrl-d."
 msgstr ""
 "上記のコマンドは、データベースを作成してから、コマンドの入力を受け付ける対話"
@@ -948,8 +948,8 @@ msgstr ""
 # bbd1e3b24ab142a9a23b30d186a1bfb5
 #: ../../../source/tutorial/introduction.txt:43
 msgid ""
-"If COMMAND is specified, groonga executes COMMAND and returns the result. "
-"Otherwise, groonga starts in interactive mode that reads commands from the "
+"If COMMAND is specified, Groonga executes COMMAND and returns the result. "
+"Otherwise, Groonga starts in interactive mode that reads commands from the "
 "standard input and executes them one by one. This tutorial focuses on the "
 "interactive mode."
 msgstr ""
@@ -960,10 +960,10 @@ msgstr ""
 
 #: ../../../source/tutorial/introduction.txt:45
 msgid ""
-"Let's see the status of a groonga process by using a :doc:`/reference/"
+"Let's see the status of a Groonga process by using a :doc:`/reference/"
 "commands/status` command."
 msgstr ""
-"それでは、 :doc:`/reference/commands/status` コマンドを実行して、groongaの実"
+"それでは、 :doc:`/reference/commands/status` コマンドを実行して、Groongaの実"
 "行状態を確認してみましょう。"
 
 # f20f73567cf74f89928a062e06b51594
@@ -1038,8 +1038,8 @@ msgstr ""
 
 # 602f9e43757345a1b0bc3a57a5b595ea
 #: ../../../source/tutorial/introduction.txt:75
-msgid "shows status of a groonga process."
-msgstr "groongaプロセスの状態を表示します。"
+msgid "shows status of a Groonga process."
+msgstr "Groongaプロセスの状態を表示します。"
 
 # 1e74fb8068674cafb7c2776d998e7ce8
 #: ../../../source/tutorial/introduction.txt:76
@@ -1117,7 +1117,7 @@ msgid ""
 "In most cases, a table has a primary key which must be specified with its "
 "data type and index type."
 msgstr ""
-"groongaのテーブルには基本的に主キーが必要であり、テーブルを作成する際には型と"
+"Groongaのテーブルには基本的に主キーが必要であり、テーブルを作成する際には型と"
 "格納方法も併せて指定する必要があります。"
 
 #: ../../../source/tutorial/introduction.txt:96
@@ -1183,12 +1183,12 @@ msgstr ""
 #: ../../../source/tutorial/introduction.txt:117
 msgid ""
 "The above two columns, _id and _key, are the necessary columns. The _id "
-"column stores IDs those are automatically allocated by groonga. The _key "
+"column stores IDs those are automatically allocated by Groonga. The _key "
 "column is associated with the primary key. You are not allowed to rename "
 "these columns."
 msgstr ""
 "上記の_idカラムと_keyカラムの2つのカラムは必須のカラムです。_idカラムは"
-"groongaが自動的に割り当てるIDを格納します。_keyカラムは主キーを格納します。こ"
+"Groongaが自動的に割り当てるIDを格納します。_keyカラムは主キーを格納します。こ"
 "れらのカラム名を変更することはできません。"
 
 # bb371206793e407ab12db2864ee8d152
@@ -1314,7 +1314,7 @@ msgid ""
 "vocabulary made up of index terms and each record stores postings lists for "
 "one index term."
 msgstr ""
-"groongaでは転置インデックスを使って高速な全文検索を実現しています。そのため、"
+"Groongaでは転置インデックスを使って高速な全文検索を実現しています。そのため、"
 "まずは転置インデックスとして用いるテーブルを作成する必要があります。テーブル"
 "の内容は、文書に含まれる単語やN-gramなどの索引語を主キーとして、各カラムに索"
 "引語の位置情報を格納するという構成になります。結果として、主キーのカラムは全"
@@ -1401,9 +1401,9 @@ msgstr ""
 #: ../../../source/tutorial/introduction.txt:212
 msgid ""
 "You can create a lexicon table and index columns before/during/after loading "
-"records. If a target column already has records, groonga creates an inverted "
+"records. If a target column already has records, Groonga creates an inverted "
 "index in a static manner. In contrast, if you load records into an already "
-"indexed column, groonga updates the inverted index in a dynamic manner."
+"indexed column, Groonga updates the inverted index in a dynamic manner."
 msgstr ""
 "語彙表とインデックスカラムを作成するタイミングは、データをロードする前後のど"
 "ちらでも問題ありません。データをロードした後でインデックスを作成し、さらに新"

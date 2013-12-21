@@ -916,13 +916,13 @@ msgstr "Basic operations"
 # 4137ca1ca6864f85862b23a807696044
 #: ../../../source/tutorial/introduction.txt:11
 msgid ""
-"A groonga package provides a C library (libgroonga) and a command line tool "
-"(groonga). This tutorial explains how to use the command line tool, with "
+"A Groonga package provides a C library (libgroonga) and a command line tool "
+"(Groonga). This tutorial explains how to use the command line tool, with "
 "which you can create/operate databases, start a server, establish a "
 "connection with a server, etc."
 msgstr ""
-"A groonga package provides a C library (libgroonga) and a command line tool "
-"(groonga). This tutorial explains how to use the command line tool, with "
+"A Groonga package provides a C library (libgroonga) and a command line tool "
+"(Groonga). This tutorial explains how to use the command line tool, with "
 "which you can create/operate databases, start a server, establish a "
 "connection with a server, etc."
 
@@ -934,10 +934,10 @@ msgstr "Create a database"
 # b917637c8de947ba8f9a3d9ff692c04c
 #: ../../../source/tutorial/introduction.txt:16
 msgid ""
-"The first step to using groonga is to create a new database. The following "
+"The first step to using Groonga is to create a new database. The following "
 "shows how to do it."
 msgstr ""
-"The first step to using groonga is to create a new database. The following "
+"The first step to using Groonga is to create a new database. The following "
 "shows how to do it."
 
 # b387dfe1c70e4a19836b8bb701e08a18
@@ -976,11 +976,11 @@ msgstr ""
 #: ../../../source/tutorial/introduction.txt:24
 msgid ""
 "This command creates a new database and then enters into interactive mode in "
-"which groonga prompts you to enter commands for operating that database. You "
+"which Groonga prompts you to enter commands for operating that database. You "
 "can terminate this mode with Ctrl-d."
 msgstr ""
 "This command creates a new database and then enters into interactive mode in "
-"which groonga prompts you to enter commands for operating that database. You "
+"which Groonga prompts you to enter commands for operating that database. You "
 "can terminate this mode with Ctrl-d."
 
 # 472b4dee17ee45f4884ab6dfb95d74a4
@@ -1015,19 +1015,19 @@ msgstr ""
 #: ../../../source/tutorial/introduction.txt:43
 msgid ""
 "If COMMAND is specified, groonga executes COMMAND and returns the result. "
-"Otherwise, groonga starts in interactive mode that reads commands from the "
+"Otherwise, Groonga starts in interactive mode that reads commands from the "
 "standard input and executes them one by one. This tutorial focuses on the "
 "interactive mode."
 msgstr ""
-"If COMMAND is specified, groonga executes COMMAND and returns the result. "
-"Otherwise, groonga starts in interactive mode that reads commands from the "
+"If COMMAND is specified, Groonga executes COMMAND and returns the result. "
+"Otherwise, Groonga starts in interactive mode that reads commands from the "
 "standard input and executes them one by one. This tutorial focuses on the "
 "interactive mode."
 
 # b19b32246f6d4807b1082363e719fb84
 #: ../../../source/tutorial/introduction.txt:45
 msgid ""
-"Let's see the status of a groonga process by using a :doc:`/reference/"
+"Let's see the status of a Groonga process by using a :doc:`/reference/"
 "commands/status` command."
 msgstr ""
 "Let's see the status of a groonga process by using a :doc:`/reference/"
@@ -1108,8 +1108,8 @@ msgstr ""
 
 # ef2818e6664d402cb3ff68d3ac335ece
 #: ../../../source/tutorial/introduction.txt:75
-msgid "shows status of a groonga process."
-msgstr "shows status of a groonga process."
+msgid "shows status of a Groonga process."
+msgstr "shows status of a Groonga process."
 
 # a296dfd2c7644f52afa892d4183d040a
 #: ../../../source/tutorial/introduction.txt:76
@@ -1250,12 +1250,12 @@ msgstr ""
 #: ../../../source/tutorial/introduction.txt:117
 msgid ""
 "The above two columns, _id and _key, are the necessary columns. The _id "
-"column stores IDs those are automatically allocated by groonga. The _key "
+"column stores IDs those are automatically allocated by Groonga. The _key "
 "column is associated with the primary key. You are not allowed to rename "
 "these columns."
 msgstr ""
 "The above two columns, _id and _key, are the necessary columns. The _id "
-"column stores IDs those are automatically allocated by groonga. The _key "
+"column stores IDs those are automatically allocated by Groonga. The _key "
 "column is associated with the primary key. You are not allowed to rename "
 "these columns."
 
@@ -1472,14 +1472,14 @@ msgstr ""
 #: ../../../source/tutorial/introduction.txt:212
 msgid ""
 "You can create a lexicon table and index columns before/during/after loading "
-"records. If a target column already has records, groonga creates an inverted "
+"records. If a target column already has records, Groonga creates an inverted "
 "index in a static manner. In contrast, if you load records into an already "
 "indexed column, groonga updates the inverted index in a dynamic manner."
 msgstr ""
 "You can create a lexicon table and index columns before/during/after loading "
-"records. If a target column already has records, groonga creates an inverted "
+"records. If a target column already has records, Groonga creates an inverted "
 "index in a static manner. In contrast, if you load records into an already "
-"indexed column, groonga updates the inverted index in a dynamic manner."
+"indexed column, Groonga updates the inverted index in a dynamic manner."
 
 # aa38fedf0441417abb938d6c1a978ea3
 #: ../../../source/tutorial/introduction.txt:215
