@@ -253,6 +253,8 @@ See :doc:`/reference/tokenizers` for all tokenizers
 
 The default value is none.
 
+.. _table-create-normalizer:
+
 ``normalizer``
 ^^^^^^^^^^^^^^
 
