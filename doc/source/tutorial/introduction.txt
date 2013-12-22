@@ -8,12 +8,12 @@
 Basic operations
 ================
 
-A groonga package provides a C library (libgroonga) and a command line tool (groonga). This tutorial explains how to use the command line tool, with which you can create/operate databases, start a server, establish a connection with a server, etc.
+A Groonga package provides a C library (libgroonga) and a command line tool (Groonga). This tutorial explains how to use the command line tool, with which you can create/operate databases, start a server, establish a connection with a server, etc.
 
 Create a database
 -----------------
 
-The first step to using groonga is to create a new database. The following shows how to do it.
+The first step to using Groonga is to create a new database. The following shows how to do it.
 
 Form::
 
@@ -21,7 +21,7 @@ Form::
 
 The `-n` option specifies to create a new database and DB_PATH specifies the path of the new database. Actually, a database consists of a series of files and DB_PATH specifies the file which will be the entrance to the new database. DB_PATH also specifies the path prefix for other files. Note that database creation fails if DB_PATH points to an existing file.
 
-This command creates a new database and then enters into interactive mode in which groonga prompts you to enter commands for operating that database. You can terminate this mode with Ctrl-d.
+This command creates a new database and then enters into interactive mode in which Groonga prompts you to enter commands for operating that database. You can terminate this mode with Ctrl-d.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-1.log
@@ -40,9 +40,9 @@ Form::
 
 DB_PATH specifies the path of a target database. This command fails if the specified database does not exist.
 
-If COMMAND is specified, groonga executes COMMAND and returns the result. Otherwise, groonga starts in interactive mode that reads commands from the standard input and executes them one by one. This tutorial focuses on the interactive mode.
+If COMMAND is specified, Groonga executes COMMAND and returns the result. Otherwise, Groonga starts in interactive mode that reads commands from the standard input and executes them one by one. This tutorial focuses on the interactive mode.
 
-Let's see the status of a groonga process by using a :doc:`/reference/commands/status` command.
+Let's see the status of a Groonga process by using a :doc:`/reference/commands/status` command.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-2.log
@@ -72,7 +72,7 @@ Basic commands
 --------------
 
  :doc:`/reference/commands/status`
-  shows status of a groonga process.
+  shows status of a Groonga process.
  :doc:`/reference/commands/table_list`
   shows a list of tables in a database.
  :doc:`/reference/commands/column_list`
@@ -114,7 +114,7 @@ A :doc:`/reference/commands/select` command can enumerate records in a table.
 
 When only a table name is specified with a `table` parameter, a :doc:`/reference/commands/select` command returns the first (at most) 10 records in the table. [0] in the result shows the number of records in the table. The next array is a list of columns. ["_id","Uint32"] is a column of UInt32, named _id. ["_key","ShortText"] is a column of ShortText, named _key.
 
-The above two columns, _id and _key, are the necessary columns. The _id column stores IDs those are automatically allocated by groonga. The _key column is associated with the primary key. You are not allowed to rename these columns.
+The above two columns, _id and _key, are the necessary columns. The _id column stores IDs those are automatically allocated by Groonga. The _key column is associated with the primary key. You are not allowed to rename these columns.
 
 Create a column
 ---------------
@@ -209,7 +209,7 @@ The `table` parameter specifies the index table and the `name` parameter specifi
 
 .. note::
 
-   You can create a lexicon table and index columns before/during/after loading records. If a target column already has records, groonga creates an inverted index in a static manner. In contrast, if you load records into an already indexed column, groonga updates the inverted index in a dynamic manner.
+   You can create a lexicon table and index columns before/during/after loading records. If a target column already has records, Groonga creates an inverted index in a static manner. In contrast, if you load records into an already indexed column, Groonga updates the inverted index in a dynamic manner.
 
 Full text search
 ----------------
