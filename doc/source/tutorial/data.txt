@@ -15,9 +15,9 @@ Groonga is a full text search engine but also serves as a column-oriented data s
 Overview
 --------
 
-The basic data types of groonga are roughly divided into 5 groups --- boolean type, numeric types, string types, date/time type and longitude/latitude types. The numeric types are further divided according to whether integer or floating point number, signed or unsigned and the number of bits allocated to each integer. The string types are further divided according to the maximum length. The longitude/latitude types are further divided according to the geographic coordinate system. For more details, see :doc:`/reference/types`.
+The basic data types of Groonga are roughly divided into 5 groups --- boolean type, numeric types, string types, date/time type and longitude/latitude types. The numeric types are further divided according to whether integer or floating point number, signed or unsigned and the number of bits allocated to each integer. The string types are further divided according to the maximum length. The longitude/latitude types are further divided according to the geographic coordinate system. For more details, see :doc:`/reference/types`.
 
-In addition, groonga supports reference types and vector types. Reference types are designed for accessing other tables. Vector types are designed for storing a variable number of values in one element.
+In addition, Groonga supports reference types and vector types. Reference types are designed for accessing other tables. Vector types are designed for storing a variable number of values in one element.
 
 First, let's create a table for this tutorial.
 
@@ -82,12 +82,12 @@ The following example creates a ShortText column and updates existing records. T
 Date and time type
 ------------------
 
-The date and time type of groonga is Time. Actually, a Time column stores a date and time as the number of microseconds since the Epoch, 1970-01-01 00:00:00. A Time value can represent a date and time before the Epoch because the actual data type is a signed integer. Note that :doc:`/reference/commands/load` and :doc:`/reference/commands/select` commands use a decimal number to represent a data and time in seconds. The default value is 0.0, which means the Epoch.
+The date and time type of Groonga is Time. Actually, a Time column stores a date and time as the number of microseconds since the Epoch, 1970-01-01 00:00:00. A Time value can represent a date and time before the Epoch because the actual data type is a signed integer. Note that :doc:`/reference/commands/load` and :doc:`/reference/commands/select` commands use a decimal number to represent a data and time in seconds. The default value is 0.0, which means the Epoch.
 
 .. note::
 
    Groonga internally holds the value of Epoch as pair of integer. The first integer represents the value of seconds, on the other hand, the second integer represents the value of micro seconds.
-   So, groonga shows the value of Epoch as floating point. Integral part means the value of seconds, fraction part means the value of micro seconds.
+   So, Groonga shows the value of Epoch as floating point. Integral part means the value of seconds, fraction part means the value of micro seconds.
 
 The following example creates a Time column and updates existing records. The first record has the default value because not updated.
 
@@ -104,7 +104,7 @@ The following example creates a Time column and updates existing records. The fi
 Longitude and latitude types
 ----------------------------
 
-The longitude and latitude types are divided according to the geographic coordinate system. For more details, see :doc:`/reference/types`. To represent a longitude and latitude, groonga uses a string formatted as follows:
+The longitude and latitude types are divided according to the geographic coordinate system. For more details, see :doc:`/reference/types`. To represent a longitude and latitude, Groonga uses a string formatted as follows:
 
 * "longitude x latitude" in milliseconds (e.g.: "128452975x503157902")
 * "longitude x latitude" in degrees (e.g.: "35.6813819x139.7660839")
