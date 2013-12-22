@@ -8,7 +8,7 @@
 Basic operations
 ================
 
-A Groonga package provides a C library (libgroonga) and a command line tool (Groonga). This tutorial explains how to use the command line tool, with which you can create/operate databases, start a server, establish a connection with a server, etc.
+A Groonga package provides a C library (libgroonga) and a command line tool (groonga). This tutorial explains how to use the command line tool, with which you can create/operate databases, start a server, establish a connection with a server, etc.
 
 Create a database
 -----------------
