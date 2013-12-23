@@ -148,7 +148,7 @@ You can write the query that search the records which contains specified keyword
 
 Query for searching the records described above::
 
-  select Articles --match_columns comment.content --query groonga --output_columns "_id, _score, *" 
+  select Articles --match_columns comment.content --query groonga --output_columns "_id, _score, *"
 
 You need to concatenate comment column of Articles table and content column of Comments table with period(.) as --match_columns arguments.
 
@@ -157,7 +157,7 @@ At first, this query execute fulltext search from content of Comments table, the
 
 .. groonga-command
 .. include:: ../example/tutorial/match_columns-nested-index-select.log
-.. select Articles --match_columns comment.content --query groonga --output_columns "_id, _score, *" 
+.. select Articles --match_columns comment.content --query groonga --output_columns "_id, _score, *"
 
 Now, you can search articles which contains specific keywords as a comment.
 
@@ -207,15 +207,15 @@ Here is the sample data.
 
 Query for searching the records described above::
 
-  select Articles2 --match_columns comment.content --query mroonga --output_columns "_id, _score, *" 
-  select Articles2 --match_columns comment.comment.content --query mroonga --output_columns "_id, _score, *" 
+  select Articles2 --match_columns comment.content --query mroonga --output_columns "_id, _score, *"
+  select Articles2 --match_columns comment.comment.content --query mroonga --output_columns "_id, _score, *"
 
 The first query searches 'mroonga' from Comments2 table, the second one searches 'mroonga' from Replies2 and Comment2 table by using reference column index.
 
 .. groonga-command
 .. include:: ../example/tutorial/match_columns-nested-index-select-with-three-relationship.log
-.. select Articles2 --match_columns comment.content --query mroonga --output_columns "_id, _score, *" 
-.. select Articles2 --match_columns comment.comment.content --query mroonga --output_columns "_id, _score, *" 
+.. select Articles2 --match_columns comment.content --query mroonga --output_columns "_id, _score, *"
+.. select Articles2 --match_columns comment.comment.content --query mroonga --output_columns "_id, _score, *"
 
 As a result, the first query matches two article because of Comments2 table has two records which contains 'mroonga' as keyword.
 
