@@ -2586,42 +2586,42 @@ msgstr "Remote access"
 # e8e707dcae6241878372a1fbe18994ec
 #: ../../../source/tutorial/network.txt:13
 msgid ""
-"You can use groonga as a server which allows remote access. Groonga supports "
+"You can use Groonga as a server which allows remote access. Groonga supports "
 "the original protocol (gqtp), the memcached binary protocol and HTTP."
 msgstr ""
-"You can use groonga as a server which allows remote access. Groonga supports "
+"You can use Groonga as a server which allows remote access. Groonga supports "
 "the original protocol (gqtp), the memcached binary protocol and HTTP."
 
 # 4cd0dd5324cc4577b65762a8e9c3d185
 #: ../../../source/tutorial/network.txt:16
-msgid "Groonga query transfer protocol (gqtp)"
-msgstr "Groonga query transfer protocol (gqtp)"
+msgid "Groonga query transfer protocol (GQTP)"
+msgstr "Groonga query transfer protocol (GQTP)"
 
 # 9c22ad9858d24339bf756696db6cd27b
 #: ../../../source/tutorial/network.txt:19
-msgid "How to run a gqtp server"
-msgstr "How to run a gqtp server"
+msgid "How to run a GQTP server"
+msgstr "How to run a GQTP server"
 
 # 6df4ee5a71104044bf27dbf253bdd36a
 #: ../../../source/tutorial/network.txt:21
 msgid ""
-"Groonga has a special protocol, named groonga query transfer ptorotocl "
-"(gqtp), for remote access to a database. The following form shows how to run "
-"groonga as a gqtp server."
+"Groonga has a special protocol, named Groonga query transfer ptorotocl "
+"(GQTP), for remote access to a database. The following form shows how to run "
+"Groonga as a GQTP server."
 msgstr ""
-"Groonga has a special protocol, named groonga query transfer ptorotocl "
-"(gqtp), for remote access to a database. The following form shows how to run "
-"groonga as a gqtp server."
+"Groonga has a special protocol, named Groonga query transfer ptorotocl "
+"(GQTP), for remote access to a database. The following form shows how to run "
+"Groonga as a GQTP server."
 
 # 11fa4debd58640e8aef1c19cf271109e
 #: ../../../source/tutorial/network.txt:27
 msgid ""
-"The `-s` option specifies to run groonga as a server. DB_PATH specifies the "
+"The `-s` option specifies to run Groonga as a server. DB_PATH specifies the "
 "path of the existing database to be hosted. The `-p` option and its "
 "argument, PORT_NUMBER, specify the port number of the server. The default "
 "port number is 10041, which is used when you don't specify PORT_NUMBER."
 msgstr ""
-"The `-s` option specifies to run groonga as a server. DB_PATH specifies the "
+"The `-s` option specifies to run Groonga as a server. DB_PATH specifies the "
 "path of the existing database to be hosted. The `-p` option and its "
 "argument, PORT_NUMBER, specify the port number of the server. The default "
 "port number is 10041, which is used when you don't specify PORT_NUMBER."
@@ -2637,71 +2637,71 @@ msgstr ""
 
 # d1f95c64526a4d8591830f39b3a93f1f
 #: ../../../source/tutorial/network.txt:38
-msgid "How to run a gqtp daemon"
-msgstr "How to run a gqtp daemon"
+msgid "How to run a GQTP daemon"
+msgstr "How to run a GQTP daemon"
 
 # b55dfa62608d4a9981497456460b291f
 #: ../../../source/tutorial/network.txt:40
 msgid ""
-"You can also run a gqtp server as a daemon by using the `-d` option, instead "
+"You can also run a GQTP server as a daemon by using the `-d` option, instead "
 "of the `-s` option."
 msgstr ""
-"You can also run a gqtp server as a daemon by using the `-d` option, instead "
+"You can also run a GQTP server as a daemon by using the `-d` option, instead "
 "of the `-s` option."
 
 # f11b72db2ff7424185465776c5230b6c
 #: ../../../source/tutorial/network.txt:46
 msgid ""
-"A groonga daemon prints its process ID as follows. In this example, the "
+"A Groonga daemon prints its process ID as follows. In this example, the "
 "process ID is 12345. Then, the daemon opens a specified database and accepts "
 "operations to that database."
 msgstr ""
-"A groonga daemon prints its process ID as follows. In this example, the "
+"A Groonga daemon prints its process ID as follows. In this example, the "
 "process ID is 12345. Then, the daemon opens a specified database and accepts "
 "operations to that database."
 
 # 13d82bf3e0dc438a867e53302c29cc8b
 #: ../../../source/tutorial/network.txt:55
-msgid "How to run a gqtp client"
-msgstr "How to run a gqtp client"
+msgid "How to run a GQTP client"
+msgstr "How to run a GQTP client"
 
 # f63a03fbb82c41759bc463bd6c6e8324
 #: ../../../source/tutorial/network.txt:57
-msgid "You can run groonga as a gqtp client as follows:"
-msgstr "You can run groonga as a gqtp client as follows:"
+msgid "You can run Groonga as a GQTP client as follows:"
+msgstr "You can run Groonga as a GQTP client as follows:"
 
 # 7b0289e78ff449e889f7161f5e92e858
 #: ../../../source/tutorial/network.txt:63
 msgid ""
-"This command establishes a connection with a gqtp server and then enters "
+"This command establishes a connection with a GQTP server and then enters "
 "into interactive mode. HOST_NAME_OR_IP_ADDRESS specifies the hostname or the "
-"IP address of the server. If not specified, groonga uses the default "
+"IP address of the server. If not specified, Groonga uses the default "
 "hostname \"localhost\". The `-p` option and its argument, PORT_NUMBER, "
-"specify the port number of the server. If not specified, groonga uses the "
+"specify the port number of the server. If not specified, Groonga uses the "
 "default port number 10041."
 msgstr ""
 
 # 6e9832216e1049e281642be6ec5e292d
 #: ../../../source/tutorial/network.txt:72
 msgid ""
-"In interactive mode, groonga reads commands from the standard input and "
+"In interactive mode, Groonga reads commands from the standard input and "
 "executes them one by one."
 msgstr ""
-"In interactive mode, groonga reads commands from the standard input and "
+"In interactive mode, Groonga reads commands from the standard input and "
 "executes them one by one."
 
 # 6a31d3c240b14ab69239a0d0ed2ace2f
 #: ../../../source/tutorial/network.txt:75
-msgid "How to terminate a gqtp server"
-msgstr "How to terminate a gqtp server"
+msgid "How to terminate a GQTP server"
+msgstr "How to terminate a GQTP server"
 
 # a68da31135e14fa8ae4ad15d4a301986
 #: ../../../source/tutorial/network.txt:77
 msgid ""
-"You can terminate a gqtp server with a :doc:`/reference/commands/shutdown` "
+"You can terminate a GQTP server with a :doc:`/reference/commands/shutdown` "
 "command."
 msgstr ""
-"You can terminate a gqtp server with a :doc:`/reference/commands/shutdown` "
+"You can terminate a GQTP server with a :doc:`/reference/commands/shutdown` "
 "command."
 
 # be704078840241639953791bac8a9796
@@ -2713,10 +2713,10 @@ msgstr "Memcached binary protocol"
 #: ../../../source/tutorial/network.txt:88
 msgid ""
 "Groonga supports the memcached binary protocol. The following form shows how "
-"to run groonga as a memcached binary protocol server daemon."
+"to run Groonga as a memcached binary protocol server daemon."
 msgstr ""
 "Groonga supports the memcached binary protocol. The following form shows how "
-"to run groonga as a memcached binary protocol server daemon."
+"to run Groonga as a memcached binary protocol server daemon."
 
 # f5c52799b90d457a8d01790760536beb
 #: ../../../source/tutorial/network.txt:94
@@ -2741,10 +2741,10 @@ msgstr "How to run an HTTP server"
 #: ../../../source/tutorial/network.txt:102
 msgid ""
 "Groonga supports the hypertext transfer protocol (HTTP). The following form "
-"shows how to run groonga as an HTTP server daemon."
+"shows how to run Groonga as an HTTP server daemon."
 msgstr ""
 "Groonga supports the hypertext transfer protocol (HTTP). The following form "
-"shows how to run groonga as an HTTP server daemon."
+"shows how to run Groonga as an HTTP server daemon."
 
 # 847fcced5ca444739568e1a4af937921
 #: ../../../source/tutorial/network.txt:108
@@ -2799,13 +2799,13 @@ msgstr "Administration tool (HTTP)"
 # 2f2ee28b4cb84b23919c441dc56c8b6b
 #: ../../../source/tutorial/network.txt:141
 msgid ""
-"An HTTP server of groonga provides a browser based administration tool that "
+"An HTTP server of Groonga provides a browser based administration tool that "
 "makes database management easy. After starting an HTTP server, you can use "
 "the administration tool by accessing http://HOST_NAME_OR_IP_ADDRESS[:"
 "PORT_NUMBER]/. Note that Javascript must be enabled for the tool to work "
 "properly."
 msgstr ""
-"An HTTP server of groonga provides a browser based administration tool that "
+"An HTTP server of Groonga provides a browser based administration tool that "
 "makes database management easy. After starting an HTTP server, you can use "
 "the administration tool by accessing http://HOST_NAME_OR_IP_ADDRESS[:"
 "PORT_NUMBER]/. Note that Javascript must be enabled for the tool to work "
@@ -2820,13 +2820,13 @@ msgstr "Security issues"
 #: ../../../source/tutorial/network.txt:146
 msgid ""
 "Groonga servers don't support user authentication. Everyone can view and "
-"modify databases hosted by groonga servers. You are recommended to restrict "
-"IP addresses that can access groonga servers. You can use iptables or "
+"modify databases hosted by Groonga servers. You are recommended to restrict "
+"IP addresses that can access Groonga servers. You can use iptables or "
 "similar for this purpose."
 msgstr ""
 "Groonga servers don't support user authentication. Everyone can view and "
-"modify databases hosted by groonga servers. You are recommended to restrict "
-"IP addresses that can access groonga servers. You can use iptables or "
+"modify databases hosted by Groonga servers. You are recommended to restrict "
+"IP addresses that can access Groonga servers. You can use iptables or "
 "similar for this purpose."
 
 # 19c095bd11054dbb9197ac9deaf9b908
