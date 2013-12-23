@@ -130,7 +130,7 @@ The following example shows how to send commands to an HTTP server.
 .. .. http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/d/status
 .. .. Executed command:
 .. status
-.. .. 
+.. ..
 .. .. http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/d/select?table=Site&query=title:@this
 .. .. Executed command:
 .. select --table Site --query title:@this
