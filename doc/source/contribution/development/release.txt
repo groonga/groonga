@@ -62,7 +62,7 @@ Groongaプロジェクトでは署名用の鍵をリリース担当者の公開�
     uid                  groonga Key (groonga Official Signing Key)
     <packages@groonga.org>
     sub   1024R/BC009774 2012-04-24
-    
+
 鍵をインポートしただけでは使用することができないため、インポートした鍵に対してtrust,signを行う必要があります。
 
 以下のコマンドを実行して署名を行います。(途中の選択肢は省略)::
@@ -72,7 +72,7 @@ Groongaプロジェクトでは署名用の鍵をリリース担当者の公開�
     gpg> sign
     gpg> save
     gpg> quit
-    
+
 この作業は、新規にリリースを行うことになった担当者やパッケージに署名する鍵に変更があった場合などに行います。
 
 リリース作業用ディレクトリの作成
@@ -154,7 +154,7 @@ Makefileを生成するためにconfigureスクリプトを実行します。
 
 リリース用にビルドするためには以下のオプションを指定してconfigureを実行します。::
 
-    % ./configure CFLAGS="-O0 -ggdb3" CXXFLAGS="-O0 -ggdb3" --prefix=/tmp/local --with-rsync-path="packages@packages.groonga.org:public" --with-groonga-github-com-path=$HOME/work/groonga/groonga.github.com --enable-document --with-ruby19 --with-cutter-source-path=$HOME/work/cutter/cutter 
+    % ./configure CFLAGS="-O0 -ggdb3" CXXFLAGS="-O0 -ggdb3" --prefix=/tmp/local --with-rsync-path="packages@packages.groonga.org:public" --with-groonga-github-com-path=$HOME/work/groonga/groonga.github.com --enable-document --with-ruby19 --with-cutter-source-path=$HOME/work/cutter/cutter
 
 configureオプションである--with-groonga-github-com-pathにはGroongaのウェブサイトのリポジトリをcloneした場所を指定します。
 
@@ -162,7 +162,7 @@ configureオプションである--with-cutter-source-pathにはcutterのソー�
 
 以下のようにGroongaのソースコードをcloneした先からの相対パスを指定することもできます。::
 
-    % ./configure CFLAGS="-O0 -ggdb3" CXXFLAGS="-O0 -ggdb3" --prefix=/tmp/local --with-rsync-path="packages@packages.groonga.org:public" --with-groonga-github-com-path=../groonga.github.com --enable-document --with-ruby19 --with-cutter-source-path=../../cutter/cutter 
+    % ./configure CFLAGS="-O0 -ggdb3" CXXFLAGS="-O0 -ggdb3" --prefix=/tmp/local --with-rsync-path="packages@packages.groonga.org:public" --with-groonga-github-com-path=../groonga.github.com --enable-document --with-ruby19 --with-cutter-source-path=../../cutter/cutter
 
 あらかじめpackagesユーザでpackages.groonga.orgにsshログインできることを確認しておいてください。
 
@@ -411,7 +411,7 @@ grntestではGroongaコマンドを明示的にしていすることができま
 
 最後にgrntestによる実行結果が以下のようにまとめて表示されます。::
 
-    55 tests, 52 passes, 0 failures, 3 not checked tests. 
+    55 tests, 52 passes, 0 failures, 3 not checked tests.
     94.55% passed.
 
 grntestでエラーが発生しないことを確認します。
@@ -543,7 +543,7 @@ jekyllのインストールを行ったら、以下のコマンドでローカ�
     title: Groonga 2.0.5 has been released
     published: false
     ---
-    
+
 
 ドキュメントのアップロード
 ------------------------------------------------------------
