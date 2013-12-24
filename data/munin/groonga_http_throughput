@@ -13,7 +13,8 @@ end
 label = ENV["label"]
 @groonga = ENV["groonga"] || "groonga"
 @host = ENV["host"] || "localhost"
-@port = ENV["port"] || 10041
+@port = ENV["port"] || 10043
+@protocol = ENV["protocol"] || "http"
 
 command = ARGV.shift
 
@@ -36,9 +37,27 @@ def parse(success, result)
 end
 
 def run(command, *args)
-  groonga = "#{@groonga} -p #{@port} -c #{@host}"
-  result = `#{groonga} #{command} #{args.join(' ')} 2>&1`
-  parse($?.success?, result)
+  if @protocol == "http"
+    require "net/http"
+    begin
+      response = Net::HTTP.start(@host, @port) do |http|
+        http.get("/d/status.json")
+      end
+      if response.is_a?(Net::HTTPSuccess)
+        parse(true, response.body)
+      else
+        parse(false, "#{response.code}: #{response.body}")
+      end
+    rescue Exception
+      message = "#{$!.class}: #{$!.message}\n"
+      message <<  $@.join("\n")
+      parse(false, message)
+    end
+  else
+    groonga = "#{@groonga} -p #{@port} -c #{@host}"
+    result = `#{groonga} #{command} #{args.join(' ')} 2>&1`
+    parse($?.success?, result)
+  end
 end
 
 def parse_list(header, list)
@@ -63,18 +82,18 @@ when "autoconf", "detect"
   end
 when "config"
   if label.nil?
-    title = "groonga: status"
+    title = "groonga: throughput"
   else
-    title = "groonga: #{label}: status"
+    title = "groonga: #{label}: throughput"
   end
   puts <<EOF
 graph_title #{title}
-graph_vlabel status
+graph_vlabel queries per ${graph_period}
 graph_category groonga
-graph_info groonga status
+graph_info groonga throughput
 
-alloc_count.label alloc count
-alloc_count.type GAUGE
+n_queries.label N queries
+n_queries.type COUNTER
 EOF
   exit(true)
 end
@@ -85,5 +104,5 @@ unless success
   exit(false)
 end
 puts <<EOF
-alloc_count.value #{body["alloc_count"]}
+n_queries.value #{body["n_queries"]}
 EOF

@@ -1,0 +1,57 @@
+#!/usr/bin/env ruby
+
+#%# family=auto
+#%# capabilities=autoconf
+
+label = ENV["label"]
+pid_file = ENV["pid_file"]
+
+command = ARGV.shift
+
+case command
+when "autoconf", "detect"
+  if pid_file.nil?
+    puts "no (PID file isn't specified by env.pid_file)"
+    exit(false)
+  elsif File.exist?(pid_file)
+    puts "yes"
+    exit(true)
+  else
+    puts "no (PID file doesn't exist: #{pid_file})"
+    exit(false)
+  end
+when "config"
+  if label
+    title = "groonga: #{label}: CPU time"
+  else
+    title = "groonga: CPU time"
+  end
+  puts <<EOF
+graph_title #{title}
+graph_vlabel CPU time (days)
+graph_category groonga
+graph_info groonga CPU time
+
+cpu_time.label CPU time
+cpu_time.type GAUGE
+EOF
+  exit(true)
+end
+
+groonga_pid = File.read(pid_file).strip
+time = `ps h -o time -p #{groonga_pid}`.chomp
+if /\A(?:(\d+)-)?(\d+):(\d+):(\d+)\z/ =~ time
+  day, hours, minutes, seconds, = $1, $2, $3, $4
+  day = (day || 0).to_i
+  hours = hours.to_i
+  minutes = minutes.to_i
+  seconds = seconds.to_i
+  time_in_seconds = seconds + minutes * 60 + hours * 60 * 60
+  day_in_seconds = 60 * 60 * 24
+  fraction_in_day = time_in_seconds.to_f / day_in_seconds.to_f
+  cpu_time_in_day = day + fraction_in_day
+  puts "cpu_time.value #{cpu_time_in_day}"
+else
+  puts "invalid time format: <#{time}>"
+  exit(false)
+end
