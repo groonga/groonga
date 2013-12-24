@@ -13,7 +13,7 @@ end
 label = ENV["label"]
 @groonga = ENV["groonga"] || "groonga"
 @host = ENV["host"] || "localhost"
-@port = ENV["port"] || 10043
+@port = ENV["port"] || 10041
 @protocol = ENV["protocol"] || "http"
 
 command = ARGV.shift
