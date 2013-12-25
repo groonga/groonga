@@ -28,7 +28,7 @@ msgid ""
 "Groonga supports geolocation search. It uses index for search. It means that "
 "you can search by geolocation fast like fulltext search."
 msgstr ""
-"groongaは位置情報検索をサポートしています。検索にはインデックスを使うので全文"
+"Groongaは位置情報検索をサポートしています。検索にはインデックスを使うので全文"
 "検索と同様に位置情報も高速に検索できます。"
 
 # 6de86dadeb2d49209f6e035211a026b8
@@ -42,8 +42,8 @@ msgid ""
 "Groonga supports only point as data type. Line, surface and so on aren't "
 "supported yet. Here is a feature list:"
 msgstr ""
-"groongaは位置情報データのうち座標データのみサポートしています。線や面などはサ"
-"ポートしています。よってgroongaができることは以下の通りです。"
+"Groongaは位置情報データのうち座標データのみサポートしています。線や面などはサ"
+"ポートしています。よってGroongaができることは以下の通りです。"
 
 # 015337893515489bac205c621b1b3682
 #: ../../../source/geolocation_search.txt:18
@@ -76,7 +76,7 @@ msgstr "指定した座標からの距離が近い順にレコードをソート
 # 10616bad24bc46dfa2a3b55dcd9dd973
 #: ../../../source/geolocation_search.txt:25
 msgid "Here are use cases for groonga's geolocation search:"
-msgstr "以下はgroongaの位置情報検索を利用例です。"
+msgstr "以下はGroongaの位置情報検索を利用例です。"
 
 # cebb6a413d3d4698a7d58f9a31e126e8
 #: ../../../source/geolocation_search.txt:27
@@ -94,7 +94,7 @@ msgstr ""
 # 5b10433ab2f94a22908b374aa81428d9
 #: ../../../source/geolocation_search.txt:31
 msgid "Here are not use cases:"
-msgstr "以下はgroongaではできないことです。"
+msgstr "以下はGroongaではできないことです。"
 
 # 702f4bcb13ba4ea484b83f23812048aa
 #: ../../../source/geolocation_search.txt:33
@@ -102,7 +102,7 @@ msgid ""
 "You search McDonald's in a city. (Groonga doesn't support geolocation search "
 "by a shape except a rectangle and a circle.)"
 msgstr ""
-"市内にあるマクドナルドを検索する。（groongaは四角形と円以外の形状の位置情報検"
+"市内にあるマクドナルドを検索する。（Groongaは四角形と円以外の形状の位置情報検"
 "索をサポートしていません。）"
 
 # fd8ea3e7f68a454eaaaff589f40672bc
@@ -117,7 +117,7 @@ msgstr ""
 # f4d7cab659164b0a96aa573ea80f7ed5
 #: ../../../source/geolocation_search.txt:40
 msgid "The following figures show about groonga's geolocation search features."
-msgstr "以下の図はgroongaの位置情報検索機能を示しています。"
+msgstr "以下の図はGroongaの位置情報検索機能を示しています。"
 
 # e88ed916865340dfb3e65b5fb5f7fe4c
 #: ../../../source/geolocation_search.txt:43
