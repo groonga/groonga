@@ -17,7 +17,6 @@ Improvements
   [Suggested by Hideki Yamane]
 * [deb] Dropped Debian 6.0 (squeeze) support.
 * [deb] Dropped Ubuntu 10.04 (lucid) support.
-* Improved interoperability with mruby.
 * Supported :doc:`/reference/functions/geo_in_rectangle` in the whole world.
 * Supported error report when failed to casting invalid value of geo point type.
 * Exported some macros which is used for accessing pseudo column names.
@@ -28,6 +27,7 @@ Improvements
 * [doc] Updated Travis CI envrinment information. [Patch by cosmo0920]
 * [rpm][fedora] Dropped Fedora 19.
 * [rpm][fedora] Supported Fedora 20.
+* [doc] Updated "Groonga" notation. [Patch by cosmo0920] [GitHub#122, #123, #124, #125, #125, #126, #127, #128, #129, #130, #131, #131, #132, #133, #134]
 
 Fixes
 ^^^^^
