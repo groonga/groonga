@@ -82,6 +82,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/tokenizer_token_trigram.log \
 	$(top_srcdir)/doc/source/example/reference/commands/truncate/truncate.log \
 	$(top_srcdir)/doc/source/example/reference/executables/groonga-httpd.log \
+	$(top_srcdir)/doc/source/example/reference/functions/between/usage_age.log \
+	$(top_srcdir)/doc/source/example/reference/functions/between/usage_value.log \
 	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_distance_ellipsoid.log \
 	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_distance_rectangle_across_equator.log \
 	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_distance_rectangle_across_meridian.log \
@@ -421,6 +423,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/executables/groonga-suggest-learner.txt \
 	$(top_srcdir)/doc/source/reference/executables/groonga.txt \
 	$(top_srcdir)/doc/source/reference/executables.txt \
+	$(top_srcdir)/doc/source/reference/functions/between.txt \
 	$(top_srcdir)/doc/source/reference/functions/edit_distance.txt \
 	$(top_srcdir)/doc/source/reference/functions/geo_distance.txt \
 	$(top_srcdir)/doc/source/reference/functions/geo_in_circle.txt \
@@ -577,6 +580,8 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/tokenize/tokenizer_token_trigram.log \
 	source/example/reference/commands/truncate/truncate.log \
 	source/example/reference/executables/groonga-httpd.log \
+	source/example/reference/functions/between/usage_age.log \
+	source/example/reference/functions/between/usage_value.log \
 	source/example/reference/functions/geo_distance_distance_ellipsoid.log \
 	source/example/reference/functions/geo_distance_distance_rectangle_across_equator.log \
 	source/example/reference/functions/geo_distance_distance_rectangle_across_meridian.log \
@@ -916,6 +921,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/executables/groonga-suggest-learner.txt \
 	source/reference/executables/groonga.txt \
 	source/reference/executables.txt \
+	source/reference/functions/between.txt \
 	source/reference/functions/edit_distance.txt \
 	source/reference/functions/geo_distance.txt \
 	source/reference/functions/geo_in_circle.txt \
@@ -1169,6 +1175,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/executables/groonga-suggest-learner.html \
 	html/reference/executables.html \
 	html/reference/function.html \
+	html/reference/functions/between.html \
 	html/reference/functions/edit_distance.html \
 	html/reference/functions/geo_distance.html \
 	html/reference/functions/geo_in_circle.html \
@@ -1302,6 +1309,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/executables/groonga-suggest-learner.txt \
 	html/_sources/reference/executables/groonga.txt \
 	html/_sources/reference/executables.txt \
+	html/_sources/reference/functions/between.txt \
 	html/_sources/reference/functions/edit_distance.txt \
 	html/_sources/reference/functions/geo_distance.txt \
 	html/_sources/reference/functions/geo_in_circle.txt \
