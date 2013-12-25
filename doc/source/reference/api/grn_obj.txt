@@ -33,7 +33,7 @@ Reference
 
 .. c:function:: grn_bool grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj)
 
-   Check whether groonga built-in object.
+   Check whether Groonga built-in object.
 
    :param ctx: context
    :param obj: target object
