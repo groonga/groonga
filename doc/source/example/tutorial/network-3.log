@@ -14,14 +14,13 @@ Execution example::
   #     "max_command_version": 2, 
   #     "n_queries": 0, 
   #     "cache_hit_rate": 0.0, 
-  #     "version": "3.1.0", 
-  #     "alloc_count": 139, 
+  #     "version": "3.1.1", 
+  #     "alloc_count": 140, 
   #     "command_version": 1, 
-  #     "starttime": 1385359920, 
+  #     "starttime": 1387939627, 
   #     "default_command_version": 1
   #   }
   # ]
-  
   http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/d/select?table=Site&query=title:@this
   Executed command:
   select --table Site --query title:@this
