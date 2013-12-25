@@ -61,7 +61,7 @@ Reference
 
    初期化された :c:type:`grn_ctx` オブジェクトを返します。
 
-   :c:func:`grn_ctx_init()` で初期化された :c:type:`grn_ctx` オブジェクトは構造体の実体をAPIの呼び元で確保するのに対して、 :c:func:`grn_ctx_open()` ではgroongaライブラリの内部で、実体を確保します。
+   :c:func:`grn_ctx_init()` で初期化された :c:type:`grn_ctx` オブジェクトは構造体の実体をAPIの呼び元で確保するのに対して、 :c:func:`grn_ctx_open()` ではGroongaライブラリの内部で、実体を確保します。
    どちらで初期化された :c:type:`grn_ctx` も、 :c:func:`grn_ctx_fin()` で解放できます。
    :c:func:`grn_ctx_open()` で確保した :c:type:`grn_ctx` 構造体に関しては、:c:func:`grn_ctx_fin()` で解放した後に、その :c:type:`grn_ctx` で作成した :c:type:`grn_obj` を :c:func:`grn_obj_close()` によって解放しても問題ありません。
 
