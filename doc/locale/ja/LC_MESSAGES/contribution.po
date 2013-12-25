@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../../source/contribution.txt:6
 msgid "How to contribute to groonga"
-msgstr "groongaへのコントリビュート方法"
+msgstr "Groongaへのコントリビュート方法"
 
 #: ../../../source/contribution.txt:8
 msgid ""
@@ -29,9 +29,9 @@ msgid ""
 "Coding and documentation are also welcome for groonga and its related "
 "projects."
 msgstr ""
-"groongaプロジェクトではみなさんからのコントリビュートを歓迎します！コントリ"
-"ビュートの方法はいくつもあります。groongaを使ったり誰かに紹介することもコント"
-"リビュートですし、バグレポートを送ったり、groonga本体やgroonga関連の開発に参"
+"Groongaプロジェクトではみなさんからのコントリビュートを歓迎します！コントリ"
+"ビュートの方法はいくつもあります。Groongaを使ったり誰かに紹介することもコント"
+"リビュートですし、バグレポートを送ったり、Groonga本体やGroonga関連の開発に参"
 "加することもコントリビュートです。プログラムではなく、ドキュメントでのコント"
 "リビュートも歓迎します！"
 
@@ -51,7 +51,7 @@ msgstr "布教する立場で:"
 
 #: ../../../source/contribution.txt:17
 msgid "Please introduce groonga to your friends and colleagues."
-msgstr "groongaについてまわりの人に話してください。"
+msgstr "Groongaについてまわりの人に話してください。"
 
 # 2d16a62eebd34fa68b33b44197342be9
 #: ../../../source/contribution.txt:19
@@ -2050,7 +2050,7 @@ msgid ""
 "There is `the repository of groonga on GitHub <https://github.com/groonga/"
 "groonga>`_. If you want to check-out groonga, type the below command::"
 msgstr ""
-"groongaのリポジトリは `GitHub <https://github.com/groonga/groonga>`_ 上にあり"
+"Groongaのリポジトリは `GitHub <https://github.com/groonga/groonga>`_ 上にあり"
 "ます。次のコマンドでcloneできます。"
 
 # 601f58fb68ef47d49ff13d5cdc1bed26
@@ -2059,7 +2059,7 @@ msgid ""
 "There is `the list of related projects of groonga <https://github.com/"
 "groonga>`_ (grntest, fluent-plugin-groonga and so on)."
 msgstr ""
-"`groonga関係のプロジェクト（grntest, fluent-plugin-groongaなど） <https://"
+"`Groonga関係のプロジェクト（grntest, fluent-plugin-groongaなど） <https://"
 "github.com/groonga>`_ のリストはリンク先をごらんください。"
 
 #: ../../../source/contribution/development/test.txt:6
@@ -2260,7 +2260,7 @@ msgid ""
 "base language and translate English into other languages such as Japanese. "
 "We'll put all documentations into doc/source/ and process them by Sphinx."
 msgstr ""
-"今のところ、groongaには日本語でのドキュメントしかありません。1.2.2からgettext"
+"今のところ、Groongaには日本語でのドキュメントしかありません。1.2.2からgettext"
 "ベースの `Sphinx I18N feature`_ を使ってドキュメントの国際化対応を始めまし"
 "た。この仕組みではベースの言語として英語を使い、日本語などの他の言語には英語"
 "からその言語に翻訳します。すべてのドキュメントはdoc/source/以下において、それ"
@@ -2290,7 +2290,7 @@ msgstr "これが翻訳の流れです:"
 
 #: ../../../source/contribution/documentation/i18n.txt:29
 msgid "Clone groonga repository."
-msgstr "groongaのリポジトリをcloneします。"
+msgstr "Groongaのリポジトリをcloneします。"
 
 #: ../../../source/contribution/documentation/i18n.txt:30
 msgid "Update .po files."
@@ -2314,7 +2314,7 @@ msgstr "翻訳が完了するまで、2.-4.を繰り返します。"
 
 #: ../../../source/contribution/documentation/i18n.txt:35
 msgid "Send your works to us!"
-msgstr "翻訳作業の成果をgroongaプロジェクトに送ってください！"
+msgstr "翻訳作業の成果をGroongaプロジェクトに送ってください！"
 
 #: ../../../source/contribution/documentation/i18n.txt:37
 msgid ""
@@ -2325,7 +2325,7 @@ msgstr ""
 
 #: ../../../source/contribution/documentation/i18n.txt:57
 msgid "How to clone groonga repository"
-msgstr "groongaリポジトリのcloneの仕方"
+msgstr "Groongaリポジトリのcloneの仕方"
 
 #: ../../../source/contribution/documentation/i18n.txt:59
 msgid ""
@@ -2333,9 +2333,9 @@ msgid ""
 "github.com/groonga/groonga and press `Fork` button. Now you can clone your "
 "groonga repository::"
 msgstr ""
-"はじめに、GitHub上のgroongaリポジトリをforkしてください。 https://github.com/"
+"はじめに、GitHub上のGroongaリポジトリをforkしてください。 https://github.com/"
 "groonga/groonga にアクセスして `Fork` ボタンを押すだけです。これで自分の"
-"groongaリポジトリをcloneすることができます。::"
+"Groongaリポジトリをcloneすることができます。::"
 
 #: ../../../source/contribution/documentation/i18n.txt:65
 msgid "Then you need to configure your cloned repository::"
@@ -2498,7 +2498,7 @@ msgid ""
 "those files to us!"
 msgstr ""
 "カレントディレクトリに000X-YYY.patchという名前のファイルができていると思いま"
-"す。これをgroongaプロジェクトに送ってください！"
+"す。これをGroongaプロジェクトに送ってください！"
 
 # e58b1b4fa7e3480395ece1915626b72c
 # d2f54e2851444803a0c147a1d75dea2c
@@ -2518,7 +2518,7 @@ msgid ""
 "extract and merge them to the groonga repository."
 msgstr ""
 "doc/locale/${LANGUAGE}/LC_MESSAGES/以下を.tar.gzや.zipなどでアーカイブにして"
-"groongaプロジェクトに送ってください！（`${LANGUAGE}` は'ja'など自分の言語の言"
+"Groongaプロジェクトに送ってください！（`${LANGUAGE}` は'ja'など自分の言語の言"
 "語コードに置き換えてください。）こちらでアーカイブの中の内容をマージします。"
 
 #: ../../../source/contribution/documentation/i18n.txt:186
@@ -2572,7 +2572,7 @@ msgid ""
 "github.com/groonga/groonga/issues>`_.  Redmine is for Japanese and GitHub "
 "issue tracker is for English. You can use one of them to report a bug."
 msgstr ""
-"groonga用の課題追跡システム（ITS, Issue Tracking System）が2つあります。1つ"
+"Groonga用の課題追跡システム（ITS, Issue Tracking System）が2つあります。1つ"
 "は `Redmine <http://redmine.groonga.org/projects/groonga/issues>`_ でもう1つ"
 "は `GitHub issue tracker <https://github.com/groonga/groonga/issues>`_ です。"
 "Redmineは日本語で、GitHub issue trackerは英語を使っています。どちらにバグレ"
@@ -2584,5 +2584,5 @@ msgid ""
 "Groonga project has :doc:`/community` for discussing about groonga. Please "
 "send a mail that describes a bug."
 msgstr ""
-"groongaプロジェクトではgroongaについて議論するための :doc:`/community` があり"
+"GroongaプロジェクトではGroongaについて議論するための :doc:`/community` があり"
 "ます。バグを説明したメールを送ってください。"
