@@ -1,0 +1,104 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+.. groonga-command
+.. database: between
+
+between
+=======
+
+Summary
+-------
+
+``between`` is used for checking the specified value exists in the specific range.
+It is often used for combination with :ref:`search-condition-filter` option in :doc:`/reference/commands/select`.
+
+Syntax
+------
+
+``between`` has five parameters::
+
+  between(column_or_value, min, min_border, max, max_border)
+
+
+Usage
+-----
+
+Here are a schema definition and sample data to show usage.
+
+.. groonga-command
+.. table_create Users TABLE_HASH_KEY ShortText
+.. column_create Users age COLUMN_SCALAR Int32
+.. table_create Ages TABLE_HASH_KEY Int32
+.. column_create Ages user_age COLUMN_INDEX Users age
+.. load --table Users
+.. [
+.. {"_key": "Alice",  "age": 12},
+.. {"_key": "Bob",    "age": 13},
+.. {"_key": "Calros", "age": 15},
+.. {"_key": "Dave",   "age": 16},
+.. {"_key": "Eric",   "age": 20}
+.. {"_key": "Frank",  "age": 21}
+.. ]
+
+Here is the query to show the persons to match PG-13 rating (MPAA).
+
+.. groonga-command
+.. include:: ../../example/reference/functions/between/usage_age.log
+.. select Users --filter 'between(age, 13, "include", 16, "include")'
+
+It returns 13, 14, 15 and 16 years old users.
+
+``between`` function accepts not only a column of table, but also the value.
+
+If you specify the value as 1st parameter, it is checked whether the value is included or not. if it matches to the specified range, it returns the all records because ``between`` function returns true.
+
+If it doesn't match to the specified range, it returns no records because ``between`` function returns false.
+
+.. groonga-command
+.. include:: ../../example/reference/functions/between/usage_value.log
+.. select Users --filter 'between(14, 13, "include", 16, "include")'
+
+In the above case, it returns all the records, because 14 exists in between 13 and 16.
+This behavior is used for checking the specified value exists or not in the table.
+
+Parameters
+----------
+
+There are five required parameters, ``column_or_value``, and ``min``, ``min_border``, ``max`` and ``max_border``.
+
+``column_or_value``
+^^^^^^^^^^^^^^^^^^^
+
+It specifies a column of the table or the value.
+
+``min``
+^^^^^^^^^^^^^^^^^^^
+
+It specifies the minimal border value of the range.
+You can control the behavior that the value of ``max`` is included or excluded by ``max_border`` parameter.
+
+``min_border``
+^^^^^^^^^^^^^^^^^^^
+
+It specifies whether the specified range contains the value of ``min`` or not.
+The value of ``min_border`` are either "include" or "exclude". If it is "include", ``min`` value is included. If it is "exclude", ``min`` value is not included.
+
+``max``
+^^^^^^^^^^^^^^^^^^^
+
+It specifies the maximum border value of the range.
+You can control the behavior that the value of ``max`` is included or excluded by ``max_border`` parameter.
+
+``max_border``
+^^^^^^^^^^^^^^^^^^^
+
+It specifies whether the specified range contains the value of ``max`` or not.
+The value of ``max_border`` are either "include" or "exclude". If it is "include", ``max`` value is included. If it is "exclude", ``max`` value is not included.
+
+Return value
+------------
+
+``between`` returns whether the value of column exists in specified the value of range or not. If record is matched to specified the value of range, it returns true. Otherwise, it returns false.
+
