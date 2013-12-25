@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-17 13:02+0900\n"
-"PO-Revision-Date: 2013-12-22 09:38+0900\n"
+"POT-Creation-Date: 2013-12-25 13:38+0900\n"
+"PO-Revision-Date: 2013-12-25 14:40+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -537,30 +537,57 @@ msgstr ""
 msgid "Drilldown"
 msgstr ""
 
-# 4079a1e36549437992d1ba1ead900c34
+# e4be3e797d66460194469445f0757e92
 #: ../../../source/tutorial/drilldown.txt:13
 msgid ""
-"There is a case that you want to know summary of search result. For example, "
-"it is the case that searching the number of records which belongs to "
-"specific category. Selecting a category at first, then investigate further "
-"in detail is a reasonable way."
+"You learned how to filter search results and sort ones in the previous "
+"sections. Now that you can search as you likes, but how do you summarize the "
+"number of records which has specific value in the column?"
+msgstr ""
+
+# c4c4674f7e9646a99d3a4f9809b72bcc
+#: ../../../source/tutorial/drilldown.txt:16
+msgid ""
+"As you know, there is a naive solution to execute query by every the value "
+"of column, then you can get the number of records as a result. It is a "
+"simple way, but it is not reasonable to many records."
+msgstr ""
+
+# fd548b47c83744adaafa164ab33b149b
+#: ../../../source/tutorial/drilldown.txt:18
+msgid ""
+"If you are familiar with SQL, you will doubt with \"Is there a similar SQL "
+"functionality to ``GROUP BY`` in Groonga?\"."
 msgstr ""
 
 # 771501ad646e4f0ebe46e5d311b3d457
-#: ../../../source/tutorial/drilldown.txt:17
+#: ../../../source/tutorial/drilldown.txt:20
 msgid ""
-"To achive such a purpose, Groonga provides the feature which groups search "
-"results by the value of specific column. In Groonga, this feature is called "
+"Of course, Groonga provides such a functionality. It's called as "
 "``drilldown``."
 msgstr ""
 
+# 2dc2cadcc84b471bb61ee734b87d6ac0
+#: ../../../source/tutorial/drilldown.txt:22
+msgid ""
+"``drilldown`` enables you to get the number of records which belongs to "
+"specific the value of column at once."
+msgstr ""
+
+# d0136df415b8495685cdcde9eadba238
+#: ../../../source/tutorial/drilldown.txt:24
+msgid ""
+"To illustrate this feature, imagine the case that classification by domain "
+"and grouping by country that domain belongs to."
+msgstr ""
+
 # 88500b4b3afd4fa594e13fc8135659e5
-#: ../../../source/tutorial/drilldown.txt:20
+#: ../../../source/tutorial/drilldown.txt:26
 msgid "Here is the concrete examples how to use this feature."
 msgstr ""
 
 # b0df99484331467f8aa0f66d9a81f070
-#: ../../../source/tutorial/drilldown.txt:22
+#: ../../../source/tutorial/drilldown.txt:28
 msgid ""
 "In this example, we add two columns to ``Site`` table. ``domain`` column is "
 "used for TLD (top level domain). ``country`` column is used for country "
@@ -570,103 +597,103 @@ msgid ""
 msgstr ""
 
 # a94d699ee5d246ae963acd1eb7bc41a9
-#: ../../../source/tutorial/drilldown.txt:43
+#: ../../../source/tutorial/drilldown.txt:49
 msgid ""
 "Here is a example of drilldown with ``domain`` column. Three kind of values "
 "are used in ``domain`` column - \".org\", \".net\" and \".com\"."
 msgstr ""
 
 # 1ae3f40faa4443fca912062abb456176
-#: ../../../source/tutorial/drilldown.txt:50
+#: ../../../source/tutorial/drilldown.txt:56
 msgid "Here is a summary of above query."
 msgstr ""
 
 # 2e3d24845e4849209726622e140a897a
-#: ../../../source/tutorial/drilldown.txt:55
+#: ../../../source/tutorial/drilldown.txt:61
 msgid "Group by"
 msgstr ""
 
 # 081480ab27214e2eb743fe6848a58cef
-#: ../../../source/tutorial/drilldown.txt:56
+#: ../../../source/tutorial/drilldown.txt:62
 msgid "The number of group records"
 msgstr ""
 
 # 93c84c5ac45b4737a992960ec7b6c8d4
-#: ../../../source/tutorial/drilldown.txt:57
+#: ../../../source/tutorial/drilldown.txt:63
 msgid "Group records means following records"
 msgstr ""
 
 # 1fb756b46a39495eb2fe8267790b2062
-#: ../../../source/tutorial/drilldown.txt:58
+#: ../../../source/tutorial/drilldown.txt:64
 msgid ".org"
 msgstr ""
 
 # 9313f04b20ea43f99e1b36fd5c4de57f
 # 7e9df24a485c4fd4a77485f1d927be7e
 # d5e4417425504db186b99dfe2f6cd34b
-#: ../../../source/tutorial/drilldown.txt:59
-#: ../../../source/tutorial/drilldown.txt:64
-#: ../../../source/tutorial/drilldown.txt:69
+#: ../../../source/tutorial/drilldown.txt:65
+#: ../../../source/tutorial/drilldown.txt:70
+#: ../../../source/tutorial/drilldown.txt:75
 msgid "3"
 msgstr ""
 
 # 5b843932416848f583b1f352cc6744af
-#: ../../../source/tutorial/drilldown.txt:60
+#: ../../../source/tutorial/drilldown.txt:66
 msgid "http://example.org/"
 msgstr ""
 
 # e459bcc8f5be4d39ab268376f10fe882
-#: ../../../source/tutorial/drilldown.txt:61
+#: ../../../source/tutorial/drilldown.txt:67
 msgid "http://example.org/aba"
 msgstr ""
 
 # 2039664ca808484992b730d5d1505603
-#: ../../../source/tutorial/drilldown.txt:62
+#: ../../../source/tutorial/drilldown.txt:68
 msgid "http://example.org/gat"
 msgstr ""
 
 # 0de96a61b6cb4420a9f62ed00d89fb9d
-#: ../../../source/tutorial/drilldown.txt:63
+#: ../../../source/tutorial/drilldown.txt:69
 msgid ".net"
 msgstr ""
 
 # 7f4e28543aa14072924503670ae87198
-#: ../../../source/tutorial/drilldown.txt:65
+#: ../../../source/tutorial/drilldown.txt:71
 msgid "http://example.net/"
 msgstr ""
 
 # 8b65b6bf70e944bd9d335494629221c6
-#: ../../../source/tutorial/drilldown.txt:66
+#: ../../../source/tutorial/drilldown.txt:72
 msgid "http://example.net/afr"
 msgstr ""
 
 # a3ecbeac2ba74bdfb2c7ae408dbefc5c
-#: ../../../source/tutorial/drilldown.txt:67
+#: ../../../source/tutorial/drilldown.txt:73
 msgid "http://example.net/atv"
 msgstr ""
 
 # 58bb17e73cf24be3b68c6a388a9df983
-#: ../../../source/tutorial/drilldown.txt:68
+#: ../../../source/tutorial/drilldown.txt:74
 msgid ".com"
 msgstr ""
 
 # 4df5378f28294808bfddc8b977ee6dde
-#: ../../../source/tutorial/drilldown.txt:70
+#: ../../../source/tutorial/drilldown.txt:76
 msgid "http://example.com/"
 msgstr ""
 
 # cb7b34a30f3c4837bf05c7c7934a48ca
-#: ../../../source/tutorial/drilldown.txt:71
+#: ../../../source/tutorial/drilldown.txt:77
 msgid "http://example.com/rab"
 msgstr ""
 
 # 8ae22b46c9d44e2ea402dc4c7278ddb3
-#: ../../../source/tutorial/drilldown.txt:72
+#: ../../../source/tutorial/drilldown.txt:78
 msgid "http://example.com/vdw"
 msgstr ""
 
 # eb0c1708c5be4f58a71a394a65b01c0d
-#: ../../../source/tutorial/drilldown.txt:75
+#: ../../../source/tutorial/drilldown.txt:81
 msgid ""
 "The value of drilldown are returned as the value of ``_nsubrecs`` column. In "
 "this case, ``Site`` table is grouped by \".org\", \".net\", \".com\" domain. "
@@ -674,7 +701,7 @@ msgid ""
 msgstr ""
 
 # 8669eed164924aa28a1cd7ab1d07128d
-#: ../../../source/tutorial/drilldown.txt:77
+#: ../../../source/tutorial/drilldown.txt:83
 msgid ""
 "If you execute drildown to the column which has table as a type, you can get "
 "the value of column which is stored in referenced table. ``_nsubrecs`` "
@@ -683,7 +710,7 @@ msgid ""
 msgstr ""
 
 # 3a19b81d6b7644d398ab689ddc8affc4
-#: ../../../source/tutorial/drilldown.txt:80
+#: ../../../source/tutorial/drilldown.txt:86
 msgid ""
 "Then, investigate referenced table in detail. As ``Site`` table use "
 "``SiteDomain`` table as column type of ``domain``, you can use ``--"
@@ -691,19 +718,19 @@ msgid ""
 msgstr ""
 
 # b0ae08e9993943a3964dd68a52d4d2f7
-#: ../../../source/tutorial/drilldown.txt:86
+#: ../../../source/tutorial/drilldown.txt:92
 msgid ""
 "Now, you can see detail of each grouped domain, drilldown by ``country`` "
 "column which has \".org\" as column value."
 msgstr ""
 
 # 6842fe705d5a4cf99d1017c242e5d305
-#: ../../../source/tutorial/drilldown.txt:93
+#: ../../../source/tutorial/drilldown.txt:99
 msgid "Drilldown with multiple column"
 msgstr ""
 
 # 8afe6d4f78614cd8829b04bf11ce5151
-#: ../../../source/tutorial/drilldown.txt:95
+#: ../../../source/tutorial/drilldown.txt:101
 msgid ""
 "Drilldown feature supports multiple column. Use comma separated multiple "
 "column names as ``drildown`` parameter. You can get the each result of "
@@ -711,24 +738,24 @@ msgid ""
 msgstr ""
 
 # f97dd651d840431cb03fe8eebc4268b3
-#: ../../../source/tutorial/drilldown.txt:104
+#: ../../../source/tutorial/drilldown.txt:110
 msgid "Sorting drildown results"
 msgstr ""
 
 # 2dc2cadcc84b471bb61ee734b87d6ac0
-#: ../../../source/tutorial/drilldown.txt:106
+#: ../../../source/tutorial/drilldown.txt:112
 msgid ""
 "Use ``--drilldown_sortby`` if you want to sort the result of drilldown. For "
-"example, specify ``_nsubrecs`` as descending order."
+"example, specify ``_nsubrecs`` as ascending order."
 msgstr ""
 
 # 47fc5d9538c74eb2bd7f78a9b0b0f624
-#: ../../../source/tutorial/drilldown.txt:114
+#: ../../../source/tutorial/drilldown.txt:120
 msgid "limits drildown results"
 msgstr ""
 
 # a694f44741144d6ca59991606e0e4545
-#: ../../../source/tutorial/drilldown.txt:116
+#: ../../../source/tutorial/drilldown.txt:122
 msgid ""
 "The number of drilldown results is limited to 10 as a default. Use "
 "``drilldown_limits`` and ``drilldown_offset`` parameter to customize "
@@ -736,7 +763,7 @@ msgid ""
 msgstr ""
 
 # 33e92b42f72e434aa1b5a4061132ffa7
-#: ../../../source/tutorial/drilldown.txt:122
+#: ../../../source/tutorial/drilldown.txt:128
 msgid ""
 "文字列型のカラムに対するドリルダウンは、他の型でのドリルダウンに比べて低速で"
 "す。文字列でのドリルダウンを行いたい場合には、このチュートリアルのように、文"
@@ -1014,15 +1041,11 @@ msgstr ""
 # 205032e86a44456983e595bf8bde1730
 #: ../../../source/tutorial/introduction.txt:43
 msgid ""
-"If COMMAND is specified, groonga executes COMMAND and returns the result. "
-"Otherwise, Groonga starts in interactive mode that reads commands from the "
-"standard input and executes them one by one. This tutorial focuses on the "
-"interactive mode."
-msgstr ""
 "If COMMAND is specified, Groonga executes COMMAND and returns the result. "
 "Otherwise, Groonga starts in interactive mode that reads commands from the "
 "standard input and executes them one by one. This tutorial focuses on the "
 "interactive mode."
+msgstr ""
 
 # b19b32246f6d4807b1082363e719fb84
 #: ../../../source/tutorial/introduction.txt:45
@@ -1474,12 +1497,8 @@ msgid ""
 "You can create a lexicon table and index columns before/during/after loading "
 "records. If a target column already has records, Groonga creates an inverted "
 "index in a static manner. In contrast, if you load records into an already "
-"indexed column, groonga updates the inverted index in a dynamic manner."
-msgstr ""
-"You can create a lexicon table and index columns before/during/after loading "
-"records. If a target column already has records, Groonga creates an inverted "
-"index in a static manner. In contrast, if you load records into an already "
 "indexed column, Groonga updates the inverted index in a dynamic manner."
+msgstr ""
 
 # aa38fedf0441417abb938d6c1a978ea3
 #: ../../../source/tutorial/introduction.txt:215
@@ -2587,15 +2606,13 @@ msgstr "Remote access"
 #: ../../../source/tutorial/network.txt:13
 msgid ""
 "You can use Groonga as a server which allows remote access. Groonga supports "
-"the original protocol (gqtp), the memcached binary protocol and HTTP."
+"the original protocol (GQTP), the memcached binary protocol and HTTP."
 msgstr ""
-"You can use Groonga as a server which allows remote access. Groonga supports "
-"the original protocol (gqtp), the memcached binary protocol and HTTP."
 
 # 4cd0dd5324cc4577b65762a8e9c3d185
 #: ../../../source/tutorial/network.txt:16
-msgid "Groonga query transfer protocol (GQTP)"
-msgstr "Groonga query transfer protocol (GQTP)"
+msgid "Groonga Query Transfer Protocol (GQTP)"
+msgstr ""
 
 # 9c22ad9858d24339bf756696db6cd27b
 #: ../../../source/tutorial/network.txt:19
@@ -2605,13 +2622,10 @@ msgstr "How to run a GQTP server"
 # 6df4ee5a71104044bf27dbf253bdd36a
 #: ../../../source/tutorial/network.txt:21
 msgid ""
-"Groonga has a special protocol, named Groonga query transfer ptorotocl "
+"Groonga has a special protocol, named Groonga Query Transfer Protocol "
 "(GQTP), for remote access to a database. The following form shows how to run "
 "Groonga as a GQTP server."
 msgstr ""
-"Groonga has a special protocol, named Groonga query transfer ptorotocl "
-"(GQTP), for remote access to a database. The following form shows how to run "
-"Groonga as a GQTP server."
 
 # 11fa4debd58640e8aef1c19cf271109e
 #: ../../../source/tutorial/network.txt:27
@@ -2792,12 +2806,12 @@ msgid "The following example shows how to send commands to an HTTP server."
 msgstr "The following example shows how to send commands to an HTTP server."
 
 # a7fb2ffee5e5469282e014642d6afe47
-#: ../../../source/tutorial/network.txt:139
+#: ../../../source/tutorial/network.txt:138
 msgid "Administration tool (HTTP)"
 msgstr "Administration tool (HTTP)"
 
 # 2f2ee28b4cb84b23919c441dc56c8b6b
-#: ../../../source/tutorial/network.txt:141
+#: ../../../source/tutorial/network.txt:140
 msgid ""
 "An HTTP server of Groonga provides a browser based administration tool that "
 "makes database management easy. After starting an HTTP server, you can use "
@@ -2812,12 +2826,12 @@ msgstr ""
 "properly."
 
 # bd5e8710909c499e939bbd91f69df7f5
-#: ../../../source/tutorial/network.txt:144
+#: ../../../source/tutorial/network.txt:143
 msgid "Security issues"
 msgstr "Security issues"
 
 # 7e5df68f031342de9342e15396e31672
-#: ../../../source/tutorial/network.txt:146
+#: ../../../source/tutorial/network.txt:145
 msgid ""
 "Groonga servers don't support user authentication. Everyone can view and "
 "modify databases hosted by Groonga servers. You are recommended to restrict "
@@ -2837,13 +2851,10 @@ msgstr "パトリシア木による前方一致検索"
 # f53522af22f34b819a3b77844e7426eb
 #: ../../../source/tutorial/patricia_trie.txt:11
 msgid ""
-"groongaのテーブルは、テーブル作成時にパトリシア木オプションを指定すると、前方"
+"Groongaのテーブルは、テーブル作成時にパトリシア木オプションを指定すると、前方"
 "一致検索を行うことができます。また、追加のオプションを指定することにより、主"
 "キーの後方一致検索をも行うことができます。"
 msgstr ""
-"groongaのテーブルは、テーブル作成時にパトリシア木オプションを指定すると、前方"
-"一致検索を行うことができます。また、追加のオプションを指定することにより、主"
-"キーの後方一致検索をも行うことができます。"
 
 # 3ee45f8cc1ed4fc09f376baa61986d6d
 #: ../../../source/tutorial/patricia_trie.txt:14
@@ -2909,13 +2920,10 @@ msgstr "クエリ拡張"
 # 65708eed06814c8cb4762ebbf2b71099
 #: ../../../source/tutorial/query_expansion.txt:11
 msgid ""
-"groongaでは、 :doc:`/reference/commands/select` コマンドにquery_expanderパラ"
+"Groongaでは、 :doc:`/reference/commands/select` コマンドにquery_expanderパラ"
 "メータを指定することによって、ユーザが指定した検索文字列を適宜拡張することが"
 "可能です。"
 msgstr ""
-"groongaでは、 :doc:`/reference/commands/select` コマンドにquery_expansionパラ"
-"メータを指定することによって、ユーザが指定した検索文字列を適宜拡張することが"
-"可能です。"
 
 # b8e0309c263a484991e40cb94f8d0809
 #: ../../../source/tutorial/query_expansion.txt:13
@@ -3007,13 +3015,10 @@ msgstr "さまざまな検索条件の指定"
 # 1a303cf9bff840b9ab3d0ab20bb2c6e9
 #: ../../../source/tutorial/search.txt:13
 msgid ""
-"groongaは、JavaScriptに似た文法での条件絞込や、計算した値を用いたソートを行う"
+"Groongaは、JavaScriptに似た文法での条件絞込や、計算した値を用いたソートを行う"
 "ことができます。また、位置情報(緯度・経度)を用いた絞込・ソートを行うことがで"
 "きます。"
 msgstr ""
-"groongaは、JavaScriptに似た文法での条件絞込や、計算した値を用いたソートを行う"
-"ことができます。また、位置情報(緯度・経度)を用いた絞込・ソートを行うことがで"
-"きます。"
 
 # 9701ab1aa7f44fbbabe6801d0ae28059
 #: ../../../source/tutorial/search.txt:16
@@ -3149,11 +3154,9 @@ msgstr "位置情報を用いた絞込・ソート"
 # 1ada8a6a3b484091a62a3deae5ba4eb5
 #: ../../../source/tutorial/search.txt:72
 msgid ""
-"groongaでは、位置情報（経緯度）を保存することができます。また、保存した経緯度"
+"Groongaでは、位置情報（経緯度）を保存することができます。また、保存した経緯度"
 "を用いて絞込やソートができます。"
 msgstr ""
-"groongaでは、位置情報（経緯度）を保存することができます。また、保存した経緯度"
-"を用いて絞込やソートができます。"
 
 # 60449647b0de4d23ad66c118aa9220c8
 #: ../../../source/tutorial/search.txt:74
@@ -3280,33 +3283,33 @@ msgstr ""
 "また、経緯度が指定の矩形領域内であるかどうかを判定する :doc:`/reference/"
 "functions/geo_in_rectangle` 関数も存在します。"
 
-# faf75afb9d2d4278b0fe34153d965f84
-#~ msgid "ドリルダウン"
-#~ msgstr "ドリルダウン"
-
-# cccf703ed3d6459ab98048a20c592a3a
+# 25f37a574a2d4d898923c16c0f455744
 #~ msgid ""
-#~ "groongaでは、特定のカラム値で検索結果をグループ化することができます。これ"
-#~ "をドリルダウンと呼びます。"
+#~ "ドリルダウン結果は、デフォルトでは10件のみ表示されます。drilldown_offsetパ"
+#~ "ラメータと、drilldown_limitパラメータによって、offsetとlimitを指定すること"
+#~ "ができます。"
 #~ msgstr ""
-#~ "groongaでは、特定のカラム値で検索結果をグループ化することができます。これ"
-#~ "をドリルダウンと呼びます。"
+#~ "ドリルダウン結果は、デフォルトでは10件のみ表示されます。drilldown_offsetパ"
+#~ "ラメータと、drilldown_limitパラメータによって、offsetとlimitを指定すること"
+#~ "ができます。"
 
-# 1b2ea7399ccc4aabbe5c2af93017b3e1
+# a7a846c92175442eb500190c29944a45
 #~ msgid ""
-#~ "Siteテーブルに２つのカラムを追加します。TLDドメイン名を格納するdomainカラ"
-#~ "ムと、国名を格納するcountryカラムです。これらのカラムの型は、それぞれドメ"
-#~ "イン名を主キーとするSiteDomainテーブルと、国名を主キーとするSiteCountry"
-#~ "テーブルとします。"
+#~ "ドリルダウン結果を並びかえることができます。例えば、_nsubrecsパラメータの"
+#~ "降順で並び替えることができます。"
 #~ msgstr ""
-#~ "Siteテーブルに２つのカラムを追加します。TLDドメイン名を格納するdomainカラ"
-#~ "ムと、国名を格納するcountryカラムです。これらのカラムの型は、それぞれドメ"
-#~ "イン名を主キーとするSiteDomainテーブルと、国名を主キーとするSiteCountry"
-#~ "テーブルとします。"
+#~ "ドリルダウン結果を並びかえることができます。例えば、_nsubrecsパラメータの"
+#~ "降順で並び替えることができます。"
 
-# 2c2d5ec457c74758a33ad52580fdb5fa
-#~ msgid "domainカラムとcountryカラムでドリルダウンを行う例を以下に示します。"
-#~ msgstr "domainカラムとcountryカラムでドリルダウンを行う例を以下に示します。"
+# b660b9c2e6c1443ea88f6bdff9b35a08
+#~ msgid ""
+#~ "複数のカラムに対してドリルダウンを行うことができます。複数のカラムに対して"
+#~ "ドリルダウンを行う場合には、drilldownパラメータにカラム名をカンマ区切りで"
+#~ "与えます。"
+#~ msgstr ""
+#~ "複数のカラムに対してドリルダウンを行うことができます。複数のカラムに対して"
+#~ "ドリルダウンを行う場合には、drilldownパラメータにカラム名をカンマ区切りで"
+#~ "与えます。"
 
 # 5e29383a15644677954b77ef47777067
 #~ msgid ""
@@ -3320,30 +3323,30 @@ msgstr ""
 #~ "は、_nsubrecsという仮想的なカラムが追加されます。このカラムには、グループ"
 #~ "化されたレコード数が入ります。"
 
-# b660b9c2e6c1443ea88f6bdff9b35a08
-#~ msgid ""
-#~ "複数のカラムに対してドリルダウンを行うことができます。複数のカラムに対して"
-#~ "ドリルダウンを行う場合には、drilldownパラメータにカラム名をカンマ区切りで"
-#~ "与えます。"
-#~ msgstr ""
-#~ "複数のカラムに対してドリルダウンを行うことができます。複数のカラムに対して"
-#~ "ドリルダウンを行う場合には、drilldownパラメータにカラム名をカンマ区切りで"
-#~ "与えます。"
+# 2c2d5ec457c74758a33ad52580fdb5fa
+#~ msgid "domainカラムとcountryカラムでドリルダウンを行う例を以下に示します。"
+#~ msgstr "domainカラムとcountryカラムでドリルダウンを行う例を以下に示します。"
 
-# a7a846c92175442eb500190c29944a45
+# 1b2ea7399ccc4aabbe5c2af93017b3e1
 #~ msgid ""
-#~ "ドリルダウン結果を並びかえることができます。例えば、_nsubrecsパラメータの"
-#~ "降順で並び替えることができます。"
+#~ "Siteテーブルに２つのカラムを追加します。TLDドメイン名を格納するdomainカラ"
+#~ "ムと、国名を格納するcountryカラムです。これらのカラムの型は、それぞれドメ"
+#~ "イン名を主キーとするSiteDomainテーブルと、国名を主キーとするSiteCountry"
+#~ "テーブルとします。"
 #~ msgstr ""
-#~ "ドリルダウン結果を並びかえることができます。例えば、_nsubrecsパラメータの"
-#~ "降順で並び替えることができます。"
+#~ "Siteテーブルに２つのカラムを追加します。TLDドメイン名を格納するdomainカラ"
+#~ "ムと、国名を格納するcountryカラムです。これらのカラムの型は、それぞれドメ"
+#~ "イン名を主キーとするSiteDomainテーブルと、国名を主キーとするSiteCountry"
+#~ "テーブルとします。"
 
-# 25f37a574a2d4d898923c16c0f455744
+# cccf703ed3d6459ab98048a20c592a3a
 #~ msgid ""
-#~ "ドリルダウン結果は、デフォルトでは10件のみ表示されます。drilldown_offsetパ"
-#~ "ラメータと、drilldown_limitパラメータによって、offsetとlimitを指定すること"
-#~ "ができます。"
+#~ "groongaでは、特定のカラム値で検索結果をグループ化することができます。これ"
+#~ "をドリルダウンと呼びます。"
 #~ msgstr ""
-#~ "ドリルダウン結果は、デフォルトでは10件のみ表示されます。drilldown_offsetパ"
-#~ "ラメータと、drilldown_limitパラメータによって、offsetとlimitを指定すること"
-#~ "ができます。"
+#~ "groongaでは、特定のカラム値で検索結果をグループ化することができます。これ"
+#~ "をドリルダウンと呼びます。"
+
+# faf75afb9d2d4278b0fe34153d965f84
+#~ msgid "ドリルダウン"
+#~ msgstr "ドリルダウン"

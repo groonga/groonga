@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-30 11:09+0900\n"
-"PO-Revision-Date: 2012-07-23 17:58+0900\n"
+"POT-Creation-Date: 2013-12-25 13:38+0900\n"
+"PO-Revision-Date: 2013-12-25 14:38+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -80,8 +80,8 @@ msgstr "groonga 通信アーキテクチャ"
 
 # 9af85985293b422895b04fa918ea0c41
 #: ../../../source/contribution/development/com.txt:7
-msgid "gqtpでのアーキテクチャ"
-msgstr "gqtpでのアーキテクチャ"
+msgid "GQTPでのアーキテクチャ"
+msgstr ""
 
 # 9ea163f2925c4d278bbd15f9b484dca9
 #: ../../../source/contribution/development/com.txt:9
