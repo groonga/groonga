@@ -228,7 +228,7 @@ msgid ""
 "Groonga can be used as a fulltext search library. This section describes "
 "APIs that are provided by groonga."
 msgstr ""
-"groongaを全文検索ライブラリとして使うことができます。この節ではgroongaが提供"
+"Groongaを全文検索ライブラリとして使うことができます。この節ではGroongaが提供"
 "しているAPIを示します。"
 
 # 2c056c1209e44cd9b8d361393df4db4f
@@ -3204,7 +3204,7 @@ msgid ""
 "Command is the most important processing unit in query API. You request a "
 "processing to groonga by a command."
 msgstr ""
-"コマンドはクエリーAPIでもっとも重要な処理単位です。コマンドでgroongaに処理を"
+"コマンドはクエリーAPIでもっとも重要な処理単位です。コマンドでGroongaに処理を"
 "リクエストします。"
 
 # 760446ef50754013ae7ccded10368cb0
@@ -3606,8 +3606,8 @@ msgid ""
 "``LOCATION_IN_GROONGA`` is an array. ``LOCATION_IN_GROONGA`` has three "
 "elements::"
 msgstr ""
-"``LOCATION_IN_GROONGA`` はgroonga内でエラーが発生したソースコードの場所です。"
-"この情報はgroonga開発者には役に立ちますが、ユーザーの役には立ちません。 "
+"``LOCATION_IN_GROONGA`` はGroonga内でエラーが発生したソースコードの場所です。"
+"この情報はGroonga開発者には役に立ちますが、ユーザーの役には立ちません。 "
 "``LOCATION_IN_GROONGA`` は配列です。 ``LOCATION_IN_GROONGA`` には3個の要素が"
 "あります::"
 
@@ -3622,7 +3622,7 @@ msgid ""
 "``SOURCE_FILE_NAME`` is the name of groonga's source file that error is "
 "occurred."
 msgstr ""
-"``SOURCE_FILE_NAME`` はエラーが発生した箇所を含んだgroongaのソースコードの"
+"``SOURCE_FILE_NAME`` はエラーが発生した箇所を含んだGroongaのソースコードの"
 "ファイル名です。"
 
 # 69e92361b1154ef9bd5197d80a572487
@@ -5339,7 +5339,7 @@ msgid ""
 "Reserved. Compress the value of column by using zlib. This flag is disabled "
 "feature even if you build groonga with ``--with-zlib``."
 msgstr ""
-"予約済み。zlibを使ってカラムの値を圧縮します。このフラグはgroongaを ``--with-"
+"予約済み。zlibを使ってカラムの値を圧縮します。このフラグはGroongaを ``--with-"
 "zlib`` つきでビルドしても使えません。"
 
 # 96f39751140b4fdc84c4fd79e29335b3
@@ -5353,7 +5353,7 @@ msgid ""
 "Reserved. Compress the value of column by using lzo. This flag is disabled "
 "feature even if you build groonga with ``--with-lzo``."
 msgstr ""
-"予約済み。lzoを使ってカラムの値を圧縮します。このフラグはgroongaを ``--with-"
+"予約済み。lzoを使ってカラムの値を圧縮します。このフラグはGroongaを ``--with-"
 "lzo`` つきでビルドしても使えません。"
 
 # afdb31ce94c04731ad99c315676f743d
@@ -9198,11 +9198,11 @@ msgstr ""
 msgid ""
 "If your records aren't searched by key, ``TABLE_NO_KEY`` type table is "
 "suitable. Because ``TABLE_NO_KEY`` doesn't support key but it is fast and "
-"small table. Storing logs into groonga database is the case."
+"small table. Storing logs into Groonga database is the case."
 msgstr ""
 "キーでレコードを検索しないのであれば、 ``TABLE_NO_KEY`` 型のテーブルが適切で"
 "す。なぜなら、 ``TABLE_NO_KEY`` はキーをサポートしていませんが、速くて小さい"
-"サイズのテーブルだからです。ログをgroongaのデータベースに保存するという使い方"
+"サイズのテーブルだからです。ログをGroongaのデータベースに保存するという使い方"
 "はこのケースです。"
 
 # 3ea1c7974adf4235b10b25c3690c161a
@@ -9576,10 +9576,10 @@ msgstr ""
 # eb6c6fb7c63145418521eafda5bb6b63
 #: ../../../source/reference/commands/table_create.txt:201
 msgid ""
-"Since groonga 2.1.0 ``KEY_NORMALIZE`` flag is deprecated. Use ``normalizer`` "
+"Since Groonga 2.1.0 ``KEY_NORMALIZE`` flag is deprecated. Use ``normalizer`` "
 "option with ``NormalizerAuto`` instead."
 msgstr ""
-"groonga 2.1.0から ``KEY_NORMALIZE`` フラグは非推奨になりました。代わりに、 "
+"Groonga 2.1.0から ``KEY_NORMALIZE`` フラグは非推奨になりました。代わりに、 "
 "``normalizer`` オプションに ``NormalizerAuto`` を指定してください。"
 
 # e40b5e47c7f642799da5f4abccaeced1
