@@ -25,8 +25,22 @@ Syntax
 Usage
 -----
 
-Here are a schema definition and sample data to show usage.
+Here are a schema definition and sample data to show usage.::
 
+  table_create Users TABLE_HASH_KEY ShortText
+  column_create Users age COLUMN_SCALAR Int32
+  table_create Ages TABLE_HASH_KEY Int32
+  column_create Ages user_age COLUMN_INDEX Users age
+  load --table Users
+  [
+  {"_key": "Alice",  "age": 12},
+  {"_key": "Bob",    "age": 13},
+  {"_key": "Calros", "age": 15},
+  {"_key": "Dave",   "age": 16},
+  {"_key": "Eric",   "age": 20}
+  {"_key": "Frank",  "age": 21}
+  ]
+ 
 .. groonga-command
 .. table_create Users TABLE_HASH_KEY ShortText
 .. column_create Users age COLUMN_SCALAR Int32
