@@ -14,7 +14,7 @@ end
 label = ENV["label"]
 @groonga = ENV["groonga"] || "groonga"
 @host = ENV["host"] || "localhost"
-@port = ENV["port"] || 10043
+@port = ENV["port"] || 10041
 @path = ENV["path"]
 @exclude_tables = (ENV["exclude_tables"] || "").split(/\s*,\s*/)
 
