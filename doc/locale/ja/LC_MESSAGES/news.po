@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-21 18:12+0900\n"
-"PO-Revision-Date: 2013-11-25 16:26+0900\n"
+"POT-Creation-Date: 2013-12-25 14:46+0900\n"
+"PO-Revision-Date: 2013-12-25 15:24+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -22,9 +22,8 @@ msgid "News"
 msgstr "お知らせ"
 
 #: ../../../source/news.txt:11
-#, fuzzy
 msgid "Release 3.1.1 - 2013/12/29"
-msgstr "3.1.0リリース - 2013/11/29"
+msgstr "3.1.1リリース - 2013/12/29"
 
 #: ../../../source/news.txt:14 ../../../source/news.txt:53
 #: ../../../source/news.txt:94 ../../../source/news.txt:148
@@ -55,72 +54,67 @@ msgstr "改良"
 msgid ""
 "[deb] Refined Groonga packages for Debian policy. [groonga-dev,01930] "
 "[Suggested by Hideki Yamane]"
-msgstr ""
+msgstr "[deb] Debianのパッケージングポリシーに準拠するようにしました。[groonga-dev,01930] [やまねさんが提案]"
 
 #: ../../../source/news.txt:18
-#, fuzzy
 msgid "[deb] Dropped Debian 6.0 (squeeze) support."
-msgstr "Ubuntu 11.10 (Oneiric Ocelot)のサポートをやめました。"
+msgstr "[deb] Debian 6.0 (squeeze)のサポートをやめました。"
 
 #: ../../../source/news.txt:19
-#, fuzzy
 msgid "[deb] Dropped Ubuntu 10.04 (lucid) support."
-msgstr "Ubuntu 11.10 (Oneiric Ocelot)のサポートをやめました。"
-
-# ce04d49016204e9a966d54bc65b3af19
-#: ../../../source/news.txt:20
-msgid "Improved interoperability with mruby."
-msgstr ""
+msgstr "[deb] Ubuntu 10.04 (Lucid)のサポートをやめました。"
 
 # 56df60af25a9482c8301b23d03385886
-#: ../../../source/news.txt:21
-#, fuzzy
+#: ../../../source/news.txt:20
 msgid ""
-"Supported :doc:/reference/functions/geo_in_rectangle in the whole world."
-msgstr ":doc:`/reference/functions/geo_distance` ()内での型変換をサポート。"
+"Supported :doc:`/reference/functions/geo_in_rectangle` in the whole world."
+msgstr ":doc:`/reference/functions/geo_in_rectangle` が全世界をサポートしました。"
 
 # 7aea24b8b1014e8ba7567a17473d83ed
-#: ../../../source/news.txt:22
-#, fuzzy
+#: ../../../source/news.txt:21
 msgid ""
 "Supported error report when failed to casting invalid value of geo point "
 "type."
-msgstr "[load] カラムの値が設定できなかった時のエラーレポートをサポート。"
+msgstr "GeoPoint型の値のキャストに失敗したときにエラーを報告するようになりました。"
 
 # 9f4b2807dc494e20b863ee1d1daef706
-#: ../../../source/news.txt:23
+#: ../../../source/news.txt:22
 msgid ""
 "Exported some macros which is used for accessing pseudo column names. "
 "[groonga-dev,1999] [Suggested by whombx]"
-msgstr ""
+msgstr "疑似カラム名でアクセスするためにいくつかのマクロを公開するようにしました。[groonga-dev,01999] [whombxさんが提案]"
 
 # de7541cc9b8f4cd69ec4578ebadc284c
-#: ../../../source/news.txt:25
-#, fuzzy
+#: ../../../source/news.txt:24
 msgid "[doc] Refined drilldown documentation. [Reported by @Yahppo]"
-msgstr "インストールのドキュメントの誤字を修正。 [hinoさんが報告]"
+msgstr "[doc] ドリルダウンのドキュメントを整理しました。[@Yappoさんが報告]"
 
-# 57ef177e43ce43ed9c96cb8eb0c45205
-#: ../../../source/news.txt:26
+# ef63348e0b7a4e97a3c058b3e1bdfaa5
+#: ../../../source/news.txt:25
 msgid ""
-"Supported :doc:/reference/functions/between function which is used for "
+"Supported :doc:`/reference/functions/between` function which is used for "
 "filtering the column value in specific range."
-msgstr ""
+msgstr "特定の範囲にあるカラムの値をフィルタリングするのに使う :doc:`/reference/functions/between` 関数をサポートしました。"
 
 # ab4f90548b1d41c88632b77ef3e081af
-#: ../../../source/news.txt:28
+#: ../../../source/news.txt:27
 msgid "[doc] Updated Travis CI envrinment information. [Patch by cosmo0920]"
-msgstr ""
+msgstr "[doc] Travis CIの環境情報を更新しました。[cosmo0920さんがパッチ提供]"
+
+#: ../../../source/news.txt:28
+msgid "[rpm][fedora] Dropped Fedora 19."
+msgstr "[rpm][fedora] Fedora 19のサポートをやめました。"
 
 #: ../../../source/news.txt:29
-#, fuzzy
-msgid "[rpm][fedora] Dropped Fedora 19."
-msgstr "[rpm][fedora] Fedora 19をサポート。"
-
-#: ../../../source/news.txt:30
-#, fuzzy
 msgid "[rpm][fedora] Supported Fedora 20."
-msgstr "[rpm][fedora] Fedora 19をサポート。"
+msgstr "[rpm][fedora] Fedora 20をサポートしました。"
+
+# ba31585d66e34b73aeedbd3ca589ae76
+#: ../../../source/news.txt:30
+msgid ""
+"[doc] Updated \"Groonga\" notation. [Patch by cosmo0920] [GitHub#122, #123, "
+"#124, #125, #125, #126, #127, #128, #129, #130, #131, #131, #132, #133, #134]"
+msgstr "[doc] \\\"Groonga\\\" 表記に更新しました。[cosmo0920さんがパッチ提供] [GitHub#122, #123, #124, #125, #125, #126, #127, #128, #129, #130, #131, #131, #132, #133, #134]"
 
 #: ../../../source/news.txt:33 ../../../source/news.txt:64
 #: ../../../source/news.txt:114 ../../../source/news.txt:171
@@ -145,14 +139,15 @@ msgstr "修正"
 # 44168a5adbbf413597b8975e468a8a8e
 #: ../../../source/news.txt:35
 msgid "[munin] Fixed the wrong port number which is specified for GQTP."
-msgstr ""
+msgstr "[munin] GQTPのポート番号の誤りを修正しました。"
 
-# ea4adfb663cc46debcb6a4cf689afe74
+# 3ef18d6718ab4eeda2cb57e47ce48674
 #: ../../../source/news.txt:36
 msgid ""
 "[geo_in_circle] Fixed a bug that if you specify \"LONGITUDExLATITUDE\" as "
-"the 3rd argument of :doc:/reference/functions/geo_in_circle, Groonga crashes."
-msgstr ""
+"the 3rd argument of :doc:`/reference/functions/geo_in_circle`, Groonga "
+"crashes."
+msgstr "[geo_in_circle] \\\"LONGITUDExLATITUDE\\\" を :doc:`/reference/functions/geo_in_circle` の3番目の引数に与えたときにGroongaがクラッシュする問題を修正しました。"
 
 #: ../../../source/news.txt:40 ../../../source/news.txt:81
 #: ../../../source/news.txt:135 ../../../source/news.txt:176
@@ -175,7 +170,7 @@ msgstr "感謝"
 # 9eecb218645342249a1dbba0a300057a
 #: ../../../source/news.txt:42
 msgid "Hideki Yamane"
-msgstr ""
+msgstr "やまねひできさん"
 
 # 61aa1ce2d28b44ef8cb660e832e4e605
 #: ../../../source/news.txt:43 ../../../source/news.txt:237
@@ -185,12 +180,12 @@ msgstr "whombxさん"
 # 43d19305e5054cab9f70173370b4d278
 #: ../../../source/news.txt:44
 msgid "@Yappo"
-msgstr ""
+msgstr "@Yappoさん"
 
 # 752f1efe040f4504b131ccd9b8e9d2ae
 #: ../../../source/news.txt:45
 msgid "cosmo0920"
-msgstr ""
+msgstr "cosmo0920さん"
 
 #: ../../../source/news.txt:50
 msgid "Release 3.1.0 - 2013/11/29"
@@ -225,7 +220,7 @@ msgstr "AIOサポートを打ち切りました。[#2054] [sho MINAGAWAさんが
 msgid ""
 "[windows] Supported build with Visual Studio Express 2008. [#1964 the 21th "
 "comment] It is aimed to promote bundling Mroonga with MariaDB in the future."
-msgstr ""
+msgstr "[windows] Visual Studio Express 2008でのビルドをサポートしました。[#1964 21番目のコメント参照] 将来的にMariaDBへのバンドルを推進することを目的としています。"
 
 # 523d7c5900ab4a50b85a9b64aada4964
 #: ../../../source/news.txt:66
@@ -1320,9 +1315,9 @@ msgid ""
 "Supported query expander in ``query()`` function. This change supports the "
 "query such as ``query(\"MATCH_COLUMNS\", \"QUERY\", \"QueryExpanderTSV\")``."
 msgstr ""
-"``query()`` 関数でクエリ展開をサポートしました。この変更で "
-"``query(\"MATCH_COLUMNS\", \"QUERY\",\"QueryExpanderTSV\")`` といったクエリが"
-"書けるようになりました。"
+"``query()`` 関数でクエリ展開をサポートしました。この変更で ``query"
+"(\"MATCH_COLUMNS\", \"QUERY\",\"QueryExpanderTSV\")`` といったクエリが書ける"
+"ようになりました。"
 
 # 9ee8feeeb75e445c86cdb3d4245b4408
 #: ../../../source/news.txt:417
@@ -1564,9 +1559,9 @@ msgstr ""
 # c4efc6097f634a7e96f2d9042629fb42
 #: ../../../source/news.txt:518
 msgid ""
-"Added ``grn_default_logger_set_path()`` and "
-"``grn_default_logger_get_path()`` API. Note that global ``grn_log_path`` "
-"variable was removed. Use above API."
+"Added ``grn_default_logger_set_path()`` and ``grn_default_logger_get_path()"
+"`` API. Note that global ``grn_log_path`` variable was removed. Use above "
+"API."
 msgstr ""
 "``grn_default_logger_set_path()`` と ``grn_default_logger_get_path()`` APIを"
 "追加しました。グローバル変数としての ``grn_log_path`` は削除しました。上記変"
@@ -5073,8 +5068,8 @@ msgstr "suggest: suggestコマンドにprefix_searchパラメータを追加。"
 
 #: ../../../source/news/1.2.x.txt:304
 msgid ""
-"plugin: Added grn_plugin_get_system_plugins_dir() and "
-"grn_plugin_get_suffix() API."
+"plugin: Added grn_plugin_get_system_plugins_dir() and grn_plugin_get_suffix"
+"() API."
 msgstr ""
 "plugin: grn_plugin_get_system_plugins_dir()とgrn_plugin_get_suffix() APIを追"
 "加。"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-23 20:10+0900\n"
+"POT-Creation-Date: 2013-12-25 14:46+0900\n"
 "PO-Revision-Date: 2013-12-23 20:30+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -2574,12 +2574,12 @@ msgstr ""
 msgid "The following example shows how to send commands to an HTTP server."
 msgstr "以下の例は、HTTPサーバに対するコマンドの送り方を示しています。"
 
-#: ../../../source/tutorial/network.txt:139
+#: ../../../source/tutorial/network.txt:138
 msgid "Administration tool (HTTP)"
 msgstr "ブラウザベースの管理ツール"
 
 # f27356d1aceb4888a30743f0dd1c0b44
-#: ../../../source/tutorial/network.txt:141
+#: ../../../source/tutorial/network.txt:140
 msgid ""
 "An HTTP server of Groonga provides a browser based administration tool that "
 "makes database management easy. After starting an HTTP server, you can use "
@@ -2593,11 +2593,11 @@ msgstr ""
 "クセスしてください。管理ツールの使用には、JavaScriptの実行が有効になっている"
 "必要があります。"
 
-#: ../../../source/tutorial/network.txt:144
+#: ../../../source/tutorial/network.txt:143
 msgid "Security issues"
 msgstr "セキュリティ"
 
-#: ../../../source/tutorial/network.txt:146
+#: ../../../source/tutorial/network.txt:145
 msgid ""
 "Groonga servers don't support user authentication. Everyone can view and "
 "modify databases hosted by Groonga servers. You are recommended to restrict "
@@ -2612,9 +2612,10 @@ msgstr ""
 msgid "パトリシア木による前方一致検索"
 msgstr ""
 
+# 3b3a554340fe481a98a412939a7303e6
 #: ../../../source/tutorial/patricia_trie.txt:11
 msgid ""
-"groongaのテーブルは、テーブル作成時にパトリシア木オプションを指定すると、前方"
+"Groongaのテーブルは、テーブル作成時にパトリシア木オプションを指定すると、前方"
 "一致検索を行うことができます。また、追加のオプションを指定することにより、主"
 "キーの後方一致検索をも行うことができます。"
 msgstr ""
@@ -2661,10 +2662,10 @@ msgstr ""
 msgid "クエリ拡張"
 msgstr ""
 
-# 18b2fbdadae64ddfaa82e07dd9a012e6
+# ccae6c61a65342c299970982ae742600
 #: ../../../source/tutorial/query_expansion.txt:11
 msgid ""
-"groongaでは、 :doc:`/reference/commands/select` コマンドにquery_expanderパラ"
+"Groongaでは、 :doc:`/reference/commands/select` コマンドにquery_expanderパラ"
 "メータを指定することによって、ユーザが指定した検索文字列を適宜拡張することが"
 "可能です。"
 msgstr ""
@@ -2732,9 +2733,10 @@ msgstr ""
 msgid "さまざまな検索条件の指定"
 msgstr ""
 
+# f28086c0af904f88b3827c4a4d953260
 #: ../../../source/tutorial/search.txt:13
 msgid ""
-"groongaは、JavaScriptに似た文法での条件絞込や、計算した値を用いたソートを行う"
+"Groongaは、JavaScriptに似た文法での条件絞込や、計算した値を用いたソートを行う"
 "ことができます。また、位置情報(緯度・経度)を用いた絞込・ソートを行うことがで"
 "きます。"
 msgstr ""
@@ -2833,9 +2835,10 @@ msgstr ""
 msgid "位置情報を用いた絞込・ソート"
 msgstr ""
 
+# 5f03f717e3c5431abc010e22ef49cbfc
 #: ../../../source/tutorial/search.txt:72
 msgid ""
-"groongaでは、位置情報（経緯度）を保存することができます。また、保存した経緯度"
+"Groongaでは、位置情報（経緯度）を保存することができます。また、保存した経緯度"
 "を用いて絞込やソートができます。"
 msgstr ""
 
