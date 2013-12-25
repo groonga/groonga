@@ -29,9 +29,9 @@ msgid ""
 "of building groonga by yourself. But don't warry. There is a document about "
 "building groonga from source."
 msgstr ""
-"このセクションではgroongaのインストール方法を環境毎に説明します。主要なプラッ"
-"トフォームにはパッケージがあります。自分でgroongaをビルドするよりもパッケージ"
-"を使うことを推奨します。しかし、心配しないでください。ソースからgroongaをビル"
+"このセクションではGroongaのインストール方法を環境毎に説明します。主要なプラッ"
+"トフォームにはパッケージがあります。自分でGroongaをビルドするよりもパッケージ"
+"を使うことを推奨します。しかし、心配しないでください。ソースからGroongaをビル"
 "ドするためのドキュメントもあります。"
 
 # 7d41debddc034e78b134ebb1d89a18ed
@@ -61,7 +61,7 @@ msgid ""
 "This section describes how to install groonga related RPM packages on "
 "CentOS. You can install them by ``yum``."
 msgstr ""
-"このセクションではCentOS上でgroonga関連のPRMパッケージをインストールする方法"
+"このセクションではCentOS上でGroonga関連のPRMパッケージをインストールする方法"
 "を説明します。これらのパッケージは ``yum`` でインストールできます。"
 
 # 58b6907be3844735a2195ce4b225cd1f
@@ -174,7 +174,7 @@ msgid ""
 "munin-plugins package."
 msgstr ""
 "`Munin <http://munin-monitoring.org/>`_ プラグインを提供するパッケージもあり"
-"ます。Muninでgroongaの状態をモニターしたい場合は、groonga-munin-pluginsパッ"
+"ます。MuninでGroongaの状態をモニターしたい場合は、groonga-munin-pluginsパッ"
 "ケージをインストールしてください。"
 
 # 7b4911420849402a9fced72df9b2422f
@@ -244,7 +244,7 @@ msgid ""
 "plugins. If you want to use that one, install groonga-normalizer-mysql "
 "package."
 msgstr ""
-"MySQL互換のノーマライザーをgroongaのプラグインとして提供するパッケージがあり"
+"MySQL互換のノーマライザーをGroongaのプラグインとして提供するパッケージがあり"
 "ます。MySQL互換のノーマライザーを使うには ``groonga-normalizer-mysql`` パッ"
 "ケージをインストールしてください。"
 
@@ -313,7 +313,7 @@ msgstr "ソースからビルド"
 #: ../../../source/install/solaris.txt:14
 #: ../../../source/install/ubuntu.txt:203
 msgid "Install required packages to build groonga::"
-msgstr "groongaをビルドするために必要なパッケージをインストールします::"
+msgstr "Groongaをビルドするために必要なパッケージをインストールします::"
 
 # 181b7dfdc0a24f31ab8dd8c163a635c3
 # 4f2f49c3b9b64224b35f57a636b99aae
@@ -369,7 +369,7 @@ msgid ""
 "This section describes how to install groonga related deb packages on Debian "
 "GNU/Linux. You can install them by ``apt``."
 msgstr ""
-"このセクションではDebian GNU/Linux上でgroonga関連のdebパッケージをインストー"
+"このセクションではDebian GNU/Linux上でGroonga関連のdebパッケージをインストー"
 "ルする方法を説明します。これらのパッケージは ``apt`` でインストールできます。"
 
 # 0ffb077c4da54f15a5de1ea3b6b2195b
@@ -389,7 +389,7 @@ msgstr ""
 #: ../../../source/install/ubuntu.txt:29 ../../../source/install/ubuntu.txt:76
 #: ../../../source/install/ubuntu.txt:123
 msgid "Add the groonga apt repository."
-msgstr "groongaのaptリポジトリを追加します。"
+msgstr "Groongaのaptリポジトリを追加します。"
 
 #: ../../../source/install/debian.txt:24 ../../../source/install/debian.txt:64
 #: ../../../source/install/debian.txt:104
@@ -419,7 +419,7 @@ msgid ""
 "This section describes how to install groonga related RPM packages on "
 "Fedora. You can install them by ``yum``."
 msgstr ""
-"このセクションではFedora上でgroonga関連のRPMパッケージをインストールする方法"
+"このセクションではFedora上でGroonga関連のRPMパッケージをインストールする方法"
 "を説明します。これらのパッケージは ``yum`` でインストールできます。"
 
 # 30c2793738b3406bb9228f186dcfd437
@@ -433,10 +433,10 @@ msgid ""
 "But we will also plan to release ``groonga-normalizer-mysql`` in the "
 "official Fedora yum repository in the future."
 msgstr ""
-"3.0.2のリリースから、groonga関連のRPMパッケージはFedoraの公式yumリポジトリで"
-"リリースしています。groongaのyumリポジトリのかわりにFedoraの公式リポジトリを"
+"3.0.2のリリースから、Groonga関連のRPMパッケージはFedoraの公式yumリポジトリで"
+"リリースしています。GroongaのyumリポジトリのかわりにFedoraの公式リポジトリを"
 "使います。ただ、いくつか例外があって、 ``groonga-normalizer-mysql`` や MeCab"
-"の辞書 ( ``mecab-ipadic`` や ``mecab-jumandic`` )パッケージを使うにはgroonga"
+"の辞書 ( ``mecab-ipadic`` や ``mecab-jumandic`` )パッケージを使うにはGroonga"
 "のyumリポジトリを使います。将来的には ``groonga-normalizer-mysql`` もFedora公"
 "式のyumリポジトリで提供することを計画しています。"
 
@@ -453,7 +453,7 @@ msgid ""
 "package which provides the groonga yum repository beforehand::"
 msgstr ""
 "``groonga-normalizer-mysql`` や ``mecab-ipadic`` 、 ``mecab-jumandic`` といっ"
-"たパッケージを使うには groongaのyumリポジトリを提供する ``groonga-release`` "
+"たパッケージを使うには Groongaのyumリポジトリを提供する ``groonga-release`` "
 "パッケージをあらかじめインストールします。"
 
 # 65bbef01a2a14d579cb2264a926d1ab7
@@ -467,7 +467,7 @@ msgid ""
 "groonga by `MacPorts <http://www.macports.org/>`_ or `Homebrew <http://mxcl."
 "github.com/homebrew/>`_."
 msgstr ""
-"このセクションではMac OS X上でgroongaをインストールする方法を説明します。 "
+"このセクションではMac OS X上でGroongaをインストールする方法を説明します。 "
 "`MacPorts <http://www.macports.org/>`_ か `Homebrew <http://mxcl.github.com/"
 "homebrew/>`_ を使ってインストールできます。"
 
@@ -496,7 +496,7 @@ msgid ""
 "This section describes how to install groonga from source on UNIX like "
 "environment."
 msgstr ""
-"このセクションではUNIX系の環境でgroongaをソースコードからインストールする方法"
+"このセクションではUNIX系の環境でGroongaをソースコードからインストールする方法"
 "を説明します。"
 
 # 52f5e08363e14c7bbab62c53c1072725
@@ -521,7 +521,7 @@ msgid ""
 "Groonga doesn't require any special libraries but requires some tools for "
 "build."
 msgstr ""
-"groongaは特別なライブラリを必要としませんが、いくつかビルドに必要なツールがあ"
+"Groongaは特別なライブラリを必要としませんが、いくつかビルドに必要なツールがあ"
 "ります。"
 
 # aa0ffddb2d834edaa440712454dab8d2
@@ -600,7 +600,7 @@ msgstr ""
 #: ../../../source/install/others.txt:44
 msgid "`sudo <http://www.gratisoft.us/sudo/>`_ for installing built groonga"
 msgstr ""
-"`sudo <http://www.gratisoft.us/sudo/>`_ （ビルドしたgroongaをインストールする"
+"`sudo <http://www.gratisoft.us/sudo/>`_ （ビルドしたGroongaをインストールする"
 "ため）"
 
 # a38fd410c105412f89b990031960eb4a
@@ -686,7 +686,7 @@ msgid ""
 "If you want to use those all or some libraries, you need to install them "
 "before installing groonga."
 msgstr ""
-"これらのライブラリを使いたい場合は、groongaをインストールする前にライブラリを"
+"これらのライブラリを使いたい場合は、Groongaをインストールする前にライブラリを"
 "インストールしてください。"
 
 # 23209294975243ce9d564c9986361bd3
@@ -694,7 +694,7 @@ msgstr ""
 msgid ""
 "Groonga uses GNU build system. So the following is the simplest build steps::"
 msgstr ""
-"groongaはGNUビルドシステムを使っています。以下は一番簡単なビルド手順です::"
+"GroongaはGNUビルドシステムを使っています。以下は一番簡単なビルド手順です::"
 
 # 8fa2f56d10904f649ad325bb8fb6dfb7
 #: ../../../source/install/others.txt:84
@@ -711,7 +711,7 @@ msgid ""
 "The default build will work well but you can customize groonga at "
 "``configure`` step."
 msgstr ""
-"デフォルトのビルドでもうまく動くでしょうが、 ``configure`` のときにgroongaを"
+"デフォルトのビルドでもうまく動くでしょうが、 ``configure`` のときにGroongaを"
 "カスタマイズすることができます。"
 
 # 3b3cab4a201c40829b0edb8d2307bc74
@@ -744,7 +744,7 @@ msgid ""
 "Specifies the install base directory. Groonga related files are installed "
 "under ``${PATH}/`` directory."
 msgstr ""
-"インストール先となるディレクトリを指定します。groonga関連のファイルは  ``"
+"インストール先となるディレクトリを指定します。Groonga関連のファイルは  ``"
 "${PATH}/`` ディレクトリ以下にインストールされます。"
 
 # e73b963346834f5ab5ec13168e391364
@@ -762,7 +762,7 @@ msgid ""
 "Here is an example that installs groonga into ``~/local`` for an user use "
 "instead of system wide use::"
 msgstr ""
-"以下はシステム全体にgroongaをインストールするのではなく、ユーザーが個人で使う"
+"以下はシステム全体にGroongaをインストールするのではなく、ユーザーが個人で使う"
 "目的で ``~/local`` にインストールする例です::"
 
 # 8996242d5f9e461fa7c2840d9ce08443
@@ -954,7 +954,7 @@ msgid ""
 "``configure``."
 msgstr ""
 "もし、MessagePackを ``--prefix=$HOME/local`` という ``configure`` オプション"
-"でインストールした場合は、groongaの ``configure`` では ``--with-message-pack="
+"でインストールした場合は、Groongaの ``configure`` では ``--with-message-pack="
 "$HOME/local`` と指定してください。"
 
 # 7acfab88eaf04c9ea99d205ebfb40e61
@@ -982,7 +982,7 @@ msgid ""
 "Installs Munin plugins for groonga. They are installed into ``${PREFIX}/"
 "share/groonga/munin/plugins/``."
 msgstr ""
-"groonga用のMuninプラグインをインストールします。プラグインは ``${PREFIX}/"
+"Groonga用のMuninプラグインをインストールします。プラグインは ``${PREFIX}/"
 "share/groonga/munin/plugins/`` 以下にインストールされます。"
 
 # caf44b2f903748b8991cf84c2c177a9f
@@ -994,7 +994,7 @@ msgstr "デフォルトではプラグインはインストールされません
 # 43e0e10730b24e0f9f2869aab377cfb1
 #: ../../../source/install/others.txt:229
 msgid "Here is an example that installs Munin plugins for groonga::"
-msgstr "以下はgroonga用のMuninプラグインをインストールする例です::"
+msgstr "以下はGroonga用のMuninプラグインをインストールする例です::"
 
 # 5c45044affbf41a8848fe14246583e1f
 #: ../../../source/install/others.txt:234
@@ -1043,7 +1043,7 @@ msgstr ""
 # f6547787aee44f09865d72c73ae7334c
 #: ../../../source/install/others.txt:256
 msgid "``configure`` is succeeded, you can build groonga by ``make``::"
-msgstr "``configure`` が成功したら ``make`` でgroongaをビルドします::"
+msgstr "``configure`` が成功したら ``make`` でGroongaをビルドします::"
 
 # 5ce9a2ae5dc546e98e9be192052b9c57
 #: ../../../source/install/others.txt:260
@@ -1072,7 +1072,7 @@ msgstr ""
 # 8c1d42a847964a629f8ebeff72f93110
 #: ../../../source/install/others.txt:271
 msgid "Now, you can install built groonga!::"
-msgstr "これでビルドしたgroongaをインストールできます！::"
+msgstr "これでビルドしたGroongaをインストールできます！::"
 
 # 714ab1fb1c3240458fa00571dfde7b07
 #: ../../../source/install/others.txt:275
@@ -1095,7 +1095,7 @@ msgid ""
 "want to use groonga for server use, you can install additional preconfigured "
 "packages."
 msgstr ""
-"'groonga'パッケージは全文検索のための最小構成パッケージです。groongaをサー"
+"'groonga'パッケージは全文検索のための最小構成パッケージです。Groongaをサー"
 "バー用途で使うなら、設定済みの追加パッケージをインストールすることができま"
 "す。"
 
@@ -1148,7 +1148,7 @@ msgstr ""
 msgid ""
 "This section describes how to install groonga from source on Oracle Solaris."
 msgstr ""
-"このセクションではOracle Solaris上でgroongaをソースコードからインストールする"
+"このセクションではOracle Solaris上でGroongaをソースコードからインストールする"
 "方法を説明します。"
 
 # c0a60454ab464a85af07ab73c392d9f3
@@ -1178,7 +1178,7 @@ msgid ""
 "This section describes how to install groonga related deb packages on "
 "Ubuntu. You can install them by ``apt``."
 msgstr ""
-"このセクションではUbuntu上でgroonga関連のdebパッケージをインストールする方法"
+"このセクションではUbuntu上でGroonga関連のdebパッケージをインストールする方法"
 "を説明します。これらのパッケージは ``apt`` でインストールできます。"
 
 # e965ab7beab74a84af33efbafac719a1
@@ -1194,7 +1194,7 @@ msgstr ""
 #: ../../../source/install/ubuntu.txt:118
 msgid "Enable the universe repository to install groonga::"
 msgstr ""
-"groongaをインストールするためにuniverseリポジトリを有効にしてください::"
+"Groongaをインストールするためにuniverseリポジトリを有効にしてください::"
 
 # b4dbf30424aa404090cc145aae930f99
 #: ../../../source/install/ubuntu.txt:67
@@ -1401,7 +1401,7 @@ msgid ""
 "build 32-bit version, use ``-G \"Visual Studio 10\"`` parameter instead::"
 msgstr ""
 "``cmake`` でビルドオプションを設定します。以下のコマンドラインは64-bit用の"
-"groongaをビルドするためのものです。32-bit用のgroongaをビルドする場合は代わり"
+"Groongaをビルドするためのものです。32-bit用のGroongaをビルドする場合は代わり"
 "に ``-G \"Visual Studio 10\"`` パラメーターを指定してください::"
 
 # 607b3624ab724f1eb01bfef59b92d8c9
