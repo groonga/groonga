@@ -29,7 +29,7 @@ msgid ""
 "application that uses groonga as its database, a library that uses "
 "libgroonga, language bindings of libgroonga and so on."
 msgstr ""
-"このセクションではgroongaを使った開発について説明します。例えば、groongaを"
+"このセクションではGroongaを使った開発について説明します。例えば、Groongaを"
 "データベースとして使ったアプリケーション、libgroongaを使ったライブラリ、"
 "libgroongaの言語バインディングなどを開発することがあるでしょう。"
 
@@ -45,7 +45,7 @@ msgid ""
 "org/>`_. Travis CI is a hosted continuous integration service for the open "
 "source community."
 msgstr ""
-"このセクションでは `Travis CI <http://travis-ci.org/>`_ 上でgroongaを使う方法"
+"このセクションでは `Travis CI <http://travis-ci.org/>`_ 上でGroongaを使う方法"
 "について説明します。Travis CIはオープンソースコミュニティ用の継続的インテグ"
 "レーション（CI）サービスです。"
 
@@ -57,7 +57,7 @@ msgid ""
 "<http://about.travis-ci.org/docs/>`_ about general Travis CI."
 msgstr ""
 "オープンソースソフトウェアを開発しているならTravis CIを使えます。このセクショ"
-"ンではgroonga関連の設定のみ説明します。Travis CI一般については `Travis CI: "
+"ンではGroonga関連の設定のみ説明します。Travis CI一般については `Travis CI: "
 "Documentation <http://about.travis-ci.org/docs/>`_ を読んでください。"
 
 # f6186316fe91417f8cd64fb1a0ad0215
@@ -75,7 +75,7 @@ msgid ""
 msgstr ""
 "Travis CIは64-bit版のUbuntu 12.04 LTS サーバ版を使っています。（ `Travis CI: About Travis "
 "CI Environment <http://about.travis-ci.org/docs/user/ci-environment/>`_ 参"
-"照。）Travis CIにgroongaをインストールするために、groongaプロジェクトが提供し"
+"照。）Travis CIにGroongaをインストールするために、Groongaプロジェクトが提供し"
 "ているUbuntu 12.04 LTS用のapt-lineを使えます。"
 
 # ccf892ca5eb740ae8467f66720b0248d
@@ -112,7 +112,7 @@ msgstr ""
 # e462315d4c4347e08b399275daef7dca
 #: ../../../source/development/travis-ci.txt:41
 msgid "With the above configuration, you can use groonga for your build."
-msgstr "上記の設定でビルド中にgroongaを使えるようになります。"
+msgstr "上記の設定でビルド中にGroongaを使えるようになります。"
 
 # b0b0b6a38cf24189a2effe6cd3ba63b3
 #: ../../../source/development/travis-ci.txt:44
@@ -123,7 +123,7 @@ msgstr "例"
 #: ../../../source/development/travis-ci.txt:46
 msgid "Here are open source softwares that use groonga on Travis CI:"
 msgstr ""
-"Travis CI上でgroongaを使っているオープンソースソフトウェアは以下の通りです"
+"Travis CI上でGroongaを使っているオープンソースソフトウェアは以下の通りです"
 
 # 1289ab120456443c8b2b22145c4bed8e
 #: ../../../source/development/travis-ci.txt:48
