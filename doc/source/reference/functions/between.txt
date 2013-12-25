@@ -12,7 +12,7 @@ Summary
 -------
 
 ``between`` is used for checking the specified value exists in the specific range.
-It is often used for combination with :ref:`search-condition-filter` option in :doc:`/reference/commands/select`.
+It is often used for combination with :ref:`select-filter` option in :doc:`/reference/commands/select`.
 
 Syntax
 ------

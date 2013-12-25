@@ -360,6 +360,8 @@ is less than ``11`` from ``Entries`` table.
 
 See :doc:`/reference/grn_expr/query_syntax` for other operations.
 
+.. _select-filter:
+
 ``filter``
 """"""""""
 
