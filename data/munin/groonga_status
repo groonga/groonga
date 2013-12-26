@@ -47,7 +47,7 @@ def run(command, *args)
     result = Net::HTTP.start(@host, @port) do |http|
       http.get("/d/#{command}")
     end
-    parse(result.code == "200", result.body)
+    parse(result.is_a?(Net::HTTPSuccess), result.body)
   end
 end
 
