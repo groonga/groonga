@@ -16,7 +16,7 @@ tokenizing text and storing table key. For example, ``A`` and ``a``
 are processed as the same character after normalization.
 
 Normalizer module can be added as a plugin. You can customize text
-normalization by registering your normalizer plugins to groonga.
+normalization by registering your normalizer plugins to Groonga.
 
 A normalizer module is attached to a table. A table can have zero or
 one normalizer module. You can attach a normalizer module to a table
@@ -35,12 +35,12 @@ normalizer module:
    Groonga 2.0.9 or earlier doesn't have ``--normalizer`` option in
    ``table_create``. ``KEY_NORMALIZE`` flag was used instead.
 
-   You can open an old database by groonga 2.1.0 or later. An old
-   database means that the database is created by groonga 2.0.9 or
-   earlier. But you cannot open the opened old database by groonga
-   2.0.9 or earlier. Once you open the old database by groonga 2.1.0
+   You can open an old database by Groonga 2.1.0 or later. An old
+   database means that the database is created by Groonga 2.0.9 or
+   earlier. But you cannot open the opened old database by Groonga
+   2.0.9 or earlier. Once you open the old database by Groonga 2.1.0
    or later, ``KEY_NORMALIZE`` flag information in the old database is
-   converted to normalizer information. So groogna 2.0.9 or earlier
+   converted to normalizer information. So Groonga 2.0.9 or earlier
    cannot find ``KEY_NORMALIZE`` flag information in the opened old
    database.
 
@@ -77,10 +77,10 @@ Here is a list of built-in normalizers:
 ^^^^^^^^^^^^^^^^^^
 
 Normally you should use ``NormalizerAuto``
-normalizer. ``NormalizerAuto`` was the normalizer for groonga 2.0.9 or
-earlier. ``KEY_NORMALIZE`` flag in ``table_create`` on groonga 2.0.9
+normalizer. ``NormalizerAuto`` was the normalizer for Groonga 2.0.9 or
+earlier. ``KEY_NORMALIZE`` flag in ``table_create`` on Groonga 2.0.9
 or earlier equals to ``--normalizer NormalizerAuto`` option in
-``table_create`` on groonga 2.1.0 or later.
+``table_create`` on Groonga 2.1.0 or later.
 
 ``NormalizerAuto`` supports all encoding. It uses Unicode NFKC
 (Normalization Form Compatibility Composition) for UTF-8 encoding
@@ -125,8 +125,8 @@ Here is a list of additional normalizers provided by ``groonga-normalizer-mysql`
   * ``NormalizerMySQLUnicodeCI``
   * ``NormalizerMySQLUnicodeCIExceptKanaCIKanaWithVoicedSoundMark``
 
-``groonga-normalizer-mysql`` is a groonga plugin.
-It provides MySQL compatible normalizers to groonga.
+``groonga-normalizer-mysql`` is a Groonga plugin.
+It provides MySQL compatible normalizers to Groonga.
 ``NormalizerMySQLGeneralCI`` corresponds to ``utf8mb4_general_ci``.
 
 You need to register ``normalizers/mysql`` plugin in advance.
