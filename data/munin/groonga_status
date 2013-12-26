@@ -44,8 +44,8 @@ def run(command, *args)
     result = `#{groonga} #{command} #{args.join(' ')} 2>&1`
     parse($?.success?, result)
   when "http"
-    Net::HTTP.start(@host, @port) do |http|
-      result = http.get("/d/#{command}")
+    result = Net::HTTP.start(@host, @port) do |http|
+      http.get("/d/#{command}")
     end
     parse(result.code == "200", result.body)
   end
