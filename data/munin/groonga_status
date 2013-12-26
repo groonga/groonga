@@ -44,10 +44,10 @@ def run(command, *args)
     result = `#{groonga} #{command} #{args.join(' ')} 2>&1`
     parse($?.success?, result)
   when "http"
-    result = Net::HTTP.start(@host, @port) do |http|
+    response = Net::HTTP.start(@host, @port) do |http|
       http.get("/d/#{command}")
     end
-    parse(result.is_a?(Net::HTTPSuccess), result.body)
+    parse(response.is_a?(Net::HTTPSuccess), response.body)
   end
 end
 
