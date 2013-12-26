@@ -2,4 +2,8 @@
 
 set -e
 
+if [ "$1" = "purge" ]; then
+	rm -f /etc/munin/plugins/groonga_* > /dev/null 2>&1
+fi
+
 #DEBHELPER#
