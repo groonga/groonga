@@ -3,6 +3,7 @@
 #%# family=auto
 #%# capabilities=autoconf
 
+require 'net/http'
 begin
   require 'json'
 rescue LoadError
@@ -13,6 +14,7 @@ end
 label = ENV["label"]
 @groonga = ENV["groonga"] || "groonga"
 @host = ENV["host"] || "localhost"
+@protocol = ENV["protocol"] || "http"
 @port = ENV["port"] || 10041
 
 command = ARGV.shift
@@ -36,9 +38,17 @@ def parse(success, result)
 end
 
 def run(command, *args)
-  groonga = "#{@groonga} -p #{@port} -c #{@host}"
-  result = `#{groonga} #{command} #{args.join(' ')} 2>&1`
-  parse($?.success?, result)
+  case @protocol
+  when "gqtp"
+    groonga = "#{@groonga} -p #{@port} -c #{@host}"
+    result = `#{groonga} #{command} #{args.join(' ')} 2>&1`
+    parse($?.success?, result)
+  when "http"
+    Net::HTTP.start(@host, @port) do |http|
+      result = http.get("/d/#{command}")
+    end
+    parse(result.code == "200", result.body)
+  end
 end
 
 def parse_list(header, list)
