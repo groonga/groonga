@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #%# family=auto
-#%# capabilities=autoconf
+#%# capabilities=autoconf suggest
 
 case "$1" in
     autoconf|detect)
@@ -16,6 +16,11 @@ case "$1" in
 	    exit 1
         fi
         ;;
+    suggest)
+	echo "gqtp"
+	echo "http"
+	exit 0
+	;;
     config)
 	if [ -z "${label}" ]; then
 	    title="groonga: CPU load"

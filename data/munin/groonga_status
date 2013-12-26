@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 #%# family=auto
-#%# capabilities=autoconf
+#%# capabilities=autoconf suggest
 
 require 'net/http'
 begin
@@ -86,6 +86,10 @@ graph_info groonga status
 alloc_count.label alloc count
 alloc_count.type GAUGE
 EOF
+  exit(true)
+when "suggest"
+  puts "gqtp"
+  puts "http"
   exit(true)
 end
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 #%# family=auto
-#%# capabilities=autoconf
+#%# capabilities=autoconf suggest
 
 require 'English'
 require 'strscan'
@@ -40,6 +40,10 @@ longest.label Longest
 average.label Average
 median.label Median
 EOF
+  exit(true)
+when "suggest"
+  puts "gqtp"
+  puts "http"
   exit(true)
 end
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 #%# family=auto
-#%# capabilities=autoconf
+#%# capabilities=autoconf suggest
 
 label = ENV["label"]
 pid_file = ENV["pid_file"]
@@ -35,6 +35,10 @@ graph_info groonga CPU time
 cpu_time.label CPU time
 cpu_time.type GAUGE
 EOF
+  exit(true)
+when "suggest"
+  puts "gqtp"
+  puts "http"
   exit(true)
 end
 

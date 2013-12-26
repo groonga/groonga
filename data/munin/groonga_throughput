@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 #%# family=auto
-#%# capabilities=autoconf
+#%# capabilities=autoconf suggest
 
 begin
   require 'json'
@@ -95,6 +95,10 @@ graph_info groonga throughput
 n_queries.label N queries
 n_queries.type COUNTER
 EOF
+  exit(true)
+when "suggest"
+  puts "gqtp"
+  puts "http"
   exit(true)
 end
 

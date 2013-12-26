@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 #%# family=auto
-#%# capabilities=autoconf
+#%# capabilities=autoconf suggest
 
 require 'shellwords'
 begin
@@ -102,6 +102,10 @@ EOF
 #{name}.type GAUGE
 EOF
   end
+  exit(true)
+when "suggest"
+  puts "gqtp"
+  puts "http"
   exit(true)
 end
 
