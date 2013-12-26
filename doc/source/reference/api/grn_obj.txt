@@ -33,7 +33,7 @@ Reference
 
 .. c:function:: grn_bool grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj)
 
-   Check whether groonga built-in object.
+   Check whether Groonga built-in object.
 
    :param ctx: context
    :param obj: target object
@@ -58,7 +58,7 @@ Reference
    :param obj: 対象objectを指定します。
    :param offset: 値を取得する範囲の開始位置となるレコードIDを指定します。
    :param values: 値の配列がセットされます。
- 
+
 .. c:function:: grn_rc grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags)
 
    objのIDに対応するレコードの値を更新します。対応するレコードが存在しない場合は ``GRN_INVALID_ARGUMENT`` を返します。
@@ -243,4 +243,3 @@ Reference
    :param db: The target database.
    :param id: The object (table, column and so on) ID to be deleted.
    :param buffer: path string corresponding to the id will be set in this buffer.
-

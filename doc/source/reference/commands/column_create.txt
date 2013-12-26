@@ -10,7 +10,7 @@ Summary
 
 column_create - カラムの追加
 
-groonga組込コマンドの一つであるcolumn_createについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
+Groonga組込コマンドの一つであるcolumn_createについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
 
 column_createは、使用しているデータベースのテーブルに対してカラムを追加します。
 
@@ -79,7 +79,7 @@ Parameters
 
 ``type``
 
-  値の型を指定します。groongaの組込型か、同一データベースに定義済みのユーザ定義型、定義済みのテーブルを指定することができます。
+  値の型を指定します。Groongaの組込型か、同一データベースに定義済みのユーザ定義型、定義済みのテーブルを指定することができます。
 
 ``source``
 
@@ -100,4 +100,3 @@ Return value
 ``SUCCEEDED``
 
   If command is succeeded, it returns true on success, false otherwise.
-
