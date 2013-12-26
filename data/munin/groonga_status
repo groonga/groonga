@@ -65,10 +65,10 @@ case command
 when "autoconf", "detect"
   success, body = run("status")
   if success
-    puts "yes"
+    puts("yes")
     exit(true)
   else
-    puts "no (#{body})"
+    puts("no (#{body})")
     exit(false)
   end
 when "config"
@@ -77,7 +77,7 @@ when "config"
   else
     title = "groonga: #{label}: status"
   end
-  puts <<EOF
+  puts(<<EOF)
 graph_title #{title}
 graph_vlabel status
 graph_category groonga
@@ -88,8 +88,8 @@ alloc_count.type GAUGE
 EOF
   exit(true)
 when "suggest"
-  puts "gqtp"
-  puts "http"
+  puts("gqtp")
+  puts("http")
   exit(true)
 end
 
@@ -98,6 +98,6 @@ unless success
   puts("error: #{body}")
   exit(false)
 end
-puts <<EOF
+puts(<<EOF)
 alloc_count.value #{body["alloc_count"]}
 EOF

@@ -15,14 +15,14 @@ command = ARGV.shift
 case command
 when "autoconf", "detect"
   if @log_path.nil?
-    puts "no (query log file path isn't specified by env.log_path)"
+    puts("no (query log file path isn't specified by env.log_path)")
     exit(false)
   end
   unless File.readable?(@log_path)
-    puts "no (query log file isn't readable: <#{@log_path}>)"
+    puts("no (query log file isn't readable: <#{@log_path}>)")
     exit(false)
   end
-  puts "yes"
+  puts("yes")
   exit(true)
 when "config"
   if label.nil?
@@ -30,7 +30,7 @@ when "config"
   else
     title = "groonga: #{label}: query performance"
   end
-  puts <<EOF
+  puts(<<EOF)
 graph_title #{title}
 graph_vlabel seconds
 graph_category groonga
@@ -42,8 +42,8 @@ median.label Median
 EOF
   exit(true)
 when "suggest"
-  puts "gqtp"
-  puts "http"
+  puts("gqtp")
+  puts("http")
   exit(true)
 end
 
@@ -132,6 +132,6 @@ else
   median = sorted_elapsed_times[sorted_elapsed_times.size / 2]
 end
 
-puts "longest.value #{longest}"
-puts "average.value #{average}"
-puts "median.value #{median}"
+puts("longest.value #{longest}")
+puts("average.value #{average}")
+puts("median.value #{median}")

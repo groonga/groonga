@@ -11,13 +11,13 @@ command = ARGV.shift
 case command
 when "autoconf", "detect"
   if pid_file.nil?
-    puts "no (PID file isn't specified by env.pid_file)"
+    puts("no (PID file isn't specified by env.pid_file)")
     exit(false)
   elsif File.exist?(pid_file)
-    puts "yes"
+    puts("yes")
     exit(true)
   else
-    puts "no (PID file doesn't exist: #{pid_file})"
+    puts("no (PID file doesn't exist: #{pid_file})")
     exit(false)
   end
 when "config"
@@ -26,7 +26,7 @@ when "config"
   else
     title = "groonga: CPU time"
   end
-  puts <<EOF
+  puts(<<EOF)
 graph_title #{title}
 graph_vlabel CPU time (days)
 graph_category groonga
@@ -37,8 +37,8 @@ cpu_time.type GAUGE
 EOF
   exit(true)
 when "suggest"
-  puts "gqtp"
-  puts "http"
+  puts("gqtp")
+  puts("http")
   exit(true)
 end
 
@@ -54,8 +54,8 @@ if /\A(?:(\d+)-)?(\d+):(\d+):(\d+)\z/ =~ time
   day_in_seconds = 60 * 60 * 24
   fraction_in_day = time_in_seconds.to_f / day_in_seconds.to_f
   cpu_time_in_day = day + fraction_in_day
-  puts "cpu_time.value #{cpu_time_in_day}"
+  puts("cpu_time.value #{cpu_time_in_day}")
 else
-  puts "invalid time format: <#{time}>"
+  puts("invalid time format: <#{time}>")
   exit(false)
 end

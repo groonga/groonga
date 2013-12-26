@@ -57,7 +57,7 @@ def schema
   tables = []
   success, table_list_body = run("table_list")
   unless success
-    puts "error: #{table_list_body}"
+    puts("error: #{table_list_body}")
     exit(false)
   end
   parse_list(table_list_body[0], table_list_body[1..-1]).each do |table|
@@ -65,7 +65,7 @@ def schema
     table["key"] = "table_#{table_name}"
     success, column_list_body = run("column_list", table_name)
     unless success
-      puts "error: #{column_list_body}"
+      puts("error: #{column_list_body}")
       exit(false)
     end
     table["columns"] = parse_list(column_list_body[0], column_list_body[1..-1])
@@ -104,10 +104,10 @@ case command
 when "autoconf", "detect"
   success, body = run("status")
   if success
-    puts "yes"
+    puts("yes")
     exit(true)
   else
-    puts "no (#{body})"
+    puts("no (#{body})")
     exit(false)
   end
 when "config"
@@ -116,7 +116,7 @@ when "config"
   else
     title = "groonga: #{label}: disk usage"
   end
-  puts <<EOF
+  puts(<<EOF)
 graph_title #{title}
 graph_vlabel Bytes
 graph_category groonga
@@ -130,7 +130,7 @@ EOF
   schema.each do |table|
     table_key = table["key"]
     table_name = table["name"]
-    puts <<EOF
+    puts(<<EOF)
 
 #{table_key}.label #{table_name}
 #{table_key}.draw STACK
@@ -138,7 +138,7 @@ EOF
     table["columns"].each do |column|
       column_key = column["key"]
       column_name = column["full_name"]
-      puts <<EOF
+      puts(<<EOF)
 
 #{column_key}.label #{column_name}
 #{column_key}.draw STACK
@@ -147,8 +147,8 @@ EOF
   end
   exit(true)
 when "suggest"
-  puts "gqtp"
-  puts "http"
+  puts("gqtp")
+  puts("http")
   exit(true)
 end
 
@@ -160,20 +160,20 @@ unless $?.success?
 end
 usages = parse_du_result(du_result)
 usage = compute_size(usages, @path)
-puts <<EOF
+puts(<<EOF)
 database.value #{usage}
 EOF
 schema.each do |table|
   table_key = table["key"]
   table_name = table["name"]
   usage = compute_size(usages, table["path"])
-  puts <<EOF
+  puts(<<EOF)
 #{table_key}.value #{usage}
 EOF
   table["columns"].each do |column|
     column_key = column["key"]
     usage = compute_size(usages, column["path"])
-    puts <<EOF
+    puts(<<EOF)
 #{column_key}.value #{usage}
 EOF
   end

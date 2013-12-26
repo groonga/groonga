@@ -62,7 +62,7 @@ end
 def table_list
   success, body = run("table_list")
   unless success
-    puts "error: #{body}"
+    puts("error: #{body}")
     exit(false)
   end
   tables = parse_list(body[0], body[1..-1])
@@ -76,10 +76,10 @@ case command
 when "autoconf", "detect"
   success, body = run("status")
   if success
-    puts "yes"
+    puts("yes")
     exit(true)
   else
-    puts "no (#{body})"
+    puts("no (#{body})")
     exit(false)
   end
 when "config"
@@ -88,7 +88,7 @@ when "config"
   else
     title = "groonga: #{label}: number of records"
   end
-  puts <<EOF
+  puts(<<EOF)
 graph_title #{title}
 graph_vlabel records
 graph_category groonga
@@ -96,7 +96,7 @@ graph_info number of records in groonga table
 EOF
   table_list.each do |table|
     name = table["name"]
-    puts <<EOF
+    puts(<<EOF)
 
 #{name}.label #{name}
 #{name}.type GAUGE
@@ -104,8 +104,8 @@ EOF
   end
   exit(true)
 when "suggest"
-  puts "gqtp"
-  puts "http"
+  puts("gqtp")
+  puts("http")
   exit(true)
 end
 
@@ -117,7 +117,7 @@ table_list.each do |table|
     exit(false)
   end
   n_records = body[0][0][0]
-  puts <<EOF
+  puts(<<EOF)
 #{name}.value #{n_records}
 EOF
 end

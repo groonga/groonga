@@ -74,10 +74,10 @@ case command
 when "autoconf", "detect"
   success, body = run("status")
   if success
-    puts "yes"
+    puts("yes")
     exit(true)
   else
-    puts "no (#{body})"
+    puts("no (#{body})")
     exit(false)
   end
 when "config"
@@ -86,7 +86,7 @@ when "config"
   else
     title = "groonga: #{label}: throughput"
   end
-  puts <<EOF
+  puts(<<EOF)
 graph_title #{title}
 graph_vlabel queries per ${graph_period}
 graph_category groonga
@@ -97,8 +97,8 @@ n_queries.type COUNTER
 EOF
   exit(true)
 when "suggest"
-  puts "gqtp"
-  puts "http"
+  puts("gqtp")
+  puts("http")
   exit(true)
 end
 
@@ -107,6 +107,6 @@ unless success
   puts("error: #{body}")
   exit(false)
 end
-puts <<EOF
+puts(<<EOF)
 n_queries.value #{body["n_queries"]}
 EOF
