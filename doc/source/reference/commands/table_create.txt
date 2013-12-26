@@ -52,7 +52,7 @@ and is ``TABLE_NO_KEY`` type.
 
 If your records aren't searched by key, ``TABLE_NO_KEY`` type table is
 suitable. Because ``TABLE_NO_KEY`` doesn't support key but it is fast
-and small table. Storing logs into groonga database is the case.
+and small table. Storing logs into Groonga database is the case.
 
 If your records are searched by key or referenced by one or more
 columns, ``TABLE_NO_KEY`` type isn't suitable. Lexicon for fulltext
@@ -198,7 +198,7 @@ Here are available flags:
 +--------------------+------------------------------+
 
 .. note::
-   Since groonga 2.1.0 ``KEY_NORMALIZE`` flag is deprecated. Use
+   Since Groonga 2.1.0 ``KEY_NORMALIZE`` flag is deprecated. Use
    ``normalizer`` option with ``NormalizerAuto`` instead.
 
 You must specify one of ``TABLE_${TYPE}`` flags. You cannot specify two
