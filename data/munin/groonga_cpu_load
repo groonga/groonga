@@ -42,6 +42,6 @@ if [ -z "${pid_file}" ]; then
 fi
 
 groonga_pid=$(cat ${pid_file})
-top_for_groonga=$(top -b -n 1 -p ${groonga_pid} | tail -2 | head -1)
+top_for_groonga=$(top -b -n 1 -p ${groonga_pid} | grep ${groonga_pid})
 load_in_percent=$(echo ${top_for_groonga} | sed -r -e 's/ +/ /g' | cut -d' ' -f 9)
 echo "cpu_load.value ${load_in_percent}"
