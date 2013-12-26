@@ -84,8 +84,3 @@ dumpが出力するフォーマットは直接Groongaが解釈できるフォー
   [2,"http://qwik.jp/senna/"],
   ...
   ]
-
-
-
-
-
