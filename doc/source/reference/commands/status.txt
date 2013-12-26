@@ -21,7 +21,7 @@ status - groongaプロセスの状態表示
 説明
 ----
 
-groonga組込コマンドの一つであるstatusについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
+Groonga組込コマンドの一つであるstatusについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
 
 statusコマンドは、groongaプロセスの状態を表示します。主にgroongaサーバプロセスに対して使用することを想定しています。
 
@@ -42,7 +42,7 @@ json形式
 
 ``alloc_count``
 
-  groongaプロセスの内部でアロケートされ、まだ解放されてないメモリブロックの数を示します。groongaをbuildする際に、configureオプションで --enable-exact-alloc-countが指定されていたならば、正確な値を返します。それ以外の場合は不正確な値を返す場合があります。
+  groongaプロセスの内部でアロケートされ、まだ解放されてないメモリブロックの数を示します。Groongaをbuildする際に、configureオプションで --enable-exact-alloc-countが指定されていたならば、正確な値を返します。それ以外の場合は不正確な値を返す場合があります。
 
 ``starttime``
 
