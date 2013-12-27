@@ -198,11 +198,17 @@ cat <<EOC > $RPM_BUILD_ROOT%{_sysconfdir}/munin/plugin-conf.d/groonga
   user groonga
   group groonga
   env.PATH %{_bindir}
-  env.pid_file %{_localstatedir}/run/groonga/groonga.pid
+  env.pid_file %{_localstatedir}/run/groonga/groonga-http.pid
   env.path %{_localstatedir}/lib/groonga/db/db
   env.host 127.0.0.1
+  env.protocol http
   env.port 10041
-  env.log_path %{_localstatedir}/log/groonga/query.log
+  env.log_path %{_localstatedir}/log/groonga/query-http.log
+[groonga_*_gqtp]
+  env.protocol gqtp
+  env.port 10043
+  env.pid_file %{_localstatedir}/run/groonga/groonga-gqtp.pid
+  env.log_path %{_localstatedir}/log/groonga/query-gqtp.log
 EOC
 
 %clean
