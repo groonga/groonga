@@ -13495,10 +13495,10 @@ msgstr ""
 #: ../../../source/reference/functions/snippet_html.txt:57
 msgid ""
 "You need to specify ``--command_version 2`` argument explicitly because "
-"function call in ``--output_columns`` is experimental feature in groonga "
+"function call in ``--output_columns`` is experimental feature in Groonga "
 "2.0.9. It will be enabled by default soon."
 msgstr ""
-"groonga 2.0.9では ``output_columns`` 内での関数呼び出しはまだ実験的な機能なの"
+"Groonga 2.0.9では ``output_columns`` 内での関数呼び出しはまだ実験的な機能なの"
 "で、明示的に ``--command_version 2`` オプションを指定する必要があります。この"
 "機能はじきに有効になる予定です。"
 
