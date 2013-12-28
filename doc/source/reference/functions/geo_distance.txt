@@ -32,14 +32,14 @@ Usage
 
 ``geo_distance`` is one of the Groonga builtin functions.
 
-You can call a builtin function in :doc:`/reference/grn_expr` 
+You can call a builtin function in :doc:`/reference/grn_expr`
 
 ``geo_distance`` function calculates the value of distance (approximate value)
 between the coordinate of ``point1`` and the coordinate of ``point2``.
 
 .. note::
 
-    groonga provides three built in functions for calculating the value of distance. 
+    groonga provides three built in functions for calculating the value of distance.
     There are ``geo_distance()``, ``geo_distance2()`` and ``geo_distance3()``.
     The difference of them is the algorithm of calculating distance.
     ``geo_distance2()`` and ``geo_distance3()`` were deprecated since version 1.2.9.
@@ -166,7 +166,7 @@ See :doc:`/reference/types` about GeoPoint.
 It specifies the end point that
 you want to calculate the value of distance between two points.
 
-You can specify the value of GeoPoint type or 
+You can specify the value of GeoPoint type or
 the string indicating the coordinate.
 
 See :doc:`/reference/types` about GeoPoint and the coordinate.
@@ -298,4 +298,3 @@ The unit of return value is meter.
 .. rubric:: Footnote
 
 .. [#] You can specify whether TokyoGeoPoint or WGS84GeoPoint.
-
