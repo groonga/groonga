@@ -12413,8 +12413,8 @@ msgstr ""
 
 # 7b106eaa12f94ffc9d75774e712493df
 #: ../../../source/reference/functions/geo_distance.txt:33
-msgid "``geo_distance`` is one of the Groonga builtin functions."
-msgstr "``geo_distance`` はGroongaの組み込み関数の一つです。"
+msgid "``geo_distance`` is one of the groonga builtin functions."
+msgstr "``geo_distance`` はgroongaの組み込み関数の一つです。"
 
 # 79447dbd4788452aa475c3251e710d1b
 #: ../../../source/reference/functions/geo_distance.txt:35
@@ -13110,8 +13110,8 @@ msgstr "必要条件"
 
 # bc11a0685eec4d32bef5c3dd6748bfdb
 #: ../../../source/reference/functions/html_untag.txt:30
-msgid "``html_untag`` requires groonga 3.0.5 or later."
-msgstr "``html_untag`` を使うにはgroonga 3.0.5以降が必要です。"
+msgid "``html_untag`` requires Groonga 3.0.5 or later."
+msgstr "``html_untag`` を使うにはGroonga 3.0.5以降が必要です。"
 
 # 36e989ebd0744bf2a1cfc82b3d88dfa8
 #: ../../../source/reference/functions/html_untag.txt:32
