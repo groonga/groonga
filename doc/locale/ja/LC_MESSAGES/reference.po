@@ -12413,8 +12413,8 @@ msgstr ""
 
 # 7b106eaa12f94ffc9d75774e712493df
 #: ../../../source/reference/functions/geo_distance.txt:33
-msgid "``geo_distance`` is one of the groonga builtin functions."
-msgstr "``geo_distance`` はgroongaの組み込み関数の一つです。"
+msgid "``geo_distance`` is one of the Groonga builtin functions."
+msgstr "``geo_distance`` はGroongaの組み込み関数の一つです。"
 
 # 79447dbd4788452aa475c3251e710d1b
 #: ../../../source/reference/functions/geo_distance.txt:35

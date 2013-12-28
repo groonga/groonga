@@ -30,7 +30,7 @@ distance as if ``"rectangle"`` was specified.
 Usage
 -----
 
-``geo_distance`` is one of the groonga builtin functions.
+``geo_distance`` is one of the Groonga builtin functions.
 
 You can call a builtin function in :doc:`/reference/grn_expr` 
 
