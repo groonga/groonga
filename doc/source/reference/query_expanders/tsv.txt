@@ -14,7 +14,7 @@ feature than the embedded query expansion feature. For example, it
 doesn't support word normalization. But it may be easy to use because
 you can manage your synonyms by TSV file. You can edit your synonyms
 by spreadsheet application such as Excel. With the embedded query
-expansion feature, you manage your synonyms by groonga's table.
+expansion feature, you manage your synonyms by Groonga's table.
 
 Install
 -------
