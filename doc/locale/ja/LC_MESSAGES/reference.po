@@ -17811,11 +17811,11 @@ msgstr "テーブル"
 # ce0f6b93acb9495997e1d896f8fa7a07
 #: ../../../source/reference/tables.txt:11
 msgid ""
-"Table in groonga manages relation between ID and key. Groonga provides four "
+"Table in Groonga manages relation between ID and key. Groonga provides four "
 "table types. They are ``TABLE_NO_KEY``, ``TABLE_HASH_KEY``, "
 "``TABLE_PAT_KEY`` and ``TABLE_DAT_KEY``."
 msgstr ""
-"groongaのテーブルはIDとキーの対応を管理します。groongaは4つの種類のテーブルを"
+"GroongaのテーブルはIDとキーの対応を管理します。Groongaは4つの種類のテーブルを"
 "提供しています。 ``TABLE_NO_KEY`` 、 ``TABLE_HASH_KEY`` 、 "
 "``TABLE_PAT_KEY`` 、 ``TABLE_DAT_KEY`` です。"
 
@@ -17840,10 +17840,10 @@ msgstr "特徴"
 # 3fb208bb1eac4e039f3af9f22cf2789c
 #: ../../../source/reference/tables.txt:23
 msgid ""
-"Here is a chracteristic table of all tables in groonga. (``TABLE_`` prefix "
+"Here is a chracteristic table of all tables in Groonga. (``TABLE_`` prefix "
 "is omitted in the table.)"
 msgstr ""
-"以下はgroongaにあるすべてのテーブルの特性表です。（この表の中では ``TABLE_`` "
+"以下はGroongaにあるすべてのテーブルの特性表です。（この表の中では ``TABLE_`` "
 "プレフィックスは省略しています。）"
 
 # c705e142b1fa4c6f9a58a0b01725a35e
@@ -18100,15 +18100,15 @@ msgstr ""
 # 6836b1c00ae3456e97196bf3e0209339
 #: ../../../source/reference/tables.txt:106
 msgid ""
-"``TABLE_DAT_KEY`` is used in groonga database. Groonga database needs to "
+"``TABLE_DAT_KEY`` is used in Groonga database. Groonga database needs to "
 "convert object name such as ``ShortText``, ``TokenBigram`` and table names "
-"to object ID. And groonga database needs to rename object name. Those "
+"to object ID. And Groonga database needs to rename object name. Those "
 "features are implemented by ``TABLE_DAT_KEY``. The number of objects is "
 "small. So large data size demerit of ``TABLE_DAT_KEY`` can be ignored."
 msgstr ""
-"``TABLE_DAT_KEY`` はgroongaのデータベース内で使われています。groongaのデータ"
+"``TABLE_DAT_KEY`` はGroongaのデータベース内で使われています。Groongaのデータ"
 "ベースは ``ShortText`` や ``TokenBigram`` 、テーブル名などオブジェクトの名前"
-"をオブジェクトのIDに変換する必要があります。さらに、groongaのデータベースはオ"
+"をオブジェクトのIDに変換する必要があります。さらに、Groongaのデータベースはオ"
 "ブジェクト名の変更もサポートする必要があります。これらの機能は "
 "``TABLE_DAT_KEY`` で実現されています。オブジェクト数は小さいので "
 "``TABLE_DAT_KEY`` のサイズが大きいというデメリットは無視できます。"
