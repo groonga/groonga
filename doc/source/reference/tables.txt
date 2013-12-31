@@ -8,7 +8,7 @@ Tables
 Summary
 -------
 
-Table in groonga manages relation between ID and key. Groonga provides
+Table in Groonga manages relation between ID and key. Groonga provides
 four table types. They are ``TABLE_NO_KEY``, ``TABLE_HASH_KEY``,
 ``TABLE_PAT_KEY`` and ``TABLE_DAT_KEY``.
 
@@ -20,7 +20,7 @@ provides ID search and key search.
 Characteristics
 ---------------
 
-Here is a chracteristic table of all tables in groonga. (``TABLE_``
+Here is a chracteristic table of all tables in Groonga. (``TABLE_``
 prefix is omitted in the table.)
 
 +--------------+------------+--------------+-------------+-------------+
@@ -103,9 +103,9 @@ index for range search.
 is not suitable for storing many records. ``TABLE_DAT_KEY`` is a only
 table that supports key update.
 
-``TABLE_DAT_KEY`` is used in groonga database. Groonga database needs
+``TABLE_DAT_KEY`` is used in Groonga database. Groonga database needs
 to convert object name such as ``ShortText``, ``TokenBigram`` and
-table names to object ID. And groonga database needs to rename object
+table names to object ID. And Groonga database needs to rename object
 name. Those features are implemented by ``TABLE_DAT_KEY``. The number
 of objects is small. So large data size demerit of ``TABLE_DAT_KEY``
 can be ignored.
