@@ -13110,8 +13110,8 @@ msgstr "必要条件"
 
 # bc11a0685eec4d32bef5c3dd6748bfdb
 #: ../../../source/reference/functions/html_untag.txt:30
-msgid "``html_untag`` requires groonga 3.0.5 or later."
-msgstr "``html_untag`` を使うにはgroonga 3.0.5以降が必要です。"
+msgid "``html_untag`` requires Groonga 3.0.5 or later."
+msgstr "``html_untag`` を使うにはGroonga 3.0.5以降が必要です。"
 
 # 36e989ebd0744bf2a1cfc82b3d88dfa8
 #: ../../../source/reference/functions/html_untag.txt:32
@@ -13495,10 +13495,10 @@ msgstr ""
 #: ../../../source/reference/functions/snippet_html.txt:57
 msgid ""
 "You need to specify ``--command_version 2`` argument explicitly because "
-"function call in ``--output_columns`` is experimental feature in groonga "
+"function call in ``--output_columns`` is experimental feature in Groonga "
 "2.0.9. It will be enabled by default soon."
 msgstr ""
-"groonga 2.0.9では ``output_columns`` 内での関数呼び出しはまだ実験的な機能なの"
+"Groonga 2.0.9では ``output_columns`` 内での関数呼び出しはまだ実験的な機能なの"
 "で、明示的に ``--command_version 2`` オプションを指定する必要があります。この"
 "機能はじきに有効になる予定です。"
 

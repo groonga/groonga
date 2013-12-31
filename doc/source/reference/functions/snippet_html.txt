@@ -56,7 +56,7 @@ Here are a schema definition and sample data to show usage.
 
 You need to specify ``--command_version 2`` argument explicitly
 because function call in ``--output_columns`` is experimental feature
-in groonga 2.0.9. It will be enabled by default soon.
+in Groonga 2.0.9. It will be enabled by default soon.
 
 You also need to specify ``--query`` and/or ``--filter``. Keywords are
 extracted from ``--query`` and ``--filter`` arguments.
