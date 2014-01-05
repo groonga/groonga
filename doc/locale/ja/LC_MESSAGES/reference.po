@@ -17269,7 +17269,7 @@ msgstr "出力"
 # 0456560989284e96b46873a3f0839c6f
 #: ../../../source/reference/output.txt:8
 msgid "Groonga supports the following output format types:"
-msgstr "groongaは以下の出力形式をサポートしています。"
+msgstr "Groongaは以下の出力形式をサポートしています。"
 
 # 47b6fe0212ab41f0a807f4a25d4f4297
 #: ../../../source/reference/output.txt:10
@@ -17299,7 +17299,7 @@ msgstr "JSONがデフォルトの出力形式です。"
 # d7a794e5323e4a099ac7b82c5553987a
 #: ../../../source/reference/output.txt:20
 msgid "Groonga has the following query interfaces:"
-msgstr "groongaには以下のクエリーインターフェイスがあります。"
+msgstr "Groongaには以下のクエリーインターフェイスがあります。"
 
 # ed826c0f4a9d42e38f9696fa39f928eb
 #: ../../../source/reference/output.txt:22
