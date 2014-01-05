@@ -13793,7 +13793,7 @@ msgid ""
 "manipulates a database. It's pronounced as ``gurun expression``."
 msgstr ""
 "grn_exprは特定の条件にマッチするレコードを検索したり、データベースを操作する"
-"オブジェクトです。 ``ぐるんしき`` と読みます。（由来は「groongaの式」。）"
+"オブジェクトです。 ``ぐるんしき`` と読みます。（由来は「Groongaの式」。）"
 
 # 5541dcdc1b134b5fbd75ca2adab6d99a
 #: ../../../source/reference/grn_expr.txt:11
@@ -13874,14 +13874,14 @@ msgid ""
 "related APIs. You can use full features with calling APIs like :doc:`/"
 "reference/grn_expr/script_syntax`. Calling APIs is useful creating a custom "
 "syntax to create grn_expr. They are used in `rroonga <http://groonga."
-"rubyforge.org/#about-rroonga>`_ that is Ruby bindings of groonga. Rroonga "
+"rubyforge.org/#about-rroonga>`_ that is Ruby bindings of Groonga. Rroonga "
 "can create a grn_expr by Ruby's syntax instead of parsing string."
 msgstr ""
 "groongaをライブラリとして使うと、grn_expr関連のAPIを呼び出してgrn_exprを作る"
 "ことができます。 :doc:`/reference/grn_expr/script_syntax` のように、APIを呼び"
 "出すと全ての機能を使えます。grn_exprを作る構文を新しく作るときにはAPIが便利で"
 "す。APIは `rroonga <http://groonga.rubyforge.org/#about-rroonga>`_ という"
-"groongaのRubyバインディングで使われています。rroongaでは文字列をパースするの"
+"GroongaのRubyバインディングで使われています。rroongaでは文字列をパースするの"
 "ではなく、Rubyの構文を使ってgrn_exprを作ることができます。"
 
 # e90312f4bab14ce3ad0480a2aa30e23b
@@ -14998,7 +14998,7 @@ msgid ""
 "Null literal is ``null``. Groonga doesn't support null value but null "
 "literal is supported."
 msgstr ""
-"NULLのリテラルは ``null`` です。groongaはNULL値をサポートしてませんが、NULLリ"
+"NULLのリテラルは ``null`` です。GroongaはNULL値をサポートしてませんが、NULLリ"
 "テラルをサポートしています。"
 
 # d1e7bd098f4d46f0a4b1a630a02ee99e
