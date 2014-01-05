@@ -16443,7 +16443,7 @@ msgid ""
 "Groonga supports both online index construction and offline index "
 "construction since 2.0.0."
 msgstr ""
-"groongaは2.0.0から動的なインデックス構築方法と静的なインデックス構築方法を両"
+"Groongaは2.0.0から動的なインデックス構築方法と静的なインデックス構築方法を両"
 "方サポートしています。"
 
 # f2f8e1cbf05e417a9c5d8f1b601f31bb
@@ -16520,7 +16520,7 @@ msgid ""
 "Groonga uses online index construction by default. We register a document, "
 "we can search it quickly."
 msgstr ""
-"groongaはデフォルトで動的なインデックス構築方法を使います。文書を登録するとす"
+"Groongaはデフォルトで動的なインデックス構築方法を使います。文書を登録するとす"
 "ぐに検索できるようになります。"
 
 # 30845cc513474ddb819106c5a15b6c8d
