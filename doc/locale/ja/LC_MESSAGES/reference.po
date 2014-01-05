@@ -12413,8 +12413,8 @@ msgstr ""
 
 # 7b106eaa12f94ffc9d75774e712493df
 #: ../../../source/reference/functions/geo_distance.txt:33
-msgid "``geo_distance`` is one of the groonga builtin functions."
-msgstr "``geo_distance`` はgroongaの組み込み関数の一つです。"
+msgid "``geo_distance`` is one of the Groonga builtin functions."
+msgstr "``geo_distance`` はGroongaの組み込み関数の一つです。"
 
 # 79447dbd4788452aa475c3251e710d1b
 #: ../../../source/reference/functions/geo_distance.txt:35
@@ -12433,7 +12433,7 @@ msgstr ""
 # 0694c768b41341fa930f48546308c147
 #: ../../../source/reference/functions/geo_distance.txt:42
 msgid ""
-"groonga provides three built in functions for calculating the value of "
+"Groonga provides three built in functions for calculating the value of "
 "distance. There are ``geo_distance()``, ``geo_distance2()`` and "
 "``geo_distance3()``. The difference of them is the algorithm of calculating "
 "distance. ``geo_distance2()`` and ``geo_distance3()`` were deprecated since "
@@ -12441,7 +12441,7 @@ msgid ""
 "``geo_distance2(point1, point2)``. Use ``geo_distance(point1, point2, "
 "\"ellipsoid\")`` instead of ``geo_distance3(point1, point2)``."
 msgstr ""
-"groongaは三つの組み込み関数を距離の計算のために提供しています。 "
+"Groongaは三つの組み込み関数を距離の計算のために提供しています。 "
 "``geo_distance()`` 、 ``geo_distance2()`` 、 ``geo_distance3()`` です。これら"
 "の違いは距離の計算アルゴリズムにあります。 ``geo_distance2()`` と "
 "``geo_distance3()`` はバージョン1.2.9より非推奨となりました。 ``geo_distance2"
@@ -12674,13 +12674,13 @@ msgid ""
 "calculate the value of distance between two points across meridian, equator "
 "or the date line if you use ``sphere`` or ``ellipsoid`` as approximate type. "
 "There is not such a limitation for ``rectangle``. This is temporary "
-"limitation according to the implementation of groonga, but it will be fixed "
+"limitation according to the implementation of Groonga, but it will be fixed "
 "in the future release."
 msgstr ""
 "``geo_distance`` には制限があります。 ``sphere`` や ``ellipsoid`` を近似方法"
 "として選択した場合、子午線や日付変更線、赤道といった境界をまたぐ距離の計算を"
 "行うことができません。この制限は ``rectangle`` を近似方法として選択した場合に"
-"はありません。これはgroongaの実装上の一時的な制限ですが、将来的には修正される"
+"はありません。これはGroongaの実装上の一時的な制限ですが、将来的には修正される"
 "予定です。"
 
 # 6060a0e7b2064d03aa51c9da14fd9207
