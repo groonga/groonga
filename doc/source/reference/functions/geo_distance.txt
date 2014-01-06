@@ -39,7 +39,7 @@ between the coordinate of ``point1`` and the coordinate of ``point2``.
 
 .. note::
 
-    groonga provides three built in functions for calculating the value of distance.
+    Groonga provides three built in functions for calculating the value of distance.
     There are ``geo_distance()``, ``geo_distance2()`` and ``geo_distance3()``.
     The difference of them is the algorithm of calculating distance.
     ``geo_distance2()`` and ``geo_distance3()`` were deprecated since version 1.2.9.
@@ -194,7 +194,7 @@ You can specify the value of ``approximate_type`` by one of the followings.
     calculate the value of distance between two points across meridian,
     equator or the date line if you use ``sphere`` or ``ellipsoid`` as
     approximate type. There is not such a limitation for ``rectangle``.
-    This is temporary limitation according to the implementation of groonga,
+    This is temporary limitation according to the implementation of Groonga,
     but it will be fixed in the future release.
 
 ``rectangle``

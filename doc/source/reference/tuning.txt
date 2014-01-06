@@ -8,7 +8,7 @@ Tuning
 Summary
 -------
 
-There are some tuning parameters for improving groonga performance or
+There are some tuning parameters for improving Groonga performance or
 handling a large database.
 
 Parameters
@@ -111,7 +111,7 @@ vm.overcommit_memory
 
 This is :ref:`tuning-memory-usage` related parameter. You can handle a
 database that is larger than your memory and swap by setting
-``vm.overcommit_memory`` kernel parameter to 1. 1 means that groonga
+``vm.overcommit_memory`` kernel parameter to 1. 1 means that Groonga
 can always map database files onto memory. It is no problem until
 groonga touch mapped database files that their size is larger than
 memory and swap. Groonga recommends the configuration.
