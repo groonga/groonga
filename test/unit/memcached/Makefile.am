@@ -1,7 +1,7 @@
 if WITH_CUTTER
 if WITH_LIBMEMCACHED
-noinst_LTLIBRARIES =				\
-	test-memcached.la
+# noinst_LTLIBRARIES =				\
+# 	test-memcached.la
 endif
 endif
 
