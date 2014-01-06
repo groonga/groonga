@@ -441,6 +441,17 @@ AC_ARG_WITH(stack_size,
   GRN_STACK_SIZE="$withval")
 AC_DEFINE_UNQUOTED(GRN_STACK_SIZE, [$GRN_STACK_SIZE], [stack size])
 
+# lock wait time
+GRN_LOCK_WAIT_TIME_NANOSECOND=1000000
+AC_ARG_WITH(lock_wait_time,
+  [AS_HELP_STRING([--with-lock-wait-time=NANOSECONDS],
+    [This option specifies wait time in nanosecond to acquire a lock.
+     (default=$GRN_LOCK_WAIT_TIME_NANOSECOND)])],
+  GRN_LOCK_WAIT_TIME_NANOSECOND="$withval")
+AC_DEFINE_UNQUOTED(GRN_LOCK_WAIT_TIME_NANOSECOND,
+                   [$GRN_LOCK_WAIT_TIME_NANOSECOND],
+                   [lock wait time in nanosecond])
+
 if test "$os_win32" != "yes"; then
   AC_CHECK_HEADERS(pthread.h)
   AC_SEARCH_LIBS(pthread_create, pthread,

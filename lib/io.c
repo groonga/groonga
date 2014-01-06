@@ -1317,7 +1317,7 @@ grn_io_lock(grn_ctx *ctx, grn_io *io, int timeout)
                   "io(%s) collisions(%d/%d)", io->path, _ncolls, _ncalls);
         }
       }
-      grn_nanosleep(1000000);
+      grn_nanosleep(GRN_LOCK_WAIT_TIME_NANOSECOND);
       continue;
     }
     return GRN_SUCCESS;

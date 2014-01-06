@@ -2002,7 +2002,7 @@ grn_hash_lock(grn_ctx *ctx, grn_hash *hash, int timeout)
           GRN_LOG(ctx, GRN_LOG_NOTICE, "hash(%p) collisions(%d/%d)", hash, _ncolls, _ncalls);
         }
       }
-      grn_nanosleep(1000000);
+      grn_nanosleep(GRN_LOCK_WAIT_TIME_NANOSECOND);
       continue;
     }
     return GRN_SUCCESS;

@@ -67,6 +67,10 @@ set(GRN_STACK_SIZE
   1024
   CACHE STRING
   "DANGER!!! groonga stack size. Normarlly, you should not change this variable.")
+set(GRN_LOCK_WAIT_TIME_NANOSECOND
+  1000000
+  CACHE STRING
+  "wait time in nanosecond to acquire a lock.")
 set(GRN_RELATIVE_PLUGINS_DIR
   "${LIB_DIR}/${GRN_PROJECT_NAME}/plugins")
 set(GRN_PLUGINS_DIR
