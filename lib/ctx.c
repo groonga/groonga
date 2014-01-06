@@ -1225,8 +1225,8 @@ check_grn_ja_skip_same_value_put(grn_ctx *ctx)
 
   grn_ja_skip_same_value_put_env = getenv("GRN_JA_SKIP_SAME_VALUE_PUT");
   if (grn_ja_skip_same_value_put_env &&
-      strcmp(grn_ja_skip_same_value_put_env, "yes") == 0) {
-    grn_ja_skip_same_value_put = GRN_TRUE;
+      strcmp(grn_ja_skip_same_value_put_env, "no") == 0) {
+    grn_ja_skip_same_value_put = GRN_FALSE;
   }
 }
 

@@ -308,7 +308,7 @@ struct grn_ja_header {
 #define SEGMENTS_GINFO_ON(ja,seg,width) (SEGMENTS_AT(ja,seg) = SEG_GINFO|(width))
 #define SEGMENTS_OFF(ja,seg) (SEGMENTS_AT(ja,seg) = 0)
 
-grn_bool grn_ja_skip_same_value_put = GRN_FALSE;
+grn_bool grn_ja_skip_same_value_put = GRN_TRUE;
 
 static grn_ja *
 _grn_ja_create(grn_ctx *ctx, grn_ja *ja, const char *path,
