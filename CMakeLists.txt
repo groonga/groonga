@@ -67,6 +67,10 @@ set(GRN_STACK_SIZE
   1024
   CACHE STRING
   "DANGER!!! groonga stack size. Normarlly, you should not change this variable.")
+set(GRN_LOCK_TIMEOUT
+  10000000
+  CACHE STRING
+  "timeout to acquire a lock.")
 set(GRN_LOCK_WAIT_TIME_NANOSECOND
   1000000
   CACHE STRING

@@ -609,7 +609,7 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
     if (token->mode == GRN_TOKEN_ADD) {
       switch (table->header.type) {
       case GRN_TABLE_PAT_KEY :
-        if (grn_io_lock(ctx, ((grn_pat *)table)->io, 10000000)) {
+        if (grn_io_lock(ctx, ((grn_pat *)table)->io, GRN_LOCK_TIMEOUT)) {
           tid = GRN_ID_NIL;
         } else {
           tid = grn_pat_add(ctx, (grn_pat *)table, token->curr, token->curr_size,
@@ -618,7 +618,7 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
         }
         break;
       case GRN_TABLE_DAT_KEY :
-        if (grn_io_lock(ctx, ((grn_dat *)table)->io, 10000000)) {
+        if (grn_io_lock(ctx, ((grn_dat *)table)->io, GRN_LOCK_TIMEOUT)) {
           tid = GRN_ID_NIL;
         } else {
           tid = grn_dat_add(ctx, (grn_dat *)table, token->curr, token->curr_size,
@@ -627,7 +627,7 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
         }
         break;
       case GRN_TABLE_HASH_KEY :
-        if (grn_io_lock(ctx, ((grn_hash *)table)->io, 10000000)) {
+        if (grn_io_lock(ctx, ((grn_hash *)table)->io, GRN_LOCK_TIMEOUT)) {
           tid = GRN_ID_NIL;
         } else {
           tid = grn_hash_add(ctx, (grn_hash *)table, token->curr, token->curr_size,

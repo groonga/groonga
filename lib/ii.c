@@ -4943,7 +4943,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     GRN_RECORD_INIT(&buf, GRN_OBJ_VECTOR, grn_obj_id(ctx, ii->lexicon));
     post = &buf;
   }
-  if (grn_io_lock(ctx, ii->seg, 10000000)) { return ctx->rc; }
+  if (grn_io_lock(ctx, ii->seg, GRN_LOCK_TIMEOUT)) { return ctx->rc; }
   if (new) {
     unsigned char type = (ii->obj.header.domain == new->header.domain)
       ? GRN_UVECTOR

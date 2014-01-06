@@ -441,6 +441,20 @@ AC_ARG_WITH(stack_size,
   GRN_STACK_SIZE="$withval")
 AC_DEFINE_UNQUOTED(GRN_STACK_SIZE, [$GRN_STACK_SIZE], [stack size])
 
+# lock timeout
+GRN_LOCK_TIMEOUT=10000000
+AC_ARG_WITH(lock_timeout,
+  [AS_HELP_STRING([--with-lock-timeout=N],
+    [This option specifies how many times Groonga tries to acquire a lock.
+     Each try waits --with-lock-wait-time nanoseconds to acquire a lock.
+     It means that Groonga gives up after
+     (--with-lock-wait-time * --with-lock-timeout) nanoseconds.
+     (default=$GRN_LOCK_TIMEOUT)])],
+  GRN_LOCK_TIMEOUT="$withval")
+AC_DEFINE_UNQUOTED(GRN_LOCK_TIMEOUT,
+                   [$GRN_LOCK_TIMEOUT],
+                   [lock timeout])
+
 # lock wait time
 GRN_LOCK_WAIT_TIME_NANOSECOND=1000000
 AC_ARG_WITH(lock_wait_time,
