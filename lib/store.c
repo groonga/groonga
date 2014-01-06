@@ -568,7 +568,7 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id,
   lseg = id >> JA_W_EINFO_IN_A_SEGMENT;
   pos = id & JA_M_EINFO_IN_A_SEGMENT;
   pseg = &ja->header->esegs[lseg];
-  if (grn_io_lock(ctx, ja->io, GRN_LOCK_TIMEOUT)) {
+  if (grn_io_lock(ctx, ja->io, grn_lock_timeout)) {
     return ctx->rc;
   }
   if (*pseg == JA_ESEG_VOID) {
@@ -631,7 +631,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
     return GRN_SUCCESS;
   }
   iw->tiny_p = 0;
-  if (grn_io_lock(ctx, ja->io, GRN_LOCK_TIMEOUT)) { return ctx->rc; }
+  if (grn_io_lock(ctx, ja->io, grn_lock_timeout)) { return ctx->rc; }
   if (element_size + sizeof(grn_id) > JA_SEGMENT_SIZE) {
     int i, j, n = (element_size + JA_SEGMENT_SIZE - 1) >> GRN_JA_W_SEGMENT;
     for (i = 0, j = -1; i < JA_N_DSEGMENTS; i++) {
@@ -966,7 +966,7 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
     return GRN_INVALID_ARGUMENT;
   }
   if ((rc = grn_ja_replace(ctx, ja, id, &einfo, cas))) {
-    if (!grn_io_lock(ctx, ja->io, GRN_LOCK_TIMEOUT)) {
+    if (!grn_io_lock(ctx, ja->io, grn_lock_timeout)) {
       grn_ja_free(ctx, ja, &einfo);
       grn_io_unlock(ja->io);
     }

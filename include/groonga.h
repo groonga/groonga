@@ -244,6 +244,9 @@ GRN_API grn_rc grn_ctx_set_match_escalation_threshold(grn_ctx *ctx, long long in
 GRN_API long long int grn_get_default_match_escalation_threshold(void);
 GRN_API grn_rc grn_set_default_match_escalation_threshold(long long int threshold);
 
+GRN_API int grn_get_lock_timeout(void);
+GRN_API grn_rc grn_set_lock_timeout(int timeout);
+
 /* cache */
 #define GRN_CACHE_DEFAULT_MAX_N_ENTRIES 100
 typedef struct _grn_cache grn_cache;

@@ -1121,7 +1121,7 @@ grn_edges_fin(grn_ctx *ctx)
 grn_edge *
 grn_edges_add(grn_ctx *ctx, grn_com_addr *addr, int *added)
 {
-  if (grn_io_lock(ctx, grn_edges->io, GRN_LOCK_TIMEOUT)) {
+  if (grn_io_lock(ctx, grn_edges->io, grn_lock_timeout)) {
     return NULL;
   } else {
     grn_edge *edge;
@@ -1136,7 +1136,7 @@ grn_edges_add(grn_ctx *ctx, grn_com_addr *addr, int *added)
 void
 grn_edges_delete(grn_ctx *ctx, grn_edge *edge)
 {
-  if (!grn_io_lock(ctx, grn_edges->io, GRN_LOCK_TIMEOUT)) {
+  if (!grn_io_lock(ctx, grn_edges->io, grn_lock_timeout)) {
     grn_hash_delete_by_id(ctx, grn_edges, edge->id, NULL);
     grn_io_unlock(grn_edges->io);
   }

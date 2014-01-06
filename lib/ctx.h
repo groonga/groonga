@@ -383,6 +383,7 @@ GRN_VAR grn_ctx grn_gctx;
 extern int grn_pagesize;
 extern grn_critical_section grn_glock;
 extern uint32_t grn_gtick;
+extern int grn_lock_timeout;
 
 #define GRN_CTX_ALLOCATED                            (0x80)
 #define GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND (0x40)

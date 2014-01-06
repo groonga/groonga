@@ -1115,7 +1115,7 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
         grn_pat *pat = (grn_pat *)table;
         WITH_NORMALIZE(pat, key, key_size, {
           if (pat->io && !(pat->io->flags & GRN_IO_TEMPORARY)) {
-            if (grn_io_lock(ctx, pat->io, GRN_LOCK_TIMEOUT)) {
+            if (grn_io_lock(ctx, pat->io, grn_lock_timeout)) {
               id = GRN_ID_NIL;
             } else {
               id = grn_pat_add(ctx, pat, key, key_size, NULL, &added_);
@@ -1133,7 +1133,7 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
         grn_dat *dat = (grn_dat *)table;
         WITH_NORMALIZE(dat, key, key_size, {
           if (dat->io && !(dat->io->flags & GRN_IO_TEMPORARY)) {
-            if (grn_io_lock(ctx, dat->io, GRN_LOCK_TIMEOUT)) {
+            if (grn_io_lock(ctx, dat->io, grn_lock_timeout)) {
               id = GRN_ID_NIL;
             } else {
               id = grn_dat_add(ctx, dat, key, key_size, NULL, &added_);
@@ -1151,7 +1151,7 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
         grn_hash *hash = (grn_hash *)table;
         WITH_NORMALIZE(hash, key, key_size, {
           if (hash->io && !(hash->io->flags & GRN_IO_TEMPORARY)) {
-            if (grn_io_lock(ctx, hash->io, GRN_LOCK_TIMEOUT)) {
+            if (grn_io_lock(ctx, hash->io, grn_lock_timeout)) {
               id = GRN_ID_NIL;
             } else {
               id = grn_hash_add(ctx, hash, key, key_size, NULL, &added_);
@@ -1168,7 +1168,7 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
       {
         grn_array *array = (grn_array *)table;
         if (array->io && !(array->io->flags & GRN_IO_TEMPORARY)) {
-          if (grn_io_lock(ctx, array->io, GRN_LOCK_TIMEOUT)) {
+          if (grn_io_lock(ctx, array->io, grn_lock_timeout)) {
             id = GRN_ID_NIL;
           } else {
             id = grn_array_add(ctx, array, NULL);
@@ -1691,7 +1691,7 @@ grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key
         WITH_NORMALIZE((grn_pat *)table, key, key_size, {
           grn_pat *pat = (grn_pat *)table;
           if (pat->io && !(pat->io->flags & GRN_IO_TEMPORARY)) {
-            if (!(rc = grn_io_lock(ctx, pat->io, GRN_LOCK_TIMEOUT))) {
+            if (!(rc = grn_io_lock(ctx, pat->io, grn_lock_timeout))) {
               rc = grn_pat_delete(ctx, pat, key, key_size, NULL);
               grn_io_unlock(pat->io);
             }
@@ -1704,7 +1704,7 @@ grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key
         WITH_NORMALIZE((grn_dat *)table, key, key_size, {
           grn_dat *dat = (grn_dat *)table;
           if (dat->io && !(dat->io->flags & GRN_IO_TEMPORARY)) {
-            if (!(rc = grn_io_lock(ctx, dat->io, GRN_LOCK_TIMEOUT))) {
+            if (!(rc = grn_io_lock(ctx, dat->io, grn_lock_timeout))) {
               rc = grn_dat_delete(ctx, dat, key, key_size, NULL);
               grn_io_unlock(dat->io);
             }
@@ -1717,7 +1717,7 @@ grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key
         WITH_NORMALIZE((grn_hash *)table, key, key_size, {
           grn_hash *hash = (grn_hash *)table;
           if (hash->io && !(hash->io->flags & GRN_IO_TEMPORARY)) {
-            if (!(rc = grn_io_lock(ctx, hash->io, GRN_LOCK_TIMEOUT))) {
+            if (!(rc = grn_io_lock(ctx, hash->io, grn_lock_timeout))) {
               rc = grn_hash_delete(ctx, hash, key, key_size, NULL);
               grn_io_unlock(hash->io);
             }
@@ -1781,7 +1781,7 @@ grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id)
   grn_io *io;
   GRN_API_ENTER;
   if ((io = grn_obj_io(table)) && !(io->flags & GRN_IO_TEMPORARY)) {
-    if (!(rc = grn_io_lock(ctx, io, GRN_LOCK_TIMEOUT))) {
+    if (!(rc = grn_io_lock(ctx, io, grn_lock_timeout))) {
       rc = _grn_table_delete_by_id(ctx, table, id, NULL);
       grn_io_unlock(io);
     }
@@ -7177,7 +7177,7 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
   GRN_API_ENTER;
   if (ctx->impl && ctx->impl->db && ctx->impl->db != obj) {
     grn_io *io = grn_obj_io(ctx->impl->db);
-    if (!grn_io_lock(ctx, io, GRN_LOCK_TIMEOUT)) {
+    if (!grn_io_lock(ctx, io, grn_lock_timeout)) {
       _grn_obj_remove(ctx, obj);
       grn_io_unlock(io);
     }
@@ -7196,7 +7196,7 @@ grn_table_update_by_id(grn_ctx *ctx, grn_obj *table, grn_id id,
   if (table->header.type == GRN_TABLE_DAT_KEY) {
     grn_dat *dat = (grn_dat *)table;
     if (dat->io && !(dat->io->flags & GRN_IO_TEMPORARY)) {
-      if (grn_io_lock(ctx, dat->io, GRN_LOCK_TIMEOUT)) {
+      if (grn_io_lock(ctx, dat->io, grn_lock_timeout)) {
         rc = ctx->rc;
       } else {
         rc = grn_dat_update_by_id(ctx, dat, id, dest_key, dest_key_size);

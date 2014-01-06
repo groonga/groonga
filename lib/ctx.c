@@ -54,6 +54,7 @@ grn_ctx grn_gctx = GRN_CTX_INITIALIZER(GRN_ENC_DEFAULT);
 int grn_pagesize;
 grn_critical_section grn_glock;
 uint32_t grn_gtick;
+int grn_lock_timeout = GRN_LOCK_TIMEOUT;
 
 #ifdef USE_UYIELD
 int grn_uyield_count = 0;
@@ -1360,6 +1361,19 @@ grn_rc
 grn_set_default_match_escalation_threshold(long long int threshold)
 {
   return grn_ctx_set_match_escalation_threshold(&grn_gctx, threshold);
+}
+
+int
+grn_get_lock_timeout(void)
+{
+  return grn_lock_timeout;
+}
+
+grn_rc
+grn_set_lock_timeout(int timeout)
+{
+  grn_lock_timeout = timeout;
+  return GRN_SUCCESS;
 }
 
 static int alloc_count = 0;
