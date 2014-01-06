@@ -195,7 +195,7 @@ grn_test_server_start(GrnTestServer *server, GError **error)
   if (!gcut_egg_hatch(priv->egg, error))
     return FALSE;
 
-  g_usleep(G_USEC_PER_SEC); /* FIXME: use select */
+  g_usleep(1.5 * G_USEC_PER_SEC); /* FIXME: use select */
 
   return TRUE;
 }
