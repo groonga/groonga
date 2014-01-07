@@ -41,7 +41,7 @@ msgid ""
 "Groonga has the suggest feature. This section describes how to use it and "
 "how it works."
 msgstr ""
-"groongaにはサジェスト機能があります。このセクションではこの機能の使い方とどの"
+"Groongaにはサジェスト機能があります。このセクションではこの機能の使い方とどの"
 "ように動作しているかを説明します。"
 
 # db6618c5291347159686d575b797d774
@@ -365,7 +365,7 @@ msgstr "していない（入力ミス！）"
 # 70da73db787b444fa868ea08b0c7d598
 #: ../../../source/suggest/completion.txt:87
 msgid "Groonga creates the following completion pairs:"
-msgstr "groongaは以下のような補完ペアを作ります。:"
+msgstr "Groongaは以下のような補完ペアを作ります。:"
 
 # 9bc9abc19d4b4b5eb8df89459609e31a
 #: ../../../source/suggest/completion.txt:90
@@ -448,7 +448,7 @@ msgid ""
 "Groonga provides :doc:`/reference/commands/suggest` command to use "
 "completion. `--type complete` option requests completion."
 msgstr ""
-"groongaは補完機能を使うために :doc:`/reference/commands/suggest` コマンドを用"
+"Groongaは補完機能を使うために :doc:`/reference/commands/suggest` コマンドを用"
 "意しています。 `--type complete` オプションを使うと補完機能を利用できます。"
 
 # 5c176e739a484fccb0d12746750fbab9
@@ -755,7 +755,7 @@ msgid ""
 "and \"engine\"."
 msgstr ""
 "\"search engine\"は\"search\"トークンと\"engine\"トークンにトークナイズされま"
-"す。（groongaのTokenBigramトークナイザーは連続するアルファベットと数字を2文字"
+"す。（GroongaのTokenBigramトークナイザーは連続するアルファベットと数字を2文字"
 "にトークナイズしません。これは検索ノイズを減らす為です。確実に2文字でトークナ"
 "イズするためにはTokenBigramSplitSymbolAlphaDigitを使います。）\"web search "
 "service\"は\"web\"トークンと\"search\"トークンと\"service\"トークンにトークナ"
@@ -768,7 +768,7 @@ msgid ""
 "Groonga provides :doc:`/reference/commands/suggest` command to use "
 "correction. `--type correct` option requests corrections."
 msgstr ""
-"groongaは補正機能を使うために :doc:`/reference/commands/suggest` コマンドを用"
+"Groongaは補正機能を使うために :doc:`/reference/commands/suggest` コマンドを用"
 "意しています。 `--type correct` オプションを使うと補正機能を利用できます。"
 
 # 4039b51af5424222a1a4ceb57340fec8
@@ -848,8 +848,8 @@ msgstr "はじめに"
 
 # 658488d54fa140e282567a5df0dc30ac
 #: ../../../source/suggest/introduction.txt:8
-msgid "The suggest feature in groonga provides the following features:"
-msgstr "groongaのサジェスト機能は以下の機能を提供します。:"
+msgid "The suggest feature in Groonga provides the following features:"
+msgstr "Groongaのサジェスト機能は以下の機能を提供します。:"
 
 # 8b488f504f0742de94d8295e358fe950
 # be77cbd721bb46df9a1f02102320c232
@@ -863,7 +863,7 @@ msgstr "提案"
 # 4abf378f79de420caabe42bb429ab93d
 #: ../../../source/suggest/introduction.txt:17
 msgid ""
-"Completion helps user input. If user inputs a partial word, groonga can "
+"Completion helps user input. If user inputs a partial word, Groonga can "
 "return complete words from registered words."
 msgstr ""
 "補完はユーザの入力を支援します。ユーザが単語の一部分のみしか入力していないと"
@@ -1106,7 +1106,7 @@ msgstr ""
 # c9a2de2c1b6c4a778885257956fb9052
 #: ../../../source/suggest/suggestion.txt:44
 msgid "Groonga creates the following suggestion pairs:"
-msgstr "groongaは以下のような提案ペアを作成します。"
+msgstr "Groongaは以下のような提案ペアを作成します。"
 
 # f8f03e6e573d42a18c6964f5e008b7c8
 #: ../../../source/suggest/suggestion.txt:47
@@ -1164,7 +1164,7 @@ msgid ""
 "Groonga provides :doc:`/reference/commands/suggest` command to use "
 "suggestion. `--type suggest` option requests suggestion"
 msgstr ""
-"groongaは提案機能を使うために :doc:`/reference/commands/suggest` コマンドを用"
+"Groongaは提案機能を使うために :doc:`/reference/commands/suggest` コマンドを用"
 "意しています。 `--type suggest` オプションを使うと提案機能を利用できます。"
 
 # f34dff8561634141a09b2334c56879d0
