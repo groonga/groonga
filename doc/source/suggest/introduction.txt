@@ -5,7 +5,7 @@
 Introduction
 ============
 
-The suggest feature in groonga provides the following features:
+The suggest feature in Groonga provides the following features:
 
 * Completion
 * Correction
@@ -15,7 +15,7 @@ Completion
 ----------
 
 Completion helps user input. If user inputs a partial word,
-groonga can return complete words from registered
+Groonga can return complete words from registered
 words.
 
 For example, there are registered words:
