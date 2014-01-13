@@ -1,0 +1,39 @@
+table_create Users TABLE_PAT_KEY ShortText
+column_create Users name COLUMN_SCALAR ShortText
+
+table_create Memos TABLE_PAT_KEY ShortText
+column_create Memos owner COLUMN_SCALAR Users
+column_create Memos title COLUMN_SCALAR ShortText
+column_create Memos content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+column_create Terms users_name COLUMN_INDEX|WITH_SECTION|WITH_POSITION \
+  Users name
+column_create Terms memos_title COLUMN_INDEX|WITH_SECTION|WITH_POSITION \
+  Memos title
+column_create Terms memos_content COLUMN_INDEX|WITH_SECTION|WITH_POSITION \
+  Memos content
+
+column_create Users memos COLUMN_INDEX Memos owner
+
+load --table Users
+[
+{"_key": "alice",  "name": "Alice"},
+{"_key": "bob",    "name": "Bob"},
+{"_key": "carlos", "name": "Carlos"}
+]
+
+load --table Memos
+[
+{"_key": "alice1", "owner": "alice",
+ "title": "Groonga", "content": "Groonga is full text search engine."},
+{"_key": "alice2", "owner": "alice",
+ "title": "Rroonga", "content": "Rroonga is the Ruby bindings of Groonga."},
+{"_key": "bob1", "owner": "bob",
+ "title": "Mroonga", "content": "Mroonga is a MySAL storage engine based on Groonga."}
+]
+
+select Memos \
+  --match_columns "title || content || owner.name" \
+  --query "Alice Rroonga" \
+  --output_columns '_key'

@@ -2640,7 +2640,7 @@ grn_table_next(grn_ctx *ctx, grn_obj *table, grn_id id)
 
 grn_rc
 grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
-                     grn_obj *base_res, grn_obj *res, grn_operator op,
+                     grn_obj *base_res, grn_obj **res,
                      grn_search_optarg *optarg)
 {
   grn_rc rc = GRN_SUCCESS;
@@ -2729,12 +2729,13 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
     }
   }
 
-  if (rc == GRN_SUCCESS) {
-    rc = grn_table_setoperation(ctx, res, current_res, res, op);
-  }
-
-  if (current_res != base_res) {
-    grn_obj_unlink(ctx, current_res);
+  if (rc == GRN_SUCCESS && current_res != base_res) {
+    *res = current_res;
+  } else {
+    *res = NULL;
+    if (rc == GRN_SUCCESS) {
+      rc = GRN_INVALID_ARGUMENT;
+    }
   }
 
   GRN_OBJ_FIN(ctx, &accessor_stack);
@@ -2778,6 +2779,7 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
       rc = grn_obj_search(ctx, index, query, res, op, optarg);
     } else {
       grn_obj *base_res;
+      grn_obj *resolve_res = NULL;
       grn_obj *range = grn_ctx_at(ctx, DB_OBJ(index)->range);
       base_res = grn_table_create(ctx, NULL, 0, NULL,
                                   GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
@@ -2793,8 +2795,17 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
         grn_obj_unlink(ctx, base_res);
         goto exit;
       }
-      rc = grn_accessor_resolve(ctx, obj, n_accessors - 1, base_res, res, op,
-                                optarg);
+      rc = grn_accessor_resolve(ctx, obj, n_accessors - 1, base_res,
+                                &resolve_res, optarg);
+      if (resolve_res) {
+        if (op == GRN_OP_AND) {
+          grn_table_setoperation(ctx, res, resolve_res, res, GRN_OP_OR);
+          grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
+        } else {
+          grn_table_setoperation(ctx, res, resolve_res, res, op);
+        }
+        grn_obj_unlink(ctx, resolve_res);
+      }
       grn_obj_unlink(ctx, base_res);
     }
   }

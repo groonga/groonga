@@ -439,7 +439,7 @@ GRN_API grn_rc grn_column_filter(grn_ctx *ctx, grn_obj *column,
                                  grn_operator set_op);
 
 grn_rc grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
-                            grn_obj *base_res, grn_obj *res, grn_operator op,
+                            grn_obj *base_res, grn_obj **res,
                             grn_search_optarg *optarg);
 
 #ifdef __cplusplus
