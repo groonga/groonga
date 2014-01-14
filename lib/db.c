@@ -2798,12 +2798,17 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
       rc = grn_accessor_resolve(ctx, obj, n_accessors - 1, base_res,
                                 &resolve_res, optarg);
       if (resolve_res) {
-        if (op == GRN_OP_AND) {
-          grn_table_setoperation(ctx, res, resolve_res, res, GRN_OP_OR);
-          grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
-        } else {
-          grn_table_setoperation(ctx, res, resolve_res, res, op);
-        }
+        grn_id *record_id;
+        grn_rset_recinfo *recinfo;
+        GRN_HASH_EACH(ctx, (grn_hash *)resolve_res, id, &record_id, NULL,
+                      &recinfo, {
+          grn_ii_posting posting;
+          posting.rid = *record_id;
+          posting.sid = 1;
+          posting.weight = recinfo->score - 1;
+          grn_ii_posting_add(ctx, &posting, (grn_hash *)res, op);
+        });
+        grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
         grn_obj_unlink(ctx, resolve_res);
       }
       grn_obj_unlink(ctx, base_res);
