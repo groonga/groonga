@@ -1,0 +1,48 @@
+table_create Bookmarks TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Bookmarks tag COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Tags bookmarks_tag COLUMN_INDEX Bookmarks tag
+[[0,0.0,0.0],true]
+load --table Bookmarks
+[
+{"_key": "http://groonga.org/", "tag": "groonga"},
+{"_key": "http://mroonga.org/", "tag": ""}
+]
+[[0,0.0,0.0],2]
+select Bookmarks --query 'tag:\"\"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tag",
+          "ShortText"
+        ]
+      ],
+      [
+        2,
+        "http://mroonga.org/",
+        ""
+      ]
+    ]
+  ]
+]

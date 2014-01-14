@@ -4598,6 +4598,10 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
     grn_obj *index = GRN_PTR_VALUE(&si->index);
     switch (si->op) {
     case GRN_OP_EQUAL :
+      if (GRN_BULK_VSIZE(si->query) == 0) {
+        /* We can't use index for empty value. */
+        return GRN_FALSE;
+      }
       if (si->flags & SCAN_ACCESSOR) {
         if (index->header.type == GRN_ACCESSOR &&
             !((grn_accessor *)index)->next) {

@@ -1,0 +1,13 @@
+table_create Bookmarks TABLE_HASH_KEY ShortText
+column_create Bookmarks tag COLUMN_SCALAR ShortText
+
+table_create Tags TABLE_PAT_KEY ShortText
+column_create Tags bookmarks_tag COLUMN_INDEX Bookmarks tag
+
+load --table Bookmarks
+[
+{"_key": "http://groonga.org/", "tag": "groonga"},
+{"_key": "http://mroonga.org/", "tag": ""}
+]
+
+select Bookmarks --query 'tag:\"\"'
