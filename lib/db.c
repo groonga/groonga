@@ -2805,6 +2805,7 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
           grn_ii_posting posting;
           posting.rid = *record_id;
           posting.sid = 1;
+          posting.pos = 0;
           posting.weight = recinfo->score - 1;
           grn_ii_posting_add(ctx, &posting, (grn_hash *)res, op);
         });
