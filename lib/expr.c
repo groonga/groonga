@@ -3754,41 +3754,6 @@ grn_expr_get_value(grn_ctx *ctx, grn_obj *expr, int offset)
   GRN_API_RETURN(res);
 }
 
-inline static void
-res_add(grn_ctx *ctx, grn_hash *s, grn_rset_posinfo *pi, uint32_t score,
-        grn_operator op)
-{
-  grn_rset_recinfo *ri;
-  switch (op) {
-  case GRN_OP_OR :
-    if (grn_hash_add(ctx, s, pi, s->key_size, (void **)&ri, NULL)) {
-      grn_table_add_subrec((grn_obj *)s, ri, score, pi, 1);
-    }
-    break;
-  case GRN_OP_AND :
-    if (grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri)) {
-      ri->n_subrecs |= GRN_RSET_UTIL_BIT;
-      grn_table_add_subrec((grn_obj *)s, ri, score, pi, 1);
-    }
-    break;
-  case GRN_OP_AND_NOT :
-    {
-      grn_id id;
-      if ((id = grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri))) {
-        grn_hash_delete_by_id(ctx, s, id, NULL);
-      }
-    }
-    break;
-  case GRN_OP_ADJUST :
-    if (grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri)) {
-      ri->score += score;
-    }
-    break;
-  default :
-    break;
-  }
-}
-
 struct _grn_scan_info {
   uint32_t start;
   uint32_t end;
@@ -4638,15 +4603,19 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
             !((grn_accessor *)index)->next) {
           grn_obj dest;
           grn_accessor *a = (grn_accessor *)index;
-          grn_rset_posinfo pi;
+          grn_ii_posting posting;
+          posting.sid = 1;
+          posting.pos = 0;
+          posting.weight = 0;
           switch (a->action) {
           case GRN_ACCESSOR_GET_ID :
             GRN_UINT32_INIT(&dest, 0);
             if (!grn_obj_cast(ctx, si->query, &dest, GRN_FALSE)) {
-              memcpy(&pi, GRN_BULK_HEAD(&dest), GRN_BULK_VSIZE(&dest));
-              if (pi.rid) {
-                if (pi.rid == grn_table_at(ctx, table, pi.rid)) {
-                  res_add(ctx, (grn_hash *)res, &pi, 1, si->logical_op);
+              posting.rid = *((grn_id *)GRN_BULK_HEAD(&dest));
+              if (posting.rid) {
+                if (posting.rid == grn_table_at(ctx, table, posting.rid)) {
+                  grn_ii_posting_add(ctx, &posting, (grn_hash *)res,
+                                     si->logical_op);
                 }
               }
               processed = GRN_TRUE;
@@ -4657,10 +4626,11 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
           case GRN_ACCESSOR_GET_KEY :
             GRN_OBJ_INIT(&dest, GRN_BULK, 0, table->header.domain);
             if (!grn_obj_cast(ctx, si->query, &dest, GRN_FALSE)) {
-              if ((pi.rid = grn_table_get(ctx, table,
-                                          GRN_BULK_HEAD(&dest),
-                                          GRN_BULK_VSIZE(&dest)))) {
-                res_add(ctx, (grn_hash *)res, &pi, 1, si->logical_op);
+              if ((posting.rid = grn_table_get(ctx, table,
+                                               GRN_BULK_HEAD(&dest),
+                                               GRN_BULK_VSIZE(&dest)))) {
+                grn_ii_posting_add(ctx, &posting, (grn_hash *)res,
+                                   si->logical_op);
               }
               processed = GRN_TRUE;
             }
@@ -4708,7 +4678,10 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
             !((grn_accessor *)index)->next) {
           grn_obj dest;
           grn_accessor *a = (grn_accessor *)index;
-          grn_rset_posinfo pi;
+          grn_ii_posting posting;
+          posting.sid = 1;
+          posting.pos = 0;
+          posting.weight = 0;
           switch (a->action) {
           case GRN_ACCESSOR_GET_ID :
             /* todo */
@@ -4724,9 +4697,10 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
                                  GRN_BULK_HEAD(&dest), GRN_BULK_VSIZE(&dest),
                                  si->op, (grn_obj *)pres, GRN_OP_OR);
                 GRN_HASH_EACH(ctx, pres, id, &key, NULL, NULL, {
-                    pi.rid = *key;
-                    res_add(ctx, (grn_hash *)res, &pi, 1, si->logical_op);
-                  });
+                  posting.rid = *key;
+                  grn_ii_posting_add(ctx, &posting, (grn_hash *)res,
+                                     si->logical_op);
+                });
                 grn_hash_close(ctx, pres);
               }
               processed = GRN_TRUE;
@@ -6577,12 +6551,15 @@ grn_column_filter(grn_ctx *ctx, grn_obj *column,
                   grn_operator set_operation)
 {
   uint32_t *vp;
-  grn_rset_posinfo pi;
+  grn_ii_posting posting;
   uint32_t value_ = grn_atoui(GRN_TEXT_VALUE(value), GRN_BULK_CURR(value), NULL);
+  posting.sid = 1;
+  posting.pos = 0;
+  posting.weight = 0;
   GRN_COLUMN_EACH(ctx, column, id, vp, {
     if (*vp < value_) {
-      pi.rid = id;
-      res_add(ctx, (grn_hash *)result_set, &pi, 1, set_operation);
+      posting.rid = id;
+      grn_ii_posting_add(ctx, &posting, (grn_hash *)result_set, set_operation);
     }
   });
   grn_ii_resolve_sel_and(ctx, (grn_hash *)result_set, set_operation);
