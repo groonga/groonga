@@ -4611,7 +4611,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
           case GRN_ACCESSOR_GET_ID :
             GRN_UINT32_INIT(&dest, 0);
             if (!grn_obj_cast(ctx, si->query, &dest, GRN_FALSE)) {
-              posting.rid = *((grn_id *)GRN_BULK_HEAD(&dest));
+              posting.rid = GRN_UINT32_VALUE(&dest);
               if (posting.rid) {
                 if (posting.rid == grn_table_at(ctx, table, posting.rid)) {
                   grn_ii_posting_add(ctx, &posting, (grn_hash *)res,
