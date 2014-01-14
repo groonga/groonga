@@ -3,7 +3,6 @@ SUBDIRS =		\
 	fixtures	\
 	util		\
 	core		\
-	memcached	\
 	http		\
 	story		\
 	groonga-benchmark

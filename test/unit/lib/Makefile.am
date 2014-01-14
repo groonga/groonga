@@ -6,10 +6,6 @@ noinst_LTLIBRARIES =			\
 	libgrn-test-utils.la		\
 	libgrn-test-hash-utils.la	\
 	libgrn-test-server.la
-if WITH_LIBMEMCACHED
-noinst_LTLIBRARIES +=				\
-	libgrn-test-memcached-utils.la
-endif
 endif
 
 AM_CPPFLAGS =					\
@@ -60,10 +56,4 @@ libgrn_test_server_la_SOURCES =		\
 	grn-test-server.c		\
 	grn-test-server.h
 libgrn_test_server_la_LIBADD =	\
-	libgrn-test-utils.la
-
-libgrn_test_memcached_utils_la_SOURCES =	\
-	grn-test-memcached-assertions.c		\
-	grn-test-memcached-assertions.h
-libgrn_test_memcached_utils_la_LIBADD =		\
 	libgrn-test-utils.la

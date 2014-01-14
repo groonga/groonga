@@ -283,7 +283,6 @@ AC_CONFIG_FILES([
   test/unit/util/Makefile
   test/unit/core/Makefile
   test/unit/core/dat/Makefile
-  test/unit/memcached/Makefile
   test/unit/http/Makefile
   test/unit/story/Makefile
   test/unit/groonga-benchmark/Makefile
@@ -696,18 +695,6 @@ AM_CONDITIONAL([WITH_CUTTER], [test "$cutter_use_cutter" = "yes"])
 AM_CONDITIONAL([WITH_CPPCUTTER], [test "$cutter_use_cppcutter" = "yes"])
 if test "$cutter_use_cutter" = "yes"; then
   AC_DEFINE(GRN_WITH_CUTTER, 1, [Define to 1 if you use Cutter])
-
-  ac_cv_have_libmemcached=no
-  AC_CHECK_HEADER(libmemcached/memcached.h,
-                  [AC_SEARCH_LIBS(memcached_increment_with_initial, memcached,
-                                  [ac_cv_have_libmemcached=yes])])
-  AM_CONDITIONAL([WITH_LIBMEMCACHED],
-                 [test "$ac_cv_have_libmemcached" = "yes"])
-  if test "$ac_cv_have_libmemcached" = "yes"; then
-    AC_DEFINE(GRN_WITH_LIBMEMCACHED, 1, [Define to 1 if you use libmemcached])
-  fi
-else
-  AM_CONDITIONAL([WITH_LIBMEMCACHED], false)
 fi
 
 # check for benchmark
