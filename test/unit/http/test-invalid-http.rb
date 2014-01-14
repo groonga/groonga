@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009-2011  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2009-2014  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -76,12 +76,12 @@ class InvalidHTTPTest < Test::Unit::TestCase
 
   def test_not_start_with_slash
     response = get(".")
-    assert_equal("500", response.code) # FIXME: 400
+    assert_equal("400", response.code)
   end
 
   def test_long_path
     response = get("/0123456789" * 10000)
-    assert_equal("500", response.code)
+    assert_equal("400", response.code)
     assert_response([[Result::INVALID_ARGUMENT,
                       0.0,
                       0.0,
