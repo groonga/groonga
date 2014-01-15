@@ -98,7 +98,7 @@ msgstr "特定の範囲にあるカラムの値をフィルタリングするの
 
 # ab4f90548b1d41c88632b77ef3e081af
 #: ../../../source/news.txt:27
-msgid "[doc] Updated Travis CI envrinment information. [Patch by cosmo0920]"
+msgid "[doc] Updated Travis CI environment information. [Patch by cosmo0920]"
 msgstr "[doc] Travis CIの環境情報を更新しました。[cosmo0920さんがパッチ提供]"
 
 #: ../../../source/news.txt:28
