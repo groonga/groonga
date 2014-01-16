@@ -24,7 +24,7 @@ Improvements
 * [doc] Refined drilldown documentation. [Reported by @Yahppo]
 * Supported :doc:`/reference/functions/between` function which is used for
   filtering the column value in specific range.
-* [doc] Updated Travis CI envrinment information. [Patch by cosmo0920]
+* [doc] Updated Travis CI environment information. [Patch by cosmo0920]
 * [rpm][fedora] Dropped Fedora 19.
 * [rpm][fedora] Supported Fedora 20.
 * [doc] Updated "Groonga" notation. [Patch by cosmo0920] [GitHub#122, #123, #124, #125, #125, #126, #127, #128, #129, #130, #131, #131, #132, #133, #134]
