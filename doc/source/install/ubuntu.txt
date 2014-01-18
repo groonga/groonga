@@ -5,7 +5,7 @@
 Ubuntu
 ======
 
-This section describes how to install groonga related deb packages on
+This section describes how to install Groonga related deb packages on
 Ubuntu. You can install them by ``apt``.
 
 We distribute both 32-bit and 64-bit packages but we strongly
@@ -26,7 +26,7 @@ size data.
      % sudo cp /etc/apt/sources.list /etc/apt/sources.list.d/universe.list
      % sudo sed -i'' -e 's/main/universe/' /etc/apt/sources.list.d/universe.list
 
-Add the groonga apt repository.
+Add the Groonga apt repository.
 
 /etc/apt/sources.list.d/groonga.list::
 
@@ -56,7 +56,7 @@ Install groonga-munin-plugins package::
   % sudo apt-get -y install groonga-munin-plugins
 
 There is a package that provides MySQL compatible normalizer as
-groonga plugins.
+Groonga plugins.
 If you want to use that one, install groonga-normalizer-mysql package.
 
 Install groonga-normalizer-mysql package::
@@ -73,7 +73,7 @@ Install groonga-normalizer-mysql package::
      % sudo cp /etc/apt/sources.list /etc/apt/sources.list.d/universe.list
      % sudo sed -i'' -e 's/main/universe/' /etc/apt/sources.list.d/universe.list
 
-Add the groonga apt repository.
+Add the Groonga apt repository.
 
 /etc/apt/sources.list.d/groonga.list::
 
@@ -96,14 +96,14 @@ Install groonga-tokenizer-mecab package::
 
 There is a package that provides `Munin
 <http://munin-monitoring.org/>`_ plugins. If you want to monitor
-groonga status by Munin, install groonga-munin-plugins package.
+Groonga status by Munin, install groonga-munin-plugins package.
 
 Install groonga-munin-plugins package::
 
   % sudo apt-get -y install groonga-munin-plugins
 
 There is a package that provides MySQL compatible normalizer as
-groonga plugins.
+Groonga plugins.
 If you want to use that one, install groonga-normalizer-mysql package.
 
 Install groonga-normalizer-mysql package::
@@ -120,7 +120,7 @@ Install groonga-normalizer-mysql package::
      % sudo cp /etc/apt/sources.list /etc/apt/sources.list.d/universe.list
      % sudo sed -i'' -e 's/main/universe/' /etc/apt/sources.list.d/universe.list
 
-Add the groonga apt repository.
+Add the Groonga apt repository.
 
 /etc/apt/sources.list.d/groonga.list::
 

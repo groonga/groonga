@@ -5,7 +5,7 @@
 Debian GNU/Linux
 ================
 
-This section describes how to install groonga related deb packages on
+This section describes how to install Groonga related deb packages on
 Debian GNU/Linux. You can install them by ``apt``.
 
 We distribute both 32-bit and 64-bit packages but we strongly
@@ -19,7 +19,7 @@ size data.
 wheezy
 ------
 
-Add the groonga apt repository.
+Add the Groonga apt repository.
 
 /etc/apt/sources.list.d/groonga.list::
 
@@ -89,7 +89,7 @@ Install groonga-munin-plugins package::
   % sudo aptitude -V -D -y install groonga-munin-plugins
 
 There is a package that provides MySQL compatible normalizer as
-groonga plugins.
+Groonga plugins.
 If you want to use that one, install groonga-normalizer-mysql package.
 
 Install groonga-normalizer-mysql package::

@@ -45,7 +45,7 @@ Or install Juman dictionary::
 
 There is a package that provides `Munin
 <http://munin-monitoring.org/>`_ plugins. If you want to monitor
-groonga status by Munin, install groonga-munin-plugins package.
+Groonga status by Munin, install groonga-munin-plugins package.
 
 .. note::
 
@@ -75,7 +75,7 @@ Install groonga-munin-plugins package::
   % sudo yum install -y groonga-munin-plugins
 
 There is a package that provides MySQL compatible normalizer as
-groonga plugins.
+Groonga plugins.
 If you want to use that one, install groonga-normalizer-mysql package.
 
 Install groonga-normalizer-mysql package::
@@ -110,7 +110,7 @@ Or install Juman dictionary::
 
 There is a package that provides `Munin
 <http://munin-monitoring.org/>`_ plugins. If you want to monitor
-groonga status by Munin, install groonga-munin-plugins package.
+Groonga status by Munin, install groonga-munin-plugins package.
 
 .. note::
 
@@ -137,7 +137,7 @@ Install groonga-munin-plugins package::
   % sudo yum install -y groonga-munin-plugins
 
 There is a package that provides MySQL compatible normalizer as
-groonga plugins.
+Groonga plugins.
 If you want to use that one, install groonga-normalizer-mysql package.
 
 Install groonga-normalizer-mysql package::

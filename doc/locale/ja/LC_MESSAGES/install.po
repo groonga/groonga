@@ -366,7 +366,7 @@ msgstr ""
 
 #: ../../../source/install/debian.txt:8
 msgid ""
-"This section describes how to install groonga related deb packages on Debian "
+"This section describes how to install Groonga related deb packages on Debian "
 "GNU/Linux. You can install them by ``apt``."
 msgstr ""
 "このセクションではDebian GNU/Linux上でGroonga関連のdebパッケージをインストー"
@@ -425,7 +425,7 @@ msgstr ""
 # 30c2793738b3406bb9228f186dcfd437
 #: ../../../source/install/fedora.txt:13
 msgid ""
-"Since groonga 3.0.2 release, Groonga related RPM pakcages are in the "
+"Since Groonga 3.0.2 release, Groonga related RPM pakcages are in the "
 "official Fedora yum repository (Fedora 18). So you can use them instead of "
 "the groonga yum repository now. There is some exceptions to use the groonga "
 "yum repository because ``groonga-normalizer-mysql`` and mecab dictionaries "
@@ -1146,7 +1146,7 @@ msgstr ""
 
 #: ../../../source/install/solaris.txt:8
 msgid ""
-"This section describes how to install groonga from source on Oracle Solaris."
+"This section describes how to install Groonga from source on Oracle Solaris."
 msgstr ""
 "このセクションではOracle Solaris上でGroongaをソースコードからインストールする"
 "方法を説明します。"
@@ -1175,7 +1175,7 @@ msgstr ""
 
 #: ../../../source/install/ubuntu.txt:8
 msgid ""
-"This section describes how to install groonga related deb packages on "
+"This section describes how to install Groonga related deb packages on "
 "Ubuntu. You can install them by ``apt``."
 msgstr ""
 "このセクションではUbuntu上でGroonga関連のdebパッケージをインストールする方法"
