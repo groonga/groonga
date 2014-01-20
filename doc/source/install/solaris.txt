@@ -5,7 +5,7 @@
 Oracle Solaris
 ==============
 
-This section describes how to install groonga from source on Oracle
+This section describes how to install Groonga from source on Oracle
 Solaris.
 
 Oracle Solaris 11
