@@ -181,7 +181,7 @@ Description: Documentation of Groonga.
  This package provides documentation of Groonga.
 
 Package: groonga-examples
-Architecture: any
+Architecture: all
 Depends:
   ${misc:Depends},
   ${shlibs:Depends},
