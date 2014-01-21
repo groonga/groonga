@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2010-2013 Brazil
+  Copyright(C) 2010-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -6468,6 +6468,70 @@ grn_expr_parser_close(grn_ctx *ctx)
   return ctx->rc;
 }
 
+grn_rc
+grn_expr_snip_add_conditions(grn_ctx *ctx, grn_obj *expr, grn_snip *snip,
+                             unsigned int n_tags,
+                             const char **opentags, unsigned int *opentag_lens,
+                             const char **closetags, unsigned int *closetag_lens)
+{
+  int i, n;
+  scan_info **sis, *si;
+  GRN_API_ENTER;
+  if ((sis = scan_info_build(ctx, expr, &n, GRN_OP_OR, 0))) {
+    int butp = 0, nparens = 0, npbut = 0;
+    grn_obj but_stack;
+    grn_obj snip_stack;
+    GRN_UINT32_INIT(&but_stack, GRN_OBJ_VECTOR);
+    GRN_PTR_INIT(&snip_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
+    for (i = n; i--;) {
+      si = sis[i];
+      if (si->flags & SCAN_POP) {
+        nparens++;
+        if (si->logical_op == GRN_OP_AND_NOT) {
+          GRN_UINT32_PUT(ctx, &but_stack, npbut);
+          npbut = nparens;
+          butp = 1 - butp;
+        }
+      } else {
+        if (si->op == GRN_OP_MATCH && si->query) {
+          if (butp == (si->logical_op == GRN_OP_AND_NOT)) {
+            GRN_PTR_PUT(ctx, &snip_stack, si->query);
+          }
+        }
+        if (si->flags & SCAN_PUSH) {
+          if (nparens == npbut) {
+            butp = 1 - butp;
+            GRN_UINT32_POP(&but_stack, npbut);
+          }
+          nparens--;
+        }
+      }
+    }
+    if (n_tags) {
+      for (i = 0;; i = (i + 1) % n_tags) {
+        grn_obj *q;
+        GRN_PTR_POP(&snip_stack, q);
+        if (!q) { break; }
+        grn_snip_add_cond(ctx, snip, GRN_TEXT_VALUE(q), GRN_TEXT_LEN(q),
+                          opentags[i], opentag_lens[i], closetags[i], closetag_lens[i]);
+      }
+    } else {
+      for (;;) {
+        grn_obj *q;
+        GRN_PTR_POP(&snip_stack, q);
+        if (!q) { break; }
+        grn_snip_add_cond(ctx, snip, GRN_TEXT_VALUE(q), GRN_TEXT_LEN(q),
+                          NULL, 0, NULL, 0);
+      }
+    }
+    GRN_OBJ_FIN(ctx, &but_stack);
+    GRN_OBJ_FIN(ctx, &snip_stack);
+    for (i = n; i--;) { SI_FREE(sis[i]); }
+    GRN_FREE(sis);
+  }
+  GRN_API_RETURN(GRN_SUCCESS);
+}
+
 grn_snip *
 grn_expr_snip(grn_ctx *ctx, grn_obj *expr, int flags,
               unsigned int width, unsigned int max_results,
@@ -6476,64 +6540,14 @@ grn_expr_snip(grn_ctx *ctx, grn_obj *expr, int flags,
               const char **closetags, unsigned int *closetag_lens,
               grn_snip_mapping *mapping)
 {
-  int i, n;
-  scan_info **sis, *si;
   grn_snip *res = NULL;
   GRN_API_ENTER;
-  if ((sis = scan_info_build(ctx, expr, &n, GRN_OP_OR, 0))) {
-    if ((res = grn_snip_open(ctx, flags, width, max_results,
+  if ((res = grn_snip_open(ctx, flags, width, max_results,
                            NULL, 0, NULL, 0, mapping))) {
-      int butp = 0, nparens = 0, npbut = 0;
-      grn_obj but_stack;
-      grn_obj snip_stack;
-      GRN_UINT32_INIT(&but_stack, GRN_OBJ_VECTOR);
-      GRN_PTR_INIT(&snip_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
-      for (i = n; i--;) {
-        si = sis[i];
-        if (si->flags & SCAN_POP) {
-          nparens++;
-          if (si->logical_op == GRN_OP_AND_NOT) {
-            GRN_UINT32_PUT(ctx, &but_stack, npbut);
-            npbut = nparens;
-            butp = 1 - butp;
-          }
-        } else {
-          if (si->op == GRN_OP_MATCH && si->query) {
-            if (butp == (si->logical_op == GRN_OP_AND_NOT)) {
-              GRN_PTR_PUT(ctx, &snip_stack, si->query);
-            }
-          }
-          if (si->flags & SCAN_PUSH) {
-            if (nparens == npbut) {
-              butp = 1 - butp;
-              GRN_UINT32_POP(&but_stack, npbut);
-            }
-            nparens--;
-          }
-        }
-      }
-      if (n_tags) {
-        for (i = 0;; i = (i + 1) % n_tags) {
-          grn_obj *q;
-          GRN_PTR_POP(&snip_stack, q);
-          if (!q) { break; }
-          grn_snip_add_cond(ctx, res, GRN_TEXT_VALUE(q), GRN_TEXT_LEN(q),
-                            opentags[i], opentag_lens[i], closetags[i], closetag_lens[i]);
-        }
-      } else {
-        for (;;) {
-          grn_obj *q;
-          GRN_PTR_POP(&snip_stack, q);
-          if (!q) { break; }
-          grn_snip_add_cond(ctx, res, GRN_TEXT_VALUE(q), GRN_TEXT_LEN(q),
-                            NULL, 0, NULL, 0);
-        }
-      }
-      GRN_OBJ_FIN(ctx, &but_stack);
-      GRN_OBJ_FIN(ctx, &snip_stack);
-    }
-    for (i = n; i--;) { SI_FREE(sis[i]); }
-    GRN_FREE(sis);
+    grn_expr_snip_add_conditions(ctx, expr, res,
+                                 n_tags,
+                                 opentags, opentag_lens,
+                                 closetags, closetag_lens);
   }
   GRN_API_RETURN(res);
 }
