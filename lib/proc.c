@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2013 Brazil
+  Copyright(C) 2009-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3639,18 +3639,12 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
     grn_obj *condition_ptr = NULL;
     grn_obj *condition = NULL;
     grn_snip *snip = NULL;
-    int flags = GRN_SNIP_NORMALIZE | GRN_SNIP_SKIP_LEADING_SPACES;
+    int flags = GRN_SNIP_SKIP_LEADING_SPACES;
     unsigned int width = 200;
     unsigned int max_n_results = 3;
-    unsigned int n_tags = 1;
-    const char *open_tags[] = {"<span class=\"keyword\">"};
-    unsigned int open_tag_lengths[1];
-    const char *close_tags[] = {"</span>"};
-    unsigned int close_tag_lengths[1];
+    const char *open_tag = "<span class=\"keyword\">";
+    const char *close_tag = "</span>";
     grn_snip_mapping *mapping = GRN_SNIP_MAPPING_HTML_ESCAPE;
-
-    open_tag_lengths[0] = strlen(open_tags[0]);
-    close_tag_lengths[0] = strlen(close_tags[0]);
 
     grn_proc_get_info(ctx, user_data, NULL, NULL, &expression);
     condition_ptr = grn_expr_get_var(ctx, expression,
@@ -3661,11 +3655,15 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
     }
 
     if (condition) {
-      snip = grn_expr_snip(ctx, condition, flags,
-                           width, max_n_results, n_tags,
-                           open_tags, open_tag_lengths,
-                           close_tags, close_tag_lengths,
+      snip = grn_snip_open(ctx, flags, width, max_n_results,
+                           open_tag, strlen(open_tag),
+                           close_tag, strlen(close_tag),
                            mapping);
+      if (snip) {
+        grn_snip_set_normalizer(ctx, snip, GRN_NORMALIZER_AUTO);
+        grn_expr_snip_add_conditions(ctx, condition, snip,
+                                     0, NULL, NULL, NULL, NULL);
+      }
     }
 
     if (snip) {
