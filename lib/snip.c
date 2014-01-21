@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2012 Brazil
+/* Copyright(C) 2009-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -259,14 +259,12 @@ grn_snip_cond_close(grn_ctx *ctx, snip_cond *cond)
 
 grn_rc
 grn_snip_cond_init(grn_ctx *ctx, snip_cond *sc, const char *keyword, unsigned int keyword_len,
-                grn_encoding enc, int flags)
+                   grn_encoding enc, grn_obj *normalizer, int flags)
 {
   const char *norm;
   unsigned int norm_blen;
-  grn_obj *normalizer = NULL;
   int f = GRN_STR_REMOVEBLANK;
   memset(sc, 0, sizeof(snip_cond));
-  if (flags & GRN_SNIP_NORMALIZE) { normalizer = GRN_NORMALIZER_AUTO; }
   if (!(sc->keyword = grn_string_open(ctx, keyword, keyword_len,
                                       normalizer, f))) {
     GRN_LOG(ctx, GRN_LOG_ALERT,
@@ -340,6 +338,24 @@ grn_snip_cond_set_tag(grn_ctx *ctx,
 }
 
 grn_rc
+grn_snip_set_normalizer(grn_ctx *ctx, grn_snip *snip,
+                        grn_obj *normalizer)
+{
+  if (!snip) {
+    return GRN_INVALID_ARGUMENT;
+  }
+
+  snip->normalizer = normalizer;
+  return GRN_SUCCESS;
+}
+
+grn_obj *
+grn_snip_get_normalizer(grn_ctx *ctx, grn_snip *snip)
+{
+  return snip->normalizer;
+}
+
+grn_rc
 grn_snip_add_cond(grn_ctx *ctx, grn_snip *snip,
                   const char *keyword, unsigned int keyword_len,
                   const char *opentag, unsigned int opentag_len,
@@ -355,7 +371,7 @@ grn_snip_add_cond(grn_ctx *ctx, grn_snip *snip,
   }
   cond = snip->cond + snip->cond_len;
   if ((rc = grn_snip_cond_init(ctx, cond, keyword, keyword_len,
-                               snip->encoding, snip->flags))) {
+                               snip->encoding, snip->normalizer, snip->flags))) {
     return rc;
   }
   grn_string_get_normalized(ctx, cond->keyword, NULL, &norm_blen, NULL);
@@ -488,6 +504,11 @@ grn_snip_open(grn_ctx *ctx, int flags, unsigned int width,
   ret->nstr = NULL;
   ret->tag_count = 0;
   ret->snip_count = 0;
+  if (ret->flags & GRN_SNIP_NORMALIZE) {
+    ret->normalizer = GRN_NORMALIZER_AUTO;
+  } else {
+    ret->normalizer = NULL;
+  }
 
   GRN_DB_OBJ_SET_TYPE(ret, GRN_SNIP);
   {
@@ -565,7 +586,6 @@ grn_snip_exec(grn_ctx *ctx, grn_snip *snip, const char *string, unsigned int str
               unsigned int *nresults, unsigned int *max_tagged_len)
 {
   size_t i;
-  grn_obj *normalizer = NULL;
   int f = GRN_STR_WITH_CHECKS|GRN_STR_REMOVEBLANK;
   if (!snip || !string || !nresults || !max_tagged_len) {
     return GRN_INVALID_ARGUMENT;
@@ -573,8 +593,7 @@ grn_snip_exec(grn_ctx *ctx, grn_snip *snip, const char *string, unsigned int str
   GRN_API_ENTER;
   exec_clean(ctx, snip);
   *nresults = 0;
-  if (snip->flags & GRN_SNIP_NORMALIZE) { normalizer = GRN_NORMALIZER_AUTO; }
-  snip->nstr = grn_string_open(ctx, string, string_len, normalizer, f);
+  snip->nstr = grn_string_open(ctx, string, string_len, snip->normalizer, f);
   if (!snip->nstr) {
     exec_clean(ctx, snip);
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_string_open on grn_snip_exec failed !");

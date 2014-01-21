@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2012  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2008-2014  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -44,6 +44,8 @@ void test_open_with_invalid_max_results(void);
 void test_add_cond_with_invalid_argument(void);
 void test_add_cond_with_too_large_keyword(void);
 void test_add_cond_with_copy_tag_flag(void);
+void test_flag_normalize(void);
+void test_normalizer_accessor(void);
 
 static grn_ctx context;
 static grn_obj *database;
@@ -945,4 +947,28 @@ test_add_cond_with_copy_tag(void)
                                     keyword, keyword_len,
                                     NULL, 0,
                                     NULL, 0));
+}
+
+void
+test_flag_normalize(void)
+{
+  default_flags = GRN_SNIP_NORMALIZE;
+  cut_assert_open_snip();
+  cut_assert_equal_pointer(GRN_NORMALIZER_AUTO,
+                           grn_snip_get_normalizer(&context, snip));
+}
+
+void
+test_normalizer_accessor(void)
+{
+  grn_obj *normalizer;
+
+  cut_assert_open_snip();
+  cut_assert_null(grn_snip_get_normalizer(&context, snip));
+
+  normalizer = grn_ctx_get(&context, "NormalizerNFKC51", -1);
+  cut_assert_not_null(normalizer);
+
+  grn_snip_set_normalizer(&context, snip, normalizer);
+  cut_assert_equal_pointer(normalizer, grn_snip_get_normalizer(&context, snip));
 }

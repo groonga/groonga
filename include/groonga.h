@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2009-2013 Brazil
+  Copyright(C) 2009-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1019,6 +1019,9 @@ GRN_API grn_rc grn_snip_add_cond(grn_ctx *ctx, grn_snip *snip,
                                  const char *keyword, unsigned int keyword_len,
                                  const char *opentag, unsigned int opentag_len,
                                  const char *closetag, unsigned int closetag_len);
+GRN_API grn_rc grn_snip_set_normalizer(grn_ctx *ctx, grn_snip *snip,
+                                       grn_obj *normalizer);
+GRN_API grn_obj *grn_snip_get_normalizer(grn_ctx *ctx, grn_snip *snip);
 GRN_API grn_rc grn_snip_exec(grn_ctx *ctx, grn_snip *snip,
                              const char *string, unsigned int string_len,
                              unsigned int *nresults, unsigned int *max_tagged_len);

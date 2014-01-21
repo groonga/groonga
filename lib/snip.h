@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2012 Brazil
+/* Copyright(C) 2009-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -114,11 +114,13 @@ struct _grn_snip
   _snip_tag_result tag_result[MAX_SNIP_TAG_COUNT];
 
   size_t max_tagged_len;
+
+  grn_obj *normalizer;
 };
 
 grn_rc grn_snip_close_real(grn_ctx *ctx, grn_snip *snip);
 grn_rc grn_snip_cond_init(grn_ctx *ctx, snip_cond *sc, const char *keyword, unsigned int keyword_len,
-                          grn_encoding enc, int flags);
+                          grn_encoding enc, grn_obj *normalizer, int flags);
 void grn_snip_cond_reinit(snip_cond *cond);
 grn_rc grn_snip_cond_close(grn_ctx *ctx, snip_cond *cond);
 void grn_bm_tunedbm(grn_ctx *ctx, snip_cond *cond, grn_obj *string, int flags);
