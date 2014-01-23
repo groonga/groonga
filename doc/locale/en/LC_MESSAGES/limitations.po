@@ -17,63 +17,48 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-# c41a2a725b7241e8a6670bcba083f2a2
 msgid "Limitations"
 msgstr "Limitations"
 
-# 0a8f1bb877974ed5b45fc3bbcb536130
 msgid "Groonga has some limitations."
 msgstr "Groonga has some limitations."
 
-# 0fd4eb74e2624ab19cab63ffe14d78f4
 msgid "Limitations of table"
 msgstr ""
 
-# af2dd3ee474744eaa6c6fdb5a9d1dc40
 msgid "A table has the following limitations."
 msgstr ""
 
-# 52672378218c4bf08259165d689f3984
 msgid "The maximum one key size: 4096Bytes"
 msgstr ""
 
-# 52672378218c4bf08259165d689f3984
 msgid "The maximum total size of keys: 4GBytes"
 msgstr ""
 
-# 118adb85d55046c2a5e90e60a4bbc640
 msgid "Keep in mind that these limitations may vary depending on conditions."
 msgstr "Keep in mind that these limitations may vary depending on conditions."
 
-# 0fd4eb74e2624ab19cab63ffe14d78f4
 msgid "Limitations of indexing"
 msgstr "Limitations of indexing"
 
-# af2dd3ee474744eaa6c6fdb5a9d1dc40
 msgid "A full-text index has the following limitations."
 msgstr "A full-text index has the following limitations."
 
-# 4180343b95ac49a5b1e0e8e14cbd8f0a
 msgid "The maximum number of records: 268,435,455 (more than 268 million)"
 msgstr ""
 
-# cfad6fa84201470795d5ef1e01539205
 msgid ""
 "The maximum number of distinct terms: 268,435,455 (more than 268 million)"
 msgstr ""
 
-# 52672378218c4bf08259165d689f3984
 msgid "The maximum index size: 256GBytes"
 msgstr "The maximum index size: 256GBytes"
 
-# 0fd4eb74e2624ab19cab63ffe14d78f4
 msgid "Limitations of column"
 msgstr ""
 
-# af2dd3ee474744eaa6c6fdb5a9d1dc40
 msgid "A column has the following limitation."
 msgstr ""
 
-# 98937bb421c043d991c73e839ddc990e
 msgid "The maximum stored data size of each column: 256GiB"
 msgstr ""

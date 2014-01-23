@@ -17,665 +17,488 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-# 70c14b5b5578438f9fca2b77aa53d2c7
 msgid "Specification"
 msgstr "Specification"
 
-# 2a5183f5c81f4eeeb4b332ed5dbecc11
 msgid "GQTP"
 msgstr ""
 
-# 394dab59612b42699b8b41e0b3636f3b
 msgid ""
 "GQTP is the acronym of Groonga Query Transfer Protocol. GQTP is the original "
 "protocol for groonga."
 msgstr ""
 
-# 8cb0ef8809624a07ba4b3c1a8d933cb4
 msgid "Protocol"
 msgstr ""
 
-# 13e6eba29b584b67b2f41c0986aa37dc
 msgid ""
 "GQTP is stateful client server model protocol. The following sequence is one "
 "processing unit:"
 msgstr ""
 
-# e8db1aa0c01f4c66b97911c5c253e675
 msgid "Client sends a request"
 msgstr ""
 
-# d9f44580fe2f42bab088b43a7aecd25c
 msgid "Server receives the request"
 msgstr ""
 
-# a077db385fb04f3b83b222b3313eadad
 msgid "Server processes the request"
 msgstr ""
 
-# 1207484d5aa44e3a933f0ff1d5cd75f4
 msgid "Server sends a response"
 msgstr ""
 
-# 856ebe99884e4757b3047c15781fbb65
 msgid "Client receives the response"
 msgstr ""
 
-# 2209f5d761f24ed0b9aab41f7b22e422
 msgid "You can do zero or more processing units in a session."
 msgstr ""
 
-# b4a8e0ea6e024f30b77f86545766d9a2
 msgid ""
 "Both request and response consist of GQTP header and body. GQTP header is "
 "fixed size data. Body is variable size data and its size is stored in GQTP "
 "header. The content of body isn't defined in GQTP."
 msgstr ""
 
-# 5378260b3169470082902e95e7a7e95d
 msgid "GQTP header"
 msgstr ""
 
-# 9c24d1116bdf4f35849679320fcdd88d
 msgid "GQTP header consists of the following unsigned integer values:"
 msgstr ""
 
-# 6a7ae2d5bf3b4fe381bca081bed4c19b
-# ace06ba6366943f18e21b24370c5d266
-# 30ee75a6100e415c89d5f2888daa4cb0
 msgid "Description"
 msgstr ""
 
-# 821966376a574dd4a3cb4e4541306370
-# c2212d9f1d6844189f16c14db5b1b188
-# b9565f96cc1646e2a2a30aee6bfb626a
 msgid "Name"
 msgstr ""
 
-# 264a8e19d7564c49bcdbc341d4e5661c
 msgid "Size"
 msgstr ""
 
-# 5c34a7e3855b49efb3ac177dd7117240
-# e9168c5043144fba9918ea9e43e187fd
-# eb9700974a4449b29483bf588db64dfe
-# 716cb2b9846f476a8b908d94f482df85
 msgid "1byte"
 msgstr ""
 
-# 1a8f406b1d3a4f1ca41acf09d86a874d
 msgid "Protocol type."
 msgstr ""
 
-# 835e1669290e469784edbf4b758b2dd6
-# 2f06e72aa9a5409898230e5a6a13c6f1
 msgid "``protocol``"
 msgstr ""
 
-# 43e7687f387a46e8ae289dfa5d677afe
 msgid "Content type of body."
 msgstr ""
 
-# 0a02a730e2fd4a9aa26e8354fc0cfea2
-# 8b35b0e05b184fc18a2598355d701409
 msgid "``query_type``"
 msgstr ""
 
-# e4041fb1efab44e2a9e1b7b619126e35
-# 18846385bafa4919871c80c0f61d3393
 msgid "2byte"
 msgstr ""
 
-# 7d4a3bf02171498dbfe478354cc91e20
-# f76e99ea6ceb4834baa7f0b1758a82f9
-# 17cd5787691f4c5d9a200995a9e3b060
-# bc12cf4269bc4312b6ff4eccba809ee9
-# 93db3d00f32b44febbb6db999b4ba56d
 msgid "Not used."
 msgstr ""
 
-# 1b17e113282144a58952cbb250344707
 msgid "``key_length``"
 msgstr ""
 
-# b6ae6f84d3684050a01d955ad4d0006a
 msgid "``level``"
 msgstr ""
 
-# 6c932a42dea543ecbe663985aa766faf
 msgid "Flags."
 msgstr ""
 
-# 56c932b541fa4e1dab925f672f148dff
-# e103151ccd0045fb9bccd5098d08064b
 msgid "``flags``"
 msgstr ""
 
-# cca264682eb046a69c60f6698c19776b
 msgid "Return code."
 msgstr ""
 
-# e2c5e27a0af84b7899a18189d51e0e7d
-# 05ed17794fdd4785b591dca5903bdf5b
 msgid "``status``"
 msgstr ""
 
-# 95e0dcce4aa34edd9c7044ad474cdf40
-# df81427697f14dbc97b5acb25106b0c8
 msgid "4byte"
 msgstr ""
 
-# 497788499e074001975e817eef408c0b
 msgid "Body size."
 msgstr ""
 
-# fc9b8748fdd742cb8b31680531d60a3a
-# 30632f83b3c4446ca643b6ed9bd9ec28
 msgid "``size``"
 msgstr ""
 
-# 4a67799371fa41f588e9576923606c70
 msgid "``opaque``"
 msgstr ""
 
-# 1cd52e519a744469836f90bcf041fd90
 msgid "8byte"
 msgstr ""
 
-# c161045220a043f493b88e5fe50e4c14
 msgid "``cas``"
 msgstr ""
 
-# 667e1a7ea4e94d848468ea1366f5a04e
 msgid "All header values are encoded by network byte order."
 msgstr ""
 
-# 8629b11b961f4d7ebf3ab43b4c004943
 msgid "The following sections describes available values of each header value."
 msgstr ""
 
-# ec9a4b15b8de4df5bb9b340b436504c9
 msgid "The total size of GQTP header is 24byte."
 msgstr ""
 
-# 6dc74e8a2c57468b8a1c2dbc424bd038
 msgid "The value is always ``0xc7`` in both request and response GQTP header."
 msgstr ""
 
-# 1c1597c6eeeb402f8bbbe452ff88c3eb
 msgid "The value is one of the following values:"
 msgstr ""
 
-# d4dd27c2e2f14f61ada5ccfeee4e5e18
-# a4ca3df8a4d74983a671d1379fe4d3ba
 msgid "Value"
 msgstr ""
 
-# 5713008b6664468588c21eeb64252a46
 msgid "0"
 msgstr ""
 
-# 9a853d2aca5d44a4b99368f0bea4c6f3
 msgid "Free format."
 msgstr ""
 
-# 4d1a44b2080c4ef58d1c4f5d8ea76d22
 msgid "``NONE``"
 msgstr ""
 
-# 5013c3b28877412d876d135673f5905e
 msgid "1"
 msgstr ""
 
-# c60fccae9cae4fc09435bd257d867eb2
 msgid "Tab Separated Values."
 msgstr ""
 
-# 5efecabf5ed94730bf4ef258fb3949be
 msgid "``TSV``"
 msgstr ""
 
-# 70f34e8fc6064babbf535d0ed4d624a7
 msgid "2"
 msgstr ""
 
-# c04f79a5de2e4577bedfc48298d52b75
 msgid "JSON."
 msgstr ""
 
-# 7d117baade3a43dd85952eb36757e1fe
 msgid "``JSON``"
 msgstr ""
 
-# 6d9994c69e87420fb7c35da41b2ec2cf
 msgid "3"
 msgstr ""
 
-# 2fb645ad661b456a86abbf97d927c81e
 msgid "XML."
 msgstr ""
 
-# f387e73cca9e4955a45f4bb850ac0680
 msgid "``XML``"
 msgstr ""
 
-# ad168999dcf845afba44a5e892913b60
 msgid "4"
 msgstr ""
 
-# 0808d6880109467f86fe652fbd284731
 msgid "MessagePack."
 msgstr ""
 
-# 81baaa5d64c040dfa65c8e9446ecc178
 msgid "``MSGPACK``"
 msgstr ""
 
-# 2d7b95e6a449473fac9cdb2bb261b371
 msgid "This is not used in request GQTP header."
 msgstr ""
 
-# 3ca8e23598454eec9c76e7467f6a6c99
 msgid ""
 "This is used in response GQTP header. Body is formatted as specified type."
 msgstr ""
 
-# 3f840330700742c2b1d13fd9300e96fa
 msgid "The value is bitwise OR of the following values:"
 msgstr ""
 
-# f54fa0a23e184f6aa0a3ffc2446284a5
 msgid "0x01"
 msgstr ""
 
-# 2905d1b4fe30465f8b460d9ef0fea840
 msgid "There are more data."
 msgstr ""
 
-# fe75e7c5d68548b8ae3d32bf402f1eab
 msgid "``MORE``"
 msgstr ""
 
-# 0e8ca553654a448cb51db131812c3f82
 msgid "0x02"
 msgstr ""
 
-# fc713d7cc5704e4e8fa6a0efbc44c8ac
 msgid "There are no more data."
 msgstr ""
 
-# aa84c4b74ed946d983137ffe8a875522
 msgid "``TAIL``"
 msgstr ""
 
-# 79225cf175234c40b54791a923e2fd74
 msgid "0x04"
 msgstr ""
 
-# 72fc2b48d88c452b9accd1374460a969
 msgid "``HEAD``"
 msgstr ""
 
-# a18f9b9bf1214c1daefae18f2deb6c63
 msgid "0x08"
 msgstr ""
 
-# 66693fbea32c47089f05c6de2ae7ffbb
 msgid "Be quiet."
 msgstr ""
 
-# 9f1a192974794f6cb95b7a7e7defd22e
 msgid "``QUIET``"
 msgstr ""
 
-# d8dc20049ca940bba71e068a78eabcad
 msgid "0x10"
 msgstr ""
 
-# 332111caeb4b4cd4af384214c7ac7742
 msgid "Quit."
 msgstr ""
 
-# df5c90af9e744cd0a19ea1cb00a19baa
 msgid "``QUIT``"
 msgstr ""
 
-# abae9a40cdf9438aa415761fce83e296
 msgid "You must specify ``MORE`` or ``TAIL`` flag."
 msgstr ""
 
-# b0ee06152b44409daf33458ecdda6c9f
 msgid ""
 "If you use ``MORE`` flag, you should also use ``QUIET`` flag. Because you "
 "don't need to show a response for your partial request."
 msgstr ""
 
-# 6a63449624274627ad19739f2c116ce1
 msgid "Use ``QUIT`` flag to quit this session."
 msgstr ""
 
-# 258b8396f5e4409cbe9e58b677c4c106
 msgid ""
 "Here are available values. The new statuses will be added in the future."
 msgstr ""
 
-# 7cca57bad1434bb3b9551ed7daa9a1b3
 msgid "0: ``SUCCESS``"
 msgstr ""
 
-# 3d2b3f1d589a4b2ebc4c380234ab391b
 msgid "1: ``END_OF_DATA``"
 msgstr ""
 
-# c584e0438ae04ac79ccc20acac9577a7
 msgid "65535: ``UNKNOWN_ERROR``"
 msgstr ""
 
-# 221849f7b14542379cc92c5141683702
 msgid "65534: ``OPERATION_NOT_PERMITTED``"
 msgstr ""
 
-# 6a8b6d431d084e04a978babe1d18d39c
 msgid "65533: ``NO_SUCH_FILE_OR_DIRECTORY``"
 msgstr ""
 
-# 41b7130b74ab47eeaac4974b1ca72ef8
 msgid "65532: ``NO_SUCH_PROCESS``"
 msgstr ""
 
-# b7bafea0b0f44d47b28851210fd22749
 msgid "65531: ``INTERRUPTED_FUNCTION_CALL``"
 msgstr ""
 
-# c9a5bae02115493caf8b270166f01ded
 msgid "65530: ``INPUT_OUTPUT_ERROR``"
 msgstr ""
 
-# a2c5a894000144c5866ea0c05b01b68d
 msgid "65529: ``NO_SUCH_DEVICE_OR_ADDRESS``"
 msgstr ""
 
-# 34351ef089884ccc9ca53ef387bc16ad
 msgid "65528: ``ARG_LIST_TOO_LONG``"
 msgstr ""
 
-# f3c4d0e794d44d82b738b9684500c9e7
 msgid "65527: ``EXEC_FORMAT_ERROR``"
 msgstr ""
 
-# ce2d5e70a94740b388a1c9340d82b7ce
 msgid "65526: ``BAD_FILE_DESCRIPTOR``"
 msgstr ""
 
-# 67e8dd6d84cf4f9f8f270cf641267b0c
 msgid "65525: ``NO_CHILD_PROCESSES``"
 msgstr ""
 
-# 6247d82177b24e5b8d0dc90f89e207d2
 msgid "65524: ``RESOURCE_TEMPORARILY_UNAVAILABLE``"
 msgstr ""
 
-# 6ff5d7d3695440308cb8d003e466f1f3
 msgid "65523: ``NOT_ENOUGH_SPACE``"
 msgstr ""
 
-# d327997e8095419c8eb7e2da2be59ce4
 msgid "65522: ``PERMISSION_DENIED``"
 msgstr ""
 
-# c862dca61fd14ca8ae2ec416490eb592
 msgid "65521: ``BAD_ADDRESS``"
 msgstr ""
 
-# f764663999974f5daaa00a91a4b06c08
 msgid "65520: ``RESOURCE_BUSY``"
 msgstr ""
 
-# a86591fce7d24d6bb648aedb762dc2f2
 msgid "65519: ``FILE_EXISTS``"
 msgstr ""
 
-# a8e842172a0545579244aa7d22f7f2a7
 msgid "65518: ``IMPROPER_LINK``"
 msgstr ""
 
-# cdf6fe5555c845dbbac2c258bb0aadaf
 msgid "65517: ``NO_SUCH_DEVICE``"
 msgstr ""
 
-# c468d2507afe412dbe8c8a2980fa4c5c
 msgid "65516: ``NOT_A_DIRECTORY``"
 msgstr ""
 
-# 92d0086477b54216bdf9b7902324139e
 msgid "65515: ``IS_A_DIRECTORY``"
 msgstr ""
 
-# 9edeb9267efc4793b541b54421417e58
 msgid "65514: ``INVALID_ARGUMENT``"
 msgstr ""
 
-# 35c914997d2e4e75ad4c7d2123ab9eb1
 msgid "65513: ``TOO_MANY_OPEN_FILES_IN_SYSTEM``"
 msgstr ""
 
-# c7904d5259764dc48829cbdde3c92f83
 msgid "65512: ``TOO_MANY_OPEN_FILES``"
 msgstr ""
 
-# 85c55e562e7249e0af5884dddfae0989
 msgid "65511: ``INAPPROPRIATE_I_O_CONTROL_OPERATION``"
 msgstr ""
 
-# ec8fba2822bd4510a5b04947f07ab18c
 msgid "65510: ``FILE_TOO_LARGE``"
 msgstr ""
 
-# ce6ef94bdebd47e79b4378ad48c28f74
 msgid "65509: ``NO_SPACE_LEFT_ON_DEVICE``"
 msgstr ""
 
-# 73dfb94ace7747f5bb98af6f0cadf3c0
 msgid "65508: ``INVALID_SEEK``"
 msgstr ""
 
-# 2bac53ac0f434e59bb75f8c150ed1e8f
 msgid "65507: ``READ_ONLY_FILE_SYSTEM``"
 msgstr ""
 
-# 384e3c418f2545129245f6b57f313af3
 msgid "65506: ``TOO_MANY_LINKS``"
 msgstr ""
 
-# d8708abd5db5408d8fcebcf53e41b489
 msgid "65505: ``BROKEN_PIPE``"
 msgstr ""
 
-# be1c0ec012764c50bb311334248025de
 msgid "65504: ``DOMAIN_ERROR``"
 msgstr ""
 
-# 5e68b8eb3a1845d2a40b2f8d86b7c1ea
 msgid "65503: ``RESULT_TOO_LARGE``"
 msgstr ""
 
-# b042fc3089cc4d01bf5b7116716c9872
 msgid "65502: ``RESOURCE_DEADLOCK_AVOIDED``"
 msgstr ""
 
-# 2cde10adff0146d8969eb1f4ae8dcc72
 msgid "65501: ``NO_MEMORY_AVAILABLE``"
 msgstr ""
 
-# 4454c8c7c2fc4a29bbee57bf5e56c1b3
 msgid "65500: ``FILENAME_TOO_LONG``"
 msgstr ""
 
-# d039cf8762664538bc7096a3fd4d0288
 msgid "65499: ``NO_LOCKS_AVAILABLE``"
 msgstr ""
 
-# 34fe3c9713e747d3981621fc6275b494
 msgid "65498: ``FUNCTION_NOT_IMPLEMENTED``"
 msgstr ""
 
-# c338643421624201ac74a7b43cf993c7
 msgid "65497: ``DIRECTORY_NOT_EMPTY``"
 msgstr ""
 
-# c1f94f4f5c2745eca995a7e97bd41f28
 msgid "65496: ``ILLEGAL_BYTE_SEQUENCE``"
 msgstr ""
 
-# 7ecf2fa850494bdbbffccb395b8bc9e5
 msgid "65495: ``SOCKET_NOT_INITIALIZED``"
 msgstr ""
 
-# 8e47860bec784e7cb13975c88428b813
 msgid "65494: ``OPERATION_WOULD_BLOCK``"
 msgstr ""
 
-# 1cd9f50785824a4f8a4e0d5ddb5e0f5c
 msgid "65493: ``ADDRESS_IS_NOT_AVAILABLE``"
 msgstr ""
 
-# 13f37c4ddf9945648a8b96bfca721d70
 msgid "65492: ``NETWORK_IS_DOWN``"
 msgstr ""
 
-# 4dceaefc4b574f54a7ead914b20f9f53
 msgid "65491: ``NO_BUFFER``"
 msgstr ""
 
-# ccbd349c948948b68131a58d1d7a431a
 msgid "65490: ``SOCKET_IS_ALREADY_CONNECTED``"
 msgstr ""
 
-# 76b17bcdf2f745dcaa296b60e7930063
 msgid "65489: ``SOCKET_IS_NOT_CONNECTED``"
 msgstr ""
 
-# 742c4c7a5e95491bbd18252e0509335c
 msgid "65488: ``SOCKET_IS_ALREADY_SHUTDOWNED``"
 msgstr ""
 
-# e5ae6849962447afab12069a4abd2001
 msgid "65487: ``OPERATION_TIMEOUT``"
 msgstr ""
 
-# 343248a965724576943c0a30113e9ce2
 msgid "65486: ``CONNECTION_REFUSED``"
 msgstr ""
 
-# e9a9d37b4a2d4d43b0ffd491460a487e
 msgid "65485: ``RANGE_ERROR``"
 msgstr ""
 
-# 4b70e159c9804529a8874f09dfaeaebc
 msgid "65484: ``TOKENIZER_ERROR``"
 msgstr ""
 
-# 1567bc6e0e3448e3981e31b2b1872bc9
 msgid "65483: ``FILE_CORRUPT``"
 msgstr ""
 
-# 721f9ab87468441d9d5f9aaf8203a6af
 msgid "65482: ``INVALID_FORMAT``"
 msgstr ""
 
-# 0f9179c671814fc48c9d4c6fbd37586e
 msgid "65481: ``OBJECT_CORRUPT``"
 msgstr ""
 
-# fae8471565d14ca4a14a4dd52c70879e
 msgid "65480: ``TOO_MANY_SYMBOLIC_LINKS``"
 msgstr ""
 
-# 8ed6e3f6384944c3ae1dcc51620cd024
 msgid "65479: ``NOT_SOCKET``"
 msgstr ""
 
-# 302fa28c38734543afadd812a29aae61
 msgid "65478: ``OPERATION_NOT_SUPPORTED``"
 msgstr ""
 
-# ff0d1707e9024b22ba3c202ae15eaef1
 msgid "65477: ``ADDRESS_IS_IN_USE``"
 msgstr ""
 
-# a5f4b255eb034367a925516afb833fe9
 msgid "65476: ``ZLIB_ERROR``"
 msgstr ""
 
-# c6d9fd44a4f446df99f08ba628745c05
 msgid "65475: ``LZO_ERROR``"
 msgstr ""
 
-# 5ea89f1b8fd149ff9010c5982e20e99d
 msgid "65474: ``STACK_OVER_FLOW``"
 msgstr ""
 
-# 36c4817fcc764ec3b76d341b4083f393
 msgid "65473: ``SYNTAX_ERROR``"
 msgstr ""
 
-# 2c8fa701d9d6491db99ed62820b0b679
 msgid "65472: ``RETRY_MAX``"
 msgstr ""
 
-# ec8a409cf09d4fb2a4d7aefffa6734ea
 msgid "65471: ``INCOMPATIBLE_FILE_FORMAT``"
 msgstr ""
 
-# e7f105a7dd8e4683af412c3f71c1cd71
 msgid "65470: ``UPDATE_NOT_ALLOWED``"
 msgstr ""
 
-# 6f852dbad2b641559aa676b205b13519
 msgid "65469: ``TOO_SMALL_OFFSET``"
 msgstr ""
 
-# fa7dff1ae291420e933948e4b8bc4f18
 msgid "65468: ``TOO_LARGE_OFFSET``"
 msgstr ""
 
-# 8e528e61050e4327b1c26d2e103f2bd6
 msgid "65467: ``TOO_SMALL_LIMIT``"
 msgstr ""
 
-# 931cd00768e34f37b54dd4f72e7f00d8
 msgid "65466: ``CAS_ERROR``"
 msgstr ""
 
-# d7f00413ea104bf8a43ef56b692a8058
 msgid "65465: ``UNSUPPORTED_COMMAND_VERSION``"
 msgstr ""
 
-# 34643f82a2bf49feb59a5cc5ac76c377
 msgid ""
 "The size of body. The maximum body size is 4GiB because ``size`` is 4byte "
 "unsigned integer. If you want to send 4GiB or more larger data, use ``MORE`` "
 "flag."
 msgstr ""
 
-# 34eb2a6c1f1c46e889cc8b6101ad3c67
 msgid "Example"
 msgstr ""
 
-# 9228e2bbfbbc49a2ade9cbb587cd5c4c
-# 91062dab1bb449e4b01dd02e0ae8696f
 msgid "TODO"
 msgstr ""
 
-# f43548e504324e9e837240a59af5c943
 msgid "See also"
 msgstr ""
 
-# 728d32d9dce9424c91a0fd9016cf48a8
 msgid "検索"
 msgstr "検索"
 
-# 1728b3cf62d344df9cdc9b329b150b13
 msgid ""
 ":doc:`/reference/commands/select` コマンドがqueryパラメータを使ってどのように"
 "検索するのかを説明します。"
@@ -683,31 +506,22 @@ msgstr ""
 ":doc:`/reference/commands/select` コマンドがqueryパラメータを使ってどのように"
 "検索するのかを説明します。"
 
-# f29fe82eb9b2422c87509f9cffc05031
 msgid "検索の挙動"
 msgstr "検索の挙動"
 
-# a7699f18272340ce8d5e8b363a6d437d
 msgid "検索の挙動には以下の3種類あり、検索結果によって動的に使い分けています。"
 msgstr ""
 "検索の挙動には以下の3種類あり、検索結果によって動的に使い分けています。"
 
-# 5bdcf955bfae429691cf832ca4861796
-# 93ba91c2b19546e29b839c610e9dd24b
 msgid "完全一致検索"
 msgstr "完全一致検索"
 
-# 6c7a2fe65ce24f478678e74544281960
-# f40bc442cc2641ec9d01fd75a85e63d8
 msgid "非わかち書き検索"
 msgstr "非わかち書き検索"
 
-# 636b332de19c4de5b9286e9e2604f9d9
-# 8ea30e996d0f4ccb9525cbddcbcae62c
 msgid "部分一致検索"
 msgstr "部分一致検索"
 
-# ffab14c1e09a4e86b37dd807299249db
 msgid ""
 "どのように検索の挙動を使い分けているかを説明する前に、まず、それぞれの検索の"
 "挙動を説明します。"
@@ -715,7 +529,6 @@ msgstr ""
 "どのように検索の挙動を使い分けているかを説明する前に、まず、それぞれの検索の"
 "挙動を説明します。"
 
-# c2a470aca37b4147be0081acfce63e0c
 msgid ""
 "検索対象文書は複数の語彙にトークナイズ(分割)され、それぞれを単位とした語彙表"
 "に索引を管理します。 検索キーワードも同一の方法でトークナイズされます。"
@@ -723,7 +536,6 @@ msgstr ""
 "検索対象文書は複数の語彙にトークナイズ(分割)され、それぞれを単位とした語彙表"
 "に索引を管理します。 検索キーワードも同一の方法でトークナイズされます。"
 
-# 70023069da6c482ea159de76e03002d3
 msgid ""
 "このとき、検索キーワードをトークナイズした結果得られる語彙の配列と同一の配列"
 "を含む文書を検索する処理を完全一致検索と呼んでいます。"
@@ -731,17 +543,14 @@ msgstr ""
 "このとき、検索キーワードをトークナイズした結果得られる語彙の配列と同一の配列"
 "を含む文書を検索する処理を完全一致検索と呼んでいます。"
 
-# d713c5b5d5bf4e9f97a125afeef8dced
 msgid ""
 "たとえば、TokenMecabトークナイザを使用した索引では「東京都民」という文字列は"
 msgstr ""
 "たとえば、TokenMecabトークナイザを使用した索引では「東京都民」という文字列は"
 
-# 897f6da9094848648866a03bb8c16b1c
 msgid "東京 / 都民"
 msgstr "東京 / 都民"
 
-# bc9f56ee727a4eb0b4b32f66a3e0c31a
 msgid ""
 "という二つの語彙の配列として格納されます。この索引に対して「東京都」という"
 "キーワードで検索した時、このキーワードは、"
@@ -749,11 +558,9 @@ msgstr ""
 "という二つの語彙の配列として格納されます。この索引に対して「東京都」という"
 "キーワードで検索した時、このキーワードは、"
 
-# f994f3f08eda4cbcb30fd686c1dec6ab
 msgid "東京 / 都"
 msgstr "東京 / 都"
 
-# 7375a1f0dc5a41e1b31217e9db3ea6f0
 msgid ""
 "という二つの語彙の配列として処理されます。この語彙の並びは、「東京 / 都民」と"
 "いう語彙の並びには一致しませんので、完全一致検索ではヒットしません。"
@@ -761,7 +568,6 @@ msgstr ""
 "という二つの語彙の配列として処理されます。この語彙の並びは、「東京 / 都民」と"
 "いう語彙の並びには一致しませんので、完全一致検索ではヒットしません。"
 
-# e8d3a43cc0824edaa97a27a8fb0a336f
 msgid ""
 "これに対して、TokenBigramトークナイザを使用した索引では「東京都民」という文字"
 "列は"
@@ -769,11 +575,9 @@ msgstr ""
 "これに対して、TokenBigramトークナイザを使用した索引では「東京都民」という文字"
 "列は"
 
-# 4f344074ba6142f182ecd5e52a4a7f20
 msgid "東京 / 京都 / 都民 / 民"
 msgstr "東京 / 京都 / 都民 / 民"
 
-# c2b88457847b4c478acec044acc2869a
 msgid ""
 "という四つの語彙の配列として格納されます。この索引に対して「東京都」という"
 "キーワードで検索した時、このキーワードは、"
@@ -781,11 +585,9 @@ msgstr ""
 "という四つの語彙の配列として格納されます。この索引に対して「東京都」という"
 "キーワードで検索した時、このキーワードは、"
 
-# 54796e8218b0434489b0e99deff155bf
 msgid "東京 / 京都"
 msgstr "東京 / 京都"
 
-# cfbbcb35012848d2bcb59b0517e3f738
 msgid ""
 "という二つの語彙の配列として処理されます。この語彙の並びは、「東京 / 京都 / "
 "都民」という語彙の並びに含まれますので、完全一致検索でヒットします。"
@@ -793,7 +595,6 @@ msgstr ""
 "という二つの語彙の配列として処理されます。この語彙の並びは、「東京 / 京都 / "
 "都民」という語彙の並びに含まれますので、完全一致検索でヒットします。"
 
-# c30dcf57bb4e4d329ef6a71c9a1a04a8
 msgid ""
 "なお、TokenBigramトークナイザでは、アルファベット・数値・記号文字列については"
 "bigramを生成せず、一つの連続したトークンとして扱います。たとえば、「楽しい"
@@ -803,11 +604,9 @@ msgstr ""
 "bigramを生成せず、一つの連続したトークンとして扱います。たとえば、「楽しい"
 "billiard」という文字列は、"
 
-# 96c0b6611df149659cd697ab43eaf9f1
 msgid "楽し / しい / billiard"
 msgstr "楽し / しい / billiard"
 
-# ad80178fe804440eb1ce2a5671dcb0ce
 msgid ""
 "という三つの語彙の配列として格納されます。これに対して「bill」というキーワー"
 "ドで検索した時、このキーワードは、"
@@ -815,11 +614,9 @@ msgstr ""
 "という三つの語彙の配列として格納されます。これに対して「bill」というキーワー"
 "ドで検索した時、このキーワードは、"
 
-# 12fddb2fff7444cd947796f01211030e
 msgid "bill"
 msgstr "bill"
 
-# 617ec801d5de456db5c1d67ae265ac88
 msgid ""
 "という一つの語彙として処理されます。この語彙の並びは「楽し / しい / "
 "billiard」という語彙の並びには含まれないので、完全一致でヒットしません。"
@@ -827,7 +624,6 @@ msgstr ""
 "という一つの語彙として処理されます。この語彙の並びは「楽し / しい / "
 "billiard」という語彙の並びには含まれないので、完全一致でヒットしません。"
 
-# 5e150b5b85e14797b83db2fc175dce91
 msgid ""
 "これに対して、TokenBigramSplitSymbolAlphaトークナイザではアルファベット文字列"
 "についてもbigramを生成し、「楽しいbilliard」という文字列は、"
@@ -835,11 +631,9 @@ msgstr ""
 "これに対して、TokenBigramSplitSymbolAlphaトークナイザではアルファベット文字列"
 "についてもbigramを生成し、「楽しいbilliard」という文字列は、"
 
-# 54439d77222d4b55ad19977b4b7ba1b7
 msgid "楽し / しい / いb / bi / il / ll / li / ia / ar / rd / d"
 msgstr "楽し / しい / いb / bi / il / ll / li / ia / ar / rd / d"
 
-# 89e59edc3ca84fafa4b99a5a02c141ef
 msgid ""
 "という十一の語彙の配列として格納されます。これに対して「bill」というキーワー"
 "ドで検索した時、このキーワードは、"
@@ -847,11 +641,9 @@ msgstr ""
 "という十一の語彙の配列として格納されます。これに対して「bill」というキーワー"
 "ドで検索した時、このキーワードは、"
 
-# c771dba3556047038857d7a00f9e9ea8
 msgid "bi / il / ll"
 msgstr "bi / il / ll"
 
-# 3737b3b7e9864ef29f8c3d20fa0a0358
 msgid ""
 "という三つの語彙として処理されます。この語彙の並びは「楽し / しい / いb / "
 "bi / il / ll / li / ia / ar / rd / d」という語彙の並びに含まれるので、完全一"
@@ -861,13 +653,11 @@ msgstr ""
 "bi / il / ll / li / ia / ar / rd / d」という語彙の並びに含まれるので、完全一"
 "致でヒットします。"
 
-# 70384833e1c54099aa0f9c53a5d5fb05
 msgid ""
 "非わかち書き検索はパトリシア木で語彙表を構築している場合のみ利用可能です。"
 msgstr ""
 "非わかち書き検索はパトリシア木で語彙表を構築している場合のみ利用可能です。"
 
-# 16beb563d287414ca2fe1ba003a50264
 msgid ""
 "非わかち書き検索の挙動はTokenBigramなどN-gram系のトークナイザーを利用している"
 "場合とTokenMecabトークナイザーを利用している場合で挙動が変わります。"
@@ -875,7 +665,6 @@ msgstr ""
 "非わかち書き検索の挙動はTokenBigramなどN-gram系のトークナイザーを利用している"
 "場合とTokenMecabトークナイザーを利用している場合で挙動が変わります。"
 
-# e52c1131ceaf41faa2f679d47f923934
 msgid ""
 "N-gram系のトークナイザーを利用している場合はキーワードで前方一致検索をしま"
 "す。"
@@ -883,7 +672,6 @@ msgstr ""
 "N-gram系のトークナイザーを利用している場合はキーワードで前方一致検索をしま"
 "す。"
 
-# 3b6ffdd5bfe3456fa1fef7b2f1ce7572
 msgid ""
 "例えば、「bill」というキーワードで検索した場合、「bill」も「billiard」もヒッ"
 "トします。"
@@ -891,7 +679,6 @@ msgstr ""
 "例えば、「bill」というキーワードで検索した場合、「bill」も「billiard」もヒッ"
 "トします。"
 
-# 96ae599c1ac341839e956ad1e70af717
 msgid ""
 "TokenMeCabトークナイザーの場合はわかち書き前のキーワードで前方一致検索をしま"
 "す。"
@@ -899,7 +686,6 @@ msgstr ""
 "TokenMeCabトークナイザーの場合はわかち書き前のキーワードで前方一致検索をしま"
 "す。"
 
-# 453cbc829e724e3087f083b114aa04fd
 msgid ""
 "例えば、「スープカレー」というキーワードで検索した場合、「スープカレーバー」"
 "（1単語扱い）にヒットしますが、「スープカレー」（\"スープ\"と\"カレー\"の2単"
@@ -911,7 +697,6 @@ msgstr ""
 "語扱い）や「スープカレーライス」（\"スープ\"と\"カレーライス\"の2単語扱い）に"
 "はヒットしません。"
 
-# b223646328354061a127205742d48d81
 msgid ""
 "部分一致検索はパトリシア木で語彙表を構築していて、かつ、KEY_WITH_SISオプショ"
 "ンを指定している場合のみ利用可能です。KEY_WITH_SISオプションが指定されていな"
@@ -921,7 +706,6 @@ msgstr ""
 "ンを指定している場合のみ利用可能です。KEY_WITH_SISオプションが指定されていな"
 "い場合は非わかち書き検索と同等です。"
 
-# 0b2a8dce7c2a4e64b0f0d9d2c4f86264
 msgid ""
 "部分一致検索の挙動はTokenBigramなどN-gram系のトークナイザーを利用している場合"
 "とTokenMecabトークナイザーを利用している場合で挙動が変わります。"
@@ -929,11 +713,9 @@ msgstr ""
 "部分一致検索の挙動はTokenBigramなどN-gram系のトークナイザーを利用している場合"
 "とTokenMecabトークナイザーを利用している場合で挙動が変わります。"
 
-# 396daf2f86fc401f8e9518041ba5c18d
 msgid "Bigramの場合は前方一致検索と中間一致検索と後方一致検索を行います。"
 msgstr "Bigramの場合は前方一致検索と中間一致検索と後方一致検索を行います。"
 
-# f1ad0755145844c686cc786a3ea1e77e
 msgid ""
 "例えば、「ill」というキーワードで検索した場合、「bill」も「billiard」もヒット"
 "します。"
@@ -941,7 +723,6 @@ msgstr ""
 "例えば、「ill」というキーワードで検索した場合、「bill」も「billiard」もヒット"
 "します。"
 
-# 9c9cdf179e784df68de7cc2d8c268236
 msgid ""
 "TokenMeCabトークナイザーの場合はわかち書き後のキーワードで前方一致検索と中間"
 "一致検索と後方一致検索をします。"
@@ -949,7 +730,6 @@ msgstr ""
 "TokenMeCabトークナイザーの場合はわかち書き後のキーワードで前方一致検索と中間"
 "一致検索と後方一致検索をします。"
 
-# 142a027c208d490db83a70349da953dc
 msgid ""
 "例えば、「スープカレー」というキーワードで検索した場合、「スープカレー」"
 "（\"スープ\"と\"カレー\"の2単語扱い）や「スープカレーライス」（\"スープ\"と"
@@ -961,11 +741,9 @@ msgstr ""
 "\"カレーライス\"の2単語扱い）、「スープカレーバー」（1単語扱い）にもヒットし"
 "ます。"
 
-# bdbb6c659aa249daad729d09677bcd8d
 msgid "検索の使い分け"
 msgstr "検索の使い分け"
 
-# db0fdf95b7c54e5dbafc79d355a71089
 msgid ""
 "groongaは基本的に完全一致検索のみを行います。完全一致検索でのヒット件数が所定"
 "の閾値以下の場合に限り、非わかち書き検索を行い、それでもヒット件数が閾値以下"
@@ -975,7 +753,6 @@ msgstr ""
 "の閾値以下の場合に限り、非わかち書き検索を行い、それでもヒット件数が閾値以下"
 "の場合は部分一致検索を行います。（閾値のデフォルト値は0です。）"
 
-# 4b3d05200f7441df86b0772b9f8f95cd
 msgid ""
 "ただし、すでに検索結果セットが存在する場合はたとえヒット件数が閾値以下でも完"
 "全一致検索のみを行います。"
@@ -983,7 +760,6 @@ msgstr ""
 "ただし、すでに検索結果セットが存在する場合はたとえヒット件数が閾値以下でも完"
 "全一致検索のみを行います。"
 
-# e54e352429d34ca1bf4ae1cd0aed4fc5
 msgid ""
 "例えば、以下のようなクエリの場合は、それぞれの検索でヒット件数が閾値以下の場"
 "合は完全一致検索、非わかち書き検索、部分一致検索を順に行います。::"
@@ -991,7 +767,6 @@ msgstr ""
 "例えば、以下のようなクエリの場合は、それぞれの検索でヒット件数が閾値以下の場"
 "合は完全一致検索、非わかち書き検索、部分一致検索を順に行います。::"
 
-# 660e16ae01b04b29ade8aa14f772caab
 msgid ""
 "しかし、以下のように全文検索を行う前に検索結果セットが存在する場合は完全一致"
 "検索のみを行います。（point > 3で閾値の件数よりヒットしている場合）::"
@@ -999,7 +774,6 @@ msgstr ""
 "しかし、以下のように全文検索を行う前に検索結果セットが存在する場合は完全一致"
 "検索のみを行います。（point > 3で閾値の件数よりヒットしている場合）::"
 
-# 4d23e6c1d44b46b0964ebdde68ad7d6f
 msgid ""
 "そのため、descriptionに「スープカレーライス」が含まれていても、「スープカレー"
 "ライス」は「スープカレー」に完全一致しないのでヒットしません。"

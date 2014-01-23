@@ -17,15 +17,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-# 4658768b9d654370b152c97edc7c5f5b
 msgid "トラブルシューティング"
 msgstr "トラブルシューティング"
 
-# 1e436a42404d4ccb95ec5822c9efdecd
 msgid "同じ検索キーワードなのに全文検索結果が異なる"
 msgstr "同じ検索キーワードなのに全文検索結果が異なる"
 
-# 210abfb034ab4a4186bcba33054420fc
 msgid ""
 "同じ検索キーワードでも一緒に指定するクエリによっては全文検索の結果が異なるこ"
 "とがあります。ここでは、その原因と対策方法を説明します。"
@@ -33,15 +30,12 @@ msgstr ""
 "同じ検索キーワードでも一緒に指定するクエリによっては全文検索の結果が異なるこ"
 "とがあります。ここでは、その原因と対策方法を説明します。"
 
-# 7ee9d44d516c4d73869db613c5d38489
 msgid "例"
 msgstr "例"
 
-# b9a5034cbe214888b9045f16549fee91
 msgid "まず、実際に検索結果が異なる例を説明します。"
 msgstr "まず、実際に検索結果が異なる例を説明します。"
 
-# 873a68c2380646f59b902e5ca53a62a3
 msgid ""
 "DDLは以下の通りです。BlogsテーブルのbodyカラムをTokenMecabトークナイザーを"
 "使ってトークナイズしてからインデックスを作成しています。::"
@@ -49,15 +43,12 @@ msgstr ""
 "DDLは以下の通りです。BlogsテーブルのbodyカラムをTokenMecabトークナイザーを"
 "使ってトークナイズしてからインデックスを作成しています。::"
 
-# e45d890fc5a64da3905b34a97aa76e93
 msgid "テスト用のデータは1件だけ投入します。::"
 msgstr "テスト用のデータは1件だけ投入します。::"
 
-# 2e1de6df5c1d4c24a3a9053487d559c3
 msgid "まず、全文検索のみで検索します。この場合ヒットします。::"
 msgstr "まず、全文検索のみで検索します。この場合ヒットします。::"
 
-# fdb370b9813d465aa6de1344a11efbbb
 msgid ""
 "続いて、範囲指定と全文検索を組み合わせて検索します（1285858800は2010/10/1 "
 "0:0:0の秒表記）。この場合もヒットします。::"
@@ -65,7 +56,6 @@ msgstr ""
 "続いて、範囲指定と全文検索を組み合わせて検索します（1285858800は2010/10/1 "
 "0:0:0の秒表記）。この場合もヒットします。::"
 
-# 6eb1abd544b7459d87fdeb85d48b0a12
 msgid ""
 "最後に、範囲指定と全文検索の順番を入れ替えて検索します。個々の条件は同じです"
 "が、この場合はヒットしません。::"
@@ -73,15 +63,12 @@ msgstr ""
 "最後に、範囲指定と全文検索の順番を入れ替えて検索します。個々の条件は同じです"
 "が、この場合はヒットしません。::"
 
-# 33221195919c4c2ba712f2757bddf445
 msgid "どうしてこのような挙動になるかを説明します。"
 msgstr "どうしてこのような挙動になるかを説明します。"
 
-# 0b62e9a94d754bc29006ec3c5cb3c753
 msgid "原因"
 msgstr "原因"
 
-# 454fe8993ee44699973af1310f9463dc
 msgid ""
 "このような挙動になるのは全文検索時に複数の検索の挙動を使い分けているからで"
 "す。ここでは簡単に説明するので、詳細は :doc:`/spec/search` を参照してくださ"
@@ -91,23 +78,18 @@ msgstr ""
 "す。ここでは簡単に説明するので、詳細は :doc:`/spec/search` を参照してくださ"
 "い。"
 
-# 3b913c5f3d404b968bc8499c32492979
 msgid "検索の挙動には以下の3種類があります。"
 msgstr "検索の挙動には以下の3種類があります。"
 
-# addc9cbbfe8643f5b584ec7db02cd001
 msgid "完全一致検索"
 msgstr "完全一致検索"
 
-# eba88189feeb41d6b9bf351195dab34d
 msgid "非わかち書き検索"
 msgstr "非わかち書き検索"
 
-# c2f02051d72443229e3a14e005b4997b
 msgid "部分一致検索"
 msgstr "部分一致検索"
 
-# 10d4f1ac39cf4e9d95d6a118520b60ed
 msgid ""
 "groongaは基本的に完全一致検索のみを行います。上記の例では「東京都民に深刻なダ"
 "メージを与えました。」を「東京都」というクエリで検索していますが、TokenMecab"
@@ -117,27 +99,21 @@ msgstr ""
 "メージを与えました。」を「東京都」というクエリで検索していますが、TokenMecab"
 "トークナイザーを使っている場合はこのクエリはマッチしません。"
 
-# fb1d3a0555e64c4495bd6cb001bfc3d9
 msgid "検索対象の「東京都民に深刻なダメージを与えました。」は"
 msgstr "検索対象の「東京都民に深刻なダメージを与えました。」は"
 
-# 0ea5a422141043bc8dfbe9228e50ae7c
 msgid "東京 / 都民 / に / 深刻 / な / ダメージ / を / 与え / まし / た / 。"
 msgstr "東京 / 都民 / に / 深刻 / な / ダメージ / を / 与え / まし / た / 。"
 
-# b4e2baed266c4b08a4dc807797488ce6
 msgid "とトークナイズされますが、クエリの「東京都」は"
 msgstr "とトークナイズされますが、クエリの「東京都」は"
 
-# 9e5604cc8c664cdb992e3e4ce1881435
 msgid "東京 / 都"
 msgstr "東京 / 都"
 
-# d6c0b657d55c4bc6802185035d693652
 msgid "とトークナイズされるため、完全一致しません。"
 msgstr "とトークナイズされるため、完全一致しません。"
 
-# fc968dc2282749a388ca383d82d70fc5
 msgid ""
 "groongaは完全一致検索した結果のヒット件数が所定の閾値を超えない場合に限り、非"
 "わかち書き検索を行い、それでもヒット件数が閾値を超えない場合は部分一致検索を"
@@ -149,7 +125,6 @@ msgstr ""
 "行います（閾値は1がデフォルト値となっています）。このケースのデータは部分一致"
 "検索ではヒットするので、「東京都」クエリのみを指定するとヒットします。"
 
-# 328bb720d4e6460ca52ebcf714e2e0f9
 msgid ""
 "しかし、以下のように全文検索前にすでに閾値が越えている場合（「updated_at < "
 "1285858800」で1件ヒットし、閾値を越える）は、たとえ完全一致検索で1件もヒット"
@@ -159,7 +134,6 @@ msgstr ""
 "1285858800」で1件ヒットし、閾値を越える）は、たとえ完全一致検索で1件もヒット"
 "しない場合でも部分一致検索などを行いません。::"
 
-# 92c5f782e684493382337303cb708b6c
 msgid ""
 "そのため、条件の順序を変えると検索結果が変わるという状況が発生します。以下"
 "で、この情報を回避する方法を2種類紹介しますが、それぞれトレードオフとなる条件"
@@ -169,11 +143,9 @@ msgstr ""
 "で、この情報を回避する方法を2種類紹介しますが、それぞれトレードオフとなる条件"
 "があるので採用するかどうかを十分検討してください。"
 
-# f80cc972be994498bbeda75962efa426
 msgid "対策方法1: トークナイザーを変更する"
 msgstr "対策方法1: トークナイザーを変更する"
 
-# a65f45244c63416093ff839bce4f9746
 msgid ""
 "TokenMecabトークナイザーは事前に準備した辞書を用いてトークナイズするため、再"
 "現率よりも適合率を重視したトークナイザーと言えます。一方、TokenBigramなど、N-"
@@ -189,7 +161,6 @@ msgstr ""
 "TokenBigramでは完全一致します。一方、TokenMecabでは「東京都民」に完全一致しま"
 "せんが、TokenBigramでは完全一致します。"
 
-# 7fcee90f7fa2455aae0166cb33b7a170
 msgid ""
 "このようにN-gram系のトークナイザーを指定することにより再現率をあげることがで"
 "きますが、適合率が下がり検索ノイズが含まれる可能性が高くなります。この度合い"
@@ -201,7 +172,6 @@ msgstr ""
 "を調整するためには :doc:`/reference/commands/select` のmatch_columnsで使用す"
 "る索引毎に重み付けを指定します。"
 
-# 9c09dfb32cc1443ca384861d57f16c26
 msgid ""
 "ここでも、前述の例を使って具体例を示します。まず、TokenBigramを用いた索引を追"
 "加します。::"
@@ -209,13 +179,11 @@ msgstr ""
 "ここでも、前述の例を使って具体例を示します。まず、TokenBigramを用いた索引を追"
 "加します。::"
 
-# 17351e7db1c548438959060966b3cb0e
 msgid ""
 "この状態でも以前はマッチしなかったレコードがヒットするようになります。::"
 msgstr ""
 "この状態でも以前はマッチしなかったレコードがヒットするようになります。::"
 
-# 8abf389efb15409b92c995265e724750
 msgid ""
 "しかし、N-gram系のトークナイザーの方がTokenMecabトークナイザーよりも語のヒッ"
 "ト数が多いため、N-gram系のヒットスコアの方が重く扱われてしまいます。N-gram系"
@@ -227,7 +195,6 @@ msgstr ""
 "のトークナイザーの方がTokenMecabトークナイザーよりも適合率の低い場合が多いの"
 "で、このままでは検索ノイズが上位に表示される可能性が高くなります。"
 
-# e7d30899f93b4f01ab0e0ce62b013b9a
 msgid ""
 "そこで、TokenMecabトークナイザーを使って作った索引の方をTokenBigramトークナイ"
 "ザーを使って作った索引よりも重視するように重み付けを指定します。これは、"
@@ -237,7 +204,6 @@ msgstr ""
 "ザーを使って作った索引よりも重視するように重み付けを指定します。これは、"
 "match_columnsオプションで指定できます。::"
 
-# 2bf2534d65f44046bb80b1f7cb36fc12
 msgid ""
 "この場合はスコアが11になっています。内訳は、Terms.blog_body索引（TokenMecab"
 "トークナイザーを使用）でマッチしたので10、Bigram.blog_body索引（TokenBigram"
@@ -251,7 +217,6 @@ msgstr ""
 "のようにTokenMecabトークナイザーの重みを高くすることにより、検索ノイズが上位"
 "にくることを抑えつつ再現率を上げることができます。"
 
-# 30f1514440064dd5ad39299bd705e761
 msgid ""
 "この例は日本語だったのでTokenBigramトークナイザーでよかったのですが、アルファ"
 "ベットの場合はTokenBigramSplitSymbolAlphaトークナイザーなども利用する必要があ"
@@ -261,11 +226,9 @@ msgstr ""
 "ベットの場合はTokenBigramSplitSymbolAlphaトークナイザーなども利用する必要があ"
 "ります。例えば、「楽しいbilliard」はTokenBigramトークナイザーでは"
 
-# 38f8fb12650b4ea6baac2f8cc6e011b1
 msgid "楽し / しい / billiard"
 msgstr "楽し / しい / billiard"
 
-# b3e0e78d16414bdeb1f347486a75a67f
 msgid ""
 "となり、「bill」では完全一致しません。一方、TokenBigramSplitSymbolAlphaトーク"
 "ナイザーを使うと"
@@ -273,15 +236,12 @@ msgstr ""
 "となり、「bill」では完全一致しません。一方、TokenBigramSplitSymbolAlphaトーク"
 "ナイザーを使うと"
 
-# 2b50101131a748219ec50d7d207e81e7
 msgid "楽し / しい / いb / bi / il / ll / li / ia / ar / rd / d"
 msgstr "楽し / しい / いb / bi / il / ll / li / ia / ar / rd / d"
 
-# 00e4398fcffa4112938654b0e20ce7c6
 msgid "となり、「bill」でも完全一致します。"
 msgstr "となり、「bill」でも完全一致します。"
 
-# d472b4fbb38a4fe895e087a313c7eb2d
 msgid ""
 "TokenBigramSplitSymbolAlphaトークナイザーを使う場合も重み付けを考慮する必要が"
 "あることはかわりありません。"
@@ -289,11 +249,9 @@ msgstr ""
 "TokenBigramSplitSymbolAlphaトークナイザーを使う場合も重み付けを考慮する必要が"
 "あることはかわりありません。"
 
-# 9a7f7fe0d210460d9decd9add0d510e9
 msgid "利用できるバイグラム系のトークナイザーの一覧は以下の通りです。"
 msgstr "利用できるバイグラム系のトークナイザーの一覧は以下の通りです。"
 
-# 178708dfac104b5aa785de66d1d97c0e
 msgid ""
 "TokenBigram: バイグラムでトークナイズする。連続する記号・アルファベット・数字"
 "は一語として扱う。"
@@ -301,7 +259,6 @@ msgstr ""
 "TokenBigram: バイグラムでトークナイズする。連続する記号・アルファベット・数字"
 "は一語として扱う。"
 
-# 6a9e3cb005ff450e86dac1dcd13285ec
 msgid ""
 "TokenBigramSplitSymbol: 記号もバイグラムでトークナイズする。連続するアルファ"
 "ベット・数字は一語として扱う。"
@@ -309,7 +266,6 @@ msgstr ""
 "TokenBigramSplitSymbol: 記号もバイグラムでトークナイズする。連続するアルファ"
 "ベット・数字は一語として扱う。"
 
-# 17477832b05e4dc496d419ac807e38ff
 msgid ""
 "TokenBigramSplitSymbolAlpha: 記号とアルファベットもバイグラムでトークナイズす"
 "る。連続する数字は一語として扱う。"
@@ -317,7 +273,6 @@ msgstr ""
 "TokenBigramSplitSymbolAlpha: 記号とアルファベットもバイグラムでトークナイズす"
 "る。連続する数字は一語として扱う。"
 
-# 87533b7bddb44938ae7f4bc6fcd093e5
 msgid ""
 "TokenBigramSplitSymbolAlphaDigit: 記号・アルファベット・数字もバイグラムで"
 "トークナイズする。"
@@ -325,7 +280,6 @@ msgstr ""
 "TokenBigramSplitSymbolAlphaDigit: 記号・アルファベット・数字もバイグラムで"
 "トークナイズする。"
 
-# 1a7ee8c5c2e740a1956c78092a5e1fd6
 msgid ""
 "TokenBigramIgnoreBlank: バイグラムでトークナイズする。連続する記号・アルファ"
 "ベット・数字は一語として扱う。空白は無視する。"
@@ -333,7 +287,6 @@ msgstr ""
 "TokenBigramIgnoreBlank: バイグラムでトークナイズする。連続する記号・アルファ"
 "ベット・数字は一語として扱う。空白は無視する。"
 
-# 67e54e66fa4c4c89b2c46218ad627c08
 msgid ""
 "TokenBigramIgnoreBlankSplitSymbol: 記号もバイグラムでトークナイズする。連続す"
 "るアルファベット・数字は一語として扱う。空白は無視する。"
@@ -341,7 +294,6 @@ msgstr ""
 "TokenBigramIgnoreBlankSplitSymbol: 記号もバイグラムでトークナイズする。連続す"
 "るアルファベット・数字は一語として扱う。空白は無視する。"
 
-# b746a6a5784f44a6b8177c88feb24f2c
 msgid ""
 "TokenBigramIgnoreBlankSplitSymbolAlpha: 記号とアルファベットもバイグラムで"
 "トークナイズする。連続する数字は一語として扱う。空白は無視する。"
@@ -349,7 +301,6 @@ msgstr ""
 "TokenBigramIgnoreBlankSplitSymbolAlpha: 記号とアルファベットもバイグラムで"
 "トークナイズする。連続する数字は一語として扱う。空白は無視する。"
 
-# d78c0482e9044ce99b3933f048a0a752
 msgid ""
 "TokenBigramIgnoreBlankSplitSymbolAlphaDigit: 記号・アルファベット・数字もバイ"
 "グラムでトークナイズする。空白は無視する。"
@@ -357,11 +308,9 @@ msgstr ""
 "TokenBigramIgnoreBlankSplitSymbolAlphaDigit: 記号・アルファベット・数字もバイ"
 "グラムでトークナイズする。空白は無視する。"
 
-# 856ace70541744158a8965c620aded91
 msgid "対策方法2: 閾値をあげる"
 msgstr "対策方法2: 閾値をあげる"
 
-# 1972cee3b5e843e487294050bd4027d1
 msgid ""
 "非わかち書き検索・部分一致検索を利用するかどうかの閾値は--with-match-"
 "escalation-threshold configureオプションで変更することができます。以下のよう"
@@ -373,7 +322,6 @@ msgstr ""
 "に指定すると、100件以下のヒット数であれば、たとえ完全一致検索でヒットしても、"
 "非わかち書き検索・部分一致検索を行います。::"
 
-# 0d8ea58d6d264d10b40538852faedc97
 msgid ""
 "この場合も対策方法1同様、検索ノイズが上位に現れる可能性が高くなることに注意し"
 "てください。検索ノイズが多くなった場合は指定する値を低くする必要があります。"
@@ -381,94 +329,75 @@ msgstr ""
 "この場合も対策方法1同様、検索ノイズが上位に現れる可能性が高くなることに注意し"
 "てください。検索ノイズが多くなった場合は指定する値を低くする必要があります。"
 
-# 76adc621040f453b94483b163d43721a
 msgid "How to avoid mmap Cannot allocate memory error"
 msgstr ""
 
-# 5828cde9e429412496c48cdb8cbe9639
 msgid "Example"
 msgstr ""
 
-# 8dfcb16077644c839f2b3b66661bba06
 msgid "There is a case following mmap error in log file:"
 msgstr ""
 
-# 79234702dd1e4461b28a6c0a129cb9fa
 msgid ""
 "2013-06-04 08:19:34.835218|A|4e86e700|mmap(4194304,551,432017408)=Cannot "
 "allocate memory <13036498944>"
 msgstr ""
 
-# 4ae5641ea9ed47f69db482535f21bb6e
 msgid ""
 "Note that <13036498944> means total size of mmap (almost 12GB) in this case."
 msgstr ""
 
-# 7466a0fa39994bff9da328b6abf5e0c7
 msgid "Solution"
 msgstr ""
 
-# 79694d0a62094ca7917edb9cca1b2eda
 msgid "So you need to confirm following point of views."
 msgstr ""
 
-# 914e1406c981413d824ac169244b6ee0
 msgid "Are there enough free memory?"
 msgstr ""
 
-# 5e4930f5a28143c19ce0f8f13cfc6e96
 msgid "Are maximum number of mappings exceeded?"
 msgstr ""
 
-# dbd23f33f4a74c72812b51a67751da43
 msgid "To check there are enough free memory, you can use vmstat command."
 msgstr ""
 
-# ab74545412c64e2b9c142d031f086f01
 msgid ""
 "To check whether maximum number of mappings are exceeded, you can "
 "investigate the value of vm.max_map_count."
 msgstr ""
 
-# 7f0d7088ae324eedb7171e40b97e40ff
 msgid ""
 "If this issue is fixed by modifying the value of vm.max_map_count, it's "
 "exactly the reason."
 msgstr ""
 
-# a1558638d0fe463f983d968b5a70d635
 msgid ""
 "As groonga allocates memory chunks each 256KB, you can estimate the size of "
 "database you can handle by following formula:"
 msgstr ""
 
-# 701988c8cc8244ff9b20e19b0001d4ac
 msgid "(database size) = vm.max_map_count * (memory chunks)"
 msgstr ""
 
-# 5f0b4fa1576043d09070d3543b3de6e3
 msgid ""
 "If you want to handle over 16GB groonga database, you must specify at least "
 "65536 as the value of vm.max_map_count:"
 msgstr ""
 
-# ea086311738d4540aea9df7858a9f1c7
 msgid "database size (16GB) = vm.max_map_count (65536) * memory chunks (256KB)"
 msgstr ""
 
-# 9ce4884ddf0e4039a95e5fb71605cfa7
 msgid ""
 "You can modify vm.max_map_count temporary by sudo sysctl -w vm."
 "max_map_count=65536."
 msgstr ""
 
-# 900879f7c67a45078e3121ae0747d332
 msgid ""
 "Then save the configuration value to /etc/sysctl.conf or /etc/sysctl.d/*."
 "conf."
 msgstr ""
 
-# ce93736db00d4069a578ca0fc9555b04
 msgid ""
 "See :doc:`/reference/tuning` documentation about tuning related parameters."
 msgstr ""
