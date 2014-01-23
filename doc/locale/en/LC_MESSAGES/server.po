@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-24 18:23+0900\n"
+"POT-Creation-Date: 2014-01-23 17:13+0900\n"
 "PO-Revision-Date: 2012-08-15 15:24+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -18,12 +18,10 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 # ed13f02be8cf4e75899c1bdb9c3b0ce0
-#: ../../../source/server.txt:6
 msgid "Server"
 msgstr "Server"
 
 # d9c71a9414424ef3b88c0b524b7f05b1
-#: ../../../source/server/gqtp.txt:6
 msgid "GQTP"
 msgstr "GQTP"
 
@@ -34,42 +32,30 @@ msgstr "GQTP"
 # fc7af47d7e9e49b3bbfa44b5be780f99
 # bc3bac6e5b2d4bbabf960fb6c748d13e
 # db09943762d248ccbc5952b0089bfb5b
-#: ../../../source/server/gqtp.txt:8
-#: ../../../source/server/http/comparison.txt:288
-#: ../../../source/server/http/comparison.txt:293
-#: ../../../source/server/http/comparison.txt:298
-#: ../../../source/server/http/groonga-httpd.txt:8
-#: ../../../source/server/http/groonga.txt:8
 msgid "TODO"
 msgstr "TODO"
 
 # 8f5a4f787e5045bc9271e40e0f9926b4
-#: ../../../source/server/gqtp.txt:10
 msgid "See :doc:`/reference/executables/groonga`."
 msgstr "See :doc:`/reference/executables/groonga`."
 
 # ff0ba1c4e92940a29779b95e7706393d
-#: ../../../source/server/http.txt:6
 msgid "HTTP"
 msgstr "HTTP"
 
 # 4491f93502544b3a9ef75f191d5ba8f8
-#: ../../../source/server/http.txt:8
 msgid "Groonga provides two HTTP server implementations."
 msgstr "Groonga provides two HTTP server implementations."
 
 # ced95a43b96841e495ea4e06b1f84bbe
-#: ../../../source/server/http.txt:10
 msgid ":doc:`http/groonga`"
 msgstr ":doc:`http/groonga`"
 
 # fd4a09baf8414fb0b0ed41c38ccfc915
-#: ../../../source/server/http.txt:11
 msgid ":doc:`http/groonga-httpd`"
 msgstr ":doc:`http/groonga-httpd`"
 
 # 641a66693c6f456b995e32b7a583c9a1
-#: ../../../source/server/http.txt:13
 msgid ""
 ":doc:`http/groonga` is a simple implemntation. It is fast but doesn't have "
 "many HTTP features. It is convenient to try groonga because it requires just "
@@ -80,7 +66,6 @@ msgstr ""
 "a few command line options to run."
 
 # ee2a04daf68b46d196f5f792e83135f9
-#: ../../../source/server/http.txt:17
 msgid ""
 ":doc:`http/groonga-httpd` is a `nginx <http://nginx.org/>`_ based "
 "implementation. It is also fast and has many HTTP features."
@@ -89,17 +74,14 @@ msgstr ""
 "implementation. It is also fast and has many HTTP features."
 
 # 473b6fff145f41c7a68df81717d852a4
-#: ../../../source/server/http.txt:22
 msgid ":doc:`http/groonga-httpd` is still experimental."
 msgstr ":doc:`http/groonga-httpd` is still experimental."
 
 # 7275e03373ba4d3cae737acfe18441ab
-#: ../../../source/server/http/comparison.txt:6
 msgid "Comparison"
 msgstr "Comparison"
 
 # 37171e5be3eb428da3f745c1b4991309
-#: ../../../source/server/http/comparison.txt:8
 msgid ""
 "There are many differences between :doc:`groonga` and :doc:`groonga-httpd`. "
 "Here is a comparison table."
@@ -109,23 +91,16 @@ msgstr ""
 
 # 941952f809004fb4abaa772654cf8279
 # 396f547d4f9442eebd07abd4c70a73db
-#: ../../../source/server/http/comparison.txt:12
-#: ../../../source/server/http/groonga.txt:6
 msgid "groonga"
 msgstr "groonga"
 
 # 83dfd6267c6c46f2bd331ffc43befa09
 # 03f919d64f904e0c935a7eb1e0d844e6
-#: ../../../source/server/http/comparison.txt:12
-#: ../../../source/server/http/groonga-httpd.txt:6
-#: ../../../source/server/package.txt:36
 msgid "groonga-httpd"
 msgstr "groonga-httpd"
 
 # 33e0e13c27c24c119bb473a16548b8db
 # f56c89a477c7431d90d0b000347d7399
-#: ../../../source/server/http/comparison.txt:14
-#: ../../../source/server/http/comparison.txt:40
 msgid "Performance"
 msgstr "Performance"
 
@@ -139,58 +114,37 @@ msgstr "Performance"
 # 603feca3cf3f4a0b82c7229fe9c033c5
 # 20bd597512d845828d13994f963ff797
 # f7b9fd34b09b4af78a4829b86777bd1e
-#: ../../../source/server/http/comparison.txt:14
-#: ../../../source/server/http/comparison.txt:20
-#: ../../../source/server/http/comparison.txt:22
-#: ../../../source/server/http/comparison.txt:24
-#: ../../../source/server/http/comparison.txt:26
-#: ../../../source/server/http/comparison.txt:28
-#: ../../../source/server/http/comparison.txt:30
-#: ../../../source/server/http/comparison.txt:32
-#: ../../../source/server/http/comparison.txt:34
-#: ../../../source/server/http/comparison.txt:36
 msgid "o"
 msgstr "o"
 
 # 9b4b8f609e5d43ed9e761fac2454e07f
 # 9032f5535cdc4afc9f018e81b193e971
-#: ../../../source/server/http/comparison.txt:16
-#: ../../../source/server/http/comparison.txt:46
 msgid "Using multi CPU cores"
 msgstr "Using multi CPU cores"
 
 # 71c3575dab9f4d8eb38028a80b33283e
-#: ../../../source/server/http/comparison.txt:16
 msgid "o (by multi process)"
 msgstr "o (by multi process)"
 
 # 35411a8c2f4746469099969dc793fb6b
-#: ../../../source/server/http/comparison.txt:16
 msgid "o (by multi threading)"
 msgstr "o (by multi threading)"
 
 # 7a205eae058b4fc0ae69c39a19183d14
 # 09a77bd06d29454fa36fa229b26683ab
-#: ../../../source/server/http/comparison.txt:18
-#: ../../../source/server/http/comparison.txt:67
-#: ../../../source/server/package.txt:53
 msgid "Configuration file"
 msgstr "Configuration file"
 
 # f945bc7aabfb4a02b5be39ceb9d9cbb7
-#: ../../../source/server/http/comparison.txt:18
 msgid "optional"
 msgstr "optional"
 
 # 7becb2eab85843d5ad41ad988571b917
-#: ../../../source/server/http/comparison.txt:18
 msgid "required"
 msgstr "required"
 
 # c8bc500295c545aaa87cdf073b6f35b3
 # 4178d301f40d45f0895d1e419211b38a
-#: ../../../source/server/http/comparison.txt:20
-#: ../../../source/server/http/comparison.txt:99
 msgid "Custom prefix path"
 msgstr "Custom prefix path"
 
@@ -202,81 +156,55 @@ msgstr "Custom prefix path"
 # 29a62b1e94854a14876c02bef882147f
 # 658d2f641efe4756bc13d0260b10b9d4
 # 1ff20bbb7c4b4145b78bc3aec40c256d
-#: ../../../source/server/http/comparison.txt:20
-#: ../../../source/server/http/comparison.txt:24
-#: ../../../source/server/http/comparison.txt:26
-#: ../../../source/server/http/comparison.txt:28
-#: ../../../source/server/http/comparison.txt:30
-#: ../../../source/server/http/comparison.txt:32
-#: ../../../source/server/http/comparison.txt:34
-#: ../../../source/server/http/comparison.txt:36
 msgid "x"
 msgstr "x"
 
 # b880f79ebb794bfba0bb47ce715480ad
 # 6f3ef3bb0b044477aca77b070e5e4ff3
-#: ../../../source/server/http/comparison.txt:22
-#: ../../../source/server/http/comparison.txt:124
 msgid "Custom command version"
 msgstr "Custom command version"
 
 # e76b208ebd454561bdbafbeb6ece5de6
 # 431d9b51db2f4ddc8750ebddaf263b0a
-#: ../../../source/server/http/comparison.txt:22
 msgid "x (comming soon)"
 msgstr "x (comming soon)"
 
 # 0cb6ad6bc9224228adda25a0b2221f24
 # 802cf469fad54df7b067b7b7d919a125
-#: ../../../source/server/http/comparison.txt:24
-#: ../../../source/server/http/comparison.txt:164
 msgid "Multi databases"
 msgstr "Multi databases"
 
 # 35e8bef3cf0e47f7b32673b211fac087
 # acbd5d64be7c42edbdc66268a1632452
-#: ../../../source/server/http/comparison.txt:26
-#: ../../../source/server/http/comparison.txt:192
 msgid "Authentication"
 msgstr "Authentication"
 
 # c0578e5c521e458d80cde4c54921bc3f
 # 6ad60fb007054b0db09581b7d08609e5
-#: ../../../source/server/http/comparison.txt:28
-#: ../../../source/server/http/comparison.txt:228
 msgid "Gzip compression"
 msgstr "Gzip compression"
 
 # 738f3c2e9fab4114af69a62bcb2d949f
 # cf1df911c7374ccb898992e41ed4e2ab
-#: ../../../source/server/http/comparison.txt:30
-#: ../../../source/server/http/comparison.txt:271
 msgid "POST"
 msgstr "POST"
 
 # d8eadc31f8d147d5bdf8f8fd8823ea8b
 # a113462e651b42f38eb289da1f6b7786
-#: ../../../source/server/http/comparison.txt:32
-#: ../../../source/server/http/comparison.txt:286
 msgid "HTTPS"
 msgstr "HTTPS"
 
 # 203a3a3af84d4728af390bbaf90e84d0
 # b8fe45cb84ba49599fd15fb3a69724e0
-#: ../../../source/server/http/comparison.txt:34
-#: ../../../source/server/http/comparison.txt:291
 msgid "Access log"
 msgstr "Access log"
 
 # 97dc932c2ad845e6875ba6d632e2ab38
 # 97dc932c2ad845e6875ba6d632e2ab38
-#: ../../../source/server/http/comparison.txt:36
-#: ../../../source/server/http/comparison.txt:296
 msgid "Upgrading without downtime"
 msgstr "Upgrading without downtime"
 
 # 46bde559c3cc4dcc8790b3c7eda8df3e
-#: ../../../source/server/http/comparison.txt:42
 msgid ""
 "Both :doc:`groonga` and :doc:`groonga-httpd` are very fast. They can work "
 "with the same throughput."
@@ -285,7 +213,6 @@ msgstr ""
 "with the same throughput."
 
 # 8906fe4798c14125971c251f4c8660c1
-#: ../../../source/server/http/comparison.txt:48
 msgid ""
 "Groonga scales on multi CPU cores. :doc:`groonga` scales by multi "
 "threading. :doc:`groonga-httpd` scales by multi processes."
@@ -294,7 +221,6 @@ msgstr ""
 "threading. :doc:`groonga-httpd` scales by multi processes."
 
 # 44fd143b2c3b448f81cba9a2ca10db89
-#: ../../../source/server/http/comparison.txt:51
 msgid ""
 ":doc:`groonga` uses the same number of threads as CPU cores by default. If "
 "you have 8 CPU cores, 8 threads are used by default."
@@ -303,7 +229,6 @@ msgstr ""
 "you have 8 CPU cores, 8 threads are used by default."
 
 # ebd2b2605ce04593847e90ba438dc7fc
-#: ../../../source/server/http/comparison.txt:54
 msgid ""
 ":doc:`groonga-httpd` uses 1 process by default. You need to set "
 "`worker_processes <http://nginx.org/en/docs/ngx_core_module."
@@ -318,7 +243,6 @@ msgstr ""
 "following::"
 
 # 21b7aad8e45045db9e4f6e63dbf0cd78
-#: ../../../source/server/http/comparison.txt:69
 msgid ""
 ":doc:`groonga` can work without configuration file. All configuration items "
 "such as port number and the max number of threads can be specified by "
@@ -329,7 +253,6 @@ msgstr ""
 "command line. Configuration file is also used to specify configuration items."
 
 # e325978cd0e94eaf8ca86627c30a3f1a
-#: ../../../source/server/http/comparison.txt:74
 msgid ""
 "It's very easy to run groonga HTTP server because :doc:`groonga` requires "
 "just a few options to run. Here is the most simple command line to start "
@@ -340,7 +263,6 @@ msgstr ""
 "HTTP server by :doc:`groonga`::"
 
 # 1b42a2bfcb81480098f3e088843c193b
-#: ../../../source/server/http/comparison.txt:80
 msgid ""
 ":doc:`groonga-httpd` requires configuration file to run. Here is the most "
 "simple configuration file to start HTTP server by :doc:`groonga-httpd`::"
@@ -349,7 +271,6 @@ msgstr ""
 "simple configuration file to start HTTP server by :doc:`groonga-httpd`::"
 
 # 30bb689e67d84685adf79f0b3e14c4b6
-#: ../../../source/server/http/comparison.txt:101
 msgid ""
 ":doc:`groonga` accepts a path that starts with ``/d/`` as command URL such "
 "as ``http://localhost:10041/d/status``. You cannot change the prefix path ``/"
@@ -360,7 +281,6 @@ msgstr ""
 "d/``."
 
 # d9eba3a2ebe14eb585c60f99fdf4f46e
-#: ../../../source/server/http/comparison.txt:105
 msgid ""
 ":doc:`groonga-httpd` can custom prefix path. For example, you can use "
 "``http://localhost:10041/api/status`` as command URL. Here is a sample "
@@ -371,14 +291,12 @@ msgstr ""
 "configuration to use ``/api/`` as prefix path::"
 
 # 42601672fe09426d95c78a6336402724
-#: ../../../source/server/http/comparison.txt:126
 msgid ""
 "Groonga has :doc:`/reference/command/command_version` mechanism. It is for "
 "upgrading groonga commands with backward compatibility."
 msgstr ""
 
 # 7605c6584f974a4fa38ab13ef99b1a4d
-#: ../../../source/server/http/comparison.txt:129
 msgid ""
 ":doc:`groonga` can change the default command veresion by ``--default-"
 "command-version`` option. Here is a sample command line to use command "
@@ -389,7 +307,6 @@ msgstr ""
 "version 2 as the default command version::"
 
 # 45663d14710e48c0a0a54e133cfd3de7
-#: ../../../source/server/http/comparison.txt:135
 msgid ""
 ":doc:`groonga-httpd` cannot custom the default command version yet. But it "
 "will be supported soon. If it is supported, you can provides different "
@@ -404,12 +321,10 @@ msgstr ""
 "``/api/1/`` and command version 2 comamnds under ``/api/2/``::"
 
 # c2b82670d04d48c0b9ba22ecf1e2f931
-#: ../../../source/server/http/comparison.txt:166
 msgid ":doc:`groonga` can use only one database in a process."
 msgstr ":doc:`groonga` can use only one database in a process."
 
 # c434d0cca47e41e7813f72f6f6a78863
-#: ../../../source/server/http/comparison.txt:168
 msgid ""
 ":doc:`groonga-httpd` can use one or more databases in a process. Here is a "
 "sample configuration to provide ``/tmp/db1`` database under ``/db1/`` path "
@@ -420,7 +335,6 @@ msgstr ""
 "and ``/tmp/db2`` database under ``/db2/`` path::"
 
 # 6155ed1c0e954a57aabf2674d6150b03
-#: ../../../source/server/http/comparison.txt:194
 msgid ""
 "HTTP supports authentications such as basic authentication and digest "
 "authentication. It can be used for restricting use of danger command such "
@@ -431,7 +345,6 @@ msgstr ""
 "as :doc:`/reference/commands/shutdown`."
 
 # fdeb2ffa199f4b5cb8b4665eb14e43b1
-#: ../../../source/server/http/comparison.txt:198
 msgid ""
 ":doc:`groonga` doesn't support any authentications. To restrict use of "
 "danger command, other tools such as iptables and reverse proxy are needed."
@@ -440,7 +353,6 @@ msgstr ""
 "danger command, other tools such as iptables and reverse proxy are needed."
 
 # e1ce7a0cb8cb4956a2ba7a602c322065
-#: ../../../source/server/http/comparison.txt:202
 msgid ""
 ":doc:`groonga-httpd` supports basic authentication. Here is a sample "
 "configuration to restrict use of :doc:`/reference/commands/shutdown` "
@@ -451,7 +363,6 @@ msgstr ""
 "command::"
 
 # 830441268ded43568ef5dd5c3617325e
-#: ../../../source/server/http/comparison.txt:230
 msgid ""
 "HTTP supports response compression by gzip with ``Content-Encoding: gzip`` "
 "response header. It can reduce network flow. It is useful for large search "
@@ -462,7 +373,6 @@ msgstr ""
 "response."
 
 # bfa4014c039a47a885eb7fca0598251c
-#: ../../../source/server/http/comparison.txt:234
 msgid ""
 ":doc:`groonga` doesn't support compression. To support compression, reverse "
 "proxy is needed."
@@ -471,7 +381,6 @@ msgstr ""
 "proxy is needed."
 
 # d6ad7a1d41574b768f285517a4297524
-#: ../../../source/server/http/comparison.txt:237
 msgid ""
 ":doc:`groonga-httpd` supports gzip compression. Here is a sample "
 "configuration to compress response by gzip::"
@@ -480,7 +389,6 @@ msgstr ""
 "configuration to compress response by gzip::"
 
 # 2b04113fce604de1b757839cf3e23aa3
-#: ../../../source/server/http/comparison.txt:257
 msgid ""
 "Note that `gzip_types *` is specified. It's one of the important "
 "configuration. `gzip_types` specifies gzip target data formats by MIME "
@@ -490,7 +398,6 @@ msgid ""
 msgstr ""
 
 # 0dabd3179e04486da7d465381bb2bd51
-#: ../../../source/server/http/comparison.txt:263
 msgid ""
 "To compress response data from :doc:`groonga-httpd` by gzip, you need to "
 "specify `gzip_types *` or `gzip_types application/json text/xml application/"
@@ -501,41 +408,34 @@ msgid ""
 msgstr ""
 
 # bd2f52743ccf4d48bea1c55ca855118d
-#: ../../../source/server/http/comparison.txt:273
 msgid ""
 "You can load your data by POST JSON data. You need follow the following "
 "rules to use loading by POST."
 msgstr ""
 
 # 5fa70ed9e2194383af88f4d6aff6178d
-#: ../../../source/server/http/comparison.txt:276
 msgid "`Content-Type` header value must be `application/json`."
 msgstr ""
 
 # 096cfd1a0ca740c0b25aad9868296cee
-#: ../../../source/server/http/comparison.txt:277
 msgid "JSON data is sent as body."
 msgstr ""
 
 # 14f31041c40e4a698356c54b036f717e
-#: ../../../source/server/http/comparison.txt:278
 msgid "Table name is specified by query parameter such as ``table=NAME``."
 msgstr ""
 
 # d4b841d3698a45aa8ed02356941dc066
-#: ../../../source/server/http/comparison.txt:280
 msgid ""
 "Here is an example curl command line that loads two users `alice` and `bob` "
 "to `Users` table::"
 msgstr ""
 
 # 27ed7e35fb874c5599ca1a0b1de7ffb5
-#: ../../../source/server/package.txt:6
 msgid "Server packages"
 msgstr ""
 
 # 4b9e5a6d80d74f868f880b9d778cfa3b
-#: ../../../source/server/package.txt:8
 msgid ""
 "The package ``groonga`` is the mininum set of fulltext search engine. If you "
 "want to use groonga for server use, you can install additional preconfigured "
@@ -543,28 +443,23 @@ msgid ""
 msgstr ""
 
 # 992dda4734924e76b567b9414918e5c0
-#: ../../../source/server/package.txt:12
 msgid "There are three packages for server use."
 msgstr ""
 
 # 5aedd9549eea4ac2a417fa2ff0d8ad94
-#: ../../../source/server/package.txt:14
 msgid "``groonga-httpd`` (nginx and HTTP protocol based server package)"
 msgstr ""
 
 # 8ee55616054c4b1bb9a808465515f550
-#: ../../../source/server/package.txt:15
 msgid "``groonga-server-http`` (simple HTTP protocol based server package)"
 msgstr ""
 
 # 6a94a2aae23d4b2db8c34986fc9e5de7
-#: ../../../source/server/package.txt:16
 msgid ""
 "``groonga-server-gqtp`` (:doc:`/spec/gqtp` protocol based server package)"
 msgstr ""
 
 # 92ac0fa6c1d44ca28fbf014c91450442
-#: ../../../source/server/package.txt:18
 msgid ""
 "There is the reason why groonga supports not only GQTP but also two HTTP "
 "server packages. :doc:`/spec/gqtp` - Groonga Query Transfer Protocol is "
@@ -577,7 +472,6 @@ msgid ""
 msgstr ""
 
 # 578feb05470040669a4f47c45e8255f2
-#: ../../../source/server/package.txt:25
 msgid ""
 "We recommend to use ``groonga-server-http`` at first, then if you want to "
 "use more fullfilling functionality, use ``groonga-httpd`` package. If you "
@@ -586,7 +480,6 @@ msgid ""
 msgstr ""
 
 # ed2bcc368d0d4d13b5a4bcd5876547ae
-#: ../../../source/server/package.txt:31
 msgid ""
 "There is a conflict between ``groonga-httpd`` and ``groonga-server-http`` "
 "package because of port number. See :doc:`/server/http/comparison` if you "
@@ -594,102 +487,77 @@ msgid ""
 msgstr ""
 
 # 0531d5aea7d94951a7dc8fe937ee2269
-#: ../../../source/server/package.txt:38
 msgid "``groonga-httpd`` is a nginx and HTTP protocol based server package."
 msgstr ""
 
 # 4be1f7bc57db4d49b2691586fbfc0636
 # 6fa103e953e2464f94f66cfe36e33f1b
-#: ../../../source/server/package.txt:40 ../../../source/server/package.txt:94
 msgid "Preconfigured setting:"
 msgstr ""
 
 # 765a80c5aec6487db6bc5577ae7ad978
 # ead890d4891a48499a7b142c41d27a40
 # 574e91a38e8749bd9fd580ffa292fe2e
-#: ../../../source/server/package.txt:43 ../../../source/server/package.txt:97
-#: ../../../source/server/package.txt:155
 msgid "Default value"
 msgstr ""
 
 # cf3af42034a3455abaafd6a5b016112a
 # 9944a6c3914445788ee5d06e6fd1cbee
 # 828a75323e23412999639421c4145405
-#: ../../../source/server/package.txt:43 ../../../source/server/package.txt:97
-#: ../../../source/server/package.txt:155
 msgid "Item"
 msgstr ""
 
 # f429752ec6b640348bf2aed4849827a9
 # b2fb59430da4452f8fd0b5a151cb92e9
-#: ../../../source/server/package.txt:45 ../../../source/server/package.txt:99
 msgid "10041"
 msgstr ""
 
 # 302fd27da26b42e49d7b60df0d33b9f0
 # 7bb08e7f7d7a4b1aa792f13b430a36b7
 # 7f919c8b7f4b4c32b994def19f5b35d7
-#: ../../../source/server/package.txt:45 ../../../source/server/package.txt:99
-#: ../../../source/server/package.txt:157
 msgid "Port number"
 msgstr ""
 
 # 93d4625a49d54f20ade10df30b344775
-#: ../../../source/server/package.txt:47
 msgid "/var/log/groonga/httpd/acccess.log"
 msgstr ""
 
 # 203a3a3af84d4728af390bbaf90e84d0
 # b8fe45cb84ba49599fd15fb3a69724e0
-#: ../../../source/server/package.txt:47
 msgid "Access log path"
 msgstr ""
 
 # 444935818eb640b586745f25797d4ffd
 # 86ef9e9ff93a48e7b1e45b211e1229e8
-#: ../../../source/server/package.txt:49
-#: ../../../source/server/package.txt:103
 msgid "/var/log/groonga/http-query.log"
 msgstr ""
 
 # 65d14f23815b4749af35c8ff2682256f
-#: ../../../source/server/package.txt:49
 msgid "Error log path"
 msgstr ""
 
 # 208583eedfaa4948954743585e12a987
 # 81e7dbccc72c4b84a8b378617226193a
 # e9d5e73140af49d386b2f7dc64fe50a9
-#: ../../../source/server/package.txt:51
-#: ../../../source/server/package.txt:105
-#: ../../../source/server/package.txt:163
 msgid "/var/lib/groonga/db/*"
 msgstr ""
 
 # 0cb6ad6bc9224228adda25a0b2221f24
 # 802cf469fad54df7b067b7b7d919a125
-#: ../../../source/server/package.txt:51
-#: ../../../source/server/package.txt:105
-#: ../../../source/server/package.txt:163
 msgid "Database"
 msgstr ""
 
 # fd4a09baf8414fb0b0ed41c38ccfc915
-#: ../../../source/server/package.txt:53
 msgid "/etc/groonga/httpd/groonga-httpd.conf"
 msgstr ""
 
 # 3dd040d7bc414b65a06de360498c6cee
 # 3dd040d7bc414b65a06de360498c6cee
-#: ../../../source/server/package.txt:57
-#: ../../../source/server/package.txt:117
 msgid "Start HTTP server"
 msgstr ""
 
 # 6b55acdfe3284958a62d6eb2f86820ee
 # 6b55acdfe3284958a62d6eb2f86820ee
-#: ../../../source/server/package.txt:59
-#: ../../../source/server/package.txt:119
 msgid "Starting groonga HTTP server(Debian/Ubuntu/CentOS)::"
 msgstr ""
 
@@ -697,157 +565,119 @@ msgstr ""
 # af9a018d494147e8a9416c30ced7f091
 # af9a018d494147e8a9416c30ced7f091
 # af9a018d494147e8a9416c30ced7f091
-#: ../../../source/server/package.txt:63 ../../../source/server/package.txt:74
-#: ../../../source/server/package.txt:123
 msgid "Starting groonga HTTP server(Fedora)::"
 msgstr ""
 
 # 3dd040d7bc414b65a06de360498c6cee
 # 3dd040d7bc414b65a06de360498c6cee
-#: ../../../source/server/package.txt:68
-#: ../../../source/server/package.txt:128
 msgid "Stop HTTP server"
 msgstr ""
 
 # 6b55acdfe3284958a62d6eb2f86820ee
 # 6b55acdfe3284958a62d6eb2f86820ee
-#: ../../../source/server/package.txt:70
-#: ../../../source/server/package.txt:130
 msgid "Stopping groonga HTTP server(Debian/Ubuntu/CentOS)::"
 msgstr ""
 
 # 3dd040d7bc414b65a06de360498c6cee
 # 3dd040d7bc414b65a06de360498c6cee
-#: ../../../source/server/package.txt:79
-#: ../../../source/server/package.txt:139
 msgid "Restart HTTP server"
 msgstr ""
 
 # 6b55acdfe3284958a62d6eb2f86820ee
 # 6b55acdfe3284958a62d6eb2f86820ee
 # 6b55acdfe3284958a62d6eb2f86820ee
-#: ../../../source/server/package.txt:81
-#: ../../../source/server/package.txt:141
-#: ../../../source/server/package.txt:199
 msgid "Restarting groonga HTTP server(Debian/Ubuntu/CentOS)::"
 msgstr ""
 
 # af9a018d494147e8a9416c30ced7f091
 # af9a018d494147e8a9416c30ced7f091
 # af9a018d494147e8a9416c30ced7f091
-#: ../../../source/server/package.txt:85
-#: ../../../source/server/package.txt:145
-#: ../../../source/server/package.txt:203
 msgid "Restarting groonga HTTP server(Fedora)::"
 msgstr ""
 
 # 83dfd6267c6c46f2bd331ffc43befa09
 # 03f919d64f904e0c935a7eb1e0d844e6
-#: ../../../source/server/package.txt:90
 msgid "groonga-server-http"
 msgstr ""
 
 # 2ad0f8b094304b9d894e7af72faa1ef1
-#: ../../../source/server/package.txt:92
 msgid "``groonga-server-http`` is a simple HTTP protocol based server package."
 msgstr ""
 
 # d6296771835d4aaa983dce3137526e27
-#: ../../../source/server/package.txt:101
 msgid "/var/log/groonga/groonga-http.log"
 msgstr ""
 
 # b981db6631054af5a01ab27fe448a228
 # b1b7559d8c824a75b5b94bc0a4563588
-#: ../../../source/server/package.txt:101
-#: ../../../source/server/package.txt:159
 msgid ":ref:`process-log`"
 msgstr ""
 
 # a73cd1de36b14521965a7961b2774bae
 # 80aca61b2ef54270b13afacf1dcc13f8
-#: ../../../source/server/package.txt:103
-#: ../../../source/server/package.txt:161
 msgid ":ref:`query-log`"
 msgstr ""
 
 # dff80176a41c424db256230c6ecc88e5
 # 4137de97fb004827a28c4adbfa5c15ea
-#: ../../../source/server/package.txt:108
-#: ../../../source/server/package.txt:166
 msgid "Configuration file for server setting (Debian/Ubuntu)::"
 msgstr ""
 
 # f873009381d14976bbc660eec0552412
 # 6751cca06d6c4e0c89f3897cfdfd49d6
-#: ../../../source/server/package.txt:112
-#: ../../../source/server/package.txt:170
 msgid "Configuration file for server setting (CentOS)::"
 msgstr ""
 
 # af9a018d494147e8a9416c30ced7f091
-#: ../../../source/server/package.txt:134
 msgid "Stopping groonga HTTP server(Fedora)::"
 msgstr ""
 
 # 83dfd6267c6c46f2bd331ffc43befa09
 # 03f919d64f904e0c935a7eb1e0d844e6
-#: ../../../source/server/package.txt:150
 msgid "groonga-server-gqtp"
 msgstr ""
 
 # 2ad0f8b094304b9d894e7af72faa1ef1
-#: ../../../source/server/package.txt:152
 msgid ""
 "``groonga-server-gqtp`` is a :doc:`/spec/gqtp` protocol based server package."
 msgstr ""
 
 # b901e2cfbb16473c82f725943589aeed
-#: ../../../source/server/package.txt:157
 msgid "10043"
 msgstr ""
 
 # 01f436b74761468a8ec8aeedb77eca19
-#: ../../../source/server/package.txt:159
 msgid "/var/log/groonga/groonga-gqtp.log"
 msgstr ""
 
 # 2c716883efd94e4b87d09f476e2b3f06
-#: ../../../source/server/package.txt:161
 msgid "/var/log/groonga/gqtp-query.log"
 msgstr ""
 
 # 3dd040d7bc414b65a06de360498c6cee
-#: ../../../source/server/package.txt:175
 msgid "Start GQTP server"
 msgstr ""
 
 # 6b55acdfe3284958a62d6eb2f86820ee
-#: ../../../source/server/package.txt:177
 msgid "Starting groonga GQTP server(Debian/Ubuntu/CentOS)::"
 msgstr ""
 
 # af9a018d494147e8a9416c30ced7f091
-#: ../../../source/server/package.txt:181
 msgid "Starting groonga GQTP server(Fedora)::"
 msgstr ""
 
 # 3dd040d7bc414b65a06de360498c6cee
-#: ../../../source/server/package.txt:186
 msgid "Stop GQTP server"
 msgstr ""
 
 # 6b55acdfe3284958a62d6eb2f86820ee
-#: ../../../source/server/package.txt:188
 msgid "Stopping groonga GQTP server(Debian/Ubuntu/CentOS)::"
 msgstr ""
 
 # af9a018d494147e8a9416c30ced7f091
-#: ../../../source/server/package.txt:192
 msgid "Stopping groonga GQTP server(Fedora)::"
 msgstr ""
 
 # 3dd040d7bc414b65a06de360498c6cee
-#: ../../../source/server/package.txt:197
 msgid "Restart GQTP server"
 msgstr ""

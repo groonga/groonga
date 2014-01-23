@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-22 14:27\n"
+"POT-Creation-Date: 2014-01-23 17:13+0900\n"
 "PO-Revision-Date: 2012-07-23 17:57+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -18,12 +18,10 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 # 98df3bbf31654e2b98d3862f413f066d
-#: ../../../source/community.txt:6
 msgid "Community"
 msgstr "Community"
 
 # d945d7b1453f4747b12943ebbd15b4a8
-#: ../../../source/community.txt:8
 msgid ""
 "There are some places for sharing Groonga information. We welcome you to "
 "join our community."
@@ -32,22 +30,18 @@ msgstr ""
 "join our community."
 
 # 5b3632c05b8847dca82be2e4aac6ef21
-#: ../../../source/community.txt:12
 msgid "Mailing List"
 msgstr "Mailing List"
 
 # d63b2c210bdc49f5b8e2608df3bc4b49
-#: ../../../source/community.txt:14
 msgid "There are mailing lists for discussion about Groonga."
 msgstr "There are mailing lists for discussion about Groonga."
 
 # 40f74a6d1d80428ab1431417b8954cf2
-#: ../../../source/community.txt:17
 msgid "For English speakers"
 msgstr ""
 
 # 09ee087cd5d24a4db848133fe0fcb384
-#: ../../../source/community.txt:17
 msgid ""
 "`groonga-talk@lists.sourceforge.net <http://lists.sourceforge.net/mailman/"
 "listinfo/groonga-talk>`_"
@@ -56,12 +50,10 @@ msgstr ""
 "listinfo/groonga-talk>`_"
 
 # 161e80986d65492da085c5b80d58f2b5
-#: ../../../source/community.txt:20
 msgid "For Japanese speakers"
 msgstr ""
 
 # 432a3768c7ed4dffa7cf3195b892a906
-#: ../../../source/community.txt:20
 msgid ""
 "`groonga-dev@lists.sourceforge.jp <http://lists.sourceforge.jp/mailman/"
 "listinfo/groonga-dev>`_"
@@ -70,36 +62,30 @@ msgstr ""
 "listinfo/groonga-dev>`_"
 
 # c6728510c9794221b51cc01cb4b954e2
-#: ../../../source/community.txt:23
 msgid "Twitter"
 msgstr ""
 
 # ca52d6f15abc4d59be26fccd7edf77eb
-#: ../../../source/community.txt:25
 msgid ""
 "`@groonga <https://twitter.com/groonga/>`_ tweets Groonga related "
 "information."
 msgstr ""
 
 # 991209fd288941c6a35aff931acb2d3f
-#: ../../../source/community.txt:28
 msgid ""
 "Please follow the account to get the latest Groonga related information!"
 msgstr ""
 
 # 1c5a3a3309584c9eac26437cee4b5202
-#: ../../../source/community.txt:32
 msgid "Facebook"
 msgstr ""
 
 # 99a356bc6dba45d5b0a31be7e38f1615
-#: ../../../source/community.txt:34
 msgid ""
 "`Groonga page on Facebook <http://www.facebook.com/groonga>`_ shares Groonga "
 "related information."
 msgstr ""
 
 # ed467ee4ec1b4d77b6f253b7d40a90c9
-#: ../../../source/community.txt:37
 msgid "Please like the page to get the latest Groonga related information!"
 msgstr ""

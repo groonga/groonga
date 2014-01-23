@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-25 13:38+0900\n"
+"POT-Creation-Date: 2014-01-23 17:13+0900\n"
 "PO-Revision-Date: 2013-12-25 14:39+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -18,17 +18,14 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 # 63fab5f3d33041a4ba618b631bb8d0fd
-#: ../../../source/characteristic.txt:6
 msgid "Characteristics of Groonga"
 msgstr "Characteristics of Groonga"
 
 # 8120f98617654b0999d36c596d52f1cd
-#: ../../../source/characteristic.txt:9
 msgid "Groonga overview"
 msgstr "Groonga overview"
 
 # ae7af580d375488ea48a4359c796bd27
-#: ../../../source/characteristic.txt:11
 msgid ""
 "Groonga is a fast and accurate full text search engine based on inverted "
 "index. One of the characteristics of Groonga is that a newly registered "
@@ -43,7 +40,6 @@ msgstr ""
 "real-time applications."
 
 # c0e6e594a48a4b059d2abd0184a0a2af
-#: ../../../source/characteristic.txt:13
 msgid ""
 "Groonga is also a column-oriented database management system (DBMS). "
 "Compared with well-known row-oriented systems, such as MySQL and PostgreSQL, "
@@ -56,7 +52,6 @@ msgstr ""
 "advantage, Groonga can cover weakness of row-oriented systems."
 
 # 85a1009d75324723860c6dd72c305690
-#: ../../../source/characteristic.txt:15
 msgid ""
 "The basic functions of Groonga are provided in a C library. Also, libraries "
 "for using Groonga in other languages, such as Ruby, are provided by related "
@@ -71,12 +66,10 @@ msgstr ""
 "use Groonga. See `usage examples <http://groonga.org/users/>`_."
 
 # eef0f14116cd439ba8222ea400f60738
-#: ../../../source/characteristic.txt:18
 msgid "Full text search and Instant update"
 msgstr "Full text search and Instant update"
 
 # 833bdd1c8c704ab68e99b538a9e9f9b4
-#: ../../../source/characteristic.txt:20
 msgid ""
 "In widely used DBMSs, updates are immediately processed, for example, a "
 "newly registered record appears in the result of the next query. In "
@@ -91,7 +84,6 @@ msgstr ""
 "underlying data structure."
 
 # 024a202c55314acd9d7c099f783845d1
-#: ../../../source/characteristic.txt:22
 msgid ""
 "Groonga also uses inverted indexes but supports instant updates. In "
 "addition, Groonga allows you to search documents even when updating the "
@@ -108,12 +100,10 @@ msgstr ""
 "smaller tasks."
 
 # 5d77a0d14c064792b1422483d15edfea
-#: ../../../source/characteristic.txt:25
 msgid "Column store and aggregate query"
 msgstr "Column store and aggregate query"
 
 # fa9e65a3f9eb4e8dbfc699a0b6c471cc
-#: ../../../source/characteristic.txt:27
 msgid ""
 "People can collect more than enough data in the Internet era. However, it is "
 "difficult to extract informative knowledge from a large database, and such a "
@@ -128,7 +118,6 @@ msgstr ""
 "Aggregate queries are useful to perform this kind of tasks."
 
 # c19396a765b04ef8a04f708bdad52ec0
-#: ../../../source/characteristic.txt:29
 msgid ""
 "An aggregate query groups search results by specified column values and then "
 "counts the number of records in each group. For example, an aggregate query "
@@ -149,7 +138,6 @@ msgstr ""
 "refinement and aggregation are important to perform data mining."
 
 # 66049cae53ce4920a63bc716f538dbc5
-#: ../../../source/characteristic.txt:31
 msgid ""
 "A column-oriented architecture allows Groonga to efficiently process "
 "aggregate queries because a column-oriented database, which stores records "
@@ -166,12 +154,10 @@ msgstr ""
 "are not required."
 
 # 39aa87ab85294b0585b9464fb73fc275
-#: ../../../source/characteristic.txt:34
 msgid "Inverted index and tokenizer"
 msgstr "Inverted index and tokenizer"
 
 # 45bde1a4562b4df6ac9cb9aa2f16af18
-#: ../../../source/characteristic.txt:36
 msgid ""
 "An inverted index is a traditional data structure used for large-scale full "
 "text search. A search engine based on inverted index extracts index terms "
@@ -188,7 +174,6 @@ msgstr ""
 "extracting index terms is a key to a better search engine."
 
 # cda3f2d428ac4e15b6dd1014d338976f
-#: ../../../source/characteristic.txt:38
 msgid ""
 "A tokenizer is a module to extract index terms. A Japanese full text search "
 "engine commonly uses a word-based tokenizer (hereafter referred to as a word "
@@ -211,7 +196,6 @@ msgstr ""
 "practice."
 
 # 399d371c07764ee9b5dc76894babc4f5
-#: ../../../source/characteristic.txt:40
 msgid ""
 "Groonga supports both word and n-gram tokenizers. The simplest built-in "
 "tokenizer uses spaces as word delimiters. Built-in n-gram tokenizers (n = 1, "
@@ -230,12 +214,10 @@ msgstr ""
 "speech tagger or a named-entity recognizer."
 
 # 99f1dd56fbbe4199b728eee272b74a4d
-#: ../../../source/characteristic.txt:43
 msgid "Sharable storage and read lock-free"
 msgstr "Sharable storage and read lock-free"
 
 # fd22338109904cceb10654f17c3db3fd
-#: ../../../source/characteristic.txt:45
 msgid ""
 "Multi-core processors are mainstream today and the number of cores per "
 "processor is increasing. In order to exploit multiple cores, executing "
@@ -248,7 +230,6 @@ msgstr ""
 "parallel processing is becoming more important."
 
 # 39108b4f40fd4b38ad4fbf5b7e53e525
-#: ../../../source/characteristic.txt:47
 msgid ""
 "A database of Groonga can be shared with multiple threads/processes. Also, "
 "multiple threads/processes can execute read queries in parallel even when "
@@ -269,12 +250,10 @@ msgstr ""
 "Groonga while accepting update queries through MySQL."
 
 # 47daa45655f34eeb9b77f4863177915b
-#: ../../../source/characteristic.txt:50
 msgid "Geo-location (latitude and longitude) search"
 msgstr "Geo-location (latitude and longitude) search"
 
 # 11de0e50526d4ca686798e43b8e5f1b1
-#: ../../../source/characteristic.txt:52
 msgid ""
 "Location services are getting more convenient because of mobile devices with "
 "GPS. For example, if you are going to have lunch or dinner at a nearby "
@@ -287,7 +266,6 @@ msgstr ""
 "for such services, fast geo-location search is becoming more important."
 
 # 237b97a668b14f30aaa4fe3e413f1a9d
-#: ../../../source/characteristic.txt:54
 msgid ""
 "Groonga provides inverted index-based fast geo-location search, which "
 "supports a query to find points in a rectangle or circle. Groonga gives high "
@@ -300,12 +278,10 @@ msgstr ""
 "distance measurement and you can sort points by distance from any point."
 
 # ab5490312b5640848fd88a8d52f33300
-#: ../../../source/characteristic.txt:57
 msgid "Groonga library"
 msgstr "Groonga library"
 
 # 7493245bfdd2448bbb2168c29927de56
-#: ../../../source/characteristic.txt:59
 msgid ""
 "The basic functions of Groonga are provided in a C library and any "
 "application can use Groonga as a full text search engine or a column-"
@@ -320,12 +296,10 @@ msgstr ""
 "groonga.org/related-projects.html>`_ for details."
 
 # aa61d8e85dba495c8f6f2b7e305c0d06
-#: ../../../source/characteristic.txt:62
 msgid "Groonga server"
 msgstr "Groonga server"
 
 # 745c97df3e31432cba426eda820b3dec
-#: ../../../source/characteristic.txt:64
 msgid ""
 "Groonga provides a built-in server command which supports HTTP, the "
 "memcached binary protocol and the Groonga Query Transfer Protocol (GQTP). "
@@ -335,12 +309,10 @@ msgid ""
 msgstr ""
 
 # bdeeaedd1de6476a9fff475fea4258f4
-#: ../../../source/characteristic.txt:67
 msgid "Groonga storage engine"
 msgstr "Groonga storage engine"
 
 # a74721095b4a42ed84335d3aab088dda
-#: ../../../source/characteristic.txt:69
 msgid ""
 "Groonga works not only as an independent column-oriented DBMS but also as "
 "storage engines of well-known DBMSs. For example, `mroonga <http://mroonga."

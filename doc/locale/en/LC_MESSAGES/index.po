@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-30 11:09+0900\n"
+"POT-Creation-Date: 2014-01-23 17:13+0900\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -18,26 +18,21 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 # 0429e62490fa4e4d99ddbd3ccdd0ab58
-#: ../../../source/index.txt:9
 msgid "groonga documentation"
 msgstr "groonga documentation"
 
 # bdf94bc753e74171a0e1f171d3eb5322
-#: ../../../source/index.txt:11
 msgid ":doc:`news`"
 msgstr ":doc:`news`"
 
 # 7a50acfe86d1429f9185bb5737388a3e
-#: ../../../source/index.txt:31
 msgid ":ref:`genindex`"
 msgstr ":ref:`genindex`"
 
 # ac699e10a3df408caa3cc7f645b42e0a
-#: ../../../source/index.txt:32
 msgid ":ref:`modindex`"
 msgstr ":ref:`modindex`"
 
 # 8f96e6490e024a1981f8acece6bcc598
-#: ../../../source/index.txt:33
 msgid ":ref:`search`"
 msgstr ":ref:`search`"

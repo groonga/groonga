@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-16 19:12+0900\n"
+"POT-Creation-Date: 2014-01-23 17:13+0900\n"
 "PO-Revision-Date: 2013-12-17 15:33+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -18,12 +18,10 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 # e4b1529814434d149d64d6fd54c470b3
-#: ../../../source/development.txt:6
 msgid "Development"
 msgstr "Development"
 
 # 7e2f0106b0bc46228d5d824089c31711
-#: ../../../source/development.txt:8
 msgid ""
 "This section describes about developing with groonga. You may develop an "
 "application that uses groonga as its database, a library that uses "
@@ -31,12 +29,10 @@ msgid ""
 msgstr ""
 
 # f92355c60edf4146a3a587c3c579dda4
-#: ../../../source/development/travis-ci.txt:6
 msgid "Travis CI"
 msgstr "Travis CI"
 
 # 25df3388c3e84f2f9420698df843e947
-#: ../../../source/development/travis-ci.txt:8
 msgid ""
 "This section describes about using groonga on `Travis CI <http://travis-ci."
 "org/>`_. Travis CI is a hosted continuous integration service for the open "
@@ -47,7 +43,6 @@ msgstr ""
 "source community."
 
 # 5f1724f322df4a1596e1b980eb69b632
-#: ../../../source/development/travis-ci.txt:12
 msgid ""
 "You can use Travis CI for your open source software. This section only "
 "describes about groonga related configuration. See `Travis CI: Documentation "
@@ -58,25 +53,22 @@ msgstr ""
 "<http://about.travis-ci.org/docs/>`_ about general Travis CI."
 
 # eca4c0ed9cb649be805c3122ecbfa047
-#: ../../../source/development/travis-ci.txt:18
 msgid "Configuration"
 msgstr "Configuration"
 
 # 3c2876acdfa94e50846d681d3c6cc5d0
-#: ../../../source/development/travis-ci.txt:20
 msgid ""
-"Travis CI is running on 64-bit Ubuntu 12.04 LTS Server Edition. (See `Travis CI: About Travis "
-"CI Environment <http://about.travis-ci.org/docs/user/ci-environment/>`_.)  "
-"You can use apt-line for Ubuntu 12.04 LTS provided by groonga project to install "
-"groonga on Travis CI."
+"Travis CI is running on 64-bit Ubuntu 12.04 LTS Server Edition. (See `Travis "
+"CI: About Travis CI Environment <http://about.travis-ci.org/docs/user/ci-"
+"environment/>`_.)  You can use apt-line for Ubuntu 12.04 LTS provided by "
+"groonga project to install groonga on Travis CI."
 msgstr ""
-"Travis CI is running on 64-bit Ubuntu 12.04 LTS Server Edition. (See `Travis CI: About Travis "
-"CI Environment <http://about.travis-ci.org/docs/user/ci-environment/>`_.)  "
-"You can use apt-line for Ubuntu 12.04 LTS provided by groonga project to install "
-"groonga on Travis CI."
+"Travis CI is running on 64-bit Ubuntu 12.04 LTS Server Edition. (See `Travis "
+"CI: About Travis CI Environment <http://about.travis-ci.org/docs/user/ci-"
+"environment/>`_.)  You can use apt-line for Ubuntu 12.04 LTS provided by "
+"groonga project to install groonga on Travis CI."
 
 # 8bbd47f3a4b14f4f88fd06001615f178
-#: ../../../source/development/travis-ci.txt:26
 msgid ""
 "You can custom build lifecycle by ``.travis.yml``. (See `Travis CI: "
 "Conifugration your Travis CI build with .travis.yml <http://about.travis-ci."
@@ -93,12 +85,11 @@ msgstr ""
 "``install`` otherwise."
 
 # 9c9851b190b1429a9187cfb763ae6895
-#: ../../../source/development/travis-ci.txt:33
 msgid "Add the following ``before_install`` configuration to ``.travis.yml``::"
-msgstr "Add the following ``before_install`` configuration to ``.travis.yml``::"
+msgstr ""
+"Add the following ``before_install`` configuration to ``.travis.yml``::"
 
 # c4d9d05b6bc041099821f7b090325508
-#: ../../../source/development/travis-ci.txt:38
 msgid ""
 "If you need to use ``install`` hook instead of ``before_install``, you just "
 "substitute ``before_install:`` with ``install:``."
@@ -107,34 +98,28 @@ msgstr ""
 "substitute ``before_install:`` with ``install:``."
 
 # 3fbdee4e2e6f4dc7b408b1c8c00462b3
-#: ../../../source/development/travis-ci.txt:41
 msgid "With the above configuration, you can use groonga for your build."
 msgstr "With the above configuration, you can use groonga for your build."
 
 # 92f4cffc16fa44ec962865a1ed860c6b
-#: ../../../source/development/travis-ci.txt:44
 msgid "Examples"
 msgstr "Examples"
 
 # ec42e535eb7e46cebd1e1f3ba0f96078
-#: ../../../source/development/travis-ci.txt:46
 msgid "Here are open source softwares that use groonga on Travis CI:"
 msgstr "Here are open source softwares that use groonga on Travis CI:"
 
 # e3f6c37f09f74bc48d77a1fb93a4fb40
-#: ../../../source/development/travis-ci.txt:48
 msgid ""
 "`rroonga <http://groonga.rubyforge.org/#about-rroonga>`_ (Ruby bindings)"
 msgstr ""
 "`rroonga <http://groonga.rubyforge.org/#about-rroonga>`_ (Ruby bindings)"
 
 # 9aa8193a1cb94f43bf94cc8f00b3923c
-#: ../../../source/development/travis-ci.txt:50
 msgid "`rroonga on Travis CI <http://travis-ci.org/#!/ranguba/rroonga>`_"
 msgstr "`rroonga on Travis CI <http://travis-ci.org/#!/ranguba/rroonga>`_"
 
 # 6fba380db8d54b84874e43327f98169c
-#: ../../../source/development/travis-ci.txt:51
 msgid ""
 "`.travis.yml for rroonga <https://github.com/ranguba/rroonga/blob/master/."
 "travis.yml>`_"
@@ -143,17 +128,14 @@ msgstr ""
 "travis.yml>`_"
 
 # f1d45822063b4290bc75a36c078e4c4e
-#: ../../../source/development/travis-ci.txt:53
 msgid "`nroonga <http://nroonga.github.com/>`_ (node.js bindings)"
 msgstr "`nroonga <http://nroonga.github.com/>`_ (node.js bindings)"
 
 # 39c1c9cdc89d4dc6893ccf5fcba7dfc8
-#: ../../../source/development/travis-ci.txt:55
 msgid "`nroonga on Travis CI <http://travis-ci.org/#!/nroonga/nroonga>`_"
 msgstr "`nroonga on Travis CI <http://travis-ci.org/#!/nroonga/nroonga>`_"
 
 # c462ecb93a604e29a6b7bf71e4432d02
-#: ../../../source/development/travis-ci.txt:56
 msgid ""
 "`.travis.yml for nroonga <https://github.com/nroonga/nroonga/blob/master/."
 "travis.yml>`_"
@@ -162,21 +144,18 @@ msgstr ""
 "travis.yml>`_"
 
 # 446c60fdc918441b9a7d29fa29530438
-#: ../../../source/development/travis-ci.txt:58
 msgid ""
 "`logaling-command <http://logaling.github.com/>`_ (A glossary management "
 "command line tool)"
 msgstr ""
 
 # 9aa8193a1cb94f43bf94cc8f00b3923c
-#: ../../../source/development/travis-ci.txt:60
 msgid ""
 "`logaling-command on Travis CI <http://travis-ci.org/#!/logaling/logaling-"
 "command>`_"
 msgstr ""
 
 # 6fba380db8d54b84874e43327f98169c
-#: ../../../source/development/travis-ci.txt:61
 msgid ""
 "`.travis.yml for logaling-command <https://github.com/logaling/logaling-"
 "command/blob/master/.travis.yml>`_"
