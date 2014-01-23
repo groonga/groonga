@@ -14,18 +14,20 @@ BUILT_SOURCES +=				\
 	$(mo_files)
 endif
 
-SUFFIXES += .pot .po .mo
+SUFFIXES += .pot .edit .po .mo 
 
 .PHONY: gettext update build
 
 all:
 
-.pot.po:
-	msgmerge --quiet --update --sort-by-file $@ $<
+.pot.edit:
+	msgmerge --quiet --sort-by-file --output-file=$@ $*.po $<
+.edit.po:
+	msgcat --no-location --output $@ $*.edit
 .po.mo:
 	msgfmt -o $@ $<
 
-update: pot-build-stamp $(po_files)
+update: pot-build-stamp $(edit_po_files) $(po_files)
 
 if DOCUMENT_BUILDABLE
 build: $(mo_files)
@@ -43,11 +45,22 @@ gettext: sphinx-ensure-updated
 	xgettext --language Python --output conf.pot ../../../source/conf.py
 
 init: gettext
-	for pot in *.pot; do							\
-	  po=`basename $${pot} | sed -e 's,pot$$,po,g'`;			\
-	  test "$(FORCE_INIT)" = "yes" -o ! -f $${po} &&			\
-	    msginit --input=$${pot} --output-file=$${po} --locale=$(LOCALE);	\
-	  :;									\
+	for pot in *.pot; do								\
+	  edit_po=`basename $${pot} | sed -e 's,pot$$,edit,g'`;				\
+	  test "$(FORCE_INIT)" = "yes" -o ! -f $${edit_po} &&				\
+	    msginit --input=$${pot} --output-file=$${edit_po} --locale=$(LOCALE);	\
+	  :;										\
+	done
+
+edit:
+	for pot in *.pot; do								\
+	  edit_po=`basename $${pot} | sed -e 's,pot$$,edit,g'`;				\
+	  po=`basename $${pot} | sed -e 's,pot$$,po,g'`;				\
+	  test ! -f $${edit_po} && test -f $${po} &&					\
+	    msgmerge --quiet --sort-by-file --output-file=$${edit_po} $${po} $${pot};	\
+	  test ! -f $${edit_po} && test ! -f $${po} &&					\
+	    msginit --input=$${pot} --output-file=$${edit_po} --locale=$(LOCALE);	\
+	  :;										\
 	done
 
 reinit:

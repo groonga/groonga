@@ -46,6 +46,20 @@ find "themes" -type f | \
       -e 's,pot$,po,' | \
     list_paths "po_files_relative_from_locale_dir"
 
+## edit file base paths
+(cd locale/en/LC_MESSAGES; find . -type f -name '*.pot') | \
+    sed \
+      -e 's,^\./,,' \
+      -e 's,pot$,edit,' | \
+    list_paths "edit_po_files"
+
+## edit file paths relative from locale/$LANG/ dir.
+(cd locale/en/LC_MESSAGES; find . -type f -name '*.pot') | \
+    sed \
+      -e 's,^\.,LC_MESSAGES,' \
+      -e 's,pot$,edit,' | \
+    list_paths "edit_po_files_relative_from_locale_dir"
+
 ## mo file paths relative from locale/$LANG/ dir.
 (cd locale/en/LC_MESSAGES; find . -type f -name '*.pot') | \
     sed \
