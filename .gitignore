@@ -69,6 +69,7 @@ cmake_install.cmake
 /doc/locale/*/pdf/
 /doc/locale/*/LC_MESSAGES/*.mo
 /doc/locale/*/LC_MESSAGES/*.pot
+/doc/locale/*/LC_MESSAGES/*.edit
 /doc/locale/*/LC_MESSAGES/doctrees/
 /doc/locale/*/LC_MESSAGES/pot-build-stamp
 /doc/commands_not_implemented/
