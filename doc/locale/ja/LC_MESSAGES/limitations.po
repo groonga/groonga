@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-26 17:16+0900\n"
+"POT-Creation-Date: 2014-01-23 17:04+0900\n"
 "PO-Revision-Date: 2011-05-09 00:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -17,63 +17,48 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: ../../../source/limitations.txt:6
 msgid "Limitations"
 msgstr "制限事項"
 
-#: ../../../source/limitations.txt:8
 msgid "Groonga has some limitations."
 msgstr "Groongaにはいくつか制限事項があります。"
 
-#: ../../../source/limitations.txt:11
 msgid "Limitations of table"
 msgstr "テーブルの制限"
 
-#: ../../../source/limitations.txt:13
 msgid "A table has the following limitations."
 msgstr "テーブルには以下の制限があります。"
 
-#: ../../../source/limitations.txt:15
 msgid "The maximum one key size: 4096Bytes"
 msgstr "1つのキーの最大サイズ: 4096Bytes"
 
-#: ../../../source/limitations.txt:16
 msgid "The maximum total size of keys: 4GBytes"
 msgstr "キーのサイズを合計した上限値: 4GByte"
 
-#: ../../../source/limitations.txt:18 ../../../source/limitations.txt:29
 msgid "Keep in mind that these limitations may vary depending on conditions."
 msgstr "実際には他の諸条件の制約により上記の値まで到達しない場合もあります。"
 
-#: ../../../source/limitations.txt:21
 msgid "Limitations of indexing"
 msgstr "インデックス上限値"
 
-#: ../../../source/limitations.txt:23
 msgid "A full-text index has the following limitations."
 msgstr "1つのインデックスにおける論理上の上限値は以下のとおりです。"
 
-#: ../../../source/limitations.txt:25
 msgid "The maximum number of records: 268,435,455 (more than 268 million)"
 msgstr "最大レコード数: 268,435,455 (約2億6千万)"
 
-#: ../../../source/limitations.txt:26
 msgid ""
 "The maximum number of distinct terms: 268,435,455 (more than 268 million)"
 msgstr "最大語彙数: 268,435,455 (約2億6千万)"
 
-#: ../../../source/limitations.txt:27
 msgid "The maximum index size: 256GBytes"
 msgstr "最大インデックスサイズ: 256GByte"
 
-#: ../../../source/limitations.txt:32
 msgid "Limitations of column"
 msgstr "カラムの制限"
 
-#: ../../../source/limitations.txt:34
 msgid "A column has the following limitation."
 msgstr "カラムには以下の制限があります。"
 
-#: ../../../source/limitations.txt:36
 msgid "The maximum stored data size of each column: 256GiB"
 msgstr "カラムごとのサイズを合計した上限値: 256GiB"

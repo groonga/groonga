@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-25 11:22+0900\n"
+"POT-Creation-Date: 2014-01-23 17:04+0900\n"
 "PO-Revision-Date: 2012-11-22 16:11+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -18,12 +18,10 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 # 35dfd83e336a49b7af22facf3dfa8927
-#: ../../../source/server.txt:6
 msgid "Server"
 msgstr "サーバー"
 
 # d4543e04dd5142c58114eeec6a6a2d16
-#: ../../../source/server/gqtp.txt:6
 msgid "GQTP"
 msgstr ""
 
@@ -34,42 +32,30 @@ msgstr ""
 # b049e74907a74a5fa0a7822118d39af7
 # bd6242b5399945fc8046bf4280e08cfc
 # 38b2d9272ebd410184692728ac0d7a8f
-#: ../../../source/server/gqtp.txt:8
-#: ../../../source/server/http/comparison.txt:288
-#: ../../../source/server/http/comparison.txt:293
-#: ../../../source/server/http/comparison.txt:298
-#: ../../../source/server/http/groonga-httpd.txt:8
-#: ../../../source/server/http/groonga.txt:8
 msgid "TODO"
 msgstr ""
 
 # dddd18c0c751464a977ec1a2525200bd
-#: ../../../source/server/gqtp.txt:10
 msgid "See :doc:`/reference/executables/groonga`."
 msgstr ":doc:`/reference/executables/groonga` を参照してください。"
 
 # f1b7682c04454b7380dc168e4bc1309b
-#: ../../../source/server/http.txt:6
 msgid "HTTP"
 msgstr ""
 
 # 6162a6a9e9a84d37a245fc9011cc47b3
-#: ../../../source/server/http.txt:8
 msgid "Groonga provides two HTTP server implementations."
 msgstr "groongaは2つのHTTPサーバー実装を提供しています。"
 
 # b4f7f016eba94264b0c24995ffc2f668
-#: ../../../source/server/http.txt:10
 msgid ":doc:`http/groonga`"
 msgstr ""
 
 # 7c91e45cd353456abfa68a529b27b5f5
-#: ../../../source/server/http.txt:11
 msgid ":doc:`http/groonga-httpd`"
 msgstr ""
 
 # da1665df1d3a4662adb7a6968dd38770
-#: ../../../source/server/http.txt:13
 msgid ""
 ":doc:`http/groonga` is a simple implemntation. It is fast but doesn't have "
 "many HTTP features. It is convenient to try groonga because it requires just "
@@ -80,7 +66,6 @@ msgstr ""
 "だけで動くのでgroongaを簡単に試すことができます。"
 
 # 5a9645c099a243f9af9ae079029f944a
-#: ../../../source/server/http.txt:17
 msgid ""
 ":doc:`http/groonga-httpd` is a `nginx <http://nginx.org/>`_ based "
 "implementation. It is also fast and has many HTTP features."
@@ -90,17 +75,14 @@ msgstr ""
 "ます。"
 
 # 7585e693bf374d7c9940e7157e7eb6d7
-#: ../../../source/server/http.txt:22
 msgid ":doc:`http/groonga-httpd` is still experimental."
 msgstr ":doc:`http/groonga-httpd` はまだ実験的な扱いです。"
 
 # 0fd304e540654aaf99b3a25c91f7171b
-#: ../../../source/server/http/comparison.txt:6
 msgid "Comparison"
 msgstr "比較"
 
 # 8ba3377688654c39963670f326eb2522
-#: ../../../source/server/http/comparison.txt:8
 msgid ""
 "There are many differences between :doc:`groonga` and :doc:`groonga-httpd`. "
 "Here is a comparison table."
@@ -110,23 +92,16 @@ msgstr ""
 
 # 9a080ae986c046be9a8c41feab800dcb
 # d9ad8415cb554767a2e939737c5ceb1e
-#: ../../../source/server/http/comparison.txt:12
-#: ../../../source/server/http/groonga.txt:6
 msgid "groonga"
 msgstr ""
 
 # fd831a376048486cb9e0ef673786df2c
 # adb479098f9c4d789c08b6c7ef16651a
-#: ../../../source/server/http/comparison.txt:12
-#: ../../../source/server/http/groonga-httpd.txt:6
-#: ../../../source/server/package.txt:36
 msgid "groonga-httpd"
 msgstr ""
 
 # a05d266b7cbd4e718f2370b095c46ddb
 # 10ff285adb7b42b98b334858691b0feb
-#: ../../../source/server/http/comparison.txt:14
-#: ../../../source/server/http/comparison.txt:40
 msgid "Performance"
 msgstr "性能"
 
@@ -140,58 +115,37 @@ msgstr "性能"
 # d083ce0bc6544c9bbbb61ab1c8a9f452
 # d083ce0bc6544c9bbbb61ab1c8a9f452
 # d083ce0bc6544c9bbbb61ab1c8a9f452
-#: ../../../source/server/http/comparison.txt:14
-#: ../../../source/server/http/comparison.txt:20
-#: ../../../source/server/http/comparison.txt:22
-#: ../../../source/server/http/comparison.txt:24
-#: ../../../source/server/http/comparison.txt:26
-#: ../../../source/server/http/comparison.txt:28
-#: ../../../source/server/http/comparison.txt:30
-#: ../../../source/server/http/comparison.txt:32
-#: ../../../source/server/http/comparison.txt:34
-#: ../../../source/server/http/comparison.txt:36
 msgid "o"
 msgstr "○"
 
 # 210e41668d564b8aaf53626797a4cb72
 # 59d93edc3a95414ab9c2dfe68080cbfd
-#: ../../../source/server/http/comparison.txt:16
-#: ../../../source/server/http/comparison.txt:46
 msgid "Using multi CPU cores"
 msgstr "複数CPUコア対応"
 
 # c56a7742b8fc4efa95064b5277501240
-#: ../../../source/server/http/comparison.txt:16
 msgid "o (by multi process)"
 msgstr "○（マルチプロセスで対応）"
 
 # 7a912c0a8f8d4f1d9e8cc4a79f24dcce
-#: ../../../source/server/http/comparison.txt:16
 msgid "o (by multi threading)"
 msgstr "○（マルチスレッドで対応）"
 
 # 54776be8dbf243b4902c47761ee415f2
 # 54776be8dbf243b4902c47761ee415f2
-#: ../../../source/server/http/comparison.txt:18
-#: ../../../source/server/http/comparison.txt:67
-#: ../../../source/server/package.txt:53
 msgid "Configuration file"
 msgstr "設定ファイル"
 
 # cae581fb31194dccb2c1c829a2527021
-#: ../../../source/server/http/comparison.txt:18
 msgid "optional"
 msgstr "なくてもよい"
 
 # 0e564fbd85b446ddad83db0a1157d888
-#: ../../../source/server/http/comparison.txt:18
 msgid "required"
 msgstr "必須"
 
 # 9d99b23f501c4caba58afaef859766b8
 # 9d99b23f501c4caba58afaef859766b8
-#: ../../../source/server/http/comparison.txt:20
-#: ../../../source/server/http/comparison.txt:99
 msgid "Custom prefix path"
 msgstr "プレフィックスパスの変更"
 
@@ -203,80 +157,54 @@ msgstr "プレフィックスパスの変更"
 # 12be4a46667f4df9a092a22634d66062
 # 12be4a46667f4df9a092a22634d66062
 # 12be4a46667f4df9a092a22634d66062
-#: ../../../source/server/http/comparison.txt:20
-#: ../../../source/server/http/comparison.txt:24
-#: ../../../source/server/http/comparison.txt:26
-#: ../../../source/server/http/comparison.txt:28
-#: ../../../source/server/http/comparison.txt:30
-#: ../../../source/server/http/comparison.txt:32
-#: ../../../source/server/http/comparison.txt:34
-#: ../../../source/server/http/comparison.txt:36
 msgid "x"
 msgstr "×"
 
 # 60608f2d3a2c46c385f43761b05ce0af
 # d68e55ed848b4815a149be5e2b9273bf
-#: ../../../source/server/http/comparison.txt:22
-#: ../../../source/server/http/comparison.txt:124
 msgid "Custom command version"
 msgstr "コマンドバージョンの変更"
 
 # 88e801b5210c417ba32f5f1b7cfbd098
 # d1838ae98a684a2085432f41eb613620
-#: ../../../source/server/http/comparison.txt:22
 msgid "x (comming soon)"
 msgstr "×（まもなく実装予定）"
 
 # 44628f04c1bd42548128833abc1594f8
 # 44628f04c1bd42548128833abc1594f8
-#: ../../../source/server/http/comparison.txt:24
-#: ../../../source/server/http/comparison.txt:164
 msgid "Multi databases"
 msgstr "複数データベース"
 
 # 6d5de3d07057445087a21c7752d284eb
 # 6d5de3d07057445087a21c7752d284eb
-#: ../../../source/server/http/comparison.txt:26
-#: ../../../source/server/http/comparison.txt:192
 msgid "Authentication"
 msgstr "認証"
 
 # a37ba95d7dd741c0b3248ac3e72893ff
 # a37ba95d7dd741c0b3248ac3e72893ff
-#: ../../../source/server/http/comparison.txt:28
-#: ../../../source/server/http/comparison.txt:228
 msgid "Gzip compression"
 msgstr "gzip圧縮"
 
 # a33fb266ef0949b6a9d94d4e69fd547f
 # a33fb266ef0949b6a9d94d4e69fd547f
-#: ../../../source/server/http/comparison.txt:30
-#: ../../../source/server/http/comparison.txt:271
 msgid "POST"
 msgstr ""
 
 # c3cb22dd5b5541808093b16711b9388f
 # 34c078f412394246b89e9d89440ac71e
-#: ../../../source/server/http/comparison.txt:32
-#: ../../../source/server/http/comparison.txt:286
 msgid "HTTPS"
 msgstr ""
 
 # 13346d87ebe14d0994b20faf8fd40fe6
 # 6fbb32a9075249e7b9a0952df5226e40
-#: ../../../source/server/http/comparison.txt:34
-#: ../../../source/server/http/comparison.txt:291
 msgid "Access log"
 msgstr "アクセスログ"
 
 # f5a82d512d3148199b6bc5f12823e640
-#: ../../../source/server/http/comparison.txt:36
-#: ../../../source/server/http/comparison.txt:296
 msgid "Upgrading without downtime"
 msgstr "ダウンタイムなしでのアップグレード"
 
 # 653d4606e9ba4712957ababbe00d457e
-#: ../../../source/server/http/comparison.txt:42
 msgid ""
 "Both :doc:`groonga` and :doc:`groonga-httpd` are very fast. They can work "
 "with the same throughput."
@@ -285,7 +213,6 @@ msgstr ""
 "スループットで動きます。"
 
 # b70eafade99847b1abae841ec14dbb31
-#: ../../../source/server/http/comparison.txt:48
 msgid ""
 "Groonga scales on multi CPU cores. :doc:`groonga` scales by multi "
 "threading. :doc:`groonga-httpd` scales by multi processes."
@@ -295,7 +222,6 @@ msgstr ""
 "使って性能を向上させます。"
 
 # 662c4d6138cc454c8501b97f5d80440f
-#: ../../../source/server/http/comparison.txt:51
 msgid ""
 ":doc:`groonga` uses the same number of threads as CPU cores by default. If "
 "you have 8 CPU cores, 8 threads are used by default."
@@ -304,7 +230,6 @@ msgstr ""
 "アが8個あった場合は、デフォルトで8個のスレッドを使います。"
 
 # 26db63d0d4ce495b84d5b0a69588e18b
-#: ../../../source/server/http/comparison.txt:54
 msgid ""
 ":doc:`groonga-httpd` uses 1 process by default. You need to set "
 "`worker_processes <http://nginx.org/en/docs/ngx_core_module."
@@ -319,7 +244,6 @@ msgstr ""
 "す。::"
 
 # bfd2f2691f68416db4bdeb8c41161e63
-#: ../../../source/server/http/comparison.txt:69
 msgid ""
 ":doc:`groonga` can work without configuration file. All configuration items "
 "such as port number and the max number of threads can be specified by "
@@ -330,7 +254,6 @@ msgstr ""
 "ても設定項目を指定することができます。"
 
 # d263a230afb7488bb5210f5b2107f51e
-#: ../../../source/server/http/comparison.txt:74
 msgid ""
 "It's very easy to run groonga HTTP server because :doc:`groonga` requires "
 "just a few options to run. Here is the most simple command line to start "
@@ -341,7 +264,6 @@ msgstr ""
 "HTTPサーバーを起動する一番簡単なコマンドラインです。::"
 
 # 053f40600e4147d1ac5af1cfedd04207
-#: ../../../source/server/http/comparison.txt:80
 msgid ""
 ":doc:`groonga-httpd` requires configuration file to run. Here is the most "
 "simple configuration file to start HTTP server by :doc:`groonga-httpd`::"
@@ -350,7 +272,6 @@ msgstr ""
 "`groonga-httpd` でHTTPサーバーを実行する一番簡単な設定ファイルです。::"
 
 # 2776c22478bb4d4ca2ba1fdae506cf1b
-#: ../../../source/server/http/comparison.txt:101
 msgid ""
 ":doc:`groonga` accepts a path that starts with ``/d/`` as command URL such "
 "as ``http://localhost:10041/d/status``. You cannot change the prefix path ``/"
@@ -361,7 +282,6 @@ msgstr ""
 "フィックスパスを変更することはできません。"
 
 # 23501fcdcb3e40d6b36fb207bbfdd87a
-#: ../../../source/server/http/comparison.txt:105
 msgid ""
 ":doc:`groonga-httpd` can custom prefix path. For example, you can use "
 "``http://localhost:10041/api/status`` as command URL. Here is a sample "
@@ -372,7 +292,6 @@ msgstr ""
 "以下は ``/api/`` をプレフィックスパスとして使う設定例です。::"
 
 # a706571ddf514fb280f1bb14666659b0
-#: ../../../source/server/http/comparison.txt:126
 msgid ""
 "Groonga has :doc:`/reference/command/command_version` mechanism. It is for "
 "upgrading groonga commands with backward compatibility."
@@ -382,7 +301,6 @@ msgstr ""
 "組みです。"
 
 # 3d0dabefd19e4ca2b79ca4b43c174c99
-#: ../../../source/server/http/comparison.txt:129
 msgid ""
 ":doc:`groonga` can change the default command veresion by ``--default-"
 "command-version`` option. Here is a sample command line to use command "
@@ -393,7 +311,6 @@ msgstr ""
 "ンドバージョン2を使うコマンドライン例です。::"
 
 # a2d0e9cb91fd4b3ea94745b6ccd03e14
-#: ../../../source/server/http/comparison.txt:135
 msgid ""
 ":doc:`groonga-httpd` cannot custom the default command version yet. But it "
 "will be supported soon. If it is supported, you can provides different "
@@ -408,13 +325,11 @@ msgstr ""
 "ジョン2のコマンドを ``/api/2/`` 以下で提供するための設定例です。::"
 
 # 95f532d5dfc34eeca5a885f1f1c850bb
-#: ../../../source/server/http/comparison.txt:166
 msgid ":doc:`groonga` can use only one database in a process."
 msgstr ""
 ":doc:`groonga` は1つのプロセスで1つのデータベースしか使うことができません。"
 
 # 8c4ff0f369ea4fbaa82a2c27643ada8b
-#: ../../../source/server/http/comparison.txt:168
 msgid ""
 ":doc:`groonga-httpd` can use one or more databases in a process. Here is a "
 "sample configuration to provide ``/tmp/db1`` database under ``/db1/`` path "
@@ -425,7 +340,6 @@ msgstr ""
 "にあるデータベースを ``/db2/`` 以下で提供する設定例です。::"
 
 # b45a47d4949b4186ba7867c198806552
-#: ../../../source/server/http/comparison.txt:194
 msgid ""
 "HTTP supports authentications such as basic authentication and digest "
 "authentication. It can be used for restricting use of danger command such "
@@ -436,7 +350,6 @@ msgstr ""
 "ンドの実行を制限することができます。"
 
 # 8f20c573631a493586d7e00774b04800
-#: ../../../source/server/http/comparison.txt:198
 msgid ""
 ":doc:`groonga` doesn't support any authentications. To restrict use of "
 "danger command, other tools such as iptables and reverse proxy are needed."
@@ -445,7 +358,6 @@ msgstr ""
 "iptablesやリバースプロキシなど他のツールを使う必要があります。"
 
 # 66e27de22e994e168e048a66cd418368
-#: ../../../source/server/http/comparison.txt:202
 msgid ""
 ":doc:`groonga-httpd` supports basic authentication. Here is a sample "
 "configuration to restrict use of :doc:`/reference/commands/shutdown` "
@@ -455,7 +367,6 @@ msgstr ""
 "reference/commands/shutdown` コマンドの使用を制限する設定例です。::"
 
 # 375963b0fbb44a5495fd2c21ac1d3154
-#: ../../../source/server/http/comparison.txt:230
 msgid ""
 "HTTP supports response compression by gzip with ``Content-Encoding: gzip`` "
 "response header. It can reduce network flow. It is useful for large search "
@@ -466,7 +377,6 @@ msgstr ""
 "できます。大きな検索結果を返すときに有用です。"
 
 # 28472fa732f44c50aa60a96b762ae4d0
-#: ../../../source/server/http/comparison.txt:234
 msgid ""
 ":doc:`groonga` doesn't support compression. To support compression, reverse "
 "proxy is needed."
@@ -475,7 +385,6 @@ msgstr ""
 "バースプロキシを使う必要があります。"
 
 # 8e26d485855a492aa03440ea64cf61c6
-#: ../../../source/server/http/comparison.txt:237
 msgid ""
 ":doc:`groonga-httpd` supports gzip compression. Here is a sample "
 "configuration to compress response by gzip::"
@@ -484,7 +393,6 @@ msgstr ""
 "圧縮する設定例です。::"
 
 # b19e64310f714cebb91c45ecc6b32996
-#: ../../../source/server/http/comparison.txt:257
 msgid ""
 "Note that `gzip_types *` is specified. It's one of the important "
 "configuration. `gzip_types` specifies gzip target data formats by MIME "
@@ -499,7 +407,6 @@ msgstr ""
 "に含まれていません。 `gzip_types` のデフォルト値は `text/html` です。"
 
 # 3aa95449f725406c820371b33d6c4dc6
-#: ../../../source/server/http/comparison.txt:263
 msgid ""
 "To compress response data from :doc:`groonga-httpd` by gzip, you need to "
 "specify `gzip_types *` or `gzip_types application/json text/xml application/"
@@ -517,7 +424,6 @@ msgstr ""
 "す。"
 
 # 1829dfc59fbf4978b44017e97797e95d
-#: ../../../source/server/http/comparison.txt:273
 msgid ""
 "You can load your data by POST JSON data. You need follow the following "
 "rules to use loading by POST."
@@ -526,23 +432,19 @@ msgstr ""
 "場合は以下のルールに従ってください。"
 
 # d13cdf7dc6874a3bbb262257acb36f53
-#: ../../../source/server/http/comparison.txt:276
 msgid "`Content-Type` header value must be `application/json`."
 msgstr "`Content-Type` ヘッダーの値を `application/json` にする。"
 
 # 6282600bb9e24a70ba5b25d0165efc74
-#: ../../../source/server/http/comparison.txt:277
 msgid "JSON data is sent as body."
 msgstr "JSONデータはbodyとして送る。"
 
 # 823e64393d8648299001e5fb95439647
-#: ../../../source/server/http/comparison.txt:278
 msgid "Table name is specified by query parameter such as ``table=NAME``."
 msgstr ""
 "テーブル名は ``table=名前`` というようにクエリーパラメーターで指定する。"
 
 # 43ce7034d6f44f29b48cb26ac09a4227
-#: ../../../source/server/http/comparison.txt:280
 msgid ""
 "Here is an example curl command line that loads two users `alice` and `bob` "
 "to `Users` table::"
@@ -551,12 +453,10 @@ msgstr ""
 "ロードするコマンドラインの例です::"
 
 # ab1b37bfcbd6483b939bfccfe8e14b38
-#: ../../../source/server/package.txt:6
 msgid "Server packages"
 msgstr "サーバーパッケージ"
 
 # 93d0456b01cf402b92b5c616c9815620
-#: ../../../source/server/package.txt:8
 msgid ""
 "The package ``groonga`` is the mininum set of fulltext search engine. If you "
 "want to use groonga for server use, you can install additional preconfigured "
@@ -567,28 +467,23 @@ msgstr ""
 "ます。"
 
 # eae021afd88248e688bb6b42ff640709
-#: ../../../source/server/package.txt:12
 msgid "There are three packages for server use."
 msgstr "サーバー用途の3つのパッケージがあります。"
 
 # 81ca03ace28c41f88079bc8c2c199202
-#: ../../../source/server/package.txt:14
 msgid "``groonga-httpd`` (nginx and HTTP protocol based server package)"
 msgstr "``groonga-httpd`` (nginxをベースにしたHTTPサーバー)"
 
 # 5dff1120d81d497383cc7c6b6a831dca
-#: ../../../source/server/package.txt:15
 msgid "``groonga-server-http`` (simple HTTP protocol based server package)"
 msgstr "``groonga-server-http`` (簡易HTTPサーバー)"
 
 # dd979692d56b4bea882bfbae3ca451a8
-#: ../../../source/server/package.txt:16
 msgid ""
 "``groonga-server-gqtp`` (:doc:`/spec/gqtp` protocol based server package)"
 msgstr "``groonga-server-gqtp`` (:doc:`/spec/gqtp` サーバー)"
 
 # e42d2d6d313b48b1b374bd40e3f46dca
-#: ../../../source/server/package.txt:18
 msgid ""
 "There is the reason why groonga supports not only GQTP but also two HTTP "
 "server packages. :doc:`/spec/gqtp` - Groonga Query Transfer Protocol is "
@@ -599,32 +494,28 @@ msgid ""
 "for details). If you use ``groonga-httpd`` package, you can also take "
 "benefits of nginx functionality."
 msgstr ""
-"groongaがGQTPだけでなく、2つのHTTPサーバーパッケージをサポートしてい"
-"るのには理由があります。 :doc:`/spec/gqtp` - Groonga Query Transfer Protocol "
-"はオーバーヘッドを低減し、パフォーマンスを向上させるように設計されて"
-"いますが、HTTPプロトコルほどクライアントライブラリのサポートがありま"
-"せん。HTTPは枯れたプロトコルなので既存のツールを活用できたり、多くの"
-"クライアントライブラリが存在します。(詳細は `関連プロジェクト "
-"<http://groonga.org/ja/related-projects.html>`_ を参照) "
-"``groonga-httpd`` パッケージを使うと nginxの機能の恩恵を受けることが"
-"できます。"
-
+"groongaがGQTPだけでなく、2つのHTTPサーバーパッケージをサポートしているのには"
+"理由があります。 :doc:`/spec/gqtp` - Groonga Query Transfer Protocol はオー"
+"バーヘッドを低減し、パフォーマンスを向上させるように設計されていますが、HTTP"
+"プロトコルほどクライアントライブラリのサポートがありません。HTTPは枯れたプロ"
+"トコルなので既存のツールを活用できたり、多くのクライアントライブラリが存在し"
+"ます。(詳細は `関連プロジェクト <http://groonga.org/ja/related-projects."
+"html>`_ を参照) ``groonga-httpd`` パッケージを使うと nginxの機能の恩恵を受け"
+"ることができます。"
 
 # 946f38c04ce54b618cfb35a82a13a804
-#: ../../../source/server/package.txt:25
 msgid ""
 "We recommend to use ``groonga-server-http`` at first, then if you want to "
 "use more fullfilling functionality, use ``groonga-httpd`` package. If you "
 "have performance issues which is derived from protocol overheads, consider "
 "to use ``groonga-server-gqtp``."
 msgstr ""
-"最初は ``groonga-server-http`` パッケージを使うことをおすすめします。それでもっ"
-"と高機能なものを使いたくなったら、``groonga-httpd`` パッケージを使ってください。"
-"プロトコルのオーバーヘッドがパフォーマンス上問題となったら "
-"``groonga-server-gqtp`` を検討してください。"
+"最初は ``groonga-server-http`` パッケージを使うことをおすすめします。それで"
+"もっと高機能なものを使いたくなったら、``groonga-httpd`` パッケージを使ってく"
+"ださい。プロトコルのオーバーヘッドがパフォーマンス上問題となったら ``groonga-"
+"server-gqtp`` を検討してください。"
 
 # 2550d6e7dc2a4f2892afa3655b11b5df
-#: ../../../source/server/package.txt:31
 msgid ""
 "There is a conflict between ``groonga-httpd`` and ``groonga-server-http`` "
 "package because of port number. See :doc:`/server/http/comparison` if you "
@@ -635,102 +526,77 @@ msgstr ""
 "comparison` を参照してください。"
 
 # 81ca03ace28c41f88079bc8c2c199202
-#: ../../../source/server/package.txt:38
 msgid "``groonga-httpd`` is a nginx and HTTP protocol based server package."
 msgstr "``groonga-httpd`` はnginxをベースにしたHTTPサーバーパッケージです。"
 
 # 8cd21df1970b48808329613668276acd
 # 269c15b3e5bd4dd7a0172af6dfc3c885
-#: ../../../source/server/package.txt:40 ../../../source/server/package.txt:94
 msgid "Preconfigured setting:"
 msgstr "設定済みの内容:"
 
 # 6f3ce2ee1f6e481e95e9ffe34018f64d
 # fdcdbf0432c545959ef2477995ea7bc8
 # 1b27031566354d7da77954e42d40df5a
-#: ../../../source/server/package.txt:43 ../../../source/server/package.txt:97
-#: ../../../source/server/package.txt:155
 msgid "Default value"
 msgstr "既定値"
 
 # a91231338d694a67b88a3b92c9c96e8d
 # 447f1422b1f34879a9b2acf280d01bd0
 # 1a18b37ff92d470e908a86fcaf76ae07
-#: ../../../source/server/package.txt:43 ../../../source/server/package.txt:97
-#: ../../../source/server/package.txt:155
 msgid "Item"
 msgstr "項目"
 
 # ee2b2880a25e468099baec381032601c
 # 212188192b21464e809802db84abd9ee
-#: ../../../source/server/package.txt:45 ../../../source/server/package.txt:99
 msgid "10041"
 msgstr ""
 
 # c3d4ccc43cb34ae09c64996de566e8bb
 # 24dc25cedc0145d983fce1dac16eb061
 # 198a4e6a2ab146aabd1a66f1056186aa
-#: ../../../source/server/package.txt:45 ../../../source/server/package.txt:99
-#: ../../../source/server/package.txt:157
 msgid "Port number"
 msgstr "ポート番号"
 
 # d18fa1dc7b0048aa831c1f0d3f90ba3c
-#: ../../../source/server/package.txt:47
 msgid "/var/log/groonga/httpd/acccess.log"
 msgstr ""
 
 # 13346d87ebe14d0994b20faf8fd40fe6
 # 6fbb32a9075249e7b9a0952df5226e40
-#: ../../../source/server/package.txt:47
 msgid "Access log path"
 msgstr "アクセスログ"
 
 # 468997185b7243048a59069000aa8114
 # b0abed2dfdd247f7a63aa7266f70c553
-#: ../../../source/server/package.txt:49
-#: ../../../source/server/package.txt:103
 msgid "/var/log/groonga/http-query.log"
 msgstr ""
 
 # 15cc6ee820344c28864f15a358f02533
-#: ../../../source/server/package.txt:49
 msgid "Error log path"
 msgstr "エラーログ"
 
 # 7002b2952aa94df282bb73bde2ffe55a
 # f84af66160e74898b29419f0c356b3b2
 # 7515e688d39e40dcb4da352042df3014
-#: ../../../source/server/package.txt:51
-#: ../../../source/server/package.txt:105
-#: ../../../source/server/package.txt:163
 msgid "/var/lib/groonga/db/*"
 msgstr ""
 
 # 44628f04c1bd42548128833abc1594f8
 # 44628f04c1bd42548128833abc1594f8
-#: ../../../source/server/package.txt:51
-#: ../../../source/server/package.txt:105
-#: ../../../source/server/package.txt:163
 msgid "Database"
 msgstr "データベース"
 
 # ee6abcac96014e57ab43a6a396c1b750
-#: ../../../source/server/package.txt:53
 msgid "/etc/groonga/httpd/groonga-httpd.conf"
 msgstr ""
 
 # 55aad42d8e054534bd781e9543deba1e
 # 55aad42d8e054534bd781e9543deba1e
-#: ../../../source/server/package.txt:57
-#: ../../../source/server/package.txt:117
 msgid "Start HTTP server"
 msgstr "HTTPサーバーを起動"
 
 # 96c79f81fff542e79e5dc5edc87aeaeb
 # 96c79f81fff542e79e5dc5edc87aeaeb
-#: ../../../source/server/package.txt:59
-#: ../../../source/server/package.txt:119
 msgid "Starting groonga HTTP server(Debian/Ubuntu/CentOS)::"
 msgstr "groonga HTTPサーバーを起動(Debian/Ubuntu/CentOS)::"
 
@@ -738,155 +604,117 @@ msgstr "groonga HTTPサーバーを起動(Debian/Ubuntu/CentOS)::"
 # dbbf739614224ff5bbcdc5daa1db9241
 # dbbf739614224ff5bbcdc5daa1db9241
 # dbbf739614224ff5bbcdc5daa1db9241
-#: ../../../source/server/package.txt:63 ../../../source/server/package.txt:74
-#: ../../../source/server/package.txt:123
 msgid "Starting groonga HTTP server(Fedora)::"
 msgstr "groonga HTTPサーバーを起動(Fedora)::"
 
 # 55aad42d8e054534bd781e9543deba1e
 # 55aad42d8e054534bd781e9543deba1e
-#: ../../../source/server/package.txt:68
-#: ../../../source/server/package.txt:128
 msgid "Stop HTTP server"
 msgstr "HTTPサーバーを終了"
 
 # 96c79f81fff542e79e5dc5edc87aeaeb
 # 96c79f81fff542e79e5dc5edc87aeaeb
-#: ../../../source/server/package.txt:70
-#: ../../../source/server/package.txt:130
 msgid "Stopping groonga HTTP server(Debian/Ubuntu/CentOS)::"
 msgstr "groonga HTTPサーバーを終了(Debian/Ubuntu/CentOS)::"
 
 # 55aad42d8e054534bd781e9543deba1e
 # 55aad42d8e054534bd781e9543deba1e
-#: ../../../source/server/package.txt:79
-#: ../../../source/server/package.txt:139
 msgid "Restart HTTP server"
 msgstr "HTTPサーバーを再起動"
 
 # 96c79f81fff542e79e5dc5edc87aeaeb
 # 96c79f81fff542e79e5dc5edc87aeaeb
 # 96c79f81fff542e79e5dc5edc87aeaeb
-#: ../../../source/server/package.txt:81
-#: ../../../source/server/package.txt:141
-#: ../../../source/server/package.txt:199
 msgid "Restarting groonga HTTP server(Debian/Ubuntu/CentOS)::"
 msgstr "groonga HTTPサーバーを再起動(Debian/Ubuntu/CentOS)::"
 
 # dbbf739614224ff5bbcdc5daa1db9241
 # dbbf739614224ff5bbcdc5daa1db9241
 # dbbf739614224ff5bbcdc5daa1db9241
-#: ../../../source/server/package.txt:85
-#: ../../../source/server/package.txt:145
-#: ../../../source/server/package.txt:203
 msgid "Restarting groonga HTTP server(Fedora)::"
 msgstr "groonga HTTPサーバーを再起動(Fedora)::"
 
 # 34888035334f473db8a90cfe5fb259c9
-#: ../../../source/server/package.txt:90
 msgid "groonga-server-http"
 msgstr ""
 
 # be0a3105ef084cd0af1bb8227e3a3cef
-#: ../../../source/server/package.txt:92
 msgid "``groonga-server-http`` is a simple HTTP protocol based server package."
 msgstr "``groonga-server-http`` は簡易HTTPサーバーパッケージです。"
 
 # 947a063dbf394c9aa9793f6cfd37210f
-#: ../../../source/server/package.txt:101
 msgid "/var/log/groonga/groonga-http.log"
 msgstr ""
 
 # 69650be7bc9f4ab988a7be7a536e204f
 # 38201ebcaf414c07ad1f96fc1c1fcd9b
-#: ../../../source/server/package.txt:101
-#: ../../../source/server/package.txt:159
 msgid ":ref:`process-log`"
 msgstr ""
 
 # 063313924ba04fba9d9fda1a21b50c5e
 # 6a662fa9e5234a1aa783f61496344ad0
-#: ../../../source/server/package.txt:103
-#: ../../../source/server/package.txt:161
 msgid ":ref:`query-log`"
 msgstr ""
 
 # 3220192a1bcd4d4c9afc2313018320e9
 # c822624b7f02430aa60460be284a4aa5
-#: ../../../source/server/package.txt:108
-#: ../../../source/server/package.txt:166
 msgid "Configuration file for server setting (Debian/Ubuntu)::"
 msgstr "サーバー設定ファイル (Debian/Ubuntu)::"
 
 # 36b56a4ec5ff4b9e97547865e5079277
 # 9fa3adb63fc048a088c630ab66e0e66d
-#: ../../../source/server/package.txt:112
-#: ../../../source/server/package.txt:170
 msgid "Configuration file for server setting (CentOS)::"
 msgstr "サーバー設定ファイル(CentOS)::"
 
 # dbbf739614224ff5bbcdc5daa1db9241
-#: ../../../source/server/package.txt:134
 msgid "Stopping groonga HTTP server(Fedora)::"
 msgstr "groonga HTTPサーバーを終了(Fedora)::"
 
 # f6cd7686c8ba408fa859073cce635016
-#: ../../../source/server/package.txt:150
 msgid "groonga-server-gqtp"
 msgstr ""
 
 # dd979692d56b4bea882bfbae3ca451a8
-#: ../../../source/server/package.txt:152
 msgid ""
 "``groonga-server-gqtp`` is a :doc:`/spec/gqtp` protocol based server package."
 msgstr "``groonga-server-gqtp`` は :doc:`/spec/gqtp` サーバーパッケージです。"
 
 # 0c9b51cfe7f74ea2beb5865e02c96a98
-#: ../../../source/server/package.txt:157
 msgid "10043"
 msgstr ""
 
 # e11dda30905849e4812f06b1d33b741e
-#: ../../../source/server/package.txt:159
 msgid "/var/log/groonga/groonga-gqtp.log"
 msgstr ""
 
 # 8da50ba99aea43509ffaa95113256dd6
-#: ../../../source/server/package.txt:161
 msgid "/var/log/groonga/gqtp-query.log"
 msgstr ""
 
 # 55aad42d8e054534bd781e9543deba1e
-#: ../../../source/server/package.txt:175
 msgid "Start GQTP server"
 msgstr "GQTPサーバーを起動"
 
 # 96c79f81fff542e79e5dc5edc87aeaeb
-#: ../../../source/server/package.txt:177
 msgid "Starting groonga GQTP server(Debian/Ubuntu/CentOS)::"
 msgstr "groonga GQTPサーバーを起動(Debian/Ubuntu/CentOS)::"
 
 # dbbf739614224ff5bbcdc5daa1db9241
-#: ../../../source/server/package.txt:181
 msgid "Starting groonga GQTP server(Fedora)::"
 msgstr "groonga GQTPサーバーを起動(Fedora)::"
 
 # 55aad42d8e054534bd781e9543deba1e
-#: ../../../source/server/package.txt:186
 msgid "Stop GQTP server"
 msgstr "GQTPサーバーを終了"
 
 # 96c79f81fff542e79e5dc5edc87aeaeb
-#: ../../../source/server/package.txt:188
 msgid "Stopping groonga GQTP server(Debian/Ubuntu/CentOS)::"
 msgstr "groonga GQTPサーバーを終了(Debian/Ubuntu/CentOS)::"
 
 # dbbf739614224ff5bbcdc5daa1db9241
-#: ../../../source/server/package.txt:192
 msgid "Stopping groonga GQTP server(Fedora)::"
 msgstr "groonga GQTPサーバーを終了(Fedora)::"
 
 # 55aad42d8e054534bd781e9543deba1e
-#: ../../../source/server/package.txt:197
 msgid "Restart GQTP server"
 msgstr "GQTPサーバーを再起動"

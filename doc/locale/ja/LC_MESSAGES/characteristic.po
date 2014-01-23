@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-28 17:13\n"
+"POT-Creation-Date: 2014-01-23 17:04+0900\n"
 "PO-Revision-Date: 2013-12-21 13:56+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -18,15 +18,12 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 # 5134941b94334ac487d34f8670afe5cc
-#: ../../../source/characteristic.txt:6
 msgid "Characteristics of Groonga"
 msgstr "Groongaの特徴"
 
-#: ../../../source/characteristic.txt:9
 msgid "Groonga overview"
 msgstr "Groonga の概要"
 
-#: ../../../source/characteristic.txt:11
 msgid ""
 "Groonga is a fast and accurate full text search engine based on inverted "
 "index. One of the characteristics of Groonga is that a newly registered "
@@ -38,7 +35,6 @@ msgstr ""
 "書をすぐに検索結果に反映できます。また、参照をブロックせずに更新できることか"
 "ら、即時更新の必要なアプリケーションにおいても高い性能を発揮します。"
 
-#: ../../../source/characteristic.txt:13
 msgid ""
 "Groonga is also a column-oriented database management system (DBMS). "
 "Compared with well-known row-oriented systems, such as MySQL and PostgreSQL, "
@@ -50,7 +46,6 @@ msgstr ""
 "ど、既存の代表的なデータベースが苦手とする集計クエリを高速に処理できるという"
 "特徴があり、組み合わせによって弱点を補うような使い方もできます。"
 
-#: ../../../source/characteristic.txt:15
 msgid ""
 "The basic functions of Groonga are provided in a C library. Also, libraries "
 "for using Groonga in other languages, such as Ruby, are provided by related "
@@ -64,11 +59,9 @@ msgstr ""
 "ます。 興味のある方は `利用例 <http://groonga.org/ja/users/>`_ をご覧くださ"
 "い。"
 
-#: ../../../source/characteristic.txt:18
 msgid "Full text search and Instant update"
 msgstr "全文検索と即時更新"
 
-#: ../../../source/characteristic.txt:20
 msgid ""
 "In widely used DBMSs, updates are immediately processed, for example, a "
 "newly registered record appears in the result of the next query. In "
@@ -80,7 +73,6 @@ msgstr ""
 "方、全文検索においては、転置索引が逐次更新の難しいデータ構造であることから、"
 "文書の追加・削除に対応しないエンジンが少なくありません。"
 
-#: ../../../source/characteristic.txt:22
 msgid ""
 "Groonga also uses inverted indexes but supports instant updates. In "
 "addition, Groonga allows you to search documents even when updating the "
@@ -95,11 +87,9 @@ msgstr ""
 "また、複数の転置索引を統合するような重い処理を必要としないので、安定して高い"
 "性能を発揮することが期待できます。"
 
-#: ../../../source/characteristic.txt:25
 msgid "Column store and aggregate query"
 msgstr "カラムストアと集計クエリ"
 
-#: ../../../source/characteristic.txt:27
 msgid ""
 "People can collect more than enough data in the Internet era. However, it is "
 "difficult to extract informative knowledge from a large database, and such a "
@@ -113,7 +103,6 @@ msgstr ""
 "により絞り込んでみたり、性別や年齢により絞り込んでみたりすることでしょう。そ"
 "して、そのようなときに便利な存在が集計クエリです。"
 
-#: ../../../source/characteristic.txt:29
 msgid ""
 "An aggregate query groups search results by specified column values and then "
 "counts the number of records in each group. For example, an aggregate query "
@@ -133,7 +122,6 @@ msgstr ""
 "選択して絞り込み・集計できることは、膨大な情報を扱う上でとても重要になりま"
 "す。"
 
-#: ../../../source/characteristic.txt:31
 msgid ""
 "A column-oriented architecture allows Groonga to efficiently process "
 "aggregate queries because a column-oriented database, which stores records "
@@ -149,11 +137,9 @@ msgstr ""
 "納する行指向のデータベースでは、隣接するカラムをまとめて読み出してしまうこと"
 "が欠点となります。"
 
-#: ../../../source/characteristic.txt:34
 msgid "Inverted index and tokenizer"
 msgstr "転置索引とトークナイザ"
 
-#: ../../../source/characteristic.txt:36
 msgid ""
 "An inverted index is a traditional data structure used for large-scale full "
 "text search. A search engine based on inverted index extracts index terms "
@@ -167,7 +153,6 @@ msgstr ""
 "きはクエリを索引語に分割して出現文書を求めます。そのため、文書やクエリから索"
 "引語を抜き出す方法が重要になります。"
 
-#: ../../../source/characteristic.txt:38
 msgid ""
 "A tokenizer is a module to extract index terms. A Japanese full text search "
 "engine commonly uses a word-based tokenizer (hereafter referred to as a word "
@@ -186,7 +171,6 @@ msgstr ""
 "持っています。一方、N-gram 方式には検索漏れが発生しにくいという利点があり、状"
 "況によって適した方式を選択することが望ましいとされています。"
 
-#: ../../../source/characteristic.txt:40
 msgid ""
 "Groonga supports both word and n-gram tokenizers. The simplest built-in "
 "tokenizer uses spaces as word delimiters. Built-in n-gram tokenizers (n = 1, "
@@ -203,11 +187,9 @@ msgstr ""
 "なキーワードのみを索引語として採用するなど、独自のトークナイザを開発すること"
 "が可能です。"
 
-#: ../../../source/characteristic.txt:43
 msgid "Sharable storage and read lock-free"
 msgstr "共有可能なストレージと参照ロックフリー"
 
-#: ../../../source/characteristic.txt:45
 msgid ""
 "Multi-core processors are mainstream today and the number of cores per "
 "processor is increasing. In order to exploit multiple cores, executing "
@@ -217,7 +199,6 @@ msgstr ""
 "CPU のマルチコア化が進んでいるため、同時に複数のクエリを実行したり、一つのク"
 "エリを複数のスレッドで実行したりすることの重要性はますます高まっています。"
 
-#: ../../../source/characteristic.txt:47
 msgid ""
 "A database of Groonga can be shared with multiple threads/processes. Also, "
 "multiple threads/processes can execute read queries in parallel even when "
@@ -236,11 +217,9 @@ msgstr ""
 "介して参照クエリを実行するなど、多彩な運用が可能となっています。"
 
 # 7992fcd67dc64bffbb20cfa5d462ab56
-#: ../../../source/characteristic.txt:50
 msgid "Geo-location (latitude and longitude) search"
 msgstr "位置情報（緯度・経度）検索"
 
-#: ../../../source/characteristic.txt:52
 msgid ""
 "Location services are getting more convenient because of mobile devices with "
 "GPS. For example, if you are going to have lunch or dinner at a nearby "
@@ -253,7 +232,6 @@ msgstr ""
 "を地図上に表示してくれるようなサービスが便利です。そのため、位置情報検索を高"
 "速に実現できることが重要になっています。"
 
-#: ../../../source/characteristic.txt:54
 msgid ""
 "Groonga provides inverted index-based fast geo-location search, which "
 "supports a query to find points in a rectangle or circle. Groonga gives high "
@@ -265,11 +243,9 @@ msgstr ""
 "す。また、距離計算をサポートしているので、位置情報検索の結果を基準点からの距"
 "離によって整列することも可能です。"
 
-#: ../../../source/characteristic.txt:57
 msgid "Groonga library"
 msgstr "Groonga ライブラリ"
 
-#: ../../../source/characteristic.txt:59
 msgid ""
 "The basic functions of Groonga are provided in a C library and any "
 "application can use Groonga as a full text search engine or a column-"
@@ -283,11 +259,9 @@ msgstr ""
 "詳しくは `関連プロジェクト <http://groonga.org/ja/related-projects.html>`_ を"
 "参照してください。"
 
-#: ../../../source/characteristic.txt:62
 msgid "Groonga server"
 msgstr "Groonga サーバ"
 
-#: ../../../source/characteristic.txt:64
 msgid ""
 "Groonga provides a built-in server command which supports HTTP, the "
 "memcached binary protocol and the Groonga Query Transfer Protocol (GQTP). "
@@ -297,33 +271,31 @@ msgid ""
 msgstr ""
 "Groonga にはサーバ機能があるため、レンタルサーバなどの新しいライブラリをイン"
 "ストールできない環境においても利用できます。対応しているのは HTTP, memcached "
-"binary プロトコル、およびに Groonga の独自プロトコルである GQTP（Groonga Query Transfer Protocol） です。サーバ"
-"として利用するときはクエリのキャッシュ機能が有効になるため、同じクエリを受け"
-"取ったときは応答時間が短くなるという特徴があります。"
+"binary プロトコル、およびに Groonga の独自プロトコルである GQTP（Groonga "
+"Query Transfer Protocol） です。サーバとして利用するときはクエリのキャッシュ"
+"機能が有効になるため、同じクエリを受け取ったときは応答時間が短くなるという特"
+"徴があります。"
 
-#: ../../../source/characteristic.txt:67
 msgid "Groonga storage engine"
 msgstr "Groonga ストレージエンジン"
 
-#: ../../../source/characteristic.txt:69
 msgid ""
 "Groonga works not only as an independent column-oriented DBMS but also as "
 "storage engines of well-known DBMSs. For example, `mroonga <http://mroonga."
-"org/>`_ is a MySQL pluggable storage engine using Groonga. By using "
-"mroonga, you can use Groonga for column-oriented storage and full text "
-"search. A combination of a built-in storage engine, MyISAM or InnoDB, and a "
-"groonga-based full text search engine is also available. All the "
-"combinations have good and bad points and the best one depends on the "
-"application. See `related projects <http://groonga.org/related-projects."
-"html>`_ for details."
+"org/>`_ is a MySQL pluggable storage engine using Groonga. By using mroonga, "
+"you can use Groonga for column-oriented storage and full text search. A "
+"combination of a built-in storage engine, MyISAM or InnoDB, and a groonga-"
+"based full text search engine is also available. All the combinations have "
+"good and bad points and the best one depends on the application. See "
+"`related projects <http://groonga.org/related-projects.html>`_ for details."
 msgstr ""
 "Groonga は独自のカラムストアを持つ列指向のデータベースとしての側面を持ってい"
 "ますが、既存の RDBMS のストレージエンジンとして利用することもできます。たとえ"
 "ば、Groonga をベースとする MySQL のストレージエンジンとして `mroonga <http://"
-"mroonga.org/ja/>`_ が開発されています。mroonga は MySQL のプラグインと"
-"して動的にロードすることが可能であり、Groonga のカラムストアをストレージとし"
-"て利用したり、全文検索エンジンとして Groonga を MyISAM や InnoDB と連携させた"
-"りすることができます。Groonga 単体での利用、およびに MyISAM, InnoDB との連携"
-"には一長一短があるので、用途に応じて適切な組み合わせを選ぶことが大切です。詳"
-"しくは `関連プロジェクト <http://groonga.org/ja/related-projects.html>`_ を参"
-"照してください。"
+"mroonga.org/ja/>`_ が開発されています。mroonga は MySQL のプラグインとして動"
+"的にロードすることが可能であり、Groonga のカラムストアをストレージとして利用"
+"したり、全文検索エンジンとして Groonga を MyISAM や InnoDB と連携させたりする"
+"ことができます。Groonga 単体での利用、およびに MyISAM, InnoDB との連携には一"
+"長一短があるので、用途に応じて適切な組み合わせを選ぶことが大切です。詳しくは "
+"`関連プロジェクト <http://groonga.org/ja/related-projects.html>`_ を参照して"
+"ください。"
