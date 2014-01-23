@@ -359,6 +359,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/news/senna.txt \
 	$(top_srcdir)/doc/source/news.txt \
 	$(top_srcdir)/doc/source/rdoc.py \
+	$(top_srcdir)/doc/source/reference/api/global_configurations.txt \
 	$(top_srcdir)/doc/source/reference/api/grn_cache.txt \
 	$(top_srcdir)/doc/source/reference/api/grn_column.txt \
 	$(top_srcdir)/doc/source/reference/api/grn_command_version.txt \
@@ -857,6 +858,7 @@ source_files_relative_from_doc_dir = \
 	source/news/senna.txt \
 	source/news.txt \
 	source/rdoc.py \
+	source/reference/api/global_configurations.txt \
 	source/reference/api/grn_cache.txt \
 	source/reference/api/grn_column.txt \
 	source/reference/api/grn_command_version.txt \
@@ -1032,6 +1034,44 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/tutorial.po \
 	$(NULL)
 
+edit_po_files = \
+	characteristic.edit \
+	community.edit \
+	conf.edit \
+	contribution.edit \
+	development.edit \
+	geolocation_search.edit \
+	index.edit \
+	install.edit \
+	limitations.edit \
+	news.edit \
+	reference.edit \
+	server.edit \
+	spec.edit \
+	suggest.edit \
+	troubleshooting.edit \
+	tutorial.edit \
+	$(NULL)
+
+edit_po_files_relative_from_locale_dir = \
+	LC_MESSAGES/characteristic.edit \
+	LC_MESSAGES/community.edit \
+	LC_MESSAGES/conf.edit \
+	LC_MESSAGES/contribution.edit \
+	LC_MESSAGES/development.edit \
+	LC_MESSAGES/geolocation_search.edit \
+	LC_MESSAGES/index.edit \
+	LC_MESSAGES/install.edit \
+	LC_MESSAGES/limitations.edit \
+	LC_MESSAGES/news.edit \
+	LC_MESSAGES/reference.edit \
+	LC_MESSAGES/server.edit \
+	LC_MESSAGES/spec.edit \
+	LC_MESSAGES/suggest.edit \
+	LC_MESSAGES/troubleshooting.edit \
+	LC_MESSAGES/tutorial.edit \
+	$(NULL)
+
 mo_files = \
 	characteristic.mo \
 	community.mo \
@@ -1110,6 +1150,7 @@ html_files_relative_from_locale_dir = \
 	html/news.html \
 	html/news/senna.html \
 	html/objects.inv \
+	html/reference/api/global_configurations.html \
 	html/reference/api/grn_cache.html \
 	html/reference/api/grn_column.html \
 	html/reference/api/grn_command_version.html \
@@ -1245,6 +1286,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/news/1.2.x.txt \
 	html/_sources/news/senna.txt \
 	html/_sources/news.txt \
+	html/_sources/reference/api/global_configurations.txt \
 	html/_sources/reference/api/grn_cache.txt \
 	html/_sources/reference/api/grn_column.txt \
 	html/_sources/reference/api/grn_command_version.txt \
