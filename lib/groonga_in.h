@@ -122,7 +122,7 @@
 #ifndef __GNUC__
 # define snprintf(str, size, ...) _snprintf(str, size, __VA_ARGS__)
 #endif
-#if _MSC_VER < 1500
+#if defined(_MSC_VER) && _MSC_VER < 1500
 # define vsnprintf(str, size, format, ap) _vsnprintf(str, size, format, ap)
 #endif /* _MSC_VER < 1500 */
 #define unlink(pathname) _unlink(pathname)
