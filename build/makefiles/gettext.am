@@ -27,7 +27,7 @@ all:
 .po.mo:
 	msgfmt -o $@ $<
 
-update: pot-build-stamp $(edit_po_files) $(po_files)
+update: pot-build-stamp edit-po-build-stamp $(edit_po_files) $(po_files)
 
 if DOCUMENT_BUILDABLE
 build: $(mo_files)
@@ -68,4 +68,8 @@ reinit:
 
 pot-build-stamp: $(absolute_source_files)
 	$(MAKE) gettext
+	@touch $@
+
+edit-po-build-stamp: $(absolute_source_files)
+	$(MAKE) edit
 	@touch $@
