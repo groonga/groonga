@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-23 17:13+0900\n"
-"PO-Revision-Date: 2013-12-25 14:36+0900\n"
+"POT-Creation-Date: 2014-01-24 14:26+0900\n"
+"PO-Revision-Date: 2014-01-24 14:40+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -20,11 +20,61 @@ msgstr ""
 msgid "News"
 msgstr "News"
 
-msgid "Release 3.1.1 - 2013/12/29"
+msgid "Release 3.1.2 - 2014/01/29"
 msgstr ""
 
 msgid "Improvements"
 msgstr "Improvements"
+
+msgid ""
+"[doc] Updated to caplitalized \"Groonga\" terms in documentation. [Patch by "
+"cosmo0920] [GitHub#136, #137, #138, #139, #140, #141, #142, #143, #144, "
+"#145, #146, #147, #148, #149, #150]"
+msgstr ""
+
+msgid ""
+"Supported to customize the value of lock timeout. See :doc:`/reference/api/"
+"global_configurations` about details. [groonga-dev,02017] [Suggested by yoku]"
+msgstr ""
+
+msgid "[doc] Added description about the value of lock timeout."
+msgstr ""
+
+msgid ""
+"Enabled ``GRN_JA_SKIP_SAME_VALUE_PUT`` by default. In the previous releases, "
+"the value of this configuration is 'no'. This change affects reducing the "
+"size of Groonga database."
+msgstr ""
+
+msgid ""
+"Supported multiple indexes including a nested index and multiple keywords "
+"query. This change TODO."
+msgstr ""
+
+msgid "Added API to customize normalizer for snippet."
+msgstr ""
+
+msgid "Fixes"
+msgstr "Fixes"
+
+msgid ""
+"Fixed not to use index for empty query. This change enables you to search "
+"even though empty query. Note that this means that there is performance "
+"penalty if many empty records exist. [groonga-dev,02052] [Reported by Naoya "
+"Murakami]"
+msgstr ""
+
+msgid "Thanks"
+msgstr "Thanks"
+
+msgid "yoku"
+msgstr ""
+
+msgid "Naoya Murakami"
+msgstr ""
+
+msgid "Release 3.1.1 - 2013/12/29"
+msgstr ""
 
 msgid ""
 "[deb] Refined Groonga packages for Debian policy. [groonga-dev,01930] "
@@ -73,9 +123,6 @@ msgid ""
 "#124, #125, #125, #126, #127, #128, #129, #130, #131, #131, #132, #133, #134]"
 msgstr ""
 
-msgid "Fixes"
-msgstr "Fixes"
-
 msgid "[munin] Fixed the wrong port number which is specified for GQTP."
 msgstr ""
 
@@ -84,9 +131,6 @@ msgid ""
 "the 3rd argument of :doc:`/reference/functions/geo_in_circle`, Groonga "
 "crashes."
 msgstr ""
-
-msgid "Thanks"
-msgstr "Thanks"
 
 msgid "Hideki Yamane"
 msgstr ""
@@ -253,9 +297,6 @@ msgstr ""
 msgid ""
 "Fix a bug that casting to Time may causes overflow issue. It affects the "
 "case that assignment of the Time value which indicate over 32bit value."
-msgstr ""
-
-msgid "Naoya Murakami"
 msgstr ""
 
 msgid "wanabe"
