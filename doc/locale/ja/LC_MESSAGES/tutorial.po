@@ -23,11 +23,9 @@ msgstr "実行例::"
 msgid "Tutorial"
 msgstr "チュートリアル"
 
-# fa721fedb4f64992b485a0cd289bce93
 msgid "Various data types"
 msgstr "いろいろなデータの保存"
 
-# 19e12e7217a54c47a4cbc3ab8081e1a7
 msgid ""
 "Groonga is a full text search engine but also serves as a column-oriented "
 "data store. Groonga supports various data types, such as numeric types, "
@@ -39,11 +37,9 @@ msgstr ""
 "ろなデータを保存することができます。本チュートリアルでは、Groongaで保存できる"
 "データの種類、およびに保存の方法を説明します。"
 
-# c9e13b292e424a658a2db5a95d21a417
 msgid "Overview"
 msgstr "データの種類"
 
-# 19e12e7217a54c47a4cbc3ab8081e1a7
 msgid ""
 "The basic data types of Groonga are roughly divided into 5 groups --- "
 "boolean type, numeric types, string types, date/time type and longitude/"
@@ -60,7 +56,6 @@ msgstr ""
 "できます。また、経緯度には測地系による分類があります。詳しくは :doc:`/"
 "reference/types` を参照してください。"
 
-# 3ec01c2c1fbd42978e3a85da79958686
 msgid ""
 "In addition, Groonga supports reference types and vector types. Reference "
 "types are designed for accessing other tables. Vector types are designed for "
@@ -70,15 +65,12 @@ msgstr ""
 "とができます。また、基本型もしくはテーブル参照を複数まとめて保存できるよう"
 "に、ベクターカラムをサポートしています。"
 
-# 9e6e98a709f14215910f8e5673e2ef46
 msgid "First, let's create a table for this tutorial."
 msgstr "それでは、本チュートリアルで使用するテーブルを作成しておきましょう。"
 
-# 53d9f39eca8145b4a66147fda15bf49b
 msgid "Boolean type"
 msgstr "真偽値"
 
-# 12f45b0a19194e02b1523b9f3645f175
 msgid ""
 "The boolean type is used to store true or false. To create a boolean type "
 "column, specify Bool to the `type` parameter of :doc:`/reference/commands/"
@@ -88,7 +80,6 @@ msgstr ""
 "するには、 :doc:`/reference/commands/column_create` コマンドの `type` 引数に "
 "Bool を指定します。ブール型のデフォルト値はfalseです。"
 
-# b0efb64bd2724bcc88a28ff9460b8fa0
 msgid ""
 "The following example creates a boolean type column and adds three records. "
 "Note that the third record has the default value because no value is "
@@ -97,11 +88,9 @@ msgstr ""
 "以下の例では、ブール型のカラムを作成し、3つのレコードを追加します。3番目のレ"
 "コードについては、値を省略しているため、デフォルト値が格納されます。"
 
-# 5beba7b848dd4414b24dd6957c7beda2
 msgid "Numeric types"
 msgstr "数値"
 
-# 14cc63c41f094d08aac73106b134640b
 msgid ""
 "The numeric types are divided into integer types and a floating point number "
 "type. The integer types are further divided into the signed integer types "
@@ -116,7 +105,6 @@ msgstr ""
 "doc:`/reference/types` を参照してください。数値型のデフォルト値はいずれも0で"
 "す。"
 
-# 92862bee04a048cf97411a6649be1a0f
 msgid ""
 "The following example creates an Int8 column and a Float column, and then "
 "updates existing records. The :doc:`/reference/commands/load` command "
@@ -133,11 +121,9 @@ msgstr ""
 "は、指定した値とは異なる値が格納されています。このように、表現できる範囲を超"
 "える値を指定すると、操作後の値は未定義になるので注意してください。"
 
-# ac9727f7f978484497a9972a67ad950a
 msgid "String types"
 msgstr "文字列"
 
-# 6f9b195b9b494b518887da51ea243c5b
 msgid ""
 "The string types are divided according to the maximum length. For more "
 "details, see :doc:`/reference/types`. The default value is the zero-length "
@@ -147,7 +133,6 @@ msgstr ""
 "reference/types` を参照してください。文字列型のデフォルト値は長さ0の文字列で"
 "す。"
 
-# b0efb64bd2724bcc88a28ff9460b8fa0
 msgid ""
 "The following example creates a ShortText column and updates existing "
 "records. The third record has the default value because not updated."
@@ -155,11 +140,9 @@ msgstr ""
 "以下の例では、ShortText型のカラムを作成し、IDが1と2のレコードを更新します。更"
 "新しないレコードについては、デフォルト値のままとなります。"
 
-# 7d03964b5a874744bfe1e3a6551e4e51
 msgid "Date and time type"
 msgstr "日時"
 
-# d3765644e96044df8c541833e8989c51
 msgid ""
 "The date and time type of Groonga is Time. Actually, a Time column stores a "
 "date and time as the number of microseconds since the Epoch, 1970-01-01 "
@@ -176,7 +159,6 @@ msgstr ""
 "マンドでは、経過秒数による指定・表示となります。デフォルト値は1970年1月1日0時"
 "0分0秒のことを表す0.0です。"
 
-# da28d44c9dc6439daaf8f52ca4f50194
 msgid ""
 "Groonga internally holds the value of Epoch as pair of integer. The first "
 "integer represents the value of seconds, on the other hand, the second "
@@ -188,7 +170,6 @@ msgstr ""
 "もう一方でマイクロ秒を表現します。それゆえGroongaでは小数で経過秒数を表示しま"
 "す。整数部が秒数で、小数部はマイクロ秒の値です。"
 
-# b0efb64bd2724bcc88a28ff9460b8fa0
 msgid ""
 "The following example creates a Time column and updates existing records. "
 "The first record has the default value because not updated."
@@ -196,11 +177,9 @@ msgstr ""
 "以下の例では、Time型のカラムを作成し、IDが2と3のレコードを更新します。更新し"
 "ないレコードについては、デフォルト値のままとなります。"
 
-# 07daa91307514527811f3676dc10f746
 msgid "Longitude and latitude types"
 msgstr "経緯度"
 
-# 6f9b195b9b494b518887da51ea243c5b
 msgid ""
 "The longitude and latitude types are divided according to the geographic "
 "coordinate system. For more details, see :doc:`/reference/types`. To "
@@ -211,16 +190,13 @@ msgstr ""
 "doc:`/reference/types` を参照してください。経緯度の指定・表示には、以下に示す"
 "形式の文字列を使います。"
 
-# bc2afac58e83444099f6a2e282104d04
 msgid ""
 "\"longitude x latitude\" in milliseconds (e.g.: \"128452975x503157902\")"
 msgstr "\"経度のミリ秒表記x緯度のミリ秒表記\" （例: \"128452975x503157902\"）"
 
-# e1f3ea2983484088b1ba1af18ef828ef
 msgid "\"longitude x latitude\" in degrees (e.g.: \"35.6813819x139.7660839\")"
 msgstr "\"経度の度数表記x緯度の度数表記\" （例: \"35.6813819x139.7660839\"）"
 
-# 88eb9be1200c4811a3a98f1905145535
 msgid ""
 "A number with/without a decimal point represents a longitude or latitude in "
 "milliseconds/degrees respectively. Note that a combination of a number with "
@@ -233,7 +209,6 @@ msgstr ""
 "経度と緯度の区切りとしては、'x' のほかに ',' を使うことができます。経緯度のデ"
 "フォルト値は \"0x0\" です。"
 
-# 4d10a27a69284c1ba1699fcb8ead8cfe
 msgid ""
 "The following example creates a WGS84GeoPoint column and updates existing "
 "records. The second record has the default value because not updated."
@@ -242,11 +217,9 @@ msgstr ""
 "コードを更新します。更新しないレコードについては、デフォルト値のままとなりま"
 "す。"
 
-# 5ddabb8ff97a4f54ac6b61a035092980
 msgid "Reference types"
 msgstr "テーブル参照"
 
-# 7f6c518d20094892b435340a53ddee21
 msgid ""
 "Groonga supports a reference column, which stores references to records in "
 "its associated table. In practice, a reference column stores the IDs of the "
@@ -257,7 +230,6 @@ msgstr ""
 "をおこない、参照先テーブルにおけるレコードIDを格納しておくことにより、参照先"
 "のレコードにアクセスできるようにします。"
 
-# 5f41c9f3d5bc416590fd143e82eccd53
 msgid ""
 "You can specify a column in the associated table to the `output_columns` "
 "parameter of a :doc:`/reference/commands/select` command. The format is "
@@ -274,7 +246,6 @@ msgstr ""
 "出されます。テーブル参照が有効なレコードを指していないときは、参照先カラムの"
 "デフォルト値が取り出されるようになっています。"
 
-# c3a7a7cea377485d81cd4ec552c15694
 msgid ""
 "The following example adds a reference column to the Site table that was "
 "created in the previous tutorial. The new column, named link, is designed "
@@ -283,7 +254,6 @@ msgstr ""
 "ここでは、先のチュートリアルで作成したSiteテーブルにlinkという新たなカラムを"
 "作成し、サイト間のリンク関係を保存できるようにしてみましょう。"
 
-# fcab1957c86f4f028958b472cf6dda56
 msgid ""
 "The `type` parameter of the :doc:`/reference/commands/column_create` command "
 "specifies the table to be associated with the reference column. In this "
@@ -308,7 +278,6 @@ msgstr ""
 msgid "Vector types"
 msgstr "ベクターカラム"
 
-# 2a92c171b54e4efca37e0e72e454c7bb
 msgid ""
 "Groonga supports a vector column, in which each element can store a variable "
 "number of values. To create a vector column, specify the COLUMN_VECTOR flag "
@@ -321,7 +290,6 @@ msgstr ""
 "す。ベクターカラムは、各レコードに複数の値を格納できるため、一対多の参照関係"
 "を表すのに便利です。"
 
-# 11d030f09d2f467baa42c4a27ff06b7e
 msgid ""
 "The previous example used a regular column, so each record could have at "
 "most one link. Obviously, the specification is insufficient because a site "
@@ -333,7 +301,6 @@ msgstr ""
 "るので、これでは残念な仕様になってしまいます。そこで、ベクターカラムを使っ"
 "て、複数のリンクを保存できるようにしてみましょう。"
 
-# fcab1957c86f4f028958b472cf6dda56
 msgid ""
 "The only difference at the first step is the `flags` parameter that "
 "specifies to create a vector column. The `type` parameter of the :doc:`/"
@@ -354,57 +321,47 @@ msgstr ""
 "links.title を指定しているので、参照先の主キーとタイトルをそれぞれ配列にした"
 "ものが表示されています。"
 
-# cf328179797047a387a14ab8c7a701bb
 msgid "Drilldown by ``domain`` column"
 msgstr "``domain`` カラムによるドリルダウン"
 
-# a967996b1b64428d881bbea1cb9b52f9
 msgid "Drilldown"
 msgstr "ドリルダウン"
 
-# 7a5ae65c70ea4954a4a13b6a236c036b
 msgid ""
 "You learned how to filter search results and sort ones in the previous "
 "sections. Now that you can search as you likes, but how do you summarize the "
 "number of records which has specific value in the column?"
 msgstr ""
 
-# d86dc365d86e4e56ba7bc730acd75fec
 msgid ""
 "As you know, there is a naive solution to execute query by every the value "
 "of column, then you can get the number of records as a result. It is a "
 "simple way, but it is not reasonable to many records."
 msgstr ""
 
-# 64c11c6082bb46969fc60f2e9e9d67a0
 msgid ""
 "If you are familiar with SQL, you will doubt with \"Is there a similar SQL "
 "functionality to ``GROUP BY`` in Groonga?\"."
 msgstr ""
 
-# e6e95508b508459681bad09053420a94
 msgid ""
 "Of course, Groonga provides such a functionality. It's called as "
 "``drilldown``."
 msgstr ""
 
-# 38ed942c7bbd43c59e5321797de02e79
 msgid ""
 "``drilldown`` enables you to get the number of records which belongs to "
 "specific the value of column at once."
 msgstr ""
 
-# 3aaae4de2d8240fda6b1da1598609ca5
 msgid ""
 "To illustrate this feature, imagine the case that classification by domain "
 "and grouping by country that domain belongs to."
 msgstr ""
 
-# e405f76fd24a4e7f847ddb62b6b94316
 msgid "Here is the concrete examples how to use this feature."
 msgstr "この機能を使った具体的な例を示します。"
 
-# f023fe30f2f54946b3bb556760917cbb
 msgid ""
 "In this example, we add two columns to ``Site`` table. ``domain`` column is "
 "used for TLD (top level domain). ``country`` column is used for country "
@@ -417,7 +374,6 @@ msgstr ""
 "す。これらのカラムの型はドメイン名を主キーとする ``SiteDomain`` テーブルと国"
 "名を主キーとする ``SiteCountry`` テーブルです。"
 
-# 3b34a859fc4940e2b2dbcbb0e57e55a2
 msgid ""
 "Here is a example of drilldown with ``domain`` column. Three kind of values "
 "are used in ``domain`` column - \".org\", \".net\" and \".com\"."
@@ -425,77 +381,57 @@ msgstr ""
 "``domain`` カラムでドリルダウンする例を示します。 3つの値が ``domain`` カラム"
 "では使われています。\".org\"、\".net\"そして\".com\"です。"
 
-# 875768b2815a4583b0abc65c4d60ddb1
 msgid "Here is a summary of above query."
 msgstr "上記のクエリの集計結果です。"
 
-# 08f4bf9c6f644f4c8099830b63fff88f
 msgid "Group by"
 msgstr "グループ化するカラムの値"
 
-# c85fd78d517a4299957c969d8000a285
 msgid "The number of group records"
 msgstr "グループ化されたレコード数"
 
-# a62187dff85b4721bdba07a81326342d
 msgid "Group records means following records"
 msgstr "グループ化されたレコードは次のとおり"
 
-# 22d4f6d363b04abc974c034eff26a949
 msgid ".org"
 msgstr ""
 
-# c523ff839b4744fb8d3124c3a20ada6e
-# d26f5e4e1ee341569cb0853fc46df89c
-# 737209b4e6f5400788acfe2d76fbef39
 msgid "3"
 msgstr ""
 
-# ee8de53f22be4a0c9bdaa261289b9aaf
 msgid "http://example.org/"
 msgstr ""
 
-# eaa188b424db4aa3982e86b0e1be1c1c
 msgid "http://example.org/aba"
 msgstr ""
 
-# b218190a56f649bfbaa3ba7b896e9b30
 msgid "http://example.org/gat"
 msgstr ""
 
-# f421ec1498024ad78db9ebe703cb1aee
 msgid ".net"
 msgstr ""
 
-# 6aca36b9f7f445e490f19f71646cd42b
 msgid "http://example.net/"
 msgstr ""
 
-# e42f387cd71e4cde88103ec723cd8715
 msgid "http://example.net/afr"
 msgstr ""
 
-# 7ef1ccdcfe3c4175b98bd7aeafd44586
 msgid "http://example.net/atv"
 msgstr ""
 
-# 4cc3161e00ed499891b1383dab1e53de
 msgid ".com"
 msgstr ""
 
-# 7b38924da3b84348a60674cdd02ec859
 msgid "http://example.com/"
 msgstr ""
 
-# 4759deffe0b14f9faf873eccf1394f8e
 msgid "http://example.com/rab"
 msgstr ""
 
-# 5c000fc7941b4f59ad3a37742dff252e
 msgid "http://example.com/vdw"
 msgstr ""
 
-# a81dc68b661a4da6a38579f761ee9284
 msgid ""
 "The value of drilldown are returned as the value of ``_nsubrecs`` column. In "
 "this case, ``Site`` table is grouped by \".org\", \".net\", \".com\" domain. "
@@ -506,7 +442,6 @@ msgstr ""
 "ます。 ``_nsubrecs`` はグループ化されたドメインが3つのレコードをそれぞれもつ"
 "ことを意味します。"
 
-# 0402232364074db8a5233a051fbab716
 msgid ""
 "If you execute drildown to the column which has table as a type, you can get "
 "the value of column which is stored in referenced table. ``_nsubrecs`` "
@@ -518,7 +453,6 @@ msgstr ""
 "``_nsubrecs`` という仮想的なカラムが追加されます。このカラムには、グループ化"
 "されたレコード数が入ります。"
 
-# bf8ec33c7f2e4267b75dfec5d5425668
 msgid ""
 "Then, investigate referenced table in detail. As ``Site`` table use "
 "``SiteDomain`` table as column type of ``domain``, you can use ``--"
@@ -528,7 +462,6 @@ msgstr ""
 "``SiteDomain`` テーブルを ``domain`` カラムの型として使っています。 ``--"
 "drilldown_output_columns`` を参照されているカラムの詳細を知るのに使えます。"
 
-# b30522dfe83e40be84fea4ffa571e5e2
 msgid ""
 "Now, you can see detail of each grouped domain, drilldown by ``country`` "
 "column which has \".org\" as column value."
@@ -537,11 +470,9 @@ msgstr ""
 "\"であるレコードに対して ``country`` カラムを使ってドリルダウンしてみましょ"
 "う。"
 
-# f2aef14711a545b08c584672703126ee
 msgid "Drilldown with multiple column"
 msgstr "複数のカラムでドリルダウン"
 
-# bb1c0026100e488a92b412ee7935b035
 msgid ""
 "Drilldown feature supports multiple column. Use comma separated multiple "
 "column names as ``drildown`` parameter. You can get the each result of "
@@ -551,11 +482,9 @@ msgstr ""
 "引数にカンマ区切りの値を指定します。すると一度にまとめてドリルダウン結果を取"
 "得できます。"
 
-# 75a7b7fc10ab490c85ecd4d598d16f99
 msgid "Sorting drildown results"
 msgstr "ドリルダウン結果をソートする"
 
-# 06f20df5fff44a5f8afcd1b8f114a1d8
 msgid ""
 "Use ``--drilldown_sortby`` if you want to sort the result of drilldown. For "
 "example, specify ``_nsubrecs`` as ascending order."
@@ -563,11 +492,9 @@ msgstr ""
 "ドリルダウン結果をソートしたい場合には ``--drilldown_sortby`` を使います。指"
 "定した ``_nsubrecs`` カラムを昇順でソートします。"
 
-# 711a8e88049347fe8047f40f4175df8f
 msgid "limits drildown results"
 msgstr "ドリルダウン結果の制限"
 
-# 387020d3b42644c7af4ad609f3e0c3dc
 msgid ""
 "The number of drilldown results is limited to 10 as a default. Use "
 "``drilldown_limits`` and ``drilldown_offset`` parameter to customize "
@@ -665,7 +592,6 @@ msgstr ""
 msgid "インデックス付きジオサーチ"
 msgstr ""
 
-# 922d1d03bd144f599ee52828119b3284
 msgid ""
 "位置情報のカラムに対して、インデックスを付与することが出来ます。大量の位置情"
 "報レコードを検索する場合に、検索速度が速くなります。"
@@ -675,11 +601,9 @@ msgid ""
 "同様に、位置情報レコードを用いてソートする場合に、ソート速度が速くなります。"
 msgstr ""
 
-# 3da56138e9904419b4dcc5d036e81a07
 msgid "Basic operations"
 msgstr "基本的な操作"
 
-# 7a5094c3e47443369b7daf194fe51c68
 msgid ""
 "A Groonga package provides a C library (libgroonga) and a command line tool "
 "(groonga). This tutorial explains how to use the command line tool, with "
@@ -691,11 +615,9 @@ msgstr ""
 "について説明します。groonga実行ファイルを使って、データベースの作成・操作・"
 "サーバの起動・サーバへの接続などの操作が行えます。"
 
-# 2053368aefe74a5d9363bf95cb157d4a
 msgid "Create a database"
 msgstr "データベースの作成"
 
-# 6f92cc5132bb4166890341665e393217
 msgid ""
 "The first step to using Groonga is to create a new database. The following "
 "shows how to do it."
@@ -706,7 +628,6 @@ msgstr ""
 msgid "Form::"
 msgstr "書式::"
 
-# 308db7bb25d64bfe990b1deaa74997b3
 msgid ""
 "The `-n` option specifies to create a new database and DB_PATH specifies the "
 "path of the new database. Actually, a database consists of a series of files "
@@ -730,7 +651,6 @@ msgstr ""
 "モードに入ります。Ctrlキーを押しながらdキーを押すと、対話モードから抜けること"
 "ができます。"
 
-# 235b9730698e402aa21334e1958efc1e
 msgid ""
 "After this database creation, you can find a series of files in /tmp/groonga-"
 "databases."
@@ -738,15 +658,12 @@ msgstr ""
 "データベースを作成に成功すれば、/tmp/groonga-databases以下にデータベースを構"
 "成するファイルが配置されます。"
 
-# d658120aeaf84578b997493e5e6c9737
 msgid "Operate a database"
 msgstr "データベースの操作"
 
-# f8c8c0a35b004171b80f3188d5ba7ee1
 msgid "The following shows how to operate an existing database."
 msgstr "以下の書式は、既存のデータベースを操作する方法を示しています。"
 
-# 98d46d97a1e34f3e8151087450cb3c0d
 msgid ""
 "DB_PATH specifies the path of a target database. This command fails if the "
 "specified database does not exist."
@@ -754,7 +671,6 @@ msgstr ""
 "DB_PATHには操作対象のデータベースを指定します。指定したデータベースが存在しな"
 "いときは失敗します。"
 
-# bbd1e3b24ab142a9a23b30d186a1bfb5
 msgid ""
 "If COMMAND is specified, Groonga executes COMMAND and returns the result. "
 "Otherwise, Groonga starts in interactive mode that reads commands from the "
@@ -773,7 +689,6 @@ msgstr ""
 "それでは、 :doc:`/reference/commands/status` コマンドを実行して、Groongaの実"
 "行状態を確認してみましょう。"
 
-# f20f73567cf74f89928a062e06b51594
 msgid ""
 "As shown in the above example, a command returns a JSON array. The first "
 "element contains an error code, execution time, etc. The second element is "
@@ -783,11 +698,9 @@ msgstr ""
 "配列の先頭には、エラーコードや実行時間などの情報が入ります。2番目の要素には、"
 "指示された操作の実行結果が入ります。"
 
-# 039d52210dbb4bbf8923efd307eb8be8
 msgid "Command format"
 msgstr "コマンドの書式"
 
-# 7d741d7734244269b7bed966b12359ed
 msgid "Commands for operating a database accept arguments as follows::"
 msgstr "データベースを操作するコマンドには、以下の書式で引数を与えます。::"
 
@@ -808,7 +721,6 @@ msgstr ""
 "できます。このような引数は、名前付き引数やキーワード引数と呼ばれることもあり"
 "ます。"
 
-# 7da00e489d7f4bbd835e4e19057de278
 msgid ""
 "If you want to specify a value which contains white-spaces or special "
 "characters, such as quotes and parentheses, please enclose the value with "
@@ -818,7 +730,6 @@ msgstr ""
 "指定したいときは、シングルクォート(')かダブルクォート(\")で値を囲むようにして"
 "ください。"
 
-# 8ae549a22ed54274a31717f115927311
 msgid ""
 "For details, see also the paragraph of \"command\" in :doc:`/reference/"
 "executables/groonga`."
@@ -826,70 +737,54 @@ msgstr ""
 "詳しくは、 :doc:`/reference/executables/groonga` のコマンドの項を参考にしてく"
 "ださい。"
 
-# 3da56138e9904419b4dcc5d036e81a07
 msgid "Basic commands"
 msgstr "主なコマンド"
 
-# 10881436a2754b049191709023275136
 msgid ":doc:`/reference/commands/status`"
 msgstr ""
 
-# 602f9e43757345a1b0bc3a57a5b595ea
 msgid "shows status of a Groonga process."
 msgstr "Groongaプロセスの状態を表示します。"
 
-# 1e74fb8068674cafb7c2776d998e7ce8
 msgid ":doc:`/reference/commands/table_list`"
 msgstr ""
 
-# f35fc92dd787414ebd0561453131adb4
 msgid "shows a list of tables in a database."
 msgstr "データベースに定義されているテーブルのリストを表示します。"
 
-# 4e5488d852844f238c41dfc94e49fa73
 msgid ":doc:`/reference/commands/column_list`"
 msgstr ""
 
-# e18aeb6cbc8b4c28b0cb38508c6c8b00
 msgid "shows a list of columns in a table."
 msgstr "テーブルに定義されているカラムのリストを表示します。"
 
-# 1e74fb8068674cafb7c2776d998e7ce8
 msgid ":doc:`/reference/commands/table_create`"
 msgstr ""
 
-# 0d2bb03bc0114bbb8ad3a1b9670c865d
 msgid "adds a table to a database."
 msgstr "データベースにテーブルを追加します。"
 
-# 4e5488d852844f238c41dfc94e49fa73
 msgid ":doc:`/reference/commands/column_create`"
 msgstr ""
 
-# 714cfb440b37481d81291c5386fce6b1
 msgid "adds a column to a table."
 msgstr "テーブルにカラムを追加します。"
 
-# 8cb3ff01469d48e28b6875b2554741e8
 msgid ":doc:`/reference/commands/select`"
 msgstr ""
 
 msgid "searches records from a table and shows the result."
 msgstr "テーブルに含まれるレコードを検索して表示します。"
 
-# f908b90d86ec43d8885d86d0e7965874
 msgid ":doc:`/reference/commands/load`"
 msgstr ""
 
-# 1e5193b6ca864ba3b773170879f49631
 msgid "inserts records to a table."
 msgstr "テーブルにレコードを挿入します。"
 
-# 92c83c9cbfde4c2b8d67b2897204b7a2
 msgid "Create a table"
 msgstr "テーブルの作成"
 
-# 1e74fb8068674cafb7c2776d998e7ce8
 msgid "A :doc:`/reference/commands/table_create` command creates a new table."
 msgstr ""
 ":doc:`/reference/commands/table_create` コマンドを使用してテーブルを作成しま"
@@ -913,7 +808,6 @@ msgstr ""
 "キーの格納方法は、主キーを条件とする検索にかかる時間や、前方一致検索の可否な"
 "どを左右します。こちらも後で説明します。"
 
-# d31322b60f8545a581404b1d2838bd5f
 msgid ""
 "Let's create a table. The following example creates a table with a primary "
 "key. The `name` parameter specifies the name of the table. The `flags` "
@@ -925,16 +819,13 @@ msgstr ""
 "格納方法を指定するために使っています。 `key_type` 引数は主キーの型を指定しま"
 "す。"
 
-# 3ee9ad487d034b6c8c45529715afec0f
 msgid ""
 "The second element of the result indicates that the operation succeeded."
 msgstr "実行結果の第2要素は、操作が成功したことを示しています。"
 
-# 92c83c9cbfde4c2b8d67b2897204b7a2
 msgid "View a table"
 msgstr "テーブルの表示"
 
-# 8cb3ff01469d48e28b6875b2554741e8
 msgid ""
 "A :doc:`/reference/commands/select` command can enumerate records in a table."
 msgstr ""
@@ -955,7 +846,6 @@ msgstr ""
 "値を持つ_idという名前のカラム、[\"_key\",\"ShortText\"]はShortText型の値を持"
 "つ_keyという名前のカラムをそれぞれ表しています。"
 
-# 1a57023af4614d00a11b2a36f650aa4b
 msgid ""
 "The above two columns, _id and _key, are the necessary columns. The _id "
 "column stores IDs those are automatically allocated by Groonga. The _key "
@@ -966,18 +856,15 @@ msgstr ""
 "Groongaが自動的に割り当てるIDを格納します。_keyカラムは主キーを格納します。こ"
 "れらのカラム名を変更することはできません。"
 
-# bb371206793e407ab12db2864ee8d152
 msgid "Create a column"
 msgstr "カラムの作成"
 
-# 4e5488d852844f238c41dfc94e49fa73
 msgid ""
 "A :doc:`/reference/commands/column_create` command creates a new column."
 msgstr ""
 ":doc:`/reference/commands/column_create` コマンドを用いて、カラムを作成するこ"
 "とができます。"
 
-# f44e8a1aae7145509172f036a73737fd
 msgid ""
 "Let's add a column. The following example adds a column to the Site table. "
 "The `table` parameter specifies the target table. The `name` parameter "
@@ -989,11 +876,9 @@ msgstr ""
 "いカラムの名前を指定します。 `type` 引数はカラムに格納する値の型を指定しま"
 "す。"
 
-# f32c5902673741f7b30561531cef7f9a
 msgid "Load records"
 msgstr "データのロード"
 
-# 4e5488d852844f238c41dfc94e49fa73
 msgid ""
 "A :doc:`/reference/commands/load` command loads JSON-formatted records into "
 "a table."
@@ -1004,7 +889,6 @@ msgstr ""
 msgid "The following example loads nine records into the Site table."
 msgstr "以下の例では9つのレコードをSiteテーブルに格納します。"
 
-# e98df732f0ac45b1bfca3c78d2463864
 msgid ""
 "The second element of the result indicates how many records were "
 "successfully loaded. In this case, all the records are successfully loaded."
@@ -1012,22 +896,18 @@ msgstr ""
 "実行結果の第2要素はロードされたレコードの数を示しています。上記の操作では、す"
 "べてのレコードを問題なくロードできています。"
 
-# 370b2f236b6f4af78389aafc61011d31
 msgid "Let's make sure that these records are correctly stored."
 msgstr "念のため、データが入っていることを確認してみましょう。"
 
-# f32c5902673741f7b30561531cef7f9a
 msgid "Get a record"
 msgstr "レコードの取得"
 
-# 8cb3ff01469d48e28b6875b2554741e8
 msgid ""
 "A :doc:`/reference/commands/select` command can search records in a table."
 msgstr ""
 ":doc:`/reference/commands/select` コマンドを用いて、テーブルの中身を表示する"
 "ことができます。"
 
-# e38ea18132744542b958286632ffe6c9
 msgid ""
 "If a search condition is specified with a `query` parameter, a :doc:`/"
 "reference/commands/select` command searches records matching the search "
@@ -1036,7 +916,6 @@ msgstr ""
 "`query` 引数を使って検索条件が指定された場合、 :doc:`/reference/commands/"
 "select` コマンドは検索条件に適合するレコードを検索し、検索結果を出力します。"
 
-# ec50e00750b2498fb6a1cf945b94ef20
 msgid ""
 "Let's get a record having a specified record ID. The following example gets "
 "the first record in the Site table. More precisely, the `query` parameter "
@@ -1046,7 +925,6 @@ msgstr ""
 "ブルの先頭レコードを取り出します。正確には、 `query` 引数を使って _id カラム"
 "に1が格納されているレコードを要求しています。"
 
-# 8edf85223ba64dc0914d61e5c4f95c61
 msgid ""
 "Next, let's get a record having a specified key. The following example gets "
 "the record whose primary key is \"http://example.org/\". More precisely, the "
@@ -1058,11 +936,9 @@ msgstr ""
 "て _key カラムに \"http://example.org/\" が格納されているレコードを要求してい"
 "ます。"
 
-# 86701e6e96324ccba83052699027da21
 msgid "Create a lexicon table for full text search"
 msgstr "全文検索用の語彙表の作成"
 
-# 86701e6e96324ccba83052699027da21
 msgid "Let's go on to how to make full text search."
 msgstr "そろそろ全文検索の使い方について見ていきましょう。"
 
@@ -1095,7 +971,6 @@ msgstr ""
 "の、本チュートリアルではすべてを理解する必要はありません。以下に簡単な説明を"
 "述べますが、読み飛ばしてもらってかまいません。"
 
-# 7cded565e72b46869c9d7e759dfcddb6
 msgid ""
 "The TABLE_PAT_KEY flag specifies to store index terms in a patricia trie. "
 "The KEY_NORMALIZE flag specifies to normalize index terms. In this example, "
@@ -1109,7 +984,6 @@ msgstr ""
 "ようになっています。上記の例では、一般的にN-gramと呼ばれるインデックス方式に"
 "対応するTokenBigramを指定しています。"
 
-# 86701e6e96324ccba83052699027da21
 msgid "Create an index column for full text search"
 msgstr "全文検索用のインデックスカラムの作成"
 
@@ -1131,7 +1005,6 @@ msgstr ""
 "カラムを全文検索の対象とするべく、インデックス型のカラムを作成してみましょ"
 "う。"
 
-# 83e0fea2854347a48a4e1330fbd06a7e
 msgid ""
 "The `table` parameter specifies the index table and the `name` parameter "
 "specifies the index column. The `type` parameter specifies the target table "
@@ -1149,7 +1022,6 @@ msgstr ""
 "COLUMN_INDEX|WITH_POSITIONを指定してください。索引語の位置情報については、本"
 "チュートリアルでは触れません。"
 
-# e455171020c74b2995c850fbf5c3d707
 msgid ""
 "You can create a lexicon table and index columns before/during/after loading "
 "records. If a target column already has records, Groonga creates an inverted "
@@ -1163,7 +1035,6 @@ msgstr ""
 "デックスを作成した後で追加されたレコードについては、動的にインデックスを更新"
 "します。"
 
-# 889b663bc7ff431f888baf85574207d5
 msgid "Full text search"
 msgstr "全文検索"
 
@@ -1187,7 +1058,6 @@ msgstr ""
 "て KEY_NORMALIZE フラグを指定したときは、全角・半角や大文字・小文字などの違い"
 "が吸収されることに注意してください。"
 
-# e22d8716e0ce40f5898bfea63c8260df
 msgid ""
 "In this example, the first record matches the query because its title "
 "contains \"This\", that is the capitalized form of the query."
@@ -1204,7 +1074,6 @@ msgstr ""
 "存在します。このパラメータはデフォルトで検索対象にするカラムを指定するもの"
 "で、カラム名を指定しない検索条件にのみ適用されます。 [1]_"
 
-# fe9bfc13759d46b4a0b76f729a7d6c77
 msgid ""
 "The combination of \"`--match_columns` title\" and \"`--query` this\" brings "
 "you the same result that \"`--query` title:@this\" does."
@@ -1212,11 +1081,9 @@ msgstr ""
 "\"`--match_columns` title\" と \"`--query` this\" の組み合わせを指定すると、 "
 "\"`--query` title:@this\" を指定したときと同じ検索条件になります。"
 
-# 12e3b87c0ed64703a7ef66eff3bce8af
 msgid "Specify output columns"
 msgstr "出力カラムの指定"
 
-# cada70fbbe534c64a949a3c07a6b0039
 msgid ""
 "An `output_columns` parameter of a :doc:`/reference/commands/select` command "
 "specifies columns to appear in the search result. If you want to specify "
@@ -1234,7 +1101,6 @@ msgstr ""
 "groongaの検索結果に含まれるカラムであり、全文検索の条件に合致するレコードほど"
 "高い数値が入ります。"
 
-# 12e3b87c0ed64703a7ef66eff3bce8af
 msgid "Specify output ranges"
 msgstr "表示範囲指定"
 
@@ -1257,11 +1123,9 @@ msgstr ""
 "場合、 `offset` 引数を省略するか、0を指定するようにしてください。 `limit` 引"
 "数には、検索結果の表示件数を指定します。"
 
-# bb510b00d1884eb99fe04922374fd892
 msgid "Sort a search result"
 msgstr "検索結果の並べ替え"
 
-# cada70fbbe534c64a949a3c07a6b0039
 msgid ""
 "A :doc:`/reference/commands/select` command sorts its result when used with "
 "a `sortby` parameter."
@@ -1269,7 +1133,6 @@ msgstr ""
 ":doc:`/reference/commands/select` コマンドに `sortby` 引数を渡すことにより、"
 "検索結果を並べ替えることができます。"
 
-# a5a5613c2bf640fabc845b6b549c6c5c
 msgid ""
 "A `sortby` parameter specifies a column as a sorting creteria. A search "
 "result is arranged in ascending order of the column values. If you want to "
@@ -1301,7 +1164,6 @@ msgstr ""
 "初のカラムに同じ値が格納されているレコードを次のカラムを基準として整列しま"
 "す。"
 
-# 483e363f1f964ab3a2be02e9c2b67b17
 msgid "footnote"
 msgstr "脚注"
 
@@ -1355,7 +1217,6 @@ msgid ""
 "それぞれ1カラムごとに1つずつ追加しています。"
 msgstr ""
 
-# b5b69e0bad9d4b229fd7f08db85d6348
 msgid ""
 "match_columnsオプションで、検索対象のカラムを複数指定することが出来ます。検索"
 "する文字列はqueryオプションで指定します。これを使うことで、タイトルと本文を全"
@@ -1381,7 +1242,6 @@ msgstr ""
 msgid "実際に検索してみましょう。結果は上の例と同じになります。"
 msgstr ""
 
-# ad07ee763a854a27b361f8e2be9049ae
 msgid ""
 "There may be a question that \"which is the better solution for indexing.\" "
 "It depends on the case."
@@ -1389,7 +1249,6 @@ msgstr ""
 "\"インデックスはどちらがよい方法なのか\"と疑問に思うかも知れません。それは場"
 "合によります。"
 
-# 903c86cd2046489eb792aa062074ab64
 msgid ""
 "Indexes for each column - The update performance tends to be better than "
 "multiple colum index because there is enough buffer for updating. On the "
@@ -1398,7 +1257,6 @@ msgstr ""
 "カラムごとのインデックス - マルチカラムインデックスよりも更新性能が良い傾向が"
 "あります。一方、ディスク使用効率はあまり良くありません。"
 
-# 58c56a1cee6c4caf94d026bf3d116b36
 msgid ""
 "Indexes for multiple column - It saves disk usage because it shares common "
 "buffer. On the other hand, the update performance is not so good."
@@ -1412,11 +1270,9 @@ msgstr ""
 msgid "執筆中です。"
 msgstr ""
 
-# 4da5c716f8d64beaab327bbc1ffba50f
 msgid "Nested index search among related table by column index"
 msgstr "カラムインデックスによる関連テーブルをまたぐ検索"
 
-# 7bced8fbc8cd4f219fb6b102f84fc5fa
 msgid ""
 "If there are relationships among multiple table with column index, you can "
 "search multiple table by specifying reference column name."
@@ -1424,11 +1280,9 @@ msgstr ""
 "複数のテーブルがカラムインデックスで関連付けられているなら、参照カラム名を指"
 "定して複数のテーブルにまたがって検索することができます。"
 
-# e405f76fd24a4e7f847ddb62b6b94316
 msgid "Here is the concrete example."
 msgstr "具体的な例を示します。"
 
-# 6bf0db0e541048c8ab646ff029a51e37
 msgid ""
 "There are tables which store blog articles, comments for articles. The table "
 "which stores articles has columns for article and comment. And the comment "
@@ -1440,7 +1294,6 @@ msgstr ""
 "Commentsテーブルを参照しています。コメントを保存するテーブルにはコメントと記"
 "事テーブルに対するカラムインデックスが設定されています。"
 
-# 3ed9c4432a0c4fc88278e81ee05a6ffb
 msgid ""
 "if you want to search the articles which contain specified keyword in "
 "comment, you need to execute fulltext search for table of comment, then "
@@ -1449,7 +1302,6 @@ msgstr ""
 "特定のキーワードをコメントに含む記事を探すには、コメントテーブルを全文検索す"
 "る必要があり、全文検索結果を含むレコードをさらに検索する必要があります。"
 
-# d706c5de7ea9451eb30998a02101e583
 msgid ""
 "But, you can search the records by specifying the reference column index at "
 "once."
@@ -1457,16 +1309,12 @@ msgstr ""
 "しかし、カラムインデックスを指定することで一度にレコードを検索することができ"
 "ます。"
 
-# af08271eff8749f28d7327ea73e92bf6
 msgid "Here is the sample schema."
 msgstr "サンプルのスキーマ定義はこちらです。"
 
-# db81d2adc91d4c04bcf315cfdcda138a
-# 6980dd1b2928452790e163f1c40239c0
 msgid "Here is the sample data."
 msgstr "サンプルデータはこちらです。"
 
-# 6f3aebf07960425c8f7fd639a5cac4ee
 msgid ""
 "You can write the query that search the records which contains specified "
 "keyword as a comment, then fetch the articles which refers to it."
@@ -1474,12 +1322,9 @@ msgstr ""
 "特定のキーワードをコメントに含むレコードを検索するクエリを書くことができ、そ"
 "れによりレコードを参照する記事を取得します。"
 
-# ccaec950af944b2f9eda01b0495a1e58
-# 361bca53d8fd44c49dfb57f0e0a72457
 msgid "Query for searching the records described above::"
 msgstr "これまでに記述したレコードを検索するクエリ::"
 
-# 224fa73233d14d0d9e0094cd1aac2938
 msgid ""
 "You need to concatenate comment column of Articles table and content column "
 "of Comments table with period(.) as --match_columns arguments."
@@ -1487,7 +1332,6 @@ msgstr ""
 "ArticlesテーブルのcommentカラムとCommentsテーブルのcontentカラムをピリオド(.)"
 "で連結し ``--match_columns`` の引数とする必要があります。"
 
-# edfe46cbd9b346b29e3c7da2c5bc9066
 msgid ""
 "At first, this query execute fulltext search from content of Comments table, "
 "then fetch the records of Articles table which refers to already searched "
@@ -1500,12 +1344,10 @@ msgstr ""
 "(これにより、Commentsテーブルの'article'カラムインデックスを生成するクエリを"
 "コメントアウトすると、意図した検索結果が得られません。)"
 
-# 0ac728a05da94dc794d12d99b38ed5dd
 msgid ""
 "Now, you can search articles which contains specific keywords as a comment."
 msgstr "これで、特定のキーワードをコメントとして含む記事を検索できます。"
 
-# 1e5ff72886ba4f099a8ff658e079570b
 msgid ""
 "The feature of nested index search is not limited to the relationship "
 "between two table only."
@@ -1513,7 +1355,6 @@ msgstr ""
 "このネストしたインデックスの検索という特徴には関連するテーブルが2つだけに制限"
 "されません。"
 
-# 2915df73547147a8a0244afdf11067c4
 msgid ""
 "Here is the sample schema similar to previous one. The difference is added "
 "table which express 'Reply' and relationship is extended to three tables."
@@ -1521,7 +1362,6 @@ msgstr ""
 "前のものと似たサンプルのスキーマ定義です。違いは'返信'を表現するテーブルの追"
 "加と関連するテーブルが3つに増えたことです。"
 
-# 1b348cc0bb0b4ac3bb99975d8dab5491
 msgid ""
 "The first query searches 'mroonga' from Comments2 table, the second one "
 "searches 'mroonga' from Replies2 and Comment2 table by using reference "
@@ -1531,7 +1371,6 @@ msgstr ""
 "Replies2とComments2テーブルからカラムインデックスによる参照を用い"
 "て'mroonga'を検索します。"
 
-# 5ba3f540f2a94408aac518d891ae66c8
 msgid ""
 "As a result, the first query matches two article because of Comments2 table "
 "has two records which contains 'mroonga' as keyword."
@@ -1539,7 +1378,6 @@ msgstr ""
 "結果として、最初のクエリはComments2テーブルに'mroonga'をキーワードとして含む"
 "レコードが2つあるので、該当する記事2つにマッチします。"
 
-# 1619ff8d5bc343c2879ceec89bcb8087
 msgid ""
 "On the other hand, the second one matches one article only because of "
 "Replies2 table has only one record which contains 'mroonga' as keyword, and "
@@ -1576,53 +1414,42 @@ msgid ""
 "格納するためのテーブルです。"
 msgstr ""
 
-# 4fb72f74f49b40329c3978bcd9006672
-# e9d00623b2614b16b3a2fa041b59ba64
-# e62dc91528bf4f539d679d0b07d46d4a
-# bd904851aebc4c63acb8eea013c236cf
 msgid "``_key``"
 msgstr ""
 
 msgid "ユーザーID"
 msgstr ""
 
-# e136832d91a944e68f8e08b218d10012
 msgid "``name``"
 msgstr ""
 
 msgid "ユーザー名"
 msgstr ""
 
-# bb65f10f639c49a7811210e960c7c930
 msgid "``follower``"
 msgstr ""
 
 msgid "フォローしているユーザーの一覧"
 msgstr ""
 
-# 9203a37b57f84bd580fa13051ea5cdba
 msgid "``favorites``"
 msgstr ""
 
 msgid "お気に入りのコメント一覧"
 msgstr ""
 
-# 11df9202207d4977ad6fec28f9ff9783
-# 3bb76a5eeb404bc7a73d3ed879981064
 msgid "``location``"
 msgstr ""
 
 msgid "ユーザーの現在地（緯度経度座標）"
 msgstr ""
 
-# efb082a21873494faf0c0a3ac7605614
 msgid "``location_str``"
 msgstr ""
 
 msgid "ユーザーの現在地（文字列）"
 msgstr ""
 
-# 0e94f3b1566b4680b678cedd1bfa0bc2
 msgid "``description``"
 msgstr ""
 
@@ -1634,7 +1461,6 @@ msgid ""
 "とで、あるユーザーをフォローしているユーザーを検索できるようになります。"
 msgstr ""
 
-# 8e0b44b9cb794f03a4286c9a316b7ba6
 msgid "``followee``"
 msgstr ""
 
@@ -1649,35 +1475,30 @@ msgstr ""
 msgid "コメントID"
 msgstr ""
 
-# 6d5c1ced6a41481f862054601e7da56d
 msgid "``comment``"
 msgstr ""
 
 msgid "コメント内容"
 msgstr ""
 
-# 2f6786c053524a22aa0f29395ae94b8f
 msgid "``last_modified``"
 msgstr ""
 
 msgid "投稿日時"
 msgstr ""
 
-# 1ae7eb9d5ac44b178a2f746891505bb0
 msgid "``replied_to``"
 msgstr ""
 
 msgid "返信元のコメント内容"
 msgstr ""
 
-# fc3ac6a2a2054ab1a50cb94fc6cf71ef
 msgid "``replied_users``"
 msgstr ""
 
 msgid "返信先のユーザーの一覧"
 msgstr ""
 
-# 5fe5b6ba7bc240498a40863dc9d5298e
 msgid "``hash_tags``"
 msgstr ""
 
@@ -1687,7 +1508,6 @@ msgstr ""
 msgid "投稿場所(緯度経度座標のため)"
 msgstr ""
 
-# 5538160167b34634a5f9e12d84c34a53
 msgid "``posted_by``"
 msgstr ""
 
@@ -1700,7 +1520,6 @@ msgid ""
 "ます。"
 msgstr ""
 
-# 01cae5d7fe484b1f9f5d812052c05827
 msgid "``favorited_by``"
 msgstr ""
 
@@ -1713,20 +1532,17 @@ msgstr ""
 msgid "ハッシュタグ"
 msgstr ""
 
-# 5e188c51bec24646954e58a55b1d5ec5
 msgid ""
 "「Comments.hash_tags」のインデックス。 このインデックスを作ることで、指定した"
 "ハッシュタグのついているコメントの一覧を出すことが出来るようになります。"
 msgstr ""
 
-# d3c55eb0d8db454d8a4fd3b1b652a879
 msgid "``hash_index``"
 msgstr ""
 
 msgid "Bigramテーブル"
 msgstr ""
 
-# 8e68bf66b34a470d9be215f2c55ed5d0
 msgid ""
 "ユーザー情報・コメントで全文検索が出来るようにするためのインデックスを格納す"
 "るテーブルです。"
@@ -1741,22 +1557,18 @@ msgid ""
 "います。"
 msgstr ""
 
-# 2cb1972156164a5b9c50543d53e22cc0
 msgid "``users_index``"
 msgstr ""
 
-# 325efced20a64be28eeb4b809dff9a50
 msgid "``comment_index``"
 msgstr ""
 
 msgid "コメント内容「Comments.comment」のインデックス"
 msgstr ""
 
-# 8a6dd054cd9e453189df70e659c4bcbf
 msgid "GeoIndex table"
 msgstr "GeoIndexテーブル"
 
-# c87fff0925df42b192c161a4aac9ef40
 msgid ""
 "This is the table which stores indexes of location column to search geo "
 "location effectively."
@@ -1764,19 +1576,15 @@ msgstr ""
 "位置情報検索を効果的に行うための locationカラムのインデックスを保持するテーブ"
 "ルです。"
 
-# a037907f07214650ab2fbeb9eb090fd1
 msgid "Indexes of location column for Users table"
 msgstr "Usersテーブルのlocationカラムに対するインデックス"
 
-# f28c1324f1a34ce296b6aa0fb6b3f41f
 msgid "``users_location``"
 msgstr ""
 
-# 016aa49589f645ebb8bcc9af00d30b7e
 msgid "Indexes of location column for Comments table"
 msgstr "Commentsテーブルのlocationカラムに対するインデックス"
 
-# a92fa12625974811a3bf02161fc9ef0e
 msgid "``comments_location``"
 msgstr ""
 
@@ -1797,7 +1605,6 @@ msgid ""
 "型です。この型での値の指定は、\"[緯度]x[経度]\"と記述して指定します。"
 msgstr ""
 
-# 3479bb9a539542f5ac6f4bca3cdabbcf
 msgid ""
 "Commentsテーブルのlast_modifiedカラムは、Time型です。この型での値を指定する方"
 "法は2つあります。 1つ目の方法は、1970年1月1日0時0分0秒からの経過秒数の値を直"
@@ -1944,11 +1751,9 @@ msgid ""
 "していることがわかります。"
 msgstr ""
 
-# e667839575dd4575a23036acbd75f3fd
 msgid "Remote access"
 msgstr "リモートアクセス"
 
-# aba6954242c14501bd3a285d08a7f9b8
 msgid ""
 "You can use Groonga as a server which allows remote access. Groonga supports "
 "the original protocol (GQTP), the memcached binary protocol and HTTP."
@@ -1957,14 +1762,12 @@ msgstr ""
 "クセスできるようになります。groongaがサポートしているプロトコルは、Groongaの"
 "専用プロトコルであるGQTP、memcachedバイナリプロトコル、HTTPの三種類です。"
 
-# 25314998f8a44c8ca314c0ce7808341f
 msgid "Groonga Query Transfer Protocol (GQTP)"
 msgstr "Groonga専用プロトコル（GQTP）"
 
 msgid "How to run a GQTP server"
 msgstr "GQTPサーバの起動"
 
-# d6b116c322594360b727ea6cbc5da918
 msgid ""
 "Groonga has a special protocol, named Groonga Query Transfer Protocol "
 "(GQTP), for remote access to a database. The following form shows how to run "
@@ -1974,7 +1777,6 @@ msgstr ""
 "データベースへとリモートアクセスすることができます。以下の書式はGQTPサーバの"
 "起動方法を示しています。"
 
-# ec85c284500e4549b3ad9b977c5ca2aa
 msgid ""
 "The `-s` option specifies to run Groonga as a server. DB_PATH specifies the "
 "path of the existing database to be hosted. The `-p` option and its "
@@ -1986,7 +1788,6 @@ msgstr ""
 "サーバのポート番号を指定することができます。ポート番号を省略した場合は10041が"
 "使用されます。"
 
-# 0bbeedf7a0ce4fb98f0b9af07d086a93
 msgid ""
 "The following command runs a server that listens on the default port number. "
 "The server accepts operations to the specified database."
@@ -1994,11 +1795,9 @@ msgstr ""
 "以下のコマンドにより、デフォルトのポート番号で待ち受けるサーバを起動すること"
 "ができます。サーバは指定されたデータベースへの操作を受け付けます。"
 
-# 5c086abd44eb4e40be44306cf06e1f13
 msgid "How to run a GQTP daemon"
 msgstr "GQTPデーモンの起動"
 
-# aba6954242c14501bd3a285d08a7f9b8
 msgid ""
 "You can also run a GQTP server as a daemon by using the `-d` option, instead "
 "of the `-s` option."
@@ -2006,7 +1805,6 @@ msgstr ""
 "GQTPサーバはデーモンとして起動することができます。オプションとして、 `-s` の"
 "代わりに `-d` を与えてください。"
 
-# 3c5469f173484ec8ba39c2245ed9455a
 msgid ""
 "A Groonga daemon prints its process ID as follows. In this example, the "
 "process ID is 12345. Then, the daemon opens a specified database and accepts "
@@ -2016,15 +1814,12 @@ msgstr ""
 "下の例では、12345というプロセスIDが表示されています。サーバとして起動した場合"
 "と同様に、指定されたデータベースへの操作を受け付けます。"
 
-# 5c086abd44eb4e40be44306cf06e1f13
 msgid "How to run a GQTP client"
 msgstr "GQTPサーバへの接続"
 
-# f5ec19849c3d416b9704b474f9716929
 msgid "You can run Groonga as a GQTP client as follows:"
 msgstr "GQTPサーバに接続するクライアントは、以下のように起動します。"
 
-# abf4e97bb050457ba3d7c2543db16c19
 msgid ""
 "This command establishes a connection with a GQTP server and then enters "
 "into interactive mode. HOST_NAME_OR_IP_ADDRESS specifies the hostname or the "
@@ -2045,7 +1840,6 @@ msgid ""
 "executes them one by one."
 msgstr "対話モードでは、標準入力からコマンドを読み込んで順次実行します。"
 
-# 5c086abd44eb4e40be44306cf06e1f13
 msgid "How to terminate a GQTP server"
 msgstr "GQTPサーバの終了"
 
@@ -2056,11 +1850,9 @@ msgstr ""
 "GQTPサーバを終了する安全は方法は、クライアントを起動して :doc:`/reference/"
 "commands/shutdown` を発行することです。"
 
-# ca13b09553e6473d9628d6ad2eed0ce7
 msgid "Memcached binary protocol"
 msgstr "memcachedバイナリプロトコル"
 
-# e4c86c73a6e142828d30f8e04e098155
 msgid ""
 "Groonga supports the memcached binary protocol. The following form shows how "
 "to run Groonga as a memcached binary protocol server daemon."
@@ -2069,7 +1861,6 @@ msgstr ""
 "memcachedバイナリプロトコルのサーバをデーモンとして起動する方法を示していま"
 "す。"
 
-# f75869210a16483384edb6f91c8d3cf2
 msgid ""
 "The `--protocol` option and its argument specify the protocol of the server. "
 "\"memcached\" specifies to use the memcached binary protocol."
@@ -2077,14 +1868,12 @@ msgstr ""
 "`--protocol` オプションとその引数により、サーバのプロトコルを指定することがで"
 "きます。\"memcached\"はmemcachedバイナリプロトコルを示しています。"
 
-# de369068ea8c40d49adf03644d6b6f50
 msgid "Hypertext transfer protocol (HTTP)"
 msgstr "HTTP"
 
 msgid "How to run an HTTP server"
 msgstr "HTTPサーバの起動"
 
-# 1bd1fe33fb71404ebb390cd5a645e871
 msgid ""
 "Groonga supports the hypertext transfer protocol (HTTP). The following form "
 "shows how to run Groonga as an HTTP server daemon."
@@ -2092,7 +1881,6 @@ msgstr ""
 "GroongaはHTTPをサポートしています。以下の書式はHTTPサーバをデーモンとして起動"
 "する方法を示しています。"
 
-# 3806418d724e4a11b0042ed5a51046c3
 msgid ""
 "The `--protocol` option and its argument specify the protocol of the server. "
 "\"http\" specifies to use HTTP."
@@ -2100,14 +1888,12 @@ msgstr ""
 "`--protocol` オプションとその引数により、サーバのプロトコルを指定することがで"
 "きます。\"http\"はHTTPサーバの起動を指示しています。"
 
-# 0bbeedf7a0ce4fb98f0b9af07d086a93
 msgid ""
 "The following command runs an HTTP server that listens on the port number 80."
 msgstr ""
 "以下のコマンドは、ポート番号80で待ち受けるHTTPサーバをデーモンとして起動しま"
 "す。"
 
-# b83695b7457d4c93b52444216137e48f
 msgid ""
 "You must have root privileges if you listen on the port number 80 (well "
 "known port). There is no such a limitation about the port number 1024 or "
@@ -2116,11 +1902,9 @@ msgstr ""
 "80番ポートで待ち受けるにはroot権限が必須です。1024番以降のポート番号にはその"
 "ような制限はありません。"
 
-# 9060642c9ac34a1383aed3289fba31a7
 msgid "How to send a command to an HTTP server"
 msgstr "HTTPサーバへのコマンド送信"
 
-# df79fcf54432414da92f5c02ff7c9e2b
 msgid ""
 "You can send a command to an HTTP server by sending a GET request to /d/"
 "COMMAND_NAME. Command parameters can be passed as parameters of the GET "
@@ -2131,14 +1915,12 @@ msgstr ""
 "HTTPのGETパラメータとして渡します。引数の書式は \"?"
 "NAME_1=VALUE_1&NAME_2=VALUE_2&...\" となります。"
 
-# f8c8c0a35b004171b80f3188d5ba7ee1
 msgid "The following example shows how to send commands to an HTTP server."
 msgstr "以下の例は、HTTPサーバに対するコマンドの送り方を示しています。"
 
 msgid "Administration tool (HTTP)"
 msgstr "ブラウザベースの管理ツール"
 
-# f27356d1aceb4888a30743f0dd1c0b44
 msgid ""
 "An HTTP server of Groonga provides a browser based administration tool that "
 "makes database management easy. After starting an HTTP server, you can use "
@@ -2168,7 +1950,6 @@ msgstr ""
 msgid "パトリシア木による前方一致検索"
 msgstr ""
 
-# 3b3a554340fe481a98a412939a7303e6
 msgid ""
 "Groongaのテーブルは、テーブル作成時にパトリシア木オプションを指定すると、前方"
 "一致検索を行うことができます。また、追加のオプションを指定することにより、主"
@@ -2198,7 +1979,6 @@ msgid ""
 "一工夫必要になります。"
 msgstr ""
 
-# 1aa5ca8a98084b5fab88050d01dea5da
 msgid ""
 "例えば、元のレコードと自動的に追加されたレコードとの区別をつけるために、元の"
 "レコードであることを示すoriginalカラムを追加して、検索時にはoriginalカラムが "
@@ -2210,7 +1990,6 @@ msgstr ""
 msgid "クエリ拡張"
 msgstr ""
 
-# ccae6c61a65342c299970982ae742600
 msgid ""
 "Groongaでは、 :doc:`/reference/commands/select` コマンドにquery_expanderパラ"
 "メータを指定することによって、ユーザが指定した検索文字列を適宜拡張することが"
@@ -2248,13 +2027,11 @@ msgid ""
 "しています。"
 msgstr ""
 
-# f20d2f09091e4a21bc469c91f5a8af57
 msgid ""
 "それでは実際に、準備した置換テーブルを使ってみましょう。まずは、"
 "query_expanderパラメータを指定せずにselectコマンドを使って検索してみます。"
 msgstr ""
 
-# e50697cf53c34b1abdd49ebb160ccb1a
 msgid ""
 "指定された文字列に完全に一致するレコードのみがそれぞれヒットします。次に、"
 "query_expanderパラメータに、準備したSynonymテーブルのbodyカラムを指定してみま"
@@ -2270,7 +2047,6 @@ msgstr ""
 msgid "さまざまな検索条件の指定"
 msgstr ""
 
-# f28086c0af904f88b3827c4a4d953260
 msgid ""
 "Groongaは、JavaScriptに似た文法での条件絞込や、計算した値を用いたソートを行う"
 "ことができます。また、位置情報(緯度・経度)を用いた絞込・ソートを行うことがで"
@@ -2352,7 +2128,6 @@ msgstr ""
 msgid "位置情報を用いた絞込・ソート"
 msgstr ""
 
-# 5f03f717e3c5431abc010e22ef49cbfc
 msgid ""
 "Groongaでは、位置情報（経緯度）を保存することができます。また、保存した経緯度"
 "を用いて絞込やソートができます。"
@@ -2392,7 +2167,6 @@ msgid ""
 "ます。ここではミリ秒表記で登録しましょう。"
 msgstr ""
 
-# 6ca2b63b880b4c9a820e26f990fd77f6
 msgid ""
 "scorerパラメータにおいて、 :doc:`/reference/functions/geo_distance` 関数を用"
 "いることにより、２点間の距離を計算することができます。"
@@ -2415,7 +2189,6 @@ msgstr ""
 msgid "「ある地点から何m以内に存在する」といった絞込も可能です。"
 msgstr ""
 
-# 1597a1064a8c455ea715b89ccd2846a3
 msgid ""
 "filterパラメータにおいて、 :doc:`/reference/functions/geo_in_circle` 関数を用"
 "いることにより、２点間の距離が指定のm以下におさまるかどうかを判定することがで"
@@ -2425,7 +2198,6 @@ msgstr ""
 msgid "たとえば、秋葉原駅から5000m以内にあるレコードを検索してみましょう。"
 msgstr ""
 
-# 48c9c2938c5a4a57bb94d23a54e8fd28
 msgid ""
 "また、経緯度が指定の矩形領域内であるかどうかを判定する :doc:`/reference/"
 "functions/geo_in_rectangle` 関数も存在します。"

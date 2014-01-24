@@ -33,31 +33,25 @@ msgstr "メーリングリスト"
 msgid "There are mailing lists for discussion about Groonga."
 msgstr "Groongaに関する話題を扱うメーリングリストがあります。"
 
-# 9d33343bc5df4c00ba6860584e53881d
 msgid "For English speakers"
 msgstr ""
 
-# 89e18df189bc437bace011afd72ff622
 msgid ""
 "`groonga-talk@lists.sourceforge.net <http://lists.sourceforge.net/mailman/"
 "listinfo/groonga-talk>`_"
 msgstr ""
 
-# 1370549bcbc8420f83af752aaff762cc
 msgid "For Japanese speakers"
 msgstr ""
 
-# 89e18df189bc437bace011afd72ff622
 msgid ""
 "`groonga-dev@lists.sourceforge.jp <http://lists.sourceforge.jp/mailman/"
 "listinfo/groonga-dev>`_"
 msgstr ""
 
-# fad57b46202447b389efbd5d26627c42
 msgid "Twitter"
 msgstr ""
 
-# 6dab49c2f7f4482dbf01f8bdc8fb1c6d
 msgid ""
 "`@groonga <https://twitter.com/groonga/>`_ tweets Groonga related "
 "information."
@@ -65,17 +59,14 @@ msgstr ""
 "`@groonga <https://twitter.com/groonga/>`_ がGroonga関連情報をツイートしてい"
 "ます。"
 
-# 10109dd7c644437ead44d7dff06e7b11
 msgid ""
 "Please follow the account to get the latest Groonga related information!"
 msgstr ""
 "このアカウントをフォローして最新のGroonga関連情報をゲットしてください！"
 
-# 047c2e78bf92470fb89d281d034ba1cb
 msgid "Facebook"
 msgstr ""
 
-# 21fcb920369045a2ab9ce38137ad279c
 msgid ""
 "`Groonga page on Facebook <http://www.facebook.com/groonga>`_ shares Groonga "
 "related information."
@@ -83,6 +74,5 @@ msgstr ""
 "`FacebookのGroongaページ <http://www.facebook.com/groonga>`_ ではGroonga関連"
 "情報をシェアしています。"
 
-# 81e44e17bb284daf9739acd6f33e028c
 msgid "Please like the page to get the latest Groonga related information!"
 msgstr "このページをいいね！して最新のGroonga関連情報をゲットしてください！"

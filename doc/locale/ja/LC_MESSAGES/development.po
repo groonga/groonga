@@ -17,11 +17,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-# ad2d4e2869a349b9a8985e6120bbe6c1
 msgid "Development"
 msgstr "開発"
 
-# ee60bc7d21f047fba1426b8e9e69300f
 msgid ""
 "This section describes about developing with groonga. You may develop an "
 "application that uses groonga as its database, a library that uses "
@@ -31,11 +29,9 @@ msgstr ""
 "データベースとして使ったアプリケーション、libgroongaを使ったライブラリ、"
 "libgroongaの言語バインディングなどを開発することがあるでしょう。"
 
-# 7f58ddffa7f04c2d8c029a397dcc18ff
 msgid "Travis CI"
 msgstr ""
 
-# c808faf29c7647adba3cf6e793701a49
 msgid ""
 "This section describes about using groonga on `Travis CI <http://travis-ci."
 "org/>`_. Travis CI is a hosted continuous integration service for the open "
@@ -45,7 +41,6 @@ msgstr ""
 "について説明します。Travis CIはオープンソースコミュニティ用の継続的インテグ"
 "レーション（CI）サービスです。"
 
-# e9b3427aeea44dbc9f5d90d69ba02b13
 msgid ""
 "You can use Travis CI for your open source software. This section only "
 "describes about groonga related configuration. See `Travis CI: Documentation "
@@ -55,11 +50,9 @@ msgstr ""
 "ンではGroonga関連の設定のみ説明します。Travis CI一般については `Travis CI: "
 "Documentation <http://about.travis-ci.org/docs/>`_ を読んでください。"
 
-# f6186316fe91417f8cd64fb1a0ad0215
 msgid "Configuration"
 msgstr "設定"
 
-# 514db429bebf4729abf0a273db593924
 msgid ""
 "Travis CI is running on 64-bit Ubuntu 12.04 LTS Server Edition. (See `Travis "
 "CI: About Travis CI Environment <http://about.travis-ci.org/docs/user/ci-"
@@ -71,7 +64,6 @@ msgstr ""
 "environment/>`_ 参照。）Travis CIにGroongaをインストールするために、Groongaプ"
 "ロジェクトが提供しているUbuntu 12.04 LTS用のapt-lineを使えます。"
 
-# ccf892ca5eb740ae8467f66720b0248d
 msgid ""
 "You can custom build lifecycle by ``.travis.yml``. (See `Travis CI: "
 "Conifugration your Travis CI build with .travis.yml <http://about.travis-ci."
@@ -87,11 +79,9 @@ msgstr ""
 "ばRuby）を使ったソフトウェアの場合は ``before_install`` を使います。そうでな"
 "い場合は ``install`` を使います。"
 
-# 18a966a785e642798568e44c7d0cc3e0
 msgid "Add the following ``before_install`` configuration to ``.travis.yml``::"
 msgstr "以下の ``before_install`` の設定を ``.travis.yml`` に加えます::"
 
-# a6b8de9cbf144b01979b948a8a865b2d
 msgid ""
 "If you need to use ``install`` hook instead of ``before_install``, you just "
 "substitute ``before_install:`` with ``install:``."
@@ -99,32 +89,26 @@ msgstr ""
 "``before_install`` フックではなく ``install`` フックを使わなければいけない場"
 "合は、単に ``before_install:`` を ``install:`` に書き換えてください。"
 
-# e462315d4c4347e08b399275daef7dca
 msgid "With the above configuration, you can use groonga for your build."
 msgstr "上記の設定でビルド中にGroongaを使えるようになります。"
 
-# b0b0b6a38cf24189a2effe6cd3ba63b3
 msgid "Examples"
 msgstr "例"
 
-# be1f9402c2fe413fb5b165d7ad3936ae
 msgid "Here are open source softwares that use groonga on Travis CI:"
 msgstr ""
 "Travis CI上でGroongaを使っているオープンソースソフトウェアは以下の通りです"
 
-# 1289ab120456443c8b2b22145c4bed8e
 msgid ""
 "`rroonga <http://groonga.rubyforge.org/#about-rroonga>`_ (Ruby bindings)"
 msgstr ""
 "`rroonga <http://groonga.rubyforge.org/#about-rroonga>`_ （Rubyバインディン"
 "グ）"
 
-# f71c9e0c4eef4ee59805c08a46068a95
 msgid "`rroonga on Travis CI <http://travis-ci.org/#!/ranguba/rroonga>`_"
 msgstr ""
 "`Travis CIでのrroongaのビルド結果 <http://travis-ci.org/#!/ranguba/rroonga>`_"
 
-# fadbc4c17f28497aaba5042574796fd8
 msgid ""
 "`.travis.yml for rroonga <https://github.com/ranguba/rroonga/blob/master/."
 "travis.yml>`_"
@@ -132,16 +116,13 @@ msgstr ""
 "`rroonga用の.travis.yml <https://github.com/ranguba/rroonga/blob/master/."
 "travis.yml>`_"
 
-# db6e279d295f4822a2eba569d27aa98d
 msgid "`nroonga <http://nroonga.github.com/>`_ (node.js bindings)"
 msgstr "`nroonga <http://nroonga.github.com/>`_ （node.jsバインディング）"
 
-# 0ab0b4dd3a5e4b978d1d27ccc7103fe0
 msgid "`nroonga on Travis CI <http://travis-ci.org/#!/nroonga/nroonga>`_"
 msgstr ""
 "`Travis CIでのnroongaのビルド結果 <http://travis-ci.org/#!/nroonga/nroonga>`_"
 
-# 4b784c45ae9242f7a2fa5d3ef87f4466
 msgid ""
 "`.travis.yml for nroonga <https://github.com/nroonga/nroonga/blob/master/."
 "travis.yml>`_"
@@ -149,13 +130,11 @@ msgstr ""
 "`nroonga用の.travis.yml <https://github.com/nroonga/nroonga/blob/master/."
 "travis.yml>`_"
 
-# ff4d25be71234f6ab9051adb1c8d9794
 msgid ""
 "`logaling-command <http://logaling.github.com/>`_ (A glossary management "
 "command line tool)"
 msgstr ""
 
-# f71c9e0c4eef4ee59805c08a46068a95
 msgid ""
 "`logaling-command on Travis CI <http://travis-ci.org/#!/logaling/logaling-"
 "command>`_"
@@ -163,7 +142,6 @@ msgstr ""
 "`Travis CIでのlogaling-commandのビルド結果 <http://travis-ci.org/#!/logaling/"
 "logaling-command>`_"
 
-# fadbc4c17f28497aaba5042574796fd8
 msgid ""
 "`.travis.yml for logaling-command <https://github.com/logaling/logaling-"
 "command/blob/master/.travis.yml>`_"

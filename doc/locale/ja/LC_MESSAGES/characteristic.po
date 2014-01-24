@@ -17,7 +17,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-# 5134941b94334ac487d34f8670afe5cc
 msgid "Characteristics of Groonga"
 msgstr "Groongaの特徴"
 
@@ -216,7 +215,6 @@ msgstr ""
 "らには、MySQL を介して更新クエリを実行している最中に Groonga の HTTP サーバを"
 "介して参照クエリを実行するなど、多彩な運用が可能となっています。"
 
-# 7992fcd67dc64bffbb20cfa5d462ab56
 msgid "Geo-location (latitude and longitude) search"
 msgstr "位置情報（緯度・経度）検索"
 
