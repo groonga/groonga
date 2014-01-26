@@ -1,0 +1,10 @@
+table_create Users TABLE_NO_KEY
+
+load --table Users
+[
+[]
+]
+
+select Users \
+  --output_columns '_id, false || false || false' \
+  --command_version 2
