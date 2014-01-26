@@ -7,5 +7,5 @@ load --table Records
 {"_key": "empty", "tags": []}
 ]
 [[0,0.0,0.0],1]
-select Records   --output_columns '_id, tags || "default"'   --command_version 2
-[[0,0.0,0.0],[[[1],[["_id","UInt32"],["tags","ShortText"]],[1,[]]]]]
+select Records --filter tags --output_columns _score
+[[0,0.0,0.0],[[[1],[["_score","Int32"]],[1]]]]

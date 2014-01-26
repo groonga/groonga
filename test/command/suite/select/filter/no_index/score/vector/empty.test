@@ -6,6 +6,4 @@ load --table Records
 {"_key": "empty", "tags": []}
 ]
 
-select Records \
-  --output_columns '_id, tags || "default"' \
-  --command_version 2
+select Records --filter tags --output_columns _score
