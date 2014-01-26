@@ -1,0 +1,9 @@
+table_create Records TABLE_NO_KEY
+[[0,0.0,0.0],true]
+load --table Records
+[
+[]
+]
+[[0,0.0,0.0],1]
+select Records --filter 'true' --output_columns _score
+[[0,0.0,0.0],[[[1],[["_score","Int32"]],[1]]]]
