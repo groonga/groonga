@@ -1,0 +1,11 @@
+table_create Records TABLE_HASH_KEY ShortText
+column_create Records tags COLUMN_VECTOR ShortText
+
+load --table Records
+[
+{"_key": "empty", "tags": []}
+]
+
+select Records \
+  --output_columns '_id, tags || "default"' \
+  --command_version 2

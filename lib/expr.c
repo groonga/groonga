@@ -4319,11 +4319,21 @@ exec_result_to_score(grn_ctx *ctx, grn_obj *result, grn_obj *score_buffer)
     return 0;
   }
 
-  if (grn_obj_cast(ctx, result, score_buffer, GRN_FALSE) != GRN_SUCCESS) {
+  switch (result->header.type) {
+  case GRN_VOID :
     return 0;
+  case GRN_BULK :
+    if (grn_obj_cast(ctx, result, score_buffer, GRN_FALSE) != GRN_SUCCESS) {
+      return 1;
+    }
+    return GRN_INT32_VALUE(score_buffer);
+  case GRN_UVECTOR :
+  case GRN_PVECTOR :
+  case GRN_VECTOR :
+    return 1;
+  default :
+    return 1; /* TODO: 1 is reasonable? */
   }
-
-  return GRN_INT32_VALUE(score_buffer);
 }
 
 static void
