@@ -1,0 +1,10 @@
+table_create Records TABLE_NO_KEY
+
+load --table Records
+[
+[]
+]
+
+select Records \
+  --output_columns '_id, null && "not false"' \
+  --command_version 2
