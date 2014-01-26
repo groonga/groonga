@@ -240,11 +240,14 @@ data_logic_operator_and(void)
             gcut_list_string_new(NULL, NULL),
             "size <= 9 && 0");
 
-  ADD_DATUM("&& - 0.1",
+  ADD_DATUM("&& - 1.1",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= 9 && 1.1");
+  ADD_DATUM("&& - 0.1",
+            gcut_list_string_new(NULL, NULL),
             "size <= 9 && 0.1");
   ADD_DATUM("&& - -0.1",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            gcut_list_string_new(NULL, NULL),
             "size <= 9 && -0.1");
   ADD_DATUM("&& - 0.0",
             gcut_list_string_new(NULL, NULL),
@@ -268,11 +271,14 @@ data_logic_operator_or(void)
             gcut_list_string_new("hoge", NULL),
             "size <= 9 && (size == 4 || 0)");
 
-  ADD_DATUM("|| - 0.1",
+  ADD_DATUM("|| - 1.1",
             gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            "size <= 9 && (size == 4 || 1.1)");
+  ADD_DATUM("|| - 0.1",
+            gcut_list_string_new("hoge", NULL),
             "size <= 9 && (size == 4 || 0.1)");
   ADD_DATUM("|| - -0.1",
-            gcut_list_string_new("fuga fuga", "hoge", "hoge hoge", NULL),
+            gcut_list_string_new("hoge", NULL),
             "size <= 9 && (size == 4 || -0.1)");
   ADD_DATUM("|| - 0.0",
             gcut_list_string_new("hoge", NULL),
