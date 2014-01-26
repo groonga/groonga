@@ -3155,17 +3155,28 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         {
           grn_obj *x, *y;
           unsigned int x_boolean, y_boolean;
-          int result;
+          grn_obj *result;
           POP2ALLOC1(x, y, res);
           GRN_TRUEP(ctx, x, x_boolean);
-          GRN_TRUEP(ctx, y, y_boolean);
-          if (x_boolean || y_boolean) {
-            result = 1;
+          if (x_boolean) {
+            result = x;
           } else {
-            result = 0;
+            GRN_TRUEP(ctx, y, y_boolean);
+            if (y_boolean) {
+              result = y;
+            } else {
+              result = NULL;
+            }
           }
-          grn_obj_reinit(ctx, res, GRN_DB_INT32, 0);
-          GRN_INT32_SET(ctx, res, result);
+          if (result) {
+            if (res != result) {
+              grn_obj_reinit(ctx, res, result->header.domain, 0);
+              grn_obj_cast(ctx, result, res, GRN_FALSE);
+            }
+          } else {
+            grn_obj_reinit(ctx, res, GRN_DB_BOOL, 0);
+            GRN_BOOL_SET(ctx, res, GRN_FALSE);
+          }
         }
         code++;
         break;

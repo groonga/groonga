@@ -1,0 +1,11 @@
+table_create Users TABLE_NO_KEY
+column_create Users name COLUMN_SCALAR ShortText
+
+load --table Users
+[
+{"name": "Alice"}
+]
+
+select Users \
+  --output_columns '_id, null || name || "unknown"' \
+  --command_version 2

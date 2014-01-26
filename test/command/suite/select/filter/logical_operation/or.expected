@@ -1,0 +1,11 @@
+table_create Users TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"name": "Alice"}
+]
+[[0,0.0,0.0],1]
+select Users   --output_columns '_id, null || name || "unknown"'   --command_version 2
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["","null"]],[1,"Alice"]]]]
