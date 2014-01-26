@@ -1,10 +1,10 @@
-table_create Users TABLE_NO_KEY
+table_create Records TABLE_NO_KEY
 
-load --table Users
+load --table Records
 [
 []
 ]
 
-select Users \
+select Records \
   --output_columns '_id, false || false || false' \
   --command_version 2
