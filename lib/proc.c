@@ -3622,15 +3622,55 @@ selector_all_records(grn_ctx *ctx, grn_obj *table, grn_obj *index,
 }
 
 static grn_obj *
-func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
-                  grn_user_data *user_data)
+snippet_exec(grn_ctx *ctx, grn_snip *snip, grn_obj *text,
+             grn_user_data *user_data)
 {
+  grn_rc rc;
+  unsigned int i, n_results, max_tagged_length;
+  grn_obj snippet_buffer;
   grn_obj *snippets;
+
+  rc = grn_snip_exec(ctx, snip,
+                     GRN_TEXT_VALUE(text), GRN_TEXT_LEN(text),
+                     &n_results, &max_tagged_length);
+  if (rc != GRN_SUCCESS) {
+    return NULL;
+  }
+
+  if (n_results == 0) {
+    return GRN_PROC_ALLOC(GRN_DB_VOID, 0);
+  }
 
   snippets = GRN_PROC_ALLOC(GRN_DB_SHORT_TEXT, GRN_OBJ_VECTOR);
   if (!snippets) {
     return NULL;
   }
+
+  GRN_TEXT_INIT(&snippet_buffer, 0);
+  grn_bulk_space(ctx, &snippet_buffer, max_tagged_length);
+  for (i = 0; i < n_results; i++) {
+    unsigned int snippet_length;
+
+    GRN_BULK_REWIND(&snippet_buffer);
+    rc = grn_snip_get_result(ctx, snip, i,
+                             GRN_TEXT_VALUE(&snippet_buffer),
+                             &snippet_length);
+    if (rc == GRN_SUCCESS) {
+      grn_vector_add_element(ctx, snippets,
+                             GRN_TEXT_VALUE(&snippet_buffer), snippet_length,
+                             0, GRN_DB_SHORT_TEXT);
+    }
+  }
+  GRN_OBJ_FIN(ctx, &snippet_buffer);
+
+  return snippets;
+}
+
+static grn_obj *
+func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
+                  grn_user_data *user_data)
+{
+  grn_obj *snippets = NULL;
 
   /* TODO: support parameters */
   if (nargs == 1) {
@@ -3667,27 +3707,7 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
     }
 
     if (snip) {
-      grn_rc rc;
-      unsigned int i, n_results, max_tagged_length;
-      grn_obj snippet_buffer;
-
-      rc = grn_snip_exec(ctx, snip,
-                         GRN_TEXT_VALUE(text), GRN_TEXT_LEN(text),
-                         &n_results, &max_tagged_length);
-      GRN_TEXT_INIT(&snippet_buffer, 0);
-      grn_bulk_space(ctx, &snippet_buffer, max_tagged_length);
-      for (i = 0; i < n_results; i++) {
-        unsigned int snippet_length;
-
-        GRN_BULK_REWIND(&snippet_buffer);
-        rc = grn_snip_get_result(ctx, snip, i,
-                                 GRN_TEXT_VALUE(&snippet_buffer),
-                                 &snippet_length);
-        grn_vector_add_element(ctx, snippets,
-                               GRN_TEXT_VALUE(&snippet_buffer), snippet_length,
-                               0, GRN_DB_SHORT_TEXT);
-      }
-      GRN_OBJ_FIN(ctx, &snippet_buffer);
+      snippets = snippet_exec(ctx, snip, text, user_data);
       grn_snip_close(ctx, snip);
     }
   }

@@ -1,0 +1,16 @@
+table_create Documents TABLE_HASH_KEY ShortText
+column_create Documents content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+column_create Terms document_index COLUMN_INDEX|WITH_POSITION Documents content
+
+load --table Documents
+[
+["_key", "content"],
+["Groonga", "Groonga can be used with MySQL."]
+]
+
+select Documents \
+  --match_columns content --query 'MySQL' \
+  --output_columns '_key, snippet_html(_key)' \
+  --command_version 2

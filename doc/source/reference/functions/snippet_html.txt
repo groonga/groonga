@@ -92,8 +92,10 @@ You can specify string literal instead of column.
 Return value
 ------------
 
-``snippet_html`` returns an array of string. An element of array is a
-snippet::
+``snippet_html`` returns an array of string or ``null``. If
+``snippet_html`` can't find any snippets, it returns ``null``.
+
+An element of array is a snippet::
 
   [SNIPPET1, SNIPPET2, SNIPPET3]
 
