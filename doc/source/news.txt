@@ -13,7 +13,7 @@ Release 3.1.2 - 2014/01/29
 Improvements
 ^^^^^^^^^^^^
 
-* [doc] Updated to caplitalized "Groonga" terms in documentation. [Patch by cosmo0920] [GitHub#136, #137, #138, #139, #140, #141, #142, #143, #144, #145, #146, #147, #148, #149, #150]
+* [doc] Updated to caplitalized "Groonga" terms in documentation. [Patch by cosmo0920] [GitHub#136, #137, #138, #139, #140, #141, #142, #143, #144, #145, #146, #147, #148, #149, #150, #151]
 * Supported to customize the value of lock timeout. See :doc:`/reference/api/global_configurations` about details.
   [groonga-dev,02017] [Suggested by yoku]
 * [doc] Added description about the value of lock timeout.
