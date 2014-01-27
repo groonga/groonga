@@ -8,4 +8,4 @@
 #QUERY_LOG_PATH=/var/log/groonga/httpd/access.log
 #GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE=/usr/share/groonga/synonyms.tsv
 TIMEOUT=3
-#GRN_JA_SKIP_SAME_VALUE_PUT=yes
+GRN_JA_SKIP_SAME_VALUE_PUT=yes
