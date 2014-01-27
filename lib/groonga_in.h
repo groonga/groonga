@@ -122,9 +122,9 @@
 #ifndef __GNUC__
 # define snprintf(str, size, ...) _snprintf(str, size, __VA_ARGS__)
 #endif /* __GNUC__ */
-#if defined(_MSC_VER) && _MSC_VER < 1500
+#if !defined(__GNUC__) && _MSC_VER < 1500
 # define vsnprintf(str, size, format, ap) _vsnprintf(str, size, format, ap)
-#endif /* defined(_MSC_VER) && _MSC_VER < 1500 */
+#endif /* !defined(__GNUC__) && _MSC_VER < 1500 */
 #define unlink(pathname) _unlink(pathname)
 #define lseek(fd, offset, whence) _lseek(fd, offset, whence)
 #define getpid() _getpid()
