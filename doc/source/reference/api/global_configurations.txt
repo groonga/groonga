@@ -36,7 +36,7 @@ Reference
 
    Sets the lock timeout.
 
-   See :c:function:`grn_get_lock_timeout` about lock timeout.
+   See :c:func:`grn_get_lock_timeout` about lock timeout.
 
    There are some special values for ``timeout``.
 
