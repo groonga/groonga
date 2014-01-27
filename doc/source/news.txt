@@ -20,7 +20,7 @@ Improvements
 * Enabled ``GRN_JA_SKIP_SAME_VALUE_PUT`` by default. In the previous releases, the value of
   this configuration is 'no'. This change affects reducing the size of Groonga database.
 * Supported multiple indexes including a nested index and multiple keywords query.
-  This change TODO.
+  This change improves missing search results isssue when narrowing down by multiple keywords query.
 * Added API to customize normalizer for snippet.
 
 Fixes
@@ -29,10 +29,15 @@ Fixes
 * Fixed not to use index for empty query. This change enables you to search even though empty query.
   Note that this means that there is performance penalty if many empty records exist.
   [groonga-dev,02052] [Reported by Naoya Murakami]
+* Fixed the behaviour about return value of "X || Y" and "X && Y" for adjusting to ECMAScript.
+  In "X || Y" case, if either X or Y satisfy the condition, it returns X itself or Y itself instead of 1 or 0.
+* In "X && Y" case, if X and Y satisfy the condition, it returns X itself instead of 1.
+  if X doesn't satisfy the condition, it returns false instead of 0.
 
 Thanks
 ^^^^^^
 
+* cosmo0920
 * yoku
 * Naoya Murakami
 
