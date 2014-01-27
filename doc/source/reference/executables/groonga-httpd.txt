@@ -1,4 +1,5 @@
 .. -*- rst -*-
+.. Groonga Project
 
 .. highlightlang:: none
 
@@ -8,7 +9,7 @@ groonga-httpd
 Summary
 -------
 
-groonga-httpd is a program to communicate with a groonga server using
+groonga-httpd is a program to communicate with a Groonga server using
 the HTTP protocol. It functions as same as
 :doc:`groonga-server-http`. Although :doc:`groonga-server-http` has
 limited support for HTTP with a minimal built-in HTTP server,
@@ -131,7 +132,7 @@ Default
 Context
   ``location``
 
-Specifies whether groonga is enabled in the ``location`` block. The
+Specifies whether Groonga is enabled in the ``location`` block. The
 default is ``off``. You need to specify ``on`` to enable groonga.
 
 Examples::
@@ -159,7 +160,7 @@ Default
 Context
   ``http``, ``server``, ``location``
 
-Specifies the path to a groonga database. This is the required
+Specifies the path to a Groonga database. This is the required
 directive.
 
 .. _groonga-database-auto-create:
@@ -177,10 +178,10 @@ Default
 Context
   ``http``, ``server``, ``location``
 
-Specifies whether groonga database is created automatically or not. If
-the value is ``on`` and the groonga database specified by
-:ref:`groonga-database` doesn't exist, the groonga database is created
-automatically. If the groonga database exists, groonga-httpd does
+Specifies whether Groonga database is created automatically or not. If
+the value is ``on`` and the Groonga database specified by
+:ref:`groonga-database` doesn't exist, the Groonga database is created
+automatically. If the Groonga database exists, groonga-httpd does
 nothing.
 
 If parent directory doesn't exist, parent directory is also created
@@ -203,13 +204,13 @@ Default
 Context
   ``location``
 
-Specifies the base path in URI. groonga uses
+Specifies the base path in URI. Groonga uses
 ``/d/command?parameter1=value1&...`` path to run ``command``. The form
 of path in used in groonga-httpd but groonga-httpd also supports
 ``/other-prefix/command?parameter1=value1&...`` form. To support the
 form, groonga-httpd removes the base path from the head of request URI
 and prepend ``/d/`` to the processed request URI. By the path
-conversion, users can use custom path prefix and groonga can always
+conversion, users can use custom path prefix and Groonga can always
 uses ``/d/command?parameter1=value1&...`` form.
 
 Nomally, this directive isn't needed. It is needed for per command
@@ -252,7 +253,7 @@ Default
 Context
   ``http``, ``server``, ``location``
 
-Specifies groonga log path in the ``http``, ``server`` or ``location`` block. The
+Specifies Groonga log path in the ``http``, ``server`` or ``location`` block. The
 default is ``/var/log/groonga/httpd/groonga.log``.
 You can disable logging to specify ``off``.
 
@@ -279,7 +280,7 @@ Default
 Context
   ``http``, ``server``, ``location``
 
-Specifies groonga log level in the ``http``, ``server`` or ``location`` block. The
+Specifies Groonga log level in the ``http``, ``server`` or ``location`` block. The
 default is ``notice``. You can disable logging by specifying ``none`` as log level.
 
 Examples::
@@ -305,7 +306,7 @@ Default
 Context
   ``http``, ``server``, ``location``
 
-Specifies groonga's query log path in the ``http``, ``server`` or
+Specifies Groonga's query log path in the ``http``, ``server`` or
 ``location`` block. The default is
 ``/var/log/groonga/httpd/groonga-query.log``.  You can disable logging
 to specify ``off``.
@@ -329,7 +330,7 @@ useful tools.
 
 For example, there is a tool that analyzing your query log. It can
 detect slow queries from your query log. There is a tool that
-replaying same queries in your query log. It can test the new groonga
+replaying same queries in your query log. It can test the new Groonga
 before updating production environment.
 
 Performance related directives
@@ -341,7 +342,7 @@ The following directives are related to the performance of groonga-httpd.
 """"""""""""""""""""
 
 For optimum performance, set this to be equal to the number of CPUs or cores. In
-many cases, groonga queries may be CPU-intensive work, so to fully utilize
+many cases, Groonga queries may be CPU-intensive work, so to fully utilize
 multi-CPU/core systems, it's essential to set this accordingly.
 
 This isn't a groonga-httpd specific directive, but an nginx's one. For details,
@@ -366,7 +367,7 @@ Default
 Context
   ``http``, ``server``, ``location``
 
-Specifies groonga's limit of query cache in the ``http``, ``server`` or
+Specifies Groonga's limit of query cache in the ``http``, ``server`` or
 ``location`` block. The default value is 100.
 You can disable query cache to specify 0 to ``groonga_cache_limit`` explicitly.
 
@@ -382,7 +383,7 @@ Examples::
 """""""""""""""
 
 In short, you can use nginx's reverse proxy and cache mechanism
-instead of groonga's built-in query cache feature.
+instead of Groonga's built-in query cache feature.
 
 Query cache
 +++++++++++
@@ -486,13 +487,13 @@ See the following nginx documentations for parameter details:
   * http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass
 
 Note that you need to remove cache files created by nginx by hand
-after you load new data to groonga. For the above sample
+after you load new data to Groonga. For the above sample
 configuration, run the following command to remove cache files::
 
   % groonga DB_PATH < load.grn
   % rm -rf /var/cache/groonga-httpd/*
 
-If you use groonga's query cache feature, you don't need to expire
+If you use Groonga's query cache feature, you don't need to expire
 cache by hand. It is done automatically.
 
 Available nginx modules
