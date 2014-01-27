@@ -11,5 +11,5 @@
 TIMEOUT=3
 # Comment out this to disable groonga-httpd daemon.
 ENABLE=yes
-# Comment out this to enable to skip updating column for same value.
-#GRN_JA_SKIP_SAME_VALUE_PUT=yes
+# Set "no" to disable to skip updating column for same value.
+GRN_JA_SKIP_SAME_VALUE_PUT=yes
