@@ -124,7 +124,7 @@
 #endif /* __GNUC__ */
 #if defined(_MSC_VER) && _MSC_VER < 1500
 # define vsnprintf(str, size, format, ap) _vsnprintf(str, size, format, ap)
-#endif /* _MSC_VER < 1500 */
+#endif /* defined(_MSC_VER) && _MSC_VER < 1500 */
 #define unlink(pathname) _unlink(pathname)
 #define lseek(fd, offset, whence) _lseek(fd, offset, whence)
 #define getpid() _getpid()
