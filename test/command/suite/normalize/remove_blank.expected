@@ -1,2 +1,2 @@
 normalize NormalizerAuto "a b c" REMOVE_BLANK
-[[0,0.0,0.0],{"normalized":"abc","types":[]}]
+[[0,0.0,0.0],{"normalized":"abc","types":[],"checks":[]}]

@@ -1,2 +1,2 @@
 normalize NormalizerAuto "aBcDe 123"
-[[0,0.0,0.0],{"normalized":"abcde 123","types":[]}]
+[[0,0.0,0.0],{"normalized":"abcde 123","types":[],"checks":[]}]

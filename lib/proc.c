@@ -2867,6 +2867,7 @@ proc_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     grn_obj *normalizer;
     grn_obj *grn_string;
     int flags;
+    unsigned int normalized_length_in_bytes;
     unsigned int normalized_n_characters;
 
     flags = parse_normalize_flags(ctx, flag_names);
@@ -2890,7 +2891,6 @@ proc_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     GRN_OUTPUT_MAP_OPEN("RESULT", 2);
     {
       const char *normalized;
-      unsigned int normalized_length_in_bytes;
 
       grn_string_get_normalized(ctx, grn_string,
                                 &normalized,
@@ -2913,6 +2913,23 @@ proc_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
         GRN_OUTPUT_ARRAY_CLOSE();
       } else {
         GRN_OUTPUT_ARRAY_OPEN("types", 0);
+        GRN_OUTPUT_ARRAY_CLOSE();
+      }
+    }
+    {
+      const short *checks;
+
+      checks = grn_string_get_checks(ctx, grn_string);
+      GRN_OUTPUT_CSTR("checks");
+      if (checks) {
+        unsigned int i;
+        GRN_OUTPUT_ARRAY_OPEN("checks", normalized_length_in_bytes);
+        for (i = 0; i < normalized_length_in_bytes; i++) {
+          GRN_OUTPUT_INT32(checks[i]);
+        }
+        GRN_OUTPUT_ARRAY_CLOSE();
+      } else {
+        GRN_OUTPUT_ARRAY_OPEN("checks", 0);
         GRN_OUTPUT_ARRAY_CLOSE();
       }
     }
