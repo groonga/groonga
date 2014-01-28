@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-23 17:04+0900\n"
-"PO-Revision-Date: 2013-12-25 15:24+0900\n"
+"POT-Creation-Date: 2014-01-28 11:32+0900\n"
+"PO-Revision-Date: 2014-01-28 12:02+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -20,11 +20,113 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 3.1.1 - 2013/12/29"
-msgstr "3.1.1リリース - 2013/12/29"
+msgid "Release 3.1.2 - 2014/01/29"
+msgstr "3.1.2リリース - 2014/01/29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid ""
+"[doc] Updated to caplitalized \"Groonga\" terms in documentation. [Patch by "
+"cosmo0920] [GitHub#136, #137, #138, #139, #140, #141, #142, #143, #144, "
+"#145, #146, #147, #148, #149, #150, #151]"
+msgstr ""
+"[doc] \\\"Groonga\\\" 表記に更新しました。[cosmo0920さんがパッチ提供] "
+"[GitHub#136, #137, #138, #139, #140, #141, #142, #143, #144, #145, #146, "
+"#147, #148, #149, #150, #151]"
+
+msgid ""
+"Supported to customize the value of lock timeout. See :doc:`/reference/api/"
+"global_configurations` about details. [groonga-dev,02017] [Suggested by yoku]"
+msgstr ""
+"ロックタイムアウトの値をカスタマイズできるようにしました。 詳細は :doc:`/"
+"reference/api/global_configurations` を参照してください。 [groonga-"
+"dev,02017] [yokuさんが提案]"
+
+msgid "[doc] Added description about the value of lock timeout."
+msgstr "[doc] ロックタイムアウトについての説明を追加しました。"
+
+msgid ""
+"Enabled ``GRN_JA_SKIP_SAME_VALUE_PUT`` by default. In the previous releases, "
+"the value of this configuration is 'no'. This change affects reducing the "
+"size of Groonga database."
+msgstr ""
+"``GRN_JA_SKIP_SAME_VALUE_PUT`` をデフォルトで有効にしました。以前のバージョン"
+"までは、この設定は 'no' となっていました。この変更により、Groongaのデータベー"
+"スのサイズの増加を抑制できます。"
+
+# c50da55dfc9742fd9b1e8f9af9a1bb7d
+msgid ""
+"Supported multiple indexes including a nested index and multiple keywords "
+"query. This change improves missing search results isssue when narrowing "
+"down by multiple keywords query."
+msgstr ""
+"ネストしたインデックスと複数のキーワードを含むクエリに対するインデックスを使"
+"えるようにしました。この変更で複数のキーワードで絞り込んだときに検索結果が欠"
+"落していた問題が改善します。"
+
+msgid "Added API to customize normalizer for snippet."
+msgstr ""
+"スニペット向けにノーマライザーをカスタマイズするためのAPIを追加しました。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid ""
+"Fixed not to use index for empty query. This change enables you to search "
+"even though empty query. Note that this means that there is performance "
+"penalty if many empty records exist. [groonga-dev,02052] [Reported by Naoya "
+"Murakami]"
+msgstr ""
+"空のクエリに対してインデックスを使わないようにしました。この変更で、空のクエ"
+"リでも検索できるようになりました。ただし空のレコードがたくさんあるとパフォー"
+"マンスの問題があることに注意してください。 [groonga-dev,02052] [村上さんが報"
+"告]"
+
+# 3ec71b87bb204da0a7219fcdff2b2bc7
+msgid ""
+"Fixed the behaviour about return value of \"X || Y\" and \"X && Y\" for "
+"adjusting to ECMAScript. In \"X || Y\" case, if either X or Y satisfy the "
+"condition, it returns X itself or Y itself instead of 1 or 0."
+msgstr ""
+"\"X || Y\"と\"X && Y\"の返り値の振舞いをECMAScriptに準拠するようにしまし"
+"た。\"X || Y\"では、もしXかYが条件を満す場合にはXもしくはYそのものの値を返し"
+"ます。以前は1もしくは0を返していました。"
+
+# e894addc2a5d4939a08c935d767a5031
+msgid ""
+"In \"X && Y\" case, if X and Y satisfy the condition, it returns X itself "
+"instead of 1. if X doesn't satisfy the condition, it returns false instead "
+"of 0."
+msgstr ""
+"\"X && Y\"では、もしXとYが条件を満す場合には、1ではなく、Xの値を返します。も"
+"しXが条件を満さない場合には、0ではなくfalseを返します。"
+
+# 5bb753f978fc42d2925ea09c2055e05e
+msgid ""
+"Fixed to return null when no snippet is found. This change enables you to "
+"set the default value of :doc:`/reference/functions/snippet_html`. In such a "
+"purpose, use \"snippet_html(XXX) || 'default value'\"."
+msgstr ""
+"スニペットが見付からない場合にはnullを返すようにしました。この変更により、 :"
+"doc:`/reference/functions/snippet_html` のデフォルトの値を指定できるようにな"
+"りました。この用途には \"snippet_html(XXX) || 'デフォルトの値'\"を使って下さ"
+"い。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "cosmo0920"
+msgstr "cosmo0920さん"
+
+msgid "yoku"
+msgstr "yokuさん"
+
+msgid "Naoya Murakami"
+msgstr "村上さん"
+
+msgid "Release 3.1.1 - 2013/12/29"
+msgstr "3.1.1リリース - 2013/12/29"
 
 msgid ""
 "[deb] Refined Groonga packages for Debian policy. [groonga-dev,01930] "
@@ -84,9 +186,6 @@ msgstr ""
 "[GitHub#122, #123, #124, #125, #125, #126, #127, #128, #129, #130, #131, "
 "#131, #132, #133, #134]"
 
-msgid "Fixes"
-msgstr "修正"
-
 msgid "[munin] Fixed the wrong port number which is specified for GQTP."
 msgstr "[munin] GQTPのポート番号の誤りを修正しました。"
 
@@ -99,9 +198,6 @@ msgstr ""
 "geo_in_circle` の3番目の引数に与えたときにGroongaがクラッシュする問題を修正し"
 "ました。"
 
-msgid "Thanks"
-msgstr "感謝"
-
 msgid "Hideki Yamane"
 msgstr "やまねひできさん"
 
@@ -110,9 +206,6 @@ msgstr "whombxさん"
 
 msgid "@Yappo"
 msgstr "@Yappoさん"
-
-msgid "cosmo0920"
-msgstr "cosmo0920さん"
 
 msgid "Release 3.1.0 - 2013/11/29"
 msgstr "3.1.0リリース - 2013/11/29"
@@ -324,9 +417,6 @@ msgid ""
 msgstr ""
 "Time型にキャストするときにオーバーフローする問題を修正しました。これはTime型"
 "に32bitの範囲を超えた値を設定する場合に影響します。"
-
-msgid "Naoya Murakami"
-msgstr "村上さん"
 
 msgid "wanabe"
 msgstr "wanabeさん"
