@@ -58,8 +58,8 @@ console because groonga-httpd runs as a daemon process by default.::
 
    % groonga-httpd
 
-Request queries (GET)
-^^^^^^^^^^^^^^^^^^^^^
+Request queries
+^^^^^^^^^^^^^^^
 
 To check, request a simple query (:doc:`/reference/commands/status`).
 
@@ -69,8 +69,8 @@ To check, request a simple query (:doc:`/reference/commands/status`).
 .. /d/status
 
 
-Request queries (POST)
-^^^^^^^^^^^^^^^^^^^^^^
+Loading by POST JSON data
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The feature of groonga-httpd in contrast to groonga is supporting POST method.
 
