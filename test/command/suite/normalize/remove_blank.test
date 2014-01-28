@@ -1,1 +1,1 @@
-normalize NormalizerAuto "a b c" REMOVE_BLANK|WITH_CHECKS
+normalize NormalizerAuto " a  b   c " REMOVE_BLANK|WITH_CHECKS
