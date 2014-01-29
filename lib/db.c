@@ -1537,6 +1537,7 @@ delete_reference_records_in_index(grn_ctx *ctx, grn_obj *table, grn_id id,
   grn_obj source_ids;
   unsigned int i, n_ids;
   grn_obj sources;
+  grn_bool have_reference_source = GRN_FALSE;
 
   GRN_UINT32_INIT(&source_ids, GRN_OBJ_VECTOR);
   GRN_PTR_INIT(&sources, GRN_OBJ_VECTOR, 0);
@@ -1553,7 +1554,17 @@ delete_reference_records_in_index(grn_ctx *ctx, grn_obj *table, grn_id id,
 
     source_id = GRN_UINT32_VALUE_AT(&source_ids, i);
     source = grn_ctx_at(ctx, source_id);
-    GRN_PTR_PUT(ctx, &sources, source);
+    if (grn_obj_get_range(ctx, source) == index->header.domain) {
+      GRN_PTR_PUT(ctx, &sources, source);
+      have_reference_source = GRN_TRUE;
+    } else {
+      grn_obj_unlink(ctx, source);
+      GRN_PTR_PUT(ctx, &sources, NULL);
+    }
+  }
+
+  if (!have_reference_source) {
+    goto exit;
   }
 
   ii_cursor = grn_ii_cursor_open(ctx, ii, id, GRN_ID_NIL, GRN_ID_MAX,
@@ -1564,6 +1575,9 @@ delete_reference_records_in_index(grn_ctx *ctx, grn_obj *table, grn_id id,
 
   while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
     grn_obj *source = GRN_PTR_VALUE_AT(&sources, posting->sid - 1);
+    if (!source) {
+      continue;
+    }
     switch (source->header.type) {
     case GRN_COLUMN_VAR_SIZE :
       switch (source->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
@@ -1655,11 +1669,17 @@ delete_reference_records(grn_ctx *ctx, grn_obj *table, grn_id id)
 
   GRN_HASH_EACH(ctx, cols, tid, &key, NULL, NULL, {
     grn_obj *col = grn_ctx_at(ctx, *key);
-    if (col && col->header.type == GRN_COLUMN_INDEX) {
-      delete_reference_records_in_index(ctx, table, id, col);
-      if (ctx->rc != GRN_SUCCESS) {
-        break;
-      }
+    if (!col) {
+      continue;
+    }
+    if (col->header.type != GRN_COLUMN_INDEX) {
+      grn_obj_unlink(ctx, col);
+      continue;
+    }
+    delete_reference_records_in_index(ctx, table, id, col);
+    grn_obj_unlink(ctx, col);
+    if (ctx->rc != GRN_SUCCESS) {
+      break;
     }
   });
 

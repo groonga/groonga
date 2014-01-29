@@ -1,0 +1,116 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms memo_content COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": "Today is sunny day."},
+{"content": "Today is rainy day."}
+]
+[[0,0.0,0.0],2]
+select Memos --query 'content:@sunny'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "content",
+          "Text"
+        ]
+      ],
+      [
+        1,
+        "Today is sunny day."
+      ]
+    ]
+  ]
+]
+delete Terms --filter '_key == "sunny"'
+[[0,0.0,0.0],true]
+select Terms --output_columns _key
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        5
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        "."
+      ],
+      [
+        "day"
+      ],
+      [
+        "is"
+      ],
+      [
+        "rainy"
+      ],
+      [
+        "today"
+      ]
+    ]
+  ]
+]
+select Memos --query 'content:@sunny'
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["content","Text"]]]]]
+select Memos
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "content",
+          "Text"
+        ]
+      ],
+      [
+        1,
+        "Today is sunny day."
+      ],
+      [
+        2,
+        "Today is rainy day."
+      ]
+    ]
+  ]
+]

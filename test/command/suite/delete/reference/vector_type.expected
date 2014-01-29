@@ -29,7 +29,7 @@ column_create URLs author COLUMN_SCALAR Users
 load --table Users
 [
 ["_key","bookmarks"],
-["mori",["http://mroonga.org/","http://ranguba.org/"]]
+["mori",["http://mroonga.org/","http://groonga.org/","http://ranguba.org/"]]
 ]
 load --table URLs
 [

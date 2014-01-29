@@ -1,0 +1,21 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Terms memo_content COLUMN_INDEX|WITH_POSITION Memos content
+
+load --table Memos
+[
+{"content": "Today is sunny day."},
+{"content": "Today is rainy day."}
+]
+
+select Memos --query 'content:@sunny'
+
+delete Terms --filter '_key == "sunny"'
+select Terms --output_columns _key
+
+select Memos --query 'content:@sunny'
+select Memos
