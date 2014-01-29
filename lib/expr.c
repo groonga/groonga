@@ -1127,7 +1127,6 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
               obj = col;
               type = col->header.type;
               domain = grn_obj_get_range(ctx, col);
-              grn_obj_unlink(ctx, col);
             }
           } else {
             domain = grn_obj_get_range(ctx, obj);
