@@ -1,4 +1,5 @@
 .. -*- rst -*-
+.. Groonga project
 
 .. highlightlang:: none
 

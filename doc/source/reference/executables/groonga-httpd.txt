@@ -69,8 +69,8 @@ To check, request a simple query (:doc:`/reference/commands/status`).
 .. /d/status
 
 
-Loading by POST JSON data
-^^^^^^^^^^^^^^^^^^^^^^^^^
+Loading data by POST
+^^^^^^^^^^^^^^^^^^^^
 
 The feature of groonga-httpd in contrast to groonga is supporting POST method.
 

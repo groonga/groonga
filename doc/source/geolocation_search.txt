@@ -1,4 +1,5 @@
 .. -*- rst -*-
+.. Groonga Project
 
 .. highlightlang:: none
 
@@ -22,7 +23,7 @@ so on aren't supported yet. Here is a feature list:
 #. Groonga can sort records by distance from the specified
    point in ascending order.
 
-Here are use cases for groonga's geolocation search:
+Here are use cases for Groonga's geolocation search:
 
 * You list McDonald's around a station.
 * You list KFS around the current location sort by distance
@@ -37,7 +38,7 @@ Here are not use cases:
   record. (A column can't has geolocation data except a
   point.)
 
-The following figures show about groonga's geolocation
+The following figures show about Groonga's geolocation
 search features.
 
 Here is a figure that only has records. A black point
