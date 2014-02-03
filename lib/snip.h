@@ -87,7 +87,7 @@ typedef struct
   unsigned int tag_count;
 } _snip_result;
 
-struct _grn_snip
+typedef struct _grn_snip
 {
   grn_db_obj obj;
   grn_encoding encoding;
@@ -116,9 +116,9 @@ struct _grn_snip
   size_t max_tagged_len;
 
   grn_obj *normalizer;
-};
+} grn_snip;
 
-grn_rc grn_snip_close_real(grn_ctx *ctx, grn_snip *snip);
+grn_rc grn_snip_close(grn_ctx *ctx, grn_snip *snip);
 grn_rc grn_snip_cond_init(grn_ctx *ctx, snip_cond *sc, const char *keyword, unsigned int keyword_len,
                           grn_encoding enc, grn_obj *normalizer, int flags);
 void grn_snip_cond_reinit(snip_cond *cond);

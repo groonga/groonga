@@ -49,7 +49,7 @@ void test_normalizer_accessor(void);
 
 static grn_ctx context;
 static grn_obj *database;
-static grn_snip *snip;
+static grn_obj *snip;
 static gchar *keyword;
 static gchar *result;
 
@@ -222,7 +222,7 @@ void
 cut_teardown(void)
 {
   if (snip) {
-    grn_obj_close(&context, (grn_obj *)snip);
+    grn_obj_close(&context, snip);
   }
   if (keyword) {
     g_free(keyword);
@@ -242,7 +242,7 @@ cut_teardown(void)
   grn_ctx_fin(&context);
 }
 
-static grn_snip *
+static grn_obj *
 open_snip(void)
 {
   if (snip) {

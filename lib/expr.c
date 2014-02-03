@@ -6518,7 +6518,7 @@ grn_expr_parser_close(grn_ctx *ctx)
 }
 
 grn_rc
-grn_expr_snip_add_conditions(grn_ctx *ctx, grn_obj *expr, grn_snip *snip,
+grn_expr_snip_add_conditions(grn_ctx *ctx, grn_obj *expr, grn_obj *snip,
                              unsigned int n_tags,
                              const char **opentags, unsigned int *opentag_lens,
                              const char **closetags, unsigned int *closetag_lens)
@@ -6581,7 +6581,7 @@ grn_expr_snip_add_conditions(grn_ctx *ctx, grn_obj *expr, grn_snip *snip,
   GRN_API_RETURN(GRN_SUCCESS);
 }
 
-grn_snip *
+grn_obj *
 grn_expr_snip(grn_ctx *ctx, grn_obj *expr, int flags,
               unsigned int width, unsigned int max_results,
               unsigned int n_tags,
@@ -6589,7 +6589,7 @@ grn_expr_snip(grn_ctx *ctx, grn_obj *expr, int flags,
               const char **closetags, unsigned int *closetag_lens,
               grn_snip_mapping *mapping)
 {
-  grn_snip *res = NULL;
+  grn_obj *res = NULL;
   GRN_API_ENTER;
   if ((res = grn_snip_open(ctx, flags, width, max_results,
                            NULL, 0, NULL, 0, mapping))) {

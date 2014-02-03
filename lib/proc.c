@@ -3639,7 +3639,7 @@ selector_all_records(grn_ctx *ctx, grn_obj *table, grn_obj *index,
 }
 
 static grn_obj *
-snippet_exec(grn_ctx *ctx, grn_snip *snip, grn_obj *text,
+snippet_exec(grn_ctx *ctx, grn_obj *snip, grn_obj *text,
              grn_user_data *user_data)
 {
   grn_rc rc;
@@ -3695,7 +3695,7 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
     grn_obj *expression = NULL;
     grn_obj *condition_ptr = NULL;
     grn_obj *condition = NULL;
-    grn_snip *snip = NULL;
+    grn_obj *snip = NULL;
     int flags = GRN_SNIP_SKIP_LEADING_SPACES;
     unsigned int width = 200;
     unsigned int max_n_results = 3;
@@ -3725,7 +3725,7 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
 
     if (snip) {
       snippets = snippet_exec(ctx, snip, text, user_data);
-      grn_snip_close(ctx, snip);
+      grn_obj_close(ctx, snip);
     }
   }
 

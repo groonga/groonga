@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
-/* Copyright(C) 2009 Brazil
+/* Copyright(C) 2009-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -662,7 +662,7 @@ test_snip(void)
         GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA);
 
   {
-    grn_snip *snip;
+    grn_obj *snip;
     int flags = 0;
     unsigned int width, max_results;
     const char *open_tags[] = {"[[", "<"};
@@ -709,7 +709,7 @@ test_snip(void)
                             result);
     cut_assert_equal_uint(49, result_len);
 
-    grn_test_assert(grn_snip_close(&context, snip));
+    grn_test_assert(grn_obj_close(&context, snip));
   }
 }
 
@@ -727,7 +727,7 @@ test_snip_without_tags(void)
         GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA);
 
   {
-    grn_snip *snip;
+    grn_obj *snip;
     int flags = 0;
     unsigned int width, max_results;
     unsigned int n_results;
@@ -770,7 +770,7 @@ test_snip_without_tags(void)
                             result);
     cut_assert_equal_uint(45, result_len);
 
-    grn_test_assert(grn_snip_close(&context, snip));
+    grn_test_assert(grn_obj_close(&context, snip));
   }
 }
 

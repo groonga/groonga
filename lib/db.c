@@ -7738,7 +7738,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       rc = GRN_SUCCESS;
       break;
     case GRN_SNIP :
-      rc = grn_snip_close_real(ctx, (grn_snip *)obj);
+      rc = grn_snip_close(ctx, (grn_snip *)obj);
       break;
     case GRN_STRING :
       rc = grn_string_close(ctx, obj);
