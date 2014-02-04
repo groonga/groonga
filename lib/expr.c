@@ -2924,9 +2924,6 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           grn_obj pat_value;
           GRN_TEXT_INIT(&pat_value, 0);
           do {
-            uint32_t size;
-            const char *value;
-            grn_bool is_pat_key_accessor = GRN_FALSE;
             if (code->nargs == 1) {
               rec = v0;
               if (code->value) {
@@ -2950,33 +2947,11 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
             }
             if (col) {
               grn_obj_reinit_for(ctx, res, col);
-              if (col->header.type == GRN_ACCESSOR &&
-                  ((grn_accessor *)col)->action == GRN_ACCESSOR_GET_KEY &&
-                  ((grn_accessor *)col)->obj->header.type == GRN_TABLE_PAT_KEY) {
-                is_pat_key_accessor = GRN_TRUE;
-                GRN_BULK_REWIND(&pat_value);
-                grn_obj_get_value(ctx, col, GRN_RECORD_VALUE(rec), &pat_value);
-                value = GRN_BULK_HEAD(&pat_value);
-                size = GRN_BULK_VSIZE(&pat_value);
-              } else {
-                value = grn_obj_get_value_(ctx, col, GRN_RECORD_VALUE(rec),
-                                           &size);
-              }
+              grn_obj_get_value(ctx, col, GRN_RECORD_VALUE(rec), res);
             } else {
               ERR(GRN_INVALID_ARGUMENT, "col resolve failed");
               GRN_OBJ_FIN(ctx, &pat_value);
               goto exit;
-            }
-            if (!is_pat_key_accessor && size == GRN_OBJ_GET_VALUE_IMD) {
-              GRN_RECORD_SET(ctx, res, (uintptr_t)value);
-            } else {
-              if (value) {
-                if (res->header.type == GRN_VECTOR) {
-                  grn_vector_decode(ctx, res, value, size);
-                } else {
-                  grn_bulk_write_from(ctx, res, value, 0, size);
-                }
-              }
             }
             code++;
           } while (code < ce && code->op == GRN_OP_GET_VALUE);

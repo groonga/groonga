@@ -1,0 +1,8 @@
+table_create Memos TABLE_HASH_KEY ShortText
+
+load --table Memos
+[
+{"_key": "Groonga is full text search engine."}
+]
+
+select Memos --filter true --output_columns _key,_score --command_version 2
