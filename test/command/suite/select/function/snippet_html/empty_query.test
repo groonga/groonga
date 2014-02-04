@@ -1,0 +1,16 @@
+table_create Documents TABLE_HASH_KEY ShortText
+column_create Documents content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+column_create Terms document_index COLUMN_INDEX|WITH_POSITION Documents content
+
+load --table Documents
+[
+["_key", "content"],
+["About Groonga", "Groonga is an open-source fulltext search engine and column store. It lets you write high-performance applications that requires fulltext search."]
+]
+
+select Documents \
+  --match_columns content --query '' \
+  --output_columns 'snippet_html(content)' \
+  --command_version 2

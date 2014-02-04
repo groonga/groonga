@@ -3729,6 +3729,10 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
     }
   }
 
+  if (!snippets) {
+    snippets = GRN_PROC_ALLOC(GRN_DB_VOID, 0);
+  }
+
   return snippets;
 }
 
