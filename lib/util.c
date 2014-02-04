@@ -803,15 +803,21 @@ grn_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 
   table = grn_ctx_at(ctx, obj->header.domain);
   GRN_TEXT_PUTS(ctx, buf, "#<record:");
-  grn_table_type_inspect(ctx, buf, table);
-  GRN_TEXT_PUTS(ctx, buf, ":");
-  grn_inspect_name(ctx, buf, table);
+  if (table) {
+    grn_table_type_inspect(ctx, buf, table);
+    GRN_TEXT_PUTS(ctx, buf, ":");
+    grn_inspect_name(ctx, buf, table);
+  } else {
+    GRN_TEXT_PUTS(ctx, buf, "(anonymous table:");
+    grn_text_lltoa(ctx, buf, obj->header.domain);
+    GRN_TEXT_PUTS(ctx, buf, ")");
+  }
 
   GRN_TEXT_PUTS(ctx, buf, " id:");
   id = GRN_RECORD_VALUE(obj);
   grn_text_lltoa(ctx, buf, id);
 
-  if (grn_table_at(ctx, table, id)) {
+  if (table && grn_table_at(ctx, table, id)) {
     if (table->header.type != GRN_TABLE_NO_KEY) {
       grn_obj key;
       GRN_TEXT_PUTS(ctx, buf, " key:");
@@ -846,7 +852,9 @@ grn_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   }
   GRN_TEXT_PUTS(ctx, buf, ">");
 
-  grn_obj_unlink(ctx, table);
+  if (table) {
+    grn_obj_unlink(ctx, table);
+  }
 
   return GRN_SUCCESS;
 }
