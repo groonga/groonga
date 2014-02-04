@@ -3647,6 +3647,10 @@ snippet_exec(grn_ctx *ctx, grn_obj *snip, grn_obj *text,
   grn_obj snippet_buffer;
   grn_obj *snippets;
 
+  if (GRN_TEXT_LEN(text) == 0) {
+    return NULL;
+  }
+
   rc = grn_snip_exec(ctx, snip,
                      GRN_TEXT_VALUE(text), GRN_TEXT_LEN(text),
                      &n_results, &max_tagged_length);
