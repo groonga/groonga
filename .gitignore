@@ -90,6 +90,7 @@ cmake_install.cmake
 /packages/apt/debian/groonga-keyring.postrm
 /packages/apt/repositories/debian/pool/*/*/*/*/*.diff.gz
 /packages/apt/repositories/debian/pool/*/*/*/*/*.tar.gz
+/packages/apt/repositories/debian/pool/*/*/*/*/*.tar.xz
 /packages/apt/repositories/debian/pool/*/*/*/*/*.build
 /packages/apt/repositories/debian/pool/*/*/*/*/*.changes
 /packages/apt/repositories/debian/pool/*/*/*/*/*.deb
