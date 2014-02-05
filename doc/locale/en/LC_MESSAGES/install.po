@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-23 17:13+0900\n"
+"POT-Creation-Date: 2014-02-05 11:57+0900\n"
 "PO-Revision-Date: 2014-01-23 17:21+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -719,7 +719,7 @@ msgid ""
 "org:"
 msgstr ""
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-3.1.2-x86.exe"
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.0-x86.exe"
 msgstr ""
 
 msgid "Then run it."
@@ -730,7 +730,7 @@ msgid ""
 "org:"
 msgstr ""
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-3.1.2-x64.exe"
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.0-x64.exe"
 msgstr ""
 
 msgid ""
@@ -745,7 +745,7 @@ msgid ""
 "For 32-bit environment, download x86 zip archive from packages.groonga.org:"
 msgstr ""
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-3.1.2-x86.zip"
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.0-x86.zip"
 msgstr ""
 
 msgid "Then extract it."
@@ -755,7 +755,7 @@ msgid ""
 "For 64-bit environment, download x64 zip archive from packages.groonga.org:"
 msgstr ""
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-3.1.2-x64.zip"
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.0-x64.zip"
 msgstr ""
 
 msgid "You can find :doc:`/reference/executables/groonga` in ``bin`` folder."
@@ -779,7 +779,7 @@ msgstr "`CMake <http://www.cmake.org/>`_"
 msgid "Download zipped source from packages.groonga.org:"
 msgstr ""
 
-msgid "http://packages.groonga.org/source/groonga/groonga-3.1.2.zip"
+msgid "http://packages.groonga.org/source/groonga/groonga-4.0.0.zip"
 msgstr ""
 
 msgid "Move to the Groonga's source folder::"

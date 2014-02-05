@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-23 17:04+0900\n"
+"POT-Creation-Date: 2014-02-05 11:55+0900\n"
 "PO-Revision-Date: 2013-11-15 11:25+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -777,7 +777,7 @@ msgstr ""
 "32-bit環境の場合は、x86のバイナリをpackages.groonga.orgからダウンロードしてく"
 "ださい。"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-3.1.2-x86.exe"
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.0-x86.exe"
 msgstr ""
 
 msgid "Then run it."
@@ -790,7 +790,7 @@ msgstr ""
 "64-bit環境の場合は、x64のバイナリをpackages.groonga.orgからダウンロードしてく"
 "ださい。"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-3.1.2-x64.exe"
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.0-x64.exe"
 msgstr ""
 
 msgid ""
@@ -809,7 +809,7 @@ msgstr ""
 "32-bit環境の場合は、x86のzipアーカイブをpackages.groonga.orgからダウンロード"
 "してください。"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-3.1.2-x86.zip"
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.0-x86.zip"
 msgstr ""
 
 msgid "Then extract it."
@@ -821,7 +821,7 @@ msgstr ""
 "64-bit環境の場合は、x64のzipアーカイブをpackages.groonga.orgからダウンロード"
 "してください。"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-3.1.2-x64.zip"
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.0-x64.zip"
 msgstr ""
 
 msgid "You can find :doc:`/reference/executables/groonga` in ``bin`` folder."
@@ -847,7 +847,7 @@ msgstr ""
 msgid "Download zipped source from packages.groonga.org:"
 msgstr "zipアーカイブをpackages.groonga.orgからダウンロードしてください。"
 
-msgid "http://packages.groonga.org/source/groonga/groonga-3.1.2.zip"
+msgid "http://packages.groonga.org/source/groonga/groonga-4.0.0.zip"
 msgstr ""
 
 msgid "Move to the Groonga's source folder::"
