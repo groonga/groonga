@@ -361,6 +361,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Sun Feb 09 2014 HAYASHI Kentaro <hayashi@clear-code.com> - 4.0.0-1
+- new upstream release.
+
 * Wed Jan 29 2014 HAYASHI Kentaro <hayashi@clear-code.com> - 3.1.2-1
 - new upstream release.
 
