@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2012-2013 Brazil
+  Copyright(C) 2012-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -100,6 +100,20 @@ ngx_str_equal_c_string(ngx_str_t *string, const char *c_string)
   }
 
   return memcmp(c_string, string->data, string->len) == 0;
+}
+
+static grn_bool
+ngx_str_is_custom_path(ngx_str_t *string)
+{
+  if (string->len == 0) {
+    return GRN_FALSE;
+  }
+
+  if (strncmp((const char *)(string->data), "off", string->len) == 0) {
+    return GRN_FALSE;
+  }
+
+  return GRN_TRUE;
 }
 
 static void
@@ -901,9 +915,7 @@ ngx_http_groonga_conf_set_log_path_slot(ngx_conf_t *cf, ngx_command_t *cmd,
     return NGX_CONF_OK;
   }
 
-  if (strncmp((const char *)(groonga_location_conf->log_path.data),
-              "off",
-              groonga_location_conf->log_path.len) == 0) {
+  if (!ngx_str_is_custom_path(&(groonga_location_conf->log_path))) {
     return NGX_CONF_OK;
   }
 
@@ -975,9 +987,7 @@ ngx_http_groonga_conf_set_query_log_path_slot(ngx_conf_t *cf,
     return NGX_CONF_OK;
   }
 
-  if (strncmp((const char *)(groonga_location_conf->query_log_path.data),
-              "off",
-              groonga_location_conf->query_log_path.len) == 0) {
+  if (!ngx_str_is_custom_path(&(groonga_location_conf->query_log_path))) {
     return NGX_CONF_OK;
   }
 
@@ -1057,7 +1067,9 @@ ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
 
   ngx_conf_merge_str_value(conf->query_log_path, prev->query_log_path,
                            NGX_HTTP_GROONGA_QUERY_LOG_PATH);
-  if (!conf->query_log_file && conf->query_log_path.data && conf->enabled) {
+  if (!conf->query_log_file &&
+      ngx_str_is_custom_path(&(conf->query_log_path)) &&
+      conf->enabled) {
     conf->query_log_file = ngx_conf_open_file(cf->cycle,
                                               &(conf->query_log_path));
     if (!conf->query_log_file) {
