@@ -2237,7 +2237,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   ((y == -1) ? -(x) : (x) / (y))
 #define UNSIGNED_INTEGER_DIVISION_OPERATION_SLASH(x, y) ((x) / (y))
 #define FLOAT_DIVISION_OPERATION_SLASH(x, y) ((double)(x) / (double)(y))
-#define SIGNED_INTEGER_DIVISION_OPERATION_MOD(x, y) ((y == -1) ? 0 : (x) / (y))
+#define SIGNED_INTEGER_DIVISION_OPERATION_MOD(x, y) ((y == -1) ? 0 : (x) % (y))
 #define UNSIGNED_INTEGER_DIVISION_OPERATION_MOD(x, y) ((x) % (y))
 #define FLOAT_DIVISION_OPERATION_MOD(x, y) (fmod((x), (y)))
 
