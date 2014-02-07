@@ -36,13 +36,15 @@ Fixes
   [groonga-dev,02097] [Reported by Naoya Murakami]
 * [snippet_html] Fixed to suppress ALERT level message when contents of column is empty text.
   [groonga-dev,02097] [Reported by Naoya Murakami]
-
+* [groonga-httpd] Fixed a bug "off" is used as path name in groonga_query_log_path.
+  [groonga-dev,02113] [Reported by Ryoji Yamamoto]
 
 Thanks
 ^^^^^^
 
 * yoku
 * Naoya Murakami
+* Ryoji Yamamoto
 
 .. _release-3-1-2:
 
