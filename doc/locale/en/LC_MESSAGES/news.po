@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-05 11:57+0900\n"
-"PO-Revision-Date: 2014-01-24 14:40+0900\n"
+"POT-Creation-Date: 2014-02-06 18:02+0900\n"
+"PO-Revision-Date: 2014-02-07 10:12+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -20,11 +20,66 @@ msgstr ""
 msgid "News"
 msgstr "News"
 
-msgid "Release 3.1.2 - 2014/01/29"
+msgid "Release 4.0.0 - 2014/02/09"
+msgstr ""
+
+msgid "Bump version to 4.0.0!"
 msgstr ""
 
 msgid "Improvements"
 msgstr "Improvements"
+
+msgid ""
+"[normalizer] Supported to show \"checks\" which is used for calculating next "
+"character position. Use WITH_CHECKS flag to enable this feature."
+msgstr ""
+
+msgid "[deb] Dropped Ubuntu 13.04 support."
+msgstr ""
+
+msgid "Fixes"
+msgstr "Fixes"
+
+msgid ""
+"Fixed a crash bug that an object in grn_expr is used after it is freed. "
+"Normally Groonga server users aren't affected this bug. This bug mainly "
+"affects Rroonga users. Because this bug is occured by specifying column name "
+"including pseudo column name - such as '_key' - Rroonga users may use the "
+"usage."
+msgstr ""
+
+msgid ""
+"Fixed not to execute unexpected cascade delete which is introduced Groonga "
+"3.0.8 release. If source's range and index's domain are different, Groonga "
+"doesn't execute cascade delete. [groonga-dev,02073] [Reported by yoku]"
+msgstr ""
+
+msgid ""
+"Fixed not to publish grn_snip structure. Use grn_obj instead of grn_snip. If "
+"you use grn_snip_close, please replace grn_snip_close to grn_obj_close."
+msgstr ""
+
+msgid ""
+"[snippet_html] Fixed a crash bug when --query is empty. [groonga-dev,02097] "
+"[Reported by Naoya Murakami]"
+msgstr ""
+
+msgid ""
+"[snippet_html] Fixed to suppress ALERT level message when contents of column "
+"is empty text. [groonga-dev,02097] [Reported by Naoya Murakami]"
+msgstr ""
+
+msgid "Thanks"
+msgstr "Thanks"
+
+msgid "yoku"
+msgstr ""
+
+msgid "Naoya Murakami"
+msgstr ""
+
+msgid "Release 3.1.2 - 2014/01/29"
+msgstr ""
 
 msgid ""
 "[doc] Updated to caplitalized \"Groonga\" terms in documentation. [Patch by "
@@ -55,9 +110,6 @@ msgstr ""
 msgid "Added API to customize normalizer for snippet."
 msgstr ""
 
-msgid "Fixes"
-msgstr "Fixes"
-
 msgid ""
 "Fixed not to use index for empty query. This change enables you to search "
 "even though empty query. Note that this means that there is performance "
@@ -83,16 +135,7 @@ msgid ""
 "purpose, use \"snippet_html(XXX) || 'default value'\"."
 msgstr ""
 
-msgid "Thanks"
-msgstr "Thanks"
-
 msgid "cosmo0920"
-msgstr ""
-
-msgid "yoku"
-msgstr ""
-
-msgid "Naoya Murakami"
 msgstr ""
 
 msgid "Release 3.1.1 - 2013/12/29"
