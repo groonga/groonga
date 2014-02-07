@@ -1928,7 +1928,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
 #define ARITHMETIC_OPERATION_NO_CHECK(y) do {} while (0)
 #define ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y) do {        \
   if ((long long int)y == 0) {                                  \
-    ERR(GRN_INVALID_ARGUMENT, "dividend should not be 0");      \
+    ERR(GRN_INVALID_ARGUMENT, "divisor should not be 0");       \
     goto exit;                                                  \
   }                                                             \
 } while (0)

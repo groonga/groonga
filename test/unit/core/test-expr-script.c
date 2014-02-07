@@ -1240,7 +1240,7 @@ data_arithmetic_operator_error_slash(void)
             "body == \"fuga\" / \"hoge\"");
   ADD_DATUM("integer / 0",
             GRN_INVALID_ARGUMENT,
-            "dividend should not be 0",
+            "divisor should not be 0",
             "size == 10 / 0");
 }
 
@@ -1253,7 +1253,7 @@ data_arithmetic_operator_error_mod(void)
             "body == \"fuga\" % \"hoge\"");
   ADD_DATUM("integer % 0",
             GRN_INVALID_ARGUMENT,
-            "dividend should not be 0",
+            "divisor should not be 0",
             "size == 10 % 0");
 }
 
