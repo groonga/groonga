@@ -1,0 +1,11 @@
+table_create Values TABLE_NO_KEY
+column_create Values value COLUMN_SCALAR Int64
+
+load --table Values
+[
+{"value": -9223372036854775808}
+]
+
+select Values \
+  --output_columns 'value, value / -1' \
+  --command_version 2
