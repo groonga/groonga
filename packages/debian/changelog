@@ -7,6 +7,15 @@ groonga (4.0.0-1) unstable; urgency=low
 groonga (3.1.2-1) unstable; urgency=low
 
   * New upstream release.
+  * debian/control
+    - Add proper description to fix "duplicate-long-description" lintian warning
+      for groonga-server-gqtp and groonga-server-http packages.
+    - Remove needless period to fix I:description-synopsis-might-not-be-phrased-properly lintian warning.
+    - Use "all" in Architecture field to fix I: package-contains-no-arch-dependent-files
+      lintian warning for groonga-example package.
+  * debian/rules
+    - Add DEB_BUILD_HARDENING flag to fix lintian warning "hardening-no-relro" and
+      "hardening-no-fortify-functions"
 
  -- HAYASHI Kentaro <hayashi@clear-code.com>  Wed, 29 Jan 2014 00:00:00 +0900
 
