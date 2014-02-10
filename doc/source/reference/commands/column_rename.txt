@@ -11,16 +11,31 @@
 Summary
 -------
 
-``column_rename`` command renames specified column name of table.
+``column_rename`` command renames a column.
+
+It is a light operation. It just changes a relationship between name
+and the column object. It doesn't copy column values.
+
+It is a dangerous operation. You must stop all operations including
+read operations while you run ``column_rename``. If the following case
+is occurred, Groonga process may be crashed:
+
+  * Starts an operation (like ``select``) that accesses the column to
+    be renamed by the current column name. The current column name is
+    called as ``the old column name`` in the below because the column
+    name is renamed.
+  * Runs ``column_rename``. The ``select`` is still running.
+  * The ``select`` accesses the column to be renamed by the old column
+    name. But the ``select`` can't find the column by the old name
+    because the column has been renamed to the new column name. It may
+    crash the Groonga process.
 
 Syntax
 ------
 
-``column_rename`` command takes two parameters.
+``column_rename`` command takes three parameters. All parameters are required::
 
-The required parameter is ``table`` and ``column_name``::
-
-  column_rename table column
+  column_rename table name new_name
 
 Usage
 -----
@@ -46,20 +61,26 @@ Parameters
 
 This section describes parameters of ``column_rename``.
 
-Required parameter
-^^^^^^^^^^^^^^^^^^
+Required parameters
+^^^^^^^^^^^^^^^^^^^
 
-There are required parameters, ``table_name`` and ``column_name``.
+All parameters are required.
 
 ``table_name``
 """"""""""""""
 
-It specifies the name of table.
+It specifies the name of table that has the column to be renamed.
 
-``column_name``
-"""""""""""""""
+``name``
+""""""""
 
-It specifies the name of column.
+It specifies the column name to be renamed.
+
+``new_name``
+""""""""""""
+
+It specifies the new column name.
+
 
 Return value
 ------------
@@ -75,5 +96,5 @@ Return value
 
 ``SUCCEEDED_OR_NOT``
 
-  If command succeeded, it returns true, otherwise it returns false on error.
+  It is ``true`` on success, ``false`` otherwise.
 
