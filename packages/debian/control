@@ -13,7 +13,7 @@ Build-Depends:
   libevent-dev,
   libmecab-dev,
   libpcre3-dev
-Standards-Version: 3.9.3
+Standards-Version: 3.9.5
 Homepage: http://groonga.org/
 
 Package: groonga
