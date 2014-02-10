@@ -13,7 +13,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-cmake_minimum_required(VERSION 2.8.8)
+cmake_minimum_required(VERSION 2.6.4)
 set(GRN_PROJECT_NAME "groonga")
 project("${GRN_PROJECT_NAME}")
 
@@ -383,6 +383,11 @@ endif()
 option(GRN_WITH_MRUBY "use mruby" OFF)
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/mruby_version" MRUBY_VERSION)
 if(GRN_WITH_MRUBY)
+  if(CMAKE_VERSION VERSION_LESS "2.8.8")
+    message(FATAL_ERROR
+      "Your CMake (${CMAKE_VERSION}) is old. "
+      "CMake 2.8.8 or later is required for mruby supported build")
+  endif()
   set(MRUBY_INCLUDE_DIRS
     "${CMAKE_CURRENT_SOURCE_DIR}/vendor/mruby-${MRUBY_VERSION}/include")
   set(MRUBY_LIBS "$<TARGET_OBJECTS:mruby>")
