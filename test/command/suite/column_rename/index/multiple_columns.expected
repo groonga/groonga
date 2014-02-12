@@ -1,0 +1,71 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos title COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --normalizer NormalizerAuto   --default_tokenizer TokenBigram
+[[0,0.0,0.0],true]
+column_create Terms memos COLUMN_INDEX|WITH_SECTION|WITH_POSITION   Memos title,content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"title": "Groonga", "content": "Groonga is fast."}
+]
+[[0,0.0,0.0],1]
+column_rename Terms memos memos_index
+[[0,0.0,0.0],true]
+dump
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR Text
+column_create Memos title COLUMN_SCALAR ShortText
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+column_create Terms memos_index COLUMN_INDEX|WITH_SECTION|WITH_POSITION Memos title,content
+load --table Memos
+[
+["_id","content","title"],
+[1,"Groonga is fast.","Groonga"]
+]
+load --table Terms
+[
+["_key"],
+["."],
+["fast"],
+["groonga"],
+["is"]
+]
+
+select Memos --query "content:@groonga"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "content",
+          "Text"
+        ],
+        [
+          "title",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "Groonga is fast.",
+        "Groonga"
+      ]
+    ]
+  ]
+]

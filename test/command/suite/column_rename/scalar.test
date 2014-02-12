@@ -1,0 +1,11 @@
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users age COLUMN_SCALAR UInt8
+
+load --table Users
+[
+{"_key": "alice", "age": 29}
+]
+
+column_rename Users age age_new
+
+select Users

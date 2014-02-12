@@ -1,0 +1,11 @@
+table_create Items TABLE_HASH_KEY ShortText
+column_create Items prices COLUMN_VECTOR UInt16
+
+load --table Items
+[
+{"_key": "Groogna book", "prices": [1029, 2029]}
+]
+
+column_rename Items prices new_prices
+
+select Items

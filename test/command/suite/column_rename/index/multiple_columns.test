@@ -1,0 +1,20 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos title COLUMN_SCALAR ShortText
+column_create Memos content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --normalizer NormalizerAuto \
+  --default_tokenizer TokenBigram
+column_create Terms memos COLUMN_INDEX|WITH_SECTION|WITH_POSITION \
+  Memos title,content
+
+load --table Memos
+[
+{"title": "Groonga", "content": "Groonga is fast."}
+]
+
+column_rename Terms memos memos_index
+
+dump
+
+select Memos --query "content:@groonga"
