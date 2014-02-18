@@ -94,8 +94,7 @@ Return value
 
 ``HEADER``
 
-  The format of HEADER is [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, ELAPSED_TIME].
-  See :doc:`/reference/command/output_format` about HEADER.
+  See :doc:`/reference/command/output_format` about ``HEADER``.
 
 ``SUCCEEDED``
 
