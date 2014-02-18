@@ -40,7 +40,7 @@ Here are a schema definition and sample data to show usage.
 .. [
 .. {"_key": 1, "status": "OK"}
 .. {"_key": 2, "status": "NG"}
-.. ] 
+.. ]
 
 Delete the record from Entry table which has "2" as the key.
 
@@ -67,12 +67,12 @@ The country column of Users table associates with Country table.
 .. {"_key": 2, "name": "Mike", country: "United States"}
 .. {"_key": 3, "name": "Takashi", country: "Japan"}
 .. {"_key": 4, "name": "Hanako", country: "Japan"}
-.. ] 
+.. ]
 .. load --table Country
 .. [
 .. {"_key": "United States"}
 .. {"_key": "Japan"}
-.. ] 
+.. ]
 .. delete Country "United States"
 .. select Country
 .. select Users
