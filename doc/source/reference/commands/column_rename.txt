@@ -66,8 +66,8 @@ Required parameters
 
 All parameters are required.
 
-``table_name``
-""""""""""""""
+``table``
+"""""""""
 
 It specifies the name of table that has the column to be renamed.
 
