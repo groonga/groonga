@@ -70,7 +70,7 @@ Return value
 
 ``cache_limit`` returns the current max number of query cache entries::
 
-  [[HEADER, N_ENTRIES]]
+  [HEADER, N_ENTRIES]
 
 ``HEADER``
 
