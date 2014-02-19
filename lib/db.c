@@ -9769,7 +9769,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
   GRN_UINT32_POP(&loader->level, begin);
   value = ((grn_obj *)(GRN_TEXT_VALUE(&loader->values))) + begin;
   ve = ((grn_obj *)(GRN_TEXT_VALUE(&loader->values))) + loader->values_size;
-  GRN_ASSERT(value->header.domain == OPEN_BRACKET);
+  GRN_ASSERT(value->header.domain == OPEN_BRACE);
   GRN_UINT32_SET(ctx, value, loader->values_size - begin - 1);
   value++;
   if (GRN_BULK_VSIZE(&loader->level) <= sizeof(uint32_t) * loader->emit_level) {
