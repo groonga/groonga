@@ -1,0 +1,12 @@
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos content COLUMN_SCALAR ShortText
+
+load --table Memos
+[
+{
+  "_key": "Groonga is fast",
+  "content": {
+    "groonga": 100
+  }
+}
+]

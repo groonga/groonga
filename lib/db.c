@@ -9462,7 +9462,8 @@ values_add(grn_ctx *ctx, grn_loader *loader)
 static grn_obj *
 values_next(grn_ctx *ctx, grn_obj *value)
 {
-  if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
+  if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET ||
+      value->header.domain == GRN_JSON_LOAD_OPEN_BRACE) {
     value += GRN_UINT32_VALUE(value);
   }
   return value + 1;
@@ -9574,6 +9575,21 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
   }
   grn_obj_set_value(ctx, column, id, &buf, GRN_OBJ_SET);
   GRN_OBJ_FIN(ctx, &buf);
+}
+
+static void
+set_map(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *map)
+{
+  if (column->header.type != GRN_COLUMN_INDEX) {
+    char column_name[GRN_TABLE_MAX_KEY_SIZE];
+    int column_name_size;
+    column_name_size = grn_obj_name(ctx, column, column_name,
+                                    GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_INVALID_ARGUMENT,
+        "<%.*s>: columns except index column don't support object value",
+        column_name_size, column_name);
+    return;
+  }
 }
 
 static inline int
@@ -9726,7 +9742,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
           if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
             set_vector(ctx, column, id, value);
           } else if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACE) {
-            /* todo */
+            set_map(ctx, column, id, value);
           } else {
             grn_obj_set_value(ctx, column, id, value, GRN_OBJ_SET);
           }
@@ -9836,7 +9852,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
             if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
               set_vector(ctx, col, id, value);
             } else if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACE) {
-              /* todo */
+              set_map(ctx, col, id, value);
             } else {
               grn_obj_set_value(ctx, col, id, value, GRN_OBJ_SET);
             }
