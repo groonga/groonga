@@ -9459,13 +9459,10 @@ values_add(grn_ctx *ctx, grn_loader *loader)
   return res;
 }
 
-#define OPEN_BRACKET 0x40000000
-#define OPEN_BRACE   0x40000001
-
 static grn_obj *
 values_next(grn_ctx *ctx, grn_obj *value)
 {
-  if (value->header.domain == OPEN_BRACKET) {
+  if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
     value += GRN_UINT32_VALUE(value);
   }
   return value + 1;
@@ -9625,7 +9622,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
   GRN_UINT32_POP(&loader->level, begin);
   value = ((grn_obj *)(GRN_TEXT_VALUE(&loader->values))) + begin;
   ve = ((grn_obj *)(GRN_TEXT_VALUE(&loader->values))) + loader->values_size;
-  GRN_ASSERT(value->header.domain == OPEN_BRACKET);
+  GRN_ASSERT(value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET);
   GRN_UINT32_SET(ctx, value, loader->values_size - begin - 1);
   value++;
   if (GRN_BULK_VSIZE(&loader->level) <= sizeof(uint32_t) * loader->emit_level) {
@@ -9726,9 +9723,9 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
           }
 
           column = *cols;
-          if (value->header.domain == OPEN_BRACKET) {
+          if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
             set_vector(ctx, column, id, value);
-          } else if (value->header.domain == OPEN_BRACE) {
+          } else if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACE) {
             /* todo */
           } else {
             grn_obj_set_value(ctx, column, id, value, GRN_OBJ_SET);
@@ -9769,7 +9766,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
   GRN_UINT32_POP(&loader->level, begin);
   value = ((grn_obj *)(GRN_TEXT_VALUE(&loader->values))) + begin;
   ve = ((grn_obj *)(GRN_TEXT_VALUE(&loader->values))) + loader->values_size;
-  GRN_ASSERT(value->header.domain == OPEN_BRACE);
+  GRN_ASSERT(value->header.domain == GRN_JSON_LOAD_OPEN_BRACE);
   GRN_UINT32_SET(ctx, value, loader->values_size - begin - 1);
   value++;
   if (GRN_BULK_VSIZE(&loader->level) <= sizeof(uint32_t) * loader->emit_level) {
@@ -9823,7 +9820,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
           value++;
           /* auto column create
           if (!col) {
-            if (value->header.domain == OPEN_BRACKET) {
+            if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
               grn_obj *v = value + 1;
               col = grn_column_create(ctx, loader->table, name, name_size,
                                       NULL, GRN_OBJ_PERSISTENT|GRN_OBJ_COLUMN_VECTOR,
@@ -9836,9 +9833,9 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
           }
           */
           if (col) {
-            if (value->header.domain == OPEN_BRACKET) {
+            if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
               set_vector(ctx, col, id, value);
-            } else if (value->header.domain == OPEN_BRACE) {
+            } else if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACE) {
               /* todo */
             } else {
               grn_obj_set_value(ctx, col, id, value, GRN_OBJ_SET);
@@ -9871,7 +9868,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
 #define JSON_READ_OPEN_BRACKET() do {\
   GRN_UINT32_PUT(ctx, &loader->level, loader->values_size);\
   values_add(ctx, loader);\
-  loader->last->header.domain = OPEN_BRACKET;\
+  loader->last->header.domain = GRN_JSON_LOAD_OPEN_BRACKET;\
   loader->stat = GRN_LOADER_TOKEN;\
   str++;\
 } while (0)
@@ -9879,7 +9876,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
 #define JSON_READ_OPEN_BRACE() do {\
   GRN_UINT32_PUT(ctx, &loader->level, loader->values_size);\
   values_add(ctx, loader);\
-  loader->last->header.domain = OPEN_BRACE;\
+  loader->last->header.domain = GRN_JSON_LOAD_OPEN_BRACE;\
   loader->stat = GRN_LOADER_TOKEN;\
   str++;\
 } while (0)
