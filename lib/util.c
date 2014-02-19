@@ -795,6 +795,51 @@ grn_geo_point_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 }
 
 static grn_rc
+grn_json_load_open_bracket_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  uint i, n;
+
+  n = GRN_UINT32_VALUE(obj);
+
+  GRN_TEXT_PUTS(ctx, buf, "[");
+  for (i = 0; i < n; i++) {
+    grn_obj *value;
+    value = obj + 1 + i;
+    if (i > 0) {
+      GRN_TEXT_PUTS(ctx, buf, ", ");
+    }
+    grn_inspect(ctx, buf, value);
+  }
+  GRN_TEXT_PUTS(ctx, buf, "]");
+
+  return GRN_SUCCESS;
+}
+
+static grn_rc
+grn_json_load_open_brace_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  uint i, n;
+
+  n = GRN_UINT32_VALUE(obj);
+
+  GRN_TEXT_PUTS(ctx, buf, "{");
+  for (i = 0; i < n; i += 2) {
+    grn_obj *key, *value;
+    key = obj + 1 + i;
+    value = key + 1;
+    if (i > 0) {
+      GRN_TEXT_PUTS(ctx, buf, ", ");
+    }
+    grn_inspect(ctx, buf, key);
+    GRN_TEXT_PUTS(ctx, buf, ": ");
+    grn_inspect(ctx, buf, value);
+  }
+  GRN_TEXT_PUTS(ctx, buf, "}");
+
+  return GRN_SUCCESS;
+}
+
+static grn_rc
 grn_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
   grn_id id;
@@ -905,6 +950,12 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
     case GRN_DB_TOKYO_GEO_POINT :
     case GRN_DB_WGS84_GEO_POINT :
       grn_geo_point_inspect(ctx, buffer, obj);
+      return buffer;
+    case GRN_JSON_LOAD_OPEN_BRACKET :
+      grn_json_load_open_bracket_inspect(ctx, buffer, obj);
+      return buffer;
+    case GRN_JSON_LOAD_OPEN_BRACE :
+      grn_json_load_open_brace_inspect(ctx, buffer, obj);
       return buffer;
     default :
       domain = grn_ctx_at(ctx, obj->header.domain);
