@@ -9578,7 +9578,7 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
 }
 
 static void
-set_map(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *map)
+set_index_value(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *index_value)
 {
   uint i, n;
   grn_obj new_value;
@@ -9596,7 +9596,7 @@ set_map(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *map)
     return;
   }
 
-  n = GRN_UINT32_VALUE(map);
+  n = GRN_UINT32_VALUE(index_value);
   range_id = grn_obj_get_range(ctx, column);
   range = grn_ctx_at(ctx, range_id);
   if (!range) {
@@ -9615,7 +9615,7 @@ set_map(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *map)
   for (i = 0; i < n; i += 2) {
     grn_obj *key, *value;
     grn_id token_id;
-    key = map + 1 + i;
+    key = index_value + 1 + i;
     value = key + 1;
     token_id = grn_table_add(ctx, range,
                              GRN_TEXT_VALUE(key), GRN_TEXT_LEN(key),
@@ -9782,7 +9782,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
           if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
             set_vector(ctx, column, id, value);
           } else if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACE) {
-            set_map(ctx, column, id, value);
+            set_index_value(ctx, column, id, value);
           } else {
             grn_obj_set_value(ctx, column, id, value, GRN_OBJ_SET);
           }
@@ -9892,7 +9892,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
             if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
               set_vector(ctx, col, id, value);
             } else if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACE) {
-              set_map(ctx, col, id, value);
+              set_index_value(ctx, col, id, value);
             } else {
               grn_obj_set_value(ctx, col, id, value, GRN_OBJ_SET);
             }
