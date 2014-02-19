@@ -16,7 +16,7 @@ load --table Users
 ]
 [[0,0.0,0.0],1]
 #|e| <Users.cards>: failed to cast to <UInt8>: <"GARBAGE">
-#|e| [table][load] failed to set column value: <Users.cards>: failed to cast to <UInt8>: <"GARBAGE">: key: <"alice">, column: <cards>, value: <3>
+#|e| [table][load] failed to set column value: <Users.cards>: failed to cast to <UInt8>: <"GARBAGE">: key: <"alice">, column: <cards>, value: <[1, "GARBAGE", 3]>
 select Users
 [
   [
