@@ -442,6 +442,65 @@ is_output_columns_format_v1(grn_ctx *ctx,
   return GRN_TRUE;
 }
 
+static double
+grn_select_apply_adjuster_ensure_factor(grn_ctx *ctx, grn_obj *factor_object)
+{
+  if (factor_object->header.domain == GRN_DB_FLOAT) {
+    return GRN_FLOAT_VALUE(factor_object);
+  } else {
+    grn_rc rc;
+    grn_obj float_object;
+    double factor;
+    GRN_FLOAT_INIT(&float_object, 0);
+    rc = grn_obj_cast(ctx, factor_object, &float_object, GRN_FALSE);
+    if (rc == GRN_SUCCESS) {
+      factor = GRN_FLOAT_VALUE(&float_object);
+    } else {
+      /* TODO: Log or return error? */
+      factor = 1.0;
+    }
+    GRN_OBJ_FIN(ctx, &float_object);
+    return factor;
+  }
+}
+
+static void
+grn_select_apply_adjuster(grn_ctx *ctx, grn_obj *res, grn_obj *adjuster)
+{
+  grn_expr *expr = (grn_expr *)adjuster;
+  grn_obj *index;
+  grn_obj *value;
+  double factor;
+  grn_obj *table;
+  grn_table_cursor *table_cursor;
+  grn_obj *index_cursor;
+  grn_posting *posting;
+
+  index = expr->codes[0].value;
+  value = expr->codes[1].value;
+  factor = grn_select_apply_adjuster_ensure_factor(ctx, expr->codes[2].value);
+
+  table = grn_ctx_at(ctx, grn_obj_get_range(ctx, index));
+  table_cursor = grn_table_cursor_open(ctx, table,
+                                       GRN_TEXT_VALUE(value),
+                                       GRN_TEXT_LEN(value),
+                                       GRN_TEXT_VALUE(value),
+                                       GRN_TEXT_LEN(value),
+                                       0, -1, 0);
+  index_cursor = grn_index_cursor_open(ctx, table_cursor, index,
+                                       GRN_ID_NIL, GRN_ID_MAX, 0);
+  while ((posting = grn_index_cursor_next(ctx, index_cursor, NULL))) {
+    posting->weight = posting->weight * factor - 1;
+    grn_ii_posting_add(ctx,
+                       (grn_ii_posting *)posting,
+                       (grn_hash *)res,
+                       GRN_OP_ADJUST);
+  }
+  grn_obj_unlink(ctx, index_cursor);
+  grn_table_cursor_close(ctx, table_cursor);
+  grn_obj_unlink(ctx, table);
+}
+
 grn_rc
 grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
            const char *match_columns, unsigned int match_columns_len,
@@ -458,7 +517,8 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
            const char *cache, unsigned int cache_len,
            const char *match_escalation_threshold, unsigned int match_escalation_threshold_len,
            const char *query_expander, unsigned int query_expander_len,
-           const char *query_flags, unsigned int query_flags_len)
+           const char *query_flags, unsigned int query_flags_len,
+           const char *adjuster, unsigned int adjuster_len)
 {
   uint32_t nkeys, nhits;
   uint16_t cacheable = 1, taintable = 0;
@@ -472,7 +532,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
     filter_len + 1 + scorer_len + 1 + sortby_len + 1 + output_columns_len + 1 +
     drilldown_len + 1 + drilldown_sortby_len + 1 +
     drilldown_output_columns_len + 1 + match_escalation_threshold_len + 1 +
-    query_expander_len + 1 + query_flags_len + 1 +
+    query_expander_len + 1 + query_flags_len + 1 + adjuster_len + 1 +
     sizeof(grn_content_type) + sizeof(int) * 4;
   long long int threshold, original_threshold = 0;
   grn_cache *cache_obj = grn_cache_current_get(ctx);
@@ -505,6 +565,8 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
     cp += query_expander_len; *cp++ = '\0';
     memcpy(cp, query_flags, query_flags_len);
     cp += query_flags_len; *cp++ = '\0';
+    memcpy(cp, adjuster, adjuster_len);
+    cp += adjuster_len; *cp++ = '\0';
     memcpy(cp, &output_type, sizeof(grn_content_type)); cp += sizeof(grn_content_type);
     memcpy(cp, &offset, sizeof(int)); cp += sizeof(int);
     memcpy(cp, &limit, sizeof(int)); cp += sizeof(int);
@@ -620,6 +682,23 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
         }
       }
       GRN_OUTPUT_ARRAY_OPEN("RESULT", result_size);
+
+      if (adjuster && adjuster_len) {
+        grn_obj *adjuster_;
+        grn_obj *v;
+        GRN_EXPR_CREATE_FOR_QUERY(ctx, table_, adjuster_, v);
+        if (adjuster_ && v) {
+          grn_expr_parse(ctx, adjuster_, adjuster, adjuster_len, NULL,
+                         GRN_OP_MATCH, GRN_OP_ADJUST,
+                         GRN_EXPR_SYNTAX_SCRIPT);
+          cacheable *= ((grn_expr *)adjuster_)->cacheable;
+          taintable += ((grn_expr *)adjuster_)->taintable;
+          grn_select_apply_adjuster(ctx, res, adjuster_);
+          grn_obj_unlink(ctx, adjuster_);
+        }
+        GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                      ":", "adjust(%d)", nhits);
+      }
 
       if (scorer && scorer_len) {
         grn_obj *v;
@@ -816,6 +895,7 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     : DEFAULT_DRILLDOWN_LIMIT;
   grn_obj *query_expansion = VAR(16);
   grn_obj *query_expander = VAR(18);
+  grn_obj *adjuster = VAR(19);
   if (GRN_TEXT_LEN(query_expander) == 0 && GRN_TEXT_LEN(query_expansion) > 0) {
     query_expander = query_expansion;
   }
@@ -842,7 +922,8 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                  GRN_TEXT_VALUE(VAR(14)), GRN_TEXT_LEN(VAR(14)),
                  GRN_TEXT_VALUE(VAR(15)), GRN_TEXT_LEN(VAR(15)),
                  GRN_TEXT_VALUE(query_expander), GRN_TEXT_LEN(query_expander),
-                 GRN_TEXT_VALUE(VAR(17)), GRN_TEXT_LEN(VAR(17)))) {
+                 GRN_TEXT_VALUE(VAR(17)), GRN_TEXT_LEN(VAR(17)),
+                 GRN_TEXT_VALUE(adjuster), GRN_TEXT_LEN(adjuster))) {
   }
   return NULL;
 }
@@ -4445,7 +4526,7 @@ exit :
 void
 grn_db_init_builtin_query(grn_ctx *ctx)
 {
-  grn_expr_var vars[20];
+  grn_expr_var vars[21];
 
   DEF_VAR(vars[0], "name");
   DEF_VAR(vars[1], "table");
@@ -4468,8 +4549,9 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[17], "query_expansion");
   DEF_VAR(vars[18], "query_flags");
   DEF_VAR(vars[19], "query_expander");
-  DEF_COMMAND("define_selector", proc_define_selector, 20, vars);
-  DEF_COMMAND("select", proc_select, 19, vars + 1);
+  DEF_VAR(vars[20], "adjuster");
+  DEF_COMMAND("define_selector", proc_define_selector, 21, vars);
+  DEF_COMMAND("select", proc_select, 20, vars + 1);
 
   DEF_VAR(vars[0], "values");
   DEF_VAR(vars[1], "table");
