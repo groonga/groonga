@@ -9580,6 +9580,11 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
 static void
 set_map(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *map)
 {
+  uint i, n;
+  grn_obj new_value;
+  grn_id range_id;
+  grn_obj *range;
+
   if (column->header.type != GRN_COLUMN_INDEX) {
     char column_name[GRN_TABLE_MAX_KEY_SIZE];
     int column_name_size;
@@ -9590,6 +9595,41 @@ set_map(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *map)
         column_name_size, column_name);
     return;
   }
+
+  n = GRN_UINT32_VALUE(map);
+  range_id = grn_obj_get_range(ctx, column);
+  range = grn_ctx_at(ctx, range_id);
+  if (!range) {
+    char column_name[GRN_TABLE_MAX_KEY_SIZE];
+    int column_name_size;
+    column_name_size = grn_obj_name(ctx, column, column_name,
+                                    GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_INVALID_ARGUMENT,
+        "<%.*s>: dangling range reference: <%d>",
+        column_name_size, column_name,
+        range_id);
+    return;
+  }
+
+  GRN_RECORD_INIT(&new_value, GRN_OBJ_VECTOR, range_id);
+  for (i = 0; i < n; i += 2) {
+    grn_obj *key, *value;
+    grn_id token_id;
+    key = map + 1 + i;
+    value = key + 1;
+    token_id = grn_table_add(ctx, range,
+                             GRN_TEXT_VALUE(key), GRN_TEXT_LEN(key),
+                             NULL);
+    if (token_id == GRN_ID_NIL) {
+      break;
+    }
+    GRN_RECORD_PUT(ctx, &new_value, token_id);
+  }
+  if (!ctx->rc) {
+    grn_obj *old_value = NULL; /* TODO */
+    grn_column_index_update(ctx, column, id, 1, old_value, &new_value);
+  }
+  GRN_OBJ_FIN(ctx, &new_value);
 }
 
 static inline int
