@@ -9581,7 +9581,6 @@ static void
 set_index_value(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *index_value)
 {
   uint i, n;
-  grn_obj new_value;
   grn_id range_id;
   grn_obj *range;
 
@@ -9611,10 +9610,10 @@ set_index_value(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *index_value)
     return;
   }
 
-  GRN_RECORD_INIT(&new_value, GRN_OBJ_VECTOR, range_id);
   for (i = 0; i < n; i += 2) {
     grn_obj *key, *value;
     grn_id token_id;
+    grn_ii_updspec *update_spec;
     key = index_value + 1 + i;
     value = key + 1;
     token_id = grn_table_add(ctx, range,
@@ -9623,13 +9622,11 @@ set_index_value(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *index_value)
     if (token_id == GRN_ID_NIL) {
       break;
     }
-    GRN_RECORD_PUT(ctx, &new_value, token_id);
+    update_spec = grn_ii_updspec_open(ctx, id, 1);
+    grn_ii_updspec_add(ctx, update_spec, 0, GRN_UINT32_VALUE(value));
+    grn_ii_update_one(ctx, (grn_ii *)column, token_id, update_spec, NULL);
+    grn_ii_updspec_close(ctx, update_spec);
   }
-  if (!ctx->rc) {
-    grn_obj *old_value = NULL; /* TODO */
-    grn_column_index_update(ctx, column, id, 1, old_value, &new_value);
-  }
-  GRN_OBJ_FIN(ctx, &new_value);
 }
 
 static inline int
