@@ -445,7 +445,9 @@ is_output_columns_format_v1(grn_ctx *ctx,
 static double
 grn_select_apply_adjuster_ensure_factor(grn_ctx *ctx, grn_obj *factor_object)
 {
-  if (factor_object->header.domain == GRN_DB_FLOAT) {
+  if (!factor_object) {
+    return 1.0;
+  } else if (factor_object->header.domain == GRN_DB_FLOAT) {
     return GRN_FLOAT_VALUE(factor_object);
   } else {
     grn_rc rc;
@@ -465,20 +467,16 @@ grn_select_apply_adjuster_ensure_factor(grn_ctx *ctx, grn_obj *factor_object)
 }
 
 static void
-grn_select_apply_adjuster(grn_ctx *ctx, grn_obj *res, grn_obj *adjuster)
+grn_select_apply_adjuster_adjust(grn_ctx *ctx, grn_obj *res,
+                                 grn_obj *index, grn_obj *value, grn_obj *factor)
 {
-  grn_expr *expr = (grn_expr *)adjuster;
-  grn_obj *index;
-  grn_obj *value;
-  double factor;
+  double factor_value;
   grn_obj *table;
   grn_table_cursor *table_cursor;
   grn_obj *index_cursor;
   grn_posting *posting;
 
-  index = expr->codes[0].value;
-  value = expr->codes[1].value;
-  factor = grn_select_apply_adjuster_ensure_factor(ctx, expr->codes[2].value);
+  factor_value = grn_select_apply_adjuster_ensure_factor(ctx, factor);
 
   table = grn_ctx_at(ctx, grn_obj_get_range(ctx, index));
   table_cursor = grn_table_cursor_open(ctx, table,
@@ -490,7 +488,7 @@ grn_select_apply_adjuster(grn_ctx *ctx, grn_obj *res, grn_obj *adjuster)
   index_cursor = grn_index_cursor_open(ctx, table_cursor, index,
                                        GRN_ID_NIL, GRN_ID_MAX, 0);
   while ((posting = grn_index_cursor_next(ctx, index_cursor, NULL))) {
-    posting->weight = posting->weight * factor - 1;
+    posting->weight = posting->weight * factor_value - 1;
     grn_ii_posting_add(ctx,
                        (grn_ii_posting *)posting,
                        (grn_hash *)res,
@@ -499,6 +497,38 @@ grn_select_apply_adjuster(grn_ctx *ctx, grn_obj *res, grn_obj *adjuster)
   grn_obj_unlink(ctx, index_cursor);
   grn_table_cursor_close(ctx, table_cursor);
   grn_obj_unlink(ctx, table);
+}
+
+static void
+grn_select_apply_adjuster(grn_ctx *ctx, grn_obj *res, grn_obj *adjuster)
+{
+  grn_expr *expr = (grn_expr *)adjuster;
+  grn_expr_code *code, *code_end;
+
+  code = expr->codes;
+  code_end = expr->codes + expr->codes_curr;
+  while (code < code_end) {
+    grn_obj *index, *value, *factor;
+
+    if (code->op == GRN_OP_PLUS) {
+      code++;
+      continue;
+    }
+
+    index = code->value;
+    code++;
+    value = code->value;
+    code++;
+    code++; /* op == GRN_OP_MATCH */
+    if ((code_end - code) >= 2 && code[1].op == GRN_OP_STAR) {
+      factor = code->value;
+      code++;
+      code++; /* op == GRN_OP_STAR */
+    } else {
+      factor = NULL;
+    }
+    grn_select_apply_adjuster_adjust(ctx, res, index, value, factor);
+  }
 }
 
 grn_rc
@@ -690,7 +720,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
         if (adjuster_ && v) {
           grn_expr_parse(ctx, adjuster_, adjuster, adjuster_len, NULL,
                          GRN_OP_MATCH, GRN_OP_ADJUST,
-                         GRN_EXPR_SYNTAX_SCRIPT);
+                         GRN_EXPR_SYNTAX_ADJUSTER);
           cacheable *= ((grn_expr *)adjuster_)->cacheable;
           taintable += ((grn_expr *)adjuster_)->taintable;
           grn_select_apply_adjuster(ctx, res, adjuster_);
