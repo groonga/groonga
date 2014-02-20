@@ -27,13 +27,15 @@ libgroonga_la_LIBADD =				\
 	$(MESSAGE_PACK_LIBS)			\
 	$(MRUBY_LIBS)
 
+if WITH_LEMON
 BUILT_SOURCES =					\
 	ecmascript.c
 
 SUFFIXES = .y .c
 
 .y.c:
-	lemon $<
+	$(LEMON) $<
+endif
 
 EXTRA_DIST =					\
 	ecmascript.c				\

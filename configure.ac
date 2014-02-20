@@ -798,6 +798,38 @@ fi
 AC_SUBST(INKSCAPE)
 AM_CONDITIONAL([WITH_INKSCAPE], [test "$inkscape_available" = "yes"])
 
+# check Lemon for generating .c and .h files from .y file
+lemon_available="no"
+AC_ARG_WITH([lemon],
+            AS_HELP_STRING([--with-lemon=PATH],
+                           [Lemon path (default: auto)]),
+            [LEMON="$withval"],
+	    [: ${LEMON:=auto}])
+
+if test "$LEMON" = "no"; then
+  LEMON=
+else
+  if test "$LEMON" = "auto"; then
+    AC_PATH_PROGS(LEMON, [lemon], none)
+    if test "$LEMON" != "none"; then
+      lemon_available="yes"
+    fi
+  elif test "$LEMON" = "yes"; then
+    AC_PATH_PROGS(LEMON, [lemon], none)
+    if test "$LEMON" = "none"; then
+      AC_MSG_WARN([lemon is not found. Disable .y compilation.])
+    else
+      lemon_available="yes"
+    fi
+  else
+    AC_CHECK_FILE([$LEMON],
+		  [lemon_available="yes"],
+		  [AC_MSG_WARN([$LEMON is not found. Disable .y compilation.])])
+  fi
+fi
+AC_SUBST(LEMON)
+AM_CONDITIONAL([WITH_LEMON], [test "$lemon_available" = "yes"])
+
 # libedit
 AC_ARG_ENABLE(libedit,
   [AS_HELP_STRING([--disable-libedit],
@@ -1440,7 +1472,7 @@ echo
 
 echo "Tools:"
 # echo "  Sphinx:                ${enable_sphinx}"
-echo "  yacc:                  ${YACC}"
+echo "  lemon:                 ${LEMON}"
 echo "  hg:                    ${HG}"
 echo "  Ruby:                  ${RUBY}"
 echo "  Cutter:                ${CUTTER}"
