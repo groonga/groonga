@@ -7,6 +7,9 @@ column_create Memos tags COLUMN_INDEX|WITH_WEIGHT Tags
 load --table Memos
 [
 {
+  "_key": "unused"
+},
+{
   "_key": "Groonga is fast",
   "tags": {
     "groonga": 100
@@ -26,8 +29,8 @@ load --table Memos
   }
 }
 ]
-[[0,0.0,0.0],3]
-select Memos   --filter true   --adjuster 'tags @ "groonga" * 2.5 + tags @ "mroonga" * 0.5 + tags @ "ruby" * 1.5'   --output_columns _key,_score
+[[0,0.0,0.0],4]
+select Memos   --filter '_id != 1'   --adjuster 'tags @ "groonga" * 1.0'   --output_columns _key,_score
 [
   [
     0,
@@ -51,15 +54,15 @@ select Memos   --filter true   --adjuster 'tags @ "groonga" * 2.5 + tags @ "mroo
       ],
       [
         "Groonga is fast",
-        251
+        101
       ],
       [
         "Mroonga is also fast",
-        76
+        11
       ],
       [
         "Ruby is an object oriented script language",
-        151
+        1
       ]
     ]
   ]
