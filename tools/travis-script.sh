@@ -1,7 +1,6 @@
 #!/bin/sh
 
 set -e
-set -x
 
 case "${BUILD_TOOL}" in
     autotools)
