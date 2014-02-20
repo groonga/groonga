@@ -6726,10 +6726,14 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     efsi.opt.weight_vector = NULL;
     efsi.weight_set = NULL;
 
-    if (flags & (GRN_EXPR_SYNTAX_SCRIPT | GRN_EXPR_SYNTAX_OUTPUT_COLUMNS)) {
+    if (flags & (GRN_EXPR_SYNTAX_SCRIPT |
+                 GRN_EXPR_SYNTAX_OUTPUT_COLUMNS |
+                 GRN_EXPR_SYNTAX_ADJUSTER)) {
+      efs_info *q = &efsi;
       if (flags & GRN_EXPR_SYNTAX_OUTPUT_COLUMNS) {
-        efs_info *q = &efsi;
         PARSE(GRN_EXPR_TOKEN_START_OUTPUT_COLUMNS);
+      } else if (flags & GRN_EXPR_SYNTAX_ADJUSTER) {
+        PARSE(GRN_EXPR_TOKEN_START_ADJUSTER);
       }
       parse_script(ctx, &efsi);
     } else {

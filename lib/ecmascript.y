@@ -25,6 +25,7 @@
 input ::= query.
 input ::= expression.
 input ::= START_OUTPUT_COLUMNS output_columns.
+input ::= START_ADJUSTER adjuster.
 
 query ::= query_element.
 query ::= query query_element. {
@@ -429,4 +430,19 @@ output_column(IGNORED) ::= NONEXISTENT_COLUMN. {
 }
 output_column(IGNORED) ::= assignment_expression. {
   IGNORED = GRN_FALSE;
+}
+
+adjuster ::= .
+adjuster ::= adjust_expression.
+adjuster ::= adjuster PLUS adjust_expression. {
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PLUS, 2);
+}
+
+adjust_expression ::= adjust_match_expression.
+adjust_expression ::= adjust_match_expression STAR DECIMAL. {
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_STAR, 2);
+}
+
+adjust_match_expression ::= IDENTIFIER MATCH STRING. {
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MATCH, 2);
 }

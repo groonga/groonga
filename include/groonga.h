@@ -1691,6 +1691,7 @@ typedef unsigned int grn_expr_flags;
 #define GRN_EXPR_SYNTAX_QUERY          (0x00)
 #define GRN_EXPR_SYNTAX_SCRIPT         (0x01)
 #define GRN_EXPR_SYNTAX_OUTPUT_COLUMNS (0x20)
+#define GRN_EXPR_SYNTAX_ADJUSTER       (0x40)
 #define GRN_EXPR_ALLOW_PRAGMA          (0x02)
 #define GRN_EXPR_ALLOW_COLUMN          (0x04)
 #define GRN_EXPR_ALLOW_UPDATE          (0x08)

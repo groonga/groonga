@@ -27,6 +27,14 @@ libgroonga_la_LIBADD =				\
 	$(MESSAGE_PACK_LIBS)			\
 	$(MRUBY_LIBS)
 
+BUILT_SOURCES =					\
+	ecmascript.c
+
+SUFFIXES = .y .c
+
+.y.c:
+	lemon $<
+
 EXTRA_DIST =					\
 	ecmascript.c				\
 	ecmascript.h				\
