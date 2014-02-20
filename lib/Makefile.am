@@ -31,16 +31,16 @@ if WITH_LEMON
 BUILT_SOURCES =					\
 	ecmascript.c
 
-SUFFIXES = .y .c
+SUFFIXES = .lemon .c
 
-.y.c:
+.lemon.c:
 	$(LEMON) $<
 endif
 
 EXTRA_DIST =					\
 	ecmascript.c				\
 	ecmascript.h				\
-	ecmascript.y				\
+	ecmascript.lemon			\
 	CMakeLists.txt
 
 CLEANFILES = *.gcno *.gcda
