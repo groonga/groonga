@@ -5697,6 +5697,10 @@ grn_obj_set_value_column_index(grn_ctx *ctx, grn_obj *obj, grn_id id,
     return ctx->rc;
   }
 
+  if (call_hook(ctx, obj, id, value, flags)) {
+    return GRN_INVALID_ARGUMENT;
+  }
+
   {
     unsigned int i, n;
     grn_obj key_buffer;
@@ -5839,6 +5843,70 @@ grn_obj_get_value_(grn_ctx *ctx, grn_obj *obj, grn_id id, uint32_t *size)
   return value;
 }
 
+static void
+grn_obj_get_value_column_index_forward(grn_ctx *ctx, grn_obj *index_column,
+                                       grn_id id, grn_obj *value)
+{
+  grn_ii *ii = (grn_ii *)index_column;
+  grn_ii_cursor *ii_cursor;
+  int flags = GRN_OBJ_WITH_WEIGHT;
+
+  grn_obj_ensure_vector(ctx, value);
+
+  ii_cursor = grn_ii_cursor_open(ctx, ii, id, GRN_ID_NIL, GRN_ID_MAX,
+                                 ii->n_elements, flags);
+  if (ii_cursor) {
+    grn_ii_posting *posting;
+    grn_obj *range;
+    grn_obj key;
+    grn_obj *key_accessor;
+
+    range = grn_ctx_at(ctx, grn_obj_get_range(ctx, index_column));
+
+    GRN_TEXT_INIT(&key, 0);
+    key_accessor = grn_obj_column(ctx, range,
+                                  GRN_COLUMN_NAME_KEY,
+                                  GRN_COLUMN_NAME_KEY_LEN);
+    while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
+      GRN_BULK_REWIND(&key);
+      grn_obj_get_value(ctx, key_accessor, posting->rid, &key);
+      grn_vector_add_element(ctx,
+                             value,
+                             GRN_BULK_HEAD(&key),
+                             GRN_BULK_VSIZE(&key),
+                             posting->weight,
+                             key.header.domain);
+    }
+    grn_obj_unlink(ctx, key_accessor);
+    GRN_OBJ_FIN(ctx, &key);
+
+    grn_obj_unlink(ctx, range);
+
+    grn_ii_cursor_close(ctx, ii_cursor);
+  }
+}
+
+static void
+grn_obj_get_value_column_index_normal(grn_ctx *ctx, grn_obj *index_column,
+                                      grn_id id, grn_obj *value)
+{
+  grn_ii *ii = (grn_ii *)index_column;
+  grn_obj_ensure_bulk(ctx, value);
+  GRN_UINT32_SET(ctx, value, grn_ii_estimate_size(ctx, ii, id));
+  value->header.domain = GRN_DB_UINT32;
+}
+
+static void
+grn_obj_get_value_column_index(grn_ctx *ctx, grn_obj *index_column,
+                               grn_id id, grn_obj *value)
+{
+  if (GRN_OBJ_FORWARD_INDEX_COLUMNP(index_column)) {
+    grn_obj_get_value_column_index_forward(ctx, index_column, id, value);
+  } else {
+    grn_obj_get_value_column_index_normal(ctx, index_column, id, value);
+  }
+}
+
 grn_obj *
 grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
 {
@@ -5973,9 +6041,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
     }
     break;
   case GRN_COLUMN_INDEX :
-    grn_obj_ensure_bulk(ctx, value);
-    GRN_UINT32_SET(ctx, value, grn_ii_estimate_size(ctx, (grn_ii *)obj, id));
-    value->header.domain = GRN_DB_UINT32;
+    grn_obj_get_value_column_index(ctx, obj, id, value);
     break;
   }
 exit :
@@ -6253,6 +6319,7 @@ update_source_hook(grn_ctx *ctx, grn_obj *obj)
         break;
       case GRN_COLUMN_FIX_SIZE :
       case GRN_COLUMN_VAR_SIZE :
+      case GRN_COLUMN_INDEX :
         grn_obj_add_hook(ctx, source, GRN_HOOK_SET, 0, NULL, &data);
         break;
       default :
