@@ -1204,7 +1204,10 @@ GRN_API grn_rc grn_text_time2rfc1123(grn_ctx *ctx, grn_obj *bulk, int sec);
 typedef struct _grn_obj_format grn_obj_format;
 
 #define GRN_OBJ_FORMAT_WITH_COLUMN_NAMES   (0x01<<0)
-#define GRN_OBJ_FORMAT_ASARRAY             (0x01<<3)
+#define GRN_OBJ_FORMAT_AS_ARRAY            (0x01<<3)
+/* Deprecated since 4.0.1. It will be removed at 5.0.0.
+   Use GRN_OBJ_FORMAT_AS_ARRAY instead.*/
+#define GRN_OBJ_FORMAT_ASARRAY             GRN_OBJ_FORMAT_AS_ARRAY
 
 struct _grn_obj_format {
   grn_obj columns;
