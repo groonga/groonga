@@ -2760,7 +2760,7 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
   n_accessors = 0;
   for (a = (grn_accessor *)obj; a; a = a->next) {
     n_accessors++;
-    if (a->obj->header.type == GRN_COLUMN_INDEX) {
+    if (GRN_OBJ_NORMAL_INDEX_COLUMNP(a->obj)) {
       break;
     }
   }
