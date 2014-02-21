@@ -1,0 +1,33 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_INDEX|WITH_WEIGHT Tags
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{
+  "_key": "Groonga is fast",
+  "tags": {
+    "groonga": 100,
+    "full text serach": 10
+  }
+}
+]
+[[0,0.0,0.0],1]
+dump
+table_create Tags TABLE_PAT_KEY ShortText
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos tags COLUMN_INDEX|WITH_WEIGHT Tags
+load --table Tags
+[
+["_key"],
+["full text serach"],
+["groonga"]
+]
+load --table Memos
+[
+["_key","tags"],
+["Groonga is fast",{"groonga":100,"full text serach":10}]
+]
+

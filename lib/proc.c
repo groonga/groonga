@@ -2277,6 +2277,55 @@ dump_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
 }
 
 static void
+dump_record_column_forward_index(grn_ctx *ctx, grn_obj *outbuf,
+                                 grn_id id, grn_obj *index_column)
+{
+  grn_ii *ii = (grn_ii *)index_column;
+  grn_ii_cursor *ii_cursor;
+  int flags = GRN_OBJ_WITH_WEIGHT;
+
+  GRN_TEXT_PUTC(ctx, outbuf, '{');
+  ii_cursor = grn_ii_cursor_open(ctx, ii, id, GRN_ID_NIL, GRN_ID_MAX,
+                                 ii->n_elements, flags);
+  if (ii_cursor) {
+    int i = 0;
+    grn_ii_posting *posting;
+    grn_obj *range;
+    grn_obj key, weight;
+    grn_obj *key_accessor;
+
+    range = grn_ctx_at(ctx, grn_obj_get_range(ctx, index_column));
+
+    GRN_TEXT_INIT(&key, 0);
+    GRN_UINT32_INIT(&weight, 0);
+    key_accessor = grn_obj_column(ctx, range,
+                                  GRN_COLUMN_NAME_KEY,
+                                  GRN_COLUMN_NAME_KEY_LEN);
+    while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
+      if (i > 0) {
+        GRN_TEXT_PUTC(ctx, outbuf, ',');
+      }
+      GRN_BULK_REWIND(&key);
+      GRN_BULK_REWIND(&weight);
+      grn_obj_get_value(ctx, key_accessor, posting->rid, &key);
+      GRN_UINT32_SET(ctx, &weight, posting->weight);
+      grn_text_otoj(ctx, outbuf, &key, NULL);
+      GRN_TEXT_PUTC(ctx, outbuf, ':');
+      grn_text_otoj(ctx, outbuf, &weight, NULL);
+      i++;
+    }
+    grn_obj_unlink(ctx, key_accessor);
+    GRN_OBJ_FIN(ctx, &key);
+    GRN_OBJ_FIN(ctx, &weight);
+
+    grn_obj_unlink(ctx, range);
+
+    grn_ii_cursor_close(ctx, ii_cursor);
+  }
+  GRN_TEXT_PUTC(ctx, outbuf, '}');
+}
+
+static void
 dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
 {
   grn_obj **columns;
@@ -2313,7 +2362,8 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   GRN_PTR_INIT(&use_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
   GRN_TEXT_INIT(&column_name, 0);
   for (i = 0; i < ncolumns; i++) {
-    if (columns[i]->header.type == GRN_COLUMN_INDEX) {
+    if (columns[i]->header.type == GRN_COLUMN_INDEX &&
+        DB_OBJ(columns[i])->source_size > 0) {
       continue;
     }
     GRN_BULK_REWIND(&column_name);
@@ -2387,6 +2437,7 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
       switch (column->header.type) {
       case GRN_COLUMN_VAR_SIZE:
       case GRN_COLUMN_FIX_SIZE:
+      case GRN_COLUMN_INDEX:
         switch (column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
         case GRN_OBJ_COLUMN_VECTOR:
           /* TODO: We assume that if |range| is GRN_OBJ_KEY_VAR_SIZE, a vector
@@ -2415,6 +2466,9 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
           }
           break;
         case GRN_OBJ_COLUMN_INDEX:
+          if (DB_OBJ(column)->source_size == 0) {
+              dump_record_column_forward_index(ctx, outbuf, id, column);
+          }
           break;
         default:
           ERR(GRN_OPERATION_NOT_SUPPORTED,
