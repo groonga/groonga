@@ -9622,9 +9622,9 @@ set_index_value(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *index_value)
     if (token_id == GRN_ID_NIL) {
       break;
     }
-    update_spec = grn_ii_updspec_open(ctx, id, 1);
+    update_spec = grn_ii_updspec_open(ctx, token_id, 1);
     grn_ii_updspec_add(ctx, update_spec, 0, GRN_UINT32_VALUE(value));
-    grn_ii_update_one(ctx, (grn_ii *)column, token_id, update_spec, NULL);
+    grn_ii_update_one(ctx, (grn_ii *)column, id, update_spec, NULL);
     grn_ii_updspec_close(ctx, update_spec);
   }
 }
