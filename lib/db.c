@@ -5679,7 +5679,7 @@ grn_obj_set_value_column_index(grn_ctx *ctx, grn_obj *obj, grn_id id,
   grn_id range_id;
   grn_obj *range;
 
-  if (DB_OBJ(obj)->source_size > 0) {
+  if (!GRN_OBJ_FORWARD_INDEX_COLUMNP(obj)) {
     char column_name[GRN_TABLE_MAX_KEY_SIZE];
     int column_name_size;
     column_name_size = grn_obj_name(ctx, obj, column_name,

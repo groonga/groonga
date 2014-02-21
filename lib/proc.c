@@ -2363,7 +2363,7 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   GRN_TEXT_INIT(&column_name, 0);
   for (i = 0; i < ncolumns; i++) {
     if (columns[i]->header.type == GRN_COLUMN_INDEX &&
-        DB_OBJ(columns[i])->source_size > 0) {
+        !GRN_OBJ_FORWARD_INDEX_COLUMNP(columns[i])) {
       continue;
     }
     GRN_BULK_REWIND(&column_name);
@@ -2466,8 +2466,8 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
           }
           break;
         case GRN_OBJ_COLUMN_INDEX:
-          if (DB_OBJ(column)->source_size == 0) {
-              dump_record_column_forward_index(ctx, outbuf, id, column);
+          if (GRN_OBJ_FORWARD_INDEX_COLUMNP(column)) {
+            dump_record_column_forward_index(ctx, outbuf, id, column);
           }
           break;
         default:
