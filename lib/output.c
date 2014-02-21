@@ -576,7 +576,15 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         break;
       }
     }
+    grn_output_obj(ctx, outbuf, output_type, &buf, NULL);
   } else {
+    if (GRN_OBJ_FORWARD_INDEX_COLUMNP(obj)) {
+      grn_obj_format format;
+      format.flags = GRN_OBJ_FORMAT_AS_FORWARD_INDEX;
+      GRN_VOID_INIT(&buf);
+      grn_obj_get_value(ctx, obj, id, &buf);
+      grn_output_obj(ctx, outbuf, output_type, &buf, &format);
+    } else {
     switch (obj->header.type) {
     case GRN_COLUMN_FIX_SIZE :
       GRN_VALUE_FIX_SIZE_INIT(&buf, 0, DB_OBJ(obj)->range);
@@ -601,8 +609,9 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       break;
     }
     grn_obj_get_value(ctx, obj, id, &buf);
+      grn_output_obj(ctx, outbuf, output_type, &buf, NULL);
+    }
   }
-  grn_output_obj(ctx, outbuf, output_type, &buf, NULL);
 exit :
   grn_obj_close(ctx, &buf);
 }
@@ -864,12 +873,49 @@ static inline void
 grn_output_vector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                   grn_obj *vector, grn_obj_format *format)
 {
+  grn_bool as_forward_index = GRN_FALSE;
+
   if (vector->header.domain == GRN_DB_VOID) {
     ERR(GRN_INVALID_ARGUMENT, "invalid obj->header.domain");
+    return;
   }
+
   if (format) {
-    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-        "cannot print GRN_VECTOR using grn_obj_format");
+    if (format->flags & GRN_OBJ_FORMAT_AS_FORWARD_INDEX) {
+      as_forward_index = GRN_TRUE;
+    } else {
+      ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+          "cannot print GRN_VECTOR using grn_obj_format "
+          "without GRN_OBJ_FORMAT_AS_FORWARD_INDEX flag");
+      return;
+    }
+  }
+
+  if (as_forward_index) {
+    unsigned int i, n;
+    grn_obj value;
+
+    GRN_VOID_INIT(&value);
+    n = grn_vector_size(ctx, vector);
+    grn_output_map_open(ctx, outbuf, output_type, "FORWARD_INDEX", n);
+    for (i = 0; i < n; i++) {
+      const char *_value;
+      unsigned int weight, length;
+      grn_id domain;
+
+      length = grn_vector_get_element(ctx, vector, i,
+                                      &_value, &weight, &domain);
+      if (domain != GRN_DB_VOID) {
+        grn_obj_reinit(ctx, &value, domain, 0);
+      } else {
+        grn_obj_reinit(ctx, &value, vector->header.domain, 0);
+      }
+      grn_bulk_write(ctx, &value, _value, length);
+      grn_output_obj(ctx, outbuf, output_type, &value, NULL);
+      grn_output_uint64(ctx, outbuf, output_type, weight);
+    }
+    grn_output_map_close(ctx, outbuf, output_type);
+    GRN_OBJ_FIN(ctx, &value);
   } else {
     unsigned int i, n;
     grn_obj value;
