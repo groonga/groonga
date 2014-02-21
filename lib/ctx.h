@@ -134,15 +134,6 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
 #define ERRP(ctx,lvl) \
   (((ctx) && ((grn_ctx *)(ctx))->errlvl <= (lvl)) || (grn_gctx.errlvl <= (lvl)))
 
-#define QLERR(...) do {\
-  ERRSET(ctx, GRN_WARN, GRN_INVALID_ARGUMENT, __VA_ARGS__);\
-  return F;\
-} while (0)
-
-#define QLASSERT(expr) do {\
-  if (!(expr)) { QLERR("syntax error"); }\
-} while (0)
-
 #ifdef ERR
 #  undef ERR
 #endif /* ERR */
