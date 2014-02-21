@@ -56,25 +56,6 @@
   }\
 } while (0)
 
-#define REPORT_CAST_ERROR(column, range, element) do {\
-  grn_obj inspected;\
-  char column_name[GRN_TABLE_MAX_KEY_SIZE];\
-  int column_name_size;\
-  char range_name[GRN_TABLE_MAX_KEY_SIZE];\
-  int range_name_size;\
-  GRN_TEXT_INIT(&inspected, 0);\
-  grn_inspect(ctx, &inspected, element);\
-  column_name_size = grn_obj_name(ctx, column, column_name,\
-                                  GRN_TABLE_MAX_KEY_SIZE);\
-  range_name_size = grn_obj_name(ctx, range, range_name,\
-                                 GRN_TABLE_MAX_KEY_SIZE);\
-  ERR(GRN_INVALID_ARGUMENT, "<%.*s>: failed to cast to <%.*s>: <%.*s>",\
-      column_name_size, column_name,\
-      range_name_size, range_name,\
-      (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));\
-  GRN_OBJ_FIN(ctx, &inspected);\
-} while (0)
-
 inline static grn_id
 grn_table_add_v_inline(grn_ctx *ctx, grn_obj *table, const void *key, int key_size,
                        void **value, int *added);
@@ -5536,7 +5517,7 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
             if (rc) {
               grn_obj *range_obj;
               range_obj = grn_ctx_at(ctx, range);
-              REPORT_CAST_ERROR(obj, range_obj, &value_buf);
+              ERR_CAST(obj, range_obj, &value_buf);
               grn_obj_unlink(ctx, range_obj);
             } else {
               value_ptr = GRN_BULK_HEAD(&cast_buf);
@@ -5610,7 +5591,7 @@ grn_obj_set_value_column_fix_size(grn_ctx *ctx, grn_obj *obj, grn_id id,
     if (rc) {
       grn_obj *range_obj;
       range_obj = grn_ctx_at(ctx, range);
-      REPORT_CAST_ERROR(obj, range_obj, value);
+      ERR_CAST(obj, range_obj, value);
       grn_obj_unlink(ctx, range_obj);
     } else {
       value_ = &buf;
@@ -5743,7 +5724,7 @@ grn_obj_set_value_column_index(grn_ctx *ctx, grn_obj *obj, grn_id id,
       GRN_BULK_REWIND(&token_buffer);
       rc = grn_obj_cast(ctx, &key_buffer, &token_buffer, GRN_TRUE);
       if (rc != GRN_SUCCESS) {
-        REPORT_CAST_ERROR(obj, range, value);
+        ERR_CAST(obj, range, value);
         break;
       }
       token_id = GRN_RECORD_VALUE(&token_buffer);
@@ -9604,7 +9585,7 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
         GRN_RECORD_INIT(&record, 0, range_id);
         if (grn_obj_cast(ctx, element, &record, GRN_TRUE)) {
           cast_failed = GRN_TRUE;
-          REPORT_CAST_ERROR(column, range, element);
+          ERR_CAST(column, range, element);
         }
         element = &record;
       }
@@ -9625,7 +9606,7 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
             GRN_OBJ_INIT(&casted_element, GRN_BULK, 0, range_id);
             if (grn_obj_cast(ctx, element, &casted_element, GRN_TRUE)) {
               cast_failed = GRN_TRUE;
-              REPORT_CAST_ERROR(column, range, element);
+              ERR_CAST(column, range, element);
             }
             element = &casted_element;
           }
@@ -9651,7 +9632,7 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
           GRN_OBJ_INIT(&casted_element, GRN_BULK, 0, range_id);
           if (grn_obj_cast(ctx, element, &casted_element, GRN_TRUE)) {
             cast_failed = GRN_TRUE;
-            REPORT_CAST_ERROR(column, range, element);
+            ERR_CAST(column, range, element);
           }
           element = &casted_element;
         }
@@ -9701,7 +9682,7 @@ set_index_value(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *index_value)
       if (rc != GRN_SUCCESS) {
         grn_obj *range;
         range = grn_ctx_at(ctx, weight_buffer.header.domain);
-        REPORT_CAST_ERROR(column, range, weight);
+        ERR_CAST(column, range, weight);
         grn_obj_unlink(ctx, range);
         break;
       }
