@@ -585,30 +585,30 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       grn_obj_get_value(ctx, obj, id, &buf);
       grn_output_obj(ctx, outbuf, output_type, &buf, &format);
     } else {
-    switch (obj->header.type) {
-    case GRN_COLUMN_FIX_SIZE :
-      GRN_VALUE_FIX_SIZE_INIT(&buf, 0, DB_OBJ(obj)->range);
-      break;
-    case GRN_COLUMN_VAR_SIZE :
-      if ((obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_VECTOR) {
-        grn_obj *range = grn_ctx_at(ctx, DB_OBJ(obj)->range);
-        if (range->header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-          GRN_VALUE_VAR_SIZE_INIT(&buf, GRN_OBJ_VECTOR, DB_OBJ(obj)->range);
+      switch (obj->header.type) {
+      case GRN_COLUMN_FIX_SIZE :
+        GRN_VALUE_FIX_SIZE_INIT(&buf, 0, DB_OBJ(obj)->range);
+        break;
+      case GRN_COLUMN_VAR_SIZE :
+        if ((obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_VECTOR) {
+          grn_obj *range = grn_ctx_at(ctx, DB_OBJ(obj)->range);
+          if (range->header.flags & GRN_OBJ_KEY_VAR_SIZE) {
+            GRN_VALUE_VAR_SIZE_INIT(&buf, GRN_OBJ_VECTOR, DB_OBJ(obj)->range);
+          } else {
+            GRN_VALUE_FIX_SIZE_INIT(&buf, GRN_OBJ_VECTOR, DB_OBJ(obj)->range);
+          }
         } else {
-          GRN_VALUE_FIX_SIZE_INIT(&buf, GRN_OBJ_VECTOR, DB_OBJ(obj)->range);
+          GRN_VALUE_VAR_SIZE_INIT(&buf, 0, DB_OBJ(obj)->range);
         }
-      } else {
-        GRN_VALUE_VAR_SIZE_INIT(&buf, 0, DB_OBJ(obj)->range);
+        break;
+      case GRN_COLUMN_INDEX :
+        GRN_UINT32_INIT(&buf, 0);
+        break;
+      default:
+        GRN_TEXT_INIT(&buf, 0);
+        break;
       }
-      break;
-    case GRN_COLUMN_INDEX :
-      GRN_UINT32_INIT(&buf, 0);
-      break;
-    default:
-      GRN_TEXT_INIT(&buf, 0);
-      break;
-    }
-    grn_obj_get_value(ctx, obj, id, &buf);
+      grn_obj_get_value(ctx, obj, id, &buf);
       grn_output_obj(ctx, outbuf, output_type, &buf, NULL);
     }
   }
