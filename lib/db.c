@@ -5672,6 +5672,96 @@ grn_obj_set_value_column_fix_size(grn_ctx *ctx, grn_obj *obj, grn_id id,
   return rc;
 }
 
+static grn_rc
+grn_obj_set_value_column_index(grn_ctx *ctx, grn_obj *obj, grn_id id,
+                               grn_obj *value, int flags)
+{
+  grn_id range_id;
+  grn_obj *range;
+
+  if (DB_OBJ(obj)->source_size > 0) {
+    char column_name[GRN_TABLE_MAX_KEY_SIZE];
+    int column_name_size;
+    column_name_size = grn_obj_name(ctx, obj, column_name,
+                                    GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_INVALID_ARGUMENT,
+        "can't set value to not forward index column directly: <%.*s>",
+        column_name_size, column_name);
+    return ctx->rc;
+  }
+
+  if (value->header.type != GRN_VECTOR) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, value, &inspected);
+    ERR(GRN_INVALID_ARGUMENT,
+        "index value must be a vector: <%.*s>",
+        (int)GRN_TEXT_LEN(&inspected),
+        GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return ctx->rc;
+  }
+
+  range_id = DB_OBJ(obj)->range;
+  range = grn_ctx_at(ctx, range_id);
+  if (!range) {
+    char column_name[GRN_TABLE_MAX_KEY_SIZE];
+    int column_name_size;
+    column_name_size = grn_obj_name(ctx, obj, column_name,
+                                    GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_INVALID_ARGUMENT,
+        "<%.*s>: dangling range reference: <%d>",
+        column_name_size, column_name,
+        range_id);
+    return ctx->rc;
+  }
+
+  {
+    unsigned int i, n;
+    grn_obj key_buffer;
+    grn_obj token_buffer;
+
+    n = grn_vector_size(ctx, value);
+    GRN_VOID_INIT(&key_buffer);
+    GRN_RECORD_INIT(&token_buffer, 0, range_id);
+    for (i = 0; i < n; i++) {
+      grn_rc rc;
+      const char *key;
+      unsigned int key_length;
+      unsigned int weight;
+      grn_id domain_id;
+      grn_ii_updspec *update_spec;
+      grn_id token_id;
+
+      key_length = grn_vector_get_element(ctx, value, i,
+                                          &key, &weight, &domain_id);
+      if (ctx->rc != GRN_SUCCESS) {
+        break;
+      }
+      grn_obj_reinit(ctx, &key_buffer, domain_id, 0);
+      grn_bulk_write(ctx, &key_buffer, key, key_length);
+      GRN_BULK_REWIND(&token_buffer);
+      rc = grn_obj_cast(ctx, &key_buffer, &token_buffer, GRN_TRUE);
+      if (rc != GRN_SUCCESS) {
+        REPORT_CAST_ERROR(obj, range, value);
+        break;
+      }
+      token_id = GRN_RECORD_VALUE(&token_buffer);
+
+      update_spec = grn_ii_updspec_open(ctx, token_id, 1);
+      grn_ii_updspec_add(ctx, update_spec, 0, weight);
+      grn_ii_update_one(ctx, (grn_ii *)obj, id, update_spec, NULL);
+      grn_ii_updspec_close(ctx, update_spec);
+    }
+    GRN_OBJ_FIN(ctx, &key_buffer);
+    GRN_OBJ_FIN(ctx, &token_buffer);
+  }
+
+  grn_obj_unlink(ctx, range);
+
+  return ctx->rc;
+}
+
 grn_rc
 grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
                   grn_obj *value, int flags)
@@ -5717,7 +5807,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
       rc = grn_obj_set_value_column_fix_size(ctx, obj, id, value, flags);
       break;
     case GRN_COLUMN_INDEX :
-      // todo : how??
+      rc = grn_obj_set_value_column_index(ctx, obj, id, value, flags);
       break;
     }
   }
@@ -9580,10 +9670,6 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
 static void
 set_index_value(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *index_value)
 {
-  uint i, n;
-  grn_id range_id;
-  grn_obj *range;
-
   if (column->header.type != GRN_COLUMN_INDEX) {
     char column_name[GRN_TABLE_MAX_KEY_SIZE];
     int column_name_size;
@@ -9595,37 +9681,37 @@ set_index_value(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *index_value)
     return;
   }
 
-  n = GRN_UINT32_VALUE(index_value);
-  range_id = grn_obj_get_range(ctx, column);
-  range = grn_ctx_at(ctx, range_id);
-  if (!range) {
-    char column_name[GRN_TABLE_MAX_KEY_SIZE];
-    int column_name_size;
-    column_name_size = grn_obj_name(ctx, column, column_name,
-                                    GRN_TABLE_MAX_KEY_SIZE);
-    ERR(GRN_INVALID_ARGUMENT,
-        "<%.*s>: dangling range reference: <%d>",
-        column_name_size, column_name,
-        range_id);
-    return;
-  }
+  {
+    unsigned int i, n;
+    grn_obj vector;
+    grn_obj weight_buffer;
 
-  for (i = 0; i < n; i += 2) {
-    grn_obj *key, *value;
-    grn_id token_id;
-    grn_ii_updspec *update_spec;
-    key = index_value + 1 + i;
-    value = key + 1;
-    token_id = grn_table_add(ctx, range,
-                             GRN_TEXT_VALUE(key), GRN_TEXT_LEN(key),
-                             NULL);
-    if (token_id == GRN_ID_NIL) {
-      break;
+    n = GRN_UINT32_VALUE(index_value);
+    GRN_TEXT_INIT(&vector, GRN_OBJ_VECTOR);
+    GRN_UINT32_INIT(&weight_buffer, 0);
+    for (i = 0; i < n; i += 2) {
+      grn_rc rc;
+      grn_obj *key, *weight;
+
+      key = index_value + 1 + i;
+      weight = key + 1;
+
+      GRN_BULK_REWIND(&weight_buffer);
+      rc = grn_obj_cast(ctx, weight, &weight_buffer, GRN_TRUE);
+      if (rc != GRN_SUCCESS) {
+        grn_obj *range;
+        range = grn_ctx_at(ctx, weight_buffer.header.domain);
+        REPORT_CAST_ERROR(column, range, weight);
+        grn_obj_unlink(ctx, range);
+        break;
+      }
+      grn_vector_add_element(ctx, &vector,
+                             GRN_BULK_HEAD(key), GRN_BULK_VSIZE(key),
+                             GRN_UINT32_VALUE(&weight_buffer),
+                             key->header.domain);
     }
-    update_spec = grn_ii_updspec_open(ctx, token_id, 1);
-    grn_ii_updspec_add(ctx, update_spec, 0, GRN_UINT32_VALUE(value));
-    grn_ii_update_one(ctx, (grn_ii *)column, id, update_spec, NULL);
-    grn_ii_updspec_close(ctx, update_spec);
+    grn_obj_set_value(ctx, column, id, &vector, GRN_OBJ_SET);
+    GRN_OBJ_FIN(ctx, &vector);
   }
 }
 
