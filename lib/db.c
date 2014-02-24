@@ -2898,7 +2898,7 @@ grn_obj_search_column_index(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
     case GRN_BULK :
       if (query->header.domain == obj->header.domain &&
           GRN_BULK_VSIZE(query) == sizeof(grn_id)) {
-        grn_id tid = *((grn_id *)GRN_BULK_HEAD(query));
+        grn_id tid = GRN_RECORD_VALUE(query);
         rc = grn_obj_search_column_index_by_id(ctx, obj, tid, res, op, optarg);
       } else {
         rc = grn_obj_search_column_index_by_key(ctx, obj, query,
