@@ -3075,6 +3075,17 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
         rc = grn_table_search(ctx, obj, key, key_size, mode, res, op);
       }
       break;
+    case GRN_COLUMN_FIX_SIZE :
+    case GRN_COLUMN_VAR_SIZE :
+      {
+        grn_obj *index;
+        unsigned int n_indexes;
+        n_indexes = grn_column_index(ctx, obj, GRN_OP_MATCH, &index, 1, NULL);
+        if (n_indexes > 0) {
+          rc = grn_obj_search(ctx, index, query, res, op, optarg);
+        }
+      }
+      break;
     case GRN_COLUMN_INDEX :
       if (GRN_OBJ_INVERTED_INDEX_COLUMNP(obj)) {
         rc = grn_obj_search_column_inverted_index(ctx, obj, query,
