@@ -143,7 +143,7 @@ struct _grn_type {
    (GRN_TABLE_HASH_KEY <= ((grn_db_obj *)obj)->header.type) &&\
    (((grn_db_obj *)obj)->header.type <= GRN_DB))
 
-#define GRN_OBJ_NORMAL_INDEX_COLUMNP(obj) \
+#define GRN_OBJ_INVERTED_INDEX_COLUMNP(obj) \
   (obj &&\
    DB_OBJ(obj)->header.type == GRN_COLUMN_INDEX &&\
    DB_OBJ(obj)->source_size > 0)
