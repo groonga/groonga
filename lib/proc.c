@@ -442,26 +442,26 @@ is_output_columns_format_v1(grn_ctx *ctx,
   return GRN_TRUE;
 }
 
-static double
+static int
 grn_select_apply_adjuster_ensure_factor(grn_ctx *ctx, grn_obj *factor_object)
 {
   if (!factor_object) {
-    return 1.0;
-  } else if (factor_object->header.domain == GRN_DB_FLOAT) {
-    return GRN_FLOAT_VALUE(factor_object);
+    return 1;
+  } else if (factor_object->header.domain == GRN_DB_INT32) {
+    return GRN_INT32_VALUE(factor_object);
   } else {
     grn_rc rc;
-    grn_obj float_object;
-    double factor;
-    GRN_FLOAT_INIT(&float_object, 0);
-    rc = grn_obj_cast(ctx, factor_object, &float_object, GRN_FALSE);
+    grn_obj int32_object;
+    int factor;
+    GRN_INT32_INIT(&int32_object, 0);
+    rc = grn_obj_cast(ctx, factor_object, &int32_object, GRN_FALSE);
     if (rc == GRN_SUCCESS) {
-      factor = GRN_FLOAT_VALUE(&float_object);
+      factor = GRN_INT32_VALUE(&int32_object);
     } else {
       /* TODO: Log or return error? */
-      factor = 1.0;
+      factor = 1;
     }
-    GRN_OBJ_FIN(ctx, &float_object);
+    GRN_OBJ_FIN(ctx, &int32_object);
     return factor;
   }
 }
@@ -532,7 +532,7 @@ grn_select_apply_adjuster_adjust(grn_ctx *ctx, grn_obj *table, grn_obj *res,
 {
   grn_obj *index;
   unsigned int n_indexes;
-  double factor_value;
+  int factor_value;
 
   n_indexes = grn_column_index(ctx, column, GRN_OP_MATCH, &index, 1, NULL);
   if (n_indexes == 0) {

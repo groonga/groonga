@@ -29,7 +29,7 @@ load --table Memos
 }
 ]
 [[0,0.0,0.0],3]
-select Memos   --filter true   --adjuster 'tags @ "groonga" * 2.5 + tags @ "mroonga" * 0.5 + tags @ "ruby" * 1.5'   --output_columns _key,_score
+select Memos   --filter true   --adjuster 'tags @ "groonga" * 4 + tags @ "mroonga" * 3 + tags @ "ruby" * 2'   --output_columns _key,_score
 [
   [
     0,
@@ -53,15 +53,15 @@ select Memos   --filter true   --adjuster 'tags @ "groonga" * 2.5 + tags @ "mroo
       ],
       [
         "Groonga is fast",
-        251
+        401
       ],
       [
         "Mroonga is also fast",
-        76
+        341
       ],
       [
         "Ruby is an object oriented script language",
-        151
+        201
       ]
     ]
   ]

@@ -32,7 +32,7 @@ load --table Memos
 }
 ]
 [[0,0.0,0.0],4]
-select Memos   --filter '_id != 1'   --adjuster 'tags @ "groonga" * 1.0'   --output_columns _key,_score
+select Memos   --filter '_id != 1'   --adjuster 'tags @ "groonga" * 1'   --output_columns _key,_score
 [
   [
     0,

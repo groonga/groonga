@@ -33,5 +33,5 @@ load --table Memos
 
 select Memos \
   --filter '_id != 1' \
-  --adjuster 'tags @ "groonga" * 1.0' \
+  --adjuster 'tags @ "groonga" * 1' \
   --output_columns _key,_score

@@ -30,5 +30,5 @@ load --table Memos
 
 select Memos \
   --filter true \
-  --adjuster 'tags @ "groonga" * 2.5' \
+  --adjuster 'tags @ "groonga" * 2' \
   --output_columns _key,_score
