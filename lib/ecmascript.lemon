@@ -6,6 +6,11 @@
 
 %token_type { int }
 
+%type suppress_unused_variable_warning { void * }
+%destructor suppress_unused_variable_warning {
+  (void)efsi;
+}
+
 %extra_argument { efs_info *efsi }
 
 %syntax_error {
