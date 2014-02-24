@@ -2791,7 +2791,7 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
       if (!base_res) {
         goto exit;
       }
-      rc = grn_obj_search(ctx, index, query, base_res, GRN_OP_OR, optarg);
+      rc = grn_obj_search(ctx, last_obj, query, base_res, GRN_OP_OR, optarg);
       if (rc != GRN_SUCCESS) {
         grn_obj_unlink(ctx, base_res);
         goto exit;
@@ -9333,7 +9333,7 @@ grn_column_index_accessor(grn_ctx *ctx, grn_obj *obj, grn_operator op,
     grn_hook_entry entry = -1;
 
     if (a->action == GRN_ACCESSOR_GET_COLUMN_VALUE &&
-        a->obj->header.type == GRN_COLUMN_INDEX) {
+        GRN_OBJ_INVERTED_INDEX_COLUMNP(a->obj)) {
       return grn_column_index_accessor_index_column(ctx, a, op, indexbuf,
                                                     buf_size, section);
     }

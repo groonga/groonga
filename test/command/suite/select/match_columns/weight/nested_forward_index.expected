@@ -1,0 +1,112 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Products TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Products tags COLUMN_INDEX|WITH_WEIGHT Tags
+[[0,0.0,0.0],true]
+column_create Tags products_tags COLUMN_INDEX Products tags
+[[0,0.0,0.0],true]
+table_create Programmers TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Programmers products COLUMN_VECTOR Products
+[[0,0.0,0.0],true]
+column_create Products programmers_products COLUMN_INDEX Programmers products
+[[0,0.0,0.0],true]
+load --table Products
+[
+{
+  "_key": "Groonga",
+  "tags": {
+    "groonga": 100
+  }
+},
+{
+  "_key": "Mroonga",
+  "tags": {
+    "mroonga": 100,
+    "groonga": 50
+  }
+},
+{
+  "_key": "Rroonga",
+  "tags": {
+    "ruby": 100,
+    "groonga": 10
+  }
+},
+{
+  "_key": "TST",
+  "tags": {
+    "mozilla": 100
+  }
+}
+]
+[[0,0.0,0.0],4]
+load --table Programmers
+[
+{
+  "_key": "daijiro",
+  "products": [
+    "Groonga",
+    "Mroonga"
+  ]
+},
+{
+  "_key": "kou",
+  "products": [
+    "Groonga",
+    "Mroonga",
+    "Rroonga"
+  ]
+},
+{
+  "_key": "maruyama",
+  "products": [
+    "Mroonga"
+  ]
+},
+{
+  "_key": "piro",
+  "products": [
+    "TST"
+  ]
+}
+]
+[[0,0.0,0.0],4]
+select Programmers   --match_columns 'products.tags * 10'   --query groonga   --output_columns _key,_score
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "daijiro",
+        1500
+      ],
+      [
+        "kou",
+        1600
+      ],
+      [
+        "maruyama",
+        500
+      ]
+    ]
+  ]
+]
