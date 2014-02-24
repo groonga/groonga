@@ -1,0 +1,34 @@
+table_create Tags TABLE_PAT_KEY ShortText
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos tags COLUMN_INDEX|WITH_WEIGHT Tags
+
+column_create Tags memos_tags COLUMN_INDEX Memos tags
+
+load --table Memos
+[
+{
+  "_key": "Groonga is fast",
+  "tags": {
+    "groonga": 100
+  }
+},
+{
+  "_key": "Mroonga is also fast",
+  "tags": {
+    "mroonga": 100,
+    "groonga": 10
+  }
+},
+{
+  "_key": "Ruby is an object oriented script language",
+  "tags": {
+    "ruby": 100
+  }
+}
+]
+
+select Memos \
+  --match_columns tags \
+  --query groonga \
+  --output_columns _key,_score
