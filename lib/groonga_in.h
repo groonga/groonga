@@ -474,7 +474,7 @@ typedef int grn_cond;
  * GRN_BIT_SCAN_REV0() is similar to GRN_BIT_SCAN_REV() but if `v' is 0, `r' is
  * set to 0.
  */
-#define GRN_BIT_SCAN_REV0(v, r) \
+#  define GRN_BIT_SCAN_REV0(v, r) \
   __asm__ __volatile__ ("bsrl %1, %%eax; cmovzl %1, %%eax; movl %%eax, %0" : "=r"(r) : "r"(v) : "%eax", "cc")
 # elif (defined(__PPC__) || defined(__ppc__)) /* ATOMIC ADD */
 #  define GRN_ATOMIC_ADD_EX(p,i,r) \
@@ -590,13 +590,13 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
 #endif /* __GNUC__ */
 
 #ifdef WORDS_BIGENDIAN
-#define grn_hton(buf,key,size) do {\
+# define grn_hton(buf,key,size) do {\
   uint32_t size_ = (uint32_t)size;\
   uint8_t *buf_ = (uint8_t *)buf;\
   uint8_t *key_ = (uint8_t *)key;\
   while (size_--) { *buf_++ = *key_++; }\
 } while (0)
-#define grn_ntohi(buf,key,size) do {\
+# define grn_ntohi(buf,key,size) do {\
   uint32_t size_ = (uint32_t)size;\
   uint8_t *buf_ = (uint8_t *)buf;\
   uint8_t *key_ = (uint8_t *)key;\
@@ -604,13 +604,13 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
   while (size_) { *buf_++ = *key_++; size_--; }\
 } while (0)
 #else /* WORDS_BIGENDIAN */
-#define grn_hton(buf,key,size) do {\
+# define grn_hton(buf,key,size) do {\
   uint32_t size_ = (uint32_t)size;\
   uint8_t *buf_ = (uint8_t *)buf;\
   uint8_t *key_ = (uint8_t *)key + size;\
   while (size_--) { *buf_++ = *(--key_); }\
 } while (0)
-#define grn_ntohi(buf,key,size) do {\
+# define grn_ntohi(buf,key,size) do {\
   uint32_t size_ = (uint32_t)size;\
   uint8_t *buf_ = (uint8_t *)buf;\
   uint8_t *key_ = (uint8_t *)key + size;\
@@ -704,10 +704,10 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
 #endif /* HAVE_STRTOULL */
 
 #ifdef USE_FUTEX
-#include <linux/futex.h>
-#include <sys/syscall.h>
+# include <linux/futex.h>
+# include <sys/syscall.h>
 
-#define GRN_FUTEX_WAIT(p) do {\
+# define GRN_FUTEX_WAIT(p) do {\
   int err;\
   struct timespec timeout = {1, 0};\
   while (1) {\
@@ -724,25 +724,25 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
   }\
 } while(0)
 
-#define GRN_FUTEX_WAKE(p) syscall(SYS_futex, p, FUTEX_WAKE, 1)
+# define GRN_FUTEX_WAKE(p) syscall(SYS_futex, p, FUTEX_WAKE, 1)
 #else /* USE_FUTEX */
-#define GRN_FUTEX_WAIT(p) grn_nanosleep(1000000)
-#define GRN_FUTEX_WAKE(p)
+# define GRN_FUTEX_WAIT(p) grn_nanosleep(1000000)
+# define GRN_FUTEX_WAKE(p)
 #endif /* USE_FUTEX */
 
 #ifndef HOST_NAME_MAX
-#ifdef _POSIX_HOST_NAME_MAX
-#define HOST_NAME_MAX _POSIX_HOST_NAME_MAX
-#else /* POSIX_HOST_NAME_MAX */
-#define HOST_NAME_MAX 128
-#endif /* POSIX_HOST_NAME_MAX */
+# ifdef _POSIX_HOST_NAME_MAX
+#  define HOST_NAME_MAX _POSIX_HOST_NAME_MAX
+# else /* POSIX_HOST_NAME_MAX */
+#  define HOST_NAME_MAX 128
+# endif /* POSIX_HOST_NAME_MAX */
 #endif /* HOST_NAME_MAX */
 
 GRN_API void grn_sleep(uint32_t seconds);
 GRN_API void grn_nanosleep(uint64_t nanoseconds);
 
 #ifndef GROONGA_H
-#include "groonga.h"
+# include "groonga.h"
 #endif /* GROONGA_H */
 
 #endif /* GROONGA_IN_H */
