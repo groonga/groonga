@@ -489,6 +489,18 @@ typedef int grn_cond;
 /* todo */
 #  define GRN_BIT_SCAN_REV(v,r)  for (r = 31; r && !((1 << r) & v); r--)
 #  define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
+#elif defined(__aarch64__)
+#define GRN_ATOMIC_ADD_EX(p, i, r) __asm__ __volatile__("  dmb sy;             " \
+                                                        "  ldr %0, [%1];       " \
+                                                        "  dmb ld;             " \
+                                                        "  add x0, %0, %2;     " \
+                                                        "  str x0, [%1];       " \
+                                                        "  dsb st;             " \
+                                                        : "=&r"(r)               \
+                                                        : "r"(p), "r"(i)         \
+                                                        :"x0", "memory");
+#  define GRN_BIT_SCAN_REV(v,r)  __asm__ __volatile__ ("clz %0, %1;":"=r"(r):"r"(v))
+#  define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
 # else /* ATOMIC ADD */
 /* todo */
 #  define GRN_BIT_SCAN_REV(v,r)  for (r = 31; r && !((1 << r) & v); r--)
@@ -505,6 +517,12 @@ typedef int grn_cond;
 /* todo */
 #  define GRN_SET_64BIT(p,v) \
   (void)atomic_swap_64(p, v)
+#elif defined(__aarch64__)
+#  define GRN_SET_64BIT(p,v) __asm__ __volatile__("    str %1, [%0];   "      \
+                                                  "    dsb st;         "      \
+                                                  :                    \
+                                                  :"r"(p), "r"(v)      \
+                                                  :"memory")
 # endif /* ATOMIC 64BIT SET */
 
 # ifdef HAVE_MKOSTEMP
