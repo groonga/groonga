@@ -499,8 +499,8 @@ typedef int grn_cond;
                                                         : "=&r"(r)               \
                                                         : "r"(p), "r"(i)         \
                                                         :"x0", "memory");
-#  define GRN_BIT_SCAN_REV(v,r)  __asm__ __volatile__ ("clz %0, %1;":"=r"(r):"r"(v))
-#  define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
+#  define GRN_BIT_SCAN_REV(v,r)  __asm__ __volatile__ ("clz %0, %1;mov x9, #63;sub %0, x9, %0;":"=r"(r):"r"(v):"x9")
+#  define GRN_BIT_SCAN_REV0(v,r)  GRN_BIT_SCAN_REV(v, r)
 # else /* ATOMIC ADD */
 /* todo */
 #  define GRN_BIT_SCAN_REV(v,r)  for (r = 31; r && !((1 << r) & v); r--)
