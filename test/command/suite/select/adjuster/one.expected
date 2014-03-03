@@ -4,7 +4,7 @@ table_create Memos TABLE_HASH_KEY ShortText
 [[0,0.0,0.0],true]
 column_create Memos tags COLUMN_INDEX|WITH_WEIGHT Tags
 [[0,0.0,0.0],true]
-column_create Tags memos_tags COLUMN_INDEX Memos tags
+column_create Tags memos_tags COLUMN_INDEX|WITH_WEIGHT Memos tags
 [[0,0.0,0.0],true]
 load --table Memos
 [
@@ -53,11 +53,11 @@ select Memos   --filter true   --adjuster 'tags @ "groonga" * 2'   --output_colu
       ],
       [
         "Groonga is fast",
-        201
+        203
       ],
       [
         "Mroonga is also fast",
-        21
+        23
       ],
       [
         "Ruby is an object oriented script language",

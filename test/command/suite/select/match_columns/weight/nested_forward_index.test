@@ -3,7 +3,7 @@ table_create Tags TABLE_PAT_KEY ShortText
 table_create Products TABLE_HASH_KEY ShortText
 column_create Products tags COLUMN_INDEX|WITH_WEIGHT Tags
 
-column_create Tags products_tags COLUMN_INDEX Products tags
+column_create Tags products_tags COLUMN_INDEX|WITH_WEIGHT Products tags
 
 table_create Programmers TABLE_PAT_KEY ShortText
 column_create Programmers products COLUMN_VECTOR Products

@@ -500,7 +500,7 @@ grn_select_apply_adjuster_adjust(grn_ctx *ctx, grn_obj *table, grn_obj *res,
     options.proc = NULL;
     options.max_size = 0;
 
-    grn_obj_search(ctx, column, value, res, GRN_OP_ADJUST, &options);
+    grn_obj_search(ctx, index, value, res, GRN_OP_ADJUST, &options);
   }
 }
 

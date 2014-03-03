@@ -4,7 +4,7 @@ table_create Products TABLE_HASH_KEY ShortText
 [[0,0.0,0.0],true]
 column_create Products tags COLUMN_INDEX|WITH_WEIGHT Tags
 [[0,0.0,0.0],true]
-column_create Tags products_tags COLUMN_INDEX Products tags
+column_create Tags products_tags COLUMN_INDEX|WITH_WEIGHT Products tags
 [[0,0.0,0.0],true]
 table_create Programmers TABLE_PAT_KEY ShortText
 [[0,0.0,0.0],true]
@@ -97,15 +97,15 @@ select Programmers   --match_columns 'products.tags * 10'   --query groonga   --
       ],
       [
         "daijiro",
-        1500
+        1520
       ],
       [
         "kou",
-        1600
+        1630
       ],
       [
         "maruyama",
-        500
+        510
       ]
     ]
   ]

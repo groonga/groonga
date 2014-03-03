@@ -2791,7 +2791,7 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
       if (!base_res) {
         goto exit;
       }
-      rc = grn_obj_search(ctx, last_obj, query, base_res, GRN_OP_OR, optarg);
+      rc = grn_obj_search(ctx, index, query, base_res, GRN_OP_OR, optarg);
       if (rc != GRN_SUCCESS) {
         grn_obj_unlink(ctx, base_res);
         goto exit;
@@ -2917,141 +2917,6 @@ grn_obj_search_column_inverted_index(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
   return rc;
 }
 
-static grn_id
-grn_obj_search_column_forward_index_get_adjust_id(grn_ctx *ctx,
-                                                  grn_obj *forward_index,
-                                                  grn_obj *value)
-{
-  grn_id adjust_id = GRN_ID_NIL;
-  grn_obj *adjust_keys;
-  grn_id adjust_keys_id;
-  const char *adjust_key = NULL;
-  unsigned int adjust_key_size = 0;
-  grn_obj casted_adjust_key;
-  grn_bool need_cast;
-
-  adjust_keys_id = grn_obj_get_range(ctx, forward_index);
-  adjust_keys = grn_ctx_at(ctx, adjust_keys_id);
-  if (!adjust_keys) {
-    char column_name[GRN_TABLE_MAX_KEY_SIZE];
-    int column_name_size;
-    column_name_size = grn_obj_name(ctx, forward_index,
-                                    column_name, GRN_TABLE_MAX_KEY_SIZE);
-    ERR(GRN_INVALID_ARGUMENT,
-        "<%.*s>: dangling range reference: <%d>",
-        column_name_size, column_name,
-        adjust_keys_id);
-    return GRN_ID_NIL;
-  }
-
-  need_cast = adjust_keys->header.domain != value->header.domain;
-  if (need_cast) {
-    grn_rc rc;
-    GRN_OBJ_INIT(&casted_adjust_key, GRN_BULK, 0, adjust_keys->header.domain);
-    rc = grn_obj_cast(ctx, value, &casted_adjust_key, GRN_FALSE);
-    if (rc == GRN_SUCCESS) {
-      adjust_key = GRN_BULK_HEAD(&casted_adjust_key);
-      adjust_key_size = GRN_BULK_VSIZE(&casted_adjust_key);
-    } else {
-      grn_obj *range;
-      range = grn_ctx_at(ctx, adjust_keys->header.domain);
-      ERR_CAST(forward_index, range, value);
-      grn_obj_unlink(ctx, range);
-    }
-  } else {
-    adjust_key = GRN_BULK_HEAD(value);
-    adjust_key_size = GRN_BULK_VSIZE(value);
-  }
-
-  if (adjust_key) {
-    adjust_id = grn_table_get(ctx, adjust_keys, adjust_key, adjust_key_size);
-  }
-
-  if (need_cast) {
-    GRN_OBJ_FIN(ctx, &casted_adjust_key);
-  }
-
-  grn_obj_unlink(ctx, adjust_keys);
-
-  return adjust_id;
-}
-
-static grn_rc
-grn_obj_search_column_forward_index(grn_ctx *ctx, grn_obj *forward_index,
-                                    grn_obj *query,
-                                    grn_obj *res, grn_operator op,
-                                    grn_search_optarg *optarg)
-{
-  grn_obj *index;
-  unsigned int n_indexes;
-  grn_ii *ii = (grn_ii *)forward_index;
-  grn_id adjust_id;
-  grn_obj *targets;
-  grn_table_cursor *table_cursor;
-  double factor = 0.0;
-
-  n_indexes = grn_column_index(ctx, forward_index,
-                               GRN_OP_MATCH, &index, 1, NULL);
-  if (n_indexes == 0) {
-    return GRN_INVALID_ARGUMENT;
-  }
-
-  adjust_id = grn_obj_search_column_forward_index_get_adjust_id(ctx,
-                                                                forward_index,
-                                                                query);
-  if (adjust_id == GRN_ID_NIL) {
-    return GRN_SUCCESS;
-  }
-
-  if (optarg && !optarg->weight_vector && optarg->vector_size > 0) {
-    factor = optarg->vector_size;
-  }
-
-  {
-    grn_obj *table;
-    table = grn_ctx_at(ctx, forward_index->header.domain);
-    targets = grn_table_create(ctx, NULL, 0, NULL,
-                               GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
-                               table, NULL);
-    grn_obj_unlink(ctx, table);
-  }
-
-  grn_obj_search(ctx, index, query, targets, GRN_OP_OR, NULL);
-
-  table_cursor = grn_table_cursor_open(ctx, targets, NULL, 0, NULL, 0,
-                                       0, -1, GRN_CURSOR_BY_ID);
-  if (table_cursor) {
-    while (grn_table_cursor_next(ctx, table_cursor) != GRN_ID_NIL) {
-      grn_id id;
-      void *key;
-      grn_ii_cursor *ii_cursor;
-      int flags = GRN_OBJ_WITH_WEIGHT;
-
-      grn_table_cursor_get_key(ctx, table_cursor, &key);
-      id = *((grn_id *)key);
-      ii_cursor = grn_ii_cursor_open(ctx, ii, id, GRN_ID_NIL, GRN_ID_MAX,
-                                     ii->n_elements, flags);
-      if (ii_cursor) {
-        grn_ii_posting *posting;
-        while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
-          grn_ii_posting adjust_posting;
-          if (posting->rid != adjust_id) {
-            continue;
-          }
-          adjust_posting.rid = id;
-          adjust_posting.weight = posting->weight * factor - 1;
-          grn_ii_posting_add(ctx, &adjust_posting, (grn_hash *)res, op);
-        }
-        grn_ii_cursor_close(ctx, ii_cursor);
-      }
-    }
-    grn_table_cursor_close(ctx, table_cursor);
-  }
-  grn_obj_unlink(ctx, targets);
-
-  return ctx->rc;
-}
-
 grn_rc
 grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
                grn_obj *res, grn_operator op, grn_search_optarg *optarg)
@@ -3069,20 +2934,8 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
         const void *key = GRN_BULK_HEAD(query);
         uint32_t key_size = GRN_BULK_VSIZE(query);
         grn_operator mode = optarg ? optarg->mode : GRN_OP_EXACT;
-        if (!key || !key_size) {
-          return GRN_INVALID_ARGUMENT;
-        }
-        rc = grn_table_search(ctx, obj, key, key_size, mode, res, op);
-      }
-      break;
-    case GRN_COLUMN_FIX_SIZE :
-    case GRN_COLUMN_VAR_SIZE :
-      {
-        grn_obj *index;
-        unsigned int n_indexes;
-        n_indexes = grn_column_index(ctx, obj, GRN_OP_MATCH, &index, 1, NULL);
-        if (n_indexes > 0) {
-          rc = grn_obj_search(ctx, index, query, res, op, optarg);
+        if (key && key_size) {
+          rc = grn_table_search(ctx, obj, key, key_size, mode, res, op);
         }
       }
       break;
@@ -3090,9 +2943,6 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
       if (GRN_OBJ_INVERTED_INDEX_COLUMNP(obj)) {
         rc = grn_obj_search_column_inverted_index(ctx, obj, query,
                                                   res, op, optarg);
-      } else {
-        rc = grn_obj_search_column_forward_index(ctx, obj, query,
-                                                 res, op, optarg);
       }
       break;
     }

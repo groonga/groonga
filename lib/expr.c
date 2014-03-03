@@ -4426,17 +4426,23 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                   }
                   break;
                 case GRN_COLUMN_INDEX :
-                  sid = 0;
-                  index = ec->value;
-                  if (j > 2 &&
-                      ec[1].value &&
-                      ec[1].value->header.domain == GRN_DB_UINT32 &&
-                      ec[2].op == GRN_OP_GET_MEMBER) {
-                    sid = GRN_UINT32_VALUE(ec[1].value) + 1;
-                    j -= 2;
-                    ec += 2;
+                  if (GRN_OBJ_FORWARD_INDEX_COLUMNP(ec->value)) {
+                    if (grn_column_index(ctx, ec->value, c->op, &index, 1, &sid)) {
+                      scan_info_put_index(ctx, si, index, sid, get_weight(ctx, ec));
+                    }
+                  } else {
+                    sid = 0;
+                    index = ec->value;
+                    if (j > 2 &&
+                        ec[1].value &&
+                        ec[1].value->header.domain == GRN_DB_UINT32 &&
+                        ec[2].op == GRN_OP_GET_MEMBER) {
+                      sid = GRN_UINT32_VALUE(ec[1].value) + 1;
+                      j -= 2;
+                      ec += 2;
+                    }
+                    scan_info_put_index(ctx, si, index, sid, get_weight(ctx, ec));
                   }
-                  scan_info_put_index(ctx, si, index, sid, get_weight(ctx, ec));
                   break;
                 }
               }
