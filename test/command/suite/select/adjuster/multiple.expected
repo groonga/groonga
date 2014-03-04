@@ -53,15 +53,15 @@ select Memos   --filter true   --adjuster 'tags @ "groonga" * 4 + tags @ "mroong
       ],
       [
         "Groonga is fast",
-        405
+        401
       ],
       [
         "Mroonga is also fast",
-        348
+        341
       ],
       [
         "Ruby is an object oriented script language",
-        203
+        201
       ]
     ]
   ]

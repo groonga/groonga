@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2012 Brazil
+/* Copyright(C) 2009-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3754,7 +3754,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
           u2.sid = 1;
         }
         u2.tf = 1;
-        u2.weight = 0;
+        u2.weight = 1;
         if (u2.rid != u->rid || u2.sid != u->sid) {
           uint8_t *bs2 = encode_rec(ctx, ii, &u2, &size2, 0);
           if (!bs2) {
@@ -3785,7 +3785,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
     break;
   }
   if (!br) {
-    if (u->tf == 1 && u->weight == 0) {
+    if (u->tf == 1 && u->weight == 1) {
       if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
         if (u->rid < 0x100000 && u->sid < 0x800) {
           a[0] = (u->rid << 12) + (u->sid << 1) + 1;
@@ -4024,7 +4024,7 @@ grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
         c->pb.sid = 1;
       }
       c->pb.tf = 1;
-      c->pb.weight = 0;
+      c->pb.weight = 1;
       c->pb.pos = a[1];
     } else {
       uint32_t chunk;
@@ -4111,7 +4111,7 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
             if ((c->ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
               c->pc.weight = *c->cwp++;
             } else {
-              c->pc.weight = 0;
+              c->pc.weight = 1;
             }
             c->pc.pos = 0;
             /*
@@ -4217,7 +4217,7 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
           if ((c->ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
             GRN_B_DEC(c->pb.weight, c->bp);
           } else {
-            c->pb.weight = 0;
+            c->pb.weight = 1;
           }
           c->pb.rest = c->pb.tf;
           c->pb.pos = 0;
@@ -4918,7 +4918,7 @@ grn_uvector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
         return GRN_NO_MEMORY_AVAILABLE;
       }
     }
-    if (grn_ii_updspec_add(ctx, *u, j, 0)) {
+    if (grn_ii_updspec_add(ctx, *u, j, 1)) {
       GRN_LOG(ctx, GRN_LOG_ALERT, "grn_ii_updspec_add on grn_ii_update failed!");
       return GRN_NO_MEMORY_AVAILABLE;
     }
@@ -4958,7 +4958,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
         GRN_OBJ_INIT(&newv, GRN_VECTOR, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
         newv.u.v.body = new;
         new = &newv;
-        grn_vector_delimit(ctx, new, 0, GRN_ID_NIL);
+        grn_vector_delimit(ctx, new, 1, GRN_ID_NIL);
         if (new_ != newvalue) { grn_obj_close(ctx, new_); }
       }
       /* fallthru */
@@ -5040,7 +5040,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
         GRN_OBJ_INIT(&oldv, GRN_VECTOR, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
         oldv.u.v.body = old;
         old = &oldv;
-        grn_vector_delimit(ctx, old, 0, GRN_ID_NIL);
+        grn_vector_delimit(ctx, old, 1, GRN_ID_NIL);
         if (old_ != oldvalue) { grn_obj_close(ctx, old_); }
       }
       /* fallthru */
@@ -5455,7 +5455,7 @@ res_add(grn_ctx *ctx, grn_hash *s, grn_rset_posinfo *pi, uint32_t score,
 grn_rc
 grn_ii_posting_add(grn_ctx *ctx, grn_ii_posting *pos, grn_hash *s, grn_operator op)
 {
-  res_add(ctx, s, (grn_rset_posinfo *)(pos), (1 + pos->weight), op);
+  res_add(ctx, s, (grn_rset_posinfo *)(pos), pos->weight, op);
   return ctx->rc;
 }
 
@@ -5697,7 +5697,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
           pos = c->post;
           if ((w2 = get_weight(ctx, s, pos->rid, pos->sid, wvm, optarg))) {
             while (grn_ii_cursor_next_pos(ctx, c)) {
-              res_add(ctx, s, (grn_rset_posinfo *) pos, *w1 * w2 * (1 + pos->weight), op);
+              res_add(ctx, s, (grn_rset_posinfo *) pos, *w1 * w2 * pos->weight, op);
             }
           }
         }
@@ -5705,7 +5705,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
         while (grn_ii_cursor_next(ctx, c)) {
           pos = c->post;
           if ((w2 = get_weight(ctx, s, pos->rid, pos->sid, wvm, optarg))) {
-            res_add(ctx, s, (grn_rset_posinfo *) pos, *w1 * w2 * (pos->tf + pos->weight), op);
+            res_add(ctx, s, (grn_rset_posinfo *) pos, *w1 * w2 * pos->tf * pos->weight, op);
           }
         }
       }
@@ -5926,6 +5926,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
               if (max - min <= max_interval) {
                 if (rep) { pi.pos = min; res_add(ctx, s, &pi, weight, op); }
                 noccur++;
+                tscore += ti->p->weight; /* FIXME: Is it right? */
                 if (ti->pos == max + 1) {
                   break;
                 }
@@ -5950,14 +5951,15 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
               score = ti->p->weight; count = 1; pos = ti->pos;
             }
             if (count == n) {
-              if (rep) { pi.pos = pos; res_add(ctx, s, &pi, (score + 1) * weight, op); }
-              tscore += score;
+              if (rep) { pi.pos = pos; res_add(ctx, s, &pi, score * weight, op); }
+              tscore += score / count;
               score = 0; count = 0; pos++;
               noccur++;
             }
           }
+          tscore /= noccur;
         }
-        if (noccur && !rep) { res_add(ctx, s, &pi, (noccur + tscore) * weight, op); }
+        if (noccur && !rep) { res_add(ctx, s, &pi, (noccur * tscore) * weight, op); }
 #undef SKIP_OR_BREAK
       }
     }
@@ -6049,7 +6051,7 @@ grn_ii_at(grn_ctx *ctx, grn_ii *ii, grn_id id, grn_hash *s, grn_operator op)
   if ((c = grn_ii_cursor_open(ctx, ii, id, GRN_ID_NIL, GRN_ID_MAX,
                               rep ? ii->n_elements : ii->n_elements - 1, 0))) {
     while ((pos = grn_ii_cursor_next(ctx, c))) {
-      res_add(ctx, s, (grn_rset_posinfo *) pos, (1 + pos->weight), op);
+      res_add(ctx, s, (grn_rset_posinfo *) pos, pos->weight, op);
     }
     grn_ii_cursor_close(ctx, c);
   }
@@ -6100,7 +6102,7 @@ grn_ii_cursor_next_all(grn_ctx *ctx, grn_ii_cursor *c)
             if ((c->ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
               c->pc.weight = *c->cwp++;
             } else {
-              c->pc.weight = 0;
+              c->pc.weight = 1;
             }
             c->pc.pos = 0;
             /*
@@ -6198,7 +6200,7 @@ grn_ii_cursor_next_all(grn_ctx *ctx, grn_ii_cursor *c)
           if ((c->ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
             GRN_B_DEC(c->pb.weight, c->bp);
           } else {
-            c->pb.weight = 0;
+            c->pb.weight = 1;
           }
           c->pb.rest = c->pb.tf;
           c->pb.pos = 0;

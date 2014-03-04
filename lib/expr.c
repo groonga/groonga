@@ -4322,7 +4322,7 @@ scan_info_build_find_index_column_inverted_index(grn_ctx *ctx,
   uint32_t offset = 0;
   grn_obj *index;
   int sid = 0;
-  int32_t weight = 0;
+  int32_t weight = 1;
 
   index = ec->value;
   if (n_rest_codes > 2 &&
@@ -4968,7 +4968,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
           grn_ii_posting posting;
           posting.sid = 1;
           posting.pos = 0;
-          posting.weight = 0;
+          posting.weight = 1;
           switch (a->action) {
           case GRN_ACCESSOR_GET_ID :
             GRN_UINT32_INIT(&dest, 0);
@@ -5043,7 +5043,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
           grn_ii_posting posting;
           posting.sid = 1;
           posting.pos = 0;
-          posting.weight = 0;
+          posting.weight = 1;
           switch (a->action) {
           case GRN_ACCESSOR_GET_ID :
             /* todo */
@@ -6935,7 +6935,7 @@ grn_column_filter(grn_ctx *ctx, grn_obj *column,
   uint32_t value_ = grn_atoui(GRN_TEXT_VALUE(value), GRN_BULK_CURR(value), NULL);
   posting.sid = 1;
   posting.pos = 0;
-  posting.weight = 0;
+  posting.weight = 1;
   GRN_COLUMN_EACH(ctx, column, id, vp, {
     if (*vp < value_) {
       posting.rid = id;

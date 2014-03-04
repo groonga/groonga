@@ -97,15 +97,15 @@ select Programmers   --match_columns 'products.tags * 10'   --query groonga   --
       ],
       [
         "daijiro",
-        1520
+        1500
       ],
       [
         "kou",
-        1630
+        1600
       ],
       [
         "maruyama",
-        510
+        500
       ]
     ]
   ]
