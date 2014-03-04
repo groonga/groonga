@@ -53,11 +53,11 @@ select Memos   --match_columns 'tags * 10'   --query groonga   --output_columns 
       ],
       [
         "Groonga is fast",
-        1010
+        1000
       ],
       [
         "Mroonga is also fast",
-        110
+        100
       ]
     ]
   ]

@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2013 Brazil
+/* Copyright(C) 2009-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -2807,7 +2807,7 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
           posting.rid = *record_id;
           posting.sid = 1;
           posting.pos = 0;
-          posting.weight = recinfo->score - 1;
+          posting.weight = recinfo->score;
           grn_ii_posting_add(ctx, &posting, (grn_hash *)res, op);
         });
         grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
@@ -3976,7 +3976,7 @@ grn_vector_decode(grn_ctx *ctx, grn_obj *v, const char *data, uint32_t data_size
       GRN_B_DEC(l, p);
       vp->length = l;
       vp->offset = o;
-      vp->weight = 0;
+      vp->weight = 1;
       vp->domain = 0;
       o += l;
     }
@@ -9706,7 +9706,8 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
           if (!cast_failed) {
             grn_vector_add_element(ctx, &buf,
                                    GRN_TEXT_VALUE(element),
-                                   GRN_TEXT_LEN(element), 0,
+                                   GRN_TEXT_LEN(element),
+                                   1,
                                    element->header.domain);
           }
           if (element == &casted_element) { GRN_OBJ_FIN(ctx, element); }

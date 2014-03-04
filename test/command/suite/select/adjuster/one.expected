@@ -53,11 +53,11 @@ select Memos   --filter true   --adjuster 'tags @ "groonga" * 2'   --output_colu
       ],
       [
         "Groonga is fast",
-        203
+        201
       ],
       [
         "Mroonga is also fast",
-        23
+        21
       ],
       [
         "Ruby is an object oriented script language",
