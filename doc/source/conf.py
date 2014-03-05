@@ -270,3 +270,6 @@ man_pages = [
     ('index', 'groonga', unicode(_('Groonga documentation'), "utf-8"),
      [u'Groonga Project'], 1)
 ]
+
+# -- Options for Gettext --------------------------------------------------
+gettext_uuid = False
