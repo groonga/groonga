@@ -143,15 +143,18 @@ struct _grn_type {
    (GRN_TABLE_HASH_KEY <= ((grn_db_obj *)obj)->header.type) &&\
    (((grn_db_obj *)obj)->header.type <= GRN_DB))
 
-#define GRN_OBJ_INVERTED_INDEX_COLUMNP(obj) \
+#define GRN_OBJ_INDEX_COLUMNP(obj) \
   (obj &&\
-   DB_OBJ(obj)->header.type == GRN_COLUMN_INDEX &&\
-   DB_OBJ(obj)->source_size > 0)
+   DB_OBJ(obj)->header.type == GRN_COLUMN_INDEX)
 
-#define GRN_OBJ_FORWARD_INDEX_COLUMNP(obj) \
+#define GRN_OBJ_VECTOR_COLUMNP(obj) \
   (obj &&\
-   DB_OBJ(obj)->header.type == GRN_COLUMN_INDEX &&\
-   DB_OBJ(obj)->source_size == 0)
+   DB_OBJ(obj)->header.type == GRN_COLUMN_VAR_SIZE &&\
+   (DB_OBJ(obj)->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_VECTOR)
+
+#define GRN_OBJ_WEIGHT_VECTOR_COLUMNP(obj) \
+  (GRN_OBJ_VECTOR_COLUMNP(obj) &&\
+   (DB_OBJ(obj)->header.flags & GRN_OBJ_WITH_WEIGHT))
 
 typedef grn_rc grn_selector_func(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                                  int nargs, grn_obj **args,

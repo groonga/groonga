@@ -2283,52 +2283,30 @@ dump_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
 }
 
 static void
-dump_record_column_forward_index(grn_ctx *ctx, grn_obj *outbuf,
-                                 grn_id id, grn_obj *index_column)
+dump_record_column_vector(grn_ctx *ctx, grn_obj *outbuf, grn_id id,
+                          grn_obj *column, grn_id range_id, grn_obj *buf)
 {
-  grn_ii *ii = (grn_ii *)index_column;
-  grn_ii_cursor *ii_cursor;
-  int flags = GRN_OBJ_WITH_WEIGHT;
+  grn_obj *range;
 
-  GRN_TEXT_PUTC(ctx, outbuf, '{');
-  ii_cursor = grn_ii_cursor_open(ctx, ii, id, GRN_ID_NIL, GRN_ID_MAX,
-                                 ii->n_elements, flags);
-  if (ii_cursor) {
-    int i = 0;
-    grn_ii_posting *posting;
-    grn_obj *range;
-    grn_obj key, weight;
-    grn_obj *key_accessor;
-
-    range = grn_ctx_at(ctx, grn_obj_get_range(ctx, index_column));
-
-    GRN_TEXT_INIT(&key, 0);
-    GRN_UINT32_INIT(&weight, 0);
-    key_accessor = grn_obj_column(ctx, range,
-                                  GRN_COLUMN_NAME_KEY,
-                                  GRN_COLUMN_NAME_KEY_LEN);
-    while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
-      if (i > 0) {
-        GRN_TEXT_PUTC(ctx, outbuf, ',');
-      }
-      GRN_BULK_REWIND(&key);
-      GRN_BULK_REWIND(&weight);
-      grn_obj_get_value(ctx, key_accessor, posting->rid, &key);
-      GRN_UINT32_SET(ctx, &weight, posting->weight);
-      grn_text_otoj(ctx, outbuf, &key, NULL);
-      GRN_TEXT_PUTC(ctx, outbuf, ':');
-      grn_text_otoj(ctx, outbuf, &weight, NULL);
-      i++;
+  range = grn_ctx_at(ctx, range_id);
+  if (GRN_OBJ_TABLEP(range) ||
+      (range->header.flags & GRN_OBJ_KEY_VAR_SIZE) == 0) {
+    GRN_OBJ_INIT(buf, GRN_UVECTOR, 0, range_id);
+    grn_obj_get_value(ctx, column, id, buf);
+    grn_text_otoj(ctx, outbuf, buf, NULL);
+  } else {
+    grn_obj_format *format_argument = NULL;
+    grn_obj_format format;
+    if (column->header.flags & GRN_OBJ_WITH_WEIGHT) {
+      format.flags = GRN_OBJ_FORMAT_WITH_WEIGHT;
+      format_argument = &format;
     }
-    grn_obj_unlink(ctx, key_accessor);
-    GRN_OBJ_FIN(ctx, &key);
-    GRN_OBJ_FIN(ctx, &weight);
-
-    grn_obj_unlink(ctx, range);
-
-    grn_ii_cursor_close(ctx, ii_cursor);
+    GRN_OBJ_INIT(buf, GRN_VECTOR, 0, range_id);
+    grn_obj_get_value(ctx, column, id, buf);
+    grn_text_otoj(ctx, outbuf, buf, format_argument);
   }
-  GRN_TEXT_PUTC(ctx, outbuf, '}');
+  grn_obj_unlink(ctx, range);
+  grn_obj_unlink(ctx, buf);
 }
 
 static void
@@ -2368,8 +2346,7 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   GRN_PTR_INIT(&use_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
   GRN_TEXT_INIT(&column_name, 0);
   for (i = 0; i < ncolumns; i++) {
-    if (columns[i]->header.type == GRN_COLUMN_INDEX &&
-        !GRN_OBJ_FORWARD_INDEX_COLUMNP(columns[i])) {
+    if (GRN_OBJ_INDEX_COLUMNP(columns[i])) {
       continue;
     }
     GRN_BULK_REWIND(&column_name);
@@ -2443,25 +2420,9 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
       switch (column->header.type) {
       case GRN_COLUMN_VAR_SIZE:
       case GRN_COLUMN_FIX_SIZE:
-      case GRN_COLUMN_INDEX:
         switch (column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
         case GRN_OBJ_COLUMN_VECTOR:
-          /* TODO: We assume that if |range| is GRN_OBJ_KEY_VAR_SIZE, a vector
-                   is GRN_VECTOR, otherwise GRN_UVECTOR. This is not always
-                   the case, especially by using GRNAPI with C, it's possible
-                   to create GRN_VECTOR with values of constant-size type. */
-          if (((struct _grn_type *)grn_ctx_at(ctx, range))->obj.header.flags &
-              GRN_OBJ_KEY_VAR_SIZE) {
-            GRN_OBJ_INIT(&buf, GRN_VECTOR, 0, range);
-            grn_obj_get_value(ctx, column, id, &buf);
-            grn_text_otoj(ctx, outbuf, &buf, NULL);
-            grn_obj_unlink(ctx, &buf);
-          } else {
-            GRN_OBJ_INIT(&buf, GRN_UVECTOR, 0, range);
-            grn_obj_get_value(ctx, column, id, &buf);
-            grn_text_otoj(ctx, outbuf, &buf, NULL);
-            grn_obj_unlink(ctx, &buf);
-          }
+          dump_record_column_vector(ctx, outbuf, id, column, range, &buf);
           break;
         case GRN_OBJ_COLUMN_SCALAR:
           {
@@ -2471,17 +2432,14 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
             grn_obj_unlink(ctx, &buf);
           }
           break;
-        case GRN_OBJ_COLUMN_INDEX:
-          if (GRN_OBJ_FORWARD_INDEX_COLUMNP(column)) {
-            dump_record_column_forward_index(ctx, outbuf, id, column);
-          }
-          break;
         default:
           ERR(GRN_OPERATION_NOT_SUPPORTED,
               "unsupported column type: %#x",
               column->header.type);
           break;
         }
+        break;
+      case GRN_COLUMN_INDEX:
         break;
       case GRN_ACCESSOR:
         {

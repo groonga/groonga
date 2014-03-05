@@ -1,7 +1,7 @@
 table_create Tags TABLE_PAT_KEY ShortText
 
 table_create Memos TABLE_HASH_KEY ShortText
-column_create Memos tags COLUMN_INDEX|WITH_WEIGHT Tags
+column_create Memos tags COLUMN_VECTOR Tags
 
 load --table Memos
 [
@@ -12,5 +12,3 @@ load --table Memos
   }
 }
 ]
-
-select Tags

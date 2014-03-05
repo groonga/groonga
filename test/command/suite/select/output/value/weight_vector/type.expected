@@ -1,0 +1,47 @@
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT ShortText
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{
+  "_key": "Mroonga is fast",
+  "tags": {
+    "mroonga": 100,
+    "groonga": 10
+  }
+}
+]
+[[0,0.0,0.0],1]
+select Memos   --output_columns _key,tags
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tags",
+          "ShortText"
+        ]
+      ],
+      [
+        "Mroonga is fast",
+        {
+          "mroonga": 100,
+          "groonga": 10
+        }
+      ]
+    ]
+  ]
+]

@@ -578,39 +578,39 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     }
     grn_output_obj(ctx, outbuf, output_type, &buf, NULL);
   } else {
-    if (GRN_OBJ_FORWARD_INDEX_COLUMNP(obj)) {
-      grn_obj_format format;
-      format.flags = GRN_OBJ_FORMAT_AS_FORWARD_INDEX;
-      GRN_VOID_INIT(&buf);
-      grn_obj_get_value(ctx, obj, id, &buf);
-      grn_output_obj(ctx, outbuf, output_type, &buf, &format);
-    } else {
-      switch (obj->header.type) {
-      case GRN_COLUMN_FIX_SIZE :
-        GRN_VALUE_FIX_SIZE_INIT(&buf, 0, DB_OBJ(obj)->range);
-        break;
-      case GRN_COLUMN_VAR_SIZE :
-        if ((obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_VECTOR) {
-          grn_obj *range = grn_ctx_at(ctx, DB_OBJ(obj)->range);
-          if (range->header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-            GRN_VALUE_VAR_SIZE_INIT(&buf, GRN_OBJ_VECTOR, DB_OBJ(obj)->range);
-          } else {
-            GRN_VALUE_FIX_SIZE_INIT(&buf, GRN_OBJ_VECTOR, DB_OBJ(obj)->range);
-          }
+    grn_obj_format *format_argument = NULL;
+    grn_obj_format format;
+    format.flags = 0;
+    switch (obj->header.type) {
+    case GRN_COLUMN_FIX_SIZE :
+      GRN_VALUE_FIX_SIZE_INIT(&buf, 0, DB_OBJ(obj)->range);
+      break;
+    case GRN_COLUMN_VAR_SIZE :
+      if ((obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_VECTOR) {
+        grn_obj *range = grn_ctx_at(ctx, DB_OBJ(obj)->range);
+        if (GRN_OBJ_TABLEP(range) ||
+            (range->header.flags & GRN_OBJ_KEY_VAR_SIZE) == 0) {
+          GRN_VALUE_FIX_SIZE_INIT(&buf, GRN_OBJ_VECTOR, DB_OBJ(obj)->range);
         } else {
-          GRN_VALUE_VAR_SIZE_INIT(&buf, 0, DB_OBJ(obj)->range);
+          GRN_VALUE_VAR_SIZE_INIT(&buf, GRN_OBJ_VECTOR, DB_OBJ(obj)->range);
+          if (obj->header.flags & GRN_OBJ_WITH_WEIGHT) {
+            format.flags |= GRN_OBJ_FORMAT_WITH_WEIGHT;
+            format_argument = &format;
+          }
         }
-        break;
-      case GRN_COLUMN_INDEX :
-        GRN_UINT32_INIT(&buf, 0);
-        break;
-      default:
-        GRN_TEXT_INIT(&buf, 0);
-        break;
+      } else {
+        GRN_VALUE_VAR_SIZE_INIT(&buf, 0, DB_OBJ(obj)->range);
       }
-      grn_obj_get_value(ctx, obj, id, &buf);
-      grn_output_obj(ctx, outbuf, output_type, &buf, NULL);
+      break;
+    case GRN_COLUMN_INDEX :
+      GRN_UINT32_INIT(&buf, 0);
+      break;
+    default:
+      GRN_TEXT_INIT(&buf, 0);
+      break;
     }
+    grn_obj_get_value(ctx, obj, id, &buf);
+    grn_output_obj(ctx, outbuf, output_type, &buf, format_argument);
   }
 exit :
   grn_obj_close(ctx, &buf);
@@ -873,7 +873,7 @@ static inline void
 grn_output_vector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                   grn_obj *vector, grn_obj_format *format)
 {
-  grn_bool as_forward_index = GRN_FALSE;
+  grn_bool with_weight = GRN_FALSE;
 
   if (vector->header.domain == GRN_DB_VOID) {
     ERR(GRN_INVALID_ARGUMENT, "invalid obj->header.domain");
@@ -881,23 +881,18 @@ grn_output_vector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   }
 
   if (format) {
-    if (format->flags & GRN_OBJ_FORMAT_AS_FORWARD_INDEX) {
-      as_forward_index = GRN_TRUE;
-    } else {
-      ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-          "cannot print GRN_VECTOR using grn_obj_format "
-          "without GRN_OBJ_FORMAT_AS_FORWARD_INDEX flag");
-      return;
+    if (format->flags & GRN_OBJ_FORMAT_WITH_WEIGHT) {
+      with_weight = GRN_TRUE;
     }
   }
 
-  if (as_forward_index) {
+  if (with_weight) {
     unsigned int i, n;
     grn_obj value;
 
     GRN_VOID_INIT(&value);
     n = grn_vector_size(ctx, vector);
-    grn_output_map_open(ctx, outbuf, output_type, "FORWARD_INDEX", n);
+    grn_output_map_open(ctx, outbuf, output_type, "WEIGHT_VECTOR", n);
     for (i = 0; i < n; i++) {
       const char *_value;
       unsigned int weight, length;

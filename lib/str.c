@@ -2847,31 +2847,41 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
   case GRN_VECTOR :
     if (obj->header.domain == GRN_DB_VOID) {
       ERR(GRN_INVALID_ARGUMENT, "invalid obj->header.domain");
-    }
-    if (format) {
-      ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-          "cannot print GRN_VECTOR using grn_obj_format");
     } else {
       unsigned int i, n;
       grn_obj value;
+      grn_obj weight;
+      grn_bool with_weight;
+
       GRN_VOID_INIT(&value);
+      GRN_UINT32_INIT(&weight, 0);
+      with_weight = (format && format->flags & GRN_OBJ_FORMAT_WITH_WEIGHT);
       n = grn_vector_size(ctx, obj);
       GRN_TEXT_PUTC(ctx, bulk, '[');
       for (i = 0; i < n; i++) {
         const char *_value;
-        unsigned int weight, length;
+        unsigned int _weight, length;
         grn_id domain;
         if (i) { GRN_TEXT_PUTC(ctx, bulk, ','); }
 
         length = grn_vector_get_element(ctx, obj, i,
-                                        &_value, &weight, &domain);
+                                        &_value, &_weight, &domain);
         if (domain != GRN_DB_VOID) {
           grn_obj_reinit(ctx, &value, domain, 0);
         } else {
           grn_obj_reinit(ctx, &value, obj->header.domain, 0);
         }
+        if (with_weight) {
+          GRN_TEXT_PUTC(ctx, bulk, '{');
+        }
         grn_bulk_write(ctx, &value, _value, length);
         grn_text_otoj(ctx, bulk, &value, NULL);
+        if (with_weight) {
+          GRN_TEXT_PUTC(ctx, bulk, ':');
+          GRN_UINT32_SET(ctx, &weight, _weight);
+          grn_text_otoj(ctx, bulk, &weight, NULL);
+          GRN_TEXT_PUTC(ctx, bulk, '}');
+        }
       }
       GRN_TEXT_PUTC(ctx, bulk, ']');
     }

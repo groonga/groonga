@@ -4295,29 +4295,11 @@ grn_scan_info_get_arg(grn_ctx *ctx, scan_info *si, int i)
 }
 
 static uint32_t
-scan_info_build_find_index_column_forward_index(grn_ctx *ctx,
-                                                scan_info *si,
-                                                grn_expr_code *ec,
-                                                uint32_t n_rest_codes,
-                                                grn_operator op)
-{
-  uint32_t offset = 0;
-  grn_obj *index;
-  int sid;
-
-  if (grn_column_index(ctx, ec->value, op, &index, 1, &sid)) {
-    scan_info_put_index(ctx, si, index, sid, get_weight(ctx, ec));
-  }
-
-  return offset;
-}
-
-static uint32_t
-scan_info_build_find_index_column_inverted_index(grn_ctx *ctx,
-                                                 scan_info *si,
-                                                 grn_expr_code *ec,
-                                                 uint32_t n_rest_codes,
-                                                 grn_operator op)
+scan_info_build_find_index_column_index(grn_ctx *ctx,
+                                        scan_info *si,
+                                        grn_expr_code *ec,
+                                        uint32_t n_rest_codes,
+                                        grn_operator op)
 {
   uint32_t offset = 0;
   grn_obj *index;
@@ -4474,15 +4456,8 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                 case GRN_COLUMN_INDEX :
                   {
                     uint32_t offset;
-                    if (GRN_OBJ_FORWARD_INDEX_COLUMNP(ec->value)) {
-                      offset =
-                        scan_info_build_find_index_column_forward_index(
-                          ctx, si, ec, j, c->op);
-                    } else {
-                      offset =
-                        scan_info_build_find_index_column_inverted_index(
-                          ctx, si, ec, j, c->op);
-                    }
+                    offset = scan_info_build_find_index_column_index(ctx, si, ec,
+                                                                     j, c->op);
                     j -= offset;
                     ec += offset;
                   }

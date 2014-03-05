@@ -1,15 +1,17 @@
 table_create Tags TABLE_PAT_KEY ShortText
-
+[[0,0.0,0.0],true]
 table_create Products TABLE_HASH_KEY ShortText
-column_create Products tags COLUMN_INDEX|WITH_WEIGHT Tags
-
+[[0,0.0,0.0],true]
+column_create Products tags COLUMN_VECTOR|WITH_WEIGHT Tags
+[[0,0.0,0.0],true]
 column_create Tags products_tags COLUMN_INDEX|WITH_WEIGHT Products tags
-
+[[0,0.0,0.0],true]
 table_create Programmers TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
 column_create Programmers products COLUMN_VECTOR Products
-
+[[0,0.0,0.0],true]
 column_create Products programmers_products COLUMN_INDEX Programmers products
-
+[[0,0.0,0.0],true]
 load --table Products
 [
 {
@@ -39,7 +41,7 @@ load --table Products
   }
 }
 ]
-
+[[0,0.0,0.0],4]
 load --table Programmers
 [
 {
@@ -70,9 +72,41 @@ load --table Programmers
   ]
 }
 ]
-
-
-select Programmers \
-  --match_columns 'products.tags * 10' \
-  --query groonga \
-  --output_columns _key,_score
+[[0,0.0,0.0],4]
+select Programmers   --match_columns 'products.tags * 10'   --query groonga   --output_columns _key,_score
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "daijiro",
+        1520
+      ],
+      [
+        "kou",
+        1630
+      ],
+      [
+        "maruyama",
+        510
+      ]
+    ]
+  ]
+]
