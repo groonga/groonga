@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2012 Brazil
+/* Copyright(C) 2009-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -203,7 +203,7 @@ grn_ra_cache_fin(grn_ctx *ctx, grn_ra *ra, grn_id id)
 
 /**** jagged arrays ****/
 
-#define GRN_JA_W_SEGREGATE_THRESH      7
+#define GRN_JA_W_SEGREGATE_THRESH      16
 #define GRN_JA_W_CAPACITY              38
 #define GRN_JA_W_SEGMENT               22
 
