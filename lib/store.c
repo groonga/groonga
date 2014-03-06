@@ -508,6 +508,7 @@ grn_ja_truncate(grn_ctx *ctx, grn_ja *ja)
   if ((rc = grn_io_close(ctx, ja->io))) { goto exit; }
   ja->io = NULL;
   if (path && (rc = grn_io_remove(ctx, path))) { goto exit; }
+  GRN_GFREE(ja->header);
   if (!_grn_ja_create(ctx, ja, path, max_element_size, flags)) {
     rc = GRN_UNKNOWN_ERROR;
   }
