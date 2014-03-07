@@ -2,13 +2,17 @@
 
 .. highlightlang:: none
 
+.. groonga-command
+.. database: groonga-suggest-httpd
+
 groonga-suggest-httpd
 =====================
 
 Summary
 -------
 
-TODO
+groonga-suggest-httpd is a program to provide interface which accepts HTTP request and returns suggestion dataset, then saves logs for learning.
+groonga-suggest-httpd behaves similar in point of view of suggestion functionality, but the name of parameter is different.
 
 Synopsis
 --------
@@ -19,6 +23,30 @@ Synopsis
 
 Usage
 -----
+
+
+Set up
+^^^^^^
+
+First you need to set up database for suggestion.
+
+.. groonga-command
+.. include:: ../example/reference/executables/groonga-suggest-httpd-setup.log
+.. .. % groonga-suggest-create-dataset /tmp/groonga-databases/groonga-suggest-httpd query
+
+Launch groonga-suggest-httpd
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Execute groonga-suggest-httpd command:
+
+.. groonga-command
+.. include:: ../example/reference/executables/groonga-suggest-httpd-launch.log
+.. .. % groonga-suggest-httpd /tmp/groonga-databases/groonga-suggest-httpd
+
+After executing above command, groonga-suggest-httpd accepts HTTP request on 8080 port.
+
+Request to groonga-suggest-httpd
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 TODO
 
@@ -57,12 +85,108 @@ Options
 
    Specify this option to disable checking max fd on start.
 
-Parameters
-----------
+Command line Parameters
+-----------------------
 
 There is one required parameter - ``database_path``.
 
 ``database_path``
 ^^^^^^^^^^^^^^^^^^^
 
-Specifies the path to a groonga database.
+Specifies the path to a Groonga database. This database must be created by :doc:`groonga-suggest-create-dataset` command because it executes required initialization for suggestion.
+
+
+GET Parameters
+--------------
+
+groonga-suggest-httpd accepts following GET parameters.
+
+There are required parameters which depends on type of query.
+
+Required parameters
+^^^^^^^^^^^^^^^^^^^
+
+.. list-table::
+   :header-rows: 1
+
+   * - Key
+     - Description
+     - Note
+   * - q
+     - UTF-8 encoded string which user fills in form
+     - 
+   * - t
+     - The type of query. The value of type must be complete, correct, suggest or submit. It also accepts multiple type of query which is concatinated by '|'. Note that 'submit' is invalid value when you specify multiple type of query.
+     - 
+
+Required parameters for learning
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. list-table::
+   :header-rows: 1
+
+   * - Key
+     - Description
+     - Note
+   * - s
+     - Elapsed time from 0:00 January 1, 1970
+     - Note that you need specify the value of 's' in milliseconds
+   * - i
+     - Unique ID to distinct user
+     - Use session ID or IP address for example
+   * - l
+     - Specify the name of dataset for learning. It also accepts multiple dataset name which is concatinated by '|'
+     - Note that dataset name must be matched to following regular expression '[A-Za-z ][A-Za-z0-9 ]{0,15}'
+
+Required parameters for suggestion
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. list-table::
+   :header-rows: 1
+
+   * - Key
+     - Description
+     - Note
+   * - n
+     - Specify the name of dataset for suggestion
+     - This dataset name is used to calculate suggestion results
+
+Optional parameter
+^^^^^^^^^^^^^^^^^^
+
+.. list-table::
+   :header-rows: 1
+
+   * - Key
+     - Description
+     - Note
+   * - callback
+     - Specify the name of function if you prefer JSONP as response format
+     - The name of function must be matched to reqular expression '[A-Za-z ][A-Za-z0-9 ]{0,15}'
+
+Return value
+------------
+
+``groonga-suggest-httpd`` command returns following response in JSON or JSONP format.
+
+In JSON format::
+
+  {TYPE: [[CANDIDATE_1, SCORE_1], [CANDIDATE_2, SCORE_2], ... [CANDIDATE_N, SCORE_N]]}
+
+In JSONP format::
+
+  FUNCTION({TYPE: [[CANDIDATE_1, SCORE_1], [CANDIDATE_2, SCORE_2], ... [CANDIDATE_N, SCORE_N]]})
+
+
+``TYPE``
+
+  'complete', 'correct' or 'suggest'.
+
+``CANDIDATE_N``
+
+  The string of candidate (UTF-8).
+
+``SCORE_N``
+
+  The number of score.
+
