@@ -203,7 +203,11 @@ grn_ra_cache_fin(grn_ctx *ctx, grn_ra *ra, grn_id id)
 
 /**** jagged arrays ****/
 
-#define GRN_JA_W_SEGREGATE_THRESH      16
+#ifdef GRN_JA_SEGREGATE_THRESHOLD
+# define GRN_JA_W_SEGREGATE_THRESH     GRN_JA_SEGREGATE_THRESHOLD
+#else
+# define GRN_JA_W_SEGREGATE_THRESH     7
+#endif
 #define GRN_JA_W_CAPACITY              38
 #define GRN_JA_W_SEGMENT               22
 

@@ -67,6 +67,24 @@ set(GRN_STACK_SIZE
   1024
   CACHE STRING
   "DANGER!!! groonga stack size. Normarlly, you should not change this variable.")
+set(GRN_JA_SEGREGATE_THRESHOLD
+  7
+  CACHE STRING
+  "DANGER!!! This option breaks database compatibility.
+   You can't use the same database with different
+   GRN_JA_SEGREGATE_THRESHOLD Groongas.
+   This option changes data management threshold for variable size columns
+   such as ShortText type column and COLUMN_VECTOR column.
+   (default=7)
+
+   If you don't delete/update variable size column values, you don't need to
+   change it. If you delete/update variable size column values with
+   [128, 65535] size data, GRN_JA_SEGREGATE_THRESHOLD=16 will better
+   database size.
+   In the case, your database size will be increased unlimitedly with
+   the default GRN_JA_SEGREGATE_THRESHOLD (= 7).
+   Your database size will not be increased unlimitedly with
+   GRN_JA_SEGREGATE_THRESHOLD=16.")
 set(GRN_LOCK_TIMEOUT
   10000000
   CACHE STRING

@@ -13,6 +13,9 @@ case "${BUILD_TOOL}" in
 	if [ "$ENABLE_MRUBY" = "yes" ]; then
 	    configure_args="${configure_args} --enable-mruby"
 	fi
+	if [ -n "${JA_SEGREGATE_THRESHOLD}" ]; then
+	    configure_args="${configure_args} --with-ja-segregate-threshold=${JA_SEGREGATE_THRESHOLD}"
+	fi
 
 	./configure --with-ruby19 ${configure_args}
 	;;
@@ -21,6 +24,9 @@ case "${BUILD_TOOL}" in
 	cmake_args="${cmake_args} -DGRN_WITH_DEBUG=yes"
 	if [ "$ENABLE_MRUBY" = "yes" ]; then
 	    cmake_args="${cmake_args} -DGRN_WITH_MRUBY=yes"
+	fi
+	if [ -n "${JA_SEGREGATE_THRESHOLD}" ]; then
+	    cmake_args="${cmake_args} -DGRN_JA_SEGREGATE_THRESHOLD=${JA_SEGREGATE_THRESHOLD}"
 	fi
 
 	cmake . ${cmake_args}
