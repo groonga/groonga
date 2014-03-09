@@ -1,0 +1,62 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+.. groonga-command
+.. database: columns_vector
+
+Vector column
+=============
+
+Summary
+-------
+
+Vector column is a data store object. It can stores zero or more
+scalar values. In short, scalar value is a single value such as number
+and string. See :doc:`scalar` about scalar value details.
+
+One of vector column use cases is tags store. You can use a vector
+column to store tag values.
+
+You can use vector column as index search target in the same way as
+scalar column. You can set weight for each element. The element that
+has one or more weight is matched, the record has more score rather
+than no weight case. It is a vector column specific feature. Vector
+column that can store weight is called weight vector column.
+
+You can also do full text search against each text element. But search
+score is too high when weight is used. You should use full text search
+with weight carefully.
+
+Usage
+-----
+
+Here is a schema definition to show usage:
+
+.. groonga-command
+.. include:: ../../example/reference/columns/vector/usage_setup.log
+.. table_create Bookmarks TABLE_HASH_KEY ShortText
+
+This section describes the followings:
+
+  * How to create a normal vector column
+  * How to load data to a normal vector column
+  * How to search elements in a normal vector column
+  * How to implement tag search
+  * How to create a weight vector column
+  * How to load data to a weight vector column
+  * How to search elements in a weight vector column
+
+How to create a normal vector column
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Use :doc:`/reference/commands/column_create` command to create a
+normal vector column. The point is ``COLUMN_VECTOR`` flag:
+
+.. groonga-command
+.. include:: ../../example/reference/columns/vector/usage_create_normal_column.log
+.. column_create Bookmarks tags COLUMN_VECTOR ShortText
+
+You can set zero or more tags to a bookmark.
+
+You can use a table as column type:
