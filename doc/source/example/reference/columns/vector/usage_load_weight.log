@@ -1,0 +1,15 @@
+Execution example::
+
+  load --table Bookmarks
+  [
+  {"_key": "http://groonga.org/",
+   "tags": {"groonga": 100}},
+  {"_key": "http://mroonga.org/",
+   "tags": {"mroonga": 100,
+            "mysql":   50,
+            "groonga": 10}},
+  {"_key": "http://ranguba.org/",
+   "tags": {"ruby": 100,
+            "groonga": 50}}
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 3]

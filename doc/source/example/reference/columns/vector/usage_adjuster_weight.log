@@ -1,0 +1,6 @@
+Execution example::
+
+  select Bookmarks \
+    --filter true \
+    --adjuster 'tags @ "mysql" * 10 + tags @ "groonga" * 5' \
+    --output_columns _key,tags,_score
