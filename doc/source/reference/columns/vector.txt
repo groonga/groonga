@@ -114,7 +114,7 @@ You need to create an index to search normal vector column:
 .. column_create Tags bookmark_index COLUMN_INDEX Bookmarks tags
 
 There are no vector column specific way. You can create an index like
-a normal scalar column.
+a scalar column.
 
 You can search an element in ``tags`` like full text search syntax.
 
@@ -168,7 +168,7 @@ Weight vector column
 ^^^^^^^^^^^^^^^^^^^^
 
 Weight vector column is similar to normal vector column. It can store
-elements themselves and weights for them. Weight is degree of
+elements. It can also stores weights for them. Weight is degree of
 importance of the element.
 
 Weight is positive integer. ``0`` is the default weight. It means that
@@ -193,7 +193,7 @@ Here are limitations:
   * You need to use string representation for element value on load.
     For example, you can't use ``29`` for number 29. You need to use
     ``"29"`` for number 29.
-  * You can't use reference table type.
+  * You can't use reference type.
 
 How to create
 """""""""""""
@@ -268,7 +268,7 @@ forget to specify ``WITH_WEIGHT`` flag to ``column_create``:
 .. column_create Tags bookmark_index COLUMN_INDEX|WITH_WEIGHT Bookmarks tags
 
 There are no weight vector column specific way except ``WITH_WEIGHT``
-flag. You can create an index like a normal scalar column.
+flag. You can create an index like a scalar column.
 
 You can search an element in ``tags`` like full text search syntax.
 
