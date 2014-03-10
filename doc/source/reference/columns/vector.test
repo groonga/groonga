@@ -42,7 +42,9 @@ This section describes the followings:
   * How to create a normal vector column
   * How to load data to a normal vector column
   * How to search elements in a normal vector column
-  * How to implement tag search
+  * How to create a reference vector column
+  * How to load data to a reference vector column
+  * How to search elements in a reference vector column
   * How to create a weight vector column
   * How to load data to a weight vector column
   * How to search elements in a weight vector column
@@ -54,9 +56,105 @@ Use :doc:`/reference/commands/column_create` command to create a
 normal vector column. The point is ``COLUMN_VECTOR`` flag:
 
 .. groonga-command
-.. include:: ../../example/reference/columns/vector/usage_create_normal_column.log
+.. include:: ../../example/reference/columns/vector/usage_create_normal.log
 .. column_create Bookmarks tags COLUMN_VECTOR ShortText
 
 You can set zero or more tags to a bookmark.
 
-You can use a table as column type:
+How to load data to a normal vector column
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can load vector data by JSON array syntax::
+
+  [ELEMENT1, ELEMENT2, ELEMENT3, ...]
+
+Let's load the following data:
+
+.. list-table::
+   :header-rows:
+
+   * - ``_key``
+     - ``tags``
+   * - ``http://groonga.org/``
+     - ``["groonga"]``
+   * - ``http://mroonga.org/``
+     - ``["mroonga", "mysql", "groonga"]``
+   * - ``http://ranguba.org/``
+     - ``["ruby", "groonga"]``
+
+Here is a command that loads the data:
+
+.. groonga-command
+.. include:: ../../example/reference/columns/vector/usage_load_normal.log
+.. load --table Bookmarks
+.. [
+.. {"_key": "http://groonga.org/", "tags": ["groonga"]},
+.. {"_key": "http://mroonga.org/", "tags": ["mroonga", "mysql", "groonga"]},
+.. {"_key": "http://ranguba.org/", "tags": ["ruby", "groonga"]}
+.. ]
+
+The loaded data can be outputted as JSON array syntax:
+
+.. groonga-command
+.. include:: ../../example/reference/columns/vector/usage_output_normal.log
+.. select Bookmarks
+
+How to search elements in a normal vector column
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You need to create an index to search normal vector column:
+
+.. groonga-command
+.. include:: ../../example/reference/columns/vector/usage_index_normal.log
+.. table_create Tags TABLE_PAT_KEY ShortText
+.. column_create Tags bookmark_index COLUMN_INDEX Bookmarks tags
+
+There are no vector column specific way. You can create an index like
+a normal scalar column.
+
+You can search an element in ``tags`` like full text search syntax.
+
+With :ref:`select-match-columns` and :ref:`select-query`:
+
+.. groonga-command
+.. include:: ../../example/reference/columns/vector/usage_query_normal.log
+.. select Bookmarks --match_columns tags --query mysql --output_columns _key,tags,_score
+
+You can also use weight in :ref:`select-match-columns`:
+
+.. groonga-command
+.. include:: ../../example/reference/columns/vector/usage_query_normal.log
+.. select Bookmarks --match_columns 'tags * 3' --query mysql --output_columns _key,tags,_score
+
+With :ref:`select-filter`:
+
+.. groonga-command
+.. include:: ../../example/reference/columns/vector/usage_filter_normal.log
+.. select Bookmarks --filter 'tags @ "msyql"' --output_columns _key,tags,_score
+
+
+How to create a reference vector column
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+TODO
+
+How to load data to a reference vector column
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+TODO
+
+How to search elements in a reference vector column
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+TODO
+
+
+How to create a weight vector column
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+How to load data to a weight vector column
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+How to search elements in a weight vector column
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
