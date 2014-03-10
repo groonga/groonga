@@ -3,8 +3,8 @@
 
 .. highlightlang:: none
 
-リファレンスマニュアル
-======================
+Reference manual
+================
 
 .. toctree::
    :maxdepth: 2
