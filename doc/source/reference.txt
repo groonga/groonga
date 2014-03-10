@@ -14,6 +14,7 @@
    reference/command
    reference/types
    reference/tables
+   reference/column
    reference/normalizers
    reference/tokenizers
    reference/query_expanders
