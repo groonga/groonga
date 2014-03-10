@@ -39,6 +39,8 @@ There are three vector column types:
 
 This section describes how to use these types.
 
+.. _normal-vector-column:
+
 Normal vector column
 ^^^^^^^^^^^^^^^^^^^^
 
@@ -140,6 +142,8 @@ With :ref:`select-filter`:
 .. table_remove Tags
 .. table_remove Bookmarks
 
+.. _reference-vector-column:
+
 Reference vector column
 ^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -163,6 +167,8 @@ How to search
 """""""""""""
 
 TODO
+
+.. _weight-vector-column:
 
 Weight vector column
 ^^^^^^^^^^^^^^^^^^^^

@@ -42,6 +42,7 @@ Syntax
          [query_expansion=null]
          [query_flags=ALLOW_PRAGMA|ALLOW_COLUMN|ALLOW_UPDATE|ALLOW_LEADING_NOT|NONE]
          [query_expander=null]
+         [adjuster=null]
 
 Usage
 -----
@@ -837,6 +838,104 @@ TODO: write in English and add example.
 ``no``
 
   検索結果をクエリキャッシュに残しません。キャッシュして再利用される可能性が低いクエリに対して用います。キャッシュ容量は有限です。有効なキャッシュが多くヒットするために、このパラメータは有効です。
+
+Score related parameters
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+There is a score related parameter, ``adjuster``.
+
+.. _select-adjuster:
+
+
+``adjuster``
+""""""""""""
+
+It specifies one or more score adjust expressions. You need to use
+``adjuster`` with ``query`` or ``filter``. ``adjuster`` doesn't work
+with not searched request.
+
+You can increase score of specific records by ``adjuster``. You can
+use ``adjuster`` to set high score for important records.
+
+For example, you can use ``adjuster`` to increase score of records
+that have ``groonga`` tag.
+
+Here is the syntax::
+
+  --adjuster "SCORE_ADJUST_EXPRESSION1 + SCORE_ADJUST_EXPRESSION2 + ..."
+
+Here is the ``SCORE_ADJUST_EXPRESSION`` syntax::
+
+  COLUMN @ "KEYWORD" * WEIGHT
+
+Note the following:
+
+  * ``COLUMN`` must be indexed.
+  * ``"KEYWORD"`` must be a string.
+  * ``WEIGHT`` must be a positive integer.
+
+Here is a sample ``adjuster`` usage example that uses just one
+``SCORE_ADJUST_EXPRESSION``:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/adjuster_one.log
+.. select Entries \
+..   --filter true \
+..   --adjuster 'content @ "groonga" * 5' \
+..   --output_columns _key,content,_score
+
+The ``select`` command matches all records. Then it applies
+``adjuster``. The adjuster increases score of records that have
+``"groonga"`` in ``Entries.content`` column by 5. There is only one
+record that has ``"groonga"`` in ``Entries.content`` column.  So the
+record that its key is ``"Groonga"`` has score 6 (``= 1 + 5``).
+
+You can omit ``WEIGHT``. If you omit ``WEIGHT``, it is treated as 1.
+
+Here is a sample ``adjuster`` usage example that omits ``WEIGHT``:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/adjuster_no_weight.log
+.. select Entries \
+..   --filter true \
+..   --adjuster 'content @ "groonga"' \
+..   --output_columns _key,content,_score
+
+The ``adjuster`` in the ``select`` command doesn't have ``WEIGHT``. So
+the weight is treated as 1. There is only one record that has
+``"groonga"`` in ``Entries.content`` column. So the record that its
+key is ``"Groonga"`` has score 2 (``= 1 + 1``).
+
+Here is a sample ``adjuster`` usage example that uses multiple
+``SCORE_ADJUST_EXPRESSION``:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/adjuster_multiple.log
+.. select Entries \
+..   --filter true \
+..   --adjuster 'content @ "groonga" * 5 + content @ "started" * 3' \
+..   --output_columns _key,content,_score
+
+The ``adjuster`` in the ``select`` command has two
+``SCORE_ADJUST_EXPRESSION`` s. The final score is sum of scores of
+these ``SCORE_ADJUST_EXPRESSION`` s. All ``SCORE_ADJUST_EXPRESSION`` s
+in the ``select`` command are applied to a record that its key is
+``"Groonga"``. So the final score of the record is sum of scores of
+all ``SCORE_ADJUST_EXPRESSION`` s.
+
+The first ``SCORE_ADJUST_EXPRESSION`` is ``content @ "groonga" * 5``.
+It increases score by 5.
+
+The second ``SCORE_ADJUST_EXPRESSION`` is ``content @ "started" * 3``.
+It increases score by 3.
+
+The final score is 9 (``= 1 + 5 + 3``).
+
+A ``SCORE_ADJUST_EXPRESSION`` has a weight for ``"KEYWORD"``. This
+means that scores of all records that has ``"KEYWORD"`` are the same
+value. You can change score for each record that has the same
+``"KEYWORD"``. It is useful to tune search score. See
+:ref:`weight-vector-column` for details.
 
 返値
 ----

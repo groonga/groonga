@@ -1,0 +1,59 @@
+Execution example::
+
+  select Entries \
+    --filter true \
+    --adjuster 'content @ "groonga" * 5 + content @ "started" * 3' \
+    --output_columns _key,content,_score
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         5
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "content", 
+  #           "Text"
+  #         ], 
+  #         [
+  #           "_score", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         "The first post!", 
+  #         "Welcome! This is my first post!", 
+  #         1
+  #       ], 
+  #       [
+  #         "Groonga", 
+  #         "I started to use groonga. It's very fast!", 
+  #         9
+  #       ], 
+  #       [
+  #         "Mroonga", 
+  #         "I also started to use mroonga. It's also very fast! Really fast!", 
+  #         4
+  #       ], 
+  #       [
+  #         "Good-bye Senna", 
+  #         "I migrated all Senna system!", 
+  #         1
+  #       ], 
+  #       [
+  #         "Good-bye Tritonn", 
+  #         "I also migrated all Tritonn system!", 
+  #         1
+  #       ]
+  #     ]
+  #   ]
+  # ]
