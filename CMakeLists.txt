@@ -114,7 +114,7 @@ set(GRN_RUBY_SCRIPTS_DIR
   "${CMAKE_INSTALL_PREFIX}/${GRN_RELATIVE_RUBY_SCRIPTS_DIR}")
 
 macro(check_cflag flag)
-  set(checking_message "checking for C flag '${flag}")
+  set(checking_message "checking for C flag '${flag}'")
   check_c_compiler_flag(${flag} is_available)
   if(${is_available})
     message(STATUS "${checking_message} - available")
