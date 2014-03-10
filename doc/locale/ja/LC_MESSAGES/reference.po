@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-28 11:32+0900\n"
-"PO-Revision-Date: 2014-01-28 12:30+0900\n"
+"POT-Creation-Date: 2014-03-10 14:49+0900\n"
+"PO-Revision-Date: 2014-03-10 16:35+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -139,8 +139,8 @@ msgstr "以下はキャシュを変更する例です。"
 
 msgid ""
 "It is an opaque cache object. You can create a ``grn_cache`` by :c:func:"
-"`grn_cache_open()` and free the created object by :c:func:`grn_cache_close()"
-"`."
+"`grn_cache_open()` and free the created object by :c:func:"
+"`grn_cache_close()`."
 msgstr ""
 
 msgid "Creates a new cache object."
@@ -502,10 +502,10 @@ msgid ""
 ":c:func:`grn_ctx_init()` で初期化された :c:type:`grn_ctx` オブジェクトは構造"
 "体の実体をAPIの呼び元で確保するのに対して、 :c:func:`grn_ctx_open()` では"
 "Groongaライブラリの内部で、実体を確保します。 どちらで初期化された :c:type:"
-"`grn_ctx` も、 :c:func:`grn_ctx_fin()` で解放できます。 :c:func:`grn_ctx_open"
-"()` で確保した :c:type:`grn_ctx` 構造体に関しては、:c:func:`grn_ctx_fin()` で"
-"解放した後に、その :c:type:`grn_ctx` で作成した :c:type:`grn_obj` を :c:func:"
-"`grn_obj_close()` によって解放しても問題ありません。"
+"`grn_ctx` も、 :c:func:`grn_ctx_fin()` で解放できます。 :c:func:"
+"`grn_ctx_open()` で確保した :c:type:`grn_ctx` 構造体に関しては、:c:func:"
+"`grn_ctx_fin()` で解放した後に、その :c:type:`grn_ctx` で作成した :c:type:"
+"`grn_obj` を :c:func:`grn_obj_close()` によって解放しても問題ありません。"
 msgstr ""
 
 msgid ""
@@ -1830,6 +1830,337 @@ msgstr ""
 msgid "Cast"
 msgstr ""
 
+msgid "Column"
+msgstr "カラム"
+
+msgid "Column is a data store object or an index object for fast search."
+msgstr ""
+"カラムはデータストアオブジェクトまたは高速な検索のための転置索引オブジェクト"
+"です。"
+
+msgid "A column belongs to a table. Table has zero or more columns."
+msgstr ""
+"カラムは必ず1つのテーブルに属します。テーブルは0個以上のカラムを持ちます。"
+
+msgid ""
+"Both data store column and index column have type. Type of data store column "
+"specifies data range. In other words, it is \"value type\". Type of index "
+"column specifies set of documents to be indexed. A set of documents is a "
+"table in Groonga. So it must be a table."
+msgstr ""
+"データストアカラムもインデックスカラムもどちらも型を持ちます。データストアカ"
+"ラムの型は値域を指定します。言い換えると、データストアカラムの型は「値の型」"
+"です。インデックスカラムの型はインデックス対象のドキュメント集合を指定しま"
+"す。Groongaではテーブルがドキュメント集合になります。よって、インデックスカラ"
+"ムの型はテーブルにしなければいけません。"
+
+msgid "Here are data store columns:"
+msgstr "以下がデータストアカラムです。"
+
+msgid ":doc:`columns/scalar`"
+msgstr ""
+
+msgid ":doc:`columns/vector`"
+msgstr ""
+
+msgid "Here is an index column:"
+msgstr "以下がインデックスカラムです。"
+
+msgid ":doc:`columns/index`"
+msgstr ""
+
+msgid "Vector column"
+msgstr "ベクターカラム"
+
+msgid ""
+"Vector column is a data store object. It can stores zero or more scalar "
+"values. In short, scalar value is a single value such as number and string. "
+"See :doc:`scalar` about scalar value details."
+msgstr ""
+"ベクターカラムはデータストアオブジェクトです。ベクターカラムは0個以上のスカ"
+"ラー値を保存できます。ざっくり言うと、スカラー値とは数値や文字列といった1つの"
+"値のことです。スカラー値の詳細は :doc:`scalar` を参照してください。"
+
+msgid ""
+"One of vector column use cases is tags store. You can use a vector column to "
+"store tag values."
+msgstr ""
+"ベクターカラムのユースケースの1つはタグの保存です。ベクターカラムを使うとタグ"
+"の値を複数保存できます。"
+
+msgid ""
+"You can use vector column as index search target in the same way as scalar "
+"column. You can set weight for each element. The element that has one or "
+"more weight is matched, the record has more score rather than no weight "
+"case. It is a vector column specific feature. Vector column that can store "
+"weight is called weight vector column."
+msgstr ""
+"スカラーカラムと同じように、ベクターカラムもインデックスを使って検索できま"
+"す。各要素に重みをつけることもできます。1以上の重みがついた要素がマッチする"
+"と、重みがついていない場合よりも大きなスコアがつきます。これはベクターカラム"
+"特有の機能です。重みも保存できるベクターカラムのことは重み付きベクターカラム"
+"と呼びます。"
+
+msgid ""
+"You can also do full text search against each text element. But search score "
+"is too high when weight is used. You should use full text search with weight "
+"carefully."
+msgstr ""
+"各要素がテキストなら、各要素に対して全文検索することもできます。しかし、重み"
+"を使った場合は検索スコアが高くなりすぎることに注意してください。重み付きベク"
+"ターカラムに対して全文検索をするときは注意してください。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "There are three vector column types:"
+msgstr "ベクターカラムには3種類あります。"
+
+msgid "Normal vector column"
+msgstr "ノーマルベクターカラム"
+
+msgid "Reference vector column"
+msgstr "参照型ベクターカラム"
+
+msgid "Weight vector column"
+msgstr "重み付きベクターカラム"
+
+msgid "This section describes how to use these types."
+msgstr "このセクションではこれらの種類の使い方について説明します。"
+
+msgid ""
+"Normal vector column stores zero or more scalar data. For example, scalar "
+"data are number, string and so on."
+msgstr ""
+"ノーマルベクターカラムは0個以上のスカラーデータを保存します。スカラーデータと"
+"は、例えば、数値や文字列です。"
+
+msgid ""
+"A normal vector column can store the same type elements. You can't mix "
+"types. For example, you can't store a number and a string in the same normal "
+"vector column."
+msgstr ""
+"ノーマルベクターカラムは同じ型の要素だけを保存できます。型を混ぜることはでき"
+"ません。例えば、同じノーマルベクターカラムに数値と文字列を保存できません。"
+
+msgid ""
+"Normal vector column is useful when a record has multiple values with a key. "
+"Tags are the most popular use case."
+msgstr ""
+"ノーマルベクターカラムは、1つのレコードが、1つのキーに対して複数の値を持って"
+"いるときに便利です。タグは一番よくあるユースケースです。"
+
+msgid "How to create"
+msgstr "作り方"
+
+msgid ""
+"Use :doc:`/reference/commands/column_create` command to create a normal "
+"vector column. The point is ``COLUMN_VECTOR`` flag:"
+msgstr ""
+"ノーマルベクターカラムを作るためには :doc:`/reference/commands/"
+"column_create` コマンドを使います。ポイントは ``COLUMN_VECTOR`` フラグです。"
+
+msgid "You can set zero or more tags to a bookmark."
+msgstr "1つのブックマークに0個以上のタグを設定できます。"
+
+msgid "How to load"
+msgstr "ロード方法"
+
+msgid "You can load vector data by JSON array syntax::"
+msgstr "JSONの配列構文で指定してベクターデータをロードします::"
+
+msgid "Let's load the following data:"
+msgstr "以下のデータをロードしましょう。"
+
+msgid "Here is a command that loads the data:"
+msgstr "以下がデータをロードするコマンドです。"
+
+msgid "The loaded data can be outputted as JSON array syntax:"
+msgstr "ロードしたデータはJSONの配列構文で出力されます。"
+
+msgid "How to search"
+msgstr "検索方法"
+
+msgid "You need to create an index to search normal vector column:"
+msgstr "ノーマルベクターカラムを検索するにはインデックスを作る必要があります。"
+
+msgid ""
+"There are no vector column specific way. You can create an index like a "
+"scalar column."
+msgstr ""
+"ベクターカラム固有の方法はありません。スカラーカラムにインデックスを作る方法"
+"と同じです。"
+
+msgid "You can search an element in ``tags`` like full text search syntax."
+msgstr "全文検索と同じ構文で ``tags`` 内の要素を検索できます。"
+
+msgid "With :ref:`select-match-columns` and :ref:`select-query`:"
+msgstr ":ref:`select-match-columns` と :ref:`select-query` を使った場合:"
+
+msgid "You can also use weight in :ref:`select-match-columns`:"
+msgstr ":ref:`select-match-columns` の中で重みを使うこともできます。"
+
+msgid "With :ref:`select-filter`:"
+msgstr ":ref:`select-filter` を使った場合:"
+
+msgid "TODO"
+msgstr ""
+
+msgid ""
+"Reference vector column is space-efficient if there are many same value "
+"elements. Reference vector column keeps reference record IDs not value "
+"itself. Record ID is smaller than value itself."
+msgstr ""
+
+msgid ""
+"Weight vector column is similar to normal vector column. It can store "
+"elements. It can also store weights for them. Weight is degree of importance "
+"of the element."
+msgstr ""
+"重み付きベクターカラムはノーマルベクターカラムに似ています。複数の要素を保存"
+"できます。さらに、要素の重みも保存できます。重みとはその要素の重要度です。"
+
+msgid ""
+"Weight is positive integer. ``0`` is the default weight. It means that no "
+"weight."
+msgstr ""
+"重みは正の整数です。デフォルトの重みは ``0`` です。これは重みがないという意味"
+"になります。"
+
+msgid ""
+"If weight is one or larger, search score is increased by the weight. If the "
+"weight is ``0``, score is ``1``. If the weight is ``10``, score is ``11`` "
+"(``= 1 + 10``)."
+msgstr ""
+"重みが1以上なら、検索スコアーに重みが加算されます。重みが ``0`` なら検索スコ"
+"アーは ``1`` です。重みが ``10`` なら検索スコアーは ``11`` （ ``= 1 + 10`` ）"
+"です。"
+
+msgid ""
+"Weight vector column is useful for tuning search score. See also :ref:"
+"`select-adjuster`. You can increase search score of specific records."
+msgstr ""
+"重み付きベクターカラムは検索スコアーのチューニングに便利です。 :ref:`select-"
+"adjuster` も参照してください。特定のレコードの検索スコアーを増やすことができ"
+"ます。"
+
+msgid "Limitations"
+msgstr "制限"
+
+msgid ""
+"There are some limitations for now. They will be resolved in the future."
+msgstr "今のところいくつか制限があります。将来的には解消される予定です。"
+
+msgid "Here are limitations:"
+msgstr "以下が制限です。"
+
+msgid ""
+"You need to use string representation for element value on load. For "
+"example, you can't use ``29`` for number 29. You need to use ``\"29\"`` for "
+"number 29."
+msgstr ""
+"ロード時に要素の値を文字列での表現で指定しなければいけません。例えば、数値の"
+"29を指定するために、 ``29`` を使うことはできません。 ``\"29\"`` と文字列で表"
+"記する必要があります。"
+
+msgid "You can't use reference type."
+msgstr "参照型を使うことができません。"
+
+msgid ""
+"Use :doc:`/reference/commands/column_create` command to create a weight "
+"vector column. The point is ``COLUMN_VECTOR|WITH_WEIGHT`` flags:"
+msgstr ""
+"重み付きベクターカラムを作るには :doc:`/reference/commands/column_create` を"
+"使います。ポイントは ``COLUMN_VECTOR|WITH_WEIGHT`` フラグです。"
+
+msgid ""
+"If you don't specify ``WITH_WEIGHT`` flag, it is just a normal vector column."
+msgstr ""
+"``WITH_WEIGHT`` フラグを指定しないと、ただのノーマルベクターカラムになりま"
+"す。"
+
+msgid "You can set zero or more tags with weight to a bookmark."
+msgstr "1つのブックマークに重み付きで0個以上のタグを設定できます。"
+
+msgid "You can load vector data by JSON object syntax::"
+msgstr "JSONのオブジェクト構文でベクターデータをロードします::"
+
+msgid "The loaded data can be outputted as JSON object syntax:"
+msgstr "ロードしたデータはJSONのオブジェクト構文で出力されます。"
+
+msgid ""
+"You need to create an index to search weight vector column. You don't forget "
+"to specify ``WITH_WEIGHT`` flag to ``column_create``:"
+msgstr ""
+"重み付きベクターを検索するためにはインデックスを作る必要があります。 "
+"``column_create`` に ``WITH_WEIGHT`` フラグを指定することを忘れないでくださ"
+"い。"
+
+msgid ""
+"There are no weight vector column specific way except ``WITH_WEIGHT`` flag. "
+"You can create an index like a scalar column."
+msgstr ""
+"``WITH_WEIGHT`` 以外は重み付きベクターカラムに特有の方法はありません。スカ"
+"ラーカラムにインデックスを作る方法と同じです。"
+
+msgid ""
+"You can also use weight in :ref:`select-match-columns`. The score is ``(1 + "
+"weight_in_weight_vector) * weight_in_match_columns``:"
+msgstr ""
+":ref:`select-match-columns` の重みと一緒に使うこともできます。スコアーは "
+"``(1 + 重み付きベクターの重み) * match_columnsの重み`` 。"
+
+msgid "How to apply just weight"
+msgstr "重みだけを適用する方法"
+
+msgid ""
+"You can use weight in weight vector column to just increase search score "
+"without changing a set of matched records."
+msgstr ""
+"マッチしたレコード集合を変更せずに、重み付きベクターカラムの重みの分だけ検索"
+"スコアーを増やすことができます。"
+
+msgid "Use :ref:`select-adjuster` for the purpose:"
+msgstr "この用途には :ref:`select-adjuster` を使います。"
+
+msgid ""
+"The ``select`` command uses ``--filter true``. So all records are matched "
+"with score 1. Then it applies ``--adjuster``. The adjuster does the "
+"following:"
+msgstr ""
+"この ``select`` コマンドは ``--filter true`` を使っています。そのため、すべて"
+"のレコードがマッチし、スコアーは1になります。それから、 ``--adjuster`` を適用"
+"します。アジャスターは以下のことをします。"
+
+msgid ""
+"``tags @ \"mysql\" * 10`` increases score by ``(1 + weight) * 10`` of "
+"records that has ``\"mysql\"`` tag."
+msgstr ""
+"``tags @ \"mysql\" * 10`` は ``\"mysql\"`` タグを含むレコードのスコアーを "
+"``(1 + 重み) * 10`` 増やします。"
+
+msgid ""
+"``tags @ \"groonga\" * 5`` increases score by ``(1 + weight) * 5`` of "
+"records that has ``\"groonga\"`` tag."
+msgstr ""
+"``tags @ \"groonga\" * 5`` は ``\"groonga\"`` タグを含むレコードのスコアーを "
+"``(1 + 重み) * 5`` 増やします。"
+
+msgid ""
+"For example, record ``\"http://mroonga.org/\"`` has both ``\"mysql\"`` tag "
+"and ``\"groonga\"`` tag. So its score is increased by ``565`` (``= ((1 + 50) "
+"* 10) + ((1 + 10) * 5) = (51 * 10) + (11 * 5) = 510 + 55``). The search "
+"score is 1 by ``--filter true`` before applying ``--adjuster``. So the final "
+"search score is ``566`` (``= 1 + 565``) of record ``\"http://mroonga.org/"
+"\"``."
+msgstr ""
+"例えば、 ``\"http://mroonga.org/\"`` レコードは ``\"mysql\"`` タグと ``"
+"\"groonga\"`` タグを両方持っています。そのため、スコアーは ``565`` （ ``= "
+"((1 + 50) * 10) + ((1 + 10) * 5) = (51 * 10) + (11 * 5) = 510 + 55`` ）増えま"
+"す。 ``--adjuster`` を適用する前は、``--filter true`` によって検索スコアーは1"
+"になっています。そのため、 ``\"http://mroonga.org/\"`` レコードの最終的な検索"
+"スコアーは ``566`` （ ``= 1 + 565`` ）になります。"
+
 msgid "Command"
 msgstr "コマンド"
 
@@ -2161,9 +2492,6 @@ msgstr ""
 msgid "XML"
 msgstr "XML"
 
-msgid "TODO"
-msgstr ""
-
 msgid "TSV"
 msgstr ""
 
@@ -2470,9 +2798,6 @@ msgstr "構文"
 
 msgid "``cache_limit`` has one optional parameter::"
 msgstr "``cache_limit`` には省略可能な引数が1つあります::"
-
-msgid "Usage"
-msgstr "使い方"
 
 msgid ""
 "You can get the current max number of cache entries by executing "
@@ -2904,14 +3229,6 @@ msgid ""
 "引数に指定します。"
 msgstr ""
 
-msgid ""
-"The format of HEADER is [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, "
-"ELAPSED_TIME]. See :doc:`/reference/command/output_format` about HEADER."
-msgstr ""
-"HEADERのフォーマットは  [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, ELAPSED_TIME] "
-"です。HEADERについては :doc:`/reference/command/output_format` を参照してくだ"
-"さい。"
-
 msgid "``SUCCEEDED``"
 msgstr ""
 
@@ -3035,14 +3352,41 @@ msgstr ""
 msgid "``column_rename``"
 msgstr ""
 
-msgid "``column_rename`` command renames specified column name of table."
+#, fuzzy
+msgid "``column_rename`` command renames a column."
 msgstr "``column_rename`` コマンドは指定したテーブルのカラム名を変更します。"
 
-msgid "``column_rename`` command takes two parameters."
-msgstr "``column_rename`` コマンドは引数を二つとります。"
+msgid ""
+"It is a light operation. It just changes a relationship between name and the "
+"column object. It doesn't copy column values."
+msgstr ""
 
-msgid "The required parameter is ``table`` and ``column_name``::"
-msgstr "``table`` と ``column_name`` が必須の引数です。"
+msgid ""
+"It is a dangerous operation. You must stop all operations including read "
+"operations while you run ``column_rename``. If the following case is "
+"occurred, Groonga process may be crashed:"
+msgstr ""
+
+msgid ""
+"Starts an operation (like ``select``) that accesses the column to be renamed "
+"by the current column name. The current column name is called as ``the old "
+"column name`` in the below because the column name is renamed."
+msgstr ""
+
+msgid "Runs ``column_rename``. The ``select`` is still running."
+msgstr ""
+
+msgid ""
+"The ``select`` accesses the column to be renamed by the old column name. But "
+"the ``select`` can't find the column by the old name because the column has "
+"been renamed to the new column name. It may crash the Groonga process."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"``column_rename`` command takes three parameters. All parameters are "
+"required::"
+msgstr "``column_rename`` コマンドは引数を二つとります。"
 
 msgid "Here is a simple example of ``column_rename`` command."
 msgstr "以下は ``column_rename`` コマンドの簡単な使用例です。"
@@ -3050,29 +3394,33 @@ msgstr "以下は ``column_rename`` コマンドの簡単な使用例です。"
 msgid "This section describes parameters of ``column_rename``."
 msgstr "このセクションでは ``column_rename`` の引数について説明します。"
 
-msgid "Required parameter"
+msgid "Required parameters"
 msgstr "必須引数"
 
-msgid "There are required parameters, ``table_name`` and ``column_name``."
-msgstr "必須引数は二つあります。 ``table_name`` と ``column_name`` です。"
-
-msgid "``table_name``"
+msgid "All parameters are required."
 msgstr ""
 
-msgid "It specifies the name of table."
+#, fuzzy
+msgid "It specifies the name of table that has the column to be renamed."
+msgstr "レコードを削除するテーブルの名前を指定します。"
+
+#, fuzzy
+msgid "It specifies the column name to be renamed."
 msgstr "テーブルの名前を指定します。"
 
-msgid "``column_name``"
-msgstr ""
+#, fuzzy
+msgid "``new_name``"
+msgstr "時間"
 
-msgid "It specifies the name of column."
+#, fuzzy
+msgid "It specifies the new column name."
 msgstr "カラムの名前を指定します。"
 
 msgid "``SUCCEEDED_OR_NOT``"
 msgstr ""
 
-msgid ""
-"If command succeeded, it returns true, otherwise it returns false on error."
+#, fuzzy
+msgid "It is ``true`` on success, ``false`` otherwise."
 msgstr ""
 "コマンドの実行が成功するとtrueを返します。失敗するとエラーとしてfalseを返しま"
 "す。"
@@ -3294,6 +3642,12 @@ msgid ""
 msgstr ""
 "レコードを特定するためのgrn_exprの式を指定します。引数 ``filter`` を指定する"
 "なら、引数 ``key`` や ``id`` を指定してはいけません。"
+
+msgid ""
+"If command succeeded, it returns true, otherwise it returns false on error."
+msgstr ""
+"コマンドの実行が成功するとtrueを返します。失敗するとエラーとしてfalseを返しま"
+"す。"
 
 msgid "dump"
 msgstr ""
@@ -3575,6 +3929,9 @@ msgstr "以下は ``normalize`` コマンドの簡単な使用例です。"
 
 msgid "This section describes parameters of ``normalizer``."
 msgstr "このセクションでは ``normalizer`` の引数について説明します。"
+
+msgid "Required parameter"
+msgstr "必須引数"
 
 msgid "There are required parameters, ``normalizer`` and ``string``."
 msgstr "必須引数は二つあります。 ``normalizer`` と ``string`` です。"
@@ -5615,7 +5972,7 @@ msgstr ""
 msgid "Hash table."
 msgstr "ハッシュテーブル。"
 
-msgid "``TABLE_HASH_HEY``"
+msgid "``TABLE_HASH_KEY``"
 msgstr ""
 
 msgid "Patricia trie."
@@ -5870,9 +6227,6 @@ msgstr ""
 "クナイズしたトークンを返します。この例では ``\"Fulltext Search\"`` を正規化し"
 "ていません。"
 
-msgid "Required parameters"
-msgstr "必須引数"
-
 msgid "There are required parameters, ``tokenizer`` and ``string``."
 msgstr "必須引数は二つあります。 ``tokenizer`` と ``string`` です。"
 
@@ -6052,6 +6406,12 @@ msgstr "このセクションでは ``truncate`` の引数について説明し�
 
 msgid "There is required parameter, ``table_name``."
 msgstr "``table_name`` だけが必須の引数です。"
+
+msgid "``table_name``"
+msgstr ""
+
+msgid "It specifies the name of table."
+msgstr "テーブルの名前を指定します。"
 
 msgid "実行ファイル"
 msgstr ""
@@ -7076,6 +7436,31 @@ msgstr ""
 msgid "groonga-suggest-httpd"
 msgstr ""
 
+msgid ""
+"groonga-suggest-httpd is a program to provide interface which accepts HTTP "
+"request and returns suggestion dataset, then saves logs for learning. "
+"groonga-suggest-httpd behaves similar in point of view of suggestion "
+"functionality, but the name of parameter is different."
+msgstr ""
+
+#, fuzzy
+msgid "First you need to set up database for suggestion."
+msgstr "以下は提案用の学習データです。"
+
+msgid "Launch groonga-suggest-httpd"
+msgstr ""
+
+msgid "Execute groonga-suggest-httpd command:"
+msgstr ""
+
+msgid ""
+"After executing above command, groonga-suggest-httpd accepts HTTP request on "
+"8080 port."
+msgstr ""
+
+msgid "Request to groonga-suggest-httpd"
+msgstr ""
+
 msgid "Options"
 msgstr ""
 
@@ -7104,17 +7489,155 @@ msgstr ""
 msgid "Specify this option to disable checking max fd on start."
 msgstr ""
 
+#, fuzzy
+msgid "Command line Parameters"
+msgstr "コマンドライン"
+
 msgid "There is one required parameter - ``database_path``."
 msgstr "``database_path`` だけが必須の引数です。"
 
 msgid "``database_path``"
 msgstr ""
 
-msgid "Specifies the path to a groonga database."
-msgstr "groongaデータベースのパスを指定します。"
+msgid ""
+"Specifies the path to a Groonga database. This database must be created by :"
+"doc:`groonga-suggest-create-dataset` command because it executes required "
+"initialization for suggestion."
+msgstr ""
+
+#, fuzzy
+msgid "GET Parameters"
+msgstr "引数"
+
+msgid "groonga-suggest-httpd accepts following GET parameters."
+msgstr ""
+
+#, fuzzy
+msgid "There are required parameters which depends on type of query."
+msgstr "必須引数は二つあります。 ``tokenizer`` と ``string`` です。"
+
+msgid "Key"
+msgstr ""
+
+msgid "Note"
+msgstr ""
+
+msgid "q"
+msgstr ""
+
+msgid "UTF-8 encoded string which user fills in form"
+msgstr ""
+
+msgid "t"
+msgstr ""
+
+msgid ""
+"The type of query. The value of type must be complete, correct, suggest or "
+"submit. It also accepts multiple type of query which is concatinated by '|'. "
+"Note that 'submit' is invalid value when you specify multiple type of query."
+msgstr ""
+
+#, fuzzy
+msgid "Required parameters for learning"
+msgstr "必須引数"
+
+msgid "s"
+msgstr ""
+
+msgid "Elapsed time from 0:00 January 1, 1970"
+msgstr ""
+
+msgid "Note that you need specify the value of 's' in milliseconds"
+msgstr ""
+
+msgid "i"
+msgstr ""
+
+msgid "Unique ID to distinct user"
+msgstr ""
+
+msgid "Use session ID or IP address for example"
+msgstr ""
+
+msgid "l"
+msgstr ""
+
+msgid ""
+"Specify the name of dataset for learning. It also accepts multiple dataset "
+"name which is concatinated by '|'"
+msgstr ""
+
+msgid ""
+"Note that dataset name must be matched to following regular expression '[A-"
+"Za-z ][A-Za-z0-9 ]{0,15}'"
+msgstr ""
+
+#, fuzzy
+msgid "Required parameters for suggestion"
+msgstr "必須引数"
+
+msgid "n"
+msgstr ""
+
+#, fuzzy
+msgid "Specify the name of dataset for suggestion"
+msgstr "以下は提案用の学習データです。"
+
+msgid "This dataset name is used to calculate suggestion results"
+msgstr ""
+
+msgid "Optional parameter"
+msgstr "省略可能引数"
+
+msgid "callback"
+msgstr ""
+
+msgid "Specify the name of function if you prefer JSONP as response format"
+msgstr ""
+
+msgid ""
+"The name of function must be matched to reqular expression '[A-Za-z ][A-Za-"
+"z0-9 ]{0,15}'"
+msgstr ""
+
+msgid ""
+"``groonga-suggest-httpd`` command returns following response in JSON or "
+"JSONP format."
+msgstr ""
+
+#, fuzzy
+msgid "In JSON format::"
+msgstr "JSON形式"
+
+#, fuzzy
+msgid "In JSONP format::"
+msgstr "JSON形式"
+
+msgid "``TYPE``"
+msgstr ""
+
+#, fuzzy
+msgid "'complete', 'correct' or 'suggest'."
+msgstr "補完・補正・提案候補。"
+
+msgid "``CANDIDATE_N``"
+msgstr ""
+
+msgid "The string of candidate (UTF-8)."
+msgstr ""
+
+msgid "``SCORE_N``"
+msgstr ""
+
+#, fuzzy
+msgid "The number of score."
+msgstr "全レコード数"
 
 msgid "groonga-suggest-learner"
 msgstr ""
+
+msgid "Specifies the path to a groonga database."
+msgstr "groongaデータベースのパスを指定します。"
 
 msgid "groonga command"
 msgstr "groongaコマンド"
@@ -7582,10 +8105,10 @@ msgstr ""
 "Groongaは三つの組み込み関数を距離の計算のために提供しています。 "
 "``geo_distance()`` 、 ``geo_distance2()`` 、 ``geo_distance3()`` です。これら"
 "の違いは距離の計算アルゴリズムにあります。 ``geo_distance2()`` と "
-"``geo_distance3()`` はバージョン1.2.9より非推奨となりました。 ``geo_distance2"
-"(point1, point2)`` の代りに ``geo_distance(point1, point2, \"sphere\")`` を使"
-"用してください。 ``geo_distance3(point1, point2)`` の代りに ``geo_distance"
-"(point1, point2, \"ellipsoid\")`` を使用してください。"
+"``geo_distance3()`` はバージョン1.2.9より非推奨となりました。 "
+"``geo_distance2(point1, point2)`` の代りに ``geo_distance(point1, point2, "
+"\"sphere\")`` を使用してください。 ``geo_distance3(point1, point2)`` の代り"
+"に ``geo_distance(point1, point2, \"ellipsoid\")`` を使用してください。"
 
 msgid ""
 "Lets's learn about ``geo_distance`` usage with examples. This section shows "
@@ -7701,9 +8224,6 @@ msgstr "GeoPoint型の値か座標を表す文字列を指定することがで�
 msgid "See :doc:`/reference/types` about GeoPoint and the coordinate."
 msgstr "GeoPointと座標については :doc:`/reference/types` を参照してください。"
 
-msgid "Optional parameter"
-msgstr "省略可能引数"
-
 msgid "There is a optional parameter, ``approximate_type``."
 msgstr "省略可能な引数として ``approximate_type`` があります。"
 
@@ -7776,12 +8296,12 @@ msgstr ""
 
 msgid ""
 "This sample shows the value of distance across meridian. The return value of "
-"``geo_distance(\"175904000x8464000\", \"145508000x-13291000\", \"rectangle\")"
-"`` is the value of distance from Paris, Flance to Madrid, Spain."
+"``geo_distance(\"175904000x8464000\", \"145508000x-13291000\", \"rectangle"
+"\")`` is the value of distance from Paris, Flance to Madrid, Spain."
 msgstr ""
-"このサンプルは子午線をまたいだ場合の距離を示します。 ``geo_distance"
-"(\"175904000x8464000\", \"145508000x-13291000\", \"rectangle\")`` はパリ(フラ"
-"ンス)からマドリード(スペイン)間の距離を返します。"
+"このサンプルは子午線をまたいだ場合の距離を示します。 "
+"``geo_distance(\"175904000x8464000\", \"145508000x-13291000\", \"rectangle"
+"\")`` はパリ(フランス)からマドリード(スペイン)間の距離を返します。"
 
 msgid ""
 "This sample shows the value of distance across equator. The return value of "
@@ -7789,9 +8309,10 @@ msgid ""
 "\"rectangle\")`` is the value of distance from New York, The United Status "
 "to Brasillia, Brasil."
 msgstr ""
-"このサンプルは赤道をまたいだ場合の距離を示します。 ``geo_distance"
-"(\"146566000x-266422000\", \"-56880000x-172310000\", \"rectangle\")`` は"
-"ニューヨーク(アメリカ)からブラジリア(ブラジル)間の距離を返します。"
+"このサンプルは赤道をまたいだ場合の距離を示します。 "
+"``geo_distance(\"146566000x-266422000\", \"-56880000x-172310000\", "
+"\"rectangle\")`` はニューヨーク(アメリカ)からブラジリア(ブラジル)間の距離を返"
+"します。"
 
 msgid ""
 "This sample shows the value of distance across the date line. The return "
@@ -7799,9 +8320,9 @@ msgid ""
 "\"rectangle\")`` is the value of distance from Beijin, China to San "
 "Francisco, The United States."
 msgstr ""
-"このサンプルは日付変更線をまたいだ場合の距離を示します。 ``geo_distance"
-"(\"143660000x419009000\", \"135960000x-440760000\", \"rectangle\")`` は北京"
-"(中国)からサンフランシスコ(アメリカ)間の距離を返します。"
+"このサンプルは日付変更線をまたいだ場合の距離を示します。 "
+"``geo_distance(\"143660000x419009000\", \"135960000x-440760000\", \"rectangle"
+"\")`` は北京(中国)からサンフランシスコ(アメリカ)間の距離を返します。"
 
 msgid ""
 "``geo_distance`` uses square approximation as default. If you omit "
@@ -8646,9 +9167,9 @@ msgid "Here is a special character list:"
 msgstr "以下が特別な文字のリストです:"
 
 msgid ""
-"``[space]`` (escaped as ``[backslash][space]``) (You should substitute ``"
-"[space]`` with a white space character that is 0x20 in ASCII and ``"
-"[backslash]`` with ``\\\\``.)"
+"``[space]`` (escaped as ``[backslash][space]``) (You should substitute "
+"``[space]`` with a white space character that is 0x20 in ASCII and "
+"``[backslash]`` with ``\\\\``.)"
 msgstr ""
 "``[space]`` （ ``[backslash][space]`` とエスケープする。）（ ``[space]`` を"
 "ASCIIで言えば0x20の空白文字に置き換えて、 ``[backslash]`` を ``\\\\`` に置き"
@@ -8870,8 +9391,8 @@ msgid ""
 "search condition`` and ``full text search condition (with explicit match "
 "column)``. ``Phrase search condition`` supports advanced match columns but "
 "``phrase search condition (with explicit match column)`` isn't supported. "
-"See description of ``full text search condition (with explicit match column)"
-"`` about advanced match columns."
+"See description of ``full text search condition (with explicit match "
+"column)`` about advanced match columns."
 msgstr ""
 "``フレーズ検索条件`` と ``フレーズ検索条件（マッチカラム指定あり）`` は ``全"
 "文検索条件`` と ``全文検索条件（マッチカラム指定あり）`` の関係と似ていま"
@@ -10573,13 +11094,7 @@ msgstr ""
 msgid "Notification"
 msgstr ""
 
-msgid "n"
-msgstr ""
-
 msgid "Information"
-msgstr ""
-
-msgid "i"
 msgstr ""
 
 msgid "Debug"
@@ -11114,8 +11629,8 @@ msgstr "クエリーが ``mroonga search`` のときのクエリー展開の例�
 msgid ""
 "It is important that registered words (``groonga`` and ``mroonga``) are only "
 "expanded to synonyms and not registered words (``search``) are not expanded. "
-"Query expansion isn't occurred recursively. ``groonga`` is appeared in ``"
-"(mroonga OR (groonga MySQL))`` as query expansion result but it isn't "
+"Query expansion isn't occurred recursively. ``groonga`` is appeared in "
+"``(mroonga OR (groonga MySQL))`` as query expansion result but it isn't "
 "expanded."
 msgstr ""
 "登録されている単語だけ（ここでは ``groonga`` と ``mroonga`` ）クエリー展開さ"
@@ -11359,9 +11874,6 @@ msgstr ""
 "表はトークンをキーとして保存する必要があるからです。 ``TABLE_NO_KEY`` はログ"
 "のようにキーのないレコードを管理するテーブルとして有用です。"
 
-msgid "``TABLE_HASH_KEY``"
-msgstr ""
-
 msgid ""
 "``TABLE_HASH_KEY`` is fast but it doesn't support advanced search functions "
 "such as common prefix search and predictive search."
@@ -11462,9 +11974,6 @@ msgstr ""
 "果などを格納するために使われています。検索結果とグループ結果には "
 "``TABLE_HASH_KEY`` が使われています。ソート結果には ``TABLE_NO_KEY`` が使われ"
 "ています。"
-
-msgid "Limitations"
-msgstr "制限"
 
 msgid ""
 "The max number of records is 268435455. You cannot add 268435456 or more "
@@ -11912,3 +12421,17 @@ msgstr ""
 
 msgid "Object型はv1.2でサポートされます。"
 msgstr ""
+
+#~ msgid "There are required parameters, ``table_name`` and ``column_name``."
+#~ msgstr "必須引数は二つあります。 ``table_name`` と ``column_name`` です。"
+
+#~ msgid "The required parameter is ``table`` and ``column_name``::"
+#~ msgstr "``table`` と ``column_name`` が必須の引数です。"
+
+#~ msgid ""
+#~ "The format of HEADER is [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, "
+#~ "ELAPSED_TIME]. See :doc:`/reference/command/output_format` about HEADER."
+#~ msgstr ""
+#~ "HEADERのフォーマットは  [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, "
+#~ "ELAPSED_TIME] です。HEADERについては :doc:`/reference/command/"
+#~ "output_format` を参照してください。"
