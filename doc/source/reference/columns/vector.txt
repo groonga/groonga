@@ -77,7 +77,7 @@ You can load vector data by JSON array syntax::
 Let's load the following data:
 
 .. list-table::
-   :header-rows:
+   :header-rows: 1
 
    * - ``_key``
      - ``tags``
@@ -228,7 +228,7 @@ You can load vector data by JSON object syntax::
 Let's load the following data:
 
 .. list-table::
-   :header-rows:
+   :header-rows: 1
 
    * - ``_key``
      - ``tags``
