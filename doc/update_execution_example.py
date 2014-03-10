@@ -46,10 +46,17 @@ def normalize_output(output):
     status[2] = normalized_elapsed_time
   return output
 
+def remove_continuous_marks(command):
+  return re.sub('\\\\\n', '', command)
+
+def prepend_prefix(prefix, command):
+  beginning_of_line = re.compile('^', re.M)
+  return beginning_of_line.sub(prefix, command)
+
 def execmd(command, fout):
   stdout.write(command + "\n")
   stdout.flush()
-  groonga_process.stdin.write(command + "\n")
+  groonga_process.stdin.write(remove_continuous_marks(command) + "\n")
   groonga_process.stdin.flush()
   is_command = re.match("[a-z/]", command)
   is_load_command = re.match("load ", command)
@@ -59,7 +66,7 @@ def execmd(command, fout):
       prefix = "  "
     else:
       prefix = "  % curl http://localhost:10041"
-    formatted_command_line = prefix + command + "\n"
+    formatted_command_line = prepend_prefix(prefix, command) + "\n"
     fout.write(formatted_command_line)
   is_load_data_end = re.match("^\]", command)
   if is_load_command:
@@ -166,6 +173,8 @@ def readfile(fname, outflag):
               execmd(dat.pop(0), fout)
           else:
             cmd = cmd[3:]
+            while cmd.endswith('\\'):
+              cmd += '\n' + re.sub('^\.\. ', '', dat.pop(0))
             execmd(cmd, fout)
         else:
           print '### command end'
