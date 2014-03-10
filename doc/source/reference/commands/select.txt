@@ -917,11 +917,11 @@ Here is a sample ``adjuster`` usage example that uses multiple
 ..   --output_columns _key,content,_score
 
 The ``adjuster`` in the ``select`` command has two
-``SCORE_ADJUST_EXPRESSION`` s. The final score is sum of scores of
-these ``SCORE_ADJUST_EXPRESSION`` s. All ``SCORE_ADJUST_EXPRESSION`` s
-in the ``select`` command are applied to a record that its key is
-``"Groonga"``. So the final score of the record is sum of scores of
-all ``SCORE_ADJUST_EXPRESSION`` s.
+``SCORE_ADJUST_EXPRESSION`` s. The final increased score is sum of
+scores of these ``SCORE_ADJUST_EXPRESSION`` s. All
+``SCORE_ADJUST_EXPRESSION`` s in the ``select`` command are applied to
+a record that its key is ``"Groonga"``. So the final increased score
+of the record is sum of scores of all ``SCORE_ADJUST_EXPRESSION`` s.
 
 The first ``SCORE_ADJUST_EXPRESSION`` is ``content @ "groonga" * 5``.
 It increases score by 5.
@@ -929,12 +929,12 @@ It increases score by 5.
 The second ``SCORE_ADJUST_EXPRESSION`` is ``content @ "started" * 3``.
 It increases score by 3.
 
-The final score is 9 (``= 1 + 5 + 3``).
+The final increased score is 9 (``= 1 + 5 + 3``).
 
 A ``SCORE_ADJUST_EXPRESSION`` has a weight for ``"KEYWORD"``. This
-means that scores of all records that has ``"KEYWORD"`` are the same
-value. You can change score for each record that has the same
-``"KEYWORD"``. It is useful to tune search score. See
+means that increased scores of all records that has ``"KEYWORD"`` are
+the same value. You can change increase score for each record that has
+the same ``"KEYWORD"``. It is useful to tune search score. See
 :ref:`weight-vector-column` for details.
 
 返値
