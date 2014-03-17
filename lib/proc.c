@@ -1155,6 +1155,9 @@ grn_column_create_flags_to_text(grn_ctx *ctx, grn_obj *buf, grn_obj_flags flags)
     break;
   case GRN_OBJ_COLUMN_VECTOR:
     GRN_TEXT_PUTS(ctx, buf, "COLUMN_VECTOR");
+    if (flags & GRN_OBJ_WITH_WEIGHT) {
+      GRN_TEXT_PUTS(ctx, buf, "|WITH_WEIGHT");
+    }
     break;
   case GRN_OBJ_COLUMN_INDEX:
     GRN_TEXT_PUTS(ctx, buf, "COLUMN_INDEX");

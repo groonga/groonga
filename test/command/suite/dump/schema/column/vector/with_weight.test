@@ -1,0 +1,4 @@
+table_create Bookmarks TABLE_HASH_KEY ShortText
+column_create Bookmarks tags COLUMN_VECTOR|WITH_WEIGHT ShortText
+
+dump
