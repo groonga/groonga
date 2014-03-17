@@ -440,26 +440,6 @@ AC_ARG_WITH(stack_size,
   GRN_STACK_SIZE="$withval")
 AC_DEFINE_UNQUOTED(GRN_STACK_SIZE, [$GRN_STACK_SIZE], [stack size])
 
-# Use at your own risk!!!: ja segregate threshold
-GRN_JA_SEGREGATE_THRESHOLD=7
-AC_ARG_WITH(ja_segregate_threshold,
-  [AS_HELP_STRING([--with-ja-segregate-threshold=THRESHOLD],
-    [DANGER!!! This option breaks database compatibility.
-     You can't use the same database with different THRESHOLD Groongas.
-     This option changes data management threshold for variable size columns
-     such as ShortText type column and COLUMN_VECTOR column.
-     (default=7)
-     If you don't delete/update variable size column values, you don't need to
-     change it. If you delete/update variable size column values with
-     [128, 65535] size data, THRESHOLD=16 will better database size.
-     In the case, your database size will be increased unlimitedly with
-     the default THRESHOLD (= 7). Your database size will not be increased
-     unlimitedly with THRESHOLD=16.])],
-  GRN_JA_SEGREGATE_THRESHOLD="$withval")
-AC_DEFINE_UNQUOTED(GRN_JA_SEGREGATE_THRESHOLD,
-                   [$GRN_JA_SEGREGATE_THRESHOLD],
-                   [segregate threshold for ja])
-
 # lock timeout
 GRN_LOCK_TIMEOUT=10000000
 AC_ARG_WITH(lock_timeout,
@@ -1434,8 +1414,6 @@ echo "  CFLAGS:                ${CFLAGS}"
 echo "  CXXFLAGS:              ${CXXFLAGS}"
 echo "  Libraries:             ${LIBS}"
 echo "  Stack size:            ${GRN_STACK_SIZE}"
-echo "  ja:"
-echo "    Segregate threshold: ${GRN_JA_SEGREGATE_THRESHOLD}"
 echo "  Document:              ${document_available}"
 echo "    buildable:           ${document_buildable}"
 echo "    built:               ${have_built_document}"
