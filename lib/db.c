@@ -6437,12 +6437,24 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
     goto exit;
   }
 
+  source_ids = (grn_id *)GRN_BULK_HEAD(value);
+  n_source_ids = GRN_BULK_VSIZE(value) / sizeof(grn_id);
+  if (n_source_ids > 1 && !(obj->header.flags & GRN_OBJ_WITH_SECTION)) {
+    char index_name[GRN_TABLE_MAX_KEY_SIZE];
+    int index_name_size;
+    index_name_size = grn_obj_name(ctx, obj,
+                                   index_name, GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_INVALID_ARGUMENT,
+        "grn_obj_set_info(): GRN_INFO_SOURCE: "
+        "multi column index must be created with WITH_SECTION flag: <%.*s>",
+        index_name_size, index_name);
+    goto exit;
+  }
+
   if (!GRN_OBJ_TABLEP(table_domain)) {
     goto exit;
   }
 
-  source_ids = (grn_id *)GRN_BULK_HEAD(value);
-  n_source_ids = GRN_BULK_VSIZE(value) / sizeof(grn_id);
   for (i = 0; i < n_source_ids; i++) {
     grn_id source_id = source_ids[i];
     grn_obj *source;
@@ -6477,7 +6489,7 @@ exit:
   if (table_domain) {
     grn_obj_unlink(ctx, table_domain);
   }
-  return GRN_SUCCESS;
+  return ctx->rc;
 }
 
 inline static void
