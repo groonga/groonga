@@ -203,7 +203,8 @@ grn_ra_cache_fin(grn_ctx *ctx, grn_ra *ra, grn_id id)
 
 /**** jagged arrays ****/
 
-#define GRN_JA_W_SEGREGATE_THRESH      16
+#define GRN_JA_W_SEGREGATE_THRESH_V1   7
+#define GRN_JA_W_SEGREGATE_THRESH_V2   16
 #define GRN_JA_W_CAPACITY              38
 #define GRN_JA_W_SEGMENT               22
 
@@ -215,7 +216,8 @@ grn_ra_cache_fin(grn_ctx *ctx, grn_ra *ra, grn_id id)
 #define JA_N_EINFO_IN_A_SEGMENT        (1U << JA_W_EINFO_IN_A_SEGMENT)
 #define JA_M_EINFO_IN_A_SEGMENT        (JA_N_EINFO_IN_A_SEGMENT - 1)
 #define JA_N_GARBAGES_IN_A_SEGMENT     ((1U << (GRN_JA_W_SEGMENT - 3)) - 2)
-#define JA_N_ELEMENT_VARIATION         (GRN_JA_W_SEGREGATE_THRESH - JA_W_EINFO + 1)
+#define JA_N_ELEMENT_VARIATION_V1      (GRN_JA_W_SEGREGATE_THRESH_V1 - JA_W_EINFO + 1)
+#define JA_N_ELEMENT_VARIATION_V2      (GRN_JA_W_SEGREGATE_THRESH_V2 - JA_W_EINFO + 1)
 #define JA_N_DSEGMENTS                 (1U << JA_W_SEGMENTS_MAX)
 #define JA_N_ESEGMENTS                 (1U << (GRN_ID_WIDTH - JA_W_EINFO_IN_A_SEGMENT))
 
@@ -282,16 +284,44 @@ typedef struct {
   ja_pos recs[JA_N_GARBAGES_IN_A_SEGMENT];
 } grn_ja_ginfo;
 
-struct grn_ja_header {
+struct grn_ja_header_v1 {
   uint32_t flags;
   uint32_t curr_seg;
   uint32_t curr_pos;
   uint32_t max_element_size;
-  ja_pos free_elements[JA_N_ELEMENT_VARIATION];
-  uint32_t garbages[JA_N_ELEMENT_VARIATION];
-  uint32_t ngarbages[JA_N_ELEMENT_VARIATION];
+  ja_pos free_elements[JA_N_ELEMENT_VARIATION_V1];
+  uint32_t garbages[JA_N_ELEMENT_VARIATION_V1];
+  uint32_t ngarbages[JA_N_ELEMENT_VARIATION_V1];
   uint32_t dsegs[JA_N_DSEGMENTS];
   uint32_t esegs[JA_N_ESEGMENTS];
+};
+
+struct grn_ja_header_v2 {
+  uint32_t flags;
+  uint32_t curr_seg;
+  uint32_t curr_pos;
+  uint32_t max_element_size;
+  ja_pos free_elements[JA_N_ELEMENT_VARIATION_V2];
+  uint32_t garbages[JA_N_ELEMENT_VARIATION_V2];
+  uint32_t ngarbages[JA_N_ELEMENT_VARIATION_V2];
+  uint32_t dsegs[JA_N_DSEGMENTS];
+  uint32_t esegs[JA_N_ESEGMENTS];
+  uint8_t segregate_threshold;
+  uint8_t n_element_variation;
+};
+
+struct grn_ja_header {
+  uint32_t flags;
+  uint32_t *curr_seg;
+  uint32_t *curr_pos;
+  uint32_t max_element_size;
+  ja_pos *free_elements;
+  uint32_t *garbages;
+  uint32_t *ngarbages;
+  uint32_t *dsegs;
+  uint32_t *esegs;
+  uint8_t segregate_threshold;
+  uint8_t n_element_variation;
 };
 
 #define SEG_SEQ        (0x10000000U)
@@ -317,18 +347,41 @@ _grn_ja_create(grn_ctx *ctx, grn_ja *ja, const char *path,
   int i;
   grn_io *io;
   struct grn_ja_header *header;
-  io = grn_io_create(ctx, path, sizeof(struct grn_ja_header),
+  struct grn_ja_header_v2 *header_v2;
+  io = grn_io_create(ctx, path, sizeof(struct grn_ja_header_v2),
                      JA_SEGMENT_SIZE, JA_N_DSEGMENTS, grn_io_auto,
                      GRN_IO_EXPIRE_SEGMENT);
   if (!io) { return NULL; }
   grn_io_set_type(io, GRN_COLUMN_VAR_SIZE);
-  header = grn_io_header(io);
-  header->curr_pos = JA_SEGMENT_SIZE;
-  header->flags = flags;
-  for (i = 0; i < JA_N_ESEGMENTS; i++) { header->esegs[i] = JA_ESEG_VOID; }
+
+  header_v2 = grn_io_header(io);
+  header_v2->flags = flags;
+  header_v2->curr_seg = 0;
+  header_v2->curr_pos = JA_SEGMENT_SIZE;
+  header_v2->max_element_size = max_element_size;
+  for (i = 0; i < JA_N_ESEGMENTS; i++) { header_v2->esegs[i] = JA_ESEG_VOID; }
+  header_v2->segregate_threshold = GRN_JA_W_SEGREGATE_THRESH_V2;
+  header_v2->n_element_variation = JA_N_ELEMENT_VARIATION_V2;
+
+  header = GRN_GMALLOC(sizeof(struct grn_ja_header));
+  if (!header) {
+    grn_io_close(ctx, io);
+    return NULL;
+  }
+  header->flags               = header_v2->flags;
+  header->curr_seg            = &(header_v2->curr_seg);
+  header->curr_pos            = &(header_v2->curr_pos);
+  header->max_element_size    = header_v2->max_element_size;
+  header->free_elements       = header_v2->free_elements;
+  header->garbages            = header_v2->garbages;
+  header->ngarbages           = header_v2->ngarbages;
+  header->dsegs               = header_v2->dsegs;
+  header->esegs               = header_v2->esegs;
+  header->segregate_threshold = header_v2->segregate_threshold;
+  header->n_element_variation = header_v2->n_element_variation;
+
   ja->io = io;
   ja->header = header;
-  header->max_element_size = max_element_size;
   SEGMENTS_EINFO_ON(ja, 0, 0);
   header->esegs[0] = 0;
   return ja;
@@ -355,21 +408,56 @@ grn_ja_open(grn_ctx *ctx, const char *path)
   grn_io *io;
   grn_ja *ja = NULL;
   struct grn_ja_header *header;
+  struct grn_ja_header_v2 *header_v2;
   io = grn_io_open(ctx, path, grn_io_auto);
   if (!io) { return NULL; }
-  header = grn_io_header(io);
+  header_v2 = grn_io_header(io);
   if (grn_io_get_type(io) != GRN_COLUMN_VAR_SIZE) {
     ERR(GRN_INVALID_FORMAT, "file type unmatch");
     grn_io_close(ctx, io);
     return NULL;
+  }
+  if (header_v2->segregate_threshold == 0) {
+    header_v2->segregate_threshold = GRN_JA_W_SEGREGATE_THRESH_V1;
+  }
+  if (header_v2->n_element_variation == 0) {
+    header_v2->n_element_variation = JA_N_ELEMENT_VARIATION_V1;
   }
   if (!(ja = GRN_GMALLOC(sizeof(grn_ja)))) {
     grn_io_close(ctx, io);
     return NULL;
   }
   GRN_DB_OBJ_SET_TYPE(ja, GRN_COLUMN_VAR_SIZE);
+  if (!(header = GRN_GMALLOC(sizeof(struct grn_ja_header)))) {
+    grn_io_close(ctx, io);
+    GRN_GFREE(ja);
+    return NULL;
+  }
+
+  header->flags               = header_v2->flags;
+  header->curr_seg            = &(header_v2->curr_seg);
+  header->curr_pos            = &(header_v2->curr_pos);
+  header->max_element_size    = header_v2->max_element_size;
+  header->segregate_threshold = header_v2->segregate_threshold;
+  header->n_element_variation = header_v2->n_element_variation;
+  if (header->segregate_threshold == GRN_JA_W_SEGREGATE_THRESH_V1) {
+    struct grn_ja_header_v1 *header_v1 = (struct grn_ja_header_v1 *)header_v2;
+    header->free_elements = header_v1->free_elements;
+    header->garbages      = header_v1->garbages;
+    header->ngarbages     = header_v1->ngarbages;
+    header->dsegs         = header_v1->dsegs;
+    header->esegs         = header_v1->esegs;
+  } else {
+    header->free_elements = header_v2->free_elements;
+    header->garbages      = header_v2->garbages;
+    header->ngarbages     = header_v2->ngarbages;
+    header->dsegs         = header_v2->dsegs;
+    header->esegs         = header_v2->esegs;
+  }
+
   ja->io = io;
   ja->header = header;
+
   return ja;
 }
 
@@ -387,6 +475,7 @@ grn_ja_close(grn_ctx *ctx, grn_ja *ja)
   grn_rc rc;
   if (!ja) { return GRN_INVALID_ARGUMENT; }
   rc = grn_io_close(ctx, ja->io);
+  GRN_GFREE(ja->header);
   GRN_GFREE(ja);
   return rc;
 }
@@ -419,6 +508,7 @@ grn_ja_truncate(grn_ctx *ctx, grn_ja *ja)
   if ((rc = grn_io_close(ctx, ja->io))) { goto exit; }
   ja->io = NULL;
   if (path && (rc = grn_io_remove(ctx, path))) { goto exit; }
+  GRN_GFREE(ja->header);
   if (!_grn_ja_create(ctx, ja, path, max_element_size, flags)) {
     rc = GRN_UNKNOWN_ERROR;
   }
@@ -494,7 +584,7 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
     GRN_BIT_SCAN_REV(es, m);
     m++;
   }
-  if (m > GRN_JA_W_SEGREGATE_THRESH) {
+  if (m > ja->header->segregate_threshold) {
     byte *addr = NULL;
     GRN_IO_SEG_REF(ja->io, seg, addr);
     if (!addr) { return GRN_NO_MEMORY_AVAILABLE; }
@@ -508,8 +598,8 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
     if (SEGMENTS_AT(ja, seg) == SEG_SEQ) {
       /* reuse the segment */
       SEGMENTS_OFF(ja, seg);
-      if (seg == ja->header->curr_seg) {
-        ja->header->curr_pos = JA_SEGMENT_SIZE;
+      if (seg == *(ja->header->curr_seg)) {
+        *(ja->header->curr_pos) = JA_SEGMENT_SIZE;
       }
     }
     GRN_IO_SEG_UNREF(ja->io, seg);
@@ -660,8 +750,9 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
     int m, aligned_size, es = element_size - 1;
     GRN_BIT_SCAN_REV(es, m);
     m++;
-    if (m > GRN_JA_W_SEGREGATE_THRESH) {
-      uint32_t seg = ja->header->curr_seg, pos = ja->header->curr_pos;
+    if (m > ja->header->segregate_threshold) {
+      uint32_t seg = *(ja->header->curr_seg);
+      uint32_t pos = *(ja->header->curr_pos);
       if (pos + element_size + sizeof(grn_id) > JA_SEGMENT_SIZE) {
         seg = 0;
         while (SEGMENTS_AT(ja, seg)) {
@@ -672,7 +763,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
           }
         }
         SEGMENTS_SEQ_ON(ja, seg);
-        ja->header->curr_seg = seg;
+        *(ja->header->curr_seg) = seg;
         pos = 0;
       }
       GRN_IO_SEG_REF(ja->io, seg, addr);
@@ -690,7 +781,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
       EINFO_ENC(einfo, seg, pos, element_size);
       iw->segment = seg;
       iw->addr = addr + pos;
-      ja->header->curr_pos = pos + aligned_size;
+      *(ja->header->curr_pos) = pos + aligned_size;
       grn_io_unlock(ja->io);
       return GRN_SUCCESS;
     } else {
@@ -1350,7 +1441,7 @@ grn_ja_defrag(grn_ctx *ctx, grn_ja *ja, int threshold)
   int nsegs = 0;
   uint32_t seg, ts = 1U << (GRN_JA_W_SEGMENT - threshold);
   for (seg = 0; seg < JA_N_DSEGMENTS; seg++) {
-    if (seg == ja->header->curr_seg) { continue; }
+    if (seg == *(ja->header->curr_seg)) { continue; }
     if (((SEGMENTS_AT(ja, seg) & SEG_MASK) == SEG_SEQ) &&
         ((SEGMENTS_AT(ja, seg) & ~SEG_MASK) < ts)) {
       if (!grn_ja_defrag_seg(ctx, ja, seg)) { nsegs++; }
@@ -1371,11 +1462,15 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
   grn_itoh(h->flags, buf, 8);
   GRN_OUTPUT_STR(buf, 8);
   GRN_OUTPUT_CSTR("curr seg");
-  GRN_OUTPUT_INT64(h->curr_seg);
+  GRN_OUTPUT_INT64(*(h->curr_seg));
   GRN_OUTPUT_CSTR("curr pos");
-  GRN_OUTPUT_INT64(h->curr_pos);
+  GRN_OUTPUT_INT64(*(h->curr_pos));
   GRN_OUTPUT_CSTR("max_element_size");
   GRN_OUTPUT_INT64(h->max_element_size);
+  GRN_OUTPUT_CSTR("segregate_threshold");
+  GRN_OUTPUT_INT64(h->segregate_threshold);
+  GRN_OUTPUT_CSTR("n_element_variation");
+  GRN_OUTPUT_INT64(h->n_element_variation);
   GRN_OUTPUT_MAP_CLOSE();
   GRN_OUTPUT_ARRAY_OPEN("DETAIL", -1);
   for (seg = 0; seg < JA_N_DSEGMENTS; seg++) {
