@@ -86,7 +86,7 @@ segment_get(grn_ctx *ctx, grn_ii *ii)
           used[pseg] = 1;
         }
       }
-      for (pseg = 0; used[pseg] && pseg < MAX_PSEG; pseg++) ;
+      for (pseg = 0; pseg < MAX_PSEG && used[pseg]; pseg++) ;
       GRN_FREE(used);
       ii->header->pnext = pmax + 1;
     } else
