@@ -5,6 +5,54 @@
 News
 ====
 
+.. _release-4-0-1:
+
+
+Release 4.0.1 - 2014/03/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [doc] Added a link in return value to detailed header description (:doc:`/reference/command/output_format`).
+* Supported to inspect vector and object value in JSON load.
+  It shows more details about data which is failed to load.
+* [load] Supported to load forward index value.
+* [load] Supported loading weight into forward index.
+* Added ``adjuster`` option to select command.
+  adjuster options accepts following syntax: INDEX_COLUMN @ STRING_LITERAL (* FACTOR).
+* [dump] Supported to dump forward index.
+* [select] Supported to show forward index.
+* Added missing MIN/MAX macros on SunOS. [GitHub#154] [Patch by Sebastian Wiedenroth]
+* Supported loading/outptting weight vector. You need to specify WITH_WEIGHT flag when creating
+  column.
+* Improved recycling garbage data. It suppress to increse database size.
+* Supported to customize the value of segregate threshold by '--with-ja-segregate-threshold'.
+  You can use this option to tune database which depends on the size of stored data.
+* [doc] Added documentation about GET parameters for :doc:`/reference/executables/groonga-suggest-httpd`.
+* [doc] Added documentation about :doc:`/reference/column`.
+* [doc] Added documentation about :doc:`/reference/columns/vector`.
+* [dump] Supported to dump weight vector column.
+* [column_list] Supported to show weight vector column.
+* [column_create] Added error check for creating multi column index without WITH_SECTION.
+
+Fixes
+^^^^^
+
+* Fixed a bug that a division overflow caused a fatal error.
+  For example, it occurs when you execute 'COLUMN / -1' operation to Int32 or Int64 column. [#2307]
+* Fixed a bug that '%' operations performs '/' operations. [#2307]
+  It affects ...
+* [doc] Fixed a wrong documentation about :doc:`reference/commands/column_rename`.
+* Fixed the issue that out of bound array element access may occurs. [GitHub#158] [Reported by dcb314]
+
+Thanks
+^^^^^^
+
+* nise_nabe
+* Sebastian Wiedenroth
+* dcb314
+
 .. _release-4-0-0:
 
 
