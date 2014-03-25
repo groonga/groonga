@@ -78,6 +78,7 @@ cd "${nginx_directory_in_build_directory}"
   --pid-path="${GROONGA_HTTPD_PID_PATH}" \
   --with-cc-opt="${cc_opt}" \
   --with-ld-opt="${ld_opt}" \
+  --with-http_stub_status_module \
   ${configure_args}
 
 if [ "${GROONGA_HTTPD_DEBUG}" = "yes" ]; then
