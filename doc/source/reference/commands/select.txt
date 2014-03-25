@@ -866,13 +866,13 @@ Here is the syntax::
 
 Here is the ``SCORE_ADJUST_EXPRESSION`` syntax::
 
-  COLUMN @ "KEYWORD" * WEIGHT
+  COLUMN @ "KEYWORD" * FACTOR
 
 Note the following:
 
   * ``COLUMN`` must be indexed.
   * ``"KEYWORD"`` must be a string.
-  * ``WEIGHT`` must be a positive integer.
+  * ``FACTOR`` must be a positive integer.
 
 Here is a sample ``adjuster`` usage example that uses just one
 ``SCORE_ADJUST_EXPRESSION``:
@@ -890,19 +890,19 @@ The ``select`` command matches all records. Then it applies
 record that has ``"groonga"`` in ``Entries.content`` column.  So the
 record that its key is ``"Groonga"`` has score 6 (``= 1 + 5``).
 
-You can omit ``WEIGHT``. If you omit ``WEIGHT``, it is treated as 1.
+You can omit ``FACTOR``. If you omit ``FACTOR``, it is treated as 1.
 
-Here is a sample ``adjuster`` usage example that omits ``WEIGHT``:
+Here is a sample ``adjuster`` usage example that omits ``FACTOR``:
 
 .. groonga-command
-.. include:: ../../example/reference/commands/select/adjuster_no_weight.log
+.. include:: ../../example/reference/commands/select/adjuster_no_factor.log
 .. select Entries \
 ..   --filter true \
 ..   --adjuster 'content @ "groonga"' \
 ..   --output_columns _key,content,_score
 
-The ``adjuster`` in the ``select`` command doesn't have ``WEIGHT``. So
-the weight is treated as 1. There is only one record that has
+The ``adjuster`` in the ``select`` command doesn't have ``FACTOR``. So
+the factor is treated as 1. There is only one record that has
 ``"groonga"`` in ``Entries.content`` column. So the record that its
 key is ``"Groonga"`` has score 2 (``= 1 + 1``).
 
@@ -931,7 +931,7 @@ It increases score by 3.
 
 The final increased score is 9 (``= 1 + 5 + 3``).
 
-A ``SCORE_ADJUST_EXPRESSION`` has a weight for ``"KEYWORD"``. This
+A ``SCORE_ADJUST_EXPRESSION`` has a factor for ``"KEYWORD"``. This
 means that increased scores of all records that has ``"KEYWORD"`` are
 the same value. You can change increase score for each record that has
 the same ``"KEYWORD"``. It is useful to tune search score. See
