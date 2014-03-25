@@ -797,7 +797,7 @@ grn_geo_point_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 static grn_rc
 grn_json_load_open_bracket_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
-  uint i, n;
+  uint32_t i, n;
 
   n = GRN_UINT32_VALUE(obj);
 
@@ -818,7 +818,7 @@ grn_json_load_open_bracket_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 static grn_rc
 grn_json_load_open_brace_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
-  uint i, n;
+  uint32_t i, n;
 
   n = GRN_UINT32_VALUE(obj);
 
