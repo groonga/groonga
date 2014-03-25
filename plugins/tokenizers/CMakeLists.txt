@@ -40,7 +40,7 @@ if(GRN_WITH_KYTEA)
   add_library(kytea_tokenizer MODULE ${KYTEA_SOURCES})
   set_source_files_properties(${KYTEA_SOURCES}
     PROPERTIES
-    COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
+    COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS}")
   set_target_properties(kytea_tokenizer PROPERTIES
     PREFIX ""
     OUTPUT_NAME "kytea")
