@@ -1,6 +1,6 @@
 Execution example::
 
-  select Articles --match_columns comment.content --query groonga --output_columns "_id, _score, *" 
+  select Articles --match_columns comment.content --query groonga --output_columns "_id, _score, *"
   # [
   #   [
   #     0, 

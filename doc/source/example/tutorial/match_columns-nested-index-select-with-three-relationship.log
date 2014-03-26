@@ -1,6 +1,6 @@
 Execution example::
 
-  select Articles2 --match_columns comment.content --query mroonga --output_columns "_id, _score, *" 
+  select Articles2 --match_columns comment.content --query mroonga --output_columns "_id, _score, *"
   # [
   #   [
   #     0, 
@@ -45,7 +45,7 @@ Execution example::
   #     ]
   #   ]
   # ]
-  select Articles2 --match_columns comment.comment.content --query mroonga --output_columns "_id, _score, *" 
+  select Articles2 --match_columns comment.comment.content --query mroonga --output_columns "_id, _score, *"
   # [
   #   [
   #     0, 

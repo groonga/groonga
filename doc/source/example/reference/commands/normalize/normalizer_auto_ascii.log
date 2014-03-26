@@ -9,6 +9,7 @@ Execution example::
   #   ], 
   #   {
   #     "normalized": "abcde 123", 
-  #     "types": []
+  #     "types": [], 
+  #     "checks": []
   #   }
   # ]
