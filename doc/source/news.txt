@@ -35,6 +35,7 @@ Improvements
 * [dump] Supported to dump weight vector column.
 * [column_list] Supported to show weight vector column.
 * [column_create] Added error check for creating multi column index without WITH_SECTION.
+* [httpd] Enabled stub status module (NginxHttpStubStatusModule) for groonga-httpd. [Suggested by Masahiro Nagano]
 
 Fixes
 ^^^^^
