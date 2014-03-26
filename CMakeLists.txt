@@ -98,6 +98,7 @@ set(GRN_RUBY_SCRIPTS_DIR
 
 macro(check_cflag flag)
   set(checking_message "checking for C flag '${flag}'")
+  unset(is_available CACHE)
   check_c_compiler_flag(${flag} is_available)
   if(${is_available})
     message(STATUS "${checking_message} - available")
@@ -109,6 +110,7 @@ endmacro()
 
 macro(check_cxxflag flag)
   set(checking_message "checking for CXX flag '${flag}'")
+  unset(is_available CACHE)
   check_cxx_compiler_flag(${flag} is_available)
   if(${is_available})
     message(STATUS "${checking_message} - available")
