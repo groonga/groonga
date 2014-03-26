@@ -8,7 +8,7 @@ load --table Memos
   "_key": "Groonga is fast",
   "tags": {
     "groonga": 100,
-    "full text serach": 10
+    "full text search": 10
   }
 }
 ]
@@ -19,6 +19,6 @@ column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT ShortText
 load --table Memos
 [
 ["_key","tags"],
-["Groonga is fast",[{"groonga":100},{"full text serach":10}]]
+["Groonga is fast",[{"groonga":100},{"full text search":10}]]
 ]
 

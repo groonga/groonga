@@ -7,7 +7,7 @@ load --table Memos
   "_key": "Groonga is fast",
   "tags": {
     "groonga": 100,
-    "full text serach": 10
+    "full text search": 10
   }
 }
 ]
