@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-06 18:02+0900\n"
-"PO-Revision-Date: 2014-02-07 10:12+0900\n"
+"POT-Creation-Date: 2014-03-25 15:58+0900\n"
+"PO-Revision-Date: 2014-03-26 16:26+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -20,14 +20,121 @@ msgstr ""
 msgid "News"
 msgstr "News"
 
+msgid "Release 4.0.1 - 2014/03/29"
+msgstr ""
+
+msgid "Improvements"
+msgstr "Improvements"
+
+msgid ""
+"[doc] Added a link in return value to detailed header description (:doc:`/"
+"reference/command/output_format`)."
+msgstr ""
+
+msgid ""
+"Supported to inspect vector and object value in JSON load. It shows more "
+"details about data which is failed to load."
+msgstr ""
+
+msgid "[load] Supported to load forward index value."
+msgstr ""
+
+msgid "[load] Supported loading weight into forward index."
+msgstr ""
+
+msgid ""
+"Added ``adjuster`` option to select command. adjuster options accepts "
+"following syntax: INDEX_COLUMN @ STRING_LITERAL (* FACTOR)."
+msgstr ""
+
+msgid "[dump] Supported to dump forward index."
+msgstr ""
+
+msgid "[select] Supported to show forward index."
+msgstr ""
+
+msgid ""
+"Added missing MIN/MAX macros on SunOS. [GitHub#154] [Patch by Sebastian "
+"Wiedenroth]"
+msgstr ""
+
+msgid ""
+"Supported loading/outptting weight vector. You need to specify WITH_WEIGHT "
+"flag when creating column."
+msgstr ""
+
+msgid "Improved recycling garbage data. It suppress to increse database size."
+msgstr ""
+
+msgid ""
+"Supported to customize the value of segregate threshold by '--with-ja-"
+"segregate-threshold'. You can use this option to tune database which depends "
+"on the size of stored data."
+msgstr ""
+
+msgid ""
+"[doc] Added documentation about GET parameters for :doc:`/reference/"
+"executables/groonga-suggest-httpd`."
+msgstr ""
+
+msgid "[doc] Added documentation about :doc:`/reference/column`."
+msgstr ""
+
+msgid "[doc] Added documentation about :doc:`/reference/columns/vector`."
+msgstr ""
+
+msgid "[dump] Supported to dump weight vector column."
+msgstr ""
+
+msgid "[column_list] Supported to show weight vector column."
+msgstr ""
+
+msgid ""
+"[column_create] Added error check for creating multi column index without "
+"WITH_SECTION."
+msgstr ""
+
+msgid "Fixes"
+msgstr "Fixes"
+
+msgid ""
+"Fixed a bug that a division overflow caused a fatal error. For example, it "
+"occurs when you execute 'COLUMN / -1' operation to Int32 or Int64 column. "
+"[#2307]"
+msgstr ""
+
+msgid ""
+"Fixed a bug that '%' operations performs '/' operations. [#2307] It "
+"affects ..."
+msgstr ""
+
+msgid ""
+"[doc] Fixed a wrong documentation about :doc:`reference/commands/"
+"column_rename`."
+msgstr ""
+
+msgid ""
+"Fixed the issue that out of bound array element access may occurs. "
+"[GitHub#158] [Reported by dcb314]"
+msgstr ""
+
+msgid "Thanks"
+msgstr "Thanks"
+
+msgid "nise_nabe"
+msgstr ""
+
+msgid "Sebastian Wiedenroth"
+msgstr ""
+
+msgid "dcb314"
+msgstr ""
+
 msgid "Release 4.0.0 - 2014/02/09"
 msgstr ""
 
 msgid "Bump version to 4.0.0!"
 msgstr ""
-
-msgid "Improvements"
-msgstr "Improvements"
 
 msgid ""
 "[normalizer] Supported to show \"checks\" which is used for calculating next "
@@ -36,9 +143,6 @@ msgstr ""
 
 msgid "[deb] Dropped Ubuntu 13.04 support."
 msgstr ""
-
-msgid "Fixes"
-msgstr "Fixes"
 
 msgid ""
 "Fixed a crash bug that an object in grn_expr is used after it is freed. "
@@ -69,13 +173,18 @@ msgid ""
 "is empty text. [groonga-dev,02097] [Reported by Naoya Murakami]"
 msgstr ""
 
-msgid "Thanks"
-msgstr "Thanks"
+msgid ""
+"[groonga-httpd] Fixed a bug \"off\" is used as path name in "
+"groonga_query_log_path. [groonga-dev,02113] [Reported by Ryoji Yamamoto]"
+msgstr ""
 
 msgid "yoku"
 msgstr ""
 
 msgid "Naoya Murakami"
+msgstr ""
+
+msgid "Ryoji Yamamoto"
 msgstr ""
 
 msgid "Release 3.1.2 - 2014/01/29"

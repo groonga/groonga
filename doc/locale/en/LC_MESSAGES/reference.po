@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-05 11:57+0900\n"
-"PO-Revision-Date: 2014-01-23 17:26+0900\n"
+"POT-Creation-Date: 2014-03-25 15:58+0900\n"
+"PO-Revision-Date: 2014-03-26 16:30+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -20,8 +20,8 @@ msgstr ""
 msgid "Execution example::"
 msgstr "Execution example::"
 
-msgid "リファレンスマニュアル"
-msgstr "リファレンスマニュアル"
+msgid "Reference manual"
+msgstr ""
 
 msgid "API"
 msgstr "API"
@@ -1806,6 +1806,300 @@ msgstr ""
 msgid "Cast"
 msgstr "Cast"
 
+msgid "Column"
+msgstr ""
+
+msgid "Column is a data store object or an index object for fast search."
+msgstr ""
+
+msgid "A column belongs to a table. Table has zero or more columns."
+msgstr ""
+
+msgid ""
+"Both data store column and index column have type. Type of data store column "
+"specifies data range. In other words, it is \"value type\". Type of index "
+"column specifies set of documents to be indexed. A set of documents is a "
+"table in Groonga. In other words, type of index column must be a table."
+msgstr ""
+
+msgid "Here are data store columns:"
+msgstr ""
+
+msgid ":doc:`columns/scalar`"
+msgstr ""
+
+msgid ":doc:`columns/vector`"
+msgstr ""
+
+msgid "Here is an index column:"
+msgstr ""
+
+msgid ":doc:`columns/index`"
+msgstr ""
+
+msgid "Vector column"
+msgstr ""
+
+msgid ""
+"Vector column is a data store object. It can stores zero or more scalar "
+"values. In short, scalar value is a single value such as number and string. "
+"See :doc:`scalar` about scalar value details."
+msgstr ""
+
+msgid ""
+"One of vector column use cases is tags store. You can use a vector column to "
+"store tag values."
+msgstr ""
+
+msgid ""
+"You can use vector column as index search target in the same way as scalar "
+"column. You can set weight for each element. The element that has one or "
+"more weight is matched, the record has more score rather than no weight "
+"case. It is a vector column specific feature. Vector column that can store "
+"weight is called weight vector column."
+msgstr ""
+
+msgid ""
+"You can also do full text search against each text element. But search score "
+"is too high when weight is used. You should use full text search with weight "
+"carefully."
+msgstr ""
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid "There are three vector column types:"
+msgstr ""
+
+msgid "Normal vector column"
+msgstr ""
+
+msgid "Reference vector column"
+msgstr ""
+
+msgid "Weight vector column"
+msgstr ""
+
+msgid "This section describes how to use these types."
+msgstr ""
+
+msgid ""
+"Normal vector column stores zero or more scalar data. For example, scalar "
+"data are number, string and so on."
+msgstr ""
+
+msgid ""
+"A normal vector column can store the same type elements. You can't mix "
+"types. For example, you can't store a number and a string in the same normal "
+"vector column."
+msgstr ""
+
+msgid ""
+"Normal vector column is useful when a record has multiple values with a key. "
+"Tags are the most popular use case."
+msgstr ""
+
+msgid "How to create"
+msgstr ""
+
+msgid ""
+"Use :doc:`/reference/commands/column_create` command to create a normal "
+"vector column. The point is ``COLUMN_VECTOR`` flag:"
+msgstr ""
+
+msgid "You can set zero or more tags to a bookmark."
+msgstr ""
+
+msgid "How to load"
+msgstr ""
+
+msgid "You can load vector data by JSON array syntax::"
+msgstr ""
+
+msgid "Let's load the following data:"
+msgstr ""
+
+msgid "``_key``"
+msgstr "``_key``"
+
+msgid "``tags``"
+msgstr ""
+
+msgid "``http://groonga.org/``"
+msgstr ""
+
+msgid "``[\"groonga\"]``"
+msgstr ""
+
+msgid "``http://mroonga.org/``"
+msgstr ""
+
+msgid "``[\"mroonga\", \"mysql\", \"groonga\"]``"
+msgstr ""
+
+msgid "``http://ranguba.org/``"
+msgstr ""
+
+msgid "``[\"ruby\", \"groonga\"]``"
+msgstr ""
+
+msgid "Here is a command that loads the data:"
+msgstr ""
+
+msgid "The loaded data can be outputted as JSON array syntax:"
+msgstr ""
+
+msgid "How to search"
+msgstr ""
+
+msgid "You need to create an index to search normal vector column:"
+msgstr ""
+
+msgid ""
+"There are no vector column specific way. You can create an index like a "
+"scalar column."
+msgstr ""
+
+msgid "You can search an element in ``tags`` like full text search syntax."
+msgstr ""
+
+msgid "With :ref:`select-match-columns` and :ref:`select-query`:"
+msgstr ""
+
+msgid "You can also use weight in :ref:`select-match-columns`:"
+msgstr ""
+
+msgid "With :ref:`select-filter`:"
+msgstr ""
+
+msgid "TODO"
+msgstr "TODO"
+
+msgid ""
+"Reference vector column is space-efficient if there are many same value "
+"elements. Reference vector column keeps reference record IDs not value "
+"itself. Record ID is smaller than value itself."
+msgstr ""
+
+msgid ""
+"Weight vector column is similar to normal vector column. It can store "
+"elements. It can also stores weights for them. Weight is degree of "
+"importance of the element."
+msgstr ""
+
+msgid ""
+"Weight is positive integer. ``0`` is the default weight. It means that no "
+"weight."
+msgstr ""
+
+msgid ""
+"If weight is one or larger, search score is increased by the weight. If the "
+"weight is ``0``, score is ``1``. If the weight is ``10``, score is ``11`` "
+"(``= 1 + 10``)."
+msgstr ""
+
+msgid ""
+"Weight vector column is useful for tuning search score. See also :ref:"
+"`select-adjuster`. You can increase search score of specific records."
+msgstr ""
+
+msgid "Limitations"
+msgstr ""
+
+msgid ""
+"There are some limitations for now. They will be resolved in the future."
+msgstr ""
+
+msgid "Here are limitations:"
+msgstr ""
+
+msgid ""
+"You need to use string representation for element value on load. For "
+"example, you can't use ``29`` for number 29. You need to use ``\"29\"`` for "
+"number 29."
+msgstr ""
+
+msgid "You can't use reference type."
+msgstr ""
+
+msgid ""
+"Use :doc:`/reference/commands/column_create` command to create a weight "
+"vector column. The point is ``COLUMN_VECTOR|WITH_WEIGHT`` flags:"
+msgstr ""
+
+msgid ""
+"If you don't specify ``WITH_WEIGHT`` flag, it is just a normal vector column."
+msgstr ""
+
+msgid "You can set zero or more tags with weight to a bookmark."
+msgstr ""
+
+msgid "You can load vector data by JSON object syntax::"
+msgstr ""
+
+msgid "``{\"groonga\": 100}``"
+msgstr ""
+
+msgid "``{\"mroonga\": 100, \"mysql\": 50, \"groonga\": 10}``"
+msgstr ""
+
+msgid "``{\"ruby\": 100, \"groonga\": 50}``"
+msgstr ""
+
+msgid "The loaded data can be outputted as JSON object syntax:"
+msgstr ""
+
+msgid ""
+"You need to create an index to search weight vector column. You don't forget "
+"to specify ``WITH_WEIGHT`` flag to ``column_create``:"
+msgstr ""
+
+msgid ""
+"There are no weight vector column specific way except ``WITH_WEIGHT`` flag. "
+"You can create an index like a scalar column."
+msgstr ""
+
+msgid ""
+"You can also use weight in :ref:`select-match-columns`. The score is ``(1 + "
+"weight_in_weight_vector) * weight_in_match_columns``:"
+msgstr ""
+
+msgid "How to apply just weight"
+msgstr ""
+
+msgid ""
+"You can use weight in weight vector column to just increase search score "
+"without changing a set of matched records."
+msgstr ""
+
+msgid "Use :ref:`select-adjuster` for the purpose:"
+msgstr ""
+
+msgid ""
+"The ``select`` command uses ``--filter true``. So all records are matched "
+"with score 1. Then it applies ``--adjuster``. The adjuster does the "
+"following:"
+msgstr ""
+
+msgid ""
+"``tags @ \"mysql\" * 10`` increases score by ``(1 + weight) * 10`` of "
+"records that has ``\"mysql\"`` tag."
+msgstr ""
+
+msgid ""
+"``tags @ \"groonga\" * 5`` increases score by ``(1 + weight) * 5`` of "
+"records that has ``\"groonga\"`` tag."
+msgstr ""
+
+msgid ""
+"For example, record ``\"http://mroonga.org/\"`` has both ``\"mysql\"`` tag "
+"and ``\"groonga\"`` tag. So its score is increased by ``565`` (``= ((1 + 50) "
+"* 10) + ((1 + 10) * 5) = (51 * 10) + (11 * 5) = 510 + 55``). The search "
+"score is 1 by ``--filter true`` before applying ``--adjuster``. So the final "
+"search score is ``566`` (``= 1 + 565``) of record ``\"http://mroonga.org/"
+"\"``."
+msgstr ""
+
 msgid "Command"
 msgstr ""
 
@@ -2119,9 +2413,6 @@ msgstr ""
 msgid "XML"
 msgstr ""
 
-msgid "TODO"
-msgstr "TODO"
-
 msgid "TSV"
 msgstr ""
 
@@ -2406,9 +2697,6 @@ msgstr "Syntax"
 
 msgid "``cache_limit`` has one optional parameter::"
 msgstr ""
-
-msgid "Usage"
-msgstr "Usage"
 
 msgid ""
 "You can get the current max number of cache entries by executing "
@@ -2841,11 +3129,6 @@ msgstr ""
 "インデックス型のカラムを作成した場合は、インデックス対象となるカラムをsource"
 "引数に指定します。"
 
-msgid ""
-"The format of HEADER is [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, "
-"ELAPSED_TIME]. See :doc:`/reference/command/output_format` about HEADER."
-msgstr ""
-
 msgid "``SUCCEEDED``"
 msgstr ""
 
@@ -2974,13 +3257,38 @@ msgstr ""
 msgid "``column_rename``"
 msgstr ""
 
-msgid "``column_rename`` command renames specified column name of table."
+msgid "``column_rename`` command renames a column."
 msgstr ""
 
-msgid "``column_rename`` command takes two parameters."
+msgid ""
+"It is a light operation. It just changes a relationship between name and the "
+"column object. It doesn't copy column values."
 msgstr ""
 
-msgid "The required parameter is ``table`` and ``column_name``::"
+msgid ""
+"It is a dangerous operation. You must stop all operations including read "
+"operations while you run ``column_rename``. If the following case is "
+"occurred, Groonga process may be crashed:"
+msgstr ""
+
+msgid ""
+"Starts an operation (like ``select``) that accesses the column to be renamed "
+"by the current column name. The current column name is called as ``the old "
+"column name`` in the below because the column name is renamed."
+msgstr ""
+
+msgid "Runs ``column_rename``. The ``select`` is still running."
+msgstr ""
+
+msgid ""
+"The ``select`` accesses the column to be renamed by the old column name. But "
+"the ``select`` can't find the column by the old name because the column has "
+"been renamed to the new column name. It may crash the Groonga process."
+msgstr ""
+
+msgid ""
+"``column_rename`` command takes three parameters. All parameters are "
+"required::"
 msgstr ""
 
 msgid "Here is a simple example of ``column_rename`` command."
@@ -2989,29 +3297,28 @@ msgstr ""
 msgid "This section describes parameters of ``column_rename``."
 msgstr ""
 
-msgid "Required parameter"
-msgstr "Required parameter"
-
-msgid "There are required parameters, ``table_name`` and ``column_name``."
+msgid "Required parameters"
 msgstr ""
 
-msgid "``table_name``"
+msgid "All parameters are required."
 msgstr ""
 
-msgid "It specifies the name of table."
+msgid "It specifies the name of table that has the column to be renamed."
 msgstr ""
 
-msgid "``column_name``"
+msgid "It specifies the column name to be renamed."
 msgstr ""
 
-msgid "It specifies the name of column."
+msgid "``new_name``"
+msgstr ""
+
+msgid "It specifies the new column name."
 msgstr ""
 
 msgid "``SUCCEEDED_OR_NOT``"
 msgstr ""
 
-msgid ""
-"If command succeeded, it returns true, otherwise it returns false on error."
+msgid "It is ``true`` on success, ``false`` otherwise."
 msgstr ""
 
 msgid "define_selector"
@@ -3226,6 +3533,10 @@ msgid ""
 "It specifies the expression of grn_expr to identify the record. If you "
 "specify ``filter`` parameter, you must not specify ``key`` and ``id`` "
 "parameter."
+msgstr ""
+
+msgid ""
+"If command succeeded, it returns true, otherwise it returns false on error."
 msgstr ""
 
 msgid "dump"
@@ -3491,6 +3802,9 @@ msgstr ""
 
 msgid "This section describes parameters of ``normalizer``."
 msgstr ""
+
+msgid "Required parameter"
+msgstr "Required parameter"
 
 msgid "There are required parameters, ``normalizer`` and ``string``."
 msgstr ""
@@ -4772,6 +5086,110 @@ msgstr ""
 "いクエリに対して用います。キャッシュ容量は有限です。有効なキャッシュが多く"
 "ヒットするために、このパラメータは有効です。"
 
+msgid "Score related parameters"
+msgstr ""
+
+msgid "There is a score related parameter, ``adjuster``."
+msgstr ""
+
+msgid "``adjuster``"
+msgstr ""
+
+msgid ""
+"It specifies one or more score adjust expressions. You need to use "
+"``adjuster`` with ``query`` or ``filter``. ``adjuster`` doesn't work with "
+"not searched request."
+msgstr ""
+
+msgid ""
+"You can increase score of specific records by ``adjuster``. You can use "
+"``adjuster`` to set high score for important records."
+msgstr ""
+
+msgid ""
+"For example, you can use ``adjuster`` to increase score of records that have "
+"``groonga`` tag."
+msgstr ""
+
+msgid "Here is the syntax::"
+msgstr ""
+
+msgid "Here is the ``SCORE_ADJUST_EXPRESSION`` syntax::"
+msgstr ""
+
+msgid "Note the following:"
+msgstr ""
+
+msgid "``COLUMN`` must be indexed."
+msgstr ""
+
+msgid "``\"KEYWORD\"`` must be a string."
+msgstr ""
+
+msgid "``WEIGHT`` must be a positive integer."
+msgstr ""
+
+msgid ""
+"Here is a sample ``adjuster`` usage example that uses just one "
+"``SCORE_ADJUST_EXPRESSION``:"
+msgstr ""
+
+msgid ""
+"The ``select`` command matches all records. Then it applies ``adjuster``. "
+"The adjuster increases score of records that have ``\"groonga\"`` in "
+"``Entries.content`` column by 5. There is only one record that has ``"
+"\"groonga\"`` in ``Entries.content`` column.  So the record that its key is "
+"``\"Groonga\"`` has score 6 (``= 1 + 5``)."
+msgstr ""
+
+msgid "You can omit ``WEIGHT``. If you omit ``WEIGHT``, it is treated as 1."
+msgstr ""
+
+msgid "Here is a sample ``adjuster`` usage example that omits ``WEIGHT``:"
+msgstr ""
+
+msgid ""
+"The ``adjuster`` in the ``select`` command doesn't have ``WEIGHT``. So the "
+"weight is treated as 1. There is only one record that has ``\"groonga\"`` in "
+"``Entries.content`` column. So the record that its key is ``\"Groonga\"`` "
+"has score 2 (``= 1 + 1``)."
+msgstr ""
+
+msgid ""
+"Here is a sample ``adjuster`` usage example that uses multiple "
+"``SCORE_ADJUST_EXPRESSION``:"
+msgstr ""
+
+msgid ""
+"The ``adjuster`` in the ``select`` command has two "
+"``SCORE_ADJUST_EXPRESSION`` s. The final increased score is sum of scores of "
+"these ``SCORE_ADJUST_EXPRESSION`` s. All ``SCORE_ADJUST_EXPRESSION`` s in "
+"the ``select`` command are applied to a record that its key is ``\"Groonga"
+"\"``. So the final increased score of the record is sum of scores of all "
+"``SCORE_ADJUST_EXPRESSION`` s."
+msgstr ""
+
+msgid ""
+"The first ``SCORE_ADJUST_EXPRESSION`` is ``content @ \"groonga\" * 5``. It "
+"increases score by 5."
+msgstr ""
+
+msgid ""
+"The second ``SCORE_ADJUST_EXPRESSION`` is ``content @ \"started\" * 3``. It "
+"increases score by 3."
+msgstr ""
+
+msgid "The final increased score is 9 (``= 1 + 5 + 3``)."
+msgstr ""
+
+msgid ""
+"A ``SCORE_ADJUST_EXPRESSION`` has a weight for ``\"KEYWORD\"``. This means "
+"that increased scores of all records that has ``\"KEYWORD\"`` are the same "
+"value. You can change increase score for each record that has the same ``"
+"\"KEYWORD\"``. It is useful to tune search score. See :ref:`weight-vector-"
+"column` for details."
+msgstr ""
+
 msgid "以下のようなjson形式で値が返却されます。"
 msgstr "以下のようなjson形式で値が返却されます。"
 
@@ -5410,7 +5828,7 @@ msgstr ""
 msgid "Hash table."
 msgstr ""
 
-msgid "``TABLE_HASH_HEY``"
+msgid "``TABLE_HASH_KEY``"
 msgstr ""
 
 msgid "Patricia trie."
@@ -5640,9 +6058,6 @@ msgid ""
 "doesn't normalize ``\"Fulltext Search\"``."
 msgstr ""
 
-msgid "Required parameters"
-msgstr ""
-
 msgid "There are required parameters, ``tokenizer`` and ``string``."
 msgstr ""
 
@@ -5780,6 +6195,12 @@ msgid "This section describes parameters of ``truncate``."
 msgstr ""
 
 msgid "There is required parameter, ``table_name``."
+msgstr ""
+
+msgid "``table_name``"
+msgstr ""
+
+msgid "It specifies the name of table."
 msgstr ""
 
 msgid "実行ファイル"
@@ -6473,15 +6894,11 @@ msgstr ""
 msgid "``worker_processes``"
 msgstr "``worker_processes``"
 
-#, fuzzy
 msgid ""
 "For optimum performance, set this to be equal to the number of CPUs or "
 "cores. In many cases, Groonga queries may be CPU-intensive work, so to fully "
 "utilize multi-CPU/core systems, it's essential to set this accordingly."
 msgstr ""
-"For optimum performance, set this to be equal to the number of CPUs or "
-"cores. In many cases, groonga queries may be CPU-intensive work, so to fully "
-"utilize multi-CPU/core systems, it's essential to set this accordingly."
 
 msgid ""
 "This isn't a groonga-httpd specific directive, but an nginx's one. For "
@@ -6782,6 +7199,30 @@ msgstr ""
 msgid "groonga-suggest-httpd"
 msgstr ""
 
+msgid ""
+"groonga-suggest-httpd is a program to provide interface which accepts HTTP "
+"request and returns suggestion dataset, then saves logs for learning. "
+"groonga-suggest-httpd behaves similar in point of view of suggestion "
+"functionality, but the name of parameter is different."
+msgstr ""
+
+msgid "First you need to set up database for suggestion."
+msgstr ""
+
+msgid "Launch groonga-suggest-httpd"
+msgstr ""
+
+msgid "Execute groonga-suggest-httpd command:"
+msgstr ""
+
+msgid ""
+"After executing above command, groonga-suggest-httpd accepts HTTP request on "
+"8080 port."
+msgstr ""
+
+msgid "Request to groonga-suggest-httpd"
+msgstr ""
+
 msgid "Options"
 msgstr ""
 
@@ -6810,16 +7251,144 @@ msgstr ""
 msgid "Specify this option to disable checking max fd on start."
 msgstr ""
 
+msgid "Command line Parameters"
+msgstr ""
+
 msgid "There is one required parameter - ``database_path``."
 msgstr ""
 
 msgid "``database_path``"
 msgstr ""
 
-msgid "Specifies the path to a groonga database."
+msgid ""
+"Specifies the path to a Groonga database. This database must be created by :"
+"doc:`groonga-suggest-create-dataset` command because it executes required "
+"initialization for suggestion."
+msgstr ""
+
+msgid "GET Parameters"
+msgstr ""
+
+msgid "groonga-suggest-httpd accepts following GET parameters."
+msgstr ""
+
+msgid "There are required parameters which depends on type of query."
+msgstr ""
+
+msgid "Key"
+msgstr ""
+
+msgid "Note"
+msgstr ""
+
+msgid "q"
+msgstr ""
+
+msgid "UTF-8 encoded string which user fills in form"
+msgstr ""
+
+msgid "t"
+msgstr ""
+
+msgid ""
+"The type of query. The value of type must be complete, correct, suggest or "
+"submit. It also accepts multiple type of query which is concatinated by '|'. "
+"Note that 'submit' is invalid value when you specify multiple type of query."
+msgstr ""
+
+msgid "Required parameters for learning"
+msgstr ""
+
+msgid "s"
+msgstr ""
+
+msgid "Elapsed time from 0:00 January 1, 1970"
+msgstr ""
+
+msgid "Note that you need specify the value of 's' in milliseconds"
+msgstr ""
+
+msgid "i"
+msgstr ""
+
+msgid "Unique ID to distinct user"
+msgstr ""
+
+msgid "Use session ID or IP address for example"
+msgstr ""
+
+msgid "l"
+msgstr ""
+
+msgid ""
+"Specify the name of dataset for learning. It also accepts multiple dataset "
+"name which is concatinated by '|'"
+msgstr ""
+
+msgid ""
+"Note that dataset name must be matched to following regular expression '[A-"
+"Za-z ][A-Za-z0-9 ]{0,15}'"
+msgstr ""
+
+msgid "Required parameters for suggestion"
+msgstr ""
+
+msgid "n"
+msgstr ""
+
+msgid "Specify the name of dataset for suggestion"
+msgstr ""
+
+msgid "This dataset name is used to calculate suggestion results"
+msgstr ""
+
+msgid "Optional parameter"
+msgstr "Optional parameter"
+
+msgid "callback"
+msgstr ""
+
+msgid "Specify the name of function if you prefer JSONP as response format"
+msgstr ""
+
+msgid ""
+"The name of function must be matched to reqular expression '[A-Za-z ][A-Za-"
+"z0-9 ]{0,15}'"
+msgstr ""
+
+msgid ""
+"``groonga-suggest-httpd`` command returns following response in JSON or "
+"JSONP format."
+msgstr ""
+
+msgid "In JSON format::"
+msgstr ""
+
+msgid "In JSONP format::"
+msgstr ""
+
+msgid "``TYPE``"
+msgstr ""
+
+msgid "'complete', 'correct' or 'suggest'."
+msgstr ""
+
+msgid "``CANDIDATE_N``"
+msgstr ""
+
+msgid "The string of candidate (UTF-8)."
+msgstr ""
+
+msgid "``SCORE_N``"
+msgstr ""
+
+msgid "The number of score."
 msgstr ""
 
 msgid "groonga-suggest-learner"
+msgstr ""
+
+msgid "Specifies the path to a groonga database."
 msgstr ""
 
 msgid "groonga command"
@@ -7417,9 +7986,6 @@ msgstr ""
 
 msgid "See :doc:`/reference/types` about GeoPoint and the coordinate."
 msgstr ""
-
-msgid "Optional parameter"
-msgstr "Optional parameter"
 
 msgid "There is a optional parameter, ``approximate_type``."
 msgstr "There is a optional parameter, ``approximate_type``."
@@ -10156,14 +10722,8 @@ msgstr ""
 msgid "Notification"
 msgstr "Notification"
 
-msgid "n"
-msgstr ""
-
 msgid "Information"
 msgstr "Information"
-
-msgid "i"
-msgstr ""
 
 msgid "Debug"
 msgstr "Debug"
@@ -10539,9 +11099,6 @@ msgstr ""
 "は不変で、レコードが存在する限り変更することはできません。ただし、削除された"
 "レコードの_idの値は再利用されます。"
 
-msgid "``_key``"
-msgstr "``_key``"
-
 msgid ""
 "レコードの主キー値を表します。主キーを持つテーブルのみに定義されます。主キー"
 "値はテーブルの中で一意であり、変更することはできません。"
@@ -10860,9 +11417,6 @@ msgid ""
 "such as log."
 msgstr ""
 
-msgid "``TABLE_HASH_KEY``"
-msgstr ""
-
 msgid ""
 "``TABLE_HASH_KEY`` is fast but it doesn't support advanced search functions "
 "such as common prefix search and predictive search."
@@ -10935,9 +11489,6 @@ msgid ""
 "closing table. Temporary table is used to store search result, sort result, "
 "group (drilldown) result and so on. ``TABLE_HASH_KEY`` is used for search "
 "result and group result. ``TABLE_NO_KEY`` is used for sort result."
-msgstr ""
-
-msgid "Limitations"
 msgstr ""
 
 msgid ""
@@ -11422,236 +11973,239 @@ msgstr ""
 msgid "Object型はv1.2でサポートされます。"
 msgstr "Object型はv1.2でサポートされます。"
 
-#~ msgid "add"
-#~ msgstr "add"
+#~ msgid "VIEW型のテーブルに要素となるテーブルを定義します。"
+#~ msgstr "VIEW型のテーブルに要素となるテーブルを定義します。"
 
-#~ msgid "add - 一件のレコードの追加"
-#~ msgstr "add - 一件のレコードの追加"
-
-#~ msgid "**未実装です**"
-#~ msgstr "**未実装です**"
+#~ msgid "json"
+#~ msgstr "json"
 
 #~ msgid ""
-#~ "groonga組込コマンドの一つであるaddについて説明します。組込コマンドは、"
-#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
-#~ "クエストを送信することによって実行します。"
+#~ "クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
+#~ "は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
 #~ msgstr ""
-#~ "groonga組込コマンドの一つであるaddについて説明します。組込コマンドは、"
-#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
-#~ "クエストを送信することによって実行します。"
+#~ "クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
+#~ "は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
 
 #~ msgid ""
-#~ "addは、使用しているデータベースのテーブルに１件のレコードを登録し、カラム"
-#~ "の値を更新し、更新したカラムの値を返却します。"
+#~ "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
 #~ msgstr ""
-#~ "addは、使用しているデータベースのテーブルに１件のレコードを登録し、カラム"
-#~ "の値を更新し、更新したカラムの値を返却します。"
-
-#~ msgid "レコードを追加しようとするテーブルの名前を指定します。"
-#~ msgstr "レコードを追加しようとするテーブルの名前を指定します。"
+#~ "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
 
 #~ msgid ""
-#~ "登録するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパ"
-#~ "ラメータを指定する必要はなく、指定された場合は無視されます。"
+#~ "groonga組込コマンドの一つであるcache_limitについて説明します。組込コマンド"
+#~ "は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバ"
+#~ "にリクエストを送信することによって実行します。"
 #~ msgstr ""
-#~ "登録するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパ"
-#~ "ラメータを指定する必要はなく、指定された場合は無視されます。"
-
-#~ msgid ""
-#~ "テーブルに登録するレコードに値を設定するカラム名のリストを指定します。"
-#~ msgstr ""
-#~ "テーブルに登録するレコードに値を設定するカラム名のリストを指定します。"
-
-#~ msgid "登録するレコードの値を表現した文字列を渡します。"
-#~ msgstr "登録するレコードの値を表現した文字列を渡します。"
-
-#~ msgid "以下のいずれかの形式が使用できます。"
-#~ msgstr "以下のいずれかの形式が使用できます。"
-
-#~ msgid "[カラム値1, カラム値2,..]"
-#~ msgstr "[カラム値1, カラム値2,..]"
-
-#~ msgid "{カラム名1: カラム値1, カラム名2: カラム値2}"
-#~ msgstr "{カラム名1: カラム値1, カラム名2: カラム値2}"
-
-#~ msgid ""
-#~ "形式1の[カラム名1, カラム名2,..]の要素はcolumns引数が省略された場合のみ有"
-#~ "効です。"
-#~ msgstr ""
-#~ "形式1の[カラム名1, カラム名2,..]の要素はcolumns引数が省略された場合のみ有"
-#~ "効です。"
-
-#~ msgid "出力するカラム名のリストをカンマ(',')区切りで指定します。"
-#~ msgstr "出力するカラム名のリストをカンマ(',')区切りで指定します。"
-
-#~ msgid "返値 ---"
-#~ msgstr "返値 ---"
-
-#~ msgid "``新規追加``"
-#~ msgstr "``新規追加``"
-
-#~ msgid "レコードが追加されたかどうかを判定する。"
-#~ msgstr "レコードが追加されたかどうかを判定する。"
-
-#~ msgid "``カラム値n``"
-#~ msgstr "``カラム値n``"
-
-#~ msgid "output_columnsで指定されたカラムの値。"
-#~ msgstr "output_columnsで指定されたカラムの値。"
-
-#~ msgid "テーブルEntryにレコードを登録します。::"
-#~ msgstr "テーブルEntryにレコードを登録します。::"
-
-#~ msgid "get"
-#~ msgstr "get"
-
-#~ msgid "get - 一件のレコードの値の取得"
-#~ msgstr "get - 一件のレコードの値の取得"
-
-#~ msgid ""
-#~ "groonga組込コマンドの一つであるgetについて説明します。組込コマンドは、"
-#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
-#~ "クエストを送信することによって実行します。"
-#~ msgstr ""
-#~ "groonga組込コマンドの一つであるgetについて説明します。組込コマンドは、"
-#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
-#~ "クエストを送信することによって実行します。"
-
-#~ msgid ""
-#~ "getは、使用しているデータベースのテーブルの中の１件のレコードを指定し、カ"
-#~ "ラムの値を取得します。"
-#~ msgstr ""
-#~ "getは、使用しているデータベースのテーブルの中の１件のレコードを指定し、カ"
-#~ "ラムの値を取得します。"
-
-#~ msgid "値を取得するレコードを含むテーブルの名前を指定します。"
-#~ msgstr "値を取得するレコードを含むテーブルの名前を指定します。"
-
-#~ msgid ""
-#~ "値を取得するレコードの主キー値を指定します。主キーなしのテーブルの場合はこ"
-#~ "のパラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
-#~ msgstr ""
-#~ "値を取得するレコードの主キー値を指定します。主キーなしのテーブルの場合はこ"
-#~ "のパラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
-
-#~ msgid ""
-#~ "テーブルEntryから主キー値が\"abandon\"であるレコードのbodyカラムの値を取得"
-#~ "します。::"
-#~ msgstr ""
-#~ "テーブルEntryから主キー値が\"abandon\"であるレコードのbodyカラムの値を取得"
-#~ "します。::"
-
-#~ msgid "set"
-#~ msgstr "set"
-
-#~ msgid "set - 一件のレコードの値の更新"
-#~ msgstr "set - 一件のレコードの値の更新"
-
-#~ msgid ""
-#~ "groonga組込コマンドの一つであるsetについて説明します。組込コマンドは、"
-#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
-#~ "クエストを送信することによって実行します。"
-#~ msgstr ""
-#~ "groonga組込コマンドの一つであるsetについて説明します。組込コマンドは、"
-#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
-#~ "クエストを送信することによって実行します。"
-
-#~ msgid ""
-#~ "setは、使用しているデータベースのテーブルの中の１件のレコードについて、カ"
-#~ "ラムの値を更新し、更新したカラムの値を返却します。"
-#~ msgstr ""
-#~ "setは、使用しているデータベースのテーブルの中の１件のレコードについて、カ"
-#~ "ラムの値を更新し、更新したカラムの値を返却します。"
-
-#~ msgid "値を更新しようとするレコードを含むテーブルの名前を指定します。"
-#~ msgstr "値を更新しようとするレコードを含むテーブルの名前を指定します。"
-
-#~ msgid ""
-#~ "値を変更するレコードの主キー値を指定します。主キーなしのテーブルの場合はこ"
-#~ "のパラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
-#~ msgstr ""
-#~ "値を変更するレコードの主キー値を指定します。主キーなしのテーブルの場合はこ"
-#~ "のパラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
-
-#~ msgid ""
-#~ "レコードIDによってレコードを指定します。idパラメータを指定する場合は、key"
-#~ "パラメータを指定してはいけません。"
-#~ msgstr ""
-#~ "レコードIDによってレコードを指定します。idパラメータを指定する場合は、key"
-#~ "パラメータを指定してはいけません。"
-
-#~ msgid "grntest"
-#~ msgstr "grntest"
-
-#~ msgid "grntest命令"
-#~ msgstr "grntest命令"
-
-#~ msgid "column_create"
-#~ msgstr "column_create"
-
-#~ msgid "delete - 一件のレコードの削除"
-#~ msgstr "delete - 一件のレコードの削除"
-
-#~ msgid ""
-#~ "groonga組込コマンドの一つであるdeleteについて説明します。組込コマンドは、"
-#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
-#~ "クエストを送信することによって実行します。"
-#~ msgstr ""
-#~ "groonga組込コマンドの一つであるdeleteについて説明します。組込コマンドは、"
-#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
-#~ "クエストを送信することによって実行します。"
-
-#~ msgid ""
-#~ "deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
-#~ msgstr ""
-#~ "deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
-
-#~ msgid "テーブルEntryからレコードを削除します。::"
-#~ msgstr "テーブルEntryからレコードを削除します。::"
-
-#~ msgid "レコードを削除しようとするテーブルの名前を指定します。"
-#~ msgstr "レコードを削除しようとするテーブルの名前を指定します。"
-
-#~ msgid ""
-#~ "削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパ"
-#~ "ラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
-#~ msgstr ""
-#~ "削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパ"
-#~ "ラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
-
-#~ msgid ""
-#~ "script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを"
-#~ "指定する場合は、id及びkeyパラメータを指定してはいけません。"
-#~ msgstr ""
-#~ "script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを"
-#~ "指定する場合は、id及びkeyパラメータを指定してはいけません。"
+#~ "groonga組込コマンドの一つであるcache_limitについて説明します。組込コマンド"
+#~ "は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバ"
+#~ "にリクエストを送信することによって実行します。"
 
 #~ msgid "cache_limit - cacheサイズの設定・取得"
 #~ msgstr "cache_limit - cacheサイズの設定・取得"
 
 #~ msgid ""
-#~ "groonga組込コマンドの一つであるcache_limitについて説明します。組込コマンド"
-#~ "は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバ"
-#~ "にリクエストを送信することによって実行します。"
+#~ "script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを"
+#~ "指定する場合は、id及びkeyパラメータを指定してはいけません。"
 #~ msgstr ""
-#~ "groonga組込コマンドの一つであるcache_limitについて説明します。組込コマンド"
-#~ "は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバ"
-#~ "にリクエストを送信することによって実行します。"
+#~ "script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを"
+#~ "指定する場合は、id及びkeyパラメータを指定してはいけません。"
 
 #~ msgid ""
-#~ "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
+#~ "削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパ"
+#~ "ラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
 #~ msgstr ""
-#~ "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
+#~ "削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパ"
+#~ "ラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
+
+#~ msgid "レコードを削除しようとするテーブルの名前を指定します。"
+#~ msgstr "レコードを削除しようとするテーブルの名前を指定します。"
+
+#~ msgid "テーブルEntryからレコードを削除します。::"
+#~ msgstr "テーブルEntryからレコードを削除します。::"
 
 #~ msgid ""
-#~ "クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
-#~ "は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
+#~ "deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
 #~ msgstr ""
-#~ "クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
-#~ "は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
+#~ "deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
 
-#~ msgid "json"
-#~ msgstr "json"
+#~ msgid ""
+#~ "groonga組込コマンドの一つであるdeleteについて説明します。組込コマンドは、"
+#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
+#~ "クエストを送信することによって実行します。"
+#~ msgstr ""
+#~ "groonga組込コマンドの一つであるdeleteについて説明します。組込コマンドは、"
+#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
+#~ "クエストを送信することによって実行します。"
 
-#~ msgid "VIEW型のテーブルに要素となるテーブルを定義します。"
-#~ msgstr "VIEW型のテーブルに要素となるテーブルを定義します。"
+#~ msgid "delete - 一件のレコードの削除"
+#~ msgstr "delete - 一件のレコードの削除"
+
+#~ msgid "column_create"
+#~ msgstr "column_create"
+
+#~ msgid "grntest命令"
+#~ msgstr "grntest命令"
+
+#~ msgid "grntest"
+#~ msgstr "grntest"
+
+#~ msgid ""
+#~ "レコードIDによってレコードを指定します。idパラメータを指定する場合は、key"
+#~ "パラメータを指定してはいけません。"
+#~ msgstr ""
+#~ "レコードIDによってレコードを指定します。idパラメータを指定する場合は、key"
+#~ "パラメータを指定してはいけません。"
+
+#~ msgid ""
+#~ "値を変更するレコードの主キー値を指定します。主キーなしのテーブルの場合はこ"
+#~ "のパラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
+#~ msgstr ""
+#~ "値を変更するレコードの主キー値を指定します。主キーなしのテーブルの場合はこ"
+#~ "のパラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
+
+#~ msgid "値を更新しようとするレコードを含むテーブルの名前を指定します。"
+#~ msgstr "値を更新しようとするレコードを含むテーブルの名前を指定します。"
+
+#~ msgid ""
+#~ "setは、使用しているデータベースのテーブルの中の１件のレコードについて、カ"
+#~ "ラムの値を更新し、更新したカラムの値を返却します。"
+#~ msgstr ""
+#~ "setは、使用しているデータベースのテーブルの中の１件のレコードについて、カ"
+#~ "ラムの値を更新し、更新したカラムの値を返却します。"
+
+#~ msgid ""
+#~ "groonga組込コマンドの一つであるsetについて説明します。組込コマンドは、"
+#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
+#~ "クエストを送信することによって実行します。"
+#~ msgstr ""
+#~ "groonga組込コマンドの一つであるsetについて説明します。組込コマンドは、"
+#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
+#~ "クエストを送信することによって実行します。"
+
+#~ msgid "set - 一件のレコードの値の更新"
+#~ msgstr "set - 一件のレコードの値の更新"
+
+#~ msgid "set"
+#~ msgstr "set"
+
+#~ msgid ""
+#~ "テーブルEntryから主キー値が\"abandon\"であるレコードのbodyカラムの値を取得"
+#~ "します。::"
+#~ msgstr ""
+#~ "テーブルEntryから主キー値が\"abandon\"であるレコードのbodyカラムの値を取得"
+#~ "します。::"
+
+#~ msgid ""
+#~ "値を取得するレコードの主キー値を指定します。主キーなしのテーブルの場合はこ"
+#~ "のパラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
+#~ msgstr ""
+#~ "値を取得するレコードの主キー値を指定します。主キーなしのテーブルの場合はこ"
+#~ "のパラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
+
+#~ msgid "値を取得するレコードを含むテーブルの名前を指定します。"
+#~ msgstr "値を取得するレコードを含むテーブルの名前を指定します。"
+
+#~ msgid ""
+#~ "getは、使用しているデータベースのテーブルの中の１件のレコードを指定し、カ"
+#~ "ラムの値を取得します。"
+#~ msgstr ""
+#~ "getは、使用しているデータベースのテーブルの中の１件のレコードを指定し、カ"
+#~ "ラムの値を取得します。"
+
+#~ msgid ""
+#~ "groonga組込コマンドの一つであるgetについて説明します。組込コマンドは、"
+#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
+#~ "クエストを送信することによって実行します。"
+#~ msgstr ""
+#~ "groonga組込コマンドの一つであるgetについて説明します。組込コマンドは、"
+#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
+#~ "クエストを送信することによって実行します。"
+
+#~ msgid "get - 一件のレコードの値の取得"
+#~ msgstr "get - 一件のレコードの値の取得"
+
+#~ msgid "get"
+#~ msgstr "get"
+
+#~ msgid "テーブルEntryにレコードを登録します。::"
+#~ msgstr "テーブルEntryにレコードを登録します。::"
+
+#~ msgid "output_columnsで指定されたカラムの値。"
+#~ msgstr "output_columnsで指定されたカラムの値。"
+
+#~ msgid "``カラム値n``"
+#~ msgstr "``カラム値n``"
+
+#~ msgid "レコードが追加されたかどうかを判定する。"
+#~ msgstr "レコードが追加されたかどうかを判定する。"
+
+#~ msgid "``新規追加``"
+#~ msgstr "``新規追加``"
+
+#~ msgid "返値 ---"
+#~ msgstr "返値 ---"
+
+#~ msgid "出力するカラム名のリストをカンマ(',')区切りで指定します。"
+#~ msgstr "出力するカラム名のリストをカンマ(',')区切りで指定します。"
+
+#~ msgid ""
+#~ "形式1の[カラム名1, カラム名2,..]の要素はcolumns引数が省略された場合のみ有"
+#~ "効です。"
+#~ msgstr ""
+#~ "形式1の[カラム名1, カラム名2,..]の要素はcolumns引数が省略された場合のみ有"
+#~ "効です。"
+
+#~ msgid "{カラム名1: カラム値1, カラム名2: カラム値2}"
+#~ msgstr "{カラム名1: カラム値1, カラム名2: カラム値2}"
+
+#~ msgid "[カラム値1, カラム値2,..]"
+#~ msgstr "[カラム値1, カラム値2,..]"
+
+#~ msgid "以下のいずれかの形式が使用できます。"
+#~ msgstr "以下のいずれかの形式が使用できます。"
+
+#~ msgid "登録するレコードの値を表現した文字列を渡します。"
+#~ msgstr "登録するレコードの値を表現した文字列を渡します。"
+
+#~ msgid ""
+#~ "テーブルに登録するレコードに値を設定するカラム名のリストを指定します。"
+#~ msgstr ""
+#~ "テーブルに登録するレコードに値を設定するカラム名のリストを指定します。"
+
+#~ msgid ""
+#~ "登録するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパ"
+#~ "ラメータを指定する必要はなく、指定された場合は無視されます。"
+#~ msgstr ""
+#~ "登録するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパ"
+#~ "ラメータを指定する必要はなく、指定された場合は無視されます。"
+
+#~ msgid "レコードを追加しようとするテーブルの名前を指定します。"
+#~ msgstr "レコードを追加しようとするテーブルの名前を指定します。"
+
+#~ msgid ""
+#~ "addは、使用しているデータベースのテーブルに１件のレコードを登録し、カラム"
+#~ "の値を更新し、更新したカラムの値を返却します。"
+#~ msgstr ""
+#~ "addは、使用しているデータベースのテーブルに１件のレコードを登録し、カラム"
+#~ "の値を更新し、更新したカラムの値を返却します。"
+
+#~ msgid ""
+#~ "groonga組込コマンドの一つであるaddについて説明します。組込コマンドは、"
+#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
+#~ "クエストを送信することによって実行します。"
+#~ msgstr ""
+#~ "groonga組込コマンドの一つであるaddについて説明します。組込コマンドは、"
+#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
+#~ "クエストを送信することによって実行します。"
+
+#~ msgid "**未実装です**"
+#~ msgstr "**未実装です**"
+
+#~ msgid "add - 一件のレコードの追加"
+#~ msgstr "add - 一件のレコードの追加"
+
+#~ msgid "add"
+#~ msgstr "add"
+
+#~ msgid "リファレンスマニュアル"
+#~ msgstr "リファレンスマニュアル"
