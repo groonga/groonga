@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-07 11:30+0900\n"
-"PO-Revision-Date: 2014-02-07 11:45+0900\n"
+"POT-Creation-Date: 2014-03-27 11:32+0900\n"
+"PO-Revision-Date: 2014-03-27 12:19+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -20,14 +20,139 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
+msgid "Release 4.0.1 - 2014/03/29"
+msgstr "4.0.1リリース - 2014/03/29"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid ""
+"[doc] Added a link in return value to detailed header description (:doc:`/"
+"reference/command/output_format`)."
+msgstr ""
+"[doc] 返り値のヘッダ詳細 (:doc:`/reference/command/output_format`) についての"
+"リンクを追加しました。"
+
+msgid ""
+"Supported to inspect vector and object value in JSON load. It shows more "
+"details about data which is failed to load."
+msgstr ""
+"JSONロード時のベクターの値とオブジェクトの値を表示できるようにしました。ロー"
+"ドに失敗したときのデータの詳細がわかるようになりました。"
+
+msgid ""
+"Added ``adjuster`` option to select command. adjuster options accepts "
+"following syntax: INDEX_COLUMN @ STRING_LITERAL (* FACTOR)."
+msgstr ""
+"selectコマンドに ``adjuster`` オプションを追加しました。adjusterオプションの"
+"シンタックスは INDEX_COLUMN @ STRING_LITERAL (* FACTOR) です。"
+
+msgid ""
+"Supported :ref:`weight-vector-column`. You need to specify 'COLUMN_VECTOR|"
+"WITH_WEIGHT' flags to create weight vector column."
+msgstr ""
+":ref:`weight-vector-column` をサポートしました。重みつきベクターを使うにはカ"
+"ラム作成時に 'COLUMN_VECTOR|WITH_WEIGHT' を指定する必要があります。"
+
+msgid ""
+"Added missing MIN/MAX macros on SunOS. [GitHub#154] [Patch by Sebastian "
+"Wiedenroth]"
+msgstr ""
+"SunOSでビルドに必要なMIN/MAXの定義がなかったので追加しました。[GitHub#154] "
+"[Sebastian Wiedenrothさんがパッチ提供]"
+
+msgid ""
+"Supported loading/outptting weight vector. You need to specify WITH_WEIGHT "
+"flag when creating column."
+msgstr ""
+
+msgid "Improved recycling garbage data. It suppress to increse database size."
+msgstr ""
+"使われなくなった領域を再利用するように改善しました。これによりデータべースの"
+"肥大化を抑制します。"
+
+msgid ""
+"Supported to customize the value of segregate threshold by '--with-ja-"
+"segregate-threshold'. You can use this option to tune database which depends "
+"on the size of stored data."
+msgstr ""
+
+msgid ""
+"[doc] Added documentation about GET parameters for :doc:`/reference/"
+"executables/groonga-suggest-httpd`."
+msgstr ""
+"[doc] :doc:`/reference/executables/groonga-suggest-httpd` のGETパラメータに関"
+"するドキュメントを追加しました。"
+
+msgid "[doc] Added documentation about :doc:`/reference/column`."
+msgstr "[doc] :doc:`/reference/column` のドキュメントを追加しました。"
+
+msgid "[doc] Added documentation about :doc:`/reference/columns/vector`."
+msgstr "[doc] :doc:`/reference/columns/vector` のドキュメントを追加しました。"
+
+msgid "[column_list] Supported to show weight vector column."
+msgstr "[column_list] 重みつきベクターカラムを表示できるようにしました。"
+
+msgid ""
+"[column_create] Added error check for creating multi column index without "
+"WITH_SECTION."
+msgstr ""
+"[column_create] マルチカラムインデックスを作成するときに、WITH_SECTIONフラグ"
+"が指定されていない場合のエラーチェックを追加しました。"
+
+msgid ""
+"[httpd] Enabled stub status module (NginxHttpStubStatusModule) for groonga-"
+"httpd. [Suggested by Masahiro Nagano]"
+msgstr ""
+"[httpd] NginxHttpStubStatusModuleをgroonga-httpdで有効にしました。[長野雅広さ"
+"んが提案]"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid ""
+"Fixed a bug that a division overflow caused a fatal error. For example, it "
+"occurs when you execute 'COLUMN / -1' operation to Int32 or Int64 column. "
+"[#2307]"
+msgstr ""
+"除算によるオーバーフローが発生する不具合を修正しました。例えば、'COLUMN(最小"
+"値) / -1' をInt32やInt64で定義したカラムに適用すると発生します。[#2307]"
+
+msgid "Fixed a bug that '%' operations performs '/' operations. [#2307]"
+msgstr ""
+"剰余演算 '%' ではなく、除算 '/' を行ってしまう不具合を修正しました。[#2307]"
+
+msgid ""
+"[doc] Fixed a wrong documentation about :doc:`reference/commands/"
+"column_rename`."
+msgstr ""
+"[doc] :doc:`/reference/commands/column_rename` のドキュメントの説明の誤りを修"
+"正しました。"
+
+msgid ""
+"Fixed the issue that out of bound array element access may occurs. "
+"[GitHub#158] [Reported by dcb314]"
+msgstr ""
+"配列の領域外アクセスが発生しうる問題を修正しました。[GitHub#158] [dcb314さん"
+"が報告]"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "nise_nabe"
+msgstr "nise_nabeさん"
+
+msgid "Sebastian Wiedenroth"
+msgstr "Sebastian Wiedenrothさん"
+
+msgid "dcb314"
+msgstr "dcb314さん"
+
 msgid "Release 4.0.0 - 2014/02/09"
 msgstr "4.0.0リリース - 2014/02/09"
 
 msgid "Bump version to 4.0.0!"
 msgstr "バージョン4.0.0になりました!"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid ""
 "[normalizer] Supported to show \"checks\" which is used for calculating next "
@@ -39,9 +164,6 @@ msgstr ""
 
 msgid "[deb] Dropped Ubuntu 13.04 support."
 msgstr "[deb] Ubuntu 13.04 (Raring Ringtail)のサポートをやめました。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid ""
 "Fixed a crash bug that an object in grn_expr is used after it is freed. "
@@ -92,9 +214,6 @@ msgid ""
 msgstr ""
 "[groonga-httpd] \"off\" が通常のパス名として ``groonga_query_log_path`` で使"
 "われてしまう不具合を修正しました。 [groonga-dev,02113] [山本良二さんが報告]"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "yoku"
 msgstr "yokuさん"
@@ -4049,3 +4168,11 @@ msgid ""
 "applied ftb patch for mysql binding from <ko at yappo.ne.jp> 'IN BOOLEAN "
 "MODE' supported"
 msgstr ""
+
+#, fuzzy
+#~ msgid "[dump] Supported to dump weight vector column."
+#~ msgstr "[admin] スループットチャート対応。"
+
+#, fuzzy
+#~ msgid "[dump] Supported to dump forward index."
+#~ msgstr "[admin] スループットチャート対応。"
