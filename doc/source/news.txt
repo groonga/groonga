@@ -25,8 +25,6 @@ Improvements
 * Supported loading/outptting weight vector. You need to specify WITH_WEIGHT flag when creating
   column.
 * Improved recycling garbage data. It suppress to increse database size.
-* Supported to customize the value of segregate threshold by '--with-ja-segregate-threshold'.
-  You can use this option to tune database which depends on the size of stored data.
 * [doc] Added documentation about GET parameters for :doc:`/reference/executables/groonga-suggest-httpd`.
 * [doc] Added documentation about :doc:`/reference/column`.
 * [doc] Added documentation about :doc:`/reference/columns/vector`.
