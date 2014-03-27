@@ -22,8 +22,6 @@ Improvements
 * Supported :ref:`weight-vector-column`. You need to specify 'COLUMN_VECTOR|WITH_WEIGHT' flags 
   to create weight vector column.
 * Added missing MIN/MAX macros on SunOS. [GitHub#154] [Patch by Sebastian Wiedenroth]
-* Supported loading/outptting weight vector. You need to specify WITH_WEIGHT flag when creating
-  column.
 * Improved recycling garbage data. It suppress to increse database size.
 * [doc] Added documentation about GET parameters for :doc:`/reference/executables/groonga-suggest-httpd`.
 * [doc] Added documentation about :doc:`/reference/column`.
