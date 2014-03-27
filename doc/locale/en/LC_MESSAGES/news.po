@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-25 15:58+0900\n"
+"POT-Creation-Date: 2014-03-27 11:29+0900\n"
 "PO-Revision-Date: 2014-03-26 16:26+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -36,21 +36,14 @@ msgid ""
 "details about data which is failed to load."
 msgstr ""
 
-msgid "[load] Supported to load forward index value."
-msgstr ""
-
-msgid "[load] Supported loading weight into forward index."
-msgstr ""
-
 msgid ""
 "Added ``adjuster`` option to select command. adjuster options accepts "
 "following syntax: INDEX_COLUMN @ STRING_LITERAL (* FACTOR)."
 msgstr ""
 
-msgid "[dump] Supported to dump forward index."
-msgstr ""
-
-msgid "[select] Supported to show forward index."
+msgid ""
+"Supported :ref:`weight-vector-column`. You need to specify 'COLUMN_VECTOR|"
+"WITH_WEIGHT' flags to create weight vector column."
 msgstr ""
 
 msgid ""
@@ -83,15 +76,17 @@ msgstr ""
 msgid "[doc] Added documentation about :doc:`/reference/columns/vector`."
 msgstr ""
 
-msgid "[dump] Supported to dump weight vector column."
-msgstr ""
-
 msgid "[column_list] Supported to show weight vector column."
 msgstr ""
 
 msgid ""
 "[column_create] Added error check for creating multi column index without "
 "WITH_SECTION."
+msgstr ""
+
+msgid ""
+"[httpd] Enabled stub status module (NginxHttpStubStatusModule) for groonga-"
+"httpd. [Suggested by Masahiro Nagano]"
 msgstr ""
 
 msgid "Fixes"
@@ -103,10 +98,11 @@ msgid ""
 "[#2307]"
 msgstr ""
 
-msgid ""
-"Fixed a bug that '%' operations performs '/' operations. [#2307] It "
-"affects ..."
+#, fuzzy
+msgid "Fixed a bug that '%' operations performs '/' operations. [#2307]"
 msgstr ""
+"Fixed a bug that ``&!`` set operation doesn't work with grouped expression. "
+"[#1372]"
 
 msgid ""
 "[doc] Fixed a wrong documentation about :doc:`reference/commands/"
