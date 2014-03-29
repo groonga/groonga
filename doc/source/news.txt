@@ -36,14 +36,15 @@ Fixes
 * Fixed a bug that a division overflow caused a fatal error.
   For example, it occurs when you execute 'COLUMN / -1' operation to Int32 or Int64 column. [#2307]
 * Fixed a bug that '%' operations performs '/' operations. [#2307]
-* [doc] Fixed a wrong documentation about :doc:`reference/commands/column_rename`.
+* [doc] Fixed a wrong documentation about :doc:`reference/commands/column_rename`. [Reported by nise_nabe]
 * Fixed the issue that out of bound array element access may occurs. [GitHub#158] [Reported by dcb314]
 
 Thanks
 ^^^^^^
 
-* nise_nabe
 * Sebastian Wiedenroth
+* Masahiro Nagano
+* nise_nabe
 * dcb314
 
 .. _release-4-0-0:
