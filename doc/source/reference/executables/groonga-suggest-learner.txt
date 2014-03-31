@@ -25,15 +25,15 @@ TODO
 Options
 -------
 
-.. cmdoption:: -r, --receive-endpoint
+.. cmdoption:: -r
 
    Specify endpoint for receiver.
 
-.. cmdoption:: -s, --send-endpoint
+.. cmdoption:: -s
 
    Specify endpoint for sender.
 
-.. cmdoption:: -d, --daemon
+.. cmdoption:: -d
 
    Specify this option to daemonize.
 
