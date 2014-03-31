@@ -54,3 +54,12 @@ There is one required parameter - ``database_path``.
 Specifies the path to a groonga database.
 
 
+
+Related table
+-------------
+
+Here is the list of table which learned data is stored. If you specify 'query' as dataset name, following '_DATASET' suffix are replaced. Thus, 'event_query' table is used.
+
+* event_DATASET
+
+
