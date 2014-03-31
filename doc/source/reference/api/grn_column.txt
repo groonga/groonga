@@ -20,7 +20,7 @@ Reference
 
 .. c:macro:: GRN_COLUMN_NAME_ID
 
-   It returns the name of :doc:`/reference/pseudo_column` ``_id``.
+   It returns the name of :doc:`/reference/columns/pseudo` ``_id``.
 
    It is useful to use with :c:macro:`GRN_COLUMN_NAME_ID_LEN` like
    the following::
@@ -38,7 +38,7 @@ Reference
 
 .. c:macro:: GRN_COLUMN_NAME_KEY
 
-   It returns the name of :doc:`/reference/pseudo_column` ``_key``.
+   It returns the name of :doc:`/reference/columns/pseudo` ``_key``.
 
    It is useful to use with :c:macro:`GRN_COLUMN_NAME_KEY_LEN` like
    the following::
@@ -56,7 +56,7 @@ Reference
 
 .. c:macro:: GRN_COLUMN_NAME_VALUE
 
-   It returns the name of :doc:`/reference/pseudo_column` ``_value``.
+   It returns the name of :doc:`/reference/columns/pseudo` ``_value``.
 
    It is useful to use with :c:macro:`GRN_COLUMN_NAME_VALUE_LEN` like
    the following::
@@ -74,7 +74,7 @@ Reference
 
 .. c:macro:: GRN_COLUMN_NAME_SCORE
 
-   It returns the name of :doc:`/reference/pseudo_column` ``_score``.
+   It returns the name of :doc:`/reference/columns/pseudo` ``_score``.
 
    It is useful to use with :c:macro:`GRN_COLUMN_NAME_SCORE_LEN` like
    the following::
@@ -92,7 +92,7 @@ Reference
 
 .. c:macro:: GRN_COLUMN_NAME_NSUBRECS
 
-   It returns the name of :doc:`/reference/pseudo_column` ``_nsubrecs``.
+   It returns the name of :doc:`/reference/columns/pseudo` ``_nsubrecs``.
 
    It is useful to use with :c:macro:`GRN_COLUMN_NAME_NSUBRECS_LEN` like
    the following::

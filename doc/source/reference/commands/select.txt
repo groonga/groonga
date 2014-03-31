@@ -667,7 +667,7 @@ The ``select`` command just outputs ``_id`` and ``_key`` column
 values.
 
 ``*`` is a special value. It means that all columns that are not
-:doc:`/reference/pseudo_column`.
+:doc:`/reference/columns/pseudo`.
 
 Here is a ``*`` usage example.
 

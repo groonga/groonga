@@ -19,6 +19,7 @@ Here are data store columns:
 
   * :doc:`columns/scalar`
   * :doc:`columns/vector`
+  * :doc:`columns/pseudo`
 
 Here is an index column:
 
