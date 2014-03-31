@@ -37,6 +37,10 @@ Options
 
    Specify this option to daemonize.
 
+.. cmdoption:: -l
+
+   Specify log directory.
+
 Parameters
 ----------
 
