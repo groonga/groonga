@@ -8,7 +8,9 @@ groonga-suggest-learner
 Summary
 -------
 
-TODO
+groonga-suggest-learner is a program to learn suggest result from data which derived from groonga-suggest-httpd.
+Usually, it is used with groonga-suggest-httpd, but It is allowed to launch standalone.
+In such a case, groonga-suggest-learner loads data from log directory.
 
 Synopsis
 --------
