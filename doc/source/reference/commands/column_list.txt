@@ -131,7 +131,7 @@ Return value
     The type of the column. It is one of the followings:
 
     .. list-table::
-       :header-rows:
+       :header-rows: 1
 
        * - Value
          - Description
@@ -155,7 +155,7 @@ Return value
     Here is the available flags:
 
     .. list-table::
-       :header-rows:
+       :header-rows: 1
 
        * - Flag
          - Description
