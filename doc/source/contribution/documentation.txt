@@ -13,4 +13,6 @@ We use Sphinx_ for documentation tool.
    :maxdepth: 1
    :glob:
 
-   documentation/*
+   documentation/introduction
+   documentation/i18n
+   documentation/c-api
