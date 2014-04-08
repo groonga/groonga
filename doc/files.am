@@ -1503,4 +1503,3 @@ html_files_relative_from_locale_dir = \
 	html/tutorial/query_expansion.html \
 	html/tutorial/search.html \
 	$(NULL)
-
