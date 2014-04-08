@@ -13,6 +13,13 @@ Groongaのドキュメントは、Sphinxというツールを用いて作成さ�
  # aptitude install python-setuptools
  # easy_install -U sphinx
 
+ドキュメントファイルのリスト更新
+-------------------------
+
+Groongaのトップディレクトリにて、以下のようにしてSphinxでドキュメントを作成する際に用いるGroongaのドキュメントファイルのリストを更新できます。::
+
+ % make -C doc update-files
+
 htmlの作成
 ----------------
 
