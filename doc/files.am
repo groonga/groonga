@@ -402,6 +402,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/api/grn_user_data.txt \
 	$(top_srcdir)/doc/source/reference/cast.txt \
 	$(top_srcdir)/doc/source/reference/column.txt \
+	$(top_srcdir)/doc/source/reference/columns/pseudo.txt \
 	$(top_srcdir)/doc/source/reference/columns/vector.txt \
 	$(top_srcdir)/doc/source/reference/command.txt \
 	$(top_srcdir)/doc/source/reference/command/command_version.txt \
@@ -464,7 +465,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/log.txt \
 	$(top_srcdir)/doc/source/reference/normalizers.txt \
 	$(top_srcdir)/doc/source/reference/output.txt \
-	$(top_srcdir)/doc/source/reference/columns/pseudo.txt \
 	$(top_srcdir)/doc/source/reference/query_expanders.txt \
 	$(top_srcdir)/doc/source/reference/query_expanders/tsv.txt \
 	$(top_srcdir)/doc/source/reference/tables.txt \
@@ -921,6 +921,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/api/grn_user_data.txt \
 	source/reference/cast.txt \
 	source/reference/column.txt \
+	source/reference/columns/pseudo.txt \
 	source/reference/columns/vector.txt \
 	source/reference/command.txt \
 	source/reference/command/command_version.txt \
@@ -983,7 +984,6 @@ source_files_relative_from_doc_dir = \
 	source/reference/log.txt \
 	source/reference/normalizers.txt \
 	source/reference/output.txt \
-	source/reference/columns/pseudo.txt \
 	source/reference/query_expanders.txt \
 	source/reference/query_expanders/tsv.txt \
 	source/reference/tables.txt \
@@ -1213,6 +1213,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/api/grn_user_data.txt \
 	html/_sources/reference/cast.txt \
 	html/_sources/reference/column.txt \
+	html/_sources/reference/columns/pseudo.txt \
 	html/_sources/reference/columns/vector.txt \
 	html/_sources/reference/command.txt \
 	html/_sources/reference/command/command_version.txt \
@@ -1275,7 +1276,6 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/log.txt \
 	html/_sources/reference/normalizers.txt \
 	html/_sources/reference/output.txt \
-	html/_sources/reference/pseudo_column.txt \
 	html/_sources/reference/query_expanders.txt \
 	html/_sources/reference/query_expanders/tsv.txt \
 	html/_sources/reference/tables.txt \
@@ -1400,6 +1400,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/api/grn_user_data.html \
 	html/reference/cast.html \
 	html/reference/column.html \
+	html/reference/columns/pseudo.html \
 	html/reference/columns/vector.html \
 	html/reference/command.html \
 	html/reference/command/command_version.html \
@@ -1462,7 +1463,6 @@ html_files_relative_from_locale_dir = \
 	html/reference/log.html \
 	html/reference/normalizers.html \
 	html/reference/output.html \
-	html/reference/pseudo_column.html \
 	html/reference/query_expanders.html \
 	html/reference/query_expanders/tsv.html \
 	html/reference/tables.html \
@@ -1503,3 +1503,4 @@ html_files_relative_from_locale_dir = \
 	html/tutorial/query_expansion.html \
 	html/tutorial/search.html \
 	$(NULL)
+
