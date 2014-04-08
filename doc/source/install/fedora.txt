@@ -5,7 +5,7 @@
 Fedora
 ======
 
-This section describes how to install groonga related RPM packages on
+This section describes how to install Groonga related RPM packages on
 Fedora. You can install them by ``yum``.
 
 .. note::

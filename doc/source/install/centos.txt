@@ -5,7 +5,7 @@
 CentOS
 ======
 
-This section describes how to install groonga related RPM packages on
+This section describes how to install Groonga related RPM packages on
 CentOS. You can install them by ``yum``.
 
 We distribute both 32-bit and 64-bit packages but we strongly
@@ -147,7 +147,7 @@ Install groonga-normalizer-mysql package::
 Build from source
 -----------------
 
-Install required packages to build groonga::
+Install required packages to build Groonga::
 
   % sudo yum install -y wget tar gcc-c++ make mecab-devel
 

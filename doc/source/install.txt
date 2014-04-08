@@ -5,10 +5,10 @@
 Install
 =======
 
-This section describes how to install groonga on each
+This section describes how to install Groonga on each
 environment. There are packages for major platforms. It's recommended
-that you use package instead of building groonga by yourself. But
-don't warry. There is a document about building groonga from source.
+that you use package instead of building Groonga by yourself. But
+don't warry. There is a document about building Groonga from source.
 
 We distribute both 32-bit and 64-bit packages but we strongly
 recommend a 64-bit package for server. You should use a 32-bit package
