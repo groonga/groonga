@@ -2,7 +2,7 @@
 
 .. highlightlang:: none
 
-groonga開発者向け情報
+Groonga開発者向け情報
 =====================
 
 .. toctree::
