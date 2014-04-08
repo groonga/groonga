@@ -7,7 +7,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/contribution/development.txt \
 	$(top_srcdir)/doc/source/contribution/development/com.txt \
 	$(top_srcdir)/doc/source/contribution/development/cooperation.txt \
-	$(top_srcdir)/doc/source/contribution/development/document.txt \
 	$(top_srcdir)/doc/source/contribution/development/query.txt \
 	$(top_srcdir)/doc/source/contribution/development/release.txt \
 	$(top_srcdir)/doc/source/contribution/development/repository.txt \
@@ -15,6 +14,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/contribution/documentation.txt \
 	$(top_srcdir)/doc/source/contribution/documentation/c-api.txt \
 	$(top_srcdir)/doc/source/contribution/documentation/i18n.txt \
+	$(top_srcdir)/doc/source/contribution/documentation/introduction.txt \
 	$(top_srcdir)/doc/source/contribution/report.txt \
 	$(top_srcdir)/doc/source/development.txt \
 	$(top_srcdir)/doc/source/development/travis-ci.txt \
@@ -526,7 +526,6 @@ source_files_relative_from_doc_dir = \
 	source/contribution/development.txt \
 	source/contribution/development/com.txt \
 	source/contribution/development/cooperation.txt \
-	source/contribution/development/document.txt \
 	source/contribution/development/query.txt \
 	source/contribution/development/release.txt \
 	source/contribution/development/repository.txt \
@@ -534,6 +533,7 @@ source_files_relative_from_doc_dir = \
 	source/contribution/documentation.txt \
 	source/contribution/documentation/c-api.txt \
 	source/contribution/documentation/i18n.txt \
+	source/contribution/documentation/introduction.txt \
 	source/contribution/report.txt \
 	source/development.txt \
 	source/development/travis-ci.txt \
@@ -1159,7 +1159,6 @@ html_files_relative_from_locale_dir = \
 	html/_sources/contribution/development.txt \
 	html/_sources/contribution/development/com.txt \
 	html/_sources/contribution/development/cooperation.txt \
-	html/_sources/contribution/development/document.txt \
 	html/_sources/contribution/development/query.txt \
 	html/_sources/contribution/development/release.txt \
 	html/_sources/contribution/development/repository.txt \
@@ -1167,6 +1166,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/contribution/documentation.txt \
 	html/_sources/contribution/documentation/c-api.txt \
 	html/_sources/contribution/documentation/i18n.txt \
+	html/_sources/contribution/documentation/introduction.txt \
 	html/_sources/contribution/report.txt \
 	html/_sources/development.txt \
 	html/_sources/development/travis-ci.txt \
@@ -1344,7 +1344,6 @@ html_files_relative_from_locale_dir = \
 	html/contribution/development.html \
 	html/contribution/development/com.html \
 	html/contribution/development/cooperation.html \
-	html/contribution/development/document.html \
 	html/contribution/development/query.html \
 	html/contribution/development/release.html \
 	html/contribution/development/repository.html \
@@ -1352,6 +1351,7 @@ html_files_relative_from_locale_dir = \
 	html/contribution/documentation.html \
 	html/contribution/documentation/c-api.html \
 	html/contribution/documentation/i18n.html \
+	html/contribution/documentation/introduction.html \
 	html/contribution/report.html \
 	html/development.html \
 	html/development/travis-ci.html \
