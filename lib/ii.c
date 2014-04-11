@@ -3463,7 +3463,7 @@ _grn_ii_create(grn_ctx *ctx, grn_ii *ii, const char *path, grn_obj *lexicon, uin
   }
   if (path && strlen(path) + 6 >= PATH_MAX) { return NULL; }
   seg = grn_io_create(ctx, path, sizeof(struct grn_ii_header),
-                      S_SEGMENT, GRN_II_MAX_LSEG, grn_io_auto, GRN_IO_EXPIRE_SEGMENT);
+                      S_SEGMENT, MAX_PSEG, grn_io_auto, GRN_IO_EXPIRE_SEGMENT);
   if (!seg) { return NULL; }
   if (path) {
     strcpy(path2, path);
