@@ -34,14 +34,6 @@
 
 #define GRN_IO_IDSTR "GROONGA:IO:00001"
 
-/* VA hack */
-/* max aio request (/proc/sys/fs/aio-max-nr) */
-#define MAX_REQUEST  (64*1024)
-
-#define MEM_ALIGN    grn_cache_block
-
-/* end VA hack */
-
 #ifndef O_BINARY
 # ifdef _O_BINARY
 #  define O_BINARY _O_BINARY
