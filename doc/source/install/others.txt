@@ -5,10 +5,10 @@
 Others
 ======
 
-This section describes how to install groonga from source on UNIX like
+This section describes how to install Groonga from source on UNIX like
 environment.
 
-To get more detail about installing groonga from source on the
+To get more detail about installing Groonga from source on the
 specific environment, find the document for the specific environment
 from :doc:`/install`.
 
@@ -66,7 +66,7 @@ All libraries are optional. Here are optional libraries:
     column value
 
 If you want to use those all or some libraries, you need to install
-them before installing groonga.
+them before installing Groonga.
 
 Build from source
 -----------------
@@ -106,7 +106,7 @@ installed under ``${PATH}/`` directory.
 The default is ``/usr/local``. In this case, :doc:`/reference/executables/groonga` is
 installed into ``/usr/local/bin/groonga``.
 
-Here is an example that installs groonga into ``~/local`` for an user
+Here is an example that installs Groonga into ``~/local`` for an user
 use instead of system wide use::
 
   % ./configure --prefix=$HOME/local
@@ -221,12 +221,12 @@ Here is an example that uses MessagePack built with
 ``--with-munin-plugins``
 ++++++++++++++++++++++++
 
-Installs Munin plugins for groonga. They are installed into
+Installs Munin plugins for Groonga. They are installed into
 ``${PREFIX}/share/groonga/munin/plugins/``.
 
 Those plugins are not installed by default.
 
-Here is an example that installs Munin plugins for groonga::
+Here is an example that installs Munin plugins for Groonga::
 
   % ./configure --with-munin-plugins
 
@@ -268,7 +268,7 @@ If you get some errors by ``make``, please report them to us:
 ``make install``
 ^^^^^^^^^^^^^^^^
 
-Now, you can install built groonga!::
+Now, you can install built Groonga!::
 
   % sudo make install
 
