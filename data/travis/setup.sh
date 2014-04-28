@@ -32,6 +32,7 @@ else
     sudo apt-get purge libzmq3
 
     distribution=$(lsb_release --short --id | tr 'A-Z' 'a-z')
+    echo "distribution: <$distribution>"
     case $distribution in
 	debian)
 	    code_name=$(lsb_release --short --codename)
