@@ -28,16 +28,13 @@ Here are supported Ubuntu versions:
   * 13.10 Saucy Salamander
   * 14.04 LTS Trusty Tahr
 
-.. note::
+Enable the universe repository to install Groonga::
 
-   Enable the universe repository to install Groonga::
-
-     % sudo cp /etc/apt/sources.list /etc/apt/sources.list.d/universe.list
-     % sudo sed -i'' -e 's/main/universe/' /etc/apt/sources.list.d/universe.list
+  % sudo apt-get -y install software-properties-common
+  % sudo add-apt-repository -y universe
 
 Add the ``ppa:groonga/ppa`` PPA to your system::
 
-  % sudo apt-get -y install software-properties-common
   % sudo add-apt-repository -y ppa:groonga/ppa
   % sudo apt-get update
 
