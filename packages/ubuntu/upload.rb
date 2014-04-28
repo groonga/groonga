@@ -103,7 +103,7 @@ allow_unsigned_uploads = 0
                     "--distribution", code_name,
                     "--newversion", deb_version,
                     "Build for #{code_name}.")
-        run_command("debuild", "-S", "-pgpg2", "-k#{@pgp_sign_key}")
+        run_command("debuild", "-S", "-sa", "-pgpg2", "-k#{@pgp_sign_key}")
         run_command("dput", @dput_configuration_name,
                     "../#{@package}_#{deb_version}_source.changes")
       end
