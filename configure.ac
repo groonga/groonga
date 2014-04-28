@@ -238,6 +238,7 @@ AC_CONFIG_FILES([
   examples/dictionary/jmdict/Makefile
   packages/Makefile
   packages/apt/Makefile
+  packages/ubuntu/Makefile
   packages/rpm/Makefile
   packages/rpm/centos/Makefile
   packages/rpm/fedora/Makefile
@@ -1371,6 +1372,13 @@ AC_ARG_WITH(rsync-path,
             [RSYNC_PATH="packages@packages.groonga.org:public"])
 AC_SUBST(RSYNC_PATH)
 
+AC_ARG_WITH(launchpad-uploader-pgp-key,
+            [AS_HELP_STRING([--with-launchpad-uploader-pgp-key=KEY],
+            [specify PGP key UID to upload Groonga packages to Launchpad.])],
+            [LAUNCHPAD_UPLOADER_PGP_KEY="$withval"],
+            [LAUNCHPAD_UPLOADER_PGP_KEY=""])
+AC_SUBST(LAUNCHPAD_UPLOADER_PGP_KEY)
+
 GPG_UID=m4_include(gpg_uid)
 AC_SUBST(GPG_UID)
 
@@ -1480,6 +1488,7 @@ echo
 
 echo "For packages:"
 echo "  rsync path:            ${RSYNC_PATH}"
+echo "  Launchpad PGP key:     ${LAUNCHPAD_UPLOADER_PGP_KEY}"
 echo "  GPG UID:               ${GPG_UID}"
 echo
 
