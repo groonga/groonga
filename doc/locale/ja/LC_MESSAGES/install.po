@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-05 11:55+0900\n"
-"PO-Revision-Date: 2013-11-15 11:25+0900\n"
+"POT-Creation-Date: 2014-04-28 17:13+0900\n"
+"PO-Revision-Date: 2014-04-28 17:21+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -740,21 +740,34 @@ msgstr ""
 "このセクションではUbuntu上でGroonga関連のdebパッケージをインストールする方法"
 "を説明します。これらのパッケージは ``apt`` でインストールできます。"
 
+msgid "PPA (Personal Package Archive)"
+msgstr "PPA（Personal Package Archive）"
+
+msgid ""
+"The Groonga APT repository for Ubuntu uses PPA (Personal Package Archive) on "
+"Launchpad. You can install Groonga by APT from the PPA."
+msgstr ""
+"Ubuntu用のGroongaのAPTリポジトリーはLaunchpad上のPPA（Personal Package "
+"Archive）を使っています。このPPAからAPTでGroongaをインストールできます。"
+
+msgid "Here are supported Ubuntu versions:"
+msgstr "サポートしているUbuntuのバージョンは次の通りです。"
+
 msgid "12.04 LTS Precise Pangolin"
-msgstr ""
-
-msgid "Enable the universe repository to install groonga::"
-msgstr ""
-"Groongaをインストールするためにuniverseリポジトリを有効にしてください::"
-
-msgid "12.10 Quantal Quetzal"
-msgstr ""
-
-msgid "13.04 Raring Ringtail"
 msgstr ""
 
 msgid "13.10 Saucy Salamander"
 msgstr ""
+
+msgid "14.04 LTS Trusty Tahr"
+msgstr ""
+
+msgid "Enable the universe repository to install Groonga::"
+msgstr ""
+"Groongaをインストールするためにuniverseリポジトリを有効にしてください::"
+
+msgid "Add the ``ppa:groonga/ppa`` PPA to your system::"
+msgstr "``ppa:groonga/ppa`` PPAをシステムに登録します::"
 
 msgid "Windows"
 msgstr ""
@@ -777,7 +790,7 @@ msgstr ""
 "32-bit環境の場合は、x86のバイナリをpackages.groonga.orgからダウンロードしてく"
 "ださい。"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.0-x86.exe"
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.1-x86.exe"
 msgstr ""
 
 msgid "Then run it."
@@ -790,7 +803,7 @@ msgstr ""
 "64-bit環境の場合は、x64のバイナリをpackages.groonga.orgからダウンロードしてく"
 "ださい。"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.0-x64.exe"
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.1-x64.exe"
 msgstr ""
 
 msgid ""
@@ -809,7 +822,7 @@ msgstr ""
 "32-bit環境の場合は、x86のzipアーカイブをpackages.groonga.orgからダウンロード"
 "してください。"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.0-x86.zip"
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.1-x86.zip"
 msgstr ""
 
 msgid "Then extract it."
@@ -821,7 +834,7 @@ msgstr ""
 "64-bit環境の場合は、x64のzipアーカイブをpackages.groonga.orgからダウンロード"
 "してください。"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.0-x64.zip"
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.1-x64.zip"
 msgstr ""
 
 msgid "You can find :doc:`/reference/executables/groonga` in ``bin`` folder."
@@ -847,7 +860,7 @@ msgstr ""
 msgid "Download zipped source from packages.groonga.org:"
 msgstr "zipアーカイブをpackages.groonga.orgからダウンロードしてください。"
 
-msgid "http://packages.groonga.org/source/groonga/groonga-4.0.0.zip"
+msgid "http://packages.groonga.org/source/groonga/groonga-4.0.1.zip"
 msgstr ""
 
 msgid "Move to the Groonga's source folder::"
