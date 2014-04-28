@@ -19,7 +19,7 @@ size data.
 PPA (Personal Package Archive)
 ------------------------------
 
-The Groonga APT repository for Ubuntu uses PPA (Person Package
+The Groonga APT repository for Ubuntu uses PPA (Personal Package
 Archive) on Launchpad. You can install Groonga by APT from the PPA.
 
 Here are supported Ubuntu versions:
