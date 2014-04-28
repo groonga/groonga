@@ -31,9 +31,9 @@ if [ "$GROONGA_MASTER" = "yes" ]; then
 else
     sudo apt-get purge libzmq3
 
+    distribution=$(lsb_release --short --id | tr 'A-Z' 'a-z')
     case $distribution in
 	debian)
-	    distribution=$(lsb_release --short --id | tr 'A-Z' 'a-z')
 	    code_name=$(lsb_release --short --codename)
 	    component=main
 	    apt_url_base=http://packages.groonga.org
