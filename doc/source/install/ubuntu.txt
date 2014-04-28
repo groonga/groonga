@@ -71,7 +71,7 @@ Install groonga-normalizer-mysql package::
 Build from source
 -----------------
 
-Install required packages to build groonga::
+Install required packages to build Groonga::
 
   % sudo apt-get -V -y install wget tar build-essential zlib1g-dev liblzo2-dev libmsgpack-dev libzmq-dev libevent-dev libmecab-dev
 

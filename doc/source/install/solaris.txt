@@ -11,7 +11,7 @@ Solaris.
 Oracle Solaris 11
 -----------------
 
-Install required packages to build groonga::
+Install required packages to build Groonga::
 
   % sudo pkg install gnu-tar gcc-45 system/header
 

@@ -76,7 +76,7 @@ Install groonga-normalizer-mysql package::
 Build from source
 -----------------
 
-Install required packages to build groonga::
+Install required packages to build Groonga::
 
   % sudo yum install -y wget tar gcc-c++ make mecab-devel libedit-devel
 
