@@ -15,7 +15,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-set -x
+# set -x
 set -e
 
 if [ "$GROONGA_MASTER" = "yes" ]; then
@@ -32,7 +32,6 @@ else
     sudo apt-get purge libzmq3
 
     distribution=$(lsb_release --short --id | tr 'A-Z' 'a-z')
-    echo "distribution: <$distribution>"
     case $distribution in
 	debian)
 	    code_name=$(lsb_release --short --codename)
