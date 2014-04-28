@@ -1,0 +1,82 @@
+Execution example::
+
+  table_create Users TABLE_PAT_KEY ShortText
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Users age COLUMN_SCALAR UInt8
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Users tags COLUMN_VECTOR ShortText
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_list Users
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         "id", 
+  #         "UInt32"
+  #       ], 
+  #       [
+  #         "name", 
+  #         "ShortText"
+  #       ], 
+  #       [
+  #         "path", 
+  #         "ShortText"
+  #       ], 
+  #       [
+  #         "type", 
+  #         "ShortText"
+  #       ], 
+  #       [
+  #         "flags", 
+  #         "ShortText"
+  #       ], 
+  #       [
+  #         "domain", 
+  #         "ShortText"
+  #       ], 
+  #       [
+  #         "range", 
+  #         "ShortText"
+  #       ], 
+  #       [
+  #         "source", 
+  #         "ShortText"
+  #       ]
+  #     ], 
+  #     [
+  #       256, 
+  #       "_key", 
+  #       "", 
+  #       "", 
+  #       "COLUMN_SCALAR", 
+  #       "Users", 
+  #       "ShortText", 
+  #       []
+  #     ], 
+  #     [
+  #       257, 
+  #       "age", 
+  #       "/tmp/groonga-databases/commands_column_list.0000101", 
+  #       "fix", 
+  #       "COLUMN_SCALAR|PERSISTENT", 
+  #       "Users", 
+  #       "UInt8", 
+  #       []
+  #     ], 
+  #     [
+  #       258, 
+  #       "tags", 
+  #       "/tmp/groonga-databases/commands_column_list.0000102", 
+  #       "var", 
+  #       "COLUMN_VECTOR|PERSISTENT", 
+  #       "Users", 
+  #       "ShortText", 
+  #       []
+  #     ]
+  #   ]
+  # ]

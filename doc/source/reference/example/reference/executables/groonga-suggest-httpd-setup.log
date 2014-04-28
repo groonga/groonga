@@ -1,0 +1,3 @@
+Execution example::
+
+  % groonga-suggest-create-dataset /tmp/groonga-databases/groonga-suggest-httpd query
