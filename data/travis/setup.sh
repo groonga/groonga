@@ -28,25 +28,27 @@ if [ "$GROONGA_MASTER" = "yes" ]; then
     sudo make install > /dev/null
     cd ..
 else
-    distribution=$(lsb_release --short --id | tr 'A-Z' 'a-z')
-    code_name=$(lsb_release --short --codename)
+    sudo apt-get purge libzmq3
+
     case $distribution in
 	debian)
+	    distribution=$(lsb_release --short --id | tr 'A-Z' 'a-z')
+	    code_name=$(lsb_release --short --codename)
 	    component=main
-	    ;;
-	ubuntu)
-	    component=universe
-	    ;;
-    esac
-    apt_url_base=http://packages.groonga.org
-    cat <<EOF | sudo tee /etc/apt/sources.list.d/groonga.list
+	    apt_url_base=http://packages.groonga.org
+	    cat <<EOF | sudo tee /etc/apt/sources.list.d/groonga.list
 deb ${apt_url_base}/${distribution}/ ${code_name} ${component}
 deb-src ${apt_url_base}/${distribution}/ ${code_name} ${component}
 EOF
+	    sudo apt-get update -qq
+	    sudo apt-get install -qq -y --allow-unauthenticated groonga-keyring
+	    ;;
+	ubuntu)
+	    sudo apt-get install -qq -y -V software-properties-common
+	    sudo add-apt-repository -y ppa:groonga/ppa
+	    ;;
+    esac
 
-    sudo apt-get purge libzmq3
-    sudo apt-get update -qq
-    sudo apt-get install -qq -y --allow-unauthenticated groonga-keyring
     sudo apt-get update -qq
     sudo apt-get install -qq -y -V groonga libgroonga-dev
 fi
