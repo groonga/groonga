@@ -33,7 +33,7 @@ by Travis CI such as Ruby. You should use ``install`` otherwise.
 Add the following ``before_install`` configuration to ``.travis.yml``::
 
   before_install:
-    - curl https://raw.github.com/groonga/groonga/master/data/travis/setup.sh | sh
+    - curl --silent --location https://github.com/groonga/groonga/raw/master/data/travis/setup.sh | sh
 
 If you need to use ``install`` hook instead of ``before_install``, you
 just substitute ``before_install:`` with ``install:``.
