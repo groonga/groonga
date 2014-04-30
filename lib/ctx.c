@@ -1656,33 +1656,33 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
     int command_name_size = key_end - command_name;
     expr = grn_ctx_get(ctx, command_name, command_name_size);
     if (expr && command_proc_p(expr)) {
-    while (p < e) {
-      int l;
-      GRN_BULK_REWIND(&buf);
-      p = grn_text_cgidec(ctx, &buf, p, e, HTTP_QUERY_PAIR_DELIMITER);
-      v = GRN_TEXT_VALUE(&buf);
-      l = GRN_TEXT_LEN(&buf);
-      if (l == OUTPUT_TYPE_LEN && !memcmp(v, OUTPUT_TYPE, OUTPUT_TYPE_LEN)) {
+      while (p < e) {
+        int l;
         GRN_BULK_REWIND(&buf);
-        p = grn_text_cgidec(ctx, &buf, p, e, HTTP_QUERY_PAIRS_DELIMITERS);
+        p = grn_text_cgidec(ctx, &buf, p, e, HTTP_QUERY_PAIR_DELIMITER);
         v = GRN_TEXT_VALUE(&buf);
-        get_content_mime_type(ctx, v, GRN_BULK_CURR(&buf));
-      } else if (l == COMMAND_VERSION_LEN &&
-                 !memcmp(v, COMMAND_VERSION, COMMAND_VERSION_LEN)) {
-        GRN_BULK_REWIND(&buf);
-        p = grn_text_cgidec(ctx, &buf, p, e, HTTP_QUERY_PAIRS_DELIMITERS);
-        get_command_version(ctx, GRN_TEXT_VALUE(&buf), GRN_BULK_CURR(&buf));
-        if (ctx->rc) { goto exit; }
-      } else {
-        if (!(val = grn_expr_get_or_add_var(ctx, expr, v, l))) {
-          val = &buf;
+        l = GRN_TEXT_LEN(&buf);
+        if (l == OUTPUT_TYPE_LEN && !memcmp(v, OUTPUT_TYPE, OUTPUT_TYPE_LEN)) {
+          GRN_BULK_REWIND(&buf);
+          p = grn_text_cgidec(ctx, &buf, p, e, HTTP_QUERY_PAIRS_DELIMITERS);
+          v = GRN_TEXT_VALUE(&buf);
+          get_content_mime_type(ctx, v, GRN_BULK_CURR(&buf));
+        } else if (l == COMMAND_VERSION_LEN &&
+                   !memcmp(v, COMMAND_VERSION, COMMAND_VERSION_LEN)) {
+          GRN_BULK_REWIND(&buf);
+          p = grn_text_cgidec(ctx, &buf, p, e, HTTP_QUERY_PAIRS_DELIMITERS);
+          get_command_version(ctx, GRN_TEXT_VALUE(&buf), GRN_BULK_CURR(&buf));
+          if (ctx->rc) { goto exit; }
+        } else {
+          if (!(val = grn_expr_get_or_add_var(ctx, expr, v, l))) {
+            val = &buf;
+          }
+          grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
+          p = grn_text_cgidec(ctx, val, p, e, HTTP_QUERY_PAIRS_DELIMITERS);
         }
-        grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-        p = grn_text_cgidec(ctx, val, p, e, HTTP_QUERY_PAIRS_DELIMITERS);
       }
-    }
-    ctx->impl->curr_expr = expr;
-    grn_expr_exec(ctx, expr, 0);
+      ctx->impl->curr_expr = expr;
+      grn_expr_exec(ctx, expr, 0);
     } else {
       ERR(GRN_INVALID_ARGUMENT, "invalid command name: %.*s",
           command_name_size, command_name);
