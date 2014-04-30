@@ -24,7 +24,7 @@ override_dh_install:
 	find $(CURDIR)/debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/ -name *.la -delete
 	find $(CURDIR)/debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/ -name underscore.js -delete
 	install -d debian/tmp/etc/munin/plugin-conf.d/
-	install -m 0644 debian/groonga-munin-plugin.conf \
+	install -m 0644 debian/groonga-munin-plugins.conf \
 	  debian/tmp/etc/munin/plugin-conf.d/groonga
 	mv debian/tmp/usr/share/doc/groonga/ \
 	  debian/tmp/usr/share/doc/groonga-doc/
