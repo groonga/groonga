@@ -1651,9 +1651,11 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
   if (!GRN_TEXT_LEN(&buf)) { GRN_TEXT_SETS(ctx, &buf, INDEX_HTML); }
   v = GRN_TEXT_VALUE(&buf);
   grn_str_get_mime_type(ctx, v, GRN_BULK_CURR(&buf), &key_end, &filename_end);
-  if ((GRN_TEXT_LEN(&buf) >= 2 && v[0] == 'd' && v[1] == '/') &&
-      (expr = grn_ctx_get(ctx, v + 2, key_end - (v + 2))) &&
-      command_proc_p(expr)) {
+  if ((GRN_TEXT_LEN(&buf) >= 2 && v[0] == 'd' && v[1] == '/')) {
+    const char *command_name = v + 2;
+    int command_name_size = key_end - command_name;
+    expr = grn_ctx_get(ctx, command_name, command_name_size);
+    if (expr && command_proc_p(expr)) {
     while (p < e) {
       int l;
       GRN_BULK_REWIND(&buf);
@@ -1681,6 +1683,10 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
     }
     ctx->impl->curr_expr = expr;
     grn_expr_exec(ctx, expr, 0);
+    } else {
+      ERR(GRN_INVALID_ARGUMENT, "invalid command name: %.*s",
+          command_name_size, command_name);
+    }
   } else if ((expr = grn_ctx_get(ctx, GRN_EXPR_MISSING_NAME,
                                  strlen(GRN_EXPR_MISSING_NAME)))) {
     if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
