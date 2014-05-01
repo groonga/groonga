@@ -45,6 +45,14 @@ Execute groonga-suggest-httpd command:
 
 After executing above command, groonga-suggest-httpd accepts HTTP request on 8080 port.
 
+If you just want to save requests into log file, use '-l' option.
+
+Here is the example to save log files under 'logs' directory with 'log' prefix for each file.::
+
+  % groonga-suggest-httpd -l logs/log /tmp/groonga-databases/groonga-suggest-httpd
+
+Under 'logs' directory, log files such as 'logYYYYmmddHHMMSS-00' are created.
+
 Request to groonga-suggest-httpd
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
