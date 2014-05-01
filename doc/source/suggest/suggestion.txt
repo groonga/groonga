@@ -113,3 +113,20 @@ following command::
   {"sequence": "1", "time": 1312950803.86057, "item": "search engine", "type": "submit"},
   {"sequence": "1", "time": 1312950808.86057, "item": "web search realtime", "type": "submit"}
   ]
+
+How to extract learning data
+----------------------------
+
+The learning data is stored into item_DATASET and pair_DATASET tables.
+By using select command for such tables, you can all extract learing data.
+
+Here is the query to extract all learning data::
+
+  select item_DATASET --limit -1
+  select pair_DATASET --filter 'freq0 > 0 || freq1 > 0 || freq2 > 0' --limit -1
+
+Without '--limit -1', you can't get all data.
+In pair table, the valid value of freq0, freq1 and freq2 column must be larger than 0.
+
+Don't execute above query via HTTP request because enourmous number of records are fetched.
+ 
