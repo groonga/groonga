@@ -76,6 +76,8 @@ Options
 .. cmdoption:: -t, --n-threads
 
    Specify number of threads. The default value is 8.
+   This option accepts 128 as the max value, but use the number of CPU cores for
+   performance.
 
 .. cmdoption:: -s, --send-endpoint
 
