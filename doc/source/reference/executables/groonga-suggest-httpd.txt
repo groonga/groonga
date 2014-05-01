@@ -48,8 +48,16 @@ After executing above command, groonga-suggest-httpd accepts HTTP request on 808
 Request to groonga-suggest-httpd
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-TODO
+Here is the sample requests to learn 'groonga' for 'query' dataset::
 
+  curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=92619&t=complete&q=g'
+  curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=93850&t=complete&q=gr'
+  curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=94293&t=complete&q=gro'
+  curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=94734&t=complete&q=groo'
+  curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95147&t=complete&q=grooon'
+  curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95553&t=complete&q=groonga'
+  curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95959&t=submit&q=groonga
+  
 Options
 -------
 
