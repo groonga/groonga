@@ -186,8 +186,8 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                     mrb_value mrb_ec = mrb_grn_expr_code_new(mrb, ec);
                     mrb_value mrb_accessor;
                     weight = mrb_fixnum(mrb_funcall(mrb, mrb_ec, "weight", 0));
-                    grn_scan_info_set_flags(si, grn_scan_info_get_flags(si) | SCAN_ACCESSOR);
                     mrb_si = mrb_grn_scan_info_new(mrb, si);
+                    mrb_funcall(mrb, mrb_si, "set_flags", 1, mrb_fixnum_value(SCAN_ACCESSOR));
                     mrb_accessor = mrb_grn_accessor_new(mrb, (grn_accessor *)ec->value);
                     if (!mrb_nil_p(mrb_funcall(mrb, mrb_accessor, "next", 0))) {
                       mrb_funcall(mrb, mrb_si, "put_index", 3,
@@ -247,7 +247,8 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                           mrb_fixnum_value(1));
             }
           } else if (GRN_ACCESSORP(*p)) {
-            grn_scan_info_set_flags(si, grn_scan_info_get_flags(si) | SCAN_ACCESSOR);
+            mrb_si = mrb_grn_scan_info_new(mrb, si);
+            mrb_funcall(mrb, mrb_si, "set_flags", 1, mrb_fixnum_value(SCAN_ACCESSOR));
             if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
               mrb_value mrb_accessor = mrb_grn_accessor_new(mrb, (grn_accessor *)*p);
               if (!mrb_nil_p(mrb_funcall(mrb, mrb_accessor, "next", 0))) {
@@ -292,7 +293,10 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
         stat = SCAN_VAR;
       } else {
         grn_scan_info_push_arg(si, c->value);
-        if (stat == SCAN_START) { grn_scan_info_set_flags(si, grn_scan_info_get_flags(si) | SCAN_PRE_CONST); }
+        if (stat == SCAN_START) {
+          mrb_si = mrb_grn_scan_info_new(mrb, si);
+          mrb_funcall(mrb, mrb_si, "set_flags", 1, mrb_fixnum_value(SCAN_PRE_CONST));
+        }
         stat = SCAN_CONST;
       }
       break;
@@ -370,7 +374,8 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                             mrb_fixnum_value(1));
               }
             } else if (GRN_ACCESSORP(*p)) {
-              grn_scan_info_set_flags(si, grn_scan_info_get_flags(si) | SCAN_ACCESSOR);
+              mrb_si = mrb_grn_scan_info_new(mrb, si);
+              mrb_funcall(mrb, mrb_si, "set_flags", 1, mrb_fixnum_value(SCAN_ACCESSOR));
               if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
                 mrb_si = mrb_grn_scan_info_new(mrb, si);
                 mrb_funcall(mrb, mrb_si, "put_index", 3,
@@ -394,14 +399,16 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
   }
   if (op == GRN_OP_OR && !size) {
     // for debug
-    if (!(grn_scan_info_get_flags(sis[0]) & SCAN_PUSH) || (grn_scan_info_get_logical_op(sis[0]) != op)) {
+    mrb_value mrb_sis_first = mrb_grn_scan_info_new(mrb, sis[0]);
+    mrb_value mrb_check_flags_result = mrb_funcall(mrb, mrb_sis_first, "check_flags", 1, mrb_fixnum_value(SCAN_PUSH));
+    if (!mrb_bool(mrb_check_flags_result) || (grn_scan_info_get_logical_op(sis[0]) != op)) {
       int j;
       ERR(GRN_INVALID_ARGUMENT, "invalid expr");
       for (j = 0; j < i; j++) { grn_scan_info_close(ctx, sis[j]); }
       GRN_FREE(sis);
       return NULL;
     } else {
-      grn_scan_info_set_flags(sis[0], grn_scan_info_get_flags(sis[0]) & ~SCAN_PUSH);
+      mrb_funcall(mrb, mrb_sis_first, "unset_flags", 1, mrb_fixnum_value(SCAN_PUSH));
       grn_scan_info_set_logical_op(sis[0], op);
     }
   } else {
@@ -450,6 +457,42 @@ mrb_grn_expr_code_initialize(mrb_state *mrb, mrb_value self)
   DATA_TYPE(self) = &mrb_grn_expr_code_type;
   DATA_PTR(self) = mrb_cptr(mrb_code);
   return self;
+}
+
+static mrb_value
+mrb_grn_scan_info_set_flags(mrb_state *mrb, mrb_value self)
+{
+  int flags;
+  scan_info *si;
+
+  mrb_get_args(mrb, "i", &flags);
+  si = DATA_PTR(self);
+  grn_scan_info_set_flags(si, grn_scan_info_get_flags(si) | flags);
+  return self;
+}
+
+static mrb_value
+mrb_grn_scan_info_unset_flags(mrb_state *mrb, mrb_value self)
+{
+  int flags;
+  scan_info *si;
+
+  mrb_get_args(mrb, "i", &flags);
+  si = DATA_PTR(self);
+  grn_scan_info_set_flags(si, grn_scan_info_get_flags(si) & ~flags);
+  return self;
+}
+
+static mrb_value
+mrb_grn_scan_info_check_flags(mrb_state *mrb, mrb_value self)
+{
+  int flags;
+  scan_info *si;
+
+  mrb_get_args(mrb, "i", &flags);
+  si = DATA_PTR(self);
+  flags &= grn_scan_info_get_flags(si);
+  return flags ? mrb_fixnum_value(flags) : mrb_nil_value();
 }
 
 static mrb_value
@@ -517,6 +560,9 @@ grn_mrb_expr_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "put_index", mrb_grn_scan_info_put_index, MRB_ARGS_REQ(3));
   mrb_define_method(mrb, klass, "op=", mrb_grn_scan_info_set_op, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "end=", mrb_grn_scan_info_set_end, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "set_flags", mrb_grn_scan_info_set_flags, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "unset_flags", mrb_grn_scan_info_unset_flags, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "check_flags", mrb_grn_scan_info_check_flags, MRB_ARGS_REQ(1));
 
   klass = mrb_define_class_under(mrb, module, "ExpressionCode", mrb->object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
