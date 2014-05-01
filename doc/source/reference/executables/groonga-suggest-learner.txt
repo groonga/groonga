@@ -22,7 +22,25 @@ Synopsis
 Usage
 -----
 
-TODO
+groonga-suggest-leaner supports the two way of learning data.
+One is learning data from groonga-suggest-httpd, the other is
+learning data from already existing log files.
+
+Learning data from groonga-suggest-httpd
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Execute groonga-suggest-learner.::
+
+  groonga-suggest-learner testdb/db
+
+Learning data from log files
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Execute groonga-suggest-learner with '-l' option.
+
+Here is the sample to load log data under 'logs' directory::
+
+  groonga-suggest-learner -l logs testdb/db
 
 Options
 -------
