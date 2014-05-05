@@ -6,23 +6,23 @@
 case "$1" in
     autoconf|detect)
 	if [ -z "${pid_file}" ]; then
-            echo "no (PID file isn't specified by env.pid_file)"
+	    echo "no (PID file isn't specified by env.pid_file)"
 	    exit 1
-        elif [ -f "${pid_file}" ]; then
-            echo "yes"
-            exit 0
-        else
-            echo "no (PID file doesn't exist: ${pid_file})"
-            exit 1
-        fi
-        ;;
+	elif [ -f "${pid_file}" ]; then
+	    echo "yes"
+	    exit 0
+	else
+	    echo "no (PID file doesn't exist: ${pid_file})"
+	    exit 1
+	fi
+	;;
     config)
 	if [ -z "${label}" ]; then
 	    title="groonga: memory usage"
 	else
 	    title="groonga: ${label}: memory usage"
 	fi
-        cat <<EOF
+	cat <<EOF
 graph_title ${title}
 graph_vlabel memory usage
 graph_category groonga
@@ -33,8 +33,8 @@ rss.type GAUGE
 vsz.label virtual memory size
 vsz.type GAUGE
 EOF
-        exit 0
-        ;;
+	exit 0
+	;;
     suggest)
 	echo "gqtp"
 	echo "http"

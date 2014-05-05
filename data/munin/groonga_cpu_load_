@@ -6,16 +6,16 @@
 case "$1" in
     autoconf|detect)
 	if [ -z "${pid_file}" ]; then
-            echo "no (PID file isn't specified by env.pid_file)"
+	    echo "no (PID file isn't specified by env.pid_file)"
 	    exit 1
-        elif [ -f "${pid_file}" ]; then
-            echo "yes"
+	elif [ -f "${pid_file}" ]; then
+	    echo "yes"
 	    exit 0
-        else
-            echo "no (PID file doesn't exist: ${pid_file})"
+	else
+	    echo "no (PID file doesn't exist: ${pid_file})"
 	    exit 1
-        fi
-        ;;
+	fi
+	;;
     suggest)
 	echo "gqtp"
 	echo "http"
@@ -27,7 +27,7 @@ case "$1" in
 	else
 	    title="groonga: ${label}: CPU load"
 	fi
-        cat <<EOF
+	cat <<EOF
 graph_title ${title}
 graph_vlabel CPU load (%)
 graph_category groonga
@@ -36,8 +36,8 @@ graph_info groonga CPU load
 cpu_load.label CPU load
 cpu_load.type GAUGE
 EOF
-        exit 0
-        ;;
+	exit 0
+	;;
     *)
 esac
 
