@@ -15,7 +15,6 @@ require 'English'
 label = ENV["label"]
 @groonga = ENV["groonga"] || "groonga"
 @du = ENV["du"] || "du"
-@path = ENV["path"]
 
 command = ARGV.shift
 
@@ -38,8 +37,8 @@ def parse(success, result)
 end
 
 def run(command, *args)
-  path = Shellwords.shellescape(@path)
-  result = `#{@groonga} #{path} #{command} #{args.join(' ')} 2>&1`
+  database_path = Shellwords.shellescape(@database_path)
+  result = `#{@groonga} #{database_path} #{command} #{args.join(' ')} 2>&1`
   parse($?.success?, result)
 end
 
@@ -100,17 +99,87 @@ def compute_size(usages, base_path)
   usage
 end
 
-case command
-when "autoconf", "detect"
-  success, body = run("status")
-  if success
-    puts("yes")
-    exit(true)
+def setup_database_path
+  if /_([^_]+)\z/ =~ $0
+    service_type = $1
+    database_path_variable_name = "#{service_type}_database_path"
+    database_path = ENV[database_path_variable_name]
   else
-    puts("no (#{body})")
+    database_path_variable_name = "database_path"
+    database_path = ENV[database_path_variable_name]
+    # For backward compatibility. Remove me when 5.0.0.
+    database_path ||= ENV["path"]
+  end
+
+  if database_path.nil?
+    key = "env.#{database_path_variable_name}"
+    $stderr.puts("Database path isn't specified by #{key}")
     exit(false)
   end
+
+  unless File.exist?(database_path)
+    $stderr.puts("Database path doesn't exist: #{database_path}")
+    exit(false)
+  end
+
+  @database_path = database_path
+end
+
+def autoconf
+  database_path_variable_names = [
+    "database_path",
+    "path", # For backward compatibility. Remove me when 5.0.0.
+    "http_database_path",
+    "httpd_database_path",
+    "gqtp_database_path",
+  ]
+  database_paths = database_path_variable_names.collect do |variable_name|
+    ENV[variable_name]
+  end
+  database_paths = database_paths.compact
+  if database_paths.empty?
+    variable_names = database_path_variable_names.collect do |name|
+      "env.#{name}"
+    end
+    variable_names_label = variable_names[0..-2].join(", ")
+    variable_names_label << " and/or #{variable_names.last}"
+    puts("no (No database path is specified. Specify #{variable_names_label}.)")
+    exit(false)
+  end
+  database_paths.each do |database_path|
+    next unless File.exist?(database_path)
+    puts("yes")
+    exit(true)
+  end
+  database_paths_label = database_paths.join(", ")
+  puts("no (All database paths don't exist: #{database_paths_label})")
+  exit(false)
+end
+
+def suggest
+  exist_p = lambda do |variable_name|
+    database_path = ENV[variable_name]
+    database_path and File.exist?(database_path)
+  end
+  if exist_p.call("http_database_path")
+    puts("http")
+  end
+  if exist_p.call("httpd_database_path")
+    puts("httpd")
+  end
+  if exist_p.call("gqtp_database_path")
+    puts("gqtp")
+  end
+  exit(true)
+end
+
+case command
+when "autoconf", "detect"
+  autoconf
+when "suggest"
+  suggest
 when "config"
+  setup_database_path
   if label.nil?
     title = "groonga: disk usage"
   else
@@ -146,20 +215,17 @@ EOF
     end
   end
   exit(true)
-when "suggest"
-  puts("gqtp")
-  puts("http")
-  exit(true)
 end
 
-path = Shellwords.shellescape(@path)
-du_result = `#{@du} -B1 #{path}*`
+setup_database_path
+database_path = Shellwords.shellescape(@database_path)
+du_result = `#{@du} -B1 #{database_path}*`
 unless $?.success?
-  puts("error: #{du_result}")
+  $stderr.puts("error: #{du_result}")
   exit(false)
 end
 usages = parse_du_result(du_result)
-usage = compute_size(usages, @path)
+usage = compute_size(usages, @database_path)
 puts(<<EOF)
 database.value #{usage}
 EOF

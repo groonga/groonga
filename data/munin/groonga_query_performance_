@@ -8,43 +8,80 @@ require 'strscan'
 
 label = ENV["label"]
 
-@log_path = ENV["log_path"]
-
 command = ARGV.shift
 
-case command
-when "autoconf", "detect"
-  if @log_path.nil?
-    puts("no (query log file path isn't specified by env.log_path)")
+def autoconf
+  query_log_path_variable_names = [
+    "query_log_path",
+    "log_path", # For backward compatibility. Remove me when 5.0.0.
+    "http_query_log_path",
+    "httpd_query_log_path",
+    "gqtp_query_log_path",
+  ]
+  query_log_paths = query_log_path_variable_names.collect do |variable_name|
+    ENV[variable_name]
+  end
+  query_log_paths = query_log_paths.compact
+  if query_log_paths.empty?
+    variable_names = query_log_path_variable_names.collect do |name|
+      "env.#{name}"
+    end
+    variable_names_label = variable_names[0..-2].join(", ")
+    variable_names_label << " and/or #{variable_names.last}"
+    puts("no (No query log path is specified. Specify #{variable_names_label}.)")
     exit(false)
   end
-  unless File.readable?(@log_path)
-    puts("no (query log file isn't readable: <#{@log_path}>)")
-    exit(false)
+  query_log_paths.each do |query_log_path|
+    next unless File.exist?(query_log_path)
+    puts("yes")
+    exit(true)
   end
-  puts("yes")
-  exit(true)
-when "config"
-  if label.nil?
-    title = "groonga: query performance"
-  else
-    title = "groonga: #{label}: query performance"
-  end
-  puts(<<EOF)
-graph_title #{title}
-graph_vlabel seconds
-graph_category groonga
-graph_info groonga query performance
+  query_log_paths_label = query_log_paths.join(", ")
+  puts("no (All query log paths don't exist: #{query_log_paths_label})")
+  exit(false)
+end
 
-longest.label Longest
-average.label Average
-median.label Median
-EOF
+def suggest
+  exist_p = lambda do |variable_name|
+    query_log_path = ENV[variable_name]
+    query_log_path and File.exist?(query_log_path)
+  end
+  if exist_p.call("http_query_log_path")
+    puts("http")
+  end
+  if exist_p.call("httpd_query_log_path")
+    puts("httpd")
+  end
+  if exist_p.call("gqtp_query_log_path")
+    puts("gqtp")
+  end
   exit(true)
-when "suggest"
-  puts("gqtp")
-  puts("http")
-  exit(true)
+end
+
+def target_query_log_path
+  if /_([^_]+)\z/ =~ $0
+    service_type = $1
+    query_log_path_variable_name = "#{service_type}_query_log_path"
+    query_log_path = ENV[query_log_path_variable_name]
+  else
+    query_log_path_variable_name = "query_log_path"
+    query_log_path = ENV[query_log_path_variable_name]
+    # For backward compatibility. Remove me when 5.0.0.
+    query_log_path ||= ENV["log_file"]
+  end
+
+  if query_log_path.nil?
+    key = "env.#{query_log_path_variable_name}"
+    $stderr.puts("Query log path isn't specified by #{key}")
+    exit(false)
+  end
+
+  unless File.exist?(query_log_path)
+    $stderr.puts("Query log path doesn't exist: #{query_log_path}")
+    exit(false)
+  end
+
+  query_log_path
 end
 
 class ReverseLineReader
@@ -101,11 +138,35 @@ class ReverseLineReader
   end
 end
 
+case command
+when "autoconf", "detect"
+  autoconf
+when "suggest"
+  suggest
+when "config"
+  if label.nil?
+    title = "groonga: query performance"
+  else
+    title = "groonga: #{label}: query performance"
+  end
+  puts(<<EOF)
+graph_title #{title}
+graph_vlabel seconds
+graph_category groonga
+graph_info groonga query performance
+
+longest.label Longest
+average.label Average
+median.label Median
+EOF
+  exit(true)
+end
+
 span = 60 * 5 # 5min
 mega = 1_000_000.0
 now = Time.now
 elapsed_times = []
-File.open(@log_path) do |log_file|
+File.open(target_query_log_path) do |log_file|
   ReverseLineReader.new(log_file).each do |line|
     case line
     when /\A(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)\.(\d+)\|([\da-f])+\|<(\d+) rc=0$/

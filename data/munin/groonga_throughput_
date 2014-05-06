@@ -3,6 +3,7 @@
 #%# family=auto
 #%# capabilities=autoconf suggest
 
+require 'net/http'
 begin
   require 'json'
 rescue LoadError
@@ -12,9 +13,9 @@ end
 
 label = ENV["label"]
 @groonga = ENV["groonga"] || "groonga"
-@host = ENV["host"] || "localhost"
-@port = ENV["port"] || 10041
-@protocol = ENV["protocol"] || "gqtp"
+@default_host = ENV["host"] || "127.0.0.1"
+@default_http_port = 10041
+@default_gqtp_port = 10043
 
 command = ARGV.shift
 
@@ -36,50 +37,117 @@ def parse(success, result)
   end
 end
 
-def run(command, *args)
-  if @protocol == "http"
-    require "net/http"
-    begin
-      response = Net::HTTP.start(@host, @port) do |http|
-        http.get("/d/status.json")
-      end
-      if response.is_a?(Net::HTTPSuccess)
-        parse(true, response.body)
-      else
-        parse(false, "#{response.code}: #{response.body}")
-      end
-    rescue Exception
-      message = "#{$!.class}: #{$!.message}\n"
-      message <<  $@.join("\n")
-      parse(false, message)
-    end
+def run_http(host, port, command)
+  path = "/d/#{command}"
+  response = Net::HTTP.start(host, port) do |http|
+    http.get(path)
+  end
+  if response.is_a?(Net::HTTPSuccess)
+    parse(true, response.body)
   else
-    groonga = "#{@groonga} -p #{@port} -c #{@host}"
-    result = `#{groonga} #{command} #{args.join(' ')} 2>&1`
-    parse($?.success?, result)
+    [false, "#{response.code}: #{response.body}"]
   end
 end
 
-def parse_list(header, list)
-  list.collect do |item|
-    parsed_item = {}
-    header.each_with_index do |(name, type), i|
-      parsed_item[name] = item[i]
-    end
-    parsed_item
+def run_gqtp(host, port, command)
+  groonga = "#{@groonga} -p #{port} -c #{host}"
+  result = `#{groonga} #{command} 2>&1`
+  parse($?.success?, result)
+end
+
+def run(command)
+  case @service_type
+  when "http"
+    run_http(@http_host, @http_port, command)
+  when "httpd"
+    run_http(@httpd_host, @httpd_port, command)
+  when "gqtp"
+    run_gqtp(@gqtp_host, @gqtp_port, command)
+  else
+    [false, "unknown service type: #{@service_type}"]
   end
 end
 
-case command
-when "autoconf", "detect"
-  success, body = run("status")
-  if success
+def setup_service_type
+  if /_([^_]+)\z/ =~ $0
+    @service_type = $1
+  else
+    @service_type = nil
+  end
+end
+
+def setup_http
+  @http_host = ENV["http_host"] || @default_host
+  @http_port = (ENV["http_port"] || @default_http_port).to_i
+end
+
+def setup_httpd
+  @httpd_host = ENV["httpd_host"] || @default_host
+  @httpd_port = (ENV["httpd_port"] || @default_http_port).to_i
+end
+
+def setup_gqtp
+  @gqtp_host = ENV["gqtp_host"] || @default_host
+  @gqtp_port = (ENV["gqtp_port"] || @default_gqtp_port).to_i
+end
+
+def setup
+  setup_service_type
+  setup_http
+  setup_httpd
+  setup_gqtp
+end
+
+def autoconf
+  results = []
+
+  if @http_host and @http_port
+    results << run_http(@http_host, @http_port, "status")
+  end
+
+  if @httpd_host and @httpd_port
+    results << run_http(@httpd_host, @httpd_port, "status")
+  end
+
+  if @gqtp_host and @gqtp_port
+    results << run_gqtp(@gqtp_host, @gqtp_port, "status")
+  end
+
+  if results.any? {|success, _| success}
     puts("yes")
     exit(true)
   else
-    puts("no (#{body})")
+    errors = results.collect do |_, result|
+      result
+    end
+    error_detail = errors.join(", ")
+    puts("no (#{error_detail})")
     exit(false)
   end
+end
+
+def suggest
+  if @http_host and @http_port
+    success, _ = run_http(@http_host, @http_port, "status")
+    puts("http") if success
+  end
+  if @httpd_host and @httpd_port
+    success, _ = run_http(@httpd_host, @httpd_port, "status")
+    puts("httpd") if success
+  end
+  if @gqtp_host and @gqtp_port
+    success, _ = run_gqtp(@gqtp_host, @gqtp_port, "status")
+    puts("gqtp") if success
+  end
+  exit(true)
+end
+
+setup
+case command
+when "autoconf", "detect"
+  autoconf
+when "suggest"
+  suggest
 when "config"
   if label.nil?
     title = "groonga: throughput"
@@ -95,10 +163,6 @@ graph_info groonga throughput
 n_queries.label N queries
 n_queries.type COUNTER
 EOF
-  exit(true)
-when "suggest"
-  puts("gqtp")
-  puts("http")
   exit(true)
 end
 
