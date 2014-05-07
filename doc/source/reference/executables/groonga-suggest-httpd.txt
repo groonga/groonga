@@ -103,7 +103,7 @@ Options
 
    Specify this option to disable checking max fd on start.
 
-Command line Parameters
+Command line parameters
 -----------------------
 
 There is one required parameter - ``database_path``.
@@ -114,7 +114,7 @@ There is one required parameter - ``database_path``.
 Specifies the path to a Groonga database. This database must be created by :doc:`groonga-suggest-create-dataset` command because it executes required initialization for suggestion.
 
 
-GET Parameters
+GET parameters
 --------------
 
 groonga-suggest-httpd accepts following GET parameters.
