@@ -206,5 +206,5 @@ In JSONP format::
 
 ``SCORE_N``
 
-  The number of score.
+  The score.
 
