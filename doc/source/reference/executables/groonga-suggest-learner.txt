@@ -36,9 +36,9 @@ Execute groonga-suggest-learner.::
 Learning data from log files
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Execute groonga-suggest-learner with '-l' option.
+Execute groonga-suggest-learner with ``-l`` option.
 
-Here is the sample to load log data under 'logs' directory::
+Here is the sample to load log data under ``logs`` directory::
 
   groonga-suggest-learner -l logs testdb/db
 
@@ -73,10 +73,10 @@ Specifies the path to a groonga database.
 
 
 
-Related table
--------------
+Related tables
+--------------
 
-Here is the list of table which learned data is stored. If you specify 'query' as dataset name, following '_DATASET' suffix are replaced. Thus, 'event_query' table is used.
+Here is the list of table which learned data is stored. If you specify ``query`` as dataset name, following ``_DATASET`` suffix are replaced. Thus, ``event_query`` table is used.
 
 * event_DATASET
 

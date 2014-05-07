@@ -45,18 +45,18 @@ Execute groonga-suggest-httpd command:
 
 After executing above command, groonga-suggest-httpd accepts HTTP request on 8080 port.
 
-If you just want to save requests into log file, use '-l' option.
+If you just want to save requests into log file, use ``-l`` option.
 
-Here is the example to save log files under 'logs' directory with 'log' prefix for each file.::
+Here is the example to save log files under ``logs`` directory with ``log`` prefix for each file.::
 
   % groonga-suggest-httpd -l logs/log /tmp/groonga-databases/groonga-suggest-httpd
 
-Under 'logs' directory, log files such as 'logYYYYmmddHHMMSS-00' are created.
+Under ``logs`` directory, log files such as ``logYYYYmmddHHMMSS-00`` are created.
 
 Request to groonga-suggest-httpd
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Here is the sample requests to learn 'groonga' for 'query' dataset::
+Here is the sample requests to learn ``groonga`` for ``query`` dataset::
 
   % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=92619&t=complete&q=g'
   % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=93850&t=complete&q=gr'
@@ -65,7 +65,7 @@ Here is the sample requests to learn 'groonga' for 'query' dataset::
   % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95147&t=complete&q=grooon'
   % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95553&t=complete&q=groonga'
   % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95959&t=submit&q=groonga
-  
+
 Options
 -------
 
@@ -134,7 +134,7 @@ Required parameters
      - UTF-8 encoded string which user fills in form
      - 
    * - t
-     - The type of query. The value of type must be complete, correct, suggest or submit. It also accepts multiple type of query which is concatinated by '|'. Note that 'submit' is invalid value when you specify multiple type of query.
+     - The type of query. The value of type must be complete, correct, suggest or submit. It also accepts multiple type of query which is concatinated by ``|``. Note that ``submit`` is invalid value when you specify multiple type of query.
      - 
 
 Required parameters for learning
@@ -148,13 +148,13 @@ Required parameters for learning
      - Note
    * - s
      - Elapsed time from 0:00 January 1, 1970
-     - Note that you need specify the value of 's' in milliseconds
+     - Note that you need specify the value of ``s`` in milliseconds
    * - i
      - Unique ID to distinct user
      - Use session ID or IP address for example
    * - l
-     - Specify the name of dataset for learning. It also accepts multiple dataset name which is concatinated by '|'
-     - Note that dataset name must be matched to following regular expression '[A-Za-z ][A-Za-z0-9 ]{0,15}'
+     - Specify the name of dataset for learning. It also accepts multiple dataset name which is concatinated by ``|``
+     - Note that dataset name must be matched to following regular expression ``[A-Za-z ][A-Za-z0-9 ]{0,15}``
 
 Required parameters for suggestion
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -180,7 +180,7 @@ Optional parameter
      - Note
    * - callback
      - Specify the name of function if you prefer JSONP as response format
-     - The name of function must be matched to reqular expression '[A-Za-z ][A-Za-z0-9 ]{0,15}'
+     - The name of function must be matched to reqular expression ``[A-Za-z ][A-Za-z0-9 ]{0,15}``
 
 Return value
 ------------
@@ -198,7 +198,7 @@ In JSONP format::
 
 ``TYPE``
 
-  'complete', 'correct' or 'suggest'.
+  One of ``complete``, ``correct`` and ``suggest``.
 
 ``CANDIDATE_N``
 
