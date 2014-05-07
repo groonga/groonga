@@ -87,11 +87,14 @@ Here is a special character list:
   * ``)`` (escaped as ``\)``)
   * ``\`` (escaped as ``\\``)
 
-You can use quote instead of escape. Quote syntax is ``"..."`` or
-``'...'``. You need escape ``"`` as ``\"`` in ``"..."`` quote syntax.
-You need escape ``'`` as ``\'`` in ``'...'`` quote syntax. For
-example, ``Alice's brother (Bob)`` can be quoted ``"Alice's brother
-(Bob)"`` or ``'Alice\'s brother (Bob)'``.
+You can use quote instead of escape special characters except ``\\``
+(backslash). You need to use backslash for escaping backslash like
+``\\\\`` in quote.
+
+Quote syntax is ``"..."`` or ``'...'``. You need escape ``"`` as
+``\"`` in ``"..."`` quote syntax.  You need escape ``'`` as ``\'`` in
+``'...'`` quote syntax. For example, ``Alice's brother (Bob)`` can be
+quoted ``"Alice's brother (Bob)"`` or ``'Alice\'s brother (Bob)'``.
 
 .. note::
 
