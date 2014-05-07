@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-10 17:52+0900\n"
-"PO-Revision-Date: 2014-03-10 18:17+0900\n"
+"POT-Creation-Date: 2014-05-07 18:40+0900\n"
+"PO-Revision-Date: 2014-05-07 18:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -218,7 +218,7 @@ msgstr ""
 msgid "TODO..."
 msgstr ""
 
-msgid "It returns the name of :doc:`/reference/pseudo_column` ``_id``."
+msgid "It returns the name of :doc:`/reference/columns/pseudo` ``_id``."
 msgstr ""
 
 msgid ""
@@ -232,7 +232,7 @@ msgstr ""
 msgid "It returns the byte size of :c:macro:`GRN_COLUMN_NAME_ID`."
 msgstr ""
 
-msgid "It returns the name of :doc:`/reference/pseudo_column` ``_key``."
+msgid "It returns the name of :doc:`/reference/columns/pseudo` ``_key``."
 msgstr ""
 
 msgid ""
@@ -243,7 +243,7 @@ msgstr ""
 msgid "It returns the byte size of :c:macro:`GRN_COLUMN_NAME_KEY`."
 msgstr ""
 
-msgid "It returns the name of :doc:`/reference/pseudo_column` ``_value``."
+msgid "It returns the name of :doc:`/reference/columns/pseudo` ``_value``."
 msgstr ""
 
 msgid ""
@@ -254,7 +254,7 @@ msgstr ""
 msgid "It returns the byte size of :c:macro:`GRN_COLUMN_NAME_VALUE`."
 msgstr ""
 
-msgid "It returns the name of :doc:`/reference/pseudo_column` ``_score``."
+msgid "It returns the name of :doc:`/reference/columns/pseudo` ``_score``."
 msgstr ""
 
 msgid ""
@@ -265,7 +265,7 @@ msgstr ""
 msgid "It returns the byte size of :c:macro:`GRN_COLUMN_NAME_SCORE`."
 msgstr ""
 
-msgid "It returns the name of :doc:`/reference/pseudo_column` ``_nsubrecs``."
+msgid "It returns the name of :doc:`/reference/columns/pseudo` ``_nsubrecs``."
 msgstr ""
 
 msgid ""
@@ -1863,10 +1863,82 @@ msgstr ""
 msgid ":doc:`columns/vector`"
 msgstr ""
 
+msgid ":doc:`columns/pseudo`"
+msgstr ""
+
 msgid "Here is an index column:"
 msgstr "以下がインデックスカラムです。"
 
 msgid ":doc:`columns/index`"
+msgstr ""
+
+msgid "疑似カラム (pseudo_column)"
+msgstr ""
+
+msgid "名前"
+msgstr ""
+
+msgid "疑似カラム"
+msgstr ""
+
+msgid "説明"
+msgstr ""
+
+msgid ""
+"Groongaのデータベースで作成したテーブルには、いくつかのカラムが自動的に定義さ"
+"れます。"
+msgstr ""
+
+msgid ""
+"これらのカラムはいずれもアンダースコア('_')で始まる名前が付与されます。定義さ"
+"れる疑似カラムは、テーブルの種類によって異なります。"
+msgstr ""
+
+msgid "``_id``"
+msgstr ""
+
+msgid ""
+"レコードに付与される一意な番号です。全てのテーブルに定義されます。値の範囲は"
+"1〜1073741824の整数で、通常はレコードを追加した順に1ずつ加算されます。_idの値"
+"は不変で、レコードが存在する限り変更することはできません。ただし、削除された"
+"レコードの_idの値は再利用されます。"
+msgstr ""
+
+msgid "``_key``"
+msgstr ""
+
+msgid ""
+"レコードの主キー値を表します。主キーを持つテーブルのみに定義されます。主キー"
+"値はテーブルの中で一意であり、変更することはできません。"
+msgstr ""
+
+msgid "``_value``"
+msgstr ""
+
+msgid ""
+"レコードの値を表します。value_typeを指定したテーブルのみに定義されます。自由"
+"に変更可能です。"
+msgstr ""
+
+msgid "``_score``"
+msgstr ""
+
+msgid ""
+"各レコードのスコア値を表します。検索結果として生成されたテーブルのみに定義さ"
+"れます。"
+msgstr ""
+
+msgid "検索処理を実行する過程で値が設定されますが、自由に変更可能です。"
+msgstr ""
+
+msgid "``_nsubrecs``"
+msgstr ""
+
+msgid ""
+"主キーの値が同一であったレコードの件数を表します。検索結果として生成された"
+"テーブルのみに定義されます。グループ化(drilldown)処理を実行すると、グループ化"
+"前のテーブルにおいて、グループ化キーの値が同一であったレコードの件数が、グ"
+"ループ化処理の結果を格納するテーブルの_nsubrecsに記録されます。"
 msgstr ""
 
 msgid "Vector column"
@@ -1971,6 +2043,27 @@ msgstr "JSONの配列構文で指定してベクターデータをロードし�
 
 msgid "Let's load the following data:"
 msgstr "以下のデータをロードしましょう。"
+
+msgid "``tags``"
+msgstr ""
+
+msgid "``http://groonga.org/``"
+msgstr ""
+
+msgid "``[\"groonga\"]``"
+msgstr ""
+
+msgid "``http://mroonga.org/``"
+msgstr ""
+
+msgid "``[\"mroonga\", \"mysql\", \"groonga\"]``"
+msgstr ""
+
+msgid "``http://ranguba.org/``"
+msgstr ""
+
+msgid "``[\"ruby\", \"groonga\"]``"
+msgstr ""
 
 msgid "Here is a command that loads the data:"
 msgstr "以下がデータをロードするコマンドです。"
@@ -2084,6 +2177,15 @@ msgstr "1つのブックマークに重み付きで0個以上のタグを設定�
 
 msgid "You can load vector data by JSON object syntax::"
 msgstr "JSONのオブジェクト構文でベクターデータをロードします::"
+
+msgid "``{\"groonga\": 100}``"
+msgstr ""
+
+msgid "``{\"mroonga\": 100, \"mysql\": 50, \"groonga\": 10}``"
+msgstr ""
+
+msgid "``{\"ruby\": 100, \"groonga\": 50}``"
+msgstr ""
 
 msgid "The loaded data can be outputted as JSON object syntax:"
 msgstr "ロードしたデータはJSONのオブジェクト構文で出力されます。"
@@ -2871,16 +2973,10 @@ msgstr ""
 msgid "check"
 msgstr ""
 
-msgid "名前"
-msgstr ""
-
 msgid "check - オブジェクトの状態表示"
 msgstr ""
 
 msgid "書式"
-msgstr ""
-
-msgid "説明"
 msgstr ""
 
 msgid ""
@@ -3237,86 +3333,228 @@ msgstr ""
 "コマンドの実行が成功するとtrueを返します。失敗するとエラーとしてfalseを返しま"
 "す。"
 
-msgid "column_list"
+msgid "``column_list``"
 msgstr ""
 
-msgid "column_list - テーブルに定義されているカラムのリスト表示"
+msgid "``column_list`` command lists columns in a table."
+msgstr "``column_list`` コマンドはテーブルにあるカラムの一覧を返します。"
+
+msgid "``column_list`` command takes one required parameter::"
+msgstr "``column_list`` コマンドの引数は1つで必須です::"
+
+msgid "Here is a simple example of ``column_list`` command."
+msgstr "以下は ``column_list`` コマンドの簡単な使用例です。"
+
+msgid "This section describes parameters of ``column_list``."
+msgstr "このセクションでは ``column_list`` の引数について説明します。"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "All parameters are required."
+msgstr "すべての引数は必須です。"
+
+msgid "It specifies the name of table to be listed columns."
+msgstr "カラムの一覧を取得するテーブルの名前を指定します。"
+
+msgid "``column_list`` returns the list of column information in the table::"
 msgstr ""
 
-msgid ""
-"Groonga組込コマンドの一つであるcolumn_listについて説明します。組込コマンド"
-"は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバに"
-"リクエストを送信することによって実行します。"
-msgstr ""
-
-msgid "column_listはテーブルに定義されているカラムをリスト表示します。"
-msgstr ""
-
-msgid "カラム情報を出力するテーブルの名前を指定します。"
-msgstr ""
-
-msgid "カラム名一覧を以下の形式で返却します。::"
-msgstr ""
-
-msgid "``カラム情報名n``"
-msgstr ""
-
-msgid ""
-"``カラム情報n`` には複数の情報が含まれますが、そこに入る情報がどんな内容かを"
-"示す名前を出力します。 情報名は以下の通りです。"
-msgstr ""
-
-msgid "``id``"
-msgstr ""
-
-msgid "カラムオブジェクトに割り当てられたID"
-msgstr ""
-
-msgid "カラム名"
-msgstr ""
-
-msgid "``path``"
-msgstr ""
-
-msgid "カラム値を格納するファイル名"
-msgstr ""
-
-msgid "スカラ型、ベクタ型、インデックス型の種別"
-msgstr ""
-
-msgid "カラムのflags属性"
-msgstr ""
-
-msgid "``domain``"
-msgstr ""
-
-msgid "カラムの値の属する型"
-msgstr ""
-
-msgid "``range``"
-msgstr ""
-
-msgid "テーブルのkeyの型"
-msgstr ""
-
-msgid "インデックスカラムのとき、インデックス対象カラム名の配列"
-msgstr ""
-
-msgid "``カラム情報型n``"
-msgstr ""
-
-msgid "カラム情報の型を出力します。"
-msgstr ""
-
-msgid "``カラム情報n``"
+msgid "``COLUMN_LIST_HEADER``"
 msgstr ""
 
 msgid ""
-"``カラム情報名n`` で示された情報の配列を出力します。 情報の順序は ``カラム情"
-"報名n`` の順序と同じです。"
+"``COLUMN_LIST_HEADER`` describes about content of each "
+"``COLUMN_INFORMATION``."
 msgstr ""
 
-msgid "注: 実際は改行が入りません。"
+msgid "``COLUMN_LIST_HEADER`` is the following format::"
+msgstr ""
+
+msgid "It means the following:"
+msgstr "以下のことを意味します。"
+
+msgid ""
+"The first content in ``COLUMN_INFORMATION`` is ``id`` value and the value "
+"type is ``UInt32``."
+msgstr ""
+"``COLUMN_INFORMATION`` の1番目の要素は ``id`` の値で、その値の型は "
+"``UInt32`` です。"
+
+msgid ""
+"The second content in ``COLUMN_INFORMATION`` is ``name`` value and the value "
+"type is ``ShortText``."
+msgstr ""
+"``COLUMN_INFORMATION`` の2番目の要素は ``name`` の値で、その値の型は "
+"``ShortText`` です。"
+
+msgid "The third content ...."
+msgstr "``COLUMN_INFORMATION`` の3番目の要素は…"
+
+msgid "See the following ``COLUMN_INFORMATION`` description for details."
+msgstr ""
+
+msgid ""
+"This field provides meta-data of column information. So this field will be "
+"useful for programs rather than humans."
+msgstr ""
+
+msgid "``COLUMN_INFORMATION``"
+msgstr ""
+
+msgid "Each ``COLUMN_INFORMATION`` is the following format::"
+msgstr ""
+
+msgid "``ID``"
+msgstr ""
+
+msgid ""
+"The column ID in the Groonga database. Normally, you don't care about it."
+msgstr ""
+
+msgid "``NAME``"
+msgstr ""
+
+msgid "The column name."
+msgstr "カラム名。"
+
+msgid "``PATH``"
+msgstr ""
+
+msgid "The path for storing column data."
+msgstr "カラムのデータを保存しているパス。"
+
+msgid "``TYPE``"
+msgstr ""
+
+msgid "The type of the column. It is one of the followings:"
+msgstr "カラムの型。次のうちのどれかです。"
+
+msgid "Value"
+msgstr ""
+
+msgid "Description"
+msgstr "説明"
+
+msgid "``fix``"
+msgstr ""
+
+msgid ""
+"The column is a fixed size column. Scalar column that its type is fixed size "
+"type is fixed size column."
+msgstr ""
+
+msgid "``var``"
+msgstr ""
+
+msgid ""
+"The column is a variable size column. Vector column or scalar column that "
+"its type is variable size type are variable size column."
+msgstr ""
+
+msgid "``index``"
+msgstr ""
+
+msgid "The column is an index column."
+msgstr "このカラムはインデックスカラムです。"
+
+msgid "``FLAGS``"
+msgstr ""
+
+msgid ""
+"The flags of the column. Each flag is separated by ``|`` like "
+"``COLUMN_VECTOR|WITH_WEIGHT``. ``FLAGS`` must include one of "
+"``COLUMN_SCALAR``, ``COLUMN_VECTOR`` or ``COLUMN_INDEX``. Other flags are "
+"optional."
+msgstr ""
+
+msgid "Here is the available flags:"
+msgstr "有効なフラグは以下の通りです。"
+
+msgid "Flag"
+msgstr "フラグ"
+
+msgid "``COLUMN_SCALAR``"
+msgstr ""
+
+msgid "The column is a scalar column."
+msgstr "このカラムはスカラーカラムです。"
+
+msgid "``COLUMN_VECTOR``"
+msgstr ""
+
+msgid "The column is a vector column."
+msgstr "このカラムはベクターカラムです。"
+
+msgid "``COLUMN_INDEX``"
+msgstr ""
+
+msgid "``WITH_WEIGHT``"
+msgstr ""
+
+msgid ""
+"The column can have weight. ``COLUMN_VECTOR`` and ``COLUMN_INDEX`` may have "
+"it. ``COLUMN_SCALAR`` doesn't have it."
+msgstr ""
+
+msgid "``WITH_SECTION``"
+msgstr ""
+
+msgid ""
+"The column can have section information. ``COLUMN_INDEX`` may have it.  "
+"``COLUMN_SCALAR`` and ``COLUMN_VECTOR`` don't have it."
+msgstr ""
+
+msgid "Multiple column index has it."
+msgstr "マルチカラムインデックスはこのフラグを持ちます。"
+
+msgid "``WITH_POSITION``"
+msgstr ""
+
+msgid ""
+"The column can have position information. ``COLUMN_INDEX`` may have it.  "
+"``COLUMN_SCALAR`` and ``COLUMN_VECTOR`` don't have it."
+msgstr ""
+
+msgid "Full text search index must has it."
+msgstr "全文検索インデックスはこのフラグを持つべきです。"
+
+msgid "``PERSISTENT``"
+msgstr ""
+
+msgid ""
+"The column is a persistent column. It means that the column isn't a :doc:`/"
+"reference/columns/pseudo`."
+msgstr ""
+
+msgid "``DOMAIN``"
+msgstr ""
+
+msgid "The name of table that has the column."
+msgstr "カラムを持っているテーブルの生です。"
+
+msgid "``RANGE``"
+msgstr ""
+
+msgid "The value type name of the column. It is a type name or a table name."
+msgstr ""
+
+msgid "``SOURCES``"
+msgstr ""
+
+msgid ""
+"An array of the source column names of the index. If the index column is "
+"multiple column index, the array has two or more source column names."
+msgstr ""
+
+msgid ""
+"It is always an empty array for ``COLUMN_SCALAR`` and ``COLUMN_VECTOR``."
+msgstr ""
+
+msgid ":doc:`/reference/commands/column_create`"
+msgstr ""
+
+msgid ":doc:`/reference/column`"
 msgstr ""
 
 msgid "column_remove"
@@ -3392,36 +3630,23 @@ msgstr "以下は ``column_rename`` コマンドの簡単な使用例です。"
 msgid "This section describes parameters of ``column_rename``."
 msgstr "このセクションでは ``column_rename`` の引数について説明します。"
 
-msgid "Required parameters"
-msgstr "必須引数"
+msgid "It specifies the name of table that has the column to be renamed."
+msgstr "名前を変更したいカラムが所属するテーブルの名前を指定します。"
 
-msgid "All parameters are required."
+msgid "It specifies the column name to be renamed."
+msgstr "名前を変更するカラムを指定します。"
+
+msgid "``new_name``"
 msgstr ""
 
-#, fuzzy
-msgid "It specifies the name of table that has the column to be renamed."
-msgstr "レコードを削除するテーブルの名前を指定します。"
-
-#, fuzzy
-msgid "It specifies the column name to be renamed."
-msgstr "テーブルの名前を指定します。"
-
-#, fuzzy
-msgid "``new_name``"
-msgstr "時間"
-
-#, fuzzy
 msgid "It specifies the new column name."
-msgstr "カラムの名前を指定します。"
+msgstr "新しいカラム名を指定します。"
 
 msgid "``SUCCEEDED_OR_NOT``"
 msgstr ""
 
-#, fuzzy
 msgid "It is ``true`` on success, ``false`` otherwise."
-msgstr ""
-"コマンドの実行が成功するとtrueを返します。失敗するとエラーとしてfalseを返しま"
-"す。"
+msgstr "コマンドの実行が成功するとtrueを返します。失敗するとfalseを返します。"
 
 msgid "define_selector"
 msgstr ""
@@ -3625,6 +3850,9 @@ msgstr ""
 "削除するレコードのキーを指定します。TABLE_NO_KEYを対象となるテーブルに使用し"
 "ているなら、指定したキーは無視されます。(そのような場合には 引数 ``id`` を使"
 "います。)"
+
+msgid "``id``"
+msgstr ""
 
 msgid ""
 "It specifies the id of record to delete. If you specify ``id`` parameter, "
@@ -3995,12 +4223,6 @@ msgstr ""
 msgid "Here are available flags."
 msgstr "指定可能なフラグは以下の通りです。"
 
-msgid "Flag"
-msgstr "フラグ"
-
-msgid "Description"
-msgstr "説明"
-
 msgid "``NONE``"
 msgstr ""
 
@@ -4215,6 +4437,9 @@ msgid ""
 msgstr ""
 "``ruby_load`` コマンドは実験的なプラグインです。このコマンドは将来的に変更さ"
 "れるかも知れません。"
+
+msgid "``path``"
+msgstr ""
 
 msgid "It specifies the Ruby script path which you want to load."
 msgstr "読み込みたいrubyスクリプトを指定します。"
@@ -5079,7 +5304,7 @@ msgstr ""
 
 msgid ""
 "``*`` is a special value. It means that all columns that are not :doc:`/"
-"reference/pseudo_column`."
+"reference/columns/pseudo`."
 msgstr ""
 
 msgid "Here is a ``*`` usage example."
@@ -5412,9 +5637,9 @@ msgstr "最終的なスコアーの増分は9（ ``= 1 + 5 + 3`` ）です。"
 msgid ""
 "A ``SCORE_ADJUST_EXPRESSION`` has a factor for ``\"KEYWORD\"``. This means "
 "that increased scores of all records that has ``\"KEYWORD\"`` are the same "
-"value. You can change score for each record that has the same ``\"KEYWORD"
-"\"``. It is useful to tune search score. See :ref:`weight-vector-column` for "
-"details."
+"value. You can change increase score for each record that has the same ``"
+"\"KEYWORD\"``. It is useful to tune search score. See :ref:`weight-vector-"
+"column` for details."
 msgstr ""
 "1つの ``SCORE_ADJUST_EXPRESSION`` は ``\"KEYWORD\"`` に対して1つの係数を持ち"
 "ます。これは、 ``\"KEYWORD\"`` を持つすべてのレコードでスコアーの増加分は同じ"
@@ -6250,9 +6475,6 @@ msgstr ""
 msgid ":doc:`/reference/tables`"
 msgstr ""
 
-msgid ":doc:`/reference/commands/column_create`"
-msgstr ""
-
 msgid ":doc:`/reference/tokenizers`"
 msgstr ""
 
@@ -6297,7 +6519,13 @@ msgstr ""
 msgid "テーブルのflags属性"
 msgstr ""
 
+msgid "``domain``"
+msgstr ""
+
 msgid "主キー値の属する型"
+msgstr ""
+
+msgid "``range``"
 msgstr ""
 
 msgid "valueが属する型"
@@ -6935,7 +7163,6 @@ msgstr ""
 msgid "groonga-httpd"
 msgstr ""
 
-#, fuzzy
 msgid ""
 "groonga-httpd is a program to communicate with a Groonga server using the "
 "HTTP protocol. It functions as same as :doc:`groonga-server-http`. Although :"
@@ -6944,7 +7171,7 @@ msgid ""
 "`nginx <http://nginx.org/>`_. All standards-compliance and features provided "
 "by nginx is also available in groonga-httpd."
 msgstr ""
-"groonga-httpdはgroongaサーバーとHTTPプロトコルで通信するプログラムです。 機能"
+"groonga-httpdはGroongaサーバーとHTTPプロトコルで通信するプログラムです。 機能"
 "的には、 :doc:`groonga-server-http` と同じです。 :doc:`groonga-server-http` "
 "はHTTPサーバーとしては最小限の機能しか持ちませんが、groonga-httpdは `nginx "
 "<http://www.nginx.org/>`_ を組み込むことでnginxが準拠しているHTTPの仕様と機能"
@@ -7582,9 +7809,8 @@ msgid ""
 "functionality, but the name of parameter is different."
 msgstr ""
 
-#, fuzzy
 msgid "First you need to set up database for suggestion."
-msgstr "以下は提案用の学習データです。"
+msgstr "最初に提案用のデータベースをセットアップする必要があります。"
 
 msgid "Launch groonga-suggest-httpd"
 msgstr ""
@@ -7597,7 +7823,22 @@ msgid ""
 "8080 port."
 msgstr ""
 
+msgid "If you just want to save requests into log file, use '-l' option."
+msgstr ""
+
+msgid ""
+"Here is the example to save log files under 'logs' directory with 'log' "
+"prefix for each file.::"
+msgstr ""
+
+msgid ""
+"Under 'logs' directory, log files such as 'logYYYYmmddHHMMSS-00' are created."
+msgstr ""
+
 msgid "Request to groonga-suggest-httpd"
+msgstr ""
+
+msgid "Here is the sample requests to learn 'groonga' for 'query' dataset::"
 msgstr ""
 
 msgid "Options"
@@ -7606,7 +7847,9 @@ msgstr ""
 msgid "Specify http server port number. The default value is 8080."
 msgstr ""
 
-msgid "Specify number of threads. The default value is 8."
+msgid ""
+"Specify number of threads. The default value is 8. This option accepts 128 "
+"as the max value, but use the number of CPU cores for performance."
 msgstr ""
 
 msgid "Specify endpoint for sender."
@@ -7628,9 +7871,8 @@ msgstr ""
 msgid "Specify this option to disable checking max fd on start."
 msgstr ""
 
-#, fuzzy
 msgid "Command line Parameters"
-msgstr "コマンドライン"
+msgstr "コマンドライン引数"
 
 msgid "There is one required parameter - ``database_path``."
 msgstr "``database_path`` だけが必須の引数です。"
@@ -7644,16 +7886,14 @@ msgid ""
 "initialization for suggestion."
 msgstr ""
 
-#, fuzzy
 msgid "GET Parameters"
-msgstr "引数"
+msgstr "GETの引数"
 
 msgid "groonga-suggest-httpd accepts following GET parameters."
 msgstr ""
 
-#, fuzzy
 msgid "There are required parameters which depends on type of query."
-msgstr "必須引数は二つあります。 ``tokenizer`` と ``string`` です。"
+msgstr "必須の引数があります。どれが必須かはクエリーの種類に依存します。"
 
 msgid "Key"
 msgstr ""
@@ -7676,9 +7916,8 @@ msgid ""
 "Note that 'submit' is invalid value when you specify multiple type of query."
 msgstr ""
 
-#, fuzzy
 msgid "Required parameters for learning"
-msgstr "必須引数"
+msgstr "学習時に必須の引数"
 
 msgid "s"
 msgstr ""
@@ -7711,16 +7950,14 @@ msgid ""
 "Za-z ][A-Za-z0-9 ]{0,15}'"
 msgstr ""
 
-#, fuzzy
 msgid "Required parameters for suggestion"
-msgstr "必須引数"
+msgstr "提案時に必須の引数"
 
 msgid "n"
 msgstr ""
 
-#, fuzzy
 msgid "Specify the name of dataset for suggestion"
-msgstr "以下は提案用の学習データです。"
+msgstr "提案用のデータベース名を指定します。"
 
 msgid "This dataset name is used to calculate suggestion results"
 msgstr ""
@@ -7744,20 +7981,14 @@ msgid ""
 "JSONP format."
 msgstr ""
 
-#, fuzzy
 msgid "In JSON format::"
-msgstr "JSON形式"
+msgstr "JSON形式::"
 
-#, fuzzy
 msgid "In JSONP format::"
-msgstr "JSON形式"
+msgstr "JSONP形式::"
 
-msgid "``TYPE``"
-msgstr ""
-
-#, fuzzy
 msgid "'complete', 'correct' or 'suggest'."
-msgstr "補完・補正・提案候補。"
+msgstr "「complete」、「correct」、「suggest」のどれか。"
 
 msgid "``CANDIDATE_N``"
 msgstr ""
@@ -7768,15 +7999,54 @@ msgstr ""
 msgid "``SCORE_N``"
 msgstr ""
 
-#, fuzzy
 msgid "The number of score."
-msgstr "全レコード数"
+msgstr "スコアー。"
 
 msgid "groonga-suggest-learner"
 msgstr ""
 
+msgid ""
+"groonga-suggest-learner is a program to learn suggest result from data which "
+"derived from groonga-suggest-httpd. Usually, it is used with groonga-suggest-"
+"httpd, but It is allowed to launch standalone. In such a case, groonga-"
+"suggest-learner loads data from log directory."
+msgstr ""
+
+msgid ""
+"groonga-suggest-leaner supports the two way of learning data. One is "
+"learning data from groonga-suggest-httpd, the other is learning data from "
+"already existing log files."
+msgstr ""
+
+msgid "Learning data from groonga-suggest-httpd"
+msgstr ""
+
+msgid "Execute groonga-suggest-learner.::"
+msgstr ""
+
+msgid "Learning data from log files"
+msgstr ""
+
+msgid "Execute groonga-suggest-learner with '-l' option."
+msgstr ""
+
+msgid "Here is the sample to load log data under 'logs' directory::"
+msgstr ""
+
+msgid "Specify log directory."
+msgstr ""
+
 msgid "Specifies the path to a groonga database."
 msgstr "groongaデータベースのパスを指定します。"
+
+msgid "Related table"
+msgstr "関連するテーブル"
+
+msgid ""
+"Here is the list of table which learned data is stored. If you specify "
+"'query' as dataset name, following '_DATASET' suffix are replaced. Thus, "
+"'event_query' table is used."
+msgstr ""
 
 msgid "groonga command"
 msgstr "groongaコマンド"
@@ -7945,9 +8215,6 @@ msgid "DBに定義されているテーブルのリストを表示します。"
 msgstr ""
 
 msgid "``table_list``"
-msgstr ""
-
-msgid "``column_list``"
 msgstr ""
 
 msgid "テーブルに定義されているカラムのリストを表示します。"
@@ -9330,18 +9597,25 @@ msgid "``\\`` (escaped as ``\\\\``)"
 msgstr "``\\`` （ ``\\\\`` とエスケープする。）"
 
 msgid ""
-"You can use quote instead of escape. Quote syntax is ``\"...\"`` or "
-"``'...'``. You need escape ``\"`` as ``\\\"`` in ``\"...\"`` quote syntax. "
-"You need escape ``'`` as ``\\'`` in ``'...'`` quote syntax. For example, "
-"``Alice's brother (Bob)`` can be quoted ``\"Alice's brother (Bob)\"`` or "
-"``'Alice\\'s brother (Bob)'``."
+"You can use quote instead of escape special characters except ``\\\\`` "
+"(backslash). You need to use backslash for escaping backslash like ``\\\\\\"
+"\\`` in quote."
 msgstr ""
-"エスケープする代わりにクォートすることもできます。クォート構文は ``\"...\"`` "
-"または ``'...'`` です。 ``\"...\"`` クォート構文中では ``\"`` を ``\\\"`` に"
-"エスケープする必要があります。 ``'...'`` クォート構文中では ``'`` を ``\\'`` "
-"にエスケープする必要があります。例えば、 ``Alice's brother (Bob)`` は ``"
-"\"Alice's brother (Bob)\"`` あるいは ``'Alice\\'s brother (Bob)'`` とクォート"
-"します。"
+"``\\\\`` （バックスラッシュ）以外はエスケープする代わりにクォートすることもで"
+"きます。クォート中でバックスラッシュをエスケープするときは ``\\\\\\\\`` とい"
+"うようにバックスラッシュを使います。"
+
+msgid ""
+"Quote syntax is ``\"...\"`` or ``'...'``. You need escape ``\"`` as ``\\\"`` "
+"in ``\"...\"`` quote syntax.  You need escape ``'`` as ``\\'`` in ``'...'`` "
+"quote syntax. For example, ``Alice's brother (Bob)`` can be quoted ``"
+"\"Alice's brother (Bob)\"`` or ``'Alice\\'s brother (Bob)'``."
+msgstr ""
+"クォート構文は ``\"...\"`` または ``'...'`` です。 ``\"...\"`` クォート構文中"
+"では ``\"`` を ``\\\"`` にエスケープする必要があります。 ``'...'`` クォート構"
+"文中では ``'`` を ``\\'`` にエスケープする必要があります。例えば、 ``Alice's "
+"brother (Bob)`` は ``\"Alice's brother (Bob)\"`` あるいは ``'Alice\\'s "
+"brother (Bob)'`` とクォートします。"
 
 msgid ""
 "There is a important point which you have to care. The ''\\\\'' (backslash) "
@@ -11612,69 +11886,6 @@ msgid ""
 "You need to specify ``msgpack`` as extension to get a result in MessagePack "
 "format::"
 msgstr "MessagePack形式の出力にする場合は ``msgpack`` 拡張子を指定します::"
-
-msgid "疑似カラム (pseudo_column)"
-msgstr ""
-
-msgid "疑似カラム"
-msgstr ""
-
-msgid ""
-"Groongaのデータベースで作成したテーブルには、いくつかのカラムが自動的に定義さ"
-"れます。"
-msgstr ""
-
-msgid ""
-"これらのカラムはいずれもアンダースコア('_')で始まる名前が付与されます。定義さ"
-"れる疑似カラムは、テーブルの種類によって異なります。"
-msgstr ""
-
-msgid "``_id``"
-msgstr ""
-
-msgid ""
-"レコードに付与される一意な番号です。全てのテーブルに定義されます。値の範囲は"
-"1〜1073741824の整数で、通常はレコードを追加した順に1ずつ加算されます。_idの値"
-"は不変で、レコードが存在する限り変更することはできません。ただし、削除された"
-"レコードの_idの値は再利用されます。"
-msgstr ""
-
-msgid "``_key``"
-msgstr ""
-
-msgid ""
-"レコードの主キー値を表します。主キーを持つテーブルのみに定義されます。主キー"
-"値はテーブルの中で一意であり、変更することはできません。"
-msgstr ""
-
-msgid "``_value``"
-msgstr ""
-
-msgid ""
-"レコードの値を表します。value_typeを指定したテーブルのみに定義されます。自由"
-"に変更可能です。"
-msgstr ""
-
-msgid "``_score``"
-msgstr ""
-
-msgid ""
-"各レコードのスコア値を表します。検索結果として生成されたテーブルのみに定義さ"
-"れます。"
-msgstr ""
-
-msgid "検索処理を実行する過程で値が設定されますが、自由に変更可能です。"
-msgstr ""
-
-msgid "``_nsubrecs``"
-msgstr ""
-
-msgid ""
-"主キーの値が同一であったレコードの件数を表します。検索結果として生成された"
-"テーブルのみに定義されます。グループ化(drilldown)処理を実行すると、グループ化"
-"前のテーブルにおいて、グループ化キーの値が同一であったレコードの件数が、グ"
-"ループ化処理の結果を格納するテーブルの_nsubrecsに記録されます。"
-msgstr ""
 
 msgid "Query expanders"
 msgstr "クエリー展開オブジェクト一覧"
