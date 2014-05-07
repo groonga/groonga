@@ -87,9 +87,9 @@ Here is a special character list:
   * ``)`` (escaped as ``\)``)
   * ``\`` (escaped as ``\\``)
 
-You can use quote instead of escape special characters except ``\\``
+You can use quote instead of escape special characters except ``\``
 (backslash). You need to use backslash for escaping backslash like
-``\\\\`` in quote.
+``\\`` in quote.
 
 Quote syntax is ``"..."`` or ``'...'``. You need escape ``"`` as
 ``\"`` in ``"..."`` quote syntax.  You need escape ``'`` as ``\'`` in
