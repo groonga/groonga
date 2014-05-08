@@ -664,6 +664,7 @@ h_output(grn_ctx *ctx, int flags, void *arg)
     GRN_TEXT_SETS(ctx, &header, "HTTP/1.1 200 OK\r\n");
     break;
   case GRN_INVALID_ARGUMENT :
+  case GRN_SYNTAX_ERROR :
     GRN_TEXT_SETS(ctx, &header, "HTTP/1.1 400 Bad Request\r\n");
     break;
   case GRN_NO_SUCH_FILE_OR_DIRECTORY :
