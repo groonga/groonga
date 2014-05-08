@@ -27,6 +27,11 @@ Install::
 
   % brew install groonga
 
+If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
+tokenizer, add ``--with-mecab`` option::
+
+  % brew install groonga --with-mecab
+
 Build from source
 -----------------
 
