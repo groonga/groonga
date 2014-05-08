@@ -187,6 +187,7 @@ grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv)
     return GRN_INVALID_ARGUMENT;
   }
   r1 = r2;
+  tm.tm_isdst = -1;
 
   if ((tv->tv_sec = mktime(&tm)) == -1) { return GRN_INVALID_ARGUMENT; }
   if ((r1 + 1) < rend && *r1 == '.') { r1++; }
