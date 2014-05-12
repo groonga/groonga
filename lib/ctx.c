@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2013 Brazil
+  Copyright(C) 2009-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -187,9 +187,12 @@ grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv)
     return GRN_INVALID_ARGUMENT;
   }
   r1 = r2;
+  tm.tm_yday = -1;
   tm.tm_isdst = -1;
 
-  if ((tv->tv_sec = mktime(&tm)) == -1) { return GRN_INVALID_ARGUMENT; }
+  /* tm_yday is set appropriately (0-365) on successful completion. */
+  tv->tv_sec = mktime(&tm);
+  if (tm.tm_yday == -1) { return GRN_INVALID_ARGUMENT; }
   if ((r1 + 1) < rend && *r1 == '.') { r1++; }
   uv = grn_atoi(r1, rend, &r2);
   while (r2 < r1 + 6) {
