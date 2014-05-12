@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2012  Brazil Inc.
+  Copyright (C) 2012-2014  Brazil Inc.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -39,7 +39,7 @@ cut_teardown(void)
   grn_ctx_fin(&ctx);
 }
 
-void
+static void
 test_basic_operations(uint16_t element_size, uint16_t flags)
 {
   grn_id id;
