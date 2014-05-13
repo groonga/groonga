@@ -124,11 +124,13 @@ if test "$have_targets" != "true"; then
     grntest_options=("${grntest_options[@]}" "${BASE_DIR}/suite")
 fi
 
-tmpfs=/run/shm
-if test -d $tmpfs -a -w $tmpfs; then
-    rm -rf "tmp"
-    ln -s $tmpfs "tmp"
-fi
+tmpfs_candidates=("/dev/shm" "/run/shm")
+for tmpfs in "${tmpfs_candidates[@]}"; do
+    if test -d $tmpfs -a -w $tmpfs; then
+	rm -rf "tmp"
+	ln -s $tmpfs "tmp"
+    fi
+done
 
 export TZ=Asia/Tokyo
 
