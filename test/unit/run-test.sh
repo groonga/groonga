@@ -72,11 +72,13 @@ case `uname` in
 	;;
 esac
 
-tmpfs=/run/shm
-if test -d $tmpfs -a -w $tmpfs; then
-    rm -rf "$BASE_DIR/tmp"
-    ln -s $tmpfs "$BASE_DIR/tmp"
-fi
+tmpfs_candidates="/dev/shm /run/shm"
+for tmpfs in $tmpfs_candidates; do
+    if test -d $tmpfs -a -w $tmpfs; then
+	rm -rf "$BASE_DIR/tmp"
+	ln -s $tmpfs "$BASE_DIR/tmp"
+    fi
+done
 
 no_test=1
 
