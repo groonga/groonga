@@ -64,7 +64,7 @@ Groonga server
 
 Groonga provides a built-in server command which supports HTTP, the memcached binary protocol and the Groonga Query Transfer Protocol (GQTP). Also, a Groonga server supports query caching, which significantly reduces response time for repeated read queries. Using this command, Groonga is available even on a server that does not allow you to install new libraries.
 
-Groonga storage engine
+Mroonga storage engine
 ----------------------
 
-Groonga works not only as an independent column-oriented DBMS but also as storage engines of well-known DBMSs. For example, `mroonga <http://mroonga.org/>`_ is a MySQL pluggable storage engine using Groonga. By using mroonga, you can use Groonga for column-oriented storage and full text search. A combination of a built-in storage engine, MyISAM or InnoDB, and a groonga-based full text search engine is also available. All the combinations have good and bad points and the best one depends on the application. See `related projects <http://groonga.org/related-projects.html>`_ for details.
+Groonga works not only as an independent column-oriented DBMS but also as storage engines of well-known DBMSs. For example, `Mroonga <http://mroonga.org/>`_ is a MySQL pluggable storage engine using Groonga. By using Mroonga, you can use Groonga for column-oriented storage and full text search. A combination of a built-in storage engine, MyISAM or InnoDB, and a groonga-based full text search engine is also available. All the combinations have good and bad points and the best one depends on the application. See `related projects <http://groonga.org/related-projects.html>`_ for details.
