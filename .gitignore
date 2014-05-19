@@ -138,9 +138,13 @@ cmake_install.cmake
 /src/suggest/groonga-suggest-create-dataset
 /tmp-doc/
 /test/unit/Gemfile.lock
+/test/unit/run-test.sh.log
+/test/unit/run-test.sh.trs
+/test/unit/test-suite.log
 /test/unit/tmp
 /test/command/grntest
 /test/command/groonga-command
 /test/command/groonga-command-parser
+/test/command/test-suite.log
 /*.tar.gz
 /tmp
