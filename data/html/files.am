@@ -27,7 +27,6 @@ nobase_dist_html_DATA = \
 	admin/js/jquery-1.7.2.min.js \
 	admin/js/jquery.flot-0.7.min.js \
 	admin/js/jquery.flot.license.txt \
-	admin/js/jquery.json-2.2.min.js \
 	admin/js/jquery-ui-1.8.18.custom.min.js \
 	$(NULL)
 
