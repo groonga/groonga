@@ -1,5 +1,7 @@
 // -*- js2-basic-offset: 2; indent-tabs-mode: nil -*-
 
+"use strict";
+
 function prim2html(prim, limit) {
   switch(typeof prim) {
   case 'undefined':
@@ -33,7 +35,7 @@ function escapeHTML(str) {
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;");
 }
-Groonga = {
+var Groonga = {
   key_type_list: ['Int8', 'UInt8', 'Int16', 'UInt16', 'Int32', 'UInt32',
                   'Int64', 'UInt64', 'Float', 'Time', 'ShortText',
                   'TokyoGeoPoint', 'WGS84GeoPoint'],
@@ -788,8 +790,8 @@ jQuery.extend(GroongaAdmin.prototype, {
           var all_count = recs.shift()[0];
           var pager;
           if (show_pager) {
-            offset = params['offset'] || 0;
-            rows = params['limit'] || 10;
+            var offset = params['offset'] || 0;
+            var rows = params['limit'] || 10;
             if (rows < 0){
               rows = all_count + parseInt(rows) + 1;
             }
@@ -1064,7 +1066,7 @@ jQuery.extend(GroongaAdmin.prototype, {
     });
     flags |= Groonga[$('#createcolumn-column-type').val()];
     flags |= Groonga[$('#createcolumn-column-compress').val()];
-    d = {
+    var d = {
       table: this.current_table,
       name: $('#createcolumn-name').val(),
       'flags': flags,
@@ -1305,7 +1307,7 @@ jQuery.extend(GroongaAdmin.prototype, {
     $(".ui-widget-overlay").css("opacity", "0.0");
   },
   hideloading: function() {
-    for ( i = 0; i < this.semaphore.length; i++) {
+    for (var i = 0; i < this.semaphore.length; i++) {
       if ( this.semaphore[i].readyState == 4) {
         this.semaphore.splice(i, 1);
         i--;
@@ -1323,7 +1325,7 @@ jQuery.extend(GroongaAdmin.prototype, {
       json = jQuery.parseJSON(ajax.responseText);
     }
     this.hideloading();
-    for ( i = 0; i < this.semaphore.length; i++) {
+    for (var i = 0; i < this.semaphore.length; i++) {
       this.semaphore[i].abort();
       this.semaphore.splice(i, 1);
       i--;
