@@ -1127,7 +1127,7 @@ jQuery.extend(GroongaAdmin.prototype, {
           "table" : this.current_table,
           "input_type" : "json",
           "output_type" : "json",
-          "values" : $.toJSON([d])
+          "values" : JSON.stringify([d])
         },
         dataType: 'json',
         success: function(d) {
@@ -1320,7 +1320,7 @@ jQuery.extend(GroongaAdmin.prototype, {
     var that = this;
     var json = null;
     if (ajax) {
-      json = jQuery.parseJSON(ajax.responseText);
+      json = JSON.parse(ajax.responseText);
     }
     this.hideloading();
     for ( i = 0; i < this.semaphore.length; i++) {
