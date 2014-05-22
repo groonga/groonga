@@ -635,6 +635,20 @@ grn_plugin_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
   return grn_proc_alloc(ctx, user_data, domain, flags);
 }
 
+grn_obj *
+grn_plugin_proc_get_var(grn_ctx *ctx, grn_user_data *user_data,
+                        const char *name, unsigned int name_size)
+{
+  return grn_proc_get_var(ctx, user_data, name, name_size);
+}
+
+grn_obj *
+grn_plugin_proc_get_var_by_offset(grn_ctx *ctx, grn_user_data *user_data,
+                                  unsigned int offset)
+{
+  return grn_proc_get_var_by_offset(ctx, user_data, offset);
+}
+
 const char *
 grn_plugin_win32_base_dir(void)
 {
