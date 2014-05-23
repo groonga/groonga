@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2010-2012 Brazil
+  Copyright(C) 2010-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -172,10 +172,13 @@ GRN_API grn_obj *grn_plugin_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
 
 /*
   grn_plugin_proc_get_var() gets a variable from user_data by name.
+
+  If `name_size` is negative, `name` must be
+  NUL-terminated. `name_size` is computed by `strlen(name)` for the case.
 */
 
 GRN_API grn_obj *grn_plugin_proc_get_var(grn_ctx *ctx, grn_user_data *user_data,
-                                         const char *name, unsigned int name_size);
+                                         const char *name, int name_size);
 
 /*
   grn_plugin_proc_get_var_by_offset() gets a variable from user_data by offset.

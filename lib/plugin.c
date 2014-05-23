@@ -637,8 +637,15 @@ grn_plugin_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
 
 grn_obj *
 grn_plugin_proc_get_var(grn_ctx *ctx, grn_user_data *user_data,
-                        const char *name, unsigned int name_size)
+                        const char *name, int name_size)
 {
+  if (name_size < 0) {
+    if (name) {
+      name_size = strlen(name);
+    } else {
+      name_size = 0;
+    }
+  }
   return grn_proc_get_var(ctx, user_data, name, name_size);
 }
 
