@@ -1,20 +1,20 @@
-# English translations for groonga package.
-# Copyright (C) 2009-2012, Brazil, Inc
-# This file is distributed under the same license as the groonga package.
-# Kouhei Sutou <kou@clear-code.com>, 2012.
+# English translations for Groonga package.
+# Copyright (C) 2009-2014, Brazil, Inc
+# This file is distributed under the same license as the Groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2014.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: groonga 2.0.5\n"
+"Project-Id-Version: Groonga 4.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-05 11:57+0900\n"
-"PO-Revision-Date: 2014-02-05 11:59+0900\n"
+"POT-Creation-Date: 2014-05-23 12:39+0900\n"
+"PO-Revision-Date: 2014-05-23 12:44+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
-"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "Development"
@@ -25,6 +25,9 @@ msgid ""
 "application that uses Groonga as its database, a library that uses "
 "libgroonga, language bindings of libgroonga and so on."
 msgstr ""
+"This section describes about developing with Groonga. You may develop an "
+"application that uses Groonga as its database, a library that uses "
+"libgroonga, language bindings of libgroonga and so on."
 
 msgid "Travis CI"
 msgstr "Travis CI"
@@ -34,12 +37,18 @@ msgid ""
 "org/>`_. Travis CI is a hosted continuous integration service for the open "
 "source community."
 msgstr ""
+"This section describes about using Groonga on `Travis CI <http://travis-ci."
+"org/>`_. Travis CI is a hosted continuous integration service for the open "
+"source community."
 
 msgid ""
 "You can use Travis CI for your open source software. This section only "
 "describes about Groonga related configuration. See `Travis CI: Documentation "
 "<http://about.travis-ci.org/docs/>`_ about general Travis CI."
 msgstr ""
+"You can use Travis CI for your open source software. This section only "
+"describes about Groonga related configuration. See `Travis CI: Documentation "
+"<http://about.travis-ci.org/docs/>`_ about general Travis CI."
 
 msgid "Configuration"
 msgstr "Configuration"
@@ -50,6 +59,10 @@ msgid ""
 "environment/>`_.)  You can use apt-line for Ubuntu 12.04 LTS provided by "
 "Groonga project to install Groonga on Travis CI."
 msgstr ""
+"Travis CI is running on 64-bit Ubuntu 12.04 LTS Server Edition. (See `Travis "
+"CI: About Travis CI Environment <http://about.travis-ci.org/docs/user/ci-"
+"environment/>`_.)  You can use apt-line for Ubuntu 12.04 LTS provided by "
+"Groonga project to install Groonga on Travis CI."
 
 msgid ""
 "You can custom build lifecycle by ``.travis.yml``. (See `Travis CI: "
@@ -78,13 +91,13 @@ msgstr ""
 "substitute ``before_install:`` with ``install:``."
 
 msgid "With the above configuration, you can use Groonga for your build."
-msgstr ""
+msgstr "With the above configuration, you can use Groonga for your build."
 
 msgid "Examples"
 msgstr "Examples"
 
 msgid "Here are open source softwares that use Groonga on Travis CI:"
-msgstr ""
+msgstr "Here are open source softwares that use Groonga on Travis CI:"
 
 msgid ""
 "`rroonga <http://groonga.rubyforge.org/#about-rroonga>`_ (Ruby bindings)"
@@ -118,13 +131,19 @@ msgid ""
 "`logaling-command <http://logaling.github.com/>`_ (A glossary management "
 "command line tool)"
 msgstr ""
+"`logaling-command <http://logaling.github.com/>`_ (A glossary management "
+"command line tool)"
 
 msgid ""
 "`logaling-command on Travis CI <http://travis-ci.org/#!/logaling/logaling-"
 "command>`_"
 msgstr ""
+"`logaling-command on Travis CI <http://travis-ci.org/#!/logaling/logaling-"
+"command>`_"
 
 msgid ""
 "`.travis.yml for logaling-command <https://github.com/logaling/logaling-"
 "command/blob/master/.travis.yml>`_"
 msgstr ""
+"`.travis.yml for logaling-command <https://github.com/logaling/logaling-"
+"command/blob/master/.travis.yml>`_"

@@ -1,14 +1,14 @@
 # English translations for groonga package.
-# Copyright (C) 2012 THE groonga'S COPYRIGHT HOLDER
+# Copyright (C) 2014 THE groonga'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the groonga package.
-# Kouhei Sutou <kou@clear-code.com>, 2012.
+# Kouhei Sutou <kou@clear-code.com>, 2014.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: groonga 2.0.5\n"
+"Project-Id-Version: groonga 4.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-23 17:13+0900\n"
-"PO-Revision-Date: 2013-11-25 14:31+0900\n"
+"POT-Creation-Date: 2014-05-23 12:39+0900\n"
+"PO-Revision-Date: 2014-05-23 12:44+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -22,7 +22,7 @@ msgid "%(project)s v%(release)s documentation"
 msgstr "%(project)s v%(release)s documentation"
 
 msgid "Groonga documentation"
-msgstr ""
+msgstr "Groonga documentation"
 
 msgid "Groonga Project"
-msgstr ""
+msgstr "Groonga Project"

@@ -1,20 +1,20 @@
-# English translations for groonga package.
-# Copyright (C) 2009-2012, Brazil, Inc
-# This file is distributed under the same license as the groonga package.
-# Kouhei Sutou <kou@clear-code.com>, 2012.
+# English translations for Groonga package.
+# Copyright (C) 2009-2014, Brazil, Inc
+# This file is distributed under the same license as the Groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2014.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: groonga 2.0.5\n"
+"Project-Id-Version: Groonga 4.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-05 11:57+0900\n"
-"PO-Revision-Date: 2014-02-05 11:59+0900\n"
+"POT-Creation-Date: 2014-05-23 12:39+0900\n"
+"PO-Revision-Date: 2014-05-23 12:44+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
-"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "Geolocation Search"
@@ -59,7 +59,7 @@ msgstr ""
 "order."
 
 msgid "Here are use cases for Groonga's geolocation search:"
-msgstr ""
+msgstr "Here are use cases for Groonga's geolocation search:"
 
 msgid "You list McDonald's around a station."
 msgstr "You list McDonald's around a station."
@@ -90,6 +90,7 @@ msgstr ""
 
 msgid "The following figures show about Groonga's geolocation search features."
 msgstr ""
+"The following figures show about Groonga's geolocation search features."
 
 msgid ""
 "Here is a figure that only has records. A black point describes a record. "

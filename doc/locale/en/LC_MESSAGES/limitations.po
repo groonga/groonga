@@ -1,20 +1,20 @@
-# English translations for groonga package.
-# Copyright (C) 2009-2012, Brazil, Inc
-# This file is distributed under the same license as the groonga package.
-# Kouhei Sutou <kou@clear-code.com>, 2012.
+# English translations for Groonga package.
+# Copyright (C) 2009-2014, Brazil, Inc
+# This file is distributed under the same license as the Groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2014.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: groonga 2.0.5\n"
+"Project-Id-Version: Groonga 4.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-23 17:13+0900\n"
-"PO-Revision-Date: 2012-07-23 17:58+0900\n"
+"POT-Creation-Date: 2014-05-23 12:39+0900\n"
+"PO-Revision-Date: 2014-05-23 12:44+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
-"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "Limitations"
@@ -24,16 +24,16 @@ msgid "Groonga has some limitations."
 msgstr "Groonga has some limitations."
 
 msgid "Limitations of table"
-msgstr ""
+msgstr "Limitations of table"
 
 msgid "A table has the following limitations."
-msgstr ""
+msgstr "A table has the following limitations."
 
 msgid "The maximum one key size: 4096Bytes"
-msgstr ""
+msgstr "The maximum one key size: 4096Bytes"
 
 msgid "The maximum total size of keys: 4GBytes"
-msgstr ""
+msgstr "The maximum total size of keys: 4GBytes"
 
 msgid "Keep in mind that these limitations may vary depending on conditions."
 msgstr "Keep in mind that these limitations may vary depending on conditions."
@@ -45,20 +45,21 @@ msgid "A full-text index has the following limitations."
 msgstr "A full-text index has the following limitations."
 
 msgid "The maximum number of records: 268,435,455 (more than 268 million)"
-msgstr ""
+msgstr "The maximum number of records: 268,435,455 (more than 268 million)"
 
 msgid ""
 "The maximum number of distinct terms: 268,435,455 (more than 268 million)"
 msgstr ""
+"The maximum number of distinct terms: 268,435,455 (more than 268 million)"
 
 msgid "The maximum index size: 256GBytes"
 msgstr "The maximum index size: 256GBytes"
 
 msgid "Limitations of column"
-msgstr ""
+msgstr "Limitations of column"
 
 msgid "A column has the following limitation."
-msgstr ""
+msgstr "A column has the following limitation."
 
 msgid "The maximum stored data size of each column: 256GiB"
-msgstr ""
+msgstr "The maximum stored data size of each column: 256GiB"

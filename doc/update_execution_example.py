@@ -195,7 +195,7 @@ if os.path.isfile(entry_point):
 else:
   for root, dirs, files in os.walk(entry_point):
     for fname in files:
-      if fname.lower().endswith('.txt'):
+      if fname.lower().endswith('.rst'):
         b = os.path.join(root, fname)
         print "===" + b
         readfile(b, 0)

@@ -1,20 +1,20 @@
-# English translations for groonga package.
-# Copyright (C) 2009-2012, Brazil, Inc
-# This file is distributed under the same license as the groonga package.
-# Kouhei Sutou <kou@clear-code.com>, 2012.
+# English translations for Groonga package.
+# Copyright (C) 2009-2014, Brazil, Inc
+# This file is distributed under the same license as the Groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2014.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: groonga 2.0.6\n"
+"Project-Id-Version: Groonga 4.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-23 17:13+0900\n"
-"PO-Revision-Date: 2012-08-15 15:24+0900\n"
+"POT-Creation-Date: 2014-05-23 12:39+0900\n"
+"PO-Revision-Date: 2014-05-23 12:44+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
-"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "Server"
@@ -85,11 +85,11 @@ msgstr "o"
 msgid "Using multi CPU cores"
 msgstr "Using multi CPU cores"
 
-msgid "o (by multi process)"
-msgstr "o (by multi process)"
-
 msgid "o (by multi threading)"
 msgstr "o (by multi threading)"
+
+msgid "o (by multi process)"
+msgstr "o (by multi process)"
 
 msgid "Configuration file"
 msgstr "Configuration file"
@@ -214,6 +214,8 @@ msgid ""
 "Groonga has :doc:`/reference/command/command_version` mechanism. It is for "
 "upgrading groonga commands with backward compatibility."
 msgstr ""
+"Groonga has :doc:`/reference/command/command_version` mechanism. It is for "
+"upgrading groonga commands with backward compatibility."
 
 msgid ""
 ":doc:`groonga` can change the default command veresion by ``--default-"
@@ -304,6 +306,11 @@ msgid ""
 "data. But those formats aren't included in the default value of "
 "`gzip_types`. The default value of `gzip_types` is `text/html`."
 msgstr ""
+"Note that `gzip_types *` is specified. It's one of the important "
+"configuration. `gzip_types` specifies gzip target data formats by MIME "
+"types. :doc:`groonga-httpd` returns one of JSON, XML or MessagePack format "
+"data. But those formats aren't included in the default value of "
+"`gzip_types`. The default value of `gzip_types` is `text/html`."
 
 msgid ""
 "To compress response data from :doc:`groonga-httpd` by gzip, you need to "
@@ -313,47 +320,61 @@ msgid ""
 "second, all requests for the `location` are processed by groonga. You don't "
 "need to consider about other modules."
 msgstr ""
+"To compress response data from :doc:`groonga-httpd` by gzip, you need to "
+"specify `gzip_types *` or `gzip_types application/json text/xml application/"
+"x-msgpack` explicitly. `gzip_types *` is recommended. There are two reasons "
+"for it. The first, groonga may support more formats in the future. The "
+"second, all requests for the `location` are processed by groonga. You don't "
+"need to consider about other modules."
 
 msgid ""
 "You can load your data by POST JSON data. You need follow the following "
 "rules to use loading by POST."
 msgstr ""
+"You can load your data by POST JSON data. You need follow the following "
+"rules to use loading by POST."
 
 msgid "`Content-Type` header value must be `application/json`."
-msgstr ""
+msgstr "`Content-Type` header value must be `application/json`."
 
 msgid "JSON data is sent as body."
-msgstr ""
+msgstr "JSON data is sent as body."
 
 msgid "Table name is specified by query parameter such as ``table=NAME``."
-msgstr ""
+msgstr "Table name is specified by query parameter such as ``table=NAME``."
 
 msgid ""
 "Here is an example curl command line that loads two users `alice` and `bob` "
 "to `Users` table::"
 msgstr ""
+"Here is an example curl command line that loads two users `alice` and `bob` "
+"to `Users` table::"
 
 msgid "Server packages"
-msgstr ""
+msgstr "Server packages"
 
 msgid ""
 "The package ``groonga`` is the mininum set of fulltext search engine. If you "
 "want to use groonga for server use, you can install additional preconfigured "
 "packages."
 msgstr ""
+"The package ``groonga`` is the mininum set of fulltext search engine. If you "
+"want to use groonga for server use, you can install additional preconfigured "
+"packages."
 
 msgid "There are three packages for server use."
-msgstr ""
+msgstr "There are three packages for server use."
 
 msgid "``groonga-httpd`` (nginx and HTTP protocol based server package)"
-msgstr ""
+msgstr "``groonga-httpd`` (nginx and HTTP protocol based server package)"
 
 msgid "``groonga-server-http`` (simple HTTP protocol based server package)"
-msgstr ""
+msgstr "``groonga-server-http`` (simple HTTP protocol based server package)"
 
 msgid ""
 "``groonga-server-gqtp`` (:doc:`/spec/gqtp` protocol based server package)"
 msgstr ""
+"``groonga-server-gqtp`` (:doc:`/spec/gqtp` protocol based server package)"
 
 msgid ""
 "There is the reason why groonga supports not only GQTP but also two HTTP "
@@ -365,6 +386,14 @@ msgid ""
 "for details). If you use ``groonga-httpd`` package, you can also take "
 "benefits of nginx functionality."
 msgstr ""
+"There is the reason why groonga supports not only GQTP but also two HTTP "
+"server packages. :doc:`/spec/gqtp` - Groonga Query Transfer Protocol is "
+"desined to reduce overheads and improve performance. But, GQTP is less "
+"support of client library than HTTP protocol does. As HTTP is matured "
+"protocol, you can take advantage of existing tool and there are many client "
+"library (See `related projects <http://groonga.org/related-projects.html>`_ "
+"for details). If you use ``groonga-httpd`` package, you can also take "
+"benefits of nginx functionality."
 
 msgid ""
 "We recommend to use ``groonga-server-http`` at first, then if you want to "
@@ -372,133 +401,142 @@ msgid ""
 "have performance issues which is derived from protocol overheads, consider "
 "to use ``groonga-server-gqtp``."
 msgstr ""
+"We recommend to use ``groonga-server-http`` at first, then if you want to "
+"use more fullfilling functionality, use ``groonga-httpd`` package. If you "
+"have performance issues which is derived from protocol overheads, consider "
+"to use ``groonga-server-gqtp``."
 
 msgid ""
 "There is a conflict between ``groonga-httpd`` and ``groonga-server-http`` "
 "package because of port number. See :doc:`/server/http/comparison` if you "
 "want to know which package meets your demands."
 msgstr ""
+"There is a conflict between ``groonga-httpd`` and ``groonga-server-http`` "
+"package because of port number. See :doc:`/server/http/comparison` if you "
+"want to know which package meets your demands."
 
 msgid "``groonga-httpd`` is a nginx and HTTP protocol based server package."
-msgstr ""
+msgstr "``groonga-httpd`` is a nginx and HTTP protocol based server package."
 
 msgid "Preconfigured setting:"
-msgstr ""
-
-msgid "Default value"
-msgstr ""
+msgstr "Preconfigured setting:"
 
 msgid "Item"
-msgstr ""
+msgstr "Item"
 
-msgid "10041"
-msgstr ""
+msgid "Default value"
+msgstr "Default value"
 
 msgid "Port number"
-msgstr ""
+msgstr "Port number"
 
-msgid "/var/log/groonga/httpd/acccess.log"
-msgstr ""
+msgid "10041"
+msgstr "10041"
 
 msgid "Access log path"
-msgstr ""
+msgstr "Access log path"
 
-msgid "/var/log/groonga/http-query.log"
-msgstr ""
+msgid "/var/log/groonga/httpd/acccess.log"
+msgstr "/var/log/groonga/httpd/acccess.log"
 
 msgid "Error log path"
-msgstr ""
+msgstr "Error log path"
 
-msgid "/var/lib/groonga/db/*"
-msgstr ""
+msgid "/var/log/groonga/http-query.log"
+msgstr "/var/log/groonga/http-query.log"
 
 msgid "Database"
-msgstr ""
+msgstr "Database"
+
+msgid "/var/lib/groonga/db/*"
+msgstr "/var/lib/groonga/db/*"
 
 msgid "/etc/groonga/httpd/groonga-httpd.conf"
-msgstr ""
+msgstr "/etc/groonga/httpd/groonga-httpd.conf"
 
 msgid "Start HTTP server"
-msgstr ""
+msgstr "Start HTTP server"
 
 msgid "Starting groonga HTTP server(Debian/Ubuntu/CentOS)::"
-msgstr ""
+msgstr "Starting groonga HTTP server(Debian/Ubuntu/CentOS)::"
 
 msgid "Starting groonga HTTP server(Fedora)::"
-msgstr ""
+msgstr "Starting groonga HTTP server(Fedora)::"
 
 msgid "Stop HTTP server"
-msgstr ""
+msgstr "Stop HTTP server"
 
 msgid "Stopping groonga HTTP server(Debian/Ubuntu/CentOS)::"
-msgstr ""
+msgstr "Stopping groonga HTTP server(Debian/Ubuntu/CentOS)::"
 
 msgid "Restart HTTP server"
-msgstr ""
+msgstr "Restart HTTP server"
 
 msgid "Restarting groonga HTTP server(Debian/Ubuntu/CentOS)::"
-msgstr ""
+msgstr "Restarting groonga HTTP server(Debian/Ubuntu/CentOS)::"
 
 msgid "Restarting groonga HTTP server(Fedora)::"
-msgstr ""
+msgstr "Restarting groonga HTTP server(Fedora)::"
 
 msgid "groonga-server-http"
-msgstr ""
+msgstr "groonga-server-http"
 
 msgid "``groonga-server-http`` is a simple HTTP protocol based server package."
 msgstr ""
-
-msgid "/var/log/groonga/groonga-http.log"
-msgstr ""
+"``groonga-server-http`` is a simple HTTP protocol based server package."
 
 msgid ":ref:`process-log`"
-msgstr ""
+msgstr ":ref:`process-log`"
+
+msgid "/var/log/groonga/groonga-http.log"
+msgstr "/var/log/groonga/groonga-http.log"
 
 msgid ":ref:`query-log`"
-msgstr ""
+msgstr ":ref:`query-log`"
 
 msgid "Configuration file for server setting (Debian/Ubuntu)::"
-msgstr ""
+msgstr "Configuration file for server setting (Debian/Ubuntu)::"
 
 msgid "Configuration file for server setting (CentOS)::"
-msgstr ""
+msgstr "Configuration file for server setting (CentOS)::"
 
 msgid "Stopping groonga HTTP server(Fedora)::"
-msgstr ""
+msgstr "Stopping groonga HTTP server(Fedora)::"
 
 msgid "groonga-server-gqtp"
-msgstr ""
+msgstr "groonga-server-gqtp"
 
 msgid ""
 "``groonga-server-gqtp`` is a :doc:`/spec/gqtp` protocol based server package."
 msgstr ""
+"``groonga-server-gqtp`` is a :doc:`/spec/gqtp` protocol based server package."
 
 msgid "10043"
-msgstr ""
+msgstr "10043"
 
 msgid "/var/log/groonga/groonga-gqtp.log"
-msgstr ""
+msgstr "/var/log/groonga/groonga-gqtp.log"
 
 msgid "/var/log/groonga/gqtp-query.log"
-msgstr ""
+msgstr "/var/log/groonga/gqtp-query.log"
 
 msgid "Start GQTP server"
-msgstr ""
+msgstr "Start GQTP server"
 
 msgid "Starting groonga GQTP server(Debian/Ubuntu/CentOS)::"
-msgstr ""
+msgstr "Starting groonga GQTP server(Debian/Ubuntu/CentOS)::"
 
 msgid "Starting groonga GQTP server(Fedora)::"
-msgstr ""
+msgstr "Starting groonga GQTP server(Fedora)::"
 
 msgid "Stop GQTP server"
-msgstr ""
+msgstr "Stop GQTP server"
 
 msgid "Stopping groonga GQTP server(Debian/Ubuntu/CentOS)::"
-msgstr ""
+msgstr "Stopping groonga GQTP server(Debian/Ubuntu/CentOS)::"
 
 msgid "Stopping groonga GQTP server(Fedora)::"
-msgstr ""
+msgstr "Stopping groonga GQTP server(Fedora)::"
 
 msgid "Restart GQTP server"
-msgstr ""
+msgstr "Restart GQTP server"

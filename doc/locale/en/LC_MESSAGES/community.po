@@ -1,20 +1,20 @@
-# English translations for groonga package.
-# Copyright (C) 2009-2012, Brazil, Inc
-# This file is distributed under the same license as the groonga package.
-# Kouhei Sutou <kou@clear-code.com>, 2012.
+# English translations for Groonga package.
+# Copyright (C) 2009-2014, Brazil, Inc
+# This file is distributed under the same license as the Groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2014.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: groonga 2.0.5\n"
+"Project-Id-Version: Groonga 4.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-23 17:13+0900\n"
-"PO-Revision-Date: 2012-07-23 17:57+0900\n"
+"POT-Creation-Date: 2014-05-23 12:39+0900\n"
+"PO-Revision-Date: 2014-05-23 12:40+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
-"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "Community"
@@ -34,7 +34,7 @@ msgid "There are mailing lists for discussion about Groonga."
 msgstr "There are mailing lists for discussion about Groonga."
 
 msgid "For English speakers"
-msgstr ""
+msgstr "For English speakers"
 
 msgid ""
 "`groonga-talk@lists.sourceforge.net <http://lists.sourceforge.net/mailman/"
@@ -44,7 +44,7 @@ msgstr ""
 "listinfo/groonga-talk>`_"
 
 msgid "For Japanese speakers"
-msgstr ""
+msgstr "For Japanese speakers"
 
 msgid ""
 "`groonga-dev@lists.sourceforge.jp <http://lists.sourceforge.jp/mailman/"
@@ -54,24 +54,29 @@ msgstr ""
 "listinfo/groonga-dev>`_"
 
 msgid "Twitter"
-msgstr ""
+msgstr "Twitter"
 
 msgid ""
 "`@groonga <https://twitter.com/groonga/>`_ tweets Groonga related "
 "information."
 msgstr ""
+"`@groonga <https://twitter.com/groonga/>`_ tweets Groonga related "
+"information."
 
 msgid ""
 "Please follow the account to get the latest Groonga related information!"
 msgstr ""
+"Please follow the account to get the latest Groonga related information!"
 
 msgid "Facebook"
-msgstr ""
+msgstr "Facebook"
 
 msgid ""
 "`Groonga page on Facebook <http://www.facebook.com/groonga>`_ shares Groonga "
 "related information."
 msgstr ""
+"`Groonga page on Facebook <http://www.facebook.com/groonga>`_ shares Groonga "
+"related information."
 
 msgid "Please like the page to get the latest Groonga related information!"
-msgstr ""
+msgstr "Please like the page to get the latest Groonga related information!"

@@ -1,20 +1,20 @@
-# English translations for groonga package.
-# Copyright (C) 2009-2012, Brazil, Inc
-# This file is distributed under the same license as the groonga package.
-# Kouhei Sutou <kou@clear-code.com>, 2012.
+# English translations for Groonga package.
+# Copyright (C) 2009-2014, Brazil, Inc
+# This file is distributed under the same license as the Groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2014.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: groonga 2.0.5\n"
+"Project-Id-Version: Groonga 4.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-23 17:13+0900\n"
-"PO-Revision-Date: 2013-12-25 14:39+0900\n"
+"POT-Creation-Date: 2014-05-23 12:39+0900\n"
+"PO-Revision-Date: 2014-05-23 12:39+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
-"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "Characteristics of Groonga"
@@ -281,17 +281,30 @@ msgid ""
 "response time for repeated read queries. Using this command, Groonga is "
 "available even on a server that does not allow you to install new libraries."
 msgstr ""
+"Groonga provides a built-in server command which supports HTTP, the "
+"memcached binary protocol and the Groonga Query Transfer Protocol (GQTP). "
+"Also, a Groonga server supports query caching, which significantly reduces "
+"response time for repeated read queries. Using this command, Groonga is "
+"available even on a server that does not allow you to install new libraries."
 
-msgid "Groonga storage engine"
-msgstr "Groonga storage engine"
+msgid "Mroonga storage engine"
+msgstr "Mroonga storage engine"
 
 msgid ""
 "Groonga works not only as an independent column-oriented DBMS but also as "
-"storage engines of well-known DBMSs. For example, `mroonga <http://mroonga."
-"org/>`_ is a MySQL pluggable storage engine using Groonga. By using mroonga, "
+"storage engines of well-known DBMSs. For example, `Mroonga <http://mroonga."
+"org/>`_ is a MySQL pluggable storage engine using Groonga. By using Mroonga, "
 "you can use Groonga for column-oriented storage and full text search. A "
-"combination of a built-in storage engine, MyISAM or InnoDB, and a groonga-"
+"combination of a built-in storage engine, MyISAM or InnoDB, and a Groonga-"
 "based full text search engine is also available. All the combinations have "
 "good and bad points and the best one depends on the application. See "
 "`related projects <http://groonga.org/related-projects.html>`_ for details."
 msgstr ""
+"Groonga works not only as an independent column-oriented DBMS but also as "
+"storage engines of well-known DBMSs. For example, `Mroonga <http://mroonga."
+"org/>`_ is a MySQL pluggable storage engine using Groonga. By using Mroonga, "
+"you can use Groonga for column-oriented storage and full text search. A "
+"combination of a built-in storage engine, MyISAM or InnoDB, and a Groonga-"
+"based full text search engine is also available. All the combinations have "
+"good and bad points and the best one depends on the application. See "
+"`related projects <http://groonga.org/related-projects.html>`_ for details."
