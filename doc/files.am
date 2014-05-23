@@ -37,6 +37,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/columns/vector/usage_query_weight_weight.log \
 	$(top_srcdir)/doc/source/example/reference/commands/cache_limit/get.log \
 	$(top_srcdir)/doc/source/example/reference/commands/cache_limit/set.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_list/column_list.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_rename/column_rename.log \
 	$(top_srcdir)/doc/source/example/reference/commands/delete/cascade.log \
 	$(top_srcdir)/doc/source/example/reference/commands/delete/status.log \
@@ -45,6 +46,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/ruby_eval/calc.log \
 	$(top_srcdir)/doc/source/example/reference/commands/ruby_load/load.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/adjuster_multiple.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/adjuster_no_factor.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/adjuster_no_weight.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/adjuster_one.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/filter_equal.log \
@@ -400,6 +402,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/api/grn_table_cursor.txt \
 	$(top_srcdir)/doc/source/reference/api/grn_type.txt \
 	$(top_srcdir)/doc/source/reference/api/grn_user_data.txt \
+	$(top_srcdir)/doc/source/reference/api/plugin.txt \
 	$(top_srcdir)/doc/source/reference/cast.txt \
 	$(top_srcdir)/doc/source/reference/column.txt \
 	$(top_srcdir)/doc/source/reference/columns/pseudo.txt \
@@ -437,6 +440,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/table_remove.txt \
 	$(top_srcdir)/doc/source/reference/commands/tokenize.txt \
 	$(top_srcdir)/doc/source/reference/commands/truncate.txt \
+	$(top_srcdir)/doc/source/reference/example/reference/executables/groonga-suggest-httpd-launch.log \
+	$(top_srcdir)/doc/source/reference/example/reference/executables/groonga-suggest-httpd-setup.log \
 	$(top_srcdir)/doc/source/reference/executables.txt \
 	$(top_srcdir)/doc/source/reference/executables/grnslap.txt \
 	$(top_srcdir)/doc/source/reference/executables/groonga-benchmark.txt \
@@ -556,6 +561,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/columns/vector/usage_query_weight_weight.log \
 	source/example/reference/commands/cache_limit/get.log \
 	source/example/reference/commands/cache_limit/set.log \
+	source/example/reference/commands/column_list/column_list.log \
 	source/example/reference/commands/column_rename/column_rename.log \
 	source/example/reference/commands/delete/cascade.log \
 	source/example/reference/commands/delete/status.log \
@@ -564,6 +570,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/ruby_eval/calc.log \
 	source/example/reference/commands/ruby_load/load.log \
 	source/example/reference/commands/select/adjuster_multiple.log \
+	source/example/reference/commands/select/adjuster_no_factor.log \
 	source/example/reference/commands/select/adjuster_no_weight.log \
 	source/example/reference/commands/select/adjuster_one.log \
 	source/example/reference/commands/select/filter_equal.log \
@@ -919,6 +926,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/api/grn_table_cursor.txt \
 	source/reference/api/grn_type.txt \
 	source/reference/api/grn_user_data.txt \
+	source/reference/api/plugin.txt \
 	source/reference/cast.txt \
 	source/reference/column.txt \
 	source/reference/columns/pseudo.txt \
@@ -956,6 +964,8 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/table_remove.txt \
 	source/reference/commands/tokenize.txt \
 	source/reference/commands/truncate.txt \
+	source/reference/example/reference/executables/groonga-suggest-httpd-launch.log \
+	source/reference/example/reference/executables/groonga-suggest-httpd-setup.log \
 	source/reference/executables.txt \
 	source/reference/executables/grnslap.txt \
 	source/reference/executables/groonga-benchmark.txt \
@@ -1211,6 +1221,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/api/grn_table_cursor.txt \
 	html/_sources/reference/api/grn_type.txt \
 	html/_sources/reference/api/grn_user_data.txt \
+	html/_sources/reference/api/plugin.txt \
 	html/_sources/reference/cast.txt \
 	html/_sources/reference/column.txt \
 	html/_sources/reference/columns/pseudo.txt \
@@ -1398,6 +1409,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/api/grn_table_cursor.html \
 	html/reference/api/grn_type.html \
 	html/reference/api/grn_user_data.html \
+	html/reference/api/plugin.html \
 	html/reference/cast.html \
 	html/reference/column.html \
 	html/reference/columns/pseudo.html \
