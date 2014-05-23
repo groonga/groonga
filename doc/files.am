@@ -42,6 +42,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/delete/cascade.log \
 	$(top_srcdir)/doc/source/example/reference/commands/delete/status.log \
 	$(top_srcdir)/doc/source/example/reference/commands/normalize/normalizer_auto_ascii.log \
+        $(top_srcdir)/doc/source/example/reference/commands/normalizer_list/simple_example.log \
 	$(top_srcdir)/doc/source/example/reference/commands/register/query_expanders_tsv.log \
 	$(top_srcdir)/doc/source/example/reference/commands/ruby_eval/calc.log \
 	$(top_srcdir)/doc/source/example/reference/commands/ruby_load/load.log \
@@ -101,6 +102,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/simple_example.log \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/string_include_spaces.log \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/tokenizer_token_trigram.log \
+	$(top_srcdir)/doc/source/example/reference/commands/tokenizer_list/simple_example.log \
 	$(top_srcdir)/doc/source/example/reference/commands/truncate/truncate.log \
 	$(top_srcdir)/doc/source/example/reference/executables/groonga-httpd.log \
 	$(top_srcdir)/doc/source/example/reference/functions/between/usage_age.log \
@@ -427,6 +429,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/log_put.rst \
 	$(top_srcdir)/doc/source/reference/commands/log_reopen.rst \
 	$(top_srcdir)/doc/source/reference/commands/normalize.rst \
+        $(top_srcdir)/doc/source/reference/commands/normalizer_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/quit.rst \
 	$(top_srcdir)/doc/source/reference/commands/register.rst \
 	$(top_srcdir)/doc/source/reference/commands/ruby_eval.rst \
@@ -439,6 +442,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/table_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/table_remove.rst \
 	$(top_srcdir)/doc/source/reference/commands/tokenize.rst \
+	$(top_srcdir)/doc/source/reference/commands/tokenizer_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/truncate.rst \
 	$(top_srcdir)/doc/source/reference/example/reference/executables/groonga-suggest-httpd-launch.log \
 	$(top_srcdir)/doc/source/reference/example/reference/executables/groonga-suggest-httpd-setup.log \
@@ -951,6 +955,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/log_put.rst \
 	source/reference/commands/log_reopen.rst \
 	source/reference/commands/normalize.rst \
+        source/reference/commands/normalizer_list.rst \
 	source/reference/commands/quit.rst \
 	source/reference/commands/register.rst \
 	source/reference/commands/ruby_eval.rst \
@@ -963,6 +968,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/table_list.rst \
 	source/reference/commands/table_remove.rst \
 	source/reference/commands/tokenize.rst \
+	source/reference/commands/tokenizer_list.rst \
 	source/reference/commands/truncate.rst \
 	source/reference/example/reference/executables/groonga-suggest-httpd-launch.log \
 	source/reference/example/reference/executables/groonga-suggest-httpd-setup.log \
@@ -1246,6 +1252,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/log_put.rst \
 	html/_sources/reference/commands/log_reopen.rst \
 	html/_sources/reference/commands/normalize.rst \
+        html/_sources/reference/commands/normalizer_list.rst \
 	html/_sources/reference/commands/quit.rst \
 	html/_sources/reference/commands/register.rst \
 	html/_sources/reference/commands/ruby_eval.rst \
@@ -1258,6 +1265,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/table_list.rst \
 	html/_sources/reference/commands/table_remove.rst \
 	html/_sources/reference/commands/tokenize.rst \
+	html/_sources/reference/commands/tokenizer_list.rst \
 	html/_sources/reference/commands/truncate.rst \
 	html/_sources/reference/executables.rst \
 	html/_sources/reference/executables/grnslap.rst \
@@ -1434,6 +1442,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/log_put.html \
 	html/reference/commands/log_reopen.html \
 	html/reference/commands/normalize.html \
+        html/reference/commands/normalizer_list.html \
 	html/reference/commands/quit.html \
 	html/reference/commands/register.html \
 	html/reference/commands/ruby_eval.html \
@@ -1446,6 +1455,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/table_list.html \
 	html/reference/commands/table_remove.html \
 	html/reference/commands/tokenize.html \
+	html/reference/commands/tokenizer_list.html \
 	html/reference/commands/truncate.html \
 	html/reference/executables.html \
 	html/reference/executables/grnslap.html \

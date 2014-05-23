@@ -3277,6 +3277,88 @@ proc_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return NULL;
 }
 
+static void
+dump_proc_name_by_proc_type(grn_ctx *ctx, grn_proc_type target_proc_type)
+{
+  grn_obj *db;
+  grn_table_cursor *cursor;
+  grn_obj target_procs;
+
+  db = grn_ctx_db(ctx);
+  cursor = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1,
+                                 GRN_CURSOR_BY_ID);
+  if (!cursor) {
+    return;
+  }
+
+  GRN_PTR_INIT(&target_procs, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  {
+    grn_id id;
+
+    while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+      grn_obj *obj;
+      grn_proc_type proc_type;
+
+      obj = grn_ctx_at(ctx, id);
+      if (!obj) {
+        continue;
+      }
+
+      if (obj->header.type != GRN_PROC) {
+        grn_obj_unlink(ctx, obj);
+        continue;
+      }
+
+      proc_type = grn_proc_get_type(ctx, obj);
+      if (proc_type != target_proc_type) {
+        grn_obj_unlink(ctx, obj);
+        continue;
+      }
+
+      GRN_PTR_PUT(ctx, &target_procs, obj);
+    }
+    grn_table_cursor_close(ctx, cursor);
+
+    {
+      int i, n_procs;
+
+      n_procs = GRN_BULK_VSIZE(&target_procs) / sizeof(grn_obj *);
+      GRN_OUTPUT_ARRAY_OPEN("TOKENIZERS", n_procs);
+      for (i = 0; i < n_procs; i++) {
+        grn_obj *proc;
+        char name[GRN_TABLE_MAX_KEY_SIZE];
+        int name_size;
+
+        proc = GRN_PTR_VALUE_AT(&target_procs, i);
+        name_size = grn_obj_name(ctx, proc, name, GRN_TABLE_MAX_KEY_SIZE);
+        GRN_OUTPUT_MAP_OPEN("TOKENIZER", 2);
+        GRN_OUTPUT_CSTR("name");
+        GRN_OUTPUT_STR(name, name_size);
+        GRN_OUTPUT_MAP_CLOSE();
+
+        grn_obj_unlink(ctx, proc);
+      }
+      GRN_OUTPUT_ARRAY_CLOSE();
+    }
+
+    grn_obj_unlink(ctx, &target_procs);
+  }
+}
+
+static grn_obj *
+proc_tokenizer_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  dump_proc_name_by_proc_type(ctx, GRN_PROC_TOKENIZER);
+  return NULL;
+}
+
+static grn_obj *
+proc_normalizer_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  dump_proc_name_by_proc_type(ctx, GRN_PROC_NORMALIZER);
+  return NULL;
+}
+
 static grn_obj *
 func_rand(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -4704,6 +4786,10 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[2], "normalizer");
   DEF_VAR(vars[3], "flags");
   DEF_COMMAND("tokenize", proc_tokenize, 4, vars);
+
+  DEF_COMMAND("tokenizer_list", proc_tokenizer_list, 0, vars);
+
+  DEF_COMMAND("normalizer_list", proc_normalizer_list, 0, vars);
 
   DEF_VAR(vars[0], "seed");
   grn_proc_create(ctx, "rand", -1, GRN_PROC_FUNCTION, func_rand,

@@ -469,7 +469,8 @@ typedef struct {
 typedef grn_rc (*grn_plugin_func)(grn_ctx *ctx);
 
 typedef enum {
-  GRN_PROC_TOKENIZER = 1,
+  GRN_PROC_INVALID = 0,
+  GRN_PROC_TOKENIZER,
   GRN_PROC_COMMAND,
   GRN_PROC_FUNCTION,
   GRN_PROC_HOOK,
