@@ -1,0 +1,18 @@
+Execution example::
+
+  normalzer_list
+  # [
+  #   [
+  #     0,
+  #     0.0,
+  #     0.0
+  #   ],
+  #   [
+  #     {
+  #       "name": "NormalizerAuto"
+  #     },
+  #     {
+  #       "name": "NormalizerNFKC51"
+  #     }
+  #   ]
+  # ]
