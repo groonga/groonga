@@ -171,6 +171,21 @@ GRN_API grn_obj *grn_plugin_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
                                        grn_id domain, grn_obj_flags flags);
 
 /*
+  grn_plugin_proc_get_var() gets a variable from user_data by name.
+*/
+
+GRN_API grn_obj *grn_plugin_proc_get_var(grn_ctx *ctx, grn_user_data *user_data,
+                                         const char *name, unsigned int name_size);
+
+/*
+  grn_plugin_proc_get_var_by_offset() gets a variable from user_data by offset.
+*/
+
+GRN_API grn_obj *grn_plugin_proc_get_var_by_offset(grn_ctx *ctx, 
+                                                   grn_user_data *user_data,
+                                                   unsigned int offset);
+
+/*
   grn_plugin_win32_base_dir() returns the groonga install directory.
   The install directory is computed from the directory that has
   `groonga.dll`. You can use the directory to generate install
