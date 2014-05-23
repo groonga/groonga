@@ -159,6 +159,13 @@ grn_proc_alloc(grn_ctx *ctx, grn_user_data *user_data, grn_id domain, grn_obj_fl
   return pctx->caller ? grn_expr_alloc(ctx, (grn_obj *)pctx->caller, domain, flags) : NULL;
 }
 
+grn_proc_type
+grn_proc_get_type(grn_ctx *ctx, grn_obj *proc)
+{
+  grn_proc *proc_ = (grn_proc *)proc;
+  return proc_ ? proc_->type : GRN_PROC_INVALID;
+}
+
 grn_rc
 grn_proc_set_selector(grn_ctx *ctx, grn_obj *proc, grn_selector_func selector)
 {
