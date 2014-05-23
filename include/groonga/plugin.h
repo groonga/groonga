@@ -184,7 +184,7 @@ GRN_API grn_obj *grn_plugin_proc_get_var(grn_ctx *ctx, grn_user_data *user_data,
   grn_plugin_proc_get_var_by_offset() gets a variable from user_data by offset.
 */
 
-GRN_API grn_obj *grn_plugin_proc_get_var_by_offset(grn_ctx *ctx, 
+GRN_API grn_obj *grn_plugin_proc_get_var_by_offset(grn_ctx *ctx,
                                                    grn_user_data *user_data,
                                                    unsigned int offset);
 
