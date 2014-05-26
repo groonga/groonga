@@ -6,7 +6,7 @@
 .. database: commands_normalizer_list
 
 ``normalizer_list``
-============
+===================
 
 Summary
 -------
