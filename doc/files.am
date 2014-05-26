@@ -42,7 +42,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/delete/cascade.log \
 	$(top_srcdir)/doc/source/example/reference/commands/delete/status.log \
 	$(top_srcdir)/doc/source/example/reference/commands/normalize/normalizer_auto_ascii.log \
-        $(top_srcdir)/doc/source/example/reference/commands/normalizer_list/simple_example.log \
+	$(top_srcdir)/doc/source/example/reference/commands/normalizer_list/simple_example.log \
 	$(top_srcdir)/doc/source/example/reference/commands/register/query_expanders_tsv.log \
 	$(top_srcdir)/doc/source/example/reference/commands/ruby_eval/calc.log \
 	$(top_srcdir)/doc/source/example/reference/commands/ruby_load/load.log \
@@ -429,7 +429,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/log_put.rst \
 	$(top_srcdir)/doc/source/reference/commands/log_reopen.rst \
 	$(top_srcdir)/doc/source/reference/commands/normalize.rst \
-        $(top_srcdir)/doc/source/reference/commands/normalizer_list.rst \
+	$(top_srcdir)/doc/source/reference/commands/normalizer_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/quit.rst \
 	$(top_srcdir)/doc/source/reference/commands/register.rst \
 	$(top_srcdir)/doc/source/reference/commands/ruby_eval.rst \
@@ -570,6 +570,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/delete/cascade.log \
 	source/example/reference/commands/delete/status.log \
 	source/example/reference/commands/normalize/normalizer_auto_ascii.log \
+	source/example/reference/commands/normalizer_list/simple_example.log \
 	source/example/reference/commands/register/query_expanders_tsv.log \
 	source/example/reference/commands/ruby_eval/calc.log \
 	source/example/reference/commands/ruby_load/load.log \
@@ -629,6 +630,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/tokenize/simple_example.log \
 	source/example/reference/commands/tokenize/string_include_spaces.log \
 	source/example/reference/commands/tokenize/tokenizer_token_trigram.log \
+	source/example/reference/commands/tokenizer_list/simple_example.log \
 	source/example/reference/commands/truncate/truncate.log \
 	source/example/reference/executables/groonga-httpd.log \
 	source/example/reference/functions/between/usage_age.log \
@@ -955,7 +957,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/log_put.rst \
 	source/reference/commands/log_reopen.rst \
 	source/reference/commands/normalize.rst \
-        source/reference/commands/normalizer_list.rst \
+	source/reference/commands/normalizer_list.rst \
 	source/reference/commands/quit.rst \
 	source/reference/commands/register.rst \
 	source/reference/commands/ruby_eval.rst \
@@ -1169,169 +1171,169 @@ mo_files_relative_from_locale_dir = \
 html_files_relative_from_locale_dir = \
 	html/.buildinfo \
 	html/_images/geo-points.png \
-	html/_sources/characteristic.rst \
-	html/_sources/community.rst \
-	html/_sources/contribution.rst \
-	html/_sources/contribution/development.rst \
-	html/_sources/contribution/development/com.rst \
-	html/_sources/contribution/development/cooperation.rst \
-	html/_sources/contribution/development/query.rst \
-	html/_sources/contribution/development/release.rst \
-	html/_sources/contribution/development/repository.rst \
-	html/_sources/contribution/development/test.rst \
-	html/_sources/contribution/documentation.rst \
-	html/_sources/contribution/documentation/c-api.rst \
-	html/_sources/contribution/documentation/i18n.rst \
-	html/_sources/contribution/documentation/introduction.rst \
-	html/_sources/contribution/report.rst \
-	html/_sources/development.rst \
-	html/_sources/development/travis-ci.rst \
-	html/_sources/geolocation_search.rst \
-	html/_sources/index.rst \
-	html/_sources/install.rst \
-	html/_sources/install/centos.rst \
-	html/_sources/install/debian.rst \
-	html/_sources/install/fedora.rst \
-	html/_sources/install/mac_os_x.rst \
-	html/_sources/install/others.rst \
-	html/_sources/install/solaris.rst \
-	html/_sources/install/ubuntu.rst \
-	html/_sources/install/windows.rst \
-	html/_sources/limitations.rst \
-	html/_sources/news.rst \
-	html/_sources/news/0.x.rst \
-	html/_sources/news/1.0.x.rst \
-	html/_sources/news/1.1.x.rst \
-	html/_sources/news/1.2.x.rst \
-	html/_sources/news/senna.rst \
-	html/_sources/reference.rst \
-	html/_sources/reference/api.rst \
-	html/_sources/reference/api/global_configurations.rst \
-	html/_sources/reference/api/grn_cache.rst \
-	html/_sources/reference/api/grn_column.rst \
-	html/_sources/reference/api/grn_command_version.rst \
-	html/_sources/reference/api/grn_ctx.rst \
-	html/_sources/reference/api/grn_db.rst \
-	html/_sources/reference/api/grn_encoding.rst \
-	html/_sources/reference/api/grn_expr.rst \
-	html/_sources/reference/api/grn_geo.rst \
-	html/_sources/reference/api/grn_hook.rst \
-	html/_sources/reference/api/grn_ii.rst \
-	html/_sources/reference/api/grn_index_cursor.rst \
-	html/_sources/reference/api/grn_info.rst \
-	html/_sources/reference/api/grn_match_escalation.rst \
-	html/_sources/reference/api/grn_obj.rst \
-	html/_sources/reference/api/grn_proc.rst \
-	html/_sources/reference/api/grn_search.rst \
-	html/_sources/reference/api/grn_table.rst \
-	html/_sources/reference/api/grn_table_cursor.rst \
-	html/_sources/reference/api/grn_type.rst \
-	html/_sources/reference/api/grn_user_data.rst \
-	html/_sources/reference/api/plugin.rst \
-	html/_sources/reference/cast.rst \
-	html/_sources/reference/column.rst \
-	html/_sources/reference/columns/pseudo.rst \
-	html/_sources/reference/columns/vector.rst \
-	html/_sources/reference/command.rst \
-	html/_sources/reference/command/command_version.rst \
-	html/_sources/reference/command/output_format.rst \
-	html/_sources/reference/command/return_code.rst \
-	html/_sources/reference/commands/cache_limit.rst \
-	html/_sources/reference/commands/check.rst \
-	html/_sources/reference/commands/clearlock.rst \
-	html/_sources/reference/commands/column_create.rst \
-	html/_sources/reference/commands/column_list.rst \
-	html/_sources/reference/commands/column_remove.rst \
-	html/_sources/reference/commands/column_rename.rst \
-	html/_sources/reference/commands/define_selector.rst \
-	html/_sources/reference/commands/defrag.rst \
-	html/_sources/reference/commands/delete.rst \
-	html/_sources/reference/commands/dump.rst \
-	html/_sources/reference/commands/load.rst \
-	html/_sources/reference/commands/log_level.rst \
-	html/_sources/reference/commands/log_put.rst \
-	html/_sources/reference/commands/log_reopen.rst \
-	html/_sources/reference/commands/normalize.rst \
-        html/_sources/reference/commands/normalizer_list.rst \
-	html/_sources/reference/commands/quit.rst \
-	html/_sources/reference/commands/register.rst \
-	html/_sources/reference/commands/ruby_eval.rst \
-	html/_sources/reference/commands/ruby_load.rst \
-	html/_sources/reference/commands/select.rst \
-	html/_sources/reference/commands/shutdown.rst \
-	html/_sources/reference/commands/status.rst \
-	html/_sources/reference/commands/suggest.rst \
-	html/_sources/reference/commands/table_create.rst \
-	html/_sources/reference/commands/table_list.rst \
-	html/_sources/reference/commands/table_remove.rst \
-	html/_sources/reference/commands/tokenize.rst \
-	html/_sources/reference/commands/tokenizer_list.rst \
-	html/_sources/reference/commands/truncate.rst \
-	html/_sources/reference/executables.rst \
-	html/_sources/reference/executables/grnslap.rst \
-	html/_sources/reference/executables/groonga-benchmark.rst \
-	html/_sources/reference/executables/groonga-httpd.rst \
-	html/_sources/reference/executables/groonga-server-http.rst \
-	html/_sources/reference/executables/groonga-suggest-create-dataset.rst \
-	html/_sources/reference/executables/groonga-suggest-httpd.rst \
-	html/_sources/reference/executables/groonga-suggest-learner.rst \
-	html/_sources/reference/executables/groonga.rst \
-	html/_sources/reference/function.rst \
-	html/_sources/reference/functions/between.rst \
-	html/_sources/reference/functions/edit_distance.rst \
-	html/_sources/reference/functions/geo_distance.rst \
-	html/_sources/reference/functions/geo_in_circle.rst \
-	html/_sources/reference/functions/geo_in_rectangle.rst \
-	html/_sources/reference/functions/html_untag.rst \
-	html/_sources/reference/functions/now.rst \
-	html/_sources/reference/functions/query.rst \
-	html/_sources/reference/functions/rand.rst \
-	html/_sources/reference/functions/snippet_html.rst \
-	html/_sources/reference/functions/sub_filter.rst \
-	html/_sources/reference/grn_expr.rst \
-	html/_sources/reference/grn_expr/query_syntax.rst \
-	html/_sources/reference/grn_expr/script_syntax.rst \
-	html/_sources/reference/indexing.rst \
-	html/_sources/reference/log.rst \
-	html/_sources/reference/normalizers.rst \
-	html/_sources/reference/output.rst \
-	html/_sources/reference/query_expanders.rst \
-	html/_sources/reference/query_expanders/tsv.rst \
-	html/_sources/reference/tables.rst \
-	html/_sources/reference/tokenizers.rst \
-	html/_sources/reference/tuning.rst \
-	html/_sources/reference/types.rst \
-	html/_sources/server.rst \
-	html/_sources/server/gqtp.rst \
-	html/_sources/server/http.rst \
-	html/_sources/server/http/comparison.rst \
-	html/_sources/server/http/groonga-httpd.rst \
-	html/_sources/server/http/groonga.rst \
-	html/_sources/server/package.rst \
-	html/_sources/spec.rst \
-	html/_sources/spec/gqtp.rst \
-	html/_sources/spec/search.rst \
-	html/_sources/suggest.rst \
-	html/_sources/suggest/completion.rst \
-	html/_sources/suggest/correction.rst \
-	html/_sources/suggest/introduction.rst \
-	html/_sources/suggest/suggestion.rst \
-	html/_sources/suggest/tutorial.rst \
-	html/_sources/troubleshooting.rst \
-	html/_sources/troubleshooting/different_results_with_the_same_keyword.rst \
-	html/_sources/troubleshooting/mmap_cannot_allocate_memory.rst \
-	html/_sources/tutorial.rst \
-	html/_sources/tutorial/data.rst \
-	html/_sources/tutorial/drilldown.rst \
-	html/_sources/tutorial/index.rst \
-	html/_sources/tutorial/introduction.rst \
-	html/_sources/tutorial/lexicon.rst \
-	html/_sources/tutorial/match_columns.rst \
-	html/_sources/tutorial/micro_blog.rst \
-	html/_sources/tutorial/network.rst \
-	html/_sources/tutorial/patricia_trie.rst \
-	html/_sources/tutorial/query_expansion.rst \
-	html/_sources/tutorial/search.rst \
+	html/_sources/characteristic.txt \
+	html/_sources/community.txt \
+	html/_sources/contribution.txt \
+	html/_sources/contribution/development.txt \
+	html/_sources/contribution/development/com.txt \
+	html/_sources/contribution/development/cooperation.txt \
+	html/_sources/contribution/development/query.txt \
+	html/_sources/contribution/development/release.txt \
+	html/_sources/contribution/development/repository.txt \
+	html/_sources/contribution/development/test.txt \
+	html/_sources/contribution/documentation.txt \
+	html/_sources/contribution/documentation/c-api.txt \
+	html/_sources/contribution/documentation/i18n.txt \
+	html/_sources/contribution/documentation/introduction.txt \
+	html/_sources/contribution/report.txt \
+	html/_sources/development.txt \
+	html/_sources/development/travis-ci.txt \
+	html/_sources/geolocation_search.txt \
+	html/_sources/index.txt \
+	html/_sources/install.txt \
+	html/_sources/install/centos.txt \
+	html/_sources/install/debian.txt \
+	html/_sources/install/fedora.txt \
+	html/_sources/install/mac_os_x.txt \
+	html/_sources/install/others.txt \
+	html/_sources/install/solaris.txt \
+	html/_sources/install/ubuntu.txt \
+	html/_sources/install/windows.txt \
+	html/_sources/limitations.txt \
+	html/_sources/news.txt \
+	html/_sources/news/0.x.txt \
+	html/_sources/news/1.0.x.txt \
+	html/_sources/news/1.1.x.txt \
+	html/_sources/news/1.2.x.txt \
+	html/_sources/news/senna.txt \
+	html/_sources/reference.txt \
+	html/_sources/reference/api.txt \
+	html/_sources/reference/api/global_configurations.txt \
+	html/_sources/reference/api/grn_cache.txt \
+	html/_sources/reference/api/grn_column.txt \
+	html/_sources/reference/api/grn_command_version.txt \
+	html/_sources/reference/api/grn_ctx.txt \
+	html/_sources/reference/api/grn_db.txt \
+	html/_sources/reference/api/grn_encoding.txt \
+	html/_sources/reference/api/grn_expr.txt \
+	html/_sources/reference/api/grn_geo.txt \
+	html/_sources/reference/api/grn_hook.txt \
+	html/_sources/reference/api/grn_ii.txt \
+	html/_sources/reference/api/grn_index_cursor.txt \
+	html/_sources/reference/api/grn_info.txt \
+	html/_sources/reference/api/grn_match_escalation.txt \
+	html/_sources/reference/api/grn_obj.txt \
+	html/_sources/reference/api/grn_proc.txt \
+	html/_sources/reference/api/grn_search.txt \
+	html/_sources/reference/api/grn_table.txt \
+	html/_sources/reference/api/grn_table_cursor.txt \
+	html/_sources/reference/api/grn_type.txt \
+	html/_sources/reference/api/grn_user_data.txt \
+	html/_sources/reference/api/plugin.txt \
+	html/_sources/reference/cast.txt \
+	html/_sources/reference/column.txt \
+	html/_sources/reference/columns/pseudo.txt \
+	html/_sources/reference/columns/vector.txt \
+	html/_sources/reference/command.txt \
+	html/_sources/reference/command/command_version.txt \
+	html/_sources/reference/command/output_format.txt \
+	html/_sources/reference/command/return_code.txt \
+	html/_sources/reference/commands/cache_limit.txt \
+	html/_sources/reference/commands/check.txt \
+	html/_sources/reference/commands/clearlock.txt \
+	html/_sources/reference/commands/column_create.txt \
+	html/_sources/reference/commands/column_list.txt \
+	html/_sources/reference/commands/column_remove.txt \
+	html/_sources/reference/commands/column_rename.txt \
+	html/_sources/reference/commands/define_selector.txt \
+	html/_sources/reference/commands/defrag.txt \
+	html/_sources/reference/commands/delete.txt \
+	html/_sources/reference/commands/dump.txt \
+	html/_sources/reference/commands/load.txt \
+	html/_sources/reference/commands/log_level.txt \
+	html/_sources/reference/commands/log_put.txt \
+	html/_sources/reference/commands/log_reopen.txt \
+	html/_sources/reference/commands/normalize.txt \
+	html/_sources/reference/commands/normalizer_list.txt \
+	html/_sources/reference/commands/quit.txt \
+	html/_sources/reference/commands/register.txt \
+	html/_sources/reference/commands/ruby_eval.txt \
+	html/_sources/reference/commands/ruby_load.txt \
+	html/_sources/reference/commands/select.txt \
+	html/_sources/reference/commands/shutdown.txt \
+	html/_sources/reference/commands/status.txt \
+	html/_sources/reference/commands/suggest.txt \
+	html/_sources/reference/commands/table_create.txt \
+	html/_sources/reference/commands/table_list.txt \
+	html/_sources/reference/commands/table_remove.txt \
+	html/_sources/reference/commands/tokenize.txt \
+	html/_sources/reference/commands/tokenizer_list.txt \
+	html/_sources/reference/commands/truncate.txt \
+	html/_sources/reference/executables.txt \
+	html/_sources/reference/executables/grnslap.txt \
+	html/_sources/reference/executables/groonga-benchmark.txt \
+	html/_sources/reference/executables/groonga-httpd.txt \
+	html/_sources/reference/executables/groonga-server-http.txt \
+	html/_sources/reference/executables/groonga-suggest-create-dataset.txt \
+	html/_sources/reference/executables/groonga-suggest-httpd.txt \
+	html/_sources/reference/executables/groonga-suggest-learner.txt \
+	html/_sources/reference/executables/groonga.txt \
+	html/_sources/reference/function.txt \
+	html/_sources/reference/functions/between.txt \
+	html/_sources/reference/functions/edit_distance.txt \
+	html/_sources/reference/functions/geo_distance.txt \
+	html/_sources/reference/functions/geo_in_circle.txt \
+	html/_sources/reference/functions/geo_in_rectangle.txt \
+	html/_sources/reference/functions/html_untag.txt \
+	html/_sources/reference/functions/now.txt \
+	html/_sources/reference/functions/query.txt \
+	html/_sources/reference/functions/rand.txt \
+	html/_sources/reference/functions/snippet_html.txt \
+	html/_sources/reference/functions/sub_filter.txt \
+	html/_sources/reference/grn_expr.txt \
+	html/_sources/reference/grn_expr/query_syntax.txt \
+	html/_sources/reference/grn_expr/script_syntax.txt \
+	html/_sources/reference/indexing.txt \
+	html/_sources/reference/log.txt \
+	html/_sources/reference/normalizers.txt \
+	html/_sources/reference/output.txt \
+	html/_sources/reference/query_expanders.txt \
+	html/_sources/reference/query_expanders/tsv.txt \
+	html/_sources/reference/tables.txt \
+	html/_sources/reference/tokenizers.txt \
+	html/_sources/reference/tuning.txt \
+	html/_sources/reference/types.txt \
+	html/_sources/server.txt \
+	html/_sources/server/gqtp.txt \
+	html/_sources/server/http.txt \
+	html/_sources/server/http/comparison.txt \
+	html/_sources/server/http/groonga-httpd.txt \
+	html/_sources/server/http/groonga.txt \
+	html/_sources/server/package.txt \
+	html/_sources/spec.txt \
+	html/_sources/spec/gqtp.txt \
+	html/_sources/spec/search.txt \
+	html/_sources/suggest.txt \
+	html/_sources/suggest/completion.txt \
+	html/_sources/suggest/correction.txt \
+	html/_sources/suggest/introduction.txt \
+	html/_sources/suggest/suggestion.txt \
+	html/_sources/suggest/tutorial.txt \
+	html/_sources/troubleshooting.txt \
+	html/_sources/troubleshooting/different_results_with_the_same_keyword.txt \
+	html/_sources/troubleshooting/mmap_cannot_allocate_memory.txt \
+	html/_sources/tutorial.txt \
+	html/_sources/tutorial/data.txt \
+	html/_sources/tutorial/drilldown.txt \
+	html/_sources/tutorial/index.txt \
+	html/_sources/tutorial/introduction.txt \
+	html/_sources/tutorial/lexicon.txt \
+	html/_sources/tutorial/match_columns.txt \
+	html/_sources/tutorial/micro_blog.txt \
+	html/_sources/tutorial/network.txt \
+	html/_sources/tutorial/patricia_trie.txt \
+	html/_sources/tutorial/query_expansion.txt \
+	html/_sources/tutorial/search.txt \
 	html/_static/ajax-loader.gif \
 	html/_static/basic.css \
 	html/_static/comment-bright.png \
@@ -1442,7 +1444,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/log_put.html \
 	html/reference/commands/log_reopen.html \
 	html/reference/commands/normalize.html \
-        html/reference/commands/normalizer_list.html \
+	html/reference/commands/normalizer_list.html \
 	html/reference/commands/quit.html \
 	html/reference/commands/register.html \
 	html/reference/commands/ruby_eval.html \
