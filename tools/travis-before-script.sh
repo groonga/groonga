@@ -14,7 +14,7 @@ case "${BUILD_TOOL}" in
 	    configure_args="${configure_args} --enable-mruby"
 	fi
 
-	./configure --with-ruby19 ${configure_args}
+	./configure --with-ruby ${configure_args}
 	;;
     cmake)
 	cmake_args=""
