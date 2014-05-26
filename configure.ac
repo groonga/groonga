@@ -723,9 +723,9 @@ AM_CONDITIONAL([WITH_BENCHMARK], [test "$benchmark_available" = "yes"])
 
 # check Ruby for HTTP test
 ac_cv_ruby_available="no"
-AC_ARG_WITH([ruby19],
-            AS_HELP_STRING([--with-ruby19=PATH],
-                           [Ruby 1.9 interpreter path (default: no)]),
+AC_ARG_WITH([ruby],
+            AS_HELP_STRING([--with-ruby=PATH],
+                           [Ruby interpreter path (default: no)]),
             [RUBY="$withval"],
             [RUBY="no"])
 
@@ -733,13 +733,15 @@ if test "x$RUBY" = "xno"; then
   RUBY=
 else
   if test "x$RUBY" = "xyes"; then
-    AC_PATH_PROGS(RUBY, [ruby1.9 ruby19 ruby1.9.1 ruby], ruby19-not-found)
-    if test "$RUBY" != "ruby19-not-found"; then
+    AC_PATH_PROGS(RUBY,
+                  [ruby2.1 ruby21 ruby2.0 ruby20 ruby1.9 ruby19 ruby1.9.1 ruby],
+                  ruby-not-found)
+    if test "$RUBY" != "ruby-not-found"; then
       ruby_version="`$RUBY --version`"
-      if echo "$ruby_version" | grep -q -- 'ruby 1\.9'; then
+      if echo "$ruby_version" | grep -q -- 'ruby \(1\.9\|2\.\)'; then
         ac_cv_ruby_available="yes"
       else
-        AC_MSG_WARN([$RUBY isn't Ruby 1.9 ($ruby_version)])
+        AC_MSG_WARN([$RUBY isn't Ruby 1.9 or later ($ruby_version)])
       fi
     fi
   else
