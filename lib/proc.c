@@ -3278,7 +3278,8 @@ proc_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 }
 
 static void
-dump_proc_name_by_proc_type(grn_ctx *ctx, grn_proc_type target_proc_type)
+list_proc(grn_ctx *ctx, grn_proc_type target_proc_type,
+          const char *name, const char *plural_name)
 {
   grn_obj *db;
   grn_table_cursor *cursor;
@@ -3323,7 +3324,7 @@ dump_proc_name_by_proc_type(grn_ctx *ctx, grn_proc_type target_proc_type)
       int i, n_procs;
 
       n_procs = GRN_BULK_VSIZE(&target_procs) / sizeof(grn_obj *);
-      GRN_OUTPUT_ARRAY_OPEN("TOKENIZERS", n_procs);
+      GRN_OUTPUT_ARRAY_OPEN(plural_name, n_procs);
       for (i = 0; i < n_procs; i++) {
         grn_obj *proc;
         char name[GRN_TABLE_MAX_KEY_SIZE];
@@ -3331,7 +3332,7 @@ dump_proc_name_by_proc_type(grn_ctx *ctx, grn_proc_type target_proc_type)
 
         proc = GRN_PTR_VALUE_AT(&target_procs, i);
         name_size = grn_obj_name(ctx, proc, name, GRN_TABLE_MAX_KEY_SIZE);
-        GRN_OUTPUT_MAP_OPEN("TOKENIZER", 1);
+        GRN_OUTPUT_MAP_OPEN(name, 1);
         GRN_OUTPUT_CSTR("name");
         GRN_OUTPUT_STR(name, name_size);
         GRN_OUTPUT_MAP_CLOSE();
@@ -3348,14 +3349,14 @@ dump_proc_name_by_proc_type(grn_ctx *ctx, grn_proc_type target_proc_type)
 static grn_obj *
 proc_tokenizer_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  dump_proc_name_by_proc_type(ctx, GRN_PROC_TOKENIZER);
+  list_proc(ctx, GRN_PROC_TOKENIZER, "tokenizer", "tokenizers");
   return NULL;
 }
 
 static grn_obj *
 proc_normalizer_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  dump_proc_name_by_proc_type(ctx, GRN_PROC_NORMALIZER);
+  list_proc(ctx, GRN_PROC_NORMALIZER, "normalizer", "normalizers");
   return NULL;
 }
 
