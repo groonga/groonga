@@ -154,7 +154,7 @@ grn_output_map_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
               nelements,
               name);
     }
-    msgpack_pack_map(&ctx->impl->msgpacker, nelements / 2);
+    msgpack_pack_map(&ctx->impl->msgpacker, nelements);
 #endif
     break;
   case GRN_CONTENT_NONE:

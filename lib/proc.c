@@ -1012,7 +1012,7 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_timeval_now(ctx, &now);
   cache = grn_cache_current_get(ctx);
   grn_cache_get_statistics(ctx, cache, &statistics);
-  GRN_OUTPUT_MAP_OPEN("RESULT", 18);
+  GRN_OUTPUT_MAP_OPEN("RESULT", 9);
   GRN_OUTPUT_CSTR("alloc_count");
   GRN_OUTPUT_INT32(grn_alloc_count());
   GRN_OUTPUT_CSTR("starttime");
@@ -2813,7 +2813,7 @@ proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
               a++;
             }
           }
-          GRN_OUTPUT_MAP_OPEN("SUMMARY", 8);
+          GRN_OUTPUT_MAP_OPEN("SUMMARY", 12);
           GRN_OUTPUT_CSTR("flags");
           grn_itoh(h->flags, buf, 8);
           GRN_OUTPUT_STR(buf, 8);
@@ -3020,7 +3020,7 @@ proc_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
                                  normalizer, flags);
     grn_obj_unlink(ctx, normalizer);
 
-    GRN_OUTPUT_MAP_OPEN("RESULT", 2);
+    GRN_OUTPUT_MAP_OPEN("RESULT", 3);
     {
       const char *normalized;
 
@@ -3331,7 +3331,7 @@ dump_proc_name_by_proc_type(grn_ctx *ctx, grn_proc_type target_proc_type)
 
         proc = GRN_PTR_VALUE_AT(&target_procs, i);
         name_size = grn_obj_name(ctx, proc, name, GRN_TABLE_MAX_KEY_SIZE);
-        GRN_OUTPUT_MAP_OPEN("TOKENIZER", 2);
+        GRN_OUTPUT_MAP_OPEN("TOKENIZER", 1);
         GRN_OUTPUT_CSTR("name");
         GRN_OUTPUT_STR(name, name_size);
         GRN_OUTPUT_MAP_CLOSE();
