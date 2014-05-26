@@ -29,16 +29,16 @@ Add the Groonga apt repository.
 Install::
 
   % sudo apt-get update
-  % sudo apt-get -y --allow-unauthenticated install groonga-keyring
+  % sudo apt-get install -y --allow-unauthenticated groonga-keyring
   % sudo apt-get update
-  % sudo apt-get -y install groonga
+  % sudo apt-get install -y -V groonga
 
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
 tokenizer, install groonga-tokenizer-mecab package.
 
 Install groonga-tokenizer-mecab package::
 
-  % sudo aptitude -V -D -y install groonga-tokenizer-mecab
+  % sudo apt-get install -y -V groonga-tokenizer-mecab
 
 There is a package that provides `Munin
 <http://munin-monitoring.org/>`_ plugins. If you want to monitor
@@ -46,7 +46,7 @@ groonga status by Munin, install groonga-munin-plugins package.
 
 Install groonga-munin-plugins package::
 
-  % sudo aptitude -V -D -y install groonga-munin-plugins
+  % sudo apt-get install -y -V groonga-munin-plugins
 
 There is a package that provides MySQL compatible normalizer as
 groonga plugins.
@@ -54,7 +54,7 @@ If you want to use that one, install groonga-normalizer-mysql package.
 
 Install groonga-normalizer-mysql package::
 
-  % sudo aptitude -V -D -y install groonga-normalizer-mysql
+  % sudo apt-get install -y -V groonga-normalizer-mysql
 
 jessie
 ------
@@ -69,16 +69,16 @@ Add the groonga apt repository.
 Install::
 
   % sudo apt-get update
-  % sudo apt-get -y --allow-unauthenticated install groonga-keyring
+  % sudo apt-get install -y --allow-unauthenticated groonga-keyring
   % sudo apt-get update
-  % sudo apt-get -y install groonga
+  % sudo apt-get install -y groonga
 
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
 tokenizer, install groonga-tokenizer-mecab package.
 
 Install groonga-tokenizer-mecab package::
 
-  % sudo aptitude -V -D -y install groonga-tokenizer-mecab
+  % sudo apt-get install -y -V groonga-tokenizer-mecab
 
 There is a package that provides `Munin
 <http://munin-monitoring.org/>`_ plugins. If you want to monitor
@@ -86,7 +86,7 @@ groonga status by Munin, install groonga-munin-plugins package.
 
 Install groonga-munin-plugins package::
 
-  % sudo aptitude -V -D -y install groonga-munin-plugins
+  % sudo apt-get install -y -V groonga-munin-plugins
 
 There is a package that provides MySQL compatible normalizer as
 Groonga plugins.
@@ -94,7 +94,7 @@ If you want to use that one, install groonga-normalizer-mysql package.
 
 Install groonga-normalizer-mysql package::
 
-  % sudo aptitude -V -D -y install groonga-normalizer-mysql
+  % sudo apt-get install -y -V groonga-normalizer-mysql
 
 sid
 ---
@@ -108,17 +108,17 @@ Add the groonga apt repository.
 
 Install::
 
-  % sudo aptitude update
-  % sudo aptitude -V -D -y --allow-untrusted install groonga-keyring
-  % sudo aptitude update
-  % sudo aptitude -V -D -y install groonga
+  % sudo apt-get update
+  % sudo apt-get install -y --allow-unauthenticated groonga-keyring
+  % sudo apt-get update
+  % sudo apt-get install -y -V groonga
 
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
 tokenizer, install groonga-tokenizer-mecab package.
 
 Install groonga-tokenizer-mecab package::
 
-  % sudo aptitude -V -D -y install groonga-tokenizer-mecab
+  % sudo apt-get install -y -V groonga-tokenizer-mecab
 
 There is a package that provides `Munin
 <http://munin-monitoring.org/>`_ plugins. If you want to monitor
@@ -126,7 +126,7 @@ groonga status by Munin, install groonga-munin-plugins package.
 
 Install groonga-munin-plugins package::
 
-  % sudo aptitude -V -D -y install groonga-munin-plugins
+  % sudo apt-get install -y -V groonga-munin-plugins
 
 There is a package that provides MySQL compatible normalizer as
 groonga plugins.
@@ -134,14 +134,14 @@ If you want to use that one, install groonga-normalizer-mysql package.
 
 Install groonga-normalizer-mysql package::
 
-  % sudo aptitude -V -D -y install groonga-normalizer-mysql
+  % sudo apt-get install -y -V groonga-normalizer-mysql
 
 Build from source
 -----------------
 
 Install required packages to build Groonga::
 
-  % sudo aptitude -V -D -y install wget tar build-essential zlib1g-dev liblzo2-dev libmsgpack-dev libzmq-dev libevent-dev libmecab-dev
+  % sudo apt-get install -y -V  wget tar build-essential zlib1g-dev liblzo2-dev libmsgpack-dev libzmq-dev libevent-dev libmecab-dev
 
 Download source::
 
