@@ -3126,7 +3126,7 @@ output_tokens(grn_ctx *ctx, grn_obj *tokens, grn_hash *lexicon)
     n_tokens = GRN_BULK_VSIZE(tokens) / sizeof(tokenize_token);
   }
 
-  GRN_OUTPUT_ARRAY_OPEN("tokens", n_tokens);
+  GRN_OUTPUT_ARRAY_OPEN("TOKENS", n_tokens);
   for (i = 0; i < n_tokens; i++) {
     tokenize_token *token;
     char value[GRN_TABLE_MAX_KEY_SIZE];
@@ -3134,7 +3134,7 @@ output_tokens(grn_ctx *ctx, grn_obj *tokens, grn_hash *lexicon)
 
     token = ((tokenize_token *)(GRN_BULK_HEAD(tokens))) + i;
 
-    GRN_OUTPUT_MAP_OPEN("token", 2);
+    GRN_OUTPUT_MAP_OPEN("TOKEN", 2);
 
     GRN_OUTPUT_CSTR("value");
     value_size = grn_hash_get_key(ctx, lexicon, token->id,
