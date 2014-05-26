@@ -231,6 +231,11 @@ grn_proc_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 
   GRN_TEXT_PUTS(ctx, buf, "#<proc:");
   switch (proc->type) {
+  case GRN_PROC_INVALID :
+    GRN_TEXT_PUTS(ctx, buf, "invalid");
+    GRN_TEXT_PUTS(ctx, buf, ">");
+    return GRN_SUCCESS;
+    break;
   case GRN_PROC_TOKENIZER :
     GRN_TEXT_PUTS(ctx, buf, "tokenizer");
     break;
