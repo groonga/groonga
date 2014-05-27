@@ -513,15 +513,22 @@ grn_mrb_expr_init(grn_ctx *ctx)
 
   klass = mrb_define_class_under(mrb, module, "ScanInfo", mrb->object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
-  mrb_define_method(mrb, klass, "initialize", mrb_grn_scan_info_initialize, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "put_index", mrb_grn_scan_info_put_index, MRB_ARGS_REQ(3));
-  mrb_define_method(mrb, klass, "op=", mrb_grn_scan_info_set_op, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "end=", mrb_grn_scan_info_set_end, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "initialize",
+                    mrb_grn_scan_info_initialize, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "put_index",
+                    mrb_grn_scan_info_put_index, MRB_ARGS_REQ(3));
+  mrb_define_method(mrb, klass, "op=",
+                    mrb_grn_scan_info_set_op, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "end=",
+                    mrb_grn_scan_info_set_end, MRB_ARGS_REQ(1));
 
-  klass = mrb_define_class_under(mrb, module, "ExpressionCode", mrb->object_class);
+  klass = mrb_define_class_under(mrb, module,
+                                 "ExpressionCode", mrb->object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
-  mrb_define_method(mrb, klass, "initialize", mrb_grn_expr_code_initialize, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "weight", mrb_grn_expr_code_get_weight, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "initialize",
+                    mrb_grn_expr_code_initialize, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "weight",
+                    mrb_grn_expr_code_get_weight, MRB_ARGS_NONE());
   grn_mrb_load(ctx, "expression.rb");
 }
 
