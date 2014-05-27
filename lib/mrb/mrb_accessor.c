@@ -26,6 +26,7 @@
 
 #include "../db.h"
 #include "mrb_accessor.h"
+#include "mrb_index_info.h"
 
 static struct mrb_data_type mrb_grn_accessor_type = {
   "Groonga::Accessor",
@@ -67,6 +68,31 @@ mrb_grn_accessor_next(mrb_state *mrb, mrb_value self)
   return mrb_cptr_value(mrb, accessor->next);
 }
 
+static mrb_value
+mrb_grn_accessor_find_index(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_accessor *accessor;
+  mrb_value mrb_operator;
+  grn_obj *index;
+  int n_indexes;
+  int section_id;
+
+  mrb_get_args(mrb, "o", &mrb_operator);
+  accessor = DATA_PTR(self);
+  n_indexes = grn_column_index(ctx,
+                               (grn_obj *)accessor,
+                               mrb_fixnum(mrb_operator),
+                               &index,
+                               1,
+                               &section_id);
+  if (n_indexes == 0) {
+    return mrb_nil_value();
+  } else {
+    return mrb_grn_index_info_new(mrb, index, section_id);
+  }
+}
+
 void
 grn_mrb_accessor_init(grn_ctx *ctx)
 {
@@ -81,5 +107,7 @@ grn_mrb_accessor_init(grn_ctx *ctx)
                     mrb_grn_accessor_initialize, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "next",
                     mrb_grn_accessor_next, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "find_index",
+                    mrb_grn_accessor_find_index, MRB_ARGS_REQ(1));
 }
 #endif
