@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013 Brazil
+  Copyright(C) 2013-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -39,6 +39,9 @@ grn_mrb_class_from_grn_obj(mrb_state *mrb, grn_obj *object)
     break;
   case GRN_COLUMN_VAR_SIZE :
     klass = mrb_class_get_under(mrb, data->module, "VariableSizeColumn");
+    break;
+  case GRN_PROC :
+    klass = mrb_class_get_under(mrb, data->module, "Procedure");
     break;
   default :
     break;
