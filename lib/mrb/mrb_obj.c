@@ -24,6 +24,7 @@
 #include <mruby/data.h>
 
 #include "mrb_obj.h"
+#include "mrb_index_info.h"
 
 static mrb_value
 object_get_name(mrb_state *mrb, mrb_value self)
@@ -39,6 +40,31 @@ object_get_name(mrb_state *mrb, mrb_value self)
   return mrb_str_new(mrb, name, name_length);
 }
 
+static mrb_value
+object_find_index(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *object;
+  mrb_value mrb_operator;
+  grn_obj *index;
+  int n_indexes;
+  int section_id;
+
+  mrb_get_args(mrb, "o", &mrb_operator);
+  object = DATA_PTR(self);
+  n_indexes = grn_column_index(ctx,
+                               object,
+                               mrb_fixnum(mrb_operator),
+                               &index,
+                               1,
+                               &section_id);
+  if (n_indexes == 0) {
+    return mrb_nil_value();
+  } else {
+    return mrb_grn_index_info_new(mrb, index, section_id);
+  }
+}
+
 void
 grn_mrb_obj_init(grn_ctx *ctx)
 {
@@ -52,5 +78,7 @@ grn_mrb_obj_init(grn_ctx *ctx)
   data->object_class = klass;
 
   mrb_define_method(mrb, klass, "name", object_get_name, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "find_index",
+                    object_find_index, MRB_ARGS_REQ(1));
 }
 #endif
