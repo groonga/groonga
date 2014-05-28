@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013 Brazil
+  Copyright(C) 2013-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -266,7 +266,8 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
               }
             }
           } else {
-            grn_scan_info_set_query(si, *p);
+            mrb_si = mrb_grn_scan_info_new(mrb, si);
+            mrb_funcall(mrb, mrb_si, "query=", 1, mrb_cptr_value(mrb, *p));
           }
         }
       }
@@ -390,7 +391,8 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                             mrb_fixnum_value(1));
               }
             } else {
-              grn_scan_info_set_query(si, *p);
+              mrb_si = mrb_grn_scan_info_new(mrb, si);
+              mrb_funcall(mrb, mrb_si, "query=", 1, mrb_cptr_value(mrb, *p));
             }
           }
         }
@@ -505,6 +507,18 @@ mrb_grn_scan_info_set_end(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_scan_info_set_query(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  mrb_value mrb_query;
+
+  mrb_get_args(mrb, "o", &mrb_query);
+  si = DATA_PTR(self);
+  grn_scan_info_set_query(si, mrb_cptr(mrb_query));
+  return self;
+}
+
+static mrb_value
 mrb_grn_expr_code_get_weight(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -532,6 +546,8 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_scan_info_set_op, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "end=",
                     mrb_grn_scan_info_set_end, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "query=",
+                    mrb_grn_scan_info_set_query, MRB_ARGS_REQ(1));
 
   klass = mrb_define_class_under(mrb, module,
                                  "ExpressionCode", mrb->object_class);
