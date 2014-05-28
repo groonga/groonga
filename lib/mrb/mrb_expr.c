@@ -188,7 +188,6 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                     mrb_value mrb_accessor;
                     weight = mrb_fixnum(mrb_funcall(mrb, mrb_ec, "weight", 0));
                     grn_scan_info_set_flags(si, grn_scan_info_get_flags(si) | SCAN_ACCESSOR);
-                    mrb_si = mrb_grn_scan_info_new(mrb, si);
                     mrb_accessor = mrb_grn_accessor_new(mrb, (grn_accessor *)ec->value);
                     if (!mrb_nil_p(mrb_funcall(mrb, mrb_accessor, "next", 0))) {
                       mrb_funcall(mrb, mrb_si, "put_index", 3,
@@ -208,7 +207,6 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                   if (grn_column_index(ctx, ec->value, c->op, &index, 1, &sid)) {
                     mrb_value mrb_ec = mrb_grn_expr_code_new(mrb, ec);
                     weight = mrb_fixnum(mrb_funcall(mrb, mrb_ec, "weight", 0));
-                    mrb_si = mrb_grn_scan_info_new(mrb, si);
                     mrb_funcall(mrb, mrb_si, "put_index", 3,
                                 mrb_cptr_value(mrb, index),
                                 mrb_fixnum_value(sid),
@@ -230,7 +228,6 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                     mrb_value mrb_ec = mrb_grn_expr_code_new(mrb, ec);
                     weight = mrb_fixnum(mrb_funcall(mrb, mrb_ec, "weight", 0));
                   }
-                  mrb_si = mrb_grn_scan_info_new(mrb, si);
                   mrb_funcall(mrb, mrb_si, "put_index", 3,
                               mrb_cptr_value(mrb, index),
                               mrb_fixnum_value(sid),
@@ -241,7 +238,6 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
             }
           } else if (GRN_DB_OBJP(*p)) {
             if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
-              mrb_si = mrb_grn_scan_info_new(mrb, si);
               mrb_funcall(mrb, mrb_si, "put_index", 3,
                           mrb_cptr_value(mrb, index),
                           mrb_fixnum_value(sid),
@@ -252,13 +248,11 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
             if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
               mrb_value mrb_accessor = mrb_grn_accessor_new(mrb, (grn_accessor *)*p);
               if (!mrb_nil_p(mrb_funcall(mrb, mrb_accessor, "next", 0))) {
-                mrb_si = mrb_grn_scan_info_new(mrb, si);
                 mrb_funcall(mrb, mrb_si, "put_index", 3,
                             mrb_cptr_value(mrb, *p),
                             mrb_fixnum_value(sid),
                             mrb_fixnum_value(1));
               } else {
-                mrb_si = mrb_grn_scan_info_new(mrb, si);
                 mrb_funcall(mrb, mrb_si, "put_index", 3,
                             mrb_cptr_value(mrb, index),
                             mrb_fixnum_value(sid),
@@ -266,7 +260,6 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
               }
             }
           } else {
-            mrb_si = mrb_grn_scan_info_new(mrb, si);
             mrb_funcall(mrb, mrb_si, "query=", 1, mrb_cptr_value(mrb, *p));
           }
         }
@@ -370,7 +363,6 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
               mrb_index_info = mrb_funcall(mrb, mrb_target, "find_index", 1,
                                            mrb_fixnum_value(c->op));
               if (!mrb_nil_p(mrb_index_info)) {
-                mrb_si = mrb_grn_scan_info_new(mrb, si);
                 mrb_funcall(mrb, mrb_si, "put_index", 3,
                             mrb_funcall(mrb, mrb_index_info, "index", 0),
                             mrb_funcall(mrb, mrb_index_info, "section_id", 0),
@@ -384,14 +376,12 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
               mrb_index_info = mrb_funcall(mrb, mrb_target, "find_index", 1,
                                            mrb_fixnum_value(c->op));
               if (!mrb_nil_p(mrb_index_info)) {
-                mrb_si = mrb_grn_scan_info_new(mrb, si);
                 mrb_funcall(mrb, mrb_si, "put_index", 3,
                             mrb_funcall(mrb, mrb_index_info, "index", 0),
                             mrb_funcall(mrb, mrb_index_info, "section_id", 0),
                             mrb_fixnum_value(1));
               }
             } else {
-              mrb_si = mrb_grn_scan_info_new(mrb, si);
               mrb_funcall(mrb, mrb_si, "query=", 1, mrb_cptr_value(mrb, *p));
             }
           }
