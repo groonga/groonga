@@ -29,6 +29,7 @@
 #include "../mrb.h"
 #include "mrb_accessor.h"
 #include "mrb_expr.h"
+#include "mrb_converter.h"
 
 static struct mrb_data_type mrb_grn_scan_info_type = {
   "Groonga::ScanInfo",
@@ -358,15 +359,20 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
         sis[i++] = si;
         /* better index resolving framework for functions should be implemented */
         {
-          int sid, k;
-          grn_obj *index, *arg, **p = &arg;
+          int k;
+          grn_obj *arg, **p = &arg;
           for (k = 0; (arg = grn_scan_info_get_arg(ctx, si, k)) ; k++) {
             if (GRN_DB_OBJP(*p)) {
-              if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
+              mrb_value mrb_target;
+              mrb_value mrb_index_info;
+              mrb_target = grn_mrb_value_from_grn_obj(mrb, *p);
+              mrb_index_info = mrb_funcall(mrb, mrb_target, "find_index", 1,
+                                           mrb_fixnum_value(c->op));
+              if (!mrb_nil_p(mrb_index_info)) {
                 mrb_si = mrb_grn_scan_info_new(mrb, si);
                 mrb_funcall(mrb, mrb_si, "put_index", 3,
-                            mrb_cptr_value(mrb, index),
-                            mrb_fixnum_value(sid),
+                            mrb_funcall(mrb, mrb_index_info, "index", 0),
+                            mrb_funcall(mrb, mrb_index_info, "section_id", 0),
                             mrb_fixnum_value(1));
               }
             } else if (GRN_ACCESSORP(*p)) {
