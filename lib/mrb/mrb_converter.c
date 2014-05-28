@@ -37,6 +37,9 @@ grn_mrb_class_from_grn_obj(mrb_state *mrb, grn_obj *object)
   case GRN_COLUMN_FIX_SIZE :
     klass = mrb_class_get_under(mrb, data->module, "FixedSizeColumn");
     break;
+  case GRN_COLUMN_VAR_SIZE :
+    klass = mrb_class_get_under(mrb, data->module, "VariableSizeColumn");
+    break;
   default :
     break;
   }
