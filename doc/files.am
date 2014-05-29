@@ -379,6 +379,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/news/1.0.x.rst \
 	$(top_srcdir)/doc/source/news/1.1.x.rst \
 	$(top_srcdir)/doc/source/news/1.2.x.rst \
+	$(top_srcdir)/doc/source/news/1.3.x.rst \
+	$(top_srcdir)/doc/source/news/2.x.rst \
+	$(top_srcdir)/doc/source/news/3.x.rst \
 	$(top_srcdir)/doc/source/news/senna.rst \
 	$(top_srcdir)/doc/source/rdoc.py \
 	$(top_srcdir)/doc/source/reference.rst \
@@ -907,6 +910,9 @@ source_files_relative_from_doc_dir = \
 	source/news/1.0.x.rst \
 	source/news/1.1.x.rst \
 	source/news/1.2.x.rst \
+	source/news/1.3.x.rst \
+	source/news/2.x.rst \
+	source/news/3.x.rst \
 	source/news/senna.rst \
 	source/rdoc.py \
 	source/reference.rst \
@@ -1205,6 +1211,9 @@ html_files_relative_from_locale_dir = \
 	html/_sources/news/1.0.x.txt \
 	html/_sources/news/1.1.x.txt \
 	html/_sources/news/1.2.x.txt \
+	html/_sources/news/1.3.x.txt \
+	html/_sources/news/2.x.txt \
+	html/_sources/news/3.x.txt \
 	html/_sources/news/senna.txt \
 	html/_sources/reference.txt \
 	html/_sources/reference/api.txt \
@@ -1394,6 +1403,9 @@ html_files_relative_from_locale_dir = \
 	html/news/1.0.x.html \
 	html/news/1.1.x.html \
 	html/news/1.2.x.html \
+	html/news/1.3.x.html \
+	html/news/2.x.html \
+	html/news/3.x.html \
 	html/news/senna.html \
 	html/objects.inv \
 	html/reference.html \
