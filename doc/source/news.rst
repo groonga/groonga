@@ -5,6 +5,74 @@
 News
 ====
 
+.. _release-4-0-2:
+
+
+Release 4.0.2 - 2014/05/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [doc] Updated documentation about
+  :doc:`/reference/executables/groonga-suggest-leaner`.
+* [doc] Added documentation about how to update files.
+  [GitHub#160] [Patch by cosmo0920]
+* [doc] Updated to caplitalized "Groonga" terms in
+  documentation. [GitHub#162][GitHub#163][GitHub#164]
+  [Patch by cosmo0920]
+* Supported Ubuntu 14.04 (Trusty Tahr).
+* Dropped Ubuntu 12.10.
+* Migrated Ubuntu package distribution site to PPA on Launchpad.
+  See :doc:`/install/Ubuntu` for details.
+* Handled all requests that start with ``/d/`` as API requests. You
+  need to put files to directories that don't start with ``/d/`` to
+  serve by Groonga HTTP service.
+* [munin] Supported :doc:`/reference/executables/groonga-httpd`.
+  [Reported by Naoya Murakami]
+* Supported daylight saving time.
+  [#2546]
+* [doc] Added a description about ``--with-mecab`` in
+  :doc:`/install/mac_os_x`.
+* [http] Changed HTTP return code to ``400 Bad Request`` from ``500
+  Internal Server Error`` for syntax error case.
+* [http][admin] Removed jQuery JSON plugin.
+  [GitHub#168] [Patch by Tetsuharu OHZEKI]
+* [http][admin] Enabled strict mode.
+  [GitHub#169] [Patch by Tetsuharu OHZEKI]
+* Exported getting variable APIs to :doc:`/reference/api/plugin`.
+  [GitHub#170] [Patch by Naoya Murakami]
+  * Added ``grn_plugin_proc_get_var()``.
+  * Added ``grn_plugin_proc_get_var_by_offset()``.
+* [experimental] Added :doc:`/reference/commands/tokenizer_list`.
+  [GitHub#171] [Patch by Naoya Murakami]
+* [experimental] Added :doc:`/reference/commands/normalizer_list`.
+  [GitHub#171] [Patch by Naoya Murakami]
+
+Fixes
+^^^^^
+
+* [index] Fixed a bug that wrong max segment. It causes a crash when
+  you use all allocated resource for an index column.
+  [#2438] [Reported by GMO Media, Inc.]
+* [doc] Fixed a typo in :doc:`/install/centos`.
+  [GitHub#166] [Patch by Naoya Murakami]
+* [doc] Fixed the wrong default value of ``drilldown_output_columns`` in
+  :doc:`/reference/commands/select`.
+  [GitHub#167] [Patch by Naoya Murakami]
+* [doc] Added a missing ``\`` escape exception in
+  :doc:`/reference/grn_expr/query_syntax`.
+  [Reported by Yappo]
+
+Thanks
+^^^^^^
+
+* cosmo0920
+* Naoya Murakami
+* Tetsuharu OHZEKI
+* GMO Media, Inc.
+* Yappo
+
 .. _release-4-0-1:
 
 
