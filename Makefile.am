@@ -74,8 +74,8 @@ update-latest-release: misc
 	  packages/rpm/fedora/groonga.spec.in			\
 	  packages/rpm/centos/groonga.spec.in			\
 	  packages/debian/changelog				\
-	  doc/source/install.txt				\
-	  doc/source/install/*.txt				\
+	  doc/source/install.rst				\
+	  doc/source/install/*.rst				\
 	  doc/locale/*/LC_MESSAGES/install.po			\
 	  $(GROONGA_ORG_PATH)/index.html			\
 	  $(GROONGA_ORG_PATH)/ja/index.html
