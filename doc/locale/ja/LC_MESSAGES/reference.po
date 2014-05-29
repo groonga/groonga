@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-07 19:05+0900\n"
+"POT-Creation-Date: 2014-05-29 17:07+0900\n"
 "PO-Revision-Date: 2014-05-07 19:11+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -1825,6 +1825,18 @@ msgstr ""
 msgid ""
 "objectに登録できるユーザデータへのポインタを返します。table, column, proc, "
 "exprのみ使用可能です。"
+msgstr ""
+
+msgid "Plugin"
+msgstr ""
+
+msgid ""
+"Groonga supports plugin. You can create a new plugin with the following API."
+msgstr ""
+
+msgid ""
+"TOOD: Describe about how to create the minimum plugin here or create a "
+"tutorial about it."
 msgstr ""
 
 msgid "Cast"
@@ -4278,6 +4290,50 @@ msgstr ""
 msgid ":doc:`/reference/normalizers`"
 msgstr ""
 
+#, fuzzy
+msgid "``normalizer_list``"
+msgstr "ノーマライザー"
+
+#, fuzzy
+msgid "``normalizer_list`` command lists normalizers in a database."
+msgstr "``column_list`` コマンドはテーブルにあるカラムの一覧を返します。"
+
+#, fuzzy
+msgid "``normalizer_list`` command takes no parameter. ::"
+msgstr "``column_list`` コマンドの引数は1つで必須です::"
+
+msgid "Here is a simple example."
+msgstr "以下は簡単な使用例です。"
+
+msgid "It returns normalizers in a database."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"``normalizer_list`` command returns normalizers. Each normalizers has an "
+"attribute that contains the name. The attribute will be increased in the "
+"feature::"
+msgstr ""
+"``tokenize`` コマンドはトークナイズしたトークンをすべて返します。各トークンは"
+"トークン自身の文字列情報以外にいくつかの属性を持ちます。属性は今後増えていく"
+"可能性があります::"
+
+#, fuzzy
+msgid ""
+"``normalizer`` is an array of normalizer. Normalizer is an object that has "
+"the following attributes."
+msgstr ""
+"``tokens`` はトークンの配列です。トークンは以下の属性を持ったオブジェクトで"
+"す。"
+
+#, fuzzy
+msgid "Normalizer name."
+msgstr "ノーマライザー"
+
+#, fuzzy
+msgid ":doc:`/reference/commands/normalize`"
+msgstr "ノーマライザーの一覧は :doc:`/reference/normalizers` にあります。"
+
 msgid "quit"
 msgstr ""
 
@@ -6579,9 +6635,6 @@ msgstr ""
 "``tokenize`` コマンドには必須の引数と省略可能な引数があります。 "
 "``tokenizer`` と ``string`` が必須の引数で、他の引数はすべて省略可能です。"
 
-msgid "Here is a simple example."
-msgstr "以下は簡単な使用例です。"
-
 msgid ""
 "It has only required parameters. ``tokenizer`` is ``TokenBigram`` and "
 "``string`` is ``\"Fulltext Search\"``. It returns tokens that is generated "
@@ -6752,6 +6805,46 @@ msgstr ""
 
 msgid "The N-th token."
 msgstr "N番目のトークン。"
+
+msgid "``tokenizer_list``"
+msgstr ""
+
+#, fuzzy
+msgid "``tokenizer_list`` command lists tokenizers in a database."
+msgstr "``column_list`` コマンドはテーブルにあるカラムの一覧を返します。"
+
+#, fuzzy
+msgid "``tokenizer_list`` command takes no parameter. ::"
+msgstr "``column_list`` コマンドの引数は1つで必須です::"
+
+msgid "It returns tokenizers in a database."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"``tokenizer_list`` command returns tokenizers. Each tokenizers has an "
+"attribute that contains the name. The attribute will be increased in the "
+"feature::"
+msgstr ""
+"``tokenize`` コマンドはトークナイズしたトークンをすべて返します。各トークンは"
+"トークン自身の文字列情報以外にいくつかの属性を持ちます。属性は今後増えていく"
+"可能性があります::"
+
+#, fuzzy
+msgid ""
+"``tokenizer`` is an array of tokenizer. Tokenizer is an object that has the "
+"following attributes."
+msgstr ""
+"``tokens`` はトークンの配列です。トークンは以下の属性を持ったオブジェクトで"
+"す。"
+
+#, fuzzy
+msgid "Tokenizer name."
+msgstr "その時点のエンコーディング。"
+
+#, fuzzy
+msgid ":doc:`/reference/commands/tokenize`"
+msgstr "トークナイザーの一覧は :doc:`/reference/tokenizers` にあります。"
 
 msgid "``truncate``"
 msgstr ""
@@ -9601,12 +9694,12 @@ msgstr "``\\`` （ ``\\\\`` とエスケープする。）"
 
 msgid ""
 "You can use quote instead of escape special characters except ``\\`` "
-"(backslash). You need to use backslash for escaping backslash like ``\\"
-"\\`` in quote."
+"(backslash). You need to use backslash for escaping backslash like ``\\\\`` "
+"in quote."
 msgstr ""
-"``\\`` （バックスラッシュ）以外はエスケープする代わりにクォートすることもで"
-"きます。クォート中でバックスラッシュをエスケープするときは ``\\\\`` とい"
-"うようにバックスラッシュを使います。"
+"``\\`` （バックスラッシュ）以外はエスケープする代わりにクォートすることもでき"
+"ます。クォート中でバックスラッシュをエスケープするときは ``\\\\`` というよう"
+"にバックスラッシュを使います。"
 
 msgid ""
 "Quote syntax is ``\"...\"`` or ``'...'``. You need escape ``\"`` as ``\\\"`` "

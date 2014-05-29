@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-23 17:04+0900\n"
+"POT-Creation-Date: 2014-05-29 17:07+0900\n"
 "PO-Revision-Date: 2012-07-23 17:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -715,6 +715,28 @@ msgstr "2011-08-10T13:33:28+09:00: web search realtime （検索実行）"
 
 msgid "Groonga can be learned from the submissions by the following command::"
 msgstr "以下のコマンドで上記の検索実行結果から学習します。::"
+
+#, fuzzy
+msgid "How to extract learning data"
+msgstr "学習方法"
+
+msgid ""
+"The learning data is stored into item_DATASET and pair_DATASET tables. By "
+"using select command for such tables, you can all extract learing data."
+msgstr ""
+
+msgid "Here is the query to extract all learning data::"
+msgstr ""
+
+msgid ""
+"Without '--limit -1', you can't get all data. In pair table, the valid value "
+"of freq0, freq1 and freq2 column must be larger than 0."
+msgstr ""
+
+msgid ""
+"Don't execute above query via HTTP request because enourmous number of "
+"records are fetched."
+msgstr ""
 
 msgid "Tutorial"
 msgstr "チュートリアル"

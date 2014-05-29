@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-23 17:04+0900\n"
-"PO-Revision-Date: 2013-12-21 13:54+0900\n"
+"POT-Creation-Date: 2014-05-29 17:07+0900\n"
+"PO-Revision-Date: 2014-05-29 14:11+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -51,7 +51,7 @@ msgstr "開発者の立場で: 不具合報告や開発、ドキュメント"
 msgid "This section describes the details."
 msgstr "これらについてはこのセクションで説明します。"
 
-msgid "groonga開発者向け情報"
+msgid "Groonga開発者向け情報"
 msgstr ""
 
 msgid "Groonga 通信アーキテクチャ"
@@ -173,50 +173,6 @@ msgid ""
 msgstr ""
 
 msgid "twitterでやりとりを完結できるようにします。"
-msgstr ""
-
-msgid "ドキュメント作成"
-msgstr ""
-
-msgid "Sphinxのインストール"
-msgstr ""
-
-msgid ""
-"Groongaのドキュメントは、Sphinxというツールを用いて作成されています。Sphinxは"
-"以下のように導入します。::"
-msgstr ""
-
-msgid "htmlの作成"
-msgstr ""
-
-msgid "以下のコマンドでhtmlが作成されます。::"
-msgstr ""
-
-msgid ""
-"This document is also ditributed in forms of release source archive and "
-"updated time to time. If you want to refer latest documentation in source "
-"form, you can view such files via GitHub repository browser (https://github."
-"com/groonga/groonga/tree/master/doc/source)."
-msgstr ""
-"このドキュメントはソースアーカイブの形式で配布され、随時更新しています。最新"
-"のドキュメントをソース形式で参照したいなら、GitHubのリポジトリブラウザ経由で"
-"閲覧できます。(https://github.com/groonga/groonga/tree/master/doc/source)"
-
-msgid "pdfの作成"
-msgstr ""
-
-msgid ""
-"Groongaのドキュメントは、pdf出力することもできます。rst2pdfと、IPAフォント"
-"(IPA Gothic/IPAexGothic)が必要となります。"
-msgstr ""
-
-msgid "rst2pdfのインストール"
-msgstr ""
-
-msgid "以下のようにしてインストールできます。::"
-msgstr ""
-
-msgid "以下のコマンドでpdfが作成されます。::"
 msgstr ""
 
 msgid "クエリの実現"
@@ -1779,6 +1735,76 @@ msgstr "`${LANGUAGE}` は'ja'などの自分の言語の言語コードに置き
 
 msgid "`Codes for the Representation of Names of Languages`_."
 msgstr "言語名を表記するためのコード"
+
+msgid "Introduction"
+msgstr ""
+
+msgid ""
+"This documentation describes about how to write, generate and manage Groonga "
+"documentation."
+msgstr ""
+
+msgid "Install depended softwares"
+msgstr ""
+
+msgid ""
+"Groonga uses Sphinx_ as documentation tool. Groonga requires newer Sphinx. "
+"So Groonga clones the latest Sphinx from Sphinx repository automatically. "
+"You need only Mercurial_, Docutils_ and Jinja_."
+msgstr ""
+
+msgid "Here are command lines to install needed softwares."
+msgstr ""
+
+msgid "Debian GNU/Linux, Ubuntu::"
+msgstr ""
+
+msgid "CentOS, Fedora::"
+msgstr ""
+
+msgid "OS X::"
+msgstr ""
+
+msgid "Run ``configure`` with ``--enable-document``"
+msgstr ""
+
+msgid ""
+"Groonga disables documentation generation by default. You need to enable it "
+"explicitly by adding ``--enable-document`` option to ``configure``::"
+msgstr ""
+
+msgid "Now, your Groonga build is documentation ready."
+msgstr ""
+
+msgid "Generate HTML"
+msgstr "HTMLファイルを生成"
+
+msgid "You can generate HTML by the following command::"
+msgstr ""
+
+msgid "You can find generated HTML documentation at ``doc/locale/en/html/``."
+msgstr ""
+
+msgid "Update"
+msgstr ""
+
+msgid ""
+"You can find sources of documentation at ``doc/source/``. The sources should "
+"be written in English. See :doc:`i18n` about how to translate documentation."
+msgstr ""
+
+msgid ""
+"You can update the target file when you update the existing documentation "
+"file."
+msgstr ""
+
+msgid ""
+"You need to update file list after you add a new file, change file path and "
+"delete existing file. You can update file list by the following command::"
+msgstr ""
+
+msgid "The command updates ``doc/files.am``."
+msgstr ""
 
 msgid "How to report a bug"
 msgstr "バグレポートの送り方"
