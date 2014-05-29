@@ -24,7 +24,7 @@ Improvements
 * Supported Ubuntu 14.04 (Trusty Tahr).
 * Dropped Ubuntu 12.10.
 * Migrated Ubuntu package distribution site to PPA on Launchpad.
-  See :doc:`/install/Ubuntu` for details.
+  See :doc:`/install/ubuntu` for details.
 * Handled all requests that start with ``/d/`` as API requests. You
   need to put files to directories that don't start with ``/d/`` to
   serve by Groonga HTTP service.
