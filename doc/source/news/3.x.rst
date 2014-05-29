@@ -1,0 +1,536 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+.. _release-3-1-2:
+
+Release 3.1.2 - 2014/01/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [doc] Updated to caplitalized "Groonga" terms in documentation. [Patch by cosmo0920] [GitHub#136, #137, #138, #139, #140, #141, #142, #143, #144, #145, #146, #147, #148, #149, #150, #151]
+* Supported to customize the value of lock timeout. See :doc:`/reference/api/global_configurations` about details.
+  [groonga-dev,02017] [Suggested by yoku]
+* [doc] Added description about the value of lock timeout.
+* Enabled ``GRN_JA_SKIP_SAME_VALUE_PUT`` by default. In the previous releases, the value of
+  this configuration is 'no'. This change affects reducing the size of Groonga database.
+* Supported multiple indexes including a nested index and multiple keywords query.
+  This change improves missing search results isssue when narrowing down by multiple keywords query.
+* Added API to customize normalizer for snippet.
+
+Fixes
+^^^^^
+
+* Fixed not to use index for empty query. This change enables you to search even though empty query.
+  Note that this means that there is performance penalty if many empty records exist.
+  [groonga-dev,02052] [Reported by Naoya Murakami]
+* Fixed the behaviour about return value of "X || Y" and "X && Y" for adjusting to ECMAScript.
+  In "X || Y" case, if either X or Y satisfy the condition, it returns X itself or Y itself instead of 1 or 0.
+* In "X && Y" case, if X and Y satisfy the condition, it returns X itself instead of 1.
+  if X doesn't satisfy the condition, it returns false instead of 0.
+* Fixed to return null when no snippet is found. This change enables you to set the default value
+  of :doc:`/reference/functions/snippet_html`. In such a purpose, use "snippet_html(XXX) || 'default value'".
+
+Thanks
+^^^^^^
+
+* cosmo0920
+* yoku
+* Naoya Murakami
+
+.. _release-3-1-1:
+
+Release 3.1.1 - 2013/12/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [deb] Refined Groonga packages for Debian policy. [groonga-dev,01930]
+  [Suggested by Hideki Yamane]
+* [deb] Dropped Debian 6.0 (squeeze) support.
+* [deb] Dropped Ubuntu 10.04 (lucid) support.
+* Supported :doc:`/reference/functions/geo_in_rectangle` in the whole world.
+* Supported error report when failed to casting invalid value of geo point type.
+* Exported some macros which is used for accessing pseudo column names.
+  [groonga-dev,1999] [Suggested by whombx]
+* [doc] Refined drilldown documentation. [Reported by @Yahppo]
+* Supported :doc:`/reference/functions/between` function which is used for
+  filtering the column value in specific range.
+* [doc] Updated Travis CI environment information. [Patch by cosmo0920]
+* [rpm][fedora] Dropped Fedora 19.
+* [rpm][fedora] Supported Fedora 20.
+* [doc] Updated "Groonga" notation. [Patch by cosmo0920] [GitHub#122, #123, #124, #125, #125, #126, #127, #128, #129, #130, #131, #131, #132, #133, #134]
+
+Fixes
+^^^^^
+
+* [munin] Fixed the wrong port number which is specified for GQTP.
+* [geo_in_circle] Fixed a bug that if you specify "LONGITUDExLATITUDE" as
+  the 3rd argument of :doc:`/reference/functions/geo_in_circle`, Groonga crashes.
+
+Thanks
+^^^^^^
+
+* Hideki Yamane
+* whombx
+* @Yappo
+* cosmo0920
+
+.. _release-3-1-0:
+
+Release 3.1.0 - 2013/11/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [experimental] Supported an option to skip updating for the same value.
+  It is enabled by setting GRN_JA_SKIP_SAME_VALUE_PUT=yes as environment variable.
+* Improved to show tokenizer and original text in empty token warning message.
+  It shows actual token, so it helps you to investigate token related issue.
+* Dropped broken AIO support. [#2054] [Reported by sho MINAGAWA]
+* [windows] Supported build with Visual Studio Express 2008. [#1964 the 21th comment]
+  It is aimed to promote bundling Mroonga with MariaDB in the future.
+
+Fixes
+^^^^^
+
+* Fixed a bug that type of "_value" column is treated as Int32.
+  It causes the case that the value of "_value" column is casted unexpectedly.
+  [Reported by Genki Takiuchi]
+* Fixed to require GLib 2.14.0 or later for benchmark program.
+  The benchmark program is changed to use GRegex which requires GLib 2.14.0 or later.
+  It affects users who compile Groonga with '--enable-benchmark' configuration.
+  [groonga-dev,01890] [Reported by WING]
+* Fixed a memory leak on updating an empty column vector with the same value.
+* Fixed a memory leak on updating index for column vector.
+  It affects the case if you store the value of column which has invalid UTF-8 byte
+  sequence.
+* [plugin][windows] Fixed the issue that register command fails without
+  'lib/groonga/plugins'. [Reported by @yito]
+
+Thanks
+^^^^^^
+
+* sho MINAGAWA
+* Genki Takiuchi
+* WING
+* @yito
+
+.. _release-3-0-9:
+
+Release 3.0.9 - 2013/10/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [doc][httpd] Added documentation about :ref:`groonga-database-auto-create` directive.
+* [httpd] Added :ref:`groonga-cache-limit` directive.
+* [doc] Added description why zlib/lzo compression are disabled by default. [groonga-dev, 01845] [Suggested by Naoya Murakami]  
+* Remove a restriction related to RLIMIT_NOFILE on HTTP server.
+  It enables HTTP server process to handle over 4096 files.
+* [experimental] Added some API to integrate mruby into groonga. [GitHub#109, #110, #111, #112, #113, #114, #115, #116, #117, #118] [Patch by wanabe]
+* [travis] Supported CMake build on Travis-CI.
+* [doc] Added documentation about :doc:`reference/tuning`.
+* [experimental] Added :doc:`ruby_load` command.
+* [httpd] Supported multiple buffered body of POST request.
+  The load command caused timeout in such a case. [GitHub #120] [Patch by Motoi Washida]
+* [gqtp] Supported error message. The body is changed to return
+  raw text insted of double quoted text. This is incompatible changes.
+* [http] Supported "400 Bad request" for invalid argument error.
+* [doc] Added examples for :doc:`/suggest/completion`
+* Supported Ubuntu 13.10 (Saucy Salamander).
+
+Fixes
+^^^^^
+
+* Fixed a bug that it cause SEGV by arithmetic overflow.
+  This problem occurs when the size of indexes exceeds
+  the size of virtual memory. [groonga-dev,01661]
+  [Reported by Naoya Murakami]
+* Fixed needless lock for creating table.
+  This change fixes a performance regression instroduced at Groonga 3.0.5.
+* Fixed a bug that database which has reference column can't be removed.
+  It affects the case that indexed tables/columns and referenced tables
+  are removed at first, then remove operation to index columns and
+  reference columns fails. [Reported by Eito Katagiri] [GitHub Rroonga #13]
+* Fixed a bug that removing database which uses DAT key may remain garbage.
+* [http] Fixed a small memory leak which is caused by shared HTTP header buffer in the same worker thread.
+* [httpd] Fixed a bug that :ref:`groonga-database-auto-create` parameter
+  isn't inherited. It means that these parameters are just ignored in non location blocks.
+* Fixed a bug that status command may returns invalid cache hit rate.
+* Fix a bug that casting to Time may causes overflow issue.
+  It affects the case that assignment of the Time value which indicate over 32bit value.
+
+Thanks
+^^^^^^
+
+* Naoya Murakami
+* wanabe
+* Motoi Washida
+* Eito Katagiri
+
+.. _release-3-0-8:
+
+Release 3.0.8 - 2013/09/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [admin] Improved error handling of select functionality. This change shows error message
+  and hides loading dialog. [Patch by orangain]
+* [admin] Improved to submit search form with the enter key. [Patch by orangain]
+* [admin] Improved to show placeholder in search form.
+  This change shows usage examples. [Patch by orangain]
+* [httpd] Supported :ref:`groonga-query-log-path` directive
+* [doc] Updated :doc:`/reference/commands/select` documentation about the number of
+  hits in select response.
+* Improved to ignore an empty token which is generated by continuous spaces from tokenizer.
+  [groonga-dev,01729] [Suggested by Naoya Murakami]
+* [token delimit] Improved to treat continuous spaces as a space.
+  The tokenizer regards 2 or more spaces are valid input.
+* [doc] Added note about indexes for each column vs indexes for multiple column.
+* [doc] Added language annotation to source label. [groonga-dev,01751] [Suggested by Kazuhiro Isobe]
+* Supported :ref:`cascade-delete` to referenced records. In previous version,
+  You got an error for the operation.
+* [doc] Updated documentation location in README. [groonga-dev,01800] [Reported by Kazuhiro Isobe]
+* [experimental] Added :doc:`/reference/commands/ruby_eval` command.
+* [doc] Added note about GQTP and HTTP for server use. [groonga-dev,01810] [Reported by Kazuhiro Isobe]
+
+Fixes
+^^^^^
+
+* [admin] Fixed a bug that add value button of COLUMN_VECTOR does not work.
+
+Thanks
+^^^^^^
+
+* orangain
+* Naoya Murakami
+* Kazuhiro Isobe
+
+.. _release-3-0-7:
+
+Release 3.0.7 - 2013/08/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [doc] Added API documentation. [groonga-dev,01593]
+  [GitHub#79,#80,#81,#82,#83,#84,#85,#86,#87,#88,#89,#90,#91,#92,#93,#95,#96,#97,#98,#99,#100]
+  [Patch by whombx]
+* [table_remove] Improved not to remove patricia trie table or hash table
+  which is still referenced. This change avoids that referenced table is removed accidentally.
+* Improved to just ignore too long token (4096 bytes or more).
+  This change affects when it is registered. In the previous version, it is treated as an
+  error instead of a warning. [groonga-dev,01571] [Suggested by Naoya Murakami]
+* Improved to show actual discarded posting term in log message.
+  [groonga-dev,01621] [Reported by Naoya Murakami]
+* [httpd] Supported loading data using POST method. [GitHub#101]
+  [Patch by Motoi Washida]
+* [httpd] Supported groonga log as ``groonga_log_path`` directive.
+* [httpd] Supported groonga log level as ``groonga_log_level`` directive.
+* [httpd] Supported customizing cache limit as ``groonga_cache_limit`` directive.
+
+Fixes
+^^^^^
+
+* Fixed a bug that error in expression may cause stack overflow.
+  This change avoids that groonga crashes suddenly as a result of error accumlation.
+* Fixed a crash bug that offline index construction for vector column which has
+  orphan reference causes.
+* Fixed a bug that groonga doesn't exit on error while daemon mode starts.
+  For example, ``groonga -d /tmp/non-existence.db`` reproduce this bug.
+* [dump] Fixed a bug that wrong table type is dumped.
+  This bug occurs when table type is TABLE_PAT_KEY and key is reference type.
+* Fixed a bug that the default ``--cache-limit`` value is 0.
+  The default value is changed to '100'.
+* Fixed a memory leak when :doc:`/reference/functions/sub_filter` is used.
+* [doc] Fixed description of defrag command. [Reported by @naoina]
+* [doc] Fixed description about the way to contribute. [GitHub#77]
+  [Patch by Masafumi Yokoyama]
+* [plugin] Fixed a crash bug on multiple DB open case.
+  This bug affects the case that multiple plugin is used and the same database is opened from
+  multiple process. [groonga-dev,01596] [Reported by Naoya Murakami]
+* Fixed a bug that nested match operation after ``AND`` operator doesn't work.
+  The ``select ... --filter '... && nested.column @ "keyword"'`` query reproduces this bug.
+  [groonga-dev,01599] [Reported by Motoi Washida]
+* [doc] Fixed a typo about documentation of special characters.
+  [Reported by Genki Takiuchi]
+* Fixed a typo in error message when invalid character is given.
+  [Reported by YOSHIDA Mitsuo]
+
+Thanks
+^^^^^^
+
+* whombx
+* @naoina
+* Masafumi Yokoyama
+* Motoi Washida
+* Genki Takiuchi
+* YOSHIDA Mitsuo
+
+.. _release-3-0-6:
+
+Release 3.0.6 - 2013/07/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [doc] Added documentation about parameter of :doc:`/reference/functions/sub_filter`
+  function.
+* [suggest] Supported 0MQ 3.x. [GitHub#63] [Reported by Naoya Inada]
+* Added availability check for NetBSD about ``pthread_{mutex,cond}attr_setpshared()``
+  [Reported by OBATA Akio]
+* Supported backslash escape in query syntax. [groonga-dev,01520]
+  [Reported by Kouhei Tanabe]
+* [rpm][fedora] Supported Fedora 19.
+* [rpm][fedora] Dropped Fedora 18 support.
+* [httpd] Updated bundled nginx version to 1.4.2.
+
+Fixes
+^^^^^
+
+* Fixed a crash bug when specific internal function (``grn_obj_path()``) is called
+  for built-in proc function such as ``select``. [Reported by Genki Takiuchi]
+
+Thanks
+^^^^^^
+
+* Naoya Inada
+* OBATA Akio
+* Kouhei Tanabe
+* Genki Takiuchi
+
+.. _release-3-0-5:
+
+Release 3.0.5 - 2013/06/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [doc] Added summary about ``match_columns`` and ``query_string`` parameters in ``query()``.
+* Added subrecord information to table inspection.
+* Supported single quoted string literal in ``output_columns`` expression.
+  This means that "XXX, '...'" expression is supported.
+* [doc] Added notification about root privileges and well known port
+  when starting groonga server. [Reported by Kosuke Asami]
+* [experimental] Added :doc:`/reference/functions/html_untag` function.
+
+Fixes
+^^^^^
+
+* Fixed a crash bug of mroonga which is caused by missing lock for table creation.
+  [Reported by Y.Kentaro]
+* Fixed a lot of compilation warnings by clang and gcc.
+* Fixed a bug that ``sub_filter(...)`` is ignored if you use "XXX && sub_filter(...)"
+  expression.
+* Fixed a bug that wrong tag name is used in XML output.
+  This bug affects the case if you use "REFERENCE_VECTOR_COLUMN._key" expression
+  for ``output_columns``. Reference column isn't contained in XML ouput.
+* [doc] Fixed wrong arguments in ``sub_filter()`` documentation.
+* [deb] Fixed a bug that status action returns wrong exit code
+  when services are stopped. [GitHub#62] [Patch by @orangain]
+* Fixed a bug that the value of arithmetic operation is broken.
+  This bug affects the case if you assign calculated value to
+  ``_score`` pseudo column for example.
+
+Thanks
+^^^^^^
+
+* Y.Kentaro
+* Kosuke Asami
+* @orangain
+
+.. _release-3-0-4:
+
+Release 3.0.4 - 2013/05/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [tokenizer] Improved to show log message when normalized string is not given.
+* Supported ``_key`` as an argument of ``geo_in_circle``. [Reported by @ceekz]
+* Supported to cast vector elements when groonga is used as a library.
+* Dropped Ubuntu 11.10 (Oneiric Ocelot) support.
+* Supported multiple index section in ``match_columns``.
+* Supported ``tokenize`` command.
+* Supported to show system error message when ``mmap()`` is failed.
+* [doc][windows] Simplified build procedures by "cmake --build".
+* Improved to restrict max execution time to prevent hanging service script.
+  [GitHub#61] [Reported by firewood]
+* Supported to evaluate vector as boolean.
+  By this change, empty vector is evaluated as true.
+* Improved not to log too many needless log messages.
+  Too many log messages are truncated as "(N same messages are truncated)".
+* [munin][groonga_n_records] Added ``exclude_tables`` option.
+  It supports to exclude specific tables from monitoring results.
+* Supported Debian 8.0 (jessie).
+* Improved database portability by eliminating directory path of
+  system plugins.
+
+Fixes
+^^^^^
+
+* [tokenizer] Fixed a memory leak on error.
+* Fixed a bug that empty string for similar search causes SEGV.
+  [groonga-dev,01346] [Reported by Nakai Kanako]
+* Fixed a memory leak when "VECTOR_COLUMN != xxx", "VECTOR_COLUMN && xxx"
+  expressions are used.
+* Fixed a bug that SIGSTOP and SIGCONT stops groonga server.
+* Fixed a crash bug when normalizer returns NULL as normalized string.
+  [Reported by Y.Kentaro]
+* Fixed a bug that daemonize process doesn't work on OS X.
+  [groonga-dev,01440] [Reported by Masahiro KONISHI]
+* [deb] Fixed a bug that HTTP/GQTP process is excuted as root user.
+
+Thanks
+^^^^^^
+
+* @ceekz
+* Nakai Kanako
+* firewood
+* Y.Kentaro
+* Masahiro KONISHI
+* @orangain
+
+.. _release-3-0-3:
+
+Release 3.0.3 - 2013/04/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [suggest] Supported to learn with the value of customized weight
+  by using ``configuration.weight`` configuration.
+* Improved performance of geo-location search. For example,
+  ``geo_in_rectangle`` is executed about 10% faster than ever.
+* [rpm][centos] Added ``additional_configure_options`` parameter
+  for building customized groonga without changing spec file.
+* Supported KyTea 0.4.5.
+* Supported vector index access by "vector[N]" syntax.
+* Added ``--default-tokenizer`` option to :doc:`/reference/executables/groonga-suggest-create-dataset` command.
+* Added ``--help`` option to :doc:`/reference/executables/groonga-suggest-create-dataset` command.
+* Supported Ubuntu 13.04 Raring Ringtail.
+
+.. _release-3-0-2:
+
+Release 3.0.2 - 2013/03/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Supported two or more indexes for a table key.
+  This change affects to eliminate potential crash case when loading a new key
+  to two or more indexed key.
+* Supported binary operations such as ``X + Y``, ``X - Y``, ``X * Y``, ``X / Y``,
+  ``X % Y``, ``X >> Y``, ``X << Y``, ``X | Y``, ``X ^ Y``, ``X & Y`` and ``X >>> Y``
+  for Int8, UInt8, Int16, UInt16 and UInt64.
+* Added english documentation for ``load`` command.
+* Supported binary assign operations such as ``X += Y``, ``X -= Y``, ``X *= Y``,
+  ``X /= Y``, ``X %= Y``, ``X <<= Y``, ``X >>= Y``, ``X >>>= Y``, ``X &= Y``,
+  ``X |= Y`` and ``X ^= Y`` for Int8, UInt8, Int16, UInt16 and UInt64.
+* Supported unary operations such as ``-X`` for Int8, UInt8, Int16, UInt16 and UInt64.
+* Supported complex string concatination in ``--output_columns``.
+  For example, you can use a query such as ``--output_columns '"<" + title + ">"'``.
+* Added the information of the repository of groonga to development page.
+* Added ``sub_filter()`` function.
+* Supported query expander in ``query()`` function.
+  This change supports the query such as
+  ``query("MATCH_COLUMNS", "QUERY", "QueryExpanderTSV")``.
+* Renamed ``--query_expansion`` to ``--query_expander``.
+  ``--query_expansion`` is regarded as deprecated.
+
+Fixes
+^^^^^
+
+* Fixed a bug that ``snippet_html(XXX), XXX`` fails with "stack error".
+  This bug affects a query such as ``--output_columns 'snippet_html(title), content'``.
+  [Groonga-talk (no subject)] [Reported by Hendro Wibowo]
+* Fixed a typo about install documentation. [Reported by hino]
+* Fixed a bug that Travis-CI setup script fails.
+  [groonga-dev,01248] [Reported by ongaeshi]
+* Fixed a memory leak.
+  This bug affects the case which satisfy following three conditions.
+  Column is a reference column, Column is a vector column and
+  Reference key size is 25 byte or lager.
+* Fixed a crash bug by ``--output_columns _score.GARBAGE``.
+  This affects the case if GARBAGE does not exist.
+
+Thanks
+^^^^^^
+
+* Hendro Wibowo
+* hino
+* ongaeshi
+
+.. _release-3-0-1:
+
+Release 3.0.1 - 2013/02/28
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Supported to set Bool to reference column when loading dataset by load command.
+* Supported AND operation for nested index.
+  In this change, the expression "COLUMN1.COLUMN2 >= 1 && COLUMN1.COLUMN2 <=3" works.
+  Note that the order is important for this expression.
+  "1 <= COLUMN1.COLUMN2" is not supported yet. It is regarded as "COLUMN1.COLUMN2 <= 1".
+* Supported sorting not indexed entries.
+  This change affects the case such as ``--sortby geo_distance(...)`` drops not indexed
+  entries.
+* Supported range search for reference column by index.
+  This change enable you to search range by index which is TABLE_PAT_KEY or TABLE_DAT_KEY
+  based nested index of _key.
+* [rpm][centos] Supported MeCab 0.995.
+* [doc] Added missing documentation of commands such as ``column_rename`` or ``truncate``.
+
+Fixes
+^^^^^
+
+* Fixed a bug that ``grn_index_cursor_next()`` returns NULL unexpectedly.
+  It causes that invalid index entry is returned after deleting entries.
+  This bug affects mroonga in storage mode. [groonga-dev,01192] [Reported by b senboku]
+* Fixed a crash bug that ``geo_distance()`` sort by index.
+  This bug occurs by wrong the number of found records.
+* [httpd] Enabled default owner/group of database setting as groonga/groonga.
+
+Thanks
+^^^^^^
+
+* b senboku
+
+
+.. _release-3-0-0:
+
+Release 3.0.0 - 2013/02/09
+--------------------------
+
+* Bump version to 3.0.0!
+
+Fixes
+^^^^^
+
+* [deb] Fixed to install missing not EUC-JP, but UTF-8 encoding dictionary
+  when ``groonga-tokenizer-mecab`` package is installed.
+* Fixed a bug that int64 literal is truncated to uint32 value.
+  If you use string literal for int64, this bug does not affects.
+* [rpm][centos] Fixed a bug that stopping ``groonga-server-http`` service
+  by init script is failed. [GitHub#53] [Patch by IWAI, Masaharu]
+
+Thanks
+^^^^^^
+
+* IWAI, Masaharu

@@ -1,0 +1,617 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+.. _release-2-1-2:
+
+Release 2.1.2 - 2013/01/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Supported multiple ``query()`` in a select command.
+  For example, you can specify the keyword which has different weight such as
+  'query("column * weight1", keyword1) || query("column * weight2", keyword2) || ...'
+  for ``--filter``.
+* Dropped experimental view feature.
+* Added ``grn_logger_reopen`` API for custom logger.
+  Note that ``grn_logger_info`` API is deprecated, use ``grn_logger`` API instead.
+* Added ``grn_default_logger_set_path()`` and ``grn_default_logger_get_path()`` API.
+  Note that global ``grn_log_path`` variable was removed. Use above API.
+* Added ``grn_default_query_logger_set_path()`` and
+  ``grn_default_query_logger_get_path()`` API.
+  Note that global ``grn_qlog_path`` variable was removed. Use above API.
+* Added translated documentation about :doc:`/reference/tables` and :doc:`/reference/normalizers`.
+* [deb][rpm] Improved to install with missing dictionary when
+  ``groonga-tokenizer-mecab`` package is installed.
+* Supported :ref:`nested-index-search` with range search.
+  For example, you can specify 'column1.column2...columnN <= "1988-01-04 00:00:00"'
+  in ``--filter``.
+* [rpm][fedora] Supported Fedora 18.
+* [rpm][fedora] Dropped Fedora 17 support.
+* [doc] Added documentation for :doc:`/server/package`.
+* [doc] Added documentation for :doc:`/reference/functions/query`.
+
+Fixes
+^^^^^
+
+* Fixed not to report an error even though MeCab tokenizer shared object
+  isn't found. [groonga-dev,01174] [Reported by wing]
+* [httpd] Fixed not to fail configure on CentOS 5.4 by setting
+  ``SED`` variable explicitly.
+* Fixed a crash bug that not initialized vector column value is accessed
+  by select command.
+
+Thanks
+^^^^^^
+
+* wing
+
+.. _release-2-1-1:
+
+Release 2.1.1 - 2012/12/29
+--------------------------
+
+This is bug fix release of 2.1.0. All of 2.1.0 users should use 2.1.1
+instead.
+
+Fixes
+^^^^^
+
+* Fixed a bug that ``KEY_NORMALIZE`` information in database that is
+  created by groonga 2.0.8 or ealier is dropped.
+
+.. _release-2-1-0:
+
+Release 2.1.0 - 2012/12/29
+--------------------------
+
+.. Caution::
+
+   Use 2.1.1 instead of 2.1.0. 2.1.0 has a serious bug related
+   ``KEY_NORMALIZE``.
+
+.. Caution::
+
+   This release has backward incompatible changes against ``table_list`` and
+   ``column_list`` commands. If you use own program which depends on the output
+   results above commands, you need to support null instead of "null" string.
+
+   This release has supported ``--normalizer`` option, but there is
+   side effect for this feature. If you open old version of groonga
+   database at least once, you can not open its database by old
+   version of groonga.
+
+   There is also another backward incompatible change agaist plugin API for
+   tokenizer. The argument of ``grn_tokenizer_query_open`` API has changed.
+   This API change affects developer of tokenizer plugin.
+
+Improvements
+^^^^^^^^^^^^
+
+* [doc] Added documentation about :ref:`nested-index-search`.
+* Supported the expression as :doc:`/reference/functions/snippet_html` arguments.
+  This change enables you to use ``snippet_html("STRING" + "STRING")`` for example.
+  You can specify column name or literal for "STRING". [Reported by Tomoatsu Shimada]
+* Supported to create own normalizer as a plugin.
+* Moved ``groonga-query-log-analyzer`` as
+  `groonga-query-log <http://rubygems.org/gems/groonga-query-log>`_ RubyGems.
+  It enables you to analyze query logs without installing groonga package.
+* Supported ``--normalizer`` option for :doc:`/reference/commands/table_create` command.
+  This change enables you to specify normalizer plugin.
+* Changed "null" string to null value as meaning for "No Object".
+  This is backward incompatible change and affects output results of introspection
+  related commands such as ``table_list`` and ``column_list``.
+* Added a flag which controls behavior about normalizer as the last argument
+  of ``grn_tokenizer_query_open`` API.
+* Supported continuous line in :ref:`command-list-with-continuous-line` list.
+* Improved to support not only no key table, but also hash table, patricia trie
+  and double array trie for :ref:`nested-index-search`.
+
+Fixes
+^^^^^
+
+* [windows] Added missing ``O_BINARY`` flag to open file correctly.
+  This change fixes the infinite loop problem about groonga HTTP server.
+  [GitHub#47] [Patch by Shimomura Tatsuya]
+* Fixed a bug that ``--default-match-escalation-threshold`` doesn't accept
+  negative value to disable functionality.
+  This fix enable you to disable search escalation.
+  see :option:`--default-match-escalation-threshold` about details.
+* Fixed a bug that ``_score`` after "*" is ignored in ``--output_columns``.
+
+Thanks
+^^^^^^
+
+* Tomoatsu Shimada
+* Shimomura Tatsuya
+
+.. _release-2-0-9:
+
+Release 2.0.9 - 2012/11/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Supported to calculate the value of distance accross border
+  in ``geo_distance`` with ``rectangle`` as approximate type. [#1534]
+* [doc] Added the :doc:`/spec/gqtp` specification.
+* Improved to ignore non critical ``getaddrinfo()`` error which groonga command emits on startup.
+  This change does not affects nomal use of groonga because it just checked whether default hostname
+  is resolved in previous version.
+* [experimental] Added ``snippet_html()`` function which extract keyword and surrounding text.
+  See :doc:`/reference/functions/snippet_html` about details.
+* Supported to report error reason when error occured during reading table record.
+* Supported to search with keyword by nested index notation ( concatinate multiple 
+  indexed column name with dot character ) if there is a relationship between
+  multiple table with index.
+* Supported to log "[tokenizer][mecab]" tag when using ``TokenMecab`` tokenizer.
+* Supported to log "[tokenizer][kytea]" tag when using ``TokenKyTea`` tokenizer.
+* Improved to use separated array for command error location as output results.
+  This change is incompatibility change, but does not affects existing program.
+* Added documentation for :doc:`/reference/command/output_format`.
+* Added documentation for :doc:`/reference/command/return_code` of output results.
+* Supported range search by using index.
+
+Fixes
+^^^^^
+
+* Fixed to use network byte order for status code of :ref:`gqtp-header-spec` to follow
+  the normal network protocol convention.
+  This change affects that groonga <= 2.0.8 client which connects to groonga server 2.0.9
+  or later can not show status code properly when command failed.
+* Fixed a bug that UTF-8 normalization computes wrong offset which affects to return value
+  of ``snippet_html()``. This change not to insert tag of snippet into invalid location.
+  [#1531] [Reported by Tomoatsu Shimada]
+* [windows] Fixed over allocated memory access which cause segmentation fault
+  on startup by groonga command. [#1532] [Patch by Akio Tajima]
+* [windows] Fixed a bug that data stored in column couldn't be read when total amount of data
+  stored in column exceeds 128MB. [groonga-dev,01088] [Reported by ongaeshi]
+* Fixed a bug that searching with indexed column for ``Int*`` and ``UInt*`` 
+  except ``Int32/Uint32`` returns invalid results.
+* Fixed a bug that deleting record can be found.
+* Fixed a bug that latin1 and koi8r normalizations could not process all string data
+  if given string contains NULL character on the way.
+* Fixed to return the correct default value of type when no data stored in column is
+  referenced by ``select`` command.
+* Fixed to exclude the value of vector column metadata in :ref:`offline-index-construction`.
+  This change not to contain such a metadata as search results.
+
+Thanks
+^^^^^^
+
+* Tomoatsu Shimada
+* Akio Tajima
+* ongaeshi
+
+
+.. _release-2-0-8:
+
+Release 2.0.8 - 2012/10/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [rpm] Improved the description of server-http and httpd packages.
+  [Suggested by Daiki Ueno]
+* Supported custom query expansion by plugin.
+* [experimental] Added query expander ``QueryExpanderTSV`` plugin.
+* Supported Ubuntu 12.10 Quantal Quetzal
+* [experimental] Supported function call in ``output_columns``.
+* [doc][rpm] Add missing description about installing MeCab dictionary.
+  [Reported by serihiro]
+
+Fixes
+^^^^^
+
+* [rpm] Fixed to remove needless "Requires" from spec file.
+  [Reported by Daiki Ueno]
+* [rpm] Fixed inaccurate description about license of groonga-server-gqtp.
+* [admin] Fixed record edit button shows wrong record. [GitHub#34]
+  [Reported by firewood]
+* [deb] Fixed to remove needless dependency to pcre.
+* [deb] Fixed to bundle missing table plugin.
+
+Thanks
+^^^^^^
+
+* Daiki Ueno
+* firewood
+* serihiro
+
+.. _release-2-0-7:
+
+Release 2.0.7 - 2012/09/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [doc] Added more descriptions about ``--query_flags``.
+* [doc][httpd] Added sample configuration for gzip compression.
+* [httpd][rpm][centos] Added groonga-httpd init script.
+* [rpm] Added logrotate config files.
+* Supported creating database during install process.
+* [httpd] Supported ``groonga_database_auto_create`` directive.
+* Supported score respected merge by set operation. [GitHub#31]
+* [httpd] Supported ``load`` command by POST.
+* Added error check for creating temporary result set. [GitHub#33]
+* Added GQTP server package.
+* Added ``max()`` function.
+* Added ``min()`` function.
+
+Fixes
+^^^^^
+
+* Fixed to set domain to vector elements to ``load`` command. [GitHub#30]
+* [httpd] Fixed missing NULL initialization. [Reported by @Kiske]
+* [httpd] Fixed missing size about ``content_type_len``.
+* [rpm][fedora] Fixed to use ``--bind-address`` in ``groonga.service``.
+* Fixed crash by invalid argument filter. [GitHub#32]
+* Fixed a bug that Time -> Time cast breaks value.
+* Fixed a bug that Time -> Float cast breaks value.
+
+Thanks
+^^^^^^
+
+* @Kiske
+
+.. _release-2-0-6:
+
+Release 2.0.6 - 2012/08/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [deb][rpm] Added ``groonga-server-common`` meta package. [#1451]
+* Supported ``--query_flags`` option to ``select`` command.
+* Supported PCRE auto detection for groonga-httpd.
+* [doc] Added information about Twitter and Facebook.
+* Improved to show error message from MeCab on ``mecab_new2()`` failure.
+* [doc] Added details about groonga for server use.
+* Improved to log details about ``vm.overcommit_memory``.
+* Supported custom selector definition.
+* Supported ``--working-directory`` option for groonga.
+* Supported ``dump`` command for groonga-httpd.
+* Improved to show not found target name for ``clearlock`` command.
+* Improved error messages about ``get`` command implemented by table plugin.
+* [rpm][centos] Supported MeCab 0.994. [#1455]
+  [Suggested by IWAI, Masaharu]
+* Supported changing default logger's max level before ``grn_init()``.
+* Added ``all_records()`` function which copies all record IDs to the result table.
+* Supported '-WORD' in ``--query`` of the select command.
+
+Fixes
+^^^^^
+
+* [doc] Fixed the execution examples. [#1428]
+  [Reported by IWAI, Masaharu]
+* [deb] Fixed not to force groonga user/group by init script for groonga-httpd.
+* [rpm][fedora] Fixed missing stop parameter for groonga-httpd service.
+* Fixed a bug that the last 1 byte for cache key is ignored by ``select`` command.
+* Fixed detection of the number of arguments in the complex function call.
+* Fixed to suppress a warning by Clang.
+* Fixed backward incompatibility about missing ``add`` command related error
+  by executing ``clearlock`` command.
+* [windows] Fixed database open failure which is related to binary data.
+  [Reported by @yito]
+
+Thanks
+^^^^^^
+
+* IWAI, Masaharu
+* @yito
+
+
+.. _release-2-0-5:
+
+Release 2.0.5 - 2012/07/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Supported calculating the value of distance with "rect" or "rectangle"
+  argument in southern hemisphere. [#1418] [#1419] [#1420] [#1421]
+* [doc] Added some literals description in script syntax.
+* Supported other directory build for groonga-suggest and groonga-httpd.
+* Supported ";" as a query parameter separator. [#1406]
+  [Suggested by IWAI, Masaharu]
+* [doc] Added descriptions about script syntax.
+* Supported near search by ``'column *N "word1 word2 ..."'`` in script syntax.
+  [#1423]
+* [doc] Added a description about limitation of suffix search.
+* Supported near search for ``_key`` pseudo column. [GitHub#19]
+* [doc] Added basic ECMAScript related syntaxes.
+* [doc] Updated a description about :doc:`/reference/functions/geo_distance`.
+* [rpm][fedora] Supported Fedora 17.
+* [rpm][fedora] Dropped Fedora 16 support.
+* Supported logical not ``"!"`` operator. [GitHub#22]
+* [httpd] Supported per location groonga database.
+* Improved to return error messages while load command is processing.
+* Improved to exit load command when an uncontinuable error occurred.
+* Improved to stop load command for invalid --columns value.
+* Supported to open locked database. [GitHub#21]
+
+Fixes
+^^^^^
+
+* Fixed a build problem about groonga-httpd on Mac OS X.
+  [Reported by SHIMADA Koji]
+* Fixed not to use installed groonga's header files for groonga-httpd.
+* Fixed a build problem about groonga on Mac OS X Lion.
+* [doc] Fixed a description of :doc:`/reference/commands/table_remove` command.
+* Fixed infinite loop problem for not implemented operator without index.
+  [GitHub#20]
+* Fixed a wrong error code which causes memory leaks.
+* Fixed a wrong error code which collapse ja columns.
+* [admin] Fixed to escape error message.
+* Fixed to ignore unloadable objects which causes database incompatible.
+  [#1429] [Reported by IWAI, Masaharu]
+
+Thanks
+^^^^^^
+
+* SHIMADA Koji
+* IWAI, Masaharu
+
+
+.. _release-2-0-4:
+
+Release 2.0.4 - 2012/06/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Supported only KyTea 0.4.2.
+* Dropped KyTea 0.4.1 or ealier support.
+* [experimental] Supported nginx based groonga HTTP interface.
+* Supported calculating the value of distance with "rect" or "rectangle"
+  argument in northern hemisphere. [#1386] [#1387] [#1388] [#1389]
+* [doc] Added a document about :doc:`/development/travis-ci` integration.
+* [doc] Added descriptions about full text search and phrase search.
+  See :ref:`full-text-search-condition` and :ref:`phrase-search-condition`
+  about detail.
+* [doc] Added descriptions about comparison conditions.
+  See :ref:`conditional-expression` about detail.
+* [doc] Added examples for :doc:`/reference/grn_expr/query_syntax`.
+* [doc] Added descriptions about :ref:`combined-expression`.
+* [doc] Added descriptions about :ref:`prefix-search-condition` and
+  :ref:`suffix-search-condition`.
+* Supported suffix search by index.
+* [doc] Added a document about :doc:`/reference/grn_expr`.
+* [munin] Supported JSON library installed by RubyGems [GitHub#17]
+  [Patch by IWAI, Masaharu]
+* [doc] Updated the description of how to specify a value as Time in tutorial.
+  [#1405] [Reported by IWAI, Masaharu]
+* [rpm] Removed groonga-tokenizer-mecab dependency from groonga package.
+  [GitHub#18] [Patch by IWAI, Masaharu]
+
+Fixes
+^^^^^
+
+* Fixed a problem that display of command prompt changes to not intended state
+  by using batch mode on Mac OS X.
+  [Reported by @soundkitchen]
+* Fixed not to terminate after an invalid command in client mode. [#1305]
+* Fixed a problem that '=R' is treated as 'OR' in ``--query`` syntax. [#1393]
+
+Thanks
+^^^^^^
+
+* @soundkitchen
+* IWAI, Masaharu
+
+.. _release-2-0-3:
+
+Release 2.0.3 - 2012/05/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [doc] Added about release procedure.
+* Removed restriction that the max number of opened files is 4096.
+* [experimental] Added table plugin.
+* [doc] Added more descriptions about :doc:`/reference/commands/select` command.
+* [doc] Made execution example copy & paste friendly.
+* [windows] Supported build with Visual Studio 2010 Express and
+  CMake. See :doc:`/install/windows` about details.
+* [doc][solaris] Added a document about building on Solaris.
+  See :doc:`/install/solaris` about details.
+* [doc][yum] Updated epel-release package version.
+  [Reported by IWAI, Masaharu]
+* [doc][cenos6] Disabled Repoforge for Munin for CentOS 6.
+  [Reported by IWAI, Masaharu]
+* Started distributing source archive in zip format.
+* [munin] groonga_dist Munin plugin supported an object that has
+  separated files.
+* Started using Travis CI.
+* [yum] Changed RPM package name that provides yum repository from
+  groonga-repository to groonga-release to follow RPM package name
+  convension such as centos-release and fedora-release.
+
+Fixes
+^^^^^
+
+* [doc] Fixed a command to update yum repository.
+  [Suggested by IWAI, Masaharu]
+* [deb] Fixed a bug that log_repoen command in logrotate uses wrong protocol.
+* Fixed broken ERROR tag in XML response.
+  [#1363] [GitHub#13] [Patch by IWAI, Masaharu]
+* Fixed a bug that grn_ctx isn't fully cleared by grn_ctx_fin().
+* Fixed a bug that ``&!`` set operation doesn't work with grouped
+  expression. [#1372]
+* Fixed a bug that a record key registered via index source isn't normalized.
+
+Thanks
+^^^^^^
+
+* IWAI, Masaharu
+
+.. _release-2-0-2:
+
+Release 2.0.2 - 2012/04/29
+--------------------------
+
+.. caution::
+
+   The package sign key is changed since this release. Import the new
+   package sign key before updating groogna packages.
+
+   Debian/Ubuntu::
+
+     % sudo apt-get update
+     % sudo apt-get -y --allow-unauthenticated install groonga-keyring
+
+   CentOS/Fedora::
+
+     % sudo yum makecache
+     % sudo yum install --nogpgcheck -y groonga-repository
+
+Improvements
+^^^^^^^^^^^^
+
+* [pkg-config] Removed needless MessagePack dependency.
+* [rpm][fedora] Supported libedit. [#1325] [Suggested by IWAI, Masaharu]
+* [rpm] Supported zlib and LZO. [#1324] [Patch by IWAI, Masaharu]
+* [groonga] Improved daemoinzed timing. Groonga server daemonizes
+  after socket is listened. It means that groonga server is ready when
+  groonga server is daemonized. [#1326]
+* [admin] Supported suggest in groonga administration page.
+* [dump] Ignored MeCab tokenizer load error.
+* Supported CMake.
+* [load] Supported error report when a column value can't be set.
+* Supported similar search. ``select --filter "column *S 'TEXT'"``
+  is the similar search syntax. [#1342]
+* [apt][yum] Changed package sign key.
+* Supported Ubuntu Precise Pangolin.
+* [apt] Added a new groonga-keyring deb package for the groonga's
+  package sign key.
+
+Fixes
+^^^^^
+
+* [deb][rpm] Used ``--bind-address`` option instead of deprecated
+  ``--address`` option.
+  [#1320] [Patch by IWAI, Masaharu]
+* [deb] Renamed groonga-server package's configuration file to
+  /etc/default/groonga-server from /etc/default/groonga.
+* [rpm][fedora] Fixed upgrade condition in %post server.
+  [GitHub#11] [Patch by Daiki Ueno]
+* [rpm] Removed needless change logs. [#1328] [Patch by IWAI, Masaharu]
+* [deb][rpm] Added missing curl dependency.
+  [GitHub#12] [Patch by IWAI, Masaharu]
+* [rpm] Removed needleess ruby package dependency from groonga package.
+  [#1330] [Suggested by IWAI, Masaharu]
+* [deb] Added missing default values to groonga-server's
+  configuration file.
+* Fixed a crash bug that is caused when searching with updaging very large
+  inverted index. [#1329]
+* Fixed a bug that strings are compared as characters instead of byte string.
+  [#1340] [Reported by Shinya Kawaji]
+
+Thanks
+^^^^^^
+
+* IWAI, Masaharu
+* Daiki Ueno
+* Shinya Kawaji
+
+.. _release-2-0-1:
+
+Release 2.0.1 - 2012/03/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Supported build in other directory.
+  [#1298] [Reported by Kazuhiko]
+* [solaris] Supported build on Solaris 11. [Reported by Kazuhiko]
+* [test] Supported functional test.
+* [test] Required ``--with-ruby19`` configure option for testing by Ruby.
+* [dump] Supported records dump for a table that has default tokenizer.
+* [suggest] Added ``similar_search`` option.
+* [groonga] Removed deprecated options, ``-a``, ``--address`` and
+  ``--admin-html-path``.
+* Added more return value checks. [GitHub#9] [Reported by Markus Elfring]
+* [dat] Supported term extract operation.
+* Added `logos <http://groonga.org/logo/>`_ .
+* Updated HTML design.
+* Renamed ``grntest`` to ``groonga-benchmark``.
+* Supported ``autogen.sh`` on CentOS 5.
+* [linux] Added ``vm.overcommit_memory`` kernel parameter value
+  check. [#1289]
+* ``grn_snip`` uses ``grn_obj`` mechanism. [#1054]
+
+Fixes
+^^^^^
+
+* Fixed a bug that uninstall task doesn't uninstall installed Ruby
+  scripts. [#1299] [Reported by Kazuhiko]
+* Added a missing Gemfile. [#1302] [Reported by Kazuhiko]
+* Fixed a bug that some indexed records aren't found. The feature is
+  only used by mroonga. [#1303]
+* [groonga] Appended missing ``-id`` to ``--server-id`` option name.
+* Fixed a bug that latin1 normalization may access unexpected memory.
+
+Thanks
+^^^^^^
+
+* Kazuhiko
+* Markus Elfring
+
+.. _release-2-0-0:
+
+Release 2.0.0 - 2012/02/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [dat] Added 0 length key check.
+* [windows] Added missing GCC related DLLs. [groonga-dev,00686]
+  [Reported by Suzuki]
+* [php] Supported PHP 5.4. [Patch by Daiki Ueno]
+* Updated FSF address. [Suggested by Daiki Ueno]
+* [fedora] Supported systemd. [Patch by Daiki Ueno]
+* [rpm][debian] Changed the default protocol to HTTP from gqtp.
+* [rpm][centos] Supported status command.
+* Removed needless ``:`` from log message.
+* Removed deprecated grn_query. [#1247]
+* Reduced needless grn_ctx_at() calls on creating table.
+* [pat] Supported cache.
+* [tokenizer] Improved tokenizer API.
+* Accepted ``@`` as a valid name character.
+* [tokenizer] Added a tokenizer based on
+  `KyTea <http://www.phontron.com/kytea/>`_.
+* Supported :doc:`offline index construction </reference/indexing>`.
+* [tokenizer] Supported MeCab 0.993. [groonga-dev,00703]
+  [Reported by Masaharu YOSHIOKA]
+* [windows] Supported MessagePack.
+
+Fixes
+^^^^^
+
+* [pat] Fixed a bug that the last node can't be found. [#1258]
+* [doc] Fixed links in Japanese page. [Reported by @naoina]
+* [doc] Fixed wrong the default value. [Reported by @naoina]
+* Fixed a typo. [Reported by Kazuhiko]
+* [http] Fixed a bug that ``load`` command error isn't cleared.
+  [Reported by @wareohji]
+
+Thanks
+^^^^^^
+
+* Suzuki
+* Daiki Ueno
+* @naoina
+* Kazuhiko
+* Masaharu YOSHIOKA
+* @wareohji

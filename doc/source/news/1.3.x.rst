@@ -1,0 +1,49 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+.. _release-1-3-0:
+
+Release 1.3.0 - 2012/01/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Supported dynamic DB key table change by
+  GRN_DB_KEY=pat or GRN_DB_KEY=dat environment variable value.
+* Added ``--with-default-db-key`` configure option that
+  specifies the default DB key table.
+* Supported "" value for geo point data types. It's interpreted as "0x0".
+* Added column name to cast error message.
+* Inhibit file information for stdin on load error.
+* Enabled write-strings warnings and suppress those
+  warnings. [Suggested by montywi]
+* Marked MessagePack output format as supported. [#1215]
+* Added ``const`` to ``void *`` of ``*_set_value()``.
+* Enabled warning flags on C and C++.
+* Supported ``--with-libevent`` without value configure option.
+* ``grn_table_get()`` supported grn_db. [#1242]
+* [rpm] Removed needless groogna-munin-plugins dependency
+  from groonga-server. [#1251] [Suggested by Masaharu IWAI]
+* [rpm] Removed needless groogna-doc dependency
+  from groonga. [#1251] [Suggested by Masaharu IWAI]
+* [dat] Supported repair by ``grn_dat_repair()``.
+* ``grn_table_at()`` supported grn_db.
+* [suggest] Removed unstable mark.
+* [suggest][complete] Supported normalized value search in prefix-search.
+* Added experimental offline index build. It's disabled by
+  default for now. You can enable it by
+  USE_OFFLINE_INDEXER=yes environment variable.
+* Added internal API ``grn_obj_path_by_id()`` for mroonga.
+* [suggest][httpd] Passed unknown parameters to groonga.
+* [output][xml] Added a newline before ``</RESULT>`` for readability.
+* [doc][output] Added documentation about output format type.
+* Added ``table_rename``. [#1234]
+* Added ``column_rename``. [#1234]
+
+Thanks
+^^^^^^
+
+* montywi
+* Masaharu IWAI
