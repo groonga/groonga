@@ -42,8 +42,10 @@ Improvements
   [GitHub#169] [Patch by Tetsuharu OHZEKI]
 * Exported getting variable APIs to :doc:`/reference/api/plugin`.
   [GitHub#170] [Patch by Naoya Murakami]
+
   * Added ``grn_plugin_proc_get_var()``.
   * Added ``grn_plugin_proc_get_var_by_offset()``.
+
 * [experimental] Added :doc:`/reference/commands/tokenizer_list`.
   [GitHub#171] [Patch by Naoya Murakami]
 * [experimental] Added :doc:`/reference/commands/normalizer_list`.
@@ -62,7 +64,7 @@ Fixes
   [GitHub#167] [Patch by Naoya Murakami]
 * [doc] Added a missing ``\`` escape exception in
   :doc:`/reference/grn_expr/query_syntax`.
-  [Reported by Yappo]
+  [Reported by @Yappo]
 
 Thanks
 ^^^^^^
@@ -71,7 +73,7 @@ Thanks
 * Naoya Murakami
 * Tetsuharu OHZEKI
 * GMO Media, Inc.
-* Yappo
+* @Yappo
 
 .. _release-4-0-1:
 
