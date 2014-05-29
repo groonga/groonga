@@ -1,8 +1,8 @@
 REPOSITORIES_PATH = repositories
-DISTRIBUTIONS = debian ubuntu
+DISTRIBUTIONS = debian
 CHROOT_BASE = /var/lib/chroot
 ARCHITECTURES = i386 amd64
-CODES = wheezy jessie unstable precise saucy trusty
+CODES = wheezy jessie unstable
 KEYRING_PACKAGE = groonga-keyring
 KEYRING_VERSION = 2012.05.29
 KEYRING_BASE_NAME = $(KEYRING_PACKAGE)-$(KEYRING_VERSION)
