@@ -21,14 +21,14 @@ Installer
 For 32-bit environment, download x86 executable binary from
 packages.groonga.org:
 
-  * http://packages.groonga.org/windows/groonga/groonga-4.0.1-x86.exe
+  * http://packages.groonga.org/windows/groonga/groonga-4.0.2-x86.exe
 
 Then run it.
 
 For 64-bit environment, download x64 executable binary from
 packages.goronga.org:
 
-  * http://packages.groonga.org/windows/groonga/groonga-4.0.1-x64.exe
+  * http://packages.groonga.org/windows/groonga/groonga-4.0.2-x64.exe
 
 Then run it.
 
@@ -41,14 +41,14 @@ zip
 For 32-bit environment, download x86 zip archive from
 packages.groonga.org:
 
-  * http://packages.groonga.org/windows/groonga/groonga-4.0.1-x86.zip
+  * http://packages.groonga.org/windows/groonga/groonga-4.0.2-x86.zip
 
 Then extract it.
 
 For 64-bit environment, download x64 zip archive from
 packages.groonga.org:
 
-  * http://packages.groonga.org/windows/groonga/groonga-4.0.1-x64.zip
+  * http://packages.groonga.org/windows/groonga/groonga-4.0.2-x64.zip
 
 Then extract it.
 
@@ -66,27 +66,27 @@ Windows. Here are required tools:
 
 Download zipped source from packages.groonga.org:
 
-  * http://packages.groonga.org/source/groonga/groonga-4.0.1.zip
+  * http://packages.groonga.org/source/groonga/groonga-4.0.2.zip
 
 Then extract it.
 
 Move to the Groonga's source folder::
 
-  > cd c:\Users\%USERNAME%\Downloads\groonga-4.0.1
+  > cd c:\Users\%USERNAME%\Downloads\groonga-4.0.2
 
 Configure by ``cmake``. The following commnad line is for 64-bit
 version. To build 32-bit version, use ``-G "Visual Studio 10"``
 parameter instead::
 
-  groonga-4.0.1> cmake . -G "Visual Studio 10 Win64" -DCMAKE_INSTALL_PREFIX=C:\groonga
+  groonga-4.0.2> cmake . -G "Visual Studio 10 Win64" -DCMAKE_INSTALL_PREFIX=C:\groonga
 
 Build::
 
-  groonga-4.0.1> cmake --build . --config Release
+  groonga-4.0.2> cmake --build . --config Release
 
 Install::
 
-  groonga-4.0.1> cmake --build . --config Release --target Install
+  groonga-4.0.2> cmake --build . --config Release --target Install
 
 After the above steps, :doc:`/reference/executables/groonga` is found in
 ``c:\groonga\bin\groonga.exe``.
