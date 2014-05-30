@@ -1,5 +1,7 @@
 .. -*- rst -*-
 
+:orphan:
+
 .. highlightlang:: none
 
 News
