@@ -49,7 +49,7 @@ benchmark:
 	cd test/benchmark && $(MAKE) benchmark
 
 tag:
-	cd $(top_srcdir) && git tag v$(VERSION) -a -m 'groonga $(VERSION)!!!'
+	cd $(top_srcdir) && git tag v$(VERSION) -a -m 'Groonga $(VERSION)!!!'
 
 echo-version:
 	@echo $(VERSION)
