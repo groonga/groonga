@@ -960,7 +960,7 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
       ssize_t read_length;
       grn_rc rc;
       char buffer[POST_BUFFER_SIZE];
-      char *buffer_start, *buffer_current, *buffer_end;
+      const char *buffer_start, *buffer_current, *buffer_end;
 
       if (body_start) {
         buffer_start = body_start;
