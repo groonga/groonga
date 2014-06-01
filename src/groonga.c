@@ -260,12 +260,6 @@ prompt(grn_ctx *ctx, grn_obj *buf)
   return rc;
 }
 
-typedef enum {
-  grn_http_request_type_none = 0,
-  grn_http_request_type_get,
-  grn_http_request_type_post
-} grn_http_request_type;
-
 static void
 output_envelope(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj *foot)
 {
@@ -733,41 +727,310 @@ h_output(grn_ctx *ctx, int flags, void *arg)
 }
 
 static void
-do_htreq(grn_ctx *ctx, grn_msg *msg)
+do_htreq_get(grn_ctx *ctx, grn_msg *msg)
 {
-  grn_sock fd = msg->u.fd;
-  grn_http_request_type t = grn_http_request_type_none;
-  grn_com_header *header = &msg->header;
-  switch (header->qtype) {
-  case 'G' : /* GET */
-    t = grn_http_request_type_get;
-    break;
-  case 'P' : /* POST */
-    t = grn_http_request_type_post;
-    break;
-  }
-  if (t) {
-    char *path = NULL;
-    char *pathe = GRN_BULK_HEAD((grn_obj *)msg);
-    char *e = GRN_BULK_CURR((grn_obj *)msg);
-    for (;; pathe++) {
-      if (e <= pathe + 6) {
-        /* invalid request */
-        goto exit;
-      }
-      if (*pathe == ' ') {
-        if (!path) {
-          path = pathe + 1;
-        } else {
-          if (!memcmp(pathe + 1, "HTTP/1", 6)) {
-            break;
-          }
+  char *path = NULL;
+  char *pathe = GRN_BULK_HEAD((grn_obj *)msg);
+  char *e = GRN_BULK_CURR((grn_obj *)msg);
+  for (;; pathe++) {
+    if (e <= pathe + 6) {
+      /* invalid request */
+      return;
+    }
+    if (*pathe == ' ') {
+      if (!path) {
+        path = pathe + 1;
+      } else {
+        if (!memcmp(pathe + 1, "HTTP/1", 6)) {
+          break;
         }
       }
     }
-    grn_ctx_send(ctx, path, pathe - path, 0);
   }
-exit :
+  grn_ctx_send(ctx, path, pathe - path, 0);
+}
+
+#define STRING_EQUAL_CI(string, string_length, constant_string)\
+  (string_length == strlen(constant_string) &&\
+   strncmp(string, constant_string, string_length) == 0)
+
+static const char *
+do_htreq_post_parse_header_request_line(grn_ctx *ctx,
+                                        const char *start,
+                                        const char *end,
+                                        const char **path_start,
+                                        int *path_length)
+{
+  const char *current;
+
+  {
+    const char *method = start;
+    int method_length = -1;
+
+    for (current = method; current < end; current++) {
+      if (current[0] == '\n') {
+        return NULL;
+      }
+      if (current[0] == ' ') {
+        method_length = current - method;
+        current++;
+        break;
+      }
+    }
+    if (method_length == -1) {
+      return NULL;
+    }
+    if (!STRING_EQUAL_CI(method, method_length, "POST")) {
+      return NULL;
+    }
+  }
+
+  {
+    *path_start = current;
+    *path_length = -1;
+    for (; current < end; current++) {
+      if (current[0] == '\n') {
+        return NULL;
+      }
+      if (current[0] == ' ') {
+        *path_length = current - *path_start;
+        current++;
+        break;
+      }
+    }
+    if (*path_length == -1) {
+      return NULL;
+    }
+  }
+
+  {
+    const char *http_version_start = current;
+    int http_version_length = -1;
+    for (; current < end; current++) {
+      if (current[0] == '\n') {
+        http_version_length = current - http_version_start;
+        if (http_version_length > 0 &&
+            http_version_start[http_version_length - 1] == '\r') {
+          http_version_length--;
+        }
+        current++;
+        break;
+      }
+    }
+    if (http_version_length == -1) {
+      return NULL;
+    }
+    if (!(STRING_EQUAL_CI(http_version_start, http_version_length, "HTTP/1.0") ||
+          STRING_EQUAL_CI(http_version_start, http_version_length, "HTTP/1.1"))) {
+      return NULL;
+    }
+  }
+
+  return current;
+}
+
+static const char *
+do_htreq_post_parse_header_values(grn_ctx *ctx,
+                                  const char *start,
+                                  const char *end,
+                                  int *content_length)
+{
+  const char *current;
+  const char *name = start;
+  int name_length = -1;
+  const char *value = NULL;
+  int value_length = -1;
+
+  for (current = start; current < end; current++) {
+    switch (current[0]) {
+    case '\n' :
+      if (name_length == -1) {
+        if (current - name == 1 && current[-1] == '\r') {
+          return current + 1;
+        } else {
+          /* No ":" header line. TODO: report error. */
+          return NULL;
+        }
+      } else {
+        while (value < current && value[0] == ' ') {
+          value++;
+        }
+        value_length = current - value;
+        if (value_length > 0 && value[value_length - 1] == '\r') {
+          value_length--;
+        }
+        if (STRING_EQUAL_CI(name, name_length, "Content-Length")) {
+          const char *rest;
+          *content_length = grn_atoi(value, value + value_length, &rest);
+          if (rest != value + value_length) {
+            /* Invalid Content-Length value. TODO: report error. */
+            *content_length = -1;
+          }
+        }
+      }
+      name = current + 1;
+      name_length = -1;
+      value = NULL;
+      value_length = -1;
+      break;
+    case ':' :
+      if (name_length == -1) {
+        name_length = current - name;
+        value = current + 1;
+      }
+      break;
+    default :
+      break;
+    }
+  }
+
+  return NULL;
+}
+
+static grn_bool
+do_htreq_post_parse_header(grn_ctx *ctx,
+                           const char *start,
+                           const char *end,
+                           const char **path_start,
+                           int *path_length,
+                           int *content_length,
+                           const char **body_start)
+{
+  const char *current;
+
+  current = do_htreq_post_parse_header_request_line(ctx,
+                                                    start,
+                                                    end,
+                                                    path_start,
+                                                    path_length);
+  if (!current) {
+    return GRN_FALSE;
+  }
+  current = do_htreq_post_parse_header_values(ctx,
+                                              current,
+                                              end,
+                                              content_length);
+  if (!current) {
+    return GRN_FALSE;
+  }
+
+  if (*content_length == -1) {
+    return GRN_FALSE;
+  }
+
+  if (current >= end) {
+    return GRN_FALSE;
+  }
+
+  *body_start = current;
+
+  return GRN_TRUE;
+}
+
+static void
+do_htreq_post(grn_ctx *ctx, grn_msg *msg)
+{
+  const char *end;
+  const char *path_start = NULL;
+  int path_length = -1;
+  int content_length = -1;
+  const char *body_start = NULL;
+
+  end = GRN_BULK_CURR((grn_obj *)msg);
+  if (!do_htreq_post_parse_header(ctx,
+                                  GRN_BULK_HEAD((grn_obj *)msg),
+                                  end,
+                                  &path_start,
+                                  &path_length,
+                                  &content_length,
+                                  &body_start)) {
+    return;
+  }
+
+  grn_ctx_send(ctx, path_start, path_length, GRN_CTX_QUIET);
+
+  {
+    grn_sock fd = msg->u.fd;
+    grn_obj line_buffer;
+    int read_content_length = 0;
+
+    GRN_TEXT_INIT(&line_buffer, 0);
+    while (read_content_length < content_length) {
+#define POST_BUFFER_SIZE 8192
+      ssize_t read_length;
+      grn_rc rc;
+      char buffer[POST_BUFFER_SIZE];
+      char *buffer_start, *buffer_current, *buffer_end;
+
+      if (body_start) {
+        buffer_start = body_start;
+        buffer_end = end;
+        body_start = NULL;
+      } else {
+        read_length = read(fd, buffer, POST_BUFFER_SIZE);
+        if (read_length == 0) {
+          break;
+        }
+        if (read_length == -1) {
+          SERR("read");
+          break;
+        }
+        buffer_start = buffer;
+        buffer_end = buffer_start + read_length;
+      }
+      read_content_length += buffer_end - buffer_start;
+
+      rc = GRN_SUCCESS;
+      buffer_current = buffer_start;
+      for (; rc == GRN_SUCCESS && buffer_current < buffer_end; buffer_current++) {
+        if (buffer_current[0] != '\n') {
+          continue;
+        }
+        GRN_TEXT_PUT(ctx,
+                     &line_buffer,
+                     buffer_start,
+                     buffer_current - buffer_start);
+        {
+          int flags = 0;
+          if (!(read_content_length == content_length &&
+                buffer_current + 1 == buffer_end)) {
+            flags |= GRN_CTX_QUIET;
+          }
+          rc = grn_ctx_send(ctx,
+                            GRN_TEXT_VALUE(&line_buffer),
+                            GRN_TEXT_LEN(&line_buffer),
+                            flags);
+        }
+        buffer_start = buffer_current + 1;
+        GRN_BULK_REWIND(&line_buffer);
+      }
+      GRN_TEXT_PUT(ctx, &line_buffer, buffer_start, buffer_end - buffer_start);
+#undef POST_BUFFER_SIZE
+    }
+
+    if (GRN_TEXT_LEN(&line_buffer) > 0) {
+      grn_ctx_send(ctx,
+                   GRN_TEXT_VALUE(&line_buffer),
+                   GRN_TEXT_LEN(&line_buffer),
+                   0);
+    }
+
+    GRN_OBJ_FIN(ctx, &line_buffer);
+  }
+}
+
+static void
+do_htreq(grn_ctx *ctx, grn_msg *msg)
+{
+  grn_com_header *header = &msg->header;
+  switch (header->qtype) {
+  case 'G' : /* GET */
+    do_htreq_get(ctx, msg);
+    break;
+  case 'P' : /* POST */
+    do_htreq_post(ctx, msg);
+    break;
+  }
   /* TODO: support "Connection: keep-alive" */
   ctx->stat = GRN_CTX_QUIT;
   /* TODO: support a command in multi requests. e.g.: load command */
@@ -775,7 +1038,7 @@ exit :
   /* if (ctx->rc != GRN_OPERATION_WOULD_BLOCK) {...} */
   grn_msg_close(ctx, (grn_obj *)msg);
   /* if not keep alive connection */
-  grn_sock_close(fd);
+  grn_sock_close(msg->u.fd);
   grn_com_event_start_accept(ctx, msg->acceptor->ev);
 }
 

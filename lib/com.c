@@ -773,8 +773,6 @@ grn_com_recv_text(grn_ctx *ctx, grn_com *com,
   int retry = 0;
   grn_bulk_write(ctx, buf, (char *)header, ret);
   if ((p = scan_delimiter(GRN_BULK_HEAD(buf), GRN_BULK_CURR(buf)))) {
-    // todo : keep rest of message
-    GRN_BULK_SET_CURR(buf, p);
     header->qtype = *GRN_BULK_HEAD(buf);
     header->proto = GRN_COM_PROTO_HTTP;
     header->size = GRN_BULK_VSIZE(buf);
@@ -794,12 +792,9 @@ grn_com_recv_text(grn_ctx *ctx, grn_com *com,
     if (ret) {
       off_t o = GRN_BULK_VSIZE(buf);
       p = GRN_BULK_CURR(buf);
-      if ((p = scan_delimiter(p - (o > 3 ? 3 : o), p + ret))) {
-        GRN_BULK_SET_CURR(buf, p);
-        // todo : keep rest of message
+      GRN_BULK_INCR_LEN(buf, ret);
+      if (scan_delimiter(p - (o > 3 ? 3 : o), p + ret)) {
         break;
-      } else {
-        GRN_BULK_INCR_LEN(buf, ret);
       }
     } else {
       if (++retry > RETRY_MAX) {
