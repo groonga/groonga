@@ -752,7 +752,7 @@ do_htreq_get(grn_ctx *ctx, grn_msg *msg)
 
 #define STRING_EQUAL_CI(string, string_length, constant_string)\
   (string_length == strlen(constant_string) &&\
-   strncmp(string, constant_string, string_length) == 0)
+   strncasecmp(string, constant_string, string_length) == 0)
 
 static const char *
 do_htreq_post_parse_header_request_line(grn_ctx *ctx,
