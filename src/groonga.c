@@ -48,11 +48,9 @@
 # include <sys/sysctl.h>
 #endif /* HAVE_SYS_SYSCTL_H */
 
-#ifndef HAVE_STRNCASECMP
-# ifdef HAVE__STRNICMP
-#  define strncasecmp(s1,s2,n) _strnicmp(s1,s2,n)
-# endif /* HAVE__STRNICMP */
-#endif /* HAVE_STRNCASECMP */
+#ifdef HAVE__STRNICMP
+# define strncasecmp(s1,s2,n) _strnicmp(s1,s2,n)
+#endif /* HAVE__STRNICMP */
 
 #ifndef USE_MSG_NOSIGNAL
 # ifdef MSG_NOSIGNAL
