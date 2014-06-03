@@ -32,17 +32,6 @@ Install groonga-tokenizer-mecab package::
 
   % sudo yum install -y groonga-tokenizer-mecab
 
-Then install MeCab dictionary. (mecab-ipadic or mecab-jumandic)
-
-Install IPA dictionary::
-
-  % sudo yum install -y mecab-ipadic
-
-Or install Juman dictionary::
-
-  % sudo yum install -y mecab-jumandic
-
-
 There is a package that provides `Munin
 <http://munin-monitoring.org/>`_ plugins. If you want to monitor
 Groonga status by Munin, install groonga-munin-plugins package.
@@ -97,16 +86,6 @@ tokenizer, install groonga-tokenizer-mecab package.
 Install groonga-tokenizer-mecab package::
 
   % sudo yum install -y groonga-tokenizer-mecab
-
-Then install MeCab dictionary. (mecab-ipadic or mecab-jumandic)
-
-Install IPA dictionary::
-
-  % sudo yum install -y mecab-ipadic
-
-Or install Juman dictionary::
-
-  % sudo yum install -y mecab-jumandic
 
 There is a package that provides `Munin
 <http://munin-monitoring.org/>`_ plugins. If you want to monitor
