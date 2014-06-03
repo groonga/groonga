@@ -49,7 +49,7 @@ msgid ""
 "This section describes how to install Groonga related RPM packages on "
 "CentOS. You can install them by ``yum``."
 msgstr ""
-"このセクションではCentOS上でGroonga関連のPRMパッケージをインストールする方法"
+"このセクションではCentOS上でGroonga関連のRPMパッケージをインストールする方法"
 "を説明します。これらのパッケージは ``yum`` でインストールできます。"
 
 msgid "CentOS 5"
