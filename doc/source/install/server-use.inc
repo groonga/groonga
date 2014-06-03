@@ -3,7 +3,7 @@
 .. note::
 
    The package ``groonga`` is the minimum set of fulltext search engine.
-   If you want to use groonga for server use, you can install
+   If you want to use Groonga for server use, you can install
    additional preconfigured packages.
 
    There are three packages for server use.
