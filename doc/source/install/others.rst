@@ -134,7 +134,7 @@ command line option. So this option is not critical build option. It's
 just for convenient.
 
 The default is ``/usr/local/var/log/groonga.log``. The
-``/usr/local/var`` part is changed by ``--localestatedir`` option.
+``/usr/local/var`` part is changed by ``--localstatedir`` option.
 
 Here is an example that log file is placed into shared NFS directory
 ``/nfs/log/groonga.log``::
