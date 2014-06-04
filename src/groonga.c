@@ -69,7 +69,8 @@
 # define STDERR_FILENO 2
 #endif /* STDERR_FILENO */
 
-#define DEFAULT_PORT 10041
+#define DEFAULT_HTTP_PORT 10041
+#define DEFAULT_GQTP_PORT 10043
 #define DEFAULT_DEST "localhost"
 #define DEFAULT_MAX_NFTHREADS 8
 #define MAX_CON 0x10000
@@ -78,7 +79,7 @@
 
 static char bind_address[HOST_NAME_MAX + 1];
 static char hostname[HOST_NAME_MAX + 1];
-static int port = DEFAULT_PORT;
+static int port = DEFAULT_GQTP_PORT;
 static int batchmode;
 static int number_of_lines = 0;
 static int newdb;
@@ -2097,7 +2098,8 @@ config_file_load(const char *path, const grn_str_getopt_opt *opts, int *flags)
   return status;
 }
 
-static const int default_port = DEFAULT_PORT;
+static const int default_http_port = DEFAULT_HTTP_PORT;
+static const int default_gqtp_port = DEFAULT_GQTP_PORT;
 static grn_encoding default_encoding = GRN_ENC_DEFAULT;
 static uint32_t default_max_num_threads = DEFAULT_MAX_NFTHREADS;
 static const int default_mode = mode_alone;
@@ -2306,7 +2308,8 @@ show_usage(FILE *output)
           "      --bind-address <ip/hostname>:\n"
           "                                specify server address to bind\n"
           "                                (default: %s)\n"
-          "  -p, --port <port number>:     specify server port number (default: %d)\n"
+          "  -p, --port <port number>:     specify server port number\n"
+          "                                (HTTP default: %d, GQTP default: %d)\n"
           "  -i, --server-id <ip/hostname>:\n"
           "                                specify server ID address (default: %s)\n"
           "      --protocol <protocol>:    specify server protocol to listen\n"
@@ -2350,8 +2353,8 @@ show_usage(FILE *output)
           "  <db pathname>: in server/daemon mode\n"
           "  <dest hostname> [<commands>]: in client mode (default: %s)\n",
           grn_encoding_to_string(default_encoding),
-          default_port, default_bind_address,
-          default_port, default_hostname, default_protocol,
+          default_gqtp_port, default_bind_address,
+          default_http_port, default_gqtp_port, default_hostname, default_protocol,
           default_document_root, default_cache_limit, default_max_num_threads,
           default_log_level, default_log_path, default_query_log_path,
           default_config_path, default_default_command_version,
@@ -2498,7 +2501,11 @@ main(int argc, char **argv)
     }
     port = value;
   } else {
-    port = default_port;
+    if (protocol_arg) {
+      if (*protocol_arg == 'h' || *protocol_arg == 'H') {
+        port = default_http_port;
+      }
+    }
   }
 
   if (encoding_arg) {
