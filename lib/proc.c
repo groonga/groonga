@@ -2944,6 +2944,20 @@ parse_normalize_flags(grn_ctx *ctx, grn_obj *flag_names)
   return flags;
 }
 
+static grn_bool
+is_normalizer(grn_ctx *ctx, grn_obj *object)
+{
+  if (object->header.type != GRN_PROC) {
+    return GRN_FALSE;
+  }
+
+  if (grn_proc_get_type(ctx, object) != GRN_PROC_NORMALIZER) {
+    return GRN_FALSE;
+  }
+
+  return GRN_TRUE;
+}
+
 static const char *
 char_type_name(grn_char_type type)
 {
@@ -3006,13 +3020,24 @@ proc_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     normalizer = grn_ctx_get(ctx,
                              GRN_TEXT_VALUE(normalizer_name),
                              GRN_TEXT_LEN(normalizer_name));
-    if (!normalizer ||
-        normalizer->header.type != GRN_PROC ||
-        grn_proc_get_type(ctx, normalizer) != GRN_PROC_NORMALIZER) {
+    if (!normalizer) {
       ERR(GRN_INVALID_ARGUMENT,
-          "unknown normalizer: <%.*s>",
+          "[normalize] nonexistent normalizer: <%.*s>",
           (int)GRN_TEXT_LEN(normalizer_name),
           GRN_TEXT_VALUE(normalizer_name));
+      GRN_OUTPUT_CSTR("");
+      return NULL;
+    }
+
+    if (!is_normalizer(ctx, normalizer)) {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, normalizer);
+      ERR(GRN_INVALID_ARGUMENT,
+          "[normalize] not normalizer: %.*s",
+          (int)GRN_TEXT_LEN(&inspected),
+          GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
       GRN_OUTPUT_CSTR("");
       return NULL;
     }

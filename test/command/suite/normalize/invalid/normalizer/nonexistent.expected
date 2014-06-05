@@ -1,0 +1,3 @@
+normalize Nonexistent "aBcDe"
+[[[-22,0.0,0.0],"[normalize] nonexistent normalizer: <Nonexistent>"],""]
+#|e| [normalize] nonexistent normalizer: <Nonexistent>
