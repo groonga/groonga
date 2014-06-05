@@ -3006,7 +3006,9 @@ proc_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     normalizer = grn_ctx_get(ctx,
                              GRN_TEXT_VALUE(normalizer_name),
                              GRN_TEXT_LEN(normalizer_name));
-    if (!normalizer) {
+    if (!normalizer ||
+        normalizer->header.type != GRN_PROC ||
+        grn_proc_get_type(ctx, normalizer) != GRN_PROC_NORMALIZER) {
       ERR(GRN_INVALID_ARGUMENT,
           "unknown normalizer: <%.*s>",
           (int)GRN_TEXT_LEN(normalizer_name),
