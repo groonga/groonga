@@ -154,7 +154,6 @@ build_stamps =					\
 	doctest-build-stamp
 
 $(build_stamps): $(document_source_files)
-	$(MAKE) sphinx-ensure-updated
 	target=`echo $@ | sed -e 's/-build-stamp$$//'`;	\
 	  $(SPHINX_BUILD_COMMAND)			\
 	    -Dlanguage=$(LOCALE)			\

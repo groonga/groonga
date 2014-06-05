@@ -1116,14 +1116,32 @@ if test x"$enable_document" != x"no"; then
   fi
 
   if test x"$enable_document" = x"yes"; then
-    AC_PATH_PROG(HG, hg, [])
-    if test -n "$HG"; then
+    AC_PATH_PROG(SPHINX_BUILD, sphinx-build, [])
+    if test -n "$SPHINX_BUILD"; then
+      sphinx_build_version=`"$SPHINX_BUILD" --version`
+      if ! echo "$sphinx_build_version" | grep -q ' 1\.[[23]]'; then
+	AC_MSG_ERROR([
+sphinx-build is old: $sphinx_build_version
+Sphinx 1.2 or later is required.])
+      fi
       document_available=yes
       document_buildable=yes
     else
-      AC_MSG_ERROR("No hg found")
+      AC_MSG_ERROR([
+No sphinx-build found.
+Install it and try again.
+
+How to install sphinx-build:
+
+For Debian GNU/Linux based system like Ubuntu:
+  % sudo apt-get install -y python-pip
+  % sudo pip install sphinx
+
+For Red Hat based system like CentOS:
+  % sudo yum install -y python-pip
+  % sudo pip install sphinx])
     fi
-    AC_SUBST(HG)
+    AC_SUBST(SPHINX_BUILD)
   fi
 fi
 

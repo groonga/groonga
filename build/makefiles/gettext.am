@@ -39,7 +39,7 @@ html: build
 man: build
 pdf: build
 
-gettext: sphinx-ensure-updated
+gettext:
 	rm *.pot || true
 	$(SPHINX_BUILD_COMMAND) -d doctrees -b gettext $(ALLSPHINXOPTS) .
 	xgettext --language Python --output conf.pot ../../../source/conf.py

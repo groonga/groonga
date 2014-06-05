@@ -11,25 +11,9 @@ PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = $(PAPEROPT_$(PAPER)) -E $(SPHINXOPTS) $(SOURCE_DIR)
 
 SPHINX_DIR = $(abs_top_builddir)/doc/sphinx
-SPHINX_BUILD = $(SPHINX_DIR)/sphinx-build.py
 SPHINX_BUILD_COMMAND =				\
 	DOCUMENT_VERSION="$(DOCUMENT_VERSION)"		\
 	DOCUMENT_VERSION_FULL="$(DOCUMENT_VERSION_FULL)"	\
 	LOCALE="$(LOCALE)"			\
 	PYTHONPATH="$(SPHINX_DIR):$$PYTHONPATH"	\
-	python $(SPHINX_BUILD)
-
-.PHONY: sphinx-ensure-updated
-
-if DOCUMENT_BUILDABLE
-sphinx-ensure-updated:
-	if ! $(SPHINX_BUILD_COMMAND) --version | grep -q ' 1\.[23]' > /dev/null; then \
-	  if test -d $(SPHINX_DIR); then						 \
-	    (cd $(SPHINX_DIR) && $(HG) pull --update);					 \
-	  else										 \
-	    $(HG) clone https://bitbucket.org/birkenfeld/sphinx $(SPHINX_DIR);		 \
-	  fi;										 \
-	fi
-else
-sphinx-ensure-updated:
-endif
+	$(SPHINX_BUILD)
