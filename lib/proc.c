@@ -2958,6 +2958,20 @@ is_normalizer(grn_ctx *ctx, grn_obj *object)
   return GRN_TRUE;
 }
 
+static grn_bool
+is_tokenizer(grn_ctx *ctx, grn_obj *object)
+{
+  if (object->header.type != GRN_PROC) {
+    return GRN_FALSE;
+  }
+
+  if (grn_proc_get_type(ctx, object) != GRN_PROC_TOKENIZER) {
+    return GRN_FALSE;
+  }
+
+  return GRN_TRUE;
+}
+
 static const char *
 char_type_name(grn_char_type type)
 {
@@ -3190,9 +3204,22 @@ create_lexicon_for_tokenize(grn_ctx *ctx,
                           GRN_TEXT_LEN(tokenizer_name));
   if (!tokenizer) {
     ERR(GRN_INVALID_ARGUMENT,
-        "[tokenize] unknown tokenizer: <%.*s>",
+        "[tokenize] nonexistent tokenizer: <%.*s>",
         (int)GRN_TEXT_LEN(tokenizer_name),
         GRN_TEXT_VALUE(tokenizer_name));
+    return NULL;
+  }
+
+  if (!is_tokenizer(ctx, tokenizer)) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, tokenizer);
+    ERR(GRN_INVALID_ARGUMENT,
+        "[tokenize] not tokenizer: %.*s",
+        (int)GRN_TEXT_LEN(&inspected),
+        GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    grn_obj_unlink(ctx, tokenizer);
     return NULL;
   }
 

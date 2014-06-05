@@ -1,0 +1,15 @@
+tokenize NormalizerAuto "aBcDe 123"
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[tokenize] not tokenizer: #<proc:normalizer NormalizerAuto arguments:[$1]>"
+  ],
+  [
+
+  ]
+]
+#|e| [tokenize] not tokenizer: #<proc:normalizer NormalizerAuto arguments:[$1]>
