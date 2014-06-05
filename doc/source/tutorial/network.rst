@@ -24,7 +24,7 @@ Form::
 
   groonga [-p PORT_NUMBER] -s DB_PATH
 
-The `-s` option specifies to run Groonga as a server. DB_PATH specifies the path of the existing database to be hosted. The `-p` option and its argument, PORT_NUMBER, specify the port number of the server. The default port number is 10041, which is used when you don't specify PORT_NUMBER.
+The `-s` option specifies to run Groonga as a server. DB_PATH specifies the path of the existing database to be hosted. The `-p` option and its argument, PORT_NUMBER, specify the port number of the server. The default port number is 10043, which is used when you don't specify PORT_NUMBER.
 
 The following command runs a server that listens on the default port number. The server accepts operations to the specified database.
 
@@ -60,7 +60,7 @@ Form::
 
   groonga [-p PORT_NUMBER] -c [HOST_NAME_OR_IP_ADDRESS]
 
-This command establishes a connection with a GQTP server and then enters into interactive mode. HOST_NAME_OR_IP_ADDRESS specifies the hostname or the IP address of the server. If not specified, Groonga uses the default hostname "localhost". The `-p` option and its argument, PORT_NUMBER, specify the port number of the server. If not specified, Groonga uses the default port number 10041.
+This command establishes a connection with a GQTP server and then enters into interactive mode. HOST_NAME_OR_IP_ADDRESS specifies the hostname or the IP address of the server. If not specified, Groonga uses the default hostname "localhost". The `-p` option and its argument, PORT_NUMBER, specify the port number of the server. If not specified, Groonga uses the default port number 10043.
 
 .. groonga-command
 .. include:: ../example/tutorial/network-1.log
@@ -105,7 +105,7 @@ Form::
 
   groonga [-p PORT_NUMBER] -d --protocol http DB_PATH
 
-The `--protocol` option and its argument specify the protocol of the server. "http" specifies to use HTTP.
+The `--protocol` option and its argument specify the protocol of the server. "http" specifies to use HTTP. If the `-p` option not specified, Groonga uses the default port number 10041.
 
 The following command runs an HTTP server that listens on the port number 80.
 
