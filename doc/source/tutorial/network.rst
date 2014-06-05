@@ -105,7 +105,7 @@ Form::
 
   groonga [-p PORT_NUMBER] -d --protocol http DB_PATH
 
-The `--protocol` option and its argument specify the protocol of the server. "http" specifies to use HTTP. If the `-p` option not specified, Groonga uses the default port number 10041.
+The `--protocol` option and its argument specify the protocol of the server. "http" specifies to use HTTP. If the `-p` option is not specified, Groonga uses the default port number 10041.
 
 The following command runs an HTTP server that listens on the port number 80.
 
