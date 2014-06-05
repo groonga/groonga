@@ -14,8 +14,6 @@ just only for tests or development. You will encounter an out of
 memory error with a 32-bit package even if you just process medium
 size data.
 
-.. include:: server-use.inc
-
 PPA (Personal Package Archive)
 ------------------------------
 
@@ -41,6 +39,8 @@ Add the ``ppa:groonga/ppa`` PPA to your system::
 Install::
 
   % sudo apt-get -y install groonga
+
+.. include:: server-use.inc
 
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
 tokenizer, install groonga-tokenizer-mecab package.

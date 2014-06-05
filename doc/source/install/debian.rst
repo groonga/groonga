@@ -14,8 +14,6 @@ just only for tests or development. You will encounter an out of
 memory error with a 32-bit package even if you just process medium
 size data.
 
-.. include:: server-use.inc
-
 wheezy
 ------
 
@@ -32,6 +30,8 @@ Install::
   % sudo apt-get install -y --allow-unauthenticated groonga-keyring
   % sudo apt-get update
   % sudo apt-get install -y -V groonga
+
+.. include:: server-use.inc
 
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
 tokenizer, install groonga-tokenizer-mecab package.
@@ -73,6 +73,8 @@ Install::
   % sudo apt-get update
   % sudo apt-get install -y groonga
 
+.. include:: server-use.inc
+
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
 tokenizer, install groonga-tokenizer-mecab package.
 
@@ -112,6 +114,8 @@ Install::
   % sudo apt-get install -y --allow-unauthenticated groonga-keyring
   % sudo apt-get update
   % sudo apt-get install -y -V groonga
+
+.. include:: server-use.inc
 
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
 tokenizer, install groonga-tokenizer-mecab package.
