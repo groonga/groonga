@@ -1161,8 +1161,6 @@ case "$CUTTER_SOURCE_PATH" in
 esac
 AC_SUBST(CUTTER_SOURCE_PATH)
 
-AM_CONDITIONAL([WITH_HG], [test -n "${HG}"])
-
 AM_CONDITIONAL([DOCUMENT_AVAILABLE],
                [test "${document_available}" = "yes"])
 AC_MSG_CHECKING([whether document available])
