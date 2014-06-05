@@ -273,3 +273,19 @@ man_pages = [
 
 # -- Options for Gettext --------------------------------------------------
 gettext_uuid = False
+
+# Workaround for slow gettext builder.
+# TODO: REMOVE ME when issue#1426 is fixed
+# See also: https://bitbucket.org/birkenfeld/sphinx/issue/1426/gettext-builder-is-very-slow-during-read
+def setup(app):
+  # disable versioning for speed
+  from sphinx.builders.gettext import I18nBuilder
+  I18nBuilder.versioning_method = 'none'
+
+  def doctree_read(app, doctree):
+    if not isinstance(app.builder, I18nBuilder):
+        return
+    from docutils import nodes
+    from sphinx.versioning import add_uids
+    list(add_uids(doctree, nodes.TextElement))
+  app.connect('doctree-read', doctree_read)
