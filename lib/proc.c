@@ -3203,9 +3203,22 @@ create_lexicon_for_tokenize(grn_ctx *ctx,
     if (!normalizer) {
       grn_obj_unlink(ctx, tokenizer);
       ERR(GRN_INVALID_ARGUMENT,
-          "[tokenize] unknown normalizer: <%.*s>",
+          "[tokenize] nonexistent normalizer: <%.*s>",
           (int)GRN_TEXT_LEN(normalizer_name),
           GRN_TEXT_VALUE(normalizer_name));
+      return NULL;
+    }
+
+    if (!is_normalizer(ctx, normalizer)) {
+      grn_obj inspected;
+      grn_obj_unlink(ctx, tokenizer);
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, normalizer);
+      ERR(GRN_INVALID_ARGUMENT,
+          "[tokenize] not normalizer: %.*s",
+          (int)GRN_TEXT_LEN(&inspected),
+          GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
       return NULL;
     }
   }

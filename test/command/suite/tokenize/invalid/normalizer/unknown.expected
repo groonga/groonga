@@ -1,3 +1,0 @@
-tokenize TokenBigram "aBcDe 123" NormalizerUnknown
-[[[-22,0.0,0.0],"[tokenize] unknown normalizer: <NormalizerUnknown>"],[]]
-#|e| [tokenize] unknown normalizer: <NormalizerUnknown>
