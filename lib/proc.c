@@ -3053,6 +3053,7 @@ proc_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
           GRN_TEXT_VALUE(&inspected));
       GRN_OBJ_FIN(ctx, &inspected);
       GRN_OUTPUT_CSTR("");
+      grn_obj_unlink(ctx, normalizer);
       return NULL;
     }
 
@@ -3246,6 +3247,7 @@ create_lexicon_for_tokenize(grn_ctx *ctx,
           (int)GRN_TEXT_LEN(&inspected),
           GRN_TEXT_VALUE(&inspected));
       GRN_OBJ_FIN(ctx, &inspected);
+      grn_obj_unlink(ctx, normalizer);
       return NULL;
     }
   }
