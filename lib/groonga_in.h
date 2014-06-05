@@ -697,11 +697,9 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
   point_->longitude = lo_;\
 } while (0)
 
-#ifndef HAVE_STRTOULL
-# ifdef HAVE__STRTOUI64
-#  define strtoull(nptr,endptr,base) _strtoui64(nptr,endptr,base)
-# endif /* HAVE__STRTOUI64 */
-#endif /* HAVE_STRTOULL */
+#ifdef HAVE__STRTOUI64
+# define strtoull(nptr,endptr,base) _strtoui64(nptr,endptr,base)
+#endif /* HAVE__STRTOUI64 */
 
 #ifdef USE_FUTEX
 # include <linux/futex.h>
