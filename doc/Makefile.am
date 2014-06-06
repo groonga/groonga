@@ -50,17 +50,6 @@ dist-hook: html man
 	@touch $(distdir)/build-stamp
 
 CLEANFILES += build-stamp
-
-sphinx:
-	$(HG) clone https://bitbucket.org/birkenfeld/sphinx sphinx
-
-BUILT_SOURCES += sphinx
-
-maintainer-clean-local:
-	-rm -rf sphinx
-
-distclean-local:
-	-rm -rf sphinx
 else
 if HAVE_BUILT_DOCUMENT
 EXTRA_DIST += build-stamp
