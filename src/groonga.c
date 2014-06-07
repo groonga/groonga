@@ -763,6 +763,10 @@ typedef struct {
   const char *body_start;
 } h_post_header;
 
+#define STRING_EQUAL(string, string_length, constant_string)\
+  (string_length == strlen(constant_string) &&\
+   strncmp(string, constant_string, string_length) == 0)
+
 #define STRING_EQUAL_CI(string, string_length, constant_string)\
   (string_length == strlen(constant_string) &&\
    strncasecmp(string, constant_string, string_length) == 0)
@@ -879,7 +883,7 @@ do_htreq_post_parse_header_values(grn_ctx *ctx,
             header->content_length = -1;
           }
         } else if (STRING_EQUAL_CI(name, name_length, "Expect")) {
-          if (STRING_EQUAL_CI(value, value_length, "100-continue")) {
+          if (STRING_EQUAL(value, value_length, "100-continue")) {
             header->have_100_continue = GRN_TRUE;
           }
         }
