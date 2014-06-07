@@ -974,7 +974,6 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
     GRN_TEXT_INIT(&line_buffer, 0);
     while (read_content_length < header.content_length) {
 #define POST_BUFFER_SIZE 8192
-      ssize_t read_length;
       grn_rc rc;
       char buffer[POST_BUFFER_SIZE];
       const char *buffer_start, *buffer_current, *buffer_end;
@@ -984,16 +983,18 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
         buffer_end = end;
         header.body_start = NULL;
       } else {
-        read_length = read(fd, buffer, POST_BUFFER_SIZE);
-        if (read_length == 0) {
+        ssize_t recv_length;
+        int recv_flags = 0;
+        recv_length = recv(fd, buffer, POST_BUFFER_SIZE, recv_flags);
+        if (recv_length == 0) {
           break;
         }
-        if (read_length == -1) {
-          SERR("read");
+        if (recv_length == -1) {
+          SERR("recv");
           break;
         }
         buffer_start = buffer;
-        buffer_end = buffer_start + read_length;
+        buffer_end = buffer_start + recv_length;
       }
       read_content_length += buffer_end - buffer_start;
 
