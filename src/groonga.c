@@ -958,6 +958,14 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
     return;
   }
 
+  grn_ctx_send(ctx, header.path_start, header.path_length, GRN_CTX_QUIET);
+  if (ctx->rc != GRN_SUCCESS) {
+    ht_context context;
+    context.msg = msg;
+    h_output(ctx, GRN_CTX_TAIL, &context);
+    return;
+  }
+
   if (header.have_100_continue) {
     const char *continue_message = "HTTP/1.1 100 Continue\r\n";
     ssize_t send_size;
@@ -968,8 +976,6 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
       return;
     }
   }
-
-  grn_ctx_send(ctx, header.path_start, header.path_length, GRN_CTX_QUIET);
 
   {
     grn_obj line_buffer;
