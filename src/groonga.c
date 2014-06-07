@@ -755,6 +755,14 @@ do_htreq_get(grn_ctx *ctx, grn_msg *msg)
   grn_ctx_send(ctx, path, pathe - path, 0);
 }
 
+typedef struct {
+  const char *path_start;
+  int path_length;
+  int content_length;
+  grn_bool have_100_continue;
+  const char *body_start;
+} h_post_header;
+
 #define STRING_EQUAL_CI(string, string_length, constant_string)\
   (string_length == strlen(constant_string) &&\
    strncasecmp(string, constant_string, string_length) == 0)
@@ -763,8 +771,7 @@ static const char *
 do_htreq_post_parse_header_request_line(grn_ctx *ctx,
                                         const char *start,
                                         const char *end,
-                                        const char **path_start,
-                                        int *path_length)
+                                        h_post_header *header)
 {
   const char *current;
 
@@ -791,19 +798,19 @@ do_htreq_post_parse_header_request_line(grn_ctx *ctx,
   }
 
   {
-    *path_start = current;
-    *path_length = -1;
+    header->path_start = current;
+    header->path_length = -1;
     for (; current < end; current++) {
       if (current[0] == '\n') {
         return NULL;
       }
       if (current[0] == ' ') {
-        *path_length = current - *path_start;
+        header->path_length = current - header->path_start;
         current++;
         break;
       }
     }
-    if (*path_length == -1) {
+    if (header->path_length == -1) {
       return NULL;
     }
   }
@@ -838,7 +845,7 @@ static const char *
 do_htreq_post_parse_header_values(grn_ctx *ctx,
                                   const char *start,
                                   const char *end,
-                                  int *content_length)
+                                  h_post_header *header)
 {
   const char *current;
   const char *name = start;
@@ -866,10 +873,14 @@ do_htreq_post_parse_header_values(grn_ctx *ctx,
         }
         if (STRING_EQUAL_CI(name, name_length, "Content-Length")) {
           const char *rest;
-          *content_length = grn_atoi(value, value + value_length, &rest);
+          header->content_length = grn_atoi(value, value + value_length, &rest);
           if (rest != value + value_length) {
             /* Invalid Content-Length value. TODO: report error. */
-            *content_length = -1;
+            header->content_length = -1;
+          }
+        } else if (STRING_EQUAL_CI(name, name_length, "Expect")) {
+          if (STRING_EQUAL_CI(value, value_length, "100-continue")) {
+            header->have_100_continue = GRN_TRUE;
           }
         }
       }
@@ -896,38 +907,28 @@ static grn_bool
 do_htreq_post_parse_header(grn_ctx *ctx,
                            const char *start,
                            const char *end,
-                           const char **path_start,
-                           int *path_length,
-                           int *content_length,
-                           const char **body_start)
+                           h_post_header *header)
 {
   const char *current;
 
-  current = do_htreq_post_parse_header_request_line(ctx,
-                                                    start,
-                                                    end,
-                                                    path_start,
-                                                    path_length);
+  current = do_htreq_post_parse_header_request_line(ctx, start, end, header);
   if (!current) {
     return GRN_FALSE;
   }
-  current = do_htreq_post_parse_header_values(ctx,
-                                              current,
-                                              end,
-                                              content_length);
+  current = do_htreq_post_parse_header_values(ctx, current, end, header);
   if (!current) {
     return GRN_FALSE;
   }
 
-  if (*content_length == -1) {
+  if (!header->have_100_continue && current == end) {
     return GRN_FALSE;
   }
 
-  if (current >= end) {
-    return GRN_FALSE;
+  if (current == end) {
+    header->body_start = NULL;
+  } else {
+    header->body_start = current;
   }
-
-  *body_start = current;
 
   return GRN_TRUE;
 }
@@ -935,42 +936,53 @@ do_htreq_post_parse_header(grn_ctx *ctx,
 static void
 do_htreq_post(grn_ctx *ctx, grn_msg *msg)
 {
+  grn_sock fd = msg->u.fd;
   const char *end;
-  const char *path_start = NULL;
-  int path_length = -1;
-  int content_length = -1;
-  const char *body_start = NULL;
+  h_post_header header;
+
+  header.path_start = NULL;
+  header.path_length = -1;
+  header.content_length = -1;
+  header.body_start = NULL;
+  header.have_100_continue = GRN_FALSE;
 
   end = GRN_BULK_CURR((grn_obj *)msg);
   if (!do_htreq_post_parse_header(ctx,
                                   GRN_BULK_HEAD((grn_obj *)msg),
                                   end,
-                                  &path_start,
-                                  &path_length,
-                                  &content_length,
-                                  &body_start)) {
+                                  &header)) {
     return;
   }
 
-  grn_ctx_send(ctx, path_start, path_length, GRN_CTX_QUIET);
+  if (header.have_100_continue) {
+    const char *continue_message = "HTTP/1.1 100 Continue\r\n";
+    ssize_t send_size;
+    int send_flags = MSG_NOSIGNAL;
+    send_size = send(fd, continue_message, strlen(continue_message), send_flags);
+    if (send_size == -1) {
+      SERR("send");
+      return;
+    }
+  }
+
+  grn_ctx_send(ctx, header.path_start, header.path_length, GRN_CTX_QUIET);
 
   {
-    grn_sock fd = msg->u.fd;
     grn_obj line_buffer;
     int read_content_length = 0;
 
     GRN_TEXT_INIT(&line_buffer, 0);
-    while (read_content_length < content_length) {
+    while (read_content_length < header.content_length) {
 #define POST_BUFFER_SIZE 8192
       ssize_t read_length;
       grn_rc rc;
       char buffer[POST_BUFFER_SIZE];
       const char *buffer_start, *buffer_current, *buffer_end;
 
-      if (body_start) {
-        buffer_start = body_start;
+      if (header.body_start) {
+        buffer_start = header.body_start;
         buffer_end = end;
-        body_start = NULL;
+        header.body_start = NULL;
       } else {
         read_length = read(fd, buffer, POST_BUFFER_SIZE);
         if (read_length == 0) {
@@ -997,7 +1009,7 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
                      buffer_current - buffer_start);
         {
           int flags = 0;
-          if (!(read_content_length == content_length &&
+          if (!(read_content_length == header.content_length &&
                 buffer_current + 1 == buffer_end)) {
             flags |= GRN_CTX_QUIET;
           }
