@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013 Brazil
+  Copyright(C) 2013-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@
 
 #include "mrb.h"
 #include "mrb/mrb_ctx.h"
+#include "mrb/mrb_bulk.h"
 #include "mrb/mrb_obj.h"
 #include "mrb/mrb_column.h"
 #include "mrb/mrb_fixed_size_column.h"
@@ -40,6 +41,7 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   ctx->impl->mrb.module = mrb_define_module(mrb, "Groonga");
 
   grn_mrb_ctx_init(ctx);
+  grn_mrb_bulk_init(ctx);
   grn_mrb_obj_init(ctx);
   grn_mrb_column_init(ctx);
   grn_mrb_fixed_size_column_init(ctx);
