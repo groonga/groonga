@@ -237,12 +237,8 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
               }
             }
           } else if (GRN_DB_OBJP(*p)) {
-            if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
-              mrb_funcall(mrb, mrb_si, "put_index", 3,
-                          mrb_cptr_value(mrb, index),
-                          mrb_fixnum_value(sid),
-                          mrb_fixnum_value(1));
-            }
+            mrb_value mrb_db_obj = grn_mrb_value_from_grn_obj(mrb, *p);
+            mrb_funcall(mrb, mrb_si, "match_resolve_index_db_obj", 1, mrb_db_obj);
           } else if (GRN_ACCESSORP(*p)) {
             grn_scan_info_set_flags(si, grn_scan_info_get_flags(si) | SCAN_ACCESSOR);
             if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {

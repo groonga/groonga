@@ -18,6 +18,12 @@ module Groonga
       nil
     end
 
+    def match_resolve_index_db_obj(db_obj)
+      index_info = db_obj.find_index(op)
+      return if index_info.nil?
+      put_index(index_info.index, index_info.section_id, 1)
+    end
+
     def call_relational_resolve_indexes
       # better index resolving framework for functions should be implemented
       each_arg do |arg|
