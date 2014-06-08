@@ -26,6 +26,22 @@
 #include "mrb_procedure.h"
 #include "mrb_index_info.h"
 
+static struct mrb_data_type mrb_grn_procedure_type = {
+  "Groonga::Procedure",
+  NULL
+};
+
+static mrb_value
+mrb_grn_procedure_initialize(mrb_state *mrb, mrb_value self)
+{
+  mrb_value mrb_procedure_ptr;
+
+  mrb_get_args(mrb, "o", &mrb_procedure_ptr);
+  DATA_TYPE(self) = &mrb_grn_procedure_type;
+  DATA_PTR(self) = mrb_cptr(mrb_procedure_ptr);
+  return self;
+}
+
 void
 grn_mrb_procedure_init(grn_ctx *ctx)
 {
@@ -37,5 +53,7 @@ grn_mrb_procedure_init(grn_ctx *ctx)
 
   klass = mrb_define_class_under(mrb, module, "Procedure", object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
+  mrb_define_method(mrb, klass, "initialize",
+                    mrb_grn_procedure_initialize, MRB_ARGS_REQ(1));
 }
 #endif

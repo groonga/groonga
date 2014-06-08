@@ -59,6 +59,7 @@ mrb_value
 grn_mrb_value_from_grn_obj(mrb_state *mrb, grn_obj *object)
 {
   struct RClass *mrb_class;
+  mrb_value mrb_new_arguments[1];
   mrb_value mrb_object;
 
   if (!object) {
@@ -66,8 +67,8 @@ grn_mrb_value_from_grn_obj(mrb_state *mrb, grn_obj *object)
   }
 
   mrb_class = grn_mrb_class_from_grn_obj(mrb, object);
-  mrb_object = mrb_obj_value(mrb_obj_alloc(mrb, MRB_TT_DATA, mrb_class));
-  DATA_PTR(mrb_object) = object;
+  mrb_new_arguments[0] = mrb_cptr_value(mrb, object);
+  mrb_object = mrb_obj_new(mrb, mrb_class, 1, mrb_new_arguments);
   return mrb_object;
 }
 #endif
