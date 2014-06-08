@@ -7,6 +7,15 @@ module Groonga
       PRE_CONST = 0x08
     end
 
+    def resolve_index(object)
+      if object.is_a?(Accessor)
+        resolve_index_accessor(object)
+      else
+        resolve_index_db_obj(object)
+      end
+    end
+
+    private
     def resolve_index_db_obj(db_obj)
       index_info = db_obj.find_index(op)
       return if index_info.nil?
