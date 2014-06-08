@@ -358,16 +358,8 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
           for (k = 0; (arg = grn_scan_info_get_arg(ctx, si, k)) ; k++) {
             if (GRN_DB_OBJP(*p)) {
               mrb_value mrb_target;
-              mrb_value mrb_index_info;
               mrb_target = grn_mrb_value_from_grn_obj(mrb, *p);
-              mrb_index_info = mrb_funcall(mrb, mrb_target, "find_index", 1,
-                                           mrb_fixnum_value(c->op));
-              if (!mrb_nil_p(mrb_index_info)) {
-                mrb_funcall(mrb, mrb_si, "put_index", 3,
-                            mrb_funcall(mrb, mrb_index_info, "index", 0),
-                            mrb_funcall(mrb, mrb_index_info, "section_id", 0),
-                            mrb_fixnum_value(1));
-              }
+              mrb_funcall(mrb, mrb_si, "resolve_index_db_obj", 1, mrb_target);
             } else if (GRN_ACCESSORP(*p)) {
               mrb_value mrb_target;
               mrb_value mrb_index_info;
@@ -560,6 +552,7 @@ grn_mrb_expr_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "weight",
                     mrb_grn_expr_code_get_weight, MRB_ARGS_NONE());
   grn_mrb_load(ctx, "expression.rb");
+  grn_mrb_load(ctx, "scan_info.rb");
 }
 
 scan_info **
