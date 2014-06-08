@@ -512,6 +512,29 @@ mrb_grn_scan_info_set_query(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_scan_info_set_flags(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  int flags;
+
+  mrb_get_args(mrb, "i", &flags);
+  si = DATA_PTR(self);
+  grn_scan_info_set_flags(si, flags);
+  return self;
+}
+
+static mrb_value
+mrb_grn_scan_info_get_flags(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  int flags;
+
+  si = DATA_PTR(self);
+  flags = grn_scan_info_get_flags(si);
+  return mrb_fixnum_value(flags);
+}
+
+static mrb_value
 mrb_grn_expr_code_get_weight(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -543,6 +566,10 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_scan_info_set_end, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "query=",
                     mrb_grn_scan_info_set_query, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "flags",
+                    mrb_grn_scan_info_get_flags, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "flags=",
+                    mrb_grn_scan_info_set_flags, MRB_ARGS_REQ(1));
 
   klass = mrb_define_class_under(mrb, module,
                                  "ExpressionCode", mrb->object_class);
