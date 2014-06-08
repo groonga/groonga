@@ -353,7 +353,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
         mrb_funcall(mrb, mrb_si, "op=", 1, mrb_fixnum_value(c->op));
         mrb_funcall(mrb, mrb_si, "end=", 1, mrb_fixnum_value(c - e->codes));
         sis[i++] = si;
-        mrb_funcall(mrb, mrb_si, "resolve_indexes", 0);
+        mrb_funcall(mrb, mrb_si, "call_relational_resolve_indexes", 0);
         si = NULL;
       } else {
         stat = SCAN_COL2;

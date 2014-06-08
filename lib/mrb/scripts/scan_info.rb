@@ -18,32 +18,32 @@ module Groonga
       nil
     end
 
-    def resolve_indexes
+    def call_relational_resolve_indexes
       # better index resolving framework for functions should be implemented
       each_arg do |arg|
-        resolve_index(arg)
+        call_relational_resolve_index(arg)
       end
     end
 
     private
-    def resolve_index(object)
+    def call_relational_resolve_index(object)
       case object
       when Accessor
-        resolve_index_accessor(object)
+        call_relational_resolve_index_accessor(object)
       when Bulk
         self.query = object
       else
-        resolve_index_db_obj(object)
+        call_relational_resolve_index_db_obj(object)
       end
     end
 
-    def resolve_index_db_obj(db_obj)
+    def call_relational_resolve_index_db_obj(db_obj)
       index_info = db_obj.find_index(op)
       return if index_info.nil?
       put_index(index_info.index, index_info.section_id, 1)
     end
 
-    def resolve_index_accessor(accessor)
+    def call_relational_resolve_index_accessor(accessor)
       self.flags |= Flags::ACCESSOR
       index_info = accessor.find_index(op)
       return if index_info.nil?
