@@ -38,6 +38,10 @@
 /data/scripts/groonga-httpd-restart
 /vendor/nginx-*/objs
 /vendor/mruby/parse.c
+/vendor/mruby/mrblib.c
+/vendor/mruby/mrbgems_init.c
+/vendor/mruby/mruby-build.timestamp
+/vendor/mruby-build/
 /vendor/plugins/*/
 /groonga.spec
 /stamp-h1

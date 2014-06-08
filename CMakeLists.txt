@@ -442,7 +442,6 @@ else()
 endif()
 
 option(GRN_WITH_MRUBY "use mruby" OFF)
-file(READ "${CMAKE_CURRENT_SOURCE_DIR}/mruby_version" MRUBY_VERSION)
 if(GRN_WITH_MRUBY)
   if(CMAKE_VERSION VERSION_LESS "2.8.8")
     message(FATAL_ERROR
@@ -450,7 +449,7 @@ if(GRN_WITH_MRUBY)
       "CMake 2.8.8 or later is required for mruby supported build")
   endif()
   set(MRUBY_INCLUDE_DIRS
-    "${CMAKE_CURRENT_SOURCE_DIR}/vendor/mruby-${MRUBY_VERSION}/include")
+    "${CMAKE_CURRENT_SOURCE_DIR}/vendor/mruby-source/include")
   set(MRUBY_LIBS "$<TARGET_OBJECTS:mruby>")
 else()
   set(MRUBY_INCLUDE_DIRS "")

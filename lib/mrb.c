@@ -110,7 +110,6 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
 {
   grn_mrb_data *data = &(ctx->impl->mrb);
   mrb_state *mrb = data->state;
-  int n;
   FILE *file;
   mrb_value result;
   struct mrb_parser_state *parser;
@@ -131,10 +130,12 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
   parser = mrb_parse_file(mrb, file, NULL);
   fclose(file);
 
-  n = mrb_generate_code(mrb, parser);
-  result = mrb_run(mrb,
-                   mrb_proc_new(mrb, mrb->irep[n]),
-                   mrb_top_self(mrb));
+  {
+    struct RProc *proc;
+    proc = mrb_generate_code(mrb, parser);
+    result = mrb_run(mrb, proc, mrb_top_self(mrb));
+    mrb_irep_decref(mrb, proc->body.irep);
+  }
   mrb_parser_free(parser);
 
   return result;
@@ -145,7 +146,6 @@ grn_mrb_eval(grn_ctx *ctx, const char *script, int script_length)
 {
   grn_mrb_data *data = &(ctx->impl->mrb);
   mrb_state *mrb = data->state;
-  int n;
   mrb_value result;
   struct mrb_parser_state *parser;
 
@@ -157,16 +157,16 @@ grn_mrb_eval(grn_ctx *ctx, const char *script, int script_length)
     script_length = strlen(script);
   }
   parser = mrb_parse_nstring(mrb, script, script_length, NULL);
-  n = mrb_generate_code(mrb, parser);
   {
+    struct RProc *proc;
     struct RClass *eval_context_class;
     mrb_value eval_context;
 
+    proc = mrb_generate_code(mrb, parser);
     eval_context_class = mrb_class_get_under(mrb, data->module, "EvalContext");
     eval_context = mrb_obj_new(mrb, eval_context_class, 0, NULL);
-    result = mrb_run(mrb,
-                     mrb_proc_new(mrb, mrb->irep[n]),
-                     eval_context);
+    result = mrb_run(mrb, proc, eval_context);
+    mrb_irep_decref(mrb, proc->body.irep);
   }
   mrb_parser_free(parser);
 

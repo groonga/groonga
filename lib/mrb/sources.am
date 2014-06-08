@@ -15,8 +15,6 @@ libgrnmrb_la_SOURCES =				\
 	mrb_fixed_size_column.h			\
 	mrb_index_column.c			\
 	mrb_index_column.h			\
-	mrb_kernel.c				\
-	mrb_kernel.h				\
 	mrb_obj.c				\
 	mrb_obj.h				\
 	mrb_procedure.c				\

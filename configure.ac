@@ -1342,13 +1342,12 @@ if test "x$enable_mruby" != "xyes"; then
 fi
 AC_MSG_RESULT($enable_mruby)
 
-m4_define([mruby_version], m4_include(mruby_version))
-MRUBY_VERSION=mruby_version
-AC_SUBST(MRUBY_VERSION)
-
 if test "$enable_mruby" = "yes"; then
+  if test "$ac_cv_ruby_available" != "yes"; then
+    AC_MSG_ERROR(--enable-ruby requires --with-ruby)
+  fi
   AC_DEFINE(GRN_WITH_MRUBY, [1], [Define to 1 if mruby is enabled.])
-  MRUBY_CFLAGS="-I\$(top_srcdir)/vendor/mruby-${MRUBY_VERSION}/include"
+  MRUBY_CFLAGS="-I\$(top_srcdir)/vendor/mruby-source/include"
   MRUBY_LIBS="\$(top_builddir)/vendor/mruby/libmruby.la"
 else
   MRUBY_CFLAGS=

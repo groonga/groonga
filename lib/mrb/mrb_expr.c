@@ -49,8 +49,7 @@ mrb_grn_scan_info_new(mrb_state *mrb, scan_info *scan_info)
   mrb_value mrb_scan_info;
 
   mrb_scan_info = mrb_cptr_value(mrb, scan_info);
-  klass = mrb_class_ptr(mrb_const_get(mrb, mrb_obj_value(module),
-                                      mrb_intern(mrb, "ScanInfo")));
+  klass = mrb_class_get_under(mrb, module, "ScanInfo");
   return mrb_obj_new(mrb, klass, 1, &mrb_scan_info);
 }
 
@@ -63,8 +62,7 @@ mrb_grn_expr_code_new(mrb_state *mrb, grn_expr_code *code)
   mrb_value mrb_code;
 
   mrb_code = mrb_cptr_value(mrb, code);
-  klass = mrb_class_ptr(mrb_const_get(mrb, mrb_obj_value(module),
-                                      mrb_intern(mrb, "ExpressionCode")));
+  klass = mrb_class_get_under(mrb, module, "ExpressionCode");
   return mrb_obj_new(mrb, klass, 1, &mrb_code);
 }
 

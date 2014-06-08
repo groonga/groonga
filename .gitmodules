@@ -1,0 +1,3 @@
+[submodule "vendor/mruby-source"]
+	path = vendor/mruby-source
+	url = https://github.com/mruby/mruby.git

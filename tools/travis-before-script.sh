@@ -2,6 +2,8 @@
 
 set -e
 
+git submodule update --init --depth 1
+
 case "${BUILD_TOOL}" in
     autotools)
 	./autogen.sh
@@ -11,7 +13,7 @@ case "${BUILD_TOOL}" in
 	    configure_args="${configure_args} --enable-debug"
 	#fi
 	if [ "$ENABLE_MRUBY" = "yes" ]; then
-	    configure_args="${configure_args} --enable-mruby"
+	    configure_args="${configure_args} --with-ruby --enable-mruby"
 	fi
 
 	./configure --with-ruby ${configure_args}
