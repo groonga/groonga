@@ -188,7 +188,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                     mrb_value mrb_accessor;
                     weight = mrb_fixnum(mrb_funcall(mrb, mrb_ec, "weight", 0));
                     grn_scan_info_set_flags(si, grn_scan_info_get_flags(si) | SCAN_ACCESSOR);
-                    mrb_accessor = mrb_grn_accessor_new(mrb, (grn_accessor *)ec->value);
+                    mrb_accessor = grn_mrb_value_from_grn_obj(mrb, ec->value);
                     if (!mrb_nil_p(mrb_funcall(mrb, mrb_accessor, "next", 0))) {
                       mrb_funcall(mrb, mrb_si, "put_index", 3,
                                   mrb_cptr_value(mrb, ec->value),
@@ -246,7 +246,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
           } else if (GRN_ACCESSORP(*p)) {
             grn_scan_info_set_flags(si, grn_scan_info_get_flags(si) | SCAN_ACCESSOR);
             if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
-              mrb_value mrb_accessor = mrb_grn_accessor_new(mrb, (grn_accessor *)*p);
+              mrb_value mrb_accessor = grn_mrb_value_from_grn_obj(mrb, *p);
               if (!mrb_nil_p(mrb_funcall(mrb, mrb_accessor, "next", 0))) {
                 mrb_funcall(mrb, mrb_si, "put_index", 3,
                             mrb_cptr_value(mrb, *p),
@@ -362,7 +362,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
               mrb_funcall(mrb, mrb_si, "resolve_index_db_obj", 1, mrb_target);
             } else if (GRN_ACCESSORP(*p)) {
               mrb_value mrb_target;
-              mrb_target = mrb_grn_accessor_new(mrb, (grn_accessor *)(*p));
+              mrb_target = grn_mrb_value_from_grn_obj(mrb, *p);
               mrb_funcall(mrb, mrb_si, "resolve_index_accessor", 1, mrb_target);
             } else {
               mrb_funcall(mrb, mrb_si, "query=", 1, mrb_cptr_value(mrb, *p));

@@ -34,6 +34,9 @@ grn_mrb_class_from_grn_obj(mrb_state *mrb, grn_obj *object)
 
   data = &(ctx->impl->mrb);
   switch (object->header.type) {
+  case GRN_ACCESSOR :
+    klass = mrb_class_get_under(mrb, data->module, "Accessor");
+    break;
   case GRN_COLUMN_FIX_SIZE :
     klass = mrb_class_get_under(mrb, data->module, "FixedSizeColumn");
     break;

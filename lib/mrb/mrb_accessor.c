@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013 Brazil
+  Copyright(C) 2013-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -31,20 +31,6 @@ static struct mrb_data_type mrb_grn_accessor_type = {
   "Groonga::Accessor",
   NULL
 };
-
-mrb_value
-mrb_grn_accessor_new(mrb_state *mrb, grn_accessor *accessor)
-{
-  grn_ctx *ctx = (grn_ctx *)mrb->ud;
-  struct RClass *module = ctx->impl->mrb.module;
-  struct RClass *klass;
-  mrb_value mrb_accessor_ptr;
-
-  mrb_accessor_ptr = mrb_cptr_value(mrb, accessor);
-  klass = mrb_class_ptr(mrb_const_get(mrb, mrb_obj_value(module),
-                                      mrb_intern(mrb, "Accessor")));
-  return mrb_obj_new(mrb, klass, 1, &mrb_accessor_ptr);
-}
 
 static mrb_value
 mrb_grn_accessor_initialize(mrb_state *mrb, mrb_value self)

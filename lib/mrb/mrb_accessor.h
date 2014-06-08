@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013 Brazil
+  Copyright(C) 2013-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -27,9 +27,6 @@ extern "C" {
 #endif
 
 void grn_mrb_accessor_init(grn_ctx *ctx);
-#ifdef GRN_WITH_MRUBY
-mrb_value mrb_grn_accessor_new(mrb_state *mrb, grn_accessor *accessor);
-#endif
 
 #ifdef __cplusplus
 }
