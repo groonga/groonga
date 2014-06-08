@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013 Brazil
+  Copyright(C) 2013-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,8 +23,9 @@
 #include <mruby/class.h>
 #include <mruby/data.h>
 
+#include "../mrb.h"
 #include "mrb_obj.h"
-#include "mrb_index_info.h"
+#include "mrb_converter.h"
 
 static mrb_value
 object_get_name(mrb_state *mrb, mrb_value self)
@@ -61,7 +62,15 @@ object_find_index(mrb_state *mrb, mrb_value self)
   if (n_indexes == 0) {
     return mrb_nil_value();
   } else {
-    return mrb_grn_index_info_new(mrb, index, section_id);
+    grn_mrb_data *data;
+    struct RClass *klass;
+    mrb_value args[2];
+
+    data = &(ctx->impl->mrb);
+    klass = mrb_class_get_under(mrb, data->module, "IndexInfo");
+    args[0] = grn_mrb_value_from_grn_obj(mrb, index);
+    args[1] = mrb_fixnum_value(section_id);
+    return mrb_obj_new(mrb, klass, 2, args);
   }
 }
 
@@ -80,5 +89,7 @@ grn_mrb_obj_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "name", object_get_name, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "find_index",
                     object_find_index, MRB_ARGS_REQ(1));
+
+  grn_mrb_load(ctx, "index_info.rb");
 }
 #endif

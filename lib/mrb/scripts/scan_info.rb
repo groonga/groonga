@@ -24,6 +24,17 @@ module Groonga
       put_index(index_info.index, index_info.section_id, 1)
     end
 
+    def match_resolve_index_accessor(accessor)
+      self.flags |= Flags::ACCESSOR
+      index_info = accessor.find_index(op)
+      return if index_info.nil?
+      if acessor.next
+        put_index(accessor, index_info.section_id, 1)
+      else
+        put_index(index_info.index, index_info.section_id, 1)
+      end
+    end
+
     def call_relational_resolve_indexes
       # better index resolving framework for functions should be implemented
       each_arg do |arg|

@@ -29,7 +29,6 @@
 #include "mrb/mrb_index_column.h"
 #include "mrb/mrb_expr.h"
 #include "mrb/mrb_accessor.h"
-#include "mrb/mrb_index_info.h"
 #include "mrb/mrb_procedure.h"
 
 #ifdef GRN_WITH_MRUBY
@@ -50,7 +49,6 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   grn_mrb_index_column_init(ctx);
   grn_mrb_expr_init(ctx);
   grn_mrb_accessor_init(ctx);
-  grn_mrb_index_info_init(ctx);
   grn_mrb_procedure_init(ctx);
 }
 

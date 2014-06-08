@@ -24,7 +24,6 @@
 #include <mruby/data.h>
 
 #include "mrb_procedure.h"
-#include "mrb_index_info.h"
 
 static struct mrb_data_type mrb_grn_procedure_type = {
   "Groonga::Procedure",
