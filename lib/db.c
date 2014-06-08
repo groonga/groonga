@@ -9141,6 +9141,9 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
       break;
     }
   } else if (GRN_ACCESSORP(obj)) {
+    if (section) {
+      *section = 0;
+    }
     switch (op) {
     case GRN_OP_EQUAL :
     case GRN_OP_TERM_EXTRACT :
