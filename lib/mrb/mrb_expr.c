@@ -191,12 +191,12 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                     mrb_accessor = grn_mrb_value_from_grn_obj(mrb, ec->value);
                     if (!mrb_nil_p(mrb_funcall(mrb, mrb_accessor, "next", 0))) {
                       mrb_funcall(mrb, mrb_si, "put_index", 3,
-                                  mrb_cptr_value(mrb, ec->value),
+                                  grn_mrb_value_from_grn_obj(mrb, ec->value),
                                   mrb_fixnum_value(sid),
                                   mrb_fixnum_value(weight));
                     } else {
                       mrb_funcall(mrb, mrb_si, "put_index", 3,
-                                  mrb_cptr_value(mrb, index),
+                                  grn_mrb_value_from_grn_obj(mrb, index),
                                   mrb_fixnum_value(sid),
                                   mrb_fixnum_value(weight));
                     }
@@ -208,7 +208,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                     mrb_value mrb_ec = mrb_grn_expr_code_new(mrb, ec);
                     weight = mrb_fixnum(mrb_funcall(mrb, mrb_ec, "weight", 0));
                     mrb_funcall(mrb, mrb_si, "put_index", 3,
-                                mrb_cptr_value(mrb, index),
+                                grn_mrb_value_from_grn_obj(mrb, index),
                                 mrb_fixnum_value(sid),
                                 mrb_fixnum_value(weight));
                   }
@@ -229,7 +229,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                     weight = mrb_fixnum(mrb_funcall(mrb, mrb_ec, "weight", 0));
                   }
                   mrb_funcall(mrb, mrb_si, "put_index", 3,
-                              mrb_cptr_value(mrb, index),
+                              grn_mrb_value_from_grn_obj(mrb, index),
                               mrb_fixnum_value(sid),
                               mrb_fixnum_value(weight));
                   break;
@@ -245,12 +245,12 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
               mrb_value mrb_accessor = grn_mrb_value_from_grn_obj(mrb, *p);
               if (!mrb_nil_p(mrb_funcall(mrb, mrb_accessor, "next", 0))) {
                 mrb_funcall(mrb, mrb_si, "put_index", 3,
-                            mrb_cptr_value(mrb, *p),
+                            mrb_accessor,
                             mrb_fixnum_value(sid),
                             mrb_fixnum_value(1));
               } else {
                 mrb_funcall(mrb, mrb_si, "put_index", 3,
-                            mrb_cptr_value(mrb, index),
+                            grn_mrb_value_from_grn_obj(mrb, index),
                             mrb_fixnum_value(sid),
                             mrb_fixnum_value(1));
               }
@@ -431,7 +431,7 @@ mrb_grn_scan_info_put_index(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "oii", &mrb_index, &sid, &weight);
   si = DATA_PTR(self);
-  index = mrb_cptr(mrb_index);
+  index = DATA_PTR(mrb_index);
   grn_scan_info_put_index(ctx, si, index, sid, weight);
   return self;
 }

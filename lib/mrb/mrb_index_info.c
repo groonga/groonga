@@ -25,6 +25,7 @@
 
 #include "../db.h"
 #include "mrb_index_info.h"
+#include "mrb_converter.h"
 
 mrb_value
 mrb_grn_index_info_new(mrb_state *mrb, grn_obj *index, int section_id)
@@ -34,7 +35,7 @@ mrb_grn_index_info_new(mrb_state *mrb, grn_obj *index, int section_id)
   struct RClass *klass;
   mrb_value args[2];
 
-  args[0] = mrb_cptr_value(mrb, index);
+  args[0] = grn_mrb_value_from_grn_obj(mrb, index);
   args[1] = mrb_fixnum_value(section_id);
   klass = mrb_class_ptr(mrb_const_get(mrb, mrb_obj_value(module),
                                       mrb_intern(mrb, "IndexInfo")));
