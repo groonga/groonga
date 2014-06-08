@@ -208,8 +208,6 @@ GRN_API grn_obj *grn_proc_get_or_add_var(grn_ctx *ctx, grn_user_data *user_data,
 GRN_API grn_obj *grn_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
                                 grn_id domain, grn_obj_flags flags);
 
-GRN_API grn_proc_type grn_proc_get_type(grn_ctx *ctx, grn_obj *proc);
-
 grn_rc grn_proc_set_selector(grn_ctx *ctx, grn_obj *proc,
                              grn_selector_func selector);
 

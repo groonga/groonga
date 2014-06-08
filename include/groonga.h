@@ -483,6 +483,7 @@ GRN_API grn_obj *grn_proc_create(grn_ctx *ctx,
                                  unsigned int nvars, grn_expr_var *vars);
 GRN_API grn_obj *grn_proc_get_info(grn_ctx *ctx, grn_user_data *user_data,
                                    grn_expr_var **vars, unsigned int *nvars, grn_obj **caller);
+GRN_API grn_proc_type grn_proc_get_type(grn_ctx *ctx, grn_obj *proc);
 
 /*-------------------------------------------------------------
  * API for table
