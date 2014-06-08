@@ -473,6 +473,17 @@ mrb_grn_scan_info_put_index(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_scan_info_get_op(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  grn_operator op;
+
+  si = DATA_PTR(self);
+  op = grn_scan_info_get_op(si);
+  return mrb_fixnum_value(op);
+}
+
+static mrb_value
 mrb_grn_scan_info_set_op(mrb_state *mrb, mrb_value self)
 {
   scan_info *si;
@@ -532,6 +543,8 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_scan_info_initialize, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "put_index",
                     mrb_grn_scan_info_put_index, MRB_ARGS_REQ(3));
+  mrb_define_method(mrb, klass, "op",
+                    mrb_grn_scan_info_get_op, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "op=",
                     mrb_grn_scan_info_set_op, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "end=",

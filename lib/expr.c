@@ -4263,6 +4263,12 @@ grn_scan_info_set_logical_op(scan_info *si, grn_operator logical_op)
   si->logical_op = logical_op;
 }
 
+grn_operator
+grn_scan_info_get_op(scan_info *si)
+{
+  return si->op;
+}
+
 void
 grn_scan_info_set_op(scan_info *si, grn_operator op)
 {
