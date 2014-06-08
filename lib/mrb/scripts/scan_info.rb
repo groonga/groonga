@@ -8,8 +8,11 @@ module Groonga
     end
 
     def resolve_index(object)
-      if object.is_a?(Accessor)
+      case object
+      when Accessor
         resolve_index_accessor(object)
+      when Bulk
+        self.query = object
       else
         resolve_index_db_obj(object)
       end

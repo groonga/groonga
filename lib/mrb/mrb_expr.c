@@ -260,7 +260,9 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
               }
             }
           } else {
-            mrb_funcall(mrb, mrb_si, "query=", 1, mrb_cptr_value(mrb, *p));
+            mrb_value mrb_query;
+            mrb_query = grn_mrb_value_from_grn_obj(mrb, *p);
+            mrb_funcall(mrb, mrb_si, "query=", 1, mrb_query);
           }
         }
       }
@@ -356,13 +358,9 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
           int k;
           grn_obj *arg, **p = &arg;
           for (k = 0; (arg = grn_scan_info_get_arg(ctx, si, k)) ; k++) {
-            if ((*p)->header.type == GRN_BULK) {
-              mrb_funcall(mrb, mrb_si, "query=", 1, mrb_cptr_value(mrb, *p));
-            } else {
-              mrb_value mrb_target;
-              mrb_target = grn_mrb_value_from_grn_obj(mrb, *p);
-              mrb_funcall(mrb, mrb_si, "resolve_index", 1, mrb_target);
-            }
+            mrb_value mrb_target;
+            mrb_target = grn_mrb_value_from_grn_obj(mrb, *p);
+            mrb_funcall(mrb, mrb_si, "resolve_index", 1, mrb_target);
           }
         }
         si = NULL;
@@ -494,7 +492,7 @@ mrb_grn_scan_info_set_query(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "o", &mrb_query);
   si = DATA_PTR(self);
-  grn_scan_info_set_query(si, mrb_cptr(mrb_query));
+  grn_scan_info_set_query(si, DATA_PTR(mrb_query));
   return self;
 }
 
