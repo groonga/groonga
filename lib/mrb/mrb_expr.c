@@ -353,16 +353,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
         mrb_funcall(mrb, mrb_si, "op=", 1, mrb_fixnum_value(c->op));
         mrb_funcall(mrb, mrb_si, "end=", 1, mrb_fixnum_value(c - e->codes));
         sis[i++] = si;
-        /* better index resolving framework for functions should be implemented */
-        {
-          int k;
-          grn_obj *arg, **p = &arg;
-          for (k = 0; (arg = grn_scan_info_get_arg(ctx, si, k)) ; k++) {
-            mrb_value mrb_target;
-            mrb_target = grn_mrb_value_from_grn_obj(mrb, *p);
-            mrb_funcall(mrb, mrb_si, "resolve_index", 1, mrb_target);
-          }
-        }
+        mrb_funcall(mrb, mrb_si, "resolve_indexes", 0);
         si = NULL;
       } else {
         stat = SCAN_COL2;
@@ -520,6 +511,22 @@ mrb_grn_scan_info_get_flags(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_scan_info_get_arg(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  scan_info *si;
+  int index;
+  grn_obj *arg;
+
+  mrb_get_args(mrb, "i", &index);
+
+  si = DATA_PTR(self);
+  arg = grn_scan_info_get_arg(ctx, si, index);
+
+  return grn_mrb_value_from_grn_obj(mrb, arg);
+}
+
+static mrb_value
 mrb_grn_expr_code_get_weight(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -555,6 +562,8 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_scan_info_get_flags, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "flags=",
                     mrb_grn_scan_info_set_flags, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "get_arg",
+                    mrb_grn_scan_info_get_arg, MRB_ARGS_REQ(1));
 
   klass = mrb_define_class_under(mrb, module,
                                  "ExpressionCode", mrb->object_class);

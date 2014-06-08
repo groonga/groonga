@@ -7,6 +7,25 @@ module Groonga
       PRE_CONST = 0x08
     end
 
+    def each_arg
+      i = 0
+      loop do
+        arg = get_arg(i)
+        break if arg.nil?
+        yield(arg)
+        i += 1
+      end
+      nil
+    end
+
+    def resolve_indexes
+      # better index resolving framework for functions should be implemented
+      each_arg do |arg|
+        resolve_index(arg)
+      end
+    end
+
+    private
     def resolve_index(object)
       case object
       when Accessor
@@ -18,7 +37,6 @@ module Groonga
       end
     end
 
-    private
     def resolve_index_db_obj(db_obj)
       index_info = db_obj.find_index(op)
       return if index_info.nil?
