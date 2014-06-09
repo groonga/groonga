@@ -133,8 +133,7 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
   {
     struct RProc *proc;
     proc = mrb_generate_code(mrb, parser);
-    result = mrb_run(mrb, proc, mrb_top_self(mrb));
-    mrb_irep_decref(mrb, proc->body.irep);
+    result = mrb_toplevel_run(mrb, proc);
   }
   mrb_parser_free(parser);
 
@@ -165,8 +164,7 @@ grn_mrb_eval(grn_ctx *ctx, const char *script, int script_length)
     proc = mrb_generate_code(mrb, parser);
     eval_context_class = mrb_class_get_under(mrb, data->module, "EvalContext");
     eval_context = mrb_obj_new(mrb, eval_context_class, 0, NULL);
-    result = mrb_run(mrb, proc, eval_context);
-    mrb_irep_decref(mrb, proc->body.irep);
+    result = mrb_context_run(mrb, proc, eval_context, 0);
   }
   mrb_parser_free(parser);
 
