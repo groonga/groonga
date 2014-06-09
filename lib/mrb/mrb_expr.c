@@ -193,13 +193,15 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                   break;
                 case GRN_COLUMN_FIX_SIZE :
                 case GRN_COLUMN_VAR_SIZE :
-                  if (grn_column_index(ctx, ec->value, c->op, &index, 1, &sid)) {
-                    mrb_value mrb_ec = mrb_grn_expr_code_new(mrb, ec);
-                    weight = mrb_fixnum(mrb_funcall(mrb, mrb_ec, "weight", 0));
-                    mrb_funcall(mrb, mrb_si, "put_index", 3,
-                                grn_mrb_value_from_grn_obj(mrb, index),
-                                mrb_fixnum_value(sid),
-                                mrb_fixnum_value(weight));
+                  {
+                    mrb_value mrb_column;
+                    mrb_value mrb_ec;
+
+                    mrb_column = grn_mrb_value_from_grn_obj(mrb, ec->value);
+                    mrb_ec = mrb_grn_expr_code_new(mrb, ec);
+                    mrb_funcall(mrb, mrb_si,
+                                "match_expr_resolve_index_data_column",
+                                2, mrb_column, mrb_ec);
                   }
                   break;
                 case GRN_COLUMN_INDEX :

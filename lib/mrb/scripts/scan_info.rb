@@ -29,6 +29,12 @@ module Groonga
       end
     end
 
+    def match_expr_resolve_index_data_column(column, expr_code)
+      index_info = column.find_index(op)
+      return if index_info.nil?
+      put_index(index_info.index, index_info.section_id, expr_code.weight)
+    end
+
     def match_resolve_index_db_obj(db_obj)
       index_info = db_obj.find_index(op)
       return if index_info.nil?
