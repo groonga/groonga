@@ -181,23 +181,14 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
               if (ec->value) {
                 switch (ec->value->header.type) {
                 case GRN_ACCESSOR :
-                  if (grn_column_index(ctx, ec->value, c->op, &index, 1, &sid)) {
-                    mrb_value mrb_ec = mrb_grn_expr_code_new(mrb, ec);
+                  {
                     mrb_value mrb_accessor;
-                    weight = mrb_fixnum(mrb_funcall(mrb, mrb_ec, "weight", 0));
-                    grn_scan_info_set_flags(si, grn_scan_info_get_flags(si) | SCAN_ACCESSOR);
+                    mrb_value mrb_ec;
+
                     mrb_accessor = grn_mrb_value_from_grn_obj(mrb, ec->value);
-                    if (!mrb_nil_p(mrb_funcall(mrb, mrb_accessor, "next", 0))) {
-                      mrb_funcall(mrb, mrb_si, "put_index", 3,
-                                  grn_mrb_value_from_grn_obj(mrb, ec->value),
-                                  mrb_fixnum_value(sid),
-                                  mrb_fixnum_value(weight));
-                    } else {
-                      mrb_funcall(mrb, mrb_si, "put_index", 3,
-                                  grn_mrb_value_from_grn_obj(mrb, index),
-                                  mrb_fixnum_value(sid),
-                                  mrb_fixnum_value(weight));
-                    }
+                    mrb_ec = mrb_grn_expr_code_new(mrb, ec);
+                    mrb_funcall(mrb, mrb_si, "match_expr_resolve_index_accessor",
+                                2, mrb_accessor, mrb_ec);
                   }
                   break;
                 case GRN_COLUMN_FIX_SIZE :

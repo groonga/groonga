@@ -18,6 +18,17 @@ module Groonga
       nil
     end
 
+    def match_expr_resolve_index_accessor(accessor, expr_code)
+      self.flags |= Flags::ACCESSOR
+      index_info = accessor.find_index(op)
+      return if index_info.nil?
+      if accessor.next
+        put_index(accessor, index_info.section_id, expr_code.weight)
+      else
+        put_index(index_info.index, index_info.section_id, expr_code.weight)
+      end
+    end
+
     def match_resolve_index_db_obj(db_obj)
       index_info = db_obj.find_index(op)
       return if index_info.nil?
