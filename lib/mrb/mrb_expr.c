@@ -238,21 +238,8 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
             mrb_value mrb_db_obj = grn_mrb_value_from_grn_obj(mrb, *p);
             mrb_funcall(mrb, mrb_si, "match_resolve_index_db_obj", 1, mrb_db_obj);
           } else if (GRN_ACCESSORP(*p)) {
-            grn_scan_info_set_flags(si, grn_scan_info_get_flags(si) | SCAN_ACCESSOR);
-            if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
-              mrb_value mrb_accessor = grn_mrb_value_from_grn_obj(mrb, *p);
-              if (!mrb_nil_p(mrb_funcall(mrb, mrb_accessor, "next", 0))) {
-                mrb_funcall(mrb, mrb_si, "put_index", 3,
-                            mrb_accessor,
-                            mrb_fixnum_value(sid),
-                            mrb_fixnum_value(1));
-              } else {
-                mrb_funcall(mrb, mrb_si, "put_index", 3,
-                            grn_mrb_value_from_grn_obj(mrb, index),
-                            mrb_fixnum_value(sid),
-                            mrb_fixnum_value(1));
-              }
-            }
+            mrb_value mrb_accessor = grn_mrb_value_from_grn_obj(mrb, *p);
+            mrb_funcall(mrb, mrb_si, "match_resolve_index_accessor", 1, mrb_accessor);
           } else {
             mrb_value mrb_query;
             mrb_query = grn_mrb_value_from_grn_obj(mrb, *p);

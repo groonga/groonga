@@ -28,7 +28,7 @@ module Groonga
       self.flags |= Flags::ACCESSOR
       index_info = accessor.find_index(op)
       return if index_info.nil?
-      if acessor.next
+      if accessor.next
         put_index(accessor, index_info.section_id, 1)
       else
         put_index(index_info.index, index_info.section_id, 1)
