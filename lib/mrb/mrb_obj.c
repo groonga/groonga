@@ -17,9 +17,11 @@
 */
 
 #include "../ctx_impl.h"
+#include "../util.h"
 
 #ifdef GRN_WITH_MRUBY
 #include <mruby.h>
+#include <mruby/string.h>
 #include <mruby/class.h>
 #include <mruby/data.h>
 
@@ -74,6 +76,21 @@ object_find_index(mrb_state *mrb, mrb_value self)
   }
 }
 
+static mrb_value
+object_grn_inspect(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj buffer;
+  mrb_value inspected;
+
+  GRN_TEXT_INIT(&buffer, 0);
+  grn_inspect(ctx, &buffer, DATA_PTR(self));
+  inspected = mrb_str_new(mrb, GRN_TEXT_VALUE(&buffer), GRN_TEXT_LEN(&buffer));
+  GRN_OBJ_FIN(ctx, &buffer);
+
+  return inspected;
+}
+
 void
 grn_mrb_obj_init(grn_ctx *ctx)
 {
@@ -89,6 +106,8 @@ grn_mrb_obj_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "name", object_get_name, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "find_index",
                     object_find_index, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "grn_inspect",
+                    object_grn_inspect, MRB_ARGS_NONE());
 
   grn_mrb_load(ctx, "index_info.rb");
 }
