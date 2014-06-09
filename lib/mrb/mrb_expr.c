@@ -39,6 +39,10 @@ static struct mrb_data_type mrb_grn_expr_code_type = {
   "Groonga::ExpressionCode",
   NULL
 };
+static struct mrb_data_type mrb_grn_expression_type = {
+  "Groonga::Expression",
+  NULL
+};
 
 static mrb_value
 mrb_grn_scan_info_new(mrb_state *mrb, scan_info *scan_info)
@@ -508,11 +512,23 @@ mrb_grn_expr_code_get_weight(mrb_state *mrb, mrb_value self)
   return mrb_fixnum_value(grn_expr_code_get_weight(ctx, DATA_PTR(self)));
 }
 
+static mrb_value
+mrb_grn_expression_initialize(mrb_state *mrb, mrb_value self)
+{
+  mrb_value mrb_expression_ptr;
+
+  mrb_get_args(mrb, "o", &mrb_expression_ptr);
+  DATA_TYPE(self) = &mrb_grn_expression_type;
+  DATA_PTR(self) = mrb_cptr(mrb_expression_ptr);
+  return self;
+}
+
 void
 grn_mrb_expr_init(grn_ctx *ctx)
 {
   mrb_state *mrb = ctx->impl->mrb.state;
   struct RClass *module = ctx->impl->mrb.module;
+  struct RClass *object_class = ctx->impl->mrb.object_class;
   struct RClass *klass;
 
   mrb_define_class_method(mrb, module,
@@ -546,6 +562,12 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_expr_code_initialize, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "weight",
                     mrb_grn_expr_code_get_weight, MRB_ARGS_NONE());
+
+  klass = mrb_define_class_under(mrb, module, "Expression", object_class);
+  MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
+  mrb_define_method(mrb, klass, "initialize",
+                    mrb_grn_expression_initialize, MRB_ARGS_REQ(1));
+
   grn_mrb_load(ctx, "expression.rb");
   grn_mrb_load(ctx, "scan_info.rb");
 }

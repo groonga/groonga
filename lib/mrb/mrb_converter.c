@@ -49,6 +49,9 @@ grn_mrb_class_from_grn_obj(mrb_state *mrb, grn_obj *object)
   case GRN_COLUMN_INDEX :
     klass = mrb_class_get_under(mrb, data->module, "IndexColumn");
     break;
+  case GRN_EXPR :
+    klass = mrb_class_get_under(mrb, data->module, "Expression");
+    break;
   case GRN_PROC :
     klass = mrb_class_get_under(mrb, data->module, "Procedure");
     break;
