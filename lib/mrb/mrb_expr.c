@@ -23,6 +23,7 @@
 #include <mruby/class.h>
 #include <mruby/variable.h>
 #include <mruby/data.h>
+#include <mruby/array.h>
 
 #include "../expr.h"
 #include "../util.h"
@@ -523,6 +524,23 @@ mrb_grn_expression_initialize(mrb_state *mrb, mrb_value self)
   return self;
 }
 
+static mrb_value
+mrb_grn_expression_codes(mrb_state *mrb, mrb_value self)
+{
+  grn_expr *expr;
+  mrb_value mrb_codes;
+  int i;
+
+  expr = DATA_PTR(self);
+  mrb_codes = mrb_ary_new_capa(mrb, expr->codes_curr);
+  for (i = 0; i < expr->codes_curr; i++) {
+    grn_expr_code *code = expr->codes + i;
+    mrb_ary_push(mrb, mrb_codes, mrb_grn_expr_code_new(mrb, code));
+  }
+
+  return mrb_codes;
+}
+
 void
 grn_mrb_expr_init(grn_ctx *ctx)
 {
@@ -567,6 +585,8 @@ grn_mrb_expr_init(grn_ctx *ctx)
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
   mrb_define_method(mrb, klass, "initialize",
                     mrb_grn_expression_initialize, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "codes",
+                    mrb_grn_expression_codes, MRB_ARGS_NONE());
 
   grn_mrb_load(ctx, "expression.rb");
   grn_mrb_load(ctx, "scan_info.rb");
