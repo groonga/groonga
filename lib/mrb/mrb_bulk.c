@@ -23,6 +23,7 @@
 #include <mruby/class.h>
 #include <mruby/variable.h>
 #include <mruby/data.h>
+#include <mruby/numeric.h>
 
 #include "../db.h"
 #include "mrb_bulk.h"
@@ -52,6 +53,31 @@ mrb_grn_bulk_get_domain(mrb_state *mrb, mrb_value self)
   return mrb_fixnum_value(bulk->header.domain);
 }
 
+static mrb_value
+mrb_grn_bulk_get_value(mrb_state *mrb, mrb_value self)
+{
+  grn_obj *bulk;
+  mrb_value mrb_value_;
+
+  bulk = DATA_PTR(self);
+  switch (bulk->header.domain) {
+  case GRN_DB_UINT32 :
+    {
+      uint32_t value;
+      value = GRN_UINT32_VALUE(bulk);
+      if (!FIXABLE(value)) {
+        mrb_raisef(mrb, E_ARGUMENT_ERROR,
+                   "can't handle large number: <%u>: max: <%" PRIiMRB_INT ">",
+                   value, PRIiMRB_INT);
+      }
+      mrb_value_ = mrb_fixnum_value(value);
+    }
+    break;
+  }
+
+  return mrb_value_;
+}
+
 void
 grn_mrb_bulk_init(grn_ctx *ctx)
 {
@@ -66,5 +92,7 @@ grn_mrb_bulk_init(grn_ctx *ctx)
                     mrb_grn_bulk_initialize, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "domain",
                     mrb_grn_bulk_get_domain, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "value",
+                    mrb_grn_bulk_get_value, MRB_ARGS_NONE());
 }
 #endif
