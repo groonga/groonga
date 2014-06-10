@@ -18,7 +18,40 @@ module Groonga
       nil
     end
 
-    def match_expr_resolve_index_accessor(expr_code)
+    def match_resolve_index_expression(expression)
+      codes = expression.codes
+      n_codes = codes.size
+      i = 0
+      while i < n_codes
+        code = codes[i]
+        value = code.value
+        case value
+        when Groonga::Accessor
+          match_resolve_index_expression_accessor(code)
+        when Groonga::FixedSizeColumn, Groonga::VariableSizeColumn
+          match_resolve_index_expression_data_column(code)
+        when Groonga::IndexColumn
+          section_id = 0
+          rest_n_codes = n_codes - i
+          if rest_n_codes >= 2 and
+              codes[i + 1].value.is_a?(Groonga::Bulk) and
+              codes[i + 1].value.domain == Groonga::ID::UINT32 and
+              codes[i + 2].op == Groonga::Operator::GET_MEMBER
+            section_id = codes[i + 1].value.value + 1
+            code = codes[i + 2]
+            i += 2
+          end
+          put_index(value, section_id, code.weight)
+        end
+        i += 1
+      end
+    rescue => exception
+      p exception
+      p exception.class
+      puts exception.backtrace
+    end
+
+    def match_resolve_index_expression_accessor(expr_code)
       accessor = expr_code.value
       self.flags |= Flags::ACCESSOR
       index_info = accessor.find_index(op)
@@ -30,7 +63,7 @@ module Groonga
       end
     end
 
-    def match_expr_resolve_index_data_column(expr_code)
+    def match_resolve_index_expression_data_column(expr_code)
       column = expr_code.value
       index_info = column.find_index(op)
       return if index_info.nil?

@@ -13,10 +13,14 @@ libgrnmrb_la_SOURCES =				\
 	mrb_expr.h				\
 	mrb_fixed_size_column.c			\
 	mrb_fixed_size_column.h			\
+	mrb_id.c				\
+	mrb_id.h				\
 	mrb_index_column.c			\
 	mrb_index_column.h			\
 	mrb_obj.c				\
 	mrb_obj.h				\
+	mrb_operator.c				\
+	mrb_operator.h				\
 	mrb_procedure.c				\
 	mrb_procedure.h				\
 	mrb_variable_size_column.c		\

@@ -63,12 +63,13 @@ mrb_grn_bulk_get_value(mrb_state *mrb, mrb_value self)
   switch (bulk->header.domain) {
   case GRN_DB_UINT32 :
     {
-      uint32_t value;
+      int64_t value;
       value = GRN_UINT32_VALUE(bulk);
       if (!FIXABLE(value)) {
-        mrb_raisef(mrb, E_ARGUMENT_ERROR,
-                   "can't handle large number: <%u>: max: <%" PRIiMRB_INT ">",
-                   value, PRIiMRB_INT);
+        mrb_raisef(mrb, E_RANGE_ERROR,
+                   "can't handle large number: <%S>: max: <%S>",
+                   mrb_fixnum_value(value), /* TODO: This will cause overflow */
+                   mrb_fixnum_value(MRB_INT_MAX));
       }
       mrb_value_ = mrb_fixnum_value(value);
     }

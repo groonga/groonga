@@ -20,6 +20,8 @@
 #include "ctx_impl.h"
 
 #include "mrb.h"
+#include "mrb/mrb_id.h"
+#include "mrb/mrb_operator.h"
 #include "mrb/mrb_ctx.h"
 #include "mrb/mrb_bulk.h"
 #include "mrb/mrb_obj.h"
@@ -40,6 +42,8 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   mrb->ud = ctx;
   ctx->impl->mrb.module = mrb_define_module(mrb, "Groonga");
 
+  grn_mrb_id_init(ctx);
+  grn_mrb_operator_init(ctx);
   grn_mrb_ctx_init(ctx);
   grn_mrb_bulk_init(ctx);
   grn_mrb_obj_init(ctx);

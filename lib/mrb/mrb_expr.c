@@ -174,60 +174,14 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
       mrb_funcall(mrb, mrb_si, "end=", 1, mrb_fixnum_value(c - e->codes));
       sis[i++] = si;
       {
-        int sid, k;
-        grn_obj *index, *arg, **p = &arg;
+        int k;
+        grn_obj *arg, **p = &arg;
         for (k = 0; (arg = grn_scan_info_get_arg(ctx, si, k)) ; k++) {
           if ((*p)->header.type == GRN_EXPR) {
-            uint32_t j;
-            grn_expr_code *ec;
-            grn_expr *e = (grn_expr *)(*p);
-            for (j = e->codes_curr, ec = e->codes; j--; ec++) {
-              int32_t weight;
-              if (ec->value) {
-                switch (ec->value->header.type) {
-                case GRN_ACCESSOR :
-                  {
-                    mrb_value mrb_ec;
-
-                    mrb_ec = mrb_grn_expr_code_new(mrb, ec);
-                    mrb_funcall(mrb, mrb_si, "match_expr_resolve_index_accessor",
-                                1, mrb_ec);
-                  }
-                  break;
-                case GRN_COLUMN_FIX_SIZE :
-                case GRN_COLUMN_VAR_SIZE :
-                  {
-                    mrb_value mrb_ec;
-
-                    mrb_ec = mrb_grn_expr_code_new(mrb, ec);
-                    mrb_funcall(mrb, mrb_si,
-                                "match_expr_resolve_index_data_column",
-                                1, mrb_ec);
-                  }
-                  break;
-                case GRN_COLUMN_INDEX :
-                  sid = 0;
-                  index = ec->value;
-                  if (j > 2 &&
-                      ec[1].value &&
-                      ec[1].value->header.domain == GRN_DB_UINT32 &&
-                      ec[2].op == GRN_OP_GET_MEMBER) {
-                    sid = GRN_UINT32_VALUE(ec[1].value) + 1;
-                    j -= 2;
-                    ec += 2;
-                  }
-                  {
-                    mrb_value mrb_ec = mrb_grn_expr_code_new(mrb, ec);
-                    weight = mrb_fixnum(mrb_funcall(mrb, mrb_ec, "weight", 0));
-                  }
-                  mrb_funcall(mrb, mrb_si, "put_index", 3,
-                              grn_mrb_value_from_grn_obj(mrb, index),
-                              mrb_fixnum_value(sid),
-                              mrb_fixnum_value(weight));
-                  break;
-                }
-              }
-            }
+            mrb_value mrb_expr;
+            mrb_expr = grn_mrb_value_from_grn_obj(mrb, *p);
+            mrb_funcall(mrb, mrb_si, "match_resolve_index_expression",
+                        1, mrb_expr);
           } else if (GRN_DB_OBJP(*p)) {
             mrb_value mrb_db_obj = grn_mrb_value_from_grn_obj(mrb, *p);
             mrb_funcall(mrb, mrb_si, "match_resolve_index_db_obj", 1, mrb_db_obj);
@@ -519,6 +473,15 @@ mrb_grn_expr_code_get_value(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_expr_code_get_op(mrb_state *mrb, mrb_value self)
+{
+  grn_expr_code *expr_code;
+
+  expr_code = DATA_PTR(self);
+  return mrb_fixnum_value(expr_code->op);
+}
+
+static mrb_value
 mrb_grn_expression_initialize(mrb_state *mrb, mrb_value self)
 {
   mrb_value mrb_expression_ptr;
@@ -587,6 +550,8 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_expr_code_get_weight, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "value",
                     mrb_grn_expr_code_get_value, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "op",
+                    mrb_grn_expr_code_get_op, MRB_ARGS_NONE());
 
   klass = mrb_define_class_under(mrb, module, "Expression", object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
