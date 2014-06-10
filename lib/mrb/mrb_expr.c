@@ -187,26 +187,22 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                 switch (ec->value->header.type) {
                 case GRN_ACCESSOR :
                   {
-                    mrb_value mrb_accessor;
                     mrb_value mrb_ec;
 
-                    mrb_accessor = grn_mrb_value_from_grn_obj(mrb, ec->value);
                     mrb_ec = mrb_grn_expr_code_new(mrb, ec);
                     mrb_funcall(mrb, mrb_si, "match_expr_resolve_index_accessor",
-                                2, mrb_accessor, mrb_ec);
+                                1, mrb_ec);
                   }
                   break;
                 case GRN_COLUMN_FIX_SIZE :
                 case GRN_COLUMN_VAR_SIZE :
                   {
-                    mrb_value mrb_column;
                     mrb_value mrb_ec;
 
-                    mrb_column = grn_mrb_value_from_grn_obj(mrb, ec->value);
                     mrb_ec = mrb_grn_expr_code_new(mrb, ec);
                     mrb_funcall(mrb, mrb_si,
                                 "match_expr_resolve_index_data_column",
-                                2, mrb_column, mrb_ec);
+                                1, mrb_ec);
                   }
                   break;
                 case GRN_COLUMN_INDEX :
@@ -514,6 +510,15 @@ mrb_grn_expr_code_get_weight(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_expr_code_get_value(mrb_state *mrb, mrb_value self)
+{
+  grn_expr_code *expr_code;
+
+  expr_code = DATA_PTR(self);
+  return grn_mrb_value_from_grn_obj(mrb, expr_code->value);
+}
+
+static mrb_value
 mrb_grn_expression_initialize(mrb_state *mrb, mrb_value self)
 {
   mrb_value mrb_expression_ptr;
@@ -580,6 +585,8 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_expr_code_initialize, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "weight",
                     mrb_grn_expr_code_get_weight, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "value",
+                    mrb_grn_expr_code_get_value, MRB_ARGS_NONE());
 
   klass = mrb_define_class_under(mrb, module, "Expression", object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);

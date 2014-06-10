@@ -18,7 +18,8 @@ module Groonga
       nil
     end
 
-    def match_expr_resolve_index_accessor(accessor, expr_code)
+    def match_expr_resolve_index_accessor(expr_code)
+      accessor = expr_code.value
       self.flags |= Flags::ACCESSOR
       index_info = accessor.find_index(op)
       return if index_info.nil?
@@ -29,7 +30,8 @@ module Groonga
       end
     end
 
-    def match_expr_resolve_index_data_column(column, expr_code)
+    def match_expr_resolve_index_data_column(expr_code)
+      column = expr_code.value
       index_info = column.find_index(op)
       return if index_info.nil?
       put_index(index_info.index, index_info.section_id, expr_code.weight)
