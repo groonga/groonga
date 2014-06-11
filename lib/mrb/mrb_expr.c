@@ -173,28 +173,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
       mrb_funcall(mrb, mrb_si, "op=", 1, mrb_fixnum_value(c->op));
       mrb_funcall(mrb, mrb_si, "end=", 1, mrb_fixnum_value(c - e->codes));
       sis[i++] = si;
-      {
-        int k;
-        grn_obj *arg, **p = &arg;
-        for (k = 0; (arg = grn_scan_info_get_arg(ctx, si, k)) ; k++) {
-          if ((*p)->header.type == GRN_EXPR) {
-            mrb_value mrb_expr;
-            mrb_expr = grn_mrb_value_from_grn_obj(mrb, *p);
-            mrb_funcall(mrb, mrb_si, "match_resolve_index_expression",
-                        1, mrb_expr);
-          } else if (GRN_DB_OBJP(*p)) {
-            mrb_value mrb_db_obj = grn_mrb_value_from_grn_obj(mrb, *p);
-            mrb_funcall(mrb, mrb_si, "match_resolve_index_db_obj", 1, mrb_db_obj);
-          } else if (GRN_ACCESSORP(*p)) {
-            mrb_value mrb_accessor = grn_mrb_value_from_grn_obj(mrb, *p);
-            mrb_funcall(mrb, mrb_si, "match_resolve_index_accessor", 1, mrb_accessor);
-          } else {
-            mrb_value mrb_query;
-            mrb_query = grn_mrb_value_from_grn_obj(mrb, *p);
-            mrb_funcall(mrb, mrb_si, "query=", 1, mrb_query);
-          }
-        }
-      }
+      mrb_funcall(mrb, mrb_si, "match_resolve_index", 0);
       si = NULL;
       break;
     case GRN_OP_AND :

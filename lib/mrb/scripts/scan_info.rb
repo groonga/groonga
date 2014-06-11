@@ -18,6 +18,21 @@ module Groonga
       nil
     end
 
+    def match_resolve_index
+      each_arg do |arg|
+        case arg
+        when Expression
+          match_resolve_index_expression(arg)
+        when Accessor
+          match_resolve_index_accessor(arg)
+        when Object
+          match_resolve_index_db_obj(arg)
+        else
+          self.query = arg
+        end
+      end
+    end
+
     def match_resolve_index_expression(expression)
       codes = expression.codes
       n_codes = codes.size
