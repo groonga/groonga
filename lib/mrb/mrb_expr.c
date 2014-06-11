@@ -196,7 +196,9 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
       if (c->value == var) {
         stat = SCAN_VAR;
       } else {
-        grn_scan_info_push_arg(si, c->value);
+        mrb_si = mrb_grn_scan_info_new(mrb, si);
+        mrb_funcall(mrb, mrb_si, "push_arg",
+                    1, grn_mrb_value_from_grn_obj(mrb, c->value));
         if (stat == SCAN_START) { grn_scan_info_set_flags(si, grn_scan_info_get_flags(si) | SCAN_PRE_CONST); }
         stat = SCAN_CONST;
       }
@@ -217,7 +219,9 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
       case SCAN_CONST :
       case SCAN_VAR :
         stat = SCAN_COL1;
-        grn_scan_info_push_arg(si, c->value);
+        mrb_si = mrb_grn_scan_info_new(mrb, si);
+        mrb_funcall(mrb, mrb_si, "push_arg",
+                    1, grn_mrb_value_from_grn_obj(mrb, c->value));
         break;
       case SCAN_COL1 :
         {
@@ -435,6 +439,21 @@ mrb_grn_scan_info_get_arg(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_scan_info_push_arg(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  mrb_value mrb_arg;
+  grn_bool success;
+
+  mrb_get_args(mrb, "o", &mrb_arg);
+
+  si = DATA_PTR(self);
+  success = grn_scan_info_push_arg(si, DATA_PTR(mrb_arg));
+
+  return mrb_bool_value(success);
+}
+
+static mrb_value
 mrb_grn_expr_code_get_weight(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -519,6 +538,8 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_scan_info_set_flags, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "get_arg",
                     mrb_grn_scan_info_get_arg, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "push_arg",
+                    mrb_grn_scan_info_push_arg, MRB_ARGS_REQ(1));
 
   klass = mrb_define_class_under(mrb, module,
                                  "ExpressionCode", mrb->object_class);
