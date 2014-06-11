@@ -60,10 +60,6 @@ module Groonga
         end
         i += 1
       end
-    rescue => exception
-      p exception
-      p exception.class
-      puts exception.backtrace
     end
 
     def match_resolve_index_expression_accessor(expr_code)
