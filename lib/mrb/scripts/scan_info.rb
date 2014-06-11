@@ -33,6 +33,14 @@ module Groonga
       end
     end
 
+    def call_relational_resolve_indexes
+      # better index resolving framework for functions should be implemented
+      each_arg do |arg|
+        call_relational_resolve_index(arg)
+      end
+    end
+
+    private
     def match_resolve_index_expression(expression)
       codes = expression.codes
       n_codes = codes.size
@@ -98,14 +106,6 @@ module Groonga
       end
     end
 
-    def call_relational_resolve_indexes
-      # better index resolving framework for functions should be implemented
-      each_arg do |arg|
-        call_relational_resolve_index(arg)
-      end
-    end
-
-    private
     def call_relational_resolve_index(object)
       case object
       when Accessor
