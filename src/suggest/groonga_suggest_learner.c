@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010-2013 Brazil
+/* Copyright(C) 2010-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -14,6 +14,10 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
+/* for grn_str_getopt() */
+#include <str.h>
+
 #include "zmq_compatible.h"
 #include <stdio.h>
 #include <signal.h>
@@ -35,6 +39,15 @@
 #define SEND_WAIT 1000 /* 0.001sec */
 
 #define CONST_STR_LEN(x) x, x ? sizeof(x) - 1 : 0
+
+typedef enum {
+  RUN_MODE_NONE   = 0x00,
+  RUN_MODE_USAGE  = 0x01,
+  RUN_MODE_DAEMON = 0x02,
+  RUN_MODE_ERROR  = 0x04
+} run_mode;
+
+#define RUN_MODE_MASK                0x007f
 
 typedef struct {
   const char *db_path;
@@ -677,10 +690,19 @@ usage(FILE *output)
           "Usage: groonga-suggest-learner [options...] db_path\n"
           "options:\n"
           "  -r <recv endpoint>: recv endpoint (default: %s)\n"
+          "  --receive-endpoint <recv endpoint>\n"
+          "\n"
           "  -s <send endpoint>: send endpoint (default: %s)\n"
+          "  --send-endpoint <send endpoint>\n"
+          "\n"
           "  -l <log directory>: load from log files made on webserver.\n"
-          "  -d                : daemonize\n",
-          DEFAULT_RECV_ENDPOINT, DEFAULT_SEND_ENDPOINT);
+          "  --log-base-path <log directory>\n"
+          "\n"
+          "  --log-path <path> : output logs to <path>\n"
+          "  --log-level <level> : set log level to <level> (default: %d)\n"
+          "  -d, --daemon      : daemonize\n",
+          DEFAULT_RECV_ENDPOINT, DEFAULT_SEND_ENDPOINT,
+          GRN_LOG_DEFAULT_LEVEL);
 }
 
 static void
@@ -692,54 +714,84 @@ signal_handler(int sig)
 int
 main(int argc, char **argv)
 {
-  int daemon = 0;
-  const char *recv_endpoint = DEFAULT_RECV_ENDPOINT,
-             *send_endpoint = DEFAULT_SEND_ENDPOINT,
-             *load_logfile_name = NULL;
+  run_mode mode = RUN_MODE_NONE;
+  int n_processed_args;
+  const char *recv_endpoint = DEFAULT_RECV_ENDPOINT;
+  const char *send_endpoint = DEFAULT_SEND_ENDPOINT;
+  const char *log_base_path = NULL;
+  const char *db_path = NULL;
 
   /* parse options */
   {
-    int ch;
+    int flags = mode;
+    const char *log_path = NULL;
+    const char *log_level = NULL;
+    static grn_str_getopt_opt opts[] = {
+      {'r', "receive-endpoint", NULL, 0, GETOPT_OP_NONE},
+      {'s', "send-endpoint", NULL, 0, GETOPT_OP_NONE},
+      {'l', "log-base-path", NULL, 0, GETOPT_OP_NONE},
+      {'\0', "log-path", NULL, 0, GETOPT_OP_NONE},
+      {'\0', "log-level", NULL, 0, GETOPT_OP_NONE},
+      {'d', "daemon", NULL, RUN_MODE_DAEMON, GETOPT_OP_UPDATE},
+      {'h', "help", NULL, RUN_MODE_USAGE, GETOPT_OP_UPDATE},
+      {'\0', NULL, NULL, 0, 0}
+    };
+    opts[0].arg = &recv_endpoint;
+    opts[1].arg = &send_endpoint;
+    opts[2].arg = &log_base_path;
+    opts[3].arg = &log_path;
+    opts[4].arg = &log_level;
 
-    while ((ch = getopt(argc, argv, "r:s:dl:")) != -1) {
-      switch(ch) {
-      case 'r':
-        recv_endpoint = optarg;
-        break;
-      case 's':
-        send_endpoint = optarg;
-        break;
-      case 'd':
-        daemon = 1;
-        break;
-      case 'l':
-        load_logfile_name = optarg;
-        break;
-      }
+    n_processed_args = grn_str_getopt(argc, argv, opts, &flags);
+
+    if (log_path) {
+      grn_default_logger_set_path(log_path);
     }
-    argc -= optind; argv += optind;
+
+    if (log_level) {
+      const char * const end = log_level + strlen(log_level);
+      const char *rest = NULL;
+      const int value = grn_atoi(log_level, end, &rest);
+      if (end != rest || value < 0 || value > 9) {
+        fprintf(stderr, "invalid log level: <%s>\n", log_level);
+        return EXIT_FAILURE;
+      }
+      grn_default_logger_set_max_level(value);
+    }
+
+    mode = (flags & RUN_MODE_MASK);
+
+    if (mode & RUN_MODE_USAGE) {
+      usage(stdout);
+      return EXIT_SUCCESS;
+    }
+
+    if ((n_processed_args < 0) ||
+        (argc - n_processed_args) != 1) {
+      usage(stderr);
+    }
+
+    db_path = argv[n_processed_args];
   }
 
   /* main */
-  if (argc != 1) {
-    usage(stderr);
-  } else {
+  {
     grn_ctx *ctx;
     msgpack_zone *mempool;
 
-    if (daemon) {
+    if (mode == RUN_MODE_DAEMON) {
       daemonize();
     }
 
     grn_init();
 
     ctx = grn_ctx_open(0);
-    if (!(grn_db_open(ctx, argv[0]))) {
+    if (!(grn_db_open(ctx, db_path))) {
       print_error("cannot open database.");
     } else {
-      if (load_logfile_name) {
+      if (log_base_path) {
         /* loading log mode */
-        load_log(ctx, load_logfile_name);
+        load_log(ctx, log_base_path);
       } else {
         /* zeromq/msgpack recv mode */
         if (!(mempool = msgpack_zone_new(MSGPACK_ZONE_CHUNK_SIZE))) {
@@ -761,7 +813,7 @@ main(int argc, char **argv)
               signal(SIGQUIT, signal_handler);
 
               zmq_setsockopt(zmq_recv_sock, ZMQ_SUBSCRIBE, "", 0);
-              thd.db_path = argv[0];
+              thd.db_path = db_path;
               thd.send_endpoint = send_endpoint;
               thd.zmq_ctx = zmq_ctx;
 
