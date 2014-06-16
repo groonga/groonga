@@ -432,6 +432,29 @@ mrb_grn_scan_info_get_flags(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_scan_info_set_logical_op(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  grn_operator logical_op;
+
+  mrb_get_args(mrb, "i", &logical_op);
+  si = DATA_PTR(self);
+  grn_scan_info_set_logical_op(si, logical_op);
+  return self;
+}
+
+static mrb_value
+mrb_grn_scan_info_get_logical_op(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  grn_operator logical_op;
+
+  si = DATA_PTR(self);
+  logical_op = grn_scan_info_get_logical_op(si);
+  return mrb_fixnum_value(logical_op);
+}
+
+static mrb_value
 mrb_grn_scan_info_get_arg(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -569,6 +592,10 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_scan_info_get_flags, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "flags=",
                     mrb_grn_scan_info_set_flags, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "logical_op",
+                    mrb_grn_scan_info_get_logical_op, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "logical_op=",
+                    mrb_grn_scan_info_set_logical_op, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "get_arg",
                     mrb_grn_scan_info_get_arg, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "push_arg",
