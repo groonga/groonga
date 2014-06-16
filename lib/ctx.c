@@ -493,7 +493,6 @@ grn_ctx_impl_init(grn_ctx *ctx)
 
   ctx->impl->finalizer = NULL;
 
-  ctx->impl->inbuf = NULL;
   ctx->impl->com = NULL;
   ctx->impl->outbuf = grn_obj_open(ctx, GRN_BULK, 0, 0);
   ctx->impl->output = NULL /* grn_ctx_concat_func */;
