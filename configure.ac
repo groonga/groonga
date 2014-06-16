@@ -276,7 +276,6 @@ AC_CONFIG_FILES([
   test/unit/fixtures/Makefile
   test/unit/fixtures/inverted-index/Makefile
   test/unit/fixtures/stress/Makefile
-  test/unit/fixtures/performance/Makefile
   test/unit/fixtures/plugins/Makefile
   test/unit/fixtures/geo/Makefile
   test/unit/fixtures/story/Makefile

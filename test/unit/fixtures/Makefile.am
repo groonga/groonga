@@ -1,6 +1,5 @@
 SUBDIRS =					\
 	stress					\
-	performance				\
 	inverted-index				\
 	plugins					\
 	geo					\
