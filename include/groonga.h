@@ -22,6 +22,8 @@
 extern "C" {
 #endif
 
+#include <stdarg.h>
+
 #ifndef GRN_API
 #if defined(_WIN32) || defined(_WIN64)
 #define GRN_API __declspec(dllimport)
@@ -1204,6 +1206,10 @@ GRN_API const char *grn_text_urldec(grn_ctx *ctx, grn_obj *buf,
 GRN_API grn_rc grn_text_escape_xml(grn_ctx *ctx, grn_obj *buf,
                                    const char *s, unsigned int len);
 GRN_API grn_rc grn_text_time2rfc1123(grn_ctx *ctx, grn_obj *bulk, int sec);
+GRN_API grn_rc grn_text_printf(grn_ctx *ctx, grn_obj *bulk,
+                               const char *format, ...) GRN_ATTRIBUTE_PRINTF(3);
+GRN_API grn_rc grn_text_vprintf(grn_ctx *ctx, grn_obj *bulk,
+                                const char *format, va_list args);
 
 typedef struct _grn_obj_format grn_obj_format;
 

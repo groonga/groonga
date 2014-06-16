@@ -103,3 +103,26 @@ test_urldec(void)
                           GRN_TEXT_VALUE(&buffer),
                           GRN_TEXT_LEN(&buffer));
 }
+
+void
+test_printf_inplace_size(void)
+{
+  const char *inplace_size_string = "inplace size is <= 24  ";
+  grn_text_printf(&context, &buffer, "%s", inplace_size_string);
+  cut_assert_equal_memory(inplace_size_string,
+                          strlen(inplace_size_string),
+                          GRN_TEXT_VALUE(&buffer),
+                          GRN_BULK_VSIZE(&buffer));
+}
+
+void
+test_printf_outplace_size(void)
+{
+  const char *outplace_size_string = "outplace size is > 24   ";
+  grn_text_printf(&context, &buffer, "%s", outplace_size_string);
+  cut_assert_equal_memory(outplace_size_string,
+                          strlen(outplace_size_string),
+                          GRN_TEXT_VALUE(&buffer),
+                          GRN_BULK_VSIZE(&buffer));
+}
+

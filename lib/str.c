@@ -17,6 +17,7 @@
 #include "groonga_in.h"
 #include <limits.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include <string.h>
 #include "db.h"
 #include "str.h"
@@ -2463,6 +2464,52 @@ grn_text_time2rfc1123(grn_ctx *ctx, grn_obj *bulk, int sec)
   return GRN_SUCCESS;
 }
 
+grn_rc
+grn_text_printf(grn_ctx *ctx, grn_obj *bulk, const char *format, ...)
+{
+  va_list args;
+
+  va_start(args, format);
+  grn_text_vprintf(ctx, bulk, format, args);
+  va_end(args);
+
+  return GRN_SUCCESS;
+}
+
+grn_rc
+grn_text_vprintf(grn_ctx *ctx, grn_obj *bulk, const char *format, va_list args)
+{
+  int rest_size, written_size;
+
+  {
+    va_list copied_args;
+
+    rest_size = GRN_BULK_REST(bulk);
+    va_copy(copied_args, args);
+    written_size = vsnprintf(GRN_BULK_CURR(bulk), rest_size,
+                             format, copied_args);
+    va_end(copied_args);
+  }
+
+  if (written_size >= rest_size) {
+    grn_rc rc;
+    int required_size = written_size + 1; /* "+ 1" for terminate '\0'. */
+
+    rc = grn_bulk_reserve(ctx, bulk, GRN_BULK_VSIZE(bulk) + required_size);
+    if (rc) {
+      return rc;
+    }
+    written_size = vsnprintf(GRN_BULK_CURR(bulk), required_size,
+                             format, args);
+  }
+
+  if (written_size < 0) {
+    return GRN_INVALID_ARGUMENT;
+  }
+
+  GRN_BULK_INCR_LEN(bulk, written_size);
+  return GRN_SUCCESS;
+}
 
 grn_rc
 grn_bulk_fin(grn_ctx *ctx, grn_obj *buf)
