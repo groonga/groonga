@@ -503,6 +503,8 @@ grn_ctx_impl_init(grn_ctx *ctx)
   grn_loader_init(&ctx->impl->loader);
   ctx->impl->plugin_path = NULL;
 
+  GRN_TEXT_INIT(&ctx->impl->query_log_buf, 0);
+
   ctx->impl->previous_errbuf[0] = '\0';
   ctx->impl->n_same_error_messages = 0;
 
@@ -651,6 +653,7 @@ grn_ctx_fin(grn_ctx *ctx)
     }
     GRN_OBJ_FIN(ctx, &ctx->impl->names);
     GRN_OBJ_FIN(ctx, &ctx->impl->levels);
+    GRN_OBJ_FIN(ctx, &ctx->impl->query_log_buf);
     rc = grn_obj_close(ctx, ctx->impl->outbuf);
     {
       grn_hash **vp;
@@ -1099,7 +1102,6 @@ grn_query_logger_pass(grn_ctx *ctx, unsigned int flag)
 #define TIMESTAMP_BUFFER_SIZE    TBUFSIZE
 /* 8+a(%p) + 1(|) + 1(mark) + 15(elapsed time) = 25+a */
 #define INFO_BUFFER_SIZE         40
-#define MESSAGE_BUFFER_SIZE      MBUFSIZE
 
 void
 grn_query_logger_put(grn_ctx *ctx, unsigned int flag, const char *mark,
@@ -1107,7 +1109,7 @@ grn_query_logger_put(grn_ctx *ctx, unsigned int flag, const char *mark,
 {
   char timestamp[TIMESTAMP_BUFFER_SIZE];
   char info[INFO_BUFFER_SIZE];
-  char message[MESSAGE_BUFFER_SIZE];
+  grn_obj *message = &ctx->impl->query_log_buf;
 
   if (!current_query_logger.log) {
     return;
@@ -1138,13 +1140,15 @@ grn_query_logger_put(grn_ctx *ctx, unsigned int flag, const char *mark,
 
   {
     va_list args;
+
     va_start(args, format);
-    vsnprintf(message, MESSAGE_BUFFER_SIZE - 1, format, args);
+    GRN_BULK_REWIND(message);
+    grn_text_vprintf(ctx, message, format, args);
     va_end(args);
-    message[MESSAGE_BUFFER_SIZE - 1] = '\0';
+    GRN_TEXT_PUTC(ctx, message, '\0');
   }
 
-  current_query_logger.log(ctx, flag, timestamp, info, message,
+  current_query_logger.log(ctx, flag, timestamp, info, GRN_TEXT_VALUE(message),
                            current_query_logger.user_data);
 }
 

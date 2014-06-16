@@ -168,6 +168,8 @@ struct _grn_ctx_impl {
     uint64_t u64;
   } data;
 
+  grn_obj query_log_buf;
+
   char previous_errbuf[GRN_CTX_MSGSIZE];
   unsigned int n_same_error_messages;
 
