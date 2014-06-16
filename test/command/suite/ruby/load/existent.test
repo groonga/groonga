@@ -2,4 +2,4 @@
 register ruby/load
 #@on-error default
 
-ruby_load "expression.rb"
+ruby_load "test/empty.rb"

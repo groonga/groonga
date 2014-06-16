@@ -1,4 +1,4 @@
 register ruby/load
 [[0,0.0,0.0],true]
-ruby_load "expression.rb"
+ruby_load "test/empty.rb"
 [[0,0.0,0.0],{"value":null}]
