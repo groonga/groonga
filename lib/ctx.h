@@ -69,9 +69,6 @@ extern "C" {
 
 /**** error handling ****/
 
-#define GRN_OP_T0LVL 0
-#define GRN_OP_ERR0  1
-
 #define  GRN_EMERG  GRN_LOG_EMERG
 #define  GRN_ALERT  GRN_LOG_ALERT
 #define  GRN_CRIT   GRN_LOG_CRIT
@@ -95,7 +92,6 @@ extern "C" {
 #define BACKTRACE(ctx)
 #endif /* HAVE_BACKTRACE */
 
-GRN_API void grn_ctx_impl_err(grn_ctx *ctx);
 GRN_API grn_bool grn_ctx_impl_should_log(grn_ctx *ctx);
 GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
 
@@ -121,7 +117,6 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
   ctx_->errfile = __FILE__;\
   ctx_->errline = __LINE__;\
   ctx_->errfunc = __FUNCTION__;\
-  grn_ctx_impl_err(ctx);\
   grn_ctx_log(ctx, __VA_ARGS__);\
   if (grn_ctx_impl_should_log(ctx)) {\
     grn_ctx_impl_set_current_error_message(ctx);\

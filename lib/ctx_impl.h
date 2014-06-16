@@ -155,10 +155,6 @@ struct _grn_ctx_impl {
   grn_proc_func *finalizer;
 
   /* ql portion */
-  uint8_t op;
-  int tok;
-  char *cur;
-  char *str_end;
   grn_obj *db;
   uint32_t n_entries;
   grn_array *values;        /* temporary objects */

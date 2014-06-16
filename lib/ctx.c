@@ -493,10 +493,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
 
   ctx->impl->finalizer = NULL;
 
-  ctx->impl->op = GRN_OP_T0LVL;
   ctx->impl->n_entries = 0;
-  ctx->impl->cur = NULL;
-  ctx->impl->str_end = NULL;
   ctx->impl->inbuf = NULL;
   ctx->impl->com = NULL;
   ctx->impl->outbuf = grn_obj_open(ctx, GRN_BULK, 0, 0);
@@ -523,15 +520,6 @@ void
 grn_ctx_set_next_expr(grn_ctx *ctx, grn_obj *expr)
 {
   ctx->impl->qe_next = expr;
-}
-
-void
-grn_ctx_impl_err(grn_ctx *ctx)
-{
-  if (ctx->impl) {
-    ctx->impl->cur = ctx->impl->str_end;
-    ctx->impl->op = GRN_OP_ERR0;
-  }
 }
 
 static void

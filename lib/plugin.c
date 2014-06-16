@@ -552,7 +552,6 @@ grn_plugin_set_error(grn_ctx *ctx, grn_log_level level, grn_rc error_code,
   ctx->errfile = file;
   ctx->errline = line;
   ctx->errfunc = func;
-  grn_ctx_impl_err(ctx);
 
   {
     va_list ap;
