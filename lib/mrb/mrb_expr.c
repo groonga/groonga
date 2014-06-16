@@ -82,9 +82,18 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
   grn_expr_code *c, *ce;
   grn_expr *e = (grn_expr *)expr;
   mrb_state *mrb = ctx->impl->mrb.state;
+  mrb_value mrb_expr;
+  mrb_value mrb_var;
   mrb_value mrb_si;
 
-  if (!(var = grn_expr_get_var_by_offset(ctx, expr, 0))) { return NULL; }
+  mrb_expr = grn_mrb_value_from_grn_obj(mrb, expr);
+  mrb_var = mrb_funcall(mrb, mrb_expr,
+                        "get_var_by_offset", 1, mrb_fixnum_value(0));
+  if (mrb_nil_p(mrb_var)) {
+    return NULL;
+  }
+
+  var = mrb_cptr(mrb_var);
   for (stat = SCAN_START, c = e->codes, ce = &e->codes[e->codes_curr]; c < ce; c++) {
     switch (c->op) {
     case GRN_OP_MATCH :
@@ -507,6 +516,21 @@ mrb_grn_expression_codes(mrb_state *mrb, mrb_value self)
   return mrb_codes;
 }
 
+static mrb_value
+mrb_grn_expression_get_var_by_offset(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *expr;
+  mrb_int offset;
+  grn_obj *var;
+
+  mrb_get_args(mrb, "i", &offset);
+
+  expr = DATA_PTR(self);
+  var = grn_expr_get_var_by_offset(ctx, expr, offset);
+  return grn_mrb_value_from_grn_obj(mrb, var);
+}
+
 void
 grn_mrb_expr_init(grn_ctx *ctx)
 {
@@ -559,6 +583,8 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_expression_initialize, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "codes",
                     mrb_grn_expression_codes, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "get_var_by_offset",
+                    mrb_grn_expression_get_var_by_offset, MRB_ARGS_REQ(1));
 
   grn_mrb_load(ctx, "expression.rb");
   grn_mrb_load(ctx, "scan_info.rb");
