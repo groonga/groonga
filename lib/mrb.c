@@ -175,6 +175,8 @@ grn_rc
 grn_mrb_to_grn(grn_ctx *ctx, mrb_value mrb_object, grn_obj *grn_object)
 {
   grn_rc rc = GRN_SUCCESS;
+  grn_mrb_data *data = &(ctx->impl->mrb);
+  mrb_state *mrb = data->state;
 
   switch (mrb_type(mrb_object)) {
   case MRB_TT_FALSE :
@@ -198,6 +200,18 @@ grn_mrb_to_grn(grn_ctx *ctx, mrb_value mrb_object, grn_obj *grn_object)
     GRN_TEXT_SET(ctx, grn_object,
                  RSTRING_PTR(mrb_object),
                  RSTRING_LEN(mrb_object));
+    break;
+  case MRB_TT_SYMBOL :
+    {
+      const char *name;
+      int name_length;
+
+      grn_obj_reinit(ctx, grn_object, GRN_DB_TEXT, 0);
+      GRN_BULK_REWIND(grn_object);
+      GRN_TEXT_PUTC(ctx, grn_object, ':');
+      name = mrb_sym2name_len(mrb, mrb_symbol(mrb_object), &name_length);
+      GRN_TEXT_PUT(ctx, grn_object, name, name_length);
+    }
     break;
   default :
     rc = GRN_INVALID_ARGUMENT;
