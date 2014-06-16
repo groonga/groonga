@@ -154,7 +154,6 @@ struct _grn_ctx_impl {
   /* lifetime portion */
   grn_proc_func *finalizer;
 
-  /* ql portion */
   grn_obj *db;
   grn_array *values;        /* temporary objects */
   grn_hash *ios;        /* IOs */
