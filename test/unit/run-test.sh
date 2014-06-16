@@ -53,7 +53,6 @@ if test x"$CUTTER_VERBOSE" = x"yes"; then
 fi
 CUTTER_ARGS="$CUTTER_ARGS --exclude-directory fixtures"
 CUTTER_ARGS="$CUTTER_ARGS --exclude-directory lib"
-CUTTER_ARGS="$CUTTER_ARGS --exclude-file test-performance.so"
 
 GRN_PLUGINS_DIR="$top_dir/plugins"
 export GRN_PLUGINS_DIR
