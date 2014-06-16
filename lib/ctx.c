@@ -495,11 +495,10 @@ grn_ctx_impl_init(grn_ctx *ctx)
 
   ctx->impl->com = NULL;
   ctx->impl->outbuf = grn_obj_open(ctx, GRN_BULK, 0, 0);
-  ctx->impl->output = NULL /* grn_ctx_concat_func */;
+  ctx->impl->output = NULL;
   ctx->impl->data.ptr = NULL;
   ctx->impl->tv.tv_sec = 0;
   ctx->impl->tv.tv_nsec = 0;
-  GRN_TEXT_INIT(&ctx->impl->subbuf, 0);
   ctx->impl->edge = NULL;
   grn_loader_init(&ctx->impl->loader);
   ctx->impl->plugin_path = NULL;
@@ -653,7 +652,6 @@ grn_ctx_fin(grn_ctx *ctx)
     GRN_OBJ_FIN(ctx, &ctx->impl->names);
     GRN_OBJ_FIN(ctx, &ctx->impl->levels);
     rc = grn_obj_close(ctx, ctx->impl->outbuf);
-    rc = grn_bulk_fin(ctx, &ctx->impl->subbuf);
     {
       grn_hash **vp;
       grn_obj *value;
@@ -1898,17 +1896,6 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
     } else {
       grn_obj *buf = ctx->impl->outbuf;
       unsigned int head = 0, tail = GRN_BULK_VSIZE(buf);
-      /*
-      unsigned int *offsets = (unsigned int *) GRN_BULK_HEAD(&ctx->impl->subbuf);
-      int npackets = GRN_BULK_VSIZE(&ctx->impl->subbuf) / sizeof(unsigned int);
-      if (npackets < ctx->impl->bufcur) {
-        ERR(GRN_INVALID_ARGUMENT, "invalid argument");
-        goto exit;
-      }
-      head = ctx->impl->bufcur ? offsets[ctx->impl->bufcur - 1] : 0;
-      tail = ctx->impl->bufcur < npackets ? offsets[ctx->impl->bufcur] : GRN_BULK_VSIZE(buf);
-      *flags = ctx->impl->bufcur++ < npackets ? GRN_CTX_MORE : 0;
-      */
       *str = GRN_BULK_HEAD(buf) + head;
       *str_len = tail - head;
       GRN_BULK_REWIND(ctx->impl->outbuf);
@@ -1918,15 +1905,6 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
   ERR(GRN_INVALID_ARGUMENT, "invalid ctx assigned");
 exit :
   GRN_API_RETURN(0);
-}
-
-void
-grn_ctx_concat_func(grn_ctx *ctx, int flags, void *dummy)
-{
-  if (ctx && ctx->impl && (flags & GRN_CTX_MORE)) {
-    unsigned int size = GRN_BULK_VSIZE(ctx->impl->outbuf);
-    grn_bulk_write(ctx, &ctx->impl->subbuf, (char *) &size, sizeof(unsigned int));
-  }
 }
 
 void

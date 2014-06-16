@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2013 Brazil
+  Copyright(C) 2009-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -496,7 +496,6 @@ void grn_cache_get_statistics(grn_ctx *ctx, grn_cache *cache,
 
 /**** receive handler ****/
 
-void grn_ctx_concat_func(grn_ctx *ctx, int flags, void *dummy);
 GRN_API void grn_ctx_stream_out_func(grn_ctx *c, int flags, void *stream);
 
 grn_rc grn_db_init_builtin_procs(grn_ctx *ctx);
