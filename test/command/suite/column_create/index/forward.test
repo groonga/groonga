@@ -1,6 +1,0 @@
-table_create Tags TABLE_PAT_KEY ShortText
-
-table_create Shops TABLE_HASH_KEY ShortText
-column_create Shops tags COLUMN_INDEX|WITH_WEIGHT Tags
-
-column_list Shops
