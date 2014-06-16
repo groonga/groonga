@@ -215,8 +215,10 @@ struct _grn_ctx {
 
 #define GRN_CTX_USER_DATA(ctx) (&((ctx)->user_data))
 
-#define GRN_CTX_USE_QL                 (0x03) /* Deprecated. Don't use it. */
-#define GRN_CTX_BATCH_MODE             (0x04) /* Deprecated. Don't use it. */
+/* Deprecated since 4.0.3. Don't use it. */
+#define GRN_CTX_USE_QL                 (0x03)
+/* Deprecated since 4.0.3. Don't use it. */
+#define GRN_CTX_BATCH_MODE             (0x04)
 #define GRN_CTX_PER_DB                 (0x08)
 
 GRN_API grn_rc grn_ctx_init(grn_ctx *ctx, int flags);
