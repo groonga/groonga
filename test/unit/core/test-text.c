@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
   Copyright(C) 2009  Brazil
-  Copyright(C) 2011  Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2011-2014  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -29,79 +29,77 @@ void test_atoi_padded(void);
 void test_urldec(void);
 
 static grn_ctx context;
-
-void
-cut_startup(void)
-{
-}
-
-void
-cut_shutdown(void)
-{
-}
+static grn_obj buffer;
 
 void
 cut_setup(void)
 {
   grn_ctx_init(&context, 0);
+  GRN_TEXT_INIT(&buffer, 0);
 }
 
 void
 cut_teardown(void)
 {
+  GRN_OBJ_FIN(&context, &buffer);
   grn_ctx_fin(&context);
 }
 
 void
 test_time2rfc1123(void)
 {
-  grn_obj rfc1123;
-  const gchar *dupped_rfc1123;
+  const char *expected = "Wed, 27 May 2009 14:07:13 GMT";
 
-  GRN_TEXT_INIT(&rfc1123, 0);
-  grn_text_time2rfc1123(&context, &rfc1123, 1243433233);
-  dupped_rfc1123 = cut_take_strndup(GRN_TEXT_VALUE(&rfc1123),
-                                    GRN_TEXT_LEN(&rfc1123));
-  grn_obj_unlink(&context, &rfc1123);
-  cut_assert_equal_string("Wed, 27 May 2009 14:07:13 GMT", dupped_rfc1123);
+  grn_text_time2rfc1123(&context, &buffer, 1243433233);
+  cut_assert_equal_memory(expected,
+                          strlen(expected),
+                          GRN_TEXT_VALUE(&buffer),
+                          GRN_TEXT_LEN(&buffer));
 }
 
 void
 test_atoi_padded(void)
 {
-  grn_obj t;
-  GRN_TEXT_INIT(&t, 0);
-  grn_text_itoa_padded(&context, &t, 543, '*', 5);
-  cut_assert_equal_memory("**543", 5, GRN_TEXT_VALUE(&t), GRN_TEXT_LEN(&t));
+  grn_text_itoa_padded(&context, &buffer, 543, '*', 5);
+  cut_assert_equal_memory("**543",
+                          5,
+                          GRN_TEXT_VALUE(&buffer),
+                          GRN_TEXT_LEN(&buffer));
 
-  GRN_BULK_REWIND(&t);
-  grn_text_itoa_padded(&context, &t, 0, '-', 5);
-  cut_assert_equal_memory("----0", 5, GRN_TEXT_VALUE(&t), GRN_TEXT_LEN(&t));
+  GRN_BULK_REWIND(&buffer);
+  grn_text_itoa_padded(&context, &buffer, 0, '-', 5);
+  cut_assert_equal_memory("----0",
+                          5,
+                          GRN_TEXT_VALUE(&buffer),
+                          GRN_TEXT_LEN(&buffer));
 
-  GRN_BULK_REWIND(&t);
-  grn_text_itoa_padded(&context, &t, -123, ' ', 5);
-  cut_assert_equal_memory("- 123", 5, GRN_TEXT_VALUE(&t), GRN_TEXT_LEN(&t));
+  GRN_BULK_REWIND(&buffer);
+  grn_text_itoa_padded(&context, &buffer, -123, ' ', 5);
+  cut_assert_equal_memory("- 123",
+                          5,
+                          GRN_TEXT_VALUE(&buffer),
+                          GRN_TEXT_LEN(&buffer));
 
-  GRN_BULK_REWIND(&t);
-  grn_text_itoa_padded(&context, &t, 123, ' ', 0);
-  cut_assert_equal_memory("", 0, GRN_TEXT_VALUE(&t), GRN_TEXT_LEN(&t));
+  GRN_BULK_REWIND(&buffer);
+  grn_text_itoa_padded(&context, &buffer, 123, ' ', 0);
+  cut_assert_equal_memory("",
+                          0,
+                          GRN_TEXT_VALUE(&buffer),
+                          GRN_TEXT_LEN(&buffer));
 }
 
 void
 test_urldec(void)
 {
-  grn_obj decoded_url;
-  const gchar *dupped_deocded_url;
   const gchar *url = "/+test%20/u_hihi%00desu?yo-da:test";
+  const gchar decoded_url[] = "/+test /u_hihi\0desu?yo-da";
 
-  GRN_TEXT_INIT(&decoded_url, 0);
   grn_text_urldec(&context,
-                  &decoded_url,
+                  &buffer,
                   url, url + strlen(url),
                   ':');
-  dupped_deocded_url = cut_take_strndup(GRN_TEXT_VALUE(&decoded_url),
-                                        GRN_TEXT_LEN(&decoded_url));
-  grn_obj_unlink(&context, &decoded_url);
-  cut_assert_equal_string("/+test /u_hihi\0desu?yo-da",
-                          dupped_deocded_url);
+  cut_assert_equal_memory(decoded_url,
+                          sizeof(decoded_url) - 1,
+                          GRN_TEXT_VALUE(&buffer),
+                          GRN_TEXT_LEN(&buffer));
 }
