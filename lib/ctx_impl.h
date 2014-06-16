@@ -123,7 +123,7 @@ struct _grn_ctx_impl {
   grn_alloc_info *alloc_info;
 #endif
 
-  /* qe portion */
+  /* expression portion */
   grn_obj *stack[GRN_STACK_SIZE];
   uint32_t stack_curr;
   grn_hash *expr_vars;
