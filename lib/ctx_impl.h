@@ -156,7 +156,6 @@ struct _grn_ctx_impl {
 
   /* ql portion */
   grn_obj *db;
-  uint32_t n_entries;
   grn_array *values;        /* temporary objects */
   grn_hash *ios;        /* IOs */
   char *inbuf;
