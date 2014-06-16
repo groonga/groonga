@@ -159,7 +159,6 @@ struct _grn_ctx_impl {
   grn_array *values;        /* temporary objects */
   grn_hash *ios;        /* IOs */
   grn_obj *outbuf;
-  unsigned int bufcur;
   void (*output)(grn_ctx *, int, void *);
   grn_com *com;
   unsigned int com_status;
