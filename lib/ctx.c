@@ -497,7 +497,6 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->n_entries = 0;
   ctx->impl->cur = NULL;
   ctx->impl->str_end = NULL;
-  ctx->impl->batchmode = 0;
   ctx->impl->inbuf = NULL;
   ctx->impl->com = NULL;
   ctx->impl->outbuf = grn_obj_open(ctx, GRN_BULK, 0, 0);
@@ -590,11 +589,6 @@ grn_ctx_init(grn_ctx *ctx, int flags)
   ctx->seqno2 = 0;
   ctx->subno = 0;
   ctx->impl = NULL;
-  if (flags & GRN_CTX_USE_QL) {
-    grn_ctx_impl_init(ctx);
-    if (ERRP(ctx, GRN_ERROR)) { return ctx->rc; }
-    if (flags & GRN_CTX_BATCH_MODE) { ctx->impl->batchmode = 1; }
-  }
   ctx->user_data.ptr = NULL;
   CRITICAL_SECTION_ENTER(grn_glock);
   ctx->next = grn_gctx.next;

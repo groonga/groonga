@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2013 Brazil
+  Copyright(C) 2009-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -83,7 +83,6 @@ static int port = DEFAULT_GQTP_PORT;
 static int batchmode;
 static int number_of_lines = 0;
 static int newdb;
-static int useql;
 static grn_bool is_daemon_mode = GRN_FALSE;
 static int (*do_client)(int argc, char **argv);
 static int (*do_server)(char *path);
@@ -304,7 +303,7 @@ do_alone(int argc, char **argv)
   char *path = NULL;
   grn_obj *db;
   grn_ctx ctx_, *ctx = &ctx_;
-  grn_ctx_init(ctx, (useql ? GRN_CTX_USE_QL : 0)|(batchmode ? GRN_CTX_BATCH_MODE : 0));
+  grn_ctx_init(ctx, 0);
   if (argc > 0 && argv) { path = *argv++; argc--; }
   db = (newdb || !path) ? grn_db_create(ctx, path, NULL) : grn_db_open(ctx, path);
   if (db) {
@@ -381,7 +380,7 @@ g_client(int argc, char **argv)
   grn_ctx ctx_, *ctx = &ctx_;
   const char *hostname = DEFAULT_DEST;
   if (argc > 0 && argv) { hostname = *argv++; argc--; }
-  grn_ctx_init(ctx, (batchmode ? GRN_CTX_BATCH_MODE : 0));
+  grn_ctx_init(ctx, 0);
   if (!grn_ctx_connect(ctx, hostname, port, 0)) {
     if (!argc) {
       grn_obj text;
@@ -1853,7 +1852,7 @@ g_handler(grn_ctx *ctx, grn_obj *msg)
     int added;
     edge = grn_edges_add(ctx, &((grn_msg *)msg)->edge_id, &added);
     if (added) {
-      grn_ctx_init(&edge->ctx, (useql ? GRN_CTX_USE_QL : 0));
+      grn_ctx_init(&edge->ctx, 0);
       GRN_COM_QUEUE_INIT(&edge->recv_new);
       GRN_COM_QUEUE_INIT(&edge->send_old);
       grn_ctx_use(&edge->ctx, (grn_obj *)com->ev->opaque);
@@ -1903,7 +1902,6 @@ enum {
 };
 
 #define MODE_MASK   0x007f
-#define MODE_USE_QL 0x0080
 #define MODE_NEW_DB 0x0100
 
 static uint32_t
@@ -2411,7 +2409,6 @@ main(int argc, char **argv)
     {'s', NULL, NULL, mode_server, GETOPT_OP_UPDATE},
     {'l', "log-level", NULL, 0, GETOPT_OP_NONE},
     {'i', "server-id", NULL, 0, GETOPT_OP_NONE},
-    {'q', NULL, NULL, MODE_USE_QL, GETOPT_OP_ON},
     {'n', NULL, NULL, MODE_NEW_DB, GETOPT_OP_ON},
     {'\0', "protocol", NULL, 0, GETOPT_OP_NONE},
     {'\0', "version", NULL, mode_version, GETOPT_OP_UPDATE},
@@ -2436,20 +2433,20 @@ main(int argc, char **argv)
   opts[2].arg = &max_num_threads_arg;
   opts[7].arg = &log_level_arg;
   opts[8].arg = &hostname_arg;
-  opts[11].arg = &protocol_arg;
-  opts[13].arg = &log_path_arg;
-  opts[14].arg = &query_log_path_arg;
-  opts[15].arg = &pid_file_path;
-  opts[16].arg = &config_path;
-  opts[18].arg = &cache_limit_arg;
-  opts[19].arg = &input_path;
-  opts[20].arg = &document_root_arg;
-  opts[21].arg = &default_command_version_arg;
-  opts[22].arg = &default_match_escalation_threshold_arg;
-  opts[23].arg = &bind_address_arg;
-  opts[24].arg = &input_fd_arg;
-  opts[25].arg = &output_fd_arg;
-  opts[26].arg = &working_directory_arg;
+  opts[10].arg = &protocol_arg;
+  opts[12].arg = &log_path_arg;
+  opts[13].arg = &query_log_path_arg;
+  opts[14].arg = &pid_file_path;
+  opts[15].arg = &config_path;
+  opts[17].arg = &cache_limit_arg;
+  opts[18].arg = &input_path;
+  opts[19].arg = &document_root_arg;
+  opts[20].arg = &default_command_version_arg;
+  opts[21].arg = &default_match_escalation_threshold_arg;
+  opts[22].arg = &bind_address_arg;
+  opts[23].arg = &input_fd_arg;
+  opts[24].arg = &output_fd_arg;
+  opts[25].arg = &working_directory_arg;
 
   reset_ready_notify_pipe();
 
@@ -2791,7 +2788,6 @@ main(int argc, char **argv)
   }
 
   newdb = (mode & MODE_NEW_DB);
-  useql = (mode & MODE_USE_QL);
   switch (mode & MODE_MASK) {
   case mode_alone :
     exit_code = do_alone(argc - i, argv + i);

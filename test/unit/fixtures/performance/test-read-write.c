@@ -123,7 +123,7 @@ test_read_write(gconstpointer *data)
   if (process_number_string)
     process_number = atoi(process_number_string);
 
-  rc = grn_ctx_init(&contexts[i], GRN_CTX_USE_QL);
+  rc = grn_ctx_init(&contexts[i], 0);
   grn_test_assert(rc, cut_set_message("context: %d (%d)", i, process_number));
   context = &contexts[i];
 

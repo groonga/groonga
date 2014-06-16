@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2014  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -42,7 +42,7 @@ cut_setup(void)
   base_dir = grn_test_get_tmp_dir();
   default_path = g_build_filename(base_dir, "db", NULL);
   default_encoding = GRN_ENC_DEFAULT;
-  default_context_flags = GRN_CTX_USE_QL;
+  default_context_flags = 0;
 
   cut_remove_path(base_dir, NULL);
   g_mkdir_with_parents(base_dir, 0755);

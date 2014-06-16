@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2014  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -30,6 +30,7 @@ static grn_logger_info *logger;
 static GList *expected_messages;
 
 static grn_ctx *context;
+static grn_obj *database;
 static grn_pat *trie;
 static grn_pat_cursor *cursor;
 static grn_id id;
@@ -65,6 +66,7 @@ setup_trie_common(const gchar *default_path_component)
   expected_messages = NULL;
 
   context = NULL;
+  database = NULL;
   trie = NULL;
   cursor = NULL;
   id = GRN_ID_NIL;
@@ -88,7 +90,7 @@ setup_trie_common(const gchar *default_path_component)
   default_cursor_limit = -1;
   default_cursor_flags = 0;
 
-  default_context_flags = GRN_CTX_USE_QL;
+  default_context_flags = 0;
 
   cut_remove_path(base_dir, NULL);
   g_mkdir_with_parents(base_dir, 0755);
@@ -122,11 +124,21 @@ trie_free(void)
 }
 
 static void
+database_free(void)
+{
+  if (context && database) {
+    grn_obj_close(context, database);
+    database = NULL;
+  }
+}
+
+static void
 context_free(void)
 {
   if (context) {
     cursor_free();
     trie_free();
+    database_free();
     grn_ctx_fin(context);
     context = NULL;
   }
@@ -167,11 +179,13 @@ teardown_trie_common(void)
   GRN_CTX_SET_ENCODING(context, default_encoding);      \
 } while (0)
 
-#define cut_assert_open_context() do            \
-{                                               \
-  context_free();                               \
-  open_context();                               \
-  cut_assert(context);                          \
+#define cut_assert_open_context() do                    \
+{                                                       \
+  context_free();                                       \
+  open_context();                                       \
+  cut_assert(context);                                  \
+  database = grn_db_create(context, NULL, NULL);        \
+  cut_assert(database);                                 \
 } while (0)
 
 #define create_trie() do                                                \

@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2014  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -184,7 +184,7 @@ run_test(const gchar **test_case_names, const grn_test_data *data)
   const gchar *type_name, *table_name;
   gchar *path;
 
-  grn_test_assert(grn_ctx_init(context, GRN_CTX_USE_QL));
+  grn_test_assert(grn_ctx_init(context, 0));
 
   GRN_CTX_SET_ENCODING(context, GRN_ENC_UTF8);
 

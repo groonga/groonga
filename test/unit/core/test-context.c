@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2010  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2008-2014  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -40,7 +40,7 @@ cut_setup(void)
 {
   context = NULL;
   database = NULL;
-  default_flags = GRN_CTX_USE_QL;
+  default_flags = 0;
   memory = NULL;
 }
 

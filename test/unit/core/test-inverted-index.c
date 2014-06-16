@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2012  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2008-2014  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -96,7 +96,7 @@ cut_setup(void)
   path = g_build_filename(tmp_directory, "inverted-index", NULL);
 
   context = g_new0(grn_ctx, 1);
-  grn_test_assert(grn_ctx_init(context, GRN_CTX_USE_QL));
+  grn_test_assert(grn_ctx_init(context, 0));
   GRN_CTX_SET_ENCODING(context, GRN_ENC_UTF8);
 
   db = grn_db_create(context, NULL, NULL);

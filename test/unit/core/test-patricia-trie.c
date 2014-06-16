@@ -49,7 +49,6 @@ void test_at(gconstpointer data);
 
 static GArray *ids;
 static GList *expected_keys, *actual_keys;
-static grn_obj *database;
 
 void
 cut_setup(void)
@@ -59,7 +58,6 @@ cut_setup(void)
   ids = NULL;
   expected_keys = NULL;
   actual_keys = NULL;
-  database = NULL;
 }
 
 static void
@@ -78,8 +76,6 @@ cut_teardown(void)
     gcut_list_string_free(expected_keys);
   if (actual_keys)
     gcut_list_string_free(actual_keys);
-  if (database)
-    grn_obj_close(context, database);
   teardown_trie_common();
 }
 
@@ -827,6 +823,7 @@ test_at(gconstpointer data)
 
   cut_assert_open_context();
 
+  grn_obj_close(context, database);
   database = grn_db_create(context,
                            cut_build_path(grn_test_get_tmp_dir(),
                                           "patricia-trie.db",

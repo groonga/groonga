@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2013 Brazil
+  Copyright(C) 2009-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -155,7 +155,6 @@ struct _grn_ctx_impl {
   grn_proc_func *finalizer;
 
   /* ql portion */
-  uint8_t batchmode;
   uint8_t op;
   int tok;
   char *cur;
