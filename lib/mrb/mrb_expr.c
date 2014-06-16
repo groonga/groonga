@@ -489,6 +489,15 @@ mrb_grn_expr_code_get_op(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_expr_code_get_flags(mrb_state *mrb, mrb_value self)
+{
+  grn_expr_code *expr_code;
+
+  expr_code = DATA_PTR(self);
+  return mrb_fixnum_value(expr_code->flags);
+}
+
+static mrb_value
 mrb_grn_expression_initialize(mrb_state *mrb, mrb_value self)
 {
   mrb_value mrb_expression_ptr;
@@ -576,6 +585,8 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_expr_code_get_value, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "op",
                     mrb_grn_expr_code_get_op, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "flags",
+                    mrb_grn_expr_code_get_flags, MRB_ARGS_NONE());
 
   klass = mrb_define_class_under(mrb, module, "Expression", object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
