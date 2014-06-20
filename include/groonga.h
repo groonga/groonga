@@ -896,6 +896,19 @@ GRN_API unsigned int grn_vector_get_element(grn_ctx *ctx, grn_obj *vector,
                                             unsigned int *weight, grn_id *domain);
 
 /*-------------------------------------------------------------
+ * grn_uvector
+*/
+
+GRN_API unsigned int grn_uvector_size(grn_ctx *ctx, grn_obj *uvector);
+
+GRN_API grn_rc grn_uvector_add_element(grn_ctx *ctx, grn_obj *vector,
+                                       grn_id id, unsigned int weight);
+
+GRN_API grn_id grn_uvector_get_element(grn_ctx *ctx, grn_obj *uvector,
+                                       unsigned int offset,
+                                       unsigned int *weight);
+
+/*-------------------------------------------------------------
  * API for hook
  */
 

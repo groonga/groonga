@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2013 Brazil
+/* Copyright(C) 2009-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -31,6 +31,13 @@
 #include "util.h"
 #include <string.h>
 #include <float.h>
+
+typedef struct {
+  grn_id id;
+  unsigned int weight;
+} weight_uvector_entry;
+
+#define IS_WEIGHT_UVECTOR(obj) ((obj)->header.impl_flags & GRN_OBJ_WITH_WEIGHT)
 
 #define NEXT_ADDR(p) (((byte *)(p)) + sizeof(*(p)))
 
@@ -3821,6 +3828,20 @@ grn_vector_delimit(grn_ctx *ctx, grn_obj *vector)
 }
 */
 
+static unsigned int
+grn_uvector_size_internal(grn_ctx *ctx, grn_obj *uvector)
+{
+  unsigned int size;
+
+  if (IS_WEIGHT_UVECTOR(uvector)) {
+    size = GRN_BULK_VSIZE(uvector) / sizeof(weight_uvector_entry);
+  } else {
+    size = GRN_BULK_VSIZE(uvector) / sizeof(grn_id);
+  }
+
+  return size;
+}
+
 unsigned int
 grn_vector_size(grn_ctx *ctx, grn_obj *vector)
 {
@@ -3835,7 +3856,7 @@ grn_vector_size(grn_ctx *ctx, grn_obj *vector)
     size = GRN_BULK_VSIZE(vector);
     break;
   case GRN_UVECTOR :
-    size = GRN_BULK_VSIZE(vector) / sizeof(grn_id);
+    size = grn_uvector_size_internal(ctx, vector);
     break;
   case GRN_VECTOR :
     size = vector->u.v.n_sections;
@@ -4062,6 +4083,101 @@ grn_vector_to_sections(grn_ctx *ctx, grn_obj *vector, grn_obj *sections)
   return sections;
 }
 */
+
+/**** uvector ****/
+
+unsigned int
+grn_uvector_size(grn_ctx *ctx, grn_obj *uvector)
+{
+  unsigned int size;
+
+  if (!uvector) {
+    ERR(GRN_INVALID_ARGUMENT, "uvector must not be NULL");
+    return 0;
+  }
+
+  if (uvector->header.type != GRN_UVECTOR) {
+    grn_obj type_name;
+    GRN_TEXT_INIT(&type_name, 0);
+    grn_inspect_type(ctx, &type_name, uvector->header.type);
+    ERR(GRN_INVALID_ARGUMENT, "must be GRN_UVECTOR: %.*s",
+        (int)GRN_TEXT_LEN(&type_name), GRN_TEXT_VALUE(&type_name));
+    GRN_OBJ_FIN(ctx, &type_name);
+    return 0;
+  }
+
+  GRN_API_ENTER;
+  size = grn_uvector_size_internal(ctx, uvector);
+  GRN_API_RETURN(size);
+}
+
+
+grn_rc
+grn_uvector_add_element(grn_ctx *ctx, grn_obj *uvector,
+                        grn_id id, unsigned int weight)
+{
+  GRN_API_ENTER;
+  if (!uvector) {
+    ERR(GRN_INVALID_ARGUMENT, "uvector is null");
+    goto exit;
+  }
+  if (IS_WEIGHT_UVECTOR(uvector)) {
+    weight_uvector_entry entry;
+    entry.id = id;
+    entry.weight = weight;
+    grn_bulk_write(ctx, uvector,
+                   (const char *)&entry, sizeof(weight_uvector_entry));
+  } else {
+    grn_bulk_write(ctx, uvector,
+                   (const char *)&id, sizeof(grn_id));
+  }
+exit :
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_id
+grn_uvector_get_element(grn_ctx *ctx, grn_obj *uvector,
+                        unsigned int offset, unsigned int *weight)
+{
+  grn_id id = GRN_ID_NIL;
+
+  GRN_API_ENTER;
+  if (!uvector || uvector->header.type != GRN_UVECTOR) {
+    ERR(GRN_INVALID_ARGUMENT, "invalid uvector");
+    goto exit;
+  }
+
+  if (IS_WEIGHT_UVECTOR(uvector)) {
+    const weight_uvector_entry *entry;
+    const weight_uvector_entry *entries_start;
+    const weight_uvector_entry *entries_end;
+
+    entries_start = (const weight_uvector_entry *)GRN_BULK_HEAD(uvector);
+    entries_end = (const weight_uvector_entry *)GRN_BULK_CURR(uvector);
+    if (offset > entries_end - entries_start) {
+      ERR(GRN_RANGE_ERROR, "offset out of range");
+      goto exit;
+    }
+
+    entry = entries_start + offset;
+    id = entry->id;
+    if (weight) { *weight = entry->weight; }
+  } else {
+    const grn_id *ids_start;
+    const grn_id *ids_end;
+
+    ids_start = (const grn_id *)GRN_BULK_HEAD(uvector);
+    ids_end = (const grn_id *)GRN_BULK_CURR(uvector);
+    if (offset > ids_end - ids_start) {
+      ERR(GRN_RANGE_ERROR, "offset out of range");
+      goto exit;
+    }
+    id = ids_start[offset];
+    if (weight) { *weight = 0; }
+  }
+exit :
+  GRN_API_RETURN(id);
+}
 
 /**** accessor ****/
 
@@ -5484,6 +5600,56 @@ grn_obj_set_value_column_var_size_scalar(grn_ctx *ctx, grn_obj *obj, grn_id id,
 }
 
 static grn_rc
+grn_obj_set_value_column_var_size_vector_uvector(grn_ctx *ctx, grn_obj *column,
+                                                 grn_id id, grn_obj *value,
+                                                 int flags)
+{
+  grn_rc rc = GRN_INVALID_ARGUMENT;
+  grn_obj uvector;
+  grn_obj_flags uvector_flags = 0;
+  grn_bool need_convert = GRN_FALSE;
+  void *raw_value;
+  unsigned int size;
+
+  if (column->header.flags & GRN_OBJ_WITH_WEIGHT) {
+    if (!IS_WEIGHT_UVECTOR(value)) {
+      need_convert = GRN_TRUE;
+    }
+  } else {
+    if (IS_WEIGHT_UVECTOR(value)) {
+      need_convert = GRN_TRUE;
+      uvector_flags = GRN_OBJ_WITH_WEIGHT;
+    }
+  }
+
+  if (need_convert) {
+    unsigned int i, n;
+    GRN_VALUE_FIX_SIZE_INIT(&uvector, GRN_OBJ_VECTOR, value->header.domain);
+    uvector.header.impl_flags |= uvector_flags;
+    n = grn_uvector_size(ctx, value);
+    for (i = 0; i < n; i++) {
+      grn_id id;
+      unsigned int weight = 0;
+      id = grn_uvector_get_element(ctx, value, i, NULL);
+      grn_uvector_add_element(ctx, &uvector, id, weight);
+    }
+    raw_value = GRN_BULK_HEAD(&uvector);
+    size = GRN_BULK_VSIZE(&uvector);
+  } else {
+    raw_value = GRN_BULK_HEAD(value);
+    size = GRN_BULK_VSIZE(value);
+  }
+
+  rc = grn_ja_put(ctx, (grn_ja *)column, id, raw_value, size, flags, NULL);
+
+  if (need_convert) {
+    GRN_OBJ_FIN(ctx, &uvector);
+  }
+
+  return rc;
+}
+
+static grn_rc
 grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
                                          grn_obj *value, int flags)
 {
@@ -5494,6 +5660,13 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
   grn_obj *lexicon = grn_ctx_at(ctx, range);
 
   if (call_hook(ctx, obj, id, value, flags)) {
+    return rc;
+  }
+
+  if (value->header.type == GRN_UVECTOR) {
+    rc = grn_obj_set_value_column_var_size_vector_uvector(ctx, obj,
+                                                          id, value,
+                                                          flags);
     return rc;
   }
 
@@ -5561,9 +5734,6 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
       rc = grn_ja_put(ctx, (grn_ja *)obj, id,
                       GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), flags, NULL);
       break;
-    case GRN_UVECTOR :
-      rc = grn_ja_put(ctx, (grn_ja *)obj, id, v, s, flags, NULL);
-      break;
     default :
       ERR(GRN_INVALID_ARGUMENT, "vector, uvector or bulk required");
       break;
@@ -5582,9 +5752,6 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
         rc = grn_ja_putv(ctx, (grn_ja *)obj, id, &v, 0);
         grn_obj_close(ctx, &v);
       }
-      break;
-    case GRN_UVECTOR :
-      rc = grn_ja_put(ctx, (grn_ja *)obj, id, v, s, flags, NULL);
       break;
     case GRN_VECTOR :
       rc = grn_ja_putv(ctx, (grn_ja *)obj, id, value, 0);
@@ -5795,6 +5962,35 @@ grn_obj_get_value_column_index(grn_ctx *ctx, grn_obj *index_column,
   value->header.domain = GRN_DB_UINT32;
 }
 
+static grn_obj *
+grn_obj_get_value_column_vector(grn_ctx *ctx, grn_obj *obj,
+                                grn_id id, grn_obj *value)
+{
+  grn_obj *lexicon;
+
+  lexicon = grn_ctx_at(ctx, DB_OBJ(obj)->range);
+  if (lexicon && !GRN_OBJ_TABLEP(lexicon) &&
+      (lexicon->header.flags & GRN_OBJ_KEY_VAR_SIZE)) {
+    grn_obj v_;
+    grn_obj_ensure_vector(ctx, value);
+    GRN_TEXT_INIT(&v_, 0);
+    grn_ja_get_value(ctx, (grn_ja *)obj, id, &v_);
+    grn_vector_decode(ctx, value, GRN_TEXT_VALUE(&v_), GRN_TEXT_LEN(&v_));
+    GRN_OBJ_FIN(ctx, &v_);
+  } else {
+    grn_obj_ensure_bulk(ctx, value);
+    grn_ja_get_value(ctx, (grn_ja *)obj, id, value);
+    value->header.type = GRN_UVECTOR;
+    if (obj->header.flags & GRN_OBJ_WITH_WEIGHT) {
+      value->header.impl_flags |= GRN_OBJ_WITH_WEIGHT;
+    } else {
+      value->header.impl_flags &= ~GRN_OBJ_WITH_WEIGHT;
+    }
+  }
+
+  return value;
+}
+
 grn_obj *
 grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
 {
@@ -5886,22 +6082,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
   case GRN_COLUMN_VAR_SIZE :
     switch (obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
     case GRN_OBJ_COLUMN_VECTOR :
-      {
-        grn_obj *lexicon = grn_ctx_at(ctx, DB_OBJ(obj)->range);
-        if (lexicon && !GRN_OBJ_TABLEP(lexicon) &&
-            (lexicon->header.flags & GRN_OBJ_KEY_VAR_SIZE)) {
-          grn_obj v_;
-          grn_obj_ensure_vector(ctx, value);
-          GRN_TEXT_INIT(&v_, 0);
-          grn_ja_get_value(ctx, (grn_ja *)obj, id, &v_);
-          grn_vector_decode(ctx, value, GRN_TEXT_VALUE(&v_), GRN_TEXT_LEN(&v_));
-          GRN_OBJ_FIN(ctx, &v_);
-        } else {
-          grn_obj_ensure_bulk(ctx, value);
-          grn_ja_get_value(ctx, (grn_ja *)obj, id, value);
-          value->header.type = GRN_UVECTOR;
-        }
-      }
+      grn_obj_get_value_column_vector(ctx, obj, id, value);
       break;
     case GRN_OBJ_COLUMN_SCALAR :
       grn_obj_ensure_bulk(ctx, value);
@@ -7918,6 +8099,7 @@ grn_obj_ensure_vector(grn_ctx *ctx, grn_obj *obj)
 {
   if (obj->header.type != GRN_VECTOR) { grn_bulk_fin(ctx, obj); }
   obj->header.type = GRN_VECTOR;
+  obj->header.impl_flags &= ~GRN_OBJ_WITH_WEIGHT;
 }
 
 static void
@@ -7925,6 +8107,7 @@ grn_obj_ensure_bulk(grn_ctx *ctx, grn_obj *obj)
 {
   if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx, obj); }
   obj->header.type = GRN_BULK;
+  obj->header.impl_flags &= ~GRN_OBJ_WITH_WEIGHT;
 }
 
 grn_rc
