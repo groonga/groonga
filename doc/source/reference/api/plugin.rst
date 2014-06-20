@@ -19,7 +19,7 @@ Reference
 
 .. c:function:: grn_obj grn_plugin_proc_get_var(grn_ctx *ctx, grn_user_data *user_data, const char *name, int name_size)
 
-   It gets a variable value from `grn_user_data` by specify the variable name.
+   It gets a variable value from `grn_user_data` by specifying the variable name.
 
    :param name: The variable name.
    :param name_size: The number of bytes of name. If `name_size` is negative, `name` must be NUL-terminated. `name_size` is computed by `strlen(name)` for the case.
@@ -27,7 +27,7 @@ Reference
 
 .. c:function:: grn_obj *grn_plugin_proc_get_var_by_offset(grn_ctx *ctx, grn_user_data *user_data, unsigned int offset)
 
-   It gets a variable value from `grn_user_data` by specify the offset position of the variable.
+   It gets a variable value from `grn_user_data` by specifying the offset position of the variable.
 
    :param offset: The offset position of the variable.
    :return: A variable value on success, NULL otherwise.
@@ -36,8 +36,8 @@ Reference
 
    It initializes a `grn_expr_var`.
 
-   :param var: The pointer of `grn_expr_var` object to initialize.
-   :param name: The name of `grn_expr_var` object to initialize.
+   :param var: The pointer of `grn_expr_var` object to be initialized.
+   :param name: The name of `grn_expr_var` object to be initialized.
    :param name_size: The number of bytes of name. If `name_size` is negative, `name` must be NUL-terminated. `name_size` is computed by `strlen(name)` for the case.
    :return: ``GRN_SUCCESS``. It doesn't fail.
 
@@ -45,7 +45,7 @@ Reference
 
    It creates a command.
 
-   :param name: The `proc` name of the command to create.
+   :param name: The `proc` name of the command to be created.
    :param name_size: The number of bytes of name. If `name_size` is negative, `name` must be NUL-terminated. `name_size` is computed by `strlen(name)` for the case.
    :param func: The function name to be called by the created command.
    :param n_vars: The number of the variables of the command to create.
