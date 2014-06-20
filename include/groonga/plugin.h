@@ -215,6 +215,30 @@ GRN_API int grn_plugin_charlen(grn_ctx *ctx, const char *str_ptr,
 GRN_API int grn_plugin_isspace(grn_ctx *ctx, const char *str_ptr,
                                unsigned int str_length, grn_encoding encoding);
 
+/*
+  grn_plugin_expr_var_init() initializes a grn_expr_var.
+
+  If `name_size` is negative, `name` must be
+  NUL-terminated. `name_size` is computed by `strlen(name)` for the case.
+*/
+
+GRN_API grn_rc grn_plugin_expr_var_init(grn_ctx *ctx,
+                                        grn_expr_var *var,
+                                        const char *name,
+                                        int name_size);
+
+/*
+  grn_plugin_command_create() creates a command.
+
+  If `name_size` is negative, `name` must be
+  NUL-terminated. `name_size` is computed by `strlen(name)` for the case.
+*/
+GRN_API grn_obj * grn_plugin_command_create(grn_ctx *ctx,
+                                            const char *name,
+                                            int name_size,
+                                            grn_proc_func func,
+                                            unsigned int n_vars,
+                                            grn_expr_var *vars);
 
 
 #ifdef __cplusplus

@@ -51,6 +51,19 @@ static grn_critical_section grn_plugins_lock;
 #  define grn_dl_clear_error()
 #endif
 
+static int
+compute_name_size(const char *name, int name_size)
+{
+  if (name_size < 0) {
+    if (name) {
+      name_size = strlen(name);
+    } else {
+      name_size = 0;
+    }
+  }
+  return name_size;
+}
+
 grn_id
 grn_plugin_reference(grn_ctx *ctx, const char *filename)
 {
@@ -638,13 +651,7 @@ grn_obj *
 grn_plugin_proc_get_var(grn_ctx *ctx, grn_user_data *user_data,
                         const char *name, int name_size)
 {
-  if (name_size < 0) {
-    if (name) {
-      name_size = strlen(name);
-    } else {
-      name_size = 0;
-    }
-  }
+  name_size = compute_name_size(name, name_size);
   return grn_proc_get_var(ctx, user_data, name, name_size);
 }
 
@@ -716,4 +723,30 @@ grn_plugin_isspace(grn_ctx *ctx, const char *str_ptr,
     break;
   }
   return 0;
+}
+
+grn_rc
+grn_plugin_expr_var_init(grn_ctx *ctx,
+                         grn_expr_var *var,
+                         const char *name,
+                         int name_size)
+{
+  var->name = name;
+  var->name_size = compute_name_size(name, name_size);
+  GRN_TEXT_INIT(&var->value, 0);
+  return GRN_SUCCESS;
+}
+
+grn_obj *
+grn_plugin_command_create(grn_ctx *ctx,
+                          const char *name,
+                          int name_size,
+                          grn_proc_func func,
+                          unsigned int n_vars,
+                          grn_expr_var *vars)
+{
+  name_size = compute_name_size(name, name_size);
+  grn_proc_create(ctx, name, name_size, GRN_PROC_COMMAND,
+                  func, NULL, NULL, n_vars, vars);
+  return GRN_SUCCESS;
 }
