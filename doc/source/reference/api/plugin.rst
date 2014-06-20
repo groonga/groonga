@@ -21,7 +21,7 @@ Reference
 
    It gets a variable value from `grn_user_data` by specify the variable name.
 
-   :param name: The variable name
+   :param name: The variable name.
    :param name_size: The number of bytes of name. If `name_size` is negative, `name` must be NUL-terminated. `name_size` is computed by `strlen(name)` for the case.
    :return: A variable value on success, NULL otherwise.
 
