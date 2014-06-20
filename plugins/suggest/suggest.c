@@ -994,34 +994,21 @@ GRN_PLUGIN_INIT(grn_ctx *ctx)
 grn_rc
 GRN_PLUGIN_REGISTER(grn_ctx *ctx)
 {
-  grn_expr_var vars[] = {
-    {CONST_STR_LEN("types")},
-    {CONST_STR_LEN("table")},
-    {CONST_STR_LEN("column")},
-    {CONST_STR_LEN("query")},
-    {CONST_STR_LEN("sortby")},
-    {CONST_STR_LEN("output_columns")},
-    {CONST_STR_LEN("offset")},
-    {CONST_STR_LEN("limit")},
-    {CONST_STR_LEN("frequency_threshold")},
-    {CONST_STR_LEN("conditional_probability_threshold")},
-    {CONST_STR_LEN("prefix_search")},
-    {CONST_STR_LEN("similar_search")}
-  };
-  GRN_TEXT_INIT(&vars[0].value, 0);
-  GRN_TEXT_INIT(&vars[1].value, 0);
-  GRN_TEXT_INIT(&vars[2].value, 0);
-  GRN_TEXT_INIT(&vars[3].value, 0);
-  GRN_TEXT_INIT(&vars[4].value, 0);
-  GRN_TEXT_INIT(&vars[5].value, 0);
-  GRN_TEXT_INIT(&vars[6].value, 0);
-  GRN_TEXT_INIT(&vars[7].value, 0);
-  GRN_TEXT_INIT(&vars[8].value, 0);
-  GRN_TEXT_INIT(&vars[9].value, 0);
-  GRN_TEXT_INIT(&vars[10].value, 0);
-  GRN_TEXT_INIT(&vars[11].value, 0);
-  grn_proc_create(ctx, CONST_STR_LEN("suggest"), GRN_PROC_COMMAND,
-                  command_suggest, NULL, NULL, 12, vars);
+  grn_expr_var vars[12];
+
+  grn_plugin_expr_var_init(ctx, &vars[0], "types", -1);
+  grn_plugin_expr_var_init(ctx, &vars[1], "table", -1);
+  grn_plugin_expr_var_init(ctx, &vars[2], "column", -1);
+  grn_plugin_expr_var_init(ctx, &vars[3], "query", -1);
+  grn_plugin_expr_var_init(ctx, &vars[4], "sortby", -1);
+  grn_plugin_expr_var_init(ctx, &vars[5], "output_columns", -1);
+  grn_plugin_expr_var_init(ctx, &vars[6], "offset", -1);
+  grn_plugin_expr_var_init(ctx, &vars[7], "limit", -1);
+  grn_plugin_expr_var_init(ctx, &vars[8], "frequency_threshold", -1);
+  grn_plugin_expr_var_init(ctx, &vars[9], "conditional_probability_threshold", -1);
+  grn_plugin_expr_var_init(ctx, &vars[10], "prefix_search", -1);
+  grn_plugin_expr_var_init(ctx, &vars[11], "similar_search", -1);
+  grn_plugin_command_create(ctx, "suggest", -1, command_suggest, 12, vars);
 
   grn_proc_create(ctx, CONST_STR_LEN("suggest_preparer"), GRN_PROC_FUNCTION,
                   func_suggest_preparer, NULL, NULL, 0, NULL);
