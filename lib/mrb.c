@@ -58,14 +58,12 @@ grn_mrb_get_system_ruby_scripts_dir(void)
 }
 #endif /* WIN32 */
 
-static FILE *
-grn_mrb_open_script(grn_ctx *ctx, const char *path)
+static grn_bool
+grn_mrb_expand_script_path(grn_ctx *ctx, const char *path, char *expanded_path)
 {
   const char *ruby_scripts_dir;
   char dir_last_char;
-  char expanded_path[PATH_MAX];
   int path_length, max_path_length;
-  FILE *script_file = NULL;
 
   if (path[0] == '/') {
     expanded_path[0] = '\0';
@@ -89,20 +87,12 @@ grn_mrb_open_script(grn_ctx *ctx, const char *path)
         "script path is too long: %d (max: %d) <%s%s>",
         path_length, max_path_length,
         expanded_path, path);
-    return NULL;
+    return GRN_FALSE;
   }
 
   strcat(expanded_path, path);
-  script_file = fopen(expanded_path, "r");
-  if (!script_file) {
-    char message[BUFFER_SIZE];
-    snprintf(message, BUFFER_SIZE - 1,
-             "fopen: failed to open mruby script file: <%s>", path);
-    SERR(message);
-    return NULL;
-  }
 
-  return script_file;
+  return GRN_TRUE;
 }
 
 mrb_value
@@ -110,6 +100,7 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
 {
   grn_mrb_data *data = &(ctx->impl->mrb);
   mrb_state *mrb = data->state;
+  char expanded_path[PATH_MAX];
   FILE *file;
   mrb_value result;
   struct mrb_parser_state *parser;
@@ -118,16 +109,28 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
     return mrb_nil_value();
   }
 
-  file = grn_mrb_open_script(ctx, path);
+  if (!grn_mrb_expand_script_path(ctx, path, expanded_path)) {
+    return mrb_nil_value();
+  }
+
+  file = fopen(expanded_path, "r");
   if (!file) {
+    char message[BUFFER_SIZE];
     mrb_value exception;
+    snprintf(message, BUFFER_SIZE - 1,
+             "fopen: failed to open mruby script file: <%s>", expanded_path);
+    SERR(message);
     exception = mrb_exc_new(mrb, E_ARGUMENT_ERROR,
                             ctx->errbuf, strlen(ctx->errbuf));
     mrb->exc = mrb_obj_ptr(exception);
     return mrb_nil_value();
   }
 
-  parser = mrb_parse_file(mrb, file, NULL);
+  parser = mrb_parser_new(mrb);
+  mrb_parser_set_filename(parser, expanded_path);
+  parser->s = parser->send = NULL;
+  parser->f = file;
+  mrb_parser_parse(parser, NULL);
   fclose(file);
 
   {
