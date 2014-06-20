@@ -25,7 +25,7 @@ Reference
    :param name_size: The number of bytes of name. If `name_size` is negative, `name` must be NUL-terminated. `name_size` is computed by `strlen(name)` for the case.
    :return: A variable value on success, NULL otherwise.
 
-.. c:function:: grn_obj *grn_plugin_proc_get_var_by_offset(grn_ctx *ctx, grn_user_data *user_data, unsigned int offset);
+.. c:function:: grn_obj *grn_plugin_proc_get_var_by_offset(grn_ctx *ctx, grn_user_data *user_data, unsigned int offset)
 
    It gets a variable value from `grn_user_data` by specify the offset position of the variable.
 
@@ -41,7 +41,7 @@ Reference
    :param name_size: The number of bytes of name. If `name_size` is negative, `name` must be NUL-terminated. `name_size` is computed by `strlen(name)` for the case.
    :return: ``GRN_SUCCESS``. It doesn't fail.
 
-.. c:function:: grn_obj * grn_plugin_command_create(grn_ctx *ctx, const char *name, int name_size, grn_proc_func func, unsigned int n_vars, grn_expr_var *vars);
+.. c:function:: grn_obj * grn_plugin_command_create(grn_ctx *ctx, const char *name, int name_size, grn_proc_func func, unsigned int n_vars, grn_expr_var *vars)
 
    It creates a command.
 
