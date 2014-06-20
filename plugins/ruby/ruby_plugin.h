@@ -69,16 +69,6 @@ GRN_PLUGIN_INIT(grn_ctx *ctx)
   return GRN_SUCCESS;
 }
 
-#define DEF_VAR(v,x) do {\
-  (v).name = (x);\
-  (v).name_size = (x) ? sizeof(x) - 1 : 0;\
-  GRN_TEXT_INIT(&(v).value, 0);\
-} while (0)
-
-#define DEF_COMMAND(name, func, nvars, vars)\
-  (grn_proc_create(ctx, (name), (sizeof(name) - 1),\
-                   GRN_PROC_COMMAND, (func), NULL, NULL, (nvars), (vars)))
-
 grn_rc
 GRN_PLUGIN_FIN(grn_ctx *ctx)
 {

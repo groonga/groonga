@@ -57,8 +57,8 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
 {
   grn_expr_var vars[1];
 
-  DEF_VAR(vars[0], "script");
-  DEF_COMMAND("ruby_eval", command_ruby_eval, 1, vars);
+  grn_plugin_expr_var_init(ctx, &vars[0], "script", -1);
+  grn_plugin_command_create(ctx, "ruby_eval", -1, command_ruby_eval, 1, vars);
 
   return ctx->rc;
 }
