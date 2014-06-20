@@ -24,7 +24,6 @@
 #include <groonga/plugin.h>
 
 #define VAR GRN_PROC_GET_VAR_BY_OFFSET
-#define CONST_STR_LEN(x) x, x ? sizeof(x) - 1 : 0
 #define TEXT_VALUE_LEN(x) GRN_TEXT_VALUE(x), GRN_TEXT_LEN(x)
 
 static grn_obj *
@@ -663,90 +662,80 @@ GRN_PLUGIN_INIT(grn_ctx *ctx)
   return GRN_SUCCESS;
 }
 
-#define DEF_VAR(v,x) do {\
-  (v).name = (x);\
-  (v).name_size = (x) ? sizeof(x) - 1 : 0;\
-  GRN_TEXT_INIT(&(v).value, 0);\
-} while (0)
-
-#define DEF_COMMAND(name,func,nvars,vars)\
-  (grn_proc_create(ctx, CONST_STR_LEN(name),\
-                   GRN_PROC_COMMAND, (func), NULL, NULL, (nvars), (vars)))
-
 grn_rc
 GRN_PLUGIN_REGISTER(grn_ctx *ctx)
 {
   grn_expr_var vars[18];
 
-  DEF_VAR(vars[0], "table");
-  DEF_VAR(vars[1], "expression");
-  DEF_VAR(vars[2], "result_set");
-  DEF_VAR(vars[3], "set_operation");
-  DEF_VAR(vars[4], "allow_update");
-  DEF_COMMAND("filter_by_script", command_filter_by_script, 5, vars);
+  grn_plugin_expr_var_init(ctx, &vars[0], "table", -1);
+  grn_plugin_expr_var_init(ctx, &vars[1], "expression", -1);
+  grn_plugin_expr_var_init(ctx, &vars[2], "result_set", -1);
+  grn_plugin_expr_var_init(ctx, &vars[3], "set_operation", -1);
+  grn_plugin_expr_var_init(ctx, &vars[4], "allow_update", -1);
+  grn_plugin_command_create(ctx, "filter_by_script", -1, command_filter_by_script, 5, vars);
 
-  DEF_VAR(vars[0], "table");
-  DEF_VAR(vars[1], "column");
-  DEF_VAR(vars[2], "operator");
-  DEF_VAR(vars[3], "value");
-  DEF_VAR(vars[4], "result_set");
-  DEF_VAR(vars[5], "set_operation");
-  DEF_COMMAND("filter", command_filter, 6, vars);
+  grn_plugin_expr_var_init(ctx, &vars[0], "table", -1);
+  grn_plugin_expr_var_init(ctx, &vars[1], "column", -1);
+  grn_plugin_expr_var_init(ctx, &vars[2], "operator", -1);
+  grn_plugin_expr_var_init(ctx, &vars[3], "value", -1);
+  grn_plugin_expr_var_init(ctx, &vars[4], "result_set", -1);
+  grn_plugin_expr_var_init(ctx, &vars[5], "set_operation", -1);
+  grn_plugin_command_create(ctx, "filter", -1, command_filter, 6, vars);
 
-  DEF_VAR(vars[0], "table");
-  DEF_VAR(vars[1], "key");
-  DEF_VAR(vars[2], "result_set");
-  DEF_VAR(vars[3], "range_gap");
-  DEF_COMMAND("group", command_group, 4, vars);
+  grn_plugin_expr_var_init(ctx, &vars[0], "table", -1);
+  grn_plugin_expr_var_init(ctx, &vars[1], "key", -1);
+  grn_plugin_expr_var_init(ctx, &vars[2], "result_set", -1);
+  grn_plugin_expr_var_init(ctx, &vars[3], "range_gap", -1);
+  grn_plugin_command_create(ctx, "group", -1, command_group, 4, vars);
 
-  DEF_VAR(vars[0], "table");
-  DEF_VAR(vars[1], "keys");
-  DEF_VAR(vars[2], "offset");
-  DEF_VAR(vars[3], "limit");
-  DEF_COMMAND("sort", command_sort, 4, vars);
+  grn_plugin_expr_var_init(ctx, &vars[0], "table", -1);
+  grn_plugin_expr_var_init(ctx, &vars[1], "keys", -1);
+  grn_plugin_expr_var_init(ctx, &vars[2], "offset", -1);
+  grn_plugin_expr_var_init(ctx, &vars[3], "limit", -1);
+  grn_plugin_command_create(ctx, "sort", -1, command_sort, 4, vars);
 
-  DEF_VAR(vars[0], "table");
-  DEF_VAR(vars[1], "columns");
-  DEF_VAR(vars[2], "offset");
-  DEF_VAR(vars[3], "limit");
-  DEF_COMMAND("output", command_output, 4, vars);
+  grn_plugin_expr_var_init(ctx, &vars[0], "table", -1);
+  grn_plugin_expr_var_init(ctx, &vars[1], "columns", -1);
+  grn_plugin_expr_var_init(ctx, &vars[2], "offset", -1);
+  grn_plugin_expr_var_init(ctx, &vars[3], "limit", -1);
+  grn_plugin_command_create(ctx, "output", -1, command_output, 4, vars);
 
-  DEF_VAR(vars[0], "table");
-  DEF_VAR(vars[1], "expression");
-  DEF_COMMAND("each", command_each, 2, vars);
+  grn_plugin_expr_var_init(ctx, &vars[0], "table", -1);
+  grn_plugin_expr_var_init(ctx, &vars[1], "expression", -1);
+  grn_plugin_command_create(ctx, "each", -1, command_each, 2, vars);
 
-  DEF_VAR(vars[0], "table");
-  DEF_COMMAND("unlink", command_unlink, 1, vars);
+  grn_plugin_expr_var_init(ctx, &vars[0], "table", -1);
+  grn_plugin_command_create(ctx, "unlink", -1, command_unlink, 1, vars);
 
-  DEF_VAR(vars[0], "table");
-  DEF_VAR(vars[1], "values");
-  DEF_VAR(vars[2], "key");
-  DEF_VAR(vars[3], "columns");
-  DEF_VAR(vars[4], "output_columns");
-  DEF_VAR(vars[5], "id");
-  DEF_COMMAND("add", command_add, 2, vars);
-  DEF_COMMAND("push", command_push, 2, vars);
-  DEF_COMMAND("set", command_set, 6, vars);
+  grn_plugin_expr_var_init(ctx, &vars[0], "table", -1);
+  grn_plugin_expr_var_init(ctx, &vars[1], "values", -1);
+  grn_plugin_expr_var_init(ctx, &vars[2], "key", -1);
+  grn_plugin_expr_var_init(ctx, &vars[3], "columns", -1);
+  grn_plugin_expr_var_init(ctx, &vars[4], "output_columns", -1);
+  grn_plugin_expr_var_init(ctx, &vars[5], "id", -1);
+  grn_plugin_command_create(ctx, "add", -1, command_add, 2, vars);
+  grn_plugin_command_create(ctx, "push", -1, command_push, 2, vars);
+  grn_plugin_command_create(ctx, "set", -1, command_set, 6, vars);
 
-  DEF_VAR(vars[0], "table");
-  DEF_VAR(vars[1], "key");
-  DEF_VAR(vars[2], "output_columns");
-  DEF_VAR(vars[3], "id");
-  DEF_COMMAND("get", command_get, 4, vars);
+  grn_plugin_expr_var_init(ctx, &vars[0], "table", -1);
+  grn_plugin_expr_var_init(ctx, &vars[1], "key", -1);
+  grn_plugin_expr_var_init(ctx, &vars[2], "output_columns", -1);
+  grn_plugin_expr_var_init(ctx, &vars[3], "id", -1);
+  grn_plugin_command_create(ctx, "get", -1, command_get, 4, vars);
 
-  DEF_VAR(vars[0], "table");
-  DEF_VAR(vars[1], "output_columns");
-  DEF_VAR(vars[2], "non_block");
-  DEF_COMMAND("pull", command_pull, 3, vars);
+  grn_plugin_expr_var_init(ctx, &vars[0], "table", -1);
+  grn_plugin_expr_var_init(ctx, &vars[1], "output_columns", -1);
+  grn_plugin_expr_var_init(ctx, &vars[2], "non_block", -1);
+  grn_plugin_command_create(ctx, "pull", -1, command_pull, 3, vars);
 
-  DEF_VAR(vars[0], "table");
-  DEF_VAR(vars[1], "columns");
-  DEF_VAR(vars[2], "query");
-  DEF_VAR(vars[3], "result_set");
-  DEF_VAR(vars[4], "set_operation");
-  DEF_VAR(vars[5], "allow_column_expression");
-  DEF_VAR(vars[6], "allow_pragma");
-  DEF_COMMAND("match", command_match, 7, vars);
+  grn_plugin_expr_var_init(ctx, &vars[0], "table", -1);
+  grn_plugin_expr_var_init(ctx, &vars[1], "columns", -1);
+  grn_plugin_expr_var_init(ctx, &vars[2], "query", -1);
+  grn_plugin_expr_var_init(ctx, &vars[3], "result_set", -1);
+  grn_plugin_expr_var_init(ctx, &vars[4], "set_operation", -1);
+  grn_plugin_expr_var_init(ctx, &vars[5], "allow_column_expression", -1);
+  grn_plugin_expr_var_init(ctx, &vars[6], "allow_pragma", -1);
+  grn_plugin_command_create(ctx, "match", -1, command_match, 7, vars);
 
   return ctx->rc;
 }
