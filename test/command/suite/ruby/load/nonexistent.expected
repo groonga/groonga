@@ -8,11 +8,11 @@ ruby_load "nonexistent.rb"
       0.0,
       0.0
     ],
-    "syscall error 'fopen: failed to open mruby script file: <nonexistent.rb>' (No such file or directory)"
+    "syscall error 'fopen: failed to open mruby script file: <nonexistent.rb>'"
   ],
   {
     "exception": {
-      "message": "syscall error 'fopen: failed to open mruby script file: <nonexistent.rb>' (No such file or directory)"
+      "message": "syscall error 'fopen: failed to open mruby script file: <nonexistent.rb>'"
     }
   }
 ]
