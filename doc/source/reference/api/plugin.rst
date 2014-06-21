@@ -17,6 +17,76 @@ tutorial about it.
 Reference
 ---------
 
+.. c:function:: grn_rc GRN_PLUGIN_INIT(grn_ctx *ctx)
+
+.. c:function:: grn_rc GRN_PLUGIN_REGISTER(grn_ctx *ctx)
+
+.. c:function:: grn_rc GRN_PLUGIN_FIN(grn_ctx *ctx)
+
+.. c:macro:: GRN_PLUGIN_MALLOC(ctx, size)
+
+   GRN_PLUGIN_MALLOC() allocates `size` bytes and returns a pointer to the
+   allocated memory space. Note that the memory space is associated with `ctx`.
+
+.. c:macro:: GRN_PLUGIN_REALLOC(ctx, ptr, size)
+
+   GRN_PLUGIN_REALLOC() resizes the memory space pointed to by `ptr` or
+   allocates a new memory space of `size` bytes. GRN_PLUGIN_REALLOC() returns
+   a pointer to the memory space. The contents is unchanged or copied from the
+   old memory space to the new memory space.
+
+.. c:macro:: GRN_PLUGIN_FREE(ctx, ptr)
+
+   GRN_PLUGIN_FREE() frees a memory space allocated by GRN_PLUGIN_MALLOC() or
+   GRN_PLUGIN_REALLOC(). This means that `ptr` must be a pointer returned by
+   GRN_PLUGIN_MALLOC() or GRN_PLUGIN_REALLOC().
+
+.. c:macro:: GRN_PLUGIN_LOG(ctx, level, ...)
+
+   GRN_PLUGIN_LOG() reports a log of `level`. Its error message is generated
+   from the varying number of arguments, in which the first one is the format
+   string and the rest are its arguments. See grn_log_level in "groonga.h" for
+   more details of `level`.
+
+.. c:macro:: GRN_PLUGIN_ERROR(ctx, error_code, ...)
+
+   GRN_PLUGIN_ERROR() reports an error of `error_code`. Its error message is
+   generated from the varying number of arguments, in which the first one is the
+   format string and the rest are its arguments. See grn_rc in "groonga.h" for
+   more details of `error_code`.
+
+.. c:type:: grn_plugin_mutex
+
+   grn_plugin_mutex is available to make a critical section. See the
+   following functions.
+
+.. c:function:: grn_plugin_mutex *grn_plugin_mutex_open(grn_ctx *ctx)
+
+   grn_plugin_mutex_open() returns a pointer to a new object of
+   grn_plugin_mutex. Memory for the new object is obtained with
+   GRN_PLUGIN_MALLOC(). grn_plugin_mutex_open() returns NULL if sufficient
+   memory is not available.
+
+.. c:function:: void grn_plugin_mutex_close(grn_ctx *ctx, grn_plugin_mutex *mutex)
+
+   grn_plugin_mutex_close() finalizes an object of grn_plugin_mutex and then
+   frees memory allocated for that object.
+
+.. c:function:: void grn_plugin_mutex_lock(grn_ctx *ctx, grn_plugin_mutex *mutex)
+
+   grn_plugin_mutex_lock() locks a mutex object. If the object is already
+   locked, the calling thread waits until the object will be unlocked.
+
+.. c:function:: void grn_plugin_mutex_unlock(grn_ctx *ctx, grn_plugin_mutex *mutex)
+
+   grn_plugin_mutex_unlock() unlocks a mutex object. grn_plugin_mutex_unlock()
+   should not be called for an unlocked object.
+
+.. c:function:: grn_obj *grn_plugin_proc_alloc(grn_ctx *ctx, grn_user_data *user_data, grn_id domain, grn_obj_flags flags)
+
+   grn_plugin_proc_alloc() allocates a `grn_obj` object.
+   You can use it in function that is registered as GRN_PROC_FUNCTION.
+
 .. c:function:: grn_obj grn_plugin_proc_get_var(grn_ctx *ctx, grn_user_data *user_data, const char *name, int name_size)
 
    It gets a variable value from `grn_user_data` by specifying the variable name.
@@ -32,7 +102,28 @@ Reference
    :param offset: The offset position of the variable.
    :return: A variable value on success, NULL otherwise.
 
-.. c:function:: grn_rc grn_plugin_expr_var_init(grn_ctx *ctx, grn_expr_var *var, const char *name, int name_size);
+.. c:function:: const char *grn_plugin_win32_base_dir(void)
+
+   grn_plugin_win32_base_dir() returns the groonga install directory.
+   The install directory is computed from the directory that has
+   `groonga.dll`. You can use the directory to generate install
+   directory aware path.
+   It only works on Windows. It returns `NULL` on other platforms.
+
+.. c:function:: int grn_plugin_charlen(grn_ctx *ctx, const char *str_ptr, unsigned int str_length, grn_encoding encoding)
+
+   grn_plugin_charlen() returns the length (#bytes) of the first character
+   in the string specified by `str_ptr` and `str_length`. If the starting bytes
+   are invalid as a character, grn_plugin_charlen() returns 0. See
+   grn_encoding in "groonga.h" for more details of `encoding`.
+
+.. c:function:: int grn_plugin_isspace(grn_ctx *ctx, const char *str_ptr, unsigned int str_length, grn_encoding encoding)
+
+   grn_plugin_isspace() returns the length (#bytes) of the first character
+   in the string specified by `str_ptr` and `str_length` if it is a space
+   character. Otherwise, grn_plugin_isspace() returns 0.
+
+.. c:function:: grn_rc grn_plugin_expr_var_init(grn_ctx *ctx, grn_expr_var *var, const char *name, int name_size)
 
    It initializes a `grn_expr_var`.
 
