@@ -1988,7 +1988,7 @@ subrecs_push(byte *subrecs, int size, int n_subrecs, int score, void *body, int 
     GRN_RSET_SUBRECS_COPY(subrecs,size,n,c2);
     n = n2;
   }
-  v = subrecs + n * (size + GRN_RSET_SCORE_SIZE);
+  v = subrecs + n * (GRN_RSET_SCORE_SIZE + size);
   *((int *)v) = score;
   memcpy(v + GRN_RSET_SCORE_SIZE, body, size);
 }
@@ -2022,7 +2022,7 @@ subrecs_replace_min(byte *subrecs, int size, int n_subrecs, int score, void *bod
       }
     }
   }
-  v = subrecs + n * (size + GRN_RSET_SCORE_SIZE);
+  v = subrecs + n * (GRN_RSET_SCORE_SIZE + size);
   memcpy(v, &score, GRN_RSET_SCORE_SIZE);
   memcpy(v + GRN_RSET_SCORE_SIZE, body, size);
 }

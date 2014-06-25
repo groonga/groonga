@@ -58,9 +58,9 @@ typedef struct {
 
 #define GRN_RSET_SUBRECS_CMP(a,b,dir) (((a) - (b))*(dir))
 #define GRN_RSET_SUBRECS_NTH(subrecs,size,n) \
-  ((int *)((byte *)subrecs + n * (size + GRN_RSET_SCORE_SIZE)))
+  ((int *)((byte *)subrecs + n * (GRN_RSET_SCORE_SIZE + size)))
 #define GRN_RSET_SUBRECS_COPY(subrecs,size,n,src) \
-  (memcpy(GRN_RSET_SUBRECS_NTH(subrecs, size, n), src, size + GRN_RSET_SCORE_SIZE))
+  (memcpy(GRN_RSET_SUBRECS_NTH(subrecs, size, n), src, GRN_RSET_SCORE_SIZE + size))
 
 #define GRN_JSON_LOAD_OPEN_BRACKET 0x40000000
 #define GRN_JSON_LOAD_OPEN_BRACE   0x40000001
