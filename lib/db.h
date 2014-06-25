@@ -58,7 +58,11 @@ typedef struct {
 
 #define GRN_RSET_SUBRECS_CMP(a,b,dir) (((a) - (b))*(dir))
 #define GRN_RSET_SUBRECS_NTH(subrecs,size,n) \
-  ((int *)((byte *)subrecs + n * (GRN_RSET_SCORE_SIZE + size)))
+  ((int *)((byte *)(subrecs) + n * (GRN_RSET_SCORE_SIZE + size)))
+#define GRN_RSET_SUBRECS_NTH_BODY(subrecs,size,n) \
+  ((grn_rset_posinfo *)((byte *)(subrecs) + \
+                        n * (GRN_RSET_SCORE_SIZE + size) + \
+                        GRN_RSET_SCORE_SIZE))
 #define GRN_RSET_SUBRECS_COPY(subrecs,size,n,src) \
   (memcpy(GRN_RSET_SUBRECS_NTH(subrecs, size, n), src, GRN_RSET_SCORE_SIZE + size))
 

@@ -1,0 +1,82 @@
+table_create Bookmarks TABLE_HASH_KEY UInt32
+[[0,0.0,0.0],true]
+column_create Bookmarks url COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Bookmarks user COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Bookmarks
+[
+{"_key": 1, "url": "http://groonga.org/", "user": "mori"},
+{"_key": 2, "url": "http://groonga.org/", "user": "kou"},
+{"_key": 3, "url": "http://groonga.org/", "user": "s-yata"},
+{"_key": 4, "url": "http://mroonga.org/", "user": "kou"},
+{"_key": 5, "url": "http://droonga.org/", "user": "piro"}
+]
+[[0,0.0,0.0],5]
+select Bookmarks   --limit 0   --drilldown url   --drilldown_sortby user   --drilldown_output_columns _key,_nsubrecs,user
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        5
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "UInt32"
+        ],
+        [
+          "url",
+          "ShortText"
+        ],
+        [
+          "user",
+          "ShortText"
+        ]
+      ]
+    ],
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "_nsubrecs",
+          "Int32"
+        ],
+        [
+          "user",
+          "ShortText"
+        ]
+      ],
+      [
+        "http://mroonga.org/",
+        1,
+        "kou"
+      ],
+      [
+        "http://groonga.org/",
+        3,
+        "mori"
+      ],
+      [
+        "http://droonga.org/",
+        1,
+        "piro"
+      ]
+    ]
+  ]
+]

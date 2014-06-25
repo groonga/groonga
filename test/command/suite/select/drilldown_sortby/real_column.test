@@ -1,0 +1,18 @@
+table_create Bookmarks TABLE_HASH_KEY UInt32
+column_create Bookmarks url COLUMN_SCALAR ShortText
+column_create Bookmarks user COLUMN_SCALAR ShortText
+
+load --table Bookmarks
+[
+{"_key": 1, "url": "http://groonga.org/", "user": "mori"},
+{"_key": 2, "url": "http://groonga.org/", "user": "kou"},
+{"_key": 3, "url": "http://groonga.org/", "user": "s-yata"},
+{"_key": 4, "url": "http://mroonga.org/", "user": "kou"},
+{"_key": 5, "url": "http://droonga.org/", "user": "piro"}
+]
+
+select Bookmarks \
+  --limit 0 \
+  --drilldown url \
+  --drilldown_sortby user \
+  --drilldown_output_columns _key,_nsubrecs,user
