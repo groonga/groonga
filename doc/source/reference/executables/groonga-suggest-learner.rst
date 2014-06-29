@@ -45,21 +45,30 @@ Here is the sample to load log data under ``logs`` directory::
 Options
 -------
 
-.. cmdoption:: -r
+.. cmdoption:: ``-r <endpoint>``, ``--receive-endpoint <endpoint>``
 
-   Specify endpoint for receiver.
+   Uses ``<endpoint>`` as the receiver endpoint.
 
-.. cmdoption:: -s
+.. cmdoption:: ``-s <endpoint>``, ``--send-endpoint <endpoint>``
 
-   Specify endpoint for sender.
+   Uses ``<endpoint>`` as the sender endpoint.
 
-.. cmdoption:: -d
+.. cmdoption:: ``-d``, ``--daemon``
 
-   Specify this option to daemonize.
+   Runs as a daemon.
 
-.. cmdoption:: -l
+.. cmdoption:: ``-l <directory>``, ``--log-base-path <directory>``
 
-   Specify log directory.
+   Reads logs from ``<directory>``.
+
+.. cmdoption:: ``--log-path <path>``
+
+   Outputs log to ``<path>``.
+
+.. cmdoption:: ``--log-level <level>``
+
+   Uses ``<level>`` for log level. ``<level>`` must be between 1 and 9.
+   Larger level outputs more logs.
 
 Parameters
 ----------
