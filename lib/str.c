@@ -27,6 +27,11 @@
 #endif /* _ISOC99_SOURCE */
 #include <math.h>
 
+/* For Visual C++ 2010. Drop the code when we drop Visual C++ 2010 support. */
+#if _MSC_VER < 1800
+# define va_copy(destination, source) destination = source
+#endif
+
 inline static int
 grn_str_charlen_utf8(grn_ctx *ctx, const unsigned char *str, const unsigned char *end)
 {
