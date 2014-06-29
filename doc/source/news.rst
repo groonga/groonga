@@ -7,6 +7,66 @@
 News
 ====
 
+.. _release-4-0-3:
+
+
+Release 4.0.3 - 2014/06/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [experimental][ :doc:`/executables/groonga-server-http` ]
+  Supported POST.
+* [windows] Bundled libwinpthread-1.dll. Because newer
+  libgcc_s_sjlj-1.dll depends on libwinpthread-1.dll.
+  [groonga-dev,02398] [Reported by Masafumi Yokoyama]
+* [ :doc:`/executables/groonga` ] Changed the default port number of
+  GQTP to 10043. Because server packages use 10043 by default.
+  [GitHub#172] [Patch by Naoya Murakami]
+* [ :doc:`/reference/commands/normalize` ] Added more validations for invalid
+  argument.
+  [groonga-dev,02409][GitHub:#174]
+  [Reported by GMO Media, Inc.][Patch by Naoya Murakami]
+* [ :doc:`/reference/commands/tokenize` ] Added more validations for invalid
+  argument.
+* [ :doc:`/executables/groonga-server-http` ] Supported ``Expect:
+  100-Continue`` request.
+* Exported ``grn_proc_get_type()``.
+* [ :doc:`/reference/executables/groonga-suggest-learner` ]
+  Added ``--log-path`` and ``--log-level`` options.
+* Deprecated ``GRN_CTX_USE_QL``.
+* Deprecated ``GRN_CTX_BATCH_MODE``.
+* Added ``grn_text_printf()``.
+* Added ``grn_text_vprintf()``.
+* Removed limitation of one query log size.
+* Added :c:func:`grn_plugin_expr_var_init()`.
+  [GitHub#175][Patch by Naoya Murakami]
+* Added :c:func:`grn_plugin_command_create()`.
+  [GitHub#175][Patch by Naoya Murakami]
+* [GitHub#176] Supported reference vector column with weight.
+* [plugin] Used public API instead of internal API.
+  [GitHub#177][GitHub#178] [Patch by Naoya Murakami]
+* [doc][plugin] Added plugin APIs.
+  [GitHub#179] [Patch by Naoya Murakami]
+* [windows] Re-supported Visual C++ 2010.
+  [groonga-dev,02454] [Reported by cosmo0920].
+
+Fixes
+^^^^^
+
+* [rpm][groonga-server-gqtp] Fixed a bug that HTTP protocol is used
+  not GQTP.
+  [GitHub#173] [Patch by Naoya Murakami]
+
+Thanks
+^^^^^^
+
+* Masafumi Yokoyama
+* Naoya Murakami
+* GMO Media, Inc.
+* cosmo0920
+
 .. _release-4-0-2:
 
 
