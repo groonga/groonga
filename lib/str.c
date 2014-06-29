@@ -28,7 +28,7 @@
 #include <math.h>
 
 /* For Visual C++ 2010. Drop the code when we drop Visual C++ 2010 support. */
-#if _MSC_VER < 1800
+#if defined(_MSC_VER) && _MSC_VER < 1800
 # define va_copy(destination, source) destination = source
 #endif
 
