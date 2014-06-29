@@ -199,7 +199,6 @@ Here are limitations:
   * You need to use string representation for element value on load.
     For example, you can't use ``29`` for number 29. You need to use
     ``"29"`` for number 29.
-  * You can't use reference type.
 
 How to create
 """""""""""""
