@@ -58,6 +58,8 @@ Fixes
 * [rpm][groonga-server-gqtp] Fixed a bug that HTTP protocol is used
   not GQTP.
   [GitHub#173] [Patch by Naoya Murakami]
+* [ :doc:`/reference/commands/select` ] Fixed a crash bug when
+  :ref:`select-adjuster` has a syntax error.
 
 Thanks
 ^^^^^^
