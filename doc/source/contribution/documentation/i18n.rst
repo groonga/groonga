@@ -154,9 +154,7 @@ Now you can send pull request on GitHub. You just access
 your repository page on GitHub and press `Pull Request`
 button.
 
-.. seealso:: `Help.GitHub - Sending pull requests`_.
-
-.. _Help.GitHub - Sending pull requests: http://help.github.com/pull-requests/
+.. seealso:: `Help.GitHub - Sending pull requests <http://help.github.com/pull-requests/>`_.
 
 How to send patch
 +++++++++++++++++
@@ -193,6 +191,4 @@ Here are command lines to add new translation language::
 Please substitute `${LANGUAGE}` with your language code such
 as 'ja'.
 
-.. seealso:: `Codes for the Representation of Names of Languages`_.
-
-.. _Codes for the Representation of Names of Languages: http://www.loc.gov/standards/iso639-2/php/English_list.php
+.. seealso:: `Codes for the Representation of Names of Languages <http://www.loc.gov/standards/iso639-2/php/English_list.php>`_.
