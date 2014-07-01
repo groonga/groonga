@@ -16,13 +16,20 @@
 %syntax_error {
   {
     grn_ctx *ctx = efsi->ctx;
-    grn_obj buf;
     if (ctx->rc == GRN_SUCCESS) {
-      GRN_TEXT_INIT(&buf, 0);
-      GRN_TEXT_PUT(ctx, &buf, efsi->str, efsi->str_end - efsi->str);
-      GRN_TEXT_PUTC(ctx, &buf, '\0');
-      ERR(GRN_SYNTAX_ERROR, "Syntax error! (%s)", GRN_TEXT_VALUE(&buf));
-      GRN_OBJ_FIN(ctx, &buf);
+      grn_obj message;
+      GRN_TEXT_INIT(&message, 0);
+      GRN_TEXT_PUT(ctx, &message, efsi->str, efsi->cur - efsi->str);
+      GRN_TEXT_PUTC(ctx, &message, '|');
+      GRN_TEXT_PUTC(ctx, &message, efsi->cur[0]);
+      GRN_TEXT_PUTC(ctx, &message, '|');
+      if (efsi->cur < efsi->str_end) {
+        GRN_TEXT_PUT(ctx, &message,
+                     efsi->cur + 1, efsi->str_end - (efsi->cur + 1));
+      }
+      ERR(GRN_SYNTAX_ERROR, "Syntax error: <%.*s>",
+          (int)GRN_TEXT_LEN(&message), GRN_TEXT_VALUE(&message));
+      GRN_OBJ_FIN(ctx, &message);
     }
   }
 }
