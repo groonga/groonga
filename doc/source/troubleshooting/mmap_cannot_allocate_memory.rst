@@ -38,7 +38,7 @@ If you want to handle over 16GB groonga database, you must specify at least 6553
 
 You can modify vm.max_map_count temporary by sudo sysctl -w vm.max_map_count=65536.
 
-Then save the configuration value to /etc/sysctl.conf or /etc/sysctl.d/*.conf.
+Then save the configuration value to ``/etc/sysctl.conf`` or ``/etc/sysctl.d/*.conf``.
 
 See :doc:`/reference/tuning` documentation about tuning related parameters.
 
