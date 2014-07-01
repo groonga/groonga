@@ -717,16 +717,20 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
           result_size += ngkeys;
         }
       }
-      GRN_OUTPUT_ARRAY_OPEN("RESULT", result_size);
 
       if (adjuster && adjuster_len) {
         grn_obj *adjuster_;
         grn_obj *v;
         GRN_EXPR_CREATE_FOR_QUERY(ctx, table_, adjuster_, v);
         if (adjuster_ && v) {
-          grn_expr_parse(ctx, adjuster_, adjuster, adjuster_len, NULL,
-                         GRN_OP_MATCH, GRN_OP_ADJUST,
-                         GRN_EXPR_SYNTAX_ADJUSTER);
+          grn_rc rc;
+          rc = grn_expr_parse(ctx, adjuster_, adjuster, adjuster_len, NULL,
+                              GRN_OP_MATCH, GRN_OP_ADJUST,
+                              GRN_EXPR_SYNTAX_ADJUSTER);
+          if (rc) {
+            grn_obj_unlink(ctx, adjuster_);
+            goto exit;
+          }
           cacheable *= ((grn_expr *)adjuster_)->cacheable;
           taintable += ((grn_expr *)adjuster_)->taintable;
           grn_select_apply_adjuster(ctx, table_, res, adjuster_);
@@ -758,6 +762,8 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
         GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                       ":", "score(%d)", nhits);
       }
+
+      GRN_OUTPUT_ARRAY_OPEN("RESULT", result_size);
 
       grn_normalize_offset_and_limit(ctx, nhits, &offset, &limit);
 

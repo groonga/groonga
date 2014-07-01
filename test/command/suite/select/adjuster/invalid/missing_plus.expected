@@ -1,0 +1,43 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT Tags
+[[0,0.0,0.0],true]
+column_create Tags memos_tags COLUMN_INDEX|WITH_WEIGHT Memos tags
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{
+  "_key": "Groonga is fast",
+  "tags": {
+    "groonga": 100
+  }
+},
+{
+  "_key": "Mroonga is also fast",
+  "tags": {
+    "mroonga": 100,
+    "groonga": 10
+  }
+},
+{
+  "_key": "Ruby is an object oriented script language",
+  "tags": {
+    "ruby": 100
+  }
+}
+]
+[[0,0.0,0.0],3]
+select Memos   --filter true   --adjuster 'tags @ "groonga" * 4 tags @ "mroonga" * 3'   --output_columns _key,_score
+[
+  [
+    [
+      -63,
+      0.0,
+      0.0
+    ],
+    "Syntax error! (tags @ \"groonga\" * 4 tags @ \"mroonga\" * 3)"
+  ]
+]
+#|e| Syntax error! (tags @ "groonga" * 4 tags @ "mroonga" * 3)
