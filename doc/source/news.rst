@@ -21,7 +21,7 @@ Improvements
 * [windows] Bundled libwinpthread-1.dll. Because newer
   libgcc_s_sjlj-1.dll depends on libwinpthread-1.dll.
   [groonga-dev,02398] [Reported by Masafumi Yokoyama]
-* [ :doc:`/executables/groonga` ] Changed the default port number of
+* [ :doc:`/reference/executables/groonga` ] Changed the default port number of
   GQTP to 10043. Because server packages use 10043 by default.
   [GitHub#172] [Patch by Naoya Murakami]
 * [ :doc:`/reference/commands/normalize` ] Added more validations for invalid
@@ -30,7 +30,7 @@ Improvements
   [Reported by GMO Media, Inc.][Patch by Naoya Murakami]
 * [ :doc:`/reference/commands/tokenize` ] Added more validations for invalid
   argument.
-* [ :doc:`/executables/groonga-server-http` ] Supported ``Expect:
+* [ :doc:`/reference/executables/groonga-server-http` ] Supported ``Expect:
   100-Continue`` request.
 * Exported ``grn_proc_get_type()``.
 * [ :doc:`/reference/executables/groonga-suggest-learner` ]
