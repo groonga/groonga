@@ -1497,7 +1497,6 @@ echo
 echo "Tools:"
 # echo "  Sphinx:                ${enable_sphinx}"
 echo "  lemon:                 ${LEMON}"
-echo "  hg:                    ${HG}"
 echo "  Ruby:                  ${RUBY}"
 echo "  Cutter:                ${CUTTER}"
 echo
