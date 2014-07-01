@@ -370,6 +370,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Sun Jun 29 2014 Kouhei Sutou <kou@clear-code.com> - 4.0.3-1
+- new upstream release.
+
 * Thu May 29 2014 Kouhei Sutou <kou@clear-code.com> - 4.0.2-0
 - new upstream release.
 
