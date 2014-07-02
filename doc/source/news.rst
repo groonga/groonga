@@ -16,7 +16,7 @@ Release 4.0.3 - 2014/06/29
 Improvements
 ^^^^^^^^^^^^
 
-* [experimental][ :doc:`/executables/groonga-server-http` ]
+* [experimental][ :doc:`/reference//executables/groonga-server-http` ]
   Supported POST.
 * [windows] Bundled libwinpthread-1.dll. Because newer
   libgcc_s_sjlj-1.dll depends on libwinpthread-1.dll.

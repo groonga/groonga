@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-07-01 10:21+0900\n"
-"PO-Revision-Date: 2014-07-01 10:22+0900\n"
+"PO-Revision-Date: 2014-07-02 11:30+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -28,8 +28,8 @@ msgstr "改良"
 
 # 646aa731859f45fb8a7b198275ae894c
 msgid ""
-"[experimental][ :doc:`/executables/groonga-server-http` ] Supported POST."
-msgstr "[実験的][ :doc:`/executables/groonga-server-http` ] POSTをサポート。"
+"[experimental][ :doc:`/reference/executables/groonga-server-http` ] Supported POST."
+msgstr "[実験的][ :doc:`/reference/executables/groonga-server-http` ] POSTをサポート。"
 
 # 94f3a45e8e4a46569060ccfec91a0a0d
 msgid ""
