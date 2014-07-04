@@ -6444,7 +6444,6 @@ parse_script(grn_ctx *ctx, efs_info *q)
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
               "'+=' is not allowed (%.*s)", (int)(q->str_end - q->str), q->str);
-          goto exit;
         }
         break;
       default :
