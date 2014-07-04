@@ -21,11 +21,13 @@
       GRN_TEXT_INIT(&message, 0);
       GRN_TEXT_PUT(ctx, &message, efsi->str, efsi->cur - efsi->str);
       GRN_TEXT_PUTC(ctx, &message, '|');
-      GRN_TEXT_PUTC(ctx, &message, efsi->cur[0]);
-      GRN_TEXT_PUTC(ctx, &message, '|');
       if (efsi->cur < efsi->str_end) {
+        GRN_TEXT_PUTC(ctx, &message, efsi->cur[0]);
+        GRN_TEXT_PUTC(ctx, &message, '|');
         GRN_TEXT_PUT(ctx, &message,
                      efsi->cur + 1, efsi->str_end - (efsi->cur + 1));
+      } else {
+        GRN_TEXT_PUTC(ctx, &message, '|');
       }
       ERR(GRN_SYNTAX_ERROR, "Syntax error: <%.*s>",
           (int)GRN_TEXT_LEN(&message), GRN_TEXT_VALUE(&message));
