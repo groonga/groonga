@@ -20,6 +20,6 @@ load --table Entries
  "content": "I also migrated all Tritonn system!"}
 ]
 [[0,0.0,0.0],5]
-select Entries --match_columns content --query '-fast'
-[[[-63,0.0,0.0],"Syntax error: <|-|fast>"],[]]
-#|e| Syntax error: <|-|fast>
+select Entries --match_columns content --query '(star)*'
+[[[-63,0.0,0.0],"Syntax error: <(star)|*|>"],[]]
+#|e| Syntax error: <(star)|*|>

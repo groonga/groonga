@@ -6018,8 +6018,8 @@ parse_query(grn_ctx *ctx, efs_info *q)
       goto exit;
       break;
     case GRN_QUERY_PARENR :
-      q->cur++;
       PARSE(GRN_EXPR_TOKEN_PARENR);
+      q->cur++;
       break;
     case GRN_QUERY_QUOTEL :
       q->cur++;
@@ -6057,19 +6057,18 @@ parse_query(grn_ctx *ctx, efs_info *q)
 
       break;
     case GRN_QUERY_PREFIX :
+      PARSE(GRN_EXPR_TOKEN_MATCH);
       q->cur++;
       get_op(q, op, &mode, &option);
-      PARSE(GRN_EXPR_TOKEN_MATCH);
       break;
     case GRN_QUERY_AND :
-      q->cur++;
       if (!first_token) {
         op->op = GRN_OP_AND;
         PARSE(GRN_EXPR_TOKEN_LOGICAL_AND);
       }
+      q->cur++;
       break;
     case GRN_QUERY_AND_NOT :
-      q->cur++;
       if (first_token && (q->flags & GRN_EXPR_ALLOW_LEADING_NOT)) {
         grn_obj *all_records = grn_ctx_get(ctx, "all_records", 11);
         if (all_records) {
@@ -6081,34 +6080,35 @@ parse_query(grn_ctx *ctx, efs_info *q)
       }
       op->op = GRN_OP_AND_NOT;
       PARSE(GRN_EXPR_TOKEN_LOGICAL_AND_NOT);
+      q->cur++;
       break;
     case GRN_QUERY_ADJ_INC :
-      q->cur++;
       if (op->weight < 127) { op->weight++; }
       op->op = GRN_OP_ADJUST;
       PARSE(GRN_EXPR_TOKEN_ADJUST);
+      q->cur++;
       break;
     case GRN_QUERY_ADJ_DEC :
-      q->cur++;
       if (op->weight > -128) { op->weight--; }
       op->op = GRN_OP_ADJUST;
       PARSE(GRN_EXPR_TOKEN_ADJUST);
+      q->cur++;
       break;
     case GRN_QUERY_ADJ_NEG :
-      q->cur++;
       op->op = GRN_OP_ADJUST;
       op->weight = -1;
       PARSE(GRN_EXPR_TOKEN_ADJUST);
+      q->cur++;
       break;
     case GRN_QUERY_PARENL :
-      q->cur++;
       PARSE(GRN_EXPR_TOKEN_PARENL);
+      q->cur++;
       block_started = GRN_TRUE;
       break;
     case 'O' :
       if (q->cur[1] == 'R' && q->cur[2] == ' ') {
-        q->cur += 2;
         PARSE(GRN_EXPR_TOKEN_LOGICAL_OR);
+        q->cur += 2;
         break;
       }
       /* fallthru */
@@ -6311,66 +6311,66 @@ parse_script(grn_ctx *ctx, efs_info *q)
       goto exit;
       break;
     case '(' :
-      q->cur++;
       PARSE(GRN_EXPR_TOKEN_PARENL);
+      q->cur++;
       break;
     case ')' :
-      q->cur++;
       PARSE(GRN_EXPR_TOKEN_PARENR);
+      q->cur++;
       break;
     case '{' :
-      q->cur++;
       PARSE(GRN_EXPR_TOKEN_BRACEL);
+      q->cur++;
       break;
     case '}' :
-      q->cur++;
       PARSE(GRN_EXPR_TOKEN_BRACER);
+      q->cur++;
       break;
     case '[' :
-      q->cur++;
       PARSE(GRN_EXPR_TOKEN_BRACKETL);
+      q->cur++;
       break;
     case ']' :
-      q->cur++;
       PARSE(GRN_EXPR_TOKEN_BRACKETR);
+      q->cur++;
       break;
     case ',' :
-      q->cur++;
       PARSE(GRN_EXPR_TOKEN_COMMA);
+      q->cur++;
       break;
     case '.' :
-      q->cur++;
       PARSE(GRN_EXPR_TOKEN_DOT);
+      q->cur++;
       break;
     case ':' :
-      q->cur++;
       PARSE(GRN_EXPR_TOKEN_COLON);
+      q->cur++;
       set_tos_minor_to_curr(ctx, q);
       grn_expr_append_op(ctx, q->e, GRN_OP_JUMP, 0);
       break;
     case '@' :
-      q->cur++;
-      switch (*q->cur) {
+      switch (q->cur[1]) {
       case '^' :
-        q->cur++;
         PARSE(GRN_EXPR_TOKEN_PREFIX);
+        q->cur += 2;
         break;
       case '$' :
-        q->cur++;
         PARSE(GRN_EXPR_TOKEN_SUFFIX);
+        q->cur += 2;
         break;
       default :
         PARSE(GRN_EXPR_TOKEN_MATCH);
+        q->cur++;
         break;
       }
       break;
     case '~' :
-      q->cur++;
       PARSE(GRN_EXPR_TOKEN_BITWISE_NOT);
+      q->cur++;
       break;
     case '?' :
-      q->cur++;
       PARSE(GRN_EXPR_TOKEN_QUESTION);
+      q->cur++;
       set_tos_minor_to_curr(ctx, q);
       grn_expr_append_op(ctx, q->e, GRN_OP_CJUMP, 0);
       break;
@@ -6385,36 +6385,35 @@ parse_script(grn_ctx *ctx, efs_info *q)
       grn_expr_append_const(ctx, q->e, &q->buf, GRN_OP_PUSH, 1);
       break;
     case '*' :
-      q->cur++;
-      switch (*q->cur) {
+      switch (q->cur[1]) {
       case 'N' :
-        q->cur++;
         PARSE(GRN_EXPR_TOKEN_NEAR);
+        q->cur += 2;
         break;
       case 'S' :
-        q->cur++;
         PARSE(GRN_EXPR_TOKEN_SIMILAR);
+        q->cur += 2;
         break;
       case 'T' :
-        q->cur++;
         PARSE(GRN_EXPR_TOKEN_TERM_EXTRACT);
+        q->cur += 2;
         break;
       case '>' :
-        q->cur++;
         PARSE(GRN_EXPR_TOKEN_ADJUST);
+        q->cur += 2;
         break;
       case '<' :
-        q->cur++;
         PARSE(GRN_EXPR_TOKEN_ADJUST);
+        q->cur += 2;
         break;
       case '~' :
-        q->cur++;
         PARSE(GRN_EXPR_TOKEN_ADJUST);
+        q->cur += 2;
         break;
       case '=' :
         if (q->flags & GRN_EXPR_ALLOW_UPDATE) {
-          q->cur++;
           PARSE(GRN_EXPR_TOKEN_STAR_ASSIGN);
+          q->cur += 2;
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
               "'*=' is not allowed (%.*s)", (int)(q->str_end - q->str), q->str);
@@ -6422,16 +6421,16 @@ parse_script(grn_ctx *ctx, efs_info *q)
         break;
       default :
         PARSE(GRN_EXPR_TOKEN_STAR);
+        q->cur++;
         break;
       }
       break;
     case '+' :
-      q->cur++;
-      switch (*q->cur) {
+      switch (q->cur[1]) {
       case '+' :
         if (q->flags & GRN_EXPR_ALLOW_UPDATE) {
-          q->cur++;
           PARSE(GRN_EXPR_TOKEN_INCR);
+          q->cur += 2;
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
               "'++' is not allowed (%.*s)", (int)(q->str_end - q->str), q->str);
@@ -6439,8 +6438,8 @@ parse_script(grn_ctx *ctx, efs_info *q)
         break;
       case '=' :
         if (q->flags & GRN_EXPR_ALLOW_UPDATE) {
-          q->cur++;
           PARSE(GRN_EXPR_TOKEN_PLUS_ASSIGN);
+          q->cur += 2;
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
               "'+=' is not allowed (%.*s)", (int)(q->str_end - q->str), q->str);
@@ -6448,16 +6447,16 @@ parse_script(grn_ctx *ctx, efs_info *q)
         break;
       default :
         PARSE(GRN_EXPR_TOKEN_PLUS);
+        q->cur++;
         break;
       }
       break;
     case '-' :
-      q->cur++;
-      switch (*q->cur) {
+      switch (q->cur[1]) {
       case '-' :
         if (q->flags & GRN_EXPR_ALLOW_UPDATE) {
-          q->cur++;
           PARSE(GRN_EXPR_TOKEN_DECR);
+          q->cur += 2;
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
               "'--' is not allowed (%.*s)", (int)(q->str_end - q->str), q->str);
@@ -6465,8 +6464,8 @@ parse_script(grn_ctx *ctx, efs_info *q)
         break;
       case '=' :
         if (q->flags & GRN_EXPR_ALLOW_UPDATE) {
-          q->cur++;
           PARSE(GRN_EXPR_TOKEN_MINUS_ASSIGN);
+          q->cur += 2;
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
               "'-=' is not allowed (%.*s)", (int)(q->str_end - q->str), q->str);
@@ -6474,20 +6473,20 @@ parse_script(grn_ctx *ctx, efs_info *q)
         break;
       default :
         PARSE(GRN_EXPR_TOKEN_MINUS);
+        q->cur++;
         break;
       }
       break;
     case '|' :
-      q->cur++;
-      switch (*q->cur) {
+      switch (q->cur[1]) {
       case '|' :
-        q->cur++;
         PARSE(GRN_EXPR_TOKEN_LOGICAL_OR);
+        q->cur += 2;
         break;
       case '=' :
         if (q->flags & GRN_EXPR_ALLOW_UPDATE) {
-          q->cur++;
           PARSE(GRN_EXPR_TOKEN_OR_ASSIGN);
+          q->cur += 2;
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
               "'|=' is not allowed (%.*s)", (int)(q->str_end - q->str), q->str);
@@ -6495,16 +6494,16 @@ parse_script(grn_ctx *ctx, efs_info *q)
         break;
       default :
         PARSE(GRN_EXPR_TOKEN_BITWISE_OR);
+        q->cur++;
         break;
       }
       break;
     case '/' :
-      q->cur++;
-      switch (*q->cur) {
+      switch (q->cur[1]) {
       case '=' :
         if (q->flags & GRN_EXPR_ALLOW_UPDATE) {
-          q->cur++;
           PARSE(GRN_EXPR_TOKEN_SLASH_ASSIGN);
+          q->cur += 2;
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
               "'/=' is not allowed (%.*s)", (int)(q->str_end - q->str), q->str);
@@ -6512,16 +6511,16 @@ parse_script(grn_ctx *ctx, efs_info *q)
         break;
       default :
         PARSE(GRN_EXPR_TOKEN_SLASH);
+        q->cur++;
         break;
       }
       break;
     case '%' :
-      q->cur++;
-      switch (*q->cur) {
+      switch (q->cur[1]) {
       case '=' :
         if (q->flags & GRN_EXPR_ALLOW_UPDATE) {
-          q->cur++;
           PARSE(GRN_EXPR_TOKEN_MOD_ASSIGN);
+          q->cur += 2;
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
               "'%%=' is not allowed (%.*s)", (int)(q->str_end - q->str), q->str);
@@ -6529,27 +6528,27 @@ parse_script(grn_ctx *ctx, efs_info *q)
         break;
       default :
         PARSE(GRN_EXPR_TOKEN_MOD);
+        q->cur++;
         break;
       }
       break;
     case '!' :
-      q->cur++;
-      switch (*q->cur) {
+      switch (q->cur[1]) {
       case '=' :
-        q->cur++;
         PARSE(GRN_EXPR_TOKEN_NOT_EQUAL);
+        q->cur += 2;
         break;
       default :
         PARSE(GRN_EXPR_TOKEN_NOT);
+        q->cur++;
         break;
       }
       break;
     case '^' :
-      q->cur++;
-      switch (*q->cur) {
+      switch (q->cur[1]) {
       case '=' :
         if (q->flags & GRN_EXPR_ALLOW_UPDATE) {
-          q->cur++;
+          q->cur += 2;
           PARSE(GRN_EXPR_TOKEN_XOR_ASSIGN);
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
@@ -6558,47 +6557,45 @@ parse_script(grn_ctx *ctx, efs_info *q)
         break;
       default :
         PARSE(GRN_EXPR_TOKEN_BITWISE_XOR);
+        q->cur++;
         break;
       }
       break;
     case '&' :
-      q->cur++;
-      switch (*q->cur) {
+      switch (q->cur[1]) {
       case '&' :
-        q->cur++;
         PARSE(GRN_EXPR_TOKEN_LOGICAL_AND);
+        q->cur += 2;
         break;
       case '=' :
         if (q->flags & GRN_EXPR_ALLOW_UPDATE) {
-          q->cur++;
           PARSE(GRN_EXPR_TOKEN_AND_ASSIGN);
+          q->cur += 2;
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
               "'&=' is not allowed (%.*s)", (int)(q->str_end - q->str), q->str);
         }
         break;
       case '!' :
-        q->cur++;
         PARSE(GRN_EXPR_TOKEN_LOGICAL_AND_NOT);
+        q->cur += 2;
         break;
       default :
         PARSE(GRN_EXPR_TOKEN_BITWISE_AND);
+        q->cur++;
         break;
       }
       break;
     case '>' :
-      q->cur++;
-      switch (*q->cur) {
+      switch (q->cur[1]) {
       case '>' :
-        q->cur++;
-        switch (*q->cur) {
+        switch (q->cur[2]) {
         case '>' :
-          q->cur++;
-          switch (*q->cur) {
+          switch (q->cur[3]) {
           case '=' :
             if (q->flags & GRN_EXPR_ALLOW_UPDATE) {
-              q->cur++;
               PARSE(GRN_EXPR_TOKEN_SHIFTRR_ASSIGN);
+              q->cur += 4;
             } else {
               ERR(GRN_UPDATE_NOT_ALLOWED,
                   "'>>>=' is not allowed (%.*s)", (int)(q->str_end - q->str), q->str);
@@ -6606,13 +6603,14 @@ parse_script(grn_ctx *ctx, efs_info *q)
             break;
           default :
             PARSE(GRN_EXPR_TOKEN_SHIFTRR);
+            q->cur += 3;
             break;
           }
           break;
         case '=' :
           if (q->flags & GRN_EXPR_ALLOW_UPDATE) {
-            q->cur++;
             PARSE(GRN_EXPR_TOKEN_SHIFTR_ASSIGN);
+            q->cur += 3;
           } else {
             ERR(GRN_UPDATE_NOT_ALLOWED,
                 "'>>=' is not allowed (%.*s)", (int)(q->str_end - q->str), q->str);
@@ -6620,28 +6618,28 @@ parse_script(grn_ctx *ctx, efs_info *q)
           break;
         default :
           PARSE(GRN_EXPR_TOKEN_SHIFTR);
+          q->cur += 2;
           break;
         }
         break;
       case '=' :
-        q->cur++;
         PARSE(GRN_EXPR_TOKEN_GREATER_EQUAL);
+        q->cur += 2;
         break;
       default :
         PARSE(GRN_EXPR_TOKEN_GREATER);
+        q->cur++;
         break;
       }
       break;
     case '<' :
-      q->cur++;
-      switch (*q->cur) {
+      switch (q->cur[1]) {
       case '<' :
-        q->cur++;
-        switch (*q->cur) {
+        switch (q->cur[2]) {
         case '=' :
           if (q->flags & GRN_EXPR_ALLOW_UPDATE) {
-            q->cur++;
             PARSE(GRN_EXPR_TOKEN_SHIFTL_ASSIGN);
+            q->cur += 3;
           } else {
             ERR(GRN_UPDATE_NOT_ALLOWED,
                 "'<<=' is not allowed (%.*s)", (int)(q->str_end - q->str), q->str);
@@ -6649,28 +6647,30 @@ parse_script(grn_ctx *ctx, efs_info *q)
           break;
         default :
           PARSE(GRN_EXPR_TOKEN_SHIFTL);
+          q->cur += 2;
           break;
         }
         break;
       case '=' :
-        q->cur++;
         PARSE(GRN_EXPR_TOKEN_LESS_EQUAL);
+        q->cur += 2;
         break;
       default :
         PARSE(GRN_EXPR_TOKEN_LESS);
+        q->cur++;
         break;
       }
       break;
     case '=' :
-      q->cur++;
-      switch (*q->cur) {
+      switch (q->cur[1]) {
       case '=' :
-        q->cur++;
         PARSE(GRN_EXPR_TOKEN_EQUAL);
+        q->cur += 2;
         break;
       default :
         if (q->flags & GRN_EXPR_ALLOW_UPDATE) {
           PARSE(GRN_EXPR_TOKEN_ASSIGN);
+          q->cur++;
         } else {
           ERR(GRN_UPDATE_NOT_ALLOWED,
               "'=' is not allowed (%.*s)", (int)(q->str_end - q->str), q->str);
@@ -6714,8 +6714,8 @@ parse_script(grn_ctx *ctx, efs_info *q)
             grn_expr_append_const(ctx, q->e, &uint32buf, GRN_OP_PUSH, 1);
           }
         }
-        q->cur = rest;
         PARSE(GRN_EXPR_TOKEN_DECIMAL);
+        q->cur = rest;
       }
       break;
     default :
