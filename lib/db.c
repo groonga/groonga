@@ -37,7 +37,7 @@ typedef struct {
   unsigned int weight;
 } weight_uvector_entry;
 
-#define IS_WEIGHT_UVECTOR(obj) ((obj)->header.impl_flags & GRN_OBJ_WITH_WEIGHT)
+#define IS_WEIGHT_UVECTOR(obj) ((obj)->header.flags & GRN_OBJ_WITH_WEIGHT)
 
 #define NEXT_ADDR(p) (((byte *)(p)) + sizeof(*(p)))
 
@@ -5625,7 +5625,7 @@ grn_obj_set_value_column_var_size_vector_uvector(grn_ctx *ctx, grn_obj *column,
   if (need_convert) {
     unsigned int i, n;
     GRN_VALUE_FIX_SIZE_INIT(&uvector, GRN_OBJ_VECTOR, value->header.domain);
-    uvector.header.impl_flags |= uvector_flags;
+    uvector.header.flags |= uvector_flags;
     n = grn_uvector_size(ctx, value);
     for (i = 0; i < n; i++) {
       grn_id id;
@@ -5982,9 +5982,9 @@ grn_obj_get_value_column_vector(grn_ctx *ctx, grn_obj *obj,
     grn_ja_get_value(ctx, (grn_ja *)obj, id, value);
     value->header.type = GRN_UVECTOR;
     if (obj->header.flags & GRN_OBJ_WITH_WEIGHT) {
-      value->header.impl_flags |= GRN_OBJ_WITH_WEIGHT;
+      value->header.flags |= GRN_OBJ_WITH_WEIGHT;
     } else {
-      value->header.impl_flags &= ~GRN_OBJ_WITH_WEIGHT;
+      value->header.flags &= ~GRN_OBJ_WITH_WEIGHT;
     }
   }
 
@@ -8099,7 +8099,7 @@ grn_obj_ensure_vector(grn_ctx *ctx, grn_obj *obj)
 {
   if (obj->header.type != GRN_VECTOR) { grn_bulk_fin(ctx, obj); }
   obj->header.type = GRN_VECTOR;
-  obj->header.impl_flags &= ~GRN_OBJ_WITH_WEIGHT;
+  obj->header.flags &= ~GRN_OBJ_WITH_WEIGHT;
 }
 
 static void
@@ -8107,7 +8107,7 @@ grn_obj_ensure_bulk(grn_ctx *ctx, grn_obj *obj)
 {
   if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx, obj); }
   obj->header.type = GRN_BULK;
-  obj->header.impl_flags &= ~GRN_OBJ_WITH_WEIGHT;
+  obj->header.flags &= ~GRN_OBJ_WITH_WEIGHT;
 }
 
 grn_rc
