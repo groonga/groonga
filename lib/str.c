@@ -2000,7 +2000,8 @@ grn_bulk_truncate(grn_ctx *ctx, grn_obj *bulk, unsigned int len)
     if (GRN_BULK_BUFSIZE < len) {
       return grn_bulk_space_clear(ctx, bulk, len);
     } else {
-      bulk->header.flags = len;
+      bulk->header.flags &= ~GRN_BULK_BUFSIZE_MAX;
+      bulk->header.flags += len;
     }
   }
   return GRN_SUCCESS;

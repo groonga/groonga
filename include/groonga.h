@@ -1141,6 +1141,9 @@ GRN_API const char *grn_default_query_logger_get_path(void);
 /* grn_bulk */
 
 #define GRN_BULK_BUFSIZE (sizeof(grn_obj) - sizeof(grn_obj_header))
+/* This assumes that GRN_BULK_BUFSIZE is less than 32 (= 0x20). */
+#define GRN_BULK_BUFSIZE_MAX 0x1f
+#define GRN_BULK_SIZE_IN_FLAGS(flags) ((flags) & GRN_BULK_BUFSIZE_MAX)
 #define GRN_BULK_OUTP(bulk) ((bulk)->header.impl_flags & GRN_OBJ_OUTPLACE)
 #define GRN_BULK_REWIND(bulk) do {\
   if ((bulk)->header.type == GRN_VECTOR) {\
@@ -1149,7 +1152,7 @@ GRN_API const char *grn_default_query_logger_get_path(void);
       if (GRN_BULK_OUTP(_body)) {\
         (_body)->u.b.curr = (_body)->u.b.head;\
       } else {\
-        (_body)->header.flags = 0;\
+        (_body)->header.flags &= ~GRN_BULK_BUFSIZE_MAX;\
       }\
     }\
     (bulk)->u.v.n_sections = 0;\
@@ -1157,7 +1160,7 @@ GRN_API const char *grn_default_query_logger_get_path(void);
     if (GRN_BULK_OUTP(bulk)) {\
       (bulk)->u.b.curr = (bulk)->u.b.head;\
     } else {\
-      (bulk)->header.flags = 0;\
+      (bulk)->header.flags &= ~GRN_BULK_BUFSIZE_MAX;\
     }\
   }\
 } while (0)
@@ -1172,11 +1175,11 @@ GRN_API const char *grn_default_query_logger_get_path(void);
 #define GRN_BULK_VSIZE(bulk) \
   (GRN_BULK_OUTP(bulk)\
    ? ((bulk)->u.b.curr - (bulk)->u.b.head)\
-   : (bulk)->header.flags)
+   : GRN_BULK_SIZE_IN_FLAGS((bulk)->header.flags))
 #define GRN_BULK_EMPTYP(bulk) \
   (GRN_BULK_OUTP(bulk)\
    ? ((bulk)->u.b.curr == (bulk)->u.b.head)\
-   : !((bulk)->header.flags))
+   : !(GRN_BULK_SIZE_IN_FLAGS((bulk)->header.flags)))
 #define GRN_BULK_HEAD(bulk) \
   (GRN_BULK_OUTP(bulk)\
    ? ((bulk)->u.b.head)\
@@ -1184,7 +1187,7 @@ GRN_API const char *grn_default_query_logger_get_path(void);
 #define GRN_BULK_CURR(bulk) \
   (GRN_BULK_OUTP(bulk)\
    ? ((bulk)->u.b.curr)\
-   : (char *)&((bulk)->u.b.head) + (bulk)->header.flags)
+   : (char *)&((bulk)->u.b.head) + GRN_BULK_SIZE_IN_FLAGS((bulk)->header.flags))
 #define GRN_BULK_TAIL(bulk) \
   (GRN_BULK_OUTP(bulk)\
    ? ((bulk)->u.b.tail)\
