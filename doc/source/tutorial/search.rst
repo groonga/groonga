@@ -7,37 +7,38 @@
 .. groonga-command
 .. database: tutorial
 
-さまざまな検索条件の指定
-========================
+Various search conditions
+=========================
 
-Groongaは、JavaScriptに似た文法での条件絞込や、計算した値を用いたソートを行うことができます。また、位置情報(緯度・経度)を用いた絞込・ソートを行うことができます。
+Groonga supports to narrow down by using syntax like JavaScript, sort by the calculated value. Additionally, Groonga also supports to narrow down & sort search results by using location information (latitude & longitude).
 
-JavaScriptに似た文法での絞込・全文検索
---------------------------------------
+Narrow down & Full-text search by using syntax like JavaScript
+--------------------------------------------------------------
 
-selectコマンドのfilterパラメータは、queryパラメータと同様に、レコードの検索条件を指定します。filterパラメータとqueryパラメータが異なる点は、filterパラメータには、JavaScriptの式に似た文法で条件を指定する点です。
+The ``filter`` parameter of ``select`` command accepts the search condition.
+There is one difference between ``filter`` parameter and ``query`` parameter, you need to specify the condition by syntax like JavaScript for ``filter`` parameter.
 
 .. groonga-command
 .. include:: ../example/tutorial/search-1.log
 .. select --table Site --filter "_id <= 1" --output_columns _id,_key
 
-ここで、filterパラメータには
+See the detail of above query. Here is the condition which is specified as ``filter`` parameter:
 
   _id <= 1
 
-という条件を指定しています。この場合は_idの値が1以下のレコードが検索結果として得られます。
+In this case, this query returns the records which meets the condition that the value of ``_id`` is equal to 1.
 
-また、&& や || を使って、条件のAND・OR指定をすることもできます。
+Moreover, you can use ``&&`` for AND search, ``||`` for OR search.
 
 .. groonga-command
 .. include:: ../example/tutorial/search-2.log
 .. select --table Site --filter "_id >= 4 && _id <= 6" --output_columns _id,_key
 .. select --table Site --filter "_id <= 2 || _id >= 7" --output_columns _id,_key
 
-queryパラメータとfilterパラメータを同時に指定すると、両者の条件をともに満たすレコードが結果として返ります。
+If you specify ``query`` parameter and ``filter`` parameter at the same time, you can get the records which meets both of the condition as a result.
 
-scorerを利用したソート
-----------------------
+Sort by using ``scorer``
+------------------------
 
 selectコマンドのscorerパラメータは、
 全文検索を行った結果の各レコードに対して処理を行うためのパラメータです。
