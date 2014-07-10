@@ -152,7 +152,7 @@ groonga-benchmark命令
   1行目
     コメント行。
   2行目
-    test.dll というコマンドファイルをgroonga単体で実行し、詳細に報告する。
+    test.ddl というコマンドファイルをgroonga単体で実行し、詳細に報告する。
   3行目
     test.load というコマンドファイルをgroonga単体で実行する。(最後の";"セミコロンは複数のgroonga-benchmark命令を記述する場合に必要ですが、この例のように1つのgroonga-benchmark命令を実行する場合に付与しても問題ありません。)
   4行目
