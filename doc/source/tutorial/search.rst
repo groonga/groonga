@@ -40,32 +40,31 @@ If you specify ``query`` parameter and ``filter`` parameter at the same time, yo
 Sort by using ``scorer``
 ------------------------
 
-selectコマンドのscorerパラメータは、
-全文検索を行った結果の各レコードに対して処理を行うためのパラメータです。
+``select`` command accepts ``scorer`` parameter which is used to process each record of full-text search results.
 
-filterパラメータと同様に、
-JavaScriptの式に似たな文法で様々な条件を指定することができます。
+This parameter accepts the conditions which is specified by syntax like JavaScript as same as ``filter`` parameter.
 
 .. groonga-command
 .. include:: ../example/tutorial/search-3.log
 .. select --table Site --filter "1" --scorer "_score = rand()" --output_columns _id,_key,_score --sortby _score
 .. select --table Site --filter "1" --scorer "_score = rand()" --output_columns _id,_key,_score --sortby _score
 
-検索結果には、'_score'という名前の、全文検索のスコアが代入されている仮想的なカラムが付与されることをチュートリアル中ソートの項目で説明しました。
+'_score' is one of a pseudo column. The score of full-text search is assigned to it.
+See :doc:`/reference/columns/pseudo` about '_score' column.
 
-上記の実行例では、scorerパラメータに
+In the above query, the condition of ``scorer`` parameter is:
 
- _score = rand()
+  _score = rand()
 
-という条件を指定しています。ここでは、rand()という乱数を返す関数を用いて、全文検索のスコアを乱数で上書きしています。
+In this case, the score of full-text search is overwritten by the value of rand() function.
 
-sortbyパラメータには、
+The condition of ``sortby`` parameter is:
 
- _score
+  _score
 
-を指定しています。これは、スコア順に昇順にソートすることを意味しています。
+This means that sorting the search result by ascending order.
 
-よって、上記のクエリは実行されるたびに検索結果の並び順がランダムに変わります。
+As a result, the order of search result is randomized.
 
 位置情報を用いた絞込・ソート
 ----------------------------
