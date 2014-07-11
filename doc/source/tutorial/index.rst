@@ -7,22 +7,24 @@
 .. groonga-command
 .. database: tutorial
 
-タグ検索・参照関係の逆引き
-==========================
+Tag search and reverse resolution of reference relationships
+============================================================
 
-本チュートリアルで、Groongaはカラム値として他のテーブルへの参照の配列を持つことができることを紹介いたしました。実は、テーブルへの参照の配列データを用いることによって、いわゆるタグ検索を行うことが可能となります。
+As you know, Groonga supports to store array in column which refers other table.
+In fact, you can do tag search by using array data which refers other table.
 
-タグ検索はGroongaの転置インデックスというデータ構造を用いて高速に行われます。
+Tag search is very fast because Groonga use inverted index as data structure.
 
-タグ検索
---------
+Tag search
+----------
 
-動画共有サイトの検索エンジンを作ることを想定します。1つの動画には、その動画の特徴を表す、複数の語句が付与されています。「ある語句が付与されている動画の一覧を取得する」検索を行いたいとします。
+Let's consider to create a search engine for an web site to share movies. Each movie may be associated with multiple keywords which represents the content of movie.
 
-実際に、動画情報のテーブルを作成し、検索をしてみましょう。
+Let's create tables for movie information, then search the movies.
 
-動画の情報を保存する、Videoテーブルを作成します。Videoテーブルでは、動画のタイトルをtitleカラムに、動画のタグ情報をtagsカラムにTagテーブル型で複数格納しています。
-タグの情報を保存する、Tagテーブルを作成します。Tagテーブルでは、タグ文字列を主キーに格納し、Videoテーブルのtagsカラムに対するインデックスをindex_tagsカラムに格納しています。
+First, create the ``Video`` table which stores movie information. the ``Video`` table has two columns. the ``title`` column stores title of the movie. the ``tags`` column stores multiple tag information in reference Tag table.
+
+Next, create the ``Tag`` table which stores tag information. the ``Tag`` table has one column. The tag string is stored as primary key, then ``index_tags`` stores indexes for tags column of Video table.
 
 .. groonga-command
 .. include:: ../example/tutorial/index-1.log
@@ -43,9 +45,9 @@
 .. {"_key":8,"title":"K.O.","tags":["Animation","Music"]}
 .. ]
 
-インデックスカラムを作成すると、全文検索が高速に行えるようになります。インデックスカラムは、対象のカラムに保存されたデータに更新があったとき、自動的に更新されます。
+After creating indexed column, you can do full-text search very fast. The indexed column is also automatically updated when stored data is refreshed.
 
-「ある語句が付与されている動画の一覧を取得する」検索を行いましょう。
+List up the movies that specific keywords are given.
 
 .. groonga-command
 .. include:: ../example/tutorial/index-2.log
@@ -53,7 +55,7 @@
 .. select --table Video --query tags:@Sports --output_columns _key,title
 .. select --table Video --query tags:@Animation --output_columns _key,title
 
-このように、「Variety」、「Sports」、「Animation」のようなタグで検索を行うことができました。
+You can search by tags such as "Variety", "Sports" and "Animation".
 
 参照関係の逆引き
 ----------------
