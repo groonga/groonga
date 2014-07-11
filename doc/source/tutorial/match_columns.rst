@@ -5,21 +5,24 @@
 .. groonga-command
 .. database: tutorial-match-columns
 
-match_columnsパラメータ
+match_columns parameter
 =======================
 
-複数のカラムを対象とした全文検索
---------------------------------
+Full-text search against multiple columns
+-----------------------------------------
 
-Groongaでは、複数のカラムを対象とした全文検索を行うことができます。例えば、ブログのテーブルで、タイトルと内容とがそれぞれ別のカラムに入ったものがあるとしましょう。「タイトルもしくは内容に特定の単語を含む」検索を行いたいとします。
+Groonga supports full-text search against multiple columns. Let's consider blog site. Usually, blog site has a table which contains title column and content column. How do you search the blog entry which contains specified keywords in title or content?
 
-この場合、2つのインデックス作成方式があります。1つは、それぞれのカラムに1つずつインデックスを付与する方式です。もう1つは、複数のカラムに対して1つのインデックスを付与する方式です。Groongaでは、どちらの形式のインデックスが存在している場合でも、同一の記法で全文検索を行うことができます。
+In such a case, there are two ways to create indexes. One way is creating column index against each column. The other way is creating one column index against multiple columns. Either way, Groonga supports similar full-text search syntax.
 
-カラムごとにインデックスを付与する場合
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Creating column index against each column
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Blog1テーブルを作り、タイトル文字列のtitleカラム、本文のmessageカラムを追加しています。
-インデックス用のIndexBlog1テーブルも作り、titleカラムのインデックス用にindex_titleカラム、messageカラムのインデック用にindex_messageカラムと、それぞれ1カラムごとに1つずつ追加しています。
+Here is the example which create column index against each column.
+
+First, create ``Blog1`` table, add ``title`` column which stores title string, ``message`` column which stores content of blog entry.
+
+Then create ``IndexBlog1`` table for column indexes, add ``index_title`` column for ``title`` column, ``index_message`` column for ``message`` column.
 
 .. groonga-command
 .. include:: ../example/tutorial/match_columns-1.log
@@ -36,9 +39,10 @@ Blog1テーブルを作り、タイトル文字列のtitleカラム、本文のm
 .. {"_key":"grn3","title":"groonga message","message":"none"}
 .. ]
 
-match_columnsオプションで、検索対象のカラムを複数指定することが出来ます。検索する文字列はqueryオプションで指定します。これを使うことで、タイトルと本文を全文検索することができます。
+``match_columns`` option of ``select`` command accepts multiple columns as search target.
+Specify query string to ``query`` option. Then you can do full-text search title and content of blog entries.
 
-実際に検索してみましょう。
+Let's try to search blog entries.
 
 .. groonga-command
 .. include:: ../example/tutorial/match_columns-2.log
