@@ -126,4 +126,5 @@ The number of drilldown results is limited to 10 as a default. Use ``drilldown_l
 .. include:: ../example/tutorial/drilldown-limit.log
 .. select --table Site --limit 0 --drilldown country --drilldown_sortby _nsubrecs --drilldown_limit 2 --drilldown_offset 2
 
-文字列型のカラムに対するドリルダウンは、他の型でのドリルダウンに比べて低速です。文字列でのドリルダウンを行いたい場合には、このチュートリアルのように、文字列型を主キーとするテーブルを別途作成し、そのテーブルを型とするカラムを作成します。
+Note that drilldown to the column which stores string is slower than the columns which stores the other types.
+If you drilldown to string type of column, create the table that type of primary key is string, then create the column which refers that table.
