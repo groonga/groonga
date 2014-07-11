@@ -50,13 +50,14 @@ Let's try to search blog entries.
 .. select --table Blog1 --match_columns title||message --query message
 .. select --table Blog1 --match_columns title --query message
 
-複数のカラムにまたがったインデックスを付与する場合
+Creating one column index against multiple columns
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-内容は上の例とほぼ同じですが、titleとmessageの2つのカラムに対するインデックスが共通になっており、インデックスカラムが1つしかありません。
+Groonga also supports one column index against multiple columns.
 
-共通のインデックスを用いても、titleカラムのみでの検索、messageカラムのみでの検索、titleもしくはmessageカラムでの検索、全ての検索を行うことができます。
+The difference for previous example is only one column index exists. Thus, There is one common column index against title and message column.
 
+Even though same column index is used, Groonga supports to search against title column only, message column only and title or message column.
 
 .. groonga-command
 .. include:: ../example/tutorial/match_columns-3.log
@@ -72,7 +73,7 @@ Let's try to search blog entries.
 .. {"_key":"grn3","title":"groonga message","message":"none"}
 .. ]
 
-実際に検索してみましょう。結果は上の例と同じになります。
+Let's search same query in previous section. You can get same search results.
 
 .. groonga-command
 .. include:: ../example/tutorial/match_columns-4.log
