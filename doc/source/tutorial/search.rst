@@ -66,21 +66,23 @@ This means that sorting the search result by ascending order.
 
 As a result, the order of search result is randomized.
 
-位置情報を用いた絞込・ソート
-----------------------------
+Narrow down & sort by using location information
+------------------------------------------------
 
-Groongaでは、位置情報（経緯度）を保存することができます。また、保存した経緯度を用いて絞込やソートができます。
+Groonga supports to store location information (Longitude & Latitude) and not only narrow down but also sort by using it.
 
-位置情報を保存するためのカラムの型として、TokyoGeoPoint/WGS84GeoPointの２つの型があります。前者は日本測地系、後者は世界測地系(WGS84相当)の経緯度を保存します。
+Groonga supports two kind of column types to store location information. One is ``TokyoGeoPoint``, the other is ``WGS84GeoPoint``. ``TokyoGeoPoint`` is used for Japan geodetic system. ``WGS84GeoPoint`` is used for world geodetic system.
 
-経緯度は以下のいずれかの形式の文字列として指定します。
+Specify longitude and latitude as follows:
 
-* "[緯度のミリ秒]x[経度のミリ秒]"（例: "128452975x503157902"）
-* "[緯度のミリ秒],[経度のミリ秒]"（例: "128452975,503157902"）
-* "[緯度の小数表記の度数]x[経度の小数表記の度数]"（例: "35.6813819x139.7660839"）
-* "[緯度の小数表記の度数],[経度の小数表記の度数]"（例: "35.6813819,139.7660839"）
+* "[latitude in milliseconds]x[longitude in milliseconds]"（e.g.: "128452975x503157902"）
+* "[latitude in milliseconds],[longitude in milliseconds]"（e.g.: "128452975,503157902"）
+* "[latitude in degrees]x[longitude in degrees]"（e.g.: "35.6813819x139.7660839"）
+* "[latitude in degrees],[longitude in degrees]"（e.g.: "35.6813819,139.7660839"）
 
-ここでは、ためしに東京駅と新宿駅とついて、世界測地系での位置情報を保存してみましょう。東京駅は緯度が35度40分52.975秒、経度が139度45分57.902秒です。新宿駅は緯度が35度41分27.316秒、経度が139度42分0.929秒です。よって、ミリ秒表記の場合はそれぞれ"128452975x503157902"/"128487316x502920929"となります。度数表記の場合はそれぞれ"35.6813819x139.7660839"/"35.6909211x139.7002581"となります。ここではミリ秒表記で登録しましょう。
+Let's store two location information about station in Japan by WGS. One is Tokyo station, the other is Shinjyuku station. Both of them are station in Japan. The latitude of Tokyo station is 35 degrees 40 minutes 52.975 seconds, the longitude of Tokyo station is 139 degrees 45 minutes 57.902 seconds. The latitude of Shinjyuku station is  35 degrees 41 minutes  27.316 seconds, the longitude of Shinjyuku station is 139 degrees 42 minutes 0.929 seconds. Thus, location information in milliseconds are "128452975x503157902" and "128487316x502920929" respectively. location information in degrees are  "35.6813819x139.7660839" and "35.6909211x139.7002581" respectively.
+
+Let's register location information in milliseconds.
 
 .. groonga-command
 .. include:: ../example/tutorial/search-4.log
@@ -92,30 +94,30 @@ Groongaでは、位置情報（経緯度）を保存することができます�
 .. ]
 .. select --table Site --query "_id:1 OR _id:2" --output_columns _key,location
 
-scorerパラメータにおいて、 :doc:`/reference/functions/geo_distance` 関数を用いることにより、２点間の距離を計算することができます。
+Then assign the value of geo distance which is calculated by :doc:`/reference/functions/geo_distance` function to ``scorer`` parameter.
 
-ここでは、秋葉原駅からの距離を表示させてみましょう。世界測地系では、秋葉原駅の位置は緯度が35度41分55.259秒、経度が139度46分27.188秒です。よって、geo_distance関数に与える文字列は"128515259x503187188"となります。
+Let's show geo distance from Akihabara station in Japan. In world geodetic system, the latitude of Akihabara station is  35 degrees 41 minutes 55.259 seconds, the longitude of Akihabara station is 139 degrees 46 minutes 27.188 seconds. Specify "128515259x503187188" for geo_distance function.
 
 .. groonga-command
 .. include:: ../example/tutorial/search-5.log
 .. select --table Site --query "_id:1 OR _id:2" --output_columns _key,location,_score --scorer '_score = geo_distance(location, "128515259x503187188")'
 
-この結果を見ると、東京駅と秋葉原駅は2054m、秋葉原駅と新宿駅は6720m離れているようです。
+As you can see, the geo distance between Tokyo station and Akihabara station is 2054 meters, the geo distance between Akihabara station and Shinjyuku station is 6720 meters.
 
-geo_distance関数は、_scoreを通じてソートでも用いることができます。
+The return value of geo_distance function is also used for sorting by specifying pseudo ``_score`` column to ``sortby`` parameter.
 
 .. groonga-command
 .. include:: ../example/tutorial/search-6.log
 .. select --table Site --query "_id:1 OR _id:2" --output_columns _key,location,_score --scorer '_score = geo_distance(location, "128515259x503187188")' --sortby -_score
 
-「ある地点から何m以内に存在する」といった絞込も可能です。
+Groonga also supports to narrow down by "a certain point within specified meters".
 
-filterパラメータにおいて、 :doc:`/reference/functions/geo_in_circle` 関数を用いることにより、２点間の距離が指定のm以下におさまるかどうかを判定することができます。
+In such a case, use :doc:`/reference/functions/geo_in_circle` function in ``filter`` parameter.
 
-たとえば、秋葉原駅から5000m以内にあるレコードを検索してみましょう。
+For example, search the records which exists within 5000 meters from Akihabara station.
 
 .. groonga-command
 .. include:: ../example/tutorial/search-7.log
 .. select --table Site --output_columns _key,location --filter 'geo_in_circle(location, "128515259x503187188", 5000)'
 
-また、経緯度が指定の矩形領域内であるかどうかを判定する :doc:`/reference/functions/geo_in_rectangle` 関数も存在します。
+There is :doc:`/reference/functions/geo_in_rectangle` function which is used to search a certain point within specified region.
