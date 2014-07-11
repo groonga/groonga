@@ -97,10 +97,11 @@ Then drilldown the count which shows user is listed as friend.
 
 As you can see, it shows the results which follows reverse resolution of reference relationship.
 
-インデックス付きジオサーチ
---------------------------
+Geo location search with index
+------------------------------
 
-位置情報のカラムに対して、インデックスを付与することが出来ます。大量の位置情報レコードを検索する場合に、検索速度が速くなります。
+Groonga supports to add indexes to the column which stores geo location information.
+Groonga is very fast because it use such indexes against the column which contains geo location information to search enormous number of records.
 
 .. groonga-command
 .. include:: ../example/tutorial/index-6.log
@@ -113,7 +114,7 @@ As you can see, it shows the results which follows reverse resolution of referen
 .. ]
 .. select --table Site --filter 'geo_in_circle(location, "128515259x503187188", 5000)' --output_columns _key,location
 
-同様に、位置情報レコードを用いてソートする場合に、ソート速度が速くなります。
+These indexes are also used when sorting the records with geo location search.
 
 .. groonga-command
 .. include:: ../example/tutorial/index-7.log
