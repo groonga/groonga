@@ -57,14 +57,14 @@ List up the movies that specific keywords are given.
 
 You can search by tags such as "Variety", "Sports" and "Animation".
 
-参照関係の逆引き
-----------------
+Reverse resolution of reference relationships
+---------------------------------------------
 
-Groongaはテーブル間の参照関係の逆引きを高速に行うためのインデックスを付与することができます。タグ検索は、その1例にすぎません。
+Groonga supports indexes for reverse resolution among tables. Tag search is one of concrete examples.
 
-例えば、ソーシャルネットワーキングサイトにおける友人関係を逆引き検索することができます。
+For example, you can search friendships by reverse resolution in social networking site.
 
-以下の例では、ユーザー情報を格納するUserテーブルを作成し、ユーザー名を格納するusernameカラム、ユーザーの友人一覧を配列で格納するfriendsカラムとそのインデックスのindex_friendsカラムを追加しています。
+Following example shows how to create ``User`` table which stores user information, ``username`` column which stores user name, ``friends`` column which stores list of user's friends in array, ``index_friends`` column as indexed column.
 
 .. groonga-command
 .. include:: ../example/tutorial/index-3.log
@@ -82,20 +82,20 @@ Groongaはテーブル間の参照関係の逆引きを高速に行うための�
 .. {"_key":"hana","username":"花子","friends":["ken","taro","jiro","moritapo","tomo"]}
 .. ]
 
-指定したユーザーを友人リストに入れているユーザーの一覧を表示してみましょう。
+Let's show list of users who contains specified user in friend list.
 
 .. groonga-command
 .. include:: ../example/tutorial/index-4.log
 .. select --table User --query friends:@tomo --output_columns _key,username
 .. select --table User --query friends:@jiro --output_columns _key,username
 
-さらに、ドリルダウンを使って、友人リストに入っている数の一覧を表示してみましょう。
+Then drilldown the count which shows user is listed as friend.
 
 .. groonga-command
 .. include:: ../example/tutorial/index-5.log
 .. select --table User --limit 0 --drilldown friends
 
-このように、テーブルの参照関係を逆にたどる検索ができました。
+As you can see, it shows the results which follows reverse resolution of reference relationship.
 
 インデックス付きジオサーチ
 --------------------------
