@@ -22,7 +22,7 @@ There is one difference between ``filter`` parameter and ``query`` parameter, yo
 .. include:: ../example/tutorial/search-1.log
 .. select --table Site --filter "_id <= 1" --output_columns _id,_key
 
-See the detail of above query. Here is the condition which is specified as ``filter`` parameter:
+See the detail of above query. Here is the condition which is specified as ``filter`` parameter::
 
   _id <= 1
 
@@ -52,13 +52,13 @@ This parameter accepts the conditions which is specified by syntax like JavaScri
 '_score' is one of a pseudo column. The score of full-text search is assigned to it.
 See :doc:`/reference/columns/pseudo` about '_score' column.
 
-In the above query, the condition of ``scorer`` parameter is:
+In the above query, the condition of ``scorer`` parameter is::
 
   _score = rand()
 
 In this case, the score of full-text search is overwritten by the value of rand() function.
 
-The condition of ``sortby`` parameter is:
+The condition of ``sortby`` parameter is::
 
   _score
 
