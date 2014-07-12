@@ -42,7 +42,7 @@ Groonga release files
 - Fix to specify the version of last released groonga-repository package
   as Obsoletes.
 
-* Thu May 29 2012 Kouhei Sutou <kou@clear-code.com>
+* Tue May 29 2012 Kouhei Sutou <kou@clear-code.com>
 - Rename to groonga-release from groonga-repository to follow
   convention such as centos-release and fedora-release.
 
