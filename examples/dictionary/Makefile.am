@@ -30,5 +30,5 @@ html_files =									\
 	html/css/smoothness/jquery-ui-1.8.12.custom.css				\
 	html/index.html								\
 	html/js/dictionary.js							\
-	html/js/jquery-1.6.0.min.js						\
-	html/js/jquery-ui-1.8.12.min.js
+	html/js/jquery-1.7.2.min.js						\
+	html/js/jquery-ui-1.8.18.custom.min.js
