@@ -40,8 +40,8 @@ load --table item_dictionary
 END
 
 while !STDIN.eof?
-  line = Kconv.toutf8(gets.strip)
-  key, body = line.split('/', 2)
+  line = Kconv.toutf8(gets)
+  key, body = line.strip.split('/', 2)
   key = key.strip
   if /\s*\[(.+)\]\z/ =~ key
     key = $PREMATCH
