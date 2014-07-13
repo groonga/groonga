@@ -822,7 +822,15 @@ static inline void
 grn_output_uvector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                    grn_obj *uvector, grn_obj_format *format)
 {
+  grn_bool output_result_set = GRN_FALSE;
+
   if (format) {
+    if (GRN_BULK_VSIZE(&(format->columns)) > 0) {
+      output_result_set = GRN_TRUE;
+    }
+  }
+
+  if (output_result_set) {
     grn_output_uvector_result_set(ctx, outbuf, output_type, uvector, format);
     return;
   }
