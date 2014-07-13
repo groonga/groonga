@@ -758,63 +758,83 @@ grn_output_uvector_result_set(grn_ctx *ctx,
                               grn_obj *uvector,
                               grn_obj_format *format)
 {
-  int i, j;
-  grn_id *v = (grn_id *)GRN_BULK_HEAD(uvector), *ve = (grn_id *)GRN_BULK_CURR(uvector);
-  int ncolumns = GRN_BULK_VSIZE(&format->columns) / sizeof(grn_obj *);
-  grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
+  unsigned int i_hit, n_hits;
+  unsigned int i_column, n_columns;
+  unsigned int n_elements;
+  grn_obj **columns;
   grn_obj buf;
+  grn_bool with_column_names = GRN_FALSE;
+
+  n_hits = grn_vector_size(ctx, uvector);
+
+  n_columns = GRN_BULK_VSIZE(&format->columns) / sizeof(grn_obj *);
+  columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
 
   GRN_TEXT_INIT(&buf, 0);
-  grn_output_array_open(ctx, outbuf, output_type, "RESULTSET", -1);
-  grn_output_array_open(ctx, outbuf, output_type, "NHITS", 1);
-  grn_text_itoa(ctx, outbuf, ve - v);
-  grn_output_array_close(ctx, outbuf, output_type);
-  if (v < ve) {
-    if (format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
-      grn_output_array_open(ctx, outbuf, output_type, "COLUMNS", -1);
-      for (j = 0; j < ncolumns; j++) {
-        grn_id range_id;
-        grn_output_array_open(ctx, outbuf, output_type, "COLUMN", -1);
-        GRN_BULK_REWIND(&buf);
-        grn_column_name_(ctx, columns[j], &buf);
-        grn_output_obj(ctx, outbuf, output_type, &buf, NULL);
-        /* column range */
-        range_id = grn_obj_get_range(ctx, columns[j]);
-        if (range_id == GRN_ID_NIL) {
-          GRN_TEXT_PUTS(ctx, outbuf, "null");
-        } else {
-          int name_len;
-          grn_obj *range_obj;
-          char name_buf[GRN_TABLE_MAX_KEY_SIZE];
 
-          range_obj = grn_ctx_at(ctx, range_id);
-          name_len = grn_obj_name(ctx, range_obj, name_buf,
-                                  GRN_TABLE_MAX_KEY_SIZE);
-          GRN_BULK_REWIND(&buf);
-          GRN_TEXT_PUT(ctx, &buf, name_buf, name_len);
-          grn_output_obj(ctx, outbuf, output_type, &buf, NULL);
-        }
-        grn_output_array_close(ctx, outbuf, output_type);
-      }
-      grn_output_array_close(ctx, outbuf, output_type);
-    }
-    for (i = 0;; i++) {
-      grn_output_array_open(ctx, outbuf, output_type, "HITS", -1);
-      for (j = 0; j < ncolumns; j++) {
-        GRN_BULK_REWIND(&buf);
-        grn_obj_get_value(ctx, columns[j], *v, &buf);
-        grn_output_obj(ctx, outbuf, output_type, &buf, NULL);
-      }
-      grn_output_array_close(ctx, outbuf, output_type);
-      v++;
-      if (v < ve) {
-
-      } else {
-        break;
-      }
-    }
+  if (n_hits > 0 && format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
+    with_column_names = GRN_TRUE;
   }
+
+  n_elements = 1; /* for NHITS */
+  if (with_column_names) {
+    n_elements += 1; /* for COLUMNS */
+  }
+  n_elements += n_hits; /* for HITS */
+  grn_output_array_open(ctx, outbuf, output_type, "RESULTSET", n_elements);
+
+  grn_output_array_open(ctx, outbuf, output_type, "NHITS", 1);
+  grn_text_itoa(ctx, outbuf, n_hits);
   grn_output_array_close(ctx, outbuf, output_type);
+
+  if (with_column_names) {
+    grn_output_array_open(ctx, outbuf, output_type, "COLUMNS", n_columns);
+    for (i_column = 0; i_column < n_columns; i_column++) {
+      grn_id range_id;
+      grn_output_array_open(ctx, outbuf, output_type, "COLUMN", 2);
+
+      /* name */
+      GRN_BULK_REWIND(&buf);
+      grn_column_name_(ctx, columns[i_column], &buf);
+      grn_output_obj(ctx, outbuf, output_type, &buf, NULL);
+
+      /* type */
+      range_id = grn_obj_get_range(ctx, columns[i_column]);
+      if (range_id == GRN_ID_NIL) {
+        GRN_TEXT_PUTS(ctx, outbuf, "null");
+      } else {
+        int name_len;
+        grn_obj *range_obj;
+        char name_buf[GRN_TABLE_MAX_KEY_SIZE];
+
+        range_obj = grn_ctx_at(ctx, range_id);
+        name_len = grn_obj_name(ctx, range_obj, name_buf,
+                                GRN_TABLE_MAX_KEY_SIZE);
+        GRN_BULK_REWIND(&buf);
+        GRN_TEXT_PUT(ctx, &buf, name_buf, name_len);
+        grn_output_obj(ctx, outbuf, output_type, &buf, NULL);
+      }
+
+      grn_output_array_close(ctx, outbuf, output_type);
+    }
+    grn_output_array_close(ctx, outbuf, output_type);
+  }
+
+  for (i_hit = 0; i_hit < n_hits++; i_hit++) {
+    grn_id id;
+
+    id = grn_uvector_get_element(ctx, uvector, i_hit, NULL);
+    grn_output_array_open(ctx, outbuf, output_type, "HITS", n_columns);
+    for (i_column = 0; i_column < n_columns; i_column++) {
+      GRN_BULK_REWIND(&buf);
+      grn_obj_get_value(ctx, columns[i_column], id, &buf);
+      grn_output_obj(ctx, outbuf, output_type, &buf, NULL);
+    }
+    grn_output_array_close(ctx, outbuf, output_type);
+  }
+
+  grn_output_array_close(ctx, outbuf, output_type);
+
   GRN_OBJ_FIN(ctx, &buf);
 }
 
