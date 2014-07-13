@@ -1,5 +1,3 @@
-#@omit "weight vector for reference type will be supported in the future"
-
 table_create Tags TABLE_PAT_KEY ShortText
 
 table_create Memos TABLE_HASH_KEY ShortText

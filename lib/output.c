@@ -593,10 +593,10 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
           GRN_VALUE_FIX_SIZE_INIT(&buf, GRN_OBJ_VECTOR, DB_OBJ(obj)->range);
         } else {
           GRN_VALUE_VAR_SIZE_INIT(&buf, GRN_OBJ_VECTOR, DB_OBJ(obj)->range);
-          if (obj->header.flags & GRN_OBJ_WITH_WEIGHT) {
-            format.flags |= GRN_OBJ_FORMAT_WITH_WEIGHT;
-            format_argument = &format;
-          }
+        }
+        if (obj->header.flags & GRN_OBJ_WITH_WEIGHT) {
+          format.flags |= GRN_OBJ_FORMAT_WITH_WEIGHT;
+          format_argument = &format;
         }
       } else {
         GRN_VALUE_VAR_SIZE_INIT(&buf, 0, DB_OBJ(obj)->range);
@@ -843,10 +843,16 @@ grn_output_uvector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                    grn_obj *uvector, grn_obj_format *format)
 {
   grn_bool output_result_set = GRN_FALSE;
+  grn_bool with_weight = GRN_FALSE;
+  grn_obj *range;
+  grn_bool range_is_type;
 
   if (format) {
     if (GRN_BULK_VSIZE(&(format->columns)) > 0) {
       output_result_set = GRN_TRUE;
+    }
+    if (format->flags & GRN_OBJ_FORMAT_WITH_WEIGHT) {
+      with_weight = GRN_TRUE;
     }
   }
 
@@ -855,60 +861,72 @@ grn_output_uvector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     return;
   }
 
-  {
-    grn_obj *range = grn_ctx_at(ctx, uvector->header.domain);
-    if (range && range->header.type == GRN_TYPE) {
-      int value_size = ((struct _grn_type *)range)->obj.range;
-      char *v = (char *)GRN_BULK_HEAD(uvector),
-        *ve = (char *)GRN_BULK_CURR(uvector);
-      grn_output_array_open(ctx, outbuf, output_type, "VECTOR", -1);
-      if (v < ve) {
-        for (;;) {
-          grn_obj value;
-          GRN_OBJ_INIT(&value, GRN_BULK, 0, uvector->header.domain);
-          grn_bulk_write_from(ctx, &value, v, 0, value_size);
-          grn_output_obj(ctx, outbuf, output_type, &value, NULL);
+  range = grn_ctx_at(ctx, uvector->header.domain);
+  range_is_type = (range->header.type == GRN_TYPE);
+  if (range_is_type) {
+    unsigned int i, n;
+    char *raw_elements;
+    unsigned int element_size;
+    grn_obj element;
 
-          v += value_size;
-          if (v < ve) {
+    raw_elements = GRN_BULK_HEAD(uvector);
+    element_size = GRN_TYPE_SIZE(DB_OBJ(range));
+    n = GRN_BULK_VSIZE(uvector) / element_size;
 
-          } else {
-            break;
-          }
-        }
-      }
-      grn_output_array_close(ctx, outbuf, output_type);
+    grn_output_array_open(ctx, outbuf, output_type, "VECTOR", n);
+    GRN_OBJ_INIT(&element, GRN_BULK, 0, uvector->header.domain);
+    for (i = 0; i < n; i++) {
+      GRN_BULK_REWIND(&element);
+      grn_bulk_write_from(ctx, &element, raw_elements + (element_size * i),
+                          0, element_size);
+      grn_output_obj(ctx, outbuf, output_type, &element, NULL);
+    }
+    GRN_OBJ_FIN(ctx, &element);
+    grn_output_array_close(ctx, outbuf, output_type);
+  } else {
+    unsigned int i, n;
+    grn_obj id_value;
+    grn_obj key_value;
+
+    GRN_UINT32_INIT(&id_value, 0);
+    GRN_OBJ_INIT(&key_value, GRN_BULK, 0, range->header.domain);
+
+    n = grn_vector_size(ctx, uvector);
+    if (with_weight) {
+      grn_output_map_open(ctx, outbuf, output_type, "WEIGHT_VECTOR", n);
     } else {
-      grn_id *v = (grn_id *)GRN_BULK_HEAD(uvector),
-        *ve = (grn_id *)GRN_BULK_CURR(uvector);
-      grn_output_array_open(ctx, outbuf, output_type, "VECTOR", ve - v);
-      if (v < ve) {
-        grn_obj key;
-        GRN_OBJ_INIT(&key, GRN_BULK, 0, range->header.domain);
-        for (;;) {
-          if (range->header.type != GRN_TABLE_NO_KEY) {
-            grn_table_get_key2(ctx, range, *v, &key);
-            grn_output_obj(ctx, outbuf, output_type, &key, NULL);
-            GRN_BULK_REWIND(&key);
-          } else {
-            grn_obj id;
-            GRN_UINT32_INIT(&id, 0);
-            GRN_UINT32_SET(ctx, &id, *v);
-            grn_output_obj(ctx, outbuf, output_type, &id, NULL);
-            GRN_OBJ_FIN(ctx, &id);
-          }
-          v++;
-          if (v < ve) {
+      grn_output_array_open(ctx, outbuf, output_type, "VECTOR", n);
+    }
 
-          } else {
-            break;
-          }
-        }
-        GRN_OBJ_FIN(ctx, &key);
+    for (i = 0; i < n; i++) {
+      grn_id id;
+      unsigned int weight;
+
+      id = grn_uvector_get_element(ctx, uvector, i, &weight);
+      if (range->header.type == GRN_TABLE_NO_KEY) {
+        GRN_UINT32_SET(ctx, &id_value, id);
+        grn_output_obj(ctx, outbuf, output_type, &id_value, NULL);
+      } else {
+        GRN_BULK_REWIND(&key_value);
+        grn_table_get_key2(ctx, range, id, &key_value);
+        grn_output_obj(ctx, outbuf, output_type, &key_value, NULL);
       }
+
+      if (with_weight) {
+        grn_output_uint64(ctx, outbuf, output_type, weight);
+      }
+    }
+
+    if (with_weight) {
+      grn_output_map_close(ctx, outbuf, output_type);
+    } else {
       grn_output_array_close(ctx, outbuf, output_type);
     }
+
+    GRN_OBJ_FIN(ctx, &id_value);
+    GRN_OBJ_FIN(ctx, &key_value);
   }
+  grn_obj_unlink(ctx, range);
 }
 
 static inline void
