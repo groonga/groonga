@@ -486,8 +486,6 @@ grn_db_check_name(grn_ctx *ctx, const char *name, unsigned int name_size)
   return GRN_SUCCESS;
 }
 
-#define GRN_TYPE_SIZE(type) ((type)->range)
-
 grn_obj *
 grn_type_create(grn_ctx *ctx, const char *name, unsigned int name_size,
                 grn_obj_flags flags, unsigned int size)
@@ -5671,8 +5669,11 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
   }
 
   if (GRN_OBJ_TABLEP(lexicon)) {
-    grn_obj buf;
-    GRN_TEXT_INIT(&buf, 0);
+    grn_obj uvector;
+    GRN_RECORD_INIT(&uvector, GRN_OBJ_VECTOR, range);
+    if (obj->header.flags & GRN_OBJ_WITH_WEIGHT) {
+      uvector.header.flags |= GRN_OBJ_WITH_WEIGHT;
+    }
     switch (value->header.type) {
     case GRN_BULK :
       {
@@ -5683,62 +5684,71 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
                                     GRN_TOKEN_ADD, token_flags))) {
           while (!token->status) {
             grn_id tid = grn_token_next(ctx, token);
-            grn_bulk_write(ctx, &buf, (char *)&tid, sizeof(grn_id));
+            grn_uvector_add_element(ctx, &uvector, tid, 0);
           }
           grn_token_close(ctx, token);
         }
         rc = grn_ja_put(ctx, (grn_ja *)obj, id,
-                        GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), flags, NULL);
+                        GRN_BULK_HEAD(&uvector), GRN_BULK_VSIZE(&uvector),
+                        flags, NULL);
       }
       break;
     case GRN_VECTOR :
-      if (value->u.v.body) {
-        int j;
-        grn_section *v;
-        grn_obj value_buf, cast_buf;
-        const char *head = GRN_BULK_HEAD(value->u.v.body);
-        GRN_OBJ_INIT(&value_buf, GRN_BULK, 0, GRN_DB_VOID);
-        GRN_OBJ_INIT(&cast_buf, GRN_BULK, 0, lexicon->header.domain);
-        for (j = value->u.v.n_sections, v = value->u.v.sections; j; j--, v++) {
-          const char *value_ptr = head + v->offset;
-          int value_length = v->length;
-          grn_id tid;
-          if (v->domain != lexicon->header.domain) {
-            GRN_BULK_REWIND(&cast_buf);
-            GRN_BULK_REWIND(&value_buf);
-            grn_bulk_write(ctx, &value_buf, value_ptr, value_length);
-            value_buf.header.domain = v->domain;
-            rc = grn_obj_cast(ctx, &value_buf, &cast_buf, GRN_TRUE);
-            if (rc) {
-              grn_obj *range_obj;
-              range_obj = grn_ctx_at(ctx, range);
-              ERR_CAST(obj, range_obj, &value_buf);
-              grn_obj_unlink(ctx, range_obj);
+      {
+        unsigned int n;
+        n = grn_vector_size(ctx, value);
+        if (n > 0) {
+          unsigned int i;
+          grn_obj value_buf, cast_buf;
+          GRN_OBJ_INIT(&value_buf, GRN_BULK, 0, GRN_DB_VOID);
+          GRN_OBJ_INIT(&cast_buf, GRN_BULK, 0, lexicon->header.domain);
+          for (i = 0; i < n; i++) {
+            grn_id tid;
+            const char *element;
+            unsigned int element_length;
+            unsigned int weight;
+            grn_id element_domain;
+
+            element_length = grn_vector_get_element(ctx, value, i,
+                                                    &element, &weight,
+                                                    &element_domain);
+            if (element_domain != lexicon->header.domain) {
+              GRN_BULK_REWIND(&cast_buf);
+              GRN_BULK_REWIND(&value_buf);
+              grn_bulk_write(ctx, &value_buf, element, element_length);
+              value_buf.header.domain = element_domain;
+              rc = grn_obj_cast(ctx, &value_buf, &cast_buf, GRN_TRUE);
+              if (rc) {
+                grn_obj *range_obj;
+                range_obj = grn_ctx_at(ctx, range);
+                ERR_CAST(obj, range_obj, &value_buf);
+                grn_obj_unlink(ctx, range_obj);
+              } else {
+                element = GRN_BULK_HEAD(&cast_buf);
+                element_length = GRN_BULK_VSIZE(&cast_buf);
+              }
             } else {
-              value_ptr = GRN_BULK_HEAD(&cast_buf);
-              value_length = GRN_BULK_VSIZE(&cast_buf);
+              rc = GRN_SUCCESS;
             }
-          } else {
-            rc = GRN_SUCCESS;
+            if (rc) {
+              continue;
+            }
+            tid = grn_table_add(ctx, lexicon, element, element_length, NULL);
+            grn_uvector_add_element(ctx, &uvector, tid, weight);
           }
-          if (rc) {
-            continue;
-          }
-          tid = grn_table_add(ctx, lexicon,
-                              value_ptr, value_length, NULL);
-          grn_bulk_write(ctx, &buf, (char *)&tid, sizeof(grn_id));
+          GRN_OBJ_FIN(ctx, &value_buf);
+          GRN_OBJ_FIN(ctx, &cast_buf);
         }
-        GRN_OBJ_FIN(ctx, &value_buf);
-        GRN_OBJ_FIN(ctx, &cast_buf);
       }
       rc = grn_ja_put(ctx, (grn_ja *)obj, id,
-                      GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), flags, NULL);
+                      GRN_BULK_HEAD(&uvector), GRN_BULK_VSIZE(&uvector),
+                      flags, NULL);
       break;
     default :
       ERR(GRN_INVALID_ARGUMENT, "vector, uvector or bulk required");
       break;
     }
-    grn_obj_close(ctx, &buf);
+    grn_obj_close(ctx, &uvector);
   } else {
     switch (value->header.type) {
     case GRN_BULK :
