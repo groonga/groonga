@@ -829,18 +829,39 @@ ngx_http_groonga_handler_get(ngx_http_request_t *r)
 }
 
 static void
+ngx_http_groonga_handler_post_send_error_response(ngx_http_request_t *r,
+                                                  ngx_int_t rc)
+{
+  r->headers_out.status = rc;
+  r->headers_out.content_length_n = 0;
+  r->header_only = 1;
+  rc = ngx_http_send_header(r);
+  ngx_http_finalize_request(r, rc);
+}
+
+static void
 ngx_http_groonga_handler_post(ngx_http_request_t *r)
 {
   ngx_int_t rc;
   ngx_str_t command_path;
-  ngx_http_groonga_handler_data_t *data;
+  ngx_http_groonga_handler_data_t *data = NULL;
 
   rc = ngx_http_groonga_extract_command_path(r, &command_path);
-  if (rc == NGX_OK) {
-    rc = ngx_http_groonga_handler_create_data(r, &data);
+  if (rc != NGX_OK) {
+    ngx_http_groonga_handler_post_send_error_response(r, rc);
+    return;
   }
-  if (rc == NGX_OK) {
-    rc = ngx_http_groonga_handler_process_load(r, &command_path, data);
+
+  rc = ngx_http_groonga_handler_create_data(r, &data);
+  if (rc != NGX_OK) {
+    ngx_http_groonga_handler_post_send_error_response(r, rc);
+    return;
+  }
+
+  rc = ngx_http_groonga_handler_process_load(r, &command_path, data);
+  if (rc != NGX_OK) {
+    ngx_http_groonga_handler_post_send_error_response(r, rc);
+    return;
   }
 
   ngx_http_groonga_handler_send_response(r, data);
