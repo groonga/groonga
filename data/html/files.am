@@ -23,10 +23,12 @@ nobase_dist_html_DATA = \
 	admin/images/groonga.svg \
 	admin/images/loading.gif \
 	admin/index.html \
+	admin/index.ja.html \
+	admin/js/groonga-admin.ja.js \
 	admin/js/groonga-admin.js \
 	admin/js/jquery-1.7.2.min.js \
+	admin/js/jquery-ui-1.8.18.custom.min.js \
 	admin/js/jquery.flot-0.7.min.js \
 	admin/js/jquery.flot.license.txt \
-	admin/js/jquery-ui-1.8.18.custom.min.js \
 	$(NULL)
 
