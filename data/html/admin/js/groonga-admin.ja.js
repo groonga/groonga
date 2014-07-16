@@ -205,13 +205,13 @@ function GroongaAdmin() {
   });
 
   e1 = $('#createtable-value-type-builtin');
-  e1.append($('<option />').val('').text('None'));
+  e1.append($('<option />').val('').text('なし'));
   $.each(Groonga.value_type_list, function(i, val) {
     e1.append($('<option />').val(val).text(val));
   });
 
   e1 = $('#createtable-default-tokenizer-builtin');
-  e1.append($('<option />').val('').text('None'));
+  e1.append($('<option />').val('').text('なし'));
   $.each(Groonga.tokenizer_list, function(i, val) {
     e1.append($('<option />').val(val).text(val));
   });
@@ -555,7 +555,7 @@ jQuery.extend(GroongaAdmin.prototype, {
               tr.append(td);
               td.append($('<input/>')
                         .attr("type", "button")
-                        .attr("value", "Edit")
+                        .attr("value", "編集")
                         .attr("data-record-id", line[0])
                         .click(function () {
                           that.show_edit_record($(this).attr("data-record-id"));
@@ -566,7 +566,7 @@ jQuery.extend(GroongaAdmin.prototype, {
               tr.append(td);
               td.append($('<input/>')
                         .attr("type", "button")
-                        .attr("value", "Detail")
+                        .attr("value", "詳細")
                         .attr("data-table-name", line[1])
                         .click(function () {
                           var tableName = $(this).attr("data-table-name");
@@ -741,7 +741,7 @@ jQuery.extend(GroongaAdmin.prototype, {
           if (that.validateajax(d) < 0) { return; }
           var b = d[1];
           var table = that._createResultTable(b, {check: 2, button: 2});
-          $('#tab-tablelist-table').append($('<h1 />').text('List of table')).append(table);
+          $('#tab-tablelist-table').append($('<h1 />').text('テーブル一覧')).append(table);
           that.hideloading();
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -815,8 +815,8 @@ jQuery.extend(GroongaAdmin.prototype, {
           }
           $('#tab-recordlist-table')
             .empty()
-            .append($('<h1 />').text('List of records: ' + params['table']))
-            .append($('<p />').text('Total count: ' + all_count))
+            .append($('<h1 />').text('レコード一覧: ' + params['table']))
+            .append($('<p />').text('総件数: ' + all_count))
             .append(pager.clone(true))
             .append($('<div />').append(that._createResultTable(recs, {check: 1, button: 1})))
             .append(pager);
@@ -841,7 +841,7 @@ jQuery.extend(GroongaAdmin.prototype, {
           var b = d[1];
           var table = that._createResultTable(b, {check: 2});
           $('#tab-columnlist-table')
-            .append($('<h1 />').text('List of columns: ' + table_name))
+            .append($('<h1 />').text('カラム一覧: ' + table_name))
             .append(table);
           that.hideloading();
         },
@@ -955,7 +955,7 @@ jQuery.extend(GroongaAdmin.prototype, {
           }
           inputtd
             .append($('<span />')
-              .append("[Add value]")
+              .append("[値を追加]")
               .css('cursor', 'pointer')
               .click(function() {
                 var target = $(this).parent();
@@ -1046,7 +1046,7 @@ jQuery.extend(GroongaAdmin.prototype, {
         success: function(d) {
           if (that.validateajax(d) < 0) { return; }
           that.hideloading();
-          alert('Table is created.');
+          alert('テーブルを作成しました。');
           that.update_tablelist();
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -1083,7 +1083,7 @@ jQuery.extend(GroongaAdmin.prototype, {
         success: function(d) {
           if (that.validateajax(d) < 0) { return; }
           that.hideloading();
-          alert('Column is created.');
+          alert('カラムを作成しました。');
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           that.errorloading(XMLHttpRequest);
@@ -1135,7 +1135,7 @@ jQuery.extend(GroongaAdmin.prototype, {
         success: function(d) {
           if (that.validateajax(d) < 0) { return; }
           that.hideloading();
-          alert('Record is created.');
+          alert('レコードを作成しました。');
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           that.errorloading(XMLHttpRequest);
@@ -1149,14 +1149,14 @@ jQuery.extend(GroongaAdmin.prototype, {
     var completecount = checklist.length;
     if (completecount > 0) {
       $('<div />')
-        .append("Delete selected " + completecount + " records?")
+        .append("選択した" + completecount + "件のレコードを削除しますか？")
         .dialog({
           modal: true,
           buttons: {
-            'No': function() {
+            'いいえ': function() {
               $(this).dialog('close');
             },
-            'Yes': function() {
+            'はい': function() {
               $(this).dialog('close');
               checklist.each(function(i, val) {
                 that.showloading(
@@ -1170,7 +1170,7 @@ jQuery.extend(GroongaAdmin.prototype, {
                     success: function() {
                       if (--completecount == 0) {
                         $('#tab-recordlist-form').submit();
-                        alert('Records are deleted.');
+                        alert('レコードを削除しました。');
                       } else if (completecount < 0){
                         that.hideloading();
                       }
@@ -1193,14 +1193,14 @@ jQuery.extend(GroongaAdmin.prototype, {
     var completecount = checklist.length;
     if (completecount) {
       $('<div />')
-        .append("Delete selected " + completecount + " columns?")
+        .append("選択した" + completecount + "件のカラムを削除しますか？")
         .dialog({
           modal: true,
           buttons: {
-            'No': function() {
+            'いいえ': function() {
               $(this).dialog('close');
             },
-            'Yes': function() {
+            'はい': function() {
               $(this).dialog('close');
               checklist.each(function(i, val) {
                 that.showloading(
@@ -1214,7 +1214,7 @@ jQuery.extend(GroongaAdmin.prototype, {
                     success: function() {
                       if (!(--completecount)) {
                         that.columnlist(that.current_table);
-                        alert('Columns are deleted.');
+                        alert('カラムを削除しました。');
                       } else if (completecount < 0){
                         that.hideloading();
                       }
@@ -1237,14 +1237,14 @@ jQuery.extend(GroongaAdmin.prototype, {
     var completecount = checklist.length;
     if (completecount > 0) {
       $('<div />')
-        .append("Delete selected " + completecount + " tables?")
+        .append("選択した" + completecount + "件のテーブルを削除しますか？")
         .dialog({
           modal: true,
           buttons: {
-            'No': function() {
+            'いいえ': function() {
               $(this).dialog('close');
             },
-            'Yes': function() {
+            'はい': function() {
               $(this).dialog('close');
               checklist.each(function(i, val) {
                 that.showloading(
@@ -1258,7 +1258,7 @@ jQuery.extend(GroongaAdmin.prototype, {
                       if (--completecount == 0) {
                         that.tablelist();
                         that.update_tablelist();
-                        alert('Table are deleted.');
+                        alert('テーブルを削除しました。');
                       } else if (completecount < 0){
                         that.hideloading();
                       }
@@ -1296,7 +1296,7 @@ jQuery.extend(GroongaAdmin.prototype, {
         position: ["right", "bottom"],
         autoOpen: false,
         buttons: {
-          'Abort': function() {
+          '中止': function() {
             if (obj) { obj.abort(); }
             that.hideloading();
           }
@@ -1334,13 +1334,13 @@ jQuery.extend(GroongaAdmin.prototype, {
       var error_label;
       var error_message;
       if (json){
-        error_label = "Groonga reports error.";
+        error_label = "groongaでエラーが発生しました。";
         error_message = json[0][3] + "(" + json[0][0] + ")";
       } else if (ajax) {
-        error_label = "Connection error is occured.";
+        error_label = "通信エラーが発生しました。";
         error_message = "" + ajax.status + ": " + ajax.statusText;
       } else {
-        error_label = "Connection error is occured.";
+        error_label = "通信エラーが発生しました。";
         error_message = "";
       }
       $("<div />")
