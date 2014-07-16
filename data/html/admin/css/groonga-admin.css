@@ -37,6 +37,17 @@ input[type="text"] {
   background: url(../images/groonga.png) no-repeat left center;
 }
 
+#locale-list {
+  float: right;
+  width: 4em;
+  list-style: none;
+}
+
+#locale-list li {
+  float: left;
+  width: 2em;
+}
+
 #side-menu {
   width: 12em;
 }
