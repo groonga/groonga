@@ -781,6 +781,9 @@ ngx_http_groonga_handler_send_response(ngx_http_request_t *r,
   r->headers_out.content_length_n = GRN_TEXT_LEN(&(data->head)) +
                                     GRN_TEXT_LEN(&(data->body)) +
                                     GRN_TEXT_LEN(&(data->foot));
+  if (r->headers_out.content_length_n == 0) {
+    r->header_only = 1;
+  }
 
   /* send the headers of your response */
   rc = ngx_http_send_header(r);
