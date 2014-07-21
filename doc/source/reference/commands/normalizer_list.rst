@@ -39,15 +39,15 @@ Return value
 ``normalizer_list`` command returns normalizers. Each normalizers has an attribute
 that contains the name. The attribute will be increased in the feature::
 
-  [HEADER, normalizer]
+  [HEADER, normalizers]
 
 ``HEADER``
 
   See :doc:`/reference/command/output_format` about ``HEADER``.
 
-``normalizer``
+``normalizers``
 
-  ``normalizer`` is an array of normalizer. Normalizer is an object that has the following
+  ``normalizers`` is an array of normalizer. Normalizer is an object that has the following
   attributes.
 
   .. list-table::
