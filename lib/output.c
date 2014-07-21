@@ -580,7 +580,7 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   } else {
     grn_obj_format *format_argument = NULL;
     grn_obj_format format;
-    format.flags = 0;
+    GRN_OBJ_FORMAT_INIT(&format, 0, 0, 0, 0);
     switch (obj->header.type) {
     case GRN_COLUMN_FIX_SIZE :
       GRN_VALUE_FIX_SIZE_INIT(&buf, 0, DB_OBJ(obj)->range);
