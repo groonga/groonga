@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-05-29 17:07+0900\n"
-"PO-Revision-Date: 2014-05-07 19:11+0900\n"
+"PO-Revision-Date: 2014-07-21 17:12+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -4290,49 +4290,37 @@ msgstr ""
 msgid ":doc:`/reference/normalizers`"
 msgstr ""
 
-#, fuzzy
 msgid "``normalizer_list``"
-msgstr "ノーマライザー"
+msgstr ""
 
-#, fuzzy
 msgid "``normalizer_list`` command lists normalizers in a database."
-msgstr "``column_list`` コマンドはテーブルにあるカラムの一覧を返します。"
+msgstr "``normalizer_list`` コマンドはデータベースに登録されているノーマライザーの一覧を返します。"
 
-#, fuzzy
 msgid "``normalizer_list`` command takes no parameter. ::"
-msgstr "``column_list`` コマンドの引数は1つで必須です::"
+msgstr "``normalizer_list`` コマンドに引数はありません。::"
 
 msgid "Here is a simple example."
 msgstr "以下は簡単な使用例です。"
 
 msgid "It returns normalizers in a database."
-msgstr ""
+msgstr "データベースに登録されているノーマライザーの一覧を返します。"
 
-#, fuzzy
 msgid ""
 "``normalizer_list`` command returns normalizers. Each normalizers has an "
 "attribute that contains the name. The attribute will be increased in the "
 "feature::"
-msgstr ""
-"``tokenize`` コマンドはトークナイズしたトークンをすべて返します。各トークンは"
-"トークン自身の文字列情報以外にいくつかの属性を持ちます。属性は今後増えていく"
-"可能性があります::"
+msgstr "``normalizer_list`` コマンドはノーマライザーの一覧を返します。各ノーマライザーは属性を持っています。例えば名前です。将来、属性は増えるかもしれません。::"
 
-#, fuzzy
 msgid ""
-"``normalizer`` is an array of normalizer. Normalizer is an object that has "
+"``normalizers`` is an array of normalizer. Normalizer is an object that has "
 "the following attributes."
-msgstr ""
-"``tokens`` はトークンの配列です。トークンは以下の属性を持ったオブジェクトで"
-"す。"
+msgstr "``normalizers`` はノーマライザーの配列です。ノーマライザーは次の属性を持つオブジェクトです。"
 
-#, fuzzy
 msgid "Normalizer name."
-msgstr "ノーマライザー"
+msgstr "ノーマライザー名。"
 
-#, fuzzy
 msgid ":doc:`/reference/commands/normalize`"
-msgstr "ノーマライザーの一覧は :doc:`/reference/normalizers` にあります。"
+msgstr ""
 
 msgid "quit"
 msgstr ""
@@ -6809,42 +6797,31 @@ msgstr "N番目のトークン。"
 msgid "``tokenizer_list``"
 msgstr ""
 
-#, fuzzy
 msgid "``tokenizer_list`` command lists tokenizers in a database."
-msgstr "``column_list`` コマンドはテーブルにあるカラムの一覧を返します。"
+msgstr "``tokenizer_list`` コマンドはデータベースに登録されているトークナイザーの一覧を返します。"
 
-#, fuzzy
 msgid "``tokenizer_list`` command takes no parameter. ::"
-msgstr "``column_list`` コマンドの引数は1つで必須です::"
+msgstr "``tokenizer_list`` コマンドに引数はありません。::"
 
 msgid "It returns tokenizers in a database."
-msgstr ""
+msgstr "データベースに登録されているトークナイザーの一覧を返します。"
 
-#, fuzzy
 msgid ""
 "``tokenizer_list`` command returns tokenizers. Each tokenizers has an "
 "attribute that contains the name. The attribute will be increased in the "
 "feature::"
-msgstr ""
-"``tokenize`` コマンドはトークナイズしたトークンをすべて返します。各トークンは"
-"トークン自身の文字列情報以外にいくつかの属性を持ちます。属性は今後増えていく"
-"可能性があります::"
+msgstr "``tokenizer_list`` コマンドはトークナイザーの一覧を返します。各トークナイザーは属性を持っています。例えば名前です。将来、属性は増えるかもしれません。::"
 
-#, fuzzy
 msgid ""
-"``tokenizer`` is an array of tokenizer. Tokenizer is an object that has the "
+"``tokenizers`` is an array of tokenizer. Tokenizer is an object that has the "
 "following attributes."
-msgstr ""
-"``tokens`` はトークンの配列です。トークンは以下の属性を持ったオブジェクトで"
-"す。"
+msgstr "``tokenizers`` はトークナイザーの配列です。トークナイザーは次の属性を持つオブジェクトです。"
 
-#, fuzzy
 msgid "Tokenizer name."
-msgstr "その時点のエンコーディング。"
+msgstr "トークナイザー名。"
 
-#, fuzzy
 msgid ":doc:`/reference/commands/tokenize`"
-msgstr "トークナイザーの一覧は :doc:`/reference/tokenizers` にあります。"
+msgstr ""
 
 msgid "``truncate``"
 msgstr ""
