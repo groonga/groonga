@@ -912,19 +912,25 @@ grn_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 static grn_rc
 grn_uvector_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
-  int i = 0;
-  grn_id *v, *ve;
+  unsigned int i, n = 0;
   grn_obj record;
 
-  v = (grn_id *)GRN_BULK_HEAD(obj);
-  ve = (grn_id *)GRN_BULK_CURR(obj);
   GRN_RECORD_INIT(&record, 0, obj->header.domain);
   GRN_TEXT_PUTS(ctx, buf, "[");
-  while (v < ve) {
-    if (i++ > 0) { GRN_TEXT_PUTS(ctx, buf, ", "); }
-    GRN_RECORD_SET(ctx, &record, *v);
+  n = grn_vector_size(ctx, obj);
+  for (i = 0; i < n; i++) {
+    grn_id id;
+    unsigned int weight;
+
+    if (i > 0) {
+      GRN_TEXT_PUTS(ctx, buf, ", ");
+    }
+
+    id = grn_uvector_get_element(ctx, obj, i, &weight);
+    GRN_TEXT_PUTS(ctx, buf, "#<element record:");
+    GRN_RECORD_SET(ctx, &record, id);
     grn_inspect(ctx, buf, &record);
-    v++;
+    grn_text_printf(ctx, buf, ", weight:%u>", weight);
   }
   GRN_TEXT_PUTS(ctx, buf, "]");
   GRN_OBJ_FIN(ctx, &record);
