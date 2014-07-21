@@ -141,4 +141,5 @@ Reference
    :param func: The function name to be called by the created command.
    :param n_vars: The number of the variables of the command to create.
    :param vars:  The pointer of initialized `grn_expr_var` object.
-   :return: ``GRN_SUCCESS``. It doesn't fail.
+   :return: The created command object if it creates a command successfully,
+            `NULL` otherwise. See `ctx` for error details.

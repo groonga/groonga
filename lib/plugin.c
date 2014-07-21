@@ -745,8 +745,9 @@ grn_plugin_command_create(grn_ctx *ctx,
                           unsigned int n_vars,
                           grn_expr_var *vars)
 {
+  grn_obj *proc;
   name_size = compute_name_size(name, name_size);
-  grn_proc_create(ctx, name, name_size, GRN_PROC_COMMAND,
-                  func, NULL, NULL, n_vars, vars);
-  return GRN_SUCCESS;
+  proc = grn_proc_create(ctx, name, name_size, GRN_PROC_COMMAND,
+                         func, NULL, NULL, n_vars, vars);
+  return proc;
 }
