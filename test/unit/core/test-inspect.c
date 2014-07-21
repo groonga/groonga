@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2010-2013  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2010-2014  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -584,11 +584,12 @@ test_uvector_with_records(void)
   GRN_RECORD_PUT(context, uvector, 1);
   GRN_RECORD_PUT(context, uvector, 2);
   inspected = grn_inspect(context, NULL, uvector);
-  cut_assert_equal_string("["
-                          "#<record:pat:Sites id:1 key:\"groonga.org\">, "
-                          "#<record:pat:Sites id:2 key:\"razil.jp\">"
-                          "]",
-                          inspected_string());
+  cut_assert_equal_string(
+    "["
+    "#<element record:#<record:pat:Sites id:1 key:\"groonga.org\">, weight:0>, "
+    "#<element record:#<record:pat:Sites id:2 key:\"razil.jp\", weight:0>>"
+    "]",
+    inspected_string());
 }
 
 void
