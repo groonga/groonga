@@ -391,7 +391,7 @@ data_comparison_operator_syntax_error(void)
                  NULL)
 
   ADD_DATUM("nonexistent ==",
-            cut_take_printf("Syntax error! (nonexistent == 100)"),
+            cut_take_printf("Syntax error! (nonexistent| |== 100)"),
             "nonexistent == 100");
 
 #undef ADD_DATUM
