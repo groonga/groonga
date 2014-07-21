@@ -1256,6 +1256,7 @@ struct _grn_obj_format {
   (format)->offset = (format_offset);\
   (format)->limit = (format_limit);\
   (format)->hits_offset = (format_hits_offset);\
+  (format)->flags = 0;\
   (format)->expression = NULL;\
 } while (0)
 
