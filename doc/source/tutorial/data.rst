@@ -136,7 +136,9 @@ The following example adds a reference column to the Site table that was created
 .. include:: ../example/tutorial/data-7.log
 .. column_create --table Site --name link --type Site
 .. load --table Site
-.. [{"_key":"http://example.org/","link":"http://example.net/"}]
+.. [
+.. {"_key":"http://example.org/","link":"http://example.net/"}
+.. ]
 .. select --table Site --output_columns _key,title,link._key,link.title --query title:@this
 
 The `type` parameter of the :doc:`/reference/commands/column_create` command specifies the table to be associated with the reference column. In this example, the reference column is associated with the own table. Then, the :doc:`/reference/commands/load` command registers a link from "http://example.org" to "http://example.net". Note that a reference column requires the primary key, not the ID, of the record to be referred to. After that, the link is confirmed by the :doc:`/reference/commands/select` command. In this case, the primary key and the title of the referred record are output because link._key and link.title are specified to the `output_columns` parameter.
