@@ -156,7 +156,9 @@ The previous example used a regular column, so each record could have at most on
 .. include:: ../example/tutorial/data-8.log
 .. column_create --table Site --name links --flags COLUMN_VECTOR --type Site
 .. load --table Site
-.. [{"_key":"http://example.org/","links":["http://example.net/","http://example.org/","http://example.com/"]}]
+.. [
+.. {"_key":"http://example.org/","links":["http://example.net/","http://example.org/","http://example.com/"]},
+.. ]
 .. select --table Site --output_columns _key,title,links._key,links.title --query title:@this
 
 The only difference at the first step is the `flags` parameter that specifies to create a vector column. The `type` parameter of the :doc:`/reference/commands/column_create` command is the same as in the previous example. Then, the :doc:`/reference/commands/load` command registers three links from "http://example.org/" to "http://example.net/", "http://example.org/" and "http://example.com/". After that, the links are confirmed by the :doc:`/reference/commands/select` command. In this case, the primary keys and the titles are output as arrays because links._key and links.title are specified to the `output_columns` parameter.
