@@ -272,6 +272,7 @@ man_pages = [
 ]
 
 # -- Options for Gettext --------------------------------------------------
+# This feature requires Sphinx 1.3 or later.
 gettext_uuid = False
 
 # Workaround for slow gettext builder.
