@@ -18,7 +18,7 @@ Improvements
 * [httpd] Updated bundled nginx version to the latest mainline (1.7.3).
 * Supported weight in vector column.
 * [ :doc:`/reference/executables/groonga-benchmark` ] Added missing description about HTTP.
-* [ :doc:`/reference/tutorial/` ] Updated English tutorial documentation.
+* [ :doc:`/tutorial` ] Updated English tutorial documentation.
 * [example] Supported Ruby 1.9 or later for edict2grn.rb.
 * [http][admin] Updated to use English as default language. [GitHub#182]
 
