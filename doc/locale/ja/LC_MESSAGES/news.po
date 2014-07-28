@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-01 10:21+0900\n"
-"PO-Revision-Date: 2014-07-02 11:30+0900\n"
+"POT-Creation-Date: 2014-07-28 12:25+0900\n"
+"PO-Revision-Date: 2014-07-28 12:42+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -20,16 +20,65 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 4.0.3 - 2014/06/29"
-msgstr "4.0.3リリース - 2014/06/29"
+msgid "Release 4.0.4 - 2014/07/29"
+msgstr "4.0.4リリース - 2014/07/29"
 
 msgid "Improvements"
 msgstr "改良"
 
+msgid "[httpd] Updated bundled nginx version to the latest mainline (1.7.3)."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.7.3に更新しました。"
+
+msgid "Supported weight in vector column."
+msgstr "重みつきベクターカラムを正しく扱えるようにしました。"
+
+# 05af7005ea3a4274a7719a44960f4cb2
+msgid ""
+"[ :doc:`/reference/executables/groonga-benchmark` ] Added missing "
+"description about HTTP."
+msgstr ""
+"[ :doc:`/reference/executables/groonga-benchmark` ] HTTPに関する説明を追加し"
+"ました。"
+
+msgid "[ :doc:`/tutorial` ] Updated English tutorial documentation."
+msgstr "[ :doc:`/tutorial` ] 英語のドキュメントを更新しました。"
+
+msgid "[example] Supported Ruby 1.9 or later for edict2grn.rb."
+msgstr "[example] Ruby 1.9以降でedict2grn.rbが動作するようにしました。"
+
+msgid "[http][admin] Updated to use English as default language. [GitHub#182]"
+msgstr "[http][admin] 管理画面で英語を標準にしました。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fixed to show right syntax error location in response."
+msgstr ""
+"レスポンスでシンタックスエラーの発生個所を正しく表示できるようにしました。"
+
+msgid ""
+"[httpd] Fixed build error on Clang. [GitHub clear-code/rurema-search#11] "
+"[Reported by niku]"
+msgstr ""
+"[httpd] Clangでビルドエラーとなる問題を修正しました。 [GitHub clear-code/"
+"rurema-search#11] [nikuさんが報告]"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "niku"
+msgstr "nikuさん"
+
+msgid "Release 4.0.3 - 2014/06/29"
+msgstr "4.0.3リリース - 2014/06/29"
+
 # 646aa731859f45fb8a7b198275ae894c
 msgid ""
-"[experimental][ :doc:`/reference/executables/groonga-server-http` ] Supported POST."
-msgstr "[実験的][ :doc:`/reference/executables/groonga-server-http` ] POSTをサポート。"
+"[experimental][ :doc:`/reference/executables/groonga-server-http` ] "
+"Supported POST."
+msgstr ""
+"[実験的][ :doc:`/reference/executables/groonga-server-http` ] POSTをサポー"
+"ト。"
 
 # 94f3a45e8e4a46569060ccfec91a0a0d
 msgid ""
@@ -139,9 +188,6 @@ msgstr ""
 "[windows] Visual C++ 2010を再サポート。 [groonga-dev,02454] [cosmo0920さんが"
 "報告]。"
 
-msgid "Fixes"
-msgstr "修正"
-
 msgid ""
 "[rpm][groonga-server-gqtp] Fixed a bug that HTTP protocol is used not GQTP. "
 "[GitHub#173] [Patch by Naoya Murakami]"
@@ -156,9 +202,6 @@ msgid ""
 msgstr ""
 "[ :doc:`/reference/commands/select` ] :ref:`select-adjuster` に指定した値がシ"
 "ンタックスエラーだとクラッシュする問題を修正。"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "Masafumi Yokoyama"
 msgstr "横山さん"
