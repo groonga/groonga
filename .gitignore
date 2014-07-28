@@ -124,6 +124,8 @@ cmake_install.cmake
 /packages/yum/RPM-GPG-KEY-groonga
 /packages/yum/repositories/
 /packages/yum/tmp/
+/packages/yum/.vagrant/
+/packages/yum/env.sh
 /packages/source/files/
 /packages/windows/tmp/
 /packages/windows/dist-x86/

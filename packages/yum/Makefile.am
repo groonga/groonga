@@ -1,11 +1,7 @@
 REPOSITORIES_PATH = repositories
-DISTRIBUTIONS = fedora centos
+DISTRIBUTIONS = centos
 ARCHITECTURES = i386 x86_64
-CHROOT_BASE = /var/lib/chroot
 BASE_URL_PREFIX = http://packages.groonga.org
-HAVE_DEVELOPMENT_BRANCH = no
-USE_RPMFORGE = no
-USE_ATRPMS = no
 
 release: download build sign-packages update-repository upload
 
@@ -38,21 +34,20 @@ download: ensure-rsync-path
 	     $(REPOSITORIES_PATH)/$${distribution};	\
 	done
 
-build: build-in-chroot build-release-rpm
+build: build-in-vm build-release-rpm
 
-build-in-chroot: source
-	./build-in-chroot.sh			\
-	  $(PACKAGE)				\
-	  $(VERSION)				\
-	  $(top_builddir)/$(PACKAGE)		\
-	  ../rpm				\
-	  $(REPOSITORIES_PATH)/			\
-	  $(CHROOT_BASE)			\
-	  '$(ARCHITECTURES)'			\
-	  '$(DISTRIBUTIONS)'			\
-	  '$(HAVE_DEVELOPMENT_BRANCH)'		\
-	  '$(USE_RPMFORGE)'			\
-	  '$(USE_ATRPMS)'
+build-in-vm: source specs
+	vagrant destroy --force
+	for architecture in $(ARCHITECTURES); do		\
+	  for version in 5 6 7; do				\
+	    if [ $$version = 7 -a $$architecture = i386 ]; then	\
+	      continue;						\
+	    fi;							\
+	    id=centos-$$version-$$architecture;			\
+	    vagrant up $$id;					\
+	    vagrant destroy --force $$id;			\
+	  done;							\
+	done
 
 build-release-rpm: RPM-GPG-KEY-$(PACKAGE)
 	./build-release-rpm.sh			\
@@ -70,10 +65,16 @@ ensure-public-key:
 RPM-GPG-KEY-$(PACKAGE): ensure-public-key
 	gpg --armor --export '$(GPG_UID)' > $@
 
-source: ../$(PACKAGE)-$(VERSION).tar.gz
+source: tmp/$(PACKAGE)-$(VERSION).tar.gz
 
-../$(PACKAGE)-$(VERSION).tar.gz: $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz
-	ln -s $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz ../
+tmp/$(PACKAGE)-$(VERSION).tar.gz: $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz
+	cp $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz tmp/
 
 $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz:
 	cd $(abs_top_builddir) && $(MAKE) dist
+
+specs: tmp/centos/$(PACKAGE).spec
+
+tmp/centos/$(PACKAGE).spec: $(builddir)/../rpm/centos/$(PACKAGE).spec
+	mkdir -p tmp/centos
+	cp $(builddir)/../rpm/centos/$(PACKAGE).spec tmp/centos/
