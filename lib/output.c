@@ -1567,7 +1567,7 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
                            GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
               GRN_TEXT_PUTS(ctx, transformed, "\" ");
             }
-            first_vector_element = 0;
+            first_vector_element = GRN_FALSE;
             break;
           default :
             if (EQUAL_NAME_P("NHITS")) {
