@@ -37,7 +37,7 @@ download: ensure-rsync-path
 
 build: build-in-vm build-release-rpm
 
-build-in-vm: source specs
+build-in-vm: source specs env.sh
 	vagrant destroy --force
 	for architecture in $(ARCHITECTURES); do		\
 	  for version in 5 6 7; do				\
