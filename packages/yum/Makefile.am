@@ -69,6 +69,7 @@ RPM-GPG-KEY-$(PACKAGE): ensure-public-key
 source: tmp/$(PACKAGE)-$(VERSION).tar.gz
 
 tmp/$(PACKAGE)-$(VERSION).tar.gz: $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz
+	mkdir -p tmp/
 	cp $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz tmp/
 
 $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz:
