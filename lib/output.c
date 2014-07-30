@@ -1454,7 +1454,7 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
   unsigned int len;
   int offset = 0, limit = 0, record_n = 0;
   int column_n = 0, column_text_n = 0, result_set_n = -1;
-  int in_vector = 0, first_vector_element = 0;
+  grn_bool in_vector = GRN_FALSE, first_vector_element = GRN_FALSE;
 
   s = GRN_TEXT_VALUE(output);
   e = GRN_BULK_CURR(output);
@@ -1508,8 +1508,8 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
           }
         } else if (EQUAL_NAME_P("VECTOR")) {
           char *c = transform_xml_next_column(&columns, column_n++);
-          in_vector = 1;
-          first_vector_element = 1;
+          in_vector = GRN_TRUE;
+          first_vector_element = GRN_TRUE;
           GRN_TEXT_PUTS(ctx, transformed, "<FIELD NAME=\"");
           GRN_TEXT_PUTS(ctx, transformed, c);
           GRN_TEXT_PUTS(ctx, transformed, "\">");
@@ -1538,8 +1538,8 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
                         "</SEGMENT>\n"
                         "</SEGMENTS>\n");
         } else if (EQUAL_NAME_P("VECTOR")) {
-          in_vector = 0;
-          first_vector_element = 0;
+          in_vector = GRN_FALSE;
+          first_vector_element = GRN_FALSE;
           GRN_TEXT_PUTS(ctx, transformed, "</FIELD>\n");
         } else {
           switch (place) {
