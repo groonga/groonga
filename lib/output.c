@@ -1545,21 +1545,22 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
           switch (place) {
           case XML_PLACE_HIT :
             if (result_set_n == 0) {
-              if (!in_vector) {
+              if (in_vector) {
+                if (vector_element_n > 0) {
+                  GRN_TEXT_PUTS(ctx, transformed, ", ");
+                }
+                GRN_TEXT_PUT(ctx, transformed,
+                             GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
+                vector_element_n++;
+              } else {
                 char *c = transform_xml_next_column(&columns, column_n++);
                 GRN_TEXT_PUTS(ctx, transformed, "<FIELD NAME=\"");
                 GRN_TEXT_PUTS(ctx, transformed, c);
                 GRN_TEXT_PUTS(ctx, transformed, "\">");
-              }
-              if (in_vector && vector_element_n > 0) {
-                GRN_TEXT_PUTS(ctx, transformed, ", ");
-              }
-              GRN_TEXT_PUT(ctx, transformed,
-                           GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
-              if (!in_vector) {
+                GRN_TEXT_PUT(ctx, transformed,
+                             GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
                 GRN_TEXT_PUTS(ctx, transformed, "</FIELD>\n");
               }
-              vector_element_n++;
             } else {
               char *c = transform_xml_next_column(&columns, column_n++);
               GRN_TEXT_PUTS(ctx, transformed, c);
