@@ -1,0 +1,33 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT Tags
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{
+  "_key": "Mroonga is fast",
+  "tags": {
+    "mroonga": 100,
+    "groonga": 10
+  }
+}
+]
+[[0,0.0,0.0],1]
+select Memos   --output_type xml   --output_columns _key,tags
+<?xml version="1.0" encoding="utf-8"?>
+<SEGMENTS>
+<SEGMENT>
+<RESULTPAGE>
+<RESULTSET OFFSET="0" LIMIT="1" NHITS="1">
+<HIT NO="1">
+<FIELD NAME="_key">Mroonga is fast</FIELD>
+<FIELD NAME="tags">mroonga:100, groonga:10</FIELD>
+</HIT>
+</RESULTSET>
+</RESULTPAGE>
+</SEGMENT>
+</SEGMENTS>
+
+

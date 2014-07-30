@@ -1456,6 +1456,8 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
   int column_n = 0, column_text_n = 0, result_set_n = -1;
   grn_bool in_vector = GRN_FALSE;
   unsigned int vector_element_n = 0;
+  grn_bool in_weight_vector = GRN_FALSE;
+  unsigned int weight_vector_item_n = 0;
 
   s = GRN_TEXT_VALUE(output);
   e = GRN_BULK_CURR(output);
@@ -1514,6 +1516,13 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
           GRN_TEXT_PUTS(ctx, transformed, "<FIELD NAME=\"");
           GRN_TEXT_PUTS(ctx, transformed, c);
           GRN_TEXT_PUTS(ctx, transformed, "\">");
+        } else if (EQUAL_NAME_P("WEIGHT_VECTOR")) {
+          char *c = transform_xml_next_column(&columns, column_n++);
+          in_weight_vector = GRN_TRUE;
+          weight_vector_item_n = 0;
+          GRN_TEXT_PUTS(ctx, transformed, "<FIELD NAME=\"");
+          GRN_TEXT_PUTS(ctx, transformed, c);
+          GRN_TEXT_PUTS(ctx, transformed, "\">");
         }
         break;
       case XML_END_ELEMENT :
@@ -1541,6 +1550,9 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
         } else if (EQUAL_NAME_P("VECTOR")) {
           in_vector = GRN_FALSE;
           GRN_TEXT_PUTS(ctx, transformed, "</FIELD>\n");
+        } else if (EQUAL_NAME_P("WEIGHT_VECTOR")) {
+          in_weight_vector = GRN_FALSE;
+          GRN_TEXT_PUTS(ctx, transformed, "</FIELD>\n");
         } else {
           switch (place) {
           case XML_PLACE_HIT :
@@ -1552,6 +1564,21 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
                 GRN_TEXT_PUT(ctx, transformed,
                              GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
                 vector_element_n++;
+              } else if (in_weight_vector) {
+                grn_bool is_key;
+                is_key = ((weight_vector_item_n % 2) == 0);
+                if (is_key) {
+                  unsigned int weight_vector_key_n;
+                  weight_vector_key_n = weight_vector_item_n / 2;
+                  if (weight_vector_key_n > 0) {
+                    GRN_TEXT_PUTS(ctx, transformed, ", ");
+                  }
+                } else {
+                  GRN_TEXT_PUTS(ctx, transformed, ":");
+                }
+                GRN_TEXT_PUT(ctx, transformed,
+                             GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
+                weight_vector_item_n++;
               } else {
                 char *c = transform_xml_next_column(&columns, column_n++);
                 GRN_TEXT_PUTS(ctx, transformed, "<FIELD NAME=\"");
