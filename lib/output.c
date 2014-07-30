@@ -1454,7 +1454,8 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
   unsigned int len;
   int offset = 0, limit = 0, record_n = 0;
   int column_n = 0, column_text_n = 0, result_set_n = -1;
-  grn_bool in_vector = GRN_FALSE, first_vector_element = GRN_FALSE;
+  grn_bool in_vector = GRN_FALSE;
+  unsigned int vector_element_n = 0;
 
   s = GRN_TEXT_VALUE(output);
   e = GRN_BULK_CURR(output);
@@ -1509,7 +1510,7 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
         } else if (EQUAL_NAME_P("VECTOR")) {
           char *c = transform_xml_next_column(&columns, column_n++);
           in_vector = GRN_TRUE;
-          first_vector_element = GRN_TRUE;
+          vector_element_n = 0;
           GRN_TEXT_PUTS(ctx, transformed, "<FIELD NAME=\"");
           GRN_TEXT_PUTS(ctx, transformed, c);
           GRN_TEXT_PUTS(ctx, transformed, "\">");
@@ -1539,7 +1540,6 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
                         "</SEGMENTS>\n");
         } else if (EQUAL_NAME_P("VECTOR")) {
           in_vector = GRN_FALSE;
-          first_vector_element = GRN_FALSE;
           GRN_TEXT_PUTS(ctx, transformed, "</FIELD>\n");
         } else {
           switch (place) {
@@ -1551,7 +1551,7 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
                 GRN_TEXT_PUTS(ctx, transformed, c);
                 GRN_TEXT_PUTS(ctx, transformed, "\">");
               }
-              if (in_vector && !first_vector_element) {
+              if (in_vector && vector_element_n > 0) {
                 GRN_TEXT_PUTS(ctx, transformed, ", ");
               }
               GRN_TEXT_PUT(ctx, transformed,
@@ -1559,6 +1559,7 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
               if (!in_vector) {
                 GRN_TEXT_PUTS(ctx, transformed, "</FIELD>\n");
               }
+              vector_element_n++;
             } else {
               char *c = transform_xml_next_column(&columns, column_n++);
               GRN_TEXT_PUTS(ctx, transformed, c);
@@ -1567,7 +1568,6 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
                            GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
               GRN_TEXT_PUTS(ctx, transformed, "\" ");
             }
-            first_vector_element = GRN_FALSE;
             break;
           default :
             if (EQUAL_NAME_P("NHITS")) {
