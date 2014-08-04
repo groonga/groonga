@@ -383,7 +383,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/news/2.x.rst \
 	$(top_srcdir)/doc/source/news/3.x.rst \
 	$(top_srcdir)/doc/source/news/senna.rst \
-	$(top_srcdir)/doc/source/rdoc.py \
 	$(top_srcdir)/doc/source/reference.rst \
 	$(top_srcdir)/doc/source/reference/api.rst \
 	$(top_srcdir)/doc/source/reference/api/global_configurations.rst \
@@ -914,7 +913,6 @@ source_files_relative_from_doc_dir = \
 	source/news/2.x.rst \
 	source/news/3.x.rst \
 	source/news/senna.rst \
-	source/rdoc.py \
 	source/reference.rst \
 	source/reference/api.rst \
 	source/reference/api/global_configurations.rst \
