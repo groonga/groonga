@@ -1,0 +1,13 @@
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users age COLUMN_SCALAR Int32
+
+load --table Users
+[
+{"_key": "alice",  "age": 17},
+{"_key": "bob",    "age": 18},
+{"_key": "calros", "age": 19},
+{"_key": "dave",   "age": 20},
+{"_key": "eric",   "age": 21}
+]
+
+select Users --filter 'between(age, 18, "exclude", 22, "exclude")'

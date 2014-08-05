@@ -4645,7 +4645,7 @@ selector_between(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   grn_rc rc = GRN_SUCCESS;
   int offset = 0;
   int limit = -1;
-  int flags = GRN_CURSOR_ASCENDING | GRN_CURSOR_BY_ID;
+  int flags = GRN_CURSOR_ASCENDING | GRN_CURSOR_BY_KEY;
   between_data data;
   grn_obj casted_min, casted_max;
   grn_obj *used_min = NULL;
