@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2013  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2013-2014  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -17,14 +17,15 @@
 */
 
 /*
-  Groonga: 4851bf7c20fd37e7c40f350dade3716d3e210805
+  Groonga: 6b128f318d682e50648f3b82c5f7956f3bcb3fe8
   CFLAGS: -O0 -g3
   % (cd benchmark/ && make --quiet run-bench-ctx-create)
   run-bench-ctx-create:
-  ./bench-ctx-create
-                   (time)
-    with    mruby: 404KB (0.1260ms)
-    without mruby:  36KB (0.0610ms)
+                    (time)
+    with    mruby1: 288KB (0.0091s)
+    without mruby1:  28KB (0.0240ms)
+    with    mruby2:   0KB (0.0097s)
+    without mruby2:   0KB (0.0220ms)
 */
 
 #include <stdlib.h>
