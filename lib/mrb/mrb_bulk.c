@@ -79,6 +79,20 @@ mrb_grn_bulk_get_value(mrb_state *mrb, mrb_value self)
   return mrb_value_;
 }
 
+static mrb_value
+mrb_grn_bulk_equal(mrb_state *mrb, mrb_value self)
+{
+  mrb_value mrb_other;
+
+  mrb_get_args(mrb, "o", &mrb_other);
+
+  if (!mrb_obj_is_kind_of(mrb, mrb_other, mrb_class(mrb, self))) {
+    return mrb_false_value();
+  }
+
+  return mrb_bool_value(DATA_PTR(self) == DATA_PTR(mrb_other));
+}
+
 void
 grn_mrb_bulk_init(grn_ctx *ctx)
 {
@@ -95,5 +109,7 @@ grn_mrb_bulk_init(grn_ctx *ctx)
                     mrb_grn_bulk_get_domain, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "value",
                     mrb_grn_bulk_get_value, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "==",
+                    mrb_grn_bulk_equal, MRB_ARGS_REQ(1));
 }
 #endif
