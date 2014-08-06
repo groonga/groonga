@@ -22,6 +22,8 @@
 #include <mruby.h>
 #include <mruby/class.h>
 #include <mruby/data.h>
+#include <mruby/variable.h>
+#include <mruby/string.h>
 
 #include "mrb_ctx.h"
 #include "mrb_converter.h"
@@ -52,6 +54,108 @@ ctx_array_reference(mrb_state *mrb, mrb_value self)
   return grn_mrb_value_from_grn_obj(mrb, object);
 }
 
+static mrb_value
+ctx_get_rc(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+
+  return mrb_fixnum_value(ctx->rc);
+}
+
+static mrb_value
+ctx_set_rc(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_int rc;
+
+  mrb_get_args(mrb, "i", &rc);
+  ctx->rc = rc;
+
+  return mrb_fixnum_value(ctx->rc);
+}
+
+static mrb_value
+ctx_get_error_level(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+
+  return mrb_fixnum_value(ctx->errlvl);
+}
+
+static mrb_value
+ctx_set_error_level(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_int error_level;
+
+  mrb_get_args(mrb, "i", &error_level);
+  ctx->errlvl = error_level;
+
+  return mrb_fixnum_value(ctx->errlvl);
+}
+
+static mrb_value
+ctx_get_error_file(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+
+  return mrb_str_new_cstr(mrb, ctx->errfile);
+}
+
+static mrb_value
+ctx_set_error_file(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_value error_file;
+
+  mrb_get_args(mrb, "S", &error_file);
+  mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@error_file"), error_file);
+  ctx->errfile = RSTRING_PTR(error_file);
+
+  return error_file;
+}
+
+static mrb_value
+ctx_get_error_line(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+
+  return mrb_fixnum_value(ctx->errline);
+}
+
+static mrb_value
+ctx_set_error_line(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_int error_line;
+
+  mrb_get_args(mrb, "i", &error_line);
+  ctx->errline = error_line;
+
+  return mrb_fixnum_value(ctx->errline);
+}
+
+static mrb_value
+ctx_get_error_method(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+
+  return mrb_str_new_cstr(mrb, ctx->errfunc);
+}
+
+static mrb_value
+ctx_set_error_method(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_value error_method;
+
+  mrb_get_args(mrb, "S", &error_method);
+  mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@error_method"), error_method);
+  ctx->errfunc = RSTRING_PTR(error_method);
+
+  return error_method;
+}
+
 void
 grn_mrb_ctx_init(grn_ctx *ctx)
 {
@@ -67,5 +171,23 @@ grn_mrb_ctx_init(grn_ctx *ctx)
                           ctx_class_instance, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "[]", ctx_array_reference, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "rc", ctx_get_rc, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "rc=", ctx_set_rc, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "error_level", ctx_get_error_level,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "error_level=", ctx_set_error_level,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "error_file", ctx_get_error_file,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "error_file=", ctx_set_error_file,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "error_line", ctx_get_error_line,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "error_line=", ctx_set_error_line,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "error_method", ctx_get_error_method,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "error_method=", ctx_set_error_method,
+                    MRB_ARGS_REQ(1));
 }
 #endif
