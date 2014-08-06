@@ -162,8 +162,10 @@ main(int argc, gchar **argv)
                           bench_function,               \
                           bench_teardown,               \
                           &data)
-  REGISTER("with    mruby", bench_with_mruby);
-  REGISTER("without mruby", bench_without_mruby);
+  REGISTER("with    mruby1", bench_with_mruby);
+  REGISTER("without mruby1", bench_without_mruby);
+  REGISTER("with    mruby2", bench_with_mruby);
+  REGISTER("without mruby2", bench_without_mruby);
 #undef REGISTER
 
   bench_reporter_run(reporter);
