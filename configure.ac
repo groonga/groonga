@@ -275,7 +275,6 @@ AC_CONFIG_FILES([
   test/Makefile
   test/unit/Makefile
   test/unit/lib/Makefile
-  test/unit/lib/ruby/Makefile
   test/unit/fixtures/Makefile
   test/unit/fixtures/inverted-index/Makefile
   test/unit/fixtures/stress/Makefile
@@ -286,9 +285,7 @@ AC_CONFIG_FILES([
   test/unit/util/Makefile
   test/unit/core/Makefile
   test/unit/core/dat/Makefile
-  test/unit/http/Makefile
   test/unit/story/Makefile
-  test/unit/groonga-benchmark/Makefile
   test/command/Makefile
   benchmark/Makefile
   benchmark/fixtures/Makefile

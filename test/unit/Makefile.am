@@ -3,9 +3,7 @@ SUBDIRS =		\
 	fixtures	\
 	util		\
 	core		\
-	http		\
-	story		\
-	groonga-benchmark
+	story
 
 if WITH_UNIT_TEST
 TESTS = run-test.sh
@@ -15,7 +13,6 @@ TESTS_ENVIRONMENT =				\
 	BUILD_DIR="$(builddir)"			\
 	CUTTER="$(CUTTER)"			\
 	CUTTER_VERBOSE=yes			\
-	RUBY="$(RUBY)"				\
 	GROONGA="$(GROONGA)"			\
 	GROONGA_BENCHMARK="$(GROONGA_BENCHMARK)"
 
@@ -25,14 +22,8 @@ else
 TESTS_ENVIRONMENT += NO_CUTTER=yes
 endif
 
-if !WITH_RUBY
-TESTS_ENVIRONMENT += NO_RUBY=yes
-endif
-
 EXTRA_DIST =					\
-	run-test.sh				\
-	run-test.rb				\
-	Gemfile
+	run-test.sh
 
 AM_CPPFLAGS =			\
 	-I$(srcdir)		\
