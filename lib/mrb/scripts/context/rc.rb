@@ -1,8 +1,16 @@
 module Groonga
   class Context
     class RC
+      @@names = {}
+      class << self
+        def find(name)
+          @@names[name]
+        end
+      end
+
       attr_reader :name
       def initialize(name, code)
+        @@names[name] = self
         @name = name
         @code = code
       end
