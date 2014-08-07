@@ -111,7 +111,7 @@ ctx_set_error_file(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "S", &error_file);
   mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@error_file"), error_file);
-  ctx->errfile = RSTRING_PTR(error_file);
+  ctx->errfile = mrb_string_value_cstr(mrb, &error_file);
 
   return error_file;
 }
@@ -152,7 +152,7 @@ ctx_set_error_method(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "S", &error_method);
   mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@error_method"), error_method);
-  ctx->errfunc = RSTRING_PTR(error_method);
+  ctx->errfunc = mrb_string_value_cstr(mrb, &error_method);
 
   return error_method;
 }
