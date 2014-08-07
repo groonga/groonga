@@ -1,8 +1,16 @@
 module Groonga
   class Context
     class ErrorLevel
+      @@names = {}
+      class << self
+        def find(name)
+          @@names[name]
+        end
+      end
+
       attr_reader :name
       def initialize(name, level)
+        @@names[name] = self
         @name  = name
         @level = level
       end
