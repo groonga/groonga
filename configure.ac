@@ -292,6 +292,7 @@ AC_CONFIG_FILES([
   benchmark/fixtures/geo-select/Makefile
   benchmark/lib/Makefile
   vendor/Makefile
+  vendor/onigmo/Makefile
   vendor/mruby/Makefile
 ])
 
@@ -1349,7 +1350,7 @@ if test "$enable_mruby" = "yes"; then
   MRUBY_CFLAGS="-I\$(top_srcdir)/vendor/mruby-source/include"
   MRUBY_LIBS="\$(top_builddir)/vendor/mruby/libmruby.la"
   MRUBY_LIBS="${MRUBY_LIBS} \$(top_builddir)/vendor/onigmo-source/libonig.la"
-  AC_CONFIG_SUBDIRS([vendor/onigmo-source])
+  AC_CONFIG_SUBDIRS([vendor/onigmo])
 else
   MRUBY_CFLAGS=
   MRUBY_LIBS=

@@ -1,0 +1,36 @@
+#!/bin/sh
+
+set -e
+set -u
+
+srcdir="."
+builddir="."
+for argument in "$@"; do
+    case "$argument" in
+	--srcdir=*)
+	    srcdir="$(echo "${argument}" | sed -e 's/--srcdir=//')"
+	    ;;
+    esac
+done
+
+top_srcdir="${srcdir}/../.."
+top_builddir="${builddir}/../.."
+
+abs_top_srcdir="$(cd "${top_srcdir}" && pwd)"
+abs_top_builddir="$(cd "${top_builddir}" && pwd)"
+
+relative_onigmo_directory="vendor/onigmo-source"
+onigmo_directory="${top_srcdir}/${relative_onigmo_directory}"
+
+onigmo_directory_in_build_directory="${abs_top_builddir}/${relative_onigmo_directory}"
+if [ "${abs_top_srcdir}/vendor/onigmo" != "$(pwd)" ]; then
+  mkdir -p "${onigmo_directory_in_build_directory}"
+  rm -rf "${onigmo_directory_in_build_directory}"
+  cp -rp \
+      "${abs_top_srcdir}/${relative_onigmo_directory}" \
+      "${onigmo_directory_in_build_directory}"
+fi
+
+cd "${onigmo_directory_in_build_directory}"
+
+./configure "$@"
