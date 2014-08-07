@@ -32,6 +32,12 @@ mrbgems_init.c: mruby-build.timestamp
 	  cat $(MRUBY_BUILD_DIR)/host/mrbgems/*/gem_init.c;	\
 	) > $@
 
+BUILT_SOURCES += mruby_onig_regexp.c
+libmruby_la_SOURCES += mruby_onig_regexp.c
+MRUBY_ONIG_REGEXP_DIR = $(MRUBY_BUILD_DIR)/mrbgems/mruby-onig-regexp
+mruby_onig_regexp.c: mruby-build.timestamp
+	cp $(MRUBY_ONIG_REGEXP_DIR)/src/mruby_onig_regexp.c $@
+
 MRUBY_CONFIG = $(abs_srcdir)/build_config.rb
 mruby-build.timestamp: build_config.rb
 	rm -rf $(MRUBY_BUILD_DIR)
@@ -47,4 +53,4 @@ endif
 update:
 	cd "$(srcdir)/../mruby-source" && git pull --rebase
 	cd "$(srcdir)" && \
-	  ./update.rb build_config.rb ../mruby-source ../mruby-build > sources.am
+	  ./update.rb build_config.rb ../mruby-source > sources.am

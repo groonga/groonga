@@ -53,5 +53,4 @@ libmruby_la_SOURCES = \
 	../mruby-source/mrbgems/mruby-object-ext/src/object.c \
 	../mruby-source/mrbgems/mruby-objectspace/src/mruby_objectspace.c \
 	../mruby-source/mrbgems/mruby-fiber/src/fiber.c \
-	../mruby-source/mrbgems/mruby-kernel-ext/src/kernel.c \
-	../mruby-build/mrbgems/mruby-onig-regexp/src/mruby_onig_regexp.c
+	../mruby-source/mrbgems/mruby-kernel-ext/src/kernel.c

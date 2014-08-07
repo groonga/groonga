@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
-if ARGV.size != 3
-  puts("Usage: #{$0} BUILD_COFNIG.RB MRUBY_SOURCE_DIR MRUBY_BUILD_DIR")
+if ARGV.size != 2
+  puts("Usage: #{$0} BUILD_COFNIG.RB MRUBY_SOURCE_DIR")
   exit(false)
 end
 
@@ -9,17 +9,12 @@ require "find"
 
 build_config_rb = ARGV.shift
 mruby_source_dir = ARGV.shift
-mruby_build_dir = ARGV.shift
 
 module MRuby
   class Build
     class << self
       def source_dir=(dir)
         @@source_dir = dir
-      end
-
-      def build_dir=(dir)
-        @@build_dir = dir
       end
 
       def latest
@@ -30,16 +25,15 @@ module MRuby
     attr_reader :config
     def initialize(&block)
       @@latest = self
-      @config = Config.new(@@source_dir, @@build_dir)
+      @config = Config.new(@@source_dir)
       @config.instance_eval(&block)
     end
   end
 
   class Config
     attr_reader :gem_dirs
-    def initialize(source_dir, build_dir)
+    def initialize(source_dir)
       @source_dir = source_dir
-      @build_dir = build_dir
       @gem_dirs = []
     end
 
@@ -54,6 +48,7 @@ module MRuby
     def gem(gem_dir)
       if gem_dir.is_a?(Hash)
         gem_dir = load_special_path_gem(gem_dir)
+        return if gem_dir.nil?
       end
       @gem_dirs << gem_dir
     end
@@ -63,8 +58,7 @@ module MRuby
       if params[:core]
         "#{@source_dir}/mrbgems/#{params[:core]}"
       elsif params[:github]
-        owner, repository = params[:github].split("/", 2)
-        "#{@build_dir}/mrbgems/#{repository}"
+        nil
       else
         raise "Unsupported gem options: #{params.inspect}"
       end
@@ -73,7 +67,6 @@ module MRuby
 end
 
 MRuby::Build.source_dir = mruby_source_dir
-MRuby::Build.build_dir = mruby_build_dir
 load build_config_rb
 build = MRuby::Build.latest
 

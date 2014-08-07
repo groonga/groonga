@@ -40,6 +40,7 @@
 /vendor/mruby/parse.c
 /vendor/mruby/mrblib.c
 /vendor/mruby/mrbgems_init.c
+/vendor/mruby/mruby_onig_regexp.c
 /vendor/mruby/mruby-build.timestamp
 /vendor/mruby-build/
 /vendor/plugins/*/
