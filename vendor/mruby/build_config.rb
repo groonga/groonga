@@ -28,4 +28,6 @@ MRuby::Build.new do |conf|
   conf.gem :core => "mruby-enum-lazy"
   conf.gem :core => "mruby-toplevel-ext"
   conf.gem :core => "mruby-kernel-ext"
+
+  conf.gem :github => "mattn/mruby-onig-regexp"
 end

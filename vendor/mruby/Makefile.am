@@ -5,6 +5,9 @@ DEFAULT_INCLUDES =				\
 if WITH_MRUBY
 noinst_LTLIBRARIES = libmruby.la
 
+AM_CFLAGS =					\
+	-I$(srcdir)/../onigmo-source
+
 include sources.am
 
 BUILT_SOURCES =
@@ -44,4 +47,4 @@ endif
 update:
 	cd "$(srcdir)/../mruby-source" && git pull --rebase
 	cd "$(srcdir)" && \
-	  ./update.rb build_config.rb ../mruby-source > sources.am
+	  ./update.rb build_config.rb ../mruby-source ../mruby-build > sources.am
