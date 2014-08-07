@@ -1,11 +1,7 @@
 NGINX_DIR = nginx-$(NGINX_VERSION)
 
-SUBDIRS =
-if WITH_MRUBY
-SUBDIRS += onigmo-source
-endif
-
 SUBDIRS =					\
+	onigmo					\
 	mruby
 
 EXTRA_DIST =					\
