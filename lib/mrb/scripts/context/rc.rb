@@ -45,7 +45,7 @@ module Groonga
       INVALID_ARGUMENT                    = new(:invalid_argument, -22)
       TOO_MANY_OPEN_FILES_IN_SYSTEM       = new(:too_many_open_files_in_system, -23)
       TOO_MANY_OPEN_FILES                 = new(:too_many_open_files, -24)
-      INAPPROPRIATE_I_O_CONTROL_OPERATION = new(:inappropriate_i_o_control_operation, -25)
+      INAPPROPRIATE_IO_CONTROL_OPERATION  = new(:inappropriate_io_control_operation, -25)
       FILE_TOO_LARGE                      = new(:file_too_large, -26)
       NO_SPACE_LEFT_ON_DEVICE             = new(:no_space_left_on_device, -27)
       INVALID_SEEK                        = new(:invalid_seek, -28)
