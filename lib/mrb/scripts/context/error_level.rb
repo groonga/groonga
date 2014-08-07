@@ -2,10 +2,8 @@ module Groonga
   class Context
     class ErrorLevel
       @@names = {}
-      class << self
-        def find(name)
-          @@names[name]
-        end
+      def self.find(name)
+        @@names[name]
       end
 
       attr_reader :name
