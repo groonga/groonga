@@ -69,5 +69,8 @@ grn_mrb_logger_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "need_log?", logger_need_log_p, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "log", logger_log, MRB_ARGS_REQ(5));
+
+  grn_mrb_load(ctx, "logger/level.rb");
+  grn_mrb_load(ctx, "logger.rb");
 }
 #endif
