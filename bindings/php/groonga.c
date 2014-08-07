@@ -201,10 +201,6 @@ PHP_FUNCTION(grn_ctx_recv)
   int flags;
   unsigned int str_len, qid;
 
-  MAKE_STD_ZVAL(ret);
-
-  array_init(ret);
-  array_init(return_value);
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &res) == FAILURE) {
     return;
@@ -217,6 +213,10 @@ PHP_FUNCTION(grn_ctx_recv)
   if (ctx->rc != GRN_SUCCESS) {
     RETURN_FALSE;
   }
+
+  MAKE_STD_ZVAL(ret);
+  array_init(ret);
+  array_init(return_value);
 
   add_next_index_long(ret, flags);
   add_next_index_stringl(ret, str, str_len, 1);
