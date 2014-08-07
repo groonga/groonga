@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013 Brazil
+  Copyright(C) 2013-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,7 @@
 #include <mruby/variable.h>
 #include <mruby/string.h>
 
+#include "../mrb.h"
 #include "mrb_ctx.h"
 #include "mrb_converter.h"
 
@@ -189,5 +190,7 @@ grn_mrb_ctx_init(grn_ctx *ctx)
                     MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "error_method=", ctx_set_error_method,
                     MRB_ARGS_REQ(1));
+
+  grn_mrb_load(ctx, "context.rb");
 }
 #endif
