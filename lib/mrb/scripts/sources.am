@@ -1,5 +1,7 @@
 RUBY_SCRIPT_FILES =				\
 	context.rb				\
+	context/error_level.rb			\
+	context/rc.rb				\
 	eval_context.rb				\
 	expression.rb				\
 	index_info.rb				\
