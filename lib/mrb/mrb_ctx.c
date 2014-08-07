@@ -157,6 +157,28 @@ ctx_set_error_method(mrb_state *mrb, mrb_value self)
   return error_method;
 }
 
+static mrb_value
+ctx_get_error_message(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+
+  return mrb_str_new_cstr(mrb, ctx->errbuf);
+}
+
+static mrb_value
+ctx_set_error_message(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_value error_message;
+
+  mrb_get_args(mrb, "S", &error_message);
+  grn_ctx_log(ctx, "%.*s",
+              RSTRING_LEN(error_message),
+              RSTRING_PTR(error_message));
+
+  return error_message;
+}
+
 void
 grn_mrb_ctx_init(grn_ctx *ctx)
 {
@@ -189,6 +211,10 @@ grn_mrb_ctx_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "error_method", ctx_get_error_method,
                     MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "error_method=", ctx_set_error_method,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "error_message", ctx_get_error_message,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "error_message=", ctx_set_error_message,
                     MRB_ARGS_REQ(1));
 
   grn_mrb_load(ctx, "context/error_level.rb");
