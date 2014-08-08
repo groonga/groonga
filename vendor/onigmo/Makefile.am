@@ -1,16 +1,16 @@
-ALL_DEPENDENCIES =
-CLEAN_DEPENDENCIES =
+ALL_DEPEND_TARGETS =
+CLEAN_DEPEND_TARGETS =
 if WITH_MRUBY
-ALL_DEPENDENCIES += onigmo-all
-CLEAN_DEPENDENCIES += onigmo-clean
+ALL_DEPEND_TARGETS += onigmo-all
+CLEAN_DEPEND_TARGETS += onigmo-clean
 endif
 
 onigmo-all:
 	cd ../onigmo-source && $(MAKE) all
 
-all: $(ALL_DEPENDENCIES)
+all: $(ALL_DEPEND_TARGETS)
 
 onigmo-clean:
 	cd ../onigmo-source && $(MAKE) clean
 
-clean: $(CLEAN_DEPENDENCIES)
+clean: $(CLEAN_DEPEND_TARGETS)
