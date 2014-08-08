@@ -120,20 +120,11 @@ PHP_FUNCTION(grn_ctx_close)
   zval *res = NULL;
   int res_id = -1;
 
-  grn_ctx *ctx;
-  grn_rc rc;
-
-
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &res) == FAILURE) {
     return;
   }
 
-  ZEND_FETCH_RESOURCE(ctx, grn_ctx *, &res, res_id, "grn_ctx", le_grn_ctx);
-
-  if ((rc = grn_ctx_close(ctx)) != GRN_SUCCESS) {
-    RETURN_FALSE;
-  }
-
+  zend_list_delete(Z_LVAL_P(res)); // call grn_ctx_dtor
   RETURN_TRUE;
 }
 
