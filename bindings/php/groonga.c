@@ -120,20 +120,11 @@ PHP_FUNCTION(grn_ctx_close)
   zval *res = NULL;
   int res_id = -1;
 
-  grn_ctx *ctx;
-  grn_rc rc;
-
-
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &res) == FAILURE) {
     return;
   }
 
-  ZEND_FETCH_RESOURCE(ctx, grn_ctx *, &res, res_id, "grn_ctx", le_grn_ctx);
-
-  if ((rc = grn_ctx_close(ctx)) != GRN_SUCCESS) {
-    RETURN_FALSE;
-  }
-
+  zend_list_delete(Z_LVAL_P(res)); // call grn_ctx_dtor
   RETURN_TRUE;
 }
 
@@ -201,10 +192,6 @@ PHP_FUNCTION(grn_ctx_recv)
   int flags;
   unsigned int str_len, qid;
 
-  MAKE_STD_ZVAL(ret);
-
-  array_init(ret);
-  array_init(return_value);
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &res) == FAILURE) {
     return;
@@ -217,6 +204,10 @@ PHP_FUNCTION(grn_ctx_recv)
   if (ctx->rc != GRN_SUCCESS) {
     RETURN_FALSE;
   }
+
+  MAKE_STD_ZVAL(ret);
+  array_init(ret);
+  array_init(return_value);
 
   add_next_index_long(ret, flags);
   add_next_index_stringl(ret, str, str_len, 1);
