@@ -11,8 +11,14 @@ for argument in "$@"; do
     --srcdir=*)
       srcdir="$(echo "${argument}" | sed -e 's/--srcdir=//')"
       ;;
-    --prefix=*)
+    --prefix=*|--enable-shared*|--enable-static*)
       options="${options} ${argument}"
+      ;;
+    --disable-shared)
+      options="${options} --enable-shared=no"
+      ;;
+    --disable-static)
+      options="${options} --enable-static=no"
       ;;
     --enable-debug=*)
       options="${options} CFLAGS='-O0 -g3'"
