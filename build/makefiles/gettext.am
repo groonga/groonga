@@ -14,7 +14,7 @@ BUILT_SOURCES +=				\
 	$(mo_files)
 endif
 
-SUFFIXES += .pot .edit .po .mo 
+SUFFIXES += .pot .edit .po .mo
 
 .PHONY: gettext update build
 
