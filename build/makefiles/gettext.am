@@ -42,7 +42,8 @@ pdf: build
 gettext:
 	rm *.pot || true
 	$(SPHINX_BUILD_COMMAND) -d doctrees -b gettext $(ALLSPHINXOPTS) .
-	xgettext --language Python --output conf.pot ../../../source/conf.py
+	xgettext --language Python --output conf.pot \
+	  $(top_srcdir)/doc/source/conf.py
 
 init: gettext
 	for pot in *.pot; do								\
