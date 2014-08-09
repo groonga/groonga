@@ -46,22 +46,32 @@ gettext:
 	  $(top_srcdir)/doc/source/conf.py
 
 init: gettext
-	for pot in *.pot; do								\
-	  edit_po=`basename $${pot} | sed -e 's,pot$$,edit,g'`;				\
-	  test "$(FORCE_INIT)" = "yes" -o ! -f $${edit_po} &&				\
-	    msginit --input=$${pot} --output-file=$${edit_po} --locale=$(LOCALE);	\
-	  :;										\
+	for pot in *.pot; do					\
+	  edit_po=`basename $${pot} | sed -e 's,pot$$,edit,g'`;	\
+	  test "$(FORCE_INIT)" = "yes" -o ! -f $${edit_po} &&	\
+	    msginit						\
+	     --input=$${pot}					\
+	     --output-file=$${edit_po}				\
+	     --locale=$(LOCALE);				\
+	  :;							\
 	done
 
 edit:
-	for pot in *.pot; do								\
-	  edit_po=`basename $${pot} | sed -e 's,pot$$,edit,g'`;				\
-	  po=`basename $${pot} | sed -e 's,pot$$,po,g'`;				\
-	  test ! -f $${edit_po} && test -f $${po} &&					\
-	    msgmerge --quiet --sort-by-file --output-file=$${edit_po} $${po} $${pot};	\
-	  test ! -f $${edit_po} && test ! -f $${po} &&					\
-	    msginit --input=$${pot} --output-file=$${edit_po} --locale=$(LOCALE);	\
-	  :;										\
+	for pot in *.pot; do					\
+	  edit_po=`basename $${pot} | sed -e 's,pot$$,edit,g'`;	\
+	  po=`basename $${pot} | sed -e 's,pot$$,po,g'`;	\
+	  test ! -f $${edit_po} && test -f $${po} &&		\
+	    msgmerge						\
+	      --quiet						\
+	      --sort-by-file					\
+	      --output-file=$${edit_po}				\
+	      $${po} $${pot};					\
+	  test ! -f $${edit_po} && test ! -f $${po} &&		\
+	    msginit						\
+	      --input=$${pot}					\
+	      --output-file=$${edit_po}				\
+	      --locale=$(LOCALE);				\
+	  :;							\
 	done
 
 reinit:
