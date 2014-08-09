@@ -1,3 +1,6 @@
+EXTRA_DIST =					\
+	build_config.rb
+
 DEFAULT_INCLUDES =				\
 	-I$(srcdir)/../mruby-source/include	\
 	-I$(srcdir)/../mruby-source/src
