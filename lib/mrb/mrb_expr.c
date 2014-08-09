@@ -388,8 +388,11 @@ grn_mrb_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
   mrb_state *mrb = data->state;
   mrb_value mrb_expression;
   mrb_value mrb_sis;
-  scan_info **sis;
+  scan_info **sis = NULL;
   int i;
+  int arena_index;
+
+  arena_index = mrb_gc_arena_save(mrb);
 
   mrb_expression = grn_mrb_value_from_grn_obj(mrb, expr);
   mrb_sis = mrb_funcall(mrb, mrb_expression, "build_scan_info", 2,
@@ -397,7 +400,7 @@ grn_mrb_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                         mrb_fixnum_value(size));
 
   if (mrb_nil_p(mrb_sis)) {
-    return NULL;
+    goto exit;
   }
 
   *n = RARRAY_LEN(mrb_sis);
@@ -415,6 +418,9 @@ grn_mrb_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
     mrb_funcall(mrb, mrb_si, "apply", 1, mrb_si_data);
     sis[i] = si;
   }
+
+exit:
+  mrb_gc_arena_restore(mrb, arena_index);
 
   return sis;
 }
