@@ -26,4 +26,6 @@ libgrnmrb_la_SOURCES =				\
 	mrb_procedure.c				\
 	mrb_procedure.h				\
 	mrb_variable_size_column.c		\
-	mrb_variable_size_column.h
+	mrb_variable_size_column.h		\
+	mrb_void.c				\
+	mrb_void.h
