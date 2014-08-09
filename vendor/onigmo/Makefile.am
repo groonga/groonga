@@ -3,10 +3,12 @@ EXTRA_DIST =					\
 
 ALL_DEPEND_TARGETS =
 INSTALL_DEPEND_TARGETS =
+UNINSTALL_DEPEND_TARGETS =
 CLEAN_DEPEND_TARGETS =
 if WITH_MRUBY
 ALL_DEPEND_TARGETS += onigmo-all
 INSTALL_DEPEND_TARGETS += onigmo-install
+UNINSTALL_DEPEND_TARGETS += onigmo-uninstall
 CLEAN_DEPEND_TARGETS += onigmo-clean
 endif
 
@@ -19,6 +21,11 @@ onigmo-install:
 	cd ../onigmo-source && $(MAKE) install
 
 install: $(INSTALL_DEPEND_TARGETS)
+
+onigmo-uninstall:
+	cd ../onigmo-source && $(MAKE) uninstall
+
+uninstall: $(UNINSTALL_DEPEND_TARGETS)
 
 onigmo-clean:
 	cd ../onigmo-source && $(MAKE) clean
