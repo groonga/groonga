@@ -1,4 +1,5 @@
 RUBY_SCRIPT_FILES =				\
+	backtrace_entry.rb			\
 	context.rb				\
 	context/error_level.rb			\
 	context/rc.rb				\

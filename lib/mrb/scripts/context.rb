@@ -4,11 +4,7 @@ module Groonga
       begin
         yield
       rescue => error
-        backtrace = error.backtrace
-        puts "#{error.class}: #{error.message}"
-        backtrace.each do |entry|
-          puts entry
-        end
+        logger.log_error(error)
         fallback
       end
     end
@@ -23,11 +19,10 @@ module Groonga
       self.error_level = ErrorLevel.find(:error).to_i
 
       backtrace = error.backtrace
-      entry = backtrace.first
-      match_data = /:(\d+):/.match(entry)
-      self.error_file = match_data.pre_match
-      self.error_line = match_data[1].to_i
-      self.error_method = match_data.post_match.gsub(/^in /, "")
+      entry = BacktraceEntry.parse(backtrace.first)
+      self.error_file = entry.file
+      self.error_line = entry.line
+      self.error_method = entry.method
       self.error_message = error.message
 
       logger.log_error(error)
