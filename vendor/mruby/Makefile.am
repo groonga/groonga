@@ -51,6 +51,7 @@ CLEANFILES = *.gcno *gcda
 endif
 
 update:
-	cd "$(srcdir)/../mruby-source" && git pull --rebase
+	cd "$(srcdir)/../mruby-source" && \
+	  (git checkout master && git pull --rebase)
 	cd "$(srcdir)" && \
 	  ./update.rb build_config.rb ../mruby-source > sources.am
