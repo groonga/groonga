@@ -12,5 +12,6 @@ EXTRA_DIST =					\
 dist-hook:
 	GIT_DIR=$(srcdir)/mruby-source/.git git archive --format=tar HEAD | \
 	  tar xf - -C $(distdir)/mruby-source
+	$(MKDIR_P) $(distdir)/onigmo-source
 	GIT_DIR=$(srcdir)/onigmo-source/.git git archive --format=tar HEAD | \
 	  tar xf - -C $(distdir)/onigmo-source
