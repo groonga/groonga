@@ -89,7 +89,7 @@ module Groonga
             status = Status::COL1
             data.args << code.value
           when Status::COL1
-            raise "invalid expression: can't use column as a value: #{code.value.inspect}"
+            raise "invalid expression: can't use column as a value: <#{code.value.name}>: <#{@expression.grn_inspect}>"
             status = Status::COL2
           when Status::COL2
             # Do nothing
