@@ -8,4 +8,5 @@ RUBY_SCRIPT_FILES =				\
 	logger.rb				\
 	logger/level.rb				\
 	scan_info.rb				\
-	scan_info_builder.rb
+	scan_info_builder.rb			\
+	scan_info_data.rb
