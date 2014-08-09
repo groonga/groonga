@@ -11,6 +11,9 @@ for argument in "$@"; do
     --srcdir=*)
       srcdir="$(echo "${argument}" | sed -e 's/--srcdir=//')"
       ;;
+    --prefix=*)
+      options="${options} ${argument}"
+      ;;
     --enable-debug=*)
       options="${options} CFLAGS='-O0 -g3'"
       ;;
@@ -37,4 +40,5 @@ fi
 
 cd "${onigmo_directory_in_build_directory}"
 
-./configure "${options}"
+echo ./configure ${options}
+./configure ${options}
