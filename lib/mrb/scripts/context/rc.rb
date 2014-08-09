@@ -2,8 +2,11 @@ module Groonga
   class Context
     class RC
       @@names = {}
-      def self.find(name)
-        @@names[name]
+
+      class << self
+        def find(name)
+          @@names[name]
+        end
       end
 
       attr_reader :name
