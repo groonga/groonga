@@ -4785,6 +4785,89 @@ grn_pat_tag_keys(grn_ctx *ctx, grn_obj *keywords,
 }
 
 static grn_obj *
+func_highlight_html(grn_ctx *ctx, int nargs, grn_obj **args,
+                    grn_user_data *user_data)
+{
+  grn_obj *highlighted = NULL;
+
+#define N_REQUIRED_ARGS 1
+  if (nargs == N_REQUIRED_ARGS) {
+    grn_obj *string = args[0];
+    grn_obj *expression = NULL;
+    grn_obj *condition_ptr = NULL;
+    grn_obj *condition = NULL;
+    grn_bool html_escape_flag = GRN_TRUE;
+    unsigned int n_keyword_sets = 1;
+    const char *open_tags[1];
+    unsigned int open_tag_lengths[1];
+    const char *close_tags[1];
+    unsigned int close_tag_lengths[1];
+    grn_obj *keywords;
+    grn_obj got_keywords;
+
+    open_tags[0] = "<span class=\"keyword\">";
+    open_tag_lengths[0] = strlen("<span class=\"keyword\">");
+    close_tags[0]  = "</span>";
+    close_tag_lengths[0] = strlen("</span>");
+
+    keywords = grn_table_create(ctx, NULL, 0, NULL,
+                                GRN_OBJ_TABLE_PAT_KEY,
+                                grn_ctx_at(ctx, GRN_DB_SHORT_TEXT),
+                                NULL);
+    {
+      grn_obj * normalizer;
+      normalizer = grn_ctx_get(ctx, "NormalizerAuto", -1);
+      grn_obj_set_info(ctx, keywords, GRN_INFO_NORMALIZER, normalizer);
+      grn_obj_unlink(ctx, normalizer);
+    }
+
+    grn_proc_get_info(ctx, user_data, NULL, NULL, &expression);
+    condition_ptr = grn_expr_get_var(ctx, expression,
+                                     GRN_SELECT_INTERNAL_VAR_CONDITION,
+                                     strlen(GRN_SELECT_INTERNAL_VAR_CONDITION));
+    if (condition_ptr) {
+      condition = GRN_PTR_VALUE(condition_ptr);
+    }
+
+    if (condition) {
+      GRN_PTR_INIT(&got_keywords, GRN_OBJ_VECTOR, GRN_ID_NIL);
+      grn_expr_get_keywords(ctx, condition, &got_keywords);
+
+      for (;;) {
+        grn_obj *keyword;
+        GRN_PTR_POP(&got_keywords, keyword);
+        if (!keyword) { break; }
+        grn_table_add(ctx, keywords,
+                      GRN_TEXT_VALUE(keyword),
+                      GRN_TEXT_LEN(keyword),
+                      NULL);
+      }
+      grn_obj_unlink(ctx, &got_keywords);
+    }
+
+    highlighted = GRN_PROC_ALLOC(GRN_DB_TEXT, 0);
+    grn_pat_tag_keys(ctx, keywords,
+                     GRN_TEXT_VALUE(string), GRN_TEXT_LEN(string),
+                     open_tags,
+                     open_tag_lengths,
+                     close_tags,
+                     close_tag_lengths,
+                     n_keyword_sets,
+                     highlighted,
+                     html_escape_flag);
+
+    grn_obj_unlink(ctx, keywords);
+  }
+#undef N_REQUIRED_ARGS
+
+  if (!highlighted) {
+    highlighted = GRN_PROC_ALLOC(GRN_DB_VOID, 0);
+  }
+
+  return highlighted;
+}
+
+static grn_obj *
 func_highlight_full(grn_ctx *ctx, int nargs, grn_obj **args,
                     grn_user_data *user_data)
 {
@@ -5121,6 +5204,9 @@ grn_db_init_builtin_query(grn_ctx *ctx)
                                     func_between, NULL, NULL, 0, NULL);
     grn_proc_set_selector(ctx, selector_proc, selector_between);
   }
+
+  grn_proc_create(ctx, "highlight_html", -1, GRN_PROC_FUNCTION,
+                  func_highlight_html, NULL, NULL, 0, NULL);
 
   grn_proc_create(ctx, "highlight_full", -1, GRN_PROC_FUNCTION,
                   func_highlight_full, NULL, NULL, 0, NULL);
