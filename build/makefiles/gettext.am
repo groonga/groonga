@@ -9,16 +9,11 @@ EXTRA_DIST +=					\
 	$(mo_files)
 endif
 
-if DOCUMENT_BUILDABLE
-BUILT_SOURCES +=				\
-	$(mo_files)
-endif
-
 SUFFIXES += .pot .edit .po .mo
 
 .PHONY: gettext update build
 
-all:
+all: build
 
 .pot.edit:
 	msgmerge --quiet --sort-by-file --output-file=$@ $*.po $<
@@ -30,7 +25,7 @@ all:
 update: pot-build-stamp edit-po-build-stamp $(edit_po_files) $(po_files)
 
 if DOCUMENT_BUILDABLE
-build: $(mo_files)
+build: pot-build-stamp edit-po-build-stamp $(mo_files)
 else
 build:
 endif
