@@ -12,7 +12,7 @@
 .gdb_history
 .libs
 *~
-/aclocal.m4
+aclocal.m4
 /autom4te.cache
 /compile
 /config.guess
