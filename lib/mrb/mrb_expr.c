@@ -403,6 +403,12 @@ grn_mrb_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
     goto exit;
   }
 
+  if (mrb_type(mrb_sis) == MRB_TT_EXCEPTION) {
+    mrb->exc = mrb_obj_ptr(mrb_sis);
+    mrb_print_error(mrb);
+    goto exit;
+  }
+
   *n = RARRAY_LEN(mrb_sis);
   sis = GRN_MALLOCN(scan_info *, *n);
   for (i = 0; i < *n; i++) {
