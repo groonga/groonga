@@ -15,7 +15,7 @@ SUFFIXES += .svg .png
 endif
 
 $(srcdir)/files.am: $(srcdir)/update-files.sh
-	$(srcdir)/update-files.sh > $(srcdir)/files.am
+	(cd $(srcdir) && ./update-files.sh) > $(srcdir)/files.am
 
 update-files:
 	rm $(srcdir)/files.am
