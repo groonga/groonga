@@ -5,5 +5,5 @@ EXTRA_DIST =					\
 	$(RUBY_SCRIPT_FILES)
 
 if WITH_MRUBY
-ruby_scripts_DATA = $(RUBY_SCRIPT_FILES)
+nobase_ruby_scripts_DATA = $(RUBY_SCRIPT_FILES)
 endif
