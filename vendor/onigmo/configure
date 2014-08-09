@@ -5,12 +5,16 @@ set -u
 
 srcdir="."
 builddir="."
+options=""
 for argument in "$@"; do
-    case "$argument" in
-	--srcdir=*)
-	    srcdir="$(echo "${argument}" | sed -e 's/--srcdir=//')"
-	    ;;
-    esac
+  case "$argument" in
+    --srcdir=*)
+      srcdir="$(echo "${argument}" | sed -e 's/--srcdir=//')"
+      ;;
+    --enable-debug=*)
+      options="${options} CFLAGS='-O0 -g3'"
+      ;;
+  esac
 done
 
 top_srcdir="${srcdir}/../.."
@@ -33,4 +37,4 @@ fi
 
 cd "${onigmo_directory_in_build_directory}"
 
-./configure "$@"
+./configure "${options}"
