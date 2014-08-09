@@ -20,6 +20,7 @@ SUBDIRS =					\
 	doc
 #dist_data_DATA =
 EXTRA_DIST =					\
+	README.md				\
 	bindings				\
 	version-gen.sh				\
 	base_version				\
