@@ -216,7 +216,6 @@ grn_obj *
 grn_db_open(grn_ctx *ctx, const char *path)
 {
   grn_db *s;
-  grn_ctx *ctx_ = ctx;
   GRN_API_ENTER;
   if (path && strlen(path) <= PATH_MAX - 14) {
     if ((s = GRN_MALLOC(sizeof(grn_db)))) {
@@ -246,7 +245,6 @@ grn_db_open(grn_ctx *ctx, const char *path)
           s->obj.header.domain = GRN_ID_NIL;
           DB_OBJ(&s->obj)->range = GRN_ID_NIL;
           grn_ctx_use(ctx, (grn_obj *)s);
-          grn_ctx_use(ctx_, (grn_obj *)s);
 #ifdef GRN_WITH_MECAB
           if (grn_db_init_mecab_tokenizer(ctx)) {
             ERRCLR(ctx);
