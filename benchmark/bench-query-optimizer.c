@@ -16,6 +16,19 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+/*
+  Groonga: c4379140c02699e3c74b94cd9e7b88d372202aa5
+  CFLAGS: -O0 -g3
+  % make --quiet -C benchmark run-bench-query-optimizer
+  run-bench-query-optimizer:
+  Process 100 times in each pattern
+                                 (time)
+     1 condition: with    mruby: (0.0362s)
+     1 condition: without mruby: (0.0216s)
+    4 conditions: with    mruby: (0.0864s)
+    4 conditions: without mruby: (0.0271s)
+*/
+
 #include <stdlib.h>
 #include <string.h>
 
