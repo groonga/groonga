@@ -26,6 +26,16 @@
     without mruby1:  28KB (0.0240ms)
     with    mruby2:   0KB (0.0097s)
     without mruby2:   0KB (0.0220ms)
+
+  Groonga: c4379140c02699e3c74b94cd9e7b88d372202aa5
+  CFLAGS: -O2 -g
+  % make --quiet -C benchmark run-bench-ctx-create
+  run-bench-ctx-create:
+                    (time)
+    with    mruby1: 524KB (0.0041s)
+    without mruby1:  32KB (0.0220ms)
+    with    mruby2:   0KB (0.0040s)
+    without mruby2:   0KB (0.0200ms)
 */
 
 #include <stdlib.h>

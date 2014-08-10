@@ -18,6 +18,7 @@
 
 /*
   Groonga: c4379140c02699e3c74b94cd9e7b88d372202aa5
+
   CFLAGS: -O0 -g3
   % make --quiet -C benchmark run-bench-query-optimizer
   run-bench-query-optimizer:
@@ -27,6 +28,16 @@
      1 condition: without mruby: (0.0216s)
     4 conditions: with    mruby: (0.0864s)
     4 conditions: without mruby: (0.0271s)
+
+  CFLAGS: -O2 -g
+  % make --quiet -C benchmark run-bench-query-optimizer
+  run-bench-query-optimizer:
+  Process 100 times in each pattern
+                                 (time)
+     1 condition: with    mruby: (0.0243s)
+     1 condition: without mruby: (0.0159s)
+    4 conditions: with    mruby: (0.0452s)
+    4 conditions: without mruby: (0.0188s)
 */
 
 #include <stdlib.h>
