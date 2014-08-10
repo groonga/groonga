@@ -59,7 +59,7 @@ grn_bool grn_scan_info_push_arg(scan_info *si, grn_obj *arg);
 grn_obj *grn_scan_info_get_arg(grn_ctx *ctx, scan_info *si, int i);
 
 int32_t grn_expr_code_get_weight(grn_ctx *ctx, grn_expr_code *ec);
-grn_rc grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *got_keywords);
+grn_rc grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *keywords);
 
 #ifdef __cplusplus
 }

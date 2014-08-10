@@ -6818,7 +6818,7 @@ grn_expr_parser_close(grn_ctx *ctx)
 }
 
 grn_rc
-grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *got_keywords)
+grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *keywords)
 {
   int i, n;
   scan_info **sis, *si;
@@ -6839,7 +6839,7 @@ grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *got_keywords)
       } else {
         if (si->op == GRN_OP_MATCH && si->query) {
           if (butp == (si->logical_op == GRN_OP_AND_NOT)) {
-            GRN_PTR_PUT(ctx, got_keywords, si->query);
+            GRN_PTR_PUT(ctx, keywords, si->query);
           }
         }
         if (si->flags & SCAN_PUSH) {
