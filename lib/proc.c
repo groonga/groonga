@@ -4723,6 +4723,18 @@ exit :
   return rc;
 }
 
+static void
+grn_pat_tag_keys_put_original_text(grn_ctx *ctx, grn_obj *output,
+                                   const char *text, unsigned int length,
+                                   grn_bool use_html_escape)
+{
+  if (use_html_escape) {
+    grn_text_escape_xml(ctx, output, text, length);
+  } else {
+    GRN_TEXT_PUT(ctx, output, text, length);
+  }
+}
+
 static grn_rc
 grn_pat_tag_keys(grn_ctx *ctx, grn_obj *keywords,
                  const char *string, unsigned int string_length,
@@ -4742,40 +4754,33 @@ grn_pat_tag_keys(grn_ctx *ctx, grn_obj *keywords,
     n_hits = grn_pat_scan(ctx, (grn_pat *)keywords,
                           string, string_length,
                           hits, MAX_N_HITS, &rest);
-
     for (i = 0; i < n_hits; i++) {
       unsigned int nth_tag;
       if (hits[i].offset - previous > 0) {
-        if (use_html_escape) {
-          grn_text_escape_xml(ctx, highlighted,
-                              string + previous, hits[i].offset - previous);
-        } else {
-          GRN_TEXT_PUT(ctx, highlighted,
-                       string + previous, hits[i].offset - previous);
-        }
+        grn_pat_tag_keys_put_original_text(ctx,
+                                           highlighted,
+                                           string + previous,
+                                           hits[i].offset - previous,
+                                           use_html_escape);
       }
       nth_tag = ((hits[i].id - 1) % n_tags);
       GRN_TEXT_PUT(ctx, highlighted,
                    open_tags[nth_tag], open_tag_lengths[nth_tag]);
-      if (use_html_escape) {
-        grn_text_escape_xml(ctx, highlighted,
-                            string + hits[i].offset, hits[i].length);
-      } else {
-        GRN_TEXT_PUT(ctx, highlighted,
-                     string + hits[i].offset, hits[i].length);
-      }
+      grn_pat_tag_keys_put_original_text(ctx,
+                                         highlighted,
+                                         string + hits[i].offset,
+                                         hits[i].length,
+                                         use_html_escape);
       GRN_TEXT_PUT(ctx, highlighted,
                    close_tags[nth_tag], close_tag_lengths[nth_tag]);
       previous = hits[i].offset + hits[i].length;
     }
     if (string_length - previous > 0) {
-      if (use_html_escape) {
-        grn_text_escape_xml(ctx, highlighted,
-                            string + previous, string_length - previous);
-      } else {
-        GRN_TEXT_PUT(ctx, highlighted,
-                     string + previous, string_length - previous);
-      }
+      grn_pat_tag_keys_put_original_text(ctx,
+                                         highlighted,
+                                         string + previous,
+                                         string_length - previous,
+                                         use_html_escape);
     }
     string_length -= rest - string;
     string = rest;
