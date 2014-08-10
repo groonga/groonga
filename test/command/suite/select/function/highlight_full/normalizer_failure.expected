@@ -35,4 +35,3 @@ select Entries --output_columns   'highlight_full(body, "TokenBigram", 1,   "Gro
   ]
 ]
 #|e| [highlight_full] not normalizer: #<proc:tokenizer TokenBigram arguments:[$1, $2, $3]>
-#|e| groonga() [0x404d05]
