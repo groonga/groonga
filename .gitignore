@@ -93,6 +93,7 @@ cmake_install.cmake
 /benchmark/bench-geo-distance
 /benchmark/bench-table-factory
 /benchmark/bench-ctx-create
+/benchmark/bench-query-optimizer
 /packages/*/*.log
 /packages/apt/debian/groonga-keyring.postrm
 /packages/apt/repositories/debian/pool/*/*/*/*/*.diff.gz

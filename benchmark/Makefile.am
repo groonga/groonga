@@ -9,8 +9,12 @@ noinst_PROGRAMS =		\
 	bench-table-factory	\
 	bench-geo-distance	\
 	bench-geo-select	\
-	bench-ctx-create
+	bench-ctx-create	\
+	bench-query-optimizer
 endif
+
+EXTRA_DIST =					\
+	bench-query-optimizer-ddl.grn
 
 AM_CPPFLAGS =			\
 	-I$(srcdir)		\
@@ -39,11 +43,15 @@ nodist_EXTRA_bench_geo_select_SOURCES = $(NONEXISTENT_CXX_SOURCE)
 bench_ctx_create_SOURCES = bench-ctx-create.c
 nodist_EXTRA_bench_ctx_create_SOURCES = $(NONEXISTENT_CXX_SOURCE)
 
+bench_query_optimizer_SOURCES = bench-query-optimizer.c
+nodist_EXTRA_bench_query_optimizer_SOURCES = $(NONEXISTENT_CXX_SOURCE)
+
 benchmarks =					\
 	run-bench-table-factory			\
 	run-bench-geo-distance			\
 	run-bench-geo-select			\
-	run-bench-ctx-create
+	run-bench-ctx-create			\
+	run-bench-query-optimizer
 
 run-bench-table-factory: bench-table-factory
 	@echo $@:
@@ -64,5 +72,18 @@ run-bench-geo-select: bench-geo-select
 run-bench-ctx-create: bench-ctx-create
 	@echo $@:
 	./bench-ctx-create
+
+run-bench-query-optimizer: bench-query-optimizer
+	@echo $@:
+	@rm -rf tmp/query-optimizer
+	@mkdir -p tmp/query-optimizer
+	@env							\
+	  GRN_RUBY_SCRIPTS_DIR=$(top_srcdir)/lib/mrb/scripts	\
+	  ../src/groonga					\
+	  --file $(srcdir)/bench-query-optimizer-ddl.grn	\
+	  -n tmp/query-optimizer/db > /dev/null
+	env							\
+	  GRN_RUBY_SCRIPTS_DIR=$(top_srcdir)/lib/mrb/scripts	\
+	  ./bench-query-optimizer
 
 benchmark: $(benchmarks)
