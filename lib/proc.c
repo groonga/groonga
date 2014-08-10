@@ -4830,20 +4830,20 @@ func_highlight_html(grn_ctx *ctx, int nargs, grn_obj **args,
     }
 
     if (condition) {
-      grn_obj got_keywords;
-      GRN_PTR_INIT(&got_keywords, GRN_OBJ_VECTOR, GRN_ID_NIL);
-      grn_expr_get_keywords(ctx, condition, &got_keywords);
+      grn_obj current_keywords;
+      GRN_PTR_INIT(&current_keywords, GRN_OBJ_VECTOR, GRN_ID_NIL);
+      grn_expr_get_keywords(ctx, condition, &current_keywords);
 
       for (;;) {
         grn_obj *keyword;
-        GRN_PTR_POP(&got_keywords, keyword);
+        GRN_PTR_POP(&current_keywords, keyword);
         if (!keyword) { break; }
         grn_table_add(ctx, keywords,
                       GRN_TEXT_VALUE(keyword),
                       GRN_TEXT_LEN(keyword),
                       NULL);
       }
-      grn_obj_unlink(ctx, &got_keywords);
+      grn_obj_unlink(ctx, &current_keywords);
     }
 
     highlighted = GRN_PROC_ALLOC(GRN_DB_TEXT, 0);
