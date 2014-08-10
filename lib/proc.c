@@ -4730,7 +4730,7 @@ grn_pat_tag_keys(grn_ctx *ctx, grn_obj *keywords,
                  const char **close_tags, unsigned int *close_tag_lengths,
                  unsigned int n_tags,
                  grn_obj *highlighted,
-                 grn_bool html_escape_flag)
+                 grn_bool use_html_escape)
 {
   while (string_length > 0) {
 #define MAX_N_HITS 1024
@@ -4746,7 +4746,7 @@ grn_pat_tag_keys(grn_ctx *ctx, grn_obj *keywords,
     for (i = 0; i < n_hits; i++) {
       unsigned int nth_tag;
       if (hits[i].offset - previous > 0) {
-        if (html_escape_flag) {
+        if (use_html_escape) {
           grn_text_escape_xml(ctx, highlighted,
                               string + previous, hits[i].offset - previous);
         } else {
@@ -4757,7 +4757,7 @@ grn_pat_tag_keys(grn_ctx *ctx, grn_obj *keywords,
       nth_tag = ((hits[i].id - 1) % n_tags);
       GRN_TEXT_PUT(ctx, highlighted,
                    open_tags[nth_tag], open_tag_lengths[nth_tag]);
-      if (html_escape_flag) {
+      if (use_html_escape) {
         grn_text_escape_xml(ctx, highlighted,
                             string + hits[i].offset, hits[i].length);
       } else {
@@ -4769,7 +4769,7 @@ grn_pat_tag_keys(grn_ctx *ctx, grn_obj *keywords,
       previous = hits[i].offset + hits[i].length;
     }
     if (string_length - previous > 0) {
-      if (html_escape_flag) {
+      if (use_html_escape) {
         grn_text_escape_xml(ctx, highlighted,
                             string + previous, string_length - previous);
       } else {
@@ -4797,7 +4797,7 @@ func_highlight_html(grn_ctx *ctx, int nargs, grn_obj **args,
     grn_obj *expression = NULL;
     grn_obj *condition_ptr = NULL;
     grn_obj *condition = NULL;
-    grn_bool html_escape_flag = GRN_TRUE;
+    grn_bool use_html_escape = GRN_TRUE;
     unsigned int n_keyword_sets = 1;
     const char *open_tags[1];
     unsigned int open_tag_lengths[1];
@@ -4855,7 +4855,7 @@ func_highlight_html(grn_ctx *ctx, int nargs, grn_obj **args,
                      close_tag_lengths,
                      n_keyword_sets,
                      highlighted,
-                     html_escape_flag);
+                     use_html_escape);
 
     grn_obj_unlink(ctx, keywords);
   }
@@ -4880,7 +4880,7 @@ func_highlight_full(grn_ctx *ctx, int nargs, grn_obj **args,
       (nargs - N_REQUIRED_ARGS) % KEYWORD_SET_SIZE == 0) {
     grn_obj *string = args[0];
     grn_obj *normalizer_name = args[1];
-    grn_obj *html_escape_flag = args[2];
+    grn_obj *use_html_escape = args[2];
     grn_obj **keyword_set_args = args + N_REQUIRED_ARGS;
     unsigned int n_keyword_sets = (nargs - N_REQUIRED_ARGS) / KEYWORD_SET_SIZE;
     unsigned int i;
@@ -4965,7 +4965,7 @@ func_highlight_full(grn_ctx *ctx, int nargs, grn_obj **args,
                      (unsigned int *)GRN_BULK_HEAD(&close_tag_lengths),
                      n_keyword_sets,
                      highlighted,
-                     GRN_BOOL_VALUE(html_escape_flag));
+                     GRN_BOOL_VALUE(use_html_escape));
 
     grn_obj_unlink(ctx, keywords);
     grn_obj_unlink(ctx, &open_tags);
