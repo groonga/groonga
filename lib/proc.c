@@ -4816,7 +4816,7 @@ func_highlight_html(grn_ctx *ctx, int nargs, grn_obj **args,
                                 grn_ctx_at(ctx, GRN_DB_SHORT_TEXT),
                                 NULL);
     {
-      grn_obj * normalizer;
+      grn_obj *normalizer;
       normalizer = grn_ctx_get(ctx, "NormalizerAuto", -1);
       grn_obj_set_info(ctx, keywords, GRN_INFO_NORMALIZER, normalizer);
       grn_obj_unlink(ctx, normalizer);
