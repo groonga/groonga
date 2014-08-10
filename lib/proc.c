@@ -24,6 +24,7 @@
 #include "pat.h"
 #include "geo.h"
 #include "token.h"
+#include "expr.h"
 
 #include <string.h>
 #include <stdlib.h>
