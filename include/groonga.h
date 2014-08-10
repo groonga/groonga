@@ -1748,6 +1748,8 @@ GRN_API grn_rc grn_expr_snip_add_conditions(grn_ctx *ctx,
                                             const char **closetags,
                                             unsigned int *closetag_lens);
 
+GRN_API grn_rc grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *got_keywords);
+
 GRN_API grn_table_sort_key *grn_table_sort_key_from_str(grn_ctx *ctx,
                                                         const char *str, unsigned int str_size,
                                                         grn_obj *table, unsigned int *nkeys);

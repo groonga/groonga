@@ -1,0 +1,11 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries body COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"body": "Mroonga is a ＭｙＳＱＬ storage engine based on Groonga. <b>Rroonga</b> is a Ruby binding of Groonga."}
+]
+[[0,0.0,0.0],1]
+select Entries --output_columns   'highlight_full(body, 1,   "Groonga", "<span class=\\"keyword1\\">", "</span>")' --command_version 2
+[[0,0.0,0.0],[[[1],[["highlight_full","null"]],[null]]]]

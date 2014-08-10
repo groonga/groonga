@@ -1,0 +1,37 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries body COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"body": "Mroonga is a ＭｙＳＱＬ storage engine based on Groonga. <b>Rroonga</b> is a Ruby binding of Groonga."}
+]
+[[0,0.0,0.0],1]
+select Entries --output_columns   'highlight_full(body, "TokenBigram", 1,   "Groonga", "<span class=\\"keyword1\\">", "</span>",   "mysql", "<span class=\\"keyword2\\">", "</span>")' --command_version 2
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[highlight_full] not normalizer: #<proc:tokenizer TokenBigram arguments:[$1, $2, $3]>"
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "highlight_full",
+          "null"
+        ]
+      ],
+      [
+        "[highlight_full] not normalizer: #<proc:tokenizer TokenBigram arguments:[$1, $2, $3]>"
+      ]
+    ]
+  ]
+]
+#|e| [highlight_full] not normalizer: #<proc:tokenizer TokenBigram arguments:[$1, $2, $3]>
