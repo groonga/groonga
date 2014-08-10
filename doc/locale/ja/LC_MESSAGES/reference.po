@@ -9059,6 +9059,48 @@ msgstr ""
 "``<`` や ``>`` などの特殊文字は &lt; や &gt; にエスケープされています。"
 
 msgid ""
+"There are three required parameters, ``column``, ``normalizer_name`` and ``use_html_escape``. "
+"There are three or over optional parameters, ``keywordN``, ``open_tagN`` and ``end_tagN``."
+msgstr ""
+"必須引数は3つあります。 ``column`` と ``normalizer_name`` と ``user_html_escape`` です。"
+"省略可能引数は3つ以上あります。 ``keywordN`` と ``open_tagN`` と ``end_tagN`` です。"
+
+
+msgid "It specifies a column of the table."
+msgstr "テーブルのカラムを指定します。"
+
+msgid "It specifies a normalizer name."
+msgstr "ノーマライザー名を指定します。"
+
+msgid ""
+"It specifies use or not use HTML escape. If it is ``true`` , use HTML escape. "
+"If it is ``false`` , not use HTML escape."
+msgstr ""
+"HTMLエスケープの有無を指定します。 ``true`` を指定すればHTMLエスケープされます。"
+" ``false`` を指定すればHTMLエスケープされません。"
+
+msgid ""
+"It specifies a keyword for tagging. "
+"You can specify multiple keywords for each three arguments."
+msgstr ""
+"タグ付けするキーワードを指定します。"
+"3つの引数ごとに複数のキーワードを指定することができます。"
+
+msgid ""
+"It specifies a open tag. "
+"You can specify multiple open tags for each three arguments."
+msgstr ""
+"開始タグを指定します。"
+"3つの引数ごとに複数の開始タグを指定することができます。"
+
+msgid ""
+"It specifies a close tag. "
+"You can specify multiple close tags for each three arguments."
+msgstr ""
+"終了タグを指定します。"
+"3つの引数ごとに複数の終了タグを指定することができます。"
+
+msgid ""
 "``highlight_full`` returns a tagged string or ``null``. If "
 "``highlight_full`` can't find any keywords, it returns ``null``."
 msgstr ""

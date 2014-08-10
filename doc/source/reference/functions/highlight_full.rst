@@ -80,6 +80,45 @@ You can specify string literal instead of column.
 .. include:: ../../example/reference/functions/highlight_full/usage_string_literal.log
 .. select Entries --output_columns 'highlight_full("Groonga is very fast fulltext search engine.", "NormalizerAuto", true, "Groonga", "<span class=\\"keyword1\\">", "</span>", "mysql", "<span class=\\"keyword2\\">", "</span>")' --command_version 2 --match_columns body --query "groonga"
 
+Parameters
+----------
+There are three required parameters, ``column``, ``normalizer_name`` and ``use_html_escape``.
+There are three or over optional parameters, ``keywordN``, ``open_tagN`` and ``end_tagN``.
+
+``column``
+^^^^^^^^^^^^^^^^^^^
+
+It specifies a column of the table.
+
+``normalizer_name``
+^^^^^^^^^^^^^^^^^^^
+
+It specifies a normalizer name.
+
+``use_html_escape``
+^^^^^^^^^^^^^^^^^^^
+
+It specifies use or not use HTML escape. If it is ``true`` , use HTML escape.
+If it is ``false`` , not use HTML escape.
+
+``keywordN``
+^^^^^^^^^^^^^^^^^^^
+
+It specifies a keyword for tagging.
+You can specify multiple keywords for each three arguments.
+
+``open_tagN``
+^^^^^^^^^^^^^^^^^^^
+
+It specifies a open tag.
+You can specify multiple open tags for each three arguments.
+
+``close_tagN``
+^^^^^^^^^^^^^^^^^^^
+
+It specifies a close tag.
+You can specify multiple close tags for each three arguments.
+
 Return value
 ------------
 
