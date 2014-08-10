@@ -1,0 +1,15 @@
+Execution example::
+
+  table_create Entries TABLE_NO_KEY
+  # [[0,1407692435.35498,0.0364797115325928],true]
+  column_create Entries body COLUMN_SCALAR ShortText 
+  # [[0,1407692435.39156,0.0256640911102295],true]
+  table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+  # [[0,1407692435.423,0.0274741649627686],true]
+  column_create Terms document_index COLUMN_INDEX|WITH_POSITION Entries body
+  # [[0,1407692435.45051,0.0534985065460205],true]
+  load --table Entries
+  [
+  {"body": "Mroonga is a ＭｙＳＱＬ storage engine based on Groonga. <b>Rroonga</b> is a Ruby binding of Groonga."}
+  ]
+  # [[0,1407692435.50406,0.378907442092896],1]

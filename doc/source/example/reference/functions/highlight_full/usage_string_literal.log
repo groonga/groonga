@@ -1,0 +1,26 @@
+Execution example::
+
+  select Entries --output_columns 'highlight_full("Groonga is very fast fulltext search engine.", "NormalizerAuto", true, "Groonga", "<span class=\\"keyword1\\">", "</span>", "mysql", "<span class=\\"keyword2\\">", "</span>")' --command_version 2 --match_columns body --query "groonga" 
+  # [
+  #   [
+  #     0, 
+  #     1407696157.1849, 
+  #     0.00164437294006348
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "highlight_full", 
+  #           "null"
+  #         ]
+  #       ], 
+  #       [
+  #         "<span class=\"keyword1\">Groonga</span> is very fast fulltext search engine."
+  #       ]
+  #     ]
+  #   ]
+  # ]

@@ -1,0 +1,93 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+.. groonga-command
+.. database: functions_highlight_full
+
+highlight_full
+==============
+
+.. caution::
+
+   This feature is experimental. API will be changed.
+
+Summary
+-------
+
+``highlight_full`` tags target text. It can use to highlight the search
+keyword. It can specify use/not use HTML escape, the normalizer name and
+change the tag for each keyword.
+
+Syntax
+------
+
+``highlight_full`` has required parameter and optional parameter::
+
+  highlight_full(column, normalizer_name, use_html_escape,
+                 keyword1, open_tag1, close_tag1,
+                 ...
+                 [keywordN, open_tagN, close_tagN])
+
+Usage
+-----
+
+Here are a schema definition and sample data to show usage.
+
+.. groonga-command
+.. include:: ../../example/reference/functions/highlight_full/usage_setup.log
+.. table_create Entries TABLE_NO_KEY
+.. column_create Entries body COLUMN_SCALAR ShortText
+.. table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+.. column_create Terms document_index COLUMN_INDEX|WITH_POSITION Entries body
+.. load --table Entries
+.. [
+.. ["content"],
+.. {"body": "Mroonga is a ＭｙＳＱＬ storage engine based on Groonga. <b>Rroonga</b> is a Ruby binding of Groonga."}
+.. ]
+
+``highlight_full`` can be used in only ``--output_columns`` in
+:doc:`/reference/commands/select`.
+
+``highlight_full`` requires Groonga 4.0.5 or later.
+
+``highlight_full`` requires :doc:`/reference/command/command_version` 2
+or later.
+
+The following example uses HTML escape and normalzier is ``NormalizeAuto``.
+It specifies the tags ``<span class="keyword1">`` and ``</span>`` of the
+keyword ``groonga``, and the tags ``<span class="keyword2">`` and ``</span>``
+of the keyword ``mysql``.
+
+.. groonga-command
+.. include:: ../../example/reference/functions/highlight_full/usage_basic.log
+.. select Entries --output_columns 'highlight_full(body, "NormalizerAuto", true, "Groonga", "<span class=\\"keyword1\\">", "</span>", "mysql", "<span class=\\"keyword2\\">", "</span>")' --command_version 2
+
+The text are scanned by the keywords for tagging after they are normalized
+by ``NormalizerAuto`` normalizer.
+
+``--query "groonga mysql"`` matches to the first record's body.
+``highight_full`` surrounds the keywords ``groonga`` contained in the text
+with ``<span class="keyword1">`` and ``</span>``, and the keywords ``mysql``
+contained in the text with with ``<span class="keyword2">`` and ``</span>``.
+
+Special characters such as ``<`` and ``>`` are escapsed as ``&lt;`` and
+``&gt;``.
+
+You can specify string literal instead of column.
+
+.. groonga-command
+.. include:: ../../example/reference/functions/highlight_full/usage_string_literal.log
+.. select Entries --output_columns 'highlight_full("Groonga is very fast fulltext search engine.", "NormalizerAuto", true, "Groonga", "<span class=\\"keyword1\\">", "</span>", "mysql", "<span class=\\"keyword2\\">", "</span>")' --command_version 2 --match_columns body --query "groonga"
+
+Return value
+------------
+
+``highlight_full`` returns a tagged string or ``null``. If
+``highlight_full`` can't find any keywords, it returns ``null``.
+
+See also
+--------
+
+* :doc:`/reference/commands/select`
+* :doc:`/reference/functions/highlight_html`
