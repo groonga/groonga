@@ -9169,6 +9169,9 @@ msgstr ""
 "``highlight_html(body)`` は、テキスト中に含まれるキーワード ``groonga`` と "
 "``mysql`` を ``<span class=\"keyword\">`` と ``</span>`` で囲みます。"
 
+msgid "There is only one parameter ``column`` ."
+msgstr "引数は1つあります。 ``column`` です。"
+
 msgid ""
 "``highlight_html`` returns a tagged string or ``null``. If "
 "``highlight_html`` can't find any keywords, it returns ``null``."

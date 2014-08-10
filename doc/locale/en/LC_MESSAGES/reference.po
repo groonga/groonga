@@ -10041,6 +10041,9 @@ msgstr ""
 "``highlight_html(body)`` surrounds the keywords ``groonga`` or ``mysql`` "
 "contained in the text with ``<span class=\"keyword\">`` and ``</span>``."
 
+msgid "There is only one parameter ``column``. "
+msgstr "There is only one parameter ``column``. "
+
 msgid ""
 "``highlight_html`` returns a tagged string or ``null``. If "
 "``highlight_html`` can't find any keywords, it returns ``null``."

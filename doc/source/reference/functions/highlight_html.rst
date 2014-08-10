@@ -77,6 +77,15 @@ You can specify string literal instead of column.
 .. include:: ../../example/reference/functions/highlight_html/usage_string_literal.log
 .. select Entries --output_columns 'highlight_html("Groonga is very fast fulltext search engine.")' --command_version 2 --match_columns body --query "groonga"
 
+Parameters
+----------
+There is only one parameter ``column`` .
+
+``column``
+^^^^^^^^^^^^^^^^^^^
+
+It specifies a column of the table.
+
 Return value
 ------------
 
