@@ -4910,6 +4910,7 @@ func_highlight_full(grn_ctx *ctx, int nargs, grn_obj **args,
             GRN_TEXT_VALUE(&inspected));
         GRN_OBJ_FIN(ctx, &inspected);
         grn_obj_unlink(ctx, normalizer);
+        grn_obj_unlink(ctx, keywords);
         return NULL;
       }
       grn_obj_set_info(ctx, keywords, GRN_INFO_NORMALIZER, normalizer);
