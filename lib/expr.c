@@ -6818,6 +6818,47 @@ grn_expr_parser_close(grn_ctx *ctx)
 }
 
 grn_rc
+grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *got_keywords)
+{
+  int i, n;
+  scan_info **sis, *si;
+  GRN_API_ENTER;
+  if ((sis = scan_info_build(ctx, expr, &n, GRN_OP_OR, 0))) {
+    int butp = 0, nparens = 0, npbut = 0;
+    grn_obj but_stack;
+    GRN_UINT32_INIT(&but_stack, GRN_OBJ_VECTOR);
+    for (i = n; i--;) {
+      si = sis[i];
+      if (si->flags & SCAN_POP) {
+        nparens++;
+        if (si->logical_op == GRN_OP_AND_NOT) {
+          GRN_UINT32_PUT(ctx, &but_stack, npbut);
+          npbut = nparens;
+          butp = 1 - butp;
+        }
+      } else {
+        if (si->op == GRN_OP_MATCH && si->query) {
+          if (butp == (si->logical_op == GRN_OP_AND_NOT)) {
+            GRN_PTR_PUT(ctx, got_keywords, si->query);
+          }
+        }
+        if (si->flags & SCAN_PUSH) {
+          if (nparens == npbut) {
+            butp = 1 - butp;
+            GRN_UINT32_POP(&but_stack, npbut);
+          }
+          nparens--;
+        }
+      }
+    }
+    GRN_OBJ_FIN(ctx, &but_stack);
+    for (i = n; i--;) { SI_FREE(sis[i]); }
+    GRN_FREE(sis);
+  }
+  GRN_API_RETURN(GRN_SUCCESS);
+}
+
+grn_rc
 grn_expr_snip_add_conditions(grn_ctx *ctx, grn_obj *expr, grn_obj *snip,
                              unsigned int n_tags,
                              const char **opentags, unsigned int *opentag_lens,
@@ -6999,45 +7040,4 @@ grn_expr_syntax_escape_query(grn_ctx *ctx, const char *query, int query_size,
   return grn_expr_syntax_escape(ctx, query, query_size,
                                 target_characters, GRN_QUERY_ESCAPE,
                                 escaped_query);
-}
-
-grn_rc
-grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *got_keywords)
-{
-  int i, n;
-  scan_info **sis, *si;
-  GRN_API_ENTER;
-  if ((sis = scan_info_build(ctx, expr, &n, GRN_OP_OR, 0))) {
-    int butp = 0, nparens = 0, npbut = 0;
-    grn_obj but_stack;
-    GRN_UINT32_INIT(&but_stack, GRN_OBJ_VECTOR);
-    for (i = n; i--;) {
-      si = sis[i];
-      if (si->flags & SCAN_POP) {
-        nparens++;
-        if (si->logical_op == GRN_OP_AND_NOT) {
-          GRN_UINT32_PUT(ctx, &but_stack, npbut);
-          npbut = nparens;
-          butp = 1 - butp;
-        }
-      } else {
-        if (si->op == GRN_OP_MATCH && si->query) {
-          if (butp == (si->logical_op == GRN_OP_AND_NOT)) {
-            GRN_PTR_PUT(ctx, got_keywords, si->query);
-          }
-        }
-        if (si->flags & SCAN_PUSH) {
-          if (nparens == npbut) {
-            butp = 1 - butp;
-            GRN_UINT32_POP(&but_stack, npbut);
-          }
-          nparens--;
-        }
-      }
-    }
-    GRN_OBJ_FIN(ctx, &but_stack);
-    for (i = n; i--;) { SI_FREE(sis[i]); }
-    GRN_FREE(sis);
-  }
-  GRN_API_RETURN(GRN_SUCCESS);
 }
