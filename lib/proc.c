@@ -4804,7 +4804,6 @@ func_highlight_html(grn_ctx *ctx, int nargs, grn_obj **args,
     const char *close_tags[1];
     unsigned int close_tag_lengths[1];
     grn_obj *keywords;
-    grn_obj got_keywords;
 
     open_tags[0] = "<span class=\"keyword\">";
     open_tag_lengths[0] = strlen("<span class=\"keyword\">");
@@ -4831,6 +4830,7 @@ func_highlight_html(grn_ctx *ctx, int nargs, grn_obj **args,
     }
 
     if (condition) {
+      grn_obj got_keywords;
       GRN_PTR_INIT(&got_keywords, GRN_OBJ_VECTOR, GRN_ID_NIL);
       grn_expr_get_keywords(ctx, condition, &got_keywords);
 
