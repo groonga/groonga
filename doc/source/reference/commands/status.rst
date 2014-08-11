@@ -4,37 +4,38 @@
 
 .. _command-status:
 
-status
-======
+``status``
+==========
 
-名前
-----
+Summary
+-------
 
 status - groongaプロセスの状態表示
-
-書式
-----
-::
-
- status
-
-説明
-----
 
 Groonga組込コマンドの一つであるstatusについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
 
 statusコマンドは、groongaプロセスの状態を表示します。主にgroongaサーバプロセスに対して使用することを想定しています。
 
-引数
-----
+Syntax
+------
+::
+
+ status
+
+Usage
+-----
+
+.. groonga-command
+.. include:: ../../example/reference/commands/status.log
+.. status
+
+Parameters
+----------
 
 ありません。
 
-返値
-----
-
-json形式
-^^^^^^^^
+Return value
+------------
 
 ::
 
@@ -52,9 +53,3 @@ json形式
 
     groongaプロセスが起動してから経過した秒数を返します。
 
-例
---
-
-.. groonga-command
-.. include:: ../../example/reference/commands/status.log
-.. status
