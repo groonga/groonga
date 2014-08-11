@@ -86,7 +86,7 @@ There are three required parameters, ``column``, ``normalizer_name`` and ``use_h
 There are three or over optional parameters, ``keywordN``, ``open_tagN`` and ``end_tagN``.
 
 ``column``
-^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^
 
 It specifies a column of the table.
 
@@ -102,19 +102,19 @@ It specifies use or not use HTML escape. If it is ``true`` , use HTML escape.
 If it is ``false`` , not use HTML escape.
 
 ``keywordN``
-^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^
 
 It specifies a keyword for tagging.
 You can specify multiple keywords for each three arguments.
 
 ``open_tagN``
-^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^
 
 It specifies a open tag.
 You can specify multiple open tags for each three arguments.
 
 ``close_tagN``
-^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^
 
 It specifies a close tag.
 You can specify multiple close tags for each three arguments.
