@@ -2,39 +2,38 @@
 
 .. highlightlang:: none
 
-shutdown
-========
+``shutdown``
+============
 
-名前
-----
+Summary
+-------
 
 shutdown - サーバプロセスの停止
 
-書式
-----
-::
-
- shutdown
-
-説明
-----
-
-Groonga組込コマンドの一つであるshutdownについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
+Groonga組込コマンドの一つであるshutdownについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入
+力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
 
 shutdownは、接続しているgroongaサーバプロセスを停止します。
 
-引数
-----
-
-ありません。
-
-返値
-----
-
-ありません。
-
-例
---
+Syntax
+------
 ::
 
  shutdown
+
+Usage
+-----
+::
+
+ shutdown
+
+Parameters
+----------
+
+ありません。
+
+Return value
+------------
+
+ありません。
+
