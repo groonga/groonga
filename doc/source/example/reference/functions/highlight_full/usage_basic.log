@@ -1,0 +1,26 @@
+Execution example::
+
+  select Entries --output_columns 'highlight_full(body, "NormalizerAuto", true, "Groonga", "<span class=\\"keyword1\\">", "</span>", "mysql", "<span class=\\"keyword2\\">", "</span>")' --command_version 2
+  # [
+  #   [
+  #     0, 
+  #     1407695996.52987, 
+  #     0.00151872634887695
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "highlight_full", 
+  #           "null"
+  #         ]
+  #       ], 
+  #       [
+  #         "Mroonga is a <span class=\"keyword2\">ＭｙＳＱＬ</span> storage engine based on <span class=\"keyword1\">Groonga</span>. &lt;b&gt;Rroonga&lt;/b&gt; is a Ruby binding of <span class=\"keyword1\">Groonga</span>."
+  #       ]
+  #     ]
+  #   ]
+  # ]

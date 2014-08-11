@@ -70,7 +70,7 @@ case, ``fast`` and ``performance`` are used as keywords.
 
 ``--query "fast performance"`` matches to only the first record's
 content. ``snippet_html(content)`` extracts two text parts that
-include the keywords ``fast`` or ``performance`` and surronds the
+include the keywords ``fast`` or ``performance`` and surrounds the
 keywords with ``<span class="keyword">`` and ``</span>``.
 
 The max number of text parts is 3. If there are 4 or more text parts

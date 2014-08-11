@@ -1,0 +1,26 @@
+Execution example::
+
+  select Entries --output_columns 'highlight_html("Groonga is very fast fulltext search engine.")' --command_version 2 --match_columns body --query "groonga" 
+  # [
+  #   [
+  #     0, 
+  #     1407693081.99183, 
+  #     0.000126123428344727
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "highlight_html", 
+  #           "null"
+  #         ]
+  #       ], 
+  #       [
+  #         "<span class=\"keyword\">Groonga</span> is very fast fulltext search engine."
+  #       ]
+  #     ]
+  #   ]
+  # ]
