@@ -5,8 +5,8 @@
 .. groonga-command
 .. database: commands_register
 
-register
-========
+``register``
+============
 
 Summary
 -------
