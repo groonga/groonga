@@ -79,6 +79,7 @@ You can specify string literal instead of column.
 
 Parameters
 ----------
+
 There is only one parameter ``column`` .
 
 ``column``
