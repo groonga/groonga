@@ -4321,6 +4321,8 @@ msgid ""
 "An array of types of the normalized text. The N-th ``types`` shows the type "
 "of the N-th character in ``normalized``."
 msgstr ""
+"正規化されたテキストのtype(文字種別)の配列です。N番目の ``types`` は正規化"
+"されたテキストのN番目の文字のtype(文字種別)を示しています。"
 
 msgid ":doc:`/reference/normalizers`"
 msgstr ""
