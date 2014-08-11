@@ -9062,7 +9062,7 @@ msgid ""
 "There are three required parameters, ``column``, ``normalizer_name`` and ``use_html_escape``. "
 "There are three or over optional parameters, ``keywordN``, ``open_tagN`` and ``end_tagN``."
 msgstr ""
-"必須引数は3つあります。 ``column`` と ``normalizer_name`` と ``user_html_escape`` です。"
+"必須引数は3つあります。 ``column`` と ``normalizer_name`` と ``use_html_escape`` です。"
 "省略可能引数は3つ以上あります。 ``keywordN`` と ``open_tagN`` と ``end_tagN`` です。"
 
 
