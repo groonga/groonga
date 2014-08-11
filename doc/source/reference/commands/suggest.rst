@@ -6,27 +6,18 @@
 .. % groonga-suggest-create-dataset /tmp/groonga-databases/suggest query
 .. database: suggest
 
-suggest
-=======
+``suggest``
+===========
 
 .. note::
 
    The suggest feature specification isn't stable. The
    specification may be changed.
 
-NAME
-----
+Summary
+-------
 
 suggest - returns completion, correction and/or suggestion for a query.
-
-SYNOPSIS
---------
-::
-
- suggest types table column query [sortby [output_columns [offset [limit [frequency_threshold [conditional_probability_threshold [prefix_search]]]]]]]
-
-DESCRIPTION
------------
 
 The suggest command returns completion, correction and/or
 suggestion for a specified query.
@@ -34,8 +25,79 @@ suggestion for a specified query.
 See :doc:`/suggest/introduction` about completion,
 correction and suggestion.
 
-OPTIONS
--------
+Syntax
+------
+::
+
+ suggest types table column query [sortby [output_columns [offset [limit [frequency_threshold [conditional_probability_threshold [prefix_search]]]]]]]
+
+Usage
+-----
+
+Here are learned data for completion.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/suggest-learn-completion.log
+.. load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
+.. [
+.. {"sequence": "1", "time": 1312950803.86057, "item": "e"},
+.. {"sequence": "1", "time": 1312950803.96857, "item": "en"},
+.. {"sequence": "1", "time": 1312950804.26057, "item": "eng"},
+.. {"sequence": "1", "time": 1312950804.56057, "item": "engi"},
+.. {"sequence": "1", "time": 1312950804.76057, "item": "engin"},
+.. {"sequence": "1", "time": 1312950805.86057, "item": "engine", "type": "submit"}
+.. ]
+
+Here are learned data for correction.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/suggest-learn-correction.log
+.. {"sequence": "2", "time": 1312950803.86057, "item": "s"},
+.. {"sequence": "2", "time": 1312950803.96857, "item": "sa"},
+.. {"sequence": "2", "time": 1312950804.26057, "item": "sae"},
+.. {"sequence": "2", "time": 1312950804.56057, "item": "saer"},
+.. {"sequence": "2", "time": 1312950804.76057, "item": "saerc"},
+.. {"sequence": "2", "time": 1312950805.76057, "item": "saerch", "type": "submit"},
+.. {"sequence": "2", "time": 1312950809.76057, "item": "serch"},
+.. {"sequence": "2", "time": 1312950810.86057, "item": "search", "type": "submit"}
+.. ]
+
+Here are learned data for suggestion.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/suggest-learn-suggestion.log
+.. load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
+.. [
+.. {"sequence": "3", "time": 1312950803.86057, "item": "search engine", "type": "submit"},
+.. {"sequence": "3", "time": 1312950808.86057, "item": "web search realtime", "type": "submit"}
+.. ]
+
+Here is a completion example.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/suggest-completion.log
+.. suggest --table item_query --column kana --types complete --frequency_threshold 1 --query en
+
+Here is a correction example.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/suggest-correction.log
+.. suggest --table item_query --column kana --types correct --frequency_threshold 1 --query saerch
+
+Here is a suggestion example.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/suggest-suggestion.log
+.. suggest --table item_query --column kana --types suggest --frequency_threshold 1 --query search
+
+Here is a mixed example.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/suggest-mixed.log
+.. suggest --table item_query --column kana --types complete|correct|suggest --frequency_threshold 1 --query search
+
+Parameters
+----------
 
 ``types``
   It specifies what types are returned by the suggest
@@ -163,11 +225,8 @@ OPTIONS
   Default:
     ``auto``
 
-RETURN VALUE
+Return value
 ------------
-
-JSON format
-^^^^^^^^^^^
 
 Here is a returned JSON format::
 
@@ -195,75 +254,7 @@ Here is a returned JSON format::
   are sorted by ``score of candidate`` descending by
   default.
 
-EXAMPLE
--------
-
-Here are learned data for completion.
-
-.. groonga-command
-.. include:: ../../example/reference/commands/suggest-learn-completion.log
-.. load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
-.. [
-.. {"sequence": "1", "time": 1312950803.86057, "item": "e"},
-.. {"sequence": "1", "time": 1312950803.96857, "item": "en"},
-.. {"sequence": "1", "time": 1312950804.26057, "item": "eng"},
-.. {"sequence": "1", "time": 1312950804.56057, "item": "engi"},
-.. {"sequence": "1", "time": 1312950804.76057, "item": "engin"},
-.. {"sequence": "1", "time": 1312950805.86057, "item": "engine", "type": "submit"}
-.. ]
-
-Here are learned data for correction.
-
-.. groonga-command
-.. include:: ../../example/reference/commands/suggest-learn-correction.log
-.. load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
-.. [
-.. {"sequence": "2", "time": 1312950803.86057, "item": "s"},
-.. {"sequence": "2", "time": 1312950803.96857, "item": "sa"},
-.. {"sequence": "2", "time": 1312950804.26057, "item": "sae"},
-.. {"sequence": "2", "time": 1312950804.56057, "item": "saer"},
-.. {"sequence": "2", "time": 1312950804.76057, "item": "saerc"},
-.. {"sequence": "2", "time": 1312950805.76057, "item": "saerch", "type": "submit"},
-.. {"sequence": "2", "time": 1312950809.76057, "item": "serch"},
-.. {"sequence": "2", "time": 1312950810.86057, "item": "search", "type": "submit"}
-.. ]
-
-Here are learned data for suggestion.
-
-.. groonga-command
-.. include:: ../../example/reference/commands/suggest-learn-suggestion.log
-.. load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
-.. [
-.. {"sequence": "3", "time": 1312950803.86057, "item": "search engine", "type": "submit"},
-.. {"sequence": "3", "time": 1312950808.86057, "item": "web search realtime", "type": "submit"}
-.. ]
-
-Here is a completion example.
-
-.. groonga-command
-.. include:: ../../example/reference/commands/suggest-completion.log
-.. suggest --table item_query --column kana --types complete --frequency_threshold 1 --query en
-
-Here is a correction example.
-
-.. groonga-command
-.. include:: ../../example/reference/commands/suggest-correction.log
-.. suggest --table item_query --column kana --types correct --frequency_threshold 1 --query saerch
-
-Here is a suggestion example.
-
-.. groonga-command
-.. include:: ../../example/reference/commands/suggest-suggestion.log
-.. suggest --table item_query --column kana --types suggest --frequency_threshold 1 --query search
-
-Here is a mixed example.
-
-.. groonga-command
-.. include:: ../../example/reference/commands/suggest-mixed.log
-.. suggest --table item_query --column kana --types complete|correct|suggest --frequency_threshold 1 --query search
-
-
-SEE ALSO
+See also
 --------
 
 * :doc:`/suggest`
