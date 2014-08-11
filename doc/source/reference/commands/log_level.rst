@@ -2,29 +2,33 @@
 
 .. highlightlang:: none
 
-log_level
-=========
+``log_level``
+=============
 
-名前
-----
+Summary
+-------
 
 log_level - ログ出力レベルの設定
 
-書式
-----
+Groonga組込コマンドの一つであるlog_levelについて説明します。組込コマンドは、groonga実行ファイルの引数、標準>入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
+
+log_levelは、ログ出力レベルを設定します。
+
+Syntax
+------
 ::
 
  log_level level
 
-説明
-----
+Usage
+-----
+::
 
-Groonga組込コマンドの一つであるlog_levelについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
+ log_level warning
+ [true]
 
-log_levelは、ログ出力レベルを設定します。
-
-引数
-----
+Parameters
+----------
 
 ``level``
 
@@ -39,11 +43,8 @@ log_levelは、ログ出力レベルを設定します。
      info
      debug
 
-返値
-----
-
-json形式
-^^^^^^^^
+Return value
+------------
 
 ::
 
@@ -53,14 +54,7 @@ json形式
 
   エラーが生じなかった場合にはtrue、エラーが生じた場合にはfalseを返す。
 
-例
---
-::
-
- log_level warning
- [true]
-
-関連項目
+See also
 --------
 
 :doc:`log_put`
