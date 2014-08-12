@@ -152,7 +152,9 @@ print_header(BenchReporterPrivate *priv, gint max_label_length)
        n_spaces--) {
     g_print(" ");
   }
-  g_print("(time)\n");
+  g_print("(total)    ");
+  g_print("(average)  ");
+  g_print("(median)\n");
 }
 
 static void
@@ -175,7 +177,7 @@ print_label(BenchReporterPrivate *priv, BenchItem *item, gint max_label_length)
 }
 
 static void
-report_elapsed(gdouble elapsed_time)
+report_elapsed_time(gdouble elapsed_time)
 {
   gdouble one_second = 1.0;
   gdouble one_millisecond = one_second / 1000.0;
@@ -186,8 +188,74 @@ report_elapsed(gdouble elapsed_time)
   } else if (elapsed_time < one_millisecond) {
     g_print("(%.4fms)", elapsed_time * 1000.0);
   } else {
-    g_print("(%.4fs)", elapsed_time);
+    g_print("(%.4fs) ", elapsed_time);
   }
+}
+
+static gdouble
+compute_total_elapsed_time(GArray *elapsed_times)
+{
+  guint i;
+  gdouble total = 0.0;
+
+  for (i = 0; i< elapsed_times->len; i++) {
+    gdouble elapsed_time = g_array_index(elapsed_times, gdouble, i);
+    total += elapsed_time;
+  }
+
+  return total;
+}
+
+static void
+report_elapsed_time_total(GArray *elapsed_times)
+{
+  report_elapsed_time(compute_total_elapsed_time(elapsed_times));
+}
+
+static void
+report_elapsed_time_average(GArray *elapsed_times)
+{
+  gdouble total;
+  gdouble average;
+
+  total = compute_total_elapsed_time(elapsed_times);
+  average = total / elapsed_times->len;
+  report_elapsed_time(average);
+}
+
+static gint
+compare_elapsed_time(gconstpointer a, gconstpointer b)
+{
+  const gdouble *elapsed_time1 = a;
+  const gdouble *elapsed_time2 = b;
+
+  if (*elapsed_time1 > *elapsed_time2) {
+    return 1;
+  } else if (*elapsed_time1 < *elapsed_time2) {
+    return -1;
+  } else {
+    return 0;
+  }
+}
+
+static void
+report_elapsed_time_median(GArray *elapsed_times)
+{
+  gdouble median;
+
+  g_array_sort(elapsed_times, compare_elapsed_time);
+  median = g_array_index(elapsed_times, gdouble, elapsed_times->len / 2);
+  report_elapsed_time(median);
+}
+
+static void
+report_elapsed_time_statistics(GArray *elapsed_times)
+{
+  report_elapsed_time_total(elapsed_times);
+  g_print(" ");
+  report_elapsed_time_average(elapsed_times);
+  g_print(" ");
+  report_elapsed_time_median(elapsed_times);
   g_print("\n");
 }
 
@@ -195,26 +263,32 @@ static void
 run_item(BenchReporterPrivate *priv, BenchItem *item, gint max_label_length)
 {
   GTimer *timer;
+  GArray *elapsed_times;
   gint i;
 
   print_label(priv, item, max_label_length);
 
+  elapsed_times = g_array_new(FALSE, FALSE, sizeof(gdouble));
+
   timer = g_timer_new();
-  g_timer_stop(timer);
-  g_timer_reset(timer);
   for (i = 0; i < item->n; i++) {
+    gdouble elapsed_time;
     if (item->bench_setup)
       item->bench_setup(item->data);
-    g_timer_continue(timer);
+    g_timer_start(timer);
     item->bench(item->data);
     g_timer_stop(timer);
+    elapsed_time = g_timer_elapsed(timer, NULL);
+    g_array_append_val(elapsed_times, elapsed_time);
     if (item->bench_teardown)
       item->bench_teardown(item->data);
   }
-
-  report_elapsed(g_timer_elapsed(timer, NULL));
-
   g_timer_destroy(timer);
+
+  report_elapsed_time_statistics(elapsed_times);
+
+  g_array_free(elapsed_times, TRUE);
+
 }
 
 void
