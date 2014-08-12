@@ -881,6 +881,13 @@ struct _grn_search_optarg {
 GRN_API grn_rc grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
                               grn_obj *res, grn_operator op, grn_search_optarg *optarg);
 
+typedef grn_rc grn_selector_func(grn_ctx *ctx, grn_obj *table, grn_obj *index,
+                                 int nargs, grn_obj **args,
+                                 grn_obj *res, grn_operator op);
+
+GRN_API grn_rc grn_proc_set_selector(grn_ctx *ctx, grn_obj *proc,
+                                     grn_selector_func selector);
+
 /*-------------------------------------------------------------
  * grn_vector
 */
