@@ -2,37 +2,38 @@
 
 .. highlightlang:: none
 
-table_list
-==========
+``table_list``
+==============
 
-名前
-----
+Summary
+-------
 
 table_list - DBに定義されているテーブルをリスト表示
 
-書式
-----
+Groonga組込コマンドの一つであるtable_listについて説明します。組込コマンドは、groonga実行ファイルの引数、標準
+入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
+
+table_listは、DBに定義されているテーブルのリストを表示します。
+
+Syntax
+------
 ::
 
  table_list
 
-説明
-----
+Usage
+-----
+.. groonga-command
+.. include:: ../../example/reference/commands/table_list.log
+.. table_list
 
-Groonga組込コマンドの一つであるtable_listについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
-
-table_listは、DBに定義されているテーブルのリストを表示します。
-
-引数
-----
+Parameters
+----------
 
 ありません。
 
-返値
-----
-
-json形式
-^^^^^^^^
+Return value
+------------
 
 テーブル名一覧が以下の形式で返却されます。::
 
@@ -76,6 +77,3 @@ json形式
   ``テーブル情報名n`` で示された情報の配列を出力します。
   情報の順序は ``テーブル情報名n`` の順序と同じです。
 
-.. groonga-command
-.. include:: ../../example/reference/commands/table_list.log
-.. table_list

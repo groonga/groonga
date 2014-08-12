@@ -2,29 +2,33 @@
 
 .. highlightlang:: none
 
-log_put
-=======
+``log_put``
+===========
 
-名前
-----
+Summary
+-------
 
 log_put - ログ出力
 
-書式
-----
+groonga組込コマンドの一つであるlog_putについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入>力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
+
+log_putは、ログにmessageを出力します。
+
+Syntax
+------
 ::
 
  log_put level message
 
-説明
-----
+Usage
+-----
+::
 
-groonga組込コマンドの一つであるlog_putについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
+ log_put ERROR ****MESSAGE****
+ [true]
 
-log_putは、ログにmessageを出力します。
-
-引数
-----
+Parameters
+----------
 
 ``level``
 
@@ -43,11 +47,8 @@ log_putは、ログにmessageを出力します。
 
   出力する文字列を指定します。
 
-返値
-----
-
-json形式
-^^^^^^^^
+Return value
+------------
 
 ::
 
@@ -57,14 +58,7 @@ json形式
 
   エラーが生じなかった場合にはtrue、エラーが生じた場合にはfalseを返す。
 
-例
---
-::
-
- log_put ERROR ****MESSAGE****
- [true]
-
-関連項目
+See also
 --------
 
 :doc:`log_level`

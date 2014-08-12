@@ -2,31 +2,36 @@
 
 .. highlightlang:: none
 
-define_selector
-===============
+``define_selector``
+===================
 
-名前
-----
+Summary
+-------
 
 define_selector - 検索コマンドを定義
 
-書式
-----
+Groonga組込コマンドの一つであるdefine_selectorについて説明します。組込コマンドは、groonga実行ファイルの引数>、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
+
+define_selectorは、検索条件をカスタマイズした新たな検索コマンドを定義します。
+
+Syntax
+------
 ::
 
  define_selector name table [match_columns [query [filter [scorer [sortby
                  [output_columns [offset [limit [drilldown [drilldown_sortby
                  [drilldown_output_columns [drilldown_offset [drilldown_limit]]]]]]]]]]]]]
 
-説明
-----
+Usage
+-----
 
-Groonga組込コマンドの一つであるdefine_selectorについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
+テーブルEntryの全レコード・全カラムの値を出力するselectorコマンドを定義します。::
 
-define_selectorは、検索条件をカスタマイズした新たな検索コマンドを定義します。
+ define_selector entry_selector Entry
+ [true]
 
-引数
-----
+Parameters
+----------
 
 ``name``
 
@@ -88,11 +93,8 @@ define_selectorは、検索条件をカスタマイズした新たな検索コ�
 
   追加するselectorコマンドのdrilldown_limit引数のデフォルト値を指定します。
 
-返値
-----
-
-json形式
-^^^^^^^^
+Return value
+------------
 
 ::
 
@@ -102,15 +104,7 @@ json形式
 
   エラーが生じなかった場合にはtrue、エラーが生じた場合にはfalseを返す。
 
-例
---
-
-テーブルEntryの全レコード・全カラムの値を出力するselectorコマンドを定義します。::
-
- define_selector entry_selector Entry
- [true]
-
-関連項目
+See also
 --------
 
 :doc:`/reference/grn_expr`
