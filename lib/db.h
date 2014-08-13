@@ -158,10 +158,6 @@ struct _grn_type {
   (GRN_OBJ_VECTOR_COLUMNP(obj) &&\
    (DB_OBJ(obj)->header.flags & GRN_OBJ_WITH_WEIGHT))
 
-typedef grn_rc grn_selector_func(grn_ctx *ctx, grn_obj *table, grn_obj *index,
-                                 int nargs, grn_obj **args,
-                                 grn_obj *res, grn_operator op);
-
 typedef struct _grn_proc_ctx grn_proc_ctx;
 
 struct _grn_proc_ctx {
@@ -209,9 +205,6 @@ GRN_API grn_obj *grn_proc_get_or_add_var(grn_ctx *ctx, grn_user_data *user_data,
 
 GRN_API grn_obj *grn_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
                                 grn_id domain, grn_obj_flags flags);
-
-grn_rc grn_proc_set_selector(grn_ctx *ctx, grn_obj *proc,
-                             grn_selector_func selector);
 
 GRN_API grn_rc grn_proc_call(grn_ctx *ctx, grn_obj *proc,
                              int nargs, grn_obj *caller);
