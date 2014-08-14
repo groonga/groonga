@@ -5609,9 +5609,10 @@ get_word(grn_ctx *ctx, efs_info *q, grn_obj *column, int mode, int option)
   return GRN_SUCCESS;
 }
 
-static void
+static grn_bool
 get_op(efs_info *q, efs_op *op, grn_operator *mode, int *option)
 {
+  grn_bool found = GRN_TRUE;
   const char *start, *end = q->cur;
   switch (*end) {
   case 'S' :
@@ -5650,8 +5651,10 @@ get_op(efs_info *q, efs_op *op, grn_operator *mode, int *option)
     q->cur = end;
     break;
   default :
+    found = GRN_FALSE;
     break;
   }
+  return found;
 }
 
 static grn_rc
@@ -6057,9 +6060,14 @@ parse_query(grn_ctx *ctx, efs_info *q)
 
       break;
     case GRN_QUERY_PREFIX :
-      PARSE(GRN_EXPR_TOKEN_MATCH);
       q->cur++;
-      get_op(q, op, &mode, &option);
+      if (get_op(q, op, &mode, &option)) {
+        GRN_INT32_PUT(ctx, &q->mode_stack, mode);
+        PARSE(GRN_EXPR_TOKEN_RELATIVE_OP);
+      } else {
+        q->cur--;
+        get_word_(ctx, q);
+      }
       break;
     case GRN_QUERY_AND :
       if (!first_token) {
