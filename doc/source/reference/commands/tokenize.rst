@@ -25,6 +25,7 @@ optional::
            string
            [normalizer=null]
            [flags=NONE]
+           [mode=null]
 
 Usage
 -----
@@ -162,6 +163,30 @@ string. So the character is good character for this puropose. If
 ``ENABLE_TOKENIZED_DELIMITER`` is enabled, the target string is
 treated as already tokenized string. Tokenizer just tokenizes by
 tokenized delimiter.
+
+``mode``
+""""""""
+
+It specifies a tokenize mode. If the mode is specified ``ADD``, the text
+is tokenized by the rule that adding a document. If the mode is specified
+``GET``, the text is tokenized by the rule that searching a document. If
+the mode is omitted, the text is tokenized by the ``ADD`` mode.
+
+Here is an example to the ``ADD`` mode.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/tokenize/add_mode.log
+.. tokenize TokenBigram "Fulltext Search" --mode ADD
+
+The last alphabet is tokenized by one character.
+
+Here is an example to the ``GET`` mode.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/tokenize/get_mode.log
+.. tokenize TokenBigram "Fulltext Search" --mode GET
+
+The last alphabet is tokenized by two characters.
 
 Return value
 ------------

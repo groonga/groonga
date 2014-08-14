@@ -6801,6 +6801,29 @@ msgstr ""
 "切ってトークナイズします。"
 
 msgid ""
+"It specifies a tokenize mode. If the mode is specified ``ADD``, the text "
+"is tokenized by the rule that adding a document. If the mode is specified "
+"``GET``, the text is tokenized by the rule that searching a document. If "
+"the mode is omitted, the text is tokenized by the ``ADD`` mode."
+msgstr ""
+"トークナイズモードを指定します。 ``ADD`` を指定すると、ドキュメント追加時"
+"と同じルールでトークナイズされます。"
+" ``GET`` を指定すると、ドキュメント検索時と同じルールでトークナイズされます。"
+"省略された場合、 ``ADD`` モードでトークナイズされます。"
+
+msgid "Here is an example to the ``ADD`` mode."
+msgstr "以下は ``ADD`` モードの例です。"
+
+msgid "The last alphabet is tokenized by one character."
+msgstr "最後のアルファベットは1文字でトークナイズされています。"
+
+msgid "Here is an example to the ``GET`` mode."
+msgstr "以下は ``GET`` モードの例です。"
+
+msgid "The last alphabet is tokenized by two characters."
+msgstr "最後のアルファベットは2文字でトークナイズされています。"
+
+msgid ""
 "``tokenize`` command returns tokenized tokens. Each token has some "
 "attributes except token itself. The attributes will be increased in the "
 "feature::"
