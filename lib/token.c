@@ -518,22 +518,26 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
   token->status = GRN_TOKEN_DOING;
   token->force_prefix = 0;
   if (tokenizer) {
-    grn_obj str_, flags_;
+    grn_obj str_, flags_, mode_;
     GRN_TEXT_INIT(&str_, GRN_OBJ_DO_SHALLOW_COPY);
     GRN_TEXT_SET_REF(&str_, str, str_len);
     GRN_UINT32_INIT(&flags_, 0);
     GRN_UINT32_SET(ctx, &flags_, flags);
+    GRN_UINT32_INIT(&mode_, 0);
+    GRN_UINT32_SET(ctx, &mode_, mode);
     token->pctx.caller = NULL;
     token->pctx.user_data.ptr = NULL;
     token->pctx.proc = (grn_proc *)tokenizer;
     token->pctx.hooks = NULL;
     token->pctx.currh = NULL;
     token->pctx.phase = PROC_INIT;
+    grn_ctx_push(ctx, &mode_);
     grn_ctx_push(ctx, &str_);
     grn_ctx_push(ctx, &flags_);
     ((grn_proc *)tokenizer)->funcs[PROC_INIT](ctx, 1, &table, &token->pctx.user_data);
     grn_obj_close(ctx, &flags_);
     grn_obj_close(ctx, &str_);
+    grn_obj_close(ctx, &mode_);
   } else {
     int nflags = 0;
     token->nstr = grn_string_open_(ctx, str, str_len,
