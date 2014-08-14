@@ -3336,14 +3336,17 @@ proc_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       return NULL;
     }
 
-    if (GRN_TEXT_LEN(mode_name) == 0 ||
-        !memcmp(GRN_TEXT_VALUE(mode_name), "ADD", 3)) {
+#define MODE_NAME_EQUAL(name)\
+    (GRN_TEXT_LEN(mode_name) == strlen(name) &&\
+     memcmp(GRN_TEXT_VALUE(mode_name), name, strlen(name)) == 0)
+
+    if (GRN_TEXT_LEN(mode_name) == 0 || MODE_NAME_EQUAL("ADD")) {
       grn_obj tokens;
       GRN_VALUE_FIX_SIZE_INIT(&tokens, GRN_OBJ_VECTOR, GRN_ID_NIL);
       tokenize(ctx, lexicon, string, GRN_TOKEN_ADD, flags, &tokens);
       output_tokens(ctx, &tokens, lexicon);
       GRN_OBJ_FIN(ctx, &tokens);
-    } else if (!memcmp(GRN_TEXT_VALUE(mode_name), "GET", 3)) {
+    } else if (MODE_NAME_EQUAL("GET")) {
       {
         grn_token *token;
         token = grn_token_open(ctx, (grn_obj *)lexicon,
@@ -3368,6 +3371,7 @@ proc_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       ERR(GRN_INVALID_ARGUMENT, "[tokenize] invalid mode: <%.*s>",
           (int)GRN_TEXT_LEN(mode_name), GRN_TEXT_VALUE(mode_name));
     }
+#undef MODE_NAME_EQUAL
 
     grn_hash_close(ctx, lexicon);
   }
