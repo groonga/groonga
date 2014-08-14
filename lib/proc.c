@@ -3363,7 +3363,6 @@ proc_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     } else {
       ERR(GRN_INVALID_ARGUMENT, "[tokenize] invalid mode: <%.*s>",
           (int)GRN_TEXT_LEN(mode_name), GRN_TEXT_VALUE(mode_name));
-      output_tokens(ctx, NULL, NULL);
     }
 
     grn_hash_close(ctx, lexicon);
