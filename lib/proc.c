@@ -3274,14 +3274,14 @@ create_lexicon_for_tokenize(grn_ctx *ctx,
 }
 
 static void
-tokenize(grn_ctx *ctx, grn_hash *lexicon, grn_obj *string, unsigned int flags,
-         grn_obj *tokens)
+tokenize(grn_ctx *ctx, grn_hash *lexicon, grn_obj *string, grn_token_mode mode,
+         unsigned int flags, grn_obj *tokens)
 {
   grn_token *token;
 
   token = grn_token_open(ctx, (grn_obj *)lexicon,
                          GRN_TEXT_VALUE(string), GRN_TEXT_LEN(string),
-                         GRN_TOKEN_ADD, flags);
+                         mode, flags);
   if (!token) {
     return;
   }
@@ -3307,11 +3307,13 @@ proc_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *string;
   grn_obj *normalizer_name;
   grn_obj *flag_names;
+  grn_obj *mode_name;
 
   tokenizer_name = VAR(0);
   string = VAR(1);
   normalizer_name = VAR(2);
   flag_names = VAR(3);
+  mode_name = VAR(4);
 
   if (GRN_TEXT_LEN(tokenizer_name) == 0) {
     ERR(GRN_INVALID_ARGUMENT, "[tokenize] tokenizer name is missing");
@@ -3328,7 +3330,6 @@ proc_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   {
     unsigned int flags;
     grn_hash *lexicon;
-    grn_obj tokens;
 
     flags = parse_tokenize_flags(ctx, flag_names);
     if (ctx->rc != GRN_SUCCESS) {
@@ -3342,10 +3343,28 @@ proc_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       return NULL;
     }
 
-    GRN_VALUE_FIX_SIZE_INIT(&tokens, GRN_OBJ_VECTOR, GRN_ID_NIL);
-    tokenize(ctx, lexicon, string, flags, &tokens);
-    output_tokens(ctx, &tokens, lexicon);
-    GRN_OBJ_FIN(ctx, &tokens);
+    if (GRN_TEXT_LEN(mode_name) == 0 ||
+        !memcmp(GRN_TEXT_VALUE(mode_name), "ADD", 3)) {
+      grn_obj add_tokens;
+      GRN_VALUE_FIX_SIZE_INIT(&add_tokens, GRN_OBJ_VECTOR, GRN_ID_NIL);
+      tokenize(ctx, lexicon, string, GRN_TOKEN_ADD, flags, &add_tokens);
+      output_tokens(ctx, &add_tokens, lexicon);
+      GRN_OBJ_FIN(ctx, &add_tokens);
+    } else if (!memcmp(GRN_TEXT_VALUE(mode_name), "GET", 3)) {
+      grn_obj add_tokens;
+      grn_obj get_tokens;
+      GRN_VALUE_FIX_SIZE_INIT(&add_tokens, GRN_OBJ_VECTOR, GRN_ID_NIL);
+      GRN_VALUE_FIX_SIZE_INIT(&get_tokens, GRN_OBJ_VECTOR, GRN_ID_NIL);
+      tokenize(ctx, lexicon, string, GRN_TOKEN_ADD, flags, &add_tokens);
+      tokenize(ctx, lexicon, string, GRN_TOKEN_GET, flags, &get_tokens);
+      output_tokens(ctx, &get_tokens, lexicon);
+      GRN_OBJ_FIN(ctx, &add_tokens);
+      GRN_OBJ_FIN(ctx, &get_tokens);
+    } else {
+      ERR(GRN_INVALID_ARGUMENT, "[tokenize] invalid mode: <%.*s>",
+          (int)GRN_TEXT_LEN(mode_name), GRN_TEXT_VALUE(mode_name));
+      output_tokens(ctx, NULL, NULL);
+    }
 
     grn_hash_close(ctx, lexicon);
   }
@@ -5128,7 +5147,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[1], "string");
   DEF_VAR(vars[2], "normalizer");
   DEF_VAR(vars[3], "flags");
-  DEF_COMMAND("tokenize", proc_tokenize, 4, vars);
+  DEF_VAR(vars[4], "mode");
+  DEF_COMMAND("tokenize", proc_tokenize, 5, vars);
 
   DEF_COMMAND("tokenizer_list", proc_tokenizer_list, 0, vars);
 

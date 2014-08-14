@@ -1,0 +1,30 @@
+tokenize TokenBigram "あいabアイ" NormalizerAuto NONE ADD
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "あい",
+      "position": 0
+    },
+    {
+      "value": "い",
+      "position": 1
+    },
+    {
+      "value": "ab",
+      "position": 2
+    },
+    {
+      "value": "アイ",
+      "position": 3
+    },
+    {
+      "value": "イ",
+      "position": 4
+    }
+  ]
+]
