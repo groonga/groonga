@@ -25,7 +25,7 @@ optional::
            string
            [normalizer=null]
            [flags=NONE]
-           [mode=null]
+           [mode=ADD]
 
 Usage
 -----
@@ -171,6 +171,8 @@ It specifies a tokenize mode. If the mode is specified ``ADD``, the text
 is tokenized by the rule that adding a document. If the mode is specified
 ``GET``, the text is tokenized by the rule that searching a document. If
 the mode is omitted, the text is tokenized by the ``ADD`` mode.
+
+The default mode is ``ADD``.
 
 Here is an example to the ``ADD`` mode.
 
