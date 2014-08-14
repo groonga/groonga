@@ -1,3 +1,4 @@
+# -*- po -*-
 # Japanese translations for 1.2.4 package.
 # Copyright (C) 2009-2011, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
@@ -7,7 +8,6 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-29 17:07+0900\n"
 "PO-Revision-Date: 2012-07-23 17:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"

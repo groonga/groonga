@@ -1,3 +1,4 @@
+# -*- po -*-
 # English translations for Groonga package.
 # Copyright (C) 2009-2014, Brazil, Inc
 # This file is distributed under the same license as the Groonga package.
@@ -7,7 +8,6 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Groonga 4.0.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-23 12:39+0900\n"
 "PO-Revision-Date: 2014-05-23 12:44+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
