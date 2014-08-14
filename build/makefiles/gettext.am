@@ -21,15 +21,22 @@ SUFFIXES += .pot .po .mo .edit
 .PHONY: gettext build
 
 .pot.edit:
-	if test -f $*.po; then						\
-	  msgmerge --quiet --sort-by-file --output-file=$@ $*.po $<;	\
-	else								\
-	  msginit							\
-	    --input=$<							\
-	    --output-file=$@						\
-	    --locale=$(LOCALE)						\
-	    --no-translator;						\
+	if test -f $*.po; then			\
+	  msgmerge				\
+	    --quiet				\
+	    --sort-by-file			\
+	    --output-file=$@.tmp		\
+	    $*.po				\
+	    $<;					\
+	else					\
+	  msginit				\
+	    --input=$<				\
+	    --output-file=$@.tmp		\
+	    --locale=$(LOCALE)			\
+	    --no-translator;			\
 	fi
+	GREP_OPTIONS= grep -v '^"POT-Creation-Date:' $@.tmp > $@
+	rm $@.tmp
 
 .edit.po:
 	msgcat --no-location --output $@ $<
