@@ -6751,8 +6751,8 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
   if ((efsi.v = grn_expr_get_var_by_offset(ctx, expr, 0)) &&
       (efsi.table = grn_ctx_at(ctx, efsi.v->header.domain))) {
     GRN_TEXT_INIT(&efsi.buf, 0);
-    GRN_UINT32_INIT(&efsi.op_stack, GRN_OBJ_VECTOR);
-    GRN_UINT32_INIT(&efsi.mode_stack, GRN_OBJ_VECTOR);
+    GRN_INT32_INIT(&efsi.op_stack, GRN_OBJ_VECTOR);
+    GRN_INT32_INIT(&efsi.mode_stack, GRN_OBJ_VECTOR);
     GRN_PTR_INIT(&efsi.column_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
     GRN_PTR_INIT(&efsi.token_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
     efsi.e = expr;
