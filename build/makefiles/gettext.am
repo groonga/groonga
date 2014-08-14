@@ -9,20 +9,33 @@ EXTRA_DIST +=					\
 	$(mo_files)
 endif
 
-SUFFIXES += .pot .edit .po .mo
+if DOCUMENT_BUILDABLE
+BUILT_SOURCES +=				\
+	pot-build-stamp				\
+	edit-po-build-stamp			\
+	$(mo_files)
+endif
 
-.PHONY: gettext update build
+SUFFIXES += .pot .po .mo .edit
 
-all: build
+.PHONY: gettext build
 
 .pot.edit:
-	msgmerge --quiet --sort-by-file --output-file=$@ $*.po $<
+	if test -f $*.po; then						\
+	  msgmerge --quiet --sort-by-file --output-file=$@ $*.po $<;	\
+	else								\
+	  msginit							\
+	    --input=$<							\
+	    --output-file=$@						\
+	    --locale=$(LOCALE)						\
+	    --no-translator;						\
+	fi
+
 .edit.po:
-	msgcat --no-location --output $@ $*.edit
+	msgcat --no-location --output $@ $<
+
 .po.mo:
 	msgfmt -o $@ $<
-
-update: pot-build-stamp edit-po-build-stamp $(edit_po_files) $(po_files)
 
 if DOCUMENT_BUILDABLE
 build: pot-build-stamp edit-po-build-stamp $(mo_files)
@@ -40,44 +53,10 @@ gettext:
 	xgettext --language Python --output conf.pot \
 	  $(top_srcdir)/doc/source/conf.py
 
-init: gettext
-	for pot in *.pot; do					\
-	  edit_po=`basename $${pot} | sed -e 's,pot$$,edit,g'`;	\
-	  test "$(FORCE_INIT)" = "yes" -o ! -f $${edit_po} &&	\
-	    msginit						\
-	     --input=$${pot}					\
-	     --output-file=$${edit_po}				\
-	     --locale=$(LOCALE)					\
-	     --no-translator;					\
-	  :;							\
-	done
-
-edit:
-	for pot in *.pot; do					\
-	  edit_po=`basename $${pot} | sed -e 's,pot$$,edit,g'`;	\
-	  po=`basename $${pot} | sed -e 's,pot$$,po,g'`;	\
-	  test ! -f $${edit_po} && test -f $${po} &&		\
-	    msgmerge						\
-	      --quiet						\
-	      --sort-by-file					\
-	      --output-file=$${edit_po}				\
-	      $${po} $${pot};					\
-	  test ! -f $${edit_po} && test ! -f $${po} &&		\
-	    msginit						\
-	      --input=$${pot}					\
-	      --output-file=$${edit_po}				\
-	      --locale=$(LOCALE)				\
-	      --no-translator;					\
-	  :;							\
-	done
-
-reinit:
-	$(MAKE) FORCE_INIT=yes init
-
 pot-build-stamp: $(absolute_source_files)
 	$(MAKE) gettext
 	@touch $@
 
 edit-po-build-stamp: $(absolute_source_files)
-	$(MAKE) edit
+	$(MAKE) $(edit_po_files)
 	@touch $@
