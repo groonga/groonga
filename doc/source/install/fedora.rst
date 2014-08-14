@@ -10,11 +10,12 @@ Fedora. You can install them by ``yum``.
 
 .. note::
 
-  Since Groonga 3.0.2 release, Groonga related RPM pakcages are in the official
-  Fedora yum repository (Fedora 18). So you can use them instead of the groonga yum
-  repository now. There is some exceptions to use the groonga yum
-  repository because mecab dictionaries (mecab-ipadic or mecab-jumandic) are provided by
-  the groonga yum repository.
+  Since Groonga 3.0.2 release, Groonga related RPM pakcages are in the
+  official Fedora yum repository (Fedora 18). So you can use them
+  instead of the Groonga yum repository now. There is some exceptions
+  to use the Groonga yum repository because mecab dictionaries
+  (mecab-ipadic or mecab-jumandic) are provided by the Groonga yum
+  repository.
 
 We distribute both 32-bit and 64-bit packages but we strongly
 recommend a 64-bit package for server. You should use a 32-bit package
@@ -30,7 +31,7 @@ Install::
   % sudo yum install -y groonga
 
 Note that additional packages such as ``mecab-dic`` and ``mecab-jumandic`` packages require to install
-``groonga-release`` package which provides the groonga yum repository beforehand::
+``groonga-release`` package which provides the Groonga yum repository beforehand::
 
   % sudo rpm -ivh http://packages.groonga.org/fedora/groonga-release-1.1.0-1.noarch.rpm
   % sudo yum update
