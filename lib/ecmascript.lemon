@@ -60,13 +60,13 @@ query_element ::= PARENL query PARENR.
 
 query_element ::= RELATIVE_OP query_element.{
   int mode;
-  GRN_UINT32_POP(&efsi->mode_stack, mode);
+  GRN_INT32_POP(&efsi->mode_stack, mode);
 }
 query_element ::= IDENTIFIER RELATIVE_OP query_element. {
   int mode;
   grn_obj *c;
   GRN_PTR_POP(&efsi->column_stack, c);
-  GRN_UINT32_POP(&efsi->mode_stack, mode);
+  GRN_INT32_POP(&efsi->mode_stack, mode);
 }
 query_element ::= BRACEL expression BRACER. {
   efsi->flags = efsi->default_flags;

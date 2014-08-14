@@ -1329,7 +1329,7 @@ static void yy_reduce(
 #line 61 "ecmascript.lemon"
 {
   int mode;
-  GRN_UINT32_POP(&efsi->mode_stack, mode);
+  GRN_INT32_POP(&efsi->mode_stack, mode);
 }
 #line 1335 "ecmascript.c"
         break;
@@ -1339,7 +1339,7 @@ static void yy_reduce(
   int mode;
   grn_obj *c;
   GRN_PTR_POP(&efsi->column_stack, c);
-  GRN_UINT32_POP(&efsi->mode_stack, mode);
+  GRN_INT32_POP(&efsi->mode_stack, mode);
 }
 #line 1345 "ecmascript.c"
         break;
