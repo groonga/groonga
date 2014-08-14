@@ -135,7 +135,7 @@ msgid "Example"
 msgstr "実行例::"
 
 msgid "Here is an example that change the current cache object."
-msgstr "以下はキャシュを変更する例です。"
+msgstr "以下はキャッシュを変更する例です。"
 
 msgid ""
 "It is an opaque cache object. You can create a ``grn_cache`` by :c:func:"
@@ -6713,7 +6713,7 @@ msgid ""
 "tokenizers such as ``TokenBigram``."
 msgstr ""
 "ノーマライザー名を指定します。 ``tokenize`` コマンドは ``normalizer`` という"
-"名前のノーまライザーを使います。ノーまライザーは ``TokenBigrma`` など、N-gram"
+"名前のノーマライザーを使います。ノーマライザーは ``TokenBigrma`` など、N-gram"
 "関連のトークナイザーにとってとても重要です。"
 
 msgid ""
