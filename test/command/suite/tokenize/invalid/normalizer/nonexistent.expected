@@ -1,15 +1,3 @@
 tokenize TokenBigram "aBcDe 123" NormalizerNonexistent
-[
-  [
-    [
-      -22,
-      0.0,
-      0.0
-    ],
-    "[tokenize] nonexistent normalizer: <NormalizerNonexistent>"
-  ],
-  [
-
-  ]
-]
+[[[-22,0.0,0.0],"[tokenize] nonexistent normalizer: <NormalizerNonexistent>"]]
 #|e| [tokenize] nonexistent normalizer: <NormalizerNonexistent>

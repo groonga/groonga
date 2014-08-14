@@ -3169,12 +3169,9 @@ typedef struct {
 static void
 output_tokens(grn_ctx *ctx, grn_obj *tokens, grn_hash *lexicon)
 {
-  int i, n_tokens = 0;
+  int i, n_tokens;
 
-  if (tokens) {
-    n_tokens = GRN_BULK_VSIZE(tokens) / sizeof(tokenize_token);
-  }
-
+  n_tokens = GRN_BULK_VSIZE(tokens) / sizeof(tokenize_token);
   GRN_OUTPUT_ARRAY_OPEN("TOKENS", n_tokens);
   for (i = 0; i < n_tokens; i++) {
     tokenize_token *token;
@@ -3317,13 +3314,11 @@ proc_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   if (GRN_TEXT_LEN(tokenizer_name) == 0) {
     ERR(GRN_INVALID_ARGUMENT, "[tokenize] tokenizer name is missing");
-    output_tokens(ctx, NULL, NULL);
     return NULL;
   }
 
   if (GRN_TEXT_LEN(string) == 0) {
     ERR(GRN_INVALID_ARGUMENT, "[tokenize] string is missing");
-    output_tokens(ctx, NULL, NULL);
     return NULL;
   }
 
@@ -3333,13 +3328,11 @@ proc_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
     flags = parse_tokenize_flags(ctx, flag_names);
     if (ctx->rc != GRN_SUCCESS) {
-      output_tokens(ctx, NULL, NULL);
       return NULL;
     }
 
     lexicon = create_lexicon_for_tokenize(ctx, tokenizer_name, normalizer_name);
     if (!lexicon) {
-      output_tokens(ctx, NULL, NULL);
       return NULL;
     }
 

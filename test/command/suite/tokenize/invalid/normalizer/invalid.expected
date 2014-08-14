@@ -7,9 +7,6 @@ tokenize TokenBigram "aBcDe 123" TokenDelimit
       0.0
     ],
     "[tokenize] not normalizer: #<proc:tokenizer TokenDelimit arguments:[$1, $2, $3]>"
-  ],
-  [
-
   ]
 ]
 #|e| [tokenize] not normalizer: #<proc:tokenizer TokenDelimit arguments:[$1, $2, $3]>
