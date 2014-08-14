@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2014-06-03 20:55+0900\n"
+"PO-Revision-Date: 2014-08-14 23:05+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -67,16 +67,6 @@ msgstr ""
 
 msgid "Install groonga-tokenizer-mecab package::"
 msgstr "groonga-tokenizer-mecabパッケージのインストール::"
-
-msgid "Then install MeCab dictionary. (mecab-ipadic or mecab-jumandic)"
-msgstr ""
-"それからMeCabの辞書をインストールします。(mecab-ipadicもしくはmecab-jumandic)"
-
-msgid "Install IPA dictionary::"
-msgstr "IPA辞書をインストールします::"
-
-msgid "Or install Juman dictionary::"
-msgstr "あるいはJuman辞書をインストールします::"
 
 msgid ""
 "There is a package that provides `Munin <http://munin-monitoring.org/>`_ "
@@ -212,30 +202,36 @@ msgstr ""
 msgid ""
 "Since Groonga 3.0.2 release, Groonga related RPM pakcages are in the "
 "official Fedora yum repository (Fedora 18). So you can use them instead of "
-"the groonga yum repository now. There is some exceptions to use the groonga "
-"yum repository because ``groonga-normalizer-mysql`` and mecab dictionaries "
-"(mecab-ipadic or mecab-jumandic) are provided by the groonga yum repository. "
-"But we will also plan to release ``groonga-normalizer-mysql`` in the "
-"official Fedora yum repository in the future."
+"the Groonga yum repository now. There is some exceptions to use the Groonga "
+"yum repository because mecab dictionaries (mecab-ipadic or mecab-jumandic) "
+"are provided by the Groonga yum repository."
 msgstr ""
 "3.0.2のリリースから、Groonga関連のRPMパッケージはFedoraの公式yumリポジトリで"
 "リリースしています。GroongaのyumリポジトリのかわりにFedoraの公式リポジトリを"
-"使います。ただ、いくつか例外があって、 ``groonga-normalizer-mysql`` や MeCab"
-"の辞書 ( ``mecab-ipadic`` や ``mecab-jumandic`` )パッケージを使うにはGroonga"
-"のyumリポジトリを使います。将来的には ``groonga-normalizer-mysql`` もFedora公"
-"式のyumリポジトリで提供することを計画しています。"
+"使います。ただ、いくつか例外があって、MeCabの辞書（ ``mecab-ipadic`` や "
+"``mecab-jumandic`` ）パッケージを使うにはGroongaのyumリポジトリを使います。"
 
 msgid "Fedora 20"
 msgstr ""
 
 msgid ""
-"Note that additional packages such as ``groonga-normalizer-mysql``, ``mecab-"
-"dic`` and ``mecab-jumandic`` packages require to install ``groonga-release`` "
-"package which provides the groonga yum repository beforehand::"
+"Note that additional packages such as ``mecab-dic`` and ``mecab-jumandic`` "
+"packages require to install ``groonga-release`` package which provides the "
+"Groonga yum repository beforehand::"
 msgstr ""
-"``groonga-normalizer-mysql`` や ``mecab-ipadic`` 、 ``mecab-jumandic`` といっ"
-"たパッケージを使うには Groongaのyumリポジトリを提供する ``groonga-release`` "
-"パッケージをあらかじめインストールします。"
+"``mecab-ipadic`` 、 ``mecab-jumandic`` といったパッケージを使うには Groongaの"
+"yumリポジトリを提供する ``groonga-release`` パッケージをあらかじめインストー"
+"ルします。"
+
+msgid "Then install MeCab dictionary. (mecab-ipadic or mecab-jumandic)"
+msgstr ""
+"それからMeCabの辞書をインストールします。(mecab-ipadicもしくはmecab-jumandic)"
+
+msgid "Install IPA dictionary::"
+msgstr "IPA辞書をインストールします::"
+
+msgid "Or install Juman dictionary::"
+msgstr "あるいはJuman辞書をインストールします::"
 
 msgid "Mac OS X"
 msgstr ""
@@ -692,11 +688,11 @@ msgstr ""
 "install`` を使ってください::"
 
 msgid ""
-"The package 'groonga' is the mininum set of fulltext search engine. If you "
-"want to use groonga for server use, you can install additional preconfigured "
+"``groonga`` package is the minimum set of fulltext search engine. If you "
+"want to use Groonga for server use, you can install additional preconfigured "
 "packages."
 msgstr ""
-"'groonga'パッケージは全文検索のための最小構成パッケージです。Groongaをサー"
+"``groonga`` パッケージは全文検索のための最小構成パッケージです。Groongaをサー"
 "バー用途で使うなら、設定済みの追加パッケージをインストールすることができま"
 "す。"
 
@@ -797,7 +793,8 @@ msgstr ""
 "32-bit環境の場合は、x86のバイナリをpackages.groonga.orgからダウンロードしてく"
 "ださい。"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.3-x86.exe"
+# 6caa565487584356a4ef7e64bea91c45
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.4-x86.exe"
 msgstr ""
 
 msgid "Then run it."
@@ -810,7 +807,8 @@ msgstr ""
 "64-bit環境の場合は、x64のバイナリをpackages.groonga.orgからダウンロードしてく"
 "ださい。"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.3-x64.exe"
+# e4254522b3b84998b28460be3b9acc11
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.4-x64.exe"
 msgstr ""
 
 msgid ""
@@ -829,7 +827,8 @@ msgstr ""
 "32-bit環境の場合は、x86のzipアーカイブをpackages.groonga.orgからダウンロード"
 "してください。"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.3-x86.zip"
+# d9ac59504a364d4f87f73484cb9d6385
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.4-x86.zip"
 msgstr ""
 
 msgid "Then extract it."
@@ -841,7 +840,8 @@ msgstr ""
 "64-bit環境の場合は、x64のzipアーカイブをpackages.groonga.orgからダウンロード"
 "してください。"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.3-x64.zip"
+# 8490a15d4b954b7aa1f0b174f487af9b
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.4-x64.zip"
 msgstr ""
 
 msgid "You can find :doc:`/reference/executables/groonga` in ``bin`` folder."
@@ -867,7 +867,8 @@ msgstr ""
 msgid "Download zipped source from packages.groonga.org:"
 msgstr "zipアーカイブをpackages.groonga.orgからダウンロードしてください。"
 
-msgid "http://packages.groonga.org/source/groonga/groonga-4.0.3.zip"
+# c29c61ab44cf411da7bd6622ef2e6ca7
+msgid "http://packages.groonga.org/source/groonga/groonga-4.0.4.zip"
 msgstr ""
 
 msgid "Move to the Groonga's source folder::"
