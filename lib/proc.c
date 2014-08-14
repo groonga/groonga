@@ -3338,11 +3338,11 @@ proc_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
     if (GRN_TEXT_LEN(mode_name) == 0 ||
         !memcmp(GRN_TEXT_VALUE(mode_name), "ADD", 3)) {
-      grn_obj add_tokens;
-      GRN_VALUE_FIX_SIZE_INIT(&add_tokens, GRN_OBJ_VECTOR, GRN_ID_NIL);
-      tokenize(ctx, lexicon, string, GRN_TOKEN_ADD, flags, &add_tokens);
-      output_tokens(ctx, &add_tokens, lexicon);
-      GRN_OBJ_FIN(ctx, &add_tokens);
+      grn_obj tokens;
+      GRN_VALUE_FIX_SIZE_INIT(&tokens, GRN_OBJ_VECTOR, GRN_ID_NIL);
+      tokenize(ctx, lexicon, string, GRN_TOKEN_ADD, flags, &tokens);
+      output_tokens(ctx, &tokens, lexicon);
+      GRN_OBJ_FIN(ctx, &tokens);
     } else if (!memcmp(GRN_TEXT_VALUE(mode_name), "GET", 3)) {
       {
         grn_token *token;
