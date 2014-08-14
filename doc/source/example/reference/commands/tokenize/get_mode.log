@@ -1,0 +1,68 @@
+Execution example::
+
+  tokenize TokenBigram "Fulltext Search" --mode GET
+  # [
+  #   [
+  #     0, 
+  #     1408017732.62883, 
+  #     0.000665903091430664
+  #   ], 
+  #   [
+  #     {
+  #       "value": "Fu",
+  #       "position": 0
+  #     }, 
+  #     {
+  #       "value": "ul",
+  #       "position": 1
+  #     }, 
+  #     {
+  #       "value": "ll",
+  #       "position": 2
+  #     }, 
+  #     {
+  #       "value": "lt",
+  #       "position": 3
+  #     }, 
+  #     {
+  #       "value": "te",
+  #       "position": 4
+  #     }, 
+  #     {
+  #       "value": "ex",
+  #       "position": 5
+  #     }, 
+  #     {
+  #       "value": "xt",
+  #       "position": 6
+  #     }, 
+  #     {
+  #       "value": "t ",
+  #       "position": 7
+  #     }, 
+  #     {
+  #       "value": " S",
+  #       "position": 8
+  #     }, 
+  #     {
+  #       "value": "Se",
+  #       "position": 9
+  #     }, 
+  #     {
+  #       "value": "ea",
+  #       "position": 10
+  #     }, 
+  #     {
+  #       "value": "ar",
+  #       "position": 11
+  #     }, 
+  #     {
+  #       "value": "rc",
+  #       "position": 12
+  #     }, 
+  #     {
+  #       "value": "ch",
+  #       "position": 13
+  #     }
+  #   ]
+  # ]

@@ -135,7 +135,7 @@ msgid "Example"
 msgstr "実行例::"
 
 msgid "Here is an example that change the current cache object."
-msgstr "以下はキャシュを変更する例です。"
+msgstr "以下はキャッシュを変更する例です。"
 
 msgid ""
 "It is an opaque cache object. You can create a ``grn_cache`` by :c:func:"
@@ -6713,7 +6713,7 @@ msgid ""
 "tokenizers such as ``TokenBigram``."
 msgstr ""
 "ノーマライザー名を指定します。 ``tokenize`` コマンドは ``normalizer`` という"
-"名前のノーまライザーを使います。ノーまライザーは ``TokenBigrma`` など、N-gram"
+"名前のノーマライザーを使います。ノーマライザーは ``TokenBigrma`` など、N-gram"
 "関連のトークナイザーにとってとても重要です。"
 
 msgid ""
@@ -6799,6 +6799,29 @@ msgstr ""
 "``ENABLE_TOKENIZED_DELIMITER`` が有効のときは、対象文字列はすでにトークナイズ"
 "済みであると扱われます。トークナイザーは単にトークナイズ済み区切り文字で区"
 "切ってトークナイズします。"
+
+msgid ""
+"It specifies a tokenize mode. If the mode is specified ``ADD``, the text "
+"is tokenized by the rule that adding a document. If the mode is specified "
+"``GET``, the text is tokenized by the rule that searching a document. If "
+"the mode is omitted, the text is tokenized by the ``ADD`` mode."
+msgstr ""
+"トークナイズモードを指定します。 ``ADD`` を指定すると、ドキュメント追加時"
+"と同じルールでトークナイズされます。"
+" ``GET`` を指定すると、ドキュメント検索時と同じルールでトークナイズされます。"
+"省略された場合、 ``ADD`` モードでトークナイズされます。"
+
+msgid "Here is an example to the ``ADD`` mode."
+msgstr "以下は ``ADD`` モードの例です。"
+
+msgid "The last alphabet is tokenized by one character."
+msgstr "最後のアルファベットは1文字でトークナイズされています。"
+
+msgid "Here is an example to the ``GET`` mode."
+msgstr "以下は ``GET`` モードの例です。"
+
+msgid "The last alphabet is tokenized by two characters."
+msgstr "最後のアルファベットは2文字でトークナイズされています。"
 
 msgid ""
 "``tokenize`` command returns tokenized tokens. Each token has some "

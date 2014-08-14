@@ -7367,6 +7367,29 @@ msgstr ""
 "tokenizes by tokenized delimiter."
 
 msgid ""
+"It specifies a tokenize mode. If the mode is specified ``ADD``, the text "
+"is tokenized by the rule that adding a document. If the mode is specified "
+"``GET``, the text is tokenized by the rule that searching a document. If "
+"the mode is omitted, the text is tokenized by the ``ADD`` mode."
+msgstr ""
+"It specifies a tokenize mode. If the mode is specified ``ADD``, the text "
+"is tokenized by the rule that adding a document. If the mode is specified "
+"``GET``, the text is tokenized by the rule that searching a document. If "
+"the mode is omitted, the text is tokenized by the ``ADD`` mode."
+
+msgid "Here is an example to the ``ADD`` mode."
+msgstr "Here is an example to the ``ADD`` mode."
+
+msgid "The last alphabet is tokenized by one character."
+msgstr "The last alphabet is tokenized by one character."
+
+msgid "Here is an example to the ``GET`` mode."
+msgstr "Here is an example to the ``GET`` mode."
+
+msgid "The last alphabet is tokenized by two characters."
+msgstr "The last alphabet is tokenized by two characters."
+
+msgid ""
 "``tokenize`` command returns tokenized tokens. Each token has some "
 "attributes except token itself. The attributes will be increased in the "
 "feature::"
