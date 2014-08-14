@@ -161,6 +161,8 @@ typedef unsigned int grn_tokenizer_status;
 #define GRN_TOKENIZER_TOKEN_UNMATURED (0x01L<<2)
 /* GRN_TOKENIZER_TOKEN_REACH_END means that ... */
 #define GRN_TOKENIZER_TOKEN_REACH_END (0x01L<<3)
+/* GRN_TOKENIZER_TOKEN_SKIP means that the token is skipped */
+#define GRN_TOKENIZER_TOKEN_SKIP      (0x01L<<4)
 
 /*
  * GRN_TOKENIZER_CONTINUE and GRN_TOKENIZER_LAST are deprecated. They
