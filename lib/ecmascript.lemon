@@ -67,6 +67,17 @@ query_element ::= IDENTIFIER RELATIVE_OP query_element. {
   grn_obj *c;
   GRN_PTR_POP(&efsi->column_stack, c);
   GRN_INT32_POP(&efsi->mode_stack, mode);
+  switch (mode) {
+  case GRN_OP_NEAR :
+  case GRN_OP_NEAR2 :
+    {
+      int max_interval;
+      GRN_INT32_POP(&efsi->max_interval_stack, max_interval);
+    }
+    break;
+  default :
+    break;
+  }
 }
 query_element ::= BRACEL expression BRACER. {
   efsi->flags = efsi->default_flags;

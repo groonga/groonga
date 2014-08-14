@@ -4039,6 +4039,13 @@ grn_expr_get_value(grn_ctx *ctx, grn_obj *expr, int offset)
   GRN_API_RETURN(res);
 }
 
+#define DEFAULT_WEIGHT 5
+#define DEFAULT_DECAYSTEP 2
+#define DEFAULT_MAX_INTERVAL 10
+#define DEFAULT_SIMILARITY_THRESHOLD 10
+#define DEFAULT_TERM_EXTRACT_POLICY 0
+#define DEFAULT_WEIGHT_VECTOR_SIZE 4096
+
 struct _grn_scan_info {
   uint32_t start;
   uint32_t end;
@@ -4050,6 +4057,7 @@ struct _grn_scan_info {
   grn_obj index;
   grn_obj *query;
   grn_obj *args[8];
+  int max_interval;
 };
 
 #define SI_FREE(si) do {\
@@ -4070,6 +4078,7 @@ struct _grn_scan_info {
   (si)->logical_op = GRN_OP_OR;\
   (si)->flags = SCAN_PUSH;\
   (si)->nargs = 0;\
+  (si)->max_interval = DEFAULT_MAX_INTERVAL;\
   (si)->start = (st);\
 } while (0)
 
@@ -4492,7 +4501,21 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
               }
             }
           } else {
-            si->query = *p;
+            switch (c->op) {
+            case GRN_OP_NEAR :
+            case GRN_OP_NEAR2 :
+              if (si->nargs == 3 &&
+                  *p == si->args[2] &&
+                  (*p)->header.domain == GRN_DB_INT32) {
+                si->max_interval = GRN_INT32_VALUE(*p);
+              } else {
+                si->query = *p;
+              }
+              break;
+            default :
+              si->query = *p;
+              break;
+            }
           }
         }
       }
@@ -5103,9 +5126,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
         switch (si->op) {
         case GRN_OP_NEAR :
         case GRN_OP_NEAR2 :
-#define DEFAULT_NEAR_MAX_INTERVAL 10
-          optarg.max_interval = DEFAULT_NEAR_MAX_INTERVAL;
-#undef DEFAULT_NEAR_MAX_INTERVAL
+          optarg.max_interval = si->max_interval;
           break;
         default :
           optarg.max_interval = 0;
@@ -5324,13 +5345,6 @@ grn_int32_value_at(grn_obj *obj, int offset)
 
 #include "snip.h"
 
-#define DEFAULT_WEIGHT 5
-#define DEFAULT_DECAYSTEP 2
-#define DEFAULT_MAX_INTERVAL 10
-#define DEFAULT_SIMILARITY_THRESHOLD 10
-#define DEFAULT_TERM_EXTRACT_POLICY 0
-#define DEFAULT_WEIGHT_VECTOR_SIZE 4096
-
 typedef struct {
   grn_ctx *ctx;
   grn_obj *e;
@@ -5345,6 +5359,7 @@ typedef struct {
   grn_obj column_stack;
   grn_obj op_stack;
   grn_obj mode_stack;
+  grn_obj max_interval_stack;
   grn_operator default_op;
   grn_select_optarg opt;
   grn_operator default_mode;
@@ -5881,6 +5896,7 @@ accept_query_string(grn_ctx *ctx, efs_info *efsi,
                     const char *str, unsigned int str_size)
 {
   grn_obj *column, *token;
+  grn_operator mode;
 
   GRN_PTR_PUT(ctx, &efsi->token_stack,
               grn_expr_add_str(ctx, efsi->e, str, str_size));
@@ -5893,8 +5909,23 @@ accept_query_string(grn_ctx *ctx, efs_info *efsi,
   column = grn_ptr_value_at(&efsi->column_stack, -1);
   grn_expr_append_const(efsi->ctx, efsi->e, column, GRN_OP_GET_VALUE, 1);
   grn_expr_append_obj(efsi->ctx, efsi->e, token, GRN_OP_PUSH, 1);
-  grn_expr_append_op(efsi->ctx, efsi->e,
-                     grn_int32_value_at(&efsi->mode_stack, -1), 2);
+
+  mode = grn_int32_value_at(&efsi->mode_stack, -1);
+  switch (mode) {
+  case GRN_OP_NEAR :
+  case GRN_OP_NEAR2 :
+    {
+      int max_interval;
+      max_interval = grn_int32_value_at(&efsi->max_interval_stack, -1);
+      grn_expr_append_const_int(efsi->ctx, efsi->e, max_interval,
+                                GRN_OP_PUSH, 1);
+      grn_expr_append_op(efsi->ctx, efsi->e, mode, 3);
+    }
+    break;
+  default :
+    grn_expr_append_op(efsi->ctx, efsi->e, mode, 2);
+    break;
+  }
 }
 
 static grn_rc
@@ -6062,6 +6093,14 @@ parse_query(grn_ctx *ctx, efs_info *q)
     case GRN_QUERY_PREFIX :
       q->cur++;
       if (get_op(q, op, &mode, &option)) {
+        switch (mode) {
+        case GRN_OP_NEAR :
+        case GRN_OP_NEAR2 :
+          GRN_INT32_PUT(ctx, &q->max_interval_stack, option);
+          break;
+        default :
+          break;
+        }
         GRN_INT32_PUT(ctx, &q->mode_stack, mode);
         PARSE(GRN_EXPR_TOKEN_RELATIVE_OP);
       } else {
@@ -6753,6 +6792,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     GRN_TEXT_INIT(&efsi.buf, 0);
     GRN_INT32_INIT(&efsi.op_stack, GRN_OBJ_VECTOR);
     GRN_INT32_INIT(&efsi.mode_stack, GRN_OBJ_VECTOR);
+    GRN_INT32_INIT(&efsi.max_interval_stack, GRN_OBJ_VECTOR);
     GRN_PTR_INIT(&efsi.column_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
     GRN_PTR_INIT(&efsi.token_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
     efsi.e = expr;
@@ -6801,6 +6841,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     */
     GRN_OBJ_FIN(ctx, &efsi.op_stack);
     GRN_OBJ_FIN(ctx, &efsi.mode_stack);
+    GRN_OBJ_FIN(ctx, &efsi.max_interval_stack);
     GRN_OBJ_FIN(ctx, &efsi.column_stack);
     GRN_OBJ_FIN(ctx, &efsi.token_stack);
     GRN_OBJ_FIN(ctx, &efsi.buf);
