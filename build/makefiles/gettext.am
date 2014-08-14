@@ -35,7 +35,9 @@ SUFFIXES += .pot .po .mo .edit
 	    --locale=$(LOCALE)			\
 	    --no-translator;			\
 	fi
-	GREP_OPTIONS= grep -v '^"POT-Creation-Date:' $@.tmp > $@
+	(echo "# -*- po -*-";					\
+	 GREP_OPTIONS= grep -v '^# -\*- po -\*-' $@.tmp |	\
+	 GREP_OPTIONS= grep -v '^"POT-Creation-Date:') > $@
 	rm $@.tmp
 
 .edit.po:
