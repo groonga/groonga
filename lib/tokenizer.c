@@ -102,6 +102,7 @@ grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args,
 {
   grn_obj *flags = grn_ctx_pop(ctx);
   grn_obj *query_str = grn_ctx_pop(ctx);
+  grn_obj *token_mode = grn_ctx_pop(ctx);
 
   if (query_str == NULL) {
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT, "missing argument");
@@ -125,6 +126,11 @@ grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args,
       query->flags = GRN_UINT32_VALUE(flags);
     } else {
       query->flags = 0;
+    }
+    if (token_mode) {
+      query->token_mode = GRN_UINT32_VALUE(token_mode);
+    } else {
+      query->token_mode = GRN_TOKEN_ADD;
     }
 
     {
