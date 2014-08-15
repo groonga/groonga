@@ -39,7 +39,7 @@ typedef struct {
 static grn_obj *
 uvector_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_obj *str, *flags;
+  grn_obj *str, *flags, *mode;
   grn_uvector_tokenizer *tokenizer;
   if (!(flags = grn_ctx_pop(ctx))) {
     ERR(GRN_INVALID_ARGUMENT, "[tokenizer][uvector] missing argument: flags");
@@ -47,6 +47,10 @@ uvector_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
   if (!(str = grn_ctx_pop(ctx))) {
     ERR(GRN_INVALID_ARGUMENT, "[tokenizer][uvector] missing argument: string");
+    return NULL;
+  }
+  if (!(mode = grn_ctx_pop(ctx))) {
+    ERR(GRN_INVALID_ARGUMENT, "[tokenizer][uvector] missing argument: mode");
     return NULL;
   }
   if (!(tokenizer = GRN_MALLOC(sizeof(grn_uvector_tokenizer)))) {
