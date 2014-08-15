@@ -582,6 +582,8 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
       if (status & GRN_TOKENIZER_TOKEN_SKIP) {
         token->pos++;
         continue;
+      } else if (status & GRN_TOKENIZER_TOKEN_SKIP_WITH_POSITION) {
+        continue;
       }
       if (token->curr_size == 0) {
         char tokenizer_name[GRN_TABLE_MAX_KEY_SIZE];
