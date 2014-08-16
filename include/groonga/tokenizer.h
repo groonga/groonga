@@ -83,6 +83,7 @@ struct _grn_tokenizer_query {
   unsigned int length;
   grn_encoding encoding;
   unsigned int flags;
+  unsigned int token_mode;
   grn_bool have_tokenized_delimiter;
 };
 
@@ -152,15 +153,19 @@ GRN_PLUGIN_EXPORT void grn_tokenizer_token_fin(grn_ctx *ctx, grn_tokenizer_token
 typedef unsigned int grn_tokenizer_status;
 
 /* GRN_TOKENIZER_TOKEN_CONTINUE means that the next token is not the last one. */
-#define GRN_TOKENIZER_TOKEN_CONTINUE  (0)
+#define GRN_TOKENIZER_TOKEN_CONTINUE           (0)
 /* GRN_TOKENIZER_TOKEN_LAST means that the next token is the last one. */
-#define GRN_TOKENIZER_TOKEN_LAST      (0x01L<<0)
+#define GRN_TOKENIZER_TOKEN_LAST               (0x01L<<0)
 /* GRN_TOKENIZER_TOKEN_OVERLAP means that ... */
-#define GRN_TOKENIZER_TOKEN_OVERLAP   (0x01L<<1)
+#define GRN_TOKENIZER_TOKEN_OVERLAP            (0x01L<<1)
 /* GRN_TOKENIZER_TOKEN_UNMATURED means that ... */
-#define GRN_TOKENIZER_TOKEN_UNMATURED (0x01L<<2)
+#define GRN_TOKENIZER_TOKEN_UNMATURED          (0x01L<<2)
 /* GRN_TOKENIZER_TOKEN_REACH_END means that ... */
-#define GRN_TOKENIZER_TOKEN_REACH_END (0x01L<<3)
+#define GRN_TOKENIZER_TOKEN_REACH_END          (0x01L<<3)
+/* GRN_TOKENIZER_TOKEN_SKIP means that the token is skipped */
+#define GRN_TOKENIZER_TOKEN_SKIP               (0x01L<<4)
+/* GRN_TOKENIZER_TOKEN_SKIP means that the token and postion is skipped */
+#define GRN_TOKENIZER_TOKEN_SKIP_WITH_POSITION (0x01L<<5)
 
 /*
  * GRN_TOKENIZER_CONTINUE and GRN_TOKENIZER_LAST are deprecated. They
