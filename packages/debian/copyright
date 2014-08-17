@@ -46,6 +46,14 @@ Files: data/html/admin/js/jquery-1.7.2.min.js
 Copyright: Copyright 2011, John Resig
 License: MIT or GPL-2
 
+Files: doc/locale/*/jquery.js
+Copyright: Copyright 2012 jQuery Foundation
+License: MIT
+
+Files: doc/locale/*/underscore.js
+Copyright: Copyright 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
+License: MIT
+
 License: LGPL-2.1
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
