@@ -37,9 +37,6 @@ patches_dir = (base_dir + "patches").expand_path
 mecab_patches = [
   "mecab-0.98-not-use-locale-on-mingw.diff",
 ]
-msgpack_patches = [
-  "msgpack-0.5.7-mingw-w64.diff",
-]
 if groonga_win32_x86_p
   host = "i686-w64-mingw32"
 else
@@ -56,10 +53,13 @@ namespace :build do
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
     require 'open-uri'
-    msgpack_version = "0.5.7"
+    msgpack_version = "0.5.9"
     msgpack_base = "msgpack-#{msgpack_version}"
     msgpack_tar_gz = "#{msgpack_base}.tar.gz"
-    msgpack_tar_gz_url = "http://msgpack.org/releases/cpp/#{msgpack_tar_gz}"
+    msgpack_tar_gz_url_base =
+      "https://github.com/msgpack/msgpack-c/releases/download"
+    msgpack_tar_gz_url =
+      "#{msgpack_tar_gz_url_base}/cpp-#{msgpack_version}/#{msgpack_tar_gz}"
     Dir.chdir(tmp_dir) do
       msgpack_tar_gz = download_dir + msgpack_tar_gz
       unless msgpack_tar_gz.exist?
@@ -73,9 +73,6 @@ namespace :build do
       sh("tar", "xzf", msgpack_tar_gz.to_s) or exit(false)
     end
     Dir.chdir(tmp_dir + msgpack_base) do
-      msgpack_patches.each do |patch|
-        sh("patch -p1 < #{patches_dir + patch}")
-      end
       sh("autoreconf", "--install", "--force")
       sh("./configure",
          "--prefix=#{binary_dir}",
