@@ -90,10 +90,10 @@ Let's search same query in previous section. You can get same search results.
    * Indexes for multiple column - It saves disk usage because it shares common buffer. On the other hand, the update performance is not so good.
 
 
-インデックス名を指定した全文検索
---------------------------------
+Full text search with specific index name
+-----------------------------------------
 
-執筆中です。
+TODO
 
 .. TODO: match_columnsにインデックス名を指定しての検索についても触れる。
 
@@ -226,9 +226,9 @@ As a result, the first query matches two article because of Comments2 table has 
 
 On the other hand, the second one matches one article only because of Replies2 table has only one record which contains 'mroonga' as keyword, and there is one record which contains same keyword and refers to the record in Comments2 table.
 
-インデックスの重み
-------------------
+Indexes with Weight
+-------------------
 
-執筆中です。
+TODO
 
 .. TODO: match_columnsの重み指定機能についても触れる。
