@@ -55,6 +55,8 @@ grn_operator grn_scan_info_get_op(scan_info *si);
 void grn_scan_info_set_op(scan_info *si, grn_operator op);
 void grn_scan_info_set_end(scan_info *si, uint32_t end);
 void grn_scan_info_set_query(scan_info *si, grn_obj *query);
+int grn_scan_info_get_max_interval(scan_info *si);
+void grn_scan_info_set_max_interval(scan_info *si, int max_interval);
 grn_bool grn_scan_info_push_arg(scan_info *si, grn_obj *arg);
 grn_obj *grn_scan_info_get_arg(grn_ctx *ctx, scan_info *si, int i);
 
