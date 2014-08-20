@@ -8,6 +8,7 @@ module Groonga
     attr_accessor :args
     attr_accessor :indexes
     attr_accessor :flags
+    attr_accessor :max_interval
     def initialize(start)
       @start = start
       @end = 0
@@ -17,9 +18,49 @@ module Groonga
       @args = []
       @indexes = []
       @flags = ScanInfo::Flags::PUSH
+      @max_interval = nil
     end
 
     def match_resolve_index
+      if near_search?
+        match_near_resolve_index
+      else
+        match_generic_resolve_index
+      end
+    end
+
+    def call_relational_resolve_indexes
+      # better index resolving framework for functions should be implemented
+      @args.each do |arg|
+        call_relational_resolve_index(arg)
+      end
+    end
+
+    private
+    def near_search?
+      (@op == Operator::NEAR or @op == Operator::NEAR2) and @args.size == 3
+    end
+
+    def match_near_resolve_index
+      arg = @args[0]
+      case arg
+      when Expression
+        match_resolve_index_expression(arg)
+      when Accessor
+        match_resolve_index_accessor(arg)
+      when Object
+        match_resolve_index_db_obj(arg)
+      else
+        message =
+          "The first argument of NEAR/NEAR2 must be Expression, Accessor or Object: #{arg.class}"
+        raise message
+      end
+
+      self.query = @args[1]
+      self.max_interval = @args[2].value
+    end
+
+    def match_generic_resolve_index
       @args.each do |arg|
         case arg
         when Expression
@@ -34,14 +75,6 @@ module Groonga
       end
     end
 
-    def call_relational_resolve_indexes
-      # better index resolving framework for functions should be implemented
-      @args.each do |arg|
-        call_relational_resolve_index(arg)
-      end
-    end
-
-    private
     def match_resolve_index_expression(expression)
       codes = expression.codes
       n_codes = codes.size

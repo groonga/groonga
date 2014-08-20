@@ -13,6 +13,9 @@ module Groonga
       self.end = data.end
       self.query = data.query
       self.flags = data.flags
+      if data.max_interval
+        self.max_interval = data.max_interval
+      end
       data.args.each do |arg|
         push_arg(arg)
       end
