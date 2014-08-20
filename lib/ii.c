@@ -3363,6 +3363,10 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
   int key_size = grn_table_get_key(ctx, ii->lexicon, id, key, GRN_TABLE_MAX_KEY_SIZE);
   uint32_t *a, lseg = NOT_ASSIGNED, pseg = NOT_ASSIGNED;
   grn_table_cursor *tc = NULL;
+  if (S_SEGMENT - sizeof(buffer_header) < size + sizeof(buffer_term)) {
+    GRN_LOG(ctx, GRN_LOG_CRIT, "requested size(%d) is too large", size);
+    return NOT_ASSIGNED;
+  }
   if (ii->lexicon->header.type == GRN_TABLE_PAT_KEY) {
     if (ii->lexicon->header.flags & GRN_OBJ_KEY_VAR_SIZE) {
       tc = grn_table_cursor_open(ctx, ii->lexicon, key, key_size, NULL, 0, 0, -1,
@@ -3399,6 +3403,11 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
                       ii->header->total_chunk_size >> 10);
             if (buffer_split(ctx, ii, LSEG(pos), h)) { break; }
           } else {
+            if (S_SEGMENT - sizeof(buffer_header)
+                - b->header.nterms * sizeof(buffer_term)
+                < size + sizeof(buffer_term)) {
+              break;
+            }
             if (buffer_flush(ctx, ii, LSEG(pos), h)) { break; }
           }
         }
