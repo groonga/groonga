@@ -5,10 +5,13 @@
 .. groonga-command
 .. database: tutorial-patricia-trie
 
-パトリシア木による前方一致検索
-==============================
+Prefix search with patricia trie
+================================
 
-Groongaのテーブルは、テーブル作成時にパトリシア木オプションを指定すると、前方一致検索を行うことができます。また、追加のオプションを指定することにより、主キーの後方一致検索をも行うことができます。
+Groonga supports to create a table with patricia trie option.
+By specifying it, You can do prefix search.
+
+And more, you can do suffix search against primary key by specifying additional option.
 
 主キーによる前方一致検索
 ------------------------
