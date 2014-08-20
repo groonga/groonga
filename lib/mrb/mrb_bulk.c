@@ -61,6 +61,13 @@ mrb_grn_bulk_get_value(mrb_state *mrb, mrb_value self)
 
   bulk = DATA_PTR(self);
   switch (bulk->header.domain) {
+  case GRN_DB_INT32 :
+    {
+      int32_t value;
+      value = GRN_INT32_VALUE(bulk);
+      mrb_value_ = mrb_fixnum_value(value);
+    }
+    break;
   case GRN_DB_UINT32 :
     {
       int64_t value;
