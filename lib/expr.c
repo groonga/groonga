@@ -4218,6 +4218,7 @@ grn_scan_info_open(grn_ctx *ctx, int start)
   si->logical_op = GRN_OP_OR;
   si->flags = SCAN_PUSH;
   si->nargs = 0;
+  si->max_interval = DEFAULT_MAX_INTERVAL;
   si->start = start;
 
   return si;
