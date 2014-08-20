@@ -74,6 +74,33 @@ mrb_grn_bulk_get_value(mrb_state *mrb, mrb_value self)
       mrb_value_ = mrb_fixnum_value(value);
     }
     break;
+  default :
+    {
+#define MESSAGE_SIZE 4096
+      char message[MESSAGE_SIZE];
+      grn_ctx *ctx = (grn_ctx *)mrb->ud;
+      grn_obj *domain;
+      char domain_name[GRN_TABLE_MAX_KEY_SIZE];
+      int domain_name_size;
+
+      domain = grn_ctx_at(ctx, bulk->header.domain);
+      if (domain) {
+        domain_name_size = grn_obj_name(ctx, domain,
+                                        domain_name, GRN_TABLE_MAX_KEY_SIZE);
+        grn_obj_unlink(ctx, domain);
+      } else {
+        strcpy(domain_name, "unknown");
+        domain_name_size = strlen(domain_name);
+      }
+      snprintf(message, MESSAGE_SIZE,
+               "unsupported bulk value type: <%d>(%.*s)",
+               bulk->header.domain,
+               domain_name_size,
+               domain_name);
+      mrb_raise(mrb, E_RANGE_ERROR, message);
+#undef MESSAGE_SIZE
+    }
+    break;
   }
 
   return mrb_value_;
