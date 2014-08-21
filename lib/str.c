@@ -2769,6 +2769,9 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
         }
         GRN_TEXT_PUTC(ctx, bulk, ']');
       } else {
+        if (GRN_BULK_VSIZE(obj) == 0) {
+          GRN_TEXT_PUTS(ctx, bulk, "null");
+        } else {
         grn_obj *table = grn_ctx_at(ctx, obj->header.domain);
         grn_id id = GRN_RECORD_VALUE(obj);
         if (table && table->header.type != GRN_TABLE_NO_KEY) {
@@ -2787,6 +2790,7 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
           grn_text_lltoa(ctx, bulk, id);
         }
       }
+    }
     }
     break;
   case GRN_UVECTOR :
