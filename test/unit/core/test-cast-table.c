@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2010-2012  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2010-2014  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,8 +23,10 @@
 
 #include "../lib/grn-assertions.h"
 
-void data_text_to_table(void);
-void test_text_to_table(gconstpointer data);
+void data_text_to_table_success(void);
+void test_text_to_table_success(gconstpointer data);
+void data_text_to_table_failure(void);
+void test_text_to_table_failure(gconstpointer data);
 
 static grn_logger_info *logger;
 static grn_ctx context;
@@ -121,48 +123,58 @@ cut_teardown(void)
   teardown_grn_logger(logger);
 }
 
-static void
+static grn_rc
 cast_text(const gchar *text)
 {
   grn_obj_reinit(&context, &src, GRN_DB_TEXT, 0);
   if (text) {
     GRN_TEXT_PUTS(&context, &src, text);
   }
-  grn_test_assert(grn_obj_cast(&context, &src, &dest, GRN_FALSE));
+  grn_obj_reinit(&context, &dest, users, 0);
+  return grn_obj_cast(&context, &src, &dest, GRN_FALSE);
 }
 
 void
-data_text_to_table(void)
+data_text_to_table_success(void)
 {
-#define ADD_DATA(label, expected, expected_size, text)                  \
+#define ADD_DATA(label, expected, text)                                 \
   gcut_add_datum(label,                                                 \
                  "expected", G_TYPE_UINT, expected,                     \
-                 "expected-size", GCUT_TYPE_SIZE, expected_size,        \
                  "text", G_TYPE_STRING, text,                           \
                  NULL)
 
-  ADD_DATA("existence", 1, sizeof(grn_id), "daijiro");
-  ADD_DATA("nonexistence", GRN_ID_NIL, 0, "yu");
-  ADD_DATA("empty key", GRN_ID_NIL, sizeof(grn_id), "");
+  ADD_DATA("existence", 1, "daijiro");
+  ADD_DATA("empty key", GRN_ID_NIL, "");
 
 #undef ADD_DATA
 }
 
 void
-test_text_to_table(gconstpointer data)
+test_text_to_table_success(gconstpointer data)
 {
-  gsize expected_size;
+  grn_test_assert(cast_text(gcut_data_get_string(data, "text")));
+  grn_test_assert_equal_record_id(&context,
+                                  grn_ctx_at(&context, users),
+                                  gcut_data_get_uint(data, "expected"),
+                                  GRN_RECORD_VALUE(&dest));
+}
 
-  grn_obj_reinit(&context, &dest, users, 0);
-  cast_text(gcut_data_get_string(data, "text"));
-  expected_size = gcut_data_get_size(data, "expected-size");
-  if (expected_size == 0) {
-    cut_assert_equal_uint(0, GRN_BULK_VSIZE(&dest));
-  } else {
-    grn_test_assert_equal_record_id(&context,
-                                    grn_ctx_at(&context, users),
-                                    gcut_data_get_uint(data, "expected"),
-                                    GRN_RECORD_VALUE(&dest));
-    cut_assert_equal_uint(expected_size, GRN_BULK_VSIZE(&dest));
-  }
+void
+data_text_to_table_failure(void)
+{
+#define ADD_DATA(label, text)                                           \
+  gcut_add_datum(label,                                                 \
+                 "text", G_TYPE_STRING, text,                           \
+                 NULL)
+
+  ADD_DATA("nonexistence", "yu");
+
+#undef ADD_DATA
+}
+
+void
+test_text_to_table_failure(gconstpointer data)
+{
+  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
+                           cast_text(gcut_data_get_string(data, "text")));
 }
