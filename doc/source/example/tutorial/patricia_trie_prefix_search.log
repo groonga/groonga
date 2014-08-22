@@ -4,13 +4,15 @@ Execution example::
   # [[0, 1337566253.89858, 0.000355720520019531], true]
   load --table PatPrefix
   [
-  {"_key":"ひろゆき"},
-  {"_key":"まろゆき"},
-  {"_key":"ひろあき"},
-  {"_key":"ゆきひろ"}
+  {"_key":"James"}
+  {"_key":"Jason"}
+  {"_key":"Jennifer"},
+  {"_key":"Jeff"},
+  {"_key":"John"},
+  {"_key":"Joseph"},
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 4]
-  select --table PatPrefix --query _key:^ひろ
+  # [[0, 1337566253.89858, 0.000355720520019531], 6]
+  select --table PatPrefix --query _key:^Je
   # [
   #   [
   #     0, 
@@ -33,12 +35,12 @@ Execution example::
   #         ]
   #       ], 
   #       [
-  #         1, 
-  #         "ひろゆき"
+  #         3, 
+  #         "Jennifer"
   #       ], 
   #       [
-  #         3, 
-  #         "ひろあき"
+  #         4, 
+  #         "Jeff"
   #       ]
   #     ]
   #   ]
