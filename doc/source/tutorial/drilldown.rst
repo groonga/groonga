@@ -11,7 +11,7 @@
 Drilldown
 =========
 
-You learned how to filter search results and sort ones in the previous sections.
+You learned how to search and sort searched results in the previous sections.
 Now that you can search as you likes, but how do you summarize the number of records which has specific value in the column?
 
 As you know, there is a naive solution to execute query by every the value of column, then you can get the number of records as a result. It is a simple way, but it is not reasonable to many records.
