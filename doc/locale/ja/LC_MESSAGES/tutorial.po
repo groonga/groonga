@@ -2055,13 +2055,13 @@ msgstr ""
 "また、追加のオプションを指定することにより、主"
 "キーの後方一致検索をも行うことができます。"
 
-msgid "主キーによる前方一致検索"
-msgstr ""
+msgid "Prefix search by primary key"
+msgstr "主キーによる前方一致検索"
 
 msgid ""
-"table_createコマンドのflagsオプションにTABLE_PAT_KEYを指定することで、主キー"
-"による前方一致検索ができるようになります。"
-msgstr ""
+"table_create command which uses TABLE_PAT_KEY for flags option supports "
+"prefix search by primary key."
+msgstr "table_createコマンドのflagsオプションにTABLE_PAT_KEYを指定することで、主キーによる前方一致検索ができるようになります。"
 
 msgid "主キーによる後方一致検索"
 msgstr ""
