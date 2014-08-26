@@ -2269,7 +2269,7 @@ msgstr "\"経度のミリ秒表記x緯度のミリ秒表記\" （例: \"12845297
 msgid ""
 "\"[latitude in milliseconds],[longitude in milliseconds]\"（e.g.: "
 "\"128452975,503157902\"）"
-msgstr "\"経度のミリ秒表記x緯度のミリ秒表記\" （例: \"128452975x503157902\"）"
+msgstr "\"経度のミリ秒表記,緯度のミリ秒表記\" （例: \"128452975,503157902\"）"
 
 msgid ""
 "\"[latitude in degrees]x[longitude in degrees]\"（e.g.: "
@@ -2279,7 +2279,7 @@ msgstr "\"経度の度数表記x緯度の度数表記\" （例: \"35.6813819x139
 msgid ""
 "\"[latitude in degrees],[longitude in degrees]\"（e.g.: "
 "\"35.6813819,139.7660839\"）"
-msgstr "\"経度の度数表記x緯度の度数表記\" （例: \"35.6813819x139.7660839\"）"
+msgstr "\"経度の度数表記,緯度の度数表記\" （例: \"35.6813819,139.7660839\"）"
 
 msgid ""
 "Let's store two location information about station in Japan by WGS. One is "
