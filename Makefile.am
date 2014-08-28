@@ -40,9 +40,6 @@ $(srcdir)/version.sh: FORCE
 
 include $(srcdir)/version.sh
 
-ChangeLog:
-	touch $@
-
 dist-hook:
 	echo "$(GRN_VERSION)" > $(distdir)/version
 
