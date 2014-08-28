@@ -5,28 +5,33 @@
 .. groonga-command
 .. database: tutorial-patricia-trie
 
-パトリシア木による前方一致検索
-==============================
+Prefix search with patricia trie
+================================
 
-Groongaのテーブルは、テーブル作成時にパトリシア木オプションを指定すると、前方一致検索を行うことができます。また、追加のオプションを指定することにより、主キーの後方一致検索をも行うことができます。
+Groonga supports to create a table with patricia trie option.
+By specifying it, You can do prefix search.
 
-主キーによる前方一致検索
-------------------------
+And more, you can do suffix search against primary key by specifying additional option.
 
-table_createコマンドのflagsオプションにTABLE_PAT_KEYを指定することで、主キーによる前方一致検索ができるようになります。
+Prefix search by primary key
+----------------------------
+
+table_create command which uses TABLE_PAT_KEY for flags option supports prefix search by primary key.
 
 .. groonga-command
-.. include:: ../example/tutorial/patricia_trie-1.log
+.. include:: ../example/tutorial/patricia_trie_prefix_search.log
 ..
 .. table_create --name PatPrefix --flags TABLE_PAT_KEY --key_type ShortText
 .. load --table PatPrefix
 .. [
-.. {"_key":"ひろゆき"},
-.. {"_key":"まろゆき"},
-.. {"_key":"ひろあき"},
-.. {"_key":"ゆきひろ"}
+.. {"_key":"James"}
+.. {"_key":"Jason"}
+.. {"_key":"Jennifer"},
+.. {"_key":"Jeff"},
+.. {"_key":"John"},
+.. {"_key":"Joseph"},
 .. ]
-.. select --table PatPrefix --query _key:^ひろ
+.. select --table PatPrefix --query _key:^Je
 
 主キーによる後方一致検索
 ------------------------

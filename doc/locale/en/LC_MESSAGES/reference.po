@@ -8,14 +8,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Groonga 4.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2014-05-23 12:44+0900\n"
+"PO-Revision-Date: 2014-08-28 12:28+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Execution example::"
+msgstr "Execution example::"
 
 msgid "Reference manual"
 msgstr "Reference manual"
@@ -2254,6 +2257,143 @@ msgstr ""
 "TOOD: Describe about how to create the minimum plugin here or create a "
 "tutorial about it."
 
+msgid ""
+"GRN_PLUGIN_MALLOC() allocates `size` bytes and returns a pointer to the "
+"allocated memory space. Note that the memory space is associated with `ctx`."
+msgstr ""
+
+msgid ""
+"GRN_PLUGIN_REALLOC() resizes the memory space pointed to by `ptr` or "
+"allocates a new memory space of `size` bytes. GRN_PLUGIN_REALLOC() returns a "
+"pointer to the memory space. The contents is unchanged or copied from the "
+"old memory space to the new memory space."
+msgstr ""
+
+msgid ""
+"GRN_PLUGIN_FREE() frees a memory space allocated by GRN_PLUGIN_MALLOC() or "
+"GRN_PLUGIN_REALLOC(). This means that `ptr` must be a pointer returned by "
+"GRN_PLUGIN_MALLOC() or GRN_PLUGIN_REALLOC()."
+msgstr ""
+
+msgid ""
+"GRN_PLUGIN_LOG() reports a log of `level`. Its error message is generated "
+"from the varying number of arguments, in which the first one is the format "
+"string and the rest are its arguments. See grn_log_level in \"groonga.h\" "
+"for more details of `level`."
+msgstr ""
+
+msgid ""
+"GRN_PLUGIN_ERROR() reports an error of `error_code`. Its error message is "
+"generated from the varying number of arguments, in which the first one is "
+"the format string and the rest are its arguments. See grn_rc in \"groonga.h"
+"\" for more details of `error_code`."
+msgstr ""
+
+msgid ""
+"grn_plugin_mutex is available to make a critical section. See the following "
+"functions."
+msgstr ""
+
+msgid ""
+"grn_plugin_mutex_open() returns a pointer to a new object of "
+"grn_plugin_mutex. Memory for the new object is obtained with "
+"GRN_PLUGIN_MALLOC(). grn_plugin_mutex_open() returns NULL if sufficient "
+"memory is not available."
+msgstr ""
+
+msgid ""
+"grn_plugin_mutex_close() finalizes an object of grn_plugin_mutex and then "
+"frees memory allocated for that object."
+msgstr ""
+
+msgid ""
+"grn_plugin_mutex_lock() locks a mutex object. If the object is already "
+"locked, the calling thread waits until the object will be unlocked."
+msgstr ""
+
+msgid ""
+"grn_plugin_mutex_unlock() unlocks a mutex object. grn_plugin_mutex_unlock() "
+"should not be called for an unlocked object."
+msgstr ""
+
+msgid ""
+"grn_plugin_proc_alloc() allocates a `grn_obj` object. You can use it in "
+"function that is registered as GRN_PROC_FUNCTION."
+msgstr ""
+
+msgid ""
+"It gets a variable value from `grn_user_data` by specifying the variable "
+"name."
+msgstr ""
+
+msgid "The variable name."
+msgstr ""
+
+msgid ""
+"The number of bytes of name. If `name_size` is negative, `name` must be NUL-"
+"terminated. `name_size` is computed by `strlen(name)` for the case."
+msgstr ""
+
+msgid "A variable value on success, NULL otherwise."
+msgstr ""
+
+msgid ""
+"It gets a variable value from `grn_user_data` by specifying the offset "
+"position of the variable."
+msgstr ""
+
+msgid "The offset position of the variable."
+msgstr ""
+
+msgid ""
+"grn_plugin_win32_base_dir() returns the groonga install directory. The "
+"install directory is computed from the directory that has `groonga.dll`. You "
+"can use the directory to generate install directory aware path. It only "
+"works on Windows. It returns `NULL` on other platforms."
+msgstr ""
+
+msgid ""
+"grn_plugin_charlen() returns the length (#bytes) of the first character in "
+"the string specified by `str_ptr` and `str_length`. If the starting bytes "
+"are invalid as a character, grn_plugin_charlen() returns 0. See grn_encoding "
+"in \"groonga.h\" for more details of `encoding`."
+msgstr ""
+
+msgid ""
+"grn_plugin_isspace() returns the length (#bytes) of the first character in "
+"the string specified by `str_ptr` and `str_length` if it is a space "
+"character. Otherwise, grn_plugin_isspace() returns 0."
+msgstr ""
+
+msgid "It initializes a `grn_expr_var`."
+msgstr ""
+
+msgid "The pointer of `grn_expr_var` object to be initialized."
+msgstr ""
+
+msgid "The name of `grn_expr_var` object to be initialized."
+msgstr ""
+
+msgid "It creates a command."
+msgstr ""
+
+msgid "The `proc` name of the command to be created."
+msgstr ""
+
+msgid "The function name to be called by the created command."
+msgstr ""
+
+msgid "The number of the variables of the command to create."
+msgstr ""
+
+msgid "The pointer of initialized `grn_expr_var` object."
+msgstr ""
+
+msgid ""
+"The created command object if it creates a command successfully, `NULL` "
+"otherwise. See `ctx` for error details."
+msgstr ""
+
 msgid "Cast"
 msgstr "Cast"
 
@@ -2474,9 +2614,6 @@ msgstr ""
 "Use :doc:`/reference/commands/column_create` command to create a normal "
 "vector column. The point is ``COLUMN_VECTOR`` flag:"
 
-msgid "Execution example::"
-msgstr "Execution example::"
-
 msgid "You can set zero or more tags to a bookmark."
 msgstr "You can set zero or more tags to a bookmark."
 
@@ -2604,9 +2741,6 @@ msgstr ""
 "You need to use string representation for element value on load. For "
 "example, you can't use ``29`` for number 29. You need to use ``\"29\"`` for "
 "number 29."
-
-msgid "You can't use reference type."
-msgstr "You can't use reference type."
 
 msgid ""
 "Use :doc:`/reference/commands/column_create` command to create a weight "
@@ -3458,15 +3592,12 @@ msgstr ""
 msgid ":doc:`select`"
 msgstr ":doc:`select`"
 
-msgid "check"
-msgstr "check"
+msgid "``check``"
+msgstr ""
 
 msgid "check - オブジェクトの状態表示"
 msgstr "check - オブジェクトの状態表示"
 
-msgid "書式"
-msgstr "書式"
-
 msgid ""
 "Groonga組込コマンドの一つであるcheckについて説明します。組込コマンドは、"
 "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
@@ -3487,20 +3618,14 @@ msgstr ""
 "ています。デバッグ用のため、返値のフォーマットが安定しているということは保証"
 "されません。（フォーマットが変更される可能性が高い）"
 
-msgid "引数"
-msgstr "引数"
+msgid "テーブルTermsのインデックスカラムnameの状態を表示します。::"
+msgstr "テーブルTermsのインデックスカラムnameの状態を表示します。::"
 
 msgid "``obj``"
 msgstr "``obj``"
 
 msgid "状態を表示するオブジェクトの名前を指定します。"
 msgstr "状態を表示するオブジェクトの名前を指定します。"
-
-msgid "返値"
-msgstr "返値"
-
-msgid "json形式"
-msgstr "json形式"
 
 msgid "チェックするオブジェクトにより返される値が変わります。"
 msgstr "チェックするオブジェクトにより返される値が変わります。"
@@ -3637,33 +3762,28 @@ msgstr "``nterms with chunk``"
 msgid "バッファ内にある語のうち、チャンクを使っている語の数です。"
 msgstr "バッファ内にある語のうち、チャンクを使っている語の数です。"
 
-msgid "例"
-msgstr "例"
-
-msgid "テーブルTermsのインデックスカラムnameの状態を表示します。::"
-msgstr "テーブルTermsのインデックスカラムnameの状態を表示します。::"
-
-msgid "clearlock"
-msgstr "clearlock"
+msgid "``clearlock``"
+msgstr "``clearlock``"
 
 msgid "clearlock - オブジェクトにセットされたロックを解除する"
 msgstr "clearlock - オブジェクトにセットされたロックを解除する"
 
 msgid ""
 "Groonga組込コマンドの一つであるclearlockについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"groonga実行ファイルの引数、標準>入力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 msgstr ""
-"Groonga組込コマンドの一つであるclearlockについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
 
 msgid ""
 "clearlockは、対象となるオブジェクト(データベース,テーブル,インデックス等)を指"
-"定し、オブジェクトにかけられたロックを再帰的に解除します。"
+"定し、オブジェクトにかけられた>ロックを再帰的に解除します。"
 msgstr ""
-"clearlockは、対象となるオブジェクト(データベース,テーブル,インデックス等)を指"
-"定し、オブジェクトにかけられたロックを再帰的に解除します。"
+
+msgid "開いているデータベースのロックをすべて解除する::"
+msgstr "開いているデータベースのロックをすべて解除する::"
+
+msgid "テーブル名 Entry のカラム body のロックを解除する::"
+msgstr "テーブル名 Entry のカラム body のロックを解除する::"
 
 msgid "``objname``"
 msgstr "``objname``"
@@ -3680,15 +3800,6 @@ msgstr "``成功かどうかのフラグ``"
 
 msgid "エラーが生じなかった場合にはtrue、エラーが生じた場合にはfalseを返す。"
 msgstr "エラーが生じなかった場合にはtrue、エラーが生じた場合にはfalseを返す。"
-
-msgid "開いているデータベースのロックをすべて解除する::"
-msgstr "開いているデータベースのロックをすべて解除する::"
-
-msgid "テーブル名 Entry のカラム body のロックを解除する::"
-msgstr "テーブル名 Entry のカラム body のロックを解除する::"
-
-msgid "関連項目"
-msgstr "関連項目"
 
 msgid ":doc:`load`"
 msgstr ":doc:`load`"
@@ -4103,20 +4214,17 @@ msgstr ":doc:`/reference/commands/column_create`"
 msgid ":doc:`/reference/column`"
 msgstr ":doc:`/reference/column`"
 
-msgid "column_remove"
-msgstr "column_remove"
+msgid "``column_remove``"
+msgstr "``column_remove``"
 
 msgid "column_remove - テーブルに定義されているカラムの削除"
 msgstr "column_remove - テーブルに定義されているカラムの削除"
 
 msgid ""
 "Groonga組込コマンドの一つであるcolumn_removeについて説明します。組込コマンド"
-"は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバに"
+"は、groonga実行ファイルの引数、>標準入力、またはソケット経由でgroongaサーバに"
 "リクエストを送信することによって実行します。"
 msgstr ""
-"Groonga組込コマンドの一つであるcolumn_removeについて説明します。組込コマンド"
-"は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバに"
-"リクエストを送信することによって実行します。"
 
 msgid ""
 "column_removeはテーブルに定義されているカラムを削除します。 また、付随するイ"
@@ -4124,12 +4232,6 @@ msgid ""
 msgstr ""
 "column_removeはテーブルに定義されているカラムを削除します。 また、付随するイ"
 "ンデックスも削除されます。[#]_"
-
-msgid "削除対象のカラムが定義されているテーブルの名前を指定します。"
-msgstr "削除対象のカラムが定義されているテーブルの名前を指定します。"
-
-msgid "削除対象のカラム名を指定します。"
-msgstr "削除対象のカラム名を指定します。"
 
 msgid "脚注"
 msgstr "脚注"
@@ -4138,6 +4240,12 @@ msgid ""
 "マルチセクションインデックスの一部である場合も、インデックスが削除されます。"
 msgstr ""
 "マルチセクションインデックスの一部である場合も、インデックスが削除されます。"
+
+msgid "削除対象のカラムが定義されているテーブルの名前を指定します。"
+msgstr "削除対象のカラムが定義されているテーブルの名前を指定します。"
+
+msgid "削除対象のカラム名を指定します。"
+msgstr "削除対象のカラム名を指定します。"
 
 msgid "``column_rename``"
 msgstr "``column_rename``"
@@ -4213,25 +4321,29 @@ msgstr "``SUCCEEDED_OR_NOT``"
 msgid "It is ``true`` on success, ``false`` otherwise."
 msgstr "It is ``true`` on success, ``false`` otherwise."
 
-msgid "define_selector"
-msgstr "define_selector"
+msgid "``define_selector``"
+msgstr "``define_selector``"
 
 msgid "define_selector - 検索コマンドを定義"
 msgstr "define_selector - 検索コマンドを定義"
 
 msgid ""
 "Groonga組込コマンドの一つであるdefine_selectorについて説明します。組込コマン"
-"ドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバ"
+"ドは、groonga実行ファイルの引数>、標準入力、またはソケット経由でgroongaサーバ"
 "にリクエストを送信することによって実行します。"
 msgstr ""
-"Groonga組込コマンドの一つであるdefine_selectorについて説明します。組込コマン"
-"ドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバ"
-"にリクエストを送信することによって実行します。"
 
 msgid ""
 "define_selectorは、検索条件をカスタマイズした新たな検索コマンドを定義します。"
 msgstr ""
 "define_selectorは、検索条件をカスタマイズした新たな検索コマンドを定義します。"
+
+msgid ""
+"テーブルEntryの全レコード・全カラムの値を出力するselectorコマンドを定義しま"
+"す。::"
+msgstr ""
+"テーブルEntryの全レコード・全カラムの値を出力するselectorコマンドを定義しま"
+"す。::"
 
 msgid "定義するselectorコマンドの名前を指定します。"
 msgstr "定義するselectorコマンドの名前を指定します。"
@@ -4330,49 +4442,37 @@ msgid ""
 msgstr ""
 "追加するselectorコマンドのdrilldown_limit引数のデフォルト値を指定します。"
 
-msgid ""
-"テーブルEntryの全レコード・全カラムの値を出力するselectorコマンドを定義しま"
-"す。::"
-msgstr ""
-"テーブルEntryの全レコード・全カラムの値を出力するselectorコマンドを定義しま"
-"す。::"
-
 msgid ":doc:`/reference/grn_expr`"
 msgstr ":doc:`/reference/grn_expr`"
 
-msgid "defrag"
-msgstr "defrag"
+msgid "``defrag``"
+msgstr ""
 
 msgid "``defrag`` command resolves fragmentation of specified objects."
 msgstr "``defrag`` command resolves fragmentation of specified objects."
 
 msgid ""
 "Groonga組込コマンドの一つであるdefragについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"groonga実行ファイルの引数、標準入力 、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 msgstr ""
-"Groonga組込コマンドの一つであるdefragについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
 
 msgid ""
 "defragは、対象となるオブジェクト(データベースか可変長サイズカラム)を指定し、"
-"オブジェクトのフラグメンテーションを解消します。"
+"オブジェクトのフラグメンテーショ ンを解消します。"
 msgstr ""
-"defragは、対象となるオブジェクト(データベースか可変長サイズカラム)を指定し、"
-"オブジェクトのフラグメンテーションを解消します。"
-
-msgid "``フラグメンテーション解消を実行したセグメントの数``"
-msgstr "``フラグメンテーション解消を実行したセグメントの数``"
-
-msgid "フラグメンテーション解消を実行したセグメントの数を返す。"
-msgstr "フラグメンテーション解消を実行したセグメントの数を返す。"
 
 msgid "開いているデータベースのフラグメンテーションを解消する::"
 msgstr "開いているデータベースのフラグメンテーションを解消する::"
 
 msgid "テーブル名 Entry のカラム body のフラグメンテーションを解消する::"
 msgstr "テーブル名 Entry のカラム body のフラグメンテーションを解消する::"
+
+msgid "``フラグメンテーション解消を実行したセグメントの数``"
+msgstr "``フラグメンテーション解消を実行したセグメントの数``"
+
+msgid "フラグメンテーション解消を実行したセグメントの数を返す。"
+msgstr "フラグメンテーション解消を実行したセグメントの数を返す。"
 
 msgid "``delete``"
 msgstr "``delete``"
@@ -4455,36 +4555,34 @@ msgid ""
 msgstr ""
 "If command succeeded, it returns true, otherwise it returns false on error."
 
-msgid "dump"
-msgstr "dump"
+msgid "``dump``"
+msgstr ""
 
 msgid "dump - データベースのスキーマとデータを出力する"
 msgstr "dump - データベースのスキーマとデータを出力する"
 
 msgid ""
 "Groonga組込コマンドの一つであるdumpについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"groonga実行ファイルの引数、標準入力、 またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 msgstr ""
-"Groonga組込コマンドの一つであるdumpについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
 
 msgid ""
 "dumpはデータベースのスキーマとデータを後から読み込めるフォーマットで出力しま"
-"す。dumpの結果は大きくなるため、主にコマンドラインから使うことを想定していま"
+"す。dumpの結果は大きくなるため、 主にコマンドラインから使うことを想定していま"
 "す。データベースのバックアップが主な利用方法です。"
 msgstr ""
-"dumpはデータベースのスキーマとデータを後から読み込めるフォーマットで出力しま"
-"す。dumpの結果は大きくなるため、主にコマンドラインから使うことを想定していま"
-"す。データベースのバックアップが主な利用方法です。"
 
 msgid ""
 "dumpが出力するフォーマットは直接Groongaが解釈できるフォーマットです。そのた"
-"め、以下のようにしてデータベースをコピーすることができます。::"
+"め、以下のようにしてデータベース>をコピーすることができます。::"
 msgstr ""
-"dumpが出力するフォーマットは直接Groongaが解釈できるフォーマットです。そのた"
-"め、以下のようにしてデータベースをコピーすることができます。::"
+
+msgid "データベース内のすべてのデータを出力::"
+msgstr "データベース内のすべてのデータを出力::"
+
+msgid "データベース内のスキーマと特定のテーブルのデータのみ出力::"
+msgstr "データベース内のスキーマと特定のテーブルのデータのみ出力::"
 
 msgid "``tables``"
 msgstr "``tables``"
@@ -4502,12 +4600,6 @@ msgid ""
 msgstr ""
 "データベースのスキーマとデータをGroongaの組み込みコマンド呼び出し形式で出力し"
 "ます。output_type指定は無視されます。"
-
-msgid "データベース内のすべてのデータを出力::"
-msgstr "データベース内のすべてのデータを出力::"
-
-msgid "データベース内のスキーマと特定のテーブルのデータのみ出力::"
-msgstr "データベース内のスキーマと特定のテーブルのデータのみ出力::"
 
 msgid "``load``"
 msgstr "``load``"
@@ -4531,25 +4623,25 @@ msgstr ""
 "format. If you specify \"json\" as ``input_type``, you can choose a format "
 "from below:"
 
+msgid ""
+"[[COLUMN_NAME1, COLUMN_NAME2,..], [VALUE1, VALUE2,..], [VALUE1, "
+"VALUE2,..],..]"
+msgstr ""
+"[[COLUMN_NAME1, COLUMN_NAME2,..], [VALUE1, VALUE2,..], [VALUE1, "
+"VALUE2,..],..]"
+
 msgid "``Format 1:``"
 msgstr "``Format 1:``"
 
 msgid ""
-"[[COLUMN_NAME1, COLUMN_NAME2,..], [VALUE1, VALUE2,..], [VALUE1, "
-"VALUE2,..],..]"
+"[{COLUMN_NAME1: VALUE1, COLUMN_NAME2: VALUE2}, {COLUMN_NAME1: VALUE1, "
+"COLUMN_NAME2: VALUE2},..]"
 msgstr ""
-"[[COLUMN_NAME1, COLUMN_NAME2,..], [VALUE1, VALUE2,..], [VALUE1, "
-"VALUE2,..],..]"
+"[{COLUMN_NAME1: VALUE1, COLUMN_NAME2: VALUE2}, {COLUMN_NAME1: VALUE1, "
+"COLUMN_NAME2: VALUE2},..]"
 
 msgid "``Format 2:``"
 msgstr "``Format 2:``"
-
-msgid ""
-"[{COLUMN_NAME1: VALUE1, COLUMN_NAME2: VALUE2}, {COLUMN_NAME1: VALUE1, "
-"COLUMN_NAME2: VALUE2},..]"
-msgstr ""
-"[{COLUMN_NAME1: VALUE1, COLUMN_NAME2: VALUE2}, {COLUMN_NAME1: VALUE1, "
-"COLUMN_NAME2: VALUE2},..]"
 
 msgid ""
 "``[COLUMN_NAME1, COLUMN_NAME2,..]`` format in ``Format 1`` is effective only "
@@ -4624,20 +4716,17 @@ msgstr "JSON format"
 msgid "``load`` returns the number of added records such as ::"
 msgstr "``load`` returns the number of added records such as ::"
 
-msgid "log_level"
-msgstr "log_level"
+msgid "``log_level``"
+msgstr "``log_level``"
 
 msgid "log_level - ログ出力レベルの設定"
 msgstr "log_level - ログ出力レベルの設定"
 
 msgid ""
 "Groonga組込コマンドの一つであるlog_levelについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"groonga実行ファイルの引数、標準>入力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 msgstr ""
-"Groonga組込コマンドの一つであるlog_levelについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
 
 msgid "log_levelは、ログ出力レベルを設定します。"
 msgstr "log_levelは、ログ出力レベルを設定します。"
@@ -4654,20 +4743,17 @@ msgstr "EMERG ALERT CRIT error warning notice info debug"
 msgid ":doc:`log_put` :doc:`log_reopen`"
 msgstr ":doc:`log_put` :doc:`log_reopen`"
 
-msgid "log_put"
-msgstr "log_put"
+msgid "``log_put``"
+msgstr "``log_put``"
 
 msgid "log_put - ログ出力"
 msgstr "log_put - ログ出力"
 
 msgid ""
 "groonga組込コマンドの一つであるlog_putについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"groonga実行ファイルの引数、標準入>力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 msgstr ""
-"groonga組込コマンドの一つであるlog_putについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
 
 msgid "log_putは、ログにmessageを出力します。"
 msgstr "log_putは、ログにmessageを出力します。"
@@ -4681,29 +4767,23 @@ msgstr "出力する文字列を指定します。"
 msgid ":doc:`log_level` :doc:`log_reopen`"
 msgstr ":doc:`log_level` :doc:`log_reopen`"
 
-msgid "log_reopen"
-msgstr "log_reopen"
+msgid "``log_reopen``"
+msgstr ""
 
 msgid "log_reopen - ログファイルの再読み込み"
 msgstr "log_reopen - ログファイルの再読み込み"
 
 msgid ""
 "Groonga組込コマンドの一つであるlog_reopenについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"groonga実行ファイルの引数、標準 入力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 msgstr ""
-"Groonga組込コマンドの一つであるlog_reopenについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
 
 msgid "log_reopenは、ログファイルを再読み込みします。"
 msgstr "log_reopenは、ログファイルを再読み込みします。"
 
 msgid "現在、デフォルトのログ関数を用いている場合のみに対応しています。"
 msgstr "現在、デフォルトのログ関数を用いている場合のみに対応しています。"
-
-msgid "ありません。"
-msgstr "ありません。"
 
 msgid "log_reopenを用いたログのローテーション"
 msgstr "log_reopenを用いたログのローテーション"
@@ -4724,6 +4804,9 @@ msgid ""
 msgstr ""
 "既存のログファイル名と同じファイル名で、新たなログファイルが作成される。 今後"
 "のログは新たなログファイルに書き込まれる。"
+
+msgid "ありません。"
+msgstr "ありません。"
 
 msgid ":doc:`log_level` :doc:`log_put`"
 msgstr ":doc:`log_level` :doc:`log_put`"
@@ -4881,30 +4964,60 @@ msgstr ""
 msgid ":doc:`/reference/normalizers`"
 msgstr ":doc:`/reference/normalizers`"
 
-msgid "quit"
-msgstr "quit"
+msgid "``normalizer_list``"
+msgstr ""
+
+msgid "``normalizer_list`` command lists normalizers in a database."
+msgstr ""
+
+msgid "``normalizer_list`` command takes no parameter. ::"
+msgstr ""
+
+msgid "Here is a simple example."
+msgstr "Here is a simple example."
+
+msgid "It returns normalizers in a database."
+msgstr ""
+
+msgid ""
+"``normalizer_list`` command returns normalizers. Each normalizers has an "
+"attribute that contains the name. The attribute will be increased in the "
+"feature::"
+msgstr ""
+
+msgid "``normalizers``"
+msgstr ""
+
+msgid ""
+"``normalizers`` is an array of normalizer. Normalizer is an object that has "
+"the following attributes."
+msgstr ""
+
+msgid "Normalizer name."
+msgstr ""
+
+msgid ":doc:`/reference/commands/normalize`"
+msgstr ""
+
+msgid "``quit``"
+msgstr "``quit``"
 
 msgid "quit - セッション終了"
 msgstr "quit - セッション終了"
 
 msgid ""
 "Groonga組込コマンドの一つであるquitについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"groonga実行ファイルの引数、標準入力、 またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 msgstr ""
-"Groonga組込コマンドの一つであるquitについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
 
 msgid ""
 "quitは、groongaプロセスとのセッションを終了します。クライアントプロセスならば"
-"groongaプロセスとの接続を切ります。"
+"groongaプロセスとの接続を切りま す。"
 msgstr ""
-"quitは、groongaプロセスとのセッションを終了します。クライアントプロセスならば"
-"groongaプロセスとの接続を切ります。"
 
-msgid "register"
-msgstr "register"
+msgid "``register``"
+msgstr ""
 
 msgid ""
 "``register`` command registers a plugin. You need to register a plugin "
@@ -6268,6 +6381,9 @@ msgstr ""
 "\"KEYWORD\"``. It is useful to tune search score. See :ref:`weight-vector-"
 "column` for details."
 
+msgid "返値"
+msgstr "返値"
+
 msgid "以下のようなjson形式で値が返却されます。"
 msgstr "以下のようなjson形式で値が返却されます。"
 
@@ -6377,26 +6493,23 @@ msgstr ""
 "drilldown_output_columns, drilldown_offset, drilldown_limitによって指定された"
 "条件に従って各レコードの値が出力されます。"
 
-msgid "shutdown"
-msgstr "shutdown"
+msgid "``shutdown``"
+msgstr "``shutdown``"
 
 msgid "shutdown - サーバプロセスの停止"
 msgstr "shutdown - サーバプロセスの停止"
 
 msgid ""
 "Groonga組込コマンドの一つであるshutdownについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"groonga実行ファイルの引数、標準入 力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 msgstr ""
-"Groonga組込コマンドの一つであるshutdownについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
 
 msgid "shutdownは、接続しているgroongaサーバプロセスを停止します。"
 msgstr "shutdownは、接続しているgroongaサーバプロセスを停止します。"
 
-msgid "status"
-msgstr "status"
+msgid "``status``"
+msgstr "``status``"
 
 msgid "status - groongaプロセスの状態表示"
 msgstr "status - groongaプロセスの状態表示"
@@ -6443,8 +6556,8 @@ msgstr "``uptime``"
 msgid "groongaプロセスが起動してから経過した秒数を返します。"
 msgstr "groongaプロセスが起動してから経過した秒数を返します。"
 
-msgid "suggest"
-msgstr "suggest"
+msgid "``suggest``"
+msgstr "``suggest``"
 
 msgid ""
 "The suggest feature specification isn't stable. The specification may be "
@@ -6452,20 +6565,11 @@ msgid ""
 msgstr ""
 "The suggest feature specification isn't stable. The specification may be "
 "changed."
-
-msgid "NAME"
-msgstr "NAME"
 
 msgid "suggest - returns completion, correction and/or suggestion for a query."
 msgstr ""
 "suggest - returns completion, correction and/or suggestion for a query."
 
-msgid "SYNOPSIS"
-msgstr "SYNOPSIS"
-
-msgid "DESCRIPTION"
-msgstr "DESCRIPTION"
-
 msgid ""
 "The suggest command returns completion, correction and/or suggestion for a "
 "specified query."
@@ -6478,8 +6582,26 @@ msgid ""
 msgstr ""
 "See :doc:`/suggest/introduction` about completion, correction and suggestion."
 
-msgid "OPTIONS"
-msgstr "OPTIONS"
+msgid "Here are learned data for completion."
+msgstr "Here are learned data for completion."
+
+msgid "Here are learned data for correction."
+msgstr "Here are learned data for correction."
+
+msgid "Here are learned data for suggestion."
+msgstr "Here are learned data for suggestion."
+
+msgid "Here is a completion example."
+msgstr "Here is a completion example."
+
+msgid "Here is a correction example."
+msgstr "Here is a correction example."
+
+msgid "Here is a suggestion example."
+msgstr "Here is a suggestion example."
+
+msgid "Here is a mixed example."
+msgstr "Here is a mixed example."
 
 msgid "It specifies what types are returned by the suggest command."
 msgstr "It specifies what types are returned by the suggest command."
@@ -6487,20 +6609,17 @@ msgstr "It specifies what types are returned by the suggest command."
 msgid "Here are available types:"
 msgstr "Here are available types:"
 
-msgid "``complete``"
-msgstr "``complete``"
-
 msgid "The suggest command does completion."
 msgstr "The suggest command does completion."
 
-msgid "``correct``"
-msgstr "``correct``"
+msgid "``complete``"
+msgstr "``complete``"
 
 msgid "The suggest command does correction."
 msgstr "The suggest command does correction."
 
-msgid "``suggest``"
-msgstr "``suggest``"
+msgid "``correct``"
+msgstr "``correct``"
 
 msgid "The suggest command does suggestion."
 msgstr "The suggest command does suggestion."
@@ -6528,13 +6647,13 @@ msgstr ""
 "example, ``item_query`` is a table name if you created dataset by the "
 "following command::"
 
-msgid "``column``"
-msgstr "``column``"
-
 msgid ""
 "It specifies a column name that has furigana in Katakana in ``table`` table."
 msgstr ""
 "It specifies a column name that has furigana in Katakana in ``table`` table."
+
+msgid "``column``"
+msgstr "``column``"
 
 msgid "It specifies query for completion, correction and/or suggestion."
 msgstr "It specifies query for completion, correction and/or suggestion."
@@ -6566,9 +6685,6 @@ msgstr "It specifies number of returned records."
 msgid "``10``"
 msgstr "``10``"
 
-msgid "``frequency_threshold``"
-msgstr "``frequency_threshold``"
-
 msgid ""
 "It specifies threshold for item frequency. Returned records must have "
 "``_score`` that is greater than or equal to ``frequency_threshold``."
@@ -6578,6 +6694,9 @@ msgstr ""
 
 msgid "``100``"
 msgstr "``100``"
+
+msgid "``frequency_threshold``"
+msgstr "``frequency_threshold``"
 
 msgid "``conditional_probability_threshold``"
 msgstr "``conditional_probability_threshold``"
@@ -6596,31 +6715,28 @@ msgstr ""
 msgid "``0.2``"
 msgstr "``0.2``"
 
-msgid "``prefix_search``"
-msgstr "``prefix_search``"
-
 msgid ""
 "It specifies whether optional prefix search is used or not in completion."
 msgstr ""
 "It specifies whether optional prefix search is used or not in completion."
 
-msgid "``yes``"
-msgstr "``yes``"
-
 msgid "Prefix search is always used."
 msgstr "Prefix search is always used."
+
+msgid "``yes``"
+msgstr "``yes``"
 
 msgid "Prefix search is never used."
 msgstr "Prefix search is never used."
 
-msgid "``auto``"
-msgstr "``auto``"
-
 msgid "Prefix search is used only when other search can't find any records."
 msgstr "Prefix search is used only when other search can't find any records."
 
-msgid "``similar_search``"
-msgstr "``similar_search``"
+msgid "``auto``"
+msgstr "``auto``"
+
+msgid "``prefix_search``"
+msgstr "``prefix_search``"
 
 msgid ""
 "It specifies whether optional similar search is used or not in correction."
@@ -6636,8 +6752,8 @@ msgstr "Similar search is never used."
 msgid "Similar search is used only when other search can't find any records."
 msgstr "Similar search is used only when other search can't find any records."
 
-msgid "RETURN VALUE"
-msgstr "RETURN VALUE"
+msgid "``similar_search``"
+msgstr "``similar_search``"
 
 msgid "Here is a returned JSON format::"
 msgstr "Here is a returned JSON format::"
@@ -6662,33 +6778,6 @@ msgstr ""
 "A score of corresponding ``candidate``. It means that higher score candidate "
 "is more likely candidate for completion, correction or suggestion. Returned "
 "candidates are sorted by ``score of candidate`` descending by default."
-
-msgid "EXAMPLE"
-msgstr "EXAMPLE"
-
-msgid "Here are learned data for completion."
-msgstr "Here are learned data for completion."
-
-msgid "Here are learned data for correction."
-msgstr "Here are learned data for correction."
-
-msgid "Here are learned data for suggestion."
-msgstr "Here are learned data for suggestion."
-
-msgid "Here is a completion example."
-msgstr "Here is a completion example."
-
-msgid "Here is a correction example."
-msgstr "Here is a correction example."
-
-msgid "Here is a suggestion example."
-msgstr "Here is a suggestion example."
-
-msgid "Here is a mixed example."
-msgstr "Here is a mixed example."
-
-msgid "SEE ALSO"
-msgstr "SEE ALSO"
 
 msgid ":doc:`/suggest`"
 msgstr ":doc:`/suggest`"
@@ -6962,41 +7051,41 @@ msgstr "It specifies a table type and table customize options."
 msgid "Here are available flags:"
 msgstr "Here are available flags:"
 
-msgid "flags"
-msgstr "flags"
-
 msgid "description"
 msgstr "description"
 
-msgid "``TABLE_NO_KEY``"
-msgstr "``TABLE_NO_KEY``"
+msgid "flags"
+msgstr "flags"
 
 msgid "Array table."
 msgstr "Array table."
 
-msgid "``TABLE_HASH_KEY``"
-msgstr "``TABLE_HASH_KEY``"
+msgid "``TABLE_NO_KEY``"
+msgstr "``TABLE_NO_KEY``"
 
 msgid "Hash table."
 msgstr "Hash table."
 
-msgid "``TABLE_PAT_KEY``"
-msgstr "``TABLE_PAT_KEY``"
+msgid "``TABLE_HASH_KEY``"
+msgstr "``TABLE_HASH_KEY``"
 
 msgid "Patricia trie."
 msgstr "Patricia trie."
 
-msgid "``TABLE_DAT_KEY``"
-msgstr "``TABLE_DAT_KEY``"
+msgid "``TABLE_PAT_KEY``"
+msgstr "``TABLE_PAT_KEY``"
 
 msgid "Double Array trie."
 msgstr "Double Array trie."
 
-msgid "``KEY_WITH_SIS``"
-msgstr "``KEY_WITH_SIS``"
+msgid "``TABLE_DAT_KEY``"
+msgstr "``TABLE_DAT_KEY``"
 
 msgid "Enable Semi Infinite String. Require ``TABLE_PAT_KEY``."
 msgstr "Enable Semi Infinite String. Require ``TABLE_PAT_KEY``."
+
+msgid "``KEY_WITH_SIS``"
+msgstr "``KEY_WITH_SIS``"
 
 msgid ""
 "Since Groonga 2.1.0 ``KEY_NORMALIZE`` flag is deprecated. Use ``normalizer`` "
@@ -7118,20 +7207,17 @@ msgstr ":doc:`/reference/tokenizers`"
 msgid ":doc:`/reference/command/output_format`"
 msgstr ":doc:`/reference/command/output_format`"
 
-msgid "table_list"
-msgstr "table_list"
+msgid "``table_list``"
+msgstr "``table_list``"
 
 msgid "table_list - DBに定義されているテーブルをリスト表示"
 msgstr "table_list - DBに定義されているテーブルをリスト表示"
 
 msgid ""
 "Groonga組込コマンドの一つであるtable_listについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"groonga実行ファイルの引数、標準 入力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 msgstr ""
-"Groonga組込コマンドの一つであるtable_listについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
 
 msgid "table_listは、DBに定義されているテーブルのリストを表示します。"
 msgstr "table_listは、DBに定義されているテーブルのリストを表示します。"
@@ -7189,8 +7275,8 @@ msgstr ""
 "``テーブル情報名n`` で示された情報の配列を出力します。 情報の順序は ``テーブ"
 "ル情報名n`` の順序と同じです。"
 
-msgid "table_remove"
-msgstr "table_remove"
+msgid "``table_remove``"
+msgstr "``table_remove``"
 
 msgid "table_remove - テーブルの削除"
 msgstr "table_remove - テーブルの削除"
@@ -7227,9 +7313,6 @@ msgid ""
 msgstr ""
 "``tokenize`` command has required parameters and optional parameters. "
 "``tokenizer`` and ``string`` are required parameters. Others are optional::"
-
-msgid "Here is a simple example."
-msgstr "Here is a simple example."
 
 msgid ""
 "It has only required parameters. ``tokenizer`` is ``TokenBigram`` and "
@@ -7366,16 +7449,22 @@ msgstr ""
 "the target string is treated as already tokenized string. Tokenizer just "
 "tokenizes by tokenized delimiter."
 
-msgid ""
-"It specifies a tokenize mode. If the mode is specified ``ADD``, the text "
-"is tokenized by the rule that adding a document. If the mode is specified "
-"``GET``, the text is tokenized by the rule that searching a document. If "
-"the mode is omitted, the text is tokenized by the ``ADD`` mode."
+msgid "``mode``"
 msgstr ""
-"It specifies a tokenize mode. If the mode is specified ``ADD``, the text "
-"is tokenized by the rule that adding a document. If the mode is specified "
-"``GET``, the text is tokenized by the rule that searching a document. If "
-"the mode is omitted, the text is tokenized by the ``ADD`` mode."
+
+msgid ""
+"It specifies a tokenize mode. If the mode is specified ``ADD``, the text is "
+"tokenized by the rule that adding a document. If the mode is specified "
+"``GET``, the text is tokenized by the rule that searching a document. If the "
+"mode is omitted, the text is tokenized by the ``ADD`` mode."
+msgstr ""
+"It specifies a tokenize mode. If the mode is specified ``ADD``, the text is "
+"tokenized by the rule that adding a document. If the mode is specified "
+"``GET``, the text is tokenized by the rule that searching a document. If the "
+"mode is omitted, the text is tokenized by the ``ADD`` mode."
+
+msgid "The default mode is ``ADD``."
+msgstr ""
 
 msgid "Here is an example to the ``ADD`` mode."
 msgstr "Here is an example to the ``ADD`` mode."
@@ -7420,6 +7509,38 @@ msgstr "``position``"
 msgid "The N-th token."
 msgstr "The N-th token."
 
+msgid "``tokenizer_list``"
+msgstr ""
+
+msgid "``tokenizer_list`` command lists tokenizers in a database."
+msgstr ""
+
+msgid "``tokenizer_list`` command takes no parameter. ::"
+msgstr ""
+
+msgid "It returns tokenizers in a database."
+msgstr ""
+
+msgid ""
+"``tokenizer_list`` command returns tokenizers. Each tokenizers has an "
+"attribute that contains the name. The attribute will be increased in the "
+"feature::"
+msgstr ""
+
+msgid "``tokenizers``"
+msgstr ""
+
+msgid ""
+"``tokenizers`` is an array of tokenizer. Tokenizer is an object that has the "
+"following attributes."
+msgstr ""
+
+msgid "Tokenizer name."
+msgstr ""
+
+msgid ":doc:`/reference/commands/tokenize`"
+msgstr ""
+
 msgid "``truncate``"
 msgstr "``truncate``"
 
@@ -7458,6 +7579,9 @@ msgstr "grnslap"
 
 msgid "grnslap - groongaプロセスの通信層のパフォーマンスをチェックするツール"
 msgstr "grnslap - groongaプロセスの通信層のパフォーマンスをチェックするツール"
+
+msgid "書式"
+msgstr "書式"
 
 msgid ""
 "grnslapは、groongaプロセスに対してリクエストを多重に行い、パフォーマンスを"
@@ -7514,6 +7638,9 @@ msgstr ""
 msgid "リクエストの多重度を指定します。初期値は10です。"
 msgstr "リクエストの多重度を指定します。初期値は10です。"
 
+msgid "引数"
+msgstr "引数"
+
 msgid ""
 "接続先のホスト名とポート番号をを指定します(デフォルト値は'localhost:10041')。"
 "ポート番号を指定しない場合には、10041が指定されたものとします。"
@@ -7526,307 +7653,6 @@ msgstr "サンプル"
 
 msgid "http://localhost:10041/d/status に、多重度100でリクエストを行う。"
 msgstr "http://localhost:10041/d/status に、多重度100でリクエストを行う。"
-
-msgid "groonga command"
-msgstr "groonga command"
-
-msgid "groonga - 列指向データベース機能を持つ全文検索エンジンソフトウェア"
-msgstr "groonga - 列指向データベース機能を持つ全文検索エンジンソフトウェア"
-
-msgid ""
-"Groongaは列指向のデータベース機能を持つ高速でスケーラブルな全文検索エンジンで"
-"す。 Groongaのデータベースは、groongaコマンドかCライブラリインタフェースを通"
-"して操作することができます。このマニュアルページでは、groongaコマンドの使い方"
-"について説明します。"
-msgstr ""
-"Groongaは列指向のデータベース機能を持つ高速でスケーラブルな全文検索エンジンで"
-"す。 Groongaのデータベースは、groongaコマンドかCライブラリインタフェースを通"
-"して操作することができます。このマニュアルページでは、groongaコマンドの使い方"
-"について説明します。"
-
-msgid "新たなデータベースを作成します。"
-msgstr "新たなデータベースを作成します。"
-
-msgid "クライアントモードで実行します。"
-msgstr "クライアントモードで実行します。"
-
-msgid "サーバモードで実行します。"
-msgstr "サーバモードで実行します。"
-
-msgid "デーモンモードで実行します。(forkする点がサーバモードと異なる)"
-msgstr "デーモンモードで実行します。(forkする点がサーバモードと異なる)"
-
-msgid ""
-"データベースで使用する文字エンコーディング方式を指定します。新たなデータベー"
-"スを作成する時のみ有効です。none, euc, utf8, sjis, latin, koi8rのいずれかが指"
-"定できます。"
-msgstr ""
-"データベースで使用する文字エンコーディング方式を指定します。新たなデータベー"
-"スを作成する時のみ有効です。none, euc, utf8, sjis, latin, koi8rのいずれかが指"
-"定できます。"
-
-msgid ""
-"ログレベルを指定します。0〜8までの数値が指定可能で、数が大きいほど多くのログ"
-"が出力されます。"
-msgstr ""
-"ログレベルを指定します。0〜8までの数値が指定可能で、数が大きいほど多くのログ"
-"が出力されます。"
-
-msgid "Use :option:`--bind-address` instead."
-msgstr "Use :option:`--bind-address` instead."
-
-msgid ""
-"サーバモードかデーモンモードで実行するとき、listenするアドレスを指定します。"
-"(デフォルトは `hostname` の返すホスト名)"
-msgstr ""
-"サーバモードかデーモンモードで実行するとき、listenするアドレスを指定します。"
-"(デフォルトは `hostname` の返すホスト名)"
-
-msgid ""
-"クライアント、サーバ、またはデーモンモードで使用するTCPポート番号。 (デフォル"
-"トは10041番)"
-msgstr ""
-"クライアント、サーバ、またはデーモンモードで使用するTCPポート番号。 (デフォル"
-"トは10041番)"
-
-msgid ""
-"サーバモードかデーモンモードで実行するとき、サーバのIDとなるアドレスを指定し"
-"ます。(デフォルトは`hostname`の返すホスト名)"
-msgstr ""
-"サーバモードかデーモンモードで実行するとき、サーバのIDとなるアドレスを指定し"
-"ます。(デフォルトは`hostname`の返すホスト名)"
-
-msgid "ヘルプメッセージを出力します。"
-msgstr "ヘルプメッセージを出力します。"
-
-msgid ""
-"httpサーバとしてgroongaを使用する場合に静的ページを格納するディレクトリを指定"
-"します。"
-msgstr ""
-"httpサーバとしてgroongaを使用する場合に静的ページを格納するディレクトリを指定"
-"します。"
-
-msgid ""
-"デフォルトでは、データベースを管理するための汎用的なページに対応するファイル"
-"が/usr/share/groonga/admin_html以下にインストールされます。このディレクトリを"
-"document-rootオプションの値に指定して起動した場合、ウェブブラウザでhttp://"
-"hostname:port/index.htmlにアクセスすると、ウェブベースのデータベース管理ツー"
-"ルを使用できます。"
-msgstr ""
-"デフォルトでは、データベースを管理するための汎用的なページに対応するファイル"
-"が/usr/share/groonga/admin_html以下にインストールされます。このディレクトリを"
-"document-rootオプションの値に指定して起動した場合、ウェブブラウザでhttp://"
-"hostname:port/index.htmlにアクセスすると、ウェブベースのデータベース管理ツー"
-"ルを使用できます。"
-
-msgid "http,gqtpのいずれかを指定します。(デフォルトはgqtp)"
-msgstr "http,gqtpのいずれかを指定します。(デフォルトはgqtp)"
-
-msgid ""
-"ログを出力するファイルのパスを指定します。(デフォルトは/var/log/groonga/"
-"groonga.logです)"
-msgstr ""
-"ログを出力するファイルのパスを指定します。(デフォルトは/var/log/groonga/"
-"groonga.logです)"
-
-msgid ""
-"クエリーログを出力するファイルのパスを指定します。(デフォルトでは出力されませ"
-"ん)"
-msgstr ""
-"クエリーログを出力するファイルのパスを指定します。(デフォルトでは出力されませ"
-"ん)"
-
-msgid ""
-"最大で利用するスレッド数を指定します。(デフォルトはマシンのCPUコア数と同じ数"
-"です)"
-msgstr ""
-"最大で利用するスレッド数を指定します。(デフォルトはマシンのCPUコア数と同じ数"
-"です)"
-
-msgid "PIDを保存するパスを指定します。(デフォルトでは保存しません)"
-msgstr "PIDを保存するパスを指定します。(デフォルトでは保存しません)"
-
-msgid ""
-"設定ファイルのパスを指定します。設定ファイルは以下のようなフォーマットになり"
-"ます。::"
-msgstr ""
-"設定ファイルのパスを指定します。設定ファイルは以下のようなフォーマットになり"
-"ます。::"
-
-msgid "キャッシュ数の最大値を指定します。(デフォルトは100です)"
-msgstr "キャッシュ数の最大値を指定します。(デフォルトは100です)"
-
-msgid "検索の挙動をエスカレーションする閾値を指定します。(デフォルトは0です)"
-msgstr "検索の挙動をエスカレーションする閾値を指定します。(デフォルトは0です)"
-
-msgid "使用するデータベースのパス名を指定します。"
-msgstr "使用するデータベースのパス名を指定します。"
-
-msgid ""
-"クライアントモードの場合は接続先のホスト名とポート番号を指定します(デフォルト"
-"値は'localhost:10041')。ポート番号を指定しない場合には、10041が指定されたもの"
-"とします。"
-msgstr ""
-"クライアントモードの場合は接続先のホスト名とポート番号を指定します(デフォルト"
-"値は'localhost:10041')。ポート番号を指定しない場合には、10041が指定されたもの"
-"とします。"
-
-msgid ""
-"スタンドアロンおよびクライアントモードの場合は、実行するコマンドとその引数を"
-"コマンドライン引数に指定できます。コマンドライン引数にcommandを与えなかった場"
-"合は、標準入力から一行ずつEOFに達するまでコマンド文字列を読み取り、順次実行し"
-"ます。"
-msgstr ""
-"スタンドアロンおよびクライアントモードの場合は、実行するコマンドとその引数を"
-"コマンドライン引数に指定できます。コマンドライン引数にcommandを与えなかった場"
-"合は、標準入力から一行ずつEOFに達するまでコマンド文字列を読み取り、順次実行し"
-"ます。"
-
-msgid "コマンド"
-msgstr "コマンド"
-
-msgid ""
-"groongaコマンドを通してデータベースを操作する命令をコマンドと呼びます。コマン"
-"ドは主にC言語で記述され、groongaプロセスにロードすることによって使用できるよ"
-"うになります。 それぞれのコマンドは一意な名前と、0個以上の引数を持ちます。"
-msgstr ""
-"groongaコマンドを通してデータベースを操作する命令をコマンドと呼びます。コマン"
-"ドは主にC言語で記述され、groongaプロセスにロードすることによって使用できるよ"
-"うになります。 それぞれのコマンドは一意な名前と、0個以上の引数を持ちます。"
-
-msgid "引数は以下の2種類の方法のいずれかで指定することができます。::"
-msgstr "引数は以下の2種類の方法のいずれかで指定することができます。::"
-
-msgid ""
-"形式1でコマンドを実行する場合は、定義された順番で値を指定しなければならず、途"
-"中の引数の値を省略することはできません。形式2でコマンドを実行する場合は、「--"
-"引数名」のように引数の名前を明示しなければならない代わりに、任意の順番で引数"
-"を指定することが可能で、途中の引数の指定を省略することもできます。"
-msgstr ""
-"形式1でコマンドを実行する場合は、定義された順番で値を指定しなければならず、途"
-"中の引数の値を省略することはできません。形式2でコマンドを実行する場合は、「--"
-"引数名」のように引数の名前を明示しなければならない代わりに、任意の順番で引数"
-"を指定することが可能で、途中の引数の指定を省略することもできます。"
-
-msgid ""
-"標準入力からコマンド文字列を与える場合は、コマンド名と引数名と値は、空白( )で"
-"区切ります。空白や、記号「\"'()\\」のうちいずれかを含む値を指定したい場合は、"
-"シングルクォート(')かダブルクォート(\")で値を囲みます。値として指定する文字列"
-"の中では、改行文字は'\\n'に置き換えて指定します。また、引用符に使用した文字を"
-"値の中で指定する場合には、その文字の前にバックスラッシュ('\\') を指定します。"
-"バックスラッシュ文字自身を値として指定する場合には、その前にバックスラッシュ"
-"を指定します。"
-msgstr ""
-"標準入力からコマンド文字列を与える場合は、コマンド名と引数名と値は、空白( )で"
-"区切ります。空白や、記号「\"'()\\」のうちいずれかを含む値を指定したい場合は、"
-"シングルクォート(')かダブルクォート(\")で値を囲みます。値として指定する文字列"
-"の中では、改行文字は'\\n'に置き換えて指定します。また、引用符に使用した文字を"
-"値の中で指定する場合には、その文字の前にバックスラッシュ('\\') を指定します。"
-"バックスラッシュ文字自身を値として指定する場合には、その前にバックスラッシュ"
-"を指定します。"
-
-msgid ""
-"You can write command list with continuous line which is represented by '\\"
-"\\' character.::"
-msgstr ""
-"You can write command list with continuous line which is represented by '\\"
-"\\' character.::"
-
-msgid "組み込みコマンド"
-msgstr "組み込みコマンド"
-
-msgid "以下のコマンドは組み込みコマンドとして予め定義されています。"
-msgstr "以下のコマンドは組み込みコマンドとして予め定義されています。"
-
-msgid "``status``"
-msgstr "``status``"
-
-msgid "groongaプロセスの状態を表示します。"
-msgstr "groongaプロセスの状態を表示します。"
-
-msgid "``table_list``"
-msgstr "``table_list``"
-
-msgid "DBに定義されているテーブルのリストを表示します。"
-msgstr "DBに定義されているテーブルのリストを表示します。"
-
-msgid "テーブルに定義されているカラムのリストを表示します。"
-msgstr "テーブルに定義されているカラムのリストを表示します。"
-
-msgid "DBにテーブルを追加します。"
-msgstr "DBにテーブルを追加します。"
-
-msgid "テーブルにカラムを追加します。"
-msgstr "テーブルにカラムを追加します。"
-
-msgid "``table_remove``"
-msgstr "``table_remove``"
-
-msgid "DBに定義されているテーブルを削除します。"
-msgstr "DBに定義されているテーブルを削除します。"
-
-msgid "``column_remove``"
-msgstr "``column_remove``"
-
-msgid "テーブルに定義されているカラムを削除します。"
-msgstr "テーブルに定義されているカラムを削除します。"
-
-msgid "テーブルにレコードを挿入します。"
-msgstr "テーブルにレコードを挿入します。"
-
-msgid "テーブルに含まれるレコードを検索して表示します。"
-msgstr "テーブルに含まれるレコードを検索して表示します。"
-
-msgid "``define_selector``"
-msgstr "``define_selector``"
-
-msgid "検索条件をカスタマイズした新たな検索コマンドを定義します。"
-msgstr "検索条件をカスタマイズした新たな検索コマンドを定義します。"
-
-msgid "``quit``"
-msgstr "``quit``"
-
-msgid "データベースとのセッションを終了します。"
-msgstr "データベースとのセッションを終了します。"
-
-msgid "``shutdown``"
-msgstr "``shutdown``"
-
-msgid "サーバ(デーモン)プロセスを停止します。"
-msgstr "サーバ(デーモン)プロセスを停止します。"
-
-msgid "``log_level``"
-msgstr "``log_level``"
-
-msgid "ログ出力レベルを設定します。"
-msgstr "ログ出力レベルを設定します。"
-
-msgid "``log_put``"
-msgstr "``log_put``"
-
-msgid "ログ出力を行います。"
-msgstr "ログ出力を行います。"
-
-msgid "``clearlock``"
-msgstr "``clearlock``"
-
-msgid "ロックを解除します。"
-msgstr "ロックを解除します。"
-
-msgid "新しいデータベースを作成します。::"
-msgstr "新しいデータベースを作成します。::"
-
-msgid "作成済みのデータベースにテーブルを定義します。::"
-msgstr "作成済みのデータベースにテーブルを定義します。::"
-
-msgid "サーバを起動します。::"
-msgstr "サーバを起動します。::"
-
-msgid "httpサーバとして起動します。::"
-msgstr "httpサーバとして起動します。::"
-
-msgid "サーバに接続し、テーブル一覧を表示します。::"
-msgstr "サーバに接続し、テーブル一覧を表示します。::"
 
 msgid "groonga-benchmark"
 msgstr "groonga-benchmark"
@@ -7970,8 +7796,8 @@ msgstr ""
 msgid "groonga-benchmark命令"
 msgstr "groonga-benchmark命令"
 
-msgid "現在サポートされているgroonga-benchmark命令は以下の8つです。"
-msgstr "現在サポートされているgroonga-benchmark命令は以下の8つです。"
+msgid "現在サポートされているgroonga-benchmark命令は以下の11種類です。"
+msgstr ""
 
 msgid "do_local コマンドファイル [スレッド数] [繰り返し数]"
 msgstr "do_local コマンドファイル [スレッド数] [繰り返し数]"
@@ -7993,11 +7819,17 @@ msgid "do_gqpt コマンドファイル [スレッド数] [繰り返し数]"
 msgstr "do_gqpt コマンドファイル [スレッド数] [繰り返し数]"
 
 msgid ""
-"コマンドファイルをgroongaサーバで実行します。スレッド数や繰り返し数の意味は"
-"do_localの場合と同じです。"
+"コマンドファイルをgroongaサーバでGQTP経由で実行します。スレッド数や繰り返し数"
+"の意味はdo_localの場合と同じです。"
 msgstr ""
-"コマンドファイルをgroongaサーバで実行します。スレッド数や繰り返し数の意味は"
-"do_localの場合と同じです。"
+
+msgid "do_http コマンドファイル [スレッド数] [繰り返し数]"
+msgstr ""
+
+msgid ""
+"コマンドファイルをgroongaサーバでHTTP経由で実行します。スレッド数や繰り返し数"
+"の意味はdo_localの場合と同じです。"
+msgstr ""
 
 msgid "rep_local コマンドファイル [スレッド数] [繰り返し数]"
 msgstr "rep_local コマンドファイル [スレッド数] [繰り返し数]"
@@ -8011,11 +7843,17 @@ msgid "rep_gqpt コマンドファイル [スレッド数] [繰り返し数]"
 msgstr "rep_gqpt コマンドファイル [スレッド数] [繰り返し数]"
 
 msgid ""
-"コマンドファイルをgroongaサーバで実行し、より詳細な報告を行います。 スレッド"
-"数や繰り返し数の意味はdo_localと 同じです。"
+"コマンドファイルをgroongaサーバでGQTP経由で実行し、より詳細な報告を行いま"
+"す。 スレッド数や繰り返し数の意味はdo_localと 同じです。"
 msgstr ""
-"コマンドファイルをgroongaサーバで実行し、より詳細な報告を行います。 スレッド"
-"数や繰り返し数の意味はdo_localと 同じです。"
+
+msgid "rep_http コマンドファイル [スレッド数] [繰り返し数]"
+msgstr ""
+
+msgid ""
+"コマンドファイルをgroongaサーバでHTTP経由で実行し、より詳細な報告を行いま"
+"す。 スレッド数や繰り返し数の意味はdo_localと 同じです。"
+msgstr ""
 
 msgid "out_local コマンドファイル 入力ファイル名"
 msgstr "out_local コマンドファイル 入力ファイル名"
@@ -8040,14 +7878,17 @@ msgid "out_gqtp コマンドファイル 出力ファイル名"
 msgstr "out_gqtp コマンドファイル 出力ファイル名"
 
 msgid ""
-"コマンドファイルをgroongaサーバで実行します。その他はout_local命令と同等で"
-"す。"
+"コマンドファイルをgroongaサーバでGQTP経由で実行します。その他はout_local命令"
+"と同等です。"
 msgstr ""
-"コマンドファイルをgroongaサーバで実行します。その他はout_local命令と同等で"
-"す。"
 
-msgid "test_local コマンドファイル 入力ファイル名"
-msgstr "test_local コマンドファイル 入力ファイル名"
+msgid "out_http コマンドファイル 出力ファイル名"
+msgstr ""
+
+msgid ""
+"コマンドファイルをgroongaサーバでHTTP経由で実行します。その他はout_local命令"
+"と同等です。"
+msgstr ""
 
 msgid ""
 "コマンドファイルをgroonga-benchmark単体で実行し、各コマンドの実行結果を入力"
@@ -8057,6 +7898,9 @@ msgstr ""
 "コマンドファイルをgroonga-benchmark単体で実行し、各コマンドの実行結果を入力"
 "ファイルと比較します。処理時間など本質的要素以外に差分があった場合、差分を、"
 "入力ファイル.diffというファイルに書きだします。"
+
+msgid "test_local コマンドファイル 入力ファイル名"
+msgstr "test_local コマンドファイル 入力ファイル名"
 
 msgid "コマンドファイル"
 msgstr "コマンドファイル"
@@ -8085,8 +7929,8 @@ msgstr "コメント行。"
 msgid "2行目"
 msgstr "2行目"
 
-msgid "test.dll というコマンドファイルをgroonga単体で実行し、詳細に報告する。"
-msgstr "test.dll というコマンドファイルをgroonga単体で実行し、詳細に報告する。"
+msgid "test.ddl というコマンドファイルをgroonga単体で実行し、詳細に報告する。"
+msgstr ""
 
 msgid "3行目"
 msgstr "3行目"
@@ -8138,9 +7982,6 @@ msgstr ""
 "SET_HOSTを利用した場合、サーバが自動的には起動されないのもコマンドラインオプ"
 "ションで指定した場合と同様です。"
 
-msgid "#SET_PORT <port number>"
-msgstr "#SET_PORT <port number>"
-
 msgid ""
 "-p, --port オプションと同等の機能です。コマンドラインオプションに指定したポー"
 "ト番号とSET_PORTで指定したポート番号が異なる場合、またコマンドラインオプショ"
@@ -8149,6 +7990,9 @@ msgstr ""
 "-p, --port オプションと同等の機能です。コマンドラインオプションに指定したポー"
 "ト番号とSET_PORTで指定したポート番号が異なる場合、またコマンドラインオプショ"
 "ンを指定しなかった場合にもSET_PORTが優先されます。"
+
+msgid "#SET_PORT <port number>"
+msgstr "#SET_PORT <port number>"
 
 msgid ""
 "特殊命令はスクリプトファイルの任意の場所に書き込むことができます。同一ファイ"
@@ -8766,6 +8610,9 @@ msgstr ""
 "れたとみなされますので、ウェブブラウザでhttp://hostname:port/にアクセスする"
 "と、管理ツールを利用できます。"
 
+msgid "コマンド"
+msgstr "コマンド"
+
 msgid ""
 "httpを指定して起動したgroongaサーバに対しても、他のモードで起動したgroongaと"
 "同じコマンドが使用できます。"
@@ -8829,6 +8676,9 @@ msgstr "output_typeの指定に従って、コマンドの実行結果を出力�
 msgid "groonga-suggest-create-dataset"
 msgstr "groonga-suggest-create-dataset"
 
+msgid "NAME"
+msgstr "NAME"
+
 msgid ""
 "groonga-suggest-create-dataset - Defines schema for a suggestion dataset"
 msgstr ""
@@ -8885,6 +8735,9 @@ msgstr "event_DATASET"
 msgid "configuration"
 msgstr "configuration"
 
+msgid "OPTIONS"
+msgstr "OPTIONS"
+
 msgid "None."
 msgstr "None."
 
@@ -8893,6 +8746,12 @@ msgstr "EXIT STATUS"
 
 msgid "FILES"
 msgstr "FILES"
+
+msgid "EXAMPLE"
+msgstr "EXAMPLE"
+
+msgid "SEE ALSO"
+msgstr "SEE ALSO"
 
 msgid ""
 ":doc:`/suggest` :doc:`groonga-suggest-httpd` :doc:`groonga-suggest-learner`"
@@ -9172,8 +9031,25 @@ msgstr "Execute groonga-suggest-learner with ``-l`` option."
 msgid "Here is the sample to load log data under ``logs`` directory::"
 msgstr "Here is the sample to load log data under ``logs`` directory::"
 
-msgid "Specify log directory."
-msgstr "Specify log directory."
+msgid "Uses ``<endpoint>`` as the receiver endpoint."
+msgstr ""
+
+msgid "Uses ``<endpoint>`` as the sender endpoint."
+msgstr ""
+
+msgid "Runs as a daemon."
+msgstr ""
+
+msgid "Reads logs from ``<directory>``."
+msgstr ""
+
+msgid "Outputs log to ``<path>``."
+msgstr ""
+
+msgid ""
+"Uses ``<level>`` for log level. ``<level>`` must be between 1 and 9. Larger "
+"level outputs more logs."
+msgstr ""
 
 msgid "Specifies the path to a groonga database."
 msgstr "Specifies the path to a groonga database."
@@ -9189,6 +9065,273 @@ msgstr ""
 "Here is the list of table which learned data is stored. If you specify "
 "``query`` as dataset name, following ``_DATASET`` suffix are replaced. Thus, "
 "``event_query`` table is used."
+
+msgid "groonga command"
+msgstr "groonga command"
+
+msgid "groonga - 列指向データベース機能を持つ全文検索エンジンソフトウェア"
+msgstr "groonga - 列指向データベース機能を持つ全文検索エンジンソフトウェア"
+
+msgid ""
+"Groongaは列指向のデータベース機能を持つ高速でスケーラブルな全文検索エンジンで"
+"す。 Groongaのデータベースは、groongaコマンドかCライブラリインタフェースを通"
+"して操作することができます。このマニュアルページでは、groongaコマンドの使い方"
+"について説明します。"
+msgstr ""
+"Groongaは列指向のデータベース機能を持つ高速でスケーラブルな全文検索エンジンで"
+"す。 Groongaのデータベースは、groongaコマンドかCライブラリインタフェースを通"
+"して操作することができます。このマニュアルページでは、groongaコマンドの使い方"
+"について説明します。"
+
+msgid "新たなデータベースを作成します。"
+msgstr "新たなデータベースを作成します。"
+
+msgid "クライアントモードで実行します。"
+msgstr "クライアントモードで実行します。"
+
+msgid "サーバモードで実行します。"
+msgstr "サーバモードで実行します。"
+
+msgid "デーモンモードで実行します。(forkする点がサーバモードと異なる)"
+msgstr "デーモンモードで実行します。(forkする点がサーバモードと異なる)"
+
+msgid ""
+"データベースで使用する文字エンコーディング方式を指定します。新たなデータベー"
+"スを作成する時のみ有効です。none, euc, utf8, sjis, latin, koi8rのいずれかが指"
+"定できます。"
+msgstr ""
+"データベースで使用する文字エンコーディング方式を指定します。新たなデータベー"
+"スを作成する時のみ有効です。none, euc, utf8, sjis, latin, koi8rのいずれかが指"
+"定できます。"
+
+msgid ""
+"ログレベルを指定します。0〜8までの数値が指定可能で、数が大きいほど多くのログ"
+"が出力されます。"
+msgstr ""
+"ログレベルを指定します。0〜8までの数値が指定可能で、数が大きいほど多くのログ"
+"が出力されます。"
+
+msgid "Use :option:`--bind-address` instead."
+msgstr "Use :option:`--bind-address` instead."
+
+msgid ""
+"サーバモードかデーモンモードで実行するとき、listenするアドレスを指定します。"
+"(デフォルトは `hostname` の返すホスト名)"
+msgstr ""
+"サーバモードかデーモンモードで実行するとき、listenするアドレスを指定します。"
+"(デフォルトは `hostname` の返すホスト名)"
+
+msgid ""
+"クライアント、サーバ、またはデーモンモードで使用するTCPポート番号。 (クライア"
+"ントモードのデフォルトは10043番、サーバ、またはデーモンモードのデフォルトは、"
+"HTTPの場合、10041番、GQTPの場合、10043番)"
+msgstr ""
+
+msgid ""
+"サーバモードかデーモンモードで実行するとき、サーバのIDとなるアドレスを指定し"
+"ます。(デフォルトは`hostname`の返すホスト名)"
+msgstr ""
+"サーバモードかデーモンモードで実行するとき、サーバのIDとなるアドレスを指定し"
+"ます。(デフォルトは`hostname`の返すホスト名)"
+
+msgid "ヘルプメッセージを出力します。"
+msgstr "ヘルプメッセージを出力します。"
+
+msgid ""
+"httpサーバとしてgroongaを使用する場合に静的ページを格納するディレクトリを指定"
+"します。"
+msgstr ""
+"httpサーバとしてgroongaを使用する場合に静的ページを格納するディレクトリを指定"
+"します。"
+
+msgid ""
+"デフォルトでは、データベースを管理するための汎用的なページに対応するファイル"
+"が/usr/share/groonga/admin_html以下にインストールされます。このディレクトリを"
+"document-rootオプションの値に指定して起動した場合、ウェブブラウザでhttp://"
+"hostname:port/index.htmlにアクセスすると、ウェブベースのデータベース管理ツー"
+"ルを使用できます。"
+msgstr ""
+"デフォルトでは、データベースを管理するための汎用的なページに対応するファイル"
+"が/usr/share/groonga/admin_html以下にインストールされます。このディレクトリを"
+"document-rootオプションの値に指定して起動した場合、ウェブブラウザでhttp://"
+"hostname:port/index.htmlにアクセスすると、ウェブベースのデータベース管理ツー"
+"ルを使用できます。"
+
+msgid "http,gqtpのいずれかを指定します。(デフォルトはgqtp)"
+msgstr "http,gqtpのいずれかを指定します。(デフォルトはgqtp)"
+
+msgid ""
+"ログを出力するファイルのパスを指定します。(デフォルトは/var/log/groonga/"
+"groonga.logです)"
+msgstr ""
+"ログを出力するファイルのパスを指定します。(デフォルトは/var/log/groonga/"
+"groonga.logです)"
+
+msgid ""
+"クエリーログを出力するファイルのパスを指定します。(デフォルトでは出力されませ"
+"ん)"
+msgstr ""
+"クエリーログを出力するファイルのパスを指定します。(デフォルトでは出力されませ"
+"ん)"
+
+msgid ""
+"最大で利用するスレッド数を指定します。(デフォルトはマシンのCPUコア数と同じ数"
+"です)"
+msgstr ""
+"最大で利用するスレッド数を指定します。(デフォルトはマシンのCPUコア数と同じ数"
+"です)"
+
+msgid "PIDを保存するパスを指定します。(デフォルトでは保存しません)"
+msgstr "PIDを保存するパスを指定します。(デフォルトでは保存しません)"
+
+msgid ""
+"設定ファイルのパスを指定します。設定ファイルは以下のようなフォーマットになり"
+"ます。::"
+msgstr ""
+"設定ファイルのパスを指定します。設定ファイルは以下のようなフォーマットになり"
+"ます。::"
+
+msgid "キャッシュ数の最大値を指定します。(デフォルトは100です)"
+msgstr "キャッシュ数の最大値を指定します。(デフォルトは100です)"
+
+msgid "検索の挙動をエスカレーションする閾値を指定します。(デフォルトは0です)"
+msgstr "検索の挙動をエスカレーションする閾値を指定します。(デフォルトは0です)"
+
+msgid "使用するデータベースのパス名を指定します。"
+msgstr "使用するデータベースのパス名を指定します。"
+
+msgid ""
+"クライアントモードの場合は接続先のホスト名とポート番号を指定します(デフォルト"
+"値は'localhost:10043')。ポート番号を指定しない場合には、10043が指定されたもの"
+"とします。"
+msgstr ""
+
+msgid ""
+"スタンドアロンおよびクライアントモードの場合は、実行するコマンドとその引数を"
+"コマンドライン引数に指定できます。コマンドライン引数にcommandを与えなかった場"
+"合は、標準入力から一行ずつEOFに達するまでコマンド文字列を読み取り、順次実行し"
+"ます。"
+msgstr ""
+"スタンドアロンおよびクライアントモードの場合は、実行するコマンドとその引数を"
+"コマンドライン引数に指定できます。コマンドライン引数にcommandを与えなかった場"
+"合は、標準入力から一行ずつEOFに達するまでコマンド文字列を読み取り、順次実行し"
+"ます。"
+
+msgid ""
+"groongaコマンドを通してデータベースを操作する命令をコマンドと呼びます。コマン"
+"ドは主にC言語で記述され、groongaプロセスにロードすることによって使用できるよ"
+"うになります。 それぞれのコマンドは一意な名前と、0個以上の引数を持ちます。"
+msgstr ""
+"groongaコマンドを通してデータベースを操作する命令をコマンドと呼びます。コマン"
+"ドは主にC言語で記述され、groongaプロセスにロードすることによって使用できるよ"
+"うになります。 それぞれのコマンドは一意な名前と、0個以上の引数を持ちます。"
+
+msgid "引数は以下の2種類の方法のいずれかで指定することができます。::"
+msgstr "引数は以下の2種類の方法のいずれかで指定することができます。::"
+
+msgid ""
+"形式1でコマンドを実行する場合は、定義された順番で値を指定しなければならず、途"
+"中の引数の値を省略することはできません。形式2でコマンドを実行する場合は、「--"
+"引数名」のように引数の名前を明示しなければならない代わりに、任意の順番で引数"
+"を指定することが可能で、途中の引数の指定を省略することもできます。"
+msgstr ""
+"形式1でコマンドを実行する場合は、定義された順番で値を指定しなければならず、途"
+"中の引数の値を省略することはできません。形式2でコマンドを実行する場合は、「--"
+"引数名」のように引数の名前を明示しなければならない代わりに、任意の順番で引数"
+"を指定することが可能で、途中の引数の指定を省略することもできます。"
+
+msgid ""
+"標準入力からコマンド文字列を与える場合は、コマンド名と引数名と値は、空白( )で"
+"区切ります。空白や、記号「\"'()\\」のうちいずれかを含む値を指定したい場合は、"
+"シングルクォート(')かダブルクォート(\")で値を囲みます。値として指定する文字列"
+"の中では、改行文字は'\\n'に置き換えて指定します。また、引用符に使用した文字を"
+"値の中で指定する場合には、その文字の前にバックスラッシュ('\\') を指定します。"
+"バックスラッシュ文字自身を値として指定する場合には、その前にバックスラッシュ"
+"を指定します。"
+msgstr ""
+"標準入力からコマンド文字列を与える場合は、コマンド名と引数名と値は、空白( )で"
+"区切ります。空白や、記号「\"'()\\」のうちいずれかを含む値を指定したい場合は、"
+"シングルクォート(')かダブルクォート(\")で値を囲みます。値として指定する文字列"
+"の中では、改行文字は'\\n'に置き換えて指定します。また、引用符に使用した文字を"
+"値の中で指定する場合には、その文字の前にバックスラッシュ('\\') を指定します。"
+"バックスラッシュ文字自身を値として指定する場合には、その前にバックスラッシュ"
+"を指定します。"
+
+msgid ""
+"You can write command list with continuous line which is represented by '\\"
+"\\' character.::"
+msgstr ""
+"You can write command list with continuous line which is represented by '\\"
+"\\' character.::"
+
+msgid "組み込みコマンド"
+msgstr "組み込みコマンド"
+
+msgid "以下のコマンドは組み込みコマンドとして予め定義されています。"
+msgstr "以下のコマンドは組み込みコマンドとして予め定義されています。"
+
+msgid "groongaプロセスの状態を表示します。"
+msgstr "groongaプロセスの状態を表示します。"
+
+msgid "DBに定義されているテーブルのリストを表示します。"
+msgstr "DBに定義されているテーブルのリストを表示します。"
+
+msgid "テーブルに定義されているカラムのリストを表示します。"
+msgstr "テーブルに定義されているカラムのリストを表示します。"
+
+msgid "DBにテーブルを追加します。"
+msgstr "DBにテーブルを追加します。"
+
+msgid "テーブルにカラムを追加します。"
+msgstr "テーブルにカラムを追加します。"
+
+msgid "DBに定義されているテーブルを削除します。"
+msgstr "DBに定義されているテーブルを削除します。"
+
+msgid "テーブルに定義されているカラムを削除します。"
+msgstr "テーブルに定義されているカラムを削除します。"
+
+msgid "テーブルにレコードを挿入します。"
+msgstr "テーブルにレコードを挿入します。"
+
+msgid "テーブルに含まれるレコードを検索して表示します。"
+msgstr "テーブルに含まれるレコードを検索して表示します。"
+
+msgid "検索条件をカスタマイズした新たな検索コマンドを定義します。"
+msgstr "検索条件をカスタマイズした新たな検索コマンドを定義します。"
+
+msgid "データベースとのセッションを終了します。"
+msgstr "データベースとのセッションを終了します。"
+
+msgid "サーバ(デーモン)プロセスを停止します。"
+msgstr "サーバ(デーモン)プロセスを停止します。"
+
+msgid "ログ出力レベルを設定します。"
+msgstr "ログ出力レベルを設定します。"
+
+msgid "ログ出力を行います。"
+msgstr "ログ出力を行います。"
+
+msgid "ロックを解除します。"
+msgstr "ロックを解除します。"
+
+msgid "例"
+msgstr "例"
+
+msgid "新しいデータベースを作成します。::"
+msgstr "新しいデータベースを作成します。::"
+
+msgid "作成済みのデータベースにテーブルを定義します。::"
+msgstr "作成済みのデータベースにテーブルを定義します。::"
+
+msgid "サーバを起動します。::"
+msgstr "サーバを起動します。::"
+
+msgid "httpサーバとして起動します。::"
+msgstr "httpサーバとして起動します。::"
+
+msgid "サーバに接続し、テーブル一覧を表示します。::"
+msgstr "サーバに接続し、テーブル一覧を表示します。::"
 
 msgid "Function"
 msgstr "Function"
@@ -9897,6 +10040,9 @@ msgstr ""
 msgid "highlight_full"
 msgstr ""
 
+msgid "This feature is experimental. API will be changed."
+msgstr "This feature is experimental. API will be changed."
+
 msgid ""
 "``highlight_full`` tags target text. It can use to highlight the search "
 "keyword. It can specify use/not use HTML escape, the normalizer name and "
@@ -9920,33 +10066,42 @@ msgid "``highlight_full`` requires Groonga 4.0.5 or later."
 msgstr "``highlight_full`` requires Groonga 4.0.5 or later."
 
 msgid ""
-"``highlight_full`` requires :doc:`/reference/command/command_version` 2 "
-"or later."
+"``highlight_full`` requires :doc:`/reference/command/command_version` 2 or "
+"later."
 msgstr ""
-"``highlight_full`` requires :doc:`/reference/command/command_version` 2 "
-"or later."
+"``highlight_full`` requires :doc:`/reference/command/command_version` 2 or "
+"later."
 
 msgid ""
 "The following example uses HTML escape and normalzier is ``NormalizeAuto``. "
 "It specifies the tags ``<span class=\"keyword1\">`` and ``</span>`` of the "
-"keyword ``groonga``, and the tags ``<span class=\"keyword2\">`` and ``</span>`` "
-"of the keyword ``mysql``."
+"keyword ``groonga``, and the tags ``<span class=\"keyword2\">`` and ``</"
+"span>`` of the keyword ``mysql``."
 msgstr ""
 "The following example uses HTML escape and normalzier is ``NormalizeAuto``. "
 "It specifies the tags ``<span class=\"keyword1\">`` and ``</span>`` of the "
-"keyword ``groonga``, and the tags ``<span class=\"keyword2\">`` and ``</span>`` "
-"of the keyword ``mysql``."
+"keyword ``groonga``, and the tags ``<span class=\"keyword2\">`` and ``</"
+"span>`` of the keyword ``mysql``."
+
+msgid ""
+"The text are scanned by the keywords for tagging after they are normalized "
+"by ``NormalizerAuto`` normalizer."
+msgstr ""
+"The text are scanned by the keywords for tagging after they are normalized "
+"by ``NormalizerAuto`` normalizer."
 
 msgid ""
 "``--query \"groonga mysql\"`` matches to the first record's body. "
 "``highight_full`` surrounds the keywords ``groonga`` contained in the text "
-"with ``<span class=\"keyword1\">`` and ``</span>``, and the keywords ``mysql`` "
-"contained in the text with with ``<span class=\"keyword2\">`` and ``</span>``."
+"with ``<span class=\"keyword1\">`` and ``</span>``, and the keywords "
+"``mysql`` contained in the text with with ``<span class=\"keyword2\">`` and "
+"``</span>``."
 msgstr ""
 "``--query \"groonga mysql\"`` matches to the first record's body. "
 "``highight_full`` surrounds the keywords ``groonga`` contained in the text "
-"with ``<span class=\"keyword1\">`` and ``</span>``, and the keywords ``mysql`` "
-"contained in the text with with ``<span class=\"keyword2\">`` and ``</span>``."
+"with ``<span class=\"keyword1\">`` and ``</span>``, and the keywords "
+"``mysql`` contained in the text with with ``<span class=\"keyword2\">`` and "
+"``</span>``."
 
 msgid ""
 "Special characters such as ``<`` and ``>`` are escapsed as ``&lt;`` and "
@@ -9955,46 +10110,66 @@ msgstr ""
 "Special characters such as ``<`` and ``>`` are escapsed as ``&lt;`` and "
 "``&gt;``."
 
+msgid "You can specify string literal instead of column."
+msgstr "You can specify string literal instead of column."
+
 msgid ""
-"There are three required parameters, ``column``, ``normalizer_name`` and ``use_html_escape``. "
-"There are three or over optional parameters, ``keywordN``, ``open_tagN`` and ``end_tagN``."
+"There are three required parameters, ``column``, ``normalizer_name`` and "
+"``use_html_escape``. There are three or over optional parameters, "
+"``keywordN``, ``open_tagN`` and ``end_tagN``."
 msgstr ""
-"There are three required parameters, ``column``, ``normalizer_name`` and ``use_html_escape``. "
-"There are three or over optional parameters, ``keywordN``, ``open_tagN`` and ``end_tagN``."
+"There are three required parameters, ``column``, ``normalizer_name`` and "
+"``use_html_escape``. There are three or over optional parameters, "
+"``keywordN``, ``open_tagN`` and ``end_tagN``."
 
 msgid "It specifies a column of the table."
 msgstr "It specifies a column of the table."
 
+msgid "``normalizer_name``"
+msgstr ""
+
 msgid "It specifies a normalizer name."
 msgstr "It specifies a normalizer name."
 
-msgid ""
-"It specifies use or not use HTML escape. If it is ``true`` , use HTML escape. "
-"If it is ``false`` , not use HTML escape."
+msgid "``use_html_escape``"
 msgstr ""
-"It specifies use or not use HTML escape. If it is ``true`` , use HTML escape. "
-"If it is ``false`` , not use HTML escape."
 
 msgid ""
-"It specifies a keyword for tagging. "
-"You can specify multiple keywords for each three arguments."
+"It specifies use or not use HTML escape. If it is ``true`` , use HTML "
+"escape. If it is ``false`` , not use HTML escape."
 msgstr ""
-"It specifies a keyword for tagging. "
-"You can specify multiple keywords for each three arguments."
+"It specifies use or not use HTML escape. If it is ``true`` , use HTML "
+"escape. If it is ``false`` , not use HTML escape."
+
+msgid "``keywordN``"
+msgstr ""
 
 msgid ""
-"It specifies a open tag. "
-"You can specify multiple open tags for each three arguments."
+"It specifies a keyword for tagging. You can specify multiple keywords for "
+"each three arguments."
 msgstr ""
-"It specifies a open tag. "
-"You can specify multiple open tags for each three arguments."
+"It specifies a keyword for tagging. You can specify multiple keywords for "
+"each three arguments."
+
+msgid "``open_tagN``"
+msgstr ""
 
 msgid ""
-"It specifies a close tag. "
-"You can specify multiple close tags for each three arguments."
+"It specifies a open tag. You can specify multiple open tags for each three "
+"arguments."
 msgstr ""
-"It specifies a close tag. "
-"You can specify multiple close tags for each three arguments."
+"It specifies a open tag. You can specify multiple open tags for each three "
+"arguments."
+
+msgid "``close_tagN``"
+msgstr ""
+
+msgid ""
+"It specifies a close tag. You can specify multiple close tags for each three "
+"arguments."
+msgstr ""
+"It specifies a close tag. You can specify multiple close tags for each three "
+"arguments."
 
 msgid ""
 "``highlight_full`` returns a tagged string or ``null``. If "
@@ -10002,6 +10177,12 @@ msgid ""
 msgstr ""
 "``highlight_full`` returns a tagged string or ``null``. If "
 "``highlight_full`` can't find any keywords, it returns ``null``."
+
+msgid ":doc:`/reference/commands/select`"
+msgstr ":doc:`/reference/commands/select`"
+
+msgid ":doc:`/reference/functions/highlight_html`"
+msgstr ""
 
 msgid "highlight_html"
 msgstr ""
@@ -10010,15 +10191,15 @@ msgid ""
 "``highlight_html`` tags target text. It can use to highlight the search "
 "keywords. The tagged text are prepared for embedding HTML. Special "
 "characters such as ``<`` and ``>`` are escapsed as ``&lt;`` and ``&gt;``. "
-"Keyword is surrounded with ``<span class=\"keyword\">`` and ``</span>``. "
-"For example, a tagged text of ``I am a groonga user. <3`` for keyword "
+"Keyword is surrounded with ``<span class=\"keyword\">`` and ``</span>``. For "
+"example, a tagged text of ``I am a groonga user. <3`` for keyword "
 "``groonga`` is ``I am a <span class=\"keyword\">groonga</span> user. &lt;3``."
 msgstr ""
 "``highlight_html`` tags target text. It can use to highlight the search "
 "keywords. The tagged text are prepared for embedding HTML. Special "
 "characters such as ``<`` and ``>`` are escapsed as ``&lt;`` and ``&gt;``. "
-"Keyword is surrounded with ``<span class=\"keyword\">`` and ``</span>``. "
-"For example, a tagged text of ``I am a groonga user. <3`` for keyword "
+"Keyword is surrounded with ``<span class=\"keyword\">`` and ``</span>``. For "
+"example, a tagged text of ``I am a groonga user. <3`` for keyword "
 "``groonga`` is ``I am a <span class=\"keyword\">groonga</span> user. &lt;3``."
 
 msgid "``highlight_html`` has only one parameter::"
@@ -10035,11 +10216,18 @@ msgid "``highlight_html`` requires Groonga 4.0.5 or later."
 msgstr "``highlight_html`` requires Groonga 4.0.5 or later."
 
 msgid ""
-"``highlight_html`` requires :doc:`/reference/command/command_version` 2 "
-"or later."
+"``highlight_html`` requires :doc:`/reference/command/command_version` 2 or "
+"later."
 msgstr ""
-"``highlight_html`` requires :doc:`/reference/command/command_version` 2 "
-"or later."
+"``highlight_html`` requires :doc:`/reference/command/command_version` 2 or "
+"later."
+
+msgid ""
+"You also need to specify ``--query`` and/or ``--filter``. Keywords are "
+"extracted from ``--query`` and ``--filter`` arguments."
+msgstr ""
+"You also need to specify ``--query`` and/or ``--filter``. Keywords are "
+"extracted from ``--query`` and ``--filter`` arguments."
 
 msgid ""
 "The following example uses ``--query \"groonga mysql\"``. In this case, "
@@ -10047,13 +10235,6 @@ msgid ""
 msgstr ""
 "The following example uses ``--query \"groonga mysql\"``. In this case, "
 "``groonga`` and ``mysql`` are used as keywords."
-
-msgid ""
-"The text are scanned by the keywords for tagging after they are normalized "
-"by ``NormalizerAuto`` normalizer."
-msgstr ""
-"The text are scanned by the keywords for tagging after they are normalized "
-"by ``NormalizerAuto`` normalizer."
 
 msgid ""
 "``--query \"groonga mysql\"`` matches to only the first record's body. "
@@ -10064,8 +10245,8 @@ msgstr ""
 "``highlight_html(body)`` surrounds the keywords ``groonga`` or ``mysql`` "
 "contained in the text with ``<span class=\"keyword\">`` and ``</span>``."
 
-msgid "There is only one parameter ``column``. "
-msgstr "There is only one parameter ``column``. "
+msgid "There is only one parameter ``column`` ."
+msgstr ""
 
 msgid ""
 "``highlight_html`` returns a tagged string or ``null``. If "
@@ -10073,6 +10254,9 @@ msgid ""
 msgstr ""
 "``highlight_html`` returns a tagged string or ``null``. If "
 "``highlight_html`` can't find any keywords, it returns ``null``."
+
+msgid ":doc:`/reference/functions/highlight_full`"
+msgstr ""
 
 msgid "html_untag"
 msgstr "html_untag"
@@ -10303,9 +10487,6 @@ msgstr ""
 msgid "Support query_flags"
 msgstr "Support query_flags"
 
-msgid ":doc:`/reference/commands/select`"
-msgstr ":doc:`/reference/commands/select`"
-
 msgid "rand"
 msgstr "rand"
 
@@ -10334,9 +10515,6 @@ msgstr "0 と max の間の数を表すInt32型の値を返します。"
 
 msgid "snippet_html"
 msgstr "snippet_html"
-
-msgid "This feature is experimental. API will be changed."
-msgstr "This feature is experimental. API will be changed."
 
 msgid ""
 "``snippet_html`` extracts snippets of target text around search keywords "
@@ -10382,13 +10560,6 @@ msgstr ""
 "2.0.9. It will be enabled by default soon."
 
 msgid ""
-"You also need to specify ``--query`` and/or ``--filter``. Keywords are "
-"extracted from ``--query`` and ``--filter`` arguments."
-msgstr ""
-"You also need to specify ``--query`` and/or ``--filter``. Keywords are "
-"extracted from ``--query`` and ``--filter`` arguments."
-
-msgid ""
 "The following example uses ``--query \"fast performance\"``. In this case, "
 "``fast`` and ``performance`` are used as keywords."
 msgstr ""
@@ -10426,9 +10597,6 @@ msgid ""
 msgstr ""
 "Both the max number of text parts and the max size of a text part aren't "
 "customizable."
-
-msgid "You can specify string literal instead of column."
-msgstr "You can specify string literal instead of column."
 
 msgid ""
 "``snippet_html`` returns an array of string or ``null``. If ``snippet_html`` "
@@ -12617,9 +12785,6 @@ msgstr "Format"
 msgid "Process log uses the following format::"
 msgstr "Process log uses the following format::"
 
-msgid "TIME_STAMP"
-msgstr "TIME_STAMP"
-
 msgid "It's time stamp uses the following format::"
 msgstr "It's time stamp uses the following format::"
 
@@ -12641,35 +12806,35 @@ msgstr "DD"
 msgid "Day with two digits."
 msgstr "Day with two digits."
 
-msgid "hh"
-msgstr "hh"
-
 msgid "Hour with two digits."
 msgstr "Hour with two digits."
 
-msgid "mm"
-msgstr "mm"
+msgid "hh"
+msgstr "hh"
 
 msgid "Minute with two digits."
 msgstr "Minute with two digits."
 
-msgid "ss"
-msgstr "ss"
+msgid "mm"
+msgstr "mm"
 
 msgid "Second with two digits."
 msgstr "Second with two digits."
 
-msgid "SSSSSS"
-msgstr "SSSSSS"
+msgid "ss"
+msgstr "ss"
 
 msgid "Microsecond with six digits."
 msgstr "Microsecond with six digits."
 
+msgid "SSSSSS"
+msgstr "SSSSSS"
+
 msgid "Example::"
 msgstr "Example::"
 
-msgid "L"
-msgstr "L"
+msgid "TIME_STAMP"
+msgstr "TIME_STAMP"
 
 msgid "Log level with a character. Here is a character and log level map."
 msgstr "Log level with a character. Here is a character and log level map."
@@ -12692,17 +12857,17 @@ msgstr "C"
 msgid "Critical"
 msgstr "Critical"
 
-msgid "e"
-msgstr "e"
-
 msgid "Error"
 msgstr "Error"
 
-msgid "w"
-msgstr "w"
+msgid "e"
+msgstr "e"
 
 msgid "Warning"
 msgstr "Warning"
+
+msgid "w"
+msgstr "w"
 
 msgid "Notification"
 msgstr "Notification"
@@ -12710,23 +12875,26 @@ msgstr "Notification"
 msgid "Information"
 msgstr "Information"
 
-msgid "d"
-msgstr "d"
-
 msgid "Debug"
 msgstr "Debug"
 
-msgid "\\-"
-msgstr "\\-"
+msgid "d"
+msgstr "d"
 
 msgid "Dump"
 msgstr "Dump"
 
-msgid "MESSAGE"
-msgstr "MESSAGE"
+msgid "\\-"
+msgstr "\\-"
+
+msgid "L"
+msgstr "L"
 
 msgid "Details about the log with free format."
 msgstr "Details about the log with free format."
+
+msgid "MESSAGE"
+msgstr "MESSAGE"
 
 msgid "Query log"
 msgstr "Query log"
@@ -12741,9 +12909,6 @@ msgstr ""
 msgid "Query log uses the following formats::"
 msgstr "Query log uses the following formats::"
 
-msgid "ID"
-msgstr "ID"
-
 msgid ""
 "ID of a thread. Groonga process creates threads to process requests "
 "concurrently. Each thread outputs some logs for a request. This ID can be "
@@ -12752,6 +12917,9 @@ msgstr ""
 "ID of a thread. Groonga process creates threads to process requests "
 "concurrently. Each thread outputs some logs for a request. This ID can be "
 "used to extract a log sequence by a thread."
+
+msgid "ID"
+msgstr "ID"
 
 msgid ">"
 msgstr ">"
@@ -12771,29 +12939,29 @@ msgstr "<"
 msgid "A character that indicates query is finished."
 msgstr "A character that indicates query is finished."
 
-msgid "QUERY"
-msgstr "QUERY"
-
 msgid "A query to be processed."
 msgstr "A query to be processed."
 
-msgid "ELAPSED_TIME"
-msgstr "ELAPSED_TIME"
+msgid "QUERY"
+msgstr "QUERY"
 
 msgid "Elapsed time in nanoseconds since query is started."
 msgstr "Elapsed time in nanoseconds since query is started."
 
-msgid "PROGRESS"
-msgstr "PROGRESS"
+msgid "ELAPSED_TIME"
+msgstr "ELAPSED_TIME"
 
 msgid "A processed work at the time."
 msgstr "A processed work at the time."
 
-msgid "RETURN_CODE"
-msgstr "RETURN_CODE"
+msgid "PROGRESS"
+msgstr "PROGRESS"
 
 msgid "A return code for the query."
 msgstr "A return code for the query."
+
+msgid "RETURN_CODE"
+msgstr "RETURN_CODE"
 
 msgid "Normalizers"
 msgstr "Normalizers"
@@ -13144,26 +13312,26 @@ msgstr ""
 "If ``QUERY`` has registered synonyms, they are expanded. For example, there "
 "are the following synonyms."
 
-msgid "word"
-msgstr "word"
-
 msgid "synonym 1"
 msgstr "synonym 1"
 
 msgid "synonym 2"
 msgstr "synonym 2"
 
-msgid "groonga"
-msgstr "groonga"
+msgid "word"
+msgstr "word"
 
 msgid "Senna"
 msgstr "Senna"
 
-msgid "mroonga"
-msgstr "mroonga"
+msgid "groonga"
+msgstr "groonga"
 
 msgid "groonga MySQL"
 msgstr "groonga MySQL"
+
+msgid "mroonga"
+msgstr "mroonga"
 
 msgid ""
 "The table means that ``synonym 1`` and ``synonym 2`` are synonyms of "
@@ -13341,29 +13509,29 @@ msgstr ""
 "Here is a chracteristic table of all tables in Groonga. (``TABLE_`` prefix "
 "is omitted in the table.)"
 
-msgid "``NO_KEY``"
-msgstr "``NO_KEY``"
+msgid "``DAT_KEY``"
+msgstr "``DAT_KEY``"
 
 msgid "``HASH_KEY``"
 msgstr "``HASH_KEY``"
 
+msgid "``NO_KEY``"
+msgstr "``NO_KEY``"
+
 msgid "``PAT_KEY``"
 msgstr "``PAT_KEY``"
 
-msgid "``DAT_KEY``"
-msgstr "``DAT_KEY``"
-
 msgid "Data structure"
 msgstr "Data structure"
+
+msgid "Double array trie"
+msgstr "Double array trie"
 
 msgid "Hash table"
 msgstr "Hash table"
 
 msgid "Patricia trie"
 msgstr "Patricia trie"
-
-msgid "Double array trie"
-msgstr "Double array trie"
 
 msgid "ID support"
 msgstr "ID support"
@@ -13383,14 +13551,14 @@ msgstr "Value support"
 msgid "Key -> ID speed"
 msgstr "Key -> ID speed"
 
+msgid "oo"
+msgstr "oo"
+
 msgid "o: fast"
 msgstr "o: fast"
 
 msgid "x: slow"
 msgstr "x: slow"
-
-msgid "oo"
-msgstr "oo"
 
 msgid "Update speed"
 msgstr "Update speed"
@@ -14077,3 +14245,60 @@ msgstr ""
 
 msgid "Object型はv1.2でサポートされます。"
 msgstr "Object型はv1.2でサポートされます。"
+
+#~ msgid "You can't use reference type."
+#~ msgstr "You can't use reference type."
+
+#~ msgid "check"
+#~ msgstr "check"
+
+#~ msgid "json形式"
+#~ msgstr "json形式"
+
+#~ msgid "clearlock"
+#~ msgstr "clearlock"
+
+#~ msgid "関連項目"
+#~ msgstr "関連項目"
+
+#~ msgid "column_remove"
+#~ msgstr "column_remove"
+
+#~ msgid "define_selector"
+#~ msgstr "define_selector"
+
+#~ msgid "log_level"
+#~ msgstr "log_level"
+
+#~ msgid "log_put"
+#~ msgstr "log_put"
+
+#~ msgid "quit"
+#~ msgstr "quit"
+
+#~ msgid "shutdown"
+#~ msgstr "shutdown"
+
+#~ msgid "status"
+#~ msgstr "status"
+
+#~ msgid "suggest"
+#~ msgstr "suggest"
+
+#~ msgid "SYNOPSIS"
+#~ msgstr "SYNOPSIS"
+
+#~ msgid "DESCRIPTION"
+#~ msgstr "DESCRIPTION"
+
+#~ msgid "RETURN VALUE"
+#~ msgstr "RETURN VALUE"
+
+#~ msgid "table_list"
+#~ msgstr "table_list"
+
+#~ msgid "table_remove"
+#~ msgstr "table_remove"
+
+#~ msgid "Specify log directory."
+#~ msgstr "Specify log directory."

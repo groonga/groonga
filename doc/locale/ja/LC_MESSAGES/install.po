@@ -794,7 +794,7 @@ msgstr ""
 "ださい。"
 
 # 6caa565487584356a4ef7e64bea91c45
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.4-x86.exe"
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.5-x86.exe"
 msgstr ""
 
 msgid "Then run it."
@@ -808,7 +808,7 @@ msgstr ""
 "ださい。"
 
 # e4254522b3b84998b28460be3b9acc11
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.4-x64.exe"
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.5-x64.exe"
 msgstr ""
 
 msgid ""
@@ -828,7 +828,7 @@ msgstr ""
 "してください。"
 
 # d9ac59504a364d4f87f73484cb9d6385
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.4-x86.zip"
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.5-x86.zip"
 msgstr ""
 
 msgid "Then extract it."
@@ -841,7 +841,7 @@ msgstr ""
 "してください。"
 
 # 8490a15d4b954b7aa1f0b174f487af9b
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.4-x64.zip"
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.5-x64.zip"
 msgstr ""
 
 msgid "You can find :doc:`/reference/executables/groonga` in ``bin`` folder."
@@ -868,7 +868,7 @@ msgid "Download zipped source from packages.groonga.org:"
 msgstr "zipアーカイブをpackages.groonga.orgからダウンロードしてください。"
 
 # c29c61ab44cf411da7bd6622ef2e6ca7
-msgid "http://packages.groonga.org/source/groonga/groonga-4.0.4.zip"
+msgid "http://packages.groonga.org/source/groonga/groonga-4.0.5.zip"
 msgstr ""
 
 msgid "Move to the Groonga's source folder::"

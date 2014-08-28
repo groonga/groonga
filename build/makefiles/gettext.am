@@ -18,7 +18,7 @@ endif
 
 SUFFIXES += .pot .po .mo .edit
 
-.PHONY: gettext build
+.PHONY: gettext update build
 
 .pot.edit:
 	if test -f $*.po; then			\
@@ -47,8 +47,10 @@ SUFFIXES += .pot .po .mo .edit
 	msgfmt -o $@ $<
 
 if DOCUMENT_BUILDABLE
-build: pot-build-stamp edit-po-build-stamp $(mo_files)
+update: pot-build-stamp edit-po-build-stamp
+build: update $(mo_files)
 else
+update:
 build:
 endif
 

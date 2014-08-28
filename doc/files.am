@@ -95,7 +95,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/table_create/lexicon_table_pat_key.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_create/tag_index_table_hash_key.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_list.log \
+	$(top_srcdir)/doc/source/example/reference/commands/tokenize/add_mode.log \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/flags_enable_tokenized_delimiter.log \
+	$(top_srcdir)/doc/source/example/reference/commands/tokenize/get_mode.log \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/normalizer_none.log \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/normalizer_use.log \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/normalizer_use_with_split_symbol_alpha.log \
@@ -118,6 +120,12 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_location_sphere.log \
 	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_setup_distance.log \
 	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_setup_location.log \
+	$(top_srcdir)/doc/source/example/reference/functions/highlight_full/usage_basic.log \
+	$(top_srcdir)/doc/source/example/reference/functions/highlight_full/usage_setup.log \
+	$(top_srcdir)/doc/source/example/reference/functions/highlight_full/usage_string_literal.log \
+	$(top_srcdir)/doc/source/example/reference/functions/highlight_html/usage_basic.log \
+	$(top_srcdir)/doc/source/example/reference/functions/highlight_html/usage_setup.log \
+	$(top_srcdir)/doc/source/example/reference/functions/highlight_html/usage_string_literal.log \
 	$(top_srcdir)/doc/source/example/reference/functions/html_untag/usage_html_untag.log \
 	$(top_srcdir)/doc/source/example/reference/functions/html_untag/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/html_untag/usage_setup_schema.log \
@@ -270,8 +278,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/tutorial/network-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/network-2.log \
 	$(top_srcdir)/doc/source/example/tutorial/network-3.log \
-	$(top_srcdir)/doc/source/example/tutorial/patricia_trie-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/patricia_trie-2.log \
+	$(top_srcdir)/doc/source/example/tutorial/patricia_trie_prefix_search.log \
 	$(top_srcdir)/doc/source/example/tutorial/query_expansion-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/query_expansion-2.log \
 	$(top_srcdir)/doc/source/example/tutorial/query_expansion-3.log \
@@ -463,6 +471,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/geo_distance.rst \
 	$(top_srcdir)/doc/source/reference/functions/geo_in_circle.rst \
 	$(top_srcdir)/doc/source/reference/functions/geo_in_rectangle.rst \
+	$(top_srcdir)/doc/source/reference/functions/highlight_full.rst \
+	$(top_srcdir)/doc/source/reference/functions/highlight_html.rst \
 	$(top_srcdir)/doc/source/reference/functions/html_untag.rst \
 	$(top_srcdir)/doc/source/reference/functions/now.rst \
 	$(top_srcdir)/doc/source/reference/functions/query.rst \
@@ -625,7 +635,9 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/table_create/lexicon_table_pat_key.log \
 	source/example/reference/commands/table_create/tag_index_table_hash_key.log \
 	source/example/reference/commands/table_list.log \
+	source/example/reference/commands/tokenize/add_mode.log \
 	source/example/reference/commands/tokenize/flags_enable_tokenized_delimiter.log \
+	source/example/reference/commands/tokenize/get_mode.log \
 	source/example/reference/commands/tokenize/normalizer_none.log \
 	source/example/reference/commands/tokenize/normalizer_use.log \
 	source/example/reference/commands/tokenize/normalizer_use_with_split_symbol_alpha.log \
@@ -648,6 +660,12 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/geo_distance_location_sphere.log \
 	source/example/reference/functions/geo_distance_setup_distance.log \
 	source/example/reference/functions/geo_distance_setup_location.log \
+	source/example/reference/functions/highlight_full/usage_basic.log \
+	source/example/reference/functions/highlight_full/usage_setup.log \
+	source/example/reference/functions/highlight_full/usage_string_literal.log \
+	source/example/reference/functions/highlight_html/usage_basic.log \
+	source/example/reference/functions/highlight_html/usage_setup.log \
+	source/example/reference/functions/highlight_html/usage_string_literal.log \
 	source/example/reference/functions/html_untag/usage_html_untag.log \
 	source/example/reference/functions/html_untag/usage_setup_data.log \
 	source/example/reference/functions/html_untag/usage_setup_schema.log \
@@ -800,8 +818,8 @@ source_files_relative_from_doc_dir = \
 	source/example/tutorial/network-1.log \
 	source/example/tutorial/network-2.log \
 	source/example/tutorial/network-3.log \
-	source/example/tutorial/patricia_trie-1.log \
 	source/example/tutorial/patricia_trie-2.log \
+	source/example/tutorial/patricia_trie_prefix_search.log \
 	source/example/tutorial/query_expansion-1.log \
 	source/example/tutorial/query_expansion-2.log \
 	source/example/tutorial/query_expansion-3.log \
@@ -993,6 +1011,8 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/geo_distance.rst \
 	source/reference/functions/geo_in_circle.rst \
 	source/reference/functions/geo_in_rectangle.rst \
+	source/reference/functions/highlight_full.rst \
+	source/reference/functions/highlight_html.rst \
 	source/reference/functions/html_untag.rst \
 	source/reference/functions/now.rst \
 	source/reference/functions/query.rst \
@@ -1291,6 +1311,8 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/functions/geo_distance.txt \
 	html/_sources/reference/functions/geo_in_circle.txt \
 	html/_sources/reference/functions/geo_in_rectangle.txt \
+	html/_sources/reference/functions/highlight_full.txt \
+	html/_sources/reference/functions/highlight_html.txt \
 	html/_sources/reference/functions/html_untag.txt \
 	html/_sources/reference/functions/now.txt \
 	html/_sources/reference/functions/query.txt \
@@ -1484,6 +1506,8 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/geo_distance.html \
 	html/reference/functions/geo_in_circle.html \
 	html/reference/functions/geo_in_rectangle.html \
+	html/reference/functions/highlight_full.html \
+	html/reference/functions/highlight_html.html \
 	html/reference/functions/html_untag.html \
 	html/reference/functions/now.html \
 	html/reference/functions/query.html \

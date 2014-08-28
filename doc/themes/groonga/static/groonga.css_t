@@ -442,6 +442,8 @@ pre
     color: #000;
     line-height: 120%;
     border: 1px solid #DDD;
+    white-space: pre-wrap;
+    word-wrap: normal;
 }
 
 tt

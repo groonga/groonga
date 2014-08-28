@@ -208,6 +208,29 @@ mrb_grn_scan_info_get_logical_op(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_scan_info_set_max_interval(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  int max_interval;
+
+  mrb_get_args(mrb, "i", &max_interval);
+  si = DATA_PTR(self);
+  grn_scan_info_set_max_interval(si, max_interval);
+  return self;
+}
+
+static mrb_value
+mrb_grn_scan_info_get_max_interval(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  int max_interval;
+
+  si = DATA_PTR(self);
+  max_interval = grn_scan_info_get_max_interval(si);
+  return mrb_fixnum_value(max_interval);
+}
+
+static mrb_value
 mrb_grn_scan_info_get_arg(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -346,6 +369,10 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_scan_info_get_logical_op, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "logical_op=",
                     mrb_grn_scan_info_set_logical_op, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "max_interval",
+                    mrb_grn_scan_info_get_max_interval, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "max_interval=",
+                    mrb_grn_scan_info_set_max_interval, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "get_arg",
                     mrb_grn_scan_info_get_arg, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "push_arg",

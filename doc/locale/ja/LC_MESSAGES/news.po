@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2014-07-28 12:42+0900\n"
+"PO-Revision-Date: 2014-08-28 13:15+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -20,11 +20,141 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 4.0.4 - 2014/07/29"
-msgstr "4.0.4リリース - 2014/07/29"
+msgid "Release 4.0.5 - 2014/08/29"
+msgstr "4.0.5リリース - 2014/08/29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "Dropped Ubuntu 13.10 (Saucy Salamander)."
+msgstr "Ubuntu 13.10 (Saucy Salamander)のサポートをやめました。"
+
+msgid "Supported to show weight vector element as XML."
+msgstr "重みつきベクターカラムの表示をXML出力のときにもサポートしました。"
+
+msgid "[ :doc:`/reference/functions/between` ] Supported outside of key range."
+msgstr ""
+"[ :doc:`/reference/functions/between` ] 範囲外のキーも指定できるようにしまし"
+"た。"
+
+msgid "[mruby] Changed to use Onigmo as regexp implementation."
+msgstr "[mruby] バンドルしている正規表現の実装をOnigmoに変更しました。"
+
+msgid ""
+"Added :doc:`/reference/functions/highlight_full` and :doc:`/reference/"
+"functions/highlight_html` which tags output text. [GitHub#185] [Patch by "
+"Naoya Murakami]"
+msgstr ""
+"タグ出力のために :doc:`/reference/functions/highlight_full` と :doc:`/"
+"reference/functions/highlight_html` を追加しました。 [GitHub#185] [村上さんが"
+"パッチ提供]"
+
+# 3817653d88cb47de96f3bdb5030d739c
+msgid ""
+"[doc] Updated outdated functions/commands reference [GitHub#188] "
+"[GitHub#189] [Patch by Naoya Murakami]"
+msgstr ""
+"[doc] 古くなっていた functions/commands リファレンスを更新しました。 "
+"[GitHub#188] [GitHub#189] [村上さんがパッチ提供]"
+
+msgid "[benchmark] Added average and median in benchmark result."
+msgstr "[benchmark] 平均と中央値をベンチマーク結果に含めるようにしました。"
+
+msgid ""
+"Exported :c:func:`grn_selector_func` and :c:func:`grn_proc_set_selector` for "
+"plugin developer. [GitHub#190] [Patch by Naoya Murakami]"
+msgstr ""
+"プラグイン開発者向けに :c:func:`grn_selector_func` と :c:func:"
+"`grn_proc_set_selector` を公開しました。 [GitHub#190] [村上さんがパッチ提供]"
+
+# 4ffce3194c3e484faef47ff87bae7b34
+msgid ""
+"[ :doc:`/reference/commands/tokenize` ] Added \"mode\" option to control "
+"behavior. You can use ``GET`` or ``ADD`` as a mode. [GitHub#191] "
+"[GitHub#192] [Patch by Naoya Murakami]"
+msgstr ""
+"[ :doc:`/reference/commands/tokenize` ] \"mode\" オプションを追加して、振舞い"
+"を変更できるようにしました。``GET`` あるいは ``ADD``  を指定できます。 "
+"[GitHub#191] [GitHub#192] [村上さんがパッチ提供]"
+
+msgid "Supported near search by '\\*N\"A Z\"' syntax."
+msgstr "近傍検索で、'\\*N\"A Z\"' という構文をサポートしました。"
+
+msgid ""
+"Supported to customize behavior of tokenizer whether it skips token or skips "
+"token with position. This feature is useful for developing tokenizer plugin. "
+"[GitHub#193] [Patch by Naoya Murakami]"
+msgstr ""
+"トークンをスキップしたり、トークンだけでなくその位置もスキップするかどうかを"
+"カスタマイズできるようにしました。この機能はトークナイザープラグインを開発す"
+"るときに有用です。 [GitHub#193] [村上さんがパッチ提供]"
+
+msgid ""
+"[doc] Updated description that a bug report is accepted in Japanese on "
+"GitHub issue tracker. [Reported by 6elz] [groonga-dev,02651]"
+msgstr ""
+"[doc] GitHubのIssuesによるバグレポートで日本語も受けつけるようにしました。 "
+"[6elzさんが報告] [groonga-dev,02651]"
+
+msgid "[doc] Updated tutorial in English. [GitHub#194] [Patch by cosmo0920]"
+msgstr ""
+"[doc] チュートリアルの英語版を更新しました。[GitHub#194] [cosmo0920さんがパッ"
+"チ提供]"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid ""
+"[php] Fixed memory leak when :c:func:`grn_ctx_recv()` is used. [GitHub#184] "
+"[Patch by @do-aki]"
+msgstr ""
+"[php] :c:func:`grn_ctx_recv()` を呼び出したときのメモリリークを修正しました。"
+"[GitHub#184] [@do-akiさんがパッチ提供]"
+
+msgid ""
+"[php] Fixed to avoid double free when :c:func:`grn_ctx_close()` is called. "
+"[GitHub#184] [Patch by @do-aki]"
+msgstr ""
+"[php] :c:func:`grn_ctx_close()` を呼んだときにメモリを二重に解放しないように"
+"しました。[GitHub#184] [@do-akiさんがパッチ提供]"
+
+msgid "Fixed to support out-of-tree build again."
+msgstr "ツリー外でのビルドを再度サポートしました。"
+
+msgid ""
+"[httpd] Updated bundled nginx version to the latest mainline (1.7.4). This "
+"update contains vulnerability fix."
+msgstr ""
+"[httpd] バンドルしているnginxのバージョンを1.7.4に更新しました。セキュリ"
+"ティーに関する修正を含んでいます。"
+
+msgid ""
+"Fixed a bug that infinite loop occurs sometimes when updating indexes. "
+"[groonga-dev,02673] [Reported by MINAGAWA Sho]"
+msgstr ""
+"インデックス更新の際に無限ループが発生することがある問題を修正しました。"
+"[groonga-dev,02673] [皆川さんが報告]"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "@do-aki"
+msgstr "@do-akiさん"
+
+msgid "Naoya Murakami"
+msgstr "村上さん"
+
+msgid "6elz"
+msgstr "6elzさん"
+
+msgid "MINAGAWA Sho"
+msgstr "皆川さん"
+
+msgid "cosmo0920"
+msgstr "cosmo0920さん"
+
+msgid "Release 4.0.4 - 2014/07/29"
+msgstr "4.0.4リリース - 2014/07/29"
 
 msgid "[httpd] Updated bundled nginx version to the latest mainline (1.7.3)."
 msgstr "[httpd] バンドルしているnginxのバージョンを1.7.3に更新しました。"
@@ -49,9 +179,6 @@ msgstr "[example] Ruby 1.9以降でedict2grn.rbが動作するようにしまし
 msgid "[http][admin] Updated to use English as default language. [GitHub#182]"
 msgstr "[http][admin] 管理画面で英語を標準にしました。"
 
-msgid "Fixes"
-msgstr "修正"
-
 msgid "Fixed to show right syntax error location in response."
 msgstr ""
 "レスポンスでシンタックスエラーの発生個所を正しく表示できるようにしました。"
@@ -62,9 +189,6 @@ msgid ""
 msgstr ""
 "[httpd] Clangでビルドエラーとなる問題を修正しました。 [GitHub clear-code/"
 "rurema-search#11] [nikuさんが報告]"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "niku"
 msgstr "nikuさん"
@@ -206,14 +330,8 @@ msgstr ""
 msgid "Masafumi Yokoyama"
 msgstr "横山さん"
 
-msgid "Naoya Murakami"
-msgstr "村上さん"
-
 msgid "GMO Media, Inc."
 msgstr "GMOメディア株式会社さん"
-
-msgid "cosmo0920"
-msgstr "cosmo0920さん"
 
 msgid "Release 4.0.2 - 2014/05/29"
 msgstr "4.0.2リリース - 2014/05/29"

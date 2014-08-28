@@ -7,6 +7,58 @@
 News
 ====
 
+.. _release-4-0-5:
+
+Release 4.0.5 - 2014/08/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Dropped Ubuntu 13.10 (Saucy Salamander).
+* Supported to show weight vector element as XML.
+* [ :doc:`/reference/functions/between` ] Supported outside of key range.
+* [mruby] Changed to use Onigmo as regexp implementation.
+* Added :doc:`/reference/functions/highlight_full` and
+  :doc:`/reference/functions/highlight_html` which tags
+  output text. [GitHub#185] [Patch by Naoya Murakami]
+* [doc] Updated outdated functions/commands reference
+  [GitHub#188] [GitHub#189] [Patch by Naoya Murakami]
+* [benchmark] Added average and median in benchmark result.
+* Exported :c:func:`grn_selector_func` and :c:func:`grn_proc_set_selector`
+  for plugin developer. [GitHub#190] [Patch by Naoya Murakami]
+* [ :doc:`/reference/commands/tokenize` ] Added "mode" option to control behavior.
+  You can use ``GET`` or ``ADD`` as a mode.
+  [GitHub#191] [GitHub#192] [Patch by Naoya Murakami]
+* Supported near search by '\*N"A Z"' syntax.
+* Supported to customize behavior of tokenizer whether it skips token or
+  skips token with position. This feature is useful for developing tokenizer plugin.
+  [GitHub#193] [Patch by Naoya Murakami]
+* [doc] Updated description that a bug report is accepted in Japanese on GitHub issue tracker.
+  [Reported by 6elz] [groonga-dev,02651]
+* [doc] Updated tutorial in English. [GitHub#194] [Patch by cosmo0920]
+
+Fixes
+^^^^^
+
+* [php] Fixed memory leak when :c:func:`grn_ctx_recv()` is used.
+  [GitHub#184] [Patch by @do-aki]
+* [php] Fixed to avoid double free when :c:func:`grn_ctx_close()` is called.
+  [GitHub#184] [Patch by @do-aki]
+* Fixed to support out-of-tree build again.
+* [httpd] Updated bundled nginx version to the latest mainline (1.7.4). This update contains vulnerability fix.
+* Fixed a bug that infinite loop occurs sometimes when updating indexes.
+  [groonga-dev,02673] [Reported by MINAGAWA Sho]
+
+Thanks
+^^^^^^
+
+* @do-aki
+* Naoya Murakami
+* 6elz
+* MINAGAWA Sho
+* cosmo0920
+
 .. _release-4-0-4:
 
 Release 4.0.4 - 2014/07/29

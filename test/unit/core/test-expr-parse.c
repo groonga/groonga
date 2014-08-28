@@ -288,9 +288,10 @@ test_parse(gconstpointer data)
               gcut_data_get_int(data, "query_poyo_parse_level"));
   grn_expr_append_op(&context, cond, GRN_OP_AND, 2);
   grn_test_assert_expr(&context,
-                       "noname($1:0){2body GET_VALUE,0\"hoge\",4MATCH,"
-                                    "2body GET_VALUE,0\"moge\",0MATCH,4AND,"
-                                    "2body GET_VALUE,0\"poyo\",0MATCH,0AND}",
+                       "noname($1:null)"
+                       "{2body GET_VALUE,0\"hoge\",4MATCH,"
+                        "2body GET_VALUE,0\"moge\",0MATCH,4AND,"
+                        "2body GET_VALUE,0\"poyo\",0MATCH,0AND}",
                        cond);
   res = grn_table_create(&context, NULL, 0, NULL,
                          GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, NULL);
@@ -316,7 +317,7 @@ test_parse(gconstpointer data)
   PARSE(cond, gcut_data_get_string(data, "query_size"),
               gcut_data_get_int(data, "query_size_parse_level"));
   grn_test_assert_expr(&context,
-                       "noname($1:0){2size GET_VALUE,014,0EQUAL}",
+                       "noname($1:null){2size GET_VALUE,014,0EQUAL}",
                        cond);
   res = grn_table_create(&context, NULL, 0, NULL,
                          GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, NULL);
@@ -868,6 +869,6 @@ test_syntax_equal_string_reference_key(void)
   cut_assert_not_null(v);
   PARSE(cond, "author == \"morita\"", GRN_EXPR_SYNTAX_SCRIPT);
   grn_test_assert_expr(&context,
-                       "noname($1:0){2author GET_VALUE,0\"morita\",0EQUAL}",
+                       "noname($1:null){2author GET_VALUE,0\"morita\",0EQUAL}",
                        cond);
 }
