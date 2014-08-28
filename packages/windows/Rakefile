@@ -200,7 +200,7 @@ namespace :build do
 
       groonga_license_dir = license_dir + "groonga"
       mkdir_p(groonga_license_dir)
-      files = ["AUTHORS", "COPYING"]
+      files = ["README.md", "COPYING"]
       cp(files, groonga_license_dir)
     end
   end
