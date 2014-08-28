@@ -184,12 +184,14 @@ namespace :build do
     end
     Dir.chdir(tmp_dir + "groonga-#{groonga_version}") do
       mecab_config = binary_dir + "bin" + "mecab-config"
-      options = ["--prefix=#{binary_dir}",
-                 "--host=#{host}",
-                 "--without-cutter",
-                 "--disable-benchmark",
-                 "--disable-groonga-httpd",
-                 "--with-message-pack=#{binary_dir}"]
+      options = [
+        "--prefix=#{binary_dir}",
+        "--host=#{host}",
+        "--without-cutter",
+        "--disable-benchmark",
+        "--disable-groonga-httpd",
+        "--with-message-pack=#{binary_dir}",
+      ]
       if mecab_config.exist?
         options << "--with-mecab-config=#{mecab_config}"
       else
