@@ -36,6 +36,7 @@ binary_dir = base_dir + dist_dir
 patches_dir = (base_dir + "patches").expand_path
 mecab_patches = [
   "mecab-0.98-not-use-locale-on-mingw.diff",
+  "mecab-0.98-add-missing-dll-export.diff",
 ]
 if groonga_win32_x86_p
   host = "i686-w64-mingw32"
@@ -113,6 +114,7 @@ namespace :build do
       mecab_patches.each do |patch|
         sh("patch -p1 < #{patches_dir + patch}")
       end
+      sh("autoreconf", "--install", "--force")
       sh("./configure",
          "--prefix=#{binary_dir}",
          "--host=#{host}") or exit(false)
