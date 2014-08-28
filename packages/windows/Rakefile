@@ -187,6 +187,7 @@ namespace :build do
       options = [
         "--prefix=#{binary_dir}",
         "--host=#{host}",
+        "--disable-libedit",
         "--without-kytea",
         "--without-cutter",
         "--disable-benchmark",
