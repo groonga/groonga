@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2014-08-14 23:09+0900\n"
+"PO-Revision-Date: 2014-08-28 16:37+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -13341,15 +13341,3 @@ msgstr ""
 
 msgid "Object型はv1.2でサポートされます。"
 msgstr ""
-
-#~ msgid "RETURN VALUE"
-#~ msgstr "戻り値"
-
-#~ msgid "DESCRIPTION"
-#~ msgstr "説明"
-
-#~ msgid "SYNOPSIS"
-#~ msgstr "書式"
-
-#~ msgid "You can't use reference type."
-#~ msgstr "参照型を使うことができません。"
