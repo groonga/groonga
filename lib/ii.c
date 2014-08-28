@@ -7099,6 +7099,7 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
                               ii_buffer->ii->n_elements,
                               ii_buffer->packed_buf +
                               ii_buffer->packed_len);
+      a[1] = ii_buffer->data_vectors[0].data_size;
       bt->tid = tid;
       bt->size_in_buffer = 0;
       bt->pos_in_buffer = 0;
