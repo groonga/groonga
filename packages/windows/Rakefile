@@ -223,7 +223,12 @@ namespace :gcc do
   namespace :dll do
     desc "Bundle GCC related DLLs"
     task(:bundle) do
-      dlls = ["libgcc_s_sjlj-1.dll", "libstdc++-6.dll", "libwinpthread-1.dll"]
+      dlls = ["libstdc++-6.dll", "libwinpthread-1.dll"]
+      if groonga_win32_x86_p
+        dlls << "libgcc_s_sjlj-1.dll"
+      else
+        dlls << "libgcc_s_seh-1.dll"
+      end
       dlls.each do |dll|
         full_path = `#{host}-g++ -print-file-name=#{dll}`.strip
         cp(full_path, (binary_dir + "bin").to_s)
