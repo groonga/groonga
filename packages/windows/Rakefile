@@ -187,6 +187,7 @@ namespace :build do
       options = [
         "--prefix=#{binary_dir}",
         "--host=#{host}",
+        "--without-kytea",
         "--without-cutter",
         "--disable-benchmark",
         "--disable-groonga-httpd",
