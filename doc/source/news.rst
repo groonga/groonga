@@ -49,6 +49,9 @@ Fixes
 * [httpd] Updated bundled nginx version to the latest mainline (1.7.4). This update contains vulnerability fix.
 * Fixed a bug that infinite loop occurs sometimes when updating indexes.
   [groonga-dev,02673] [Reported by MINAGAWA Sho]
+* Fixed a bug that document frequency is invalid when
+  :ref:`offline-index-construction` is used.
+  [groonga-dev,02691] [Reported by Naoya Murakami]
 
 Thanks
 ^^^^^^
