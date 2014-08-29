@@ -2,10 +2,11 @@
 
 .. highlightlang:: none
 
-全文検索の語彙表に対する追加情報
-================================
+Additional information about lexicon for full text search
+=========================================================
 
-Groongaでは、全文検索に用いるための語意表がテーブルとして扱えます。よって、語彙ごとに複数の情報を保持することができます。例えば、語彙の出現数や検索ストップワードのフラグ、単語の重要度などを保持することができます。
+Groonga uses lexicon for full text search as a table. Thus, Groonga can hold multiple information each lexicon.
+For example, Groonga holds frequency of word, flags for stop word, importance of word and so on.
 
-この項目については、現在執筆中です。
+TODO: Write document.
 
