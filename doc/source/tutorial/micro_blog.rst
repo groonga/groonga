@@ -5,15 +5,16 @@
 .. groonga-command
 .. database: tutorial-micro-blog
 
-マイクロブログ検索システムの作成
-================================
+Let's create micro-blog
+=======================
 
-これまで学んだGroongaの機能を用いて、マイクロブログの検索システムを作成してみましょう。マイクロブログとは、Twitterのような短いメッセージを投稿するブログです。
+Let's create micro-blog with full text search by Groonga.
+Micro-blog is one of the broadcast medium in the forms of blog. It is mainly used to post small messages like a Twitter.
 
-テーブルの作成
+Create a table
 --------------
 
-まずは、テーブルを作成します。
+Let's create table.
 
 ::
 
