@@ -46,8 +46,8 @@ This parameter accepts the conditions which is specified by syntax like JavaScri
 
 .. groonga-command
 .. include:: ../example/tutorial/search-3.log
-.. select --table Site --filter "1" --scorer "_score = rand()" --output_columns _id,_key,_score --sortby _score
-.. select --table Site --filter "1" --scorer "_score = rand()" --output_columns _id,_key,_score --sortby _score
+.. select --table Site --filter "true" --scorer "_score = rand()" --output_columns _id,_key,_score --sortby _score
+.. select --table Site --filter "true" --scorer "_score = rand()" --output_columns _id,_key,_score --sortby _score
 
 '_score' is one of a pseudo column. The score of full-text search is assigned to it.
 See :doc:`/reference/columns/pseudo` about '_score' column.
