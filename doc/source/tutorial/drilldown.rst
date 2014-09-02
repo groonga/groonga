@@ -120,7 +120,7 @@ Use ``--drilldown_sortby`` if you want to sort the result of drilldown. For exam
 limits drildown results
 ------------------------
 
-The number of drilldown results is limited to 10 as a default. Use ``drilldown_limits`` and ``drilldown_offset`` parameter to customize orilldown results.
+The number of drilldown results is limited to 10 as a default. Use ``drilldown_limit`` and ``drilldown_offset`` parameter to customize orilldown results.
 
 .. groonga-command
 .. include:: ../example/tutorial/drilldown-limit.log
