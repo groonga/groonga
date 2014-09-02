@@ -5702,7 +5702,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
     grn_ii_cursor *c;
     grn_ii_posting *pos;
     grn_wv_mode wvm = grn_wv_none;
-    grn_table_sort_optarg arg = {GRN_TABLE_SORT_DESC, NULL, (void *)sizeof(grn_id), 0};
+    grn_table_sort_optarg arg = {GRN_TABLE_SORT_DESC|GRN_TABLE_SORT_BY_VALUE, NULL, NULL, 0};
     grn_array *sorted = grn_array_create(ctx, NULL, sizeof(grn_id), 0);
     if (!sorted) {
       GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_sort on grn_ii_similar_search failed !");
