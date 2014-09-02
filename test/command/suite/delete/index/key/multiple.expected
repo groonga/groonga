@@ -1,0 +1,264 @@
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create BigramTokens TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create BigramTokens memo_key COLUMN_INDEX|WITH_POSITION Memos _key
+[[0,0.0,0.0],true]
+table_create TrigramTokens TABLE_PAT_KEY ShortText   --default_tokenizer TokenTrigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create TrigramTokens memo_key COLUMN_INDEX|WITH_POSITION Memos _key
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Today is sunny day."}
+]
+[[0,0.0,0.0],1]
+select Memos --filter '_key @ "sunny"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "Today is sunny day."
+      ]
+    ]
+  ]
+]
+select BigramTokens
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        5
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "memo_key",
+          "Memos"
+        ]
+      ],
+      [
+        5,
+        ".",
+        1
+      ],
+      [
+        4,
+        "day",
+        1
+      ],
+      [
+        2,
+        "is",
+        1
+      ],
+      [
+        3,
+        "sunny",
+        1
+      ],
+      [
+        1,
+        "today",
+        1
+      ]
+    ]
+  ]
+]
+select TrigramTokens
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        5
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "memo_key",
+          "Memos"
+        ]
+      ],
+      [
+        5,
+        ".",
+        1
+      ],
+      [
+        4,
+        "day",
+        1
+      ],
+      [
+        2,
+        "is",
+        1
+      ],
+      [
+        3,
+        "sunny",
+        1
+      ],
+      [
+        1,
+        "today",
+        1
+      ]
+    ]
+  ]
+]
+delete Memos --filter '_key @ "sunny"'
+[[0,0.0,0.0],true]
+select Memos
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["_key","ShortText"]]]]]
+select BigramTokens
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        5
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "memo_key",
+          "Memos"
+        ]
+      ],
+      [
+        5,
+        ".",
+        0
+      ],
+      [
+        4,
+        "day",
+        0
+      ],
+      [
+        2,
+        "is",
+        0
+      ],
+      [
+        3,
+        "sunny",
+        0
+      ],
+      [
+        1,
+        "today",
+        0
+      ]
+    ]
+  ]
+]
+select TrigramTokens
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        5
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "memo_key",
+          "Memos"
+        ]
+      ],
+      [
+        5,
+        ".",
+        0
+      ],
+      [
+        4,
+        "day",
+        0
+      ],
+      [
+        2,
+        "is",
+        0
+      ],
+      [
+        3,
+        "sunny",
+        0
+      ],
+      [
+        1,
+        "today",
+        0
+      ]
+    ]
+  ]
+]

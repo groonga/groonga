@@ -1472,11 +1472,11 @@ call_delete_hook(grn_ctx *ctx, grn_obj *table, grn_id rid, const void *key, unsi
       GRN_TEXT_SET_REF(&oldvalue_, key, key_size);
       GRN_UINT32_SET(ctx, &id_, rid);
       GRN_UINT32_SET(ctx, &flags_, GRN_OBJ_SET);
-      grn_ctx_push(ctx, &id_);
-      grn_ctx_push(ctx, &oldvalue_);
-      grn_ctx_push(ctx, &value_);
-      grn_ctx_push(ctx, &flags_);
       while (hooks) {
+        grn_ctx_push(ctx, &id_);
+        grn_ctx_push(ctx, &oldvalue_);
+        grn_ctx_push(ctx, &value_);
+        grn_ctx_push(ctx, &flags_);
         pctx.caller = NULL;
         pctx.currh = hooks;
         if (hooks->proc) {

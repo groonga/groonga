@@ -1,0 +1,26 @@
+table_create Memos TABLE_HASH_KEY ShortText
+
+table_create BigramTokens TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create BigramTokens memo_key COLUMN_INDEX|WITH_POSITION Memos _key
+
+table_create TrigramTokens TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenTrigram \
+  --normalizer NormalizerAuto
+column_create TrigramTokens memo_key COLUMN_INDEX|WITH_POSITION Memos _key
+
+load --table Memos
+[
+{"_key": "Today is sunny day."}
+]
+
+select Memos --filter '_key @ "sunny"'
+select BigramTokens
+select TrigramTokens
+
+delete Memos --filter '_key @ "sunny"'
+select Memos
+
+select BigramTokens
+select TrigramTokens
