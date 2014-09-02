@@ -18,6 +18,7 @@ Improvements
 * Dropped Ubuntu 13.10 (Saucy Salamander).
 * Supported to show weight vector element as XML.
 * [ :doc:`/reference/functions/between` ] Supported outside of key range.
+  [GitHub#183] [Patch by Naoya Murakami]
 * [mruby] Changed to use Onigmo as regexp implementation.
 * Added :doc:`/reference/functions/highlight_full` and
   :doc:`/reference/functions/highlight_html` which tags
