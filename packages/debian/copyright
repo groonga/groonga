@@ -9,6 +9,10 @@ License: LGPL-2.1
 
 Files: debian/*
 Copyright: 2011 Kouhei Sutou <kou@clear-code.com>
+	   HAYASHI Kentaro <hayashi@clear-code.com>
+	   IWAI, Masaharu <iwaim.sub@gmail.com>
+	   SATOH Fumiyasu <fumiyas@osstech.co.jp>
+	   orangain <orangain@gmail.com>
 License: LGPL-2.1
 
 Files: data/html/admin/css/redmond/*
