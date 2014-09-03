@@ -4,15 +4,15 @@ Upstream-Contact: Groonga Project <packages@groonga.org>
 Source: http://packages.groonga.org/source/groonga/
 
 Files: *
-Copyright: Copyright 2009-2013 Brazil, Inc.
+Copyright: 2009-2013 Brazil, Inc.
 License: LGPL-2.1
 
 Files: debian/*
-Copyright: Copyright 2011 Kouhei Sutou <kou@clear-code.com>
+Copyright: 2011 Kouhei Sutou <kou@clear-code.com>
 License: LGPL-2.1
 
 Files: data/html/admin/css/redmond/*
-Copyright: Copyright 2011, Brandon Aaron
+Copyright: 2011, Brandon Aaron
  Paul Bakaus (paulbakaus.com)
  David Bolter
  Rich Caloggero
@@ -39,19 +39,19 @@ Copyright: Copyright 2011, Brandon Aaron
 License: MIT or GPL-2
 
 Files: data/html/admin/js/jquery.flot*
-Copyright: Copyright (c) 2007-2009 IOLA and Ole Laursen
+Copyright: 2007-2009 IOLA and Ole Laursen
 License: MIT
 
 Files: data/html/admin/js/jquery-1.7.2.min.js
-Copyright: Copyright 2011, John Resig
+Copyright: 2011, John Resig
 License: MIT or GPL-2
 
 Files: doc/locale/*/jquery.js
-Copyright: Copyright 2012 jQuery Foundation
+Copyright: 2012 jQuery Foundation
 License: MIT
 
 Files: doc/locale/*/underscore.js
-Copyright: Copyright 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
+Copyright: 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
 License: MIT
 
 License: LGPL-2.1
