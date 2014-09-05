@@ -7081,10 +7081,10 @@ msgstr ""
 msgid "It specifies the name of table."
 msgstr "テーブルの名前を指定します。"
 
-msgid "実行ファイル"
+msgid "Executables"
 msgstr ""
 
-msgid "groongaパッケージが提供する実行ファイルについて説明します。"
+msgid "This section describes executable files provided by groonga package."
 msgstr ""
 
 msgid "grnslap"
