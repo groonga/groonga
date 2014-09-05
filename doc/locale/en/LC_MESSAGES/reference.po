@@ -7568,11 +7568,11 @@ msgstr "``table_name``"
 msgid "It specifies the name of table."
 msgstr "It specifies the name of table."
 
-msgid "実行ファイル"
-msgstr "実行ファイル"
+msgid "Executables"
+msgstr "Executables"
 
-msgid "groongaパッケージが提供する実行ファイルについて説明します。"
-msgstr "groongaパッケージが提供する実行ファイルについて説明します。"
+msgid "This section describes executable files provided by groonga package."
+msgstr "This section describes executable files provided by groonga package."
 
 msgid "grnslap"
 msgstr "grnslap"
@@ -14246,59 +14246,65 @@ msgstr ""
 msgid "Object型はv1.2でサポートされます。"
 msgstr "Object型はv1.2でサポートされます。"
 
-#~ msgid "You can't use reference type."
-#~ msgstr "You can't use reference type."
-
-#~ msgid "check"
-#~ msgstr "check"
-
-#~ msgid "json形式"
-#~ msgstr "json形式"
-
-#~ msgid "clearlock"
-#~ msgstr "clearlock"
-
-#~ msgid "関連項目"
-#~ msgstr "関連項目"
-
-#~ msgid "column_remove"
-#~ msgstr "column_remove"
-
-#~ msgid "define_selector"
-#~ msgstr "define_selector"
-
-#~ msgid "log_level"
-#~ msgstr "log_level"
-
-#~ msgid "log_put"
-#~ msgstr "log_put"
-
-#~ msgid "quit"
-#~ msgstr "quit"
-
-#~ msgid "shutdown"
-#~ msgstr "shutdown"
-
-#~ msgid "status"
-#~ msgstr "status"
-
-#~ msgid "suggest"
-#~ msgstr "suggest"
-
-#~ msgid "SYNOPSIS"
-#~ msgstr "SYNOPSIS"
-
-#~ msgid "DESCRIPTION"
-#~ msgstr "DESCRIPTION"
-
-#~ msgid "RETURN VALUE"
-#~ msgstr "RETURN VALUE"
-
-#~ msgid "table_list"
-#~ msgstr "table_list"
+#~ msgid "Specify log directory."
+#~ msgstr "Specify log directory."
 
 #~ msgid "table_remove"
 #~ msgstr "table_remove"
 
-#~ msgid "Specify log directory."
-#~ msgstr "Specify log directory."
+#~ msgid "table_list"
+#~ msgstr "table_list"
+
+#~ msgid "RETURN VALUE"
+#~ msgstr "RETURN VALUE"
+
+#~ msgid "DESCRIPTION"
+#~ msgstr "DESCRIPTION"
+
+#~ msgid "SYNOPSIS"
+#~ msgstr "SYNOPSIS"
+
+#~ msgid "suggest"
+#~ msgstr "suggest"
+
+#~ msgid "status"
+#~ msgstr "status"
+
+#~ msgid "shutdown"
+#~ msgstr "shutdown"
+
+#~ msgid "quit"
+#~ msgstr "quit"
+
+#~ msgid "log_put"
+#~ msgstr "log_put"
+
+#~ msgid "log_level"
+#~ msgstr "log_level"
+
+#~ msgid "define_selector"
+#~ msgstr "define_selector"
+
+#~ msgid "column_remove"
+#~ msgstr "column_remove"
+
+#~ msgid "関連項目"
+#~ msgstr "関連項目"
+
+#~ msgid "clearlock"
+#~ msgstr "clearlock"
+
+#~ msgid "json形式"
+#~ msgstr "json形式"
+
+#~ msgid "check"
+#~ msgstr "check"
+
+#~ msgid "You can't use reference type."
+#~ msgstr "You can't use reference type."
+
+#~ msgid "groongaパッケージが提供する実行ファイルについて説明します。"
+#~ msgstr "groongaパッケージが提供する実行ファイルについて説明します。"
+
+#~ msgid "実行ファイル"
+#~ msgstr "実行ファイル"

@@ -2,10 +2,10 @@
 
 .. highlightlang:: none
 
-実行ファイル
-============
+Executables
+===========
 
-groongaパッケージが提供する実行ファイルについて説明します。
+This section describes executable files provided by groonga package.
 
 .. toctree::
    :maxdepth: 1
