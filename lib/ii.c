@@ -5703,7 +5703,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
     grn_ii_posting *pos;
     grn_wv_mode wvm = grn_wv_none;
     grn_table_sort_optarg arg = {
-      GRN_TABLE_SORT_DESC|GRN_TABLE_SORT_BY_VALUE,
+      GRN_TABLE_SORT_DESC|GRN_TABLE_SORT_BY_VALUE|GRN_TABLE_SORT_AS_NUMBER,
       NULL,
       NULL,
       0
