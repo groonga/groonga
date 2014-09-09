@@ -13,6 +13,11 @@ rpmbuild_options=
 
 . /vagrant/env.sh
 
+swap_file=/tmp/swap
+run dd if=/dev/zero of="$swap_file" bs=1024 count=1024K
+run mkswap "$swap_file"
+run swapon "$swap_file"
+
 distribution=$(cut -d " " -f 1 /etc/redhat-release | tr "A-Z" "a-z")
 if grep -q Linux /etc/redhat-release; then
     distribution_version=$(cut -d " " -f 4 /etc/redhat-release)
