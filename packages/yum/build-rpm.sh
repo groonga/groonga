@@ -14,7 +14,7 @@ rpmbuild_options=
 . /vagrant/env.sh
 
 swap_file=/tmp/swap
-run dd if=/dev/zero of="$swap_file" bs=1024 count=1024K
+run dd if=/dev/zero of="$swap_file" bs=1024 count=3024K
 run mkswap "$swap_file"
 run swapon "$swap_file"
 
