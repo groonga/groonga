@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013 Brazil
+  Copyright(C) 2013-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -62,6 +62,7 @@ grn_obj *grn_scan_info_get_arg(grn_ctx *ctx, scan_info *si, int i);
 
 int32_t grn_expr_code_get_weight(grn_ctx *ctx, grn_expr_code *ec);
 grn_rc grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *keywords);
+void grn_expr_take_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj);
 
 #ifdef __cplusplus
 }

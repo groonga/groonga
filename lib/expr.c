@@ -539,6 +539,14 @@ exit :
   return (grn_obj *)expr;
 }
 
+/* Pass ownership of `obj` to `expr`. */
+void
+grn_expr_take_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj)
+{
+  grn_expr *e = (grn_expr *)expr;
+  GRN_PTR_PUT(ctx, &(e->objs), obj);
+}
+
 /* data flow info */
 typedef struct {
   grn_expr_code *code;
@@ -1134,7 +1142,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
               obj = col;
               type = col->header.type;
               domain = grn_obj_get_range(ctx, col);
-              GRN_PTR_PUT(ctx, &(e->objs), col);
+              grn_expr_take_obj(ctx, (grn_obj *)e, col);
             }
           } else {
             domain = grn_obj_get_range(ctx, obj);
@@ -2886,7 +2894,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           if (col->header.type == GRN_BULK) {
             grn_obj *table = grn_ctx_at(ctx, GRN_OBJ_GET_DOMAIN(rec));
             col = grn_obj_column(ctx, table, GRN_BULK_HEAD(col), GRN_BULK_VSIZE(col));
-            if (col) { GRN_PTR_PUT(ctx, &e->objs, col); }
+            if (col) { grn_expr_take_obj(ctx, (grn_obj *)e, col); }
           }
           if (col) {
             res->header.type = GRN_PTR;
@@ -3223,7 +3231,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
             if (col->header.type == GRN_BULK) {
               grn_obj *table = grn_ctx_at(ctx, GRN_OBJ_GET_DOMAIN(rec));
               col = grn_obj_column(ctx, table, GRN_BULK_HEAD(col), GRN_BULK_VSIZE(col));
-              if (col) { GRN_PTR_PUT(ctx, &e->objs, col); }
+              if (col) { grn_expr_take_obj(ctx, (grn_obj *)expr, col); }
             }
             if (col) {
               grn_obj_reinit_for(ctx, res, col);
@@ -6022,7 +6030,7 @@ get_word_(grn_ctx *ctx, efs_info *q)
       PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
       PARSE(GRN_EXPR_TOKEN_RELATIVE_OP);
 
-      GRN_PTR_PUT(ctx, &((grn_expr *)(q->e))->objs, c);
+      grn_expr_take_obj(ctx, q->e, c);
       GRN_PTR_PUT(ctx, &q->column_stack, c);
       GRN_INT32_PUT(ctx, &q->mode_stack, mode);
 
@@ -6328,13 +6336,13 @@ done :
       goto exit;
     }
     if ((obj = grn_obj_column(ctx, q->table, name, name_size))) {
-      GRN_PTR_PUT(ctx, &((grn_expr *)q->e)->objs, obj);
+      grn_expr_take_obj(ctx, q->e, obj);
       PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
       grn_expr_append_obj(ctx, q->e, obj, GRN_OP_GET_VALUE, 1);
       goto exit;
     }
     if ((obj = resolve_top_level_name(ctx, name, name_size))) {
-      GRN_PTR_PUT(ctx, &((grn_expr *)q->e)->objs, obj);
+      grn_expr_take_obj(ctx, q->e, obj);
       PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
       grn_expr_append_obj(ctx, q->e, obj, GRN_OP_PUSH, 1);
       goto exit;
