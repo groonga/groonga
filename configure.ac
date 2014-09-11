@@ -1139,7 +1139,12 @@ For Debian GNU/Linux based system like Ubuntu:
 
 For Red Hat based system like CentOS:
   % sudo yum install -y python-pip
-  % sudo pip install sphinx])
+  % sudo pip install sphinx
+
+For Mac OSX with Homebrew:
+  % brew install pip
+  % export PATH=`brew --prefix gettext`"/bin:\$PATH"
+  % pip install sphinx])
     fi
     AC_SUBST(SPHINX_BUILD)
   fi
