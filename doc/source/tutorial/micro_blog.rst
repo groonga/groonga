@@ -49,35 +49,36 @@ Let's create table.
  column_create --table GeoIndex --name users_location --type Users --flags COLUMN_INDEX --source location
  column_create --table GeoIndex --name comments_location --type Comments --flags COLUMN_INDEX --source location
 
-Usersテーブル
-^^^^^^^^^^^^^
+Users table
+^^^^^^^^^^^
 
-ユーザーの名前や自己紹介文、フォローしているユーザー一覧など、ユーザー情報を格納するためのテーブルです。
+This is the table which stores user information.
+It stores name of user, profile, list of follower and so on.
 
 ``_key``
-  ユーザーID
+  User ID
 
 ``name``
-  ユーザー名
+  User name
 
 ``follower``
-  フォローしているユーザーの一覧
+  List of following users
 
 ``favorites``
-  お気に入りのコメント一覧
+  List of favorite comments
 
 ``location``
-  ユーザーの現在地（緯度経度座標）
+  Current location of user (geolocation)
 
 ``location_str``
-  ユーザーの現在地（文字列）
+  Current location of user (string)
 
 ``description``
-  ユーザーの自己紹介
+  User profile
 
 ``followee``
-  Usersテーブルのfollowerカラムに対するインデックス。
-  このインデックスを作ることで、あるユーザーをフォローしているユーザーを検索できるようになります。
+  Indexes for ``follower`` column in ``Users`` table.
+  With this indexes, you can search users who follows the person.
 
 Commentsテーブル
 ^^^^^^^^^^^^^^^^
