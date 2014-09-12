@@ -342,6 +342,22 @@ mrb_grn_expression_get_var_by_offset(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_expression_take_object(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *expr;
+  mrb_value mrb_object;
+  grn_obj *grn_object;
+
+  mrb_get_args(mrb, "o", &mrb_object);
+  expr = DATA_PTR(self);
+  grn_object = DATA_PTR(mrb_object);
+  grn_expr_take_obj(ctx, expr, grn_object);
+
+  return mrb_object;
+}
+
+static mrb_value
 mrb_grn_expression_allocate_constant(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -431,6 +447,8 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_expression_codes, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "get_var_by_offset",
                     mrb_grn_expression_get_var_by_offset, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "take_object",
+                    mrb_grn_expression_take_object, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "allocate_constant",
                     mrb_grn_expression_allocate_constant, MRB_ARGS_REQ(1));
 
