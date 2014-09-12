@@ -1143,7 +1143,7 @@ For Red Hat based system like CentOS:
 
 For Mac OSX with Homebrew:
   % brew install pip
-  % export PATH=`brew --prefix gettext`"/bin:\$PATH"
+  % export PATH="`brew --prefix gettext`/bin:\$PATH"
   % pip install sphinx])
     fi
     AC_SUBST(SPHINX_BUILD)
