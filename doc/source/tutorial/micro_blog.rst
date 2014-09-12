@@ -152,10 +152,10 @@ This is the table which stores indexes of location column to search geo location
 ``comments_location``
   Indexes of location column for Comments table
 
-データのロード
---------------
+Loading data
+------------
 
-つづいて、テスト用データをロードします。
+Then, load example data.
 
 ::
 
@@ -167,17 +167,17 @@ This is the table which stores indexes of location column to search geo location
      "follower": ["tasukuchan"],
      "favorites": [],
      "location": "127678039x502643091",
-     "location_str": "神奈川県",
-     "description": "groonga developer"
+     "location_str": "Kanagawa prefecture",
+     "description": "Groonga developer"
    },
    {
      "_key": "tasukuchan",
-     "name": "グニャラくん",
+     "name": "Gunyara-kun",
      "follower": ["daijiro","OffGao"],
      "favorites": ["daijiro:1","OffGao:1"],
      "location": "128423343x502929252",
-     "location_str": "東京都渋谷区",
-     "description": "エロいおっさん"
+     "location_str": "Shibuya, Tokyo",
+     "description": "Gentlemen"
    },
    {
      "_key": "OffGao",
@@ -185,8 +185,8 @@ This is the table which stores indexes of location column to search geo location
      "follower": ["tasukuchan","daijiro"],
      "favorites": ["tasukuchan:1","daijiro:1"],
      "location": "128544408x502801502",
-     "location_str": "東京都中野区",
-     "description": "がおがお"
+     "location_str": "Nakano, Tokyo prefecture",
+     "description": "Hmm,Hmm"
    }
  ]
 
@@ -194,19 +194,19 @@ This is the table which stores indexes of location column to search geo location
  [
    {
      "_key": "daijiro:1",
-     "comment": "マイクロブログ作ってみました（甘栗むいちゃいました的な感じで）。",
+     "comment": "I've created micro-blog!",
      "last_modified": "2010/03/17 12:05:00",
      "posted_by": "daijiro",
    },
    {
      "_key": "tasukuchan:1",
-     "comment": "初の書き込み。テストテスト。",
+     "comment": "First post. test,test...",
      "last_modified": "2010/03/17 12:00:00",
      "posted_by": "tasukuchan",
    },
    {
      "_key": "daijiro:2",
-     "comment": "@tasukuchan ようこそ!!!",
+     "comment": "@tasukuchan Welcome!!!",
      "last_modified": "2010/03/17 12:05:00",
      "replied_to": "tasukuchan:1",
      "replied_users": ["tasukuchan"],
@@ -214,7 +214,7 @@ This is the table which stores indexes of location column to search geo location
    },
    {
      "_key": "tasukuchan:2",
-     "comment": "@daijiro ありがとう！",
+     "comment": "@daijiro Thanks!",
      "last_modified": "2010/03/17 13:00:00",
      "replied_to": "daijiro:2",
      "replied_users": ["daijiro"],
@@ -222,7 +222,7 @@ This is the table which stores indexes of location column to search geo location
    },
    {
      "_key": "tasukuchan:3",
-     "comment": "groongaなう #groonga",
+     "comment": "Groonga Now! #groonga",
      "last_modified": "2010/03/17 14:00:00",
      "hash_tags": ["groonga"],
      "location": "127972422x503117107",
@@ -230,7 +230,7 @@ This is the table which stores indexes of location column to search geo location
    },
    {
      "_key": "tasukuchan:4",
-     "comment": "groonga開発合宿のため羽田空港に来ました！ #groonga #travel",
+     "comment": "I'm come at Haneda Airport for development camp! #groonga #travel",
      "last_modified": "2010/03/17 14:05:00",
      "hash_tags": ["groonga", "travel"],
      "location": "127975798x502919856",
@@ -238,7 +238,7 @@ This is the table which stores indexes of location column to search geo location
    },
    {
      "_key": "OffGao:1",
-     "comment": "@daijiro @tasukuchan 登録してみましたよー！",
+     "comment": "@daijiro @tasukuchan I've tried to register!",
      "last_modified": "2010/03/17 15:00:00",
      "replied_users": ["daijiro", "tasukuchan"],
      "location": "128551935x502796433",
@@ -246,7 +246,7 @@ This is the table which stores indexes of location column to search geo location
    }
    {
      "_key": "OffGao:2",
-     "comment": "中野ブロードウェイなうなう",
+     "comment": "I'm at Nakano broadway now!",
      "last_modified": "2010/03/17 15:05:00",
      "location": "128551935x502796434",
      "posted_by": "OffGao",
@@ -302,17 +302,17 @@ Commentsテーブルのlast_modifiedカラムは、Time型です。この型で�
      "follower": ["tasukuchan"],
      "favorites": [],
      "location": "127678039x502643091",
-     "location_str": "神奈川県",
-     "description": "groonga developer"
+     "location_str": "Kanagawa prefecture",
+     "description": "Groonga developer"
    },
    {
      "_key": "tasukuchan",
-     "name": "グニャラくん",
+     "name": "Gunyara-kun",
      "follower": ["daijiro","OffGao"],
      "favorites": ["daijiro:1","OffGao:1"],
      "location": "128423343x502929252",
-     "location_str": "東京都渋谷区",
-     "description": "エロいおっさん"
+     "location_str": "Shibuya, Tokyo",
+     "description": "Gentlemen"
    },
    {
      "_key": "OffGao",
@@ -320,8 +320,8 @@ Commentsテーブルのlast_modifiedカラムは、Time型です。この型で�
      "follower": ["tasukuchan","daijiro"],
      "favorites": ["tasukuchan:1","daijiro:1"],
      "location": "128544408x502801502",
-     "location_str": "東京都中野区",
-     "description": "がおがお"
+     "location_str": "Nakano, Tokyo prefecture",
+     "description": "Hmm,Hmm"
    }
  ]
 
@@ -329,19 +329,19 @@ Commentsテーブルのlast_modifiedカラムは、Time型です。この型で�
  [
    {
      "_key": "daijiro:1",
-     "comment": "マイクロブログ作ってみました（甘栗むいちゃいました的な感じで）。",
+     "comment": "I've created micro-blog!",
      "last_modified": "2010/03/17 12:05:00",
      "posted_by": "daijiro",
    },
    {
      "_key": "tasukuchan:1",
-     "comment": "初の書き込み。テストテスト。",
+     "comment": "First post. test,test...",
      "last_modified": "2010/03/17 12:00:00",
      "posted_by": "tasukuchan",
    },
    {
      "_key": "daijiro:2",
-     "comment": "@tasukuchan ようこそ!!!",
+     "comment": "@tasukuchan Welcome!!!",
      "last_modified": "2010/03/17 12:05:00",
      "replied_to": "tasukuchan:1",
      "replied_users": ["tasukuchan"],
@@ -349,7 +349,7 @@ Commentsテーブルのlast_modifiedカラムは、Time型です。この型で�
    },
    {
      "_key": "tasukuchan:2",
-     "comment": "@daijiro ありがとう！",
+     "comment": "@daijiro Thanks!",
      "last_modified": "2010/03/17 13:00:00",
      "replied_to": "daijiro:2",
      "replied_users": ["daijiro"],
@@ -357,7 +357,7 @@ Commentsテーブルのlast_modifiedカラムは、Time型です。この型で�
    },
    {
      "_key": "tasukuchan:3",
-     "comment": "groongaなう #groonga",
+     "comment": "Groonga Now! #groonga",
      "last_modified": "2010/03/17 14:00:00",
      "hash_tags": ["groonga"],
      "location": "127972422x503117107",
@@ -365,7 +365,7 @@ Commentsテーブルのlast_modifiedカラムは、Time型です。この型で�
    },
    {
      "_key": "tasukuchan:4",
-     "comment": "groonga開発合宿のため羽田空港に来ました！ #groonga #travel",
+     "comment": "I'm come at Haneda Airport for development camp! #groonga #travel",
      "last_modified": "2010/03/17 14:05:00",
      "hash_tags": ["groonga", "travel"],
      "location": "127975798x502919856",
@@ -373,7 +373,7 @@ Commentsテーブルのlast_modifiedカラムは、Time型です。この型で�
    },
    {
      "_key": "OffGao:1",
-     "comment": "@daijiro @tasukuchan 登録してみましたよー！",
+     "comment": "@daijiro @tasukuchan I've tried to register!",
      "last_modified": "2010/03/17 15:00:00",
      "replied_users": ["daijiro", "tasukuchan"],
      "location": "128551935x502796433",
@@ -381,7 +381,7 @@ Commentsテーブルのlast_modifiedカラムは、Time型です。この型で�
    }
    {
      "_key": "OffGao:2",
-     "comment": "中野ブロードウェイなうなう",
+     "comment": "I'm at Nakano broadway now!",
      "last_modified": "2010/03/17 15:05:00",
      "location": "128551935x502796434",
      "posted_by": "OffGao",
