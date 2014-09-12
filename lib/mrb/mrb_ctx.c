@@ -34,9 +34,17 @@ ctx_class_instance(mrb_state *mrb, mrb_value klass)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   mrb_value mrb_ctx;
+  mrb_sym iv_name;
 
-  mrb_ctx = mrb_obj_value(mrb_obj_alloc(mrb, MRB_TT_DATA, mrb_class_ptr(klass)));
-  DATA_PTR(mrb_ctx) = ctx;
+  iv_name = mrb_intern_lit(mrb, "@instance");
+  mrb_ctx = mrb_iv_get(mrb, klass, iv_name);
+  if (mrb_nil_p(mrb_ctx)) {
+    struct RBasic *raw_mrb_ctx;
+    raw_mrb_ctx = mrb_obj_alloc(mrb, MRB_TT_DATA, mrb_class_ptr(klass));
+    mrb_ctx = mrb_obj_value(raw_mrb_ctx);
+    DATA_PTR(mrb_ctx) = ctx;
+    mrb_iv_set(mrb, klass, iv_name, mrb_ctx);
+  }
 
   return mrb_ctx;
 }
