@@ -253,13 +253,17 @@ Then, load example data.
    }
  ]
 
-Usersテーブルのfollowerカラムとfavoritesカラム、そしてCommentsテーブルのreplied_usersカラムは、ベクターカラムです。そのため、これらのカラムは配列で値を指定します。
+``follower`` column and ``favorites`` column in ``Users`` table and ``replied_users`` column in ``Comments`` table are vector column, so specify the value as an array.
 
-Usersテーブルのlocationカラムと、Commentsテーブルのlocationカラムは、GeoPoint型です。この型での値の指定は、"[緯度]x[経度]"と記述して指定します。
+``location`` column in ``Users`` table, ``location`` column in ``Comments`` table use GeoPoint type. This type accepts "[latitude]x[longitude]".
 
-Commentsテーブルのlast_modifiedカラムは、Time型です。この型での値を指定する方法は2つあります。
-1つ目の方法は、1970年1月1日0時0分0秒からの経過秒数の値を直接指定する方法です。このとき、小数部分を指定することでマイクロ秒数での指定が可能です。指定した値は、データのロードの際にマイクロ秒を単位とする整数値に変換後、格納されます。
-2つ目の方法は、文字列で日時と時刻を指定する方法です。"年/月/日 時:分:秒"というフォーマットで記述することで、データロードの際に文字列からキャストされ、マイクロ秒数の値が格納されます。
+``last_modified`` column in ``Comments`` table use Time type.
+
+There are two way to specify the value.
+First, specify epoch (seconds since Jan, 1, 1970 AM 00:00:00) directly. In this case, you can specify micro seconds as fractional part.
+The value is converted from factional part to the time which is micro seconds based one when data is loaded.
+The second, specify the timestamp as string in following format: "(YEAR)/(MONTH)/(DAY) (HOUR):(MINUTE):(SECOND)". In this way, the string is casted to proper micro seconds
+when data is loaded.
 
 .. groonga-command
 ..
