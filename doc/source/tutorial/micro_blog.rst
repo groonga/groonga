@@ -114,17 +114,17 @@ It stores content of comment, posted date, comment which reply to, and so on.
   Indexes for ``favorites`` column in ``Users`` table.
   With this indexes, you can search the person who mark comment as favorite one.
 
-HashTagsテーブル
-^^^^^^^^^^^^^^^^
+HashTags table
+^^^^^^^^^^^^^^
 
-コメントのハッシュタグを一覧で保存するためのテーブルです。
+This is the table which stores hash tags for comments.
 
 ``_key``
-  ハッシュタグ
+  Hash tag
 
 ``hash_index``
-  「Comments.hash_tags」のインデックス。
-  このインデックスを作ることで、指定したハッシュタグのついているコメントの一覧を出すことが出来るようになります。
+  Indexes for ``Comments.hash_tags``.
+  With this indexes, you can search list of comments with specified hash tags.
 
 Bigramテーブル
 ^^^^^^^^^^^^^^
