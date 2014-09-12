@@ -1263,7 +1263,6 @@ grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj,
                       grn_operator op, int nargs)
 {
   grn_obj *res = NULL;
-  grn_expr *e = (grn_expr *)expr;
   GRN_API_ENTER;
   if (!obj) {
     ERR(GRN_SYNTAX_ERROR, "constant is null");
@@ -1297,7 +1296,6 @@ static grn_obj *
 grn_expr_add_str(grn_ctx *ctx, grn_obj *expr, const char *str, unsigned int str_size)
 {
   grn_obj *res = NULL;
-  grn_expr *e = (grn_expr *)expr;
   if ((res = grn_expr_alloc_const(ctx, expr))) {
     GRN_TEXT_INIT(res, 0);
     grn_bulk_write(ctx, res, str, str_size);
@@ -1322,7 +1320,6 @@ grn_expr_append_const_int(grn_ctx *ctx, grn_obj *expr, int i,
                           grn_operator op, int nargs)
 {
   grn_obj *res = NULL;
-  grn_expr *e = (grn_expr *)expr;
   GRN_API_ENTER;
   if ((res = grn_expr_alloc_const(ctx, expr))) {
     GRN_INT32_INIT(res, 0);
