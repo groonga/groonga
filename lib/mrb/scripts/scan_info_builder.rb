@@ -255,6 +255,7 @@ module Groonga
         if range_operations?(data, next_data)
           between_data = create_between_data(data, next_data)
           optimized_data_list << between_data
+          i += 1
           next
         end
         optimized_data_list << data
