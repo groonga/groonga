@@ -80,38 +80,39 @@ It stores name of user, profile, list of follower and so on.
   Indexes for ``follower`` column in ``Users`` table.
   With this indexes, you can search users who follows the person.
 
-Commentsテーブル
-^^^^^^^^^^^^^^^^
+Comments table
+^^^^^^^^^^^^^^
 
-コメント内容や投稿日時、返信先情報など、コメントに関する内容を格納するテーブルです。
+This is the table which stores comments and its metadata.
+It stores content of comment, posted date, comment which reply to, and so on.
 
 ``_key``
-  コメントID
+  Comment ID
 
 ``comment``
-  コメント内容
+  Content of comment
 
 ``last_modified``
-  投稿日時
+  Posted date
 
 ``replied_to``
-  返信元のコメント内容
+  Comment which you reply to someone
 
 ``replied_users``
-  返信先のユーザーの一覧
+  List of users who you reply to
 
 ``hash_tags``
-  コメントのハッシュタグの一覧
+  List of hash tags about comment
 
 ``location``
-  投稿場所(緯度経度座標のため)
+  Posted place (for geolocation)
 
 ``posted_by``
-  コメントを書いたユーザー
+  Person who write comment
 
 ``favorited_by``
-  Usersテーブルのfavoritesカラムに対するインデックス。
-  このインデックスを作ることで、指定したコメントを誰がお気に入りに入れているのかを検索できるようになります。
+  Indexes for ``favorites`` column in ``Users`` table.
+  With this indexes, you can search the person who mark comment as favorite one.
 
 HashTagsテーブル
 ^^^^^^^^^^^^^^^^
