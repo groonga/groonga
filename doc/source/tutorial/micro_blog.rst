@@ -406,7 +406,7 @@ when data is loaded.
 
 .. groonga-command
 .. include:: ../example/tutorial/micro_blog-1.log
-.. select --table Users --match_columns name,location_str,description --query 東京 --output_columns _key,name
+.. select --table Users --match_columns name,location_str,description --query Tokyo --output_columns _key,name
 
 「東京」をキーワードにユーザー検索した結果、東京都に住んでいる「グニャラくん」と「OffGao」がヒットしました。
 
@@ -452,7 +452,7 @@ GeoPointでコメント検索
 
 .. groonga-command
 .. include:: ../example/tutorial/micro_blog-5.log
-.. select --table Comments --query comment:@なう --output_columns comment,_score
+.. select --table Comments --query comment:@Now --output_columns comment,_score
 
 「なう」をキーワードにコメント検索した結果、2件のコメントがヒットしました。また、_scoreの値も返ってきており、「なう」の数が出力されていることが確認できます。
 
@@ -462,7 +462,7 @@ GeoPointとキーワードでコメント検索
 
 .. groonga-command
 .. include:: ../example/tutorial/micro_blog-6.log
-.. select --table Comments --query comment:@羽田 --filter 'geo_in_circle(location,"127975798x502919856",20000)' --output_columns posted_by.name,comment --drilldown hash_tags,posted_by
+.. select --table Comments --query comment:@Haneda --filter 'geo_in_circle(location,"127975798x502919856",20000)' --output_columns posted_by.name,comment --drilldown hash_tags,posted_by
 
 両方の条件を満たすコメントが1件ヒットしました。また、ドリルダウンの結果も返ってきており、「グニャラくん」のコメント1件であることがわかります。
 
