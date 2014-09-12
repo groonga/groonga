@@ -1141,7 +1141,7 @@ For Red Hat based system like CentOS:
   % sudo yum install -y python-pip
   % sudo pip install sphinx
 
-For Mac OSX with Homebrew:
+For OS X with Homebrew:
   % brew install pip
   % export PATH="`brew --prefix gettext`/bin:\$PATH"
   % pip install sphinx])
