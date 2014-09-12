@@ -23,12 +23,14 @@
 #include <mruby/class.h>
 #include <mruby/variable.h>
 #include <mruby/data.h>
+#include <mruby/string.h>
 #include <mruby/array.h>
 
 #include "../expr.h"
 #include "../util.h"
 #include "../mrb.h"
 #include "mrb_accessor.h"
+#include "mrb_ctx.h"
 #include "mrb_expr.h"
 #include "mrb_converter.h"
 
@@ -339,6 +341,35 @@ mrb_grn_expression_get_var_by_offset(mrb_state *mrb, mrb_value self)
   return grn_mrb_value_from_grn_obj(mrb, var);
 }
 
+static mrb_value
+mrb_grn_expression_allocate_constant(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *expr;
+  mrb_value mrb_object;
+  grn_obj *grn_object;
+
+  mrb_get_args(mrb, "o", &mrb_object);
+  expr = DATA_PTR(self);
+
+  switch (mrb_type(mrb_object)) {
+  case MRB_TT_STRING:
+    grn_object = grn_expr_alloc_const(ctx, expr);
+    if (!grn_object) {
+      grn_mrb_ctx_check(mrb);
+    }
+    GRN_TEXT_INIT(grn_object, 0);
+    GRN_TEXT_SET(ctx, grn_object,
+                 RSTRING_PTR(mrb_object), RSTRING_LEN(mrb_object));
+    break;
+  default:
+    mrb_raisef(mrb, E_ARGUMENT_ERROR, "unsupported type: %S", mrb_object);
+    break;
+  }
+
+  return grn_mrb_value_from_grn_obj(mrb, grn_object);
+}
+
 void
 grn_mrb_expr_init(grn_ctx *ctx)
 {
@@ -400,6 +431,8 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_expression_codes, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "get_var_by_offset",
                     mrb_grn_expression_get_var_by_offset, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "allocate_constant",
+                    mrb_grn_expression_allocate_constant, MRB_ARGS_REQ(1));
 
   grn_mrb_load(ctx, "expression.rb");
   grn_mrb_load(ctx, "scan_info.rb");
