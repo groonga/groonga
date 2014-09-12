@@ -1,6 +1,6 @@
 Execution example::
 
-  select --table Users --match_columns name,location_str,description --query 東京 --output_columns _key,name
+  select --table Users --match_columns name,location_str,description --query Tokyo --output_columns _key,name
   # [[0, 1337566253.89858, 0.000355720520019531], true]
   # [[0, 1337566253.89858, 0.000355720520019531], true]
   # [[0, 1337566253.89858, 0.000355720520019531], true]
@@ -51,7 +51,7 @@ Execution example::
   #       ], 
   #       [
   #         "tasukuchan", 
-  #         "グニャラくん"
+  #         "Gunyara-kun"
   #       ], 
   #       [
   #         "OffGao", 

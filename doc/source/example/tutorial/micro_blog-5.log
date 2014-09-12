@@ -1,6 +1,6 @@
 Execution example::
 
-  select --table Comments --query comment:@なう --output_columns comment,_score
+  select --table Comments --query comment:@Now --output_columns comment,_score
   # [
   #   [
   #     0, 
@@ -23,12 +23,12 @@ Execution example::
   #         ]
   #       ], 
   #       [
-  #         "groongaなう #groonga", 
+  #         "Groonga Now! #groonga", 
   #         1
   #       ], 
   #       [
-  #         "中野ブロードウェイなうなう", 
-  #         2
+  #         "I'm at Nakano broadway now!", 
+  #         1
   #       ]
   #     ]
   #   ]

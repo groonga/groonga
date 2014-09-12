@@ -28,8 +28,8 @@ Execution example::
   #           "OffGao"
   #         ], 
   #         [
-  #           "マイクロブログ作ってみました（甘栗むいちゃいました的な感じで）。", 
-  #           "@daijiro @tasukuchan 登録してみましたよー！"
+  #           "I've created micro-blog!", 
+  #           "@daijiro @tasukuchan I've tried to register!"
   #         ]
   #       ]
   #     ]

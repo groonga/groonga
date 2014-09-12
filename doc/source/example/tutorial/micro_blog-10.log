@@ -28,27 +28,27 @@ Execution example::
   #       ], 
   #       [
   #         "hsiomaneki", 
-  #         "マイクロブログ作ってみました（甘栗むいちゃいました的な感じで）。", 
+  #         "I've created micro-blog!", 
   #         1268795100.0
   #       ], 
   #       [
-  #         "グニャラくん", 
-  #         "初の書き込み。テストテスト。", 
+  #         "Gunyara-kun", 
+  #         "First post. test,test...", 
   #         1268794800.0
   #       ], 
   #       [
   #         "hsiomaneki", 
-  #         "@tasukuchan ようこそ!!!", 
+  #         "@tasukuchan Welcome!!!", 
   #         1268795100.0
   #       ], 
   #       [
-  #         "グニャラくん", 
-  #         "@daijiro ありがとう！", 
+  #         "Gunyara-kun", 
+  #         "@daijiro Thanks!", 
   #         1268798400.0
   #       ], 
   #       [
-  #         "グニャラくん", 
-  #         "groongaなう #groonga", 
+  #         "Gunyara-kun", 
+  #         "Groonga Now! #groonga", 
   #         1268802000.0
   #       ]
   #     ], 
