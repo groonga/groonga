@@ -126,20 +126,20 @@ This is the table which stores hash tags for comments.
   Indexes for ``Comments.hash_tags``.
   With this indexes, you can search list of comments with specified hash tags.
 
-Bigramテーブル
-^^^^^^^^^^^^^^
+Bigram table
+^^^^^^^^^^^^
 
-ユーザー情報・コメントで全文検索が出来るようにするためのインデックスを格納するテーブルです。
+This is the table which stores indexes for full text search by user information or comments.
 
 ``_key``
-  単語
+  Word
 
 ``users_index``
-  ユーザー情報のインデックス。
-  このカラムは、ユーザー名「Users.name」、現在地「Users.location_str」、自己紹介文「Users.description」のインデックスになっています。
+  Indexes of user information.
+  This column contains indexes of user name (``Users.name``), current location (``Users.location_str``), profile (``Users.description``).
 
 ``comment_index``
-  コメント内容「Comments.comment」のインデックス
+  Indexes about content of comments (``Comments.comment``).
 
 GeoIndex table
 ^^^^^^^^^^^^^^
