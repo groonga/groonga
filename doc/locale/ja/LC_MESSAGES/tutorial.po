@@ -1483,171 +1483,189 @@ msgstr ""
 msgid "Indexes with Weight"
 msgstr "インデックスの重み"
 
-msgid "マイクロブログ検索システムの作成"
-msgstr ""
+msgid "Let's create micro-blog"
+msgstr "マイクロブログ検索システムの作成"
 
 msgid ""
+"Let's create micro-blog with full text search by Groonga. "
+"Micro-blog is one of the broadcast medium in the forms of blog. "
+"It is mainly used to post small messages like a Twitter."
+msgstr ""
 "これまで学んだGroongaの機能を用いて、マイクロブログの検索システムを作成してみ"
 "ましょう。マイクロブログとは、Twitterのような短いメッセージを投稿するブログで"
 "す。"
-msgstr ""
 
 msgid "テーブルの作成"
 msgstr ""
 
-msgid "まずは、テーブルを作成します。"
-msgstr ""
+msgid "Let's create table."
+msgstr "まずは、テーブルを作成します。"
 
-msgid "Usersテーブル"
-msgstr ""
+msgid "Users table"
+msgstr "Usersテーブル"
 
 msgid ""
+"This is the table which stores user information. "
+"It stores name of user, profile, list of follower and so on."
+msgstr ""
 "ユーザーの名前や自己紹介文、フォローしているユーザー一覧など、ユーザー情報を"
 "格納するためのテーブルです。"
-msgstr ""
 
 msgid "``_key``"
 msgstr ""
 
-msgid "ユーザーID"
-msgstr ""
+msgid "User ID"
+msgstr "ユーザーID"
 
 msgid "``name``"
 msgstr ""
 
-msgid "ユーザー名"
-msgstr ""
+msgid "User name"
+msgstr "ユーザー名"
 
 msgid "``follower``"
 msgstr ""
 
-msgid "フォローしているユーザーの一覧"
-msgstr ""
+msgid "List of following users"
+msgstr "フォローしているユーザーの一覧"
 
 msgid "``favorites``"
 msgstr ""
 
-msgid "お気に入りのコメント一覧"
-msgstr ""
+msgid "List of favorite comments"
+msgstr "お気に入りのコメント一覧"
 
 msgid "``location``"
 msgstr ""
 
-msgid "ユーザーの現在地（緯度経度座標）"
-msgstr ""
+msgid "Current location of user (geolocation)"
+msgstr "ユーザーの現在地（緯度経度座標）"
 
 msgid "``location_str``"
 msgstr ""
 
-msgid "ユーザーの現在地（文字列）"
-msgstr ""
+msgid "Current location of user (string)"
+msgstr "ユーザーの現在地（文字列）"
 
 msgid "``description``"
 msgstr ""
 
-msgid "ユーザーの自己紹介"
-msgstr ""
+msgid "User profile"
+msgstr "ユーザーの自己紹介"
 
 msgid ""
+"Indexes for ``follower`` column in ``Users`` table. "
+"With this indexes, you can search users who follows the person."
+msgstr ""
 "Usersテーブルのfollowerカラムに対するインデックス。 このインデックスを作るこ"
 "とで、あるユーザーをフォローしているユーザーを検索できるようになります。"
-msgstr ""
 
 msgid "``followee``"
 msgstr ""
 
-msgid "Commentsテーブル"
-msgstr ""
+msgid "Comments table"
+msgstr "Commentsテーブル"
 
 msgid ""
+"This is the table which stores comments and its metadata. "
+"It stores content of comment, posted date, comment which reply to, and so on."
+msgstr ""
 "コメント内容や投稿日時、返信先情報など、コメントに関する内容を格納するテーブ"
 "ルです。"
-msgstr ""
 
-msgid "コメントID"
-msgstr ""
+msgid "Comment ID"
+msgstr "コメントID"
 
 msgid "``comment``"
 msgstr ""
 
-msgid "コメント内容"
-msgstr ""
+msgid "Content of comment"
+msgstr "コメント内容"
 
 msgid "``last_modified``"
 msgstr ""
 
-msgid "投稿日時"
-msgstr ""
+msgid "Posted date"
+msgstr "投稿日時"
 
 msgid "``replied_to``"
 msgstr ""
 
-msgid "返信元のコメント内容"
-msgstr ""
+msgid "Comment which you reply to someone"
+msgstr "返信元のコメント内容"
 
 msgid "``replied_users``"
 msgstr ""
 
-msgid "返信先のユーザーの一覧"
-msgstr ""
+msgid "List of users who you reply to"
+msgstr "返信先のユーザーの一覧"
 
 msgid "``hash_tags``"
 msgstr ""
 
-msgid "コメントのハッシュタグの一覧"
-msgstr ""
+msgid "List of hash tags about comment"
+msgstr "コメントのハッシュタグの一覧"
 
-msgid "投稿場所(緯度経度座標のため)"
-msgstr ""
+msgid "Posted place (for geolocation)"
+msgstr "投稿場所(緯度経度座標のため)"
 
 msgid "``posted_by``"
 msgstr ""
 
-msgid "コメントを書いたユーザー"
-msgstr ""
+msgid "Person who write comment"
+msgstr "コメントを書いたユーザー"
 
 msgid ""
+"Indexes for ``favorites`` column in ``Users`` table. "
+"With this indexes, you can search the person who mark comment as favorite one."
+msgstr ""
 "Usersテーブルのfavoritesカラムに対するインデックス。 このインデックスを作るこ"
 "とで、指定したコメントを誰がお気に入りに入れているのかを検索できるようになり"
 "ます。"
-msgstr ""
 
 msgid "``favorited_by``"
 msgstr ""
 
-msgid "HashTagsテーブル"
-msgstr ""
+msgid "HashTags table"
+msgstr "HashTagsテーブル"
 
-msgid "コメントのハッシュタグを一覧で保存するためのテーブルです。"
-msgstr ""
+msgid "This is the table which stores hash tags for comments."
+msgstr "コメントのハッシュタグを一覧で保存するためのテーブルです。"
 
-msgid "ハッシュタグ"
-msgstr ""
+msgid "Hash tag"
+msgstr "ハッシュタグ"
 
 msgid ""
+"Indexes for ``Comments.hash_tags``. "
+"With this indexes, you can search list of comments with specified hash tags."
+msgstr ""
 "「Comments.hash_tags」のインデックス。 このインデックスを作ることで、指定した"
 "ハッシュタグのついているコメントの一覧を出すことが出来るようになります。"
-msgstr ""
 
 msgid "``hash_index``"
 msgstr ""
 
-msgid "Bigramテーブル"
-msgstr ""
+msgid "Bigram table"
+msgstr "Bigramテーブル"
 
 msgid ""
+"This is the table which stores indexes for full text search "
+"by user information or comments."
+msgstr ""
 "ユーザー情報・コメントで全文検索が出来るようにするためのインデックスを格納す"
 "るテーブルです。"
-msgstr ""
 
-msgid "単語"
-msgstr ""
+msgid "Word"
+msgstr "単語"
 
 msgid ""
+"Indexes of user information. "
+"This column contains indexes of user name (``Users.name``),"
+" current location (``Users.location_str``), profile (``Users.description``)."
+msgstr ""
 "ユーザー情報のインデックス。 このカラムは、ユーザー名「Users.name」、現在地"
 "「Users.location_str」、自己紹介文「Users.description」のインデックスになって"
 "います。"
-msgstr ""
 
 msgid "``users_index``"
 msgstr ""
@@ -1655,8 +1673,8 @@ msgstr ""
 msgid "``comment_index``"
 msgstr ""
 
-msgid "コメント内容「Comments.comment」のインデックス"
-msgstr ""
+msgid "Indexes about content of comments (``Comments.comment``)."
+msgstr "コメント内容「Comments.comment」のインデックス"
 
 msgid "GeoIndex table"
 msgstr "GeoIndexテーブル"
