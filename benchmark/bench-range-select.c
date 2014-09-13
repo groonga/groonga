@@ -16,6 +16,40 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+/*
+  Groonga: 09a4c4e00832fb90dee74c5b97b7cf0f5952f85b
+
+  CPU Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz (fam: 06, model: 1e, stepping: 05)
+
+  CFLAGS: -O0 -g3
+  % make --quiet -C benchmark run-bench-range-select
+  run-bench-range-select:
+  Process 10 times in each pattern
+                                               (total)    (average)  (median)
+    (   500,    600] (   1000):    with mruby: (0.0058s)  (0.5773ms) (0.5830ms)
+    (   500,    600] (   1000): without mruby: (0.0062s)  (0.6203ms) (0.6200ms)
+    (  5000,   5100] (  10000):    with mruby: (0.0058s)  (0.5827ms) (0.5800ms)
+    (  5000,   5100] (  10000): without mruby: (0.0473s)  (0.0047s)  (0.0048s)
+    ( 50000,  50100] ( 100000):    with mruby: (0.0064s)  (0.6397ms) (0.6370ms)
+    ( 50000,  50100] ( 100000): without mruby: (0.4498s)  (0.0450s)  (0.0442s)
+    (500000, 500100] (1000000):    with mruby: (0.0057s)  (0.5710ms) (0.5190ms)
+    (500000, 500100] (1000000): without mruby: (4.3193s)  (0.4319s)  (0.4306s)
+
+  CFLAGS: -O2 -g
+  % make --quiet -C benchmark run-bench-range-select
+  run-bench-range-select:
+  Process 10 times in each pattern
+                                               (total)    (average)  (median)
+    (   500,    600] (   1000):    with mruby: (0.0031s)  (0.3058ms) (0.2890ms)
+    (   500,    600] (   1000): without mruby: (0.0031s)  (0.3132ms) (0.3090ms)
+    (  5000,   5100] (  10000):    with mruby: (0.0031s)  (0.3063ms) (0.3100ms)
+    (  5000,   5100] (  10000): without mruby: (0.0239s)  (0.0024s)  (0.0023s)
+    ( 50000,  50100] ( 100000):    with mruby: (0.0028s)  (0.2825ms) (0.2660ms)
+    ( 50000,  50100] ( 100000): without mruby: (0.2117s)  (0.0212s)  (0.0211s)
+    (500000, 500100] (1000000):    with mruby: (0.0028s)  (0.2757ms) (0.2650ms)
+    (500000, 500100] (1000000): without mruby: (2.0874s)  (0.2087s)  (0.2092s)
+*/
+
 #include <stdio.h>
 #include <string.h>
 
