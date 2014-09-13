@@ -15,11 +15,10 @@ You can use either way It makes no difference to us.
 Submit a bug to the issue tracker
 ---------------------------------
 
-Groonga project has two issue tracking systems, `Redmine
-<http://redmine.groonga.org/projects/groonga/issues>`_ and `GitHub
-issue tracker <https://github.com/groonga/groonga/issues>`_.  Redmine
-is for Japanese and GitHub issue tracker is for English. You can use
-one of them to report a bug.
+Groonga project uses `GitHub
+issue tracker <https://github.com/groonga/groonga/issues>`_.
+
+You can use English or Japanese to report a bug.
 
 Report a bug to the mailing list
 --------------------------------
