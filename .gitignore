@@ -85,7 +85,7 @@ cmake_install.cmake
 /coverage
 /coverage.info
 /test/unit/lib/*-*.*.*/
-/benchmark/tmp/
+/benchmark/tmp
 /benchmark/fixtures/geo-select/13_2010.CSV
 /benchmark/fixtures/geo-select/load.grn
 /benchmark/bench-geo-select
@@ -94,6 +94,7 @@ cmake_install.cmake
 /benchmark/bench-table-factory
 /benchmark/bench-ctx-create
 /benchmark/bench-query-optimizer
+/benchmark/bench-range-select
 /packages/*/*.log
 /packages/apt/debian/groonga-keyring.postrm
 /packages/apt/repositories/debian/pool/*/*/*/*/*.diff.gz
