@@ -394,21 +394,24 @@ when data is loaded.
 
 
 
-検索
-----
+Search
+------
 
-それでは、実際に検索をしてみましょう。
+Let's search micro-blog.
 
-キーワードでユーザー検索
-^^^^^^^^^^^^^^^^^^^^^^^^
-ここでは、 :doc:`match_columns` で扱った、複数カラムを対象とした検索を行います。
-指定された文字列で、ユーザー名・現在地・自己紹介文を対象に検索をします。
+Search users by keyword
+^^^^^^^^^^^^^^^^^^^^^^^
+
+In this section, we search micro-blog against multiple column by keyword.
+See :doc:`match_columns` to search multiple column at once.
+
+Let's search user from micro-blog's user name, location, description entries.
 
 .. groonga-command
 .. include:: ../example/tutorial/micro_blog-1.log
-.. select --table Users --match_columns name,location_str,description --query Tokyo --output_columns _key,name
+.. select --table Users --match_columns name,location_str,description --query "New York" --output_columns _key,name
 
-「東京」をキーワードにユーザー検索した結果、東京都に住んでいる「グニャラくん」と「OffGao」がヒットしました。
+By using "New York" as searching keyword for user, "Bob" who lives in "New York" is listed in search result.
 
 GeoPointでユーザー検索
 ^^^^^^^^^^^^^^^^^^^^^^
