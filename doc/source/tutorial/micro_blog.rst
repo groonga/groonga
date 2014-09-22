@@ -413,17 +413,19 @@ Let's search user from micro-blog's user name, location, description entries.
 
 By using "New York" as searching keyword for user, "Bob" who lives in "New York" is listed in search result.
 
-GeoPointでユーザー検索
-^^^^^^^^^^^^^^^^^^^^^^
+Search users by geolocation data (GeoPoint)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-ここでは、 :doc:`search` で扱った、GeoPoint型のカラムで検索をします。
-以下の例では、指定された位置から5000m以内にいるユーザーを検索しています。
+In this section, we search users by column data which use type of GeoPoint.
+See :doc:`search` about GeoPoint column.
+
+Following example searches users who live in within 20km from specified location.
 
 .. groonga-command
 .. include:: ../example/tutorial/micro_blog-2.log
-.. select --table Users --filter 'geo_in_circle(location,"128484216x502919856",5000)' --output_columns _key,name
+.. select --table Users --filter 'geo_in_circle(location,"146710080x-266315480",20000)' --output_columns _key,name
 
-新宿駅から5km以内にすんでいるユーザーを検索したところ、「グニャラくん」と「OffGao」がヒットしました。
+It shows that "Bob" and "Charlie" lives in within 20 km from station of "Grand Central Terminal".
 
 あるユーザーをフォローしているユーザーの検索
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
