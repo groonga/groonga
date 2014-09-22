@@ -427,17 +427,18 @@ Following example searches users who live in within 20km from specified location
 
 It shows that "Bob" and "Charlie" lives in within 20 km from station of "Grand Central Terminal".
 
-あるユーザーをフォローしているユーザーの検索
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Search users who follows specific user
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-ここでは、 :doc:`index` で扱った、参照関係の逆引きをします。
-以下の例では、Usersテーブルのfollowerカラムにあるフォローリストを逆引きします。
+In this section, we do reverse resolution of reference relationships which is described at :doc:`index`.
+
+Following examples shows reverse resolution about ``follower`` column of ``Users`` table.
 
 .. groonga-command
 .. include:: ../example/tutorial/micro_blog-3.log
-.. select --table Users --query follower:@tasukuchan --output_columns _key,name
+.. select --table Users --query follower:@bob --output_columns _key,name
 
-「グニャラくん」をフォローしている「hsiomaneki」と「OffGao」がヒットしました。
+It shows that "Alice" and "Charlie" follows "Bob".
 
 GeoPointでコメント検索
 ^^^^^^^^^^^^^^^^^^^^^^
