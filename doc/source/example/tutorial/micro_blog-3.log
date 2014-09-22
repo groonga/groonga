@@ -1,6 +1,6 @@
 Execution example::
 
-  select --table Users --query follower:@tasukuchan --output_columns _key,name
+  select --table Users --query follower:@bob --output_columns _key,name
   # [
   #   [
   #     0, 
@@ -23,12 +23,12 @@ Execution example::
   #         ]
   #       ], 
   #       [
-  #         "daijiro", 
-  #         "hsiomaneki"
+  #         "alice", 
+  #         "Alice"
   #       ], 
   #       [
-  #         "OffGao", 
-  #         "OffGao"
+  #         "charlie", 
+  #         "Charlie"
   #       ]
   #     ]
   #   ]
