@@ -1,0 +1,19 @@
+table_create Diaries TABLE_NO_KEY
+column_create Diaries content COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Terms diaries_content COLUMN_INDEX|WITH_POSITION Diaries content
+
+load --table Diaries
+[
+{"content": "a a a b b c d e f g h i j k"}
+]
+
+select \
+  --table Diaries \
+  --match_columns content \
+  --query '*S2"a b c"' \
+  --output_columns content,_score \
+  --sortby _id

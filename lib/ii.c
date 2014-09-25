@@ -6042,6 +6042,7 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
         break;
       case GRN_OP_SIMILAR :
         arg.mode = optarg->mode;
+        arg.similarity_threshold = optarg->similarity_threshold;
         break;
       default :
         break;

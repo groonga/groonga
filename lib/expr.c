@@ -4065,6 +4065,7 @@ struct _grn_scan_info {
   grn_obj *query;
   grn_obj *args[8];
   int max_interval;
+  int similarity_threshold;
 };
 
 #define SI_FREE(si) do {\
@@ -4086,6 +4087,7 @@ struct _grn_scan_info {
   (si)->flags = SCAN_PUSH;\
   (si)->nargs = 0;\
   (si)->max_interval = DEFAULT_MAX_INTERVAL;\
+  (si)->similarity_threshold = DEFAULT_SIMILARITY_THRESHOLD;\
   (si)->start = (st);\
 } while (0)
 
@@ -4226,6 +4228,7 @@ grn_scan_info_open(grn_ctx *ctx, int start)
   si->flags = SCAN_PUSH;
   si->nargs = 0;
   si->max_interval = DEFAULT_MAX_INTERVAL;
+  si->similarity_threshold = DEFAULT_SIMILARITY_THRESHOLD;
   si->start = start;
 
   return si;
@@ -4314,6 +4317,18 @@ void
 grn_scan_info_set_max_interval(scan_info *si, int max_interval)
 {
   si->max_interval = max_interval;
+}
+
+int
+grn_scan_info_get_similarity_threshold(scan_info *si)
+{
+  return si->similarity_threshold;
+}
+
+void
+grn_scan_info_set_similarity_threshold(scan_info *si, int similarity_threshold)
+{
+  si->similarity_threshold = similarity_threshold;
 }
 
 grn_bool
@@ -4528,6 +4543,15 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                   *p == si->args[2] &&
                   (*p)->header.domain == GRN_DB_INT32) {
                 si->max_interval = GRN_INT32_VALUE(*p);
+              } else {
+                si->query = *p;
+              }
+              break;
+            case GRN_OP_SIMILAR :
+              if (si->nargs == 3 &&
+                  *p == si->args[2] &&
+                  (*p)->header.domain == GRN_DB_INT32) {
+                si->similarity_threshold = GRN_INT32_VALUE(*p);
               } else {
                 si->query = *p;
               }
@@ -5142,14 +5166,17 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
         } else {
           optarg.mode = si->op;
         }
+        optarg.max_interval = 0;
         optarg.similarity_threshold = 0;
         switch (si->op) {
         case GRN_OP_NEAR :
         case GRN_OP_NEAR2 :
           optarg.max_interval = si->max_interval;
           break;
+        case GRN_OP_SIMILAR :
+          optarg.similarity_threshold = si->similarity_threshold;
+          break;
         default :
-          optarg.max_interval = 0;
           break;
         }
         optarg.weight_vector = (int *)GRN_BULK_HEAD(&wv);
@@ -5380,6 +5407,7 @@ typedef struct {
   grn_obj op_stack;
   grn_obj mode_stack;
   grn_obj max_interval_stack;
+  grn_obj similarity_threshold_stack;
   grn_operator default_op;
   grn_select_optarg opt;
   grn_operator default_mode;
@@ -5942,6 +5970,16 @@ accept_query_string(grn_ctx *ctx, efs_info *efsi,
       grn_expr_append_op(efsi->ctx, efsi->e, mode, 3);
     }
     break;
+  case GRN_OP_SIMILAR :
+    {
+      int similarity_threshold;
+      similarity_threshold =
+        grn_int32_value_at(&efsi->similarity_threshold_stack, -1);
+      grn_expr_append_const_int(efsi->ctx, efsi->e, similarity_threshold,
+                                GRN_OP_PUSH, 1);
+      grn_expr_append_op(efsi->ctx, efsi->e, mode, 3);
+    }
+    break;
   default :
     grn_expr_append_op(efsi->ctx, efsi->e, mode, 2);
     break;
@@ -6117,6 +6155,9 @@ parse_query(grn_ctx *ctx, efs_info *q)
         case GRN_OP_NEAR :
         case GRN_OP_NEAR2 :
           GRN_INT32_PUT(ctx, &q->max_interval_stack, option);
+          break;
+        case GRN_OP_SIMILAR :
+          GRN_INT32_PUT(ctx, &q->similarity_threshold_stack, option);
           break;
         default :
           break;
@@ -6813,6 +6854,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     GRN_INT32_INIT(&efsi.op_stack, GRN_OBJ_VECTOR);
     GRN_INT32_INIT(&efsi.mode_stack, GRN_OBJ_VECTOR);
     GRN_INT32_INIT(&efsi.max_interval_stack, GRN_OBJ_VECTOR);
+    GRN_INT32_INIT(&efsi.similarity_threshold_stack, GRN_OBJ_VECTOR);
     GRN_PTR_INIT(&efsi.column_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
     GRN_PTR_INIT(&efsi.token_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
     efsi.e = expr;
@@ -6862,6 +6904,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     GRN_OBJ_FIN(ctx, &efsi.op_stack);
     GRN_OBJ_FIN(ctx, &efsi.mode_stack);
     GRN_OBJ_FIN(ctx, &efsi.max_interval_stack);
+    GRN_OBJ_FIN(ctx, &efsi.similarity_threshold_stack);
     GRN_OBJ_FIN(ctx, &efsi.column_stack);
     GRN_OBJ_FIN(ctx, &efsi.token_stack);
     GRN_OBJ_FIN(ctx, &efsi.buf);
