@@ -8,8 +8,13 @@ DEFAULT_INCLUDES =				\
 if WITH_MRUBY
 noinst_LTLIBRARIES = libmruby.la
 
-AM_CFLAGS =					\
+AM_CPPFLAGS =					\
 	-I$(srcdir)/../onigmo-source
+
+if PLATFORM_WIN32
+AM_CPPFLAGS +=					\
+	-DMRB_BUILD_AS_DLL
+endif
 
 include sources.am
 
