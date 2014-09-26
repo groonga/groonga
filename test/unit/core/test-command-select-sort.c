@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2010-2011  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2010-2014  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -73,8 +73,7 @@ setup_ddl(void)
                        "column_create Bookmarks user COLUMN_SCALAR Users\n"
                        "column_create Bookmarks rank COLUMN_SCALAR Int32");
 
-  assert_send_commands("column_create Users bookmarks COLUMN_VECTOR Bookmarks "
-                       "--source Bookmarks.user");
+  assert_send_commands("column_create Users bookmarks COLUMN_VECTOR Bookmarks");
 
   assert_send_commands("table_create Bigram TABLE_PAT_KEY ShortText "
                        "--default_tokenizer TokenBigram\n"
