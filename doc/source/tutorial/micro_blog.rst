@@ -440,16 +440,23 @@ Following examples shows reverse resolution about ``follower`` column of ``Users
 
 It shows that "Alice" and "Charlie" follows "Bob".
 
-GeoPointでコメント検索
-^^^^^^^^^^^^^^^^^^^^^^
-ある範囲内で書かれたコメントを検索します。
-また、 :doc:`drilldown` で扱ったドリルダウンも行います。検索結果をハッシュタグとユーザーでドリルダウンし、ユーザー別・ハッシュタグ別のカウントを出します。
+Search comments by using the value of GeoPoint type
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In this section, we search comments which are written within specific location.
+
+Then, we also use drill down which is described at :doc:`drilldown`.
+Following example shows how to drill down against search results.
+As a result, we get the value of count which is grouped by user, and hash tags respectively.
 
 .. groonga-command
 .. include:: ../example/tutorial/micro_blog-4.log
-.. select --table Comments --filter 'geo_in_circle(location,"127975798x502919856",20000)' --output_columns posted_by.name,comment --drilldown hash_tags,posted_by
+.. select --table Comments --filter 'geo_in_circle(location,"146867000x-266280000",20000)' --output_columns posted_by.name,comment --drilldown hash_tags,posted_by
 
-範囲を広く指定したため、位置情報のあるすべてのコメントがヒットしました。そして、ヒットしたコメントからドリルダウンされた結果も返ってきており、ハッシュタグは「#groonga」が2つに「#travel」が1つ、投稿者は「グニャラくん」「OffGao」がそれぞれ2件ずつであることがわかります。
+Above query searches comments which are posted within 20 km from Central Park in city of New York.
+
+As specified range is 20 km, all comments with location are collected.
+You know that search results contain 2 #groonga hash tags and one #travel hash tag, and bob and charlie posted 2 comments.
 
 キーワードでコメント検索
 ^^^^^^^^^^^^^^^^^^^^^^^^
