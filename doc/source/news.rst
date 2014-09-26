@@ -7,6 +7,67 @@
 News
 ====
 
+.. _release-4-0-6:
+
+Release 4.0.6 - 2014/09/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [deb] Updated to follow the rule about machine-readable
+  debian/copyright file. [Reported by Hideki Yamane]
+* [deb][rpm] Changed to use signal instead of HTTP to control nginx.
+  This way meets nginx style init script.
+* [doc] Updated English documentation about [ :doc:`/reference/executables` ].
+  [GitHub#196] [Patch by Masafumi Yokoyama]
+* [OS X] Added missing sphinx error message for Homebrew users.
+  [GitHub#198] [Patch by cosmo0920]
+* Exported :c:func:`grn_expr_alloc_const` which allocates constant object.
+  It is exported for mruby.
+* [mruby] Query optimizer by mruby became a practical for some range select query.
+  For example, mruby optimizer overhead is negligible enough for query such as
+  "between(X, 0, 'exclude', 100, 'include')" - "X > 0 && X <= 100".
+* [doc] Changed to recommend GitHub for reporting issues.
+  Until now, Redmine account must be approved by administrator, so you can not
+  report at feel free. [GitHub#202] [Patch by cosmo0920]
+* [doc] Translated C API document. [GitHub#203] [Patch by NOKUBI Takatsugu]
+* Supported to customize similarity threshold by ``'*S10"..."'`` syntax.
+
+Fixes
+^^^^^
+
+* [windows] Disabled KyTea by default because of redistribution license issue. 
+* [windows] Disabled libedit support by default.
+* Fixed a bug that similar search doesn't use IDF (Inverse Document Frequency)
+  for choosing target tokens.
+  In the previous versions, it used token ID instead of IDF.
+  [groonga-dev,02731] [groonga-dev,02754] [Reported by Satoshi Mitani, warp kawada]
+* Fixed a crash bug when deleting a record.
+  If the table of the record has ``_key`` and ``_key`` is
+  indexed from two or more index columns, deleting causes a crash.
+* Fixed compiler warning about unused variable 'e'. [GitHub#197] [Patch by cosmo0920]
+* [fedora][httpd] Fixed service start failure without log directory.
+* [mruby] Fixed build error with ``--disable-mruby``.
+  [GitHub#200] [Patch by cosmo0920]
+* Fixed build warning about CMP0014 for MariaDB bundled Mroonga package.
+  [GitHub#201] [Patch by cosmo0920]
+* Fixed a bug that "*" is parsed as prefix search with empty string.
+  [groonga-dev,02796] [Reported by Kazuhiko]
+* [httpd] Updated bundled nginx version to the latest mainline (1.7.5).
+  This update contains vulnerability fix (CVE-2014-3616).
+
+Thanks
+^^^^^^
+
+* Hideki Yamane
+* Masafumi Yokoyama
+* cosmo0920
+* NOKUBI Takatsugu
+* Satoshi Mitani
+* warp kawada
+* Kazuhiko
+
 .. _release-4-0-5:
 
 Release 4.0.5 - 2014/08/29
