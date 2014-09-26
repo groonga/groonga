@@ -13,7 +13,8 @@ AM_CPPFLAGS =					\
 
 if PLATFORM_WIN32
 AM_CPPFLAGS +=					\
-	-DMRB_BUILD_AS_DLL
+	-DMRB_BUILD_AS_DLL			\
+	-DMRB_CORE
 endif
 
 include sources.am
