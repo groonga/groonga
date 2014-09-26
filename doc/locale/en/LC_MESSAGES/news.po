@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Groonga 4.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2014-08-28 12:19+0900\n"
+"PO-Revision-Date: 2014-09-26 11:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -20,11 +20,134 @@ msgstr ""
 msgid "News"
 msgstr "News"
 
-msgid "Release 4.0.5 - 2014/08/29"
-msgstr ""
+msgid "Release 4.0.6 - 2014/09/29"
+msgstr "Release 4.0.6 - 2014/09/29"
 
 msgid "Improvements"
 msgstr "Improvements"
+
+msgid ""
+"[deb] Updated to follow the rule about machine-readable debian/copyright "
+"file. [Reported by Hideki Yamane]"
+msgstr ""
+
+msgid ""
+"[deb][rpm] Changed to use signal instead of HTTP to control nginx. This way "
+"meets nginx style init script."
+msgstr ""
+
+msgid ""
+"[doc] Updated English documentation about [ :doc:`/reference/executables` ]. "
+"[GitHub#196] [Patch by Masafumi Yokoyama]"
+msgstr ""
+
+msgid ""
+"[OS X] Added missing sphinx error message for Homebrew users. [GitHub#198] "
+"[Patch by cosmo0920]"
+msgstr ""
+
+msgid ""
+"Exported :c:func:`grn_expr_alloc_const` which allocates constant object. It "
+"is exported for mruby."
+msgstr ""
+
+msgid ""
+"[mruby] Query optimizer by mruby became a practical for some range select "
+"query. For example, mruby optimizer overhead is negligible enough for query "
+"such as \"between(X, 0, 'exclude', 100, 'include')\" - \"X > 0 && X <= 100\"."
+msgstr ""
+
+msgid ""
+"[doc] Changed to recommend GitHub for reporting issues. Until now, Redmine "
+"account must be approved by administrator, so you can not report at feel "
+"free. [GitHub#202] [Patch by cosmo0920]"
+msgstr ""
+
+msgid ""
+"[doc] Translated C API document. [GitHub#203] [Patch by NOKUBI Takatsugu]"
+msgstr ""
+
+msgid ""
+"Supported to customize similarity threshold by ``'*S10\"...\"'`` syntax."
+msgstr ""
+
+msgid "Fixes"
+msgstr "Fixes"
+
+msgid ""
+"[windows] Disabled KyTea by default because of redistribution license issue."
+msgstr ""
+
+msgid "[windows] Disabled libedit support by default."
+msgstr ""
+
+msgid ""
+"Fixed a bug that similar search doesn't use IDF (Inverse Document Frequency) "
+"for choosing target tokens. In the previous versions, it used token ID "
+"instead of IDF. [groonga-dev,02731] [groonga-dev,02754] [Reported by Satoshi "
+"Mitani, warp kawada]"
+msgstr ""
+
+msgid ""
+"Fixed a crash bug when deleting a record. If the table of the record has "
+"``_key`` and ``_key`` is indexed from two or more index columns, deleting "
+"causes a crash."
+msgstr ""
+
+msgid ""
+"Fixed compiler warning about unused variable 'e'. [GitHub#197] [Patch by "
+"cosmo0920]"
+msgstr ""
+
+msgid "[fedora][httpd] Fixed service start failure without log directory."
+msgstr ""
+
+msgid ""
+"[mruby] Fixed build error with ``--disable-mruby``. [GitHub#200] [Patch by "
+"cosmo0920]"
+msgstr ""
+
+msgid ""
+"Fixed build warning about CMP0014 for MariaDB bundled Mroonga package. "
+"[GitHub#201] [Patch by cosmo0920]"
+msgstr ""
+
+msgid ""
+"Fixed a bug that \"*\" is parsed as prefix search with empty string. "
+"[groonga-dev,02796] [Reported by Kazuhiko]"
+msgstr ""
+
+msgid ""
+"[httpd] Updated bundled nginx version to the latest mainline (1.7.5). This "
+"update contains vulnerability fix (CVE-2014-3616)."
+msgstr ""
+
+msgid "Thanks"
+msgstr "Thanks"
+
+msgid "Hideki Yamane"
+msgstr "Hideki Yamane"
+
+msgid "Masafumi Yokoyama"
+msgstr "Masafumi Yokoyama"
+
+msgid "cosmo0920"
+msgstr "cosmo0920"
+
+msgid "NOKUBI Takatsugu"
+msgstr ""
+
+msgid "Satoshi Mitani"
+msgstr ""
+
+msgid "warp kawada"
+msgstr ""
+
+msgid "Kazuhiko"
+msgstr "Kazuhiko"
+
+msgid "Release 4.0.5 - 2014/08/29"
+msgstr ""
 
 msgid "Dropped Ubuntu 13.10 (Saucy Salamander)."
 msgstr ""
@@ -32,7 +155,9 @@ msgstr ""
 msgid "Supported to show weight vector element as XML."
 msgstr ""
 
-msgid "[ :doc:`/reference/functions/between` ] Supported outside of key range."
+msgid ""
+"[ :doc:`/reference/functions/between` ] Supported outside of key range. "
+"[GitHub#183] [Patch by Naoya Murakami]"
 msgstr ""
 
 msgid "[mruby] Changed to use Onigmo as regexp implementation."
@@ -80,9 +205,6 @@ msgstr ""
 msgid "[doc] Updated tutorial in English. [GitHub#194] [Patch by cosmo0920]"
 msgstr ""
 
-msgid "Fixes"
-msgstr "Fixes"
-
 msgid ""
 "[php] Fixed memory leak when :c:func:`grn_ctx_recv()` is used. [GitHub#184] "
 "[Patch by @do-aki]"
@@ -106,8 +228,10 @@ msgid ""
 "[groonga-dev,02673] [Reported by MINAGAWA Sho]"
 msgstr ""
 
-msgid "Thanks"
-msgstr "Thanks"
+msgid ""
+"Fixed a bug that document frequency is invalid when :ref:`offline-index-"
+"construction` is used. [groonga-dev,02691] [Reported by Naoya Murakami]"
+msgstr ""
 
 msgid "@do-aki"
 msgstr ""
@@ -120,9 +244,6 @@ msgstr ""
 
 msgid "MINAGAWA Sho"
 msgstr ""
-
-msgid "cosmo0920"
-msgstr "cosmo0920"
 
 msgid "Release 4.0.4 - 2014/07/29"
 msgstr ""
@@ -252,9 +373,6 @@ msgid ""
 "[ :doc:`/reference/commands/select` ] Fixed a crash bug when :ref:`select-"
 "adjuster` has a syntax error."
 msgstr ""
-
-msgid "Masafumi Yokoyama"
-msgstr "Masafumi Yokoyama"
 
 msgid "GMO Media, Inc."
 msgstr ""
@@ -3213,9 +3331,6 @@ msgstr "[groonga] Appended missing ``-id`` to ``--server-id`` option name."
 msgid "Fixed a bug that latin1 normalization may access unexpected memory."
 msgstr "Fixed a bug that latin1 normalization may access unexpected memory."
 
-msgid "Kazuhiko"
-msgstr "Kazuhiko"
-
 msgid "Markus Elfring"
 msgstr "Markus Elfring"
 
@@ -3469,9 +3584,6 @@ msgstr ""
 "[geo_in_circle] Fixed a bug that if you specify \"LONGITUDExLATITUDE\" as "
 "the 3rd argument of :doc:`/reference/functions/geo_in_circle`, Groonga "
 "crashes."
-
-msgid "Hideki Yamane"
-msgstr "Hideki Yamane"
 
 msgid "whombx"
 msgstr "whombx"
