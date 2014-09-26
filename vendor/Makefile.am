@@ -16,5 +16,3 @@ dist-hook:
 	$(MKDIR_P) $(distdir)/onigmo-source
 	GIT_DIR=$(srcdir)/onigmo-source/.git git archive --format=tar HEAD | \
 	  tar xf - -C $(distdir)/onigmo-source
-	cat $(srcdir)/onigmo/patches/0001-Add-no-undefine-link-flag.patch | \
-	  (cd $(distdir)/onigmo-source; patch -p1)
