@@ -11,7 +11,7 @@ for argument in "$@"; do
     --srcdir=*)
       srcdir="$(echo "${argument}" | sed -e 's/--srcdir=//')"
       ;;
-    --prefix=*)
+    --prefix=*|--host=*)
       options="${options} ${argument}"
       ;;
     --enable-debug=*)
