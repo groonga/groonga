@@ -1316,9 +1316,104 @@ exit:
   return NULL;
 }
 
+static grn_rc
+proc_column_create_resolve_source_name(grn_ctx *ctx,
+                                       grn_obj *table,
+                                       const char *source_name,
+                                       int source_name_length,
+                                       grn_obj *source_ids)
+{
+  grn_obj *column;
+
+  column = grn_obj_column(ctx, table, source_name, source_name_length);
+  if (!column) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[column][create] nonexistent source: <%.*s>",
+        source_name_length, source_name);
+    return ctx->rc;
+  }
+
+  if (column->header.type == GRN_ACCESSOR) {
+    if (strncmp(source_name, "_key", source_name_length) == 0) {
+      grn_id source_id = grn_obj_id(ctx, table);
+      GRN_UINT32_PUT(ctx, source_ids, source_id);
+    } else {
+      ERR(GRN_INVALID_ARGUMENT,
+          "[column][create] pseudo column except <_key> is invalid: <%.*s>",
+          source_name_length, source_name);
+    }
+  } else {
+    grn_id source_id = grn_obj_id(ctx, column);
+    GRN_UINT32_PUT(ctx, source_ids, source_id);
+  }
+  grn_obj_unlink(ctx, column);
+
+  return ctx->rc;
+}
+
+static grn_rc
+proc_column_create_resolve_source_names(grn_ctx *ctx,
+                                        grn_obj *table,
+                                        grn_obj *source_names,
+                                        grn_obj *source_ids)
+{
+  int i, names_length;
+  int start, source_name_length;
+  const char *names;
+
+  names = GRN_TEXT_VALUE(source_names);
+  start = 0;
+  source_name_length = 0;
+  names_length = GRN_TEXT_LEN(source_names);
+  for (i = 0; i < names_length; i++) {
+    switch (names[i]) {
+    case ' ' :
+      if (source_name_length == 0) {
+        start++;
+      }
+      break;
+    case ',' :
+      {
+        grn_rc rc;
+        const char *source_name = names + start;
+        rc = proc_column_create_resolve_source_name(ctx,
+                                                    table,
+                                                    source_name,
+                                                    source_name_length,
+                                                    source_ids);
+        if (rc) {
+          return rc;
+        }
+        start = i + 1;
+        source_name_length = 0;
+      }
+      break;
+    default :
+      source_name_length++;
+      break;
+    }
+  }
+
+  if (source_name_length > 0) {
+    grn_rc rc;
+    const char *source_name = names + start;
+    rc = proc_column_create_resolve_source_name(ctx,
+                                                table,
+                                                source_name,
+                                                source_name_length,
+                                                source_ids);
+    if (rc) {
+      return rc;
+    }
+  }
+
+  return GRN_SUCCESS;
+}
+
 static grn_obj *
 proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
+  grn_bool succeeded = GRN_TRUE;
   grn_obj *column, *table = NULL, *type = NULL;
   const char *rest;
   grn_obj_flags flags = grn_atoi(GRN_TEXT_VALUE(VAR(2)),
@@ -1326,13 +1421,17 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   if (GRN_TEXT_VALUE(VAR(2)) == rest) {
     flags = grn_parse_column_create_flags(ctx, GRN_TEXT_VALUE(VAR(2)),
                                           GRN_BULK_CURR(VAR(2)));
-    if (ctx->rc) { goto exit; }
+    if (ctx->rc) {
+      succeeded = GRN_FALSE;
+      goto exit;
+    }
   }
   table = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)));
   if (!table) {
     ERR(GRN_INVALID_ARGUMENT,
         "[column][create] table doesn't exist: <%.*s>",
         (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
+    succeeded = GRN_FALSE;
     goto exit;
   }
   type = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(3)),
@@ -1341,12 +1440,14 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
     ERR(GRN_INVALID_ARGUMENT,
         "[column][create] type doesn't exist: <%.*s>",
         (int)GRN_TEXT_LEN(VAR(3)), GRN_TEXT_VALUE(VAR(3))) ;
+    succeeded = GRN_FALSE;
     goto exit;
   }
   if (GRN_TEXT_LEN(VAR(1))) {
     flags |= GRN_OBJ_PERSISTENT;
   } else {
     ERR(GRN_INVALID_ARGUMENT, "[column][create] name is missing");
+    succeeded = GRN_FALSE;
     goto exit;
   }
   column = grn_column_create(ctx, table,
@@ -1355,36 +1456,30 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
                              NULL, flags, type);
   if (column) {
     if (GRN_TEXT_LEN(VAR(4))) {
-      grn_obj sources, source_ids, **p, **pe;
-      GRN_PTR_INIT(&sources, GRN_OBJ_VECTOR, GRN_ID_NIL);
+      grn_rc rc;
+      grn_obj source_ids;
       GRN_UINT32_INIT(&source_ids, GRN_OBJ_VECTOR);
-      grn_obj_columns(ctx, type,
-                      GRN_TEXT_VALUE(VAR(4)),
-                      GRN_TEXT_LEN(VAR(4)),
-                      &sources);
-      p = (grn_obj **)GRN_BULK_HEAD(&sources);
-      pe = (grn_obj **)GRN_BULK_CURR(&sources);
-      for (; p < pe; p++) {
-        grn_id source_id = grn_obj_id(ctx, *p);
-        if ((*p)->header.type == GRN_ACCESSOR) {
-          /* todo : if "_key" assigned */
-          source_id = grn_obj_id(ctx, type);
-        }
-        if (source_id) {
-          GRN_UINT32_PUT(ctx, &source_ids, source_id);
-        }
-        grn_obj_unlink(ctx, *p);
-      }
-      if (GRN_BULK_VSIZE(&source_ids)) {
+      rc = proc_column_create_resolve_source_names(ctx,
+                                                   type,
+                                                   VAR(4),
+                                                   &source_ids);
+      if (!rc && GRN_BULK_VSIZE(&source_ids)) {
         grn_obj_set_info(ctx, column, GRN_INFO_SOURCE, &source_ids);
+        rc = ctx->rc;
       }
       GRN_OBJ_FIN(ctx, &source_ids);
-      GRN_OBJ_FIN(ctx, &sources);
+      if (rc) {
+        grn_obj_remove(ctx, column);
+        succeeded = GRN_FALSE;
+        goto exit;
+      }
     }
     grn_obj_unlink(ctx, column);
+  } else {
+    succeeded = GRN_FALSE;
   }
 exit:
-  GRN_OUTPUT_BOOL(!ctx->rc);
+  GRN_OUTPUT_BOOL(succeeded);
   if (table) { grn_obj_unlink(ctx, table); }
   if (type) { grn_obj_unlink(ctx, type); }
   return NULL;
