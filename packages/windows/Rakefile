@@ -211,6 +211,26 @@ namespace :build do
       mkdir_p(groonga_license_dir)
       files = ["README.md", "COPYING"]
       cp(files, groonga_license_dir)
+
+      mruby_license_dir = license_dir + "mruby"
+      mkdir_p(mruby_license_dir)
+      files = [
+        "vendor/mruby-source/README.md",
+        "vendor/mruby-source/AUTHORS",
+        "vendor/mruby-source/LEGAL",
+        "vendor/mruby-source/MITL",
+      ]
+      cp(files, mruby_license_dir)
+
+      onigmo_license_dir = license_dir + "onigmo"
+      mkdir_p(onigmo_license_dir)
+      files = [
+        "vendor/onigmo-source/README",
+        "vendor/onigmo-source/README",
+        "vendor/onigmo-source/AUTHORS",
+        "vendor/onigmo-source/COPYING",
+      ]
+      cp(files, onigmo_license_dir)
     end
   end
 
