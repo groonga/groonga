@@ -23,12 +23,12 @@ Execution example::
   #         ]
   #       ], 
   #       [
-  #         "Gunyara-kun", 
-  #         "Groonga Now! #groonga"
+  #         "Bob", 
+  #         "I've just used 'Try-Groonga' now! #groonga"
   #       ], 
   #       [
-  #         "Gunyara-kun", 
-  #         "I'm come at Haneda Airport for development camp! #groonga #travel"
+  #         "Bob", 
+  #         "I'm come at city of New York for development camp! #groonga #travel"
   #       ]
   #     ], 
   #     [
@@ -46,7 +46,7 @@ Execution example::
   #         ]
   #       ], 
   #       [
-  #         "tasukuchan", 
+  #         "bob", 
   #         2
   #       ]
   #     ]
