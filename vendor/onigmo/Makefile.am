@@ -1,5 +1,6 @@
 EXTRA_DIST =					\
-	configure
+	configure				\
+	patches
 
 CONFIGURE_DEPENDENCIES =			\
 	configure
