@@ -195,6 +195,7 @@ namespace :build do
         "--with-message-pack=#{binary_dir}",
         "--with-ruby",
         "--enable-mruby",
+        "--enable-shared-onigmo",
       ]
       if mecab_config.exist?
         options << "--with-mecab-config=#{mecab_config}"

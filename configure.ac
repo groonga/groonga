@@ -1364,6 +1364,14 @@ AC_SUBST(MRUBY_CFLAGS)
 AC_SUBST(MRUBY_LIBS)
 AM_CONDITIONAL(WITH_MRUBY, test "$enable_mruby" = "yes")
 
+# This option is used in vendor/onigmo/configure
+AC_ARG_ENABLE(shared-onigmo,
+  [AS_HELP_STRING([--enable-shared-onigmo],
+    [use Onigmo as shared library instead of static library. [default=no]])],
+  [enable_shared_onigmo="$enableval"],
+  [enable_shared_onigmo="no"])
+
+
 # PCRE
 GRN_WITH_PCRE=no
 AC_ARG_WITH(pcre,

@@ -17,6 +17,9 @@ for argument in "$@"; do
     --enable-debug=*)
       options="${options} CFLAGS='-O0 -g3'"
       ;;
+    --enable-shared-onigmo)
+      options="${options} --enable-shared"
+      ;;
   esac
 done
 
