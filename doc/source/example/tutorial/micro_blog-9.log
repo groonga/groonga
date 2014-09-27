@@ -1,6 +1,6 @@
 Execution example::
 
-  select --table Users --query _key:tasukuchan --output_columns favorites.posted_by,favorites.comment
+  select --table Users --query _key:bob --output_columns favorites.posted_by,favorites.comment
   # [
   #   [
   #     0, 
@@ -24,12 +24,12 @@ Execution example::
   #       ], 
   #       [
   #         [
-  #           "daijiro", 
-  #           "OffGao"
+  #           "alice", 
+  #           "charlie"
   #         ], 
   #         [
   #           "I've created micro-blog!", 
-  #           "@daijiro @tasukuchan I've tried to register!"
+  #           "@alice @bob I've tried to register!"
   #         ]
   #       ]
   #     ]
