@@ -125,6 +125,56 @@ Install groonga-normalizer-mysql package::
 
   % sudo yum install -y groonga-normalizer-mysql
 
+CentOS 7
+--------
+
+Install::
+
+  % sudo rpm -ivh http://packages.groonga.org/centos/groonga-release-1.1.0-1.noarch.rpm
+  % sudo yum makecache
+  % sudo yum install -y groonga
+
+.. include:: server-use.inc
+
+If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
+tokenizer, install groonga-tokenizer-mecab package.
+
+Install groonga-tokenizer-mecab package::
+
+  % sudo yum install -y groonga-tokenizer-mecab
+
+There is a package that provides `Munin
+<http://munin-monitoring.org/>`_ plugins. If you want to monitor
+Groonga status by Munin, install groonga-munin-plugins package.
+
+.. note::
+
+   Groonga-munin-plugins package requires munin-node package that
+   isn't included in the official CentOS repository. You need to
+   enable `EPEL <http://fedoraproject.org/wiki/EPEL>`_ repository to
+   install it by ``yum``.
+
+   ..
+      Enable Repoforge (RPMforge) repository on x86_64 environment::
+
+        % sudo rpm -ivh http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el7.rf.x86_64.rpm
+
+   Enable EPEL repository on x86_64 environment::
+
+     % sudo yum install -y epel-release
+
+Install groonga-munin-plugins package::
+
+  % sudo yum install -y groonga-munin-plugins
+
+There is a package that provides MySQL compatible normalizer as
+Groonga plugins.
+If you want to use that one, install groonga-normalizer-mysql package.
+
+Install groonga-normalizer-mysql package::
+
+  % sudo yum install -y groonga-normalizer-mysql
+
 Build from source
 -----------------
 
