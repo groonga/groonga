@@ -5,21 +5,25 @@
 .. groonga-command
 .. database: tutorial-query-expansion
 
-クエリ拡張
-==========
+Query expansion
+===============
 
-Groongaでは、 :doc:`/reference/commands/select` コマンドにquery_expanderパラメータを指定することによって、ユーザが指定した検索文字列を適宜拡張することが可能です。
+Groonga accepts ``query_expander`` parameter for :doc:`/reference/commands/select` command.
+It enables you to extend your query string.
 
-たとえば、ユーザが'シークヮーサー'という文字列で検索した場合に、'シークヮーサー OR シークァーサー'で検索した場合と同一の結果を返すことによって、本来ユーザが必要とする結果をよりもれなく検索できるようになります。
+For example, if user searches "theatre" instead of "theater",
+query expansion enables to return search results of "theatre OR theater".
+This kind of way reduces search leakages. This is what really user wants.
 
-準備
-----
+Preparation
+-----------
 
-クエリ拡張機能を使用するためには、検索対象となる文書を格納するテーブル(ここでは文書テーブルと呼びます)以外に、ユーザの指定した検索文字列を置換するためのテーブル(ここでは置換テーブルと呼びます)を準備します。置換テーブルでは、その主キーが置換前の文字列となり、文字列型(ShortText)のカラムの値が置換後の文字列となります。
+To use query expansion, you need to create table which stores documents, synonym table which stores query string and replacement string.
+In synonym table, primary key represents original string, the column of ShortText represents modified string.
 
-TODO: 文字列型のベクターカラムでも可能であり、その場合は各要素をORでつなげたものに置換されるということを記述する。
+.. TODO: 文字列型のベクターカラムでも可能であり、その場合は各要素をORでつなげたものに置換されるということを記述する。
 
-実際に文書テーブルと置換テーブルを作成してみましょう。
+Let's create document table and synonym table.
 
 .. groonga-command
 .. include:: ../example/tutorial/query_expansion-1.log
@@ -31,32 +35,35 @@ TODO: 文字列型のベクターカラムでも可能であり、その場合�
 .. column_create Synonym body COLUMN_SCALAR ShortText
 .. load --table Doc
 .. [
-.. {"_key": "001", "body": "すっぱいブドウと甘いシークァーサー"},
-.. {"_key": "002", "body": "シークヮーサージュースとゴーヤチャンプル"},
+.. {"_key": "001", "body": "Play all night in this theater."},
+.. {"_key": "002", "body": "theatre is British spelling."},
 .. ]
 .. load --table Synonym
 .. [
-.. {"_key": "シークァーサー", "body": "(シークァーサー OR シークヮーサー)"},
-.. {"_key": "シークヮーサー", "body": "(シークァーサー OR シークヮーサー)"},
+.. {"_key": "theater", "body": "(theater OR theatre)"},
+.. {"_key": "theatre", "body": "(theater OR theatre)"},
 .. ]
 
-この例では、ユーザが"シークァーサー"と入力しても、"シークヮーサー"と入力しても、それぞれの異なる表記の文書をもれなく検索するための置換テーブルを作成しています。
+In this case, it doesn't occur search leakage because it creates synonym table which accepts "theatre" and "theater" as query string.
 
-検索
-----
+Search
+------
 
-それでは実際に、準備した置換テーブルを使ってみましょう。まずは、query_expanderパラメータを指定せずにselectコマンドを使って検索してみます。
+Then, let's use prepared synonym table.
+First, use select command without ``query_expander`` parameter.
 
 .. groonga-command
 .. include:: ../example/tutorial/query_expansion-2.log
-.. select Doc --match_columns body --query "シークァーサー"
-.. select Doc --match_columns body --query "シークヮーサー"
+.. select Doc --match_columns body --query "theater"
+.. select Doc --match_columns body --query "theatre"
 
-指定された文字列に完全に一致するレコードのみがそれぞれヒットします。次に、query_expanderパラメータに、準備したSynonymテーブルのbodyカラムを指定してみましょう。
+Above query returns the record which completely equal to query string.
+
+Then, use ``query_expander`` parameter against ``body`` column of ``Synonym`` table.
 
 .. groonga-command
 .. include:: ../example/tutorial/query_expansion-3.log
-.. select Doc --match_columns body --query "シークァーサー" --query_expander Synonym.body
-.. select Doc --match_columns body --query "シークヮーサー" --query_expander Synonym.body
+.. select Doc --match_columns body --query "theater" --query_expander Synonym.body
+.. select Doc --match_columns body --query "theatre" --query_expander Synonym.body
 
-どちらのクエリ文字列も、"(シークァーサー OR シークヮーサー)"という文字列に置換されてから検索されるため、表記の揺れを吸収して検索できるようになりました。
+In which cases, query string is replaced to "(theater OR theatre)", thus synonym is considered for full text search.
