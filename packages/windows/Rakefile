@@ -193,7 +193,6 @@ namespace :build do
         "--disable-benchmark",
         "--disable-groonga-httpd",
         "--with-message-pack=#{binary_dir}",
-        "--with-ruby",
         "--enable-mruby",
         "--enable-shared-onigmo",
       ]
