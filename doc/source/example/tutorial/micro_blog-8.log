@@ -1,6 +1,6 @@
 Execution example::
 
-  select --table Comments --query posted_by:tasukuchan --output_columns comment --drilldown hash_tags
+  select --table Comments --query posted_by:bob --output_columns comment --drilldown hash_tags
   # [
   #   [
   #     0, 
@@ -22,13 +22,13 @@ Execution example::
   #         "First post. test,test..."
   #       ], 
   #       [
-  #         "@daijiro Thanks!"
+  #         "@alice Thanks!"
   #       ], 
   #       [
-  #         "Groonga Now! #groonga"
+  #         "I've just used 'Try-Groonga' now! #groonga"
   #       ], 
   #       [
-  #         "I'm come at Haneda Airport for development camp! #groonga #travel"
+  #         "I'm come at city of New York for development camp! #groonga #travel"
   #       ]
   #     ], 
   #     [
