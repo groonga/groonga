@@ -265,16 +265,17 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/tutorial/match_columns-nested-index-schema.log \
 	$(top_srcdir)/doc/source/example/tutorial/match_columns-nested-index-select-with-three-relationship.log \
 	$(top_srcdir)/doc/source/example/tutorial/match_columns-nested-index-select.log \
-	$(top_srcdir)/doc/source/example/tutorial/micro_blog-1.log \
-	$(top_srcdir)/doc/source/example/tutorial/micro_blog-10.log \
-	$(top_srcdir)/doc/source/example/tutorial/micro_blog-2.log \
-	$(top_srcdir)/doc/source/example/tutorial/micro_blog-3.log \
-	$(top_srcdir)/doc/source/example/tutorial/micro_blog-4.log \
-	$(top_srcdir)/doc/source/example/tutorial/micro_blog-5.log \
-	$(top_srcdir)/doc/source/example/tutorial/micro_blog-6.log \
-	$(top_srcdir)/doc/source/example/tutorial/micro_blog-7.log \
-	$(top_srcdir)/doc/source/example/tutorial/micro_blog-8.log \
-	$(top_srcdir)/doc/source/example/tutorial/micro_blog-9.log \
+	$(top_srcdir)/doc/source/example/tutorial/micro_blog_drilldown.log \
+	$(top_srcdir)/doc/source/example/tutorial/micro_blog_favorite.log \
+	$(top_srcdir)/doc/source/example/tutorial/micro_blog_follower.log \
+	$(top_srcdir)/doc/source/example/tutorial/micro_blog_hash_tag.log \
+	$(top_srcdir)/doc/source/example/tutorial/micro_blog_keyword.log \
+	$(top_srcdir)/doc/source/example/tutorial/micro_blog_keyword_and_location.log \
+	$(top_srcdir)/doc/source/example/tutorial/micro_blog_last_modified.log \
+	$(top_srcdir)/doc/source/example/tutorial/micro_blog_now.log \
+	$(top_srcdir)/doc/source/example/tutorial/micro_blog_posted_by.log \
+	$(top_srcdir)/doc/source/example/tutorial/micro_blog_score.log \
+	$(top_srcdir)/doc/source/example/tutorial/micro_blog_user.log \
 	$(top_srcdir)/doc/source/example/tutorial/network-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/network-2.log \
 	$(top_srcdir)/doc/source/example/tutorial/network-3.log \
@@ -805,16 +806,17 @@ source_files_relative_from_doc_dir = \
 	source/example/tutorial/match_columns-nested-index-schema.log \
 	source/example/tutorial/match_columns-nested-index-select-with-three-relationship.log \
 	source/example/tutorial/match_columns-nested-index-select.log \
-	source/example/tutorial/micro_blog-1.log \
-	source/example/tutorial/micro_blog-10.log \
-	source/example/tutorial/micro_blog-2.log \
-	source/example/tutorial/micro_blog-3.log \
-	source/example/tutorial/micro_blog-4.log \
-	source/example/tutorial/micro_blog-5.log \
-	source/example/tutorial/micro_blog-6.log \
-	source/example/tutorial/micro_blog-7.log \
-	source/example/tutorial/micro_blog-8.log \
-	source/example/tutorial/micro_blog-9.log \
+	source/example/tutorial/micro_blog_drilldown.log \
+	source/example/tutorial/micro_blog_favorite.log \
+	source/example/tutorial/micro_blog_follower.log \
+	source/example/tutorial/micro_blog_hash_tag.log \
+	source/example/tutorial/micro_blog_keyword.log \
+	source/example/tutorial/micro_blog_keyword_and_location.log \
+	source/example/tutorial/micro_blog_last_modified.log \
+	source/example/tutorial/micro_blog_now.log \
+	source/example/tutorial/micro_blog_posted_by.log \
+	source/example/tutorial/micro_blog_score.log \
+	source/example/tutorial/micro_blog_user.log \
 	source/example/tutorial/network-1.log \
 	source/example/tutorial/network-2.log \
 	source/example/tutorial/network-3.log \
