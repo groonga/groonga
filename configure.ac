@@ -1372,7 +1372,7 @@ AC_ARG_ENABLE(shared-onigmo,
     [use Onigmo as shared library instead of static library. [default=no]])],
   [enable_shared_onigmo="$enableval"],
   [enable_shared_onigmo="no"])
-
+AM_CONDITIONAL(WITH_SHARED_ONIGMO, test "$enable_shared_onigmo" = "yes")
 
 # PCRE
 GRN_WITH_PCRE=no
