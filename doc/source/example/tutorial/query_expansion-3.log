@@ -1,6 +1,6 @@
 Execution example::
 
-  select Doc --match_columns body --query "シークァーサー" --query_expander Synonym.body
+  select Doc --match_columns body --query "theater" --query_expander Synonym.body
   # [
   #   [
   #     0, 
@@ -29,17 +29,17 @@ Execution example::
   #       [
   #         1, 
   #         "001", 
-  #         "すっぱいブドウと甘いシークァーサー"
+  #         "Play all night in this theater."
   #       ], 
   #       [
   #         2, 
   #         "002", 
-  #         "シークヮーサージュースとゴーヤチャンプル"
+  #         "theatre is British spelling."
   #       ]
   #     ]
   #   ]
   # ]
-  select Doc --match_columns body --query "シークヮーサー" --query_expander Synonym.body
+  select Doc --match_columns body --query "theatre" --query_expander Synonym.body
   # [
   #   [
   #     0, 
@@ -68,12 +68,12 @@ Execution example::
   #       [
   #         1, 
   #         "001", 
-  #         "すっぱいブドウと甘いシークァーサー"
+  #         "Play all night in this theater."
   #       ], 
   #       [
   #         2, 
   #         "002", 
-  #         "シークヮーサージュースとゴーヤチャンプル"
+  #         "theatre is British spelling."
   #       ]
   #     ]
   #   ]

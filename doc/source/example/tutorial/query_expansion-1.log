@@ -14,13 +14,13 @@ Execution example::
   # [[0, 1337566253.89858, 0.000355720520019531], true]
   load --table Doc
   [
-  {"_key": "001", "body": "すっぱいブドウと甘いシークァーサー"},
-  {"_key": "002", "body": "シークヮーサージュースとゴーヤチャンプル"},
+  {"_key": "001", "body": "Play all night in this theater."},
+  {"_key": "002", "body": "theatre is British spelling."},
   ]
   # [[0, 1337566253.89858, 0.000355720520019531], 2]
   load --table Synonym
   [
-  {"_key": "シークァーサー", "body": "(シークァーサー OR シークヮーサー)"},
-  {"_key": "シークヮーサー", "body": "(シークァーサー OR シークヮーサー)"},
+  {"_key": "theater", "body": "(theater OR theatre)"},
+  {"_key": "theatre", "body": "(theater OR theatre)"},
   ]
   # [[0, 1337566253.89858, 0.000355720520019531], 2]

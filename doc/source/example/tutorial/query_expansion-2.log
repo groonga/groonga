@@ -1,6 +1,6 @@
 Execution example::
 
-  select Doc --match_columns body --query "シークァーサー"
+  select Doc --match_columns body --query "theater"
   # [
   #   [
   #     0, 
@@ -29,12 +29,12 @@ Execution example::
   #       [
   #         1, 
   #         "001", 
-  #         "すっぱいブドウと甘いシークァーサー"
+  #         "Play all night in this theater."
   #       ]
   #     ]
   #   ]
   # ]
-  select Doc --match_columns body --query "シークヮーサー"
+  select Doc --match_columns body --query "theatre"
   # [
   #   [
   #     0, 
@@ -63,7 +63,7 @@ Execution example::
   #       [
   #         2, 
   #         "002", 
-  #         "シークヮーサージュースとゴーヤチャンプル"
+  #         "theatre is British spelling."
   #       ]
   #     ]
   #   ]
