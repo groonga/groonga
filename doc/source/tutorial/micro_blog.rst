@@ -458,16 +458,17 @@ Above query searches comments which are posted within 20 km from Central Park in
 As specified range is 20 km, all comments with location are collected.
 You know that search results contain 2 #groonga hash tags and one #travel hash tag, and bob and charlie posted 2 comments.
 
-キーワードでコメント検索
-^^^^^^^^^^^^^^^^^^^^^^^^
-あるキーワードを含むコメントを検索します。
-さらに、 :doc:`search` で扱った、スコア値_scoreも出してみましょう。
+Search comments by keyword
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In this section, we search comments which contains specific keyword.
+And more, Let's calculate the value of `_score` which is described at :doc:`search`.
 
 .. groonga-command
 .. include:: ../example/tutorial/micro_blog-5.log
 .. select --table Comments --query comment:@Now --output_columns comment,_score
 
-「なう」をキーワードにコメント検索した結果、2件のコメントがヒットしました。また、_scoreの値も返ってきており、「なう」の数が出力されていることが確認できます。
+By using 'Now' as a keyword, above query returns 2 comments. It also contains count of 'Now' as the value of `_score`.
 
 GeoPointとキーワードでコメント検索
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
