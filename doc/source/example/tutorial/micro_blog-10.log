@@ -27,28 +27,28 @@ Execution example::
   #         ]
   #       ], 
   #       [
-  #         "hsiomaneki", 
+  #         "Alice", 
   #         "I've created micro-blog!", 
   #         1268795100.0
   #       ], 
   #       [
-  #         "Gunyara-kun", 
+  #         "Bob", 
   #         "First post. test,test...", 
   #         1268794800.0
   #       ], 
   #       [
-  #         "hsiomaneki", 
-  #         "@tasukuchan Welcome!!!", 
+  #         "Alice", 
+  #         "@bob Welcome!!!", 
   #         1268795100.0
   #       ], 
   #       [
-  #         "Gunyara-kun", 
-  #         "@daijiro Thanks!", 
+  #         "Bob", 
+  #         "@alice Thanks!", 
   #         1268798400.0
   #       ], 
   #       [
-  #         "Gunyara-kun", 
-  #         "Groonga Now! #groonga", 
+  #         "Bob", 
+  #         "I've just used 'Try-Groonga' now! #groonga", 
   #         1268802000.0
   #       ]
   #     ], 
@@ -86,11 +86,11 @@ Execution example::
   #         ]
   #       ], 
   #       [
-  #         "daijiro", 
+  #         "alice", 
   #         2
   #       ], 
   #       [
-  #         "tasukuchan", 
+  #         "bob", 
   #         3
   #       ]
   #     ]
