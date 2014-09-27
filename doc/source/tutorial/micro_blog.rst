@@ -483,16 +483,18 @@ By using `--query` and `--filter` option, following query returns records which 
 It returns 1 comment which meets both condition.
 It also returns result of drilldown. There is 1 comment which is commented by Bob.
 
-ハッシュタグでコメント検索
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-あるハッシュタグのついているコメントを検索します。
-これも、 :doc:`index` で扱った、参照関係の逆引きを使います。
+Search comments by hash tags
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In this section, we search comments which contains specific hash tags.
+Let's use reverse resolution of reference relationships.
 
 .. groonga-command
 .. include:: ../example/tutorial/micro_blog-7.log
 .. select --table Comments --query hash_tags:@groonga --output_columns posted_by.name,comment --drilldown posted_by
 
-#groongaタグの付いている2件のコメントがヒットしました。また、投稿者のドリルダウンも返ってきており、2件とも「グニャラくん」のものであることがわかります。
+Above query returns 2 comments which contains #groonga hash tag.
+It also returns result of drilldown grouped by person who posted it. It shows that there are 2 comments. Bob commented it.
 
 ユーザーIDでコメント検索
 ^^^^^^^^^^^^^^^^^^^^^^^^
