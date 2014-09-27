@@ -496,15 +496,17 @@ Let's use reverse resolution of reference relationships.
 Above query returns 2 comments which contains #groonga hash tag.
 It also returns result of drilldown grouped by person who posted it. It shows that there are 2 comments. Bob commented it.
 
-ユーザーIDでコメント検索
-^^^^^^^^^^^^^^^^^^^^^^^^
-あるユーザーが投稿したコメントを検索します。
+Search comments by user id
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In this section, we search comments which are posted by specific user.
 
 .. groonga-command
 .. include:: ../example/tutorial/micro_blog-8.log
-.. select --table Comments --query posted_by:tasukuchan --output_columns comment --drilldown hash_tags
+.. select --table Comments --query posted_by:bob --output_columns comment --drilldown hash_tags
 
-「グニャラくん」が書き込んだ4件のコメントがヒットしました。また、ハッシュタグでドリルダウンした結果も返ってきており、ハッシュタグは「#groonga」が2つに「#travel」が1つあることがわかります。
+Above query returns 4 comments which are posted by Bob.
+It also returns result of drilldown by hash tags. There are 2 comments which contains #groonga, and 1 comment which contains #travel as hash tag.
 
 ユーザーのお気に入りコメントを検索
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
