@@ -470,15 +470,18 @@ And more, Let's calculate the value of `_score` which is described at :doc:`sear
 
 By using 'Now' as a keyword, above query returns 2 comments. It also contains count of 'Now' as the value of `_score`.
 
-GeoPointとキーワードでコメント検索
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-今度は、キーワードとGeoPointの両方を条件に検索をしてみます。--queryと--filterの両方を使用した場合、両方の条件に一致するレコードがヒットします。
+Search comments by keyword and geolocation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In this section, we search comments by specific keyword and geolocation.
+By using `--query` and `--filter` option, following query returns records which are matched to both conditions.
 
 .. groonga-command
 .. include:: ../example/tutorial/micro_blog-6.log
-.. select --table Comments --query comment:@Haneda --filter 'geo_in_circle(location,"127975798x502919856",20000)' --output_columns posted_by.name,comment --drilldown hash_tags,posted_by
+.. select --table Comments --query comment:@New --filter 'geo_in_circle(location,"146867000x-266280000",20000)' --output_columns posted_by.name,comment --drilldown hash_tags,posted_by
 
-両方の条件を満たすコメントが1件ヒットしました。また、ドリルダウンの結果も返ってきており、「グニャラくん」のコメント1件であることがわかります。
+It returns 1 comment which meets both condition.
+It also returns result of drilldown. There is 1 comment which is commented by Bob.
 
 ハッシュタグでコメント検索
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
