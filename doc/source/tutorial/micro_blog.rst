@@ -408,7 +408,7 @@ See :doc:`match_columns` to search multiple column at once.
 Let's search user from micro-blog's user name, location, description entries.
 
 .. groonga-command
-.. include:: ../example/tutorial/micro_blog-1.log
+.. include:: ../example/tutorial/micro_blog_keyword.log
 .. select --table Users --match_columns name,location_str,description --query "New York" --output_columns _key,name
 
 By using "New York" as searching keyword for user, "Bob" who lives in "New York" is listed in search result.
@@ -422,7 +422,7 @@ See :doc:`search` about GeoPoint column.
 Following example searches users who live in within 20km from specified location.
 
 .. groonga-command
-.. include:: ../example/tutorial/micro_blog-2.log
+.. include:: ../example/tutorial/micro_blog_user.log
 .. select --table Users --filter 'geo_in_circle(location,"146710080x-266315480",20000)' --output_columns _key,name
 
 It shows that "Bob" and "Charlie" lives in within 20 km from station of "Grand Central Terminal".
@@ -435,7 +435,7 @@ In this section, we do reverse resolution of reference relationships which is de
 Following examples shows reverse resolution about ``follower`` column of ``Users`` table.
 
 .. groonga-command
-.. include:: ../example/tutorial/micro_blog-3.log
+.. include:: ../example/tutorial/micro_blog_follower.log
 .. select --table Users --query follower:@bob --output_columns _key,name
 
 It shows that "Alice" and "Charlie" follows "Bob".
@@ -450,7 +450,7 @@ Following example shows how to drill down against search results.
 As a result, we get the value of count which is grouped by user, and hash tags respectively.
 
 .. groonga-command
-.. include:: ../example/tutorial/micro_blog-4.log
+.. include:: ../example/tutorial/micro_blog_drilldown.log
 .. select --table Comments --filter 'geo_in_circle(location,"146867000x-266280000",20000)' --output_columns posted_by.name,comment --drilldown hash_tags,posted_by
 
 Above query searches comments which are posted within 20 km from Central Park in city of New York.
@@ -465,7 +465,7 @@ In this section, we search comments which contains specific keyword.
 And more, Let's calculate the value of `_score` which is described at :doc:`search`.
 
 .. groonga-command
-.. include:: ../example/tutorial/micro_blog-5.log
+.. include:: ../example/tutorial/micro_blog_score.log
 .. select --table Comments --query comment:@Now --output_columns comment,_score
 
 By using 'Now' as a keyword, above query returns 2 comments. It also contains count of 'Now' as the value of `_score`.
@@ -477,7 +477,7 @@ In this section, we search comments by specific keyword and geolocation.
 By using `--query` and `--filter` option, following query returns records which are matched to both conditions.
 
 .. groonga-command
-.. include:: ../example/tutorial/micro_blog-6.log
+.. include:: ../example/tutorial/micro_blog_keyword_and_location.log
 .. select --table Comments --query comment:@New --filter 'geo_in_circle(location,"146867000x-266280000",20000)' --output_columns posted_by.name,comment --drilldown hash_tags,posted_by
 
 It returns 1 comment which meets both condition.
@@ -490,7 +490,7 @@ In this section, we search comments which contains specific hash tags.
 Let's use reverse resolution of reference relationships.
 
 .. groonga-command
-.. include:: ../example/tutorial/micro_blog-7.log
+.. include:: ../example/tutorial/micro_blog_hash_tag.log
 .. select --table Comments --query hash_tags:@groonga --output_columns posted_by.name,comment --drilldown posted_by
 
 Above query returns 2 comments which contains #groonga hash tag.
@@ -502,7 +502,7 @@ Search comments by user id
 In this section, we search comments which are posted by specific user.
 
 .. groonga-command
-.. include:: ../example/tutorial/micro_blog-8.log
+.. include:: ../example/tutorial/micro_blog_posted_by.log
 .. select --table Comments --query posted_by:bob --output_columns comment --drilldown hash_tags
 
 Above query returns 4 comments which are posted by Bob.
@@ -514,7 +514,7 @@ Search user's favorite comments
 In this section, we search user's favorite comments.
 
 .. groonga-command
-.. include:: ../example/tutorial/micro_blog-9.log
+.. include:: ../example/tutorial/micro_blog_favorite.log
 .. select --table Users --query _key:bob --output_columns favorites.posted_by,favorites.comment
 
 Above query returns Bob's favorite comments.
@@ -528,7 +528,7 @@ See type of `Time` in :doc:`data`.
 Let's search comments that posted time are older than specified time.
 
 .. groonga-command
-.. include:: ../example/tutorial/micro_blog-10.log
+.. include:: ../example/tutorial/micro_blog_last_modified.log
 .. select Comments --filter 'last_modified<=1268802000' --output_columns posted_by.name,comment,last_modified --drilldown hash_tags,posted_by
 
 Above query returns 5 comments which are older than 2010/03/17 14:00:00.
