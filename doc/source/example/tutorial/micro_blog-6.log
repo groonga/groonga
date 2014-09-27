@@ -1,6 +1,6 @@
 Execution example::
 
-  select --table Comments --query comment:@Haneda --filter 'geo_in_circle(location,"127975798x502919856",20000)' --output_columns posted_by.name,comment --drilldown hash_tags,posted_by
+  select --table Comments --query comment:@New --filter 'geo_in_circle(location,"146867000x-266280000",20000)' --output_columns posted_by.name,comment --drilldown hash_tags,posted_by
   # [
   #   [
   #     0, 
@@ -23,8 +23,8 @@ Execution example::
   #         ]
   #       ], 
   #       [
-  #         "Gunyara-kun", 
-  #         "I'm come at Haneda Airport for development camp! #groonga #travel"
+  #         "Bob", 
+  #         "I'm come at city of New York for development camp! #groonga #travel"
   #       ]
   #     ], 
   #     [
@@ -65,7 +65,7 @@ Execution example::
   #         ]
   #       ], 
   #       [
-  #         "tasukuchan", 
+  #         "bob", 
   #         1
   #       ]
   #     ]
