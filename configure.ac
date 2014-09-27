@@ -1349,7 +1349,8 @@ fi
 AC_MSG_RESULT($enable_mruby)
 
 if test "$enable_mruby" = "yes"; then
-  if test "$ac_cv_ruby_available" != "yes"; then
+  if test ! -f "$srcdir/vendor/mruby/mruby-build.timestamp" -a \
+          "$ac_cv_ruby_available" != "yes"; then
     AC_MSG_ERROR(--enable-ruby requires --with-ruby)
   fi
   AC_DEFINE(GRN_WITH_MRUBY, [1], [Define to 1 if mruby is enabled.])
