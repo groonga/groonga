@@ -519,16 +519,20 @@ In this section, we search user's favorite comments.
 
 Above query returns Bob's favorite comments.
 
-投稿時間でコメント検索
-^^^^^^^^^^^^^^^^^^^^^^
-コメントの投稿時間で検索をします。Time型については :doc:`data` で扱っています。
-この例では、指定した時間よりも前に投稿されているコメントを検索します。
+Search comments by posted time
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In this section, we search comments by posted time.
+See type of `Time` in :doc:`data`.
+
+Let's search comments that posted time are older than specified time.
 
 .. groonga-command
 .. include:: ../example/tutorial/micro_blog-10.log
 .. select Comments --filter 'last_modified<=1268802000' --output_columns posted_by.name,comment,last_modified --drilldown hash_tags,posted_by
 
-2010/03/17 14:00:00以前に書かれたコメント5件がヒットしました。また、ドリルダウンの結果も返ってきており、「hsiomaneki」が2件、「グニャラくん」が3件ヒットしていることがわかります。
+Above query returns 5 comments which are older than 2010/03/17 14:00:00.
+It also returns result of drilldown by posted person. There are 2 comments by Alice, 3 comments by Bob.
 
 .. TODO: 以下の機能はgroonga本体での支援が必要。
 .. タイムライン表示: あるユーザがfollowしているユーザの発言を、時系列順の逆順で並べて10件のみ表示。
