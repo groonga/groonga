@@ -75,7 +75,6 @@ def execmd(command, fout):
     return
   output_buffer = ""
   first_timeout = 1
-  rest_timeout = 0.1
   timeout = first_timeout
   while True:
     out = select([groonga_process.stdout], [], [], timeout)
@@ -188,8 +187,12 @@ def readfile(fname, outflag):
       print '###<<< include end'
 
 entry_point = "source/"
+rest_timeout = 0.1
 if len(argv) == 2:
   entry_point = argv[1]
+elif len(argv) == 3:
+  entry_point = argv[1]
+  rest_timeout = float(argv[2])
 if os.path.isfile(entry_point):
   readfile(entry_point, 0)
 else:
