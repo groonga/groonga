@@ -508,15 +508,16 @@ In this section, we search comments which are posted by specific user.
 Above query returns 4 comments which are posted by Bob.
 It also returns result of drilldown by hash tags. There are 2 comments which contains #groonga, and 1 comment which contains #travel as hash tag.
 
-ユーザーのお気に入りコメントを検索
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-あるユーザーがお気に入りに入れているコメントを検索します。
+Search user's favorite comments
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In this section, we search user's favorite comments.
 
 .. groonga-command
 .. include:: ../example/tutorial/micro_blog-9.log
-.. select --table Users --query _key:tasukuchan --output_columns favorites.posted_by,favorites.comment
+.. select --table Users --query _key:bob --output_columns favorites.posted_by,favorites.comment
 
-「グニャラくん」がお気に入りに入れている2件のコメントがヒットしました。
+Above query returns Bob's favorite comments.
 
 投稿時間でコメント検索
 ^^^^^^^^^^^^^^^^^^^^^^
