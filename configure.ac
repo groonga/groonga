@@ -1442,6 +1442,7 @@ AC_OUTPUT([
   packages/rpm/centos/groonga.spec
   packages/rpm/fedora/groonga.spec
   packages/apt/debian/groonga-keyring.postrm
+  packages/apt/env.sh
   packages/yum/env.sh
   groonga.pc
   config.sh

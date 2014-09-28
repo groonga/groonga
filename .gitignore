@@ -96,6 +96,7 @@ cmake_install.cmake
 /benchmark/bench-query-optimizer
 /benchmark/bench-range-select
 /packages/*/*.log
+/packages/apt/env.sh
 /packages/apt/debian/groonga-keyring.postrm
 /packages/apt/repositories/debian/pool/*/*/*/*/*.diff.gz
 /packages/apt/repositories/debian/pool/*/*/*/*/*.tar.gz
@@ -118,6 +119,7 @@ cmake_install.cmake
 /packages/apt/repositories/ubuntu/*.conf
 /packages/apt/groonga-keyring-*/
 /packages/apt/groonga-keyring-*.tar.gz
+/packages/apt/.vagrant/
 /packages/apt/tmp/
 /packages/ubuntu/tmp/
 /packages/ubuntu/*.tar.gz
