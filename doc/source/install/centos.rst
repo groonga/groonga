@@ -100,15 +100,6 @@ Groonga status by Munin, install groonga-munin-plugins package.
    enable `EPEL <http://fedoraproject.org/wiki/EPEL>`_ repository to
    install it by ``yum``.
 
-   ..
-      Enable Repoforge (RPMforge) repository on i686 environment::
-
-        % sudo rpm -ivh http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.i686.rpm
-
-      Enable Repoforge (RPMforge) repository on x86_64 environment::
-
-        % sudo rpm -ivh http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
-
    Enable EPEL repository on any environment::
 
      % sudo rpm -ivh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
@@ -154,12 +145,7 @@ Groonga status by Munin, install groonga-munin-plugins package.
    enable `EPEL <http://fedoraproject.org/wiki/EPEL>`_ repository to
    install it by ``yum``.
 
-   ..
-      Enable Repoforge (RPMforge) repository on x86_64 environment::
-
-        % sudo rpm -ivh http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el7.rf.x86_64.rpm
-
-   Enable EPEL repository on x86_64 environment::
+   Enable EPEL repository::
 
      % sudo yum install -y epel-release
 
