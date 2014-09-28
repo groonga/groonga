@@ -38,6 +38,7 @@ Improvements
   exist, :doc:`/reference/commands/column_create` returns ``false`` and
   column isn't created.
 * [windows] Enabled mruby.
+* [debian] Dropped Debian jessie and sid support.
 
 Fixes
 ^^^^^
