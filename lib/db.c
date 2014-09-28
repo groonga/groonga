@@ -301,12 +301,20 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   grn_bool ctx_used_db;
   if (!s) { return GRN_INVALID_ARGUMENT; }
   GRN_API_ENTER;
+
   ctx_used_db = ctx->impl && ctx->impl->db == db;
   if (ctx_used_db) {
     grn_ctx_loader_clear(ctx);
     if (ctx->impl->parser) {
       grn_expr_parser_close(ctx);
     }
+  }
+
+  GRN_TINY_ARRAY_EACH(&s->values, 1, grn_db_curr_id(ctx, db), id, vp, {
+    if (vp->ptr) { grn_obj_close(ctx, vp->ptr); }
+  });
+
+  if (ctx_used_db) {
     if (ctx->impl->values) {
       grn_db_obj *o;
       GRN_ARRAY_EACH(ctx, ctx->impl->values, 0, 0, id, &o, {
@@ -315,9 +323,7 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
       grn_array_truncate(ctx, ctx->impl->values);
     }
   }
-  GRN_TINY_ARRAY_EACH(&s->values, 1, grn_db_curr_id(ctx, db), id, vp, {
-    if (vp->ptr) { grn_obj_close(ctx, vp->ptr); }
-  });
+
 /* grn_tiny_array_fin should be refined.. */
 #ifdef WIN32
   {
@@ -326,6 +332,7 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   }
 #endif
   grn_tiny_array_fin(&s->values);
+
   switch (s->keys->header.type) {
   case GRN_TABLE_PAT_KEY :
     grn_pat_close(ctx, (grn_pat *)s->keys);
@@ -337,6 +344,7 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   CRITICAL_SECTION_FIN(s->lock);
   if (s->specs) { grn_ja_close(ctx, s->specs); }
   GRN_FREE(s);
+
   if (ctx_used_db) {
     grn_cache *cache;
     cache = grn_cache_current_get(ctx);
@@ -345,6 +353,7 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
     }
     ctx->impl->db = NULL;
   }
+
   GRN_API_RETURN(GRN_SUCCESS);
 }
 
