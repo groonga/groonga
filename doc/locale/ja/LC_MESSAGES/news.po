@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2014-09-28 14:54+0900\n"
+"PO-Revision-Date: 2014-09-28 18:34+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -103,6 +103,9 @@ msgstr ""
 # d7e2329a9ef34664a99b028d8a5468ed
 msgid "[windows] Enabled mruby."
 msgstr "[windows] mrubyを有効にしました。"
+
+msgid "[debian] Dropped Debian jessie and sid support."
+msgstr "[deb] Debian jessieとsidのサポートをやめました。"
 
 msgid "Fixes"
 msgstr "修正"
