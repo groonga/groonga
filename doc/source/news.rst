@@ -33,11 +33,16 @@ Improvements
   report at feel free. [GitHub#202] [Patch by cosmo0920]
 * [doc] Translated C API document. [GitHub#203] [Patch by NOKUBI Takatsugu]
 * Supported to customize similarity threshold by ``'*S10"..."'`` syntax.
+* Added source column validation to
+  :doc:`/reference/commands/column_create`.  If source column doesn't
+  exist, :doc:`/reference/commands/column_create` returns ``false`` and
+  column isn't created.
+* [windows] Enabled mruby.
 
 Fixes
 ^^^^^
 
-* [windows] Disabled KyTea by default because of redistribution license issue. 
+* [windows] Disabled KyTea by default because of redistribution license issue.
 * [windows] Disabled libedit support by default.
 * Fixed a bug that similar search doesn't use IDF (Inverse Document Frequency)
   for choosing target tokens.
