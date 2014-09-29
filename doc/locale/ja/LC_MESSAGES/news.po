@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2014-09-28 18:34+0900\n"
+"PO-Revision-Date: 2014-09-29 12:20+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -100,24 +100,11 @@ msgstr ""
 "た。もし、ソースカラムが存在しない場合は :doc:`/reference/commands/"
 "column_create` は ``false`` を返し、カラムは作られません。"
 
-# d7e2329a9ef34664a99b028d8a5468ed
-msgid "[windows] Enabled mruby."
-msgstr "[windows] mrubyを有効にしました。"
-
 msgid "[debian] Dropped Debian jessie and sid support."
 msgstr "[deb] Debian jessieとsidのサポートをやめました。"
 
 msgid "Fixes"
 msgstr "修正"
-
-msgid ""
-"[windows] Disabled KyTea by default because of redistribution license issue."
-msgstr ""
-"[windows] デフォルトでKyTeaのサポートを無効にしました。これは再配布に関するラ"
-"イセンスの問題によります。"
-
-msgid "[windows] Disabled libedit support by default."
-msgstr "[windows] デフォルトでlibeditを無効にしました。"
 
 msgid ""
 "Fixed a bug that similar search doesn't use IDF (Inverse Document Frequency) "
