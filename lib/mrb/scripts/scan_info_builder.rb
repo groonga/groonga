@@ -270,7 +270,12 @@ module Groonga
       return false if !(lower_condition?(op) or lower_condition?(next_op))
       return false if !(upper_condition?(op) or upper_condition?(next_op))
 
-      data.args[0] == next_data.args[0] and data.indexes == next_data.indexes
+      return false if data.args[0] != next_data.args[0]
+
+      data_indexes = data.indexes
+      return false if data_indexes.empty?
+
+      data_indexes == next_data.indexes
     end
 
     def lower_condition?(operator)
