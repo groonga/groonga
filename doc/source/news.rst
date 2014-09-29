@@ -42,8 +42,6 @@ Improvements
 Fixes
 ^^^^^
 
-* [windows] Disabled KyTea by default because of redistribution license issue.
-* [windows] Disabled libedit support by default.
 * Fixed a bug that similar search doesn't use IDF (Inverse Document Frequency)
   for choosing target tokens.
   In the previous versions, it used token ID instead of IDF.
