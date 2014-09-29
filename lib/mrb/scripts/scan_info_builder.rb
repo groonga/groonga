@@ -293,7 +293,7 @@ module Groonga
 
     def create_between_data(data, next_data)
       between_data = ScanInfoData.new(data.start)
-      between_data.end = next_data.end
+      between_data.end = next_data.end + 1
       between_data.flags = data.flags
       between_data.op = Operator::CALL
       between_data.logical_op = data.logical_op
