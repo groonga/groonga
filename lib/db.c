@@ -6528,6 +6528,23 @@ grn_hook_unpack(grn_ctx *ctx, grn_db_obj *obj, const char *buf, uint32_t buf_siz
   return GRN_SUCCESS;
 }
 
+static void
+grn_token_filters_pack(grn_ctx *ctx,
+                       grn_obj *token_filters,
+                       grn_obj *buffer)
+{
+  unsigned int i, n_token_filters;
+
+  n_token_filters = GRN_BULK_VSIZE(token_filters) / sizeof(grn_obj *);
+  for (i = 0; i < n_token_filters; i++) {
+    grn_obj *token_filter = GRN_PTR_VALUE_AT(token_filters, i);
+    grn_id token_filter_id;
+
+    token_filter_id = grn_obj_id(ctx, token_filter);
+    GRN_RECORD_PUT(ctx, buffer, token_filter_id);
+  }
+}
+
 void
 grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
 {
@@ -6552,6 +6569,18 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
   grn_hook_pack(ctx, obj, b);
   grn_vector_delimit(ctx, &v, 0, 0);
   switch (obj->header.type) {
+  case GRN_TABLE_HASH_KEY :
+    grn_token_filters_pack(ctx, &(((grn_hash *)obj)->token_filters), b);
+    grn_vector_delimit(ctx, &v, 0, 0);
+    break;
+  case GRN_TABLE_PAT_KEY :
+    grn_token_filters_pack(ctx, &(((grn_pat *)obj)->token_filters), b);
+    grn_vector_delimit(ctx, &v, 0, 0);
+    break;
+  case GRN_TABLE_DAT_KEY :
+    grn_token_filters_pack(ctx, &(((grn_dat *)obj)->token_filters), b);
+    grn_vector_delimit(ctx, &v, 0, 0);
+    break;
   case GRN_EXPR :
     grn_expr_pack(ctx, b, (grn_obj *)obj);
     grn_vector_delimit(ctx, &v, 0, 0);
@@ -7715,6 +7744,7 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
 #define SERIALIZED_SPEC_INDEX_PATH   1
 #define SERIALIZED_SPEC_INDEX_SOURCE 2
 #define SERIALIZED_SPEC_INDEX_HOOK   3
+#define SERIALIZED_SPEC_INDEX_TOKEN_FILTERS 4
 #define SERIALIZED_SPEC_INDEX_EXPR   4
 
 #define GET_PATH(spec,buffer,s,id) do {\
@@ -7762,6 +7792,40 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
     grn_hook_unpack(ctx, r, p, size);\
   }\
 } while (0)
+
+static void
+grn_token_filters_unpack(grn_ctx *ctx,
+                         grn_obj *token_filters,
+                         grn_obj *spec_vector)
+{
+  grn_id *token_filter_ids;
+  unsigned int element_size;
+  unsigned int i, n_token_filter_ids;
+
+  if (grn_vector_size(ctx, spec_vector) < SERIALIZED_SPEC_INDEX_TOKEN_FILTERS) {
+    return;
+  }
+
+  element_size = grn_vector_get_element(ctx,
+                                        spec_vector,
+                                        SERIALIZED_SPEC_INDEX_TOKEN_FILTERS,
+                                        (const char **)(&token_filter_ids),
+                                        NULL,
+                                        NULL);
+  n_token_filter_ids = element_size / sizeof(grn_id);
+  for (i = 0; i < n_token_filter_ids; i++) {
+    grn_id token_filter_id = token_filter_ids[i];
+    grn_obj *token_filter;
+
+    token_filter = grn_ctx_at(ctx, token_filter_id);
+    if (!token_filter) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "nonexistent token filter ID: %d\n", token_filter_id);
+      return;
+    }
+    GRN_PTR_PUT(ctx, token_filters, token_filter);
+  }
+}
 
 grn_obj *
 grn_ctx_at(grn_ctx *ctx, grn_id id)
@@ -7838,27 +7902,33 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                   GET_PATH(spec, buffer, s, id);
                   vp->ptr = (grn_obj *)grn_hash_open(ctx, buffer);
                   if (vp->ptr) {
+                    grn_hash *hash = (grn_hash *)(vp->ptr);
                     grn_obj_flags flags = vp->ptr->header.flags;
                     UNPACK_INFO();
                     vp->ptr->header.flags = flags;
+                    grn_token_filters_unpack(ctx, &(hash->token_filters), &v);
                   }
                   break;
                 case GRN_TABLE_PAT_KEY :
                   GET_PATH(spec, buffer, s, id);
                   vp->ptr = (grn_obj *)grn_pat_open(ctx, buffer);
                   if (vp->ptr) {
+                    grn_pat *pat = (grn_pat *)(vp->ptr);
                     grn_obj_flags flags = vp->ptr->header.flags;
                     UNPACK_INFO();
                     vp->ptr->header.flags = flags;
+                    grn_token_filters_unpack(ctx, &(pat->token_filters), &v);
                   }
                   break;
                 case GRN_TABLE_DAT_KEY :
                   GET_PATH(spec, buffer, s, id);
                   vp->ptr = (grn_obj *)grn_dat_open(ctx, buffer);
                   if (vp->ptr) {
+                    grn_dat *dat = (grn_dat *)(vp->ptr);
                     grn_obj_flags flags = vp->ptr->header.flags;
                     UNPACK_INFO();
                     vp->ptr->header.flags = flags;
+                    grn_token_filters_unpack(ctx, &(dat->token_filters), &v);
                   }
                   break;
                 case GRN_TABLE_NO_KEY :
