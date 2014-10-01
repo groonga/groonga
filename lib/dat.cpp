@@ -112,6 +112,7 @@ grn_dat_init(grn_ctx *, grn_dat *dat)
   dat->trie = NULL;
   dat->old_trie = NULL;
   dat->tokenizer = NULL;
+  dat->normalizer = NULL;
   CRITICAL_SECTION_INIT(dat->lock);
 }
 
