@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2011-2012 Brazil
+/* Copyright(C) 2011-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -113,6 +113,7 @@ grn_dat_init(grn_ctx *, grn_dat *dat)
   dat->old_trie = NULL;
   dat->tokenizer = NULL;
   dat->normalizer = NULL;
+  GRN_PTR_INIT(&(dat->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
   CRITICAL_SECTION_INIT(dat->lock);
 }
 
@@ -128,6 +129,7 @@ grn_dat_fin(grn_ctx *ctx, grn_dat *dat)
     grn_io_close(ctx, dat->io);
     dat->io = NULL;
   }
+  GRN_OBJ_FIN(ctx, &(dat->token_filters));
 }
 
 /*
@@ -313,6 +315,7 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t,
   }
   dat->encoding = encoding;
   dat->tokenizer = NULL;
+  GRN_PTR_INIT(&(dat->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
 
   dat->obj.header.flags = dat->header->flags;
 
@@ -355,6 +358,7 @@ grn_dat_open(grn_ctx *ctx, const char *path)
   } else {
     dat->normalizer = grn_ctx_at(ctx, dat->header->normalizer);
   }
+  GRN_PTR_INIT(&(dat->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
   dat->obj.header.flags = dat->header->flags;
   return dat;
 }
