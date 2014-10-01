@@ -6298,6 +6298,42 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
         break;
       }
       break;
+    case GRN_INFO_TOKEN_FILTERS :
+      if (!valuebuf) {
+        if (!(valuebuf = grn_obj_open(ctx, GRN_PVECTOR, 0, 0))) {
+          ERR(GRN_NO_MEMORY_AVAILABLE,
+              "grn_obj_get_info: failed to allocate value buffer");
+          goto exit;
+        }
+      }
+      {
+        grn_obj *token_filters = NULL;
+        switch (obj->header.type) {
+        case GRN_TABLE_HASH_KEY :
+          token_filters = &(((grn_hash *)obj)->token_filters);
+          break;
+        case GRN_TABLE_PAT_KEY :
+          token_filters = &(((grn_pat *)obj)->token_filters);
+          break;
+        case GRN_TABLE_DAT_KEY :
+          token_filters = &(((grn_dat *)obj)->token_filters);
+          break;
+        default :
+          ERR(GRN_INVALID_ARGUMENT,
+              /* TODO: Show type name instead of type ID */
+              "[info][get][token-filters] target object must be one of "
+              "GRN_TABLE_HASH_KEY, GRN_TABLE_PAT_KEY and GRN_TABLE_DAT_KEY: %d",
+              obj->header.type);
+          break;
+        }
+        if (token_filters) {
+          grn_bulk_write(ctx,
+                         valuebuf,
+                         GRN_BULK_HEAD(token_filters),
+                         GRN_BULK_VSIZE(token_filters));
+        }
+      }
+      break;
     default :
       /* todo */
       break;
@@ -6786,6 +6822,62 @@ grn_obj_set_info_source(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
   return rc;
 }
 
+static grn_rc
+grn_obj_set_info_token_filters(grn_ctx *ctx,
+                               grn_obj *table,
+                               grn_obj *token_filters)
+{
+  grn_obj *current_token_filters;
+  unsigned int i, n_token_filters;
+  grn_obj token_filter_names;
+
+  switch (table->header.type) {
+  case GRN_TABLE_HASH_KEY :
+    current_token_filters = &(((grn_hash *)table)->token_filters);
+    break;
+  case GRN_TABLE_PAT_KEY :
+    current_token_filters = &(((grn_pat *)table)->token_filters);
+    break;
+  case GRN_TABLE_DAT_KEY :
+    current_token_filters = &(((grn_dat *)table)->token_filters);
+    break;
+  default :
+    /* TODO: Show type name instead of type ID */
+    ERR(GRN_INVALID_ARGUMENT,
+        "[info][set][token-filters] target object must be one of "
+        "GRN_TABLE_HASH_KEY, GRN_TABLE_PAT_KEY and GRN_TABLE_DAT_KEY: %d",
+        table->header.type);
+    return ctx->rc;
+  }
+
+  GRN_TEXT_INIT(&token_filter_names, 0);
+  GRN_BULK_REWIND(current_token_filters);
+  n_token_filters = GRN_BULK_VSIZE(token_filters) / sizeof(grn_obj *);
+  for (i = 0; i < n_token_filters; i++) {
+    grn_obj *token_filter = GRN_PTR_VALUE_AT(token_filters, i);
+    char token_filter_name[GRN_TABLE_MAX_KEY_SIZE];
+    unsigned int token_filter_name_size;
+
+    GRN_PTR_PUT(ctx, current_token_filters, token_filter);
+
+    token_filter_name_size = grn_obj_name(ctx,
+                                          token_filter,
+                                          token_filter_name,
+                                          GRN_TABLE_MAX_KEY_SIZE);
+    GRN_TEXT_PUT(ctx,
+                 &token_filter_names,
+                 token_filter_name,
+                 token_filter_name_size);
+  }
+  GRN_LOG(ctx, GRN_LOG_NOTICE, "DDL:set_token_filters %.*s",
+          (int)GRN_BULK_VSIZE(&token_filter_names),
+          GRN_BULK_HEAD(&token_filter_names));
+  GRN_OBJ_FIN(ctx, &token_filter_names);
+  grn_obj_spec_save(ctx, DB_OBJ(table));
+
+  return GRN_SUCCESS;
+}
+
 grn_rc
 grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value)
 {
@@ -6844,6 +6936,9 @@ grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value)
         break;
       }
     }
+    break;
+  case GRN_INFO_TOKEN_FILTERS :
+    rc = grn_obj_set_info_source(ctx, obj, value);
     break;
   default :
     /* todo */

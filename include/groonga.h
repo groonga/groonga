@@ -790,7 +790,8 @@ typedef enum {
   GRN_INFO_II_SPLIT_THRESHOLD,
   GRN_INFO_SUPPORT_ZLIB,
   GRN_INFO_SUPPORT_LZO,
-  GRN_INFO_NORMALIZER
+  GRN_INFO_NORMALIZER,
+  GRN_INFO_TOKEN_FILTERS
 } grn_info_type;
 
 GRN_API grn_obj *grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valuebuf);
