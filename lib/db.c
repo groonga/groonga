@@ -7711,10 +7711,21 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
   return rc;
 }
 
+#define SERIALIZED_SPEC_INDEX_SPEC   0
+#define SERIALIZED_SPEC_INDEX_PATH   1
+#define SERIALIZED_SPEC_INDEX_SOURCE 2
+#define SERIALIZED_SPEC_INDEX_HOOK   3
+#define SERIALIZED_SPEC_INDEX_EXPR   4
+
 #define GET_PATH(spec,buffer,s,id) do {\
   if (spec->header.flags & GRN_OBJ_CUSTOM_NAME) {\
     const char *path;\
-    unsigned int size = grn_vector_get_element(ctx, &v, 1, &path, NULL, NULL); \
+    unsigned int size = grn_vector_get_element(ctx,\
+                                               &v,\
+                                               SERIALIZED_SPEC_INDEX_PATH,\
+                                               &path,\
+                                               NULL,\
+                                               NULL);\
     if (size > PATH_MAX) { ERR(GRN_FILENAME_TOO_LONG, "too long path"); }\
     memcpy(buffer, path, size);\
     buffer[size] = '\0';\
@@ -7730,14 +7741,24 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
     r->id = id;\
     r->range = spec->range;\
     r->db = (grn_obj *)s;\
-    size = grn_vector_get_element(ctx, &v, 2, &p, NULL, NULL);\
+    size = grn_vector_get_element(ctx,\
+                                  &v,\
+                                  SERIALIZED_SPEC_INDEX_SOURCE,\
+                                  &p,\
+                                  NULL,\
+                                  NULL);\
     if (size) {\
       if ((r->source = GRN_MALLOC(size))) {\
         memcpy(r->source, p, size);\
         r->source_size = size;\
       }\
     }\
-    size = grn_vector_get_element(ctx, &v, 3, &p, NULL, NULL);\
+    size = grn_vector_get_element(ctx,\
+                                  &v,\
+                                  SERIALIZED_SPEC_INDEX_HOOK,\
+                                  &p,\
+                                  NULL,\
+                                  NULL);\
     grn_hook_unpack(ctx, r, p, size);\
   }\
 } while (0)
@@ -7801,7 +7822,12 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
               uint32_t size;
               grn_obj_spec *spec;
               char buffer[PATH_MAX];
-              size = grn_vector_get_element(ctx, &v, 0, (const char **)&spec, NULL, NULL);
+              size = grn_vector_get_element(ctx,
+                                            &v,
+                                            SERIALIZED_SPEC_INDEX_SPEC,
+                                            (const char **)&spec,
+                                            NULL,
+                                            NULL);
               if (size) {
                 switch (spec->header.type) {
                 case GRN_TYPE :
@@ -7865,7 +7891,12 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                 case GRN_EXPR :
                   {
                     uint8_t *u;
-                    size = grn_vector_get_element(ctx, &v, 4, &p, NULL, NULL);
+                    size = grn_vector_get_element(ctx,
+                                                  &v,
+                                                  SERIALIZED_SPEC_INDEX_EXPR,
+                                                  &p,
+                                                  NULL,
+                                                  NULL);
                     u = (uint8_t *)p;
                     vp->ptr = grn_expr_open(ctx, spec, u, u + size);
                   }
