@@ -6938,7 +6938,7 @@ grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value)
     }
     break;
   case GRN_INFO_TOKEN_FILTERS :
-    rc = grn_obj_set_info_source(ctx, obj, value);
+    rc = grn_obj_set_info_token_filters(ctx, obj, value);
     break;
   default :
     /* todo */
