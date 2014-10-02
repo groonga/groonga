@@ -1,4 +1,18 @@
 
+Changes with nginx 1.7.6                                         30 Sep 2014
+
+    *) Change: the deprecated "limit_zone" directive is not supported
+       anymore.
+
+    *) Feature: the "limit_conn_zone" and "limit_req_zone" directives now
+       can be used with combinations of multiple variables.
+
+    *) Bugfix: request body might be transmitted incorrectly when retrying a
+       FastCGI request to the next upstream server.
+
+    *) Bugfix: in logging to syslog.
+
+
 Changes with nginx 1.7.5                                         16 Sep 2014
 
     *) Security: it was possible to reuse SSL sessions in unrelated contexts

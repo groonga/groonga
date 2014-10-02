@@ -11,48 +11,39 @@
 
 
 /*
- * Although FreeBSD sendfile() allows to pass a header and a trailer,
- * it cannot send a header with a part of the file in one packet until
- * FreeBSD 5.3.  Besides, over the fast ethernet connection sendfile()
- * may send the partially filled packets, i.e. the 8 file pages may be sent
- * as the 11 full 1460-bytes packets, then one incomplete 324-bytes packet,
- * and then again the 11 full 1460-bytes packets.
+ * It seems that Darwin 9.4 (Mac OS X 1.5) sendfile() has the same
+ * old bug as early FreeBSD sendfile() syscall:
+ * http://bugs.freebsd.org/33771
  *
- * Therefore we use the TCP_NOPUSH option (similar to Linux's TCP_CORK)
- * to postpone the sending - it not only sends a header and the first part of
- * the file in one packet, but also sends the file pages in the full packets.
+ * Besides sendfile() has another bug: if one calls sendfile()
+ * with both a header and a trailer, then sendfile() ignores a file part
+ * at all and sends only the header and the trailer together.
+ * For this reason we send a trailer only if there is no a header.
  *
- * But until FreeBSD 4.5 turning TCP_NOPUSH off does not flush a pending
- * data that less than MSS, so that data may be sent with 5 second delay.
- * So we do not use TCP_NOPUSH on FreeBSD prior to 4.5, although it can be used
- * for non-keepalive HTTP connections.
+ * Although sendfile() allows to pass a header or a trailer,
+ * it may send the header or the trailer and a part of the file
+ * in different packets.  And FreeBSD workaround (TCP_NOPUSH option)
+ * does not help.
  */
 
 
-#if (IOV_MAX > 64)
-#define NGX_HEADERS   64
-#define NGX_TRAILERS  64
-#else
-#define NGX_HEADERS   IOV_MAX
-#define NGX_TRAILERS  IOV_MAX
-#endif
-
-
 ngx_chain_t *
-ngx_freebsd_sendfile_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
+ngx_darwin_sendfile_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
 {
-    int              rc, flags;
+    int              rc;
     u_char          *prev;
     off_t            size, send, prev_send, aligned, sent, fprev;
-    size_t           header_size, file_size;
-    ngx_uint_t       eintr, eagain, complete;
+    off_t            header_size, file_size;
+    ngx_uint_t       eintr;
     ngx_err_t        err;
     ngx_buf_t       *file;
     ngx_array_t      header, trailer;
     ngx_event_t     *wev;
     ngx_chain_t     *cl;
     struct sf_hdtr   hdtr;
-    struct iovec    *iov, headers[NGX_HEADERS], trailers[NGX_TRAILERS];
+    struct iovec    *iov;
+    struct iovec     headers[NGX_IOVS_PREALLOCATE];
+    struct iovec     trailers[NGX_IOVS_PREALLOCATE];
 
     wev = c->write;
 
@@ -78,17 +69,15 @@ ngx_freebsd_sendfile_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
     }
 
     send = 0;
-    eagain = 0;
-    flags = 0;
 
     header.elts = headers;
     header.size = sizeof(struct iovec);
-    header.nalloc = NGX_HEADERS;
+    header.nalloc = NGX_IOVS_PREALLOCATE;
     header.pool = c->pool;
 
     trailer.elts = trailers;
     trailer.size = sizeof(struct iovec);
-    trailer.nalloc = NGX_TRAILERS;
+    trailer.nalloc = NGX_IOVS_PREALLOCATE;
     trailer.pool = c->pool;
 
     for ( ;; ) {
@@ -96,7 +85,6 @@ ngx_freebsd_sendfile_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
         file_size = 0;
         header_size = 0;
         eintr = 0;
-        complete = 0;
         prev_send = send;
 
         header.nelts = 0;
@@ -127,7 +115,7 @@ ngx_freebsd_sendfile_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
                 iov->iov_len += (size_t) size;
 
             } else {
-                if (header.nelts >= IOV_MAX){
+                if (header.nelts >= IOV_MAX) {
                     break;
                 }
 
@@ -141,7 +129,7 @@ ngx_freebsd_sendfile_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
             }
 
             prev = cl->buf->pos + (size_t) size;
-            header_size += (size_t) size;
+            header_size += size;
             send += size;
         }
 
@@ -165,7 +153,7 @@ ngx_freebsd_sendfile_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
                     }
                 }
 
-                file_size += (size_t) size;
+                file_size += size;
                 send += size;
                 fprev = cl->buf->file_pos + size;
                 cl = cl->next;
@@ -177,8 +165,7 @@ ngx_freebsd_sendfile_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
                      && fprev == cl->buf->file_pos);
         }
 
-
-        if (file) {
+        if (file && header.nelts == 0) {
 
             /* create the trailer iovec and coalesce the neighbouring bufs */
 
@@ -206,7 +193,7 @@ ngx_freebsd_sendfile_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
                     iov->iov_len += (size_t) size;
 
                 } else {
-                    if (trailer.nelts >= IOV_MAX){
+                    if (trailer.nelts >= IOV_MAX) {
                         break;
                     }
 
@@ -227,34 +214,8 @@ ngx_freebsd_sendfile_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
 
         if (file) {
 
-            if (ngx_freebsd_use_tcp_nopush
-                && c->tcp_nopush == NGX_TCP_NOPUSH_UNSET)
-            {
-                if (ngx_tcp_nopush(c->fd) == NGX_ERROR) {
-                    err = ngx_socket_errno;
-
-                    /*
-                     * there is a tiny chance to be interrupted, however,
-                     * we continue a processing without the TCP_NOPUSH
-                     */
-
-                    if (err != NGX_EINTR) {
-                        wev->error = 1;
-                        (void) ngx_connection_error(c, err,
-                                                    ngx_tcp_nopush_n " failed");
-                        return NGX_CHAIN_ERROR;
-                    }
-
-                } else {
-                    c->tcp_nopush = NGX_TCP_NOPUSH_SET;
-
-                    ngx_log_debug0(NGX_LOG_DEBUG_EVENT, c->log, 0,
-                                   "tcp_nopush");
-                }
-            }
-
             /*
-             * sendfile() does unneeded work if sf_hdtr's count is 0,
+             * sendfile() returns EINVAL if sf_hdtr's count is 0,
              * but corresponding pointer is not NULL
              */
 
@@ -263,41 +224,25 @@ ngx_freebsd_sendfile_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
             hdtr.trailers = trailer.nelts ? (struct iovec *) trailer.elts: NULL;
             hdtr.trl_cnt = trailer.nelts;
 
-            /*
-             * the "nbytes bug" of the old sendfile() syscall:
-             * http://bugs.freebsd.org/33771
-             */
+            sent = header_size + file_size;
 
-            if (!ngx_freebsd_sendfile_nbytes_bug) {
-                header_size = 0;
-            }
-
-            sent = 0;
-
-#if (NGX_HAVE_AIO_SENDFILE)
-            flags = c->aio_sendfile ? SF_NODISKIO : 0;
-#endif
+            ngx_log_debug3(NGX_LOG_DEBUG_EVENT, c->log, 0,
+                           "sendfile: @%O %O h:%O",
+                           file->file_pos, sent, header_size);
 
             rc = sendfile(file->file->fd, c->fd, file->file_pos,
-                          file_size + header_size, &hdtr, &sent, flags);
+                          &sent, &hdtr, 0);
 
             if (rc == -1) {
                 err = ngx_errno;
 
                 switch (err) {
                 case NGX_EAGAIN:
-                    eagain = 1;
                     break;
 
                 case NGX_EINTR:
                     eintr = 1;
                     break;
-
-#if (NGX_HAVE_AIO_SENDFILE)
-                case NGX_EBUSY:
-                    c->busy_sendfile = file;
-                    break;
-#endif
 
                 default:
                     wev->error = 1;
@@ -307,36 +252,32 @@ ngx_freebsd_sendfile_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
 
                 ngx_log_debug1(NGX_LOG_DEBUG_EVENT, c->log, err,
                                "sendfile() sent only %O bytes", sent);
+            }
 
-            /*
-             * sendfile() in FreeBSD 3.x-4.x may return value >= 0
-             * on success, although only 0 is documented
-             */
-
-            } else if (rc >= 0 && sent == 0) {
+            if (rc == 0 && sent == 0) {
 
                 /*
-                 * if rc is OK and sent equal to zero, then someone
+                 * if rc and sent equal to zero, then someone
                  * has truncated the file, so the offset became beyond
                  * the end of the file
                  */
 
                 ngx_log_error(NGX_LOG_ALERT, c->log, 0,
-                         "sendfile() reported that \"%s\" was truncated at %O",
-                         file->file->name.data, file->file_pos);
+                              "sendfile() reported that \"%s\" was truncated",
+                              file->file->name.data);
 
                 return NGX_CHAIN_ERROR;
             }
 
             ngx_log_debug4(NGX_LOG_DEBUG_EVENT, c->log, 0,
-                           "sendfile: %d, @%O %O:%uz",
+                           "sendfile: %d, @%O %O:%O",
                            rc, file->file_pos, sent, file_size + header_size);
 
         } else {
             rc = writev(c->fd, header.elts, header.nelts);
 
             ngx_log_debug2(NGX_LOG_DEBUG_EVENT, c->log, 0,
-                           "writev: %d of %uz", rc, header_size);
+                           "writev: %d of %O", rc, header_size);
 
             if (rc == -1) {
                 err = ngx_errno;
@@ -362,73 +303,15 @@ ngx_freebsd_sendfile_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
             sent = rc > 0 ? rc : 0;
         }
 
-        if (send - prev_send == sent) {
-            complete = 1;
-        }
-
         c->sent += sent;
 
-        for ( /* void */ ; in; in = in->next) {
-
-            if (ngx_buf_special(in->buf)) {
-                continue;
-            }
-
-            if (sent == 0) {
-                break;
-            }
-
-            size = ngx_buf_size(in->buf);
-
-            if (sent >= size) {
-                sent -= size;
-
-                if (ngx_buf_in_memory(in->buf)) {
-                    in->buf->pos = in->buf->last;
-                }
-
-                if (in->buf->in_file) {
-                    in->buf->file_pos = in->buf->file_last;
-                }
-
-                continue;
-            }
-
-            if (ngx_buf_in_memory(in->buf)) {
-                in->buf->pos += (size_t) sent;
-            }
-
-            if (in->buf->in_file) {
-                in->buf->file_pos += sent;
-            }
-
-            break;
-        }
-
-#if (NGX_HAVE_AIO_SENDFILE)
-        if (c->busy_sendfile) {
-            return in;
-        }
-#endif
-
-        if (eagain) {
-
-            /*
-             * sendfile() may return EAGAIN, even if it has sent a whole file
-             * part, it indicates that the successive sendfile() call would
-             * return EAGAIN right away and would not send anything.
-             * We use it as a hint.
-             */
-
-            wev->ready = 0;
-            return in;
-        }
+        in = ngx_handle_sent_chain(in, sent);
 
         if (eintr) {
             continue;
         }
 
-        if (!complete) {
+        if (send - prev_send != sent) {
             wev->ready = 0;
             return in;
         }

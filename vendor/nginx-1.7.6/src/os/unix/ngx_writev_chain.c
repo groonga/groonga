@@ -10,25 +10,18 @@
 #include <ngx_event.h>
 
 
-#if (IOV_MAX > 64)
-#define NGX_IOVS  64
-#else
-#define NGX_IOVS  IOV_MAX
-#endif
-
-
 ngx_chain_t *
 ngx_writev_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
 {
     u_char        *prev;
     ssize_t        n, size, sent;
     off_t          send, prev_send;
-    ngx_uint_t     eintr, complete;
+    ngx_uint_t     eintr;
     ngx_err_t      err;
     ngx_array_t    vec;
     ngx_chain_t   *cl;
     ngx_event_t   *wev;
-    struct iovec  *iov, iovs[NGX_IOVS];
+    struct iovec  *iov, iovs[NGX_IOVS_PREALLOCATE];
 
     wev = c->write;
 
@@ -57,14 +50,13 @@ ngx_writev_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
 
     vec.elts = iovs;
     vec.size = sizeof(struct iovec);
-    vec.nalloc = NGX_IOVS;
+    vec.nalloc = NGX_IOVS_PREALLOCATE;
     vec.pool = c->pool;
 
     for ( ;; ) {
         prev = NULL;
         iov = NULL;
         eintr = 0;
-        complete = 0;
         prev_send = send;
 
         vec.nelts = 0;
@@ -137,49 +129,21 @@ ngx_writev_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
 
         ngx_log_debug1(NGX_LOG_DEBUG_EVENT, c->log, 0, "writev: %z", sent);
 
-        if (send - prev_send == sent) {
-            complete = 1;
-        }
-
         c->sent += sent;
 
-        for (cl = in; cl; cl = cl->next) {
-
-            if (ngx_buf_special(cl->buf)) {
-                continue;
-            }
-
-            if (sent == 0) {
-                break;
-            }
-
-            size = cl->buf->last - cl->buf->pos;
-
-            if (sent >= size) {
-                sent -= size;
-                cl->buf->pos = cl->buf->last;
-
-                continue;
-            }
-
-            cl->buf->pos += sent;
-
-            break;
-        }
+        in = ngx_handle_sent_chain(in, sent);
 
         if (eintr) {
             continue;
         }
 
-        if (!complete) {
+        if (send - prev_send != sent) {
             wev->ready = 0;
-            return cl;
+            return in;
         }
 
-        if (send >= limit || cl == NULL) {
-            return cl;
+        if (send >= limit || in == NULL) {
+            return in;
         }
-
-        in = cl;
     }
 }
