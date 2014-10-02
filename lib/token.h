@@ -42,6 +42,7 @@ extern "C" {
 typedef enum {
   GRN_TOKEN_DOING = 0,
   GRN_TOKEN_DONE,
+  GRN_TOKEN_DONE_SKIP,
   GRN_TOKEN_NOT_FOUND
 } grn_token_status;
 

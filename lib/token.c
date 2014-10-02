@@ -680,12 +680,20 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
                         (status & GRN_TOKENIZER_TOKEN_REACH_END)))
         ? GRN_TOKEN_DONE : GRN_TOKEN_DOING;
       token->force_prefix = 0;
-      if (status & GRN_TOKENIZER_TOKEN_SKIP) {
-        token->pos++;
-        continue;
-      } else if (status & GRN_TOKENIZER_TOKEN_SKIP_WITH_POSITION) {
-        continue;
+#define SKIP_FLAGS \
+      (GRN_TOKENIZER_TOKEN_SKIP | GRN_TOKENIZER_TOKEN_SKIP_WITH_POSITION)
+      if (status & SKIP_FLAGS) {
+        if (status & GRN_TOKENIZER_TOKEN_SKIP) {
+          token->pos++;
+        }
+        if (token->status == GRN_TOKEN_DONE && tid == GRN_ID_NIL) {
+          token->status = GRN_TOKEN_DONE_SKIP;
+          break;
+        } else {
+          continue;
+        }
       }
+#undef SKIP_FLAGS
       if (token->curr_size == 0) {
         char tokenizer_name[GRN_TABLE_MAX_KEY_SIZE];
         int tokenizer_name_length;

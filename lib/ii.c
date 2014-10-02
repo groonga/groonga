@@ -5355,7 +5355,8 @@ token_compare(const void *a, const void *b)
 
 inline static grn_rc
 token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string, unsigned int string_len,
-                 token_info **tis, uint32_t *n, grn_operator mode)
+                 token_info **tis, uint32_t *n, grn_bool *only_skip_token,
+                 grn_operator mode)
 {
   token_info *ti;
   const char *key;
@@ -5364,6 +5365,7 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
   unsigned int token_flags = GRN_TOKEN_ENABLE_TOKENIZED_DELIMITER;
   grn_token *token = grn_token_open(ctx, lexicon, string, string_len,
                                     GRN_TOKEN_GET, token_flags);
+  *only_skip_token = GRN_FALSE;
   if (!token) { return GRN_NO_MEMORY_AVAILABLE; }
   if (mode == GRN_OP_UNSPLIT) {
     if ((ti = token_info_open(ctx, lexicon, ii, (char *)token->orig, token->orig_blen, 0, EX_BOTH))) {
@@ -5408,6 +5410,9 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
       ti = token_info_open(ctx, lexicon, ii, (char *)token->orig,
                            token->orig_blen, 0, ef);
       break;
+    case GRN_TOKEN_DONE_SKIP :
+      *only_skip_token = GRN_TRUE;
+      goto exit;
     default :
       goto exit;
     }
@@ -5416,6 +5421,8 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
     while (token->status == GRN_TOKEN_DOING) {
       tid = grn_token_next(ctx, token);
       switch (token->status) {
+      case GRN_TOKEN_DONE_SKIP :
+        continue;
       case GRN_TOKEN_DOING :
         key = _grn_table_key(ctx, lexicon, tid, &size);
         ti = token_info_open(ctx, lexicon, ii, key, size, token->pos, EX_NONE);
@@ -5659,7 +5666,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
     return GRN_NO_MEMORY_AVAILABLE;
   }
   if (!(max_size = optarg->max_size)) { max_size = 1048576; }
-  while (token->status != GRN_TOKEN_DONE) {
+  while (token->status != GRN_TOKEN_DONE && token->status != GRN_TOKEN_DONE_SKIP) {
     if ((tid = grn_token_next(ctx, token))) {
       if (grn_hash_add(ctx, h, &tid, sizeof(grn_id), (void **)&w1, NULL)) { (*w1)++; }
     }
@@ -5858,6 +5865,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
   int rep, orp, weight, max_interval = 0;
   token_info *ti, **tis = NULL, **tip, **tie;
   uint32_t n = 0, rid, sid, nrid, nsid;
+  grn_bool only_skip_token = GRN_FALSE;
   grn_operator mode = GRN_OP_EXACT;
   grn_wv_mode wvm = grn_wv_none;
   grn_obj *lexicon = ii->lexicon;
@@ -5886,7 +5894,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
   if (!(tis = GRN_MALLOC(sizeof(token_info *) * string_len * 2))) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
-  if (token_info_build(ctx, lexicon, ii, string, string_len, tis, &n, mode) || !n) { goto exit; }
+  if (token_info_build(ctx, lexicon, ii, string, string_len, tis, &n, &only_skip_token, mode) || !n) { goto exit; }
   switch (mode) {
   case GRN_OP_NEAR2 :
     token_info_clear_offset(tis, n);
@@ -6012,7 +6020,9 @@ exit :
     if (*tip) { token_info_close(ctx, *tip); }
   }
   if (tis) { GRN_FREE(tis); }
-  grn_ii_resolve_sel_and(ctx, s, op);
+  if (!only_skip_token) {
+    grn_ii_resolve_sel_and(ctx, s, op);
+  }
   //  grn_hash_cursor_clear(r);
   bt_close(ctx, bt);
 #ifdef DEBUG

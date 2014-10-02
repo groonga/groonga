@@ -9872,7 +9872,7 @@ grn_table_tokenize(grn_ctx *ctx, grn_obj *table,
       goto exit;
     }
   }
-  while (token->status != GRN_TOKEN_DONE) {
+  while (token->status != GRN_TOKEN_DONE && token->status != GRN_TOKEN_DONE_SKIP) {
     grn_id tid;
     if ((tid = grn_token_next(ctx, token))) {
       GRN_RECORD_PUT(ctx, buf, tid);
