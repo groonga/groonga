@@ -21,6 +21,7 @@ set(TOKEN_FILTERS_DIR "${GRN_RELATIVE_PLUGINS_DIR}/token_filters")
 
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/stop_word_sources.am
   STOP_WORD_SOURCES)
+add_library(stop_word_token_filter MODULE ${STOP_WORD_SOURCES})
 set_source_files_properties(${STOP_WORD_SOURCES}
   PROPERTIES
   COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
