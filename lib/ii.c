@@ -3467,7 +3467,8 @@ _grn_ii_create(grn_ctx *ctx, grn_ii *ii, const char *path, grn_obj *lexicon, uin
     free_histogram[i] = 0;
   }
   */
-  if (grn_table_get_info(ctx, lexicon, &lflags, &encoding, &tokenizer, NULL)) {
+  if (grn_table_get_info(ctx, lexicon, &lflags, &encoding, &tokenizer,
+                         NULL, NULL)) {
     return NULL;
   }
   if (path && strlen(path) + 6 >= PATH_MAX) { return NULL; }
@@ -3589,7 +3590,8 @@ grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
   grn_obj_flags lflags;
   grn_encoding encoding;
   grn_obj *tokenizer;
-  if (grn_table_get_info(ctx, lexicon, &lflags, &encoding, &tokenizer, NULL)) {
+  if (grn_table_get_info(ctx, lexicon, &lflags, &encoding, &tokenizer,
+                         NULL, NULL)) {
     return NULL;
   }
   if (strlen(path) + 6 >= PATH_MAX) { return NULL; }
@@ -6706,7 +6708,7 @@ get_tmp_lexicon(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
     grn_obj *normalizer;
     grn_obj_flags flags;
     grn_table_get_info(ctx, ii_buffer->lexicon, &flags, NULL,
-                       &tokenizer, &normalizer);
+                       &tokenizer, &normalizer, NULL);
     flags &= ~GRN_OBJ_PERSISTENT;
     tmp_lexicon = grn_table_create(ctx, NULL, 0, NULL, flags, domain, range);
     if (tmp_lexicon) {
@@ -7157,7 +7159,7 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
                                           S_IRUSR|S_IWUSR);
           if (ii_buffer->tmpfd != -1) {
             grn_obj_flags flags;
-            grn_table_get_info(ctx, ii->lexicon, &flags, NULL, NULL, NULL);
+            grn_table_get_info(ctx, ii->lexicon, &flags, NULL, NULL, NULL, NULL);
             if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_PAT_KEY) {
               grn_pat_cache_enable(ctx, (grn_pat *)ii->lexicon,
                                    PAT_CACHE_SIZE);
@@ -7280,7 +7282,7 @@ grn_ii_buffer_close(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
 {
   uint32_t i;
   grn_obj_flags flags;
-  grn_table_get_info(ctx, ii_buffer->ii->lexicon, &flags, NULL, NULL, NULL);
+  grn_table_get_info(ctx, ii_buffer->ii->lexicon, &flags, NULL, NULL, NULL, NULL);
   if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_PAT_KEY) {
     grn_pat_cache_disable(ctx, (grn_pat *)ii_buffer->ii->lexicon);
   }

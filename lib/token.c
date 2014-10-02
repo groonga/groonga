@@ -503,9 +503,10 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
   grn_encoding encoding;
   grn_obj *tokenizer;
   grn_obj *normalizer;
+  grn_obj *token_filters;
   grn_obj_flags table_flags;
   if (grn_table_get_info(ctx, table, &table_flags, &encoding, &tokenizer,
-                         &normalizer)) {
+                         &normalizer, &token_filters)) {
     return NULL;
   }
   if (!(token = GRN_MALLOC(sizeof(grn_token)))) { return NULL; }
@@ -513,6 +514,7 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
   token->mode = mode;
   token->encoding = encoding;
   token->tokenizer = tokenizer;
+  token->token_filters = token_filters;
   token->orig = (const unsigned char *)str;
   token->orig_blen = str_len;
   token->curr = NULL;

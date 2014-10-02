@@ -1854,6 +1854,7 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
     grn_hash *cols;
     grn_obj *tokenizer;
     grn_obj *normalizer;
+    grn_obj token_filters;
     if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
                                 GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
       if (grn_table_columns(ctx, table, "", 0, (grn_obj *)cols)) {
@@ -1865,7 +1866,9 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
       }
       grn_hash_close(ctx, cols);
     }
-    grn_table_get_info(ctx, table, NULL, NULL, &tokenizer, &normalizer);
+    grn_table_get_info(ctx, table, NULL, NULL, &tokenizer, &normalizer, NULL);
+    GRN_PTR_INIT(&token_filters, GRN_OBJ_VECTOR, GRN_ID_NIL);
+    grn_obj_get_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &token_filters);
     switch (table->header.type) {
     case GRN_TABLE_PAT_KEY :
       for (hooks = DB_OBJ(table)->hooks[GRN_HOOK_INSERT]; hooks; hooks = hooks->next) {
@@ -1900,6 +1903,8 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
     }
     grn_obj_set_info(ctx, table, GRN_INFO_DEFAULT_TOKENIZER, tokenizer);
     grn_obj_set_info(ctx, table, GRN_INFO_NORMALIZER, normalizer);
+    grn_obj_set_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &token_filters);
+    GRN_OBJ_FIN(ctx, &token_filters);
     grn_obj_touch(ctx, table, NULL);
   }
 exit :
@@ -1909,7 +1914,8 @@ exit :
 grn_rc
 grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_obj_flags *flags,
                    grn_encoding *encoding, grn_obj **tokenizer,
-                   grn_obj **normalizer)
+                   grn_obj **normalizer,
+                   grn_obj **token_filters)
 {
   grn_rc rc = GRN_INVALID_ARGUMENT;
   GRN_API_ENTER;
@@ -1920,6 +1926,7 @@ grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_obj_flags *flags,
       if (encoding) { *encoding = ((grn_pat *)table)->encoding; }
       if (tokenizer) { *tokenizer = ((grn_pat *)table)->tokenizer; }
       if (normalizer) { *normalizer = ((grn_pat *)table)->normalizer; }
+      if (token_filters) { *token_filters = &(((grn_pat *)table)->token_filters); }
       rc = GRN_SUCCESS;
       break;
     case GRN_TABLE_DAT_KEY :
@@ -1927,6 +1934,7 @@ grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_obj_flags *flags,
       if (encoding) { *encoding = ((grn_dat *)table)->encoding; }
       if (tokenizer) { *tokenizer = ((grn_dat *)table)->tokenizer; }
       if (normalizer) { *normalizer = ((grn_dat *)table)->normalizer; }
+      if (token_filters) { *token_filters = &(((grn_dat *)table)->token_filters); }
       rc = GRN_SUCCESS;
       break;
     case GRN_TABLE_HASH_KEY :
@@ -1934,6 +1942,7 @@ grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_obj_flags *flags,
       if (encoding) { *encoding = ((grn_hash *)table)->encoding; }
       if (tokenizer) { *tokenizer = ((grn_hash *)table)->tokenizer; }
       if (normalizer) { *normalizer = ((grn_hash *)table)->normalizer; }
+      if (token_filters) { *token_filters = &(((grn_hash *)table)->token_filters); }
       rc = GRN_SUCCESS;
       break;
     case GRN_TABLE_NO_KEY :
@@ -1941,6 +1950,7 @@ grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_obj_flags *flags,
       if (encoding) { *encoding = GRN_ENC_NONE; }
       if (tokenizer) { *tokenizer = grn_token_uvector; }
       if (normalizer) { *normalizer = NULL; }
+      if (token_filters) { *token_filters = NULL; }
       rc = GRN_SUCCESS;
       break;
     }
@@ -6356,7 +6366,7 @@ build_index(grn_ctx *ctx, grn_obj *obj)
       grn_obj_flags flags;
       grn_ii *ii = (grn_ii *)obj;
       grn_bool use_grn_ii_build;
-      grn_table_get_info(ctx, ii->lexicon, &flags, NULL, NULL, NULL);
+      grn_table_get_info(ctx, ii->lexicon, &flags, NULL, NULL, NULL, NULL);
       switch (flags & GRN_OBJ_TABLE_TYPE_MASK) {
       case GRN_OBJ_TABLE_PAT_KEY :
       case GRN_OBJ_TABLE_DAT_KEY :
@@ -9255,7 +9265,7 @@ grn_column_index_column_equal(grn_ctx *ctx, grn_obj *obj, grn_operator op,
     if (obj->header.type != GRN_COLUMN_FIX_SIZE) {
       grn_obj *tokenizer, *lexicon = grn_ctx_at(ctx, target->header.domain);
       if (!lexicon) { continue; }
-      grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL);
+      grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL, NULL);
       if (tokenizer) { continue; }
     }
     if (n < buf_size) {
@@ -9320,7 +9330,7 @@ grn_column_index_column_range(grn_ctx *ctx, grn_obj *obj, grn_operator op,
       if (!lexicon) { continue; }
       if (lexicon->header.type != GRN_TABLE_PAT_KEY) { continue; }
       /* FIXME: GRN_TABLE_DAT_KEY should be supported */
-      grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL);
+      grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL, NULL);
       if (tokenizer) { continue; }
     }
     if (n < buf_size) {
@@ -9352,7 +9362,7 @@ is_valid_range_index(grn_ctx *ctx, grn_obj *index_column)
     return GRN_FALSE;
   }
 
-  grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL);
+  grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL, NULL);
   grn_obj_unlink(ctx, lexicon);
   if (tokenizer) { return GRN_FALSE; }
 
