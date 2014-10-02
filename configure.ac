@@ -234,6 +234,7 @@ AC_CONFIG_FILES([
   plugins/table/Makefile
   plugins/query_expanders/Makefile
   plugins/ruby/Makefile
+  plugins/token_filters/Makefile
   examples/Makefile
   examples/dictionary/Makefile
   examples/dictionary/edict/Makefile
@@ -1242,6 +1243,9 @@ AC_SUBST(table_pluginsdir)
 
 ruby_pluginsdir="\${pluginsdir}/ruby"
 AC_SUBST(ruby_pluginsdir)
+
+token_filter_pluginsdir="\${pluginsdir}/token_filters"
+AC_SUBST(token_filter_pluginsdir)
 
 AC_MSG_CHECKING(for the suffix of plugin shared libraries)
 shrext_cmds=$(./libtool --config | grep '^shrext_cmds=')
