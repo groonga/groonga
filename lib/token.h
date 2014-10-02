@@ -63,6 +63,8 @@ typedef struct {
   grn_encoding encoding;
   grn_obj *tokenizer;
   grn_proc_ctx pctx;
+  grn_obj *token_filters;
+  grn_proc_ctx *token_filter_ctxs;
   uint32_t variant;
   grn_obj *nstr;
 } grn_token;
