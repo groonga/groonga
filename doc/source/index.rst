@@ -22,6 +22,7 @@ Groonga documentation
    suggest
    geolocation_search
    server
+   client
    reference
    spec
    limitations

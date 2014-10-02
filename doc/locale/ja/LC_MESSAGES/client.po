@@ -1,0 +1,44 @@
+# -*- po -*-
+# Japanese translations for 1.2.5 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.5\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2014-02-05 12:02+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ja\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Client"
+msgstr "クライアント"
+
+msgid ""
+"Groonga supports the original protocol (:doc:`/spec/gqtp`), the memcached "
+"binary protocol and HTTP."
+msgstr ""
+"Groongaは、Groongaの専用プロトコルである :doc:`/spec/gqtp` 、memcachedバイナ"
+"リプロトコル、HTTPの三種類をサポートしています。"
+
+msgid ""
+"As HTTP and memcached binary protocol is matured protocol, you can use "
+"existing client libraries."
+msgstr ""
+"HTTPとmemcachedバイナリプロトコルは、枯れたプロトコルなので既存のクライアント"
+"ライブラリを利用することができます。"
+
+msgid ""
+"There are some client libraries which provides convenient API to connect to "
+"Groonga server in some program languages. See `Client libraries <http://"
+"groonga.org/related-projects.html#libraries>`_ for details."
+msgstr ""
+"いくつかのプログラミング言語ではGroongaサーバーに接続するための便利なAPIを提"
+"供するクライアントライブラリがあります。詳細は、`クライアントライブラリ "
+"<http://groonga.org/ja/related-projects.html#libraries>`_ を参照して下さい。"
