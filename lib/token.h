@@ -33,15 +33,11 @@
 #include "str.h"
 #endif /* GRN_STR_H */
 
+#include <groonga/tokenizer.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-typedef enum {
-  GRN_TOKEN_GET = 0,
-  GRN_TOKEN_ADD,
-  GRN_TOKEN_DEL
-} grn_token_mode;
 
 typedef enum {
   GRN_TOKEN_DOING = 0,
