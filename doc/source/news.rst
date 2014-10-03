@@ -23,8 +23,6 @@ Improvements
   [GitHub#196] [Patch by Masafumi Yokoyama]
 * [OS X] Added missing sphinx error message for Homebrew users.
   [GitHub#198] [Patch by cosmo0920]
-* Exported :c:func:`grn_expr_alloc_const` which allocates constant object.
-  It is exported for mruby.
 * [mruby] Query optimizer by mruby became a practical for some range select query.
   For example, mruby optimizer overhead is negligible enough for query such as
   "between(X, 0, 'exclude', 100, 'include')" - "X > 0 && X <= 100".
