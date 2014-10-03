@@ -1194,6 +1194,27 @@ grn_column_create_flags_to_text(grn_ctx *ctx, grn_obj *buf, grn_obj_flags flags)
   }
 }
 
+static void
+proc_table_create_set_token_filters(grn_ctx *ctx,
+                                    grn_obj *table,
+                                    grn_obj *token_filter_names)
+{
+  grn_obj token_filters;
+
+  if (GRN_TEXT_LEN(token_filter_names) == 0) {
+    return;
+  }
+
+  GRN_PTR_INIT(&token_filters, GRN_OBJ_VECTOR, 0);
+  GRN_PTR_PUT(ctx,
+              &token_filters,
+              grn_ctx_get(ctx,
+                          GRN_TEXT_VALUE(token_filter_names),
+                          GRN_TEXT_LEN(token_filter_names)));
+  grn_obj_set_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &token_filters);
+  grn_obj_unlink(ctx, &token_filters);
+}
+
 static grn_obj *
 proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -1251,6 +1272,7 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
                                      GRN_TEXT_VALUE(normalizer_name),
                                      GRN_TEXT_LEN(normalizer_name)));
       }
+      proc_table_create_set_token_filters(ctx, table, VAR(6));
       grn_obj_unlink(ctx, table);
     }
   } else {
@@ -5171,7 +5193,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[3], "value_type");
   DEF_VAR(vars[4], "default_tokenizer");
   DEF_VAR(vars[5], "normalizer");
-  DEF_COMMAND("table_create", proc_table_create, 6, vars);
+  DEF_VAR(vars[6], "token_filters");
+  DEF_COMMAND("table_create", proc_table_create, 7, vars);
 
   DEF_VAR(vars[0], "name");
   DEF_COMMAND("table_remove", proc_table_remove, 1, vars);

@@ -495,6 +495,56 @@ grn_token_fin(void)
   return GRN_SUCCESS;
 }
 
+static void
+grn_token_open_initialize_token_filters(grn_ctx *ctx, grn_token *token)
+{
+  grn_obj *token_filters = token->token_filters;
+  unsigned int i, n_token_filters;
+  grn_obj mode;
+
+  if (token_filters) {
+    n_token_filters = GRN_BULK_VSIZE(token_filters) / sizeof(grn_obj *);
+  } else {
+    n_token_filters = 0;
+  }
+
+  if (n_token_filters == 0) {
+    token->token_filter_ctxs = NULL;
+    return;
+  }
+
+  token->token_filter_ctxs = GRN_MALLOC(sizeof(grn_proc_ctx) * n_token_filters);
+  if (!token->token_filter_ctxs) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[token][open] failed to allocate token filter contexts");
+    return;
+  }
+
+  GRN_UINT32_INIT(&mode, 0);
+  GRN_UINT32_SET(ctx, &mode, token->mode);
+  for (i = 0; i < n_token_filters; i++) {
+    grn_obj *token_filter = GRN_PTR_VALUE_AT(token_filters, i);
+    grn_proc_ctx *token_filter_ctx = &token->token_filter_ctxs[i];
+    int n_args = 0;
+    grn_obj *args[2];
+
+    token_filter_ctx->caller = NULL;
+    token_filter_ctx->user_data.ptr = NULL;
+    token_filter_ctx->proc = (grn_proc *)token_filter;
+    token_filter_ctx->hooks = NULL;
+    token_filter_ctx->currh = NULL;
+    token_filter_ctx->phase = PROC_INIT;
+
+    args[n_args++] = token->table;
+    args[n_args++] = &mode;
+    ((grn_proc *)token_filter)->funcs[PROC_INIT](ctx,
+                                                 n_args, args,
+                                                 &token_filter_ctx->user_data);
+  }
+  GRN_OBJ_FIN(ctx, &mode);
+}
+
+
 grn_token *
 grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
                grn_token_mode mode, unsigned int flags)
@@ -503,9 +553,10 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
   grn_encoding encoding;
   grn_obj *tokenizer;
   grn_obj *normalizer;
+  grn_obj *token_filters;
   grn_obj_flags table_flags;
   if (grn_table_get_info(ctx, table, &table_flags, &encoding, &tokenizer,
-                         &normalizer)) {
+                         &normalizer, &token_filters)) {
     return NULL;
   }
   if (!(token = GRN_MALLOC(sizeof(grn_token)))) { return NULL; }
@@ -513,6 +564,7 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
   token->mode = mode;
   token->encoding = encoding;
   token->tokenizer = tokenizer;
+  token->token_filters = token_filters;
   token->orig = (const unsigned char *)str;
   token->orig_blen = str_len;
   token->curr = NULL;
@@ -555,11 +607,58 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
       ERR(GRN_TOKENIZER_ERROR, "grn_string_open failed at grn_token_open");
     }
   }
+
+  grn_token_open_initialize_token_filters(ctx, token);
+
   if (ctx->rc) {
     grn_token_close(ctx, token);
     token = NULL;
   }
   return token;
+}
+
+static int
+grn_token_next_apply_token_filters(grn_ctx *ctx,
+                                   grn_token *token,
+                                   grn_obj *current_token,
+                                   grn_obj *status)
+{
+  grn_obj *token_filters = token->token_filters;
+  unsigned int i, n_token_filters;
+
+  if (token_filters) {
+    n_token_filters = GRN_BULK_VSIZE(token_filters) / sizeof(grn_obj *);
+  } else {
+    n_token_filters = 0;
+  }
+  for (i = 0; i < n_token_filters; i++) {
+    grn_obj *token_filter = GRN_PTR_VALUE_AT(token_filters, i);
+    grn_proc_ctx *token_filter_ctx = &token->token_filter_ctxs[i];
+    int n_args = 0;
+    grn_obj *args[2];
+
+#define SKIP_FLAGS\
+    (GRN_TOKENIZER_TOKEN_SKIP |\
+     GRN_TOKENIZER_TOKEN_SKIP_WITH_POSITION)
+    if (GRN_INT32_VALUE(status) & SKIP_FLAGS) {
+      break;
+    }
+#undef SKIP_FLAGS
+
+    args[n_args++] = current_token;
+    args[n_args++] = status;
+    ((grn_proc *)token_filter)->funcs[PROC_NEXT](ctx,
+                                                 n_args,
+                                                 args,
+                                                 &token_filter_ctx->user_data);
+    status = grn_ctx_pop(ctx);
+    current_token = grn_ctx_pop(ctx);
+  }
+
+  token->curr = (const unsigned char *)GRN_TEXT_VALUE(current_token);
+  token->curr_size = GRN_TEXT_LEN(current_token);
+
+  return GRN_INT32_VALUE(status);
 }
 
 grn_id
@@ -575,20 +674,26 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
       ((grn_proc *)tokenizer)->funcs[PROC_NEXT](ctx, 1, &table, &token->pctx.user_data);
       stat_ = grn_ctx_pop(ctx);
       curr_ = grn_ctx_pop(ctx);
-      token->curr = (const unsigned char *)GRN_TEXT_VALUE(curr_);
-      token->curr_size = GRN_TEXT_LEN(curr_);
-      status = GRN_UINT32_VALUE(stat_);
+      status = grn_token_next_apply_token_filters(ctx, token, curr_, stat_);
       token->status = ((status & GRN_TOKENIZER_TOKEN_LAST) ||
                        (token->mode == GRN_TOKEN_GET &&
                         (status & GRN_TOKENIZER_TOKEN_REACH_END)))
         ? GRN_TOKEN_DONE : GRN_TOKEN_DOING;
       token->force_prefix = 0;
-      if (status & GRN_TOKENIZER_TOKEN_SKIP) {
-        token->pos++;
-        continue;
-      } else if (status & GRN_TOKENIZER_TOKEN_SKIP_WITH_POSITION) {
-        continue;
+#define SKIP_FLAGS \
+      (GRN_TOKENIZER_TOKEN_SKIP | GRN_TOKENIZER_TOKEN_SKIP_WITH_POSITION)
+      if (status & SKIP_FLAGS) {
+        if (status & GRN_TOKENIZER_TOKEN_SKIP) {
+          token->pos++;
+        }
+        if (token->status == GRN_TOKEN_DONE && tid == GRN_ID_NIL) {
+          token->status = GRN_TOKEN_DONE_SKIP;
+          break;
+        } else {
+          continue;
+        }
       }
+#undef SKIP_FLAGS
       if (token->curr_size == 0) {
         char tokenizer_name[GRN_TABLE_MAX_KEY_SIZE];
         int tokenizer_name_length;
@@ -686,6 +791,32 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
   return tid;
 }
 
+static void
+grn_token_close_token_filters(grn_ctx *ctx, grn_token *token)
+{
+  grn_obj *token_filters = token->token_filters;
+  unsigned int i, n_token_filters;
+
+  if (token_filters) {
+    n_token_filters = GRN_BULK_VSIZE(token_filters) / sizeof(grn_obj *);
+  } else {
+    n_token_filters = 0;
+  }
+  for (i = 0; i < n_token_filters; i++) {
+    grn_obj *token_filter = GRN_PTR_VALUE_AT(token_filters, i);
+    grn_proc_ctx *token_filter_ctx = &token->token_filter_ctxs[i];
+
+    ((grn_proc *)token_filter)->funcs[PROC_FIN](ctx,
+                                                1,
+                                                &token->table,
+                                                &token_filter_ctx->user_data);
+  }
+
+  if (token->token_filter_ctxs) {
+    GRN_FREE(token->token_filter_ctxs);
+  }
+}
+
 grn_rc
 grn_token_close(grn_ctx *ctx, grn_token *token)
 {
@@ -694,6 +825,7 @@ grn_token_close(grn_ctx *ctx, grn_token *token)
       ((grn_proc *)token->tokenizer)->funcs[PROC_FIN](ctx, 1, &token->table,
                                                       &token->pctx.user_data);
     }
+    grn_token_close_token_filters(ctx, token);
     if (token->nstr) {
       grn_obj_close(ctx, token->nstr);
     }

@@ -116,6 +116,7 @@ typedef enum {
   GRN_CAS_ERROR = -70,
   GRN_UNSUPPORTED_COMMAND_VERSION = -71,
   GRN_NORMALIZER_ERROR = -72,
+  GRN_TOKEN_FILTER_ERROR = -73,
 } grn_rc;
 
 GRN_API grn_rc grn_init(void);
@@ -478,7 +479,8 @@ typedef enum {
   GRN_PROC_COMMAND,
   GRN_PROC_FUNCTION,
   GRN_PROC_HOOK,
-  GRN_PROC_NORMALIZER
+  GRN_PROC_NORMALIZER,
+  GRN_PROC_TOKEN_FILTER
 } grn_proc_type;
 
 GRN_API grn_obj *grn_proc_create(grn_ctx *ctx,
@@ -790,7 +792,8 @@ typedef enum {
   GRN_INFO_II_SPLIT_THRESHOLD,
   GRN_INFO_SUPPORT_ZLIB,
   GRN_INFO_SUPPORT_LZO,
-  GRN_INFO_NORMALIZER
+  GRN_INFO_NORMALIZER,
+  GRN_INFO_TOKEN_FILTERS
 } grn_info_type;
 
 GRN_API grn_obj *grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valuebuf);

@@ -1,4 +1,4 @@
-# Copyright(C) 2012-2014 Brazil
+# Copyright(C) 2014 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -13,9 +13,19 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-add_subdirectory(suggest)
-add_subdirectory(tokenizers)
-add_subdirectory(table)
-add_subdirectory(query_expanders)
-add_subdirectory(ruby)
-add_subdirectory(token_filters)
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../lib
+  )
+
+set(TOKEN_FILTERS_DIR "${GRN_RELATIVE_PLUGINS_DIR}/token_filters")
+
+read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/stop_word_sources.am
+  STOP_WORD_SOURCES)
+add_library(stop_word_token_filter MODULE ${STOP_WORD_SOURCES})
+set_source_files_properties(${STOP_WORD_SOURCES}
+  PROPERTIES
+  COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
+set_target_properties(stop_word_token_filter PROPERTIES
+  PREFIX ""
+  OUTPUT_NAME "stop_word")
+install(TARGETS stop_word_token_filter DESTINATION "${TOKEN_FILTERS_DIR}")

@@ -30,6 +30,23 @@ extern "C" {
 #define GRN_TOKENIZER_TOKENIZED_DELIMITER_UTF8_LEN 3
 
 /*
+  grn_token_mode describes propose for tokenization.
+
+  `GRN_TOKEN_GET`: Tokenization for search.
+
+  `GRN_TOKEN_ADD`: Tokenization for adding token to index.
+
+  `GRN_TOKEN_DEL`: Tokenization for deleting token from index.
+
+  @since 4.0.7
+ */
+typedef enum {
+  GRN_TOKEN_GET = 0,
+  GRN_TOKEN_ADD,
+  GRN_TOKEN_DEL
+} grn_token_mode;
+
+/*
   grn_tokenizer_charlen() returns the length (#bytes) of the first character
   in the string specified by `str_ptr' and `str_length'. If the starting bytes
   are invalid as a character, grn_tokenizer_charlen() returns 0. See
@@ -84,7 +101,7 @@ struct _grn_tokenizer_query {
   grn_encoding encoding;
   unsigned int flags;
   grn_bool have_tokenized_delimiter;
-  unsigned int token_mode;
+  grn_token_mode token_mode;
 };
 
 /*

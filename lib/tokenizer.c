@@ -148,7 +148,7 @@ grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args,
         return NULL;
       }
       grn_table_get_info(ctx, table, &table_flags, &table_encoding, NULL,
-                         &normalizer);
+                         &normalizer, NULL);
       {
         grn_obj *normalized_query;
         if (table_flags & GRN_OBJ_KEY_NORMALIZE) {
