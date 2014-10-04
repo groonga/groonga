@@ -13155,6 +13155,101 @@ msgstr "Here is an example that uses ``NormalizerMySQLGeneralCI`` normalizer:"
 msgid ":doc:`/reference/commands/table_create`"
 msgstr ":doc:`/reference/commands/table_create`"
 
+msgid "Operations"
+msgstr "Operations"
+
+msgid ""
+"Groonga has the search feature of multiple. This section describes how to "
+"search operations."
+msgstr ""
+"Groonga has the search feature of multiple. This section describes how to "
+"search operations."
+
+msgid "Geolocation Search"
+msgstr "Geolocation Search"
+
+msgid ""
+"Groonga supports geolocation search. It uses index for search. It means that "
+"you can search by geolocation fast like fulltext search."
+msgstr ""
+"Groonga supports geolocation search. It uses index for search. It means that "
+"you can search by geolocation fast like fulltext search."
+
+msgid "Supported features"
+msgstr "Supported features"
+
+msgid ""
+"Groonga supports only point as data type. Line, surface and so on aren't "
+"supported yet. Here is a feature list:"
+msgstr ""
+"Groonga supports only point as data type. Line, surface and so on aren't "
+"supported yet. Here is a feature list:"
+
+msgid "Groonga can store a point to a column."
+msgstr "Groonga can store a point to a column."
+
+msgid ""
+"Groonga can search records that have a point in the specified rectangle."
+msgstr ""
+"Groonga can search records that have a point in the specified rectangle."
+
+msgid "Groonga can search records that have a point in the specified circle."
+msgstr "Groonga can search records that have a point in the specified circle."
+
+msgid "Groonga can calculate distance between two points."
+msgstr "Groonga can calculate distance between two points."
+
+msgid ""
+"Groonga can sort records by distance from the specified point in ascending "
+"order."
+msgstr ""
+"Groonga can sort records by distance from the specified point in ascending "
+"order."
+
+msgid "Here are use cases for Groonga's geolocation search:"
+msgstr "Here are use cases for Groonga's geolocation search:"
+
+msgid "You list McDonald's around a station."
+msgstr "You list McDonald's around a station."
+
+msgid ""
+"You list KFS around the current location sort by distance from the current "
+"location in ascending order with distance."
+msgstr ""
+"You list KFS around the current location sort by distance from the current "
+"location in ascending order with distance."
+
+msgid "Here are not use cases:"
+msgstr "Here are not use cases:"
+
+msgid ""
+"You search McDonald's in a city. (Groonga doesn't support geolocation search "
+"by a shape except a rectangle and a circle.)"
+msgstr ""
+"You search McDonald's in a city. (Groonga doesn't support geolocation search "
+"by a shape except a rectangle and a circle.)"
+
+msgid ""
+"You store a region instead of a point as a lake record. (A column can't has "
+"geolocation data except a point.)"
+msgstr ""
+"You store a region instead of a point as a lake record. (A column can't has "
+"geolocation data except a point.)"
+
+msgid "The following figures show about Groonga's geolocation search features."
+msgstr ""
+"The following figures show about Groonga's geolocation search features."
+
+msgid ""
+"Here is a figure that only has records. A black point describes a record. "
+"The following figures shows how records are treated."
+msgstr ""
+"Here is a figure that only has records. A black point describes a record. "
+"The following figures shows how records are treated."
+
+msgid "Coming soon..."
+msgstr "Coming soon..."
+
 msgid "Output"
 msgstr "Output"
 
@@ -14197,9 +14292,6 @@ msgstr ""
 "Don't execute above query via HTTP request because enourmous number of "
 "records are fetched."
 
-msgid "Tutorial"
-msgstr "Tutorial"
-
 msgid "Tables"
 msgstr "Tables"
 
@@ -14970,65 +15062,65 @@ msgstr ""
 msgid "Object型はv1.2でサポートされます。"
 msgstr "Object型はv1.2でサポートされます。"
 
-#~ msgid ":doc:`/suggest`"
-#~ msgstr ":doc:`/suggest`"
-
-#~ msgid "Specify log directory."
-#~ msgstr "Specify log directory."
-
-#~ msgid "table_remove"
-#~ msgstr "table_remove"
-
-#~ msgid "table_list"
-#~ msgstr "table_list"
-
-#~ msgid "RETURN VALUE"
-#~ msgstr "RETURN VALUE"
-
-#~ msgid "DESCRIPTION"
-#~ msgstr "DESCRIPTION"
-
-#~ msgid "SYNOPSIS"
-#~ msgstr "SYNOPSIS"
-
-#~ msgid "status"
-#~ msgstr "status"
-
-#~ msgid "shutdown"
-#~ msgstr "shutdown"
-
-#~ msgid "quit"
-#~ msgstr "quit"
-
-#~ msgid "log_put"
-#~ msgstr "log_put"
-
-#~ msgid "log_level"
-#~ msgstr "log_level"
-
-#~ msgid "define_selector"
-#~ msgstr "define_selector"
-
-#~ msgid "column_remove"
-#~ msgstr "column_remove"
-
-#~ msgid "関連項目"
-#~ msgstr "関連項目"
-
-#~ msgid "clearlock"
-#~ msgstr "clearlock"
-
-#~ msgid "json形式"
-#~ msgstr "json形式"
-
-#~ msgid "check"
-#~ msgstr "check"
-
-#~ msgid "You can't use reference type."
-#~ msgstr "You can't use reference type."
+#~ msgid "実行ファイル"
+#~ msgstr "実行ファイル"
 
 #~ msgid "groongaパッケージが提供する実行ファイルについて説明します。"
 #~ msgstr "groongaパッケージが提供する実行ファイルについて説明します。"
 
-#~ msgid "実行ファイル"
-#~ msgstr "実行ファイル"
+#~ msgid "You can't use reference type."
+#~ msgstr "You can't use reference type."
+
+#~ msgid "check"
+#~ msgstr "check"
+
+#~ msgid "json形式"
+#~ msgstr "json形式"
+
+#~ msgid "clearlock"
+#~ msgstr "clearlock"
+
+#~ msgid "関連項目"
+#~ msgstr "関連項目"
+
+#~ msgid "column_remove"
+#~ msgstr "column_remove"
+
+#~ msgid "define_selector"
+#~ msgstr "define_selector"
+
+#~ msgid "log_level"
+#~ msgstr "log_level"
+
+#~ msgid "log_put"
+#~ msgstr "log_put"
+
+#~ msgid "quit"
+#~ msgstr "quit"
+
+#~ msgid "shutdown"
+#~ msgstr "shutdown"
+
+#~ msgid "status"
+#~ msgstr "status"
+
+#~ msgid "SYNOPSIS"
+#~ msgstr "SYNOPSIS"
+
+#~ msgid "DESCRIPTION"
+#~ msgstr "DESCRIPTION"
+
+#~ msgid "RETURN VALUE"
+#~ msgstr "RETURN VALUE"
+
+#~ msgid "table_list"
+#~ msgstr "table_list"
+
+#~ msgid "table_remove"
+#~ msgstr "table_remove"
+
+#~ msgid "Specify log directory."
+#~ msgstr "Specify log directory."
+
+#~ msgid ":doc:`/suggest`"
+#~ msgstr ":doc:`/suggest`"

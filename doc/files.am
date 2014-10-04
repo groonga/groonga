@@ -292,7 +292,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/tutorial/search-5.log \
 	$(top_srcdir)/doc/source/example/tutorial/search-6.log \
 	$(top_srcdir)/doc/source/example/tutorial/search-7.log \
-	$(top_srcdir)/doc/source/geolocation_search.rst \
 	$(top_srcdir)/doc/source/images/fulltext-introduction/array.png \
 	$(top_srcdir)/doc/source/images/fulltext-introduction/array.svg \
 	$(top_srcdir)/doc/source/images/fulltext-introduction/columns.png \
@@ -487,6 +486,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/indexing.rst \
 	$(top_srcdir)/doc/source/reference/log.rst \
 	$(top_srcdir)/doc/source/reference/normalizers.rst \
+	$(top_srcdir)/doc/source/reference/operations.rst \
+	$(top_srcdir)/doc/source/reference/operations/geolocation_search.rst \
 	$(top_srcdir)/doc/source/reference/output.rst \
 	$(top_srcdir)/doc/source/reference/query_expanders.rst \
 	$(top_srcdir)/doc/source/reference/query_expanders/tsv.rst \
@@ -833,7 +834,6 @@ source_files_relative_from_doc_dir = \
 	source/example/tutorial/search-5.log \
 	source/example/tutorial/search-6.log \
 	source/example/tutorial/search-7.log \
-	source/geolocation_search.rst \
 	source/images/fulltext-introduction/array.png \
 	source/images/fulltext-introduction/array.svg \
 	source/images/fulltext-introduction/columns.png \
@@ -1028,6 +1028,8 @@ source_files_relative_from_doc_dir = \
 	source/reference/indexing.rst \
 	source/reference/log.rst \
 	source/reference/normalizers.rst \
+	source/reference/operations.rst \
+	source/reference/operations/geolocation_search.rst \
 	source/reference/output.rst \
 	source/reference/query_expanders.rst \
 	source/reference/query_expanders/tsv.rst \
@@ -1087,7 +1089,6 @@ po_files = \
 	conf.po \
 	contribution.po \
 	development.po \
-	geolocation_search.po \
 	index.po \
 	install.po \
 	limitations.po \
@@ -1106,7 +1107,6 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/conf.po \
 	LC_MESSAGES/contribution.po \
 	LC_MESSAGES/development.po \
-	LC_MESSAGES/geolocation_search.po \
 	LC_MESSAGES/index.po \
 	LC_MESSAGES/install.po \
 	LC_MESSAGES/limitations.po \
@@ -1125,7 +1125,6 @@ edit_po_files = \
 	conf.edit \
 	contribution.edit \
 	development.edit \
-	geolocation_search.edit \
 	index.edit \
 	install.edit \
 	limitations.edit \
@@ -1144,7 +1143,6 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/conf.edit \
 	LC_MESSAGES/contribution.edit \
 	LC_MESSAGES/development.edit \
-	LC_MESSAGES/geolocation_search.edit \
 	LC_MESSAGES/index.edit \
 	LC_MESSAGES/install.edit \
 	LC_MESSAGES/limitations.edit \
@@ -1163,7 +1161,6 @@ mo_files = \
 	conf.mo \
 	contribution.mo \
 	development.mo \
-	geolocation_search.mo \
 	index.mo \
 	install.mo \
 	limitations.mo \
@@ -1182,7 +1179,6 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/conf.mo \
 	LC_MESSAGES/contribution.mo \
 	LC_MESSAGES/development.mo \
-	LC_MESSAGES/geolocation_search.mo \
 	LC_MESSAGES/index.mo \
 	LC_MESSAGES/install.mo \
 	LC_MESSAGES/limitations.mo \
@@ -1215,7 +1211,6 @@ html_files_relative_from_locale_dir = \
 	html/_sources/contribution/report.txt \
 	html/_sources/development.txt \
 	html/_sources/development/travis-ci.txt \
-	html/_sources/geolocation_search.txt \
 	html/_sources/index.txt \
 	html/_sources/install.txt \
 	html/_sources/install/centos.txt \
@@ -1328,6 +1323,8 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/indexing.txt \
 	html/_sources/reference/log.txt \
 	html/_sources/reference/normalizers.txt \
+	html/_sources/reference/operations.txt \
+	html/_sources/reference/operations/geolocation_search.txt \
 	html/_sources/reference/output.txt \
 	html/_sources/reference/query_expanders.txt \
 	html/_sources/reference/query_expanders/tsv.txt \
@@ -1409,7 +1406,6 @@ html_files_relative_from_locale_dir = \
 	html/development.html \
 	html/development/travis-ci.html \
 	html/genindex.html \
-	html/geolocation_search.html \
 	html/index.html \
 	html/install.html \
 	html/install/centos.html \
@@ -1523,6 +1519,8 @@ html_files_relative_from_locale_dir = \
 	html/reference/indexing.html \
 	html/reference/log.html \
 	html/reference/normalizers.html \
+	html/reference/operations.html \
+	html/reference/operations/geolocation_search.html \
 	html/reference/output.html \
 	html/reference/query_expanders.html \
 	html/reference/query_expanders/tsv.html \

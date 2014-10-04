@@ -19,7 +19,6 @@ Groonga documentation
    install
    community
    tutorial
-   geolocation_search
    server
    client
    reference
