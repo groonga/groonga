@@ -495,7 +495,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/suggest/correction.rst \
 	$(top_srcdir)/doc/source/reference/suggest/introduction.rst \
 	$(top_srcdir)/doc/source/reference/suggest/suggestion.rst \
-	$(top_srcdir)/doc/source/reference/suggest/tutorial.rst \
 	$(top_srcdir)/doc/source/reference/tables.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers.rst \
 	$(top_srcdir)/doc/source/reference/tuning.rst \
@@ -1037,7 +1036,6 @@ source_files_relative_from_doc_dir = \
 	source/reference/suggest/correction.rst \
 	source/reference/suggest/introduction.rst \
 	source/reference/suggest/suggestion.rst \
-	source/reference/suggest/tutorial.rst \
 	source/reference/tables.rst \
 	source/reference/tokenizers.rst \
 	source/reference/tuning.rst \
@@ -1338,7 +1336,6 @@ html_files_relative_from_locale_dir = \
         html/_sources/reference/suggest/correction.txt \
         html/_sources/reference/suggest/introduction.txt \
         html/_sources/reference/suggest/suggestion.txt \
-        html/_sources/reference/suggest/tutorial.txt \
 	html/_sources/reference/tables.txt \
 	html/_sources/reference/tokenizers.txt \
 	html/_sources/reference/tuning.txt \
@@ -1534,7 +1531,6 @@ html_files_relative_from_locale_dir = \
 	html/reference/suggest/correction.html \
 	html/reference/suggest/introduction.html \
 	html/reference/suggest/suggestion.html \
-	html/reference/suggest/tutorial.html \
 	html/reference/tables.html \
 	html/reference/tokenizers.html \
 	html/reference/tuning.html \
