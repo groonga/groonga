@@ -28,4 +28,5 @@ set_source_files_properties(${STOP_WORD_SOURCES}
 set_target_properties(stop_word_token_filter PROPERTIES
   PREFIX ""
   OUTPUT_NAME "stop_word")
+target_link_libraries(stop_word_token_filter libgroonga)
 install(TARGETS stop_word_token_filter DESTINATION "${TOKEN_FILTERS_DIR}")
