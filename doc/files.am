@@ -19,8 +19,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/contribution/report.rst \
 	$(top_srcdir)/doc/source/development.rst \
 	$(top_srcdir)/doc/source/development/travis-ci.rst \
-	$(top_srcdir)/doc/source/example/completion-1.log \
-	$(top_srcdir)/doc/source/example/correction-1.log \
+	$(top_srcdir)/doc/source/example/reference/completion-1.log \
+	$(top_srcdir)/doc/source/example/reference/correction-1.log \
 	$(top_srcdir)/doc/source/example/reference/columns/vector/usage_adjuster_weight.log \
 	$(top_srcdir)/doc/source/example/reference/columns/vector/usage_create_normal.log \
 	$(top_srcdir)/doc/source/example/reference/columns/vector/usage_create_weight.log \
@@ -210,12 +210,12 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-mysql-genral-ci.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-mysql-register.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc51.log \
-	$(top_srcdir)/doc/source/example/suggest/complete/registered-word-japan.log \
-	$(top_srcdir)/doc/source/example/suggest/complete/registered-word-japanese.log \
-	$(top_srcdir)/doc/source/example/suggest/complete/rk-search-nihon.log \
-	$(top_srcdir)/doc/source/example/suggest/complete/rk-search-nippon.log \
-	$(top_srcdir)/doc/source/example/suggest/complete/update-rk-data.log \
-	$(top_srcdir)/doc/source/example/suggestion-1.log \
+	$(top_srcdir)/doc/source/example/reference/suggest/complete/registered-word-japan.log \
+	$(top_srcdir)/doc/source/example/reference/suggest/complete/registered-word-japanese.log \
+	$(top_srcdir)/doc/source/example/reference/suggest/complete/rk-search-nihon.log \
+	$(top_srcdir)/doc/source/example/reference/suggest/complete/rk-search-nippon.log \
+	$(top_srcdir)/doc/source/example/reference/suggest/complete/update-rk-data.log \
+	$(top_srcdir)/doc/source/example/reference/suggestion-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-2.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-3.log \
@@ -490,6 +490,12 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/output.rst \
 	$(top_srcdir)/doc/source/reference/query_expanders.rst \
 	$(top_srcdir)/doc/source/reference/query_expanders/tsv.rst \
+	$(top_srcdir)/doc/source/reference/suggest.rst \
+	$(top_srcdir)/doc/source/reference/suggest/completion.rst \
+	$(top_srcdir)/doc/source/reference/suggest/correction.rst \
+	$(top_srcdir)/doc/source/reference/suggest/introduction.rst \
+	$(top_srcdir)/doc/source/reference/suggest/suggestion.rst \
+	$(top_srcdir)/doc/source/reference/suggest/tutorial.rst \
 	$(top_srcdir)/doc/source/reference/tables.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers.rst \
 	$(top_srcdir)/doc/source/reference/tuning.rst \
@@ -504,12 +510,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/spec.rst \
 	$(top_srcdir)/doc/source/spec/gqtp.rst \
 	$(top_srcdir)/doc/source/spec/search.rst \
-	$(top_srcdir)/doc/source/suggest.rst \
-	$(top_srcdir)/doc/source/suggest/completion.rst \
-	$(top_srcdir)/doc/source/suggest/correction.rst \
-	$(top_srcdir)/doc/source/suggest/introduction.rst \
-	$(top_srcdir)/doc/source/suggest/suggestion.rst \
-	$(top_srcdir)/doc/source/suggest/tutorial.rst \
 	$(top_srcdir)/doc/source/textile.py \
 	$(top_srcdir)/doc/source/troubleshooting.rst \
 	$(top_srcdir)/doc/source/troubleshooting/different_results_with_the_same_keyword.rst \
@@ -561,8 +561,8 @@ source_files_relative_from_doc_dir = \
 	source/contribution/report.rst \
 	source/development.rst \
 	source/development/travis-ci.rst \
-	source/example/completion-1.log \
-	source/example/correction-1.log \
+	source/example/reference/completion-1.log \
+	source/example/reference/correction-1.log \
 	source/example/reference/columns/vector/usage_adjuster_weight.log \
 	source/example/reference/columns/vector/usage_create_normal.log \
 	source/example/reference/columns/vector/usage_create_weight.log \
@@ -752,12 +752,12 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/normalizers/normalizer-mysql-genral-ci.log \
 	source/example/reference/normalizers/normalizer-mysql-register.log \
 	source/example/reference/normalizers/normalizer-nfkc51.log \
-	source/example/suggest/complete/registered-word-japan.log \
-	source/example/suggest/complete/registered-word-japanese.log \
-	source/example/suggest/complete/rk-search-nihon.log \
-	source/example/suggest/complete/rk-search-nippon.log \
-	source/example/suggest/complete/update-rk-data.log \
-	source/example/suggestion-1.log \
+	source/example/reference/suggest/complete/registered-word-japan.log \
+	source/example/reference/suggest/complete/registered-word-japanese.log \
+	source/example/reference/suggest/complete/rk-search-nihon.log \
+	source/example/reference/suggest/complete/rk-search-nippon.log \
+	source/example/reference/suggest/complete/update-rk-data.log \
+	source/example/reference/suggestion-1.log \
 	source/example/tutorial/data-1.log \
 	source/example/tutorial/data-2.log \
 	source/example/tutorial/data-3.log \
@@ -1032,6 +1032,12 @@ source_files_relative_from_doc_dir = \
 	source/reference/output.rst \
 	source/reference/query_expanders.rst \
 	source/reference/query_expanders/tsv.rst \
+	source/reference/suggest.rst \
+	source/reference/suggest/completion.rst \
+	source/reference/suggest/correction.rst \
+	source/reference/suggest/introduction.rst \
+	source/reference/suggest/suggestion.rst \
+	source/reference/suggest/tutorial.rst \
 	source/reference/tables.rst \
 	source/reference/tokenizers.rst \
 	source/reference/tuning.rst \
@@ -1046,12 +1052,6 @@ source_files_relative_from_doc_dir = \
 	source/spec.rst \
 	source/spec/gqtp.rst \
 	source/spec/search.rst \
-	source/suggest.rst \
-	source/suggest/completion.rst \
-	source/suggest/correction.rst \
-	source/suggest/introduction.rst \
-	source/suggest/suggestion.rst \
-	source/suggest/tutorial.rst \
 	source/textile.py \
 	source/troubleshooting.rst \
 	source/troubleshooting/different_results_with_the_same_keyword.rst \
@@ -1097,7 +1097,6 @@ po_files = \
 	reference.po \
 	server.po \
 	spec.po \
-	suggest.po \
 	troubleshooting.po \
 	tutorial.po \
 	$(NULL)
@@ -1117,7 +1116,6 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference.po \
 	LC_MESSAGES/server.po \
 	LC_MESSAGES/spec.po \
-	LC_MESSAGES/suggest.po \
 	LC_MESSAGES/troubleshooting.po \
 	LC_MESSAGES/tutorial.po \
 	$(NULL)
@@ -1137,7 +1135,6 @@ edit_po_files = \
 	reference.edit \
 	server.edit \
 	spec.edit \
-	suggest.edit \
 	troubleshooting.edit \
 	tutorial.edit \
 	$(NULL)
@@ -1157,7 +1154,6 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference.edit \
 	LC_MESSAGES/server.edit \
 	LC_MESSAGES/spec.edit \
-	LC_MESSAGES/suggest.edit \
 	LC_MESSAGES/troubleshooting.edit \
 	LC_MESSAGES/tutorial.edit \
 	$(NULL)
@@ -1177,7 +1173,6 @@ mo_files = \
 	reference.mo \
 	server.mo \
 	spec.mo \
-	suggest.mo \
 	troubleshooting.mo \
 	tutorial.mo \
 	$(NULL)
@@ -1197,7 +1192,6 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference.mo \
 	LC_MESSAGES/server.mo \
 	LC_MESSAGES/spec.mo \
-	LC_MESSAGES/suggest.mo \
 	LC_MESSAGES/troubleshooting.mo \
 	LC_MESSAGES/tutorial.mo \
 	$(NULL)
@@ -1339,6 +1333,12 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/output.txt \
 	html/_sources/reference/query_expanders.txt \
 	html/_sources/reference/query_expanders/tsv.txt \
+        html/_sources/reference/suggest.txt \
+        html/_sources/reference/suggest/completion.txt \
+        html/_sources/reference/suggest/correction.txt \
+        html/_sources/reference/suggest/introduction.txt \
+        html/_sources/reference/suggest/suggestion.txt \
+        html/_sources/reference/suggest/tutorial.txt \
 	html/_sources/reference/tables.txt \
 	html/_sources/reference/tokenizers.txt \
 	html/_sources/reference/tuning.txt \
@@ -1353,12 +1353,6 @@ html_files_relative_from_locale_dir = \
 	html/_sources/spec.txt \
 	html/_sources/spec/gqtp.txt \
 	html/_sources/spec/search.txt \
-	html/_sources/suggest.txt \
-	html/_sources/suggest/completion.txt \
-	html/_sources/suggest/correction.txt \
-	html/_sources/suggest/introduction.txt \
-	html/_sources/suggest/suggestion.txt \
-	html/_sources/suggest/tutorial.txt \
 	html/_sources/troubleshooting.txt \
 	html/_sources/troubleshooting/different_results_with_the_same_keyword.txt \
 	html/_sources/troubleshooting/mmap_cannot_allocate_memory.txt \
@@ -1535,6 +1529,12 @@ html_files_relative_from_locale_dir = \
 	html/reference/output.html \
 	html/reference/query_expanders.html \
 	html/reference/query_expanders/tsv.html \
+	html/reference/suggest.html \
+	html/reference/suggest/completion.html \
+	html/reference/suggest/correction.html \
+	html/reference/suggest/introduction.html \
+	html/reference/suggest/suggestion.html \
+	html/reference/suggest/tutorial.html \
 	html/reference/tables.html \
 	html/reference/tokenizers.html \
 	html/reference/tuning.html \
@@ -1551,12 +1551,6 @@ html_files_relative_from_locale_dir = \
 	html/spec.html \
 	html/spec/gqtp.html \
 	html/spec/search.html \
-	html/suggest.html \
-	html/suggest/completion.html \
-	html/suggest/correction.html \
-	html/suggest/introduction.html \
-	html/suggest/suggestion.html \
-	html/suggest/tutorial.html \
 	html/troubleshooting.html \
 	html/troubleshooting/different_results_with_the_same_keyword.html \
 	html/troubleshooting/mmap_cannot_allocate_memory.html \

@@ -55,10 +55,10 @@ All libraries are optional. Here are optional libraries:
     search target document by morphological analysis
   * `KyTea <http://www.phontron.com/kytea/>`_ for tokenizing full-text
     search target document by morphological analysis
-  * `ZeroMQ <http://www.zeromq.org/>`_ for :doc:`/suggest`
-  * `libevent <http://libevent.org/>`_ for :doc:`/suggest`
+  * `ZeroMQ <http://www.zeromq.org/>`_ for :doc:`/reference/suggest`
+  * `libevent <http://libevent.org/>`_ for :doc:`/reference/suggest`
   * `MessagePack <http://msgpack.org/>`_ for supporting MessagePack
-    output and :doc:`/suggest`
+    output and :doc:`/reference/suggest`
   * `libedit <http://www.thrysoee.dk/editline/>`_ for command line
     editing in :doc:`/reference/executables/groonga`
   * `zlib <http://zlib.net/>`_ for compressing column value

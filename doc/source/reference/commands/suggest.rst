@@ -22,7 +22,7 @@ suggest - returns completion, correction and/or suggestion for a query.
 The suggest command returns completion, correction and/or
 suggestion for a specified query.
 
-See :doc:`/suggest/introduction` about completion,
+See :doc:`/reference/suggest/introduction` about completion,
 correction and suggestion.
 
 Syntax
@@ -257,5 +257,5 @@ Here is a returned JSON format::
 See also
 --------
 
-* :doc:`/suggest`
+* :doc:`/reference/suggest`
 * :doc:`/reference/executables/groonga-suggest-create-dataset`
