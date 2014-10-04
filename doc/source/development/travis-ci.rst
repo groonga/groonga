@@ -45,7 +45,7 @@ Examples
 
 Here are open source softwares that use Groonga on Travis CI:
 
-  * `rroonga <http://groonga.rubyforge.org/#about-rroonga>`_ (Ruby bindings)
+  * `rroonga <http://ranguba.org/#about-rroonga>`_ (Ruby bindings)
 
     * `rroonga on Travis CI <http://travis-ci.org/#!/ranguba/rroonga>`_
     * `.travis.yml for rroonga <https://github.com/ranguba/rroonga/blob/master/.travis.yml>`_

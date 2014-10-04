@@ -99,10 +99,8 @@ msgstr "Examples"
 msgid "Here are open source softwares that use Groonga on Travis CI:"
 msgstr "Here are open source softwares that use Groonga on Travis CI:"
 
-msgid ""
-"`rroonga <http://groonga.rubyforge.org/#about-rroonga>`_ (Ruby bindings)"
-msgstr ""
-"`rroonga <http://groonga.rubyforge.org/#about-rroonga>`_ (Ruby bindings)"
+msgid "`rroonga <http://ranguba.org/#about-rroonga>`_ (Ruby bindings)"
+msgstr "`rroonga <http://ranguba.org/#about-rroonga>`_ (Ruby bindings)"
 
 msgid "`rroonga on Travis CI <http://travis-ci.org/#!/ranguba/rroonga>`_"
 msgstr "`rroonga on Travis CI <http://travis-ci.org/#!/ranguba/rroonga>`_"

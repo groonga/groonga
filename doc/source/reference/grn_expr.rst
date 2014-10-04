@@ -42,7 +42,7 @@ You can use groonga as a library and create a grn_expr by calling
 grn_expr related APIs. You can use full features with calling APIs
 like :doc:`/reference/grn_expr/script_syntax`. Calling APIs is useful
 creating a custom syntax to create grn_expr. They are used in `rroonga
-<http://groonga.rubyforge.org/#about-rroonga>`_ that is Ruby bindings
+<http://ranguba.org/#about-rroonga>`_ that is Ruby bindings
 of Groonga. Rroonga can create a grn_expr by Ruby's syntax instead of
 parsing string.
 
