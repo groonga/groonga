@@ -8,11 +8,11 @@ table_create Terms TABLE_PAT_KEY ShortText \
   --normalizer NormalizerAuto \
   --token_filters TokenFilterStopWord
 column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
-column_create Terms stop_word COLUMN_SCALAR Bool
+column_create Terms is_stop_word COLUMN_SCALAR Bool
 
 load --table Terms
 [
-{"_key": "and", "stop_word": true}
+{"_key": "and", "is_stop_word": true}
 ]
 
 load --table Memos

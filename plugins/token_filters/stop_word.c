@@ -23,7 +23,7 @@
 
 #include <string.h>
 
-#define COLUMN_NAME "stop_word"
+#define COLUMN_NAME "is_stop_word"
 
 typedef struct {
   grn_obj *table;
