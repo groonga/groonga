@@ -27,13 +27,6 @@
 #define NGX_SENDFILE_MAXSIZE  2147483647L
 
 
-#if (IOV_MAX > 64)
-#define NGX_HEADERS  64
-#else
-#define NGX_HEADERS  IOV_MAX
-#endif
-
-
 ngx_chain_t *
 ngx_linux_sendfile_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
 {
@@ -43,11 +36,11 @@ ngx_linux_sendfile_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
     size_t         file_size;
     ngx_err_t      err;
     ngx_buf_t     *file;
-    ngx_uint_t     eintr, complete;
+    ngx_uint_t     eintr;
     ngx_array_t    header;
     ngx_event_t   *wev;
     ngx_chain_t   *cl;
-    struct iovec  *iov, headers[NGX_HEADERS];
+    struct iovec  *iov, headers[NGX_IOVS_PREALLOCATE];
 #if (NGX_HAVE_SENDFILE64)
     off_t          offset;
 #else
@@ -72,14 +65,13 @@ ngx_linux_sendfile_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
 
     header.elts = headers;
     header.size = sizeof(struct iovec);
-    header.nalloc = NGX_HEADERS;
+    header.nalloc = NGX_IOVS_PREALLOCATE;
     header.pool = c->pool;
 
     for ( ;; ) {
         file = NULL;
         file_size = 0;
         eintr = 0;
-        complete = 0;
         prev_send = send;
 
         header.nelts = 0;
@@ -319,54 +311,15 @@ ngx_linux_sendfile_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
             ngx_log_debug1(NGX_LOG_DEBUG_EVENT, c->log, 0, "writev: %O", sent);
         }
 
-        if (send - prev_send == sent) {
-            complete = 1;
-        }
-
         c->sent += sent;
 
-        for ( /* void */ ; in; in = in->next) {
-
-            if (ngx_buf_special(in->buf)) {
-                continue;
-            }
-
-            if (sent == 0) {
-                break;
-            }
-
-            size = ngx_buf_size(in->buf);
-
-            if (sent >= size) {
-                sent -= size;
-
-                if (ngx_buf_in_memory(in->buf)) {
-                    in->buf->pos = in->buf->last;
-                }
-
-                if (in->buf->in_file) {
-                    in->buf->file_pos = in->buf->file_last;
-                }
-
-                continue;
-            }
-
-            if (ngx_buf_in_memory(in->buf)) {
-                in->buf->pos += (size_t) sent;
-            }
-
-            if (in->buf->in_file) {
-                in->buf->file_pos += sent;
-            }
-
-            break;
-        }
+        in = ngx_handle_sent_chain(in, sent);
 
         if (eintr) {
             continue;
         }
 
-        if (!complete) {
+        if (send - prev_send != sent) {
             wev->ready = 0;
             return in;
         }

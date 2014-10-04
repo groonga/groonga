@@ -35,12 +35,7 @@ ngx_chain_t *ngx_solaris_sendfilev_chain(ngx_connection_t *c, ngx_chain_t *in,
 #endif
 
 
-#if (IOV_MAX > 64)
-#define NGX_SENDFILEVECS  64
-#else
-#define NGX_SENDFILEVECS  IOV_MAX
-#endif
-
+#define NGX_SENDFILEVECS  NGX_IOVS_PREALLOCATE
 
 
 ngx_chain_t *
@@ -51,7 +46,7 @@ ngx_solaris_sendfilev_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
     off_t           size, send, prev_send, aligned, fprev;
     size_t          sent;
     ssize_t         n;
-    ngx_int_t       eintr, complete;
+    ngx_int_t       eintr;
     ngx_err_t       err;
     sendfilevec_t  *sfv, sfvs[NGX_SENDFILEVECS];
     ngx_array_t     vec;
@@ -89,7 +84,6 @@ ngx_solaris_sendfilev_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
         fprev = 0;
         sfv = NULL;
         eintr = 0;
-        complete = 0;
         sent = 0;
         prev_send = send;
 
@@ -201,54 +195,15 @@ ngx_solaris_sendfilev_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
         ngx_log_debug2(NGX_LOG_DEBUG_EVENT, c->log, 0,
                        "sendfilev: %z %z", n, sent);
 
-        if (send - prev_send == (off_t) sent) {
-            complete = 1;
-        }
-
         c->sent += sent;
 
-        for ( /* void */ ; in; in = in->next) {
-
-            if (ngx_buf_special(in->buf)) {
-                continue;
-            }
-
-            if (sent == 0) {
-                break;
-            }
-
-            size = ngx_buf_size(in->buf);
-
-            if ((off_t) sent >= size) {
-                sent = (size_t) ((off_t) sent - size);
-
-                if (ngx_buf_in_memory(in->buf)) {
-                    in->buf->pos = in->buf->last;
-                }
-
-                if (in->buf->in_file) {
-                    in->buf->file_pos = in->buf->file_last;
-                }
-
-                continue;
-            }
-
-            if (ngx_buf_in_memory(in->buf)) {
-                in->buf->pos += sent;
-            }
-
-            if (in->buf->in_file) {
-                in->buf->file_pos += sent;
-            }
-
-            break;
-        }
+        in = ngx_handle_sent_chain(in, sent);
 
         if (eintr) {
             continue;
         }
 
-        if (!complete) {
+        if (send - prev_send != (off_t) sent) {
             wev->ready = 0;
             return in;
         }
