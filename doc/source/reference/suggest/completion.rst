@@ -166,7 +166,7 @@ For example, here is an command to get completion results by
 "en":
 
 .. groonga-command
-.. include:: ../example/completion-1.log
+.. include:: ../../example/reference/completion-1.log
 .. suggest --table item_query --column kana --types complete --frequency_threshold 1 --query en
 
 How it learns
@@ -209,7 +209,7 @@ Groonga requires registered word and its reading for RK search, so load such dat
 Here is the example to register "日本" which means Japanese in english.
 
 .. groonga-command
-.. include:: ../example/suggest/complete/registered-word-japan.log
+.. include:: ../../example/reference/suggest/complete/registered-word-japan.log
 .. load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
 .. [
 .. {"sequence": "1", "time": 1312950805.86058, "item": "日本", "type": "submit"}
@@ -219,7 +219,7 @@ Here is the example to register "日本" which means Japanese in english.
 Here is the example to update RK data to complete "日本".
 
 .. groonga-command
-.. include:: ../example/suggest/complete/update-rk-data.log
+.. include:: ../../example/reference/suggest/complete/update-rk-data.log
 .. load --table item_query
 .. [
 .. {"_key":"日本", "kana":["ニホン", "ニッポン"]}
@@ -228,7 +228,7 @@ Here is the example to update RK data to complete "日本".
 Then you can complete registered word "日本" by RK input - "nihon".
 
 .. groonga-command
-.. include:: ../example/suggest/complete/rk-search-nihon.log
+.. include:: ../../example/reference/suggest/complete/rk-search-nihon.log
 .. suggest --table item_query --column kana --types complete --frequency_threshold 1 --query nihon
 
 Without loading above RK data, you can't complete registered word "日本"
@@ -241,7 +241,7 @@ This is the reason that you can also complete the registered word "日本"
 by query - "nippon".
 
 .. groonga-command
-.. include:: ../example/suggest/complete/rk-search-nippon.log
+.. include:: ../../example/reference/suggest/complete/rk-search-nippon.log
 .. suggest --table item_query --column kana --types complete --frequency_threshold 1 --query nippon
 
 This feature is very convenient because you can search registered word
@@ -254,7 +254,7 @@ table.
 Here is the example to customize priority for RK search.
 
 .. groonga-command
-.. include:: ../example/suggest/complete/registered-word-japanese.log
+.. include:: ../../example/reference/suggest/complete/registered-word-japanese.log
 .. load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
 .. [
 .. {"sequence": "1", "time": 1312950805.86059, "item": "日本語", "type": "submit"}

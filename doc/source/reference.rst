@@ -21,6 +21,8 @@ Reference manual
    reference/pseudo_column
    reference/grn_expr
    reference/function
+   reference/operations
+   reference/suggest
    reference/indexing
    reference/log
    reference/tuning

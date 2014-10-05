@@ -194,7 +194,7 @@ Improvements
 * Accepted "#" and "-" as a valid name characters. #1043
 * Accepted all valid characters except "_" as the first character. #1043
 * Supported `--each` for `[...]` form :doc:`/reference/commands/load`. #1044
-* Added documentation for :doc:`/suggest`.
+* Added documentation for :doc:`/reference/suggest`.
 * Supported threshold as `--frequency_threshold` and
   `--conditional_probability_threshold` options in all
   :doc:`/reference/commands/suggest` types. #1042

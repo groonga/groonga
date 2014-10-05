@@ -20,9 +20,9 @@ SYNOPSTIS
 DESCTIPION
 ----------
 
-groonga-suggest-create-dataset creates a dataset for :doc:`/suggest`. A database has many datasets. This command just defines schema for a suggestion dataset.
+groonga-suggest-create-dataset creates a dataset for :doc:`/reference/suggest`. A database has many datasets. This command just defines schema for a suggestion dataset.
 
-This command generates some tables and columns for :doc:`/suggest`.
+This command generates some tables and columns for :doc:`/reference/suggest`.
 
 Here is the list of such tables. If you specify 'query' as dataset name, following '_DATASET' suffix are replaced. Thus, 'item_query', 'pair_query', 'sequence_query', 'event_query' tables are generated.
 
@@ -58,6 +58,6 @@ TODO
 SEE ALSO
 --------
 
-:doc:`/suggest`
+:doc:`/reference/suggest`
 :doc:`groonga-suggest-httpd`
 :doc:`groonga-suggest-learner`

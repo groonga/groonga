@@ -1733,8 +1733,8 @@ msgid ""
 msgstr ""
 "Supported `--each` for `[...]` form :doc:`/reference/commands/load`. #1044"
 
-msgid "Added documentation for :doc:`/suggest`."
-msgstr "Added documentation for :doc:`/suggest`."
+msgid "Added documentation for :doc:`/reference/suggest`."
+msgstr "Added documentation for :doc:`/reference/suggest`."
 
 msgid ""
 "Supported threshold as `--frequency_threshold` and `--"
@@ -3723,8 +3723,8 @@ msgstr ""
 msgid "[http] Supported \"400 Bad request\" for invalid argument error."
 msgstr "[http] Supported \"400 Bad request\" for invalid argument error."
 
-msgid "[doc] Added examples for :doc:`/suggest/completion`"
-msgstr "[doc] Added examples for :doc:`/suggest/completion`"
+msgid "[doc] Added examples for :doc:`/reference/suggest/completion`"
+msgstr "[doc] Added examples for :doc:`/reference/suggest/completion`"
 
 msgid "Supported Ubuntu 13.10 (Saucy Salamander)."
 msgstr "Supported Ubuntu 13.10 (Saucy Salamander)."

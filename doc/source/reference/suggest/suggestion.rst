@@ -88,7 +88,7 @@ For example, here is an command to get suggestion results by
 "search":
 
 .. groonga-command
-.. include:: ../example/suggestion-1.log
+.. include:: ../../example/reference/suggestion-1.log
 .. suggest --table item_query --column kana --types suggest --frequency_threshold 1 --query search
 
 How it learns
