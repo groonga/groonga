@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009 Brazil
+/* Copyright(C) 2009-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -64,7 +64,7 @@ typedef struct {
   grn_proc_ctx *token_filter_ctxs;
   uint32_t variant;
   grn_obj *nstr;
-} grn_token;
+} grn_token_cursor;
 
 extern grn_obj *grn_token_uvector;
 
@@ -73,12 +73,13 @@ grn_rc grn_token_fin(void);
 
 #define GRN_TOKEN_ENABLE_TOKENIZED_DELIMITER (0x01L<<0)
 
-GRN_API grn_token *grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str,
-                                  size_t str_len, grn_token_mode mode,
-                                  unsigned int flags);
+GRN_API grn_token_cursor *grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
+                                                const char *str, size_t str_len,
+                                                grn_token_mode mode,
+                                                unsigned int flags);
 
-GRN_API grn_id grn_token_next(grn_ctx *ctx, grn_token *ng);
-GRN_API grn_rc grn_token_close(grn_ctx *ctx, grn_token *ng);
+GRN_API grn_id grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor);
+GRN_API grn_rc grn_token_cursor_close(grn_ctx *ctx, grn_token_cursor *token_cursor);
 
 grn_rc grn_db_init_mecab_tokenizer(grn_ctx *ctx);
 grn_rc grn_db_init_builtin_tokenizers(grn_ctx *ctx);
