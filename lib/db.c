@@ -7925,7 +7925,7 @@ grn_token_filters_unpack(grn_ctx *ctx,
     token_filter = grn_ctx_at(ctx, token_filter_id);
     if (!token_filter) {
       ERR(GRN_INVALID_ARGUMENT,
-          "nonexistent token filter ID: %d\n", token_filter_id);
+          "nonexistent token filter ID: %d", token_filter_id);
       return;
     }
     GRN_PTR_PUT(ctx, token_filters, token_filter);
