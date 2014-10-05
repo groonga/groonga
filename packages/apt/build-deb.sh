@@ -14,12 +14,12 @@ run()
 . /vagrant/tmp/env.sh
 
 swap_file=/tmp/swap
-run dd if=/dev/zero of="$swap_file" bs=1024 count=3024K
+run dd if=/dev/zero of="$swap_file" bs=1024 count=4096K
 run mkswap "$swap_file"
 run swapon "$swap_file"
 
-run apt-get update
-run apt-get install -y lsb-release
+run sudo apt-get update
+run sudo apt-get install -y lsb-release
 
 distribution=$(lsb_release --id --short | tr 'A-Z' 'a-z')
 code_name=$(lsb_release --codename --short)
