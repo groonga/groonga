@@ -19,8 +19,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/contribution/report.rst \
 	$(top_srcdir)/doc/source/development.rst \
 	$(top_srcdir)/doc/source/development/travis-ci.rst \
-	$(top_srcdir)/doc/source/example/reference/completion-1.log \
-	$(top_srcdir)/doc/source/example/reference/correction-1.log \
 	$(top_srcdir)/doc/source/example/reference/columns/vector/usage_adjuster_weight.log \
 	$(top_srcdir)/doc/source/example/reference/columns/vector/usage_create_normal.log \
 	$(top_srcdir)/doc/source/example/reference/columns/vector/usage_create_weight.log \
@@ -214,8 +212,10 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/suggest/complete/registered-word-japanese.log \
 	$(top_srcdir)/doc/source/example/reference/suggest/complete/rk-search-nihon.log \
 	$(top_srcdir)/doc/source/example/reference/suggest/complete/rk-search-nippon.log \
+	$(top_srcdir)/doc/source/example/reference/suggest/complete/select.log \
 	$(top_srcdir)/doc/source/example/reference/suggest/complete/update-rk-data.log \
-	$(top_srcdir)/doc/source/example/reference/suggestion-1.log \
+	$(top_srcdir)/doc/source/example/reference/suggest/correction/select.log \
+	$(top_srcdir)/doc/source/example/reference/suggest/suggest/select.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-2.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-3.log \
@@ -561,8 +561,6 @@ source_files_relative_from_doc_dir = \
 	source/contribution/report.rst \
 	source/development.rst \
 	source/development/travis-ci.rst \
-	source/example/reference/completion-1.log \
-	source/example/reference/correction-1.log \
 	source/example/reference/columns/vector/usage_adjuster_weight.log \
 	source/example/reference/columns/vector/usage_create_normal.log \
 	source/example/reference/columns/vector/usage_create_weight.log \
@@ -756,8 +754,10 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/suggest/complete/registered-word-japanese.log \
 	source/example/reference/suggest/complete/rk-search-nihon.log \
 	source/example/reference/suggest/complete/rk-search-nippon.log \
+	source/example/reference/suggest/complete/select.log \
 	source/example/reference/suggest/complete/update-rk-data.log \
-	source/example/reference/suggestion-1.log \
+	source/example/reference/suggest/correction/select.log \
+	source/example/reference/suggest/suggest/select.log \
 	source/example/tutorial/data-1.log \
 	source/example/tutorial/data-2.log \
 	source/example/tutorial/data-3.log \
@@ -1328,11 +1328,11 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/output.txt \
 	html/_sources/reference/query_expanders.txt \
 	html/_sources/reference/query_expanders/tsv.txt \
-        html/_sources/reference/suggest.txt \
-        html/_sources/reference/suggest/completion.txt \
-        html/_sources/reference/suggest/correction.txt \
-        html/_sources/reference/suggest/introduction.txt \
-        html/_sources/reference/suggest/suggestion.txt \
+	html/_sources/reference/suggest.txt \
+	html/_sources/reference/suggest/completion.txt \
+	html/_sources/reference/suggest/correction.txt \
+	html/_sources/reference/suggest/introduction.txt \
+	html/_sources/reference/suggest/suggestion.txt \
 	html/_sources/reference/tables.txt \
 	html/_sources/reference/tokenizers.txt \
 	html/_sources/reference/tuning.txt \
