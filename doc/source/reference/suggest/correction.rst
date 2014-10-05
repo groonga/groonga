@@ -108,7 +108,7 @@ For example, here is an command to get correction results by
 "saerch":
 
 .. groonga-command
-.. include:: ../../example/reference/correction-1.log
+.. include:: ../../example/reference/suggest/correction/select.log
 .. suggest --table item_query --column kana --types correction --frequency_threshold 1 --query saerch
 
 How it learns

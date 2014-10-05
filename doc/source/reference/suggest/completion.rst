@@ -166,7 +166,7 @@ For example, here is an command to get completion results by
 "en":
 
 .. groonga-command
-.. include:: ../../example/reference/completion-1.log
+.. include:: ../../example/reference/suggest/complete/select.log
 .. suggest --table item_query --column kana --types complete --frequency_threshold 1 --query en
 
 How it learns
