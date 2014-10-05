@@ -5699,7 +5699,7 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
         if (v && s &&
             (token = grn_token_open(ctx, lexicon, v, s,
                                     GRN_TOKEN_ADD, token_flags))) {
-          while (!token->status) {
+          while (token->status == GRN_TOKEN_DOING) {
             grn_id tid = grn_token_next(ctx, token);
             grn_uvector_add_element(ctx, &uvector, tid, 0);
           }
