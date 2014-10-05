@@ -14,9 +14,9 @@ run()
 . /vagrant/tmp/env.sh
 
 swap_file=/tmp/swap
-run dd if=/dev/zero of="$swap_file" bs=1024 count=4096K
-run mkswap "$swap_file"
-run swapon "$swap_file"
+run sudo dd if=/dev/zero of="$swap_file" bs=1024 count=4096K
+run sudo mkswap "$swap_file"
+run sudo swapon "$swap_file"
 
 run sudo apt-get update
 run sudo apt-get install -y lsb-release
@@ -32,7 +32,7 @@ case "${distribution}" in
     ;;
 esac
 
-run apt-get install -V -y build-essential devscripts ${DEPENDED_PACKAGES}
+run sudo apt-get install -V -y build-essential devscripts ${DEPENDED_PACKAGES}
 
 run mkdir -p build
 run cp /vagrant/tmp/${PACKAGE}-${VERSION}.tar.gz \
