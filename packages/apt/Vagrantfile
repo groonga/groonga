@@ -21,6 +21,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.define(vm[:id]) do |node|
       node.vm.box = vm[:id]
       node.vm.box_url = vm[:box_url]
+      node.vm.boot_timeout = 600
       node.vm.provision(:shell, :privileged => false, :path => "build-deb.sh")
       node.vm.provider("virtualbox") do |virtual_box|
         virtual_box.memory = 512
