@@ -1695,6 +1695,8 @@ GRN_API grn_obj *grn_expr_append_const_int(grn_ctx *ctx, grn_obj *expr, int i,
                                            grn_operator op, int nargs);
 GRN_API grn_rc grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_operator op, int nargs);
 
+GRN_API grn_rc grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *keywords);
+
 GRN_API grn_rc grn_expr_syntax_escape(grn_ctx *ctx,
                                       const char *query, int query_size,
                                       const char *target_characters,
