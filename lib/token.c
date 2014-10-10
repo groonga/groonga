@@ -501,7 +501,6 @@ grn_token_cursor_open_initialize_token_filters(grn_ctx *ctx,
 {
   grn_obj *token_filters = token_cursor->token_filters;
   unsigned int i, n_token_filters;
-  grn_obj mode;
 
   if (token_filters) {
     n_token_filters = GRN_BULK_VSIZE(token_filters) / sizeof(grn_obj *);
@@ -509,41 +508,15 @@ grn_token_cursor_open_initialize_token_filters(grn_ctx *ctx,
     n_token_filters = 0;
   }
 
-  if (n_token_filters == 0) {
-    token_cursor->token_filter_ctxs = NULL;
-    return;
-  }
-
-  token_cursor->token_filter_ctxs =
-    GRN_MALLOC(sizeof(grn_proc_ctx) * n_token_filters);
-  if (!token_cursor->token_filter_ctxs) {
-    ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[token-cursor][open] failed to allocate token filter contexts");
-    return;
-  }
-
-  GRN_UINT32_INIT(&mode, 0);
-  GRN_UINT32_SET(ctx, &mode, token_cursor->mode);
   for (i = 0; i < n_token_filters; i++) {
-    grn_obj *token_filter = GRN_PTR_VALUE_AT(token_filters, i);
-    grn_proc_ctx *token_filter_ctx = &token_cursor->token_filter_ctxs[i];
-    int n_args = 0;
-    grn_obj *args[2];
+    grn_obj *token_filter_object = GRN_PTR_VALUE_AT(token_filters, i);
+    grn_proc *token_filter = (grn_proc *)token_filter_object;
 
-    token_filter_ctx->caller = NULL;
-    token_filter_ctx->user_data.ptr = NULL;
-    token_filter_ctx->proc = (grn_proc *)token_filter;
-    token_filter_ctx->hooks = NULL;
-    token_filter_ctx->currh = NULL;
-    token_filter_ctx->phase = PROC_INIT;
-
-    args[n_args++] = token_cursor->table;
-    args[n_args++] = &mode;
-    ((grn_proc *)token_filter)->funcs[PROC_INIT](ctx,
-                                                 n_args, args,
-                                                 &token_filter_ctx->user_data);
+    token_filter->user_data =
+      token_filter->callbacks.token_filter.init(ctx,
+                                                token_cursor->table,
+                                                token_cursor->mode);
   }
-  GRN_OBJ_FIN(ctx, &mode);
 }
 
 grn_token_cursor *
@@ -625,45 +598,58 @@ grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
 static int
 grn_token_cursor_next_apply_token_filters(grn_ctx *ctx,
                                           grn_token_cursor *token_cursor,
-                                          grn_obj *current_token,
+                                          grn_obj *current_token_data,
                                           grn_obj *status)
 {
   grn_obj *token_filters = token_cursor->token_filters;
   unsigned int i, n_token_filters;
+  grn_token current_token;
+  grn_token next_token;
 
   if (token_filters) {
     n_token_filters = GRN_BULK_VSIZE(token_filters) / sizeof(grn_obj *);
   } else {
     n_token_filters = 0;
   }
+
+  GRN_TEXT_INIT(&(current_token.data), GRN_OBJ_DO_SHALLOW_COPY);
+  GRN_TEXT_SET(ctx, &(current_token.data),
+               GRN_TEXT_VALUE(current_token_data),
+               GRN_TEXT_LEN(current_token_data));
+  current_token.status = GRN_INT32_VALUE(status);
+  GRN_TEXT_INIT(&(next_token.data), GRN_OBJ_DO_SHALLOW_COPY);
+  GRN_TEXT_SET(ctx, &(next_token.data),
+               GRN_TEXT_VALUE(&(current_token.data)),
+               GRN_TEXT_LEN(&(current_token.data)));
+  next_token.status = current_token.status;
+
   for (i = 0; i < n_token_filters; i++) {
-    grn_obj *token_filter = GRN_PTR_VALUE_AT(token_filters, i);
-    grn_proc_ctx *token_filter_ctx = &token_cursor->token_filter_ctxs[i];
-    int n_args = 0;
-    grn_obj *args[2];
+    grn_obj *token_filter_object = GRN_PTR_VALUE_AT(token_filters, i);
+    grn_proc *token_filter = (grn_proc *)token_filter_object;
 
 #define SKIP_FLAGS\
     (GRN_TOKENIZER_TOKEN_SKIP |\
      GRN_TOKENIZER_TOKEN_SKIP_WITH_POSITION)
-    if (GRN_INT32_VALUE(status) & SKIP_FLAGS) {
+    if (current_token.status & SKIP_FLAGS) {
       break;
     }
 #undef SKIP_FLAGS
 
-    args[n_args++] = current_token;
-    args[n_args++] = status;
-    ((grn_proc *)token_filter)->funcs[PROC_NEXT](ctx,
-                                                 n_args,
-                                                 args,
-                                                 &token_filter_ctx->user_data);
-    status = grn_ctx_pop(ctx);
-    current_token = grn_ctx_pop(ctx);
+    token_filter->callbacks.token_filter.filter(ctx,
+                                                &current_token,
+                                                &next_token,
+                                                token_filter->user_data);
+    GRN_TEXT_SET(ctx, &(current_token.data),
+                 GRN_TEXT_VALUE(&(next_token.data)),
+                 GRN_TEXT_LEN(&(next_token.data)));
+    current_token.status = next_token.status;
   }
 
-  token_cursor->curr = (const unsigned char *)GRN_TEXT_VALUE(current_token);
-  token_cursor->curr_size = GRN_TEXT_LEN(current_token);
+  token_cursor->curr =
+    (const unsigned char *)GRN_TEXT_VALUE(&(current_token.data));
+  token_cursor->curr_size = GRN_TEXT_LEN(&(current_token.data));
 
-  return GRN_INT32_VALUE(status);
+  return current_token.status;
 }
 
 grn_id
@@ -811,17 +797,10 @@ grn_token_cursor_close_token_filters(grn_ctx *ctx,
     n_token_filters = 0;
   }
   for (i = 0; i < n_token_filters; i++) {
-    grn_obj *token_filter = GRN_PTR_VALUE_AT(token_filters, i);
-    grn_proc_ctx *token_filter_ctx = &token_cursor->token_filter_ctxs[i];
+    grn_obj *token_filter_object = GRN_PTR_VALUE_AT(token_filters, i);
+    grn_proc *token_filter = (grn_proc *)token_filter_object;
 
-    ((grn_proc *)token_filter)->funcs[PROC_FIN](ctx,
-                                                1,
-                                                &token_cursor->table,
-                                                &token_filter_ctx->user_data);
-  }
-
-  if (token_cursor->token_filter_ctxs) {
-    GRN_FREE(token_cursor->token_filter_ctxs);
+    token_filter->callbacks.token_filter.fin(ctx, token_filter->user_data);
   }
 }
 

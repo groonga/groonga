@@ -193,6 +193,21 @@ typedef unsigned int grn_tokenizer_status;
 #define GRN_TOKENIZER_CONTINUE GRN_TOKENIZER_TOKEN_CONTINUE
 #define GRN_TOKENIZER_LAST     GRN_TOKENIZER_TOKEN_LAST
 
+typedef struct _grn_token grn_token;
+
+GRN_PLUGIN_EXPORT grn_obj *grn_token_get_data(grn_ctx *ctx,
+                                              grn_token *token);
+GRN_PLUGIN_EXPORT grn_rc grn_token_set_data(grn_ctx *ctx,
+                                            grn_token *token,
+                                            const char *str_ptr,
+                                            int str_length);
+GRN_PLUGIN_EXPORT grn_tokenizer_status grn_token_get_status(grn_ctx *ctx,
+                                                            grn_token *token);
+GRN_PLUGIN_EXPORT grn_rc grn_token_set_status(grn_ctx *ctx,
+                                              grn_token *token,
+                                              grn_tokenizer_status status);
+
+
 /*
   grn_tokenizer_token_push() pushes the next token into `token'. Note that
   grn_tokenizer_token_push() does not make a copy of the given string. This

@@ -19,38 +19,41 @@
 #include <string.h>
 
 #include "groonga_in.h"
+#include "db.h"
 #include <groonga/token_filter.h>
 
 grn_rc
 grn_token_filter_register(grn_ctx *ctx,
                           const char *plugin_name_ptr,
                           int plugin_name_length,
-                          grn_proc_func *init,
-                          grn_proc_func *next,
-                          grn_proc_func *fin)
+                          grn_token_filter_init_func *init,
+                          grn_token_filter_filter_func *filter,
+                          grn_token_filter_fin_func *fin)
 {
-  grn_expr_var vars[] = {
-    { NULL, 0 },
-    { NULL, 0 },
-    { NULL, 0 }
-  };
-  GRN_TEXT_INIT(&vars[0].value, 0);
-  GRN_TEXT_INIT(&vars[1].value, 0);
-  GRN_UINT32_INIT(&vars[2].value, 0);
-
   if (plugin_name_length == -1) {
     plugin_name_length = strlen(plugin_name_ptr);
   }
+
   {
-    grn_obj * const obj = grn_proc_create(ctx,
-                                          plugin_name_ptr,
-                                          plugin_name_length,
-                                          GRN_PROC_TOKENIZER,
-                                          init, next, fin, 3, vars);
-    if (obj == NULL) {
-      GRN_PLUGIN_ERROR(ctx, GRN_TOKEN_FILTER_ERROR, "grn_proc_create() failed");
+    grn_obj *token_filter_object = grn_proc_create(ctx,
+                                                   plugin_name_ptr,
+                                                   plugin_name_length,
+                                                   GRN_PROC_TOKENIZER,
+                                                   NULL, NULL, NULL, 0, NULL);
+    if (token_filter_object == NULL) {
+      GRN_PLUGIN_ERROR(ctx, GRN_TOKEN_FILTER_ERROR,
+                       "[token-filter][%.*s] failed to grn_proc_create()",
+                       plugin_name_length, plugin_name_ptr);
       return ctx->rc;
     }
+
+    {
+      grn_proc *token_filter = (grn_proc *)token_filter_object;
+      token_filter->callbacks.token_filter.init = init;
+      token_filter->callbacks.token_filter.filter = filter;
+      token_filter->callbacks.token_filter.fin = fin;
+    }
   }
+
   return GRN_SUCCESS;
 }

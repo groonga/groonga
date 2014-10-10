@@ -26,24 +26,43 @@
 extern "C" {
 #endif  /* __cplusplus */
 
+typedef void *grn_token_filter_init_func(grn_ctx *ctx,
+                                         grn_obj *table,
+                                         grn_token_mode mode);
+
+typedef void grn_token_filter_filter_func(grn_ctx *ctx,
+                                          grn_token *current_token,
+                                          grn_token *next_token,
+                                          void *user_data);
+
+typedef void grn_token_filter_fin_func(grn_ctx *ctx,
+                                       void *user_data);
+
+
 /*
   grn_token_filter_register() registers a plugin to the database which is
   associated with `ctx'. `plugin_name_ptr' and `plugin_name_length' specify the
   plugin name. Alphabetic letters ('A'-'Z' and 'a'-'z'), digits ('0'-'9') and
-  an underscore ('_') are capable characters. `init', `next' and `fin' specify
-  the plugin functions. `init' is called for initializing a token_filter for a
-  document or query. `next' is called for extracting tokens one by one. `fin'
-  is called for finalizing a token_filter. grn_token_filter_register() returns
-  GRN_SUCCESS on success, an error code on failure. See "groonga.h" for more
-  details of grn_proc_func and grn_user_data, that is used as an argument of
-  grn_proc_func.
+  an underscore ('_') are capable characters.
+
+  `init', `filter' and `fin' specify the plugin functions.
+
+  `init' is called for initializing a token_filter for a document or
+  query.
+
+  `filter' is called for filtering tokens one by one.
+
+  `fin' is called for finalizing a token_filter.
+
+  grn_token_filter_register() returns GRN_SUCCESS on success, an error
+  code on failure.
  */
 GRN_PLUGIN_EXPORT grn_rc grn_token_filter_register(grn_ctx *ctx,
                                                    const char *plugin_name_ptr,
                                                    int plugin_name_length,
-                                                   grn_proc_func *init,
-                                                   grn_proc_func *next,
-                                                   grn_proc_func *fin);
+                                                   grn_token_filter_init_func *init,
+                                                   grn_token_filter_filter_func *filter,
+                                                   grn_token_filter_fin_func *fin);
 
 #ifdef __cplusplus
 }  /* extern "C" */

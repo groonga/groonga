@@ -46,6 +46,11 @@ typedef enum {
   GRN_TOKEN_NOT_FOUND
 } grn_token_status;
 
+struct _grn_token {
+  grn_obj data;
+  grn_tokenizer_status status;
+};
+
 typedef struct {
   grn_obj *table;
   const unsigned char *orig;
@@ -61,7 +66,6 @@ typedef struct {
   grn_obj *tokenizer;
   grn_proc_ctx pctx;
   grn_obj *token_filters;
-  grn_proc_ctx *token_filter_ctxs;
   uint32_t variant;
   grn_obj *nstr;
 } grn_token_cursor;
