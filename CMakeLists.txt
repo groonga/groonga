@@ -1,4 +1,4 @@
-# Copyright(C) 2012-2013 Brazil
+# Copyright(C) 2012-2014 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -307,15 +307,15 @@ endif()
 set(GRN_WITH_MECAB "auto"
   CACHE STRING "use MeCab for morphological analysis")
 if(NOT ${GRN_WITH_MECAB} STREQUAL "no")
-  set(MECAB_CONFIG "mecab-config" CACHE FILEPATH "mecab-config path")
+  set(GRN_MECAB_CONFIG "mecab-config" CACHE FILEPATH "mecab-config path")
   if(NOT CMAKE_CROSSCOMPILING)
-    find_program(MECAB_CONFIG_ABSOLUTE_PATH "${MECAB_CONFIG}")
+    find_program(GRN_MECAB_CONFIG_ABSOLUTE_PATH "${GRN_MECAB_CONFIG}")
   endif()
-  if(EXISTS "${MECAB_CONFIG_ABSOLUTE_PATH}")
-    execute_process(COMMAND "${MECAB_CONFIG_ABSOLUTE_PATH}" --inc-dir
+  if(EXISTS "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}")
+    execute_process(COMMAND "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}" --inc-dir
       OUTPUT_VARIABLE MECAB_INCLUDE_DIRS
       OUTPUT_STRIP_TRAILING_WHITESPACE)
-    execute_process(COMMAND "${MECAB_CONFIG_ABSOLUTE_PATH}" --libs-only-L
+    execute_process(COMMAND "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}" --libs-only-L
       OUTPUT_VARIABLE MECAB_LIBRARY_DIRS
       OUTPUT_STRIP_TRAILING_WHITESPACE)
     set(MECAB_LIBRARIES "mecab")
@@ -333,7 +333,7 @@ if(NOT ${GRN_WITH_MECAB} STREQUAL "no")
     endif()
   else()
     if(${GRN_WITH_MECAB} STREQUAL "yes")
-      message(FATAL_ERROR "No mecab-config found: <${MECAB_CONFIG}>")
+      message(FATAL_ERROR "No mecab-config found: <${GRN_MECAB_CONFIG}>")
     endif()
     set(GRN_WITH_MECAB FALSE)
   endif()
