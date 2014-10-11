@@ -2661,6 +2661,26 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
     GRN_TEXT_PUTS(ctx, outbuf, " --normalizer ");
     dump_obj_name(ctx, outbuf, normalizer);
   }
+  {
+    grn_obj token_filters;
+    int n_token_filters;
+
+    GRN_PTR_INIT(&token_filters, GRN_OBJ_VECTOR, GRN_ID_NIL);
+    grn_obj_get_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &token_filters);
+    n_token_filters = GRN_BULK_VSIZE(&token_filters) / sizeof(grn_obj *);
+    if (n_token_filters > 0) {
+      int i;
+      GRN_TEXT_PUTS(ctx, outbuf, " --token_filters ");
+      for (i = 0; i < n_token_filters; i++) {
+        grn_obj *token_filter = GRN_PTR_VALUE_AT(&token_filters, i);
+        if (i > 0) {
+          GRN_TEXT_PUTC(ctx, outbuf, ',');
+        }
+        dump_obj_name(ctx, outbuf, token_filter);
+      }
+    }
+    GRN_OBJ_FIN(ctx, &token_filters);
+  }
 
   GRN_TEXT_PUTC(ctx, outbuf, '\n');
 
