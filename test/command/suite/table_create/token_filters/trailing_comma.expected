@@ -1,0 +1,18 @@
+register token_filters/stop_word
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto   --token_filters "TokenFilterStopWord,"
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[table][create][token-filter] empty token filter name: <TokenFilterStopWord,||>"
+  ],
+  false
+]
+#|e| [table][create][token-filter] empty token filter name: <TokenFilterStopWord,||>
+dump
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+

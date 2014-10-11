@@ -1194,6 +1194,96 @@ grn_column_create_flags_to_text(grn_ctx *ctx, grn_obj *buf, grn_obj_flags flags)
   }
 }
 
+static grn_bool
+proc_table_create_set_token_filters_put(grn_ctx *ctx,
+                                        grn_obj *token_filters,
+                                        const char *token_filter_name,
+                                        int token_filter_name_length)
+{
+  grn_obj *token_filter;
+
+  token_filter = grn_ctx_get(ctx,
+                             token_filter_name,
+                             token_filter_name_length);
+  if (token_filter) {
+    GRN_PTR_PUT(ctx, token_filters, token_filter);
+    return GRN_TRUE;
+  } else {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[table][create][token-filter] nonexistent token filter: <%.*s>",
+        token_filter_name_length, token_filter_name);
+    return GRN_FALSE;
+  }
+}
+
+static grn_bool
+proc_table_create_set_token_filters_fill(grn_ctx *ctx,
+                                         grn_obj *token_filters,
+                                         grn_obj *token_filter_names)
+{
+  const char *start, *current, *end;
+  const char *name_start, *name_end;
+  const char *last_name_end;
+
+  start = GRN_TEXT_VALUE(token_filter_names);
+  end = start + GRN_TEXT_LEN(token_filter_names);
+  current = start;
+  name_start = NULL;
+  name_end = NULL;
+  last_name_end = start;
+  while (current < end) {
+    switch (current[0]) {
+    case ' ' :
+      if (name_start && !name_end) {
+        name_end = current;
+      }
+      break;
+    case ',' :
+      if (!name_start) {
+        goto break_loop;
+      }
+      if (!name_end) {
+        name_end = current;
+      }
+      proc_table_create_set_token_filters_put(ctx,
+                                              token_filters,
+                                              name_start,
+                                              name_end - name_start);
+      last_name_end = name_end + 1;
+      name_start = NULL;
+      name_end = NULL;
+      break;
+    default :
+      if (!name_start) {
+        name_start = current;
+      }
+      break;
+    }
+    current++;
+  }
+
+break_loop:
+  if (!name_start) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[table][create][token-filter] empty token filter name: "
+        "<%.*s|%.*s|%.*s>",
+        (int)(last_name_end - start), start,
+        (int)(current - last_name_end), last_name_end,
+        (int)(end - current), current);
+    return GRN_FALSE;
+  }
+
+  if (!name_end) {
+    name_end = current;
+  }
+  proc_table_create_set_token_filters_put(ctx,
+                                          token_filters,
+                                          name_start,
+                                          name_end - name_start);
+
+  return GRN_TRUE;
+}
+
 static void
 proc_table_create_set_token_filters(grn_ctx *ctx,
                                     grn_obj *table,
@@ -1206,12 +1296,11 @@ proc_table_create_set_token_filters(grn_ctx *ctx,
   }
 
   GRN_PTR_INIT(&token_filters, GRN_OBJ_VECTOR, 0);
-  GRN_PTR_PUT(ctx,
-              &token_filters,
-              grn_ctx_get(ctx,
-                          GRN_TEXT_VALUE(token_filter_names),
-                          GRN_TEXT_LEN(token_filter_names)));
-  grn_obj_set_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &token_filters);
+  if (proc_table_create_set_token_filters_fill(ctx,
+                                               &token_filters,
+                                               token_filter_names)) {
+    grn_obj_set_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &token_filters);
+  }
   grn_obj_unlink(ctx, &token_filters);
 }
 
