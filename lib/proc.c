@@ -2750,7 +2750,7 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
     GRN_TEXT_PUTS(ctx, outbuf, " --normalizer ");
     dump_obj_name(ctx, outbuf, normalizer);
   }
-  {
+  if (table->header.type != GRN_TABLE_NO_KEY) {
     grn_obj token_filters;
     int n_token_filters;
 
