@@ -15,8 +15,8 @@ rpmbuild_options=
 
 swap_file=/tmp/swap
 run sudo dd if=/dev/zero of="$swap_file" bs=1024 count=4096K
-run sudo PATH=/sbin:$PATH mkswap "$swap_file"
-run sudo PATH=/sbin:$PATH swapon "$swap_file"
+run sudo /sbin/mkswap "$swap_file"
+run sudo /sbin/swapon "$swap_file"
 
 distribution=$(cut -d " " -f 1 /etc/redhat-release | tr "A-Z" "a-z")
 if grep -q Linux /etc/redhat-release; then
