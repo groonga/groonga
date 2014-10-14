@@ -70,6 +70,10 @@ Files: doc/locale/*/websupport.js
 Copyright: 2007-2014 the Sphinx team
 License: BSD-2-clause
 
+Files: doc/locale/*/basic.css
+Copyright: 2007-2014 the Sphinx team
+License: BSD-2-clause
+
 License: BSD-2-clause
  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
  .
