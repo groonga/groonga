@@ -3500,17 +3500,18 @@ static void
 tokenize(grn_ctx *ctx, grn_hash *lexicon, grn_obj *string, grn_token_mode mode,
          unsigned int flags, grn_obj *tokens)
 {
-  grn_token *token;
+  grn_token_cursor *token_cursor;
 
-  token = grn_token_open(ctx, (grn_obj *)lexicon,
-                         GRN_TEXT_VALUE(string), GRN_TEXT_LEN(string),
-                         mode, flags);
-  if (!token) {
+  token_cursor =
+    grn_token_cursor_open(ctx, (grn_obj *)lexicon,
+                          GRN_TEXT_VALUE(string), GRN_TEXT_LEN(string),
+                          mode, flags);
+  if (!token_cursor) {
     return;
   }
 
-  while (token->status == GRN_TOKEN_DOING) {
-    grn_id token_id = grn_token_next(ctx, token);
+  while (token_cursor->status == GRN_TOKEN_DOING) {
+    grn_id token_id = grn_token_cursor_next(ctx, token_cursor);
     tokenize_token *current_token;
     if (token_id == GRN_ID_NIL) {
       continue;
@@ -3518,9 +3519,9 @@ tokenize(grn_ctx *ctx, grn_hash *lexicon, grn_obj *string, grn_token_mode mode,
     grn_bulk_space(ctx, tokens, sizeof(tokenize_token));
     current_token = ((tokenize_token *)(GRN_BULK_CURR(tokens))) - 1;
     current_token->id = token_id;
-    current_token->position = token->pos;
+    current_token->position = token_cursor->pos;
   }
-  grn_token_close(ctx, token);
+  grn_token_cursor_close(ctx, token_cursor);
 }
 
 static grn_obj *
@@ -3574,15 +3575,16 @@ proc_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       GRN_OBJ_FIN(ctx, &tokens);
     } else if (MODE_NAME_EQUAL("GET")) {
       {
-        grn_token *token;
-        token = grn_token_open(ctx, (grn_obj *)lexicon,
-                               GRN_TEXT_VALUE(string), GRN_TEXT_LEN(string),
-                               GRN_TOKEN_ADD, flags);
-        if (token) {
-          while (token->status == GRN_TOKEN_DOING) {
-            grn_token_next(ctx, token);
+        grn_token_cursor *token_cursor;
+        token_cursor =
+          grn_token_cursor_open(ctx, (grn_obj *)lexicon,
+                                GRN_TEXT_VALUE(string), GRN_TEXT_LEN(string),
+                                GRN_TOKEN_ADD, flags);
+        if (token_cursor) {
+          while (token_cursor->status == GRN_TOKEN_DOING) {
+            grn_token_cursor_next(ctx, token_cursor);
           }
-          grn_token_close(ctx, token);
+          grn_token_cursor_close(ctx, token_cursor);
         }
       }
 

@@ -33,8 +33,8 @@ typedef struct {
   grn_tokenizer_token token;
 } grn_stop_word_token_filter;
 
-static grn_obj *
-stop_word_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+static void *
+stop_word_init(grn_ctx *ctx, grn_obj *table, grn_token_mode mode)
 {
   grn_stop_word_token_filter *token_filter;
 
@@ -46,8 +46,8 @@ stop_word_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     return NULL;
   }
 
-  token_filter->table = args[0];
-  token_filter->mode = GRN_UINT32_VALUE(args[1]);
+  token_filter->table = table;
+  token_filter->mode = mode;
   token_filter->column = grn_obj_column(ctx,
                                         token_filter->table,
                                         COLUMN_NAME,
@@ -70,27 +70,29 @@ stop_word_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     return NULL;
   }
 
-  user_data->ptr = token_filter;
-
   GRN_BOOL_INIT(&(token_filter->value), 0);
   grn_tokenizer_token_init(ctx, &(token_filter->token));
 
-  return NULL;
+  return token_filter;
 }
 
-static grn_obj *
-stop_word_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+static void
+stop_word_filter(grn_ctx *ctx,
+                 grn_token *current_token,
+                 grn_token *next_token,
+                 void *user_data)
 {
-  grn_stop_word_token_filter *token_filter = user_data->ptr;
-  grn_obj *current_token = args[0];
-  int status = GRN_INT32_VALUE(args[1]);
+  grn_stop_word_token_filter *token_filter = user_data;
 
   if (token_filter->mode == GRN_TOKEN_GET) {
     grn_id id;
+    grn_obj *data;
+
+    data = grn_token_get_data(ctx, current_token);
     id = grn_table_get(ctx,
                        token_filter->table,
-                       GRN_TEXT_VALUE(current_token),
-                       GRN_TEXT_LEN(current_token));
+                       GRN_TEXT_VALUE(data),
+                       GRN_TEXT_LEN(data));
     if (id != GRN_ID_NIL) {
       GRN_BULK_REWIND(&(token_filter->value));
       grn_obj_get_value(ctx,
@@ -98,32 +100,27 @@ stop_word_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
                         id,
                         &(token_filter->value));
       if (GRN_BOOL_VALUE(&(token_filter->value))) {
+        grn_tokenizer_status status;
+        status = grn_token_get_status(ctx, current_token);
         status |= GRN_TOKENIZER_TOKEN_SKIP;
+        grn_token_set_status(ctx, next_token, status);
       }
     }
   }
-
-  grn_tokenizer_token_push(ctx,
-                           &(token_filter->token),
-                           GRN_TEXT_VALUE(current_token),
-                           GRN_TEXT_LEN(current_token),
-                           status);
-
-  return NULL;
 }
 
-static grn_obj *
-stop_word_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+static void
+stop_word_fin(grn_ctx *ctx, void *user_data)
 {
-  grn_stop_word_token_filter *token_filter = user_data->ptr;
+  grn_stop_word_token_filter *token_filter = user_data;
   if (!token_filter) {
-    return NULL;
+    return;
   }
+
   grn_tokenizer_token_fin(ctx, &(token_filter->token));
   grn_obj_unlink(ctx, token_filter->column);
   grn_obj_unlink(ctx, &(token_filter->value));
   GRN_PLUGIN_FREE(ctx, token_filter);
-  return NULL;
 }
 
 grn_rc
@@ -140,7 +137,7 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   rc = grn_token_filter_register(ctx,
                                  "TokenFilterStopWord", -1,
                                  stop_word_init,
-                                 stop_word_next,
+                                 stop_word_filter,
                                  stop_word_fin);
 
   return rc;

@@ -5695,15 +5695,15 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
     case GRN_BULK :
       {
         unsigned int token_flags = 0;
-        grn_token *token;
+        grn_token_cursor *token_cursor;
         if (v && s &&
-            (token = grn_token_open(ctx, lexicon, v, s,
-                                    GRN_TOKEN_ADD, token_flags))) {
-          while (token->status == GRN_TOKEN_DOING) {
-            grn_id tid = grn_token_next(ctx, token);
+            (token_cursor = grn_token_cursor_open(ctx, lexicon, v, s,
+                                                  GRN_TOKEN_ADD, token_flags))) {
+          while (token_cursor->status == GRN_TOKEN_DOING) {
+            grn_id tid = grn_token_cursor_next(ctx, token_cursor);
             grn_uvector_add_element(ctx, &uvector, tid, 0);
           }
-          grn_token_close(ctx, token);
+          grn_token_cursor_close(ctx, token_cursor);
         }
         rc = grn_ja_put(ctx, (grn_ja *)obj, id,
                         GRN_BULK_HEAD(&uvector), GRN_BULK_VSIZE(&uvector),
@@ -9859,10 +9859,10 @@ grn_table_tokenize(grn_ctx *ctx, grn_obj *table,
                    const char *str, unsigned int str_len,
                    grn_obj *buf, grn_bool addp)
 {
-  grn_token *token = NULL;
+  grn_token_cursor *token_cursor = NULL;
   grn_token_mode mode = addp ? GRN_TOKEN_ADD : GRN_TOKEN_GET;
   GRN_API_ENTER;
-  if (!(token = grn_token_open(ctx, table, str, str_len, mode, 0))) {
+  if (!(token_cursor = grn_token_cursor_open(ctx, table, str, str_len, mode, 0))) {
     goto exit;
   }
   if (buf) {
@@ -9872,15 +9872,15 @@ grn_table_tokenize(grn_ctx *ctx, grn_obj *table,
       goto exit;
     }
   }
-  while (token->status != GRN_TOKEN_DONE && token->status != GRN_TOKEN_DONE_SKIP) {
+  while (token_cursor->status != GRN_TOKEN_DONE && token_cursor->status != GRN_TOKEN_DONE_SKIP) {
     grn_id tid;
-    if ((tid = grn_token_next(ctx, token))) {
+    if ((tid = grn_token_cursor_next(ctx, token_cursor))) {
       GRN_RECORD_PUT(ctx, buf, tid);
     }
   }
 exit :
-  if (token) {
-    grn_token_close(ctx, token);
+  if (token_cursor) {
+    grn_token_cursor_close(ctx, token_cursor);
   }
   GRN_API_RETURN(buf);
 }
