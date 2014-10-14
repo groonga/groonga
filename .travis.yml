@@ -8,6 +8,7 @@ compiler:
 env:
   - BUILD_TOOL=autotools
   - BUILD_TOOL=autotools ENABLE_MRUBY=yes
+  - BUILD_TOOL=autotools CFLAGS=-funsigned-char CXXFLAGS=-funsigned-char
   - BUILD_TOOL=cmake
 install:
   - curl --silent --location https://raw.github.com/clear-code/cutter/master/data/travis/setup.sh | sh
