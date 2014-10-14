@@ -15,7 +15,7 @@ Copyright: 2011 Kouhei Sutou <kou@clear-code.com>
 	   orangain <orangain@gmail.com>
 License: LGPL-2.1
 
-Files: data/html/admin/css/redmond/*
+Files: data/html/admin/css/redmond/* examples/dictionary/html/css/smoothness/jquery-ui-1.8.12.custom.css data/html/admin/css/redmond/jquery-ui-1.8.18.custom.css
 Copyright: 2011, Brandon Aaron
 	   Paul Bakaus (paulbakaus.com)
 	   David Bolter
