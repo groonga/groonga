@@ -58,6 +58,18 @@ Files: doc/locale/*/underscore.js
 Copyright: 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
 License: MIT
 
+Files: doc/locale/*/doctools.js
+Copyright: 2007-2014 the Sphinx team
+License: BSD-2-clause
+
+Files: doc/locale/*/searchtools.js
+Copyright: 2007-2014 the Sphinx team
+License: BSD-2-clause
+
+Files: doc/locale/*/websupport.js
+Copyright: 2007-2014 the Sphinx team
+License: BSD-2-clause
+
 License: LGPL-2.1
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
