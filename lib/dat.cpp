@@ -701,7 +701,7 @@ grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
                                                           dat->normalizer,
                                                           flags);
       if (!normalized_string) {
-        fprintf(stderr, "error: grn_string_open() failed!\n");
+        *str_rest = str;
         return -1;
       }
       grn_string_get_normalized(ctx, normalized_string, &str, &str_size, NULL);
