@@ -1,0 +1,18 @@
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos tags COLUMN_VECTOR ShortText
+
+load --table Memos
+[
+{
+  "_key": "Groonga is fast",
+  "tags": ["groonga"]
+},
+{
+  "_key": "Mroonga is fast",
+  "tags": ["mroonga"]
+}
+]
+
+select Memos \
+  --filter 'tags + "groonga"' \
+  --output_columns _key,_score

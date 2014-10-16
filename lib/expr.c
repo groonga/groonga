@@ -2230,7 +2230,8 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   code++;                                                               \
 } while (0)
 
-#define ARITHMETIC_BINARY_OPERATION_DISPATCH(integer8_operation,        \
+#define ARITHMETIC_BINARY_OPERATION_DISPATCH(operator,                  \
+                                             integer8_operation,        \
                                              integer16_operation,       \
                                              integer32_operation,       \
                                              integer64_operation,       \
@@ -2242,6 +2243,23 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   grn_obj *x, *y;                                                       \
                                                                         \
   POP2ALLOC1(x, y, res);                                                \
+  if (x->header.type == GRN_VECTOR || y->header.type == GRN_VECTOR) {   \
+    grn_obj inspected_x;                                                \
+    grn_obj inspected_y;                                                \
+    GRN_TEXT_INIT(&inspected_x, 0);                                     \
+    GRN_TEXT_INIT(&inspected_y, 0);                                     \
+    grn_inspect(ctx, &inspected_x, x);                                  \
+    grn_inspect(ctx, &inspected_y, y);                                  \
+    ERR(GRN_INVALID_ARGUMENT,                                           \
+        "<%s> doesn't support vector: <%.*s> %s <%.*s>",                \
+        operator,                                                       \
+        (int)GRN_TEXT_LEN(&inspected_x), GRN_TEXT_VALUE(&inspected_x),  \
+        operator,                                                       \
+        (int)GRN_TEXT_LEN(&inspected_y), GRN_TEXT_VALUE(&inspected_y)); \
+    GRN_OBJ_FIN(ctx, &inspected_x);                                     \
+    GRN_OBJ_FIN(ctx, &inspected_y);                                     \
+    goto exit;                                                          \
+  }                                                                     \
   if (y != res) {                                                       \
     res->header.domain = x->header.domain;                              \
   }                                                                     \
@@ -3801,6 +3819,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_PLUS :
         ARITHMETIC_BINARY_OPERATION_DISPATCH(
+          "+",
           INTEGER_ARITHMETIC_OPERATION_PLUS,
           INTEGER_ARITHMETIC_OPERATION_PLUS,
           INTEGER_ARITHMETIC_OPERATION_PLUS,
@@ -3849,6 +3868,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
             ,);
         } else {
           ARITHMETIC_BINARY_OPERATION_DISPATCH(
+            "-",
             INTEGER_ARITHMETIC_OPERATION_MINUS,
             INTEGER_ARITHMETIC_OPERATION_MINUS,
             INTEGER_ARITHMETIC_OPERATION_MINUS,
@@ -3867,6 +3887,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_STAR :
         ARITHMETIC_BINARY_OPERATION_DISPATCH(
+          "*",
           INTEGER_ARITHMETIC_OPERATION_STAR,
           INTEGER_ARITHMETIC_OPERATION_STAR,
           INTEGER_ARITHMETIC_OPERATION_STAR,
@@ -3916,6 +3937,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_BITWISE_OR :
         ARITHMETIC_BINARY_OPERATION_DISPATCH(
+          "|",
           INTEGER_ARITHMETIC_OPERATION_BITWISE_OR,
           INTEGER_ARITHMETIC_OPERATION_BITWISE_OR,
           INTEGER_ARITHMETIC_OPERATION_BITWISE_OR,
@@ -3927,6 +3949,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_BITWISE_XOR :
         ARITHMETIC_BINARY_OPERATION_DISPATCH(
+          "^",
           INTEGER_ARITHMETIC_OPERATION_BITWISE_XOR,
           INTEGER_ARITHMETIC_OPERATION_BITWISE_XOR,
           INTEGER_ARITHMETIC_OPERATION_BITWISE_XOR,
@@ -3938,6 +3961,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_BITWISE_AND :
         ARITHMETIC_BINARY_OPERATION_DISPATCH(
+          "&",
           INTEGER_ARITHMETIC_OPERATION_BITWISE_AND,
           INTEGER_ARITHMETIC_OPERATION_BITWISE_AND,
           INTEGER_ARITHMETIC_OPERATION_BITWISE_AND,
@@ -3949,6 +3973,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_SHIFTL :
         ARITHMETIC_BINARY_OPERATION_DISPATCH(
+          "<<",
           INTEGER_ARITHMETIC_OPERATION_SHIFTL,
           INTEGER_ARITHMETIC_OPERATION_SHIFTL,
           INTEGER_ARITHMETIC_OPERATION_SHIFTL,
@@ -3960,6 +3985,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_SHIFTR :
         ARITHMETIC_BINARY_OPERATION_DISPATCH(
+          ">>",
           INTEGER_ARITHMETIC_OPERATION_SHIFTR,
           INTEGER_ARITHMETIC_OPERATION_SHIFTR,
           INTEGER_ARITHMETIC_OPERATION_SHIFTR,
@@ -3971,6 +3997,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_SHIFTRR :
         ARITHMETIC_BINARY_OPERATION_DISPATCH(
+          ">>>",
           INTEGER8_ARITHMETIC_OPERATION_SHIFTRR,
           INTEGER16_ARITHMETIC_OPERATION_SHIFTRR,
           INTEGER32_ARITHMETIC_OPERATION_SHIFTRR,
