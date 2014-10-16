@@ -297,7 +297,7 @@ grn_vector_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *vector)
       grn_obj value_object;
       GRN_OBJ_INIT(&value_object, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY,
                    section->domain);
-      grn_bulk_write(ctx, &value_object, value_raw, section->length);
+      GRN_TEXT_SET(ctx, &value_object, value_raw, section->length);
       grn_inspect(ctx, buffer, &value_object);
       GRN_OBJ_FIN(ctx, &value_object);
     }
