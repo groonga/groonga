@@ -891,6 +891,17 @@ if test "x$with_lzo" = "xyes"; then
   AC_SEARCH_LIBS(lzo1_compress, lzo2, [], [AC_MSG_ERROR("No liblzo2 found")])
 fi
 
+# Snappy
+AC_ARG_WITH(snappy,
+  [AS_HELP_STRING([--with-snappy],
+    [use Snappy for data compression. [default=no]])],
+  [with_snappy="$withval"],
+  [with_snappy="no"])
+if test "x$with_snappy" = "xyes"; then
+  AC_DEFINE(GRN_WITH_SNAPPY, [1], [with snappy])
+  AC_SEARCH_LIBS(snappy_compress, snappy, [], [AC_MSG_ERROR("No libsnappy found")])
+fi
+
 # MeCab
 # NOTE: MUST be checked last
 AC_ARG_WITH(mecab,

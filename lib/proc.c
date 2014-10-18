@@ -1108,6 +1108,9 @@ grn_parse_column_create_flags(grn_ctx *ctx, const char *nptr, const char *end)
     } else if (!memcmp(nptr, "COMPRESS_LZO", 12)) {
       flags |= GRN_OBJ_COMPRESS_LZO;
       nptr += 12;
+    } else if (!memcmp(nptr, "COMPRESS_SNAPPY", 15)) {
+      flags |= GRN_OBJ_COMPRESS_SNAPPY;
+      nptr += 15;
     } else if (!memcmp(nptr, "WITH_SECTION", 12)) {
       flags |= GRN_OBJ_WITH_SECTION;
       nptr += 12;
@@ -1193,6 +1196,9 @@ grn_column_create_flags_to_text(grn_ctx *ctx, grn_obj *buf, grn_obj_flags flags)
     break;
   case GRN_OBJ_COMPRESS_LZO:
     GRN_TEXT_PUTS(ctx, buf, "|COMPRESS_LZO");
+    break;
+  case GRN_OBJ_COMPRESS_SNAPPY:
+    GRN_TEXT_PUTS(ctx, buf, "|COMPRESS_SNAPPY");
     break;
   }
   if (flags & GRN_OBJ_PERSISTENT) {

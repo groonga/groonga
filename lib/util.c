@@ -403,6 +403,9 @@ grn_store_inspect_body(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   case GRN_OBJ_COMPRESS_LZO :
     GRN_TEXT_PUTS(ctx, buf, "lzo");
     break;
+  case GRN_OBJ_COMPRESS_SNAPPY :
+    GRN_TEXT_PUTS(ctx, buf, "snappy");
+    break;
   default:
     break;
   }

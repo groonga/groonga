@@ -1265,6 +1265,47 @@ grn_ja_ref_lzo(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *va
 }
 #endif /* GRN_WITH_LZO */
 
+#ifdef GRN_WITH_SNAPPY
+#include <snappy-c.h>
+
+static void *
+grn_ja_ref_snappy(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
+{
+  void *svalue;
+  uint32_t svalue_len;
+  size_t sout_len;
+  if (!(svalue = grn_ja_ref_raw(ctx, ja, id, iw, &svalue_len))) {
+    iw->value = NULL;
+    *value_len = 0;
+    return NULL;
+  }
+  if (snappy_uncompressed_length((const char *)svalue,
+                                 svalue_len,
+                                 &sout_len) != SNAPPY_OK) {
+    GRN_FREE(iw->value);
+    iw->value = NULL;
+    *value_len = 0;
+    return NULL;
+  }
+  if (!(iw->value = GRN_MALLOC(sout_len))) {
+    iw->value = NULL;
+    *value_len = 0;
+    return NULL;
+  }
+  if (snappy_uncompress((const char *)svalue,
+                        svalue_len,
+                        (char *)(iw->value),
+                        &sout_len) != SNAPPY_OK) {
+    GRN_FREE(iw->value);
+    iw->value = NULL;
+    *value_len = 0;
+    return NULL;
+  }
+  *value_len = sout_len;
+  return iw->value;
+}
+#endif /* GRN_WITH_SNAPPY */
+
 void *
 grn_ja_ref(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
 {
@@ -1278,6 +1319,11 @@ grn_ja_ref(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_
     return grn_ja_ref_lzo(ctx, ja, id, iw, value_len);
   }
 #endif /* GRN_WITH_LZO */
+#ifdef GRN_WITH_SNAPPY
+  if (ja->header->flags & GRN_OBJ_COMPRESS_SNAPPY) {
+    return grn_ja_ref_snappy(ctx, ja, id, iw, value_len);
+  }
+#endif /* GRN_WITH_SNAPPY */
   return grn_ja_ref_raw(ctx, ja, id, iw, value_len);
 }
 
@@ -1388,6 +1434,32 @@ grn_ja_put_lzo(grn_ctx *ctx, grn_ja *ja, grn_id id,
 }
 #endif /* GRN_WITH_LZO */
 
+#ifdef GRN_WITH_SNAPPY
+inline static grn_rc
+grn_ja_put_snappy(grn_ctx *ctx, grn_ja *ja, grn_id id,
+                  void *value, uint32_t value_len, int flags, uint64_t *cas)
+{
+  grn_rc rc;
+  void *svalue;
+  size_t svalue_len;
+
+  if (value_len == 0) {
+    return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
+  }
+
+  svalue_len = snappy_max_compressed_length(value_len);
+  if (!(svalue = GRN_MALLOC(svalue_len))) { return GRN_NO_MEMORY_AVAILABLE; }
+  if (snappy_compress((char *)value, value_len, (char *)svalue, &svalue_len) != SNAPPY_OK) {
+    GRN_FREE(svalue);
+    ERR(GRN_SNAPPY_ERROR, "snappy_compress");
+    return ctx->rc;
+  }
+  rc = grn_ja_put_raw(ctx, ja, id, svalue, svalue_len, flags, cas);
+  GRN_FREE(svalue);
+  return rc;
+}
+#endif /* GRN_WITH_SNAPPY */
+
 grn_rc
 grn_ja_put(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_len,
            int flags, uint64_t *cas)
@@ -1402,6 +1474,11 @@ grn_ja_put(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_len,
     return grn_ja_put_lzo(ctx, ja, id, value, value_len, flags, cas);
   }
 #endif /* GRN_WITH_LZO */
+#ifdef GRN_WITH_SNAPPY
+  if (ja->header->flags & GRN_OBJ_COMPRESS_SNAPPY) {
+    return grn_ja_put_snappy(ctx, ja, id, value, value_len, flags, cas);
+  }
+#endif /* GRN_WITH_SNAPPY */
   return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
 }
 

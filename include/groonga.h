@@ -117,6 +117,7 @@ typedef enum {
   GRN_UNSUPPORTED_COMMAND_VERSION = -71,
   GRN_NORMALIZER_ERROR = -72,
   GRN_TOKEN_FILTER_ERROR = -73,
+  GRN_SNAPPY_ERROR = -74
 } grn_rc;
 
 GRN_API grn_rc grn_init(void);
@@ -301,6 +302,7 @@ typedef unsigned short int grn_obj_flags;
 #define GRN_OBJ_COMPRESS_NONE          (0x00<<4)
 #define GRN_OBJ_COMPRESS_ZLIB          (0x01<<4)
 #define GRN_OBJ_COMPRESS_LZO           (0x02<<4)
+#define GRN_OBJ_COMPRESS_SNAPPY        (0x04<<4)
 
 #define GRN_OBJ_WITH_SECTION           (0x01<<7)
 #define GRN_OBJ_WITH_WEIGHT            (0x01<<8)
@@ -793,7 +795,8 @@ typedef enum {
   GRN_INFO_SUPPORT_ZLIB,
   GRN_INFO_SUPPORT_LZO,
   GRN_INFO_NORMALIZER,
-  GRN_INFO_TOKEN_FILTERS
+  GRN_INFO_TOKEN_FILTERS,
+  GRN_INFO_SUPPORT_SNAPPY
 } grn_info_type;
 
 GRN_API grn_obj *grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valuebuf);

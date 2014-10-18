@@ -6207,6 +6207,18 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
     GRN_BOOL_PUT(ctx, valuebuf, GRN_FALSE);
 #endif /* GRN_WITH_LZO */
     break;
+  case GRN_INFO_SUPPORT_SNAPPY :
+    if (!valuebuf && !(valuebuf = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_BOOL))) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "failed to open value buffer for GRN_INFO_SNAPPY_SUPPORT");
+      goto exit;
+    }
+#ifdef GRN_WITH_SNAPPY
+    GRN_BOOL_PUT(ctx, valuebuf, GRN_TRUE);
+#else
+    GRN_BOOL_PUT(ctx, valuebuf, GRN_FALSE);
+#endif
+    break;
   default :
     if (!obj) {
       ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_info failed");
