@@ -814,6 +814,19 @@ grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
   x = code_->value;                                             \
   if (CONSTP(x)) {                                              \
     switch (domain) {                                           \
+    case GRN_DB_INT32:                                          \
+      {                                                         \
+        int value;                                              \
+        value = GRN_INT32_VALUE(x);                             \
+        if (value == (int)0x80000000) {                         \
+          domain = GRN_DB_INT64;                                \
+          x->header.domain = domain;                            \
+          GRN_INT64_SET(ctx, x, -((long long int)value));       \
+        } else {                                                \
+          GRN_INT32_SET(ctx, x, -value);                        \
+        }                                                       \
+      }                                                         \
+      break;                                                    \
     case GRN_DB_UINT32:                                         \
       {                                                         \
         unsigned int value;                                     \
@@ -4366,9 +4379,14 @@ scan_info_build_find_index_column_index(grn_ctx *ctx,
   index = ec->value;
   if (n_rest_codes > 2 &&
       ec[1].value &&
-      ec[1].value->header.domain == GRN_DB_UINT32 &&
+      (ec[1].value->header.domain == GRN_DB_INT32 ||
+       ec[1].value->header.domain == GRN_DB_UINT32) &&
       ec[2].op == GRN_OP_GET_MEMBER) {
-    sid = GRN_UINT32_VALUE(ec[1].value) + 1;
+    if (ec[1].value->header.domain == GRN_DB_INT32) {
+      sid = GRN_INT32_VALUE(ec[1].value) + 1;
+    } else {
+      sid = GRN_UINT32_VALUE(ec[1].value) + 1;
+    }
     offset = 2;
     weight = get_weight(ctx, ec + offset);
   } else {
@@ -6806,7 +6824,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
           rest = rest_float;
         } else {
           const char *rest64 = rest;
-          unsigned int uint32 = grn_atoui(q->cur, q->str_end, &rest);
+          grn_atoui(q->cur, q->str_end, &rest);
           // checks to see grn_atoi failed (see above NOTE)
           if ((int64 > UINT32_MAX) ||
               (q->str_end != rest && *rest >= '0' && *rest <= '9')) {
@@ -6815,11 +6833,16 @@ parse_script(grn_ctx *ctx, efs_info *q)
             GRN_INT64_SET(ctx, &int64buf, int64);
             grn_expr_append_const(ctx, q->e, &int64buf, GRN_OP_PUSH, 1);
             rest = rest64;
+          } else if (int64 > INT32_MAX || int64 < INT32_MIN) {
+            grn_obj int64buf;
+            GRN_INT64_INIT(&int64buf, 0);
+            GRN_INT64_SET(ctx, &int64buf, int64);
+            grn_expr_append_const(ctx, q->e, &int64buf, GRN_OP_PUSH, 1);
           } else {
-            grn_obj uint32buf;
-            GRN_UINT32_INIT(&uint32buf, 0);
-            GRN_UINT32_SET(ctx, &uint32buf, uint32);
-            grn_expr_append_const(ctx, q->e, &uint32buf, GRN_OP_PUSH, 1);
+            grn_obj int32buf;
+            GRN_INT32_INIT(&int32buf, 0);
+            GRN_INT32_SET(ctx, &int32buf, (int32_t)int64);
+            grn_expr_append_const(ctx, q->e, &int32buf, GRN_OP_PUSH, 1);
           }
         }
         PARSE(GRN_EXPR_TOKEN_DECIMAL);

@@ -1,0 +1,11 @@
+table_create Numbers TABLE_NO_KEY
+column_create Numbers number COLUMN_SCALAR Int8
+
+load --table Numbers
+[
+{"number": 120},
+{"number": -10},
+{"number": 100}
+]
+
+select --table Numbers --filter 'number <= 100'

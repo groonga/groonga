@@ -42,7 +42,7 @@ void test_value_access(void);
 void test_snip(void);
 void test_snip_without_tags(void);
 void test_float_literal(void);
-void test_uint32_literal(void);
+void test_int32_literal(void);
 void test_lager_than_int32_literal(void);
 void test_int64_literal(void);
 void test_long_integer_literal(void);
@@ -811,14 +811,14 @@ test_float_literal(void)
 }
 
 void
-test_uint32_literal(void)
+test_int32_literal(void)
 {
   grn_obj *var;
   const char *str_expr = "var = 123456";
 
   var = parse_numeric_literal(str_expr);
-  cut_assert_equal_int(GRN_DB_UINT32, GRN_OBJ_GET_DOMAIN(var));
-  cut_assert_equal_int(123456, GRN_UINT32_VALUE(var));
+  cut_assert_equal_int(GRN_DB_INT32, GRN_OBJ_GET_DOMAIN(var));
+  cut_assert_equal_int(123456, GRN_INT32_VALUE(var));
 }
 
 void
@@ -828,8 +828,8 @@ test_lager_than_int32_literal(void)
   const char *str_expr = "var = 3456789012";
 
   var = parse_numeric_literal(str_expr);
-  cut_assert_equal_int(GRN_DB_UINT32, GRN_OBJ_GET_DOMAIN(var));
-  cut_assert_equal_int(3456789012U, GRN_UINT32_VALUE(var));
+  cut_assert_equal_int(GRN_DB_INT64, GRN_OBJ_GET_DOMAIN(var));
+  cut_assert_equal_int(G_GINT64_CONSTANT(3456789012), GRN_INT64_VALUE(var));
 }
 
 void
