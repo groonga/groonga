@@ -3534,7 +3534,6 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
   grn_id domain = GRN_ID_NIL;
   char fullname[GRN_TABLE_MAX_KEY_SIZE];
   char buffer[PATH_MAX];
-  grn_bool ja_p = GRN_FALSE;
   GRN_API_ENTER;
   if (!table) {
     ERR(GRN_INVALID_ARGUMENT, "[column][create] table is missing");
@@ -3654,14 +3653,12 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
   case GRN_OBJ_COLUMN_SCALAR :
     if ((flags & GRN_OBJ_KEY_VAR_SIZE) || value_size > sizeof(int64_t)) {
       res = (grn_obj *)grn_ja_create(ctx, path, value_size, flags);
-      ja_p = GRN_TRUE;
     } else {
       res = (grn_obj *)grn_ra_create(ctx, path, value_size);
     }
     break;
   case GRN_OBJ_COLUMN_VECTOR :
     res = (grn_obj *)grn_ja_create(ctx, path, value_size * 30/*todo*/, flags);
-    ja_p = GRN_TRUE;
     //todo : zlib support
     break;
   case GRN_OBJ_COLUMN_INDEX :
@@ -3674,31 +3671,6 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     DB_OBJ(res)->range = range;
     DB_OBJ(res)->header.flags = flags;
     res->header.flags = flags;
-    if (ja_p) {
-      grn_bool zlib_p = GRN_FALSE;
-      grn_bool lzo_p = GRN_FALSE;
-#ifdef GRN_WITH_ZLIB
-      if (flags & GRN_OBJ_COMPRESS_ZLIB) {
-        zlib_p = GRN_TRUE;
-      }
-#endif /* GRN_WITH_ZLIB */
-#ifdef GRN_WITH_LZO
-      if (flags & GRN_OBJ_COMPRESS_LZO) {
-        lzo_p = GRN_TRUE;
-      }
-#endif /* GRN_WITH_LZO */
-      if (zlib_p || lzo_p) {
-        int table_name_len;
-        char table_name[GRN_TABLE_MAX_KEY_SIZE];
-        table_name_len = grn_obj_name(ctx, table, table_name,
-                                      GRN_TABLE_MAX_KEY_SIZE);
-        GRN_LOG(ctx, GRN_LOG_WARNING,
-                "[column][create] "
-                "%s compressed column will leaks memories: <%.*s>.<%.*s>",
-                zlib_p ? "zlib" : "lzo",
-                table_name_len, table_name, name_size, name);
-      }
-    }
     if (grn_db_obj_init(ctx, db, id, DB_OBJ(res))) {
       _grn_obj_remove(ctx, res);
       res = NULL;

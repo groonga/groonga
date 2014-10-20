@@ -1102,6 +1102,12 @@ grn_parse_column_create_flags(grn_ctx *ctx, const char *nptr, const char *end)
     } else if (!memcmp(nptr, "COLUMN_INDEX", 12)) {
       flags |= GRN_OBJ_COLUMN_INDEX;
       nptr += 12;
+    } else if (!memcmp(nptr, "COMPRESS_ZLIB", 13)) {
+      flags |= GRN_OBJ_COMPRESS_ZLIB;
+      nptr += 13;
+    } else if (!memcmp(nptr, "COMPRESS_LZO", 12)) {
+      flags |= GRN_OBJ_COMPRESS_LZO;
+      nptr += 12;
     } else if (!memcmp(nptr, "WITH_SECTION", 12)) {
       flags |= GRN_OBJ_WITH_SECTION;
       nptr += 12;
