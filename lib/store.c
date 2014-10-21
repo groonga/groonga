@@ -1363,9 +1363,18 @@ grn_ja_put_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id,
   grn_rc rc;
   void *lvalue;
   int lvalue_len;
+
   if (value_len == 0) {
     return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
   }
+
+  if (value_len > (uint32_t)LZ4_MAX_INPUT_SIZE) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[ja][lz4] too large value size: <%u>: max: <%d>",
+        value_len, LZ4_MAX_INPUT_SIZE);
+    return ctx->rc;
+  }
+
   lvalue_len = LZ4_compressBound(value_len);
 
   if (!(lvalue = GRN_MALLOC(lvalue_len + sizeof(uint64_t)))) { return GRN_NO_MEMORY_AVAILABLE; }
