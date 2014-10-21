@@ -105,6 +105,8 @@ typedef enum {
   GRN_ADDRESS_IS_IN_USE = -59,
   GRN_ZLIB_ERROR = -60,
   GRN_LZ4_ERROR = -61,
+/* Just for backward compatibility. We'll remove it at 5.0.0. */
+#define GRN_LZO_ERROR GRN_LZ4_ERROR
   GRN_STACK_OVER_FLOW = -62,
   GRN_SYNTAX_ERROR = -63,
   GRN_RETRY_MAX = -64,
@@ -301,6 +303,8 @@ typedef unsigned short int grn_obj_flags;
 #define GRN_OBJ_COMPRESS_NONE          (0x00<<4)
 #define GRN_OBJ_COMPRESS_ZLIB          (0x01<<4)
 #define GRN_OBJ_COMPRESS_LZ4           (0x02<<4)
+/* Just for backward compatibility. We'll remove it at 5.0.0. */
+#define GRN_OBJ_COMPRESS_LZO           GRN_OBJ_COMPRESS_LZ4
 
 #define GRN_OBJ_WITH_SECTION           (0x01<<7)
 #define GRN_OBJ_WITH_WEIGHT            (0x01<<8)
@@ -792,6 +796,8 @@ typedef enum {
   GRN_INFO_II_SPLIT_THRESHOLD,
   GRN_INFO_SUPPORT_ZLIB,
   GRN_INFO_SUPPORT_LZ4,
+/* Just for backward compatibility. We'll remove it at 5.0.0. */
+#define GRN_INFO_SUPPORT_LZO GRN_INFO_SUPPORT_LZ4
   GRN_INFO_NORMALIZER,
   GRN_INFO_TOKEN_FILTERS
 } grn_info_type;
