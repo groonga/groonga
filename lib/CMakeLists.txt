@@ -47,7 +47,7 @@ target_link_libraries(libgroonga
   ${RT_LIBS}
   ${PTHREAD_LIBS}
   ${Z_LIBS}
-  ${LZO2_LIBS}
+  ${LZ4_LIBS}
   ${DL_LIBS}
   ${WS2_32_LIBS})
 

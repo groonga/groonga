@@ -149,11 +149,11 @@ test_support_lzo(void)
 
   cut_assert_ensure_context();
   GRN_BOOL_INIT(&grn_support_p, 0);
-  grn_obj_get_info(context, NULL, GRN_INFO_SUPPORT_LZO, &grn_support_p);
+  grn_obj_get_info(context, NULL, GRN_INFO_SUPPORT_LZ4, &grn_support_p);
   support_p = GRN_BOOL_VALUE(&grn_support_p);
   GRN_OBJ_FIN(context, &grn_support_p);
 
-#ifdef GRN_WITH_LZO
+#ifdef GRN_WITH_LZ4
   cut_assert_true(support_p);
 #else
   cut_assert_false(support_p);

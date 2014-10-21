@@ -880,15 +880,15 @@ else
 fi
 AC_SUBST(GRN_WITH_ZLIB)
 
-# LZO
-AC_ARG_WITH(lzo,
-  [AS_HELP_STRING([--with-lzo],
-    [use LZO for data compression. [default=no]])],
-  [with_lzo="$withval"],
-  [with_lzo="no"])
-if test "x$with_lzo" = "xyes"; then
-  AC_DEFINE(GRN_WITH_LZO, [1], [with lzo])
-  AC_SEARCH_LIBS(lzo1_compress, lzo2, [], [AC_MSG_ERROR("No liblzo2 found")])
+# LZ4
+AC_ARG_WITH(lz4,
+  [AS_HELP_STRING([--with-lz4],
+    [use LZ4 for data compression. [default=no]])],
+  [with_lz4="$withval"],
+  [with_lz4="no"])
+if test "x$with_lz4" = "xyes"; then
+  AC_DEFINE(GRN_WITH_LZ4, [1], [with lz4])
+  AC_SEARCH_LIBS(LZ4_compress, lz4, [], [AC_MSG_ERROR("No liblz4 found")])
 fi
 
 # MeCab

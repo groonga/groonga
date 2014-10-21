@@ -400,8 +400,8 @@ grn_store_inspect_body(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   case GRN_OBJ_COMPRESS_ZLIB :
     GRN_TEXT_PUTS(ctx, buf, "zlib");
     break;
-  case GRN_OBJ_COMPRESS_LZO :
-    GRN_TEXT_PUTS(ctx, buf, "lzo");
+  case GRN_OBJ_COMPRESS_LZ4 :
+    GRN_TEXT_PUTS(ctx, buf, "lz4");
     break;
   default:
     break;
