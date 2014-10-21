@@ -1391,7 +1391,7 @@ grn_ja_put_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id,
 
   if (lz4_value_len <= 0) {
     GRN_FREE(packed_value);
-    ERR(GRN_LZ4_ERROR, "lz4_compress");
+    ERR(GRN_LZ4_ERROR, "LZ4_compress");
     return ctx->rc;
   }
   *(uint64_t *)packed_value = value_len;
