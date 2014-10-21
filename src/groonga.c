@@ -2277,8 +2277,8 @@ show_version(void)
 #ifdef GRN_WITH_ZLIB
   printf(",zlib");
 #endif
-#ifdef GRN_WITH_LZO
-  printf(",lzo");
+#ifdef GRN_WITH_LZ4
+  printf(",lz4");
 #endif
 #ifdef USE_KQUEUE
   printf(",kqueue");
