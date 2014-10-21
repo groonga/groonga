@@ -1236,15 +1236,15 @@ grn_ja_ref_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *va
   int packed_value_len;
   void *lz4_value;
   int lz4_value_len;
-  int lz4_out_len;
+  int original_value_len;
 
   if (!(packed_value = grn_ja_ref_raw(ctx, ja, id, iw, &packed_value_len))) {
     iw->value = NULL;
     *value_len = 0;
     return NULL;
   }
-  lz4_out_len = *((uint64_t *)packed_value);
-  if (!(iw->value = GRN_MALLOC(lz4_out_len))) {
+  original_value_len = *((uint64_t *)packed_value);
+  if (!(iw->value = GRN_MALLOC(original_value_len))) {
     iw->value = NULL;
     *value_len = 0;
     return NULL;
@@ -1254,13 +1254,13 @@ grn_ja_ref_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *va
   if (LZ4_decompress_safe((const char *)(lz4_value),
                           (char *)(iw->value),
                           lz4_value_len,
-                          lz4_out_len) < 0) {
+                          original_value_len) < 0) {
     GRN_FREE(iw->value);
     iw->value = NULL;
     *value_len = 0;
     return NULL;
   }
-  *value_len = lz4_out_len;
+  *value_len = original_value_len;
   return iw->value;
 }
 #endif /* GRN_WITH_LZ4 */
