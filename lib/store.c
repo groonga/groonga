@@ -1377,7 +1377,9 @@ grn_ja_put_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id,
 
   lz4_value_len = LZ4_compressBound(value_len);
 
-  if (!(lz4_value = GRN_MALLOC(lz4_value_len + sizeof(uint64_t)))) { return GRN_NO_MEMORY_AVAILABLE; }
+  if (!(lz4_value = GRN_MALLOC(lz4_value_len + sizeof(uint64_t)))) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
   lz4_value_len = LZ4_compress((const char*)value, (char *)((uint64_t *)lz4_value + 1), value_len);
 
   if (lz4_value_len <= 0) {
