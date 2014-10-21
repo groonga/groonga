@@ -568,10 +568,10 @@ grn_mrb_ctx_check(mrb_state *mrb)
              "zlib error: <%s>(%d)",
              ctx->errbuf, ctx->rc);
     break;
-  case GRN_LZO_ERROR:
-    error_class = mrb_class_get_under(mrb, module, "LzoError");
+  case GRN_LZ4_ERROR:
+    error_class = mrb_class_get_under(mrb, module, "Lz4Error");
     snprintf(message, MESSAGE_SIZE,
-             "LZO error: <%s>(%d)",
+             "LZ4 error: <%s>(%d)",
              ctx->errbuf, ctx->rc);
     break;
   case GRN_STACK_OVER_FLOW:

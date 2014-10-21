@@ -149,8 +149,8 @@ grn_rc_to_string(grn_rc rc)
     return "GRN_ADDRESS_IS_IN_USE";
   case GRN_ZLIB_ERROR:
     return "GRN_ZLIB_ERROR";
-  case GRN_LZO_ERROR:
-    return "GRN_LZO_ERROR";
+  case GRN_LZ4_ERROR:
+    return "GRN_LZ4_ERROR";
   case GRN_STACK_OVER_FLOW:
     return "GRN_STACK_OVER_FLOW";
   case GRN_SYNTAX_ERROR:

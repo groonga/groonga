@@ -82,7 +82,7 @@ module Groonga
       OPERATION_NOT_SUPPORTED             = new(:operation_not_supported, -58)
       ADDRESS_IS_IN_USE                   = new(:address_is_in_use, -59)
       ZLIB_ERROR                          = new(:zlib_error, -60)
-      LZO_ERROR                           = new(:lzo_error, -61)
+      LZ4_ERROR                           = new(:lz4_error, -61)
       STACK_OVER_FLOW                     = new(:stack_over_flow, -62)
       SYNTAX_ERROR                        = new(:syntax_error, -63)
       RETRY_MAX                           = new(:retry_max, -64)

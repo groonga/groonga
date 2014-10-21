@@ -1,5 +1,5 @@
 table_create Entries TABLE_PAT_KEY ShortText
-column_create Entries content COLUMN_SCALAR|COMPRESS_LZO Text
+column_create Entries content COLUMN_SCALAR|COMPRESS_LZ4 Text
 
 load --table Entries
 [

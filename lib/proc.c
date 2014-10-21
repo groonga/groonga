@@ -1105,8 +1105,8 @@ grn_parse_column_create_flags(grn_ctx *ctx, const char *nptr, const char *end)
     } else if (!memcmp(nptr, "COMPRESS_ZLIB", 13)) {
       flags |= GRN_OBJ_COMPRESS_ZLIB;
       nptr += 13;
-    } else if (!memcmp(nptr, "COMPRESS_LZO", 12)) {
-      flags |= GRN_OBJ_COMPRESS_LZO;
+    } else if (!memcmp(nptr, "COMPRESS_LZ4", 12)) {
+      flags |= GRN_OBJ_COMPRESS_LZ4;
       nptr += 12;
     } else if (!memcmp(nptr, "WITH_SECTION", 12)) {
       flags |= GRN_OBJ_WITH_SECTION;
@@ -1191,8 +1191,8 @@ grn_column_create_flags_to_text(grn_ctx *ctx, grn_obj *buf, grn_obj_flags flags)
   case GRN_OBJ_COMPRESS_ZLIB:
     GRN_TEXT_PUTS(ctx, buf, "|COMPRESS_ZLIB");
     break;
-  case GRN_OBJ_COMPRESS_LZO:
-    GRN_TEXT_PUTS(ctx, buf, "|COMPRESS_LZO");
+  case GRN_OBJ_COMPRESS_LZ4:
+    GRN_TEXT_PUTS(ctx, buf, "|COMPRESS_LZ4");
     break;
   }
   if (flags & GRN_OBJ_PERSISTENT) {

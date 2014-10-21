@@ -157,7 +157,7 @@ grn_mrb_error_init(grn_ctx *ctx)
                          error_class);
   mrb_define_class_under(mrb, module, "ZlibError",
                          error_class);
-  mrb_define_class_under(mrb, module, "LzoError",
+  mrb_define_class_under(mrb, module, "Lz4Error",
                          error_class);
   mrb_define_class_under(mrb, module, "StackOverFlow",
                          error_class);
