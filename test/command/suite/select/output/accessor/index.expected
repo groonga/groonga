@@ -1,0 +1,47 @@
+table_create Memos TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+column_create Tags memos_tag COLUMN_INDEX Memos tag
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is a full text search engine.", "tag": "groonga"}
+]
+[[0,0.0,0.0],1]
+select Tags --filter true --command_version 2
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "memos_tag",
+          "Memos"
+        ]
+      ],
+      [
+        1,
+        "groonga",
+        1
+      ]
+    ]
+  ]
+]
