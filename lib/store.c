@@ -1241,12 +1241,12 @@ grn_ja_ref_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *va
     *value_len = 0;
     return NULL;
   }
-  if (!(iw->value = GRN_MALLOC(*((uint64_t *)lvalue)))) {
+  lout_len = *((uint64_t *)lvalue);
+  if (!(iw->value = GRN_MALLOC(lout_len))) {
     iw->value = NULL;
     *value_len = 0;
     return NULL;
   }
-  lout_len = *((uint64_t *)lvalue);
   if (LZ4_decompress_safe((const char *)((uint64_t *)lvalue + 1),
                           (char *)(iw->value),
                           lvalue_len - sizeof(uint64_t),
