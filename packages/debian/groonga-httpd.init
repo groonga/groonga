@@ -42,7 +42,7 @@ DEFAULT_FILE=/etc/default/$NAME
 . /lib/lsb/init-functions
 
 if [ -z "$PID_FILE" ]; then
-  PID_FILE=$(grep '^\s*pid\s' /etc/nginx/nginx.conf | sed -re 's/^\s*pid\s+(.+);$/\1/g' | head -n1)
+  PID_FILE=$(grep '^\s*pid\s' /etc/groonga/httpd/groonga-httpd.conf | sed -re 's/^\s*pid\s+(.+);$/\1/g' | head -n1)
   if [ -z "$PID_FILE" ]; then
     PID_FILE=/run/groonga-httpd.pid
   fi
