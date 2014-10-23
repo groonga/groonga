@@ -27,6 +27,7 @@
 #include "expr.h"
 
 #include <string.h>
+#include <float.h>
 #include <stdlib.h>
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -4888,8 +4889,12 @@ func_between(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   GRN_RECORD_SET(ctx, between_variable, GRN_RECORD_VALUE(variable));
   result = grn_expr_exec(ctx, between_expr, 0);
-  if (result && GRN_UINT32_VALUE(result) > 0) {
-    GRN_BOOL_SET(ctx, found, GRN_TRUE);
+  if (result) {
+    grn_bool result_boolean;
+    GRN_TRUEP(ctx, result, result_boolean);
+    if (result_boolean) {
+      GRN_BOOL_SET(ctx, found, GRN_TRUE);
+    }
   }
 
   grn_obj_unlink(ctx, between_expr);
