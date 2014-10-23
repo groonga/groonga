@@ -1307,6 +1307,8 @@ GRN_API void grn_ctx_output_obj(grn_ctx *ctx,
                                 grn_obj *value, grn_obj_format *format);
 
 
+GRN_API grn_content_type grn_ctx_get_output_type(grn_ctx *ctx);
+GRN_API grn_rc grn_ctx_set_output_type(grn_ctx *ctx, grn_content_type type);
 GRN_API const char *grn_ctx_get_mime_type(grn_ctx *ctx);
 GRN_API void grn_ctx_recv_handler_set(grn_ctx *,
                                       void (*func)(grn_ctx *, int, void *),

@@ -1428,6 +1428,30 @@ grn_ctx_get_command_version(grn_ctx *ctx)
   }
 }
 
+grn_content_type
+grn_ctx_get_output_type(grn_ctx *ctx)
+{
+  if (ctx->impl) {
+    return ctx->impl->output_type;
+  } else {
+    return GRN_CONTENT_NONE;
+  }
+}
+
+grn_rc
+grn_ctx_set_output_type(grn_ctx *ctx, grn_content_type type)
+{
+  grn_rc rc = GRN_SUCCESS;
+
+  if (ctx->impl) {
+    ctx->impl->output_type = type;
+  } else {
+    rc = GRN_INVALID_ARGUMENT;
+  }
+
+  return rc;
+}
+
 const char *
 grn_ctx_get_mime_type(grn_ctx *ctx)
 {

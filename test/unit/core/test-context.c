@@ -29,6 +29,7 @@ void test_dynamic_malloc_change(void);
 void test_command_version(void);
 void test_support_zlib(void);
 void test_support_lzo(void);
+void test_output_type(void);
 
 static grn_ctx *context;
 static grn_obj *database;
@@ -158,4 +159,14 @@ test_support_lzo(void)
 #else
   cut_assert_false(support_p);
 #endif
+}
+
+void
+test_output_type(void)
+{
+  cut_assert_ensure_database();
+
+  cut_assert_equal_int(GRN_CONTENT_NONE, grn_ctx_get_output_type(context));
+  grn_test_assert(grn_ctx_set_output_type(context, GRN_CONTENT_JSON));
+  cut_assert_equal_int(GRN_CONTENT_JSON, grn_ctx_get_output_type(context));
 }
