@@ -524,7 +524,7 @@ grn_ja_ref_raw(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *va
   iw->size = 0;
   iw->addr = NULL;
   iw->pseg = pseg;
-  iw->value = NULL;
+  iw->uncompressed_value = NULL;
   if (pseg != JA_ESEG_VOID) {
     grn_ja_einfo *einfo = NULL;
     GRN_IO_SEG_REF(ja->io, pseg, einfo);
@@ -557,9 +557,9 @@ grn_ja_ref_raw(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *va
 grn_rc
 grn_ja_unref(grn_ctx *ctx, grn_io_win *iw)
 {
-  if (iw->value) {
-    GRN_FREE(iw->value);
-    iw->value = NULL;
+  if (iw->uncompressed_value) {
+    GRN_FREE(iw->uncompressed_value);
+    iw->uncompressed_value = NULL;
   } else {
     if (!iw->addr) { return GRN_INVALID_ARGUMENT; }
     GRN_IO_SEG_UNREF(iw->io, iw->pseg);
@@ -864,7 +864,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
       vp->seg = 0;
       vp->pos = 0;
     }
-    iw->value = NULL;
+    iw->uncompressed_value = NULL;
     grn_io_unlock(ja->io);
     return GRN_SUCCESS;
   }
@@ -1187,7 +1187,7 @@ grn_ja_ref_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *v
   void *zvalue;
   uint32_t zvalue_len;
   if (!(zvalue = grn_ja_ref_raw(ctx, ja, id, iw, &zvalue_len))) {
-    iw->value = NULL;
+    iw->uncompressed_value = NULL;
     *value_len = 0;
     return NULL;
   }
@@ -1196,33 +1196,33 @@ grn_ja_ref_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *v
   zstream.zalloc = Z_NULL;
   zstream.zfree = Z_NULL;
   if (inflateInit2(&zstream, 15 /* windowBits */) != Z_OK) {
-    iw->value = NULL;
+    iw->uncompressed_value = NULL;
     *value_len = 0;
     return NULL;
   }
-  if (!(iw->value = GRN_MALLOC(*((uint64_t *)zvalue)))) {
+  if (!(iw->uncompressed_value = GRN_MALLOC(*((uint64_t *)zvalue)))) {
     inflateEnd(&zstream);
-    iw->value = NULL;
+    iw->uncompressed_value = NULL;
     *value_len = 0;
     return NULL;
   }
-  zstream.next_out = (Bytef *)iw->value;
+  zstream.next_out = (Bytef *)iw->uncompressed_value;
   zstream.avail_out = *(uint64_t *)zvalue;
   if (inflate(&zstream, Z_FINISH) != Z_STREAM_END) {
     inflateEnd(&zstream);
-    GRN_FREE(iw->value);
-    iw->value = NULL;
+    GRN_FREE(iw->uncompressed_value);
+    iw->uncompressed_value = NULL;
     *value_len = 0;
     return NULL;
   }
   *value_len = zstream.total_out;
   if (inflateEnd(&zstream) != Z_OK) {
-    GRN_FREE(iw->value);
-    iw->value = NULL;
+    GRN_FREE(iw->uncompressed_value);
+    iw->uncompressed_value = NULL;
     *value_len = 0;
     return NULL;
   }
-  return iw->value;
+  return iw->uncompressed_value;
 }
 #endif /* GRN_WITH_ZLIB */
 
@@ -1239,29 +1239,29 @@ grn_ja_ref_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *va
   int original_value_len;
 
   if (!(packed_value = grn_ja_ref_raw(ctx, ja, id, iw, &packed_value_len))) {
-    iw->value = NULL;
+    iw->uncompressed_value = NULL;
     *value_len = 0;
     return NULL;
   }
   original_value_len = *((uint64_t *)packed_value);
-  if (!(iw->value = GRN_MALLOC(original_value_len))) {
-    iw->value = NULL;
+  if (!(iw->uncompressed_value = GRN_MALLOC(original_value_len))) {
+    iw->uncompressed_value = NULL;
     *value_len = 0;
     return NULL;
   }
   lz4_value = (void *)((uint64_t *)packed_value + 1);
   lz4_value_len = packed_value_len - sizeof(uint64_t);
   if (LZ4_decompress_safe((const char *)(lz4_value),
-                          (char *)(iw->value),
+                          (char *)(iw->uncompressed_value),
                           lz4_value_len,
                           original_value_len) < 0) {
-    GRN_FREE(iw->value);
-    iw->value = NULL;
+    GRN_FREE(iw->uncompressed_value);
+    iw->uncompressed_value = NULL;
     *value_len = 0;
     return NULL;
   }
   *value_len = original_value_len;
-  return iw->value;
+  return iw->uncompressed_value;
 }
 #endif /* GRN_WITH_LZ4 */
 
