@@ -513,6 +513,10 @@ typedef int grn_cond;
 # elif defined(__ATOMIC_SEQ_CST) /* GCC atomic builtins */
 #  define GRN_SET_64BIT(p,v) \
    __atomic_store_n(p, v, __ATOMIC_SEQ_CST)
+# else
+#  warning Need atomic 64bit operation support. The current implementation may break data.
+#  define GRN_SET_64BIT(p,v) \
+  (*(p) = (v))
 # endif /* ATOMIC 64BIT SET */
 
 # ifdef HAVE_MKOSTEMP
