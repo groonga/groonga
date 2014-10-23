@@ -454,6 +454,14 @@ typedef int grn_cond;
 # endif /* WIN32 */
 #endif /* HAVE_INTTYPES_H */
 
+#ifdef WIN32
+# define GRN_FMT_SIZE  "Iu"
+# define GRN_FMT_SSIZE "Id"
+#else /* WIN32 */
+# define GRN_FMT_SIZE  "zu"
+# define GRN_FMT_SSIZE "zd"
+#endif /* WIN32 */
+
 #ifdef __GNUC__
 # if (defined(__i386__) || defined(__x86_64__)) /* ATOMIC ADD */
 /*

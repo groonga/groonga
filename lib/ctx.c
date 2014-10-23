@@ -2220,7 +2220,7 @@ grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
     if (size > GRN_CTX_SEGMENT_SIZE) {
       uint64_t npages = (size + (grn_pagesize - 1)) / grn_pagesize;
       if (npages >= (1LL<<32)) {
-        MERR("too long request size=%zu", size);
+        MERR("too long request size=%" GRN_FMT_SIZE, size);
         goto exit;
       }
       for (i = 0, mi = ctx->impl->segs;; i++, mi++) {
@@ -2425,7 +2425,7 @@ grn_ctx_alloc_lifo(grn_ctx *ctx, size_t size,
     if (size > GRN_CTX_SEGMENT_SIZE) {
       uint64_t npages = (size + (grn_pagesize - 1)) / grn_pagesize;
       if (npages >= (1LL<<32)) {
-        MERR("too long request size=%zu", size);
+        MERR("too long request size=%" GRN_FMT_SIZE, size);
         return NULL;
       }
       for (;;) {
@@ -2614,7 +2614,7 @@ grn_malloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const 
       grn_alloc_info_add(res);
     } else {
       if (!(res = malloc(size))) {
-        MERR("malloc fail (%zu)=%p (%s:%d) <%d>",
+        MERR("malloc fail (%" GRN_FMT_SIZE ")=%p (%s:%d) <%d>",
              size, res, file, line, alloc_count);
       } else {
         GRN_ADD_ALLOC_COUNT(1);
@@ -2671,7 +2671,8 @@ grn_realloc_default(grn_ctx *ctx, void *ptr, size_t size, const char* file, int 
   if (size) {
     if (!(res = realloc(ptr, size))) {
       if (!(res = realloc(ptr, size))) {
-        MERR("realloc fail (%p,%zu)=%p (%s:%d) <%d>", ptr, size, res, file, line, alloc_count);
+        MERR("realloc fail (%p,%" GRN_FMT_SIZE ")=%p (%s:%d) <%d>",
+             ptr, size, res, file, line, alloc_count);
         return NULL;
       }
     }
@@ -2758,7 +2759,8 @@ grn_realloc_fail(grn_ctx *ctx, void *ptr, size_t size, const char* file, int lin
   if (grn_fail_malloc_check(size, file, line, func)) {
     return grn_realloc_default(ctx, ptr, size, file, line, func);
   } else {
-    MERR("fail_realloc (%p,%zu) (%s:%d@%s) <%d>", ptr, size, file, line, func, alloc_count);
+    MERR("fail_realloc (%p,%" GRN_FMT_SIZE ") (%s:%d@%s) <%d>",
+         ptr, size, file, line, func, alloc_count);
     return NULL;
   }
 }

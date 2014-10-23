@@ -6521,7 +6521,7 @@ allocate_outbuf(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
       bufsize_ = bufsize;
     }
   }
-  GRN_LOG(ctx, GRN_LOG_INFO, "flushing:%d bufsize:%zu",
+  GRN_LOG(ctx, GRN_LOG_INFO, "flushing:%d bufsize:%" GRN_FMT_SIZE,
           ii_buffer->nblocks, bufsize);
   return (uint8_t *)GRN_MALLOC(bufsize);
 }
@@ -6679,7 +6679,7 @@ grn_ii_buffer_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   size_t encsize;
   uint8_t *outbuf;
   ii_buffer_block *block;
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "flushing:%d npostings:%zu",
+  GRN_LOG(ctx, GRN_LOG_NOTICE, "flushing:%d npostings:%" GRN_FMT_SIZE,
           ii_buffer->nblocks, ii_buffer->block_pos);
   if (!(block = block_new(ctx, ii_buffer))) { return; }
   if (!(outbuf = allocate_outbuf(ctx, ii_buffer))) { return; }
@@ -6701,7 +6701,7 @@ grn_ii_buffer_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
          grn_table_size(ctx, ii_buffer->tmp_lexicon) *
          sizeof(ii_buffer_counter));
   grn_obj_close(ctx, ii_buffer->tmp_lexicon);
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "flushed: %d encsize:%zu",
+  GRN_LOG(ctx, GRN_LOG_NOTICE, "flushed: %d encsize:%" GRN_FMT_SIZE,
           ii_buffer->nblocks, encsize);
   ii_buffer->tmp_lexicon = NULL;
   ii_buffer->nblocks++;
@@ -6899,7 +6899,7 @@ grn_ii_buffer_chunk_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   grn_io_win io_win;
   uint32_t chunk_number;
   chunk_new(ctx, ii_buffer->ii, &chunk_number, ii_buffer->packed_len);
-  GRN_LOG(ctx, GRN_LOG_INFO, "chunk:%d, packed_len:%zu",
+  GRN_LOG(ctx, GRN_LOG_INFO, "chunk:%d, packed_len:%" GRN_FMT_SIZE,
           chunk_number, ii_buffer->packed_len);
   fake_map2(ctx, ii_buffer->ii->chunk, &io_win, ii_buffer->packed_buf,
             chunk_number, ii_buffer->packed_len);
@@ -7283,7 +7283,7 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   }
   datavec_fin(ctx, ii_buffer->data_vectors);
   GRN_LOG(ctx, GRN_LOG_NOTICE,
-          "tmpfile_size:%jd > total_chunk_size:%" GRN_FMT_INT64U,
+          "tmpfile_size:%jd > total_chunk_size:%" GRN_FMT_SIZE,
           ii_buffer->filepos, ii_buffer->total_chunk_size);
   GRN_CLOSE(ii_buffer->tmpfd);
   unlink(ii_buffer->tmpfpath);

@@ -1406,7 +1406,8 @@ grn_mmap(grn_ctx *ctx, HANDLE *fmo, fileinfo *fi, off_t offset, size_t length)
   if (!*fmo) { return NULL; }
   res = MapViewOfFile(*fmo, FILE_MAP_WRITE, 0, (DWORD)offset, (SIZE_T)length);
   if (!res) {
-    MERR("MapViewOfFile failed #%d <%zu>", GetLastError(), mmap_size);
+    MERR("MapViewOfFile failed #%d <%" GRN_FMT_SIZE ">",
+         GetLastError(), mmap_size);
     return NULL;
   }
   /* CRITICAL_SECTION_LEAVE(fi->cs); */
@@ -1426,12 +1427,16 @@ grn_munmap(grn_ctx *ctx, HANDLE *fmo, void *start, size_t length)
       mmap_size -= length;
     } else {
       SERR("UnmapViewOfFile");
-      GRN_LOG(ctx, GRN_LOG_ERROR, "UnmapViewOfFile(%p,%d) failed <%zu>", start, length, mmap_size);
+      GRN_LOG(ctx, GRN_LOG_ERROR,
+              "UnmapViewOfFile(%p,%d) failed <%" GRN_FMT_SIZE ">",
+              start, length, mmap_size);
       r = -1;
     }
     if (!CloseHandle(*fmo)) {
       SERR("CloseHandle");
-      GRN_LOG(ctx, GRN_LOG_ERROR, "CloseHandle(%p,%d) failed <%zu>", start, length, mmap_size);
+      GRN_LOG(ctx, GRN_LOG_ERROR,
+              "CloseHandle(%p,%d) failed <%" GRN_FMT_SIZE ">",
+              start, length, mmap_size);
     }
     *fmo = NULL;
   } else {
@@ -1549,7 +1554,8 @@ grn_mmap(grn_ctx *ctx, fileinfo *fi, off_t offset, size_t length)
   */
   res = MapViewOfFile(fi->fmo, FILE_MAP_WRITE, 0, (DWORD)offset, (SIZE_T)length);
   if (!res) {
-    MERR("MapViewOfFile failed #%d  <%zu>", GetLastError(), mmap_size);
+    MERR("MapViewOfFile failed #%d <%" GRN_FMT_SIZE ">",
+         GetLastError(), mmap_size);
     return NULL;
   }
   mmap_size += length;
@@ -1564,7 +1570,9 @@ grn_munmap(grn_ctx *ctx, void *start, size_t length)
     return 0;
   } else {
     SERR("UnmapViewOfFile");
-    GRN_LOG(ctx, GRN_LOG_ERROR, "UnmapViewOfFile(%p,%d) failed <%zu>", start, length, mmap_size);
+    GRN_LOG(ctx, GRN_LOG_ERROR,
+            "UnmapViewOfFile(%p,%d) failed <%" GRN_FMT_SIZE ">",
+            start, length, mmap_size);
     return -1;
   }
 }
@@ -1734,7 +1742,8 @@ grn_fail_mmap(grn_ctx *ctx, fileinfo *fi, off_t offset, size_t length,
   if (grn_fail_malloc_check(length, file, line, func)) {
     return grn_mmap(ctx, fi, offset, length);
   } else {
-    MERR("fail_mmap(%zu,%d,%" GRN_FMT_LLU ") (%s:%d@%s) <%zu>",
+    MERR("fail_mmap(%" GRN_FMT_SIZE ",%d,%" GRN_FMT_LLU ") "
+         "(%s:%d@%s) <%" GRN_FMT_SIZE ">",
           length, fi ? fi->fd : 0, offset, file, line, func, mmap_size);
     return NULL;
   }
