@@ -28,7 +28,7 @@ void test_at_nonexistent(void);
 void test_dynamic_malloc_change(void);
 void test_command_version(void);
 void test_support_zlib(void);
-void test_support_lzo(void);
+void test_support_lz4(void);
 void test_output_type(void);
 
 static grn_ctx *context;
@@ -143,7 +143,7 @@ test_support_zlib(void)
 }
 
 void
-test_support_lzo(void)
+test_support_lz4(void)
 {
   int support_p;
   grn_obj grn_support_p;
