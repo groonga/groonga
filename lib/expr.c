@@ -4095,6 +4095,8 @@ grn_expr_get_value(grn_ctx *ctx, grn_obj *expr, int offset)
 #define DEFAULT_TERM_EXTRACT_POLICY 0
 #define DEFAULT_WEIGHT_VECTOR_SIZE 4096
 
+#define GRN_SCAN_INFO_MAX_N_ARGS 128
+
 struct _grn_scan_info {
   uint32_t start;
   uint32_t end;
@@ -4105,7 +4107,7 @@ struct _grn_scan_info {
   grn_obj wv;
   grn_obj index;
   grn_obj *query;
-  grn_obj *args[8];
+  grn_obj *args[GRN_SCAN_INFO_MAX_N_ARGS];
   int max_interval;
   int similarity_threshold;
 };
@@ -4376,7 +4378,7 @@ grn_scan_info_set_similarity_threshold(scan_info *si, int similarity_threshold)
 grn_bool
 grn_scan_info_push_arg(scan_info *si, grn_obj *arg)
 {
-  if (si->nargs >= 8) {
+  if (si->nargs >= GRN_SCAN_INFO_MAX_N_ARGS) {
     return GRN_FALSE;
   }
 
@@ -4624,7 +4626,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
       if (c->value == var) {
         stat = SCAN_VAR;
       } else {
-        if (si->nargs < 8) {
+        if (si->nargs < GRN_SCAN_INFO_MAX_N_ARGS) {
           si->args[si->nargs++] = c->value;
         }
         if (stat == SCAN_START) { si->flags |= SCAN_PRE_CONST; }
@@ -4639,7 +4641,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
       case SCAN_CONST :
       case SCAN_VAR :
         stat = SCAN_COL1;
-        if (si->nargs < 8) {
+        if (si->nargs < GRN_SCAN_INFO_MAX_N_ARGS) {
           si->args[si->nargs++] = c->value;
         }
         break;
