@@ -86,7 +86,7 @@ Groongaのリリース作業ではリリース専用の環境下(コンパイル
 
 リリース用のクリーンな状態でソースコードを取得するために$GROONGA_DIRにて以下のコマンドを実行します。::
 
-    % git clone git@github.com:groonga/groonga.git groonga.clean
+    % git clone --recursive git@github.com:groonga/groonga.git groonga.clean
 
 この作業はリリース作業ごとに行います。
 
