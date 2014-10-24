@@ -4039,10 +4039,11 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_NOT :
         {
           grn_obj *value;
+          grn_bool value_boolean;
           POP1ALLOC1(value, res);
+          GRN_TRUEP(ctx, value, value_boolean);
           grn_obj_reinit(ctx, res, GRN_DB_BOOL, 0);
-          grn_obj_cast(ctx, value, res, GRN_FALSE);
-          GRN_BOOL_SET(ctx, res, !GRN_BOOL_VALUE(res));
+          GRN_BOOL_SET(ctx, res, !value_boolean);
         }
         code++;
         break;
