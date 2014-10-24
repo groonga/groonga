@@ -1428,6 +1428,24 @@ grn_ctx_get_command_version(grn_ctx *ctx)
   }
 }
 
+grn_rc
+grn_ctx_set_command_version(grn_ctx *ctx, grn_command_version version)
+{
+  switch (version) {
+  case GRN_COMMAND_VERSION_DEFAULT :
+    ctx->impl->command_version = GRN_COMMAND_VERSION_STABLE;
+    return GRN_SUCCESS;
+  default :
+    if (GRN_COMMAND_VERSION_MIN <= version &&
+        version <= GRN_COMMAND_VERSION_MAX) {
+      ctx->impl->command_version = version;
+      return GRN_SUCCESS;
+    } else {
+      return GRN_UNSUPPORTED_COMMAND_VERSION;
+    }
+  }
+}
+
 grn_content_type
 grn_ctx_get_output_type(grn_ctx *ctx)
 {
@@ -1459,24 +1477,6 @@ grn_ctx_get_mime_type(grn_ctx *ctx)
     return ctx->impl->mime_type;
   } else {
     return NULL;
-  }
-}
-
-grn_rc
-grn_ctx_set_command_version(grn_ctx *ctx, grn_command_version version)
-{
-  switch (version) {
-  case GRN_COMMAND_VERSION_DEFAULT :
-    ctx->impl->command_version = GRN_COMMAND_VERSION_STABLE;
-    return GRN_SUCCESS;
-  default :
-    if (GRN_COMMAND_VERSION_MIN <= version &&
-        version <= GRN_COMMAND_VERSION_MAX) {
-      ctx->impl->command_version = version;
-      return GRN_SUCCESS;
-    } else {
-      return GRN_UNSUPPORTED_COMMAND_VERSION;
-    }
   }
 }
 
