@@ -10564,7 +10564,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
                         (int)GRN_TEXT_LEN(key_column_name),
                         GRN_TEXT_VALUE(key_column_name),
                         column_name_size, column_name);
-                return;
+                goto exit;
               }
               key_column_name = value;
               v++;
@@ -10577,7 +10577,62 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
         }
         break;
       case GRN_TABLE_NO_KEY :
-        id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
+        {
+          grn_obj *v;
+          grn_bool found_id_column = GRN_FALSE;
+          for (v = value; v + 1 < ve; v = values_next(ctx, v)) {
+            char *column_name = GRN_TEXT_VALUE(v);
+            unsigned int column_name_size = GRN_TEXT_LEN(v);
+            if (v->header.domain == GRN_DB_TEXT &&
+                (name_equal(column_name, column_name_size,
+                            GRN_COLUMN_NAME_ID))) {
+              grn_obj *id_column;
+              grn_obj *id_value;
+              if (found_id_column) {
+                GRN_LOG(ctx, GRN_LOG_ERROR, "duplicated '_id' column");
+                goto exit;
+              }
+              found_id_column = GRN_TRUE;
+              id_column = v;
+              v = values_next(ctx, v);
+              id_value = v;
+              switch (id_value->header.type) {
+              case GRN_DB_UINT32 :
+                id = GRN_UINT32_VALUE(id_value);
+                break;
+              case GRN_DB_INT32 :
+                id = GRN_INT32_VALUE(id_value);
+                break;
+              default :
+                {
+                  grn_obj casted_id_value;
+                  GRN_UINT32_INIT(&casted_id_value, 0);
+                  if (grn_obj_cast(ctx, id_value, &casted_id_value, GRN_FALSE)) {
+                    grn_obj inspected;
+                    GRN_TEXT_INIT(&inspected, 0);
+                    grn_inspect(ctx, &inspected, id_value);
+                    ERR(GRN_INVALID_ARGUMENT,
+                        "<%.*s>: failed to cast to <UInt32>: <%.*s>",
+                        (int)column_name_size, column_name,
+                        (int)GRN_TEXT_LEN(&inspected),
+                        GRN_TEXT_VALUE(&inspected));
+                    grn_obj_unlink(ctx, &inspected);
+                    goto exit;
+                  } else {
+                    id = GRN_UINT32_VALUE(&casted_id_value);
+                  }
+                  GRN_OBJ_FIN(ctx, &casted_id_value);
+                }
+                break;
+              }
+            } else {
+              v = values_next(ctx, v);
+            }
+          }
+        }
+        if (id == GRN_ID_NIL) {
+          id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
+        }
         break;
       default :
         break;
@@ -10635,6 +10690,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
         GRN_LOG(ctx, GRN_LOG_ERROR, "neither _key nor _id is assigned");
       }
     }
+  exit:
     loader->values_size = begin;
   }
 }
