@@ -5254,6 +5254,93 @@ func_highlight_full(grn_ctx *ctx, int nargs, grn_obj **args,
   return highlighted;
 }
 
+static grn_obj *
+func_in_values(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *found;
+  grn_obj *target_value;
+  int i;
+
+  found = GRN_PROC_ALLOC(GRN_DB_BOOL, 0);
+  if (!found) {
+    return NULL;
+  }
+  GRN_BOOL_SET(ctx, found, GRN_FALSE);
+
+  if (nargs < 1) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "in_values(): wrong number of arguments (%d for 1..)", nargs);
+    return found;
+  }
+
+  target_value = args[0];
+  for (i = 1; i < nargs; i++) {
+    grn_obj *value = args[i];
+    grn_obj *equal_condition;
+    grn_obj *result;
+    grn_bool result_boolean = GRN_FALSE;
+
+    /* TODO: Implement grn_obj_equal() and use it. */
+    equal_condition = grn_expr_create(ctx, NULL, 0);
+    grn_expr_append_const(ctx, equal_condition, target_value, GRN_OP_PUSH, 1);
+    grn_expr_append_const(ctx, equal_condition, value, GRN_OP_PUSH, 1);
+    grn_expr_append_op(ctx, equal_condition, GRN_OP_EQUAL, 2);
+    result = grn_expr_exec(ctx, equal_condition, 0);
+    if (result) {
+      GRN_TRUEP(ctx, result, result_boolean);
+    }
+    grn_obj_unlink(ctx, equal_condition);
+
+    if (result_boolean) {
+      GRN_BOOL_SET(ctx, found, GRN_TRUE);
+      break;
+    }
+  }
+
+  return found;
+}
+
+static grn_rc
+selector_in_values(grn_ctx *ctx, grn_obj *table, grn_obj *index,
+                   int nargs, grn_obj **args,
+                   grn_obj *res, grn_operator op)
+{
+  grn_rc rc = GRN_SUCCESS;
+  int i;
+
+  if (!index) {
+    return GRN_INVALID_ARGUMENT;
+  }
+
+  if (nargs < 2) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "in_values(): wrong number of arguments (%d for 1..)", nargs);
+    return ctx->rc;
+  }
+
+  ctx->flags |= GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
+  for (i = 2; i < nargs; i++) {
+    grn_obj *value = args[i];
+    grn_search_optarg search_options;
+    search_options.mode = GRN_OP_EXACT;
+    search_options.similarity_threshold = 0;
+    search_options.max_interval = 0;
+    search_options.weight_vector = NULL;
+    search_options.vector_size = 0;
+    search_options.proc = NULL;
+    search_options.max_size = 0;
+    if (i == nargs - 1) {
+      ctx->flags &= ~GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
+    }
+    rc = grn_obj_search(ctx, index, value, res, op, &search_options);
+    if (rc != GRN_SUCCESS) {
+      break;
+    }
+  }
+
+  return rc;
+}
+
 #define DEF_VAR(v,name_str) do {\
   (v).name = (name_str);\
   (v).name_size = GRN_STRLEN(name_str);\
@@ -5484,4 +5571,12 @@ grn_db_init_builtin_query(grn_ctx *ctx)
 
   grn_proc_create(ctx, "highlight_full", -1, GRN_PROC_FUNCTION,
                   func_highlight_full, NULL, NULL, 0, NULL);
+
+  {
+    grn_obj *selector_proc;
+
+    selector_proc = grn_proc_create(ctx, "in_values", -1, GRN_PROC_FUNCTION,
+                                    func_in_values, NULL, NULL, 0, NULL);
+    grn_proc_set_selector(ctx, selector_proc, selector_in_values);
+  }
 }

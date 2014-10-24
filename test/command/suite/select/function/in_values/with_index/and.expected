@@ -1,0 +1,58 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+column_create Tags memos_tag COLUMN_INDEX Memos tag
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is fast",          "tag": "groonga"},
+{"_key": "Mroonga is fast",          "tag": "mroonga"},
+{"_key": "Rroonga is fast",          "tag": "rroonga"},
+{"_key": "Droonga is fast",          "tag": "droonga"},
+{"_key": "Groonga is a HTTP server", "tag": "groonga"}
+]
+[[0,0.0,0.0],5]
+select Memos   --output_columns _key,tag   --filter 'all_records() && in_values(tag, "groonga", "mroonga", "droonga")'   --sortby _id
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tag",
+          "Tags"
+        ]
+      ],
+      [
+        "Groonga is fast",
+        "groonga"
+      ],
+      [
+        "Mroonga is fast",
+        "mroonga"
+      ],
+      [
+        "Droonga is fast",
+        "droonga"
+      ],
+      [
+        "Groonga is a HTTP server",
+        "groonga"
+      ]
+    ]
+  ]
+]
