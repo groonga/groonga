@@ -7879,7 +7879,7 @@ grn_token_filters_unpack(grn_ctx *ctx,
   unsigned int element_size;
   unsigned int i, n_token_filter_ids;
 
-  if (grn_vector_size(ctx, spec_vector) < SERIALIZED_SPEC_INDEX_TOKEN_FILTERS) {
+  if (grn_vector_size(ctx, spec_vector) <= SERIALIZED_SPEC_INDEX_TOKEN_FILTERS) {
     return;
   }
 
