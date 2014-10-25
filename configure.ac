@@ -973,6 +973,63 @@ if test "x$with_kytea" = "xyes"; then
 fi
 AM_CONDITIONAL(WITH_KYTEA, test "x$with_kytea" = "xyes")
 
+# libstemmer
+AC_ARG_WITH(libstemmer,
+  [AS_HELP_STRING([--with-libstemmer],
+    [use libstemmer for stemming. [default=auto]])],
+  [with_libstemmer="$withval"],
+  [with_libstemmer="auto"])
+AC_ARG_WITH(libstemmer-include,
+  [AS_HELP_STRING([--with-libstemmer-include],
+    [path to libstemmer.h. [default=auto]])])
+AC_ARG_WITH(libstemmer-lib,
+  [AS_HELP_STRING([--with-libstemmer-lib],
+    [path to libstemmer.so. [default=auto]])])
+AC_MSG_CHECKING([whether enable libstemmer])
+AC_MSG_RESULT($with_libstemmer)
+if test "x$with_libstemmer" != "xno"; then
+  LIBSTEMMER_CFLAGS=""
+  LIBSTEMMER_LDFLAGS=""
+  LIBSTEMMER_LIBS=""
+
+  CFLAGS_save="${CFLAGS}"
+  LDFLAGS_save="${LDFLAGS}"
+  if test "x$with_libstemmer" != "xauto"; then
+    if test -z "${with_libstemmer_include}"; then
+      with_libstemmer_include="${with_libstemmer}/include"
+    fi
+    LIBSTEMMER_CFLAGS="-I${with_libstemmer_include:}"
+    if test -z "${with_libstemmer_lib}"; then
+      with_libstemmer_lib="${with_libstemmer}/lib"
+    fi
+    LIBSTEMMER_LDFLAGS="-L${with_libstemmer_lib}"
+    CFLAGS="${CFLAGS} ${LIBSTEMMER_CFLAGS}"
+    LDFLAGS="${LDFLAGS} ${LIBSTEMMER_LDFLAGS}"
+  fi
+  AC_CHECK_HEADERS(libstemmer.h,
+                   [libstemmer_exists=yes],
+                   [libstemmer_exists=no])
+  if test "$libstemmer_exists" = "yes"; then
+    AC_CHECK_LIB(stemmer, sb_stemmer_list,
+                 [LIBSTEMMER_LIBS="-lstemmer"],
+                 [libstemmer_exists=no])
+  fi
+  CFLAGS="${CFLAGS_save}"
+  LDFLAGS="${LDFLAGS_save}"
+
+  if test "$libstemmer_exists" = "no" -a "x$with_libstemmer" != "xauto"; then
+    AC_MSG_ERROR("No libstemmer found at ${with_libstemmer_include} and ${with_libstemmer_lib}.")
+  fi
+  with_libstemmer="$libstemmer_exists"
+fi
+if test "x$with_libstemmer" = "xyes"; then
+  AC_SUBST(LIBSTEMMER_CFLAGS)
+  AC_SUBST(LIBSTEMMER_LDFLAGS)
+  AC_SUBST(LIBSTEMMER_LIBS)
+  AC_DEFINE(GRN_WITH_LIBSTEMMER, [1], [use libstemmer])
+fi
+AM_CONDITIONAL(WITH_LIBSTEMMER, test "x$with_libstemmer" = "xyes")
+
 # futex check
 AC_ARG_ENABLE(futex,
   [AS_HELP_STRING([--enable-futex],
@@ -1486,6 +1543,14 @@ echo "  KyTea:                 $with_kytea"
 if test "x$with_kytea" = "xyes"; then
   echo "    CFLAGS:              $KYTEA_CFLAGS"
   echo "    LIBS:                $KYTEA_LIBS"
+fi
+echo
+
+echo "Token filters:"
+echo "  libstemmer:            $with_libstemmer"
+if test "x$with_libstemmer" = "xyes"; then
+  echo "    CFLAGS:              $LIBSTEMMER_CFLAGS"
+  echo "    LIBS:                $LIBSTEMMER_LIBS"
 fi
 echo
 
