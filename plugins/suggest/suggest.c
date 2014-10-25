@@ -573,7 +573,18 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
 
   if ((items = grn_ctx_get(ctx, TEXT_VALUE_LEN(VAR(1))))) {
     if ((items_boost = grn_obj_column(ctx, items, CONST_STR_LEN("boost")))) {
-      GRN_OUTPUT_MAP_OPEN("RESULT_SET", -1);
+      int n_outputs = 0;
+      if (types & COMPLETE) {
+        n_outputs++;
+      }
+      if (types & CORRECT) {
+        n_outputs++;
+      }
+      if (types & SUGGEST) {
+        n_outputs++;
+      }
+      GRN_OUTPUT_MAP_OPEN("RESULT_SET", n_outputs);
+
       if (types & COMPLETE) {
         if ((col = grn_obj_column(ctx, items, TEXT_VALUE_LEN(VAR(2))))) {
           GRN_OUTPUT_CSTR("complete");
