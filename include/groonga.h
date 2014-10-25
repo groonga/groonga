@@ -1187,7 +1187,7 @@ GRN_API const char *grn_default_query_logger_get_path(void);
 #define GRN_BULK_REST(bulk) \
   (GRN_BULK_OUTP(bulk)\
    ? ((bulk)->u.b.tail - (bulk)->u.b.curr)\
-   : GRN_BULK_BUFSIZE - (bulk)->header.flags)
+   : GRN_BULK_BUFSIZE - GRN_BULK_SIZE_IN_FLAGS((bulk)->header.flags))
 #define GRN_BULK_VSIZE(bulk) \
   (GRN_BULK_OUTP(bulk)\
    ? ((bulk)->u.b.curr - (bulk)->u.b.head)\
