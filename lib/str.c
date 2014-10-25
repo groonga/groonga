@@ -2941,6 +2941,8 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
         }
       }
       GRN_TEXT_PUTC(ctx, bulk, ']');
+      GRN_OBJ_FIN(ctx, &value);
+      GRN_OBJ_FIN(ctx, &weight);
     }
     break;
   case GRN_PVECTOR :
