@@ -84,7 +84,7 @@
 #cmakedefine GRN_WITH_CUTTER
 #cmakedefine GRN_WITH_KYTEA
 #cmakedefine GRN_WITH_LIBMEMCACHED
-#cmakedefine GRN_WITH_LZO
+#cmakedefine GRN_WITH_LZ4
 #cmakedefine GRN_WITH_MECAB
 #cmakedefine GRN_WITH_MESSAGE_PACK
 #cmakedefine GRN_WITH_MRUBY
