@@ -72,6 +72,9 @@ set(GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT
 set(GRN_DEFAULT_DOCUMENT_ROOT
   "${CMAKE_INSTALL_PREFIX}/${GRN_DATA_DIR}/${GRN_DEFAULT_DOCUMENT_ROOT_BASE}"
   CACHE PATH "groonga default document root")
+set(GRN_DEFAULT_DB_KEY
+  "auto"
+  CACHE STRING "Groonga's default DB key management algorithm")
 set(GRN_STACK_SIZE
   1024
   CACHE STRING
