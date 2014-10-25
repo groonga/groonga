@@ -329,8 +329,6 @@ struct _grn_expr {
   grn_expr_code *code0;
 };
 
-GRN_API grn_rc grn_expr_clear_vars(grn_ctx *ctx, grn_obj *expr);
-
 grn_rc grn_expr_parser_close(grn_ctx *ctx);
 GRN_API grn_rc grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, grn_bool addp);
 

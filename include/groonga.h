@@ -1691,6 +1691,8 @@ GRN_API grn_obj *grn_expr_add_var(grn_ctx *ctx, grn_obj *expr,
 GRN_API grn_obj *grn_expr_get_var(grn_ctx *ctx, grn_obj *expr,
                                   const char *name, unsigned int name_size);
 GRN_API grn_obj *grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset);
+GRN_API grn_rc grn_expr_clear_vars(grn_ctx *ctx, grn_obj *expr);
+
 
 GRN_API grn_obj *grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj,
                                      grn_operator op, int nargs);
