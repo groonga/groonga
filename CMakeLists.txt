@@ -357,6 +357,38 @@ else()
   set(GRN_WITH_KYTEA FALSE)
 endif()
 
+set(GRN_WITH_LIBSTEMMER "auto"
+  CACHE STRING "use libstemmer for stemming token filter")
+if(NOT ${GRN_WITH_LIBSTEMMER} STREQUAL "no")
+  if(NOT ("${GRN_WITH_LIBSTEMMER}" STREQUAL "yes" OR
+	"${GRN_WITH_LIBSTEMMER}" STREQUAL "auto"))
+    if("${LIBSTEMMER_INCLUDE_DIRS}" STREQUAL "")
+      set(LIBSTEMMER_INCLUDE_DIRS "${GRN_WITH_LIBSTEMMER}/include")
+    endif()
+    if("${LIBSTEMMER_LIBRARY_DIRS}" STREQUAL "")
+      set(LIBSTEMMER_LIBRARY_DIRS "${GRN_WITH_LIBSTEMMER}/lib")
+    endif()
+  endif()
+  set(CMAKE_REQUIRED_INCLUDES_SAVE ${CMAKE_REQUIRED_INCLUDES})
+  set(CMAKE_REQUIRED_INCLUDES
+    ${CMAKE_REQUIRED_INCLUDES}
+    ${LIBSTEMMER_INCLUDE_DIRS})
+  ac_check_headers(libstemmer.h)
+  ac_check_lib(stemmer sb_stemmer_list "${LIBSTEMMER_LIBRARY_DIRS}")
+  set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES_SAVE})
+  if(HAVE_LIBSTEMMER_H AND HAVE_LIBSTEMMER)
+    set(LIBSTEMMER_LIBRARIES "stemmer")
+    set(GRN_WITH_LIBSTEMMER TRUE)
+  else()
+    if(${GRN_WITH_LIBSTEMMER} STREQUAL "yes")
+      message(FATAL_ERROR "No libstemmer found")
+    endif()
+    set(GRN_WITH_LIBSTEMMER FALSE)
+  endif()
+else()
+  set(GRN_WITH_LIBSTEMMER FALSE)
+endif()
+
 set(GRN_WITH_ZEROMQ "auto"
   CACHE STRING "use ZeroMQ for suggestion")
 if(NOT ${GRN_WITH_ZEROMQ} STREQUAL "no")
