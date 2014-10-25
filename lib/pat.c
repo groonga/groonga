@@ -749,16 +749,16 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
   return r;
 }
 
-inline static int
+inline static grn_bool
 chop(grn_ctx *ctx, grn_pat *pat, const char **key, const char *end, uint32_t *lkey)
 {
   size_t len = grn_charlen(ctx, *key, end);
   if (len) {
     *lkey += len;
     *key += len;
-    return **key;
+    return (end - *key) > 0;
   } else {
-    return 0;
+    return GRN_FALSE;
   }
 }
 
