@@ -7194,6 +7194,24 @@ msgstr ""
 msgid "See :doc:`/reference/normalizers` for all normalizsers."
 msgstr "See :doc:`/reference/normalizers` for all normalizsers."
 
+msgid "``token_filters``"
+msgstr ""
+
+msgid ""
+"It specifies token filters that is used to some processes tokenized token."
+msgstr ""
+"It specifies token filters that is used to some processes tokenized token."
+
+msgid ""
+"You cannot use ``token_filters`` with ``TABLE_NO_KEY`` because "
+"``TABLE_NO_KEY`` doesn't support key."
+msgstr ""
+"You cannot use ``token_filters`` with ``TABLE_NO_KEY`` because "
+"``TABLE_NO_KEY`` doesn't support key."
+
+msgid "See :doc:`/reference/token_filters` for all token filters."
+msgstr "See :doc:`/reference/token_filters` for all token filters."
+
 msgid "``table_create`` returns ``true`` as body on success such as::"
 msgstr "``table_create`` returns ``true`` as body on success such as::"
 

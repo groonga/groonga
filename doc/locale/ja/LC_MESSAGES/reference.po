@@ -6766,6 +6766,25 @@ msgstr ""
 msgid "See :doc:`/reference/normalizers` for all normalizsers."
 msgstr "ノーマライザーの一覧は :doc:`/reference/normalizers` にあります。"
 
+msgid "``token_filters``"
+msgstr ""
+
+msgid ""
+"It specifies token filters that is used to some processes tokenized token."
+msgstr ""
+"トークナイズされたトークンに所定の処理を行うために使うトークンフィルターを指"
+"定します。"
+
+msgid ""
+"You cannot use ``token_filters`` with ``TABLE_NO_KEY`` because "
+"``TABLE_NO_KEY`` doesn't support key."
+msgstr ""
+"``TABLE_NO_KEY`` はキーをサポートしていないので、 ``TABLE_NO_KEY`` と "
+"``token_filters`` を一緒に指定することはできません。"
+
+msgid "See :doc:`/reference/token_filters` for all token filters."
+msgstr "トークンフィルターの一覧は :doc:`/reference/token_filters` にあります。"
+
 msgid "``table_create`` returns ``true`` as body on success such as::"
 msgstr ""
 "``table_create`` が成功したときは以下のようにボディは ``true`` になります::"
