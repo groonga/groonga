@@ -57,6 +57,9 @@ set(GRN_CONFIG_DIR "${CONFIG_DIR}/${GRN_PROJECT_NAME}")
 set(GRN_LOG_PATH
   "${CMAKE_INSTALL_PREFIX}/var/log/${GRN_PROJECT_NAME}/${GRN_PROJECT_NAME}.log"
   CACHE FILEPATH "log file path")
+set(GRN_DEFAULT_ENCODING
+  "utf8"
+  CACHE STRING "Groonga's default encoding")
 set(GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD
   0
   CACHE STRING "groonga default match escalation threshold")
