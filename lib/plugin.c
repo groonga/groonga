@@ -89,6 +89,10 @@ grn_plugin_path(grn_ctx *ctx, grn_id id)
   const char *system_plugins_dir;
   size_t system_plugins_dir_size;
 
+  if (id == GRN_ID_NIL) {
+    return NULL;
+  }
+
   CRITICAL_SECTION_ENTER(grn_plugins_lock);
   path = _grn_hash_key(&grn_gctx, grn_plugins, id, &key_size);
   CRITICAL_SECTION_LEAVE(grn_plugins_lock);
