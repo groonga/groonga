@@ -268,6 +268,8 @@ See :doc:`/reference/normalizers` for all normalizsers.
 
 The default value is none.
 
+.. _table-create-token-filters:
+
 ``token_filters``
 ^^^^^^^^^^^^^^^^^^
 

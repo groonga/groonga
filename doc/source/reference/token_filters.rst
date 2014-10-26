@@ -17,9 +17,9 @@ Token filter module can be added as a plugin.
 
 You can customize tokenized token by registering your token filters plugins to Groonga.
 
-A token filter module is attached to a table. A token filter can have zero or
-N token filter module. You can attach a normalizer module to a table
-``token_filters`` option in :doc:`/reference/commands/table_create`.
+A table can have zero or more token filters. You can attach token
+filters to a table by :ref:`table-create-token-filters` option in
+:doc:`/reference/commands/table_create`.
 
 Here is an example ``table_create`` that uses ``TokenFilterStopWord``
 token filter module:
