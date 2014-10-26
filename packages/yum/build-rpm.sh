@@ -86,7 +86,7 @@ build_fedora_srpm()
     run mv *.spec ~/rpmbuild/SPECS/
     run mv * ~/rpmbuild/SOURCES/
     run cd -
-    rn rm -rf tmp
+    run rm -rf tmp
 
     mecab_build_options="--buildroot ${HOME}/rpmbuild/BUILDROOT/${srpm_base}"
     case "${architecture}" in
