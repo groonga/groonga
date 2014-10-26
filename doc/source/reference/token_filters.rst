@@ -69,6 +69,11 @@ Here is an example that uses ``TokenFilterStopWord`` token filter:
 .. ]
 .. select Memos --match_columns content --query "Hello and"
 
+``and`` token is marked as stop word in ``Terms`` table.
+
+``"Hello"`` that doesn't have ``and`` in content is matched. Because
+``and`` is a stop word and ``and`` is removed from query.
+
 ``TokenFilterStem``
 ^^^^^^^^^^^^^^^^^^^
 
@@ -91,6 +96,10 @@ Here is an example that uses ``TokenFilterStem`` token filter:
 .. {"content": "I developed Groonga"}
 .. ]
 .. select Memos --match_columns content --query "develops"
+
+All of ``develop``, ``developing``, ``developed`` and ``develops``
+tokens are stemmed as ``develop``. So we can find ``develop``,
+``developing`` and ``developed`` by ``develops`` query.
 
 See also
 --------
