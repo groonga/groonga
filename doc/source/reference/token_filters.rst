@@ -31,7 +31,7 @@ token filter module:
 Available token filters
 -----------------------
 
-Here are the list of available token filters:
+Here is the list of available token filters:
 
 * ``TokenFilterStopWord``
 * ``TokenFilterStem``
