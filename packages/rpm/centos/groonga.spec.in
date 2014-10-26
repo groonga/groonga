@@ -1,4 +1,4 @@
-%{!?use_lzo:%define use_lzo 0}
+%{!?use_lz4:%define use_lz4 0}
 %{!?use_mecab:%define use_mecab 1}
 %{?additional_configure_options:%define use_additional_configure_options 1}
 %{!?additional_configure_options:%define use_additional_configure_options 0}
@@ -20,8 +20,8 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
 BuildRequires:	mecab-devel
 %endif
 BuildRequires:	zlib-devel
-%if %{use_lzo}
-BuildRequires:	lzo-devel
+%if %{use_lz4}
+BuildRequires:	lz4-devel
 %endif
 BuildRequires:	pcre-devel
 Requires:	%{name}-libs = %{version}-%{release}
@@ -161,8 +161,8 @@ Munin plugins for Groonga
   --disable-static \
   --with-package-platform=redhat \
   --with-zlib \
-%if %{use_lzo}
-  --with-lzo \
+%if %{use_lz4}
+  --with-lz4 \
 %endif
 %if %{use_mecab}
   --with-mecab \
