@@ -1,15 +1,6 @@
-register token_filters/stop_word
+register token_filters/stem
 [[0,0.0,0.0],true]
-table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto   --token_filters TokenFilterStopWord
-[[0,0.0,0.0],true]
-column_create Terms is_stop_word COLUMN_SCALAR Bool
-[[0,0.0,0.0],true]
-load --table Terms
-[
-{"_key": "and", "is_stop_word": true}
-]
-[[0,0.0,0.0],1]
-tokenize TokenBigram "Hello and Good-bye" --mode GET --table Terms
+tokenize TokenBigram "I developed Groonga" NormalizerAuto --token_filters TokenFilterStem
 [
   [
     0,
@@ -18,20 +9,16 @@ tokenize TokenBigram "Hello and Good-bye" --mode GET --table Terms
   ],
   [
     {
-      "value": "hello",
+      "value": "i",
       "position": 0
     },
     {
-      "value": "good",
+      "value": "develop",
+      "position": 1
+    },
+    {
+      "value": "groonga",
       "position": 2
-    },
-    {
-      "value": "-",
-      "position": 3
-    },
-    {
-      "value": "bye",
-      "position": 4
     }
   ]
 ]

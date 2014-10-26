@@ -3545,7 +3545,6 @@ proc_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *flag_names;
   grn_obj *mode_name;
   grn_obj *token_filter_names;
-  grn_obj *table_name;
 
   tokenizer_name = VAR(0);
   string = VAR(1);
@@ -3553,7 +3552,6 @@ proc_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   flag_names = VAR(3);
   mode_name = VAR(4);
   token_filter_names = VAR(5);
-  table_name = VAR(6);
 
   if (GRN_TEXT_LEN(tokenizer_name) == 0) {
     ERR(GRN_INVALID_ARGUMENT, "[tokenize] tokenizer name is missing");
@@ -3574,14 +3572,10 @@ proc_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       return NULL;
     }
 
-    if (GRN_TEXT_LEN(table_name)) {
-      lexicon = grn_ctx_get(ctx, GRN_TEXT_VALUE(table_name), GRN_TEXT_LEN(table_name));
-    } else {
-      lexicon = create_lexicon_for_tokenize(ctx,
-                                            tokenizer_name,
-                                            normalizer_name,
-                                            token_filter_names);
-    }
+    lexicon = create_lexicon_for_tokenize(ctx,
+                                          tokenizer_name,
+                                          normalizer_name,
+                                          token_filter_names);
     if (!lexicon) {
       return NULL;
     }
@@ -5499,8 +5493,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[3], "flags");
   DEF_VAR(vars[4], "mode");
   DEF_VAR(vars[5], "token_filters");
-  DEF_VAR(vars[6], "table");
-  DEF_COMMAND("tokenize", proc_tokenize, 7, vars);
+  DEF_COMMAND("tokenize", proc_tokenize, 6, vars);
 
   DEF_COMMAND("tokenizer_list", proc_tokenizer_list, 0, vars);
 
