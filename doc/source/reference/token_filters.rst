@@ -10,6 +10,7 @@ Token filters
 
 Summary
 -------
+
 Groonga has token filter module that some processes tokenized token.
 
 Token filter module can be added as a plugin.
