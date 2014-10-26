@@ -7036,9 +7036,6 @@ msgstr ""
 "kytea/>`_ ベースのトークナイザーを ``tokenizers/kytea`` を登録することで使え"
 "ます。"
 
-msgid "It specifies any string which you want to tokenize."
-msgstr "トークナイズしたい文字列を指定します。"
-
 msgid ""
 "It specifies the normalizer name. ``tokenize`` command uses the normalizer "
 "that is named ``normalizer``. Normalizer is important for N-gram family "
@@ -7131,10 +7128,6 @@ msgstr ""
 "``ENABLE_TOKENIZED_DELIMITER`` が有効のときは、対象文字列はすでにトークナイズ"
 "済みであると扱われます。トークナイザーは単にトークナイズ済み区切り文字で区"
 "切ってトークナイズします。"
-
-# bb92571e89f6451f98bb15c4c25fc786
-msgid "``mode``"
-msgstr ""
 
 msgid ""
 "It specifies a tokenize mode. If the mode is specified ``ADD``, the text is "
@@ -7240,9 +7233,6 @@ msgstr ""
 
 msgid "Tokenizer name."
 msgstr "トークナイザー名。"
-
-msgid ":doc:`/reference/commands/tokenize`"
-msgstr ""
 
 msgid "``truncate``"
 msgstr ""
