@@ -39,13 +39,13 @@ Here are the list of available token filters:
 ``TokenFilterStopWord``
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-``TokenFilterStopWord`` removes stopword from tokenized token
+``TokenFilterStopWord`` removes stop words from tokenized token
 in searching the documents.
 
-``TokenFilterStopWord`` can specify stopword after adding the
+``TokenFilterStopWord`` can specify stop word after adding the
 documents, because It removes token in searching the documents.
 
-The stopword is specified ``stopword`` column on lexicon table.
+The stop word is specified ``stopword`` column on lexicon table.
 
 Here is an example that uses ``TokenFilterStopWord`` token filter:
 
