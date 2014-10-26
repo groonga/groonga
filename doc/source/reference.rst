@@ -17,6 +17,7 @@ Reference manual
    reference/column
    reference/normalizers
    reference/tokenizers
+   reference/token_filters
    reference/query_expanders
    reference/pseudo_column
    reference/grn_expr

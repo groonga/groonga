@@ -14559,6 +14559,76 @@ msgstr ""
 "database (sharding) or reduce each key size to handle 4GiB or more larger "
 "total key size."
 
+msgid "Token filters"
+msgstr "Token filters"
+
+msgid "Groonga has token filter module that some processes tokenized token."
+msgstr "Groonga has token filter module that some processes tokenized token."
+
+msgid "Token filter module can be added as a plugin."
+msgstr "Token filter module can be added as a plugin."
+
+msgid ""
+"You can customize tokenized token by registering your token filters plugins "
+"to Groonga."
+msgstr ""
+"You can customize tokenized token by registering your token filters plugins "
+"to Groonga."
+
+msgid ""
+"A token filter module is attached to a table. A token filter can have zero "
+"or N token filter module. You can attach a normalizer module to a table "
+"``token_filters`` option in :doc:`/reference/commands/table_create`."
+msgstr ""
+"A token filter module is attached to a table. A token filter can have zero "
+"or N token filter module. You can attach a normalizer module to a table "
+"``token_filters`` option in :doc:`/reference/commands/table_create`."
+
+msgid ""
+"Here is an example ``table_create`` that uses ``TokenFilterStopWord`` token "
+"filter module:"
+msgstr ""
+"Here is an example ``table_create`` that uses ``TokenFilterStopWord`` token "
+"filter module:"
+
+msgid "Available token filters"
+msgstr "Available token filters"
+
+msgid "Here are the list of available token filters:"
+msgstr "Here are the list of available token filters:"
+
+msgid "``TokenFilterStopWord``"
+msgstr ""
+
+msgid "``TokenFilterStem``"
+msgstr ""
+
+msgid ""
+"``TokenFilterStopWord`` removes stopword from tokenized token in searching "
+"the documents."
+msgstr ""
+"``TokenFilterStopWord`` removes stopword from tokenized token in searching "
+"the documents."
+
+msgid ""
+"``TokenFilterStopWord`` can specify stopword after adding the documents, "
+"because It removes token in searching the documents."
+msgstr ""
+"``TokenFilterStopWord`` can specify stopword after adding the documents, "
+"because It removes token in searching the documents."
+
+msgid "The stopword is specified ``stopword`` column on lexicon table."
+msgstr "The stopword is specified ``stopword`` column on lexicon table."
+
+msgid "Here is an example that uses ``TokenFilterStopWord`` token filter:"
+msgstr "Here is an example that uses ``TokenFilterStopWord`` token filter:"
+
+msgid "``TokenFilterStem`` stemming tokenized token."
+msgstr "``TokenFilterStem`` stemming tokenized token."
+
+msgid "Here is an example that uses ``TokenFilterStem`` token filter:"
+msgstr "Here is an example that uses ``TokenFilterStem`` token filter:"
+
 msgid "Tokenizers"
 msgstr "Tokenizers"
 
