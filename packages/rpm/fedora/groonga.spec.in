@@ -348,7 +348,7 @@ fi
 %dir %{_libdir}/groonga/plugins/token_filters
 %{_libdir}/groonga/plugins/table/table.so
 %{_libdir}/groonga/plugins/query_expanders/tsv.so
-%{_libdir}/groonga/plugins/token_filters/stop_word
+%{_libdir}/groonga/plugins/token_filters/stop_word.so
 %{_datadir}/groonga/
 %config(noreplace) %{_sysconfdir}/groonga/synonyms.tsv
 
