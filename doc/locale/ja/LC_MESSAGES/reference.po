@@ -6766,6 +6766,25 @@ msgstr ""
 msgid "See :doc:`/reference/normalizers` for all normalizsers."
 msgstr "ノーマライザーの一覧は :doc:`/reference/normalizers` にあります。"
 
+msgid "``token_filters``"
+msgstr ""
+
+msgid ""
+"It specifies token filters that is used to some processes tokenized token."
+msgstr ""
+"トークナイズされたトークンに所定の処理を行うために使うトークンフィルターを指"
+"定します。"
+
+msgid ""
+"You cannot use ``token_filters`` with ``TABLE_NO_KEY`` because "
+"``TABLE_NO_KEY`` doesn't support key."
+msgstr ""
+"``TABLE_NO_KEY`` はキーをサポートしていないので、 ``TABLE_NO_KEY`` と "
+"``token_filters`` を一緒に指定することはできません。"
+
+msgid "See :doc:`/reference/token_filters` for all token filters."
+msgstr "トークンフィルターの一覧は :doc:`/reference/token_filters` にあります。"
+
 msgid "``table_create`` returns ``true`` as body on success such as::"
 msgstr ""
 "``table_create`` が成功したときは以下のようにボディは ``true`` になります::"
@@ -13777,6 +13796,80 @@ msgstr ""
 "キーサイズの合計の最大値は4GiBです。キーサイズの合計が4GiBを超える場合は、"
 "テーブルを分割したり、データベースを分割したり（シャーディング）、それぞれの"
 "キーのサイズを減らしてください。"
+
+msgid "Token filters"
+msgstr "Token filters"
+
+msgid "Groonga has token filter module that some processes tokenized token."
+msgstr ""
+"Groongaにはトークナイズされたトークンに所定の処理を行うトークンフィルター"
+"モジュールがあります。"
+
+msgid "Token filter module can be added as a plugin."
+msgstr "トークンフィルターモジュールはプラグインとして追加できます。"
+
+msgid ""
+"You can customize tokenized token by registering your token filters plugins "
+"to Groonga."
+msgstr ""
+"トークンフィルタープラグインをGroongaに追加することでトークナイズされたトークン"
+"をカスタマイズできます。"
+
+msgid ""
+"A token filter module is attached to a table. A token filter can have zero "
+"or N token filter module. You can attach a normalizer module to a table "
+"``token_filters`` option in :doc:`/reference/commands/table_create`."
+msgstr ""
+"トークンフィルターモジュールはテーブルに関連付いています。テーブルは0個かN個"
+"のトークンフィルターモジュールを持つことができます。"
+":doc:`/reference/commands/table_create` の ``token_filters`` オプションで"
+"テーブルにトークンフィルターオプションを関連付けることができます。"
+
+msgid ""
+"Here is an example ``table_create`` that uses ``TokenFilterStopWord`` token "
+"filter module:"
+msgstr ""
+"以下は ``TokenFilterStopWord`` トークンフィルターモジュールを使う"
+" ``table_create`` の例です。"
+
+msgid "Available token filters"
+msgstr "利用可能なトークンフィルター"
+
+msgid "Here are the list of available token filters:"
+msgstr "以下は組み込みのトークンフィルターのリストです。"
+
+msgid "``TokenFilterStopWord``"
+msgstr ""
+
+msgid "``TokenFilterStem``"
+msgstr ""
+
+msgid ""
+"``TokenFilterStopWord`` removes stopword from tokenized token in searching "
+"the documents."
+msgstr ""
+"``TokenFilterStopWord`` は、文書を検索する時にトークナイズされたトークンから"
+"ストップワードを除去します。"
+
+msgid ""
+"``TokenFilterStopWord`` can specify stopword after adding the documents, "
+"because It removes token in searching the documents."
+msgstr ""
+"``TokenFilterStopWord`` は、文書を検索する時のみトークン除去するため、文書"
+"を追加した後でストップワードを指定することもできます。"
+
+msgid "The stopword is specified ``stopword`` column on lexicon table."
+msgstr ""
+"ストップワードは、語彙表の ``stopword`` カラムで指定します。"
+
+msgid "Here is an example that uses ``TokenFilterStopWord`` token filter:"
+msgstr "以下は ``TokenFilterStopWord`` トークンフィルターを使う例です。"
+
+msgid "``TokenFilterStem`` stemming tokenized token."
+msgstr "``TokenFilterStem`` は、トークナイズされたトークンをステミングします。"
+
+msgid "Here is an example that uses ``TokenFilterStem`` token filter:"
+msgstr "以下は ``TokenFilterStem`` トークンフィルターを使う例です。"
 
 msgid "Tokenizers"
 msgstr ""

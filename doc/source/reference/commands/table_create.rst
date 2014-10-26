@@ -26,6 +26,7 @@ Syntax
                [value_type=null]
                [default_tokenizer=null]
                [normalizer=null]
+               [token_filters=null]
 
 Usage
 -----
@@ -264,6 +265,18 @@ You cannot use ``normalizer`` with ``TABLE_NO_KEY`` because
 ``TABLE_NO_KEY`` doesn't support key.
 
 See :doc:`/reference/normalizers` for all normalizsers.
+
+The default value is none.
+
+``token_filters``
+^^^^^^^^^^^^^^^^^^
+
+It specifies token filters that is used to some processes tokenized token.
+
+You cannot use ``token_filters`` with ``TABLE_NO_KEY`` because
+``TABLE_NO_KEY`` doesn't support key.
+
+See :doc:`/reference/token_filters` for all token filters.
 
 The default value is none.
 
