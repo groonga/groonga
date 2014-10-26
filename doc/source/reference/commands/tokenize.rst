@@ -26,6 +26,7 @@ optional::
            [normalizer=null]
            [flags=NONE]
            [mode=ADD]
+           [token_filters=NONE]
 
 Usage
 -----
@@ -189,6 +190,14 @@ Here is an example to the ``GET`` mode.
 .. tokenize TokenBigram "Fulltext Search" --mode GET
 
 The last alphabet is tokenized by two characters.
+
+``token_filters``
+"""""""""""""""""
+
+It specifies the token filter names. ``tokenize`` command uses the
+tokenizer that is named ``token_filters``.
+
+See :doc:`/reference/token_filters` about token filters.
 
 Return value
 ------------

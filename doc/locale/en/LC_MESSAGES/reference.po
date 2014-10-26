@@ -7499,6 +7499,18 @@ msgid "The last alphabet is tokenized by two characters."
 msgstr "The last alphabet is tokenized by two characters."
 
 msgid ""
+"It specifies the token filter names. ``tokenize`` command uses the "
+"tokenizer that is named ``token_filters``."
+msgstr""
+"It specifies the token filter names. ``tokenize`` command uses the "
+"tokenizer that is named ``token_filters``."
+
+msgid ""
+"See :doc:`/reference/token_filters` about token filters."
+msgstr
+"See :doc:`/reference/token_filters` about token filters."
+
+msgid ""
 "``tokenize`` command returns tokenized tokens. Each token has some "
 "attributes except token itself. The attributes will be increased in the "
 "feature::"

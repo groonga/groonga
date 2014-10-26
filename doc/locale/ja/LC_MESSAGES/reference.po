@@ -7072,6 +7072,18 @@ msgid "The last alphabet is tokenized by two characters."
 msgstr "最後のアルファベットは2文字でトークナイズされています。"
 
 msgid ""
+"It specifies the token filter names. ``tokenize`` command uses the "
+"tokenizer that is named ``token_filters``."
+msgstr "トークンフィルターを指定します。 ``tokenize`` コマンド"
+"は ``token_filters`` という名前のトークンフィルターを使います。"
+
+msgid ""
+"See :doc:`/reference/token_filters` about token filters."
+msgstr
+"トークンフィルターについては :doc:`/reference/token_filters` "
+"を参照してください。"
+
+msgid ""
 "``tokenize`` command returns tokenized tokens. Each token has some "
 "attributes except token itself. The attributes will be increased in the "
 "feature::"
