@@ -12,7 +12,7 @@ Source0:	http://packages.groonga.org/source/groonga/groonga-%{version}.tar.gz
 
 BuildRequires:	mecab-devel
 BuildRequires:	zlib-devel
-BuildRequires:	lzo-devel
+BuildRequires:	lz4-devel
 #BuildRequires:	messagepack-devel
 #BuildRequires:	zeromq-devel
 #BuildRequires:	libevent-devel
@@ -170,7 +170,7 @@ PHP language binding for Groonga
 %configure \
   --disable-static \
   --with-package-platform=fedora \
-  --with-zlib --with-lzo \
+  --with-zlib --with-lz4 \
   --with-munin-plugins
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
 sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
