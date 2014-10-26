@@ -40,7 +40,7 @@ Here are the list of available token filters:
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 ``TokenFilterStopWord`` removes stopword from tokenized token
-in searching the documents. 
+in searching the documents.
 
 ``TokenFilterStopWord`` can specify stopword after adding the
 documents, because It removes token in searching the documents.
