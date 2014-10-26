@@ -45,7 +45,7 @@ in searching the documents.
 ``TokenFilterStopWord`` can specify stop word after adding the
 documents, because It removes token in searching the documents.
 
-The stop word is specified ``stopword`` column on lexicon table.
+The stop word is specified ``is_stop_word`` column on lexicon table.
 
 Here is an example that uses ``TokenFilterStopWord`` token filter:
 
