@@ -7165,11 +7165,15 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
       if (ii_buffer->counters) {
         ii_buffer->block_buf = GRN_MALLOCN(grn_id, II_BUFFER_BLOCK_SIZE);
         if (ii_buffer->block_buf) {
+          int open_flags = O_WRONLY|O_CREAT|O_TRUNC;
+#ifdef WIN32
+          open_flags |= O_BINARY;
+#endif
           snprintf(ii_buffer->tmpfpath, PATH_MAX,
                    "%sXXXXXX", grn_io_path(ii->seg));
           ii_buffer->block_buf_size = II_BUFFER_BLOCK_SIZE;
           ii_buffer->tmpfd = GRN_MKOSTEMP(ii_buffer->tmpfpath,
-                                          O_WRONLY|O_CREAT|O_TRUNC,
+                                          open_flags,
                                           S_IRUSR|S_IWUSR);
           if (ii_buffer->tmpfd != -1) {
             grn_obj_flags flags;
