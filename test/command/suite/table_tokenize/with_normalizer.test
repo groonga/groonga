@@ -1,0 +1,5 @@
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+
+table_tokenize Terms "aBcDe 123"
