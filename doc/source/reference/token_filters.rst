@@ -43,7 +43,7 @@ Here are the list of available token filters:
 in searching the documents.
 
 ``TokenFilterStopWord`` can specify stop word after adding the
-documents, because It removes token in searching the documents.
+documents because it removes token in searching the documents.
 
 The stop word is specified ``is_stop_word`` column on lexicon table.
 
@@ -72,7 +72,7 @@ Here is an example that uses ``TokenFilterStopWord`` token filter:
 ``TokenFilterStem``
 ^^^^^^^^^^^^^^^^^^^
 
-``TokenFilterStem`` stemming tokenized token.
+``TokenFilterStem`` stems tokenized token.
 
 Here is an example that uses ``TokenFilterStem`` token filter:
 
