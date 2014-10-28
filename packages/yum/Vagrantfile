@@ -36,7 +36,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       node.vm.boot_timeout = 1 * hour_in_seconds
       node.vm.provision(:shell, :privileged => false, :path => "build-rpm.sh")
       node.vm.provider("virtualbox") do |virtual_box|
-        virtual_box.memory = 512
+        virtual_box.memory = (ENV["VM_MEMORY"] || 1024).to_i
       end
     end
   end
