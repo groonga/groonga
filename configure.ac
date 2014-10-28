@@ -867,28 +867,45 @@ fi
 # zlib
 AC_ARG_WITH(zlib,
   [AS_HELP_STRING([--with-zlib],
-    [use zlib for data compression. [default=no]])],
+    [Support data compression by zlib. [default=auto]])],
   [with_zlib="$withval"],
-  [with_zlib="no"])
+  [with_zlib="auto"])
 GRN_WITH_ZLIB=no
-if test "x$with_zlib" = "xyes"; then
-  AC_DEFINE(GRN_WITH_ZLIB, [1], [with zlib])
-  AC_SEARCH_LIBS(compress, z, [GRN_WITH_ZLIB=yes],
-                 [AC_MSG_ERROR("No libz found")])
-else
-  AC_SEARCH_LIBS(compress, z, [GRN_WITH_ZLIB=yes], [])
+if test "x$with_zlib" != "xno"; then
+  # TODO: Support custom zlib include and lib directory by --with-zlib.
+  AC_SEARCH_LIBS(compress, z,
+                 [
+                   GRN_WITH_ZLIB=yes
+                   AC_DEFINE(GRN_WITH_ZLIB, [1],
+                             [Support data compression by zlib.])
+                 ],
+                 [
+                   if test "x$with_zlib" != "xauto"; then
+                     AC_MSG_ERROR("No libz found")
+                   fi
+                 ])
 fi
 AC_SUBST(GRN_WITH_ZLIB)
 
 # LZ4
 AC_ARG_WITH(lz4,
   [AS_HELP_STRING([--with-lz4],
-    [use LZ4 for data compression. [default=no]])],
+    [Support data compression by LZ4. [default=auto]])],
   [with_lz4="$withval"],
-  [with_lz4="no"])
-if test "x$with_lz4" = "xyes"; then
-  AC_DEFINE(GRN_WITH_LZ4, [1], [with lz4])
-  AC_SEARCH_LIBS(LZ4_compress, lz4, [], [AC_MSG_ERROR("No liblz4 found")])
+  [with_lz4="auto"])
+if test "x$with_lz4" != "xno"; then
+  # TODO: Support custom zlib include and lib directory by --with-zlib.
+  AC_SEARCH_LIBS(LZ4_compress, lz4,
+                 [
+                   GRN_WITH_LZ4=yes
+                   AC_DEFINE(GRN_WITH_LZ4, [1],
+                             [Support data compression by LZ4.])
+                 ],
+                 [
+                   if test "x$with_lz4" != "xauto"; then
+                     AC_MSG_ERROR("No libz found")
+                   fi
+                 ])
 fi
 
 # MeCab
