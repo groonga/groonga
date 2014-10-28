@@ -3668,10 +3668,10 @@ proc_table_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user
     (GRN_TEXT_LEN(mode_name) == strlen(name) &&\
      memcmp(GRN_TEXT_VALUE(mode_name), name, strlen(name)) == 0)
 
-    if (GRN_TEXT_LEN(mode_name) == 0 || MODE_NAME_EQUAL("ADD")) {
-      tokenize_add(ctx, lexicon, string, flags);
-    } else if (MODE_NAME_EQUAL("GET")) {
+    if (GRN_TEXT_LEN(mode_name) == 0 || MODE_NAME_EQUAL("GET")) {
       tokenize_get(ctx, lexicon, string, flags);
+    } else if (MODE_NAME_EQUAL("ADD")) {
+      tokenize_add(ctx, lexicon, string, flags);
     } else {
       ERR(GRN_INVALID_ARGUMENT, "[table_tokenize] invalid mode: <%.*s>",
           (int)GRN_TEXT_LEN(mode_name), GRN_TEXT_VALUE(mode_name));

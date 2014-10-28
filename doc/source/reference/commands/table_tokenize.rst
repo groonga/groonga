@@ -23,7 +23,7 @@ optional::
   table_tokenize table
                  string
                  [flags=NONE]
-                 [mode=ADD]
+                 [mode=GET]
 
 Usage
 -----
@@ -82,12 +82,16 @@ There are optional parameters.
 It specifies a tokenization customize options. You can specify
 multiple options separated by "``|``".
 
+The default value is ``NONE``.
+
 See :ref:`tokenize-flags` option in :doc:`/reference/commands/tokenize` about details.
 
 ``mode``
 """"""""
 
 It specifies a tokenize mode.
+
+The default value is ``GET``.
 
 See :ref:`tokenize-mode` option in :doc:`/reference/commands/tokenize` about details.
 
