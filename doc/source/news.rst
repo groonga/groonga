@@ -38,9 +38,9 @@ Improvements
   performance.
 * [load] Supported to update existing record in ``TABLE_NO_KEY`` by
   specifying a record by ``_id``.
-* Added :ref:`token-filter-stem` token filter plugin. It provides stemming
-  feature.  To use this token filter, it requires libstemmer library
-  provided by Snowball.
+* Added :ref:`token-filter-stem` token filter plugin. It provides
+  stemming feature.  To use this token filter, you need to install
+  `libstemmer <http://http://snowball.tartarus.org/>`_ library.
 * [doc] Added :doc:`/reference/token_filters` documentation.
   [GitHub#227] [Patch by Naoya Murakami]
 
