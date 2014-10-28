@@ -49,7 +49,7 @@ Fixes
 * [power8] Fixed build failure. See http://lists.askmonty.org/pipermail/commits/2014-October/006752.html
   [Patch by Sergey Vojtovich]
 * Fixed a bug that url encoding fails if char is build as unsigned char. [GitHub#217]
-* Fixed a bug that a DAT table returns empty results for :doc:`/reference/select`. [GitHub#220]
+* Fixed a bug that a DAT table returns empty results for :doc:`/reference/commands/select`. [GitHub#220]
 * Fixed a memory leak about inspecting vector column. It occurs when something error
   reports about vector column.
 * Fixed memory leaks in compress zlib/lzo column [GitHub#221] [Patch by Naoya Murakami]
