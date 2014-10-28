@@ -429,16 +429,12 @@ typedef int grn_cond;
 # define GRN_FMT_INT32U PRIu32
 # define GRN_FMT_INT64D PRId64
 # define GRN_FMT_INT64U PRIu64
-# define GRN_FMT_LLD "lld"
-# define GRN_FMT_LLU "llu"
 #else /* HAVE_INTTYPES_H */
 # ifdef WIN32
 #  define GRN_FMT_INT32D "I32d"
 #  define GRN_FMT_INT32U "I32u"
 #  define GRN_FMT_INT64D "I64d"
 #  define GRN_FMT_INT64U "I64u"
-#  define GRN_FMT_LLD "I64d"
-#  define GRN_FMT_LLU "I64u"
 # else /* WIN32 */
 #  define GRN_FMT_INT32D "d"
 #  define GRN_FMT_INT32U "u"
@@ -449,15 +445,17 @@ typedef int grn_cond;
 #   define GRN_FMT_INT64D "lld"
 #   define GRN_FMT_INT64U "llu"
 #  endif /* __x86_64__ */
-#  define GRN_FMT_LLD "lld"
-#  define GRN_FMT_LLU "llu"
 # endif /* WIN32 */
 #endif /* HAVE_INTTYPES_H */
 
 #ifdef WIN32
+# define GRN_FMT_LLD "I64d"
+# define GRN_FMT_LLU "I64u"
 # define GRN_FMT_SIZE  "Iu"
 # define GRN_FMT_SSIZE "Id"
 #else /* WIN32 */
+# define GRN_FMT_LLD  "lld"
+# define GRN_FMT_LLU  "llu"
 # define GRN_FMT_SIZE  "zu"
 # define GRN_FMT_SSIZE "zd"
 #endif /* WIN32 */
