@@ -32,6 +32,14 @@ case "${distribution}" in
     ;;
 esac
 
+have_liblz4=yes
+if ! apt-cache show liblz4-dev > /dev/null 2>&1; then
+  have_liblz4=no
+fi
+
+if [ "${have_liblz4}" = "no" ]; then
+  DEPENDED_PACKAGES="$(echo ${DEPENDED_PACKAGES} | sed -e 's/liblz4-dev//')"
+fi
 run sudo apt-get install -V -y build-essential devscripts ${DEPENDED_PACKAGES}
 
 run mkdir -p build
@@ -41,6 +49,9 @@ run cd build
 run tar xfz ${PACKAGE}_${VERSION}.orig.tar.gz
 run cd ${PACKAGE}-${VERSION}/
 run cp -rp /vagrant/tmp/debian debian
+if [ "${have_liblz4}" = "no" ]; then
+  grep -v liblz4 /vagrant/tmp/debian/control > debian/control
+fi
 # export DEB_BUILD_OPTIONS=noopt
 run debuild -us -uc
 run cd -
