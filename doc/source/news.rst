@@ -17,7 +17,7 @@ Improvements
 
 * [windows] Supported Groonga with mruby on Windows.
 * Added token filter plugin API.
-* Added stop-word token filter which uses token filter plugin API.
+* Added :ref:`token-filter-stop-word` token filter plugin.
   It treats records of ``is_stop_word`` column as actual stop words.
 * [doc] Added :doc:`/client` section which introduces link to client libraries.
   [GitHub#210] [Patch by Naoya Murakami]
@@ -27,36 +27,45 @@ Improvements
   [GitHub#206] [Patch by Naoya Murakami]
 * [dump] Supports to dump TABLE_NO_KEY for token_flters.
   [GitHub#215] [Patch by Naoya Murakami]
-* [deb] Changed to bundle token_filter stop word plugin.
+* [deb] Added stop word token filter plugin.
   [GitHub#216] [Patch by Hiroshi Hatake]
 * [deb] Clarified licenses about used/bundled files in debian/copyright.
 * Dropped LZO compression support.
 * Added LZ4 compression support. [GitHub#223] [Patch by Naoya Murakami]
-* Added :doc:`/reference/function/in_values`. we recommends it instead of
-  '==' and OR combinations because of better performance.
-* [load] Supported to update existing record by _id key.
-* [suggest] Improved to show the number of outputs for suggest command.
-* Added 'TokenFilterStem' which provides stemming feature.
-  To use this token filter, it requires libstemmer provided by Snowball.
+* Added :doc:`/reference/function/in_values`. We recommends to use it
+  instead of ``==`` and ``OR`` combinations ( ``((COLUMN == "a") OR
+  (COLUMN == "b") OR (COLUMN == "c"))`` ) because of better
+  performance.
+* [load] Supported to update existing record in ``TABLE_NO_KEY`` by
+  specifying a record by ``_id``.
+* Added :ref:`token-filter-stem` token filter plugin. It provides stemming
+  feature.  To use this token filter, it requires libstemmer library
+  provided by Snowball.
 * [doc] Added :doc:`/reference/token_filters` documentation.
   [GitHub#227] [Patch by Naoya Murakami]
 
 Fixes
 ^^^^^
 
-* [httpd] Updated bundled nginx version to the latest mainline (1.7.6).
+* [httpd] Updated bundled nginx version to 1.7.6.
   [GitHub#208] [Patch by Hiroshi Hatake]
-* [power8] Fixed build failure. See http://lists.askmonty.org/pipermail/commits/2014-October/006752.html
+* [power8] Fixed build failure. See
+  http://lists.askmonty.org/pipermail/commits/2014-October/006752.html
   [Patch by Sergey Vojtovich]
-* Fixed a bug that url encoding fails if char is build as unsigned char. [GitHub#217]
-* Fixed a bug that a DAT table returns empty results for :doc:`/reference/commands/select`. [GitHub#220]
-* Fixed a memory leak about inspecting vector column. It occurs when something error
-  reports about vector column.
-* Fixed memory leaks in compress zlib/lzo column [GitHub#221] [Patch by Naoya Murakami]
-* Fixed a bug that the value of Int8 column which is less than 100 may return true
-  in ``--filter``. By this issue, not intended records may be included as search results.
+* Fixed a bug that URL encoding fails if ``char`` type is build as
+  ``unsigned char`` type. [GitHub#217]
+* Fixed a bug that a ``TABLE_DAT_KEY`` table returns empty results for
+  :doc:`/reference/commands/select`. [GitHub#220]
+* Fixed a memory leak about inspecting vector column. It occurs when
+  something error reports about vector column.
+* Fixed memory leaks in zlib/LZO compressed column [GitHub#221] [Patch
+  by Naoya Murakami]
+* Fixed a bug that the value of ``Int8`` column which is less than 100 may
+  return true in ``--filter``. By this issue, not intended records may
+  be included as search results.
 * Fixed to handle binary operation for vector column as an error.
-* Fixed a bug that "!XXX" may returns inverted result on big endian environment.
+* Fixed a bug that ``!XXX`` may return inverted result on big endian
+  environment.
 * Fixed a memory leak on converting weight vector to text.
 
 Thanks
