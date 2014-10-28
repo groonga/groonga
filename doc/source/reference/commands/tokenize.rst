@@ -26,6 +26,7 @@ optional::
            [normalizer=null]
            [flags=NONE]
            [mode=ADD]
+           [token_filters=NONE]
 
 Usage
 -----
@@ -51,6 +52,8 @@ Required parameters
 
 There are required parameters, ``tokenizer`` and ``string``.
 
+.. _tokenize-tokenizer:
+
 ``tokenizer``
 """""""""""""
 
@@ -70,6 +73,8 @@ tokenizer plugin by :doc:`register` command. For example, you can use
 `KyTea <http://www.phontron.com/kytea/>`_ based tokenizer by
 registering ``tokenizers/kytea``.
 
+.. _tokenize-string:
+
 ``string``
 """"""""""
 
@@ -88,6 +93,8 @@ Optional parameters
 ^^^^^^^^^^^^^^^^^^^
 
 There are optional parameters.
+
+.. _tokenize-normalizer:
 
 ``normalizer``
 """"""""""""""
@@ -128,6 +135,8 @@ If you want to tokenize by two characters with noramlizer, use
 All alphabets are tokenized by two characters. And they are normalized
 to lower case characters. For example, ``fu`` is a token.
 
+.. _tokenize-flags:
+
 ``flags``
 """""""""
 
@@ -164,6 +173,8 @@ string. So the character is good character for this puropose. If
 treated as already tokenized string. Tokenizer just tokenizes by
 tokenized delimiter.
 
+.. _tokenize-mode:
+
 ``mode``
 """"""""
 
@@ -189,6 +200,18 @@ Here is an example to the ``GET`` mode.
 .. tokenize TokenBigram "Fulltext Search" --mode GET
 
 The last alphabet is tokenized by two characters.
+
+.. _tokenize-token-filters:
+
+``token_filters``
+"""""""""""""""""
+
+It specifies the token filter names. ``tokenize`` command uses the
+tokenizer that is named ``token_filters``.
+
+See :doc:`/reference/token_filters` about token filters.
+
+.. _tokenize-return-value:
 
 Return value
 ------------
