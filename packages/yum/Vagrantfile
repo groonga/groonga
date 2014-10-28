@@ -37,7 +37,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       node.vm.provision(:shell, :privileged => false, :path => "build-rpm.sh")
       node.vm.provider("virtualbox") do |virtual_box|
         virtual_box.memory = 512
-        virtual_box.customize ["modifyvm", :id, "--hwvirtex", "off"]
       end
     end
   end
