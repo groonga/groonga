@@ -281,7 +281,7 @@ grn_com_event_init(grn_ctx *ctx, grn_com_event *ev, int max_nevents, int data_si
     COND_INIT(ev->cond);
     GRN_COM_QUEUE_INIT(&ev->recv_old);
 #ifndef USE_SELECT
-#ifdef USE_EPOLL
+# ifdef USE_EPOLL
     if ((ev->events = GRN_MALLOC(sizeof(struct epoll_event) * max_nevents))) {
       if ((ev->epfd = epoll_create(max_nevents)) != -1) {
         goto exit;
@@ -290,8 +290,8 @@ grn_com_event_init(grn_ctx *ctx, grn_com_event *ev, int max_nevents, int data_si
       }
       GRN_FREE(ev->events);
     }
-#else /* USE_EPOLL */
-#ifdef USE_KQUEUE
+# else /* USE_EPOLL */
+#  ifdef USE_KQUEUE
     if ((ev->events = GRN_MALLOC(sizeof(struct kevent) * max_nevents))) {
       if ((ev->kqfd = kqueue()) != -1) {
         goto exit;
@@ -300,12 +300,12 @@ grn_com_event_init(grn_ctx *ctx, grn_com_event *ev, int max_nevents, int data_si
       }
       GRN_FREE(ev->events);
     }
-#else /* USE_KQUEUE */
+#  else /* USE_KQUEUE */
     if ((ev->events = GRN_MALLOC(sizeof(struct pollfd) * max_nevents))) {
       goto exit;
     }
-#endif /* USE_KQUEUE*/
-#endif /* USE_EPOLL */
+#  endif /* USE_KQUEUE*/
+# endif /* USE_EPOLL */
     grn_hash_close(ctx, ev->hash);
     ev->hash = NULL;
     ev->events = NULL;
@@ -327,12 +327,12 @@ grn_com_event_fin(grn_ctx *ctx, grn_com_event *ev)
   if (ev->hash) { grn_hash_close(ctx, ev->hash); }
 #ifndef USE_SELECT
   if (ev->events) { GRN_FREE(ev->events); }
-#ifdef USE_EPOLL
+# ifdef USE_EPOLL
   GRN_CLOSE(ev->epfd);
-#endif /* USE_EPOLL */
-#ifdef USE_KQUEUE
+# endif /* USE_EPOLL */
+# ifdef USE_KQUEUE
   GRN_CLOSE(ev->kqfd);
-#endif /* USE_KQUEUE*/
+# endif /* USE_KQUEUE*/
 #endif /* USE_SELECT */
   return GRN_SUCCESS;
 }
@@ -571,7 +571,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
     if (FD_ISSET(*pfd, &rfds)) { grn_com_receiver(ctx, com); }
   });
 #else /* USE_SELECT */
-#ifdef USE_EPOLL
+# ifdef USE_EPOLL
   struct epoll_event *ep;
   ctx->errlvl = GRN_OK;
   ctx->rc = GRN_SUCCESS;
@@ -579,8 +579,8 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
   if (nevents < 0) {
     SERR("epoll_wait");
   }
-#else /* USE_EPOLL */
-#ifdef USE_KQUEUE
+# else /* USE_EPOLL */
+#  ifdef USE_KQUEUE
   struct kevent *ep;
   struct timespec tv;
   if (timeout >= 0) {
@@ -591,7 +591,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
   if (nevents < 0) {
     SERR("kevent");
   }
-#else /* USE_KQUEUE */
+#  else /* USE_KQUEUE */
   uint32_t dummy;
   int nfd = 0, *pfd;
   struct pollfd *ep = ev->events;
@@ -609,8 +609,8 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
   if (nevents < 0) {
     SERR("poll");
   }
-#endif /* USE_KQUEUE */
-#endif /* USE_EPOLL */
+#  endif /* USE_KQUEUE */
+# endif /* USE_EPOLL */
   if (ctx->rc != GRN_SUCCESS) {
     if (ctx->rc == GRN_INTERRUPTED_FUNCTION_CALL) {
       ERRCLR(ctx);
@@ -620,7 +620,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
   if (timeout < 0 && !nevents) { GRN_LOG(ctx, GRN_LOG_NOTICE, "poll returns 0 events"); }
   for (ep = ev->events; nevents; ep++) {
     int efd;
-#ifdef USE_EPOLL
+# ifdef USE_EPOLL
     efd = ep->data.fd;
     nevents--;
     // todo : com = ep->data.ptr;
@@ -635,8 +635,8 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
       continue;
     }
     if ((ep->events & GRN_COM_POLLIN)) { grn_com_receiver(ctx, com); }
-#else /* USE_EPOLL */
-#ifdef USE_KQUEUE
+# else /* USE_EPOLL */
+#  ifdef USE_KQUEUE
     efd = ep->ident;
     nevents--;
     // todo : com = ep->udata;
@@ -649,7 +649,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
       continue;
     }
     if ((ep->filter == GRN_COM_POLLIN)) { grn_com_receiver(ctx, com); }
-#else
+#  else
     efd = ep->fd;
     if (!(ep->events & ep->revents)) { continue; }
     nevents--;
@@ -659,8 +659,8 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
       continue;
     }
     if ((ep->revents & GRN_COM_POLLIN)) { grn_com_receiver(ctx, com); }
-#endif /* USE_KQUEUE */
-#endif /* USE_EPOLL */
+#  endif /* USE_KQUEUE */
+# endif /* USE_EPOLL */
   }
 #endif /* USE_SELECT */
   /* todo :
