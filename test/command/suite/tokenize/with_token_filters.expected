@@ -1,0 +1,24 @@
+register token_filters/stem
+[[0,0.0,0.0],true]
+tokenize TokenBigram "I developed Groonga" NormalizerAuto --token_filters TokenFilterStem
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "i",
+      "position": 0
+    },
+    {
+      "value": "develop",
+      "position": 1
+    },
+    {
+      "value": "groonga",
+      "position": 2
+    }
+  ]
+]

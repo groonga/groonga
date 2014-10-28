@@ -1,0 +1,5 @@
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenDelimit \
+  --normalizer NormalizerAuto
+
+table_tokenize Terms "aB￾cDe 1￾23" ENABLE_TOKENIZED_DELIMITER

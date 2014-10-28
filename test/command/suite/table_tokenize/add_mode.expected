@@ -1,0 +1,32 @@
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+table_tokenize Terms "あいabアイ" --mode ADD
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "あい",
+      "position": 0
+    },
+    {
+      "value": "い",
+      "position": 1
+    },
+    {
+      "value": "ab",
+      "position": 2
+    },
+    {
+      "value": "アイ",
+      "position": 3
+    },
+    {
+      "value": "イ",
+      "position": 4
+    }
+  ]
+]
