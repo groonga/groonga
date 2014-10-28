@@ -41,6 +41,10 @@ on relational data model.
 Summary:	Runtime libraries for Groonga
 Group:		System Environment/Libraries
 License:	LGPLv2 and (MIT or GPLv2)
+Requires:	zlib
+%if %{use_lz4}
+Requires:	lz4
+%endif
 Requires(post):	/sbin/ldconfig
 Requires(postun):	/sbin/ldconfig
 
@@ -160,9 +164,8 @@ Munin plugins for Groonga
 %configure \
   --disable-static \
   --with-package-platform=redhat \
-  --with-zlib \
-%if %{use_lz4}
-  --with-lz4 \
+%if %{!use_lz4}
+  --without-lz4 \
 %endif
 %if %{use_mecab}
   --with-mecab \
