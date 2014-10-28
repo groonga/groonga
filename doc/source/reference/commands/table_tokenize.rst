@@ -80,7 +80,7 @@ There are optional parameters.
 """""""""
 
 It specifies a tokenization customize options. You can specify
-multiple options separated by "``|``". 
+multiple options separated by "``|``".
 
 See :ref:`tokenize-flags` option in :doc:`/reference/commands/tokenize` about details.
 
