@@ -3549,27 +3549,17 @@ tokenize_add(grn_ctx *ctx, grn_obj *lexicon, grn_obj *string, unsigned int flags
 static void
 tokenize_get(grn_ctx *ctx, grn_obj *lexicon, grn_obj *string, unsigned int flags)
 {
-  {
-    grn_token_cursor *token_cursor;
-    token_cursor =
-      grn_token_cursor_open(ctx, lexicon,
-                            GRN_TEXT_VALUE(string), GRN_TEXT_LEN(string),
-                            GRN_TOKEN_ADD, flags);
-    if (token_cursor) {
-      while (token_cursor->status == GRN_TOKEN_DOING) {
-        grn_token_cursor_next(ctx, token_cursor);
-      }
-      grn_token_cursor_close(ctx, token_cursor);
-    }
-  }
+  grn_obj tokens;
 
-  {
-    grn_obj tokens;
-    GRN_VALUE_FIX_SIZE_INIT(&tokens, GRN_OBJ_VECTOR, GRN_ID_NIL);
-    tokenize(ctx, lexicon, string, GRN_TOKEN_GET, flags, &tokens);
-    output_tokens(ctx, &tokens, lexicon);
-    GRN_OBJ_FIN(ctx, &tokens);
-  }
+  GRN_VALUE_FIX_SIZE_INIT(&tokens, GRN_OBJ_VECTOR, GRN_ID_NIL);
+
+  tokenize(ctx, lexicon, string, GRN_TOKEN_ADD, flags, &tokens);
+
+  GRN_BULK_REWIND(&tokens);
+  tokenize(ctx, lexicon, string, GRN_TOKEN_GET, flags, &tokens);
+  output_tokens(ctx, &tokens, lexicon);
+
+  GRN_OBJ_FIN(ctx, &tokens);
 }
 
 static grn_obj *
