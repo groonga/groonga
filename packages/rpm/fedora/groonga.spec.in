@@ -413,6 +413,9 @@ fi
 %{php_extdir}/groonga.so
 
 %changelog
+* Wed Oct 29 2014 Kouhei Sutou <kou@clear-code.com> - 4.0.7-1
+- new upstream release.
+
 * Mon Sep 29 2014 Kouhei Sutou <kou@cozmixng.org> - 4.0.6-1
 - new upstream release.
 
