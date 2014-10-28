@@ -21,7 +21,6 @@ Improvements
   It treats records of ``is_stop_word`` column as actual stop words.
 * [doc] Added :doc:`/client` section which introduces link to client libraries.
   [GitHub#210] [Patch by Naoya Murakami]
-* [doc] Fixed link of the Ranguba project. [GitHub#212] [Patch by Naoya Murakami]
 * [doc] Reconstructed documentation. :doc:`/reference/suggest` and
   :doc:`/reference/operations/geolocation_search` are grouped under :doc:`/reference`.
   [GitHub#206] [Patch by Naoya Murakami]
@@ -47,6 +46,7 @@ Improvements
 Fixes
 ^^^^^
 
+* [doc] Fixed link of the Ranguba project. [GitHub#212] [Patch by Naoya Murakami]
 * [httpd] Updated bundled nginx version to 1.7.6.
   [GitHub#208] [Patch by Hiroshi Hatake]
 * [power8] Fixed build failure. See
