@@ -12,7 +12,8 @@ Build-Depends:
   libzmq3-dev | libzmq-dev,
   libevent-dev,
   libmecab-dev,
-  libpcre3-dev
+  libpcre3-dev,
+  libstemmer-dev
 Standards-Version: 3.9.5
 Homepage: http://groonga.org/
 
@@ -125,6 +126,22 @@ Description: MeCab tokenizer for Groonga
  It lets you write high-performance applications that requires fulltext search.
  .
  This package provides MeCab tokenizer.
+
+Package: groonga-token-filter-stem
+Section: libs
+Architecture: any
+Depends:
+  ${misc:Depends},
+  ${shlibs:Depends},
+  libgroonga0 (= ${binary:Version}),
+  libstemmer0d
+Description: Stemming token filter for Groonga
+ Groonga is an open-source fulltext search engine and column store.
+ It lets you write high-performance applications that requires fulltext search.
+ .
+ This package provides TokenFilterStem token filter that stem each token.
+ The token filter uses libstemmer that uses stemming algorithm written
+ by Snowball.
 
 Package: groonga-plugin-suggest
 Section: libs
