@@ -858,7 +858,14 @@ grn_com_recv(grn_ctx *ctx, grn_com *com, grn_com_header *header, grn_obj *buf)
       }
     }
   } while (rest);
-  GRN_LOG(ctx, GRN_LOG_INFO, "recv (%lu,%x,%d,%02x,%02x,%04x)", ntohl(header->size), header->flags, header->proto, header->qtype, header->level, header->status);
+  GRN_LOG(ctx, GRN_LOG_INFO,
+          "recv (%lu,%x,%d,%02x,%02x,%04x)",
+          ntohl(header->size),
+          header->flags,
+          header->proto,
+          header->qtype,
+          header->level,
+          header->status);
   {
     uint8_t proto = header->proto;
     size_t value_size = ntohl(header->size);
