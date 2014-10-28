@@ -3537,7 +3537,7 @@ tokenize(grn_ctx *ctx, grn_obj *lexicon, grn_obj *string, grn_token_mode mode,
 }
 
 static void
-add_tokenize(grn_ctx *ctx, grn_obj *lexicon, grn_obj *string, unsigned int flags)
+tokenize_add(grn_ctx *ctx, grn_obj *lexicon, grn_obj *string, unsigned int flags)
 {
   grn_obj tokens;
   GRN_VALUE_FIX_SIZE_INIT(&tokens, GRN_OBJ_VECTOR, GRN_ID_NIL);
@@ -3547,7 +3547,7 @@ add_tokenize(grn_ctx *ctx, grn_obj *lexicon, grn_obj *string, unsigned int flags
 }
 
 static void
-get_tokenize(grn_ctx *ctx, grn_obj *lexicon, grn_obj *string, unsigned int flags)
+tokenize_get(grn_ctx *ctx, grn_obj *lexicon, grn_obj *string, unsigned int flags)
 {
   {
     grn_token_cursor *token_cursor;
@@ -3621,9 +3621,9 @@ proc_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
      memcmp(GRN_TEXT_VALUE(mode_name), name, strlen(name)) == 0)
 
     if (GRN_TEXT_LEN(mode_name) == 0 || MODE_NAME_EQUAL("ADD")) {
-      add_tokenize(ctx, lexicon, string, flags);
+      tokenize_add(ctx, lexicon, string, flags);
     } else if (MODE_NAME_EQUAL("GET")) {
-      get_tokenize(ctx, lexicon, string, flags);
+      tokenize_get(ctx, lexicon, string, flags);
     } else {
       ERR(GRN_INVALID_ARGUMENT, "[tokenize] invalid mode: <%.*s>",
           (int)GRN_TEXT_LEN(mode_name), GRN_TEXT_VALUE(mode_name));
@@ -3679,9 +3679,9 @@ proc_table_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user
      memcmp(GRN_TEXT_VALUE(mode_name), name, strlen(name)) == 0)
 
     if (GRN_TEXT_LEN(mode_name) == 0 || MODE_NAME_EQUAL("ADD")) {
-      add_tokenize(ctx, lexicon, string, flags);
+      tokenize_add(ctx, lexicon, string, flags);
     } else if (MODE_NAME_EQUAL("GET")) {
-      get_tokenize(ctx, lexicon, string, flags);
+      tokenize_get(ctx, lexicon, string, flags);
     } else {
       ERR(GRN_INVALID_ARGUMENT, "[table_tokenize] invalid mode: <%.*s>",
           (int)GRN_TEXT_LEN(mode_name), GRN_TEXT_VALUE(mode_name));
