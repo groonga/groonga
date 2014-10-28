@@ -18,7 +18,7 @@ Improvements
 * [windows] Supported Groonga with mruby on Windows.
 * Added token filter plugin API.
 * Added stop-word token filter which uses token filter plugin API.
-  It treats records of 'is_stop_word' column as actual stop words.
+  It treats records of ``is_stop_word`` column as actual stop words.
 * [doc] Added :doc:`/client` section which introduces link to client libraries.
   [GitHub#210] [Patch by Naoya Murakami]
 * [doc] Fixed link of the Ranguba project. [GitHub#212] [Patch by Naoya Murakami]
