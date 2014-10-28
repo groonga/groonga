@@ -8,23 +8,212 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2014-09-29 12:20+0900\n"
+"PO-Revision-Date: 2014-10-29 07:42+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ja\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 4.0.6 - 2014/09/29"
-msgstr "4.0.6リリース - 2014/09/29"
+msgid "Release 4.0.7 - 2014/10/29"
+msgstr "4.0.7リリース - 2014/10/29"
 
 msgid "Improvements"
 msgstr "改良"
+
+# e989815d725446b1be68dbd3c3e43c80
+msgid "[windows] Supported Groonga with mruby on Windows."
+msgstr "[windows] Windows上でもmrubyを組み込んで使えるようにしました。"
+
+# 9fa6e5c3cb054438b08284d9f047a130
+msgid "Added token filter plugin API."
+msgstr "プラグインAPIとしてトークンフィルタを追加しました。"
+
+# d9d29ccb4fc041e982794b104013b620
+msgid ""
+"Added :ref:`token-filter-stop-word` token filter plugin. It treats records "
+"of ``is_stop_word`` column as actual stop words."
+msgstr ""
+":ref:`token-filter-stop-word` プラグインを追加しました。このプラグインは "
+"``is_stop_word`` カラムの値がtrueのものをストップワードとして扱います。"
+
+msgid ""
+"[doc] Added :doc:`/client` section which introduces link to client "
+"libraries. [GitHub#210] [Patch by Naoya Murakami]"
+msgstr ""
+"[doc] クライアントライブラリーへのリンク先を紹介する :doc:`/client` セクショ"
+"ンを追加しました。 [GitHub#210] [村上さんがパッチ提供]"
+
+msgid ""
+"[doc] Reconstructed documentation. :doc:`/reference/suggest` and :doc:`/"
+"reference/operations/geolocation_search` are grouped under :doc:`/"
+"reference`. [GitHub#206] [Patch by Naoya Murakami]"
+msgstr ""
+"[doc] ドキュメント構成を見直しました。 :doc:`/reference/suggest` や :doc:`/"
+"reference/operations/geolocation_search` は :doc:`/reference` 以下にまとめま"
+"した。 [GitHub#206] [村上さんがパッチ提供]"
+
+# 50a7f9da570c42779df1e4702ee5e564
+msgid ""
+"[dump] Supports to dump TABLE_NO_KEY for token_flters. [GitHub#215] [Patch "
+"by Naoya Murakami]"
+msgstr ""
+
+# 261770392cdc42d397d2a08b5b175fb3
+msgid ""
+"[deb] Added stop word token filter plugin. [GitHub#216] [Patch by Hiroshi "
+"Hatake]"
+msgstr ""
+"[deb] ストップワードトークンフィルタープラグインを追加しました。 "
+"[GitHub#216] [畑ヶさんがパッチ提供]"
+
+# fc2b47d4a3f54e2bbf0c42b58fa9bbbf
+msgid "[deb] Clarified licenses about used/bundled files in debian/copyright."
+msgstr ""
+"[deb] 同梱しているファイルの著作権表記を debian/copyright でより明確にしまし"
+"た。"
+
+msgid "Dropped LZO compression support."
+msgstr "LZOによる圧縮サポートをやめました。"
+
+msgid "Added LZ4 compression support. [GitHub#223] [Patch by Naoya Murakami]"
+msgstr "LZ4による圧縮をサポートしました。 [GitHub#223] [村上さんがパッチ提供]"
+
+# 9479728e9ad342f6ae37070142f25646
+msgid ""
+"Added :doc:`/reference/function/in_values`. We recommends to use it instead "
+"of ``==`` and ``OR`` combinations ( ``((COLUMN == \"a\") OR (COLUMN == \"b"
+"\") OR (COLUMN == \"c\"))`` ) because of better performance."
+msgstr ""
+":doc:`/reference/function/in_values` を追加しました。``==`` や ``OR`` を繋げ"
+"て書いていたクエリ ( ``((COLUMN == \"a\") OR (COLUMN == \"b\") OR (COLUMN == "
+"\"c\"))`` ) のかわりにこれを使うのがパフォーマンスの観点からお勧めです。"
+
+# 492bc0c34e284275ac115c555996714d
+msgid ""
+"[load] Supported to update existing record in ``TABLE_NO_KEY`` by specifying "
+"a record by ``_id``."
+msgstr ""
+"[load] ``TABLE_NO_KEY`` を使ったテーブルで既存のレコードを ``_id`` を指定して"
+"更新できるようになりました。"
+
+# 49e6874d8ece4b39b5b443e905504e46
+msgid ""
+"Added :ref:`token-filter-stem` token filter plugin. It provides stemming "
+"feature.  To use this token filter, you need to install `libstemmer <http://"
+"http://snowball.tartarus.org/>`_ library."
+msgstr ""
+":ref:`token-filter-stem` プラグインを追加しました。ステミングの機能を追加しま"
+"す。この機能をトークンフィルタで使うには、`libstemmer <http://http://"
+"snowball.tartarus.org/>`_ ライブラリーが必要です。"
+
+msgid ""
+"[doc] Added :doc:`/reference/token_filters` documentation. [GitHub#227] "
+"[Patch by Naoya Murakami]"
+msgstr ""
+"[doc] :doc:`/reference/token_filters` のドキュメントを追加しました。 "
+"[GitHub#227] [村上さんがパッチ提供]"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid ""
+"[doc] Fixed link of the Ranguba project. [GitHub#212] [Patch by Naoya "
+"Murakami]"
+msgstr ""
+"[doc] Rangubaプロジェクトへのリンクを修正しました。 [GitHub#212] [村上さんが"
+"パッチ提供]"
+
+msgid ""
+"[httpd] Updated bundled nginx version to 1.7.6. [GitHub#208] [Patch by "
+"Hiroshi Hatake]"
+msgstr ""
+"[httpd] バンドルしているnginxのバージョンを1.7.6に更新しました。 "
+"[GitHub#208] [畑ヶさんがパッチ提供]"
+
+# dc67df768a1247819fea7582287f68a5
+msgid ""
+"[power8] Fixed build failure. See http://lists.askmonty.org/pipermail/"
+"commits/2014-October/006752.html [Patch by Sergey Vojtovich]"
+msgstr ""
+"[power8] ビルドに失敗していたのを修正しました。詳細は http://lists.askmonty."
+"org/pipermail/commits/2014-October/006752.html を参照してください。 [Sergey "
+"Vojtovichさんがパッチ提供]"
+
+# 59c5112b98ee4991bd8740a0367dd491
+msgid ""
+"Fixed a bug that URL encoding fails if ``char`` type is build as ``unsigned "
+"char`` type. [GitHub#217]"
+msgstr ""
+"``char`` が ``unsigned char`` としてビルドされているとURLエンコーディングに失"
+"敗する不具合を修正しました。 [GitHub#217]"
+
+msgid ""
+"Fixed a bug that a ``TABLE_DAT_KEY`` table returns empty results for :doc:`/"
+"reference/commands/select`. [GitHub#220]"
+msgstr ""
+"``TABLE_DAT_KEY`` テーブルを :doc:`/reference/commands/select` したときに検索"
+"結果が空になる不具合を修正しました。 [GitHub#220]"
+
+msgid ""
+"Fixed a memory leak about inspecting vector column. It occurs when something "
+"error reports about vector column."
+msgstr ""
+"ベクターカラムを表示するときにメモリリークするのを修正しました。エラーが発生"
+"したときの詳細表示で発生します。"
+
+msgid ""
+"Fixed memory leaks in zlib/LZO compressed column [GitHub#221] [Patch by "
+"Naoya Murakami]"
+msgstr ""
+"Zlibカラム圧縮でメモリリークする問題を修正しました。 [GitHub#221] [村上さんが"
+"パッチ提供]"
+
+# 500323cc89804689a2b2ac93d9c754f7
+msgid ""
+"Fixed a bug that the value of ``Int8`` column which is less than 100 may "
+"return true in ``--filter``. By this issue, not intended records may be "
+"included as search results."
+msgstr ""
+"``--filter`` で ``Int8`` カラムの値に100以下を指定したときに意図しない true "
+"を返すことがある不具合を修正しました。この問題により意図しないレコードが検索"
+"結果含まれていました。"
+
+# 1b045eafbe31411a901bfb68d0e0f8fd
+msgid "Fixed to handle binary operation for vector column as an error."
+msgstr "ベクターカラムに対する四則演算はエラーになるようにしました。"
+
+# 5d5fbd1675cf4977a2228021a1aeb60d
+msgid ""
+"Fixed a bug that ``!XXX`` may return inverted result on big endian "
+"environment."
+msgstr ""
+"ビッグエンディアンの環境では、 ``!XXX`` が逆の結果を返すのを修正しました。"
+
+msgid "Fixed a memory leak on converting weight vector to text."
+msgstr ""
+"重みつきベクターカラムの内容を出力するさいメモリリークするのを修正しました。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "Naoya Murakami"
+msgstr "村上さん"
+
+msgid "Hiroshi Hatake"
+msgstr "畑ヶさん"
+
+# 56cade0a559f426d9579f52902b10110
+msgid "Sergey Vojtovich"
+msgstr "Sergey Vojtovichさん"
+
+msgid "Release 4.0.6 - 2014/09/29"
+msgstr "4.0.6リリース - 2014/09/29"
 
 msgid ""
 "[deb] Updated to follow the rule about machine-readable debian/copyright "
@@ -60,8 +249,8 @@ msgid ""
 "such as \"between(X, 0, 'exclude', 100, 'include')\" - \"X > 0 && X <= 100\"."
 msgstr ""
 "[mruby] mrubyによるクエリオプティマイザが範囲検索で実用的になりました。例え"
-"ば、mrubyを使うことによるオーバーヘッドは、次のようなクエリで無視できます。"
-"\"between(X, 0, 'exclude', 100, 'include')\" - \"X > 0 && X <= 100\"。"
+"ば、mrubyを使うことによるオーバーヘッドは、次のようなクエリで無視できま"
+"す。\"between(X, 0, 'exclude', 100, 'include')\" - \"X > 0 && X <= 100\"。"
 
 msgid ""
 "[doc] Changed to recommend GitHub for reporting issues. Until now, Redmine "
@@ -95,9 +284,6 @@ msgstr ""
 
 msgid "[debian] Dropped Debian jessie and sid support."
 msgstr "[deb] Debian jessieとsidのサポートをやめました。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid ""
 "Fixed a bug that similar search doesn't use IDF (Inverse Document Frequency) "
@@ -158,9 +344,6 @@ msgid ""
 msgstr ""
 "[httpd] バンドルしているnginxのバージョンを1.7.5に更新しました。セキュリ"
 "ティーに関する修正(CVE-2014-3616)を含んでいます。"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "Hideki Yamane"
 msgstr "やまねひできさん"
@@ -304,9 +487,6 @@ msgstr ""
 
 msgid "@do-aki"
 msgstr "@do-akiさん"
-
-msgid "Naoya Murakami"
-msgstr "村上さん"
 
 msgid "6elz"
 msgstr "6elzさん"
@@ -924,8 +1104,8 @@ msgid "true/false/nullリテラルをサポート。"
 msgstr ""
 
 msgid ""
-"GeoPointの度での指定をサポート。 （例: \"35.6954581363924,139.564207350021"
-"\"）"
+"GeoPointの度での指定をサポート。 （例: "
+"\"35.6954581363924,139.564207350021\"）"
 msgstr ""
 
 msgid "NO_KEYテーブルを参照しているカラム値をサポート。"
@@ -2013,8 +2193,8 @@ msgid "suggest: Added prefix_search parameter to suggest command. #909"
 msgstr "suggest: suggestコマンドにprefix_searchパラメータを追加。"
 
 msgid ""
-"plugin: Added grn_plugin_get_system_plugins_dir() and grn_plugin_get_suffix"
-"() API."
+"plugin: Added grn_plugin_get_system_plugins_dir() and "
+"grn_plugin_get_suffix() API."
 msgstr ""
 "plugin: grn_plugin_get_system_plugins_dir()とgrn_plugin_get_suffix() APIを追"
 "加。"
@@ -2287,9 +2467,9 @@ msgstr ""
 "りました。 ``grn_logger`` APIを代りに使ってください。"
 
 msgid ""
-"Added ``grn_default_logger_set_path()`` and ``grn_default_logger_get_path()"
-"`` API. Note that global ``grn_log_path`` variable was removed. Use above "
-"API."
+"Added ``grn_default_logger_set_path()`` and "
+"``grn_default_logger_get_path()`` API. Note that global ``grn_log_path`` "
+"variable was removed. Use above API."
 msgstr ""
 "``grn_default_logger_set_path()`` と ``grn_default_logger_get_path()`` APIを"
 "追加しました。グローバル変数としての ``grn_log_path`` は削除しました。上記変"
@@ -3586,9 +3766,9 @@ msgid ""
 "adjusting to ECMAScript. In \"X || Y\" case, if either X or Y satisfy the "
 "condition, it returns X itself or Y itself instead of 1 or 0."
 msgstr ""
-"\"X || Y\"と\"X && Y\"の返り値の振舞いをECMAScriptに準拠するようにしました。"
-"\"X || Y\"では、もしXかYが条件を満す場合にはXもしくはYそのものの値を返しま"
-"す。以前は1もしくは0を返していました。"
+"\"X || Y\"と\"X && Y\"の返り値の振舞いをECMAScriptに準拠するようにしまし"
+"た。\"X || Y\"では、もしXかYが条件を満す場合にはXもしくはYそのものの値を返し"
+"ます。以前は1もしくは0を返していました。"
 
 # e894addc2a5d4939a08c935d767a5031
 msgid ""
@@ -4507,9 +4687,9 @@ msgid ""
 "Supported query expander in ``query()`` function. This change supports the "
 "query such as ``query(\"MATCH_COLUMNS\", \"QUERY\", \"QueryExpanderTSV\")``."
 msgstr ""
-"``query()`` 関数でクエリ展開をサポートしました。この変更で ``query"
-"(\"MATCH_COLUMNS\", \"QUERY\",\"QueryExpanderTSV\")`` といったクエリが書ける"
-"ようになりました。"
+"``query()`` 関数でクエリ展開をサポートしました。この変更で "
+"``query(\"MATCH_COLUMNS\", \"QUERY\",\"QueryExpanderTSV\")`` といったクエリが"
+"書けるようになりました。"
 
 msgid ""
 "Renamed ``--query_expansion`` to ``--query_expander``. ``--query_expansion`` "
@@ -4575,10 +4755,10 @@ msgid ""
 "is important for this expression. \"1 <= COLUMN1.COLUMN2\" is not supported "
 "yet. It is regarded as \"COLUMN1.COLUMN2 <= 1\"."
 msgstr ""
-"ネストしたインデックスに対してAND検索できるようになりました。この変更で、"
-"\"COLUMN1.COLUMN2 >= 1 && COLUMN1.COLUMN2 <=3\"という検索ができるようになりま"
-"す。ただし、\"1 <= COLUMN1.COLUMN2\" という表記はまだサポートしていません。こ"
-"れを指定すると、\"COLUMN1.COLUMN2 <= 1\"とみなします。"
+"ネストしたインデックスに対してAND検索できるようになりました。この変更"
+"で、\"COLUMN1.COLUMN2 >= 1 && COLUMN1.COLUMN2 <=3\"という検索ができるようにな"
+"ります。ただし、\"1 <= COLUMN1.COLUMN2\" という表記はまだサポートしていませ"
+"ん。これを指定すると、\"COLUMN1.COLUMN2 <= 1\"とみなします。"
 
 msgid ""
 "Supported sorting not indexed entries. This change affects the case such as "

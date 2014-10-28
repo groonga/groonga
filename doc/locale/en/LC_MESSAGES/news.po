@@ -20,11 +20,178 @@ msgstr ""
 msgid "News"
 msgstr "News"
 
-msgid "Release 4.0.6 - 2014/09/29"
+#, fuzzy
+msgid "Release 4.0.7 - 2014/10/29"
 msgstr "Release 4.0.6 - 2014/09/29"
 
 msgid "Improvements"
 msgstr "Improvements"
+
+# e521868a6e6a4b5fbcc36b3a5db4318e
+msgid "[windows] Supported Groonga with mruby on Windows."
+msgstr ""
+
+# ae4a00e6e9a845d09a2638ca5e6f4d8f
+msgid "Added token filter plugin API."
+msgstr ""
+
+# 7f9b135186d24348adf55944da2118f8
+msgid ""
+"Added :ref:`token-filter-stop-word` token filter plugin. It treats records "
+"of ``is_stop_word`` column as actual stop words."
+msgstr ""
+
+# cf3a4576babb461593be45efa8b76bde
+msgid ""
+"[doc] Added :doc:`/client` section which introduces link to client "
+"libraries. [GitHub#210] [Patch by Naoya Murakami]"
+msgstr ""
+
+# 56a5ebe4baae447aa40da19f1f4cdfb4
+msgid ""
+"[doc] Reconstructed documentation. :doc:`/reference/suggest` and :doc:`/"
+"reference/operations/geolocation_search` are grouped under :doc:`/"
+"reference`. [GitHub#206] [Patch by Naoya Murakami]"
+msgstr ""
+
+# 936acde33225489f874becc892156514
+msgid ""
+"[dump] Supports to dump TABLE_NO_KEY for token_flters. [GitHub#215] [Patch "
+"by Naoya Murakami]"
+msgstr ""
+
+# e4540cf33d97490d9ab348218c01e71b
+msgid ""
+"[deb] Added stop word token filter plugin. [GitHub#216] [Patch by Hiroshi "
+"Hatake]"
+msgstr ""
+
+# 6da4573f838a44d080aa2d6c1afb3703
+msgid "[deb] Clarified licenses about used/bundled files in debian/copyright."
+msgstr ""
+
+#, fuzzy
+msgid "Dropped LZO compression support."
+msgstr "Dropped Fedora 15 support."
+
+# 82afb03dfd8e437885f34f6be86dba86
+msgid "Added LZ4 compression support. [GitHub#223] [Patch by Naoya Murakami]"
+msgstr ""
+
+# 978dccb17f3c402abcb4b558b87fa25f
+msgid ""
+"Added :doc:`/reference/function/in_values`. We recommends to use it instead "
+"of ``==`` and ``OR`` combinations ( ``((COLUMN == \"a\") OR (COLUMN == \"b"
+"\") OR (COLUMN == \"c\"))`` ) because of better performance."
+msgstr ""
+
+# 641f3f56f7384b20b3186616cc48c687
+msgid ""
+"[load] Supported to update existing record in ``TABLE_NO_KEY`` by specifying "
+"a record by ``_id``."
+msgstr ""
+
+# 81922253b5214500aaa505ba017c8540
+msgid ""
+"Added :ref:`token-filter-stem` token filter plugin. It provides stemming "
+"feature.  To use this token filter, you need to install `libstemmer <http://"
+"http://snowball.tartarus.org/>`_ library."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"[doc] Added :doc:`/reference/token_filters` documentation. [GitHub#227] "
+"[Patch by Naoya Murakami]"
+msgstr "[doc] Fixed a typo in documentation. [GitHub#8] [Patch by zunda]"
+
+msgid "Fixes"
+msgstr "Fixes"
+
+#, fuzzy
+msgid ""
+"[doc] Fixed link of the Ranguba project. [GitHub#212] [Patch by Naoya "
+"Murakami]"
+msgstr ""
+"[doc] Fixed description about the way to contribute. [GitHub#77] [Patch by "
+"Masafumi Yokoyama]"
+
+#, fuzzy
+msgid ""
+"[httpd] Updated bundled nginx version to 1.7.6. [GitHub#208] [Patch by "
+"Hiroshi Hatake]"
+msgstr "[httpd] Updated bundled nginx version to 1.4.2."
+
+# 9fdcb9e60b804fc7b39977f8e0812d06
+msgid ""
+"[power8] Fixed build failure. See http://lists.askmonty.org/pipermail/"
+"commits/2014-October/006752.html [Patch by Sergey Vojtovich]"
+msgstr ""
+
+# 46bb983cd57247d78e2be33f7dba35fa
+msgid ""
+"Fixed a bug that URL encoding fails if ``char`` type is build as ``unsigned "
+"char`` type. [GitHub#217]"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"Fixed a bug that a ``TABLE_DAT_KEY`` table returns empty results for :doc:`/"
+"reference/commands/select`. [GitHub#220]"
+msgstr ""
+"Fixed a crash bug that invalid value is passed as match expression argument "
+"in :doc:`/reference/commands/select`. #1047"
+
+#, fuzzy
+msgid ""
+"Fixed a memory leak about inspecting vector column. It occurs when something "
+"error reports about vector column."
+msgstr ""
+"Fixed a memory leak on updating an empty column vector with the same value."
+
+# b1480c77d8994b379cc2b1618479c447
+msgid ""
+"Fixed memory leaks in zlib/LZO compressed column [GitHub#221] [Patch by "
+"Naoya Murakami]"
+msgstr ""
+
+# 91095cacf6584432b9a832a0deb96345
+msgid ""
+"Fixed a bug that the value of ``Int8`` column which is less than 100 may "
+"return true in ``--filter``. By this issue, not intended records may be "
+"included as search results."
+msgstr ""
+
+# 77d2807e005d4b58b8eba2133f5a56e6
+msgid "Fixed to handle binary operation for vector column as an error."
+msgstr ""
+
+# 51c9961be60d45d7a29efcbcbf2f543a
+msgid ""
+"Fixed a bug that ``!XXX`` may return inverted result on big endian "
+"environment."
+msgstr ""
+
+#, fuzzy
+msgid "Fixed a memory leak on converting weight vector to text."
+msgstr ""
+"Fixed a memory leak on updating an empty column vector with the same value."
+
+msgid "Thanks"
+msgstr "Thanks"
+
+msgid "Naoya Murakami"
+msgstr "Naoya Murakami"
+
+#, fuzzy
+msgid "Hiroshi Hatake"
+msgstr "Hiroshi Umemoto"
+
+# f7e4235d5c534cb0a61409858aa976f9
+msgid "Sergey Vojtovich"
+msgstr ""
+
+msgid "Release 4.0.6 - 2014/09/29"
+msgstr "Release 4.0.6 - 2014/09/29"
 
 msgid ""
 "[deb] Updated to follow the rule about machine-readable debian/copyright "
@@ -47,11 +214,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Exported :c:func:`grn_expr_alloc_const` which allocates constant object. It "
-"is exported for mruby."
-msgstr ""
-
-msgid ""
 "[mruby] Query optimizer by mruby became a practical for some range select "
 "query. For example, mruby optimizer overhead is negligible enough for query "
 "such as \"between(X, 0, 'exclude', 100, 'include')\" - \"X > 0 && X <= 100\"."
@@ -71,15 +233,16 @@ msgid ""
 "Supported to customize similarity threshold by ``'*S10\"...\"'`` syntax."
 msgstr ""
 
-msgid "Fixes"
-msgstr "Fixes"
-
+# b328bbc788aa4cccaad1963f7665ff01
 msgid ""
-"[windows] Disabled KyTea by default because of redistribution license issue."
+"Added source column validation to :doc:`/reference/commands/column_create`.  "
+"If source column doesn't exist, :doc:`/reference/commands/column_create` "
+"returns ``false`` and column isn't created."
 msgstr ""
 
-msgid "[windows] Disabled libedit support by default."
-msgstr ""
+#, fuzzy
+msgid "[debian] Dropped Debian jessie and sid support."
+msgstr "[deb] Dropped Debian 6.0 (squeeze) support."
 
 msgid ""
 "Fixed a bug that similar search doesn't use IDF (Inverse Document Frequency) "
@@ -121,9 +284,6 @@ msgid ""
 "[httpd] Updated bundled nginx version to the latest mainline (1.7.5). This "
 "update contains vulnerability fix (CVE-2014-3616)."
 msgstr ""
-
-msgid "Thanks"
-msgstr "Thanks"
 
 msgid "Hideki Yamane"
 msgstr "Hideki Yamane"
@@ -235,9 +395,6 @@ msgstr ""
 
 msgid "@do-aki"
 msgstr ""
-
-msgid "Naoya Murakami"
-msgstr "Naoya Murakami"
 
 msgid "6elz"
 msgstr ""
