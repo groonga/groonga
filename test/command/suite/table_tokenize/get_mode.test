@@ -3,3 +3,13 @@ table_create Terms TABLE_PAT_KEY ShortText \
   --normalizer NormalizerAuto
 
 table_tokenize Terms "あいabアイ" --mode GET
+
+load --table Terms
+[
+{"_key": "あい"},
+{"_key": "い"},
+{"_key": "ab"},
+{"_key": "イ"}
+]
+
+table_tokenize Terms "あいabアイ" --mode GET
