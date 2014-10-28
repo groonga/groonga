@@ -36,7 +36,7 @@ Here is the list of available token filters:
 * ``TokenFilterStopWord``
 * ``TokenFilterStem``
 
-.. _token-filter-stop-word
+.. _token-filter-stop-word:
 
 ``TokenFilterStopWord``
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -76,7 +76,7 @@ Here is an example that uses ``TokenFilterStopWord`` token filter:
 ``"Hello"`` that doesn't have ``and`` in content is matched. Because
 ``and`` is a stop word and ``and`` is removed from query.
 
-.. _token-filter-stem
+.. _token-filter-stem:
 
 ``TokenFilterStem``
 ^^^^^^^^^^^^^^^^^^^
