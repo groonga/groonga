@@ -23,7 +23,7 @@ Improvements
   [GitHub#210] [Patch by Naoya Murakami]
 * [doc] Fixed link of the Ranguba project. [GitHub#212] [Patch by Naoya Murakami]
 * [doc] Reconstructed documentation. :doc:`/reference/suggest` and
-  :doc:`/reference/operations/gelocation_search` are grouped under :doc:`/reference`.
+  :doc:`/reference/operations/geolocation_search` are grouped under :doc:`/reference`.
   [GitHub#206] [Patch by Naoya Murakami]
 * [dump] Supports to dump TABLE_NO_KEY for token_flters.
   [GitHub#215] [Patch by Naoya Murakami]
