@@ -387,7 +387,10 @@ grn_com_event_mod(grn_ctx *ctx, grn_com_event *ev, grn_sock fd, int events, grn_
   if (!ev) { return GRN_INVALID_ARGUMENT; }
   if (grn_hash_get(ctx, ev->hash, &fd, sizeof(grn_sock), (void **)&c)) {
     if (c->fd != fd) {
-      GRN_LOG(ctx, GRN_LOG_ERROR, "grn_com_event_mod fd unmatch %d != %d", c->fd, fd);
+      GRN_LOG(ctx, GRN_LOG_ERROR,
+              "grn_com_event_mod fd unmatch "
+              "%" GRN_FMT_SOCKET " != %" GRN_FMT_SOCKET,
+              c->fd, fd);
       return GRN_OBJECT_CORRUPT;
     }
     if (com) { *com = c; }
@@ -449,7 +452,9 @@ grn_com_event_del(grn_ctx *ctx, grn_com_event *ev, grn_sock fd)
 #endif /* USE_KQUEUE */
       return grn_hash_delete_by_id(ctx, ev->hash, id, NULL);
     } else {
-      GRN_LOG(ctx, GRN_LOG_ERROR, "%04x| fd(%d) not found in ev(%p)", getpid(), fd, ev);
+      GRN_LOG(ctx, GRN_LOG_ERROR,
+              "%04x| fd(%" GRN_FMT_SOCKET ") not found in ev(%p)",
+              getpid(), fd, ev);
       return GRN_INVALID_ARGUMENT;
     }
   }
@@ -739,7 +744,8 @@ grn_com_send(grn_ctx *ctx, grn_com *cs,
     }
   }
   if (ret != whole_size) {
-    GRN_LOG(ctx, GRN_LOG_ERROR, "sendmsg(%d): %" GRN_FMT_LLD " < %" GRN_FMT_LLU,
+    GRN_LOG(ctx, GRN_LOG_ERROR,
+            "sendmsg(%" GRN_FMT_SOCKET "): %" GRN_FMT_LLD " < %" GRN_FMT_LLU,
             cs->fd, (long long int)ret, (unsigned long long int)whole_size);
     rc = ctx->rc;
   }
@@ -832,7 +838,7 @@ grn_com_recv(grn_ctx *ctx, grn_com *com, grn_com_header *header, grn_obj *buf)
   do {
     if ((ret = recv(com->fd, p, rest, 0)) < 0) {
       SERR("recv size");
-      GRN_LOG(ctx, GRN_LOG_ERROR, "recv error (%d)", com->fd);
+      GRN_LOG(ctx, GRN_LOG_ERROR, "recv error (%" GRN_FMT_SOCKET ")", com->fd);
       if (ctx->rc == GRN_OPERATION_WOULD_BLOCK ||
           ctx->rc == GRN_INTERRUPTED_FUNCTION_CALL) {
         ERRCLR(ctx);
