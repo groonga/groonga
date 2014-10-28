@@ -957,7 +957,8 @@ grn_com_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
                 addrinfo_ptr->ai_protocol);
     if (fd == -1) {
       SERR("socket");
-    } else if (setsockopt(fd, 6, TCP_NODELAY, (const char *)&value, sizeof(value))) {
+    } else if (setsockopt(fd, 6, TCP_NODELAY,
+                          (const char *)&value, sizeof(value))) {
       SERR("setsockopt");
       grn_sock_close(fd);
     } else if (connect(fd, addrinfo_ptr->ai_addr, addrinfo_ptr->ai_addrlen)) {
