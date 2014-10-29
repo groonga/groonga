@@ -246,7 +246,6 @@ AC_CONFIG_FILES([
   packages/ubuntu/Makefile
   packages/rpm/Makefile
   packages/rpm/centos/Makefile
-  packages/rpm/fedora/Makefile
   packages/yum/Makefile
   packages/source/Makefile
   packages/windows/Makefile
@@ -1520,7 +1519,6 @@ AC_SUBST(GROONGA_HTTPD_DEFAULT_DATABASE_PATH)
 
 AC_OUTPUT([
   packages/rpm/centos/groonga.spec
-  packages/rpm/fedora/groonga.spec
   packages/apt/debian/groonga-keyring.postrm
   packages/apt/env.sh
   packages/yum/env.sh

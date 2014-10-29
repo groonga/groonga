@@ -1,1 +1,1 @@
-SUBDIRS = centos fedora
+SUBDIRS = centos
