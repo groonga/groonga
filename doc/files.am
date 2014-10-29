@@ -94,6 +94,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/table_create/lexicon_table_pat_key.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_create/tag_index_table_hash_key.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_list.log \
+	$(top_srcdir)/doc/source/example/reference/commands/table_tokenize/simple_example.log \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/add_mode.log \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/flags_enable_tokenized_delimiter.log \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/get_mode.log \
@@ -216,6 +217,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/suggest/complete/update-rk-data.log \
 	$(top_srcdir)/doc/source/example/reference/suggest/correction/select.log \
 	$(top_srcdir)/doc/source/example/reference/suggest/suggest/select.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/example-table-create.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/stem.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/stop_word.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-2.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-3.log \
@@ -398,6 +402,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/api/grn_cache.rst \
 	$(top_srcdir)/doc/source/reference/api/grn_column.rst \
 	$(top_srcdir)/doc/source/reference/api/grn_command_version.rst \
+	$(top_srcdir)/doc/source/reference/api/grn_content_type.rst \
 	$(top_srcdir)/doc/source/reference/api/grn_ctx.rst \
 	$(top_srcdir)/doc/source/reference/api/grn_db.rst \
 	$(top_srcdir)/doc/source/reference/api/grn_encoding.rst \
@@ -452,6 +457,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/table_create.rst \
 	$(top_srcdir)/doc/source/reference/commands/table_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/table_remove.rst \
+	$(top_srcdir)/doc/source/reference/commands/table_tokenize.rst \
 	$(top_srcdir)/doc/source/reference/commands/tokenize.rst \
 	$(top_srcdir)/doc/source/reference/commands/tokenizer_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/truncate.rst \
@@ -497,6 +503,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/suggest/introduction.rst \
 	$(top_srcdir)/doc/source/reference/suggest/suggestion.rst \
 	$(top_srcdir)/doc/source/reference/tables.rst \
+	$(top_srcdir)/doc/source/reference/token_filters.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers.rst \
 	$(top_srcdir)/doc/source/reference/tuning.rst \
 	$(top_srcdir)/doc/source/reference/types.rst \
@@ -636,6 +643,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/table_create/lexicon_table_pat_key.log \
 	source/example/reference/commands/table_create/tag_index_table_hash_key.log \
 	source/example/reference/commands/table_list.log \
+	source/example/reference/commands/table_tokenize/simple_example.log \
 	source/example/reference/commands/tokenize/add_mode.log \
 	source/example/reference/commands/tokenize/flags_enable_tokenized_delimiter.log \
 	source/example/reference/commands/tokenize/get_mode.log \
@@ -758,6 +766,9 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/suggest/complete/update-rk-data.log \
 	source/example/reference/suggest/correction/select.log \
 	source/example/reference/suggest/suggest/select.log \
+	source/example/reference/token_filters/example-table-create.log \
+	source/example/reference/token_filters/stem.log \
+	source/example/reference/token_filters/stop_word.log \
 	source/example/tutorial/data-1.log \
 	source/example/tutorial/data-2.log \
 	source/example/tutorial/data-3.log \
@@ -940,6 +951,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/api/grn_cache.rst \
 	source/reference/api/grn_column.rst \
 	source/reference/api/grn_command_version.rst \
+	source/reference/api/grn_content_type.rst \
 	source/reference/api/grn_ctx.rst \
 	source/reference/api/grn_db.rst \
 	source/reference/api/grn_encoding.rst \
@@ -994,6 +1006,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/table_create.rst \
 	source/reference/commands/table_list.rst \
 	source/reference/commands/table_remove.rst \
+	source/reference/commands/table_tokenize.rst \
 	source/reference/commands/tokenize.rst \
 	source/reference/commands/tokenizer_list.rst \
 	source/reference/commands/truncate.rst \
@@ -1039,6 +1052,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/suggest/introduction.rst \
 	source/reference/suggest/suggestion.rst \
 	source/reference/tables.rst \
+	source/reference/token_filters.rst \
 	source/reference/tokenizers.rst \
 	source/reference/tuning.rst \
 	source/reference/types.rst \
@@ -1237,6 +1251,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/api/grn_cache.txt \
 	html/_sources/reference/api/grn_column.txt \
 	html/_sources/reference/api/grn_command_version.txt \
+	html/_sources/reference/api/grn_content_type.txt \
 	html/_sources/reference/api/grn_ctx.txt \
 	html/_sources/reference/api/grn_db.txt \
 	html/_sources/reference/api/grn_encoding.txt \
@@ -1291,6 +1306,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/table_create.txt \
 	html/_sources/reference/commands/table_list.txt \
 	html/_sources/reference/commands/table_remove.txt \
+	html/_sources/reference/commands/table_tokenize.txt \
 	html/_sources/reference/commands/tokenize.txt \
 	html/_sources/reference/commands/tokenizer_list.txt \
 	html/_sources/reference/commands/truncate.txt \
@@ -1334,6 +1350,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/suggest/introduction.txt \
 	html/_sources/reference/suggest/suggestion.txt \
 	html/_sources/reference/tables.txt \
+	html/_sources/reference/token_filters.txt \
 	html/_sources/reference/tokenizers.txt \
 	html/_sources/reference/tuning.txt \
 	html/_sources/reference/types.txt \
@@ -1433,6 +1450,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/api/grn_cache.html \
 	html/reference/api/grn_column.html \
 	html/reference/api/grn_command_version.html \
+	html/reference/api/grn_content_type.html \
 	html/reference/api/grn_ctx.html \
 	html/reference/api/grn_db.html \
 	html/reference/api/grn_encoding.html \
@@ -1487,6 +1505,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/table_create.html \
 	html/reference/commands/table_list.html \
 	html/reference/commands/table_remove.html \
+	html/reference/commands/table_tokenize.html \
 	html/reference/commands/tokenize.html \
 	html/reference/commands/tokenizer_list.html \
 	html/reference/commands/truncate.html \
@@ -1530,6 +1549,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/suggest/introduction.html \
 	html/reference/suggest/suggestion.html \
 	html/reference/tables.html \
+	html/reference/token_filters.html \
 	html/reference/tokenizers.html \
 	html/reference/tuning.html \
 	html/reference/types.html \
