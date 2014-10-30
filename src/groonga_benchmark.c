@@ -1149,7 +1149,7 @@ typedef struct _grntest_worker {
 } grntest_worker;
 
 #ifdef WIN32
-static int
+static unsigned int
 __stdcall
 worker(void *val)
 {
