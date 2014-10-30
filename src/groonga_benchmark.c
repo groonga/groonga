@@ -1252,7 +1252,6 @@ get_sysinfo(const char *path, char *result, int olen)
   char tmpbuf[256];
 
 #ifdef WIN32
-  int cinfo[4];
   ULARGE_INTEGER dinfo;
   char cpustring[64];
   SYSTEM_INFO sinfo;
@@ -1279,12 +1278,15 @@ get_sysinfo(const char *path, char *result, int olen)
 
   memset(cpustring, 0, 64);
 #ifndef __GNUC__
-  __cpuid(cinfo, 0x80000002);
-  memcpy(cpustring, cinfo, 16);
-  __cpuid(cinfo, 0x80000003);
-  memcpy(cpustring+16, cinfo, 16);
-  __cpuid(cinfo, 0x80000004);
-  memcpy(cpustring+32, cinfo, 16);
+  {
+    int cinfo[4];
+    __cpuid(cinfo, 0x80000002);
+    memcpy(cpustring, cinfo, 16);
+    __cpuid(cinfo, 0x80000003);
+    memcpy(cpustring+16, cinfo, 16);
+    __cpuid(cinfo, 0x80000004);
+    memcpy(cpustring+32, cinfo, 16);
+  }
 #endif
 
   if (grntest_outtype == OUT_TSV) {
