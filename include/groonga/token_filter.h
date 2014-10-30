@@ -15,8 +15,8 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef GRN_PLUGIN_TOKEN_FILTER_H
-#define GRN_PLUGIN_TOKEN_FILTER_H
+#ifndef GROONGA_TOKEN_FILTER_H
+#define GROONGA_TOKEN_FILTER_H
 
 #include <stddef.h>
 
@@ -68,4 +68,4 @@ GRN_PLUGIN_EXPORT grn_rc grn_token_filter_register(grn_ctx *ctx,
 }  /* extern "C" */
 #endif  /* __cplusplus */
 
-#endif  /* GRN_PLUGIN_TOKEN_FILTER_H */
+#endif  /* GROONGA_TOKEN_FILTER_H */
