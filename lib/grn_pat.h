@@ -17,10 +17,7 @@
 #ifndef GRN_PAT_H
 #define GRN_PAT_H
 
-#ifndef GRN_H
 #include "grn.h"
-#endif /* GRN_H */
-
 #include "grn_db.h"
 #include "grn_hash.h"
 

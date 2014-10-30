@@ -19,21 +19,10 @@
 
 /* "ii" is for inverted index */
 
-#ifndef GRN_H
 #include "grn.h"
-#endif /* GRN_H */
-
-#ifndef GRN_HASH_H
 #include "grn_hash.h"
-#endif /* GRN_HASH_H */
-
-#ifndef GRN_IO_H
 #include "grn_io.h"
-#endif /* GRN_IO_H */
-
-#ifndef GRN_STORE_H
 #include "grn_store.h"
-#endif /* GRN_STORE_H */
 
 #ifdef  __cplusplus
 extern "C" {

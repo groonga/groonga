@@ -751,8 +751,6 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
 GRN_API void grn_sleep(uint32_t seconds);
 GRN_API void grn_nanosleep(uint64_t nanoseconds);
 
-#ifndef GROONGA_H
-# include <groonga.h>
-#endif /* GROONGA_H */
+#include <groonga.h>
 
 #endif /* GRN_H */

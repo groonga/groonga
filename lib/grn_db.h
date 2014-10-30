@@ -17,17 +17,9 @@
 #ifndef GRN_DB_H
 #define GRN_DB_H
 
-#ifndef GRN_H
 #include "grn.h"
-#endif /* GRN_H */
-
-#ifndef GRN_CTX_H
 #include "grn_ctx.h"
-#endif /* GRN_CTX_H */
-
-#ifndef GRN_STORE_H
 #include "grn_store.h"
-#endif /* GRN_STORE_H */
 
 #include <groonga/token_filter.h>
 

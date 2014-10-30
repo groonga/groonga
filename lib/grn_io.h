@@ -17,13 +17,8 @@
 #ifndef GRN_IO_H
 #define GRN_IO_H
 
-#ifndef GRN_H
 #include "grn.h"
-#endif /* GRN_H */
-
-#ifndef GRN_ERROR_H
 #include "grn_error.h"
-#endif /* GRN_ERROR_H */
 
 #ifdef __cplusplus
 extern "C" {

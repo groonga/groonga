@@ -18,13 +18,8 @@
 #ifndef GRN_CTX_H
 #define GRN_CTX_H
 
-#ifndef GRN_H
 #include "grn.h"
-#endif /* GRN_H */
-
-#ifdef HAVE_ERRNO_H
 #include <errno.h>
-#endif /* HAVE_ERRNO_H */
 
 #ifdef HAVE_SIGNAL_H
 #include <signal.h>
@@ -35,9 +30,7 @@
 #include <execinfo.h>
 #endif /* HAVE_EXECINFO_H */
 
-#ifndef GRN_IO_H
 #include "grn_io.h"
-#endif /* GRN_IO_H */
 
 #ifdef __cplusplus
 extern "C" {

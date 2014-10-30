@@ -17,9 +17,7 @@
 #ifndef GRN_PROC_H
 #define GRN_PROC_H
 
-#ifndef GRN_H
 #include "grn.h"
-#endif /* GRN_H */
 
 #ifdef __cplusplus
 extern "C" {

@@ -17,13 +17,8 @@
 #ifndef GRN_STR_H
 #define GRN_STR_H
 
-#ifndef GRN_H
 #include "grn.h"
-#endif /* GRN_H */
-
-#ifndef GRN_NFKC_H
 #include <groonga/nfkc.h>
-#endif /* GRN_NFKC_H */
 
 #ifdef __cplusplus
 extern "C" {
