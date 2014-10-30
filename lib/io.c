@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2012 Brazil
+/* Copyright(C) 2009-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1520,11 +1520,12 @@ exit:
       CRITICAL_SECTION_INIT(fi->cs);
       return GRN_SUCCESS;
     } else {
-      GRN_LOG(ctx, GRN_LOG_ERROR, "fmo object already exists! handle=%d", fi->fh);
+      GRN_LOG(ctx, GRN_LOG_ERROR, "fmo object already exists! handle=%p", fi->fh);
       CloseHandle(fi->fmo);
     }
   } else {
-    GRN_LOG(ctx, GRN_LOG_ALERT, "failed to get FileMappingObject #%d", GetLastError());
+    GRN_LOG(ctx, GRN_LOG_ALERT,
+            "failed to get FileMappingObject #%lu", GetLastError());
   }
   CloseHandle(fi->fh);
   SERR("OpenFileMapping");
@@ -1554,7 +1555,7 @@ grn_mmap(grn_ctx *ctx, fileinfo *fi, off_t offset, size_t length)
   */
   res = MapViewOfFile(fi->fmo, FILE_MAP_WRITE, 0, (DWORD)offset, (SIZE_T)length);
   if (!res) {
-    MERR("MapViewOfFile failed #%d <%" GRN_FMT_SIZE ">",
+    MERR("MapViewOfFile failed #%lu <%" GRN_FMT_SIZE ">",
          GetLastError(), mmap_size);
     return NULL;
   }
@@ -1571,7 +1572,7 @@ grn_munmap(grn_ctx *ctx, void *start, size_t length)
   } else {
     SERR("UnmapViewOfFile");
     GRN_LOG(ctx, GRN_LOG_ERROR,
-            "UnmapViewOfFile(%p,%d) failed <%" GRN_FMT_SIZE ">",
+            "UnmapViewOfFile(%p,%" GRN_FMT_SIZE ") failed <%" GRN_FMT_SIZE ">",
             start, length, mmap_size);
     return -1;
   }
@@ -1628,7 +1629,9 @@ grn_pread(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
       SERR("ReadFile");
     } else if (len != count) {
       /* todo : should retry ? */
-      ERR(GRN_INPUT_OUTPUT_ERROR, "ReadFile %d != %d", count, len);
+      ERR(GRN_INPUT_OUTPUT_ERROR,
+          "ReadFile %" GRN_FMT_SIZE " != %lu",
+          count, len);
     }
   }
   CRITICAL_SECTION_LEAVE(fi->cs);
@@ -1648,7 +1651,9 @@ grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
       SERR("WriteFile");
     } else if (len != count) {
       /* todo : should retry ? */
-      ERR(GRN_INPUT_OUTPUT_ERROR, "WriteFile %d != %d", count, len);
+      ERR(GRN_INPUT_OUTPUT_ERROR,
+          "WriteFile %" GRN_FMT_SIZE " != %lu",
+          count, len);
     }
   }
   CRITICAL_SECTION_LEAVE(fi->cs);
