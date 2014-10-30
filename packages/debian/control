@@ -25,7 +25,7 @@ Depends:
   groonga-bin (= ${binary:Version}),
   groonga-plugin-suggest (= ${binary:Version}),
   groonga-doc (= ${source:Version})
-Description: Fulltext search engine (meta-package for library use)
+Description: Fulltext search engine (metapackage for library use)
  Groonga is an open-source fulltext search engine and column store.
  It lets you write high-performance applications that requires fulltext search.
  .
@@ -38,7 +38,7 @@ Depends:
   ${shlibs:Depends},
   adduser,
   groonga (= ${binary:Version})
-Description: Fulltext search engine (meta-package for server use)
+Description: Fulltext search engine (metapackage for server use)
  Groonga is an open-source fulltext search engine and column store.
  It lets you write high-performance applications that requires fulltext search.
  .
@@ -55,7 +55,7 @@ Depends:
   adduser,
   curl,
   groonga-server-common (= ${binary:Version})
-Description: Fulltext search engine (meta-package for HTTP server use)
+Description: Fulltext search engine (metapackage for HTTP server use)
  Groonga is an open-source fulltext search engine and column store.
  It lets you write high-performance applications that requires fulltext search.
  .
@@ -70,7 +70,7 @@ Depends:
   ${shlibs:Depends},
   adduser,
   groonga-server-common (= ${binary:Version})
-Description: Fulltext search engine (meta-package for GQTP server use)
+Description: Fulltext search engine (metapackage for GQTP server use)
  Groonga is an open-source fulltext search engine and column store.
  It lets you write high-performance applications that requires fulltext search.
  .
