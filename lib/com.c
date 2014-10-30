@@ -860,7 +860,7 @@ grn_com_recv(grn_ctx *ctx, grn_com *com, grn_com_header *header, grn_obj *buf)
   } while (rest);
   GRN_LOG(ctx, GRN_LOG_INFO,
           "recv (%u,%x,%d,%02x,%02x,%04x)",
-          ntohl(header->size),
+          (uint32_t)ntohl(header->size),
           header->flags,
           header->proto,
           header->qtype,
