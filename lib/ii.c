@@ -6426,8 +6426,8 @@ typedef struct {
 } ii_buffer_counter;
 
 typedef struct {
-  off_t head;
-  off_t tail;
+  off64_t head;
+  off64_t tail;
   uint32_t nextsize;
   uint8_t *buffer;
   uint32_t buffersize;
@@ -6450,7 +6450,7 @@ struct _grn_ii_buffer {
   char tmpfpath[PATH_MAX];
   uint64_t update_buffer_size;
   // stuff for parsing
-  off_t filepos;
+  off64_t filepos;
   grn_id *block_buf;
   size_t block_buf_size;
   size_t block_pos;
@@ -6857,8 +6857,8 @@ grn_ii_buffer_fetch(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
           return;
         }
       }
-      if (lseek(ii_buffer->tmpfd, block->head, SEEK_SET) != block->head) {
-        SERR("lseek");
+      if (grn_lseek(ii_buffer->tmpfd, block->head, SEEK_SET) != block->head) {
+        SERR("grn_lseek");
         return;
       }
       if (read(ii_buffer->tmpfd, block->buffer, bytesize) != bytesize) {

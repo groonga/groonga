@@ -123,7 +123,6 @@
 #  define vsnprintf(str, size, format, ap) _vsnprintf(str, size, format, ap)
 # endif /* !defined(__GNUC__) && _MSC_VER < 1500 */
 # define unlink(pathname) _unlink(pathname)
-# define lseek(fd, offset, whence) _lseek(fd, offset, whence)
 # define getpid() _getpid()
 # if !defined(__GNUC__) && _MSC_VER < 1400
 #  define fstat(fd, buf) _fstat(fd, buf)
@@ -147,6 +146,7 @@ typedef int64_t INT64
 typedef uint64_t UINT64
 typedef ssize_t SSIZE_T
 typedef pid_t int
+typedef off64_t int64_t
 # endif
 
 # undef MSG_WAITALL
@@ -226,6 +226,14 @@ typedef int grn_sock;
 #ifndef INT64_MIN
 # define INT64_MIN (-9223372036854775808)
 #endif /* INT64_MIN */
+
+
+#ifdef WIN32
+# define grn_lseek(fd, offset, whence) _lseeki64(fd, offset, whence)
+#else /* WIN32 */
+# define grn_lseek(fd, offset, whence) lseek(fd, offset, whence)
+#endif /* WIN32 */
+
 
 #ifdef HAVE_PTHREAD_H
 # include <pthread.h>
