@@ -129,7 +129,7 @@
 # if !defined(__GNUC__) && _MSC_VER < 1400
 #  define fstat(fd, buf) _fstat(fd, buf)
 # endif /* !defined(__GNUC__) && _MSC_VER < 1400 */
-# if !defined(strcasecmp)
+# ifndef HAVE_STRCASECMP
 #  define strcasecmp(s1, s2) _stricmp(s1, s2)
 # endif /* !defined(strcasecmp) */
 
