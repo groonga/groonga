@@ -15,12 +15,12 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <groonga/plugin.h>
-
 /* groonga's internal headers */
 /* for grn_text_fgets(): We don't want to require stdio.h for groonga.h.
    What should we do? Should we split header file such as groonga/stdio.h? */
 #include <grn_str.h>
+
+#include <groonga/plugin.h>
 
 #include <stdio.h>
 #include <string.h>
