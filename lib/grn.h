@@ -240,6 +240,8 @@ typedef int grn_sock;
 #ifdef HAVE_PTHREAD_H
 # include <pthread.h>
 typedef pthread_t grn_thread;
+typedef void * grn_thread_func_result;
+# define GRN_THREAD_FUNC_RETURN_VALUE NULL
 # define THREAD_CREATE(thread,func,arg) \
   (pthread_create(&(thread), NULL, (func), (arg)))
 # define THREAD_JOIN(thread) (pthread_join(thread, NULL))
@@ -330,6 +332,8 @@ typedef int grn_thread_key;
 
 # ifdef WIN32
 typedef uintptr_t grn_thread;
+typedef unsigned int grn_thread_func_result;
+#  define GRN_THREAD_FUNC_RETURN_VALUE 0
 #  define THREAD_CREATE(thread,func,arg) \
   (((thread)=_beginthreadex(NULL, 0, (func), (arg), 0, NULL)) == NULL)
 #  define THREAD_JOIN(thread) \

@@ -196,7 +196,7 @@ msg_handler(grn_ctx *ctx, grn_obj *msg)
   grn_msg_close(ctx, msg);
 }
 
-static void * CALLBACK
+static grn_thread_func_result CALLBACK
 receiver(void *arg)
 {
   grn_ctx ctx_, *ctx = &ctx_;
@@ -213,7 +213,7 @@ receiver(void *arg)
     */
   }
   grn_ctx_fin(ctx);
-  return NULL;
+  return GRN_THREAD_FUNC_RETURN_VALUE;
 }
 
 static int

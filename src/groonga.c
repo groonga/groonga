@@ -1655,7 +1655,7 @@ check_rlimit_nofile(grn_ctx *ctx)
 #endif /* WIN32 */
 }
 
-static void * CALLBACK
+static grn_thread_func_result CALLBACK
 h_worker(void *arg)
 {
   ht_context hc;
@@ -1686,7 +1686,7 @@ exit :
   MUTEX_UNLOCK(q_mutex);
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)", nfthreads, nthreads);
   grn_ctx_fin(ctx);
-  return NULL;
+  return GRN_THREAD_FUNC_RETURN_VALUE;
 }
 
 static void
@@ -1731,7 +1731,7 @@ h_server(char *path)
   return exit_code;
 }
 
-static void * CALLBACK
+static grn_thread_func_result CALLBACK
 g_worker(void *arg)
 {
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)", nfthreads, nthreads + 1);
@@ -1792,7 +1792,7 @@ exit :
   nthreads--;
   MUTEX_UNLOCK(q_mutex);
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)", nfthreads, nthreads);
-  return NULL;
+  return GRN_THREAD_FUNC_RETURN_VALUE;
 }
 
 static void
