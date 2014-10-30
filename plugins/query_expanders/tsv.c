@@ -44,7 +44,6 @@ get_system_synonyms_file(void)
     const char *base_dir;
     const char *relative_path = GRN_QUERY_EXPANDER_TSV_RELATIVE_SYNONYMS_FILE;
     char *synonyms_file;
-    char *path;
     size_t base_dir_length;
 
     base_dir = grn_plugin_win32_base_dir();
