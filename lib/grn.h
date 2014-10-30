@@ -335,9 +335,9 @@ typedef uintptr_t grn_thread;
 typedef unsigned int grn_thread_func_result;
 #  define GRN_THREAD_FUNC_RETURN_VALUE 0
 #  define THREAD_CREATE(thread,func,arg) \
-  (((thread)=_beginthreadex(NULL, 0, (func), (arg), 0, NULL)) == NULL)
+  (((thread)=_beginthreadex(NULL, 0, (func), (arg), 0, NULL)) == (grn_thread)0)
 #  define THREAD_JOIN(thread) \
-  (WaitForSingleObject((thread), INFINITE) == WAIT_FAILED)
+  (WaitForSingleObject((HANDLE)(thread), INFINITE) == WAIT_FAILED)
 typedef HANDLE grn_mutex;
 #  define MUTEX_INIT(m)   ((m) = CreateMutex(0, FALSE, NULL))
 #  define MUTEX_LOCK(m)   WaitForSingleObject((m), INFINITE)
