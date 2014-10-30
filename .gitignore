@@ -81,7 +81,7 @@ cmake_install.cmake
 /doc/commands_not_implemented/
 /doc/sphinx/
 /lib/icudump
-/lib/ecmascript.out
+/lib/grn_ecmascript.out
 /coverage
 /coverage.info
 /test/unit/lib/*-*.*.*/
