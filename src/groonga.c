@@ -693,8 +693,12 @@ h_output(grn_ctx *ctx, int flags, void *arg)
     wsabufs[2].len = GRN_TEXT_LEN(outbuf);
     wsabufs[3].buf = GRN_TEXT_VALUE(&foot);
     wsabufs[3].len = GRN_TEXT_LEN(&foot);
-    if (WSASend(fd, wsabufs, 4, &ret, 0, NULL, NULL) == SOCKET_ERROR) {
-      SERR("WSASend");
+    {
+      DWORD sent;
+      if (WSASend(fd, wsabufs, 4, &sent, 0, NULL, NULL) == SOCKET_ERROR) {
+        SERR("WSASend");
+      }
+      ret = sent;
     }
 #else /* WIN32 */
     struct iovec msg_iov[4];
