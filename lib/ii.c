@@ -6870,7 +6870,8 @@ grn_ii_buffer_fetch(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
       if (block->head >= block->tail) {
         if (block->head > block->tail) {
           GRN_LOG(ctx, GRN_LOG_WARNING,
-                  "fetch error: %jd > %jd", block->head, block->tail);
+                  "fetch error: %" GRN_FMT_INT64D " > %" GRN_FMT_INT64D,
+                  block->head, block->tail);
         }
         block->rest = block->nextsize;
         block->nextsize = 0;
@@ -7287,7 +7288,7 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   }
   datavec_fin(ctx, ii_buffer->data_vectors);
   GRN_LOG(ctx, GRN_LOG_NOTICE,
-          "tmpfile_size:%jd > total_chunk_size:%" GRN_FMT_SIZE,
+          "tmpfile_size:%" GRN_FMT_INT64D " > total_chunk_size:%" GRN_FMT_SIZE,
           ii_buffer->filepos, ii_buffer->total_chunk_size);
   GRN_CLOSE(ii_buffer->tmpfd);
   unlink(ii_buffer->tmpfpath);
