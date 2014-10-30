@@ -20,51 +20,51 @@
 #define GRN_H
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include <config.h>
 #endif /* HAVE_CONFIG_H */
 
 #ifdef __cplusplus
-#define __STDC_LIMIT_MACROS
+# define __STDC_LIMIT_MACROS
 #endif
 
 #ifdef HAVE_STDLIB_H
-#include <stdlib.h>
+# include <stdlib.h>
 #endif /* HAVE_STDLIB_H */
 
 #ifdef HAVE_STDINT_H
-#include <stdint.h>
+# include <stdint.h>
 #endif /* HAVE_STDINT_H */
 
 #ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
+# include <sys/types.h>
 #endif /* HAVE_SYS_TYPES_H */
 
 #ifdef HAVE_SYS_PARAM_H
-#include <sys/param.h>
+# include <sys/param.h>
 #endif /* HAVE_SYS_PARAM_H */
 
 #ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h>
+# include <sys/mman.h>
 #endif /* HAVE_SYS_MMAN_H */
 
 #ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
+# include <sys/time.h>
 #endif /* HAVE_SYS_TIME_H */
 
 #ifdef HAVE_SYS_RESOURCE_H
-#include <sys/resource.h>
+# include <sys/resource.h>
 #endif /* HAVE_SYS_RESOURCE_H */
 
 #ifdef WIN32
-#  define GRN_API __declspec(dllexport)
+# define GRN_API __declspec(dllexport)
 #ifdef GROONGA_MAIN
-#  define GRN_VAR __declspec(dllimport)
+# define GRN_VAR __declspec(dllimport)
 #else
-#  define GRN_VAR __declspec(dllexport) extern
+# define GRN_VAR __declspec(dllexport) extern
 #endif /* GROONGA_MAIN */
 #else
-#  define GRN_API
-#  define GRN_VAR extern
+# define GRN_API
+# define GRN_VAR extern
 #endif
 
 #ifdef HAVE_OPEN
@@ -93,84 +93,84 @@
 
 #ifdef WIN32
 
-#if defined(__GNUC__) && !defined(WINVER)
+# if defined(__GNUC__) && !defined(WINVER)
 #  include <w32api.h>
 #  define WINVER WindowsXP
-#endif /* defined(__GNUC__) && !defined(WINVER) */
+# endif /* defined(__GNUC__) && !defined(WINVER) */
 
-#include <basetsd.h>
-#include <process.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <windows.h>
-#include <stddef.h>
-#include <windef.h>
-#include <float.h>
-#include <time.h>
-#include <sys/types.h>
+# include <basetsd.h>
+# include <process.h>
+# include <winsock2.h>
+# include <ws2tcpip.h>
+# include <windows.h>
+# include <stddef.h>
+# include <windef.h>
+# include <float.h>
+# include <time.h>
+# include <sys/types.h>
 
-#ifndef __GNUC__
-# define PATH_MAX (MAX_PATH - 1)
-# ifndef __cplusplus
-#  define inline _inline
+# ifndef __GNUC__
+#  define PATH_MAX (MAX_PATH - 1)
+#  ifndef __cplusplus
+#   define inline _inline
+#  endif
 # endif
-#endif
 
-#ifndef __GNUC__
-# define snprintf(str, size, ...) _snprintf(str, size, __VA_ARGS__)
-#endif /* __GNUC__ */
-#if !defined(__GNUC__) && _MSC_VER < 1500
-# define vsnprintf(str, size, format, ap) _vsnprintf(str, size, format, ap)
-#endif /* !defined(__GNUC__) && _MSC_VER < 1500 */
-#define unlink(pathname) _unlink(pathname)
-#define lseek(fd, offset, whence) _lseek(fd, offset, whence)
-#define getpid() _getpid()
-#if !defined(__GNUC__) && _MSC_VER < 1400
-# define fstat(fd, buf) _fstat(fd, buf)
-#endif /* !defined(__GNUC__) && _MSC_VER < 1400 */
-#if !defined(strcasecmp)
-# define strcasecmp(s1, s2) _stricmp(s1, s2)
-#endif /* !defined(strcasecmp) */
+# ifndef __GNUC__
+#  define snprintf(str, size, ...) _snprintf(str, size, __VA_ARGS__)
+# endif /* __GNUC__ */
+# if !defined(__GNUC__) && _MSC_VER < 1500
+#  define vsnprintf(str, size, format, ap) _vsnprintf(str, size, format, ap)
+# endif /* !defined(__GNUC__) && _MSC_VER < 1500 */
+# define unlink(pathname) _unlink(pathname)
+# define lseek(fd, offset, whence) _lseek(fd, offset, whence)
+# define getpid() _getpid()
+# if !defined(__GNUC__) && _MSC_VER < 1400
+#  define fstat(fd, buf) _fstat(fd, buf)
+# endif /* !defined(__GNUC__) && _MSC_VER < 1400 */
+# if !defined(strcasecmp)
+#  define strcasecmp(s1, s2) _stricmp(s1, s2)
+# endif /* !defined(strcasecmp) */
 
-#ifdef __GNUC__
-#include <stdint.h>
-#else
-#define uint8_t UINT8
-#define int8_t INT8
-#define int_least8_t INT8
-#define uint_least8_t UINT8
-#define int16_t INT16
-#define uint16_t UINT16
-#define int32_t INT32
-#define uint32_t UINT32
-#define int64_t INT64
-#define uint64_t UINT64
-#define ssize_t SSIZE_T
-#define pid_t int
-#endif
+# ifdef __GNUC__
+#  include <stdint.h>
+# else
+#  define uint8_t UINT8
+#  define int8_t INT8
+#  define int_least8_t INT8
+#  define uint_least8_t UINT8
+#  define int16_t INT16
+#  define uint16_t UINT16
+#  define int32_t INT32
+#  define uint32_t UINT32
+#  define int64_t INT64
+#  define uint64_t UINT64
+#  define ssize_t SSIZE_T
+#  define pid_t int
+# endif
 
-#undef MSG_WAITALL
-#define MSG_WAITALL 0 /* before Vista, not supported... */
-#define SHUT_RDWR SD_BOTH
+# undef MSG_WAITALL
+# define MSG_WAITALL 0 /* before Vista, not supported... */
+# define SHUT_RDWR SD_BOTH
 
 typedef SOCKET grn_sock;
-#define grn_sock_close(sock) closesocket(sock)
+# define grn_sock_close(sock) closesocket(sock)
 
-#define CALLBACK __stdcall
+# define CALLBACK __stdcall
 
-#ifndef __GNUC__
-#include <intrin.h>
-#include <sys/timeb.h>
-#include <errno.h>
-#endif
+# ifndef __GNUC__
+#  include <intrin.h>
+#  include <sys/timeb.h>
+#  include <errno.h>
+# endif
 
 #else /* WIN32 */
 
-#define GROONGA_API
+# define GROONGA_API
 
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif /* HAVE_UNISTD_H */
+# ifdef HAVE_UNISTD_H
+#  include <unistd.h>
+# endif /* HAVE_UNISTD_H */
 
 # ifndef PATH_MAX
 #  if defined(MAXPATHLEN)
@@ -192,90 +192,90 @@ typedef int grn_sock;
 #endif /* WIN32 */
 
 #ifndef INT8_MAX
-#define INT8_MAX (127)
+# define INT8_MAX (127)
 #endif /* INT8_MAX */
 
 #ifndef INT8_MIN
-#define INT8_MIN (-128)
+# define INT8_MIN (-128)
 #endif /* INT8_MIN */
 
 #ifndef INT16_MAX
-#define INT16_MAX (32767)
+# define INT16_MAX (32767)
 #endif /* INT16_MAX */
 
 #ifndef INT16_MIN
-#define INT16_MIN (-32768)
+# define INT16_MIN (-32768)
 #endif /* INT16_MIN */
 
 #ifndef INT32_MAX
-#define INT32_MAX (2147483647)
+# define INT32_MAX (2147483647)
 #endif /* INT32_MAX */
 
 #ifndef INT32_MIN
-#define INT32_MIN (-2147483648)
+# define INT32_MIN (-2147483648)
 #endif /* INT32_MIN */
 
 #ifndef UINT32_MAX
-#define UINT32_MAX (4294967295)
+# define UINT32_MAX (4294967295)
 #endif /* UINT32_MAX */
 
 #ifndef INT64_MAX
-#define INT64_MAX (9223372036854775807)
+# define INT64_MAX (9223372036854775807)
 #endif /* INT64_MAX */
 
 #ifndef INT64_MIN
-#define INT64_MIN (-9223372036854775808)
+# define INT64_MIN (-9223372036854775808)
 #endif /* INT64_MIN */
 
 #ifdef HAVE_PTHREAD_H
-#include <pthread.h>
+# include <pthread.h>
 typedef pthread_t grn_thread;
-#define THREAD_CREATE(thread,func,arg) \
+# define THREAD_CREATE(thread,func,arg) \
   (pthread_create(&(thread), NULL, (func), (arg)))
-#define THREAD_JOIN(thread) (pthread_join(thread, NULL))
+# define THREAD_JOIN(thread) (pthread_join(thread, NULL))
 typedef pthread_mutex_t grn_mutex;
-#define MUTEX_INIT(m)   pthread_mutex_init(&m, NULL)
-#define MUTEX_LOCK(m)   pthread_mutex_lock(&m)
-#define MUTEX_UNLOCK(m) pthread_mutex_unlock(&m)
-#define MUTEX_FIN(m)
-#ifdef HAVE_PTHREAD_MUTEXATTR_SETPSHARED
-# define MUTEX_INIT_SHARED(m) do {\
+# define MUTEX_INIT(m)   pthread_mutex_init(&m, NULL)
+# define MUTEX_LOCK(m)   pthread_mutex_lock(&m)
+# define MUTEX_UNLOCK(m) pthread_mutex_unlock(&m)
+# define MUTEX_FIN(m)
+# ifdef HAVE_PTHREAD_MUTEXATTR_SETPSHARED
+#  define MUTEX_INIT_SHARED(m) do {\
   pthread_mutexattr_t mutexattr;\
   pthread_mutexattr_init(&mutexattr);\
   pthread_mutexattr_setpshared(&mutexattr, PTHREAD_PROCESS_SHARED);\
   pthread_mutex_init(&m, &mutexattr);\
 } while (0)
-#else
-# define MUTEX_INIT_SHARED MUTEX_INIT
-#endif /* HAVE_PTHREAD_MUTEXATTR_SETPSHARED */
+# else
+#  define MUTEX_INIT_SHARED MUTEX_INIT
+# endif /* HAVE_PTHREAD_MUTEXATTR_SETPSHARED */
 
 typedef pthread_mutex_t grn_critical_section;
-#define CRITICAL_SECTION_INIT(cs)  pthread_mutex_init(&(cs), NULL)
-#define CRITICAL_SECTION_ENTER(cs) pthread_mutex_lock(&(cs))
-#define CRITICAL_SECTION_LEAVE(cs) pthread_mutex_unlock(&(cs))
-#define CRITICAL_SECTION_FIN(cs)
+# define CRITICAL_SECTION_INIT(cs)  pthread_mutex_init(&(cs), NULL)
+# define CRITICAL_SECTION_ENTER(cs) pthread_mutex_lock(&(cs))
+# define CRITICAL_SECTION_LEAVE(cs) pthread_mutex_unlock(&(cs))
+# define CRITICAL_SECTION_FIN(cs)
 
 typedef pthread_cond_t grn_cond;
-#define COND_INIT(c)   pthread_cond_init(&c, NULL)
-#define COND_SIGNAL(c) pthread_cond_signal(&c)
-#define COND_WAIT(c,m) pthread_cond_wait(&c, &m)
-#define COND_BROADCAST(c) pthread_cond_broadcast(&c)
-#ifdef HAVE_PTHREAD_CONDATTR_SETPSHARED
-# define COND_INIT_SHARED(c) do {\
+# define COND_INIT(c)   pthread_cond_init(&c, NULL)
+# define COND_SIGNAL(c) pthread_cond_signal(&c)
+# define COND_WAIT(c,m) pthread_cond_wait(&c, &m)
+# define COND_BROADCAST(c) pthread_cond_broadcast(&c)
+# ifdef HAVE_PTHREAD_CONDATTR_SETPSHARED
+#  define COND_INIT_SHARED(c) do {\
   pthread_condattr_t condattr;\
   pthread_condattr_init(&condattr);\
   pthread_condattr_setpshared(&condattr, PTHREAD_PROCESS_SHARED);\
   pthread_cond_init(&c, &condattr);\
 } while (0)
-#else
-# define COND_INIT_SHARED COND_INIT
-#endif /* HAVE_PTHREAD_CONDATTR_SETPSHARE */
+# else
+#  define COND_INIT_SHARED COND_INIT
+# endif /* HAVE_PTHREAD_CONDATTR_SETPSHARE */
 
 typedef pthread_key_t grn_thread_key;
-#define THREAD_KEY_CREATE(key, destr)  pthread_key_create(key, destr)
-#define THREAD_KEY_DELETE(key)         pthread_key_delete(key)
-#define THREAD_SETSPECIFIC(key, value) pthread_setspecific(key, value)
-#define THREAD_GETSPECIFIC(key)        pthread_getspecific(key)
+# define THREAD_KEY_CREATE(key, destr)  pthread_key_create(key, destr)
+# define THREAD_KEY_DELETE(key)         pthread_key_delete(key)
+# define THREAD_SETSPECIFIC(key, value) pthread_setspecific(key, value)
+# define THREAD_GETSPECIFIC(key)        pthread_getspecific(key)
 
 #if USE_UYIELD
   extern int grn_uyield_count;
@@ -305,35 +305,35 @@ typedef pthread_key_t grn_thread_key;
   #if !defined(_POSIX_PRIORITY_SCHEDULING)
   #define sched_yield() grn_nanosleep(1000000 * 20)
   #endif
-#else /* USE_UYIELD */
+# else /* USE_UYIELD */
   #define GRN_TEST_YIELD() do {} while (0)
-#endif /* USE_UYIELD */
+# endif /* USE_UYIELD */
 
 #else /* HAVE_PTHREAD_H */
 
 /* todo */
 typedef int grn_thread_key;
-#define THREAD_KEY_CREATE(key,destr)
-#define THREAD_KEY_DELETE(key)
-#define THREAD_SETSPECIFIC(key)
-#define THREAD_GETSPECIFIC(key,value)
+# define THREAD_KEY_CREATE(key,destr)
+# define THREAD_KEY_DELETE(key)
+# define THREAD_SETSPECIFIC(key)
+# define THREAD_GETSPECIFIC(key,value)
 
-#ifdef WIN32
+# ifdef WIN32
 typedef uintptr_t grn_thread;
-#define THREAD_CREATE(thread,func,arg) \
+#  define THREAD_CREATE(thread,func,arg) \
   (((thread)=_beginthreadex(NULL, 0, (func), (arg), 0, NULL)) == NULL)
-#define THREAD_JOIN(thread) \
+#  define THREAD_JOIN(thread) \
   (WaitForSingleObject((thread), INFINITE) == WAIT_FAILED)
 typedef HANDLE grn_mutex;
-#define MUTEX_INIT(m)   ((m) = CreateMutex(0, FALSE, NULL))
-#define MUTEX_LOCK(m)   WaitForSingleObject((m), INFINITE)
-#define MUTEX_UNLOCK(m) ReleaseMutex(m)
-#define MUTEX_FIN(m)    CloseHandle(m)
+#  define MUTEX_INIT(m)   ((m) = CreateMutex(0, FALSE, NULL))
+#  define MUTEX_LOCK(m)   WaitForSingleObject((m), INFINITE)
+#  define MUTEX_UNLOCK(m) ReleaseMutex(m)
+#  define MUTEX_FIN(m)    CloseHandle(m)
 typedef CRITICAL_SECTION grn_critical_section;
-#define CRITICAL_SECTION_INIT(cs)  InitializeCriticalSection(&(cs))
-#define CRITICAL_SECTION_ENTER(cs) EnterCriticalSection(&(cs))
-#define CRITICAL_SECTION_LEAVE(cs) LeaveCriticalSection(&(cs))
-#define CRITICAL_SECTION_FIN(cs)   DeleteCriticalSection(&(cs))
+#  define CRITICAL_SECTION_INIT(cs)  InitializeCriticalSection(&(cs))
+#  define CRITICAL_SECTION_ENTER(cs) EnterCriticalSection(&(cs))
+#  define CRITICAL_SECTION_LEAVE(cs) LeaveCriticalSection(&(cs))
+#  define CRITICAL_SECTION_FIN(cs)   DeleteCriticalSection(&(cs))
 
 typedef struct
 {
@@ -344,14 +344,14 @@ typedef struct
   size_t was_broadcast_;
 } grn_cond;
 
-#define COND_INIT(c) do { \
+#  define COND_INIT(c) do { \
   (c).waiters_count_ = 0; \
   (c).sema_ = CreateSemaphore(NULL, 0, 0x7fffffff, NULL); \
   MUTEX_INIT((c).waiters_count_lock_); \
   (c).waiters_done_ = CreateEvent(NULL, FALSE, FALSE, NULL); \
 } while (0)
 
-#define COND_SIGNAL(c) do { \
+#  define COND_SIGNAL(c) do { \
   MUTEX_LOCK((c).waiters_count_lock_); \
   { \
     int have_waiters = (c).waiters_count_ > 0; \
@@ -362,7 +362,7 @@ typedef struct
   } \
 } while (0)
 
-#define COND_BROADCAST(c) do { \
+#  define COND_BROADCAST(c) do { \
   MUTEX_LOCK((c).waiters_count_lock_); \
   { \
     int have_waiters = (c).waiters_count_ > 0; \
@@ -382,7 +382,7 @@ typedef struct
   } \
 } while (0)
 
-#define COND_WAIT(c,m) do { \
+#  define COND_WAIT(c,m) do { \
   MUTEX_LOCK((c).waiters_count_lock_); \
   (c).waiters_count_++; \
   MUTEX_UNLOCK((c).waiters_count_lock_); \
@@ -401,24 +401,24 @@ typedef struct
   } \
 } while (0)
 
-#else /* WIN32 */
+# else /* WIN32 */
 /* todo */
 typedef int grn_cond;
-#define COND_INIT(c)   ((c) = 0)
-#define COND_SIGNAL(c)
-#define COND_WAIT(c,m) do { \
+#  define COND_INIT(c)   ((c) = 0)
+#  define COND_SIGNAL(c)
+#  define COND_WAIT(c,m) do { \
   MUTEX_UNLOCK(m); \
   grn_nanosleep(1000000); \
   MUTEX_LOCK(m); \
 } while (0)
 /* todo : must be enhanced! */
 
-#endif /* WIN32 */
+# endif /* WIN32 */
 
-#define MUTEX_INIT_SHARED MUTEX_INIT
-#define COND_INIT_SHARED COND_INIT
+# define MUTEX_INIT_SHARED MUTEX_INIT
+# define COND_INIT_SHARED COND_INIT
 
-#define GRN_TEST_YIELD() do {} while (0)
+# define GRN_TEST_YIELD() do {} while (0)
 
 #endif /* HAVE_PTHREAD_H */
 
