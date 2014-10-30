@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2012 Brazil
+/* Copyright(C) 2009-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -135,18 +135,18 @@
 # ifdef __GNUC__
 #  include <stdint.h>
 # else
-#  define uint8_t UINT8
-#  define int8_t INT8
-#  define int_least8_t INT8
-#  define uint_least8_t UINT8
-#  define int16_t INT16
-#  define uint16_t UINT16
-#  define int32_t INT32
-#  define uint32_t UINT32
-#  define int64_t INT64
-#  define uint64_t UINT64
-#  define ssize_t SSIZE_T
-#  define pid_t int
+typedef uint8_t UINT8
+typedef int8_t INT8
+typedef int_least8_t INT8
+typedef uint_least8_t UINT8
+typedef int16_t INT16
+typedef uint16_t UINT16
+typedef int32_t INT32
+typedef uint32_t UINT32
+typedef int64_t INT64
+typedef uint64_t UINT64
+typedef ssize_t SSIZE_T
+typedef pid_t int
 # endif
 
 # undef MSG_WAITALL
