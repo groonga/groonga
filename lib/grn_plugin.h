@@ -14,19 +14,19 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef GRN_PLUGIN_IN_H
-#define GRN_PLUGIN_IN_H
+#ifndef GRN_PLUGIN_H
+#define GRN_PLUGIN_H
 
-#ifndef GROONGA_IN_H
-#include "groonga_in.h"
-#endif /* GROONGA_IN_H */
+#ifndef GRN_H
+#include "grn.h"
+#endif /* GRN_H */
 
 #ifndef GRN_CTX_H
-#include "ctx.h"
+#include "grn_ctx.h"
 #endif /* GRN_CTX_H */
 
 #ifndef GRN_STORE_H
-#include "store.h"
+#include "grn_store.h"
 #endif /* GRN_STORE_H */
 
 #ifdef __cplusplus
@@ -65,4 +65,4 @@ char *grn_plugin_find_path(grn_ctx *ctx, const char *name);
 }
 #endif
 
-#endif /* GRN_PLUGIN_IN_H */
+#endif /* GRN_PLUGIN_H */

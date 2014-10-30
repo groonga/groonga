@@ -15,15 +15,15 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef GROONGA_IN_H
-#include "groonga_in.h"
-#endif /* GROONGA_IN_H */
+#ifndef GRN_H
+#include "grn.h"
+#endif /* GRN_H */
 
 #include <string.h>
-#include "str.h"
-#include "db.h"
-#include "util.h"
-#include "output.h"
+#include "grn_str.h"
+#include "grn_db.h"
+#include "grn_util.h"
+#include "grn_output.h"
 
 #define LEVELS (&ctx->impl->levels)
 #define DEPTH (GRN_BULK_VSIZE(LEVELS)>>2)

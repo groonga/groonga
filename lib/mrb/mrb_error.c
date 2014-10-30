@@ -16,12 +16,12 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "../ctx_impl.h"
+#include "../grn_ctx_impl.h"
 
 #ifdef GRN_WITH_MRUBY
 #include <mruby.h>
 
-#include "../mrb.h"
+#include "../grn_mrb.h"
 #include "mrb_error.h"
 
 void

@@ -20,7 +20,7 @@
 /* groonga's internal headers */
 /* for grn_text_fgets(): We don't want to require stdio.h for groonga.h.
    What should we do? Should we split header file such as groonga/stdio.h? */
-#include <str.h>
+#include <grn_str.h>
 
 #include <stdio.h>
 #include <string.h>

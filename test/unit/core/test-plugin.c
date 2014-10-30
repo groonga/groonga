@@ -21,7 +21,7 @@
 
 #include "../lib/grn-assertions.h"
 
-#include <str.h>
+#include <grn_str.h>
 
 void test_register_function(void);
 void test_register_with_too_long_name(void);

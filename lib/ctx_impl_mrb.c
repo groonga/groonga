@@ -18,10 +18,10 @@
 
 #include <string.h>
 
-#include "ctx_impl_mrb.h"
-#include "ctx_impl.h"
+#include "grn_ctx_impl_mrb.h"
+#include "grn_ctx_impl.h"
 
-#include "mrb.h"
+#include "grn_mrb.h"
 #include "mrb/mrb_error.h"
 #include "mrb/mrb_id.h"
 #include "mrb/mrb_operator.h"

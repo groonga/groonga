@@ -21,7 +21,7 @@
 
 #include "../lib/grn-assertions.h"
 
-#include <str.h>
+#include <grn_str.h>
 
 void test_domain(void);
 void test_range(void);

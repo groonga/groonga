@@ -18,7 +18,7 @@
 
 #include <gcutter.h>
 
-#include <hash.h>
+#include <grn_hash.h>
 
 #include "grn-test-hash-assertions.h"
 

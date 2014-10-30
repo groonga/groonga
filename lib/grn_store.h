@@ -17,20 +17,20 @@
 #ifndef GRN_STORE_H
 #define GRN_STORE_H
 
-#ifndef GROONGA_IN_H
-#include "groonga_in.h"
-#endif /* GROONGA_IN_H */
+#ifndef GRN_H
+#include "grn.h"
+#endif /* GRN_H */
 
 #ifndef GRN_CTX_H
-#include "ctx.h"
+#include "grn_ctx.h"
 #endif /* GRN_CTX_H */
 
 #ifndef GRN_HASH_H
-#include "hash.h"
+#include "grn_hash.h"
 #endif /* GRN_HASH_H */
 
 #ifndef GRN_IO_H
-#include "io.h"
+#include "grn_io.h"
 #endif /* GRN_IO_H */
 
 #ifdef __cplusplus

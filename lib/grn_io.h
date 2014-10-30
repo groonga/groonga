@@ -17,12 +17,12 @@
 #ifndef GRN_IO_H
 #define GRN_IO_H
 
-#ifndef GROONGA_IN_H
-#include "groonga_in.h"
-#endif /* GROONGA_IN_H */
+#ifndef GRN_H
+#include "grn.h"
+#endif /* GRN_H */
 
 #ifndef GRN_ERROR_H
-#include "error.h"
+#include "grn_error.h"
 #endif /* GRN_ERROR_H */
 
 #ifdef __cplusplus

@@ -19,11 +19,11 @@
 #define GRN_CTX_IMPL_H
 
 #ifndef GRN_CTX_H
-#include "ctx.h"
+#include "grn_ctx.h"
 #endif /* GRN_CTX_H */
 
 #ifndef GRN_COM_H
-#include "com.h"
+#include "grn_com.h"
 #endif /* GRN_COM_H */
 
 #ifdef GRN_WITH_MESSAGE_PACK

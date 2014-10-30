@@ -21,7 +21,7 @@
 
 #include "../lib/grn-assertions.h"
 
-#include <str.h>
+#include <grn_str.h>
 
 void test_columns(void);
 void attributes_bool(void);

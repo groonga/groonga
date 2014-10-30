@@ -17,7 +17,7 @@
 */
 
 #include <groonga.h>
-#include <db.h>
+#include <grn_db.h>
 
 #include <gcutter.h>
 #include <glib/gstdio.h>

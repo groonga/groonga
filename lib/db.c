@@ -14,21 +14,21 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include "groonga_in.h"
-#include "db.h"
-#include "hash.h"
-#include "pat.h"
-#include "dat.h"
-#include "ii.h"
-#include "ctx_impl.h"
-#include "token.h"
-#include "proc.h"
-#include "plugin_in.h"
-#include "geo.h"
-#include "snip.h"
-#include "string_in.h"
-#include "normalizer_in.h"
-#include "util.h"
+#include "grn.h"
+#include "grn_db.h"
+#include "grn_hash.h"
+#include "grn_pat.h"
+#include "grn_dat.h"
+#include "grn_ii.h"
+#include "grn_ctx_impl.h"
+#include "grn_token.h"
+#include "grn_proc.h"
+#include "grn_plugin.h"
+#include "grn_geo.h"
+#include "grn_snip.h"
+#include "grn_string.h"
+#include "grn_normalizer.h"
+#include "grn_util.h"
 #include <string.h>
 #include <float.h>
 

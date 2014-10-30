@@ -15,17 +15,17 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include "groonga_in.h"
-#include "db.h"
-#include "ctx_impl.h"
+#include "grn.h"
+#include "grn_db.h"
+#include "grn_ctx_impl.h"
 #include <string.h>
 #include <float.h>
-#include "ii.h"
-#include "geo.h"
-#include "expr.h"
-#include "util.h"
-#include "normalizer_in.h"
-#include "mrb.h"
+#include "grn_ii.h"
+#include "grn_geo.h"
+#include "grn_expr.h"
+#include "grn_util.h"
+#include "grn_normalizer.h"
+#include "grn_mrb.h"
 #include "mrb/mrb_expr.h"
 
 static inline int
@@ -5410,7 +5410,7 @@ grn_int32_value_at(grn_obj *obj, int offset)
 
 /* grn_expr_create_from_str */
 
-#include "snip.h"
+#include "grn_snip.h"
 
 typedef struct {
   grn_ctx *ctx;
@@ -5938,8 +5938,8 @@ section_weight_cb(grn_ctx *ctx, grn_hash *r, const void *rid, int sid, void *arg
 }
 #endif
 
-#include "ecmascript.h"
-#include "ecmascript.c"
+#include "grn_ecmascript.h"
+#include "grn_ecmascript.c"
 
 static grn_rc
 grn_expr_parser_open(grn_ctx *ctx)

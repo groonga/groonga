@@ -17,15 +17,15 @@
 #ifndef GRN_SNIP_H
 #define GRN_SNIP_H
 
-#ifndef GROONGA_IN_H
-#include "groonga_in.h"
-#endif /* GROONGA_IN_H */
+#ifndef GRN_H
+#include "grn.h"
+#endif /* GRN_H */
 
 #ifndef GRN_STR_H
-#include "str.h"
+#include "grn_str.h"
 #endif /* GRN_STR_H */
 
-#include "db.h"
+#include "grn_db.h"
 
 #define ASIZE                   256U
 #define MAX_SNIP_TAG_COUNT      512U

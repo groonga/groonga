@@ -17,12 +17,12 @@
 #ifndef GRN_HASH_H
 #define GRN_HASH_H
 
-#ifndef GROONGA_IN_H
-#include "groonga_in.h"
-#endif /* GROONGA_IN_H */
+#ifndef GRN_H
+#include "grn.h"
+#endif /* GRN_H */
 
 #ifndef GRN_CTX_H
-#include "ctx.h"
+#include "grn_ctx.h"
 #endif /* GRN_CTX_H */
 
 #ifdef __cplusplus

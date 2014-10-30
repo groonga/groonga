@@ -15,17 +15,17 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include "groonga_in.h"
-#include "groonga/plugin.h"
+#include "grn.h"
+#include <groonga/plugin.h>
 
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "db.h"
-#include "plugin_in.h"
-#include "ctx_impl.h"
-#include "util.h"
+#include "grn_db.h"
+#include "grn_plugin.h"
+#include "grn_ctx_impl.h"
+#include "grn_util.h"
 
 static grn_hash *grn_plugins = NULL;
 static grn_critical_section grn_plugins_lock;

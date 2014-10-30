@@ -19,8 +19,8 @@
 #ifndef GRN_CTX_IMPL_MRB_H
 #define GRN_CTX_IMPL_MRB_H
 
-#include "groonga_in.h"
-#include "ctx.h"
+#include "grn.h"
+#include "grn_ctx.h"
 
 #ifdef __cplusplus
 extern "C" {

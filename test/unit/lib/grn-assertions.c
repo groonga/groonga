@@ -19,10 +19,10 @@
 #include <cutter/cut-helper.h>
 #include <gcutter.h>
 
-#include <groonga_in.h>
-#include <db.h>
-#include <util.h>
-#include <str.h>
+#include <grn.h>
+#include <grn_db.h>
+#include <grn_util.h>
+#include <grn_str.h>
 
 #include "grn-assertions.h"
 

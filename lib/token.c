@@ -15,16 +15,16 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include "groonga_in.h"
+#include "grn.h"
 #include <string.h>
 #include <ctype.h>
-#include "ctx_impl.h"
-#include "token.h"
-#include "pat.h"
-#include "dat.h"
-#include "hash.h"
-#include "string_in.h"
-#include "plugin_in.h"
+#include "grn_ctx_impl.h"
+#include "grn_token.h"
+#include "grn_pat.h"
+#include "grn_dat.h"
+#include "grn_hash.h"
+#include "grn_string.h"
+#include "grn_plugin.h"
 #include <groonga/tokenizer.h>
 
 grn_obj *grn_token_uvector = NULL;

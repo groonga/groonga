@@ -17,20 +17,20 @@
 #ifndef GRN_OUTPUT_H
 #define GRN_OUTPUT_H
 
-#ifndef GROONGA_IN_H
-#include "groonga_in.h"
-#endif /* GROONGA_IN_H */
+#ifndef GRN_H
+#include "grn.h"
+#endif /* GRN_H */
 
 #ifndef GRN_CTX_H
-#include "ctx.h"
+#include "grn_ctx.h"
 #endif /* GRN_CTX_H */
 
 #ifndef GRN_STORE_H
-#include "store.h"
+#include "grn_store.h"
 #endif /* GRN_STORE_H */
 
 #ifndef GRN_CTX_IMPL_H
-#include "ctx_impl.h"
+#include "grn_ctx_impl.h"
 #endif /* GRN_CTX_IMPL_H */
 
 #ifdef __cplusplus

@@ -18,9 +18,9 @@
 #ifndef GRN_CTX_H
 #define GRN_CTX_H
 
-#ifndef GROONGA_IN_H
-#include "groonga_in.h"
-#endif /* GROONGA_IN_H */
+#ifndef GRN_H
+#include "grn.h"
+#endif /* GRN_H */
 
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
@@ -36,7 +36,7 @@
 #endif /* HAVE_EXECINFO_H */
 
 #ifndef GRN_IO_H
-#include "io.h"
+#include "grn_io.h"
 #endif /* GRN_IO_H */
 
 #ifdef __cplusplus

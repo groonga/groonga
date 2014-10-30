@@ -15,7 +15,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "groonga_in.h"
+#include "grn.h"
 
 #include <stdio.h>
 
@@ -26,11 +26,11 @@
 #include <string.h>
 #include <sys/stat.h>
 
-#include "ctx.h"
-#include "io.h"
-#include "plugin_in.h"
-#include "hash.h"
-#include "ctx_impl.h"
+#include "grn_ctx.h"
+#include "grn_io.h"
+#include "grn_plugin.h"
+#include "grn_hash.h"
+#include "grn_ctx_impl.h"
 
 #define GRN_IO_IDSTR "GROONGA:IO:00001"
 

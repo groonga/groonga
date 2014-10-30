@@ -16,8 +16,8 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef GROONGA_IN_H
-#define GROONGA_IN_H
+#ifndef GRN_H
+#define GRN_H
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -752,7 +752,7 @@ GRN_API void grn_sleep(uint32_t seconds);
 GRN_API void grn_nanosleep(uint64_t nanoseconds);
 
 #ifndef GROONGA_H
-# include "groonga.h"
+# include <groonga.h>
 #endif /* GROONGA_H */
 
-#endif /* GROONGA_IN_H */
+#endif /* GRN_H */

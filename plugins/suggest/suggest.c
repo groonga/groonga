@@ -15,11 +15,11 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "ctx.h"
-#include "db.h"
-#include "ii.h"
-#include "token.h"
-#include "output.h"
+#include "grn_ctx.h"
+#include "grn_db.h"
+#include "grn_ii.h"
+#include "grn_token.h"
+#include "grn_output.h"
 #include <groonga/plugin.h>
 #include <string.h>
 

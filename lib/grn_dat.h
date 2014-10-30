@@ -17,11 +17,11 @@
 #ifndef GRN_DAT_H
 #define GRN_DAT_H
 
-#ifndef GROONGA_IN_H
-# include "groonga_in.h"
-#endif /* GROONGA_IN_H */
+#ifndef GRN_H
+# include "grn.h"
+#endif /* GRN_H */
 
-#include "db.h"
+#include "grn_db.h"
 
 #ifdef __cplusplus
 extern "C" {

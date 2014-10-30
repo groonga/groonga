@@ -19,20 +19,20 @@
 
 /* "ii" is for inverted index */
 
-#ifndef GROONGA_IN_H
-#include "groonga_in.h"
-#endif /* GROONGA_IN_H */
+#ifndef GRN_H
+#include "grn.h"
+#endif /* GRN_H */
 
 #ifndef GRN_HASH_H
-#include "hash.h"
+#include "grn_hash.h"
 #endif /* GRN_HASH_H */
 
 #ifndef GRN_IO_H
-#include "io.h"
+#include "grn_io.h"
 #endif /* GRN_IO_H */
 
 #ifndef GRN_STORE_H
-#include "store.h"
+#include "grn_store.h"
 #endif /* GRN_STORE_H */
 
 #ifdef  __cplusplus

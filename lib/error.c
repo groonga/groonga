@@ -15,7 +15,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "error.h"
+#include "grn_error.h"
 
 #ifdef HAVE_ERRNO_H
 #include <errno.h>

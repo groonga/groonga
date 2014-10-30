@@ -17,12 +17,12 @@
 #ifndef GRN_GEO_H
 #define GRN_GEO_H
 
-#ifndef GROONGA_IN_H
-#include "groonga_in.h"
-#endif /* GROONGA_IN_H */
+#ifndef GRN_H
+#include "grn.h"
+#endif /* GRN_H */
 
-#include "ii.h"
-#include "db.h"
+#include "grn_ii.h"
+#include "grn_db.h"
 
 #if defined(WIN32) || defined(__sun)
 # define _USE_MATH_DEFINES

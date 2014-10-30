@@ -17,9 +17,9 @@
 #ifndef GRN_STR_H
 #define GRN_STR_H
 
-#ifndef GROONGA_IN_H
-#include "groonga_in.h"
-#endif /* GROONGA_IN_H */
+#ifndef GRN_H
+#include "grn.h"
+#endif /* GRN_H */
 
 #ifndef GRN_NFKC_H
 #include <groonga/nfkc.h>

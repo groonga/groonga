@@ -29,7 +29,7 @@ libgroonga_la_LIBADD =				\
 
 if WITH_LEMON
 BUILT_SOURCES =					\
-	ecmascript.c
+	grn_ecmascript.c
 
 SUFFIXES = .lemon .c
 
@@ -38,9 +38,9 @@ SUFFIXES = .lemon .c
 endif
 
 EXTRA_DIST =					\
-	ecmascript.c				\
-	ecmascript.h				\
-	ecmascript.lemon			\
+	grn_ecmascript.c			\
+	grn_ecmascript.h			\
+	grn_ecmascript.lemon			\
 	CMakeLists.txt
 
 CLEANFILES = *.gcno *.gcda

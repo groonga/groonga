@@ -18,16 +18,16 @@
 #ifndef GRN_COM_H
 #define GRN_COM_H
 
-#ifndef GROONGA_H
-#include "groonga_in.h"
-#endif /* GROONGA_H */
+#ifndef GRN_H
+#include "grn.h"
+#endif /* GRN_H */
 
 #ifndef GRN_STR_H
-#include "str.h"
+#include "grn_str.h"
 #endif /* GRN_STR_H */
 
 #ifndef GRN_HASH_H
-#include "hash.h"
+#include "grn_hash.h"
 #endif /* GRN_HASH_H */
 
 #ifdef HAVE_NETDB_H

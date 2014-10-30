@@ -21,7 +21,7 @@
 
 #include "../lib/grn-assertions.h"
 
-#include <str.h>
+#include <grn_str.h>
 
 void data_alphabet(void);
 void test_alphabet(gconstpointer data);

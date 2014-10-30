@@ -14,11 +14,11 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include "groonga_in.h"
-#include "str.h"
-#include "store.h"
-#include "ctx_impl.h"
-#include "output.h"
+#include "grn.h"
+#include "grn_str.h"
+#include "grn_store.h"
+#include "grn_ctx_impl.h"
+#include "grn_output.h"
 #include <string.h>
 
 /* rectangular arrays */

@@ -21,7 +21,7 @@
 
 #include "../lib/grn-assertions.h"
 
-#include <str.h>
+#include <grn_str.h>
 
 void test_invalid_name(void);
 void test_missing_name(void);

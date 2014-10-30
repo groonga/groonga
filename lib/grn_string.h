@@ -20,21 +20,21 @@
 #ifndef GRN_STRING_H
 #define GRN_STRING_H
 
-#ifndef GROONGA_IN_H
-# include "groonga_in.h"
-#endif /* GROONGA_IN_H */
+#ifndef GRN_H
+# include "grn.h"
+#endif /* GRN_H */
 
 #ifndef GRN_CTX_H
-# include "ctx.h"
+# include "grn_ctx.h"
 #endif /* GRN_CTX_H */
 
 #ifndef GRN_DB_H
-# include "db.h"
+# include "grn_db.h"
 #endif /* GRN_DB_H */
 
 #ifndef GRN_STR_H
-# include "str.h"
-#endif /* GRN_STR_IN_H */
+# include "grn_str.h"
+#endif /* GRN_STR_H */
 
 #ifdef __cplusplus
 extern "C" {
@@ -62,4 +62,4 @@ grn_rc grn_string_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *string);
 }
 #endif
 
-#endif /* GRN_STRING_IN_H */
+#endif /* GRN_STRING_H */

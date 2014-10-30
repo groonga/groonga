@@ -15,18 +15,18 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include "groonga_in.h"
-#include "groonga/tokenizer.h"
+#include "grn.h"
+#include <groonga/tokenizer.h>
 
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "ctx.h"
-#include "db.h"
-#include "str.h"
-#include "string_in.h"
-#include "token.h"
+#include "grn_ctx.h"
+#include "grn_db.h"
+#include "grn_str.h"
+#include "grn_string.h"
+#include "grn_token.h"
 
 /*
   Just for backward compatibility. See grn_plugin_charlen() instead.

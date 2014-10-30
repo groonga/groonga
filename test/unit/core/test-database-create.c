@@ -16,7 +16,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <store.h>
+#include <grn_store.h>
 
 #include <gcutter.h>
 #include <glib/gstdio.h>

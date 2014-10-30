@@ -16,7 +16,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "../ctx_impl.h"
+#include "../grn_ctx_impl.h"
 
 #ifdef GRN_WITH_MRUBY
 #include <mruby.h>
@@ -25,7 +25,7 @@
 #include <mruby/data.h>
 #include <mruby/numeric.h>
 
-#include "../db.h"
+#include "../grn_db.h"
 #include "mrb_bulk.h"
 
 static struct mrb_data_type mrb_grn_bulk_type = {

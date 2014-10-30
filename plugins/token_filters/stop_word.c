@@ -16,7 +16,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <str.h>
+#include <grn_str.h>
 
 #include <groonga.h>
 #include <groonga/token_filter.h>

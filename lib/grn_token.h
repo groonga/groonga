@@ -17,20 +17,20 @@
 #ifndef GRN_TOKEN_H
 #define GRN_TOKEN_H
 
-#ifndef GROONGA_IN_H
-#include "groonga_in.h"
-#endif /* GROONGA_IN_H */
+#ifndef GRN_H
+#include "grn.h"
+#endif /* GRN_H */
 
 #ifndef GRN_CTX_H
-#include "ctx.h"
+#include "grn_ctx.h"
 #endif /* GRN_CTX_H */
 
 #ifndef GRN_DB_H
-#include "db.h"
+#include "grn_db.h"
 #endif /* GRN_DB_H */
 
 #ifndef GRN_STR_H
-#include "str.h"
+#include "grn_str.h"
 #endif /* GRN_STR_H */
 
 #include <groonga/tokenizer.h>

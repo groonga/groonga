@@ -15,8 +15,8 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef GRN_PLUGIN_H
-#define GRN_PLUGIN_H
+#ifndef GROONGA_PLUGIN_H
+#define GROONGA_PLUGIN_H
 
 #include <stddef.h>
 
@@ -149,4 +149,4 @@ GRN_API grn_obj * grn_plugin_command_create(grn_ctx *ctx,
 }
 #endif
 
-#endif /* GRN_PLUGIN_H */
+#endif /* GROONGA_PLUGIN_H */

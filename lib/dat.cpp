@@ -14,16 +14,16 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include "groonga_in.h"
+#include "grn.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <cstring>
 #include <new>
-#include "str.h"
-#include "io.h"
-#include "dat.h"
-#include "util.h"
-#include "normalizer_in.h"
+#include "grn_str.h"
+#include "grn_io.h"
+#include "grn_dat.h"
+#include "grn_util.h"
+#include "grn_normalizer.h"
 
 #include "dat/trie.hpp"
 #include "dat/cursor-factory.hpp"

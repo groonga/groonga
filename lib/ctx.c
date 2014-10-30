@@ -16,16 +16,16 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "groonga_in.h"
+#include "grn.h"
 #include <string.h>
-#include "token.h"
-#include "ctx_impl.h"
-#include "pat.h"
-#include "plugin_in.h"
-#include "snip.h"
-#include "output.h"
-#include "normalizer_in.h"
-#include "ctx_impl_mrb.h"
+#include "grn_token.h"
+#include "grn_ctx_impl.h"
+#include "grn_pat.h"
+#include "grn_plugin.h"
+#include "grn_snip.h"
+#include "grn_output.h"
+#include "grn_normalizer.h"
+#include "grn_ctx_impl_mrb.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <time.h>

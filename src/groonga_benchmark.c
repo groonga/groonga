@@ -37,9 +37,9 @@
 #include <netinet/in.h>
 #endif /* HAVE_NETINET_IN_H */
 
-#include "lib/str.h"
-#include "lib/com.h"
-#include "lib/db.h"
+#include "lib/grn_str.h"
+#include "lib/grn_com.h"
+#include "lib/grn_db.h"
 
 #ifdef WIN32
 #include <windows.h>

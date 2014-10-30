@@ -15,11 +15,11 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "db.h"
-#include "pat.h"
-#include "ii.h"
-#include "util.h"
-#include "string_in.h"
+#include "grn_db.h"
+#include "grn_pat.h"
+#include "grn_ii.h"
+#include "grn_util.h"
+#include "grn_string.h"
 
 #include <string.h>
 #include <stdio.h>

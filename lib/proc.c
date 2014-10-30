@@ -16,15 +16,15 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "proc.h"
-#include "ii.h"
-#include "db.h"
-#include "util.h"
-#include "output.h"
-#include "pat.h"
-#include "geo.h"
-#include "token.h"
-#include "expr.h"
+#include "grn_proc.h"
+#include "grn_ii.h"
+#include "grn_db.h"
+#include "grn_util.h"
+#include "grn_output.h"
+#include "grn_pat.h"
+#include "grn_geo.h"
+#include "grn_token.h"
+#include "grn_expr.h"
 
 #include <string.h>
 #include <float.h>

@@ -19,7 +19,7 @@
 #ifndef GRN_EXPR_H
 #define GRN_EXPR_H
 
-#include "db.h"
+#include "grn_db.h"
 
 #ifdef __cplusplus
 extern "C" {

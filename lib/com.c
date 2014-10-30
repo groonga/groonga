@@ -15,11 +15,11 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "groonga_in.h"
+#include "grn.h"
 
 #include <stdio.h>
 #include <string.h>
-#include "ctx_impl.h"
+#include "grn_ctx_impl.h"
 
 #ifdef WIN32
 #  include <ws2tcpip.h>
@@ -38,8 +38,8 @@
 #  endif /* HAVE_SIGNAL_H */
 #endif /* WIN32 */
 
-#include "ctx.h"
-#include "com.h"
+#include "grn_ctx.h"
+#include "grn_com.h"
 
 #ifndef PF_INET
 #define PF_INET AF_INET

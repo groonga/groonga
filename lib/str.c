@@ -14,13 +14,13 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include "groonga_in.h"
+#include "grn.h"
 #include <limits.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
-#include "db.h"
-#include "str.h"
+#include "grn_db.h"
+#include "grn_str.h"
 
 #ifndef _ISOC99_SOURCE
 #define _ISOC99_SOURCE

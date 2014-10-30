@@ -21,8 +21,8 @@
 
 #include "../lib/grn-assertions.h"
 
-#include <str.h>
-#include <util.h>
+#include <grn_str.h>
+#include <grn_util.h>
 
 #define get(name) grn_ctx_get(context, name, strlen(name))
 

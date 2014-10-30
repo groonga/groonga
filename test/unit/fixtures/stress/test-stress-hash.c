@@ -16,7 +16,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <hash.h>
+#include <grn_hash.h>
 #include <gcutter.h>
 #include "../lib/grn-assertions.h"
 

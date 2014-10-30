@@ -20,9 +20,9 @@
 #include <glib/gstdio.h>
 
 #include "../lib/grn-assertions.h"
-#include "store.h"
+#include "grn_store.h"
 
-#include <str.h>
+#include <grn_str.h>
 
 void test_vector_empty_load(void);
 

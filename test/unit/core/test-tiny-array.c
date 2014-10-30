@@ -23,7 +23,7 @@
 
 #include <string.h>
 
-#include <hash.h>
+#include <grn_hash.h>
 
 static grn_ctx ctx;
 

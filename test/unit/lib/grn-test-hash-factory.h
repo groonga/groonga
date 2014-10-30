@@ -19,7 +19,7 @@
 #ifndef __GRN_TEST_HASH_FACTORY_H__
 #define __GRN_TEST_HASH_FACTORY_H__
 
-#include <hash.h>
+#include <grn_hash.h>
 
 #include <glib-object.h>
 

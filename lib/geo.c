@@ -15,9 +15,9 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "geo.h"
-#include "pat.h"
-#include "util.h"
+#include "grn_geo.h"
+#include "grn_pat.h"
+#include "grn_util.h"
 
 #include <string.h>
 #include <stdlib.h>

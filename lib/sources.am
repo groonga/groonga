@@ -1,52 +1,52 @@
 libgroonga_la_SOURCES =				\
 	com.c					\
-	com.h					\
+	grn_com.h				\
 	ctx.c					\
-	ctx.h					\
-	ctx_impl.h				\
+	grn_ctx.h				\
+	grn_ctx_impl.h				\
 	ctx_impl_mrb.c				\
-	ctx_impl_mrb.h				\
+	grn_ctx_impl_mrb.h			\
 	dat.cpp					\
-	dat.h					\
+	grn_dat.h				\
 	db.c					\
-	db.h					\
+	grn_db.h				\
 	error.c					\
-	error.h					\
+	grn_error.h				\
 	expr.c					\
-	expr.h					\
+	grn_expr.h				\
 	geo.c					\
-	geo.h					\
-	groonga_in.h				\
+	grn_geo.h				\
+	grn.h					\
 	hash.c					\
-	hash.h					\
+	grn_hash.h				\
 	ii.c					\
-	ii.h					\
+	grn_ii.h				\
 	io.c					\
-	io.h					\
+	grn_io.h				\
 	mrb.c					\
-	mrb.h					\
+	grn_mrb.h				\
 	nfkc.c					\
 	normalizer.c				\
-	normalizer_in.h				\
+	grn_normalizer.h			\
 	output.c				\
-	output.h				\
+	grn_output.h				\
 	pat.c					\
-	pat.h					\
+	grn_pat.h				\
 	plugin.c				\
-	plugin_in.h				\
+	grn_plugin.h				\
 	proc.c					\
-	proc.h					\
+	grn_proc.h				\
 	snip.c					\
-	snip.h					\
+	grn_snip.h				\
 	store.c					\
-	store.h					\
+	grn_store.h				\
 	str.c					\
-	str.h					\
+	grn_str.h				\
 	string.c				\
-	string_in.h				\
+	grn_string.h				\
 	token.c					\
-	token.h					\
+	grn_token.h				\
 	tokenizer.c				\
 	token_filter.c				\
 	util.c					\
-	util.h
+	grn_util.h
