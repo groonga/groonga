@@ -121,6 +121,7 @@ cmake_install.cmake
 /packages/apt/groonga-keyring-*.tar.gz
 /packages/apt/.vagrant/
 /packages/apt/tmp/
+/packages/ubuntu/precise/
 /packages/ubuntu/tmp/
 /packages/ubuntu/*.tar.gz
 /configure.lineno

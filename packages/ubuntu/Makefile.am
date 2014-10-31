@@ -18,6 +18,20 @@ upload: source ensure-launchpad-configuration
 	  --debian-directory '$(srcdir)/../debian/' \
 	  --pgp-sign-key '$(LAUNCHPAD_UPLOADER_PGP_KEY)'
 
+upload: upload-precise
+upload-precise: source ensure-launchpad-configuration
+	rm -rf precise
+	mkdir -p precise
+	cp -r '$(srcdir)/../debian/' precise/
+	grep -v liblz4 '$(srcdir)/../debian/control' > precise/debian/control
+	./upload.rb \
+	  --package '$(PACKAGE)' \
+	  --version '$(VERSION)' \
+	  --source-archive '$(SOURCE)' \
+	  --code-names 'precise' \
+	  --debian-directory 'precise/debian' \
+	  --pgp-sign-key '$(LAUNCHPAD_UPLOADER_PGP_KEY)'
+
 source: $(SOURCE)
 
 $(SOURCE):
