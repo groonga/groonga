@@ -5,28 +5,28 @@ set -e
 git submodule update --init --depth 1
 
 case "${BUILD_TOOL}" in
-    autotools)
-	./autogen.sh
+  autotools)
+    ./autogen.sh
 
-	configure_args=""
-	#if [ "$CC" = "clang" ]; then
-	    configure_args="${configure_args} --enable-debug"
-	#fi
-	if [ "$ENABLE_MRUBY" = "yes" ]; then
-	    configure_args="${configure_args} --with-ruby --enable-mruby"
-	fi
+    configure_args=""
+    #if [ "$CC" = "clang" ]; then
+      configure_args="${configure_args} --enable-debug"
+    #fi
+    if [ "$ENABLE_MRUBY" = "yes" ]; then
+      configure_args="${configure_args} --with-ruby --enable-mruby"
+    fi
 
-	./configure --with-ruby ${configure_args}
-	;;
-    cmake)
-	cmake_args=""
-	cmake_args="${cmake_args} -DGRN_WITH_DEBUG=yes"
-	if [ "$ENABLE_MRUBY" = "yes" ]; then
-	    cmake_args="${cmake_args} -DGRN_WITH_MRUBY=yes"
-	fi
+    ./configure --with-ruby ${configure_args}
+    ;;
+  cmake)
+    cmake_args=""
+    cmake_args="${cmake_args} -DGRN_WITH_DEBUG=yes"
+    if [ "$ENABLE_MRUBY" = "yes" ]; then
+      cmake_args="${cmake_args} -DGRN_WITH_MRUBY=yes"
+    fi
 
-	cmake . ${cmake_args}
-	;;
+    cmake . ${cmake_args}
+    ;;
 esac
 
 case "$(uname)" in
