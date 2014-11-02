@@ -111,6 +111,9 @@ test_match_against_not_string(void)
     GRN_INVALID_ARGUMENT,
     "invalid expression: can't use column as a value: "
     "<Sites.uri>: "
-    "<noname($1:null){2_key GET_VALUE,0uri GET_VALUE,0MATCH}>",
+    "<#<expr\n"
+    "  vars:{\n"
+    "    $1:#<record:hash:Sites id:0(nonexistent)>\n"
+    "  ",
     "select Sites --filter \"_key @ uri");
 }

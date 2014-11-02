@@ -287,12 +287,30 @@ test_parse(gconstpointer data)
   PARSE(cond, gcut_data_get_string(data, "query_poyo"),
               gcut_data_get_int(data, "query_poyo_parse_level"));
   grn_expr_append_op(&context, cond, GRN_OP_AND, 2);
-  grn_test_assert_expr(&context,
-                       "noname($1:null)"
-                       "{2body GET_VALUE,0\"hoge\",4MATCH,"
-                        "2body GET_VALUE,0\"moge\",0MATCH,4AND,"
-                        "2body GET_VALUE,0\"poyo\",0MATCH,0AND}",
-                       cond);
+  grn_test_assert_expr(
+    &context,
+    "#<expr\n"
+    "  vars:{\n"
+    "    $1:#<record:no_key:docs id:0(nonexistent)>\n"
+    "  },\n"
+    "  codes:{\n"
+    "    0:<get_value(), modify:2, "
+    "value:#<column:var_size docs.body range:Text type:scalar compress:none>>,\n"
+    "    1:<push(), modify:0, value:\"hoge\">,\n"
+    "    2:<match(), modify:4, value:(NULL)>,\n"
+    "    3:<get_value(), modify:2, "
+    "value:#<column:var_size docs.body range:Text type:scalar compress:none>>,\n"
+    "    4:<push(), modify:0, value:\"moge\">,\n"
+    "    5:<match(), modify:0, value:(NULL)>,\n"
+    "    6:<and(), modify:4, value:(NULL)>,\n"
+    "    7:<get_value(), modify:2, "
+    "value:#<column:var_size docs.body range:Text type:scalar compress:none>>,\n"
+    "    8:<push(), modify:0, value:\"poyo\">,\n"
+    "    9:<match(), modify:0, value:(NULL)>,\n"
+    "    10:<and(), modify:0, value:(NULL)>\n"
+    "  }\n"
+    ">",
+    cond);
   res = grn_table_create(&context, NULL, 0, NULL,
                          GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, NULL);
   cut_assert_not_null(res);
@@ -316,9 +334,20 @@ test_parse(gconstpointer data)
   GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
   PARSE(cond, gcut_data_get_string(data, "query_size"),
               gcut_data_get_int(data, "query_size_parse_level"));
-  grn_test_assert_expr(&context,
-                       "noname($1:null){2size GET_VALUE,014,0EQUAL}",
-                       cond);
+  grn_test_assert_expr(
+    &context,
+    "#<expr\n"
+    "  vars:{\n"
+    "    $1:#<record:no_key:docs id:0(nonexistent)>\n"
+    "  },\n"
+    "  codes:{\n"
+    "    0:<get_value(), modify:2, "
+    "value:#<column:fix_size docs.size range:UInt32 type:scalar compress:none>>,\n"
+    "    1:<push(), modify:0, value:14>,\n"
+    "    2:<equal(), modify:0, value:(NULL)>\n"
+    "  }\n"
+    ">",
+    cond);
   res = grn_table_create(&context, NULL, 0, NULL,
                          GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, docs, NULL);
   cut_assert_not_null(res);
@@ -868,7 +897,19 @@ test_syntax_equal_string_reference_key(void)
   cut_assert_not_null(cond);
   cut_assert_not_null(v);
   PARSE(cond, "author == \"morita\"", GRN_EXPR_SYNTAX_SCRIPT);
-  grn_test_assert_expr(&context,
-                       "noname($1:null){2author GET_VALUE,0\"morita\",0EQUAL}",
-                       cond);
+  grn_test_assert_expr(
+    &context,
+    "#<expr\n"
+    "  vars:{\n"
+    "    $1:#<record:no_key:docs id:0(nonexistent)>\n"
+    "  },\n"
+    "  codes:{\n"
+    "    0:<get_value(), modify:2, "
+    "value:#<column:fix_size docs.author range:properties type:scalar compress:none>>,\n"
+    "    1:<push(), modify:0, "
+    "value:#<record:hash:properties id:1 key:\"morita\">>,\n"
+    "    2:<equal(), modify:0, value:(NULL)>\n"
+    "  }\n"
+    ">",
+    cond);
 }
