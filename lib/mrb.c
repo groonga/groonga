@@ -28,7 +28,7 @@
 #define BUFFER_SIZE 2048
 
 #ifdef GRN_WITH_MRUBY
-#ifdef WIN32
+# ifdef WIN32
 static char *win32_ruby_scripts_dir = NULL;
 static char win32_ruby_scripts_dir_buffer[PATH_MAX];
 static const char *
@@ -50,13 +50,13 @@ grn_mrb_get_system_ruby_scripts_dir(void)
   return win32_ruby_scripts_dir;
 }
 
-#else /* WIN32 */
+# else /* WIN32 */
 static const char *
 grn_mrb_get_system_ruby_scripts_dir(void)
 {
   return GRN_RUBY_SCRIPTS_DIR;
 }
-#endif /* WIN32 */
+# endif /* WIN32 */
 
 static grn_bool
 grn_mrb_expand_script_path(grn_ctx *ctx, const char *path, char *expanded_path)
