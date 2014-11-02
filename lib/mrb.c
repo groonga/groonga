@@ -18,6 +18,7 @@
 
 #include "grn_mrb.h"
 #include "grn_ctx_impl.h"
+#include "grn_util.h"
 
 #ifdef GRN_WITH_MRUBY
 # include <mruby/proc.h>
