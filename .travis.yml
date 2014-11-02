@@ -14,7 +14,7 @@ env:
   - BUILD_TOOL=autotools CFLAGS=-funsigned-char CXXFLAGS=-funsigned-char
   - BUILD_TOOL=cmake
 install:
-  - toosl/travis-install.sh
+  - tools/travis-install.sh
 before_script:
   - rvm use 1.9.3
   - tools/travis-before-script.sh
