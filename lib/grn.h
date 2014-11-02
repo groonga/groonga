@@ -508,6 +508,11 @@ typedef int grn_cond;
 /* todo */
 #  define GRN_BIT_SCAN_REV(v,r)  for (r = 31; r && !((1 << r) & v); r--)
 #  define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
+# elif defined(__ATOMIC_SEQ_CST) /* GCC atomic builtins */
+#  define GRN_ATOMIC_ADD_EX(p,i,r) \
+  (r = __atomic_fetch_add(p, i, __ATOMIC_SEQ_CST))
+#  define GRN_BIT_SCAN_REV(v,r)  for (r = 31; r && !((1 << r) & v); r--)
+#  define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
 # else /* ATOMIC ADD */
 /* todo */
 #  define GRN_BIT_SCAN_REV(v,r)  for (r = 31; r && !((1 << r) & v); r--)
