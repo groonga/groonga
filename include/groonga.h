@@ -19,5 +19,6 @@
 #define GROONGA_H
 
 #include <groonga/groonga.h>
+#include <groonga/util.h>
 
 #endif /* GROONGA_H */
