@@ -4696,6 +4696,31 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
   return sis;
 }
 
+void
+grn_p_scan_info_list(grn_ctx *ctx, scan_info **sis, int n)
+{
+  int i;
+  grn_obj inspected;
+
+  GRN_TEXT_INIT(&inspected, 0);
+  for (i = 0; i < n; i++) {
+    scan_info *si = sis[i];
+
+    printf("[%d]\n", i);
+    printf("  op:         <%s>\n", grn_operator_to_string(si->op));
+    printf("  logical_op: <%s>\n", grn_operator_to_string(si->logical_op));
+
+    GRN_BULK_REWIND(&inspected);
+    grn_inspect(ctx, &inspected, si->query);
+    printf("  query:      <%.*s>\n",
+           (int)GRN_TEXT_LEN(&inspected),
+           GRN_TEXT_VALUE(&inspected));
+
+    printf("  expr:       <%d..%d>\n", si->start, si->end);
+  }
+  GRN_OBJ_FIN(ctx, &inspected);
+}
+
 inline static int32_t
 exec_result_to_score(grn_ctx *ctx, grn_obj *result, grn_obj *score_buffer)
 {
