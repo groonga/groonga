@@ -5952,6 +5952,35 @@ grn_obj_get_value_(grn_ctx *ctx, grn_obj *obj, grn_id id, uint32_t *size)
 }
 
 static void
+grn_obj_get_value_expr(grn_ctx *ctx, grn_obj *expr, grn_id id, grn_obj *value)
+{
+  grn_expr *e = (grn_expr *)expr;
+  grn_expr_code *code;
+
+  if (e->codes_curr != 1) {
+    return;
+  }
+
+  code = e->codes;
+  if (code->op != GRN_OP_GET_VALUE) {
+    return;
+  }
+
+  if (!code->value) {
+    return;
+  }
+
+  switch (code->value->header.type) {
+  case GRN_COLUMN_VAR_SIZE :
+  case GRN_COLUMN_FIX_SIZE :
+    grn_obj_get_value(ctx, code->value, id, value);
+    break;
+  default :
+    break;
+  }
+}
+
+static void
 grn_obj_get_value_column_index(grn_ctx *ctx, grn_obj *index_column,
                                grn_id id, grn_obj *value)
 {
@@ -6023,6 +6052,9 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
     grn_obj_ensure_bulk(ctx, value);
     value = grn_accessor_get_value(ctx, (grn_accessor *)obj, id, value);
     value->header.domain = grn_obj_get_range(ctx, obj);
+    break;
+  case GRN_EXPR :
+    grn_obj_get_value_expr(ctx, obj, id, value);
     break;
   case GRN_TABLE_PAT_KEY :
     {
