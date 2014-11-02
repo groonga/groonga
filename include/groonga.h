@@ -707,6 +707,8 @@ typedef enum {
   GRN_OP_GET_MEMBER
 } grn_operator;
 
+GRN_API const char *grn_operator_to_string(grn_operator op);
+
 struct _grn_table_group_result {
   grn_obj *table;
   unsigned char key_begin;
