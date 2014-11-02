@@ -270,8 +270,8 @@ put_value(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   }
 }
 
-grn_rc
-grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr)
+static grn_rc
+grn_expr_inspect_internal(grn_ctx *ctx, grn_obj *buf, grn_obj *expr)
 {
   uint32_t i, j;
   grn_expr_var *var;
@@ -4174,7 +4174,7 @@ put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip, grn_operator op, int star
 #define EXPRLOG(name,expr) do {\
   grn_obj strbuf;\
   GRN_TEXT_INIT(&strbuf, 0);\
-  grn_expr_inspect(ctx, &strbuf, (expr));\
+  grn_expr_inspect_internal(ctx, &strbuf, (expr));\
   GRN_TEXT_PUTC(ctx, &strbuf, '\0');\
   GRN_LOG(ctx, GRN_LOG_NOTICE, "%s=(%s)", (name), GRN_TEXT_VALUE(&strbuf));\
   GRN_OBJ_FIN(ctx, &strbuf);\
@@ -6939,7 +6939,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     /*
         grn_obj strbuf;
         GRN_TEXT_INIT(&strbuf, 0);
-        grn_expr_inspect(ctx, &strbuf, expr);
+        grn_expr_inspect_internal(ctx, &strbuf, expr);
         GRN_TEXT_PUTC(ctx, &strbuf, '\0');
         GRN_LOG(ctx, GRN_LOG_NOTICE, "query=(%s)", GRN_TEXT_VALUE(&strbuf));
         GRN_OBJ_FIN(ctx, &strbuf);

@@ -275,6 +275,69 @@ grn_proc_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   return GRN_SUCCESS;
 }
 
+grn_rc
+grn_expr_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *expr)
+{
+  grn_expr *e = (grn_expr *)expr;
+
+  GRN_TEXT_PUTS(ctx, buffer, "#<expr\n");
+  {
+    int i = 0;
+    grn_obj *value;
+    const char *name;
+    uint32_t name_len;
+    unsigned int n_vars;
+    grn_hash *vars = grn_expr_get_vars(ctx, expr, &n_vars);
+    GRN_TEXT_PUTS(ctx, buffer, "  vars:{");
+    GRN_HASH_EACH(ctx, vars, id, &name, &name_len, &value, {
+      if (i++) {
+        GRN_TEXT_PUTC(ctx, buffer, ',');
+      }
+      GRN_TEXT_PUTS(ctx, buffer, "\n    ");
+      GRN_TEXT_PUT(ctx, buffer, name, name_len);
+      GRN_TEXT_PUTC(ctx, buffer, ':');
+      grn_inspect_indented(ctx, buffer, value, "    ");
+    });
+    GRN_TEXT_PUTS(ctx, buffer, "\n  },");
+  }
+
+  {
+    uint32_t i, j;
+    grn_expr_var *var;
+    grn_expr_code *code;
+    GRN_TEXT_PUTS(ctx, buffer, "\n  codes:{");
+    for (j = 0, code = e->codes; j < e->codes_curr; j++, code++) {
+      if (j) { GRN_TEXT_PUTC(ctx, buffer, ','); }
+      GRN_TEXT_PUTS(ctx, buffer, "\n    ");
+      grn_text_itoa(ctx, buffer, j);
+      GRN_TEXT_PUTS(ctx, buffer, ":<");
+      GRN_TEXT_PUTS(ctx, buffer, grn_operator_to_string(code->op));
+      GRN_TEXT_PUTS(ctx, buffer, "(");
+      for (i = 0, var = e->vars; i < e->nvars; i++, var++) {
+        if (i) { GRN_TEXT_PUTC(ctx, buffer, ','); }
+        GRN_TEXT_PUTC(ctx, buffer, '?');
+        if (var->name_size) {
+          GRN_TEXT_PUT(ctx, buffer, var->name, var->name_size);
+        } else {
+          grn_text_itoa(ctx, buffer, (int)i);
+        }
+      }
+      GRN_TEXT_PUTS(ctx, buffer, "), ");
+      GRN_TEXT_PUTS(ctx, buffer, "modify:");
+      grn_text_itoa(ctx, buffer, code->modify);
+      GRN_TEXT_PUTS(ctx, buffer, ", ");
+      GRN_TEXT_PUTS(ctx, buffer, "value:");
+      grn_inspect_indented(ctx, buffer, code->value, "      ");
+      GRN_TEXT_PUTS(ctx, buffer, ">");
+    }
+    GRN_TEXT_PUTS(ctx, buffer, "\n  }");
+  }
+
+  GRN_TEXT_PUTS(ctx, buffer, "\n>");
+
+  return GRN_SUCCESS;
+}
+
 static grn_rc
 grn_vector_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *vector)
 {
