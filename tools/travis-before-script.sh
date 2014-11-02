@@ -29,5 +29,16 @@ case "${BUILD_TOOL}" in
 	;;
 esac
 
-n_processors="$(grep '^processor' /proc/cpuinfo | wc -l)"
+case "$(uname)" in
+  Linux)
+    n_processors="$(grep '^processor' /proc/cpuinfo | wc -l)"
+    ;;
+  Darwin)
+    n_processors="$(/usr/sbin/sysctl -n hw.ncpu)"
+    ;;
+  *)
+    n_processors="1"
+    ;;
+esac
+
 make -j${n_processors} > /dev/null

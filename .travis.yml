@@ -1,6 +1,9 @@
 notifications:
   recipients:
     - groonga-commit@lists.sourceforge.jp
+os:
+  - linux
+  - osx
 language: cpp
 compiler:
   - gcc
@@ -11,8 +14,7 @@ env:
   - BUILD_TOOL=autotools CFLAGS=-funsigned-char CXXFLAGS=-funsigned-char
   - BUILD_TOOL=cmake
 install:
-  - curl --silent --location https://raw.github.com/clear-code/cutter/master/data/travis/setup.sh | sh
-  - sudo apt-get install -qq -y autotools-dev zlib1g-dev libmsgpack-dev libevent-dev libmecab-dev mecab-naist-jdic cmake
+  - toosl/travis-install.sh
 before_script:
   - rvm use 1.9.3
   - tools/travis-before-script.sh
