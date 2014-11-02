@@ -1,0 +1,15 @@
+table_create IDs TABLE_PAT_KEY Int32
+[[0,0.0,0.0],true]
+table_create Logs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs id COLUMN_SCALAR IDs
+[[0,0.0,0.0],true]
+column_create IDs logs_id COLUMN_INDEX Logs id
+[[0,0.0,0.0],true]
+load --table Logs
+[
+{"id": 1}
+]
+[[0,0.0,0.0],1]
+select Logs   --filter 'id @ 1 &! id @ 2 && ((id @ 1) || (id @ 3)) && id @ 1'   --output_columns id
+[[0,0.0,0.0],[[[1],[["id","IDs"]],[1]]]]

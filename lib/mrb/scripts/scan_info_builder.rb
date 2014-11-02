@@ -206,10 +206,12 @@ module Groonga
                     new_data.flags = ScanInfo::Flags::POP
                     new_data.logical_op = operator
                     @data_list << new_data
+                    break
                   end
                 else
                   data.flags &= ~ScanInfo::Flags::PUSH
                   data.logical_op = operator
+                  break
                 end
               else
                 if n_dif_ops > 0
@@ -225,6 +227,7 @@ module Groonga
                     @data_list[r..-1] +
                     @data_list[j...r]
                 end
+                break
               end
             end
           else
