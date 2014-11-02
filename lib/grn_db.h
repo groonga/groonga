@@ -441,6 +441,7 @@ grn_rc grn_obj_reinit_for(grn_ctx *ctx, grn_obj *obj, grn_obj *domain_obj);
 
 void grn_expr_pack(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
 GRN_API grn_rc grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
+grn_hash *grn_expr_get_vars(grn_ctx *ctx, grn_obj *expr, unsigned int *nvars);
 grn_obj *grn_expr_open(grn_ctx *ctx, grn_obj_spec *spec, const uint8_t *p, const uint8_t *pe);
 
 GRN_API void grn_load_(grn_ctx *ctx, grn_content_type input_type,

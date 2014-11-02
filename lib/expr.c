@@ -60,7 +60,7 @@ grn_expr_alloc(grn_ctx *ctx, grn_obj *expr, grn_id domain, grn_obj_flags flags)
   return res;
 }
 
-static grn_hash *
+grn_hash *
 grn_expr_get_vars(grn_ctx *ctx, grn_obj *expr, unsigned int *nvars)
 {
   grn_hash *vars = NULL;
