@@ -585,9 +585,6 @@ typedef int grn_cond;
 #  define GRN_ATOMIC_ADD_EX(p,i,r) \
   (r = atomic_add_32_nv(p, i) - i)
 /* todo */
-#  define GRN_BIT_SCAN_REV(v,r)  for (r = 31; r && !((1 << r) & v); r--)
-#  define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
-/* todo */
 #  define GRN_SET_64BIT(p,v) \
   (void)atomic_swap_64(p, v)
 # endif /* ATOMIC ADD */
