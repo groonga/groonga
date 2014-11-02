@@ -38,7 +38,6 @@ grn_mrb_get_system_ruby_scripts_dir(void)
   if (!win32_ruby_scripts_dir) {
     const char *base_dir;
     const char *relative_path = GRN_RELATIVE_RUBY_SCRIPTS_DIR;
-    char *path;
     size_t base_dir_length;
 
     base_dir = grn_win32_base_dir();
