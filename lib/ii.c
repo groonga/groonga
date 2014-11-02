@@ -6367,7 +6367,7 @@ grn_ii_cursor_inspect(grn_ctx *ctx, grn_ii_cursor *c, grn_obj *buf)
 }
 
 void
-grn_ii_inspect_elements(grn_ctx *ctx, grn_ii *ii, grn_obj *buf)
+grn_ii_inspect_values(grn_ctx *ctx, grn_ii *ii, grn_obj *buf)
 {
   grn_table_cursor *tc;
   GRN_TEXT_PUTS(ctx, buf, "[");

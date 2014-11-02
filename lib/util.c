@@ -544,9 +544,6 @@ grn_ii_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     GRN_TEXT_PUTS(ctx, buf, "NONE");
   }
 
-  GRN_TEXT_PUTS(ctx, buf, " elements:");
-  grn_ii_inspect_elements(ctx, (grn_ii *)obj, buf);
-
   GRN_TEXT_PUTS(ctx, buf, ">");
 
   return GRN_SUCCESS;
@@ -1195,6 +1192,17 @@ grn_p_geo_point(grn_ctx *ctx, grn_geo_point *point)
   GRN_GEO_POINT_SET(ctx, &obj, point->latitude, point->longitude);
   grn_p(ctx, &obj);
   grn_obj_unlink(ctx, &obj);
+}
+
+void
+grn_p_ii_values(grn_ctx *ctx, grn_obj *ii)
+{
+  grn_obj buffer;
+
+  GRN_TEXT_INIT(&buffer, 0);
+  grn_ii_inspect_values(ctx, (grn_ii *)ii, &buffer);
+  printf("%.*s\n", (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
+  grn_obj_unlink(ctx, &buffer);
 }
 
 #ifdef WIN32
