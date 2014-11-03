@@ -55,6 +55,7 @@ GRN_API grn_rc grn_expr_syntax_escape_query(grn_ctx *ctx,
                                             grn_obj *escaped_query);
 
 GRN_API grn_rc grn_expr_compile(grn_ctx *ctx, grn_obj *expr);
+GRN_API grn_rc grn_expr_dump_plan(grn_ctx *ctx, grn_obj *expr, grn_obj *buffer);
 GRN_API grn_obj *grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs);
 
 GRN_API grn_obj *grn_expr_alloc(grn_ctx *ctx, grn_obj *expr,

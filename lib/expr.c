@@ -4697,27 +4697,40 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
 }
 
 void
-grn_p_scan_info_list(grn_ctx *ctx, scan_info **sis, int n)
+grn_inspect_scan_info_list(grn_ctx *ctx, grn_obj *buffer, scan_info **sis, int n)
 {
   int i;
-  grn_obj inspected;
 
-  GRN_TEXT_INIT(&inspected, 0);
   for (i = 0; i < n; i++) {
     scan_info *si = sis[i];
 
-    printf("[%d]\n", i);
-    printf("  op:         <%s>\n", grn_operator_to_string(si->op));
-    printf("  logical_op: <%s>\n", grn_operator_to_string(si->logical_op));
+    grn_text_printf(ctx, buffer, "[%d]\n", i);
+    grn_text_printf(ctx, buffer,
+                    "  op:         <%s>\n",
+                    grn_operator_to_string(si->op));
+    grn_text_printf(ctx, buffer,
+                    "  logical_op: <%s>\n",
+                    grn_operator_to_string(si->logical_op));
 
-    GRN_BULK_REWIND(&inspected);
     grn_inspect(ctx, &inspected, si->query);
-    printf("  query:      <%.*s>\n",
-           (int)GRN_TEXT_LEN(&inspected),
-           GRN_TEXT_VALUE(&inspected));
+    GRN_TEXT_PUTS(ctx, buffer, "  query:      <");
+    grn_inspect(ctx, buffer, si->query);
+    GRN_TEXT_PUTS(ctx, buffer, ">\n");
 
-    printf("  expr:       <%d..%d>\n", si->start, si->end);
+    grn_text_printf(ctx, buffer,
+                    "  expr:       <%d..%d>\n", si->start, si->end);
   }
+}
+
+void
+grn_p_scan_info_list(grn_ctx *ctx, scan_info **sis, int n)
+{
+  grn_obj inspected;
+  GRN_TEXT_INIT(&inspected, 0);
+  grn_inspect_scan_info_lsit(ctx, &inspected, sis, n);
+  printf("%.*s\n",
+         (int)GRN_TEXT_LEN(&inspected),
+         GRN_TEXT_VALUE(&inspected));
   GRN_OBJ_FIN(ctx, &inspected);
 }
 
@@ -7182,4 +7195,25 @@ grn_expr_syntax_escape_query(grn_ctx *ctx, const char *query, int query_size,
   return grn_expr_syntax_escape(ctx, query, query_size,
                                 target_characters, GRN_QUERY_ESCAPE,
                                 escaped_query);
+}
+
+grn_rc
+grn_expr_dump_plan(grn_ctx *ctx, grn_obj *expr, grn_obj *buffer)
+{
+  int n;
+  scan_info **sis;
+
+  GRN_API_ENTER;
+  sis = scan_info_build(ctx, expr, &n, GRN_OP_OR, 0);
+  if (sis) {
+    int i;
+    grn_inspect_scan_info_list(ctx, buffer, sis, n);
+    for (i = 0; i < n; i++) {
+      SI_FREE(sis[i]);
+    }
+    GRN_FREE(sis);
+  } else {
+    GRN_TEXT_PUTS(ctx, buffer, "sequential search\n");
+  }
+  GRN_API_RETURN(GRN_SUCCESS);
 }
