@@ -7,15 +7,15 @@ class TestNoIndex < QueryOptimizerTestCase
     end
 
     @logs = Groonga["Logs"]
-    @expression = create_expression(@logs)
+    setup_expression(@logs)
   end
 
   def teardown
-    @expression.close
+    teardown_expression
   end
 
   def test_plus
-    assert_equal(<<-DUMP, dump_plan(@expression, "1 + 1"))
+    assert_equal(<<-DUMP, dump_plan("1 + 1"))
 sequential search
     DUMP
   end

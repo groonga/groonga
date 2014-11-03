@@ -14,15 +14,15 @@ class TestIndex < QueryOptimizerTestCase
     end
 
     @logs = Groonga["Logs"]
-    @expression = create_expression(@logs)
+    setup_expression(@logs)
   end
 
   def teardown
-    @expression.close
+    teardown_expression
   end
 
   def test_match
-    assert_equal(<<-DUMP, dump_plan(@expression, "message @ 'Groonga'"))
+    assert_equal(<<-DUMP, dump_plan("message @ 'Groonga'"))
 [0]
   op:         <match>
   logical_op: <or>

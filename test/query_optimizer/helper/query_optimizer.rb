@@ -1,15 +1,18 @@
 module QueryOptimizer
-  def create_expression(domain)
-    expression = Groonga::Expression.new
-    expression.define_variable(:domain => domain)
-    expression
+  def setup_expression(domain)
+    @expression = Groonga::Expression.new
+    @expression.define_variable(:domain => domain)
   end
 
-  def dump_plan(expression, text, options={})
+  def teardown_expression
+    @expression.close
+  end
+
+  def dump_plan(text, options={})
     default_options = {
       :syntax => :script,
     }
-    expression.parse(text, default_options.merge(options))
-    expression.dump_plan
+    @expression.parse(text, default_options.merge(options))
+    @expression.dump_plan
   end
 end
