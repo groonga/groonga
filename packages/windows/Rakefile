@@ -256,7 +256,9 @@ namespace :gcc do
       end
       dlls.each do |dll|
         full_path = `#{host}-g++ -print-file-name=#{dll}`.strip
-        cp(full_path, (binary_dir + "bin").to_s)
+        destination_path = (binary_dir + "bin" + dll).to_s
+        cp(full_path, destination_path)
+        chmod(0755, destination_path)
       end
     end
   end
