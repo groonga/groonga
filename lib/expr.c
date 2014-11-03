@@ -4726,7 +4726,7 @@ grn_p_scan_info_list(grn_ctx *ctx, scan_info **sis, int n)
 {
   grn_obj inspected;
   GRN_TEXT_INIT(&inspected, 0);
-  grn_inspect_scan_info_lsit(ctx, &inspected, sis, n);
+  grn_inspect_scan_info_list(ctx, &inspected, sis, n);
   printf("%.*s\n",
          (int)GRN_TEXT_LEN(&inspected),
          GRN_TEXT_VALUE(&inspected));
