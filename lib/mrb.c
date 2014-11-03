@@ -67,6 +67,9 @@ grn_mrb_expand_script_path(grn_ctx *ctx, const char *path, char *expanded_path)
 
   if (path[0] == '/') {
     expanded_path[0] = '\0';
+  } else if (path[0] == '.' && path[1] == '/') {
+    strcpy(expanded_path, ctx->impl->mrb.base_directory);
+    strcat(expanded_path, "/");
   } else {
     ruby_scripts_dir = getenv("GRN_RUBY_SCRIPTS_DIR");
     if (!ruby_scripts_dir) {
@@ -126,6 +129,17 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
     return mrb_nil_value();
   }
 
+  {
+    char current_base_directory[PATH_MAX];
+    char *last_directory;
+
+    strcpy(current_base_directory, data->base_directory);
+    strcpy(data->base_directory, expanded_path);
+    last_directory = strrchr(data->base_directory, '/');
+    if (last_directory) {
+      last_directory[0] = '\0';
+    }
+
   parser = mrb_parser_new(mrb);
   mrb_parser_set_filename(parser, expanded_path);
   parser->s = parser->send = NULL;
@@ -139,6 +153,9 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
     result = mrb_toplevel_run(mrb, proc);
   }
   mrb_parser_free(parser);
+
+  strcpy(data->base_directory, current_base_directory);
+  }
 
   return result;
 }

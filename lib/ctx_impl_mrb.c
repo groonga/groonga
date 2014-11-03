@@ -79,9 +79,12 @@ grn_ctx_impl_mrb_init(grn_ctx *ctx)
   grn_mruby_enabled = getenv("GRN_MRUBY_ENABLED");
   if (grn_mruby_enabled && strcmp(grn_mruby_enabled, "no") == 0) {
     ctx->impl->mrb.state = NULL;
+    ctx->impl->mrb.base_directory[0] = '\0';
     ctx->impl->mrb.module = NULL;
+    ctx->impl->mrb.object_class = NULL;
   } else {
     ctx->impl->mrb.state = mrb_open();
+    ctx->impl->mrb.base_directory[0] = '\0';
     grn_ctx_impl_mrb_init_bindings(ctx);
     grn_ctx_impl_mrb_init_eval(ctx);
   }
