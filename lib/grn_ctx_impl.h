@@ -96,6 +96,7 @@ struct _grn_alloc_info
 typedef struct _grn_mrb_data grn_mrb_data;
 struct _grn_mrb_data {
   mrb_state *state;
+  char base_directory[PATH_MAX];
   struct RClass *module;
   struct RClass *object_class;
 };
