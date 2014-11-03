@@ -57,7 +57,7 @@ module Sandbox
   end
 
   def setup_error_logger
-    Groonga::Logger.register(:max_level => :dump) do |*args|
+    Groonga::Logger.register(:max_level => :error) do |*args|
       event, level, time, title, message, location = args
       if event == :log
         puts("#{time}:#{level[0]}:#{location}:#{message}")
