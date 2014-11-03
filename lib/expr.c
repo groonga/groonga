@@ -4712,7 +4712,6 @@ grn_inspect_scan_info_list(grn_ctx *ctx, grn_obj *buffer, scan_info **sis, int n
                     "  logical_op: <%s>\n",
                     grn_operator_to_string(si->logical_op));
 
-    grn_inspect(ctx, &inspected, si->query);
     GRN_TEXT_PUTS(ctx, buffer, "  query:      <");
     grn_inspect(ctx, buffer, si->query);
     GRN_TEXT_PUTS(ctx, buffer, ">\n");
