@@ -4,3 +4,6 @@
 [submodule "vendor/onigmo-source"]
 	path = vendor/onigmo-source
 	url = https://github.com/k-takata/Onigmo.git
+[submodule "test/query_optimizer/rroonga"]
+	path = test/query_optimizer/rroonga
+	url = https://github.com/ranguba/rroonga.git
