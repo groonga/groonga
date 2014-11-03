@@ -1,0 +1,19 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos title COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Memos flags COLUMN_SCALAR Int8
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms memos_index COLUMN_INDEX|WITH_POSITION|WITH_SECTION   Memos title,content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"title": "Groonga", "content": "Groonga is fast!", "flags": 1}
+]
+[[0,0.0,0.0],1]
+select Memos   --match_columns Terms.memos_index   --query groonga   --filter '(flags + 1) == 2'   --output_columns 'content'
+[[0,0.0,0.0],[[[1],[["content","ShortText"]],["Groonga is fast!"]]]]

@@ -4437,6 +4437,20 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
       stat = SCAN_START;
       m++;
       break;
+    case GRN_OP_BITWISE_OR :
+    case GRN_OP_BITWISE_XOR :
+    case GRN_OP_BITWISE_AND :
+    case GRN_OP_BITWISE_NOT :
+    case GRN_OP_SHIFTL :
+    case GRN_OP_SHIFTR :
+    case GRN_OP_SHIFTRR :
+    case GRN_OP_PLUS :
+    case GRN_OP_MINUS :
+    case GRN_OP_STAR :
+    case GRN_OP_MOD :
+      if (stat < SCAN_COL1 || SCAN_CONST < stat) { return NULL; }
+      stat = SCAN_START;
+      break;
     case GRN_OP_AND :
     case GRN_OP_OR :
     case GRN_OP_AND_NOT :

@@ -41,6 +41,20 @@ module Groonga
       Operator::TERM_EXTRACT,
     ]
 
+    ARITHMETIC_OPERATORS = [
+      Operator::BITWISE_OR,
+      Operator::BITWISE_XOR,
+      Operator::BITWISE_AND,
+      Operator::BITWISE_NOT,
+      Operator::SHIFTL,
+      Operator::SHIFTR,
+      Operator::SHIFTRR,
+      Operator::PLUS,
+      Operator::MINUS,
+      Operator::STAR,
+      Operator::MOD,
+    ]
+
     LOGICAL_OPERATORS = [
       Operator::AND,
       Operator::OR,
@@ -140,6 +154,10 @@ module Groonga
           return false if status > Status::CONST
           status = Status::START
           n_relation_expressions += 1
+        when *ARITHMETIC_OPERATORS
+          return false if status < Status::COL1
+          return false if status > Status::CONST
+          status = Status::START
         when *LOGICAL_OPERATORS
           return false if status != Status::START
           n_logical_expressions += 1
