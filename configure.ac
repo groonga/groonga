@@ -683,6 +683,10 @@ AC_SUBST(GROONGA_BENCHMARK)
 GROONGA_SUGGEST_CREATE_DATASET="${ac_pwd}/src/suggest/groonga-suggest-create-dataset"
 AC_SUBST(GROONGA_SUGGEST_CREATE_DATASET)
 
+# groonga-mruby binary path
+GROONGA_MRUBY="${ac_pwd}/src/groonga-mruby"
+AC_SUBST(GROONGA_MRUBY)
+
 # check Cutter with GLib support if available
 REQUIRED_MINIMUM_CUTTER_VERSION=1.1.6
 REQUIRED_MINIMUM_CPPCUTTER_VERSION=1.2.0
