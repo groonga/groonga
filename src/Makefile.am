@@ -5,10 +5,10 @@ SUBDIRS =					\
 NONEXISTENT_CXX_SOURCE = nonexistent.cpp
 
 bin_PROGRAMS = groonga groonga-benchmark
-if WITH_MRUBY
-bin_PROGRAMS += groonga-mruby
-endif
 noinst_PROGRAMS = grnslap
+if WITH_MRUBY
+noinst_PROGRAMS += groonga-mruby
+endif
 
 EXTRA_DIST =					\
 	CMakeLists.txt
