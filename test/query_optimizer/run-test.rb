@@ -10,6 +10,10 @@ source_top_dir_path = base_dir_path.parent.parent
 build_top_dir_path  = current_dir_path
 build_base_dir_path = build_top_dir_path + "test/query_optimizer"
 
+Dir.chdir(build_top_dir_path.to_s) do
+  system("make -j8 > /dev/null") or exit(false)
+end
+
 rroonga_built_revision_path = build_base_dir_path + "rroonga.built"
 rroonga_built_revision = nil
 if rroonga_built_revision_path.exist?
