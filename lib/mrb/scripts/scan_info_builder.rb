@@ -158,6 +158,7 @@ module Groonga
           return false if status < Status::COL1
           return false if status > Status::CONST
           status = Status::START
+          return false if n_relation_expressions != (n_logical_expressions + 1)
         when *LOGICAL_OPERATORS
           return false if status != Status::START
           n_logical_expressions += 1

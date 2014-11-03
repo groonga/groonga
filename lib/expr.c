@@ -4450,6 +4450,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
     case GRN_OP_MOD :
       if (stat < SCAN_COL1 || SCAN_CONST < stat) { return NULL; }
       stat = SCAN_START;
+      if (m != o + 1) { return NULL; }
       break;
     case GRN_OP_AND :
     case GRN_OP_OR :
