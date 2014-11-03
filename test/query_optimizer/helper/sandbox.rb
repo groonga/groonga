@@ -3,6 +3,7 @@ module Sandbox
   def setup_sandbox
     setup_tmp_directory
     setup_log_path
+    setup_error_logger
 
     setup_encoding
     setup_context
@@ -55,9 +56,18 @@ module Sandbox
     Groonga::Encoding.default
   end
 
+  def setup_error_logger
+    Groonga::Logger.register(:max_level => :dump) do |*args|
+      event, level, time, title, message, location = args
+      if event == :log
+        puts("#{time}:#{level[0]}:#{location}:#{message}")
+      end
+    end
+  end
+
   def setup_logger
-    Groonga::Logger.register(:level => :dump) do |level, time, title, message, location|
-      p [level, time, title, message, location]
+    Groonga::Logger.register(:max_level => :dump) do |*args|
+      p args
     end
   end
 
