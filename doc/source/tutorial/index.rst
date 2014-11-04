@@ -2,7 +2,7 @@
 
 .. highlightlang:: none
 
-.. groonga-include : drilldown.txt
+.. groonga-include : drilldown.rst
 
 .. groonga-command
 .. database: tutorial

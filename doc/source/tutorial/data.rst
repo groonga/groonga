@@ -2,7 +2,7 @@
 
 .. highlightlang:: none
 
-.. groonga-include : introduction.txt
+.. groonga-include : introduction.rst
 
 .. groonga-command
 .. database: tutorial

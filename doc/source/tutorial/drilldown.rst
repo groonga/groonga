@@ -3,7 +3,7 @@
 
 .. highlightlang:: none
 
-.. groonga-include : search.txt
+.. groonga-include : search.rst
 
 .. groonga-command
 .. database: tutorial
