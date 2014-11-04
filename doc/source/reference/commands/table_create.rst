@@ -135,7 +135,7 @@ range index table. Range index table needs range search support but
 Here is an example to create ``TABLE_DAT_KEY`` table:
 
 .. groonga-command
-.. include:: ../../example/reference/commands/table_create/tag_index_table_hash_key.log
+.. include:: ../../example/reference/commands/table_create/range_index_table_dat_key.log
 .. table_create Ages TABLE_DAT_KEY UInt32
 
 The ``table_create`` command creates a table that is named ``Ages``,
