@@ -13,10 +13,11 @@ env:
   - BUILD_TOOL=autotools ENABLE_MRUBY=yes
   - BUILD_TOOL=autotools CFLAGS=-funsigned-char CXXFLAGS=-funsigned-char
   - BUILD_TOOL=cmake
+before_install:
+  - rvm use 1.9.3
 install:
   - tools/travis-install.sh
 before_script:
-  - rvm use 1.9.3
   - tools/travis-before-script.sh
 script:
   - tools/travis-script.sh
