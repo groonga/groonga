@@ -179,151 +179,6 @@ grn_proc_set_selector(grn_ctx *ctx, grn_obj *proc, grn_selector_func selector)
 
 /* grn_expr */
 
-static const char *opstrs[] = {
-  "PUSH",
-  "POP",
-  "NOP",
-  "CALL",
-  "INTERN",
-  "GET_REF",
-  "GET_VALUE",
-  "AND",
-  "AND_NOT",
-  "OR",
-  "ASSIGN",
-  "STAR_ASSIGN",
-  "SLASH_ASSIGN",
-  "MOD_ASSIGN",
-  "PLUS_ASSIGN",
-  "MINUS_ASSIGN",
-  "SHIFTL_ASSIGN",
-  "SHIFTR_ASSIGN",
-  "SHIFTRR_ASSIGN",
-  "AND_ASSIGN",
-  "XOR_ASSIGN",
-  "OR_ASSIGN",
-  "JUMP",
-  "CJUMP",
-  "COMMA",
-  "BITWISE_OR",
-  "BITWISE_XOR",
-  "BITWISE_AND",
-  "BITWISE_NOT",
-  "EQUAL",
-  "NOT_EQUAL",
-  "LESS",
-  "GREATER",
-  "LESS_EQUAL",
-  "GREATER_EQUAL",
-  "IN",
-  "MATCH",
-  "NEAR",
-  "NEAR2",
-  "SIMILAR",
-  "TERM_EXTRACT",
-  "SHIFTL",
-  "SHIFTR",
-  "SHIFTRR",
-  "PLUS",
-  "MINUS",
-  "STAR",
-  "SLASH",
-  "MOD",
-  "DELETE",
-  "INCR",
-  "DECR",
-  "INCR_POST",
-  "DECR_POST",
-  "NOT",
-  "ADJUST",
-  "EXACT",
-  "LCP",
-  "PARTIAL",
-  "UNSPLIT",
-  "PREFIX",
-  "SUFFIX",
-  "GEO_DISTANCE1",
-  "GEO_DISTANCE2",
-  "GEO_DISTANCE3",
-  "GEO_DISTANCE4",
-  "GEO_WITHINP5",
-  "GEO_WITHINP6",
-  "GEO_WITHINP8",
-  "OBJ_SEARCH",
-  "EXPR_GET_VAR",
-  "TABLE_CREATE",
-  "TABLE_SELECT",
-  "TABLE_SORT",
-  "TABLE_GROUP",
-  "JSON_PUT"
-};
-
-static void
-put_value(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
-{
-  int len;
-  char namebuf[GRN_TABLE_MAX_KEY_SIZE];
-  if ((len = grn_column_name(ctx, obj, namebuf, GRN_TABLE_MAX_KEY_SIZE))) {
-    GRN_TEXT_PUT(ctx, buf, namebuf, len);
-  } else {
-    grn_text_otoj(ctx, buf, obj, NULL);
-  }
-}
-
-static grn_rc
-grn_expr_inspect_internal(grn_ctx *ctx, grn_obj *buf, grn_obj *expr)
-{
-  uint32_t i, j;
-  grn_expr_var *var;
-  grn_expr_code *code;
-  grn_expr *e = (grn_expr *)expr;
-  grn_hash *vars = grn_expr_get_vars(ctx, expr, &i);
-  GRN_TEXT_PUTS(ctx, buf, "noname");
-  GRN_TEXT_PUTC(ctx, buf, '(');
-  {
-    int i = 0;
-    grn_obj *value;
-    const char *name;
-    uint32_t name_len;
-    GRN_HASH_EACH(ctx, vars, id, &name, &name_len, &value, {
-      if (i++) { GRN_TEXT_PUTC(ctx, buf, ','); }
-      GRN_TEXT_PUT(ctx, buf, name, name_len);
-      GRN_TEXT_PUTC(ctx, buf, ':');
-      put_value(ctx, buf, value);
-    });
-  }
-  GRN_TEXT_PUTC(ctx, buf, ')');
-  GRN_TEXT_PUTC(ctx, buf, '{');
-  for (j = 0, code = e->codes; j < e->codes_curr; j++, code++) {
-    if (j) { GRN_TEXT_PUTC(ctx, buf, ','); }
-    grn_text_itoa(ctx, buf, code->modify);
-    if (code->op == GRN_OP_PUSH) {
-      for (i = 0, var = e->vars; i < e->nvars; i++, var++) {
-        if (&var->value == code->value) {
-          GRN_TEXT_PUTC(ctx, buf, '?');
-          if (var->name_size) {
-            GRN_TEXT_PUT(ctx, buf, var->name, var->name_size);
-          } else {
-            grn_text_itoa(ctx, buf, (int)i);
-          }
-          break;
-        }
-      }
-      if (i == e->nvars) {
-        put_value(ctx, buf, code->value);
-      }
-    } else {
-      if (code->value) {
-        put_value(ctx, buf, code->value);
-        GRN_TEXT_PUTC(ctx, buf, ' ');
-      }
-      GRN_TEXT_PUTS(ctx, buf, opstrs[code->op]);
-    }
-  }
-  GRN_TEXT_PUTC(ctx, buf, '}');
-  return GRN_SUCCESS;
-}
-
 grn_obj *
 grn_ctx_pop(grn_ctx *ctx)
 {
@@ -4170,6 +4025,152 @@ put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip, grn_operator op, int star
   return sis;
 }
 
+/* TODO: Remove me if nobody doesn't want to reuse the implementation again. */
+#if 0
+static const char *opstrs[] = {
+  "PUSH",
+  "POP",
+  "NOP",
+  "CALL",
+  "INTERN",
+  "GET_REF",
+  "GET_VALUE",
+  "AND",
+  "AND_NOT",
+  "OR",
+  "ASSIGN",
+  "STAR_ASSIGN",
+  "SLASH_ASSIGN",
+  "MOD_ASSIGN",
+  "PLUS_ASSIGN",
+  "MINUS_ASSIGN",
+  "SHIFTL_ASSIGN",
+  "SHIFTR_ASSIGN",
+  "SHIFTRR_ASSIGN",
+  "AND_ASSIGN",
+  "XOR_ASSIGN",
+  "OR_ASSIGN",
+  "JUMP",
+  "CJUMP",
+  "COMMA",
+  "BITWISE_OR",
+  "BITWISE_XOR",
+  "BITWISE_AND",
+  "BITWISE_NOT",
+  "EQUAL",
+  "NOT_EQUAL",
+  "LESS",
+  "GREATER",
+  "LESS_EQUAL",
+  "GREATER_EQUAL",
+  "IN",
+  "MATCH",
+  "NEAR",
+  "NEAR2",
+  "SIMILAR",
+  "TERM_EXTRACT",
+  "SHIFTL",
+  "SHIFTR",
+  "SHIFTRR",
+  "PLUS",
+  "MINUS",
+  "STAR",
+  "SLASH",
+  "MOD",
+  "DELETE",
+  "INCR",
+  "DECR",
+  "INCR_POST",
+  "DECR_POST",
+  "NOT",
+  "ADJUST",
+  "EXACT",
+  "LCP",
+  "PARTIAL",
+  "UNSPLIT",
+  "PREFIX",
+  "SUFFIX",
+  "GEO_DISTANCE1",
+  "GEO_DISTANCE2",
+  "GEO_DISTANCE3",
+  "GEO_DISTANCE4",
+  "GEO_WITHINP5",
+  "GEO_WITHINP6",
+  "GEO_WITHINP8",
+  "OBJ_SEARCH",
+  "EXPR_GET_VAR",
+  "TABLE_CREATE",
+  "TABLE_SELECT",
+  "TABLE_SORT",
+  "TABLE_GROUP",
+  "JSON_PUT"
+};
+
+static void
+put_value(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  int len;
+  char namebuf[GRN_TABLE_MAX_KEY_SIZE];
+  if ((len = grn_column_name(ctx, obj, namebuf, GRN_TABLE_MAX_KEY_SIZE))) {
+    GRN_TEXT_PUT(ctx, buf, namebuf, len);
+  } else {
+    grn_text_otoj(ctx, buf, obj, NULL);
+  }
+}
+
+static grn_rc
+grn_expr_inspect_internal(grn_ctx *ctx, grn_obj *buf, grn_obj *expr)
+{
+  uint32_t i, j;
+  grn_expr_var *var;
+  grn_expr_code *code;
+  grn_expr *e = (grn_expr *)expr;
+  grn_hash *vars = grn_expr_get_vars(ctx, expr, &i);
+  GRN_TEXT_PUTS(ctx, buf, "noname");
+  GRN_TEXT_PUTC(ctx, buf, '(');
+  {
+    int i = 0;
+    grn_obj *value;
+    const char *name;
+    uint32_t name_len;
+    GRN_HASH_EACH(ctx, vars, id, &name, &name_len, &value, {
+      if (i++) { GRN_TEXT_PUTC(ctx, buf, ','); }
+      GRN_TEXT_PUT(ctx, buf, name, name_len);
+      GRN_TEXT_PUTC(ctx, buf, ':');
+      put_value(ctx, buf, value);
+    });
+  }
+  GRN_TEXT_PUTC(ctx, buf, ')');
+  GRN_TEXT_PUTC(ctx, buf, '{');
+  for (j = 0, code = e->codes; j < e->codes_curr; j++, code++) {
+    if (j) { GRN_TEXT_PUTC(ctx, buf, ','); }
+    grn_text_itoa(ctx, buf, code->modify);
+    if (code->op == GRN_OP_PUSH) {
+      for (i = 0, var = e->vars; i < e->nvars; i++, var++) {
+        if (&var->value == code->value) {
+          GRN_TEXT_PUTC(ctx, buf, '?');
+          if (var->name_size) {
+            GRN_TEXT_PUT(ctx, buf, var->name, var->name_size);
+          } else {
+            grn_text_itoa(ctx, buf, (int)i);
+          }
+          break;
+        }
+      }
+      if (i == e->nvars) {
+        put_value(ctx, buf, code->value);
+      }
+    } else {
+      if (code->value) {
+        put_value(ctx, buf, code->value);
+        GRN_TEXT_PUTC(ctx, buf, ' ');
+      }
+      GRN_TEXT_PUTS(ctx, buf, opstrs[code->op]);
+    }
+  }
+  GRN_TEXT_PUTC(ctx, buf, '}');
+  return GRN_SUCCESS;
+}
 
 #define EXPRLOG(name,expr) do {\
   grn_obj strbuf;\
@@ -4179,6 +4180,8 @@ put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip, grn_operator op, int star
   GRN_LOG(ctx, GRN_LOG_NOTICE, "%s=(%s)", (name), GRN_TEXT_VALUE(&strbuf));\
   GRN_OBJ_FIN(ctx, &strbuf);\
 } while (0)
+#endif
+
 
 static void
 scan_info_put_index(grn_ctx *ctx, scan_info *si, grn_obj *index, uint32_t sid, int32_t weight)
