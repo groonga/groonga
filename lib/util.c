@@ -339,6 +339,27 @@ grn_expr_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *expr)
 }
 
 static grn_rc
+grn_pvector_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *pvector)
+{
+  int i, n;
+
+  GRN_TEXT_PUTS(ctx, buffer, "[");
+  n = GRN_BULK_VSIZE(pvector) / sizeof(grn_obj *);
+  for (i = 0; i < n; i++) {
+    grn_obj *element = GRN_PTR_VALUE_AT(pvector, i);
+
+    if (i > 0) {
+      GRN_TEXT_PUTS(ctx, buffer, ", ");
+    }
+
+    grn_inspect(ctx, buffer, element);
+  }
+  GRN_TEXT_PUTS(ctx, buffer, "]");
+
+  return GRN_SUCCESS;
+}
+
+static grn_rc
 grn_vector_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *vector)
 {
   int i;
@@ -1068,8 +1089,8 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
     }
     break;
   case GRN_PVECTOR :
-    /* TODO */
-    break;
+    grn_pvector_inspect(ctx, buffer, obj);
+    return buffer;
   case GRN_VECTOR :
     grn_vector_inspect(ctx, buffer, obj);
     return buffer;

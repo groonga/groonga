@@ -625,7 +625,7 @@ test_pvector_with_records(void)
   inspected = grn_inspect(context, NULL, pvector);
   grn_obj_unlink(context, groonga);
   grn_obj_unlink(context, razil);
-  cut_assert_equal_string("[\"groonga\",\"razil\"]", inspected_string());
+  cut_assert_equal_string("[\"groonga\", \"razil\"]", inspected_string());
 }
 
 void
