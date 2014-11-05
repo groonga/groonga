@@ -1,0 +1,23 @@
+table_create Paths TABLE_PAT_KEY ShortText
+
+table_create Logs TABLE_NO_KEY
+column_create Logs message COLUMN_SCALAR ShortText
+column_create Logs path COLUMN_SCALAR Paths
+
+column_create Paths logs_index COLUMN_INDEX Logs path
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Terms path_index COLUMN_INDEX|WITH_POSITION Paths _key
+
+load --table Logs
+[
+{"message": "access", "path": "/home/alice/.zshrc"},
+{"message": "write",  "path": "/home/bob/.bashrc"},
+{"message": "read",   "path": "/home/calros/public_html/index.html"}
+]
+
+select Logs \
+  --filter 'path._key @ "alice"' \
+  --output_columns '_key, path'
