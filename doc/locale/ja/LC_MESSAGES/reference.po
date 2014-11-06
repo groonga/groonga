@@ -82,7 +82,6 @@ msgstr "ロックタイムアウト。"
 msgid "Sets the lock timeout."
 msgstr "ロックタイムアウトを設定します。"
 
-# d2aac7d1be6d46668ece727b6c38bc28
 msgid "See :c:func:`grn_get_lock_timeout` about lock timeout."
 msgstr ""
 "ロックタイムアウトについては、 :c:func:`grn_get_lock_timeout` を参照してくだ"
@@ -1905,13 +1904,11 @@ msgid ""
 "tutorial about it."
 msgstr ""
 
-# baef1d0e3c5a416b8cbca4e5b5d0c789
 msgid ""
 "GRN_PLUGIN_MALLOC() allocates `size` bytes and returns a pointer to the "
 "allocated memory space. Note that the memory space is associated with `ctx`."
 msgstr ""
 
-# 1443f79e1c814e959830007b636657b0
 msgid ""
 "GRN_PLUGIN_REALLOC() resizes the memory space pointed to by `ptr` or "
 "allocates a new memory space of `size` bytes. GRN_PLUGIN_REALLOC() returns a "
@@ -1919,14 +1916,12 @@ msgid ""
 "old memory space to the new memory space."
 msgstr ""
 
-# 78e4f173a31d430f8bd28a7ac0dda4bb
 msgid ""
 "GRN_PLUGIN_FREE() frees a memory space allocated by GRN_PLUGIN_MALLOC() or "
 "GRN_PLUGIN_REALLOC(). This means that `ptr` must be a pointer returned by "
 "GRN_PLUGIN_MALLOC() or GRN_PLUGIN_REALLOC()."
 msgstr ""
 
-# 69208485e9984a2fbf3de93bfad7d370
 msgid ""
 "GRN_PLUGIN_LOG() reports a log of `level`. Its error message is generated "
 "from the varying number of arguments, in which the first one is the format "
@@ -1934,7 +1929,6 @@ msgid ""
 "for more details of `level`."
 msgstr ""
 
-# dd5ed34f17cb49e78b0d0bc2ff20c0e3
 msgid ""
 "GRN_PLUGIN_ERROR() reports an error of `error_code`. Its error message is "
 "generated from the varying number of arguments, in which the first one is "
@@ -1942,13 +1936,11 @@ msgid ""
 "\" for more details of `error_code`."
 msgstr ""
 
-# 09a084fdcc1141b68bc17fd04215e207
 msgid ""
 "grn_plugin_mutex is available to make a critical section. See the following "
 "functions."
 msgstr ""
 
-# 5e3ae0f30931490b950994c2f2f7f733
 msgid ""
 "grn_plugin_mutex_open() returns a pointer to a new object of "
 "grn_plugin_mutex. Memory for the new object is obtained with "
@@ -1956,31 +1948,26 @@ msgid ""
 "memory is not available."
 msgstr ""
 
-# 3d5cad652d8b4e318d55d79ae4b6a512
 msgid ""
 "grn_plugin_mutex_close() finalizes an object of grn_plugin_mutex and then "
 "frees memory allocated for that object."
 msgstr ""
 
-# b21a8da70e804b98b0186809d47c325b
 msgid ""
 "grn_plugin_mutex_lock() locks a mutex object. If the object is already "
 "locked, the calling thread waits until the object will be unlocked."
 msgstr ""
 
-# 8be44bd6d19b43559adae5a98ae13a20
 msgid ""
 "grn_plugin_mutex_unlock() unlocks a mutex object. grn_plugin_mutex_unlock() "
 "should not be called for an unlocked object."
 msgstr ""
 
-# 5e53856fbee040bcbc4b8d064924d461
 msgid ""
 "grn_plugin_proc_alloc() allocates a `grn_obj` object. You can use it in "
 "function that is registered as GRN_PROC_FUNCTION."
 msgstr ""
 
-# b87076633ca441039b4bdd776e611f28
 msgid ""
 "It gets a variable value from `grn_user_data` by specifying the variable "
 "name."
@@ -1989,9 +1976,6 @@ msgstr ""
 msgid "The variable name."
 msgstr "変数名。"
 
-# 078f7ea734144b5595bf509411bd98b2
-# aa3c73daf8a441939815a0b0ab2ac2e0
-# 24de5f7f961749a9bec945e162678ca8
 msgid ""
 "The number of bytes of name. If `name_size` is negative, `name` must be NUL-"
 "terminated. `name_size` is computed by `strlen(name)` for the case."
@@ -2000,17 +1984,14 @@ msgstr ""
 msgid "A variable value on success, NULL otherwise."
 msgstr "成功すると変数の値を返します。失敗するとNULLを返します。"
 
-# 4bc4ae02dc254996b5a2433f212a0308
 msgid ""
 "It gets a variable value from `grn_user_data` by specifying the offset "
 "position of the variable."
 msgstr ""
 
-# 9fbf79ff2a004bc9a7673f006f6af5fd
 msgid "The offset position of the variable."
 msgstr ""
 
-# 3ef33cefc7d0471b90987e1219598ba7
 msgid ""
 "grn_plugin_win32_base_dir() returns the groonga install directory. The "
 "install directory is computed from the directory that has `groonga.dll`. You "
@@ -2018,7 +1999,6 @@ msgid ""
 "works on Windows. It returns `NULL` on other platforms."
 msgstr ""
 
-# e5ff0353251e4fe2923cac08ff1f2277
 msgid ""
 "grn_plugin_charlen() returns the length (#bytes) of the first character in "
 "the string specified by `str_ptr` and `str_length`. If the starting bytes "
@@ -2026,44 +2006,36 @@ msgid ""
 "in \"groonga.h\" for more details of `encoding`."
 msgstr ""
 
-# bbbb773e648741ac844dd372aaab67f2
 msgid ""
 "grn_plugin_isspace() returns the length (#bytes) of the first character in "
 "the string specified by `str_ptr` and `str_length` if it is a space "
 "character. Otherwise, grn_plugin_isspace() returns 0."
 msgstr ""
 
-# cee571a98e9c44f1b6c2c7e7382b816d
 msgid "It initializes a `grn_expr_var`."
 msgstr ""
 
-# f7dacea7ff7f4c258be16b3304abdbe0
 msgid "The pointer of `grn_expr_var` object to be initialized."
 msgstr ""
 
-# 8523f3455772441fb5ef269646881a1d
 msgid "The name of `grn_expr_var` object to be initialized."
 msgstr ""
 
-# f34fcbcd9911424caa16be022352a300
 msgid "It creates a command."
 msgstr ""
 
 msgid "The `proc` name of the command to be created."
 msgstr ""
 
-# 1157b6995b6f47209af415fa85887e58
 msgid "The function name to be called by the created command."
 msgstr ""
 
 msgid "The number of the variables of the command to create."
 msgstr ""
 
-# 504389e27fd4469791e45ecb8027b593
 msgid "The pointer of initialized `grn_expr_var` object."
 msgstr ""
 
-# 3aa30747f90b498fb925c35174ea169d
 msgid ""
 "The created command object if it creates a command successfully, `NULL` "
 "otherwise. See `ctx` for error details."
@@ -3209,7 +3181,6 @@ msgstr ""
 msgid ":doc:`select`"
 msgstr ""
 
-# 306b13faf4d64b2c9187f128af616704
 msgid "``check``"
 msgstr ""
 
@@ -3376,14 +3347,12 @@ msgstr ""
 msgid "clearlock - オブジェクトにセットされたロックを解除する"
 msgstr ""
 
-# f649706fc9d443779f3db4190a40e4ad
 msgid ""
 "Groonga組込コマンドの一つであるclearlockについて説明します。組込コマンドは、"
 "groonga実行ファイルの引数、標準>入力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 msgstr ""
 
-# 29c1728da68443fab37443d99d239351
 msgid ""
 "clearlockは、対象となるオブジェクト(データベース,テーブル,インデックス等)を指"
 "定し、オブジェクトにかけられた>ロックを再帰的に解除します。"
@@ -3811,7 +3780,6 @@ msgstr ""
 msgid "column_remove - テーブルに定義されているカラムの削除"
 msgstr ""
 
-# 9d0d923565c54c1fb695ddcdee4be60d
 msgid ""
 "Groonga組込コマンドの一つであるcolumn_removeについて説明します。組込コマンド"
 "は、groonga実行ファイルの引数、>標準入力、またはソケット経由でgroongaサーバに"
@@ -3915,7 +3883,6 @@ msgstr ""
 msgid "define_selector - 検索コマンドを定義"
 msgstr ""
 
-# 07658ea010f2403fa3e28a8b6220e66b
 msgid ""
 "Groonga組込コマンドの一つであるdefine_selectorについて説明します。組込コマン"
 "ドは、groonga実行ファイルの引数>、標準入力、またはソケット経由でgroongaサーバ"
@@ -4024,7 +3991,6 @@ msgstr ""
 msgid ":doc:`/reference/grn_expr`"
 msgstr ""
 
-# c5b618825acf4add8b45e67256920a6b
 msgid "``defrag``"
 msgstr ""
 
@@ -4033,14 +3999,12 @@ msgstr ""
 "``defrag`` コマンドは指定されたオブジェクトのフラグメンテーションを解消しま"
 "す。"
 
-# a7c9fee5e04a45b0a473fd28b2bec54e
 msgid ""
 "Groonga組込コマンドの一つであるdefragについて説明します。組込コマンドは、"
 "groonga実行ファイルの引数、標準入力 、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 msgstr ""
 
-# 48fb0c99fa8743049bb1f79b9dcb16f5
 msgid ""
 "defragは、対象となるオブジェクト(データベースか可変長サイズカラム)を指定し、"
 "オブジェクトのフラグメンテーショ ンを解消します。"
@@ -4140,28 +4104,24 @@ msgstr ""
 "コマンドの実行が成功するとtrueを返します。失敗するとエラーとしてfalseを返しま"
 "す。"
 
-# 6c9ff54336694ada800d7dbbf1783363
 msgid "``dump``"
 msgstr ""
 
 msgid "dump - データベースのスキーマとデータを出力する"
 msgstr ""
 
-# 6091960bb46147d4876197c4c23926be
 msgid ""
 "Groonga組込コマンドの一つであるdumpについて説明します。組込コマンドは、"
 "groonga実行ファイルの引数、標準入力、 またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 msgstr ""
 
-# bbea452bb1f54adb822365900c6b2168
 msgid ""
 "dumpはデータベースのスキーマとデータを後から読み込めるフォーマットで出力しま"
 "す。dumpの結果は大きくなるため、 主にコマンドラインから使うことを想定していま"
 "す。データベースのバックアップが主な利用方法です。"
 msgstr ""
 
-# c5a0ab3af50b456a8afc64421a4e1366
 msgid ""
 "dumpが出力するフォーマットは直接Groongaが解釈できるフォーマットです。そのた"
 "め、以下のようにしてデータベース>をコピーすることができます。::"
@@ -4306,7 +4266,6 @@ msgstr ""
 msgid "log_level - ログ出力レベルの設定"
 msgstr ""
 
-# a071676aee8c4155b81363c9bb72f9ae
 msgid ""
 "Groonga組込コマンドの一つであるlog_levelについて説明します。組込コマンドは、"
 "groonga実行ファイルの引数、標準>入力、またはソケット経由でgroongaサーバにリク"
@@ -4334,7 +4293,6 @@ msgstr ""
 msgid "log_put - ログ出力"
 msgstr ""
 
-# b87699fb67c047c2957772c5ddea6526
 msgid ""
 "groonga組込コマンドの一つであるlog_putについて説明します。組込コマンドは、"
 "groonga実行ファイルの引数、標準入>力、またはソケット経由でgroongaサーバにリク"
@@ -4353,14 +4311,12 @@ msgstr ""
 msgid ":doc:`log_level` :doc:`log_reopen`"
 msgstr ""
 
-# ecbc635fc44a4cd18c33e2831244b8b7
 msgid "``log_reopen``"
 msgstr ""
 
 msgid "log_reopen - ログファイルの再読み込み"
 msgstr ""
 
-# 9e8d396ffc0545f08dcee9a840af2f95
 msgid ""
 "Groonga組込コマンドの一つであるlog_reopenについて説明します。組込コマンドは、"
 "groonga実行ファイルの引数、標準 入力、またはソケット経由でgroongaサーバにリク"
@@ -4601,20 +4557,17 @@ msgstr ""
 msgid "quit - セッション終了"
 msgstr ""
 
-# a409da3763234177830b5658a59ffc13
 msgid ""
 "Groonga組込コマンドの一つであるquitについて説明します。組込コマンドは、"
 "groonga実行ファイルの引数、標準入力、 またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 msgstr ""
 
-# 25cc0d74d06d4cd8ad2341e43fe1c7eb
 msgid ""
 "quitは、groongaプロセスとのセッションを終了します。クライアントプロセスならば"
 "groongaプロセスとの接続を切りま す。"
 msgstr ""
 
-# 86abea80982b4c388aa32ac2918b7375
 msgid "``register``"
 msgstr ""
 
@@ -6068,7 +6021,6 @@ msgstr ""
 msgid "shutdown - サーバプロセスの停止"
 msgstr ""
 
-# 1922f50a7ab34ae8bfac572ccd249d38
 msgid ""
 "Groonga組込コマンドの一つであるshutdownについて説明します。組込コマンドは、"
 "groonga実行ファイルの引数、標準入 力、またはソケット経由でgroongaサーバにリク"
@@ -6808,7 +6760,6 @@ msgstr ""
 msgid "table_list - DBに定義されているテーブルをリスト表示"
 msgstr ""
 
-# db1a5ab6ae074e7095a1714033499ab8
 msgid ""
 "Groonga組込コマンドの一つであるtable_listについて説明します。組込コマンドは、"
 "groonga実行ファイルの引数、標準 入力、またはソケット経由でgroongaサーバにリク"
@@ -7220,7 +7171,6 @@ msgstr ""
 "``tokenizer_list`` コマンドはトークナイザーの一覧を返します。各トークナイザー"
 "は属性を持っています。例えば名前です。将来、属性は増えるかもしれません。::"
 
-# a6d330fab98240fe81cc274d835b2d6b
 msgid "``tokenizers``"
 msgstr ""
 
@@ -7438,7 +7388,6 @@ msgstr ""
 msgid "groonga-benchmark命令"
 msgstr ""
 
-# bfab8fe36d9d42adbd05a08a1e6c0618
 msgid "現在サポートされているgroonga-benchmark命令は以下の11種類です。"
 msgstr ""
 
@@ -7456,17 +7405,14 @@ msgstr ""
 msgid "do_gqpt コマンドファイル [スレッド数] [繰り返し数]"
 msgstr ""
 
-# 64ed150e10a242009e556a58b16f356c
 msgid ""
 "コマンドファイルをgroongaサーバでGQTP経由で実行します。スレッド数や繰り返し数"
 "の意味はdo_localの場合と同じです。"
 msgstr ""
 
-# b02fd60417ab4958a7aaacc11faaf57b
 msgid "do_http コマンドファイル [スレッド数] [繰り返し数]"
 msgstr ""
 
-# f5b348ab1f6d417cb459e16024d93d77
 msgid ""
 "コマンドファイルをgroongaサーバでHTTP経由で実行します。スレッド数や繰り返し数"
 "の意味はdo_localの場合と同じです。"
@@ -7482,17 +7428,14 @@ msgstr ""
 msgid "rep_gqpt コマンドファイル [スレッド数] [繰り返し数]"
 msgstr ""
 
-# 4a53e278900644b99f5a290a72ddd9b2
 msgid ""
 "コマンドファイルをgroongaサーバでGQTP経由で実行し、より詳細な報告を行いま"
 "す。 スレッド数や繰り返し数の意味はdo_localと 同じです。"
 msgstr ""
 
-# 2673fc7ac49c4c8cbd98ded7117424fe
 msgid "rep_http コマンドファイル [スレッド数] [繰り返し数]"
 msgstr ""
 
-# f022619329b74b98a92e8e504d88bb91
 msgid ""
 "コマンドファイルをgroongaサーバでHTTP経由で実行し、より詳細な報告を行いま"
 "す。 スレッド数や繰り返し数の意味はdo_localと 同じです。"
@@ -7515,17 +7458,14 @@ msgstr ""
 msgid "out_gqtp コマンドファイル 出力ファイル名"
 msgstr ""
 
-# e873dc95b222468dbedb06c3a669a61f
 msgid ""
 "コマンドファイルをgroongaサーバでGQTP経由で実行します。その他はout_local命令"
 "と同等です。"
 msgstr ""
 
-# 132f5f8bfa1548df815b585e8afa3345
 msgid "out_http コマンドファイル 出力ファイル名"
 msgstr ""
 
-# c66c601df75149948f6ea50ea21acb28
 msgid ""
 "コマンドファイルをgroongaサーバでHTTP経由で実行します。その他はout_local命令"
 "と同等です。"
@@ -7564,7 +7504,6 @@ msgstr ""
 msgid "2行目"
 msgstr ""
 
-# 87fccacfca43471d8c683716617f52cf
 msgid "test.ddl というコマンドファイルをgroonga単体で実行し、詳細に報告する。"
 msgstr ""
 
@@ -7737,31 +7676,25 @@ msgstr ""
 "動作を確認するため、簡単なクエリー（ :doc:`/reference/commands/status` ）をリ"
 "クエストしてみます。"
 
-# 3417d4f80cf749ed948a43c4e3c20c13
 msgid "Loading data by POST"
 msgstr ""
 
-# 874e8455a7b6438998c3d2e47d1dbd01
 msgid ""
 "The feature of groonga-httpd in contrast to groonga is supporting POST "
 "method."
 msgstr ""
 
-# d33b34b4b4724b1589b37aa578d8fb55
 msgid "You can load data by POST JSON data."
 msgstr ""
 
-# c1752e29d2434fa2a5329b2cf1f950ea
 msgid ""
 "Here is an example curl command line that loads two users alice and bob to "
 "Users table::"
 msgstr ""
 
-# 135cd9058fb74dd2a2a70b1875f38f00
 msgid "If you loads users from JSON file, prepare JSON file like this::"
 msgstr ""
 
-# a33934f2b71246b4911cfa1eadc5373c
 msgid "Then specify JSON file in curl command line::"
 msgstr ""
 
@@ -8572,27 +8505,21 @@ msgstr ""
 msgid "Here is the sample to load log data under ``logs`` directory::"
 msgstr ""
 
-# 432b055e945445d3987fda4f411496a3
 msgid "Uses ``<endpoint>`` as the receiver endpoint."
 msgstr ""
 
-# d1f3eb87d7b24976b44e079e3f7ac1ec
 msgid "Uses ``<endpoint>`` as the sender endpoint."
 msgstr ""
 
-# 6d0a3de476dc4e54addf648225009d3f
 msgid "Runs as a daemon."
 msgstr ""
 
-# dcc6fdd1b9d0465288ddfa623864b44d
 msgid "Reads logs from ``<directory>``."
 msgstr ""
 
-# 31580530a20943d4bf4e3f949aab5175
 msgid "Outputs log to ``<path>``."
 msgstr ""
 
-# 41106ed6499d49e3b6a924d4bab5607d
 msgid ""
 "Uses ``<level>`` for log level. ``<level>`` must be between 1 and 9. Larger "
 "level outputs more logs."
@@ -8654,7 +8581,6 @@ msgid ""
 "(デフォルトは `hostname` の返すホスト名)"
 msgstr ""
 
-# 51b7463cfd744fd2ab6a365e97bab71e
 msgid ""
 "クライアント、サーバ、またはデーモンモードで使用するTCPポート番号。 (クライア"
 "ントモードのデフォルトは10043番、サーバ、またはデーモンモードのデフォルトは、"
@@ -8717,7 +8643,6 @@ msgstr ""
 msgid "使用するデータベースのパス名を指定します。"
 msgstr ""
 
-# 4c3c7db55230429db32ce8699a0efe5a
 msgid ""
 "クライアントモードの場合は接続先のホスト名とポート番号を指定します(デフォルト"
 "値は'localhost:10043')。ポート番号を指定しない場合には、10043が指定されたもの"
@@ -9556,7 +9481,6 @@ msgstr ""
 msgid "It specifies a normalizer name."
 msgstr "ノーマライザー名を指定します。"
 
-# efb1abf3bef347fe8102d132fe0f276c
 msgid "``use_html_escape``"
 msgstr ""
 
@@ -9567,7 +9491,6 @@ msgstr ""
 "HTMLエスケープの有無を指定します。 ``true`` を指定すればHTMLエスケープされま"
 "す。 ``false`` を指定すればHTMLエスケープされません。"
 
-# 56e4fb8533204fd9a57491e6d85bb2d2
 msgid "``keywordN``"
 msgstr ""
 
@@ -9578,7 +9501,6 @@ msgstr ""
 "タグ付けするキーワードを指定します。3つの引数ごとに複数のキーワードを指定する"
 "ことができます。"
 
-# e6275b5323364678b4ed95b2ff03f267
 msgid "``open_tagN``"
 msgstr ""
 
@@ -9588,7 +9510,6 @@ msgid ""
 msgstr ""
 "開始タグを指定します。3つの引数ごとに複数の開始タグを指定することができます。"
 
-# 6f377972f8474a9bb40b19c3704ff7f6
 msgid "``close_tagN``"
 msgstr ""
 
@@ -9608,7 +9529,6 @@ msgstr ""
 msgid ":doc:`/reference/commands/select`"
 msgstr ""
 
-# cda1f077ef7742e48d7201e47a7f437e
 msgid ":doc:`/reference/functions/highlight_html`"
 msgstr ""
 
@@ -13956,13 +13876,11 @@ msgstr "ストップワードは、語彙表の ``is_stop_word`` カラムで指
 msgid "Here is an example that uses ``TokenFilterStopWord`` token filter:"
 msgstr "以下は ``TokenFilterStopWord`` トークンフィルターを使う例です。"
 
-# a8b84103f234474fbcd07e178952da1f
 msgid "``and`` token is marked as stop word in ``Terms`` table."
 msgstr ""
 "``and`` というトークンは ``Terms`` テーブルでストップワードと指定されていま"
 "す。"
 
-# 1f1834584e30402fbf03def3ce9ea065
 msgid ""
 "``\"Hello\"`` that doesn't have ``and`` in content is matched. Because "
 "``and`` is a stop word and ``and`` is removed from query."
@@ -13977,7 +13895,6 @@ msgstr "``TokenFilterStem`` は、トークナイズされたトークンをス�
 msgid "Here is an example that uses ``TokenFilterStem`` token filter:"
 msgstr "以下は ``TokenFilterStem`` トークンフィルターを使う例です。"
 
-# 0455fb4a6e53469585531e53372031d2
 msgid ""
 "All of ``develop``, ``developing``, ``developed`` and ``develops`` tokens "
 "are stemmed as ``develop``. So we can find ``develop``, ``developing`` and "

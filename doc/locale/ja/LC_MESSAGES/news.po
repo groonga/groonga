@@ -26,15 +26,12 @@ msgstr "4.0.7リリース - 2014/10/29"
 msgid "Improvements"
 msgstr "改良"
 
-# e989815d725446b1be68dbd3c3e43c80
 msgid "[windows] Supported Groonga with mruby on Windows."
 msgstr "[windows] Windows上でもmrubyを組み込んで使えるようにしました。"
 
-# 9fa6e5c3cb054438b08284d9f047a130
 msgid "Added token filter plugin API."
 msgstr "プラグインAPIとしてトークンフィルタを追加しました。"
 
-# d9d29ccb4fc041e982794b104013b620
 msgid ""
 "Added :ref:`token-filter-stop-word` token filter plugin. It treats records "
 "of ``is_stop_word`` column as actual stop words."
@@ -58,7 +55,6 @@ msgstr ""
 "reference/operations/geolocation_search` は :doc:`/reference` 以下にまとめま"
 "した。 [GitHub#206] [村上さんがパッチ提供]"
 
-# 261770392cdc42d397d2a08b5b175fb3
 msgid ""
 "[deb] Added stop word token filter plugin. [GitHub#216] [Patch by Hiroshi "
 "Hatake]"
@@ -66,7 +62,6 @@ msgstr ""
 "[deb] ストップワードトークンフィルタープラグインを追加しました。 "
 "[GitHub#216] [畑ヶさんがパッチ提供]"
 
-# fc2b47d4a3f54e2bbf0c42b58fa9bbbf
 msgid "[deb] Clarified licenses about used/bundled files in debian/copyright."
 msgstr ""
 "[deb] 同梱しているファイルの著作権表記を debian/copyright でより明確にしまし"
@@ -78,7 +73,6 @@ msgstr "LZOによる圧縮サポートをやめました。"
 msgid "Added LZ4 compression support. [GitHub#223] [Patch by Naoya Murakami]"
 msgstr "LZ4による圧縮をサポートしました。 [GitHub#223] [村上さんがパッチ提供]"
 
-# 9479728e9ad342f6ae37070142f25646
 msgid ""
 "Added :doc:`/reference/function/in_values`. We recommends to use it instead "
 "of ``==`` and ``OR`` combinations ( ``((COLUMN == \"a\") OR (COLUMN == \"b"
@@ -88,7 +82,6 @@ msgstr ""
 "て書いていたクエリ ( ``((COLUMN == \"a\") OR (COLUMN == \"b\") OR (COLUMN == "
 "\"c\"))`` ) のかわりにこれを使うのがパフォーマンスの観点からお勧めです。"
 
-# 492bc0c34e284275ac115c555996714d
 msgid ""
 "[load] Supported to update existing record in ``TABLE_NO_KEY`` by specifying "
 "a record by ``_id``."
@@ -96,7 +89,6 @@ msgstr ""
 "[load] ``TABLE_NO_KEY`` を使ったテーブルで既存のレコードを ``_id`` を指定して"
 "更新できるようになりました。"
 
-# 49e6874d8ece4b39b5b443e905504e46
 msgid ""
 "Added :ref:`token-filter-stem` token filter plugin. It provides stemming "
 "feature.  To use this token filter, you need to install `libstemmer <http://"
@@ -130,7 +122,6 @@ msgstr ""
 "[httpd] バンドルしているnginxのバージョンを1.7.6に更新しました。 "
 "[GitHub#208] [畑ヶさんがパッチ提供]"
 
-# dc67df768a1247819fea7582287f68a5
 msgid ""
 "[power8] Fixed build failure. See http://lists.askmonty.org/pipermail/"
 "commits/2014-October/006752.html [Patch by Sergey Vojtovich]"
@@ -139,7 +130,6 @@ msgstr ""
 "org/pipermail/commits/2014-October/006752.html を参照してください。 [Sergey "
 "Vojtovichさんがパッチ提供]"
 
-# 59c5112b98ee4991bd8740a0367dd491
 msgid ""
 "Fixed a bug that URL encoding fails if ``char`` type is build as ``unsigned "
 "char`` type. [GitHub#217]"
@@ -168,7 +158,6 @@ msgstr ""
 "Zlibカラム圧縮でメモリリークする問題を修正しました。 [GitHub#221] [村上さんが"
 "パッチ提供]"
 
-# 500323cc89804689a2b2ac93d9c754f7
 msgid ""
 "Fixed a bug that the value of ``Int8`` column which is less than 100 may "
 "return true in ``--filter``. By this issue, not intended records may be "
@@ -178,11 +167,9 @@ msgstr ""
 "を返すことがある不具合を修正しました。この問題により意図しないレコードが検索"
 "結果含まれていました。"
 
-# 1b045eafbe31411a901bfb68d0e0f8fd
 msgid "Fixed to handle binary operation for vector column as an error."
 msgstr "ベクターカラムに対する四則演算はエラーになるようにしました。"
 
-# 5d5fbd1675cf4977a2228021a1aeb60d
 msgid ""
 "Fixed a bug that ``!XXX`` may return inverted result on big endian "
 "environment."
@@ -210,7 +197,6 @@ msgstr "村上さん"
 msgid "Hiroshi Hatake"
 msgstr "畑ヶさん"
 
-# 56cade0a559f426d9579f52902b10110
 msgid "Sergey Vojtovich"
 msgstr "Sergey Vojtovichさん"
 
@@ -274,7 +260,6 @@ msgstr ""
 "``'*S10\"...\"'`` というシンタックスで類似度の閾値をカスタマイズできるように"
 "しました。"
 
-# 45c6b4c3ca174f118e352f13b261d2d1
 msgid ""
 "Added source column validation to :doc:`/reference/commands/column_create`.  "
 "If source column doesn't exist, :doc:`/reference/commands/column_create` "
@@ -396,7 +381,6 @@ msgstr ""
 "reference/functions/highlight_html` を追加しました。 [GitHub#185] [村上さんが"
 "パッチ提供]"
 
-# 3817653d88cb47de96f3bdb5030d739c
 msgid ""
 "[doc] Updated outdated functions/commands reference [GitHub#188] "
 "[GitHub#189] [Patch by Naoya Murakami]"
@@ -414,7 +398,6 @@ msgstr ""
 "プラグイン開発者向けに :c:func:`grn_selector_func` と :c:func:"
 "`grn_proc_set_selector` を公開しました。 [GitHub#190] [村上さんがパッチ提供]"
 
-# 4ffce3194c3e484faef47ff87bae7b34
 msgid ""
 "[ :doc:`/reference/commands/tokenize` ] Added \"mode\" option to control "
 "behavior. You can use ``GET`` or ``ADD`` as a mode. [GitHub#191] "
@@ -505,7 +488,6 @@ msgstr "[httpd] バンドルしているnginxのバージョンを1.7.3に更新
 msgid "Supported weight in vector column."
 msgstr "重みつきベクターカラムを正しく扱えるようにしました。"
 
-# 05af7005ea3a4274a7719a44960f4cb2
 msgid ""
 "[ :doc:`/reference/executables/groonga-benchmark` ] Added missing "
 "description about HTTP."
@@ -539,7 +521,6 @@ msgstr "nikuさん"
 msgid "Release 4.0.3 - 2014/06/29"
 msgstr "4.0.3リリース - 2014/06/29"
 
-# 646aa731859f45fb8a7b198275ae894c
 msgid ""
 "[experimental][ :doc:`/reference/executables/groonga-server-http` ] "
 "Supported POST."
@@ -547,7 +528,6 @@ msgstr ""
 "[実験的][ :doc:`/reference/executables/groonga-server-http` ] POSTをサポー"
 "ト。"
 
-# 94f3a45e8e4a46569060ccfec91a0a0d
 msgid ""
 "[windows] Bundled libwinpthread-1.dll. Because newer libgcc_s_sjlj-1.dll "
 "depends on libwinpthread-1.dll. [groonga-dev,02398] [Reported by Masafumi "
@@ -556,7 +536,6 @@ msgstr ""
 "[windows] libwinpthread-1.dllをバンドル。新しいlibgcc_s_sjlj-1.dllが"
 "libwinpthread-1.dllに依存しているため。 [groonga-dev,02398] [横山さんが報告]"
 
-# 63311d932cd14ed9bcca42e5c9729de1
 msgid ""
 "[ :doc:`/reference/executables/groonga` ] Changed the default port number of "
 "GQTP to 10043. Because server packages use 10043 by default. [GitHub#172] "
@@ -566,7 +545,6 @@ msgstr ""
 "変更。サーバーパッケージではデフォルトで10043を使っているため。 [GitHub#172] "
 "[村上さんがパッチ提供]"
 
-# 4ffce3194c3e484faef47ff87bae7b34
 msgid ""
 "[ :doc:`/reference/commands/normalize` ] Added more validations for invalid "
 "argument. [groonga-dev,02409][GitHub:#174] [Reported by GMO Media, Inc.]"
@@ -575,13 +553,11 @@ msgstr ""
 "[ :doc:`/reference/commands/normalize` ] 引数チェックを強化。 [groonga-"
 "dev,02409][GitHub:#174] [GMOメディア株式会社さんが報告][村上さんがパッチ提供]"
 
-# 6c5dac54c2d841edb1fdbd19ca029cec
 msgid ""
 "[ :doc:`/reference/commands/tokenize` ] Added more validations for invalid "
 "argument."
 msgstr "[ :doc:`/reference/commands/tokenize` ] 引数チェックを強化。"
 
-# 675c81b7ce4a46edb4fecac25a64733b
 msgid ""
 "[ :doc:`/reference/executables/groonga-server-http` ] Supported ``Expect: "
 "100-Continue`` request."
@@ -592,7 +568,6 @@ msgstr ""
 msgid "Exported ``grn_proc_get_type()``."
 msgstr "``grn_proc_get_type()`` を公開。"
 
-# 05af7005ea3a4274a7719a44960f4cb2
 msgid ""
 "[ :doc:`/reference/executables/groonga-suggest-learner` ] Added ``--log-"
 "path`` and ``--log-level`` options."
@@ -600,11 +575,9 @@ msgstr ""
 "[ :doc:`/reference/executables/groonga-suggest-learner` ] ``--log-path`` オプ"
 "ションと ``--log-level`` オプションを追加。"
 
-# 4e8bee792843428ab54e6032f9f54924
 msgid "Deprecated ``GRN_CTX_USE_QL``."
 msgstr "``GRN_CTX_USE_QL`` を非推奨にした。"
 
-# eb9573a683b7469397f80cfebbe5b1d3
 msgid "Deprecated ``GRN_CTX_BATCH_MODE``."
 msgstr "``GRN_CTX_BATCH_MODE`` を非推奨にした。"
 
@@ -614,7 +587,6 @@ msgstr "``grn_text_printf()`` を追加。"
 msgid "Added ``grn_text_vprintf()``."
 msgstr "``grn_text_vprintf()`` を追加。"
 
-# 80bfa3263c5d44d78d906bc998472b65
 msgid "Removed limitation of one query log size."
 msgstr "それぞれのクエリーログのサイズ制限を撤廃。"
 
@@ -632,11 +604,9 @@ msgstr ""
 ":c:func:`grn_plugin_command_create()` を追加。 [GitHub#175][村上さんがパッチ"
 "提供]"
 
-# 2246ca932dc5489c93cab09c21727786
 msgid "[GitHub#176] Supported reference vector column with weight."
 msgstr "[GitHub#176] 重み付きの参照ベクターカラムをサポート。"
 
-# 3817653d88cb47de96f3bdb5030d739c
 msgid ""
 "[plugin] Used public API instead of internal API. [GitHub#177][GitHub#178] "
 "[Patch by Naoya Murakami]"
@@ -662,7 +632,6 @@ msgstr ""
 "[rpm][groonga-server-gqtp] GQTPではなくHTTPが使われる問題を修正。 "
 "[GitHub#173] [村上さんがパッチ提供]"
 
-# 4eb6c4ad4e8644ad9c4411ce5900bb9e
 msgid ""
 "[ :doc:`/reference/commands/select` ] Fixed a crash bug when :ref:`select-"
 "adjuster` has a syntax error."
@@ -3737,7 +3706,6 @@ msgstr ""
 "までは、この設定は 'no' となっていました。この変更により、Groongaのデータベー"
 "スのサイズの増加を抑制できます。"
 
-# c50da55dfc9742fd9b1e8f9af9a1bb7d
 msgid ""
 "Supported multiple indexes including a nested index and multiple keywords "
 "query. This change improves missing search results isssue when narrowing "
@@ -3762,7 +3730,6 @@ msgstr ""
 "マンスの問題があることに注意してください。 [groonga-dev,02052] [村上さんが報"
 "告]"
 
-# 3ec71b87bb204da0a7219fcdff2b2bc7
 msgid ""
 "Fixed the behaviour about return value of \"X || Y\" and \"X && Y\" for "
 "adjusting to ECMAScript. In \"X || Y\" case, if either X or Y satisfy the "
@@ -3772,7 +3739,6 @@ msgstr ""
 "た。\"X || Y\"では、もしXかYが条件を満す場合にはXもしくはYそのものの値を返し"
 "ます。以前は1もしくは0を返していました。"
 
-# e894addc2a5d4939a08c935d767a5031
 msgid ""
 "In \"X && Y\" case, if X and Y satisfy the condition, it returns X itself "
 "instead of 1. if X doesn't satisfy the condition, it returns false instead "
@@ -3781,7 +3747,6 @@ msgstr ""
 "\"X && Y\"では、もしXとYが条件を満す場合には、1ではなく、Xの値を返します。も"
 "しXが条件を満さない場合には、0ではなくfalseを返します。"
 
-# 5bb753f978fc42d2925ea09c2055e05e
 msgid ""
 "Fixed to return null when no snippet is found. This change enables you to "
 "set the default value of :doc:`/reference/functions/snippet_html`. In such a "
