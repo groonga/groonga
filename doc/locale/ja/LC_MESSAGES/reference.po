@@ -13891,7 +13891,7 @@ msgstr ""
 "キーのサイズを減らしてください。"
 
 msgid "Token filters"
-msgstr "Token filters"
+msgstr "トークンフィルター"
 
 msgid "Groonga has token filter module that some processes tokenized token."
 msgstr ""
