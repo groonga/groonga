@@ -58,12 +58,6 @@ msgstr ""
 "reference/operations/geolocation_search` は :doc:`/reference` 以下にまとめま"
 "した。 [GitHub#206] [村上さんがパッチ提供]"
 
-# 50a7f9da570c42779df1e4702ee5e564
-msgid ""
-"[dump] Supports to dump TABLE_NO_KEY for token_flters. [GitHub#215] [Patch "
-"by Naoya Murakami]"
-msgstr ""
-
 # 261770392cdc42d397d2a08b5b175fb3
 msgid ""
 "[deb] Added stop word token filter plugin. [GitHub#216] [Patch by Hiroshi "
@@ -198,6 +192,14 @@ msgstr ""
 msgid "Fixed a memory leak on converting weight vector to text."
 msgstr ""
 "重みつきベクターカラムの内容を出力するさいメモリリークするのを修正しました。"
+
+msgid ""
+"[dump] Fixed token filters and ``TABLE_NO_KEY`` related error in :doc:`/"
+"reference/commands/dump`.  [GitHub#215] [Patch by Naoya Murakami]"
+msgstr ""
+"[dump] :doc:`/reference/commands/dump` でのトークンフィルターと "
+"``TABLE_NO_KEY`` 関連のエラーを修正しました。 [GitHub#215] [村上さんがパッチ"
+"提供]"
 
 msgid "Thanks"
 msgstr "感謝"

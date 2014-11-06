@@ -24,8 +24,6 @@ Improvements
 * [doc] Reconstructed documentation. :doc:`/reference/suggest` and
   :doc:`/reference/operations/geolocation_search` are grouped under :doc:`/reference`.
   [GitHub#206] [Patch by Naoya Murakami]
-* [dump] Supports to dump TABLE_NO_KEY for token_flters.
-  [GitHub#215] [Patch by Naoya Murakami]
 * [deb] Added stop word token filter plugin.
   [GitHub#216] [Patch by Hiroshi Hatake]
 * [deb] Clarified licenses about used/bundled files in debian/copyright.
@@ -67,6 +65,9 @@ Fixes
 * Fixed a bug that ``!XXX`` may return inverted result on big endian
   environment.
 * Fixed a memory leak on converting weight vector to text.
+* [dump] Fixed token filters and ``TABLE_NO_KEY`` related error in
+  :doc:`/reference/commands/dump`.  [GitHub#215] [Patch by Naoya
+  Murakami]
 
 Thanks
 ^^^^^^
