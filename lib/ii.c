@@ -7169,7 +7169,7 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
       if (ii_buffer->counters) {
         ii_buffer->block_buf = GRN_MALLOCN(grn_id, II_BUFFER_BLOCK_SIZE);
         if (ii_buffer->block_buf) {
-          int open_flags = O_WRONLY|O_CREAT|O_TRUNC;
+          int open_flags = O_WRONLY|O_CREAT;
 #ifdef WIN32
           open_flags |= O_BINARY;
 #endif
