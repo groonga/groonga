@@ -7173,7 +7173,7 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
 #ifdef WIN32
           open_flags |= O_BINARY;
 #endif
-#if defined(BSD)
+#ifdef BSD
           open_flags = 0;
 #endif
           snprintf(ii_buffer->tmpfpath, PATH_MAX,
