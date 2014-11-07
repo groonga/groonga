@@ -7173,6 +7173,9 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
 #ifdef WIN32
           open_flags |= O_BINARY;
 #endif
+#if defined(BSD)
+          open_flags = 0;
+#endif
           snprintf(ii_buffer->tmpfpath, PATH_MAX,
                    "%sXXXXXX", grn_io_path(ii->seg));
           ii_buffer->block_buf_size = II_BUFFER_BLOCK_SIZE;
