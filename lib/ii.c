@@ -7174,7 +7174,7 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
           open_flags |= O_BINARY;
 #endif
 #ifdef BSD
-          open_flags = 0;
+          open_flags &= O_APPEND|O_DIRECT|O_SHLOCK|O_EXLOCK|O_SYNC|O_CLOEXEC;
 #endif
           snprintf(ii_buffer->tmpfpath, PATH_MAX,
                    "%sXXXXXX", grn_io_path(ii->seg));
