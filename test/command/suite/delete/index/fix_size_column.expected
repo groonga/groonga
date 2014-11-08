@@ -35,7 +35,7 @@ select Ages
         ],
         [
           "users_age",
-          "Users"
+          "UInt32"
         ]
       ],
       [
@@ -112,7 +112,7 @@ select Ages
         ],
         [
           "users_age",
-          "Users"
+          "UInt32"
         ]
       ],
       [

@@ -1114,7 +1114,11 @@ grn_output_table_column(grn_ctx *ctx, grn_obj *outbuf,
     GRN_BULK_REWIND(buf);
     grn_column_name_(ctx, column, buf);
     grn_output_obj(ctx, outbuf, output_type, buf, NULL);
-    range_id = grn_obj_get_range(ctx, column);
+    if (column->header.type == GRN_COLUMN_INDEX) {
+      range_id = GRN_DB_UINT32;
+    } else {
+      range_id = grn_obj_get_range(ctx, column);
+    }
     if (range_id == GRN_ID_NIL) {
       grn_output_cstr(ctx, outbuf, output_type, "null");
     } else {

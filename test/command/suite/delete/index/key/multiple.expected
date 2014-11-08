@@ -65,7 +65,7 @@ select BigramTokens
         ],
         [
           "memo_key",
-          "Memos"
+          "UInt32"
         ]
       ],
       [
@@ -119,7 +119,7 @@ select TrigramTokens
         ],
         [
           "memo_key",
-          "Memos"
+          "UInt32"
         ]
       ],
       [
@@ -177,7 +177,7 @@ select BigramTokens
         ],
         [
           "memo_key",
-          "Memos"
+          "UInt32"
         ]
       ],
       [
@@ -231,7 +231,7 @@ select TrigramTokens
         ],
         [
           "memo_key",
-          "Memos"
+          "UInt32"
         ]
       ],
       [
