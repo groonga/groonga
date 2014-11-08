@@ -6842,7 +6842,7 @@ grn_obj_set_info_token_filters(grn_ctx *ctx,
                                grn_obj *token_filters)
 {
   grn_obj *current_token_filters;
-  unsigned int i, n_token_filters;
+  unsigned int i, n_current_token_filters, n_token_filters;
   grn_obj token_filter_names;
 
   switch (table->header.type) {
@@ -6864,9 +6864,12 @@ grn_obj_set_info_token_filters(grn_ctx *ctx,
     return ctx->rc;
   }
 
+  n_current_token_filters =
+    GRN_BULK_VSIZE(current_token_filters) / sizeof(grn_obj *);
+  n_token_filters = GRN_BULK_VSIZE(token_filters) / sizeof(grn_obj *);
+
   GRN_TEXT_INIT(&token_filter_names, 0);
   GRN_BULK_REWIND(current_token_filters);
-  n_token_filters = GRN_BULK_VSIZE(token_filters) / sizeof(grn_obj *);
   for (i = 0; i < n_token_filters; i++) {
     grn_obj *token_filter = GRN_PTR_VALUE_AT(token_filters, i);
     char token_filter_name[GRN_TABLE_MAX_KEY_SIZE];
@@ -6883,9 +6886,11 @@ grn_obj_set_info_token_filters(grn_ctx *ctx,
                  token_filter_name,
                  token_filter_name_size);
   }
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "DDL:set_token_filters %.*s",
-          (int)GRN_BULK_VSIZE(&token_filter_names),
-          GRN_BULK_HEAD(&token_filter_names));
+  if (n_token_filters > 0 || n_token_filters != n_current_token_filters) {
+    GRN_LOG(ctx, GRN_LOG_NOTICE, "DDL:set_token_filters %.*s",
+            (int)GRN_BULK_VSIZE(&token_filter_names),
+            GRN_BULK_HEAD(&token_filter_names));
+  }
   GRN_OBJ_FIN(ctx, &token_filter_names);
   grn_obj_spec_save(ctx, DB_OBJ(table));
 
