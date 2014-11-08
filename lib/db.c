@@ -5129,7 +5129,6 @@ grn_accessor_get_value(grn_ctx *ctx, grn_accessor *a, grn_id id, grn_obj *value)
       vs = GRN_BULK_VSIZE(value) - size0;
       break;
     case GRN_ACCESSOR_GET_SCORE :
-      grn_obj_get_value(ctx, a->obj, id, value);
       {
         grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
         GRN_INT32_PUT(ctx, value, ri->score);
