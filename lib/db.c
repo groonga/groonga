@@ -5115,11 +5115,13 @@ grn_accessor_get_value(grn_ctx *ctx, grn_accessor *a, grn_id id, grn_obj *value)
     switch (a->action) {
     case GRN_ACCESSOR_GET_ID :
       GRN_UINT32_PUT(ctx, value, id);
+      value->header.domain = GRN_DB_UINT32;
       vp = GRN_BULK_HEAD(value) + size0;
       vs = GRN_BULK_VSIZE(value) - size0;
       break;
     case GRN_ACCESSOR_GET_KEY :
       grn_table_get_key2(ctx, a->obj, id, value);
+      value->header.domain = a->obj->header.domain;
       vp = GRN_BULK_HEAD(value) + size0;
       vs = GRN_BULK_VSIZE(value) - size0;
       break;
@@ -5133,12 +5135,14 @@ grn_accessor_get_value(grn_ctx *ctx, grn_accessor *a, grn_id id, grn_obj *value)
         grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
         GRN_INT32_PUT(ctx, value, ri->score);
       }
+      value->header.domain = GRN_DB_INT32;
       break;
     case GRN_ACCESSOR_GET_NSUBRECS :
       {
         grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
         GRN_INT32_PUT(ctx, value, ri->n_subrecs);
       }
+      value->header.domain = GRN_DB_INT32;
       break;
     case GRN_ACCESSOR_GET_COLUMN_VALUE :
       /* todo : support vector */
@@ -6045,7 +6049,6 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
   case GRN_ACCESSOR :
     grn_obj_ensure_bulk(ctx, value);
     value = grn_accessor_get_value(ctx, (grn_accessor *)obj, id, value);
-    value->header.domain = grn_obj_get_range(ctx, obj);
     break;
   case GRN_EXPR :
     grn_obj_get_value_expr(ctx, obj, id, value);
