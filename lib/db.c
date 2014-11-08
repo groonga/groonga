@@ -4527,6 +4527,33 @@ grn_column_is_vector(grn_ctx *ctx, grn_obj *column)
   return type == GRN_OBJ_COLUMN_VECTOR;
 }
 
+inline static grn_bool
+grn_column_is_index(grn_ctx *ctx, grn_obj *column)
+{
+  grn_obj_flags type;
+
+  if (column->header.type == GRN_ACCESSOR) {
+    grn_accessor *a;
+    for (a = (grn_accessor *)column; a; a = a->next) {
+      if (a->next) {
+        continue;
+      }
+      if (a->action != GRN_ACCESSOR_GET_COLUMN_VALUE) {
+        return GRN_FALSE;
+      }
+
+      column = a->obj;
+    }
+  }
+
+  if (column->header.type != GRN_COLUMN_INDEX) {
+    return GRN_FALSE;
+  }
+
+  type = column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK;
+  return type == GRN_OBJ_COLUMN_INDEX;
+}
+
 inline static void
 grn_obj_get_range_info(grn_ctx *ctx, grn_obj *obj,
                        grn_id *range_id, grn_obj_flags *range_flags)
@@ -8433,10 +8460,14 @@ grn_obj_reinit_for(grn_ctx *ctx, grn_obj *obj, grn_obj *domain_obj)
     return ctx->rc;
   }
 
-  grn_obj_get_range_info(ctx, domain_obj, &domain, &flags);
-  if (GRN_OBJ_TABLEP(domain_obj) &&
-      domain_obj->header.type != GRN_TABLE_NO_KEY) {
-    domain = domain_obj->header.domain;
+  if (grn_column_is_index(ctx, domain_obj)) {
+    domain = GRN_DB_UINT32;
+  } else {
+    grn_obj_get_range_info(ctx, domain_obj, &domain, &flags);
+    if (GRN_OBJ_TABLEP(domain_obj) &&
+        domain_obj->header.type != GRN_TABLE_NO_KEY) {
+      domain = domain_obj->header.domain;
+    }
   }
   return grn_obj_reinit(ctx, obj, domain, flags);
 }
