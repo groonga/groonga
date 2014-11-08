@@ -4553,12 +4553,7 @@ grn_obj_get_range_info(grn_ctx *ctx, grn_obj *obj,
         *range_id = GRN_DB_INT32;
         break;
       case GRN_ACCESSOR_GET_COLUMN_VALUE :
-        if (GRN_DB_OBJP(a->obj)) {
-          *range_id = DB_OBJ(a->obj)->range;
-          if (grn_column_is_vector(ctx, a->obj)) {
-            *range_flags = GRN_OBJ_VECTOR;
-          }
-        }
+        grn_obj_get_range_info(ctx, a->obj, range_id, range_flags);
         break;
       case GRN_ACCESSOR_GET_KEY :
         if (GRN_DB_OBJP(a->obj)) { *range_id = DB_OBJ(a->obj)->header.domain; }
