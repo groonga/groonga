@@ -27,6 +27,8 @@ extern "C" {
 typedef struct _grn_ii grn_ii;
 typedef struct _grn_ii_buffer grn_ii_buffer;
 
+GRN_API unsigned int grn_ii_estimate_size(grn_ctx *ctx, grn_ii *ii, grn_id tid);
+
 GRN_API grn_ii_buffer *grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
                                           long long unsigned int update_buffer_size);
 GRN_API grn_rc grn_ii_buffer_append(grn_ctx *ctx,

@@ -102,8 +102,6 @@ grn_rc grn_ii_updspec_close(grn_ctx *ctx, grn_ii_updspec *u);
 grn_rc grn_ii_updspec_add(grn_ctx *ctx, grn_ii_updspec *u, int pos, int32_t weight);
 int grn_ii_updspec_cmp(grn_ii_updspec *a, grn_ii_updspec *b);
 
-uint32_t grn_ii_estimate_size(grn_ctx *ctx, grn_ii *ii, uint32_t key);
-
 void grn_ii_expire(grn_ctx *ctx, grn_ii *ii);
 
 typedef struct {
