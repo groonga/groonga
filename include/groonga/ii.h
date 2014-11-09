@@ -27,12 +27,15 @@ extern "C" {
 typedef struct _grn_ii grn_ii;
 typedef struct _grn_ii_buffer grn_ii_buffer;
 
-grn_ii_buffer *grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
-                                  long long unsigned int update_buffer_size);
-grn_rc grn_ii_buffer_append(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
-                            grn_id rid, unsigned int section, grn_obj *value);
-grn_rc grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer);
-grn_rc grn_ii_buffer_close(grn_ctx *ctx, grn_ii_buffer *ii_buffer);
+GRN_API grn_ii_buffer *grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
+                                          long long unsigned int update_buffer_size);
+GRN_API grn_rc grn_ii_buffer_append(grn_ctx *ctx,
+                                    grn_ii_buffer *ii_buffer,
+                                    grn_id rid,
+                                    unsigned int section,
+                                    grn_obj *value);
+GRN_API grn_rc grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer);
+GRN_API grn_rc grn_ii_buffer_close(grn_ctx *ctx, grn_ii_buffer *ii_buffer);
 
 #ifdef __cplusplus
 }
