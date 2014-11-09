@@ -22,7 +22,7 @@
 
 #include "grn_ii.h"
 #include "grn_ctx_impl.h"
-#include "grn_token.h"
+#include "grn_token_cursor.h"
 #include "grn_pat.h"
 #include "grn_db.h"
 #include "grn_output.h"

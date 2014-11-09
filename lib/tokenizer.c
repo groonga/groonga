@@ -26,7 +26,7 @@
 #include "grn_db.h"
 #include "grn_str.h"
 #include "grn_string.h"
-#include "grn_token.h"
+#include "grn_token_cursor.h"
 
 /*
   Just for backward compatibility. See grn_plugin_charlen() instead.

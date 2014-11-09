@@ -15,7 +15,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include "grn_token.h"
+#include "grn_token_cursor.h"
 #include "grn_string.h"
 #include "grn_pat.h"
 #include "grn_dat.h"

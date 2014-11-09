@@ -14,8 +14,8 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef GRN_TOKEN_H
-#define GRN_TOKEN_H
+#ifndef GRN_TOKEN_CURSOR_H
+#define GRN_TOKEN_CURSOR_H
 
 #include "grn_ctx.h"
 #include "grn_db.h"
@@ -71,4 +71,4 @@ GRN_API grn_rc grn_token_cursor_close(grn_ctx *ctx, grn_token_cursor *token_curs
 }
 #endif
 
-#endif /* GRN_TOKEN_H */
+#endif /* GRN_TOKEN_CURSOR_H */

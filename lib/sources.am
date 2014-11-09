@@ -45,8 +45,8 @@ libgroonga_la_SOURCES =				\
 	grn_str.h				\
 	string.c				\
 	grn_string.h				\
-	token.c					\
-	grn_token.h				\
+	token_cursor.c				\
+	grn_token_cursor.h			\
 	tokenizer.c				\
 	tokenizers.c				\
 	grn_tokenizers.h			\

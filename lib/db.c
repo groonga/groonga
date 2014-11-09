@@ -21,7 +21,7 @@
 #include "grn_dat.h"
 #include "grn_ii.h"
 #include "grn_ctx_impl.h"
-#include "grn_token.h"
+#include "grn_token_cursor.h"
 #include "grn_tokenizers.h"
 #include "grn_proc.h"
 #include "grn_plugin.h"

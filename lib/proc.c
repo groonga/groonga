@@ -23,7 +23,7 @@
 #include "grn_output.h"
 #include "grn_pat.h"
 #include "grn_geo.h"
-#include "grn_token.h"
+#include "grn_token_cursor.h"
 #include "grn_expr.h"
 
 #include <string.h>

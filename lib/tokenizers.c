@@ -16,7 +16,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include <string.h>
-#include "grn_token.h"
+#include "grn_token_cursor.h"
 #include "grn_string.h"
 #include "grn_plugin.h"
 #include <groonga/tokenizer.h>
