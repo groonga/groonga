@@ -23,7 +23,7 @@
 extern "C" {
 #endif
 
-extern grn_obj *grn_token_uvector;
+extern grn_obj *grn_tokenizer_uvector;
 
 grn_rc grn_tokenizers_init(void);
 grn_rc grn_tokenizers_fin(void);

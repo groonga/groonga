@@ -21,7 +21,7 @@
 #include "grn_plugin.h"
 #include <groonga/tokenizer.h>
 
-grn_obj *grn_token_uvector = NULL;
+grn_obj *grn_tokenizer_uvector = NULL;
 
 typedef struct {
   grn_tokenizer_token token;
@@ -471,15 +471,15 @@ ngram_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 grn_rc
 grn_tokenizers_init(void)
 {
-  static grn_proc _grn_token_uvector;
-  _grn_token_uvector.obj.db = NULL;
-  _grn_token_uvector.obj.id = GRN_ID_NIL;
-  _grn_token_uvector.obj.header.domain = GRN_ID_NIL;
-  _grn_token_uvector.obj.range = GRN_ID_NIL;
-  _grn_token_uvector.funcs[PROC_INIT] = uvector_init;
-  _grn_token_uvector.funcs[PROC_NEXT] = uvector_next;
-  _grn_token_uvector.funcs[PROC_FIN] = uvector_fin;
-  grn_token_uvector = (grn_obj *)&_grn_token_uvector;
+  static grn_proc _grn_tokenizer_uvector;
+  _grn_tokenizer_uvector.obj.db = NULL;
+  _grn_tokenizer_uvector.obj.id = GRN_ID_NIL;
+  _grn_tokenizer_uvector.obj.header.domain = GRN_ID_NIL;
+  _grn_tokenizer_uvector.obj.range = GRN_ID_NIL;
+  _grn_tokenizer_uvector.funcs[PROC_INIT] = uvector_init;
+  _grn_tokenizer_uvector.funcs[PROC_NEXT] = uvector_next;
+  _grn_tokenizer_uvector.funcs[PROC_FIN] = uvector_fin;
+  grn_tokenizer_uvector = (grn_obj *)&_grn_tokenizer_uvector;
   return GRN_SUCCESS;
 }
 
