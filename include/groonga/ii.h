@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2014 Brazil
+  Copyright(C) 2009-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -15,12 +15,27 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef GROONGA_H
-#define GROONGA_H
+#ifndef GROONGA_II_H
+#define GROONGA_II_H
 
-#include <groonga/groonga.h>
-#include <groonga/ii.h>
-#include <groonga/expr.h>
-#include <groonga/util.h>
+#ifdef  __cplusplus
+extern "C" {
+#endif
 
-#endif /* GROONGA_H */
+/* buffered index builder */
+
+typedef struct _grn_ii grn_ii;
+typedef struct _grn_ii_buffer grn_ii_buffer;
+
+grn_ii_buffer *grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
+                                  long long unsigned int update_buffer_size);
+grn_rc grn_ii_buffer_append(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
+                            grn_id rid, unsigned int section, grn_obj *value);
+grn_rc grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer);
+grn_rc grn_ii_buffer_close(grn_ctx *ctx, grn_ii_buffer *ii_buffer);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* GROONGA_II_H */

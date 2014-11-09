@@ -2024,18 +2024,6 @@ GRN_API grn_rc grn_dat_cursor_delete(grn_ctx *ctx, grn_dat_cursor *c,
   }\
 } while (0)
 
-/* buffered index builder */
-
-typedef struct _grn_ii grn_ii;
-typedef struct _grn_ii_buffer grn_ii_buffer;
-
-grn_ii_buffer *grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
-                                  long long unsigned int update_buffer_size);
-grn_rc grn_ii_buffer_append(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
-                            grn_id rid, unsigned int section, grn_obj *value);
-grn_rc grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer);
-grn_rc grn_ii_buffer_close(grn_ctx *ctx, grn_ii_buffer *ii_buffer);
-
 #ifdef __cplusplus
 }
 #endif
