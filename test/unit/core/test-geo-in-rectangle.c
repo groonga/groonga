@@ -330,11 +330,11 @@ test_cursor(gconstpointer data)
 }
 
 void
-test_estimate(void)
+test_estimate_size(void)
 {
-  cut_assert_equal_int(4,
-                       grn_geo_estimate_in_rectangle(context,
-                                                     location_index,
-                                                     sazare_wgs84,
-                                                     tokyo_wgs84));
+  cut_assert_equal_uint(4,
+                        grn_geo_estimate_size_in_rectangle(context,
+                                                           location_index,
+                                                           sazare_wgs84,
+                                                           tokyo_wgs84));
 }

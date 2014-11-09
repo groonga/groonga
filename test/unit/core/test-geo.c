@@ -299,7 +299,7 @@ test_distance_ellipsoid(void)
 }
 
 void
-test_estimate_in_rectangle(void)
+test_estimate_size_in_rectangle(void)
 {
   grn_obj *location_index;
 
@@ -307,9 +307,9 @@ test_estimate_in_rectangle(void)
   assert_send_command(cut_get_fixture_data_string("shops.grn", NULL));
 
   location_index = get("Locations.shop");
-  cut_assert_equal_int(4,
-                       grn_geo_estimate_in_rectangle(context,
-                                                     location_index,
-                                                     sazare_wgs84,
-                                                     tokyo_wgs84));
+  cut_assert_equal_uint(4,
+                        grn_geo_estimate_size_in_rectangle(context,
+                                                           location_index,
+                                                           sazare_wgs84,
+                                                           tokyo_wgs84));
 }

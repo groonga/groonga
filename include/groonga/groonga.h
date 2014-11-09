@@ -970,6 +970,11 @@ GRN_API grn_rc grn_geo_select_in_rectangle(grn_ctx *ctx,
                                            grn_obj *bottom_right_point,
                                            grn_obj *res,
                                            grn_operator op);
+GRN_API unsigned int grn_geo_estimate_size_in_rectangle(grn_ctx *ctx,
+                                                        grn_obj *index,
+                                                        grn_obj *top_left_point,
+                                                        grn_obj *bottom_right_point);
+/* Deprecated since 4.0.8. Use grn_geo_estimate_size_in_rectangle() instead. */
 GRN_API int grn_geo_estimate_in_rectangle(grn_ctx *ctx,
                                           grn_obj *index,
                                           grn_obj *top_left_point,
