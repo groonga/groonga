@@ -3374,16 +3374,16 @@ parse_tokenize_flags(grn_ctx *ctx, grn_obj *flag_names)
 #define CHECK_FLAG(name)\
     if (((names_end - names) >= (sizeof(#name) - 1)) &&\
         (!memcmp(names, #name, sizeof(#name) - 1))) {\
-      flags |= GRN_TOKEN_ ## name;\
+      flags |= GRN_TOKEN_CURSOR_ ## name;\
       names += sizeof(#name);\
       continue;\
     }
 
     CHECK_FLAG(ENABLE_TOKENIZED_DELIMITER);
 
-#define GRN_TOKEN_NONE 0
+#define GRN_TOKEN_CURSOR_NONE 0
     CHECK_FLAG(NONE);
-#undef GRN_TOKEN_NONE
+#undef GRN_TOKEN_CURSOR_NONE
 
     ERR(GRN_INVALID_ARGUMENT, "[tokenize] invalid flag: <%.*s>",
         (int)(names_end - names), names);

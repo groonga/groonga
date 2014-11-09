@@ -176,7 +176,7 @@ grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args,
       }
       query->encoding = table_encoding;
 
-      if (query->flags & GRN_TOKEN_ENABLE_TOKENIZED_DELIMITER) {
+      if (query->flags & GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER) {
         const char *normalized_string;
         unsigned int normalized_string_length;
 

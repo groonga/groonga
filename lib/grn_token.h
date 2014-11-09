@@ -57,7 +57,7 @@ typedef struct {
   grn_obj *nstr;
 } grn_token_cursor;
 
-#define GRN_TOKEN_ENABLE_TOKENIZED_DELIMITER (0x01L<<0)
+#define GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER (0x01L<<0)
 
 GRN_API grn_token_cursor *grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
                                                 const char *str, size_t str_len,

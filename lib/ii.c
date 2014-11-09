@@ -5362,7 +5362,7 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
   const char *key;
   uint32_t size;
   grn_rc rc = GRN_END_OF_DATA;
-  unsigned int token_flags = GRN_TOKEN_ENABLE_TOKENIZED_DELIMITER;
+  unsigned int token_flags = GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER;
   grn_token_cursor *token_cursor = grn_token_cursor_open(ctx, lexicon,
                                                          string, string_len,
                                                          GRN_TOKEN_GET,
@@ -5656,7 +5656,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
   grn_rc rc = GRN_SUCCESS;
   grn_hash *h;
   grn_token_cursor *token_cursor;
-  unsigned int token_flags = GRN_TOKEN_ENABLE_TOKENIZED_DELIMITER;
+  unsigned int token_flags = GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER;
   grn_obj *lexicon = ii->lexicon;
   if (!lexicon || !ii || !string || !string_len || !s || !optarg) { return GRN_INVALID_ARGUMENT; }
   if (!(h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(int), 0))) {
