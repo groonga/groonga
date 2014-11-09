@@ -18,7 +18,7 @@
 
 #include "grn.h"
 #include <string.h>
-#include "grn_token.h"
+#include "grn_tokenizers.h"
 #include "grn_ctx_impl.h"
 #include "grn_pat.h"
 #include "grn_plugin.h"
@@ -1282,8 +1282,8 @@ grn_init(void)
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_normalizer_init failed (%d)", rc);
     return rc;
   }
-  if ((rc = grn_token_init())) {
-    GRN_LOG(ctx, GRN_LOG_ALERT, "grn_token_init failed (%d)", rc);
+  if ((rc = grn_tokenizers_init())) {
+    GRN_LOG(ctx, GRN_LOG_ALERT, "grn_tokenizers_init failed (%d)", rc);
     return rc;
   }
   /*
@@ -1380,7 +1380,7 @@ grn_fin(void)
   }
   query_logger_fin(ctx);
   grn_cache_fin();
-  grn_token_fin();
+  grn_tokenizers_fin();
   grn_normalizer_fin();
   grn_plugins_fin();
   grn_io_fin();

@@ -17,10 +17,8 @@
 #ifndef GRN_TOKEN_H
 #define GRN_TOKEN_H
 
-#include "grn.h"
 #include "grn_ctx.h"
 #include "grn_db.h"
-#include "grn_str.h"
 
 #include <groonga/tokenizer.h>
 
@@ -59,11 +57,6 @@ typedef struct {
   grn_obj *nstr;
 } grn_token_cursor;
 
-extern grn_obj *grn_token_uvector;
-
-grn_rc grn_token_init(void);
-grn_rc grn_token_fin(void);
-
 #define GRN_TOKEN_ENABLE_TOKENIZED_DELIMITER (0x01L<<0)
 
 GRN_API grn_token_cursor *grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
@@ -73,9 +66,6 @@ GRN_API grn_token_cursor *grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
 
 GRN_API grn_id grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor);
 GRN_API grn_rc grn_token_cursor_close(grn_ctx *ctx, grn_token_cursor *token_cursor);
-
-grn_rc grn_db_init_mecab_tokenizer(grn_ctx *ctx);
-grn_rc grn_db_init_builtin_tokenizers(grn_ctx *ctx);
 
 #ifdef __cplusplus
 }
