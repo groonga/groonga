@@ -833,6 +833,11 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       DFI_PUT(e, type, domain, code);
       break;
     case GRN_OP_EQUAL :
+    case GRN_OP_NOT_EQUAL :
+    case GRN_OP_LESS :
+    case GRN_OP_GREATER :
+    case GRN_OP_LESS_EQUAL :
+    case GRN_OP_GREATER_EQUAL :
       PUSH_CODE(e, op, obj, nargs, code);
       if (nargs) {
         grn_id xd, yd = GRN_ID_NIL;
@@ -889,11 +894,6 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_SIMILAR :
     case GRN_OP_PREFIX :
     case GRN_OP_SUFFIX :
-    case GRN_OP_NOT_EQUAL :
-    case GRN_OP_LESS :
-    case GRN_OP_GREATER :
-    case GRN_OP_LESS_EQUAL :
-    case GRN_OP_GREATER_EQUAL :
     case GRN_OP_GEO_DISTANCE1 :
     case GRN_OP_GEO_DISTANCE2 :
     case GRN_OP_GEO_DISTANCE3 :
