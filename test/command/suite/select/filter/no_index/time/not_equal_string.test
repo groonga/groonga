@@ -1,0 +1,10 @@
+table_create Memos TABLE_PAT_KEY ShortText
+column_create Memos timestamp COLUMN_SCALAR Time
+
+load --table Memos
+[
+{"_key": "Hello!", "timestamp": "2014-11-11 12:49:00"},
+{"_key": "World!", "timestamp": "2014-11-11 12:50:00"}
+]
+
+select Memos --filter 'timestamp != "2014-11-11 12:49:00"'
