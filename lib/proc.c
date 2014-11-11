@@ -4780,10 +4780,26 @@ typedef enum {
 typedef struct {
   grn_obj *value;
   grn_obj *min;
+  grn_obj casted_min;
   between_border_type min_border_type;
   grn_obj *max;
+  grn_obj casted_max;
   between_border_type max_border_type;
 } between_data;
+
+static void
+between_data_init(grn_ctx *ctx, between_data *data)
+{
+  GRN_VOID_INIT(&(data->casted_min));
+  GRN_VOID_INIT(&(data->casted_max));
+}
+
+static void
+between_data_fin(grn_ctx *ctx, between_data *data)
+{
+  GRN_OBJ_FIN(ctx, &(data->casted_min));
+  GRN_OBJ_FIN(ctx, &(data->casted_max));
+}
 
 static between_border_type
 between_parse_border(grn_ctx *ctx, grn_obj *border,
@@ -4810,44 +4826,6 @@ between_parse_border(grn_ctx *ctx, grn_obj *border,
   grn_obj_unlink(ctx, &inspected);
 
   return BETWEEN_BORDER_INVALID;
-}
-
-static grn_rc
-between_parse_args(grn_ctx *ctx, int nargs, grn_obj **args, between_data *data)
-{
-  grn_rc rc = GRN_SUCCESS;
-  grn_obj *min_border;
-  grn_obj *max_border;
-
-  if (nargs != 5) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "between(): wrong number of arguments (%d for 5)", nargs);
-    rc = ctx->rc;
-    goto exit;
-  }
-
-  data->value = args[0];
-  data->min   = args[1];
-  min_border  = args[2];
-  data->max   = args[3];
-  max_border  = args[4];
-
-  data->min_border_type =
-    between_parse_border(ctx, min_border, "the 3rd argument (min_border)");
-  if (data->min_border_type == BETWEEN_BORDER_INVALID) {
-    rc = ctx->rc;
-    goto exit;
-  }
-
-  data->max_border_type =
-    between_parse_border(ctx, max_border, "the 5th argument (max_border)");
-  if (data->max_border_type == BETWEEN_BORDER_INVALID) {
-    rc = ctx->rc;
-    goto exit;
-  }
-
-exit :
-  return rc;
 }
 
 static grn_rc
@@ -4885,6 +4863,106 @@ between_cast(grn_ctx *ctx, grn_obj *source, grn_obj *destination, grn_id domain,
   return rc;
 }
 
+static grn_rc
+between_parse_args(grn_ctx *ctx, int nargs, grn_obj **args, between_data *data)
+{
+  grn_rc rc = GRN_SUCCESS;
+  grn_obj *min_border;
+  grn_obj *max_border;
+
+  if (nargs != 5) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "between(): wrong number of arguments (%d for 5)", nargs);
+    rc = ctx->rc;
+    goto exit;
+  }
+
+  data->value = args[0];
+  data->min   = args[1];
+  min_border  = args[2];
+  data->max   = args[3];
+  max_border  = args[4];
+
+  data->min_border_type =
+    between_parse_border(ctx, min_border, "the 3rd argument (min_border)");
+  if (data->min_border_type == BETWEEN_BORDER_INVALID) {
+    rc = ctx->rc;
+    goto exit;
+  }
+
+  data->max_border_type =
+    between_parse_border(ctx, max_border, "the 5th argument (max_border)");
+  if (data->max_border_type == BETWEEN_BORDER_INVALID) {
+    rc = ctx->rc;
+    goto exit;
+  }
+
+  {
+    grn_id value_type;
+    if (data->value->header.type == GRN_BULK) {
+      value_type = data->value->header.domain;
+    } else {
+      value_type = grn_obj_get_range(ctx, data->value);
+    }
+    if (value_type != data->min->header.domain) {
+      rc = between_cast(ctx, data->min, &data->casted_min, value_type, "min");
+      if (rc != GRN_SUCCESS) {
+        goto exit;
+      }
+      data->min = &(data->casted_min);
+    }
+
+    if (value_type != data->max->header.domain) {
+      rc = between_cast(ctx, data->max, &data->casted_max, value_type, "max");
+      if (rc != GRN_SUCCESS) {
+        goto exit;
+      }
+      data->max = &(data->casted_max);
+    }
+  }
+
+exit :
+  return rc;
+}
+
+static grn_bool
+between_create_expr(grn_ctx *ctx, grn_obj *table, between_data *data,
+                    grn_obj **expr, grn_obj **variable)
+{
+  GRN_EXPR_CREATE_FOR_QUERY(ctx, table, *expr, *variable);
+  if (!*expr) {
+    return GRN_FALSE;
+  }
+
+  if (data->value->header.type == GRN_BULK) {
+    grn_expr_append_obj(ctx, *expr, data->value, GRN_OP_PUSH, 1);
+  } else {
+    grn_expr_append_obj(ctx, *expr, data->value, GRN_OP_GET_VALUE, 1);
+  }
+  grn_expr_append_obj(ctx, *expr, data->min, GRN_OP_PUSH, 1);
+  if (data->min_border_type == BETWEEN_BORDER_INCLUDE) {
+    grn_expr_append_op(ctx, *expr, GRN_OP_GREATER_EQUAL, 2);
+  } else {
+    grn_expr_append_op(ctx, *expr, GRN_OP_GREATER, 2);
+  }
+
+  if (data->value->header.type == GRN_BULK) {
+    grn_expr_append_obj(ctx, *expr, data->value, GRN_OP_PUSH, 1);
+  } else {
+    grn_expr_append_obj(ctx, *expr, data->value, GRN_OP_GET_VALUE, 1);
+  }
+  grn_expr_append_obj(ctx, *expr, data->max, GRN_OP_PUSH, 1);
+  if (data->max_border_type == BETWEEN_BORDER_INCLUDE) {
+    grn_expr_append_op(ctx, *expr, GRN_OP_LESS_EQUAL, 2);
+  } else {
+    grn_expr_append_op(ctx, *expr, GRN_OP_LESS, 2);
+  }
+
+  grn_expr_append_op(ctx, *expr, GRN_OP_AND, 2);
+
+  return GRN_TRUE;
+}
+
 static grn_obj *
 func_between(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -4893,7 +4971,7 @@ func_between(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   between_data data;
   grn_obj *condition = NULL;
   grn_obj *variable;
-  grn_obj *table;
+  grn_obj *table = NULL;
   grn_obj *between_expr;
   grn_obj *between_variable;
   grn_obj *result;
@@ -4914,38 +4992,19 @@ func_between(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     return found;
   }
 
+  between_data_init(ctx, &data);
   rc = between_parse_args(ctx, nargs, args, &data);
   if (rc != GRN_SUCCESS) {
-    return found;
+    goto exit;
   }
 
   table = grn_ctx_at(ctx, variable->header.domain);
   if (!table) {
-    return found;
+    goto exit;
   }
-  GRN_EXPR_CREATE_FOR_QUERY(ctx, table, between_expr, between_variable);
-  if (!between_expr) {
-    grn_obj_unlink(ctx, table);
-    return found;
+  if (!between_create_expr(ctx, table, &data, &between_expr, &between_variable)) {
+    goto exit;
   }
-
-  grn_expr_append_obj(ctx, between_expr, data.value, GRN_OP_PUSH, 1);
-  grn_expr_append_obj(ctx, between_expr, data.min, GRN_OP_PUSH, 1);
-  if (data.min_border_type == BETWEEN_BORDER_INCLUDE) {
-    grn_expr_append_op(ctx, between_expr, GRN_OP_GREATER_EQUAL, 2);
-  } else {
-    grn_expr_append_op(ctx, between_expr, GRN_OP_GREATER, 2);
-  }
-
-  grn_expr_append_obj(ctx, between_expr, data.value, GRN_OP_PUSH, 1);
-  grn_expr_append_obj(ctx, between_expr, data.max, GRN_OP_PUSH, 1);
-  if (data.max_border_type == BETWEEN_BORDER_INCLUDE) {
-    grn_expr_append_op(ctx, between_expr, GRN_OP_LESS_EQUAL, 2);
-  } else {
-    grn_expr_append_op(ctx, between_expr, GRN_OP_LESS, 2);
-  }
-
-  grn_expr_append_op(ctx, between_expr, GRN_OP_AND, 2);
 
   GRN_RECORD_SET(ctx, between_variable, GRN_RECORD_VALUE(variable));
   result = grn_expr_exec(ctx, between_expr, 0);
@@ -4960,7 +5019,195 @@ func_between(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj_unlink(ctx, between_expr);
   grn_obj_unlink(ctx, table);
 
+exit :
+  between_data_fin(ctx, &data);
+  if (table) {
+    grn_obj_unlink(ctx, table);
+  }
+
   return found;
+}
+
+static grn_bool
+selector_between_sequential_search(grn_ctx *ctx,
+                                   grn_obj *table,
+                                   grn_obj *index, grn_obj *index_table,
+                                   between_data *data,
+                                   grn_obj *res, grn_operator op)
+{
+  double too_many_index_match_ratio = 0.01;
+  int n_existing_records;
+  int n_index_keys;
+
+  {
+    const char *too_many_index_match_ratio_env =
+      getenv("GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO");
+    if (too_many_index_match_ratio_env) {
+      too_many_index_match_ratio = atof(too_many_index_match_ratio_env);
+    }
+  }
+
+  if (too_many_index_match_ratio < 0.0) {
+    return GRN_FALSE;
+  }
+
+  if (op != GRN_OP_AND) {
+    return GRN_FALSE;
+  }
+
+  if (index->header.flags & GRN_OBJ_WITH_WEIGHT) {
+    return GRN_FALSE;
+  }
+
+  n_existing_records = grn_table_size(ctx, res);
+  if (n_existing_records == 0) {
+    return GRN_TRUE;
+  }
+
+  n_index_keys = grn_table_size(ctx, index_table);
+  if (n_index_keys == 0) {
+    return GRN_FALSE;
+  }
+
+  switch (index_table->header.domain) {
+  /* TODO: */
+  /* case GRN_DB_INT8 : */
+  /* case GRN_DB_UINT8 : */
+  /* case GRN_DB_INT16 : */
+  /* case GRN_DB_UINT16 : */
+  /* case GRN_DB_INT32 : */
+  /* case GRN_DB_UINT32 : */
+  /* case GRN_DB_INT64 : */
+  /* case GRN_DB_UINT64 : */
+  /* case GRN_DB_FLOAT : */
+  case GRN_DB_TIME :
+    break;
+  default :
+    return GRN_FALSE;
+  }
+
+  {
+    grn_table_cursor *cursor;
+    long long int all_min;
+    long long int all_max;
+    cursor = grn_table_cursor_open(ctx, index_table,
+                                   NULL, -1,
+                                   NULL, -1,
+                                   0, 1,
+                                   GRN_CURSOR_BY_KEY | GRN_CURSOR_ASCENDING);
+    if (!cursor) {
+      return GRN_FALSE;
+    }
+    if (grn_table_cursor_next(ctx, cursor) == GRN_ID_NIL) {
+      return GRN_FALSE;
+    }
+    {
+      long long int *key;
+      grn_table_cursor_get_key(ctx, cursor, (void **)&key);
+      all_min = *key;
+    }
+    grn_table_cursor_close(ctx, cursor);
+
+    cursor = grn_table_cursor_open(ctx, index_table,
+                                   NULL, 0, NULL, 0,
+                                   0, 1,
+                                   GRN_CURSOR_BY_KEY | GRN_CURSOR_DESCENDING);
+    if (!cursor) {
+      return GRN_FALSE;
+    }
+    if (grn_table_cursor_next(ctx, cursor) == GRN_ID_NIL) {
+      return GRN_FALSE;
+    }
+    {
+      long long int *key;
+      grn_table_cursor_get_key(ctx, cursor, (void **)&key);
+      all_max = *key;
+    }
+    grn_table_cursor_close(ctx, cursor);
+
+    /*
+     * We assume the following:
+     *   * homogeneous index key distribution.
+     *   * each index key matches only 1 record.
+     * TODO: Improve me.
+     */
+    {
+      int n_indexed_records;
+      long long int all_difference;
+      long long int argument_difference;
+      all_difference = all_max - all_min;
+      if (all_difference <= 0) {
+        return GRN_FALSE;
+      }
+      argument_difference =
+        GRN_TIME_VALUE(data->max) - GRN_TIME_VALUE(data->min);
+      if (argument_difference <= 0) {
+        return GRN_FALSE;
+      }
+      n_indexed_records =
+        n_index_keys * ((double)argument_difference / (double)all_difference);
+      /*
+       * Same as:
+       * ((n_existing_record / n_indexed_records) > too_many_index_match_ratio)
+       */
+      if (n_existing_records > (n_indexed_records * too_many_index_match_ratio)) {
+        return GRN_FALSE;
+      }
+    }
+  }
+
+  {
+    int offset = 0;
+    int limit = -1;
+    int flags = 0;
+    grn_table_cursor *cursor;
+    grn_obj *expr;
+    grn_obj *variable;
+    grn_id id;
+
+    if (!between_create_expr(ctx, table, data, &expr, &variable)) {
+      return GRN_FALSE;
+    }
+
+    cursor = grn_table_cursor_open(ctx, res,
+                                   NULL, 0,
+                                   NULL, 0,
+                                   offset, limit, flags);
+    if (!cursor) {
+      grn_obj_unlink(ctx, expr);
+      return GRN_FALSE;
+    }
+
+    while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+      grn_id record_id;
+      grn_obj *result;
+      {
+        grn_id *key;
+        grn_table_cursor_get_key(ctx, cursor, (void **)&key);
+        record_id = *key;
+      }
+      GRN_RECORD_SET(ctx, variable, record_id);
+      result = grn_expr_exec(ctx, expr, 0);
+      if (result) {
+        grn_bool result_boolean;
+        GRN_TRUEP(ctx, result, result_boolean);
+        if (result_boolean) {
+          grn_ii_posting posting;
+          posting.rid = record_id;
+          posting.sid = 1;
+          posting.pos = 0;
+          posting.weight = 0;
+          grn_ii_posting_add(ctx, &posting, (grn_hash *)res, op);
+        }
+      }
+    }
+    grn_obj_unlink(ctx, expr);
+    grn_table_cursor_close(ctx, cursor);
+
+    grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
+  }
+
+  return GRN_TRUE;
 }
 
 static grn_rc
@@ -4973,9 +5220,6 @@ selector_between(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   int limit = -1;
   int flags = GRN_CURSOR_ASCENDING | GRN_CURSOR_BY_KEY;
   between_data data;
-  grn_obj casted_min, casted_max;
-  grn_obj *used_min = NULL;
-  grn_obj *used_max = NULL;
   grn_obj *index_table = NULL;
   grn_table_cursor *cursor;
   grn_id id;
@@ -4984,9 +5228,10 @@ selector_between(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     return GRN_INVALID_ARGUMENT;
   }
 
+  between_data_init(ctx, &data);
   rc = between_parse_args(ctx, nargs - 1, args + 1, &data);
   if (rc != GRN_SUCCESS) {
-    return rc;
+    goto exit;
   }
 
   if (data.min_border_type == BETWEEN_BORDER_EXCLUDE) {
@@ -4997,31 +5242,16 @@ selector_between(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   }
 
   index_table = grn_ctx_at(ctx, index->header.domain);
-  if (data.min->header.domain == index_table->header.domain) {
-    used_min = data.min;
-  } else {
-    used_min = &casted_min;
-    rc = between_cast(ctx, data.min, &casted_min, index_table->header.domain,
-                      "min");
-    if (rc != GRN_SUCCESS) {
-      goto exit;
-    }
+  if (selector_between_sequential_search(ctx, table, index, index_table,
+                                         &data, res, op)) {
+    goto exit;
   }
-  if (data.max->header.domain == index_table->header.domain) {
-    used_max = data.max;
-  } else {
-    used_max = &casted_max;
-    rc = between_cast(ctx, data.max, &casted_max, index_table->header.domain,
-                      "max");
-    if (rc != GRN_SUCCESS) {
-      goto exit;
-    }
-  }
+
   cursor = grn_table_cursor_open(ctx, index_table,
-                                 GRN_BULK_HEAD(used_min),
-                                 GRN_BULK_VSIZE(used_min),
-                                 GRN_BULK_HEAD(used_max),
-                                 GRN_BULK_VSIZE(used_max),
+                                 GRN_BULK_HEAD(data.min),
+                                 GRN_BULK_VSIZE(data.min),
+                                 GRN_BULK_HEAD(data.max),
+                                 GRN_BULK_VSIZE(data.max),
                                  offset, limit, flags);
   if (!cursor) {
     rc = ctx->rc;
@@ -5035,12 +5265,7 @@ selector_between(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   grn_table_cursor_close(ctx, cursor);
 
 exit :
-  if (used_min == &casted_min) {
-    grn_obj_unlink(ctx, &casted_min);
-  }
-  if (used_max == &casted_max) {
-    grn_obj_unlink(ctx, &casted_max);
-  }
+  between_data_fin(ctx, &data);
   if (index_table) {
     grn_obj_unlink(ctx, index_table);
   }
