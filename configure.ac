@@ -1459,6 +1459,11 @@ AM_CONDITIONAL(WITH_SHARED_ONIGMO, test "$enable_shared_onigmo" = "yes")
 AC_DEFINE(GRN_WITH_ONIGMO, [1], [Use Onigmo.])
 AC_CONFIG_SUBDIRS([vendor/onigmo])
 
+ONIGMO_CFLAGS="-I\$(top_srcdir)/vendor/onigmo-source"
+ONIGMO_LIBS="\$(top_builddir)/vendor/onigmo-source/libonig.la"
+AC_SUBST(ONIGMO_CFLAGS)
+AC_SUBST(ONIGMO_LIBS)
+
 # PCRE
 GRN_WITH_PCRE=no
 AC_ARG_WITH(pcre,

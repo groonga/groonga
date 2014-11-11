@@ -10,12 +10,12 @@ AM_CFLAGS =					\
 	$(COVERAGE_CFLAGS)			\
 	$(GRN_CFLAGS)				\
 	$(MESSAGE_PACK_CFLAGS)			\
-	$(MRUBY_CFLAGS)
+	$(MRUBY_CFLAGS)				\
+	$(ONIGMO_CFLAGS)
 
 DEFAULT_INCLUDES =				\
 	-I$(top_builddir)			\
-	-I$(top_srcdir)/include			\
-	-I$(top_srcdir)/vendor/onigmo-source
+	-I$(top_srcdir)/include
 
 DEFS += -D_REENTRANT $(GRN_DEFS) -DGRN_DAT_EXPORT
 
@@ -30,7 +30,8 @@ libgroonga_la_LIBADD =				\
 	dat/libgrndat.la			\
 	mrb/libgrnmrb.la			\
 	$(MESSAGE_PACK_LIBS)			\
-	$(MRUBY_LIBS)
+	$(MRUBY_LIBS)				\
+	$(ONIGMO_LIBS)
 
 if WITH_LEMON
 BUILT_SOURCES =					\
