@@ -5029,23 +5029,16 @@ exit :
 }
 
 static grn_bool
-selector_between_sequential_search(grn_ctx *ctx,
-                                   grn_obj *table,
-                                   grn_obj *index, grn_obj *index_table,
-                                   between_data *data,
-                                   grn_obj *res, grn_operator op)
+selector_between_sequential_search_should_use(grn_ctx *ctx,
+                                              grn_obj *table,
+                                              grn_obj *index,
+                                              grn_obj *index_table,
+                                              between_data *data,
+                                              grn_obj *res,
+                                              grn_operator op,
+                                              double too_many_index_match_ratio)
 {
-  double too_many_index_match_ratio = 0.01;
-  int n_existing_records;
   int n_index_keys;
-
-  {
-    const char *too_many_index_match_ratio_env =
-      getenv("GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO");
-    if (too_many_index_match_ratio_env) {
-      too_many_index_match_ratio = atof(too_many_index_match_ratio_env);
-    }
-  }
 
   if (too_many_index_match_ratio < 0.0) {
     return GRN_FALSE;
@@ -5057,11 +5050,6 @@ selector_between_sequential_search(grn_ctx *ctx,
 
   if (index->header.flags & GRN_OBJ_WITH_WEIGHT) {
     return GRN_FALSE;
-  }
-
-  n_existing_records = grn_table_size(ctx, res);
-  if (n_existing_records == 0) {
-    return GRN_TRUE;
   }
 
   n_index_keys = grn_table_size(ctx, index_table);
@@ -5099,6 +5087,7 @@ selector_between_sequential_search(grn_ctx *ctx,
       return GRN_FALSE;
     }
     if (grn_table_cursor_next(ctx, cursor) == GRN_ID_NIL) {
+      grn_table_cursor_close(ctx, cursor);
       return GRN_FALSE;
     }
     {
@@ -5116,6 +5105,7 @@ selector_between_sequential_search(grn_ctx *ctx,
       return GRN_FALSE;
     }
     if (grn_table_cursor_next(ctx, cursor) == GRN_ID_NIL) {
+      grn_table_cursor_close(ctx, cursor);
       return GRN_FALSE;
     }
     {
@@ -5132,9 +5122,13 @@ selector_between_sequential_search(grn_ctx *ctx,
      * TODO: Improve me.
      */
     {
+      int n_existing_records;
       int n_indexed_records;
       long long int all_difference;
       long long int argument_difference;
+
+      n_existing_records = grn_table_size(ctx, res);
+
       all_difference = all_max - all_min;
       if (all_difference <= 0) {
         return GRN_FALSE;
@@ -5146,6 +5140,7 @@ selector_between_sequential_search(grn_ctx *ctx,
       }
       n_indexed_records =
         n_index_keys * ((double)argument_difference / (double)all_difference);
+
       /*
        * Same as:
        * ((n_existing_record / n_indexed_records) > too_many_index_match_ratio)
@@ -5154,6 +5149,32 @@ selector_between_sequential_search(grn_ctx *ctx,
         return GRN_FALSE;
       }
     }
+  }
+
+  return GRN_TRUE;
+}
+
+static grn_bool
+selector_between_sequential_search(grn_ctx *ctx,
+                                   grn_obj *table,
+                                   grn_obj *index, grn_obj *index_table,
+                                   between_data *data,
+                                   grn_obj *res, grn_operator op)
+{
+  double too_many_index_match_ratio = 0.01;
+
+  {
+    const char *too_many_index_match_ratio_env =
+      getenv("GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO");
+    if (too_many_index_match_ratio_env) {
+      too_many_index_match_ratio = atof(too_many_index_match_ratio_env);
+    }
+  }
+
+  if (!selector_between_sequential_search_should_use(
+        ctx, table, index, index_table, data, res, op,
+        too_many_index_match_ratio)) {
+    return GRN_FALSE;
   }
 
   {
