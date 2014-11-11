@@ -1,0 +1,44 @@
+table_create Memos TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Hello!", "timestamp": "2014-11-11 12:49:00"},
+{"_key": "World!", "timestamp": "2014-11-11 12:50:00"}
+]
+[[0,0.0,0.0],2]
+select Memos --filter 'timestamp < "2014-11-11 12:50:00"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "timestamp",
+          "Time"
+        ]
+      ],
+      [
+        1,
+        "Hello!",
+        1415677740.0
+      ]
+    ]
+  ]
+]

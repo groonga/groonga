@@ -1344,9 +1344,14 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
       case GRN_DB_TEXT :\
       case GRN_DB_LONG_TEXT :\
         {\
-          const char *p_ = GRN_TEXT_VALUE(y);\
-          int i_ = grn_atoi(p_, p_ + GRN_TEXT_LEN(y), NULL);\
-          r = (x_ op GRN_TIME_PACK(i_, 0));\
+          grn_obj time_value_;\
+          GRN_TIME_INIT(&time_value_, 0);\
+          if (grn_obj_cast(ctx, y, &time_value_, GRN_FALSE) == GRN_SUCCESS) {\
+            r = (x_ op GRN_TIME_VALUE(&time_value_));\
+          } else {\
+            r = 0;\
+          }\
+          GRN_OBJ_FIN(ctx, &time_value_);\
         }\
         break;\
       default :\
