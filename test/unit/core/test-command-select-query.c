@@ -25,7 +25,6 @@
 
 void test_int64_compare_over_int32(void);
 void test_int64_compare_float_literal(void);
-void test_int32_key_table_reference_compare(void);
 void test_prefix_search(void);
 void test_full_width_space(void);
 void test_leading_plus(void);
@@ -113,23 +112,6 @@ test_int64_compare_float_literal(void)
        "[[\"_id\",\"UInt32\"],[\"int64\",\"Int64\"]],"
        "[1,344494643000000]]]",
     send_command("select Integers --query int64:<=3.44494643e14"));
-}
-
-void
-test_int32_key_table_reference_compare(void)
-{
-  assert_send_command("table_create Users TABLE_NO_KEY");
-  assert_send_command("table_create IDs TABLE_HASH_KEY Int32");
-  assert_send_command("column_create Users id COLUMN_SCALAR IDs");
-  assert_send_command("load --table Users\n"
-                      "[\n"
-                      "{\"id\":29}\n"
-                      "]");
-  cut_assert_equal_string(
-      "[[[1],"
-       "[[\"_id\",\"UInt32\"],[\"id\",\"IDs\"]],"
-       "[1,29]]]",
-    send_command("select Users --query id:<30"));
 }
 
 void

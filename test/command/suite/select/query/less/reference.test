@@ -1,0 +1,12 @@
+table_create Ages TABLE_PAT_KEY UInt8
+
+table_create Users TABLE_PAT_KEY ShortText
+column_create Users age COLUMN_SCALAR Ages
+
+load --table Users
+[
+{"_key": "alice", "age": 22},
+{"_key": "bob",   "age": 21}
+]
+
+select Users --query age:<22
