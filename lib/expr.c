@@ -6157,7 +6157,7 @@ get_word_(grn_ctx *ctx, efs_info *q)
       GRN_INT32_PUT(ctx, &q->mode_stack, mode);
 
       return GRN_SUCCESS;
-    } else if (GRN_TEXT_LEN(&q->buf) > 1 && *end == GRN_QUERY_PREFIX) {
+    } else if (GRN_TEXT_LEN(&q->buf) > 0 && *end == GRN_QUERY_PREFIX) {
       q->cur = end + 1;
       GRN_INT32_PUT(ctx, &q->mode_stack, GRN_OP_PREFIX);
       break;

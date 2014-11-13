@@ -1,0 +1,63 @@
+table_create Diaries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Diaries content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms diaries_content COLUMN_INDEX|WITH_POSITION Diaries content
+[[0,0.0,0.0],true]
+load --table Diaries
+[
+{"content": "It'll be fine tomorrow as well."},
+{"content": "It'll rain tomorrow."},
+{"content": "It's fine today. It'll be fine tomorrow as well."},
+{"content": "It's fine today. But it'll rain tomorrow."},
+{"content": "Ring the bell."},
+{"content": "I love dumbbells."}
+]
+[[0,0.0,0.0],6]
+select   --table Diaries   --match_columns content   --query "t*"   --output_columns content,_score   --sortby _id
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        5
+      ],
+      [
+        [
+          "content",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "It'll be fine tomorrow as well.",
+        1
+      ],
+      [
+        "It'll rain tomorrow.",
+        1
+      ],
+      [
+        "It's fine today. It'll be fine tomorrow as well.",
+        2
+      ],
+      [
+        "It's fine today. But it'll rain tomorrow.",
+        2
+      ],
+      [
+        "Ring the bell.",
+        1
+      ]
+    ]
+  ]
+]
