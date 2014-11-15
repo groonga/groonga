@@ -183,6 +183,8 @@ typedef unsigned int grn_tokenizer_status;
 #define GRN_TOKENIZER_TOKEN_SKIP               (0x01L<<4)
 /* GRN_TOKENIZER_TOKEN_SKIP_WITH_POSITION means that the token and postion is skipped */
 #define GRN_TOKENIZER_TOKEN_SKIP_WITH_POSITION (0x01L<<5)
+/* GRN_TOKENIZER_TOKEN_FORCE_PREIX that the token is used common prefix search */
+#define GRN_TOKENIZER_TOKEN_FORCE_PREFIX       (0x01L<<6)
 
 /*
  * GRN_TOKENIZER_CONTINUE and GRN_TOKENIZER_LAST are deprecated. They

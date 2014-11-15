@@ -5431,6 +5431,7 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
     tis[(*n)++] = ti;
     while (token_cursor->status == GRN_TOKEN_DOING) {
       tid = grn_token_cursor_next(ctx, token_cursor);
+      if (token_cursor->force_prefix) { ef |= EX_PREFIX; }
       switch (token_cursor->status) {
       case GRN_TOKEN_DONE_SKIP :
         continue;
