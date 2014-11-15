@@ -1,3 +1,5 @@
+# Note: There is a limitation for supported architectures.
+# When the build problem is fixed, we may change Architecture: to any.
 Source: groonga
 Section: database
 Priority: optional
@@ -18,7 +20,7 @@ Standards-Version: 3.9.5
 Homepage: http://groonga.org/
 
 Package: groonga
-Architecture: any
+Architecture: amd64 i386 kfreebsd-amd64 kfreebsd-i386 ppc64el
 Depends:
   ${misc:Depends},
   ${shlibs:Depends},
@@ -78,7 +80,7 @@ Description: Fulltext search engine (metapackage for GQTP server use)
 
 Package: libgroonga-dev
 Section: libdevel
-Architecture: any
+Architecture: amd64 i386 kfreebsd-amd64 kfreebsd-i386 ppc64el
 Multi-Arch: same
 Replaces: libgroonga (<< 1.2.0-1)
 Breaks: libgroonga (<< 1.2.0-1)
@@ -95,7 +97,7 @@ Description: Development files to use Groonga as a library
 
 Package: libgroonga0
 Section: libs
-Architecture: any
+Architecture: amd64 i386 kfreebsd-amd64 kfreebsd-i386 ppc64el
 Multi-Arch: same
 Replaces: libgroonga (<< 1.2.0-1)
 Breaks: libgroonga (<< 1.2.0-1)
@@ -113,7 +115,7 @@ Description: Library files for Groonga
 
 Package: groonga-tokenizer-mecab
 Section: libs
-Architecture: any
+Architecture: amd64 i386 kfreebsd-amd64 kfreebsd-i386 ppc64el
 Replaces: libgroonga-tokenizer-mecab (<< 1.2.0-1)
 Breaks: libgroonga-tokenizer-mecab (<< 1.2.0-1)
 Depends:
@@ -129,7 +131,7 @@ Description: MeCab tokenizer for Groonga
 
 Package: groonga-token-filter-stem
 Section: libs
-Architecture: any
+Architecture: amd64 i386 kfreebsd-amd64 kfreebsd-i386 ppc64el
 Depends:
   ${misc:Depends},
   ${shlibs:Depends},
@@ -145,7 +147,7 @@ Description: Stemming token filter for Groonga
 
 Package: groonga-plugin-suggest
 Section: libs
-Architecture: any
+Architecture: amd64 i386 kfreebsd-amd64 kfreebsd-i386 ppc64el
 Replaces: libgroonga-plugin-suggest (<< 1.2.0-1)
 Breaks: libgroonga-plugin-suggest (<< 1.2.0-1)
 Depends:
@@ -159,7 +161,7 @@ Description: Suggest plugin for Groonga
  This package provides suggest plugin.
 
 Package: groonga-bin
-Architecture: any
+Architecture: amd64 i386 kfreebsd-amd64 kfreebsd-i386 ppc64el
 Replaces: groonga (<< 1.2.0-1)
 Breaks: groonga (<< 1.2.0-1)
 Depends:
@@ -173,7 +175,7 @@ Description: Commands for Groonga
  This package provides 'groonga' command.
 
 Package: groonga-httpd
-Architecture: any
+Architecture: amd64 i386 kfreebsd-amd64 kfreebsd-i386 ppc64el
 Replaces: groonga (<< 1.2.0-1)
 Breaks: groonga (<< 1.2.0-1)
 Conflicts: groonga-server-http
