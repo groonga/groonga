@@ -43,7 +43,7 @@ With the above configuration, you can use Groonga for your build.
 Examples
 --------
 
-Here are open source softwares that use Groonga on Travis CI:
+Here are open source software that use Groonga on Travis CI:
 
   * `rroonga <http://ranguba.org/#about-rroonga>`_ (Ruby bindings)
 

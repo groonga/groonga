@@ -8,8 +8,8 @@ Introduction
 This documentation describes about how to write, generate and manage
 Groonga documentation.
 
-Install depended softwares
---------------------------
+Install depended software
+-------------------------
 
 Groonga uses Sphinx_ as documentation tool. Groonga requires newer
 Sphinx. So Groonga clones the latest Sphinx from Sphinx repository
@@ -20,7 +20,7 @@ automatically. You need only Mercurial_, Docutils_ and Jinja_.
 .. _Docutils: http://docutils.sourceforge.net/
 .. _Jinja: http://jinja.pocoo.org/
 
-Here are command lines to install needed softwares.
+Here are command lines to install needed software.
 
 Debian GNU/Linux, Ubuntu::
 
