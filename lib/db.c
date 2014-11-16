@@ -6110,19 +6110,33 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
     break;
   case GRN_TABLE_HASH_KEY :
     {
-      grn_hash *hash = (grn_hash *)obj;
-      uint32_t size = hash->value_size;
+      grn_bool processed = GRN_FALSE;
       grn_obj_ensure_bulk(ctx, value);
-      if (grn_bulk_space(ctx, value, size)) {
-        MERR("grn_bulk_space failed");
-        goto exit;
-      }
-      {
-        char *curr = GRN_BULK_CURR(value);
-        grn_hash_get_value(ctx, hash, id, curr - size);
-      }
-      value->header.type = GRN_BULK;
       value->header.domain = grn_obj_get_range(ctx, obj);
+      if (GRN_TABLE_IS_GROUPED(obj)) {
+        grn_obj *domain;
+        domain = grn_ctx_at(ctx, value->header.domain);
+        if (GRN_OBJ_TABLEP(domain)) {
+          grn_id subrec_id;
+          if (grn_table_get_subrecs(ctx, obj, id, &subrec_id, NULL, 1) == 1) {
+            GRN_RECORD_SET(ctx, value, subrec_id);
+            processed = GRN_TRUE;
+          }
+        }
+        grn_obj_unlink(ctx, domain);
+      }
+      if (!processed) {
+        grn_hash *hash = (grn_hash *)obj;
+        uint32_t size = hash->value_size;
+        if (grn_bulk_space(ctx, value, size)) {
+          MERR("grn_bulk_space failed");
+          goto exit;
+        }
+        {
+          char *curr = GRN_BULK_CURR(value);
+          grn_hash_get_value(ctx, hash, id, curr - size);
+        }
+      }
     }
     break;
   case GRN_TABLE_NO_KEY :
