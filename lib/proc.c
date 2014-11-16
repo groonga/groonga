@@ -548,7 +548,6 @@ grn_select_drilldown(grn_ctx *ctx, grn_obj *table,
 {
   uint32_t i;
   grn_table_group_result g = {NULL, 0, 0, 1, GRN_TABLE_GROUP_CALC_COUNT, 0};
-  if (keys) {
     for (i = 0; i < n_keys; i++) {
       uint32_t n_hits;
       int real_offset = offset;
@@ -608,7 +607,6 @@ grn_select_drilldown(grn_ctx *ctx, grn_obj *table,
       GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                     ":", "drilldown(%d)", n_hits);
     }
-  }
 }
 
 grn_rc
