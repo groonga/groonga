@@ -911,6 +911,8 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
                              drilldown_sortby, drilldown_sortby_len,
                              drilldown_output_columns,
                              drilldown_output_columns_len);
+      }
+      if (gkeys) {
         grn_table_sort_key_close(ctx, gkeys, ngkeys);
       }
       if (res != table_) { grn_obj_unlink(ctx, res); }
