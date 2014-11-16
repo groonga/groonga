@@ -2988,6 +2988,7 @@ accelerated_table_group(grn_ctx *ctx, grn_obj *table, grn_obj *key, grn_obj *res
       int idp = GRN_OBJ_TABLEP(range);
       grn_table_cursor *tc;
       if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0))) {
+        grn_bool processed = GRN_TRUE;
         switch (a->next->obj->header.type) {
         case GRN_COLUMN_FIX_SIZE :
           {
@@ -3048,14 +3049,15 @@ accelerated_table_group(grn_ctx *ctx, grn_obj *table, grn_obj *key, grn_obj *res
               }
             }
           } else {
-            return GRN_FALSE;
+            processed = GRN_FALSE;
           }
           break;
         default :
-          return GRN_FALSE;
+          processed = GRN_FALSE;
+          break;
         }
         grn_table_cursor_close(ctx, tc);
-        return GRN_TRUE;
+        return processed;
       }
     }
   }
