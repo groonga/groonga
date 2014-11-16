@@ -131,6 +131,18 @@ grn_proc_get_info(grn_ctx *ctx, grn_user_data *user_data,
 }
 
 grn_obj *
+grn_proc_get_vars(grn_ctx *ctx, grn_user_data *user_data)
+{
+  uint32_t n;
+  grn_proc_ctx *pctx = (grn_proc_ctx *)user_data;
+  if (pctx->proc) {
+    return (grn_obj *)grn_expr_get_vars(ctx, (grn_obj *)pctx->proc, &n);
+  } else {
+    return NULL;
+  }
+}
+
+grn_obj *
 grn_proc_get_var(grn_ctx *ctx, grn_user_data *user_data, const char *name, unsigned int name_size)
 {
   grn_proc_ctx *pctx = (grn_proc_ctx *)user_data;
