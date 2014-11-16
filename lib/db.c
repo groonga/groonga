@@ -2976,7 +2976,7 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
 #define GRN_TABLE_GROUP_FILTER_PREFIX    0
 #define GRN_TABLE_GROUP_FILTER_SUFFIX    (1L<<2)
 
-static int
+static grn_bool
 accelerated_table_group(grn_ctx *ctx, grn_obj *table, grn_obj *key, grn_obj *res)
 {
   if (key->header.type == GRN_ACCESSOR) {
@@ -3048,18 +3048,18 @@ accelerated_table_group(grn_ctx *ctx, grn_obj *table, grn_obj *key, grn_obj *res
               }
             }
           } else {
-            return 0;
+            return GRN_FALSE;
           }
           break;
         default :
-          return 0;
+          return GRN_FALSE;
         }
         grn_table_cursor_close(ctx, tc);
-        return 1;
+        return GRN_TRUE;
       }
     }
   }
-  return 0;
+  return GRN_FALSE;
 }
 
 grn_rc
