@@ -918,13 +918,18 @@ grn_table_create_for_group(grn_ctx *ctx, const char *name,
   grn_obj *res = NULL;
   grn_obj *key_type;
   GRN_API_ENTER;
-  key_type = grn_ctx_at(ctx, grn_obj_get_range(ctx, group_key));
+  if (group_key) {
+    key_type = grn_ctx_at(ctx, grn_obj_get_range(ctx, group_key));
+  } else {
+    key_type = grn_ctx_at(ctx, GRN_DB_SHORT_TEXT);
+  }
   if (key_type) {
     res = grn_table_create_with_max_n_subrecs(ctx, name, name_size, path,
                                               GRN_TABLE_HASH_KEY|
                                               GRN_OBJ_WITH_SUBREC|
                                               GRN_OBJ_UNIT_USERDEF_DOCUMENT,
                                               key_type, value_type, max_n_subrecs);
+    grn_obj_unlink(ctx, key_type);
   }
   GRN_API_RETURN(res);
 }
