@@ -548,65 +548,65 @@ grn_select_drilldown(grn_ctx *ctx, grn_obj *table,
 {
   uint32_t i;
   grn_table_group_result g = {NULL, 0, 0, 1, GRN_TABLE_GROUP_CALC_COUNT, 0};
-    for (i = 0; i < n_keys; i++) {
-      uint32_t n_hits;
-      int real_offset = offset;
-      int real_limit = limit;
+  for (i = 0; i < n_keys; i++) {
+    uint32_t n_hits;
+    int real_offset = offset;
+    int real_limit = limit;
 
-      g.table = grn_table_create_for_group(ctx, NULL, 0, NULL,
-                                           keys[i].key, table, 0);
-      if (!g.table) {
-        continue;
-      }
-
-      grn_table_group(ctx, table, &keys[i], 1, &g, 1);
-      n_hits = grn_table_size(ctx, g.table);
-
-      grn_normalize_offset_and_limit(ctx, n_hits, &real_offset, &real_limit);
-
-      if (sortby_len) {
-        grn_table_sort_key *sort_keys;
-        uint32_t n_sort_keys;
-        sort_keys = grn_table_sort_key_from_str(ctx,
-                                                sortby, sortby_len,
-                                                g.table, &n_sort_keys);
-        if (sort_keys) {
-          grn_obj *sorted;
-          sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
-                                    NULL, g.table);
-          if (sorted) {
-            grn_obj_format format;
-            grn_table_sort(ctx, g.table, real_offset, real_limit,
-                           sorted, sort_keys, n_sort_keys);
-            GRN_OBJ_FORMAT_INIT(&format, n_hits, 0, real_limit, real_offset);
-            format.flags =
-              GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
-              GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY;
-            grn_obj_columns(ctx, sorted,
-                            output_columns, output_columns_len,
-                            &format.columns);
-            GRN_OUTPUT_OBJ(sorted, &format);
-            GRN_OBJ_FORMAT_FIN(ctx, &format);
-            grn_obj_unlink(ctx, sorted);
-          }
-          grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
-        }
-      } else {
-        grn_obj_format format;
-        GRN_OBJ_FORMAT_INIT(&format, n_hits, real_offset,
-                            real_limit, real_offset);
-        format.flags =
-          GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
-          GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY;
-        grn_obj_columns(ctx, g.table, output_columns, output_columns_len,
-                        &format.columns);
-        GRN_OUTPUT_OBJ(g.table, &format);
-        GRN_OBJ_FORMAT_FIN(ctx, &format);
-      }
-      grn_obj_unlink(ctx, g.table);
-      GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                    ":", "drilldown(%d)", n_hits);
+    g.table = grn_table_create_for_group(ctx, NULL, 0, NULL,
+                                         keys[i].key, table, 0);
+    if (!g.table) {
+      continue;
     }
+
+    grn_table_group(ctx, table, &keys[i], 1, &g, 1);
+    n_hits = grn_table_size(ctx, g.table);
+
+    grn_normalize_offset_and_limit(ctx, n_hits, &real_offset, &real_limit);
+
+    if (sortby_len) {
+      grn_table_sort_key *sort_keys;
+      uint32_t n_sort_keys;
+      sort_keys = grn_table_sort_key_from_str(ctx,
+                                              sortby, sortby_len,
+                                              g.table, &n_sort_keys);
+      if (sort_keys) {
+        grn_obj *sorted;
+        sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
+                                  NULL, g.table);
+        if (sorted) {
+          grn_obj_format format;
+          grn_table_sort(ctx, g.table, real_offset, real_limit,
+                         sorted, sort_keys, n_sort_keys);
+          GRN_OBJ_FORMAT_INIT(&format, n_hits, 0, real_limit, real_offset);
+          format.flags =
+            GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
+            GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY;
+          grn_obj_columns(ctx, sorted,
+                          output_columns, output_columns_len,
+                          &format.columns);
+          GRN_OUTPUT_OBJ(sorted, &format);
+          GRN_OBJ_FORMAT_FIN(ctx, &format);
+          grn_obj_unlink(ctx, sorted);
+        }
+        grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
+      }
+    } else {
+      grn_obj_format format;
+      GRN_OBJ_FORMAT_INIT(&format, n_hits, real_offset,
+                          real_limit, real_offset);
+      format.flags =
+        GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
+        GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY;
+      grn_obj_columns(ctx, g.table, output_columns, output_columns_len,
+                      &format.columns);
+      GRN_OUTPUT_OBJ(g.table, &format);
+      GRN_OBJ_FORMAT_FIN(ctx, &format);
+    }
+    grn_obj_unlink(ctx, g.table);
+    GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                  ":", "drilldown(%d)", n_hits);
+  }
 }
 
 grn_rc
