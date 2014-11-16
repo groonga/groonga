@@ -609,7 +609,7 @@ grn_select_drilldown(grn_ctx *ctx, grn_obj *table,
   }
 }
 
-grn_rc
+static grn_rc
 grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
            const char *match_columns, unsigned int match_columns_len,
            const char *query, unsigned int query_len,
