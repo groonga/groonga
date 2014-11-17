@@ -70,13 +70,13 @@ uvector_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   if (tokenizer->tail < p) {
     grn_tokenizer_token_push(ctx, &(tokenizer->token),
                              (const char *)tokenizer->curr, 0,
-                             GRN_TOKENIZER_TOKEN_LAST);
+                             GRN_TOKEN_LAST);
   } else {
-    grn_tokenizer_status status;
+    grn_token_status status;
     if (tokenizer->tail == p) {
-      status = GRN_TOKENIZER_TOKEN_LAST;
+      status = GRN_TOKEN_LAST;
     } else {
-      status = GRN_TOKENIZER_TOKEN_CONTINUE;
+      status = GRN_TOKEN_CONTINUE;
     }
     grn_tokenizer_token_push(ctx, &(tokenizer->token),
                              (const char *)tokenizer->curr, tokenizer->unit,
@@ -171,7 +171,7 @@ delimited_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     size_t cl;
     const unsigned char *p = tokenizer->next, *r;
     const unsigned char *e = tokenizer->end;
-    grn_tokenizer_status status;
+    grn_token_status status;
     for (r = p; r < e; r += cl) {
       if (!(cl = grn_charlen_(ctx, (char *)r, (char *)e,
                               tokenizer->query->encoding))) {
@@ -194,9 +194,9 @@ delimited_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
       }
     }
     if (r == e) {
-      status = GRN_TOKENIZER_LAST;
+      status = GRN_TOKEN_LAST;
     } else {
-      status = GRN_TOKENIZER_CONTINUE;
+      status = GRN_TOKEN_CONTINUE;
     }
     grn_tokenizer_token_push(ctx,
                              &(tokenizer->token),
@@ -350,7 +350,8 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   size_t cl;
   grn_ngram_tokenizer *tokenizer = user_data->ptr;
   const unsigned char *p = tokenizer->next, *r = p, *e = tokenizer->end;
-  int32_t len = 0, pos = tokenizer->pos + tokenizer->skip, status = 0;
+  int32_t len = 0, pos = tokenizer->pos + tokenizer->skip;
+  grn_token_status status = 0;
   const uint_least8_t *cp = tokenizer->ctypes ? tokenizer->ctypes + pos : NULL;
   if (cp && tokenizer->uni_alpha && GRN_STR_CTYPE(*cp) == GRN_CHAR_ALPHA) {
     while ((cl = grn_charlen_(ctx, (char *)r, (char *)e,
@@ -427,10 +428,10 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         r += cl;
       }
       if (tokenizer->overlap) {
-        status |= GRN_TOKENIZER_TOKEN_OVERLAP;
+        status |= GRN_TOKEN_OVERLAP;
       }
       if (len < tokenizer->ngram_unit) {
-        status |= GRN_TOKENIZER_TOKEN_UNMATURED;
+        status |= GRN_TOKEN_UNMATURED;
       }
       tokenizer->overlap = (len > 1) ? 1 : 0;
     }
@@ -440,11 +441,11 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   tokenizer->tail = pos + len - 1;
   if (p == r || tokenizer->next == e) {
     tokenizer->skip = 0;
-    status |= GRN_TOKENIZER_TOKEN_LAST;
+    status |= GRN_TOKEN_LAST;
   } else {
     tokenizer->skip = tokenizer->overlap ? 1 : len;
   }
-  if (r == e) { status |= GRN_TOKENIZER_TOKEN_REACH_END; }
+  if (r == e) { status |= GRN_TOKEN_REACH_END; }
   grn_tokenizer_token_push(ctx,
                            &(tokenizer->token),
                            (const char *)p,

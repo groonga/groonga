@@ -153,8 +153,8 @@ grn_token_cursor_next_apply_token_filters(grn_ctx *ctx,
     grn_proc *token_filter = (grn_proc *)token_filter_object;
 
 #define SKIP_FLAGS\
-    (GRN_TOKENIZER_TOKEN_SKIP |\
-     GRN_TOKENIZER_TOKEN_SKIP_WITH_POSITION)
+    (GRN_TOKEN_SKIP |\
+     GRN_TOKEN_SKIP_WITH_POSITION)
     if (current_token.status & SKIP_FLAGS) {
       break;
     }
@@ -193,15 +193,15 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
       status = grn_token_cursor_next_apply_token_filters(ctx, token_cursor,
                                                          curr_, stat_);
       token_cursor->status =
-        ((status & GRN_TOKENIZER_TOKEN_LAST) ||
+        ((status & GRN_TOKEN_LAST) ||
          (token_cursor->mode == GRN_TOKEN_GET &&
-          (status & GRN_TOKENIZER_TOKEN_REACH_END)))
+          (status & GRN_TOKEN_REACH_END)))
         ? GRN_TOKEN_CURSOR_DONE : GRN_TOKEN_CURSOR_DOING;
       token_cursor->force_prefix = GRN_FALSE;
 #define SKIP_FLAGS \
-      (GRN_TOKENIZER_TOKEN_SKIP | GRN_TOKENIZER_TOKEN_SKIP_WITH_POSITION)
+      (GRN_TOKEN_SKIP | GRN_TOKEN_SKIP_WITH_POSITION)
       if (status & SKIP_FLAGS) {
-        if (status & GRN_TOKENIZER_TOKEN_SKIP) {
+        if (status & GRN_TOKEN_SKIP) {
           token_cursor->pos++;
         }
         if (token_cursor->status == GRN_TOKEN_CURSOR_DONE && tid == GRN_ID_NIL) {
@@ -212,7 +212,7 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
         }
       }
 #undef SKIP_FLAGS
-      if (status & GRN_TOKENIZER_TOKEN_FORCE_PREFIX) {
+      if (status & GRN_TOKEN_FORCE_PREFIX) {
         token_cursor->force_prefix = GRN_TRUE;
       }
       if (token_cursor->curr_size == 0) {
@@ -236,14 +236,14 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
                 token_cursor->curr_size, token_cursor->curr);
         continue;
       }
-      if (status & GRN_TOKENIZER_TOKEN_UNMATURED) {
-        if (status & GRN_TOKENIZER_TOKEN_OVERLAP) {
+      if (status & GRN_TOKEN_UNMATURED) {
+        if (status & GRN_TOKEN_OVERLAP) {
           if (token_cursor->mode == GRN_TOKEN_GET) {
             token_cursor->pos++;
             continue;
           }
         } else {
-          if (status & GRN_TOKENIZER_TOKEN_LAST) {
+          if (status & GRN_TOKEN_LAST) {
             token_cursor->force_prefix = GRN_TRUE;
           }
         }

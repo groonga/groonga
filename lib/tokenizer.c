@@ -241,7 +241,7 @@ grn_tokenizer_token_fin(grn_ctx *ctx, grn_tokenizer_token *token)
 void
 grn_tokenizer_token_push(grn_ctx *ctx, grn_tokenizer_token *token,
                          const char *str_ptr, unsigned int str_length,
-                         grn_tokenizer_status status)
+                         grn_token_status status)
 {
   GRN_TEXT_SET_REF(&token->str, str_ptr, str_length);
   GRN_UINT32_SET(ctx, &token->status, status);
@@ -262,7 +262,7 @@ grn_tokenizer_tokenized_delimiter_next(grn_ctx *ctx,
   const char *end = str_ptr + str_length;
   const char *next_start = NULL;
   unsigned int token_length;
-  grn_tokenizer_status status;
+  grn_token_status status;
 
   for (current = start; current < end; current += char_length) {
     char_length = grn_charlen_(ctx, current, end, encoding);
@@ -349,13 +349,13 @@ exit:
   GRN_API_RETURN(ctx->rc);
 }
 
-grn_tokenizer_status
+grn_token_status
 grn_token_get_status(grn_ctx *ctx, grn_token *token)
 {
   GRN_API_ENTER;
   if (!token) {
     ERR(GRN_INVALID_ARGUMENT, "token must not be NULL");
-    GRN_API_RETURN(GRN_TOKENIZER_TOKEN_CONTINUE);
+    GRN_API_RETURN(GRN_TOKEN_CONTINUE);
   }
   GRN_API_RETURN(token->status);
 }
@@ -363,7 +363,7 @@ grn_token_get_status(grn_ctx *ctx, grn_token *token)
 grn_rc
 grn_token_set_status(grn_ctx *ctx,
                      grn_token *token,
-                     grn_tokenizer_status status)
+                     grn_token_status status)
 {
   GRN_API_ENTER;
   if (!token) {

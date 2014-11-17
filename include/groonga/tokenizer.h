@@ -163,28 +163,120 @@ GRN_PLUGIN_EXPORT void grn_tokenizer_token_init(grn_ctx *ctx, grn_tokenizer_toke
 GRN_PLUGIN_EXPORT void grn_tokenizer_token_fin(grn_ctx *ctx, grn_tokenizer_token *token);
 
 /*
+ * grn_token_status is a flag set for tokenizer status codes.
+ * If a document or query contains no tokens, push an empty string with
+ * GRN_TOKEN_LAST as a token.
+ *
+ * @since 4.0.7
+ */
+typedef unsigned int grn_token_status;
+
+/*
+ * GRN_TOKEN_CONTINUE means that the next token is not the last one.
+ *
+ * @since 4.0.7
+ */
+#define GRN_TOKEN_CONTINUE           (0)
+/*
+ * GRN_TOKEN_LAST means that the next token is the last one.
+ *
+ * @since 4.0.7
+ */
+#define GRN_TOKEN_LAST               (0x01L<<0)
+/*
+ * GRN_TOKEN_OVERLAP means that ...
+ *
+ * @since 4.0.7
+ */
+#define GRN_TOKEN_OVERLAP            (0x01L<<1)
+/*
+ * GRN_TOKEN_UNMATURED means that ...
+ *
+ * @since 4.0.7
+ */
+#define GRN_TOKEN_UNMATURED          (0x01L<<2)
+/*
+ * GRN_TOKEN_REACH_END means that ...
+ *
+ * @since 4.0.7
+ */
+#define GRN_TOKEN_REACH_END          (0x01L<<3)
+/*
+ * GRN_TOKEN_SKIP means that the token is skipped
+ *
+ * @since 4.0.7
+ */
+#define GRN_TOKEN_SKIP               (0x01L<<4)
+/*
+ * GRN_TOKEN_SKIP_WITH_POSITION means that the token and postion is skipped
+ *
+ * @since 4.0.7
+ */
+#define GRN_TOKEN_SKIP_WITH_POSITION (0x01L<<5)
+/*
+ * GRN_TOKEN_FORCE_PREIX that the token is used common prefix search
+ *
+ * @since 4.0.7
+ */
+#define GRN_TOKEN_FORCE_PREFIX       (0x01L<<6)
+
+/*
  * grn_tokenizer_status is a flag set for tokenizer status codes.
  * If a document or query contains no tokens, push an empty string with
  * GRN_TOKENIZER_TOKEN_LAST as a token.
+ *
+ * @deprecated since 4.0.7. Use grn_token_status instead.
  */
-typedef unsigned int grn_tokenizer_status;
+typedef grn_token_status grn_tokenizer_status;
 
-/* GRN_TOKENIZER_TOKEN_CONTINUE means that the next token is not the last one. */
-#define GRN_TOKENIZER_TOKEN_CONTINUE           (0)
-/* GRN_TOKENIZER_TOKEN_LAST means that the next token is the last one. */
-#define GRN_TOKENIZER_TOKEN_LAST               (0x01L<<0)
-/* GRN_TOKENIZER_TOKEN_OVERLAP means that ... */
-#define GRN_TOKENIZER_TOKEN_OVERLAP            (0x01L<<1)
-/* GRN_TOKENIZER_TOKEN_UNMATURED means that ... */
-#define GRN_TOKENIZER_TOKEN_UNMATURED          (0x01L<<2)
-/* GRN_TOKENIZER_TOKEN_REACH_END means that ... */
-#define GRN_TOKENIZER_TOKEN_REACH_END          (0x01L<<3)
-/* GRN_TOKENIZER_TOKEN_SKIP means that the token is skipped */
-#define GRN_TOKENIZER_TOKEN_SKIP               (0x01L<<4)
-/* GRN_TOKENIZER_TOKEN_SKIP_WITH_POSITION means that the token and postion is skipped */
-#define GRN_TOKENIZER_TOKEN_SKIP_WITH_POSITION (0x01L<<5)
-/* GRN_TOKENIZER_TOKEN_FORCE_PREIX that the token is used common prefix search */
-#define GRN_TOKENIZER_TOKEN_FORCE_PREFIX       (0x01L<<6)
+/*
+ * GRN_TOKENIZER_TOKEN_CONTINUE means that the next token is not the last one.
+ *
+ * @deprecated since 4.0.7. Use GRN_TOKEN_CONTINUE instead.
+ */
+#define GRN_TOKENIZER_TOKEN_CONTINUE           GRN_TOKEN_CONTINUE
+/*
+ * GRN_TOKENIZER_TOKEN_LAST means that the next token is the last one.
+ *
+ * @deprecated since 4.0.7. Use GRN_TOKEN_LAST instead.
+ */
+#define GRN_TOKENIZER_TOKEN_LAST               GRN_TOKEN_LAST
+/*
+ * GRN_TOKENIZER_TOKEN_OVERLAP means that ...
+ *
+ * @deprecated since 4.0.7. Use GRN_TOKEN_OVERLAP instead.
+ */
+#define GRN_TOKENIZER_TOKEN_OVERLAP            GRN_TOKEN_OVERLAP
+/*
+ * GRN_TOKENIZER_TOKEN_UNMATURED means that ...
+ *
+ * @deprecated since 4.0.7. Use GRN_TOKEN_UNMATURED instead.
+ */
+#define GRN_TOKENIZER_TOKEN_UNMATURED          GRN_TOKEN_UNMATURED
+/*
+ * GRN_TOKENIZER_TOKEN_REACH_END means that ...
+ *
+ * @deprecated since 4.0.7. Use GRN_TOKEN_REACH_END instead.
+ */
+#define GRN_TOKENIZER_TOKEN_REACH_END          GRN_TOKEN_REACH_END
+/*
+ * GRN_TOKENIZER_TOKEN_SKIP means that the token is skipped
+ *
+ * @deprecated since 4.0.7. Use GRN_TOKEN_SKIP instead.
+ */
+#define GRN_TOKENIZER_TOKEN_SKIP               GRN_TOKEN_SKIP
+/*
+ * GRN_TOKENIZER_TOKEN_SKIP_WITH_POSITION means that the token and postion is skipped
+ *
+ * @deprecated since 4.0.7. Use GRN_TOKEN_SKIP_WITH_POSITION instead.
+ */
+#define GRN_TOKENIZER_TOKEN_SKIP_WITH_POSITION GRN_TOKEN_SKIP_WITH_POSITION
+/*
+ * GRN_TOKENIZER_TOKEN_FORCE_PREIX that the token is used common prefix search
+ *
+ * @deprecated since 4.0.7. Use GRN_TOKEN_FORCE_PREIX instead.
+ */
+#define GRN_TOKENIZER_TOKEN_FORCE_PREFIX       GRN_TOKEN_FORCE_PREFIX
 
 /*
  * GRN_TOKENIZER_CONTINUE and GRN_TOKENIZER_LAST are deprecated. They
@@ -207,7 +299,7 @@ GRN_PLUGIN_EXPORT grn_tokenizer_status grn_token_get_status(grn_ctx *ctx,
                                                             grn_token *token);
 GRN_PLUGIN_EXPORT grn_rc grn_token_set_status(grn_ctx *ctx,
                                               grn_token *token,
-                                              grn_tokenizer_status status);
+                                              grn_token_status status);
 
 
 /*
@@ -215,12 +307,12 @@ GRN_PLUGIN_EXPORT grn_rc grn_token_set_status(grn_ctx *ctx,
   grn_tokenizer_token_push() does not make a copy of the given string. This
   means that you have to maintain a memory space allocated to the string.
   Also note that the grn_tokenizer_token object must be maintained until the
-  request for the next token or finalization comes. See grn_tokenizer_status in
+  request for the next token or finalization comes. See grn_token_status in
   this header for more details of `status'.
  */
 GRN_PLUGIN_EXPORT void grn_tokenizer_token_push(grn_ctx *ctx, grn_tokenizer_token *token,
                                                 const char *str_ptr, unsigned int str_length,
-                                                grn_tokenizer_status status);
+                                                grn_token_status status);
 
 /*
   grn_tokenizer_tokenized_delimiter_next() extracts the next token

@@ -35,7 +35,7 @@ typedef enum {
 
 struct _grn_token {
   grn_obj data;
-  grn_tokenizer_status status;
+  grn_token_status status;
 };
 
 typedef struct {
