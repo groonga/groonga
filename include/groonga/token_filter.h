@@ -26,7 +26,7 @@ extern "C" {
 
 typedef void *grn_token_filter_init_func(grn_ctx *ctx,
                                          grn_obj *table,
-                                         grn_token_mode mode);
+                                         grn_tokenize_mode mode);
 
 typedef void grn_token_filter_filter_func(grn_ctx *ctx,
                                           grn_token *current_token,

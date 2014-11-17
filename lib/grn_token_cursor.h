@@ -45,7 +45,7 @@ typedef struct {
   uint32_t orig_blen;
   uint32_t curr_size;
   int32_t pos;
-  grn_token_mode mode;
+  grn_tokenize_mode mode;
   grn_token_cursor_status status;
   grn_bool force_prefix;
   grn_obj_flags table_flags;
@@ -61,7 +61,7 @@ typedef struct {
 
 GRN_API grn_token_cursor *grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
                                                 const char *str, size_t str_len,
-                                                grn_token_mode mode,
+                                                grn_tokenize_mode mode,
                                                 unsigned int flags);
 
 GRN_API grn_id grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor);

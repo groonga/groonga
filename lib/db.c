@@ -10238,7 +10238,7 @@ grn_table_tokenize(grn_ctx *ctx, grn_obj *table,
                    grn_obj *buf, grn_bool addp)
 {
   grn_token_cursor *token_cursor = NULL;
-  grn_token_mode mode = addp ? GRN_TOKEN_ADD : GRN_TOKEN_GET;
+  grn_tokenize_mode mode = addp ? GRN_TOKENIZE_ADD : GRN_TOKENIZE_GET;
   GRN_API_ENTER;
   if (!(token_cursor = grn_token_cursor_open(ctx, table, str, str_len, mode, 0))) {
     goto exit;

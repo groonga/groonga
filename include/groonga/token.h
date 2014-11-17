@@ -23,6 +23,23 @@ extern "C" {
 #endif  /* __cplusplus */
 
 /*
+ * grn_tokenize_mode describes propose for tokenization.
+ *
+ * `GRN_TOKENIZE_GET`: Tokenize for search.
+ *
+ * `GRN_TOKENIZE_ADD`: Tokenize for adding token to index.
+ *
+ * `GRN_TOKENIZE_DELETE`: Tokenize for deleting token from index.
+ *
+ * @since 4.0.8
+ */
+typedef enum {
+  GRN_TOKENIZE_GET = 0,
+  GRN_TOKENIZE_ADD,
+  GRN_TOKENIZE_DELETE
+} grn_tokenize_mode;
+
+/*
   grn_token_mode describes propose for tokenization.
 
   `GRN_TOKEN_GET`: Tokenization for search.
@@ -32,12 +49,13 @@ extern "C" {
   `GRN_TOKEN_DEL`: Tokenization for deleting token from index.
 
   @since 4.0.7
+  @deprecated since 4.0.8. Use grn_tokenize_mode instead.
  */
-typedef enum {
-  GRN_TOKEN_GET = 0,
-  GRN_TOKEN_ADD,
-  GRN_TOKEN_DEL
-} grn_token_mode;
+typedef grn_tokenize_mode grn_token_mode;
+
+#define GRN_TOKEN_GET GRN_TOKENIZE_GET
+#define GRN_TOKEN_ADD GRN_TOKENIZE_ADD
+#define GRN_TOKEN_DEL GRN_TOKENIZE_DELETE
 
 /*
  * grn_token_status is a flag set for tokenizer status codes.

@@ -4876,7 +4876,8 @@ exit :
 
 static grn_rc
 grn_vector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
-                    grn_obj *in, grn_obj *out, grn_token_mode mode, grn_obj *posting)
+                    grn_obj *in, grn_obj *out, grn_tokenize_mode mode,
+                    grn_obj *posting)
 {
   int j;
   grn_id tid;

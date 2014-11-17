@@ -47,7 +47,7 @@ grn_token_cursor_open_initialize_token_filters(grn_ctx *ctx,
 grn_token_cursor *
 grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
                       const char *str, size_t str_len,
-                      grn_token_mode mode, unsigned int flags)
+                      grn_tokenize_mode mode, unsigned int flags)
 {
   grn_token_cursor *token_cursor;
   grn_encoding encoding;
@@ -194,7 +194,7 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
                                                          curr_, stat_);
       token_cursor->status =
         ((status & GRN_TOKEN_LAST) ||
-         (token_cursor->mode == GRN_TOKEN_GET &&
+         (token_cursor->mode == GRN_TOKENIZE_GET &&
           (status & GRN_TOKEN_REACH_END)))
         ? GRN_TOKEN_CURSOR_DONE : GRN_TOKEN_CURSOR_DOING;
       token_cursor->force_prefix = GRN_FALSE;
@@ -238,7 +238,7 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
       }
       if (status & GRN_TOKEN_UNMATURED) {
         if (status & GRN_TOKEN_OVERLAP) {
-          if (token_cursor->mode == GRN_TOKEN_GET) {
+          if (token_cursor->mode == GRN_TOKENIZE_GET) {
             token_cursor->pos++;
             continue;
           }
@@ -251,7 +251,7 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
     } else {
       token_cursor->status = GRN_TOKEN_CURSOR_DONE;
     }
-    if (token_cursor->mode == GRN_TOKEN_ADD) {
+    if (token_cursor->mode == GRN_TOKENIZE_ADD) {
       switch (table->header.type) {
       case GRN_TABLE_PAT_KEY :
         if (grn_io_lock(ctx, ((grn_pat *)table)->io, grn_lock_timeout)) {

@@ -3809,7 +3809,7 @@ create_lexicon_for_tokenize(grn_ctx *ctx,
 }
 
 static void
-tokenize(grn_ctx *ctx, grn_obj *lexicon, grn_obj *string, grn_token_mode mode,
+tokenize(grn_ctx *ctx, grn_obj *lexicon, grn_obj *string, grn_tokenize_mode mode,
          unsigned int flags, grn_obj *tokens)
 {
   grn_token_cursor *token_cursor;
