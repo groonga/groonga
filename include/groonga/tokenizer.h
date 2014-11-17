@@ -149,56 +149,56 @@ GRN_PLUGIN_EXPORT void grn_tokenizer_token_fin(grn_ctx *ctx, grn_tokenizer_token
  * If a document or query contains no tokens, push an empty string with
  * GRN_TOKENIZER_TOKEN_LAST as a token.
  *
- * @deprecated since 4.0.7. Use grn_token_status instead.
+ * @deprecated since 4.0.8. Use grn_token_status instead.
  */
 typedef grn_token_status grn_tokenizer_status;
 
 /*
  * GRN_TOKENIZER_TOKEN_CONTINUE means that the next token is not the last one.
  *
- * @deprecated since 4.0.7. Use GRN_TOKEN_CONTINUE instead.
+ * @deprecated since 4.0.8. Use GRN_TOKEN_CONTINUE instead.
  */
 #define GRN_TOKENIZER_TOKEN_CONTINUE           GRN_TOKEN_CONTINUE
 /*
  * GRN_TOKENIZER_TOKEN_LAST means that the next token is the last one.
  *
- * @deprecated since 4.0.7. Use GRN_TOKEN_LAST instead.
+ * @deprecated since 4.0.8. Use GRN_TOKEN_LAST instead.
  */
 #define GRN_TOKENIZER_TOKEN_LAST               GRN_TOKEN_LAST
 /*
  * GRN_TOKENIZER_TOKEN_OVERLAP means that ...
  *
- * @deprecated since 4.0.7. Use GRN_TOKEN_OVERLAP instead.
+ * @deprecated since 4.0.8. Use GRN_TOKEN_OVERLAP instead.
  */
 #define GRN_TOKENIZER_TOKEN_OVERLAP            GRN_TOKEN_OVERLAP
 /*
  * GRN_TOKENIZER_TOKEN_UNMATURED means that ...
  *
- * @deprecated since 4.0.7. Use GRN_TOKEN_UNMATURED instead.
+ * @deprecated since 4.0.8. Use GRN_TOKEN_UNMATURED instead.
  */
 #define GRN_TOKENIZER_TOKEN_UNMATURED          GRN_TOKEN_UNMATURED
 /*
  * GRN_TOKENIZER_TOKEN_REACH_END means that ...
  *
- * @deprecated since 4.0.7. Use GRN_TOKEN_REACH_END instead.
+ * @deprecated since 4.0.8. Use GRN_TOKEN_REACH_END instead.
  */
 #define GRN_TOKENIZER_TOKEN_REACH_END          GRN_TOKEN_REACH_END
 /*
  * GRN_TOKENIZER_TOKEN_SKIP means that the token is skipped
  *
- * @deprecated since 4.0.7. Use GRN_TOKEN_SKIP instead.
+ * @deprecated since 4.0.8. Use GRN_TOKEN_SKIP instead.
  */
 #define GRN_TOKENIZER_TOKEN_SKIP               GRN_TOKEN_SKIP
 /*
  * GRN_TOKENIZER_TOKEN_SKIP_WITH_POSITION means that the token and postion is skipped
  *
- * @deprecated since 4.0.7. Use GRN_TOKEN_SKIP_WITH_POSITION instead.
+ * @deprecated since 4.0.8. Use GRN_TOKEN_SKIP_WITH_POSITION instead.
  */
 #define GRN_TOKENIZER_TOKEN_SKIP_WITH_POSITION GRN_TOKEN_SKIP_WITH_POSITION
 /*
  * GRN_TOKENIZER_TOKEN_FORCE_PREIX that the token is used common prefix search
  *
- * @deprecated since 4.0.7. Use GRN_TOKEN_FORCE_PREIX instead.
+ * @deprecated since 4.0.8. Use GRN_TOKEN_FORCE_PREIX instead.
  */
 #define GRN_TOKENIZER_TOKEN_FORCE_PREFIX       GRN_TOKEN_FORCE_PREFIX
 

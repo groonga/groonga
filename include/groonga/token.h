@@ -44,56 +44,56 @@ typedef enum {
  * If a document or query contains no tokens, push an empty string with
  * GRN_TOKEN_LAST as a token.
  *
- * @since 4.0.7
+ * @since 4.0.8
  */
 typedef unsigned int grn_token_status;
 
 /*
  * GRN_TOKEN_CONTINUE means that the next token is not the last one.
  *
- * @since 4.0.7
+ * @since 4.0.8
  */
 #define GRN_TOKEN_CONTINUE           (0)
 /*
  * GRN_TOKEN_LAST means that the next token is the last one.
  *
- * @since 4.0.7
+ * @since 4.0.8
  */
 #define GRN_TOKEN_LAST               (0x01L<<0)
 /*
  * GRN_TOKEN_OVERLAP means that ...
  *
- * @since 4.0.7
+ * @since 4.0.8
  */
 #define GRN_TOKEN_OVERLAP            (0x01L<<1)
 /*
  * GRN_TOKEN_UNMATURED means that ...
  *
- * @since 4.0.7
+ * @since 4.0.8
  */
 #define GRN_TOKEN_UNMATURED          (0x01L<<2)
 /*
  * GRN_TOKEN_REACH_END means that ...
  *
- * @since 4.0.7
+ * @since 4.0.8
  */
 #define GRN_TOKEN_REACH_END          (0x01L<<3)
 /*
  * GRN_TOKEN_SKIP means that the token is skipped
  *
- * @since 4.0.7
+ * @since 4.0.8
  */
 #define GRN_TOKEN_SKIP               (0x01L<<4)
 /*
  * GRN_TOKEN_SKIP_WITH_POSITION means that the token and postion is skipped
  *
- * @since 4.0.7
+ * @since 4.0.8
  */
 #define GRN_TOKEN_SKIP_WITH_POSITION (0x01L<<5)
 /*
  * GRN_TOKEN_FORCE_PREIX that the token is used common prefix search
  *
- * @since 4.0.7
+ * @since 4.0.8
  */
 #define GRN_TOKEN_FORCE_PREFIX       (0x01L<<6)
 
