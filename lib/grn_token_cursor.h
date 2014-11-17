@@ -47,7 +47,7 @@ typedef struct {
   int32_t pos;
   grn_token_mode mode;
   grn_token_status status;
-  uint8_t force_prefix;
+  grn_bool force_prefix;
   grn_obj_flags table_flags;
   grn_encoding encoding;
   grn_obj *tokenizer;

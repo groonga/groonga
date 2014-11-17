@@ -72,7 +72,7 @@ grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
   token_cursor->curr_size = 0;
   token_cursor->pos = -1;
   token_cursor->status = GRN_TOKEN_DOING;
-  token_cursor->force_prefix = 0;
+  token_cursor->force_prefix = GRN_FALSE;
   if (tokenizer) {
     grn_obj str_, flags_, mode_;
     GRN_TEXT_INIT(&str_, GRN_OBJ_DO_SHALLOW_COPY);
@@ -197,7 +197,7 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
          (token_cursor->mode == GRN_TOKEN_GET &&
           (status & GRN_TOKENIZER_TOKEN_REACH_END)))
         ? GRN_TOKEN_DONE : GRN_TOKEN_DOING;
-      token_cursor->force_prefix = 0;
+      token_cursor->force_prefix = GRN_FALSE;
 #define SKIP_FLAGS \
       (GRN_TOKENIZER_TOKEN_SKIP | GRN_TOKENIZER_TOKEN_SKIP_WITH_POSITION)
       if (status & SKIP_FLAGS) {
@@ -212,7 +212,7 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
         }
       }
 #undef SKIP_FLAGS
-      if (status & GRN_TOKENIZER_TOKEN_FORCE_PREFIX) { token_cursor->force_prefix = 1; }
+      if (status & GRN_TOKENIZER_TOKEN_FORCE_PREFIX) { token_cursor->force_prefix = GRN_TRUE; }
       if (token_cursor->curr_size == 0) {
         char tokenizer_name[GRN_TABLE_MAX_KEY_SIZE];
         int tokenizer_name_length;
@@ -238,7 +238,7 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
         if (status & GRN_TOKENIZER_TOKEN_OVERLAP) {
           if (token_cursor->mode == GRN_TOKEN_GET) { token_cursor->pos++; continue; }
         } else {
-          if (status & GRN_TOKENIZER_TOKEN_LAST) { token_cursor->force_prefix = 1; }
+          if (status & GRN_TOKENIZER_TOKEN_LAST) { token_cursor->force_prefix = GRN_TRUE; }
         }
       }
     } else {
