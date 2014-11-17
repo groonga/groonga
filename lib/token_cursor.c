@@ -212,7 +212,9 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
         }
       }
 #undef SKIP_FLAGS
-      if (status & GRN_TOKENIZER_TOKEN_FORCE_PREFIX) { token_cursor->force_prefix = GRN_TRUE; }
+      if (status & GRN_TOKENIZER_TOKEN_FORCE_PREFIX) {
+        token_cursor->force_prefix = GRN_TRUE;
+      }
       if (token_cursor->curr_size == 0) {
         char tokenizer_name[GRN_TABLE_MAX_KEY_SIZE];
         int tokenizer_name_length;
@@ -236,9 +238,14 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
       }
       if (status & GRN_TOKENIZER_TOKEN_UNMATURED) {
         if (status & GRN_TOKENIZER_TOKEN_OVERLAP) {
-          if (token_cursor->mode == GRN_TOKEN_GET) { token_cursor->pos++; continue; }
+          if (token_cursor->mode == GRN_TOKEN_GET) {
+            token_cursor->pos++;
+            continue;
+          }
         } else {
-          if (status & GRN_TOKENIZER_TOKEN_LAST) { token_cursor->force_prefix = GRN_TRUE; }
+          if (status & GRN_TOKENIZER_TOKEN_LAST) {
+            token_cursor->force_prefix = GRN_TRUE;
+          }
         }
       }
     } else {
