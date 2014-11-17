@@ -18,9 +18,9 @@
 #ifndef GROONGA_H
 #define GROONGA_H
 
-#include <groonga/groonga.h>
-#include <groonga/ii.h>
-#include <groonga/expr.h>
-#include <groonga/util.h>
+#include "groonga/groonga.h"
+#include "groonga/ii.h"
+#include "groonga/expr.h"
+#include "groonga/util.h"
 
 #endif /* GROONGA_H */
