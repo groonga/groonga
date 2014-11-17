@@ -18,8 +18,6 @@
 #ifndef GROONGA_TOKEN_FILTER_H
 #define GROONGA_TOKEN_FILTER_H
 
-#include <stddef.h>
-
 #include <groonga/tokenizer.h>
 
 #ifdef __cplusplus
