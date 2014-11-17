@@ -212,6 +212,7 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
         }
       }
 #undef SKIP_FLAGS
+      if (status & GRN_TOKENIZER_TOKEN_FORCE_PREFIX) { token_cursor->force_prefix = 1; }
       if (token_cursor->curr_size == 0) {
         char tokenizer_name[GRN_TABLE_MAX_KEY_SIZE];
         int tokenizer_name_length;
