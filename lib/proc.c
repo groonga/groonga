@@ -3822,7 +3822,7 @@ tokenize(grn_ctx *ctx, grn_obj *lexicon, grn_obj *string, grn_token_mode mode,
     return;
   }
 
-  while (token_cursor->status == GRN_TOKEN_DOING) {
+  while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
     grn_id token_id = grn_token_cursor_next(ctx, token_cursor);
     tokenize_token *current_token;
     if (token_id == GRN_ID_NIL) {

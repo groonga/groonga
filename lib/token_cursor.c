@@ -71,7 +71,7 @@ grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
   token_cursor->nstr = NULL;
   token_cursor->curr_size = 0;
   token_cursor->pos = -1;
-  token_cursor->status = GRN_TOKEN_DOING;
+  token_cursor->status = GRN_TOKEN_CURSOR_DOING;
   token_cursor->force_prefix = GRN_FALSE;
   if (tokenizer) {
     grn_obj str_, flags_, mode_;
@@ -184,7 +184,7 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
   grn_id tid = GRN_ID_NIL;
   grn_obj *table = token_cursor->table;
   grn_obj *tokenizer = token_cursor->tokenizer;
-  while (token_cursor->status != GRN_TOKEN_DONE) {
+  while (token_cursor->status != GRN_TOKEN_CURSOR_DONE) {
     if (tokenizer) {
       grn_obj *curr_, *stat_;
       ((grn_proc *)tokenizer)->funcs[PROC_NEXT](ctx, 1, &table, &token_cursor->pctx.user_data);
@@ -196,7 +196,7 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
         ((status & GRN_TOKENIZER_TOKEN_LAST) ||
          (token_cursor->mode == GRN_TOKEN_GET &&
           (status & GRN_TOKENIZER_TOKEN_REACH_END)))
-        ? GRN_TOKEN_DONE : GRN_TOKEN_DOING;
+        ? GRN_TOKEN_CURSOR_DONE : GRN_TOKEN_CURSOR_DOING;
       token_cursor->force_prefix = GRN_FALSE;
 #define SKIP_FLAGS \
       (GRN_TOKENIZER_TOKEN_SKIP | GRN_TOKENIZER_TOKEN_SKIP_WITH_POSITION)
@@ -204,8 +204,8 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
         if (status & GRN_TOKENIZER_TOKEN_SKIP) {
           token_cursor->pos++;
         }
-        if (token_cursor->status == GRN_TOKEN_DONE && tid == GRN_ID_NIL) {
-          token_cursor->status = GRN_TOKEN_DONE_SKIP;
+        if (token_cursor->status == GRN_TOKEN_CURSOR_DONE && tid == GRN_ID_NIL) {
+          token_cursor->status = GRN_TOKEN_CURSOR_DONE_SKIP;
           break;
         } else {
           continue;
@@ -249,7 +249,7 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
         }
       }
     } else {
-      token_cursor->status = GRN_TOKEN_DONE;
+      token_cursor->status = GRN_TOKEN_CURSOR_DONE;
     }
     if (token_cursor->mode == GRN_TOKEN_ADD) {
       switch (table->header.type) {
@@ -308,8 +308,8 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
         break;
       }
     }
-    if (tid == GRN_ID_NIL && token_cursor->status != GRN_TOKEN_DONE) {
-      token_cursor->status = GRN_TOKEN_NOT_FOUND;
+    if (tid == GRN_ID_NIL && token_cursor->status != GRN_TOKEN_CURSOR_DONE) {
+      token_cursor->status = GRN_TOKEN_CURSOR_NOT_FOUND;
     }
     token_cursor->pos++;
     break;

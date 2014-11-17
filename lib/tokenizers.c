@@ -392,7 +392,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     // todo : grn_pat_lcp_search
     if ((tid = grn_sym_common_prefix_search(sym, p))) {
       if (!(key = _grn_sym_key(sym, tid))) {
-        tokenizer->status = GRN_TOKEN_NOT_FOUND;
+        tokenizer->status = GRN_TOKEN_CURSOR_NOT_FOUND;
         return NULL;
       }
       len = grn_str_len(key, tokenizer->query->encoding, NULL);
@@ -402,7 +402,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       if (r != p && pos + len - 1 <= tokenizer->tail) { continue; }
       p += strlen(key);
       if (!*p && tokenizer->mode == GRN_TOKEN_GET) {
-        tokenizer->status = GRN_TOKEN_DONE;
+        tokenizer->status = GRN_TOKEN_CURSOR_DONE;
       }
     }
 #endif /* PRE_DEFINED_UNSPLIT_WORDS */

@@ -27,11 +27,11 @@ extern "C" {
 #endif
 
 typedef enum {
-  GRN_TOKEN_DOING = 0,
-  GRN_TOKEN_DONE,
-  GRN_TOKEN_DONE_SKIP,
-  GRN_TOKEN_NOT_FOUND
-} grn_token_status;
+  GRN_TOKEN_CURSOR_DOING = 0,
+  GRN_TOKEN_CURSOR_DONE,
+  GRN_TOKEN_CURSOR_DONE_SKIP,
+  GRN_TOKEN_CURSOR_NOT_FOUND
+} grn_token_cursor_status;
 
 struct _grn_token {
   grn_obj data;
@@ -46,7 +46,7 @@ typedef struct {
   uint32_t curr_size;
   int32_t pos;
   grn_token_mode mode;
-  grn_token_status status;
+  grn_token_cursor_status status;
   grn_bool force_prefix;
   grn_obj_flags table_flags;
   grn_encoding encoding;

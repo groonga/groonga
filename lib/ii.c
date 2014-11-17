@@ -5403,11 +5403,11 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
     tid = grn_token_cursor_next(ctx, token_cursor);
     if (token_cursor->force_prefix) { ef |= EX_PREFIX; }
     switch (token_cursor->status) {
-    case GRN_TOKEN_DOING :
+    case GRN_TOKEN_CURSOR_DOING :
       key = _grn_table_key(ctx, lexicon, tid, &size);
       ti = token_info_open(ctx, lexicon, ii, key, size, token_cursor->pos, ef & EX_SUFFIX);
       break;
-    case GRN_TOKEN_DONE :
+    case GRN_TOKEN_CURSOR_DONE :
       ti = token_info_open(ctx, lexicon, ii, (const char *)token_cursor->curr,
                            token_cursor->curr_size, 0, ef);
       /*
@@ -5417,11 +5417,11 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
                            token_cursor->orig_blen, token_cursor->pos, ef);
       */
       break;
-    case GRN_TOKEN_NOT_FOUND :
+    case GRN_TOKEN_CURSOR_NOT_FOUND :
       ti = token_info_open(ctx, lexicon, ii, (char *)token_cursor->orig,
                            token_cursor->orig_blen, 0, ef);
       break;
-    case GRN_TOKEN_DONE_SKIP :
+    case GRN_TOKEN_CURSOR_DONE_SKIP :
       *only_skip_token = GRN_TRUE;
       goto exit;
     default :
@@ -5429,17 +5429,17 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
     }
     if (!ti) { goto exit ; }
     tis[(*n)++] = ti;
-    while (token_cursor->status == GRN_TOKEN_DOING) {
+    while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
       tid = grn_token_cursor_next(ctx, token_cursor);
       if (token_cursor->force_prefix) { ef |= EX_PREFIX; }
       switch (token_cursor->status) {
-      case GRN_TOKEN_DONE_SKIP :
+      case GRN_TOKEN_CURSOR_DONE_SKIP :
         continue;
-      case GRN_TOKEN_DOING :
+      case GRN_TOKEN_CURSOR_DOING :
         key = _grn_table_key(ctx, lexicon, tid, &size);
         ti = token_info_open(ctx, lexicon, ii, key, size, token_cursor->pos, EX_NONE);
         break;
-      case GRN_TOKEN_DONE :
+      case GRN_TOKEN_CURSOR_DONE :
         if (tid) {
           key = _grn_table_key(ctx, lexicon, tid, &size);
           ti = token_info_open(ctx, lexicon, ii, key, size, token_cursor->pos, ef & EX_PREFIX);
@@ -5678,8 +5678,8 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
     return GRN_NO_MEMORY_AVAILABLE;
   }
   if (!(max_size = optarg->max_size)) { max_size = 1048576; }
-  while (token_cursor->status != GRN_TOKEN_DONE &&
-         token_cursor->status != GRN_TOKEN_DONE_SKIP) {
+  while (token_cursor->status != GRN_TOKEN_CURSOR_DONE &&
+         token_cursor->status != GRN_TOKEN_CURSOR_DONE_SKIP) {
     if ((tid = grn_token_cursor_next(ctx, token_cursor))) {
       if (grn_hash_add(ctx, h, &tid, sizeof(grn_id), (void **)&w1, NULL)) { (*w1)++; }
     }

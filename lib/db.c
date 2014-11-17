@@ -5704,7 +5704,7 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
         if (v && s &&
             (token_cursor = grn_token_cursor_open(ctx, lexicon, v, s,
                                                   GRN_TOKEN_ADD, token_flags))) {
-          while (token_cursor->status == GRN_TOKEN_DOING) {
+          while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
             grn_id tid = grn_token_cursor_next(ctx, token_cursor);
             grn_uvector_add_element(ctx, &uvector, tid, 0);
           }
@@ -10250,7 +10250,7 @@ grn_table_tokenize(grn_ctx *ctx, grn_obj *table,
       goto exit;
     }
   }
-  while (token_cursor->status != GRN_TOKEN_DONE && token_cursor->status != GRN_TOKEN_DONE_SKIP) {
+  while (token_cursor->status != GRN_TOKEN_CURSOR_DONE && token_cursor->status != GRN_TOKEN_CURSOR_DONE_SKIP) {
     grn_id tid;
     if ((tid = grn_token_cursor_next(ctx, token_cursor))) {
       GRN_RECORD_PUT(ctx, buf, tid);
