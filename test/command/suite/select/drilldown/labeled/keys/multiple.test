@@ -15,4 +15,4 @@ load --table Memos
 
 select Memos \
   --drilldown[tag].keys tag,date \
-  --drilldown[tag].output_columns tag,date,_nsubrecs
+  --drilldown[tag].output_columns _value.tag,_value.date,_nsubrecs
