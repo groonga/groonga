@@ -4476,7 +4476,15 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
           (*rp)->action = GRN_ACCESSOR_GET_COLUMN_VALUE;
           break;
         } else {
-          if (!obj->header.domain) {
+          grn_bool is_grouped_table;
+          grn_id next_obj_id;
+          is_grouped_table = grn_table_is_grouped(ctx, obj);
+          if (is_grouped_table) {
+            next_obj_id = grn_obj_get_range(ctx, obj);
+          } else {
+            next_obj_id = obj->header.domain;
+          }
+          if (!next_obj_id) {
             // ERR(GRN_INVALID_ARGUMENT, "no such column: <%s>", name);
             if (!is_chained) {
               grn_obj_close(ctx, (grn_obj *)res);
@@ -4486,23 +4494,28 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
           }
           *rp = accessor_new(ctx);
           (*rp)->obj = obj;
-          if (!(obj = grn_ctx_at(ctx, obj->header.domain))) {
+          obj = grn_ctx_at(ctx, next_obj_id);
+          if (!obj) {
             grn_obj_close(ctx, (grn_obj *)res);
             res = NULL;
             goto exit;
           }
-          switch (obj->header.type) {
-          case GRN_TABLE_PAT_KEY :
-          case GRN_TABLE_DAT_KEY :
-          case GRN_TABLE_HASH_KEY :
-          case GRN_TABLE_NO_KEY :
-            (*rp)->action = GRN_ACCESSOR_GET_KEY;
+          if (is_grouped_table) {
+            (*rp)->action = GRN_ACCESSOR_GET_VALUE;
+          } else {
+            switch (obj->header.type) {
+            case GRN_TABLE_PAT_KEY :
+            case GRN_TABLE_DAT_KEY :
+            case GRN_TABLE_HASH_KEY :
+            case GRN_TABLE_NO_KEY :
+              (*rp)->action = GRN_ACCESSOR_GET_KEY;
             break;
-          default :
-            /* lookup failed */
-            grn_obj_close(ctx, (grn_obj *)res);
-            res = NULL;
-            goto exit;
+            default :
+              /* lookup failed */
+              grn_obj_close(ctx, (grn_obj *)res);
+              res = NULL;
+              goto exit;
+            }
           }
         }
       }
