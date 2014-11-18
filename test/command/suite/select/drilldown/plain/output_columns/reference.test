@@ -1,0 +1,26 @@
+table_create Tags TABLE_PAT_KEY ShortText
+column_create Tags label COLUMN_SCALAR ShortText
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos tag COLUMN_SCALAR Tags
+
+load --table Tags
+[
+{"_key": "groonga", "label": "Groonga"},
+{"_key": "mroonga", "label": "Mroonga"},
+{"_key": "rroonga", "label": "Rroonga"}
+]
+
+load --table Memos
+[
+{"_key": "Groonga is fast!", "tag": "groonga"},
+{"_key": "Mroonga is fast!", "tag": "mroonga"},
+{"_key": "Groonga sticker!", "tag": "groonga"},
+{"_key": "Rroonga is fast!", "tag": "rroonga"},
+{"_key": "Groonga is good!", "tag": "groonga"}
+]
+
+select Memos \
+  --filter true \
+  --drilldown tag \
+  --drilldown_output_columns _key,label,_nsubrecs

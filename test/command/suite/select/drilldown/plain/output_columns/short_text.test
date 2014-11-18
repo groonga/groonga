@@ -1,0 +1,16 @@
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos tag COLUMN_SCALAR ShortText
+
+load --table Memos
+[
+{"_key": "Groonga is fast!", "tag": "Groonga"},
+{"_key": "Mroonga is fast!", "tag": "Mroonga"},
+{"_key": "Groonga sticker!", "tag": "Groonga"},
+{"_key": "Rroonga is fast!", "tag": "Rroonga"},
+{"_key": "Groonga is good!", "tag": "Groonga"}
+]
+
+select Memos \
+  --filter true \
+  --drilldown tag \
+  --drilldown_output_columns _key,_nsubrecs
