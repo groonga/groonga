@@ -4995,8 +4995,8 @@ exec_result_to_score(grn_ctx *ctx, grn_obj *result, grn_obj *score_buffer)
 }
 
 static void
-grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
-                  grn_obj *res, grn_operator op)
+grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
+                            grn_obj *v, grn_obj *res, grn_operator op)
 {
   int32_t score;
   grn_id id, *idp;
@@ -5649,7 +5649,8 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
             if (ctx->rc) { break; }
             e->codes = codes + si->start;
             e->codes_curr = si->end - si->start + 1;
-            grn_table_select_(ctx, table, expr, v, res, si->logical_op);
+            grn_table_select_sequential(ctx, table, expr, v,
+                                        res, si->logical_op);
           }
         }
         GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
@@ -5665,7 +5666,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
       e->codes_curr = codes_curr;
     } else {
       if (!ctx->rc) {
-        grn_table_select_(ctx, table, expr, v, res, op);
+        grn_table_select_sequential(ctx, table, expr, v, res, op);
       }
     }
   }
