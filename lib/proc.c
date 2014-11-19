@@ -1054,6 +1054,9 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
             while ((id = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
               GRN_RECORD_SET(ctx, v, id);
               grn_expr_exec(ctx, scorer_, 0);
+              if (ctx->rc) {
+                break;
+              }
             }
             grn_table_cursor_close(ctx, tc);
           }
@@ -5497,6 +5500,9 @@ selector_between_sequential_search(grn_ctx *ctx,
       }
       GRN_RECORD_SET(ctx, variable, record_id);
       result = grn_expr_exec(ctx, expr, 0);
+      if (ctx->rc) {
+        break;
+      }
       if (result) {
         grn_bool result_boolean;
         GRN_TRUEP(ctx, result, result_boolean);
@@ -5880,6 +5886,9 @@ func_in_values(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     grn_expr_append_const(ctx, equal_condition, value, GRN_OP_PUSH, 1);
     grn_expr_append_op(ctx, equal_condition, GRN_OP_EQUAL, 2);
     result = grn_expr_exec(ctx, equal_condition, 0);
+    if (ctx->rc) {
+      break;
+    }
     if (result) {
       GRN_TRUEP(ctx, result, result_boolean);
     }
@@ -6325,6 +6334,9 @@ proc_range_filter(grn_ctx *ctx, int nargs, grn_obj **args,
             grn_obj *result;
             GRN_RECORD_SET(ctx, filter_variable, posting->rid);
             result = grn_expr_exec(ctx, filter_expr, 0);
+            if (ctx->rc) {
+              break;
+            }
             if (result) {
               GRN_TRUEP(ctx, result, result_boolean);
             }
@@ -6358,7 +6370,7 @@ proc_range_filter(grn_ctx *ctx, int nargs, grn_obj **args,
     grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
   }
 
-  {
+  if (ctx->rc == GRN_SUCCESS) {
     const char *raw_output_columns;
     int raw_output_columns_len;
 
