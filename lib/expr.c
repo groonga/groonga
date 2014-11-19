@@ -5013,6 +5013,9 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
       while ((id = grn_table_cursor_next(ctx, tc))) {
         GRN_RECORD_SET(ctx, v, id);
         r = grn_expr_exec(ctx, expr, 0);
+        if (ctx->rc) {
+          break;
+        }
         score = exec_result_to_score(ctx, r, &score_buffer);
         if (score > 0) {
           grn_rset_recinfo *ri;
@@ -5030,6 +5033,9 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
         grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
         GRN_RECORD_SET(ctx, v, *idp);
         r = grn_expr_exec(ctx, expr, 0);
+        if (ctx->rc) {
+          break;
+        }
         score = exec_result_to_score(ctx, r, &score_buffer);
         if (score > 0) {
           grn_rset_recinfo *ri;
@@ -5048,6 +5054,9 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
         grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
         GRN_RECORD_SET(ctx, v, *idp);
         r = grn_expr_exec(ctx, expr, 0);
+        if (ctx->rc) {
+          break;
+        }
         score = exec_result_to_score(ctx, r, &score_buffer);
         if (score > 0) {
           grn_hash_cursor_delete(ctx, hc, NULL);
@@ -5062,6 +5071,9 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
         grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
         GRN_RECORD_SET(ctx, v, *idp);
         r = grn_expr_exec(ctx, expr, 0);
+        if (ctx->rc) {
+          break;
+        }
         score = exec_result_to_score(ctx, r, &score_buffer);
         if (score > 0) {
           grn_rset_recinfo *ri;
