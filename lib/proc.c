@@ -6211,6 +6211,7 @@ proc_range_filter(grn_ctx *ctx, int nargs, grn_obj **args,
           "[range_filter] invalid limit format: <%.*s>",
           (int)GRN_TEXT_LEN(limit), GRN_TEXT_VALUE(limit));
       GRN_OBJ_FIN(ctx, &int32_value);
+      goto exit;
     }
     real_limit = GRN_INT32_VALUE(&int32_value);
 

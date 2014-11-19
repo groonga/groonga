@@ -9,5 +9,5 @@ table_create IDs TABLE_PAT_KEY Int32
 column_create IDs memos_id COLUMN_INDEX Memos id
 [[0,0.0,0.0],true]
 range_filter Memos id --limit x
-[[0,0.0,0.0],[[]]]
+[[[-22,0.0,0.0],"[range_filter] invalid limit format: <x>"]]
 #|e| [range_filter] invalid limit format: <x>
