@@ -1,0 +1,51 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos id COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+column_create Memos text COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create IDs TABLE_PAT_KEY Int32
+[[0,0.0,0.0],true]
+column_create IDs memos_id COLUMN_INDEX Memos id
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"id":   0, "text": "aaa"},
+{"id":   1, "text": "aab"},
+{"id":   2, "text": "aac"}
+]
+[[0,0.0,0.0],3]
+range_filter Memos id   --min 0 --min_border include   --max 1
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "_id",
+        "UInt32"
+      ],
+      [
+        "id",
+        "Int32"
+      ],
+      [
+        "text",
+        "Text"
+      ]
+    ],
+    [
+      1,
+      0,
+      "aaa"
+    ],
+    [
+      2,
+      1,
+      "aab"
+    ]
+  ]
+]
