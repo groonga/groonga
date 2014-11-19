@@ -1,0 +1,11 @@
+table_create Paths TABLE_PAT_KEY ShortText
+
+table_create Memos TABLE_NO_KEY
+column_create Memos path COLUMN_SCALAR Paths
+
+load --table Memos
+[
+{"path": "/data/Groonga/db"}
+]
+
+select Memos --filter 'path @ "gROONGA"'
