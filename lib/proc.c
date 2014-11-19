@@ -6285,7 +6285,11 @@ proc_range_filter(grn_ctx *ctx, int nargs, grn_obj **args,
         } else {
           table_cursor_flags |= GRN_CURSOR_ASCENDING;
         }
-        min_border_type = between_parse_border(ctx, min_border, "min_border");
+        if (GRN_TEXT_LEN(min_border) > 0) {
+          min_border_type = between_parse_border(ctx, min_border, "min_border");
+        } else {
+          min_border_type = BETWEEN_BORDER_INCLUDE;
+        }
         max_border_type = between_parse_border(ctx, max_border, "max_border");
         if (min_border_type == BETWEEN_BORDER_EXCLUDE) {
           table_cursor_flags |= GRN_CURSOR_GT;
