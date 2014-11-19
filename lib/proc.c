@@ -6346,10 +6346,21 @@ proc_range_filter(grn_ctx *ctx, int nargs, grn_obj **args,
     grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
   }
 
-  grn_select_output_columns(ctx, res, -1, real_offset, real_limit,
-                            GRN_TEXT_VALUE(output_columns),
-                            GRN_TEXT_LEN(output_columns),
-                            filter_expr);
+  {
+    const char *raw_output_columns;
+    int raw_output_columns_len;
+
+    raw_output_columns = GRN_TEXT_VALUE(output_columns);
+    raw_output_columns_len = GRN_TEXT_LEN(output_columns);
+    if (raw_output_columns_len == 0) {
+      raw_output_columns = DEFAULT_OUTPUT_COLUMNS;
+      raw_output_columns_len = strlen(raw_output_columns);
+    }
+    grn_select_output_columns(ctx, res, -1, real_offset, real_limit,
+                              raw_output_columns,
+                              raw_output_columns_len,
+                              filter_expr);
+  }
 
 exit:
   if (filter_expr) {
