@@ -6195,25 +6195,33 @@ proc_range_filter(grn_ctx *ctx, int nargs, grn_obj **args,
 
     GRN_INT32_INIT(&int32_value, 0);
 
-    if (grn_obj_cast(ctx, offset, &int32_value, GRN_FALSE) != GRN_SUCCESS) {
-      ERR(GRN_INVALID_ARGUMENT,
-          "[range_filter] invalid offset format: <%.*s>",
-          (int)GRN_TEXT_LEN(offset), GRN_TEXT_VALUE(offset));
-      GRN_OBJ_FIN(ctx, &int32_value);
-      goto exit;
+    if (GRN_TEXT_LEN(offset) > 0) {
+      if (grn_obj_cast(ctx, offset, &int32_value, GRN_FALSE) != GRN_SUCCESS) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "[range_filter] invalid offset format: <%.*s>",
+            (int)GRN_TEXT_LEN(offset), GRN_TEXT_VALUE(offset));
+        GRN_OBJ_FIN(ctx, &int32_value);
+        goto exit;
+      }
+      real_offset = GRN_INT32_VALUE(&int32_value);
+    } else {
+      real_offset = 0;
     }
-    real_offset = GRN_INT32_VALUE(&int32_value);
 
     GRN_BULK_REWIND(&int32_value);
 
-    if (grn_obj_cast(ctx, limit, &int32_value, GRN_FALSE) != GRN_SUCCESS) {
-      ERR(GRN_INVALID_ARGUMENT,
-          "[range_filter] invalid limit format: <%.*s>",
-          (int)GRN_TEXT_LEN(limit), GRN_TEXT_VALUE(limit));
-      GRN_OBJ_FIN(ctx, &int32_value);
-      goto exit;
+    if (GRN_TEXT_LEN(limit) > 0) {
+      if (grn_obj_cast(ctx, limit, &int32_value, GRN_FALSE) != GRN_SUCCESS) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "[range_filter] invalid limit format: <%.*s>",
+            (int)GRN_TEXT_LEN(limit), GRN_TEXT_VALUE(limit));
+        GRN_OBJ_FIN(ctx, &int32_value);
+        goto exit;
+      }
+      real_limit = GRN_INT32_VALUE(&int32_value);
+    } else {
+      real_limit = DEFAULT_LIMIT;
     }
-    real_limit = GRN_INT32_VALUE(&int32_value);
 
     GRN_OBJ_FIN(ctx, &int32_value);
   }

@@ -1,0 +1,95 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos id COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+column_create Memos text COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create IDs TABLE_PAT_KEY Int32
+[[0,0.0,0.0],true]
+column_create IDs memos_id COLUMN_INDEX Memos id
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"id":   0, "text": "aaa"},
+{"id":   1, "text": "aab"},
+{"id":   2, "text": "aac"},
+{"id":   3, "text": "aad"},
+{"id":   4, "text": "aae"},
+{"id":   5, "text": "aaf"},
+{"id":   6, "text": "aag"},
+{"id":   7, "text": "aah"},
+{"id":   8, "text": "aai"},
+{"id":   9, "text": "aaj"},
+{"id":  10, "text": "aak"},
+{"id":  11, "text": "aal"},
+{"id":  12, "text": "aam"},
+{"id":  13, "text": "aan"},
+{"id":  14, "text": "aao"},
+{"id":  15, "text": "aap"},
+{"id":  16, "text": "aaq"},
+{"id":  17, "text": "aar"},
+{"id":  18, "text": "aas"},
+{"id":  19, "text": "aat"},
+{"id":  20, "text": "aau"}
+]
+[[0,0.0,0.0],21]
+range_filter Memos id   --min 5 --min_border include   --max 35 --max_border exclude   --offset 0   --output_columns 'id,text'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "id",
+        "Int32"
+      ],
+      [
+        "text",
+        "Text"
+      ]
+    ],
+    [
+      5,
+      "aaf"
+    ],
+    [
+      6,
+      "aag"
+    ],
+    [
+      7,
+      "aah"
+    ],
+    [
+      8,
+      "aai"
+    ],
+    [
+      9,
+      "aaj"
+    ],
+    [
+      10,
+      "aak"
+    ],
+    [
+      11,
+      "aal"
+    ],
+    [
+      12,
+      "aam"
+    ],
+    [
+      13,
+      "aan"
+    ],
+    [
+      14,
+      "aao"
+    ]
+  ]
+]

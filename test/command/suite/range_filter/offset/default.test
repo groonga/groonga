@@ -1,0 +1,37 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos id COLUMN_SCALAR Int32
+column_create Memos text COLUMN_SCALAR Text
+
+table_create IDs TABLE_PAT_KEY Int32
+column_create IDs memos_id COLUMN_INDEX Memos id
+
+load --table Memos
+[
+{"id":   0, "text": "aaa"},
+{"id":   1, "text": "aab"},
+{"id":   2, "text": "aac"},
+{"id":   3, "text": "aad"},
+{"id":   4, "text": "aae"},
+{"id":   5, "text": "aaf"},
+{"id":   6, "text": "aag"},
+{"id":   7, "text": "aah"},
+{"id":   8, "text": "aai"},
+{"id":   9, "text": "aaj"},
+{"id":  10, "text": "aak"},
+{"id":  11, "text": "aal"},
+{"id":  12, "text": "aam"},
+{"id":  13, "text": "aan"},
+{"id":  14, "text": "aao"},
+{"id":  15, "text": "aap"},
+{"id":  16, "text": "aaq"},
+{"id":  17, "text": "aar"},
+{"id":  18, "text": "aas"},
+{"id":  19, "text": "aat"},
+{"id":  20, "text": "aau"}
+]
+
+range_filter Memos id \
+  --min 5 --min_border include \
+  --max 35 --max_border exclude \
+  --limit 10 \
+  --output_columns 'id,text'
