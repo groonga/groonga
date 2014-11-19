@@ -1,0 +1,15 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos id COLUMN_SCALAR Int32
+column_create Memos text COLUMN_SCALAR Text
+
+table_create IDs TABLE_PAT_KEY Int32
+column_create IDs memos_id COLUMN_INDEX Memos id
+
+load --table Memos
+[
+{"id":   0, "text": "aaa"}
+]
+
+range_filter Memos id \
+  --min 0 --min_border include \
+  --max_border exclude

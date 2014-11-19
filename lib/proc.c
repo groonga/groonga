@@ -6295,8 +6295,12 @@ proc_range_filter(grn_ctx *ctx, int nargs, grn_obj **args,
         }
         GRN_OBJ_INIT(&real_min, GRN_BULK, 0, lexicon->header.domain);
         GRN_OBJ_INIT(&real_max, GRN_BULK, 0, lexicon->header.domain);
-        grn_obj_cast(ctx, min, &real_min, GRN_FALSE);
-        grn_obj_cast(ctx, max, &real_max, GRN_FALSE);
+        if (GRN_TEXT_LEN(min) > 0) {
+          grn_obj_cast(ctx, min, &real_min, GRN_FALSE);
+        }
+        if (GRN_TEXT_LEN(max) > 0) {
+          grn_obj_cast(ctx, max, &real_max, GRN_FALSE);
+        }
         table_cursor = grn_table_cursor_open(ctx, lexicon,
                                              GRN_BULK_HEAD(&real_min),
                                              GRN_BULK_VSIZE(&real_min),
