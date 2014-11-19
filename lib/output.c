@@ -1021,6 +1021,7 @@ grn_output_table_header(grn_ctx *ctx, grn_obj *outbuf,
                         grn_content_type output_type,
                         grn_obj *table, grn_obj_format *format)
 {
+  if (format->nhits != -1) {
     grn_output_array_open(ctx, outbuf, output_type, "NHITS", 1);
     if (output_type == GRN_CONTENT_XML) {
       grn_text_itoa(ctx, outbuf, format->nhits);
@@ -1028,6 +1029,7 @@ grn_output_table_header(grn_ctx *ctx, grn_obj *outbuf,
       grn_output_int32(ctx, outbuf, output_type, format->nhits);
     }
     grn_output_array_close(ctx, outbuf, output_type);
+  }
 }
 
 static inline int

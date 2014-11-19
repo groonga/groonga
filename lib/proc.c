@@ -539,6 +539,39 @@ grn_select_apply_adjuster(grn_ctx *ctx, grn_obj *table, grn_obj *res,
   }
 }
 
+static void
+grn_select_output_columns(grn_ctx *ctx, grn_obj *res,
+                          int n_hits, int offset, int limit,
+                          const char *columns, int columns_len,
+                          grn_obj *condition)
+{
+  grn_obj_format format;
+
+  GRN_OBJ_FORMAT_INIT(&format, n_hits, offset, limit, offset);
+  format.flags =
+    GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
+    GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET;
+  if (is_output_columns_format_v1(ctx, columns, columns_len)) {
+    grn_obj_columns(ctx, res, columns, columns_len, &format.columns);
+  } else {
+    grn_obj *v;
+    grn_obj *condition_ptr;
+    GRN_EXPR_CREATE_FOR_QUERY(ctx, res, format.expression, v);
+    grn_expr_parse(ctx, format.expression,
+                   columns, columns_len, NULL,
+                   GRN_OP_MATCH, GRN_OP_AND,
+                   GRN_EXPR_SYNTAX_OUTPUT_COLUMNS);
+    condition_ptr =
+      grn_expr_get_or_add_var(ctx, format.expression,
+                              GRN_SELECT_INTERNAL_VAR_CONDITION,
+                              strlen(GRN_SELECT_INTERNAL_VAR_CONDITION));
+    GRN_PTR_INIT(condition_ptr, 0, GRN_DB_OBJECT);
+    GRN_PTR_SET(ctx, condition_ptr, condition);
+  }
+  GRN_OUTPUT_OBJ(res, &format);
+  GRN_OBJ_FORMAT_FIN(ctx, &format);
+}
+
 typedef struct {
   const char *label;
   unsigned int label_len;
@@ -797,7 +830,6 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
 {
   uint32_t nkeys, nhits;
   uint16_t cacheable = 1, taintable = 0;
-  grn_obj_format format;
   grn_table_sort_key *keys;
   grn_obj *outbuf = ctx->impl->outbuf;
   grn_content_type output_type = ctx->impl->output_type;
@@ -1042,59 +1074,15 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
           grn_table_sort(ctx, res, offset, limit, sorted, keys, nkeys);
           GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                         ":", "sort(%d)", limit);
-          GRN_OBJ_FORMAT_INIT(&format, nhits, 0, limit, offset);
-          format.flags =
-            GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
-            GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET;
-          if (is_output_columns_format_v1(ctx, output_columns, output_columns_len)) {
-            grn_obj_columns(ctx, sorted, output_columns, output_columns_len,
-                            &format.columns);
-          } else {
-            grn_obj *v;
-            grn_obj *condition_ptr;
-            GRN_EXPR_CREATE_FOR_QUERY(ctx, sorted, format.expression, v);
-            grn_expr_parse(ctx, format.expression,
-                           output_columns, output_columns_len, NULL,
-                           GRN_OP_MATCH, GRN_OP_AND,
-                           GRN_EXPR_SYNTAX_OUTPUT_COLUMNS);
-            condition_ptr =
-              grn_expr_get_or_add_var(ctx, format.expression,
-                                      GRN_SELECT_INTERNAL_VAR_CONDITION,
-                                      strlen(GRN_SELECT_INTERNAL_VAR_CONDITION));
-            GRN_PTR_INIT(condition_ptr, 0, GRN_DB_OBJECT);
-            GRN_PTR_SET(ctx, condition_ptr, cond);
-          }
-          GRN_OUTPUT_OBJ(sorted, &format);
-          GRN_OBJ_FORMAT_FIN(ctx, &format);
+          grn_select_output_columns(ctx, sorted, nhits, 0, limit,
+                                    output_columns, output_columns_len, cond);
           grn_obj_unlink(ctx, sorted);
         }
         grn_table_sort_key_close(ctx, keys, nkeys);
       } else {
         if (!ctx->rc) {
-          GRN_OBJ_FORMAT_INIT(&format, nhits, offset, limit, offset);
-          format.flags =
-            GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
-            GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET;
-          if (is_output_columns_format_v1(ctx, output_columns, output_columns_len)) {
-            grn_obj_columns(ctx, res, output_columns, output_columns_len,
-                            &format.columns);
-          } else {
-            grn_obj *v;
-            grn_obj *condition_ptr;
-            GRN_EXPR_CREATE_FOR_QUERY(ctx, res, format.expression, v);
-            grn_expr_parse(ctx, format.expression,
-                           output_columns, output_columns_len, NULL,
-                           GRN_OP_MATCH, GRN_OP_AND,
-                           GRN_EXPR_SYNTAX_OUTPUT_COLUMNS);
-            condition_ptr =
-              grn_expr_get_or_add_var(ctx, format.expression,
-                                      GRN_SELECT_INTERNAL_VAR_CONDITION,
-                                      strlen(GRN_SELECT_INTERNAL_VAR_CONDITION));
-            GRN_PTR_INIT(condition_ptr, 0, GRN_DB_OBJECT);
-            GRN_PTR_SET(ctx, condition_ptr, cond);
-          }
-          GRN_OUTPUT_OBJ(res, &format);
-          GRN_OBJ_FORMAT_FIN(ctx, &format);
+          grn_select_output_columns(ctx, res, nhits, offset, limit,
+                                    output_columns, output_columns_len, cond);
         }
       }
       GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
@@ -6148,6 +6136,223 @@ selector_in_values(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   return rc;
 }
 
+static grn_obj *
+proc_range_filter(grn_ctx *ctx, int nargs, grn_obj **args,
+                  grn_user_data *user_data)
+{
+  grn_obj *table_name = VAR(0);
+  grn_obj *column_name = VAR(1);
+  grn_obj *min = VAR(2);
+  grn_obj *min_border = VAR(3);
+  grn_obj *max = VAR(4);
+  grn_obj *max_border = VAR(5);
+  grn_obj *offset = VAR(6);
+  grn_obj *limit = VAR(7);
+  grn_obj *filter = VAR(8);
+  grn_obj *output_columns = VAR(9);
+  grn_obj *table;
+  grn_obj *res = NULL;
+  grn_obj *filter_expr = NULL;
+  grn_obj *filter_variable;
+  int real_offset;
+  int real_limit;
+
+  table = grn_ctx_get(ctx, GRN_TEXT_VALUE(table_name), GRN_TEXT_LEN(table_name));
+  if (!table) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[range_filter] nonexistent table <%.*s>",
+        (int)GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name));
+    return NULL;
+  }
+
+  if (GRN_TEXT_LEN(filter) > 0) {
+    GRN_EXPR_CREATE_FOR_QUERY(ctx, table, filter_expr, filter_variable);
+    if (!filter_expr) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "[range_filter] failed to create expression");
+      goto exit;
+    }
+
+    grn_expr_parse(ctx, filter_expr,
+                   GRN_TEXT_VALUE(filter), GRN_TEXT_LEN(filter),
+                   NULL, GRN_OP_MATCH, GRN_OP_AND, GRN_EXPR_SYNTAX_SCRIPT);
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+  }
+
+  res = grn_table_create(ctx, NULL, 0, NULL,
+                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                         table, NULL);
+  if (!res) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[range_filter] failed to result table");
+    goto exit;
+  }
+
+  {
+    grn_obj int32_value;
+
+    GRN_INT32_INIT(&int32_value, 0);
+
+    if (grn_obj_cast(ctx, offset, &int32_value, GRN_FALSE) != GRN_SUCCESS) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "[range_filter] invalid offset format: <%.*s>",
+          (int)GRN_TEXT_LEN(offset), GRN_TEXT_VALUE(offset));
+      GRN_OBJ_FIN(ctx, &int32_value);
+      goto exit;
+    }
+    real_offset = GRN_INT32_VALUE(&int32_value);
+
+    GRN_BULK_REWIND(&int32_value);
+
+    if (grn_obj_cast(ctx, limit, &int32_value, GRN_FALSE) != GRN_SUCCESS) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "[range_filter] invalid limit format: <%.*s>",
+          (int)GRN_TEXT_LEN(limit), GRN_TEXT_VALUE(limit));
+      GRN_OBJ_FIN(ctx, &int32_value);
+    }
+    real_limit = GRN_INT32_VALUE(&int32_value);
+
+    GRN_OBJ_FIN(ctx, &int32_value);
+  }
+  {
+    grn_rc rc;
+    int original_offset = real_offset;
+    int original_limit = real_limit;
+    rc = grn_normalize_offset_and_limit(ctx, grn_table_size(ctx, table),
+                                        &real_offset, &real_limit);
+    switch (rc) {
+    case GRN_TOO_SMALL_OFFSET :
+      ERR(GRN_INVALID_ARGUMENT,
+          "[range_filter] too small offset: <%d>", original_offset);
+      goto exit;
+    case GRN_TOO_LARGE_OFFSET :
+      ERR(GRN_INVALID_ARGUMENT,
+          "[range_filter] too large offset: <%d>", original_offset);
+      goto exit;
+    case GRN_TOO_SMALL_LIMIT :
+      ERR(GRN_INVALID_ARGUMENT,
+          "[range_filter] too small limit: <%d>", original_limit);
+      goto exit;
+    default :
+      break;
+    }
+  }
+
+  if (real_limit != 0) {
+    grn_table_sort_key *sort_keys;
+    unsigned int n_sort_keys;
+    sort_keys = grn_table_sort_key_from_str(ctx,
+                                            GRN_TEXT_VALUE(column_name),
+                                            GRN_TEXT_LEN(column_name),
+                                            table,
+                                            &n_sort_keys);
+    if (n_sort_keys == 1) {
+      grn_table_sort_key *sort_key;
+      grn_obj *index;
+      int n_indexes;
+      grn_operator op = GRN_OP_OR;
+
+      sort_key = &(sort_keys[0]);
+      n_indexes = grn_column_index(ctx, sort_key->key, GRN_OP_LESS,
+                                   &index, 1, NULL);
+      if (n_indexes > 0) {
+        grn_obj *lexicon;
+        grn_table_cursor *table_cursor;
+        int table_cursor_flags = 0;
+        between_border_type min_border_type;
+        between_border_type max_border_type;
+        grn_obj real_min;
+        grn_obj real_max;
+        int n_records = 0;
+        grn_obj *index_cursor;
+        int index_cursor_flags = 0;
+        grn_posting *posting;
+
+        lexicon = grn_ctx_at(ctx, index->header.domain);
+        if (sort_key->flags & GRN_TABLE_SORT_DESC) {
+          table_cursor_flags |= GRN_CURSOR_DESCENDING;
+        } else {
+          table_cursor_flags |= GRN_CURSOR_ASCENDING;
+        }
+        min_border_type = between_parse_border(ctx, min_border, "min_border");
+        max_border_type = between_parse_border(ctx, max_border, "max_border");
+        if (min_border_type == BETWEEN_BORDER_EXCLUDE) {
+          table_cursor_flags |= GRN_CURSOR_GT;
+        }
+        if (max_border_type == BETWEEN_BORDER_EXCLUDE) {
+          table_cursor_flags |= GRN_CURSOR_LT;
+        }
+        GRN_OBJ_INIT(&real_min, GRN_BULK, 0, lexicon->header.domain);
+        GRN_OBJ_INIT(&real_max, GRN_BULK, 0, lexicon->header.domain);
+        grn_obj_cast(ctx, min, &real_min, GRN_FALSE);
+        grn_obj_cast(ctx, max, &real_max, GRN_FALSE);
+        table_cursor = grn_table_cursor_open(ctx, lexicon,
+                                             GRN_BULK_HEAD(&real_min),
+                                             GRN_BULK_VSIZE(&real_min),
+                                             GRN_BULK_HEAD(&real_max),
+                                             GRN_BULK_VSIZE(&real_max),
+                                             0, -1, table_cursor_flags);
+        index_cursor = grn_index_cursor_open(ctx, table_cursor,
+                                             index, GRN_ID_NIL, GRN_ID_NIL,
+                                             index_cursor_flags);
+        while ((posting = grn_index_cursor_next(ctx, index_cursor, NULL))) {
+          grn_bool result_boolean = GRN_FALSE;
+
+          if (filter_expr) {
+            grn_obj *result;
+            GRN_RECORD_SET(ctx, filter_variable, posting->rid);
+            result = grn_expr_exec(ctx, filter_expr, 0);
+            if (result) {
+              GRN_TRUEP(ctx, result, result_boolean);
+            }
+          } else {
+            result_boolean = GRN_TRUE;
+          }
+
+          if (result_boolean) {
+            if (n_records >= real_offset) {
+              grn_ii_posting ii_posting;
+              ii_posting.rid = posting->rid;
+              ii_posting.sid = posting->sid;
+              ii_posting.pos = posting->pos;
+              ii_posting.weight = posting->weight;
+              grn_ii_posting_add(ctx, &ii_posting, (grn_hash *)res, op);
+            }
+            n_records++;
+            if (n_records == real_limit) {
+              break;
+            }
+          }
+        }
+        grn_obj_unlink(ctx, index_cursor);
+        grn_table_cursor_close(ctx, table_cursor);
+
+        GRN_OBJ_FIN(ctx, &real_min);
+        GRN_OBJ_FIN(ctx, &real_max);
+      }
+      grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
+    }
+    grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
+  }
+
+  grn_select_output_columns(ctx, res, -1, real_offset, real_limit,
+                            GRN_TEXT_VALUE(output_columns),
+                            GRN_TEXT_LEN(output_columns),
+                            filter_expr);
+
+exit:
+  if (filter_expr) {
+    grn_obj_unlink(ctx, filter_expr);
+  }
+  if (res) {
+    grn_obj_unlink(ctx, res);
+  }
+
+  return NULL;
+}
+
 #define DEF_VAR(v,name_str) do {\
   (v).name = (name_str);\
   (v).name_size = GRN_STRLEN(name_str);\
@@ -6393,4 +6598,16 @@ grn_db_init_builtin_query(grn_ctx *ctx)
                                     func_in_values, NULL, NULL, 0, NULL);
     grn_proc_set_selector(ctx, selector_proc, selector_in_values);
   }
+
+  DEF_VAR(vars[0], "table");
+  DEF_VAR(vars[1], "column");
+  DEF_VAR(vars[2], "min");
+  DEF_VAR(vars[3], "min_border");
+  DEF_VAR(vars[4], "max");
+  DEF_VAR(vars[5], "max_border");
+  DEF_VAR(vars[6], "offset");
+  DEF_VAR(vars[7], "limit");
+  DEF_VAR(vars[8], "filter");
+  DEF_VAR(vars[9], "output_columns");
+  DEF_COMMAND("range_filter", proc_range_filter, 10, vars);
 }
