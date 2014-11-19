@@ -1116,7 +1116,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid table name: <%.*s>", table_len, table);
   }
-exit:
+exit :
   if (match_escalation_threshold_len) {
     grn_ctx_set_match_escalation_threshold(ctx, original_threshold);
   }
@@ -1663,7 +1663,7 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
     ERR(GRN_INVALID_ARGUMENT,
         "[table][create] should not create anonymous table");
   }
-exit:
+exit :
   GRN_OUTPUT_BOOL(!ctx->rc);
   return NULL;
 }
@@ -1716,7 +1716,7 @@ proc_table_rename(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
         (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)),
         (int)GRN_TEXT_LEN(VAR(1)), GRN_TEXT_VALUE(VAR(1)));
   }
-exit:
+exit :
   GRN_OUTPUT_BOOL(!rc);
   if (table) { grn_obj_unlink(ctx, table); }
   return NULL;
@@ -1884,7 +1884,7 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   } else {
     succeeded = GRN_FALSE;
   }
-exit:
+exit :
   GRN_OUTPUT_BOOL(succeeded);
   if (table) { grn_obj_unlink(ctx, table); }
   if (type) { grn_obj_unlink(ctx, type); }
@@ -1976,7 +1976,7 @@ proc_column_rename(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
         (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)),
         (int)GRN_TEXT_LEN(VAR(2)), GRN_TEXT_VALUE(VAR(2)));
   }
-exit:
+exit :
   GRN_OUTPUT_BOOL(!rc);
   if (column) { grn_obj_unlink(ctx, column); }
   if (table) { grn_obj_unlink(ctx, table); }
@@ -4809,7 +4809,7 @@ run_query(grn_ctx *ctx, grn_obj *table,
     rc = ctx->rc;
   }
 
-exit:
+exit :
   if (match_columns) {
     grn_obj_unlink(ctx, match_columns);
   }
@@ -4939,7 +4939,7 @@ run_sub_filter(grn_ctx *ctx, grn_obj *table,
     grn_obj_unlink(ctx, base_res);
   }
 
-exit:
+exit :
   if (scope_domain) {
     grn_obj_unlink(ctx, scope_domain);
   }
@@ -6374,7 +6374,7 @@ proc_range_filter(grn_ctx *ctx, int nargs, grn_obj **args,
                               filter_expr);
   }
 
-exit:
+exit :
   if (filter_expr) {
     grn_obj_unlink(ctx, filter_expr);
   }
