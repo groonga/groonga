@@ -11,10 +11,10 @@ msgstr ""
 "PO-Revision-Date: 2014-09-28 18:35+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ja\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 msgid "Install"
@@ -790,7 +790,8 @@ msgstr ""
 "32-bit環境の場合は、x86のバイナリをpackages.groonga.orgからダウンロードしてく"
 "ださい。"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.6-x86.exe"
+# 2d06b111290a42ac8906d107c7361058
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.7-x86.exe"
 msgstr ""
 
 msgid "Then run it."
@@ -803,7 +804,8 @@ msgstr ""
 "64-bit環境の場合は、x64のバイナリをpackages.groonga.orgからダウンロードしてく"
 "ださい。"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.6-x64.exe"
+# 622e147555d442ae9e49883b5b5e20c4
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.7-x64.exe"
 msgstr ""
 
 msgid ""
@@ -822,7 +824,8 @@ msgstr ""
 "32-bit環境の場合は、x86のzipアーカイブをpackages.groonga.orgからダウンロード"
 "してください。"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.6-x86.zip"
+# 660cb4dc81ec475f99334cd2c394ddf4
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.7-x86.zip"
 msgstr ""
 
 msgid "Then extract it."
@@ -834,7 +837,8 @@ msgstr ""
 "64-bit環境の場合は、x64のzipアーカイブをpackages.groonga.orgからダウンロード"
 "してください。"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.6-x64.zip"
+# e2ab99439f684358932096fa9c8ffb4c
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.7-x64.zip"
 msgstr ""
 
 msgid "You can find :doc:`/reference/executables/groonga` in ``bin`` folder."
@@ -860,7 +864,8 @@ msgstr ""
 msgid "Download zipped source from packages.groonga.org:"
 msgstr "zipアーカイブをpackages.groonga.orgからダウンロードしてください。"
 
-msgid "http://packages.groonga.org/source/groonga/groonga-4.0.6.zip"
+# 547deb7760ae4ea29dd90cbae95f6fc2
+msgid "http://packages.groonga.org/source/groonga/groonga-4.0.7.zip"
 msgstr ""
 
 msgid "Move to the Groonga's source folder::"
