@@ -9361,6 +9361,34 @@ is_compressed_column(grn_ctx *ctx, grn_obj *obj)
   return (obj->header.flags & (GRN_OBJ_COMPRESS_ZLIB | GRN_OBJ_COMPRESS_LZ4));
 }
 
+static grn_bool
+is_sub_record_accessor(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_accessor *accessor;
+
+  if (!obj) {
+    return GRN_FALSE;
+  }
+
+  if (obj->header.type != GRN_ACCESSOR) {
+    return GRN_FALSE;
+  }
+
+  for (accessor = (grn_accessor *)obj; accessor; accessor = accessor->next) {
+    switch (accessor->action) {
+    case GRN_ACCESSOR_GET_VALUE :
+      if (GRN_TABLE_IS_GROUPED(accessor->obj)) {
+        return GRN_TRUE;
+      }
+      break;
+    default :
+      break;
+    }
+  }
+
+  return GRN_FALSE;
+}
+
 static int
 range_is_idp(grn_obj *obj)
 {
@@ -9435,10 +9463,14 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
   } else {
     int j;
     grn_bool have_compressed_column = GRN_FALSE;
+    grn_bool have_sub_record_accessor = GRN_FALSE;
     grn_table_sort_key *kp;
     for (kp = keys, j = n_keys; j; kp++, j--) {
       if (is_compressed_column(ctx, kp->key)) {
         have_compressed_column = GRN_TRUE;
+      }
+      if (is_sub_record_accessor(ctx, kp->key)) {
+        have_sub_record_accessor = GRN_TRUE;
       }
       if (range_is_idp(kp->key)) {
         kp->offset = KEY_ID;
@@ -9509,7 +9541,7 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
         }
       }
     }
-    if (have_compressed_column) {
+    if (have_compressed_column || have_sub_record_accessor) {
       i = grn_table_sort_value(ctx, table, offset, limit, result,
                                keys, n_keys);
     } else {
