@@ -136,19 +136,19 @@
 # ifdef __GNUC__
 #  include <stdint.h>
 # else
-typedef uint8_t UINT8
-typedef int8_t INT8
-typedef int_least8_t INT8
-typedef uint_least8_t UINT8
-typedef int16_t INT16
-typedef uint16_t UINT16
-typedef int32_t INT32
-typedef uint32_t UINT32
-typedef int64_t INT64
-typedef uint64_t UINT64
-typedef ssize_t SSIZE_T
-typedef pid_t int
-typedef off64_t int64_t
+typedef uint8_t UINT8;
+typedef int8_t INT8;
+typedef int_least8_t INT8;
+typedef uint_least8_t UINT8;
+typedef int16_t INT16;
+typedef uint16_t UINT16;
+typedef int32_t INT32;
+typedef uint32_t UINT32;
+typedef int64_t INT64;
+typedef uint64_t UINT64;
+typedef ssize_t SSIZE_T;
+typedef pid_t int;
+typedef off64_t int64_t;
 # endif
 
 # undef MSG_WAITALL
