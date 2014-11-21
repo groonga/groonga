@@ -34,5 +34,5 @@ Limitations of column
 
 A column has the following limitation.
 
-* The maximum stored data size of each column: 256GiB
+* The maximum stored data size of a column: 256GiB
 
