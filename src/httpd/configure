@@ -68,7 +68,7 @@ fi
 
 cd "${nginx_directory_in_build_directory}"
 
-./configure \
+auto/configure \
   --prefix="${GROONGA_HTTPD_PREFIX}" \
   --sbin-path="${GROONGA_HTTPD_BIN_PATH}" \
   --conf-path="${GROONGA_HTTPD_CONF_PATH}" \

@@ -21,11 +21,12 @@ current_nginx_version=$(cat "${nginx_version_file}")
 current_nginx_dir="${base_dir}/nginx-${current_nginx_version}"
 
 new_nginx_base_name="nginx-${new_nginx_version}"
-new_nginx_tar_gz="${new_nginx_base_name}.tar.gz"
-wget "http://nginx.org/download/${new_nginx_tar_gz}"
+hg clone http://hg.nginx.org/nginx "${new_nginx_base_name}"
 
-tar xzf "${new_nginx_tar_gz}"
-rm "${new_nginx_tar_gz}"
+cd "${new_nginx_base_name}"
+hg "checkout" "release-${new_nginx_version}"
+rm -rf .hg .hgtags
+cd -
 
 echo "${new_nginx_version}" > "${nginx_version_file}"
 
