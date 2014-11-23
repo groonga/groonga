@@ -60,6 +60,8 @@ if [ "${is_mingw}" = "yes" ]; then
   configure_args="${configure_args} --crossbuild=win32"
   configure_args="${configure_args} --with-cc=${host}-gcc"
   configure_args="${configure_args} --with-cpp=${host}-c++"
+  GROONGA_HTTPD_WITH_PCRE="no"
+  GROONGA_HTTPD_WITH_ZLIB="no"
 fi
 if [ "${GROONGA_HTTPD_DEBUG}" = "yes" ]; then
   configure_args="${configure_args} --with-debug"
