@@ -5,7 +5,7 @@ set -u
 
 srcdir="."
 builddir="."
-host=""
+is_mingw="no"
 
 for argument in "$@"; do
   case "$argument" in
@@ -13,7 +13,9 @@ for argument in "$@"; do
       srcdir="$(echo "${argument}" | sed -e 's/--srcdir=//')"
       ;;
     --host=*)
-      host="$(echo "${argument}" | sed -e 's/--host=//')"
+      if echo "${argument}" | grep -q mingw; then
+        is_mingw="yes"
+      fi
       ;;
   esac
 done
@@ -54,7 +56,7 @@ if [ "${abs_top_srcdir}/src/httpd" != "$(pwd)" ]; then
 fi
 
 configure_args=""
-if [ -n "${host}" ]; then
+if [ "${is_mingw}" = "yes" ]; then
   configure_args="${configure_args} --crossbuild=win32"
   configure_args="${configure_args} --with-cc=${host}-gcc"
   configure_args="${configure_args} --with-cpp=${host}-c++"
