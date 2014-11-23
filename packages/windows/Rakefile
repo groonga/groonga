@@ -235,7 +235,7 @@ namespace :build do
     naist_jdic_base = "mecab-naist-jdic-0.6.3-20100801"
     naist_jdic_tar_gz = "#{naist_jdic_base}.tar.gz"
     naist_jdic_tar_gz_url = "http://osdn.dl.sourceforge.jp/naist-jdic/48487/#{naist_jdic_tar_gz}"
-    mecab_jdic_tar_gz = download(mecab_jdic_tar_gz_url, download_dir)
+    naist_jdic_tar_gz = download(naist_jdic_tar_gz_url, download_dir)
     Dir.chdir(tmp_dir) do
       sh("tar", "xzf", naist_jdic_tar_gz.to_s) or exit(false)
     end
