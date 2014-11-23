@@ -132,35 +132,6 @@ namespace :build do
     end
   end
 
-  desc "Build PCRE and install it into #{dist_dir}."
-  task :pcre do
-    tmp_dir = Pathname.new("tmp/pcre")
-    rm_rf(tmp_dir)
-    mkdir_p(tmp_dir)
-    pcre_version = "8.36"
-    pcre_base = "pcre-#{pcre_version}"
-    pcre_tar_gz_url_base =
-      "http://sourceforge.net/projects/pcre/files/pcre"
-    pcre_tar_gz_url =
-      "#{pcre_tar_gz_url_base}/#{pcre_version}/#{pcre_base}.tar.gz"
-    pcre_tar_gz = download(pcre_tar_gz_url, download_dir)
-    Dir.chdir(tmp_dir) do
-      sh("tar", "xzf", pcre_tar_gz.to_s) or exit(false)
-    end
-    Dir.chdir(tmp_dir + pcre_base) do
-      sh("./configure",
-         "--prefix=#{binary_dir}",
-         "--host=#{host}") or exit(false)
-      sh("env", "GREP_OPTIONS=--text", "nice", "make", "-j8") or exit(false)
-      sh("env", "GREP_OPTIONS=--text", "make", "install") or exit(false)
-
-      pcre_license_dir = license_dir + "pcre"
-      mkdir_p(pcre_license_dir)
-      files = ["AUTHORS", "COPYING", "LICENCE"]
-      cp(files, pcre_license_dir)
-    end
-  end
-
   desc "Build MessagePack and install it into #{dist_dir}."
   task :msgpack do
     tmp_dir = Pathname.new("tmp/msgpack")
@@ -366,7 +337,6 @@ build_dependencies = [
   "build:pre",
   "build:zlib",
   "build:lz4",
-  "build:pcre",
   "build:msgpack",
   "build:mecab",
   "build:mecab_dict",
