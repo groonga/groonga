@@ -66,6 +66,42 @@ end
 namespace :build do
   download_dir = Pathname.new("tmp/download").expand_path
 
+  desc "Build zlib and install it into #{dist_dir}."
+  task :zlib do
+    tmp_dir = Pathname.new("tmp/zlib")
+    rm_rf(tmp_dir)
+    mkdir_p(tmp_dir)
+    zlib_version = "1.2.8"
+    zlib_base = "zlib-#{zlib_version}"
+    zlib_tar_gz_url_base =
+      "http://sourceforge.net/projects/libpng/files/zlib"
+    zlib_tar_gz_url =
+      "#{zlib_tar_gz_url_base}/#{zlib_version}/#{zlib_base}.tar.gz"
+    zlib_tar_gz = download(zlib_tar_gz_url, download_dir)
+    Dir.chdir(tmp_dir) do
+      sh("tar", "xzf", zlib_tar_gz.to_s) or exit(false)
+    end
+    Dir.chdir(tmp_dir + zlib_base) do
+      sh("make", "PREFIX=#{host}-", "-f", "win32/Makefile.gcc") or exit(false)
+      include_path = binary_dir + "include"
+      library_path = binary_dir + "lib"
+      binary_path  = binary_dir + "bin"
+      sh("make",
+         "INCLUDE_PATH=#{include_path}",
+         "LIBRARY_PATH=#{library_path}",
+         "BINARY_PATH=#{binary_path}",
+         "SHARED_MODE=1",
+         "-f",
+         "win32/Makefile.gcc",
+         "install") or exit(false)
+
+      zlib_license_dir = license_dir + "zlib"
+      mkdir_p(zlib_license_dir)
+      files = ["README"]
+      cp(files, zlib_license_dir)
+    end
+  end
+
   desc "Build MessagePack and install it into #{dist_dir}."
   task :msgpack do
     tmp_dir = Pathname.new("tmp/msgpack")
@@ -259,6 +295,7 @@ task "build:post" => "gcc:dll:bundle"
 
 build_dependencies = [
   "build:pre",
+  "build:zlib",
   "build:msgpack",
   "build:mecab",
   "build:mecab_dict",
