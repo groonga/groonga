@@ -137,7 +137,6 @@ namespace :build do
     tmp_dir = Pathname.new("tmp/mecab_dict")
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
-    require 'open-uri'
     naist_jdic_base = "mecab-naist-jdic-0.6.3-20100801"
     naist_jdic_tar_gz = "#{naist_jdic_base}.tar.gz"
     naist_jdic_tar_gz_url = "http://osdn.dl.sourceforge.jp/naist-jdic/48487/#{naist_jdic_tar_gz}"
