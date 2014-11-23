@@ -6,11 +6,11 @@ set -u
 srcdir="."
 builddir="."
 for argument in "$@"; do
-    case "$argument" in
-	--srcdir=*)
-	    srcdir="$(echo "${argument}" | sed -e 's/--srcdir=//')"
-	    ;;
-    esac
+  case "$argument" in
+    --srcdir=*)
+      srcdir="$(echo "${argument}" | sed -e 's/--srcdir=//')"
+      ;;
+  esac
 done
 
 top_srcdir="${srcdir}/../.."
