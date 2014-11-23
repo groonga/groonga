@@ -16,6 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 require 'pathname'
+require 'open-uri'
 
 base_dir = Pathname.new(__FILE__).dirname
 
@@ -45,6 +46,23 @@ else
   mecab_patches << "mecab-0.98-mingw-w64.diff"
 end
 
+def download(url, download_dir)
+  base_name = url.split("/").last
+  absolute_output_path = download_dir + base_name
+
+  unless absolute_output_path.exist?
+    mkdir_p(download_dir)
+    rake_output_message "Downloading... #{url}"
+    open(url) do |downloaded_file|
+      absolute_output_path.open("wb") do |output_file|
+        output_file.print(downloaded_file.read)
+      end
+    end
+  end
+
+  absolute_output_path
+end
+
 namespace :build do
   download_dir = Pathname.new("tmp/download").expand_path
 
@@ -53,7 +71,6 @@ namespace :build do
     tmp_dir = Pathname.new("tmp/msgpack")
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
-    require 'open-uri'
     msgpack_version = "0.5.9"
     msgpack_base = "msgpack-#{msgpack_version}"
     msgpack_tar_gz = "#{msgpack_base}.tar.gz"
@@ -61,16 +78,8 @@ namespace :build do
       "https://github.com/msgpack/msgpack-c/releases/download"
     msgpack_tar_gz_url =
       "#{msgpack_tar_gz_url_base}/cpp-#{msgpack_version}/#{msgpack_tar_gz}"
+    msgpack_tar_gz = download(msgpack_tar_gz_url, download_dir)
     Dir.chdir(tmp_dir) do
-      msgpack_tar_gz = download_dir + msgpack_tar_gz
-      unless msgpack_tar_gz.exist?
-        mkdir_p(download_dir)
-        open(msgpack_tar_gz_url) do |downloaded_tar_gz|
-          File.open(msgpack_tar_gz, "wb") do |tar_gz|
-            tar_gz.print(downloaded_tar_gz.read)
-          end
-        end
-      end
       sh("tar", "xzf", msgpack_tar_gz.to_s) or exit(false)
     end
     Dir.chdir(tmp_dir + msgpack_base) do
@@ -93,21 +102,12 @@ namespace :build do
     tmp_dir = Pathname.new("tmp/mecab")
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
-    require 'open-uri'
     mecab_version = "0.98"
     mecab_base = "mecab-#{mecab_version}"
     mecab_tar_gz = "#{mecab_base}.tar.gz"
     mecab_tar_gz_url = "http://mecab.googlecode.com/files/#{mecab_tar_gz}"
+    mecab_tar_gz = download(mecab_tar_gz_url, download_dir)
     Dir.chdir(tmp_dir) do
-      mecab_tar_gz = download_dir + mecab_tar_gz
-      unless mecab_tar_gz.exist?
-        mkdir_p(download_dir)
-        open(mecab_tar_gz_url) do |downloaded_tar_gz|
-          File.open(mecab_tar_gz, "wb") do |tar_gz|
-            tar_gz.print(downloaded_tar_gz.read)
-          end
-        end
-      end
       sh("tar", "xzf", mecab_tar_gz.to_s) or exit(false)
     end
     Dir.chdir(tmp_dir + mecab_base) do
@@ -141,16 +141,8 @@ namespace :build do
     naist_jdic_base = "mecab-naist-jdic-0.6.3-20100801"
     naist_jdic_tar_gz = "#{naist_jdic_base}.tar.gz"
     naist_jdic_tar_gz_url = "http://osdn.dl.sourceforge.jp/naist-jdic/48487/#{naist_jdic_tar_gz}"
+    mecab_jdic_tar_gz = download(mecab_jdic_tar_gz_url, download_dir)
     Dir.chdir(tmp_dir) do
-      naist_jdic_tar_gz = download_dir + naist_jdic_tar_gz
-      unless naist_jdic_tar_gz.exist?
-        mkdir_p(download_dir)
-        open(naist_jdic_tar_gz_url) do |downloaded_tar_gz|
-          File.open(naist_jdic_tar_gz, "wb") do |tar_gz|
-            tar_gz.print(downloaded_tar_gz.read)
-          end
-        end
-      end
       sh("tar", "xzf", naist_jdic_tar_gz.to_s) or exit(false)
     end
     Dir.chdir(tmp_dir + naist_jdic_base) do
