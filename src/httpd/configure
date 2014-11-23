@@ -84,7 +84,7 @@ auto/configure \
 if [ "${GROONGA_HTTPD_DEBUG}" = "yes" ]; then
   sed -i'' \
     -e '/^CFLAGS =/ s/ -O / -O0 /' \
-    -e '/^CFLAGS =/ s/ -g / -ggdb3 /' \
+    -e '/^CFLAGS =/ s/ -g / -g3 /' \
     objs/Makefile
 fi
 
