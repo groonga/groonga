@@ -5,10 +5,15 @@ set -u
 
 srcdir="."
 builddir="."
+host=""
+
 for argument in "$@"; do
   case "$argument" in
     --srcdir=*)
       srcdir="$(echo "${argument}" | sed -e 's/--srcdir=//')"
+      ;;
+    --host=*)
+      host="$(echo "${argument}" | sed -e 's/--host=//')"
       ;;
   esac
 done
@@ -49,6 +54,11 @@ if [ "${abs_top_srcdir}/src/httpd" != "$(pwd)" ]; then
 fi
 
 configure_args=""
+if [ -n "${host}" ]; then
+  configure_args="${configure_args} --crossbuild=win32"
+  configure_args="${configure_args} --with-cc=${host}-gcc"
+  configure_args="${configure_args} --with-cpp=${host}-c++"
+fi
 if [ "${GROONGA_HTTPD_DEBUG}" = "yes" ]; then
   configure_args="${configure_args} --with-debug"
 fi
