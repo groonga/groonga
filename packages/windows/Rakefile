@@ -251,7 +251,6 @@ namespace :build do
         "--without-kytea",
         "--without-cutter",
         "--disable-benchmark",
-        "--disable-groonga-httpd",
         "--with-message-pack=#{binary_dir}",
         "--enable-mruby",
         "--enable-shared-onigmo",
