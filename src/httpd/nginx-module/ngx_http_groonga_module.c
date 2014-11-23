@@ -16,15 +16,22 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
+#ifndef WIN32
+# define NGX_GRN_SUPPORT_STOP_BY_COMMAND
+#endif
 
 #include <ngx_config.h>
 #include <ngx_core.h>
 #include <ngx_http.h>
 
 #include <groonga.h>
+
+#include <sys/stat.h>
+
+#ifdef NGX_GRN_SUPPORT_STOP_BY_COMMAND
+# include <sys/types.h>
+# include <unistd.h>
+#endif
 
 #define GRN_NO_FLAGS 0
 
@@ -375,6 +382,7 @@ ngx_http_groonga_context_receive_handler(grn_ctx *context,
 
   grn_ctx_recv(context, &result, &result_size, &recv_flags);
 
+#ifdef NGX_GRN_SUPPORT_STOP_BY_COMMAND
   if (recv_flags == GRN_CTX_QUIT) {
     ngx_int_t ngx_rc;
     ngx_int_t ngx_pid;
@@ -398,6 +406,7 @@ ngx_http_groonga_context_receive_handler(grn_ctx *context,
       context->stat &= ~GRN_CTX_QUIT;
     }
   }
+#endif
 
   if (result_size > 0 ||
       GRN_TEXT_LEN(&(data->body)) > 0 ||
