@@ -102,6 +102,36 @@ namespace :build do
     end
   end
 
+  desc "Build LZ4 and install it into #{dist_dir}."
+  task :lz4 do
+    tmp_dir = Pathname.new("tmp/lz4")
+    rm_rf(tmp_dir)
+    mkdir_p(tmp_dir)
+    lz4_version = "r124"
+    lz4_base = "lz4-#{lz4_version}"
+    lz4_tar_gz_url_base =
+      "https://github.com/Cyan4973/lz4/archive"
+    lz4_tar_gz_url =
+      "#{lz4_tar_gz_url_base}/#{lz4_version}.tar.gz"
+    lz4_tar_gz = download(lz4_tar_gz_url, download_dir)
+    Dir.chdir(tmp_dir) do
+      sh("tar", "xzf", lz4_tar_gz.to_s) or exit(false)
+    end
+    Dir.chdir(tmp_dir + lz4_base) do
+      sh("make",
+         "CC=#{host}-gcc",
+         # "EXT=.exe",
+         "SHARED_EXT=dll",
+         "PREFIX=#{binary_dir}",
+         "install") or exit(false)
+
+      lz4_license_dir = license_dir + "lz4"
+      mkdir_p(lz4_license_dir)
+      files = ["LICENSE"]
+      cp(files, lz4_license_dir)
+    end
+  end
+
   desc "Build PCRE and install it into #{dist_dir}."
   task :pcre do
     tmp_dir = Pathname.new("tmp/pcre")
@@ -335,6 +365,7 @@ task "build:post" => "gcc:dll:bundle"
 build_dependencies = [
   "build:pre",
   "build:zlib",
+  "build:lz4",
   "build:pcre",
   "build:msgpack",
   "build:mecab",
