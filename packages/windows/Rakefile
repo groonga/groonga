@@ -266,10 +266,13 @@ end
 
 task "build:post" => "gcc:dll:bundle"
 
+build_dependencies = [
+  "build:pre",
+  "build:msgpack",
+  "build:mecab",
+  "build:mecab_dict",
+  "build:groonga",
+  "build:post",
+]
 desc "Build MeCab and groonga and install them into #{dist_dir}/."
-task :build => ["build:pre",
-                "build:msgpack",
-                "build:mecab",
-                "build:mecab_dict",
-                "build:groonga",
-                "build:post"]
+task :build => build_dependencies
