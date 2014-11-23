@@ -1469,7 +1469,7 @@ GRN_WITH_PCRE=no
 AC_ARG_WITH(pcre,
   [AS_HELP_STRING([--without-pcre],
     [Don't use PCRE for groonga-httpd. [default=auto-detect]])],
-  [with_pcre="$witheval"],
+  [with_pcre="$withval"],
   [with_pcre="auto"])
 if test "x$with_pcre" != "xno"; then
   m4_ifdef([PKG_CHECK_MODULES], [
