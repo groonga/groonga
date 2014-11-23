@@ -33,6 +33,9 @@ else
 end
 license_dir = dist_dir + "share" + "license"
 binary_dir = base_dir + dist_dir
+include_dir = binary_dir + "include"
+lib_dir = binary_dir + "lib"
+bin_dir = binary_dir + "bin"
 
 patches_dir = (base_dir + "patches").expand_path
 mecab_patches = [
@@ -83,13 +86,10 @@ namespace :build do
     end
     Dir.chdir(tmp_dir + zlib_base) do
       sh("make", "PREFIX=#{host}-", "-f", "win32/Makefile.gcc") or exit(false)
-      include_path = binary_dir + "include"
-      library_path = binary_dir + "lib"
-      binary_path  = binary_dir + "bin"
       sh("make",
-         "INCLUDE_PATH=#{include_path}",
-         "LIBRARY_PATH=#{library_path}",
-         "BINARY_PATH=#{binary_path}",
+         "INCLUDE_PATH=#{include_dir}",
+         "LIBRARY_PATH=#{lib_dir}",
+         "BINARY_PATH=#{bin_dir}",
          "SHARED_MODE=1",
          "-f",
          "win32/Makefile.gcc",
@@ -99,6 +99,35 @@ namespace :build do
       mkdir_p(zlib_license_dir)
       files = ["README"]
       cp(files, zlib_license_dir)
+    end
+  end
+
+  desc "Build PCRE and install it into #{dist_dir}."
+  task :pcre do
+    tmp_dir = Pathname.new("tmp/pcre")
+    rm_rf(tmp_dir)
+    mkdir_p(tmp_dir)
+    pcre_version = "8.36"
+    pcre_base = "pcre-#{pcre_version}"
+    pcre_tar_gz_url_base =
+      "http://sourceforge.net/projects/pcre/files/pcre"
+    pcre_tar_gz_url =
+      "#{pcre_tar_gz_url_base}/#{pcre_version}/#{pcre_base}.tar.gz"
+    pcre_tar_gz = download(pcre_tar_gz_url, download_dir)
+    Dir.chdir(tmp_dir) do
+      sh("tar", "xzf", pcre_tar_gz.to_s) or exit(false)
+    end
+    Dir.chdir(tmp_dir + pcre_base) do
+      sh("./configure",
+         "--prefix=#{binary_dir}",
+         "--host=#{host}") or exit(false)
+      sh("env", "GREP_OPTIONS=--text", "nice", "make", "-j8") or exit(false)
+      sh("env", "GREP_OPTIONS=--text", "make", "install") or exit(false)
+
+      pcre_license_dir = license_dir + "pcre"
+      mkdir_p(pcre_license_dir)
+      files = ["AUTHORS", "COPYING", "LICENCE"]
+      cp(files, pcre_license_dir)
     end
   end
 
@@ -267,7 +296,17 @@ namespace :build do
     rm_rf(dist_dir)
   end
 
-  task :pre => :clean
+  task :pkg_config do
+    ENV["PKG_CONFIG_PATH"] = nil
+    ENV["PKG_CONFIG_LIBDIR"] = (lib_dir + "pkgconfig").to_s
+  end
+
+  task :flags do
+    ENV["CPPFLAGS"] = "-I#{include_dir}"
+    ENV["LDFLAGS"] = "-L#{lib_dir}"
+  end
+
+  task :pre => [:clean, :pkg_config, :flags]
   task :post
 end
 
@@ -296,6 +335,7 @@ task "build:post" => "gcc:dll:bundle"
 build_dependencies = [
   "build:pre",
   "build:zlib",
+  "build:pcre",
   "build:msgpack",
   "build:mecab",
   "build:mecab_dict",
