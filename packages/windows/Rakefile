@@ -15,8 +15,8 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-require 'pathname'
-require 'open-uri'
+require "pathname"
+require "open-uri"
 
 base_dir = Pathname.new(__FILE__).dirname
 
@@ -156,7 +156,7 @@ namespace :build do
       files = ["AUTHORS", "COPYING"]
       cp(files, naist_jdic_license_dir)
     end
-    dictionary_dir = '$(rcpath)\..\share\mecab\dic\naist-jdic'
+    dictionary_dir = "$(rcpath)\\..\\share\\mecab\\dic\\naist-jdic"
     mecab_rc_path = binary_dir + "bin" + "mecabrc"
     mecab_rc_content = mecab_rc_path.read
     File.open(mecab_rc_path, "w") do |mecab_rc|
