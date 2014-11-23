@@ -1468,7 +1468,7 @@ AC_SUBST(ONIGMO_LIBS)
 GRN_WITH_PCRE=no
 AC_ARG_WITH(pcre,
   [AS_HELP_STRING([--without-pcre],
-    [use PCRE for groonga-httpd. [default=auto-detect]])],
+    [Don't use PCRE for groonga-httpd. [default=auto-detect]])],
   [with_pcre="$witheval"],
   [with_pcre="auto"])
 if test "x$with_pcre" != "xno"; then
