@@ -3177,14 +3177,14 @@ grn_table_group_with_range_gap(grn_ctx *ctx, grn_obj *table,
 }
 
 static inline void
-grn_table_group_add_record(grn_ctx *ctx,
-                           grn_table_sort_key *keys,
-                           int n_keys,
-                           grn_table_group_result *results,
-                           int n_results,
-                           grn_id id,
-                           grn_rset_recinfo *ri,
-                           grn_obj *bulk)
+grn_table_group_multi_keys_add_record(grn_ctx *ctx,
+                                      grn_table_sort_key *keys,
+                                      int n_keys,
+                                      grn_table_group_result *results,
+                                      int n_results,
+                                      grn_id id,
+                                      grn_rset_recinfo *ri,
+                                      grn_obj *bulk)
 {
   int r;
   grn_table_group_result *rp;
@@ -3206,12 +3206,12 @@ grn_table_group_add_record(grn_ctx *ctx,
 }
 
 static void
-grn_table_group_scalar_records(grn_ctx *ctx,
-                               grn_obj *table,
-                               grn_table_sort_key *keys,
-                               int n_keys,
-                               grn_table_group_result *results,
-                               int n_results)
+grn_table_group_multi_keys_scalar_records(grn_ctx *ctx,
+                                          grn_obj *table,
+                                          grn_table_sort_key *keys,
+                                          int n_keys,
+                                          grn_table_group_result *results,
+                                          int n_results)
 {
   grn_id id;
   grn_table_cursor *tc;
@@ -3239,24 +3239,24 @@ grn_table_group_scalar_records(grn_ctx *ctx,
       grn_obj_get_value(ctx, kp->key, id, &bulk);
     }
 
-    grn_table_group_add_record(ctx, keys, n_keys, results, n_results,
-                               id, ri, &bulk);
+    grn_table_group_multi_keys_add_record(ctx, keys, n_keys, results, n_results,
+                                          id, ri, &bulk);
   }
   GRN_OBJ_FIN(ctx, &bulk);
   grn_table_cursor_close(ctx, tc);
 }
 
 static inline void
-grn_table_group_vector_record(grn_ctx *ctx,
-                              grn_table_sort_key *keys,
-                              grn_obj *key_buffers,
-                              int nth_key,
-                              int n_keys,
-                              grn_table_group_result *results,
-                              int n_results,
-                              grn_id id,
-                              grn_rset_recinfo *ri,
-                              grn_obj *bulk)
+grn_table_group_multi_keys_vector_record(grn_ctx *ctx,
+                                         grn_table_sort_key *keys,
+                                         grn_obj *key_buffers,
+                                         int nth_key,
+                                         int n_keys,
+                                         grn_table_group_result *results,
+                                         int n_results,
+                                         grn_id id,
+                                         grn_rset_recinfo *ri,
+                                         grn_obj *bulk)
 {
   int k;
   grn_table_sort_key *kp;
@@ -3276,10 +3276,11 @@ grn_table_group_vector_record(grn_ctx *ctx,
         GRN_BULK_REWIND(bulk);
         GRN_BULK_INCR_LEN(bulk, kp->offset);
         GRN_TEXT_PUT(ctx, bulk, content, content_length);
-        grn_table_group_vector_record(ctx,
-                                      keys, key_buffers, k + 1, n_keys,
-                                      results, n_results,
-                                      id, ri, bulk);
+        grn_table_group_multi_keys_vector_record(ctx,
+                                                 keys, key_buffers,
+                                                 k + 1, n_keys,
+                                                 results, n_results,
+                                                 id, ri, bulk);
       }
       return;
     } else {
@@ -3290,20 +3291,20 @@ grn_table_group_vector_record(grn_ctx *ctx,
   }
 
   if (k == n_keys) {
-    grn_table_group_add_record(ctx,
-                               keys, n_keys,
-                               results, n_results,
-                               id, ri, bulk);
+    grn_table_group_multi_keys_add_record(ctx,
+                                          keys, n_keys,
+                                          results, n_results,
+                                          id, ri, bulk);
   }
 }
 
 static void
-grn_table_group_vector_records(grn_ctx *ctx,
-                               grn_obj *table,
-                               grn_table_sort_key *keys,
-                               int n_keys,
-                               grn_table_group_result *results,
-                               int n_results)
+grn_table_group_multi_keys_vector_records(grn_ctx *ctx,
+                                          grn_obj *table,
+                                          grn_table_sort_key *keys,
+                                          int n_keys,
+                                          grn_table_group_result *results,
+                                          int n_results)
 {
   grn_id id;
   grn_table_cursor *tc;
@@ -3341,10 +3342,10 @@ grn_table_group_vector_records(grn_ctx *ctx,
     }
 
     GRN_BULK_REWIND(&bulk);
-    grn_table_group_vector_record(ctx,
-                                  keys, key_buffers, 0, n_keys,
-                                  results, n_results,
-                                  id, ri, &bulk);
+    grn_table_group_multi_keys_vector_record(ctx,
+                                             keys, key_buffers, 0, n_keys,
+                                             results, n_results,
+                                             id, ri, &bulk);
   }
   for (k = 0; k < n_keys; k++) {
     GRN_OBJ_FIN(ctx, &(key_buffers[k]));
@@ -3448,13 +3449,13 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
         }
       }
       if (have_vector) {
-        grn_table_group_vector_records(ctx, table,
-                                       keys, n_keys,
-                                       results, n_results);
+        grn_table_group_multi_keys_vector_records(ctx, table,
+                                                  keys, n_keys,
+                                                  results, n_results);
       } else {
-        grn_table_group_scalar_records(ctx, table,
-                                       keys, n_keys,
-                                       results, n_results);
+        grn_table_group_multi_keys_scalar_records(ctx, table,
+                                                  keys, n_keys,
+                                                  results, n_results);
       }
     }
     grn_obj_close(ctx, &bulk);
