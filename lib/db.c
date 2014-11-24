@@ -3073,6 +3073,82 @@ accelerated_table_group(grn_ctx *ctx, grn_obj *table, grn_obj *key, grn_obj *res
   return GRN_FALSE;
 }
 
+static void
+grn_table_group_single_key_records(grn_ctx *ctx, grn_obj *table,
+                                   grn_obj *key, grn_obj *res)
+{
+  grn_obj bulk;
+  grn_table_cursor *tc;
+
+  GRN_TEXT_INIT(&bulk, 0);
+  if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0))) {
+    grn_id id;
+    grn_obj *range = grn_ctx_at(ctx, grn_obj_get_range(ctx, key));
+    int idp = GRN_OBJ_TABLEP(range);
+    while ((id = grn_table_cursor_next_inline(ctx, tc))) {
+      void *value;
+      grn_rset_recinfo *ri = NULL;
+      GRN_BULK_REWIND(&bulk);
+      if (DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC) {
+        grn_table_cursor_get_value_inline(ctx, tc, (void **)&ri);
+      }
+      grn_obj_get_value(ctx, key, id, &bulk);
+      switch (bulk.header.type) {
+      case GRN_UVECTOR :
+        {
+          // todo : support objects except grn_id
+          grn_id *v = (grn_id *)GRN_BULK_HEAD(&bulk);
+          grn_id *ve = (grn_id *)GRN_BULK_CURR(&bulk);
+          while (v < ve) {
+            if ((*v != GRN_ID_NIL) &&
+                grn_table_add_v_inline(ctx, res,
+                                       v, sizeof(grn_id), &value, NULL)) {
+              grn_table_add_subrec_inline(res, value, ri ? ri->score : 0,
+                                          (grn_rset_posinfo *)&id, 0);
+            }
+            v++;
+          }
+        }
+        break;
+      case GRN_VECTOR :
+        {
+          unsigned int i, n_elements;
+          n_elements = grn_vector_size(ctx, &bulk);
+          for (i = 0; i < n_elements; i++) {
+            const char *content;
+            unsigned int content_length;
+            content_length = grn_vector_get_element(ctx, &bulk, i,
+                                                    &content, NULL, NULL);
+            if (grn_table_add_v_inline(ctx, res,
+                                       content, content_length,
+                                       &value, NULL)) {
+              grn_table_add_subrec_inline(res, value, ri ? ri->score : 0,
+                                          (grn_rset_posinfo *)&id, 0);
+            }
+          }
+        }
+        break;
+      case GRN_BULK :
+        {
+          if ((!idp || *((grn_id *)GRN_BULK_HEAD(&bulk))) &&
+              grn_table_add_v_inline(ctx, res,
+                                     GRN_BULK_HEAD(&bulk), GRN_BULK_VSIZE(&bulk),
+                                     &value, NULL)) {
+            grn_table_add_subrec_inline(res, value, ri ? ri->score : 0,
+                                        (grn_rset_posinfo *)&id, 0);
+          }
+        }
+        break;
+      default :
+        ERR(GRN_INVALID_ARGUMENT, "invalid column");
+        break;
+      }
+    }
+    grn_table_cursor_close(ctx, tc);
+  }
+  grn_obj_close(ctx, &bulk);
+}
+
 grn_rc
 grn_table_group_with_range_gap(grn_ctx *ctx, grn_obj *table,
                                grn_table_sort_key *group_key,
@@ -3443,8 +3519,6 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
   GRN_API_ENTER;
   {
     int k, r;
-    grn_obj bulk;
-    grn_table_cursor *tc;
     grn_table_sort_key *kp;
     grn_table_group_result *rp;
     for (k = 0, kp = keys; k < n_keys; k++, kp++) {
@@ -3459,73 +3533,10 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
         goto exit;
       }
     }
-    GRN_TEXT_INIT(&bulk, 0);
     if (n_keys == 1 && n_results == 1) {
       if (!accelerated_table_group(ctx, table, keys->key, results->table)) {
-        if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0))) {
-          grn_id id;
-          grn_obj *range = grn_ctx_at(ctx, grn_obj_get_range(ctx, keys->key));
-          int idp = GRN_OBJ_TABLEP(range);
-          while ((id = grn_table_cursor_next_inline(ctx, tc))) {
-            void *value;
-            grn_rset_recinfo *ri = NULL;
-            GRN_BULK_REWIND(&bulk);
-            if (DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC) {
-              grn_table_cursor_get_value_inline(ctx, tc, (void **)&ri);
-            }
-            grn_obj_get_value(ctx, keys->key, id, &bulk);
-            switch (bulk.header.type) {
-            case GRN_UVECTOR :
-              {
-                // todo : support objects except grn_id
-                grn_id *v = (grn_id *)GRN_BULK_HEAD(&bulk);
-                grn_id *ve = (grn_id *)GRN_BULK_CURR(&bulk);
-                while (v < ve) {
-                  if ((*v != GRN_ID_NIL) &&
-                      grn_table_add_v_inline(ctx, results->table, v, sizeof(grn_id), &value, NULL)) {
-                    grn_table_add_subrec_inline(results->table, value, ri ? ri->score : 0,
-                                                (grn_rset_posinfo *)&id, 0);
-                  }
-                  v++;
-                }
-              }
-              break;
-            case GRN_VECTOR :
-              {
-                unsigned int i, n_elements;
-                n_elements = grn_vector_size(ctx, &bulk);
-                for (i = 0; i < n_elements; i++) {
-                  const char *content;
-                  unsigned int content_length;
-                  content_length = grn_vector_get_element(ctx, &bulk, i,
-                                                          &content, NULL, NULL);
-                  if (grn_table_add_v_inline(ctx, results->table,
-                                             content, content_length,
-                                             &value, NULL)) {
-                    grn_table_add_subrec_inline(results->table, value,
-                                                ri ? ri->score : 0,
-                                                (grn_rset_posinfo *)&id, 0);
-                  }
-                }
-              }
-              break;
-            case GRN_BULK :
-              {
-                if ((!idp || *((grn_id *)GRN_BULK_HEAD(&bulk))) &&
-                    grn_table_add_v_inline(ctx, results->table,
-                                           GRN_BULK_HEAD(&bulk), GRN_BULK_VSIZE(&bulk), &value, NULL)) {
-                  grn_table_add_subrec_inline(results->table, value, ri ? ri->score : 0,
-                                              (grn_rset_posinfo *)&id, 0);
-                }
-              }
-              break;
-            default :
-              ERR(GRN_INVALID_ARGUMENT, "invalid column");
-              break;
-            }
-          }
-          grn_table_cursor_close(ctx, tc);
-        }
+        grn_table_group_single_key_records(ctx, table,
+                                           keys->key, results->table);
       }
     } else {
       grn_bool have_vector = GRN_FALSE;
@@ -3548,7 +3559,6 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
                                                   results, n_results);
       }
     }
-    grn_obj_close(ctx, &bulk);
     for (r = 0, rp = results; r < n_results; r++, rp++) {
       GRN_TABLE_GROUPED_ON(rp->table);
     }
