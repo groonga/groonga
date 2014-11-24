@@ -14,7 +14,8 @@ load --table Memos
 ]
 
 select Memos \
+  --command_version 2 \
   --filter true \
   --drilldown[tag].keys tag,date \
-  --drilldown[tag].output_columns _value.tag,_value.date,_nsubrecs \
+  --drilldown[tag].output_columns _key[0],_key[1],_nsubrecs \
   --drilldown[tag].sortby _value.tag._key,_value.date

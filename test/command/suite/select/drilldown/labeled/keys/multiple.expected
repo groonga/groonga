@@ -15,7 +15,7 @@ load --table Memos
 {"_key": "Groonga is good!", "tag": "Groonga", "date": "2014-11-17 00:00:00"}
 ]
 [[0,0.0,0.0],5]
-select Memos   --drilldown[tag].keys tag,date   --drilldown[tag].output_columns _value.tag,_value.date,_nsubrecs
+select Memos   --command_version 2   --drilldown[tag].keys tag,date   --drilldown[tag].output_columns _key[0],_key[1],_nsubrecs
 [
   [
     0,
@@ -83,12 +83,12 @@ select Memos   --drilldown[tag].keys tag,date   --drilldown[tag].output_columns 
         ],
         [
           [
-            "tag",
-            "Tags"
+            "_key",
+            "ShortText"
           ],
           [
-            "date",
-            "Time"
+            "_key",
+            "ShortText"
           ],
           [
             "_nsubrecs",

@@ -2922,10 +2922,10 @@ grn_expr_exec_get_member(grn_ctx *ctx,
   GRN_TEXT_INIT(&values, 0);
   grn_obj_get_value(ctx, column, record_id, &values);
 
-  grn_obj_reinit(ctx, result, DB_OBJ(column)->range, 0);
   i = GRN_UINT32_VALUE(index);
   if (values.header.type == GRN_UVECTOR) {
     int n_elements;
+    grn_obj_reinit(ctx, result, DB_OBJ(column)->range, 0);
     n_elements = GRN_BULK_VSIZE(&values) / sizeof(grn_id);
     if (n_elements > i) {
       grn_id value;
@@ -2934,11 +2934,14 @@ grn_expr_exec_get_member(grn_ctx *ctx,
     }
   } else {
     if (values.u.v.n_sections > i) {
-      grn_section *section = &(values.u.v.sections[i]);
-      grn_obj *body = values.u.v.body;
-      const char *value;
-      value = GRN_BULK_HEAD(body) + section->offset;
-      grn_bulk_write(ctx, result, value, section->length);
+      const char *content;
+      unsigned int content_length;
+      grn_id domain;
+
+      content_length = grn_vector_get_element(ctx, &values, i,
+                                              &content, NULL, &domain);
+      grn_obj_reinit(ctx, result, domain, 0);
+      grn_bulk_write(ctx, result, content, content_length);
     }
   }
 

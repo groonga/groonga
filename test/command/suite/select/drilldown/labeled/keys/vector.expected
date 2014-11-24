@@ -22,7 +22,7 @@ load --table Memos
  "tags": ["Groonga"]}
 ]
 [[0,0.0,0.0],5]
-select Memos   --drilldown[vector].keys user,tags,date   --drilldown[vector].output_columns _value._id,_value.user,_value.tags,_value.date,_nsubrecs   --drilldown[vector].sortby -_nsubrecs,_id
+select Memos   --limit 0   --output_columns _id   --command_version 2   --drilldown[vector].keys user,tags,date   --drilldown[vector].output_columns _key[0],_key[1],_key[2],_nsubrecs   --drilldown[vector].sortby -_nsubrecs,_id
 [
   [
     0,
@@ -38,70 +38,7 @@ select Memos   --drilldown[vector].keys user,tags,date   --drilldown[vector].out
         [
           "_id",
           "UInt32"
-        ],
-        [
-          "_key",
-          "ShortText"
-        ],
-        [
-          "date",
-          "Time"
-        ],
-        [
-          "tags",
-          "ShortText"
-        ],
-        [
-          "user",
-          "Users"
         ]
-      ],
-      [
-        1,
-        "Groonga is fast!",
-        1416063600.0,
-        [
-          "Groonga"
-        ],
-        "alice"
-      ],
-      [
-        2,
-        "Mroonga is fast!",
-        1416063600.0,
-        [
-          "Mroonga",
-          "Groonga"
-        ],
-        "alice"
-      ],
-      [
-        3,
-        "Groonga sticker!",
-        1416063600.0,
-        [
-          "Groonga"
-        ],
-        "alice"
-      ],
-      [
-        4,
-        "Rroonga is fast!",
-        1416150000.0,
-        [
-          "Rroonga",
-          "Groonga"
-        ],
-        "alice"
-      ],
-      [
-        5,
-        "Groonga is good!",
-        1416150000.0,
-        [
-          "Groonga"
-        ],
-        "alice"
       ]
     ],
     {
@@ -111,20 +48,16 @@ select Memos   --drilldown[vector].keys user,tags,date   --drilldown[vector].out
         ],
         [
           [
-            "_id",
-            "UInt32"
-          ],
-          [
-            "user",
-            "Users"
-          ],
-          [
-            "tags",
+            "_key",
             "ShortText"
           ],
           [
-            "date",
-            "Time"
+            "_key",
+            "ShortText"
+          ],
+          [
+            "_key",
+            "ShortText"
           ],
           [
             "_nsubrecs",
@@ -132,41 +65,26 @@ select Memos   --drilldown[vector].keys user,tags,date   --drilldown[vector].out
           ]
         ],
         [
-          1,
           "alice",
-          [
-            "Groonga"
-          ],
+          "Groonga",
           1416063600.0,
           3
         ],
         [
-          4,
           "alice",
-          [
-            "Rroonga",
-            "Groonga"
-          ],
+          "Groonga",
           1416150000.0,
           2
         ],
         [
-          2,
           "alice",
-          [
-            "Mroonga",
-            "Groonga"
-          ],
+          "Mroonga",
           1416063600.0,
           1
         ],
         [
-          4,
           "alice",
-          [
-            "Rroonga",
-            "Groonga"
-          ],
+          "Rroonga",
           1416150000.0,
           1
         ]

@@ -5372,10 +5372,23 @@ grn_accessor_get_value(grn_ctx *ctx, grn_accessor *a, grn_id id, grn_obj *value)
       vs = GRN_BULK_VSIZE(value) - size0;
       break;
     case GRN_ACCESSOR_GET_KEY :
-      grn_table_get_key2(ctx, a->obj, id, value);
-      value->header.domain = a->obj->header.domain;
-      vp = GRN_BULK_HEAD(value) + size0;
-      vs = GRN_BULK_VSIZE(value) - size0;
+      if (!a->next && GRN_TABLE_IS_GROUPED(a->obj)) {
+        grn_obj raw_vector;
+        GRN_TEXT_INIT(&raw_vector, 0);
+        grn_table_get_key2(ctx, a->obj, id, &raw_vector);
+        grn_obj_ensure_vector(ctx, value);
+        grn_vector_decode(ctx, value,
+                          GRN_BULK_HEAD(&raw_vector),
+                          GRN_BULK_VSIZE(&raw_vector));
+        GRN_OBJ_FIN(ctx, &raw_vector);
+        vp = NULL;
+        vs = 0;
+      } else {
+        grn_table_get_key2(ctx, a->obj, id, value);
+        value->header.domain = a->obj->header.domain;
+        vp = GRN_BULK_HEAD(value) + size0;
+        vs = GRN_BULK_VSIZE(value) - size0;
+      }
       break;
     case GRN_ACCESSOR_GET_VALUE :
       grn_obj_get_value(ctx, a->obj, id, value);
