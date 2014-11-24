@@ -83,12 +83,12 @@ select Memos   --command_version 2   --filter true   --drilldown[tag].keys tag,d
         ],
         [
           [
-            "_key",
-            "ShortText"
+            "_key[0]",
+            null
           ],
           [
-            "_key",
-            "ShortText"
+            "_key[1]",
+            null
           ],
           [
             "_nsubrecs",

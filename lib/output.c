@@ -1143,6 +1143,46 @@ grn_output_table_column(grn_ctx *ctx, grn_obj *outbuf,
 }
 
 static inline void
+grn_output_table_column_by_expression(grn_ctx *ctx, grn_obj *outbuf,
+                                      grn_content_type output_type,
+                                      grn_expr_code *code,
+                                      grn_expr_code *code_end,
+                                      grn_obj *buf)
+{
+  if (code_end <= code) {
+    grn_output_array_open(ctx, outbuf, output_type, "COLUMN", 2);
+    grn_output_null(ctx, outbuf, output_type);
+    grn_output_null(ctx, outbuf, output_type);
+    grn_output_array_close(ctx, outbuf, output_type);
+    return;
+  }
+
+  switch (code_end[-1].op) {
+  case GRN_OP_GET_MEMBER :
+    if ((code_end - code) == 3) {
+      grn_output_array_open(ctx, outbuf, output_type, "COLUMN", 2);
+
+      GRN_BULK_REWIND(buf);
+      grn_column_name_(ctx, code[0].value, buf);
+      GRN_TEXT_PUTC(ctx, buf, '[');
+      grn_inspect(ctx, buf, code[1].value);
+      GRN_TEXT_PUTC(ctx, buf, ']');
+
+      grn_output_obj(ctx, outbuf, output_type, buf, NULL);
+      grn_output_null(ctx, outbuf, output_type);
+
+      grn_output_array_close(ctx, outbuf, output_type);
+    } else {
+      grn_output_table_column(ctx, outbuf, output_type, code->value, buf);
+    }
+    break;
+  default :
+    grn_output_table_column(ctx, outbuf, output_type, code->value, buf);
+    break;
+  }
+}
+
+static inline void
 grn_output_table_columns_by_expression(grn_ctx *ctx, grn_obj *outbuf,
                                        grn_content_type output_type,
                                        grn_obj *table, grn_obj_format *format,
@@ -1167,30 +1207,35 @@ grn_output_table_columns_by_expression(grn_ctx *ctx, grn_obj *outbuf,
     }
 
     have_comma = GRN_TRUE;
-    code_start_offset = previous_comma_offset + 1;
     if (is_first_comma) {
+      int n_used_codes;
       int code_end_offset;
-      int n_used_code;
 
-      grn_output_table_column(ctx, outbuf, output_type,
-                              expr->codes[0].value, buf);
+      n_used_codes = count_used_n_codes(ctx, expr->codes, code - 1);
+      code_end_offset = code - expr->codes - n_used_codes;
 
-      code_end_offset = code - expr->codes - code_start_offset - 1;
-      n_used_code = count_used_n_codes(ctx,
-                                       expr->codes,
-                                       expr->codes + code_end_offset);
-      code_start_offset = code_end_offset - n_used_code + 1;
+      grn_output_table_column_by_expression(ctx, outbuf, output_type,
+                                            expr->codes,
+                                            expr->codes + code_end_offset,
+                                            buf);
+      code_start_offset = code_end_offset;
       is_first_comma = GRN_FALSE;
+    } else {
+      code_start_offset = previous_comma_offset + 1;
     }
 
-    grn_output_table_column(ctx, outbuf, output_type,
-                            expr->codes[code_start_offset].value, buf);
+    grn_output_table_column_by_expression(ctx, outbuf, output_type,
+                                          expr->codes + code_start_offset,
+                                          code,
+                                          buf);
     previous_comma_offset = code - expr->codes;
   }
 
   if (!have_comma && expr->codes_curr > 0) {
-    grn_output_table_column(ctx, outbuf, output_type,
-                            expr->codes[0].value, buf);
+    grn_output_table_column_by_expression(ctx, outbuf, output_type,
+                                          expr->codes,
+                                          code_end,
+                                          buf);
   }
 
   grn_output_array_close(ctx, outbuf, output_type);
