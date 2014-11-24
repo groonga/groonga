@@ -25,11 +25,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifndef HAVE_STRNCASECMP
-# ifdef HAVE__STRNICMP
-#  define strncasecmp(s1,s2,n) _strnicmp(s1,s2,n)
-# endif /* HAVE__STRNICMP */
-#endif /* HAVE_STRNCASECMP */
+#ifdef HAVE__STRNICMP
+# define strncasecmp(s1,s2,n) _strnicmp(s1,s2,n)
+#endif /* HAVE__STRNICMP */
 
 #define MAX_SYNONYM_BYTES 4096
 
