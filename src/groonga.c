@@ -49,6 +49,10 @@
 # include <sys/sysctl.h>
 #endif /* HAVE_SYS_SYSCTL_H */
 
+#ifdef HAVE_IO_H
+# include <io.h>
+#endif /* HAVE_IO_H */
+
 #ifndef HAVE_STRNCASECMP
 # ifdef HAVE__STRNICMP
 #  define strncasecmp(s1,s2,n) _strnicmp(s1,s2,n)
