@@ -3491,8 +3491,23 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
               }
               break;
             case GRN_VECTOR :
-              ERR(GRN_OPERATION_NOT_SUPPORTED, "sorry.. not implemented yet");
-              /* todo */
+              {
+                unsigned int i, n_elements;
+                n_elements = grn_vector_size(ctx, &bulk);
+                for (i = 0; i < n_elements; i++) {
+                  const char *content;
+                  unsigned int content_length;
+                  content_length = grn_vector_get_element(ctx, &bulk, i,
+                                                          &content, NULL, NULL);
+                  if (grn_table_add_v_inline(ctx, results->table,
+                                             content, content_length,
+                                             &value, NULL)) {
+                    grn_table_add_subrec_inline(results->table, value,
+                                                ri ? ri->score : 0,
+                                                (grn_rset_posinfo *)&id, 0);
+                  }
+                }
+              }
               break;
             case GRN_BULK :
               {
