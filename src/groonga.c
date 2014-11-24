@@ -19,13 +19,14 @@
 #ifdef WIN32
 # define GROONGA_MAIN
 #endif /* WIN32 */
-#include "lib/grn.h"
+#include <grn.h>
 
-#include "lib/grn_com.h"
-#include "lib/grn_ctx_impl.h"
-#include "lib/grn_proc.h"
-#include "lib/grn_db.h"
-#include "lib/grn_util.h"
+#include <grn_com.h>
+#include <grn_ctx_impl.h>
+#include <grn_proc.h>
+#include <grn_db.h>
+#include <grn_util.h>
+
 #include <string.h>
 #include <stdio.h>
 #include <ctype.h>

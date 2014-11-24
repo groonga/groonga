@@ -16,8 +16,8 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "lib/grn_com.h"
-#include "lib/grn_ctx_impl.h"
+#include <grn_com.h>
+#include <grn_ctx_impl.h>
 #include <string.h>
 #include <stdio.h>
 #ifdef HAVE_SYS_WAIT_H

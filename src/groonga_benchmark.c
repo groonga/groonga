@@ -17,7 +17,7 @@
 */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include <config.h>
 #endif /* HAVE_CONFIG_H */
 
 #include <stdio.h>
@@ -37,9 +37,9 @@
 #include <netinet/in.h>
 #endif /* HAVE_NETINET_IN_H */
 
-#include "lib/grn_str.h"
-#include "lib/grn_com.h"
-#include "lib/grn_db.h"
+#include <grn_str.h>
+#include <grn_com.h>
+#include <grn_db.h>
 
 #ifdef WIN32
 #include <windows.h>

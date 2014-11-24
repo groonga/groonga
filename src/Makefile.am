@@ -25,9 +25,8 @@ AM_LDFLAGS = -no-undefined
 
 DEFAULT_INCLUDES =				\
 	-I$(top_builddir)			\
-	-I$(srcdir)				\
-	-I$(top_srcdir)				\
 	-I$(top_srcdir)/include			\
+	-I$(top_srcdir)/lib			\
 	$(GROONGA_INCLUDEDIR)
 
 include groonga_sources.am

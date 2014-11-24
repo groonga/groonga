@@ -16,7 +16,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "../lib/grn_mrb.h"
+#include <grn_mrb.h>
 
 #include <stdio.h>
 #include <stdlib.h>
