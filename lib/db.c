@@ -3293,33 +3293,67 @@ grn_table_group_multi_keys_vector_record(grn_ctx *ctx,
 
   for (k = nth_key, kp = &(keys[nth_key]); k < n_keys; k++, kp++) {
     grn_obj *key_buffer = &(key_buffers[k]);
-    if (key_buffer->header.type == GRN_VECTOR) {
-      unsigned int n_vector_elements;
-      unsigned int i, n_key_elements;
-
-      n_vector_elements = grn_vector_size(ctx, vector);
-      n_key_elements = grn_vector_size(ctx, key_buffer);
-      for (i = 0; i < n_key_elements; i++) {
-        const char *content;
-        unsigned int content_length;
+    switch (key_buffer->header.type) {
+    case GRN_UVECTOR :
+      {
+        unsigned int n_vector_elements;
         grn_id domain;
-        content_length = grn_vector_get_element(ctx, key_buffer, i,
-                                                &content, NULL, &domain);
-        grn_vector_add_element(ctx, vector,
-                               content, content_length,
-                               0,
-                               domain);
-        grn_table_group_multi_keys_vector_record(ctx,
-                                                 keys, key_buffers,
-                                                 k + 1, n_keys,
-                                                 results, n_results,
-                                                 id, ri, vector, bulk);
-        while (grn_vector_size(ctx, vector) != n_vector_elements) {
-          grn_vector_pop_element(ctx, vector, &content, NULL, NULL);
+        grn_id *ids;
+        unsigned int i, n_ids;
+
+        n_vector_elements = grn_vector_size(ctx, vector);
+        domain = key_buffer->header.domain;
+        ids = (grn_id *)GRN_BULK_HEAD(key_buffer);
+        n_ids = GRN_BULK_VSIZE(key_buffer) / sizeof(grn_id);
+        for (i = 0; i < n_ids; i++) {
+          grn_id element_id = ids[i];
+          grn_vector_add_element(ctx, vector,
+                                 (const char *)(&element_id), sizeof(grn_id),
+                                 0,
+                                 domain);
+          grn_table_group_multi_keys_vector_record(ctx,
+                                                   keys, key_buffers,
+                                                   k + 1, n_keys,
+                                                   results, n_results,
+                                                   id, ri, vector, bulk);
+          while (grn_vector_size(ctx, vector) != n_vector_elements) {
+            const char *content;
+            grn_vector_pop_element(ctx, vector, &content, NULL, NULL);
+          }
         }
+        return;
       }
-      return;
-    } else {
+      break;
+    case GRN_VECTOR :
+      {
+        unsigned int n_vector_elements;
+        unsigned int i, n_key_elements;
+
+        n_vector_elements = grn_vector_size(ctx, vector);
+        n_key_elements = grn_vector_size(ctx, key_buffer);
+        for (i = 0; i < n_key_elements; i++) {
+          const char *content;
+          unsigned int content_length;
+          grn_id domain;
+          content_length = grn_vector_get_element(ctx, key_buffer, i,
+                                                  &content, NULL, &domain);
+          grn_vector_add_element(ctx, vector,
+                                 content, content_length,
+                                 0,
+                                 domain);
+          grn_table_group_multi_keys_vector_record(ctx,
+                                                   keys, key_buffers,
+                                                   k + 1, n_keys,
+                                                   results, n_results,
+                                                   id, ri, vector, bulk);
+          while (grn_vector_size(ctx, vector) != n_vector_elements) {
+            grn_vector_pop_element(ctx, vector, &content, NULL, NULL);
+          }
+        }
+        return;
+      }
+      break;
+    default :
       grn_vector_add_element(ctx, vector,
                              GRN_BULK_HEAD(key_buffer),
                              GRN_BULK_VSIZE(key_buffer),
