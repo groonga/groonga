@@ -750,7 +750,7 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
     GRN_OUTPUT_STR(drilldown->label, drilldown->label_len);
 
     result.key_begin = 0;
-    result.key_end = n_keys;
+    result.key_end = n_keys - 1;
     grn_table_group(ctx, table, keys, n_keys, &result, 1);
     n_hits = grn_table_size(ctx, result.table);
 

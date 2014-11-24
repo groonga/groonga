@@ -3184,21 +3184,44 @@ grn_table_group_multi_keys_add_record(grn_ctx *ctx,
                                       int n_results,
                                       grn_id id,
                                       grn_rset_recinfo *ri,
+                                      grn_obj *vector,
                                       grn_obj *bulk)
 {
   int r;
   grn_table_group_result *rp;
 
   for (r = 0, rp = results; r < n_results; r++, rp++) {
-    void *key;
     void *value;
-    int begin = keys[rp->key_begin].offset;
-    int end = rp->key_end >= n_keys
-      ? GRN_BULK_VSIZE(bulk)
-      : keys[rp->key_end].offset;
-    key = GRN_BULK_HEAD(bulk) + begin;
+    int i;
+    int end;
+
+    if (rp->key_end > n_keys) {
+      end = n_keys;
+    } else {
+      end = rp->key_end + 1;
+    }
+    GRN_BULK_REWIND(bulk);
+    grn_text_benc(ctx, bulk, end - rp->key_begin);
+    for (i = rp->key_begin; i < end; i++) {
+      grn_section section = vector->u.v.sections[i];
+      grn_text_benc(ctx, bulk, section.length);
+    }
+    {
+      grn_obj *body = vector->u.v.body;
+      if (body) {
+        GRN_TEXT_PUT(ctx, bulk, GRN_BULK_HEAD(body), GRN_BULK_VSIZE(body));
+      }
+    }
+    for (i = rp->key_begin; i < end; i++) {
+      grn_section section = vector->u.v.sections[i];
+      grn_text_benc(ctx, bulk, section.weight);
+      grn_text_benc(ctx, bulk, section.domain);
+    }
+
     // todo : cut off GRN_ID_NIL
-    if (grn_table_add_v_inline(ctx, rp->table, key, end - begin, &value, NULL)) {
+    if (grn_table_add_v_inline(ctx, rp->table,
+                               GRN_BULK_HEAD(bulk), GRN_BULK_VSIZE(bulk),
+                               &value, NULL)) {
       grn_table_add_subrec_inline(rp->table, value, ri ? ri->score : 0,
                                   (grn_rset_posinfo *)&id, 0);
     }
@@ -3216,6 +3239,7 @@ grn_table_group_multi_keys_scalar_records(grn_ctx *ctx,
   grn_id id;
   grn_table_cursor *tc;
   grn_obj bulk;
+  grn_obj vector;
 
   tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0);
   if (!tc) {
@@ -3223,6 +3247,7 @@ grn_table_group_multi_keys_scalar_records(grn_ctx *ctx,
   }
 
   GRN_TEXT_INIT(&bulk, 0);
+  GRN_OBJ_INIT(&vector, GRN_VECTOR, 0, GRN_DB_VOID);
   while ((id = grn_table_cursor_next_inline(ctx, tc))) {
     int k;
     grn_table_sort_key *kp;
@@ -3232,16 +3257,20 @@ grn_table_group_multi_keys_scalar_records(grn_ctx *ctx,
       grn_table_cursor_get_value_inline(ctx, tc, (void **)&ri);
     }
 
-    GRN_BULK_REWIND(&bulk);
-
+    GRN_BULK_REWIND(&vector);
     for (k = 0, kp = keys; k < n_keys; k++, kp++) {
-      kp->offset = GRN_BULK_VSIZE(&bulk);
+      GRN_BULK_REWIND(&bulk);
       grn_obj_get_value(ctx, kp->key, id, &bulk);
+      grn_vector_add_element(ctx, &vector,
+                             GRN_BULK_HEAD(&bulk), GRN_BULK_VSIZE(&bulk),
+                             0,
+                             bulk.header.domain);
     }
 
     grn_table_group_multi_keys_add_record(ctx, keys, n_keys, results, n_results,
-                                          id, ri, &bulk);
+                                          id, ri, &vector, &bulk);
   }
+  GRN_OBJ_FIN(ctx, &vector);
   GRN_OBJ_FIN(ctx, &bulk);
   grn_table_cursor_close(ctx, tc);
 }
@@ -3256,6 +3285,7 @@ grn_table_group_multi_keys_vector_record(grn_ctx *ctx,
                                          int n_results,
                                          grn_id id,
                                          grn_rset_recinfo *ri,
+                                         grn_obj *vector,
                                          grn_obj *bulk)
 {
   int k;
@@ -3264,29 +3294,37 @@ grn_table_group_multi_keys_vector_record(grn_ctx *ctx,
   for (k = nth_key, kp = &(keys[nth_key]); k < n_keys; k++, kp++) {
     grn_obj *key_buffer = &(key_buffers[k]);
     if (key_buffer->header.type == GRN_VECTOR) {
-      unsigned int i, n_elements;
+      unsigned int n_vector_elements;
+      unsigned int i, n_key_elements;
 
-      kp->offset = GRN_BULK_VSIZE(bulk);
-      n_elements = grn_vector_size(ctx, key_buffer);
-      for (i = 0; i < n_elements; i++) {
+      n_vector_elements = grn_vector_size(ctx, vector);
+      n_key_elements = grn_vector_size(ctx, key_buffer);
+      for (i = 0; i < n_key_elements; i++) {
         const char *content;
         unsigned int content_length;
+        grn_id domain;
         content_length = grn_vector_get_element(ctx, key_buffer, i,
-                                                &content, NULL, NULL);
-        GRN_BULK_REWIND(bulk);
-        GRN_BULK_INCR_LEN(bulk, kp->offset);
-        GRN_TEXT_PUT(ctx, bulk, content, content_length);
+                                                &content, NULL, &domain);
+        grn_vector_add_element(ctx, vector,
+                               content, content_length,
+                               0,
+                               domain);
         grn_table_group_multi_keys_vector_record(ctx,
                                                  keys, key_buffers,
                                                  k + 1, n_keys,
                                                  results, n_results,
-                                                 id, ri, bulk);
+                                                 id, ri, vector, bulk);
+        while (grn_vector_size(ctx, vector) != n_vector_elements) {
+          grn_vector_pop_element(ctx, vector, &content, NULL, NULL);
+        }
       }
       return;
     } else {
-      kp->offset = GRN_BULK_VSIZE(bulk);
-      GRN_TEXT_PUT(ctx, bulk,
-                   GRN_BULK_HEAD(key_buffer), GRN_BULK_VSIZE(key_buffer));
+      grn_vector_add_element(ctx, vector,
+                             GRN_BULK_HEAD(key_buffer),
+                             GRN_BULK_VSIZE(key_buffer),
+                             0,
+                             key_buffer->header.domain);
     }
   }
 
@@ -3294,7 +3332,7 @@ grn_table_group_multi_keys_vector_record(grn_ctx *ctx,
     grn_table_group_multi_keys_add_record(ctx,
                                           keys, n_keys,
                                           results, n_results,
-                                          id, ri, bulk);
+                                          id, ri, vector, bulk);
   }
 }
 
@@ -3309,6 +3347,7 @@ grn_table_group_multi_keys_vector_records(grn_ctx *ctx,
   grn_id id;
   grn_table_cursor *tc;
   grn_obj bulk;
+  grn_obj vector;
   grn_obj *key_buffers;
   int k;
 
@@ -3324,6 +3363,7 @@ grn_table_group_multi_keys_vector_records(grn_ctx *ctx,
   }
 
   GRN_TEXT_INIT(&bulk, 0);
+  GRN_OBJ_INIT(&vector, GRN_VECTOR, 0, GRN_DB_VOID);
   for (k = 0; k < n_keys; k++) {
     GRN_VOID_INIT(&(key_buffers[k]));
   }
@@ -3341,16 +3381,17 @@ grn_table_group_multi_keys_vector_records(grn_ctx *ctx,
       grn_obj_get_value(ctx, kp->key, id, key_buffer);
     }
 
-    GRN_BULK_REWIND(&bulk);
+    GRN_BULK_REWIND(&vector);
     grn_table_group_multi_keys_vector_record(ctx,
                                              keys, key_buffers, 0, n_keys,
                                              results, n_results,
-                                             id, ri, &bulk);
+                                             id, ri, &vector, &bulk);
   }
   for (k = 0; k < n_keys; k++) {
     GRN_OBJ_FIN(ctx, &(key_buffers[k]));
   }
   GRN_FREE(key_buffers);
+  GRN_OBJ_FIN(ctx, &vector);
   GRN_OBJ_FIN(ctx, &bulk);
   grn_table_cursor_close(ctx, tc);
 }
