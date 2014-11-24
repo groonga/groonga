@@ -435,6 +435,7 @@ is_output_columns_format_v1(grn_ctx *ctx,
     switch (output_columns[i]) {
     case ',' :
     case '(' :
+    case '[' :
       return GRN_FALSE;
     default :
       break;
@@ -709,7 +710,8 @@ grn_select_drilldown(grn_ctx *ctx, grn_obj *table,
 
 static void
 grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
-                      drilldown_info *drilldowns, unsigned int n_drilldowns)
+                      drilldown_info *drilldowns, unsigned int n_drilldowns,
+                      grn_obj *condition)
 {
   unsigned int i;
 
@@ -770,35 +772,21 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
         sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
                                   NULL, result.table);
         if (sorted) {
-          grn_obj_format format;
           grn_table_sort(ctx, result.table, offset, limit,
                          sorted, sort_keys, n_sort_keys);
-          GRN_OBJ_FORMAT_INIT(&format, n_hits, 0, limit, offset);
-          format.flags =
-            GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
-            GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY;
-          grn_obj_columns(ctx, sorted,
-                          drilldown->output_columns,
-                          drilldown->output_columns_len,
-                          &format.columns);
-          GRN_OUTPUT_OBJ(sorted, &format);
-          GRN_OBJ_FORMAT_FIN(ctx, &format);
+          grn_select_output_columns(ctx, sorted, n_hits, 0, limit,
+                                    drilldown->output_columns,
+                                    drilldown->output_columns_len,
+                                    condition);
           grn_obj_unlink(ctx, sorted);
         }
         grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
       }
     } else {
-      grn_obj_format format;
-      GRN_OBJ_FORMAT_INIT(&format, n_hits, offset, limit, offset);
-      format.flags =
-        GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
-        GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY;
-      grn_obj_columns(ctx, result.table,
-                      drilldown->output_columns,
-                      drilldown->output_columns_len,
-                      &format.columns);
-      GRN_OUTPUT_OBJ(result.table, &format);
-      GRN_OBJ_FORMAT_FIN(ctx, &format);
+      grn_select_output_columns(ctx, result.table, n_hits, offset, limit,
+                                drilldown->output_columns,
+                                drilldown->output_columns_len,
+                                condition);
     }
 
     grn_table_sort_key_close(ctx, keys, n_keys);
@@ -1099,7 +1087,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
                                drilldown->output_columns,
                                drilldown->output_columns_len);
         } else if (n_drilldowns > 0) {
-          grn_select_drilldowns(ctx, res, drilldowns, n_drilldowns);
+          grn_select_drilldowns(ctx, res, drilldowns, n_drilldowns, cond);
         }
       }
       if (gkeys) {
