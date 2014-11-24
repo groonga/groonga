@@ -6162,7 +6162,7 @@ proc_range_filter(grn_ctx *ctx, int nargs, grn_obj **args,
   grn_obj *table;
   grn_obj *res = NULL;
   grn_obj *filter_expr = NULL;
-  grn_obj *filter_variable;
+  grn_obj *filter_variable = NULL;
   int real_offset;
   int real_limit;
 
