@@ -1,0 +1,176 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos user COLUMN_SCALAR Users
+[[0,0.0,0.0],true]
+column_create Memos date COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is fast!", "user": "alice", "date": "2014-11-16 00:00:00",
+ "tags": ["Groonga"]},
+{"_key": "Mroonga is fast!", "user": "alice", "date": "2014-11-16 00:00:00",
+ "tags": ["Mroonga", "Groonga"]},
+{"_key": "Groonga sticker!", "user": "alice", "date": "2014-11-16 00:00:00",
+ "tags": ["Groonga"]},
+{"_key": "Rroonga is fast!", "user": "alice", "date": "2014-11-17 00:00:00",
+ "tags": ["Rroonga", "Groonga"]},
+{"_key": "Groonga is good!", "user": "alice", "date": "2014-11-17 00:00:00",
+ "tags": ["Groonga"]}
+]
+[[0,0.0,0.0],5]
+select Memos   --drilldown[vector].keys user,tags,date   --drilldown[vector].output_columns _value._id,_value.user,_value.tags,_value.date,_nsubrecs   --drilldown[vector].sortby -_nsubrecs,_id
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        5
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "date",
+          "Time"
+        ],
+        [
+          "tags",
+          "ShortText"
+        ],
+        [
+          "user",
+          "Users"
+        ]
+      ],
+      [
+        1,
+        "Groonga is fast!",
+        1416063600.0,
+        [
+          "Groonga"
+        ],
+        "alice"
+      ],
+      [
+        2,
+        "Mroonga is fast!",
+        1416063600.0,
+        [
+          "Mroonga",
+          "Groonga"
+        ],
+        "alice"
+      ],
+      [
+        3,
+        "Groonga sticker!",
+        1416063600.0,
+        [
+          "Groonga"
+        ],
+        "alice"
+      ],
+      [
+        4,
+        "Rroonga is fast!",
+        1416150000.0,
+        [
+          "Rroonga",
+          "Groonga"
+        ],
+        "alice"
+      ],
+      [
+        5,
+        "Groonga is good!",
+        1416150000.0,
+        [
+          "Groonga"
+        ],
+        "alice"
+      ]
+    ],
+    {
+      "vector": [
+        [
+          4
+        ],
+        [
+          [
+            "_id",
+            "UInt32"
+          ],
+          [
+            "user",
+            "Users"
+          ],
+          [
+            "tags",
+            "ShortText"
+          ],
+          [
+            "date",
+            "Time"
+          ],
+          [
+            "_nsubrecs",
+            "Int32"
+          ]
+        ],
+        [
+          1,
+          "alice",
+          [
+            "Groonga"
+          ],
+          1416063600.0,
+          3
+        ],
+        [
+          4,
+          "alice",
+          [
+            "Rroonga",
+            "Groonga"
+          ],
+          1416150000.0,
+          2
+        ],
+        [
+          2,
+          "alice",
+          [
+            "Mroonga",
+            "Groonga"
+          ],
+          1416063600.0,
+          1
+        ],
+        [
+          4,
+          "alice",
+          [
+            "Rroonga",
+            "Groonga"
+          ],
+          1416150000.0,
+          1
+        ]
+      ]
+    }
+  ]
+]
