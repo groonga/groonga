@@ -46,7 +46,7 @@ Files: data/html/admin/js/jquery.flot*
 Copyright: 2007-2009 IOLA and Ole Laursen
 License: MIT
 
-Files: data/html/admin/js/jquery-1.7.2.min.js
+Files: data/html/admin/js/jquery-1.7.2.js
 Copyright: 2011, John Resig
 License: MIT or GPL-2
 
