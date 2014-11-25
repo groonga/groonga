@@ -7211,6 +7211,9 @@ grn_obj_set_info_token_filters(grn_ctx *ctx,
 
     GRN_PTR_PUT(ctx, current_token_filters, token_filter);
 
+    if (i > 0) {
+      GRN_TEXT_PUTC(ctx, &token_filter_names, ',');
+    }
     token_filter_name_size = grn_obj_name(ctx,
                                           token_filter,
                                           token_filter_name,
