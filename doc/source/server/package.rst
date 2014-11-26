@@ -84,6 +84,64 @@ Restarting groonga HTTP server(Fedora)::
 
   % sudo systemctl restart groonga-httpd
 
+groonga-server-gqtp
+-------------------
+
+``groonga-server-gqtp`` is a :doc:`/spec/gqtp` protocol based server package.
+
++--------------------+---------------------------------------+
+| Item               | Default value                         |
++====================+=======================================+
+| Port number        | 10043                                 |
++--------------------+---------------------------------------+
+| :ref:`process-log` | /var/log/groonga/groonga-gqtp.log     |
++--------------------+---------------------------------------+
+| :ref:`query-log`   | /var/log/groonga/gqtp-query.log       |
++--------------------+---------------------------------------+
+| Database           | /var/lib/groonga/db/*                 |
++--------------------+---------------------------------------+
+
+Configuration file for server setting (Debian/Ubuntu)::
+
+  /etc/default/groonga/groonga-server-gqtp
+
+Configuration file for server setting (CentOS)::
+
+  /etc/sysconfig/groonga-server-gqtp
+
+Start GQTP server
+^^^^^^^^^^^^^^^^^
+
+Starting groonga GQTP server(Debian/Ubuntu/CentOS)::
+
+  % sudo service groonga-server-gqtp start
+ 
+Starting groonga GQTP server(Fedora)::
+
+  % sudo systemctl start groonga-server-gqtp
+
+Stop GQTP server
+^^^^^^^^^^^^^^^^
+
+Stopping groonga GQTP server(Debian/Ubuntu/CentOS)::
+
+  % sudo service groonga-server-http stop
+ 
+Stopping groonga GQTP server(Fedora)::
+
+  % sudo systemctl stop groonga-server-gqtp
+
+Restart GQTP server
+^^^^^^^^^^^^^^^^^^^
+
+Restarting groonga HTTP server(Debian/Ubuntu/CentOS)::
+
+  % sudo service groonga-server-gqtp restart
+ 
+Restarting groonga HTTP server(Fedora)::
+
+  % sudo systemctl restart groonga-server-gqtp
+
 groonga-server-http
 -------------------
 
@@ -149,60 +207,3 @@ Restarting groonga HTTP server(Fedora)::
 
   % sudo systemctl restart groonga-server-http
 
-groonga-server-gqtp
--------------------
-
-``groonga-server-gqtp`` is a :doc:`/spec/gqtp` protocol based server package.
-
-+--------------------+---------------------------------------+
-| Item               | Default value                         |
-+====================+=======================================+
-| Port number        | 10043                                 |
-+--------------------+---------------------------------------+
-| :ref:`process-log` | /var/log/groonga/groonga-gqtp.log     |
-+--------------------+---------------------------------------+
-| :ref:`query-log`   | /var/log/groonga/gqtp-query.log       |
-+--------------------+---------------------------------------+
-| Database           | /var/lib/groonga/db/*                 |
-+--------------------+---------------------------------------+
-
-Configuration file for server setting (Debian/Ubuntu)::
-
-  /etc/default/groonga/groonga-server-gqtp
-
-Configuration file for server setting (CentOS)::
-
-  /etc/sysconfig/groonga-server-gqtp
-
-Start GQTP server
-^^^^^^^^^^^^^^^^^
-
-Starting groonga GQTP server(Debian/Ubuntu/CentOS)::
-
-  % sudo service groonga-server-gqtp start
- 
-Starting groonga GQTP server(Fedora)::
-
-  % sudo systemctl start groonga-server-gqtp
-
-Stop GQTP server
-^^^^^^^^^^^^^^^^
-
-Stopping groonga GQTP server(Debian/Ubuntu/CentOS)::
-
-  % sudo service groonga-server-http stop
- 
-Stopping groonga GQTP server(Fedora)::
-
-  % sudo systemctl stop groonga-server-gqtp
-
-Restart GQTP server
-^^^^^^^^^^^^^^^^^^^
-
-Restarting groonga HTTP server(Debian/Ubuntu/CentOS)::
-
-  % sudo service groonga-server-gqtp restart
- 
-Restarting groonga HTTP server(Fedora)::
-
-  % sudo systemctl restart groonga-server-gqtp
