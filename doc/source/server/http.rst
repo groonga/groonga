@@ -17,10 +17,6 @@ requires just a few command line options to run.
 :doc:`http/groonga-httpd` is a `nginx <http://nginx.org/>`_ based
 implementation. It is also fast and has many HTTP features.
 
-.. note::
-
-   :doc:`http/groonga-httpd` is still experimental.
-
 .. toctree::
    :maxdepth: 2
 
