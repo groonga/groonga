@@ -177,16 +177,16 @@ Here is an example that enables column value compression by zlib::
 
   % ./configure --with-zlib
 
-``--with-lzo``
+``--with-lz4``
 ++++++++++++++
 
-Enables column value compression by LZO.
+Enables column value compression by LZ4.
 
 The default is disabled.
 
-Here is an example that enables column value compression by LZO::
+Here is an example that enables column value compression by LZ4::
 
-  % ./configure --with-lzo
+  % ./configure --with-lz4
 
 ``--with-message-pack=MESSAGE_PACK_INSTALL_PREFIX``
 +++++++++++++++++++++++++++++++++++++++++++++++++++
