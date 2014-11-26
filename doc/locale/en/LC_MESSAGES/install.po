@@ -8,13 +8,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Groonga 4.0.3\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2014-05-23 12:44+0900\n"
+"PO-Revision-Date: 2014-11-26 19:06+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "Install"
@@ -52,30 +52,6 @@ msgstr ""
 "This section describes how to install Groonga related RPM packages on "
 "CentOS. You can install them by ``yum``."
 
-msgid ""
-"The package 'groonga' is the mininum set of fulltext search engine. If you "
-"want to use groonga for server use, you can install additional preconfigured "
-"packages."
-msgstr ""
-"The package 'groonga' is the mininum set of fulltext search engine. If you "
-"want to use groonga for server use, you can install additional preconfigured "
-"packages."
-
-msgid "There are three packages for server use."
-msgstr "There are three packages for server use."
-
-msgid "groonga-server-http (simple HTTP protocol based server package)"
-msgstr "groonga-server-http (simple HTTP protocol based server package)"
-
-msgid "groonga-httpd (nginx and HTTP protocol based server package)"
-msgstr "groonga-httpd (nginx and HTTP protocol based server package)"
-
-msgid "groonga-server-gqtp (GQTP protocol based server package)"
-msgstr "groonga-server-gqtp (GQTP protocol based server package)"
-
-msgid "See :doc:`/server` section about details."
-msgstr "See :doc:`/server` section about details."
-
 msgid "CentOS 5"
 msgstr "CentOS 5"
 
@@ -91,15 +67,6 @@ msgstr ""
 
 msgid "Install groonga-tokenizer-mecab package::"
 msgstr "Install groonga-tokenizer-mecab package::"
-
-msgid "Then install MeCab dictionary. (mecab-ipadic or mecab-jumandic)"
-msgstr "Then install MeCab dictionary. (mecab-ipadic or mecab-jumandic)"
-
-msgid "Install IPA dictionary::"
-msgstr "Install IPA dictionary::"
-
-msgid "Or install Juman dictionary::"
-msgstr "Or install Juman dictionary::"
 
 msgid ""
 "There is a package that provides `Munin <http://munin-monitoring.org/>`_ "
@@ -157,6 +124,12 @@ msgstr ""
 "included in the official CentOS repository. You need to enable `EPEL <http://"
 "fedoraproject.org/wiki/EPEL>`_ repository to install it by ``yum``."
 
+msgid "CentOS 7"
+msgstr ""
+
+msgid "Enable EPEL repository::"
+msgstr ""
+
 msgid "Build from source"
 msgstr "Build from source"
 
@@ -209,15 +182,6 @@ msgstr ""
 "plugins. If you want to use that one, install groonga-normalizer-mysql "
 "package."
 
-msgid "jessie"
-msgstr "jessie"
-
-msgid "Add the groonga apt repository."
-msgstr "Add the groonga apt repository."
-
-msgid "sid"
-msgstr "sid"
-
 msgid "Fedora"
 msgstr "Fedora"
 
@@ -244,6 +208,15 @@ msgid ""
 "packages require to install ``groonga-release`` package which provides the "
 "Groonga yum repository beforehand::"
 msgstr ""
+
+msgid "Then install MeCab dictionary. (mecab-ipadic or mecab-jumandic)"
+msgstr "Then install MeCab dictionary. (mecab-ipadic or mecab-jumandic)"
+
+msgid "Install IPA dictionary::"
+msgstr "Install IPA dictionary::"
+
+msgid "Or install Juman dictionary::"
+msgstr "Or install Juman dictionary::"
 
 msgid "Mac OS X"
 msgstr "Mac OS X"
@@ -685,6 +658,27 @@ msgstr ""
 "``sudo``. e.g. ``--prefix=$HOME/local`` case. In this case, use ``make "
 "install``::"
 
+msgid ""
+"``groonga`` package is the minimum set of fulltext search engine. If you "
+"want to use Groonga for server use, you can install additional preconfigured "
+"packages."
+msgstr ""
+
+msgid "There are three packages for server use."
+msgstr "There are three packages for server use."
+
+msgid "groonga-server-http (simple HTTP protocol based server package)"
+msgstr "groonga-server-http (simple HTTP protocol based server package)"
+
+msgid "groonga-httpd (nginx and HTTP protocol based server package)"
+msgstr "groonga-httpd (nginx and HTTP protocol based server package)"
+
+msgid "groonga-server-gqtp (GQTP protocol based server package)"
+msgstr "groonga-server-gqtp (GQTP protocol based server package)"
+
+msgid "See :doc:`/server` section about details."
+msgstr "See :doc:`/server` section about details."
+
 msgid "Oracle Solaris"
 msgstr "Oracle Solaris"
 
@@ -763,7 +757,7 @@ msgstr ""
 "For 32-bit environment, download x86 executable binary from packages.groonga."
 "org:"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.5-x86.exe"
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.8-x86.exe"
 msgstr ""
 
 msgid "Then run it."
@@ -776,7 +770,7 @@ msgstr ""
 "For 64-bit environment, download x64 executable binary from packages.goronga."
 "org:"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.5-x64.exe"
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.8-x64.exe"
 msgstr ""
 
 msgid ""
@@ -794,7 +788,7 @@ msgid ""
 msgstr ""
 "For 32-bit environment, download x86 zip archive from packages.groonga.org:"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.5-x86.zip"
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.8-x86.zip"
 msgstr ""
 
 msgid "Then extract it."
@@ -805,7 +799,7 @@ msgid ""
 msgstr ""
 "For 64-bit environment, download x64 zip archive from packages.groonga.org:"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.5-x64.zip"
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.8-x64.zip"
 msgstr ""
 
 msgid "You can find :doc:`/reference/executables/groonga` in ``bin`` folder."
@@ -831,7 +825,7 @@ msgstr "`CMake <http://www.cmake.org/>`_"
 msgid "Download zipped source from packages.groonga.org:"
 msgstr "Download zipped source from packages.groonga.org:"
 
-msgid "http://packages.groonga.org/source/groonga/groonga-4.0.5.zip"
+msgid "http://packages.groonga.org/source/groonga/groonga-4.0.8.zip"
 msgstr ""
 
 msgid "Move to the Groonga's source folder::"
@@ -850,3 +844,12 @@ msgid ""
 msgstr ""
 "After the above steps, :doc:`/reference/executables/groonga` is found in ``c:"
 "\\groonga\\bin\\groonga.exe``."
+
+#~ msgid "sid"
+#~ msgstr "sid"
+
+#~ msgid "Add the groonga apt repository."
+#~ msgstr "Add the groonga apt repository."
+
+#~ msgid "jessie"
+#~ msgstr "jessie"

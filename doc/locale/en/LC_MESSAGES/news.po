@@ -50,11 +50,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"[dump] Supports to dump TABLE_NO_KEY for token_flters. [GitHub#215] [Patch "
-"by Naoya Murakami]"
-msgstr ""
-
-msgid ""
 "[deb] Added stop word token filter plugin. [GitHub#216] [Patch by Hiroshi "
 "Hatake]"
 msgstr ""
@@ -157,6 +152,11 @@ msgstr ""
 msgid "Fixed a memory leak on converting weight vector to text."
 msgstr ""
 "Fixed a memory leak on updating an empty column vector with the same value."
+
+msgid ""
+"[dump] Fixed token filters and ``TABLE_NO_KEY`` related error in :doc:`/"
+"reference/commands/dump`.  [GitHub#215] [Patch by Naoya Murakami]"
+msgstr ""
 
 msgid "Thanks"
 msgstr "Thanks"
