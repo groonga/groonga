@@ -9,10 +9,9 @@ The package ``groonga`` is the mininum set of fulltext search engine.
 If you want to use groonga for server use, you can install
 additional preconfigured packages.
 
-There are three packages for server use.
+There are two packages for server use.
 
 * ``groonga-httpd`` (nginx and HTTP protocol based server package)
-* ``groonga-server-http`` (simple HTTP protocol based server package)
 * ``groonga-server-gqtp`` (:doc:`/spec/gqtp` protocol based server package)
 
 There is the reason why groonga supports not only GQTP but also two HTTP server
