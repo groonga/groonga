@@ -23,8 +23,8 @@ Archive) on Launchpad. You can install Groonga by APT from the PPA.
 Here are supported Ubuntu versions:
 
   * 12.04 LTS Precise Pangolin
-  * 13.10 Saucy Salamander
   * 14.04 LTS Trusty Tahr
+  * 14.10 Utopic Unicorn
 
 Enable the universe repository to install Groonga::
 
