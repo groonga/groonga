@@ -21,15 +21,14 @@ As HTTP is matured protocol, you can take advantage of existing tool and there a
 library (See `related projects <http://groonga.org/related-projects.html>`_ for details).
 If you use ``groonga-httpd`` package, you can also take benefits of nginx functionality.
 
-We recommend to use ``groonga-server-http`` at first, then if you want to use more 
-fullfilling functionality, use ``groonga-httpd`` package. If you have performance issues which
-is derived from protocol overheads, consider to use ``groonga-server-gqtp``.
+We recommend to use ``groonga-httpd`` at first, because it provides fullfilling server functionality.
+If you have performance issues which is derived from protocol overheads, consider to use ``groonga-server-gqtp``.
 
  .. note::
 
-   There is a conflict between ``groonga-httpd`` and ``groonga-server-http``
-   package because of port number.
-   See :doc:`/server/http/comparison` if you want to know which package meets your demands.
+   In the previous versions, there is a ``groonga-server-http`` package (simple HTTP protocol
+   based server package). It is now marked as obsolete, please use ``groonga-httpd`` packages
+   instead. ``groonga-server-http`` package became a transitional package for ``groonga-httpd``.
 
 groonga-httpd
 -------------
@@ -89,6 +88,11 @@ groonga-server-http
 -------------------
 
 ``groonga-server-http`` is a simple HTTP protocol based server package.
+
+ .. note::
+
+   ``groonga-server-http`` package is the transitional package since Groonga 4.0.8.
+   Please use ``groonga-httpd`` instead.
 
 Preconfigured setting:
 
