@@ -1,0 +1,8 @@
+clone_folder: C:\grnwork
+clone_depth: 1
+build_script:
+ - cd C:\grnwork
+ - cmake . -G "Visual Studio 12"
+ - cmake --build . --config RelWithDebInfo
+
+test: off
