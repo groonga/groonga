@@ -57,9 +57,6 @@ msgstr ""
 ":doc:`http/groonga-httpd` is a `nginx <http://nginx.org/>`_ based "
 "implementation. It is also fast and has many HTTP features."
 
-msgid ":doc:`http/groonga-httpd` is still experimental."
-msgstr ":doc:`http/groonga-httpd` is still experimental."
-
 msgid "Comparison"
 msgstr "Comparison"
 
@@ -468,36 +465,6 @@ msgstr "Restarting groonga HTTP server(Debian/Ubuntu/CentOS)::"
 msgid "Restarting groonga HTTP server(Fedora)::"
 msgstr "Restarting groonga HTTP server(Fedora)::"
 
-msgid "groonga-server-http"
-msgstr "groonga-server-http"
-
-msgid "``groonga-server-http`` is a simple HTTP protocol based server package."
-msgstr ""
-"``groonga-server-http`` is a simple HTTP protocol based server package."
-
-msgid ""
-"``groonga-server-http`` package is the transitional package since Groonga "
-"4.0.8. Please use ``groonga-httpd`` instead."
-msgstr ""
-
-msgid "/var/log/groonga/groonga-http.log"
-msgstr "/var/log/groonga/groonga-http.log"
-
-msgid ":ref:`process-log`"
-msgstr ":ref:`process-log`"
-
-msgid ":ref:`query-log`"
-msgstr ":ref:`query-log`"
-
-msgid "Configuration file for server setting (Debian/Ubuntu)::"
-msgstr "Configuration file for server setting (Debian/Ubuntu)::"
-
-msgid "Configuration file for server setting (CentOS)::"
-msgstr "Configuration file for server setting (CentOS)::"
-
-msgid "Stopping groonga HTTP server(Fedora)::"
-msgstr "Stopping groonga HTTP server(Fedora)::"
-
 msgid "groonga-server-gqtp"
 msgstr "groonga-server-gqtp"
 
@@ -512,8 +479,20 @@ msgstr "10043"
 msgid "/var/log/groonga/groonga-gqtp.log"
 msgstr "/var/log/groonga/groonga-gqtp.log"
 
+msgid ":ref:`process-log`"
+msgstr ":ref:`process-log`"
+
 msgid "/var/log/groonga/gqtp-query.log"
 msgstr "/var/log/groonga/gqtp-query.log"
+
+msgid ":ref:`query-log`"
+msgstr ":ref:`query-log`"
+
+msgid "Configuration file for server setting (Debian/Ubuntu)::"
+msgstr "Configuration file for server setting (Debian/Ubuntu)::"
+
+msgid "Configuration file for server setting (CentOS)::"
+msgstr "Configuration file for server setting (CentOS)::"
 
 msgid "Start GQTP server"
 msgstr "Start GQTP server"
@@ -536,6 +515,27 @@ msgstr "Stopping groonga GQTP server(Fedora)::"
 msgid "Restart GQTP server"
 msgstr "Restart GQTP server"
 
+msgid "groonga-server-http"
+msgstr "groonga-server-http"
+
+msgid "``groonga-server-http`` is a simple HTTP protocol based server package."
+msgstr ""
+"``groonga-server-http`` is a simple HTTP protocol based server package."
+
+msgid ""
+"``groonga-server-http`` package is the transitional package since Groonga "
+"4.0.8. Please use ``groonga-httpd`` instead."
+msgstr ""
+
+msgid "/var/log/groonga/groonga-http.log"
+msgstr "/var/log/groonga/groonga-http.log"
+
+msgid "Stopping groonga HTTP server(Fedora)::"
+msgstr "Stopping groonga HTTP server(Fedora)::"
+
+#~ msgid "``groonga-server-http`` (simple HTTP protocol based server package)"
+#~ msgstr "``groonga-server-http`` (simple HTTP protocol based server package)"
+
 #~ msgid ""
 #~ "There is a conflict between ``groonga-httpd`` and ``groonga-server-http`` "
 #~ "package because of port number. See :doc:`/server/http/comparison` if you "
@@ -545,5 +545,5 @@ msgstr "Restart GQTP server"
 #~ "package because of port number. See :doc:`/server/http/comparison` if you "
 #~ "want to know which package meets your demands."
 
-#~ msgid "``groonga-server-http`` (simple HTTP protocol based server package)"
-#~ msgstr "``groonga-server-http`` (simple HTTP protocol based server package)"
+#~ msgid ":doc:`http/groonga-httpd` is still experimental."
+#~ msgstr ":doc:`http/groonga-httpd` is still experimental."

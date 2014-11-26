@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Groonga 4.0.3\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2014-11-26 19:06+0900\n"
+"PO-Revision-Date: 2014-11-26 19:29+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -664,11 +664,8 @@ msgid ""
 "packages."
 msgstr ""
 
-msgid "There are three packages for server use."
-msgstr "There are three packages for server use."
-
-msgid "groonga-server-http (simple HTTP protocol based server package)"
-msgstr "groonga-server-http (simple HTTP protocol based server package)"
+msgid "There are two packages for server use."
+msgstr ""
 
 msgid "groonga-httpd (nginx and HTTP protocol based server package)"
 msgstr "groonga-httpd (nginx and HTTP protocol based server package)"
@@ -725,11 +722,11 @@ msgstr "Here are supported Ubuntu versions:"
 msgid "12.04 LTS Precise Pangolin"
 msgstr "12.04 LTS Precise Pangolin"
 
-msgid "13.10 Saucy Salamander"
-msgstr "13.10 Saucy Salamander"
-
 msgid "14.04 LTS Trusty Tahr"
 msgstr "14.04 LTS Trusty Tahr"
+
+msgid "14.10 Utopic Unicorn"
+msgstr ""
 
 msgid "Enable the universe repository to install Groonga::"
 msgstr "Enable the universe repository to install Groonga::"
@@ -845,11 +842,17 @@ msgstr ""
 "After the above steps, :doc:`/reference/executables/groonga` is found in ``c:"
 "\\groonga\\bin\\groonga.exe``."
 
-#~ msgid "sid"
-#~ msgstr "sid"
+#~ msgid "jessie"
+#~ msgstr "jessie"
 
 #~ msgid "Add the groonga apt repository."
 #~ msgstr "Add the groonga apt repository."
 
-#~ msgid "jessie"
-#~ msgstr "jessie"
+#~ msgid "sid"
+#~ msgstr "sid"
+
+#~ msgid "13.10 Saucy Salamander"
+#~ msgstr "13.10 Saucy Salamander"
+
+#~ msgid "groonga-server-http (simple HTTP protocol based server package)"
+#~ msgstr "groonga-server-http (simple HTTP protocol based server package)"
