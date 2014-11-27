@@ -13,3 +13,7 @@
 ENABLE=yes
 # Set "no" to disable to skip updating column for same value.
 GRN_JA_SKIP_SAME_VALUE_PUT=yes
+# Set the threshold value to force sequential search for in_values()
+GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO=0.01
+# Set the threshold value to force sequential search for between()
+GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO=0.01

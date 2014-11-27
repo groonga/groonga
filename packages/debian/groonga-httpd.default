@@ -3,3 +3,7 @@
 TIMEOUT=3
 # Comment out this to disable groonga-httpd daemon.
 ENABLE=yes
+# Set the threshold value to force sequential search for in_values()
+GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO=0.01
+# Set the threshold value to force sequential search for between()
+GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO=0.01
