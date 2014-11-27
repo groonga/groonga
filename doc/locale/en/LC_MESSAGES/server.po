@@ -533,17 +533,3 @@ msgstr "/var/log/groonga/groonga-http.log"
 msgid "Stopping groonga HTTP server(Fedora)::"
 msgstr "Stopping groonga HTTP server(Fedora)::"
 
-#~ msgid "``groonga-server-http`` (simple HTTP protocol based server package)"
-#~ msgstr "``groonga-server-http`` (simple HTTP protocol based server package)"
-
-#~ msgid ""
-#~ "There is a conflict between ``groonga-httpd`` and ``groonga-server-http`` "
-#~ "package because of port number. See :doc:`/server/http/comparison` if you "
-#~ "want to know which package meets your demands."
-#~ msgstr ""
-#~ "There is a conflict between ``groonga-httpd`` and ``groonga-server-http`` "
-#~ "package because of port number. See :doc:`/server/http/comparison` if you "
-#~ "want to know which package meets your demands."
-
-#~ msgid ":doc:`http/groonga-httpd` is still experimental."
-#~ msgstr ":doc:`http/groonga-httpd` is still experimental."
