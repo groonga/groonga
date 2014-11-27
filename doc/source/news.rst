@@ -7,6 +7,78 @@
 News
 ====
 
+.. _release-4-0-8:
+
+Release 4.0.8 - 2014/11/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [deb] Supported Ubuntu 12.04 again because Travis-CI runs on it.
+* [mruby] Supported pretty print - "pp" for debugging. And supported to
+  show internal objects more descriptive format when inspecting it.
+* Supported sequential match (no index match) with match_columns.
+  [groonga-dev,02902] [Reported by Atsushi Shinoda]
+* :doc:`/reference/functions/in_values` supports auto sequential search mode.
+  There is a case that sequential search is faster than index search when
+  almost records are matched for example. You can customize the ratio
+  when to apply this search mode by GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO
+  environment variable.
+* [mruby] Supported to load relative path of script.
+* Supported test suite to write query optimizer test more easily with
+  mruby enabled build.
+* Supported offline index construction for token filters.
+  [GitHub#239] [Patch by Naoya Murakami]
+* :doc:`/reference/functions/between` supports auto sequential search mode.
+  Use GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO. Basic concept is similar
+  to GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO.
+* [experimental] Supported multiple drilldowns for :doc:``/reference/command/select``
+  command. The new syntax is ``--drilldown[LABEL1].keys COLUMN1,COLUMN2`` for keys,
+  ``--drilldown[LABEL1].output_columns _value.COLUMN1,_value.COLUMN2,_nsubrecs``
+  for output columns.
+* Supported to search 'reference_column @ "query"' without index.
+* Added :doc:`/reference/commands/range_filter` command. It is faster than select
+  command to fetch specific range of records, but there are limitations
+  which doesn't support drilldown and so on.
+* [httpd] Supported groonga-httpd on windows.
+* Supported vector column for drilldown.
+* [deb] Changed groonga-httpd as default HTTP server package.
+  groonga-server-http is deprecated.
+* Added configuration file for Windows CI on AppVeyor.
+  [groonga-dev,02970,02981] [Patch by Hiroshi Hatake]
+
+Fixes
+^^^^^
+
+* [doc] Fixed duplicated execution example path about
+  :doc:`/reference/commands/table_create`.
+  [GitHub groonga.org#14] [Reported by Masafumi Yokoyama]
+* Fixed a bug that nested indexed full text search against _key
+  returns empty results.
+* Fixed flags parameter for BSD ``mkostemp(3)``.
+  [GitHub#240] [Patch by Jun Kuriyama]
+* Fixed a bug that select command reports invalid value type (table)
+  as index column value type. It affects only header of response.
+* Fixed a bug that compare operations such as <, <=, >, >=, != with
+  Time and String type returns invalid results.
+* Fixed a bug that "*" with single character can't do prefix search.
+  [GitHub#242] [Patch by Naoya Murakami]
+* Fixed a memory leak on drilldown ``ShortText`` value with ``--filter``.
+* [windows] Fixed typedef which causes build error for MSVC.
+  [GitHub#245,#247] [Patch by Hiroshi Hatake]
+* Fixed missing "," for "DDL:set_token_filters" log.
+  [Reported by Naoya Murakami]
+
+Thanks
+^^^^^^
+
+* Atsushi Shinoda
+* Masafumi Yokoyama
+* Naoya Murakami
+* Jun Kuriyama
+* Hiroshi Hatake
+
 .. _release-4-0-7:
 
 Release 4.0.7 - 2014/10/29
