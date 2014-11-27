@@ -583,23 +583,6 @@ Groonga 3.0.6のときは以下のように更新してpull requestを送りま�
 * groonga-dev groonga-dev@lists.sourceforge.jp
 * Groonga-talk groonga-talk@lists.sourceforge.net
 
-freecode.comへリリース情報を登録
-------------------------------------------------------------
-
-Groongaプロジェクトではfreecode.comでもリリース情報を発信しています。
-
-freecode.comのプロジェクトページは以下の通りです。
-
-  https://freecode.com/projects/groonga
-
-プロジェクトの管理メニューから「Submit a release」をクリックし、
-新規リリース情報を登録します。
-
-  https://freecode.com/projects/groonga/releases/new
-
-.. note::
-   投稿した内容に対するレビューが運営側で実施されるので、反映されるまでしばらく時間がかかります。
-
 Twitterでリリースアナウンスをする
 ------------------------------------------------------------
 
