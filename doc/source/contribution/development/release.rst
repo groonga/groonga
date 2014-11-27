@@ -294,14 +294,10 @@ make build PALALLEL=yesコマンドを実行すると、ディストリビュー
 
 現在サポートされているのは以下の通りです。
 
-* squeeze i386/amd64
 * wheezy i386/amd64
-* unstable i386/amd64
-* lucid i386/amd64
-* natty i386/amd64
-* oneiric i386/amd64
 * precise i386/amd64
-* quantal i386/amd64
+* trusty i386/amd64
+* utopic i386/amd64
 
 正常にビルドが終了すると$GROONGA_CLONE_DIR/packages/apt/repositories配下に.debパッケージが生成されます。
 
