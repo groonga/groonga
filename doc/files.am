@@ -448,6 +448,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/normalize.rst \
 	$(top_srcdir)/doc/source/reference/commands/normalizer_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/quit.rst \
+	$(top_srcdir)/doc/source/reference/commands/range_filter.rst \
 	$(top_srcdir)/doc/source/reference/commands/register.rst \
 	$(top_srcdir)/doc/source/reference/commands/ruby_eval.rst \
 	$(top_srcdir)/doc/source/reference/commands/ruby_load.rst \
@@ -482,6 +483,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/highlight_full.rst \
 	$(top_srcdir)/doc/source/reference/functions/highlight_html.rst \
 	$(top_srcdir)/doc/source/reference/functions/html_untag.rst \
+	$(top_srcdir)/doc/source/reference/functions/in_values.rst \
 	$(top_srcdir)/doc/source/reference/functions/now.rst \
 	$(top_srcdir)/doc/source/reference/functions/query.rst \
 	$(top_srcdir)/doc/source/reference/functions/rand.rst \
@@ -998,6 +1000,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/normalize.rst \
 	source/reference/commands/normalizer_list.rst \
 	source/reference/commands/quit.rst \
+	source/reference/commands/range_filter.rst \
 	source/reference/commands/register.rst \
 	source/reference/commands/ruby_eval.rst \
 	source/reference/commands/ruby_load.rst \
@@ -1032,6 +1035,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/highlight_full.rst \
 	source/reference/functions/highlight_html.rst \
 	source/reference/functions/html_untag.rst \
+	source/reference/functions/in_values.rst \
 	source/reference/functions/now.rst \
 	source/reference/functions/query.rst \
 	source/reference/functions/rand.rst \
@@ -1298,6 +1302,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/normalize.txt \
 	html/_sources/reference/commands/normalizer_list.txt \
 	html/_sources/reference/commands/quit.txt \
+	html/_sources/reference/commands/range_filter.txt \
 	html/_sources/reference/commands/register.txt \
 	html/_sources/reference/commands/ruby_eval.txt \
 	html/_sources/reference/commands/ruby_load.txt \
@@ -1330,6 +1335,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/functions/highlight_full.txt \
 	html/_sources/reference/functions/highlight_html.txt \
 	html/_sources/reference/functions/html_untag.txt \
+	html/_sources/reference/functions/in_values.txt \
 	html/_sources/reference/functions/now.txt \
 	html/_sources/reference/functions/query.txt \
 	html/_sources/reference/functions/rand.txt \
@@ -1394,6 +1400,7 @@ html_files_relative_from_locale_dir = \
 	html/_static/groonga.css \
 	html/_static/header-background.png \
 	html/_static/jp.png \
+	html/_static/jquery-1.11.1.js \
 	html/_static/jquery.js \
 	html/_static/logo.png \
 	html/_static/minus.png \
@@ -1401,6 +1408,7 @@ html_files_relative_from_locale_dir = \
 	html/_static/plus.png \
 	html/_static/pygments.css \
 	html/_static/searchtools.js \
+	html/_static/underscore-1.3.1.js \
 	html/_static/underscore.js \
 	html/_static/up-pressed.png \
 	html/_static/up.png \
@@ -1497,6 +1505,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/normalize.html \
 	html/reference/commands/normalizer_list.html \
 	html/reference/commands/quit.html \
+	html/reference/commands/range_filter.html \
 	html/reference/commands/register.html \
 	html/reference/commands/ruby_eval.html \
 	html/reference/commands/ruby_load.html \
@@ -1529,6 +1538,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/highlight_full.html \
 	html/reference/functions/highlight_html.html \
 	html/reference/functions/html_untag.html \
+	html/reference/functions/in_values.html \
 	html/reference/functions/now.html \
 	html/reference/functions/query.html \
 	html/reference/functions/rand.html \
