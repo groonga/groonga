@@ -203,7 +203,7 @@ msgid "Added LZ4 compression support. [GitHub#223] [Patch by Naoya Murakami]"
 msgstr ""
 
 msgid ""
-"Added :doc:`/reference/function/in_values`. We recommends to use it instead "
+"Added :doc:`/reference/functions/in_values`. We recommends to use it instead "
 "of ``==`` and ``OR`` combinations ( ``((COLUMN == \"a\") OR (COLUMN == \"b"
 "\") OR (COLUMN == \"c\"))`` ) because of better performance."
 msgstr ""

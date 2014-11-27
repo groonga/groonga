@@ -101,7 +101,7 @@ Improvements
 * [deb] Clarified licenses about used/bundled files in debian/copyright.
 * Dropped LZO compression support.
 * Added LZ4 compression support. [GitHub#223] [Patch by Naoya Murakami]
-* Added :doc:`/reference/function/in_values`. We recommends to use it
+* Added :doc:`/reference/functions/in_values`. We recommends to use it
   instead of ``==`` and ``OR`` combinations ( ``((COLUMN == "a") OR
   (COLUMN == "b") OR (COLUMN == "c"))`` ) because of better
   performance.
