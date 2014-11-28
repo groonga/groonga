@@ -345,6 +345,9 @@ fi
 %{_initddir}/groonga-httpd
 %{_sbindir}/groonga-httpd
 %{_sbindir}/groonga-httpd-restart
+%ghost %dir %{_localstatedir}/run/%{name}
+%attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}
+%attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}/db
 
 %files doc
 %defattr(-,root,root,-)
