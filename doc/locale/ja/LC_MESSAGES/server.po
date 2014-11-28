@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.6\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2012-11-22 16:11+0900\n"
+"PO-Revision-Date: 2014-11-28 12:06+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -57,9 +57,6 @@ msgstr ""
 ":doc:`http/groonga-httpd` は `nginx <http://nginx.org/>`_ をベースにした実装"
 "です。 :doc:`http/groonga-httpd` も高速に動作し、しかも多くのHTTPの機能を使え"
 "ます。"
-
-msgid ":doc:`http/groonga-httpd` is still experimental."
-msgstr ":doc:`http/groonga-httpd` はまだ実験的な扱いです。"
 
 msgid "Comparison"
 msgstr "比較"
@@ -367,14 +364,11 @@ msgstr ""
 "バー用途で使うために、設定済みのパッケージを追加でインストールすることができ"
 "ます。"
 
-msgid "There are three packages for server use."
-msgstr "サーバー用途の3つのパッケージがあります。"
+msgid "There are two packages for server use."
+msgstr "サーバー用途の2つのパッケージがあります。"
 
 msgid "``groonga-httpd`` (nginx and HTTP protocol based server package)"
 msgstr "``groonga-httpd`` (nginxをベースにしたHTTPサーバー)"
-
-msgid "``groonga-server-http`` (simple HTTP protocol based server package)"
-msgstr "``groonga-server-http`` (簡易HTTPサーバー)"
 
 msgid ""
 "``groonga-server-gqtp`` (:doc:`/spec/gqtp` protocol based server package)"
@@ -400,24 +394,17 @@ msgstr ""
 "ることができます。"
 
 msgid ""
-"We recommend to use ``groonga-server-http`` at first, then if you want to "
-"use more fullfilling functionality, use ``groonga-httpd`` package. If you "
-"have performance issues which is derived from protocol overheads, consider "
-"to use ``groonga-server-gqtp``."
-msgstr ""
-"最初は ``groonga-server-http`` パッケージを使うことをおすすめします。それで"
-"もっと高機能なものを使いたくなったら、``groonga-httpd`` パッケージを使ってく"
-"ださい。プロトコルのオーバーヘッドがパフォーマンス上問題となったら ``groonga-"
-"server-gqtp`` を検討してください。"
+"We recommend to use ``groonga-httpd`` at first, because it provides "
+"fullfilling server functionality. If you have performance issues which is "
+"derived from protocol overheads, consider to use ``groonga-server-gqtp``."
+msgstr "最初は ``groonga-httpd`` パッケージを使うことをおすすめします。プロトコルのオーバーヘッドがパフォーマンス上問題となったら ``groonga-server-gqtp`` を検討してください。"
 
 msgid ""
-"There is a conflict between ``groonga-httpd`` and ``groonga-server-http`` "
-"package because of port number. See :doc:`/server/http/comparison` if you "
-"want to know which package meets your demands."
+"In the previous versions, there is a ``groonga-server-http`` package (simple "
+"HTTP protocol based server package). It is now marked as obsolete, please "
+"use ``groonga-httpd`` packages instead. ``groonga-server-http`` package "
+"became a transitional package for ``groonga-httpd``."
 msgstr ""
-"``groonga-httpd`` と ``groonga-server-http`` パッケージは使用ポートが一緒なの"
-"で衝突します。どちらのパッケージを使うのがいいのかは :doc:`/server/http/"
-"comparison` を参照してください。"
 
 msgid "``groonga-httpd`` is a nginx and HTTP protocol based server package."
 msgstr "``groonga-httpd`` はnginxをベースにしたHTTPサーバーパッケージです。"
@@ -482,30 +469,6 @@ msgstr "groonga HTTPサーバーを再起動(Debian/Ubuntu/CentOS)::"
 msgid "Restarting groonga HTTP server(Fedora)::"
 msgstr "groonga HTTPサーバーを再起動(Fedora)::"
 
-msgid "groonga-server-http"
-msgstr ""
-
-msgid "``groonga-server-http`` is a simple HTTP protocol based server package."
-msgstr "``groonga-server-http`` は簡易HTTPサーバーパッケージです。"
-
-msgid "/var/log/groonga/groonga-http.log"
-msgstr ""
-
-msgid ":ref:`process-log`"
-msgstr ""
-
-msgid ":ref:`query-log`"
-msgstr ""
-
-msgid "Configuration file for server setting (Debian/Ubuntu)::"
-msgstr "サーバー設定ファイル (Debian/Ubuntu)::"
-
-msgid "Configuration file for server setting (CentOS)::"
-msgstr "サーバー設定ファイル(CentOS)::"
-
-msgid "Stopping groonga HTTP server(Fedora)::"
-msgstr "groonga HTTPサーバーを終了(Fedora)::"
-
 msgid "groonga-server-gqtp"
 msgstr ""
 
@@ -519,8 +482,20 @@ msgstr ""
 msgid "/var/log/groonga/groonga-gqtp.log"
 msgstr ""
 
+msgid ":ref:`process-log`"
+msgstr ""
+
 msgid "/var/log/groonga/gqtp-query.log"
 msgstr ""
+
+msgid ":ref:`query-log`"
+msgstr ""
+
+msgid "Configuration file for server setting (Debian/Ubuntu)::"
+msgstr "サーバー設定ファイル (Debian/Ubuntu)::"
+
+msgid "Configuration file for server setting (CentOS)::"
+msgstr "サーバー設定ファイル(CentOS)::"
 
 msgid "Start GQTP server"
 msgstr "GQTPサーバーを起動"
@@ -542,3 +517,35 @@ msgstr "groonga GQTPサーバーを終了(Fedora)::"
 
 msgid "Restart GQTP server"
 msgstr "GQTPサーバーを再起動"
+
+msgid "groonga-server-http"
+msgstr ""
+
+msgid "``groonga-server-http`` is a simple HTTP protocol based server package."
+msgstr "``groonga-server-http`` は簡易HTTPサーバーパッケージです。"
+
+msgid ""
+"``groonga-server-http`` package is the transitional package since Groonga "
+"4.0.8. Please use ``groonga-httpd`` instead."
+msgstr ""
+
+msgid "/var/log/groonga/groonga-http.log"
+msgstr ""
+
+msgid "Stopping groonga HTTP server(Fedora)::"
+msgstr "groonga HTTPサーバーを終了(Fedora)::"
+
+#~ msgid ""
+#~ "There is a conflict between ``groonga-httpd`` and ``groonga-server-http`` "
+#~ "package because of port number. See :doc:`/server/http/comparison` if you "
+#~ "want to know which package meets your demands."
+#~ msgstr ""
+#~ "``groonga-httpd`` と ``groonga-server-http`` パッケージは使用ポートが一緒"
+#~ "なので衝突します。どちらのパッケージを使うのがいいのかは :doc:`/server/"
+#~ "http/comparison` を参照してください。"
+
+#~ msgid "``groonga-server-http`` (simple HTTP protocol based server package)"
+#~ msgstr "``groonga-server-http`` (簡易HTTPサーバー)"
+
+#~ msgid ":doc:`http/groonga-httpd` is still experimental."
+#~ msgstr ":doc:`http/groonga-httpd` はまだ実験的な扱いです。"
