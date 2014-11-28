@@ -797,28 +797,16 @@ msgstr ""
 msgid "現在サポートされているのは以下の通りです。"
 msgstr ""
 
-msgid "squeeze i386/amd64"
-msgstr ""
-
 msgid "wheezy i386/amd64"
-msgstr ""
-
-msgid "unstable i386/amd64"
-msgstr ""
-
-msgid "lucid i386/amd64"
-msgstr ""
-
-msgid "natty i386/amd64"
-msgstr ""
-
-msgid "oneiric i386/amd64"
 msgstr ""
 
 msgid "precise i386/amd64"
 msgstr ""
 
-msgid "quantal i386/amd64"
+msgid "trusty i386/amd64"
+msgstr ""
+
+msgid "utopic i386/amd64"
 msgstr ""
 
 msgid ""
@@ -1197,31 +1185,6 @@ msgid "groonga-dev groonga-dev@lists.sourceforge.jp"
 msgstr ""
 
 msgid "Groonga-talk groonga-talk@lists.sourceforge.net"
-msgstr ""
-
-msgid "freecode.comへリリース情報を登録"
-msgstr ""
-
-msgid "Groongaプロジェクトではfreecode.comでもリリース情報を発信しています。"
-msgstr ""
-
-msgid "freecode.comのプロジェクトページは以下の通りです。"
-msgstr ""
-
-msgid "https://freecode.com/projects/groonga"
-msgstr ""
-
-msgid ""
-"プロジェクトの管理メニューから「Submit a release」をクリックし、 新規リリース"
-"情報を登録します。"
-msgstr ""
-
-msgid "https://freecode.com/projects/groonga/releases/new"
-msgstr ""
-
-msgid ""
-"投稿した内容に対するレビューが運営側で実施されるので、反映されるまでしばらく"
-"時間がかかります。"
 msgstr ""
 
 msgid "Twitterでリリースアナウンスをする"
