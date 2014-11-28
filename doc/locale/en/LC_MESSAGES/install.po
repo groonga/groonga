@@ -832,4 +832,3 @@ msgid ""
 msgstr ""
 "After the above steps, :doc:`/reference/executables/groonga` is found in ``c:"
 "\\groonga\\bin\\groonga.exe``."
-

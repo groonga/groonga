@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Groonga 4.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2014-11-27 16:31+0900\n"
+"PO-Revision-Date: 2014-11-28 12:41+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -5121,6 +5121,15 @@ msgid ""
 "quitは、groongaプロセスとのセッションを終了します。クライアントプロセスならば"
 "groongaプロセスとの接続を切りま す。"
 msgstr ""
+
+msgid "``range_filter``"
+msgstr ""
+
+msgid "TODO: write me"
+msgstr ""
+
+msgid ":doc:`/reference/commands/select`"
+msgstr ":doc:`/reference/commands/select`"
 
 msgid "``register``"
 msgstr ""
@@ -10400,9 +10409,6 @@ msgstr ""
 "``highlight_full`` returns a tagged string or ``null``. If "
 "``highlight_full`` can't find any keywords, it returns ``null``."
 
-msgid ":doc:`/reference/commands/select`"
-msgstr ":doc:`/reference/commands/select`"
-
 msgid ":doc:`/reference/functions/highlight_html`"
 msgstr ""
 
@@ -15357,4 +15363,3 @@ msgstr ""
 
 msgid "Object型はv1.2でサポートされます。"
 msgstr "Object型はv1.2でサポートされます。"
-

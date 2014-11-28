@@ -532,4 +532,3 @@ msgstr "/var/log/groonga/groonga-http.log"
 
 msgid "Stopping groonga HTTP server(Fedora)::"
 msgstr "Stopping groonga HTTP server(Fedora)::"
-
