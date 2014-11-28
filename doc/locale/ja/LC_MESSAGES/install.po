@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2014-09-28 18:35+0900\n"
+"PO-Revision-Date: 2014-11-28 12:00+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -557,23 +557,14 @@ msgstr "デフォルトでは無効です。"
 msgid "Here is an example that enables column value compression by zlib::"
 msgstr "以下はzlibを使ってカラム値を圧縮する機能を有効にする例です::"
 
-msgid ""
-"The disabled reason is that memory leak occurs when it refers column value. "
-"This is already known issue as `GitHub#6 <https://github.com/groonga/groonga/"
-"issues/6>`_. This issue is not nothing to do with updating column value."
-msgstr ""
-"無効となっている理由は、カラムの値を参照するときにメモリリークするためです。"
-"これは既知の問題 `GitHub#6 <https://github.com/groonga/groonga/issues/6>`_ で"
-"す。この問題はカラムの更新とは関係ありません。"
-
-msgid "``--with-lzo``"
+msgid "``--with-lz4``"
 msgstr ""
 
-msgid "Enables column value compression by LZO."
-msgstr "LZOを使ってカラム値を圧縮する機能を有効にします。"
+msgid "Enables column value compression by LZ4."
+msgstr "LZ4を使ってカラム値を圧縮する機能を有効にします。"
 
-msgid "Here is an example that enables column value compression by LZO::"
-msgstr "以下はLZOを使ってカラム値を圧縮する機能を有効にする例です::"
+msgid "Here is an example that enables column value compression by LZ4::"
+msgstr "以下はLZ4を使ってカラム値を圧縮する機能を有効にする例です::"
 
 msgid "``--with-message-pack=MESSAGE_PACK_INSTALL_PREFIX``"
 msgstr ""
@@ -693,11 +684,8 @@ msgstr ""
 "バー用途で使うなら、設定済みの追加パッケージをインストールすることができま"
 "す。"
 
-msgid "There are three packages for server use."
-msgstr "サーバー用途のための3つのパッケージがあります。"
-
-msgid "groonga-server-http (simple HTTP protocol based server package)"
-msgstr "groonga-server-http (簡易HTTPサーバー)"
+msgid "There are two packages for server use."
+msgstr "サーバー用途のための2つのパッケージがあります。"
 
 msgid "groonga-httpd (nginx and HTTP protocol based server package)"
 msgstr "groonga-httpd (nginxを元にしたHTTPサーバー)"
@@ -756,10 +744,10 @@ msgstr "サポートしているUbuntuのバージョンは次の通りです。
 msgid "12.04 LTS Precise Pangolin"
 msgstr ""
 
-msgid "13.10 Saucy Salamander"
+msgid "14.04 LTS Trusty Tahr"
 msgstr ""
 
-msgid "14.04 LTS Trusty Tahr"
+msgid "14.10 Utopic Unicorn"
 msgstr ""
 
 msgid "Enable the universe repository to install Groonga::"
@@ -790,8 +778,7 @@ msgstr ""
 "32-bit環境の場合は、x86のバイナリをpackages.groonga.orgからダウンロードしてく"
 "ださい。"
 
-# 2d06b111290a42ac8906d107c7361058
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.7-x86.exe"
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.8-x86.exe"
 msgstr ""
 
 msgid "Then run it."
@@ -804,8 +791,7 @@ msgstr ""
 "64-bit環境の場合は、x64のバイナリをpackages.groonga.orgからダウンロードしてく"
 "ださい。"
 
-# 622e147555d442ae9e49883b5b5e20c4
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.7-x64.exe"
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.8-x64.exe"
 msgstr ""
 
 msgid ""
@@ -824,8 +810,7 @@ msgstr ""
 "32-bit環境の場合は、x86のzipアーカイブをpackages.groonga.orgからダウンロード"
 "してください。"
 
-# 660cb4dc81ec475f99334cd2c394ddf4
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.7-x86.zip"
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.8-x86.zip"
 msgstr ""
 
 msgid "Then extract it."
@@ -837,8 +822,7 @@ msgstr ""
 "64-bit環境の場合は、x64のzipアーカイブをpackages.groonga.orgからダウンロード"
 "してください。"
 
-# e2ab99439f684358932096fa9c8ffb4c
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.7-x64.zip"
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.0.8-x64.zip"
 msgstr ""
 
 msgid "You can find :doc:`/reference/executables/groonga` in ``bin`` folder."
@@ -864,8 +848,7 @@ msgstr ""
 msgid "Download zipped source from packages.groonga.org:"
 msgstr "zipアーカイブをpackages.groonga.orgからダウンロードしてください。"
 
-# 547deb7760ae4ea29dd90cbae95f6fc2
-msgid "http://packages.groonga.org/source/groonga/groonga-4.0.7.zip"
+msgid "http://packages.groonga.org/source/groonga/groonga-4.0.8.zip"
 msgstr ""
 
 msgid "Move to the Groonga's source folder::"
@@ -885,3 +868,16 @@ msgid ""
 msgstr ""
 "以上の手順で :doc:`/reference/executables/groonga` が ``c:\\groonga\\bin"
 "\\groonga.exe`` にインストールされます。"
+
+#~ msgid "groonga-server-http (simple HTTP protocol based server package)"
+#~ msgstr "groonga-server-http (簡易HTTPサーバー)"
+
+#~ msgid ""
+#~ "The disabled reason is that memory leak occurs when it refers column "
+#~ "value. This is already known issue as `GitHub#6 <https://github.com/"
+#~ "groonga/groonga/issues/6>`_. This issue is not nothing to do with "
+#~ "updating column value."
+#~ msgstr ""
+#~ "無効となっている理由は、カラムの値を参照するときにメモリリークするためで"
+#~ "す。これは既知の問題 `GitHub#6 <https://github.com/groonga/groonga/"
+#~ "issues/6>`_ です。この問題はカラムの更新とは関係ありません。"
