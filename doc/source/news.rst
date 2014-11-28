@@ -76,11 +76,9 @@ Fixes
   The search results is not changed at all.
 * Fixed a bug that compare operations such as ``<``, ``<=``, ``>``, ``>=``, ``!=`` with
   Time and String type returns invalid results.
-* Fixed a bug that ``"*"`` with single character can't do prefix search.
-  [GitHub#242] [Patch by Naoya Murakami]
+* Fixed a bug that prefix search can't be executed against single character such as
+  ``"x*"``. [GitHub#242] [Patch by Naoya Murakami]
 * Fixed a memory leak on drilldown ``ShortText`` value with ``--filter``.
-* [windows] Fixed typedef which causes build error for MSVC.
-  [GitHub#245,#247] [Patch by Hiroshi Hatake]
 * Fixed missing ``","`` for ``"DDL:set_token_filters"`` log.
   [Reported by Naoya Murakami]
 
