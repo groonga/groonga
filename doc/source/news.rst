@@ -18,33 +18,45 @@ Improvements
 * [deb] Supported Ubuntu 12.04 again because Travis-CI runs on it.
 * [mruby] Supported pretty print - ``"pp"`` for debugging. And supported to
   show internal objects more descriptive format when inspecting it.
-* Supported sequential match (no index match) with match_columns.
+* Supported full text search query without index if one column is specified
+  for ``--match_columns`` even though sequential search is executed
+  by ``--query`` and ``--match_columns`` combination.
   [groonga-dev,02902] [Reported by Atsushi Shinoda]
-* :doc:`/reference/functions/in_values` supports auto sequential search mode.
-  There is a case that sequential search is faster than index search when
-  almost records are matched for example. You can customize the ratio
-  when to apply this search mode by ``GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO``
-  environment variable.
+* [experimental] :doc:`/reference/functions/in_values` supports auto sequential
+  search mode. There is a case that sequential search is faster than index search when
+  the number of narrowed down records is small enough in contrast to 
+  the number of expected records to narrow down by ``in_values`` with
+  ``AND`` operation which use indexes.
+  The value of ``GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO`` is used as
+  threshold whether Groonga execute sequential search or search with indexes in
+  such a case.
 * [mruby] Supported to load relative path of script.
 * Supported test suite to write query optimizer test more easily with
   mruby enabled build.
 * Supported offline index construction for token filters.
   [GitHub#239] [Patch by Naoya Murakami]
-* :doc:`/reference/functions/between` supports auto sequential search mode.
-  Use ``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO``. Basic concept is similar
-  to ``GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO``.
+* [experimental] :doc:`/reference/functions/between` supports auto sequential search mode.
+  Use the value of ``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO`` as threshold.
+  Basic concept is similar to ``GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO``.
 * [experimental] Supported multiple drilldowns for :doc:``/reference/command/select``
-  command. The new syntax is ``--drilldown[LABEL1].keys COLUMN1,COLUMN2`` for keys,
-  ``--drilldown[LABEL1].output_columns _value.COLUMN1,_value.COLUMN2,_nsubrecs``
-  for output columns.
+  command. The syntax is extended to support this feature. The new one is
+  ``--drilldown[LABEL1].keys COLUMN1,COLUMN2`` for keys,
+  ``--drilldown[LABEL1].output_columns _value.COLUMN1,_value.COLUMN2,_nsubrecs`` for output columns.
+  In the previous versions, a client application must implement by oneself for drilldown
+  by multiple keys. Use ``_key[N]`` for ``--drilldown[LABEL1].output_columns`` to show
+  original value of key in records.
 * Supported to search ``'reference_column @ "query"'`` without index.
-* Added :doc:`/reference/commands/range_filter` command. It is faster than select
-  command to fetch specific range of records, but there are limitations
-  which doesn't support drilldown and so on.
+* [experimental] Added :doc:`/reference/commands/range_filter` command. It is faster than select
+  command to fetch specific range of records in most cases, because it doesn't returns
+  the number of matched records. There are limitations which doesn't support drilldown and so on.
+  Thus, ``range_filter`` is suitable for extracting first ``N`` records in specific range for ranking
+  or something else.
 * [httpd] Supported ``groonga-httpd`` on windows.
 * Supported vector column for drilldown.
 * [deb] Changed ``groonga-httpd`` as default HTTP server package.
-  ``groonga-server-http`` is deprecated.
+  ``groonga-server-http`` is deprecated. Note that :doc:`/reference/executables/groonga-server-http`
+  functionality itself is still exists in Groonga. If you just want to use simple HTTP server
+  in traditional way, specify proper arguments by command line for :doc:`/reference/executables/groonga`.
 * Added configuration file for Windows CI on AppVeyor.
   [groonga-dev,02970,02981] [Patch by Hiroshi Hatake]
 
@@ -54,12 +66,14 @@ Fixes
 * [doc] Fixed duplicated execution example path about
   :doc:`/reference/commands/table_create`.
   [GitHub groonga.org#14] [Reported by Masafumi Yokoyama]
-* Fixed a bug that nested indexed full text search against ``_key``
+* Fixed a bug that nested indexed full text search against ``X._key``
   returns empty results.
-* Fixed flags parameter for BSD ``mkostemp(3)``.
+* Fixed flags parameter which is strict in BSD ``mkostemp(3)``.
   [GitHub#240] [Patch by Jun Kuriyama]
 * Fixed a bug that select command reports invalid value type (table)
-  as index column value type. It affects only header of response.
+  as index column value type. It was fixed to ``UInt32``.
+  Note that it affects only the value of response header.
+  The search results is not changed at all.
 * Fixed a bug that compare operations such as ``<``, ``<=``, ``>``, ``>=``, ``!=`` with
   Time and String type returns invalid results.
 * Fixed a bug that ``"*"`` with single character can't do prefix search.
