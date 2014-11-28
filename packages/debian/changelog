@@ -1,6 +1,13 @@
 groonga (4.0.8-1) unstable; urgency=low
 
   * New upstream release.
+  * debian/control
+    - Support amd64,i386,kfreebsd-amd64,kfreebsd-i386 and ppc64el only
+      because of build failure for other architectures. It is a just workaround.
+    - Use "metapackage" instead of "meta-package"
+    - Make "groonga-server-http" as transitional package for groonga-httpd.
+  * debian/missing-sources
+    - Replaced minified jQuery and related stuff.
 
  -- HAYASHI Kentaro <hayashi@clear-code.com>  Sat, 29 Nov 2014 00:00:00 +0900
 
