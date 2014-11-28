@@ -1,5 +1,6 @@
 # -*- autoconf -*-
 
+AC_CHECK_FUNCS(_stricmp)
 AC_CHECK_FUNCS(_strnicmp)
 AC_CHECK_FUNCS(_strtoui64)
 AC_CHECK_FUNCS(close)
