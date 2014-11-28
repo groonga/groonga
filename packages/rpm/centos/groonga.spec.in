@@ -377,6 +377,8 @@ fi
 %changelog
 * Sat Nov 29 2014 HAYASHI Kentaro <hayashi@clear-code.com> - 4.0.8-1
 - new upstream release.
+- make groonga-httpd as default HTTP server package
+- drop groonga-server-http, it is just changed to transitional package
 
 * Wed Oct 29 2014 Kouhei Sutou <kou@clear-code.com> - 4.0.7-1
 - new upstream release.
