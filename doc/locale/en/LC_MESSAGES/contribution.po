@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Groonga 4.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2014-11-26 19:28+0900\n"
+"PO-Revision-Date: 2014-11-28 12:09+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -989,29 +989,17 @@ msgstr ""
 msgid "現在サポートされているのは以下の通りです。"
 msgstr "現在サポートされているのは以下の通りです。"
 
-msgid "squeeze i386/amd64"
-msgstr "squeeze i386/amd64"
-
 msgid "wheezy i386/amd64"
 msgstr "wheezy i386/amd64"
-
-msgid "unstable i386/amd64"
-msgstr "unstable i386/amd64"
-
-msgid "lucid i386/amd64"
-msgstr "lucid i386/amd64"
-
-msgid "natty i386/amd64"
-msgstr "natty i386/amd64"
-
-msgid "oneiric i386/amd64"
-msgstr "oneiric i386/amd64"
 
 msgid "precise i386/amd64"
 msgstr "precise i386/amd64"
 
-msgid "quantal i386/amd64"
-msgstr "quantal i386/amd64"
+msgid "trusty i386/amd64"
+msgstr ""
+
+msgid "utopic i386/amd64"
+msgstr ""
 
 msgid ""
 "正常にビルドが終了すると$GROONGA_CLONE_DIR/packages/apt/repositories配下に."
@@ -1463,35 +1451,6 @@ msgstr "groonga-dev groonga-dev@lists.sourceforge.jp"
 
 msgid "Groonga-talk groonga-talk@lists.sourceforge.net"
 msgstr "Groonga-talk groonga-talk@lists.sourceforge.net"
-
-msgid "freecode.comへリリース情報を登録"
-msgstr "freecode.comへリリース情報を登録"
-
-msgid "Groongaプロジェクトではfreecode.comでもリリース情報を発信しています。"
-msgstr "Groongaプロジェクトではfreecode.comでもリリース情報を発信しています。"
-
-msgid "freecode.comのプロジェクトページは以下の通りです。"
-msgstr "freecode.comのプロジェクトページは以下の通りです。"
-
-msgid "https://freecode.com/projects/groonga"
-msgstr "https://freecode.com/projects/groonga"
-
-msgid ""
-"プロジェクトの管理メニューから「Submit a release」をクリックし、 新規リリース"
-"情報を登録します。"
-msgstr ""
-"プロジェクトの管理メニューから「Submit a release」をクリックし、 新規リリース"
-"情報を登録します。"
-
-msgid "https://freecode.com/projects/groonga/releases/new"
-msgstr "https://freecode.com/projects/groonga/releases/new"
-
-msgid ""
-"投稿した内容に対するレビューが運営側で実施されるので、反映されるまでしばらく"
-"時間がかかります。"
-msgstr ""
-"投稿した内容に対するレビューが運営側で実施されるので、反映されるまでしばらく"
-"時間がかかります。"
 
 msgid "Twitterでリリースアナウンスをする"
 msgstr "Twitterでリリースアナウンスをする"
@@ -2178,3 +2137,46 @@ msgid ""
 msgstr ""
 "Groonga project has :doc:`/community` for discussing about groonga. Please "
 "send a mail that describes a bug."
+
+#~ msgid ""
+#~ "投稿した内容に対するレビューが運営側で実施されるので、反映されるまでしばら"
+#~ "く時間がかかります。"
+#~ msgstr ""
+#~ "投稿した内容に対するレビューが運営側で実施されるので、反映されるまでしばら"
+#~ "く時間がかかります。"
+
+#~ msgid "https://freecode.com/projects/groonga/releases/new"
+#~ msgstr "https://freecode.com/projects/groonga/releases/new"
+
+#~ msgid ""
+#~ "プロジェクトの管理メニューから「Submit a release」をクリックし、 新規リ"
+#~ "リース情報を登録します。"
+#~ msgstr ""
+#~ "プロジェクトの管理メニューから「Submit a release」をクリックし、 新規リ"
+#~ "リース情報を登録します。"
+
+#~ msgid "https://freecode.com/projects/groonga"
+#~ msgstr "https://freecode.com/projects/groonga"
+
+#~ msgid "freecode.comのプロジェクトページは以下の通りです。"
+#~ msgstr "freecode.comのプロジェクトページは以下の通りです。"
+
+#~ msgid ""
+#~ "Groongaプロジェクトではfreecode.comでもリリース情報を発信しています。"
+#~ msgstr ""
+#~ "Groongaプロジェクトではfreecode.comでもリリース情報を発信しています。"
+
+#~ msgid "freecode.comへリリース情報を登録"
+#~ msgstr "freecode.comへリリース情報を登録"
+
+#~ msgid "quantal i386/amd64"
+#~ msgstr "quantal i386/amd64"
+
+#~ msgid "lucid i386/amd64"
+#~ msgstr "lucid i386/amd64"
+
+#~ msgid "unstable i386/amd64"
+#~ msgstr "unstable i386/amd64"
+
+#~ msgid "squeeze i386/amd64"
+#~ msgstr "squeeze i386/amd64"
