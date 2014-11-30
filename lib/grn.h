@@ -174,6 +174,10 @@ typedef SOCKET grn_sock;
 #  include <unistd.h>
 # endif /* HAVE_UNISTD_H */
 
+# ifdef __APPLE__
+typedef off_t off64_t;
+# endif
+
 # ifndef PATH_MAX
 #  if defined(MAXPATHLEN)
 #   define PATH_MAX MAXPATHLEN
