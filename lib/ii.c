@@ -37,6 +37,10 @@
 # include <oniguruma.h>
 #endif
 
+#ifndef O_DIRECT
+# define O_DIRECT 0
+#endif
+
 #define MAX_PSEG                 0x20000
 #define S_CHUNK                  (1 << GRN_II_W_CHUNK)
 #define W_SEGMENT                18
