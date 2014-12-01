@@ -96,7 +96,7 @@ Obsoletes:	%{name}-server < 2.0.7-0
 This is a transitional package to groonga-httpd.
 
 %package httpd
-Summary:	Groonga HTTP server (experimental)
+Summary:	Groonga HTTP server
 Group:		Applications/Text
 License:	LGPLv2 and BSD
 Requires:	%{name}-server-common = %{version}-%{release}
@@ -104,9 +104,8 @@ Provides:	%{name}-server-http = %{version}-%{release}
 Obsoletes:	%{name}-server-http <= 4.0.7-2
 
 %description httpd
-This package contains the Groonga HTTP server. It is experimental
-but has many features. Because it is based on nginx HTTP server.
-It will obsolete groonga-server-http when it is stable.
+This package contains the Groonga HTTP server. It has
+many features because it is based on nginx HTTP server.
 
 %package doc
 Summary:	Documentation for Groonga
