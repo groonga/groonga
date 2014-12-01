@@ -49,6 +49,13 @@ Install groonga-tokenizer-mecab package::
 
   % sudo apt-get -y install groonga-tokenizer-mecab
 
+If you want to use TokenFilterStem as a token filter, install
+groonga-token-filter-stem package.
+
+Install groonga-token-filter-stem package::
+
+  % sudo apt-get -y install groonga-token-filter-stem
+
 There is a package that provides `Munin
 <http://munin-monitoring.org/>`_ plugins. If you want to monitor
 groonga status by Munin, install groonga-munin-plugins package.
