@@ -1295,11 +1295,35 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_timeval now;
   grn_cache *cache;
   grn_cache_statistics statistics;
+  char *env, **entry;
+  const char *env_list[] = {
+    "GRN_MRUBY_ENABLED",
+    "GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO",
+    "GRN_II_SELECT_TOO_MANY_INDEX_MATCH_RATIO",
+    "GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO",
+    NULL,
+  };
 
   grn_timeval_now(ctx, &now);
   cache = grn_cache_current_get(ctx);
   grn_cache_get_statistics(ctx, cache, &statistics);
-  GRN_OUTPUT_MAP_OPEN("RESULT", 9);
+  if (GRN_TEXT_LEN(VAR(0)) == 3 && memcmp(GRN_TEXT_VALUE(VAR(0)), "env", 3) == 0) {
+    GRN_OUTPUT_MAP_OPEN("RESULT", 13);
+    entry = (char **)env_list;
+    while (*entry != NULL) {
+      env = getenv(*entry);
+      if (env) {
+        GRN_OUTPUT_CSTR(*entry);
+        GRN_OUTPUT_CSTR(env);
+      } else {
+        GRN_OUTPUT_CSTR(*entry);
+        GRN_OUTPUT_CSTR("(default)");
+      }
+      entry++;
+    }
+  } else {
+    GRN_OUTPUT_MAP_OPEN("RESULT", 9);
+  }
   GRN_OUTPUT_CSTR("alloc_count");
   GRN_OUTPUT_INT32(grn_alloc_count());
   GRN_OUTPUT_CSTR("starttime");
@@ -6433,7 +6457,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[5], "each");
   DEF_COMMAND("load", proc_load, 6, vars);
 
-  DEF_COMMAND("status", proc_status, 0, vars);
+  DEF_VAR(vars[0], "env");
+  DEF_COMMAND("status", proc_status, 1, vars);
 
   DEF_COMMAND("table_list", proc_table_list, 0, vars);
 
