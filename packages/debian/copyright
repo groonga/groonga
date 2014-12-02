@@ -74,6 +74,11 @@ Files: doc/locale/*/basic.css doc/locale/*/pygments.css
 Copyright: 2007-2014 the Sphinx team
 License: BSD-2-clause
 
+Files: vendor/onigmo-source/*
+Copyright: 2002-2009 K.Kosako <sndgk393@ybb.ne.jp>
+	   2011-2014 K.Takata <kentkt@csc.jp>
+License: BSD-2-clause
+
 License: BSD-2-clause
  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
  .
