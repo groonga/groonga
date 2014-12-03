@@ -1,0 +1,53 @@
+table_create Bookmarks TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Bookmarks title COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users bookmark COLUMN_SCALAR Bookmarks
+[[0,0.0,0.0],true]
+load --table Bookmarks
+[
+{"_key": "http://groonga.org/", "title": "Groonga"}
+]
+[[0,0.0,0.0],1]
+load --table Users
+[
+{"_key": "alice", "bookmark": "http://groonga.org/"},
+{"_key": "bob"}
+]
+[[0,0.0,0.0],2]
+select Users --filter 'bookmark.title == "Groonga"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "bookmark",
+          "Bookmarks"
+        ]
+      ],
+      [
+        1,
+        "alice",
+        "http://groonga.org/"
+      ]
+    ]
+  ]
+]
