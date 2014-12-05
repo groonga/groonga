@@ -2015,7 +2015,7 @@ grn_cache_open(grn_ctx *ctx)
     goto exit;
   }
 
-  cache->next = (grn_cache_entry*)cache;
+  cache->next = (grn_cache_entry *)cache;
   cache->prev = (grn_cache_entry *)cache;
   cache->hash = grn_hash_create(&grn_gctx, NULL, GRN_TABLE_MAX_KEY_SIZE,
                                 sizeof(grn_cache_entry), GRN_OBJ_KEY_VAR_SIZE);
