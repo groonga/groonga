@@ -6385,6 +6385,30 @@ exit :
   return NULL;
 }
 
+static grn_obj *
+proc_request_cancel(grn_ctx *ctx, int nargs, grn_obj **args,
+                    grn_user_data *user_data)
+{
+  grn_obj *id = VAR(0);
+  grn_bool canceled;
+
+  if (GRN_TEXT_LEN(id) == 0) {
+    ERR(GRN_INVALID_ARGUMENT, "[request_cancel] ID is missing");
+    return NULL;
+  }
+
+  canceled = grn_request_canceler_cancel(GRN_TEXT_VALUE(id), GRN_TEXT_LEN(id));
+
+  GRN_OUTPUT_MAP_OPEN("result", 2);
+  GRN_OUTPUT_CSTR("id");
+  GRN_OUTPUT_STR(GRN_TEXT_VALUE(id), GRN_TEXT_LEN(id));
+  GRN_OUTPUT_CSTR("canceled");
+  GRN_OUTPUT_BOOL(canceled);
+  GRN_OUTPUT_MAP_CLOSE();
+
+  return NULL;
+}
+
 #define DEF_VAR(v,name_str) do {\
   (v).name = (name_str);\
   (v).name_size = GRN_STRLEN(name_str);\
@@ -6642,4 +6666,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[8], "filter");
   DEF_VAR(vars[9], "output_columns");
   DEF_COMMAND("range_filter", proc_range_filter, 10, vars);
+
+  DEF_VAR(vars[0], "id");
+  DEF_COMMAND("request_cancel", proc_request_cancel, 1, vars);
 }

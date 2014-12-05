@@ -4,6 +4,7 @@ groonga_include_HEADERS =			\
 	groonga.h				\
 	ii.h					\
 	plugin.h				\
+	request_canceler.h			\
 	token.h					\
 	tokenizer.h				\
 	token_filter.h				\

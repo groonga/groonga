@@ -18,6 +18,7 @@
 
 #include "grn.h"
 #include <string.h>
+#include "grn_request_canceler.h"
 #include "grn_tokenizers.h"
 #include "grn_ctx_impl.h"
 #include "grn_pat.h"
@@ -1293,6 +1294,13 @@ grn_init(void)
   }
   */
   grn_cache_init();
+  if (!grn_request_canceler_init()) {
+    rc = ctx->rc;
+    grn_cache_fin();
+    GRN_LOG(ctx, GRN_LOG_ALERT,
+            "failed to initialize request canceler (%d)", rc);
+    return rc;
+  }
   GRN_LOG(ctx, GRN_LOG_NOTICE, "grn_init");
   check_overcommit_memory(ctx);
   check_grn_ja_skip_same_value_put(ctx);
@@ -1379,6 +1387,7 @@ grn_fin(void)
     }
   }
   query_logger_fin(ctx);
+  grn_request_canceler_fin();
   grn_cache_fin();
   grn_tokenizers_fin();
   grn_normalizer_fin();
@@ -1637,9 +1646,11 @@ get_command_version(grn_ctx *ctx, const char *p, const char *pe)
 #define INDEX_HTML          "index.html"
 #define OUTPUT_TYPE         "output_type"
 #define COMMAND_VERSION     "command_version"
+#define REQUEST_ID          "request_id"
 #define EXPR_MISSING        "expr_missing"
 #define OUTPUT_TYPE_LEN     (sizeof(OUTPUT_TYPE) - 1)
 #define COMMAND_VERSION_LEN (sizeof(COMMAND_VERSION) - 1)
+#define REQUEST_ID_LEN      (sizeof(REQUEST_ID) - 1)
 
 #define HTTP_QUERY_PAIR_DELIMITER   "="
 #define HTTP_QUERY_PAIRS_DELIMITERS "&;"
@@ -1655,8 +1666,10 @@ grn_obj *
 grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
 {
   grn_obj buf, *expr, *val;
+  grn_obj request_id;
   const char *p = path, *e = path + path_len, *v, *key_end, *filename_end;
   GRN_TEXT_INIT(&buf, 0);
+  GRN_TEXT_INIT(&request_id, 0);
   p = grn_text_urldec(ctx, &buf, p, e, '?');
   if (!GRN_TEXT_LEN(&buf)) { GRN_TEXT_SETS(ctx, &buf, INDEX_HTML); }
   v = GRN_TEXT_VALUE(&buf);
@@ -1683,6 +1696,12 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
           p = grn_text_cgidec(ctx, &buf, p, e, HTTP_QUERY_PAIRS_DELIMITERS);
           get_command_version(ctx, GRN_TEXT_VALUE(&buf), GRN_BULK_CURR(&buf));
           if (ctx->rc) { goto exit; }
+        } else if (l == REQUEST_ID_LEN &&
+                   !memcmp(v, REQUEST_ID, REQUEST_ID_LEN)) {
+          GRN_BULK_REWIND(&request_id);
+          p = grn_text_cgidec(ctx, &request_id, p, e,
+                              HTTP_QUERY_PAIRS_DELIMITERS);
+          if (ctx->rc) { goto exit; }
         } else {
           if (!(val = grn_expr_get_or_add_var(ctx, expr, v, l))) {
             val = &buf;
@@ -1691,8 +1710,18 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
           p = grn_text_cgidec(ctx, val, p, e, HTTP_QUERY_PAIRS_DELIMITERS);
         }
       }
+      if (GRN_TEXT_LEN(&request_id) > 0) {
+        grn_request_canceler_register(ctx,
+                                      GRN_TEXT_VALUE(&request_id),
+                                      GRN_TEXT_LEN(&request_id));
+      }
       ctx->impl->curr_expr = expr;
       grn_expr_exec(ctx, expr, 0);
+      if (GRN_TEXT_LEN(&request_id) > 0) {
+        grn_request_canceler_unregister(ctx,
+                                        GRN_TEXT_VALUE(&request_id),
+                                        GRN_TEXT_LEN(&request_id));
+      }
     } else {
       ERR(GRN_INVALID_ARGUMENT, "invalid command name: %.*s",
           command_name_size, command_name);
@@ -1717,8 +1746,10 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
   char tok_type;
   int offset = 0;
   grn_obj buf, *expr = NULL, *val = NULL;
+  grn_obj request_id;
   const char *p = str, *e = str + str_len, *v;
   GRN_TEXT_INIT(&buf, 0);
+  GRN_TEXT_INIT(&request_id, 0);
   p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
   expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
   while (p < e) {
@@ -1744,6 +1775,11 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
           p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
           get_command_version(ctx, GRN_TEXT_VALUE(&buf), GRN_BULK_CURR(&buf));
           if (ctx->rc) { goto exit; }
+        } else if (l == REQUEST_ID_LEN &&
+                   !memcmp(v, REQUEST_ID, REQUEST_ID_LEN)) {
+          GRN_BULK_REWIND(&request_id);
+          p = grn_text_unesc_tok(ctx, &request_id, p, e, &tok_type);
+          if (ctx->rc) { goto exit; }
         } else if (expr && (val = grn_expr_get_or_add_var(ctx, expr, v, l))) {
           grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
           p = grn_text_unesc_tok(ctx, val, p, e, &tok_type);
@@ -1764,6 +1800,11 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
       break;
     }
   }
+  if (GRN_TEXT_LEN(&request_id) > 0) {
+    grn_request_canceler_register(ctx,
+                                  GRN_TEXT_VALUE(&request_id),
+                                  GRN_TEXT_LEN(&request_id));
+  }
   ctx->impl->curr_expr = expr;
   if (expr && command_proc_p(expr)) {
     grn_expr_exec(ctx, expr, 0);
@@ -1775,7 +1816,13 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
           (int)GRN_TEXT_LEN(&buf), GRN_TEXT_VALUE(&buf));
     }
   }
+  if (GRN_TEXT_LEN(&request_id) > 0) {
+    grn_request_canceler_unregister(ctx,
+                                    GRN_TEXT_VALUE(&request_id),
+                                    GRN_TEXT_LEN(&request_id));
+  }
 exit :
+  GRN_OBJ_FIN(ctx, &request_id);
   GRN_OBJ_FIN(ctx, &buf);
   return expr;
 }

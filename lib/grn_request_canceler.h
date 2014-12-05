@@ -1,10 +1,10 @@
+/* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+  License version 2.1 as published by the Free Software Foundation.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,13 +15,17 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef GROONGA_H
-#define GROONGA_H
 
-#include "groonga/groonga.h"
-#include "groonga/ii.h"
-#include "groonga/expr.h"
-#include "groonga/util.h"
-#include "groonga/request_canceler.h"
+#ifndef GRN_REQUEST_CANCELER_H
+#define GRN_REQUEST_CANCELER_H
 
-#endif /* GROONGA_H */
+#include "grn.h"
+
+grn_bool grn_request_canceler_init(void);
+void grn_request_canceler_fin(void);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* GRN_REQUEST_CANCELER_H */
