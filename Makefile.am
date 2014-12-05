@@ -21,6 +21,7 @@ SUBDIRS =					\
 #dist_data_DATA =
 EXTRA_DIST =					\
 	README.md				\
+	autogen.sh				\
 	bindings				\
 	version-gen.sh				\
 	base_version				\
