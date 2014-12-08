@@ -1,0 +1,15 @@
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos tags COLUMN_VECTOR ShortText
+
+table_create Tags TABLE_PAT_KEY ShortText
+column_create Tags memos_index COLUMN_INDEX Memos tags
+
+load --table Memos
+[
+{"_key": "Groonga is fast", "tags": ["Groonga"]},
+{"_key": "Mroonga is fast", "tags": ["Groonga", "Mroonga", "MySQL"]},
+{"_key": "Rroonga is fast", "tags": ["Groonga", "Rroonga", "Ruby"]},
+{"_key": "Ruby is fan",     "tags": ["Ruby"]}
+]
+
+select Memos --output_columns _key,tags --filter 'tags @ "Ruby"'

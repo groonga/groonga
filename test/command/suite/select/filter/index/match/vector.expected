@@ -1,0 +1,55 @@
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Tags memos_index COLUMN_INDEX Memos tags
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is fast", "tags": ["Groonga"]},
+{"_key": "Mroonga is fast", "tags": ["Groonga", "Mroonga", "MySQL"]},
+{"_key": "Rroonga is fast", "tags": ["Groonga", "Rroonga", "Ruby"]},
+{"_key": "Ruby is fan",     "tags": ["Ruby"]}
+]
+[[0,0.0,0.0],4]
+select Memos --output_columns _key,tags --filter 'tags @ "Ruby"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tags",
+          "ShortText"
+        ]
+      ],
+      [
+        "Rroonga is fast",
+        [
+          "Groonga",
+          "Rroonga",
+          "Ruby"
+        ]
+      ],
+      [
+        "Ruby is fan",
+        [
+          "Ruby"
+        ]
+      ]
+    ]
+  ]
+]
