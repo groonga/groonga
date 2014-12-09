@@ -160,7 +160,6 @@ if test "$GCC" = "yes"; then
   CHECK_BUILD_FLAG([-Wdisabled-optimization])
   CHECK_BUILD_FLAG([-Wfloat-equal])
   CHECK_BUILD_FLAG([-Wpointer-arith])
-  CHECK_CFLAG([-Wdeclaration-after-statement])
   CHECK_CFLAG([-Wbad-function-cast])
   if test "$CLANG" = "no"; then
     CHECK_BUILD_FLAG([-Wcast-align])
