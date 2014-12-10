@@ -128,7 +128,6 @@ GRN_API grn_rc grn_ii_cursor_close(grn_ctx *ctx, grn_ii_cursor *c);
 
 uint32_t grn_ii_max_section(grn_ii *ii);
 
-int grn_ii_check(grn_ii *ii);
 const char *grn_ii_path(grn_ii *ii);
 grn_obj *grn_ii_lexicon(grn_ii *ii);
 
