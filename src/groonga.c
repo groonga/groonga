@@ -2439,7 +2439,8 @@ main(int argc, char **argv)
     *working_directory_arg = NULL;
   const char *config_path = NULL;
   int exit_code = EXIT_SUCCESS;
-  int i, mode = 0;
+  int i;
+  int flags = 0;
   uint32_t cache_limit = 0;
   static grn_str_getopt_opt opts[] = {
     {'p', "port", NULL, 0, GETOPT_OP_NONE},
@@ -2496,14 +2497,14 @@ main(int argc, char **argv)
   init_default_settings();
 
   /* only for parsing --config-path. */
-  i = grn_str_getopt(argc, argv, opts, &mode);
+  i = grn_str_getopt(argc, argv, opts, &flags);
   if (i < 0) {
     show_usage(stderr);
     return EXIT_FAILURE;
   }
 
   if (config_path) {
-    const config_file_status status = config_file_load(config_path, opts, &mode);
+    const config_file_status status = config_file_load(config_path, opts, &flags);
     if (status == CONFIG_FILE_FOPEN_ERROR) {
       fprintf(stderr, "%s: can't open config file: %s (%s)\n",
               argv[0], config_path, strerror(errno));
@@ -2516,7 +2517,7 @@ main(int argc, char **argv)
     }
   } else if (*default_config_path) {
     const config_file_status status =
-        config_file_load(default_config_path, opts, &mode);
+        config_file_load(default_config_path, opts, &flags);
     if (status != CONFIG_FILE_SUCCESS && status != CONFIG_FILE_FOPEN_ERROR) {
       fprintf(stderr, "%s: failed to parse config file: %s (%s)\n",
               argv[0], default_config_path,
@@ -2534,11 +2535,11 @@ main(int argc, char **argv)
   }
 
   /* ignore mode option in config file */
-  mode = (mode == ACTION_ERROR) ? 0 : (mode & ~ACTION_MASK);
+  flags = (flags == ACTION_ERROR) ? 0 : (flags & ~ACTION_MASK);
 
-  i = grn_str_getopt(argc, argv, opts, &mode);
-  if (i < 0) { mode = ACTION_ERROR; }
-  switch (mode & ACTION_MASK) {
+  i = grn_str_getopt(argc, argv, opts, &flags);
+  if (i < 0) { flags = ACTION_ERROR; }
+  switch (flags & ACTION_MASK) {
   case ACTION_VERSION :
     show_version();
     return EXIT_SUCCESS;
@@ -2546,7 +2547,7 @@ main(int argc, char **argv)
     show_usage(output);
     return EXIT_SUCCESS;
   case ACTION_SHOW_CONFIG :
-    show_config(output, opts, mode & ~ACTION_MASK);
+    show_config(output, opts, flags & ~ACTION_MASK);
     return EXIT_SUCCESS;
   case ACTION_ERROR :
     show_usage(stderr);
@@ -2829,12 +2830,12 @@ main(int argc, char **argv)
     grn_cache_set_max_n_entries(&grn_gctx, cache, cache_limit);
   }
 
-  newdb = (mode & MODE_NEW_DB);
-  is_recover_db = ((mode & MODE_RECOVER_DB) == MODE_RECOVER_DB);
-  is_daemon_mode = (mode & MODE_DAEMON);
-  if (mode & MODE_CLIENT) {
+  newdb = (flags & MODE_NEW_DB);
+  is_recover_db = ((flags & MODE_RECOVER_DB) == MODE_RECOVER_DB);
+  is_daemon_mode = (flags & MODE_DAEMON);
+  if (flags & MODE_CLIENT) {
     exit_code = do_client(argc - i, argv + i);
-  } else if (is_daemon_mode || (mode & MODE_SERVER)) {
+  } else if (is_daemon_mode || (flags & MODE_SERVER)) {
     exit_code = do_server(argc > i ? argv[i] : NULL);
   } else {
     exit_code = do_alone(argc - i, argv + i);
