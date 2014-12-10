@@ -1930,12 +1930,12 @@ enum {
 };
 
 #define ACTION_MASK       (0x0f)
-#define MODE_ALONE      (1 << 4)
-#define MODE_CLIENT     (1 << 5)
-#define MODE_DAEMON     (1 << 6)
-#define MODE_SERVER     (1 << 7)
-#define MODE_NEW_DB     (1 << 8)
-#define MODE_RECOVER_DB (1 << 9)
+#define FLAG_MODE_ALONE      (1 << 4)
+#define FLAG_MODE_CLIENT     (1 << 5)
+#define FLAG_MODE_DAEMON     (1 << 6)
+#define FLAG_MODE_SERVER     (1 << 7)
+#define FLAG_NEW_DB     (1 << 8)
+#define FLAG_RECOVER_DB (1 << 9)
 
 static uint32_t
 get_core_number(void)
@@ -2447,12 +2447,12 @@ main(int argc, char **argv)
     {'e', "encoding", NULL, 0, GETOPT_OP_NONE},
     {'t', "max-threads", NULL, 0, GETOPT_OP_NONE},
     {'h', "help", NULL, ACTION_USAGE, GETOPT_OP_UPDATE},
-    {'c', NULL, NULL, MODE_CLIENT, GETOPT_OP_ON},
-    {'d', NULL, NULL, MODE_DAEMON, GETOPT_OP_ON},
-    {'s', NULL, NULL, MODE_SERVER, GETOPT_OP_ON},
+    {'c', NULL, NULL, FLAG_MODE_CLIENT, GETOPT_OP_ON},
+    {'d', NULL, NULL, FLAG_MODE_DAEMON, GETOPT_OP_ON},
+    {'s', NULL, NULL, FLAG_MODE_SERVER, GETOPT_OP_ON},
     {'l', "log-level", NULL, 0, GETOPT_OP_NONE},
     {'i', "server-id", NULL, 0, GETOPT_OP_NONE},
-    {'n', NULL, NULL, MODE_NEW_DB, GETOPT_OP_ON},
+    {'n', NULL, NULL, FLAG_NEW_DB, GETOPT_OP_ON},
     {'\0', "protocol", NULL, 0, GETOPT_OP_NONE},
     {'\0', "version", NULL, ACTION_VERSION, GETOPT_OP_UPDATE},
     {'\0', "log-path", NULL, 0, GETOPT_OP_NONE},
@@ -2469,7 +2469,7 @@ main(int argc, char **argv)
     {'\0', "input-fd", NULL, 0, GETOPT_OP_NONE},
     {'\0', "output-fd", NULL, 0, GETOPT_OP_NONE},
     {'\0', "working-directory", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "recover", NULL, MODE_RECOVER_DB, GETOPT_OP_ON},
+    {'\0', "recover", NULL, FLAG_RECOVER_DB, GETOPT_OP_ON},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &port_arg;
@@ -2830,12 +2830,12 @@ main(int argc, char **argv)
     grn_cache_set_max_n_entries(&grn_gctx, cache, cache_limit);
   }
 
-  newdb = (flags & MODE_NEW_DB);
-  is_recover_db = ((flags & MODE_RECOVER_DB) == MODE_RECOVER_DB);
-  is_daemon_mode = (flags & MODE_DAEMON);
-  if (flags & MODE_CLIENT) {
+  newdb = (flags & FLAG_NEW_DB);
+  is_recover_db = ((flags & FLAG_RECOVER_DB) == FLAG_RECOVER_DB);
+  is_daemon_mode = (flags & FLAG_MODE_DAEMON);
+  if (flags & FLAG_MODE_CLIENT) {
     exit_code = do_client(argc - i, argv + i);
-  } else if (is_daemon_mode || (flags & MODE_SERVER)) {
+  } else if (is_daemon_mode || (flags & FLAG_MODE_SERVER)) {
     exit_code = do_server(argc > i ? argv[i] : NULL);
   } else {
     exit_code = do_alone(argc - i, argv + i);
