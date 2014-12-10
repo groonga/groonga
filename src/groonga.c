@@ -1923,19 +1923,19 @@ g_server(char *path)
 }
 
 enum {
-  mode_alone = 0,
-  mode_client,
-  mode_daemon,
-  mode_server,
-  mode_usage,
+  mode_usage = 1,
   mode_version,
   mode_config,
   mode_error
 };
 
-#define MODE_MASK   0x007f
-#define MODE_NEW_DB 0x0100
-#define MODE_RECOVER_DB 0x0200
+#define MODE_MASK       (0x0f)
+#define MODE_ALONE      (1 << 4)
+#define MODE_CLIENT     (1 << 5)
+#define MODE_DAEMON     (1 << 6)
+#define MODE_SERVER     (1 << 7)
+#define MODE_NEW_DB     (1 << 8)
+#define MODE_RECOVER_DB (1 << 9)
 
 static uint32_t
 get_core_number(void)
@@ -2156,7 +2156,6 @@ static const int default_http_port = DEFAULT_HTTP_PORT;
 static const int default_gqtp_port = DEFAULT_GQTP_PORT;
 static grn_encoding default_encoding = GRN_ENC_DEFAULT;
 static uint32_t default_max_num_threads = DEFAULT_MAX_NFTHREADS;
-static const int default_mode = mode_alone;
 static const int default_log_level = GRN_LOG_DEFAULT_LEVEL;
 static const char * const default_protocol = "gqtp";
 static const char *default_hostname = "localhost";
@@ -2440,16 +2439,16 @@ main(int argc, char **argv)
     *working_directory_arg = NULL;
   const char *config_path = NULL;
   int exit_code = EXIT_SUCCESS;
-  int i, mode = mode_alone;
+  int i, mode = 0;
   uint32_t cache_limit = 0;
   static grn_str_getopt_opt opts[] = {
     {'p', "port", NULL, 0, GETOPT_OP_NONE},
     {'e', "encoding", NULL, 0, GETOPT_OP_NONE},
     {'t', "max-threads", NULL, 0, GETOPT_OP_NONE},
     {'h', "help", NULL, mode_usage, GETOPT_OP_UPDATE},
-    {'c', NULL, NULL, mode_client, GETOPT_OP_UPDATE},
-    {'d', NULL, NULL, mode_daemon, GETOPT_OP_UPDATE},
-    {'s', NULL, NULL, mode_server, GETOPT_OP_UPDATE},
+    {'c', NULL, NULL, MODE_CLIENT, GETOPT_OP_ON},
+    {'d', NULL, NULL, MODE_DAEMON, GETOPT_OP_ON},
+    {'s', NULL, NULL, MODE_SERVER, GETOPT_OP_ON},
     {'l', "log-level", NULL, 0, GETOPT_OP_NONE},
     {'i', "server-id", NULL, 0, GETOPT_OP_NONE},
     {'n', NULL, NULL, MODE_NEW_DB, GETOPT_OP_ON},
@@ -2535,8 +2534,7 @@ main(int argc, char **argv)
   }
 
   /* ignore mode option in config file */
-  mode = (mode == mode_error) ? default_mode :
-    ((mode & ~MODE_MASK) | default_mode);
+  mode = (mode == mode_error) ? 0 : (mode & ~MODE_MASK);
 
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) { mode = mode_error; }
@@ -2833,22 +2831,13 @@ main(int argc, char **argv)
 
   newdb = (mode & MODE_NEW_DB);
   is_recover_db = ((mode & MODE_RECOVER_DB) == MODE_RECOVER_DB);
-  switch (mode & MODE_MASK) {
-  case mode_alone :
-    exit_code = do_alone(argc - i, argv + i);
-    break;
-  case mode_client :
+  is_daemon_mode = (mode & MODE_DAEMON);
+  if (mode & MODE_CLIENT) {
     exit_code = do_client(argc - i, argv + i);
-    break;
-  case mode_daemon :
-    is_daemon_mode = GRN_TRUE;
-    /* fallthru */
-  case mode_server :
+  } else if (is_daemon_mode || (mode & MODE_SERVER)) {
     exit_code = do_server(argc > i ? argv[i] : NULL);
-    break;
-  default:
-    exit_code = EXIT_FAILURE;
-    break;
+  } else {
+    exit_code = do_alone(argc - i, argv + i);
   }
 
 #ifdef GRN_WITH_LIBEDIT
