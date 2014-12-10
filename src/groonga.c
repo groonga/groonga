@@ -318,7 +318,7 @@ do_alone(int argc, char **argv)
       grn_rc rc;
       rc = grn_db_recover(ctx, db);
       if (rc != GRN_SUCCESS) {
-        fprintf(stderr, "Failed to recover database <%s>: %s",
+        fprintf(stderr, "Failed to recover database <%s>: %s\n",
                 path, ctx->errbuf);
         exit_code = grn_rc_to_exit_code(ctx->rc);
         grn_obj_close(ctx, db);
@@ -643,7 +643,7 @@ start_service(grn_ctx *ctx, const char *db_path,
         rc = grn_db_recover(ctx, db);
       }
       if (rc != GRN_SUCCESS) {
-        fprintf(stderr, "Failed to recover database <%s>: %s",
+        fprintf(stderr, "Failed to recover database <%s>: %s\n",
                 db_path, ctx->errbuf);
         exit_code = grn_rc_to_exit_code(ctx->rc);
       } else {
