@@ -11615,3 +11615,56 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
             ifexists, ifexists_len, each, each_len, 1);
   GRN_API_RETURN(ctx->rc);
 }
+
+static void
+grn_db_recover_index_column(grn_ctx *ctx, grn_obj *index_column)
+{
+  grn_ii *ii = (grn_ii *)index_column;
+
+  if (!grn_obj_is_locked(ctx, index_column)) {
+    return;
+  }
+
+  grn_ii_truncate(ctx, ii);
+  build_index(ctx, index_column);
+}
+
+grn_rc
+grn_db_recover(grn_ctx *ctx, grn_obj *db)
+{
+  grn_table_cursor *cursor;
+  grn_id id;
+
+  GRN_API_ENTER;
+  cursor = grn_table_cursor_open(ctx, db,
+                                 NULL, 0, NULL, 0,
+                                 0, -1,
+                                 GRN_CURSOR_BY_ID);
+  if (!cursor) {
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+    grn_obj *object;
+
+    if ((object = grn_ctx_at(ctx, id))) {
+      switch (object->header.type) {
+      case GRN_COLUMN_INDEX :
+        grn_db_recover_index_column(ctx, object);
+        break;
+      default:
+        break;
+      }
+      grn_obj_unlink(ctx, object);
+    } else {
+      ERRCLR(ctx);
+    }
+
+    if (ctx->rc != GRN_SUCCESS) {
+      break;
+    }
+  }
+  grn_table_cursor_close(ctx, cursor);
+
+  GRN_API_RETURN(ctx->rc);
+}
