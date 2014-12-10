@@ -4701,6 +4701,7 @@ inline static grn_rc
 index_del(grn_ctx *ctx, grn_id rid, grn_obj *lexicon, grn_ii *ii, grn_vgram *vgram,
           const char *value, size_t value_len)
 {
+  grn_rc rc = GRN_SUCCESS;
   grn_hash *h;
   unsigned int token_flags = 0;
   grn_token_cursor *token_cursor;
@@ -4733,12 +4734,16 @@ index_del(grn_ctx *ctx, grn_id rid, grn_obj *lexicon, grn_ii *ii, grn_vgram *vgr
   grn_token_cursor_close(ctx, token_cursor);
   GRN_HASH_EACH(ctx, h, id, &tp, NULL, &u, {
     if (*tp) {
-      grn_ii_delete_one(ctx, ii, *tp, *u, NULL);
+      grn_rc r;
+      r = grn_ii_delete_one(ctx, ii, *tp, *u, NULL);
+      if (r) {
+        rc = r;
+      }
     }
     grn_ii_updspec_close(ctx, *u);
   });
   grn_hash_close(ctx, h);
-  return GRN_SUCCESS;
+  return rc;
 }
 
 grn_rc
@@ -4873,7 +4878,11 @@ grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram, unsigned i
           grn_hash_delete_by_id(ctx, new, eid, NULL);
         }
       } else {
-        grn_ii_delete_one(ctx, ii, *tp, *u, new);
+        grn_rc r;
+        r = grn_ii_delete_one(ctx, ii, *tp, *u, new);
+        if (r) {
+          rc = r;
+        }
       }
       grn_ii_updspec_close(ctx, *u);
     });
@@ -5162,7 +5171,11 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
           grn_hash_delete_by_id(ctx, n, eid, NULL);
         }
       } else {
-        grn_ii_delete_one(ctx, ii, *tp, *u, n);
+        grn_rc r;
+        r = grn_ii_delete_one(ctx, ii, *tp, *u, n);
+        if (r) {
+          rc = r;
+        }
       }
       grn_ii_updspec_close(ctx, *u);
     });
