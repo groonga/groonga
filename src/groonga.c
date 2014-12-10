@@ -1923,10 +1923,10 @@ g_server(char *path)
 }
 
 enum {
-  mode_usage = 1,
-  mode_version,
-  mode_config,
-  mode_error
+  MODE_USAGE = 1,
+  MODE_VERSION,
+  MODE_CONFIG,
+  MODE_ERROR
 };
 
 #define MODE_MASK       (0x0f)
@@ -2445,7 +2445,7 @@ main(int argc, char **argv)
     {'p', "port", NULL, 0, GETOPT_OP_NONE},
     {'e', "encoding", NULL, 0, GETOPT_OP_NONE},
     {'t', "max-threads", NULL, 0, GETOPT_OP_NONE},
-    {'h', "help", NULL, mode_usage, GETOPT_OP_UPDATE},
+    {'h', "help", NULL, MODE_USAGE, GETOPT_OP_UPDATE},
     {'c', NULL, NULL, MODE_CLIENT, GETOPT_OP_ON},
     {'d', NULL, NULL, MODE_DAEMON, GETOPT_OP_ON},
     {'s', NULL, NULL, MODE_SERVER, GETOPT_OP_ON},
@@ -2453,12 +2453,12 @@ main(int argc, char **argv)
     {'i', "server-id", NULL, 0, GETOPT_OP_NONE},
     {'n', NULL, NULL, MODE_NEW_DB, GETOPT_OP_ON},
     {'\0', "protocol", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "version", NULL, mode_version, GETOPT_OP_UPDATE},
+    {'\0', "version", NULL, MODE_VERSION, GETOPT_OP_UPDATE},
     {'\0', "log-path", NULL, 0, GETOPT_OP_NONE},
     {'\0', "query-log-path", NULL, 0, GETOPT_OP_NONE},
     {'\0', "pid-path", NULL, 0, GETOPT_OP_NONE},
     {'\0', "config-path", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "show-config", NULL, mode_config, GETOPT_OP_UPDATE},
+    {'\0', "show-config", NULL, MODE_CONFIG, GETOPT_OP_UPDATE},
     {'\0', "cache-limit", NULL, 0, GETOPT_OP_NONE},
     {'\0', "file", NULL, 0, GETOPT_OP_NONE},
     {'\0', "document-root", NULL, 0, GETOPT_OP_NONE},
@@ -2534,21 +2534,21 @@ main(int argc, char **argv)
   }
 
   /* ignore mode option in config file */
-  mode = (mode == mode_error) ? 0 : (mode & ~MODE_MASK);
+  mode = (mode == MODE_ERROR) ? 0 : (mode & ~MODE_MASK);
 
   i = grn_str_getopt(argc, argv, opts, &mode);
-  if (i < 0) { mode = mode_error; }
+  if (i < 0) { mode = MODE_ERROR; }
   switch (mode & MODE_MASK) {
-  case mode_version :
+  case MODE_VERSION :
     show_version();
     return EXIT_SUCCESS;
-  case mode_usage :
+  case MODE_USAGE :
     show_usage(output);
     return EXIT_SUCCESS;
-  case mode_config :
+  case MODE_CONFIG :
     show_config(output, opts, mode & ~MODE_MASK);
     return EXIT_SUCCESS;
-  case mode_error :
+  case MODE_ERROR :
     show_usage(stderr);
     return EXIT_FAILURE;
   }
