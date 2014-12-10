@@ -1925,7 +1925,7 @@ g_server(char *path)
 enum {
   ACTION_USAGE = 1,
   ACTION_VERSION,
-  ACTION_CONFIG,
+  ACTION_SHOW_CONFIG,
   ACTION_ERROR
 };
 
@@ -2458,7 +2458,7 @@ main(int argc, char **argv)
     {'\0', "query-log-path", NULL, 0, GETOPT_OP_NONE},
     {'\0', "pid-path", NULL, 0, GETOPT_OP_NONE},
     {'\0', "config-path", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "show-config", NULL, ACTION_CONFIG, GETOPT_OP_UPDATE},
+    {'\0', "show-config", NULL, ACTION_SHOW_CONFIG, GETOPT_OP_UPDATE},
     {'\0', "cache-limit", NULL, 0, GETOPT_OP_NONE},
     {'\0', "file", NULL, 0, GETOPT_OP_NONE},
     {'\0', "document-root", NULL, 0, GETOPT_OP_NONE},
@@ -2545,7 +2545,7 @@ main(int argc, char **argv)
   case ACTION_USAGE :
     show_usage(output);
     return EXIT_SUCCESS;
-  case ACTION_CONFIG :
+  case ACTION_SHOW_CONFIG :
     show_config(output, opts, mode & ~ACTION_MASK);
     return EXIT_SUCCESS;
   case ACTION_ERROR :
