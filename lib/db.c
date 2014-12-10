@@ -11617,6 +11617,25 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
 }
 
 static void
+grn_db_recover_data_column(grn_ctx *ctx, grn_obj *data_column)
+{
+  if (!grn_obj_is_locked(ctx, data_column)) {
+    return;
+  }
+
+  {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    unsigned int name_size;
+    name_size = grn_obj_name(ctx, data_column, name, GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_OBJECT_CORRUPT,
+        "[db][recover] column may be broken: <%.*s>: "
+        "please truncate the column (or clear lock of the column) "
+        "and load data again",
+        (int)name_size, name);
+  }
+}
+
+static void
 grn_db_recover_index_column(grn_ctx *ctx, grn_obj *index_column)
 {
   grn_ii *ii = (grn_ii *)index_column;
@@ -11649,6 +11668,10 @@ grn_db_recover(grn_ctx *ctx, grn_obj *db)
 
     if ((object = grn_ctx_at(ctx, id))) {
       switch (object->header.type) {
+      case GRN_COLUMN_FIX_SIZE :
+      case GRN_COLUMN_VAR_SIZE :
+        grn_db_recover_data_column(ctx, object);
+        break;
       case GRN_COLUMN_INDEX :
         grn_db_recover_index_column(ctx, object);
         break;
