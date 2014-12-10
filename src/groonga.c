@@ -2534,7 +2534,7 @@ main(int argc, char **argv)
   }
 
   /* ignore mode option in config file */
-  mode = (mode == ACTION_ERROR) ? 0 : (mode & ~MODE_MASK);
+  mode = (mode == ACTION_ERROR) ? 0 : (mode & ~ACTION_MASK);
 
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) { mode = ACTION_ERROR; }
