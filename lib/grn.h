@@ -546,7 +546,7 @@ typedef int grn_cond;
 #  define GRN_MKOSTEMP(template,flags,mode) mkostemp(template,flags)
 # else /* HAVE_MKOSTEMP */
 #  define GRN_MKOSTEMP(template,flags,mode) \
-  (mktemp(template), GRN_OPEN((template),flags,mode))
+  (mktemp(template), GRN_OPEN((template),((flags)|O_RDWR|O_CREAT|O_EXCL),mode))
 # endif /* HAVE_MKOSTEMP */
 
 #elif (defined(WIN32) || defined (_WIN64)) /* __GNUC__ */
@@ -579,7 +579,7 @@ typedef int grn_cond;
 # define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
 
 # define GRN_MKOSTEMP(template,flags,mode) \
-  (mktemp(template), GRN_OPEN((template),((flags)|O_BINARY),mode))
+  (mktemp(template), GRN_OPEN((template),((flags)|O_RDWR|O_CREAT),mode))
 
 #else /* __GNUC__ */
 

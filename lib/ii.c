@@ -7428,12 +7428,9 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
       if (ii_buffer->counters) {
         ii_buffer->block_buf = GRN_MALLOCN(grn_id, II_BUFFER_BLOCK_SIZE);
         if (ii_buffer->block_buf) {
-          int open_flags = O_WRONLY|O_CREAT;
+          int open_flags = 0;
 #ifdef WIN32
           open_flags |= O_BINARY;
-#endif
-#ifdef BSD
-          open_flags &= O_APPEND|O_DIRECT|O_SHLOCK|O_EXLOCK|O_SYNC|O_CLOEXEC;
 #endif
           snprintf(ii_buffer->tmpfpath, PATH_MAX,
                    "%sXXXXXX", grn_io_path(ii->seg));
