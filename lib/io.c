@@ -420,7 +420,6 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
   grn_io *io;
   struct stat s;
   fileinfo *fis;
-  uint32_t flags = 0;
   unsigned int b, max_nfiles;
   uint32_t total_header_size;
   uint32_t header_size = 0, segment_size = 0, max_segment = 0, bs;
@@ -435,7 +434,6 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
           header_size = h.header_size;
           segment_size = h.segment_size;
           max_segment = h.max_segment;
-          flags = h.flags;
         } else {
           ERR(GRN_INCOMPATIBLE_FILE_FORMAT, "incompatible file format");
         }
