@@ -5753,8 +5753,8 @@ static grn_rc get_token(grn_ctx *ctx, efs_info *q, efs_op *op, grn_obj *column, 
 static grn_rc
 get_phrase(grn_ctx *ctx, efs_info *q, grn_obj *column, int mode, int option)
 {
-  const char *start, *s;
-  start = s = q->cur;
+  const char *s;
+  s = q->cur;
   GRN_BULK_REWIND(&q->buf);
   while (1) {
     unsigned int len;
