@@ -278,7 +278,7 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
     return GRN_NO_MEMORY_AVAILABLE;
   } else {
     uint32_t *vp;
-    int m, aligned_size;
+    int m;
     if (size > (1 << GRN_II_W_LEAST_CHUNK)) {
       int es = size - 1;
       GRN_BIT_SCAN_REV(es, m);
@@ -286,7 +286,6 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
     } else {
       m = GRN_II_W_LEAST_CHUNK;
     }
-    aligned_size = 1 << (m - GRN_II_W_LEAST_CHUNK);
     if (ii->header->ngarbages[m - GRN_II_W_LEAST_CHUNK] > N_GARBAGES_TH) {
       grn_ii_ginfo *ginfo;
       uint32_t *gseg;
