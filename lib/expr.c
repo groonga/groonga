@@ -3840,15 +3840,13 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         {
           int r;
           grn_obj *e;
-          int64_t ln0, la0, ln1, la1, ln2, la2, ln3, la3;
+          int64_t ln0, la0, ln2, la2, ln3, la3;
           POP1(e);
           ln0 = GRN_INT32_VALUE(e);
           POP1(e);
           la0 = GRN_INT32_VALUE(e);
           POP1(e);
-          ln1 = GRN_INT32_VALUE(e);
           POP1(e);
-          la1 = GRN_INT32_VALUE(e);
           POP1(e);
           ln2 = GRN_INT32_VALUE(e);
           POP1(e);
