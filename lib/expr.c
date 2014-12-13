@@ -3840,15 +3840,13 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         {
           int r;
           grn_obj *e;
-          int64_t ln0, la0, ln1, la1, ln2, la2, ln3, la3;
+          int64_t ln0, la0, ln2, la2, ln3, la3;
           POP1(e);
           ln0 = GRN_INT32_VALUE(e);
           POP1(e);
           la0 = GRN_INT32_VALUE(e);
           POP1(e);
-          ln1 = GRN_INT32_VALUE(e);
           POP1(e);
-          la1 = GRN_INT32_VALUE(e);
           POP1(e);
           ln2 = GRN_INT32_VALUE(e);
           POP1(e);
@@ -5755,8 +5753,8 @@ static grn_rc get_token(grn_ctx *ctx, efs_info *q, efs_op *op, grn_obj *column, 
 static grn_rc
 get_phrase(grn_ctx *ctx, efs_info *q, grn_obj *column, int mode, int option)
 {
-  const char *start, *s;
-  start = s = q->cur;
+  const char *s;
+  s = q->cur;
   GRN_BULK_REWIND(&q->buf);
   while (1) {
     unsigned int len;
@@ -6020,8 +6018,7 @@ get_op(efs_info *q, efs_op *op, grn_operator *mode, int *option)
     op->op = GRN_OP_AND;
     *mode = GRN_OP_EXACT;
     *option = 0;
-    start = ++end;
-    q->cur = end;
+    q->cur = ++end;
     break;
   default :
     found = GRN_FALSE;
@@ -6427,8 +6424,8 @@ parse_query(grn_ctx *ctx, efs_info *q)
       q->cur++;
 
       {
-        const char *start, *s;
-        start = s = q->cur;
+        const char *s;
+        s = q->cur;
         GRN_BULK_REWIND(&q->buf);
         while (1) {
           unsigned int len;
