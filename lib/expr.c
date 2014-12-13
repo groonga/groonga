@@ -6018,8 +6018,7 @@ get_op(efs_info *q, efs_op *op, grn_operator *mode, int *option)
     op->op = GRN_OP_AND;
     *mode = GRN_OP_EXACT;
     *option = 0;
-    start = ++end;
-    q->cur = end;
+    q->cur = ++end;
     break;
   default :
     found = GRN_FALSE;
