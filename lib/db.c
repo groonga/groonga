@@ -11039,14 +11039,12 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
             if (v->header.domain == GRN_DB_TEXT &&
                 (name_equal(column_name, column_name_size,
                             GRN_COLUMN_NAME_ID))) {
-              grn_obj *id_column;
               grn_obj *id_value;
               if (found_id_column) {
                 GRN_LOG(ctx, GRN_LOG_ERROR, "duplicated '_id' column");
                 goto exit;
               }
               found_id_column = GRN_TRUE;
-              id_column = v;
               v = values_next(ctx, v);
               id_value = v;
               switch (id_value->header.type) {
