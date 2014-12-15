@@ -1,0 +1,16 @@
+table_create Users TABLE_NO_KEY
+column_create Users ids COLUMN_VECTOR UInt64
+
+table_create IDs TABLE_PAT_KEY UInt64
+column_create IDs users_ids COLUMN_INDEX Users ids
+
+load --table Users
+[
+["ids"],
+[[10, 20, 30]],
+[[20, 40]],
+[[]]
+]
+
+select Users --output_columns ids
+select IDs --output_columns _key
