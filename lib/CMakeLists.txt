@@ -19,7 +19,10 @@ add_definitions(
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/dat
-  ${MRUBY_INCLUDE_DIRS})
+  ${MRUBY_INCLUDE_DIRS}
+  ${LIBLZ4_INCLUDE_DIRS})
+link_directories(
+  ${LIBLZ4_LIBRARY_DIRS})
 
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/sources.am LIBGROONGA_SOURCES)
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/dat/sources.am LIBGRNDAT_SOURCES)
@@ -47,7 +50,7 @@ target_link_libraries(libgroonga
   ${RT_LIBS}
   ${PTHREAD_LIBS}
   ${Z_LIBS}
-  ${LZ4_LIBS}
+  ${LIBLZ4_LIBRARIES}
   ${DL_LIBS}
   ${WS2_32_LIBS})
 
