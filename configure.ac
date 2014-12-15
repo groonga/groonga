@@ -1017,7 +1017,7 @@ if test "x$with_libstemmer" != "xno"; then
     if test -z "${with_libstemmer_include}"; then
       with_libstemmer_include="${with_libstemmer}/include"
     fi
-    LIBSTEMMER_CFLAGS="-I${with_libstemmer_include:}"
+    LIBSTEMMER_CFLAGS="-I${with_libstemmer_include}"
     if test -z "${with_libstemmer_lib}"; then
       with_libstemmer_lib="${with_libstemmer}/lib"
     fi
