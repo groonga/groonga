@@ -335,7 +335,7 @@ typedef unsigned short int grn_obj_flags;
 #define GRN_VOID                       (0x00)
 #define GRN_BULK                       (0x02)
 #define GRN_PTR                        (0x03)
-#define GRN_UVECTOR                    (0x04) /* vector of grn_id */
+#define GRN_UVECTOR                    (0x04) /* vector of fixed size data especially grn_id */
 #define GRN_PVECTOR                    (0x05) /* vector of grn_obj* */
 #define GRN_VECTOR                     (0x06) /* vector of arbitrary data */
 #define GRN_MSG                        (0x07)
