@@ -4097,6 +4097,61 @@ grn_vector_delimit(grn_ctx *ctx, grn_obj *vector)
 */
 
 static unsigned int
+grn_uvector_element_size_internal(grn_ctx *ctx, grn_obj *uvector)
+{
+  unsigned int element_size;
+
+  if (IS_WEIGHT_UVECTOR(uvector)) {
+    element_size = sizeof(weight_uvector_entry);
+  } else {
+    switch (uvector->header.domain) {
+    case GRN_DB_BOOL :
+      element_size = sizeof(grn_bool);
+      break;
+    case GRN_DB_INT8 :
+      element_size = sizeof(int8_t);
+      break;
+    case GRN_DB_UINT8 :
+      element_size = sizeof(uint8_t);
+      break;
+    case GRN_DB_INT16 :
+      element_size = sizeof(int16_t);
+      break;
+    case GRN_DB_UINT16 :
+      element_size = sizeof(uint16_t);
+      break;
+    case GRN_DB_INT32 :
+      element_size = sizeof(int32_t);
+      break;
+    case GRN_DB_UINT32 :
+      element_size = sizeof(uint32_t);
+      break;
+    case GRN_DB_INT64 :
+      element_size = sizeof(int64_t);
+      break;
+    case GRN_DB_UINT64 :
+      element_size = sizeof(uint64_t);
+      break;
+    case GRN_DB_FLOAT :
+      element_size = sizeof(double);
+      break;
+    case GRN_DB_TIME :
+      element_size = sizeof(int64_t);
+      break;
+    case GRN_DB_TOKYO_GEO_POINT :
+    case GRN_DB_WGS84_GEO_POINT :
+      element_size = sizeof(grn_geo_point);
+      break;
+    default :
+      element_size = sizeof(grn_id);
+      break;
+    }
+  }
+
+  return element_size;
+}
+
+static unsigned int
 grn_uvector_size_internal(grn_ctx *ctx, grn_obj *uvector)
 {
   unsigned int size;
@@ -4379,6 +4434,30 @@ grn_uvector_size(grn_ctx *ctx, grn_obj *uvector)
   GRN_API_RETURN(size);
 }
 
+unsigned int
+grn_uvector_element_size(grn_ctx *ctx, grn_obj *uvector)
+{
+  unsigned int element_size;
+
+  if (!uvector) {
+    ERR(GRN_INVALID_ARGUMENT, "uvector must not be NULL");
+    return 0;
+  }
+
+  if (uvector->header.type != GRN_UVECTOR) {
+    grn_obj type_name;
+    GRN_TEXT_INIT(&type_name, 0);
+    grn_inspect_type(ctx, &type_name, uvector->header.type);
+    ERR(GRN_INVALID_ARGUMENT, "must be GRN_UVECTOR: %.*s",
+        (int)GRN_TEXT_LEN(&type_name), GRN_TEXT_VALUE(&type_name));
+    GRN_OBJ_FIN(ctx, &type_name);
+    return 0;
+  }
+
+  GRN_API_ENTER;
+  element_size = grn_uvector_element_size_internal(ctx, uvector);
+  GRN_API_RETURN(element_size);
+}
 
 grn_rc
 grn_uvector_add_element(grn_ctx *ctx, grn_obj *uvector,

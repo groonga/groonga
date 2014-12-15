@@ -62,7 +62,8 @@ noinst_LTLIBRARIES =				\
 	test-object.la				\
 	test-rename.la				\
 	test-tokenizer.la			\
-	test-proc.la
+	test-proc.la				\
+	test-uvector.la
 endif
 
 AM_CPPFLAGS =			\
@@ -150,3 +151,4 @@ test_object_la_SOURCES			= test-object.c
 test_rename_la_SOURCES			= test-rename.c
 test_tokenizer_la_SOURCES		= test-tokenizer.c
 test_proc_la_SOURCES			= test-proc.c
+test_uvector_la_SOURCES			= test-uvector.c

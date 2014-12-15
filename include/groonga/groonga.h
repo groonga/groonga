@@ -919,6 +919,7 @@ GRN_API unsigned int grn_vector_get_element(grn_ctx *ctx, grn_obj *vector,
 */
 
 GRN_API unsigned int grn_uvector_size(grn_ctx *ctx, grn_obj *uvector);
+GRN_API unsigned int grn_uvector_element_size(grn_ctx *ctx, grn_obj *uvector);
 
 GRN_API grn_rc grn_uvector_add_element(grn_ctx *ctx, grn_obj *vector,
                                        grn_id id, unsigned int weight);
