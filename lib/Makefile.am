@@ -11,7 +11,8 @@ AM_CFLAGS =					\
 	$(GRN_CFLAGS)				\
 	$(MESSAGE_PACK_CFLAGS)			\
 	$(MRUBY_CFLAGS)				\
-	$(ONIGMO_CFLAGS)
+	$(ONIGMO_CFLAGS)			\
+	$(LIBLZ4_CFLAGS)
 
 DEFAULT_INCLUDES =				\
 	-I$(top_builddir)			\
@@ -31,7 +32,8 @@ libgroonga_la_LIBADD =				\
 	mrb/libgrnmrb.la			\
 	$(MESSAGE_PACK_LIBS)			\
 	$(MRUBY_LIBS)				\
-	$(ONIGMO_LIBS)
+	$(ONIGMO_LIBS)				\
+	$(LIBLZ4_LIBS)
 
 if WITH_LEMON
 BUILT_SOURCES =					\

@@ -896,18 +896,21 @@ AC_ARG_WITH(lz4,
   [with_lz4="$withval"],
   [with_lz4="auto"])
 if test "x$with_lz4" != "xno"; then
-  # TODO: Support custom LZ4 include and lib directory by --with-lz4.
-  AC_SEARCH_LIBS(LZ4_compress, lz4,
-                 [
-                   GRN_WITH_LZ4=yes
-                   AC_DEFINE(GRN_WITH_LZ4, [1],
-                             [Support data compression by LZ4.])
-                 ],
-                 [
-                   if test "x$with_lz4" != "xauto"; then
-                     AC_MSG_ERROR("No liblz4 found")
-                   fi
-                 ])
+  m4_ifdef([PKG_CHECK_MODULES], [
+    PKG_CHECK_MODULES([LIBLZ4],
+                      [liblz4],
+                      [GRN_WITH_LZ4=yes],
+                      [GRN_WITH_LZ4=no])
+  ],
+  [GRN_WITH_LZ4=no])
+  if test "$GRN_WITH_LZ4" = "yes"; then
+    AC_DEFINE(GRN_WITH_LZ4, [1],
+              [Support data compression by LZ4.])
+  else
+    if test "x$with_lz4" != "xauto"; then
+      AC_MSG_ERROR("No liblz4 found")
+    fi
+  fi
 fi
 
 # MeCab
