@@ -4948,8 +4948,65 @@ grn_vector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
 }
 
 static grn_rc
-grn_uvector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
-                     grn_obj *in, grn_obj *out)
+grn_uvector2updspecs_data(grn_ctx *ctx, grn_ii *ii, grn_id rid,
+                          unsigned int section, grn_obj *in, grn_obj *out,
+                          grn_tokenize_mode mode, grn_obj *posting)
+{
+  int i, n;
+  grn_hash *h = (grn_hash *)out;
+  grn_obj *lexicon = ii->lexicon;
+  unsigned int element_size;
+
+  n = grn_uvector_size(ctx, in);
+  element_size = grn_uvector_element_size(ctx, in);
+  for (i = 0; i < n; i++) {
+    grn_token_cursor *token_cursor;
+    unsigned int token_flags = 0;
+    const char *element;
+
+    element = GRN_BULK_HEAD(in) + (element_size * i);
+    token_cursor = grn_token_cursor_open(ctx, lexicon,
+                                         element, element_size,
+                                         mode, token_flags);
+    if (!token_cursor) {
+      continue;
+    }
+
+    while (!token_cursor->status) {
+      grn_id tid;
+      if ((tid = grn_token_cursor_next(ctx, token_cursor))) {
+        grn_ii_updspec **u;
+
+        if (posting) { GRN_RECORD_PUT(ctx, posting, tid); }
+        if (!grn_hash_add(ctx, h, &tid, sizeof(grn_id), (void **)&u, NULL)) {
+          break;
+        }
+        if (!*u) {
+          if (!(*u = grn_ii_updspec_open(ctx, rid, section))) {
+            GRN_LOG(ctx, GRN_LOG_ALERT,
+                    "grn_ii_updspec_open on grn_uvector2updspecs_data failed!");
+            grn_token_cursor_close(ctx, token_cursor);
+            return GRN_NO_MEMORY_AVAILABLE;
+          }
+        }
+        if (grn_ii_updspec_add(ctx, *u, token_cursor->pos, 0)) {
+          GRN_LOG(ctx, GRN_LOG_ALERT,
+                  "grn_ii_updspec_add on grn_uvector2updspecs failed!");
+          grn_token_cursor_close(ctx, token_cursor);
+          return GRN_NO_MEMORY_AVAILABLE;
+        }
+      }
+    }
+
+    grn_token_cursor_close(ctx, token_cursor);
+  }
+
+  return GRN_SUCCESS;
+}
+
+static grn_rc
+grn_uvector2updspecs_id(grn_ctx *ctx, grn_ii *ii, grn_id rid,
+                        unsigned int section, grn_obj *in, grn_obj *out)
 {
   int i, n;
   grn_ii_updspec **u;
@@ -4976,6 +5033,19 @@ grn_uvector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     }
   }
   return GRN_SUCCESS;
+}
+
+static grn_rc
+grn_uvector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid,
+                     unsigned int section, grn_obj *in, grn_obj *out,
+                     grn_tokenize_mode mode, grn_obj *posting)
+{
+  if (in->header.domain < GRN_N_RESERVED_TYPES) {
+    return grn_uvector2updspecs_data(ctx, ii, rid, section, in, out,
+                                     mode, posting);
+  } else {
+    return grn_uvector2updspecs_id(ctx, ii, rid, section, in, out);
+  }
 }
 
 grn_rc
@@ -5038,7 +5108,8 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
         rc = GRN_NO_MEMORY_AVAILABLE;
       } else {
         if (new_->header.type == GRN_UVECTOR) {
-          rc = grn_uvector2updspecs(ctx, ii, rid, section, new_, new);
+          rc = grn_uvector2updspecs(ctx, ii, rid, section, new_, new,
+                                    GRN_TOKEN_ADD, post);
         } else {
           grn_obj uvector;
           unsigned int weight = 0;
@@ -5047,7 +5118,8 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
             uvector.header.impl_flags |= GRN_OBJ_WITH_WEIGHT;
           }
           grn_uvector_add_element(ctx, &uvector, GRN_RECORD_VALUE(new_), weight);
-          rc = grn_uvector2updspecs(ctx, ii, rid, section, &uvector, new);
+          rc = grn_uvector2updspecs(ctx, ii, rid, section, &uvector, new,
+                                    GRN_TOKEN_ADD, post);
           GRN_OBJ_FIN(ctx, &uvector);
         }
       }
@@ -5132,7 +5204,8 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
         rc = GRN_NO_MEMORY_AVAILABLE;
       } else {
         if (old_->header.type == GRN_UVECTOR) {
-          rc = grn_uvector2updspecs(ctx, ii, rid, section, old_, old);
+          rc = grn_uvector2updspecs(ctx, ii, rid, section, old_, old,
+                                    GRN_TOKEN_DEL, NULL);
         } else {
           grn_obj uvector;
           unsigned int weight = 0;
@@ -5141,7 +5214,8 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
             uvector.header.impl_flags |= GRN_OBJ_WITH_WEIGHT;
           }
           grn_uvector_add_element(ctx, &uvector, GRN_RECORD_VALUE(old_), weight);
-          rc = grn_uvector2updspecs(ctx, ii, rid, section, &uvector, old);
+          rc = grn_uvector2updspecs(ctx, ii, rid, section, &uvector, old,
+                                    GRN_TOKEN_DEL, NULL);
           GRN_OBJ_FIN(ctx, &uvector);
         }
       }
