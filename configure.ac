@@ -896,7 +896,7 @@ AC_ARG_WITH(lz4,
   [with_lz4="$withval"],
   [with_lz4="auto"])
 if test "x$with_lz4" != "xno"; then
-  # TODO: Support custom zlib include and lib directory by --with-zlib.
+  # TODO: Support custom LZ4 include and lib directory by --with-lz4.
   AC_SEARCH_LIBS(LZ4_compress, lz4,
                  [
                    GRN_WITH_LZ4=yes
@@ -905,7 +905,7 @@ if test "x$with_lz4" != "xno"; then
                  ],
                  [
                    if test "x$with_lz4" != "xauto"; then
-                     AC_MSG_ERROR("No libz found")
+                     AC_MSG_ERROR("No liblz4 found")
                    fi
                  ])
 fi
