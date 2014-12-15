@@ -4154,15 +4154,10 @@ grn_uvector_element_size_internal(grn_ctx *ctx, grn_obj *uvector)
 static unsigned int
 grn_uvector_size_internal(grn_ctx *ctx, grn_obj *uvector)
 {
-  unsigned int size;
+  unsigned int element_size;
 
-  if (IS_WEIGHT_UVECTOR(uvector)) {
-    size = GRN_BULK_VSIZE(uvector) / sizeof(weight_uvector_entry);
-  } else {
-    size = GRN_BULK_VSIZE(uvector) / sizeof(grn_id);
-  }
-
-  return size;
+  element_size = grn_uvector_element_size_internal(ctx, uvector);
+  return GRN_BULK_VSIZE(uvector) / element_size;
 }
 
 unsigned int
