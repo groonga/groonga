@@ -1,0 +1,16 @@
+table_create Users TABLE_NO_KEY
+column_create Users points COLUMN_VECTOR WGS84GeoPoint
+
+table_create Points TABLE_PAT_KEY WGS84GeoPoint
+column_create Points users_points COLUMN_INDEX Users points
+
+load --table Users
+[
+["points"],
+[["130094061x505025099", "130185500x505009000"]],
+[["35.658611x139.745556"]],
+[[]]
+]
+
+select Users --output_columns points
+select Points --output_columns _key
