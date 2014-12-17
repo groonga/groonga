@@ -435,7 +435,6 @@ grn_msgpack_buffer_write(void *data, const char *buf, unsigned int len)
 static void
 grn_ctx_impl_init(grn_ctx *ctx)
 {
-
   grn_io_mapinfo mi;
   if (!(ctx->impl = grn_io_anon_map(ctx, &mi, IMPL_SIZE))) {
     ctx->impl = NULL;
