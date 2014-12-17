@@ -560,8 +560,8 @@ grn_ctx_impl_set_current_error_message(grn_ctx *ctx)
   strcpy(ctx->impl->previous_errbuf, ctx->errbuf);
 }
 
-grn_rc
-grn_ctx_init(grn_ctx *ctx, int flags)
+static grn_rc
+grn_ctx_init_internal(grn_ctx *ctx, int flags)
 {
   if (!ctx) { return GRN_INVALID_ARGUMENT; }
   // if (ctx->stat != GRN_CTX_FIN) { return GRN_INVALID_ARGUMENT; }
@@ -590,6 +590,20 @@ grn_ctx_init(grn_ctx *ctx, int flags)
   ctx->trace[0] = NULL;
   ctx->errbuf[0] = '\0';
   return ctx->rc;
+}
+
+grn_rc
+grn_ctx_init(grn_ctx *ctx, int flags)
+{
+  grn_rc rc;
+
+  rc = grn_ctx_init_internal(ctx, flags);
+  if (rc == GRN_SUCCESS) {
+    grn_ctx_impl_init(ctx);
+    rc = ctx->rc;
+  }
+
+  return rc;
 }
 
 grn_ctx *
@@ -707,7 +721,6 @@ grn_ctx_set_finalizer(grn_ctx *ctx, grn_proc_func *finalizer)
 {
   if (!ctx) { return GRN_INVALID_ARGUMENT; }
   if (!ctx->impl) {
-    grn_ctx_impl_init(ctx);
     if (ERRP(ctx, GRN_ERROR)) { return ctx->rc; }
   }
   ctx->impl->finalizer = finalizer;
@@ -1228,7 +1241,7 @@ grn_init(void)
   grn_gtick = 0;
   ctx->next = ctx;
   ctx->prev = ctx;
-  grn_ctx_init(ctx, 0);
+  grn_ctx_init_internal(ctx, 0);
   ctx->encoding = grn_encoding_parse(GRN_DEFAULT_ENCODING);
   grn_timeval_now(ctx, &grn_starttime);
 #ifdef WIN32
@@ -1405,7 +1418,6 @@ grn_rc
 grn_ctx_connect(grn_ctx *ctx, const char *host, int port, int flags)
 {
   GRN_API_ENTER;
-  if (!ctx->impl) { grn_ctx_impl_init(ctx); }
   if (!ctx->impl) { goto exit; }
   {
     grn_com *com = grn_com_copen(ctx, NULL, host, port);
@@ -2279,7 +2291,6 @@ grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
   void *res = NULL;
   if (!ctx) { return res; }
   if (!ctx->impl) {
-    grn_ctx_impl_init(ctx);
     if (ERRP(ctx, GRN_ERROR)) { return res; }
   }
   CRITICAL_SECTION_ENTER(ctx->impl->lock);
@@ -2466,7 +2477,6 @@ grn_ctx_use(grn_ctx *ctx, grn_obj *db)
   if (db && !DB_P(db)) {
     ctx->rc = GRN_INVALID_ARGUMENT;
   } else {
-    if (!ctx->impl) { grn_ctx_impl_init(ctx); }
     if (!ctx->rc) {
       ctx->impl->db = db;
       if (db) {
@@ -2487,7 +2497,6 @@ grn_ctx_alloc_lifo(grn_ctx *ctx, size_t size,
 {
   if (!ctx) { return NULL; }
   if (!ctx->impl) {
-    grn_ctx_impl_init(ctx);
     if (ERRP(ctx, GRN_ERROR)) { return NULL; }
   }
   {
