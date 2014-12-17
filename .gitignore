@@ -53,6 +53,7 @@ aclocal.m4
 /src/groonga-benchmark
 /src/grnslap
 /src/groonga-mruby
+/src/grndb
 Makefile
 Makefile.in
 version.sh
