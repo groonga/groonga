@@ -23,6 +23,7 @@
 #include <mruby/class.h>
 #include <mruby/data.h>
 
+#include "mrb_ctx.h"
 #include "mrb_database.h"
 
 static struct mrb_data_type mrb_grn_database_type = {
@@ -41,6 +42,36 @@ mrb_grn_database_initialize(mrb_state *mrb, mrb_value self)
   return self;
 }
 
+static mrb_value
+mrb_grn_database_singleton_open(mrb_state *mrb, mrb_value klass)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *database;
+  char *path;
+
+  mrb_get_args(mrb, "z", &path);
+
+  database = grn_db_open(ctx, path);
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_funcall(mrb, klass, "new", 1, mrb_cptr_value(mrb, database));
+}
+
+static mrb_value
+mrb_grn_database_singleton_create(mrb_state *mrb, mrb_value klass)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *database;
+  char *path;
+
+  mrb_get_args(mrb, "z", &path);
+
+  database = grn_db_create(ctx, path, NULL);
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_funcall(mrb, klass, "new", 1, mrb_cptr_value(mrb, database));
+}
+
 void
 grn_mrb_database_init(grn_ctx *ctx)
 {
@@ -52,7 +83,16 @@ grn_mrb_database_init(grn_ctx *ctx)
 
   klass = mrb_define_class_under(mrb, module, "Database", object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
+
+  mrb_define_singleton_method(mrb, (struct RObject *)klass, "open",
+                              mrb_grn_database_singleton_open,
+                              MRB_ARGS_REQ(1));
+  mrb_define_singleton_method(mrb, (struct RObject *)klass, "create",
+                              mrb_grn_database_singleton_create,
+                              MRB_ARGS_REQ(1));
+
   mrb_define_method(mrb, klass, "initialize",
                     mrb_grn_database_initialize, MRB_ARGS_REQ(1));
+
 }
 #endif
