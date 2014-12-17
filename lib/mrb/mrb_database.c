@@ -72,6 +72,17 @@ mrb_grn_database_singleton_create(mrb_state *mrb, mrb_value klass)
   return mrb_funcall(mrb, klass, "new", 1, mrb_cptr_value(mrb, database));
 }
 
+static mrb_value
+mrb_grn_database_recover(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+
+  grn_db_recover(ctx, DATA_PTR(self));
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_nil_value();
+}
+
 void
 grn_mrb_database_init(grn_ctx *ctx)
 {
@@ -93,6 +104,7 @@ grn_mrb_database_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "initialize",
                     mrb_grn_database_initialize, MRB_ARGS_REQ(1));
-
+  mrb_define_method(mrb, klass, "recover",
+                    mrb_grn_database_recover, MRB_ARGS_NONE());
 }
 #endif
