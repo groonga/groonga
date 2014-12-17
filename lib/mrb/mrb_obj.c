@@ -111,6 +111,23 @@ object_equal(mrb_state *mrb, mrb_value self)
   }
 }
 
+static mrb_value
+object_close(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *object;
+
+  object = DATA_PTR(self);
+  if (!object) {
+    mrb_raise(mrb, E_ARGUMENT_ERROR, "already closed object");
+  }
+
+  grn_obj_close(ctx, object);
+  DATA_PTR(self) = NULL;
+
+  return mrb_nil_value();
+}
+
 void
 grn_mrb_obj_init(grn_ctx *ctx)
 {
@@ -129,6 +146,7 @@ grn_mrb_obj_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "grn_inspect",
                     object_grn_inspect, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "==", object_equal, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "close", object_close, MRB_ARGS_NONE());
 
   grn_mrb_load(ctx, "index_info.rb");
 }
