@@ -47,6 +47,9 @@ typedef struct {
   ((table)->header.impl_flags & GRN_TABLE_GROUPED)
 #define GRN_TABLE_GROUPED_ON(table)\
   ((table)->header.impl_flags |= GRN_TABLE_GROUPED)
+#define GRN_TABLE_IS_MULTI_KEYS_GROUPED(table)\
+  (GRN_TABLE_IS_GROUPED(table) &&\
+   table->header.domain == GRN_ID_NIL)
 
 #define WITH_NORMALIZE(table,key,key_size,block) do {\
   if ((table)->normalizer && key && key_size > 0) {\
@@ -920,20 +923,27 @@ grn_table_create_for_group(grn_ctx *ctx, const char *name,
                            unsigned int max_n_subrecs)
 {
   grn_obj *res = NULL;
-  grn_obj *key_type;
   GRN_API_ENTER;
   if (group_key) {
+    grn_obj *key_type;
     key_type = grn_ctx_at(ctx, grn_obj_get_range(ctx, group_key));
+    if (key_type) {
+      res = grn_table_create_with_max_n_subrecs(ctx, name, name_size, path,
+                                                GRN_TABLE_HASH_KEY|
+                                                GRN_OBJ_WITH_SUBREC|
+                                                GRN_OBJ_UNIT_USERDEF_DOCUMENT,
+                                                key_type, value_type,
+                                                max_n_subrecs);
+      grn_obj_unlink(ctx, key_type);
+    }
   } else {
-    key_type = grn_ctx_at(ctx, GRN_DB_SHORT_TEXT);
-  }
-  if (key_type) {
     res = grn_table_create_with_max_n_subrecs(ctx, name, name_size, path,
                                               GRN_TABLE_HASH_KEY|
+                                              GRN_OBJ_KEY_VAR_SIZE|
                                               GRN_OBJ_WITH_SUBREC|
                                               GRN_OBJ_UNIT_USERDEF_DOCUMENT,
-                                              key_type, value_type, max_n_subrecs);
-    grn_obj_unlink(ctx, key_type);
+                                              NULL, value_type,
+                                              max_n_subrecs);
   }
   GRN_API_RETURN(res);
 }
@@ -4595,6 +4605,11 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
         for (rp = &res; !done; rp = &(*rp)->next) {
           *rp = accessor_new(ctx);
           (*rp)->obj = obj;
+          if (GRN_TABLE_IS_MULTI_KEYS_GROUPED(obj)) {
+            (*rp)->action = GRN_ACCESSOR_GET_KEY;
+            done++;
+            break;
+          }
           if (!(obj = grn_ctx_at(ctx, obj->header.domain))) {
             grn_obj_close(ctx, (grn_obj *)res);
             res = NULL;
@@ -5505,7 +5520,7 @@ grn_accessor_get_value(grn_ctx *ctx, grn_accessor *a, grn_id id, grn_obj *value)
       vs = GRN_BULK_VSIZE(value) - size0;
       break;
     case GRN_ACCESSOR_GET_KEY :
-      if (!a->next && GRN_TABLE_IS_GROUPED(a->obj)) {
+      if (!a->next && GRN_TABLE_IS_MULTI_KEYS_GROUPED(a->obj)) {
         grn_obj_ensure_vector(ctx, value);
         if (id) {
           grn_obj raw_vector;
@@ -6501,7 +6516,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
       grn_obj_ensure_bulk(ctx, value);
       value->header.domain = grn_obj_get_range(ctx, obj);
       if (id) {
-        if (GRN_TABLE_IS_GROUPED(obj)) {
+        if (GRN_TABLE_IS_MULTI_KEYS_GROUPED(obj)) {
           grn_obj *domain;
           domain = grn_ctx_at(ctx, value->header.domain);
           if (GRN_OBJ_TABLEP(domain)) {
@@ -9770,7 +9785,7 @@ is_sub_record_accessor(grn_ctx *ctx, grn_obj *obj)
   for (accessor = (grn_accessor *)obj; accessor; accessor = accessor->next) {
     switch (accessor->action) {
     case GRN_ACCESSOR_GET_VALUE :
-      if (GRN_TABLE_IS_GROUPED(accessor->obj)) {
+      if (GRN_TABLE_IS_MULTI_KEYS_GROUPED(accessor->obj)) {
         return GRN_TRUE;
       }
       break;
