@@ -149,7 +149,7 @@ Description: Stemming token filter for Groonga
 
 Package: groonga-plugin-suggest
 Section: libs
-Architecture: amd64 i386 kfreebsd-amd64 kfreebsd-i386 ppc64el
+Architecture: amd64 i386 kfreebsd-amd64 kfreebsd-i386 ppc64el armhf
 Replaces: libgroonga-plugin-suggest (<< 1.2.0-1)
 Breaks: libgroonga-plugin-suggest (<< 1.2.0-1)
 Depends:
