@@ -20,7 +20,7 @@ Standards-Version: 3.9.5
 Homepage: http://groonga.org/
 
 Package: groonga
-Architecture: amd64 i386 kfreebsd-amd64 kfreebsd-i386 ppc64el
+Architecture: amd64 i386 kfreebsd-amd64 kfreebsd-i386 ppc64el armhf
 Depends:
   ${misc:Depends},
   ${shlibs:Depends},
@@ -82,7 +82,7 @@ Description: Fulltext search engine (metapackage for GQTP server use)
 
 Package: libgroonga-dev
 Section: libdevel
-Architecture: amd64 i386 kfreebsd-amd64 kfreebsd-i386 ppc64el
+Architecture: amd64 i386 kfreebsd-amd64 kfreebsd-i386 ppc64el armhf
 Multi-Arch: same
 Replaces: libgroonga (<< 1.2.0-1)
 Breaks: libgroonga (<< 1.2.0-1)
@@ -99,7 +99,7 @@ Description: Development files to use Groonga as a library
 
 Package: libgroonga0
 Section: libs
-Architecture: amd64 i386 kfreebsd-amd64 kfreebsd-i386 ppc64el
+Architecture: amd64 i386 kfreebsd-amd64 kfreebsd-i386 ppc64el armhf
 Multi-Arch: same
 Replaces: libgroonga (<< 1.2.0-1)
 Breaks: libgroonga (<< 1.2.0-1)
@@ -117,7 +117,7 @@ Description: Library files for Groonga
 
 Package: groonga-tokenizer-mecab
 Section: libs
-Architecture: amd64 i386 kfreebsd-amd64 kfreebsd-i386 ppc64el
+Architecture: amd64 i386 kfreebsd-amd64 kfreebsd-i386 ppc64el armhf
 Replaces: libgroonga-tokenizer-mecab (<< 1.2.0-1)
 Breaks: libgroonga-tokenizer-mecab (<< 1.2.0-1)
 Depends:
@@ -133,7 +133,7 @@ Description: MeCab tokenizer for Groonga
 
 Package: groonga-token-filter-stem
 Section: libs
-Architecture: amd64 i386 kfreebsd-amd64 kfreebsd-i386 ppc64el
+Architecture: amd64 i386 kfreebsd-amd64 kfreebsd-i386 ppc64el armhf
 Depends:
   ${misc:Depends},
   ${shlibs:Depends},
@@ -163,7 +163,7 @@ Description: Suggest plugin for Groonga
  This package provides suggest plugin.
 
 Package: groonga-bin
-Architecture: amd64 i386 kfreebsd-amd64 kfreebsd-i386 ppc64el
+Architecture: amd64 i386 kfreebsd-amd64 kfreebsd-i386 ppc64el armhf
 Replaces: groonga (<< 1.2.0-1)
 Breaks: groonga (<< 1.2.0-1)
 Depends:
@@ -177,7 +177,7 @@ Description: Commands for Groonga
  This package provides 'groonga' command.
 
 Package: groonga-httpd
-Architecture: amd64 i386 kfreebsd-amd64 kfreebsd-i386 ppc64el
+Architecture: amd64 i386 kfreebsd-amd64 kfreebsd-i386 ppc64el armhf
 Replaces: groonga (<< 1.2.0-1), groonga-server-http (<< 4.0.8-1)
 Breaks: groonga (<< 1.2.0-1), groonga-server-http (<< 4.0.8-1)
 Provides: groonga-server-http
