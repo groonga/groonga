@@ -680,6 +680,7 @@ h_output(grn_ctx *ctx, int flags, void *arg)
   ht_context *hc = (ht_context *)arg;
   grn_sock fd = hc->msg->u.fd;
   grn_obj header, head, foot, *outbuf = ctx->impl->outbuf;
+  grn_bool should_return_body = (hc->msg->header.qtype == 'G');
   if (!(flags & GRN_CTX_TAIL)) { return; }
   GRN_TEXT_INIT(&header, 0);
   GRN_TEXT_INIT(&head, 0);
@@ -710,18 +711,25 @@ h_output(grn_ctx *ctx, int flags, void *arg)
   {
     ssize_t ret, len;
 #ifdef WIN32
+    int n_buffers;
     WSABUF wsabufs[4];
     wsabufs[0].buf = GRN_TEXT_VALUE(&header);
     wsabufs[0].len = GRN_TEXT_LEN(&header);
-    wsabufs[1].buf = GRN_TEXT_VALUE(&head);
-    wsabufs[1].len = GRN_TEXT_LEN(&head);
-    wsabufs[2].buf = GRN_TEXT_VALUE(outbuf);
-    wsabufs[2].len = GRN_TEXT_LEN(outbuf);
-    wsabufs[3].buf = GRN_TEXT_VALUE(&foot);
-    wsabufs[3].len = GRN_TEXT_LEN(&foot);
+    n_buffers = 1;
+    len = GRN_TEXT_LEN(&header);
+    if (should_return_body) {
+      wsabufs[1].buf = GRN_TEXT_VALUE(&head);
+      wsabufs[1].len = GRN_TEXT_LEN(&head);
+      wsabufs[2].buf = GRN_TEXT_VALUE(outbuf);
+      wsabufs[2].len = GRN_TEXT_LEN(outbuf);
+      wsabufs[3].buf = GRN_TEXT_VALUE(&foot);
+      wsabufs[3].len = GRN_TEXT_LEN(&foot);
+      n_buffers += 3;
+      len += GRN_TEXT_LEN(&head) + GRN_TEXT_LEN(outbuf) + GRN_TEXT_LEN(&foot);
+    }
     {
       DWORD sent;
-      if (WSASend(fd, wsabufs, 4, &sent, 0, NULL, NULL) == SOCKET_ERROR) {
+      if (WSASend(fd, wsabufs, n_buffers, &sent, 0, NULL, NULL) == SOCKET_ERROR) {
         SERR("WSASend");
       }
       ret = sent;
@@ -732,24 +740,27 @@ h_output(grn_ctx *ctx, int flags, void *arg)
     msg.msg_name = NULL;
     msg.msg_namelen = 0;
     msg.msg_iov = msg_iov;
-    msg.msg_iovlen = 4;
+    msg.msg_iovlen = 1;
     msg.msg_control = NULL;
     msg.msg_controllen = 0;
     msg.msg_flags = 0;
     msg_iov[0].iov_base = GRN_TEXT_VALUE(&header);
     msg_iov[0].iov_len = GRN_TEXT_LEN(&header);
-    msg_iov[1].iov_base = GRN_TEXT_VALUE(&head);
-    msg_iov[1].iov_len = GRN_TEXT_LEN(&head);
-    msg_iov[2].iov_base = GRN_TEXT_VALUE(outbuf);
-    msg_iov[2].iov_len = GRN_TEXT_LEN(outbuf);
-    msg_iov[3].iov_base = GRN_TEXT_VALUE(&foot);
-    msg_iov[3].iov_len = GRN_TEXT_LEN(&foot);
+    len = GRN_TEXT_LEN(&header);
+    if (should_return_body) {
+      msg_iov[1].iov_base = GRN_TEXT_VALUE(&head);
+      msg_iov[1].iov_len = GRN_TEXT_LEN(&head);
+      msg_iov[2].iov_base = GRN_TEXT_VALUE(outbuf);
+      msg_iov[2].iov_len = GRN_TEXT_LEN(outbuf);
+      msg_iov[3].iov_base = GRN_TEXT_VALUE(&foot);
+      msg_iov[3].iov_len = GRN_TEXT_LEN(&foot);
+      msg.msg_iovlen += 3;
+      len += GRN_TEXT_LEN(&head) + GRN_TEXT_LEN(outbuf) + GRN_TEXT_LEN(&foot);
+    }
     if ((ret = sendmsg(fd, &msg, MSG_NOSIGNAL)) == -1) {
       SERR("sendmsg");
     }
 #endif /* WIN32 */
-    len = GRN_TEXT_LEN(&header) + GRN_TEXT_LEN(&head) +
-      GRN_TEXT_LEN(outbuf) + GRN_TEXT_LEN(&foot);
     if (ret != len) {
       GRN_LOG(&grn_gctx, GRN_LOG_NOTICE,
               "couldn't send all data (%" GRN_FMT_LLD "/%" GRN_FMT_LLD ")",
@@ -1084,6 +1095,7 @@ do_htreq(grn_ctx *ctx, grn_msg *msg)
   grn_com_header *header = &msg->header;
   switch (header->qtype) {
   case 'G' : /* GET */
+  case 'H' : /* HEAD */
     do_htreq_get(ctx, msg);
     break;
   case 'P' : /* POST */
