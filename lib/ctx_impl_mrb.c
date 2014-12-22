@@ -54,6 +54,9 @@ mrb_kernel_load(mrb_state *mrb, mrb_value self)
   mrb_get_args(mrb, "z", &path);
 
   grn_mrb_load(ctx, path);
+  if (mrb->exc) {
+    mrb_exc_raise(mrb, mrb_obj_value(mrb->exc));
+  }
 
   grn_mrb_ctx_check(mrb);
 

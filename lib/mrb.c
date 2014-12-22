@@ -136,7 +136,7 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
     SERR(message);
     exception = mrb_exc_new(mrb, E_LOAD_ERROR,
                             ctx->errbuf, strlen(ctx->errbuf));
-    mrb_exc_raise(mrb, exception);
+    mrb->exc = mrb_obj_ptr(exception);
     return mrb_nil_value();
   }
 
