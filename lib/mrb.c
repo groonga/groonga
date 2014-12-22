@@ -140,21 +140,21 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
       last_directory[0] = '\0';
     }
 
-  parser = mrb_parser_new(mrb);
-  mrb_parser_set_filename(parser, expanded_path);
-  parser->s = parser->send = NULL;
-  parser->f = file;
-  mrb_parser_parse(parser, NULL);
-  fclose(file);
+    parser = mrb_parser_new(mrb);
+    mrb_parser_set_filename(parser, expanded_path);
+    parser->s = parser->send = NULL;
+    parser->f = file;
+    mrb_parser_parse(parser, NULL);
+    fclose(file);
 
-  {
-    struct RProc *proc;
-    proc = mrb_generate_code(mrb, parser);
-    result = mrb_toplevel_run(mrb, proc);
-  }
-  mrb_parser_free(parser);
+    {
+      struct RProc *proc;
+      proc = mrb_generate_code(mrb, parser);
+      result = mrb_toplevel_run(mrb, proc);
+    }
+    mrb_parser_free(parser);
 
-  strcpy(data->base_directory, current_base_directory);
+    strcpy(data->base_directory, current_base_directory);
   }
 
   return result;
