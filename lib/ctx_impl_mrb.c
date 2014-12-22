@@ -63,6 +63,7 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   mrb->ud = ctx;
   ctx->impl->mrb.module = mrb_define_module(mrb, "Groonga");
 
+  mrb_define_class(mrb, "LoadError", mrb_class_get(mrb, "ScriptError"));
   mrb_define_method(mrb, mrb->kernel_module,
                     "load", mrb_kernel_load, MRB_ARGS_REQ(1));
 

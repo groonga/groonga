@@ -27,6 +27,7 @@
 #endif
 
 #define BUFFER_SIZE 2048
+#define E_LOAD_ERROR (mrb_class_get(mrb, "LoadError"))
 
 #ifdef GRN_WITH_MRUBY
 # ifdef WIN32
@@ -123,7 +124,7 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
     snprintf(message, BUFFER_SIZE - 1,
              "fopen: failed to open mruby script file: <%s>", expanded_path);
     SERR(message);
-    exception = mrb_exc_new(mrb, E_ARGUMENT_ERROR,
+    exception = mrb_exc_new(mrb, E_LOAD_ERROR,
                             ctx->errbuf, strlen(ctx->errbuf));
     mrb->exc = mrb_obj_ptr(exception);
     return mrb_nil_value();
