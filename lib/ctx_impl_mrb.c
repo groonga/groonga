@@ -40,6 +40,11 @@
 #include "mrb/mrb_procedure.h"
 
 #ifdef GRN_WITH_MRUBY
+# include <mruby/array.h>
+# include <mruby/variable.h>
+#endif
+
+#ifdef GRN_WITH_MRUBY
 static mrb_value
 mrb_kernel_load(mrb_state *mrb, mrb_value self)
 {
@@ -68,6 +73,18 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
                     "load", mrb_kernel_load, MRB_ARGS_REQ(1));
 
   grn_mrb_load(ctx, "backtrace_entry.rb");
+  {
+    mrb_value load_path;
+    const char *system_ruby_scripts_dir;
+
+    load_path = mrb_ary_new(mrb);
+    system_ruby_scripts_dir = grn_mrb_get_system_ruby_scripts_dir(ctx);
+    mrb_ary_push(mrb, load_path,
+                 mrb_str_new_cstr(mrb, system_ruby_scripts_dir));
+    mrb_gv_set(mrb, mrb_intern_cstr(mrb, "$LOAD_PATH"), load_path);
+  }
+
+  grn_mrb_load(ctx, "require.rb");
 
   grn_mrb_error_init(ctx);
   grn_mrb_id_init(ctx);
