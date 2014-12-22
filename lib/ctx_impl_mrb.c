@@ -72,7 +72,6 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   mrb_define_method(mrb, mrb->kernel_module,
                     "load", mrb_kernel_load, MRB_ARGS_REQ(1));
 
-  grn_mrb_load(ctx, "backtrace_entry.rb");
   {
     mrb_value load_path;
     const char *system_ruby_scripts_dir;
@@ -85,6 +84,7 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   }
 
   grn_mrb_load(ctx, "require.rb");
+  grn_mrb_load(ctx, "init.rb");
 
   grn_mrb_error_init(ctx);
   grn_mrb_id_init(ctx);
