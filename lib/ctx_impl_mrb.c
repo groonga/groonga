@@ -104,12 +104,6 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   grn_mrb_procedure_init(ctx);
 }
 
-static void
-grn_ctx_impl_mrb_init_eval(grn_ctx *ctx)
-{
-  grn_mrb_load(ctx, "eval_context.rb");
-}
-
 void
 grn_ctx_impl_mrb_init(grn_ctx *ctx)
 {
@@ -124,7 +118,6 @@ grn_ctx_impl_mrb_init(grn_ctx *ctx)
     ctx->impl->mrb.state = mrb_open();
     ctx->impl->mrb.base_directory[0] = '\0';
     grn_ctx_impl_mrb_init_bindings(ctx);
-    grn_ctx_impl_mrb_init_eval(ctx);
   }
 }
 
