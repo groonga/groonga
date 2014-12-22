@@ -34,7 +34,7 @@
 static char *win32_ruby_scripts_dir = NULL;
 static char win32_ruby_scripts_dir_buffer[PATH_MAX];
 static const char *
-grn_mrb_get_system_ruby_scripts_dir(void)
+grn_mrb_get_default_system_ruby_scripts_dir(void)
 {
   if (!win32_ruby_scripts_dir) {
     const char *base_dir;
@@ -53,11 +53,24 @@ grn_mrb_get_system_ruby_scripts_dir(void)
 
 # else /* WIN32 */
 static const char *
-grn_mrb_get_system_ruby_scripts_dir(void)
+grn_mrb_get_default_system_ruby_scripts_dir(void)
 {
   return GRN_RUBY_SCRIPTS_DIR;
 }
 # endif /* WIN32 */
+
+const char *
+grn_mrb_get_system_ruby_scripts_dir(grn_ctx *ctx)
+{
+  const char *ruby_scripts_dir;
+
+  ruby_scripts_dir = getenv("GRN_RUBY_SCRIPTS_DIR");
+  if (!ruby_scripts_dir) {
+    ruby_scripts_dir = grn_mrb_get_default_system_ruby_scripts_dir();
+  }
+
+  return ruby_scripts_dir;
+}
 
 static grn_bool
 grn_mrb_expand_script_path(grn_ctx *ctx, const char *path, char *expanded_path)
@@ -72,10 +85,7 @@ grn_mrb_expand_script_path(grn_ctx *ctx, const char *path, char *expanded_path)
     strcpy(expanded_path, ctx->impl->mrb.base_directory);
     strcat(expanded_path, "/");
   } else {
-    ruby_scripts_dir = getenv("GRN_RUBY_SCRIPTS_DIR");
-    if (!ruby_scripts_dir) {
-      ruby_scripts_dir = grn_mrb_get_system_ruby_scripts_dir();
-    }
+    ruby_scripts_dir = grn_mrb_get_system_ruby_scripts_dir(ctx);
     strcpy(expanded_path, ruby_scripts_dir);
 
     dir_last_char = ruby_scripts_dir[strlen(expanded_path) - 1];
