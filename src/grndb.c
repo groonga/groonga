@@ -27,54 +27,92 @@
 #include <mruby/array.h>
 
 static int
+run_command(grn_ctx *ctx, int argc, char **argv)
+{
+  int exit_code = EXIT_SUCCESS;
+  grn_mrb_data *data = &(ctx->impl->mrb);
+  mrb_state *mrb = data->state;
+  mrb_value mrb_command_module;
+  mrb_value mrb_grndb_class;
+
+  mrb_command_module = mrb_const_get(mrb,
+                                     mrb_obj_value(data->module),
+                                     mrb_intern_cstr(mrb, "Command"));
+  if (mrb->exc) {
+    goto exit;
+  }
+
+  mrb_grndb_class = mrb_const_get(mrb,
+                                  mrb_command_module,
+                                  mrb_intern_cstr(mrb, "Grndb"));
+  if (mrb->exc) {
+    goto exit;
+  }
+
+  {
+    int i;
+    mrb_value mrb_argv;
+    mrb_value mrb_grndb;
+    mrb_value mrb_result;
+
+    mrb_argv = mrb_ary_new_capa(mrb, argc);
+    for (i = 0; i < argc; i++) {
+      mrb_ary_push(mrb, mrb_argv, mrb_str_new_cstr(mrb, argv[i]));
+    }
+    mrb_grndb = mrb_funcall(mrb, mrb_grndb_class, "new", 1, mrb_argv);
+    if (mrb->exc) {
+      goto exit;
+    }
+
+    mrb_result = mrb_funcall(mrb, mrb_grndb, "run", 0);
+    if (mrb->exc) {
+      goto exit;
+    }
+
+    if (!mrb_bool(mrb_result)) {
+      exit_code = EXIT_FAILURE;
+    }
+  }
+
+exit :
+  if (mrb->exc) {
+    mrb_print_error(mrb);
+    exit_code = EXIT_FAILURE;
+  }
+
+  return exit_code;
+}
+
+static int
 run(grn_ctx *ctx, int argc, char **argv)
 {
+  int exit_code = EXIT_SUCCESS;
   const char *grndb_rb = "command/grndb.rb";
+  grn_mrb_data *data = &(ctx->impl->mrb);
+  mrb_state *mrb = data->state;
+
+  mrb_gv_set(mrb, mrb_intern_lit(mrb, "$0"), mrb_str_new_cstr(mrb, argv[0]));
 
   grn_mrb_load(ctx, grndb_rb);
   if (ctx->rc != GRN_SUCCESS) {
-      fprintf(stderr, "Failed to load Ruby script: <%s>: %s",
-              grndb_rb, ctx->errbuf);
-      goto exit;
+    fprintf(stderr, "Failed to load Ruby script: <%s>: %s",
+            grndb_rb, ctx->errbuf);
+    goto exit;
   }
 
-  /* TODO: Handle error. */
   {
-    grn_mrb_data *data = &(ctx->impl->mrb);
-    mrb_state *mrb = data->state;
-    mrb_value mrb_command_module;
-    mrb_value mrb_grndb_class;
     int arena_index;
 
     arena_index = mrb_gc_arena_save(mrb);
-    mrb_command_module = mrb_const_get(mrb,
-                                       mrb_obj_value(data->module),
-                                       mrb_intern_cstr(mrb, "Command"));
-    mrb_grndb_class = mrb_const_get(mrb,
-                                    mrb_command_module,
-                                    mrb_intern_cstr(mrb, "Grndb"));
-    {
-      int i;
-      mrb_value mrb_argv;
-      mrb_value mrb_grndb;
-      mrb_value mrb_result;
-
-      mrb_argv = mrb_ary_new_capa(mrb, argc);
-      for (i = 0; i < argc; i++) {
-        mrb_ary_push(mrb, mrb_argv, mrb_str_new_cstr(mrb, argv[i]));
-      }
-      mrb_grndb = mrb_funcall(mrb, mrb_grndb_class, "new", 1, mrb_argv);
-      mrb_result = mrb_funcall(mrb, mrb_grndb, "run", 0);
-    }
+    exit_code = run_command(ctx, argc, argv);
     mrb_gc_arena_restore(mrb, arena_index);
   }
 
 exit :
-  if (ctx->rc == GRN_SUCCESS) {
-    return EXIT_SUCCESS;
-  } else {
-    return EXIT_FAILURE;
+  if (ctx->rc != GRN_SUCCESS) {
+    exit_code = EXIT_FAILURE;
   }
+  return exit_code;
 }
 
 int
