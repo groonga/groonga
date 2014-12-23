@@ -1715,13 +1715,16 @@ msgid ""
 msgstr ""
 
 msgid "Install depended software"
-msgstr ""
+msgstr "必要なソフトウェアのインストール"
 
 msgid ""
 "Groonga uses Sphinx_ as documentation tool. Groonga requires newer Sphinx. "
-"So You need to install it with other tools such as Mercurial_, Docutils_ and "
+"So you need to install it with other tools such as Mercurial_, Docutils_ and "
 "Jinja_."
 msgstr ""
+"Groongaはドキュメントツールとして、Sphinx_ を利用します。Groongaは新しいバー"
+"ジョンのSphinxを必要とするので、Mercurial_ や Docutils_ 、Jinja_ といったツー"
+"ルと一緒にインストールする必要があります。"
 
 msgid "Here are command lines to install needed software."
 msgstr "以下は必要なソフトウェアをインストールするコマンドラインです。"
