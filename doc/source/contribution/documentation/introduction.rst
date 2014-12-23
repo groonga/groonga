@@ -12,8 +12,8 @@ Install depended software
 -------------------------
 
 Groonga uses Sphinx_ as documentation tool. Groonga requires newer
-Sphinx. So Groonga clones the latest Sphinx from Sphinx repository
-automatically. You need only Mercurial_, Docutils_ and Jinja_.
+Sphinx. So you need to install it with other tools such as Mercurial_,
+Docutils_ and Jinja_.
 
 .. _Sphinx: http://sphinx.pocoo.org/
 .. _Mercurial: http://mercurial.selenic.com/
@@ -24,17 +24,21 @@ Here are command lines to install needed software.
 
 Debian GNU/Linux, Ubuntu::
 
-  % sudo apt-get install -V -y mercurial python-docutils python-jinja2
+  % sudo apt-get install -V -y mercurial python-docutils python-jinja2 python-pip
+  % sudo pip install sphinx
 
 CentOS, Fedora::
 
-  % sudo yum install -y mercurial python-docutils python-jinja2
+  % sudo yum install -y mercurial python-docutils python-jinja2 python-pip
+  % sudo pip install sphinx
 
 OS X::
 
   % brew install mercurial
   % pip install docutils
   % pip install jinja
+  % export PATH=`brew --prefix gettext`/bin:$PATH
+  % pip install sphinx
 
 Run ``configure`` with ``--enable-document``
 --------------------------------------------

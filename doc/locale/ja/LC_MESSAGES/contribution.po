@@ -1719,8 +1719,8 @@ msgstr ""
 
 msgid ""
 "Groonga uses Sphinx_ as documentation tool. Groonga requires newer Sphinx. "
-"So Groonga clones the latest Sphinx from Sphinx repository automatically. "
-"You need only Mercurial_, Docutils_ and Jinja_."
+"So You need to install it with other tools such as Mercurial_, Docutils_ and "
+"Jinja_."
 msgstr ""
 
 msgid "Here are command lines to install needed software."
