@@ -10,7 +10,6 @@ AM_CFLAGS =					\
 	$(COVERAGE_CFLAGS)			\
 	$(GRN_CFLAGS)				\
 	$(MESSAGE_PACK_CFLAGS)			\
-	$(MRUBY_CFLAGS)				\
 	$(ONIGMO_CFLAGS)			\
 	$(LIBLZ4_CFLAGS)
 
@@ -30,8 +29,16 @@ libgroonga_la_LDFLAGS =				\
 libgroonga_la_LIBADD =				\
 	dat/libgrndat.la			\
 	mrb/libgrnmrb.la			\
-	$(MESSAGE_PACK_LIBS)			\
-	$(MRUBY_LIBS)				\
+	$(MESSAGE_PACK_LIBS)
+
+if WITH_MRUBY
+AM_CFLAGS +=					\
+	../vendor/mruby-source/include
+libgroonga_la_LIBADD +=				\
+	../vendor/mruby/libmruby.la
+endif
+
+libgroonga_la_LIBADD +=				\
 	$(ONIGMO_LIBS)				\
 	$(LIBLZ4_LIBS)
 
