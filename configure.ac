@@ -1439,7 +1439,11 @@ if test "$enable_mruby" = "yes"; then
     AC_MSG_ERROR(--enable-ruby requires --with-ruby)
   fi
   AC_DEFINE(GRN_WITH_MRUBY, [1], [Define to 1 if mruby is enabled.])
+  MRUBY_CFLAGS="-I\$(top_srcdir)/vendor/mruby-source/include"
+else
+  MRUBY_CFLAGS=""
 fi
+AC_SUBST(MRUBY_CFLAGS)
 AM_CONDITIONAL(WITH_MRUBY, test "$enable_mruby" = "yes")
 
 # This option is used in vendor/onigmo/configure

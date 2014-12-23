@@ -10,6 +10,7 @@ AM_CFLAGS =					\
 	$(COVERAGE_CFLAGS)			\
 	$(GRN_CFLAGS)				\
 	$(MESSAGE_PACK_CFLAGS)			\
+	$(MRUBY_CFLAGS)				\
 	$(ONIGMO_CFLAGS)			\
 	$(LIBLZ4_CFLAGS)
 
@@ -32,8 +33,6 @@ libgroonga_la_LIBADD =				\
 	$(MESSAGE_PACK_LIBS)
 
 if WITH_MRUBY
-AM_CFLAGS +=					\
-	../vendor/mruby-source/include
 libgroonga_la_LIBADD +=				\
 	../vendor/mruby/libmruby.la
 endif
