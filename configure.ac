@@ -1215,15 +1215,15 @@ Install it and try again.
 How to install sphinx-build:
 
 For Debian GNU/Linux based system like Ubuntu:
-  % sudo apt-get install -y python-pip
-  % sudo pip install sphinx
+  % sudo apt-get install -y python-sphinx
 
 For Red Hat based system like CentOS:
   % sudo yum install -y python-pip
   % sudo pip install sphinx
 
 For OS X with Homebrew:
-  % brew install pip
+  % brew install python
+  % brew install gettext
   % export PATH="`brew --prefix gettext`/bin:\$PATH"
   % pip install sphinx])
     fi
