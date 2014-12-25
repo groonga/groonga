@@ -32,6 +32,11 @@ grn_mrb_id_init(grn_ctx *ctx)
 
   id_module = mrb_define_module_under(mrb, module, "ID");
 
+  mrb_define_const(mrb, id_module, "NIL",
+                   mrb_fixnum_value(GRN_ID_NIL));
+  mrb_define_const(mrb, id_module, "MAX",
+                   mrb_fixnum_value(GRN_ID_MAX));
+
   mrb_define_const(mrb, id_module, "VOID",
                    mrb_fixnum_value(GRN_DB_VOID));
   mrb_define_const(mrb, id_module, "DB",
