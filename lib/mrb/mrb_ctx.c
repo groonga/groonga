@@ -53,12 +53,22 @@ static mrb_value
 ctx_array_reference(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_value mrb_id_or_name;
   grn_obj *object;
-  char *name;
-  int name_length;
 
-  mrb_get_args(mrb, "s", &name, &name_length);
-  object = grn_ctx_get(ctx, name, name_length);
+  mrb_get_args(mrb, "o", &mrb_id_or_name);
+
+  if (mrb_fixnum_p(mrb_id_or_name)) {
+    grn_id id = mrb_fixnum(mrb_id_or_name);
+    object = grn_ctx_at(ctx, id);
+  } else {
+    mrb_value mrb_name;
+    mrb_name = mrb_convert_type(mrb, mrb_id_or_name,
+                                MRB_TT_STRING, "String", "to_str");
+    object = grn_ctx_get(ctx,
+                         RSTRING_PTR(mrb_name),
+                         RSTRING_LEN(mrb_name));
+  }
 
   return grn_mrb_value_from_grn_obj(mrb, object);
 }
