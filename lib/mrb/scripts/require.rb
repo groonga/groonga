@@ -1,4 +1,4 @@
-$" = []
+$" = [__FILE__]
 
 class ScriptLoader
   @@loading_paths = {}
