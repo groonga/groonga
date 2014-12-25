@@ -67,11 +67,15 @@ module Groonga
       def run_action(slop, database)
         case slop[:action]
         when :recover
-          database.recover
-          true
+          recover(database)
         when :check
           check(database)
         end
+      end
+
+      def recover(database)
+        database.recover
+        true
       end
 
       def check(database)
