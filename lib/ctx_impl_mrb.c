@@ -87,7 +87,7 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   }
 
   grn_mrb_load(ctx, "require.rb");
-  grn_mrb_load(ctx, "init.rb");
+  grn_mrb_load(ctx, "initialize/pre.rb");
 
   grn_mrb_error_init(ctx);
   grn_mrb_id_init(ctx);
@@ -105,6 +105,8 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   grn_mrb_expr_init(ctx);
   grn_mrb_accessor_init(ctx);
   grn_mrb_procedure_init(ctx);
+
+  grn_mrb_load(ctx, "initialize/post.rb");
 }
 
 void
