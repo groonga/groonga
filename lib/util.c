@@ -826,6 +826,26 @@ grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 }
 
 static grn_rc
+grn_db_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  grn_id range_id;
+  grn_obj *range;
+  grn_db *db = (grn_db *)obj;
+
+  GRN_TEXT_PUTS(ctx, buf, "#<db");
+
+  GRN_TEXT_PUTS(ctx, buf, " key_type:");
+  grn_table_type_inspect(ctx, buf, db->keys);
+
+  GRN_TEXT_PUTS(ctx, buf, " size:");
+  grn_text_lltoa(ctx, buf, grn_table_size(ctx, obj));
+
+  GRN_TEXT_PUTS(ctx, buf, ">");
+
+  return GRN_SUCCESS;
+}
+
+static grn_rc
 grn_geo_point_inspect_point(grn_ctx *ctx, grn_obj *buf, int point)
 {
   GRN_TEXT_PUTS(ctx, buf, "(");
@@ -1138,7 +1158,7 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
     grn_table_inspect(ctx, buffer, obj);
     return buffer;
   case GRN_DB :
-    /* TODO */
+    grn_db_inspect(ctx, buffer, obj);
     break;
   case GRN_COLUMN_FIX_SIZE :
     grn_ra_inspect(ctx, buffer, obj);
