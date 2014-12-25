@@ -12,4 +12,5 @@ RUBY_SCRIPT_FILES =				\
 	require.rb				\
 	scan_info.rb				\
 	scan_info_builder.rb			\
-	scan_info_data.rb
+	scan_info_data.rb			\
+	table_cursor.rb

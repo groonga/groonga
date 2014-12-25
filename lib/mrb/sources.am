@@ -29,6 +29,8 @@ libgrnmrb_la_SOURCES =				\
 	mrb_operator.h				\
 	mrb_procedure.c				\
 	mrb_procedure.h				\
+	mrb_table_cursor.c			\
+	mrb_table_cursor.h			\
 	mrb_variable_size_column.c		\
 	mrb_variable_size_column.h		\
 	mrb_void.c				\

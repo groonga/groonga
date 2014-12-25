@@ -38,6 +38,7 @@
 #include "mrb/mrb_expr.h"
 #include "mrb/mrb_accessor.h"
 #include "mrb/mrb_procedure.h"
+#include "mrb/mrb_table_cursor.h"
 
 #ifdef GRN_WITH_MRUBY
 # include <mruby/array.h>
@@ -105,6 +106,7 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   grn_mrb_expr_init(ctx);
   grn_mrb_accessor_init(ctx);
   grn_mrb_procedure_init(ctx);
+  grn_mrb_table_cursor_init(ctx);
 
   grn_mrb_load(ctx, "initialize/post.rb");
 }
