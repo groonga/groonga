@@ -69,7 +69,20 @@ module Groonga
         when :recover
           database.recover
           true
+        when :check
+          check(database)
         end
+      end
+
+      def check(database)
+        all_unlocked = true
+        database.each do |object|
+          if object.locked?
+            # TODO: Report
+            all_unlocked = false
+          end
+        end
+        all_unlocked
       end
     end
   end
