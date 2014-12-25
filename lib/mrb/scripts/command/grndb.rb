@@ -2,8 +2,7 @@ module Groonga
   module Command
     class Grndb
       def initialize(argv)
-        @command = argv[0]
-        @arguments = argv[1..-1]
+        @command, *@arguments = argv
       end
 
       def run
