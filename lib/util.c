@@ -580,6 +580,9 @@ grn_table_type_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   case GRN_TABLE_PAT_KEY:
     GRN_TEXT_PUTS(ctx, buf, "pat");
     break;
+  case GRN_TABLE_DAT_KEY:
+    GRN_TEXT_PUTS(ctx, buf, "dat");
+    break;
   case GRN_TABLE_NO_KEY:
     GRN_TEXT_PUTS(ctx, buf, "no_key");
     break;
