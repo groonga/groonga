@@ -4,7 +4,8 @@ EXTRA_DIST =					\
 DEFAULT_INCLUDES =				\
 	-I$(srcdir)/../mruby-source/include	\
 	-I$(srcdir)/../mruby-source/src		\
-	-Imruby-io/include
+	-Imruby-io/include			\
+	-I$(srcdir)/mruby-io/include
 
 if WITH_MRUBY
 noinst_LTLIBRARIES = libmruby.la
