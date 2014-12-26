@@ -127,7 +127,7 @@ namespace :build do
 
       lz4_license_dir = license_dir + "lz4"
       mkdir_p(lz4_license_dir)
-      files = ["LICENSE"]
+      files = ["lib/LICENSE"]
       cp(files, lz4_license_dir)
     end
   end
