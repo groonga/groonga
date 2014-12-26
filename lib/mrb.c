@@ -26,6 +26,8 @@
 # include <mruby/string.h>
 #endif
 
+#include <ctype.h>
+
 #define BUFFER_SIZE 2048
 #define E_LOAD_ERROR (mrb_class_get(mrb, "LoadError"))
 
@@ -73,13 +75,27 @@ grn_mrb_get_system_ruby_scripts_dir(grn_ctx *ctx)
 }
 
 static grn_bool
+grn_mrb_is_absolute_path(const char *path)
+{
+  if (path[0] == '/') {
+    return GRN_TRUE;
+  }
+
+  if (isalpha(path[0]) && path[1] == ':' && path[2] == '/') {
+    return GRN_TRUE;
+  }
+
+  return GRN_FALSE;
+}
+
+static grn_bool
 grn_mrb_expand_script_path(grn_ctx *ctx, const char *path, char *expanded_path)
 {
   const char *ruby_scripts_dir;
   char dir_last_char;
   int path_length, max_path_length;
 
-  if (path[0] == '/') {
+  if (grn_mrb_is_absolute_path(path)) {
     expanded_path[0] = '\0';
   } else if (path[0] == '.' && path[1] == '/') {
     strcpy(expanded_path, ctx->impl->mrb.base_directory);
