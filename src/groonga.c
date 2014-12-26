@@ -216,6 +216,7 @@ read_next_line(grn_ctx *ctx, grn_obj *buf)
     rc = line_editor_fgets(ctx, buf);
 #else
     fprintf(stderr, "> ");
+    fflush(stderr);
     rc = grn_text_fgets(ctx, buf, stdin);
 #endif
   } else {
