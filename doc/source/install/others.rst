@@ -62,7 +62,7 @@ All libraries are optional. Here are optional libraries:
   * `libedit <http://www.thrysoee.dk/editline/>`_ for command line
     editing in :doc:`/reference/executables/groonga`
   * `zlib <http://zlib.net/>`_ for compressing column value
-  * `LZO <http://www.oberhumer.com/opensource/lzo/>`_ for compressing
+  * `LZ4 <https://code.google.com/p/lz4/>`_ for compressing
     column value
 
 If you want to use those all or some libraries, you need to install
