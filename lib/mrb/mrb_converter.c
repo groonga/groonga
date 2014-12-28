@@ -58,6 +58,9 @@ grn_mrb_class_from_grn_obj(mrb_state *mrb, grn_obj *object)
   case GRN_EXPR :
     klass = mrb_class_get_under(mrb, data->module, "Expression");
     break;
+  case GRN_TABLE_NO_KEY :
+    klass = mrb_class_get_under(mrb, data->module, "Array");
+    break;
   case GRN_TABLE_HASH_KEY :
     klass = mrb_class_get_under(mrb, data->module, "HashTable");
     break;
