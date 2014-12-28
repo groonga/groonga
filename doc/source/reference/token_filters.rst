@@ -87,7 +87,6 @@ Here is an example that uses ``TokenFilterStem`` token filter:
 
 .. groonga-command
 .. include:: ../example/reference/token_filters/stem.log
-.. register token_filters/stop_word
 .. register token_filters/stem
 .. table_create Memos TABLE_NO_KEY
 .. column_create Memos content COLUMN_SCALAR ShortText
