@@ -30,6 +30,17 @@
 #include "mrb_converter.h"
 
 static mrb_value
+object_get_id(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_id id;
+
+  id = grn_obj_id(ctx, DATA_PTR(self));
+
+  return mrb_fixnum_value(id);
+}
+
+static mrb_value
 object_get_name(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -140,6 +151,7 @@ grn_mrb_object_init(grn_ctx *ctx)
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
   data->object_class = klass;
 
+  mrb_define_method(mrb, klass, "id", object_get_id, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "name", object_get_name, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "find_index",
                     object_find_index, MRB_ARGS_REQ(1));
