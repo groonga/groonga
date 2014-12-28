@@ -23,8 +23,8 @@ libgrnmrb_la_SOURCES =				\
 	mrb_index_column.h			\
 	mrb_logger.c				\
 	mrb_logger.h				\
-	mrb_obj.c				\
-	mrb_obj.h				\
+	mrb_object.c				\
+	mrb_object.h				\
 	mrb_operator.c				\
 	mrb_operator.h				\
 	mrb_patricia_trie.c			\

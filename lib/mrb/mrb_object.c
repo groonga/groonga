@@ -26,7 +26,7 @@
 #include <mruby/data.h>
 
 #include "../grn_mrb.h"
-#include "mrb_obj.h"
+#include "mrb_object.h"
 #include "mrb_converter.h"
 
 static mrb_value
@@ -129,7 +129,7 @@ object_close(mrb_state *mrb, mrb_value self)
 }
 
 void
-grn_mrb_obj_init(grn_ctx *ctx)
+grn_mrb_object_init(grn_ctx *ctx)
 {
   grn_mrb_data *data = &(ctx->impl->mrb);
   mrb_state *mrb = data->state;

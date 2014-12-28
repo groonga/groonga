@@ -29,7 +29,7 @@
 #include "mrb/mrb_logger.h"
 #include "mrb/mrb_void.h"
 #include "mrb/mrb_bulk.h"
-#include "mrb/mrb_obj.h"
+#include "mrb/mrb_object.h"
 #include "mrb/mrb_database.h"
 #include "mrb/mrb_table.h"
 #include "mrb/mrb_patricia_trie.h"
@@ -99,7 +99,7 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   grn_mrb_logger_init(ctx);
   grn_mrb_void_init(ctx);
   grn_mrb_bulk_init(ctx);
-  grn_mrb_obj_init(ctx);
+  grn_mrb_object_init(ctx);
   grn_mrb_database_init(ctx);
   grn_mrb_table_init(ctx);
   grn_mrb_patricia_trie_init(ctx);

@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013 Brazil
+  Copyright(C) 2013-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -16,8 +16,8 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef GRN_MRB_OBJ_H
-#define GRN_MRB_OBJ_H
+#ifndef GRN_MRB_OBJECT_H
+#define GRN_MRB_OBJECT_H
 
 #include "../grn_ctx.h"
 
@@ -25,10 +25,10 @@
 extern "C" {
 #endif
 
-void grn_mrb_obj_init(grn_ctx *ctx);
+void grn_mrb_object_init(grn_ctx *ctx);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* GRN_MRB_OBJ_H */
+#endif /* GRN_MRB_OBJECT_H */
