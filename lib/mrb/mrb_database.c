@@ -83,6 +83,18 @@ mrb_grn_database_recover(mrb_state *mrb, mrb_value self)
   return mrb_nil_value();
 }
 
+static mrb_value
+mrb_grn_database_is_locked(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  unsigned int is_locked;
+
+  is_locked = grn_obj_is_locked(ctx, DATA_PTR(self));
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_bool_value(is_locked != 0);
+}
+
 void
 grn_mrb_database_init(grn_ctx *ctx)
 {
@@ -106,5 +118,7 @@ grn_mrb_database_init(grn_ctx *ctx)
                     mrb_grn_database_initialize, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "recover",
                     mrb_grn_database_recover, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "locked?",
+                    mrb_grn_database_is_locked, MRB_ARGS_NONE());
 }
 #endif
