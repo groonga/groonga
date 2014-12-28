@@ -2,7 +2,10 @@ module Groonga
   class Database
     def each
       context = Context.instance
-      cursor = TableCursor.open(self)
+      flags =
+        TableCursorFlags::ASCENDING |
+        TableCursorFlags::BY_ID
+      cursor = TableCursor.open(self, :flags => flags)
       begin
         cursor.each do |id|
           object = context[id];
