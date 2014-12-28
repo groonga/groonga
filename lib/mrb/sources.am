@@ -13,6 +13,8 @@ libgrnmrb_la_SOURCES =				\
 	mrb_ctx.h				\
 	mrb_database.c				\
 	mrb_database.h				\
+	mrb_double_array_trie.c			\
+	mrb_double_array_trie.h			\
 	mrb_error.c				\
 	mrb_error.h				\
 	mrb_expr.c				\

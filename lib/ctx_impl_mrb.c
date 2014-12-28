@@ -35,6 +35,7 @@
 #include "mrb/mrb_array.h"
 #include "mrb/mrb_hash_table.h"
 #include "mrb/mrb_patricia_trie.h"
+#include "mrb/mrb_double_array_trie.h"
 #include "mrb/mrb_column.h"
 #include "mrb/mrb_fixed_size_column.h"
 #include "mrb/mrb_variable_size_column.h"
@@ -109,6 +110,7 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   grn_mrb_array_init(ctx);
   grn_mrb_hash_table_init(ctx);
   grn_mrb_patricia_trie_init(ctx);
+  grn_mrb_double_array_trie_init(ctx);
   grn_mrb_column_init(ctx);
   grn_mrb_fixed_size_column_init(ctx);
   grn_mrb_variable_size_column_init(ctx);
