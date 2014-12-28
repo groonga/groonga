@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013 Brazil
+  Copyright(C) 2013-2014 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -21,8 +21,22 @@
 #ifdef GRN_WITH_MRUBY
 #include <mruby.h>
 #include <mruby/class.h>
+#include <mruby/data.h>
 
+#include "mrb_ctx.h"
 #include "mrb_column.h"
+
+static mrb_value
+mrb_grn_column_is_locked(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  unsigned int is_locked;
+
+  is_locked = grn_obj_is_locked(ctx, DATA_PTR(self));
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_bool_value(is_locked != 0);
+}
 
 void
 grn_mrb_column_init(grn_ctx *ctx)
@@ -35,5 +49,8 @@ grn_mrb_column_init(grn_ctx *ctx)
 
   klass = mrb_define_class_under(mrb, module, "Column", object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
+
+  mrb_define_method(mrb, klass, "locked?",
+                    mrb_grn_column_is_locked, MRB_ARGS_NONE());
 }
 #endif
