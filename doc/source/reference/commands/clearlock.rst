@@ -8,6 +8,9 @@
 Summary
 -------
 
+.. deprecated:: 4.0.9
+   Use :doc:`lock_clear` instead.
+
 clearlock - オブジェクトにセットされたロックを解除する
 
 Groonga組込コマンドの一つであるclearlockについて説明します。組込コマンドは、groonga実行ファイルの引数、標準>入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
