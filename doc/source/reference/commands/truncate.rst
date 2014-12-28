@@ -20,8 +20,13 @@ The required parameter is only ``target_name``::
 
   truncate target_name
 
-For backward compatibility, ``truncate`` command accepts ``table``
-parameter. But it should not be used for newly written code.
+.. note::
+
+   ``target_name`` parameter can be used since 4.0.9. You need to use
+   ``table`` parameter for 4.0.8 or earlier.
+
+   For backward compatibility, ``truncate`` command accepts ``table``
+   parameter. But it should not be used for newly written code.
 
 Usage
 -----
