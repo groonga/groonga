@@ -2361,7 +2361,8 @@ proc_shutdown(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 }
 
 static grn_obj *
-proc_clearlock(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+proc_lock_clear(grn_ctx *ctx, int nargs, grn_obj **args,
+                grn_user_data *user_data)
 {
   int target_name_len;
   grn_obj *target_name;
@@ -2379,7 +2380,7 @@ proc_clearlock(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   if (obj) {
     grn_obj_clear_lock(ctx, obj);
   } else {
-    ERR(GRN_INVALID_ARGUMENT, "[clearlock] target object not found: <%.*s>",
+    ERR(GRN_INVALID_ARGUMENT, "[lock_clear] target object not found: <%.*s>",
         target_name_len, GRN_TEXT_VALUE(target_name));
   }
   GRN_OUTPUT_BOOL(!ctx->rc);
@@ -6522,8 +6523,12 @@ grn_db_init_builtin_query(grn_ctx *ctx)
 
   DEF_COMMAND("shutdown", proc_shutdown, 0, vars);
 
+  /* Deprecated. Use "lock_clear" instead. */
   DEF_VAR(vars[0], "target_name");
-  DEF_COMMAND("clearlock", proc_clearlock, 1, vars);
+  DEF_COMMAND("clearlock", proc_lock_clear, 1, vars);
+
+  DEF_VAR(vars[0], "target_name");
+  DEF_COMMAND("lock_clear", proc_lock_clear, 1, vars);
 
   DEF_VAR(vars[0], "target_name");
   DEF_VAR(vars[1], "threshold");
