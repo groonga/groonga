@@ -2,9 +2,6 @@
 
 .. highlightlang:: none
 
-.. groonga-command
-.. database: token_filters
-
 Token filters
 =============
 
@@ -25,8 +22,13 @@ Here is an example ``table_create`` that uses ``TokenFilterStopWord``
 token filter module:
 
 .. groonga-command
+.. database: token_filters_example
 .. include:: ../example/reference/token_filters/example-table-create.log
-.. table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto --token_filters TokenFilterStopWord
+.. register token_filters/stop_word
+.. table_create Terms TABLE_PAT_KEY ShortText \
+..   --default_tokenizer TokenBigram \
+..   --normalizer NormalizerAuto \
+..   --token_filters TokenFilterStopWord
 
 Available token filters
 -----------------------
@@ -52,11 +54,15 @@ The stop word is specified ``is_stop_word`` column on lexicon table.
 Here is an example that uses ``TokenFilterStopWord`` token filter:
 
 .. groonga-command
+.. database: token_filters_stop_word
 .. include:: ../example/reference/token_filters/stop_word.log
 .. register token_filters/stop_word
 .. table_create Memos TABLE_NO_KEY
 .. column_create Memos content COLUMN_SCALAR ShortText
-.. table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto   --token_filters TokenFilterStopWord
+.. table_create Terms TABLE_PAT_KEY ShortText \
+..   --default_tokenizer TokenBigram \
+..   --normalizer NormalizerAuto \
+..   --token_filters TokenFilterStopWord
 .. column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
 .. column_create Terms is_stop_word COLUMN_SCALAR Bool
 .. load --table Terms
@@ -86,11 +92,15 @@ Here is an example that uses ``TokenFilterStopWord`` token filter:
 Here is an example that uses ``TokenFilterStem`` token filter:
 
 .. groonga-command
+.. database: token_filters_stem
 .. include:: ../example/reference/token_filters/stem.log
 .. register token_filters/stem
 .. table_create Memos TABLE_NO_KEY
 .. column_create Memos content COLUMN_SCALAR ShortText
-.. table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto   --token_filters TokenFilterStem
+.. table_create Terms TABLE_PAT_KEY ShortText \
+..   --default_tokenizer TokenBigram \
+..   --normalizer NormalizerAuto \
+..   --token_filters TokenFilterStem
 .. column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
 .. load --table Memos
 .. [
