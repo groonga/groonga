@@ -8,7 +8,7 @@ module Groonga
       cursor = TableCursor.open(self, :flags => flags)
       begin
         cursor.each do |id|
-          object = context[id];
+          object = context[id]
           yield(object) if object
         end
       ensure
