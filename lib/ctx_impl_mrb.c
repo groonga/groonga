@@ -37,6 +37,7 @@
 #include "mrb/mrb_fixed_size_column.h"
 #include "mrb/mrb_variable_size_column.h"
 #include "mrb/mrb_index_column.h"
+#include "mrb/mrb_type.h"
 #include "mrb/mrb_expr.h"
 #include "mrb/mrb_accessor.h"
 #include "mrb/mrb_procedure.h"
@@ -107,6 +108,7 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   grn_mrb_fixed_size_column_init(ctx);
   grn_mrb_variable_size_column_init(ctx);
   grn_mrb_index_column_init(ctx);
+  grn_mrb_type_init(ctx);
   grn_mrb_expr_init(ctx);
   grn_mrb_accessor_init(ctx);
   grn_mrb_procedure_init(ctx);
