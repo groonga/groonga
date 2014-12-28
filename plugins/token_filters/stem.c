@@ -21,6 +21,7 @@
 #include <groonga.h>
 #include <groonga/token_filter.h>
 
+#include <ctype.h>
 #include <string.h>
 
 #include <libstemmer.h>
@@ -28,6 +29,7 @@
 typedef struct {
   struct sb_stemmer *stemmer;
   grn_tokenizer_token token;
+  grn_obj buffer;
 } grn_stem_token_filter;
 
 static void *
@@ -43,10 +45,126 @@ stem_init(grn_ctx *ctx, grn_obj *table, grn_token_mode mode)
     return NULL;
   }
 
-  token_filter->stemmer = NULL;
+  {
+    /* TODO: Support other languages. */
+    const char *algorithm = "english";
+    const char *encoding = "UTF_8";
+    token_filter->stemmer = sb_stemmer_new(algorithm, encoding);
+    if (!token_filter->stemmer) {
+      GRN_PLUGIN_FREE(ctx, token_filter);
+      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                       "[token-filter][stem] "
+                       "failed to create stemmer: "
+                       "algorithm=<%s>, encoding=<%s>",
+                       algorithm, encoding);
+      return NULL;
+    }
+  }
   grn_tokenizer_token_init(ctx, &(token_filter->token));
+  GRN_TEXT_INIT(&(token_filter->buffer), 0);
 
   return token_filter;
+}
+
+static grn_bool
+is_stemmable(grn_obj *data, grn_bool *is_all_upper)
+{
+  const char *current, *end;
+  grn_bool have_lower = GRN_FALSE;
+  grn_bool have_upper = GRN_FALSE;
+
+  *is_all_upper = GRN_FALSE;
+
+  switch (data->header.domain) {
+  case GRN_DB_SHORT_TEXT :
+  case GRN_DB_TEXT :
+  case GRN_DB_LONG_TEXT :
+    break;
+  default :
+    return GRN_FALSE;
+  }
+
+  current = GRN_TEXT_VALUE(data);
+  end = current + GRN_TEXT_LEN(data);
+
+  for (; current < end; current++) {
+    if (islower(*current)) {
+      have_lower = GRN_TRUE;
+      continue;
+    }
+    if (isupper(*current)) {
+      have_upper = GRN_TRUE;
+      continue;
+    }
+    if (isdigit(*current)) {
+      continue;
+    }
+    switch (*current) {
+    case '-' :
+    case '\'' :
+      break;
+    default :
+      return GRN_FALSE;
+    }
+  }
+
+  if (!have_lower && have_upper) {
+    *is_all_upper = GRN_TRUE;
+  }
+
+  return GRN_TRUE;
+}
+
+static void
+normalize(grn_ctx *ctx,
+          const char *string, unsigned int length,
+          grn_obj *normalized)
+{
+  const char *current, *end;
+  const char *unwritten;
+
+  current = unwritten = string;
+  end = current + length;
+
+  for (; current < end; current++) {
+    if (isupper(*current)) {
+      if (current > unwritten) {
+        GRN_TEXT_PUT(ctx, normalized, unwritten, current - unwritten);
+      }
+      GRN_TEXT_PUTC(ctx, normalized, tolower(*current));
+      unwritten = current + 1;
+    }
+  }
+
+  if (current != unwritten) {
+    GRN_TEXT_PUT(ctx, normalized, unwritten, current - unwritten);
+  }
+}
+
+static void
+unnormalize(grn_ctx *ctx,
+            const char *string, unsigned int length,
+            grn_obj *normalized)
+{
+  const char *current, *end;
+  const char *unwritten;
+
+  current = unwritten = string;
+  end = current + length;
+
+  for (; current < end; current++) {
+    if (islower(*current)) {
+      if (current > unwritten) {
+        GRN_TEXT_PUT(ctx, normalized, unwritten, current - unwritten);
+      }
+      GRN_TEXT_PUTC(ctx, normalized, toupper(*current));
+      unwritten = current + 1;
+    }
+  }
+
+  if (current != unwritten) {
+    GRN_TEXT_PUT(ctx, normalized, unwritten, current - unwritten);
+  }
 }
 
 static void
@@ -57,46 +175,59 @@ stem_filter(grn_ctx *ctx,
 {
   grn_stem_token_filter *token_filter = user_data;
   grn_obj *data;
+  grn_bool is_all_upper = GRN_FALSE;
 
   if (GRN_CTX_GET_ENCODING(ctx) != GRN_ENC_UTF8) {
     return;
   }
 
   data = grn_token_get_data(ctx, current_token);
-
-  if (token_filter->stemmer) {
-    sb_stemmer_delete(token_filter->stemmer);
-  }
-  {
-    /* TODO: Detect algorithm from the current token. */
-    const char *algorithm = "english";
-    const char *encoding = "UTF_8";
-    token_filter->stemmer = sb_stemmer_new(algorithm, encoding);
-    if (!token_filter->stemmer) {
-      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                       "[token-filter][stem] "
-                       "failed to create stemmer: "
-                       "algorithm=<%s>, encoding=<%s>",
-                       algorithm, encoding);
-      return;
-    }
+  if (!is_stemmable(data, &is_all_upper)) {
+    return;
   }
 
   {
     const sb_symbol *stemmed;
 
-    stemmed = sb_stemmer_stem(token_filter->stemmer,
-                              GRN_TEXT_VALUE(data), GRN_TEXT_LEN(data));
-    if (stemmed) {
-      grn_token_set_data(ctx, next_token,
-                         stemmed,
-                         sb_stemmer_length(token_filter->stemmer));
+    if (is_all_upper) {
+      grn_obj *buffer;
+      buffer = &(token_filter->buffer);
+      GRN_BULK_REWIND(buffer);
+      normalize(ctx,
+                GRN_TEXT_VALUE(data),
+                GRN_TEXT_LEN(data),
+                buffer);
+      stemmed = sb_stemmer_stem(token_filter->stemmer,
+                                GRN_TEXT_VALUE(buffer), GRN_TEXT_LEN(buffer));
+      if (stemmed) {
+        GRN_BULK_REWIND(buffer);
+        unnormalize(ctx,
+                    stemmed,
+                    sb_stemmer_length(token_filter->stemmer),
+                    buffer);
+        grn_token_set_data(ctx, next_token,
+                           GRN_TEXT_VALUE(buffer), GRN_TEXT_LEN(buffer));
+      } else {
+        GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
+                         "[token-filter][stem] "
+                         "failed to allocate memory for stemmed word: <%.*s> "
+                         "(normalized: <%.*s>)",
+                         (int)GRN_TEXT_LEN(data), GRN_TEXT_VALUE(data),
+                         (int)GRN_TEXT_LEN(buffer), GRN_TEXT_VALUE(buffer));
+      }
     } else {
-      GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
-                       "[token-filter][stem] "
-                       "failed to allocate memory for stemmed word: <%.*s>",
-                       (int)GRN_TEXT_LEN(data), GRN_TEXT_VALUE(data));
-      return;
+      stemmed = sb_stemmer_stem(token_filter->stemmer,
+                                GRN_TEXT_VALUE(data), GRN_TEXT_LEN(data));
+      if (stemmed) {
+        grn_token_set_data(ctx, next_token,
+                           stemmed,
+                           sb_stemmer_length(token_filter->stemmer));
+      } else {
+        GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
+                         "[token-filter][stem] "
+                         "failed to allocate memory for stemmed word: <%.*s>",
+                         (int)GRN_TEXT_LEN(data), GRN_TEXT_VALUE(data));
+      }
     }
   }
 }
@@ -113,6 +244,7 @@ stem_fin(grn_ctx *ctx, void *user_data)
   if (token_filter->stemmer) {
     sb_stemmer_delete(token_filter->stemmer);
   }
+  GRN_OBJ_FIN(ctx, &(token_filter->buffer));
   GRN_PLUGIN_FREE(ctx, token_filter);
 }
 

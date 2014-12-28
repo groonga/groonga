@@ -1,0 +1,113 @@
+register token_filters/stem
+[[0,0.0,0.0],true]
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenDelimit   --token_filters TokenFilterStem
+[[0,0.0,0.0],true]
+column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": "I DEVELOP GROONGA"},
+{"content": "I'M DEVELOPING GROONGA"},
+{"content": "I DEVELOPED GROONGA"},
+{"content": "GROONGA DEVELOPERS' SITE"}
+]
+[[0,0.0,0.0],4]
+select Terms
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        5
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "memos_content",
+          "UInt32"
+        ]
+      ],
+      [
+        2,
+        "DEVELOP",
+        7
+      ],
+      [
+        3,
+        "GROONGA",
+        8
+      ],
+      [
+        1,
+        "I",
+        4
+      ],
+      [
+        4,
+        "I'M",
+        1
+      ],
+      [
+        5,
+        "SITE",
+        1
+      ]
+    ]
+  ]
+]
+select Memos --match_columns content --query "DEVELOPS"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "content",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "I DEVELOP GROONGA"
+      ],
+      [
+        2,
+        "I'M DEVELOPING GROONGA"
+      ],
+      [
+        3,
+        "I DEVELOPED GROONGA"
+      ],
+      [
+        4,
+        "GROONGA DEVELOPERS' SITE"
+      ]
+    ]
+  ]
+]
