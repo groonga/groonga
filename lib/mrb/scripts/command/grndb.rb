@@ -81,6 +81,7 @@ module Groonga
       def check(database)
         all_unlocked = true
         database.each do |object|
+          next unless object.is_a?(Column)
           if object.locked?
             # TODO: Report
             all_unlocked = false
