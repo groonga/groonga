@@ -2,9 +2,6 @@
 
 .. highlightlang:: none
 
-.. groonga-command
-.. database: commands_truncate
-
 ``truncate``
 ============
 
@@ -32,8 +29,10 @@ Usage
 Here is a simple example of ``truncate`` command against a table.
 
 .. groonga-command
-.. include:: ../../example/reference/commands/truncate/truncate-table.log
+.. database: commands_truncate_table
+.. include:: ../../example/reference/commands/truncate/truncate_table.log
 .. table_create Users TABLE_PAT_KEY ShortText
+.. column_create Users score COLUMN_SCALAR Int32
 .. load --table Users
 .. [
 .. {"_key": "Alice",  "score": 2},
@@ -47,8 +46,10 @@ Here is a simple example of ``truncate`` command against a table.
 Here is a simple example of ``truncate`` command against a column.
 
 .. groonga-command
-.. include:: ../../example/reference/commands/truncate/truncate-column.log
+.. database: commands_truncate_column
+.. include:: ../../example/reference/commands/truncate/truncate_column.log
 .. table_create Users TABLE_PAT_KEY ShortText
+.. column_create Users score COLUMN_SCALAR Int32
 .. load --table Users
 .. [
 .. {"_key": "Alice",  "score": 2},
