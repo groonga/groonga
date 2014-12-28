@@ -12,6 +12,7 @@ SOURCES = $(srcdir)/source
 update-examples:
 	PATH=$(top_builddir)/src:$(top_builddir)/src/suggest:$$PATH	\
 	  GRN_PLUGINS_DIR="$(top_builddir)/plugins"			\
+	  GRN_RUBY_SCRIPTS_DIR="$(top_srcdir)/lib/mrb/scripts"		\
 	  $(srcdir)/update_execution_example.py				\
 	  $(SOURCES)
 
