@@ -55,6 +55,9 @@ grn_mrb_class_from_grn_obj(mrb_state *mrb, grn_obj *object)
   case GRN_PROC :
     klass = mrb_class_get_under(mrb, data->module, "Procedure");
     break;
+  case GRN_TABLE_PAT_KEY :
+    klass = mrb_class_get_under(mrb, data->module, "PatriciaTrie");
+    break;
   case GRN_VOID :
     klass = mrb_class_get_under(mrb, data->module, "Void");
     break;
