@@ -1,0 +1,112 @@
+table_create Logs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs message COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms logs_message COLUMN_INDEX|WITH_POSITION Logs message
+[[0,0.0,0.0],true]
+load --table Logs
+[
+{"message": "Hello"},
+{"message": "World"}
+]
+[[0,0.0,0.0],2]
+select Terms
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "logs_message",
+          "UInt32"
+        ]
+      ],
+      [
+        1,
+        "hello",
+        1
+      ],
+      [
+        2,
+        "world",
+        1
+      ]
+    ]
+  ]
+]
+truncate Terms.logs_message
+[[0,0.0,0.0],true]
+select Terms
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "logs_message",
+          "UInt32"
+        ]
+      ],
+      [
+        1,
+        "hello",
+        0
+      ],
+      [
+        2,
+        "world",
+        0
+      ]
+    ]
+  ]
+]
+dump
+table_create Logs TABLE_NO_KEY
+column_create Logs message COLUMN_SCALAR ShortText
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+column_create Terms logs_message COLUMN_INDEX|WITH_POSITION Logs message
+load --table Logs
+[
+["_id","message"],
+[1,"Hello"],
+[2,"World"]
+]
+load --table Terms
+[
+["_key"],
+["hello"],
+["world"]
+]
+

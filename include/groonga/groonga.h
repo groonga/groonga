@@ -762,6 +762,7 @@ GRN_API grn_rc grn_column_index_update(grn_ctx *ctx, grn_obj *column,
                                        grn_id id, unsigned int section,
                                        grn_obj *oldvalue, grn_obj *newvalue);
 GRN_API grn_obj *grn_column_table(grn_ctx *ctx, grn_obj *column);
+GRN_API grn_rc grn_column_truncate(grn_ctx *ctx, grn_obj *column);
 
 /*-------------------------------------------------------------
  * API for db, table and/or column

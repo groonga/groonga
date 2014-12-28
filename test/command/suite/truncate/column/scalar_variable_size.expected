@@ -1,0 +1,36 @@
+table_create Logs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs id COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+column_create Logs message COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Logs
+[
+{"id": 11, "message": "Hello"},
+{"id": 22, "message": "World"}
+]
+[[0,0.0,0.0],2]
+dump
+table_create Logs TABLE_NO_KEY
+column_create Logs id COLUMN_SCALAR Int32
+column_create Logs message COLUMN_SCALAR ShortText
+load --table Logs
+[
+["_id","id","message"],
+[1,11,"Hello"],
+[2,22,"World"]
+]
+
+truncate Logs.message
+[[0,0.0,0.0],true]
+dump
+table_create Logs TABLE_NO_KEY
+column_create Logs id COLUMN_SCALAR Int32
+column_create Logs message COLUMN_SCALAR ShortText
+load --table Logs
+[
+["_id","id","message"],
+[1,11,""],
+[2,22,""]
+]
+

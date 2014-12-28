@@ -1,0 +1,15 @@
+table_create Logs TABLE_NO_KEY
+column_create Logs id COLUMN_SCALAR Int32
+column_create Logs message COLUMN_SCALAR ShortText
+
+load --table Logs
+[
+{"id": 11, "message": "Hello"},
+{"id": 22, "message": "World"}
+]
+
+dump
+
+truncate Logs.id
+
+dump
