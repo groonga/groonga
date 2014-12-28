@@ -81,9 +81,36 @@ module Groonga
       def check(database)
         all_unlocked = true
         database.each do |object|
-          next unless object.is_a?(Column)
-          if object.locked?
-            # TODO: Report
+          case object
+          when IndexColumn
+            next unless object.locked?
+            message =
+              "[#{object.name}] Index column is locked. " +
+              "It may be broken. " +
+              "Re-create index by --action=recover."
+            $stdout.puts(message)
+            all_unlocked = false
+          when Column
+            next unless object.locked?
+            name = object.name
+            message =
+              "[#{name}] Data column is locked. " +
+              "It may be broken. " +
+              "(1) Truncate the column (truncate #{name}) or " +
+              "clear lock of the column (lock_clear #{name}) " +
+              "and (2) load data again."
+            $stdout.puts(message)
+            all_unlocked = false
+          when Table
+            next unless object.locked?
+            name = object.name
+            message =
+              "[#{name}] Table is locked. " +
+              "It may be broken. " +
+              "(1) Truncate the table (truncate #{name}) or " +
+              "clear lock of the table (lock_clear #{name}) " +
+              "and (2) load data again."
+            $stdout.puts(message)
             all_unlocked = false
           end
         end
