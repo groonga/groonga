@@ -34,11 +34,11 @@ grn_mrb_class_from_grn_obj(mrb_state *mrb, grn_obj *object)
 
   data = &(ctx->impl->mrb);
   switch (object->header.type) {
-  case GRN_ACCESSOR :
-    klass = mrb_class_get_under(mrb, data->module, "Accessor");
-    break;
   case GRN_BULK :
     klass = mrb_class_get_under(mrb, data->module, "Bulk");
+    break;
+  case GRN_ACCESSOR :
+    klass = mrb_class_get_under(mrb, data->module, "Accessor");
     break;
   case GRN_COLUMN_FIX_SIZE :
     klass = mrb_class_get_under(mrb, data->module, "FixedSizeColumn");
@@ -52,11 +52,11 @@ grn_mrb_class_from_grn_obj(mrb_state *mrb, grn_obj *object)
   case GRN_TYPE :
     klass = mrb_class_get_under(mrb, data->module, "Type");
     break;
-  case GRN_EXPR :
-    klass = mrb_class_get_under(mrb, data->module, "Expression");
-    break;
   case GRN_PROC :
     klass = mrb_class_get_under(mrb, data->module, "Procedure");
+    break;
+  case GRN_EXPR :
+    klass = mrb_class_get_under(mrb, data->module, "Expression");
     break;
   case GRN_TABLE_PAT_KEY :
     klass = mrb_class_get_under(mrb, data->module, "PatriciaTrie");
