@@ -394,9 +394,9 @@ msgid "`zlib <http://zlib.net/>`_ for compressing column value"
 msgstr "`zlib <http://zlib.net/>`_ （カラム値の圧縮用）"
 
 msgid ""
-"`LZO <http://www.oberhumer.com/opensource/lzo/>`_ for compressing column "
+"`LZ4 <https://code.google.com/p/lz4/>`_ for compressing column "
 "value"
-msgstr "`LZO <http://www.oberhumer.com/opensource/lzo/>`_ （カラム値の圧縮用）"
+msgstr "`LZ4 <https://code.google.com/p/lz4/>`_ （カラム値の圧縮用）"
 
 msgid ""
 "If you want to use those all or some libraries, you need to install them "
