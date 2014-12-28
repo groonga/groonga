@@ -828,8 +828,6 @@ grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 static grn_rc
 grn_db_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
-  grn_id range_id;
-  grn_obj *range;
   grn_db *db = (grn_db *)obj;
 
   GRN_TEXT_PUTS(ctx, buf, "#<db");
