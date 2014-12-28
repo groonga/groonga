@@ -40,6 +40,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/column_rename/column_rename.log \
 	$(top_srcdir)/doc/source/example/reference/commands/delete/cascade.log \
 	$(top_srcdir)/doc/source/example/reference/commands/delete/status.log \
+	$(top_srcdir)/doc/source/example/reference/commands/lock_clear/column.log \
+	$(top_srcdir)/doc/source/example/reference/commands/lock_clear/database.log \
+	$(top_srcdir)/doc/source/example/reference/commands/lock_clear/table.log \
 	$(top_srcdir)/doc/source/example/reference/commands/normalize/normalizer_auto_ascii.log \
 	$(top_srcdir)/doc/source/example/reference/commands/normalizer_list/simple_example.log \
 	$(top_srcdir)/doc/source/example/reference/commands/register/query_expanders_tsv.log \
@@ -208,8 +211,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/normalizers/example-load.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/example-table-create.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-auto.log \
-	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-mysql-genral-ci.log \
-	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-mysql-register.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc51.log \
 	$(top_srcdir)/doc/source/example/reference/suggest/complete/registered-word-japan.log \
 	$(top_srcdir)/doc/source/example/reference/suggest/complete/registered-word-japanese.log \
@@ -443,6 +444,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/delete.rst \
 	$(top_srcdir)/doc/source/reference/commands/dump.rst \
 	$(top_srcdir)/doc/source/reference/commands/load.rst \
+	$(top_srcdir)/doc/source/reference/commands/lock_clear.rst \
 	$(top_srcdir)/doc/source/reference/commands/log_level.rst \
 	$(top_srcdir)/doc/source/reference/commands/log_put.rst \
 	$(top_srcdir)/doc/source/reference/commands/log_reopen.rst \
@@ -593,6 +595,9 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/column_rename/column_rename.log \
 	source/example/reference/commands/delete/cascade.log \
 	source/example/reference/commands/delete/status.log \
+	source/example/reference/commands/lock_clear/column.log \
+	source/example/reference/commands/lock_clear/database.log \
+	source/example/reference/commands/lock_clear/table.log \
 	source/example/reference/commands/normalize/normalizer_auto_ascii.log \
 	source/example/reference/commands/normalizer_list/simple_example.log \
 	source/example/reference/commands/register/query_expanders_tsv.log \
@@ -761,8 +766,6 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/normalizers/example-load.log \
 	source/example/reference/normalizers/example-table-create.log \
 	source/example/reference/normalizers/normalizer-auto.log \
-	source/example/reference/normalizers/normalizer-mysql-genral-ci.log \
-	source/example/reference/normalizers/normalizer-mysql-register.log \
 	source/example/reference/normalizers/normalizer-nfkc51.log \
 	source/example/reference/suggest/complete/registered-word-japan.log \
 	source/example/reference/suggest/complete/registered-word-japanese.log \
@@ -996,6 +999,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/delete.rst \
 	source/reference/commands/dump.rst \
 	source/reference/commands/load.rst \
+	source/reference/commands/lock_clear.rst \
 	source/reference/commands/log_level.rst \
 	source/reference/commands/log_put.rst \
 	source/reference/commands/log_reopen.rst \
@@ -1298,6 +1302,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/delete.txt \
 	html/_sources/reference/commands/dump.txt \
 	html/_sources/reference/commands/load.txt \
+	html/_sources/reference/commands/lock_clear.txt \
 	html/_sources/reference/commands/log_level.txt \
 	html/_sources/reference/commands/log_put.txt \
 	html/_sources/reference/commands/log_reopen.txt \
@@ -1499,6 +1504,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/delete.html \
 	html/reference/commands/dump.html \
 	html/reference/commands/load.html \
+	html/reference/commands/lock_clear.html \
 	html/reference/commands/log_level.html \
 	html/reference/commands/log_put.html \
 	html/reference/commands/log_reopen.html \

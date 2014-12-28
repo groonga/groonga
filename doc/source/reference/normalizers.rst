@@ -119,28 +119,9 @@ Here is an example that uses ``NormalizerNFKC51`` normalizer:
 Additional normalizers
 ----------------------
 
-Here is a list of additional normalizers provided by ``groonga-normalizer-mysql`` plugins:
+There are additional normalizers:
 
-  * ``NormalizerMySQLGeneralCI``
-  * ``NormalizerMySQLUnicodeCI``
-  * ``NormalizerMySQLUnicodeCIExceptKanaCIKanaWithVoicedSoundMark``
-
-``groonga-normalizer-mysql`` is a Groonga plugin.
-It provides MySQL compatible normalizers to Groonga.
-``NormalizerMySQLGeneralCI`` corresponds to ``utf8mb4_general_ci``.
-
-You need to register ``normalizers/mysql`` plugin in advance.
-
-.. groonga-command
-.. include:: ../example/reference/normalizers/normalizer-mysql-register.log
-.. register normalizers/mysql
-
-Here is an example that uses ``NormalizerMySQLGeneralCI`` normalizer:
-
-.. groonga-command
-.. include:: ../example/reference/normalizers/normalizer-mysql-genral-ci.log
-.. table_create MySQLGeneralLexicon TABLE_HASH_KEY ShortText --normalizer NormalizerMySQLGeneralCI
-
+  * `groonga-normalizer-mysql <https://github.com/groonga/groonga-normalizer-mysql>_`
 
 See also
 --------
