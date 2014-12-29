@@ -83,9 +83,9 @@ It specifies the name of table or column.
 Return value
 ------------
 
-::
+``truncate`` command returns whether truncation is succeeded or not::
 
- [HEADER, SUCCEEDED_OR_NOT]
+  [HEADER, SUCCEEDED_OR_NOT]
 
 ``HEADER``
 
