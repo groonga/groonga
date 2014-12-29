@@ -88,7 +88,6 @@ static int port = DEFAULT_GQTP_PORT;
 static int batchmode;
 static int number_of_lines = 0;
 static int newdb;
-static grn_bool is_recover_db = GRN_FALSE;
 static grn_bool is_daemon_mode = GRN_FALSE;
 static int (*do_client)(int argc, char **argv);
 static int (*do_server)(char *path);
@@ -315,17 +314,6 @@ do_alone(int argc, char **argv)
   db = (newdb || !path) ? grn_db_create(ctx, path, NULL) : grn_db_open(ctx, path);
   if (db) {
     grn_obj command;
-    if (is_recover_db) {
-      grn_rc rc;
-      rc = grn_db_recover(ctx, db);
-      if (rc != GRN_SUCCESS) {
-        fprintf(stderr, "Failed to recover database <%s>: %s\n",
-                path, ctx->errbuf);
-        exit_code = grn_rc_to_exit_code(ctx->rc);
-        grn_obj_close(ctx, db);
-        goto exit;
-      }
-    }
     GRN_TEXT_INIT(&command, 0);
     GRN_CTX_USER_DATA(ctx)->ptr = &command;
     grn_ctx_recv_handler_set(ctx, s_output, output);
@@ -349,7 +337,6 @@ do_alone(int argc, char **argv)
   } else {
     fprintf(stderr, "db open failed (%s): %s\n", path, ctx->errbuf);
   }
-exit :
   grn_ctx_fin(ctx);
   return exit_code;
 }
@@ -639,17 +626,7 @@ start_service(grn_ctx *ctx, const char *db_path,
     grn_obj *db;
     db = (newdb || !db_path) ? grn_db_create(ctx, db_path, NULL) : grn_db_open(ctx, db_path);
     if (db) {
-      grn_rc rc = GRN_SUCCESS;
-      if (is_recover_db) {
-        rc = grn_db_recover(ctx, db);
-      }
-      if (rc != GRN_SUCCESS) {
-        fprintf(stderr, "Failed to recover database <%s>: %s\n",
-                db_path, ctx->errbuf);
-        exit_code = grn_rc_to_exit_code(ctx->rc);
-      } else {
-        exit_code = run_server(ctx, db, &ev, dispatcher, handler);
-      }
+      exit_code = run_server(ctx, db, &ev, dispatcher, handler);
       grn_obj_close(ctx, db);
     } else {
       fprintf(stderr, "db open failed (%s)\n", db_path);
@@ -1948,7 +1925,6 @@ enum {
 #define FLAG_MODE_DAEMON     (1 << 6)
 #define FLAG_MODE_SERVER     (1 << 7)
 #define FLAG_NEW_DB     (1 << 8)
-#define FLAG_RECOVER_DB (1 << 9)
 
 static uint32_t
 get_core_number(void)
@@ -2362,16 +2338,6 @@ show_usage(FILE *output)
           "                       specify encoding for new database\n"
           "                       [none|euc|utf8|sjis|latin1|koi8r] (default: %s)\n"
           "\n"
-          "Database options:\n"
-          "  --recover:           check the existing database.\n"
-          "                       If the database has any problem,\n"
-          "                       this command tries to recover the database.\n"
-          "                       If the problem can't be recover automatically,\n"
-          "                       this command exits with non zero status.\n"
-          "                       CAUTION: Don't open the same database\n"
-          "                       by other process while recovering.\n"
-          "                       (except client mode)\n"
-          "\n"
           "Standalone/client options:\n"
           "      --file <path>:          read commands from specified file\n"
           "      --input-fd <FD>:        read commands from specified file descriptor\n"
@@ -2482,7 +2448,6 @@ main(int argc, char **argv)
     {'\0', "input-fd", NULL, 0, GETOPT_OP_NONE},
     {'\0', "output-fd", NULL, 0, GETOPT_OP_NONE},
     {'\0', "working-directory", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "recover", NULL, FLAG_RECOVER_DB, GETOPT_OP_ON},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &port_arg;
@@ -2844,7 +2809,6 @@ main(int argc, char **argv)
   }
 
   newdb = (flags & FLAG_NEW_DB);
-  is_recover_db = ((flags & FLAG_RECOVER_DB) == FLAG_RECOVER_DB);
   is_daemon_mode = (flags & FLAG_MODE_DAEMON);
   if (flags & FLAG_MODE_CLIENT) {
     exit_code = do_client(argc - i, argv + i);
