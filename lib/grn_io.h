@@ -41,7 +41,7 @@ extern "C" {
 #ifdef WIN32
 # define GRN_IO_FILE_CREATE_MODE (GENERIC_READ | GENERIC_WRITE)
 #else /* WIN32 */
-# define GRN_IO_FILE_CREATE_MODE 0666
+# define GRN_IO_FILE_CREATE_MODE 0644
 #endif /* WIN32 */
 
 typedef enum {
