@@ -431,6 +431,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/command.rst \
 	$(top_srcdir)/doc/source/reference/command/command_version.rst \
 	$(top_srcdir)/doc/source/reference/command/output_format.rst \
+	$(top_srcdir)/doc/source/reference/command/request_id.rst \
 	$(top_srcdir)/doc/source/reference/command/return_code.rst \
 	$(top_srcdir)/doc/source/reference/commands/cache_limit.rst \
 	$(top_srcdir)/doc/source/reference/commands/check.rst \
@@ -453,6 +454,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/quit.rst \
 	$(top_srcdir)/doc/source/reference/commands/range_filter.rst \
 	$(top_srcdir)/doc/source/reference/commands/register.rst \
+	$(top_srcdir)/doc/source/reference/commands/request_cancel.rst \
 	$(top_srcdir)/doc/source/reference/commands/ruby_eval.rst \
 	$(top_srcdir)/doc/source/reference/commands/ruby_load.rst \
 	$(top_srcdir)/doc/source/reference/commands/select.rst \
@@ -986,6 +988,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/command.rst \
 	source/reference/command/command_version.rst \
 	source/reference/command/output_format.rst \
+	source/reference/command/request_id.rst \
 	source/reference/command/return_code.rst \
 	source/reference/commands/cache_limit.rst \
 	source/reference/commands/check.rst \
@@ -1008,6 +1011,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/quit.rst \
 	source/reference/commands/range_filter.rst \
 	source/reference/commands/register.rst \
+	source/reference/commands/request_cancel.rst \
 	source/reference/commands/ruby_eval.rst \
 	source/reference/commands/ruby_load.rst \
 	source/reference/commands/select.rst \
@@ -1289,6 +1293,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/command.txt \
 	html/_sources/reference/command/command_version.txt \
 	html/_sources/reference/command/output_format.txt \
+	html/_sources/reference/command/request_id.txt \
 	html/_sources/reference/command/return_code.txt \
 	html/_sources/reference/commands/cache_limit.txt \
 	html/_sources/reference/commands/check.txt \
@@ -1311,6 +1316,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/quit.txt \
 	html/_sources/reference/commands/range_filter.txt \
 	html/_sources/reference/commands/register.txt \
+	html/_sources/reference/commands/request_cancel.txt \
 	html/_sources/reference/commands/ruby_eval.txt \
 	html/_sources/reference/commands/ruby_load.txt \
 	html/_sources/reference/commands/select.txt \
@@ -1491,6 +1497,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/command.html \
 	html/reference/command/command_version.html \
 	html/reference/command/output_format.html \
+	html/reference/command/request_id.html \
 	html/reference/command/return_code.html \
 	html/reference/commands/cache_limit.html \
 	html/reference/commands/check.html \
@@ -1513,6 +1520,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/quit.html \
 	html/reference/commands/range_filter.html \
 	html/reference/commands/register.html \
+	html/reference/commands/request_cancel.html \
 	html/reference/commands/ruby_eval.html \
 	html/reference/commands/ruby_load.html \
 	html/reference/commands/select.html \
