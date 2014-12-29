@@ -7,6 +7,80 @@
 News
 ====
 
+.. _release-4-0-9:
+
+Release 4.0.9 - 2014-12-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/executables/groonga-httpd`] Marked as "stable".
+* [doc] Described about ``groonga-token-filter-stem`` package.
+  [GitHub#259] [Patch by Masafumi Yokoyama]
+* [build] Supported ``make install`` without ``make``.
+  [Reported by akira yamada]
+* [experimental] Added :doc:`/reference/commands/request_cancel`
+  command that cancels running request.
+* [experimental] Added :c:func:`grn_db_recover()`.
+* Supported indexing vector of fixed size data such as vector of
+  ``UInt64``.
+  [groonga-dev,03014] [Reported by funa 1g]
+* [experimental] Added :doc:`/reference/executables/grndb`.
+* [deb] Supported armhf architecture.
+* [:doc:`/reference/executables/groonga-server-http`] Supported HEAD.
+* [doc] Updated :doc:`/contribution/documentation/introduction`.
+  [GitHub#270] [Patch by Yuya TAMANO]
+* [doc] Updated :doc:`/install/others`.
+  [GitHub#271] [Patch by Hiroshi Hatake]
+* [:ref:`token-filter-stem`] Supported token that consists with only
+  upper-case alphabets, digits, ``-`` and ``\```. It means that
+  :ref:`token-filter-stem` can work with MySQL compatible normalizers.
+* [:doc:`/reference/commands/truncate`] Supported column.
+* [:doc:`/reference/commands/truncate`] Changed parameter name to
+  ``target_name`` from ``table``. ``table`` parameter can be used for
+  backward compatibility but it shouldn't used for newly written code.
+* Exported :c:func:`grn_column_truncate()`.
+* Added :doc:`/reference/commands/lock_clear`.
+* Marked :doc:`/reference/commands/clearlock` deprecated.
+* [backward incompatible] Stopped to set world writable permission for
+  newly created files on ``umask(0)`` environment such as daemoned
+  :doc:`/reference/executables/groonga-httpd`. It's a backward
+  incompatible change but done because the previous behavior has
+  a security risk.
+
+Fixes
+^^^^^
+
+* Fixed build error on BSD based system.
+  [GitHub#253] [Reported by Hiroshi Hatake]
+* Fixed build error on OS X.
+  [GitHub#253] [Reported by Hiroshi Hatake]
+* Fixed a regression bug that equal operation against nonexistent
+  reference always matches.
+* Fixed a crash bug that may be occurred by deleting or updating many
+  indexed values at once.
+  [groonga-dev,02942] [Reported by kashihara]
+* Fixed a regression bug that static index construction doesn't work
+  on BSD based system. [GitHub#264] [Reported by Ayumu Osanai]
+* Fixed a bug that ``--with-libstemmer`` configure option is ignored.
+* [deb] Fixed a bug that logrotate script has a syntax error.
+* Fixed a bug that grouped result can't be got when
+  :doc:`/reference/command/command version` is ``2``.
+  [GitHub ranguba/rroonga#38] [Reported by YUKI "Piro" Hiroshi]
+
+Thanks
+^^^^^^
+
+* Hiroshi Hatake
+* Masafumi Yokoyama
+* akira yamada
+* kashihara
+* Ayumu Osanai
+* funa 1g
+* YUKI "Piro" Hiroshi
+* Yuya TAMANO
+
 .. _release-4-0-8:
 
 Release 4.0.8 - 2014/11/29
