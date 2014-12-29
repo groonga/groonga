@@ -80,6 +80,16 @@ module Groonga
 
       def check(database)
         all_unlocked = true
+
+        if database.locked?
+          message =
+            "Database is locked. " +
+            "It may be broken. " +
+            "Re-create the database."
+          $stdout.puts(message)
+          all_unlocked = false
+        end
+
         database.each do |object|
           case object
           when IndexColumn
@@ -114,6 +124,7 @@ module Groonga
             all_unlocked = false
           end
         end
+
         all_unlocked
       end
     end
