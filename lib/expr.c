@@ -5658,6 +5658,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
         }
         GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                       ":", "filter(%d)", grn_table_size(ctx, res));
+        if (ctx->rc) { break; }
       }
       for (i = 0; i < n; i++) {
         scan_info *si = sis[i];
