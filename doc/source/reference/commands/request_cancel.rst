@@ -25,6 +25,10 @@ There are some limitations:
 
 See :doc:`/reference/command/request_id` about request ID.
 
+If request is canceled, the canceled request has ``-5``
+(``GRN_INTERRUPTED_FUNCTION_CALL``) as
+:doc:`/reference/command/return_code`.
+
 Syntax
 ------
 
@@ -70,6 +74,13 @@ changed to ``false`` from ``true``::
   $ curl 'http://localhost:10041/d/request_cancel?id=unique-id-1'
   [[...], {"id": "unique-id-1", "canceled": false}]
   # "select" is canceled or finished. ("canceled" is "false")
+
+If the ``select`` command is canceled, response of the ``select``
+command has ``-5`` (``GRN_INTERRUPTED_FUNCTION_CALL``) as
+:doc:`/reference/command/return_code`::
+
+  $ curl 'http://localhost:10041/d/select?table=LargeTable&filter=true&request_id=unique-id-1' &
+  [[-5, ...], ...]
 
 Parameters
 ----------
