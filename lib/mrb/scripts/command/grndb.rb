@@ -136,7 +136,7 @@ module Groonga
             message =
               "[#{object.name}] Index column is locked. " +
               "It may be broken. " +
-              "Re-create index by --action=recover."
+              "Re-create index by '#{@command} recover #{@database_path}'."
             $stdout.puts(message)
             @succeeded = false
           when Column
