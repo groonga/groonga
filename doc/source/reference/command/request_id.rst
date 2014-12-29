@@ -8,6 +8,8 @@ Request ID
 Summary
 -------
 
+.. versionadded:: 4.0.9
+
 You can assign ID to each request.
 
 The ID can be used by canceling the request. See also
