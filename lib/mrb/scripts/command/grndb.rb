@@ -25,9 +25,9 @@ module Groonga
 
         unless @executed
           if rest.empty?
-            $stderr.puts("No action is specified.")
+            $stderr.puts("No command is specified.")
           else
-            $stderr.puts("Unknown action: <#{rest.first}>")
+            $stderr.puts("Unknown command: <#{rest.first}>")
           end
           return false
         end
