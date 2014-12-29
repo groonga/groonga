@@ -377,6 +377,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Mon Dec 29 2014 Kouhei Sutou <kou@cozmixng.org> - 4.0.9-1
+- new upstream release.
+
 * Sat Nov 29 2014 HAYASHI Kentaro <hayashi@clear-code.com> - 4.0.8-1
 - new upstream release.
 - make groonga-httpd as default HTTP server package
