@@ -471,6 +471,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/example/reference/executables/groonga-suggest-httpd-launch.log \
 	$(top_srcdir)/doc/source/reference/example/reference/executables/groonga-suggest-httpd-setup.log \
 	$(top_srcdir)/doc/source/reference/executables.rst \
+	$(top_srcdir)/doc/source/reference/executables/grndb.rst \
 	$(top_srcdir)/doc/source/reference/executables/grnslap.rst \
 	$(top_srcdir)/doc/source/reference/executables/groonga-benchmark.rst \
 	$(top_srcdir)/doc/source/reference/executables/groonga-httpd.rst \
@@ -1028,6 +1029,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/example/reference/executables/groonga-suggest-httpd-launch.log \
 	source/reference/example/reference/executables/groonga-suggest-httpd-setup.log \
 	source/reference/executables.rst \
+	source/reference/executables/grndb.rst \
 	source/reference/executables/grnslap.rst \
 	source/reference/executables/groonga-benchmark.rst \
 	source/reference/executables/groonga-httpd.rst \
@@ -1331,6 +1333,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/tokenizer_list.txt \
 	html/_sources/reference/commands/truncate.txt \
 	html/_sources/reference/executables.txt \
+	html/_sources/reference/executables/grndb.txt \
 	html/_sources/reference/executables/grnslap.txt \
 	html/_sources/reference/executables/groonga-benchmark.txt \
 	html/_sources/reference/executables/groonga-httpd.txt \
@@ -1535,6 +1538,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/tokenizer_list.html \
 	html/reference/commands/truncate.html \
 	html/reference/executables.html \
+	html/reference/executables/grndb.html \
 	html/reference/executables/grnslap.html \
 	html/reference/executables/groonga-benchmark.html \
 	html/reference/executables/groonga-httpd.html \
