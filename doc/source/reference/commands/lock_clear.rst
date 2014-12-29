@@ -11,6 +11,8 @@
 Summary
 -------
 
+.. versionadded:: 4.0.9
+
 ``lock_clear`` command clear the lock of the target object
 recursively. The target object is one of database, table and column.
 
@@ -20,7 +22,6 @@ recursively. The target object is one of database, table and column.
    other process or thread is doing a write operation to the target
    object. If you do it, your database may be broken and/or your
    process may be crashed.
-
 
 Syntax
 ------
