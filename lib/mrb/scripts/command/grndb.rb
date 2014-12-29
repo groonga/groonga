@@ -3,6 +3,9 @@ module Groonga
     class Grndb
       def initialize(argv)
         @command, *@arguments = argv
+        @succeeded = true
+        @executed = false
+        @database_path = nil
       end
 
       def run
@@ -20,74 +23,110 @@ module Groonga
           return true
         end
 
-        if rest.size < 1
-          $stderr.puts("database path is missing")
+        unless @executed
+          if rest.empty?
+            $stderr.puts("No action is specified.")
+          else
+            $stderr.puts("Unknown action: <#{rest.first}>")
+          end
           return false
         end
 
-        succeeded = false
-        database = Groonga::Database.open(rest[0])
-        begin
-          succeeded = run_action(slop, database)
-        ensure
-          database.close
-        end
-        succeeded
+        @succeeded
       end
 
       private
-      ACTIONS = [:recover, :check]
-
       def create_slop
         slop = Slop.new
-        slop.banner = "Usage: #{File.basename(@command)} [options] DB_PATH"
-        slop.on("-h", "--help", "Display this help message.", :tail => true)
-        slop.on("--action=",
-                "Action to do. Available actions: #{format_actions}",
-                :default => ACTIONS.first,
-                :as => lambda {|value| action_value(value)})
+        command_name = File.basename(@command)
+        slop.banner = "Usage: #{command_name} command [options] DB_PATH"
+        slop_enable_help(slop)
+
+        slop.command "recover" do |command|
+          command.description "Recover database"
+          slop_enable_help(command)
+
+          command.run do |options, arguments|
+            run_command(options, arguments) do |database, new_arguments|
+              recover(database, options, new_arguments)
+            end
+          end
+        end
+
+        slop.command "check" do |command|
+          command.description "Check database"
+          slop_enable_help(command)
+
+          command.run do |options, arguments|
+            run_command(options, arguments) do |database, new_arguments|
+              check(database, options, new_arguments)
+            end
+          end
+        end
+
         slop
       end
 
-      def format_actions
-        "[#{ACTIONS.join(", ")}]"
+      def slop_enable_help(slop)
+        slop.on("-h", "--help", "Display this help message.", :tail => true)
       end
 
-      def action_value(value)
-        action = value.to_sym
-        case action
-        when *ACTIONS
-          action
-        else
-          message = "action must be one of #{format_actions}: #{value.inspect}"
-          raise Slop::InvalidArgumentError, message
+      def open_database(arguments)
+        if arguments.empty?
+          $stderr.puts("Database path is missing")
+          @succeesed = false
+          return
+        end
+
+        database = nil
+        @database_path, *rest_arguments = arguments
+        begin
+          database = Database.open(@database_path)
+        rescue Error => error
+          $stderr.puts("Failed to open database: <#{@database_path}>")
+          $stderr.puts(error.message)
+          @succeeded = false
+          return
+        end
+
+        begin
+          yield(database, rest_arguments)
+        ensure
+          database.close
         end
       end
 
-      def run_action(slop, database)
-        case slop[:action]
-        when :recover
-          recover(database)
-        when :check
-          check(database)
+      def run_command(options, arguments)
+        @executed = true
+
+        if options.help?
+          $stdout.puts(options.help)
+          return
+        end
+
+        open_database(arguments) do |database|
+          yield(database)
         end
       end
 
-      def recover(database)
-        database.recover
-        true
+      def recover(database, options, arguments)
+        begin
+          database.recover
+        rescue Error => error
+          $stderr.puts("Failed to recover database: <#{@database_path}>")
+          $stderr.puts(error.message)
+          @succeeded = false
+        end
       end
 
-      def check(database)
-        all_unlocked = true
-
+      def check(database, options, arguments)
         if database.locked?
           message =
             "Database is locked. " +
             "It may be broken. " +
             "Re-create the database."
           $stdout.puts(message)
-          all_unlocked = false
+          @succeeded = false
         end
 
         database.each do |object|
@@ -99,7 +138,7 @@ module Groonga
               "It may be broken. " +
               "Re-create index by --action=recover."
             $stdout.puts(message)
-            all_unlocked = false
+            @succeeded = false
           when Column
             next unless object.locked?
             name = object.name
@@ -110,7 +149,7 @@ module Groonga
               "clear lock of the column (lock_clear #{name}) " +
               "and (2) load data again."
             $stdout.puts(message)
-            all_unlocked = false
+            @succeeded = false
           when Table
             next unless object.locked?
             name = object.name
@@ -121,11 +160,9 @@ module Groonga
               "clear lock of the table (lock_clear #{name}) " +
               "and (2) load data again."
             $stdout.puts(message)
-            all_unlocked = false
+            @succeeded = false
           end
         end
-
-        all_unlocked
       end
     end
   end
