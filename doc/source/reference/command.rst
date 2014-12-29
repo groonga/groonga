@@ -16,5 +16,6 @@ This section describes about command and built-in commands.
 
    command/command_version
    command/output_format
+   command/request_id
    command/return_code
    commands/*
