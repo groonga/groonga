@@ -39,7 +39,7 @@ module Groonga
       def create_slop
         slop = Slop.new
         command_name = File.basename(@command)
-        slop.banner = "Usage: #{command_name} command [options] DB_PATH"
+        slop.banner = "Usage: #{command_name} COMMAND [OPTIONS] DB_PATH"
         slop_enable_help(slop)
 
         slop.command "recover" do |command|
