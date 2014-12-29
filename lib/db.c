@@ -11706,6 +11706,25 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
 }
 
 static void
+grn_db_recover_table(grn_ctx *ctx, grn_obj *table)
+{
+  if (!grn_obj_is_locked(ctx, table)) {
+    return;
+  }
+
+  {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    unsigned int name_size;
+    name_size = grn_obj_name(ctx, table, name, GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_OBJECT_CORRUPT,
+        "[db][recover] table may be broken: <%.*s>: "
+        "please truncate the table (or clear lock of the table) "
+        "and load data again",
+        (int)name_size, name);
+  }
+}
+
+static void
 grn_db_recover_data_column(grn_ctx *ctx, grn_obj *data_column)
 {
   if (!grn_obj_is_locked(ctx, data_column)) {
@@ -11757,6 +11776,12 @@ grn_db_recover(grn_ctx *ctx, grn_obj *db)
 
     if ((object = grn_ctx_at(ctx, id))) {
       switch (object->header.type) {
+      case GRN_TABLE_NO_KEY :
+      case GRN_TABLE_HASH_KEY :
+      case GRN_TABLE_PAT_KEY :
+      case GRN_TABLE_DAT_KEY :
+        grn_db_recover_table(ctx, object);
+        break;
       case GRN_COLUMN_FIX_SIZE :
       case GRN_COLUMN_VAR_SIZE :
         grn_db_recover_data_column(ctx, object);
