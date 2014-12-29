@@ -42,17 +42,6 @@ module Groonga
         slop.banner = "Usage: #{command_name} COMMAND [OPTIONS] DB_PATH"
         slop_enable_help(slop)
 
-        slop.command "recover" do |command|
-          command.description "Recover database"
-          slop_enable_help(command)
-
-          command.run do |options, arguments|
-            run_command(options, arguments) do |database, new_arguments|
-              recover(database, options, new_arguments)
-            end
-          end
-        end
-
         slop.command "check" do |command|
           command.description "Check database"
           slop_enable_help(command)
@@ -60,6 +49,17 @@ module Groonga
           command.run do |options, arguments|
             run_command(options, arguments) do |database, new_arguments|
               check(database, options, new_arguments)
+            end
+          end
+        end
+
+        slop.command "recover" do |command|
+          command.description "Recover database"
+          slop_enable_help(command)
+
+          command.run do |options, arguments|
+            run_command(options, arguments) do |database, new_arguments|
+              recover(database, options, new_arguments)
             end
           end
         end
