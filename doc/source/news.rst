@@ -15,7 +15,7 @@ Release 4.0.9 - 2014-12-29
 Improvements
 ^^^^^^^^^^^^
 
-* [:doc:`/reference/executables/groonga-httpd`] Marked as "stable".
+* [:doc:`/reference/executables/groonga-httpd`] Marked as stable.
 * [doc] Described about ``groonga-token-filter-stem`` package.
   [GitHub#259] [Patch by Masafumi Yokoyama]
 * [build] Supported ``make install`` without ``make``.
@@ -34,7 +34,7 @@ Improvements
 * [doc] Updated :doc:`/install/others`.
   [GitHub#271] [Patch by Hiroshi Hatake]
 * [:ref:`token-filter-stem`] Supported token that consists with only
-  upper-case alphabets, digits, ``-`` and ``\```. It means that
+  upper-case alphabets, digits, ``-`` and ``'``. It means that
   :ref:`token-filter-stem` can work with MySQL compatible normalizers.
 * [:doc:`/reference/commands/truncate`] Supported column.
 * [:doc:`/reference/commands/truncate`] Changed parameter name to
@@ -66,7 +66,7 @@ Fixes
 * Fixed a bug that ``--with-libstemmer`` configure option is ignored.
 * [deb] Fixed a bug that logrotate script has a syntax error.
 * Fixed a bug that grouped result can't be got when
-  :doc:`/reference/command/command version` is ``2``.
+  :doc:`/reference/command/command_version` is ``2``.
   [GitHub ranguba/rroonga#38] [Reported by YUKI "Piro" Hiroshi]
 
 Thanks
