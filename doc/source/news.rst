@@ -24,7 +24,7 @@ Improvements
   [groonga-dev,02902] [Reported by Atsushi Shinoda]
 * [experimental] :doc:`/reference/functions/in_values` supports auto sequential
   search mode. There is a case that sequential search is faster than index search when
-  the number of narrowed down records is small enough in contrast to 
+  the number of narrowed down records is small enough in contrast to
   the number of expected records to narrow down by ``in_values`` with
   ``AND`` operation which use indexes.
   The value of ``GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO`` is used as
