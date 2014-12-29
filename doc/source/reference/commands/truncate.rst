@@ -20,7 +20,7 @@ The required parameter is only ``target_name``::
 
   truncate target_name
 
-.. note::
+.. versionadded:: 4.0.9
 
    ``target_name`` parameter can be used since 4.0.9. You need to use
    ``table`` parameter for 4.0.8 or earlier.
