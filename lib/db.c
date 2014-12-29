@@ -11706,6 +11706,17 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
 }
 
 static void
+grn_db_recover_database(grn_ctx *ctx, grn_obj *db)
+{
+  if (!grn_obj_is_locked(ctx, db)) {
+    return;
+  }
+
+  ERR(GRN_OBJECT_CORRUPT,
+      "[db][recover] database may be broken. Please re-create the database");
+}
+
+static void
 grn_db_recover_table(grn_ctx *ctx, grn_obj *table)
 {
   if (!grn_obj_is_locked(ctx, table)) {
@@ -11763,6 +11774,12 @@ grn_db_recover(grn_ctx *ctx, grn_obj *db)
   grn_id id;
 
   GRN_API_ENTER;
+
+  grn_db_recover_database(ctx, db);
+  if (ctx->rc != GRN_SUCCESS) {
+    GRN_API_RETURN(ctx->rc);
+  }
+
   cursor = grn_table_cursor_open(ctx, db,
                                  NULL, 0, NULL, 0,
                                  0, -1,
