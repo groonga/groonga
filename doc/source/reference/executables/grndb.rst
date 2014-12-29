@@ -12,7 +12,7 @@ Summary
 
    This executable command is an experimental feature.
 
-.. vesionadded:: 4.0.9
+.. versionadded:: 4.0.9
 
 ``grndb`` manages a Groonga database.
 
