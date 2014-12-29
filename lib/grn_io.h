@@ -38,6 +38,12 @@ extern "C" {
 # define GRN_IO_UPDATE     grn_io_rdwr
 #endif /* WIN32 */
 
+#ifdef WIN32
+# define GRN_IO_FILE_CREATE_MODE (GENERIC_READ | GENERIC_WRITE)
+#else /* WIN32 */
+# define GRN_IO_FILE_CREATE_MODE 0666
+#endif /* WIN32 */
+
 typedef enum {
   grn_io_rdonly,
   grn_io_wronly,

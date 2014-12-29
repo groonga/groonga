@@ -1357,7 +1357,7 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
     } else {
       dwCreationDisposition = OPEN_ALWAYS;
     }
-    fi->fh = CreateFile(path, GENERIC_READ | GENERIC_WRITE,
+    fi->fh = CreateFile(path, GRN_IO_FILE_CREATE_MODE,
                         FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
                         dwCreationDisposition, FILE_ATTRIBUTE_NORMAL, 0);
     if (fi->fh == INVALID_HANDLE_VALUE) {
@@ -1368,7 +1368,7 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
   }
   if ((flags & O_TRUNC)) {
     CloseHandle(fi->fh);
-    fi->fh = CreateFile(path, GENERIC_READ | GENERIC_WRITE,
+    fi->fh = CreateFile(path, GRN_IO_FILE_CREATE_MODE,
                         FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
                         TRUNCATE_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
     if (fi->fh == INVALID_HANDLE_VALUE) {
@@ -1378,7 +1378,7 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
     goto exit;
   }
   /* O_RDWR only */
-  fi->fh = CreateFile(path, GENERIC_READ | GENERIC_WRITE,
+  fi->fh = CreateFile(path, GRN_IO_FILE_CREATE_MODE,
                       FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
                       OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
   if (fi->fh == INVALID_HANDLE_VALUE) {
@@ -1471,7 +1471,7 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
     } else {
       dwCreationDisposition = OPEN_ALWAYS;
     }
-    fi->fh = CreateFile(path, GENERIC_READ | GENERIC_WRITE,
+    fi->fh = CreateFile(path, GRN_IO_FILE_CREATE_MODE,
                         FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
                         dwCreationDisposition, FILE_ATTRIBUTE_NORMAL, 0);
     if (fi->fh == INVALID_HANDLE_VALUE) {
@@ -1483,7 +1483,7 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
   if ((flags & O_TRUNC)) {
     CloseHandle(fi->fh);
     /* unable to assign OPEN_ALWAYS and TRUNCATE_EXISTING at once */
-    fi->fh = CreateFile(path, GENERIC_READ | GENERIC_WRITE,
+    fi->fh = CreateFile(path, GRN_IO_FILE_CREATE_MODE,
                         FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
                         TRUNCATE_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
     if (fi->fh == INVALID_HANDLE_VALUE) {
@@ -1493,7 +1493,7 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
     goto exit;
   }
   /* O_RDWR only */
-  fi->fh = CreateFile(path, GENERIC_READ | GENERIC_WRITE,
+  fi->fh = CreateFile(path, GRN_IO_FILE_CREATE_MODE,
                       FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
                       OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
   if (fi->fh == INVALID_HANDLE_VALUE) {
@@ -1666,7 +1666,7 @@ inline static grn_rc
 grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize)
 {
   struct stat st;
-  if ((fi->fd = GRN_OPEN(path, flags, 0666)) == -1) {
+  if ((fi->fd = GRN_OPEN(path, flags, GRN_IO_FILE_CREATE_MODE)) == -1) {
     SERR(path);
     return ctx->rc;
   }
