@@ -92,6 +92,10 @@ Files: vendor/mruby/parse.c
 Copyright: 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
 License: GPL-3+-WITH-BISON-EXCEPTION
 
+Files: vendor/mruby/mruby-onig-regexp/src/mruby_onig_regexp.c
+Copyright: 2014 mattn <mattn.jp@gmail.com>
+License: MIT
+
 Files: vendor/mruby/mruby-io/*
 Copyright: 2013 Internet Initiative Japan Inc.
 License: MIT
