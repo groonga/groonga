@@ -4870,6 +4870,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
               "invalid expression: can't use column as a value: %.*s",
               (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
           GRN_OBJ_FIN(ctx, &inspected);
+          SI_FREE(si);
           for (j = 0; j < i; j++) { SI_FREE(sis[j]); }
           GRN_FREE(sis);
           return NULL;
