@@ -27,7 +27,7 @@ select Sites --filter "_key @ uri"
 
   ]
 ]
-#|e| RuntimeError: invalid expression: can't use column as a value: <Sites.uri>: <#<expr
+#|e| invalid expression: can't use column as a value: <Sites.uri>: <#<expr
   vars:{
     $1:#<record:hash:Sites id:(no value)>
   },

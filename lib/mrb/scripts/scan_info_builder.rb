@@ -103,7 +103,7 @@ module Groonga
             status = Status::COL1
             data.args << code.value
           when Status::COL1
-            raise "invalid expression: can't use column as a value: <#{code.value.name}>: <#{@expression.grn_inspect}>"
+            raise ErrorMessage, "invalid expression: can't use column as a value: <#{code.value.name}>: <#{@expression.grn_inspect}>"
             status = Status::COL2
           when Status::COL2
             # Do nothing
@@ -128,7 +128,7 @@ module Groonga
         first_data = @data_list.first
         if (first_data.flags & ScanInfo::Flags::PUSH) == 0 or
             first_data.logical_op != @operator
-          raise "invalid expr"
+          raise ErrorMessage, "invalid expr"
         else
           first_data.flags &= ~ScanInfo::Flags::PUSH
           first_data.logical_op = @operator
@@ -257,7 +257,7 @@ module Groonga
         end
 
         if j < 0
-          raise GRN_INVALID_ARGUMENT.new("unmatched nesting level")
+          raise ErrorMessage, "unmatched nesting level"
         end
       end
     end

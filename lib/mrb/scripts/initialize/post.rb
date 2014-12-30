@@ -1,3 +1,5 @@
+require "error"
+
 require "database"
 require "table_cursor"
 

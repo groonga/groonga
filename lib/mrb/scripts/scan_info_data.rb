@@ -57,7 +57,7 @@ module Groonga
       else
         message =
           "The first argument of NEAR/NEAR2 must be Expression, Accessor or Object: #{arg.class}"
-        raise message
+        raise ErrorMessage, message
       end
 
       self.query = @args[1]
@@ -80,7 +80,7 @@ module Groonga
       else
         message =
           "The first argument of SIMILAR must be Expression, Accessor or Object: #{arg.class}"
-        raise message
+        raise ErrorMesesage, message
       end
 
       self.query = @args[1]
