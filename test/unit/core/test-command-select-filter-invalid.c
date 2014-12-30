@@ -24,7 +24,6 @@
 #include "../lib/grn-assertions.h"
 
 void test_no_operator_and_parentheses_column(void);
-void test_match_against_not_string(void);
 
 static gchar *tmp_directory;
 
@@ -101,19 +100,4 @@ test_no_operator_and_parentheses_column(void)
     GRN_INVALID_ARGUMENT,
     "invalid function: <\"groonga\">",
     "select Sites --filter \"_key != \\\"groonga\\\" ()\"");
-}
-
-void
-test_match_against_not_string(void)
-{
-  grn_test_assert_send_command_error(
-    context,
-    GRN_INVALID_ARGUMENT,
-    "invalid expression: can't use column as a value: "
-    "<Sites.uri>: "
-    "<#<expr\n"
-    "  vars:{\n"
-    "    $1:#<record:hash:Sites id:0(nonexistent)>\n"
-    "  ",
-    "select Sites --filter \"_key @ uri");
 }

@@ -1,0 +1,39 @@
+table_create Sites TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Sites uri COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms sites_key COLUMN_INDEX|WITH_SECTION Sites _key
+[[0,0.0,0.0],true]
+load --table Sites
+[
+["_key", "uri"],
+["Groonga", "http://groonga.org/"],
+["Mroonga", "http://mroonga.org/"]
+]
+[[0,0.0,0.0],2]
+select Sites --filter "_key @ uri"
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "invalid expression: can't use column as a value: <Sites.uri>: <#<expr\n  vars:{\n    $1:#<record:hash:Sites id:(no value)>\n  },\n "
+  ],
+  [
+
+  ]
+]
+#|e| RuntimeError: invalid expression: can't use column as a value: <Sites.uri>: <#<expr
+  vars:{
+    $1:#<record:hash:Sites id:(no value)>
+  },
+  codes:{
+    0:<get_value(), modify:2, value:_key>,
+    1:<get_value(), modify:0, value:#<column:var_size Sites.uri range:ShortText type:scalar compress:none>>,
+    2:<match(), modify:0, value:(NULL)>
+  }
+>>

@@ -1,0 +1,16 @@
+table_create Sites TABLE_HASH_KEY ShortText
+column_create Sites uri COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Terms sites_key COLUMN_INDEX|WITH_SECTION Sites _key
+
+load --table Sites
+[
+["_key", "uri"],
+["Groonga", "http://groonga.org/"],
+["Mroonga", "http://mroonga.org/"]
+]"
+
+select Sites --filter "_key @ uri"
