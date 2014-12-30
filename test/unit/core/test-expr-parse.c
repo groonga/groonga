@@ -291,7 +291,7 @@ test_parse(gconstpointer data)
     &context,
     "#<expr\n"
     "  vars:{\n"
-    "    $1:#<record:no_key:docs id:0(nonexistent)>\n"
+    "    $1:#<record:no_key:docs id:(no value)>\n"
     "  },\n"
     "  codes:{\n"
     "    0:<get_value(), modify:2, "
@@ -338,7 +338,7 @@ test_parse(gconstpointer data)
     &context,
     "#<expr\n"
     "  vars:{\n"
-    "    $1:#<record:no_key:docs id:0(nonexistent)>\n"
+    "    $1:#<record:no_key:docs id:(no value)>\n"
     "  },\n"
     "  codes:{\n"
     "    0:<get_value(), modify:2, "
@@ -901,7 +901,7 @@ test_syntax_equal_string_reference_key(void)
     &context,
     "#<expr\n"
     "  vars:{\n"
-    "    $1:#<record:no_key:docs id:0(nonexistent)>\n"
+    "    $1:#<record:no_key:docs id:(no value)>\n"
     "  },\n"
     "  codes:{\n"
     "    0:<get_value(), modify:2, "
