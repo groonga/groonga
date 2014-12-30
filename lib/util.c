@@ -952,7 +952,6 @@ grn_json_load_open_brace_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 static grn_rc
 grn_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
-  grn_id id;
   grn_obj *table;
   grn_hash *cols;
 
@@ -969,6 +968,11 @@ grn_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   }
 
   GRN_TEXT_PUTS(ctx, buf, " id:");
+  if (GRN_BULK_VSIZE(obj) == 0) {
+    GRN_TEXT_PUTS(ctx, buf, "(no value)");
+  } else {
+    grn_id id;
+
   id = GRN_RECORD_VALUE(obj);
   grn_text_lltoa(ctx, buf, id);
 
@@ -1005,6 +1009,8 @@ grn_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   } else {
     GRN_TEXT_PUTS(ctx, buf, "(nonexistent)");
   }
+  }
+
   GRN_TEXT_PUTS(ctx, buf, ">");
 
   if (table) {
