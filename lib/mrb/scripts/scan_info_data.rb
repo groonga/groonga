@@ -127,6 +127,8 @@ module Groonga
             i += 2
           end
           put_index(value, section_id, code.weight)
+        else
+          raise ErrorMessage, "invalid match target: <#{value.name}>"
         end
         i += 1
       end
