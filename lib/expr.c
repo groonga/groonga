@@ -4624,6 +4624,90 @@ scan_info_build_find_index_column_index(grn_ctx *ctx,
   return offset;
 }
 
+static void
+scan_info_build_match(grn_ctx *ctx, scan_info *si)
+{
+  int sid;
+  grn_obj *index, **p = si->args, **pe = si->args + si->nargs;
+  for (; p < pe; p++) {
+    if ((*p)->header.type == GRN_EXPR) {
+      uint32_t j;
+      grn_expr_code *ec;
+      grn_expr *e = (grn_expr *)(*p);
+      for (j = e->codes_curr, ec = e->codes; j--; ec++) {
+        if (ec->value) {
+          switch (ec->value->header.type) {
+          case GRN_ACCESSOR :
+            if (grn_column_index(ctx, ec->value, si->op, &index, 1, &sid)) {
+              int32_t weight = get_weight(ctx, ec);
+              si->flags |= SCAN_ACCESSOR;
+              if (((grn_accessor *)ec->value)->next) {
+                scan_info_put_index(ctx, si, ec->value, sid, weight);
+              } else {
+                scan_info_put_index(ctx, si, index, sid, weight);
+              }
+            }
+            break;
+          case GRN_COLUMN_FIX_SIZE :
+          case GRN_COLUMN_VAR_SIZE :
+            if (grn_column_index(ctx, ec->value, si->op, &index, 1, &sid)) {
+              scan_info_put_index(ctx, si, index, sid, get_weight(ctx, ec));
+            }
+            break;
+          case GRN_COLUMN_INDEX :
+            {
+              uint32_t offset;
+              offset = scan_info_build_find_index_column_index(ctx, si, ec,
+                                                               j, si->op);
+              j -= offset;
+              ec += offset;
+            }
+            break;
+          }
+        }
+      }
+    } else if (GRN_DB_OBJP(*p)) {
+      if (grn_column_index(ctx, *p, si->op, &index, 1, &sid)) {
+        scan_info_put_index(ctx, si, index, sid, 1);
+      }
+    } else if (GRN_ACCESSORP(*p)) {
+      si->flags |= SCAN_ACCESSOR;
+      if (grn_column_index(ctx, *p, si->op, &index, 1, &sid)) {
+        if (((grn_accessor *)(*p))->next) {
+          scan_info_put_index(ctx, si, *p, sid, 1);
+        } else {
+          scan_info_put_index(ctx, si, index, sid, 1);
+        }
+      }
+    } else {
+      switch (si->op) {
+      case GRN_OP_NEAR :
+      case GRN_OP_NEAR2 :
+        if (si->nargs == 3 &&
+            *p == si->args[2] &&
+            (*p)->header.domain == GRN_DB_INT32) {
+          si->max_interval = GRN_INT32_VALUE(*p);
+        } else {
+          si->query = *p;
+        }
+        break;
+      case GRN_OP_SIMILAR :
+        if (si->nargs == 3 &&
+            *p == si->args[2] &&
+            (*p)->header.domain == GRN_DB_INT32) {
+          si->similarity_threshold = GRN_INT32_VALUE(*p);
+        } else {
+          si->query = *p;
+        }
+        break;
+      default :
+        si->query = *p;
+        break;
+      }
+    }
+  }
+}
+
 static scan_info **
 scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                 grn_operator op, uint32_t size)
@@ -4742,87 +4826,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
       si->op = c->op;
       si->end = c - e->codes;
       sis[i++] = si;
-      {
-        int sid;
-        grn_obj *index, **p = si->args, **pe = si->args + si->nargs;
-        for (; p < pe; p++) {
-          if ((*p)->header.type == GRN_EXPR) {
-            uint32_t j;
-            grn_expr_code *ec;
-            grn_expr *e = (grn_expr *)(*p);
-            for (j = e->codes_curr, ec = e->codes; j--; ec++) {
-              if (ec->value) {
-                switch (ec->value->header.type) {
-                case GRN_ACCESSOR :
-                  if (grn_column_index(ctx, ec->value, c->op, &index, 1, &sid)) {
-                    int32_t weight = get_weight(ctx, ec);
-                    si->flags |= SCAN_ACCESSOR;
-                    if (((grn_accessor *)ec->value)->next) {
-                      scan_info_put_index(ctx, si, ec->value, sid, weight);
-                    } else {
-                      scan_info_put_index(ctx, si, index, sid, weight);
-                    }
-                  }
-                  break;
-                case GRN_COLUMN_FIX_SIZE :
-                case GRN_COLUMN_VAR_SIZE :
-                  if (grn_column_index(ctx, ec->value, c->op, &index, 1, &sid)) {
-                    scan_info_put_index(ctx, si, index, sid, get_weight(ctx, ec));
-                  }
-                  break;
-                case GRN_COLUMN_INDEX :
-                  {
-                    uint32_t offset;
-                    offset = scan_info_build_find_index_column_index(ctx, si, ec,
-                                                                     j, c->op);
-                    j -= offset;
-                    ec += offset;
-                  }
-                  break;
-                }
-              }
-            }
-          } else if (GRN_DB_OBJP(*p)) {
-            if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
-              scan_info_put_index(ctx, si, index, sid, 1);
-            }
-          } else if (GRN_ACCESSORP(*p)) {
-            si->flags |= SCAN_ACCESSOR;
-            if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
-              if (((grn_accessor *)(*p))->next) {
-                scan_info_put_index(ctx, si, *p, sid, 1);
-              } else {
-                scan_info_put_index(ctx, si, index, sid, 1);
-              }
-            }
-          } else {
-            switch (c->op) {
-            case GRN_OP_NEAR :
-            case GRN_OP_NEAR2 :
-              if (si->nargs == 3 &&
-                  *p == si->args[2] &&
-                  (*p)->header.domain == GRN_DB_INT32) {
-                si->max_interval = GRN_INT32_VALUE(*p);
-              } else {
-                si->query = *p;
-              }
-              break;
-            case GRN_OP_SIMILAR :
-              if (si->nargs == 3 &&
-                  *p == si->args[2] &&
-                  (*p)->header.domain == GRN_DB_INT32) {
-                si->similarity_threshold = GRN_INT32_VALUE(*p);
-              } else {
-                si->query = *p;
-              }
-              break;
-            default :
-              si->query = *p;
-              break;
-            }
-          }
-        }
-      }
+      scan_info_build_match(ctx, si);
       si = NULL;
       break;
     case GRN_OP_AND :
