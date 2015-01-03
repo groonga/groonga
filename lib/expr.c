@@ -4663,6 +4663,18 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si)
               ec += offset;
             }
             break;
+          default :
+            {
+              char name[GRN_TABLE_MAX_KEY_SIZE];
+              int name_size;
+              name_size = grn_obj_name(ctx, ec->value,
+                                       name, GRN_TABLE_MAX_KEY_SIZE);
+              ERR(GRN_INVALID_ARGUMENT,
+                  "invalid match target: <%.*s>",
+                  name_size, name);
+              return;
+            }
+            break;
           }
         }
       }
@@ -4827,6 +4839,12 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
       si->end = c - e->codes;
       sis[i++] = si;
       scan_info_build_match(ctx, si);
+      if (ctx->rc != GRN_SUCCESS) {
+        int j;
+        for (j = 0; j < i; j++) { SI_FREE(sis[j]); }
+        GRN_FREE(sis);
+        return NULL;
+      }
       si = NULL;
       break;
     case GRN_OP_AND :
