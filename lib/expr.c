@@ -4663,7 +4663,10 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si)
               ec += offset;
             }
             break;
-          default :
+          case GRN_TABLE_NO_KEY :
+          case GRN_TABLE_HASH_KEY :
+          case GRN_TABLE_PAT_KEY :
+          case GRN_TABLE_DAT_KEY :
             {
               char name[GRN_TABLE_MAX_KEY_SIZE];
               int name_size;
