@@ -21,6 +21,7 @@
 #include "grn_ctx.h"
 #include "grn_store.h"
 
+#include <groonga/command.h>
 #include <groonga/token_filter.h>
 
 #ifdef __cplusplus
@@ -180,6 +181,9 @@ struct _grn_proc {
   grn_selector_func *selector;
 
   union {
+    struct {
+      grn_command_run_func *run;
+    } command;
     struct {
       grn_token_filter_init_func   *init;
       grn_token_filter_filter_func *filter;

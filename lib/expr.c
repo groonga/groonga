@@ -2955,7 +2955,16 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
   uint32_t stack_curr = ctx->impl->stack_curr;
   GRN_API_ENTER;
   if (expr->header.type == GRN_PROC) {
-    grn_proc_call(ctx, expr, nargs, expr);
+    grn_proc *proc = (grn_proc *)expr;
+    if (proc->type == GRN_PROC_COMMAND) {
+      grn_command_input *input;
+      input = grn_command_input_open(ctx, expr);
+      grn_command_run(ctx, expr, input);
+      grn_command_input_close(ctx, input);
+      GRN_API_RETURN(NULL);
+    } else {
+      grn_proc_call(ctx, expr, nargs, expr);
+    }
   } else {
     grn_expr *e = (grn_expr *)expr;
     register grn_obj **s_ = ctx->impl->stack, *s0 = NULL, *s1 = NULL, **sp, *vp = e->values;

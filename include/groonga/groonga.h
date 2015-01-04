@@ -119,6 +119,7 @@ typedef enum {
   GRN_UNSUPPORTED_COMMAND_VERSION = -71,
   GRN_NORMALIZER_ERROR = -72,
   GRN_TOKEN_FILTER_ERROR = -73,
+  GRN_COMMAND_ERROR = -74,
 } grn_rc;
 
 GRN_API grn_rc grn_init(void);

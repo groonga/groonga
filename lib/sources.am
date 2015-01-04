@@ -1,6 +1,7 @@
 libgroonga_la_SOURCES =				\
 	com.c					\
 	grn_com.h				\
+	command.c				\
 	ctx.c					\
 	grn_ctx.h				\
 	grn_ctx_impl.h				\
