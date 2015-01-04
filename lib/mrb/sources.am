@@ -7,6 +7,10 @@ libgrnmrb_la_SOURCES =				\
 	mrb_bulk.h				\
 	mrb_column.c				\
 	mrb_column.h				\
+	mrb_command.c				\
+	mrb_command.h				\
+	mrb_command_input.c			\
+	mrb_command_input.h			\
 	mrb_converter.c				\
 	mrb_converter.h				\
 	mrb_ctx.c				\

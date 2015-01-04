@@ -44,6 +44,8 @@
 #include "mrb/mrb_expr.h"
 #include "mrb/mrb_accessor.h"
 #include "mrb/mrb_procedure.h"
+#include "mrb/mrb_command.h"
+#include "mrb/mrb_command_input.h"
 #include "mrb/mrb_table_cursor.h"
 #include "mrb/mrb_table_cursor_flags.h"
 
@@ -119,6 +121,8 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   grn_mrb_expr_init(ctx);
   grn_mrb_accessor_init(ctx);
   grn_mrb_procedure_init(ctx);
+  grn_mrb_command_init(ctx);
+  grn_mrb_command_input_init(ctx);
   grn_mrb_table_cursor_init(ctx);
   grn_mrb_table_cursor_flags_init(ctx);
 
