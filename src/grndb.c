@@ -32,18 +32,18 @@ run_command(grn_ctx *ctx, int argc, char **argv)
   int exit_code = EXIT_SUCCESS;
   grn_mrb_data *data = &(ctx->impl->mrb);
   mrb_state *mrb = data->state;
-  mrb_value mrb_command_module;
+  mrb_value mrb_command_line_module;
   mrb_value mrb_grndb_class;
 
-  mrb_command_module = mrb_const_get(mrb,
-                                     mrb_obj_value(data->module),
-                                     mrb_intern_cstr(mrb, "Command"));
+  mrb_command_line_module = mrb_const_get(mrb,
+                                          mrb_obj_value(data->module),
+                                          mrb_intern_cstr(mrb, "CommandLine"));
   if (mrb->exc) {
     goto exit;
   }
 
   mrb_grndb_class = mrb_const_get(mrb,
-                                  mrb_command_module,
+                                  mrb_command_line_module,
                                   mrb_intern_cstr(mrb, "Grndb"));
   if (mrb->exc) {
     goto exit;

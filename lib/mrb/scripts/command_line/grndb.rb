@@ -1,5 +1,5 @@
 module Groonga
-  module Command
+  module CommandLine
     class Grndb
       def initialize(argv)
         @command, *@arguments = argv
