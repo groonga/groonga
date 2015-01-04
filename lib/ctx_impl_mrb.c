@@ -143,6 +143,10 @@ grn_ctx_impl_mrb_init(grn_ctx *ctx)
     ctx->impl->mrb.state = mrb_open();
     ctx->impl->mrb.base_directory[0] = '\0';
     grn_ctx_impl_mrb_init_bindings(ctx);
+    /* TODO: Implement better error handling on init. */
+    if (ctx->impl->mrb.state->exc) {
+      mrb_print_error(ctx->impl->mrb.state);
+    }
   }
 }
 
