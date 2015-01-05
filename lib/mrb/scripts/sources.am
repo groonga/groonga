@@ -14,6 +14,7 @@ RUBY_SCRIPT_FILES =				\
 	initialize/post.rb			\
 	logger.rb				\
 	logger/level.rb				\
+	plugin_loader.rb			\
 	require.rb				\
 	scan_info.rb				\
 	scan_info_builder.rb			\

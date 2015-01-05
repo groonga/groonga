@@ -99,6 +99,8 @@ struct _grn_mrb_data {
   char base_directory[PATH_MAX];
   struct RClass *module;
   struct RClass *object_class;
+  grn_hash *checked_procs;
+  grn_hash *registered_plugins;
 };
 #endif
 

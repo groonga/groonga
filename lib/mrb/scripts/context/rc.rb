@@ -96,6 +96,7 @@ module Groonga
       NORMALIZER_ERROR                    = new(:normalizer_error, -72)
       TOKEN_FILTER_ERROR                  = new(:token_filter, -73)
       COMMAND_ERROR                       = new(:command_error, -74)
+      PLUGIN_ERROR                        = new(:plugin_error, -75)
     end
   end
 end

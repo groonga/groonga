@@ -139,6 +139,8 @@ grn_ctx_impl_mrb_init(grn_ctx *ctx)
     ctx->impl->mrb.base_directory[0] = '\0';
     ctx->impl->mrb.module = NULL;
     ctx->impl->mrb.object_class = NULL;
+    ctx->impl->mrb.checked_procs = NULL;
+    ctx->impl->mrb.registered_plugins = NULL;
   } else {
     ctx->impl->mrb.state = mrb_open();
     ctx->impl->mrb.base_directory[0] = '\0';
@@ -147,6 +149,10 @@ grn_ctx_impl_mrb_init(grn_ctx *ctx)
     if (ctx->impl->mrb.state->exc) {
       mrb_print_error(ctx->impl->mrb.state);
     }
+    ctx->impl->mrb.checked_procs =
+      grn_hash_create(ctx, NULL, sizeof(grn_id), 0, GRN_HASH_TINY);
+    ctx->impl->mrb.registered_plugins =
+      grn_hash_create(ctx, NULL, sizeof(grn_id), 0, GRN_HASH_TINY);
   }
 }
 
@@ -156,6 +162,8 @@ grn_ctx_impl_mrb_fin(grn_ctx *ctx)
   if (ctx->impl->mrb.state) {
     mrb_close(ctx->impl->mrb.state);
     ctx->impl->mrb.state = NULL;
+    grn_hash_close(ctx, ctx->impl->mrb.checked_procs);
+    grn_hash_close(ctx, ctx->impl->mrb.registered_plugins);
   }
 }
 #else
