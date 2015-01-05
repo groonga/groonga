@@ -590,12 +590,14 @@ grn_proc_create(grn_ctx *ctx, const char *name, int name_size, grn_proc_type typ
     if (!added) {
       db_value *vp;
       if ((vp = grn_tiny_array_at(&s->values, id)) && (res = (grn_proc *)vp->ptr)) {
+        /* TODO: Do more robust check. */
         if (res->funcs[PROC_INIT] ||
             res->funcs[PROC_NEXT] ||
             res->funcs[PROC_FIN]) {
           ERR(GRN_INVALID_ARGUMENT, "already used name");
           GRN_API_RETURN(NULL);
         }
+        GRN_API_RETURN((grn_obj *)res);
       } else {
         added = 1;
       }
