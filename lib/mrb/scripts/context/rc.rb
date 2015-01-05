@@ -94,6 +94,8 @@ module Groonga
       CAS_ERROR                           = new(:cas_error, -70)
       UNSUPPORTED_COMMAND_VERSION         = new(:unsupported_command_version, -71)
       NORMALIZER_ERROR                    = new(:normalizer_error, -72)
+      TOKEN_FILTER_ERROR                  = new(:token_filter, -73)
+      COMMAND_ERROR                       = new(:command_error, -74)
     end
   end
 end
