@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2012-2013 Brazil
+  Copyright(C) 2012-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -118,7 +118,7 @@ grn_plugin_path(grn_ctx *ctx, grn_id id)
 #define GRN_PLUGIN_FUNC_PREFIX "grn_plugin_impl_"
 
 static grn_rc
-grn_plugin_call_init (grn_ctx *ctx, grn_id id)
+grn_plugin_call_init(grn_ctx *ctx, grn_id id)
 {
   grn_plugin *plugin;
   if (!grn_hash_get_value(&grn_gctx, grn_plugins, id, &plugin)) {
