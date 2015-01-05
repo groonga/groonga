@@ -5,7 +5,7 @@ module Groonga
 
       class << self
         def find(name)
-          @@names[name]
+          @@names[name] || UNKNOWN_ERROR
         end
       end
 
