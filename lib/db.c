@@ -8564,7 +8564,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
         }
       }
       res = vp->ptr;
-      if (res->header.type == GRN_PROC) {
+      if (res && res->header.type == GRN_PROC) {
         grn_plugin_ensure_registered(ctx, res);
       }
     }
