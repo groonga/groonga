@@ -277,28 +277,69 @@ output_envelope(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj *
 }
 
 static void
-s_output(grn_ctx *ctx, int flags, void *arg)
+s_output_raw(grn_ctx *ctx, int flags, FILE *stream)
+{
+  char *chunk = NULL;
+  unsigned int chunk_size = 0;
+  int recv_flags;
+
+  grn_ctx_recv(ctx, &chunk, &chunk_size, &recv_flags);
+  if (chunk_size > 0) {
+    fwrite(chunk, 1, chunk_size, stream);
+  }
+
+  if (flags & GRN_CTX_TAIL) {
+    grn_obj *command;
+
+    fputc('\n', stream);
+    fflush(stream);
+
+    command = GRN_CTX_USER_DATA(ctx)->ptr;
+    GRN_BULK_REWIND(command);
+  }
+}
+
+static void
+s_output_typed(grn_ctx *ctx, int flags, FILE *stream)
 {
   if (ctx && ctx->impl && (flags & GRN_CTX_TAIL)) {
-    grn_obj *buf = ctx->impl->outbuf;
+    char *chunk = NULL;
+    unsigned int chunk_size = 0;
+    int recv_flags;
+    grn_obj body;
     grn_obj *command;
-    if (GRN_TEXT_LEN(buf) || ctx->rc) {
-      FILE * stream = (FILE *) arg;
+
+    GRN_TEXT_INIT(&body, GRN_OBJ_DO_SHALLOW_COPY);
+    grn_ctx_recv(ctx, &chunk, &chunk_size, &recv_flags);
+    GRN_TEXT_SET(ctx, &body, chunk, chunk_size);
+
+    if (GRN_TEXT_LEN(&body) || ctx->rc) {
       grn_obj head, foot;
       GRN_TEXT_INIT(&head, 0);
       GRN_TEXT_INIT(&foot, 0);
-      output_envelope(ctx, ctx->rc, &head, buf, &foot);
+      output_envelope(ctx, ctx->rc, &head, &body, &foot);
       fwrite(GRN_TEXT_VALUE(&head), 1, GRN_TEXT_LEN(&head), stream);
-      fwrite(GRN_TEXT_VALUE(buf), 1, GRN_TEXT_LEN(buf), stream);
+      fwrite(GRN_TEXT_VALUE(&body), 1, GRN_TEXT_LEN(&body), stream);
       fwrite(GRN_TEXT_VALUE(&foot), 1, GRN_TEXT_LEN(&foot), stream);
       fputc('\n', stream);
       fflush(stream);
-      GRN_BULK_REWIND(buf);
       GRN_OBJ_FIN(ctx, &head);
       GRN_OBJ_FIN(ctx, &foot);
     }
     command = GRN_CTX_USER_DATA(ctx)->ptr;
     GRN_BULK_REWIND(command);
+  }
+}
+
+static void
+s_output(grn_ctx *ctx, int flags, void *arg)
+{
+  FILE *stream = (FILE *)arg;
+
+  if (grn_ctx_get_output_type(ctx) == GRN_CONTENT_NONE) {
+    s_output_raw(ctx, flags, stream);
+  } else {
+    s_output_typed(ctx, flags, stream);
   }
 }
 
