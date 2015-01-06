@@ -3003,6 +3003,18 @@ grn_set_term_handler(void)
 }
 
 void
+grn_ctx_output_flush(grn_ctx *ctx, int flags)
+{
+  if (flags & GRN_CTX_QUIET) {
+    return;
+  }
+  if (!ctx->impl->output) {
+    return;
+  }
+  ctx->impl->output(ctx, 0, ctx->impl->data.ptr);
+}
+
+void
 grn_ctx_output_array_open(grn_ctx *ctx, const char *name, int nelements)
 {
   grn_output_array_open(ctx, ctx->impl->outbuf, ctx->impl->output_type,

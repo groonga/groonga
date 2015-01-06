@@ -1302,6 +1302,7 @@ GRN_API void grn_output_envelope(grn_ctx *ctx, grn_rc rc,
                                  grn_obj *head, grn_obj *body, grn_obj *foot,
                                  const char *file, int line);
 
+GRN_API void grn_ctx_output_flush(grn_ctx *ctx, int flags);
 GRN_API void grn_ctx_output_array_open(grn_ctx *ctx,
                                        const char *name, int nelements);
 GRN_API void grn_ctx_output_array_close(grn_ctx *ctx);

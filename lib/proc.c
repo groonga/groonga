@@ -2629,6 +2629,8 @@ exit :
   return NULL;
 }
 
+static const size_t DUMP_FLUSH_THRESHOLD_SIZE = 256 * 1024;
+
 static void
 dump_name(grn_ctx *ctx, grn_obj *outbuf, const char *name, int name_len)
 {
@@ -2966,6 +2968,9 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
       }
     }
     GRN_TEXT_PUTC(ctx, outbuf, ']');
+    if (GRN_TEXT_LEN(outbuf) >= DUMP_FLUSH_THRESHOLD_SIZE) {
+      grn_ctx_output_flush(ctx, 0);
+    }
   }
   GRN_TEXT_PUTS(ctx, outbuf, "\n]\n");
   GRN_TEXT_PUT(ctx, outbuf, GRN_TEXT_VALUE(&delete_commands),
@@ -3217,6 +3222,7 @@ proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   ctx->impl->output_type = GRN_CONTENT_NONE;
   ctx->impl->mime_type = "text/x-groonga-command-list";
   dump_schema(ctx, outbuf);
+  grn_ctx_output_flush(ctx, 0);
   /* To update index columns correctly, we first create the whole schema, then
      load non-derivative records, while skipping records of index columns. That
      way, groonga will silently do the job of updating index columns for us. */
