@@ -68,6 +68,8 @@ typedef struct {
     grn_bool header_sent;
     ngx_http_request_t *r;
     ngx_int_t rc;
+    ngx_chain_t *free_chain;
+    ngx_chain_t *busy_chain;
   } raw;
   struct {
     grn_obj head;
@@ -427,29 +429,34 @@ ngx_http_groonga_context_receive_handler_raw(grn_ctx *context,
   }
 
   if (chunk_size > 0) {
-    ngx_chain_t chain;
-    ngx_buf_t *buffer;
+    ngx_chain_t *chain;
 
-    buffer = ngx_palloc(r->pool, sizeof(ngx_buf_t));
-    if (!buffer) {
+    chain = ngx_chain_get_free_buf(r->pool, &(data->raw.free_chain));
+    if (!chain) {
       ngx_log_error(NGX_LOG_ERR, log, 0,
                     "http_groonga: failed to allocate memory for chunked body");
       data->raw.rc = NGX_ERROR;
       return;
     }
-    buffer->pos = (u_char *)chunk;
-    buffer->last = (u_char *)chunk + chunk_size;
-    buffer->memory = 1;
-    buffer->in_file = 0;
+    chain->buf->pos = (u_char *)chunk;
+    chain->buf->last = (u_char *)chunk + chunk_size;
+    chain->buf->tag = (ngx_buf_tag_t)&ngx_http_groonga_module;
+    chain->buf->temporary = 0;
+    chain->buf->memory = 1;
+    chain->buf->in_file = 0;
     if (is_last_chunk) {
-      buffer->last_buf = 1;
+      chain->buf->last_buf = 1;
     } else {
-      buffer->last_buf = 0;
+      chain->buf->last_buf = 0;
     }
-    chain.buf = buffer;
-    chain.next = NULL;
+    chain->next = NULL;
 
-    data->raw.rc = ngx_http_output_filter(r, &chain);
+    data->raw.rc = ngx_http_output_filter(r, chain);
+    ngx_chain_update_chains(r->pool,
+                            &(data->raw.free_chain),
+                            &(data->raw.busy_chain),
+                            &chain,
+                            (ngx_buf_tag_t)&ngx_http_groonga_module);
   }
 }
 
@@ -603,6 +610,8 @@ ngx_http_groonga_handler_create_data(ngx_http_request_t *r,
   data->raw.header_sent = GRN_FALSE;
   data->raw.r = r;
   data->raw.rc = NGX_OK;
+  data->raw.free_chain = NULL;
+  data->raw.busy_chain = NULL;
 
   GRN_TEXT_INIT(&(data->typed.head), GRN_NO_FLAGS);
   GRN_TEXT_INIT(&(data->typed.body), GRN_NO_FLAGS);
