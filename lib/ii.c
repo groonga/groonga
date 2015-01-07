@@ -41,7 +41,6 @@
 #define S_CHUNK                  (1 << GRN_II_W_CHUNK)
 #define W_SEGMENT                18
 #define S_SEGMENT                (1 << W_SEGMENT)
-#define N_CHUNKS_PER_FILE        (GRN_IO_FILE_SIZE >> W_SEGMENT)
 #define W_ARRAY_ELEMENT	         3
 #define S_ARRAY_ELEMENT	         (1 << W_ARRAY_ELEMENT)
 #define W_ARRAY                  (W_SEGMENT - W_ARRAY_ELEMENT)
@@ -411,41 +410,6 @@ chunk_free(grn_ctx *ctx, grn_ii *ii, uint32_t offset, uint32_t dummy, uint32_t s
   ii->header->ngarbages[m - GRN_II_W_LEAST_CHUNK]++;
   return GRN_SUCCESS;
 }
-
-/*
-inline static grn_rc
-chunk_new(grn_ii *ii, uint32_t *res, uint32_t size)
-{
-  int i, j;
-  uint32_t n = (size + S_CHUNK - 1) >> GRN_II_W_CHUNK;
-  uint32_t base_seg = grn_io_base_seg(ii->chunk);
-  for (i = 0, j = -1; i < GRN_II_MAX_CHUNK; i++) {
-    if (HEADER_CHUNK_AT(ii, i)) {
-      j = i;
-    } else {
-      if (i == j + n) {
-        j++;
-        if (res) { *res = j; }
-        for (; j <= i; j++) { HEADER_CHUNK_ON(ii, j); }
-        return GRN_SUCCESS;
-      }
-      // todo : cut off
-      if ((i + base_seg)/ N_CHUNKS_PER_FILE !=
-          (i + base_seg + 1) / N_CHUNKS_PER_FILE) { j = i; }
-    }
-  }
-  GRN_LOG(ctx, GRN_LOG_CRIT, "index full.");
-  return GRN_NO_MEMORY_AVAILABLE;
-}
-
-static void
-chunk_free(grn_ii *ii, int offset, uint32_t size1, uint32_t size2)
-{
-  uint32_t i = offset + ((size1 + S_CHUNK - 1) >> GRN_II_W_CHUNK);
-  uint32_t n = offset + ((size2 + S_CHUNK - 1) >> GRN_II_W_CHUNK);
-  for (; i < n; i++) { HEADER_CHUNK_OFF(ii, i); }
-}
-*/
 
 #define UNIT_SIZE 0x80
 #define UNIT_MASK (UNIT_SIZE - 1)
