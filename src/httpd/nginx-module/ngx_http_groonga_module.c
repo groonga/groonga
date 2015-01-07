@@ -351,6 +351,7 @@ ngx_http_groonga_grn_obj_to_ngx_buf(ngx_pool_t *pool, grn_obj *object)
   buffer->pos = (u_char *)GRN_TEXT_VALUE(object);
   buffer->last = (u_char *)GRN_TEXT_VALUE(object) + GRN_TEXT_LEN(object);
   buffer->memory = 1;    /* this buffer is in memory */
+  buffer->in_file = 0;
 
   return buffer;
 }
