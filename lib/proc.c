@@ -3232,7 +3232,7 @@ proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     dump_all_records(ctx, outbuf);
   }
 
-  /* remove the last newline because another one will be added by the calller.
+  /* remove the last newline because another one will be added by the caller.
      maybe, the caller of proc functions currently doesn't consider the
      possibility of multiple-line output from proc functions. */
   if (GRN_BULK_VSIZE(outbuf) > 0) {
