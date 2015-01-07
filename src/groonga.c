@@ -291,7 +291,9 @@ s_output_raw(grn_ctx *ctx, int flags, FILE *stream)
   if (flags & GRN_CTX_TAIL) {
     grn_obj *command;
 
-    fputc('\n', stream);
+    if (chunk_size > 0) {
+      fputc('\n', stream);
+    }
     fflush(stream);
 
     command = GRN_CTX_USER_DATA(ctx)->ptr;
