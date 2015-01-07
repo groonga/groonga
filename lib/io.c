@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2014 Brazil
+/* Copyright(C) 2009-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -845,8 +845,8 @@ grn_io_write_ja_ehead(grn_io *io, grn_ctx *ctx, uint32_t key,
 }
 
 void *
-grn_io_win_map2(grn_io *io, grn_ctx *ctx, grn_io_win *iw, uint32_t segment,
-                uint32_t offset, uint32_t size, grn_io_rw_mode mode)
+grn_io_win_map(grn_io *io, grn_ctx *ctx, grn_io_win *iw, uint32_t segment,
+               uint32_t offset, uint32_t size, grn_io_rw_mode mode)
 {
   uint32_t nseg, segment_size = io->header->segment_size;
   if (offset >= segment_size) {
@@ -901,7 +901,7 @@ grn_io_win_map2(grn_io *io, grn_ctx *ctx, grn_io_win *iw, uint32_t segment,
 }
 
 grn_rc
-grn_io_win_unmap2(grn_io_win *iw)
+grn_io_win_unmap(grn_io_win *iw)
 {
   if (!iw || !iw->io ||!iw->ctx) { return GRN_INVALID_ARGUMENT; }
   if (iw->cached) {

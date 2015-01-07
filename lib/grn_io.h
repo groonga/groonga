@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2012 Brazil
+/* Copyright(C) 2009-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -134,9 +134,9 @@ grn_rc grn_io_size(grn_ctx *ctx, grn_io *io, uint64_t *size);
 grn_rc grn_io_rename(grn_ctx *ctx, const char *old_name, const char *new_name);
 GRN_API void *grn_io_header(grn_io *io);
 
-void *grn_io_win_map2(grn_io *io, grn_ctx *ctx, grn_io_win *iw, uint32_t segment,
-                      uint32_t offset, uint32_t size, grn_io_rw_mode mode);
-grn_rc grn_io_win_unmap2(grn_io_win *iw);
+void *grn_io_win_map(grn_io *io, grn_ctx *ctx, grn_io_win *iw, uint32_t segment,
+                     uint32_t offset, uint32_t size, grn_io_rw_mode mode);
+grn_rc grn_io_win_unmap(grn_io_win *iw);
 
 typedef struct _grn_io_ja_einfo grn_io_ja_einfo;
 typedef struct _grn_io_ja_ehead grn_io_ja_ehead;

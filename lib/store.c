@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2014 Brazil
+/* Copyright(C) 2009-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -545,7 +545,7 @@ grn_ja_ref_raw(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *va
         } else {
           EINFO_DEC(ei, jag, vpos, vsize);
         }
-        grn_io_win_map2(ja->io, ctx, iw, jag, vpos, vsize, grn_io_rdonly);
+        grn_io_win_map(ja->io, ctx, iw, jag, vpos, vsize, grn_io_rdonly);
       }
       if (!iw->addr) { GRN_IO_SEG_UNREF(ja->io, pseg); }
     }
@@ -563,7 +563,7 @@ grn_ja_unref(grn_ctx *ctx, grn_io_win *iw)
   } else {
     if (!iw->addr) { return GRN_INVALID_ARGUMENT; }
     GRN_IO_SEG_UNREF(iw->io, iw->pseg);
-    if (!iw->tiny_p) { grn_io_win_unmap2(iw); }
+    if (!iw->tiny_p) { grn_io_win_unmap(iw); }
   }
   return GRN_SUCCESS;
 }
@@ -711,7 +711,7 @@ exit :
 
 #define JA_N_GARBAGES_TH 10
 
-// todo : grn_io_win_map2 cause verbose copy when nseg > 1, it should be copied directly.
+// todo : grn_io_win_map cause verbose copy when nseg > 1, it should be copied directly.
 static grn_rc
 grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
              uint32_t element_size, grn_ja_einfo *einfo, grn_io_win *iw)
@@ -736,7 +736,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
       } else {
         if (i == j + n) {
           j++;
-          addr = grn_io_win_map2(ja->io, ctx, iw, j, 0, element_size, grn_io_wronly);
+          addr = grn_io_win_map(ja->io, ctx, iw, j, 0, element_size, grn_io_wronly);
           if (!addr) {
             grn_io_unlock(ja->io);
             return GRN_NO_MEMORY_AVAILABLE;
@@ -883,11 +883,11 @@ set_value(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_len,
     }
     memcpy(iw.addr, value, value_len);
     memset((byte *)iw.addr + value_len, 0, sizeof(uint32_t));
-    grn_io_win_unmap2(&iw);
+    grn_io_win_unmap(&iw);
   } else {
     if ((rc = grn_ja_alloc(ctx, ja, id, value_len, einfo, &iw))) { return rc; }
     memcpy(iw.addr, value, value_len);
-    grn_io_win_unmap2(&iw);
+    grn_io_win_unmap(&iw);
   }
   return rc;
 }
@@ -953,7 +953,7 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
             memcpy(iw.addr, oldvalue, old_len);
             memcpy((byte *)iw.addr + old_len, value, value_len);
             memset((byte *)iw.addr + old_len + value_len, 0, sizeof(uint32_t));
-            grn_io_win_unmap2(&iw);
+            grn_io_win_unmap(&iw);
           }
         } else {
           if ((rc = grn_ja_alloc(ctx, ja, id, value_len + old_len, &einfo, &iw))) {
@@ -962,7 +962,7 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
           }
           memcpy(iw.addr, oldvalue, old_len);
           memcpy((byte *)iw.addr + old_len, value, value_len);
-          grn_io_win_unmap2(&iw);
+          grn_io_win_unmap(&iw);
         }
         grn_ja_unref(ctx, &jw);
       } else {
@@ -1003,7 +1003,7 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
             memcpy(iw.addr, value, value_len);
             memcpy((byte *)iw.addr + value_len, oldvalue, old_len);
             memset((byte *)iw.addr + value_len + old_len, 0, sizeof(uint32_t));
-            grn_io_win_unmap2(&iw);
+            grn_io_win_unmap(&iw);
           }
         } else {
           if ((rc = grn_ja_alloc(ctx, ja, id, value_len + old_len, &einfo, &iw))) {
@@ -1012,7 +1012,7 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
           }
           memcpy(iw.addr, value, value_len);
           memcpy((byte *)iw.addr + value_len, oldvalue, old_len);
-          grn_io_win_unmap2(&iw);
+          grn_io_win_unmap(&iw);
         }
         grn_ja_unref(ctx, &jw);
       } else {
@@ -1103,7 +1103,7 @@ grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *vector, int flags)
     memcpy(iw.addr, GRN_BULK_HEAD(&header), sizeh);
     if (body) { memcpy((char *)iw.addr + sizeh, GRN_BULK_HEAD(body), sizev); }
     if (f) { memcpy((char *)iw.addr + sizeh + sizev, GRN_BULK_HEAD(&footer), sizef); }
-    grn_io_win_unmap2(&iw);
+    grn_io_win_unmap(&iw);
     rc = grn_ja_replace(ctx, ja, id, &einfo, NULL);
   }
 exit :
