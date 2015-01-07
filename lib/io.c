@@ -56,7 +56,7 @@ typedef struct _grn_io_fileinfo {
 
 #define IO_HEADER_SIZE 64
 
-inline static grn_rc grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize);
+inline static grn_rc grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags);
 inline static void grn_fileinfo_init(fileinfo *fis, int nfis);
 inline static int grn_opened(fileinfo *fi);
 inline static grn_rc grn_close(grn_ctx *ctx, fileinfo *fi);
@@ -202,7 +202,7 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t seg
     / GRN_IO_FILE_SIZE);
   if ((fis = GRN_GMALLOCN(fileinfo, max_nfiles))) {
     grn_fileinfo_init(fis, max_nfiles);
-    if (!grn_open(ctx, fis, path, O_RDWR|O_CREAT|O_EXCL, GRN_IO_FILE_SIZE)) {
+    if (!grn_open(ctx, fis, path, O_RDWR|O_CREAT|O_EXCL)) {
       if ((header = (struct _grn_io_header *)GRN_MMAP(&grn_gctx, &fis->fmo, fis, 0, b))) {
         header->header_size = header_size;
         header->segment_size = segment_size;
@@ -452,7 +452,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
     / GRN_IO_FILE_SIZE);
   if (!(fis = GRN_GMALLOCN(fileinfo, max_nfiles))) { return NULL; }
   grn_fileinfo_init(fis, max_nfiles);
-  if (!grn_open(ctx, fis, path, O_RDWR, GRN_IO_FILE_SIZE)) {
+  if (!grn_open(ctx, fis, path, O_RDWR)) {
     struct _grn_io_header *header;
     if ((header = GRN_MMAP(&grn_gctx, &fis->fmo, fis, 0, b))) {
       if ((io = GRN_GMALLOC(sizeof(grn_io)))) {
@@ -694,7 +694,7 @@ grn_io_read_ja(grn_io *io, grn_ctx *ctx, grn_io_ja_einfo *einfo, uint32_t epos, 
   if (!grn_opened(fi)) {
     char path[PATH_MAX];
     gen_pathname(io->path, path, fno);
-    if (grn_open(ctx, fi, path, O_RDWR|O_CREAT, GRN_IO_FILE_SIZE)) {
+    if (grn_open(ctx, fi, path, O_RDWR|O_CREAT)) {
       *value = NULL;
       *value_len = 0;
       GRN_FREE(v);
@@ -742,7 +742,7 @@ grn_io_read_ja(grn_io *io, grn_ctx *ctx, grn_io_ja_einfo *einfo, uint32_t epos, 
       if (!grn_opened(fi)) {
         char path[PATH_MAX];
         gen_pathname(io->path, path, fno);
-        if (grn_open(ctx, fi, path, O_RDWR|O_CREAT, GRN_IO_FILE_SIZE)) {
+        if (grn_open(ctx, fi, path, O_RDWR|O_CREAT)) {
           *value = NULL;
           *value_len = 0;
           GRN_FREE(v);
@@ -784,7 +784,7 @@ grn_io_write_ja(grn_io *io, grn_ctx *ctx, uint32_t key,
   if (!grn_opened(fi)) {
     char path[PATH_MAX];
     gen_pathname(io->path, path, fno);
-    if ((rc = grn_open(ctx, fi, path, O_RDWR|O_CREAT, GRN_IO_FILE_SIZE))) { return rc; }
+    if ((rc = grn_open(ctx, fi, path, O_RDWR|O_CREAT))) { return rc; }
   }
   if (value_len <= 256) {
     ja_element je;
@@ -808,7 +808,7 @@ grn_io_write_ja(grn_io *io, grn_ctx *ctx, uint32_t key,
       if (!grn_opened(fi)) {
         char path[PATH_MAX];
         gen_pathname(io->path, path, fno);
-        if ((rc = grn_open(ctx, fi, path, O_RDWR|O_CREAT, GRN_IO_FILE_SIZE))) { return rc; }
+        if ((rc = grn_open(ctx, fi, path, O_RDWR|O_CREAT))) { return rc; }
       }
       size = rest > GRN_IO_FILE_SIZE ? GRN_IO_FILE_SIZE : rest;
       if ((rc = grn_pwrite(ctx, fi, vr, size, 0))) { return rc; }
@@ -834,7 +834,7 @@ grn_io_write_ja_ehead(grn_io *io, grn_ctx *ctx, uint32_t key,
   if (!grn_opened(fi)) {
     char path[PATH_MAX];
     gen_pathname(io->path, path, fno);
-    if ((rc = grn_open(ctx, fi, path, O_RDWR|O_CREAT, GRN_IO_FILE_SIZE))) { return rc; }
+    if ((rc = grn_open(ctx, fi, path, O_RDWR|O_CREAT))) { return rc; }
   }
   {
     grn_io_ja_ehead eh;
@@ -964,7 +964,7 @@ grn_io_win_unmap(grn_io_win *iw)
     if (!grn_opened(fi)) {\
       char path[PATH_MAX];\
       gen_pathname(io->path, path, fno);\
-      if (!grn_open(ctx, fi, path, O_RDWR|O_CREAT, GRN_IO_FILE_SIZE)) {  \
+      if (!grn_open(ctx, fi, path, O_RDWR|O_CREAT)) {  \
         DO_MAP(io, &info->fmo, fi, pos, segment_size, segno, info->map);\
       }\
     } else {\
@@ -1206,7 +1206,7 @@ static size_t mmap_size = 0;
 #ifdef WIN32_FMO_EACH
 
 inline static grn_rc
-grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize)
+grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 {
   if ((flags & O_CREAT)) {
     DWORD dwCreationDisposition;
@@ -1319,7 +1319,7 @@ grn_close(grn_ctx *ctx, fileinfo *fi)
 
 #else /* WIN32_FMO_EACH */
 inline static grn_rc
-grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize)
+grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 {
   /* may be wrong if flags is just only O_RDWR */
   if ((flags & O_CREAT)) {
@@ -1521,7 +1521,7 @@ grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
 #else /* WIN32 */
 
 inline static grn_rc
-grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize)
+grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 {
   struct stat st;
   if ((fi->fd = GRN_OPEN(path, flags, GRN_IO_FILE_CREATE_MODE)) == -1) {
