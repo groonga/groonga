@@ -20,8 +20,65 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
+msgid "Release 4.1.0 - 2015-01-09"
+msgstr "4.1.0リリース - 2015-01-09"
+
+# f4c4ce262559449b9e9f757a0c59ef65
+msgid "It's a bug fix release of 4.0.9."
+msgstr "4.0.9のバグフィックスリリースです。"
+
+# ced95f34184a4d398062e5f69759459c
+msgid ""
+"If you have already upgraded to 4.0.9, please upgrade to 4.1.0. And re-"
+"create your all indexes. You can re-create your indexes by removing and re-"
+"creating your indexes such as::"
+msgstr ""
+"もし、すでに4.0.9にアップグレードした場合は4.1.0にアップグレードしてくださ"
+"い。アップグレード後、すべてのインデックスを作りなおしてください。次のように"
+"インデックスを削除してから再作成することでインデックスを作りなおすことができ"
+"ます::"
+
+msgid ":doc:`/reference/commands/column_remove`"
+msgstr ""
+
+msgid ":doc:`/reference/commands/column_create`"
+msgstr ""
+
+# 6c061a70e086454ba165661e91b70ad3
+msgid ""
+"If you didn't change your indexes by Groonga 4.0.9, you don't need to re-"
+"create your indexes. \"change\" means \"add\", \"remove\" and \"update\". If "
+"you use your indexes only for \"search\" by Groonga 4.0.9, you don't need to "
+"re-create your indexes."
+msgstr ""
+"Groonga 4.0.9でインデックスを変更していない場合はインデックスを作りなおす必要"
+"はありません。「変更」とは「追加」、「削除」、「更新」のことです。Groonga "
+"4.0.9で「検索」だけしていた場合はインデックスを作りなおす必要はありません。"
+
+msgid "Fixes"
+msgstr "修正"
+
+# b45b272c085e4afd876f27f99a53b17f
+msgid ""
+"Fixed a bug that index may be broken. But the following bug fixed in Groonga "
+"4.0.9 is re-appeared."
+msgstr "インデックスが壊れるかもしれない問題を修正しました。ただし、Groonga 4.0.9で修正した次の問題は再発します。"
+
+msgid ""
+"Fixed a crash bug that may be occurred by deleting or updating many indexed "
+"values at once. [groonga-dev,02942] [Reported by kashihara]"
+msgstr ""
+"インデックス化された値を一度に大量に削除または更新するとクラッシュする問題を"
+"修正しました。 [groonga-dev,02942] [kashiharaさんが報告]"
+
 msgid "Release 4.0.9 - 2014-12-29"
 msgstr "4.0.9リリース - 2014-12-29"
+
+msgid ""
+"Use 4.1.0 instead of 4.0.9. 4.0.9 has a serious bug that may break index."
+msgstr ""
+"4.0.9ではなく4.1.0を使ってください。4.1.0はインデックスが壊れるかもしれないと"
+"いう深刻な問題があります。"
 
 msgid "Improvements"
 msgstr "改良"
@@ -90,7 +147,10 @@ msgid ""
 "[:ref:`token-filter-stem`] Supported token that consists with only upper-"
 "case alphabets, digits, ``-`` and ``'``. It means that :ref:`token-filter-"
 "stem` can work with MySQL compatible normalizers."
-msgstr "[:ref:`token-filter-stem`] 大文字アルファベット、数字、 ``-`` 、 ``'`` だけで構成されているトークンに対応しました。これにより、 :ref:`token-filter-stem` はMySQL互換ノーマライザーと一緒に使うことができるようになりました。"
+msgstr ""
+"[:ref:`token-filter-stem`] 大文字アルファベット、数字、 ``-`` 、 ``'`` だけで"
+"構成されているトークンに対応しました。これにより、 :ref:`token-filter-stem` "
+"はMySQL互換ノーマライザーと一緒に使うことができるようになりました。"
 
 msgid "[:doc:`/reference/commands/truncate`] Supported column."
 msgstr "[:doc:`/reference/commands/truncate`] カラムに対応しました。"
@@ -126,9 +186,6 @@ msgstr ""
 "るパーミッションにすることを止めました。これは後方非互換な変更ですが、以前の"
 "挙動はセキュリティーリスクがあるため変更します。"
 
-msgid "Fixes"
-msgstr "修正"
-
 msgid ""
 "Fixed build error on BSD based system. [GitHub#253] [Reported by Hiroshi "
 "Hatake]"
@@ -146,13 +203,6 @@ msgid ""
 msgstr ""
 "存在しない参照に対する等価演算が常にマッチするというリグレッションバグを修正"
 "しました。"
-
-msgid ""
-"Fixed a crash bug that may be occurred by deleting or updating many indexed "
-"values at once. [groonga-dev,02942] [Reported by kashihara]"
-msgstr ""
-"インデックス化された値を一度に大量に削除または更新するとクラッシュする問題を"
-"修正しました。 [groonga-dev,02942] [kashiharaさんが報告]"
 
 # bb9cf88a1a8e4b64b4e8dfa31a8fced7
 msgid ""
