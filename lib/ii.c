@@ -2644,12 +2644,12 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
               datavec_fin(ctx, rdv);
               return rc;
             }
-            if (cinfo[i].size) {
-              nvchunks++;
-            } else {
-              crid -= cinfo[i].dgap;
-              cinfo[i + 1].dgap += cinfo[i].dgap;
-            }
+          }
+          if (cinfo[i].size) {
+            nvchunks++;
+          } else {
+            crid -= cinfo[i].dgap;
+            cinfo[i + 1].dgap += cinfo[i].dgap;
           }
         }
       }
