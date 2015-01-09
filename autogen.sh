@@ -18,4 +18,9 @@ FreeBSD)
 	;;
 esac
 
+if [ ! -f vendor/mruby-source/.git ]; then
+  rm -rf vendor/mruby-source
+fi
+git submodule update --init
+
 ${AUTORECONF:-autoreconf} --force --install
