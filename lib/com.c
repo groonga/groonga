@@ -193,7 +193,7 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
       {
         ssize_t ret;
         ret = send(peer->fd, GRN_BULK_HEAD(msg), GRN_BULK_VSIZE(msg), MSG_NOSIGNAL);
-        if (ret == -1) { SERR("send"); }
+        if (ret == -1) { SOERR("send"); }
         if (ctx->rc != GRN_OPERATION_WOULD_BLOCK) {
           grn_com_queue_enque(ctx, m->old, (grn_com_queue_entry *)msg);
           return ctx->rc;
@@ -251,7 +251,7 @@ grn_com_init(void)
   WSADATA wd;
   if (WSAStartup(MAKEWORD(2, 0), &wd) != 0) {
     grn_ctx *ctx = &grn_gctx;
-    SERR("WSAStartup");
+    SOERR("WSAStartup");
   }
 #else /* WIN32 */
 #ifndef USE_MSG_NOSIGNAL
@@ -474,7 +474,7 @@ grn_com_event_start_accept(grn_ctx *ctx, grn_com_event *ev)
     if (listen(com->fd, LISTEN_BACKLOG) == 0) {
       com->accepting = GRN_TRUE;
     } else {
-      SERR("listen - start accept");
+      SOERR("listen - start accept");
     }
   }
   GRN_API_RETURN(ctx->rc);
@@ -492,7 +492,7 @@ grn_com_event_stop_accept(grn_ctx *ctx, grn_com_event *ev)
     if (listen(com->fd, 0) == 0) {
       com->accepting = GRN_FALSE;
     } else {
-      SERR("listen - disable accept");
+      SOERR("listen - disable accept");
     }
   }
   GRN_API_RETURN(ctx->rc);
@@ -510,7 +510,7 @@ grn_com_receiver(grn_ctx *ctx, grn_com *com)
       if (errno == EMFILE) {
         grn_com_event_stop_accept(ctx, ev);
       } else {
-        SERR("accept");
+        SOERR("accept");
       }
       return;
     }
@@ -567,7 +567,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
   });
   nevents = select(nfds + 1, &rfds, &wfds, NULL, (timeout >= 0) ? &tv : NULL);
   if (nevents < 0) {
-    SERR("select");
+    SOERR("select");
     if (ctx->rc == GRN_INTERRUPTED_FUNCTION_CALL) { ERRCLR(ctx); }
     return ctx->rc;
   }
@@ -636,7 +636,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
       e.data.fd = efd;
       e.events = ep->events;
       if (epoll_ctl(ev->epfd, EPOLL_CTL_DEL, efd, &e) == -1) { SERR("epoll_ctl"); }
-      if (grn_sock_close(efd) == -1) { SERR("close"); }
+      if (grn_sock_close(efd) == -1) { SOERR("close"); }
       continue;
     }
     if ((ep->events & GRN_COM_POLLIN)) { grn_com_receiver(ctx, com); }
@@ -650,7 +650,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
       GRN_LOG(ctx, GRN_LOG_ERROR, "fd(%d) not found in ev->set", efd);
       EV_SET(&e, efd, ep->filter, EV_DELETE, 0, 0, NULL);
       if (kevent(ev->kqfd, &e, 1, NULL, 0, NULL) == -1) { SERR("kevent"); }
-      if (grn_sock_close(efd) == -1) { SERR("close"); }
+      if (grn_sock_close(efd) == -1) { SOERR("close"); }
       continue;
     }
     if ((ep->filter == GRN_COM_POLLIN)) { grn_com_receiver(ctx, com); }
@@ -660,7 +660,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
     nevents--;
     if (!grn_hash_get(ctx, ev->hash, &efd, sizeof(grn_sock), (void *)&com)) {
       GRN_LOG(ctx, GRN_LOG_ERROR, "fd(%d) not found in ev->hash", efd);
-      if (grn_sock_close(efd) == -1) { SERR("close"); }
+      if (grn_sock_close(efd) == -1) { SOERR("close"); }
       continue;
     }
     if ((ep->revents & GRN_COM_POLLIN)) { grn_com_receiver(ctx, com); }
@@ -687,7 +687,7 @@ grn_com_send_http(grn_ctx *ctx, grn_com *cs, const char *path, uint32_t path_len
   GRN_TEXT_PUTS(ctx, &buf, " HTTP/1.0\r\n\r\n");
   // todo : refine
   if ((ret = send(cs->fd, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), MSG_NOSIGNAL|flags)) == -1) {
-    SERR("send");
+    SOERR("send");
   }
   if (ret != GRN_BULK_VSIZE(&buf)) {
     GRN_LOG(ctx, GRN_LOG_NOTICE, "send %d != %d", (int)ret, (int)GRN_BULK_VSIZE(&buf));
@@ -715,7 +715,7 @@ grn_com_send(grn_ctx *ctx, grn_com *cs,
     wsabufs[1].buf = (char *)body;
     wsabufs[1].len = size;
     if (WSASend(cs->fd, wsabufs, 2, &n_sent, 0, NULL, NULL) == SOCKET_ERROR) {
-      SERR("WSASend");
+      SOERR("WSASend");
     }
     ret = n_sent;
 #else /* WIN32 */
@@ -733,13 +733,13 @@ grn_com_send(grn_ctx *ctx, grn_com *cs,
     msg_iov[1].iov_base = (char *)body;
     msg_iov[1].iov_len = size;
     if ((ret = sendmsg(cs->fd, &msg, MSG_NOSIGNAL|flags)) == -1) {
-      SERR("sendmsg");
+      SOERR("sendmsg");
       rc = ctx->rc;
     }
 #endif /* WIN32 */
   } else {
     if ((ret = send(cs->fd, (const void *)header, whole_size, MSG_NOSIGNAL|flags)) == -1) {
-      SERR("send");
+      SOERR("send");
       rc = ctx->rc;
     }
   }
@@ -787,7 +787,7 @@ grn_com_recv_text(grn_ctx *ctx, grn_com *com,
   for (;;) {
     if (grn_bulk_reserve(ctx, buf, BUFSIZE)) { return ctx->rc; }
     if ((ret = recv(com->fd, GRN_BULK_CURR(buf), BUFSIZE, 0)) < 0) {
-      SERR("recv text");
+      SOERR("recv text");
       if (ctx->rc == GRN_OPERATION_WOULD_BLOCK ||
           ctx->rc == GRN_INTERRUPTED_FUNCTION_CALL) {
         ERRCLR(ctx);
@@ -819,7 +819,7 @@ exit :
     GRN_BULK_REWIND(buf);
     grn_bulk_reserve(ctx, buf, BUFSIZE);
     if ((ret = recv(com->fd, GRN_BULK_CURR(buf), BUFSIZE, 0)) < 0) {
-      SERR("recv text body");
+      SOERR("recv text body");
     } else {
       GRN_BULK_CURR(buf) += ret;
     }
@@ -837,7 +837,7 @@ grn_com_recv(grn_ctx *ctx, grn_com *com, grn_com_header *header, grn_obj *buf)
   size_t rest = sizeof(grn_com_header);
   do {
     if ((ret = recv(com->fd, p, rest, 0)) < 0) {
-      SERR("recv size");
+      SOERR("recv size");
       GRN_LOG(ctx, GRN_LOG_ERROR, "recv error (%" GRN_FMT_SOCKET ")", com->fd);
       if (ctx->rc == GRN_OPERATION_WOULD_BLOCK ||
           ctx->rc == GRN_INTERRUPTED_FUNCTION_CALL) {
@@ -881,7 +881,7 @@ grn_com_recv(grn_ctx *ctx, grn_com *com, grn_com_header *header, grn_obj *buf)
       retry = 0;
       for (rest = value_size; rest;) {
         if ((ret = recv(com->fd, GRN_BULK_CURR(buf), rest, MSG_WAITALL)) < 0) {
-          SERR("recv body");
+          SOERR("recv body");
           if (ctx->rc == GRN_OPERATION_WOULD_BLOCK ||
               ctx->rc == GRN_INTERRUPTED_FUNCTION_CALL) {
             ERRCLR(ctx);
@@ -939,7 +939,7 @@ grn_com_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
 #endif
 #ifdef EAI_SYSTEM
     case EAI_SYSTEM:
-      SERR("getaddrinfo");
+      SOERR("getaddrinfo");
       break;
 #endif
     default:
@@ -956,13 +956,13 @@ grn_com_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
     fd = socket(addrinfo_ptr->ai_family, addrinfo_ptr->ai_socktype,
                 addrinfo_ptr->ai_protocol);
     if (fd == -1) {
-      SERR("socket");
+      SOERR("socket");
     } else if (setsockopt(fd, 6, TCP_NODELAY,
                           (const char *)&value, sizeof(value))) {
-      SERR("setsockopt");
+      SOERR("setsockopt");
       grn_sock_close(fd);
     } else if (connect(fd, addrinfo_ptr->ai_addr, addrinfo_ptr->ai_addrlen)) {
-      SERR("connect");
+      SOERR("connect");
       grn_sock_close(fd);
     } else {
       break;
@@ -995,9 +995,9 @@ void
 grn_com_close_(grn_ctx *ctx, grn_com *com)
 {
   grn_sock fd = com->fd;
-  if (shutdown(fd, SHUT_RDWR) == -1) { /* SERR("shutdown"); */ }
+  if (shutdown(fd, SHUT_RDWR) == -1) { /* SOERR("shutdown"); */ }
   if (grn_sock_close(fd) == -1) {
-    SERR("close");
+    SOERR("close");
   } else {
     com->closed = 1;
   }
@@ -1054,7 +1054,7 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
 #endif
 #ifdef EAI_SYSTEM
     case EAI_SYSTEM:
-      SERR("getaddrinfo");
+      SOERR("getaddrinfo");
       break;
 #endif
     default:
@@ -1066,7 +1066,7 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
     goto exit;
   }
   if ((lfd = socket(bind_address_info->ai_family, SOCK_STREAM, 0)) == -1) {
-    SERR("socket");
+    SOERR("socket");
     goto exit;
   }
   memcpy(&ev->curr_edge_id.addr, he->h_addr, he->h_length);
@@ -1075,20 +1075,20 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
   {
     int v = 1;
     if (setsockopt(lfd, SOL_TCP, TCP_NODELAY, (void *) &v, sizeof(int)) == -1) {
-      SERR("setsockopt");
+      SOERR("setsockopt");
       goto exit;
     }
     if (setsockopt(lfd, SOL_SOCKET, SO_REUSEADDR, (void *) &v, sizeof(int)) == -1) {
-      SERR("setsockopt");
+      SOERR("setsockopt");
       goto exit;
     }
   }
   if (bind(lfd, bind_address_info->ai_addr, bind_address_info->ai_addrlen) < 0) {
-    SERR("bind");
+    SOERR("bind");
     goto exit;
   }
   if (listen(lfd, LISTEN_BACKLOG) < 0) {
-    SERR("listen");
+    SOERR("listen");
     goto exit;
   }
   if (ev) {

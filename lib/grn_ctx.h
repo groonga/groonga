@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2014 Brazil
+  Copyright(C) 2009-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -150,7 +150,110 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
 } while (0)
 
 #ifdef WIN32
+
+#define SYSTEM_ERROR_MESSAGE_BUFFER_SIZE 1024
 #define SERR(str) do {\
+  grn_rc rc;\
+  char message[SYSTEM_ERROR_MESSAGE_BUFFER_SIZE];\
+  int error = GetLastError();\
+  message[0] = '\0';\
+  FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,\
+                 NULL,\
+                 error,\
+                 0,\
+                 message,\
+                 SYSTEM_ERROR_MESSAGE_BUFFER_SIZE,\
+                 NULL);\
+  switch (error) {\
+  case ERROR_FILE_NOT_FOUND :\
+  case ERROR_PATH_NOT_FOUND :\
+    rc = GRN_NO_SUCH_FILE_OR_DIRECTORY;\
+    break;\
+  case ERROR_TOO_MANY_OPEN_FILES :\
+    rc = GRN_TOO_MANY_OPEN_FILES;\
+    break;\
+  case ERROR_ACCESS_DENIED :\
+    rc = GRN_PERMISSION_DENIED;\
+    break;\
+  case ERROR_INVALID_HANDLE :\
+    rc = GRN_INVALID_ARGUMENT;\
+    break;\
+  case ERROR_ARENA_TRASHED :\
+    rc = GRN_ADDRESS_IS_NOT_AVAILABLE;\
+    break;\
+  case ERROR_NOT_ENOUGH_MEMORY :\
+    rc = GRN_NO_MEMORY_AVAILABLE;\
+    break;\
+  case ERROR_INVALID_BLOCK :\
+  case ERROR_BAD_ENVIRONMENT :\
+    rc = GRN_INVALID_ARGUMENT;\
+    break;\
+  case ERROR_BAD_FORMAT :\
+    rc = GRN_INVALID_FORMAT;\
+    break;\
+  case ERROR_INVALID_DATA :\
+    rc = GRN_INVALID_ARGUMENT;\
+    break;\
+  case ERROR_OUTOFMEMORY :\
+    rc = GRN_NO_MEMORY_AVAILABLE;\
+    break;\
+  case ERROR_INVALID_DRIVE :\
+    rc = GRN_INVALID_ARGUMENT;\
+    break;\
+  case ERROR_WRITE_PROTECT :\
+    rc = GRN_PERMISSION_DENIED;\
+    break;\
+  case ERROR_BAD_LENGTH :\
+    rc = GRN_INVALID_ARGUMENT;\
+    break;\
+  case ERROR_SEEK :\
+    rc = GRN_INVALID_SEEK;\
+    break;\
+  case ERROR_NOT_SUPPORTED :\
+    rc = GRN_OPERATION_NOT_SUPPORTED;\
+    break;\
+  case ERROR_NETWORK_ACCESS_DENIED :\
+    rc = GRN_OPERATION_NOT_PERMITTED;\
+    break;\
+  case ERROR_FILE_EXISTS :\
+    rc = GRN_FILE_EXISTS;\
+    break;\
+  case ERROR_INVALID_PARAMETER :\
+    rc = GRN_INVALID_ARGUMENT;\
+    break;\
+  case ERROR_BROKEN_PIPE :\
+    rc = GRN_BROKEN_PIPE;\
+    break;\
+  case ERROR_CALL_NOT_IMPLEMENTED :\
+    rc = GRN_FUNCTION_NOT_IMPLEMENTED;\
+    break;\
+  case ERROR_INVALID_NAME :\
+    rc = GRN_INVALID_ARGUMENT;\
+    break;\
+  case ERROR_BUSY_DRIVE :\
+  case ERROR_PATH_BUSY :\
+    rc = GRN_RESOURCE_BUSY;\
+    break;\
+  case ERROR_BAD_ARGUMENTS :\
+    rc = GRN_INVALID_ARGUMENT;\
+    break;\
+  case ERROR_BUSY :\
+    rc = GRN_RESOURCE_BUSY;\
+    break;\
+  case ERROR_ALREADY_EXISTS :\
+    rc = GRN_FILE_EXISTS;\
+    break;\
+  case ERROR_BAD_EXE_FORMAT :\
+    rc = GRN_EXEC_FORMAT_ERROR;\
+    break;\
+  default:\
+    rc = GRN_UNKNOWN_ERROR;\
+    break;\
+  }\
+  ERR(rc, "syscall error '%s' (%s)[%d]", str, message, error);\
+} while (0)
+
+#define SOERR(str) do {\
   grn_rc rc;\
   const char *m;\
   int e = WSAGetLastError();\
@@ -228,8 +331,9 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
     m = "unknown error";\
     break;\
   }\
-  ERR(rc, "syscall error '%s' (%s)", str, m);\
+  ERR(rc, "socket error '%s' (%s)[%d]", str, m, e);\
 } while (0)
+
 #else /* WIN32 */
 #define SERR(str) do {\
   grn_rc rc;\
@@ -281,8 +385,11 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
   case EAGAIN: rc = GRN_OPERATION_WOULD_BLOCK; break;\
   default : rc = GRN_UNKNOWN_ERROR; break;\
   }\
-  ERR(rc, "syscall error '%s' (%s)", str, strerror(errno));\
+  ERR(rc, "syscall error '%s' (%s)[%d]", str, strerror(errno), errno);\
 } while (0)
+
+#define SOERR(str) SERR(str)
+
 #endif /* WIN32 */
 
 #define GERR(rc,...) ERRSET(&grn_gctx, GRN_ERROR, (rc),  __VA_ARGS__)

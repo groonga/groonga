@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2014 Brazil
+  Copyright(C) 2009-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -635,7 +635,7 @@ run_server(grn_ctx *ctx, grn_obj *db, grn_com_event *ev,
   struct hostent *he;
   if (!(he = gethostbyname(hostname))) {
     send_ready_notify();
-    SERR("gethostbyname");
+    SOERR("gethostbyname");
   } else {
     ev->opaque = db;
     grn_edges_init(ctx, dispatcher);
@@ -767,7 +767,7 @@ h_output_send(grn_ctx *ctx, grn_sock fd,
   {
     DWORD sent;
     if (WSASend(fd, wsabufs, n_buffers, &sent, 0, NULL, NULL) == SOCKET_ERROR) {
-      SERR("WSASend");
+      SOERR("WSASend");
     }
     ret = sent;
   }
@@ -807,7 +807,7 @@ h_output_send(grn_ctx *ctx, grn_sock fd,
     msg.msg_iovlen++;
   }
   if ((ret = sendmsg(fd, &msg, MSG_NOSIGNAL)) == -1) {
-    SERR("sendmsg");
+    SOERR("sendmsg");
   }
 #endif /* WIN32 */
   if (ret != len) {
@@ -1175,7 +1175,7 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
     int send_flags = MSG_NOSIGNAL;
     send_size = send(fd, continue_message, strlen(continue_message), send_flags);
     if (send_size == -1) {
-      SERR("send");
+      SOERR("send");
       return;
     }
   }
@@ -1203,7 +1203,7 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
           break;
         }
         if (recv_length == -1) {
-          SERR("recv");
+          SOERR("recv");
           break;
         }
         buffer_start = buffer;
