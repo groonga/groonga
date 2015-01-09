@@ -2496,25 +2496,21 @@ typedef struct {
 static grn_rc
 chunk_flush(grn_ctx *ctx, grn_ii *ii, chunk_info *cinfo, uint8_t *enc, uint32_t encsize)
 {
-  grn_rc rc = GRN_SUCCESS;
+  grn_rc rc;
   uint8_t *dc;
   uint32_t dcn;
   grn_io_win dw;
-  if (encsize) {
-    if (!(rc = chunk_new(ctx, ii, &dcn, encsize))) {
-      if ((dc = WIN_MAP2(ii->chunk, ctx, &dw, dcn, 0, encsize, grn_io_wronly))) {
-        memcpy(dc, enc, encsize);
-        grn_io_win_unmap2(&dw);
-        cinfo->segno = dcn;
-        cinfo->size = encsize;
-      } else {
-        chunk_free(ctx, ii, dcn, 0, encsize);
-        rc = GRN_NO_MEMORY_AVAILABLE;
-      }
+  if (!(rc = chunk_new(ctx, ii, &dcn, encsize))) {
+    if ((dc = WIN_MAP2(ii->chunk, ctx, &dw, dcn, 0, encsize, grn_io_wronly))) {
+      memcpy(dc, enc, encsize);
+      grn_io_win_unmap2(&dw);
+      cinfo->segno = dcn;
+      cinfo->size = encsize;
+      rc = GRN_SUCCESS;
+    } else {
+      chunk_free(ctx, ii, dcn, 0, encsize);
+      rc = GRN_NO_MEMORY_AVAILABLE;
     }
-  } else {
-    cinfo->segno = 0;
-    cinfo->size = 0;
   }
   return rc;
 }
@@ -2634,7 +2630,6 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
     uint64_t spos = 0;
     int32_t balance = 0;
     uint32_t *ridp, *sidp = NULL, *tfp, *weightp = NULL, *posp, nchunks = 0;
-    uint32_t nvchunks = 0;
     chunk_info *cinfo = NULL;
     grn_id crid = GRN_ID_NIL;
     docinfo cid = {0, 0, 0, 0, 0}, lid = {0, 0, 0, 0, 0}, bid = {0, 0};
@@ -2679,12 +2674,6 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
               datavec_fin(ctx, dv);
               datavec_fin(ctx, rdv);
               return rc;
-            }
-            if (cinfo[i].size) {
-              nvchunks++;
-            } else {
-              crid -= cinfo[i].dgap;
-              cinfo[i + 1].dgap += cinfo[i].dgap;
             }
           }
         }
@@ -2759,21 +2748,21 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
         memset(bt, 0, sizeof(buffer_term));
         nterms_void++;
       } else {
-        if (!ndf && !nvchunks) {
+        if (!ndf && !nchunks) {
           a[0] = 0;
           a[1] = 0;
           lexicon_delete(ctx, ii, tid, h);
           memset(bt, 0, sizeof(buffer_term));
           nterms_void++;
         } else if ((ii->header->flags & GRN_OBJ_WITH_SECTION)
-                   && !nvchunks && ndf == 1 && lid.rid < 0x100000 &&
+                   && !nchunks && ndf == 1 && lid.rid < 0x100000 &&
                    lid.sid < 0x800 && lid.tf == 1 && lid.weight == 0) {
           a[0] = (lid.rid << 12) + (lid.sid << 1) + 1;
           a[1] = (ii->header->flags & GRN_OBJ_WITH_POSITION) ? posp[-1] : 0;
           memset(bt, 0, sizeof(buffer_term));
           nterms_void++;
         } else if (!(ii->header->flags & GRN_OBJ_WITH_SECTION)
-                   && !nvchunks && ndf == 1 && lid.tf == 1 && lid.weight == 0) {
+                   && !nchunks && ndf == 1 && lid.tf == 1 && lid.weight == 0) {
           a[0] = (lid.rid << 1) + 1;
           a[1] = (ii->header->flags & GRN_OBJ_WITH_POSITION) ? posp[-1] : 0;
           memset(bt, 0, sizeof(buffer_term));
@@ -2799,15 +2788,13 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
           }
           dcp0 = dcp;
           a[1] = (bt->size_in_chunk ? a[1] : 0) + (ndf - sdf) + balance;
-          if (nvchunks) {
+          if (nchunks) {
             int i;
-            GRN_B_ENC(nvchunks, dcp);
+            GRN_B_ENC(nchunks, dcp);
             for (i = 0; i < nchunks; i++) {
-              if (cinfo[i].size) {
-                GRN_B_ENC(cinfo[i].segno, dcp);
-                GRN_B_ENC(cinfo[i].size, dcp);
-                GRN_B_ENC(cinfo[i].dgap, dcp);
-              }
+              GRN_B_ENC(cinfo[i].segno, dcp);
+              GRN_B_ENC(cinfo[i].size, dcp);
+              GRN_B_ENC(cinfo[i].dgap, dcp);
             }
           }
           encsize = grn_p_encv(ctx, dv, ii->n_elements, dcp);
@@ -2852,23 +2839,18 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
               !chunk_flush(ctx, ii, &cinfo[nchunks], dcp, encsize)) {
             int i;
             cinfo[nchunks].dgap = lid.rid - crid;
-            nvchunks++;
+            nchunks++;
             dcp = dcp0;
-            GRN_B_ENC(nvchunks, dcp);
-            for (i = 0; i <= nchunks; i++) {
-              if (cinfo[i].size) {
-                GRN_B_ENC(cinfo[i].segno, dcp);
-                GRN_B_ENC(cinfo[i].size, dcp);
-                GRN_B_ENC(cinfo[i].dgap, dcp);
-              }
+            GRN_B_ENC(nchunks, dcp);
+            for (i = 0; i < nchunks; i++) {
+              GRN_B_ENC(cinfo[i].segno, dcp);
+              GRN_B_ENC(cinfo[i].size, dcp);
+              GRN_B_ENC(cinfo[i].dgap, dcp);
             }
             GRN_LOG(ctx, GRN_LOG_NOTICE, "split (%d) encsize=%d", tid, encsize);
             bt->tid |= CHUNK_SPLIT;
           } else {
             dcp += encsize;
-            if (!nvchunks) {
-              bt->tid &= ~CHUNK_SPLIT;
-            }
           }
           bt->pos_in_chunk = (uint32_t)(dcp0 - dc);
           bt->size_in_chunk = (uint32_t)(dcp - dcp0);
