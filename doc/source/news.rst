@@ -7,10 +7,51 @@
 News
 ====
 
+.. _release-4-1-0:
+
+Release 4.1.0 - 2015-01-09
+--------------------------
+
+It's a bug fix release of 4.0.9.
+
+If you have already upgraded to 4.0.9, please upgrade to 4.1.0. And
+re-create your all indexes. You can re-create your indexes by removing
+and re-creating your indexes such as::
+
+  column_remove TABLE INDEX_COLUMN
+  column_create TABLE INDEX_COLUMN COLUMN_INDEX|...
+
+.. seealso::
+
+   * :doc:`/reference/commands/column_remove`
+   * :doc:`/reference/commands/column_create`
+
+.. note::
+
+   If you didn't change your indexes by Groonga 4.0.9, you don't need
+   to re-create your indexes. "change" means "add", "remove" and
+   "update". If you use your indexes only for "search" by Groonga
+   4.0.9, you don't need to re-create your indexes.
+
+Fixes
+^^^^^
+
+* Fixed a bug that index may be broken. But the following bug fixed in
+  Groonga 4.0.9 is re-appeared.
+
+  * Fixed a crash bug that may be occurred by deleting or updating many
+    indexed values at once.
+    [groonga-dev,02942] [Reported by kashihara]
+
 .. _release-4-0-9:
 
 Release 4.0.9 - 2014-12-29
 --------------------------
+
+.. caution::
+
+   Use 4.1.0 instead of 4.0.9. 4.0.9 has a serious bug that may break
+   index.
 
 Improvements
 ^^^^^^^^^^^^
