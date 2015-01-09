@@ -2854,7 +2854,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
 }
 
 static void
-fake_map2(grn_ctx *ctx, grn_io *io, grn_io_win *iw, void *addr, uint32_t seg, uint32_t size)
+fake_map(grn_ctx *ctx, grn_io *io, grn_io_win *iw, void *addr, uint32_t seg, uint32_t size)
 {
   iw->ctx = ctx;
   iw->diff = 0;
@@ -2899,7 +2899,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
             }
             if (!actual_chunk_size || !(rc = chunk_new(ctx, ii, &dcn, actual_chunk_size))) {
               db->header.chunk = actual_chunk_size ? dcn : NOT_ASSIGNED;
-              fake_map2(ctx, ii->chunk, &dw, dc, dcn, actual_chunk_size);
+              fake_map(ctx, ii->chunk, &dw, dc, dcn, actual_chunk_size);
               if (!(rc = grn_io_win_unmap(&dw))) {
                 buffer_segment_update(ii, seg, ds);
                 ii->header->total_chunk_size += actual_chunk_size;
@@ -3240,7 +3240,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                 if (!actual_db0_chunk_size ||
                     !(rc = chunk_new(ctx, ii, &dcn0, actual_db0_chunk_size))) {
                   db0->header.chunk = actual_db0_chunk_size ? dcn0 : NOT_ASSIGNED;
-                  fake_map2(ctx, ii->chunk, &dw0, dc0, dcn0, actual_db0_chunk_size);
+                  fake_map(ctx, ii->chunk, &dw0, dc0, dcn0, actual_db0_chunk_size);
                   if (!(rc = grn_io_win_unmap(&dw0))) {
                     if (!(rc = buffer_merge(ctx, ii, seg, h, sb, sc, db1, dc1))) {
                       actual_db1_chunk_size = db1->header.chunk_size;
@@ -3251,7 +3251,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                       }
                       if (!actual_db1_chunk_size ||
                           !(rc = chunk_new(ctx, ii, &dcn1, actual_db1_chunk_size))) {
-                        fake_map2(ctx, ii->chunk, &dw1, dc1, dcn1, actual_db1_chunk_size);
+                        fake_map(ctx, ii->chunk, &dw1, dc1, dcn1, actual_db1_chunk_size);
                         if (!(rc = grn_io_win_unmap(&dw1))) {
                           db1->header.chunk = actual_db1_chunk_size ? dcn1 : NOT_ASSIGNED;
                           buffer_segment_update(ii, dls0, dps0);
@@ -7198,8 +7198,8 @@ grn_ii_buffer_chunk_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   chunk_new(ctx, ii_buffer->ii, &chunk_number, ii_buffer->packed_len);
   GRN_LOG(ctx, GRN_LOG_INFO, "chunk:%d, packed_len:%" GRN_FMT_SIZE,
           chunk_number, ii_buffer->packed_len);
-  fake_map2(ctx, ii_buffer->ii->chunk, &io_win, ii_buffer->packed_buf,
-            chunk_number, ii_buffer->packed_len);
+  fake_map(ctx, ii_buffer->ii->chunk, &io_win, ii_buffer->packed_buf,
+           chunk_number, ii_buffer->packed_len);
   grn_io_win_unmap(&io_win);
   ii_buffer->term_buffer->header.chunk = chunk_number;
   ii_buffer->term_buffer->header.chunk_size = ii_buffer->packed_len;
