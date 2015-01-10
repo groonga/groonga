@@ -30,6 +30,16 @@
 
 #define GRN_IO_IDSTR "GROONGA:IO:00001"
 
+#ifdef WIN32
+# ifdef WIN32_FMO_EACH
+#  define GRN_IO_FILE_SIZE  1073741824UL
+# else /* FMO_EACH */
+#  define GRN_IO_FILE_SIZE  134217728L
+# endif /* FMO_EACH */
+#else /* WIN32 */
+# define GRN_IO_FILE_SIZE  1073741824UL
+#endif /* WIN32 */
+
 #ifndef O_BINARY
 # ifdef _O_BINARY
 #  define O_BINARY _O_BINARY

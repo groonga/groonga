@@ -25,16 +25,6 @@ extern "C" {
 #endif
 
 #ifdef WIN32
-# ifdef WIN32_FMO_EACH
-#  define GRN_IO_FILE_SIZE  1073741824UL
-# else /* FMO_EACH */
-#  define GRN_IO_FILE_SIZE  134217728L
-# endif /* FMO_EACH */
-#else /* WIN32 */
-# define GRN_IO_FILE_SIZE  1073741824UL
-#endif /* WIN32 */
-
-#ifdef WIN32
 # define GRN_IO_FILE_CREATE_MODE (GENERIC_READ | GENERIC_WRITE)
 #else /* WIN32 */
 # define GRN_IO_FILE_CREATE_MODE 0644
