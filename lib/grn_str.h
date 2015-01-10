@@ -77,7 +77,7 @@ GRN_API grn_str *grn_str_open_(grn_ctx *ctx, const char *str, unsigned int str_l
   if (GRN_BULK_OUTP(buf)) {\
     (buf)->u.b.curr += (len);\
   } else {\
-    (buf)->header.flags += (len);\
+    (buf)->header.flags += (grn_obj_flags)(len);\
   }\
 } while (0)
 
