@@ -337,7 +337,8 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
 #else /* WIN32 */
 #define SERR(str) do {\
   grn_rc rc;\
-  switch (errno) {\
+  int errno_keep = errno;\
+  switch (errno_keep) {\
   case ELOOP : rc = GRN_TOO_MANY_SYMBOLIC_LINKS; break;\
   case ENAMETOOLONG : rc = GRN_FILENAME_TOO_LONG; break;\
   case ENOENT : rc = GRN_NO_SUCH_FILE_OR_DIRECTORY; break;\
@@ -385,7 +386,7 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
   case EAGAIN: rc = GRN_OPERATION_WOULD_BLOCK; break;\
   default : rc = GRN_UNKNOWN_ERROR; break;\
   }\
-  ERR(rc, "syscall error '%s' (%s)[%d]", str, strerror(errno), errno);\
+  ERR(rc, "syscall error '%s' (%s)[%d]", str, strerror(errno_keep), errno_keep);\
 } while (0)
 
 #define SOERR(str) SERR(str)
