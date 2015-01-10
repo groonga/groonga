@@ -18,10 +18,6 @@
 #include "grn.h"
 
 #include <stdio.h>
-
-#ifndef __USE_GNU
-#define __USE_GNU /* O_DIRECT */
-#endif /* __USE_GNU */
 #include <fcntl.h>
 #include <string.h>
 #include <sys/stat.h>
