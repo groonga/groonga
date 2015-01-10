@@ -310,7 +310,7 @@ grn_com_event_init(grn_ctx *ctx, grn_com_event *ev, int max_nevents, int data_si
     ev->hash = NULL;
     ev->events = NULL;
 #else /* USE_SELECT */
-
+    goto exit;
 #endif /* USE_SELECT */
   }
 exit :
