@@ -30,12 +30,8 @@ extern "C" {
 # else /* FMO_EACH */
 #  define GRN_IO_FILE_SIZE  134217728L
 # endif /* FMO_EACH */
-# define GRN_IO_COPY       grn_io_rdonly
-# define GRN_IO_UPDATE     grn_io_wronly
 #else /* WIN32 */
 # define GRN_IO_FILE_SIZE  1073741824UL
-# define GRN_IO_COPY       grn_io_rdwr
-# define GRN_IO_UPDATE     grn_io_rdwr
 #endif /* WIN32 */
 
 #ifdef WIN32
