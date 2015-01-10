@@ -26,6 +26,9 @@
 #include <string.h>
 
 #ifdef HAVE__STRNICMP
+# ifdef strncasecmp
+#  undef strncasecmp
+# endif /* strncasecmp */
 # define strncasecmp(s1,s2,n) _strnicmp(s1,s2,n)
 #endif /* HAVE__STRNICMP */
 

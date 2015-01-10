@@ -16,6 +16,11 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include <string.h>
+#include <stdio.h>
+#include <ctype.h>
+#include <fcntl.h>
+
 #ifdef WIN32
 # define GROONGA_MAIN
 #endif /* WIN32 */
@@ -27,10 +32,6 @@
 #include <grn_db.h>
 #include <grn_util.h>
 
-#include <string.h>
-#include <stdio.h>
-#include <ctype.h>
-#include <fcntl.h>
 #ifdef HAVE_SYS_WAIT_H
 # include <sys/wait.h>
 #endif /* HAVE_SYS_WAIT_H */
@@ -54,6 +55,9 @@
 #endif /* HAVE_IO_H */
 
 #ifdef HAVE__STRNICMP
+# ifdef strncasecmp
+#  undef strncasecmp
+# endif /* strcasecmp */
 # define strncasecmp(s1,s2,n) _strnicmp(s1,s2,n)
 #endif /* HAVE__STRNICMP */
 
