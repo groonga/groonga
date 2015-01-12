@@ -8,4 +8,4 @@ load --table Users
 {"name": "Carlos"}
 ]
 
-select Users --query name:@a
+select Users --query name:@aRl

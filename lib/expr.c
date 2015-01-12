@@ -2666,6 +2666,30 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
 } while (0)
 
 static grn_bool
+string_is_contained(grn_ctx *ctx,
+                    const char *text, unsigned int text_len,
+                    const char *sub_text, unsigned int sub_text_len)
+{
+  /* TODO: Use more fast algorithm such as Boyer-Moore algorithm that
+   * is used in snip.c. */
+  const char *text_end = text + text_len;
+  unsigned int sub_text_current = 0;
+
+  for (; text < text_end; text++) {
+    if (text[0] == sub_text[sub_text_current]) {
+      sub_text_current++;
+      if (sub_text_current == sub_text_len) {
+        return GRN_TRUE;
+      }
+    } else {
+      sub_text_current = 0;
+    }
+  }
+
+  return GRN_FALSE;
+}
+
+static grn_bool
 pseudo_query_scan_raw_text_raw_text(grn_ctx *ctx,
                                     const char *x, unsigned int x_len,
                                     const char *y, unsigned int y_len)
@@ -2675,15 +2699,22 @@ pseudo_query_scan_raw_text_raw_text(grn_ctx *ctx,
   grn_obj *norm_y;
   const char *norm_x_raw;
   const char *norm_y_raw;
+  unsigned int norm_x_raw_length_in_bytes;
+  unsigned int norm_y_raw_length_in_bytes;
   grn_bool matched = GRN_FALSE;
 
   normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
   norm_x = grn_string_open(ctx, x, x_len, normalizer, 0);
   norm_y = grn_string_open(ctx, y, y_len, normalizer, 0);
-  grn_string_get_normalized(ctx, norm_x, &norm_x_raw, NULL, NULL);
-  grn_string_get_normalized(ctx, norm_y, &norm_y_raw, NULL, NULL);
-  /* normalized str doesn't contain '\0'. */
-  matched = (strstr(norm_x_raw, norm_y_raw) != NULL);
+  grn_string_get_normalized(ctx, norm_x,
+                            &norm_x_raw, &norm_x_raw_length_in_bytes,
+                            NULL);
+  grn_string_get_normalized(ctx, norm_y,
+                            &norm_y_raw, &norm_y_raw_length_in_bytes,
+                            NULL);
+  matched = string_is_contained(ctx,
+                                norm_x_raw, norm_x_raw_length_in_bytes,
+                                norm_y_raw, norm_y_raw_length_in_bytes);
 
   grn_obj_close(ctx, norm_x);
   grn_obj_close(ctx, norm_y);
@@ -2711,22 +2742,15 @@ pseudo_query_scan_record_text(grn_ctx *ctx, grn_obj *record, grn_obj *table,
   if (normalizer) {
     grn_obj *norm_y;
     const char *norm_y_raw;
+    unsigned int norm_y_raw_length_in_bytes;
     norm_y = grn_string_open(ctx, GRN_TEXT_VALUE(y), GRN_TEXT_LEN(y),
                              normalizer, 0);
-    grn_string_get_normalized(ctx, norm_y, &norm_y_raw, NULL, NULL);
-
-    if (x_key_len == GRN_TABLE_MAX_KEY_SIZE) {
-      grn_obj x_key_buffer;
-      GRN_TEXT_INIT(&x_key_buffer, 0);
-      GRN_TEXT_PUT(ctx, &x_key_buffer, x_key, x_key_len);
-      GRN_TEXT_PUTC(ctx, &x_key_buffer, '\0');
-      matched = (strstr(GRN_TEXT_VALUE(&x_key_buffer), norm_y_raw) != NULL);
-      GRN_OBJ_FIN(ctx, &x_key_buffer);
-    } else {
-      x_key[x_key_len] = '\0';
-      matched = (strstr(x_key, norm_y_raw) != NULL);
-    }
-
+    grn_string_get_normalized(ctx, norm_y,
+                              &norm_y_raw, &norm_y_raw_length_in_bytes,
+                              NULL);
+    matched = string_is_contained(ctx,
+                                  x_key, x_key_len,
+                                  norm_y_raw, norm_y_raw_length_in_bytes);
     grn_obj_close(ctx, norm_y);
   } else {
     matched = pseudo_query_scan_raw_text_raw_text(ctx,

@@ -9,36 +9,5 @@ load --table Users
 {"name": "Carlos"}
 ]
 [[0,0.0,0.0],3]
-select Users --query name:@a
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        2
-      ],
-      [
-        [
-          "_id",
-          "UInt32"
-        ],
-        [
-          "name",
-          "ShortText"
-        ]
-      ],
-      [
-        1,
-        "Alice"
-      ],
-      [
-        3,
-        "Carlos"
-      ]
-    ]
-  ]
-]
+select Users --query name:@aRl
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["name","ShortText"]],[3,"Carlos"]]]]
