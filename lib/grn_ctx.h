@@ -19,6 +19,8 @@
 #define GRN_CTX_H
 
 #include "grn.h"
+#include "grn_error.h"
+
 #include <errno.h>
 
 #ifdef HAVE_SIGNAL_H
@@ -154,16 +156,9 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
 #define SYSTEM_ERROR_MESSAGE_BUFFER_SIZE 1024
 #define SERR(str) do {\
   grn_rc rc;\
-  char message[SYSTEM_ERROR_MESSAGE_BUFFER_SIZE];\
+  const char *message;\
   int error = GetLastError();\
-  message[0] = '\0';\
-  FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,\
-                 NULL,\
-                 error,\
-                 0,\
-                 message,\
-                 SYSTEM_ERROR_MESSAGE_BUFFER_SIZE,\
-                 NULL);\
+  message = grn_current_error_message();\
   switch (error) {\
   case ERROR_FILE_NOT_FOUND :\
   case ERROR_PATH_NOT_FOUND :\
@@ -339,6 +334,7 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
   grn_rc rc;\
   int errno_keep = errno;\
   grn_bool show_errno = GRN_FALSE;\
+  const char *message = grn_current_error_message();\
   switch (errno_keep) {\
   case ELOOP : rc = GRN_TOO_MANY_SYMBOLIC_LINKS; break;\
   case ENAMETOOLONG : rc = GRN_FILENAME_TOO_LONG; break;\
@@ -391,9 +387,9 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
     break;\
   }\
   if (show_errno) {\
-    ERR(rc, "syscall error '%s' (%s)[%d]", str, strerror(errno_keep), errno_keep);\
+    ERR(rc, "syscall error '%s' (%s)[%d]", str, message, errno_keep);\
   } else {\
-    ERR(rc, "syscall error '%s' (%s)", str, strerror(errno_keep));\
+    ERR(rc, "syscall error '%s' (%s)", str, message);\
   }\
 } while (0)
 
