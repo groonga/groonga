@@ -49,7 +49,7 @@ class ScriptLoader
     return false if $".include?(path)
     return false if @@loading_paths.key?(path)
 
-    return nil unless File.exist?(path)
+    return nil unless File.file?(path)
 
     @@loading_paths[path] = true
     load(path)
