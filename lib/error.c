@@ -28,7 +28,7 @@ const char *
 grn_current_error_message(void)
 {
 # define ERROR_MESSAGE_BUFFER_SIZE 4096
-  int error_code = WSAGetLastError();
+  int error_code = GetLastError();
   static char message[ERROR_MESSAGE_BUFFER_SIZE];
 
   FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM |
