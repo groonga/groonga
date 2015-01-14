@@ -16,4 +16,4 @@ ruby_load "nonexistent.rb"
     }
   }
 ]
-#|e| syscall error 'fopen: failed to open mruby script file: <nonexistent.rb>' (No such file or directory)[?]
+#|e| syscall error 'fopen: failed to open mruby script file: <nonexistent.rb>' (No such file or directory)
