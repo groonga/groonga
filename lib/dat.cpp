@@ -678,6 +678,9 @@ grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat) || !str ||
       !(dat->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) || !scan_hits) {
+    if (str_rest) {
+      *str_rest = str;
+    }
     return -1;
   }
 
@@ -783,6 +786,9 @@ grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
   } catch (const grn::dat::Exception &ex) {
     ERR(grn_dat_translate_error_code(ex.code()),
         "grn::dat::lcp_search failed");
+    if (str_rest) {
+      *str_rest = str;
+    }
     return -1;
   }
   return static_cast<int>(num_scan_hits);
