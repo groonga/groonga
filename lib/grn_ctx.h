@@ -156,9 +156,9 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
 #define SYSTEM_ERROR_MESSAGE_BUFFER_SIZE 1024
 #define SERR(str) do {\
   grn_rc rc;\
-  const char *message;\
+  const char *system_message;\
   int error = GetLastError();\
-  message = grn_current_error_message();\
+  system_message = grn_current_error_message();\
   switch (error) {\
   case ERROR_FILE_NOT_FOUND :\
   case ERROR_PATH_NOT_FOUND :\
@@ -245,7 +245,7 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
     rc = GRN_UNKNOWN_ERROR;\
     break;\
   }\
-  ERR(rc, "syscall error '%s' (%s)[%d]", str, message, error);\
+  ERR(rc, "syscall error '%s' (%s)[%d]", str, system_message, error);\
 } while (0)
 
 #define SOERR(str) do {\
@@ -334,7 +334,7 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
   grn_rc rc;\
   int errno_keep = errno;\
   grn_bool show_errno = GRN_FALSE;\
-  const char *message = grn_current_error_message();\
+  const char *system_message = grn_current_error_message();\
   switch (errno_keep) {\
   case ELOOP : rc = GRN_TOO_MANY_SYMBOLIC_LINKS; break;\
   case ENAMETOOLONG : rc = GRN_FILENAME_TOO_LONG; break;\
@@ -387,9 +387,9 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
     break;\
   }\
   if (show_errno) {\
-    ERR(rc, "syscall error '%s' (%s)[%d]", str, message, errno_keep);\
+    ERR(rc, "syscall error '%s' (%s)[%d]", str, system_message, errno_keep); \
   } else {\
-    ERR(rc, "syscall error '%s' (%s)", str, message);\
+    ERR(rc, "syscall error '%s' (%s)", str, system_message);\
   }\
 } while (0)
 
