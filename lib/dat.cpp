@@ -701,7 +701,9 @@ grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
                                                           dat->normalizer,
                                                           flags);
       if (!normalized_string) {
-        *str_rest = str;
+        if (str_rest) {
+          *str_rest = str;
+        }
         return -1;
       }
       grn_string_get_normalized(ctx, normalized_string, &str, &str_size, NULL);
