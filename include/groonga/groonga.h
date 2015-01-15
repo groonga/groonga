@@ -1913,9 +1913,10 @@ GRN_API grn_rc grn_pat_delete(grn_ctx *ctx, grn_pat *pat, const void *key, unsig
 GRN_API int grn_pat_delete_with_sis(grn_ctx *ctx, grn_pat *pat, grn_id id,
                                     grn_table_delete_optarg *optarg);
 
-typedef struct _grn_pat_scan_hit grn_pat_scan_hit;
+typedef struct _grn_table_scan_hit grn_pat_scan_hit;
+typedef struct _grn_table_scan_hit grn_dat_scan_hit;
 
-struct _grn_pat_scan_hit {
+struct _grn_table_scan_hit {
   grn_id id;
   unsigned int offset;
   unsigned int length;
@@ -1967,6 +1968,13 @@ GRN_API grn_rc grn_pat_cursor_delete(grn_ctx *ctx, grn_pat_cursor *c,
 
 typedef struct _grn_dat grn_dat;
 typedef struct _grn_dat_cursor grn_dat_cursor;
+
+GRN_API int grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
+                         unsigned int str_size, grn_dat_scan_hit *scan_hits,
+                         unsigned int max_num_scan_hits, const char **str_rest);
+
+GRN_API grn_id grn_dat_lcp_search(grn_ctx *ctx, grn_dat *dat,
+                          const void *key, unsigned int key_size);
 
 GRN_API grn_dat *grn_dat_create(grn_ctx *ctx, const char *path, unsigned int key_size,
                                 unsigned int value_size, unsigned int flags);

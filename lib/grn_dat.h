@@ -58,20 +58,6 @@ struct _grn_dat_cursor {
   grn_id curr_rec;
 };
 
-typedef struct _grn_dat_scan_hit grn_dat_scan_hit;
-
-struct _grn_dat_scan_hit {
-  grn_id id;
-  unsigned int offset;
-  unsigned int length;
-};
-
-GRN_API int grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
-                         unsigned int str_size, grn_dat_scan_hit *scan_hits,
-                         unsigned int max_num_scan_hits, const char **str_rest);
-GRN_API grn_id grn_dat_lcp_search(grn_ctx *ctx, grn_dat *dat,
-                          const void *key, unsigned int key_size);
-
 GRN_API grn_id grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat);
 
 /*
