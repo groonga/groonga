@@ -683,7 +683,10 @@ grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
 
   grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
   if (!trie) {
-    return -1;
+    if (str_rest) {
+      *str_rest = str + str_size;
+    }
+    return 0;
   }
 
   if (!max_num_scan_hits || !str_size) {
