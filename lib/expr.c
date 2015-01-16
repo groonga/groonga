@@ -2703,6 +2703,10 @@ pseudo_query_scan_raw_text_raw_text(grn_ctx *ctx,
   unsigned int norm_y_raw_length_in_bytes;
   grn_bool matched = GRN_FALSE;
 
+  if (x_len == 0 || y_len == 0) {
+    return GRN_FALSE;
+  }
+
   normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
   norm_x = grn_string_open(ctx, x, x_len, normalizer, 0);
   norm_y = grn_string_open(ctx, y, y_len, normalizer, 0);
