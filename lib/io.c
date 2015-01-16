@@ -108,7 +108,7 @@ grn_io_create_tmp(uint32_t header_size, uint32_t segment_size,
                   uint32_t max_segment, grn_io_mode mode, uint32_t flags)
 {
   grn_io *io;
-  unsigned int b;
+  uint32_t b;
   uint32_t total_header_size;
   struct _grn_io_header *header;
   total_header_size = IO_HEADER_SIZE + header_size;
@@ -193,7 +193,7 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t seg
 {
   grn_io *io;
   fileinfo *fis;
-  unsigned int b, max_nfiles;
+  uint32_t b, max_nfiles;
   uint32_t bs, total_header_size;
   struct _grn_io_header *header;
   if (!path) {
@@ -427,7 +427,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
   struct stat s;
   fileinfo *fis;
   uint32_t flags = 0;
-  unsigned int b, max_nfiles;
+  uint32_t b, max_nfiles;
   uint32_t total_header_size;
   uint32_t header_size = 0, segment_size = 0, max_segment = 0, bs;
   if (!path || !*path || (strlen(path) > PATH_MAX - 4)) { return NULL; }
