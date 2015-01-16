@@ -24,7 +24,6 @@ groonga_win32_x86_p = ENV["ARCHITECTURE"] == "x86"
 groonga_version = ENV["VERSION"]
 groonga_source = Pathname.new(ENV["SOURCE"]).expand_path
 debug_build_p = ENV["DEBUG_BUILD"] == "yes"
-debug_flags = ["CFLAGS=-ggdb3 -O0", "CXXFLAGS=-ggdb3 -O0"]
 
 if groonga_win32_x86_p
   dist_dir = Pathname.new("dist-x86").expand_path
@@ -260,7 +259,7 @@ namespace :build do
       else
         options << "--without-mecab"
       end
-      options.concat(debug_flags) if debug_build_p
+      options << "--enable-debug" if debug_build_p
       sh("./configure", *options) or exit(false)
       sh("env", "GREP_OPTIONS=--text", "nice", "make", "-j8") or exit(false)
       sh("env", "GREP_OPTIONS=--text", "make", "install") or exit(false)
