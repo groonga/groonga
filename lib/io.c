@@ -111,6 +111,12 @@ grn_io_compute_base(uint32_t header_size)
   return (total_header_size + grn_pagesize - 1) & ~(grn_pagesize - 1);
 }
 
+static inline uint32_t
+grn_io_compute_base_segment(uint32_t base, uint32_t segment_size)
+{
+  return (base + segment_size - 1) / segment_size;
+}
+
 grn_io *
 grn_io_create_tmp(uint32_t header_size, uint32_t segment_size,
                   uint32_t max_segment, grn_io_mode mode, uint32_t flags)
@@ -207,7 +213,7 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t seg
   }
   if (!*path || (strlen(path) > PATH_MAX - 4)) { return NULL; }
   b = grn_io_compute_base(header_size);
-  bs = (b + segment_size - 1) / segment_size;
+  bs = grn_io_compute_base_segment(b, segment_size);
   max_nfiles = (unsigned int)(
     ((uint64_t)segment_size * (max_segment + bs) + GRN_IO_FILE_SIZE - 1)
     / GRN_IO_FILE_SIZE);
@@ -455,7 +461,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
     if (!segment_size) { return NULL; }
   }
   b = grn_io_compute_base(header_size);
-  bs = (b + segment_size - 1) / segment_size;
+  bs = grn_io_compute_base_segment(b, segment_size);
   max_nfiles = (unsigned int)(
     ((uint64_t)segment_size * (max_segment + bs) + GRN_IO_FILE_SIZE - 1)
     / GRN_IO_FILE_SIZE);
