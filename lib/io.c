@@ -103,6 +103,14 @@ grn_io_fin(void)
   return GRN_SUCCESS;
 }
 
+static inline uint32_t
+grn_io_compute_base(uint32_t header_size)
+{
+  uint32_t total_header_size;
+  total_header_size = IO_HEADER_SIZE + header_size;
+  return (total_header_size + grn_pagesize - 1) & ~(grn_pagesize - 1);
+}
+
 grn_io *
 grn_io_create_tmp(uint32_t header_size, uint32_t segment_size,
                   uint32_t max_segment, grn_io_mode mode, uint32_t flags)
