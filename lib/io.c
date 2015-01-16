@@ -117,6 +117,36 @@ grn_io_compute_base_segment(uint32_t base, uint32_t segment_size)
   return (base + segment_size - 1) / segment_size;
 }
 
+static uint32_t
+grn_io_compute_max_n_files(uint32_t segment_size, uint32_t max_segment,
+                           unsigned int base_segument, unsigned long file_size)
+{
+  uint64_t last_segment_end;
+  last_segment_end = ((uint64_t)segment_size) * (max_segment + base_segument);
+  return (uint32_t)((last_segment_end + file_size - 1) / file_size);
+}
+
+static inline uint32_t
+grn_io_max_segment(grn_io *io)
+{
+  if (io->header->segment_tail) {
+    return io->header->segment_tail;
+  } else {
+    return io->header->max_segment;
+  }
+}
+
+static uint32_t
+grn_io_max_n_files(grn_io *io)
+{
+  unsigned long file_size = GRN_IO_FILE_SIZE;
+
+  return grn_io_compute_max_n_files(io->header->segment_size,
+                                    grn_io_max_segment(io),
+                                    io->base_seg,
+                                    file_size);
+}
+
 grn_io *
 grn_io_create_tmp(uint32_t header_size, uint32_t segment_size,
                   uint32_t max_segment, grn_io_mode mode, uint32_t flags)
@@ -214,9 +244,8 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t seg
   if (!*path || (strlen(path) > PATH_MAX - 4)) { return NULL; }
   b = grn_io_compute_base(header_size);
   bs = grn_io_compute_base_segment(b, segment_size);
-  max_nfiles = (unsigned int)(
-    ((uint64_t)segment_size * (max_segment + bs) + GRN_IO_FILE_SIZE - 1)
-    / GRN_IO_FILE_SIZE);
+  max_nfiles = grn_io_compute_max_n_files(segment_size, max_segment,
+                                          bs, GRN_IO_FILE_SIZE);
   if ((fis = GRN_GMALLOCN(fileinfo, max_nfiles))) {
     grn_fileinfo_init(fis, max_nfiles);
     if (!grn_open(ctx, fis, path, O_RDWR|O_CREAT|O_EXCL)) {
@@ -462,9 +491,8 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
   }
   b = grn_io_compute_base(header_size);
   bs = grn_io_compute_base_segment(b, segment_size);
-  max_nfiles = (unsigned int)(
-    ((uint64_t)segment_size * (max_segment + bs) + GRN_IO_FILE_SIZE - 1)
-    / GRN_IO_FILE_SIZE);
+  max_nfiles = grn_io_compute_max_n_files(segment_size, max_segment,
+                                          bs, GRN_IO_FILE_SIZE);
   if (!(fis = GRN_GMALLOCN(fileinfo, max_nfiles))) { return NULL; }
   grn_fileinfo_init(fis, max_nfiles);
   if (!grn_open(ctx, fis, path, O_RDWR)) {
@@ -511,16 +539,16 @@ grn_io_close(grn_ctx *ctx, grn_io *io)
   int i;
   grn_io_mapinfo *mi;
   fileinfo *fi;
-  uint32_t bs = io->base_seg;
-  uint32_t max_segment = io->header->segment_tail
-    ? io->header->segment_tail : io->header->max_segment;
-  uint32_t segment_size = io->header->segment_size;
-  unsigned int max_nfiles = (unsigned int)(
-    ((uint64_t)segment_size * (max_segment + bs) + GRN_IO_FILE_SIZE - 1)
-    / GRN_IO_FILE_SIZE);
+  uint32_t max_nfiles;
+
+  max_nfiles = grn_io_max_n_files(io);
   grn_io_unregister(io);
   if (io->ainfo) { GRN_GFREE(io->ainfo); }
   if (io->maps) {
+    uint32_t max_segment;
+    uint32_t segment_size;
+    max_segment = grn_io_max_segment(io);
+    segment_size = io->header->segment_size;
     for (mi = io->maps, i = max_segment; i; mi++, i--) {
       if (mi->map) {
         /* if (atomic_read(mi->nref)) { return STILL_IN_USE ; } */
