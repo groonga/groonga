@@ -87,7 +87,7 @@ static int
 run(grn_ctx *ctx, int argc, char **argv)
 {
   int exit_code = EXIT_SUCCESS;
-  const char *grndb_rb = "command/grndb.rb";
+  const char *grndb_rb = "command_line/grndb.rb";
   grn_mrb_data *data = &(ctx->impl->mrb);
   mrb_state *mrb = data->state;
 
