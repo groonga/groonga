@@ -474,7 +474,11 @@ typedef int grn_cond;
 # define GRN_FMT_LLU "I64u"
 # define GRN_FMT_SIZE  "Iu"
 # define GRN_FMT_SSIZE "Id"
-# define GRN_FMT_SOCKET GRN_FMT_INT64U
+# ifdef WIN64
+#  define GRN_FMT_SOCKET GRN_FMT_INT64U
+# else /* WIN64 */
+#  define GRN_FMT_SOCKET "u"
+# endif /* WIN64 */
 #else /* WIN32 */
 # define GRN_FMT_LLD  "lld"
 # define GRN_FMT_LLU  "llu"
