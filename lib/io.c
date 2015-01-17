@@ -1324,7 +1324,7 @@ grn_munmap(grn_ctx *ctx, HANDLE *fmo, void *start, size_t length)
 {
   int r = 0;
   if (!fmo) {
-    GRN_FREE(start);
+    GRN_GFREE(start);
     return r;
   }
   if (*fmo) {
@@ -1345,7 +1345,7 @@ grn_munmap(grn_ctx *ctx, HANDLE *fmo, void *start, size_t length)
     }
     *fmo = NULL;
   } else {
-    GRN_FREE(start);
+    GRN_GFREE(start);
   }
   return r;
 }
