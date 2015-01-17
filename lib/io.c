@@ -1325,6 +1325,7 @@ grn_munmap(grn_ctx *ctx, HANDLE *fmo, void *start, size_t length)
   int r = 0;
   if (!fmo) {
     GRN_FREE(start);
+    return r;
   }
   if (*fmo) {
     if (UnmapViewOfFile(start)) {
