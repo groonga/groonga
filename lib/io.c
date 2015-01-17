@@ -537,7 +537,6 @@ grn_rc
 grn_io_close(grn_ctx *ctx, grn_io *io)
 {
   int i;
-  grn_io_mapinfo *mi;
   fileinfo *fi;
   uint32_t max_nfiles;
 
@@ -569,7 +568,11 @@ grn_io_close(grn_ctx *ctx, grn_io *io)
 #endif /* WIN32 */
   GRN_MUNMAP(&grn_gctx, &io->fis->fmo, io->header, io->base);
   if (io->fis) {
-    for (fi = io->fis, i = max_nfiles; i; fi++, i--) { grn_close(ctx, fi); }
+    int i;
+    for (i = 0; i < max_nfiles; i++) {
+      fileinfo *fi = &(io->fis[i]);
+      grn_close(ctx, fi);
+    }
     GRN_GFREE(io->fis);
   }
   GRN_GFREE(io);
