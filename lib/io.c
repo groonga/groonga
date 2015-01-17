@@ -1143,10 +1143,12 @@ grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limit)
           }
         }
         {
-          grn_io_mapinfo *info = io->maps;
-          for (m = io->max_map_seg; m; info++, m--) {
+          uint32_t fno;
+          for (fno = 0; fno < io->max_map_seg; fno++) {
+            grn_io_mapinfo *info = &(io->maps[fno]);
             if (info->map) {
-              GRN_MUNMAP(&grn_gctx, io, &info->fmo, NULL,
+              fileinfo *fi = &(io->fis[fno]);
+              GRN_MUNMAP(&grn_gctx, io, &info->fmo, fi,
                          info->map, io->header->segment_size);
               info->map = NULL;
               info->nref = 0;
