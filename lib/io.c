@@ -1326,6 +1326,10 @@ grn_mmap_v1(grn_ctx *ctx, HANDLE *fmo, fileinfo *fi, off_t offset, size_t length
     if (fmo) {
       *fmo = NULL;
     }
+    /* TODO: Try to support VirtualAlloc() as anonymous mmap in POSIX.
+     * If VirtualAlloc() provides better performance rather than malloc(),
+     * we'll use it.
+     */
     return GRN_GCALLOC(length);
   }
   /* CRITICAL_SECTION_ENTER(fi->cs); */
