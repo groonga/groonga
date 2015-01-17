@@ -1332,14 +1332,14 @@ grn_munmap(grn_ctx *ctx, HANDLE *fmo, void *start, size_t length)
     } else {
       SERR("UnmapViewOfFile");
       GRN_LOG(ctx, GRN_LOG_ERROR,
-              "UnmapViewOfFile(%p,%d) failed <%" GRN_FMT_SIZE ">",
+              "UnmapViewOfFile(%p,%" GRN_FMT_SIZE ") failed <%" GRN_FMT_SIZE ">",
               start, length, mmap_size);
       r = -1;
     }
     if (!CloseHandle(*fmo)) {
       SERR("CloseHandle");
       GRN_LOG(ctx, GRN_LOG_ERROR,
-              "CloseHandle(%p,%d) failed <%" GRN_FMT_SIZE ">",
+              "CloseHandle(%p,%" GRN_FMT_SIZE ") failed <%" GRN_FMT_SIZE ">",
               start, length, mmap_size);
     }
     *fmo = NULL;
