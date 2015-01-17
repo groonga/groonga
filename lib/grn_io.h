@@ -59,9 +59,9 @@ typedef struct {
   void *addr;
   uint32_t diff;
   int32_t cached;
-#if defined(WIN32) && defined(WIN32_FMO_EACH)
+#ifdef WIN32
   HANDLE fmo;
-#endif /* defined(WIN32) && defined(WIN32_FMO_EACH) */
+#endif /* WIN32 */
   void *uncompressed_value;
 } grn_io_win;
 
@@ -69,9 +69,9 @@ typedef struct {
   void *map;
   uint32_t nref;
   uint32_t count;
-#if defined(WIN32) && defined(WIN32_FMO_EACH)
+#ifdef WIN32
   HANDLE fmo;
-#endif /* defined(WIN32) && defined(WIN32_FMO_EACH) */
+#endif /* WIN32 */
 } grn_io_mapinfo;
 
 typedef struct _grn_io_array_info grn_io_array_info;
