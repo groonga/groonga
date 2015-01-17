@@ -34,7 +34,9 @@
 static grn_hash *grn_plugins = NULL;
 static grn_critical_section grn_plugins_lock;
 
+#ifdef GRN_WITH_MRUBY
 static const char *grn_plugin_mrb_suffix = ".rb";
+#endif /* GRN_WITH_MRUBY */
 
 #ifdef HAVE_DLFCN_H
 #  include <dlfcn.h>
