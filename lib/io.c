@@ -1308,8 +1308,10 @@ grn_mmap(grn_ctx *ctx, HANDLE *fmo, fileinfo *fi, off_t offset, size_t length)
   if (!*fmo) { return NULL; }
   res = MapViewOfFile(*fmo, FILE_MAP_WRITE, 0, (DWORD)offset, (SIZE_T)length);
   if (!res) {
-    MERR("MapViewOfFile failed #%d <%" GRN_FMT_SIZE ">",
-         GetLastError(), mmap_size);
+    SERR("MapViewOfFile");
+    GRN_LOG(ctx, GRN_LOG_ERROR,
+            "MapViewOfFile(%lu,%" GRN_FMT_SIZE ") failed <%" GRN_FMT_SIZE ">",
+            (DWORD)offset, length, mmap_size);
     return NULL;
   }
   /* CRITICAL_SECTION_LEAVE(fi->cs); */
