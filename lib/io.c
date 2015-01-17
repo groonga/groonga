@@ -17,6 +17,7 @@
 
 #include "grn.h"
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <fcntl.h>
 #include <string.h>
@@ -105,6 +106,13 @@ inline static grn_rc grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t co
 grn_rc
 grn_io_init(void)
 {
+  const char *version_env;
+
+  version_env = getenv("GRN_IO_VERSION");
+  if (version_env) {
+    grn_io_version_default = atoi(version_env);
+  }
+
   return GRN_SUCCESS;
 }
 
