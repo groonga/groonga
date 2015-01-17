@@ -1111,7 +1111,8 @@ grn_io_seg_expire(grn_ctx *ctx, grn_io *io, uint32_t segno, uint32_t nretry)
         }
       } else {
         uint32_t nmaps;
-        GRN_MUNMAP(&grn_gctx, io, &info->fmo, NULL,
+        fileinfo *fi = &(io->fis[segno]);
+        GRN_MUNMAP(&grn_gctx, io, &info->fmo, fi,
                    info->map, io->header->segment_size);
         info->map = NULL;
         GRN_ATOMIC_ADD_EX(pnref, -(GRN_IO_MAX_REF + 1), nref);
