@@ -1457,8 +1457,8 @@ grn_mmap(grn_ctx *ctx, fileinfo *fi, off_t offset, size_t length)
   */
   res = MapViewOfFile(fi->fmo, FILE_MAP_WRITE, 0, (DWORD)offset, (SIZE_T)length);
   if (!res) {
-    MERR("MapViewOfFile failed #%lu <%" GRN_FMT_SIZE ">",
-         GetLastError(), mmap_size);
+    MERR("MapViewOfFile failed: <%" GRN_FMT_SIZE ">: %s",
+         mmap_size, grn_current_error_message());
     return NULL;
   }
   mmap_size += length;
