@@ -1135,7 +1135,6 @@ grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limit)
       uint32_t nref, nmaps, *pnref = &io->nref;
       GRN_ATOMIC_ADD_EX(pnref, 1, nref);
       if (!nref && grn_gtick - io->count > count_thresh) {
-        grn_io_mapinfo *info = io->maps;
         {
           uint32_t i = io->header->n_arrays;
           grn_io_array_spec *array_specs = (grn_io_array_spec *)io->user_header;
@@ -1143,15 +1142,18 @@ grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limit)
             memset(io->ainfo[i].addrs, 0, sizeof(void *) * array_specs[i].max_n_segments);
           }
         }
-        for (m = io->max_map_seg; m; info++, m--) {
-          if (info->map) {
-            GRN_MUNMAP(&grn_gctx, io, &info->fmo, NULL,
-                       info->map, io->header->segment_size);
-            info->map = NULL;
-            info->nref = 0;
-            info->count = grn_gtick;
-            GRN_ATOMIC_ADD_EX(&io->nmaps, -1, nmaps);
-            n++;
+        {
+          grn_io_mapinfo *info = io->maps;
+          for (m = io->max_map_seg; m; info++, m--) {
+            if (info->map) {
+              GRN_MUNMAP(&grn_gctx, io, &info->fmo, NULL,
+                         info->map, io->header->segment_size);
+              info->map = NULL;
+              info->nref = 0;
+              info->count = grn_gtick;
+              GRN_ATOMIC_ADD_EX(&io->nmaps, -1, nmaps);
+              n++;
+            }
           }
         }
       }
