@@ -1296,7 +1296,7 @@ grn_mmap(grn_ctx *ctx, HANDLE *fmo, fileinfo *fi, off_t offset, size_t length)
 {
   void *res;
   if (!fi) {
-    if(fmo) {
+    if (fmo) {
       *fmo = (HANDLE)0;
     }
     return GRN_GCALLOC(length);
