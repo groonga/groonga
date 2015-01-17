@@ -1418,7 +1418,7 @@ exit:
     // funlock
   }
   if (fi->fmo != NULL) {
-    if (GetLastError() != ERROR_ALREADY_EXISTS ) {
+    if (GetLastError() != ERROR_ALREADY_EXISTS) {
       CRITICAL_SECTION_INIT(fi->cs);
       return GRN_SUCCESS;
     } else {
