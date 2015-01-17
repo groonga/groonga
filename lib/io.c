@@ -1529,12 +1529,14 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
     return rc;
   }
 
-  header_size = sizeof(struct _grn_io_header);
-  ReadFile(fi->fh, &io_header, header_size, &read_bytes, NULL);
-  if (read_bytes == header_size) {
-    version = io_header.version;
+  if (!(flags & O_CREAT)) {
+    header_size = sizeof(struct _grn_io_header);
+    ReadFile(fi->fh, &io_header, header_size, &read_bytes, NULL);
+    if (read_bytes == header_size) {
+      version = io_header.version;
+    }
+    SetFilePointer(fi->fh, 0, NULL, FILE_BEGIN);
   }
-  SetFilePointer(fi->fh, 0, NULL, FILE_BEGIN);
 
   if (version == 0) {
     return grn_open_v0(ctx, fi, path, flags);
