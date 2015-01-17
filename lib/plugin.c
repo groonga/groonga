@@ -29,7 +29,7 @@
 
 #ifdef GRN_WITH_MRUBY
 # include <mruby.h>
-#endif
+#endif /* GRN_WITH_MRUBY */
 
 static grn_hash *grn_plugins = NULL;
 static grn_critical_section grn_plugins_lock;
