@@ -1704,6 +1704,22 @@ delete_reference_records(grn_ctx *ctx, grn_obj *table, grn_id id)
   return ctx->rc;
 }
 
+static grn_rc
+grn_table_delete_prepare(grn_ctx *ctx, grn_obj *table,
+                         grn_id id, const void *key, unsigned int key_size)
+{
+  grn_rc rc;
+
+  rc = delete_reference_records(ctx, table, id);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  call_delete_hook(ctx, table, id, key, key_size);
+  clear_column_values(ctx, table, id);
+
+  return rc;
+}
+
 grn_rc
 grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_size)
 {
@@ -1713,12 +1729,10 @@ grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key
   if (table) {
     if (key && key_size) { rid = grn_table_get(ctx, table, key, key_size); }
     if (rid) {
-      rc = delete_reference_records(ctx, table, rid);
+      rc = grn_table_delete_prepare(ctx, table, rid, key, key_size);
       if (rc != GRN_SUCCESS) {
         goto exit;
       }
-      call_delete_hook(ctx, table, rid, key, key_size);
-      clear_column_values(ctx, table, rid);
       switch (table->header.type) {
       case GRN_DB :
         /* todo : delete tables and columns from db */
@@ -1766,7 +1780,7 @@ grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key
       grn_obj_touch(ctx, table, NULL);
     }
   }
-exit:
+exit :
   GRN_API_RETURN(rc);
 }
 
@@ -1776,15 +1790,16 @@ _grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id,
 {
   grn_rc rc = GRN_INVALID_ARGUMENT;
   if (table) {
-    const void *key;
-    unsigned int key_size;
     if (id) {
-      rc = delete_reference_records(ctx, table, id);
+      const void *key = NULL;
+      unsigned int key_size = 0;
+
+      if (table->header.type != GRN_TABLE_NO_KEY) {
+        key = _grn_table_key(ctx, table, id, &key_size);
+      }
+      rc = grn_table_delete_prepare(ctx, table, id, key, key_size);
       if (rc != GRN_SUCCESS) {
         goto exit;
-      }
-      if ((key = _grn_table_key(ctx, table, id, &key_size))) {
-        call_delete_hook(ctx, table, id, key, key_size);
       }
       // todo : support optarg
       switch (table->header.type) {
@@ -1801,12 +1816,9 @@ _grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id,
         rc = grn_array_delete_by_id(ctx, (grn_array *)table, id, optarg);
         break;
       }
-      if (rc == GRN_SUCCESS) {
-        clear_column_values(ctx, table, id);
-      }
     }
   }
-exit:
+exit :
   return rc;
 }
 
@@ -2412,24 +2424,58 @@ grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc)
   if (!tc) {
     ERR(GRN_INVALID_ARGUMENT, "tc is null");
   } else {
+    grn_id id;
+    grn_obj *table;
+    const void *key = NULL;
+    unsigned int key_size = 0;
     switch (tc->header.type) {
     case GRN_CURSOR_TABLE_PAT_KEY :
-      rc = grn_pat_cursor_delete(ctx, (grn_pat_cursor *)tc, NULL);
+      {
+        grn_pat_cursor *pc = (grn_pat_cursor *)tc;
+        id = pc->curr_rec;
+        table = (grn_obj *)(pc->pat);
+        key = _grn_pat_key(ctx, pc->pat, id, &key_size);
+        rc = grn_table_delete_prepare(ctx, table, id, key, key_size);
+        if (rc != GRN_SUCCESS) {
+          goto exit;
+        }
+        rc = grn_pat_cursor_delete(ctx, pc, NULL);
+      }
       break;
     case GRN_CURSOR_TABLE_DAT_KEY :
       rc = GRN_OPERATION_NOT_SUPPORTED;
       break;
     case GRN_CURSOR_TABLE_HASH_KEY :
-      rc = grn_hash_cursor_delete(ctx, (grn_hash_cursor *)tc, NULL);
+      {
+        grn_hash_cursor *hc = (grn_hash_cursor *)tc;
+        id = hc->curr_rec;
+        table = (grn_obj *)(hc->hash);
+        key = _grn_hash_key(ctx, hc->hash, id, &key_size);
+        rc = grn_table_delete_prepare(ctx, table, id, key, key_size);
+        if (rc != GRN_SUCCESS) {
+          goto exit;
+        }
+        rc = grn_hash_cursor_delete(ctx, hc, NULL);
+      }
       break;
     case GRN_CURSOR_TABLE_NO_KEY :
-      rc = grn_array_cursor_delete(ctx, (grn_array_cursor *)tc, NULL);
+      {
+        grn_array_cursor *ac = (grn_array_cursor *)tc;
+        id = ac->curr_rec;
+        table = (grn_obj *)(ac->array);
+        rc = grn_table_delete_prepare(ctx, table, id, key, key_size);
+        if (rc != GRN_SUCCESS) {
+          goto exit;
+        }
+        rc = grn_array_cursor_delete(ctx, ac, NULL);
+      }
       break;
     default :
       ERR(GRN_INVALID_ARGUMENT, "invalid type %d", tc->header.type);
       break;
     }
   }
+exit :
   GRN_API_RETURN(rc);
 }
 
