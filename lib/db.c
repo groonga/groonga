@@ -5878,6 +5878,7 @@ grn_accessor_set_value(grn_ctx *ctx, grn_accessor *a, grn_id id,
               grn_rset_recinfo_set_max(ctx, ri, a->obj,
                                        GRN_INT64_VALUE(&value_int64));
             }
+            GRN_OBJ_FIN(ctx, &value_int64);
           }
         }
         break;
@@ -5894,6 +5895,7 @@ grn_accessor_set_value(grn_ctx *ctx, grn_accessor *a, grn_id id,
               grn_rset_recinfo_set_sum(ctx, ri, a->obj,
                                        GRN_INT64_VALUE(&value_int64));
             }
+            GRN_OBJ_FIN(ctx, &value_int64);
           }
         }
         break;
