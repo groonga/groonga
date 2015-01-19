@@ -3229,8 +3229,10 @@ grn_table_group_single_key_records(grn_ctx *ctx, grn_obj *table,
             if (grn_table_add_v_inline(ctx, res,
                                        content, content_length,
                                        &value, NULL)) {
-              grn_table_add_subrec_inline(res, value, ri ? ri->score : 0,
-                                          (grn_rset_posinfo *)&id, 0);
+              grn_table_group_add_subrec(ctx, res, value,
+                                         ri ? ri->score : 0,
+                                         (grn_rset_posinfo *)&id, 0,
+                                         calc_target);
             }
           }
         }
