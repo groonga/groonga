@@ -99,6 +99,57 @@ grn_rset_recinfo_update_calc_values(grn_ctx *ctx,
 }
 
 int64_t *
+grn_rset_recinfo_get_max_(grn_ctx *ctx,
+                          grn_rset_recinfo *ri,
+                          grn_obj *table)
+{
+  grn_table_group_flags flags;
+  byte *values;
+
+  flags = DB_OBJ(table)->flags.group;
+  if (!(flags & GRN_TABLE_GROUP_CALC_MAX)) {
+    return NULL;
+  }
+
+  values = (((byte *)ri->subrecs) +
+            GRN_RSET_SUBRECS_SIZE(DB_OBJ(table)->subrec_size,
+                                  DB_OBJ(table)->max_n_subrecs));
+
+  return (int64_t *)values;
+}
+
+int64_t
+grn_rset_recinfo_get_max(grn_ctx *ctx,
+                         grn_rset_recinfo *ri,
+                         grn_obj *table)
+{
+  int64_t *max_address;
+
+  max_address = grn_rset_recinfo_get_max_(ctx, ri, table);
+  if (max_address) {
+    return *max_address;
+  } else {
+    return 0;
+  }
+}
+
+void
+grn_rset_recinfo_set_max(grn_ctx *ctx,
+                         grn_rset_recinfo *ri,
+                         grn_obj *table,
+                         int64_t max)
+{
+  int64_t *max_address;
+
+  max_address = grn_rset_recinfo_get_max_(ctx, ri, table);
+  if (!max_address) {
+    return;
+  }
+
+  *max_address = max;
+}
+
+int64_t *
 grn_rset_recinfo_get_sum_(grn_ctx *ctx,
                           grn_rset_recinfo *ri,
                           grn_obj *table)

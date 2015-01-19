@@ -64,6 +64,17 @@ void grn_rset_recinfo_update_calc_values(grn_ctx *ctx,
                                          grn_obj *table,
                                          grn_obj *value);
 
+int64_t *grn_rset_recinfo_get_max_(grn_ctx *ctx,
+                                   grn_rset_recinfo *ri,
+                                   grn_obj *table);
+int64_t grn_rset_recinfo_get_max(grn_ctx *ctx,
+                                 grn_rset_recinfo *ri,
+                                 grn_obj *table);
+void grn_rset_recinfo_set_max(grn_ctx *ctx,
+                              grn_rset_recinfo *ri,
+                              grn_obj *table,
+                              int64_t max);
+
 int64_t *grn_rset_recinfo_get_sum_(grn_ctx *ctx,
                                    grn_rset_recinfo *ri,
                                    grn_obj *table);

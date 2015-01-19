@@ -753,6 +753,8 @@ GRN_API unsigned int grn_table_size(grn_ctx *ctx, grn_obj *table);
 #define GRN_COLUMN_NAME_SCORE_LEN     (sizeof(GRN_COLUMN_NAME_SCORE) - 1)
 #define GRN_COLUMN_NAME_NSUBRECS      "_nsubrecs"
 #define GRN_COLUMN_NAME_NSUBRECS_LEN  (sizeof(GRN_COLUMN_NAME_NSUBRECS) - 1)
+#define GRN_COLUMN_NAME_MAX           "_max"
+#define GRN_COLUMN_NAME_MAX_LEN       (sizeof(GRN_COLUMN_NAME_MAX) - 1)
 #define GRN_COLUMN_NAME_SUM           "_sum"
 #define GRN_COLUMN_NAME_SUM_LEN       (sizeof(GRN_COLUMN_NAME_SUM) - 1)
 
