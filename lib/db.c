@@ -4969,7 +4969,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
           goto exit;
         }
         break;
-      case 'm' : /* max */
+      case 'm' : /* max, min */
         if (len == GRN_COLUMN_NAME_MAX_LEN &&
             memcmp(name,
                    GRN_COLUMN_NAME_MAX,
