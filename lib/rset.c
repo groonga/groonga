@@ -150,6 +150,61 @@ grn_rset_recinfo_set_max(grn_ctx *ctx,
 }
 
 int64_t *
+grn_rset_recinfo_get_min_(grn_ctx *ctx,
+                          grn_rset_recinfo *ri,
+                          grn_obj *table)
+{
+  grn_table_group_flags flags;
+  byte *values;
+
+  flags = DB_OBJ(table)->flags.group;
+  if (!(flags & GRN_TABLE_GROUP_CALC_MIN)) {
+    return NULL;
+  }
+
+  values = (((byte *)ri->subrecs) +
+            GRN_RSET_SUBRECS_SIZE(DB_OBJ(table)->subrec_size,
+                                  DB_OBJ(table)->max_n_subrecs));
+
+  if (flags & GRN_TABLE_GROUP_CALC_MAX) {
+    values += GRN_RSET_MAX_SIZE;
+  }
+
+  return (int64_t *)values;
+}
+
+int64_t
+grn_rset_recinfo_get_min(grn_ctx *ctx,
+                         grn_rset_recinfo *ri,
+                         grn_obj *table)
+{
+  int64_t *min_address;
+
+  min_address = grn_rset_recinfo_get_min_(ctx, ri, table);
+  if (min_address) {
+    return *min_address;
+  } else {
+    return 0;
+  }
+}
+
+void
+grn_rset_recinfo_set_min(grn_ctx *ctx,
+                         grn_rset_recinfo *ri,
+                         grn_obj *table,
+                         int64_t min)
+{
+  int64_t *min_address;
+
+  min_address = grn_rset_recinfo_get_min_(ctx, ri, table);
+  if (!min_address) {
+    return;
+  }
+
+  *min_address = min;
+}
+
+int64_t *
 grn_rset_recinfo_get_sum_(grn_ctx *ctx,
                           grn_rset_recinfo *ri,
                           grn_obj *table)

@@ -542,6 +542,15 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         }
         buf.header.domain = GRN_DB_INT64;
         break;
+      case GRN_ACCESSOR_GET_MIN :
+        {
+          grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
+          int64_t min;
+          min = grn_rset_recinfo_get_min(ctx, ri, a->obj);
+          GRN_INT64_PUT(ctx, &buf, min);
+        }
+        buf.header.domain = GRN_DB_INT64;
+        break;
       case GRN_ACCESSOR_GET_SUM :
         {
           grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);

@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2009-2014 Brazil
+  Copyright(C) 2009-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -755,6 +755,8 @@ GRN_API unsigned int grn_table_size(grn_ctx *ctx, grn_obj *table);
 #define GRN_COLUMN_NAME_NSUBRECS_LEN  (sizeof(GRN_COLUMN_NAME_NSUBRECS) - 1)
 #define GRN_COLUMN_NAME_MAX           "_max"
 #define GRN_COLUMN_NAME_MAX_LEN       (sizeof(GRN_COLUMN_NAME_MAX) - 1)
+#define GRN_COLUMN_NAME_MIN           "_min"
+#define GRN_COLUMN_NAME_MIN_LEN       (sizeof(GRN_COLUMN_NAME_MIN) - 1)
 #define GRN_COLUMN_NAME_SUM           "_sum"
 #define GRN_COLUMN_NAME_SUM_LEN       (sizeof(GRN_COLUMN_NAME_SUM) - 1)
 
