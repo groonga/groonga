@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2014 Brazil
+  Copyright(C) 2009-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -584,7 +584,51 @@ typedef struct {
   unsigned int output_columns_len;
   int offset;
   int limit;
+  grn_table_group_flags calc_types;
+  const char *calc_target_name;
+  unsigned int calc_target_name_len;
 } drilldown_info;
+
+static grn_table_group_flags
+grn_parse_table_group_calc_types(grn_ctx *ctx,
+                                 const char *calc_types,
+                                 unsigned int calc_types_len)
+{
+  grn_table_group_flags flags = 0;
+  const char *calc_types_end = calc_types + calc_types_len;
+
+  while (calc_types < calc_types_end) {
+    if (*calc_types == '|' || *calc_types == ' ') {
+      calc_types += 1;
+      continue;
+    }
+
+#define CHECK_TABLE_GROUP_CALC_TYPE(name)\
+  if (((calc_types_end - calc_types) >= (sizeof(#name) - 1)) &&\
+      (!memcmp(calc_types, #name, sizeof(#name) - 1))) {\
+    flags |= GRN_TABLE_GROUP_CALC_ ## name;\
+    calc_types += sizeof(#name);\
+    continue;\
+  }
+
+    CHECK_TABLE_GROUP_CALC_TYPE(COUNT);
+    CHECK_TABLE_GROUP_CALC_TYPE(MAX);
+    CHECK_TABLE_GROUP_CALC_TYPE(MIN);
+    CHECK_TABLE_GROUP_CALC_TYPE(SUM);
+    CHECK_TABLE_GROUP_CALC_TYPE(AVG);
+
+#define GRN_TABLE_GROUP_CALC_NONE 0
+    CHECK_TABLE_GROUP_CALC_TYPE(NONE);
+#undef GRN_TABLE_GROUP_CALC_NONE
+
+    ERR(GRN_INVALID_ARGUMENT, "invalid table group calc type: <%.*s>",
+        (int)(calc_types_end - calc_types), calc_types);
+    return 0;
+#undef CHECK_TABLE_GROUP_CALC_TYPE
+  }
+
+  return flags;
+}
 
 static void
 drilldown_info_fill(grn_ctx *ctx,
@@ -593,7 +637,9 @@ drilldown_info_fill(grn_ctx *ctx,
                     grn_obj *sortby,
                     grn_obj *output_columns,
                     grn_obj *offset,
-                    grn_obj *limit)
+                    grn_obj *limit,
+                    grn_obj *calc_types,
+                    grn_obj *calc_target)
 {
   if (keys) {
     drilldown->keys = GRN_TEXT_VALUE(keys);
@@ -635,6 +681,23 @@ drilldown_info_fill(grn_ctx *ctx,
       grn_atoi(GRN_TEXT_VALUE(limit), GRN_BULK_CURR(limit), NULL);
   } else {
     drilldown->limit = DEFAULT_DRILLDOWN_LIMIT;
+  }
+
+  if (calc_types && GRN_TEXT_LEN(calc_types)) {
+    drilldown->calc_types =
+      grn_parse_table_group_calc_types(ctx,
+                                       GRN_TEXT_VALUE(calc_types),
+                                       GRN_TEXT_LEN(calc_types));
+  } else {
+    drilldown->calc_types = 0;
+  }
+
+  if (calc_target && GRN_TEXT_LEN(calc_target)) {
+    drilldown->calc_target_name = GRN_TEXT_VALUE(calc_target);
+    drilldown->calc_target_name_len = GRN_TEXT_LEN(calc_target);
+  } else {
+    drilldown->calc_target_name = NULL;
+    drilldown->calc_target_name_len = 0;
   }
 }
 
@@ -725,7 +788,7 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
     int offset;
     int limit;
     grn_table_group_result result = {
-      NULL, 0, 0, 1, GRN_TABLE_GROUP_CALC_COUNT, 0
+      NULL, 0, 0, 1, GRN_TABLE_GROUP_CALC_COUNT, 0, 0, NULL
     };
 
     keys = grn_table_sort_key_from_str(ctx,
@@ -736,23 +799,22 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
       continue;
     }
 
-    if (n_keys == 1) {
-      result.table = grn_table_create_for_group(ctx, NULL, 0, NULL,
-                                                keys[0].key, table, 0);
-    } else {
-      result.table = grn_table_create_for_group(ctx, NULL, 0, NULL,
-                                                NULL, table, 1);
-    }
-
-    if (!result.table) {
-      grn_table_sort_key_close(ctx, keys, n_keys);
-      continue;
-    }
-
     GRN_OUTPUT_STR(drilldown->label, drilldown->label_len);
 
     result.key_begin = 0;
     result.key_end = n_keys - 1;
+    if (n_keys > 1) {
+      result.max_n_subrecs = 1;
+    }
+    if (drilldown->calc_target_name) {
+      result.calc_target = grn_obj_column(ctx, table,
+                                          drilldown->calc_target_name,
+                                          drilldown->calc_target_name_len);
+    }
+    if (result.calc_target) {
+      result.flags |= drilldown->calc_types;
+    }
+
     grn_table_group(ctx, table, keys, n_keys, &result, 1);
     n_hits = grn_table_size(ctx, result.table);
 
@@ -790,6 +852,9 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
     }
 
     grn_table_sort_key_close(ctx, keys, n_keys);
+    if (result.calc_target) {
+      grn_obj_unlink(ctx, result.calc_target);
+    }
     grn_obj_unlink(ctx, result.table);
 
     GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
@@ -1191,7 +1256,8 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     drilldown->label = NULL;
     drilldown->label_len = 0;
     drilldown_info_fill(ctx, drilldown,
-                        VAR(9), VAR(10), VAR(11), VAR(12), VAR(13));
+                        VAR(9), VAR(10), VAR(11), VAR(12), VAR(13),
+                        NULL, NULL);
     n_drilldowns++;
   } else {
     unsigned int i;
@@ -1207,6 +1273,8 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       grn_obj *output_columns;
       grn_obj *offset;
       grn_obj *limit;
+      grn_obj *calc_types;
+      grn_obj *calc_target;
 
       label_len = grn_vector_get_element(ctx, &drilldown_labels, i,
                                          &label, NULL, NULL);
@@ -1223,11 +1291,14 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       GET_VAR(output_columns);
       GET_VAR(offset);
       GET_VAR(limit);
+      GET_VAR(calc_types);
+      GET_VAR(calc_target);
 
 #undef GET_VAR
 
       drilldown_info_fill(ctx, drilldown,
-                          keys, sortby, output_columns, offset, limit);
+                          keys, sortby, output_columns, offset, limit,
+                          calc_types, calc_target);
     }
   }
   if (grn_select(ctx, GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)),

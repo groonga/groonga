@@ -719,6 +719,8 @@ struct _grn_table_group_result {
   int limit;
   grn_table_group_flags flags;
   grn_operator op;
+  unsigned int max_n_subrecs;
+  grn_obj *calc_target;
 };
 
 GRN_API grn_rc grn_table_group(grn_ctx *ctx, grn_obj *table,
@@ -751,6 +753,8 @@ GRN_API unsigned int grn_table_size(grn_ctx *ctx, grn_obj *table);
 #define GRN_COLUMN_NAME_SCORE_LEN     (sizeof(GRN_COLUMN_NAME_SCORE) - 1)
 #define GRN_COLUMN_NAME_NSUBRECS      "_nsubrecs"
 #define GRN_COLUMN_NAME_NSUBRECS_LEN  (sizeof(GRN_COLUMN_NAME_NSUBRECS) - 1)
+#define GRN_COLUMN_NAME_SUM           "_sum"
+#define GRN_COLUMN_NAME_SUM_LEN       (sizeof(GRN_COLUMN_NAME_SUM) - 1)
 
 GRN_API grn_obj *grn_column_create(grn_ctx *ctx, grn_obj *table,
                                    const char *name, unsigned int name_size,

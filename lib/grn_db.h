@@ -47,6 +47,12 @@ typedef struct {
 
 #define GRN_RSET_UTIL_BIT (0x80000000)
 
+#define GRN_RSET_N_SUBRECS_SIZE (sizeof(int))
+#define GRN_RSET_MAX_SIZE       (sizeof(int64_t))
+#define GRN_RSET_MIN_SIZE       (sizeof(int64_t))
+#define GRN_RSET_SUM_SIZE       (sizeof(int64_t))
+#define GRN_RSET_AVG_SIZE       (sizeof(double))
+
 #define GRN_RSET_SCORE_SIZE (sizeof(int))
 
 #define GRN_RSET_N_SUBRECS(ri) ((ri)->n_subrecs & ~GRN_RSET_UTIL_BIT)
@@ -58,6 +64,8 @@ typedef struct {
   ((int *)((byte *)subrecs + n * GRN_RSET_SUBREC_SIZE(size)))
 #define GRN_RSET_SUBRECS_COPY(subrecs,size,n,src) \
   (memcpy(GRN_RSET_SUBRECS_NTH(subrecs, size, n), src, GRN_RSET_SUBREC_SIZE(size)))
+#define GRN_RSET_SUBRECS_SIZE(subrec_size,n) \
+  (GRN_RSET_SUBREC_SIZE(subrec_size) * n)
 
 #define GRN_JSON_LOAD_OPEN_BRACKET 0x40000000
 #define GRN_JSON_LOAD_OPEN_BRACE   0x40000001
@@ -246,6 +254,7 @@ enum {
   GRN_ACCESSOR_GET_VALUE,
   GRN_ACCESSOR_GET_SCORE,
   GRN_ACCESSOR_GET_NSUBRECS,
+  GRN_ACCESSOR_GET_SUM,
   GRN_ACCESSOR_GET_COLUMN_VALUE,
   GRN_ACCESSOR_GET_DB_OBJ,
   GRN_ACCESSOR_LOOKUP,
