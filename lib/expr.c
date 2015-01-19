@@ -4641,7 +4641,7 @@ scan_info_build_find_index_column_index(grn_ctx *ctx,
   int32_t weight = 0;
 
   index = ec->value;
-  if (n_rest_codes > 2 &&
+  if (n_rest_codes >= 2 &&
       ec[1].value &&
       (ec[1].value->header.domain == GRN_DB_INT32 ||
        ec[1].value->header.domain == GRN_DB_UINT32) &&
@@ -4652,9 +4652,9 @@ scan_info_build_find_index_column_index(grn_ctx *ctx,
       sid = GRN_UINT32_VALUE(ec[1].value) + 1;
     }
     offset = 2;
+  }
+  if ((n_rest_codes - offset) >= 1) {
     weight = get_weight(ctx, ec + offset);
-  } else {
-    weight = get_weight(ctx, ec);
   }
   scan_info_put_index(ctx, si, index, sid, weight);
 
