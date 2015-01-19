@@ -5643,9 +5643,10 @@ grn_accessor_get_value_(grn_ctx *ctx, grn_accessor *a, grn_id id, uint32_t *size
       break;
     case GRN_ACCESSOR_GET_SUM :
       if ((value = grn_obj_get_value_(ctx, a->obj, id, size))) {
-        value = grn_rset_recinfo_get_sum_(ctx,
-                                          (grn_rset_recinfo *)value,
-                                          a->obj);
+        value =
+          (const char *)grn_rset_recinfo_get_sum_(ctx,
+                                                  (grn_rset_recinfo *)value,
+                                                  a->obj);
         *size = GRN_RSET_SUM_SIZE;
       }
       break;
