@@ -139,3 +139,19 @@ grn_rset_recinfo_get_sum(grn_ctx *ctx,
     return 0;
   }
 }
+
+void
+grn_rset_recinfo_set_sum(grn_ctx *ctx,
+                         grn_rset_recinfo *ri,
+                         grn_obj *table,
+                         int64_t sum)
+{
+  int64_t *sum_address;
+
+  sum_address = grn_rset_recinfo_get_sum_(ctx, ri, table);
+  if (!sum_address) {
+    return;
+  }
+
+  *sum_address = sum;
+}

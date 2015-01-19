@@ -5846,9 +5846,16 @@ grn_accessor_set_value(grn_ctx *ctx, grn_accessor *a, grn_id id,
         grn_obj_get_value(ctx, a->obj, id, &buf);
         {
           grn_rset_recinfo *ri = (grn_rset_recinfo *)GRN_BULK_HEAD(&buf);
-          int64_t *sum;
-          sum = grn_rset_recinfo_get_sum_(ctx, ri, a->obj);
-          vp = sum;
+          if (value->header.type == GRN_DB_INT64) {
+            grn_rset_recinfo_set_sum(ctx, ri, a->obj, GRN_INT64_VALUE(value));
+          } else {
+            grn_obj value_int64;
+            GRN_INT64_INIT(&value_int64, 0);
+            if (!grn_obj_cast(ctx, value, &value_int64, GRN_FALSE)) {
+              grn_rset_recinfo_set_sum(ctx, ri, a->obj,
+                                       GRN_INT64_VALUE(&value_int64));
+            }
+          }
         }
         break;
       case GRN_ACCESSOR_GET_COLUMN_VALUE :

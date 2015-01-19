@@ -70,6 +70,10 @@ int64_t *grn_rset_recinfo_get_sum_(grn_ctx *ctx,
 int64_t grn_rset_recinfo_get_sum(grn_ctx *ctx,
                                  grn_rset_recinfo *ri,
                                  grn_obj *table);
+void grn_rset_recinfo_set_sum(grn_ctx *ctx,
+                              grn_rset_recinfo *ri,
+                              grn_obj *table,
+                              int64_t sum);
 
 #ifdef __cplusplus
 }
