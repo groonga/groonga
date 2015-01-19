@@ -89,7 +89,7 @@ grn_rset_recinfo_update_calc_values(grn_ctx *ctx,
   }
   if (flags & GRN_TABLE_GROUP_CALC_AVG) {
     double current_average = *((double *)values);
-    int64_t value_raw = GRN_FLOAT_VALUE(&value_float);
+    double value_raw = GRN_FLOAT_VALUE(&value_float);
     *((double *)values) += (value_raw - current_average) / ri->n_subrecs;
     values += GRN_RSET_AVG_SIZE;
   }
@@ -260,4 +260,65 @@ grn_rset_recinfo_set_sum(grn_ctx *ctx,
   }
 
   *sum_address = sum;
+}
+
+double *
+grn_rset_recinfo_get_avg_(grn_ctx *ctx,
+                          grn_rset_recinfo *ri,
+                          grn_obj *table)
+{
+  grn_table_group_flags flags;
+  byte *values;
+
+  flags = DB_OBJ(table)->flags.group;
+  if (!(flags & GRN_TABLE_GROUP_CALC_AVG)) {
+    return NULL;
+  }
+
+  values = (((byte *)ri->subrecs) +
+            GRN_RSET_SUBRECS_SIZE(DB_OBJ(table)->subrec_size,
+                                  DB_OBJ(table)->max_n_subrecs));
+
+  if (flags & GRN_TABLE_GROUP_CALC_MAX) {
+    values += GRN_RSET_MAX_SIZE;
+  }
+  if (flags & GRN_TABLE_GROUP_CALC_MIN) {
+    values += GRN_RSET_MIN_SIZE;
+  }
+  if (flags & GRN_TABLE_GROUP_CALC_SUM) {
+    values += GRN_RSET_SUM_SIZE;
+  }
+
+  return (double *)values;
+}
+
+double
+grn_rset_recinfo_get_avg(grn_ctx *ctx,
+                         grn_rset_recinfo *ri,
+                         grn_obj *table)
+{
+  double *avg_address;
+
+  avg_address = grn_rset_recinfo_get_avg_(ctx, ri, table);
+  if (avg_address) {
+    return *avg_address;
+  } else {
+    return 0;
+  }
+}
+
+void
+grn_rset_recinfo_set_avg(grn_ctx *ctx,
+                         grn_rset_recinfo *ri,
+                         grn_obj *table,
+                         double avg)
+{
+  double *avg_address;
+
+  avg_address = grn_rset_recinfo_get_avg_(ctx, ri, table);
+  if (!avg_address) {
+    return;
+  }
+
+  *avg_address = avg;
 }

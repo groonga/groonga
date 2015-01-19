@@ -97,6 +97,17 @@ void grn_rset_recinfo_set_sum(grn_ctx *ctx,
                               grn_obj *table,
                               int64_t sum);
 
+double *grn_rset_recinfo_get_avg_(grn_ctx *ctx,
+                                  grn_rset_recinfo *ri,
+                                  grn_obj *table);
+double grn_rset_recinfo_get_avg(grn_ctx *ctx,
+                                grn_rset_recinfo *ri,
+                                grn_obj *table);
+void grn_rset_recinfo_set_avg(grn_ctx *ctx,
+                              grn_rset_recinfo *ri,
+                              grn_obj *table,
+                              double avg);
+
 #ifdef __cplusplus
 }
 #endif

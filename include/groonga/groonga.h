@@ -759,6 +759,8 @@ GRN_API unsigned int grn_table_size(grn_ctx *ctx, grn_obj *table);
 #define GRN_COLUMN_NAME_MIN_LEN       (sizeof(GRN_COLUMN_NAME_MIN) - 1)
 #define GRN_COLUMN_NAME_SUM           "_sum"
 #define GRN_COLUMN_NAME_SUM_LEN       (sizeof(GRN_COLUMN_NAME_SUM) - 1)
+#define GRN_COLUMN_NAME_AVG           "_avg"
+#define GRN_COLUMN_NAME_AVG_LEN       (sizeof(GRN_COLUMN_NAME_AVG) - 1)
 
 GRN_API grn_obj *grn_column_create(grn_ctx *ctx, grn_obj *table,
                                    const char *name, unsigned int name_size,

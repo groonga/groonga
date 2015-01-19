@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2013 Brazil
+/* Copyright(C) 2009-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -224,6 +224,7 @@ enum {
   GRN_ACCESSOR_GET_MAX,
   GRN_ACCESSOR_GET_MIN,
   GRN_ACCESSOR_GET_SUM,
+  GRN_ACCESSOR_GET_AVG,
   GRN_ACCESSOR_GET_COLUMN_VALUE,
   GRN_ACCESSOR_GET_DB_OBJ,
   GRN_ACCESSOR_LOOKUP,

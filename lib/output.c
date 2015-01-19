@@ -560,6 +560,15 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         }
         buf.header.domain = GRN_DB_INT64;
         break;
+      case GRN_ACCESSOR_GET_AVG :
+        {
+          grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
+          double avg;
+          avg = grn_rset_recinfo_get_avg(ctx, ri, a->obj);
+          GRN_FLOAT_PUT(ctx, &buf, avg);
+        }
+        buf.header.domain = GRN_DB_FLOAT;
+        break;
       case GRN_ACCESSOR_GET_COLUMN_VALUE :
         if ((a->obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_VECTOR) {
           if (a->next) {
