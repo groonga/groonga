@@ -4705,8 +4705,9 @@ grn_obj_get_accessor_pseudo_column(grn_ctx *ctx, grn_obj *obj,
       }
       break;
     case GRN_ACCESSOR_GET_SUM :
+    case GRN_ACCESSOR_GET_NSUBRECS :
       if (GRN_TABLE_IS_GROUPED(obj)) {
-        (*rp)->action = GRN_ACCESSOR_GET_SUM;
+        (*rp)->action = action;
         succeeded = GRN_TRUE;
         goto exit;
       }
@@ -4957,37 +4958,9 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
                    GRN_COLUMN_NAME_NSUBRECS_LEN)) {
           goto exit;
         }
-        for (rp = &res; !done; rp = &(*rp)->next) {
-          *rp = accessor_new(ctx);
-          (*rp)->obj = obj;
-          if (GRN_TABLE_IS_GROUPED(obj)) {
-            (*rp)->action = GRN_ACCESSOR_GET_NSUBRECS;
-            done++;
-          } else {
-            switch (obj->header.type) {
-            case GRN_TABLE_PAT_KEY :
-            case GRN_TABLE_DAT_KEY :
-            case GRN_TABLE_HASH_KEY :
-              (*rp)->action = GRN_ACCESSOR_GET_KEY;
-              break;
-            case GRN_TABLE_NO_KEY :
-              if (obj->header.domain) {
-                (*rp)->action = GRN_ACCESSOR_GET_VALUE;
-                break;
-              }
-              /* fallthru */
-            default :
-              /* lookup failed */
-              grn_obj_close(ctx, (grn_obj *)res);
-              res = NULL;
-              goto exit;
-            }
-            if (!(obj = grn_ctx_at(ctx, obj->header.domain))) {
-              grn_obj_close(ctx, (grn_obj *)res);
-              res = NULL;
-              goto exit;
-            }
-          }
+        if (!grn_obj_get_accessor_pseudo_column(ctx, obj, &res,
+                                                GRN_ACCESSOR_GET_NSUBRECS)) {
+          goto exit;
         }
         break;
       default :
