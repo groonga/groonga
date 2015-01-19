@@ -5758,9 +5758,9 @@ grn_accessor_get_value(grn_ctx *ctx, grn_accessor *a, grn_id id, grn_obj *value)
     case GRN_ACCESSOR_GET_MAX :
       if (id) {
         grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
-        int64_t sum;
-        sum = grn_rset_recinfo_get_max(ctx, ri, a->obj);
-        GRN_INT64_PUT(ctx, value, sum);
+        int64_t max;
+        max = grn_rset_recinfo_get_max(ctx, ri, a->obj);
+        GRN_INT64_PUT(ctx, value, max);
       } else {
         GRN_INT64_PUT(ctx, value, 0);
       }
