@@ -4686,8 +4686,8 @@ accessor_new(grn_ctx *ctx)
 }
 
 inline static grn_bool
-grn_obj_get_accessor_pseudo_column(grn_ctx *ctx, grn_obj *obj,
-                                   grn_accessor **res, uint8_t action)
+grn_obj_get_accessor_rset_value(grn_ctx *ctx, grn_obj *obj,
+                                grn_accessor **res, uint8_t action)
 {
   grn_bool succeeded = GRN_FALSE;
   grn_accessor **rp;
@@ -4935,16 +4935,16 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
       case 's' : /* score, sum */
         if (len == GRN_COLUMN_NAME_SCORE_LEN &&
             memcmp(name, GRN_COLUMN_NAME_SCORE, GRN_COLUMN_NAME_SCORE_LEN) == 0) {
-          if (!grn_obj_get_accessor_pseudo_column(ctx, obj, &res,
-                                                  GRN_ACCESSOR_GET_SCORE)) {
+          if (!grn_obj_get_accessor_rset_value(ctx, obj, &res,
+                                               GRN_ACCESSOR_GET_SCORE)) {
             goto exit;
           }
         } else if (len == GRN_COLUMN_NAME_SUM_LEN &&
                    memcmp(name,
                           GRN_COLUMN_NAME_SUM,
                           GRN_COLUMN_NAME_SUM_LEN) == 0) {
-          if (!grn_obj_get_accessor_pseudo_column(ctx, obj, &res,
-                                                  GRN_ACCESSOR_GET_SUM)) {
+          if (!grn_obj_get_accessor_rset_value(ctx, obj, &res,
+                                               GRN_ACCESSOR_GET_SUM)) {
             goto exit;
           }
         } else {
@@ -4958,8 +4958,8 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
                    GRN_COLUMN_NAME_NSUBRECS_LEN)) {
           goto exit;
         }
-        if (!grn_obj_get_accessor_pseudo_column(ctx, obj, &res,
-                                                GRN_ACCESSOR_GET_NSUBRECS)) {
+        if (!grn_obj_get_accessor_rset_value(ctx, obj, &res,
+                                             GRN_ACCESSOR_GET_NSUBRECS)) {
           goto exit;
         }
         break;
