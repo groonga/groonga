@@ -536,17 +536,9 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       case GRN_ACCESSOR_GET_SUM :
         {
           grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
-          byte *values;
-          values = ((char *)(ri->subrecs) +
-                    GRN_RSET_SUBRECS_SIZE(DB_OBJ(a->obj)->subrec_size,
-                                          DB_OBJ(a->obj)->max_n_subrecs));
-          if (DB_OBJ(a->obj)->flags.group & GRN_TABLE_GROUP_CALC_MAX) {
-            values += GRN_RSET_MAX_SIZE;
-          }
-          if (DB_OBJ(a->obj)->flags.group & GRN_TABLE_GROUP_CALC_MIN) {
-            values += GRN_RSET_MIN_SIZE;
-          }
-          GRN_INT64_PUT(ctx, &buf, *((int64_t *)values));
+          int64_t sum;
+          sum = grn_rset_recinfo_get_sum(ctx, ri, a->obj);
+          GRN_INT64_PUT(ctx, &buf, sum);
         }
         buf.header.domain = GRN_DB_INT64;
         break;

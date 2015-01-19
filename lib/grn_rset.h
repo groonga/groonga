@@ -57,6 +57,19 @@ typedef struct {
 #define GRN_RSET_SUBRECS_SIZE(subrec_size,n) \
   (GRN_RSET_SUBREC_SIZE(subrec_size) * n)
 
+uint32_t grn_rset_recinfo_calc_values_size(grn_ctx *ctx,
+                                           grn_table_group_flags flags);
+void grn_rset_recinfo_update_calc_values(grn_ctx *ctx,
+                                         grn_rset_recinfo *ri,
+                                         grn_obj *table,
+                                         grn_obj *value);
+
+int64_t *grn_rset_recinfo_get_sum_(grn_ctx *ctx,
+                                   grn_rset_recinfo *ri,
+                                   grn_obj *table);
+int64_t grn_rset_recinfo_get_sum(grn_ctx *ctx,
+                                 grn_rset_recinfo *ri,
+                                 grn_obj *table);
 
 #ifdef __cplusplus
 }

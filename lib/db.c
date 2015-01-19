@@ -3058,10 +3058,7 @@ grn_table_group_add_subrec(grn_ctx *ctx,
                            grn_obj *calc_target)
 {
   grn_table_group_flags flags;
-  byte *values;
   grn_obj value;
-  grn_obj value_int64;
-  grn_obj value_float;
 
   if (!(DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC)) {
     return;
@@ -3078,54 +3075,9 @@ grn_table_group_add_subrec(grn_ctx *ctx,
     return;
   }
 
-  values = (((byte *)ri->subrecs) +
-            GRN_RSET_SUBRECS_SIZE(DB_OBJ(table)->subrec_size,
-                                  DB_OBJ(table)->max_n_subrecs));
-
   GRN_VOID_INIT(&value);
-  GRN_INT64_INIT(&value_int64, 0);
-  GRN_FLOAT_INIT(&value_float, 0);
-
   grn_obj_get_value(ctx, calc_target, pi->rid, &value);
-  if (flags & (GRN_TABLE_GROUP_CALC_MAX |
-               GRN_TABLE_GROUP_CALC_MIN |
-               GRN_TABLE_GROUP_CALC_SUM)) {
-    grn_obj_cast(ctx, &value, &value_int64, GRN_FALSE);
-  }
-  if (flags & GRN_TABLE_GROUP_CALC_AVG) {
-    grn_obj_cast(ctx, &value, &value_float, GRN_FALSE);
-  }
-
-  if (flags & GRN_TABLE_GROUP_CALC_MAX) {
-    int64_t current_max = *((int64_t *)values);
-    int64_t value_raw = GRN_INT64_VALUE(&value_int64);
-    if (ri->n_subrecs == 1 || value_raw > current_max) {
-      *((int64_t *)values) = value_raw;
-    }
-    values += GRN_RSET_MAX_SIZE;
-  }
-  if (flags & GRN_TABLE_GROUP_CALC_MIN) {
-    int64_t current_min = *((int64_t *)values);
-    int64_t value_raw = GRN_INT64_VALUE(&value_int64);
-    if (ri->n_subrecs == 1 || value_raw < current_min) {
-      *((int64_t *)values) = value_raw;
-    }
-    values += GRN_RSET_MIN_SIZE;
-  }
-  if (flags & GRN_TABLE_GROUP_CALC_SUM) {
-    int64_t value_raw = GRN_INT64_VALUE(&value_int64);
-    *((int64_t *)values) += value_raw;
-    values += GRN_RSET_SUM_SIZE;
-  }
-  if (flags & GRN_TABLE_GROUP_CALC_AVG) {
-    double current_average = *((double *)values);
-    int64_t value_raw = GRN_FLOAT_VALUE(&value_float);
-    *((double *)values) += (value_raw - current_average) / ri->n_subrecs;
-    values += GRN_RSET_AVG_SIZE;
-  }
-
-  GRN_OBJ_FIN(ctx, &value_float);
-  GRN_OBJ_FIN(ctx, &value_int64);
+  grn_rset_recinfo_update_calc_values(ctx, ri, table, &value);
   GRN_OBJ_FIN(ctx, &value);
 }
 
@@ -3690,7 +3642,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
       if (!rp->table) {
         grn_obj_flags flags;
         grn_obj *key_type = NULL;
-        uint32_t additional_value_size = 0;
+        uint32_t additional_value_size;
 
         flags = GRN_TABLE_HASH_KEY|
           GRN_OBJ_WITH_SUBREC|
@@ -3700,18 +3652,8 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
         } else {
           flags |= GRN_OBJ_KEY_VAR_SIZE;
         }
-        if (rp->flags & GRN_TABLE_GROUP_CALC_MAX) {
-          additional_value_size += GRN_RSET_MAX_SIZE;
-        }
-        if (rp->flags & GRN_TABLE_GROUP_CALC_MIN) {
-          additional_value_size += GRN_RSET_MIN_SIZE;
-        }
-        if (rp->flags & GRN_TABLE_GROUP_CALC_SUM) {
-          additional_value_size += GRN_RSET_SUM_SIZE;
-        }
-        if (rp->flags & GRN_TABLE_GROUP_CALC_AVG) {
-          additional_value_size += GRN_RSET_AVG_SIZE;
-        }
+        additional_value_size = grn_rset_recinfo_calc_values_size(ctx,
+                                                                  rp->flags);
         rp->table = grn_table_create_with_max_n_subrecs(ctx, NULL, 0, NULL,
                                                         flags,
                                                         key_type, table,
@@ -5701,15 +5643,9 @@ grn_accessor_get_value_(grn_ctx *ctx, grn_accessor *a, grn_id id, uint32_t *size
       break;
     case GRN_ACCESSOR_GET_SUM :
       if ((value = grn_obj_get_value_(ctx, a->obj, id, size))) {
-        value = ((const char *)(((grn_rset_recinfo *)value)->subrecs) +
-                 GRN_RSET_SUBRECS_SIZE(DB_OBJ(a->obj)->subrec_size,
-                                       DB_OBJ(a->obj)->max_n_subrecs));
-        if (DB_OBJ(a->obj)->flags.group & GRN_TABLE_GROUP_CALC_MAX) {
-          value += GRN_RSET_MAX_SIZE;
-        }
-        if (DB_OBJ(a->obj)->flags.group & GRN_TABLE_GROUP_CALC_MIN) {
-          value += GRN_RSET_MIN_SIZE;
-        }
+        value = grn_rset_recinfo_get_sum_(ctx,
+                                          (grn_rset_recinfo *)value,
+                                          a->obj);
         *size = GRN_RSET_SUM_SIZE;
       }
       break;
@@ -5809,17 +5745,9 @@ grn_accessor_get_value(grn_ctx *ctx, grn_accessor *a, grn_id id, grn_obj *value)
     case GRN_ACCESSOR_GET_SUM :
       if (id) {
         grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
-        byte *values;
-        values = ((char *)(ri->subrecs) +
-                  GRN_RSET_SUBRECS_SIZE(DB_OBJ(a->obj)->subrec_size,
-                                        DB_OBJ(a->obj)->max_n_subrecs));
-        if (DB_OBJ(a->obj)->flags.group & GRN_TABLE_GROUP_CALC_MAX) {
-          values += GRN_RSET_MAX_SIZE;
-        }
-        if (DB_OBJ(a->obj)->flags.group & GRN_TABLE_GROUP_CALC_MIN) {
-          values += GRN_RSET_MIN_SIZE;
-        }
-        GRN_INT64_PUT(ctx, value, *((int64_t *)values));
+        int64_t sum;
+        sum = grn_rset_recinfo_get_sum(ctx, ri, a->obj);
+        GRN_INT64_PUT(ctx, value, sum);
       } else {
         GRN_INT64_PUT(ctx, value, 0);
       }
@@ -5917,17 +5845,9 @@ grn_accessor_set_value(grn_ctx *ctx, grn_accessor *a, grn_id id,
         grn_obj_get_value(ctx, a->obj, id, &buf);
         {
           grn_rset_recinfo *ri = (grn_rset_recinfo *)GRN_BULK_HEAD(&buf);
-          char *values;
-          values = ((char *)(ri->subrecs) +
-                    GRN_RSET_SUBRECS_SIZE(DB_OBJ(a->obj)->subrec_size,
-                                          DB_OBJ(a->obj)->max_n_subrecs));
-          if (DB_OBJ(a->obj)->flags.group & GRN_TABLE_GROUP_CALC_MAX) {
-            values += GRN_RSET_MAX_SIZE;
-          }
-          if (DB_OBJ(a->obj)->flags.group & GRN_TABLE_GROUP_CALC_MIN) {
-            values += GRN_RSET_MIN_SIZE;
-          }
-          vp = values;
+          int64_t *sum;
+          sum = grn_rset_recinfo_get_sum_(ctx, ri, a->obj);
+          vp = sum;
         }
         break;
       case GRN_ACCESSOR_GET_COLUMN_VALUE :
