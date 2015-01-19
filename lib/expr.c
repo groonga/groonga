@@ -4638,7 +4638,7 @@ scan_info_build_find_index_column_index(grn_ctx *ctx,
   uint32_t offset = 0;
   grn_obj *index;
   int sid = 0;
-  int32_t weight = 0;
+  int32_t weight;
 
   index = ec->value;
   if (n_rest_codes >= 2 &&
@@ -4653,9 +4653,7 @@ scan_info_build_find_index_column_index(grn_ctx *ctx,
     }
     offset = 2;
   }
-  if ((n_rest_codes - offset) >= 1) {
-    weight = get_weight(ctx, ec + offset);
-  }
+  weight = get_weight(ctx, ec + offset);
   scan_info_put_index(ctx, si, index, sid, weight);
 
   return offset;
