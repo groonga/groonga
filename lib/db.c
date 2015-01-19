@@ -3055,10 +3055,10 @@ grn_table_group_add_subrec(grn_ctx *ctx,
                            grn_obj *table,
                            grn_rset_recinfo *ri, int score,
                            grn_rset_posinfo *pi, int dir,
-                           grn_obj *calc_target)
+                           grn_obj *calc_target,
+                           grn_obj *value_buffer)
 {
   grn_table_group_flags flags;
-  grn_obj value;
 
   if (!(DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC)) {
     return;
@@ -3075,10 +3075,9 @@ grn_table_group_add_subrec(grn_ctx *ctx,
     return;
   }
 
-  GRN_VOID_INIT(&value);
-  grn_obj_get_value(ctx, calc_target, pi->rid, &value);
-  grn_rset_recinfo_update_calc_values(ctx, ri, table, &value);
-  GRN_OBJ_FIN(ctx, &value);
+  GRN_BULK_REWIND(value_buffer);
+  grn_obj_get_value(ctx, calc_target, pi->rid, value_buffer);
+  grn_rset_recinfo_update_calc_values(ctx, ri, table, value_buffer);
 }
 
 static grn_bool
@@ -3097,6 +3096,8 @@ accelerated_table_group(grn_ctx *ctx, grn_obj *table, grn_obj *key,
       grn_table_cursor *tc;
       if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0))) {
         grn_bool processed = GRN_TRUE;
+        grn_obj value_buffer;
+        GRN_VOID_INIT(&value_buffer);
         switch (a->next->obj->header.type) {
         case GRN_COLUMN_FIX_SIZE :
           {
@@ -3124,7 +3125,8 @@ accelerated_table_group(grn_ctx *ctx, grn_obj *table, grn_obj *key,
                 grn_table_group_add_subrec(ctx, res, value,
                                            ri ? ri->score : 0,
                                            (grn_rset_posinfo *)&id, 0,
-                                           calc_target);
+                                           calc_target,
+                                           &value_buffer);
               }
             }
             GRN_RA_CACHE_FIN(ra, &cache);
@@ -3152,7 +3154,8 @@ accelerated_table_group(grn_ctx *ctx, grn_obj *table, grn_obj *key,
                     grn_table_group_add_subrec(ctx, res, value,
                                                ri ? ri->score : 0,
                                                (grn_rset_posinfo *)&id, 0,
-                                               calc_target);
+                                               calc_target,
+                                               &value_buffer);
                   }
                   v++;
                   len -= sizeof(grn_id);
@@ -3168,6 +3171,7 @@ accelerated_table_group(grn_ctx *ctx, grn_obj *table, grn_obj *key,
           processed = GRN_FALSE;
           break;
         }
+        GRN_OBJ_FIN(ctx, &value_buffer);
         grn_table_cursor_close(ctx, tc);
         return processed;
       }
@@ -3181,11 +3185,13 @@ grn_table_group_single_key_records(grn_ctx *ctx, grn_obj *table,
                                    grn_obj *key, grn_table_group_result *result)
 {
   grn_obj bulk;
+  grn_obj value_buffer;
   grn_table_cursor *tc;
   grn_obj *res = result->table;
   grn_obj *calc_target = result->calc_target;
 
   GRN_TEXT_INIT(&bulk, 0);
+  GRN_VOID_INIT(&value_buffer);
   if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0))) {
     grn_id id;
     grn_obj *range = grn_ctx_at(ctx, grn_obj_get_range(ctx, key));
@@ -3211,7 +3217,8 @@ grn_table_group_single_key_records(grn_ctx *ctx, grn_obj *table,
               grn_table_group_add_subrec(ctx, res, value,
                                          ri ? ri->score : 0,
                                          (grn_rset_posinfo *)&id, 0,
-                                         calc_target);
+                                         calc_target,
+                                         &value_buffer);
             }
             v++;
           }
@@ -3232,7 +3239,8 @@ grn_table_group_single_key_records(grn_ctx *ctx, grn_obj *table,
               grn_table_group_add_subrec(ctx, res, value,
                                          ri ? ri->score : 0,
                                          (grn_rset_posinfo *)&id, 0,
-                                         calc_target);
+                                         calc_target,
+                                         &value_buffer);
             }
           }
         }
@@ -3246,7 +3254,8 @@ grn_table_group_single_key_records(grn_ctx *ctx, grn_obj *table,
             grn_table_group_add_subrec(ctx, res, value,
                                        ri ? ri->score : 0,
                                        (grn_rset_posinfo *)&id, 0,
-                                       calc_target);
+                                       calc_target,
+                                       &value_buffer);
           }
         }
         break;
@@ -3412,7 +3421,8 @@ grn_table_group_multi_keys_add_record(grn_ctx *ctx,
       grn_table_group_add_subrec(ctx, rp->table, value,
                                  ri ? ri->score : 0,
                                  (grn_rset_posinfo *)&id, 0,
-                                 rp->calc_target);
+                                 rp->calc_target,
+                                 bulk);
     }
   }
 }
