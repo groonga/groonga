@@ -20,6 +20,7 @@
 #include "grn.h"
 #include "grn_ctx.h"
 #include "grn_store.h"
+#include "grn_rset.h"
 
 #include <groonga/command.h>
 #include <groonga/token_filter.h>
@@ -32,40 +33,6 @@ extern "C" {
 #define GRN_DB_PSEUDO_COLUMN_PREFIX '_'
 
 #define GRN_N_RESERVED_TYPES 256
-
-typedef struct {
-  int score;
-  int n_subrecs;
-  int subrecs[1];
-} grn_rset_recinfo;
-
-typedef struct {
-  grn_id rid;
-  uint32_t sid;
-  uint32_t pos;
-} grn_rset_posinfo;
-
-#define GRN_RSET_UTIL_BIT (0x80000000)
-
-#define GRN_RSET_N_SUBRECS_SIZE (sizeof(int))
-#define GRN_RSET_MAX_SIZE       (sizeof(int64_t))
-#define GRN_RSET_MIN_SIZE       (sizeof(int64_t))
-#define GRN_RSET_SUM_SIZE       (sizeof(int64_t))
-#define GRN_RSET_AVG_SIZE       (sizeof(double))
-
-#define GRN_RSET_SCORE_SIZE (sizeof(int))
-
-#define GRN_RSET_N_SUBRECS(ri) ((ri)->n_subrecs & ~GRN_RSET_UTIL_BIT)
-
-#define GRN_RSET_SUBREC_SIZE(subrec_size) \
-  (GRN_RSET_SCORE_SIZE + subrec_size)
-#define GRN_RSET_SUBRECS_CMP(a,b,dir) (((a) - (b))*(dir))
-#define GRN_RSET_SUBRECS_NTH(subrecs,size,n) \
-  ((int *)((byte *)subrecs + n * GRN_RSET_SUBREC_SIZE(size)))
-#define GRN_RSET_SUBRECS_COPY(subrecs,size,n,src) \
-  (memcpy(GRN_RSET_SUBRECS_NTH(subrecs, size, n), src, GRN_RSET_SUBREC_SIZE(size)))
-#define GRN_RSET_SUBRECS_SIZE(subrec_size,n) \
-  (GRN_RSET_SUBREC_SIZE(subrec_size) * n)
 
 #define GRN_JSON_LOAD_OPEN_BRACKET 0x40000000
 #define GRN_JSON_LOAD_OPEN_BRACE   0x40000001
