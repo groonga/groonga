@@ -4685,6 +4685,64 @@ accessor_new(grn_ctx *ctx)
   return res;
 }
 
+inline static grn_bool
+grn_obj_get_accessor_pseudo_column(grn_ctx *ctx, grn_obj *obj,
+                                   grn_accessor **res, uint8_t action)
+{
+  grn_bool succeeded = GRN_FALSE;
+  grn_accessor **rp;
+
+  for (rp = res; GRN_TRUE; rp = &(*rp)->next) {
+    *rp = accessor_new(ctx);
+    (*rp)->obj = obj;
+
+    switch (action) {
+    case GRN_ACCESSOR_GET_SCORE :
+      if (DB_OBJ(obj)->header.flags & GRN_OBJ_WITH_SUBREC) {
+        (*rp)->action = action;
+        succeeded = GRN_TRUE;
+        goto exit;
+      }
+      break;
+    case GRN_ACCESSOR_GET_SUM :
+      if (GRN_TABLE_IS_GROUPED(obj)) {
+        (*rp)->action = GRN_ACCESSOR_GET_SUM;
+        succeeded = GRN_TRUE;
+        goto exit;
+      }
+      break;
+    }
+
+    switch (obj->header.type) {
+    case GRN_TABLE_PAT_KEY :
+    case GRN_TABLE_DAT_KEY :
+    case GRN_TABLE_HASH_KEY :
+      (*rp)->action = GRN_ACCESSOR_GET_KEY;
+      break;
+    case GRN_TABLE_NO_KEY :
+      if (!obj->header.domain) {
+        goto exit;
+      }
+      (*rp)->action = GRN_ACCESSOR_GET_VALUE;
+      break;
+    default :
+      /* lookup failed */
+      goto exit;
+    }
+    if (!(obj = grn_ctx_at(ctx, obj->header.domain))) {
+      goto exit;
+    }
+  }
+
+exit :
+  if (!succeeded) {
+    grn_obj_close(ctx, (grn_obj *)*res);
+    *res = NULL;
+  }
+
+  return succeeded;
+}
+
 static grn_obj *
 grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int name_size)
 {
@@ -4876,73 +4934,17 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
       case 's' : /* score, sum */
         if (len == GRN_COLUMN_NAME_SCORE_LEN &&
             memcmp(name, GRN_COLUMN_NAME_SCORE, GRN_COLUMN_NAME_SCORE_LEN) == 0) {
-        for (rp = &res; !done; rp = &(*rp)->next) {
-          *rp = accessor_new(ctx);
-          (*rp)->obj = obj;
-          if (DB_OBJ(obj)->header.flags & GRN_OBJ_WITH_SUBREC) {
-            (*rp)->action = GRN_ACCESSOR_GET_SCORE;
-            done++;
-          } else {
-            switch (obj->header.type) {
-            case GRN_TABLE_PAT_KEY :
-            case GRN_TABLE_DAT_KEY :
-            case GRN_TABLE_HASH_KEY :
-              (*rp)->action = GRN_ACCESSOR_GET_KEY;
-              break;
-            case GRN_TABLE_NO_KEY :
-              if (obj->header.domain) {
-                (*rp)->action = GRN_ACCESSOR_GET_VALUE;
-                break;
-              }
-              /* fallthru */
-            default :
-              /* lookup failed */
-              grn_obj_close(ctx, (grn_obj *)res);
-              res = NULL;
-              goto exit;
-            }
-            if (!(obj = grn_ctx_at(ctx, obj->header.domain))) {
-              grn_obj_close(ctx, (grn_obj *)res);
-              res = NULL;
-              goto exit;
-            }
+          if (!grn_obj_get_accessor_pseudo_column(ctx, obj, &res,
+                                                  GRN_ACCESSOR_GET_SCORE)) {
+            goto exit;
           }
-        }
         } else if (len == GRN_COLUMN_NAME_SUM_LEN &&
                    memcmp(name,
                           GRN_COLUMN_NAME_SUM,
                           GRN_COLUMN_NAME_SUM_LEN) == 0) {
-          for (rp = &res; !done; rp = &(*rp)->next) {
-            *rp = accessor_new(ctx);
-            (*rp)->obj = obj;
-            if (GRN_TABLE_IS_GROUPED(obj)) {
-              (*rp)->action = GRN_ACCESSOR_GET_SUM;
-              done++;
-            } else {
-              switch (obj->header.type) {
-              case GRN_TABLE_PAT_KEY :
-              case GRN_TABLE_DAT_KEY :
-              case GRN_TABLE_HASH_KEY :
-                (*rp)->action = GRN_ACCESSOR_GET_KEY;
-                break;
-              case GRN_TABLE_NO_KEY :
-                if (obj->header.domain) {
-                  (*rp)->action = GRN_ACCESSOR_GET_VALUE;
-                  break;
-                }
-                /* fallthru */
-              default :
-                /* lookup failed */
-                grn_obj_close(ctx, (grn_obj *)res);
-                res = NULL;
-                goto exit;
-              }
-              if (!(obj = grn_ctx_at(ctx, obj->header.domain))) {
-                grn_obj_close(ctx, (grn_obj *)res);
-                res = NULL;
-                goto exit;
-              }
-            }
+          if (!grn_obj_get_accessor_pseudo_column(ctx, obj, &res,
+                                                  GRN_ACCESSOR_GET_SUM)) {
+            goto exit;
           }
         } else {
           goto exit;
