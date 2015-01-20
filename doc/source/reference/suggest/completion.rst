@@ -38,10 +38,10 @@ For example, there is a registered word "日本". And "ニホン"
 can find "日本" by "ni", "二" or "に".
 
 If you create dataset which is named as ``example`` by
-:doc:`/reference/executables/groonga-suggest-create-dataset` command,
-you can update pairs of registered word and its reading by loading
-data to ``_key`` and ``kana`` column of ``item_example`` table
-explicitly for prefix RK search.
+:doc:`/reference/executables/groonga-suggest-create-dataset`
+executable file, you can update pairs of registered word and its
+reading by loading data to ``_key`` and ``kana`` column of
+``item_example`` table explicitly for prefix RK search.
 
 Cooccurrence search
 ^^^^^^^^^^^^^^^^^^^
