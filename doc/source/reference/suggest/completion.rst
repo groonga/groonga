@@ -37,11 +37,11 @@ For example, there is a registered word "日本". And "ニホン"
 (it must be katakana) is registered as its reading. An user
 can find "日本" by "ni", "二" or "に".
 
-If you create dataset which is named as example by
+If you create dataset which is named as ``example`` by
 :doc:`/reference/executables/groonga-suggest-create-dataset` command,
 you can update pairs of registered word and its reading by loading
-data to '_key' and 'kana' column of item_example table explicitly for
-prefix RK search.
+data to ``_key`` and ``kana`` column of ``item_example`` table
+explicitly for prefix RK search.
 
 Cooccurrence search
 ^^^^^^^^^^^^^^^^^^^
@@ -135,7 +135,7 @@ Prefix search
 
 Prefix search can find registered word that start with
 user's input. This search doesn't care about romaji,
-katakana and hiragana not like Prefix RK search.
+katakana and hiragana not like prefix RK search.
 
 This search isn't always ran. It's just ran when it's
 requested explicitly or both prefix RK search and
@@ -160,7 +160,7 @@ How to use
 .. ]
 
 Groonga provides :doc:`/reference/commands/suggest` command to use
-completion. `--type complete` option requests completion.
+completion. ``--type complete`` option requests completion.
 
 For example, here is an command to get completion results by
 "en":
@@ -174,7 +174,7 @@ How it learns
 
 Cooccurrence search uses learned data. They are based on
 query logs, access logs and so on. To create learned data,
-groonga needs user input sequence with time stamp and user
+Groonga needs user input sequence with time stamp and user
 submit input with time stamp.
 
 For example, an user wants to search by "engine". The user
@@ -203,10 +203,10 @@ following command::
 How to update RK reading data
 -----------------------------
 
-Groonga requires registered word and its reading for RK search, so load such data in the advance.
+Groonga requires registered word and its reading for RK search. This
+section describes how to register a word and its reading.
 
-
-Here is the example to register "日本" which means Japanese in english.
+Here is an example to register "日本" which means Japan in English:
 
 .. groonga-command
 .. include:: ../../example/reference/suggest/complete/registered-word-japan.log
@@ -216,7 +216,7 @@ Here is the example to register "日本" which means Japanese in english.
 .. ]
 
 
-Here is the example to update RK data to complete "日本".
+Here is an example to update reading data to complete "日本":
 
 .. groonga-command
 .. include:: ../../example/reference/suggest/complete/update-rk-data.log
@@ -225,17 +225,19 @@ Here is the example to update RK data to complete "日本".
 .. {"_key":"日本", "kana":["ニホン", "ニッポン"]}
 .. ]
 
-Then you can complete registered word "日本" by RK input - "nihon".
+Then you can complete registered word "日本" by Romaji input -
+"nihon".
 
 .. groonga-command
 .. include:: ../../example/reference/suggest/complete/rk-search-nihon.log
 .. suggest --table item_query --column kana --types complete --frequency_threshold 1 --query nihon
 
-Without loading above RK data, you can't complete registered word "日本"
-by query - "nihon".
+Without loading above reading data, you can't complete registered word
+"日本" by query - "nihon".
 
-As the column type of item_query table is VECTOR_COLUMN, you can
-register multiple readings for registered word.
+You can register multiple readings for a registered word because
+``kana`` column in ``item_query`` table is defined as a
+:doc:`/reference/columns/vector`.
 
 This is the reason that you can also complete the registered word "日本"
 by query - "nippon".
@@ -245,13 +247,13 @@ by query - "nippon".
 .. suggest --table item_query --column kana --types complete --frequency_threshold 1 --query nippon
 
 This feature is very convenient because you can search registered word
-even though Japanese IM is disabled.
+even though Japanese input method is disabled.
 
 If there are multiple candidates as completed result, you can
-customize priority to set the value of "boost" column in item_query
-table.
+customize priority to set the value of ``boost`` column in
+``item_query`` table.
 
-Here is the example to customize priority for RK search.
+Here is an example to customize priority for RK search:
 
 .. groonga-command
 .. include:: ../../example/reference/suggest/complete/registered-word-japanese.log
