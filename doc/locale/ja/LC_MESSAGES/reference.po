@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-01-20 14:47+0900\n"
+"PO-Revision-Date: 2015-01-20 18:05+0900\n"
 "Last-Translator: Takatsugu <nokubi@gmail.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -13426,13 +13426,17 @@ msgstr ""
 "ユーザの入力が\"ni\"でも\"二\"でも\"に\"でも\"日本\"を見つけることができま"
 "す。"
 
-# 3c1757ab7c23407eb2d2bdf7c62dc00b
+# b50ba18cbd3945738bf3c52fb27f8d0a
 msgid ""
 "If you create dataset which is named as ``example`` by :doc:`/reference/"
-"executables/groonga-suggest-create-dataset` command, you can update pairs of "
-"registered word and its reading by loading data to ``_key`` and ``kana`` "
-"column of ``item_example`` table explicitly for prefix RK search."
+"executables/groonga-suggest-create-dataset` executable file, you can update "
+"pairs of registered word and its reading by loading data to ``_key`` and "
+"``kana`` column of ``item_example`` table explicitly for prefix RK search."
 msgstr ""
+":doc:`/reference/executables/groonga-suggest-create-dataset` 実行ファイルで "
+"``example`` という名前のデータセットを作ったとします。前方一致RK検索で使うた"
+"めに ``item_example`` テーブルの ``_key`` と ``kana`` カラムに登録済みの単語"
+"と読みのペアを指定することで更新できます。"
 
 msgid "Cooccurrence search"
 msgstr "共起検索"
@@ -13613,7 +13617,7 @@ msgid ""
 msgstr "以下のコマンドでこの入力シーケンスから学習できます。::"
 
 msgid "How to update RK reading data"
-msgstr ""
+msgstr "読みデータの更新方法"
 
 msgid ""
 "Groonga requires registered word and its reading for RK search. This section "
@@ -13624,7 +13628,7 @@ msgstr ""
 
 # 03f55704ed0f4c5a8c0db085eb6109ce
 msgid "Here is an example to register \"日本\" which means Japan in English:"
-msgstr ""
+msgstr "以下は「日本」を登録する例です:"
 
 msgid "Here is an example to update reading data to complete \"日本\":"
 msgstr "以下は「日本」を補完するために読みデータを登録する例です:"
@@ -13633,12 +13637,15 @@ msgstr "以下は「日本」を補完するために読みデータを登録す
 msgid ""
 "Then you can complete registered word \"日本\" by Romaji input - \"nihon\"."
 msgstr ""
+"これで「nihon」というローマ字で登録済みの「日本」という単語を補完できます。"
 
 # 138a8f10a0f2482d9ee5cc1b3b6d9df7
 msgid ""
 "Without loading above reading data, you can't complete registered word \"日本"
 "\" by query - \"nihon\"."
 msgstr ""
+"この読みデータがないと登録済みの「日本」という単語を「nihon」というクエリーで"
+"補完できません。"
 
 # e7c0f66f03a84f6ba2cf6a8fa7836f9d
 msgid ""
@@ -13646,23 +13653,29 @@ msgid ""
 "column in ``item_query`` table is defined as a :doc:`/reference/columns/"
 "vector`."
 msgstr ""
+"``item_query`` テーブルの ``kana`` カラムは :doc:`/reference/columns/vector` "
+"なので、複数の読みを登録できます。"
 
 msgid ""
 "This is the reason that you can also complete the registered word \"日本\" "
 "by query - \"nippon\"."
-msgstr ""
+msgstr "これが「nippon」でも「日本」を補完できる理由です。"
 
 # c6c17ad8a37d4050b8bbbfb313b8543c
 msgid ""
 "This feature is very convenient because you can search registered word even "
 "though Japanese input method is disabled."
 msgstr ""
+"日本語入力システムが無効になっている状態でも登録済みの単語を検索できるのでこ"
+"の機能はとても便利です。"
 
 # 0c4ca295b94a4676b50793295412235b
 msgid ""
 "If there are multiple candidates as completed result, you can customize "
 "priority to set the value of ``boost`` column in ``item_query`` table."
 msgstr ""
+"補完候補が複数ある場合、 ``item_query`` テーブルの ``boost`` カラムに値を設定"
+"することで優先度をカスタマイズすることができます。"
 
 msgid "Here is an example to customize priority for RK search:"
 msgstr "以下はRK検索での優先度をカスタマイズする例です:"
