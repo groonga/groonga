@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2014-11-28 12:05+0900\n"
+"PO-Revision-Date: 2015-01-20 14:33+0900\n"
 "Last-Translator: Takatsugu <nokubi@gmail.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -440,6 +440,24 @@ msgstr ""
 msgid "section番号を格納するint長バッファ（呼出側で準備する）を指定します。"
 msgstr ""
 
+# 088763db4bbf4d8d8c7fc089b7bc146b
+msgid ""
+"This is a dangerous API. You must not use this API when other thread or "
+"process accesses the target column. If you use this API against shared "
+"column, the process that accesses the column may be broken and the column "
+"may be broken."
+msgstr ""
+
+# 9165d4d286c94ecd8698d1cea573619c
+msgid "Clears all values in the column."
+msgstr ""
+
+msgid "The column to be truncated."
+msgstr "truncate対象のカラム。"
+
+msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
+msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"
+
 msgid "``grn_command_version``"
 msgstr ""
 
@@ -556,9 +574,6 @@ msgstr ""
 
 msgid "初期化する ``ctx`` のオプションを指定します。"
 msgstr ""
-
-msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
-msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"
 
 msgid "ctxの管理するメモリを解放し、使用を終了します。"
 msgstr ""
@@ -738,6 +753,66 @@ msgstr ""
 
 msgid "objの属するdbを返します。"
 msgstr ""
+
+msgid "This is an experimental API."
+msgstr "これは実験的なAPIです。"
+
+# 08139050b56c4aa08a700894f988a25f
+msgid ""
+"This is a dangerous API. You must not use this API when other thread or "
+"process opens the target database. If you use this API against shared "
+"database, the database may be broken."
+msgstr ""
+
+# d83d9840fe4a410d94212d432e916d2b
+msgid ""
+"Checks the passed database and recovers it if it is broken and it can be "
+"recovered."
+msgstr ""
+
+# 150f553067894cdc86363b95a64b452f
+msgid ""
+"This API uses lock existence for checking whether the database is broken or "
+"not."
+msgstr ""
+
+msgid "Here are recoverable cases:"
+msgstr "以下は復旧可能なケースです。"
+
+# 59d01dfa4b70487f9751c271feae1bef
+msgid "Index column is broken. The index column must have source column."
+msgstr ""
+
+msgid "Here are unrecoverable cases:"
+msgstr "以下は復旧できないケースです。"
+
+# d2149f225553408ca68440db3f185d4b
+msgid "Object name management feature is broken."
+msgstr ""
+
+# 45bc4b70b9b842ccbe4b5bac533d019b
+msgid "Table is broken."
+msgstr ""
+
+# 63d82d7bc37443a5a42414d88b7e50de
+msgid "Data column is broken."
+msgstr ""
+
+# f5dd2a0f95e8483c8b1defe79dfe3b1a
+msgid ""
+"Object name management feature is used for managing table name, column name "
+"and so on. If the feature is broken, the database can't be recovered. Please "
+"re-create the database from backup."
+msgstr ""
+
+# ac5a1b5c74794da8b33c8e6af269cfd4
+msgid ""
+"Table and data column can be recovered by removing an existence lock and re-"
+"add data."
+msgstr ""
+
+msgid "The database to be recovered."
+msgstr "復旧対象のデータベース。"
 
 msgid "``grn_encoding``"
 msgstr ""
@@ -2913,6 +2988,51 @@ msgstr "参考"
 msgid ":doc:`return_code` describes about return code."
 msgstr ""
 
+msgid "Request ID"
+msgstr "リクエストID"
+
+# fa33df3be0a649509ae60b55405e9f61
+msgid "You can assign ID to each request."
+msgstr ""
+
+# f61a2ed3df9d4ab6b6b2b5940f97df94
+msgid ""
+"The ID can be used by canceling the request. See also :doc:`/reference/"
+"commands/request_cancel` for details about canceling a request."
+msgstr ""
+
+# 2266126a6fe445c3a3b9a4b3c1b73897
+msgid ""
+"Request ID should be managed by user. If you assign the same ID for some "
+"running requests, you can't cancel the request."
+msgstr ""
+
+# 2d7d3cde060f4c5691657164aad61a7b
+msgid ""
+"The simplest ID sequence is incremented numbers such as ``1``, ``2`` , ``..."
+"``."
+msgstr ""
+
+# 340c0204a4c14ca68d177314eee12792
+msgid "A request ID is a string. The maximum request ID size is 4096 byte."
+msgstr ""
+
+# 606b6840634d468fbd1d82329b7d65a8
+msgid "How to assign ID to request"
+msgstr ""
+
+# 09584728ab8241ef8082ca2cdf80d59c
+msgid ""
+"All commands accept ``request_id`` parameter. You can assign ID to request "
+"by adding ``request_id`` parameter."
+msgstr ""
+
+msgid "Here is an example to assign ``id-1`` ID to a request::"
+msgstr "以下は ``id-1`` というIDをリクエストに割り当てる例です::"
+
+msgid ":doc:`/reference/commands/request_cancel`"
+msgstr ":doc:`/reference/commands/request_cancel`"
+
 msgid "Return code"
 msgstr "リターンコード"
 
@@ -3441,6 +3561,10 @@ msgid "バッファ内にある語のうち、チャンクを使っている語�
 msgstr ""
 
 msgid "``clearlock``"
+msgstr ""
+
+# 1962d28aa5e341de9a4fddf3f1fb1bf6
+msgid "Use :doc:`lock_clear` instead."
 msgstr ""
 
 msgid "clearlock - オブジェクトにセットされたロックを解除する"
@@ -4359,6 +4483,62 @@ msgstr "JSON形式"
 msgid "``load`` returns the number of added records such as ::"
 msgstr "テーブルに登録されたレコードの件数が返されます。"
 
+# f90346e27a3b4d50aedc56498f73fc47
+msgid "``lock_clear``"
+msgstr ""
+
+# 631c1b112fed405f9f5bd1c63ba3344d
+msgid ""
+"``lock_clear`` command clear the lock of the target object recursively. The "
+"target object is one of database, table and column."
+msgstr ""
+
+# a6a132a774344e82974af7a3f231f43d
+msgid ""
+"This is a dangerous command. You must not use this command while other "
+"process or thread is doing a write operation to the target object. If you do "
+"it, your database may be broken and/or your process may be crashed."
+msgstr ""
+
+msgid "``truncate`` command takes only one parameter."
+msgstr "``truncate`` コマンドの引数は1つだけです::"
+
+msgid "There is no required parameter::"
+msgstr "必須の引数はありません::"
+
+# 088d6f28963e451aba302359d0045188
+msgid ""
+"If ``target_name`` parameters is omitted, database is used for the target "
+"object. It means that all locks in the database are cleared."
+msgstr ""
+
+msgid "Here is an example to clear all locks in the database::"
+msgstr "以下はデータベースの中のすべてのロックを解放する例です::"
+
+msgid ""
+"Here is an example to clear locks of ``Entry`` table and ``Entry`` table "
+"columns::"
+msgstr ""
+"以下は ``Entry`` テーブルと ``Entry`` テーブルのカラムのロックを解放する例で"
+"す::"
+
+msgid "Here is an example to clear the lock of ``Site.title`` column::"
+msgstr "以下は ``Site.title`` カラムのロックを解放する例です::"
+
+msgid "``target_name``"
+msgstr ""
+
+msgid "It specifies the name of table or column."
+msgstr "テーブル名またはカラム名を指定します。"
+
+# 77498f831b814019afdc5c30be9ab258
+msgid "If you don't specify it, database is used for the target object."
+msgstr ""
+
+# d870dc0a4ef8426e9867d356c9683e3e
+msgid "The default is none. It means that the target object is database."
+msgstr ""
+
 msgid "``log_level``"
 msgstr ""
 
@@ -4735,6 +4915,134 @@ msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
 msgstr ""
 "``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
 "さい。"
+
+# e29b646988824312888c2b9c3b5d49c5
+msgid "``request_cancel``"
+msgstr ""
+
+msgid "``request_cancel`` command is an experimental feature."
+msgstr "``request_cancel`` コマンドは実験的な機能です。"
+
+# 65840f111de64d1eb3d80ca22e496f7d
+msgid "``request_cancel`` command cancels a running request."
+msgstr ""
+
+msgid "There are some limitations:"
+msgstr "いくつか制限があります。"
+
+# c9ae0a9e56ab4799993cac130adcdbde
+msgid ""
+"Request ID must be managed by user. (You need to assign unique key for each "
+"request.)"
+msgstr ""
+
+# 41e2594b8e084df2a35e48dc9bba3176
+msgid ""
+"Cancel request may be ignored. (You can send ``request_cancel`` command "
+"multiple times for the same request ID.)"
+msgstr ""
+
+# f769f25853604a739d236b95699ff55c
+msgid ""
+"Only multithreading type Groonga server is supported. (You can use with :doc:"
+"`/reference/executables/groonga` based server but can't use with :doc:`/"
+"reference/executables/groonga-httpd`.)"
+msgstr ""
+
+msgid "See :doc:`/reference/command/request_id` about request ID."
+msgstr ""
+"リクエストIDについては :doc:`/reference/command/request_id` を参照してくださ"
+"い。"
+
+# 026d2ce7e1ce4141b6429bc1099b8037
+msgid ""
+"If request is canceled, the canceled request has ``-5`` "
+"(``GRN_INTERRUPTED_FUNCTION_CALL``) as :doc:`/reference/command/return_code`."
+msgstr ""
+
+msgid "``request_cancel`` command takes only one parameter."
+msgstr "``request_cancel`` コマンドの引数は1つだけです。"
+
+msgid "The required parameter is only ``id``::"
+msgstr "``id`` だけが必須の引数です。"
+
+msgid "Here is an example of ``request_cancel`` command::"
+msgstr "以下は ``request_cancel`` コマンドの使用例です::"
+
+# d8118656a64546a6a51db815c85e1636
+msgid ""
+"Assume that the first ``select`` command takes a long time. ``unique-id-1`` "
+"request ID is assigned to the ``select`` command by ``request_id=unique-"
+"id-1`` parameter."
+msgstr ""
+
+# d6c7e140609f40e7a3f0aabe8a82e20d
+msgid ""
+"The second ``request_cancel`` command passes ``id=unique-id-1`` parameter. "
+"``unique-id-1`` is the same request ID passed in ``select`` command."
+msgstr ""
+
+# 6abceca50e7e4c5eb5df222600de4df6
+msgid ""
+"The ``select`` command may not be canceled immediately. And the cancel "
+"request may be ignored."
+msgstr ""
+
+# 8d3bf4384941491394e466d943ca3104
+msgid ""
+"You can send cancel request for the same request ID multiple times. If the "
+"target request is canceled or finished, ``\"canceled\"`` value is changed to "
+"``false`` from ``true``::"
+msgstr ""
+
+# c4ca71b7ff874245ad960492ba50e868
+msgid ""
+"If the ``select`` command is canceled, response of the ``select`` command "
+"has ``-5`` (``GRN_INTERRUPTED_FUNCTION_CALL``) as :doc:`/reference/command/"
+"return_code`::"
+msgstr ""
+
+msgid "This section describes parameters of ``request_cancel``."
+msgstr "このセクションでは ``request_cancel`` の引数について説明します。"
+
+msgid "There is required parameter, ``id``."
+msgstr "``id`` だけが必須の引数です。"
+
+msgid "It specifies the ID for the target request."
+msgstr "対象リクエストのIDを指定します。"
+
+# 4b25ce81f5df407bb2cf675eff672d75
+msgid "``request_cancel`` command returns the result of the cancel request::"
+msgstr ""
+
+# ffd0b4bc386f467c938842ebb3a98758
+msgid "The ID of the target request."
+msgstr ""
+
+# f6ad226c7033420cb208514efc0d9d9c
+msgid "``CANCEL_REQUEST_IS_ACCEPTED_OR_NOT``"
+msgstr ""
+
+# 6d4aaec6c5194c2e8eb0872a5cec961b
+msgid ""
+"If the cancel request is accepted, this is ``true``, otherwise this is "
+"``false``."
+msgstr ""
+
+# c6ee7a6f8fd142699e8f4e1d23f63046
+msgid ""
+"Note that \"cancel request is accepted\" doesn't means that \"the target "
+"request is canceled\". It just means \"cancel request is notified to the "
+"target request but the cancel request may be ignored by the target request\"."
+msgstr ""
+
+# 43b78dc07abe4853b8a899058ea15f13
+msgid ""
+"If request assigned with the request ID doesn't exist, this is ``false``."
+msgstr ""
+
+msgid ":doc:`/reference/command/request_id`"
+msgstr ""
 
 msgid "``ruby_eval``"
 msgstr ""
@@ -7298,35 +7606,147 @@ msgstr "トークナイザー名。"
 msgid "``truncate``"
 msgstr ""
 
-msgid "``truncate`` command deletes all records from specified table."
-msgstr "``truncate`` コマンドは指定したテーブルのレコードをすべて削除します。"
+msgid ""
+"``truncate`` command deletes all records from specified table or all values "
+"from specified column."
+msgstr ""
+"``truncate`` コマンドは指定したテーブルのレコードをすべて削除します。カラムを"
+"指定した場合はカラムの値をすべて削除します。"
 
-msgid "``truncate`` command takes only one parameter."
-msgstr "``truncate`` コマンドの引数は1つだけです::"
+msgid "The required parameter is only ``target_name``::"
+msgstr "``target_name`` だけが必須の引数です。"
 
-msgid "The required parameter is only ``table``::"
-msgstr "``table`` だけが必須の引数です。"
+# 54155f46293441f8b3f333255cbf0e03
+msgid ""
+"``target_name`` parameter can be used since 4.0.9. You need to use ``table`` "
+"parameter for 4.0.8 or earlier."
+msgstr ""
 
-msgid "Here is a simple example of ``truncate`` command."
-msgstr "以下は ``truncate`` コマンドの簡単な使用例です。"
+# 4eb0f555de5247d4b3880768db9e0bb7
+msgid ""
+"For backward compatibility, ``truncate`` command accepts ``table`` "
+"parameter. But it should not be used for newly written code."
+msgstr ""
+
+msgid "Here is a simple example of ``truncate`` command against a table."
+msgstr ""
+"以下はテーブルに対して ``truncate`` コマンドを実行する簡単な使用例です。"
+
+msgid "Here is a simple example of ``truncate`` command against a column."
+msgstr "以下はカラムに対して ``truncate`` コマンドを実行する簡単な使用例です。"
 
 msgid "This section describes parameters of ``truncate``."
 msgstr "このセクションでは ``truncate`` の引数について説明します。"
 
-msgid "There is required parameter, ``table_name``."
-msgstr "``table_name`` だけが必須の引数です。"
+msgid "There is required parameter, ``target_name``."
+msgstr "``target_name`` だけが必須の引数です。"
 
-msgid "``table_name``"
+# 89e4f7f7796f4f7784127f63364b6657
+msgid "``truncate`` command returns whether truncation is succeeded or not::"
 msgstr ""
-
-msgid "It specifies the name of table."
-msgstr "テーブルの名前を指定します。"
 
 msgid "Executables"
 msgstr "実行ファイル"
 
 msgid "This section describes executable files provided by groonga package."
 msgstr "groongaパッケージが提供する実行ファイルについて説明します。"
+
+msgid "``grndb``"
+msgstr ""
+
+# 23c91b83bdb642c0a5527406811b4371
+msgid "This executable command is an experimental feature."
+msgstr ""
+
+# 52b8357ba74747b5aeabe583eae9928c
+msgid "``grndb`` manages a Groonga database."
+msgstr ""
+
+msgid "Here are features:"
+msgstr "機能は次の通りです。"
+
+# 3bc14c4552694f6faf256a12b240ac9a
+msgid "Checks whether database is broken or not."
+msgstr ""
+
+# cf830bed10f04e569822f5822b97e672
+msgid "Recovers broken database automatically if the database is recoverable."
+msgstr ""
+
+# d3c541e881584a4cb97b16cd8a29c369
+msgid "``grndb`` requires command and database path::"
+msgstr ""
+
+msgid "Here are available commands:"
+msgstr "利用可能なコマンドは以下の通りです。"
+
+# d6d2b2d405794bd38b989933e4746fd8
+msgid "``check`` - Checks whether database is broken or not."
+msgstr ""
+
+# 6ecfb7af81f64a1f911c0c738f7ef96e
+msgid "``recover`` - Recovers database."
+msgstr ""
+
+msgid ""
+"Here is an example to check the database at ``/var/lib/groonga/db/db``::"
+msgstr ""
+"以下は ``/var/lib/groonga/db/db`` にあるデータベースをチェックする例です::"
+
+msgid ""
+"Here is an example to recover the database at ``/var/lib/groonga/db/db``::"
+msgstr "以下は ``/var/lib/groonga/db/db`` にあるデータベースを復旧する例です::"
+
+msgid "Commands"
+msgstr "コマンド一覧"
+
+msgid "This section describes available commands."
+msgstr "このセクションでは利用可能なコマンドについて説明します。"
+
+# 4d54d7faf58a43a39bf618f076a8d4d7
+msgid ""
+"It checks an existing Groonga database. If the database is broken, ``grndb`` "
+"reports reasons and exits with non-``0`` exit status."
+msgstr ""
+
+# 4e974dd423d64407b304f560c2ab3714
+msgid ""
+"You must not use this command for opened database. If the database is "
+"opened, this command may report wrong result."
+msgstr ""
+
+# dc616dd61e0f4b249cc48a8cde423863
+msgid "``recover``"
+msgstr ""
+
+msgid "It recovers an existing broken Groonga database."
+msgstr "既存の壊れたGroongaデータベースを復旧します。"
+
+# b6ff9a964a764755be5843942ecadab2
+msgid ""
+"If the database is not broken, ``grndb`` does nothing and exits with ``0`` "
+"exit status."
+msgstr ""
+
+# a5631bb8c67e4a5ba0fde29ee1d27ee8
+msgid ""
+"If the database is broken and one or more index columns are only broken, "
+"``grndb`` recovers these index columns and exists with ``0`` exit status. It "
+"may take a long time for large indexed data."
+msgstr ""
+
+# 61f51cfa8346488b9bf743c5b99d8e02
+msgid ""
+"If the database is broken and tables or data columns are broken, ``grndb`` "
+"reports broken reasons and exits with non-``0`` exit status. You can know "
+"whether the database is recoverable or not by ``check`` command."
+msgstr ""
+
+# 4b650d41c85d4cac91e035c5dfd8a623
+msgid ""
+"You must not use this command for opened database. If the database is "
+"opened, this command may break the database."
+msgstr ""
 
 msgid "grnslap"
 msgstr ""
@@ -12527,38 +12947,16 @@ msgid "Here is an example that uses ``NormalizerNFKC51`` normalizer:"
 msgstr "以下は ``NormalizerNFKC51`` ノーマライザーを使う例です。"
 
 msgid "Additional normalizers"
-msgstr "追加のノーマライザー"
+msgstr "追加のノーマライザー一覧"
 
+msgid "There are additional normalizers:"
+msgstr "いくつか追加のノーマライザーがあります。"
+
+# 6f7e59af1a4f4b3aa9412c1adfd4f1a9
 msgid ""
-"Here is a list of additional normalizers provided by ``groonga-normalizer-"
-"mysql`` plugins:"
+"`groonga-normalizer-mysql <https://github.com/groonga/groonga-normalizer-"
+"mysql>_`"
 msgstr ""
-"``groonga-normalizer-mysql`` パッケージで提供される追加のノーマライザーのリス"
-"トです。"
-
-msgid "``NormalizerMySQLGeneralCI``"
-msgstr ""
-
-msgid "``NormalizerMySQLUnicodeCI``"
-msgstr ""
-
-msgid "``NormalizerMySQLUnicodeCIExceptKanaCIKanaWithVoicedSoundMark``"
-msgstr ""
-
-msgid ""
-"``groonga-normalizer-mysql`` is a Groonga plugin. It provides MySQL "
-"compatible normalizers to Groonga. ``NormalizerMySQLGeneralCI`` corresponds "
-"to ``utf8mb4_general_ci``."
-msgstr ""
-"``groonga-normalizer-mysql`` はGroongaのプラグインです。MySQL互換のノーマライ"
-"ザーを提供します。ノーマライザー ``NormalizerMySQLGeneralCI`` に対応するのは "
-"``utf8mb4_general_ci`` です。"
-
-msgid "You need to register ``normalizers/mysql`` plugin in advance."
-msgstr "事前に ``normalizers/mysql`` プラグインを登録する必要があります。"
-
-msgid "Here is an example that uses ``NormalizerMySQLGeneralCI`` normalizer:"
-msgstr "以下は ``NormalizerMySQLGeneralCI`` ノーマライザーを使う例です。"
 
 msgid ":doc:`/reference/commands/table_create`"
 msgstr ""
