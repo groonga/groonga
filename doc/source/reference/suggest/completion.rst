@@ -200,11 +200,11 @@ following command::
   {"sequence": "1", "time": 1312950805.86057, "item": "engine", "type": "submit"}
   ]
 
-How to update RK reading data
------------------------------
+How to update reading data
+--------------------------
 
-Groonga requires registered word and its reading for RK search. This
-section describes how to register a word and its reading.
+Groonga requires registered word and its reading for prefix RK
+search. This section describes how to register a word and its reading.
 
 Here is an example to register "日本" which means Japan in English:
 
@@ -253,7 +253,7 @@ If there are multiple candidates as completed result, you can
 customize priority to set the value of ``boost`` column in
 ``item_query`` table.
 
-Here is an example to customize priority for RK search:
+Here is an example to customize priority for prefix RK search:
 
 .. groonga-command
 .. include:: ../../example/reference/suggest/complete/registered-word-japanese.log
