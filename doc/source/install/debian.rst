@@ -40,7 +40,7 @@ Install groonga-tokenizer-mecab package::
 
   % sudo apt-get install -y -V groonga-tokenizer-mecab
 
-If you want to use TokenFilterStem as a token filter, install
+If you want to use ``TokenFilterStem`` as a token filter, install
 groonga-token-filter-stem package.
 
 Install groonga-token-filter-stem package::
