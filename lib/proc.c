@@ -704,19 +704,15 @@ drilldown_info_fill(grn_ctx *ctx,
 static void
 grn_select_drilldown(grn_ctx *ctx, grn_obj *table,
                      grn_table_sort_key *keys, uint32_t n_keys,
-                     int offset, int limit,
-                     const char *sortby, unsigned int sortby_len,
-                     const char *output_columns, unsigned int output_columns_len)
+                     drilldown_info *drilldown)
 {
   uint32_t i;
-  grn_table_group_result g = {NULL, 0, 0, 1, GRN_TABLE_GROUP_CALC_COUNT, 0};
   for (i = 0; i < n_keys; i++) {
+    grn_table_group_result g = {NULL, 0, 0, 1, GRN_TABLE_GROUP_CALC_COUNT, 0};
     uint32_t n_hits;
-    int real_offset = offset;
-    int real_limit = limit;
+    int offset;
+    int limit;
 
-    g.table = grn_table_create_for_group(ctx, NULL, 0, NULL,
-                                         keys[i].key, table, 0);
     if (!g.table) {
       continue;
     }
@@ -724,13 +720,16 @@ grn_select_drilldown(grn_ctx *ctx, grn_obj *table,
     grn_table_group(ctx, table, &keys[i], 1, &g, 1);
     n_hits = grn_table_size(ctx, g.table);
 
-    grn_normalize_offset_and_limit(ctx, n_hits, &real_offset, &real_limit);
+    offset = drilldown->offset;
+    limit = drilldown->limit;
+    grn_normalize_offset_and_limit(ctx, n_hits, &offset, &limit);
 
-    if (sortby_len) {
+    if (drilldown->sortby_len) {
       grn_table_sort_key *sort_keys;
       uint32_t n_sort_keys;
       sort_keys = grn_table_sort_key_from_str(ctx,
-                                              sortby, sortby_len,
+                                              drilldown->sortby,
+                                              drilldown->sortby_len,
                                               g.table, &n_sort_keys);
       if (sort_keys) {
         grn_obj *sorted;
@@ -738,14 +737,15 @@ grn_select_drilldown(grn_ctx *ctx, grn_obj *table,
                                   NULL, g.table);
         if (sorted) {
           grn_obj_format format;
-          grn_table_sort(ctx, g.table, real_offset, real_limit,
+          grn_table_sort(ctx, g.table, offset, limit,
                          sorted, sort_keys, n_sort_keys);
-          GRN_OBJ_FORMAT_INIT(&format, n_hits, 0, real_limit, real_offset);
+          GRN_OBJ_FORMAT_INIT(&format, n_hits, 0, limit, offset);
           format.flags =
             GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
             GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY;
           grn_obj_columns(ctx, sorted,
-                          output_columns, output_columns_len,
+                          drilldown->output_columns,
+                          drilldown->output_columns_len,
                           &format.columns);
           GRN_OUTPUT_OBJ(sorted, &format);
           GRN_OBJ_FORMAT_FIN(ctx, &format);
@@ -755,12 +755,13 @@ grn_select_drilldown(grn_ctx *ctx, grn_obj *table,
       }
     } else {
       grn_obj_format format;
-      GRN_OBJ_FORMAT_INIT(&format, n_hits, real_offset,
-                          real_limit, real_offset);
+      GRN_OBJ_FORMAT_INIT(&format, n_hits, offset, limit, offset);
       format.flags =
         GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
         GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY;
-      grn_obj_columns(ctx, g.table, output_columns, output_columns_len,
+      grn_obj_columns(ctx, g.table,
+                      drilldown->output_columns,
+                      drilldown->output_columns_len,
                       &format.columns);
       GRN_OUTPUT_OBJ(g.table, &format);
       GRN_OBJ_FORMAT_FIN(ctx, &format);
@@ -1146,11 +1147,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
       if (!ctx->rc) {
         if (gkeys) {
           drilldown_info *drilldown = &(drilldowns[0]);
-          grn_select_drilldown(ctx, res, gkeys, ngkeys,
-                               drilldown->offset, drilldown->limit,
-                               drilldown->sortby, drilldown->sortby_len,
-                               drilldown->output_columns,
-                               drilldown->output_columns_len);
+          grn_select_drilldown(ctx, res, gkeys, ngkeys, drilldown);
         } else if (n_drilldowns > 0) {
           grn_select_drilldowns(ctx, res, drilldowns, n_drilldowns, cond);
         }
