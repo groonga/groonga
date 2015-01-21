@@ -396,7 +396,7 @@ grn_parse_query_flags(grn_ctx *ctx, const char *query_flags,
   if (((query_flags_end - query_flags) >= (sizeof(#name) - 1)) &&\
       (!memcmp(query_flags, #name, sizeof(#name) - 1))) {\
     flags |= GRN_EXPR_ ## name;\
-    query_flags += sizeof(#name);\
+    query_flags += sizeof(#name) - 1;\
     continue;\
   }
 
@@ -607,7 +607,7 @@ grn_parse_table_group_calc_types(grn_ctx *ctx,
   if (((calc_types_end - calc_types) >= (sizeof(#name) - 1)) &&\
       (!memcmp(calc_types, #name, sizeof(#name) - 1))) {\
     flags |= GRN_TABLE_GROUP_CALC_ ## name;\
-    calc_types += sizeof(#name);\
+    calc_types += sizeof(#name) - 1;\
     continue;\
   }
 
@@ -3540,7 +3540,7 @@ parse_normalize_flags(grn_ctx *ctx, grn_obj *flag_names)
     if (((names_end - names) >= (sizeof(#name) - 1)) &&\
         (!memcmp(names, #name, sizeof(#name) - 1))) {\
       flags |= GRN_STRING_ ## name;\
-      names += sizeof(#name);\
+      names += sizeof(#name) - 1;\
       continue;\
     }
 
@@ -3753,7 +3753,7 @@ parse_tokenize_flags(grn_ctx *ctx, grn_obj *flag_names)
     if (((names_end - names) >= (sizeof(#name) - 1)) &&\
         (!memcmp(names, #name, sizeof(#name) - 1))) {\
       flags |= GRN_TOKEN_CURSOR_ ## name;\
-      names += sizeof(#name);\
+      names += sizeof(#name) - 1;\
       continue;\
     }
 
