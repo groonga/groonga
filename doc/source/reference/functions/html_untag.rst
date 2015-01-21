@@ -13,7 +13,8 @@ Summary
 
 ``html_untag`` strips HTML tags from HTML and outputs plain text.
 
-``html_untag`` is used in ``--output_columns`` described at :ref:`output_columns`.
+``html_untag`` is used in ``--output_columns`` described at
+:ref:`select-output-columns`.
 
 Syntax
 ------

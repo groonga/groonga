@@ -650,7 +650,7 @@ is equal to or more than ``10`` from ``Entries`` table.
 Output related parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. _output_columns:
+.. _select-output-columns:
 
 ``output_columns``
 """"""""""""""""""
