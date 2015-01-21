@@ -2245,23 +2245,20 @@ msgstr ""
 msgid "Here are data store columns:"
 msgstr "以下がデータストアカラムです。"
 
-msgid ":doc:`columns/scalar`"
-msgstr ""
-
-msgid ":doc:`columns/vector`"
-msgstr ""
-
-msgid ":doc:`columns/pseudo`"
-msgstr ""
-
 msgid "Here is an index column:"
 msgstr "以下がインデックスカラムです。"
 
-msgid ":doc:`columns/index`"
+msgid "Index column"
+msgstr "インデックスカラム"
+
+msgid "TODO"
 msgstr ""
 
-msgid "疑似カラム (pseudo_column)"
-msgstr ""
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Pseudo column"
+msgstr "擬似カラム"
 
 msgid "名前"
 msgstr ""
@@ -2329,6 +2326,9 @@ msgid ""
 "ループ化処理の結果を格納するテーブルの_nsubrecsに記録されます。"
 msgstr ""
 
+msgid "Scalar column"
+msgstr "スカラーカラム"
+
 msgid "Vector column"
 msgstr "ベクターカラム"
 
@@ -2369,9 +2369,6 @@ msgstr ""
 "各要素がテキストなら、各要素に対して全文検索することもできます。しかし、重み"
 "を使った場合は検索スコアが高くなりすぎることに注意してください。重み付きベク"
 "ターカラムに対して全文検索をするときは注意してください。"
-
-msgid "Usage"
-msgstr "使い方"
 
 msgid "There are three vector column types:"
 msgstr "ベクターカラムには3種類あります。"
@@ -2483,9 +2480,6 @@ msgstr ":ref:`select-match-columns` の中で重みを使うこともできま�
 
 msgid "With :ref:`select-filter`:"
 msgstr ":ref:`select-filter` を使った場合:"
-
-msgid "TODO"
-msgstr ""
 
 msgid ""
 "Reference vector column is space-efficient if there are many same value "

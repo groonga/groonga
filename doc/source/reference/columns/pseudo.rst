@@ -2,8 +2,8 @@
 
 .. highlightlang:: none
 
-疑似カラム (pseudo_column)
-==========================
+Pseudo column
+=============
 
 名前
 ----
