@@ -43,6 +43,35 @@ Syntax
          [query_flags=ALLOW_PRAGMA|ALLOW_COLUMN|ALLOW_UPDATE|ALLOW_LEADING_NOT|NONE]
          [query_expander=null]
          [adjuster=null]
+         [drilldown_calc_types=NONE]
+         [drilldown_calc_target=null]
+
+``select`` has the following named parameters for advanced drilldown::
+
+  drilldown[${LABEL}].keys=null
+  drilldown[${LABEL}].sortby=null
+  drilldown[${LABEL}].output_columns="_key, _nsubrecs"
+  drilldown[${LABEL}].offset=0
+  drilldown[${LABEL}].limit=10
+  drilldown[${LABEL}].calc_types=NONE
+  drilldown[${LABEL}].calc_target=null
+
+You can use one ore more alphabets, digits, ``_`` and ``.`` for
+``${LABEL}``. For example, ``parent.sub1`` is a valid ``${LABEL}``.
+
+Parameters that have the same ``${LABEL}`` are grouped.
+
+For example, the following parameters specify one drilldown:
+
+  * ``--drilldown[label].keys column``
+  * ``--drilldown[label].sortby -_nsubrecs``
+
+The following parameters specify two drilldowns:
+
+  * ``--drilldown[label1].keys column1``
+  * ``--drilldown[label1].sortby -_nsubrecs``
+  * ``--drilldown[label2].keys column2``
+  * ``--drilldown[label2].sortby _key``
 
 Usage
 -----
@@ -57,6 +86,7 @@ Here are a schema definition and sample data to show usage.
 .. table_create Entries TABLE_HASH_KEY ShortText
 .. column_create Entries content COLUMN_SCALAR Text
 .. column_create Entries n_likes COLUMN_SCALAR UInt32
+.. column_create Entries tag COLUMN_SCALAR ShortText
 .. table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
 .. column_create Terms entries_key_index COLUMN_INDEX|WITH_POSITION Entries _key
 .. column_create Terms entries_content_index COLUMN_INDEX|WITH_POSITION Entries content
@@ -64,25 +94,31 @@ Here are a schema definition and sample data to show usage.
 .. [
 .. {"_key":    "The first post!",
 ..  "content": "Welcome! This is my first post!",
-..  "n_likes": 5},
+..  "n_likes": 5,
+..  "tag": "Hello"},
 .. {"_key":    "Groonga",
-..  "content": "I started to use groonga. It's very fast!",
-..  "n_likes": 10},
+..  "content": "I started to use Groonga. It's very fast!",
+..  "n_likes": 10,
+..  "tag": "Groonga"},
 .. {"_key":    "Mroonga",
-..  "content": "I also started to use mroonga. It's also very fast! Really fast!",
-..  "n_likes": 15},
+..  "content": "I also started to use Mroonga. It's also very fast! Really fast!",
+..  "n_likes": 15,
+..  "tag": "Groonga"},
 .. {"_key":    "Good-bye Senna",
 ..  "content": "I migrated all Senna system!",
-..  "n_likes": 3},
+..  "n_likes": 3,
+..  "tag": "Senna"},
 .. {"_key":    "Good-bye Tritonn",
 ..  "content": "I also migrated all Tritonn system!",
-..  "n_likes": 3}
+..  "n_likes": 3,
+..  "tag": "Senna"}
 .. ]
 
 There is a table, ``Entries``, for blog entries. An entry has title,
 content and the number of likes for the entry. Title is key of
 ``Entries``. Content is value of ``Entries.content`` column. The
-number of likes is value of ``Entries.n_likes`` column.
+number of likes is value of ``Entries.n_likes`` column. Tag is value
+of ``Entries.tag`` column.
 
 ``Entries._key`` column and ``Entries.content`` column are indexed
 using ``TokenBigram`` tokenizer. So both ``Entries._key`` and
@@ -163,8 +199,8 @@ in ``content`` column value and has ``Groonga`` as ``_key`` from
 ``==`` is equality operator.
 
 ``filter`` has more operators and syntax like grouping by ``(...)``
-its deatils aren't described here. See :doc:`/reference/grn_expr/script_syntax` for
-datails.
+its details aren't described here. See
+:doc:`/reference/grn_expr/script_syntax` for datails.
 
 Paging
 ^^^^^^
@@ -195,6 +231,56 @@ without any contents of records.
 
 ``--limit 0`` is also useful for retrieving only the number of matched
 records.
+
+Drilldown
+^^^^^^^^^
+
+You can get additional grouped results against the search result in
+one ``select``. You need to use two ore more ``SELECT``s in SQL but
+``select`` in Groonga can do it in one ``select``.
+
+This feature is called as `drilldown
+<http://en.wikipedia.org/wiki/Drill_down>`_ in Groonga. It's also
+called as `faceted search
+<http://en.wikipedia.org/wiki/Faceted_search>`_ in other search
+engine.
+
+For example, think about the following situation.
+
+You search entries that has ``fast`` word:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/usage_drilldown_only_query.log
+.. select Entries --filter 'content @ "fast"'
+
+You want to use ``tag`` for additional search condition like
+``--filter 'content @ "fast" && tag == "???"``. But you don't know
+suitable tag until you see the result of ``content @ "fast"``.
+
+If you know the number of matched records of each available tag, you
+can choose suitable tag. You can use drilldown for the case:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/usage_drilldown.log
+.. select Entries --filter 'content @ "fast"' --drilldown tag
+
+``--drilldown tag`` returns a list of pair of available tag and the
+number of matched records. You can avoid "no hit search" case by
+choosing a tag from the list. You can also avoid "too many search
+results" case by choosing a tag that the number of matched records is
+few from the list.
+
+You can create the following UI with the drilldown results:
+
+  * Links to narrow search results. (Users don't need to input a
+    search query by their keyboard. They just click a link.)
+
+Most EC sites use the UI. See side menu at Amazon.
+
+Groonga supports not only counting grouped records but also finding
+the maximum and/or minimum value from grouped records, summing values
+in grouped records. See :ref:`select-drilldown-related-parameters` for
+details.
 
 Parameters
 ----------
@@ -787,29 +873,163 @@ TODO: write in English and add example.
 
 scorerは、検索処理が完了し、ソート処理が実行される前に呼び出されます。従って、各レコードのスコアを操作する式を指定しておけば、検索結果のソート順序をカスタマイズできるようになります。
 
-Facet related parameters
-^^^^^^^^^^^^^^^^^^^^^^^^
+.. _select-drilldown-related-parameters:
+
+Drilldown related parameters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. _select-drilldown:
 
 ``drilldown``
 """""""""""""
 
-TODO: write in English and add example.
+It specifies keys for grouping separated by ``,``.
 
-グループ化のキーとなるカラム名のリストをカンマ(',')区切りで指定します。検索条件にマッチした各レコードを出力したのちに、drilldownに指定されたカラムの値が同一であるレコードをとりまとめて、それぞれについて結果レコードを出力します。
+Matched records by specified search conditions are grouped by each
+key. If you specify no search condition, all records are grouped by
+each key.
+
+Here is a simple ``drilldown`` example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldown_simple.log
+.. select Entries --drilldown tag
+
+The ``select`` command outputs the following information:
+
+  * There is one record that has "Hello" tag.
+  * There is two records that has "Groonga" tag.
+  * There is two records that has "Senna" tag.
+
+Here is a ``drilldown`` with search condition example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldown_simple.log
+.. select Entries --filter 'n_likes >= 5' --drilldown tag
+
+The ``select`` command outputs the following information:
+
+  * In records that have 5 or larger as ``n_likes`` value:
+    * There is one record that has "Hello" tag.
+    * There is two records that has "Groonga" tag.
+
+Here is a ``drilldown`` example to specify multiple columns:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldown_multiple.log
+.. select Entries --drilldown tag,n_likes
+
+The ``select`` command outputs the following information:
+
+  * About ``tag``:
+    * There is one record that has "Hello" tag.
+    * There is two records that has "Groonga" tag.
+    * There is two records that has "Senna" tag.
+
+  * About ``n_likes``:
+    * There is one record that has "Hello" tag.
+    * There is two records that has "Groonga" tag.
+    * There is two records that has "Senna" tag.
+
+.. _select-drilldown-sortby:
 
 ``drilldown_sortby``
 """"""""""""""""""""
 
-TODO: write in English and add example.
+It specifies sort keys for drilldown outputs separated by ``,``. Each
+sort key is column name.
 
-drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、ソートキーとなるカラム名のリストをカンマ(',')区切りで指定します。sortbyパラメータと同様に昇降順を指定できます。
+You can refer the number of grouped records by ``_nsubrecs``
+:doc:`/reference/columns/pseudo`.
+
+Here is a simple ``drilldown_sortby`` example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldown_sortby_simple.log
+.. select Entries --drilldown tag --drilldown_sortby '-_nsubrecs, _key'
+
+Drilldown result is sorted by the number of grouped records (=
+``_nsubrecs`` ) in descending order. If there are grouped results that
+the number of records in the group are the same, these grouped results
+are sort by grouped key (= ``_key`` ) in ascending order.
+
+The sort keys are used in all group keys specified in ``dilldown``:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldown_sortby_simple.log
+.. select Entries --drilldown 'tag, n_likes' --drilldown_sortby '-_nsubrecs, _key'
+
+The same sort keys are used in ``tag`` drilldown and ``n_likes``
+drilldown.
+
+If you want to use different sort keys for each drilldown, use
+:ref:`select-advanced-drilldown-related-parameters`.
+
+.. _select-drilldown-output-columns:
 
 ``drilldown_output_columns``
 """"""""""""""""""""""""""""
 
-TODO: write in English and add example.
+It specifies output columns for drilldown separated by ``,``.
 
-drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力するカラム名のリストをカンマ(',')区切りで指定します。
+Here is a ``drilldown_output_columns`` example.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldown_output_columns_simple.log
+.. select Entries --drilldown_output_columns _key
+
+The ``select`` command just outputs grouped key.
+
+If grouped key is a referenced type column (= column that its type is
+a table), you can access column of the table referenced by the
+referenced type column.
+
+Here are a schema definition and sample data to show drilldown against
+referenced type column:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldown_output_columns_referenced_type_column_definition.log
+.. table_create Tags TABLE_HASH_KEY ShortText --normalizer NormalizerAuto
+.. column_create Tags label COLUMN_SCALAR ShortText
+.. column_create Tags priority COLUMN_SCALAR Int32
+..
+.. table_create Items TABLE_HASH_KEY ShortText
+.. column_create Items tag COLUMN_SCALAR Tags
+..
+.. load --table Tags
+.. [
+.. {"_key": "groonga", label: "Groonga", priority: 10},
+.. {"_key": "mroonga", label: "Mroonga", priority: 5}
+.. ]
+..
+.. load --table Items
+.. [
+.. {"_key": "A", "tag": "groonga"},
+.. {"_key": "B", "tag": "groonga"},
+.. {"_key": "C", "tag": "mroonga"}
+.. ]
+
+``Tags`` table is a referenced table. ``Items.tag`` is a referenced
+type column.
+
+You can refer ``Tags.label`` by ``label`` in
+``drilldown_output_columns``:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldown_output_columns_referenced_type_column_label.log
+.. select Entries --drilldown tag --drilldown_output_columns '_key, label'
+
+You can use ``*`` to refer all columns in referenced table (= ``Tags``):
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldown_output_columns_referenced_type_column_asterisk.log
+.. select Entries --drilldown tag --drilldown_output_columns '_key, *'
+
+``*`` is expanded to ``label, priority``.
+
+The default value of ``drilldown_output_columns`` is ``_key,
+_nsubrecs``. It means that grouped key and the number of records in
+the group are output.
 
 ``drilldown_offset``
 """"""""""""""""""""
@@ -824,6 +1044,13 @@ drilldown条件に指定されたカラムの値毎にとりまとめられた�
 TODO: write in English and add example.
 
 drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力を行うレコードの件数を指定します。デフォルト値は10です。実際には、drilldown_offset + drilldown_limit がヒットした件数を超えない範囲でレコードが出力されます。drilldown_limitに負の値を指定した場合は、ヒットした件数 + drilldown_limit + 1 によって算出される値が指定されたものとみなされます。
+
+.. _select-advanced-drilldown-related-parameters:
+
+Advanced drilldown related parameters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+TODO
 
 Cache related parameter
 ^^^^^^^^^^^^^^^^^^^^^^^
