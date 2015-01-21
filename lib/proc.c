@@ -598,7 +598,7 @@ grn_parse_table_group_calc_types(grn_ctx *ctx,
   const char *calc_types_end = calc_types + calc_types_len;
 
   while (calc_types < calc_types_end) {
-    if (*calc_types == '|' || *calc_types == ' ') {
+    if (*calc_types == ',' || *calc_types == ' ') {
       calc_types += 1;
       continue;
     }
