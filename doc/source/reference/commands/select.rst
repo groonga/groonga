@@ -212,7 +212,7 @@ Here is an example to output only the 2nd record.
 .. include:: ../../example/reference/commands/select/paging.log
 .. select Entries --offset 1 --limit 1
 
-``offset`` is zero-origin. ``--offset 1`` means output range is
+``offset`` is zero-based. ``--offset 1`` means output range is
 started from the 2nd record.
 
 ``limit`` specifies the max number of output records. ``--limit 1``
@@ -732,7 +732,6 @@ more liked entries.
 The ``select`` command outputs records that ``n_likes`` column value
 is equal to or more than ``10`` from ``Entries`` table.
 
-
 Output related parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -767,6 +766,8 @@ column value.
 
 The default value is ``_id, _key, *``. It means that all column
 values except ``_score`` are outputted.
+
+.. _select-sortby:
 
 ``sortby``
 """"""""""
@@ -809,11 +810,13 @@ descending order and outputs record key and hit score.
 If you use ``_score`` without ``query`` nor ``filter`` parameters,
 it's just ignored but get a warning in log file.
 
+.. _select-offset:
+
 ``offset``
 """"""""""
 
 It specifies offset to determine output records range. Offset is
-zero-origin. ``--offset 1`` means output range is started from the 2nd
+zero-zero. ``--offset 1`` means output range is started from the 2nd
 record.
 
 .. groonga-command
@@ -824,8 +827,9 @@ The ``select`` command outputs from the 4th record.
 
 You can specify negative value. It means that ``the number of matched
 records + offset``. If you have 3 matched records and specify
-``--offset -2``, you get records from the 1st (``3 + -2 = 1``) record
-to the 3rd record.
+``--offset -2``, you get records from the 2nd (``3 + -2 = 1``. ``1``
+means 2nd. Remember that offset is zero-based.) record to the 3rd
+record.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/offset_negative.log
@@ -905,7 +909,9 @@ Here is a ``drilldown`` with search condition example:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/drilldown_simple.log
-.. select Entries --filter 'n_likes >= 5' --drilldown tag
+.. select Entries \
+..   --filter 'n_likes >= 5' \
+..   --drilldown tag
 
 The ``select`` command outputs the following information:
 
@@ -917,7 +923,10 @@ Here is a ``drilldown`` example to specify multiple columns:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/drilldown_multiple.log
-.. select Entries --drilldown tag,n_likes
+.. select Entries \
+..   --limit 0 \
+..   --output_column _id \
+..   --drilldown tag,n_likes
 
 The ``select`` command outputs the following information:
 
@@ -946,7 +955,11 @@ Here is a simple ``drilldown_sortby`` example:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/drilldown_sortby_simple.log
-.. select Entries --drilldown tag --drilldown_sortby '-_nsubrecs, _key'
+.. select Entries \
+..   --limit 0 \
+..   --output_column _id \
+..   --drilldown tag \
+..   --drilldown_sortby '-_nsubrecs, _key'
 
 Drilldown result is sorted by the number of grouped records (=
 ``_nsubrecs`` ) in descending order. If there are grouped results that
@@ -957,7 +970,11 @@ The sort keys are used in all group keys specified in ``dilldown``:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/drilldown_sortby_simple.log
-.. select Entries --drilldown 'tag, n_likes' --drilldown_sortby '-_nsubrecs, _key'
+.. select Entries \
+..   --limit 0 \
+..   --output_column _id \
+..   --drilldown 'tag, n_likes' \
+..   --drilldown_sortby '-_nsubrecs, _key'
 
 The same sort keys are used in ``tag`` drilldown and ``n_likes``
 drilldown.
@@ -972,11 +989,15 @@ If you want to use different sort keys for each drilldown, use
 
 It specifies output columns for drilldown separated by ``,``.
 
-Here is a ``drilldown_output_columns`` example.
+Here is a ``drilldown_output_columns`` example:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/drilldown_output_columns_simple.log
-.. select Entries --drilldown_output_columns _key
+.. select Entries \
+..   --limit 0 \
+..   --output_column _id \
+..   --drilldown tag \
+..   --drilldown_output_columns _key
 
 The ``select`` command just outputs grouped key.
 
@@ -1017,13 +1038,21 @@ You can refer ``Tags.label`` by ``label`` in
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/drilldown_output_columns_referenced_type_column_label.log
-.. select Entries --drilldown tag --drilldown_output_columns '_key, label'
+.. select Entries \
+..   --limit 0 \
+..   --output_column _id \
+..   --drilldown tag \
+..   --drilldown_output_columns '_key, label'
 
 You can use ``*`` to refer all columns in referenced table (= ``Tags``):
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/drilldown_output_columns_referenced_type_column_asterisk.log
-.. select Entries --drilldown tag --drilldown_output_columns '_key, *'
+.. select Entries \
+..   --limit 0 \
+..   --output_column _id \
+..   --drilldown tag \
+..   --drilldown_output_columns '_key, *'
 
 ``*`` is expanded to ``label, priority``.
 
@@ -1031,12 +1060,47 @@ The default value of ``drilldown_output_columns`` is ``_key,
 _nsubrecs``. It means that grouped key and the number of records in
 the group are output.
 
+.. _select-drilldown-offset:
+
 ``drilldown_offset``
 """"""""""""""""""""
 
-TODO: write in English and add example.
+It specifies offset to determine range of drilldown output
+records. Offset is zero-based. ``--drilldown_offset 1`` means output
+range is started from the 2nd record.
 
-drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力対象となる最初のレコードの番号を0ベースで指定します。デフォルト値は0です。drilldown_offsetに負の値を指定した場合は、ヒットした件数 + drilldown_offsetによって算出される値が指定されたものとみなされます。
+Here is a ``drilldown_offset`` example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldown_offset_simple.log
+.. select Entries \
+..   --limit 0 \
+..   --output_column _id \
+..   --drilldown tag \
+..   --drilldown_sortby _key \
+..   --drilldown_offset 1
+
+The ``select`` command outputs from the 2th record.
+
+You can specify negative value. It means that ``the number of grouped
+results + offset``. If you have 3 grouped results and specify
+``--drilldown_offset -2``, you get grouped results from the 2st
+(``3 + -2 = 1``. ``1`` means 2nd. Remember that offset is zero-based.)
+grouped result to the 3rd grouped result.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldown_offset_negative.log
+.. select Entries \
+..   --limit 0 \
+..   --output_column _id \
+..   --drilldown tag \
+..   --drilldown_sortby _key \
+..   --drilldown_offset -2
+
+The ``select`` command outputs from the 2st grouped result because the
+total number of grouped results is ``3``.
+
+The default value of ``drilldown_offset`` is ``0``.
 
 ``drilldown_limit``
 """""""""""""""""""
