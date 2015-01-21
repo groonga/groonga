@@ -35,6 +35,9 @@ msgstr "1つのキーの最大サイズ: 4096Bytes"
 msgid "The maximum total size of keys: 4GBytes"
 msgstr "キーのサイズを合計した上限値: 4GByte"
 
+msgid "The maximum number of records: 268,435,455 (more than 268 million)"
+msgstr "最大レコード数: 268,435,455 (約2億6千万)"
+
 msgid "Keep in mind that these limitations may vary depending on conditions."
 msgstr "実際には他の諸条件の制約により上記の値まで到達しない場合もあります。"
 
@@ -43,9 +46,6 @@ msgstr "インデックス上限値"
 
 msgid "A full-text index has the following limitations."
 msgstr "1つのインデックスにおける論理上の上限値は以下のとおりです。"
-
-msgid "The maximum number of records: 268,435,455 (more than 268 million)"
-msgstr "最大レコード数: 268,435,455 (約2億6千万)"
 
 msgid ""
 "The maximum number of distinct terms: 268,435,455 (more than 268 million)"

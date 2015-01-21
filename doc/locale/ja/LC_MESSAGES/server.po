@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.6\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2014-11-28 12:06+0900\n"
+"PO-Revision-Date: 2015-01-21 15:18+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -106,9 +106,6 @@ msgstr "×"
 
 msgid "Custom command version"
 msgstr "コマンドバージョンの変更"
-
-msgid "x (comming soon)"
-msgstr "×（まもなく実装予定）"
 
 msgid "Multi databases"
 msgstr "複数データベース"
@@ -537,4 +534,3 @@ msgstr ""
 
 msgid "Stopping groonga HTTP server(Fedora)::"
 msgstr "groonga HTTPサーバーを終了(Fedora)::"
-
