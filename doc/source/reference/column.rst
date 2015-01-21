@@ -17,10 +17,18 @@ must be a table.
 
 Here are data store columns:
 
-  * :doc:`columns/scalar`
-  * :doc:`columns/vector`
-  * :doc:`columns/pseudo`
+.. toctree::
+   :maxdepth: 1
+   :glob:
+
+   columns/scalar
+   columns/vector
+   columns/pseudo
 
 Here is an index column:
 
-  * :doc:`columns/index`
+.. toctree::
+   :maxdepth: 1
+   :glob:
+
+   columns/index

@@ -426,7 +426,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/api/plugin.rst \
 	$(top_srcdir)/doc/source/reference/cast.rst \
 	$(top_srcdir)/doc/source/reference/column.rst \
+	$(top_srcdir)/doc/source/reference/columns/index.rst \
 	$(top_srcdir)/doc/source/reference/columns/pseudo.rst \
+	$(top_srcdir)/doc/source/reference/columns/scalar.rst \
 	$(top_srcdir)/doc/source/reference/columns/vector.rst \
 	$(top_srcdir)/doc/source/reference/command.rst \
 	$(top_srcdir)/doc/source/reference/command/command_version.rst \
@@ -984,7 +986,9 @@ source_files_relative_from_doc_dir = \
 	source/reference/api/plugin.rst \
 	source/reference/cast.rst \
 	source/reference/column.rst \
+	source/reference/columns/index.rst \
 	source/reference/columns/pseudo.rst \
+	source/reference/columns/scalar.rst \
 	source/reference/columns/vector.rst \
 	source/reference/command.rst \
 	source/reference/command/command_version.rst \
@@ -1290,7 +1294,9 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/api/plugin.txt \
 	html/_sources/reference/cast.txt \
 	html/_sources/reference/column.txt \
+	html/_sources/reference/columns/index.txt \
 	html/_sources/reference/columns/pseudo.txt \
+	html/_sources/reference/columns/scalar.txt \
 	html/_sources/reference/columns/vector.txt \
 	html/_sources/reference/command.txt \
 	html/_sources/reference/command/command_version.txt \
@@ -1495,7 +1501,9 @@ html_files_relative_from_locale_dir = \
 	html/reference/api/plugin.html \
 	html/reference/cast.html \
 	html/reference/column.html \
+	html/reference/columns/index.html \
 	html/reference/columns/pseudo.html \
+	html/reference/columns/scalar.html \
 	html/reference/columns/vector.html \
 	html/reference/command.html \
 	html/reference/command/command_version.html \
