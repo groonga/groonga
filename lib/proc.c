@@ -713,8 +713,13 @@ grn_select_drilldown(grn_ctx *ctx, grn_obj *table,
     int offset;
     int limit;
 
-    if (!g.table) {
-      continue;
+    if (drilldown->calc_target_name) {
+      g.calc_target = grn_obj_column(ctx, table,
+                                     drilldown->calc_target_name,
+                                     drilldown->calc_target_name_len);
+    }
+    if (g.calc_target) {
+      g.flags |= drilldown->calc_types;
     }
 
     grn_table_group(ctx, table, &keys[i], 1, &g, 1);
@@ -1254,7 +1259,7 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     drilldown->label_len = 0;
     drilldown_info_fill(ctx, drilldown,
                         VAR(9), VAR(10), VAR(11), VAR(12), VAR(13),
-                        NULL, NULL);
+                        VAR(20), VAR(21));
     n_drilldowns++;
   } else {
     unsigned int i;
@@ -6516,7 +6521,7 @@ proc_request_cancel(grn_ctx *ctx, int nargs, grn_obj **args,
 void
 grn_db_init_builtin_query(grn_ctx *ctx)
 {
-  grn_expr_var vars[21];
+  grn_expr_var vars[23];
 
   DEF_VAR(vars[0], "name");
   DEF_VAR(vars[1], "table");
@@ -6540,8 +6545,10 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[18], "query_flags");
   DEF_VAR(vars[19], "query_expander");
   DEF_VAR(vars[20], "adjuster");
-  DEF_COMMAND("define_selector", proc_define_selector, 21, vars);
-  DEF_COMMAND("select", proc_select, 20, vars + 1);
+  DEF_VAR(vars[21], "drilldown_calc_types");
+  DEF_VAR(vars[22], "drilldown_calc_target");
+  DEF_COMMAND("define_selector", proc_define_selector, 23, vars);
+  DEF_COMMAND("select", proc_select, 22, vars + 1);
 
   DEF_VAR(vars[0], "values");
   DEF_VAR(vars[1], "table");
