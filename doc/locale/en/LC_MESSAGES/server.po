@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Groonga 4.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2014-11-26 19:12+0900\n"
+"PO-Revision-Date: 2015-01-21 15:15+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -105,9 +105,6 @@ msgstr "x"
 
 msgid "Custom command version"
 msgstr "Custom command version"
-
-msgid "x (comming soon)"
-msgstr "x (comming soon)"
 
 msgid "Multi databases"
 msgstr "Multi databases"

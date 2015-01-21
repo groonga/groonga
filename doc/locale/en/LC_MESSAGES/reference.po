@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Groonga 4.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2014-11-28 12:41+0900\n"
+"PO-Revision-Date: 2015-01-21 15:15+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -482,6 +482,24 @@ msgstr "indexbufのサイズ（byte長）を指定します。"
 msgid "section番号を格納するint長バッファ（呼出側で準備する）を指定します。"
 msgstr "section番号を格納するint長バッファ（呼出側で準備する）を指定します。"
 
+# 5028ca08c9934f03a4e524786dad5c78
+msgid ""
+"This is a dangerous API. You must not use this API when other thread or "
+"process accesses the target column. If you use this API against shared "
+"column, the process that accesses the column may be broken and the column "
+"may be broken."
+msgstr ""
+
+# 6ad8cd3fce074509b2e47fff14ee58da
+msgid "Clears all values in the column."
+msgstr ""
+
+msgid "The column to be truncated."
+msgstr ""
+
+msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
+msgstr "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
+
 msgid "``grn_command_version``"
 msgstr "``grn_command_version``"
 
@@ -597,9 +615,6 @@ msgstr "初期化するctx構造体へのポインタを指定します。"
 
 msgid "初期化する ``ctx`` のオプションを指定します。"
 msgstr "初期化する ``ctx`` のオプションを指定します。"
-
-msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
-msgstr "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
 
 msgid "ctxの管理するメモリを解放し、使用を終了します。"
 msgstr "ctxの管理するメモリを解放し、使用を終了します。"
@@ -807,6 +822,66 @@ msgstr "内容が変更されたdbを指定します。"
 
 msgid "objの属するdbを返します。"
 msgstr "objの属するdbを返します。"
+
+msgid "This is an experimental API."
+msgstr ""
+
+# 4631f4433f434d019da39a89596ce36f
+msgid ""
+"This is a dangerous API. You must not use this API when other thread or "
+"process opens the target database. If you use this API against shared "
+"database, the database may be broken."
+msgstr ""
+
+# 9eec77d0e91148598f919310d74e80ff
+msgid ""
+"Checks the passed database and recovers it if it is broken and it can be "
+"recovered."
+msgstr ""
+
+# 270b866fb2dc478c8bcbfcb4541f7347
+msgid ""
+"This API uses lock existence for checking whether the database is broken or "
+"not."
+msgstr ""
+
+msgid "Here are recoverable cases:"
+msgstr ""
+
+# b193ebcacfe84eb39b682fce5cd87dea
+msgid "Index column is broken. The index column must have source column."
+msgstr ""
+
+msgid "Here are unrecoverable cases:"
+msgstr ""
+
+# 15ad5f7022254e83a3ffb265b05f20c5
+msgid "Object name management feature is broken."
+msgstr ""
+
+# 8846369aa8944f7f83b4cb952a0d3407
+msgid "Table is broken."
+msgstr ""
+
+# 3cdd9995b63649369d5cc1fc886240d5
+msgid "Data column is broken."
+msgstr ""
+
+# d46326cd16964bd68ff0f43eda983ede
+msgid ""
+"Object name management feature is used for managing table name, column name "
+"and so on. If the feature is broken, the database can't be recovered. Please "
+"re-create the database from backup."
+msgstr ""
+
+# 31bb862557da4766b329f6af0eb3dbe9
+msgid ""
+"Table and data column can be recovered by removing an existence lock and re-"
+"add data."
+msgstr ""
+
+msgid "The database to be recovered."
+msgstr ""
 
 msgid "``grn_encoding``"
 msgstr "``grn_encoding``"
@@ -3332,6 +3407,51 @@ msgstr "See also"
 msgid ":doc:`return_code` describes about return code."
 msgstr ":doc:`return_code` describes about return code."
 
+msgid "Request ID"
+msgstr ""
+
+# 59b175046aad404ea18bedf1729331eb
+msgid "You can assign ID to each request."
+msgstr ""
+
+# 536d3a9d246b4a95b822a7acd2fdb69b
+msgid ""
+"The ID can be used by canceling the request. See also :doc:`/reference/"
+"commands/request_cancel` for details about canceling a request."
+msgstr ""
+
+# 82c00caf9c0348a9be89cbddabf2f5ec
+msgid ""
+"Request ID should be managed by user. If you assign the same ID for some "
+"running requests, you can't cancel the request."
+msgstr ""
+
+# f4e4ad1af9714d5ab7b7da06ff3fcb22
+msgid ""
+"The simplest ID sequence is incremented numbers such as ``1``, ``2`` , ``..."
+"``."
+msgstr ""
+
+# 9aaa4b35213c4144965de9d59a0a9bf6
+msgid "A request ID is a string. The maximum request ID size is 4096 byte."
+msgstr ""
+
+# b0e0322c97084478914f521b313fcc6a
+msgid "How to assign ID to request"
+msgstr ""
+
+# 02654e49ebcd4dbe82903044a7ccae9a
+msgid ""
+"All commands accept ``request_id`` parameter. You can assign ID to request "
+"by adding ``request_id`` parameter."
+msgstr ""
+
+msgid "Here is an example to assign ``id-1`` ID to a request::"
+msgstr ""
+
+msgid ":doc:`/reference/commands/request_cancel`"
+msgstr ""
+
 msgid "Return code"
 msgstr "Return code"
 
@@ -3870,6 +3990,10 @@ msgstr "バッファ内にある語のうち、チャンクを使っている語
 
 msgid "``clearlock``"
 msgstr "``clearlock``"
+
+# e00d19a13acf4e8588248661c00cacde
+msgid "Use :doc:`lock_clear` instead."
+msgstr ""
 
 msgid "clearlock - オブジェクトにセットされたロックを解除する"
 msgstr "clearlock - オブジェクトにセットされたロックを解除する"
@@ -4822,6 +4946,59 @@ msgstr "JSON format"
 msgid "``load`` returns the number of added records such as ::"
 msgstr "``load`` returns the number of added records such as ::"
 
+msgid "``lock_clear``"
+msgstr ""
+
+# 5f540a5f2ca54b17967367fbaedac173
+msgid ""
+"``lock_clear`` command clear the lock of the target object recursively. The "
+"target object is one of database, table and column."
+msgstr ""
+
+# b84e0f92ad904b7da4680d8dd52c56b5
+msgid ""
+"This is a dangerous command. You must not use this command while other "
+"process or thread is doing a write operation to the target object. If you do "
+"it, your database may be broken and/or your process may be crashed."
+msgstr ""
+
+msgid "``truncate`` command takes only one parameter."
+msgstr "``truncate`` command takes only one parameter."
+
+msgid "There is no required parameter::"
+msgstr ""
+
+# f6d3c67dcb734afb8331db59c2238be8
+msgid ""
+"If ``target_name`` parameters is omitted, database is used for the target "
+"object. It means that all locks in the database are cleared."
+msgstr ""
+
+msgid "Here is an example to clear all locks in the database::"
+msgstr ""
+
+msgid ""
+"Here is an example to clear locks of ``Entry`` table and ``Entry`` table "
+"columns::"
+msgstr ""
+
+msgid "Here is an example to clear the lock of ``Site.title`` column::"
+msgstr ""
+
+msgid "``target_name``"
+msgstr ""
+
+msgid "It specifies the name of table or column."
+msgstr ""
+
+# 212aa475a95a41af82bbd4c742923d23
+msgid "If you don't specify it, database is used for the target object."
+msgstr ""
+
+# 347992f875914a41bb2003924323f072
+msgid "The default is none. It means that the target object is database."
+msgstr ""
+
 msgid "``log_level``"
 msgstr "``log_level``"
 
@@ -5187,6 +5364,131 @@ msgstr "If ``register`` fails, error details are in ``HEADER``."
 
 msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
 msgstr "See :doc:`/reference/command/output_format` for ``HEADER``."
+
+msgid "``request_cancel``"
+msgstr ""
+
+msgid "``request_cancel`` command is an experimental feature."
+msgstr ""
+
+# cfec1fe5c74d4ee0a9eda2335e43c562
+msgid "``request_cancel`` command cancels a running request."
+msgstr ""
+
+msgid "There are some limitations:"
+msgstr ""
+
+# d702ca1e9c4d40088b66e285770e2d28
+msgid ""
+"Request ID must be managed by user. (You need to assign unique key for each "
+"request.)"
+msgstr ""
+
+# 30ea816b2a5a4b9eb582be3f4e4de7ca
+msgid ""
+"Cancel request may be ignored. (You can send ``request_cancel`` command "
+"multiple times for the same request ID.)"
+msgstr ""
+
+# a1ec5a736a214ad08a04f219b81cafe6
+msgid ""
+"Only multithreading type Groonga server is supported. (You can use with :doc:"
+"`/reference/executables/groonga` based server but can't use with :doc:`/"
+"reference/executables/groonga-httpd`.)"
+msgstr ""
+
+msgid "See :doc:`/reference/command/request_id` about request ID."
+msgstr ""
+
+# 0da91ba692b24b8f831442eab7d223cd
+msgid ""
+"If request is canceled, the canceled request has ``-5`` "
+"(``GRN_INTERRUPTED_FUNCTION_CALL``) as :doc:`/reference/command/return_code`."
+msgstr ""
+
+msgid "``request_cancel`` command takes only one parameter."
+msgstr ""
+
+msgid "The required parameter is only ``id``::"
+msgstr ""
+
+msgid "Here is an example of ``request_cancel`` command::"
+msgstr ""
+
+# dba222ab0deb473abc00f0e59fc768b1
+msgid ""
+"Assume that the first ``select`` command takes a long time. ``unique-id-1`` "
+"request ID is assigned to the ``select`` command by ``request_id=unique-"
+"id-1`` parameter."
+msgstr ""
+
+# 7a7bca8c029b4e679567b1c69c015a0d
+msgid ""
+"The second ``request_cancel`` command passes ``id=unique-id-1`` parameter. "
+"``unique-id-1`` is the same request ID passed in ``select`` command."
+msgstr ""
+
+# b978256ad5624f2aae83d4a5586c1370
+msgid ""
+"The ``select`` command may not be canceled immediately. And the cancel "
+"request may be ignored."
+msgstr ""
+
+# a62832d3c63344ad906168d148e02f67
+msgid ""
+"You can send cancel request for the same request ID multiple times. If the "
+"target request is canceled or finished, ``\"canceled\"`` value is changed to "
+"``false`` from ``true``::"
+msgstr ""
+
+# a6a03a484d984e9bb52f4e0d30d213d3
+msgid ""
+"If the ``select`` command is canceled, response of the ``select`` command "
+"has ``-5`` (``GRN_INTERRUPTED_FUNCTION_CALL``) as :doc:`/reference/command/"
+"return_code`::"
+msgstr ""
+
+msgid "This section describes parameters of ``request_cancel``."
+msgstr ""
+
+msgid "There is required parameter, ``id``."
+msgstr ""
+
+msgid "It specifies the ID for the target request."
+msgstr ""
+
+# 778460b3299a42a6a7c83c8252287105
+msgid "``request_cancel`` command returns the result of the cancel request::"
+msgstr ""
+
+# dc61e4c01c314a3388905976cfd78c8d
+msgid "The ID of the target request."
+msgstr ""
+
+# f2ce2ecb9db945f698f70303b71c85fb
+msgid "``CANCEL_REQUEST_IS_ACCEPTED_OR_NOT``"
+msgstr ""
+
+# 4ddc8d24dd054e0b936611fb2a7f0808
+msgid ""
+"If the cancel request is accepted, this is ``true``, otherwise this is "
+"``false``."
+msgstr ""
+
+# 7b2a86467ead413d8ec0337f6f3188ab
+msgid ""
+"Note that \"cancel request is accepted\" doesn't means that \"the target "
+"request is canceled\". It just means \"cancel request is notified to the "
+"target request but the cancel request may be ignored by the target request\"."
+msgstr ""
+
+# b81cee5eafa94fcbbfa6f3da88dd32de
+msgid ""
+"If request assigned with the request ID doesn't exist, this is ``false``."
+msgstr ""
+
+msgid ":doc:`/reference/command/request_id`"
+msgstr ""
 
 msgid "``ruby_eval``"
 msgstr "``ruby_eval``"
@@ -7771,35 +8073,143 @@ msgstr ""
 msgid "``truncate``"
 msgstr "``truncate``"
 
-msgid "``truncate`` command deletes all records from specified table."
-msgstr "``truncate`` command deletes all records from specified table."
+msgid ""
+"``truncate`` command deletes all records from specified table or all values "
+"from specified column."
+msgstr ""
 
-msgid "``truncate`` command takes only one parameter."
-msgstr "``truncate`` command takes only one parameter."
+msgid "The required parameter is only ``target_name``::"
+msgstr ""
 
-msgid "The required parameter is only ``table``::"
-msgstr "The required parameter is only ``table``::"
+# eacfe2fd99ff4d288665e8b7e3b318bc
+msgid ""
+"``target_name`` parameter can be used since 4.0.9. You need to use ``table`` "
+"parameter for 4.0.8 or earlier."
+msgstr ""
 
-msgid "Here is a simple example of ``truncate`` command."
-msgstr "Here is a simple example of ``truncate`` command."
+# 618d2efd4f70422eb408ab2ce093228f
+msgid ""
+"For backward compatibility, ``truncate`` command accepts ``table`` "
+"parameter. But it should not be used for newly written code."
+msgstr ""
+
+msgid "Here is a simple example of ``truncate`` command against a table."
+msgstr ""
+
+msgid "Here is a simple example of ``truncate`` command against a column."
+msgstr ""
 
 msgid "This section describes parameters of ``truncate``."
 msgstr "This section describes parameters of ``truncate``."
 
-msgid "There is required parameter, ``table_name``."
-msgstr "There is required parameter, ``table_name``."
+msgid "There is required parameter, ``target_name``."
+msgstr ""
 
-msgid "``table_name``"
-msgstr "``table_name``"
-
-msgid "It specifies the name of table."
-msgstr "It specifies the name of table."
+# 86370f5f205f4ff682ec896a81ec8856
+msgid "``truncate`` command returns whether truncation is succeeded or not::"
+msgstr ""
 
 msgid "Executables"
 msgstr "Executables"
 
 msgid "This section describes executable files provided by groonga package."
 msgstr "This section describes executable files provided by groonga package."
+
+msgid "``grndb``"
+msgstr ""
+
+# dc50df85d7844d28bc610836aff86c6b
+msgid "This executable command is an experimental feature."
+msgstr ""
+
+# c94eb5ab6c4f432ba5b96bb865554620
+msgid "``grndb`` manages a Groonga database."
+msgstr ""
+
+msgid "Here are features:"
+msgstr ""
+
+# 4914fb8cf17246cf87289d3c5c848d01
+msgid "Checks whether database is broken or not."
+msgstr ""
+
+# bdf35dd95ce54a92a8bfbf3b23330694
+msgid "Recovers broken database automatically if the database is recoverable."
+msgstr ""
+
+# c5623b075c524076a5f1567f18da2197
+msgid "``grndb`` requires command and database path::"
+msgstr ""
+
+msgid "Here are available commands:"
+msgstr ""
+
+# cc3e5070687446678fb14ccdbf9bcd53
+msgid "``check`` - Checks whether database is broken or not."
+msgstr ""
+
+# bba8325a9e3b486ea04cb1cbd606485a
+msgid "``recover`` - Recovers database."
+msgstr ""
+
+msgid ""
+"Here is an example to check the database at ``/var/lib/groonga/db/db``::"
+msgstr ""
+
+msgid ""
+"Here is an example to recover the database at ``/var/lib/groonga/db/db``::"
+msgstr ""
+
+msgid "Commands"
+msgstr ""
+
+msgid "This section describes available commands."
+msgstr ""
+
+# e23b3bdf6f6542afb826b543476e16a8
+msgid ""
+"It checks an existing Groonga database. If the database is broken, ``grndb`` "
+"reports reasons and exits with non-``0`` exit status."
+msgstr ""
+
+# f8cc59eca6ad4707928c66c7c6893175
+msgid ""
+"You must not use this command for opened database. If the database is "
+"opened, this command may report wrong result."
+msgstr ""
+
+msgid "``recover``"
+msgstr ""
+
+# 3dcf9077fb354d05ad39007cf5a1f58e
+msgid "It recovers an existing broken Groonga database."
+msgstr ""
+
+# 31e20f6c01ce411a938b3ba78c28cebe
+msgid ""
+"If the database is not broken, ``grndb`` does nothing and exits with ``0`` "
+"exit status."
+msgstr ""
+
+# 83971e14a44c4c43a45653fce788fd3a
+msgid ""
+"If the database is broken and one or more index columns are only broken, "
+"``grndb`` recovers these index columns and exists with ``0`` exit status. It "
+"may take a long time for large indexed data."
+msgstr ""
+
+# 07b128f6bf54418abde9b9ed52fa57e1
+msgid ""
+"If the database is broken and tables or data columns are broken, ``grndb`` "
+"reports broken reasons and exits with non-``0`` exit status. You can know "
+"whether the database is recoverable or not by ``check`` command."
+msgstr ""
+
+# c5f81ca168dd41a7aa6592f27eeacdfa
+msgid ""
+"You must not use this command for opened database. If the database is "
+"opened, this command may break the database."
+msgstr ""
 
 msgid "grnslap"
 msgstr "grnslap"
@@ -13346,36 +13756,14 @@ msgstr "Here is an example that uses ``NormalizerNFKC51`` normalizer:"
 msgid "Additional normalizers"
 msgstr "Additional normalizers"
 
-msgid ""
-"Here is a list of additional normalizers provided by ``groonga-normalizer-"
-"mysql`` plugins:"
+msgid "There are additional normalizers:"
 msgstr ""
-"Here is a list of additional normalizers provided by ``groonga-normalizer-"
-"mysql`` plugins:"
 
-msgid "``NormalizerMySQLGeneralCI``"
-msgstr "``NormalizerMySQLGeneralCI``"
-
-msgid "``NormalizerMySQLUnicodeCI``"
-msgstr "``NormalizerMySQLUnicodeCI``"
-
-msgid "``NormalizerMySQLUnicodeCIExceptKanaCIKanaWithVoicedSoundMark``"
-msgstr "``NormalizerMySQLUnicodeCIExceptKanaCIKanaWithVoicedSoundMark``"
-
+# f953b55db14f42ea92bf856e22248435
 msgid ""
-"``groonga-normalizer-mysql`` is a Groonga plugin. It provides MySQL "
-"compatible normalizers to Groonga. ``NormalizerMySQLGeneralCI`` corresponds "
-"to ``utf8mb4_general_ci``."
+"`groonga-normalizer-mysql <https://github.com/groonga/groonga-normalizer-"
+"mysql>_`"
 msgstr ""
-"``groonga-normalizer-mysql`` is a Groonga plugin. It provides MySQL "
-"compatible normalizers to Groonga. ``NormalizerMySQLGeneralCI`` corresponds "
-"to ``utf8mb4_general_ci``."
-
-msgid "You need to register ``normalizers/mysql`` plugin in advance."
-msgstr "You need to register ``normalizers/mysql`` plugin in advance."
-
-msgid "Here is an example that uses ``NormalizerMySQLGeneralCI`` normalizer:"
-msgstr "Here is an example that uses ``NormalizerMySQLGeneralCI`` normalizer:"
 
 msgid ":doc:`/reference/commands/table_create`"
 msgstr ":doc:`/reference/commands/table_create`"
@@ -13858,15 +14246,11 @@ msgstr ""
 "\"二\" or \"に\"."
 
 msgid ""
-"If you create dataset which is named as example by :doc:`/reference/"
-"executables/groonga-suggest-create-dataset` command, you can update pairs of "
-"registered word and its reading by loading data to '_key' and 'kana' column "
-"of item_example table explicitly for prefix RK search."
+"If you create dataset which is named as ``example`` by :doc:`/reference/"
+"executables/groonga-suggest-create-dataset` executable file, you can update "
+"pairs of registered word and its reading by loading data to ``_key`` and "
+"``kana`` column of ``item_example`` table explicitly for prefix RK search."
 msgstr ""
-"If you create dataset which is named as example by :doc:`/reference/"
-"executables/groonga-suggest-create-dataset` command, you can update pairs of "
-"registered word and its reading by loading data to '_key' and 'kana' column "
-"of item_example table explicitly for prefix RK search."
 
 msgid "Cooccurrence search"
 msgstr "Cooccurrence search"
@@ -13971,12 +14355,9 @@ msgstr "Prefix search"
 
 msgid ""
 "Prefix search can find registered word that start with user's input. This "
-"search doesn't care about romaji, katakana and hiragana not like Prefix RK "
+"search doesn't care about romaji, katakana and hiragana not like prefix RK "
 "search."
 msgstr ""
-"Prefix search can find registered word that start with user's input. This "
-"search doesn't care about romaji, katakana and hiragana not like Prefix RK "
-"search."
 
 msgid ""
 "This search isn't always ran. It's just ran when it's requested explicitly "
@@ -13994,10 +14375,8 @@ msgstr ""
 
 msgid ""
 "Groonga provides :doc:`/reference/commands/suggest` command to use "
-"completion. `--type complete` option requests completion."
+"completion. ``--type complete`` option requests completion."
 msgstr ""
-"Groonga provides :doc:`/reference/commands/suggest` command to use "
-"completion. `--type complete` option requests completion."
 
 msgid "For example, here is an command to get completion results by \"en\":"
 msgstr "For example, here is an command to get completion results by \"en\":"
@@ -14007,12 +14386,9 @@ msgstr "How it learns"
 
 msgid ""
 "Cooccurrence search uses learned data. They are based on query logs, access "
-"logs and so on. To create learned data, groonga needs user input sequence "
+"logs and so on. To create learned data, Groonga needs user input sequence "
 "with time stamp and user submit input with time stamp."
 msgstr ""
-"Cooccurrence search uses learned data. They are based on query logs, access "
-"logs and so on. To create learned data, groonga needs user input sequence "
-"with time stamp and user submit input with time stamp."
 
 msgid ""
 "For example, an user wants to search by \"engine\". The user inputs the "
@@ -14044,41 +14420,35 @@ msgid ""
 msgstr ""
 "Groonga can be learned from the input sequence by the following command::"
 
-msgid "How to update RK reading data"
-msgstr "How to update RK reading data"
+msgid "How to update reading data"
+msgstr ""
 
 msgid ""
-"Groonga requires registered word and its reading for RK search, so load such "
-"data in the advance."
+"Groonga requires registered word and its reading for prefix RK search. This "
+"section describes how to register a word and its reading."
 msgstr ""
-"Groonga requires registered word and its reading for RK search, so load such "
-"data in the advance."
+
+msgid "Here is an example to register \"日本\" which means Japan in English:"
+msgstr ""
+
+msgid "Here is an example to update reading data to complete \"日本\":"
+msgstr ""
 
 msgid ""
-"Here is the example to register \"日本\" which means Japanese in english."
+"Then you can complete registered word \"日本\" by Romaji input - \"nihon\"."
 msgstr ""
-"Here is the example to register \"日本\" which means Japanese in english."
-
-msgid "Here is the example to update RK data to complete \"日本\"."
-msgstr "Here is the example to update RK data to complete \"日本\"."
-
-msgid "Then you can complete registered word \"日本\" by RK input - \"nihon\"."
-msgstr ""
-"Then you can complete registered word \"日本\" by RK input - \"nihon\"."
 
 msgid ""
-"Without loading above RK data, you can't complete registered word \"日本\" "
-"by query - \"nihon\"."
+"Without loading above reading data, you can't complete registered word \"日本"
+"\" by query - \"nihon\"."
 msgstr ""
-"Without loading above RK data, you can't complete registered word \"日本\" "
-"by query - \"nihon\"."
 
+# 7b9c3e64f6624637802f8aba5a79b13b
 msgid ""
-"As the column type of item_query table is VECTOR_COLUMN, you can register "
-"multiple readings for registered word."
+"You can register multiple readings for a registered word because ``kana`` "
+"column in ``item_query`` table is defined as a :doc:`/reference/columns/"
+"vector`."
 msgstr ""
-"As the column type of item_query table is VECTOR_COLUMN, you can register "
-"multiple readings for registered word."
 
 msgid ""
 "This is the reason that you can also complete the registered word \"日本\" "
@@ -14089,20 +14459,16 @@ msgstr ""
 
 msgid ""
 "This feature is very convenient because you can search registered word even "
-"though Japanese IM is disabled."
+"though Japanese input method is disabled."
 msgstr ""
-"This feature is very convenient because you can search registered word even "
-"though Japanese IM is disabled."
 
 msgid ""
 "If there are multiple candidates as completed result, you can customize "
-"priority to set the value of \"boost\" column in item_query table."
+"priority to set the value of ``boost`` column in ``item_query`` table."
 msgstr ""
-"If there are multiple candidates as completed result, you can customize "
-"priority to set the value of \"boost\" column in item_query table."
 
-msgid "Here is the example to customize priority for RK search."
-msgstr "Here is the example to customize priority for RK search."
+msgid "Here is an example to customize priority for prefix RK search:"
+msgstr ""
 
 msgid "Correction"
 msgstr "Correction"
@@ -14480,6 +14846,15 @@ msgid ""
 "For example, here is an command to get suggestion results by \"search\":"
 msgstr ""
 "For example, here is an command to get suggestion results by \"search\":"
+
+msgid ""
+"Cooccurrence search uses learned data. They are based on query logs, access "
+"logs and so on. To create learned data, groonga needs user input sequence "
+"with time stamp and user submit input with time stamp."
+msgstr ""
+"Cooccurrence search uses learned data. They are based on query logs, access "
+"logs and so on. To create learned data, groonga needs user input sequence "
+"with time stamp and user submit input with time stamp."
 
 msgid "2011-08-10T13:33:23+09:00: search engine (submit)"
 msgstr "2011-08-10T13:33:23+09:00: search engine (submit)"

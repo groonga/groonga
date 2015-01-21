@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Groonga 4.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2014-11-27 16:31+0900\n"
+"PO-Revision-Date: 2015-01-21 15:14+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -20,11 +20,212 @@ msgstr ""
 msgid "News"
 msgstr "News"
 
-msgid "Release 4.0.8 - 2014/11/29"
+msgid "Release 4.1.0 - 2015-01-09"
+msgstr ""
+
+# c34a00700c694595aea05a4b44d109f1
+msgid "It's a bug fix release of 4.0.9."
+msgstr ""
+
+# 7633824e61f9476f8a3bf306f805624e
+msgid ""
+"If you have already upgraded to 4.0.9, please upgrade to 4.1.0. And re-"
+"create your all indexes. You can re-create your indexes by removing and re-"
+"creating your indexes such as::"
+msgstr ""
+
+msgid ":doc:`/reference/commands/column_remove`"
+msgstr ""
+
+msgid ":doc:`/reference/commands/column_create`"
+msgstr ""
+
+# cd8a50e5b79c40caa20c8531a0e53f31
+msgid ""
+"If you didn't change your indexes by Groonga 4.0.9, you don't need to re-"
+"create your indexes. \"change\" means \"add\", \"remove\" and \"update\". If "
+"you use your indexes only for \"search\" by Groonga 4.0.9, you don't need to "
+"re-create your indexes."
+msgstr ""
+
+msgid "Fixes"
+msgstr "Fixes"
+
+# eec36f7644d24a0e8bae40f427308c29
+msgid ""
+"Fixed a bug that index may be broken. But the following bug fixed in Groonga "
+"4.0.9 is re-appeared."
+msgstr ""
+
+msgid ""
+"Fixed a crash bug that may be occurred by deleting or updating many indexed "
+"values at once. [groonga-dev,02942] [Reported by kashihara]"
+msgstr ""
+
+msgid "Release 4.0.9 - 2014-12-29"
+msgstr ""
+
+msgid ""
+"Use 4.1.0 instead of 4.0.9. 4.0.9 has a serious bug that may break index."
 msgstr ""
 
 msgid "Improvements"
 msgstr "Improvements"
+
+# 1a9a4ae1ae5847a8be98c96d9b7df541
+msgid "[:doc:`/reference/executables/groonga-httpd`] Marked as stable."
+msgstr ""
+
+msgid ""
+"[doc] Described about ``groonga-token-filter-stem`` package. [GitHub#259] "
+"[Patch by Masafumi Yokoyama]"
+msgstr ""
+
+# 4ad510500ece4416907978ad3ba0520b
+msgid ""
+"[build] Supported ``make install`` without ``make``. [Reported by akira "
+"yamada]"
+msgstr ""
+
+msgid ""
+"[experimental] Added :doc:`/reference/commands/request_cancel` command that "
+"cancels running request."
+msgstr ""
+
+msgid "[experimental] Added :c:func:`grn_db_recover()`."
+msgstr ""
+
+# 5301cf5d3ccc432c87011a9d6d1763fc
+msgid ""
+"Supported indexing vector of fixed size data such as vector of ``UInt64``. "
+"[groonga-dev,03014] [Reported by funa 1g]"
+msgstr ""
+
+msgid "[experimental] Added :doc:`/reference/executables/grndb`."
+msgstr ""
+
+msgid "[deb] Supported armhf architecture."
+msgstr ""
+
+msgid "[:doc:`/reference/executables/groonga-server-http`] Supported HEAD."
+msgstr ""
+
+msgid ""
+"[doc] Updated :doc:`/contribution/documentation/introduction`. [GitHub#270] "
+"[Patch by Yuya TAMANO]"
+msgstr ""
+
+# e9fdb289010b407f9c6338e279d390c4
+msgid ""
+"[doc] Updated :doc:`/install/others`. [GitHub#271] [Patch by Hiroshi Hatake]"
+msgstr ""
+
+# a41aa3b6de59458aa8974ae82babd023
+msgid ""
+"[:ref:`token-filter-stem`] Supported token that consists with only upper-"
+"case alphabets, digits, ``-`` and ``'``. It means that :ref:`token-filter-"
+"stem` can work with MySQL compatible normalizers."
+msgstr ""
+
+msgid "[:doc:`/reference/commands/truncate`] Supported column."
+msgstr ""
+
+# 4cb60cf9178c465189d0a0b237173e50
+msgid ""
+"[:doc:`/reference/commands/truncate`] Changed parameter name to "
+"``target_name`` from ``table``. ``table`` parameter can be used for backward "
+"compatibility but it shouldn't used for newly written code."
+msgstr ""
+
+# c66ca536d95842309c95107739e79420
+msgid "Exported :c:func:`grn_column_truncate()`."
+msgstr ""
+
+msgid "Added :doc:`/reference/commands/lock_clear`."
+msgstr ""
+
+msgid "Marked :doc:`/reference/commands/clearlock` deprecated."
+msgstr ""
+
+# 34cb9e0d20d9463ebc3abdf6b1ef6f90
+msgid ""
+"[backward incompatible] Stopped to set world writable permission for newly "
+"created files on ``umask(0)`` environment such as daemoned :doc:`/reference/"
+"executables/groonga-httpd`. It's a backward incompatible change but done "
+"because the previous behavior has a security risk."
+msgstr ""
+
+# 3749e6a86673495e82a646688b7e80cf
+msgid ""
+"Fixed build error on BSD based system. [GitHub#253] [Reported by Hiroshi "
+"Hatake]"
+msgstr ""
+
+# 3fdc7c8d2b214cf49607d1c163009f61
+msgid "Fixed build error on OS X. [GitHub#253] [Reported by Hiroshi Hatake]"
+msgstr ""
+
+# 51a695ee23bd4ba8af73d1a3a353a894
+msgid ""
+"Fixed a regression bug that equal operation against nonexistent reference "
+"always matches."
+msgstr ""
+
+# a737c0e78e154876a716a1d45e6a6bae
+msgid ""
+"Fixed a regression bug that static index construction doesn't work on BSD "
+"based system. [GitHub#264] [Reported by Ayumu Osanai]"
+msgstr ""
+
+# 7b3548207df54c5e89af223262870959
+msgid "Fixed a bug that ``--with-libstemmer`` configure option is ignored."
+msgstr ""
+
+msgid "[deb] Fixed a bug that logrotate script has a syntax error."
+msgstr ""
+
+# 28af245ee15a497a91b7803665b30191
+msgid ""
+"Fixed a bug that grouped result can't be got when :doc:`/reference/command/"
+"command_version` is ``2``. [GitHub ranguba/rroonga#38] [Reported by YUKI "
+"\"Piro\" Hiroshi]"
+msgstr ""
+
+msgid "Thanks"
+msgstr "Thanks"
+
+msgid "Hiroshi Hatake"
+msgstr ""
+
+msgid "Masafumi Yokoyama"
+msgstr "Masafumi Yokoyama"
+
+# c72a2e1d12c544f28225b3ba1f12228d
+msgid "akira yamada"
+msgstr ""
+
+# 711adc2b885041b08d3b8c44060221f7
+msgid "kashihara"
+msgstr ""
+
+# 2f2197a1749a475e9329f4e63a655572
+msgid "Ayumu Osanai"
+msgstr ""
+
+# 35e9dc2cce9f4b019eff75a6e4d7e071
+msgid "funa 1g"
+msgstr ""
+
+# eb68b4d05d1d4f448e6a4d8b9fd8bf07
+msgid "YUKI \"Piro\" Hiroshi"
+msgstr ""
+
+# e520bdf5563a4a8b9c80022fe921da74
+msgid "Yuya TAMANO"
+msgstr ""
+
+msgid "Release 4.0.8 - 2014/11/29"
+msgstr ""
 
 msgid "[deb] Supported Ubuntu 12.04 again because Travis-CI runs on it."
 msgstr ""
@@ -93,9 +294,8 @@ msgid ""
 "range for ranking or something else."
 msgstr ""
 
-#, fuzzy
 msgid "[httpd] Supported ``groonga-httpd`` on windows."
-msgstr "[httpd] Supported ``load`` command by POST."
+msgstr ""
 
 msgid "Supported vector column for drilldown."
 msgstr ""
@@ -112,9 +312,6 @@ msgid ""
 "Added configuration file for Windows CI on AppVeyor. [groonga-"
 "dev,02970,02981] [Patch by Hiroshi Hatake]"
 msgstr ""
-
-msgid "Fixes"
-msgstr "Fixes"
 
 msgid ""
 "[doc] Fixed duplicated execution example path about :doc:`/reference/"
@@ -156,22 +353,13 @@ msgid ""
 "Naoya Murakami]"
 msgstr ""
 
-msgid "Thanks"
-msgstr "Thanks"
-
 msgid "Atsushi Shinoda"
 msgstr ""
-
-msgid "Masafumi Yokoyama"
-msgstr "Masafumi Yokoyama"
 
 msgid "Naoya Murakami"
 msgstr "Naoya Murakami"
 
 msgid "Jun Kuriyama"
-msgstr ""
-
-msgid "Hiroshi Hatake"
 msgstr ""
 
 msgid "Release 4.0.7 - 2014/10/29"

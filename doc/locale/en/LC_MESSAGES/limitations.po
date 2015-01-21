@@ -35,6 +35,9 @@ msgstr "The maximum one key size: 4096Bytes"
 msgid "The maximum total size of keys: 4GBytes"
 msgstr "The maximum total size of keys: 4GBytes"
 
+msgid "The maximum number of records: 268,435,455 (more than 268 million)"
+msgstr "The maximum number of records: 268,435,455 (more than 268 million)"
+
 msgid "Keep in mind that these limitations may vary depending on conditions."
 msgstr "Keep in mind that these limitations may vary depending on conditions."
 
@@ -43,9 +46,6 @@ msgstr "Limitations of indexing"
 
 msgid "A full-text index has the following limitations."
 msgstr "A full-text index has the following limitations."
-
-msgid "The maximum number of records: 268,435,455 (more than 268 million)"
-msgstr "The maximum number of records: 268,435,455 (more than 268 million)"
 
 msgid ""
 "The maximum number of distinct terms: 268,435,455 (more than 268 million)"
