@@ -1267,7 +1267,6 @@ do_htreq(grn_ctx *ctx, grn_msg *msg)
     do_htreq_post(ctx, msg);
     break;
   }
-  /* TODO: support a command in multi requests. e.g.: load command */
   grn_ctx_set_next_expr(ctx, NULL);
   /* if (ctx->rc != GRN_OPERATION_WOULD_BLOCK) {...} */
   grn_msg_close(ctx, (grn_obj *)msg);
