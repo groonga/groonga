@@ -1,5 +1,6 @@
 EXTRA_DIST =					\
-	build_config.rb
+	build_config.rb				\
+	mruby-build.timestamp
 
 DEFAULT_INCLUDES =				\
 	-I$(srcdir)/../mruby-source/include	\
