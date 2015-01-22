@@ -1268,7 +1268,6 @@ do_htreq(grn_ctx *ctx, grn_msg *msg)
     break;
   }
   /* TODO: support "Connection: keep-alive" */
-  ctx->stat = GRN_CTX_QUIT;
   /* TODO: support a command in multi requests. e.g.: load command */
   grn_ctx_set_next_expr(ctx, NULL);
   /* if (ctx->rc != GRN_OPERATION_WOULD_BLOCK) {...} */
