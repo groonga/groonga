@@ -914,6 +914,22 @@ if test "x$with_lz4" != "xno"; then
   fi
 fi
 
+# jemalloc
+AC_ARG_WITH(jemalloc,
+  [AS_HELP_STRING([--with-jemalloc],
+    [Use jemalloc for memory allocation. [default=no]])],
+  [with_jemalloc="$withval"],
+  [with_jemalloc="no"])
+jemalloc_available="no"
+if test "x$with_jemalloc" != "xno"; then
+  if test "x$with_jemalloc" != "xyes"; then
+    LDFLAGS="-L$with_jemalloc $LDFLAGS"
+  fi
+  AC_SEARCH_LIBS(mallocx, jemalloc,
+                 [jemalloc_available="yes"],
+                 [AC_MSG_ERROR("No libjemalloc found")])
+fi
+
 # MeCab
 # NOTE: MUST be checked last
 AC_ARG_WITH(mecab,
@@ -1596,6 +1612,7 @@ if test "x$message_pack_available" = "xyes"; then
   echo "    LIBS:                ${MESSAGE_PACK_LIBS}"
 fi
 echo "  mruby:                 $enable_mruby"
+echo "  jemalloc:              $jemalloc_available"
 echo
 
 echo "groonga-httpd:"
