@@ -373,17 +373,17 @@ int grn_fmalloc_line = 0;
 static void
 grn_ctx_impl_init_malloc(grn_ctx *ctx)
 {
-#  ifdef USE_FAIL_MALLOC
+# ifdef USE_FAIL_MALLOC
   ctx->impl->malloc_func = grn_malloc_fail;
   ctx->impl->calloc_func = grn_calloc_fail;
   ctx->impl->realloc_func = grn_realloc_fail;
   ctx->impl->strdup_func = grn_strdup_fail;
-#  else
+# else
   ctx->impl->malloc_func = grn_malloc_default;
   ctx->impl->calloc_func = grn_calloc_default;
   ctx->impl->realloc_func = grn_realloc_default;
   ctx->impl->strdup_func = grn_strdup_default;
-#  endif
+# endif
 }
 #endif
 
