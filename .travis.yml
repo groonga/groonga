@@ -11,6 +11,8 @@ compiler:
 env:
   - BUILD_TOOL=autotools
   - BUILD_TOOL=autotools ENABLE_MRUBY=yes
+  - BUILD_TOOL=autotools ENABLE_JEMALLOC=yes
+  - BUILD_TOOL=autotools ENABLE_MRUBY=yes ENABLE_JEMALLOC=yes
   - BUILD_TOOL=autotools CFLAGS=-funsigned-char CXXFLAGS=-funsigned-char
   - BUILD_TOOL=cmake
 before_install:
