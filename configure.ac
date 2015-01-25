@@ -925,7 +925,7 @@ if test "x$with_jemalloc" != "xno"; then
   if test "x$with_jemalloc" != "xyes"; then
     LDFLAGS="-L$with_jemalloc $LDFLAGS"
   fi
-  AC_SEARCH_LIBS(mallocx, jemalloc,
+  AC_SEARCH_LIBS(malloc_conf, jemalloc,
                  [jemalloc_available="yes"],
                  [AC_MSG_ERROR("No libjemalloc found")])
 fi
