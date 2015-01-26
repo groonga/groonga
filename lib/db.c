@@ -1783,7 +1783,9 @@ grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key
         });
         break;
       }
-      grn_obj_touch(ctx, table, NULL);
+      if (rc == GRN_SUCCESS) {
+        grn_obj_touch(ctx, table, NULL);
+      }
     }
   }
 exit :
@@ -1842,7 +1844,9 @@ grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id)
   } else {
     rc = _grn_table_delete_by_id(ctx, table, id, NULL);
   }
-  grn_obj_touch(ctx, table, NULL);
+  if (rc == GRN_SUCCESS) {
+    grn_obj_touch(ctx, table, NULL);
+  }
   GRN_API_RETURN(rc);
 }
 
@@ -1946,7 +1950,9 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
     grn_obj_set_info(ctx, table, GRN_INFO_NORMALIZER, normalizer);
     grn_obj_set_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &token_filters);
     GRN_OBJ_FIN(ctx, &token_filters);
-    grn_obj_touch(ctx, table, NULL);
+    if (rc == GRN_SUCCESS) {
+      grn_obj_touch(ctx, table, NULL);
+    }
   }
 exit :
   GRN_API_RETURN(rc);
