@@ -2785,9 +2785,13 @@ grn_strdup_default(grn_ctx *ctx, const char *s, const char* file, int line, cons
     char *res = strdup(s);
     if (res) {
       GRN_ADD_ALLOC_COUNT(1);
+      grn_alloc_info_add(res);
     } else {
       if (!(res = strdup(s))) {
         MERR("strdup(%p)=%p (%s:%d) <%d>", s, res, file, line, alloc_count);
+      } else {
+        GRN_ADD_ALLOC_COUNT(1);
+        grn_alloc_info_add(res);
       }
     }
     return res;
