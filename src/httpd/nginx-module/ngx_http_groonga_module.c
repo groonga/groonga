@@ -428,7 +428,7 @@ ngx_http_groonga_context_receive_handler_raw(grn_ctx *context,
     }
   }
 
-  if (chunk_size > 0) {
+  if (chunk_size > 0 || is_last_chunk) {
     ngx_chain_t *chain;
 
     chain = ngx_chain_get_free_buf(r->pool, &(data->raw.free_chain));
@@ -438,12 +438,18 @@ ngx_http_groonga_context_receive_handler_raw(grn_ctx *context,
       data->raw.rc = NGX_ERROR;
       return;
     }
-    chain->buf->pos = (u_char *)chunk;
-    chain->buf->last = (u_char *)chunk + chunk_size;
+    if (chunk_size == 0) {
+      chain->buf->pos = NULL;
+      chain->buf->last = NULL;
+      chain->buf->memory = 0;
+    } else {
+      chain->buf->pos = (u_char *)chunk;
+      chain->buf->last = (u_char *)chunk + chunk_size;
+      chain->buf->memory = 1;
+    }
     chain->buf->tag = (ngx_buf_tag_t)&ngx_http_groonga_module;
     chain->buf->flush = 1;
     chain->buf->temporary = 0;
-    chain->buf->memory = 1;
     chain->buf->in_file = 0;
     if (is_last_chunk) {
       chain->buf->last_buf = 1;
