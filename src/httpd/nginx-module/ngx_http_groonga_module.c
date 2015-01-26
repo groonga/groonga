@@ -450,11 +450,11 @@ ngx_http_groonga_context_receive_handler_raw(grn_ctx *context,
     r->headers_out.status = NGX_HTTP_OK;
     if (is_last_chunk) {
       r->headers_out.content_length_n = chunk_size;
+      if (chunk_size == 0) {
+        r->header_only = 1;
+      }
     } else {
       r->headers_out.content_length_n = -1;
-    }
-    if (chunk_size == 0) {
-      r->header_only = 1;
     }
     data->raw.rc = ngx_http_send_header(r);
     data->raw.header_sent = GRN_TRUE;
