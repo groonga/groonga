@@ -4101,8 +4101,9 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     if (grn_db_obj_init(ctx, db, id, DB_OBJ(res))) {
       _grn_obj_remove(ctx, res);
       res = NULL;
+    } else {
+      grn_obj_touch(ctx, res, NULL);
     }
-    grn_obj_touch(ctx, res, NULL);
   }
 exit :
   if (!res && id) { grn_obj_delete_by_id(ctx, db, id, GRN_TRUE); }
