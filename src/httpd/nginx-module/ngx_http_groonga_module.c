@@ -441,6 +441,7 @@ ngx_http_groonga_context_receive_handler_raw(grn_ctx *context,
     chain->buf->pos = (u_char *)chunk;
     chain->buf->last = (u_char *)chunk + chunk_size;
     chain->buf->tag = (ngx_buf_tag_t)&ngx_http_groonga_module;
+    chian->buf->flush = 1;
     chain->buf->temporary = 0;
     chain->buf->memory = 1;
     chain->buf->in_file = 0;
