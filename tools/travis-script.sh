@@ -9,8 +9,8 @@ case "${BUILD_TOOL}" in
     if [ "${ENABLE_MRUBY}" = "yes" ]; then
       test/query_optimizer/run-test.rb
     fi
-    # test/command/run-test.sh --interface http
-    # test/command/run-test.sh --interface http --testee groonga-httpd
+    test/command/run-test.sh --interface http
+    test/command/run-test.sh --testee groonga-httpd
     ;;
   cmake)
     test/command/run-test.sh
