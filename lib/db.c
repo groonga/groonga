@@ -1884,6 +1884,9 @@ grn_column_truncate(grn_ctx *ctx, grn_obj *column)
       rc = grn_ra_truncate(ctx, (grn_ra *)column);
       break;
     }
+    if (rc == GRN_SUCCESS) {
+      grn_obj_touch(ctx, column, NULL);
+    }
   }
 exit :
   GRN_API_RETURN(rc);
