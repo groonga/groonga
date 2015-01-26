@@ -1201,7 +1201,7 @@ ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
                             GRN_CACHE_DEFAULT_MAX_N_ENTRIES);
 
 #ifdef NGX_HTTP_GROONGA_LOG_PATH
-  {
+  if (!conf->log_file) {
     ngx_str_t default_log_path;
     default_log_path.data = (u_char *)NGX_HTTP_GROONGA_LOG_PATH;
     default_log_path.len = strlen(NGX_HTTP_GROONGA_LOG_PATH);
@@ -1214,8 +1214,6 @@ ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
       return NGX_CONF_ERROR;
     }
   }
-#else
-  conf->log_file = NULL;
 #endif
 
   ngx_conf_merge_str_value(conf->query_log_path, prev->query_log_path,
