@@ -21,4 +21,3 @@ load --table Memos
 ["_key","tags"],
 ["Groonga is fast",[{"groonga":100},{"full text search":10}]]
 ]
-

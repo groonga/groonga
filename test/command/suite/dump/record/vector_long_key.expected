@@ -23,4 +23,3 @@ load --table Users
 ["_key","tags"],
 ["alice",["long (larger than 24byte)"]]
 ]
-

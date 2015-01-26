@@ -31,7 +31,6 @@ load --table Terms
 ["groonga"],
 ["is"]
 ]
-
 select Memos --query "content:@groonga"
 [
   [

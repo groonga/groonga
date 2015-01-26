@@ -28,7 +28,6 @@ load --table Memos
 ["_key","tag"],
 ["Groonga is fast.","groonga"]
 ]
-
 select Memos --query "tag:@groonga"
 [
   [
