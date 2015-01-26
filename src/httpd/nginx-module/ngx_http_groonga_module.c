@@ -143,18 +143,54 @@ ngx_http_groonga_logger_log(grn_ctx *ctx, grn_log_level level,
   const char level_marks[] = " EACewnid-";
   u_char buffer[NGX_MAX_ERROR_STR];
   u_char *last;
+  size_t prefix_size;
+  size_t message_size;
+  size_t location_size;
+  size_t postfix_size;
+  size_t log_message_size;
 
+#define LOG_PREFIX_FORMAT "%s|%c|%s "
+  prefix_size =
+    strlen(timestamp) +
+    1 /* | */ +
+    1 /* %c */ +
+    1 /* | */ +
+    strlen(title) +
+    1 /* a space */;
+  message_size = strlen(message);
   if (location && *location) {
-    last = ngx_slprintf(buffer, buffer + NGX_MAX_ERROR_STR,
-                        "%s|%c|%s %s %s\n",
-                        timestamp, *(level_marks + level), title, message,
-                        location);
+    location_size = 1 /* a space */ + strlen(location);
   } else {
-    last = ngx_slprintf(buffer, buffer + NGX_MAX_ERROR_STR,
-                        "%s|%c|%s %s\n",
-                        timestamp, *(level_marks + level), title, message);
+    location_size = 0;
   }
-  ngx_write_fd(logger_data->file->fd, buffer, last - buffer);
+  postfix_size = 1 /* \n */;
+  log_message_size = prefix_size + message_size + location_size + postfix_size;
+
+  if (log_message_size > NGX_MAX_ERROR_STR) {
+    last = ngx_slprintf(buffer, buffer + NGX_MAX_ERROR_STR,
+                        LOG_PREFIX_FORMAT,
+                        timestamp, *(level_marks + level), title);
+    ngx_write_fd(logger_data->file->fd, buffer, last - buffer);
+    ngx_write_fd(logger_data->file->fd, (void *)message, message_size);
+    if (location_size > 0) {
+      ngx_write_fd(logger_data->file->fd, " ", 1);
+      ngx_write_fd(logger_data->file->fd, (void *)location, location_size);
+    }
+    ngx_write_fd(logger_data->file->fd, "\n", 1);
+  } else {
+    if (location && *location) {
+      last = ngx_slprintf(buffer, buffer + NGX_MAX_ERROR_STR,
+                          LOG_PREFIX_FORMAT " %s %s\n",
+                          timestamp, *(level_marks + level), title, message,
+                          location);
+    } else {
+      last = ngx_slprintf(buffer, buffer + NGX_MAX_ERROR_STR,
+                          LOG_PREFIX_FORMAT " %s\n",
+                          timestamp, *(level_marks + level), title, message);
+    }
+    ngx_write_fd(logger_data->file->fd, buffer, last - buffer);
+  }
+#undef LOG_PREFIX_FORMAT
 }
 
 static void
