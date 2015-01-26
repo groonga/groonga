@@ -893,9 +893,19 @@ h_output_typed(grn_ctx *ctx, int flags, ht_context *hc)
   char *chunk = NULL;
   unsigned int chunk_size = 0;
   int recv_flags;
-  grn_bool should_return_body = (hc->msg->header.qtype == 'G');
+  grn_bool should_return_body;
 
   if (!(flags & GRN_CTX_TAIL)) { return; }
+
+  switch (hc->msg->header.qtype) {
+  case 'G' :
+  case 'P' :
+    should_return_body = GRN_TRUE;
+    break;
+  default :
+    should_return_body = GRN_FALSE;
+    break;
+  }
 
   GRN_TEXT_INIT(&header, 0);
   GRN_TEXT_INIT(&head, 0);
