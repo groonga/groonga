@@ -4,6 +4,8 @@ set -e
 
 git submodule update --init --depth 1
 
+prefix=/tmp/local
+
 case "${BUILD_TOOL}" in
   autotools)
     ./autogen.sh
@@ -19,7 +21,7 @@ case "${BUILD_TOOL}" in
       configure_args="${configure_args} --with-jemalloc"
     fi
 
-    ./configure --with-ruby ${configure_args}
+    ./configure --prefix=${prefix} --with-ruby ${configure_args}
     ;;
   cmake)
     cmake_args=""
