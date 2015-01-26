@@ -1136,10 +1136,6 @@ do_htreq_post_parse_header(grn_ctx *ctx,
     return GRN_FALSE;
   }
 
-  if (!header->have_100_continue && current == end) {
-    return GRN_FALSE;
-  }
-
   if (current == end) {
     header->body_start = NULL;
   } else {
