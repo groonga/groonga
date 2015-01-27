@@ -922,6 +922,7 @@ Here is a ``drilldown`` with search condition example:
 The ``select`` command outputs the following information:
 
   * In records that have 5 or larger as ``n_likes`` value:
+
     * There is one record that has "Hello" tag.
     * There is two records that has "Groonga" tag.
 
@@ -937,11 +938,13 @@ Here is a ``drilldown`` example to specify multiple columns:
 The ``select`` command outputs the following information:
 
   * About ``tag``:
+
     * There is one record that has "Hello" tag.
     * There is two records that has "Groonga" tag.
     * There is two records that has "Senna" tag.
 
   * About ``n_likes``:
+
     * There is one record that has "Hello" tag.
     * There is two records that has "Groonga" tag.
     * There is two records that has "Senna" tag.
