@@ -911,7 +911,7 @@ The ``select`` command outputs the following information:
 Here is a ``drilldown`` with search condition example:
 
 .. groonga-command
-.. include:: ../../example/reference/commands/select/drilldown_simple.log
+.. include:: ../../example/reference/commands/select/drilldown_filter.log
 .. select Entries \
 ..   --filter 'n_likes >= 5' \
 ..   --drilldown tag
