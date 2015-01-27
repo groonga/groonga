@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-01-21 15:20+0900\n"
+"PO-Revision-Date: 2015-01-27 16:40+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -245,12 +245,12 @@ msgstr ""
 
 msgid ""
 "This section describes how to install Groonga on Mac OS X. You can install "
-"Groonga by `MacPorts <http://www.macports.org/>`_ or `Homebrew <http://mxcl."
-"github.com/homebrew/>`_."
+"Groonga by `MacPorts <http://www.macports.org/>`__ or `Homebrew <http://mxcl."
+"github.com/homebrew/>`__."
 msgstr ""
 "このセクションではMac OS X上でGroongaをインストールする方法を説明します。 "
-"`MacPorts <http://www.macports.org/>`_ か `Homebrew <http://mxcl.github.com/"
-"homebrew/>`_ を使ってインストールできます。"
+"`MacPorts <http://www.macports.org/>`__ か `Homebrew <http://mxcl.github.com/"
+"homebrew/>`__ を使ってインストールできます。"
 
 msgid "MacPorts"
 msgstr ""
@@ -786,7 +786,8 @@ msgstr ""
 "32-bit環境の場合は、x86のバイナリをpackages.groonga.orgからダウンロードしてく"
 "ださい。"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.1.0-x86.exe"
+# 7ffb594084f74ae08672e26a05e88d55
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.1.1-x86.exe"
 msgstr ""
 
 msgid "Then run it."
@@ -799,7 +800,8 @@ msgstr ""
 "64-bit環境の場合は、x64のバイナリをpackages.groonga.orgからダウンロードしてく"
 "ださい。"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.1.0-x64.exe"
+# a6aeedf8d19c4574b6b38bed1ef1a746
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.1.1-x64.exe"
 msgstr ""
 
 msgid ""
@@ -818,7 +820,8 @@ msgstr ""
 "32-bit環境の場合は、x86のzipアーカイブをpackages.groonga.orgからダウンロード"
 "してください。"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.1.0-x86.zip"
+# 75b67811539f40e8a154db1d7231c6ef
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.1.1-x86.zip"
 msgstr ""
 
 msgid "Then extract it."
@@ -830,7 +833,8 @@ msgstr ""
 "64-bit環境の場合は、x64のzipアーカイブをpackages.groonga.orgからダウンロード"
 "してください。"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-4.1.0-x64.zip"
+# d52fa0683aa24499b85e73f325c8b654
+msgid "http://packages.groonga.org/windows/groonga/groonga-4.1.1-x64.zip"
 msgstr ""
 
 msgid "You can find :doc:`/reference/executables/groonga` in ``bin`` folder."
@@ -856,7 +860,8 @@ msgstr ""
 msgid "Download zipped source from packages.groonga.org:"
 msgstr "zipアーカイブをpackages.groonga.orgからダウンロードしてください。"
 
-msgid "http://packages.groonga.org/source/groonga/groonga-4.1.0.zip"
+# f5cdbb4226bf441db65967ae25105095
+msgid "http://packages.groonga.org/source/groonga/groonga-4.1.1.zip"
 msgstr ""
 
 msgid "Move to the Groonga's source folder::"
