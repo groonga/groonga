@@ -1327,7 +1327,201 @@ that no calculation target column is specified.
 Advanced drilldown related parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-TODO
+You can get multiple drilldown results by specifying multiple group
+keys by :ref:`select-drilldown`. But you need to use the same
+configuration for all drilldowns. For example,
+:ref:`select-drilldown-output-columns` is used by all drilldowns.
+
+You can use a configuration for each drilldown by the following
+parameters:
+
+  * ``drilldown[${LABEL}].keys``
+  * ``drilldown[${LABEL}].sortby``
+  * ``drilldown[${LABEL}].output_columns``
+  * ``drilldown[${LABEL}].offset``
+  * ``drilldown[${LABEL}].limit``
+  * ``drilldown[${LABEL}].calc_types``
+  * ``drilldown[${LABEL}].calc_target``
+
+``${LABEL}`` is a variable. You can use the following characters for
+``${LABEL}``:
+
+  * Alphabets
+  * Digits
+  * ``.``
+  * ``_``
+
+.. You can use more characters but it's better that you use only these
+   characters.
+
+Parameters that has the same ``${LABEL}`` value are grouped. Grouped
+parameters are used for one drilldown.
+
+For example, there are 2 groups for the following parameters:
+
+  * ``--drilldown[label1].keys _key``
+  * ``--drilldown[label1].output_columns _nsubrecs``
+  * ``--drilldown[label2].keys tag``
+  * ``--drilldown[label2].output_columns _key,_nsubrecs``
+
+``drilldown[label1].keys`` and ``drilldown[label1].output_columns``
+are grouped. ``drilldown[label2].keys`` and
+``drilldown[label2].output_columns`` are also grouped.
+
+In ``label1`` group, ``_key`` is used for group key and ``_nsubrecs``
+is used for output columns.
+
+In ``label2`` group, ``tag`` is used for group key and
+``_key,_nsubrecs`` is used for output columns.
+
+See document for corresponding ``drilldown_XXX`` parameter to know how
+to use it for the following parameters:
+
+  * ``drilldown[${LABEL}].sortby``: :ref:`select-drilldown-sortby`
+  * ``drilldown[${LABEL}].offset``: :ref:`select-drilldown-offset`
+  * ``drilldown[${LABEL}].limit``: :ref:`select-drilldown-limit`
+  * ``drilldown[${LABEL}].calc_types``: :ref:`select-drilldown-calc-types`
+  * ``drilldown[${LABEL}].calc_target``: :ref:`select-drilldown-calc-target`
+
+The following parameters are needed more description:
+
+  * ``drilldown[${LABEL}].keys``
+  * ``drilldown[${LABEL}].output_columns``
+
+Output format is different a bit. It's also needed more description.
+
+.. _select-drilldown-label-keys:
+
+``drilldown[${LABEL}].keys``
+""""""""""""""""""""""""""""
+
+:ref:`select-drilldown` can specify multiple keys for multiple
+drilldowns. But it can't specify multiple keys for one drilldown.
+
+``drilldown[${LABEL}].keys`` can't specify multiple keys for multiple
+drilldowns. But it can specify multiple keys for one drilldown.
+
+You can specify multiple keys separated by "``,``".
+
+Here is an example to group by multiple keys, ``tag`` and ``n_likes``
+column values:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldown_label_keys_multiple.log
+.. select Entries \
+..   --limit -1 \
+..   --output_column tag,n_likes \
+..   --drilldown[tag.n_likes].keys tag,n_likes \
+..   --drilldown[tag.n_likes].output_columns _value.tag,_value.n_likes,_nsubrecs
+
+``tag.n_likes`` is used as the label for the drilldown parameters
+group. You can refer grouped keys by ``_value.${KEY_NAME}`` syntax in
+:ref:`select-drilldown-label-output-columns`. ``${KEY_NAME}`` is a
+column name to be used by group key. ``tag`` and ``n_likes`` are
+``${KEY_NAME}`` in this case.
+
+Note that you can't use ``_value.${KEY_NAME}`` syntax when you just
+specify one ``drilldown[${LABEL}].keys`` like ``--drilldown[tag].keys
+tag``. You should use ``_key`` for the case. It's the same rule in
+:ref:`select-drilldown-output-columns`.
+
+.. _select-drilldown-label-output-columns:
+
+``drilldown[${LABEL}].output_columns``
+""""""""""""""""""""""""""""""""""""""
+
+It's almost same as :ref:`select-drilldown-output-columns`. The
+difference between :ref:`select-drilldown-output-columns` and
+``drilldown[${LABEL}].output_columns`` is how to refer group keys.
+
+:ref:`select-drilldown-output-columns` uses ``_key``
+:doc:`/reference/columns/pseudo` to refer group
+key. ``drilldown[${LABEL}].output_columns`` also uses ``_key``
+:doc:`/reference/columns/pseudo` to refer group key when you specify
+only one group key by :ref:`select-drilldown-label-keys`.
+
+Here is an example to refer single group key by ``_key``
+:doc:`/reference/columns/pseudo`:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldown_label_output_columns_single_group_key.log
+.. select Entries \
+..   --limit 0 \
+..   --output_column _id \
+..   --drilldown[tag.n_likes].keys tag \
+..   --drilldown[tag.n_likes].output_columns _key
+
+But you can't refer each group key by ``_key``
+:doc:`/reference/columns/pseudo` in
+``drilldown[${LABEL}].output_columns``. You need to use
+``_value.${KEY_NAME}`` syntax. ``${KEY_NAME}`` is a column name to be
+used by group key in :ref:`select-drilldown-label-keys`.
+
+Here is an example to refer each group key in multiple group keys by
+``_value.${KEY_NAME}`` syntax:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldown_label_output_columns_single_group_key.log
+.. select Entries \
+..   --limit 0 \
+..   --output_column _id \
+..   --drilldown[tag.n_likes].keys tag,n_likes \
+..   --drilldown[tag.n_likes].output_columns _value.tag,_value.n_likes
+
+.. tip:: Why ``_value.${KEY_NAME}`` syntax?
+
+   It's implementation specific information.
+
+   ``_key`` is a vector value. The vector value is consists of all
+   group keys. You can see byte sequence of the vector value by
+   referring ``_key`` in ``drilldown[${LABEL}].output_columns``.
+
+   There is one grouped record in ``_value`` to refer each grouped
+   values when you specify multiple group keys to
+   :ref:`select-drilldown-label-keys`. So you can refer each group key
+   by ``_value.${KEY_NAME}`` syntax.
+
+   On the other hand, there is no grouped record in ``_value`` when
+   you specify only one group key to
+   :ref:`select-drilldown-label-keys`. So you can't refer group key by
+   ``_value.${KEY_NAME}`` syntax.
+
+.. _select-drilldown-label-output-format:
+
+Output format for ``drilldown[${LABEL}]`` style
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+There is a difference in output format between :ref:`select-drilldown`
+and :ref:`select-drilldown-label-keys`. :ref:`select-drilldown` uses
+array to output multiple drilldown results.
+:ref:`select-drilldown-label-keys` uses pairs of label and drilldown
+result.
+
+:ref:`select-drilldown` uses the following output format::
+
+  [
+    HEADER,
+    [
+      SEARCH_RESULT,
+      DRILLDOWN_RESULT1,
+      DRILLDOWN_RESULT2,
+      ...
+    ]
+  ]
+
+:ref:`select-drilldown-label-keys` uses the following output format::
+
+  [
+    HEADER,
+    [
+      SEARCH_RESULT,
+      {
+        "LABEL1": DRILLDOWN_RESULT1,
+        "LABEL2": DRILLDOWN_RESULT2,
+        ...
+      }
+    ]
+  ]
 
 Cache related parameter
 ^^^^^^^^^^^^^^^^^^^^^^^
