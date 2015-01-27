@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-01-27 22:20+0900\n"
+"PO-Revision-Date: 2015-01-27 23:18+0900\n"
 "Last-Translator: Takatsugu <nokubi@gmail.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -6829,11 +6829,16 @@ msgid ""
 "drilldowns. For example, :ref:`select-drilldown-output-columns` is used by "
 "all drilldowns."
 msgstr ""
+":ref:`select-drilldown` に複数のグループキーを指定することで複数のドリルダウ"
+"ン結果を取得できます。しかし、すべてのドリルダウンで同じ設定を使う必要があり"
+"ます。例えば、すべてのドリルダウンで同じ :ref:`select-drilldown-output-"
+"columns` の値が使われます。"
 
 # 1e3c30ee4f62480c94f728efe9801121
 msgid ""
 "You can use a configuration for each drilldown by the following parameters:"
 msgstr ""
+"以下の引数を使うことで、各ドリルダウンで別々の設定を使うことができます。"
 
 # ecaa0e9e25584f13accd4ba2078f057e
 # 56837b22eb944e5da35be0a5b4816aec
@@ -6872,14 +6877,15 @@ msgid ""
 "``${LABEL}`` is a variable. You can use the following characters for ``"
 "${LABEL}``:"
 msgstr ""
+"``${LABEL}`` は変数です。 ``${LABEL}`` には次の文字を使うことができます。"
 
 # d163fb68506e454186cc06e9584d8d1f
 msgid "Alphabets"
-msgstr ""
+msgstr "アルファベット"
 
 # d2a82e2e15cd43c1b323dd247af34986
 msgid "Digits"
-msgstr ""
+msgstr "数字"
 
 # ca9c74df805141b29be0b30535c242af
 msgid "``.``"
@@ -6894,10 +6900,11 @@ msgid ""
 "Parameters that has the same ``${LABEL}`` value are grouped. Grouped "
 "parameters are used for one drilldown."
 msgstr ""
+"同じ ``${LABEL}`` の値を持つ引数は同じグループになります。1つのドリルダウンで"
+"同じグループの引数を一緒に使います。"
 
-#, fuzzy
 msgid "For example, there are 2 groups for the following parameters:"
-msgstr "例えば、ユーザが以下のように検索を実行したとします。:"
+msgstr "例えば、以下の引数は2つのグループにわかれます。"
 
 # de03eb53d8c541b6881c4d8a511bb51e
 msgid "``--drilldown[label1].keys _key``"
@@ -6921,24 +6928,33 @@ msgid ""
 "grouped. ``drilldown[label2].keys`` and ``drilldown[label2].output_columns`` "
 "are also grouped."
 msgstr ""
+"``drilldown[label1].keys`` と ``drilldown[label1].output_columns`` が同じグ"
+"ループです。 ``drilldown[label2].keys`` と ``drilldown[label2]."
+"output_columns`` は別のグループです。"
 
 # 4f4af24792314fb7b62fb8df7201d469
 msgid ""
 "In ``label1`` group, ``_key`` is used for group key and ``_nsubrecs`` is "
 "used for output columns."
 msgstr ""
+"``label1`` グループでは、グループキーとして ``_key`` を使って、出力カラムとし"
+"て ``_nsubrecs`` を使います。"
 
 # 177668e2f52d4641a30bd5fdaba39470
 msgid ""
 "In ``label2`` group, ``tag`` is used for group key and ``_key,_nsubrecs`` is "
 "used for output columns."
 msgstr ""
+"``label2`` グループでは、グループキーとして ``tag`` を使って、出力カラムとし"
+"て ``_key,_nsubrecs`` を使います。"
 
 # 797be5e1b27c4175a060f20d1f0669b5
 msgid ""
 "See document for corresponding ``drilldown_XXX`` parameter to know how to "
 "use it for the following parameters:"
 msgstr ""
+"以下の引数の使い方は対応する ``drilldown_XXX`` 引数のドキュメントを参照してく"
+"ださい。"
 
 # 07b362c65dbe4a63ba6ffb5cbb443c41
 msgid "``drilldown[${LABEL}].sortby``: :ref:`select-drilldown-sortby`"
@@ -6963,35 +6979,38 @@ msgstr ""
 
 # 397197d5c6c54235bc63d804a1f9f3d3
 msgid "The following parameters are needed more description:"
-msgstr ""
+msgstr "以下の引数は追加の説明が必要です。"
 
 # eca3d555650e432fad9fe6fdc2a41946
 msgid "Output format is different a bit. It's also needed more description."
-msgstr ""
+msgstr "出力フォーマットは少し違います。これも追加の説明が必要です。"
 
 # 91b6860846274cf48247c01e7eb07706
 msgid ""
 ":ref:`select-drilldown` can specify multiple keys for multiple drilldowns. "
 "But it can't specify multiple keys for one drilldown."
 msgstr ""
+":ref:`select-drilldown` は複数のキーを指定して複数のドリルダウンを指定できま"
+"す。しかし、1つのドリルダウンに複数のキーを指定することはできません。"
 
 # f1f8a91640cd46b192b74dc2d2c85e78
 msgid ""
 "``drilldown[${LABEL}].keys`` can't specify multiple keys for multiple "
 "drilldowns. But it can specify multiple keys for one drilldown."
 msgstr ""
+"``drilldown[${LABEL}].keys`` は複数のキーを指定して複数のドリルダウンを指定す"
+"ることはできません。しかし、1つのドリルダウンに複数のキーを指定することができ"
+"ます。"
 
-#, fuzzy
 msgid "You can specify multiple keys separated by \"``,``\"."
-msgstr "出力するカラムを ``,`` 区切りで指定します。"
+msgstr "複数のキーを ``,`` 区切りで指定します。"
 
-#, fuzzy
 msgid ""
 "Here is an example to group by multiple keys, ``tag`` and ``n_likes`` column "
 "values:"
 msgstr ""
-"以下は ``Entry`` テーブルと ``Entry`` テーブルのカラムのロックを解放する例で"
-"す::"
+"以下は ``tag`` カラムと ``n_likes`` カラムの値を使った複数キーでのグループ化"
+"の例です。"
 
 # 98740b6d65a24d98a1288bb762fdcbff
 msgid ""
@@ -7000,14 +7019,23 @@ msgid ""
 "drilldown-label-output-columns`. ``${KEY_NAME}`` is a column name to be used "
 "by group key. ``tag`` and ``n_likes`` are ``${KEY_NAME}`` in this case."
 msgstr ""
+"``tag.n_likes`` はドリルダウン引数グループのラベルです。グループ化に使ったそ"
+"れぞれのキーを参照するときは :ref:`select-drilldown-label-output-columns` で "
+"``_value.${KEY_NAME}`` という構文を使います。 ``${KEY_NAME}`` にはグループ"
+"キーを指定したときに使ったカラム名を使います。この場合は ``${KEY_NAME}`` に "
+"``tag`` と ``n_keys`` を使います。"
 
 # 9d5fb3029a5a48eaaf240c5765e7a8df
 msgid ""
 "Note that you can't use ``_value.${KEY_NAME}`` syntax when you just specify "
-"one ``drilldown[${LABEL}].keys`` like ``--drilldown[tag].keys tag``. You "
-"should use ``_key`` for the case. It's the same rule in :ref:`select-"
+"one key as ``drilldown[${LABEL}].keys`` like ``--drilldown[tag].keys tag``. "
+"You should use ``_key`` for the case. It's the same rule in :ref:`select-"
 "drilldown-output-columns`."
 msgstr ""
+"``--drilldown[tag].keys tag`` のように ``drilldown[${LABEL}].keys`` にキーを1"
+"つだけしか指定していない場合は ``_value.${KEY_NAME}`` 構文を使うことはできま"
+"せん。この場合は ``_key`` を使ってください。これは、 :ref:`select-drilldown-"
+"output-columns` と同じルールです。"
 
 # bf6a8b5a1f6649c5900907ae1497cf28
 msgid ""
@@ -7015,6 +7043,9 @@ msgid ""
 "between :ref:`select-drilldown-output-columns` and ``drilldown[${LABEL}]."
 "output_columns`` is how to refer group keys."
 msgstr ""
+"``drilldown[${LABEL}].output_columns`` はほとんど :ref:`select-drilldown-"
+"output-columns` と同じです。 :ref:`select-drilldown-output-columns` と "
+"``drilldown[${LABEL}].output_columns`` の違いはグループキーの参照方法です。"
 
 # 96747ec63d3d4b64a2720e1fff90db8b
 msgid ""
@@ -7023,36 +7054,46 @@ msgid ""
 "also uses ``_key`` :doc:`/reference/columns/pseudo` to refer group key when "
 "you specify only one group key by :ref:`select-drilldown-label-keys`."
 msgstr ""
+":ref:`select-drilldown-output-columns` はグループキーを参照するために "
+"``_key`` :doc:`/reference/columns/pseudo` を使います。 ``drilldown[${LABEL}]."
+"output_columns`` も :ref:`select-drilldown-label-keys` で1つだけしかグループ"
+"キーを指定していない場合は、グループキーを参照するために ``_key`` :doc:`/"
+"reference/columns/pseudo` を使います。"
 
-#, fuzzy
 msgid ""
 "Here is an example to refer single group key by ``_key`` :doc:`/reference/"
 "columns/pseudo`:"
 msgstr ""
-"以下は :doc:`/reference/commands/shutdown` コマンドに認証をかける設定例で"
-"す。::"
+"以下は1つだけ指定したグループキーを参照するために ``_key`` :doc:`/reference/"
+"columns/pseudo` を使う例です。"
 
 # da0e93c2c0594034bb32844a3ba47156
 msgid ""
 "But you can't refer each group key by ``_key`` :doc:`/reference/columns/"
 "pseudo` in ``drilldown[${LABEL}].output_columns``. You need to use ``_value."
-"${KEY_NAME}`` syntax. ``${KEY_NAME}`` is a column name to be used by group "
-"key in :ref:`select-drilldown-label-keys`."
+"${KEY_NAME}`` syntax. ``${KEY_NAME}`` is a column name that is used for "
+"group key in :ref:`select-drilldown-label-keys`."
 msgstr ""
+"``drilldown[${LABEL}].output_columns`` で各グループキーを参照するために "
+"``_key`` :doc:`/reference/columns/pseudo` を使うことはできません。 ``_value."
+"${KEY_NAME}`` 構文を使います。 ``${KEY_NAME}`` には :ref:`select-drilldown-"
+"label-keys` でグループキーを指定するために使ったカラム名を使います。"
 
 # 4896c49e12d24b66bc046d668e215adc
 msgid ""
 "Here is an example to refer each group key in multiple group keys by "
 "``_value.${KEY_NAME}`` syntax:"
 msgstr ""
+"以下は複数のグループキーを使ったときに ``_value.${KEY_NAME}`` 構文でそれぞれ"
+"のグループキーを参照する例です。"
 
 # 5e6f0bb8ec8049c9b3a5cfcc5d35c820
 msgid "Why ``_value.${KEY_NAME}`` syntax?"
-msgstr ""
+msgstr "どうして ``_value.${KEY_NAME}`` 構文なの？"
 
 # 5f9d5e2fae98488d9e7c758fa95e6763
 msgid "It's implementation specific information."
-msgstr ""
+msgstr "これは実装よりの情報です。"
 
 # e2627daaf28e4a049a7a56e0d37be267
 msgid ""
@@ -7060,6 +7101,9 @@ msgid ""
 "You can see byte sequence of the vector value by referring ``_key`` in "
 "``drilldown[${LABEL}].output_columns``."
 msgstr ""
+"``_key`` はベクターの値です。このベクターの値はすべてのグループキーから成りま"
+"す。 ``drilldown[${LABEL}].output_columns`` で ``_key`` を参照するとこのベク"
+"ターの値のバイト列を確認することができます。"
 
 # 0c921974b2224bf68f3b89e88f0eb8cc
 msgid ""
@@ -7067,6 +7111,10 @@ msgid ""
 "you specify multiple group keys to :ref:`select-drilldown-label-keys`. So "
 "you can refer each group key by ``_value.${KEY_NAME}`` syntax."
 msgstr ""
+":ref:`select-drilldown-label-keys` に複数のグループキーを指定したとき、各グ"
+"ループの値を参照するために ``_value`` にグループのレコードが1つだけ保存されて"
+"います。そのため、各グループキーを参照するために ``_value.${KEY_NAME}`` 構文"
+"を使えます。"
 
 # 65d6e4af9b3648c8874f5ce8bffc176c
 msgid ""
@@ -7074,10 +7122,13 @@ msgid ""
 "only one group key to :ref:`select-drilldown-label-keys`. So you can't refer "
 "group key by ``_value.${KEY_NAME}`` syntax."
 msgstr ""
+"一方、 :ref:`select-drilldown-label-keys` に1つのグループキーしか指定していな"
+"い場合は、 ``_value`` にグループのレコードを保存しません。そのため、 "
+"``_value.${KEY_NAME}`` 構文でグループキーを参照できません。"
 
 # 08a7c2ffa15546dfa6f85f14f48decc4
 msgid "Output format for ``drilldown[${LABEL}]`` style"
-msgstr ""
+msgstr "``drilldown[${LABEL}]`` スタイルの出力フォーマット"
 
 # 22bffd3a54d94349852c6151df63fe1f
 msgid ""
@@ -7086,14 +7137,17 @@ msgid ""
 "output multiple drilldown results. :ref:`select-drilldown-label-keys` uses "
 "pairs of label and drilldown result."
 msgstr ""
+":ref:`select-drilldown` と :ref:`select-drilldown-label-keys` には出力フォー"
+"マットに違いがあります。 :ref:`select-drilldown` は複数のドリルダウン結果を出"
+"力するために配列を使います。 :ref:`select-drilldown-label-keys` は「ラベル」"
+"と「ドリルダウン結果」のペアの集まりを使います。"
 
-#, fuzzy
 msgid ":ref:`select-drilldown` uses the following output format::"
-msgstr "Groongaは以下の出力形式をサポートしています。"
+msgstr ":ref:`select-drilldown` の出力フォーマットは以下の通りです::"
 
-#, fuzzy
 msgid ":ref:`select-drilldown-label-keys` uses the following output format::"
-msgstr "Groongaは以下の出力形式をサポートしています。"
+msgstr ""
+":ref:`select-drilldown-label-keys` の出力フォーマットは以下の通りです::"
 
 msgid "Cache related parameter"
 msgstr "キャッシュ関連の引数"

@@ -1428,7 +1428,7 @@ column name to be used by group key. ``tag`` and ``n_likes`` are
 ``${KEY_NAME}`` in this case.
 
 Note that you can't use ``_value.${KEY_NAME}`` syntax when you just
-specify one ``drilldown[${LABEL}].keys`` like ``--drilldown[tag].keys
+specify one key as ``drilldown[${LABEL}].keys`` like ``--drilldown[tag].keys
 tag``. You should use ``_key`` for the case. It's the same rule in
 :ref:`select-drilldown-output-columns`.
 
@@ -1461,8 +1461,8 @@ Here is an example to refer single group key by ``_key``
 But you can't refer each group key by ``_key``
 :doc:`/reference/columns/pseudo` in
 ``drilldown[${LABEL}].output_columns``. You need to use
-``_value.${KEY_NAME}`` syntax. ``${KEY_NAME}`` is a column name to be
-used by group key in :ref:`select-drilldown-label-keys`.
+``_value.${KEY_NAME}`` syntax. ``${KEY_NAME}`` is a column name that is
+used for group key in :ref:`select-drilldown-label-keys`.
 
 Here is an example to refer each group key in multiple group keys by
 ``_value.${KEY_NAME}`` syntax:
