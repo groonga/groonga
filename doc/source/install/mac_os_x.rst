@@ -6,8 +6,8 @@ Mac OS X
 ========
 
 This section describes how to install Groonga on Mac OS X. You can
-install Groonga by `MacPorts <http://www.macports.org/>`_ or `Homebrew
-<http://mxcl.github.com/homebrew/>`_.
+install Groonga by `MacPorts <http://www.macports.org/>`__ or
+`Homebrew <http://mxcl.github.com/homebrew/>`__.
 
 .. _macports:
 
