@@ -1060,6 +1060,11 @@ The default value of ``drilldown_output_columns`` is ``_key,
 _nsubrecs``. It means that grouped key and the number of records in
 the group are output.
 
+You can use more :doc:`/reference/columns/pseudo` in
+``drilldown_output_columns`` such as ``_max``, ``_min``, ``_sum`` and
+``_avg`` when you use :ref:`select-drilldown-calc-types`. See
+``drilldown_calc_types`` document for details.
+
 .. _select-drilldown-offset:
 
 ``drilldown_offset``
@@ -1143,7 +1148,154 @@ Here is a simple negative ``limit`` value usage example.
 
 The ``select`` command outputs all drilldown records.
 
-The default value is ``10``.
+The default value of ``drilldown_limit`` is ``10``.
+
+.. _select-drilldown-calc-types:
+
+``drilldown_calc_types``
+""""""""""""""""""""""""
+
+It specifies how to calculate (aggregate) values in grouped records by
+a drilldown. You can specify multiple calculation types separated by
+"``|``". For example, ``MAX|MIN``.
+
+Calculation target values are read from a column of grouped
+records. The column is specified by
+:ref:`select-drilldown-calc-target`.
+
+You can read calculated value by :doc:`/reference/columns/pseudo` such
+as ``_max`` and ``_min`` in :ref:`select-drilldown-output-columns`.
+
+You can use the following calculation types:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Type name
+     - :doc:`/reference/columns/pseudo` name
+     - Need :ref:`select-drilldown-calc-target`
+     - Description
+   * - ``NONE``
+     - Nothing.
+     - Not needs.
+     - Just ignored.
+   * - ``COUNT``
+     - ``_nsubrecs``
+     - Not needs.
+     - Counting grouped records. It's always enabled. So you don't
+       specify it.
+   * - ``MAX``
+     - ``_max``
+     - Needs.
+     - Finding the maximum integer value from integer values in
+       grouped records.
+   * - ``MIN``
+     - ``_min``
+     - Needs.
+     - Finding the minimum integer value from integer values in
+       grouped records.
+   * - ``SUM``
+     - ``_sum``
+     - Needs.
+     - Summing integer values in grouped records.
+   * - ``AVG``
+     - ``_avg``
+     - Needs.
+     - Averaging integer/float values in grouped records.
+
+Here is a ``MAX`` example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldown_calc_types_max.log
+.. select Entries \
+..   --limit -1 \
+..   --output_column _id,n_likes \
+..   --drilldown tag \
+..   --drilldown_calc_types MAX \
+..   --drilldown_calc_target n_likes \
+..   --drilldown_output_columns _key,_max
+
+The ``select`` command groups all records by ``tag`` column value,
+finding the maximum ``n_likes`` column value for each group and
+outputs pairs of grouped key and the maximum ``n_likes`` column value
+for the group. It uses ``_max`` :doc:`/reference/columns/pseudo` to
+read the maximum ``n_likes`` column value.
+
+Here is a ``MIN`` example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldown_calc_types_min.log
+.. select Entries \
+..   --limit -1 \
+..   --output_column _id,n_likes \
+..   --drilldown tag \
+..   --drilldown_calc_types MIN \
+..   --drilldown_calc_target n_likes \
+..   --drilldown_output_columns _key,_min
+
+The ``select`` command groups all records by ``tag`` column value,
+finding the minimum ``n_likes`` column value for each group and
+outputs pairs of grouped key and the minimum ``n_likes`` column value
+for the group. It uses ``_min`` :doc:`/reference/columns/pseudo` to
+read the minimum ``n_likes`` column value.
+
+Here is a ``SUM`` example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldown_calc_types_sum.log
+.. select Entries \
+..   --limit -1 \
+..   --output_column _id,n_likes \
+..   --drilldown tag \
+..   --drilldown_calc_types SUM \
+..   --drilldown_calc_target n_likes \
+..   --drilldown_output_columns _key,_sum
+
+The ``select`` command groups all records by ``tag`` column value,
+sums all ``n_likes`` column values for each group and outputs pairs
+of grouped key and the summed ``n_likes`` column values for the
+group. It uses ``_sum`` :doc:`/reference/columns/pseudo` to read the
+summed ``n_likes`` column values.
+
+Here is a ``AVG`` example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldown_calc_types_avg.log
+.. select Entries \
+..   --limit -1 \
+..   --output_column _id,n_likes \
+..   --drilldown tag \
+..   --drilldown_calc_types AVG \
+..   --drilldown_calc_target n_likes \
+..   --drilldown_output_columns _key,_avg
+
+The ``select`` command groups all records by ``tag`` column value,
+averages all ``n_likes`` column values for each group and outputs
+pairs of grouped key and the averaged ``n_likes`` column values for
+the group. It uses ``_avg`` :doc:`/reference/columns/pseudo` to read
+the averaged ``n_likes`` column values.
+
+Here is an example that uses all calculation types:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldown_calc_types_all.log
+.. select Entries \
+..   --limit -1 \
+..   --output_column _id,n_likes \
+..   --drilldown tag \
+..   --drilldown_calc_types MAX|MIN|SUM|AVG \
+..   --drilldown_calc_target n_likes \
+..   --drilldown_output_columns _key,_nsubrecs,_max,_min,_sum,_avg
+
+The ``select`` command specifies multiple calculation types separated
+by "``|``" like ``MAX|MIN|SUM|AVG``. You can use ``_nsubrecs``
+:doc:`/reference/columns/pseudo` in
+:ref:`select-drilldown-output-columns` without specifying ``COUNT`` in
+``drilldown_calc_types``. Because ``COUNT`` is always enabled.
+
+The default value of ``drilldown_calc_types`` is ``NONE``. It means
+that only ``COUNT`` is enabled. Because ``NONE`` is just ignored and
+``COUNT`` is always enabled.
 
 .. _select-advanced-drilldown-related-parameters:
 
