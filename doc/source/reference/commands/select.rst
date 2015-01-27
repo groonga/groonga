@@ -1094,7 +1094,7 @@ Here is a ``drilldown_offset`` example:
 ..   --drilldown_sortby _key \
 ..   --drilldown_offset 1
 
-The ``select`` command outputs from the 2th record.
+The ``select`` command outputs from the 2nd record.
 
 You can specify negative value. It means that ``the number of grouped
 results + offset``. If you have 3 grouped results and specify
@@ -1111,7 +1111,7 @@ grouped result to the 3rd grouped result.
 ..   --drilldown_sortby _key \
 ..   --drilldown_offset -2
 
-The ``select`` command outputs from the 2st grouped result because the
+The ``select`` command outputs from the 2nd grouped result because the
 total number of grouped results is ``3``.
 
 The default value of ``drilldown_offset`` is ``0``.
@@ -1121,11 +1121,10 @@ The default value of ``drilldown_offset`` is ``0``.
 ``drilldown_limit``
 """""""""""""""""""
 
-It specifies the max number of drilldown output records. If the number
-of matched drilldown records is less than ``drilldown_limit``, all
-drilldown records are outputted.
+It specifies the max number of groups in a drilldown. If the number of
+groups is less than ``drilldown_limit``, all groups are outputted.
 
-Here is a ``limit`` example:
+Here is a ``drilldown_limit`` example:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/drilldown_limit_simple.log
@@ -1137,14 +1136,13 @@ Here is a ``limit`` example:
 ..   --drilldown_offset 1 \
 ..   --drilldown_limit 2
 
-The ``select`` command outputs the 2rd and the 3rd drilldown records.
+The ``select`` command outputs the 2rd and the 3rd groups.
 
-You can specify negative value. It means that ``the number of matched
-drilldown records + drilldown_limit + 1``. For example,
-``--drilldown_limit -1`` outputs all drilldown records. It's very
-useful value to show all drilldown records.
+You can specify negative value. It means that ``the number of groups +
+drilldown_limit + 1``. For example, ``--drilldown_limit -1`` outputs
+all groups. It's very useful value to show all groups.
 
-Here is a simple negative ``limit`` value usage example.
+Here is a negative ``drilldown_limit`` value example.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/drilldown_limit_negative.log
@@ -1155,7 +1153,7 @@ Here is a simple negative ``limit`` value usage example.
 ..   --drilldown_sortby _key \
 ..   --drilldown_limit -1
 
-The ``select`` command outputs all drilldown records.
+The ``select`` command outputs all groups.
 
 The default value of ``drilldown_limit`` is ``10``.
 

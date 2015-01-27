@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-01-20 18:13+0900\n"
+"PO-Revision-Date: 2015-01-27 18:51+0900\n"
 "Last-Translator: Takatsugu <nokubi@gmail.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -5185,6 +5185,81 @@ msgstr ""
 "``select`` には多くの引数があります。必須の引数は ``table`` だけで、残りは省"
 "略できます。::"
 
+msgid "``select`` has the following named parameters for advanced drilldown:"
+msgstr ""
+"``select`` には高度なドリルダウン機能のために以下の名前付き引数があります。"
+
+# bb37d24c839d485e8464c562b0049de0
+msgid "``drilldown[${LABEL}].keys=null``"
+msgstr ""
+
+# e72a2089d86e48af8b29fe829dfc318f
+msgid "``drilldown[${LABEL}].sortby=null``"
+msgstr ""
+
+# 5b6e1254a8ce48a88c28ece081ca3af4
+msgid "``drilldown[${LABEL}].output_columns=\"_key, _nsubrecs\"``"
+msgstr ""
+
+# 6de3c351bf884e0aac65618bf513e5c0
+msgid "``drilldown[${LABEL}].offset=0``"
+msgstr ""
+
+# 83c813b5a92e4af7831f2d7fec050153
+msgid "``drilldown[${LABEL}].limit=10``"
+msgstr ""
+
+# f0f30ebc793f4596888dfab42ca3e74f
+msgid "``drilldown[${LABEL}].calc_types=NONE``"
+msgstr ""
+
+# a09d04c57050443ca6c7697d8ee1b041
+msgid "``drilldown[${LABEL}].calc_target=null``"
+msgstr ""
+
+# b0dd873585054b0cb28a01ced40dad93
+msgid ""
+"You can use one or more alphabets, digits, ``_`` and ``.`` for ``${LABEL}``. "
+"For example, ``parent.sub1`` is a valid ``${LABEL}``."
+msgstr ""
+"``${LABEL}`` には1つ以上のアルファベット、数字、 ``_`` 、 ``.`` を使うことが"
+"できます。たとえば、 ``parent.sub1`` は有効な ``${LABEL}`` です。"
+
+# d85a0a6ec3974ff7b0e275abe264d9f2
+msgid "Parameters that have the same ``${LABEL}`` are grouped."
+msgstr "同じ ``${LABEL}`` も持つ引数は同じグループになります。"
+
+msgid "For example, the following parameters specify one drilldown:"
+msgstr "たとえば、以下の引数は1つのドリルダウンを指定しています。"
+
+# a84edc397f27402ea760bcc832fa960b
+msgid "``--drilldown[label].keys column``"
+msgstr ""
+
+# 99b7866b3052448b8f5796e8a2ac3dff
+msgid "``--drilldown[label].sortby -_nsubrecs``"
+msgstr ""
+
+# 1e68b9823e1c4e8ca6c2657091d3064f
+msgid "The following parameters specify two drilldowns:"
+msgstr "以下の引数は2つのドリルダウンを指定しています。"
+
+# 529c31b0a4ad4009a3b1bf0797059ccf
+msgid "``--drilldown[label1].keys column1``"
+msgstr ""
+
+# 8b689f5b8f764831bbf64d82f844df3f
+msgid "``--drilldown[label1].sortby -_nsubrecs``"
+msgstr ""
+
+# fd1dcdb8651444e3892064f9e7117c06
+msgid "``--drilldown[label2].keys column2``"
+msgstr ""
+
+# 1d7785b0c39949c2a8c36c3c5dd2ec99
+msgid "``--drilldown[label2].sortby _key``"
+msgstr ""
+
 msgid ""
 "Let's learn about ``select`` usage with examples. This section shows many "
 "popular usages."
@@ -5193,15 +5268,16 @@ msgstr ""
 "れる使い方を紹介します。"
 
 msgid ""
-"There is a table, ``Entries``, for blog entries. An entry has title, content "
-"and the number of likes for the entry. Title is key of ``Entries``. Content "
-"is value of ``Entries.content`` column. The number of likes is value of "
-"``Entries.n_likes`` column."
+"There is a table, ``Entries``, for blog entries. An entry has title, "
+"content, the number of likes for the entry and tag. Title is key of "
+"``Entries``. Content is value of ``Entries.content`` column. The number of "
+"likes is value of ``Entries.n_likes`` column. Tag is value of ``Entries."
+"tag`` column."
 msgstr ""
 "ブログエントリ用の ``Entries`` テーブルがあります。各エントリはタイトルと内容"
-"と「いいね！」数を持っています。タイトルは ``Entries`` のキーとします。内容"
-"は ``Entries.content`` カラムの値とします。「いいね！」数は ``Entries."
-"n_likes`` カラムの値とします。"
+"と「いいね！」数、タグを持っています。タイトルは ``Entries`` のキーとします。"
+"内容は ``Entries.content`` カラムの値とします。「いいね！」数は ``Entries."
+"n_likes`` カラムの値とします。タグは ``Entries.tag`` カラムの値とします。"
 
 msgid ""
 "``Entries._key`` column and ``Entries.content`` column are indexed using "
@@ -5329,7 +5405,7 @@ msgstr ""
 
 msgid ""
 "``filter`` has more operators and syntax like grouping by ``(...)`` its "
-"deatils aren't described here. See :doc:`/reference/grn_expr/script_syntax` "
+"details aren't described here. See :doc:`/reference/grn_expr/script_syntax` "
 "for datails."
 msgstr ""
 "``filter`` にはもっと演算子や構文があります。例えば、 ``(...)`` を使った検索"
@@ -5347,11 +5423,11 @@ msgstr ""
 "す。以下は2番目のレコードだけを出力する例です。"
 
 msgid ""
-"``offset`` is zero-origin. ``--offset 1`` means output range is started from "
+"``offset`` is zero-based. ``--offset 1`` means output range is started from "
 "the 2nd record."
 msgstr ""
-"``offset`` は0基点です。 ``--offset 1`` は2番目以降のレコードを出力するという"
-"意味になります。"
+"``offset`` は0始まりです。 ``--offset 1`` は2番目以降のレコードを出力するとい"
+"う意味になります。"
 
 msgid ""
 "``limit`` specifies the max number of output records. ``--limit 1`` means "
@@ -5376,6 +5452,96 @@ msgid ""
 "``--limit 0`` is also useful for retrieving only the number of matched "
 "records."
 msgstr "``--limit 0`` はマッチしたレコード数だけを取得したいときにも便利です。"
+
+# 3e4cbf12271343268020e44f834244ce
+msgid "Drilldown"
+msgstr "ドリルダウン"
+
+# c66bec89613e483d9c9e79aabfc43449
+msgid ""
+"You can get additional grouped results against the search result in one "
+"``select``. You need to use two or more ``SELECT``s in SQL but ``select`` in "
+"Groonga can do it in one ``select``."
+msgstr ""
+"1回の ``select`` で検索結果だけでなく、検索結果をグループ化した結果も一緒に取"
+"得できます。SQLでは2回以上 ``SELECT`` を使わなければいけない場合でも、Groonga"
+"の場合は1回の ``select`` で実現できます。"
+
+# 477153d699da4b5897adaf9b056979d7
+msgid ""
+"This feature is called as `drilldown <http://en.wikipedia.org/wiki/"
+"Drill_down>`_ in Groonga. It's also called as `faceted search <http://en."
+"wikipedia.org/wiki/Faceted_search>`_ in other search engine."
+msgstr ""
+"Groongaではこの機能を `ドリルダウン <http://en.wikipedia.org/wiki/"
+"Drill_down>`_ と呼んでいます。他の検索エンジンでは `ファセット検索 <http://"
+"en.wikipedia.org/wiki/Faceted_search>`_ とも呼ばれています。"
+
+msgid "For example, think about the following situation."
+msgstr "例えば、以下の状況を考えてみましょう。"
+
+# 32aed8fcc5ae4c7fbaf4413a7a6369d0
+msgid "You search entries that has ``fast`` word:"
+msgstr "``fast`` という単語を含むエントリーを探します。"
+
+# 2fbe40d6dbd94766ba04e1f145101ccd
+msgid ""
+"You want to use ``tag`` for additional search condition like ``--filter "
+"'content @ \"fast\" && tag == \"???\"``. But you don't know suitable tag "
+"until you see the result of ``content @ \"fast\"``."
+msgstr ""
+"``--filter 'content @ \"fast\" && tag == \"???\"`` というように、追加の検索条"
+"件として ``tag`` を使いたいとします。しかし、 ``content @ \"fast\"`` の結果を"
+"見るまでは適切なタグはわかりません。"
+
+# a7ec0a651eae483caf9b97f58455373f
+msgid ""
+"If you know the number of matched records of each available tag, you can "
+"choose suitable tag. You can use drilldown for the case:"
+msgstr ""
+"もし、有効なタグそれぞれについてマッチするレコード数がわかれば、その中から適"
+"切なタグを選ぶことができます。このような用途のためにドリルダウンを使えます。"
+
+# d8afd564c96247a2b1484c9ae634dc0c
+msgid ""
+"``--drilldown tag`` returns a list of pair of available tag and the number "
+"of matched records. You can avoid \"no hit search\" case by choosing a tag "
+"from the list. You can also avoid \"too many search results\" case by "
+"choosing a tag that the number of matched records is few from the list."
+msgstr ""
+"``--drilldown tag`` は「有効なタグ」と「そのタグを持っているレコード数」のペ"
+"アをリストにして返します。このリストからタグを選ぶと「検索したけどヒット数0」"
+"という状況を避けることができます。また、リストの中からレコード数が少ないタグ"
+"を選べば「検索結果が多すぎる」という状況も避けることができます。"
+
+msgid "You can create the following UI with the drilldown results:"
+msgstr "ドリルダウン結果を使うと次のようなUIを作ることができます。"
+
+# 39e753c033734cc9adafad82e4f87b87
+msgid ""
+"Links to narrow search results. (Users don't need to input a search query by "
+"their keyboard. They just click a link.)"
+msgstr ""
+"検索結果を絞り込むリンク。（ユーザーはキーボードから検索クエリーを入力する必"
+"要がなくなります。単にリンクをクリックすればよいからです。)"
+
+# 7f431b81b5b24bd49e51e18595e8b67e
+msgid "Most EC sites use the UI. See side menu at Amazon."
+msgstr ""
+"多くのECサイトではこのUIを使っています。Amazonのサイドメニューを見てくださ"
+"い。"
+
+# 41e437bb25e540d79c7e232d3fa2f891
+msgid ""
+"Groonga supports not only counting grouped records but also finding the "
+"maximum and/or minimum value from grouped records, summing values in grouped "
+"records and so on. See :ref:`select-drilldown-related-parameters` for "
+"details."
+msgstr ""
+"Groongaはグループ化したレコードの数を数えるだけでなく、グループ化したレコード"
+"のカラムの値の中から最大値・最小値を見つけたり、合計値を計算したりすることが"
+"できます。詳細は :ref:`select-drilldown-related-parameters` を参照してくださ"
+"い。"
 
 msgid "This section describes all parameters. Parameters are categorized."
 msgstr ""
@@ -6069,11 +6235,11 @@ msgstr ""
 "``_score`` を無視して、ログファイルに警告を出力します。"
 
 msgid ""
-"It specifies offset to determine output records range. Offset is zero-"
-"origin. ``--offset 1`` means output range is started from the 2nd record."
+"It specifies offset to determine output records range. Offset is zero-based. "
+"``--offset 1`` means output range is started from the 2nd record."
 msgstr ""
-"出力するレコードの範囲を決めるためのオフセットを指定します。オフセットは0基点"
-"です。 ``--offset 1`` は2番目以降のレコードを出力するという意味になります。"
+"出力するレコードの範囲を決めるためのオフセットを指定します。オフセットは0始ま"
+"りです。 ``--offset 1`` は2番目以降のレコードを出力するという意味になります。"
 
 msgid "The ``select`` command outputs from the 4th record."
 msgstr "この ``select`` コマンドは4番目以降のレコードを出力します。"
@@ -6081,12 +6247,14 @@ msgstr "この ``select`` コマンドは4番目以降のレコードを出力�
 msgid ""
 "You can specify negative value. It means that ``the number of matched "
 "records + offset``. If you have 3 matched records and specify ``--offset "
-"-2``, you get records from the 1st (``3 + -2 = 1``) record to the 3rd record."
+"-2``, you get records from the 2nd (``3 + -2 = 1``. ``1`` means 2nd. "
+"Remember that offset is zero-based.) record to the 3rd record."
 msgstr ""
 "負の値を指定することもできます。負の値の場合は ``マッチしたレコード数 + "
 "offset`` 番目のレコードから始まる範囲という意味になります。もし、マッチしたレ"
-"コードが3つあり、 ``--offset -2`` を指定した場合は1番目（ ``3 + -2 = 1`` ） "
-"のレコードから3番目のレコードが出力されます。"
+"コードが3つあり、 ``--offset -2`` を指定した場合は2番目（ ``3 + -2 = 1`` 。 "
+"``1`` は2番目という意味です。オフセットは0始まりということを思い出してくださ"
+"い。） のレコードから3番目のレコードを取得します。"
 
 msgid ""
 "The ``select`` command outputs from the 4th record because the total number "
@@ -6144,40 +6312,754 @@ msgid ""
 "スタマイズできるようになります。"
 msgstr ""
 
-msgid "Facet related parameters"
+msgid "Drilldown related parameters"
+msgstr "ドリルダウン関連の引数"
+
+msgid ""
+"This section describes basic drilldown related parameters. Advanced "
+"drilldown related parameters are described in another section."
+msgstr ""
+"このセクションでは基本的なドリルダウン関連の引数について説明します。高度なド"
+"リルダウン関連の引数は他のセクションで説明します。"
+
+msgid "It specifies keys for grouping separated by ``,``."
+msgstr "グループ化するときに使うキーを ``,`` 区切りで指定します。"
+
+# 2b3e49451560470a9b59dc2caf614a10
+msgid ""
+"Matched records by specified search conditions are grouped by each key. If "
+"you specify no search condition, all records are grouped by each key."
+msgstr ""
+"指定した検索条件にマッチしたレコードを指定したキーのそれぞれでグループ化しま"
+"す。検索条件を指定していない場合はすべてのレコードを指定したキーのそれぞれで"
+"グループ化します。"
+
+msgid "Here is a simple ``drilldown`` example:"
+msgstr "以下は簡単な ``drilldown`` の使用例です。"
+
+msgid "The ``select`` command outputs the following information:"
+msgstr "この ``select`` コマンドは次の情報を出力します。"
+
+msgid "There is one record that has \"Hello\" tag."
+msgstr "「Hello」タグを持つレコードが1つある。"
+
+msgid "There is two records that has \"Groonga\" tag."
+msgstr "「Groonga」タグを持つレコードが2つある。"
+
+msgid "There is two records that has \"Senna\" tag."
+msgstr "「Senna」タグを持つレコードが2つある。"
+
+msgid "Here is a ``drilldown`` with search condition example:"
+msgstr "以下は検索条件付きで ``drilldown`` を使う例です。"
+
+# 2dd45e339ba54fa39f09107647e3a020
+msgid "In records that have 5 or larger as ``n_likes`` value:"
+msgstr "``n_likes`` の値が5以上のレコードの中には…"
+
+msgid "Here is a ``drilldown`` with multiple group keys example:"
+msgstr "以下は複数のグループ化キーを指定する ``drilldown`` の例です。"
+
+# 7eb24b6644d346d9b11c8f9d86f03c7d
+msgid "About ``tag``:"
+msgstr "``tag`` について:"
+
+# caa2407a2ef144e1afdd64825af6fd49
+msgid "About ``n_likes``:"
+msgstr "``n_likes`` について:"
+
+msgid ""
+"It specifies sort keys for drilldown outputs separated by ``,``. Each sort "
+"key is column name."
+msgstr ""
+"ドリルダウン結果のソートキーを ``,`` 区切りで指定します。それぞれのソートキー"
+"はカラム名を指定します。"
+
+msgid ""
+"You can refer the number of grouped records by ``_nsubrecs`` :doc:`/"
+"reference/columns/pseudo`."
+msgstr ""
+"グループ化されたレコード数は ``_nsubrecs`` :doc:`/reference/columns/pseudo` "
+"擬似カラムで参照できます。"
+
+msgid "Here is a simple ``drilldown_sortby`` example:"
+msgstr "以下は簡単な ``drilldown_sortby`` の使用例です。"
+
+# b962d2b7a3d7407f85c1067cfa584d7b
+msgid ""
+"Drilldown result is sorted by the number of grouped records (= "
+"``_nsubrecs`` ) in descending order. If there are grouped results that the "
+"number of records in the group are the same, these grouped results are "
+"sorted by grouped key (= ``_key`` ) in ascending order."
+msgstr ""
+"ドリルダウン結果は「グループに含まれるレコード数」（= ``_nsubrecs`` ）で降順"
+"にソートします。「グループに含まれるレコード数」が同じグループが複数あった場"
+"合は、グループ化に使ったキー（= ``_key`` ）で昇順にソートします。"
+
+# bde26eac3b1341df8a8b8e346c32bce1
+msgid "The sort keys are used in all group keys specified in ``drilldown``:"
+msgstr ""
+"``drilldown`` で指定したすべてのグループキーで同じソートキーを使います。"
+
+# 2b35542e95d046f79818b9a3cf165ed8
+msgid ""
+"The same sort keys are used in ``tag`` drilldown and ``n_likes`` drilldown."
+msgstr ""
+"``tag`` のドリルダウンでも ``n_likes`` のドリルダウンでも同じソートキーを使っ"
+"ています。"
+
+# c212c6c17dd84ed3bb2614a63f02add4
+msgid ""
+"If you want to use different sort keys for each drilldown, use :ref:`select-"
+"advanced-drilldown-related-parameters`."
+msgstr ""
+"それぞれのドリルダウンで異なるソートキーを使いたい場合は :ref:`select-"
+"advanced-drilldown-related-parameters` を参照してください。"
+
+msgid "It specifies output columns for drilldown separated by ``,``."
+msgstr "ドリルダウン結果から出力するカラムを ``,`` 区切りで指定します。"
+
+msgid "Here is a ``drilldown_output_columns`` example:"
+msgstr "以下は ``drilldown_output_columns`` の使用例です。"
+
+msgid "The ``select`` command just outputs grouped key."
+msgstr "この ``select`` コマンドはグループ化したキーを出力していくだけです。"
+
+# ddeecd0711314068a9df088676df46b4
+msgid ""
+"If grouped key is a referenced type column (= column that its type is a "
+"table), you can access column of the table referenced by the referenced type "
+"column."
+msgstr ""
+"グループ化したキーが参照型のカラム（型がテーブルのカラム）だった場合、参照型"
+"のカラムが参照しているテーブルのカラムにもアクセスできます。"
+
+msgid ""
+"Here are a schema definition and sample data to show drilldown against "
+"referenced type column:"
+msgstr ""
+"参照型に対してドリルダウンする方法を示すために使うスキーマ定義とサンプルデー"
+"タは以下の通りです。"
+
+# c73c21cd8c7b4404ab2709b1228f00b1
+msgid ""
+"``Tags`` table is a referenced table. ``Items.tag`` is a referenced type "
+"column."
+msgstr ""
+"``Tags`` テーブルは参照されているテーブルです。 ``Items.tag`` は参照型のカラ"
+"ムです。"
+
+# 79a4edebb9d74d3e8f1b0e51642fb2d8
+msgid ""
+"You can refer ``Tags.label`` by ``label`` in ``drilldown_output_columns``:"
+msgstr ""
+"``Tags.label`` は ``drilldown_output_columns`` の中では ``label`` で参照でき"
+"ます。"
+
+# f13d78aed8384c7a92c1b7adf9ca53bf
+msgid ""
+"You can use ``*`` to refer all columns in referenced table (= ``Tags``):"
+msgstr ""
+"``*`` を使うと、参照されているテーブル（= ``Tags`` ）のすべてのカラムを参照で"
+"きます。"
+
+# b0be71afbb1449eb9cb1d72da6bb7a05
+msgid "``*`` is expanded to ``label, priority``."
+msgstr "``*`` は ``label, priority`` に展開されます。"
+
+# 29c0e44eb8b04f8588d2888e08aebb81
+msgid ""
+"The default value of ``drilldown_output_columns`` is ``_key, _nsubrecs``. It "
+"means that grouped key and the number of records in the group are output."
+msgstr ""
+"``drilldown_output_columns`` のデフォルト値は ``_key, _nsubrecs`` です。グ"
+"ループ化に使ったキーとグループのレコード数を出力する、ということです。"
+
+# de923fce7c984af2804bf3e3ff9b3c35
+msgid ""
+"You can use more :doc:`/reference/columns/pseudo` in "
+"``drilldown_output_columns`` such as ``_max``, ``_min``, ``_sum`` and "
+"``_avg`` when you use :ref:`select-drilldown-calc-types`. See "
+"``drilldown_calc_types`` document for details."
+msgstr ""
+":ref:`select-drilldown-calc-types` を使うと、 ``drilldown_output_columns`` の"
+"中で ``_max`` 、 ``_min`` 、 ``_sum`` 、 ``_avg`` といった :doc:`/reference/"
+"columns/pseudo` も使えるようになります。詳細は ``drilldown_calc_types`` のド"
+"キュメントを参照してください。"
+
+msgid ""
+"It specifies offset to determine range of drilldown output records. Offset "
+"is zero-based. ``--drilldown_offset 1`` means output range is started from "
+"the 2nd record."
+msgstr ""
+"ドリルダウン結果を出力するレコードの範囲を決めるためのオフセットを指定しま"
+"す。オフセットは0始まりです。 ``--offset 1`` は2番目以降のレコードを出力する"
+"という意味になります。"
+
+msgid "Here is a ``drilldown_offset`` example:"
+msgstr "以下は簡単な ``drilldown_offset`` の使用例です。"
+
+msgid "The ``select`` command outputs from the 2nd record."
+msgstr "この ``select`` コマンドは2番目以降のレコードを出力します。"
+
+msgid ""
+"You can specify negative value. It means that ``the number of grouped "
+"results + offset``. If you have 3 grouped results and specify ``--"
+"drilldown_offset -2``, you get grouped results from the 2st (``3 + -2 = 1``. "
+"``1`` means 2nd. Remember that offset is zero-based.) grouped result to the "
+"3rd grouped result."
+msgstr ""
+"負の値を指定することもできます。負の値の場合は ``グループの数 + offset`` 番目"
+"のレコードから始まる範囲という意味になります。もし、グループの数が3つあり、 "
+"``--offset -2`` を指定した場合は1番目（ ``3 + -2 = 1`` 。 ``1`` は2番目です。"
+"オフセットは0始まりということを思い出してください。） のグループから3番目のグ"
+"ループが出力されます。"
+
+msgid ""
+"The ``select`` command outputs from the 2nd grouped result because the total "
+"number of grouped results is ``3``."
+msgstr ""
+"この ``select`` コマンドは2番目以降のグループを出力します。なぜなら、全グルー"
+"プ数が ``3`` だからです。"
+
+msgid "The default value of ``drilldown_offset`` is ``0``."
+msgstr "``drilldown_offset`` のデフォルト値は ``0`` です。"
+
+msgid ""
+"It specifies the max number of groups in a drilldown. If the number of "
+"groups is less than ``drilldown_limit``, all groups are outputted."
+msgstr ""
+"``drilldown_limit`` は出力グループ数の最大値を指定します。もし、グループ数 "
+"``limit`` よりも小さい場合はすべてのグループが出力されます。"
+
+msgid "Here is a ``drilldown_limit`` example:"
+msgstr "以下は ``drilldown_limit`` の使用例です。"
+
+msgid "The ``select`` command outputs the 2rd and the 3rd groups."
+msgstr "この ``select`` コマンドは2番目、3番目のレコードを出力します。"
+
+msgid ""
+"You can specify negative value. It means that ``the number of groups + "
+"drilldown_limit + 1``. For example, ``--drilldown_limit -1`` outputs all "
+"groups. It's very useful value to show all groups."
+msgstr ""
+"負の値を指定することもできます。負の値の場合は、最大で ``マッチしたレコード"
+"数 + drilldown_limit + 1`` 件のレコードを出力するという意味になります。 例え"
+"ば、 ``--drilldown_limit -1`` はすべてのレコードを出力します。これはすべての"
+"レコードを表示する場合にとても便利です。"
+
+msgid "The ``select`` command outputs all groups."
+msgstr "この ``select`` コマンドはすべてのグループを出力します。"
+
+msgid "The default value of ``drilldown_limit`` is ``10``."
+msgstr "``drilldown_limit`` のデフォルト値は ``10`` です。"
+
+# 21ca15a610c94f0a9ae3d527f60daba7
+msgid "``drilldown_calc_types``"
+msgstr ""
+
+msgid ""
+"It specifies how to calculate (aggregate) values in grouped records by a "
+"drilldown. You can specify multiple calculation types separated by \"``|``"
+"\". For example, ``MAX|MIN``."
+msgstr ""
+"ドリルダウンでグループ内のレコードの値を計算（集計）する方法を指定します。"
+"「 ``|`` 」で区切ることで複数の計算タイプを指定することもできます。たとえ"
+"ば、 ``MAX|MIN`` といった具合です。"
+
+# f40ef3f3231445b08776720af898ee18
+msgid ""
+"Calculation target values are read from a column of grouped records. The "
+"column is specified by :ref:`select-drilldown-calc-target`."
+msgstr ""
+"計算対象の値はグループ内のレコードのカラムから取得します。このカラムは :ref:"
+"`select-drilldown-calc-target` で指定します。"
+
+# 81b3c79688954af187b2d2f9f45065c3
+msgid ""
+"You can read calculated value by :doc:`/reference/columns/pseudo` such as "
+"``_max`` and ``_min`` in :ref:`select-drilldown-output-columns`."
+msgstr ""
+"計算した値は :ref:`select-drilldown-output-columns` の中で ``_max`` や "
+"``_min`` のような :doc:`/reference/columns/pseudo` を指定すると取得できます。"
+
+#, fuzzy
+msgid "You can use the following calculation types:"
+msgstr "Groongaは以下のような補完ペアを作ります。:"
+
+# da469f75baa647908401693d50786018
+msgid "Type name"
+msgstr ""
+
+#, fuzzy
+msgid ":doc:`/reference/columns/pseudo` name"
+msgstr ":doc:`/reference/commands/request_cancel`"
+
+# aa960cfab154409fb7c16193351acf89
+msgid "Need :ref:`select-drilldown-calc-target`"
+msgstr ""
+
+#, fuzzy
+msgid "Nothing."
+msgstr "ロギング機能"
+
+# d9801078ea134944abba9f0d0522bf26
+# c5c9f84448674c3a8a83f6576ecc0866
+msgid "Not needs."
+msgstr ""
+
+# cca1518a327e456da874c1c8c632c874
+msgid "``COUNT``"
+msgstr ""
+
+# 2cdb94fda1264f8b8346ec000276a449
+msgid "Counting grouped records. It's always enabled. So you don't specify it."
+msgstr ""
+
+# 696ca82f696b4b8a8d2fa56784ab3cf4
+msgid "``MAX``"
+msgstr ""
+
+# e3bccd7be1c4451bb379cec6a80f53f3
+msgid "``_max``"
+msgstr ""
+
+# c8b557f875e546299206d21877a0b81b
+# 0fdf5d96ca03470c90650e0f8d230897
+# 22e0c7e270564eda80911e7eb66ebaf4
+# 2c168cc8453a41158e47f8d64acd9feb
+msgid "Needs."
+msgstr ""
+
+# 9bf8275192ad49469471980cb216a8cf
+msgid ""
+"Finding the maximum integer value from integer values in grouped records."
+msgstr ""
+
+# 6bf4886a807e462fbb532af148931894
+msgid "``MIN``"
+msgstr ""
+
+# 8e1127975ebf4a1ab2ccdb52fc1489f9
+msgid "``_min``"
+msgstr ""
+
+# 33079d5b4c554217a45fcb82b5470860
+msgid ""
+"Finding the minimum integer value from integer values in grouped records."
+msgstr ""
+
+# b45426bf8d144b268c565c0cb558aac3
+msgid "``SUM``"
+msgstr ""
+
+# 6165a981ef884d768202bbc297b9f19f
+msgid "``_sum``"
+msgstr ""
+
+# fd66dfabefb844f58aa3a0a5b3a6af31
+msgid "Summing integer values in grouped records."
+msgstr ""
+
+# 7389a43ab5124eceabffa7dea5bb8841
+msgid "``AVG``"
+msgstr ""
+
+# d392626bfa4e48778785d4914e78213c
+msgid "``_avg``"
+msgstr ""
+
+# dedea6ec66dd42349561566600c3964e
+msgid "Averaging integer/float values in grouped records."
+msgstr ""
+
+#, fuzzy
+msgid "Here is a ``MAX`` example:"
+msgstr "以下は ``*`` の使用例です。"
+
+# 26216aaca10c4acc80136babdaf2c424
+msgid ""
+"The ``select`` command groups all records by ``tag`` column value, finding "
+"the maximum ``n_likes`` column value for each group and outputs pairs of "
+"grouped key and the maximum ``n_likes`` column value for the group. It uses "
+"``_max`` :doc:`/reference/columns/pseudo` to read the maximum ``n_likes`` "
+"column value."
+msgstr ""
+
+#, fuzzy
+msgid "Here is a ``MIN`` example:"
+msgstr "以下は ``*`` の使用例です。"
+
+# 9c9f202af3504967ab74d330116c4915
+msgid ""
+"The ``select`` command groups all records by ``tag`` column value, finding "
+"the minimum ``n_likes`` column value for each group and outputs pairs of "
+"grouped key and the minimum ``n_likes`` column value for the group. It uses "
+"``_min`` :doc:`/reference/columns/pseudo` to read the minimum ``n_likes`` "
+"column value."
+msgstr ""
+
+#, fuzzy
+msgid "Here is a ``SUM`` example:"
+msgstr "以下は ``*`` の使用例です。"
+
+# 4d38d6a293e14e07939c13b6c3a76251
+msgid ""
+"The ``select`` command groups all records by ``tag`` column value, sums all "
+"``n_likes`` column values for each group and outputs pairs of grouped key "
+"and the summed ``n_likes`` column values for the group. It uses ``_sum`` :"
+"doc:`/reference/columns/pseudo` to read the summed ``n_likes`` column values."
+msgstr ""
+
+#, fuzzy
+msgid "Here is a ``AVG`` example:"
+msgstr "以下は ``*`` の使用例です。"
+
+# 277a022977c2475e84b6e9097863015a
+msgid ""
+"The ``select`` command groups all records by ``tag`` column value, averages "
+"all ``n_likes`` column values for each group and outputs pairs of grouped "
+"key and the averaged ``n_likes`` column values for the group. It uses "
+"``_avg`` :doc:`/reference/columns/pseudo` to read the averaged ``n_likes`` "
+"column values."
+msgstr ""
+
+#, fuzzy
+msgid "Here is an example that uses all calculation types:"
+msgstr "以下はノーマライザーを使う例です。"
+
+# c646d934e5f34fcf84a01b76ea8cdcaa
+msgid ""
+"The ``select`` command specifies multiple calculation types separated by "
+"\"``|``\" like ``MAX|MIN|SUM|AVG``. You can use ``_nsubrecs`` :doc:`/"
+"reference/columns/pseudo` in :ref:`select-drilldown-output-columns` without "
+"specifying ``COUNT`` in ``drilldown_calc_types``. Because ``COUNT`` is "
+"always enabled."
+msgstr ""
+
+# 7c9987c84d5f49708127fd1dcdeba98a
+msgid ""
+"The default value of ``drilldown_calc_types`` is ``NONE``. It means that "
+"only ``COUNT`` is enabled. Because ``NONE`` is just ignored and ``COUNT`` is "
+"always enabled."
+msgstr ""
+
+# 47919acbf86340cfa00e2fec1a92ebeb
+msgid "``drilldown_calc_target``"
+msgstr ""
+
+# d383cb1889334034b283ca5b0328c4da
+msgid "It specifies the target column for :ref:`select-drilldown-calc-types`."
+msgstr ""
+
+# 11e9f08729ce4bd5b112ad707ac6fae7
+msgid ""
+"If you specify a calculation type that needs a target column such as ``MAX`` "
+"in :ref:`select-drilldown-calc-types` but you omit "
+"``drilldown_calc_target``, the calculation result is always ``0``."
+msgstr ""
+
+# ed09a153912849febea0ba1935ed54f9
+msgid ""
+"You can specify only one column name like ``--drilldown_calc_target "
+"n_likes``. You can't specify multiple column name like ``--"
+"drilldown_calc_target _key,n_likes``."
+msgstr ""
+
+# fa35026e926f4c6bb8c330684fac664d
+msgid ""
+"You can use referenced value from the target record by combining \"``.``\" "
+"like ``--drilldown_calc_target reference_column.nested_reference_column."
+"value``."
+msgstr ""
+
+# 6fabf6b56acb42afaf75505e2836d4c6
+msgid ""
+"See :ref:`select-drilldown-calc-types` to know how to use "
+"``drilldown_calc_target``."
+msgstr ""
+
+# 9a66ff0f864040c3af41e31bf610490a
+msgid ""
+"The default value of ``drilldown_calc_target`` is ``null``. It means that no "
+"calculation target column is specified."
+msgstr ""
+
+#, fuzzy
+msgid "Advanced drilldown related parameters"
 msgstr "ファセット関連の引数"
 
+# 44a2e92ae3b9407f9e492d0ebc7a2b7a
 msgid ""
-"グループ化のキーとなるカラム名のリストをカンマ(',')区切りで指定します。検索条"
-"件にマッチした各レコードを出力したのちに、drilldownに指定されたカラムの値が同"
-"一であるレコードをとりまとめて、それぞれについて結果レコードを出力します。"
+"You can get multiple drilldown results by specifying multiple group keys by :"
+"ref:`select-drilldown`. But you need to use the same configuration for all "
+"drilldowns. For example, :ref:`select-drilldown-output-columns` is used by "
+"all drilldowns."
 msgstr ""
 
+# 1e3c30ee4f62480c94f728efe9801121
 msgid ""
-"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、ソー"
-"トキーとなるカラム名のリストをカンマ(',')区切りで指定します。sortbyパラメータ"
-"と同様に昇降順を指定できます。"
+"You can use a configuration for each drilldown by the following parameters:"
 msgstr ""
 
-msgid ""
-"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
-"するカラム名のリストをカンマ(',')区切りで指定します。"
+# ecaa0e9e25584f13accd4ba2078f057e
+# 56837b22eb944e5da35be0a5b4816aec
+# 5ea60ccf294d4a459e23ad18d520bc87
+msgid "``drilldown[${LABEL}].keys``"
 msgstr ""
 
-msgid ""
-"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
-"対象となる最初のレコードの番号を0ベースで指定します。デフォルト値は0です。"
-"drilldown_offsetに負の値を指定した場合は、ヒットした件数 + drilldown_offsetに"
-"よって算出される値が指定されたものとみなされます。"
+# 5ea3b36ea00b4a0d86a5d4fdbdbde808
+msgid "``drilldown[${LABEL}].sortby``"
 msgstr ""
 
-msgid ""
-"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
-"を行うレコードの件数を指定します。デフォルト値は10です。実際には、"
-"drilldown_offset + drilldown_limit がヒットした件数を超えない範囲でレコードが"
-"出力されます。drilldown_limitに負の値を指定した場合は、ヒットした件数 + "
-"drilldown_limit + 1 によって算出される値が指定されたものとみなされます。"
+# c41c684b5a1f4fd8a32e795ca4b59502
+# 0a83c2cb207f488ea9d127af0bc29ed2
+# 823f729ec35f4ae6b353a6d74f2d3495
+msgid "``drilldown[${LABEL}].output_columns``"
 msgstr ""
+
+# 60c71d6aef34410889978207f7517b54
+msgid "``drilldown[${LABEL}].offset``"
+msgstr ""
+
+# fc3db25077d444d999e13511a18e0342
+msgid "``drilldown[${LABEL}].limit``"
+msgstr ""
+
+# 8e4ae172f00340daa25375d6cf01aad5
+msgid "``drilldown[${LABEL}].calc_types``"
+msgstr ""
+
+# fbb8afa8c18e4528b6ea59318f7ef684
+msgid "``drilldown[${LABEL}].calc_target``"
+msgstr ""
+
+# 6cec134a6321435eae491ebc8238e077
+msgid ""
+"``${LABEL}`` is a variable. You can use the following characters for ``"
+"${LABEL}``:"
+msgstr ""
+
+# d163fb68506e454186cc06e9584d8d1f
+msgid "Alphabets"
+msgstr ""
+
+# d2a82e2e15cd43c1b323dd247af34986
+msgid "Digits"
+msgstr ""
+
+# ca9c74df805141b29be0b30535c242af
+msgid "``.``"
+msgstr ""
+
+# 6a2e848b723a4478802c5eea641f6a41
+msgid "``_``"
+msgstr ""
+
+# d355a644382743ddbe54d988290814d8
+msgid ""
+"Parameters that has the same ``${LABEL}`` value are grouped. Grouped "
+"parameters are used for one drilldown."
+msgstr ""
+
+#, fuzzy
+msgid "For example, there are 2 groups for the following parameters:"
+msgstr "例えば、ユーザが以下のように検索を実行したとします。:"
+
+# de03eb53d8c541b6881c4d8a511bb51e
+msgid "``--drilldown[label1].keys _key``"
+msgstr ""
+
+# 1f9f210fdc40426c8b3d81a8bb1ec996
+msgid "``--drilldown[label1].output_columns _nsubrecs``"
+msgstr ""
+
+# f593bd787f2c4a898cf77f52cbd594ad
+msgid "``--drilldown[label2].keys tag``"
+msgstr ""
+
+# f73d85e5c94d4794a580e8d819a48e95
+msgid "``--drilldown[label2].output_columns _key,_nsubrecs``"
+msgstr ""
+
+# 392c6a316ae3498f90881ff3b7c1f3f2
+msgid ""
+"``drilldown[label1].keys`` and ``drilldown[label1].output_columns`` are "
+"grouped. ``drilldown[label2].keys`` and ``drilldown[label2].output_columns`` "
+"are also grouped."
+msgstr ""
+
+# 4f4af24792314fb7b62fb8df7201d469
+msgid ""
+"In ``label1`` group, ``_key`` is used for group key and ``_nsubrecs`` is "
+"used for output columns."
+msgstr ""
+
+# 177668e2f52d4641a30bd5fdaba39470
+msgid ""
+"In ``label2`` group, ``tag`` is used for group key and ``_key,_nsubrecs`` is "
+"used for output columns."
+msgstr ""
+
+# 797be5e1b27c4175a060f20d1f0669b5
+msgid ""
+"See document for corresponding ``drilldown_XXX`` parameter to know how to "
+"use it for the following parameters:"
+msgstr ""
+
+# 07b362c65dbe4a63ba6ffb5cbb443c41
+msgid "``drilldown[${LABEL}].sortby``: :ref:`select-drilldown-sortby`"
+msgstr ""
+
+# fd96988ca49b4eb7aad29969e29840f8
+msgid "``drilldown[${LABEL}].offset``: :ref:`select-drilldown-offset`"
+msgstr ""
+
+# 2690f939559f41e98244b6e614dbff02
+msgid "``drilldown[${LABEL}].limit``: :ref:`select-drilldown-limit`"
+msgstr ""
+
+# 835758accca444dda72dc4d9a9ce9cd1
+msgid "``drilldown[${LABEL}].calc_types``: :ref:`select-drilldown-calc-types`"
+msgstr ""
+
+# 608886c10d834adab983a220c47b6c9e
+msgid ""
+"``drilldown[${LABEL}].calc_target``: :ref:`select-drilldown-calc-target`"
+msgstr ""
+
+# 397197d5c6c54235bc63d804a1f9f3d3
+msgid "The following parameters are needed more description:"
+msgstr ""
+
+# eca3d555650e432fad9fe6fdc2a41946
+msgid "Output format is different a bit. It's also needed more description."
+msgstr ""
+
+# 91b6860846274cf48247c01e7eb07706
+msgid ""
+":ref:`select-drilldown` can specify multiple keys for multiple drilldowns. "
+"But it can't specify multiple keys for one drilldown."
+msgstr ""
+
+# f1f8a91640cd46b192b74dc2d2c85e78
+msgid ""
+"``drilldown[${LABEL}].keys`` can't specify multiple keys for multiple "
+"drilldowns. But it can specify multiple keys for one drilldown."
+msgstr ""
+
+#, fuzzy
+msgid "You can specify multiple keys separated by \"``,``\"."
+msgstr "出力するカラムを ``,`` 区切りで指定します。"
+
+#, fuzzy
+msgid ""
+"Here is an example to group by multiple keys, ``tag`` and ``n_likes`` column "
+"values:"
+msgstr ""
+"以下は ``Entry`` テーブルと ``Entry`` テーブルのカラムのロックを解放する例で"
+"す::"
+
+# 98740b6d65a24d98a1288bb762fdcbff
+msgid ""
+"``tag.n_likes`` is used as the label for the drilldown parameters group. You "
+"can refer grouped keys by ``_value.${KEY_NAME}`` syntax in :ref:`select-"
+"drilldown-label-output-columns`. ``${KEY_NAME}`` is a column name to be used "
+"by group key. ``tag`` and ``n_likes`` are ``${KEY_NAME}`` in this case."
+msgstr ""
+
+# 9d5fb3029a5a48eaaf240c5765e7a8df
+msgid ""
+"Note that you can't use ``_value.${KEY_NAME}`` syntax when you just specify "
+"one ``drilldown[${LABEL}].keys`` like ``--drilldown[tag].keys tag``. You "
+"should use ``_key`` for the case. It's the same rule in :ref:`select-"
+"drilldown-output-columns`."
+msgstr ""
+
+# bf6a8b5a1f6649c5900907ae1497cf28
+msgid ""
+"It's almost same as :ref:`select-drilldown-output-columns`. The difference "
+"between :ref:`select-drilldown-output-columns` and ``drilldown[${LABEL}]."
+"output_columns`` is how to refer group keys."
+msgstr ""
+
+# 96747ec63d3d4b64a2720e1fff90db8b
+msgid ""
+":ref:`select-drilldown-output-columns` uses ``_key`` :doc:`/reference/"
+"columns/pseudo` to refer group key. ``drilldown[${LABEL}].output_columns`` "
+"also uses ``_key`` :doc:`/reference/columns/pseudo` to refer group key when "
+"you specify only one group key by :ref:`select-drilldown-label-keys`."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"Here is an example to refer single group key by ``_key`` :doc:`/reference/"
+"columns/pseudo`:"
+msgstr ""
+"以下は :doc:`/reference/commands/shutdown` コマンドに認証をかける設定例で"
+"す。::"
+
+# da0e93c2c0594034bb32844a3ba47156
+msgid ""
+"But you can't refer each group key by ``_key`` :doc:`/reference/columns/"
+"pseudo` in ``drilldown[${LABEL}].output_columns``. You need to use ``_value."
+"${KEY_NAME}`` syntax. ``${KEY_NAME}`` is a column name to be used by group "
+"key in :ref:`select-drilldown-label-keys`."
+msgstr ""
+
+# 4896c49e12d24b66bc046d668e215adc
+msgid ""
+"Here is an example to refer each group key in multiple group keys by "
+"``_value.${KEY_NAME}`` syntax:"
+msgstr ""
+
+# 5e6f0bb8ec8049c9b3a5cfcc5d35c820
+msgid "Why ``_value.${KEY_NAME}`` syntax?"
+msgstr ""
+
+# 5f9d5e2fae98488d9e7c758fa95e6763
+msgid "It's implementation specific information."
+msgstr ""
+
+# e2627daaf28e4a049a7a56e0d37be267
+msgid ""
+"``_key`` is a vector value. The vector value is consists of all group keys. "
+"You can see byte sequence of the vector value by referring ``_key`` in "
+"``drilldown[${LABEL}].output_columns``."
+msgstr ""
+
+# 0c921974b2224bf68f3b89e88f0eb8cc
+msgid ""
+"There is one grouped record in ``_value`` to refer each grouped values when "
+"you specify multiple group keys to :ref:`select-drilldown-label-keys`. So "
+"you can refer each group key by ``_value.${KEY_NAME}`` syntax."
+msgstr ""
+
+# 65d6e4af9b3648c8874f5ce8bffc176c
+msgid ""
+"On the other hand, there is no grouped record in ``_value`` when you specify "
+"only one group key to :ref:`select-drilldown-label-keys`. So you can't refer "
+"group key by ``_value.${KEY_NAME}`` syntax."
+msgstr ""
+
+# 08a7c2ffa15546dfa6f85f14f48decc4
+msgid "Output format for ``drilldown[${LABEL}]`` style"
+msgstr ""
+
+# 22bffd3a54d94349852c6151df63fe1f
+msgid ""
+"There is a difference in output format between :ref:`select-drilldown` and :"
+"ref:`select-drilldown-label-keys`. :ref:`select-drilldown` uses array to "
+"output multiple drilldown results. :ref:`select-drilldown-label-keys` uses "
+"pairs of label and drilldown result."
+msgstr ""
+
+#, fuzzy
+msgid ":ref:`select-drilldown` uses the following output format::"
+msgstr "Groongaは以下の出力形式をサポートしています。"
+
+#, fuzzy
+msgid ":ref:`select-drilldown-label-keys` uses the following output format::"
+msgstr "Groongaは以下の出力形式をサポートしています。"
 
 msgid "Cache related parameter"
 msgstr "キャッシュ関連の引数"
@@ -10150,11 +11032,11 @@ msgid "``html_untag`` strips HTML tags from HTML and outputs plain text."
 msgstr "``html_untag`` はHTMLタグをHTMLから除去したテキストを出力します。"
 
 msgid ""
-"``html_untag`` is used in ``--output_columns`` described at :ref:"
-"`output_columns`."
+"``html_untag`` is used in ``--output_columns`` described at :ref:`select-"
+"output-columns`."
 msgstr ""
-"``html_untag`` は :ref:`output_columns` で説明している ``--output_columns`` "
-"で使います。"
+"``html_untag`` は :ref:`select-output-columns` で説明している ``--"
+"output_columns`` で使います。"
 
 msgid "``html_untag`` requires only one argument. It is ``html``."
 msgstr "``html_untag`` は引数を一つだけとります。 それは ``html`` です。"
@@ -10766,6 +11648,17 @@ msgstr ""
 
 msgid "Sample data"
 msgstr "サンプルデータ"
+
+msgid ""
+"There is a table, ``Entries``, for blog entries. An entry has title, content "
+"and the number of likes for the entry. Title is key of ``Entries``. Content "
+"is value of ``Entries.content`` column. The number of likes is value of "
+"``Entries.n_likes`` column."
+msgstr ""
+"ブログエントリ用の ``Entries`` テーブルがあります。各エントリはタイトルと内容"
+"と「いいね！」数を持っています。タイトルは ``Entries`` のキーとします。内容"
+"は ``Entries.content`` カラムの値とします。「いいね！」数は ``Entries."
+"n_likes`` カラムの値とします。"
 
 msgid "Escape"
 msgstr "エスケープ"
