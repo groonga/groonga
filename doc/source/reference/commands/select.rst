@@ -1164,7 +1164,7 @@ The default value of ``drilldown_limit`` is ``10``.
 
 It specifies how to calculate (aggregate) values in grouped records by
 a drilldown. You can specify multiple calculation types separated by
-"``|``". For example, ``MAX|MIN``.
+"``,``". For example, ``MAX,MIN``.
 
 Calculation target values are read from a column of grouped
 records. The column is specified by
@@ -1290,12 +1290,12 @@ Here is an example that uses all calculation types:
 ..   --limit -1 \
 ..   --output_column _id,n_likes \
 ..   --drilldown tag \
-..   --drilldown_calc_types MAX|MIN|SUM|AVG \
+..   --drilldown_calc_types MAX,MIN,SUM,AVG \
 ..   --drilldown_calc_target n_likes \
 ..   --drilldown_output_columns _key,_nsubrecs,_max,_min,_sum,_avg
 
 The ``select`` command specifies multiple calculation types separated
-by "``|``" like ``MAX|MIN|SUM|AVG``. You can use ``_nsubrecs``
+by "``|``" like ``MAX,MIN,SUM,AVG``. You can use ``_nsubrecs``
 :doc:`/reference/columns/pseudo` in
 :ref:`select-drilldown-output-columns` without specifying ``COUNT`` in
 ``drilldown_calc_types``. Because ``COUNT`` is always enabled.
