@@ -7,6 +7,58 @@
 News
 ====
 
+.. _release-4-1-1:
+
+Release 4.1.1 - 2015-01-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [windows] Improved to show error message instead of
+  error code. It's easy to understand.
+* [windows] Supported small start file size for database file.
+  In previous versions, Groonga consumed larger initial file
+  size on windows in contrast to UNIX like environment.
+  To enable this feature, use ``GRN_IO_VERSION=1`` environment
+  variable.
+* Supported sum feature for drilldown. Here is the syntax how to use it.
+  ``select --drilldown[label].calc_type SUM --drilldown[label].calc_target target_column``
+  It returns drilldown result with max value in group.
+* Supported ``MIN``, ``MAX``, ``AVG`` feature for drilldown. The syntax is same as
+  sum feature. You can specify multiple 'calc_types' at the same time.
+* Added ``--with-jemalloc`` option to use ``jemalloc`` for ``malloc()/free()``.
+  It'll improve performance on multi-threading usage.
+* groonga-httpd: Supported long error message over ``NGX_MAX_ERROR_STR``.
+  By this change, long error message (>=2048) is not truncated.
+* [doc] Added documents about :ref:`select-drilldown-limit`,
+  :ref:`select-drilldown-calc-types`, :ref:`select-drilldown-calc-target` and more.
+
+Fixes
+^^^^^
+
+* Fixed mismatch between error code and error message when
+  ``strerror()`` is failed. There was a case that Groonga shows
+  incorrect error code as syscall error.
+* Fixed to show errno in error message when unknow error is occurred.
+* [windows] Fixed to return proper error code.
+* Fixed a bug that there is only 'index[0]' for :ref:`select-match_columns`,
+  it doesn't return correct search results. For example, it occurs
+  when index 'memo_index' is created against multiple column -
+  'title,content' then 'memo_index[0]' is specified.
+* http: Fixed a bug that two or more request don't have body.
+* mecab: Added workaround for ``mecab_strerror(NULL)`` on MeCab 0.993.
+  Without this workaround, Groonga aborts if there is no MeCab
+  dictionary. [Reported by Shuhei Tanuma]
+* groonga-httpd: Fixed a bug that custom log file is ignored.
+* groonga-httpd: Fixed a bug that empty dump doesn't return.
+* http: Fixed a bug that body isn't returned for POST requests.
+
+Thanks
+^^^^^^
+
+* Shuhei Tanuma
+
 .. _release-4-1-0:
 
 Release 4.1.0 - 2015-01-09
