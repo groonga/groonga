@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-01-27 18:51+0900\n"
+"PO-Revision-Date: 2015-01-27 22:20+0900\n"
 "Last-Translator: Takatsugu <nokubi@gmail.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -6547,6 +6547,9 @@ msgstr ""
 "ば、 ``--drilldown_limit -1`` はすべてのレコードを出力します。これはすべての"
 "レコードを表示する場合にとても便利です。"
 
+msgid "Here is a negative ``drilldown_limit`` value example."
+msgstr "以下は ``drilldown_limit`` に負の値を指定する例です。"
+
 msgid "The ``select`` command outputs all groups."
 msgstr "この ``select`` コマンドはすべてのグループを出力します。"
 
@@ -6559,12 +6562,12 @@ msgstr ""
 
 msgid ""
 "It specifies how to calculate (aggregate) values in grouped records by a "
-"drilldown. You can specify multiple calculation types separated by \"``|``"
-"\". For example, ``MAX|MIN``."
+"drilldown. You can specify multiple calculation types separated by \"``,``"
+"\". For example, ``MAX,MIN``."
 msgstr ""
 "ドリルダウンでグループ内のレコードの値を計算（集計）する方法を指定します。"
-"「 ``|`` 」で区切ることで複数の計算タイプを指定することもできます。たとえ"
-"ば、 ``MAX|MIN`` といった具合です。"
+"「 ``,`` 」で区切ることで複数の計算タイプを指定することもできます。たとえ"
+"ば、 ``MAX,MIN`` といった具合です。"
 
 # f40ef3f3231445b08776720af898ee18
 msgid ""
@@ -6582,30 +6585,27 @@ msgstr ""
 "計算した値は :ref:`select-drilldown-output-columns` の中で ``_max`` や "
 "``_min`` のような :doc:`/reference/columns/pseudo` を指定すると取得できます。"
 
-#, fuzzy
 msgid "You can use the following calculation types:"
-msgstr "Groongaは以下のような補完ペアを作ります。:"
+msgstr "以下の計算タイプを使えます。"
 
 # da469f75baa647908401693d50786018
 msgid "Type name"
-msgstr ""
+msgstr "タイプ名"
 
-#, fuzzy
 msgid ":doc:`/reference/columns/pseudo` name"
-msgstr ":doc:`/reference/commands/request_cancel`"
+msgstr ":doc:`/reference/columns/pseudo` 名"
 
 # aa960cfab154409fb7c16193351acf89
 msgid "Need :ref:`select-drilldown-calc-target`"
-msgstr ""
+msgstr ":ref:`select-drilldown-calc-target` が必要か"
 
-#, fuzzy
 msgid "Nothing."
-msgstr "ロギング機能"
+msgstr "なし。"
 
 # d9801078ea134944abba9f0d0522bf26
 # c5c9f84448674c3a8a83f6576ecc0866
 msgid "Not needs."
-msgstr ""
+msgstr "必要ない。"
 
 # cca1518a327e456da874c1c8c632c874
 msgid "``COUNT``"
@@ -6613,7 +6613,7 @@ msgstr ""
 
 # 2cdb94fda1264f8b8346ec000276a449
 msgid "Counting grouped records. It's always enabled. So you don't specify it."
-msgstr ""
+msgstr "グループ内のレコードの数を数える。常に有効なので指定する必要はない。"
 
 # 696ca82f696b4b8a8d2fa56784ab3cf4
 msgid "``MAX``"
@@ -6628,12 +6628,12 @@ msgstr ""
 # 22e0c7e270564eda80911e7eb66ebaf4
 # 2c168cc8453a41158e47f8d64acd9feb
 msgid "Needs."
-msgstr ""
+msgstr "必要。"
 
 # 9bf8275192ad49469471980cb216a8cf
 msgid ""
 "Finding the maximum integer value from integer values in grouped records."
-msgstr ""
+msgstr "グループ内のレコードの整数値の中で最大の値を見つける。"
 
 # 6bf4886a807e462fbb532af148931894
 msgid "``MIN``"
@@ -6646,7 +6646,7 @@ msgstr ""
 # 33079d5b4c554217a45fcb82b5470860
 msgid ""
 "Finding the minimum integer value from integer values in grouped records."
-msgstr ""
+msgstr "グループ内のレコードの整数値の中で最小の値を見つける。"
 
 # b45426bf8d144b268c565c0cb558aac3
 msgid "``SUM``"
@@ -6658,7 +6658,7 @@ msgstr ""
 
 # fd66dfabefb844f58aa3a0a5b3a6af31
 msgid "Summing integer values in grouped records."
-msgstr ""
+msgstr "グループ内のレコードの整数値の合計を計算する。"
 
 # 7389a43ab5124eceabffa7dea5bb8841
 msgid "``AVG``"
@@ -6670,11 +6670,10 @@ msgstr ""
 
 # dedea6ec66dd42349561566600c3964e
 msgid "Averaging integer/float values in grouped records."
-msgstr ""
+msgstr "グループ内のレコードの整数値・浮動小数点数値の平均を計算する。"
 
-#, fuzzy
 msgid "Here is a ``MAX`` example:"
-msgstr "以下は ``*`` の使用例です。"
+msgstr "以下は ``MAX`` の使用例です。"
 
 # 26216aaca10c4acc80136babdaf2c424
 msgid ""
@@ -6684,10 +6683,14 @@ msgid ""
 "``_max`` :doc:`/reference/columns/pseudo` to read the maximum ``n_likes`` "
 "column value."
 msgstr ""
+"この ``select`` コマンドは ``tag`` カラムの値ですべてのレコードをグループ化し"
+"ます。その後、各グループについて最大の ``n_likes`` カラムの値を探し、「グルー"
+"プ化に使ったキー」と「 ``n_likes`` カラムの値の最大値」のペアのリストを出力し"
+"ます。 ``n_likes`` カラムの値の最大値を参照するために ``_max`` :doc:`/"
+"reference/columns/pseudo` を使っています。"
 
-#, fuzzy
 msgid "Here is a ``MIN`` example:"
-msgstr "以下は ``*`` の使用例です。"
+msgstr "以下は ``MIN`` の使用例です。"
 
 # 9c9f202af3504967ab74d330116c4915
 msgid ""
@@ -6697,10 +6700,14 @@ msgid ""
 "``_min`` :doc:`/reference/columns/pseudo` to read the minimum ``n_likes`` "
 "column value."
 msgstr ""
+"この ``select`` コマンドは ``tag`` カラムの値ですべてのレコードをグループ化し"
+"ます。その後、各グループについて最小の ``n_likes`` カラムの値を探し、「グルー"
+"プ化に使ったキー」と「 ``n_likes`` カラムの値の最小値」のペアのリストを出力し"
+"ます。 ``n_likes`` カラムの値の最小値を参照するために ``_min`` :doc:`/"
+"reference/columns/pseudo` を使っています。"
 
-#, fuzzy
 msgid "Here is a ``SUM`` example:"
-msgstr "以下は ``*`` の使用例です。"
+msgstr "以下は ``SUM`` の使用例です。"
 
 # 4d38d6a293e14e07939c13b6c3a76251
 msgid ""
@@ -6709,10 +6716,14 @@ msgid ""
 "and the summed ``n_likes`` column values for the group. It uses ``_sum`` :"
 "doc:`/reference/columns/pseudo` to read the summed ``n_likes`` column values."
 msgstr ""
+"この ``select`` コマンドは ``tag`` カラムの値ですべてのレコードをグループ化し"
+"ます。その後、各グループについて ``n_likes`` カラムの合計を計算し、「グループ"
+"化に使ったキー」と「 ``n_likes`` カラムの値の合計」のペアのリストを出力しま"
+"す。 ``n_likes`` カラムの値の合計を参照するために ``_sum`` :doc:`/reference/"
+"columns/pseudo` を使っています。"
 
-#, fuzzy
 msgid "Here is a ``AVG`` example:"
-msgstr "以下は ``*`` の使用例です。"
+msgstr "以下は ``AVG`` の使用例です。"
 
 # 277a022977c2475e84b6e9097863015a
 msgid ""
@@ -6722,19 +6733,27 @@ msgid ""
 "``_avg`` :doc:`/reference/columns/pseudo` to read the averaged ``n_likes`` "
 "column values."
 msgstr ""
+"この ``select`` コマンドは ``tag`` カラムの値ですべてのレコードをグループ化し"
+"ます。その後、各グループについて ``n_likes`` カラムの平均を計算し、「グループ"
+"化に使ったキー」と「 ``n_likes`` カラムの値の平均」のペアのリストを出力しま"
+"す。 ``n_likes`` カラムの値の合計を参照するために ``_avg`` :doc:`/reference/"
+"columns/pseudo` を使っています。"
 
-#, fuzzy
 msgid "Here is an example that uses all calculation types:"
-msgstr "以下はノーマライザーを使う例です。"
+msgstr "以下はすべての計算タイプを使う例です。"
 
-# c646d934e5f34fcf84a01b76ea8cdcaa
+# a08702483b59457babde3182f0281209
 msgid ""
 "The ``select`` command specifies multiple calculation types separated by "
-"\"``|``\" like ``MAX|MIN|SUM|AVG``. You can use ``_nsubrecs`` :doc:`/"
+"\"``,``\" like ``MAX,MIN,SUM,AVG``. You can use ``_nsubrecs`` :doc:`/"
 "reference/columns/pseudo` in :ref:`select-drilldown-output-columns` without "
 "specifying ``COUNT`` in ``drilldown_calc_types``. Because ``COUNT`` is "
 "always enabled."
 msgstr ""
+"この ``select`` コマンドは複数の計算タイプを ``MAX,MIN,SUM,AVG`` というように"
+"「 ``,`` 」で区切って指定しています。 :ref:`select-drilldown-output-columns` "
+"で ``COUNT`` を指定していなくても ``_nsubrecs`` :doc:`/reference/columns/"
+"pseudo` を使えます。これは、 ``COUNT`` は常に有効だからです。"
 
 # 7c9987c84d5f49708127fd1dcdeba98a
 msgid ""
@@ -6742,6 +6761,9 @@ msgid ""
 "only ``COUNT`` is enabled. Because ``NONE`` is just ignored and ``COUNT`` is "
 "always enabled."
 msgstr ""
+"``drilldown_calc_types`` のデフォルト値は ``NONE`` です。これは、 ``COUNT`` "
+"だけが有効になっているという意味です。なぜなら、 ``NONE`` は単に無視されて、 "
+"``COUNT`` は常に有効だからです。"
 
 # 47919acbf86340cfa00e2fec1a92ebeb
 msgid "``drilldown_calc_target``"
@@ -6749,7 +6771,7 @@ msgstr ""
 
 # d383cb1889334034b283ca5b0328c4da
 msgid "It specifies the target column for :ref:`select-drilldown-calc-types`."
-msgstr ""
+msgstr ":ref:`select-drilldown-calc-types` の計算対象のカラムを指定します。"
 
 # 11e9f08729ce4bd5b112ad707ac6fae7
 msgid ""
@@ -6757,6 +6779,9 @@ msgid ""
 "in :ref:`select-drilldown-calc-types` but you omit "
 "``drilldown_calc_target``, the calculation result is always ``0``."
 msgstr ""
+":ref:`select-drilldown-calc-types` で ``MAX`` のように計算対象のカラムが必要"
+"な計算タイプを指定したにも関わらず ``drilldown_calc_target`` を省略すると、計"
+"算結果は常に ``0`` になります。"
 
 # ed09a153912849febea0ba1935ed54f9
 msgid ""
@@ -6764,6 +6789,9 @@ msgid ""
 "n_likes``. You can't specify multiple column name like ``--"
 "drilldown_calc_target _key,n_likes``."
 msgstr ""
+"``--drilldown_calc_target n_likes`` というように1つのカラム名だけしか指定でき"
+"ません。 ``--drilldown_calc_target _key,n_likes`` というように複数のカラムを"
+"指定することはできません。"
 
 # fa35026e926f4c6bb8c330684fac664d
 msgid ""
@@ -6771,22 +6799,28 @@ msgid ""
 "like ``--drilldown_calc_target reference_column.nested_reference_column."
 "value``."
 msgstr ""
+"``--drilldown_calc_target reference_column.nested_reference_column.value`` と"
+"いうように「 ``.`` 」でつなげることで対象レコードから参照している値を使うこと"
+"ができます。"
 
 # 6fabf6b56acb42afaf75505e2836d4c6
 msgid ""
 "See :ref:`select-drilldown-calc-types` to know how to use "
 "``drilldown_calc_target``."
 msgstr ""
+"``drilldown_calc_target`` の使い方は :ref:`select-drilldown-calc-types` を参"
+"照してください。"
 
 # 9a66ff0f864040c3af41e31bf610490a
 msgid ""
 "The default value of ``drilldown_calc_target`` is ``null``. It means that no "
 "calculation target column is specified."
 msgstr ""
+"``drilldown_calc_target`` のデフォルト値は ``null`` です。これは計算対象カラ"
+"ムは何も指定されていないということです。"
 
-#, fuzzy
 msgid "Advanced drilldown related parameters"
-msgstr "ファセット関連の引数"
+msgstr "高度なドリルダウン関連の引数"
 
 # 44a2e92ae3b9407f9e492d0ebc7a2b7a
 msgid ""
