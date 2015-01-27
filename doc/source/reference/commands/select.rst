@@ -1297,6 +1297,31 @@ The default value of ``drilldown_calc_types`` is ``NONE``. It means
 that only ``COUNT`` is enabled. Because ``NONE`` is just ignored and
 ``COUNT`` is always enabled.
 
+.. _select-drilldown-calc-target:
+
+``drilldown_calc_target``
+"""""""""""""""""""""""""
+
+It specifies the target column for :ref:`select-drilldown-calc-types`.
+
+If you specify a calculation type that needs a target column such as
+``MAX`` in :ref:`select-drilldown-calc-types` but you omit
+``drilldown_calc_target``, the calculation result is always ``0``.
+
+You can specify only one column name like ``--drilldown_calc_target
+n_likes``. You can't specify multiple column name like
+``--drilldown_calc_target _key,n_likes``.
+
+You can use referenced value from the target record by combining
+"``.``" like ``--drilldown_calc_target
+reference_column.nested_reference_column.value``.
+
+See :ref:`select-drilldown-calc-types` to know how to use
+``drilldown_calc_target``.
+
+The default value of ``drilldown_calc_target`` is ``null``. It means
+that no calculation target column is specified.
+
 .. _select-advanced-drilldown-related-parameters:
 
 Advanced drilldown related parameters
