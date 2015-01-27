@@ -1102,12 +1102,48 @@ total number of grouped results is ``3``.
 
 The default value of ``drilldown_offset`` is ``0``.
 
+.. _select-drilldown-limit:
+
 ``drilldown_limit``
 """""""""""""""""""
 
-TODO: write in English and add example.
+It specifies the max number of drilldown output records. If the number
+of matched drilldown records is less than ``drilldown_limit``, all
+drilldown records are outputted.
 
-drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力を行うレコードの件数を指定します。デフォルト値は10です。実際には、drilldown_offset + drilldown_limit がヒットした件数を超えない範囲でレコードが出力されます。drilldown_limitに負の値を指定した場合は、ヒットした件数 + drilldown_limit + 1 によって算出される値が指定されたものとみなされます。
+Here is a ``limit`` example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldown_limit_simple.log
+.. select Entries \
+..   --limit 0 \
+..   --output_column _id \
+..   --drilldown tag \
+..   --drilldown_sortby _key \
+..   --drilldown_offset 1 \
+..   --drilldown_limit 2
+
+The ``select`` command outputs the 2rd and the 3rd drilldown records.
+
+You can specify negative value. It means that ``the number of matched
+drilldown records + drilldown_limit + 1``. For example,
+``--drilldown_limit -1`` outputs all drilldown records. It's very
+useful value to show all drilldown records.
+
+Here is a simple negative ``limit`` value usage example.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldown_limit_negative.log
+.. select Entries \
+..   --limit 0 \
+..   --output_column _id \
+..   --drilldown tag \
+..   --drilldown_sortby _key \
+..   --drilldown_limit -1
+
+The ``select`` command outputs all drilldown records.
+
+The default value is ``10``.
 
 .. _select-advanced-drilldown-related-parameters:
 
