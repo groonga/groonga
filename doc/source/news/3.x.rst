@@ -437,7 +437,7 @@ Improvements
 * Supported binary operations such as ``X + Y``, ``X - Y``, ``X * Y``, ``X / Y``,
   ``X % Y``, ``X >> Y``, ``X << Y``, ``X | Y``, ``X ^ Y``, ``X & Y`` and ``X >>> Y``
   for Int8, UInt8, Int16, UInt16 and UInt64.
-* Added english documentation for ``load`` command.
+* Added English documentation for :doc:`/reference/commands/load` command.
 * Supported binary assign operations such as ``X += Y``, ``X -= Y``, ``X *= Y``,
   ``X /= Y``, ``X %= Y``, ``X <<= Y``, ``X >>= Y``, ``X >>>= Y``, ``X &= Y``,
   ``X |= Y`` and ``X ^= Y`` for Int8, UInt8, Int16, UInt16 and UInt64.

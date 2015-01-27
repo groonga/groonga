@@ -161,11 +161,13 @@ Improvements
   by multiple keys. Use ``_key[N]`` for ``--drilldown[LABEL1].output_columns`` to show
   original value of key in records.
 * Supported to search ``'reference_column @ "query"'`` without index.
-* [experimental] Added :doc:`/reference/commands/range_filter` command. It is faster than select
-  command to fetch specific range of records in most cases, because it doesn't returns
-  the number of matched records. There are limitations which doesn't support drilldown and so on.
-  Thus, ``range_filter`` is suitable for extracting first ``N`` records in specific range for ranking
-  or something else.
+* [experimental] Added :doc:`/reference/commands/range_filter`
+  command. It is faster than :doc:`/reference/commands/select` command
+  to fetch specific range of records in most cases, because it doesn't
+  returns the number of matched records. There are limitations which
+  doesn't support drilldown and so on.  Thus, ``range_filter`` is
+  suitable for extracting first ``N`` records in specific range for
+  ranking or something else.
 * [httpd] Supported ``groonga-httpd`` on windows.
 * Supported vector column for drilldown.
 * [deb] Changed ``groonga-httpd`` as default HTTP server package.
@@ -185,10 +187,10 @@ Fixes
   returns empty results.
 * Fixed flags parameter which is strict in BSD ``mkostemp(3)``.
   [GitHub#240] [Patch by Jun Kuriyama]
-* Fixed a bug that select command reports invalid value type (table)
-  as index column value type. It was fixed to ``UInt32``.
-  Note that it affects only the value of response header.
-  The search results is not changed at all.
+* Fixed a bug that :doc:`/reference/commands/select` command reports
+  invalid value type (table) as index column value type. It was fixed
+  to ``UInt32``.  Note that it affects only the value of response
+  header.  The search results is not changed at all.
 * Fixed a bug that compare operations such as ``<``, ``<=``, ``>``, ``>=``, ``!=`` with
   Time and String type returns invalid results.
 * Fixed a bug that prefix search can't be executed against single character such as
