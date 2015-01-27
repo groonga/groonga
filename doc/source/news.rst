@@ -153,7 +153,7 @@ Improvements
 * [experimental] :doc:`/reference/functions/between` supports auto sequential search mode.
   Use the value of ``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO`` as threshold.
   Basic concept is similar to ``GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO``.
-* [experimental] Supported multiple drilldowns for :doc:``/reference/command/select``
+* [experimental] Supported multiple drilldowns for :doc:`/reference/commands/select`
   command. The syntax is extended to support this feature. The new one is
   ``--drilldown[LABEL1].keys COLUMN1,COLUMN2`` for keys,
   ``--drilldown[LABEL1].output_columns _value.COLUMN1,_value.COLUMN2,_nsubrecs`` for output columns.
