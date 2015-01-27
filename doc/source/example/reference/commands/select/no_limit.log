@@ -28,6 +28,10 @@ Execution example::
   #         [
   #           "n_likes", 
   #           "UInt32"
+  #         ], 
+  #         [
+  #           "tag", 
+  #           "ShortText"
   #         ]
   #       ]
   #     ]

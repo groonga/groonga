@@ -24,12 +24,17 @@ Execution example::
   #         [
   #           "n_likes", 
   #           "UInt32"
+  #         ], 
+  #         [
+  #           "tag", 
+  #           "ShortText"
   #         ]
   #       ], 
   #       [
   #         "The first post!", 
   #         "Welcome! This is my first post!", 
-  #         5
+  #         5, 
+  #         "Hello"
   #       ]
   #     ]
   #   ]

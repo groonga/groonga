@@ -28,13 +28,18 @@ Execution example::
   #         [
   #           "n_likes", 
   #           "UInt32"
+  #         ], 
+  #         [
+  #           "tag", 
+  #           "ShortText"
   #         ]
   #       ], 
   #       [
   #         3, 
   #         "Mroonga", 
-  #         "I also started to use mroonga. It's also very fast! Really fast!", 
-  #         15
+  #         "I also started to use Mroonga. It's also very fast! Really fast!", 
+  #         15, 
+  #         "Groonga"
   #       ]
   #     ]
   #   ]
@@ -67,19 +72,25 @@ Execution example::
   #         [
   #           "n_likes", 
   #           "UInt32"
+  #         ], 
+  #         [
+  #           "tag", 
+  #           "ShortText"
   #         ]
   #       ], 
   #       [
   #         3, 
   #         "Mroonga", 
-  #         "I also started to use mroonga. It's also very fast! Really fast!", 
-  #         15
+  #         "I also started to use Mroonga. It's also very fast! Really fast!", 
+  #         15, 
+  #         "Groonga"
   #       ], 
   #       [
   #         5, 
   #         "Good-bye Tritonn", 
   #         "I also migrated all Tritonn system!", 
-  #         3
+  #         3, 
+  #         "Senna"
   #       ]
   #     ]
   #   ]
@@ -112,19 +123,25 @@ Execution example::
   #         [
   #           "n_likes", 
   #           "UInt32"
+  #         ], 
+  #         [
+  #           "tag", 
+  #           "ShortText"
   #         ]
   #       ], 
   #       [
   #         3, 
   #         "Mroonga", 
-  #         "I also started to use mroonga. It's also very fast! Really fast!", 
-  #         15
+  #         "I also started to use Mroonga. It's also very fast! Really fast!", 
+  #         15, 
+  #         "Groonga"
   #       ], 
   #       [
   #         5, 
   #         "Good-bye Tritonn", 
   #         "I also migrated all Tritonn system!", 
-  #         3
+  #         3, 
+  #         "Senna"
   #       ]
   #     ]
   #   ]
