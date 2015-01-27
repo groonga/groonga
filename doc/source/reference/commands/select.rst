@@ -882,6 +882,9 @@ scorerは、検索処理が完了し、ソート処理が実行される前に�
 Drilldown related parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+This section describes basic drilldown related parameters. Advanced
+drilldown related parameters are described in another section.
+
 .. _select-drilldown:
 
 ``drilldown``
