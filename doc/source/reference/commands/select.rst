@@ -900,7 +900,9 @@ Here is a simple ``drilldown`` example:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/drilldown_simple.log
-.. select Entries --drilldown tag
+.. select Entries \
+..   --output_columns _key,tag \
+..   --drilldown tag
 
 The ``select`` command outputs the following information:
 
@@ -913,6 +915,7 @@ Here is a ``drilldown`` with search condition example:
 .. groonga-command
 .. include:: ../../example/reference/commands/select/drilldown_filter.log
 .. select Entries \
+..   --output_columns _key,tag \
 ..   --filter 'n_likes >= 5' \
 ..   --drilldown tag
 
