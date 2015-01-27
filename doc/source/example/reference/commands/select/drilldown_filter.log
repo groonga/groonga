@@ -1,0 +1,65 @@
+Execution example::
+
+  select Entries \
+    --output_columns _key,tag \
+    --filter 'n_likes >= 5' \
+    --drilldown tag
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         3
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "tag", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         "The first post!", 
+  #         "Hello"
+  #       ], 
+  #       [
+  #         "Groonga", 
+  #         "Groonga"
+  #       ], 
+  #       [
+  #         "Mroonga", 
+  #         "Groonga"
+  #       ]
+  #     ], 
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "_nsubrecs", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         "Hello", 
+  #         1
+  #       ], 
+  #       [
+  #         "Groonga", 
+  #         2
+  #       ]
+  #     ]
+  #   ]
+  # ]

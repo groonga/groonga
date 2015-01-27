@@ -1,0 +1,64 @@
+Execution example::
+
+  select Items \
+    --limit 0 \
+    --output_column _id \
+    --drilldown tag \
+    --drilldown_output_columns '_key, *'
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         3
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "tag", 
+  #           "Tags"
+  #         ]
+  #       ]
+  #     ], 
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "label", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "priority", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         "groonga", 
+  #         "Groonga", 
+  #         10
+  #       ], 
+  #       [
+  #         "mroonga", 
+  #         "Mroonga", 
+  #         5
+  #       ]
+  #     ]
+  #   ]
+  # ]
