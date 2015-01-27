@@ -46,17 +46,17 @@ Syntax
          [drilldown_calc_types=NONE]
          [drilldown_calc_target=null]
 
-``select`` has the following named parameters for advanced drilldown::
+``select`` has the following named parameters for advanced drilldown:
 
-  drilldown[${LABEL}].keys=null
-  drilldown[${LABEL}].sortby=null
-  drilldown[${LABEL}].output_columns="_key, _nsubrecs"
-  drilldown[${LABEL}].offset=0
-  drilldown[${LABEL}].limit=10
-  drilldown[${LABEL}].calc_types=NONE
-  drilldown[${LABEL}].calc_target=null
+  * ``drilldown[${LABEL}].keys=null``
+  * ``drilldown[${LABEL}].sortby=null``
+  * ``drilldown[${LABEL}].output_columns="_key, _nsubrecs"``
+  * ``drilldown[${LABEL}].offset=0``
+  * ``drilldown[${LABEL}].limit=10``
+  * ``drilldown[${LABEL}].calc_types=NONE``
+  * ``drilldown[${LABEL}].calc_target=null``
 
-You can use one ore more alphabets, digits, ``_`` and ``.`` for
+You can use one or more alphabets, digits, ``_`` and ``.`` for
 ``${LABEL}``. For example, ``parent.sub1`` is a valid ``${LABEL}``.
 
 Parameters that have the same ``${LABEL}`` are grouped.
@@ -115,7 +115,7 @@ Here are a schema definition and sample data to show usage.
 .. ]
 
 There is a table, ``Entries``, for blog entries. An entry has title,
-content and the number of likes for the entry. Title is key of
+content, the number of likes for the entry and tag. Title is key of
 ``Entries``. Content is value of ``Entries.content`` column. The
 number of likes is value of ``Entries.n_likes`` column. Tag is value
 of ``Entries.tag`` column.
@@ -236,7 +236,7 @@ Drilldown
 ^^^^^^^^^
 
 You can get additional grouped results against the search result in
-one ``select``. You need to use two ore more ``SELECT``s in SQL but
+one ``select``. You need to use two or more ``SELECT``s in SQL but
 ``select`` in Groonga can do it in one ``select``.
 
 This feature is called as `drilldown
@@ -279,8 +279,8 @@ Most EC sites use the UI. See side menu at Amazon.
 
 Groonga supports not only counting grouped records but also finding
 the maximum and/or minimum value from grouped records, summing values
-in grouped records. See :ref:`select-drilldown-related-parameters` for
-details.
+in grouped records and so on. See
+:ref:`select-drilldown-related-parameters` for details.
 
 Parameters
 ----------
@@ -816,7 +816,7 @@ it's just ignored but get a warning in log file.
 """"""""""
 
 It specifies offset to determine output records range. Offset is
-zero-zero. ``--offset 1`` means output range is started from the 2nd
+zero-based. ``--offset 1`` means output range is started from the 2nd
 record.
 
 .. groonga-command
@@ -926,7 +926,7 @@ The ``select`` command outputs the following information:
     * There is one record that has "Hello" tag.
     * There is two records that has "Groonga" tag.
 
-Here is a ``drilldown`` example to specify multiple columns:
+Here is a ``drilldown`` with multiple group keys example:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/drilldown_multiple.log
@@ -973,9 +973,9 @@ Here is a simple ``drilldown_sortby`` example:
 Drilldown result is sorted by the number of grouped records (=
 ``_nsubrecs`` ) in descending order. If there are grouped results that
 the number of records in the group are the same, these grouped results
-are sort by grouped key (= ``_key`` ) in ascending order.
+are sorted by grouped key (= ``_key`` ) in ascending order.
 
-The sort keys are used in all group keys specified in ``dilldown``:
+The sort keys are used in all group keys specified in ``drilldown``:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/drilldown_sortby_simple.log
@@ -1047,7 +1047,7 @@ You can refer ``Tags.label`` by ``label`` in
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/drilldown_output_columns_referenced_type_column_label.log
-.. select Entries \
+.. select Items \
 ..   --limit 0 \
 ..   --output_column _id \
 ..   --drilldown tag \
@@ -1057,7 +1057,7 @@ You can use ``*`` to refer all columns in referenced table (= ``Tags``):
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/drilldown_output_columns_referenced_type_column_asterisk.log
-.. select Entries \
+.. select Items \
 ..   --limit 0 \
 ..   --output_column _id \
 ..   --drilldown tag \
