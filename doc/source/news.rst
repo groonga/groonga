@@ -45,11 +45,11 @@ Fixes
 * Fixed to show errno in error message when unknow error is occurred.
 * [windows] Fixed to return proper error code.
 * Fixed a bug that there is only one section for multi-column index for
-  :ref:`select-match_columns`, it doesn't return correct search results.
+  :ref:`select-match-columns`, it doesn't return correct search results.
   For example, consider the case that there is multi-column index which is
   named as ``memo_index`` for ``title`` column and ``content`` column.
   Thus, this bug occurs when ``memo_index[0]`` which means index
-  for ``title`` column is specified for :ref:`select-match_columns`.
+  for ``title`` column is specified for :ref:`select-match-columns`.
 * mecab: Added workaround for ``mecab_strerror(NULL)`` on MeCab 0.993.
   Without this workaround, Groonga aborts if there is no MeCab
   dictionary. [Reported by Shuhei Tanuma]
