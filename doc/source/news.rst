@@ -46,13 +46,11 @@ Fixes
   it doesn't return correct search results. For example, it occurs
   when index 'memo_index' is created against multiple column -
   'title,content' then 'memo_index[0]' is specified.
-* http: Fixed a bug that two or more request don't have body.
 * mecab: Added workaround for ``mecab_strerror(NULL)`` on MeCab 0.993.
   Without this workaround, Groonga aborts if there is no MeCab
   dictionary. [Reported by Shuhei Tanuma]
 * groonga-httpd: Fixed a bug that custom log file is ignored.
 * groonga-httpd: Fixed a bug that empty dump doesn't return.
-* http: Fixed a bug that body isn't returned for POST requests.
 
 Thanks
 ^^^^^^
