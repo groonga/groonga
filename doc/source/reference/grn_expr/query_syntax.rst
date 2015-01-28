@@ -98,13 +98,14 @@ quoted ``"Alice's brother (Bob)"`` or ``'Alice\'s brother (Bob)'``.
 
 .. note::
 
-   There is a important point which you have to care. The ``\`` (backslash)
-   character is interpreted by command line shell. So if you want to search
-   ``(`` itself for example, you need to escape twice (``\\(``) in command line shell.
-   The command line shell interprets ``\\(`` as ``\(``, then pass such a literal
-   to groonga. groonga regards ``\(`` as ``(``, then search ``(``
-   itself from database. If you can't do intended search by groonga, confirm whether
-   special character is escaped properly.
+   There is a important point which you have to care. The ``\``
+   (backslash) character is interpreted by command line shell. So if
+   you want to search ``(`` itself for example, you need to escape
+   twice (``\\(``) in command line shell.  The command line shell
+   interprets ``\\(`` as ``\(``, then pass such a literal to
+   groonga. groonga regards ``\(`` as ``(``, then search ``(`` itself
+   from database. If you can't do intended search by groonga, confirm
+   whether special character is escaped properly.
 
 .. _conditional-expression:
 
