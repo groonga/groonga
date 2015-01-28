@@ -17,7 +17,7 @@ Improvements
 
 * [windows] Improved to show error message instead of
   error code. It's easy to understand.
-* [windows] Supported small start file size for database file.
+* [experimental][windows] Supported small start file size for database file.
   In previous versions, Groonga consumed larger initial file
   size on windows in contrast to UNIX like environment.
   To enable this feature, use ``GRN_IO_VERSION=1`` environment
@@ -27,7 +27,7 @@ Improvements
   It returns drilldown result with max value in group.
 * Supported ``MIN``, ``MAX``, ``AVG`` feature for drilldown. The syntax is same as
   sum feature. You can specify multiple 'calc_types' at the same time.
-* Added ``--with-jemalloc`` option to use ``jemalloc`` for ``malloc()/free()``.
+* [experimental] Added ``--with-jemalloc`` option to use ``jemalloc`` for ``malloc()/free()``.
   It'll improve performance on multi-threading usage.
 * groonga-httpd: Supported long error message over ``NGX_MAX_ERROR_STR``.
   By this change, long error message (>=2048) is not truncated.
