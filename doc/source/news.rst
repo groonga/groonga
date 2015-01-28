@@ -27,8 +27,6 @@ Improvements
   Specify ``SUM``, ``MIN``, ``MAX`` or ``AVG`` for :ref:`select-drilldown-calc-types`
   and target column for :ref:`select-drilldown-calc-target`.
   The return value is calculated based on drilldown result in group.
-* Supported feature for drilldown. The syntax is same as
-  sum feature. You can specify multiple 'calc_types' at the same time.
 * [experimental] Added ``--with-jemalloc`` option to use ``jemalloc`` for ``malloc()/free()``.
   It'll improve performance on multi-threading usage.
 * groonga-httpd: Supported long error message over ``NGX_MAX_ERROR_STR``.
