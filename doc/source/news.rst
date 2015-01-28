@@ -33,6 +33,7 @@ Improvements
   By this change, long error message (>=2048) is not truncated.
 * [doc] Added documents about :ref:`select-drilldown-limit`,
   :ref:`select-drilldown-calc-types`, :ref:`select-drilldown-calc-target` and more.
+* groonga-httpd: Supported streaming dump functionality.
 
 Fixes
 ^^^^^
