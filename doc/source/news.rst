@@ -29,8 +29,8 @@ Improvements
   The return value is calculated based on drilldown result in group.
 * [experimental] Added ``--with-jemalloc`` option to use ``jemalloc`` for ``malloc()/free()``.
   It'll improve performance on multi-threading usage.
-* groonga-httpd: Supported long error message over ``NGX_MAX_ERROR_STR``.
-  By this change, long error message (>=2048) is not truncated.
+* groonga-httpd: Supported long error message over 2048 bytes.
+  By this change, long error message (>2048) is not truncated.
 * groonga-httpd: Supported streaming dump functionality.
 
 Fixes
