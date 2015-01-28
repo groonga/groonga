@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-01-28 17:27+0900\n"
+"PO-Revision-Date: 2015-01-28 18:30+0900\n"
 "Last-Translator: Takatsugu <nokubi@gmail.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -12406,6 +12406,101 @@ msgstr ""
 "ば、 ``if`` 制御文や ``for`` 繰り返し文や変数定義文といった文をサポートしてい"
 "ません。関数定義もサポートしていません。しかし、独自の演算子を追加していま"
 "す。独自の演算子はECMAScriptの構文を説明した後に説明します。"
+
+# 5865aa8618154b6cb735bed653def090
+msgid "Security"
+msgstr "セキュリティー"
+
+# 03920273a22640de979226a48adc1be6
+msgid ""
+"For security reason, you should not pass an input from users to Groonga "
+"directly. If there is an evil user, the user may input a query that "
+"retrieves records that should not be shown to the user."
+msgstr ""
+"セキュリティーの観点からユーザーからの入力をそのままGroongaに渡すべきではあり"
+"ません。悪意のあるユーザーがそのユーザーには参照できてはいけないレコードを取"
+"得するクエリーを入力するかもしれないからです。"
+
+msgid "Think about the following case."
+msgstr "例えば、以下の状況を考えてみましょう。"
+
+msgid ""
+"A Groonga application constructs a Groonga request by the following program::"
+msgstr ""
+"あるGroongaアプリケーションがGroongaへのリクエストを次のようなプログラムで構"
+"築していたとします。::"
+
+# b33b082426c94821ab291abc3a68bfcf
+msgid ""
+"``user_input`` is an input from user. If the input is ``query``, here is the "
+"constructed :ref:`select-filter` parameter::"
+msgstr ""
+"``user_input`` はユーザーからの入力です。入力が ``query`` だった場合は構築さ"
+"れた :ref:`select-filter` 引数は次のようになります。::"
+
+# 22133c8405ab48f7946c246e158b361d
+msgid ""
+"If the input is ``x\" || true || \"``, here is the constructed ref:`select-"
+"filter` parameter::"
+msgstr ""
+"もし、入力が ``x\" || true || \"`` だった場合は構築された :ref:`select-"
+"filter` 引数は次のようになります。::"
+
+# b110aa24838843f6905d214761341737
+msgid ""
+"This query matches to all records. The user will get all records from your "
+"database. The user may be evil."
+msgstr ""
+"このクエリーはすべてのレコードにマッチします。このユーザーはデータベース中の"
+"すべてのレコードを取得するでしょう。このユーザーには悪意があったのかもしれま"
+"せん。"
+
+# d3dc5fee886b41dea13e8abe4835b4a5
+msgid ""
+"It's better that you just receive an user input as a value. It means that "
+"you don't accept that user input can contain operator such as ``@`` and "
+"``&&``. If you accept operator, user can create evil query."
+msgstr ""
+"ユーザーからの入力では値だけを受け取るようにする方がよいです。これは、ユー"
+"ザーからの入力には ``@`` や ``&&`` のような演算子を受け付けないようにするとい"
+"うことです。もし、演算子も受け付けるようにするなら、ユーザーは悪意のあるクエ"
+"リーを作ることができます。"
+
+# da6b2bc245ff461888461545bedab6b4
+msgid ""
+"If user input has only value, you blocks evil query by escaping user input "
+"value. Here is a list how to escape user input value:"
+msgstr ""
+"ユーザーの入力が値だけなら、入力された値をエスケープすることで悪意のあるクエ"
+"リーを防ぐことができます。以下はユーザーの入力をどのようにエスケープすればよ"
+"いかのリストです。"
+
+# 3e7f47291e424cd58b65a2f700e87d54
+msgid "True value: Convert it to ``true``."
+msgstr "真の値： ``true`` に変換してください。"
+
+# 616922a50feb4586af06373ff9b68849
+msgid "False value: Convert it to ``false``."
+msgstr "負の値： ``false`` に変換してください。"
+
+# d95f99a4a4e343be89b391279e5196ac
+msgid ""
+"Numerical value: Convert it to number. For example, ``1.2`` should be "
+"converted to ``1.2``."
+msgstr ""
+"数値：数字に変換してください。例えば、 ``1.2`` は ``1.2`` にしてください。"
+
+# 0905fb902d244f9ebb768a767d09f098
+msgid ""
+"String value: Replace ``\"`` with ``\\\"`` and ``\\`` with ``\\\\`` in the "
+"string value and surround substituted string value by ``\"``. For example, "
+"``double \" quote and back \\ slash`` should be converted to ``\"double \\\" "
+"quote and back \\\\ slash\"``."
+msgstr ""
+"文字列：文字列中の ``\"`` を ``\\\"`` で、 ``\\`` を ``\\\\`` で置換してくだ"
+"さい。その後、置換した文字列を ``\"`` で囲んでください。例えば、 ``double \" "
+"quote and back \\ slash`` は ``\"double \\\" quote and back \\\\ slash\"`` に"
+"変換します。"
 
 msgid "Literals"
 msgstr "リテラル"

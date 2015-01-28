@@ -22,6 +22,54 @@ statement. Function definion is not supported too. But script syntax
 addes the original additional operators.  They are described after
 ECMAScript syntax is described.
 
+Security
+--------
+
+For security reason, you should not pass an input from users to
+Groonga directly. If there is an evil user, the user may input a query
+that retrieves records that should not be shown to the user.
+
+Think about the following case.
+
+A Groonga application constructs a Groonga request by the following
+program::
+
+  filter = "column @ \"#{user_input}\""
+  select_options = {
+    # ...
+    :filter => filter,
+  }
+  groonga_client.select(select_options)
+
+``user_input`` is an input from user. If the input is ``query``,
+here is the constructed :ref:`select-filter` parameter::
+
+  column @ "query"
+
+If the input is ``x" || true || "``, here is the constructed
+ref:`select-filter` parameter::
+
+  column @ "x" || true || ""
+
+This query matches to all records. The user will get all records from
+your database. The user may be evil.
+
+It's better that you just receive an user input as a value. It means
+that you don't accept that user input can contain operator such as
+``@`` and ``&&``. If you accept operator, user can create evil query.
+
+If user input has only value, you blocks evil query by escaping user
+input value. Here is a list how to escape user input value:
+
+  * True value: Convert it to ``true``.
+  * False value: Convert it to ``false``.
+  * Numerical value: Convert it to number. For example, ``1.2`` should
+    be converted to ``1.2``.
+  * String value: Replace ``"`` with ``\"`` and ``\`` with ``\\`` in
+    the string value and surround substituted string value by
+    ``"``. For example, ``double " quote and back \ slash`` should be
+    converted to ``"double \" quote and back \\ slash"``.
+
 Sample data
 -----------
 
