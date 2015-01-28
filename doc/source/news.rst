@@ -21,18 +21,18 @@ Improvements
   In previous versions, Groonga consumed larger initial file
   size on windows in contrast to UNIX like environment.
   To enable this feature, use ``GRN_IO_VERSION=1`` environment
-  variable.
-* Supported sum feature for drilldown. Here is the syntax how to use it.
-  ``select --drilldown[label].calc_type SUM --drilldown[label].calc_target target_column``
-  It returns drilldown result with max value in group.
-* Supported ``MIN``, ``MAX``, ``AVG`` feature for drilldown. The syntax is same as
+  variable. This feature isn't enabled by default because it is in experimental stage.
+* Supported ``SUM``, ``MIN``, ``MAX``, ``AVG`` feature for drilldown.
+  This feature is supported by extending newer drilldown syntax which supports label.
+  Specify ``SUM``, ``MIN``, ``MAX`` or ``AVG`` for :ref:`select-drilldown-calc-types`
+  and target column for :ref:`select-drilldown-calc-target`.
+  The return value is calculated based on drilldown result in group.
+* Supported feature for drilldown. The syntax is same as
   sum feature. You can specify multiple 'calc_types' at the same time.
 * [experimental] Added ``--with-jemalloc`` option to use ``jemalloc`` for ``malloc()/free()``.
   It'll improve performance on multi-threading usage.
 * groonga-httpd: Supported long error message over ``NGX_MAX_ERROR_STR``.
   By this change, long error message (>=2048) is not truncated.
-* [doc] Added documents about :ref:`select-drilldown-limit`,
-  :ref:`select-drilldown-calc-types`, :ref:`select-drilldown-calc-target` and more.
 * groonga-httpd: Supported streaming dump functionality.
 
 Fixes
