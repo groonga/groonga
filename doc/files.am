@@ -52,6 +52,25 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/select/adjuster_no_factor.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/adjuster_no_weight.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/adjuster_one.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_calc_types_all.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_calc_types_avg.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_calc_types_max.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_calc_types_min.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_calc_types_sum.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_filter.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_label_keys_multiple.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_label_output_columns_single_group_key.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_limit_negative.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_limit_simple.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_multiple.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_offset_negative.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_offset_simple.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_output_columns_referenced_type_column_asterisk.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_output_columns_referenced_type_column_definition.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_output_columns_referenced_type_column_label.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_output_columns_simple.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_simple.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_sortby_simple.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/filter_equal.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/filter_less_than.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/limit_negative.log \
@@ -84,6 +103,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/select/sortby_score_with_query.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/sortby_simple.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/table_nonexistent.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/usage_drilldown.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/usage_drilldown_only_query.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/usage_setup.log \
 	$(top_srcdir)/doc/source/example/reference/commands/status.log \
 	$(top_srcdir)/doc/source/example/reference/commands/suggest-completion.log \
@@ -612,6 +633,25 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/select/adjuster_no_factor.log \
 	source/example/reference/commands/select/adjuster_no_weight.log \
 	source/example/reference/commands/select/adjuster_one.log \
+	source/example/reference/commands/select/drilldown_calc_types_all.log \
+	source/example/reference/commands/select/drilldown_calc_types_avg.log \
+	source/example/reference/commands/select/drilldown_calc_types_max.log \
+	source/example/reference/commands/select/drilldown_calc_types_min.log \
+	source/example/reference/commands/select/drilldown_calc_types_sum.log \
+	source/example/reference/commands/select/drilldown_filter.log \
+	source/example/reference/commands/select/drilldown_label_keys_multiple.log \
+	source/example/reference/commands/select/drilldown_label_output_columns_single_group_key.log \
+	source/example/reference/commands/select/drilldown_limit_negative.log \
+	source/example/reference/commands/select/drilldown_limit_simple.log \
+	source/example/reference/commands/select/drilldown_multiple.log \
+	source/example/reference/commands/select/drilldown_offset_negative.log \
+	source/example/reference/commands/select/drilldown_offset_simple.log \
+	source/example/reference/commands/select/drilldown_output_columns_referenced_type_column_asterisk.log \
+	source/example/reference/commands/select/drilldown_output_columns_referenced_type_column_definition.log \
+	source/example/reference/commands/select/drilldown_output_columns_referenced_type_column_label.log \
+	source/example/reference/commands/select/drilldown_output_columns_simple.log \
+	source/example/reference/commands/select/drilldown_simple.log \
+	source/example/reference/commands/select/drilldown_sortby_simple.log \
 	source/example/reference/commands/select/filter_equal.log \
 	source/example/reference/commands/select/filter_less_than.log \
 	source/example/reference/commands/select/limit_negative.log \
@@ -644,6 +684,8 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/select/sortby_score_with_query.log \
 	source/example/reference/commands/select/sortby_simple.log \
 	source/example/reference/commands/select/table_nonexistent.log \
+	source/example/reference/commands/select/usage_drilldown.log \
+	source/example/reference/commands/select/usage_drilldown_only_query.log \
 	source/example/reference/commands/select/usage_setup.log \
 	source/example/reference/commands/status.log \
 	source/example/reference/commands/suggest-completion.log \
