@@ -103,8 +103,8 @@ quoted ``"Alice's brother (Bob)"`` or ``'Alice\'s brother (Bob)'``.
    you want to search ``(`` itself for example, you need to escape
    twice (``\\(``) in command line shell.  The command line shell
    interprets ``\\(`` as ``\(``, then pass such a literal to
-   groonga. groonga regards ``\(`` as ``(``, then search ``(`` itself
-   from database. If you can't do intended search by groonga, confirm
+   Groonga. Groonga regards ``\(`` as ``(``, then search ``(`` itself
+   from database. If you can't do intended search by Groonga, confirm
    whether special character is escaped properly.
 
 .. _conditional-expression:
