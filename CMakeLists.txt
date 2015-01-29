@@ -150,6 +150,9 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   check_cxxflag("-fexceptions")
   check_cxxflag("-fimplicit-templates")
   check_build_flag("-Wno-clobbered")
+  if(MRN_GROONGA_BUNDLED)
+    check_build_flag("-fPIC")
+  endif()
 endif()
 
 option(GRN_WITH_DEBUG "enable debug build." OFF)
@@ -223,6 +226,14 @@ endif()
 ac_check_lib(rt clock_gettime)
 if(HAVE_LIBRT)
   set(HAVE_CLOCK_GETTIME TRUE)
+endif()
+if(MRN_GROONGA_BUNDLED)
+  ac_check_lib(m sincos)
+  check_library_exists(stdc++ __cxa_begin_catch "${ARG2}"
+    STDCPP)
+  if(STDCPP)
+    set(STDCPP_LIBS "stdc++")
+  endif()
 endif()
 
 if(UNIX)
@@ -520,8 +531,10 @@ set(GRN_EXPANDED_DEFAULT_DOCUMENT_ROOT "${GRN_DEFAULT_DOCUMENT_ROOT}")
 set(EXEEXT "${CMAKE_EXECUTABLE_SUFFIX}")
 configure_file(groonga.pc.in "${CMAKE_CURRENT_BINARY_DIR}/groonga.pc" @ONLY)
 
-install(
-  FILES "${CMAKE_CURRENT_BINARY_DIR}/groonga.pc"
-  DESTINATION "${LIB_DIR}/pkgconfig/")
+if(NOT MRN_GROONGA_BUNDLED)
+  install(
+    FILES "${CMAKE_CURRENT_BINARY_DIR}/groonga.pc"
+    DESTINATION "${LIB_DIR}/pkgconfig/")
+endif()
 
 add_subdirectory(vendor/plugins)

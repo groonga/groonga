@@ -39,31 +39,56 @@ set_source_files_properties(dat.cpp ${LIBGRNDAT_SOURCES}
   PROPERTIES
   COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS}")
 
-add_library(libgroonga SHARED
-  ${LIBGROONGA_SOURCES}
-  ${LIBGRNDAT_SOURCES}
-  ${LIBGRNMRB_SOURCES}
-  ${MRUBY_LIBS})
+if(MRN_GROONGA_BUNDLED)
+  add_library(libgroonga STATIC
+    ${LIBGROONGA_SOURCES}
+    ${LIBGRNDAT_SOURCES}
+    ${LIBGRNMRB_SOURCES}
+    ${MRUBY_LIBS})
+else()
+  add_library(libgroonga SHARED
+    ${LIBGROONGA_SOURCES}
+    ${LIBGRNDAT_SOURCES}
+    ${LIBGRNMRB_SOURCES}
+    ${MRUBY_LIBS})
+endif()
 set_target_properties(libgroonga PROPERTIES OUTPUT_NAME "groonga")
-target_link_libraries(libgroonga
-  ${EXECINFO_LIBS}
-  ${RT_LIBS}
-  ${PTHREAD_LIBS}
-  ${Z_LIBS}
-  ${LIBLZ4_LIBRARIES}
-  ${DL_LIBS}
-  ${WS2_32_LIBS})
-
-install(TARGETS libgroonga
-  ARCHIVE DESTINATION "${LIB_DIR}"
-  LIBRARY DESTINATION "${LIB_DIR}"
-  RUNTIME DESTINATION "${BIN_DIR}")
+if(NOT MRN_GROONGA_BUNDLED)
+  target_link_libraries(libgroonga
+    ${EXECINFO_LIBS}
+    ${RT_LIBS}
+    ${PTHREAD_LIBS}
+    ${Z_LIBS}
+    ${LIBLZ4_LIBRARIES}
+    ${DL_LIBS}
+    ${WS2_32_LIBS})
+  install(TARGETS libgroonga
+    ARCHIVE DESTINATION "${LIB_DIR}"
+    LIBRARY DESTINATION "${LIB_DIR}"
+    RUNTIME DESTINATION "${BIN_DIR}")
+else()
+  target_link_libraries(libgroonga
+    ${EXECINFO_LIBS}
+    ${RT_LIBS}
+    ${PTHREAD_LIBS}
+    ${Z_LIBS}
+    ${LIBLZ4_LIBRARIES}
+    ${DL_LIBS}
+    ${M_LIBS}
+    ${STDCPP_LIBS}
+    ${WS2_32_LIBS})
+endif()
 
 if(GRN_WITH_MRUBY)
   read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mrb/scripts/sources.am
     RUBY_SCRIPTS)
   string(REGEX REPLACE "([^;]+)" "mrb/scripts/\\1"
     RUBY_SCRIPTS "${RUBY_SCRIPTS}")
+  if(NOT MRN_GROONGA_BUNDLED)
+    install(
+      FILES ${RUBY_SCRIPTS}
+      DESTINATION "${GRN_RELATIVE_RUBY_SCRIPTS_DIR}")
+  endif()
   install(
     FILES ${RUBY_SCRIPTS}
     DESTINATION "${GRN_RELATIVE_RUBY_SCRIPTS_DIR}")

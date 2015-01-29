@@ -13,4 +13,6 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-install(DIRECTORY admin DESTINATION "${GRN_DATA_DIR}/html")
+if(NOT MRN_GROONGA_BUNDLED)
+  install(DIRECTORY admin DESTINATION "${GRN_DATA_DIR}/html")
+endif()

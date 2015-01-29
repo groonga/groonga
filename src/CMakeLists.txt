@@ -25,7 +25,9 @@ set_source_files_properties(${GROONGA_SOURCES}
   PROPERTIES
   COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 target_link_libraries(groonga libgroonga)
-install(TARGETS groonga DESTINATION ${BIN_DIR})
+if(NOT MRN_GROONGA_BUNDLED)
+  install(TARGETS groonga DESTINATION ${BIN_DIR})
+endif()
 
 if(NOT WIN32)
   read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/grnslap_sources.am GRNSLAP_SOURCES)
@@ -34,7 +36,9 @@ if(NOT WIN32)
     PROPERTIES
     COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
   target_link_libraries(grnslap libgroonga)
-  install(TARGETS grnslap DESTINATION ${BIN_DIR})
+  if(NOT MRN_GROONGA_BUNDLED)
+    install(TARGETS grnslap DESTINATION ${BIN_DIR})
+  endif()
 endif()
 
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/groonga_benchmark_sources.am
@@ -44,5 +48,7 @@ set_source_files_properties(${GROONGA_BENCHMARK_SOURCES}
   PROPERTIES
   COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 target_link_libraries(groonga-benchmark libgroonga)
-install(TARGETS groonga-benchmark DESTINATION ${BIN_DIR})
+if(NOT MRN_GROONGA_BUNDLED)
+  install(TARGETS groonga-benchmark DESTINATION ${BIN_DIR})
+endif()
 

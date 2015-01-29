@@ -27,4 +27,6 @@ set_target_properties(tsv_query_expander PROPERTIES
   PREFIX ""
   OUTPUT_NAME "tsv")
 target_link_libraries(tsv_query_expander libgroonga)
-install(TARGETS tsv_query_expander DESTINATION "${QUERY_EXPANDERS_DIR}")
+if(NOT MRN_GROONGA_BUNDLED)
+  install(TARGETS tsv_query_expander DESTINATION "${QUERY_EXPANDERS_DIR}")
+endif()
