@@ -143,8 +143,8 @@
 #cmakedefine HAVE_FPCLASSIFY
 #cmakedefine HAVE_GMTIME_S
 #cmakedefine HAVE_GMTIME_R
-#cmakedefine HAVE_LOCALTIME_R
 #cmakedefine HAVE_LOCALTIME_S
+#cmakedefine HAVE_LOCALTIME_R
 #cmakedefine HAVE_MKOSTEMP
 #cmakedefine HAVE_OPEN
 #cmakedefine HAVE_READ
