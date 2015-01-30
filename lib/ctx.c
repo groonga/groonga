@@ -133,21 +133,25 @@ grn_rc
 grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf)
 {
   struct tm *ltm;
+  const char *function_name;
 #ifdef HAVE_LOCALTIME_S
   struct tm tm;
   time_t t = tv->tv_sec;
+  function_name = "localtime_s";
   ltm = (localtime_s(&tm, &t) == 0) ? &tm : NULL;
 #else /* HAVE_LOCALTIME_S */
 # ifdef HAVE_LOCALTIME_R
   struct tm tm;
   time_t t = tv->tv_sec;
+  function_name = "localtime_r";
   ltm = localtime_r(&t, &tm);
 # else /* HAVE_LOCALTIME_R */
   time_t tvsec = (time_t) tv->tv_sec;
+  function_name = "localtime";
   ltm = localtime(&tvsec);
 # endif /* HAVE_LOCALTIME_R */
 #endif /* HAVE_LOCALTIME_S */
-  if (!ltm) { SERR("localtime"); }
+  if (!ltm) { SERR(function_name); }
   snprintf(buf, GRN_TIMEVAL_STR_SIZE - 1, GRN_TIMEVAL_STR_FORMAT,
            ltm->tm_year + 1900, ltm->tm_mon + 1, ltm->tm_mday,
            ltm->tm_hour, ltm->tm_min, ltm->tm_sec,
