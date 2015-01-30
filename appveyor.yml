@@ -2,6 +2,8 @@ version: "{build}"
 clone_depth: 1
 build_script:
   - cmake . -G "Visual Studio 12"
+  - type CMakeFiles\CMakeOutput.log
+  - type CMakeFiles\CMakeError.log
   - cmake --build . --config RelWithDebInfo
 
 notifications:
