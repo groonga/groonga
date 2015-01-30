@@ -134,12 +134,12 @@ grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf)
 {
   struct tm *ltm;
   const char *function_name;
-#ifdef HAVE__LOCALTIME_S
+#ifdef HAVE_LOCALTIME_S
   struct tm tm;
   time_t t = tv->tv_sec;
-  function_name = "_localtime_s";
-  ltm = (_localtime_s(&tm, &t) == 0) ? &tm : NULL;
-#else /* HAVE__LOCALTIME_S */
+  function_name = "localtime_s";
+  ltm = (localtime_s(&tm, &t) == 0) ? &tm : NULL;
+#else /* HAVE_LOCALTIME_S */
 # ifdef HAVE_LOCALTIME_R
   struct tm tm;
   time_t t = tv->tv_sec;
@@ -150,7 +150,7 @@ grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf)
   function_name = "localtime";
   ltm = localtime(&tvsec);
 # endif /* HAVE_LOCALTIME_R */
-#endif /* HAVE__LOCALTIME_S */
+#endif /* HAVE_LOCALTIME_S */
   if (!ltm) { SERR(function_name); }
   snprintf(buf, GRN_TIMEVAL_STR_SIZE - 1, GRN_TIMEVAL_STR_FORMAT,
            ltm->tm_year + 1900, ltm->tm_mon + 1, ltm->tm_mday,
