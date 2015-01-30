@@ -141,6 +141,7 @@
 #cmakedefine HAVE_CLOCK_GETTIME
 #cmakedefine HAVE_CLOSE
 #cmakedefine HAVE_FPCLASSIFY
+#cmakedefine HAVE_GMTIME_S
 #cmakedefine HAVE_GMTIME_R
 #cmakedefine HAVE_LOCALTIME_R
 #cmakedefine HAVE_LOCALTIME_S
