@@ -2441,11 +2441,11 @@ grn_text_time2rfc1123(grn_ctx *ctx, grn_obj *bulk, int sec)
 {
   time_t tsec;
   struct tm *t;
-#ifdef HAVE_GMTIME_S
+#ifdef HAVE__GMTIME_S
   struct tm tm;
   tsec = (time_t)sec;
-  t = (gmtime_s(&tm, &tsec) == 0) ? &tm : NULL;
-#else /* HAVE_GMTIME_S */
+  t = (_gmtime_s(&tm, &tsec) == 0) ? &tm : NULL;
+#else /* HAVE__GMTIME_S */
 # ifdef HAVE_GMTIME_R
   struct tm tm;
   tsec = (time_t)sec;
@@ -2454,7 +2454,7 @@ grn_text_time2rfc1123(grn_ctx *ctx, grn_obj *bulk, int sec)
   tsec = (time_t)sec;
   t = gmtime(&tsec);
 # endif /* HAVE_GMTIME_R */
-#endif /* HAVE_GMTIME_S */
+#endif /* HAVE__GMTIME_S */
   if (t) {
     GRN_TEXT_SET(ctx, bulk, weekdays[t->tm_wday], 3);
     GRN_TEXT_PUTS(ctx, bulk, ", ");
