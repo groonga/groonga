@@ -2441,7 +2441,7 @@ grn_text_time2rfc1123(grn_ctx *ctx, grn_obj *bulk, int sec)
 {
   time_t tsec;
   struct tm *t;
-#ifdef HAVE_GMTIME_S
+#ifdef HAVE_GMTIME64_S
   struct tm tm;
   tsec = (time_t)sec;
   t = (gmtime_s(&tm, &tsec) == 0) ? &tm : NULL;
