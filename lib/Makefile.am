@@ -10,12 +10,12 @@ AM_CFLAGS =					\
 	$(COVERAGE_CFLAGS)			\
 	$(GRN_CFLAGS)				\
 	$(MESSAGE_PACK_CFLAGS)			\
-	$(MRUBY_CFLAGS)				\
 	$(LIBLZ4_CFLAGS)
 
 DEFAULT_INCLUDES =				\
 	-I$(top_builddir)			\
 	-I$(top_srcdir)/include			\
+	$(MRUBY_CFLAGS)				\
 	$(ONIGMO_CFLAGS)
 
 DEFS += -D_REENTRANT $(GRN_DEFS) -DGRN_DAT_EXPORT
