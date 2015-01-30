@@ -1,8 +1,8 @@
 version: "{build}"
 clone_depth: 1
 build_script:
- - cmake . -G "Visual Studio 12"
- - cmake --build . --config RelWithDebInfo
+  - cmake . -G "Visual Studio 12"
+  - cmake --build . --config RelWithDebInfo
 
 notifications:
   email:
