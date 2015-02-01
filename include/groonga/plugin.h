@@ -26,9 +26,24 @@
 extern "C" {
 #endif
 
-#define GRN_PLUGIN_INIT grn_plugin_impl_init
-#define GRN_PLUGIN_REGISTER grn_plugin_impl_register
-#define GRN_PLUGIN_FIN grn_plugin_impl_fin
+# define GRN_PLUGIN_IMPL_NAME_RAW(type)         \
+  grn_plugin_impl_ ## type
+# define GRN_PLUGIN_IMPL_NAME_TAGGED(type, tag) \
+  GRN_PLUGIN_IMPL_NAME_RAW(type ## _ ## tag)
+# define GRN_PLUGIN_IMPL_NAME_TAGGED_EXPANDABLE(type, tag)      \
+  GRN_PLUGIN_IMPL_NAME_TAGGED(type, tag)
+
+#if defined(GRN_PLUGIN_BUILTIN) && defined(GRN_PLUGIN_BUILTIN_TAG)
+# define GRN_PLUGIN_IMPL_NAME(type)                             \
+  GRN_PLUGIN_IMPL_NAME_TAGGED_EXPANDABLE(type, GRN_PLUGIN_BUILTIN_TAG)
+#else /* GRN_PLUGIN_BUILTIN */
+# define GRN_PLUGIN_IMPL_NAME(type)             \
+  GRN_PLUGIN_IMPL_NAME_RAW(type)
+#endif /* GRN_PLUGIN_BUILTIN */
+
+#define GRN_PLUGIN_INIT     GRN_PLUGIN_IMPL_NAME(init)
+#define GRN_PLUGIN_REGISTER GRN_PLUGIN_IMPL_NAME(register)
+#define GRN_PLUGIN_FIN      GRN_PLUGIN_IMPL_NAME(fin)
 
 #if defined(_WIN32) || defined(_WIN64)
 #  define GRN_PLUGIN_EXPORT __declspec(dllexport)
