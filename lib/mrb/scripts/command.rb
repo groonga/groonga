@@ -12,13 +12,21 @@ module Groonga
     end
 
     private
+    def context
+      @context ||= Context.instance
+    end
+
     def run_internal(input)
       begin
         run_body(input)
       rescue => error
-        Context.instance.record_error(:command_error, error)
+        context.record_error(:command_error, error)
         nil
       end
+    end
+
+    def output(object)
+      context.output(object)
     end
   end
 end
