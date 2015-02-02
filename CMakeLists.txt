@@ -227,7 +227,7 @@ ac_check_lib(rt clock_gettime)
 if(HAVE_LIBRT)
   set(HAVE_CLOCK_GETTIME TRUE)
 endif()
-ac_check_lib(m sincos)
+ac_check_lib(m fpclassify)
 if(MRN_GROONGA_BUNDLED)
   check_library_exists(stdc++ __cxa_begin_catch "${ARG2}"
     STDCPP)
