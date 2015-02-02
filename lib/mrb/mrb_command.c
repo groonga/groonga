@@ -172,7 +172,7 @@ grn_mrb_command_init(grn_ctx *ctx)
 
   mrb_define_singleton_method(mrb, (struct RObject *)klass, "register",
                               mrb_grn_command_singleton_register,
-                              MRB_ARGS_REQ(5));
+                              MRB_ARGS_REQ(2));
 
   mrb_define_method(mrb, klass, "initialize",
                     mrb_grn_command_initialize, MRB_ARGS_REQ(1));
