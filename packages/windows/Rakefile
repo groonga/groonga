@@ -48,9 +48,6 @@ else
   mecab_patches << "mecab-0.98-mingw-w64.diff"
 end
 
-use_seh_exception_p =
-  Pathname.new(`#{host}-g++ -print-file-name=libgcc_s_seh-1.dll`).exist?
-
 def download(url, download_dir)
   base_name = url.split("/").last
   absolute_output_path = download_dir + base_name
@@ -316,20 +313,17 @@ namespace :gcc do
   namespace :dll do
     desc "Bundle GCC related DLLs"
     task :bundle do
-      dlls = ["libstdc++-6.dll", "libwinpthread-1.dll"]
-      if groonga_win32_x86_p
-        dlls << "libgcc_s_sjlj-1.dll"
-      else
-        if use_seh_exception_p
-          dlls << "libgcc_s_seh-1.dll"
-        else
-          dlls << "libgcc_s_sjlj-1.dll"
-        end
-      end
+      dlls = [
+        "libstdc++-6.dll",
+        "libwinpthread-1.dll",
+        "libgcc_s_sjlj-1.dll",
+        "libgcc_s_seh-1.dll",
+      ]
       dlls.each do |dll|
-        full_path = `#{host}-g++ -print-file-name=#{dll}`.strip
+        full_path = Pathname.new(`#{host}-g++ -print-file-name=#{dll}`.strip)
+        next unless full_path.absolute?
         destination_path = (binary_dir + "bin" + dll).to_s
-        cp(full_path, destination_path)
+        cp(full_path.to_s, destination_path)
         chmod(0755, destination_path)
       end
     end
