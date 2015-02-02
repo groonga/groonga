@@ -1,4 +1,4 @@
-# Copyright(C) 2012-2014 Brazil
+# Copyright(C) 2012-2015 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -43,6 +43,10 @@ include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
 include(FindPkgConfig)
 include(${CMAKE_CURRENT_SOURCE_DIR}/build/cmake_modules/ReadFileList.cmake)
+
+option(GRN_EMBED
+  "Build as a static library to embed into an application"
+  OFF)
 
 set(BIN_DIR "bin")
 set(SBIN_DIR "sbin")
@@ -150,7 +154,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   check_cxxflag("-fexceptions")
   check_cxxflag("-fimplicit-templates")
   check_build_flag("-Wno-clobbered")
-  if(MRN_GROONGA_BUNDLED)
+  if(GRN_EMBED)
     check_build_flag("-fPIC")
   endif()
 endif()
@@ -228,7 +232,7 @@ ac_check_lib(rt clock_gettime)
 if(HAVE_LIBRT)
   set(HAVE_CLOCK_GETTIME TRUE)
 endif()
-if(MRN_GROONGA_BUNDLED)
+if(GRN_EMBED)
   check_library_exists(stdc++ __cxa_begin_catch "${ARG2}"
     STDCPP)
   if(STDCPP)
@@ -504,10 +508,12 @@ endif()
 
 add_subdirectory(vendor)
 add_subdirectory(lib)
-add_subdirectory(src)
-add_subdirectory(plugins)
-add_subdirectory(include)
-add_subdirectory(data)
+if(NOT GRN_EMBED)
+  add_subdirectory(src)
+  add_subdirectory(plugins)
+  add_subdirectory(include)
+  add_subdirectory(data)
+endif()
 
 configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
@@ -531,7 +537,7 @@ set(GRN_EXPANDED_DEFAULT_DOCUMENT_ROOT "${GRN_DEFAULT_DOCUMENT_ROOT}")
 set(EXEEXT "${CMAKE_EXECUTABLE_SUFFIX}")
 configure_file(groonga.pc.in "${CMAKE_CURRENT_BINARY_DIR}/groonga.pc" @ONLY)
 
-if(NOT MRN_GROONGA_BUNDLED)
+if(NOT GRN_EMBED)
   install(
     FILES "${CMAKE_CURRENT_BINARY_DIR}/groonga.pc"
     DESTINATION "${LIB_DIR}/pkgconfig/")

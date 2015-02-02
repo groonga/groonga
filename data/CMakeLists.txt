@@ -15,6 +15,4 @@
 
 add_subdirectory(html)
 
-if(NOT MRN_GROONGA_BUNDLED)
-  install(FILES groonga.conf DESTINATION "${GRN_CONFIG_DIR}/")
-endif()
+install(FILES groonga.conf DESTINATION "${GRN_CONFIG_DIR}/")
