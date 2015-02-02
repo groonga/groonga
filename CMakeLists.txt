@@ -44,9 +44,14 @@ include(CheckCXXCompilerFlag)
 include(FindPkgConfig)
 include(${CMAKE_CURRENT_SOURCE_DIR}/build/cmake_modules/ReadFileList.cmake)
 
+if(DEFINED GRN_EMBED)
+  set(GRN_EMBED_DEFAULT ${GRN_EMBED})
+else()
+  set(GRN_EMBED_DEFAULT OFF)
+endif()
 option(GRN_EMBED
   "Build as a static library to embed into an application"
-  OFF)
+  ${GRN_EMBED_DEFAULT})
 
 set(BIN_DIR "bin")
 set(SBIN_DIR "sbin")
