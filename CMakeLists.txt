@@ -215,6 +215,7 @@ include(build/ac_macros/check_headers.m4)
 include(build/ac_macros/check_functions.m4)
 
 ac_check_symbols(fpclassify math.h)
+ac_check_lib(m fpclassify)
 
 ac_check_lib(dl dlopen)
 ac_check_lib(execinfo backtrace)
@@ -227,7 +228,6 @@ ac_check_lib(rt clock_gettime)
 if(HAVE_LIBRT)
   set(HAVE_CLOCK_GETTIME TRUE)
 endif()
-ac_check_lib(m fpclassify)
 if(MRN_GROONGA_BUNDLED)
   check_library_exists(stdc++ __cxa_begin_catch "${ARG2}"
     STDCPP)
