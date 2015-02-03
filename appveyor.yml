@@ -5,8 +5,11 @@ build_script:
   - cmake --build . --config RelWithDebInfo
 
 notifications:
-  email:
-    - groonga-commit@lists.sourceforge.jp
+  - provider: Email
+    to:
+      - groonga-commit@lists.sourceforge.jp
+      - kou@clear-code.com
+    on_build_status_changed: true
 
 before_test:
   - gem install grntest
