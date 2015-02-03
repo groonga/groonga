@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2014 Brazil
+  Copyright(C) 2013-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -332,10 +332,10 @@ mrb_grn_expression_singleton_create(mrb_state *mrb, mrb_value klass)
 
   mrb_get_args(mrb, "o", &mrb_table);
   if (mrb_nil_p(mrb_table)) {
+    expr = grn_expr_create(ctx, NULL, 0);
+  } else {
     grn_obj *table = DATA_PTR(mrb_table);
     GRN_EXPR_CREATE_FOR_QUERY(ctx, table, expr, variable);
-  } else {
-    expr = grn_expr_create(ctx, NULL, 0);
   }
 
   if (!expr) {
