@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014 Brazil
+  Copyright(C) 2014-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -22,9 +22,11 @@
 #include <mruby.h>
 #include <mruby/class.h>
 #include <mruby/data.h>
+#include <mruby/hash.h>
 
 #include "mrb_ctx.h"
 #include "mrb_table.h"
+#include "mrb_converter.h"
 
 static mrb_value
 mrb_grn_table_is_locked(mrb_state *mrb, mrb_value self)
@@ -50,6 +52,45 @@ mrb_grn_table_get_size(mrb_state *mrb, mrb_value self)
   return mrb_fixnum_value(size);
 }
 
+static mrb_value
+mrb_grn_table_select(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *table;
+  grn_obj *expr;
+  grn_obj *result = NULL;
+  grn_operator operator = GRN_OP_OR;
+  mrb_value mrb_expr;
+  mrb_value mrb_options = mrb_nil_value();
+
+  table = DATA_PTR(self);
+  mrb_get_args(mrb, "o|H", &mrb_expr, &mrb_options);
+
+  expr = DATA_PTR(mrb_expr);
+
+  if (!mrb_nil_p(mrb_options)) {
+    mrb_value mrb_result;
+    mrb_value mrb_operator;
+
+    mrb_result = mrb_hash_get(mrb, mrb_options,
+                              mrb_symbol_value(mrb_intern_lit(mrb, "result")));
+    if (!mrb_nil_p(mrb_result)) {
+      result = DATA_PTR(mrb_result);
+    }
+
+    mrb_operator = mrb_hash_get(mrb, mrb_options,
+                                mrb_symbol_value(mrb_intern_lit(mrb, "operator")));
+    if (!mrb_nil_p(mrb_operator)) {
+      operator = mrb_fixnum(mrb_operator);
+    }
+  }
+
+  result = grn_table_select(ctx, table, expr, result, operator);
+  grn_mrb_ctx_check(mrb);
+
+  return grn_mrb_value_from_grn_obj(mrb, result);
+}
+
 void
 grn_mrb_table_init(grn_ctx *ctx)
 {
@@ -67,5 +108,7 @@ grn_mrb_table_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "size",
                     mrb_grn_table_get_size, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "select",
+                    mrb_grn_table_select, MRB_ARGS_ARG(1, 1));
 }
 #endif
