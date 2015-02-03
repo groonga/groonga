@@ -199,6 +199,14 @@ ctx_set_error_message(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+ctx_get_database(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+
+  return grn_mrb_value_from_grn_obj(mrb, grn_ctx_db(ctx));
+}
+
+static mrb_value
 ctx_output(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -733,6 +741,9 @@ grn_mrb_ctx_init(grn_ctx *ctx)
                     MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "error_message=", ctx_set_error_message,
                     MRB_ARGS_REQ(1));
+
+  mrb_define_method(mrb, klass, "database", ctx_get_database,
+                    MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "output", ctx_output,
                     MRB_ARGS_REQ(1));
