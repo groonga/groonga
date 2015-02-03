@@ -22,6 +22,7 @@
 #include <mruby.h>
 #include <mruby/class.h>
 #include <mruby/data.h>
+#include <mruby/string.h>
 #include <mruby/hash.h>
 
 #include "mrb_ctx.h"
@@ -52,7 +53,24 @@ mrb_grn_table_cursor_singleton_open(mrb_state *mrb, mrb_value klass)
 
   table = DATA_PTR(mrb_table);
   if (!mrb_nil_p(mrb_options)) {
+    mrb_value mrb_min;
     mrb_value mrb_flags;
+
+    mrb_min = mrb_hash_get(mrb, mrb_options,
+                           mrb_symbol_value(mrb_intern_lit(mrb, "min")));
+    if (!mrb_nil_p(mrb_min)) {
+      switch (mrb_type(mrb_min)) {
+      case MRB_TT_STRING :
+        min = RSTRING_PTR(mrb_min);
+        min_size = RSTRING_LEN(mrb_min);
+        break;
+      default :
+        mrb_raisef(mrb, E_NOTIMP_ERROR,
+                   "min: only string is supported for now: %s",
+                   mrb_min);
+        break;
+      }
+    }
 
     mrb_flags = mrb_hash_get(mrb, mrb_options,
                              mrb_symbol_value(mrb_intern_lit(mrb, "flags")));
