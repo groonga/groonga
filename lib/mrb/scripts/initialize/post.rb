@@ -1,5 +1,7 @@
 require "error"
 
+require "context"
+
 require "database"
 require "command"
 require "table_cursor"

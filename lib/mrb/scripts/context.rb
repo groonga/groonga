@@ -1,3 +1,6 @@
+require "context/error_level"
+require "context/rc"
+
 module Groonga
   class Context
     def guard(fallback=nil)

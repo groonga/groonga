@@ -736,9 +736,5 @@ grn_mrb_ctx_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "output", ctx_output,
                     MRB_ARGS_REQ(1));
-
-  grn_mrb_load(ctx, "context/error_level.rb");
-  grn_mrb_load(ctx, "context/rc.rb");
-  grn_mrb_load(ctx, "context.rb");
 }
 #endif
