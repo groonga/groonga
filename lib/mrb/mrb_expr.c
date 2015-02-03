@@ -456,7 +456,7 @@ mrb_grn_expression_parse(mrb_state *mrb, mrb_value self)
   grn_operator default_mode = GRN_OP_MATCH;
   grn_operator default_operator = GRN_OP_AND;
   grn_expr_flags flags = GRN_EXPR_SYNTAX_SCRIPT;
-  mrb_value mrb_options;
+  mrb_value mrb_options = mrb_nil_value();
 
   expr = DATA_PTR(self);
   mrb_get_args(mrb, "s|H", &query, &query_size, &mrb_options);
