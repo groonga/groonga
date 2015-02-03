@@ -1,0 +1,5 @@
+#@on-error omit
+register sharding/search
+#@on-error default
+
+logical_count
