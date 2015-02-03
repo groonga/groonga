@@ -19,7 +19,7 @@ module Groonga
         end
 
         total = 0
-        context.database.each_table do |table|
+        context.database.each_table(:prefix => "#{logical_table}_") do |table|
           total += table.size
         end
         output(total)
