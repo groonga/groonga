@@ -153,7 +153,7 @@ module Groonga
       ZLIB_ERROR =
         register(:zlib_error, -60, ZlibError)
       LZ4_ERROR =
-        register(:lz4_error, -61, Lz4Error)
+        register(:lz4_error, -61, LZ4Error)
       STACK_OVER_FLOW =
         register(:stack_over_flow, -62, StackOverFlow)
       SYNTAX_ERROR =

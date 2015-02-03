@@ -160,7 +160,7 @@ grn_mrb_error_init(grn_ctx *ctx)
                          groonga_error_class);
   mrb_define_class_under(mrb, module, "ZlibError",
                          groonga_error_class);
-  mrb_define_class_under(mrb, module, "Lz4Error",
+  mrb_define_class_under(mrb, module, "LZ4Error",
                          groonga_error_class);
   mrb_define_class_under(mrb, module, "StackOverFlow",
                          groonga_error_class);

@@ -621,7 +621,7 @@ grn_mrb_ctx_check(mrb_state *mrb)
              ctx->errbuf, ctx->rc);
     break;
   case GRN_LZ4_ERROR:
-    error_class = mrb_class_get_under(mrb, module, "Lz4Error");
+    error_class = mrb_class_get_under(mrb, module, "LZ4Error");
     snprintf(message, MESSAGE_SIZE,
              "LZ4 error: <%s>(%d)",
              ctx->errbuf, ctx->rc);
