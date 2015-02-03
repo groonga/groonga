@@ -38,6 +38,18 @@ mrb_grn_table_is_locked(mrb_state *mrb, mrb_value self)
   return mrb_bool_value(is_locked != 0);
 }
 
+static mrb_value
+mrb_grn_table_get_size(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  unsigned int size;
+
+  size = grn_table_size(ctx, DATA_PTR(self));
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_fixnum_value(size);
+}
+
 void
 grn_mrb_table_init(grn_ctx *ctx)
 {
@@ -52,5 +64,8 @@ grn_mrb_table_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "locked?",
                     mrb_grn_table_is_locked, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, klass, "size",
+                    mrb_grn_table_get_size, MRB_ARGS_NONE());
 }
 #endif
