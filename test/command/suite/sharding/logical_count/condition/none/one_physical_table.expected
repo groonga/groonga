@@ -1,0 +1,15 @@
+register sharding/search
+[[0,0.0,0.0],true]
+table_create Logs@20150203 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs@20150203 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+load --table Logs@20150203
+[
+{"timestamp": "2015-02-03 12:49:00"},
+{"timestamp": "2015-02-03 12:50:00"},
+{"timestamp": "2015-02-03 12:51:00"}
+]
+[[0,0.0,0.0],3]
+logical_count Logs
+[[0,0.0,0.0],3]

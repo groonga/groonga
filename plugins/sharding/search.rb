@@ -17,7 +17,12 @@ module Groonga
         if logical_table.nil?
           raise InvalidArgument, "[logical_count] logical_table is missing"
         end
-        output(0)
+
+        total = 0
+        context.database.each_table do |table|
+          total += table.size
+        end
+        output(total)
       end
     end
   end
