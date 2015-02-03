@@ -8,4 +8,7 @@ notifications:
   email:
     - groonga-commit@lists.sourceforge.jp
 
-test: off
+before_test:
+  - gem install grntest
+test_script:
+  - grntest --groonga src\groonga.exe --base-directory test\command
