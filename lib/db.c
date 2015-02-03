@@ -10674,7 +10674,7 @@ grn_column_index_accessor(grn_ctx *ctx, grn_obj *obj, grn_operator op,
   while (a) {
     grn_hook *hooks;
     grn_bool found = GRN_FALSE;
-    grn_hook_entry entry = -1;
+    grn_hook_entry entry = (grn_hook_entry)-1;
 
     if (a->action == GRN_ACCESSOR_GET_COLUMN_VALUE &&
         GRN_OBJ_INDEX_COLUMNP(a->obj)) {
@@ -10693,7 +10693,7 @@ grn_column_index_accessor(grn_ctx *ctx, grn_obj *obj, grn_operator op,
       break;
     }
 
-    if (entry == -1) {
+    if (entry == (grn_hook_entry)-1) {
       break;
     }
 
