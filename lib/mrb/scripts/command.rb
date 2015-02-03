@@ -19,6 +19,9 @@ module Groonga
     def run_internal(input)
       begin
         run_body(input)
+      rescue GroongaError => groonga_error
+        context.set_groonga_error(groonga_error)
+        nil
       rescue => error
         context.record_error(:command_error, error)
         nil
