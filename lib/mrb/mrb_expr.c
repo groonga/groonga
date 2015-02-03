@@ -25,6 +25,7 @@
 #include <mruby/data.h>
 #include <mruby/string.h>
 #include <mruby/array.h>
+#include <mruby/hash.h>
 
 #include "../grn_expr.h"
 #include "../grn_util.h"
@@ -444,6 +445,39 @@ mrb_grn_expression_allocate_constant(mrb_state *mrb, mrb_value self)
   return grn_mrb_value_from_grn_obj(mrb, grn_object);
 }
 
+static mrb_value
+mrb_grn_expression_parse(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *expr;
+  char *query;
+  mrb_int query_size;
+  grn_obj *default_column = NULL;
+  grn_operator default_mode = GRN_OP_MATCH;
+  grn_operator default_operator = GRN_OP_AND;
+  grn_expr_flags flags = GRN_EXPR_SYNTAX_SCRIPT;
+  mrb_value mrb_options;
+
+  expr = DATA_PTR(self);
+  mrb_get_args(mrb, "s|H", &query, &query_size, &mrb_options);
+
+  if (!mrb_nil_p(mrb_options)) {
+    mrb_value mrb_flags;
+
+    mrb_flags = mrb_hash_get(mrb, mrb_options,
+                             mrb_symbol_value(mrb_intern_lit(mrb, "flags")));
+    if (!mrb_nil_p(mrb_flags)) {
+      flags = mrb_fixnum(mrb_flags);
+    }
+  }
+
+  grn_expr_parse(ctx, expr, query, query_size, default_column,
+                 default_mode, default_operator, flags);
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_nil_value();
+}
+
 void
 grn_mrb_expr_init(grn_ctx *ctx)
 {
@@ -518,6 +552,9 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_expression_take_object, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "allocate_constant",
                     mrb_grn_expression_allocate_constant, MRB_ARGS_REQ(1));
+
+  mrb_define_method(mrb, klass, "parse",
+                    mrb_grn_expression_parse, MRB_ARGS_ARG(1, 1));
 
   grn_mrb_load(ctx, "expression.rb");
   grn_mrb_load(ctx, "scan_info.rb");
