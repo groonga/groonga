@@ -322,6 +322,41 @@ mrb_grn_expr_code_get_flags(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_expression_singleton_create(mrb_state *mrb, mrb_value klass)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_value mrb_expr;
+  mrb_value mrb_table;
+  mrb_value mrb_new_arguments[1];
+  grn_obj *expr, *variable = NULL;
+
+  mrb_get_args(mrb, "o", &mrb_table);
+  if (mrb_nil_p(mrb_table)) {
+    grn_obj *table = DATA_PTR(mrb_table);
+    GRN_EXPR_CREATE_FOR_QUERY(ctx, table, expr, variable);
+  } else {
+    expr = grn_expr_create(ctx, NULL, 0);
+  }
+
+  if (!expr) {
+    grn_mrb_ctx_check(mrb);
+    return mrb_nil_value();
+  }
+
+  mrb_new_arguments[0] = mrb_cptr_value(mrb, expr);
+  mrb_expr = mrb_obj_new(mrb, mrb_class_ptr(klass), 1, mrb_new_arguments);
+  {
+    mrb_value mrb_variable = mrb_nil_value();
+    if (variable) {
+      mrb_variable = grn_mrb_value_from_grn_obj(mrb, variable);
+    }
+    mrb_iv_set(mrb, mrb_expr, mrb_intern_lit(mrb, "@variable"), mrb_variable);
+  }
+
+  return mrb_expr;
+}
+
+static mrb_value
 mrb_grn_expression_initialize(mrb_state *mrb, mrb_value self)
 {
   mrb_value mrb_expression_ptr;
@@ -468,6 +503,11 @@ grn_mrb_expr_init(grn_ctx *ctx)
 
   klass = mrb_define_class_under(mrb, module, "Expression", object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
+
+  mrb_define_singleton_method(mrb, (struct RObject *)klass, "create",
+                              mrb_grn_expression_singleton_create,
+                              MRB_ARGS_REQ(1));
+
   mrb_define_method(mrb, klass, "initialize",
                     mrb_grn_expression_initialize, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "codes",
