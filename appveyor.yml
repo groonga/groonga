@@ -7,8 +7,8 @@ build_script:
 notifications:
   - provider: Email
     to:
-      - groonga-commit@lists.sourceforge.jp
       - kou@clear-code.com
+      - groonga-commit@lists.sourceforge.jp
     on_build_status_changed: true
 
 before_test:
