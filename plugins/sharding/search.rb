@@ -51,8 +51,11 @@ module Groonga
         when :none
           0
         when :all
-          return table.size if filter.nil?
-          filtered_count_n_records(table, filter)
+          if filter.nil?
+            table.size
+          else
+            filtered_count_n_records(table, filter)
+          end
         when :partial_min
           filtered_count_n_records(table, filter) do |expression|
             expression.append_constant(shard_key, Operator::PUSH, 1)
