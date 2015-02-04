@@ -131,7 +131,6 @@ module Groonga
         attr_reader :max, :max_border
         def initialize(input)
           @input = input
-          @shard_key = input[:shard_key]
           @min = parse_value(:min)
           @min_border = parse_border(:min_border)
           @max = parse_value(:max)
