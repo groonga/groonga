@@ -4,7 +4,7 @@ module Groonga
       register("logical_count",
                [
                  "logical_table",
-                 "shared_key",
+                 "shard_key",
                  "min",
                  "min_border",
                  "max",
