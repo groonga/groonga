@@ -478,6 +478,137 @@ mrb_grn_expression_parse(mrb_state *mrb, mrb_value self)
   return mrb_nil_value();
 }
 
+static mrb_value
+mrb_grn_expression_append_object(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *expr;
+  mrb_value mrb_object;
+  grn_obj *object;
+  grn_operator op;
+  int n_args;
+
+  expr = DATA_PTR(self);
+  mrb_get_args(mrb, "oii", &mrb_object, &op, &n_args);
+
+  object = DATA_PTR(mrb_object);
+  grn_expr_append_obj(ctx, expr, object, op, n_args);
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_nil_value();
+}
+
+static mrb_value
+mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *expr;
+  mrb_value mrb_constant;
+  grn_operator op;
+  int n_args;
+
+  expr = DATA_PTR(self);
+  mrb_get_args(mrb, "oii", &mrb_constant, &op, &n_args);
+
+  switch (mrb_type(mrb_constant)) {
+  case MRB_TT_FALSE :
+    if (mrb_nil_p(mrb_constant)) {
+      grn_obj constant;
+      GRN_VOID_INIT(&constant);
+      grn_expr_append_const(ctx, expr, &constant, op, n_args);
+      GRN_OBJ_FIN(ctx, &constant);
+    } else {
+      grn_obj constant;
+      GRN_BOOL_INIT(&constant, 0);
+      GRN_BOOL_SET(ctx, &constant, GRN_FALSE);
+      grn_expr_append_const(ctx, expr, &constant, op, n_args);
+      GRN_OBJ_FIN(ctx, &constant);
+    }
+    break;
+  case MRB_TT_TRUE :
+    {
+      grn_obj constant;
+      GRN_BOOL_INIT(&constant, 0);
+      GRN_BOOL_SET(ctx, &constant, GRN_TRUE);
+      grn_expr_append_const(ctx, expr, &constant, op, n_args);
+      GRN_OBJ_FIN(ctx, &constant);
+    }
+    break;
+  case MRB_TT_FIXNUM :
+    grn_expr_append_const_int(ctx, expr, mrb_fixnum(mrb_constant), op, n_args);
+    break;
+  case MRB_TT_SYMBOL :
+    {
+      const char *value;
+      mrb_int value_length;
+
+      value = mrb_sym2name_len(mrb, mrb_symbol(mrb_constant), &value_length);
+      grn_expr_append_const_str(ctx, expr, value, value_length, op, n_args);
+    }
+    break;
+  case MRB_TT_FLOAT :
+    {
+      grn_obj constant;
+      GRN_FLOAT_INIT(&constant, 0);
+      GRN_FLOAT_SET(ctx, &constant, mrb_float(mrb_constant));
+      grn_expr_append_const(ctx, expr, &constant, op, n_args);
+      GRN_OBJ_FIN(ctx, &constant);
+    }
+    break;
+  case MRB_TT_STRING :
+    grn_expr_append_const_str(ctx, expr,
+                              RSTRING_PTR(mrb_constant),
+                              RSTRING_LEN(mrb_constant),
+                              op, n_args);
+    break;
+  default :
+    {
+      struct RClass *klass;
+
+      klass = mrb_class(mrb, mrb_constant);
+      if (klass == ctx->impl->mrb.builtin.time_class) {
+        grn_obj constant;
+        mrb_value mrb_sec;
+        mrb_value mrb_usec;
+
+        mrb_sec = mrb_funcall(mrb, mrb_constant, "to_i", 0);
+        mrb_usec = mrb_funcall(mrb, mrb_constant, "usec", 0);
+        GRN_TIME_INIT(&constant, 0);
+        GRN_TIME_SET(ctx, &constant,
+                     GRN_TIME_PACK(mrb_fixnum(mrb_sec), mrb_fixnum(mrb_usec)));
+        grn_expr_append_const(ctx, expr, &constant, op, n_args);
+        GRN_OBJ_FIN(ctx, &constant);
+      } else {
+        mrb_raisef(mrb, E_ARGUMENT_ERROR,
+                   "unsupported constant to append to expression: %S",
+                   mrb_constant);
+      }
+    }
+    break;
+  }
+
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_nil_value();
+}
+
+static mrb_value
+mrb_grn_expression_append_operator(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *expr;
+  grn_operator op;
+  int n_args;
+
+  expr = DATA_PTR(self);
+  mrb_get_args(mrb, "ii", &op, &n_args);
+
+  grn_expr_append_op(ctx, expr, op, n_args);
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_nil_value();
+}
+
 void
 grn_mrb_expr_init(grn_ctx *ctx)
 {
@@ -555,6 +686,13 @@ grn_mrb_expr_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "parse",
                     mrb_grn_expression_parse, MRB_ARGS_ARG(1, 1));
+
+  mrb_define_method(mrb, klass, "append_object",
+                    mrb_grn_expression_append_object, MRB_ARGS_REQ(2));
+  mrb_define_method(mrb, klass, "append_constant",
+                    mrb_grn_expression_append_constant, MRB_ARGS_REQ(3));
+  mrb_define_method(mrb, klass, "append_operator",
+                    mrb_grn_expression_append_operator, MRB_ARGS_REQ(2));
 
   grn_mrb_load(ctx, "expression.rb");
   grn_mrb_load(ctx, "scan_info.rb");
