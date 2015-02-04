@@ -25,10 +25,8 @@
 extern "C" {
 #endif
 
-#ifdef GRN_WITH_MRUBY
 struct RClass *grn_mrb_class_from_grn_obj(mrb_state *mrb, grn_obj *object);
 mrb_value      grn_mrb_value_from_grn_obj(mrb_state *mrb, grn_obj *object);
-#endif
 
 #ifdef __cplusplus
 }

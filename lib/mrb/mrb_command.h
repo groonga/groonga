@@ -27,9 +27,7 @@ extern "C" {
 
 void grn_mrb_command_init(grn_ctx *ctx);
 
-#ifdef GRN_WITH_MRUBY
 mrb_value grn_mrb_command_instantiate(grn_ctx *ctx, grn_obj *command);
-#endif
 
 #ifdef __cplusplus
 }

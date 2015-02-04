@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2014 Brazil
+  Copyright(C) 2013-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -16,10 +16,12 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include "grn_ctx_impl.h"
+
+#ifdef GRN_WITH_MRUBY
 #include <string.h>
 
 #include "grn_ctx_impl_mrb.h"
-#include "grn_ctx_impl.h"
 
 #include "grn_mrb.h"
 #include "mrb/mrb_error.h"
@@ -49,7 +51,6 @@
 #include "mrb/mrb_table_cursor.h"
 #include "mrb/mrb_table_cursor_flags.h"
 
-#ifdef GRN_WITH_MRUBY
 # include <mruby/array.h>
 # include <mruby/variable.h>
 #endif
