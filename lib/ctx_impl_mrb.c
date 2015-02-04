@@ -142,18 +142,23 @@ grn_ctx_impl_mrb_init(grn_ctx *ctx)
     ctx->impl->mrb.object_class = NULL;
     ctx->impl->mrb.checked_procs = NULL;
     ctx->impl->mrb.registered_plugins = NULL;
+    ctx->impl->mrb.builtin.time_class = NULL;
   } else {
-    ctx->impl->mrb.state = mrb_open();
+    mrb_state *mrb;
+
+    mrb = mrb_open();
+    ctx->impl->mrb.state = mrb;
     ctx->impl->mrb.base_directory[0] = '\0';
     grn_ctx_impl_mrb_init_bindings(ctx);
     /* TODO: Implement better error handling on init. */
     if (ctx->impl->mrb.state->exc) {
-      mrb_print_error(ctx->impl->mrb.state);
+      mrb_print_error(mrb);
     }
     ctx->impl->mrb.checked_procs =
       grn_hash_create(ctx, NULL, sizeof(grn_id), 0, GRN_HASH_TINY);
     ctx->impl->mrb.registered_plugins =
       grn_hash_create(ctx, NULL, sizeof(grn_id), 0, GRN_HASH_TINY);
+    ctx->impl->mrb.builtin.time_class = mrb_class_get(mrb, "Time");
   }
 }
 

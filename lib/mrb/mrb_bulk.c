@@ -58,6 +58,7 @@ mrb_grn_bulk_get_value(mrb_state *mrb, mrb_value self)
 {
   grn_obj *bulk;
   mrb_value mrb_value_;
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
 
   bulk = DATA_PTR(self);
   switch (bulk->header.domain) {
@@ -81,11 +82,26 @@ mrb_grn_bulk_get_value(mrb_state *mrb, mrb_value self)
       mrb_value_ = mrb_fixnum_value(value);
     }
     break;
+  case GRN_DB_TIME :
+    {
+      int64_t value;
+      int32_t sec;
+      int32_t usec;
+
+      value = GRN_TIME_VALUE(bulk);
+      GRN_TIME_UNPACK(value, sec, usec);
+      mrb_value_ = mrb_funcall(mrb,
+                               mrb_obj_value(ctx->impl->mrb.builtin.time_class),
+                               "at",
+                               2,
+                               mrb_fixnum_value(sec),
+                               mrb_fixnum_value(usec));
+    }
+    break;
   default :
     {
 #define MESSAGE_SIZE 4096
       char message[MESSAGE_SIZE];
-      grn_ctx *ctx = (grn_ctx *)mrb->ud;
       grn_obj *domain;
       char domain_name[GRN_TABLE_MAX_KEY_SIZE];
       int domain_name_size;

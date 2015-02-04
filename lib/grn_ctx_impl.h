@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2014 Brazil
+  Copyright(C) 2009-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -101,6 +101,9 @@ struct _grn_mrb_data {
   struct RClass *object_class;
   grn_hash *checked_procs;
   grn_hash *registered_plugins;
+  struct {
+    struct RClass *time_class;
+  } builtin;
 };
 #endif
 
