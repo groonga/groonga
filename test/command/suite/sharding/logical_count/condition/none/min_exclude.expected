@@ -33,5 +33,5 @@ load --table Logs_20150205
 {"timestamp": "2015-02-05 13:52:00"}
 ]
 [[0,0.0,0.0],4]
-logical_count Logs   --min "2015-02-04 00:00:00"   --min_border "exclude"
-[[0,0.0,0.0],7]
+logical_count Logs timestamp   --min "2015-02-04 00:00:00"   --min_border "exclude"
+[[0,0.0,0.0],6]
