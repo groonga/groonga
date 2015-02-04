@@ -49,7 +49,7 @@ module Groonga
         cover_type = target_range.cover_type(shard_range)
         case cover_type
         when :none
-          return 0
+          0
         when :all
           return table.size if filter.nil?
           filtered_count_n_records(table, filter)
