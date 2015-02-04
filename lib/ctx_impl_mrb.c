@@ -53,7 +53,7 @@
 
 # include <mruby/array.h>
 # include <mruby/variable.h>
-#endif
+#endif /* GRN_WITH_MRUBY */
 
 #ifdef GRN_WITH_MRUBY
 static mrb_value
@@ -167,7 +167,7 @@ grn_ctx_impl_mrb_fin(grn_ctx *ctx)
     grn_hash_close(ctx, ctx->impl->mrb.registered_plugins);
   }
 }
-#else
+#else /* GRN_WITH_MRUBY */
 void
 grn_ctx_impl_mrb_init(grn_ctx *ctx)
 {
@@ -177,4 +177,4 @@ void
 grn_ctx_impl_mrb_fin(grn_ctx *ctx)
 {
 }
-#endif
+#endif /* GRN_WITH_MRUBY */
