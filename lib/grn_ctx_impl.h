@@ -102,6 +102,10 @@ struct _grn_mrb_data {
   grn_hash *checked_procs;
   grn_hash *registered_plugins;
   struct {
+    grn_obj from;
+    grn_obj to;
+  } buffer;
+  struct {
     struct RClass *time_class;
   } builtin;
 };

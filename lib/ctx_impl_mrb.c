@@ -24,6 +24,7 @@
 # include "grn_ctx_impl_mrb.h"
 
 # include "grn_mrb.h"
+# include "mrb/mrb_converter.h"
 # include "mrb/mrb_error.h"
 # include "mrb/mrb_id.h"
 # include "mrb/mrb_operator.h"
@@ -100,6 +101,7 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   grn_mrb_load(ctx, "require.rb");
   grn_mrb_load(ctx, "initialize/pre.rb");
 
+  grn_mrb_converter_init(ctx);
   grn_mrb_error_init(ctx);
   grn_mrb_id_init(ctx);
   grn_mrb_operator_init(ctx);
@@ -158,6 +160,8 @@ grn_ctx_impl_mrb_init(grn_ctx *ctx)
       grn_hash_create(ctx, NULL, sizeof(grn_id), 0, GRN_HASH_TINY);
     ctx->impl->mrb.registered_plugins =
       grn_hash_create(ctx, NULL, sizeof(grn_id), 0, GRN_HASH_TINY);
+    GRN_VOID_INIT(&(ctx->impl->mrb.buffer.from));
+    GRN_VOID_INIT(&(ctx->impl->mrb.buffer.to));
     ctx->impl->mrb.builtin.time_class = mrb_class_get(mrb, "Time");
   }
 }
@@ -170,6 +174,8 @@ grn_ctx_impl_mrb_fin(grn_ctx *ctx)
     ctx->impl->mrb.state = NULL;
     grn_hash_close(ctx, ctx->impl->mrb.checked_procs);
     grn_hash_close(ctx, ctx->impl->mrb.registered_plugins);
+    GRN_OBJ_FIN(ctx, &(ctx->impl->mrb.buffer.from));
+    GRN_OBJ_FIN(ctx, &(ctx->impl->mrb.buffer.to));
   }
 }
 #else /* GRN_WITH_MRUBY */

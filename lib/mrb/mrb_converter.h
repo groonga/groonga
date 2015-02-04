@@ -25,8 +25,13 @@
 extern "C" {
 #endif
 
+void grn_mrb_converter_init(grn_ctx *ctx);
+
 struct RClass *grn_mrb_class_from_grn_obj(mrb_state *mrb, grn_obj *object);
 mrb_value      grn_mrb_value_from_grn_obj(mrb_state *mrb, grn_obj *object);
+
+grn_id grn_mrb_class_to_grn_type(mrb_state *mrb, struct RClass *klass);
+grn_id grn_mrb_value_to_grn_type(mrb_state *mrb, mrb_value value);
 
 #ifdef __cplusplus
 }
