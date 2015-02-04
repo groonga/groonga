@@ -12,4 +12,4 @@ load --table Logs_20150203
 {"timestamp": "2015-02-03 12:51:00"}
 ]
 
-logical_count Logs
+logical_count Logs timestamp

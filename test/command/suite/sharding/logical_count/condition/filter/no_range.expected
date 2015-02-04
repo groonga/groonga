@@ -36,5 +36,5 @@ load --table Logs_20150205
 {"timestamp": "2015-02-05 13:51:00", "message": "Shutdown"}
 ]
 [[0,0.0,0.0],3]
-logical_count Logs --filter 'message == "Shutdown"'
+logical_count Logs timestamp --filter 'message == "Shutdown"'
 [[0,0.0,0.0],2]

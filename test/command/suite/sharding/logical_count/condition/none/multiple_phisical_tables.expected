@@ -30,5 +30,5 @@ load --table Logs_20150205
 {"timestamp": "2015-02-05 13:51:00"}
 ]
 [[0,0.0,0.0],3]
-logical_count Logs
+logical_count Logs timestamp
 [[0,0.0,0.0],6]
