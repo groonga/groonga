@@ -127,6 +127,19 @@ mrb_grn_table_cursor_next(mrb_state *mrb, mrb_value self)
   return mrb_fixnum_value(id);
 }
 
+static mrb_value
+mrb_grn_table_cursor_count(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  int n_records = 0;
+
+  while (grn_table_cursor_next(ctx, DATA_PTR(self)) != GRN_ID_NIL) {
+    n_records++;
+  }
+
+  return mrb_fixnum_value(n_records);
+}
+
 void
 grn_mrb_table_cursor_init(grn_ctx *ctx)
 {
@@ -148,5 +161,7 @@ grn_mrb_table_cursor_init(grn_ctx *ctx)
                     mrb_grn_table_cursor_close, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "next",
                     mrb_grn_table_cursor_next, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "count",
+                    mrb_grn_table_cursor_count, MRB_ARGS_NONE());
 }
 #endif
