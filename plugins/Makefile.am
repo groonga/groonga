@@ -15,4 +15,4 @@ dist_plugins_DATA =				\
 	$(ruby_scripts)
 endif
 
-include ruby_sources.am
+include ruby_scripts.am
