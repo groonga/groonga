@@ -513,8 +513,8 @@ grn_plugin_find_path_raw(grn_ctx *ctx, const char *path)
   }
 
   if (!S_ISREG(path_stat.st_mode)) {
-     return NULL;
-   }
+    return NULL;
+  }
 
   return GRN_STRDUP(path);
 }

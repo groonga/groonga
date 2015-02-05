@@ -20,3 +20,9 @@ add_subdirectory(query_expanders)
 add_subdirectory(ruby)
 add_subdirectory(token_filters)
 add_subdirectory(sharding)
+
+if(GRN_WITH_MRUBY)
+  read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/ruby_scripts.am RUBY_SCRIPTS)
+  install(FILES ${RUBY_SCRIPTS}
+    DESTINATION "${GRN_RELATIVE_PLUGINS_DIR}")
+endif()
