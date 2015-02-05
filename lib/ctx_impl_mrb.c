@@ -90,9 +90,13 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
 
   {
     mrb_value load_path;
+    const char *plugins_dir;
     const char *system_ruby_scripts_dir;
 
     load_path = mrb_ary_new(mrb);
+    plugins_dir = grn_plugin_get_system_plugins_dir();
+    mrb_ary_push(mrb, load_path,
+                 mrb_str_new_cstr(mrb, plugins_dir));
     system_ruby_scripts_dir = grn_mrb_get_system_ruby_scripts_dir(ctx);
     mrb_ary_push(mrb, load_path,
                  mrb_str_new_cstr(mrb, system_ruby_scripts_dir));
