@@ -33,6 +33,55 @@ static struct mrb_data_type mrb_grn_table_cursor_type = {
   NULL
 };
 
+typedef union {
+  int64_t time_value;
+} border_value_buffer;
+
+static void
+mrb_value_to_border_value(mrb_state *mrb,
+                          const char *type,
+                          mrb_value mrb_border_value,
+                          border_value_buffer *buffer,
+                          void **border_value,
+                          unsigned int *border_value_size)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+
+  if (mrb_nil_p(mrb_border_value)) {
+    return;
+  }
+
+  switch (mrb_type(mrb_border_value)) {
+  case MRB_TT_STRING :
+    *border_value = RSTRING_PTR(mrb_border_value);
+    *border_value_size = RSTRING_LEN(mrb_border_value);
+    break;
+  default :
+    {
+      struct RClass *klass;
+
+      klass = mrb_class(mrb, mrb_border_value);
+      if (klass == ctx->impl->mrb.builtin.time_class) {
+        mrb_value mrb_sec;
+        mrb_value mrb_usec;
+
+        mrb_sec = mrb_funcall(mrb, mrb_border_value, "to_i", 0);
+        mrb_usec = mrb_funcall(mrb, mrb_border_value, "usec", 0);
+        buffer->time_value = GRN_TIME_PACK(mrb_fixnum(mrb_sec),
+                                          mrb_fixnum(mrb_usec));
+        *border_value = &(buffer->time_value);
+        *border_value_size = sizeof(buffer->time_value);
+      } else {
+        mrb_raisef(mrb, E_NOTIMP_ERROR,
+                   "%s: only String and Time is supported for now: %S",
+                   type,
+                   mrb_border_value);
+      }
+    }
+    break;
+  }
+}
+
 static mrb_value
 mrb_grn_table_cursor_singleton_open(mrb_state *mrb, mrb_value klass)
 {
@@ -43,8 +92,10 @@ mrb_grn_table_cursor_singleton_open(mrb_state *mrb, mrb_value klass)
   grn_obj *table;
   void *min = NULL;
   unsigned int min_size = 0;
+  border_value_buffer min_buffer;
   void *max = NULL;
   unsigned int max_size = 0;
+  border_value_buffer max_buffer;
   int offset = 0;
   int limit = -1;
   int flags = 0;
@@ -54,23 +105,16 @@ mrb_grn_table_cursor_singleton_open(mrb_state *mrb, mrb_value klass)
   table = DATA_PTR(mrb_table);
   if (!mrb_nil_p(mrb_options)) {
     mrb_value mrb_min;
+    mrb_value mrb_max;
     mrb_value mrb_flags;
 
     mrb_min = mrb_hash_get(mrb, mrb_options,
                            mrb_symbol_value(mrb_intern_lit(mrb, "min")));
-    if (!mrb_nil_p(mrb_min)) {
-      switch (mrb_type(mrb_min)) {
-      case MRB_TT_STRING :
-        min = RSTRING_PTR(mrb_min);
-        min_size = RSTRING_LEN(mrb_min);
-        break;
-      default :
-        mrb_raisef(mrb, E_NOTIMP_ERROR,
-                   "min: only string is supported for now: %s",
-                   mrb_min);
-        break;
-      }
-    }
+    mrb_value_to_border_value(mrb, "min", mrb_min, &min_buffer, &min, &min_size);
+
+    mrb_max = mrb_hash_get(mrb, mrb_options,
+                           mrb_symbol_value(mrb_intern_lit(mrb, "max")));
+    mrb_value_to_border_value(mrb, "max", mrb_max, &max_buffer, &max, &max_size);
 
     mrb_flags = mrb_hash_get(mrb, mrb_options,
                              mrb_symbol_value(mrb_intern_lit(mrb, "flags")));
