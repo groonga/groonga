@@ -59,6 +59,52 @@ writer_write(mrb_state *mrb, mrb_value self)
   return mrb_nil_value();
 }
 
+static mrb_value
+writer_open_array(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  char *name;
+  mrb_int n_elements;
+
+  mrb_get_args(mrb, "zi", &name, &n_elements);
+  GRN_OUTPUT_ARRAY_OPEN(name, n_elements);
+
+  return mrb_nil_value();
+}
+
+static mrb_value
+writer_close_array(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+
+  GRN_OUTPUT_ARRAY_CLOSE();
+
+  return mrb_nil_value();
+}
+
+static mrb_value
+writer_open_map(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  char *name;
+  mrb_int n_elements;
+
+  mrb_get_args(mrb, "zi", &name, &n_elements);
+  GRN_OUTPUT_MAP_OPEN(name, n_elements);
+
+  return mrb_nil_value();
+}
+
+static mrb_value
+writer_close_map(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+
+  GRN_OUTPUT_MAP_CLOSE();
+
+  return mrb_nil_value();
+}
+
 void
 grn_mrb_writer_init(grn_ctx *ctx)
 {
@@ -70,5 +116,13 @@ grn_mrb_writer_init(grn_ctx *ctx)
   klass = mrb_define_class_under(mrb, module, "Writer", mrb->object_class);
 
   mrb_define_method(mrb, klass, "write", writer_write, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "open_array",
+                    writer_open_array, MRB_ARGS_REQ(2));
+  mrb_define_method(mrb, klass, "close_array",
+                    writer_close_array, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "open_map",
+                    writer_open_map, MRB_ARGS_REQ(2));
+  mrb_define_method(mrb, klass, "close_map",
+                    writer_close_map, MRB_ARGS_NONE());
 }
 #endif

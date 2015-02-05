@@ -20,4 +20,5 @@ RUBY_SCRIPT_FILES =				\
 	scan_info.rb				\
 	scan_info_builder.rb			\
 	scan_info_data.rb			\
-	table_cursor.rb
+	table_cursor.rb				\
+	writer.rb

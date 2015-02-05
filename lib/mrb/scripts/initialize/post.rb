@@ -2,6 +2,8 @@ require "error"
 
 require "context"
 
+require "writer"
+
 require "database"
 require "command"
 require "table_cursor"
