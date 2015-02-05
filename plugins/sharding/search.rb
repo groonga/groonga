@@ -83,16 +83,16 @@ module Groonga
                                      target_range.min, target_range.min_border,
                                      nil, nil)
           else
-          filtered_count_n_records(table, filter) do |expression|
-            expression.append_object(shard_key, Operator::PUSH, 1)
-            expression.append_operator(Operator::GET_VALUE, 1)
-            expression.append_constant(target_range.min, Operator::PUSH, 1)
-            if target_range.min_border == :include
-              expression.append_operator(Operator::GREATER_EQUAL, 2)
-            else
-              expression.append_operator(Operator::GREATER, 2)
+            filtered_count_n_records(table, filter) do |expression|
+              expression.append_object(shard_key, Operator::PUSH, 1)
+              expression.append_operator(Operator::GET_VALUE, 1)
+              expression.append_constant(target_range.min, Operator::PUSH, 1)
+              if target_range.min_border == :include
+                expression.append_operator(Operator::GREATER_EQUAL, 2)
+              else
+                expression.append_operator(Operator::GREATER, 2)
+              end
             end
-          end
           end
         when :partial_max
           if use_range_index
@@ -100,16 +100,16 @@ module Groonga
                                      nil, nil,
                                      target_range.max, target_range.max_border)
           else
-          filtered_count_n_records(table, filter) do |expression|
-            expression.append_object(shard_key, Operator::PUSH, 1)
-            expression.append_operator(Operator::GET_VALUE, 1)
-            expression.append_constant(target_range.max, Operator::PUSH, 1)
-            if target_range.max_border == :include
-              expression.append_operator(Operator::LESS_EQUAL, 2)
-            else
-              expression.append_operator(Operator::LESS, 2)
+            filtered_count_n_records(table, filter) do |expression|
+              expression.append_object(shard_key, Operator::PUSH, 1)
+              expression.append_operator(Operator::GET_VALUE, 1)
+              expression.append_constant(target_range.max, Operator::PUSH, 1)
+              if target_range.max_border == :include
+                expression.append_operator(Operator::LESS_EQUAL, 2)
+              else
+                expression.append_operator(Operator::LESS, 2)
+              end
             end
-          end
           end
         when :partial_min_and_max
           if use_range_index
@@ -117,18 +117,18 @@ module Groonga
                                      target_range.min, target_range.min_border,
                                      target_range.max, target_range.max_border)
           else
-          filtered_count_n_records(table, filter) do |expression|
-            expression.append_object(context["between"], Operator::PUSH, 1)
-            expression.append_object(shard_key, Operator::PUSH, 1)
-            expression.append_operator(Operator::GET_VALUE, 1)
-            expression.append_constant(target_range.min, Operator::PUSH, 1)
-            expression.append_constant(target_range.min_border,
-                                       Operator::PUSH, 1)
-            expression.append_constant(target_range.max, Operator::PUSH, 1)
-            expression.append_constant(target_range.max_border,
-                                       Operator::PUSH, 1)
-            expression.append_operator(Operator::CALL, 5)
-          end
+            filtered_count_n_records(table, filter) do |expression|
+              expression.append_object(context["between"], Operator::PUSH, 1)
+              expression.append_object(shard_key, Operator::PUSH, 1)
+              expression.append_operator(Operator::GET_VALUE, 1)
+              expression.append_constant(target_range.min, Operator::PUSH, 1)
+              expression.append_constant(target_range.min_border,
+                                         Operator::PUSH, 1)
+              expression.append_constant(target_range.max, Operator::PUSH, 1)
+              expression.append_constant(target_range.max_border,
+                                         Operator::PUSH, 1)
+              expression.append_operator(Operator::CALL, 5)
+            end
           end
         end
       end
