@@ -455,8 +455,8 @@ grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
 #ifdef WIN32
 static char *win32_plugins_dir = NULL;
 static char win32_plugins_dir_buffer[PATH_MAX];
-const char *
-grn_plugin_get_system_plugins_dir(void)
+static const char *
+grn_plugin_get_default_system_plugins_dir(void)
 {
   if (!win32_plugins_dir) {
     const char *base_dir;
@@ -474,12 +474,25 @@ grn_plugin_get_system_plugins_dir(void)
 }
 
 #else /* WIN32 */
-const char *
-grn_plugin_get_system_plugins_dir(void)
+static const char *
+grn_plugin_get_default_system_plugins_dir(void)
 {
   return GRN_PLUGINS_DIR;
 }
 #endif /* WIN32 */
+
+const char *
+grn_plugin_get_system_plugins_dir(void)
+{
+  const char *plugins_dir;
+
+  plugins_dir = getenv("GRN_PLUGINS_DIR");
+  if (!plugins_dir) {
+    plugins_dir = grn_plugin_get_default_system_plugins_dir();
+  }
+
+  return plugins_dir;
+}
 
 static char *
 grn_plugin_find_path_raw(grn_ctx *ctx, const char *path)
@@ -594,10 +607,7 @@ grn_plugin_find_path(grn_ctx *ctx, const char *name)
   if (name[0] == '/') {
     path[0] = '\0';
   } else {
-    plugins_dir = getenv("GRN_PLUGINS_DIR");
-    if (!plugins_dir) {
-      plugins_dir = grn_plugin_get_system_plugins_dir();
-    }
+    plugins_dir = grn_plugin_get_system_plugins_dir();
     strcpy(path, plugins_dir);
 
     dir_last_char = plugins_dir[strlen(path) - 1];
@@ -670,10 +680,7 @@ grn_plugin_register(grn_ctx *ctx, const char *name)
         prefix_separator = "";
         suffix = "";
       } else {
-        prefix = getenv("GRN_PLUGINS_DIR");
-        if (!prefix) {
-          prefix = grn_plugin_get_system_plugins_dir();
-        }
+        prefix = grn_plugin_get_system_plugins_dir();
         if (prefix[strlen(prefix) - 1] != '/') {
           prefix_separator = "/";
         } else {
