@@ -29,6 +29,9 @@ extern "C" {
 void grn_mrb_bulk_init(grn_ctx *ctx);
 
 mrb_value grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk);
+grn_obj  *grn_mrb_value_to_bulk(mrb_state *mrb,
+                                mrb_value mrb_value_,
+                                grn_obj *bulk);
 
 #ifdef __cplusplus
 }
