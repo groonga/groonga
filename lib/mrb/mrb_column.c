@@ -25,6 +25,7 @@
 
 #include "mrb_ctx.h"
 #include "mrb_column.h"
+#include "mrb_converter.h"
 
 static mrb_value
 mrb_grn_column_is_locked(mrb_state *mrb, mrb_value self)
@@ -36,6 +37,20 @@ mrb_grn_column_is_locked(mrb_state *mrb, mrb_value self)
   grn_mrb_ctx_check(mrb);
 
   return mrb_bool_value(is_locked != 0);
+}
+
+static mrb_value
+mrb_grn_column_get_table(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *table;
+
+  table = grn_column_table(ctx, DATA_PTR(self));
+  if (!table) {
+    return mrb_nil_value();
+  }
+
+  return grn_mrb_value_from_grn_obj(mrb, table);
 }
 
 void
@@ -52,5 +67,8 @@ grn_mrb_column_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "locked?",
                     mrb_grn_column_is_locked, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, klass, "table",
+                    mrb_grn_column_get_table, MRB_ARGS_NONE());
 }
 #endif
