@@ -1,2 +1,3 @@
 sharding_scripts =				\
-	logical_count.rb
+	logical_count.rb			\
+	logical_enumerator.rb
