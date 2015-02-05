@@ -22,6 +22,15 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <sys/stat.h>
+#include <dirent.h>
+
+#ifndef S_ISREG
+# ifdef _S_IFREG
+#  define S_ISREG(mode) (mode & _S_IFREG)
+# endif /* _S_IFREG */
+#endif /* !S_ISREG */
+
 #include "grn_db.h"
 #include "grn_plugin.h"
 #include "grn_ctx_impl.h"
@@ -497,15 +506,16 @@ grn_plugin_get_system_plugins_dir(void)
 static char *
 grn_plugin_find_path_raw(grn_ctx *ctx, const char *path)
 {
-  FILE *plugin_file;
+  struct stat path_stat;
 
-  plugin_file = fopen(path, "r");
-
-  if (!plugin_file) {
+  if (stat(path, &path_stat) != 0) {
     return NULL;
   }
 
-  fclose(plugin_file);
+  if (!S_ISREG(path_stat.st_mode)) {
+     return NULL;
+   }
+
   return GRN_STRDUP(path);
 }
 
