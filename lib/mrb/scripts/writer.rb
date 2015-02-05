@@ -2,14 +2,20 @@ module Groonga
   class Writer
     def array(name, n_elements)
       open_array(name, n_elements)
-      yield
-      close_array
+      begin
+        yield
+      ensure
+        close_array
+      end
     end
 
     def map(name, n_elements)
       open_map(name, n_elements)
-      yield
-      close_map
+      begin
+        yield
+      ensure
+        close_map
+      end
     end
   end
 end
