@@ -1,1 +1,1 @@
-require "sharding/search"
+require "sharding/logical_count"

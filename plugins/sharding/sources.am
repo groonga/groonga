@@ -1,2 +1,2 @@
 sharding_scripts =				\
-	search.rb
+	logical_count.rb
