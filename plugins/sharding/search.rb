@@ -57,14 +57,32 @@ module Groonga
         cover_type = target_range.cover_type(shard_range)
         case cover_type
         when :none
-          0
+          return 0
         when :all
           if filter.nil?
-            table.size
+            return table.size
           else
-            filtered_count_n_records(table, filter)
+            return filtered_count_n_records(table, filter)
           end
+        end
+
+        use_range_index = false
+        range_index = nil
+        if filter.nil?
+          index_info = shard_key.find_index(Operator::LESS)
+          if index_info
+            range_index = index_info.index
+            use_range_index = true
+          end
+        end
+
+        case cover_type
         when :partial_min
+          if use_range_index
+            count_n_records_in_range(range_index,
+                                     target_range.min, target_range.min_border,
+                                     nil, nil)
+          else
           filtered_count_n_records(table, filter) do |expression|
             expression.append_object(shard_key, Operator::PUSH, 1)
             expression.append_operator(Operator::GET_VALUE, 1)
@@ -75,7 +93,13 @@ module Groonga
               expression.append_operator(Operator::GREATER, 2)
             end
           end
+          end
         when :partial_max
+          if use_range_index
+            count_n_records_in_range(range_index,
+                                     nil, nil,
+                                     target_range.max, target_range.max_border)
+          else
           filtered_count_n_records(table, filter) do |expression|
             expression.append_object(shard_key, Operator::PUSH, 1)
             expression.append_operator(Operator::GET_VALUE, 1)
@@ -86,7 +110,13 @@ module Groonga
               expression.append_operator(Operator::LESS, 2)
             end
           end
+          end
         when :partial_min_and_max
+          if use_range_index
+            count_n_records_in_range(range_index,
+                                     target_range.min, target_range.min_border,
+                                     target_range.max, target_range.max_border)
+          else
           filtered_count_n_records(table, filter) do |expression|
             expression.append_object(context["between"], Operator::PUSH, 1)
             expression.append_object(shard_key, Operator::PUSH, 1)
@@ -98,6 +128,7 @@ module Groonga
             expression.append_constant(target_range.max_border,
                                        Operator::PUSH, 1)
             expression.append_operator(Operator::CALL, 5)
+          end
           end
         end
       end
@@ -122,6 +153,38 @@ module Groonga
         ensure
           filtered_table.close if filtered_table
           expression.close if expression
+        end
+      end
+
+      def count_n_records_in_range(range_index,
+                                   min, min_border, max, max_border)
+        flags = TableCursorFlags::BY_KEY
+        case min_border
+        when :include
+          flags |= TableCursorFlags::GE
+        when :exclude
+          flags |= TableCursorFlags::GT
+        end
+        case max_border
+        when :include
+          flags |= TableCursorFlags::LE
+        when :exclude
+          flags |= TableCursorFlags::LT
+        end
+
+        table_cursor = TableCursor.open(range_index.table,
+                                        :min => min,
+                                        :max => max,
+                                        :flags => flags)
+        begin
+          index_cursor = IndexCursor.open(table_cursor, range_index)
+          begin
+            index_cursor.count
+          ensure
+            index_cursor.close
+          end
+        ensure
+          table_cursor.close
         end
       end
 
