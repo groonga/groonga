@@ -92,6 +92,7 @@
 #cmakedefine GRN_WITH_ZLIB
 
 /* headers */
+#cmakedefine HAVE_DIRENT_H
 #cmakedefine HAVE_DLFCN_H
 #cmakedefine HAVE_ERRNO_H
 #cmakedefine HAVE_EXECINFO_H

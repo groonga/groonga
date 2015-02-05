@@ -23,7 +23,9 @@
 #include <string.h>
 
 #include <sys/stat.h>
-#include <dirent.h>
+#ifdef HAVE_DIRENT_H
+# include <dirent.h>
+#endif /* HAVE_DIRENT_H */
 
 #ifndef S_ISREG
 # ifdef _S_IFREG
