@@ -1,5 +1,5 @@
 module Groonga
-  class TableCursor
+  class IndexCursor
     class << self
       def open(*arguments)
         cursor = open_raw(*arguments)
@@ -12,14 +12,6 @@ module Groonga
         else
           cursor
         end
-      end
-    end
-
-    def each
-      loop do
-        id = self.next
-        return if id == Groonga::ID::NIL
-        yield(id)
       end
     end
   end

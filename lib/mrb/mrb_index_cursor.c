@@ -34,7 +34,7 @@ static struct mrb_data_type mrb_grn_index_cursor_type = {
 };
 
 static mrb_value
-mrb_grn_index_cursor_singleton_open(mrb_state *mrb, mrb_value klass)
+mrb_grn_index_cursor_singleton_open_raw(mrb_state *mrb, mrb_value klass)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   mrb_value mrb_table_cursor;
@@ -114,8 +114,8 @@ grn_mrb_index_cursor_init(grn_ctx *ctx)
   klass = mrb_define_class_under(mrb, module, "IndexCursor", mrb->object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
 
-  mrb_define_singleton_method(mrb, (struct RObject *)klass, "open",
-                              mrb_grn_index_cursor_singleton_open,
+  mrb_define_singleton_method(mrb, (struct RObject *)klass, "open_raw",
+                              mrb_grn_index_cursor_singleton_open_raw,
                               MRB_ARGS_ARG(2, 1));
 
   mrb_define_method(mrb, klass, "initialize",

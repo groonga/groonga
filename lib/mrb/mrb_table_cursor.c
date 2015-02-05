@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014 Brazil
+  Copyright(C) 2014-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -83,7 +83,7 @@ mrb_value_to_border_value(mrb_state *mrb,
 }
 
 static mrb_value
-mrb_grn_table_cursor_singleton_open(mrb_state *mrb, mrb_value klass)
+mrb_grn_table_cursor_singleton_open_raw(mrb_state *mrb, mrb_value klass)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   mrb_value mrb_table;
@@ -195,8 +195,8 @@ grn_mrb_table_cursor_init(grn_ctx *ctx)
   klass = mrb_define_class_under(mrb, module, "TableCursor", mrb->object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
 
-  mrb_define_singleton_method(mrb, (struct RObject *)klass, "open",
-                              mrb_grn_table_cursor_singleton_open,
+  mrb_define_singleton_method(mrb, (struct RObject *)klass, "open_raw",
+                              mrb_grn_table_cursor_singleton_open_raw,
                               MRB_ARGS_ARG(1, 1));
 
   mrb_define_method(mrb, klass, "initialize",
