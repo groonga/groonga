@@ -31,6 +31,8 @@ libgrnmrb_la_SOURCES =				\
 	mrb_id.h				\
 	mrb_index_column.c			\
 	mrb_index_column.h			\
+	mrb_index_cursor.c			\
+	mrb_index_cursor.h			\
 	mrb_logger.c				\
 	mrb_logger.h				\
 	mrb_object.c				\
