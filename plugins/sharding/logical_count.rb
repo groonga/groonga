@@ -22,7 +22,7 @@ module Groonga
                                    shard_key, shard_range,
                                    enumerator.target_range, cover_type)
         end
-        output(total)
+        writer.write(total)
       end
 
       private

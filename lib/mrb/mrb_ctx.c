@@ -26,7 +26,6 @@
 #include <mruby/string.h>
 
 #include "../grn_mrb.h"
-#include "../grn_output.h"
 #include "mrb_ctx.h"
 #include "mrb_converter.h"
 
@@ -204,39 +203,6 @@ ctx_get_database(mrb_state *mrb, mrb_value self)
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
 
   return grn_mrb_value_from_grn_obj(mrb, grn_ctx_db(ctx));
-}
-
-static mrb_value
-ctx_output(mrb_state *mrb, mrb_value self)
-{
-  grn_ctx *ctx = (grn_ctx *)mrb->ud;
-  mrb_value target;
-
-  mrb_get_args(mrb, "o", &target);
-
-  switch (mrb_type(target)) {
-  case MRB_TT_FALSE :
-    GRN_OUTPUT_BOOL(GRN_FALSE);
-    break;
-  case MRB_TT_TRUE :
-    GRN_OUTPUT_BOOL(GRN_TRUE);
-    break;
-  case MRB_TT_FIXNUM :
-    GRN_OUTPUT_INT32(mrb_fixnum(target));
-    break;
-  case MRB_TT_FLOAT :
-    GRN_OUTPUT_FLOAT(mrb_float(target));
-    break;
-  case MRB_TT_STRING :
-    GRN_OUTPUT_STR(RSTRING_PTR(target), RSTRING_LEN(target));
-    break;
-  default :
-    mrb_raisef(mrb, E_ARGUMENT_ERROR,
-               "must be true, false, number, float or string: %S", target);
-    break;
-  }
-
-  return mrb_nil_value();
 }
 
 void
@@ -744,8 +710,5 @@ grn_mrb_ctx_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "database", ctx_get_database,
                     MRB_ARGS_NONE());
-
-  mrb_define_method(mrb, klass, "output", ctx_output,
-                    MRB_ARGS_REQ(1));
 }
 #endif

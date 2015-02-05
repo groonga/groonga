@@ -16,6 +16,10 @@ module Groonga
       @logger ||= Logger.new
     end
 
+    def writer
+      @writer ||= Writer.new
+    end
+
     def set_groonga_error(groonga_error)
       set_error_raw(groonga_error.class.rc,
                     ErrorLevel::ERROR,

@@ -16,6 +16,10 @@ module Groonga
       @context ||= Context.instance
     end
 
+    def writer
+      @writer ||= context.writer
+    end
+
     def run_internal(input)
       begin
         run_body(input)
@@ -26,10 +30,6 @@ module Groonga
         context.record_error(:command_error, error)
         nil
       end
-    end
-
-    def output(object)
-      context.output(object)
     end
   end
 end

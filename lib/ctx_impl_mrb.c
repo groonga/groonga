@@ -52,6 +52,7 @@
 # include "mrb/mrb_command_input.h"
 # include "mrb/mrb_table_cursor.h"
 # include "mrb/mrb_table_cursor_flags.h"
+# include "mrb/mrb_writer.h"
 
 # include <mruby/array.h>
 # include <mruby/variable.h>
@@ -134,6 +135,7 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   grn_mrb_command_input_init(ctx);
   grn_mrb_table_cursor_init(ctx);
   grn_mrb_table_cursor_flags_init(ctx);
+  grn_mrb_writer_init(ctx);
 
   grn_mrb_load(ctx, "initialize/post.rb");
 }
