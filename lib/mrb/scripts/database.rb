@@ -5,14 +5,11 @@ module Groonga
       flags =
         TableCursorFlags::ASCENDING |
         TableCursorFlags::BY_ID
-      cursor = TableCursor.open(self, :flags => flags)
-      begin
+      TableCursor.open(self, :flags => flags) do |cursor|
         cursor.each do |id|
           object = context[id]
           yield(object) if object
         end
-      ensure
-        cursor.close
       end
     end
 
@@ -23,14 +20,11 @@ module Groonga
         TableCursorFlags::ASCENDING |
         TableCursorFlags::BY_KEY
       flags |= TableCursorFlags::PREFIX if min
-      cursor = TableCursor.open(self, :min => min, :flags => flags)
-      begin
+      TableCursor.open(self, :min => min, :flags => flags) do |cursor|
         cursor.each do |id|
           object = context[id]
           yield(object) if object.is_a?(Table)
         end
-      ensure
-        cursor.close
       end
     end
   end

@@ -172,19 +172,13 @@ module Groonga
           flags |= TableCursorFlags::LT
         end
 
-        table_cursor = TableCursor.open(range_index.table,
-                                        :min => min,
-                                        :max => max,
-                                        :flags => flags)
-        begin
-          index_cursor = IndexCursor.open(table_cursor, range_index)
-          begin
+        TableCursor.open(range_index.table,
+                         :min => min,
+                         :max => max,
+                         :flags => flags) do |table_cursor|
+          IndexCursor.open(table_cursor, range_index) do |index_cursor|
             index_cursor.count
-          ensure
-            index_cursor.close
           end
-        ensure
-          table_cursor.close
         end
       end
 
