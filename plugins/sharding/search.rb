@@ -17,8 +17,8 @@ module Groonga
         if logical_table.nil?
           raise InvalidArgument, "[logical_count] logical_table is missing"
         end
-        shard_key = input[:shard_key]
-        if shard_key.nil?
+        shard_key_name = input[:shard_key]
+        if shard_key_name.nil?
           raise InvalidArgument, "[logical_count] shard_key is missing"
         end
         filter = input[:filter]
@@ -26,6 +26,14 @@ module Groonga
         total = 0
         target_range = TargetRange.new(input)
         each_table(logical_table) do |table, shard_range|
+          physical_shard_key_name = "#{table.name}.#{shard_key_name}"
+          shard_key = context[physical_shard_key_name]
+          if shard_key.nil?
+            message =
+              "[logical_count] shard_key doesn't exist: " +
+              "<#{physical_shard_key_name}>"
+            raise InvalidArgument, message
+          end
           total += count_n_records(table, filter,
                                    shard_key, shard_range, target_range)
         end
@@ -58,7 +66,7 @@ module Groonga
           end
         when :partial_min
           filtered_count_n_records(table, filter) do |expression|
-            expression.append_constant(shard_key, Operator::PUSH, 1)
+            expression.append_object(shard_key, Operator::PUSH, 1)
             expression.append_operator(Operator::GET_VALUE, 1)
             expression.append_constant(target_range.min, Operator::PUSH, 1)
             if target_range.min_border == :include
@@ -69,7 +77,7 @@ module Groonga
           end
         when :partial_max
           filtered_count_n_records(table, filter) do |expression|
-            expression.append_constant(shard_key, Operator::PUSH, 1)
+            expression.append_object(shard_key, Operator::PUSH, 1)
             expression.append_operator(Operator::GET_VALUE, 1)
             expression.append_constant(target_range.max, Operator::PUSH, 1)
             if target_range.max_border == :include
@@ -81,7 +89,7 @@ module Groonga
         when :partial_min_and_max
           filtered_count_n_records(table, filter) do |expression|
             expression.append_object(context["between"], Operator::PUSH, 1)
-            expression.append_constant(shard_key, Operator::PUSH, 1)
+            expression.append_object(shard_key, Operator::PUSH, 1)
             expression.append_operator(Operator::GET_VALUE, 1)
             expression.append_constant(target_range.min, Operator::PUSH, 1)
             expression.append_constant(target_range.min_border,
