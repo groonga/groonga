@@ -32,7 +32,7 @@ module Groonga
         else
           n_elements = 1 # for columns
           result_sets.each do |result_set|
-            n_elements += result_size.size
+            n_elements += result_set.size
           end
         end
         writer.array("RESULTSET", n_elements) do
