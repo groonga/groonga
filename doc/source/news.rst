@@ -7,6 +7,22 @@
 News
 ====
 
+.. _release-5-0-0:
+
+Release 5.0.0 - 2015/02/09
+--------------------------
+
+* Bump version to 5.0.0!
+
+Improvements
+^^^^^^^^^^^^
+
+Fixes
+^^^^^
+
+Thanks
+^^^^^^
+
 The old releases
 ----------------
 
