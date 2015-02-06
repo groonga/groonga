@@ -81,9 +81,9 @@ Install required packages to build Groonga::
 
 Download source::
 
-  % wget http://packages.groonga.org/source/groonga/groonga-4.1.1.tar.gz
-  % tar xvzf groonga-4.1.1.tar.gz
-  % cd groonga-4.1.1
+  % wget http://packages.groonga.org/source/groonga/groonga-5.0.0.tar.gz
+  % tar xvzf groonga-5.0.0.tar.gz
+  % cd groonga-5.0.0
 
 Configure (see :ref:`source-configure` about ``configure`` options)::
 

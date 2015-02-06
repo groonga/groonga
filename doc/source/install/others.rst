@@ -74,9 +74,9 @@ Build from source
 Groonga uses GNU build system. So the following is the simplest build
 steps::
 
-  % wget http://packages.groonga.org/source/groonga/groonga-4.1.1.tar.gz
-  % tar xvzf groonga-4.1.1.tar.gz
-  % cd groonga-4.1.1
+  % wget http://packages.groonga.org/source/groonga/groonga-5.0.0.tar.gz
+  % tar xvzf groonga-5.0.0.tar.gz
+  % cd groonga-5.0.0
   % ./configure
   % make
   % sudo make install
