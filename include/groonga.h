@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2014 Brazil
+  Copyright(C) 2014-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@
 #include "groonga/groonga.h"
 #include "groonga/ii.h"
 #include "groonga/expr.h"
+#include "groonga/output.h"
 #include "groonga/util.h"
 #include "groonga/request_canceler.h"
 

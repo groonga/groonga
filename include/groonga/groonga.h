@@ -1265,81 +1265,9 @@ GRN_API grn_rc grn_text_printf(grn_ctx *ctx, grn_obj *bulk,
 GRN_API grn_rc grn_text_vprintf(grn_ctx *ctx, grn_obj *bulk,
                                 const char *format, va_list args);
 
-typedef struct _grn_obj_format grn_obj_format;
-
-#define GRN_OBJ_FORMAT_WITH_COLUMN_NAMES   (0x01<<0)
-#define GRN_OBJ_FORMAT_AS_ARRAY            (0x01<<3)
-/* Deprecated since 4.0.1. It will be removed at 5.0.0.
-   Use GRN_OBJ_FORMAT_AS_ARRAY instead.*/
-#define GRN_OBJ_FORMAT_ASARRAY             GRN_OBJ_FORMAT_AS_ARRAY
-#define GRN_OBJ_FORMAT_WITH_WEIGHT         (0x01<<4)
-
-struct _grn_obj_format {
-  grn_obj columns;
-  const void *min;
-  const void *max;
-  unsigned int min_size;
-  unsigned int max_size;
-  int nhits;
-  int offset;
-  int limit;
-  int hits_offset;
-  int flags;
-  grn_obj *expression;
-};
-
-#define GRN_OBJ_FORMAT_INIT(format,format_nhits,format_offset,format_limit,format_hits_offset) do { \
-  GRN_PTR_INIT(&(format)->columns, GRN_OBJ_VECTOR, GRN_ID_NIL);\
-  (format)->nhits = (format_nhits);\
-  (format)->offset = (format_offset);\
-  (format)->limit = (format_limit);\
-  (format)->hits_offset = (format_hits_offset);\
-  (format)->flags = 0;\
-  (format)->expression = NULL;\
-} while (0)
-
-#define GRN_OBJ_FORMAT_FIN(ctx,format) do {\
-  int ncolumns = GRN_BULK_VSIZE(&(format)->columns) / sizeof(grn_obj *);\
-  grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&(format)->columns);\
-  while (ncolumns--) { grn_obj_unlink((ctx), *columns++); }\
-  GRN_OBJ_FIN((ctx), &(format)->columns);\
-  if ((format)->expression) { GRN_OBJ_FIN((ctx), (format)->expression); } \
-} while (0)
-
-GRN_API void grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
-                            grn_obj *obj, grn_obj_format *format);
-GRN_API void grn_output_envelope(grn_ctx *ctx, grn_rc rc,
-                                 grn_obj *head, grn_obj *body, grn_obj *foot,
-                                 const char *file, int line);
-
-GRN_API void grn_ctx_output_flush(grn_ctx *ctx, int flags);
-GRN_API void grn_ctx_output_array_open(grn_ctx *ctx,
-                                       const char *name, int nelements);
-GRN_API void grn_ctx_output_array_close(grn_ctx *ctx);
-GRN_API void grn_ctx_output_map_open(grn_ctx *ctx,
-                                     const char *name, int nelements);
-GRN_API void grn_ctx_output_map_close(grn_ctx *ctx);
-GRN_API void grn_ctx_output_int32(grn_ctx *ctx, int value);
-GRN_API void grn_ctx_output_int64(grn_ctx *ctx, long long int value);
-GRN_API void grn_ctx_output_float(grn_ctx *ctx, double value);
-GRN_API void grn_ctx_output_cstr(grn_ctx *ctx, const char *value);
-GRN_API void grn_ctx_output_str(grn_ctx *ctx,
-                                const char *value, unsigned int value_len);
-GRN_API void grn_ctx_output_bool(grn_ctx *ctx, grn_bool value);
-GRN_API void grn_ctx_output_obj(grn_ctx *ctx,
-                                grn_obj *value, grn_obj_format *format);
-
-
-GRN_API grn_content_type grn_ctx_get_output_type(grn_ctx *ctx);
-GRN_API grn_rc grn_ctx_set_output_type(grn_ctx *ctx, grn_content_type type);
-GRN_API const char *grn_ctx_get_mime_type(grn_ctx *ctx);
 GRN_API void grn_ctx_recv_handler_set(grn_ctx *,
                                       void (*func)(grn_ctx *, int, void *),
                                       void *func_arg);
-
-/* obsolete */
-GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
-                             grn_obj_format *format);
 
 /* various values exchanged via grn_obj */
 
