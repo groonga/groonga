@@ -1407,7 +1407,7 @@ grn_output_table_records_by_columns(grn_ctx *ctx, grn_obj *outbuf,
   }
 }
 
-static inline void
+void
 grn_output_table_records(grn_ctx *ctx, grn_obj *outbuf,
                          grn_content_type output_type,
                          grn_obj *table, grn_obj_format *format)

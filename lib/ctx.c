@@ -3108,3 +3108,14 @@ grn_ctx_output_table_columns(grn_ctx *ctx, grn_obj *table,
                            table,
                            format);
 }
+
+void
+grn_ctx_output_table_records(grn_ctx *ctx, grn_obj *table,
+                             grn_obj_format *format)
+{
+  grn_output_table_records(ctx,
+                           ctx->impl->outbuf,
+                           ctx->impl->output_type,
+                           table,
+                           format);
+}
