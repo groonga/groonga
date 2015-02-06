@@ -38,10 +38,10 @@ module Groonga
         writer.array("RESULTSET", n_elements) do
           first_result_set = result_sets.first
           if first_result_set
-            # TODO: write columns of first_result_set
+            writer.write_table_columns(first_result_set, output_columns)
           end
           result_sets.each do |result_set|
-            # TODO: write records
+            writer.write_table_records(result_set, output_columns)
           end
         end
       end
