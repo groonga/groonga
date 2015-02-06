@@ -77,7 +77,7 @@ GRN_API void grn_output_table_columns(grn_ctx *ctx,
 #define GRN_OUTPUT_OBJ(obj,format)\
   (grn_ctx_output_obj(ctx, obj, format))
 #define GRN_OUTPUT_TABLE_COLUMNS(table,format)\
-  (grn_ctx_output_table_column(ctx, table, format))
+  (grn_ctx_output_table_columns(ctx, table, format))
 
 #ifdef __cplusplus
 }
