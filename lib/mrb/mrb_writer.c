@@ -20,10 +20,12 @@
 
 #ifdef GRN_WITH_MRUBY
 #include <mruby.h>
+#include <mruby/data.h>
 #include <mruby/string.h>
 
 #include "../grn_mrb.h"
 #include "../grn_output.h"
+#include "mrb_ctx.h"
 #include "mrb_writer.h"
 
 static mrb_value
@@ -105,6 +107,40 @@ writer_close_map(mrb_state *mrb, mrb_value self)
   return mrb_nil_value();
 }
 
+static mrb_value
+writer_write_table_columns(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_value mrb_table;
+  char *columns;
+  mrb_int columns_size;
+  grn_obj *table;
+  grn_obj_format format;
+  int n_hits = 0;
+  int offset = 0;
+  int limit = 0;
+  int hits_offset = 0;
+
+  mrb_get_args(mrb, "os", &mrb_table, &columns, &columns_size);
+
+  table = DATA_PTR(mrb_table);
+  GRN_OBJ_FORMAT_INIT(&format, n_hits, offset, limit, hits_offset);
+  format.flags |= GRN_OBJ_FORMAT_WITH_COLUMN_NAMES;
+  {
+    grn_rc rc;
+    rc = grn_output_format_set_columns(ctx, &format,
+                                       table, columns, columns_size);
+    if (rc != GRN_SUCCESS) {
+      GRN_OBJ_FORMAT_FIN(ctx, &format);
+      grn_mrb_ctx_check(mrb);
+    }
+  }
+  GRN_OUTPUT_TABLE_COLUMNS(table, &format);
+  GRN_OBJ_FORMAT_FIN(ctx, &format);
+
+  return mrb_nil_value();
+}
+
 void
 grn_mrb_writer_init(grn_ctx *ctx)
 {
@@ -124,5 +160,8 @@ grn_mrb_writer_init(grn_ctx *ctx)
                     writer_open_map, MRB_ARGS_REQ(2));
   mrb_define_method(mrb, klass, "close_map",
                     writer_close_map, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, klass, "write_table_columns",
+                    writer_write_table_columns, MRB_ARGS_REQ(2));
 }
 #endif
