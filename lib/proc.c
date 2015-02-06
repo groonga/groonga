@@ -418,33 +418,6 @@ grn_parse_query_flags(grn_ctx *ctx, const char *query_flags,
   return flags;
 }
 
-static inline grn_bool
-is_output_columns_format_v1(grn_ctx *ctx,
-                            const char *output_columns,
-                            unsigned int output_columns_len)
-{
-  unsigned int i;
-
-  /* TODO: REMOVE ME. If new output_columns handler is marked as stable,
-     this check is removed. We need more error checks. */
-  if (grn_ctx_get_command_version(ctx) == GRN_COMMAND_VERSION_1) {
-    return GRN_TRUE;
-  }
-
-  for (i = 0; i < output_columns_len; i++) {
-    switch (output_columns[i]) {
-    case ',' :
-    case '(' :
-    case '[' :
-      return GRN_FALSE;
-    default :
-      break;
-    }
-  }
-
-  return GRN_TRUE;
-}
-
 static int
 grn_select_apply_adjuster_ensure_factor(grn_ctx *ctx, grn_obj *factor_object)
 {
@@ -546,22 +519,17 @@ grn_select_output_columns(grn_ctx *ctx, grn_obj *res,
                           const char *columns, int columns_len,
                           grn_obj *condition)
 {
+  grn_rc rc;
   grn_obj_format format;
 
   GRN_OBJ_FORMAT_INIT(&format, n_hits, offset, limit, offset);
   format.flags =
     GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
     GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET;
-  if (is_output_columns_format_v1(ctx, columns, columns_len)) {
-    grn_obj_columns(ctx, res, columns, columns_len, &format.columns);
-  } else {
-    grn_obj *v;
+  rc = grn_output_format_set_columns(ctx, &format, res, columns, columns_len);
+  /* TODO: check rc */
+  if (format.expression) {
     grn_obj *condition_ptr;
-    GRN_EXPR_CREATE_FOR_QUERY(ctx, res, format.expression, v);
-    grn_expr_parse(ctx, format.expression,
-                   columns, columns_len, NULL,
-                   GRN_OP_MATCH, GRN_OP_AND,
-                   GRN_EXPR_SYNTAX_OUTPUT_COLUMNS);
     condition_ptr =
       grn_expr_get_or_add_var(ctx, format.expression,
                               GRN_SELECT_INTERNAL_VAR_CONDITION,

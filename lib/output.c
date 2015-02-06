@@ -2010,3 +2010,51 @@ grn_output_envelope(grn_ctx *ctx,
     break;
   }
 }
+
+static inline grn_bool
+is_output_columns_format_v1(grn_ctx *ctx,
+                            const char *output_columns,
+                            unsigned int output_columns_len)
+{
+  unsigned int i;
+
+  /* TODO: REMOVE ME. If new output_columns handler is marked as stable,
+     this check is removed. We need more error checks. */
+  if (grn_ctx_get_command_version(ctx) == GRN_COMMAND_VERSION_1) {
+    return GRN_TRUE;
+  }
+
+  for (i = 0; i < output_columns_len; i++) {
+    switch (output_columns[i]) {
+    case ',' :
+    case '(' :
+    case '[' :
+      return GRN_FALSE;
+    default :
+      break;
+    }
+  }
+
+  return GRN_TRUE;
+}
+
+grn_rc
+grn_output_format_set_columns(grn_ctx *ctx, grn_obj_format *format,
+                              grn_obj *table,
+                              const char *columns, int columns_len)
+{
+  grn_rc rc;
+
+  if (is_output_columns_format_v1(ctx, columns, columns_len)) {
+    rc = grn_obj_columns(ctx, table, columns, columns_len, &(format->columns));
+  } else {
+    grn_obj *variable;
+    GRN_EXPR_CREATE_FOR_QUERY(ctx, table, format->expression, variable);
+    rc = grn_expr_parse(ctx, format->expression,
+                        columns, columns_len, NULL,
+                        GRN_OP_MATCH, GRN_OP_AND,
+                        GRN_EXPR_SYNTAX_OUTPUT_COLUMNS);
+  }
+
+  return rc;
+}

@@ -59,6 +59,10 @@ GRN_API void grn_output_table_records(grn_ctx *ctx,
                                       grn_obj *table,
                                       grn_obj_format *format);
 
+grn_rc grn_output_format_set_columns(grn_ctx *ctx, grn_obj_format *format,
+                                     grn_obj *table,
+                                     const char *columns, int columns_len);
+
 #define GRN_OUTPUT_ARRAY_OPEN(name,nelements) \
   (grn_ctx_output_array_open(ctx, name, nelements))
 #define GRN_OUTPUT_ARRAY_CLOSE() \
