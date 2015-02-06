@@ -21,6 +21,7 @@
 #ifdef GRN_WITH_MRUBY
 #include <mruby.h>
 #include <mruby/data.h>
+#include <mruby/hash.h>
 #include <mruby/string.h>
 
 #include "../grn_mrb.h"
@@ -141,6 +142,59 @@ writer_write_table_columns(mrb_state *mrb, mrb_value self)
   return mrb_nil_value();
 }
 
+static mrb_value
+writer_write_table_records(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_value mrb_table;
+  mrb_value mrb_options = mrb_nil_value();
+  char *columns;
+  mrb_int columns_size;
+  grn_obj *table;
+  grn_obj_format format;
+  int n_hits = 0;
+  int offset = 0;
+  int limit = -1;
+  int hits_offset = 0;
+
+  mrb_get_args(mrb, "os|H", &mrb_table, &columns, &columns_size, &mrb_options);
+
+  table = DATA_PTR(mrb_table);
+  if (!mrb_nil_p(mrb_options)) {
+    mrb_value mrb_offset;
+    mrb_value mrb_limit;
+
+    mrb_offset = mrb_hash_get(mrb, mrb_options,
+                              mrb_symbol_value(mrb_intern_lit(mrb, "offset")));
+    if (!mrb_nil_p(mrb_offset)) {
+      offset = mrb_fixnum(mrb_offset);
+    }
+
+    mrb_limit = mrb_hash_get(mrb, mrb_options,
+                             mrb_symbol_value(mrb_intern_lit(mrb, "limit")));
+    if (!mrb_nil_p(mrb_limit)) {
+      limit = mrb_fixnum(mrb_limit);
+    }
+  }
+  if (limit < 0) {
+    limit = grn_table_size(ctx, table) + limit + 1;
+  }
+  GRN_OBJ_FORMAT_INIT(&format, n_hits, offset, limit, hits_offset);
+  {
+    grn_rc rc;
+    rc = grn_output_format_set_columns(ctx, &format,
+                                       table, columns, columns_size);
+    if (rc != GRN_SUCCESS) {
+      GRN_OBJ_FORMAT_FIN(ctx, &format);
+      grn_mrb_ctx_check(mrb);
+    }
+  }
+  GRN_OUTPUT_TABLE_RECORDS(table, &format);
+  GRN_OBJ_FORMAT_FIN(ctx, &format);
+
+  return mrb_nil_value();
+}
+
 void
 grn_mrb_writer_init(grn_ctx *ctx)
 {
@@ -163,5 +217,7 @@ grn_mrb_writer_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "write_table_columns",
                     writer_write_table_columns, MRB_ARGS_REQ(2));
+  mrb_define_method(mrb, klass, "write_table_records",
+                    writer_write_table_records, MRB_ARGS_ARG(2, 1));
 }
 #endif
