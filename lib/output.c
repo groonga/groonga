@@ -1294,7 +1294,7 @@ grn_output_table_columns_by_columns(grn_ctx *ctx, grn_obj *outbuf,
   grn_output_array_close(ctx, outbuf, output_type);
 }
 
-static inline void
+void
 grn_output_table_columns(grn_ctx *ctx, grn_obj *outbuf,
                          grn_content_type output_type,
                          grn_obj *table, grn_obj_format *format)

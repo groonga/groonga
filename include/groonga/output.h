@@ -85,6 +85,9 @@ GRN_API void grn_ctx_output_str(grn_ctx *ctx,
 GRN_API void grn_ctx_output_bool(grn_ctx *ctx, grn_bool value);
 GRN_API void grn_ctx_output_obj(grn_ctx *ctx,
                                 grn_obj *value, grn_obj_format *format);
+GRN_API void grn_ctx_output_table_columns(grn_ctx *ctx,
+                                          grn_obj *table,
+                                          grn_obj_format *format);
 
 
 GRN_API grn_content_type grn_ctx_get_output_type(grn_ctx *ctx);

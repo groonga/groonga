@@ -48,6 +48,12 @@ GRN_API void grn_output_bool(grn_ctx *ctx, grn_obj *outbuf,
                              grn_content_type output_type,
                              grn_bool value);
 
+GRN_API void grn_output_table_columns(grn_ctx *ctx,
+                                      grn_obj *outbuf,
+                                      grn_content_type output_type,
+                                      grn_obj *table,
+                                      grn_obj_format *format);
+
 #define GRN_OUTPUT_ARRAY_OPEN(name,nelements) \
   (grn_ctx_output_array_open(ctx, name, nelements))
 #define GRN_OUTPUT_ARRAY_CLOSE() \
@@ -70,6 +76,8 @@ GRN_API void grn_output_bool(grn_ctx *ctx, grn_obj *outbuf,
   (grn_ctx_output_bool(ctx, value))
 #define GRN_OUTPUT_OBJ(obj,format)\
   (grn_ctx_output_obj(ctx, obj, format))
+#define GRN_OUTPUT_TABLE_COLUMNS(table,format)\
+  (grn_ctx_output_table_column(ctx, table, format))
 
 #ifdef __cplusplus
 }
