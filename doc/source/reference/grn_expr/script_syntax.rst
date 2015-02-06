@@ -22,6 +22,8 @@ statement. Function definion is not supported too. But script syntax
 addes the original additional operators.  They are described after
 ECMAScript syntax is described.
 
+.. _script-syntax-security:
+
 Security
 --------
 
