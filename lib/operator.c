@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014 Brazil
+  Copyright(C) 2014-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,10 @@
 */
 
 #include "grn.h"
+#include "grn_db.h"
+#include "grn_str.h"
+
+#include <string.h>
 
 static const char *operator_names[] = {
   "push",
@@ -106,4 +110,234 @@ grn_operator_to_string(grn_operator op)
   } else {
     return "unknown";
   }
+}
+
+#define DO_EQ_SUB do {\
+  switch (y->header.domain) {\
+  case GRN_DB_INT8 :\
+    r = (x_ == GRN_INT8_VALUE(y));\
+    break;\
+  case GRN_DB_UINT8 :\
+    r = (x_ == GRN_UINT8_VALUE(y));\
+    break;\
+  case GRN_DB_INT16 :\
+    r = (x_ == GRN_INT16_VALUE(y));\
+    break;\
+  case GRN_DB_UINT16 :\
+    r = (x_ == GRN_UINT16_VALUE(y));\
+    break;\
+  case GRN_DB_INT32 :\
+    r = (x_ == GRN_INT32_VALUE(y));\
+    break;\
+  case GRN_DB_UINT32 :\
+    r = (x_ == GRN_UINT32_VALUE(y));\
+    break;\
+  case GRN_DB_INT64 :\
+    r = (x_ == GRN_INT64_VALUE(y));\
+    break;\
+  case GRN_DB_TIME :\
+    r = (GRN_TIME_PACK(x_,0) == GRN_INT64_VALUE(y));\
+    break;\
+  case GRN_DB_UINT64 :\
+    r = (x_ == GRN_UINT64_VALUE(y));\
+    break;\
+  case GRN_DB_FLOAT :\
+    r = ((x_ <= GRN_FLOAT_VALUE(y)) && (x_ >= GRN_FLOAT_VALUE(y)));\
+    break;\
+  case GRN_DB_SHORT_TEXT :\
+  case GRN_DB_TEXT :\
+  case GRN_DB_LONG_TEXT :\
+    {\
+      const char *p_ = GRN_TEXT_VALUE(y);\
+      int i_ = grn_atoi(p_, p_ + GRN_TEXT_LEN(y), NULL);\
+      r = (x_ == i_);\
+    }\
+    break;\
+  default :\
+    r = GRN_FALSE;\
+    break;\
+  }\
+} while (0)
+
+#define DO_EQ(x,y,r) do {\
+  switch (x->header.domain) {\
+  case GRN_DB_VOID :\
+    r = GRN_FALSE;\
+    break;\
+  case GRN_DB_INT8 :\
+    {\
+      int8_t x_ = GRN_INT8_VALUE(x);\
+      DO_EQ_SUB;\
+    }\
+    break;\
+  case GRN_DB_UINT8 :\
+    {\
+      uint8_t x_ = GRN_UINT8_VALUE(x);\
+      DO_EQ_SUB;\
+    }\
+    break;\
+  case GRN_DB_INT16 :\
+    {\
+      int16_t x_ = GRN_INT16_VALUE(x);\
+      DO_EQ_SUB;\
+    }\
+    break;\
+  case GRN_DB_UINT16 :\
+    {\
+      uint16_t x_ = GRN_UINT16_VALUE(x);\
+      DO_EQ_SUB;\
+    }\
+    break;\
+  case GRN_DB_INT32 :\
+    {\
+      int32_t x_ = GRN_INT32_VALUE(x);\
+      DO_EQ_SUB;\
+    }\
+    break;\
+  case GRN_DB_UINT32 :\
+    {\
+      uint32_t x_ = GRN_UINT32_VALUE(x);\
+      DO_EQ_SUB;\
+    }\
+    break;\
+  case GRN_DB_INT64 :\
+    {\
+      int64_t x_ = GRN_INT64_VALUE(x);\
+      DO_EQ_SUB;\
+    }\
+    break;\
+  case GRN_DB_TIME :\
+    {\
+      int64_t x_ = GRN_INT64_VALUE(x);\
+      switch (y->header.domain) {\
+      case GRN_DB_INT32 :\
+        r = (x_ == GRN_TIME_PACK(GRN_INT32_VALUE(y), 0));\
+        break;\
+      case GRN_DB_UINT32 :\
+        r = (x_ == GRN_TIME_PACK(GRN_UINT32_VALUE(y), 0));\
+        break;\
+      case GRN_DB_INT64 :\
+      case GRN_DB_TIME :\
+        r = (x_ == GRN_INT64_VALUE(y));\
+        break;\
+      case GRN_DB_UINT64 :\
+        r = (x_ == GRN_UINT64_VALUE(y));\
+        break;\
+      case GRN_DB_FLOAT :\
+        r = (x_ == GRN_TIME_PACK(GRN_FLOAT_VALUE(y), 0));\
+        break;\
+      case GRN_DB_SHORT_TEXT :\
+      case GRN_DB_TEXT :\
+      case GRN_DB_LONG_TEXT :\
+        {\
+          grn_obj time_value_;\
+          GRN_TIME_INIT(&time_value_, 0);\
+          if (grn_obj_cast(ctx, y, &time_value_, GRN_FALSE) == GRN_SUCCESS) {\
+            r = (x_ == GRN_TIME_VALUE(&time_value_));\
+          } else {\
+            r = GRN_FALSE;\
+          }\
+          GRN_OBJ_FIN(ctx, &time_value_);\
+        }\
+        break;\
+      default :\
+        r = GRN_FALSE;\
+        break;\
+      }\
+    }\
+    break;\
+  case GRN_DB_UINT64 :\
+    {\
+      uint64_t x_ = GRN_UINT64_VALUE(x);\
+      DO_EQ_SUB;\
+    }\
+    break;\
+  case GRN_DB_FLOAT :\
+    {\
+      double x_ = GRN_FLOAT_VALUE(x);\
+      switch (y->header.domain) {\
+      case GRN_DB_INT32 :\
+        r = ((x_ <= GRN_INT32_VALUE(y)) && (x_ >= GRN_INT32_VALUE(y)));\
+        break;\
+      case GRN_DB_UINT32 :\
+        r = ((x_ <= GRN_UINT32_VALUE(y)) && (x_ >= GRN_UINT32_VALUE(y)));\
+        break;\
+      case GRN_DB_INT64 :\
+      case GRN_DB_TIME :\
+        r = ((x_ <= GRN_INT64_VALUE(y)) && (x_ >= GRN_INT64_VALUE(y)));\
+        break;\
+      case GRN_DB_UINT64 :\
+        r = ((x_ <= GRN_UINT64_VALUE(y)) && (x_ >= GRN_UINT64_VALUE(y)));\
+        break;\
+      case GRN_DB_FLOAT :\
+        r = ((x_ <= GRN_FLOAT_VALUE(y)) && (x_ >= GRN_FLOAT_VALUE(y)));\
+        break;\
+      case GRN_DB_SHORT_TEXT :\
+      case GRN_DB_TEXT :\
+      case GRN_DB_LONG_TEXT :\
+        {\
+          const char *p_ = GRN_TEXT_VALUE(y);\
+          int i_ = grn_atoi(p_, p_ + GRN_TEXT_LEN(y), NULL);\
+          r = (x_ <= i_ && x_ >= i_);\
+        }\
+        break;\
+      default :\
+        r = GRN_FALSE;\
+        break;\
+      }\
+    }\
+    break;\
+  case GRN_DB_SHORT_TEXT :\
+  case GRN_DB_TEXT :\
+  case GRN_DB_LONG_TEXT :\
+    if (GRN_DB_SHORT_TEXT <= y->header.domain && y->header.domain <= GRN_DB_LONG_TEXT) {\
+      uint32_t la = GRN_TEXT_LEN(x), lb = GRN_TEXT_LEN(y);\
+      r =  (la == lb && !memcmp(GRN_TEXT_VALUE(x), GRN_TEXT_VALUE(y), lb));\
+    } else {\
+      const char *q_ = GRN_TEXT_VALUE(x);\
+      int x_ = grn_atoi(q_, q_ + GRN_TEXT_LEN(x), NULL);\
+      DO_EQ_SUB;\
+    }\
+    break;\
+  default :\
+    if ((x->header.domain == y->header.domain)) {\
+      r = (GRN_BULK_VSIZE(x) == GRN_BULK_VSIZE(y) &&\
+           !(memcmp(GRN_BULK_HEAD(x), GRN_BULK_HEAD(y), GRN_BULK_VSIZE(x))));\
+    } else {\
+      grn_obj dest;\
+      if (x->header.domain < y->header.domain) {\
+        GRN_OBJ_INIT(&dest, GRN_BULK, 0, y->header.domain);\
+        if (!grn_obj_cast(ctx, x, &dest, GRN_FALSE)) {\
+          r = (GRN_BULK_VSIZE(&dest) == GRN_BULK_VSIZE(y) &&\
+               !memcmp(GRN_BULK_HEAD(&dest), GRN_BULK_HEAD(y), GRN_BULK_VSIZE(y))); \
+        }\
+      } else {\
+        GRN_OBJ_INIT(&dest, GRN_BULK, 0, x->header.domain);\
+        if (!grn_obj_cast(ctx, y, &dest, GRN_FALSE)) {\
+          r = (GRN_BULK_VSIZE(&dest) == GRN_BULK_VSIZE(x) &&\
+               !memcmp(GRN_BULK_HEAD(&dest), GRN_BULK_HEAD(x), GRN_BULK_VSIZE(x))); \
+        }\
+      }\
+      GRN_OBJ_FIN(ctx, &dest);\
+    }\
+    break;\
+  }\
+} while (0)
+
+grn_bool
+grn_operator_exec_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
+{
+  grn_bool r;
+  GRN_API_ENTER;
+  DO_EQ(x, y, r);
+  GRN_API_RETURN(r);
+}
+
+grn_bool
+grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
+{
+  grn_bool r;
+  GRN_API_ENTER;
+  DO_EQ(x, y, r);
+  GRN_API_RETURN(!r);
 }
