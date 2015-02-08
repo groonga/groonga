@@ -3410,23 +3410,23 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_EQUAL :
         {
-          grn_bool equal_p;
+          grn_bool is_equal;
           grn_obj *x, *y;
           POP2ALLOC1(x, y, res);
-          equal_p = grn_operator_exec_equal(ctx, x, y);
+          is_equal = grn_operator_exec_equal(ctx, x, y);
           grn_obj_reinit(ctx, res, GRN_DB_INT32, 0);
-          GRN_INT32_SET(ctx, res, equal_p ? 1 : 0);
+          GRN_INT32_SET(ctx, res, is_equal ? 1 : 0);
         }
         code++;
         break;
       case GRN_OP_NOT_EQUAL :
         {
-          grn_bool not_equal_p;
+          grn_bool is_not_equal;
           grn_obj *x, *y;
           POP2ALLOC1(x, y, res);
-          not_equal_p = grn_operator_exec_not_equal(ctx, x, y);
+          is_not_equal = grn_operator_exec_not_equal(ctx, x, y);
           grn_obj_reinit(ctx, res, GRN_DB_INT32, 0);
-          GRN_INT32_SET(ctx, res, not_equal_p ? 1 : 0);
+          GRN_INT32_SET(ctx, res, is_not_equal ? 1 : 0);
         }
         code++;
         break;
