@@ -5931,25 +5931,14 @@ func_in_values(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   target_value = args[0];
   for (i = 1; i < nargs; i++) {
     grn_obj *value = args[i];
-    grn_obj *equal_condition;
-    grn_obj *result;
-    grn_bool result_boolean = GRN_FALSE;
+    grn_bool result;
 
-    /* TODO: Implement grn_obj_equal() and use it. */
-    equal_condition = grn_expr_create(ctx, NULL, 0);
-    grn_expr_append_const(ctx, equal_condition, target_value, GRN_OP_PUSH, 1);
-    grn_expr_append_const(ctx, equal_condition, value, GRN_OP_PUSH, 1);
-    grn_expr_append_op(ctx, equal_condition, GRN_OP_EQUAL, 2);
-    result = grn_expr_exec(ctx, equal_condition, 0);
+    result = grn_operator_exec_equal(ctx, target_value, value);
     if (ctx->rc) {
       break;
     }
-    if (result) {
-      GRN_TRUEP(ctx, result, result_boolean);
-    }
-    grn_obj_unlink(ctx, equal_condition);
 
-    if (result_boolean) {
+    if (result) {
       GRN_BOOL_SET(ctx, found, GRN_TRUE);
       break;
     }
