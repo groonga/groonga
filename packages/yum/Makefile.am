@@ -3,6 +3,7 @@ DISTRIBUTIONS = centos
 ARCHITECTURES = i386 x86_64
 BASE_URL_PREFIX = http://packages.groonga.org
 HAVE_DEVELOPMENT_BRANCH = no
+CENTOS_VERSIONS = 5 6 7
 
 release: download build sign-packages update-repository upload
 
@@ -40,7 +41,7 @@ build: build-in-vm build-release-rpm
 build-in-vm: source specs env.sh
 	vagrant destroy --force
 	for architecture in $(ARCHITECTURES); do		\
-	  for version in 5 6 7; do				\
+	  for version in $(CENTOS_VERSIONS); do			\
 	    if [ $$version = 7 -a $$architecture = i386 ]; then	\
 	      continue;						\
 	    fi;							\
