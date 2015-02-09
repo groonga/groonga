@@ -53,6 +53,18 @@ mrb_grn_table_get_size(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_table_is_empty(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  unsigned int size;
+
+  size = grn_table_size(ctx, DATA_PTR(self));
+  grn_mrb_ctx_check(mrb);
+
+  return (size == 0) ? mrb_true_value() : mrb_false_value();
+}
+
+static mrb_value
 mrb_grn_table_select(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -108,6 +120,9 @@ grn_mrb_table_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "size",
                     mrb_grn_table_get_size, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "empty?",
+                    mrb_grn_table_is_empty, MRB_ARGS_NONE());
+
   mrb_define_method(mrb, klass, "select",
                     mrb_grn_table_select, MRB_ARGS_ARG(1, 1));
 }
