@@ -139,6 +139,28 @@ object_close(mrb_state *mrb, mrb_value self)
   return mrb_nil_value();
 }
 
+static mrb_value
+object_is_temporary(mrb_state *mrb, mrb_value self)
+{
+  grn_obj *object;
+  grn_obj_flags flags;
+
+  object = DATA_PTR(self);
+  flags = object->header.flags;
+  return mrb_bool_value((flags & GRN_OBJ_PERSISTENT) != GRN_OBJ_PERSISTENT);
+}
+
+static mrb_value
+object_is_persistent(mrb_state *mrb, mrb_value self)
+{
+  grn_obj *object;
+  grn_obj_flags flags;
+
+  object = DATA_PTR(self);
+  flags = object->header.flags;
+  return mrb_bool_value((flags & GRN_OBJ_PERSISTENT) == GRN_OBJ_PERSISTENT);
+}
+
 void
 grn_mrb_object_init(grn_ctx *ctx)
 {
@@ -159,6 +181,11 @@ grn_mrb_object_init(grn_ctx *ctx)
                     object_grn_inspect, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "==", object_equal, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "close", object_close, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, klass, "temporary?", object_is_temporary,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "persistent?", object_is_persistent,
+                    MRB_ARGS_NONE());
 
   grn_mrb_load(ctx, "index_info.rb");
 }
