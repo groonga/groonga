@@ -61,7 +61,7 @@ mrb_grn_table_is_empty(mrb_state *mrb, mrb_value self)
   size = grn_table_size(ctx, DATA_PTR(self));
   grn_mrb_ctx_check(mrb);
 
-  return (size == 0) ? mrb_true_value() : mrb_false_value();
+  return mrb_bool_value(size == 0);
 }
 
 static mrb_value
