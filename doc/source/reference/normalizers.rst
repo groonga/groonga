@@ -73,6 +73,8 @@ Here is a list of built-in normalizers:
   * ``NormalizerAuto``
   * ``NormalizerNFKC51``
 
+.. _normalizer-auto:
+
 ``NormalizerAuto``
 ^^^^^^^^^^^^^^^^^^
 
@@ -99,6 +101,8 @@ Here is an example that uses ``NormalizerAuto`` normalizer:
 .. groonga-command
 .. include:: ../example/reference/normalizers/normalizer-auto.log
 .. table_create NormalLexicon TABLE_HASH_KEY ShortText --normalizer NormalizerAuto
+
+.. _normalizer-nfkc51:
 
 ``NormalizerNFKC51``
 ^^^^^^^^^^^^^^^^^^^^
