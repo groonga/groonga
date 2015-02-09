@@ -28,10 +28,7 @@ module Groonga
             raise InvalidArgument, message
           end
 
-          cover_type = @target_range.cover_type(shard_range)
-          next if cover_type == :none
-
-          yield(table, shard_key, shard_range, cover_type)
+          yield(table, shard_key, shard_range)
         end
       end
 

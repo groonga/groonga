@@ -17,10 +17,10 @@ module Groonga
         filter = input[:filter]
 
         total = 0
-        enumerator.each do |table, shard_key, shard_range, cover_type|
+        enumerator.each do |table, shard_key, shard_range|
           total += count_n_records(table, filter,
                                    shard_key, shard_range,
-                                   enumerator.target_range, cover_type)
+                                   enumerator.target_range)
         end
         writer.write(total)
       end
@@ -28,7 +28,10 @@ module Groonga
       private
       def count_n_records(table, filter,
                           shard_key, shard_range,
-                          target_range, cover_type)
+                          target_range)
+        cover_type = target_range.cover_type(shard_range)
+        return 0 if cover_type == :none
+
         if cover_type == :all
           if filter.nil?
             return table.size
