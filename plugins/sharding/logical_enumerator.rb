@@ -2,6 +2,7 @@ module Groonga
   module Sharding
     class LogicalEnumerator
       attr_reader :target_range
+      attr_reader :shard_key_name
       def initialize(command_name, input)
         @command_name = command_name
         @input = input
