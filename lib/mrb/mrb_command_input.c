@@ -90,16 +90,10 @@ mrb_grn_command_input_array_reference(mrb_state *mrb, mrb_value self)
   }
 
   if (!argument) {
-    mrb_raisef(mrb, E_ARGUMENT_ERROR,
-               "grn_command_input_get(%S) is NULL",
-               mrb_key_or_offset);
     return mrb_nil_value();
   }
 
   if (GRN_TEXT_LEN(argument) == 0) {
-    mrb_raisef(mrb, E_ARGUMENT_ERROR,
-               "grn_command_input_get(%S) is empty",
-               mrb_key_or_offset);
     return mrb_nil_value();
   }
 
