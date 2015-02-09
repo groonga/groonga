@@ -18,9 +18,9 @@ module Groonga
       min = options[:prefix]
       flags = 0
       if options[:order] == :descending
-        flags |= TableCusror::DESCENDING
+        flags |= TableCursor::DESCENDING
       else
-        flags |= TableCusror::ASCENDING
+        flags |= TableCursor::ASCENDING
       end
       if options[:order_by] == :id
         flags |= TableCursorFlags::BY_ID
