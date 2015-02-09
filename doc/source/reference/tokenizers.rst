@@ -21,4 +21,5 @@ Here are the list of built-in tokenizers:
 * TokenDelimitNull
 * TokenTrigram
 * TokenUnigram
+* TokenMecab
 
