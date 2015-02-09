@@ -16,9 +16,17 @@ module Groonga
     def each_table(options={})
       context = Context.instance
       min = options[:prefix]
-      flags =
-        TableCursorFlags::ASCENDING |
-        TableCursorFlags::BY_KEY
+      flags = 0
+      if options[:order] == :descending
+        flags |= TableCusror::DESCENDING
+      else
+        flags |= TableCusror::ASCENDING
+      end
+      if options[:order_by] == :id
+        flags |= TableCursorFlags::BY_ID
+      else
+        flags |= TableCursorFlags::BY_KEY
+      end
       flags |= TableCursorFlags::PREFIX if min
       TableCursor.open(self, :min => min, :flags => flags) do |cursor|
         cursor.each do |id|

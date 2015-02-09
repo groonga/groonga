@@ -11,7 +11,9 @@ module Groonga
       def each
         prefix = "#{@logical_table}_"
         context = Context.instance
-        context.database.each_table(:prefix => prefix) do |table|
+        context.database.each_table(:prefix => prefix,
+                                    :order_by => :key,
+                                    :order => :ascending) do |table|
           shard_range_raw = table.name[prefix.size..-1]
 
           next unless /\A(\d{4})(\d{2})(\d{2})\z/ =~ shard_range_raw
