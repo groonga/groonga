@@ -434,7 +434,7 @@ grn_ctx_loader_clear(grn_ctx *ctx)
 #define IMPL_SIZE ((sizeof(struct _grn_ctx_impl) + (grn_pagesize - 1)) & ~(grn_pagesize - 1))
 
 #ifdef GRN_WITH_MESSAGE_PACK
-static inline int
+static int
 grn_msgpack_buffer_write(void *data, const char *buf, unsigned int len)
 {
   grn_ctx *ctx = (grn_ctx *)data;
