@@ -4881,7 +4881,7 @@ grn_table_select_index_range_accessor(grn_ctx *ctx, grn_obj *table,
         break;
       }
 
-      if (section) {
+      if (section > 0) {
         int j;
         int weight_position = section - 1;
 
