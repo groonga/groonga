@@ -4788,7 +4788,7 @@ grn_table_select_index_range_column(grn_ctx *ctx, grn_obj *table,
       if (index_cursor) {
         grn_posting *posting;
         while ((posting = grn_index_cursor_next(ctx, index_cursor, NULL))) {
-          if (posting->sid == sid) {
+          if (sid == 0 || posting->sid == sid) {
             grn_ii_posting ii_posting;
             ii_posting.rid = posting->rid;
             ii_posting.sid = posting->sid;
