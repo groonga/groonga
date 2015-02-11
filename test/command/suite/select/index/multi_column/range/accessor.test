@@ -1,0 +1,59 @@
+table_create Numbers TABLE_PAT_KEY Int32
+
+table_create Pairs TABLE_HASH_KEY ShortText
+column_create Pairs number1 COLUMN_SCALAR Int32
+column_create Pairs number2 COLUMN_SCALAR Int32
+
+column_create Numbers pairs \
+  COLUMN_INDEX|WITH_SECTION \
+  Pairs number1,number2
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos pair1 COLUMN_SCALAR Pairs
+column_create Memos pair2 COLUMN_SCALAR Pairs
+
+column_create Pairs memos \
+  COLUMN_INDEX|WITH_SECTION \
+  Memos pair1,pair2
+
+load --table Pairs
+[
+  {
+    "_key": "2-30",
+    "number1": 2,
+    "number2": 30
+  },
+  {
+    "_key": "3-10",
+    "number1": 3,
+    "number2": 10
+  },
+  {
+    "_key": "1-20",
+    "number1": 1,
+    "number2": 20
+  }
+]
+
+load --table Memos
+[
+  {
+    "_key": "300",
+    "pair1": "1-20",
+    "pair2": "2-30"
+  },
+  {
+    "_key": "200",
+    "pair1": "3-10",
+    "pair2": "1-20"
+  },
+  {
+    "_key": "100",
+    "pair1": "2-30",
+    "pair2": "3-10"
+  }
+]
+
+select Memos \
+  --filter 'pair2.number1 >= 2 && pair2.number2 >= 20' \
+  --output_columns '_key,pair1,pair2'

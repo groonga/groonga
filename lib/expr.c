@@ -4852,11 +4852,21 @@ grn_table_select_index_range_accessor(grn_ctx *ctx, grn_obj *table,
 
   {
     int i;
+    grn_obj weight_vector;
+    grn_search_optarg optarg;
 
+    GRN_INT32_INIT(&weight_vector, GRN_OBJ_VECTOR);
+    memset(&optarg, 0, sizeof(grn_search_optarg));
+    if (si->op == GRN_OP_MATCH) {
+      optarg.mode = GRN_OP_EXACT;
+    } else {
+      optarg.mode = si->op;
+    }
     for (i = n_accessors - 1; i > 0; i--) {
       grn_rc rc = GRN_SUCCESS;
       grn_accessor *accessor;
       grn_obj *index;
+      int section;
       grn_obj *domain;
       grn_obj *target;
       grn_obj *next_res;
@@ -4865,10 +4875,26 @@ grn_table_select_index_range_accessor(grn_ctx *ctx, grn_obj *table,
 
       accessor = (grn_accessor *)GRN_PTR_VALUE_AT(accessor_stack, i - 1);
       target = accessor->obj;
-      if (grn_column_index(ctx, target, GRN_OP_EQUAL, &index, 1, NULL) == 0) {
+      if (grn_column_index(ctx, target, GRN_OP_EQUAL, &index, 1, &section) == 0) {
         grn_obj_unlink(ctx, current_res);
         current_res = NULL;
         break;
+      }
+
+      if (section) {
+        int j;
+        int weight_position = section - 1;
+
+        GRN_BULK_REWIND(&weight_vector);
+        GRN_INT32_SET_AT(ctx, &weight_vector, weight_position, 1);
+        optarg.weight_vector = &(GRN_INT32_VALUE(&weight_vector));
+        optarg.vector_size = GRN_BULK_VSIZE(&weight_vector) / sizeof(int32_t);
+        for (j = 0; j < weight_position - 1; j++) {
+          optarg.weight_vector[j] = 0;
+        }
+      } else {
+        optarg.weight_vector = NULL;
+        optarg.vector_size = 1;
       }
 
       {
@@ -4893,14 +4919,14 @@ grn_table_select_index_range_accessor(grn_ctx *ctx, grn_obj *table,
         if (domain->header.type == GRN_TABLE_NO_KEY) {
           rc = grn_ii_sel(ctx, (grn_ii *)index,
                           (const char *)next_record_id, sizeof(grn_id),
-                          (grn_hash *)next_res, next_op, NULL);
+                          (grn_hash *)next_res, next_op, &optarg);
         } else {
           char key[GRN_TABLE_MAX_KEY_SIZE];
           int key_len;
           key_len = grn_table_get_key(ctx, domain, *next_record_id,
                                       key, GRN_TABLE_MAX_KEY_SIZE);
           rc = grn_ii_sel(ctx, (grn_ii *)index, key, key_len,
-                          (grn_hash *)next_res, next_op, NULL);
+                          (grn_hash *)next_res, next_op, &optarg);
         }
         if (rc != GRN_SUCCESS) {
           break;
@@ -4925,6 +4951,7 @@ grn_table_select_index_range_accessor(grn_ctx *ctx, grn_obj *table,
         break;
       }
     }
+    GRN_OBJ_FIN(ctx, &weight_vector);
   }
 
   return current_res == res;
