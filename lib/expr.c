@@ -4777,13 +4777,29 @@ grn_table_select_index_range_column(grn_ctx *ctx, grn_obj *table,
                                    min, min_size, max, max_size,
                                    offset, limit, flags);
     if (cursor) {
-      grn_id index_id;
-      while ((index_id = grn_table_cursor_next(ctx, cursor))) {
-        grn_ii_at(ctx, (grn_ii *)index, index_id,
-                  (grn_hash *)res, logical_op);
+      uint32_t sid;
+      int32_t weight;
+      grn_obj *index_cursor;
+
+      sid = GRN_UINT32_VALUE_AT(&(si->wv), 0);
+      weight = GRN_INT32_VALUE_AT(&(si->wv), 1);
+      index_cursor = grn_index_cursor_open(ctx, cursor, index,
+                                           GRN_ID_NIL, GRN_ID_MAX, 0);
+      if (index_cursor) {
+        grn_posting *posting;
+        while ((posting = grn_index_cursor_next(ctx, index_cursor, NULL))) {
+          if (posting->sid == sid) {
+            grn_ii_posting ii_posting;
+            ii_posting.rid = posting->rid;
+            ii_posting.sid = posting->sid;
+            ii_posting.weight = posting->weight * weight;
+            grn_ii_posting_add(ctx, &ii_posting, (grn_hash *)res, logical_op);
+          }
+        }
+        processed = GRN_TRUE;
+        grn_obj_unlink(ctx, index_cursor);
       }
       grn_table_cursor_close(ctx, cursor);
-      processed = GRN_TRUE;
     }
 
     grn_ii_resolve_sel_and(ctx, (grn_hash *)res, logical_op);

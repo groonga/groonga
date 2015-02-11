@@ -1,0 +1,31 @@
+table_create Numbers TABLE_PAT_KEY Int32
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos number1 COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+column_create Memos number2 COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+column_create Numbers memos   COLUMN_INDEX|WITH_SECTION   Memos number1,number2
+[[0,0.0,0.0],true]
+load --table Memos
+[
+  {
+    "_key": "2-30",
+    "number1": 2,
+    "number2": 30
+  },
+  {
+    "_key": "3-10",
+    "number1": 3,
+    "number2": 10
+  },
+  {
+    "_key": "1-20",
+    "number1": 1,
+    "number2": 20
+  }
+]
+[[0,0.0,0.0],3]
+select Memos   --filter 'number1 >= 2 && number2 >= 20'   --output_columns '_key'
+[[0,0.0,0.0],[[[1],[["_key","ShortText"]],["2-30"]]]]
