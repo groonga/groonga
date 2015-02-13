@@ -12,4 +12,7 @@ describes APIs that are provided by groonga.
    :maxdepth: 1
    :glob:
 
+   api/overview
+   api/global_configurations
+   api/plugin
    api/*
