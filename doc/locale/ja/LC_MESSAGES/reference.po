@@ -15572,6 +15572,10 @@ msgstr ""
 msgid "TokenUnigram"
 msgstr ""
 
+# 263dee6ee018442495675c67244a2b59
+msgid "TokenMecab"
+msgstr ""
+
 msgid "Tuning"
 msgstr ""
 
