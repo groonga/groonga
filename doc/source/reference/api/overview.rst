@@ -46,6 +46,6 @@ Reference
 
 .. c:function:: grn_rc grn_fin(void)
 
-  ``grn_fin()`` releases resource that is used by libgroonga. You must not call it other Groonga API after calling :c:func:`grn_fin()`.
+  ``grn_fin()`` releases resource that is used by libgroonga. You must not call it other Groonga API after calling ``grn_fin()``.
 
   :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
