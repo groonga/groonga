@@ -8,6 +8,7 @@ Uploaders: HAYASHI Kentaro <hayashi@clear-code.com>
 Build-Depends:
   debhelper (>= 9),
   autotools-dev,
+  pkg-config,
   liblz4-dev,
   zlib1g-dev,
   libmsgpack-dev,
