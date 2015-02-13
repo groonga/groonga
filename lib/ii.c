@@ -5829,7 +5829,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
       if (rep) {
         while (grn_ii_cursor_next(ctx, c)) {
           pos = c->post;
-          if ((w2 = get_weight(ctx, s, pos->rid, pos->sid, wvm, optarg))) {
+          if ((w2 = get_weight(ctx, s, pos->rid, pos->sid, wvm, optarg)) > 0) {
             while (grn_ii_cursor_next_pos(ctx, c)) {
               res_add(ctx, s, (grn_rset_posinfo *) pos, *w1 * w2 * (1 + pos->weight), op);
             }
@@ -5838,7 +5838,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
       } else {
         while (grn_ii_cursor_next(ctx, c)) {
           pos = c->post;
-          if ((w2 = get_weight(ctx, s, pos->rid, pos->sid, wvm, optarg))) {
+          if ((w2 = get_weight(ctx, s, pos->rid, pos->sid, wvm, optarg)) > 0) {
             res_add(ctx, s, (grn_rset_posinfo *) pos, *w1 * w2 * (pos->tf + pos->weight), op);
           }
         }
@@ -6244,7 +6244,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
       }
     }
     weight = get_weight(ctx, s, rid, sid, wvm, optarg);
-    if (tip == tie && weight) {
+    if (tip == tie && weight > 0) {
       grn_rset_posinfo pi = {rid, sid, 0};
       if (orp || grn_hash_get(ctx, s, &pi, s->key_size, NULL)) {
         int count = 0, noccur = 0, pos = 0, score = 0, tscore = 0, min, max;
