@@ -24,7 +24,7 @@ extern "C" {
 #endif
 
 typedef struct {
-  int score;
+  double score;
   int n_subrecs;
   int subrecs[1];
 } grn_rset_recinfo;
@@ -43,7 +43,7 @@ typedef struct {
 #define GRN_RSET_SUM_SIZE       (sizeof(int64_t))
 #define GRN_RSET_AVG_SIZE       (sizeof(double))
 
-#define GRN_RSET_SCORE_SIZE (sizeof(int))
+#define GRN_RSET_SCORE_SIZE (sizeof(double))
 
 #define GRN_RSET_N_SUBRECS(ri) ((ri)->n_subrecs & ~GRN_RSET_UTIL_BIT)
 
@@ -51,7 +51,7 @@ typedef struct {
   (GRN_RSET_SCORE_SIZE + subrec_size)
 #define GRN_RSET_SUBRECS_CMP(a,b,dir) (((a) - (b))*(dir))
 #define GRN_RSET_SUBRECS_NTH(subrecs,size,n) \
-  ((int *)((byte *)subrecs + n * GRN_RSET_SUBREC_SIZE(size)))
+  ((double *)((byte *)subrecs + n * GRN_RSET_SUBREC_SIZE(size)))
 #define GRN_RSET_SUBRECS_COPY(subrecs,size,n,src) \
   (memcpy(GRN_RSET_SUBRECS_NTH(subrecs, size, n), src, GRN_RSET_SUBREC_SIZE(size)))
 #define GRN_RSET_SUBRECS_SIZE(subrec_size,n) \

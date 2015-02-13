@@ -71,7 +71,7 @@ inline static grn_id
 grn_table_add_v_inline(grn_ctx *ctx, grn_obj *table, const void *key, int key_size,
                        void **value, int *added);
 inline static void
-grn_table_add_subrec_inline(grn_obj *table, grn_rset_recinfo *ri, int score,
+grn_table_add_subrec_inline(grn_obj *table, grn_rset_recinfo *ri, double score,
                             grn_rset_posinfo *pi, int dir);
 inline static grn_id
 grn_table_cursor_next_inline(grn_ctx *ctx, grn_table_cursor *tc);
@@ -986,7 +986,7 @@ grn_table_get_subrecs(grn_ctx *ctx, grn_obj *table, grn_id id,
       }
       for (; count < limit; count++) {
         if (scorebuf) {
-          scorebuf[count] = *((int *)psubrec);
+          scorebuf[count] = *((double *)psubrec);
         }
         psubrec += GRN_RSET_SCORE_SIZE;
         if (subrecbuf) {
@@ -2041,10 +2041,10 @@ grn_table_size(grn_ctx *ctx, grn_obj *table)
 }
 
 inline static void
-subrecs_push(byte *subrecs, int size, int n_subrecs, int score, void *body, int dir)
+subrecs_push(byte *subrecs, int size, int n_subrecs, double score, void *body, int dir)
 {
   byte *v;
-  int *c2;
+  double *c2;
   int n = n_subrecs - 1, n2;
   while (n) {
     n2 = (n - 1) >> 1;
@@ -2054,15 +2054,16 @@ subrecs_push(byte *subrecs, int size, int n_subrecs, int score, void *body, int 
     n = n2;
   }
   v = subrecs + n * (GRN_RSET_SCORE_SIZE + size);
-  *((int *)v) = score;
+  *((double *)v) = score;
   memcpy(v + GRN_RSET_SCORE_SIZE, body, size);
 }
 
 inline static void
-subrecs_replace_min(byte *subrecs, int size, int n_subrecs, int score, void *body, int dir)
+subrecs_replace_min(byte *subrecs, int size, int n_subrecs, double score, void *body, int dir)
 {
   byte *v;
-  int n = 0, n1, n2, *c1, *c2;
+  int n = 0, n1, n2;
+  double *c1, *c2;
   for (;;) {
     n1 = n * 2 + 1;
     n2 = n1 + 1;
@@ -2093,7 +2094,7 @@ subrecs_replace_min(byte *subrecs, int size, int n_subrecs, int score, void *bod
 }
 
 inline static void
-grn_table_add_subrec_inline(grn_obj *table, grn_rset_recinfo *ri, int score,
+grn_table_add_subrec_inline(grn_obj *table, grn_rset_recinfo *ri, double score,
                             grn_rset_posinfo *pi, int dir)
 {
   if (DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC) {
@@ -2106,7 +2107,7 @@ grn_table_add_subrec_inline(grn_obj *table, grn_rset_recinfo *ri, int score,
       if (pi) {
         byte *body = (byte *)pi + DB_OBJ(table)->subrec_offset;
         if (limit < n_subrecs) {
-          if (GRN_RSET_SUBRECS_CMP(score, *ri->subrecs, dir) > 0) {
+          if (GRN_RSET_SUBRECS_CMP(score, *((double *)(ri->subrecs)), dir) > 0) {
             subrecs_replace_min((byte *)ri->subrecs, subrec_size, limit, score, body, dir);
           }
         } else {
@@ -2118,7 +2119,7 @@ grn_table_add_subrec_inline(grn_obj *table, grn_rset_recinfo *ri, int score,
 }
 
 void
-grn_table_add_subrec(grn_obj *table, grn_rset_recinfo *ri, int score,
+grn_table_add_subrec(grn_obj *table, grn_rset_recinfo *ri, double score,
                      grn_rset_posinfo *pi, int dir)
 {
   grn_table_add_subrec_inline(table, ri, score, pi, dir);
@@ -3062,7 +3063,7 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
 inline static void
 grn_table_group_add_subrec(grn_ctx *ctx,
                            grn_obj *table,
-                           grn_rset_recinfo *ri, int score,
+                           grn_rset_recinfo *ri, double score,
                            grn_rset_posinfo *pi, int dir,
                            grn_obj *calc_target,
                            grn_obj *value_buffer)
@@ -5148,6 +5149,8 @@ grn_obj_get_range_info(grn_ctx *ctx, grn_obj *obj,
         }
         break;
       case GRN_ACCESSOR_GET_SCORE :
+        *range_id = GRN_DB_FLOAT;
+        break;
       case GRN_ACCESSOR_GET_NSUBRECS :
         *range_id = GRN_DB_INT32;
         break;
@@ -5677,7 +5680,7 @@ grn_accessor_get_value_(grn_ctx *ctx, grn_accessor *a, grn_id id, uint32_t *size
     case GRN_ACCESSOR_GET_SCORE :
       if ((value = grn_obj_get_value_(ctx, a->obj, id, size))) {
         value = (const char *)&((grn_rset_recinfo *)value)->score;
-        *size = sizeof(int);
+        *size = sizeof(double);
       }
       break;
     case GRN_ACCESSOR_GET_NSUBRECS :
@@ -5800,11 +5803,11 @@ grn_accessor_get_value(grn_ctx *ctx, grn_accessor *a, grn_id id, grn_obj *value)
     case GRN_ACCESSOR_GET_SCORE :
       if (id) {
         grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
-        GRN_INT32_PUT(ctx, value, ri->score);
+        GRN_FLOAT_PUT(ctx, value, ri->score);
       } else {
-        GRN_INT32_PUT(ctx, value, 0);
+        GRN_FLOAT_PUT(ctx, value, 0.0);
       }
-      value->header.domain = GRN_DB_INT32;
+      value->header.domain = GRN_DB_FLOAT;
       break;
     case GRN_ACCESSOR_GET_NSUBRECS :
       if (id) {
@@ -5925,15 +5928,14 @@ grn_accessor_set_value(grn_ctx *ctx, grn_accessor *a, grn_id id,
           } else {
             uint32_t size;
             if ((ri = (grn_rset_recinfo *) grn_obj_get_value_(ctx, a->obj, id, &size))) {
-              vp = &ri->score;
               // todo : flags support
-              if (value->header.domain == GRN_DB_INT32) {
-                memcpy(vp, GRN_BULK_HEAD(value), sizeof(int));
+              if (value->header.domain == GRN_DB_FLOAT) {
+                ri->score = GRN_FLOAT_VALUE(value);
               } else {
                 grn_obj buf;
-                GRN_INT32_INIT(&buf, 0);
+                GRN_FLOAT_INIT(&buf, 0);
                 grn_obj_cast(ctx, value, &buf, GRN_FALSE);
-                memcpy(vp, GRN_BULK_HEAD(&buf), sizeof(int));
+                ri->score = GRN_FLOAT_VALUE(&buf);
                 GRN_OBJ_FIN(ctx, &buf);
               }
             }

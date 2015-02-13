@@ -519,10 +519,10 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         buf.header.domain = DB_OBJ(a->obj)->range;
         break;
       case GRN_ACCESSOR_GET_SCORE :
-        grn_obj_get_value(ctx, a->obj, id, &buf);
         {
           grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
-          GRN_INT32_PUT(ctx, &buf, ri->score);
+          int32_t int32_score = ri->score;
+          GRN_INT32_PUT(ctx, &buf, int32_score);
         }
         buf.header.domain = GRN_DB_INT32;
         break;
@@ -1141,6 +1141,20 @@ count_used_n_codes(grn_ctx *ctx, grn_expr_code *start, grn_expr_code *target)
   return n_codes;
 }
 
+static grn_bool
+is_score_accessor(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_accessor *a;
+
+  if (obj->header.type != GRN_ACCESSOR) {
+    return GRN_FALSE;
+  }
+
+  for (a = (grn_accessor *)obj; a->next; a = a->next) {
+  }
+  return a->action == GRN_ACCESSOR_GET_SCORE;
+}
+
 static inline void
 grn_output_table_column(grn_ctx *ctx, grn_obj *outbuf,
                         grn_content_type output_type,
@@ -1148,13 +1162,16 @@ grn_output_table_column(grn_ctx *ctx, grn_obj *outbuf,
 {
   grn_output_array_open(ctx, outbuf, output_type, "COLUMN", 2);
   if (column) {
-    grn_id range_id;
+    grn_id range_id = GRN_ID_NIL;
     GRN_BULK_REWIND(buf);
     grn_column_name_(ctx, column, buf);
     grn_output_obj(ctx, outbuf, output_type, buf, NULL);
     if (column->header.type == GRN_COLUMN_INDEX) {
       range_id = GRN_DB_UINT32;
-    } else {
+    } else if (is_score_accessor(ctx, column)) {
+      range_id = GRN_DB_INT32;
+    }
+    if (range_id == GRN_ID_NIL) {
       range_id = grn_obj_get_range(ctx, column);
     }
     if (range_id == GRN_ID_NIL) {

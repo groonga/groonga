@@ -83,7 +83,7 @@ int grn_table_get_key2(grn_ctx *ctx, grn_obj *table, grn_id id, grn_obj *bulk);
 grn_table_cursor *grn_table_cursor_open_by_id(grn_ctx *ctx, grn_obj *table,
                                               grn_id min, grn_id max, int flags);
 
-void grn_table_add_subrec(grn_obj *table, grn_rset_recinfo *ri, int score,
+void grn_table_add_subrec(grn_obj *table, grn_rset_recinfo *ri, double score,
                           grn_rset_posinfo *pi, int dir);
 
 grn_obj *grn_obj_graft(grn_ctx *ctx, grn_obj *obj);

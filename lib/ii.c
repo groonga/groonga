@@ -5540,7 +5540,7 @@ token_info_clear_offset(token_info **tis, uint32_t n)
 /* select */
 
 inline static void
-res_add(grn_ctx *ctx, grn_hash *s, grn_rset_posinfo *pi, uint32_t score,
+res_add(grn_ctx *ctx, grn_hash *s, grn_rset_posinfo *pi, double score,
         grn_operator op)
 {
   grn_rset_recinfo *ri;
@@ -5699,7 +5699,7 @@ typedef enum {
   grn_wv_constant
 } grn_wv_mode;
 
-inline static int
+inline static double
 get_weight(grn_ctx *ctx, grn_hash *s, grn_id rid, int sid,
            grn_wv_mode wvm, grn_select_optarg *optarg)
 {
@@ -6045,7 +6045,7 @@ grn_ii_select_sequential_search_body(grn_ctx *ctx,
                                0);
         if (position != ONIG_MISMATCH) {
           grn_rset_posinfo info;
-          uint32_t score;
+          double score;
           info.rid = id;
           info.sid = i + 1;
           info.pos = 0;
