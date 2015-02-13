@@ -30,7 +30,7 @@ Here is an example that uses Groonga as full-text search library.
    if (rc != GRN_SUCCESS) {
      return 1;
    }
-   /* some Groonga API calling code... */
+   /* Some Groonga API calling codes... */
    /* Releasing resource used by libgroonga. */
    grn_fin();
    return 0;
