@@ -8,30 +8,31 @@ Overview
 Summary
 -------
 
-Groonga can use as library. You can start to use Groonga as full-text search
-library with the following API.
+You can use Groonga as a library. You need to use the following APIs to
+initialize and finalize Groonga.
 
-:c:func:`grn_init()` is initializer for libgroonga.
-In contrast, :c:func:`grn_fin()` is finalizer for libgroonga.
+:c:func:`grn_init()` initializes Groonga.
+In contrast, :c:func:`grn_fin()` finalizes Groonga.
 
-You must call :c:func:`grn_init()` once before using API which are provided by libgroonga.
-You must call :c:func:`grn_fin()` once after stop to use API which are provided by libgroonga.
+You must call :c:func:`grn_init()` only once before you use APIs which
+are provided by Groonga. You must call :c:func:`grn_fin()` only once
+after you finish to use APIs which are provided by Groonga.
 
 Example
 -------
 
-Here is an example that uses Groonga as full-text search library.
+Here is an example that uses Groonga as a full-text search library.
 
 .. code-block :: c
 
    grn_rc rc;
-   /* Preparing resource will be used by libgroonga. */
+   /* It initializes resources used by Groonga. */
    rc = grn_init();
    if (rc != GRN_SUCCESS) {
      return EXIT_FAILURE;
    }
    /* Some Groonga API calling codes... */
-   /* Releasing resource used by libgroonga. */
+   /* It releases resources used by Groonga. */
    grn_fin();
    return EXIT_SUCCESS;
 
@@ -40,12 +41,14 @@ Reference
 
 .. c:function:: grn_rc grn_init(void)
 
-  ``grn_init()`` initializes resource that is used by libgroonga. You must call it once before calling other Groonga API.
+  ``grn_init()`` initializes resources that are used by Groonga. You
+  must call it just once before you call other Groonga APIs.
 
   :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
 
 .. c:function:: grn_rc grn_fin(void)
 
-  ``grn_fin()`` releases resource that is used by libgroonga. You must not call it other Groonga API after calling ``grn_fin()``.
+  ``grn_fin()`` releases resources that are used by Groonga. You can't
+  call other Groonga APIs after you call ``grn_fin()``.
 
   :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
