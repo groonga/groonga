@@ -40,12 +40,12 @@ Reference
 
 .. c:function:: grn_rc grn_init(void)
 
-  `grn_init()` initializes resource that is used by libgroonga. It must call once before calling other Groonga API.
+  `grn_init()` initializes resource that is used by libgroonga. You must call it once before calling other Groonga API.
 
   :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
 
 .. c:function:: grn_rc grn_fin(void)
 
-  `grn_fin()` releases resource that is used by libgroonga. It must not call other Groonga API after calling `grn_fin()`.
+  `grn_fin()` releases resource that is used by libgroonga. You must not call it other Groonga API after calling `grn_fin()`.
 
   :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
