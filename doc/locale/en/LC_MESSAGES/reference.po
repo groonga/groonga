@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Groonga 4.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-02-13 18:00+0900\n"
+"PO-Revision-Date: 2015-02-13 21:30+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -2421,6 +2421,43 @@ msgid ""
 msgstr ""
 "objectに登録できるユーザデータへのポインタを返します。table, column, proc, "
 "exprのみ使用可能です。"
+
+# ff055c16fb884cb1a3988e064875e005
+msgid "Overview"
+msgstr ""
+
+msgid ""
+"Groonga can use as library. You can start to use Groonga as full-text search "
+"library with the following API."
+msgstr ""
+
+# e589597c060c45deb011e46056f87f35
+msgid ""
+":c:func:`grn_init()` is initializer for libgroonga. In contrast, :c:func:"
+"`grn_fin()` is finalizer for libgroonga."
+msgstr ""
+
+# 2a1f5aeb649f45acaf6d47350d9c20d7
+msgid ""
+"You must call :c:func:`grn_init()` once before using API which are provided "
+"by libgroonga. You must call :c:func:`grn_fin()` once after stop to use API "
+"which are provided by libgroonga."
+msgstr ""
+
+msgid "Here is an example that uses Groonga as full-text search library."
+msgstr ""
+
+# da066927cf144fc79d22c19a1d11728b
+msgid ""
+"``grn_init()`` initializes resource that is used by libgroonga. You must "
+"call it once before calling other Groonga API."
+msgstr ""
+
+# 8949c03e545d42cf8200f0343f8c573f
+msgid ""
+"``grn_fin()`` releases resource that is used by libgroonga. You must not "
+"call it other Groonga API after calling ``grn_fin()``."
+msgstr ""
 
 msgid "Plugin"
 msgstr "Plugin"
