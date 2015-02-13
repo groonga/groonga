@@ -20,7 +20,7 @@ load --table Entries
  "content": "I also migrated all Tritonn system!"}
 ]
 [[0,0.0,0.0],5]
-select Entries --match_columns content --query '-fast'   --query_flags ALLOW_LEADING_NOT
+select Entries   --output_columns '_key,content,_score'   --match_columns content --query '-fast'   --query_flags ALLOW_LEADING_NOT
 [
   [
     0,
@@ -34,32 +34,32 @@ select Entries --match_columns content --query '-fast'   --query_flags ALLOW_LEA
       ],
       [
         [
-          "_id",
-          "UInt32"
-        ],
-        [
           "_key",
           "ShortText"
         ],
         [
           "content",
           "Text"
+        ],
+        [
+          "_score",
+          "Int32"
         ]
       ],
       [
-        4,
         "Good-bye Senna",
-        "I migrated all Senna system!"
+        "I migrated all Senna system!",
+        1
       ],
       [
-        5,
         "Good-bye Tritonn",
-        "I also migrated all Tritonn system!"
+        "I also migrated all Tritonn system!",
+        1
       ],
       [
-        1,
         "The first post!",
-        "Welcome! This is my first post!"
+        "Welcome! This is my first post!",
+        1
       ]
     ]
   ]

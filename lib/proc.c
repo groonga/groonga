@@ -4580,18 +4580,13 @@ selector_all_records(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                      int nargs, grn_obj **args,
                      grn_obj *res, grn_operator op)
 {
-  grn_obj score;
+  grn_ii_posting posting;
 
-  GRN_UINT32_INIT(&score, 0);
-  GRN_UINT32_SET(ctx, &score, 1);
-
+  memset(&posting, 0, sizeof(grn_ii_posting));
   GRN_TABLE_EACH(ctx, table, 0, 0, id, NULL, NULL, NULL, {
-    grn_id result_id;
-    result_id = grn_table_add(ctx, res, &id, sizeof(grn_id), NULL);
-    grn_obj_set_value(ctx, res, result_id, &score, GRN_OBJ_SET);
+    posting.rid = id;
+    grn_ii_posting_add(ctx, &posting, (grn_hash *)res, GRN_OP_OR);
   });
-
-  GRN_OBJ_FIN(ctx, &score);
 
   return ctx->rc;
 }

@@ -18,5 +18,7 @@ load --table Entries
  "content": "I also migrated all Tritonn system!"}
 ]
 
-select Entries --match_columns content --query '-fast' \
+select Entries \
+  --output_columns '_key,content,_score' \
+  --match_columns content --query '-fast' \
   --query_flags ALLOW_LEADING_NOT
