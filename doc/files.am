@@ -445,6 +445,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/api/grn_table_cursor.rst \
 	$(top_srcdir)/doc/source/reference/api/grn_type.rst \
 	$(top_srcdir)/doc/source/reference/api/grn_user_data.rst \
+	$(top_srcdir)/doc/source/reference/api/overview.rst \
 	$(top_srcdir)/doc/source/reference/api/plugin.rst \
 	$(top_srcdir)/doc/source/reference/cast.rst \
 	$(top_srcdir)/doc/source/reference/column.rst \
@@ -1027,6 +1028,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/api/grn_table_cursor.rst \
 	source/reference/api/grn_type.rst \
 	source/reference/api/grn_user_data.rst \
+	source/reference/api/overview.rst \
 	source/reference/api/plugin.rst \
 	source/reference/cast.rst \
 	source/reference/column.rst \
@@ -1336,6 +1338,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/api/grn_table_cursor.txt \
 	html/_sources/reference/api/grn_type.txt \
 	html/_sources/reference/api/grn_user_data.txt \
+	html/_sources/reference/api/overview.txt \
 	html/_sources/reference/api/plugin.txt \
 	html/_sources/reference/cast.txt \
 	html/_sources/reference/column.txt \
@@ -1544,6 +1547,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/api/grn_table_cursor.html \
 	html/reference/api/grn_type.html \
 	html/reference/api/grn_user_data.html \
+	html/reference/api/overview.html \
 	html/reference/api/plugin.html \
 	html/reference/cast.html \
 	html/reference/column.html \
