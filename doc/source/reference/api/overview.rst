@@ -28,7 +28,6 @@ Here is an example that uses Groonga as full-text search library.
    /* Preparing resource will be used by libgroonga. */
    rc = grn_init();
    if (rc != GRN_SUCCESS) {
-     grn_fin();
      return 1;
    }
    /* some Groonga API calling code... */
