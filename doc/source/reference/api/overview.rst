@@ -11,11 +11,11 @@ Summary
 Groonga can use as library. You can start to use Groonga as full-text search
 library with the following API.
 
-:c:func:`grn_init` is initializer for libgroonga.
-In contrast, :c:func:`grn_fin` is finalizer for libgroonga.
+:c:func:`grn_init()` is initializer for libgroonga.
+In contrast, :c:func:`grn_fin()` is finalizer for libgroonga.
 
-You must call :c:func:`grn_init` once before using API which are provided by libgroonga.
-You must call :c:func:`grn_fin` once after stop to use API which are provided by libgroonga.
+You must call :c:func:`grn_init()` once before using API which are provided by libgroonga.
+You must call :c:func:`grn_fin()` once after stop to use API which are provided by libgroonga.
 
 Example
 -------
