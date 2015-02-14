@@ -691,6 +691,9 @@ grn_select_drilldown(grn_ctx *ctx, grn_obj *table,
     }
 
     grn_table_group(ctx, table, &keys[i], 1, &g, 1);
+    if (ctx->rc != GRN_SUCCESS) {
+      break;
+    }
     n_hits = grn_table_size(ctx, g.table);
 
     offset = drilldown->offset;
