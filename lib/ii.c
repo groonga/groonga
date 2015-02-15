@@ -4093,6 +4093,18 @@ exit :
   return c;
 }
 
+static inline void
+grn_ii_cursor_set_min(grn_ctx *ctx, grn_ii_cursor *c, grn_id min)
+{
+  if (c->min > min) {
+    return;
+  }
+
+  if (getenv("GRN_II_CURSOR_SET_MIN_ENABLE")) {
+    c->min = min;
+  }
+}
+
 grn_ii_posting *
 grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
 {
@@ -4117,6 +4129,14 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
               c->pc.weight = 0;
             }
             c->pc.pos = 0;
+            if (c->pc.rid < c->min) {
+              if (c->curr_chunk < c->nchunks) {
+                if (c->pc.rid + c->cinfo[c->curr_chunk + 1].dgap < c->min) {
+                  c->crp = c->cdp + c->cdf;
+                }
+              }
+              continue;
+            }
             /*
             {
               static int count = 0;
@@ -4198,6 +4218,7 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
         }
       }
       if (c->stat & BUFFER_USED) {
+        for (;;) {
         if (c->nextb) {
           uint32_t lrid = c->pb.rid, lsid = c->pb.sid; /* for check */
           buffer_rec *br = BUFFER_REC_AT(c->buf, c->nextb);
@@ -4215,6 +4236,24 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
           if (lrid > c->pb.rid || (lrid == c->pb.rid && lsid >= c->pb.sid)) {
             ERR(GRN_FILE_CORRUPT, "brokend!! (%d:%d) -> (%d:%d) (%d->%d)", lrid, lsid, c->pb.rid, c->pb.sid, c->buffer_pseg, *c->ppseg);
           }
+          if (c->pb.rid < c->min) {
+            c->pb.rid = 0;
+            if (br->jump > 0) {
+              buffer_rec *jump_br = BUFFER_REC_AT(c->buf, br->jump);
+              uint8_t *jump_bp;
+              uint32_t jump_rid;
+              jump_bp = NEXT_ADDR(jump_br);
+              GRN_B_DEC(jump_rid, jump_bp);
+              if (jump_rid < c->min) {
+                c->nextb = br->jump;
+              } else {
+                c->nextb = br->step;
+              }
+            } else {
+              c->nextb = br->step;
+            }
+            continue;
+          }
           c->nextb = br->step;
           GRN_B_DEC(c->pb.tf, c->bp);
           if ((c->ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
@@ -4226,6 +4265,8 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
           c->pb.pos = 0;
         } else {
           c->pb.rid = 0;
+        }
+        break;
         }
       }
       if (c->pb.rid) {
@@ -4273,6 +4314,10 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
     } else {
       c->post = &c->pb;
       c->stat |= SOLE_DOC_USED;
+      if (c->post->rid < c->min) {
+        c->post = NULL;
+        return NULL;
+      }
     }
   }
   return c->post;
@@ -4552,10 +4597,11 @@ cursor_heap_recalc_min(cursor_heap *h)
 }
 
 static inline void
-cursor_heap_pop(grn_ctx *ctx, cursor_heap *h)
+cursor_heap_pop(grn_ctx *ctx, cursor_heap *h, grn_id min)
 {
   if (h->n_entries) {
     grn_ii_cursor *c = h->bins[0];
+    grn_ii_cursor_set_min(ctx, c, min);
     if (!grn_ii_cursor_next(ctx, c)) {
       grn_ii_cursor_close(ctx, c);
       h->bins[0] = h->bins[--h->n_entries];
@@ -5402,7 +5448,7 @@ token_info_skip(grn_ctx *ctx, token_info *ti, uint32_t rid, uint32_t sid)
     if (!(c = cursor_heap_min(ti->cursors))) { return GRN_END_OF_DATA; }
     p = c->post;
     if (p->rid > rid || (p->rid == rid && p->sid >= sid)) { break; }
-    cursor_heap_pop(ctx, ti->cursors);
+    cursor_heap_pop(ctx, ti->cursors, rid);
   }
   ti->pos = p->pos - ti->offset;
   ti->p = p;
