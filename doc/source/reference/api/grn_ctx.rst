@@ -141,6 +141,7 @@ Reference
       if (rc != GRN_SUCCESS) {
         GRN_OBJ_FIN(ctx, &tables);
         /* Handle error. */
+        return;
       }
 
       n_tables = GRN_BULK_VSIZE(&tables) / sizeof(grn_obj *);
