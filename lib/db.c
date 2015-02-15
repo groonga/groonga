@@ -10268,6 +10268,7 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     int j;
     grn_bool have_compressed_column = GRN_FALSE;
     grn_bool have_sub_record_accessor = GRN_FALSE;
+    grn_bool have_index_value_get = GRN_FALSE;
     grn_table_sort_key *kp;
     for (kp = keys, j = n_keys; j; kp++, j--) {
       if (is_compressed_column(ctx, kp->key)) {
@@ -10341,11 +10342,16 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
             }
           }
         } else {
+          if (kp->key->header.type == GRN_COLUMN_INDEX) {
+            have_index_value_get = GRN_TRUE;
+          }
           kp->offset = KEY_UINT32;
         }
       }
     }
-    if (have_compressed_column || have_sub_record_accessor) {
+    if (have_compressed_column ||
+        have_sub_record_accessor ||
+        have_index_value_get) {
       i = grn_table_sort_value(ctx, table, offset, limit, result,
                                keys, n_keys);
     } else {
