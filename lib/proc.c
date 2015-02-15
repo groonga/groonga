@@ -2224,20 +2224,6 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
   return NULL;
 }
 
-static grn_bool
-is_table(grn_obj *obj)
-{
-  switch (obj->header.type) {
-  case GRN_TABLE_HASH_KEY:
-  case GRN_TABLE_PAT_KEY:
-  case GRN_TABLE_DAT_KEY:
-  case GRN_TABLE_NO_KEY:
-    return GRN_TRUE;
-  default:
-    return GRN_FALSE;
-  }
-}
-
 static int
 output_table_info(grn_ctx *ctx, grn_obj *table)
 {
@@ -2272,7 +2258,6 @@ output_table_info(grn_ctx *ctx, grn_obj *table)
 static grn_obj *
 proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_table_cursor *cur;
   grn_obj tables;
   int n_top_level_elements;
   int n_elements_for_header = 1;
@@ -2280,26 +2265,7 @@ proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   int i;
 
   GRN_PTR_INIT(&tables, GRN_OBJ_VECTOR, GRN_ID_NIL);
-
-  if ((cur = grn_table_cursor_open(ctx, ctx->impl->db, NULL, 0, NULL, 0, 0, -1, 0))) {
-    grn_id id;
-    while ((id = grn_table_cursor_next(ctx, cur)) != GRN_ID_NIL) {
-      grn_obj *object;
-      if ((object = grn_ctx_at(ctx, id))) {
-        if (is_table(object)) {
-          GRN_PTR_PUT(ctx, &tables, object);
-        } else {
-          grn_obj_unlink(ctx, object);
-        }
-      } else {
-        if (ctx->rc != GRN_SUCCESS) {
-          ERRCLR(ctx);
-        }
-      }
-    }
-    grn_table_cursor_close(ctx, cur);
-  }
-
+  grn_ctx_get_all_tables(ctx, &tables);
   n_tables = GRN_BULK_VSIZE(&tables) / sizeof(grn_obj *);
   n_top_level_elements = n_elements_for_header + n_tables;
   GRN_OUTPUT_ARRAY_OPEN("TABLE_LIST", n_top_level_elements);
@@ -2340,7 +2306,7 @@ proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   GRN_OUTPUT_ARRAY_CLOSE();
 
   for (i = 0; i < n_tables; i++) {
-    grn_obj *table = ((grn_obj **)GRN_BULK_HEAD(&tables))[i];
+    grn_obj *table = GRN_PTR_VALUE_AT(&tables, i);
     output_table_info(ctx, table);
     grn_obj_unlink(ctx, table);
   }
