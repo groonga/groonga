@@ -837,8 +837,6 @@ GRN_API grn_obj *grn_obj_get_element_info(grn_ctx *ctx, grn_obj *obj, grn_id id,
 GRN_API grn_rc grn_obj_set_element_info(grn_ctx *ctx, grn_obj *obj, grn_id id,
                                         grn_info_type type, grn_obj *value);
 
-GRN_API grn_bool grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj);
-
 GRN_API grn_obj *grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value);
 GRN_API int grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void **values);
 

@@ -7805,21 +7805,6 @@ grn_obj_set_element_info(grn_ctx *ctx, grn_obj *obj, grn_id id,
   GRN_API_RETURN(GRN_SUCCESS);
 }
 
-grn_bool
-grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj)
-{
-  grn_id id;
-
-  if (!obj) { return GRN_FALSE; }
-
-  id = grn_obj_id(ctx, obj);
-  if (id == GRN_ID_NIL) {
-    return GRN_FALSE;
-  } else {
-    return id < GRN_N_RESERVED_TYPES;
-  }
-}
-
 static void
 grn_hook_free(grn_ctx *ctx, grn_hook *h)
 {

@@ -16,7 +16,23 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "grn.h"
+#include "grn_db.h"
 #include <groonga/obj.h>
+
+grn_bool
+grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_id id;
+
+  if (!obj) { return GRN_FALSE; }
+
+  id = grn_obj_id(ctx, obj);
+  if (id == GRN_ID_NIL) {
+    return GRN_FALSE;
+  } else {
+    return id < GRN_N_RESERVED_TYPES;
+  }
+}
 
 grn_bool
 grn_obj_is_table(grn_ctx *ctx, grn_obj *obj)
