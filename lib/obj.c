@@ -55,3 +55,20 @@ grn_obj_is_table(grn_ctx *ctx, grn_obj *obj)
 
   return is_table;
 }
+
+grn_bool
+grn_obj_is_function_proc(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_proc *proc;
+
+  if (!obj) {
+    return GRN_FALSE;
+  }
+
+  if (obj->header.type != GRN_PROC) {
+    return GRN_FALSE;
+  }
+
+  proc = (grn_proc *)obj;
+  return proc->type == GRN_PROC_FUNCTION;
+}
