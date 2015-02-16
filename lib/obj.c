@@ -91,3 +91,16 @@ grn_obj_is_selector_proc(grn_ctx *ctx, grn_obj *obj)
   proc = (grn_proc *)obj;
   return proc->selector != NULL;
 }
+
+grn_bool
+grn_obj_is_scorer_proc(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_proc *proc;
+
+  if (!grn_obj_is_proc(ctx, obj)) {
+    return GRN_FALSE;
+  }
+
+  proc = (grn_proc *)obj;
+  return proc->type == GRN_PROC_SCORER;
+}
