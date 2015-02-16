@@ -109,11 +109,11 @@ module Groonga
       n_codes = codes.size
       i = 0
       while i < n_codes
-        i = match_resolve_index_expression_codes(codes, i)
+        i = match_resolve_index_expression_codes(codes, i, n_codes)
       end
     end
 
-    def match_resolve_index_expression_codes(codes, i)
+    def match_resolve_index_expression_codes(codes, i, n_codes)
       code = codes[i]
       value = code.value
       case value
@@ -140,12 +140,12 @@ module Groonga
           raise ErrorMessage, message
         end
         @scorer = value
-        rest_n_codes = codes.size - i
+        rest_n_codes = n_codes - i
         if rest_n_codes == 0
           message = "match target is required as an argument: <#{scorer.name}>"
           raise ErrorMessage, message
         end
-        i = match_resolve_index_expression_codes(codes, i + 1)
+        i = match_resolve_index_expression_codes(codes, i + 1, n_codes)
       when Table
         raise ErrorMessage, "invalid match target: <#{value.name}>"
       end
