@@ -1,8 +1,3 @@
-# Because mruby optimizer only support scorer in match_columns for now
-#@on-error omit
-register ruby/load
-#@on-error default
-
 table_create Logs TABLE_NO_KEY
 column_create Logs message COLUMN_SCALAR Text
 
