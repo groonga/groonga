@@ -29,6 +29,8 @@ void data_is_builtin(void);
 void test_is_builtin(gconstpointer data);
 void data_is_table(void);
 void test_is_table(gconstpointer data);
+void data_is_proc(void);
+void test_is_proc(gconstpointer data);
 void data_is_function_proc(void);
 void test_is_function_proc(gconstpointer data);
 void data_is_selector_proc(void);
@@ -154,6 +156,38 @@ test_is_table(gconstpointer data)
     cut_assert_true(grn_obj_is_table(context, object));
   } else {
     cut_assert_false(grn_obj_is_table(context, object));
+  }
+}
+
+void
+data_is_proc(void)
+{
+#define ADD_DATUM(expected, name)                                       \
+  gcut_add_datum((expected ?                                            \
+                  "proc - " name :                                      \
+                  "not proc - " name),                                  \
+                 "expected", G_TYPE_BOOLEAN, expected,                  \
+                 "name", G_TYPE_STRING, name,                           \
+                 NULL)
+
+  ADD_DATUM(TRUE, "status");
+  ADD_DATUM(FALSE, "TokenBigram");
+
+#undef ADD_DATUM
+}
+
+void
+test_is_proc(gconstpointer data)
+{
+  const gchar *name;
+  grn_obj *object;
+
+  name = gcut_data_get_string(data, "name");
+  object = grn_ctx_get(context, name, strlen(name));
+  if (gcut_data_get_string(data, "expected")) {
+    cut_assert_true(grn_obj_is_proc(context, object));
+  } else {
+    cut_assert_false(grn_obj_is_proc(context, object));
   }
 }
 
