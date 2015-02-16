@@ -28,7 +28,7 @@
 #include "grn_mrb.h"
 #include "mrb/mrb_expr.h"
 
-static inline int
+static inline grn_bool
 function_proc_p(grn_obj *obj)
 {
   return (obj &&
@@ -36,7 +36,7 @@ function_proc_p(grn_obj *obj)
           ((grn_proc *)obj)->type == GRN_PROC_FUNCTION);
 }
 
-static inline int
+static inline grn_bool
 selector_proc_p(grn_obj *obj)
 {
   return (function_proc_p(obj) && ((grn_proc *)obj)->selector);
