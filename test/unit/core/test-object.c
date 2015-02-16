@@ -173,7 +173,7 @@ data_is_proc(void)
                  NULL)
 
   ADD_DATUM(TRUE, "status");
-  ADD_DATUM(FALSE, "TokenBigram");
+  ADD_DATUM(FALSE, "Users");
 
 #undef ADD_DATUM
 }
@@ -183,6 +183,8 @@ test_is_proc(gconstpointer data)
 {
   const gchar *name;
   grn_obj *object;
+
+  assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
 
   name = gcut_data_get_string(data, "name");
   object = grn_ctx_get(context, name, strlen(name));
