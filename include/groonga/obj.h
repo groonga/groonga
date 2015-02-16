@@ -26,6 +26,7 @@ extern "C" {
 GRN_API grn_bool grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_table(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_function_proc(grn_ctx *ctx, grn_obj *obj);
+GRN_API grn_bool grn_obj_is_selector_proc(grn_ctx *ctx, grn_obj *obj);
 
 #ifdef __cplusplus
 }

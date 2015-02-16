@@ -31,6 +31,8 @@ void data_is_table(void);
 void test_is_table(gconstpointer data);
 void data_is_function_proc(void);
 void test_is_function_proc(gconstpointer data);
+void data_is_selector_proc(void);
+void test_is_selector_proc(gconstpointer data);
 
 static gchar *tmp_directory;
 static const gchar *database_path;
@@ -184,5 +186,37 @@ test_is_function_proc(gconstpointer data)
     cut_assert_true(grn_obj_is_function_proc(context, object));
   } else {
     cut_assert_false(grn_obj_is_function_proc(context, object));
+  }
+}
+
+void
+data_is_selector_proc(void)
+{
+#define ADD_DATUM(expected, name)                                       \
+  gcut_add_datum((expected ?                                            \
+                  "selector-proc - " name :                             \
+                  "not selector-proc - " name),                         \
+                 "expected", G_TYPE_BOOLEAN, expected,                  \
+                 "name", G_TYPE_STRING, name,                           \
+                 NULL)
+
+  ADD_DATUM(TRUE, "geo_in_circle");
+  ADD_DATUM(FALSE, "now");
+
+#undef ADD_DATUM
+}
+
+void
+test_is_selector_proc(gconstpointer data)
+{
+  const gchar *name;
+  grn_obj *object;
+
+  name = gcut_data_get_string(data, "name");
+  object = grn_ctx_get(context, name, strlen(name));
+  if (gcut_data_get_string(data, "expected")) {
+    cut_assert_true(grn_obj_is_selector_proc(context, object));
+  } else {
+    cut_assert_false(grn_obj_is_selector_proc(context, object));
   }
 }
