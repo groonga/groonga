@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2014  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2008-2015  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,8 @@
 #include <glib/gstdio.h>
 
 #include "../lib/grn-assertions.h"
+
+#include <float.h>
 
 void test_create(void);
 void test_create_with_null_path(void);
@@ -854,7 +856,7 @@ test_mroonga_index_score(void)
     grn_obj score, *score_column;
     res = grn_table_create(context, NULL, 0, NULL,
                            GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, t1, 0);
-    GRN_UINT32_INIT(&score, 0);
+    GRN_FLOAT_INIT(&score, 0);
     GRN_BULK_REWIND(&buff);
     GRN_TEXT_SETS(context, &buff, "hij");
     grn_obj_search(context, ft, &buff, res, GRN_OP_OR, NULL);
@@ -869,7 +871,7 @@ test_mroonga_index_score(void)
       cut_assert_equal_int(5 ,GRN_TEXT_LEN(&buff));
       cut_assert_equal_substring("fghij", (char*) GRN_BULK_HEAD(&buff),GRN_TEXT_LEN(&buff));
       grn_obj_get_value(context, score_column, id, &score);
-      cut_assert_equal_uint(1, GRN_UINT32_VALUE(&score));
+      cut_assert_equal_double(1.0, DBL_EPSILON, GRN_FLOAT_VALUE(&score));
     }
     grn_table_cursor_close(context, tc);
     grn_obj_close(context, score_column);
@@ -904,7 +906,7 @@ test_mroonga_index_score(void)
                                    GRN_EXPR_SYNTAX_QUERY));
     grn_table_select(context, t1, expression, res, GRN_OP_OR);
     cut_assert_equal_int(1, grn_table_size(context, res));
-    GRN_UINT32_INIT(&score, 0);
+    GRN_FLOAT_INIT(&score, 0);
     score_column = grn_obj_column(context, res, "_score", 6);
     tc = grn_table_cursor_open(context, res, NULL, 0, NULL, 0, 0, -1, 0);
     while ((id = grn_table_cursor_next(context, tc))) {
@@ -915,7 +917,7 @@ test_mroonga_index_score(void)
       cut_assert_equal_int(8, GRN_TEXT_LEN(&buff));
       cut_assert_equal_substring("11 22 33", (char*) GRN_BULK_HEAD(&buff),GRN_TEXT_LEN(&buff));
       grn_obj_get_value(context, score_column, id, &score);
-      cut_assert_equal_uint(5, GRN_UINT32_VALUE(&score));
+      cut_assert_equal_double(5, DBL_EPSILON, GRN_FLOAT_VALUE(&score));
     }
     grn_obj_close(context, expression);
     grn_obj_close(context, match_columns);
