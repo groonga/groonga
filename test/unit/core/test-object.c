@@ -27,6 +27,8 @@
 
 void data_is_builtin(void);
 void test_is_builtin(gconstpointer data);
+void data_is_table(void);
+void test_is_table(gconstpointer data);
 
 static gchar *tmp_directory;
 static const gchar *database_path;
@@ -115,5 +117,38 @@ test_is_builtin(gconstpointer data)
     cut_assert_true(grn_obj_is_builtin(context, object));
   } else {
     cut_assert_false(grn_obj_is_builtin(context, object));
+  }
+}
+
+void
+data_is_table(void)
+{
+#define ADD_DATUM(expected, name)                                       \
+  gcut_add_datum((expected ? "table - " name : "column - " name),       \
+                 "expected", G_TYPE_BOOLEAN, expected,                  \
+                 "name", G_TYPE_STRING, name,                           \
+                 NULL)
+
+  ADD_DATUM(TRUE, "Users");
+  ADD_DATUM(FALSE, "Users.name");
+
+#undef ADD_DATUM
+}
+
+void
+test_is_table(gconstpointer data)
+{
+  const gchar *name;
+  grn_obj *object;
+
+  assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Users name COLUMN_SCALAR ShortText");
+
+  name = gcut_data_get_string(data, "name");
+  object = grn_ctx_get(context, name, strlen(name));
+  if (gcut_data_get_string(data, "expected")) {
+    cut_assert_true(grn_obj_is_table(context, object));
+  } else {
+    cut_assert_false(grn_obj_is_table(context, object));
   }
 }

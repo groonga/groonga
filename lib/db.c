@@ -12255,16 +12255,10 @@ grn_ctx_get_all_tables(grn_ctx *ctx, grn_obj *tables_buffer)
     grn_obj *object;
 
     if ((object = grn_ctx_at(ctx, id))) {
-      switch (object->header.type) {
-      case GRN_TABLE_NO_KEY :
-      case GRN_TABLE_HASH_KEY :
-      case GRN_TABLE_PAT_KEY :
-      case GRN_TABLE_DAT_KEY :
+      if (grn_obj_is_table(ctx, object)) {
         GRN_PTR_PUT(ctx, tables_buffer, object);
-        break;
-      default:
+      } else {
         grn_obj_unlink(ctx, object);
-        break;
       }
     } else {
       if (ctx->rc != GRN_SUCCESS) {

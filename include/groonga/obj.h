@@ -1,5 +1,6 @@
+/* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014-2015 Brazil
+  Copyright(C) 2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -15,15 +16,17 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef GROONGA_H
-#define GROONGA_H
+#ifndef GROONGA_OBJ_H
+#define GROONGA_OBJ_H
 
-#include "groonga/groonga.h"
-#include "groonga/obj.h"
-#include "groonga/ii.h"
-#include "groonga/expr.h"
-#include "groonga/output.h"
-#include "groonga/util.h"
-#include "groonga/request_canceler.h"
+#ifdef  __cplusplus
+extern "C" {
+#endif
 
-#endif /* GROONGA_H */
+GRN_API grn_bool grn_obj_is_table(grn_ctx *ctx, grn_obj *obj);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* GROONGA_OBJ_H */
