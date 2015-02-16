@@ -26,6 +26,7 @@
 #include "grn_pat.h"
 #include "grn_db.h"
 #include "grn_output.h"
+#include "grn_scorer.h"
 #include "grn_util.h"
 
 #ifdef GRN_WITH_ONIGMO
@@ -6159,6 +6160,10 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
   grn_operator mode = GRN_OP_EXACT;
   grn_wv_mode wvm = grn_wv_none;
   grn_obj *lexicon = ii->lexicon;
+  grn_scorer_score_func *score_func = NULL;
+  void *score_func_user_data = NULL;
+  grn_scorer_matched_record record;
+
   if (!lexicon || !ii || !s) { return GRN_INVALID_ARGUMENT; }
   if (optarg) {
     mode = optarg->mode;
@@ -6231,6 +6236,24 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
     goto exit;
   }
 #endif
+
+  if (optarg && optarg->scorer) {
+    grn_proc *scorer = (grn_proc *)(optarg->scorer);
+    score_func = scorer->callbacks.scorer.score;
+    score_func_user_data = scorer->user_data;
+    record.table = grn_ctx_at(ctx, s->obj.header.domain);
+    record.lexicon = lexicon;
+    record.id = GRN_ID_NIL;
+    GRN_RECORD_INIT(&(record.terms), GRN_OBJ_VECTOR, lexicon->header.domain);
+    GRN_UINT32_INIT(&(record.term_weights), GRN_OBJ_VECTOR);
+    record.total_term_weights = 0;
+    record.n_documents = grn_table_size(ctx, record.table);
+    record.n_occurrences = 0;
+    record.n_candidates = 0;
+    record.n_tokens = 0;
+    record.weight = 0;
+  }
+
   for (;;) {
     rid = (*tis)->p->rid;
     sid = (*tis)->p->sid;
@@ -6249,6 +6272,13 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
       if (orp || grn_hash_get(ctx, s, &pi, s->key_size, NULL)) {
         int count = 0, noccur = 0, pos = 0, score = 0, tscore = 0, min, max;
 
+        if (score_func) {
+          GRN_BULK_REWIND(&(record.terms));
+          GRN_BULK_REWIND(&(record.term_weights));
+          record.n_candidates = 0;
+          record.n_tokens = 0;
+        }
+
 #define SKIP_OR_BREAK(pos) {\
   if (token_info_skip_pos(ctx, ti, rid, sid, pos)) { break; }    \
   if (ti->p->rid != rid || ti->p->sid != sid) { \
@@ -6260,6 +6290,13 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
         if (n == 1 && !rep) {
           noccur = (*tis)->p->tf;
           tscore = (*tis)->p->weight;
+          if (score_func) {
+            GRN_RECORD_PUT(ctx, &(record.terms), (*tis)->cursors->bins[0]->id);
+            GRN_UINT32_PUT(ctx, &(record.term_weights), tscore);
+            record.n_occurrences = noccur;
+            record.n_candidates = (*tis)->size;
+            record.n_tokens = (*tis)->ntoken;
+          }
         } else if (mode == GRN_OP_NEAR) {
           bt_zap(bt);
           for (tip = tis; tip < tie; tip++) {
@@ -6296,6 +6333,18 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
               score += ti->p->weight; count++;
             } else {
               score = ti->p->weight; count = 1; pos = ti->pos;
+              if (noccur == 0 && score_func) {
+                GRN_BULK_REWIND(&(record.terms));
+                GRN_BULK_REWIND(&(record.term_weights));
+                record.n_candidates = 0;
+                record.n_tokens = 0;
+              }
+            }
+            if (noccur == 0 && score_func) {
+              GRN_RECORD_PUT(ctx, &(record.terms), ti->cursors->bins[0]->id);
+              GRN_UINT32_PUT(ctx, &(record.term_weights), ti->p->weight);
+              record.n_candidates += ti->size;
+              record.n_tokens += ti->ntoken;
             }
             if (count == n) {
               if (rep) { pi.pos = pos; res_add(ctx, s, &pi, (score + 1) * weight, op); }
@@ -6305,13 +6354,29 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
             }
           }
         }
-        if (noccur && !rep) { res_add(ctx, s, &pi, (noccur + tscore) * weight, op); }
+        if (noccur && !rep) {
+          double record_score;
+          if (score_func) {
+            record.id = rid;
+            record.weight = weight;
+            record.n_occurrences = noccur;
+            record.total_term_weights = tscore;
+            record_score = score_func(ctx, &record) * weight;
+          } else {
+            record_score = (noccur + tscore) * weight;
+          }
+          res_add(ctx, s, &pi, record_score, op);
+        }
 #undef SKIP_OR_BREAK
       }
     }
     if (token_info_skip(ctx, *tis, nrid, nsid)) { goto exit; }
   }
 exit :
+  if (score_func) {
+    GRN_OBJ_FIN(ctx, &(record.terms));
+    GRN_OBJ_FIN(ctx, &(record.term_weights));
+  }
   for (tip = tis; tip < tis + n; tip++) {
     if (*tip) { token_info_close(ctx, *tip); }
   }
@@ -6339,7 +6404,7 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
   ERRCLR(ctx);
   GRN_LOG(ctx, GRN_LOG_INFO, "grn_ii_sel > (%.*s)", string_len, string);
   {
-    grn_select_optarg arg = {GRN_OP_EXACT, 0, 0, NULL, 0, NULL, NULL, 0};
+    grn_select_optarg arg = {GRN_OP_EXACT, 0, 0, NULL, 0, NULL, NULL, 0, NULL};
     if (!s) { return GRN_INVALID_ARGUMENT; }
     if (optarg) {
       switch (optarg->mode) {
@@ -6359,6 +6424,7 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
         arg.weight_vector = optarg->weight_vector;
         arg.vector_size = optarg->vector_size;
       }
+      arg.scorer = optarg->scorer;
     }
     /* todo : support subrec
     grn_rset_init(ctx, s, grn_rec_document, 0, grn_rec_none, 0, 0);

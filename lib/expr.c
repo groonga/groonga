@@ -3766,6 +3766,7 @@ struct _grn_scan_info {
   grn_obj *args[GRN_SCAN_INFO_MAX_N_ARGS];
   int max_interval;
   int similarity_threshold;
+  grn_obj *scorer;
 };
 
 #define SI_FREE(si) do {\
@@ -3789,6 +3790,7 @@ struct _grn_scan_info {
   (si)->max_interval = DEFAULT_MAX_INTERVAL;\
   (si)->similarity_threshold = DEFAULT_SIMILARITY_THRESHOLD;\
   (si)->start = (st);\
+  (si)->scorer = NULL;\
 } while (0)
 
 static scan_info **
@@ -4078,6 +4080,7 @@ grn_scan_info_open(grn_ctx *ctx, int start)
   si->max_interval = DEFAULT_MAX_INTERVAL;
   si->similarity_threshold = DEFAULT_SIMILARITY_THRESHOLD;
   si->start = start;
+  si->scorer = NULL;
 
   return si;
 }
@@ -4197,6 +4200,18 @@ grn_scan_info_get_arg(grn_ctx *ctx, scan_info *si, int i)
     return NULL;
   }
   return si->args[i];
+}
+
+grn_obj *
+grn_scan_info_get_scorer(grn_ctx *ctx, scan_info *si)
+{
+  return si->scorer;
+}
+
+void
+grn_scan_info_set_scorer(grn_ctx *ctx, scan_info *si, grn_obj *scorer)
+{
+  si->scorer = scorer;
 }
 
 static uint32_t
@@ -5168,6 +5183,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
         optarg.vector_size = 1;
         optarg.proc = NULL;
         optarg.max_size = 0;
+        optarg.scorer = si->scorer;
         ctx->flags |= GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
         for (; j--; ip++, wp += 2) {
           uint32_t sid = (uint32_t) wp[0];

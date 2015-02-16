@@ -121,6 +121,7 @@ typedef enum {
   GRN_TOKEN_FILTER_ERROR = -73,
   GRN_COMMAND_ERROR = -74,
   GRN_PLUGIN_ERROR = -75,
+  GRN_SCORER_ERROR = -76
 } grn_rc;
 
 GRN_API grn_rc grn_init(void);
@@ -488,7 +489,8 @@ typedef enum {
   GRN_PROC_FUNCTION,
   GRN_PROC_HOOK,
   GRN_PROC_NORMALIZER,
-  GRN_PROC_TOKEN_FILTER
+  GRN_PROC_TOKEN_FILTER,
+  GRN_PROC_SCORER
 } grn_proc_type;
 
 GRN_API grn_obj *grn_proc_create(grn_ctx *ctx,
@@ -911,6 +913,7 @@ struct _grn_search_optarg {
   int vector_size;
   grn_obj *proc;
   int max_size;
+  grn_obj *scorer;
 };
 
 GRN_API grn_rc grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,

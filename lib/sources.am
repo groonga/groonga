@@ -42,6 +42,10 @@ libgroonga_la_SOURCES =				\
 	grn_request_canceler.h			\
 	rset.c					\
 	grn_rset.h				\
+	scorer.c				\
+	grn_scorer.h				\
+	scorers.c				\
+	grn_scorers.h				\
 	snip.c					\
 	grn_snip.h				\
 	store.c					\

@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010-2014 Brazil
+/* Copyright(C) 2010-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -253,6 +253,9 @@ grn_proc_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     break;
   case GRN_PROC_TOKEN_FILTER :
     GRN_TEXT_PUTS(ctx, buf, "token-filter");
+    break;
+  case GRN_PROC_SCORER :
+    GRN_TEXT_PUTS(ctx, buf, "scorer");
     break;
   }
   GRN_TEXT_PUTS(ctx, buf, " ");

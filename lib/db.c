@@ -26,6 +26,7 @@
 #include "grn_proc.h"
 #include "grn_plugin.h"
 #include "grn_geo.h"
+#include "grn_scorers.h"
 #include "grn_snip.h"
 #include "grn_string.h"
 #include "grn_normalizer.h"
@@ -260,6 +261,7 @@ grn_db_open(grn_ctx *ctx, const char *path)
 #endif
           grn_db_init_builtin_tokenizers(ctx);
           grn_db_init_builtin_normalizers(ctx);
+          grn_db_init_builtin_scorers(ctx);
           grn_db_init_builtin_query(ctx);
           GRN_API_RETURN((grn_obj *)s);
         }
@@ -10447,6 +10449,7 @@ grn_db_init_builtin_types(grn_ctx *ctx)
 #endif
   grn_db_init_builtin_tokenizers(ctx);
   grn_db_init_builtin_normalizers(ctx);
+  grn_db_init_builtin_scorers(ctx);
   for (id = grn_db_curr_id(ctx, db) + 1; id < 128; id++) {
     grn_itoh(id, buf + 3, 2);
     grn_obj_register(ctx, db, buf, 5);

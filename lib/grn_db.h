@@ -24,6 +24,7 @@
 
 #include <groonga/command.h>
 #include <groonga/token_filter.h>
+#include <groonga/scorer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -166,6 +167,9 @@ struct _grn_proc {
       grn_token_filter_filter_func *filter;
       grn_token_filter_fin_func    *fin;
     } token_filter;
+    struct {
+      grn_scorer_score_func *score;
+    } scorer;
   } callbacks;
 
   void *user_data;
