@@ -467,6 +467,7 @@ grn_select_apply_adjuster_adjust(grn_ctx *ctx, grn_obj *table, grn_obj *res,
 
   {
     grn_search_optarg options;
+    memset(&options, 0, sizeof(grn_search_optarg));
 
     options.mode = GRN_OP_EXACT;
     options.similarity_threshold = 0;
@@ -475,6 +476,7 @@ grn_select_apply_adjuster_adjust(grn_ctx *ctx, grn_obj *table, grn_obj *res,
     options.vector_size = factor_value;
     options.proc = NULL;
     options.max_size = 0;
+    options.scorer = NULL;
 
     grn_obj_search(ctx, index, value, res, GRN_OP_ADJUST, &options);
   }
@@ -6134,6 +6136,7 @@ selector_in_values(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   for (i = 0; i < n_values; i++) {
     grn_obj *value = values[i];
     grn_search_optarg search_options;
+    memset(&search_options, 0, sizeof(grn_search_optarg));
     search_options.mode = GRN_OP_EXACT;
     search_options.similarity_threshold = 0;
     search_options.max_interval = 0;
@@ -6141,6 +6144,7 @@ selector_in_values(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     search_options.vector_size = 0;
     search_options.proc = NULL;
     search_options.max_size = 0;
+    search_options.scorer = NULL;
     if (i == n_values - 1) {
       ctx->flags &= ~GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
     }
