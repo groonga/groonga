@@ -29,7 +29,7 @@
 #include "mrb/mrb_expr.h"
 
 static inline grn_bool
-function_proc_p(grn_obj *obj)
+is_function_proc(grn_obj *obj)
 {
   return (obj &&
           obj->header.type == GRN_PROC &&
@@ -37,9 +37,9 @@ function_proc_p(grn_obj *obj)
 }
 
 static inline grn_bool
-selector_proc_p(grn_obj *obj)
+is_selector_proc(grn_obj *obj)
 {
-  return (function_proc_p(obj) && ((grn_proc *)obj)->selector);
+  return (is_function_proc(obj) && ((grn_proc *)obj)->selector);
 }
 
 grn_obj *
@@ -182,7 +182,7 @@ grn_rc
 grn_proc_set_selector(grn_ctx *ctx, grn_obj *proc, grn_selector_func selector)
 {
   grn_proc *proc_ = (grn_proc *)proc;
-  if (!function_proc_p(proc)) {
+  if (!is_function_proc(proc)) {
     return GRN_INVALID_ARGUMENT;
   }
   proc_->selector = selector;
@@ -796,7 +796,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
           ERR(GRN_INVALID_ARGUMENT, "invalid function call expression");
           goto exit;
         }
-        if (!function_proc_p(proc)) {
+        if (!is_function_proc(proc)) {
           grn_obj buffer;
 
           GRN_TEXT_INIT(&buffer, 0);
@@ -5232,7 +5232,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
       }
       break;
     case GRN_OP_CALL :
-      if (selector_proc_p(si->args[0])) {
+      if (is_selector_proc(si->args[0])) {
         grn_rc rc;
         grn_proc *proc = (grn_proc *)(si->args[0]);
         rc = proc->selector(ctx, table, index, si->nargs, si->args,
@@ -5258,7 +5258,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
   } else {
     switch (si->op) {
     case GRN_OP_CALL :
-      if (selector_proc_p(si->args[0])) {
+      if (is_selector_proc(si->args[0])) {
         grn_rc rc;
         grn_proc *proc = (grn_proc *)(si->args[0]);
         rc = proc->selector(ctx, table, NULL, si->nargs, si->args,
