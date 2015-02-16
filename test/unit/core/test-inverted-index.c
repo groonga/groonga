@@ -212,7 +212,7 @@ test_create_with_long_path(void)
   GString *long_path;
   const gchar last_component[] = G_DIR_SEPARATOR_S "index";
 
-  if (getenv("TRAGVIS")) {
+  if (getenv("TRAVIS")) {
     cut_omit("It is crashed on Travis CI. Why?");
   }
 
