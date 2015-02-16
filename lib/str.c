@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2013 Brazil
+/* Copyright(C) 2009-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -2582,10 +2582,10 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_id id)
         buf.header.domain = GRN_DB_INT32; /* fix me */
         break;
       case GRN_ACCESSOR_GET_SCORE :
-        grn_obj_get_value(ctx, a->obj, id, &buf);
         {
           grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
-          GRN_INT32_PUT(ctx, &buf, ri->score);
+          int32_t int32_score = ri->score;
+          GRN_INT32_PUT(ctx, &buf, int32_score);
         }
         buf.header.domain = GRN_DB_INT32;
         break;
