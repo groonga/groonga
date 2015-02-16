@@ -88,6 +88,9 @@ struct _grn_alloc_info
   int freed;
   char alloc_backtrace[4096];
   char free_backtrace[4096];
+  char *file;
+  int line;
+  char *func;
   grn_alloc_info *next;
 };
 #endif

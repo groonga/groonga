@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2014 Brazil
+  Copyright(C) 2009-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -252,7 +252,7 @@ grn_alloc_info_set_backtrace(char *buffer, size_t size)
 }
 
 inline static void
-grn_alloc_info_add(void *address)
+grn_alloc_info_add(void *address, const char *file, int line, const char *func)
 {
   grn_ctx *ctx;
   grn_alloc_info *new_alloc_info;
@@ -265,6 +265,17 @@ grn_alloc_info_add(void *address)
   new_alloc_info->freed = GRN_FALSE;
   grn_alloc_info_set_backtrace(new_alloc_info->alloc_backtrace,
                                sizeof(new_alloc_info->alloc_backtrace));
+  if (file) {
+    new_alloc_info->file = strdup(file);
+  } else {
+    new_alloc_info->file = NULL;
+  }
+  new_alloc_info->line = line;
+  if (func) {
+    new_alloc_info->func = strdup(func);
+  } else {
+    new_alloc_info->func = NULL;
+  }
   new_alloc_info->next = ctx->impl->alloc_info;
   ctx->impl->alloc_info = new_alloc_info;
 }
@@ -302,8 +313,13 @@ grn_alloc_info_dump(grn_ctx *ctx)
     if (alloc_info->freed) {
       printf("address[%d][freed]: %p\n", i, alloc_info->address);
     } else {
-      printf("address[%d][not-freed]: %p:\n%s",
-             i, alloc_info->address, alloc_info->alloc_backtrace);
+      printf("address[%d][not-freed]: %p: %s:%d: %s()\n%s",
+             i,
+             alloc_info->address,
+             alloc_info->file ? alloc_info->file : "(unknown)",
+             alloc_info->line,
+             alloc_info->func ? alloc_info->func : "(unknown)",
+             alloc_info->alloc_backtrace);
     }
     i++;
   }
@@ -351,13 +367,15 @@ grn_alloc_info_free(grn_ctx *ctx)
     grn_alloc_info *current_alloc_info = alloc_info;
     alloc_info = alloc_info->next;
     current_alloc_info->next = NULL;
+    free(current_alloc_info->file);
+    free(current_alloc_info->func);
     free(current_alloc_info);
   }
   ctx->impl->alloc_info = NULL;
 }
 
 #else /* USE_MEMORY_DEBUG */
-#  define grn_alloc_info_add(address)
+#  define grn_alloc_info_add(address, file, line, func)
 #  define grn_alloc_info_change(old_address, new_address)
 #  define grn_alloc_info_check(address)
 #  define grn_alloc_info_dump(ctx)
@@ -2700,14 +2718,14 @@ grn_malloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const 
     void *res = malloc(size);
     if (res) {
       GRN_ADD_ALLOC_COUNT(1);
-      grn_alloc_info_add(res);
+      grn_alloc_info_add(res, file, line, func);
     } else {
       if (!(res = malloc(size))) {
         MERR("malloc fail (%" GRN_FMT_SIZE ")=%p (%s:%d) <%d>",
              size, res, file, line, alloc_count);
       } else {
         GRN_ADD_ALLOC_COUNT(1);
-        grn_alloc_info_add(res);
+        grn_alloc_info_add(res, file, line, func);
       }
     }
     return res;
@@ -2722,7 +2740,7 @@ grn_calloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const 
     void *res = calloc(size, 1);
     if (res) {
       GRN_ADD_ALLOC_COUNT(1);
-      grn_alloc_info_add(res);
+      grn_alloc_info_add(res, file, line, func);
     } else {
       if (!(res = calloc(size, 1))) {
         MERR("calloc fail (%" GRN_FMT_LLU ")=%p (%s:%d) <%" GRN_FMT_LLU ">",
@@ -2730,7 +2748,7 @@ grn_calloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const 
              (unsigned long long int)alloc_count);
       } else {
         GRN_ADD_ALLOC_COUNT(1);
-        grn_alloc_info_add(res);
+        grn_alloc_info_add(res, file, line, func);
       }
     }
     return res;
@@ -2769,7 +2787,7 @@ grn_realloc_default(grn_ctx *ctx, void *ptr, size_t size, const char* file, int 
       grn_alloc_info_change(ptr, res);
     } else {
       GRN_ADD_ALLOC_COUNT(1);
-      grn_alloc_info_add(res);
+      grn_alloc_info_add(res, file, line, func);
     }
   } else {
     if (!ptr) { return NULL; }
@@ -2795,13 +2813,13 @@ grn_strdup_default(grn_ctx *ctx, const char *s, const char* file, int line, cons
     char *res = strdup(s);
     if (res) {
       GRN_ADD_ALLOC_COUNT(1);
-      grn_alloc_info_add(res);
+      grn_alloc_info_add(res, file, line, func);
     } else {
       if (!(res = strdup(s))) {
         MERR("strdup(%p)=%p (%s:%d) <%d>", s, res, file, line, alloc_count);
       } else {
         GRN_ADD_ALLOC_COUNT(1);
-        grn_alloc_info_add(res);
+        grn_alloc_info_add(res, file, line, func);
       }
     }
     return res;
