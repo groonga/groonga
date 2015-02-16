@@ -1,0 +1,73 @@
+register ruby/load
+[[0,0.0,0.0],true]
+table_create Logs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs message COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms index COLUMN_INDEX|WITH_POSITION Logs message
+[[0,0.0,0.0],true]
+load --table Logs
+[
+["message"],
+["Error: invalid argument"],
+["Error: critical error"],
+["Warning: not permitted or not found"],
+["Notice: start"],
+["Notice: shutdown"],
+["Notice: start"],
+["Notice: shutdown"],
+["Notice: start"],
+["Notice: shutdown"],
+["Notice: start"],
+["Notice: shutdown"],
+["Notice: start"],
+["Notice: shutdown"],
+["Notice: start"],
+["Notice: shutdown"],
+["Notice: start"],
+["Notice: shutdown"],
+["Notice: start"],
+["Notice: shutdown"],
+["Notice: start"],
+["Notice: shutdown"],
+["Notice: start"],
+["Notice: shutdown"],
+["Notice: start"],
+["Notice: shutdown"]
+]
+[[0,0.0,0.0],25]
+select Logs   --match_columns 'scorer_tf_idf(message)'   --query 'err'   --output_columns '_score, message'   --sortby -_score
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_score",
+          "Int32"
+        ],
+        [
+          "message",
+          "Text"
+        ]
+      ],
+      [
+        3,
+        "Error: critical error"
+      ],
+      [
+        1,
+        "Error: invalid argument"
+      ]
+    ]
+  ]
+]

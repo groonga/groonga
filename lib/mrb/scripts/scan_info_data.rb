@@ -10,6 +10,7 @@ module Groonga
     attr_accessor :flags
     attr_accessor :max_interval
     attr_accessor :similarity_threshold
+    attr_accessor :scorer
     def initialize(start)
       @start = start
       @end = 0
@@ -21,6 +22,7 @@ module Groonga
       @flags = ScanInfo::Flags::PUSH
       @max_interval = nil
       @similarity_threshold = nil
+      @scorer = nil
     end
 
     def match_resolve_index
@@ -107,31 +109,47 @@ module Groonga
       n_codes = codes.size
       i = 0
       while i < n_codes
-        code = codes[i]
-        value = code.value
-        case value
-        when Accessor
-          match_resolve_index_expression_accessor(code)
-        when FixedSizeColumn, VariableSizeColumn
-          match_resolve_index_expression_data_column(code)
-        when IndexColumn
-          section_id = 0
-          rest_n_codes = n_codes - i
-          if rest_n_codes >= 2 and
-              codes[i + 1].value.is_a?(Bulk) and
-              (codes[i + 1].value.domain == ID::UINT32 or
-               codes[i + 1].value.domain == ID::INT32) and
-              codes[i + 2].op == Operator::GET_MEMBER
-            section_id = codes[i + 1].value.value + 1
-            code = codes[i + 2]
-            i += 2
-          end
-          put_index(value, section_id, code.weight)
-        when Table
-          raise ErrorMessage, "invalid match target: <#{value.name}>"
-        end
-        i += 1
+        i = match_resolve_index_expression_codes(codes, i)
       end
+    end
+
+    def match_resolve_index_expression_codes(codes, i)
+      code = codes[i]
+      value = code.value
+      case value
+      when Accessor
+        match_resolve_index_expression_accessor(code)
+      when FixedSizeColumn, VariableSizeColumn
+        match_resolve_index_expression_data_column(code)
+      when IndexColumn
+        section_id = 0
+        rest_n_codes = n_codes - i
+        if rest_n_codes >= 2 and
+          codes[i + 1].value.is_a?(Bulk) and
+          (codes[i + 1].value.domain == ID::UINT32 or
+           codes[i + 1].value.domain == ID::INT32) and
+          codes[i + 2].op == Operator::GET_MEMBER
+          section_id = codes[i + 1].value.value + 1
+          code = codes[i + 2]
+          i += 2
+        end
+        put_index(value, section_id, code.weight)
+      when Procedure
+        unless value.scorer?
+          message = "procedure must be scorer: #{scorer.name}>"
+          raise ErrorMessage, message
+        end
+        @scorer = value
+        rest_n_codes = codes.size - i
+        if rest_n_codes == 0
+          message = "match target is required as an argument: <#{scorer.name}>"
+          raise ErrorMessage, message
+        end
+        i = match_resolve_index_expression_codes(codes, i + 1)
+      when Table
+        raise ErrorMessage, "invalid match target: <#{value.name}>"
+      end
+      i + 1
     end
 
     def match_resolve_index_expression_accessor(expr_code)

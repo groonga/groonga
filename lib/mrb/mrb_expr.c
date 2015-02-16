@@ -257,6 +257,33 @@ mrb_grn_scan_info_get_similarity_threshold(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_scan_info_set_scorer(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  mrb_value mrb_scorer;
+
+  mrb_get_args(mrb, "o", &mrb_scorer);
+  si = DATA_PTR(self);
+  if (mrb_nil_p(mrb_scorer)) {
+    grn_scan_info_set_scorer(si, NULL);
+  } else {
+    grn_scan_info_set_scorer(si, DATA_PTR(mrb_scorer));
+  }
+  return self;
+}
+
+static mrb_value
+mrb_grn_scan_info_get_scorer(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  grn_obj *scorer;
+
+  si = DATA_PTR(self);
+  scorer = grn_scan_info_get_scorer(si);
+  return grn_mrb_value_from_grn_obj(mrb, scorer);
+}
+
+static mrb_value
 mrb_grn_scan_info_get_arg(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -647,6 +674,10 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_scan_info_get_similarity_threshold, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "similarity_threshold=",
                     mrb_grn_scan_info_set_similarity_threshold, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "scorer",
+                    mrb_grn_scan_info_get_scorer, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "scorer=",
+                    mrb_grn_scan_info_set_scorer, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "get_arg",
                     mrb_grn_scan_info_get_arg, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "push_arg",

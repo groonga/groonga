@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2014 Brazil
+  Copyright(C) 2013-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -59,6 +59,8 @@ int grn_scan_info_get_max_interval(scan_info *si);
 void grn_scan_info_set_max_interval(scan_info *si, int max_interval);
 int grn_scan_info_get_similarity_threshold(scan_info *si);
 void grn_scan_info_set_similarity_threshold(scan_info *si, int similarity_threshold);
+grn_obj *grn_scan_info_get_scorer(scan_info *si);
+void grn_scan_info_set_scorer(scan_info *si, grn_obj *scorer);
 grn_bool grn_scan_info_push_arg(scan_info *si, grn_obj *arg);
 grn_obj *grn_scan_info_get_arg(grn_ctx *ctx, scan_info *si, int i);
 

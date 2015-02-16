@@ -1,0 +1,48 @@
+# Because mruby optimizer only support scorer in match_columns for now
+#@on-error omit
+register ruby/load
+#@on-error default
+
+table_create Logs TABLE_NO_KEY
+column_create Logs message COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Terms index COLUMN_INDEX|WITH_POSITION Logs message
+
+load --table Logs
+[
+["message"],
+["Error: invalid argument"],
+["Error: critical error"],
+["Warning: not permitted or not found"],
+["Notice: start"],
+["Notice: shutdown"],
+["Notice: start"],
+["Notice: shutdown"],
+["Notice: start"],
+["Notice: shutdown"],
+["Notice: start"],
+["Notice: shutdown"],
+["Notice: start"],
+["Notice: shutdown"],
+["Notice: start"],
+["Notice: shutdown"],
+["Notice: start"],
+["Notice: shutdown"],
+["Notice: start"],
+["Notice: shutdown"],
+["Notice: start"],
+["Notice: shutdown"],
+["Notice: start"],
+["Notice: shutdown"],
+["Notice: start"],
+["Notice: shutdown"]
+]
+
+select Logs \
+  --match_columns 'scorer_tf_idf(message)' \
+  --query 'err' \
+  --output_columns '_score, message' \
+  --sortby -_score

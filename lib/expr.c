@@ -782,7 +782,8 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
           ERR(GRN_INVALID_ARGUMENT, "invalid function call expression");
           goto exit;
         }
-        if (!grn_obj_is_function_proc(ctx, proc)) {
+        if (!(grn_obj_is_function_proc(ctx, proc) ||
+              grn_obj_is_scorer_proc(ctx, proc))) {
           grn_obj buffer;
 
           GRN_TEXT_INIT(&buffer, 0);
@@ -4168,6 +4169,18 @@ grn_scan_info_set_similarity_threshold(scan_info *si, int similarity_threshold)
   si->similarity_threshold = similarity_threshold;
 }
 
+grn_obj *
+grn_scan_info_get_scorer(scan_info *si)
+{
+  return si->scorer;
+}
+
+void
+grn_scan_info_set_scorer(scan_info *si, grn_obj *scorer)
+{
+  si->scorer = scorer;
+}
+
 grn_bool
 grn_scan_info_push_arg(scan_info *si, grn_obj *arg)
 {
@@ -4186,18 +4199,6 @@ grn_scan_info_get_arg(grn_ctx *ctx, scan_info *si, int i)
     return NULL;
   }
   return si->args[i];
-}
-
-grn_obj *
-grn_scan_info_get_scorer(grn_ctx *ctx, scan_info *si)
-{
-  return si->scorer;
-}
-
-void
-grn_scan_info_set_scorer(grn_ctx *ctx, scan_info *si, grn_obj *scorer)
-{
-  si->scorer = scorer;
 }
 
 static uint32_t
