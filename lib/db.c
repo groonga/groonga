@@ -597,6 +597,9 @@ grn_proc_create(grn_ctx *ctx, const char *name, int name_size, grn_proc_type typ
           ERR(GRN_INVALID_ARGUMENT, "already used name");
           GRN_API_RETURN(NULL);
         }
+        if (range != GRN_ID_NIL) {
+          grn_plugin_close(ctx, range);
+        }
         GRN_API_RETURN((grn_obj *)res);
       } else {
         added = 1;
