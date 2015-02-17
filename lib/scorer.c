@@ -94,8 +94,8 @@ grn_scorer_matched_record_get_n_tokens(grn_ctx *ctx,
 }
 
 int
- grn_scorer_matched_record_get_weight(grn_ctx *ctx,
-                                      grn_scorer_matched_record *record)
+grn_scorer_matched_record_get_weight(grn_ctx *ctx,
+                                     grn_scorer_matched_record *record)
 {
   return record->weight;
 }
