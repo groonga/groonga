@@ -8,11 +8,15 @@ module QueryOptimizer
     @expression.close
   end
 
-  def dump_plan(text, options={})
+  def parse(text, options={})
     default_options = {
       :syntax => :script,
     }
     @expression.parse(text, default_options.merge(options))
+  end
+
+  def dump_plan(text, options={})
+    parse(text, options)
     @expression.dump_plan
   end
 end
