@@ -1,0 +1,4 @@
+Execution example::
+
+  logical_count Logs timestamp --filter 'message == "Shutdown"' --min "2015-02-04 00:00:00" --min_border "include"
+  # [[0, 1337566253.89858, 0.000355720520019531], 5]

@@ -1,0 +1,20 @@
+Execution example::
+
+  table_create Logs_20150203 TABLE_NO_KEY
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Logs_20150203 timestamp COLUMN_SCALAR Time
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Logs_20150203 message COLUMN_SCALAR Text
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  table_create Logs_20150204 TABLE_NO_KEY
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Logs_20150204 timestamp COLUMN_SCALAR Time
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Logs_20150204 message COLUMN_SCALAR Text
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  table_create Logs_20150205 TABLE_NO_KEY
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Logs_20150205 timestamp COLUMN_SCALAR Time
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Logs_20150205 message COLUMN_SCALAR Text
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
