@@ -38,14 +38,14 @@ target object. It means that all locks in the database are cleared.
 Usage
 -----
 
-Here is an example to clear all locks in the database::
+Here is an example to clear all locks in the database:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/lock_clear/database.log
 .. lock_clear
 
 Here is an example to clear locks of ``Entry`` table and ``Entry``
-table columns::
+table columns:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/lock_clear/table.log
@@ -53,7 +53,7 @@ table columns::
 .. column_create Entry body COLUMN_SCALAR Text
 .. lock_clear Entry
 
-Here is an example to clear the lock of ``Site.title`` column::
+Here is an example to clear the lock of ``Site.title`` column:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/lock_clear/column.log
