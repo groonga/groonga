@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-02-13 21:27+0900\n"
+"PO-Revision-Date: 2015-02-18 10:52+0900\n"
 "Last-Translator: Takatsugu <nokubi@gmail.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -675,14 +675,29 @@ msgstr ""
 msgid "検索しようとするオブジェクトのidを指定します。"
 msgstr ""
 
+# c5851f5a39db4d6797fba3e4cdbb8bd6
+msgid ""
+"It pushes all tables in the database of ``ctx`` into ``tables_buffer``. "
+"``tables_buffer`` should be initialized as ``GRN_PVECTOR``. You can use "
+"``GRN_PTR_INIT()`` with ``GRN_OBJ_VECTOR`` flags to initialize "
+"``tables_buffer``."
+msgstr ""
+
+msgid "Here is an example:"
+msgstr "以下は例です。"
+
+msgid "The context object."
+msgstr "その時点のコンテキスト。"
+
+# b07bc9a11f034614924e7b14607eccd6
+msgid "The output buffer to store tables."
+msgstr ""
+
 msgid "Gets the current output type of the context."
 msgstr "コンテキストの出力形式を取得します。"
 
 msgid "Normally, this function isn't needed."
 msgstr ""
-
-msgid "The context object."
-msgstr "その時点のコンテキスト。"
 
 msgid "The output type of the context."
 msgstr ""
@@ -11229,6 +11244,76 @@ msgstr ""
 
 msgid "in_values"
 msgstr ""
+
+# 1bd2bdd54ab14c1a85587534fbaf22d5
+msgid "``in_values`` function is added since Groonga 4.0.7."
+msgstr "``in_values`` 関数は Groonga 4.0.7 で追加されました。"
+
+# f45b2a7a711d44d88457d385679182b0
+msgid ""
+"``in_values`` enables you to simplify the query which uses multiple ``OR`` "
+"or ``==``. It is recommended to use this function in point of view about "
+"performance improvements in such a case."
+msgstr ""
+"``in_values`` は 複数の ``OR`` や ``==`` を使っているクエリを簡略化できます。"
+"複数の ``OR`` や ``==`` を使うよりは ``in_values`` を使うのがパフォーマンスの"
+"観点からおすすめです。"
+
+msgid ""
+"``query`` requires two or more arguments - ``target_value`` and multiple "
+"``value``."
+msgstr ""
+"``query`` は2以上の引数が必要です。 ``target_value`` と 複数の ``value`` で"
+"す。"
+
+msgid "Here is a schema definition and sample data."
+msgstr "使い方を示すために使うスキーマ定義とサンプルデータは以下の通りです。"
+
+# 7fcf76658cac43d9af59636f569f6671
+msgid ""
+"Here is the simple usage of ``in_values`` function which selects the records "
+"- the value of ``tag`` column is \"groonga\" or \"mroonga\" or \"droonga\"."
+msgstr ""
+"``in_values`` 関数を使って ``tag`` カラムの値が \"groonga\" 、 \"mroonga\" あ"
+"るいは \"droonga\" であるものを選択する例を示します。"
+
+# 7889b60c311f4588a6969eb361e9e004
+msgid ""
+"When executing the above query, you can get the records except \"rroonga\" "
+"because \"rroonga\" is not specified as value in ``in_values``."
+msgstr ""
+"クエリを実行すると、\"rroonga\"を除いた結果を得られます。\"rroonga\"は "
+"``in_values`` には指定していないからです。"
+
+msgid ""
+"There are two or more required parameter, ``target_value`` and multiple "
+"``value``."
+msgstr ""
+"二つ以上の引数が必須です。 ``target_valule`` と 1つ以上の ``value`` です。"
+
+# 9feb0200f2b4474d9dc153f2e8a2a243
+msgid "``target_value``"
+msgstr ""
+
+msgid ""
+"It specifies a column of the table that is specified by ``table`` parameter "
+"in ``select``."
+msgstr "``select`` 対象の ``table`` に指定されたテーブルのカラムを指定します。"
+
+msgid "It specifies a value of the column which you want to select."
+msgstr "選択したいカラムの値を指定します。"
+
+msgid ""
+"``in_values`` returns whether the value of column exists in specified the "
+"value of parameters or not."
+msgstr "``in_values`` は対象となるカラムに指定した値が含まれるかを返します。"
+
+msgid ""
+"If record is matched to specified the value of parameters, it returns true. "
+"Otherwise, it returns false."
+msgstr ""
+"もし該当するレコードがあれば、 ``true`` を返します。そうでなければ ``false`` "
+"を返します。"
 
 msgid "now"
 msgstr ""

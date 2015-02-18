@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Groonga 4.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-02-13 21:30+0900\n"
+"PO-Revision-Date: 2015-02-18 10:35+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -723,13 +723,28 @@ msgstr ""
 msgid "検索しようとするオブジェクトのidを指定します。"
 msgstr "検索しようとするオブジェクトのidを指定します。"
 
+# 227ef8afa1fc40b1a61bf3946b2fc63d
+msgid ""
+"It pushes all tables in the database of ``ctx`` into ``tables_buffer``. "
+"``tables_buffer`` should be initialized as ``GRN_PVECTOR``. You can use "
+"``GRN_PTR_INIT()`` with ``GRN_OBJ_VECTOR`` flags to initialize "
+"``tables_buffer``."
+msgstr ""
+
+msgid "Here is an example:"
+msgstr ""
+
+msgid "The context object."
+msgstr ""
+
+# c3046c21fa354c2dbcfd886e3ed2b46a
+msgid "The output buffer to store tables."
+msgstr ""
+
 msgid "Gets the current output type of the context."
 msgstr ""
 
 msgid "Normally, this function isn't needed."
-msgstr ""
-
-msgid "The context object."
 msgstr ""
 
 msgid "The output type of the context."
@@ -2426,37 +2441,38 @@ msgstr ""
 msgid "Overview"
 msgstr ""
 
+# 4155eeddd9594eadaa514fb172542b79
 msgid ""
-"Groonga can use as library. You can start to use Groonga as full-text search "
-"library with the following API."
+"You can use Groonga as a library. You need to use the following APIs to "
+"initialize and finalize Groonga."
 msgstr ""
 
-# e589597c060c45deb011e46056f87f35
+# 84769298f391417391b74ad3f4a2dbec
 msgid ""
-":c:func:`grn_init()` is initializer for libgroonga. In contrast, :c:func:"
-"`grn_fin()` is finalizer for libgroonga."
+":c:func:`grn_init()` initializes Groonga. In contrast, :c:func:`grn_fin()` "
+"finalizes Groonga."
 msgstr ""
 
-# 2a1f5aeb649f45acaf6d47350d9c20d7
+# 5cd46a4cf8014615982fef78d2e820b3
 msgid ""
-"You must call :c:func:`grn_init()` once before using API which are provided "
-"by libgroonga. You must call :c:func:`grn_fin()` once after stop to use API "
-"which are provided by libgroonga."
+"You must call :c:func:`grn_init()` only once before you use APIs which are "
+"provided by Groonga. You must call :c:func:`grn_fin()` only once after you "
+"finish to use APIs which are provided by Groonga."
 msgstr ""
 
-msgid "Here is an example that uses Groonga as full-text search library."
+msgid "Here is an example that uses Groonga as a full-text search library."
 msgstr ""
 
-# da066927cf144fc79d22c19a1d11728b
+# 4bcc12e9ef4f433299af2176771166ba
 msgid ""
-"``grn_init()`` initializes resource that is used by libgroonga. You must "
-"call it once before calling other Groonga API."
+"``grn_init()`` initializes resources that are used by Groonga. You must call "
+"it just once before you call other Groonga APIs."
 msgstr ""
 
-# 8949c03e545d42cf8200f0343f8c573f
+# 92760cf9b36f41a2bb8b3a3b7efefef2
 msgid ""
-"``grn_fin()`` releases resource that is used by libgroonga. You must not "
-"call it other Groonga API after calling ``grn_fin()``."
+"``grn_fin()`` releases resources that are used by Groonga. You can't call "
+"other Groonga APIs after you call ``grn_fin()``."
 msgstr ""
 
 msgid "Plugin"
@@ -11612,6 +11628,63 @@ msgstr ""
 "``html_untag`` returns plain text which is stripped HTML tags from HTML text."
 
 msgid "in_values"
+msgstr ""
+
+# febf9cd9a0e1442996c96e55b1b01bec
+msgid "``in_values`` function is added since Groonga 4.0.7."
+msgstr ""
+
+# 96c88bb561244790bab603a67b330349
+msgid ""
+"``in_values`` enables you to simplify the query which uses multiple ``OR`` "
+"or ``==``. It is recommended to use this function in point of view about "
+"performance improvements in such a case."
+msgstr ""
+
+msgid ""
+"``query`` requires two or more arguments - ``target_value`` and multiple "
+"``value``."
+msgstr ""
+
+msgid "Here is a schema definition and sample data."
+msgstr ""
+
+# 2e685560f66a4b10b5d739dadfce351d
+msgid ""
+"Here is the simple usage of ``in_values`` function which selects the records "
+"- the value of ``tag`` column is \"groonga\" or \"mroonga\" or \"droonga\"."
+msgstr ""
+
+# 597d231d2fba4609b07f04681a9b259e
+msgid ""
+"When executing the above query, you can get the records except \"rroonga\" "
+"because \"rroonga\" is not specified as value in ``in_values``."
+msgstr ""
+
+msgid ""
+"There are two or more required parameter, ``target_value`` and multiple "
+"``value``."
+msgstr ""
+
+msgid "``target_value``"
+msgstr ""
+
+msgid ""
+"It specifies a column of the table that is specified by ``table`` parameter "
+"in ``select``."
+msgstr ""
+
+msgid "It specifies a value of the column which you want to select."
+msgstr ""
+
+msgid ""
+"``in_values`` returns whether the value of column exists in specified the "
+"value of parameters or not."
+msgstr ""
+
+msgid ""
+"If record is matched to specified the value of parameters, it returns true. "
+"Otherwise, it returns false."
 msgstr ""
 
 msgid "now"
