@@ -2534,12 +2534,45 @@ grn_expr_exec_get_member(grn_ctx *ctx,
   GRN_OBJ_FIN(ctx, &values);
 }
 
+static inline grn_bool
+grn_expr_exec_is_simple_expr(grn_ctx *ctx, grn_obj *expr)
+{
+  grn_expr *e = (grn_expr *)expr;
+
+  if (expr->header.type != GRN_EXPR) {
+    return GRN_FALSE;
+  }
+
+  if (e->codes_curr != 1) {
+    return GRN_FALSE;
+  }
+
+  switch (e->codes[0].op) {
+  case GRN_OP_PUSH :
+    return GRN_TRUE;
+  default :
+    return GRN_FALSE;
+  }
+}
+
+static inline grn_obj *
+grn_expr_exec_simple(grn_ctx *ctx, grn_obj *expr)
+{
+  grn_expr *e = (grn_expr *)expr;
+
+  return e->codes[0].value;
+}
+
 grn_obj *
 grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
 {
   grn_obj *val = NULL;
   uint32_t stack_curr = ctx->impl->stack_curr;
   GRN_API_ENTER;
+  if (grn_expr_exec_is_simple_expr(ctx, expr)) {
+    val = grn_expr_exec_simple(ctx, expr);
+    GRN_API_RETURN(val);
+  }
   if (expr->header.type == GRN_PROC) {
     grn_proc *proc = (grn_proc *)expr;
     if (proc->type == GRN_PROC_COMMAND) {
