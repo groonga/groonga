@@ -155,6 +155,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/html_untag/usage_html_untag.log \
 	$(top_srcdir)/doc/source/example/reference/functions/html_untag/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/html_untag/usage_setup_schema.log \
+	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_only.log \
+	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_setup_data.log \
+	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_setup_schema.log \
 	$(top_srcdir)/doc/source/example/reference/functions/query/usage_basic.log \
 	$(top_srcdir)/doc/source/example/reference/functions/query/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/query/usage_setup_schema.log \
@@ -738,6 +741,9 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/html_untag/usage_html_untag.log \
 	source/example/reference/functions/html_untag/usage_setup_data.log \
 	source/example/reference/functions/html_untag/usage_setup_schema.log \
+	source/example/reference/functions/in_values/usage_only.log \
+	source/example/reference/functions/in_values/usage_setup_data.log \
+	source/example/reference/functions/in_values/usage_setup_schema.log \
 	source/example/reference/functions/query/usage_basic.log \
 	source/example/reference/functions/query/usage_setup_data.log \
 	source/example/reference/functions/query/usage_setup_schema.log \
