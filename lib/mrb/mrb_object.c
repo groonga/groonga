@@ -30,6 +30,35 @@
 #include "mrb_converter.h"
 
 static mrb_value
+object_inspect(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *object;
+  mrb_value inspected;
+
+  object = DATA_PTR(self);
+  inspected = mrb_str_buf_new(mrb, 48);
+
+  mrb_str_cat_lit(mrb, inspected, "#<");
+  mrb_str_cat_cstr(mrb, inspected, mrb_obj_classname(mrb, self));
+  mrb_str_cat_lit(mrb, inspected, ":");
+  mrb_str_concat(mrb, inspected, mrb_ptr_to_str(mrb, mrb_cptr(self)));
+  if (object) {
+    grn_obj buffer;
+    GRN_TEXT_INIT(&buffer, 0);
+    grn_inspect(ctx, &buffer, object);
+    mrb_str_cat_lit(mrb, inspected, " ");
+    mrb_str_cat(mrb, inspected, GRN_TEXT_VALUE(&buffer), GRN_TEXT_LEN(&buffer));
+    GRN_OBJ_FIN(ctx, &buffer);
+  } else {
+    mrb_str_cat_lit(mrb, inspected, " (closed)");
+  }
+  mrb_str_cat_lit(mrb, inspected, ">");
+
+  return inspected;
+}
+
+static mrb_value
 object_get_id(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -172,6 +201,9 @@ grn_mrb_object_init(grn_ctx *ctx)
   klass = mrb_define_class_under(mrb, module, "Object", mrb->object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
   data->object_class = klass;
+
+  mrb_define_method(mrb, klass, "inspect",
+                    object_inspect, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "id", object_get_id, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "name", object_get_name, MRB_ARGS_NONE());
