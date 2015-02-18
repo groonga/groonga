@@ -789,4 +789,27 @@ exit:
 
   return sis;
 }
+
+unsigned int
+grn_mrb_expr_estimate_size(grn_ctx *ctx, grn_obj *expr, grn_obj *table)
+{
+  grn_mrb_data *data = &(ctx->impl->mrb);
+  mrb_state *mrb = data->state;
+  mrb_value mrb_expression;
+  mrb_value mrb_table;
+  mrb_value mrb_size;
+  unsigned int size;
+  int arena_index;
+
+  arena_index = mrb_gc_arena_save(mrb);
+
+  mrb_expression = grn_mrb_value_from_grn_obj(mrb, expr);
+  mrb_table = grn_mrb_value_from_grn_obj(mrb, table);
+  mrb_size = mrb_funcall(mrb, mrb_expression, "estimate_size", 1, mrb_table);
+  size = mrb_fixnum(mrb_size);
+
+  mrb_gc_arena_restore(mrb, arena_index);
+
+  return size;
+}
 #endif

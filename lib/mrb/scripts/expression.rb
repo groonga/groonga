@@ -9,5 +9,23 @@ module Groonga
         nil
       end
     end
+
+    def estimate_size(table)
+      begin
+        estimator = ExpressionSizeEstimator.new(self, table)
+        estimator.estimate
+      rescue GroongaError => groonga_error
+        context.set_groonga_error(groonga_error)
+        table.size
+      rescue => error
+        context.record_error(:unknown_error, error)
+        table.size
+      end
+    end
+
+    private
+    def context
+      @context ||= Context.instance
+    end
   end
 end

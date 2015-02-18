@@ -7195,3 +7195,40 @@ grn_expr_dump_plan(grn_ctx *ctx, grn_obj *expr, grn_obj *buffer)
   }
   GRN_API_RETURN(GRN_SUCCESS);
 }
+
+static unsigned int
+grn_expr_estimate_size_raw(grn_ctx *ctx, grn_obj *expr, grn_obj *table)
+{
+  return grn_table_size(ctx, table);
+}
+
+unsigned int
+grn_expr_estimate_size(grn_ctx *ctx, grn_obj *expr)
+{
+  grn_obj *table;
+  grn_obj *variable;
+  unsigned int size;
+
+  variable = grn_expr_get_var_by_offset(ctx, expr, 0);
+  if (!variable) {
+    ERR(GRN_INVALID_ARGUMENT, "at least one variable must be defined");
+    return 0;
+  }
+
+  table = grn_ctx_at(ctx, variable->header.domain);
+  if (!table) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "variable refers unknown domain: <%u>", variable->header.domain);
+    return 0;
+  }
+
+  GRN_API_ENTER;
+#ifdef GRN_WITH_MRUBY
+  if (ctx->impl->mrb.state) {
+    size = grn_mrb_expr_estimate_size(ctx, expr, table);
+  } else {
+#endif
+    size = grn_expr_estimate_size_raw(ctx, expr, table);
+  }
+  GRN_API_RETURN(size);
+}
