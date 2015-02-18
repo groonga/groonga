@@ -7252,8 +7252,10 @@ grn_expr_estimate_size(grn_ctx *ctx, grn_obj *expr)
   if (ctx->impl->mrb.state) {
     size = grn_mrb_expr_estimate_size(ctx, expr, table);
   } else {
-#endif
     size = grn_expr_estimate_size_raw(ctx, expr, table);
   }
+#else
+  size = grn_expr_estimate_size_raw(ctx, expr, table);
+#endif
   GRN_API_RETURN(size);
 }
