@@ -1,11 +1,4 @@
 module Groonga
-  # TODO: Move me
-  class ExpressionCode
-    module Flags
-      RELATIONAL_EXPRESSION = 0x01
-    end
-  end
-
   class ScanInfoBuilder
     module Status
       START = 0

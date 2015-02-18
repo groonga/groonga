@@ -697,6 +697,14 @@ grn_mrb_expr_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "flags",
                     mrb_grn_expr_code_get_flags, MRB_ARGS_NONE());
 
+  {
+    struct RClass *expression_code_class = klass;
+    struct RClass *flags_module;
+    flags_module = mrb_define_module_under(mrb, expression_code_class, "Flags");
+    mrb_define_const(mrb, flags_module, "RELATIONAL_EXPRESSION",
+                     mrb_fixnum_value(GRN_EXPR_CODE_RELATIONAL_EXPRESSION));
+  }
+
   klass = mrb_define_class_under(mrb, module, "Expression", object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
 
