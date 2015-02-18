@@ -107,20 +107,35 @@ Parameters
 ``logical_table``
 """""""""""""""""
 
+It specifies logical table name. It means table name without "_YYYYMMDD" postfix.
+If you use actual table such as "Logs_20150203", "Logs_20150203" and so on, logical table name is "Logs".
+
 ``shard_key``
 """""""""""""
+
+It specifies column name which is treated as shared key in each parted table.
 
 ``min``
 """""""
 
+It specifies the min value of ``shard_key``
+
 ``min_border``
 """"""""""""""
+
+It specifies whether the min value of borderline must be include or not.
+Specify ``include`` or ``exclude`` as the value of this parameter.
 
 ``max``
 """""""
 
+It specifies the max value of ``shard_key``.
+
 ``max_border``
 """"""""""""""
+
+It specifies whether the max value of borderline must be include or not.
+Specify ``include`` or ``exclude`` as the value of this parameter.
 
 ``filter``
 """"""""""
