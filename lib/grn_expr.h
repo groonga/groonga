@@ -61,6 +61,12 @@ int grn_scan_info_get_similarity_threshold(scan_info *si);
 void grn_scan_info_set_similarity_threshold(scan_info *si, int similarity_threshold);
 grn_obj *grn_scan_info_get_scorer(scan_info *si);
 void grn_scan_info_set_scorer(scan_info *si, grn_obj *scorer);
+grn_obj *grn_scan_info_get_scorer_args_expr(scan_info *si);
+void grn_scan_info_set_scorer_args_expr(scan_info *si,
+                                        grn_obj *scorer_args_expr);
+uint32_t grn_scan_info_get_scorer_args_expr_offset(scan_info *si);
+void grn_scan_info_set_scorer_args_expr_offset(scan_info *si,
+                                               uint32_t offset);
 grn_bool grn_scan_info_push_arg(scan_info *si, grn_obj *arg);
 grn_obj *grn_scan_info_get_arg(grn_ctx *ctx, scan_info *si, int i);
 

@@ -912,6 +912,8 @@ struct _grn_search_optarg {
   grn_obj *proc;
   int max_size;
   grn_obj *scorer;
+  grn_obj *scorer_args_expr;
+  unsigned int scorer_args_expr_offset;
 };
 
 GRN_API grn_rc grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,

@@ -11,6 +11,8 @@ module Groonga
     attr_accessor :max_interval
     attr_accessor :similarity_threshold
     attr_accessor :scorer
+    attr_accessor :scorer_args_expr
+    attr_accessor :scorer_args_expr_offset
     def initialize(start)
       @start = start
       @end = 0
@@ -23,6 +25,8 @@ module Groonga
       @max_interval = nil
       @similarity_threshold = nil
       @scorer = nil
+      @scorer_args_expr = nil
+      @scorer_args_expr_offset = nil
     end
 
     def match_resolve_index
@@ -109,11 +113,11 @@ module Groonga
       n_codes = codes.size
       i = 0
       while i < n_codes
-        i = match_resolve_index_expression_codes(codes, i, n_codes)
+        i = match_resolve_index_expression_codes(expression, codes, i, n_codes)
       end
     end
 
-    def match_resolve_index_expression_codes(codes, i, n_codes)
+    def match_resolve_index_expression_codes(expression, codes, i, n_codes)
       code = codes[i]
       value = code.value
       case value
@@ -145,7 +149,15 @@ module Groonga
           message = "match target is required as an argument: <#{scorer.name}>"
           raise ErrorMessage, message
         end
-        i = match_resolve_index_expression_codes(codes, i + 1, n_codes)
+        i = match_resolve_index_expression_codes(expression, codes, i + 1,
+                                                 n_codes)
+        unless codes[i].op == Operator::CALL
+          @scorer_args_expr = expression
+          @scorer_args_expr_offset = i
+          until codes[i].op == Operator::CALL
+            i += 1
+          end
+        end
       when Table
         raise ErrorMessage, "invalid match target: <#{value.name}>"
       end

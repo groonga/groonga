@@ -6161,7 +6161,6 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
   grn_wv_mode wvm = grn_wv_none;
   grn_obj *lexicon = ii->lexicon;
   grn_scorer_score_func *score_func = NULL;
-  void *score_func_user_data = NULL;
   grn_scorer_matched_record record;
 
   if (!lexicon || !ii || !s) { return GRN_INVALID_ARGUMENT; }
@@ -6240,7 +6239,6 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
   if (optarg && optarg->scorer) {
     grn_proc *scorer = (grn_proc *)(optarg->scorer);
     score_func = scorer->callbacks.scorer.score;
-    score_func_user_data = scorer->user_data;
     record.table = grn_ctx_at(ctx, s->obj.header.domain);
     record.lexicon = lexicon;
     record.id = GRN_ID_NIL;
@@ -6252,6 +6250,8 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
     record.n_candidates = 0;
     record.n_tokens = 0;
     record.weight = 0;
+    record.args_expr = optarg->scorer_args_expr;
+    record.args_expr_offset = optarg->scorer_args_expr_offset;
   }
 
   for (;;) {
@@ -6425,6 +6425,8 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
         arg.vector_size = optarg->vector_size;
       }
       arg.scorer = optarg->scorer;
+      arg.scorer_args_expr = optarg->scorer_args_expr;
+      arg.scorer_args_expr_offset = optarg->scorer_args_expr_offset;
     }
     /* todo : support subrec
     grn_rset_init(ctx, s, grn_rec_document, 0, grn_rec_none, 0, 0);

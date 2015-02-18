@@ -21,6 +21,10 @@ module Groonga
       end
       if data.scorer
         self.scorer = data.scorer
+        if data.scorer_args_expr
+          self.scorer_args_expr = data.scorer_args_expr
+          self.scorer_args_expr_offset = data.scorer_args_expr_offset
+        end
       end
       data.args.each do |arg|
         push_arg(arg)

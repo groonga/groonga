@@ -284,6 +284,56 @@ mrb_grn_scan_info_get_scorer(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_scan_info_get_scorer_args_expr(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  grn_obj *scorer_args_expr;
+
+  si = DATA_PTR(self);
+  scorer_args_expr = grn_scan_info_get_scorer_args_expr(si);
+  return grn_mrb_value_from_grn_obj(mrb, scorer_args_expr);
+}
+
+static mrb_value
+mrb_grn_scan_info_set_scorer_args_expr(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  mrb_value mrb_scorer_args_expr;
+
+  mrb_get_args(mrb, "o", &mrb_scorer_args_expr);
+  si = DATA_PTR(self);
+  if (mrb_nil_p(mrb_scorer_args_expr)) {
+    grn_scan_info_set_scorer_args_expr(si, NULL);
+  } else {
+    grn_scan_info_set_scorer_args_expr(si, DATA_PTR(mrb_scorer_args_expr));
+  }
+  return self;
+}
+
+static mrb_value
+mrb_grn_scan_info_get_scorer_args_expr_offset(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  uint32_t offset;
+
+  si = DATA_PTR(self);
+  offset = grn_scan_info_get_scorer_args_expr_offset(si);
+  return mrb_fixnum_value(offset);
+}
+
+static mrb_value
+mrb_grn_scan_info_set_scorer_args_expr_offset(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  mrb_int offset;
+
+  mrb_get_args(mrb, "i", &offset);
+  si = DATA_PTR(self);
+  grn_scan_info_set_scorer_args_expr_offset(si, offset);
+  return self;
+}
+
+static mrb_value
 mrb_grn_scan_info_get_arg(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -678,6 +728,16 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_scan_info_get_scorer, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "scorer=",
                     mrb_grn_scan_info_set_scorer, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "scorer_args_expr",
+                    mrb_grn_scan_info_get_scorer_args_expr, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "scorer_args_expr=",
+                    mrb_grn_scan_info_set_scorer_args_expr, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "scorer_args_expr_offset",
+                    mrb_grn_scan_info_get_scorer_args_expr_offset,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "scorer_args_expr_offset=",
+                    mrb_grn_scan_info_set_scorer_args_expr_offset,
+                    MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "get_arg",
                     mrb_grn_scan_info_get_arg, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "push_arg",

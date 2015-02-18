@@ -1,0 +1,22 @@
+table_create Logs TABLE_NO_KEY
+column_create Logs message COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Terms index COLUMN_INDEX|WITH_POSITION Logs message
+
+load --table Logs
+[
+["message"],
+["Error"],
+["Error Error"],
+["Error Error Error"],
+["Error Error Error Error"]
+]
+
+select Logs \
+  --match_columns 'scorer_tf_at_most(message, 3.0)' \
+  --query 'error' \
+  --output_columns '_score, message' \
+  --sortby -_score

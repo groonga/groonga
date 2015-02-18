@@ -3754,6 +3754,8 @@ struct _grn_scan_info {
   int max_interval;
   int similarity_threshold;
   grn_obj *scorer;
+  grn_obj *scorer_args_expr;
+  uint32_t scorer_args_expr_offset;
 };
 
 #define SI_FREE(si) do {\
@@ -3778,6 +3780,8 @@ struct _grn_scan_info {
   (si)->similarity_threshold = DEFAULT_SIMILARITY_THRESHOLD;\
   (si)->start = (st);\
   (si)->scorer = NULL;\
+  (si)->scorer_args_expr = NULL;\
+  (si)->scorer_args_expr_offset = 0;\
 } while (0)
 
 static scan_info **
@@ -4068,6 +4072,8 @@ grn_scan_info_open(grn_ctx *ctx, int start)
   si->similarity_threshold = DEFAULT_SIMILARITY_THRESHOLD;
   si->start = start;
   si->scorer = NULL;
+  si->scorer_args_expr = NULL;
+  si->scorer_args_expr_offset = 0;
 
   return si;
 }
@@ -4181,6 +4187,30 @@ grn_scan_info_set_scorer(scan_info *si, grn_obj *scorer)
   si->scorer = scorer;
 }
 
+grn_obj *
+grn_scan_info_get_scorer_args_expr(scan_info *si)
+{
+  return si->scorer_args_expr;
+}
+
+void
+grn_scan_info_set_scorer_args_expr(scan_info *si, grn_obj *expr)
+{
+  si->scorer_args_expr = expr;
+}
+
+uint32_t
+grn_scan_info_get_scorer_args_expr_offset(scan_info *si)
+{
+  return si->scorer_args_expr_offset;
+}
+
+void
+grn_scan_info_set_scorer_args_expr_offset(scan_info *si, uint32_t offset)
+{
+  si->scorer_args_expr_offset = offset;
+}
+
 grn_bool
 grn_scan_info_push_arg(scan_info *si, grn_obj *arg)
 {
@@ -4288,15 +4318,8 @@ scan_info_build_match_expr_codes(grn_ctx *ctx, scan_info *si,
     si->scorer = ec->value;
     i = scan_info_build_match_expr_codes(ctx, si, expr, i + 1);
     if (expr->codes[i].op != GRN_OP_CALL) {
-      grn_obj inspected;
-      GRN_TEXT_INIT(&inspected, 0);
-      grn_inspect(ctx, &inspected, si->scorer);
-      ERR(GRN_INVALID_ARGUMENT,
-          "scorer must have only one argument: <%.*s>",
-          (int)GRN_TEXT_LEN(&inspected),
-          GRN_TEXT_VALUE(&inspected));
-      GRN_OBJ_FIN(ctx, &inspected);
-      return expr->codes_curr;
+      si->scorer_args_expr = (grn_obj *)expr;
+      si->scorer_args_expr_offset = i;
     }
     break;
   case GRN_TABLE_NO_KEY :
@@ -5218,6 +5241,8 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
         optarg.proc = NULL;
         optarg.max_size = 0;
         optarg.scorer = si->scorer;
+        optarg.scorer_args_expr = si->scorer_args_expr;
+        optarg.scorer_args_expr_offset = si->scorer_args_expr_offset;
         ctx->flags |= GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
         for (; j--; ip++, wp += 2) {
           uint32_t sid = (uint32_t) wp[0];
