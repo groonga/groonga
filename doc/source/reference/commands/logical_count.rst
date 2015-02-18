@@ -104,6 +104,28 @@ There is a well known limitation about the number of records. By sharding featur
 Parameters
 ----------
 
+``logical_table``
+"""""""""""""""""
+
+``shard_key``
+"""""""""""""
+
+``min``
+"""""""
+
+``min_border``
+""""""""""""""
+
+``max``
+"""""""
+
+``max_border``
+""""""""""""""
+
+``filter``
+""""""""""
+
+
 Return value
 ------------
 
