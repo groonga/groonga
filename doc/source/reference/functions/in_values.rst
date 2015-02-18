@@ -77,4 +77,6 @@ It specifies a value of the column which you want to select.
 Return value
 ------------
 
+``in_values`` returns whether the value of column exists in specified the value of parameters or not.
 
+If record is matched to specified the value of parameters, it returns true. Otherwise, it returns false.
