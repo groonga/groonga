@@ -18,7 +18,7 @@ Summary
 Syntax
 ------
 
-``query`` requires two or more arguments - ``target_value`` and multiple ``value``.
+``in_values`` requires two or more arguments - ``target_value`` and multiple ``value``.
 
 ::
 
