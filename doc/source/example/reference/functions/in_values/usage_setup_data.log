@@ -1,0 +1,11 @@
+Execution example::
+
+  load --table Memos
+  [
+  {"_key": "Groonga is fast",          "tag": "groonga"},
+  {"_key": "Mroonga is fast",          "tag": "mroonga"},
+  {"_key": "Rroonga is fast",          "tag": "rroonga"},
+  {"_key": "Droonga is fast",          "tag": "droonga"},
+  {"_key": "Groonga is a HTTP server", "tag": "groonga"}
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 5]
