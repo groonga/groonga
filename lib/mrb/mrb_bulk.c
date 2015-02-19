@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014 Brazil
+  Copyright(C) 2014-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -126,6 +126,13 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
                                mrb_fixnum_value(sec),
                                mrb_fixnum_value(usec));
     }
+    break;
+  case GRN_DB_SHORT_TEXT :
+  case GRN_DB_TEXT :
+  case GRN_DB_LONG_TEXT :
+    mrb_value_ = mrb_str_new_static(mrb,
+                                    GRN_TEXT_VALUE(bulk),
+                                    GRN_TEXT_LEN(bulk));
     break;
   default :
     {
