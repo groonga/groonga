@@ -39,6 +39,8 @@ libgrnmrb_la_SOURCES =				\
 	mrb_object.h				\
 	mrb_operator.c				\
 	mrb_operator.h				\
+	mrb_options.c				\
+	mrb_options.h				\
 	mrb_patricia_trie.c			\
 	mrb_patricia_trie.h			\
 	mrb_procedure.c				\

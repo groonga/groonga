@@ -28,6 +28,7 @@
 #include "../grn_output.h"
 #include "mrb_ctx.h"
 #include "mrb_writer.h"
+#include "mrb_options.h"
 
 static mrb_value
 writer_write(mrb_state *mrb, mrb_value self)
@@ -164,14 +165,12 @@ writer_write_table_records(mrb_state *mrb, mrb_value self)
     mrb_value mrb_offset;
     mrb_value mrb_limit;
 
-    mrb_offset = mrb_hash_get(mrb, mrb_options,
-                              mrb_symbol_value(mrb_intern_lit(mrb, "offset")));
+    mrb_offset = grn_mrb_options_get_lit(mrb, mrb_options, "offset");
     if (!mrb_nil_p(mrb_offset)) {
       offset = mrb_fixnum(mrb_offset);
     }
 
-    mrb_limit = mrb_hash_get(mrb, mrb_options,
-                             mrb_symbol_value(mrb_intern_lit(mrb, "limit")));
+    mrb_limit = grn_mrb_options_get_lit(mrb, mrb_options, "limit");
     if (!mrb_nil_p(mrb_limit)) {
       limit = mrb_fixnum(mrb_limit);
     }

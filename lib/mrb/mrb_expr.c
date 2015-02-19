@@ -34,6 +34,7 @@
 #include "mrb_ctx.h"
 #include "mrb_expr.h"
 #include "mrb_converter.h"
+#include "mrb_options.h"
 
 static struct mrb_data_type mrb_grn_scan_info_type = {
   "Groonga::ScanInfo",
@@ -541,8 +542,7 @@ mrb_grn_expression_parse(mrb_state *mrb, mrb_value self)
   if (!mrb_nil_p(mrb_options)) {
     mrb_value mrb_flags;
 
-    mrb_flags = mrb_hash_get(mrb, mrb_options,
-                             mrb_symbol_value(mrb_intern_lit(mrb, "flags")));
+    mrb_flags = grn_mrb_options_get_lit(mrb, mrb_options, "flags");
     if (!mrb_nil_p(mrb_flags)) {
       flags = mrb_fixnum(mrb_flags);
     }

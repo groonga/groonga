@@ -27,6 +27,7 @@
 
 #include "mrb_ctx.h"
 #include "mrb_table_cursor.h"
+#include "mrb_options.h"
 
 static struct mrb_data_type mrb_grn_table_cursor_type = {
   "Groonga::TableCursor",
@@ -108,16 +109,13 @@ mrb_grn_table_cursor_singleton_open_raw(mrb_state *mrb, mrb_value klass)
     mrb_value mrb_max;
     mrb_value mrb_flags;
 
-    mrb_min = mrb_hash_get(mrb, mrb_options,
-                           mrb_symbol_value(mrb_intern_lit(mrb, "min")));
+    mrb_min = grn_mrb_options_get_lit(mrb, mrb_options, "min");
     mrb_value_to_border_value(mrb, "min", mrb_min, &min_buffer, &min, &min_size);
 
-    mrb_max = mrb_hash_get(mrb, mrb_options,
-                           mrb_symbol_value(mrb_intern_lit(mrb, "max")));
+    mrb_max = grn_mrb_options_get_lit(mrb, mrb_options, "max");
     mrb_value_to_border_value(mrb, "max", mrb_max, &max_buffer, &max, &max_size);
 
-    mrb_flags = mrb_hash_get(mrb, mrb_options,
-                             mrb_symbol_value(mrb_intern_lit(mrb, "flags")));
+    mrb_flags = grn_mrb_options_get_lit(mrb, mrb_options, "flags");
     if (!mrb_nil_p(mrb_flags)) {
       flags = mrb_fixnum(mrb_flags);
     }

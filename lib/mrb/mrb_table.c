@@ -29,6 +29,7 @@
 #include "mrb_ctx.h"
 #include "mrb_table.h"
 #include "mrb_converter.h"
+#include "mrb_options.h"
 
 static mrb_value
 mrb_grn_table_is_locked(mrb_state *mrb, mrb_value self)
@@ -86,14 +87,12 @@ mrb_grn_table_select(mrb_state *mrb, mrb_value self)
     mrb_value mrb_result;
     mrb_value mrb_operator;
 
-    mrb_result = mrb_hash_get(mrb, mrb_options,
-                              mrb_symbol_value(mrb_intern_lit(mrb, "result")));
+    mrb_result = grn_mrb_options_get_lit(mrb, mrb_options, "result");
     if (!mrb_nil_p(mrb_result)) {
       result = DATA_PTR(mrb_result);
     }
 
-    mrb_operator = mrb_hash_get(mrb, mrb_options,
-                                mrb_symbol_value(mrb_intern_lit(mrb, "operator")));
+    mrb_operator = grn_mrb_options_get_lit(mrb, mrb_options, "operator");
     if (!mrb_nil_p(mrb_operator)) {
       operator = mrb_fixnum(mrb_operator);
     }
@@ -133,8 +132,7 @@ mrb_grn_table_sort(mrb_state *mrb, mrb_value self)
     mrb_value mrb_sort_order;
 
     mrb_sort_options = RARRAY_PTR(mrb_keys)[i];
-    mrb_sort_key = mrb_hash_get(mrb, mrb_sort_options,
-                                mrb_symbol_value(mrb_intern_lit(mrb, "key")));
+    mrb_sort_key = grn_mrb_options_get_lit(mrb, mrb_sort_options, "key");
     switch (mrb_type(mrb_sort_key)) {
     case MRB_TT_STRING :
       keys[i].key = grn_obj_column(ctx, table,
@@ -158,9 +156,7 @@ mrb_grn_table_sort(mrb_state *mrb, mrb_value self)
     }
 
     keys[i].flags = 0;
-    mrb_sort_order =
-      mrb_hash_get(mrb, mrb_sort_options,
-                   mrb_symbol_value(mrb_intern_lit(mrb, "order")));
+    mrb_sort_order = grn_mrb_options_get_lit(mrb, mrb_sort_options, "order");
     if (mrb_nil_p(mrb_sort_order) ||
         (mrb_symbol(mrb_sort_order) == mrb_intern_lit(mrb, "ascending"))) {
       keys[i].flags |= GRN_TABLE_SORT_ASC;
@@ -173,14 +169,12 @@ mrb_grn_table_sort(mrb_state *mrb, mrb_value self)
     mrb_value mrb_offset;
     mrb_value mrb_limit;
 
-    mrb_offset = mrb_hash_get(mrb, mrb_options,
-                              mrb_symbol_value(mrb_intern_lit(mrb, "offset")));
+    mrb_offset = grn_mrb_options_get_lit(mrb, mrb_options, "offset");
     if (!mrb_nil_p(mrb_offset)) {
       offset = mrb_fixnum(mrb_offset);
     }
 
-    mrb_limit = mrb_hash_get(mrb, mrb_options,
-                             mrb_symbol_value(mrb_intern_lit(mrb, "limit")));
+    mrb_limit = grn_mrb_options_get_lit(mrb, mrb_options, "limit");
     if (!mrb_nil_p(mrb_limit)) {
       limit = mrb_fixnum(mrb_limit);
     }
