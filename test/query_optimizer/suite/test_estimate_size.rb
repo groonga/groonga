@@ -23,7 +23,7 @@ class TestEstimateSize < QueryOptimizerTestCase
 
         schema.create_table("Terms",
                             :type => :patricia_trie,
-                            :default_tokenizer => "TokenBigram",
+                            :default_tokenizer => "TokenBigramSplitSymbolAlpha",
                             :normalizer => "NormalizerAuto") do |table|
           table.index("Logs", "message")
         end
@@ -37,7 +37,9 @@ class TestEstimateSize < QueryOptimizerTestCase
 
     def test_have_record
       @logs.add(:message => "Groonga is fast")
-      assert_equal(1, estimate_size("message @ 'Groonga'"))
+      @logs.add(:message => "Rroonga is fast")
+      @logs.add(:message => "Mroonga is fast")
+      assert_equal(6, estimate_size("message @ 'Groonga'"))
     end
   end
 end
