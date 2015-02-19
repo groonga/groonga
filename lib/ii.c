@@ -4219,54 +4219,54 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
       }
       if (c->stat & BUFFER_USED) {
         for (;;) {
-        if (c->nextb) {
-          uint32_t lrid = c->pb.rid, lsid = c->pb.sid; /* for check */
-          buffer_rec *br = BUFFER_REC_AT(c->buf, c->nextb);
-          if (buffer_is_reused(ctx, c->ii, c)) {
-            GRN_LOG(ctx, GRN_LOG_NOTICE, "buffer reused(%d,%d)", c->buffer_pseg, *c->ppseg);
-            // todo : rewind;
-          }
-          c->bp = NEXT_ADDR(br);
-          GRN_B_DEC(c->pb.rid, c->bp);
-          if ((c->ii->header->flags & GRN_OBJ_WITH_SECTION)) {
-            GRN_B_DEC(c->pb.sid, c->bp);
-          } else {
-            c->pb.sid = 1;
-          }
-          if (lrid > c->pb.rid || (lrid == c->pb.rid && lsid >= c->pb.sid)) {
-            ERR(GRN_FILE_CORRUPT, "brokend!! (%d:%d) -> (%d:%d) (%d->%d)", lrid, lsid, c->pb.rid, c->pb.sid, c->buffer_pseg, *c->ppseg);
-          }
-          if (c->pb.rid < c->min) {
-            c->pb.rid = 0;
-            if (br->jump > 0) {
-              buffer_rec *jump_br = BUFFER_REC_AT(c->buf, br->jump);
-              uint8_t *jump_bp;
-              uint32_t jump_rid;
-              jump_bp = NEXT_ADDR(jump_br);
-              GRN_B_DEC(jump_rid, jump_bp);
-              if (jump_rid < c->min) {
-                c->nextb = br->jump;
+          if (c->nextb) {
+            uint32_t lrid = c->pb.rid, lsid = c->pb.sid; /* for check */
+            buffer_rec *br = BUFFER_REC_AT(c->buf, c->nextb);
+            if (buffer_is_reused(ctx, c->ii, c)) {
+              GRN_LOG(ctx, GRN_LOG_NOTICE, "buffer reused(%d,%d)", c->buffer_pseg, *c->ppseg);
+              // todo : rewind;
+            }
+            c->bp = NEXT_ADDR(br);
+            GRN_B_DEC(c->pb.rid, c->bp);
+            if ((c->ii->header->flags & GRN_OBJ_WITH_SECTION)) {
+              GRN_B_DEC(c->pb.sid, c->bp);
+            } else {
+              c->pb.sid = 1;
+            }
+            if (lrid > c->pb.rid || (lrid == c->pb.rid && lsid >= c->pb.sid)) {
+              ERR(GRN_FILE_CORRUPT, "brokend!! (%d:%d) -> (%d:%d) (%d->%d)", lrid, lsid, c->pb.rid, c->pb.sid, c->buffer_pseg, *c->ppseg);
+            }
+            if (c->pb.rid < c->min) {
+              c->pb.rid = 0;
+              if (br->jump > 0) {
+                buffer_rec *jump_br = BUFFER_REC_AT(c->buf, br->jump);
+                uint8_t *jump_bp;
+                uint32_t jump_rid;
+                jump_bp = NEXT_ADDR(jump_br);
+                GRN_B_DEC(jump_rid, jump_bp);
+                if (jump_rid < c->min) {
+                  c->nextb = br->jump;
+                } else {
+                  c->nextb = br->step;
+                }
               } else {
                 c->nextb = br->step;
               }
-            } else {
-              c->nextb = br->step;
+              continue;
             }
-            continue;
-          }
-          c->nextb = br->step;
-          GRN_B_DEC(c->pb.tf, c->bp);
-          if ((c->ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
-            GRN_B_DEC(c->pb.weight, c->bp);
+            c->nextb = br->step;
+            GRN_B_DEC(c->pb.tf, c->bp);
+            if ((c->ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
+              GRN_B_DEC(c->pb.weight, c->bp);
+            } else {
+              c->pb.weight = 0;
+            }
+            c->pb.rest = c->pb.tf;
+            c->pb.pos = 0;
           } else {
-            c->pb.weight = 0;
+            c->pb.rid = 0;
           }
-          c->pb.rest = c->pb.tf;
-          c->pb.pos = 0;
-        } else {
-          c->pb.rid = 0;
-        }
-        break;
+          break;
         }
       }
       if (c->pb.rid) {
