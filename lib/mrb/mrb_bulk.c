@@ -165,6 +165,17 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
   return mrb_value_;
 }
 
+grn_bool
+grn_mrb_bulk_cast(mrb_state *mrb, grn_obj *from, grn_obj *to, grn_id domain_id)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_rc rc;
+
+  grn_obj_reinit(ctx, to, domain_id, 0);
+  rc = grn_obj_cast(ctx, from, to, GRN_FALSE);
+  return rc == GRN_SUCCESS;
+}
+
 static mrb_value
 mrb_grn_bulk_initialize(mrb_state *mrb, mrb_value self)
 {

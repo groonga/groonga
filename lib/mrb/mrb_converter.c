@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2014 Brazil
+  Copyright(C) 2013-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -154,16 +154,11 @@ mrb_grn_converter_singleton_convert(mrb_state *mrb, mrb_value klass)
 
   grn_mrb_value_to_bulk(mrb, mrb_from, from);
   to_type = grn_mrb_class_to_type(mrb, mrb_class_ptr(mrb_to_class));
-  grn_obj_reinit(ctx, to, to_type, 0);
-  {
-    grn_rc rc;
-    rc = grn_obj_cast(ctx, from, to, GRN_FALSE);
-    if (rc != GRN_SUCCESS) {
-      mrb_raisef(mrb, E_ARGUMENT_ERROR,
-                 "failed to convert to %S: %S",
-                 mrb_to_class,
-                 from);
-    }
+  if (!grn_mrb_bulk_cast(mrb, from, to, to_type)) {
+    mrb_raisef(mrb, E_ARGUMENT_ERROR,
+               "failed to convert to %S: %S",
+               mrb_to_class,
+               mrb_from);
   }
 
   return grn_mrb_value_from_bulk(mrb, to);
