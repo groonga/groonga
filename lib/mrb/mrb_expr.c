@@ -792,11 +792,6 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_expression_append_constant, MRB_ARGS_REQ(3));
   mrb_define_method(mrb, klass, "append_operator",
                     mrb_grn_expression_append_operator, MRB_ARGS_REQ(2));
-
-  grn_mrb_load(ctx, "expression.rb");
-  grn_mrb_load(ctx, "scan_info.rb");
-  grn_mrb_load(ctx, "scan_info_data.rb");
-  grn_mrb_load(ctx, "scan_info_builder.rb");
 }
 
 scan_info **

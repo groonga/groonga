@@ -9,7 +9,7 @@ require "command"
 require "table_cursor"
 require "index_cursor"
 
-require "expression_size_estimator"
+require "expression"
 
 require "plugin_loader"
 

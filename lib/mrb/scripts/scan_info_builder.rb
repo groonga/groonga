@@ -1,3 +1,5 @@
+require "scan_info_data"
+
 module Groonga
   class ScanInfoBuilder
     module Status
@@ -287,10 +289,10 @@ module Groonga
 
       return false if data.args[0] != next_data.args[0]
 
-      data_indexes = data.indexes
-      return false if data_indexes.empty?
+      data_search_indexes = data.search_indexes
+      return false if data_search_indexes.empty?
 
-      data_indexes == next_data.indexes
+      data_search_indexes == next_data.search_indexes
     end
 
     def lower_condition?(operator)
@@ -318,7 +320,7 @@ module Groonga
       between_data.op = Operator::CALL
       between_data.logical_op = data.logical_op
       between_data.args = create_between_data_args(data, next_data)
-      between_data.indexes = data.indexes
+      between_data.search_indexes = data.search_indexes
       between_data
     end
 

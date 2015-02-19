@@ -1,3 +1,8 @@
+require "scan_info"
+require "scan_info_builder"
+
+require "expression_size_estimator"
+
 module Groonga
   class Expression
     def build_scan_info(op, size)

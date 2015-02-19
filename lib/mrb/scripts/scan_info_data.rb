@@ -1,3 +1,5 @@
+require "scan_info_search_index"
+
 module Groonga
   class ScanInfoData
     attr_accessor :start
@@ -6,7 +8,7 @@ module Groonga
     attr_accessor :logical_op
     attr_accessor :query
     attr_accessor :args
-    attr_accessor :indexes
+    attr_accessor :search_indexes
     attr_accessor :flags
     attr_accessor :max_interval
     attr_accessor :similarity_threshold
@@ -20,7 +22,7 @@ module Groonga
       @logical_op = Operator::OR
       @query = nil
       @args = []
-      @indexes = []
+      @search_indexes = []
       @flags = ScanInfo::Flags::PUSH
       @max_interval = nil
       @similarity_threshold = nil
@@ -137,7 +139,7 @@ module Groonga
           code = codes[i + 2]
           i += 2
         end
-        put_index(value, section_id, code.weight)
+        put_search_index(value, section_id, code.weight)
       when Procedure
         unless value.scorer?
           message = "procedure must be scorer: #{scorer.name}>"
@@ -169,10 +171,13 @@ module Groonga
       self.flags |= ScanInfo::Flags::ACCESSOR
       index_info = accessor.find_index(op)
       return if index_info.nil?
+
+      section_id = index_info.section_id
+      weight = expr_code.weight
       if accessor.next
-        put_index(accessor, index_info.section_id, expr_code.weight)
+        put_search_index(accessor, section_id, weight)
       else
-        put_index(index_info.index, index_info.section_id, expr_code.weight)
+        put_search_index(index_info.index, section_id, weight)
       end
     end
 
@@ -180,13 +185,13 @@ module Groonga
       column = expr_code.value
       index_info = column.find_index(op)
       return if index_info.nil?
-      put_index(index_info.index, index_info.section_id, expr_code.weight)
+      put_search_index(index_info.index, index_info.section_id, expr_code.weight)
     end
 
     def match_resolve_index_db_obj(db_obj)
       index_info = db_obj.find_index(op)
       return if index_info.nil?
-      put_index(index_info.index, index_info.section_id, 1)
+      put_search_index(index_info.index, index_info.section_id, 1)
     end
 
     def match_resolve_index_accessor(accessor)
@@ -194,9 +199,9 @@ module Groonga
       index_info = accessor.find_index(op)
       return if index_info.nil?
       if accessor.next
-        put_index(accessor, index_info.section_id, 1)
+        put_search_index(accessor, index_info.section_id, 1)
       else
-        put_index(index_info.index, index_info.section_id, 1)
+        put_search_index(index_info.index, index_info.section_id, 1)
       end
     end
 
@@ -214,18 +219,19 @@ module Groonga
     def call_relational_resolve_index_db_obj(db_obj)
       index_info = db_obj.find_index(op)
       return if index_info.nil?
-      put_index(index_info.index, index_info.section_id, 1)
+      put_search_index(index_info.index, index_info.section_id, 1)
     end
 
     def call_relational_resolve_index_accessor(accessor)
       self.flags |= ScanInfo::Flags::ACCESSOR
       index_info = accessor.find_index(op)
       return if index_info.nil?
-      put_index(index_info.index, index_info.section_id, 1)
+      put_search_index(index_info.index, index_info.section_id, 1)
     end
 
-    def put_index(index, section_id, weight)
-      @indexes << [index, section_id, weight]
+    def put_search_index(index, section_id, weight)
+      search_index = ScanInfoSearchIndex.new(index, section_id, weight)
+      @search_indexes << search_index
     end
   end
 end
