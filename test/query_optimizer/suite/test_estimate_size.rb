@@ -135,4 +135,35 @@ class TestEstimateSize < QueryOptimizerTestCase
       assert_equal(8, estimate_size("timestamp > '2015-02-19 02:17:00'"))
     end
   end
+
+  class TestGreaterEqualSearch < self
+    def setup
+      Groonga::Schema.define do |schema|
+        schema.create_table("Logs") do |table|
+          table.time("timestamp")
+        end
+
+        schema.create_table("Times",
+                            :type => :patricia_trie,
+                            :key_type => :time) do |table|
+          table.index("Logs", "timestamp")
+        end
+      end
+      super
+    end
+
+    def test_no_record
+      assert_equal(0, estimate_size("timestamp >= '2015-02-19 02:18:00'"))
+    end
+
+    def test_have_record
+      @logs.add(:timestamp => "2015-02-19 02:17:00")
+      @logs.add(:timestamp => "2015-02-19 02:17:00")
+      @logs.add(:timestamp => "2015-02-19 02:18:00")
+      @logs.add(:timestamp => "2015-02-19 02:18:00")
+      @logs.add(:timestamp => "2015-02-19 02:19:00")
+      @logs.add(:timestamp => "2015-02-19 02:19:00")
+      assert_equal(8, estimate_size("timestamp >= '2015-02-19 02:18:00'"))
+    end
+  end
 end
