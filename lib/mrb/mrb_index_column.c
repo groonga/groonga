@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014 Brazil
+  Copyright(C) 2014-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@
 #include <mruby/data.h>
 
 #include "mrb_index_column.h"
+#include "mrb_options.h"
 
 static struct mrb_data_type mrb_grn_index_column_type = {
   "Groonga::IndexColumn",
@@ -41,6 +42,52 @@ mrb_grn_index_column_initialize(mrb_state *mrb, mrb_value self)
   return self;
 }
 
+static mrb_value
+mrb_grn_index_column_estimate_size_for_term_id(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *index_column;
+  mrb_int term_id;
+  unsigned int size;
+
+  index_column = DATA_PTR(self);
+  mrb_get_args(mrb, "i", &term_id);
+
+  size = grn_ii_estimate_size(ctx, (grn_ii *)index_column, term_id);
+  return mrb_fixnum_value(size);
+}
+
+static mrb_value
+mrb_grn_index_column_estimate_size_for_query(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *index_column;
+  char *query;
+  mrb_int query_len;
+  mrb_value mrb_options = mrb_nil_value();
+  grn_search_optarg optarg;
+  unsigned int size;
+
+  index_column = DATA_PTR(self);
+  mrb_get_args(mrb, "s|H", &query, &query_len, &mrb_options);
+
+  memset(&optarg, 0, sizeof(grn_search_optarg));
+  optarg.mode = GRN_OP_EXACT;
+
+  if (!mrb_nil_p(mrb_options)) {
+    mrb_value mrb_mode;
+
+    mrb_mode = grn_mrb_options_get_lit(mrb, mrb_options, "mode");
+    if (!mrb_nil_p(mrb_mode)) {
+      optarg.mode = mrb_fixnum(mrb_mode);
+    }
+  }
+
+  size = grn_ii_estimate_size_for_query(ctx, (grn_ii *)index_column,
+                                        query, query_len, &optarg);
+  return mrb_fixnum_value(size);
+}
+
 void
 grn_mrb_index_column_init(grn_ctx *ctx)
 {
@@ -55,5 +102,12 @@ grn_mrb_index_column_init(grn_ctx *ctx)
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
   mrb_define_method(mrb, klass, "initialize",
                     mrb_grn_index_column_initialize, MRB_ARGS_REQ(1));
+
+  mrb_define_method(mrb, klass, "estimate_size_for_term_id",
+                    mrb_grn_index_column_estimate_size_for_term_id,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "estimate_size_for_query",
+                    mrb_grn_index_column_estimate_size_for_query,
+                    MRB_ARGS_ARG(1, 1));
 }
 #endif

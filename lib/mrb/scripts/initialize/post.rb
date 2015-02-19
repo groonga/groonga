@@ -5,6 +5,7 @@ require "context"
 require "writer"
 
 require "database"
+require "index_column"
 require "command"
 require "table_cursor"
 require "index_cursor"
