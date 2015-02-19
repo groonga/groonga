@@ -69,7 +69,7 @@ mrb_value_to_border_value(mrb_state *mrb,
         mrb_sec = mrb_funcall(mrb, mrb_border_value, "to_i", 0);
         mrb_usec = mrb_funcall(mrb, mrb_border_value, "usec", 0);
         buffer->time_value = GRN_TIME_PACK(mrb_fixnum(mrb_sec),
-                                          mrb_fixnum(mrb_usec));
+                                           mrb_fixnum(mrb_usec));
         *border_value = &(buffer->time_value);
         *border_value_size = sizeof(buffer->time_value);
       } else {
