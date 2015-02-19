@@ -15,14 +15,14 @@ module Groonga
         if search_index.nil?
           @table.size
         else
+          size = nil
           case data.op
           when Operator::MATCH
-            estimate_match(data, search_index) || @table.size
-          when Operator::LESS
-            estimate_less(data, search_index) || @table.size
-          else
-            @table.size
+            size = estimate_match(data, search_index)
+          when Operator::LESS, Operator::LESS_EQUAL
+            size = estimate_range(data, search_index)
           end
+          size || @table.size
         end
       end
       sizes.min
@@ -39,7 +39,7 @@ module Groonga
       index_column.estimate_size(:query => data.query.value)
     end
 
-    def estimate_less(data, search_index)
+    def estimate_range(data, search_index)
       index_column = search_index.index_column
       if index_column.is_a?(Accessor)
         # TODO
@@ -47,9 +47,17 @@ module Groonga
       end
 
       lexicon = index_column.lexicon
-      max = data.query.value
-      flags = TableCursorFlags::LT
-      TableCursor.open(lexicon, :max => max, :flags => flags) do |cursor|
+      value = data.query.value
+      options = {}
+      case data.op
+      when Operator::LESS
+        options[:max] = value
+        options[:flags] = TableCursorFlags::LT
+      when Operator::LESS_EQUAL
+        options[:max] = value
+        options[:flags] = TableCursorFlags::LE
+      end
+      TableCursor.open(lexicon, options) do |cursor|
         index_column.estimate_size(:lexicon_cursor => cursor)
       end
     end
