@@ -102,6 +102,26 @@ mrb_grn_index_column_estimate_size_for_query(mrb_state *mrb, mrb_value self)
   return mrb_fixnum_value(size);
 }
 
+static mrb_value
+mrb_grn_index_column_estimate_size_for_lexicon_cursor(mrb_state *mrb,
+                                                      mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *index_column;
+  mrb_value mrb_lexicon_cursor;
+  grn_table_cursor *lexicon_cursor;
+  unsigned int size;
+
+  index_column = DATA_PTR(self);
+  mrb_get_args(mrb, "o", &mrb_lexicon_cursor);
+
+  lexicon_cursor = DATA_PTR(mrb_lexicon_cursor);
+  size = grn_ii_estimate_size_for_lexicon_cursor(ctx,
+                                                 (grn_ii *)index_column,
+                                                 lexicon_cursor);
+  return mrb_fixnum_value(size);
+}
+
 void
 grn_mrb_index_column_init(grn_ctx *ctx)
 {
@@ -127,5 +147,8 @@ grn_mrb_index_column_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "estimate_size_for_query",
                     mrb_grn_index_column_estimate_size_for_query,
                     MRB_ARGS_ARG(1, 1));
+  mrb_define_method(mrb, klass, "estimate_size_for_lexicon_cursor",
+                    mrb_grn_index_column_estimate_size_for_lexicon_cursor,
+                    MRB_ARGS_REQ(1));
 }
 #endif
