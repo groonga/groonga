@@ -17,12 +17,14 @@
 */
 
 #include "../grn_ctx_impl.h"
+#include "../grn_ii.h"
 
 #ifdef GRN_WITH_MRUBY
 #include <mruby.h>
 #include <mruby/class.h>
 #include <mruby/data.h>
 
+#include "mrb_converter.h"
 #include "mrb_index_column.h"
 #include "mrb_options.h"
 
@@ -40,6 +42,18 @@ mrb_grn_index_column_initialize(mrb_state *mrb, mrb_value self)
   DATA_TYPE(self) = &mrb_grn_index_column_type;
   DATA_PTR(self) = mrb_cptr(mrb_index_column_ptr);
   return self;
+}
+
+static mrb_value
+mrb_grn_index_column_get_lexicon(mrb_state *mrb, mrb_value self)
+{
+  grn_obj *index_column;
+  grn_obj *lexicon;
+
+  index_column = DATA_PTR(self);
+  lexicon = ((grn_ii *)index_column)->lexicon;
+
+  return grn_mrb_value_from_grn_obj(mrb, lexicon);
 }
 
 static mrb_value
@@ -102,6 +116,10 @@ grn_mrb_index_column_init(grn_ctx *ctx)
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
   mrb_define_method(mrb, klass, "initialize",
                     mrb_grn_index_column_initialize, MRB_ARGS_REQ(1));
+
+  mrb_define_method(mrb, klass, "lexicon",
+                    mrb_grn_index_column_get_lexicon,
+                    MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "estimate_size_for_term_id",
                     mrb_grn_index_column_estimate_size_for_term_id,
