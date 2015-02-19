@@ -78,7 +78,7 @@ There is required parameter, ``target_name``.
 ``target_name``
 """""""""""""""
 
-It specifies the name of table or column.
+Specifies the name of table or column.
 
 Return value
 ------------

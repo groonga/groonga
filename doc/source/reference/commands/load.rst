@@ -27,7 +27,7 @@ This section describes all parameters.
 
 ``values``
 
-  It specifies values loaded to records.
+  Specifies values loaded to records.
   Values should satisfy ``input_type`` format.
   If you specify "json" as ``input_type``, you can choose a format from below:
 
@@ -48,15 +48,15 @@ This section describes all parameters.
 
 ``table``
 
-  It specifies a table name you want to add records.
+  Specifies a table name you want to add records.
 
 ``columns``
 
-  It specifies column names in added records with comma separations.
+  Specifies column names in added records with comma separations.
 
 ``ifexists``
 
-  It specifies executed ``grn_expr`` string when the same primary key
+  Specifies executed ``grn_expr`` string when the same primary key
   as added records already exists in your table.
   If ``ifexists`` specifies ``grn_expr`` string (default: true) and
   its value is true, values in other (all columns excluding ``_key``
@@ -64,7 +64,7 @@ This section describes all parameters.
 
 ``input_type``
 
-  It specifies an input format for ``values``. It supports JSON only.
+  Specifies an input format for ``values``. It supports JSON only.
 
 Usage
 -----

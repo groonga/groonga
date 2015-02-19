@@ -159,7 +159,7 @@ This section describes all parameters.
 ``name``
 ^^^^^^^^
 
-It specifies a table name to be created. ``name`` must be specified.
+Specifies a table name to be created. ``name`` must be specified.
 
 Here are available characters:
 
@@ -179,7 +179,7 @@ that you cannot use ``_`` as the first character such as
 ``flags``
 ^^^^^^^^^
 
-It specifies a table type and table customize options.
+Specifies a table type and table customize options.
 
 Here are available flags:
 
@@ -216,7 +216,7 @@ The default flags are ``TABLE_HASH_KEY``.
 ``key_type``
 ^^^^^^^^^^^^
 
-It specifies key type.
+Specifies key type.
 
 If you specify ``TABLE_HASH_KEY``, ``TABLE_PAT_KEY`` or
 ``TABLE_DAT_KEY`` as ``flags`` parameter, you need to specify
@@ -229,7 +229,7 @@ The default value is none.
 ``value_type``
 ^^^^^^^^^^^^^^
 
-It specifies value type.
+Specifies value type.
 
 You can use value when you specify ``TABLE_NO_KEY``,
 ``TABLE_HASH_KEY`` or ``TABLE_PAT_KEY`` as ``flags`` parameter. Value
@@ -241,7 +241,7 @@ The default value is none.
 ``default_tokenizer``
 ^^^^^^^^^^^^^^^^^^^^^
 
-It specifies the default tokenizer that is used on searching and data
+Specifies the default tokenizer that is used on searching and data
 loading.
 
 You cannot use ``default_tokenizer`` with ``TABLE_NO_KEY`` because
@@ -259,7 +259,7 @@ The default value is none.
 ``normalizer``
 ^^^^^^^^^^^^^^
 
-It specifies a normalizer that is used to normalize key.
+Specifies a normalizer that is used to normalize key.
 
 You cannot use ``normalizer`` with ``TABLE_NO_KEY`` because
 ``TABLE_NO_KEY`` doesn't support key.
@@ -273,7 +273,7 @@ The default value is none.
 ``token_filters``
 ^^^^^^^^^^^^^^^^^^
 
-It specifies token filters that is used to some processes tokenized token.
+Specifies token filters that is used to some processes tokenized token.
 
 You cannot use ``token_filters`` with ``TABLE_NO_KEY`` because
 ``TABLE_NO_KEY`` doesn't support key.

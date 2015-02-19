@@ -60,14 +60,14 @@ There are required parameters, ``table`` and ``string``.
 ``table``
 """""""""
 
-It specifies the lexicon table. ``table_tokenize`` command uses the
+Specifies the lexicon table. ``table_tokenize`` command uses the
 tokenizer, the normalizer, the token filters that is set the
 lexicon table.
 
 ``string``
 """"""""""
 
-It specifies any string which you want to tokenize.
+Specifies any string which you want to tokenize.
 
 See :ref:`tokenize-string` option in :doc:`/reference/commands/tokenize` about details.
 
@@ -79,7 +79,7 @@ There are optional parameters.
 ``flags``
 """""""""
 
-It specifies a tokenization customize options. You can specify
+Specifies a tokenization customize options. You can specify
 multiple options separated by "``|``".
 
 The default value is ``NONE``.
@@ -89,7 +89,7 @@ See :ref:`tokenize-flags` option in :doc:`/reference/commands/tokenize` about de
 ``mode``
 """"""""
 
-It specifies a tokenize mode.
+Specifies a tokenize mode.
 
 The default value is ``GET``.
 

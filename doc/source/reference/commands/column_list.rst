@@ -46,7 +46,7 @@ All parameters are required.
 ``table``
 """""""""
 
-It specifies the name of table to be listed columns.
+Specifies the name of table to be listed columns.
 
 Return value
 ------------

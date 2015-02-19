@@ -72,7 +72,7 @@ There is one required parameter, ``html``.
 ``html``
 ^^^^^^^^
 
-It specifies HTML text to be untagged.
+Specifies HTML text to be untagged.
 
 Return value
 ------------

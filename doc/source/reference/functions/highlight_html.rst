@@ -85,7 +85,7 @@ There is only one parameter ``column`` .
 ``column``
 ^^^^^^^^^^
 
-It specifies a column of the table.
+Specifies a column of the table.
 
 Return value
 ------------

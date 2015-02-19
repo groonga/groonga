@@ -59,7 +59,7 @@ This section describes all parameters.
 ``max``
 """""""
 
-It specifies the max number of query cache entries as a number.
+Specifies the max number of query cache entries as a number.
 
 If ``max`` parameter isn't specified, the current max number of query
 cache entries isn't changed. ``cache_limit`` just returns the current

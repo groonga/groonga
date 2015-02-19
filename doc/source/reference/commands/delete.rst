@@ -83,20 +83,20 @@ Parameters
 
 ``table``
 
-  It specifies the name of table to delete the records.
+  Specifies the name of table to delete the records.
 
 ``key``
 
-  It specifies the key of record to delete. If you use the table with TABLE_NO_KEY, the key is just ignored.
+  Specifies the key of record to delete. If you use the table with TABLE_NO_KEY, the key is just ignored.
   (Use ``id`` parameter in such a case)
 
 ``id``
 
-  It specifies the id of record to delete. If you specify ``id`` parameter, you must not specify ``key`` parameter.
+  Specifies the id of record to delete. If you specify ``id`` parameter, you must not specify ``key`` parameter.
 
 ``filter``
 
-  It specifies the expression of grn_expr to identify the record. If you specify ``filter`` parameter,
+  Specifies the expression of grn_expr to identify the record. If you specify ``filter`` parameter,
   you must not specify ``key`` and ``id`` parameter.
 
 Return value

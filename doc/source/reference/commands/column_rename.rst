@@ -69,17 +69,17 @@ All parameters are required.
 ``table``
 """""""""
 
-It specifies the name of table that has the column to be renamed.
+Specifies the name of table that has the column to be renamed.
 
 ``name``
 """"""""
 
-It specifies the column name to be renamed.
+Specifies the column name to be renamed.
 
 ``new_name``
 """"""""""""
 
-It specifies the new column name.
+Specifies the new column name.
 
 
 Return value

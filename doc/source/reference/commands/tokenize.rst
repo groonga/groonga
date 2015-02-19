@@ -57,7 +57,7 @@ There are required parameters, ``tokenizer`` and ``string``.
 ``tokenizer``
 """""""""""""
 
-It specifies the tokenizer name. ``tokenize`` command uses the
+Specifies the tokenizer name. ``tokenize`` command uses the
 tokenizer that is named ``tokenizer``.
 
 See :doc:`/reference/tokenizers` about built-in tokenizers.
@@ -78,7 +78,7 @@ registering ``tokenizers/kytea``.
 ``string``
 """"""""""
 
-It specifies any string which you want to tokenize.
+Specifies any string which you want to tokenize.
 
 If you want to include spaces in ``string``, you need to quote
 ``string`` by single quotation (``'``) or double quotation (``"``).
@@ -99,7 +99,7 @@ There are optional parameters.
 ``normalizer``
 """"""""""""""
 
-It specifies the normalizer name. ``tokenize`` command uses the
+Specifies the normalizer name. ``tokenize`` command uses the
 normalizer that is named ``normalizer``. Normalizer is important for
 N-gram family tokenizers such as ``TokenBigram``.
 
@@ -140,7 +140,7 @@ to lower case characters. For example, ``fu`` is a token.
 ``flags``
 """""""""
 
-It specifies a tokenization customize options. You can specify
+Specifies a tokenization customize options. You can specify
 multiple options separated by "``|``". For example,
 ``NONE|ENABLE_TOKENIZED_DELIMITER``.
 
@@ -178,7 +178,7 @@ tokenized delimiter.
 ``mode``
 """"""""
 
-It specifies a tokenize mode. If the mode is specified ``ADD``, the text
+Specifies a tokenize mode. If the mode is specified ``ADD``, the text
 is tokenized by the rule that adding a document. If the mode is specified
 ``GET``, the text is tokenized by the rule that searching a document. If
 the mode is omitted, the text is tokenized by the ``ADD`` mode.
@@ -206,7 +206,7 @@ The last alphabet is tokenized by two characters.
 ``token_filters``
 """""""""""""""""
 
-It specifies the token filter names. ``tokenize`` command uses the
+Specifies the token filter names. ``tokenize`` command uses the
 tokenizer that is named ``token_filters``.
 
 See :doc:`/reference/token_filters` about token filters.

@@ -45,7 +45,7 @@ This section describes all parameters.
 ``path``
 """"""""
 
-It specifies the Ruby script path which you want to load.
+Specifies the Ruby script path which you want to load.
 
 Return value
 ------------

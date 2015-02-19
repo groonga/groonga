@@ -102,7 +102,7 @@ There are two required parameter, ``scope`` and ``filter_string``.
 ``scope``
 ^^^^^^^^^
 
-It specifies a column of the table that is specified by ``table``
+Specifies a column of the table that is specified by ``table``
 parameter in ``select``. The column has a limitation. The limitation
 is described later. ``filter_string`` is evaluated in the column
 context. It means that ``filter_string`` is evaluated like
@@ -119,7 +119,7 @@ See :ref:`select-table` about ``table`` parameter in ``select``.
 ``filter_string``
 ^^^^^^^^^^^^^^^^^
 
-It specifies a search condition in
+Specifies a search condition in
 :doc:`/reference/grn_expr/script_syntax`. It is evaluated in ``scope``
 context.
 

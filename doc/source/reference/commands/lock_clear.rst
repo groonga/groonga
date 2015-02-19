@@ -69,7 +69,7 @@ This section describes all parameters.
 ``target_name``
 """""""""""""""
 
-It specifies the name of table or column.
+Specifies the name of table or column.
 
 If you don't specify it, database is used for the target object.
 

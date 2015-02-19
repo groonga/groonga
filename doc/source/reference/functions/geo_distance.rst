@@ -153,7 +153,7 @@ There are two required parameter, ``point1`` and ``point2``.
 ``point1``
 """"""""""
 
-It specifies the start point that
+Specifies the start point that
 you want to calculate the value of distance between two points.
 
 You can specify the value of GeoPoint type. [#]_
@@ -163,7 +163,7 @@ See :doc:`/reference/types` about GeoPoint.
 ``point2``
 """"""""""
 
-It specifies the end point that
+Specifies the end point that
 you want to calculate the value of distance between two points.
 
 You can specify the value of GeoPoint type or
@@ -179,7 +179,7 @@ There is a optional parameter, ``approximate_type``.
 ``approximate_type``
 """"""""""""""""""""
 
-It specifies how to approximate the geographical features for calculating
+Specifies how to approximate the geographical features for calculating
 the value of distance.
 
 You can specify the value of ``approximate_type`` by one of the followings.

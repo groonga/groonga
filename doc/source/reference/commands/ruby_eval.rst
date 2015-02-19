@@ -45,7 +45,7 @@ This section describes all parameters.
 ``script``
 """"""""""
 
-It specifies the Ruby script which you want to evaluate.
+Specifies the Ruby script which you want to evaluate.
 
 Return value
 ------------

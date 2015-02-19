@@ -297,7 +297,7 @@ There is a required parameter, ``table``.
 ``table``
 """""""""
 
-It specifies a table to be searched. ``table`` must be specified.
+Specifies a table to be searched. ``table`` must be specified.
 
 If nonexistent table is specified, an error is returned.
 
@@ -322,7 +322,7 @@ and ``filter`` aren't specified, all records are selected.
 ``match_columns``
 """""""""""""""""
 
-It specifies the default target column for fulltext search by
+Specifies the default target column for fulltext search by
 ``query`` parameter value. A target column for fulltext search can be
 specified in ``query`` parameter. The difference between
 ``match_columns`` and ``query`` is whether weight is supported or
@@ -391,7 +391,7 @@ of blog entry is more important rather thatn content of blog entry.
 ``query``
 """""""""
 
-It specifies the query text. Normally, it is used for fulltext search
+Specifies the query text. Normally, it is used for fulltext search
 with ``match_columns`` parameter. ``query`` parameter is designed for
 a fulltext search form in a Web page. A query text should be formatted
 in :doc:`/reference/grn_expr/query_syntax`. The syntax is similar to common search
@@ -452,7 +452,7 @@ See :doc:`/reference/grn_expr/query_syntax` for other operations.
 ``filter``
 """"""""""
 
-It specifies the filter text. Normally, it is used for complex search
+Specifies the filter text. Normally, it is used for complex search
 conditions. ``filter`` can be used with ``query`` parameter. If both
 ``filter`` and ``query`` are specified, there are conbined with
 logical and. It means that matched records should be matched against
@@ -493,7 +493,7 @@ Advanced search parameters
 ``match_escalation_threshold``
 """"""""""""""""""""""""""""""
 
-It specifies threshold to determine whether search storategy
+Specifies threshold to determine whether search storategy
 escalation is used or not. The threshold is compared against the
 number of matched records. If the number of matched records is equal
 to or less than the threshold, the search storategy escalation is
@@ -740,7 +740,7 @@ Output related parameters
 ``output_columns``
 """"""""""""""""""
 
-It specifies output columns separated by ``,``.
+Specifies output columns separated by ``,``.
 
 Here is a simple ``output_columns`` usage example.
 
@@ -772,7 +772,7 @@ values except ``_score`` are outputted.
 ``sortby``
 """"""""""
 
-It specifies sort keys separated by ``,``. Each sort key is column
+Specifies sort keys separated by ``,``. Each sort key is column
 name.
 
 Here is a simple ``sortby`` usage example.
@@ -815,7 +815,7 @@ it's just ignored but get a warning in log file.
 ``offset``
 """"""""""
 
-It specifies offset to determine output records range. Offset is
+Specifies offset to determine output records range. Offset is
 zero-based. ``--offset 1`` means output range is started from the 2nd
 record.
 
@@ -843,7 +843,7 @@ The default value is ``0``.
 ``limit``
 """""""""
 
-It specifies the max number of output records. If the number of
+Specifies the max number of output records. If the number of
 matched records is less than ``limit``, all records are outputted.
 
 Here is a simple ``limit`` usage example.
@@ -890,7 +890,7 @@ drilldown related parameters are described in another section.
 ``drilldown``
 """""""""""""
 
-It specifies keys for grouping separated by ``,``.
+Specifies keys for grouping separated by ``,``.
 
 Matched records by specified search conditions are grouped by each
 key. If you specify no search condition, all records are grouped by
@@ -954,7 +954,7 @@ The ``select`` command outputs the following information:
 ``drilldown_sortby``
 """"""""""""""""""""
 
-It specifies sort keys for drilldown outputs separated by ``,``. Each
+Specifies sort keys for drilldown outputs separated by ``,``. Each
 sort key is column name.
 
 You can refer the number of grouped records by ``_nsubrecs``
@@ -996,7 +996,7 @@ If you want to use different sort keys for each drilldown, use
 ``drilldown_output_columns``
 """"""""""""""""""""""""""""
 
-It specifies output columns for drilldown separated by ``,``.
+Specifies output columns for drilldown separated by ``,``.
 
 Here is a ``drilldown_output_columns`` example:
 
@@ -1079,7 +1079,7 @@ You can use more :doc:`/reference/columns/pseudo` in
 ``drilldown_offset``
 """"""""""""""""""""
 
-It specifies offset to determine range of drilldown output
+Specifies offset to determine range of drilldown output
 records. Offset is zero-based. ``--drilldown_offset 1`` means output
 range is started from the 2nd record.
 
@@ -1121,7 +1121,7 @@ The default value of ``drilldown_offset`` is ``0``.
 ``drilldown_limit``
 """""""""""""""""""
 
-It specifies the max number of groups in a drilldown. If the number of
+Specifies the max number of groups in a drilldown. If the number of
 groups is less than ``drilldown_limit``, all groups are outputted.
 
 Here is a ``drilldown_limit`` example:
@@ -1162,7 +1162,7 @@ The default value of ``drilldown_limit`` is ``10``.
 ``drilldown_calc_types``
 """"""""""""""""""""""""
 
-It specifies how to calculate (aggregate) values in grouped records by
+Specifies how to calculate (aggregate) values in grouped records by
 a drilldown. You can specify multiple calculation types separated by
 "``,``". For example, ``MAX,MIN``.
 
@@ -1309,7 +1309,7 @@ that only ``COUNT`` is enabled. Because ``NONE`` is just ignored and
 ``drilldown_calc_target``
 """""""""""""""""""""""""
 
-It specifies the target column for :ref:`select-drilldown-calc-types`.
+Specifies the target column for :ref:`select-drilldown-calc-types`.
 
 If you specify a calculation type that needs a target column such as
 ``MAX`` in :ref:`select-drilldown-calc-types` but you omit
@@ -1555,7 +1555,7 @@ There is a score related parameter, ``adjuster``.
 ``adjuster``
 """"""""""""
 
-It specifies one or more score adjust expressions. You need to use
+Specifies one or more score adjust expressions. You need to use
 ``adjuster`` with ``query`` or ``filter``. ``adjuster`` doesn't work
 with not searched request.
 

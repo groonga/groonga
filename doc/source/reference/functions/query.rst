@@ -114,14 +114,14 @@ There are two required parameter, ``match_columns`` and ``query_string``.
 ``match_columns``
 """""""""""""""""
 
-It specifies the default target column for fulltext search by
+Specifies the default target column for fulltext search by
 ``query_string`` parameter value. It is the same role as
 :ref:`select-match-columns` parameter in ``select``.
 
 ``query_string``
 """"""""""""""""
 
-It specifies the search condition in
+Specifies the search condition in
 :doc:`/reference/grn_expr/query_syntax`. It is the same role as
 ``query`` parameter in ``select``.
 
@@ -136,7 +136,7 @@ There are some optional parameters.
 ``query_expander``
 """"""""""""""""""
 
-It specifies the plugin name for query expansion.
+Specifies the plugin name for query expansion.
 
 There is one plugin bundled in official release - :doc:`/reference/query_expanders/tsv`.
 
@@ -146,7 +146,7 @@ See :doc:`/reference/query_expanders/tsv` about details.
 ``substitution_table``
 """"""""""""""""""""""
 
-It specifies the substitution table and substitution column name
+Specifies the substitution table and substitution column name
 by following format such as ``${TABLE}.${COLUMN}`` for query expansion.
 
 See :ref:`query-expander` about details.

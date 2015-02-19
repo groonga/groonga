@@ -100,7 +100,7 @@ Parameters
 ----------
 
 ``types``
-  It specifies what types are returned by the suggest
+  Specifies what types are returned by the suggest
   command.
 
   Here are available types:
@@ -130,46 +130,46 @@ Parameters
       complete|correct|suggest
 
 ``table``
-  It specifies table name that has ``item_${DATA_SET_NAME}`` format.
+  Specifies table name that has ``item_${DATA_SET_NAME}`` format.
   For example, ``item_query`` is a table name if you created
   dataset by the following command::
 
     groonga-suggest-create-dataset /tmp/db-path query
 
 ``column``
-  It specifies a column name that has furigana in
+  Specifies a column name that has furigana in
   Katakana in ``table`` table.
 
 ``query``
-  It specifies query for completion, correction and/or
+  Specifies query for completion, correction and/or
   suggestion.
 
 ``sortby``
-  It specifies sort key.
+  Specifies sort key.
 
   Default:
     ``-_score``
 
 ``output_columns``
-  It specifies output columns.
+  Specifies output columns.
 
   Default:
     ``_key,_score``
 
 ``offset``
-  It specifies returned records offset.
+  Specifies returned records offset.
 
   Default:
     ``0``
 
 ``limit``
-  It specifies number of returned records.
+  Specifies number of returned records.
 
   Default:
     ``10``
 
 ``frequency_threshold``
-  It specifies threshold for item frequency. Returned records must have
+  Specifies threshold for item frequency. Returned records must have
   ``_score`` that is greater than or equal to ``frequency_threshold``.
 
   Default:
@@ -177,7 +177,7 @@ Parameters
 
 ``conditional_probability_threshold``
 
-  It specifies threshold for conditional
+  Specifies threshold for conditional
   probability. Conditional probability is used for learned
   data. It is probability of query submission when ``query``
   is occurred. Returned records must have conditional
@@ -188,7 +188,7 @@ Parameters
     ``0.2``
 
 ``prefix_search``
-  It specifies whether optional prefix search is used or not
+  Specifies whether optional prefix search is used or not
   in completion.
 
   Here are available values:
@@ -207,7 +207,7 @@ Parameters
     ``auto``
 
 ``similar_search``
-  It specifies whether optional similar search is used or not
+  Specifies whether optional similar search is used or not
   in correction.
 
   Here are available values:

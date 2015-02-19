@@ -55,7 +55,7 @@ There are required parameters, ``normalizer`` and ``string``.
 ``normalizer``
 """"""""""""""
 
-It specifies the normalizer name. ``normalize`` command uses the
+Specifies the normalizer name. ``normalize`` command uses the
 normalizer that is named ``normalizer``.
 
 See :doc:`/reference/normalizers` about built-in normalizers.
@@ -72,7 +72,7 @@ MySQL compatible normalizer by registering `groonga-normalizer-mysql
 ``string``
 """"""""""
 
-It specifies any string which you want to normalize.
+Specifies any string which you want to normalize.
 
 If you want to include spaces in ``string``, you need to quote
 ``string`` by single quotation (``'``) or double quotation (``"``).
@@ -89,7 +89,7 @@ There are optional parameters.
 ``flags``
 """""""""
 
-It specifies a normalization customize options. You can specify
+Specifies a normalization customize options. You can specify
 multiple options separated by "``|``". For example,
 ``REMOVE_BLANK|WITH_TYPES``.
 

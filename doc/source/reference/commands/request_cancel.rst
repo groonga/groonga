@@ -97,7 +97,7 @@ There is required parameter, ``id``.
 ``id``
 """"""
 
-It specifies the ID for the target request.
+Specifies the ID for the target request.
 
 Return value
 ------------

@@ -67,12 +67,12 @@ There are two or more required parameter, ``target_value`` and multiple ``value`
 ``target_value``
 ^^^^^^^^^^^^^^^^
 
-It specifies a column of the table that is specified by ``table`` parameter in ``select``.
+Specifies a column of the table that is specified by ``table`` parameter in ``select``.
 
 ``value``
 ^^^^^^^^^
 
-It specifies a value of the column which you want to select.
+Specifies a value of the column which you want to select.
 
 Return value
 ------------
