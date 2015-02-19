@@ -6507,6 +6507,22 @@ exit :
   return estimated_size;
 }
 
+uint32_t
+grn_ii_estimate_size_for_lexicon_cursor(grn_ctx *ctx, grn_ii *ii,
+                                        grn_table_cursor *lexicon_cursor)
+{
+  grn_id term_id;
+  uint32_t estimated_size = 0;
+
+  while ((term_id = grn_table_cursor_next(ctx, lexicon_cursor)) != GRN_ID_NIL) {
+    uint32_t term_estimated_size;
+    term_estimated_size = grn_ii_estimate_size(ctx, ii, term_id);
+    estimated_size += term_estimated_size;
+  }
+
+  return estimated_size;
+}
+
 grn_rc
 grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len,
            grn_hash *s, grn_operator op, grn_search_optarg *optarg)
