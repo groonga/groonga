@@ -19,7 +19,9 @@ module Groonga
           case data.op
           when Operator::MATCH
             size = estimate_match(data, search_index)
-          when Operator::LESS, Operator::LESS_EQUAL
+          when Operator::LESS,
+               Operator::LESS_EQUAL,
+               Operator::GREATER
             size = estimate_range(data, search_index)
           end
           size || @table.size
@@ -56,6 +58,9 @@ module Groonga
       when Operator::LESS_EQUAL
         options[:max] = value
         options[:flags] = TableCursorFlags::LE
+      when Operator::GREATER
+        options[:min] = value
+        options[:flags] = TableCursorFlags::GT
       end
       TableCursor.open(lexicon, options) do |cursor|
         index_column.estimate_size(:lexicon_cursor => cursor)
