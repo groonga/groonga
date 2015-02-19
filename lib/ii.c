@@ -6443,6 +6443,70 @@ exit :
   return rc;
 }
 
+uint32_t
+grn_ii_estimate_size_for_query(grn_ctx *ctx, grn_ii *ii,
+                               const char *query, unsigned int query_len,
+                               grn_search_optarg *optarg)
+{
+  grn_rc rc;
+  grn_obj *lexicon = ii->lexicon;
+  token_info **tis = NULL;
+  uint32_t i;
+  uint32_t n_tis = 0;
+  grn_bool only_skip_token = GRN_FALSE;
+  grn_operator mode = GRN_OP_EXACT;
+  double estimated_size = 0;
+
+  if (query_len == 0) {
+    return 0;
+  }
+
+  tis = GRN_MALLOC(sizeof(token_info *) * query_len * 2);
+  if (!tis) {
+    return 0;
+  }
+
+  if (optarg) {
+    switch (optarg->mode) {
+    case GRN_OP_NEAR :
+    case GRN_OP_NEAR2 :
+      mode = optarg->mode;
+      break;
+    case GRN_OP_SIMILAR :
+      mode = optarg->mode;
+      break;
+    default :
+      break;
+    }
+  }
+
+  rc = token_info_build(ctx, lexicon, ii, query, query_len,
+                        tis, &n_tis, &only_skip_token, mode);
+  if (rc != GRN_SUCCESS) {
+    goto exit;
+  }
+
+  for (i = 0; i < n_tis; i++) {
+    token_info *ti = tis[i];
+    double term_estimated_size;
+    term_estimated_size = ((double)ti->size / ti->ntoken);
+    estimated_size += (term_estimated_size - estimated_size) / (i + 1);
+  }
+
+exit :
+  for (i = 0; i < n_tis; i++) {
+    token_info *ti = tis[i];
+    if (ti) {
+      token_info_close(ctx, ti);
+    }
+  }
+  if (tis) {
+    GRN_FREE(tis);
+  }
+
+  return estimated_size;
+}
+
 grn_rc
 grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len,
            grn_hash *s, grn_operator op, grn_search_optarg *optarg)
