@@ -23,9 +23,118 @@
 #include <mruby.h>
 #include <mruby/class.h>
 #include <mruby/data.h>
+#include <mruby/string.h>
 
 #include "mrb_converter.h"
 #include "mrb_bulk.h"
+
+void
+grn_mrb_value_to_raw_data_buffer_init(mrb_state *mrb,
+                                      grn_mrb_value_to_raw_data_buffer *buffer)
+{
+  GRN_VOID_INIT(&(buffer->from));
+  GRN_VOID_INIT(&(buffer->to));
+}
+
+void
+grn_mrb_value_to_raw_data_buffer_fin(mrb_state *mrb,
+                                     grn_mrb_value_to_raw_data_buffer *buffer)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+
+  GRN_OBJ_FIN(ctx, &(buffer->from));
+  GRN_OBJ_FIN(ctx, &(buffer->to));
+}
+
+void
+grn_mrb_value_to_raw_data(mrb_state *mrb,
+                          const char *context,
+                          mrb_value mrb_value_,
+                          grn_id domain_id,
+                          grn_mrb_value_to_raw_data_buffer *buffer,
+                          void **raw_value,
+                          unsigned int *raw_value_size)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  enum mrb_vtype mrb_value_type;
+  grn_bool try_cast = GRN_FALSE;
+  grn_obj *from_bulk = NULL;
+
+  if (mrb_nil_p(mrb_value_)) {
+    *raw_value = NULL;
+    *raw_value_size = 0;
+    return;
+  }
+
+  mrb_value_type = mrb_type(mrb_value_);
+
+  switch (mrb_value_type) {
+  case MRB_TT_STRING :
+    switch (domain_id) {
+    case GRN_DB_SHORT_TEXT :
+    case GRN_DB_TEXT :
+    case GRN_DB_LONG_TEXT :
+      *raw_value = RSTRING_PTR(mrb_value_);
+      *raw_value_size = RSTRING_LEN(mrb_value_);
+      break;
+    default :
+      try_cast = GRN_TRUE;
+      break;
+    }
+    break;
+  default :
+    {
+      struct RClass *klass;
+      grn_mrb_data *data = &(ctx->impl->mrb);
+
+      klass = mrb_class(mrb, mrb_value_);
+      if (domain_id == GRN_DB_TIME &&
+          klass == data->builtin.time_class) {
+        mrb_value mrb_sec;
+        mrb_value mrb_usec;
+
+        mrb_sec = mrb_funcall(mrb, mrb_value_, "to_i", 0);
+        mrb_usec = mrb_funcall(mrb, mrb_value_, "usec", 0);
+        buffer->value.time_value = GRN_TIME_PACK(mrb_fixnum(mrb_sec),
+                                                 mrb_fixnum(mrb_usec));
+        *raw_value = &(buffer->value.time_value);
+        *raw_value_size = sizeof(buffer->value.time_value);
+      } else {
+        try_cast = GRN_TRUE;
+        if (mrb_value_type == MRB_TT_DATA &&
+            klass == mrb_class_get_under(mrb, data->module, "Bulk")) {
+          from_bulk = DATA_PTR(mrb_value_);
+        }
+      }
+    }
+    break;
+  }
+
+  if (!try_cast) {
+    return;
+  }
+
+  if (!from_bulk) {
+    from_bulk = &(buffer->from);
+    grn_mrb_value_to_bulk(mrb, mrb_value_, from_bulk);
+  }
+  if (!grn_mrb_bulk_cast(mrb, from_bulk, &(buffer->to), domain_id)) {
+    grn_obj *domain;
+    char domain_name[GRN_TABLE_MAX_KEY_SIZE];
+    int domain_name_size;
+
+    domain = grn_ctx_at(ctx, domain_id);
+    domain_name_size = grn_obj_name(ctx, domain, domain_name,
+                                    GRN_TABLE_MAX_KEY_SIZE);
+    mrb_raisef(mrb, E_ARGUMENT_ERROR,
+               "%s: failed to convert to %S: %S",
+               mrb_str_new_static(mrb, context, strlen(context)),
+               mrb_str_new_static(mrb, domain_name, domain_name_size),
+               mrb_value_);
+  }
+  *raw_value = GRN_BULK_HEAD(&(buffer->to));
+  *raw_value_size = GRN_BULK_VSIZE(&(buffer->to));
+}
 
 struct RClass *
 grn_mrb_class_from_grn_obj(mrb_state *mrb, grn_obj *object)
