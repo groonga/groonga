@@ -19,6 +19,8 @@ module Groonga
           case data.op
           when Operator::MATCH
             size = estimate_match(data, search_index)
+          when Operator::EQUAL
+            size = estimate_equal(data, search_index)
           when Operator::LESS,
                Operator::LESS_EQUAL,
                Operator::GREATER,
@@ -45,6 +47,20 @@ module Groonga
       end
 
       index_column.estimate_size(:query => data.query.value)
+    end
+
+    def estimate_equal(data, search_index)
+      index_column = search_index.index_column
+      if index_column.is_a?(Accessor)
+        # TODO
+        return nil
+      end
+
+      lexicon = index_column.lexicon
+      term_id = lexicon[data.query]
+      return 0 if term_id.nil?
+
+      index_column.estimate_size(:term_id => term_id)
     end
 
     def estimate_range(data, search_index)
