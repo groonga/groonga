@@ -24,6 +24,11 @@ module Groonga
                Operator::GREATER,
                Operator::GREATER_EQUAL
             size = estimate_range(data, search_index)
+          when Operator::CALL
+            procedure = data.args.first
+            if procedure.is_a?(Procedure) and procedure.name == "between"
+              size = estimate_between(data, search_index)
+            end
           end
           size || @table.size
         end
@@ -66,6 +71,36 @@ module Groonga
         options[:min] = value
         options[:flags] = TableCursorFlags::GE
       end
+      TableCursor.open(lexicon, options) do |cursor|
+        index_column.estimate_size(:lexicon_cursor => cursor)
+      end
+    end
+
+    def estimate_between(data, search_index)
+      index_column = search_index.index_column
+      if index_column.is_a?(Accessor)
+        # TODO
+        return nil
+      end
+
+      lexicon = index_column.lexicon
+      _, _, min, min_border, max, max_border = data.args
+      options = {
+        :min => min,
+        :max => max,
+        :flags => 0,
+      }
+      if min_border == "include"
+        options[:flags] |= TableCursorFlags::LT
+      else
+        options[:flags] |= TableCursorFlags::LE
+      end
+      if max_border == "include"
+        options[:flags] |= TableCursorFlags::GT
+      else
+        options[:flags] |= TableCursorFlags::GE
+      end
+
       TableCursor.open(lexicon, options) do |cursor|
         index_column.estimate_size(:lexicon_cursor => cursor)
       end
