@@ -10,6 +10,7 @@ RUBY_SCRIPT_FILES =				\
 	eval_context.rb				\
 	expression.rb				\
 	expression_size_estimator.rb		\
+	index_column.rb				\
 	index_cursor.rb				\
 	index_info.rb				\
 	initialize/pre.rb			\
