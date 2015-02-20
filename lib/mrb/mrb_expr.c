@@ -861,7 +861,11 @@ grn_mrb_expr_estimate_size(grn_ctx *ctx, grn_obj *expr, grn_obj *table)
   mrb_expression = grn_mrb_value_from_grn_obj(mrb, expr);
   mrb_table = grn_mrb_value_from_grn_obj(mrb, table);
   mrb_size = mrb_funcall(mrb, mrb_expression, "estimate_size", 1, mrb_table);
-  size = mrb_fixnum(mrb_size);
+  if (mrb->exc) {
+    size = grn_table_size(ctx, table);
+  } else {
+    size = mrb_fixnum(mrb_size);
+  }
 
   mrb_gc_arena_restore(mrb, arena_index);
 
