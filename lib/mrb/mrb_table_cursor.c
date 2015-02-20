@@ -53,13 +53,17 @@ mrb_value_to_border_value(mrb_state *mrb,
                           unsigned int *border_value_size)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  enum mrb_vtype mrb_border_value_type;
   grn_bool try_cast = GRN_FALSE;
+  grn_obj *from_bulk = NULL;
 
   if (mrb_nil_p(mrb_border_value)) {
     return;
   }
 
-  switch (mrb_type(mrb_border_value)) {
+  mrb_border_value_type = mrb_type(mrb_border_value);
+
+  switch (mrb_border_value_type) {
   case MRB_TT_STRING :
     switch (domain_id) {
     case GRN_DB_SHORT_TEXT :
@@ -76,10 +80,11 @@ mrb_value_to_border_value(mrb_state *mrb,
   default :
     {
       struct RClass *klass;
+      grn_mrb_data *data = &(ctx->impl->mrb);
 
       klass = mrb_class(mrb, mrb_border_value);
       if (domain_id == GRN_DB_TIME &&
-          klass == ctx->impl->mrb.builtin.time_class) {
+          klass == data->builtin.time_class) {
         mrb_value mrb_sec;
         mrb_value mrb_usec;
 
@@ -91,6 +96,10 @@ mrb_value_to_border_value(mrb_state *mrb,
         *border_value_size = sizeof(buffer->value.time_value);
       } else {
         try_cast = GRN_TRUE;
+        if (mrb_border_value_type == MRB_TT_DATA &&
+            klass == mrb_class_get_under(mrb, data->module, "Bulk")) {
+          from_bulk = DATA_PTR(mrb_border_value);
+        }
       }
     }
     break;
@@ -100,8 +109,11 @@ mrb_value_to_border_value(mrb_state *mrb,
     return;
   }
 
-  grn_mrb_value_to_bulk(mrb, mrb_border_value, &(buffer->from));
-  if (!grn_mrb_bulk_cast(mrb, &(buffer->from), &(buffer->to), domain_id)) {
+  if (!from_bulk) {
+    from_bulk = &(buffer->from);
+    grn_mrb_value_to_bulk(mrb, mrb_border_value, from_bulk);
+  }
+  if (!grn_mrb_bulk_cast(mrb, from_bulk, &(buffer->to), domain_id)) {
     grn_obj *domain;
     char domain_name[GRN_TABLE_MAX_KEY_SIZE];
     int domain_name_size;
