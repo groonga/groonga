@@ -28,107 +28,14 @@
 #include "mrb_ctx.h"
 #include "mrb_bulk.h"
 #include "mrb_table_cursor.h"
+
+#include "mrb_converter.h"
 #include "mrb_options.h"
 
 static struct mrb_data_type mrb_grn_table_cursor_type = {
   "Groonga::TableCursor",
   NULL
 };
-
-typedef struct {
-  grn_obj from;
-  grn_obj to;
-  union {
-    int64_t time_value;
-  } value;
-} border_value_buffer;
-
-static void
-mrb_value_to_border_value(mrb_state *mrb,
-                          grn_id domain_id,
-                          const char *type,
-                          mrb_value mrb_border_value,
-                          border_value_buffer *buffer,
-                          void **border_value,
-                          unsigned int *border_value_size)
-{
-  grn_ctx *ctx = (grn_ctx *)mrb->ud;
-  enum mrb_vtype mrb_border_value_type;
-  grn_bool try_cast = GRN_FALSE;
-  grn_obj *from_bulk = NULL;
-
-  if (mrb_nil_p(mrb_border_value)) {
-    return;
-  }
-
-  mrb_border_value_type = mrb_type(mrb_border_value);
-
-  switch (mrb_border_value_type) {
-  case MRB_TT_STRING :
-    switch (domain_id) {
-    case GRN_DB_SHORT_TEXT :
-    case GRN_DB_TEXT :
-    case GRN_DB_LONG_TEXT :
-      *border_value = RSTRING_PTR(mrb_border_value);
-      *border_value_size = RSTRING_LEN(mrb_border_value);
-      break;
-    default :
-      try_cast = GRN_TRUE;
-      break;
-    }
-    break;
-  default :
-    {
-      struct RClass *klass;
-      grn_mrb_data *data = &(ctx->impl->mrb);
-
-      klass = mrb_class(mrb, mrb_border_value);
-      if (domain_id == GRN_DB_TIME &&
-          klass == data->builtin.time_class) {
-        mrb_value mrb_sec;
-        mrb_value mrb_usec;
-
-        mrb_sec = mrb_funcall(mrb, mrb_border_value, "to_i", 0);
-        mrb_usec = mrb_funcall(mrb, mrb_border_value, "usec", 0);
-        buffer->value.time_value = GRN_TIME_PACK(mrb_fixnum(mrb_sec),
-                                                 mrb_fixnum(mrb_usec));
-        *border_value = &(buffer->value.time_value);
-        *border_value_size = sizeof(buffer->value.time_value);
-      } else {
-        try_cast = GRN_TRUE;
-        if (mrb_border_value_type == MRB_TT_DATA &&
-            klass == mrb_class_get_under(mrb, data->module, "Bulk")) {
-          from_bulk = DATA_PTR(mrb_border_value);
-        }
-      }
-    }
-    break;
-  }
-
-  if (!try_cast) {
-    return;
-  }
-
-  if (!from_bulk) {
-    from_bulk = &(buffer->from);
-    grn_mrb_value_to_bulk(mrb, mrb_border_value, from_bulk);
-  }
-  if (!grn_mrb_bulk_cast(mrb, from_bulk, &(buffer->to), domain_id)) {
-    grn_obj *domain;
-    char domain_name[GRN_TABLE_MAX_KEY_SIZE];
-    int domain_name_size;
-
-    domain = grn_ctx_at(ctx, domain_id);
-    domain_name_size = grn_obj_name(ctx, domain, domain_name,
-                                    GRN_TABLE_MAX_KEY_SIZE);
-    mrb_raisef(mrb, E_ARGUMENT_ERROR,
-               "failed to convert to %S: %S",
-               mrb_str_new_static(mrb, domain_name, domain_name_size),
-               mrb_border_value);
-  }
-  *border_value = GRN_BULK_HEAD(&(buffer->to));
-  *border_value_size = GRN_BULK_VSIZE(&(buffer->to));
-}
 
 static mrb_value
 mrb_grn_table_cursor_singleton_open_raw(mrb_state *mrb, mrb_value klass)
@@ -140,10 +47,10 @@ mrb_grn_table_cursor_singleton_open_raw(mrb_state *mrb, mrb_value klass)
   grn_obj *table;
   void *min = NULL;
   unsigned int min_size = 0;
-  border_value_buffer min_buffer;
+  grn_mrb_value_to_raw_data_buffer min_buffer;
   void *max = NULL;
   unsigned int max_size = 0;
-  border_value_buffer max_buffer;
+  grn_mrb_value_to_raw_data_buffer max_buffer;
   int offset = 0;
   int limit = -1;
   int flags = 0;
@@ -151,10 +58,8 @@ mrb_grn_table_cursor_singleton_open_raw(mrb_state *mrb, mrb_value klass)
   mrb_get_args(mrb, "o|H", &mrb_table, &mrb_options);
 
   table = DATA_PTR(mrb_table);
-  GRN_VOID_INIT(&(min_buffer.from));
-  GRN_VOID_INIT(&(min_buffer.to));
-  GRN_VOID_INIT(&(max_buffer.from));
-  GRN_VOID_INIT(&(max_buffer.to));
+  grn_mrb_value_to_raw_data_buffer_init(mrb, &min_buffer);
+  grn_mrb_value_to_raw_data_buffer_init(mrb, &max_buffer);
   if (!mrb_nil_p(mrb_options)) {
     grn_id key_domain_id;
     mrb_value mrb_min;
@@ -168,12 +73,12 @@ mrb_grn_table_cursor_singleton_open_raw(mrb_state *mrb, mrb_value klass)
     }
 
     mrb_min = grn_mrb_options_get_lit(mrb, mrb_options, "min");
-    mrb_value_to_border_value(mrb, key_domain_id,
-                              "min", mrb_min, &min_buffer, &min, &min_size);
+    grn_mrb_value_to_raw_data(mrb, "min", mrb_min,
+                              key_domain_id, &min_buffer, &min, &min_size);
 
     mrb_max = grn_mrb_options_get_lit(mrb, mrb_options, "max");
-    mrb_value_to_border_value(mrb, key_domain_id,
-                              "max", mrb_max, &max_buffer, &max, &max_size);
+    grn_mrb_value_to_raw_data(mrb, "max", mrb_max,
+                              key_domain_id, &max_buffer, &max, &max_size);
 
     mrb_flags = grn_mrb_options_get_lit(mrb, mrb_options, "flags");
     if (!mrb_nil_p(mrb_flags)) {
@@ -184,10 +89,8 @@ mrb_grn_table_cursor_singleton_open_raw(mrb_state *mrb, mrb_value klass)
                                        min, min_size,
                                        max, max_size,
                                        offset, limit, flags);
-  GRN_OBJ_FIN(ctx, &(min_buffer.from));
-  GRN_OBJ_FIN(ctx, &(min_buffer.to));
-  GRN_OBJ_FIN(ctx, &(max_buffer.from));
-  GRN_OBJ_FIN(ctx, &(max_buffer.to));
+  grn_mrb_value_to_raw_data_buffer_fin(mrb, &min_buffer);
+  grn_mrb_value_to_raw_data_buffer_fin(mrb, &max_buffer);
   grn_mrb_ctx_check(mrb);
 
   return mrb_funcall(mrb, klass, "new", 1, mrb_cptr_value(mrb, table_cursor));
