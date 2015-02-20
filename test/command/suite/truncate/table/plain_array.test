@@ -1,0 +1,13 @@
+table_create Diaries TABLE_NO_KEY
+column_create Diaries content COLUMN_SCALAR Text
+
+load --table Diaries
+[
+{"content": "I tried Groonga."}
+]
+
+dump
+
+truncate Diaries
+
+dump
