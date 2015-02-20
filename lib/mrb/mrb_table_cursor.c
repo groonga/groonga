@@ -144,19 +144,23 @@ mrb_grn_table_cursor_singleton_open_raw(mrb_state *mrb, mrb_value klass)
   GRN_VOID_INIT(&(max_buffer.from));
   GRN_VOID_INIT(&(max_buffer.to));
   if (!mrb_nil_p(mrb_options)) {
-    grn_id table_domain;
+    grn_id key_domain_id;
     mrb_value mrb_min;
     mrb_value mrb_max;
     mrb_value mrb_flags;
 
-    table_domain = table->header.domain;
+    if (table->header.type == GRN_DB) {
+      key_domain_id = GRN_DB_SHORT_TEXT;
+    } else {
+      key_domain_id = table->header.domain;
+    }
 
     mrb_min = grn_mrb_options_get_lit(mrb, mrb_options, "min");
-    mrb_value_to_border_value(mrb, table_domain,
+    mrb_value_to_border_value(mrb, key_domain_id,
                               "min", mrb_min, &min_buffer, &min, &min_size);
 
     mrb_max = grn_mrb_options_get_lit(mrb, mrb_options, "max");
-    mrb_value_to_border_value(mrb, table_domain,
+    mrb_value_to_border_value(mrb, key_domain_id,
                               "max", mrb_max, &max_buffer, &max, &max_size);
 
     mrb_flags = grn_mrb_options_get_lit(mrb, mrb_options, "flags");
