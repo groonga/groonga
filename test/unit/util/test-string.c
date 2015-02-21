@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2012  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2008-2015  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -31,6 +31,7 @@ void data_normalize(void);
 void test_normalize(gconstpointer data);
 void data_normalize_broken(void);
 void test_normalize_broken(gconstpointer data);
+void test_normalize_without_database(void);
 void data_remove_tokenized_delimiter(void);
 void test_remove_tokenized_delimiter(gconstpointer data);
 void data_charlen_broken(void);
@@ -86,7 +87,9 @@ void
 teardown (void)
 {
   GRN_OBJ_FIN(&context, &buffer);
-  grn_obj_close(&context, database);
+  if (database) {
+    grn_obj_close(&context, database);
+  }
   grn_ctx_fin(&context);
 }
 
@@ -283,6 +286,29 @@ test_normalize_broken(gconstpointer data)
   cut_assert_equal_string("", normalized_text);
   cut_assert_equal_int(0, normalized_text_length);
   cut_assert_equal_int(0, normalized_text_n_characters);
+}
+
+void
+test_normalize_without_database(void)
+{
+  grn_obj *string;
+  const char *input = "Groonga";
+  int flags = 0;
+
+  grn_obj_close(&context, database);
+  database = NULL;
+
+  GRN_CTX_SET_ENCODING(&context, GRN_ENC_UTF8);
+  string = grn_string_open(&context,
+                           input,
+                           strlen(input),
+                           GRN_NORMALIZER_AUTO,
+                           flags);
+  cut_assert_null(string);
+  grn_test_assert_error(GRN_INVALID_ARGUMENT,
+                        "[string][open] "
+                        "NormalizerAuto normalizer isn't available",
+                        &context);
 }
 
 void

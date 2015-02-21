@@ -140,8 +140,21 @@ grn_string_open_(grn_ctx *ctx, const char *str, unsigned int str_len,
     return NULL;
   }
 
+  is_normalizer_auto = (normalizer == GRN_NORMALIZER_AUTO);
+  if (is_normalizer_auto) {
+    normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
+    if (!normalizer) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "[string][open] NormalizerAuto normalizer isn't available");
+      return NULL;
+    }
+  }
+
   string = GRN_MALLOCN(grn_string, 1);
   if (!string) {
+    if (is_normalizer_auto) {
+      grn_obj_unlink(ctx, normalizer);
+    }
     GRN_LOG(ctx, GRN_LOG_ALERT,
             "[string][open] failed to allocate memory");
     return NULL;
@@ -163,12 +176,6 @@ grn_string_open_(grn_ctx *ctx, const char *str, unsigned int str_len,
     return (grn_obj *)grn_fake_string_open(ctx, string);
   }
 
-  is_normalizer_auto = (normalizer == GRN_NORMALIZER_AUTO);
-  if (is_normalizer_auto) {
-    normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
-  }
-
-  /* TODO: check rc */
   grn_normalizer_normalize(ctx, normalizer, (grn_obj *)string);
   if (ctx->rc) {
     grn_obj_close(ctx, obj);
