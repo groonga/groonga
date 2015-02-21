@@ -8,6 +8,7 @@ groonga_include_HEADERS =			\
 	output.h				\
 	plugin.h				\
 	request_canceler.h			\
+	scorer.h				\
 	token.h					\
 	tokenizer.h				\
 	token_filter.h				\
