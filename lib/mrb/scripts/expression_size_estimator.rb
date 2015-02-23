@@ -14,7 +14,12 @@ module Groonga
       or_data_list = group_data_list(data_list)
       or_sizes = or_data_list.collect do |and_data_list|
         and_sizes = and_data_list.collect do |data|
-          estimate_data(data)
+          size = estimate_data(data)
+          if data.logical_op == Operator::AND_NOT
+            size = @table_size - size
+            size = 0 if size < 0
+          end
+          size
         end
         and_sizes.min
       end
