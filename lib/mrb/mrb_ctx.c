@@ -58,6 +58,10 @@ ctx_array_reference(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "o", &mrb_id_or_name);
 
+  if (mrb_nil_p(mrb_id_or_name)) {
+    return mrb_nil_value();
+  }
+
   if (mrb_fixnum_p(mrb_id_or_name)) {
     grn_id id = mrb_fixnum(mrb_id_or_name);
     object = grn_ctx_at(ctx, id);
