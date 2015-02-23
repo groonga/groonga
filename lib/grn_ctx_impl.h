@@ -111,6 +111,9 @@ struct _grn_mrb_data {
   struct {
     struct RClass *time_class;
   } builtin;
+  struct {
+    struct RClass *operator_class;
+  } groonga;
 };
 #endif
 

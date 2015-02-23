@@ -33,6 +33,7 @@
 #include "mrb_accessor.h"
 #include "mrb_ctx.h"
 #include "mrb_expr.h"
+#include "mrb_operator.h"
 #include "mrb_converter.h"
 #include "mrb_options.h"
 
@@ -122,17 +123,19 @@ mrb_grn_scan_info_get_op(mrb_state *mrb, mrb_value self)
 
   si = DATA_PTR(self);
   op = grn_scan_info_get_op(si);
-  return mrb_fixnum_value(op);
+  return grn_mrb_value_from_operator(mrb, op);
 }
 
 static mrb_value
 mrb_grn_scan_info_set_op(mrb_state *mrb, mrb_value self)
 {
   scan_info *si;
+  mrb_value mrb_op;
   grn_operator op;
 
-  mrb_get_args(mrb, "i", &op);
+  mrb_get_args(mrb, "o", &mrb_op, &op);
   si = DATA_PTR(self);
+  op = grn_mrb_value_to_operator(mrb, mrb_op);
   grn_scan_info_set_op(si, op);
   return self;
 }
@@ -192,10 +195,12 @@ static mrb_value
 mrb_grn_scan_info_set_logical_op(mrb_state *mrb, mrb_value self)
 {
   scan_info *si;
+  mrb_value mrb_logical_op;
   grn_operator logical_op;
 
-  mrb_get_args(mrb, "i", &logical_op);
+  mrb_get_args(mrb, "o", &mrb_logical_op);
   si = DATA_PTR(self);
+  logical_op = grn_mrb_value_to_operator(mrb, mrb_logical_op);
   grn_scan_info_set_logical_op(si, logical_op);
   return self;
 }
@@ -208,7 +213,7 @@ mrb_grn_scan_info_get_logical_op(mrb_state *mrb, mrb_value self)
 
   si = DATA_PTR(self);
   logical_op = grn_scan_info_get_logical_op(si);
-  return mrb_fixnum_value(logical_op);
+  return grn_mrb_value_from_operator(mrb, logical_op);
 }
 
 static mrb_value
@@ -388,7 +393,7 @@ mrb_grn_expr_code_get_op(mrb_state *mrb, mrb_value self)
   grn_expr_code *expr_code;
 
   expr_code = DATA_PTR(self);
-  return mrb_fixnum_value(expr_code->op);
+  return grn_mrb_value_from_operator(mrb, expr_code->op);
 }
 
 static mrb_value
@@ -562,13 +567,15 @@ mrb_grn_expression_append_object(mrb_state *mrb, mrb_value self)
   grn_obj *expr;
   mrb_value mrb_object;
   grn_obj *object;
+  mrb_value mrb_op;
   grn_operator op;
   int n_args;
 
   expr = DATA_PTR(self);
-  mrb_get_args(mrb, "oii", &mrb_object, &op, &n_args);
+  mrb_get_args(mrb, "ooi", &mrb_object, &mrb_op, &n_args);
 
   object = DATA_PTR(mrb_object);
+  op = grn_mrb_value_to_operator(mrb, mrb_op);
   grn_expr_append_obj(ctx, expr, object, op, n_args);
   grn_mrb_ctx_check(mrb);
 
@@ -581,12 +588,14 @@ mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_obj *expr;
   mrb_value mrb_constant;
+  mrb_value mrb_op;
   grn_operator op;
   int n_args;
 
   expr = DATA_PTR(self);
-  mrb_get_args(mrb, "oii", &mrb_constant, &op, &n_args);
+  mrb_get_args(mrb, "ooi", &mrb_constant, &mrb_op, &n_args);
 
+  op = grn_mrb_value_to_operator(mrb, mrb_op);
   switch (mrb_type(mrb_constant)) {
   case MRB_TT_FALSE :
     if (mrb_nil_p(mrb_constant)) {
@@ -674,12 +683,14 @@ mrb_grn_expression_append_operator(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_obj *expr;
-  grn_operator op;
+  mrb_value mrb_op;
   int n_args;
+  grn_operator op;
 
   expr = DATA_PTR(self);
-  mrb_get_args(mrb, "ii", &op, &n_args);
+  mrb_get_args(mrb, "oi", &mrb_op, &n_args);
 
+  op = grn_mrb_value_to_operator(mrb, mrb_op);
   grn_expr_append_op(ctx, expr, op, n_args);
   grn_mrb_ctx_check(mrb);
 
@@ -810,7 +821,7 @@ grn_mrb_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
 
   mrb_expression = grn_mrb_value_from_grn_obj(mrb, expr);
   mrb_sis = mrb_funcall(mrb, mrb_expression, "build_scan_info", 2,
-                        mrb_fixnum_value(op),
+                        grn_mrb_value_from_operator(mrb, op),
                         mrb_fixnum_value(size));
 
   if (mrb_nil_p(mrb_sis)) {

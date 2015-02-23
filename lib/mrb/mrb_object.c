@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2014 Brazil
+  Copyright(C) 2013-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -27,6 +27,7 @@
 
 #include "../grn_mrb.h"
 #include "mrb_object.h"
+#include "mrb_operator.h"
 #include "mrb_converter.h"
 
 static mrb_value
@@ -89,15 +90,17 @@ object_find_index(mrb_state *mrb, mrb_value self)
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_obj *object;
   mrb_value mrb_operator;
+  grn_operator operator;
   grn_obj *index;
   int n_indexes;
   int section_id;
 
   mrb_get_args(mrb, "o", &mrb_operator);
   object = DATA_PTR(self);
+  operator = grn_mrb_value_to_operator(mrb, mrb_operator);
   n_indexes = grn_column_index(ctx,
                                object,
-                               mrb_fixnum(mrb_operator),
+                               operator,
                                &index,
                                1,
                                &section_id);

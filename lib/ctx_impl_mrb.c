@@ -153,6 +153,7 @@ grn_ctx_impl_mrb_init(grn_ctx *ctx)
     ctx->impl->mrb.checked_procs = NULL;
     ctx->impl->mrb.registered_plugins = NULL;
     ctx->impl->mrb.builtin.time_class = NULL;
+    ctx->impl->mrb.groonga.operator_class = NULL;
   } else {
     mrb_state *mrb;
 
