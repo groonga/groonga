@@ -30,6 +30,8 @@ module Groonga
     def group_data_list(data_list)
       or_data_list = [[]]
       data_list.each do |data|
+        next if data.op == Operator::NOP
+
         and_data_list = or_data_list.last
         if and_data_list.empty?
           and_data_list << data
