@@ -19,7 +19,6 @@
 #include "grn_db.h"
 #include "grn_ctx_impl.h"
 #include <string.h>
-#include <float.h>
 #include "grn_ii.h"
 #include "grn_geo.h"
 #include "grn_expr.h"

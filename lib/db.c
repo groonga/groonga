@@ -32,7 +32,6 @@
 #include "grn_normalizer.h"
 #include "grn_util.h"
 #include <string.h>
-#include <float.h>
 
 typedef struct {
   grn_id id;

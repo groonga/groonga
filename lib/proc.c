@@ -27,7 +27,6 @@
 #include "grn_expr.h"
 
 #include <string.h>
-#include <float.h>
 #include <stdlib.h>
 #include <fcntl.h>
 #include <sys/stat.h>
