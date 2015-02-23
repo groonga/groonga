@@ -172,6 +172,39 @@ object_close(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+object_get_domain_id(mrb_state *mrb, mrb_value self)
+{
+  grn_obj *object;
+  grn_id domain_id;
+
+  object = DATA_PTR(self);
+  domain_id = object->header.domain;
+
+  if (domain_id == GRN_ID_NIL) {
+    return mrb_nil_value();
+  } else {
+    return mrb_fixnum_value(domain_id);
+  }
+}
+
+static mrb_value
+object_get_range_id(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *object;
+  grn_id range_id;
+
+  object = DATA_PTR(self);
+  range_id = grn_obj_get_range(ctx, object);
+
+  if (range_id == GRN_ID_NIL) {
+    return mrb_nil_value();
+  } else {
+    return mrb_fixnum_value(range_id);
+  }
+}
+
+static mrb_value
 object_is_temporary(mrb_state *mrb, mrb_value self)
 {
   grn_obj *object;
@@ -216,6 +249,11 @@ grn_mrb_object_init(grn_ctx *ctx)
                     object_grn_inspect, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "==", object_equal, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "close", object_close, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, klass, "domain_id", object_get_domain_id,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "range_id", object_get_range_id,
+                    MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "temporary?", object_is_temporary,
                     MRB_ARGS_NONE());

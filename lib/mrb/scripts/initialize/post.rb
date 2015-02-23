@@ -4,6 +4,7 @@ require "context"
 
 require "writer"
 
+require "object"
 require "database"
 require "index_column"
 require "command"

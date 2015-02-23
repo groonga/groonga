@@ -17,6 +17,7 @@ RUBY_SCRIPT_FILES =				\
 	initialize/post.rb			\
 	logger.rb				\
 	logger/level.rb				\
+	object.rb				\
 	operator.rb				\
 	plugin_loader.rb			\
 	require.rb				\
