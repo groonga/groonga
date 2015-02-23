@@ -1511,6 +1511,23 @@ grn_ctx_set_output_type(grn_ctx *ctx, grn_content_type type)
 
   if (ctx->impl) {
     ctx->impl->output_type = type;
+    switch (ctx->impl->output_type) {
+    case GRN_CONTENT_NONE :
+      ctx->impl->mime_type = "application/octet-stream";
+      break;
+    case GRN_CONTENT_TSV :
+      ctx->impl->mime_type = "text/tab-separated-values";
+      break;
+    case GRN_CONTENT_JSON :
+      ctx->impl->mime_type = "application/json";
+      break;
+    case GRN_CONTENT_XML :
+      ctx->impl->mime_type = "text/xml";
+      break;
+    case GRN_CONTENT_MSGPACK :
+      ctx->impl->mime_type = "application/x-msgpack";
+      break;
+    }
   } else {
     rc = GRN_INVALID_ARGUMENT;
   }
