@@ -94,22 +94,19 @@ module Groonga
 
         use_range_index = false
         range_index = nil
-        # TODO
-        # if filter.nil?
-        #   index_info = shard_key.find_index(Operator::LESS)
-        #   if index_info
-        #     range_index = index_info.index
-        #     use_range_index = true
-        #   end
-        # end
+        index_info = shard_key.find_index(Operator::LESS)
+        if index_info
+          range_index = index_info.index
+          # TODO: Determine whether range index is used by estimated size.
+          use_range_index = true
+        end
 
         case cover_type
         when :partial_min
           if use_range_index
-            # TODO
-            # count_n_records_in_range(range_index,
-            #                          target_range.min, target_range.min_border,
-            #                          nil, nil)
+            filter_by_range(range_index, filter,
+                            target_range.min, target_range.min_border,
+                            nil, nil)
           else
             filter_table(table, filter) do |expression|
               expression.append_object(shard_key, Operator::PUSH, 1)
@@ -124,10 +121,9 @@ module Groonga
           end
         when :partial_max
           if use_range_index
-            # TODO
-            # count_n_records_in_range(range_index,
-            #                          nil, nil,
-            #                          target_range.max, target_range.max_border)
+            filter_by_range(range_index, filter,
+                            nil, nil,
+                            target_range.max, target_range.max_border)
           else
             filter_table(table, filter) do |expression|
               expression.append_object(shard_key, Operator::PUSH, 1)
@@ -142,10 +138,9 @@ module Groonga
           end
         when :partial_min_and_max
           if use_range_index
-            # TODO
-            # count_n_records_in_range(range_index,
-            #                          target_range.min, target_range.min_border,
-            #                          target_range.max, target_range.max_border)
+            filter_by_range(range_index, filter,
+                            target_range.min, target_range.min_border,
+                            target_range.max, target_range.max_border)
           else
             filter_table(table, filter) do |expression|
               expression.append_object(context["between"], Operator::PUSH, 1)
@@ -163,10 +158,54 @@ module Groonga
         end
       end
 
-      def filter_table(table, filter)
-        expression = nil
+      def create_expression(table)
+        expression = Expression.create(table)
         begin
-          expression = Expression.create(table)
+          yield(expression)
+        ensure
+          expression.close
+        end
+      end
+
+      def filter_by_range(range_index, filter,
+                          min, min_border, max, max_border)
+        lexicon = range_index.domain
+        data_table = range_index.range
+        flags = TableCursorFlags::BY_KEY
+        case min_border
+        when :include
+          flags |= TableCursorFlags::GE
+        when :exclude
+          flags |= TableCursorFlags::GT
+        end
+        case max_border
+        when :include
+          flags |= TableCursorFlags::LE
+        when :exclude
+          flags |= TableCursorFlags::LT
+        end
+
+        TableCursor.open(lexicon,
+                         :min => min,
+                         :max => max,
+                         :flags => flags) do |table_cursor|
+          if filter
+            create_expression(data_table) do |expression|
+              expression.parse(filter)
+              IndexCursor.open(table_cursor, range_index) do |index_cursor|
+                index_cursor.select(expression)
+              end
+            end
+          else
+            IndexCursor.open(table_cursor, range_index) do |index_cursor|
+              index_cursor.select(nil)
+            end
+          end
+        end
+      end
+
+      def filter_table(table, filter)
+        create_expression(table) do |expression|
           if block_given?
             yield(expression)
             if filter
@@ -177,8 +216,6 @@ module Groonga
             expression.parse(filter)
           end
           table.select(expression)
-        ensure
-          expression.close if expression
         end
       end
     end

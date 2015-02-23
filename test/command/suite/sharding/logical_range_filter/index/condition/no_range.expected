@@ -1,0 +1,76 @@
+load --table Logs_20150203
+[
+{
+  "timestamp": "2015-02-03 12:49:00",
+       "memo": "2015-02-03 12:49:00",
+    "message": "Start"
+}
+]
+[[0,0.0,0.0],1]
+load --table Logs_20150204
+[
+{
+  "timestamp": "2015-02-04 13:49:00",
+       "memo": "2015-02-04 13:49:00",
+    "message": "Start"
+},
+{
+  "timestamp": "2015-02-04 13:50:00",
+       "memo": "2015-02-04 13:50:00",
+    "message": "Shutdown"
+}
+]
+[[0,0.0,0.0],2]
+load --table Logs_20150205
+[
+{
+  "timestamp": "2015-02-05 13:49:00",
+       "memo": "2015-02-05 13:49:00",
+    "message": "Start"
+},
+{
+  "timestamp": "2015-02-05 13:50:00",
+       "memo": "2015-02-05 13:50:00",
+    "message": "Running"
+},
+{
+  "timestamp": "2015-02-05 13:51:00",
+       "memo": "2015-02-05 13:51:00",
+    "message": "Shutdown"
+}
+]
+[[0,0.0,0.0],3]
+logical_range_filter Logs timestamp --filter 'message == "Shutdown"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "memo",
+        "ShortText"
+      ],
+      [
+        "message",
+        "Text"
+      ],
+      [
+        "timestamp",
+        "Time"
+      ]
+    ],
+    [
+      "2015-02-04 13:50:00",
+      "Shutdown",
+      1423025400.0
+    ],
+    [
+      "2015-02-05 13:51:00",
+      "Shutdown",
+      1423111860.0
+    ]
+  ]
+]

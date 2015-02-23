@@ -1,0 +1,47 @@
+#@disable-logging
+
+#@on-error omit
+register sharding
+#@on-error default
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenizerBigram \
+  --normalizer NormalizserAuto
+
+table_create Logs_20150203 TABLE_NO_KEY
+column_create Logs_20150203 timestamp COLUMN_SCALAR Time
+column_create Logs_20150203 memo COLUMN_SCALAR ShortText
+column_create Logs_20150203 message COLUMN_SCALAR Text
+
+table_create Timestamp_20150203 TABLE_PAT_KEY Time
+column_create Timestamp_20150203 index COLUMN_INDEX Logs_20150203 timestamp
+
+column_create Terms index_20150203 COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
+  Logs_20150203 memo,message
+
+
+table_create Logs_20150204 TABLE_NO_KEY
+column_create Logs_20150204 timestamp COLUMN_SCALAR Time
+column_create Logs_20150204 memo COLUMN_SCALAR ShortText
+column_create Logs_20150204 message COLUMN_SCALAR Text
+
+table_create Timestamp_20150204 TABLE_PAT_KEY Time
+column_create Timestamp_20150204 index COLUMN_INDEX Logs_20150204 timestamp
+
+column_create Terms index_20150204 COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
+  Logs_20150204 memo,message
+
+
+table_create Logs_20150205 TABLE_NO_KEY
+column_create Logs_20150205 timestamp COLUMN_SCALAR Time
+column_create Logs_20150205 memo COLUMN_SCALAR ShortText
+column_create Logs_20150205 message COLUMN_SCALAR Text
+
+table_create Timestamp_20150205 TABLE_PAT_KEY Time
+column_create Timestamp_20150205 index COLUMN_INDEX Logs_20150205 timestamp
+
+column_create Terms index_20150205 COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
+  Logs_20150205 memo,message
+
+
+#@enable-logging
