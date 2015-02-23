@@ -18,7 +18,7 @@ module Groonga
     def initialize(start)
       @start = start
       @end = 0
-      @op = 0
+      @op = Operator::NOP
       @logical_op = Operator::OR
       @query = nil
       @args = []
