@@ -12075,6 +12075,7 @@ grn_load_(grn_ctx *ctx, grn_content_type input_type,
   case GRN_CONTENT_TSV :
   case GRN_CONTENT_XML :
   case GRN_CONTENT_MSGPACK :
+  case GRN_CONTENT_GROONGA_COMMAND_LIST :
     ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "unsupported input_type");
     // todo
     break;

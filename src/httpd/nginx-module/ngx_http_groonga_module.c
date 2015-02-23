@@ -568,10 +568,14 @@ ngx_http_groonga_context_receive_handler(grn_ctx *context,
 {
   ngx_http_groonga_handler_data_t *data = callback_data;
 
-  if (grn_ctx_get_output_type(context) == GRN_CONTENT_NONE) {
+  switch (grn_ctx_get_output_type(context)) {
+  case GRN_CONTENT_GROONGA_COMMAND_LIST :
+  case GRN_CONTENT_NONE :
     ngx_http_groonga_context_receive_handler_raw(context, flags, data);
-  } else {
+    break;
+  default :
     ngx_http_groonga_context_receive_handler_typed(context, flags, data);
+    break;
   }
 }
 

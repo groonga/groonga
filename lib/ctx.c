@@ -1527,6 +1527,9 @@ grn_ctx_set_output_type(grn_ctx *ctx, grn_content_type type)
     case GRN_CONTENT_MSGPACK :
       ctx->impl->mime_type = "application/x-msgpack";
       break;
+    case GRN_CONTENT_GROONGA_COMMAND_LIST :
+      ctx->impl->mime_type = "text/x-groonga-command-list";
+      break;
     }
   } else {
     rc = GRN_INVALID_ARGUMENT;

@@ -54,6 +54,8 @@ put_delimiter(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type)
   case GRN_CONTENT_MSGPACK :
     // do nothing
     break;
+  case GRN_CONTENT_GROONGA_COMMAND_LIST :
+    break;
   case GRN_CONTENT_NONE:
     break;
   }
@@ -88,6 +90,8 @@ grn_output_array_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_typ
     msgpack_pack_array(&ctx->impl->msgpacker, nelements);
 #endif
     break;
+  case GRN_CONTENT_GROONGA_COMMAND_LIST :
+    break;
   case GRN_CONTENT_NONE:
     break;
   }
@@ -118,6 +122,8 @@ grn_output_array_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_ty
     break;
   case GRN_CONTENT_MSGPACK :
     // do nothing
+    break;
+  case GRN_CONTENT_GROONGA_COMMAND_LIST :
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -155,6 +161,8 @@ grn_output_map_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     msgpack_pack_map(&ctx->impl->msgpacker, nelements);
 #endif
     break;
+  case GRN_CONTENT_GROONGA_COMMAND_LIST :
+    break;
   case GRN_CONTENT_NONE:
     break;
   }
@@ -186,6 +194,8 @@ grn_output_map_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type
   case GRN_CONTENT_MSGPACK :
     // do nothing
     break;
+  case GRN_CONTENT_GROONGA_COMMAND_LIST :
+    break;
   case GRN_CONTENT_NONE:
     break;
   }
@@ -214,6 +224,9 @@ grn_output_int32(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, in
     msgpack_pack_int32(&ctx->impl->msgpacker, value);
 #endif
     break;
+  case GRN_CONTENT_GROONGA_COMMAND_LIST :
+    grn_text_itoa(ctx, outbuf, value);
+    break;
   case GRN_CONTENT_NONE:
     break;
   }
@@ -240,6 +253,9 @@ grn_output_int64(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, in
 #ifdef GRN_WITH_MESSAGE_PACK
     msgpack_pack_int64(&ctx->impl->msgpacker, value);
 #endif
+    break;
+  case GRN_CONTENT_GROONGA_COMMAND_LIST :
+    grn_text_lltoa(ctx, outbuf, value);
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -268,6 +284,9 @@ grn_output_uint64(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, i
     msgpack_pack_uint64(&ctx->impl->msgpacker, value);
 #endif
     break;
+  case GRN_CONTENT_GROONGA_COMMAND_LIST :
+    grn_text_ulltoa(ctx, outbuf, value);
+    break;
   case GRN_CONTENT_NONE:
     break;
   }
@@ -294,6 +313,9 @@ grn_output_float(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, do
 #ifdef GRN_WITH_MESSAGE_PACK
     msgpack_pack_double(&ctx->impl->msgpacker, value);
 #endif
+    break;
+  case GRN_CONTENT_GROONGA_COMMAND_LIST :
+    grn_text_ftoa(ctx, outbuf, value);
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -323,6 +345,9 @@ grn_output_str(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     msgpack_pack_raw(&ctx->impl->msgpacker, value_len);
     msgpack_pack_raw_body(&ctx->impl->msgpacker, value, value_len);
 #endif
+    break;
+  case GRN_CONTENT_GROONGA_COMMAND_LIST :
+    GRN_TEXT_PUT(ctx, outbuf, value, value_len);
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -362,6 +387,9 @@ grn_output_bool(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, grn
     }
 #endif
     break;
+  case GRN_CONTENT_GROONGA_COMMAND_LIST :
+    GRN_TEXT_PUTS(ctx, outbuf, value ? "true" : "false");
+    break;
   case GRN_CONTENT_NONE:
     break;
   }
@@ -385,6 +413,8 @@ grn_output_null(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type)
 #ifdef GRN_WITH_MESSAGE_PACK
     msgpack_pack_nil(&ctx->impl->msgpacker);
 #endif
+    break;
+  case GRN_CONTENT_GROONGA_COMMAND_LIST :
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -425,6 +455,9 @@ grn_output_time(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, int
 #ifdef GRN_WITH_MESSAGE_PACK
     msgpack_pack_double(&ctx->impl->msgpacker, dv);
 #endif
+    break;
+  case GRN_CONTENT_GROONGA_COMMAND_LIST :
+    grn_text_ftoa(ctx, outbuf, dv);
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -486,6 +519,17 @@ grn_output_geo_point(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type
       msgpack_pack_nil(&ctx->impl->msgpacker);
     }
 #endif
+    break;
+  case GRN_CONTENT_GROONGA_COMMAND_LIST :
+    if (value) {
+      GRN_TEXT_PUTC(ctx, outbuf, '"');
+      grn_text_itoa(ctx, outbuf, value->latitude);
+      GRN_TEXT_PUTC(ctx, outbuf, 'x');
+      grn_text_itoa(ctx, outbuf, value->longitude);
+      GRN_TEXT_PUTC(ctx, outbuf, '"');
+    } else {
+      GRN_TEXT_PUTS(ctx, outbuf, "\"\"");
+    }
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -2022,6 +2066,8 @@ grn_output_envelope(grn_ctx *ctx,
       }
     }
 #endif
+    break;
+  case GRN_CONTENT_GROONGA_COMMAND_LIST :
     break;
   case GRN_CONTENT_NONE:
     break;

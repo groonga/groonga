@@ -341,10 +341,13 @@ s_output(grn_ctx *ctx, int flags, void *arg)
 {
   FILE *stream = (FILE *)arg;
 
-  if (grn_ctx_get_output_type(ctx) == GRN_CONTENT_NONE) {
+  switch (grn_ctx_get_output_type(ctx)) {
+  case GRN_CONTENT_GROONGA_COMMAND_LIST :
+  case GRN_CONTENT_NONE :
     s_output_raw(ctx, flags, stream);
-  } else {
+  default :
     s_output_typed(ctx, flags, stream);
+    break;
   }
 }
 
@@ -936,10 +939,14 @@ h_output(grn_ctx *ctx, int flags, void *arg)
 {
   ht_context *hc = (ht_context *)arg;
 
-  if (grn_ctx_get_output_type(ctx) == GRN_CONTENT_NONE) {
+  switch (grn_ctx_get_output_type(ctx)) {
+  case GRN_CONTENT_GROONGA_COMMAND_LIST :
+  case GRN_CONTENT_NONE :
     h_output_raw(ctx, flags, hc);
-  } else {
+    break;
+  default :
     h_output_typed(ctx, flags, hc);
+    break;
   }
 }
 
