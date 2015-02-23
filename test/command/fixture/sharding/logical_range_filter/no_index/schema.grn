@@ -1,0 +1,22 @@
+#@disable-logging
+
+#@on-error omit
+register sharding
+#@on-error default
+
+table_create Logs_20150203 TABLE_NO_KEY
+column_create Logs_20150203 timestamp COLUMN_SCALAR Time
+column_create Logs_20150203 memo COLUMN_SCALAR ShortText
+column_create Logs_20150203 message COLUMN_SCALAR Text
+
+table_create Logs_20150204 TABLE_NO_KEY
+column_create Logs_20150204 timestamp COLUMN_SCALAR Time
+column_create Logs_20150204 memo COLUMN_SCALAR ShortText
+column_create Logs_20150204 message COLUMN_SCALAR Text
+
+table_create Logs_20150205 TABLE_NO_KEY
+column_create Logs_20150205 timestamp COLUMN_SCALAR Time
+column_create Logs_20150205 memo COLUMN_SCALAR ShortText
+column_create Logs_20150205 message COLUMN_SCALAR Text
+
+#@enable-logging
