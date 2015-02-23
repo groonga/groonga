@@ -1630,7 +1630,7 @@ get_content_mime_type(grn_ctx *ctx, const char *p, const char *pe)
         ctx->impl->mime_type = "text/plain";
       } else if (p + 3 == pe && !memcmp(p, "tsv", 3)) {
         ctx->impl->output_type = GRN_CONTENT_TSV;
-        ctx->impl->mime_type = "text/plain";
+        ctx->impl->mime_type = "text/tab-separated-values";
       }
       break;
     case 'x':
