@@ -25,7 +25,9 @@ module Groonga
       backtrace.reverse_each.with_index do |raw_entry, i|
         next if i == 0
         entry = BacktraceEntry.parse(raw_entry)
-        log(log_level, entry.file, entry.line, entry.method, entry.message)
+        message = entry.message
+        message = raw_entry if message.empty?
+        log(log_level, entry.file, entry.line, entry.method, raw_entry)
       end
     end
   end
