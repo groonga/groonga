@@ -27,6 +27,13 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   set(CMAKE_COMPILER_IS_CLANGCXX ON)
 endif()
 
+if(MSVC)
+  if(MSVC_VERSION LESS 1800)
+    message(STATUS "Groonga supports only MSVC 2013 or later")
+    return()
+  endif()
+endif()
+
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/base_version" VERSION)
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/version.sh")
   file(READ "${CMAKE_CURRENT_SOURCE_DIR}/version.sh" GRN_VERSION)
