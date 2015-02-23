@@ -12,10 +12,10 @@ module Groonga
 
       sizes = data_list.collect do |data|
         search_index = data.search_indexes.first
+        size = nil
         if search_index.nil?
-          @table.size
+          size = @table.size
         else
-          size = nil
           case data.op
           when Operator::MATCH
             size = estimate_match(data, search_index)
@@ -32,8 +32,9 @@ module Groonga
               size = estimate_between(data, search_index)
             end
           end
-          size || @table.size
+          size ||= @table.size
         end
+        size
       end
       sizes.min
     end
