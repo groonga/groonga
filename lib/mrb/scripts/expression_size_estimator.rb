@@ -3,12 +3,13 @@ module Groonga
     def initialize(expression, table)
       @expression = expression
       @table = table
+      @table_size = @table.size
     end
 
     def estimate
       builder = ScanInfoBuilder.new(@expression, Operator::OR, 0)
       data_list = builder.build
-      return @table.size if data_list.nil?
+      return @table_size if data_list.nil?
 
       or_data_list = group_data_list(data_list)
       or_sizes = or_data_list.collect do |and_data_list|
@@ -44,7 +45,7 @@ module Groonga
       search_index = data.search_indexes.first
       size = nil
       if search_index.nil?
-        size = @table.size
+        size = @table_size
       else
         case data.op
         when Operator::MATCH
@@ -62,7 +63,7 @@ module Groonga
             size = estimate_between(data, search_index)
           end
         end
-        size ||= @table.size
+        size ||= @table_size
       end
       size
     end
