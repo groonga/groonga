@@ -1,6 +1,7 @@
 notifications:
-  recipients:
-    - groonga-commit@lists.sourceforge.jp
+  email:
+    recipients:
+      - groonga-commit@lists.sourceforge.jp
 os:
   - linux
   - osx
