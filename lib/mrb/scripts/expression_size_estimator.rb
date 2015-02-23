@@ -10,36 +10,63 @@ module Groonga
       data_list = builder.build
       return @table.size if data_list.nil?
 
-      sizes = data_list.collect do |data|
-        search_index = data.search_indexes.first
-        size = nil
-        if search_index.nil?
-          size = @table.size
-        else
-          case data.op
-          when Operator::MATCH
-            size = estimate_match(data, search_index)
-          when Operator::EQUAL
-            size = estimate_equal(data, search_index)
-          when Operator::LESS,
-               Operator::LESS_EQUAL,
-               Operator::GREATER,
-               Operator::GREATER_EQUAL
-            size = estimate_range(data, search_index)
-          when Operator::CALL
-            procedure = data.args.first
-            if procedure.is_a?(Procedure) and procedure.name == "between"
-              size = estimate_between(data, search_index)
-            end
-          end
-          size ||= @table.size
+      or_data_list = group_data_list(data_list)
+      or_sizes = or_data_list.collect do |and_data_list|
+        and_sizes = and_data_list.collect do |data|
+          estimate_data(data)
         end
-        size
+        and_sizes.min
       end
-      sizes.min
+      or_sizes.max
     end
 
     private
+    def group_data_list(data_list)
+      or_data_list = [[]]
+      data_list.each do |data|
+        and_data_list = or_data_list.last
+        if and_data_list.empty?
+          and_data_list << data
+        else
+          case data.logical_op
+          when Operator::AND, Operator::AND_NOT
+            and_data_list << data
+          else
+            and_data_list = [data]
+            or_data_list << and_data_list
+          end
+        end
+      end
+      or_data_list
+    end
+
+    def estimate_data(data)
+      search_index = data.search_indexes.first
+      size = nil
+      if search_index.nil?
+        size = @table.size
+      else
+        case data.op
+        when Operator::MATCH
+          size = estimate_match(data, search_index)
+        when Operator::EQUAL
+          size = estimate_equal(data, search_index)
+        when Operator::LESS,
+             Operator::LESS_EQUAL,
+             Operator::GREATER,
+             Operator::GREATER_EQUAL
+          size = estimate_range(data, search_index)
+        when Operator::CALL
+          procedure = data.args.first
+          if procedure.is_a?(Procedure) and procedure.name == "between"
+            size = estimate_between(data, search_index)
+          end
+        end
+        size ||= @table.size
+      end
+      size
+    end
+
     def estimate_match(data, search_index)
       index_column = search_index.index_column
       if index_column.is_a?(Accessor)
