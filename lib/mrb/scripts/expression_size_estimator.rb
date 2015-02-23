@@ -51,9 +51,7 @@ module Groonga
     def estimate_data(data)
       search_index = data.search_indexes.first
       size = nil
-      if search_index.nil?
-        size = @table_size
-      else
+      if search_index
         case data.op
         when Operator::MATCH
           size = estimate_match(data, search_index)
@@ -70,9 +68,8 @@ module Groonga
             size = estimate_between(data, search_index)
           end
         end
-        size ||= @table_size
       end
-      size
+      size || @table_size
     end
 
     def estimate_match(data, search_index)
