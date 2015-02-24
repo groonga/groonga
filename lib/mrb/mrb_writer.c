@@ -198,11 +198,11 @@ static mrb_value
 writer_set_content_type(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
-  mrb_value content_type;
+  grn_content_type content_type;
 
-  mrb_get_args(mrb, "o", &content_type);
+  mrb_get_args(mrb, "i", &content_type);
 
-  grn_ctx_set_output_type(ctx, mrb_fixnum(content_type));
+  grn_ctx_set_output_type(ctx, content_type);
 
   return mrb_nil_value();
 }
