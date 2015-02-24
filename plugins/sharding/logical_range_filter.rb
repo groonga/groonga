@@ -18,6 +18,7 @@ module Groonga
 
       def run_body(input)
         enumerator = LogicalEnumerator.new("logical_range_filter", input)
+        order = parse_order(input, :order)
         filter = input[:filter]
         offset = (input[:offset] || 0).to_i
         limit = (input[:limit] || 10).to_i
@@ -51,7 +52,7 @@ module Groonga
         sort_keys = [
           {
             :key => enumerator.shard_key_name,
-            :order => :ascending,
+            :order => order,
           },
         ]
         current_offset = offset
@@ -77,6 +78,23 @@ module Groonga
 
         result_sets.each do |result_set|
           result_set.close if result_set.temporary?
+        end
+      end
+
+      def parse_order(input, name)
+        order = input[name]
+        return :ascending if order.nil?
+
+        case order
+        when "ascending"
+          :ascending
+        when "descending"
+          :descending
+        else
+          message =
+            "[logical_range_filter] #{name} must be " +
+            "\"ascending\" or \"descending\": <#{order}>"
+          raise InvalidArgument, message
         end
       end
 

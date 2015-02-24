@@ -1,0 +1,11 @@
+logical_range_filter Logs timestamp --order invalid
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[logical_range_filter] order must be \"ascending\" or \"descending\": <invalid>"
+  ]
+]
