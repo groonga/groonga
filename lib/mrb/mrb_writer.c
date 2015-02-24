@@ -194,6 +194,19 @@ writer_write_table_records(mrb_state *mrb, mrb_value self)
   return mrb_nil_value();
 }
 
+static mrb_value
+writer_set_content_type(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_value content_type;
+
+  mrb_get_args(mrb, "o", &content_type);
+
+  grn_ctx_set_output_type(ctx, mrb_fixnum(content_type));
+
+  return mrb_nil_value();
+}
+
 void
 grn_mrb_writer_init(grn_ctx *ctx)
 {
@@ -218,5 +231,8 @@ grn_mrb_writer_init(grn_ctx *ctx)
                     writer_write_table_columns, MRB_ARGS_REQ(2));
   mrb_define_method(mrb, klass, "write_table_records",
                     writer_write_table_records, MRB_ARGS_ARG(2, 1));
+
+  mrb_define_method(mrb, klass, "content_type=",
+                    writer_set_content_type, MRB_ARGS_REQ(1));
 }
 #endif
