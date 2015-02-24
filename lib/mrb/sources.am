@@ -11,6 +11,8 @@ libgrnmrb_la_SOURCES =				\
 	mrb_command.h				\
 	mrb_command_input.c			\
 	mrb_command_input.h			\
+	mrb_content_type.c			\
+	mrb_content_type.h			\
 	mrb_converter.c				\
 	mrb_converter.h				\
 	mrb_ctx.c				\
