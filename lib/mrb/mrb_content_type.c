@@ -20,7 +20,6 @@
 
 #ifdef GRN_WITH_MRUBY
 #include <mruby.h>
-#include <mruby/data.h>
 
 #include "mrb_ctx.h"
 #include "mrb_content_type.h"
