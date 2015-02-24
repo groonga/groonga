@@ -1,18 +1,4 @@
-#@on-error omit
-register sharding
-#@on-error default
-
-table_create Logs_20150203 TABLE_NO_KEY
-column_create Logs_20150203 timestamp COLUMN_SCALAR Time
-column_create Logs_20150203 memo COLUMN_SCALAR ShortText
-
-table_create Logs_20150204 TABLE_NO_KEY
-column_create Logs_20150204 timestamp COLUMN_SCALAR Time
-column_create Logs_20150204 memo COLUMN_SCALAR ShortText
-
-table_create Logs_20150205 TABLE_NO_KEY
-column_create Logs_20150205 timestamp COLUMN_SCALAR Time
-column_create Logs_20150205 memo COLUMN_SCALAR ShortText
+#@include fixture/sharding/logical_range_filter/no_index/schema.grn
 
 load --table Logs_20150203
 [
