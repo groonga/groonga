@@ -1299,7 +1299,7 @@ msgid ""
 "column for ``title`` column, ``index_message`` column for ``message`` column."
 msgstr ""
 "インデックス用の ``IndexBlog1`` テーブルも作り、 ``title`` カラムのインデック"
-"ス用に ``index_title`` カラム、 ``message`` カラムのインデック用に "
+"ス用に ``index_title`` カラム、 ``message`` カラムのインデックス用に "
 "``index_message`` カラムと、それぞれ1カラムごとに1つずつ追加しています。"
 
 msgid ""
