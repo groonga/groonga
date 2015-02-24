@@ -345,6 +345,7 @@ s_output(grn_ctx *ctx, int flags, void *arg)
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
   case GRN_CONTENT_NONE :
     s_output_raw(ctx, flags, stream);
+    break;
   default :
     s_output_typed(ctx, flags, stream);
     break;
