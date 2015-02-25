@@ -116,6 +116,13 @@ There is a well known limitation about the number of records. By sharding featur
 Parameters
 ----------
 
+This section describes parameters of ``logical_count``.
+
+Required parameter
+^^^^^^^^^^^^^^^^^^
+
+There are required parameters, ``logical_table`` and ``shard_key``.
+
 ``logical_table``
 """""""""""""""""
 
@@ -126,6 +133,11 @@ If you use actual table such as "Logs_20150203", "Logs_20150203" and so on, logi
 """""""""""""
 
 Specifies column name which is treated as shared key in each parted table.
+
+Optional parameters
+^^^^^^^^^^^^^^^^^^^
+
+There are optional parameters.
 
 ``min``
 """""""
