@@ -33,6 +33,7 @@
 # include "mrb/mrb_void.h"
 # include "mrb/mrb_bulk.h"
 # include "mrb/mrb_object.h"
+# include "mrb/mrb_object_flags.h"
 # include "mrb/mrb_database.h"
 # include "mrb/mrb_table.h"
 # include "mrb/mrb_array.h"
@@ -117,6 +118,7 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   grn_mrb_void_init(ctx);
   grn_mrb_bulk_init(ctx);
   grn_mrb_object_init(ctx);
+  grn_mrb_object_flags_init(ctx);
   grn_mrb_database_init(ctx);
   grn_mrb_table_init(ctx);
   grn_mrb_array_init(ctx);
