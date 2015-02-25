@@ -118,12 +118,9 @@ module Groonga
             range_index = nil
           end
 
-          if cover_type == :all
-            filter_shard_all(table, filter, range_index)
-            return
-          end
-
           case cover_type
+          when :all
+            filter_shard_all(table, filter, range_index)
           when :partial_min
             if range_index
               filter_by_range(range_index, filter,
