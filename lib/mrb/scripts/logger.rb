@@ -15,6 +15,7 @@ module Groonga
         file = last_entry.file
         line = last_entry.line
         method = last_entry.method
+        # message = "#{file}:#{line}:#{method}: #{message}"
       else
         file = ""
         line = 0

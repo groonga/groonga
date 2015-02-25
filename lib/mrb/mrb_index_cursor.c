@@ -31,6 +31,7 @@
 #include "mrb_ctx.h"
 #include "mrb_index_cursor.h"
 #include "mrb_converter.h"
+#include "mrb_options.h"
 
 static struct mrb_data_type mrb_grn_index_cursor_type = {
   "Groonga::IndexCursor",
@@ -115,34 +116,59 @@ static mrb_value
 mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
-  mrb_value mrb_expr;
+  mrb_value mrb_result_set;
+  mrb_value mrb_options;
+  grn_obj *index_cursor;
   grn_obj *expr = NULL;
   grn_obj *expr_variable = NULL;
-  grn_obj *index_cursor;
+  int offset = 0;
+  int limit = 10;
+  int n_processed_records = 0;
   mrb_value mrb_index;
   grn_obj *index;
   grn_obj *lexicon;
   grn_obj *data_table;
-  grn_obj *result;
+  grn_hash *result_set;
   grn_posting *posting;
   grn_id term_id;
   grn_operator op = GRN_OP_OR;
 
-  mrb_get_args(mrb, "o", &mrb_expr);
+  mrb_get_args(mrb, "o|H", &mrb_result_set, &mrb_options);
 
   index_cursor = DATA_PTR(self);
-  if (!mrb_nil_p(mrb_expr)) {
-    expr = DATA_PTR(mrb_expr);
-    expr_variable = grn_expr_get_var_by_offset(ctx, expr, 0);
+  result_set = DATA_PTR(mrb_result_set);
+
+  if (!mrb_nil_p(mrb_options)) {
+    mrb_value mrb_expr;
+    mrb_value mrb_offset;
+    mrb_value mrb_limit;
+
+    mrb_expr = grn_mrb_options_get_lit(mrb, mrb_options, "expression");
+    if (!mrb_nil_p(mrb_expr)) {
+      expr = DATA_PTR(mrb_expr);
+      expr_variable = grn_expr_get_var_by_offset(ctx, expr, 0);
+    }
+
+    mrb_offset = grn_mrb_options_get_lit(mrb, mrb_options, "offset");
+    if (!mrb_nil_p(mrb_offset)) {
+      offset = mrb_fixnum(mrb_offset);
+    }
+
+    mrb_limit = grn_mrb_options_get_lit(mrb, mrb_options, "limit");
+    if (!mrb_nil_p(mrb_limit)) {
+      limit = mrb_fixnum(mrb_limit);
+    }
   }
+
+  if (limit <= 0) {
+    return mrb_fixnum_value(n_processed_records);
+  }
+
   mrb_index = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@index"));
   index = DATA_PTR(mrb_index);
   lexicon = ((grn_ii *)index)->lexicon;
   data_table = grn_ctx_at(ctx, grn_obj_get_range(ctx, index));
 
-  result = grn_table_create(ctx, NULL, 0, NULL,
-                            GRN_TABLE_HASH_KEY | GRN_OBJ_WITH_SUBREC,
-                            data_table, NULL);
   while ((posting = grn_index_cursor_next(ctx, index_cursor, &term_id))) {
     if (expr) {
       grn_bool matched_raw;
@@ -155,11 +181,20 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
         continue;
       }
     }
-    grn_ii_posting_add(ctx, (grn_ii_posting *)posting, (grn_hash *)result, op);
+    n_processed_records++;
+    if (offset > 0) {
+      offset--;
+      continue;
+    }
+    grn_ii_posting_add(ctx, (grn_ii_posting *)posting, result_set, op);
+    limit--;
+    if (limit == 0) {
+      break;
+    }
   }
-  grn_ii_resolve_sel_and(ctx, (grn_hash *)result, op);
+  grn_ii_resolve_sel_and(ctx, result_set, op);
 
-  return grn_mrb_value_from_grn_obj(mrb, result);
+  return mrb_fixnum_value(n_processed_records);
 }
 
 void
@@ -184,6 +219,6 @@ grn_mrb_index_cursor_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "count",
                     mrb_grn_index_cursor_count, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "select",
-                    mrb_grn_index_cursor_select, MRB_ARGS_REQ(1));
+                    mrb_grn_index_cursor_select, MRB_ARGS_ARG(1, 1));
 }
 #endif

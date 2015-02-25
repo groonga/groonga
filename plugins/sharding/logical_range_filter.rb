@@ -33,30 +33,13 @@ module Groonga
             end
           end
 
-          sort_keys = [
-            {
-              :key => executor.shard_key_name,
-              :order => executor.order,
-            },
-          ]
-          current_offset = executor.offset
-          current_limit = executor.limit
           writer.array("RESULTSET", n_elements) do
             first_result_set = result_sets.first
             if first_result_set
               writer.write_table_columns(first_result_set, output_columns)
             end
             result_sets.each do |result_set|
-              if result_set.size <= current_offset
-                current_offset -= result_set.size
-                next
-              end
-              sorted_result_set = result_set.sort(sort_keys,
-                                                  :offset => current_offset,
-                                                  :limit => current_limit)
-              writer.write_table_records(sorted_result_set, output_columns)
-              current_limit -= sorted_result_set.size
-              sorted_result_set.close
+              writer.write_table_records(result_set, output_columns)
             end
           end
         ensure
@@ -65,9 +48,6 @@ module Groonga
       end
 
       class Executor
-        attr_reader :order
-        attr_reader :offset
-        attr_reader :limit
         attr_reader :result_sets
         def initialize(input)
           @input = input
@@ -78,6 +58,9 @@ module Groonga
           @limit = (@input[:limit] || 10).to_i
 
           @result_sets = []
+          @unsorted_result_sets = []
+          @current_offset = 0
+          @current_limit = @limit
         end
 
         def shard_key_name
@@ -85,31 +68,24 @@ module Groonga
         end
 
         def execute
-          n_records = 0
-
           @enumerator.each do |table, shard_key, shard_range|
-            result_set = filter_shard(table, @filter,
-                                      shard_key, shard_range,
-                                      @enumerator.target_range)
-            next if result_set.nil?
-            if result_set.empty?
-              result_set.close if result_set.temporary?
-              next
-            end
-            @result_sets << result_set
-            n_records += result_set.size
-            break if n_records >= offset + limit
+            filter_shard(table, @filter,
+                         shard_key, shard_range,
+                         @enumerator.target_range)
+            break if @current_limit == 0
           end
         end
 
         def close
+          @unsorted_result_sets.each do |result_set|
+            result_set.close if result_set.temporary?
+          end
           @result_sets.each do |result_set|
             result_set.close if result_set.temporary?
           end
         end
 
         private
-
         def parse_order(input, name)
           order = input[name]
           return :ascending if order.nil?
@@ -128,12 +104,14 @@ module Groonga
         end
 
         def filter_shard(table, filter, shard_key, shard_range, target_range)
+          return if table.empty?
+
           cover_type = target_range.cover_type(shard_range)
-          return nil if cover_type == :none
+          return if cover_type == :none
 
           if cover_type == :all
             if filter.nil?
-              return table
+              return sort_result_set(table)
             else
               return filter_table(table, filter)
             end
@@ -219,6 +197,12 @@ module Groonga
           lexicon = range_index.domain
           data_table = range_index.range
           flags = TableCursorFlags::BY_KEY
+          case @order
+          when :ascending
+            flags |= TableCursorFlags::ASCENDING
+          when :descending
+            flags |= TableCursorFlags::DESCENDING
+          end
           case min_border
           when :include
             flags |= TableCursorFlags::GE
@@ -232,23 +216,50 @@ module Groonga
             flags |= TableCursorFlags::LT
           end
 
-          TableCursor.open(lexicon,
-                           :min => min,
-                           :max => max,
-                           :flags => flags) do |table_cursor|
-            if filter
-              create_expression(data_table) do |expression|
-                expression.parse(filter)
+          result_set = HashTable.create(:flags => ObjectFlags::WITH_SUBREC,
+                                        :key_type => data_table)
+          n_processed_records = 0
+          begin
+            TableCursor.open(lexicon,
+                             :min => min,
+                             :max => max,
+                             :flags => flags) do |table_cursor|
+              options = {
+                :offset => @current_offset,
+                :limit => @current_limit,
+              }
+              if filter
+                create_expression(data_table) do |expression|
+                  expression.parse(filter)
+                  options[:expression] = expression
+                  IndexCursor.open(table_cursor, range_index) do |index_cursor|
+                    n_processed_records = index_cursor.select(result_set,
+                                                              options)
+                  end
+                end
+              else
                 IndexCursor.open(table_cursor, range_index) do |index_cursor|
-                  index_cursor.select(expression)
+                  n_processed_records = index_cursor.select(result_set,
+                                                            options)
                 end
               end
-            else
-              IndexCursor.open(table_cursor, range_index) do |index_cursor|
-                index_cursor.select(nil)
-              end
             end
+          rescue
+            result_set.close
+            raise
           end
+
+          if n_processed_records <= @current_offset
+            @current_offset -= n_processed_records
+            result_set.close
+            return
+          end
+
+          if @current_offset > 0
+            @current_offset = 0
+          end
+          @current_limit -= result_set.size
+          @result_sets << result_set
         end
 
         def filter_table(table, filter)
@@ -262,8 +273,38 @@ module Groonga
             else
               expression.parse(filter)
             end
-            table.select(expression)
+            result_set = table.select(expression)
+            sort_result_set(result_set)
           end
+        end
+
+        def sort_result_set(result_set)
+          if result_set.empty?
+            result_set.close if result_set.temporary?
+            return
+          end
+
+          if result_set.size <= @current_offset
+            @current_offset -= result_set.size
+            result_set.close if result_set.temporary?
+            return
+          end
+
+          @unsorted_result_sets << result_set if result_set.temporary?
+          sort_keys = [
+            {
+              :key => @enumerator.shard_key_name,
+              :order => @order,
+            },
+          ]
+          sorted_result_set = result_set.sort(sort_keys,
+                                              :offset => @current_offset,
+                                              :limit => @current_limit)
+          @result_sets << sorted_result_set
+          if @current_offset > 0
+            @current_offset = 0
+          end
+          @current_limit -= sorted_result_set.size
         end
       end
     end
