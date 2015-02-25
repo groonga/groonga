@@ -156,3 +156,6 @@ Specify ``include`` or ``exclude`` as the value of this parameter.
 Return value
 ------------
 
+::
+
+  [HEADER, LOGICAL_COUNT]
