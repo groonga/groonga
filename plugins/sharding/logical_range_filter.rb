@@ -200,7 +200,7 @@ module Groonga
 
           result_set = HashTable.create(:flags => ObjectFlags::WITH_SUBREC,
                                         :key_type => data_table)
-          n_processed_records = 0
+          n_matched_records = 0
           begin
             TableCursor.open(lexicon,
                              :min => min,
@@ -215,14 +215,12 @@ module Groonga
                   expression.parse(filter)
                   options[:expression] = expression
                   IndexCursor.open(table_cursor, range_index) do |index_cursor|
-                    n_processed_records = index_cursor.select(result_set,
-                                                              options)
+                    n_matched_records = index_cursor.select(result_set, options)
                   end
                 end
               else
                 IndexCursor.open(table_cursor, range_index) do |index_cursor|
-                  n_processed_records = index_cursor.select(result_set,
-                                                            options)
+                  n_matched_records = index_cursor.select(result_set, options)
                 end
               end
             end
@@ -231,8 +229,8 @@ module Groonga
             raise
           end
 
-          if n_processed_records <= @current_offset
-            @current_offset -= n_processed_records
+          if n_matched_records <= @current_offset
+            @current_offset -= n_matched_records
             result_set.close
             return
           end

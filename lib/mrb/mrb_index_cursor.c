@@ -123,7 +123,7 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
   grn_obj *expr_variable = NULL;
   int offset = 0;
   int limit = 10;
-  int n_processed_records = 0;
+  int n_matched_records = 0;
   mrb_value mrb_index;
   grn_obj *index;
   grn_obj *lexicon;
@@ -161,7 +161,7 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
   }
 
   if (limit <= 0) {
-    return mrb_fixnum_value(n_processed_records);
+    return mrb_fixnum_value(n_matched_records);
   }
 
   mrb_index = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@index"));
@@ -181,7 +181,7 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
         continue;
       }
     }
-    n_processed_records++;
+    n_matched_records++;
     if (offset > 0) {
       offset--;
       continue;
@@ -194,7 +194,7 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
   }
   grn_ii_resolve_sel_and(ctx, result_set, op);
 
-  return mrb_fixnum_value(n_processed_records);
+  return mrb_fixnum_value(n_matched_records);
 }
 
 void
