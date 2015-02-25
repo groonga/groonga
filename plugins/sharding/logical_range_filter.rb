@@ -118,6 +118,10 @@ module Groonga
 
           if cover_type == :all
             if filter.nil?
+              if table.size <= @current_offset
+                @current_offset -= table.size
+                return
+              end
               if range_index
                 filter_by_range(range_index, nil,
                                 nil, nil,
