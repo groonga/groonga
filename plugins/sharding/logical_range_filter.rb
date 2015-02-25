@@ -109,21 +109,33 @@ module Groonga
           cover_type = target_range.cover_type(shard_range)
           return if cover_type == :none
 
-          if cover_type == :all
-            if filter.nil?
-              return sort_result_set(table)
-            else
-              return filter_table(table, filter)
-            end
-          end
-
-          use_range_index = false
-          range_index = nil
           index_info = shard_key.find_index(Operator::LESS)
           if index_info
             range_index = index_info.index
+          else
+            range_index = nil
+          end
+
+          if cover_type == :all
+            if filter.nil?
+              if range_index
+                filter_by_range(range_index, nil,
+                                nil, nil,
+                                nil, nil)
+              else
+                sort_result_set(table)
+              end
+            else
+              filter_table(table, filter)
+            end
+            return
+          end
+
+          if range_index
             # TODO: Determine whether range index is used by estimated size.
             use_range_index = true
+          else
+            use_range_index = false
           end
 
           case cover_type
