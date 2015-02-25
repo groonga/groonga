@@ -11681,7 +11681,6 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned int str_le
     case GRN_LOADER_TOKEN :
       if ((len = grn_isspace(str, ctx->encoding))) {
         str += len;
-        c = *str;
         continue;
       }
       switch (c) {
