@@ -43,6 +43,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/lock_clear/column.log \
 	$(top_srcdir)/doc/source/example/reference/commands/lock_clear/database.log \
 	$(top_srcdir)/doc/source/example/reference/commands/lock_clear/table.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_count/count_shutdown.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_count/setup_data.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_count/setup_schema.log \
 	$(top_srcdir)/doc/source/example/reference/commands/normalize/normalizer_auto_ascii.log \
 	$(top_srcdir)/doc/source/example/reference/commands/normalizer_list/simple_example.log \
 	$(top_srcdir)/doc/source/example/reference/commands/register/query_expanders_tsv.log \
@@ -477,6 +480,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/log_level.rst \
 	$(top_srcdir)/doc/source/reference/commands/log_put.rst \
 	$(top_srcdir)/doc/source/reference/commands/log_reopen.rst \
+	$(top_srcdir)/doc/source/reference/commands/logical_count.rst \
 	$(top_srcdir)/doc/source/reference/commands/normalize.rst \
 	$(top_srcdir)/doc/source/reference/commands/normalizer_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/quit.rst \
@@ -629,6 +633,9 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/lock_clear/column.log \
 	source/example/reference/commands/lock_clear/database.log \
 	source/example/reference/commands/lock_clear/table.log \
+	source/example/reference/commands/logical_count/count_shutdown.log \
+	source/example/reference/commands/logical_count/setup_data.log \
+	source/example/reference/commands/logical_count/setup_schema.log \
 	source/example/reference/commands/normalize/normalizer_auto_ascii.log \
 	source/example/reference/commands/normalizer_list/simple_example.log \
 	source/example/reference/commands/register/query_expanders_tsv.log \
@@ -1063,6 +1070,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/log_level.rst \
 	source/reference/commands/log_put.rst \
 	source/reference/commands/log_reopen.rst \
+	source/reference/commands/logical_count.rst \
 	source/reference/commands/normalize.rst \
 	source/reference/commands/normalizer_list.rst \
 	source/reference/commands/quit.rst \
@@ -1373,6 +1381,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/log_level.txt \
 	html/_sources/reference/commands/log_put.txt \
 	html/_sources/reference/commands/log_reopen.txt \
+	html/_sources/reference/commands/logical_count.txt \
 	html/_sources/reference/commands/normalize.txt \
 	html/_sources/reference/commands/normalizer_list.txt \
 	html/_sources/reference/commands/quit.txt \
@@ -1582,6 +1591,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/log_level.html \
 	html/reference/commands/log_put.html \
 	html/reference/commands/log_reopen.html \
+	html/reference/commands/logical_count.html \
 	html/reference/commands/normalize.html \
 	html/reference/commands/normalizer_list.html \
 	html/reference/commands/quit.html \
