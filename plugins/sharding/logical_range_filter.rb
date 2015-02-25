@@ -112,6 +112,8 @@ module Groonga
           index_info = shard_key.find_index(Operator::LESS)
           if index_info
             range_index = index_info.index
+            # TODO: Determine whether range index is used by estimated size.
+            # range_index = nil unless use_range_index
           else
             range_index = nil
           end
@@ -121,16 +123,9 @@ module Groonga
             return
           end
 
-          if range_index
-            # TODO: Determine whether range index is used by estimated size.
-            use_range_index = true
-          else
-            use_range_index = false
-          end
-
           case cover_type
           when :partial_min
-            if use_range_index
+            if range_index
               filter_by_range(range_index, filter,
                               target_range.min, target_range.min_border,
                               nil, nil)
@@ -147,7 +142,7 @@ module Groonga
               end
             end
           when :partial_max
-            if use_range_index
+            if range_index
               filter_by_range(range_index, filter,
                               nil, nil,
                               target_range.max, target_range.max_border)
@@ -164,7 +159,7 @@ module Groonga
               end
             end
           when :partial_min_and_max
-            if use_range_index
+            if range_index
               filter_by_range(range_index, filter,
                               target_range.min, target_range.min_border,
                               target_range.max, target_range.max_border)
@@ -192,14 +187,20 @@ module Groonga
               return
             end
             if range_index
-              filter_by_range(range_index, nil,
+              filter_by_range(range_index, filter,
                               nil, nil,
                               nil, nil)
             else
               sort_result_set(table)
             end
           else
-            filter_table(table, filter)
+            if range_index
+              filter_by_range(range_index, filter,
+                              nil, nil,
+                              nil, nil)
+            else
+              filter_table(table, filter)
+            end
           end
         end
 
