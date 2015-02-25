@@ -27,6 +27,18 @@ Note that this feature is not matured yet, so there are some limitations.
 Syntax
 ------
 
+``logical_count`` command has seven parameters.
+
+The required parameters are ``logical_table`` and ``shared_key``::
+
+  logical_count logical_table
+                shard_key
+                [min]
+                [min_border]
+                [max]
+                [max_border]
+                [filter]
+
 Usage
 -----
 
