@@ -196,25 +196,7 @@ module Groonga
                             min, min_border, max, max_border)
           lexicon = range_index.domain
           data_table = range_index.range
-          flags = TableCursorFlags::BY_KEY
-          case @order
-          when :ascending
-            flags |= TableCursorFlags::ASCENDING
-          when :descending
-            flags |= TableCursorFlags::DESCENDING
-          end
-          case min_border
-          when :include
-            flags |= TableCursorFlags::GE
-          when :exclude
-            flags |= TableCursorFlags::GT
-          end
-          case max_border
-          when :include
-            flags |= TableCursorFlags::LE
-          when :exclude
-            flags |= TableCursorFlags::LT
-          end
+          flags = build_range_search_flags(min_border, max_border)
 
           result_set = HashTable.create(:flags => ObjectFlags::WITH_SUBREC,
                                         :key_type => data_table)
@@ -260,6 +242,29 @@ module Groonga
           end
           @current_limit -= result_set.size
           @result_sets << result_set
+        end
+
+        def build_range_search_flags(min_border, max_border)
+          flags = TableCursorFlags::BY_KEY
+          case @order
+          when :ascending
+            flags |= TableCursorFlags::ASCENDING
+          when :descending
+            flags |= TableCursorFlags::DESCENDING
+          end
+          case min_border
+          when :include
+            flags |= TableCursorFlags::GE
+          when :exclude
+            flags |= TableCursorFlags::GT
+          end
+          case max_border
+          when :include
+            flags |= TableCursorFlags::LE
+          when :exclude
+            flags |= TableCursorFlags::LT
+          end
+          flags
         end
 
         def filter_table(table, filter)
