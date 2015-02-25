@@ -117,21 +117,7 @@ module Groonga
           end
 
           if cover_type == :all
-            if filter.nil?
-              if table.size <= @current_offset
-                @current_offset -= table.size
-                return
-              end
-              if range_index
-                filter_by_range(range_index, nil,
-                                nil, nil,
-                                nil, nil)
-              else
-                sort_result_set(table)
-              end
-            else
-              filter_table(table, filter)
-            end
+            filter_shard_all(table, filter, range_index)
             return
           end
 
@@ -196,6 +182,24 @@ module Groonga
                 expression.append_operator(Operator::CALL, 5)
               end
             end
+          end
+        end
+
+        def filter_shard_all(table, filter, range_index)
+          if filter.nil?
+            if table.size <= @current_offset
+              @current_offset -= table.size
+              return
+            end
+            if range_index
+              filter_by_range(range_index, nil,
+                              nil, nil,
+                              nil, nil)
+            else
+              sort_result_set(table)
+            end
+          else
+            filter_table(table, filter)
           end
         end
 
