@@ -12,3 +12,4 @@ Server
    server/package
    server/http
    server/gqtp
+   server/memcached
