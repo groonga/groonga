@@ -29,7 +29,7 @@ Syntax
 
 ``logical_count`` command has seven parameters.
 
-The required parameters are ``logical_table`` and ``shared_key``::
+The required parameters are ``logical_table`` and ``shard_key``::
 
   logical_count logical_table
                 shard_key
