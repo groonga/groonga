@@ -23,7 +23,7 @@ just only for tests or development. You will encounter an out of
 memory error with a 32-bit package even if you just process medium
 size data.
 
-Fedora 20
+Fedora 21
 ---------
 
 Install::
