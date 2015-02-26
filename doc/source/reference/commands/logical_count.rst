@@ -99,7 +99,7 @@ There are three tables which are mapped each day from 2015 Feb 03 to 2015 Feb 05
 
 Then, it loads data into each table which correspond to.
 
-Let's count logs which contains "Shutdown" in message column and the value of timestamp is "2015-02-04 00:00:00" or later.
+Let's count logs which contains "Shutdown" in ``message`` column and the value of timestamp is "2015-02-04 00:00:00" or later.
 
 Here is the query to achieve above purpose.
 
@@ -111,7 +111,7 @@ There is a well known limitation about the number of records. By sharding featur
 
 .. note::
 
-   There is no convenient query such as PARTITIONING BY in SQL. Thus, you must create table by ``table_create`` for each tables which contains "_YYYYMMDD" postfix in table name.
+   There is no convenient query such as ``PARTITIONING BY`` in SQL. Thus, you must create table by ``table_create`` for each tables which contains "_YYYYMMDD" postfix in table name.
 
 Parameters
 ----------
