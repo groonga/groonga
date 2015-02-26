@@ -61,9 +61,9 @@ Parameters
   There are two flags to compress the value of column, but you can't specify these flags for now because there are memory leaks issue `GitHub#6 <https://github.com/groonga/groonga/issues/6>`_ when refers the value of column. This issue occurs both of them (zlib and lzo).
 
   16, ``COMPRESS_ZLIB``
-    Reserved. Compress the value of column by using zlib. This flag is disabled feature even if you build groonga with ``--with-zlib``.
+    Compress the value of column by using zlib. This flag is enabled when you build Groonga with ``--with-zlib``.
   32, ``COMPRESS_LZO``
-    Reserved. Compress the value of column by using lzo. This flag is disabled feature even if you build groonga with ``--with-lzo``.
+    Compress the value of column by using lzo. This flag is enabled when you build Groonga with ``--with-lzo``.
 
   インデックス型のカラムについては、flagsの値に以下の値を加えることによって、追加の属
   性を指定することができます。
