@@ -10,5 +10,5 @@ Server
    :maxdepth: 2
 
    server/package
-   server/gqtp
    server/http
+   server/gqtp
