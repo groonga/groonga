@@ -25,27 +25,51 @@ Options
 
 .. cmdoption:: -n
 
-   新たなデータベースを作成します。
+   Creates new database.
 
 .. cmdoption:: -c
 
-   クライアントモードで実行します。
+   Executes ``groonga`` command in client mode.
 
 .. cmdoption:: -s
 
-   サーバモードで実行します。
+   Executes ``groonga`` command in server mode. Use "Ctrl+C" to stop groonga.
 
 .. cmdoption:: -d
 
-   デーモンモードで実行します。(forkする点がサーバモードと異なる)
+   Executes ``groonga`` command in daemon mode. In contrast to server mode, ``groonga`` command forks in daemon mode.
 
 .. cmdoption:: -e, --encoding <encoding>
 
-   データベースで使用する文字エンコーディング方式を指定します。新たなデータベースを作成する時のみ有効です。none, euc, utf8, sjis, latin, koi8rのいずれかが指定できます。
+   Specifies encoding which is used for Groonga database. This option is effective when you create new Groonga database.  This parameter specifies one of the following values: ``none``, ``euc``, ``utf8``, ``sjis``, ``latin`` or ``koi8r``.
 
 .. cmdoption:: -l, --log-level <log level>
 
-   ログレベルを指定します。0〜8までの数値が指定可能で、数が大きいほど多くのログが出力されます。
+   Specifies log level. A integer value between 0 and 8. The meaning of value is:
+
+.. list-table::
+   :header-rows: 1
+
+   * - log level
+     - description
+   * - 0
+     - Nothing
+   * - 1
+     - Emergency
+   * - 2
+     - Alert
+   * - 3
+     - Critical
+   * - 4
+     - Error
+   * - 5
+     - Warning
+   * - 6
+     - Notice
+   * - 7
+     - Info
+   * - 8
+     - Debug
 
 .. cmdoption:: -a, --address <ip/hostname>
 
