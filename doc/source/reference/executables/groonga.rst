@@ -5,13 +5,13 @@
 groonga command
 ===============
 
-名前
-----
+Summary
+-------
 
 groonga - 列指向データベース機能を持つ全文検索エンジンソフトウェア
 
-書式
-----
+Synopsis
+--------
 
 ::
 
@@ -23,8 +23,8 @@ groonga - 列指向データベース機能を持つ全文検索エンジンソ�
 Groongaは列指向のデータベース機能を持つ高速でスケーラブルな全文検索エンジンです。
 Groongaのデータベースは、groongaコマンドかCライブラリインタフェースを通して操作することができます。このマニュアルページでは、groongaコマンドの使い方について説明します。
 
-オプション
-----------
+Options
+-------
 
 .. cmdoption:: -n
 
@@ -125,8 +125,8 @@ Groongaのデータベースは、groongaコマンドかCライブラリイン�
 
    検索の挙動をエスカレーションする閾値を指定します。(デフォルトは0です)
 
-引数
-----
+Command line parameters
+-----------------------
 
 .. cmdoption:: dest
 
@@ -140,8 +140,8 @@ Groongaのデータベースは、groongaコマンドかCライブラリイン�
 
 .. _command-list-with-continuous-line:
 
-コマンド
---------
+Command
+-------
 
 groongaコマンドを通してデータベースを操作する命令をコマンドと呼びます。コマンドは主にC言語で記述され、groongaプロセスにロードすることによって使用できるようになります。
 それぞれのコマンドは一意な名前と、0個以上の引数を持ちます。
@@ -163,8 +163,8 @@ You can write command list with continuous line which is represented by '\\' cha
                --key_type ShortText \
                --default_tokenizer TokenBigram
 
-組み込みコマンド
-----------------
+Builtin command
+---------------
 
 以下のコマンドは組み込みコマンドとして予め定義されています。
 
@@ -214,8 +214,8 @@ You can write command list with continuous line which is represented by '\\' cha
    ロックを解除します。
 
 
-例
---
+Usage
+-----
 
 新しいデータベースを作成します。::
 
