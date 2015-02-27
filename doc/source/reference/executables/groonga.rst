@@ -37,7 +37,7 @@ Options
 
 .. cmdoption:: -d
 
-   Executes ``groonga`` command in daemon mode. In contrast to server mode, ``groonga`` command forks in daemon mode.
+   Executes ``groonga`` command in daemon mode. In contrast to server mode, ``groonga`` command forks in daemon mode. For example, to stop local daemon process, use "curl http://127.0.0.1:10041/d/shutdown".
 
 .. cmdoption:: -e, --encoding <encoding>
 
