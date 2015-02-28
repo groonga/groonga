@@ -247,7 +247,7 @@ mecab_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       }
     }
 
-    if (r == e) {
+    if (r == e || tokenizer->next == e) {
       status = GRN_TOKENIZER_LAST;
     } else {
       status = GRN_TOKENIZER_CONTINUE;
