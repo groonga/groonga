@@ -1,3 +1,2 @@
 tokenize TokenMecab '　'
 [[0,0.0,0.0],[]]
-#|w| [token_next] ignore an empty token: <TokenMecab>: <　>
