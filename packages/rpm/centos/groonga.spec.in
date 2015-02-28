@@ -24,6 +24,7 @@ BuildRequires:	zlib-devel
 BuildRequires:	lz4-devel
 %endif
 BuildRequires:	pcre-devel
+BuildRequires:	pkgconfig
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	%{name}-plugin-suggest = %{version}-%{release}
 #BuildRequires:	messagepack-devel
