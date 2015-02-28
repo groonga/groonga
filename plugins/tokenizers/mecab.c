@@ -223,13 +223,17 @@ mecab_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     grn_tokenizer_status status;
 
     for (r = p; r < e; r += cl) {
+      int space_len;
       if (!(cl = grn_charlen_(ctx, r, e, encoding))) {
         tokenizer->next = e;
         break;
       }
-      if (grn_isspace(r, encoding)) {
-        const char *q = r;
-        while ((cl = grn_isspace(q, encoding))) { q += cl; }
+      space_len = grn_isspace(r, encoding);
+      if (space_len > 0) {
+        const char *q = r + space_len;
+        while ((space_len = grn_isspace(q, encoding))) {
+          q += space_len;
+        }
         tokenizer->next = q;
         break;
       }
