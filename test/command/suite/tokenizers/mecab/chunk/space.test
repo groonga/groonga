@@ -1,0 +1,3 @@
+#@on-error omit
+tokenize TokenMecab '日本のエンジン エンジン'
+#@on-error default
