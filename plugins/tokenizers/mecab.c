@@ -147,6 +147,7 @@ chunked_tokenize_utf8_chunk(grn_ctx *ctx,
                             unsigned int chunk_bytes)
 {
   const char *tokenized_chunk;
+  size_t tokenized_chunk_length;
 
   tokenized_chunk = mecab_sparse_tostr2(tokenizer->mecab, chunk, chunk_bytes);
   if (!tokenized_chunk) {
@@ -161,7 +162,16 @@ chunked_tokenize_utf8_chunk(grn_ctx *ctx,
   if (GRN_TEXT_LEN(&(tokenizer->buf)) > 0) {
     GRN_TEXT_PUTS(ctx, &(tokenizer->buf), " ");
   }
-  GRN_TEXT_PUTS(ctx, &(tokenizer->buf), tokenized_chunk);
+
+  tokenized_chunk_length = strlen(tokenized_chunk);
+  if (tokenized_chunk_length >= 1 &&
+      isspace(tokenized_chunk[tokenized_chunk_length - 1])) {
+    GRN_TEXT_PUT(ctx, &(tokenizer->buf),
+                 tokenized_chunk, tokenized_chunk_length - 1);
+  } else {
+    GRN_TEXT_PUT(ctx, &(tokenizer->buf),
+                 tokenized_chunk, tokenized_chunk_length);
+  }
 
   return GRN_TRUE;
 }
