@@ -101,17 +101,35 @@ mrb_grn_expr_code_initialize(mrb_state *mrb, mrb_value self)
 static mrb_value
 mrb_grn_scan_info_put_index(mrb_state *mrb, mrb_value self)
 {
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  scan_info *si;
+  mrb_value mrb_index;
   int sid;
   int32_t weight;
-  scan_info *si;
-  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_value mrb_scorer;
+  mrb_value mrb_scorer_args_expr;
+  int32_t scorer_args_expr_offset;
   grn_obj *index;
-  mrb_value mrb_index;
+  grn_obj *scorer = NULL;
+  grn_obj *scorer_args_expr = NULL;
 
-  mrb_get_args(mrb, "oii", &mrb_index, &sid, &weight);
+  mrb_get_args(mrb, "oiiooi",
+               &mrb_index, &sid, &weight,
+               &mrb_scorer,
+               &mrb_scorer_args_expr,
+               &scorer_args_expr_offset);
   si = DATA_PTR(self);
   index = DATA_PTR(mrb_index);
-  grn_scan_info_put_index(ctx, si, index, sid, weight);
+  if (!mrb_nil_p(mrb_scorer)) {
+    scorer = DATA_PTR(mrb_scorer);
+  }
+  if (!mrb_nil_p(mrb_scorer_args_expr)) {
+    scorer_args_expr = DATA_PTR(mrb_scorer_args_expr);
+  }
+  grn_scan_info_put_index(ctx, si, index, sid, weight,
+                          scorer,
+                          scorer_args_expr,
+                          scorer_args_expr_offset);
   return self;
 }
 
@@ -263,83 +281,6 @@ mrb_grn_scan_info_get_similarity_threshold(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-mrb_grn_scan_info_set_scorer(mrb_state *mrb, mrb_value self)
-{
-  scan_info *si;
-  mrb_value mrb_scorer;
-
-  mrb_get_args(mrb, "o", &mrb_scorer);
-  si = DATA_PTR(self);
-  if (mrb_nil_p(mrb_scorer)) {
-    grn_scan_info_set_scorer(si, NULL);
-  } else {
-    grn_scan_info_set_scorer(si, DATA_PTR(mrb_scorer));
-  }
-  return self;
-}
-
-static mrb_value
-mrb_grn_scan_info_get_scorer(mrb_state *mrb, mrb_value self)
-{
-  scan_info *si;
-  grn_obj *scorer;
-
-  si = DATA_PTR(self);
-  scorer = grn_scan_info_get_scorer(si);
-  return grn_mrb_value_from_grn_obj(mrb, scorer);
-}
-
-static mrb_value
-mrb_grn_scan_info_get_scorer_args_expr(mrb_state *mrb, mrb_value self)
-{
-  scan_info *si;
-  grn_obj *scorer_args_expr;
-
-  si = DATA_PTR(self);
-  scorer_args_expr = grn_scan_info_get_scorer_args_expr(si);
-  return grn_mrb_value_from_grn_obj(mrb, scorer_args_expr);
-}
-
-static mrb_value
-mrb_grn_scan_info_set_scorer_args_expr(mrb_state *mrb, mrb_value self)
-{
-  scan_info *si;
-  mrb_value mrb_scorer_args_expr;
-
-  mrb_get_args(mrb, "o", &mrb_scorer_args_expr);
-  si = DATA_PTR(self);
-  if (mrb_nil_p(mrb_scorer_args_expr)) {
-    grn_scan_info_set_scorer_args_expr(si, NULL);
-  } else {
-    grn_scan_info_set_scorer_args_expr(si, DATA_PTR(mrb_scorer_args_expr));
-  }
-  return self;
-}
-
-static mrb_value
-mrb_grn_scan_info_get_scorer_args_expr_offset(mrb_state *mrb, mrb_value self)
-{
-  scan_info *si;
-  uint32_t offset;
-
-  si = DATA_PTR(self);
-  offset = grn_scan_info_get_scorer_args_expr_offset(si);
-  return mrb_fixnum_value(offset);
-}
-
-static mrb_value
-mrb_grn_scan_info_set_scorer_args_expr_offset(mrb_state *mrb, mrb_value self)
-{
-  scan_info *si;
-  mrb_int offset;
-
-  mrb_get_args(mrb, "i", &offset);
-  si = DATA_PTR(self);
-  grn_scan_info_set_scorer_args_expr_offset(si, offset);
-  return self;
-}
-
-static mrb_value
 mrb_grn_scan_info_get_arg(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -374,8 +315,14 @@ static mrb_value
 mrb_grn_expr_code_get_weight(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  int32_t weight;
+  uint32_t offset;
+  mrb_value mrb_values[2];
 
-  return mrb_fixnum_value(grn_expr_code_get_weight(ctx, DATA_PTR(self)));
+  weight = grn_expr_code_get_weight(ctx, DATA_PTR(self), &offset);
+  mrb_values[0] = mrb_fixnum_value(weight);
+  mrb_values[1] = mrb_fixnum_value(offset);
+  return mrb_ary_new_from_values(mrb, 2, mrb_values);
 }
 
 static mrb_value
@@ -710,7 +657,7 @@ grn_mrb_expr_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "initialize",
                     mrb_grn_scan_info_initialize, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "put_index",
-                    mrb_grn_scan_info_put_index, MRB_ARGS_REQ(3));
+                    mrb_grn_scan_info_put_index, MRB_ARGS_REQ(6));
   mrb_define_method(mrb, klass, "op",
                     mrb_grn_scan_info_get_op, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "op=",
@@ -735,20 +682,6 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_scan_info_get_similarity_threshold, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "similarity_threshold=",
                     mrb_grn_scan_info_set_similarity_threshold, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "scorer",
-                    mrb_grn_scan_info_get_scorer, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "scorer=",
-                    mrb_grn_scan_info_set_scorer, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "scorer_args_expr",
-                    mrb_grn_scan_info_get_scorer_args_expr, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "scorer_args_expr=",
-                    mrb_grn_scan_info_set_scorer_args_expr, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "scorer_args_expr_offset",
-                    mrb_grn_scan_info_get_scorer_args_expr_offset,
-                    MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "scorer_args_expr_offset=",
-                    mrb_grn_scan_info_set_scorer_args_expr_offset,
-                    MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "get_arg",
                     mrb_grn_scan_info_get_arg, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "push_arg",

@@ -12,9 +12,6 @@ module Groonga
     attr_accessor :flags
     attr_accessor :max_interval
     attr_accessor :similarity_threshold
-    attr_accessor :scorer
-    attr_accessor :scorer_args_expr
-    attr_accessor :scorer_args_expr_offset
     def initialize(start)
       @start = start
       @end = 0
@@ -26,9 +23,6 @@ module Groonga
       @flags = ScanInfo::Flags::PUSH
       @max_interval = nil
       @similarity_threshold = nil
-      @scorer = nil
-      @scorer_args_expr = nil
-      @scorer_args_expr_offset = nil
     end
 
     def match_resolve_index
@@ -122,12 +116,75 @@ module Groonga
     def match_resolve_index_expression_codes(expression, codes, i, n_codes)
       code = codes[i]
       value = code.value
+      return i + 1 if value.nil?
+
+      case value
+      when Accessor, Column
+        :xxx # TODO: To avoid mruby bug...
+        index_info, offset =
+          match_resolve_index_expression_find_index(expression,
+                                                    codes, i, n_codes)
+        i += offset - 1
+        if index_info
+          if value.is_a?(Accessor)
+            self.flags |= ScanInfo::Flags::ACCESSOR
+          end
+          weight, offset = codes[i].weight
+          i += offset
+          put_search_index(index_info.index, index_info.section_id, weight)
+       end
+      when Procedure
+        unless value.scorer?
+          message = "procedure must be scorer: #{scorer.name}>"
+          raise ErrorMessage, message
+        end
+        scorer = value
+        i += 1
+        index_info, offset =
+          match_resolve_index_expression_find_index(expression,
+                                                    codes, i, n_codes)
+        i += offset
+        if index_info
+          scorer_args_expr_offset = 0
+          if codes[i].op != Operator::CALL
+            scorer_args_expr_offset = i
+          end
+          while i < n_codes and codes[i].op != Operator::CALL
+            i += 1
+          end
+          weight, offset = codes[i].weight
+          i += offset
+          search_index = ScanInfoSearchIndex.new(index_info.index,
+                                                 index_info.section_id,
+                                                 weight,
+                                                 scorer,
+                                                 expression,
+                                                 scorer_args_expr_offset)
+          @search_indexes << search_index
+        end
+      when Table
+        raise ErrorMessage, "invalid match target: <#{value.name}>"
+      end
+      i + 1
+    end
+
+    def match_resolve_index_expression_find_index(expression, codes, i, n_codes)
+      code = codes[i]
+      value = code.value
+      index_info = nil
+      offset = 1
       case value
       when Accessor
-        match_resolve_index_expression_accessor(code)
+        accessor = value
+        index_info = accessor.find_index(@op)
+        index_info.nil? # TODO: To avoid mruby bug...
+        if index_info and accessor.have_next?
+          index_info = IndexInfo.new(accessor, index_info.section_id)
+        end
       when FixedSizeColumn, VariableSizeColumn
-        match_resolve_index_expression_data_column(code)
+        index_info = value.find_index(@op)
       when IndexColumn
+        index = value
         section_id = 0
         rest_n_codes = n_codes - i
         if rest_n_codes >= 2 and
@@ -136,34 +193,12 @@ module Groonga
            codes[i + 1].value.domain == ID::INT32) and
           codes[i + 2].op == Operator::GET_MEMBER
           section_id = codes[i + 1].value.value + 1
-          code = codes[i + 2]
-          i += 2
+          offset += 2
         end
-        put_search_index(value, section_id, code.weight)
-      when Procedure
-        unless value.scorer?
-          message = "procedure must be scorer: #{scorer.name}>"
-          raise ErrorMessage, message
-        end
-        @scorer = value
-        rest_n_codes = n_codes - i
-        if rest_n_codes == 0
-          message = "match target is required as an argument: <#{scorer.name}>"
-          raise ErrorMessage, message
-        end
-        i = match_resolve_index_expression_codes(expression, codes, i + 1,
-                                                 n_codes)
-        unless codes[i].op == Operator::CALL
-          @scorer_args_expr = expression
-          @scorer_args_expr_offset = i
-          until codes[i].op == Operator::CALL
-            i += 1
-          end
-        end
-      when Table
-        raise ErrorMessage, "invalid match target: <#{value.name}>"
+        index_info = IndexInfo.new(index, section_id)
       end
-      i + 1
+
+      [index_info, offset]
     end
 
     def match_resolve_index_expression_accessor(expr_code)

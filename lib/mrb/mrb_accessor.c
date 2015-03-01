@@ -53,6 +53,15 @@ mrb_grn_accessor_next(mrb_state *mrb, mrb_value self)
   return mrb_cptr_value(mrb, accessor->next);
 }
 
+static mrb_value
+mrb_grn_accessor_have_next_p(mrb_state *mrb, mrb_value self)
+{
+  grn_accessor *accessor;
+
+  accessor = DATA_PTR(self);
+  return mrb_bool_value(accessor->next);
+}
+
 void
 grn_mrb_accessor_init(grn_ctx *ctx)
 {
@@ -67,5 +76,7 @@ grn_mrb_accessor_init(grn_ctx *ctx)
                     mrb_grn_accessor_initialize, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "next",
                     mrb_grn_accessor_next, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "have_next?",
+                    mrb_grn_accessor_have_next_p, MRB_ARGS_NONE());
 }
 #endif
