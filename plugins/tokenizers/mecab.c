@@ -434,7 +434,7 @@ mecab_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
       if (space_len > 0) {
         const char *q = r + space_len;
-        while ((space_len = grn_isspace(q, encoding))) {
+        while (q < e && (space_len = grn_isspace(q, encoding))) {
           q += space_len;
         }
         tokenizer->next = q;
