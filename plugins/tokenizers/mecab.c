@@ -174,6 +174,7 @@ chunked_tokenize_utf8(grn_ctx *ctx,
 {
   const char *chunk_start;
   const char *current;
+  const char *last_delimiter;
   const char *string_end = string + string_bytes;
   grn_encoding encoding = tokenizer->query->encoding;
 
@@ -185,6 +186,7 @@ chunked_tokenize_utf8(grn_ctx *ctx,
   }
 
   chunk_start = current = string;
+  last_delimiter = NULL;
   while (current < string_end) {
     int space_bytes;
     int character_bytes;
@@ -204,6 +206,7 @@ chunked_tokenize_utf8(grn_ctx *ctx,
       }
       current += space_bytes;
       chunk_start = current;
+      last_delimiter = NULL;
       continue;
     }
 
@@ -218,18 +221,29 @@ chunked_tokenize_utf8(grn_ctx *ctx,
 
     current_character = current;
     current += character_bytes;
+    if (is_delimiter_character(ctx, current_character, character_bytes)) {
+      last_delimiter = current;
+    }
 
-    if (is_delimiter_character(ctx, current_character, character_bytes) ||
-        (current - chunk_start) >= grn_mecab_chunk_size_threshold) {
+    if ((current - chunk_start) >= grn_mecab_chunk_size_threshold) {
       grn_bool succeeded;
-      succeeded = chunked_tokenize_utf8_chunk(ctx,
-                                              tokenizer,
-                                              chunk_start,
-                                              current - chunk_start);
+      if (last_delimiter) {
+        succeeded = chunked_tokenize_utf8_chunk(ctx,
+                                                tokenizer,
+                                                chunk_start,
+                                                last_delimiter - chunk_start);
+        chunk_start = last_delimiter;
+      } else {
+        succeeded = chunked_tokenize_utf8_chunk(ctx,
+                                                tokenizer,
+                                                chunk_start,
+                                                current - chunk_start);
+        chunk_start = current;
+      }
       if (!succeeded) {
         return succeeded;
       }
-      chunk_start = current;
+      last_delimiter = NULL;
     }
   }
 

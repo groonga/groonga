@@ -1,0 +1,30 @@
+tokenize TokenMecab '日本。エンジン。エンジン'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "日本",
+      "position": 0
+    },
+    {
+      "value": "。",
+      "position": 1
+    },
+    {
+      "value": "エンジン",
+      "position": 2
+    },
+    {
+      "value": "。",
+      "position": 3
+    },
+    {
+      "value": "エンジン",
+      "position": 4
+    }
+  ]
+]
