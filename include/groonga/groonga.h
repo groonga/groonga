@@ -980,8 +980,21 @@ GRN_API grn_rc grn_obj_delete_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry en
 
 GRN_API grn_obj *grn_obj_open(grn_ctx *ctx, unsigned char type, grn_obj_flags flags, grn_id domain);
 
+/* Deprecated since 5.0.1. Use grn_column_find_indexes() instead. */
 GRN_API int grn_column_index(grn_ctx *ctx, grn_obj *column, grn_operator op,
                              grn_obj **indexbuf, int buf_size, int *section);
+
+/* @since 5.0.1. */
+typedef struct _grn_index_datum {
+  grn_obj *index;
+  unsigned int section;
+} grn_index_datum;
+
+/* @since 5.0.1. */
+GRN_API unsigned int grn_column_find_index_data(grn_ctx *ctx, grn_obj *column,
+                                                grn_operator op,
+                                                grn_index_datum *index_data,
+                                                unsigned int n_index_data);
 
 GRN_API grn_rc grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, grn_bool removep);
 GRN_API grn_rc grn_obj_path_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, char *buffer);
