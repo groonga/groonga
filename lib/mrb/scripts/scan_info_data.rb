@@ -120,7 +120,6 @@ module Groonga
 
       case value
       when Accessor, Column
-        :xxx # TODO: To avoid mruby bug...
         index_info, offset =
           match_resolve_index_expression_find_index(expression,
                                                     codes, i, n_codes)
@@ -177,7 +176,6 @@ module Groonga
       when Accessor
         accessor = value
         index_info = accessor.find_index(@op)
-        index_info.nil? # TODO: To avoid mruby bug...
         if index_info and accessor.have_next?
           index_info = IndexInfo.new(accessor, index_info.section_id)
         end
