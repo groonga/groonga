@@ -33,7 +33,7 @@ Options
 
 .. cmdoption:: -s
 
-   Executes ``groonga`` command in server mode. Use "Ctrl+C" to stop groonga.
+   Executes ``groonga`` command in server mode. Use "Ctrl+C" to stop the ``groonga`` process.
 
 .. cmdoption:: -d
 
