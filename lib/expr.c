@@ -4280,7 +4280,7 @@ scan_info_build_match_expr_codes_find_index(grn_ctx *ctx, scan_info *si,
     n_index_data = grn_column_find_index_data(ctx, ec->value, si->op,
                                               &index_datum, 1);
     if (n_index_data > 0) {
-        *index = index_datum.index;
+      *index = index_datum.index;
       *sid = index_datum.section;
     }
     break;
