@@ -1,0 +1,38 @@
+table_create Bigram TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigramSplitSymbolAlpha \
+  --normalizer NormalizerAuto
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos title COLUMN_SCALAR ShortText
+column_create Memos content COLUMN_SCALAR Text
+
+column_create Bigram memos1 \
+  COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
+  Memos title,content
+column_create Bigram memos2 \
+  COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
+  Memos content,title
+
+load --table Memos
+[
+  {
+    "_key": "2013-02-06",
+    "title": "Groonga",
+    "content": "It's a fast fulltext search engine!"
+  },
+  {
+    "_key": "2013-02-07",
+    "title": "Mroonga",
+    "content": "It's a MySQL storage engine to use Groonga!"
+  },
+  {
+    "_key": "2013-02-08",
+    "title": "Rroonga",
+    "content": "It's Rroonga bindings for Groonga!"
+  }
+]
+
+select Memos \
+  --match_columns 'title' \
+  --query 'Groonga' \
+  --output_columns 'title,_score'

@@ -91,20 +91,18 @@ object_find_index(mrb_state *mrb, mrb_value self)
   grn_obj *object;
   mrb_value mrb_operator;
   grn_operator operator;
-  grn_obj *index;
-  int n_indexes;
-  int section_id;
+  grn_index_datum index_datum;
+  int n_index_data;
 
   mrb_get_args(mrb, "o", &mrb_operator);
   object = DATA_PTR(self);
   operator = grn_mrb_value_to_operator(mrb, mrb_operator);
-  n_indexes = grn_column_index(ctx,
-                               object,
-                               operator,
-                               &index,
-                               1,
-                               &section_id);
-  if (n_indexes == 0) {
+  n_index_data = grn_column_find_index_data(ctx,
+                                         object,
+                                         operator,
+                                         &index_datum,
+                                         1);
+  if (n_index_data == 0) {
     return mrb_nil_value();
   } else {
     grn_mrb_data *data;
@@ -113,8 +111,8 @@ object_find_index(mrb_state *mrb, mrb_value self)
 
     data = &(ctx->impl->mrb);
     klass = mrb_class_get_under(mrb, data->module, "IndexInfo");
-    args[0] = grn_mrb_value_from_grn_obj(mrb, index);
-    args[1] = mrb_fixnum_value(section_id);
+    args[0] = grn_mrb_value_from_grn_obj(mrb, index_datum.index);
+    args[1] = mrb_fixnum_value(index_datum.section);
     return mrb_obj_new(mrb, klass, 2, args);
   }
 }

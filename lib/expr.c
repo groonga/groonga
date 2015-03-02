@@ -4258,19 +4258,31 @@ scan_info_build_match_expr_codes_find_index(grn_ctx *ctx, scan_info *si,
 {
   grn_expr_code *ec;
   uint32_t offset = 1;
+  grn_index_datum index_datum;
+  unsigned int n_index_data = 0;
 
   ec = &(expr->codes[i]);
   switch (ec->value->header.type) {
   case GRN_ACCESSOR :
-    if (grn_column_index(ctx, ec->value, si->op, index, 1, sid)) {
+    n_index_data = grn_column_find_index_data(ctx, ec->value, si->op,
+                                              &index_datum, 1);
+    if (n_index_data > 0) {
+      *sid = index_datum.section;
       if (((grn_accessor *)ec->value)->next) {
         *index = ec->value;
+      } else {
+        *index = index_datum.index;
       }
     }
     break;
   case GRN_COLUMN_FIX_SIZE :
   case GRN_COLUMN_VAR_SIZE :
-    grn_column_index(ctx, ec->value, si->op, index, 1, sid);
+    n_index_data = grn_column_find_index_data(ctx, ec->value, si->op,
+                                              &index_datum, 1);
+    if (n_index_data > 0) {
+        *index = index_datum.index;
+      *sid = index_datum.section;
+    }
     break;
   case GRN_COLUMN_INDEX :
     {
@@ -4393,23 +4405,36 @@ scan_info_build_match_expr(grn_ctx *ctx, scan_info *si, grn_expr *expr)
 static void
 scan_info_build_match(grn_ctx *ctx, scan_info *si)
 {
-  int sid;
-  grn_obj *index, **p = si->args, **pe = si->args + si->nargs;
+  grn_obj **p = si->args, **pe = si->args + si->nargs;
   for (; p < pe; p++) {
     if ((*p)->header.type == GRN_EXPR) {
       scan_info_build_match_expr(ctx, si, (grn_expr *)(*p));
     } else if (GRN_DB_OBJP(*p)) {
-      if (grn_column_index(ctx, *p, si->op, &index, 1, &sid)) {
-        scan_info_put_index(ctx, si, index, sid, 1, NULL, NULL, 0);
+      grn_index_datum index_datum;
+      unsigned int n_index_data;
+      n_index_data = grn_column_find_index_data(ctx, *p, si->op,
+                                                &index_datum, 1);
+      if (n_index_data > 0) {
+        scan_info_put_index(ctx, si,
+                            index_datum.index, index_datum.section, 1,
+                            NULL, NULL, 0);
       }
     } else if (GRN_ACCESSORP(*p)) {
+      grn_index_datum index_datum;
+      unsigned int n_index_data;
       si->flags |= SCAN_ACCESSOR;
-      if (grn_column_index(ctx, *p, si->op, &index, 1, &sid)) {
+      n_index_data = grn_column_find_index_data(ctx, *p, si->op,
+                                                &index_datum, 1);
+      if (n_index_data > 0) {
+        grn_obj *index;
         if (((grn_accessor *)(*p))->next) {
-          scan_info_put_index(ctx, si, *p, sid, 1, NULL, NULL, 0);
+          index = *p;
         } else {
-          scan_info_put_index(ctx, si, index, sid, 1, NULL, NULL, 0);
+          index = index_datum.index;
         }
+        scan_info_put_index(ctx, si,
+                            index, index_datum.section, 1,
+                            NULL, NULL, 0);
       }
     } else {
       switch (si->op) {
@@ -4634,17 +4659,28 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
         sis[i++] = si;
         /* better index resolving framework for functions should be implemented */
         {
-          int sid;
-          grn_obj *index, **p = si->args, **pe = si->args + si->nargs;
+          grn_obj **p = si->args, **pe = si->args + si->nargs;
           for (; p < pe; p++) {
             if (GRN_DB_OBJP(*p)) {
-              if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
-                scan_info_put_index(ctx, si, index, sid, 1, NULL, NULL, 0);
+              grn_index_datum index_datum;
+              unsigned int n_index_data;
+              n_index_data = grn_column_find_index_data(ctx, *p, c->op,
+                                                        &index_datum, 1);
+              if (n_index_data > 0) {
+                scan_info_put_index(ctx, si,
+                                    index_datum.index, index_datum.section, 1,
+                                    NULL, NULL, 0);
               }
             } else if (GRN_ACCESSORP(*p)) {
+              grn_index_datum index_datum;
+              unsigned int n_index_data;
               si->flags |= SCAN_ACCESSOR;
-              if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
-                scan_info_put_index(ctx, si, index, sid, 1, NULL, NULL, 0);
+              n_index_data = grn_column_find_index_data(ctx, *p, c->op,
+                                                        &index_datum, 1);
+              if (n_index_data > 0) {
+                scan_info_put_index(ctx, si,
+                                    index_datum.index, index_datum.section, 1,
+                                    NULL, NULL, 0);
               }
             } else {
               si->query = *p;
@@ -4986,10 +5022,18 @@ grn_table_select_index_range_accessor(grn_ctx *ctx, grn_obj *table,
 
       accessor = (grn_accessor *)GRN_PTR_VALUE_AT(accessor_stack, i - 1);
       target = accessor->obj;
-      if (grn_column_index(ctx, target, GRN_OP_EQUAL, &index, 1, &section) == 0) {
-        grn_obj_unlink(ctx, current_res);
-        current_res = NULL;
-        break;
+      {
+        grn_index_datum index_datum;
+        unsigned int n_index_data;
+        n_index_data = grn_column_find_index_data(ctx, target, GRN_OP_EQUAL,
+                                                  &index_datum, 1);
+        if (n_index_data == 0) {
+          grn_obj_unlink(ctx, current_res);
+          current_res = NULL;
+          break;
+        }
+        index = index_datum.index;
+        section = index_datum.section;
       }
 
       if (section > 0) {
