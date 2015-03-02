@@ -59,7 +59,7 @@ mrb_grn_accessor_have_next_p(mrb_state *mrb, mrb_value self)
   grn_accessor *accessor;
 
   accessor = DATA_PTR(self);
-  return mrb_bool_value(accessor->next);
+  return mrb_bool_value(accessor->next != NULL);
 }
 
 void
