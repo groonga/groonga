@@ -524,6 +524,7 @@ endif()
 
 option(GRN_WITH_MRUBY "use mruby" OFF)
 if(GRN_WITH_MRUBY)
+  set(GRN_WITH_ONIGMO_DEFAULT ON)
   if(CMAKE_VERSION VERSION_LESS "2.8.8")
     message(FATAL_ERROR
       "Your CMake (${CMAKE_VERSION}) is old. "
@@ -533,8 +534,24 @@ if(GRN_WITH_MRUBY)
     "${CMAKE_CURRENT_SOURCE_DIR}/vendor/mruby-source/include")
   set(MRUBY_LIBS "$<TARGET_OBJECTS:mruby>")
 else()
+  set(GRN_WITH_ONIGMO_DEFAULT OFF)
   set(MRUBY_INCLUDE_DIRS "")
   set(MRUBY_LIBS "")
+endif()
+
+option(GRN_WITH_ONIGMO "use Onigmo" ${GRN_WITH_ONIGMO_DEFAULT})
+if(GRN_WITH_ONIGMO)
+  if(CMAKE_VERSION VERSION_LESS "2.8.8")
+    message(FATAL_ERROR
+      "Your CMake (${CMAKE_VERSION}) is old. "
+      "CMake 2.8.8 or later is required for Onigmo supported build")
+  endif()
+  set(ONIGMO_INCLUDE_DIRS
+    "${CMAKE_CURRENT_SOURCE_DIR}/vendor/onigmo-source")
+  set(ONIGMO_LIBS "$<TARGET_OBJECTS:onigmo>")
+else()
+  set(ONIGMO_INCLUDE_DIRS "")
+  set(ONIGMO_LIBS "")
 endif()
 
 if(NOT GRN_EMBED)

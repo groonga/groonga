@@ -19,6 +19,7 @@ add_definitions(
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/dat
+  ${ONIGMO_INCLUDE_DIRS}
   ${MRUBY_INCLUDE_DIRS}
   ${LIBLZ4_INCLUDE_DIRS})
 link_directories(
@@ -43,7 +44,8 @@ set(GRN_ALL_SOURCES
   ${LIBGROONGA_SOURCES}
   ${LIBGRNDAT_SOURCES}
   ${LIBGRNMRB_SOURCES}
-  ${MRUBY_LIBS})
+  ${MRUBY_LIBS}
+  ${ONIGMO_LIBS})
 if(GRN_EMBED)
   add_library(libgroonga STATIC ${GRN_ALL_SOURCES})
 else()

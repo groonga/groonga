@@ -88,6 +88,7 @@
 #cmakedefine GRN_WITH_MESSAGE_PACK
 #cmakedefine GRN_WITH_MRUBY
 #cmakedefine GRN_WITH_NFKC
+#cmakedefine GRN_WITH_ONIGMO
 #cmakedefine GRN_WITH_ZEROMQ
 #cmakedefine GRN_WITH_ZLIB
 
@@ -105,6 +106,7 @@
 #cmakedefine HAVE_NETINET_TCP_H
 #cmakedefine HAVE_PTHREAD_H
 #cmakedefine HAVE_SIGNAL_H
+#cmakedefine HAVE_STDARG_H
 #cmakedefine HAVE_STDINT_H
 #cmakedefine HAVE_STDLIB_H
 #cmakedefine HAVE_STRINGS_H
