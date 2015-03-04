@@ -1,6 +1,6 @@
 EXTRA_DIST =					\
 	build_config.rb				\
-	mruby-build.timestamp
+	mruby_build.timestamp
 
 DEFAULT_INCLUDES =				\
 	-I$(srcdir)/../mruby-source/include	\
@@ -24,21 +24,21 @@ include sources.am
 include built_sources.am
 libmruby_la_SOURCES += $(BUILT_SOURCES)
 
-parse.c: mruby-build.timestamp
-mrblib.c: mruby-build.timestamp
-mrbgems_init.c: mruby-build.timestamp
-mruby-onig-regexp/src/mruby_onig_regexp.c: mruby-build.timestamp
-mruby-io/include/mruby/ext/io.h: mruby-build.timestamp
-mruby-io/src/file.c: mruby-build.timestamp
-mruby-io/src/file_test.c: mruby-build.timestamp
-mruby-io/src/io.c: mruby-build.timestamp
-mruby-io/src/mruby_io_gem.c: mruby-build.timestamp
+parse.c: mruby_build.timestamp
+mrblib.c: mruby_build.timestamp
+mrbgems_init.c: mruby_build.timestamp
+mruby-onig-regexp/src/mruby_onig_regexp.c: mruby_build.timestamp
+mruby-io/include/mruby/ext/io.h: mruby_build.timestamp
+mruby-io/src/file.c: mruby_build.timestamp
+mruby-io/src/file_test.c: mruby_build.timestamp
+mruby-io/src/io.c: mruby_build.timestamp
+mruby-io/src/mruby_io_gem.c: mruby_build.timestamp
 
 MRUBY_CONFIG = $(abs_srcdir)/build_config.rb
 MRUBY_BUILD_DIR = $(abs_top_builddir)/vendor/mruby-build
 MRUBY_ONIG_REGEXP_DIR = $(MRUBY_BUILD_DIR)/mrbgems/mruby-onig-regexp
 MRUBY_IO_DIR = $(MRUBY_BUILD_DIR)/mrbgems/mruby-io
-mruby-build.timestamp: build_config.rb
+mruby_build.timestamp: build_config.rb
 	rm -rf $(MRUBY_BUILD_DIR)
 	cd $(srcdir)/../mruby-source &&		\
 	  $(RUBY) minirake			\
