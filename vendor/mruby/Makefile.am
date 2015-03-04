@@ -57,9 +57,6 @@ mruby_build.timestamp: build_config.rb
 	cp -r $(MRUBY_IO_DIR)/include/ mruby-io/
 	cp -r $(MRUBY_IO_DIR)/src/ mruby-io/
 
-EXTRA_DIST +=					\
-	mruby-build.timestamp
-
 CLEANFILES = *.gcno *gcda
 MAINTAINERCLEANFILES = mruby-build.timestamp
 endif
