@@ -1,4 +1,4 @@
-# Copyright(C) 2013 Brazil
+# Copyright(C) 2013-2015 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -18,8 +18,8 @@ add_definitions(
   )
 
 include_directories(
-  "${CMAKE_CURRENT_SOURCE_DIR}/../mruby-${MRUBY_VERSION}/include"
-  "${CMAKE_CURRENT_SOURCE_DIR}/../mruby-${MRUBY_VERSION}/src"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../mruby-source/include"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../mruby-source/src"
   )
 
 if(GRN_WITH_MRUBY)
