@@ -26,8 +26,45 @@ if(GRN_WITH_MRUBY)
   read_file_list("${CMAKE_CURRENT_SOURCE_DIR}/sources.am" MRUBY_SOURCES)
   string(REGEX REPLACE "\\.\\./" "${CMAKE_CURRENT_SOURCE_DIR}/../"
     MRUBY_SOURCES "${MRUBY_SOURCES}")
-  add_library(mruby OBJECT ${MRUBY_SOURCES})
-  set_source_files_properties(${MRUBY_SOURCES}
+
+  read_file_list("${CMAKE_CURRENT_SOURCE_DIR}/built_sources.am"
+    MRUBY_BUILT_SOURCES)
+  set(mruby_pre_build_timestamp
+    "${CMAKE_CURRENT_SOURCE_DIR}/mruby_build.timestamp")
+  if(EXISTS "${mruby_pre_build_timestamp}")
+    string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_SOURCE_DIR}/\\1"
+      MRUBY_BUILT_SOURCES "${MRUBY_BUILT_SOURCES}")
+    include_directories(
+      "${CMAKE_CURRENT_SOURCE_DIR}/mruby-io/include"
+      )
+  else()
+    set(mruby_build_timestamp
+      "${CMAKE_CURRENT_BINARY_DIR}/mruby_build.timestamp")
+    if(NOT EXISTS "${mruby_build_timestamp}")
+      execute_process(
+	COMMAND
+	"ruby"
+	"${CMAKE_CURRENT_SOURCE_DIR}/mruby_build.rb"
+	"${CMAKE_CURRENT_SOURCE_DIR}/build_config.rb"
+	"${CMAKE_CURRENT_SOURCE_DIR}/../mruby-source"
+	"${CMAKE_CURRENT_BINARY_DIR}/../mruby-build"
+	"${mruby_build_timestamp}"
+	WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+	)
+    endif()
+    string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1"
+      MRUBY_BUILT_SOURCES "${MRUBY_BUILT_SOURCES}")
+    include_directories(
+      "${CMAKE_CURRENT_BINARY_DIR}/mruby-io/include"
+      )
+  endif()
+
+  set(MRUBY_ALL_SOURCES
+    ${MRUBY_SOURCES}
+    ${MRUBY_BUILT_SOURCES}
+    )
+  add_library(mruby OBJECT ${MRUBY_ALL_SOURCES})
+  set_source_files_properties(${MRUBY_ALL_SOURCES}
     PROPERTIES
     COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
   set_target_properties(
