@@ -521,7 +521,7 @@ grn_plugin_find_path_raw(grn_ctx *ctx, const char *path)
   return GRN_STRDUP(path);
 }
 
-#if GRN_WITH_MRUBY
+#ifdef GRN_WITH_MRUBY
 static char *
 grn_plugin_find_path_mrb(grn_ctx *ctx, const char *path, size_t path_len)
 {
