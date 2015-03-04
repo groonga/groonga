@@ -13,16 +13,16 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-add_definitions(
-  -DDISABLE_GEMS
-  )
-
-include_directories(
-  "${CMAKE_CURRENT_SOURCE_DIR}/../mruby-source/include"
-  "${CMAKE_CURRENT_SOURCE_DIR}/../mruby-source/src"
-  )
-
 if(GRN_WITH_MRUBY)
+  add_definitions(
+    -DDISABLE_GEMS
+    )
+
+  include_directories(
+    "${CMAKE_CURRENT_SOURCE_DIR}/../mruby-source/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../mruby-source/src"
+  )
+
   read_file_list("${CMAKE_CURRENT_SOURCE_DIR}/sources.am" MRUBY_SOURCES)
   string(REGEX REPLACE "\\.\\./" "${CMAKE_CURRENT_SOURCE_DIR}/../"
     MRUBY_SOURCES "${MRUBY_SOURCES}")
