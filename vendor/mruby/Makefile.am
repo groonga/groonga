@@ -21,19 +21,7 @@ AM_CPPFLAGS +=					\
 endif
 
 include sources.am
-
-BUILT_SOURCES =					\
-	parse.c					\
-	mrblib.c				\
-	mrbgems_init.c
-BUILT_SOURCES +=				\
-	mruby-onig-regexp/src/mruby_onig_regexp.c
-BUILT_SOURCES +=				\
-	mruby-io/include/mruby/ext/io.h		\
-	mruby-io/src/file.c			\
-	mruby-io/src/file_test.c		\
-	mruby-io/src/io.c			\
-	mruby-io/src/mruby_io_gem.c
+include built_sources.am
 libmruby_la_SOURCES += $(BUILT_SOURCES)
 
 parse.c: mruby-build.timestamp
