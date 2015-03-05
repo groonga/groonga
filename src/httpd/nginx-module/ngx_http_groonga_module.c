@@ -530,7 +530,7 @@ ngx_http_groonga_context_receive_handler_typed(grn_ctx *context,
     }
 
     ngx_rc = ngx_os_signal_process((ngx_cycle_t*)ngx_cycle,
-                                   "stop",
+                                   "quit",
                                    ngx_pid);
     if (ngx_rc == NGX_OK) {
       context->stat &= ~GRN_CTX_QUIT;
