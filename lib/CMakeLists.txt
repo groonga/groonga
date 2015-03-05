@@ -43,9 +43,7 @@ set_source_files_properties(dat.cpp ${LIBGRNDAT_SOURCES}
 set(GRN_ALL_SOURCES
   ${LIBGROONGA_SOURCES}
   ${LIBGRNDAT_SOURCES}
-  ${LIBGRNMRB_SOURCES}
-  ${MRUBY_LIBS}
-  ${ONIGMO_LIBS})
+  ${LIBGRNMRB_SOURCES})
 if(GRN_EMBED)
   add_library(libgroonga STATIC ${GRN_ALL_SOURCES})
 else()
@@ -61,7 +59,9 @@ set(GRN_ALL_LIBRARIES
     ${LIBLZ4_LIBRARIES}
     ${DL_LIBS}
     ${M_LIBS}
-    ${WS2_32_LIBS})
+    ${WS2_32_LIBS}
+    ${MRUBY_LIBS}
+    ${ONIGMO_LIBS})
 if(GRN_EMBED)
   target_link_libraries(libgroonga
     ${GRN_ALL_LIBRARIES}

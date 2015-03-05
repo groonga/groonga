@@ -94,7 +94,7 @@ if(GRN_WITH_ONIGMO)
     "${ONIGMO_SOURCE_DIR}/enc/cp1251.c"
     )
 
-  add_library(onigmo OBJECT ${ONIGMO_SOURCES})
+  add_library(onigmo STATIC ${ONIGMO_SOURCES})
   set_source_files_properties(${ONIGMO_SOURCES}
     PROPERTIES
     COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")

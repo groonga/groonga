@@ -63,7 +63,7 @@ if(GRN_WITH_MRUBY)
     ${MRUBY_SOURCES}
     ${MRUBY_BUILT_SOURCES}
     )
-  add_library(mruby OBJECT ${MRUBY_ALL_SOURCES})
+  add_library(mruby STATIC ${MRUBY_ALL_SOURCES})
   set_source_files_properties(${MRUBY_ALL_SOURCES}
     PROPERTIES
     COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
