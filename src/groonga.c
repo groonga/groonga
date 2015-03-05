@@ -2618,6 +2618,7 @@ main(int argc, char **argv)
   int i;
   int flags = 0;
   uint32_t cache_limit = 0;
+  grn_bool need_line_editor = GRN_FALSE;
   static grn_str_getopt_opt opts[] = {
     {'p', "port", NULL, 0, GETOPT_OP_NONE},
     {'e', "encoding", NULL, 0, GETOPT_OP_NONE},
@@ -2878,6 +2879,10 @@ main(int argc, char **argv)
     }
   }
 
+  if ((flags & FLAG_MODE_CLIENT) && !batchmode) {
+    need_line_editor = GRN_TRUE;
+  }
+
   if (output_fd_arg) {
     const char * const end = output_fd_arg + strlen(output_fd_arg);
     const char *rest = NULL;
@@ -2979,7 +2984,7 @@ main(int argc, char **argv)
   }
 
 #ifdef GRN_WITH_LIBEDIT
-  if (!batchmode) {
+  if (need_line_editor) {
     line_editor_init(argc, argv);
   }
 #endif
@@ -3016,7 +3021,7 @@ main(int argc, char **argv)
   }
 
 #ifdef GRN_WITH_LIBEDIT
-  if (!batchmode) {
+  if (need_line_editor) {
     line_editor_fin();
   }
 #endif
