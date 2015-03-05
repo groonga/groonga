@@ -529,7 +529,7 @@ ngx_http_groonga_context_receive_handler_typed(grn_ctx *context,
       ngx_pid = getppid();
     }
 
-    ngx_rc = ngx_os_signal_process((ngx_cycle_t*)ngx_cycle,
+    ngx_rc = ngx_os_signal_process((ngx_cycle_t *)ngx_cycle,
                                    "quit",
                                    ngx_pid);
     if (ngx_rc == NGX_OK) {
