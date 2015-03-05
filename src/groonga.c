@@ -505,12 +505,39 @@ send_ready_notify(void)
   close_ready_notify_pipe();
 }
 
+static void
+create_pid_file(void)
+{
+#ifndef WIN32
+  FILE *pid_file = NULL;
+  pid_t pid;
+
+  if (!pid_file_path) {
+    return;
+  }
+
+  pid_file = fopen(pid_file_path, "w");
+  pid = getpid();
+  fprintf(pid_file, "%d\n", pid);
+  fclose(pid_file);
+#endif
+}
+
+static void
+clean_pid_file(void)
+{
+#ifndef WIN32
+  if (pid_file_path) {
+    unlink(pid_file_path);
+  }
+#endif
+}
+
 static int
 daemonize(void)
 {
   int exit_code = EXIT_SUCCESS;
 #ifndef WIN32
-  pid_t pid;
 
   if (pipe(ready_notify_pipe) == -1) {
     reset_ready_notify_pipe();
@@ -537,19 +564,12 @@ daemonize(void)
   }
   switch (fork()) {
   case 0:
-    {
-      FILE *pid_file = NULL;
-      if (pid_file_path) {
-        pid_file = fopen(pid_file_path, "w");
-      }
+    if (pid_file_path) {
+      create_pid_file();
+    } else {
+      pid_t pid;
       pid = getpid();
-      if (!pid_file) {
-        fprintf(stderr, "%d\n", pid);
-      } else {
-        fprintf(pid_file, "%d\n", pid);
-        fclose(pid_file);
-        pid_file = NULL;
-      }
+      fprintf(stderr, "%d\n", pid);
     }
     break;
   case -1:
@@ -570,16 +590,6 @@ daemonize(void)
   }
 #endif /* WIN32 */
   return exit_code;
-}
-
-static void
-clean_pid_file(void)
-{
-#ifndef WIN32
-  if (pid_file_path) {
-    unlink(pid_file_path);
-  }
-#endif
 }
 
 static void
@@ -670,6 +680,8 @@ start_service(grn_ctx *ctx, const char *db_path,
     if (exit_code != EXIT_SUCCESS) {
       return exit_code;
     }
+  } else {
+    create_pid_file();
   }
 
   if (!grn_com_event_init(ctx, &ev, MAX_CON, sizeof(grn_com))) {
@@ -690,9 +702,7 @@ start_service(grn_ctx *ctx, const char *db_path,
     send_ready_notify();
   }
 
-  if (is_daemon_mode) {
-    clean_pid_file();
-  }
+  clean_pid_file();
 
   return exit_code;
 }
