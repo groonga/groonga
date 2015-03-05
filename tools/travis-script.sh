@@ -6,6 +6,8 @@ prefix=/tmp/local
 
 command_test_options="--n-workers=4"
 
+set -x
+
 case "${BUILD_TOOL}" in
   autotools)
     test/unit/run-test.sh
