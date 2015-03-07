@@ -137,6 +137,12 @@ set(GRN_RELATIVE_RUBY_SCRIPTS_DIR
 set(GRN_RUBY_SCRIPTS_DIR
   "${CMAKE_INSTALL_PREFIX}/${GRN_RELATIVE_RUBY_SCRIPTS_DIR}")
 
+
+if(CMAKE_COMPILER_IS_GNUCC)
+  set(GRN_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS} -std=gnu99")
+endif()
+
+
 macro(check_cflag flag)
   string(REGEX REPLACE "[-=]" "_" temporary_variable_name ${flag})
   string(TOUPPER "${temporary_variable_name}" temporary_variable_name)
