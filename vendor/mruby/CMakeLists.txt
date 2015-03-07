@@ -21,6 +21,7 @@ if(GRN_WITH_MRUBY)
   include_directories(
     "${CMAKE_CURRENT_SOURCE_DIR}/../mruby-source/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/../mruby-source/src"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../onigmo-source"
   )
 
   read_file_list("${CMAKE_CURRENT_SOURCE_DIR}/sources.am" MRUBY_SOURCES)
