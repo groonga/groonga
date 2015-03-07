@@ -46,6 +46,10 @@ set(GRN_ALL_SOURCES
   ${LIBGRNMRB_SOURCES})
 if(GRN_EMBED)
   add_library(libgroonga STATIC ${GRN_ALL_SOURCES})
+  set_target_properties(
+    libgroonga
+    PROPERTIES
+    POSITION_INDEPENDENT_CODE ON)
 else()
   add_library(libgroonga SHARED ${GRN_ALL_SOURCES})
 endif()

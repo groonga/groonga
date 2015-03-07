@@ -186,12 +186,6 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   check_build_flag("-Wno-clobbered")
 endif()
 
-if(GRN_EMBED)
-  if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGCXX)
-    check_build_flag("-fPIC")
-  endif()
-endif()
-
 option(GRN_WITH_DEBUG "enable debug build." OFF)
 if(GRN_WITH_DEBUG)
   if(CMAKE_COMPILER_IS_GNUCXX)
