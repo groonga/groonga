@@ -87,14 +87,12 @@ stop_word_filter(grn_ctx *ctx,
                  void *user_data)
 {
   grn_stop_word_token_filter *token_filter = user_data;
+  grn_id id;
+  grn_obj *data;
 
   if (!token_filter) {
     return;
   }
-
-  if (token_filter->mode == GRN_TOKEN_GET) {
-    grn_id id;
-    grn_obj *data;
 
     data = grn_token_get_data(ctx, current_token);
     id = grn_table_get(ctx,
@@ -114,7 +112,6 @@ stop_word_filter(grn_ctx *ctx,
         grn_token_set_status(ctx, next_token, status);
       }
     }
-  }
 }
 
 static void
