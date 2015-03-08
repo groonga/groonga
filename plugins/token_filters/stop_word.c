@@ -94,24 +94,24 @@ stop_word_filter(grn_ctx *ctx,
     return;
   }
 
-    data = grn_token_get_data(ctx, current_token);
-    id = grn_table_get(ctx,
-                       token_filter->table,
-                       GRN_TEXT_VALUE(data),
-                       GRN_TEXT_LEN(data));
-    if (id != GRN_ID_NIL) {
-      GRN_BULK_REWIND(&(token_filter->value));
-      grn_obj_get_value(ctx,
-                        token_filter->column,
-                        id,
-                        &(token_filter->value));
-      if (GRN_BOOL_VALUE(&(token_filter->value))) {
-        grn_tokenizer_status status;
-        status = grn_token_get_status(ctx, current_token);
-        status |= GRN_TOKEN_SKIP;
-        grn_token_set_status(ctx, next_token, status);
-      }
+  data = grn_token_get_data(ctx, current_token);
+  id = grn_table_get(ctx,
+                     token_filter->table,
+                     GRN_TEXT_VALUE(data),
+                     GRN_TEXT_LEN(data));
+  if (id != GRN_ID_NIL) {
+    GRN_BULK_REWIND(&(token_filter->value));
+    grn_obj_get_value(ctx,
+                      token_filter->column,
+                      id,
+                      &(token_filter->value));
+    if (GRN_BOOL_VALUE(&(token_filter->value))) {
+      grn_tokenizer_status status;
+      status = grn_token_get_status(ctx, current_token);
+      status |= GRN_TOKEN_SKIP;
+      grn_token_set_status(ctx, next_token, status);
     }
+  }
 }
 
 static void
