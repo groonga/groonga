@@ -17,7 +17,7 @@
 
 * GROONGA_DIR=$HOME/work/groonga
 * GROONGA_CLONE_DIR=$HOME/work/groonga/groonga.clean
-* GROONGA_GITHUB_COM_PATH=$HOME/work/groonga/groonga.github.com
+* GROONGA_ORG_PATH=$HOME/work/groonga/groonga.org
 * CUTTER_DIR=$HOME/work/cutter
 * CUTTER_SOURCE_PATH=$HOME/work/cutter/cutter
 
@@ -118,11 +118,11 @@ GroongaのウェブサイトのソースはGroonga同様にgithubにリポジト
 
 リリース作業では後述するコマンド(make update-latest-release)にてトップページのバージョンを置き換えることができるようになっています。
 
-Groongaのウェブサイトのソースコードを$GROONGA_GITHUB_COM_PATHとして取得するためには、$GROONGA_DIRにて以下のコマンドを実行します。::
+Groongaのウェブサイトのソースコードを$GROONGA_ORG_PATHとして取得するためには、$GROONGA_DIRにて以下のコマンドを実行します。::
 
-    % git clone git@github.com:groonga/groonga.github.com.git
+    % git clone git@github.com:groonga/groonga.org.git
 
-これで、$GROONGA_GITHUB_COM_PATHにgroonga.github.comのソースを取得できます。
+これで、$GROONGA_ORG_PATHにgroonga.orgのソースを取得できます。
 
 cutterのソースコード取得
 ------------------------------------------------------------
@@ -153,15 +153,15 @@ Makefileを生成するためにconfigureスクリプトを実行します。
 
 リリース用にビルドするためには以下のオプションを指定してconfigureを実行します。::
 
-    % ./configure CFLAGS="-O0 -ggdb3" CXXFLAGS="-O0 -ggdb3" --prefix=/tmp/local --with-rsync-path="packages@packages.groonga.org:public" --with-groonga-github-com-path=$HOME/work/groonga/groonga.github.com --enable-document --with-ruby19 --with-cutter-source-path=$HOME/work/cutter/cutter
+    % ./configure CFLAGS="-O0 -ggdb3" CXXFLAGS="-O0 -ggdb3" --prefix=/tmp/local --with-rsync-path="packages@packages.groonga.org:public" --with-groonga-org-path=$HOME/work/groonga/groonga.org --enable-document --with-ruby19 --with-cutter-source-path=$HOME/work/cutter/cutter
 
-configureオプションである--with-groonga-github-com-pathにはGroongaのウェブサイトのリポジトリをcloneした場所を指定します。
+configureオプションである--with-groonga-org-pathにはGroongaのウェブサイトのリポジトリをcloneした場所を指定します。
 
 configureオプションである--with-cutter-source-pathにはcutterのソースをcloneした場所を指定します。
 
 以下のようにGroongaのソースコードをcloneした先からの相対パスを指定することもできます。::
 
-    % ./configure CFLAGS="-O0 -ggdb3" CXXFLAGS="-O0 -ggdb3" --prefix=/tmp/local --with-rsync-path="packages@packages.groonga.org:public" --with-groonga-github-com-path=../groonga.github.com --enable-document --with-ruby19 --with-cutter-source-path=../../cutter/cutter
+    % ./configure CFLAGS="-O0 -ggdb3" CXXFLAGS="-O0 -ggdb3" --prefix=/tmp/local --with-rsync-path="packages@packages.groonga.org:public" --with-groonga-org-path=../groonga.org --enable-document --with-ruby19 --with-cutter-source-path=../../cutter/cutter
 
 あらかじめpackagesユーザでpackages.groonga.orgにsshログインできることを確認しておいてください。
 
@@ -515,8 +515,8 @@ http://groonga.org/blog/ および http://groonga.org/blog/ にて公開され�
 
 cloneしたWebサイトのソースに対して以下のファイルを新規追加します。
 
-* groonga.github.com/en/_post/(リリース日)-release.textile
-* groonga.github.com/ja/_post/(リリース日)-release.textile
+* groonga.org/en/_post/(リリース日)-release.textile
+* groonga.org/ja/_post/(リリース日)-release.textile
 
 
 編集した内容をpushする前に確認したい場合にはjekyllおよびRedClothが必要です。
@@ -549,7 +549,7 @@ doc/source以下のドキュメントを更新、翻訳まで完了している�
 
     % make update-document
 
-これによりcloneしておいたgroonga.github.comのdoc/locale以下に更新したドキュメントがコピーされます。
+これによりcloneしておいたgroonga.orgのdoc/locale以下に更新したドキュメントがコピーされます。
 
 生成されているドキュメントに問題のないことを確認できたら、コミット、pushしてgroonga.orgへと反映します。
 
