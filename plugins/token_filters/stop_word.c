@@ -41,6 +41,7 @@ stop_word_init(grn_ctx *ctx, grn_obj *table, grn_token_mode mode)
   if (mode != GRN_TOKEN_GET) {
     return NULL;
   }
+
   token_filter = GRN_PLUGIN_MALLOC(ctx, sizeof(grn_stop_word_token_filter));
   if (!token_filter) {
     GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
@@ -90,6 +91,7 @@ stop_word_filter(grn_ctx *ctx,
   if (!token_filter) {
     return;
   }
+
   if (token_filter->mode == GRN_TOKEN_GET) {
     grn_id id;
     grn_obj *data;
