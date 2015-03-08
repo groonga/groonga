@@ -17,6 +17,9 @@ env:
   - BUILD_TOOL=autotools CFLAGS=-funsigned-char CXXFLAGS=-funsigned-char
   - BUILD_TOOL=cmake
   - BUILD_TOOL=cmake ENABLE_MRUBY=yes
+matrix:
+  allow_failures:
+    - env: BUILD_TOOL=cmake ENABLE_MRUBY=yes
 before_install:
   - rvm use 2.1
 install:
