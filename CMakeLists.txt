@@ -192,14 +192,12 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   check_build_flag("-Wno-clobbered")
 endif()
 
-if(GRN_EMBED)
   if(NOT DEFINED CMAKE_C_COMPILE_OPTIONS_PIC)
     # For old CMake
     if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGCXX)
       check_build_flag("-fPIC")
     endif()
   endif()
-endif()
 
 option(GRN_WITH_DEBUG "enable debug build." OFF)
 if(GRN_WITH_DEBUG)
