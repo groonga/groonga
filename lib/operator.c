@@ -757,6 +757,12 @@ exec_text_operator_raw_text_raw_text(grn_ctx *ctx,
     return GRN_FALSE;
   }
 
+  if (op == GRN_OP_REGEXP) {
+    return exec_text_operator(ctx, op,
+                              target, target_len,
+                              query, query_len);
+  }
+
   normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
   norm_target = grn_string_open(ctx, target, target_len, normalizer, 0);
   norm_query  = grn_string_open(ctx, query,  query_len,  normalizer, 0);
@@ -797,10 +803,14 @@ exec_text_operator_record_text(grn_ctx *ctx,
     return GRN_FALSE;
   }
 
+  if (GRN_TEXT_LEN(query) == 0) {
+    return GRN_FALSE;
+  }
+
   record_key_len = grn_table_get_key(ctx, table, GRN_RECORD_VALUE(record),
                                      record_key, GRN_TABLE_MAX_KEY_SIZE);
   grn_table_get_info(ctx, table, NULL, NULL, NULL, &normalizer, NULL);
-  if (normalizer) {
+  if (normalizer && (op != GRN_OP_REGEXP)) {
     grn_obj *norm_query;
     const char *norm_query_raw;
     unsigned int norm_query_raw_length_in_bytes;

@@ -610,7 +610,7 @@ test_exec_regexp_true(gconstpointer data)
   rhs_type = gcut_data_get_string(data, "rhs_type");
 
   set_text(&lhs, "Hello");
-  set_text(&rhs, "e.l");
+  set_text(&rhs, "\\AHe");
   cut_assert_true(grn_operator_exec_regexp(context, &lhs, &rhs));
 }
 
