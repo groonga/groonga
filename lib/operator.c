@@ -621,53 +621,90 @@ string_is_contained(grn_ctx *ctx,
 }
 
 static grn_bool
-grn_operator_exec_match_raw_text_raw_text(grn_ctx *ctx,
-                                          const char *target,
-                                          unsigned int target_len,
-                                          const char *sub_text,
-                                          unsigned int sub_text_len)
+string_have_prefix(grn_ctx *ctx,
+                   const char *target, unsigned int target_len,
+                   const char *prefix, unsigned int prefix_len)
+{
+  return (target_len >= prefix_len &&
+          strncmp(target, prefix, prefix_len) == 0);
+}
+
+static grn_bool
+exec_text_operator(grn_ctx *ctx,
+                   grn_operator op,
+                   const char *target,
+                   unsigned int target_len,
+                   const char *query,
+                   unsigned int query_len)
+{
+  grn_bool matched = GRN_FALSE;
+
+  switch (op) {
+  case GRN_OP_MATCH :
+    matched = string_is_contained(ctx, target, target_len, query, query_len);
+    break;
+  case GRN_OP_PREFIX :
+    matched = string_have_prefix(ctx, target, target_len, query, query_len);
+    break;
+  default :
+    matched = GRN_FALSE;
+    break;
+  }
+
+  return matched;
+}
+
+static grn_bool
+exec_text_operator_raw_text_raw_text(grn_ctx *ctx,
+                                     grn_operator op,
+                                     const char *target,
+                                     unsigned int target_len,
+                                     const char *query,
+                                     unsigned int query_len)
 {
   grn_obj *normalizer;
   grn_obj *norm_target;
-  grn_obj *norm_sub_text;
+  grn_obj *norm_query;
   const char *norm_target_raw;
-  const char *norm_sub_text_raw;
+  const char *norm_query_raw;
   unsigned int norm_target_raw_length_in_bytes;
-  unsigned int norm_sub_text_raw_length_in_bytes;
+  unsigned int norm_query_raw_length_in_bytes;
   grn_bool matched = GRN_FALSE;
 
-  if (target_len == 0 || sub_text_len == 0) {
+  if (target_len == 0 || query_len == 0) {
     return GRN_FALSE;
   }
 
   normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
-  norm_target   = grn_string_open(ctx, target,   target_len,   normalizer, 0);
-  norm_sub_text = grn_string_open(ctx, sub_text, sub_text_len, normalizer, 0);
+  norm_target = grn_string_open(ctx, target, target_len, normalizer, 0);
+  norm_query  = grn_string_open(ctx, query,  query_len,  normalizer, 0);
   grn_string_get_normalized(ctx, norm_target,
                             &norm_target_raw,
                             &norm_target_raw_length_in_bytes,
                             NULL);
-  grn_string_get_normalized(ctx, norm_sub_text,
-                            &norm_sub_text_raw,
-                            &norm_sub_text_raw_length_in_bytes,
+  grn_string_get_normalized(ctx, norm_query,
+                            &norm_query_raw,
+                            &norm_query_raw_length_in_bytes,
                             NULL);
-  matched = string_is_contained(ctx,
-                                norm_target_raw,
-                                norm_target_raw_length_in_bytes,
-                                norm_sub_text_raw,
-                                norm_sub_text_raw_length_in_bytes);
+
+  matched = exec_text_operator(ctx, op,
+                               norm_target_raw,
+                               norm_target_raw_length_in_bytes,
+                               norm_query_raw,
+                               norm_query_raw_length_in_bytes);
 
   grn_obj_close(ctx, norm_target);
-  grn_obj_close(ctx, norm_sub_text);
+  grn_obj_close(ctx, norm_query);
   grn_obj_unlink(ctx, normalizer);
 
   return matched;
 }
 
 static grn_bool
-grn_operator_exec_match_record_text(grn_ctx *ctx,
-                                    grn_obj *record, grn_obj *table,
-                                    grn_obj *sub_text)
+exec_text_operator_record_text(grn_ctx *ctx,
+                               grn_operator op,
+                               grn_obj *record, grn_obj *table,
+                               grn_obj *query)
 {
   grn_obj *normalizer;
   char record_key[GRN_TABLE_MAX_KEY_SIZE];
@@ -682,61 +719,66 @@ grn_operator_exec_match_record_text(grn_ctx *ctx,
                                      record_key, GRN_TABLE_MAX_KEY_SIZE);
   grn_table_get_info(ctx, table, NULL, NULL, NULL, &normalizer, NULL);
   if (normalizer) {
-    grn_obj *norm_sub_text;
-    const char *norm_sub_text_raw;
-    unsigned int norm_sub_text_raw_length_in_bytes;
-    norm_sub_text = grn_string_open(ctx,
-                                   GRN_TEXT_VALUE(sub_text),
-                                   GRN_TEXT_LEN(sub_text),
-                                   normalizer,
-                                   0);
-    grn_string_get_normalized(ctx, norm_sub_text,
-                              &norm_sub_text_raw,
-                              &norm_sub_text_raw_length_in_bytes,
+    grn_obj *norm_query;
+    const char *norm_query_raw;
+    unsigned int norm_query_raw_length_in_bytes;
+    norm_query = grn_string_open(ctx,
+                                 GRN_TEXT_VALUE(query),
+                                 GRN_TEXT_LEN(query),
+                                 normalizer,
+                                 0);
+    grn_string_get_normalized(ctx, norm_query,
+                              &norm_query_raw,
+                              &norm_query_raw_length_in_bytes,
                               NULL);
-    matched = string_is_contained(ctx,
-                                  record_key,
-                                  record_key_len,
-                                  norm_sub_text_raw,
-                                  norm_sub_text_raw_length_in_bytes);
-    grn_obj_close(ctx, norm_sub_text);
+    matched = exec_text_operator(ctx,
+                                 op,
+                                 record_key,
+                                 record_key_len,
+                                 norm_query_raw,
+                                 norm_query_raw_length_in_bytes);
+    grn_obj_close(ctx, norm_query);
   } else {
-    matched = grn_operator_exec_match_raw_text_raw_text(ctx,
-                                                        record_key,
-                                                        record_key_len,
-                                                        GRN_TEXT_VALUE(sub_text),
-                                                        GRN_TEXT_LEN(sub_text));
+    matched = exec_text_operator_raw_text_raw_text(ctx,
+                                                   op,
+                                                   record_key,
+                                                   record_key_len,
+                                                   GRN_TEXT_VALUE(query),
+                                                   GRN_TEXT_LEN(query));
   }
 
   return matched;
 }
 
 static grn_bool
-grn_operator_exec_match_text_text(grn_ctx *ctx,
-                                  grn_obj *target,
-                                  grn_obj *sub_text)
+exec_text_operator_text_text(grn_ctx *ctx,
+                             grn_operator op,
+                             grn_obj *target,
+                             grn_obj *query)
 {
-  return grn_operator_exec_match_raw_text_raw_text(ctx,
-                                                   GRN_TEXT_VALUE(target),
-                                                   GRN_TEXT_LEN(target),
-                                                   GRN_TEXT_VALUE(sub_text),
-                                                   GRN_TEXT_LEN(sub_text));
+  return exec_text_operator_raw_text_raw_text(ctx,
+                                              op,
+                                              GRN_TEXT_VALUE(target),
+                                              GRN_TEXT_LEN(target),
+                                              GRN_TEXT_VALUE(query),
+                                              GRN_TEXT_LEN(query));
 }
 
 static grn_bool
-grn_operator_exec_match_bulk_bulk(grn_ctx *ctx,
-                                  grn_obj *target,
-                                  grn_obj *sub_text)
+exec_text_operator_bulk_bulk(grn_ctx *ctx,
+                             grn_operator op,
+                             grn_obj *target,
+                             grn_obj *query)
 {
   switch (target->header.domain) {
   case GRN_DB_SHORT_TEXT :
   case GRN_DB_TEXT :
   case GRN_DB_LONG_TEXT :
-    switch (sub_text->header.domain) {
+    switch (query->header.domain) {
     case GRN_DB_SHORT_TEXT :
     case GRN_DB_TEXT :
     case GRN_DB_LONG_TEXT :
-      return grn_operator_exec_match_text_text(ctx, target, sub_text);
+      return exec_text_operator_text_text(ctx, op, target, query);
     default :
       break;
     }
@@ -746,12 +788,11 @@ grn_operator_exec_match_bulk_bulk(grn_ctx *ctx,
       grn_obj *domain;
       domain = grn_ctx_at(ctx, target->header.domain);
       if (GRN_OBJ_TABLEP(domain)) {
-        switch (sub_text->header.domain) {
+        switch (query->header.domain) {
         case GRN_DB_SHORT_TEXT :
         case GRN_DB_TEXT :
         case GRN_DB_LONG_TEXT :
-          return grn_operator_exec_match_record_text(ctx, target, domain,
-                                                     sub_text);
+          return exec_text_operator_record_text(ctx, op, target, domain, query);
         default :
           break;
         }
@@ -766,151 +807,8 @@ grn_operator_exec_match(grn_ctx *ctx, grn_obj *target, grn_obj *sub_text)
 {
   grn_bool matched;
   GRN_API_ENTER;
-  matched = grn_operator_exec_match_bulk_bulk(ctx, target, sub_text);
+  matched = exec_text_operator_bulk_bulk(ctx, GRN_OP_MATCH, target, sub_text);
   GRN_API_RETURN(matched);
-}
-
-static grn_bool
-string_have_prefix(grn_ctx *ctx,
-                   const char *target, unsigned int target_len,
-                   const char *prefix, unsigned int prefix_len)
-{
-  return (target_len >= prefix_len &&
-          strncmp(target, prefix, prefix_len) == 0);
-}
-
-static grn_bool
-grn_operator_exec_prefix_raw_text_raw_text(grn_ctx *ctx,
-                                           const char *target,
-                                           unsigned int target_len,
-                                           const char *prefix,
-                                           unsigned int prefix_len)
-{
-  grn_obj *normalizer;
-  grn_obj *norm_target;
-  grn_obj *norm_prefix;
-  const char *norm_target_raw;
-  const char *norm_prefix_raw;
-  unsigned int norm_target_raw_len;
-  unsigned int norm_prefix_raw_len;
-  grn_bool matched = GRN_FALSE;
-
-  normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
-  norm_target = grn_string_open(ctx, target, target_len, normalizer, 0);
-  norm_prefix = grn_string_open(ctx, prefix, prefix_len, normalizer, 0);
-  grn_string_get_normalized(ctx,
-                            norm_target,
-                            &norm_target_raw,
-                            &norm_target_raw_len,
-                            NULL);
-  grn_string_get_normalized(ctx,
-                            norm_prefix,
-                            &norm_prefix_raw,
-                            &norm_prefix_raw_len,
-                            NULL);
-  matched = string_have_prefix(ctx,
-                               norm_target_raw, norm_target_raw_len,
-                               norm_prefix_raw, norm_prefix_raw_len);
-
-  grn_obj_close(ctx, norm_target);
-  grn_obj_close(ctx, norm_prefix);
-  grn_obj_unlink(ctx, normalizer);
-
-  return matched;
-}
-
-static grn_bool
-grn_operator_exec_prefix_record_text(grn_ctx *ctx,
-                                     grn_obj *record, grn_obj *table,
-                                     grn_obj *prefix)
-{
-  grn_obj *normalizer;
-  char record_key[GRN_TABLE_MAX_KEY_SIZE];
-  int record_key_len;
-  grn_bool matched = GRN_FALSE;
-
-  if (table->header.domain != GRN_DB_SHORT_TEXT) {
-    return GRN_FALSE;
-  }
-
-  record_key_len = grn_table_get_key(ctx, table, GRN_RECORD_VALUE(record),
-                                     record_key, GRN_TABLE_MAX_KEY_SIZE);
-  grn_table_get_info(ctx, table, NULL, NULL, NULL, &normalizer, NULL);
-  if (normalizer) {
-    grn_obj *norm_prefix;
-    const char *norm_prefix_raw;
-    unsigned int norm_prefix_raw_len;
-    norm_prefix = grn_string_open(ctx,
-                                  GRN_TEXT_VALUE(prefix), GRN_TEXT_LEN(prefix),
-                                  normalizer, 0);
-    grn_string_get_normalized(ctx,
-                              norm_prefix,
-                              &norm_prefix_raw,
-                              &norm_prefix_raw_len,
-                              NULL);
-    matched = string_have_prefix(ctx,
-                                 record_key, record_key_len,
-                                 norm_prefix_raw, norm_prefix_raw_len);
-    grn_obj_close(ctx, norm_prefix);
-  } else {
-    matched = grn_operator_exec_prefix_raw_text_raw_text(ctx,
-                                                         record_key,
-                                                         record_key_len,
-                                                         GRN_TEXT_VALUE(prefix),
-                                                         GRN_TEXT_LEN(prefix));
-  }
-
-  return matched;
-}
-
-static grn_bool
-grn_operator_exec_prefix_text_text(grn_ctx *ctx,
-                                   grn_obj *target,
-                                   grn_obj *prefix)
-{
-  return grn_operator_exec_prefix_raw_text_raw_text(ctx,
-                                                    GRN_TEXT_VALUE(target),
-                                                    GRN_TEXT_LEN(target),
-                                                    GRN_TEXT_VALUE(prefix),
-                                                    GRN_TEXT_LEN(prefix));
-}
-
-static grn_bool
-grn_operator_exec_prefix_bulk_bulk(grn_ctx *ctx,
-                                   grn_obj *target,
-                                   grn_obj *prefix)
-{
-  switch (target->header.domain) {
-  case GRN_DB_SHORT_TEXT :
-  case GRN_DB_TEXT :
-  case GRN_DB_LONG_TEXT :
-    switch (prefix->header.domain) {
-    case GRN_DB_SHORT_TEXT :
-    case GRN_DB_TEXT :
-    case GRN_DB_LONG_TEXT :
-      return grn_operator_exec_prefix_text_text(ctx, target, prefix);
-    default :
-      break;
-    }
-    return GRN_FALSE;
-  default:
-    {
-      grn_obj *domain;
-      domain = grn_ctx_at(ctx, target->header.domain);
-      if (GRN_OBJ_TABLEP(domain)) {
-        switch (prefix->header.domain) {
-        case GRN_DB_SHORT_TEXT :
-        case GRN_DB_TEXT :
-        case GRN_DB_LONG_TEXT :
-          return grn_operator_exec_prefix_record_text(ctx, target, domain,
-                                                      prefix);
-        default :
-          break;
-        }
-      }
-    }
-    return GRN_FALSE;
-  }
 }
 
 grn_bool
@@ -918,6 +816,6 @@ grn_operator_exec_prefix(grn_ctx *ctx, grn_obj *target, grn_obj *prefix)
 {
   grn_bool matched;
   GRN_API_ENTER;
-  matched = grn_operator_exec_prefix_bulk_bulk(ctx, target, prefix);
+  matched = exec_text_operator_bulk_bulk(ctx, GRN_OP_PREFIX, target, prefix);
   GRN_API_RETURN(matched);
 }
