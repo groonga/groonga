@@ -23,6 +23,14 @@
 
 #include <string.h>
 
+#ifdef GRN_WITH_ONIGMO
+# define GRN_SUPPORT_REGEXP
+#endif
+
+#ifdef GRN_SUPPORT_REGEXP
+# include <oniguruma.h>
+#endif
+
 static const char *operator_names[] = {
   "push",
   "pop",
@@ -100,7 +108,8 @@ static const char *operator_names[] = {
   "table_sort",
   "table_group",
   "json_put",
-  "get_member"
+  "get_member",
+  "regexp"
 };
 
 const char *
@@ -630,6 +639,76 @@ string_have_prefix(grn_ctx *ctx,
 }
 
 static grn_bool
+string_match_regexp(grn_ctx *ctx,
+                    const char *target, unsigned int target_len,
+                    const char *pattern, unsigned int pattern_len)
+{
+#ifdef GRN_SUPPORT_REGEXP
+  OnigRegex regex;
+  OnigEncoding onig_encoding;
+  int onig_result;
+  OnigErrorInfo onig_error_info;
+
+  if (ctx->encoding == GRN_ENC_NONE) {
+    return GRN_FALSE;
+  }
+
+  switch (ctx->encoding) {
+  case GRN_ENC_EUC_JP :
+    onig_encoding = ONIG_ENCODING_EUC_JP;
+    break;
+  case GRN_ENC_UTF8 :
+    onig_encoding = ONIG_ENCODING_UTF8;
+    break;
+  case GRN_ENC_SJIS :
+    onig_encoding = ONIG_ENCODING_CP932;
+    break;
+  case GRN_ENC_LATIN1 :
+    onig_encoding = ONIG_ENCODING_ISO_8859_1;
+    break;
+  case GRN_ENC_KOI8R :
+    onig_encoding = ONIG_ENCODING_KOI8_R;
+    break;
+  default :
+    return GRN_FALSE;
+  }
+
+  onig_result = onig_new(&regex,
+                         pattern,
+                         pattern + pattern_len,
+                         ONIG_OPTION_NONE,
+                         onig_encoding,
+                         ONIG_SYNTAX_RUBY,
+                         &onig_error_info);
+  if (onig_result != ONIG_NORMAL) {
+    char message[ONIG_MAX_ERROR_MESSAGE_LEN];
+    onig_error_code_to_str(message, onig_result, onig_error_info);
+    ERR(GRN_INVALID_ARGUMENT,
+        "[operator][regexp] "
+        "failed to create regular expression object: <%.*s>: %s",
+        pattern_len, pattern,
+        message);
+    return GRN_FALSE;
+  }
+
+  {
+    OnigPosition position;
+    position = onig_search(regex,
+                           target,
+                           target + target_len,
+                           target,
+                           target + target_len,
+                           NULL,
+                           ONIG_OPTION_NONE);
+    onig_free(regex);
+    return position != ONIG_MISMATCH;
+  }
+#else
+  return GRN_FALSE;
+#endif
+}
+
+static grn_bool
 exec_text_operator(grn_ctx *ctx,
                    grn_operator op,
                    const char *target,
@@ -645,6 +724,9 @@ exec_text_operator(grn_ctx *ctx,
     break;
   case GRN_OP_PREFIX :
     matched = string_have_prefix(ctx, target, target_len, query, query_len);
+    break;
+  case GRN_OP_REGEXP :
+    matched = string_match_regexp(ctx, target, target_len, query, query_len);
     break;
   default :
     matched = GRN_FALSE;
@@ -817,5 +899,14 @@ grn_operator_exec_prefix(grn_ctx *ctx, grn_obj *target, grn_obj *prefix)
   grn_bool matched;
   GRN_API_ENTER;
   matched = exec_text_operator_bulk_bulk(ctx, GRN_OP_PREFIX, target, prefix);
+  GRN_API_RETURN(matched);
+}
+
+grn_bool
+grn_operator_exec_regexp(grn_ctx *ctx, grn_obj *target, grn_obj *pattern)
+{
+  grn_bool matched;
+  GRN_API_ENTER;
+  matched = exec_text_operator_bulk_bulk(ctx, GRN_OP_REGEXP, target, pattern);
   GRN_API_RETURN(matched);
 }

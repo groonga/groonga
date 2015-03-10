@@ -711,7 +711,8 @@ typedef enum {
   GRN_OP_TABLE_SORT,
   GRN_OP_TABLE_GROUP,
   GRN_OP_JSON_PUT,
-  GRN_OP_GET_MEMBER
+  GRN_OP_GET_MEMBER,
+  GRN_OP_REGEXP
 } grn_operator;
 
 GRN_API const char *grn_operator_to_string(grn_operator op);
@@ -728,6 +729,8 @@ GRN_API grn_bool grn_operator_exec_match(grn_ctx *ctx,
                                          grn_obj *target, grn_obj *sub_text);
 GRN_API grn_bool grn_operator_exec_prefix(grn_ctx *ctx,
                                           grn_obj *target, grn_obj *prefix);
+GRN_API grn_bool grn_operator_exec_regexp(grn_ctx *ctx,
+                                          grn_obj *target, grn_obj *pattern);
 
 struct _grn_table_group_result {
   grn_obj *table;

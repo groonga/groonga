@@ -16,6 +16,8 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include "../../../config.h"
+
 #include <groonga.h>
 
 #include <gcutter.h>
@@ -57,6 +59,12 @@ void data_exec_prefix_true(void);
 void test_exec_prefix_true(gconstpointer data);
 void data_exec_prefix_false(void);
 void test_exec_prefix_false(gconstpointer data);
+#ifdef GRN_WITH_ONIGMO
+void data_exec_regexp_true(void);
+void test_exec_regexp_true(gconstpointer data);
+void data_exec_regexp_false(void);
+void test_exec_regexp_false(gconstpointer data);
+#endif
 
 static gchar *tmp_directory;
 
@@ -576,3 +584,61 @@ test_exec_prefix_false(gconstpointer data)
   set_text(&rhs, "ell");
   cut_assert_false(grn_operator_exec_prefix(context, &lhs, &rhs));
 }
+
+#ifdef GRN_WITH_ONIGMO
+void
+data_exec_regexp_true(void)
+{
+#define ADD_DATA(lhs_type, rhs_type)                            \
+  gcut_add_datum(lhs_type " @~ " rhs_type,                      \
+                 "lhs_type", G_TYPE_STRING, lhs_type,           \
+                 "rhs_type", G_TYPE_STRING, rhs_type,           \
+                 NULL)
+
+  ADD_DATA("text", "text");
+
+#undef ADD_DATA
+}
+
+void
+test_exec_regexp_true(gconstpointer data)
+{
+  const gchar *lhs_type;
+  const gchar *rhs_type;
+
+  lhs_type = gcut_data_get_string(data, "lhs_type");
+  rhs_type = gcut_data_get_string(data, "rhs_type");
+
+  set_text(&lhs, "Hello");
+  set_text(&rhs, "e.l");
+  cut_assert_true(grn_operator_exec_regexp(context, &lhs, &rhs));
+}
+
+void
+data_exec_regexp_false(void)
+{
+#define ADD_DATA(lhs_type, rhs_type)                            \
+  gcut_add_datum(lhs_type " @~ " rhs_type,                      \
+                 "lhs_type", G_TYPE_STRING, lhs_type,           \
+                 "rhs_type", G_TYPE_STRING, rhs_type,           \
+                 NULL)
+
+  ADD_DATA("text", "text");
+
+#undef ADD_DATA
+}
+
+void
+test_exec_regexp_false(gconstpointer data)
+{
+  const gchar *lhs_type;
+  const gchar *rhs_type;
+
+  lhs_type = gcut_data_get_string(data, "lhs_type");
+  rhs_type = gcut_data_get_string(data, "rhs_type");
+
+  set_text(&lhs, "Hello");
+  set_text(&rhs, "llox\\z");
+  cut_assert_false(grn_operator_exec_regexp(context, &lhs, &rhs));
+}
+#endif
