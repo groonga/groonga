@@ -597,9 +597,9 @@ grn_operator_exec_greater_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
 }
 
 static grn_bool
-string_is_contained(grn_ctx *ctx,
-                    const char *text, unsigned int text_len,
-                    const char *sub_text, unsigned int sub_text_len)
+string_have_sub_text(grn_ctx *ctx,
+                     const char *text, unsigned int text_len,
+                     const char *sub_text, unsigned int sub_text_len)
 {
   /* TODO: Use more fast algorithm such as Boyer-Moore algorithm that
    * is used in snip.c. */
@@ -641,7 +641,7 @@ exec_text_operator(grn_ctx *ctx,
 
   switch (op) {
   case GRN_OP_MATCH :
-    matched = string_is_contained(ctx, target, target_len, query, query_len);
+    matched = string_have_sub_text(ctx, target, target_len, query, query_len);
     break;
   case GRN_OP_PREFIX :
     matched = string_have_prefix(ctx, target, target_len, query, query_len);
