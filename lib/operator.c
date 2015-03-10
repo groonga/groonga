@@ -769,3 +769,155 @@ grn_operator_exec_match(grn_ctx *ctx, grn_obj *target, grn_obj *sub_text)
   matched = grn_operator_exec_match_bulk_bulk(ctx, target, sub_text);
   GRN_API_RETURN(matched);
 }
+
+static grn_bool
+string_have_prefix(grn_ctx *ctx,
+                   const char *target, unsigned int target_len,
+                   const char *prefix, unsigned int prefix_len)
+{
+  return (target_len >= prefix_len &&
+          strncmp(target, prefix, prefix_len) == 0);
+}
+
+static grn_bool
+grn_operator_exec_prefix_raw_text_raw_text(grn_ctx *ctx,
+                                           const char *target,
+                                           unsigned int target_len,
+                                           const char *prefix,
+                                           unsigned int prefix_len)
+{
+  grn_obj *normalizer;
+  grn_obj *norm_target;
+  grn_obj *norm_prefix;
+  const char *norm_target_raw;
+  const char *norm_prefix_raw;
+  unsigned int norm_target_raw_len;
+  unsigned int norm_prefix_raw_len;
+  grn_bool matched = GRN_FALSE;
+
+  normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
+  norm_target = grn_string_open(ctx, target, target_len, normalizer, 0);
+  norm_prefix = grn_string_open(ctx, prefix, prefix_len, normalizer, 0);
+  grn_string_get_normalized(ctx,
+                            norm_target,
+                            &norm_target_raw,
+                            &norm_target_raw_len,
+                            NULL);
+  grn_string_get_normalized(ctx,
+                            norm_prefix,
+                            &norm_prefix_raw,
+                            &norm_prefix_raw_len,
+                            NULL);
+  matched = string_have_prefix(ctx,
+                               norm_target_raw, norm_target_raw_len,
+                               norm_prefix_raw, norm_prefix_raw_len);
+
+  grn_obj_close(ctx, norm_target);
+  grn_obj_close(ctx, norm_prefix);
+  grn_obj_unlink(ctx, normalizer);
+
+  return matched;
+}
+
+static grn_bool
+grn_operator_exec_prefix_record_text(grn_ctx *ctx,
+                                     grn_obj *record, grn_obj *table,
+                                     grn_obj *prefix)
+{
+  grn_obj *normalizer;
+  char record_key[GRN_TABLE_MAX_KEY_SIZE];
+  int record_key_len;
+  grn_bool matched = GRN_FALSE;
+
+  if (table->header.domain != GRN_DB_SHORT_TEXT) {
+    return GRN_FALSE;
+  }
+
+  record_key_len = grn_table_get_key(ctx, table, GRN_RECORD_VALUE(record),
+                                     record_key, GRN_TABLE_MAX_KEY_SIZE);
+  grn_table_get_info(ctx, table, NULL, NULL, NULL, &normalizer, NULL);
+  if (normalizer) {
+    grn_obj *norm_prefix;
+    const char *norm_prefix_raw;
+    unsigned int norm_prefix_raw_len;
+    norm_prefix = grn_string_open(ctx,
+                                  GRN_TEXT_VALUE(prefix), GRN_TEXT_LEN(prefix),
+                                  normalizer, 0);
+    grn_string_get_normalized(ctx,
+                              norm_prefix,
+                              &norm_prefix_raw,
+                              &norm_prefix_raw_len,
+                              NULL);
+    matched = string_have_prefix(ctx,
+                                 record_key, record_key_len,
+                                 norm_prefix_raw, norm_prefix_raw_len);
+    grn_obj_close(ctx, norm_prefix);
+  } else {
+    matched = grn_operator_exec_prefix_raw_text_raw_text(ctx,
+                                                         record_key,
+                                                         record_key_len,
+                                                         GRN_TEXT_VALUE(prefix),
+                                                         GRN_TEXT_LEN(prefix));
+  }
+
+  return matched;
+}
+
+static grn_bool
+grn_operator_exec_prefix_text_text(grn_ctx *ctx,
+                                   grn_obj *target,
+                                   grn_obj *prefix)
+{
+  return grn_operator_exec_prefix_raw_text_raw_text(ctx,
+                                                    GRN_TEXT_VALUE(target),
+                                                    GRN_TEXT_LEN(target),
+                                                    GRN_TEXT_VALUE(prefix),
+                                                    GRN_TEXT_LEN(prefix));
+}
+
+static grn_bool
+grn_operator_exec_prefix_bulk_bulk(grn_ctx *ctx,
+                                   grn_obj *target,
+                                   grn_obj *prefix)
+{
+  switch (target->header.domain) {
+  case GRN_DB_SHORT_TEXT :
+  case GRN_DB_TEXT :
+  case GRN_DB_LONG_TEXT :
+    switch (prefix->header.domain) {
+    case GRN_DB_SHORT_TEXT :
+    case GRN_DB_TEXT :
+    case GRN_DB_LONG_TEXT :
+      return grn_operator_exec_prefix_text_text(ctx, target, prefix);
+    default :
+      break;
+    }
+    return GRN_FALSE;
+  default:
+    {
+      grn_obj *domain;
+      domain = grn_ctx_at(ctx, target->header.domain);
+      if (GRN_OBJ_TABLEP(domain)) {
+        switch (prefix->header.domain) {
+        case GRN_DB_SHORT_TEXT :
+        case GRN_DB_TEXT :
+        case GRN_DB_LONG_TEXT :
+          return grn_operator_exec_prefix_record_text(ctx, target, domain,
+                                                      prefix);
+        default :
+          break;
+        }
+      }
+    }
+    return GRN_FALSE;
+  }
+}
+
+grn_bool
+grn_operator_exec_prefix(grn_ctx *ctx, grn_obj *target, grn_obj *prefix)
+{
+  grn_bool matched;
+  GRN_API_ENTER;
+  matched = grn_operator_exec_prefix_bulk_bulk(ctx, target, prefix);
+  GRN_API_RETURN(matched);
+}
