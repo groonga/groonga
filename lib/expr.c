@@ -23,7 +23,6 @@
 #include "grn_geo.h"
 #include "grn_expr.h"
 #include "grn_util.h"
-#include "grn_normalizer.h"
 #include "grn_mrb.h"
 #include "mrb/mrb_expr.h"
 
