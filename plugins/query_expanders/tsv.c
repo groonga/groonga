@@ -219,6 +219,13 @@ load_synonyms(grn_ctx *ctx)
     const char *line_value = GRN_TEXT_VALUE(&line);
     size_t line_length = GRN_TEXT_LEN(&line);
 
+    if (line_length > 0 && line_value[line_length - 1] == '\n') {
+      if (line_length > 1 && line_value[line_length - 2] == '\r') {
+        line_length -= 2;
+      } else {
+        line_length -= 1;
+      }
+    }
     number_of_lines++;
     if (number_of_lines == 1) {
       encoding = guess_encoding(ctx, &line_value, &line_length);
