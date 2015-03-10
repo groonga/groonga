@@ -115,7 +115,7 @@ static const char *operator_names[] = {
 const char *
 grn_operator_to_string(grn_operator op)
 {
-  if (GRN_OP_PUSH <= op && op <= GRN_OP_GET_MEMBER) {
+  if (GRN_OP_PUSH <= op && op <= GRN_OP_REGEXP) {
     return operator_names[op];
   } else {
     return "unknown";
