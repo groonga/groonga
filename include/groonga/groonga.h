@@ -724,6 +724,8 @@ GRN_API grn_bool grn_operator_exec_less_equal(grn_ctx *ctx,
                                               grn_obj *x, grn_obj *y);
 GRN_API grn_bool grn_operator_exec_greater_equal(grn_ctx *ctx,
                                                  grn_obj *x, grn_obj *y);
+GRN_API grn_bool grn_operator_exec_match(grn_ctx *ctx,
+                                         grn_obj *target, grn_obj *pattern);
 
 struct _grn_table_group_result {
   grn_obj *table;
