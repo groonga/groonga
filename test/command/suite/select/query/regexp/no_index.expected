@@ -9,7 +9,7 @@ load --table Users
 {"name": "Carlos"}
 ]
 [[0,0.0,0.0],3]
-select Users --query 'name:~"a.*l"'
+select Users --query 'name:~"[aA].*l"'
 [
   [
     0,
