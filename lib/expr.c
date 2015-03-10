@@ -3471,8 +3471,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
             matched = grn_operator_exec_regexp(ctx, target, pattern);
           });
           ALLOC1(res);
-          grn_obj_reinit(ctx, res, GRN_DB_INT32, 0);
-          GRN_INT32_SET(ctx, res, matched ? 1 : 0);
+          grn_obj_reinit(ctx, res, GRN_DB_BOOL, 0);
+          GRN_BOOL_SET(ctx, res, matched);
         }
         code++;
         break;
