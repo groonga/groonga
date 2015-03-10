@@ -469,7 +469,7 @@ void
 data_exec_match_true(void)
 {
 #define ADD_DATA(lhs_type, rhs_type)                            \
-  gcut_add_datum(lhs_type " >= " rhs_type,                      \
+  gcut_add_datum(lhs_type " @ " rhs_type,                       \
                  "lhs_type", G_TYPE_STRING, lhs_type,           \
                  "rhs_type", G_TYPE_STRING, rhs_type,           \
                  NULL)
@@ -497,7 +497,7 @@ void
 data_exec_match_false(void)
 {
 #define ADD_DATA(lhs_type, rhs_type)                            \
-  gcut_add_datum(lhs_type " >= " rhs_type,                      \
+  gcut_add_datum(lhs_type " @ " rhs_type,                       \
                  "lhs_type", G_TYPE_STRING, lhs_type,           \
                  "rhs_type", G_TYPE_STRING, rhs_type,           \
                  NULL)
