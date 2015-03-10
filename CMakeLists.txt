@@ -529,7 +529,7 @@ else()
   set(GRN_WITH_MESSAGE_PACK FALSE)
 endif()
 
-find_program(GRN_RUBY NAMES "ruby2.1" "ruby21" "ruby")
+find_program(RUBY NAMES "ruby2.1" "ruby21" "ruby")
 
 option(GRN_WITH_MRUBY "use mruby" OFF)
 if(GRN_WITH_MRUBY)
