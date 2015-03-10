@@ -471,7 +471,9 @@ GRN_API grn_obj *grn_type_create(grn_ctx *ctx, const char *name, unsigned int na
                                  grn_obj_flags flags, unsigned int size);
 
 GRN_API grn_rc grn_plugin_register(grn_ctx *ctx, const char *name);
+GRN_API grn_rc grn_plugin_unregister(grn_ctx *ctx, const char *name);
 GRN_API grn_rc grn_plugin_register_by_path(grn_ctx *ctx, const char *path);
+GRN_API grn_rc grn_plugin_unregister_by_path(grn_ctx *ctx, const char *path);
 GRN_API const char *grn_plugin_get_system_plugins_dir(void);
 GRN_API const char *grn_plugin_get_suffix(void);
 

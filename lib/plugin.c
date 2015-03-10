@@ -673,6 +673,30 @@ exit :
   GRN_API_RETURN(found_path);
 }
 
+static void
+grn_plugin_set_name_resolve_error(grn_ctx *ctx, const char *name,
+                                  const char *tag)
+{
+  const char *prefix, *prefix_separator, *suffix;
+
+  if (name[0] == '/') {
+    prefix = "";
+    prefix_separator = "";
+    suffix = "";
+  } else {
+    prefix = grn_plugin_get_system_plugins_dir();
+    if (prefix[strlen(prefix) - 1] != '/') {
+      prefix_separator = "/";
+    } else {
+      prefix_separator = "";
+    }
+    suffix = grn_plugin_get_suffix();
+  }
+  ERR(GRN_NO_SUCH_FILE_OR_DIRECTORY,
+      "%s cannot find plugin file: <%s%s%s%s>",
+      tag, prefix, prefix_separator, name, suffix);
+}
+
 grn_rc
 grn_plugin_register(grn_ctx *ctx, const char *name)
 {
@@ -686,23 +710,84 @@ grn_plugin_register(grn_ctx *ctx, const char *name)
     GRN_FREE(path);
   } else {
     if (ctx->rc == GRN_SUCCESS) {
-      const char *prefix, *prefix_separator, *suffix;
-      if (name[0] == '/') {
-        prefix = "";
-        prefix_separator = "";
-        suffix = "";
-      } else {
-        prefix = grn_plugin_get_system_plugins_dir();
-        if (prefix[strlen(prefix) - 1] != '/') {
-          prefix_separator = "/";
-        } else {
-          prefix_separator = "";
-        }
-        suffix = grn_plugin_get_suffix();
+      grn_plugin_set_name_resolve_error(ctx, name, "[plugin][register]");
+    }
+    rc = ctx->rc;
+  }
+  GRN_API_RETURN(rc);
+}
+
+grn_rc
+grn_plugin_unregister_by_path(grn_ctx *ctx, const char *path)
+{
+  grn_obj *db;
+  grn_id plugin_id;
+
+  if (!ctx || !ctx->impl) {
+    ERR(GRN_INVALID_ARGUMENT, "[plugin][unregister] ctx isn't initialized");
+    return ctx->rc;
+  }
+
+  db = ctx->impl->db;
+  if (!db) {
+    ERR(GRN_INVALID_ARGUMENT, "[plugin][unregister] DB isn't initialized");
+    return ctx->rc;
+  }
+
+  GRN_API_ENTER;
+
+  CRITICAL_SECTION_ENTER(grn_plugins_lock);
+  plugin_id = grn_hash_get(&grn_gctx, grn_plugins, path, strlen(path), NULL);
+  CRITICAL_SECTION_LEAVE(grn_plugins_lock);
+
+  if (plugin_id == GRN_ID_NIL) {
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  {
+    grn_table_cursor *cursor;
+    grn_id id;
+
+    cursor = grn_table_cursor_open(ctx, db,
+                                   NULL, 0,
+                                   NULL, 0,
+                                   0, -1, GRN_CURSOR_BY_ID);
+    if (!cursor) {
+      GRN_API_RETURN(ctx->rc);
+    }
+
+    while ((id = grn_table_cursor_next(ctx, cursor))) {
+      grn_obj *obj;
+      obj = grn_ctx_at(ctx, id);
+      if (!obj) {
+        continue;
       }
-      ERR(GRN_NO_SUCH_FILE_OR_DIRECTORY,
-          "cannot find plugin file: <%s%s%s%s>",
-          prefix, prefix_separator, name, suffix);
+      if (obj->header.type == GRN_PROC && DB_OBJ(obj)->range == plugin_id) {
+        grn_obj_remove(ctx, obj);
+      } else {
+        grn_obj_unlink(ctx, obj);
+      }
+    }
+    grn_table_cursor_close(ctx, cursor);
+  }
+
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_plugin_unregister(grn_ctx *ctx, const char *name)
+{
+  grn_rc rc;
+  char *path;
+
+  GRN_API_ENTER;
+  path = grn_plugin_find_path(ctx, name);
+  if (path) {
+    grn_plugin_unregister_by_path(ctx, path);
+    GRN_FREE(path);
+  } else {
+    if (ctx->rc == GRN_SUCCESS) {
+      grn_plugin_set_name_resolve_error(ctx, name, "[plugin][unregister]");
     }
     rc = ctx->rc;
   }

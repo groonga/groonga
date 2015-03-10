@@ -6431,6 +6431,22 @@ proc_request_cancel(grn_ctx *ctx, int nargs, grn_obj **args,
   return NULL;
 }
 
+static grn_obj *
+proc_plugin_unregister(grn_ctx *ctx, int nargs, grn_obj **args,
+                       grn_user_data *user_data)
+{
+  if (GRN_TEXT_LEN(VAR(0))) {
+    const char *name;
+    GRN_TEXT_PUTC(ctx, VAR(0), '\0');
+    name = GRN_TEXT_VALUE(VAR(0));
+    grn_plugin_unregister(ctx, name);
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "[plugin_unregister] name is missing");
+  }
+  GRN_OUTPUT_BOOL(!ctx->rc);
+  return NULL;
+}
+
 #define DEF_VAR(v,name_str) do {\
   (v).name = (name_str);\
   (v).name_size = GRN_STRLEN(name_str);\
@@ -6698,4 +6714,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
 
   DEF_VAR(vars[0], "id");
   DEF_COMMAND("request_cancel", proc_request_cancel, 1, vars);
+
+  DEF_VAR(vars[0], "name");
+  DEF_COMMAND("plugin_unregister", proc_plugin_unregister, 1, vars);
 }

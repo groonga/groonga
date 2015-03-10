@@ -1,0 +1,20 @@
+#@copy-path fixture/query_expander/tsv/expand.tsv tmp/synonyms.tsv
+register "query_expanders/tsv"
+
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR ShortText
+
+load --table Memos
+[
+["content"],
+["Start Rroonga!"],
+["Start Ruby and Groonga!"]
+]
+
+select --table Memos --query_expander QueryExpanderTSV \
+  --match_columns content --query rroonga
+
+plugin_unregister "query_expanders/tsv"
+
+select --table Memos --query_expander QueryExpanderTSV \
+  --match_columns content --query rroonga

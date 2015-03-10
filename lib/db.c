@@ -8350,7 +8350,8 @@ _grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
     const char *n = _grn_table_key(ctx, ctx->impl->db, DB_OBJ(obj)->id, &s);
     GRN_LOG(ctx, GRN_LOG_NOTICE, "DDL:obj_remove %.*s", s, n);
   }
-  if ((io_path = grn_obj_path(ctx, obj)) && *io_path != '\0') {
+  if (obj->header.type != GRN_PROC &&
+      (io_path = grn_obj_path(ctx, obj)) && *io_path != '\0') {
     if (!(path = GRN_STRDUP(io_path))) {
       ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path: <%s>", io_path);
       return;
