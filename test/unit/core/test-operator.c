@@ -27,6 +27,8 @@
 
 void data_exec_equal_true(void);
 void test_exec_equal_true(gconstpointer data);
+void data_exec_equal_false(void);
+void test_exec_equal_false(gconstpointer data);
 
 static gchar *tmp_directory;
 
@@ -99,6 +101,18 @@ set_one(grn_obj *value, const gchar *type)
   }
 }
 
+static void
+set_two(grn_obj *value, const gchar *type)
+{
+  if (strcmp(type, "text") == 0) {
+    grn_obj_reinit(context, value, GRN_DB_TEXT, 0);
+    GRN_TEXT_SETS(context, value, "2");
+  } else if (strcmp(type, "int32") == 0) {
+    grn_obj_reinit(context, value, GRN_DB_INT32, 0);
+    GRN_INT32_SET(context, value, 2);
+  }
+}
+
 void
 data_exec_equal_true(void)
 {
@@ -128,4 +142,35 @@ test_exec_equal_true(gconstpointer data)
   set_one(&rhs, rhs_type);
 
   cut_assert_true(grn_operator_exec_equal(context, &lhs, &rhs));
+}
+
+void
+data_exec_equal_false(void)
+{
+#define ADD_DATA(lhs_type, rhs_type)                            \
+  gcut_add_datum(lhs_type " == " rhs_type,                      \
+                 "lhs_type", G_TYPE_STRING, lhs_type,           \
+                 "rhs_type", G_TYPE_STRING, rhs_type,           \
+                 NULL)
+
+  ADD_DATA("text", "text");
+  ADD_DATA("text", "int32");
+  ADD_DATA("int32", "text");
+
+#undef ADD_DATA
+}
+
+void
+test_exec_equal_false(gconstpointer data)
+{
+  const gchar *lhs_type;
+  const gchar *rhs_type;
+
+  lhs_type = gcut_data_get_string(data, "lhs_type");
+  rhs_type = gcut_data_get_string(data, "rhs_type");
+
+  set_one(&lhs, lhs_type);
+  set_two(&rhs, rhs_type);
+
+  cut_assert_false(grn_operator_exec_equal(context, &lhs, &rhs));
 }
