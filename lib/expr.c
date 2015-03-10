@@ -906,6 +906,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_GET_REF :
     case GRN_OP_ADJUST :
     case GRN_OP_TERM_EXTRACT :
+    case GRN_OP_REGEXP :
       PUSH_CODE(e, op, obj, nargs, code);
       if (nargs) {
         int i = nargs - 1;
@@ -3460,6 +3461,21 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           code++;
         }
         break;
+      case GRN_OP_REGEXP :
+        {
+          grn_obj *target, *pattern;
+          grn_bool matched;
+          POP1(pattern);
+          POP1(target);
+          WITH_SPSAVE({
+            matched = grn_operator_exec_regexp(ctx, target, pattern);
+          });
+          ALLOC1(res);
+          grn_obj_reinit(ctx, res, GRN_DB_INT32, 0);
+          GRN_INT32_SET(ctx, res, matched ? 1 : 0);
+        }
+        code++;
+        break;
       default :
         ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "not implemented operator assigned");
         goto exit;
@@ -5929,6 +5945,10 @@ get_word_(grn_ctx *ctx, efs_info *q)
           break;
         case '$' :
           mode = GRN_OP_SUFFIX;
+          q->cur = end + 2;
+          break;
+        case '~' :
+          mode = GRN_OP_REGEXP;
           q->cur = end + 2;
           break;
         default :
