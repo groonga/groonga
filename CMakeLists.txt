@@ -529,6 +529,8 @@ else()
   set(GRN_WITH_MESSAGE_PACK FALSE)
 endif()
 
+find_program(GRN_RUBY NAMES "ruby2.1" "ruby21" "ruby")
+
 option(GRN_WITH_MRUBY "use mruby" OFF)
 if(GRN_WITH_MRUBY)
   set(GRN_WITH_ONIGMO_DEFAULT ON)
@@ -564,7 +566,6 @@ endif()
 
 configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
-set(RUBY "ruby") # TODO: support customization
 set(GROONGA "${CMAKE_CURRENT_BINARY_DIR}/src/groonga")
 set(GROONGA_SUGGEST_CREATE_DATASET
   "${CMAKE_CURRENT_BINARY_DIR}/src/suggest/groonga-suggest-create-dataset")

@@ -40,7 +40,7 @@ if(GRN_WITH_MRUBY)
     if(NOT EXISTS "${mruby_build_timestamp}")
       execute_process(
 	COMMAND
-	"ruby"
+	"${GRN_RUBY}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/mruby_build.rb"
 	"${CMAKE_CURRENT_SOURCE_DIR}/build_config.rb"
 	"${CMAKE_CURRENT_SOURCE_DIR}/../mruby-source"
