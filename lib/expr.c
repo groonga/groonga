@@ -6046,6 +6046,10 @@ parse_script(grn_ctx *ctx, efs_info *q)
         PARSE(GRN_EXPR_TOKEN_SUFFIX);
         q->cur += 2;
         break;
+      case '~' :
+        PARSE(GRN_EXPR_TOKEN_REGEXP);
+        q->cur += 2;
+        break;
       default :
         PARSE(GRN_EXPR_TOKEN_MATCH);
         q->cur++;
