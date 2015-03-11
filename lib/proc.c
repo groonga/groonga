@@ -6432,6 +6432,22 @@ proc_request_cancel(grn_ctx *ctx, int nargs, grn_obj **args,
 }
 
 static grn_obj *
+proc_plugin_register(grn_ctx *ctx, int nargs, grn_obj **args,
+                     grn_user_data *user_data)
+{
+  if (GRN_TEXT_LEN(VAR(0))) {
+    const char *name;
+    GRN_TEXT_PUTC(ctx, VAR(0), '\0');
+    name = GRN_TEXT_VALUE(VAR(0));
+    grn_plugin_register(ctx, name);
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "[plugin_register] name is missing");
+  }
+  GRN_OUTPUT_BOOL(!ctx->rc);
+  return NULL;
+}
+
+static grn_obj *
 proc_plugin_unregister(grn_ctx *ctx, int nargs, grn_obj **args,
                        grn_user_data *user_data)
 {
@@ -6575,6 +6591,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[0], "tables");
   DEF_COMMAND("dump", proc_dump, 1, vars);
 
+  /* Deprecated. Use "plugin_register" instead. */
   DEF_VAR(vars[0], "path");
   DEF_COMMAND("register", proc_register, 1, vars);
 
@@ -6714,6 +6731,9 @@ grn_db_init_builtin_query(grn_ctx *ctx)
 
   DEF_VAR(vars[0], "id");
   DEF_COMMAND("request_cancel", proc_request_cancel, 1, vars);
+
+  DEF_VAR(vars[0], "name");
+  DEF_COMMAND("plugin_register", proc_plugin_register, 1, vars);
 
   DEF_VAR(vars[0], "name");
   DEF_COMMAND("plugin_unregister", proc_plugin_unregister, 1, vars);
