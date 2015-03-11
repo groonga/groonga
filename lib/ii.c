@@ -6475,6 +6475,9 @@ grn_ii_estimate_size_for_query(grn_ctx *ctx, grn_ii *ii,
     case GRN_OP_SIMILAR :
       mode = optarg->mode;
       break;
+    case GRN_OP_REGEXP :
+      mode = optarg->mode;
+      break;
     default :
       break;
     }
@@ -6542,6 +6545,9 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
       case GRN_OP_SIMILAR :
         arg.mode = optarg->mode;
         arg.similarity_threshold = optarg->similarity_threshold;
+        break;
+      case GRN_OP_REGEXP :
+        arg.mode = optarg->mode;
         break;
       default :
         break;

@@ -10491,6 +10491,27 @@ grn_column_find_index_data_column_equal(grn_ctx *ctx, grn_obj *obj,
   return n;
 }
 
+static inline grn_bool
+is_valid_regexp_index(grn_ctx *ctx, grn_obj *index_column)
+{
+  grn_obj *tokenizer;
+  grn_obj *lexicon;
+
+  lexicon = grn_ctx_at(ctx, index_column->header.domain);
+  if (!lexicon) {
+    return GRN_FALSE;
+  }
+
+  grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL, NULL);
+  grn_obj_unlink(ctx, lexicon);
+  if (!tokenizer) {
+    return GRN_FALSE;
+  }
+
+  /* TODO: Restrict to TokenRegexp? */
+  return GRN_TRUE;
+}
+
 static inline int
 grn_column_find_index_data_column_match(grn_ctx *ctx, grn_obj *obj,
                                         grn_operator op,
@@ -10521,6 +10542,9 @@ grn_column_find_index_data_column_match(grn_ctx *ctx, grn_obj *obj,
     grn_obj *target = grn_ctx_at(ctx, data->target);
     int section;
     if (target->header.type != GRN_COLUMN_INDEX) { continue; }
+    if (op == GRN_OP_REGEXP && !is_valid_regexp_index(ctx, target)) {
+      continue;
+    }
     section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0;
     if (section_buf) { *section_buf = section; }
     if (n < buf_size) {
@@ -10632,6 +10656,9 @@ is_valid_index(grn_ctx *ctx, grn_obj *index_column, grn_operator op)
   case GRN_OP_GREATER_EQUAL :
   case GRN_OP_CALL :
     return is_valid_range_index(ctx, index_column);
+    break;
+  case GRN_OP_REGEXP :
+    return is_valid_regexp_index(ctx, index_column);
     break;
   default :
     return GRN_FALSE;
@@ -10855,6 +10882,7 @@ grn_column_find_index_data_accessor(grn_ctx *ctx, grn_obj *obj,
   case GRN_OP_LESS_EQUAL :
   case GRN_OP_GREATER_EQUAL :
   case GRN_OP_CALL :
+  case GRN_OP_REGEXP :
     n = grn_column_find_index_data_accessor_match(ctx, obj, op,
                                                   index_data, n_index_data,
                                                   index_buf, buf_size,
@@ -10887,6 +10915,7 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
     case GRN_OP_NEAR :
     case GRN_OP_NEAR2 :
     case GRN_OP_SIMILAR :
+    case GRN_OP_REGEXP :
       n = grn_column_find_index_data_column_match(ctx, obj, op,
                                                   NULL, 0,
                                                   index_buf, buf_size,
@@ -10934,6 +10963,7 @@ grn_column_find_index_data(grn_ctx *ctx, grn_obj *obj, grn_operator op,
     case GRN_OP_NEAR :
     case GRN_OP_NEAR2 :
     case GRN_OP_SIMILAR :
+    case GRN_OP_REGEXP :
       n = grn_column_find_index_data_column_match(ctx, obj, op,
                                                   index_data, n_index_data,
                                                   NULL, 0, NULL);

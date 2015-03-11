@@ -4149,10 +4149,115 @@ scan_info_build_match_expr(grn_ctx *ctx, scan_info *si, grn_expr *expr)
   }
 }
 
+static grn_bool
+is_index_searchable_regexp(grn_ctx *ctx, grn_obj *regexp)
+{
+  const char *regexp_raw;
+  const char *regexp_raw_end;
+  grn_bool escaping = GRN_FALSE;
+
+  if (!(regexp->header.domain == GRN_DB_SHORT_TEXT ||
+        regexp->header.domain == GRN_DB_TEXT ||
+        regexp->header.domain == GRN_DB_LONG_TEXT)) {
+    return GRN_FALSE;
+  }
+
+  regexp_raw = GRN_TEXT_VALUE(regexp);
+  regexp_raw_end = regexp_raw + GRN_TEXT_LEN(regexp);
+
+  while (regexp_raw < regexp_raw_end) {
+    unsigned int char_len;
+
+    char_len = grn_charlen(ctx, regexp_raw, regexp_raw_end);
+    if (char_len == 0) {
+      return GRN_FALSE;
+    }
+
+    if (char_len == 1) {
+      if (escaping) {
+        escaping = GRN_FALSE;
+        switch (regexp_raw[0]) {
+        case 'Z' :
+        case 'b' :
+        case 'B' :
+        case 'd' :
+        case 'D' :
+        case 'h' :
+        case 'H' :
+        case 'p' :
+        case 's' :
+        case 'S' :
+        case 'w' :
+        case 'W' :
+        case 'X' :
+        case 'k' :
+        case 'g' :
+        case '1' :
+        case '2' :
+        case '3' :
+        case '4' :
+        case '5' :
+        case '6' :
+        case '7' :
+        case '8' :
+        case '9' :
+          return GRN_FALSE;
+        default :
+          break;
+        }
+      } else {
+        switch (regexp_raw[0]) {
+        case '.' :
+        case '[' :
+        case ']' :
+        case '|' :
+        case '?' :
+        case '+' :
+        case '*' :
+        case '{' :
+        case '}' :
+        case '^' :
+        case '$' :
+        case '(' :
+        case ')' :
+          escaping = GRN_FALSE;
+          return GRN_FALSE;
+        case '\\' :
+          escaping = GRN_TRUE;
+          break;
+        default :
+          escaping = GRN_FALSE;
+          break;
+        }
+      }
+    } else {
+      escaping = GRN_FALSE;
+    }
+
+    regexp_raw += char_len;
+  }
+
+  return GRN_TRUE;
+}
+
 static void
 scan_info_build_match(grn_ctx *ctx, scan_info *si)
 {
-  grn_obj **p = si->args, **pe = si->args + si->nargs;
+  grn_obj **p, **pe;
+
+  if (si->op == GRN_OP_REGEXP) {
+    p = si->args;
+    pe = si->args + si->nargs;
+    for (; p < pe; p++) {
+      if ((*p)->header.type == GRN_BULK &&
+          !is_index_searchable_regexp(ctx, *p)) {
+        return;
+      }
+    }
+  }
+
+  p = si->args;
+  pe = si->args + si->nargs;
   for (; p < pe; p++) {
     if ((*p)->header.type == GRN_EXPR) {
       scan_info_build_match_expr(ctx, si, (grn_expr *)(*p));
@@ -4246,6 +4351,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
     case GRN_OP_GEO_WITHINP6 :
     case GRN_OP_GEO_WITHINP8 :
     case GRN_OP_TERM_EXTRACT :
+    case GRN_OP_REGEXP :
       if (stat < SCAN_COL1 || SCAN_CONST < stat) { return NULL; }
       stat = SCAN_START;
       m++;
@@ -4326,6 +4432,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
     case GRN_OP_GEO_WITHINP6 :
     case GRN_OP_GEO_WITHINP8 :
     case GRN_OP_TERM_EXTRACT :
+    case GRN_OP_REGEXP :
       stat = SCAN_START;
       si->op = c->op;
       si->end = c - e->codes;
@@ -5041,6 +5148,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
     case GRN_OP_NEAR :
     case GRN_OP_NEAR2 :
     case GRN_OP_SIMILAR :
+    case GRN_OP_REGEXP :
       {
         grn_obj wv, **ip = &GRN_PTR_VALUE(&si->index);
         int j = GRN_BULK_VSIZE(&si->index)/sizeof(grn_obj *);

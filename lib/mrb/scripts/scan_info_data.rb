@@ -102,6 +102,38 @@ module Groonga
           self.query = arg
         end
       end
+      if @op == Operator::REGEXP and not index_searchable_regexp?(@query)
+        @search_indexes.clear
+      end
+    end
+
+    def index_searchable_regexp?(pattern)
+      return false if pattern.nil?
+
+      previous_char = nil
+      pattern.value.each_char do |char|
+        if previous_char == "\\"
+          case char
+          when "Z"
+            return false
+          when "b", "B"
+            return false
+          when "d", "D", "h", "H", "p", "s", "S", "w", "W"
+            return false
+          when "X"
+            return false
+          when "k", "g", "1", "2", "3", "4", "5", "6", "7", "8", "9"
+            return false
+          end
+        else
+          case char
+          when ".", "[", "]", "|", "?", "+", "*", "{", "}", "^", "$", "(", ")"
+            return false
+          end
+        end
+        previous_char = char
+      end
+      true
     end
 
     def match_resolve_index_expression(expression)

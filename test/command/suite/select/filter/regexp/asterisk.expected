@@ -1,0 +1,58 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create RegexpTokens TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigramSplitSymbolAlphaDigit
+[[0,0.0,0.0],true]
+column_create RegexpTokens memos_content COLUMN_INDEX|WITH_POSITION   Memos content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": "Grnga"},
+{"content": "Gronga"},
+{"content": "Groonga"},
+{"content": "Mroonga"},
+{"content": "mruby"}
+]
+[[0,0.0,0.0],5]
+select Memos --filter 'content @~ "ro*nga"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "content",
+          "Text"
+        ]
+      ],
+      [
+        1,
+        "Grnga"
+      ],
+      [
+        2,
+        "Gronga"
+      ],
+      [
+        3,
+        "Groonga"
+      ],
+      [
+        4,
+        "Mroonga"
+      ]
+    ]
+  ]
+]

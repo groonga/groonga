@@ -1,0 +1,18 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR Text
+
+table_create RegexpTokens TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigramSplitSymbolAlphaDigit
+column_create RegexpTokens memos_content COLUMN_INDEX|WITH_POSITION \
+  Memos content
+
+load --table Memos
+[
+{"content": "Grnga"},
+{"content": "Gronga"},
+{"content": "Groonga"},
+{"content": "Mroonga"},
+{"content": "mruby"}
+]
+
+select Memos --filter 'content @~ "ro*nga"'
