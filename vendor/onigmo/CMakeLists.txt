@@ -35,6 +35,9 @@ if(GRN_WITH_ONIGMO)
   ac_check_sizeof(long)
 
   add_definitions(-DEXPORT)
+  if(MSVC)
+    add_definitions(-Dinline=__inline)
+  endif()
 
   include_directories(
     ${ONIGMO_BINARY_DIR}
