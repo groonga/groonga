@@ -988,7 +988,7 @@ do_htreq_get(grn_ctx *ctx, grn_msg *msg)
 typedef struct {
   const char *path_start;
   int path_length;
-  int content_length;
+  long long int content_length;
   grn_bool have_100_continue;
   const char *body_start;
 } h_post_header;
@@ -1107,7 +1107,7 @@ do_htreq_post_parse_header_values(grn_ctx *ctx,
         }
         if (STRING_EQUAL_CI(name, name_length, "Content-Length")) {
           const char *rest;
-          header->content_length = grn_atoi(value, value + value_length, &rest);
+          header->content_length = grn_atoll(value, value + value_length, &rest);
           if (rest != value + value_length) {
             /* Invalid Content-Length value. TODO: report error. */
             header->content_length = -1;
@@ -1207,7 +1207,7 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
 
   {
     grn_obj chunk_buffer;
-    int read_content_length = 0;
+    long long int read_content_length = 0;
 
     GRN_TEXT_INIT(&chunk_buffer, 0);
     while (read_content_length < header.content_length) {
