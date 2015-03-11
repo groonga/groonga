@@ -6891,6 +6891,7 @@ grn_ii_inspect_values(grn_ctx *ctx, grn_ii *ii, grn_obj *buf)
 
 const grn_id II_BUFFER_RID_FLAG = 0x80000000;
 const grn_id II_BUFFER_WEIGHT_FLAG = 0x40000000;
+const grn_id II_BUFFER_POSITION_FLAG = 0x20000000;
 #ifdef II_BUFFER_ORDER_BY_ID
 const int II_BUFFER_ORDER = GRN_CURSOR_BY_ID;
 #else /* II_BUFFER_ORDER_BY_ID */
@@ -7102,6 +7103,8 @@ encode_postings(grn_ctx *ctx, grn_ii_buffer *ii_buffer, uint8_t *outbuf)
       pos = 0;
     } else if (id & II_BUFFER_WEIGHT_FLAG) {
       weight = id - II_BUFFER_WEIGHT_FLAG;
+    } else if (id & II_BUFFER_POSITION_FLAG) {
+      pos = id - II_BUFFER_POSITION_FLAG;
     } else {
       ii_buffer_counter *counter = &ii_buffer->counters[id - 1];
       if (counter->last_rid == rid && counter->last_sid == sid) {
@@ -7144,7 +7147,6 @@ encode_postings(grn_ctx *ctx, grn_ii_buffer *ii_buffer, uint8_t *outbuf)
         counter->offset_pos = p - outbuf;
         counter->last_pos = pos;
       }
-      pos++;
     }
   }
 }
@@ -7286,13 +7288,13 @@ grn_ii_buffer_tokenize(grn_ctx *ctx, grn_ii_buffer *ii_buffer, grn_id rid,
       if ((token_cursor = grn_token_cursor_open(ctx, tmp_lexicon,
                                                 value, value_len,
                                                 GRN_TOKEN_ADD, token_flags))) {
-        uint32_t pos;
-        for (pos = 0; !token_cursor->status; pos++) {
+        while (!token_cursor->status) {
           grn_id tid;
           if ((tid = grn_token_cursor_next(ctx, token_cursor))) {
             ii_buffer_counter *counter;
             counter = get_buffer_counter(ctx, ii_buffer, tmp_lexicon, tid);
             if (!counter) { return; }
+            buffer[block_pos++] = token_cursor->pos + II_BUFFER_POSITION_FLAG;
             buffer[block_pos++] = tid;
             if (counter->last_rid != rid) {
               counter->offset_rid += GRN_B_ENC_SIZE(rid - counter->last_rid);
@@ -7321,8 +7323,9 @@ grn_ii_buffer_tokenize(grn_ctx *ctx, grn_ii_buffer *ii_buffer, grn_id rid,
               counter->last_pos = 0;
               counter->nrecs++;
             }
-            counter->offset_pos += GRN_B_ENC_SIZE(pos - counter->last_pos);
-            counter->last_pos = pos;
+            counter->offset_pos +=
+              GRN_B_ENC_SIZE(token_cursor->pos - counter->last_pos);
+            counter->last_pos = token_cursor->pos;
             counter->last_tf++;
             counter->last_weight += weight;
             counter->nposts++;
