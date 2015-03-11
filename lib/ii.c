@@ -6889,8 +6889,8 @@ grn_ii_inspect_values(grn_ctx *ctx, grn_ii *ii, grn_obj *buf)
 
 /********************** buffered index builder ***********************/
 
-const grn_id II_BUFFER_RID_FLAG = 0x80000000;
-const grn_id II_BUFFER_WEIGHT_FLAG = 0x40000000;
+const grn_id II_BUFFER_RID_FLAG      = 0x80000000;
+const grn_id II_BUFFER_WEIGHT_FLAG   = 0x40000000;
 const grn_id II_BUFFER_POSITION_FLAG = 0x20000000;
 #ifdef II_BUFFER_ORDER_BY_ID
 const int II_BUFFER_ORDER = GRN_CURSOR_BY_ID;
