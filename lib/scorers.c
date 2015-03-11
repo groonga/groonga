@@ -16,9 +16,9 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <groonga/scorer.h>
-
 #include "grn_db.h"
+
+#include <groonga/scorer.h>
 
 #include <math.h>
 
