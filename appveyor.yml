@@ -1,7 +1,7 @@
 version: "{build}"
 clone_depth: 10
 build_script:
-  - git submodule update --init --depth 1
+  - git submodule update --init
   - cmake . -G "Visual Studio 12 Win64"
   - cmake --build . --config RelWithDebInfo
 
