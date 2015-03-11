@@ -1206,10 +1206,10 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
   }
 
   {
-    grn_obj line_buffer;
+    grn_obj chunk_buffer;
     int read_content_length = 0;
 
-    GRN_TEXT_INIT(&line_buffer, 0);
+    GRN_TEXT_INIT(&chunk_buffer, 0);
     while (read_content_length < header.content_length) {
 #define POST_BUFFER_SIZE 8192
       grn_rc rc;
@@ -1241,11 +1241,11 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
       for (;
            rc == GRN_SUCCESS && buffer_current > buffer_start;
            buffer_current--) {
-        if (buffer_current[0] != '\n') {
+        if (!(buffer_current[0] == '\n' || buffer_current[0] == ',')) {
           continue;
         }
         GRN_TEXT_PUT(ctx,
-                     &line_buffer,
+                     &chunk_buffer,
                      buffer_start,
                      buffer_current - buffer_start);
         {
@@ -1255,25 +1255,25 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
             flags |= GRN_CTX_QUIET;
           }
           rc = grn_ctx_send(ctx,
-                            GRN_TEXT_VALUE(&line_buffer),
-                            GRN_TEXT_LEN(&line_buffer),
+                            GRN_TEXT_VALUE(&chunk_buffer),
+                            GRN_TEXT_LEN(&chunk_buffer),
                             flags);
         }
         buffer_start = buffer_current + 1;
-        GRN_BULK_REWIND(&line_buffer);
+        GRN_BULK_REWIND(&chunk_buffer);
       }
-      GRN_TEXT_PUT(ctx, &line_buffer, buffer_start, buffer_end - buffer_start);
+      GRN_TEXT_PUT(ctx, &chunk_buffer, buffer_start, buffer_end - buffer_start);
 #undef POST_BUFFER_SIZE
     }
 
-    if (GRN_TEXT_LEN(&line_buffer) > 0) {
+    if (GRN_TEXT_LEN(&chunk_buffer) > 0) {
       grn_ctx_send(ctx,
-                   GRN_TEXT_VALUE(&line_buffer),
-                   GRN_TEXT_LEN(&line_buffer),
+                   GRN_TEXT_VALUE(&chunk_buffer),
+                   GRN_TEXT_LEN(&chunk_buffer),
                    0);
     }
 
-    GRN_OBJ_FIN(ctx, &line_buffer);
+    GRN_OBJ_FIN(ctx, &chunk_buffer);
   }
 }
 
