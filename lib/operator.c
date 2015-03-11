@@ -320,12 +320,16 @@ grn_operator_to_string(grn_operator op)
         if (!grn_obj_cast(ctx, x, &dest, GRN_FALSE)) {\
           r = (GRN_BULK_VSIZE(&dest) == GRN_BULK_VSIZE(y) &&\
                !memcmp(GRN_BULK_HEAD(&dest), GRN_BULK_HEAD(y), GRN_BULK_VSIZE(y))); \
+        } else {\
+          r = GRN_FALSE;\
         }\
       } else {\
         GRN_OBJ_INIT(&dest, GRN_BULK, 0, x->header.domain);\
         if (!grn_obj_cast(ctx, y, &dest, GRN_FALSE)) {\
           r = (GRN_BULK_VSIZE(&dest) == GRN_BULK_VSIZE(x) &&\
                !memcmp(GRN_BULK_HEAD(&dest), GRN_BULK_HEAD(x), GRN_BULK_VSIZE(x))); \
+        } else {\
+          r = GRN_FALSE;\
         }\
       }\
       GRN_OBJ_FIN(ctx, &dest);\
