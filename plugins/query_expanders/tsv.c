@@ -182,6 +182,7 @@ parse_synonyms_file_line(grn_ctx *ctx, const char *line, int line_length,
       return;
     }
 
+    GRN_TEXT_PUTC(ctx, value, '\0');
     grn_bulk_truncate(ctx, value, MAX_SYNONYM_BYTES - 1);
     GRN_TEXT_PUTC(ctx, value, '\0');
     memcpy(value_location, GRN_TEXT_VALUE(value), MAX_SYNONYM_BYTES);
