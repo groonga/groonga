@@ -34,6 +34,8 @@ if(GRN_WITH_ONIGMO)
   ac_check_sizeof(int)
   ac_check_sizeof(long)
 
+  add_definitions(-DEXPORT)
+
   include_directories(
     ${ONIGMO_BINARY_DIR}
     ${ONIGMO_SOURCE_DIR}
