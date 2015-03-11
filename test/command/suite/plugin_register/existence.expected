@@ -8,9 +8,10 @@ load --table Memos
 [
 ["content"],
 ["Start Rroonga!"],
+["Start Ruby and Groonga!"],
 ["Start Ruby and Mroonga!"]
 ]
-[[0,0.0,0.0],2]
+[[0,0.0,0.0],3]
 select --table Memos --query_expander QueryExpanderTSV   --match_columns content --query rroonga
 [
   [
@@ -21,7 +22,7 @@ select --table Memos --query_expander QueryExpanderTSV   --match_columns content
   [
     [
       [
-        1
+        2
       ],
       [
         [
@@ -32,6 +33,10 @@ select --table Memos --query_expander QueryExpanderTSV   --match_columns content
           "content",
           "ShortText"
         ]
+      ],
+      [
+        2,
+        "Start Ruby and Groonga!"
       ],
       [
         1,

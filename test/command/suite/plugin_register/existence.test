@@ -8,7 +8,8 @@ load --table Memos
 [
 ["content"],
 ["Start Rroonga!"],
-["Start Ruby and Groonga!"]
+["Start Ruby and Groonga!"],
+["Start Ruby and Mroonga!"]
 ]
 
 select --table Memos --query_expander QueryExpanderTSV \
