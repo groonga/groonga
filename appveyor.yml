@@ -12,6 +12,7 @@ notifications:
       - groonga-commit@lists.sourceforge.jp
     on_build_status_changed: true
 
+test: off
 # before_test:
 #   - gem install grntest
 # test_script:
