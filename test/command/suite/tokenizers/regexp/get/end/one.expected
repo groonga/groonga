@@ -17,10 +17,10 @@ table_tokenize Lexicon "x" --mode ADD
       "position": 1
     },
     {
-      "value": "￯",
+      "value": "￰",
       "position": 2
     }
   ]
 ]
 table_tokenize Lexicon "x\\z" --mode GET
-[[0,0.0,0.0],[{"value":"x","position":0},{"value":"￯","position":1}]]
+[[0,0.0,0.0],[{"value":"x","position":0},{"value":"￰","position":1}]]

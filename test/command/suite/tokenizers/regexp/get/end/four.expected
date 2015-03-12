@@ -29,7 +29,7 @@ table_tokenize Lexicon "abcd" --mode ADD
       "position": 4
     },
     {
-      "value": "￯",
+      "value": "￰",
       "position": 5
     }
   ]
@@ -55,7 +55,7 @@ table_tokenize Lexicon "abcd\\z" --mode GET
       "position": 2
     },
     {
-      "value": "￯",
+      "value": "￰",
       "position": 4
     }
   ]

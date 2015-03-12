@@ -19,7 +19,7 @@ tokenize TokenRegexp "xy"
       "position": 2
     },
     {
-      "value": "￯",
+      "value": "￰",
       "position": 3
     }
   ]

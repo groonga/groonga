@@ -23,7 +23,7 @@ tokenize TokenRegexp "xyz"
       "position": 3
     },
     {
-      "value": "￯",
+      "value": "￰",
       "position": 4
     }
   ]

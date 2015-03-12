@@ -586,8 +586,8 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       status |= GRN_TOKEN_LAST | GRN_TOKEN_REACH_END;
       grn_tokenizer_token_push(ctx,
                                &(tokenizer->token),
-                               GRN_TOKENIZER_BEGIN_MARK_UTF8,
-                               GRN_TOKENIZER_BEGIN_MARK_UTF8_LEN,
+                               GRN_TOKENIZER_END_MARK_UTF8,
+                               GRN_TOKENIZER_END_MARK_UTF8_LEN,
                                status);
       return NULL;
     }
@@ -606,8 +606,8 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       status |= GRN_TOKEN_LAST | GRN_TOKEN_REACH_END;
       grn_tokenizer_token_push(ctx,
                                &(tokenizer->token),
-                               GRN_TOKENIZER_BEGIN_MARK_UTF8,
-                               GRN_TOKENIZER_BEGIN_MARK_UTF8_LEN,
+                               GRN_TOKENIZER_END_MARK_UTF8,
+                               GRN_TOKENIZER_END_MARK_UTF8_LEN,
                                status);
       return NULL;
     }

@@ -17,7 +17,7 @@ table_tokenize Lexicon "x" --mode ADD
       "position": 1
     },
     {
-      "value": "￯",
+      "value": "￰",
       "position": 2
     }
   ]

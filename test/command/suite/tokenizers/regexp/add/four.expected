@@ -27,7 +27,7 @@ tokenize TokenRegexp "abcd"
       "position": 4
     },
     {
-      "value": "￯",
+      "value": "￰",
       "position": 5
     }
   ]

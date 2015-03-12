@@ -25,7 +25,7 @@ table_tokenize Lexicon "xyz" --mode ADD
       "position": 3
     },
     {
-      "value": "￯",
+      "value": "￰",
       "position": 4
     }
   ]
