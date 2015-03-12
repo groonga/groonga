@@ -5184,7 +5184,13 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
           int32_t weight = wp[1];
           if (sid) {
             int weight_index = sid - 1;
-            GRN_INT32_SET_AT(ctx, &wv, weight_index, weight);
+            int current_vector_size;
+            current_vector_size = GRN_BULK_VSIZE(&wv)/sizeof(int32_t);
+            if (weight_index < current_vector_size) {
+              *((int *)GRN_BULK_HEAD(&wv)) = weight;
+            } else {
+              GRN_INT32_SET_AT(ctx, &wv, weight_index, weight);
+            }
             optarg.weight_vector = &GRN_INT32_VALUE(&wv);
             optarg.vector_size = GRN_BULK_VSIZE(&wv)/sizeof(int32_t);
           } else {
