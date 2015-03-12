@@ -1212,7 +1212,6 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
     GRN_TEXT_INIT(&chunk_buffer, 0);
     while (read_content_length < header.content_length) {
 #define POST_BUFFER_SIZE 8192
-      grn_rc rc;
       char buffer[POST_BUFFER_SIZE];
       const char *buffer_start, *buffer_current, *buffer_end;
 
@@ -1236,11 +1235,8 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
       }
       read_content_length += buffer_end - buffer_start;
 
-      rc = GRN_SUCCESS;
       buffer_current = buffer_end - 1;
-      for (;
-           rc == GRN_SUCCESS && buffer_current > buffer_start;
-           buffer_current--) {
+      for (; buffer_current > buffer_start; buffer_current--) {
         grn_bool is_separator;
         switch (buffer_current[0]) {
         case '\n' :
@@ -1254,6 +1250,7 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
         if (!is_separator) {
           continue;
         }
+
         GRN_TEXT_PUT(ctx,
                      &chunk_buffer,
                      buffer_start,
@@ -1264,10 +1261,10 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
                 buffer_current + 1 == buffer_end)) {
             flags |= GRN_CTX_QUIET;
           }
-          rc = grn_ctx_send(ctx,
-                            GRN_TEXT_VALUE(&chunk_buffer),
-                            GRN_TEXT_LEN(&chunk_buffer),
-                            flags);
+          grn_ctx_send(ctx,
+                       GRN_TEXT_VALUE(&chunk_buffer),
+                       GRN_TEXT_LEN(&chunk_buffer),
+                       flags);
         }
         buffer_start = buffer_current + 1;
         GRN_BULK_REWIND(&chunk_buffer);
