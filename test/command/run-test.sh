@@ -96,6 +96,7 @@ fi
 
 have_targets="false"
 use_gdb="false"
+use_valgrind="false"
 next_argument_is_long_option_value="false"
 for argument in "$@"; do
   case "$argument" in
@@ -107,6 +108,10 @@ for argument in "$@"; do
     --gdb)
       # no argument options
       use_gdb="true"
+      ;;
+    --valgrind)
+      # no argument options
+      use_valgrind="true"
       ;;
     --*)
       next_argument_is_long_option_value="true"
@@ -124,7 +129,9 @@ for argument in "$@"; do
 done
 
 grntest_options=("$@")
-if test "$use_gdb" != "true"; then
+if test "$use_gdb" = "true" -o "$use_valgrind" = "true"; then
+  grntest_options=("--reporter" "stream" "${grntest_options[@]}")
+else
   grntest_options=("--n-workers" "${n_processors}" "${grntest_options[@]}")
 fi
 if test "$CI" = "true"; then
