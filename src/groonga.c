@@ -1269,7 +1269,7 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
                             GRN_TEXT_LEN(&chunk_buffer),
                             flags);
         }
-        buffer_start = buffer_current;
+        buffer_start = buffer_current + 1;
         GRN_BULK_REWIND(&chunk_buffer);
       }
       if (buffer_end > buffer_start) {
