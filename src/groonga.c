@@ -1241,7 +1241,18 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
       for (;
            rc == GRN_SUCCESS && buffer_current > buffer_start;
            buffer_current--) {
-        if (!(buffer_current[0] == '\n' || buffer_current[0] == ',')) {
+        grn_bool is_separator;
+        switch (buffer_current[0]) {
+        case '\n' :
+        case ',' :
+        case ']' :
+          is_separator = GRN_TRUE;
+          break;
+        default :
+          is_separator = GRN_FALSE;
+          break;
+        }
+        if (!is_separator) {
           continue;
         }
         GRN_TEXT_PUT(ctx,
