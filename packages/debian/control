@@ -16,7 +16,8 @@ Build-Depends:
   libevent-dev,
   libmecab-dev,
   libpcre3-dev,
-  libstemmer-dev
+  libstemmer-dev,
+  libjemalloc-dev
 Standards-Version: 3.9.5
 Homepage: http://groonga.org/
 
@@ -109,7 +110,8 @@ Depends:
   ${misc:Depends},
   ${shlibs:Depends},
   liblz4-1,
-  zlib1g
+  zlib1g,
+  libjemalloc1
 Description: Library files for Groonga
  Groonga is an open-source fulltext search engine and column store.
  It lets you write high-performance applications that requires fulltext search.

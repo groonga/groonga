@@ -1,5 +1,6 @@
 %{!?use_lz4:%define use_lz4 0}
 %{!?use_mecab:%define use_mecab 1}
+%{!?use_jemalloc:%define use_jemalloc 0}
 %{?additional_configure_options:%define use_additional_configure_options 1}
 %{!?additional_configure_options:%define use_additional_configure_options 0}
 
@@ -23,6 +24,9 @@ BuildRequires:	zlib-devel
 %if %{use_lz4}
 BuildRequires:	lz4-devel
 %endif
+%if %{use_jemalloc}
+BuildRequires:	jemalloc-devel
+%endif
 BuildRequires:	pcre-devel
 BuildRequires:	pkgconfig
 Requires:	%{name}-libs = %{version}-%{release}
@@ -45,6 +49,9 @@ License:	LGPLv2 and (MIT or GPLv2)
 Requires:	zlib
 %if %{use_lz4}
 Requires:	lz4
+%endif
+%if %{use_jemalloc}
+Requires:	jemalloc
 %endif
 Requires(post):	/sbin/ldconfig
 Requires(postun):	/sbin/ldconfig
