@@ -1237,7 +1237,7 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
       read_content_length += buffer_end - buffer_start;
 
       rc = GRN_SUCCESS;
-      buffer_current = buffer_end;
+      buffer_current = buffer_end - 1;
       for (;
            rc == GRN_SUCCESS && buffer_current > buffer_start;
            buffer_current--) {
