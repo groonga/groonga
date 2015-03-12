@@ -1245,7 +1245,6 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
         switch (buffer_current[0]) {
         case '\n' :
         case ',' :
-        case ']' :
           is_separator = GRN_TRUE;
           break;
         default :
