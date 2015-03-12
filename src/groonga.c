@@ -1247,7 +1247,7 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
         GRN_TEXT_PUT(ctx,
                      &chunk_buffer,
                      buffer_start,
-                     buffer_current - buffer_start);
+                     buffer_current + 1 - buffer_start);
         {
           int flags = 0;
           if (!(read_content_length == header.content_length &&
@@ -1259,7 +1259,7 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
                             GRN_TEXT_LEN(&chunk_buffer),
                             flags);
         }
-        buffer_start = buffer_current + 1;
+        buffer_start = buffer_current;
         GRN_BULK_REWIND(&chunk_buffer);
       }
       if (buffer_end > buffer_start) {
