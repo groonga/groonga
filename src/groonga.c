@@ -1271,6 +1271,7 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
         }
         buffer_start = buffer_current + 1;
         GRN_BULK_REWIND(&chunk_buffer);
+        break;
       }
       if (buffer_end > buffer_start) {
         GRN_TEXT_PUT(ctx, &chunk_buffer,
