@@ -1,6 +1,7 @@
 %{!?use_lz4:%define use_lz4 0}
 %{!?use_mecab:%define use_mecab 1}
 %{!?use_jemalloc:%define use_jemalloc 0}
+%{!?use_msgpack:%define use_msgpack 0}
 %{?additional_configure_options:%define use_additional_configure_options 1}
 %{!?additional_configure_options:%define use_additional_configure_options 0}
 
@@ -27,11 +28,13 @@ BuildRequires:	lz4-devel
 %if %{use_jemalloc}
 BuildRequires:	jemalloc-devel
 %endif
+%if %{use_msgpack}
+BuildRequires:	msgpack-devel
+%endif
 BuildRequires:	pcre-devel
 BuildRequires:	pkgconfig
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	%{name}-plugin-suggest = %{version}-%{release}
-#BuildRequires:	messagepack-devel
 #BuildRequires:	zeromq-devel
 #BuildRequires:	libevent-devel
 Obsoletes:	%{name} < 1.2.2-0
@@ -52,6 +55,9 @@ Requires:	lz4
 %endif
 %if %{use_jemalloc}
 Requires:	jemalloc
+%endif
+%if %{use_msgpack}
+Requires:	msgpack
 %endif
 Requires(post):	/sbin/ldconfig
 Requires(postun):	/sbin/ldconfig
