@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2014 Brazil
+  Copyright(C) 2009-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -467,6 +467,212 @@ ngram_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return NULL;
 }
 
+/* regexp tokenizer */
+
+typedef struct {
+  grn_tokenizer_token token;
+  grn_tokenizer_query *query;
+  struct {
+    grn_bool have_begin;
+    grn_bool have_end;
+  } get;
+  grn_bool is_begin;
+  grn_bool is_end;
+  grn_bool is_overlapping;
+  const char *next;
+  const char *end;
+} grn_regexp_tokenizer;
+
+static grn_obj *
+regexp_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  unsigned int normalize_flags = 0;
+  grn_tokenizer_query *query;
+  const char *normalized;
+  unsigned int normalized_length_in_bytes;
+  grn_regexp_tokenizer *tokenizer;
+
+  query = grn_tokenizer_query_open(ctx, nargs, args, normalize_flags);
+  if (!query) {
+    return NULL;
+  }
+
+  tokenizer = GRN_MALLOC(sizeof(grn_regexp_tokenizer));
+  if (!tokenizer) {
+    grn_tokenizer_query_close(ctx, query);
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[tokenizer][regexp] failed to allocate memory");
+    return NULL;
+  }
+  user_data->ptr = tokenizer;
+
+  grn_tokenizer_token_init(ctx, &(tokenizer->token));
+  tokenizer->query = query;
+
+  tokenizer->get.have_begin = GRN_FALSE;
+  tokenizer->get.have_end   = GRN_FALSE;
+
+  tokenizer->is_begin = GRN_TRUE;
+  tokenizer->is_end   = GRN_FALSE;
+  tokenizer->is_overlapping = GRN_FALSE;
+
+  grn_string_get_normalized(ctx, tokenizer->query->normalized_query,
+                            &normalized, &normalized_length_in_bytes,
+                            NULL);
+  tokenizer->next = normalized;
+  tokenizer->end = tokenizer->next + normalized_length_in_bytes;
+
+  if (tokenizer->query->tokenize_mode == GRN_TOKEN_GET) {
+    unsigned int query_length = tokenizer->query->length;
+    if (query_length >= 2) {
+      const char *query_string = tokenizer->query->ptr;
+      grn_encoding encoding = tokenizer->query->encoding;
+      if (query_string[0] == '\\' && query_string[1] == 'A') {
+        tokenizer->get.have_begin = GRN_TRUE;
+        /* TODO: It assumes that both "\\" and "A" are normalized to 1
+           characters. Normalizer may omit character or expand to
+           multiple characters. */
+        tokenizer->next += grn_charlen_(ctx, tokenizer->next, tokenizer->end,
+                                        encoding);
+        tokenizer->next += grn_charlen_(ctx, tokenizer->next, tokenizer->end,
+                                        encoding);
+      }
+      if (query_string[query_length - 2] == '\\' &&
+          query_string[query_length - 1] == 'z') {
+        tokenizer->get.have_end = GRN_TRUE;
+        /* TODO: It assumes that both "\\" and "z" are normalized to 1
+           byte characters. Normalizer may omit character or expand to
+           multiple characters. */
+        tokenizer->end -= grn_charlen_(ctx,
+                                       tokenizer->end - 1,
+                                       tokenizer->end,
+                                       encoding);
+        tokenizer->end -= grn_charlen_(ctx,
+                                       tokenizer->end - 1,
+                                       tokenizer->end,
+                                       encoding);
+      }
+    }
+  }
+
+  return NULL;
+}
+
+static grn_obj *
+regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  int char_len;
+  grn_token_status status = 0;
+  grn_regexp_tokenizer *tokenizer = user_data->ptr;
+  unsigned int n_characters = 0;
+  int ngram_unit = 2;
+  const char *start = tokenizer->next;
+  const char *current = start;
+  const char *end = tokenizer->end;
+  grn_tokenize_mode mode = tokenizer->query->tokenize_mode;
+
+  if (mode == GRN_TOKEN_GET) {
+    if (tokenizer->get.have_begin) {
+      grn_tokenizer_token_push(ctx,
+                               &(tokenizer->token),
+                               GRN_TOKENIZER_BEGIN_MARK_UTF8,
+                               GRN_TOKENIZER_BEGIN_MARK_UTF8_LEN,
+                               status);
+      tokenizer->get.have_begin = GRN_FALSE;
+      return NULL;
+    }
+
+    if (tokenizer->is_end && tokenizer->get.have_end) {
+      status |= GRN_TOKEN_LAST | GRN_TOKEN_REACH_END;
+      grn_tokenizer_token_push(ctx,
+                               &(tokenizer->token),
+                               GRN_TOKENIZER_BEGIN_MARK_UTF8,
+                               GRN_TOKENIZER_BEGIN_MARK_UTF8_LEN,
+                               status);
+      return NULL;
+    }
+  } else {
+    if (tokenizer->is_begin) {
+      grn_tokenizer_token_push(ctx,
+                               &(tokenizer->token),
+                               GRN_TOKENIZER_BEGIN_MARK_UTF8,
+                               GRN_TOKENIZER_BEGIN_MARK_UTF8_LEN,
+                               status);
+      tokenizer->is_begin = GRN_FALSE;
+      return NULL;
+    }
+
+    if (tokenizer->is_end) {
+      status |= GRN_TOKEN_LAST | GRN_TOKEN_REACH_END;
+      grn_tokenizer_token_push(ctx,
+                               &(tokenizer->token),
+                               GRN_TOKENIZER_BEGIN_MARK_UTF8,
+                               GRN_TOKENIZER_BEGIN_MARK_UTF8_LEN,
+                               status);
+      return NULL;
+    }
+  }
+
+  char_len = grn_charlen_(ctx, current, end, tokenizer->query->encoding);
+  if (char_len == 0) {
+    status |= GRN_TOKEN_LAST | GRN_TOKEN_REACH_END;
+    grn_tokenizer_token_push(ctx, &(tokenizer->token), "", 0, status);
+    return NULL;
+  }
+
+  n_characters++;
+  current += char_len;
+  tokenizer->next = current;
+  while (n_characters < ngram_unit) {
+    char_len = grn_charlen_(ctx, (const char *)current, (const char *)end,
+                            tokenizer->query->encoding);
+    if (char_len == 0) {
+      break;
+    }
+    n_characters++;
+    current += char_len;
+  }
+
+  if (tokenizer->is_overlapping) {
+    status |= GRN_TOKEN_OVERLAP;
+  }
+  if (n_characters < ngram_unit) {
+    status |= GRN_TOKEN_UNMATURED;
+  }
+  tokenizer->is_overlapping = (n_characters > 1);
+
+  if (tokenizer->next == end) {
+    tokenizer->is_end = GRN_TRUE;
+    if (mode == GRN_TOKEN_GET) {
+      if (status & GRN_TOKEN_UNMATURED) {
+        status |= GRN_TOKEN_FORCE_PREFIX;
+      }
+      if (!tokenizer->get.have_end) {
+        status |= GRN_TOKEN_LAST | GRN_TOKEN_REACH_END;
+      }
+    }
+  }
+  grn_tokenizer_token_push(ctx,
+                           &(tokenizer->token),
+                           (const char *)start,
+                           current - start,
+                           status);
+  return NULL;
+}
+
+static grn_obj *
+regexp_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_regexp_tokenizer *tokenizer = user_data->ptr;
+  if (!tokenizer) {
+    return NULL;
+  }
+  grn_tokenizer_token_fin(ctx, &(tokenizer->token));
+  grn_tokenizer_query_close(ctx, tokenizer->query);
+  GRN_FREE(tokenizer);
+  return NULL;
+}
+
 /* external */
 
 grn_rc
@@ -560,5 +766,7 @@ grn_db_init_builtin_tokenizers(grn_ctx *ctx)
                 bigramisad_init, ngram_next, ngram_fin, vars);
   DEF_TOKENIZER("TokenDelimitNull",
                 delimit_null_init, delimited_next, delimited_fin, vars);
+  DEF_TOKENIZER("TokenRegexp",
+                regexp_init, regexp_next, regexp_fin, vars);
   return GRN_SUCCESS;
 }

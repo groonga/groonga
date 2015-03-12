@@ -1,0 +1,34 @@
+tokenize TokenRegexp "abcd"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "￯",
+      "position": 0
+    },
+    {
+      "value": "ab",
+      "position": 1
+    },
+    {
+      "value": "bc",
+      "position": 2
+    },
+    {
+      "value": "cd",
+      "position": 3
+    },
+    {
+      "value": "d",
+      "position": 4
+    },
+    {
+      "value": "￯",
+      "position": 5
+    }
+  ]
+]

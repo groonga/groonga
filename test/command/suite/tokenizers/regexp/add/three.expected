@@ -1,0 +1,30 @@
+tokenize TokenRegexp "xyz"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "￯",
+      "position": 0
+    },
+    {
+      "value": "xy",
+      "position": 1
+    },
+    {
+      "value": "yz",
+      "position": 2
+    },
+    {
+      "value": "z",
+      "position": 3
+    },
+    {
+      "value": "￯",
+      "position": 4
+    }
+  ]
+]

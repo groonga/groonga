@@ -1,0 +1,22 @@
+tokenize TokenRegexp "x"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "￯",
+      "position": 0
+    },
+    {
+      "value": "x",
+      "position": 1
+    },
+    {
+      "value": "￯",
+      "position": 2
+    }
+  ]
+]
