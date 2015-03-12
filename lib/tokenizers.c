@@ -644,14 +644,14 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   if (tokenizer->next == end) {
     tokenizer->is_end = GRN_TRUE;
     if (mode == GRN_TOKEN_GET) {
-      if (status & GRN_TOKEN_UNMATURED) {
-        status |= GRN_TOKEN_FORCE_PREFIX;
-      }
       if (!tokenizer->get.have_end) {
         status |= GRN_TOKEN_LAST | GRN_TOKEN_REACH_END;
+      } else if (status & GRN_TOKEN_UNMATURED) {
+        status |= GRN_TOKEN_FORCE_PREFIX;
       }
     }
   }
+
   grn_tokenizer_token_push(ctx,
                            &(tokenizer->token),
                            (const char *)start,
