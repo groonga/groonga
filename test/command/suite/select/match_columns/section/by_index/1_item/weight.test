@@ -9,11 +9,11 @@ column_create Lexicon memo_index COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
 load --table Memos
 [
 ["title", "content"],
-["groonga", "Start groonga!"],
-["mroonga", "Start mroonga!"],
-["rroonga", "Start rroonga!"],
+["Groonga", "Start Groonga!"],
+["Mroonga", "Start Mroonga!"],
+["Rroonga", "Start Rroonga!"],
 ["Ruby", "Start Ruby!"],
-["learn", "Learning Ruby and groonga..."]
+["learn", "Learning Ruby and Groonga..."]
 ]
 
 select Memos \

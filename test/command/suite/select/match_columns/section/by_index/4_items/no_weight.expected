@@ -15,14 +15,14 @@ column_create Lexicon memo_index COLUMN_INDEX|WITH_POSITION|WITH_SECTION   Memos
 load --table Memos
 [
 ["title", "content", "comment", "category"],
-["groonga", "Start groonga!", "groonga!", "groonga"],
-["mroonga", "Start mroonga!", "mroonga!", "mroonga"],
-["rroonga", "Start rroonga!", "rroonga!", "rroonga"],
+["Groonga", "Start Groonga!", "Groonga!", "Groonga"],
+["Mroonga", "Start Mroonga!", "Mroonga!", "Mroonga"],
+["Rroonga", "Start Rroonga!", "Rroonga!", "Rroonga"],
 ["Ruby", "Start Ruby!", "Ruby!", "Ruby"],
-["learn", "Learning Ruby and groonga...", "learn!", "learn"]
+["learn", "Learning Ruby and Groonga...", "learn!", "learn"]
 ]
 [[0,0.0,0.0],5]
-select Memos   --match_columns "Lexicon.memo_index[0] || Lexicon.memo_index[1] || Lexicon.memo_index[2] || Lexicon.memo_index[3]"   --query rroonga   --output_columns "title, content, _score"
+select Memos   --match_columns "Lexicon.memo_index[0] || Lexicon.memo_index[1] || Lexicon.memo_index[2] || Lexicon.memo_index[3]"   --query Rroonga   --output_columns "title, content, _score"
 [
   [
     0,
@@ -49,8 +49,8 @@ select Memos   --match_columns "Lexicon.memo_index[0] || Lexicon.memo_index[1] |
         ]
       ],
       [
-        "rroonga",
-        "Start rroonga!",
+        "Rroonga",
+        "Start Rroonga!",
         4
       ]
     ]

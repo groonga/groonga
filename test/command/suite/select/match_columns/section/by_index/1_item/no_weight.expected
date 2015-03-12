@@ -11,11 +11,11 @@ column_create Lexicon memo_index COLUMN_INDEX|WITH_POSITION|WITH_SECTION   Memos
 load --table Memos
 [
 ["title", "content"],
-["groonga", "Start groonga!"],
-["mroonga", "Start mroonga!"],
-["rroonga", "Start rroonga!"],
+["Groonga", "Start Groonga!"],
+["Mroonga", "Start Mroonga!"],
+["Rroonga", "Start Rroonga!"],
 ["Ruby", "Start Ruby!"],
-["learn", "Learning Ruby and groonga..."]
+["learn", "Learning Ruby and Groonga..."]
 ]
 [[0,0.0,0.0],5]
 select Memos   --match_columns "Lexicon.memo_index[0]"   --query Ruby   --output_columns "title, content, _score"
