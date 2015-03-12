@@ -34,7 +34,6 @@ if(GRN_WITH_ONIGMO)
   ac_check_sizeof(int)
   ac_check_sizeof(long)
 
-  add_definitions(-DEXPORT)
   if(MSVC)
     add_definitions(-Dinline=__inline)
   endif()

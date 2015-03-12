@@ -546,6 +546,10 @@ set(GRN_WITH_ONIGMO ON)
 set(ONIGMO_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/vendor/onigmo-source")
 set(ONIGMO_LIBS onigmo)
 
+# TODO: It's for Onigmo static link case. If we support system Onigmo,
+# we need to remove it and add -DEXPORT to Onigmo build.
+add_definitions(-DONIG_EXTERN=extern)
+
 add_subdirectory(vendor)
 add_subdirectory(lib)
 if(NOT GRN_EMBED)
