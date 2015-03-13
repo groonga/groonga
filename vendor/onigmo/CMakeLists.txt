@@ -36,6 +36,7 @@ if(GRN_WITH_ONIGMO)
 
   if(MSVC)
     add_definitions(-Dinline=__inline)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
   endif()
 
   include_directories(
