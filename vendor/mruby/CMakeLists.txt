@@ -47,7 +47,11 @@ if(GRN_WITH_MRUBY)
 	"${CMAKE_CURRENT_BINARY_DIR}/../mruby-build"
 	"${mruby_build_timestamp}"
 	WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+	RESULT_VARIABLE MRUBY_BUILD_RESULT
 	)
+      if(NOT MRUBY_BUILD_RESULT EQUAL "0")
+	message(FATAL_ERROR "Failed to build mruby files")
+      endif()
     endif()
     string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1"
       MRUBY_BUILT_SOURCES "${MRUBY_BUILT_SOURCES}")
