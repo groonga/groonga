@@ -254,6 +254,11 @@ grn_plugin_open_mrb(grn_ctx *ctx, const char *filename, size_t filename_size)
   grn_id id = GRN_ID_NIL;
   grn_plugin **plugin = NULL;
 
+  if (!ctx->impl->mrb.state) {
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "mruby support isn't enabled");
+    return GRN_ID_NIL;
+  }
+
   id = grn_hash_add(&grn_gctx, grn_plugins, filename, filename_size,
                     (void **)&plugin, NULL);
   if (!id) {
@@ -528,6 +533,10 @@ grn_plugin_find_path_mrb(grn_ctx *ctx, const char *path, size_t path_len)
   char mrb_path[PATH_MAX];
   const char *mrb_suffix = grn_plugin_mrb_suffix;
   size_t mrb_path_len;
+
+  if (!ctx->impl->mrb.state) {
+    return NULL;
+  }
 
   mrb_path_len = path_len + strlen(mrb_suffix);
   if (mrb_path_len >= PATH_MAX) {
