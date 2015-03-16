@@ -144,6 +144,25 @@ If normalizer is used, ``TokenBigram`` uses white-space-separate like
 tokenize method for ASCII characters. ``TokenBigram`` uses bigram
 tokenize method for non-ASCII characters.
 
+You may be confused with this combined behavior. But it's reasonable
+for most use cases such as English text (only ASCII characters) and
+Japanese text (ASCII and non-ASCII characters are mixed).
+
+Most languages consists of only ASCII characters use white-space for
+word separator. White-space-separate tokenize method is suitable for
+the case.
+
+Languages consists of non-ASCII characters don't use white-space for
+word separator. Bigram tokenize method is suitable for the case.
+
+Mixed tokenize method is suitable for mixed language case.
+
+If you want to use bigram tokenize method for ASCII character, see
+``TokenBigramSplitXXX`` type tokenizers such as
+:ref:`token-bigram-split-symbol-alpha`.
+
+Let's confirm ``TokenBigram`` behavior by example.
+
 ``TokenBigram`` uses one or more white-spaces as token delimiter for
 ASCII characters:
 
@@ -177,7 +196,6 @@ for non-ASCII characters.
 .. groonga-command
 .. include:: ../example/reference/tokenizers/token-bigram-non-ascii-with-normalizer.log
 .. tokenize TokenBigram "日本語の勉強" NormalizerAuto
-
 
 .. _token-bigram-split-symbol
 
