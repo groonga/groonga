@@ -122,7 +122,7 @@ Here is a list of built-in tokenizers:
   * ``TokenMecab``
   * ``TokenRegexp``
 
-.. _token-bigram
+.. _token-bigram:
 
 ``TokenBigram``
 ^^^^^^^^^^^^^^^
@@ -220,7 +220,7 @@ for non-ASCII characters.
 .. include:: ../example/reference/tokenizers/token-bigram-non-ascii-with-normalizer.log
 .. tokenize TokenBigram "日本語の勉強" NormalizerAuto
 
-.. _token-bigram-split-symbol
+.. _token-bigram-split-symbol:
 
 ``TokenBigramSplitSymbol``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -233,7 +233,7 @@ tokenizes symbols by bigram tokenize method:
 .. include:: ../example/reference/tokenizers/token-bigram-split-symbol-with-normalizer.log
 .. tokenize TokenBigramSplitSymbol "100cents!!!" NormalizerAuto
 
-.. _token-bigram-split-symbol-alpha
+.. _token-bigram-split-symbol-alpha:
 
 ``TokenBigramSplitSymbolAlpha``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -247,7 +247,7 @@ alphabets by bigram tokenize method:
 .. include:: ../example/reference/tokenizers/token-bigram-split-symbol-alpha-with-normalizer.log
 .. tokenize TokenBigramSplitSymbolAlpha "100cents!!!" NormalizerAuto
 
-.. _token-bigram-split-symbol-alpha-digit
+.. _token-bigram-split-symbol-alpha-digit:
 
 ``TokenBigramSplitSymbolAlphaDigit``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -261,7 +261,7 @@ symbols, alphabets and digits by bigram tokenize method:
 .. include:: ../example/reference/tokenizers/token-bigram-split-symbol-alpha-digit-with-normalizer.log
 .. tokenize TokenBigramSplitSymbolAlphaDigit "100cents!!!" NormalizerAuto
 
-.. _token-bigramIgnoreBlank
+.. _token-bigram-ignore-blank:
 
 ``TokenBigramIgnoreBlank``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -285,7 +285,7 @@ Here is a result by ``TokenBigramIgnoreBlank``:
 .. include:: ../example/reference/tokenizers/token-bigram-ignore-blank-with-white-spaces.log
 .. tokenize TokenBigramIgnoreBlank "日 本 語 ! ! !" NormalizerAuto
 
-.. _token-bigramIgnoreBlank-split-symbol
+.. _token-bigram-ignore-blank-split-symbol:
 
 ``TokenBigramIgnoreBlankSplitSymbol``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -317,7 +317,7 @@ Here is a result by ``TokenBigramIgnoreBlankSplitSymbol``:
 .. include:: ../example/reference/tokenizers/token-bigram-ignore-blank-split-symbol-with-white-spaces-and-symbol.log
 .. tokenize TokenBigramIgnoreBlankSplitSymbol "日 本 語 ! ! !" NormalizerAuto
 
-.. _token-bigramIgnoreBlank-split-symbol-alpha
+.. _token-bigram-ignore-blank-split-symbol-alpha:
 
 ``TokenBigramIgnoreBlankSplitSymbolAlpha``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -349,7 +349,7 @@ Here is a result by ``TokenBigramIgnoreBlankSplitSymbolAlpha``:
 .. include:: ../example/reference/tokenizers/token-bigram-ignore-blank-split-symbol-with-white-spaces-and-symbol-and-alphabet.log
 .. tokenize TokenBigramIgnoreBlankSplitSymbolAlpha "Hello 日 本 語 ! ! !" NormalizerAuto
 
-.. _token-bigramIgnoreBlank-split-symbol-alpha-digit
+.. _token-bigram-ignore-blank-split-symbol-alpha-digit:
 
 ``TokenBigramIgnoreBlankSplitSymbolAlphaDigit``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -382,7 +382,7 @@ Here is a result by ``TokenBigramIgnoreBlankSplitSymbolAlphaDigit``:
 .. include:: ../example/reference/tokenizers/token-bigram-ignore-blank-split-symbol-with-white-spaces-and-symbol-and-alphabet-digit.log
 .. tokenize TokenBigramIgnoreBlankSplitSymbolAlphaDigit "Hello 日 本 語 ! ! ! 777" NormalizerAuto
 
-.. _token-unigram
+.. _token-unigram:
 
 ``TokenUnigram``
 ^^^^^^^^^^^^^^^^
@@ -395,7 +395,7 @@ token. ``TokenUnigram`` uses 1 character per token.
 .. include:: ../example/reference/tokenizers/token-unigram.log
 .. tokenize TokenUnigram "100cents!!!" NormalizerAuto
 
-.. _token-trigram
+.. _token-trigram:
 
 ``TokenTrigram``
 ^^^^^^^^^^^^^^^^
@@ -408,22 +408,22 @@ token. ``TokenTrigram`` uses 3 characters per token.
 .. include:: ../example/reference/tokenizers/token-trigram.log
 .. tokenize TokenTrigram "10000cents!!!!!" NormalizerAuto
 
-.. _token-delimit
+.. _token-delimit:
 
 ``TokenDelimit``
 ^^^^^^^^^^^^^^^^
 
-.. _token-delimit-null
+.. _token-delimit-null:
 
 ``TokenDelimitNull``
 ^^^^^^^^^^^^^^^^^^^^
 
-.. _token-mecab
+.. _token-mecab:
 
 ``TokenMecab``
 ^^^^^^^^^^^^^^
 
-.. _token-regexp
+.. _token-regexp:
 
 ``TokenRegexp``
 ^^^^^^^^^^^^^^^
