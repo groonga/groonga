@@ -210,7 +210,7 @@ GRN_DLL_FILENAME="libgroonga-\$(LT_CURRENT).dll"
 AC_SUBST(GRN_DLL_FILENAME)
 
 if test "$srcdir/version.sh"; then
-  source "$srcdir/version.sh"
+  . "$srcdir/version.sh"
   AC_SUBST(GRN_VERSION)
   AC_DEFINE_UNQUOTED(GRN_VERSION, ["$GRN_VERSION"], [groonga version])
 fi
