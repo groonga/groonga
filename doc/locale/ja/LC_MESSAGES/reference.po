@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-02-26 17:49+0900\n"
+"PO-Revision-Date: 2015-03-16 18:59+0900\n"
 "Last-Translator: Takatsugu <nokubi@gmail.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -10292,27 +10292,107 @@ msgid ""
 "について説明します。"
 msgstr ""
 
-msgid "新たなデータベースを作成します。"
+msgid "Creates new database."
+msgstr "新しいデータベースを作成します。"
+
+# 03c9623da3e64097937a6e0e91a1aeb8
+msgid "Executes ``groonga`` command in client mode."
 msgstr ""
 
-msgid "クライアントモードで実行します。"
-msgstr ""
-
-msgid "サーバモードで実行します。"
-msgstr ""
-
-msgid "デーモンモードで実行します。(forkする点がサーバモードと異なる)"
-msgstr ""
-
+# adb337fd6f1844a2a370ce6325cb9244
 msgid ""
-"データベースで使用する文字エンコーディング方式を指定します。新たなデータベー"
-"スを作成する時のみ有効です。none, euc, utf8, sjis, latin, koi8rのいずれかが指"
-"定できます。"
+"Executes ``groonga`` command in server mode. Use \"Ctrl+C\" to stop the "
+"``groonga`` process."
 msgstr ""
 
+# d7677c239bfb4eb5a44ab4f0d69fe8bc
 msgid ""
-"ログレベルを指定します。0〜8までの数値が指定可能で、数が大きいほど多くのログ"
-"が出力されます。"
+"Executes ``groonga`` command in daemon mode. In contrast to server mode, "
+"``groonga`` command forks in daemon mode. For example, to stop local daemon "
+"process, use \"curl http://127.0.0.1:10041/d/shutdown\"."
+msgstr ""
+
+# 46e3593d34ba47a18c4d78fbf350f592
+msgid ""
+"Specifies encoding which is used for Groonga database. This option is "
+"effective when you create new Groonga database.  This parameter specifies "
+"one of the following values: ``none``, ``euc``, ``utf8``, ``sjis``, "
+"``latin`` or ``koi8r``."
+msgstr ""
+
+# 4167a7e2ae2a4063ba9dc0879b0d0739
+msgid ""
+"Specifies log level. A integer value between 0 and 8. The meaning of value "
+"is:"
+msgstr ""
+
+# c50cb4e657204d20847f83f61b37bce0
+msgid "log level"
+msgstr ""
+
+# f8a460e9209c4f9785a7ed9f4e2ca066
+msgid "0"
+msgstr ""
+
+msgid "Nothing"
+msgstr "なし"
+
+# 523cc130a3c0484592083688d0009b43
+msgid "1"
+msgstr ""
+
+msgid "Emergency"
+msgstr ""
+
+# dffc8f7ce6384e96af0df63c4f28f9e9
+msgid "2"
+msgstr ""
+
+msgid "Alert"
+msgstr ""
+
+# 85191cfcb3b64910aeb14ceb38076a4b
+msgid "3"
+msgstr ""
+
+msgid "Critical"
+msgstr ""
+
+# 3dcb8a64437045ec9742e0a3e19a7693
+msgid "4"
+msgstr ""
+
+msgid "Error"
+msgstr ""
+
+# 03a41be5b08845229486b0c3d382e728
+msgid "5"
+msgstr ""
+
+msgid "Warning"
+msgstr ""
+
+# 8a43e627de4741c0ae4a5edd4869eff7
+msgid "6"
+msgstr ""
+
+# 51f30be91efd41d98fd71994e7ba525d
+msgid "Notice"
+msgstr ""
+
+# b4778e15adc64f999a522b46617ad7ac
+msgid "7"
+msgstr ""
+
+# f3e41c1ec551411d91bb1cf671538595
+msgid "Info"
+msgstr ""
+
+# 351a362992be4b6e8a3eff51fef8de22
+msgid "8"
+msgstr ""
+
+msgid "Debug"
 msgstr ""
 
 msgid "Use :option:`--bind-address` instead."
@@ -10431,8 +10511,8 @@ msgstr ""
 "'\\\\'文字で継続行であることを明示してコマンドリストを記述することができま"
 "す。"
 
-msgid "組み込みコマンド"
-msgstr ""
+msgid "Builtin command"
+msgstr "組み込みコマンド"
 
 msgid "以下のコマンドは組み込みコマンドとして予め定義されています。"
 msgstr ""
@@ -10480,9 +10560,6 @@ msgid "ログ出力を行います。"
 msgstr ""
 
 msgid "ロックを解除します。"
-msgstr ""
-
-msgid "例"
 msgstr ""
 
 msgid "新しいデータベースを作成します。::"
@@ -10659,6 +10736,9 @@ msgid "もうひとつの文字列を指定します"
 msgstr ""
 
 msgid "指定した2つ文字列の編集距離をUint32型の値として返します。"
+msgstr ""
+
+msgid "例"
 msgstr ""
 
 msgid "geo_distance"
@@ -14054,28 +14134,13 @@ msgstr ""
 msgid "E"
 msgstr ""
 
-msgid "Emergency"
-msgstr ""
-
 msgid "A"
-msgstr ""
-
-msgid "Alert"
 msgstr ""
 
 msgid "C"
 msgstr ""
 
-msgid "Critical"
-msgstr ""
-
-msgid "Error"
-msgstr ""
-
 msgid "e"
-msgstr ""
-
-msgid "Warning"
 msgstr ""
 
 msgid "w"
@@ -14085,9 +14150,6 @@ msgid "Notification"
 msgstr ""
 
 msgid "Information"
-msgstr ""
-
-msgid "Debug"
 msgstr ""
 
 msgid "d"
@@ -15822,51 +15884,851 @@ msgstr ""
 msgid "Tokenizers"
 msgstr ""
 
-msgid "TODO: Write me."
+msgid ""
+"Groonga has tokenizer module that tokenizes text. It is used when the "
+"following cases:"
+msgstr ""
+"Groongaにはテキストをトークナイズするトークナイザーモージュールがあります。次"
+"のケースのときにトークナイザーを使います。"
+
+msgid "Indexing text"
+msgstr "テキストのインデックスを構築するとき"
+
+# e147c985845144caa4096da6ef841fee
+msgid "Tokenizer is used when indexing text."
+msgstr "テキストのインデックスを構築するときにトークナイザーを使います。"
+
+msgid "Searching by query"
+msgstr "クエリーで検索するとき"
+
+# be6dd8ac89fb473caad42b36797651be
+msgid "Tokenizer is used when searching by query."
+msgstr "クエリーで検索するときにトークナイザーを使います。"
+
+# 3fe3f07803364e81aa8fbfcb6121dbec
+msgid ""
+"Tokenizer is an important module for full-text search. You can change trade-"
+"off between `precision and recall <http://en.wikipedia.org/wiki/"
+"Precision_and_recall>`_ by changing tokenizer."
+msgstr ""
+"全文検索ではトークナイザーは重要なモジュールです。トークナイザーを変えること"
+"で `適合率と再現率 <http://ja.wikipedia.org/wiki/%E6%83%85%E5%A0%B1%E6%A4%9C"
+"%E7%B4%A2>`_ のトレードオフを調整することができます。"
+
+# cd45a08f7d504ed4b875b32442ca8e15
+msgid ""
+"Normally, :ref:`token-bigram` is a suitable tokenizer. If you don't know "
+"much about tokenizer, it's recommended that you choose :ref:`token-bigram`."
+msgstr ""
+"一般的に :ref:`token-bigram` が適切なトークナイザーです。トークナイザーについ"
+"てよく知らない場合は :ref:`token-bigram` を使うことをオススメします。"
+
+# 19310933a11f48a183a5d9ac4417afee
+msgid ""
+"You can try a tokenizer by :doc:`/reference/commands/tokenize.rst` and :doc:"
+"`/reference/commands/table_tokenize.rst`. Here is an example to try :ref:"
+"`token-bigram` tokenizer by :doc:`/reference/commands/tokenize.rst`:"
+msgstr ""
+":doc:`/reference/commands/tokenize.rst` コマンドと :doc:`/reference/commands/"
+"table_tokenize.rst` コマンドを使うことでトークナイザーを試すことができま"
+"す。 :doc:`/reference/commands/tokenize.rst` コマンドを使って :ref:`token-"
+"bigram` トークナイザーを試す例を以下に示します。"
+
+# 3f22817593594be0a270788d6c341065
+msgid "What is \"tokenize\"?"
+msgstr "「トークナイズ」とはなにか"
+
+# fd687b573a9f48579bcd2f47226621ed
+msgid ""
+"\"tokenize\" is the process that extracts zero or more tokens from a text. "
+"There are some \"tokenize\" methods."
+msgstr ""
+"「トークナイズ」はテキストから0個以上のトークンを抽出する処理です。「トークナ"
+"イズ」する方法はいくつかあります。"
+
+# 6f7add9c5c904cd3b428c14ca4c348bc
+msgid ""
+"For example, ``Hello World`` is tokenized to the following tokens by bigram "
+"tokenize method:"
+msgstr ""
+"例えば、バイグラムというトークナイズ方法では ``Hello World`` は次のトークンに"
+"トークナイズされます。"
+
+# 50f57354810e4d26a60664bbe71ac1e9
+msgid "``He``"
 msgstr ""
 
-msgid "Here are the list of built-in tokenizers:"
+# 5f34eea6f2394df6a3737454e5f5d266
+msgid "``el``"
+msgstr ""
+
+# 7aa81905c3c04f359c46084282979324
+msgid "``ll``"
+msgstr ""
+
+# 1bc10af5ba9e4fac946e1d91bb9e543a
+msgid "``lo``"
+msgstr ""
+
+# e7358a6d67874e0d95c211763ede30aa
+msgid "``o ``"
+msgstr ""
+
+# 133b80a4d78e42f992b956d08949f389
+msgid "`` W``"
+msgstr ""
+
+# d9f4093b3d0c40fc9ca4d946c84df822
+msgid "``Wo``"
+msgstr ""
+
+# 49766388df36435bafd1c9b1afc217ac
+msgid "``or``"
+msgstr ""
+
+# c51c7e9d57f94fd28991874d40839078
+msgid "``rl``"
+msgstr ""
+
+# b44f2c6d66c941d0a1df2b6cb51fa171
+msgid "``ld``"
+msgstr ""
+
+# 492bcfbf5b5f400697c45b83d1f8308b
+msgid ""
+"In the above example, 10 tokens are extracted from one text ``Hello World``."
+msgstr "上記の例では、 ``Hello World`` から10個のトークンを抽出しました。"
+
+# 54dddfc618f4487ab649292047ae5f29
+msgid ""
+"For example, ``Hello World`` is tokenized to the following tokens by white-"
+"space-separate tokenize method:"
+msgstr ""
+"例えば、空白区切りのトークナイズ方法では ``Hello World`` は次のトークンにトー"
+"クナイズされます。"
+
+# 36b87bbcea594c5da967e2c96e9d8721
+msgid "``Hello``"
+msgstr ""
+
+# 2fc4fe6ecf084e3996567b7dc19aebc3
+msgid "``World``"
+msgstr ""
+
+# 5f038dd1493642d7929b02dc8b08dd65
+msgid ""
+"In the above example, 2 tokens are extracted from one text ``Hello World``."
+msgstr "上記の例では、``Hello World`` から2つのトークンを抽出しました。"
+
+# 2763cba3ed134aa59e8ccd0b3f43012a
+msgid ""
+"Token is used as search key. You can find indexed documents only by tokens "
+"that are extracted by used tokenize method. For example, you can find "
+"``Hello World`` by ``ll`` with bigram tokenize method but you can't find "
+"``Hello World`` by ``ll`` with white-space-separate tokenize method. Because "
+"white-space-separate tokenize method doesn't extract ``ll`` token. It just "
+"extracts ``Hello`` and ``World`` tokens."
+msgstr ""
+"トークンは検索時のキーとして使われます。使用したトークナイズ方法で抽出した"
+"トークンでしかインデックス化されたドキュメントを探すことはできません。例え"
+"ば、トークナイズ方法としてバイグラムを使った場合は ``ll`` で ``Hello World`` "
+"を見つけることができます。しかし、空白区切りのトークナイズ方法を使ったときは "
+"``ll`` で ``Hello World`` を見つけることはできません。なぜなら、空白区切りの"
+"トークナイズ方法は ``ll`` というトークンを抽出していないからです。空白区切り"
+"のトークナイズ方法は ``Hello`` というトークンと ``World`` というトークンしか"
+"抽出していません。"
+
+# 37d82f9d0437448784f29f7296081d9d
+msgid ""
+"In general, tokenize method that generates small tokens increases recall but "
+"decreases precision. Tokenize method that generates large tokens increases "
+"precision but decreases recall."
+msgstr ""
+"一般的に、小さいトークンを生成するトークナイズ方法は再現率が高い代わりに適合"
+"率が低くなりがちです。一方、大きいトークンを生成するトークナイズ方法は適合率"
+"が高い代わりに再現率が低くなりがちです。"
+
+# 3ef8f9cf5ae04071a3c303e7e2291e83
+msgid ""
+"For example, we can find ``Hello World`` and ``A or B`` by ``or`` with "
+"bigram tokenize method. ``Hello World`` is a noise for people who wants to "
+"search \"logical and\". It means that precision is decreased. But recall is "
+"increased."
+msgstr ""
+"例えば、バイグラムというトークナイズ方法では ``or`` で ``Hello World`` と "
+"``A or B`` を検索できます。しかし、「論理和」を検索したい人にとっては "
+"``Hello World`` は不要な結果です。これは、適合率が下がったということです。し"
+"かし、再現率は上がっています。"
+
+# 80d6df62cab443b1b59cb7d6d66089cf
+msgid ""
+"We can find only ``A or B`` by ``or`` with white-space-separate tokenize "
+"method. Because ``World`` is tokenized to one token ``World`` with white-"
+"space-separate tokenize method. It means that precision is increased for "
+"people who wants to search \"logical and\". But recall is decreased because "
+"``Hello World`` that contains ``or`` isn't found."
+msgstr ""
+"空白区切りのトークナイズ方法を使った場合は ``or`` で ``A or B`` だけが見つか"
+"ります。なぜなら、空白区切りのトークナイズ方法では ``World`` は ``World`` と"
+"いう1つのトークンだけにトークナイズされるからです。これは、「論理和」を探した"
+"い人にとっては適合率が挙がっています。しかし、 ``Hello World`` も ``or`` を含"
+"んでいるのに見つかっていないので再現率が下がっています。"
+
+msgid "Built-in tokenizsers"
+msgstr "組み込みトークナイザー"
+
+msgid "Here is a list of built-in tokenizers:"
 msgstr "以下は組み込みのトークナイザーのリストです。"
 
-msgid "TokenBigram"
+msgid "``TokenBigram``"
 msgstr ""
 
-msgid "TokenBigramSplitSymbol"
+# 780e6792659b4312bcef15a70448db2d
+# 123ba52a1f1049efa460a06f3ac7e404
+msgid "``TokenBigramSplitSymbol``"
 msgstr ""
 
-msgid "TokenBigramSplitSymbolAlpha"
+# 0e9124a40083424087e3bbed974ff298
+# f1389b5c509a4a8a989e2b3ed9b23399
+msgid "``TokenBigramSplitSymbolAlpha``"
 msgstr ""
 
-msgid "TokenBigramSplitSymbolAlphaDigit"
+# 6012b5769c7b45ecac166c74c4509161
+# 12cfa5fc210e4c72a9bdc4a9f30d1b6e
+msgid "``TokenBigramSplitSymbolAlphaDigit``"
 msgstr ""
 
-msgid "TokenBigramIgnoreBlank"
+# bb0af3f99a37462eaabfa66590a875e2
+# 9c235f7d876a40a2aacef37181b75551
+msgid "``TokenBigramIgnoreBlank``"
 msgstr ""
 
-msgid "TokenBigramIgnoreBlankSplitSymbol"
+# dc98867f4100462897f73df584e69049
+# 2cbcda670ec94d189b30a2df3064d18c
+msgid "``TokenBigramIgnoreBlankSplitSymbol``"
 msgstr ""
 
-msgid "TokenBigramIgnoreBlankSplitAlpha"
+# 54bfe7c257c24f1bac4fc9cd886b98d8
+# 147a996fd8bb4a69a21a73b5642ece15
+msgid "``TokenBigramIgnoreBlankSplitAlpha``"
 msgstr ""
 
-msgid "TokenBigramIgnoreBlankSplitAlphaDigit"
+# 69b2c5c683ea42a096cbdd80cb9694a6
+# 25aa68507d324464be73ae64e9494cf7
+msgid "``TokenBigramIgnoreBlankSplitAlphaDigit``"
 msgstr ""
 
-msgid "TokenDelimit"
+# 206ac20b6dc244318f32a9708ff8f19a
+# 7ae0fd1b8a9242c98252efba61a00c1a
+msgid "``TokenUnigram``"
 msgstr ""
 
-msgid "TokenDelimitNull"
+# 27e47d2f83e84722af4fb07b265f1adc
+# ae4fc190b622481e8954f271207719d4
+msgid "``TokenTrigram``"
 msgstr ""
 
-msgid "TokenTrigram"
+# 024e7346765845b69b4729b9c5cf5dae
+# 058390bfda6f4c3389ae59d44516c44b
+msgid "``TokenDelimit``"
 msgstr ""
 
-msgid "TokenUnigram"
+# 9d0b0283bbd54c6c8104548171fa1b64
+# 0461dcf7fdd24be995b94db1c163292b
+msgid "``TokenDelimitNull``"
 msgstr ""
 
-# 263dee6ee018442495675c67244a2b59
-msgid "TokenMecab"
+# e4ba73f0bcf548edbb8eaddb6ca1a994
+# c0b119a40d9d41de9e32aacc1447892b
+msgid "``TokenMecab``"
 msgstr ""
+
+# e59bda32e8a14ba5bacc3bcc79609aac
+# db59397ea7784fe794a624e6d7b15482
+msgid "``TokenRegexp``"
+msgstr ""
+
+# b88d2ed4c89540fd9d656cfcdd3bc3c8
+msgid ""
+"``TokenBigram`` is a bigram based tokenizer. It's recommended to use this "
+"tokenizer for most cases."
+msgstr ""
+"``TokenBigram`` はバイグラムベースのトークナイザーです。多くのケースでは、こ"
+"のトークナイザーを使うことをオススメします。"
+
+# 87e2a00567a94f85adeafbb4ce11d94e
+msgid ""
+"Bigram tokenize method tokenizes a text to two adjacent characters tokens. "
+"For example, ``Hello`` is tokenized to the following tokens:"
+msgstr ""
+"バイグラムというトークナイズ方法は、隣り合った2つの文字を1つのトークンとして"
+"テキストをトークナイズします。例えば、 ``Hello`` は次のトークンにトークナイズ"
+"します。"
+
+# 6b7275236b6f4b6f9e16828219b46989
+msgid ""
+"Bigram tokenize method is good for recall because you can find all texts by "
+"query consists of two or more characters."
+msgstr ""
+"バイグラムというトークナイズ方法は再現性に優れています。なぜなら、2文字以上の"
+"文字のクエリーに対してはすべてのテキストを見つけることができるからです。"
+
+# 5dd553ba22eb47cdb66f071d87f18648
+msgid ""
+"In general, you can't find all texts by query consists of one character "
+"because one character token doesn't exist. But you can find all texts by "
+"query consists of one character in Groonga. Because Groonga find tokens that "
+"start with query by predictive search. For example, Groonga can find ``ll`` "
+"and ``lo`` tokens by ``l`` query."
+msgstr ""
+"一般的に、1文字のクエリーではすべてのテキストを見つけることはできません。なぜ"
+"なら、1つの文字のトークンが存在しないからです。しかし、Groongaでは1文字のクエ"
+"リーでもすべてのテキストを見つけることができます。なぜなら、Groongaは前方一致"
+"検索によりクエリーで指定した文字で始まるトークンをすべて見つけることができる"
+"からです。例えば、Groongaは ``l`` というクエリーから ``ll`` というトークンと "
+"``lo`` というトークンを見つけることができます。"
+
+# 52e2b82bbbfb4401a7d58b1d19dd9138
+msgid ""
+"Bigram tokenize method isn't good for precision because you can find texts "
+"that includes query in word. For example, you can find ``world`` by ``or``. "
+"This is more sensitive for ASCII only languages rather than non-ASCII "
+"languages. ``TokenBigram`` has solution for this problem described in the "
+"bellow."
+msgstr ""
+"バイグラムというトークナイズ方法は適合率はそれほど優れていません。なぜなら、"
+"単語の一部にクエリーが含まれていればすべてのテキストが見つかってしまうからで"
+"す。例えば、 ``or`` で ``world`` が見つかります。これは非ASCIIを使う言語より"
+"ASCIIのみを使う言語で顕著です。以降の説明で触れる通り、 ``TokenBigram`` はこ"
+"の問題を解決しています。"
+
+# 15632a52d1d64313ae46f38e384c9e1f
+msgid ""
+"``TokenBigram`` behavior is different when it's worked with any :doc:/"
+"reference/normalizers ."
+msgstr ""
+"``TokenBigram`` の挙動は :doc:/reference/normalizers を使うかどうかで変わりま"
+"す。"
+
+# f20ee8155a874b289cfec1ac55ede3a7
+msgid ""
+"If no normalizer is used, ``TokenBigram`` uses pure bigram (all tokens "
+"except the last token have two characters) tokenize method:"
+msgstr ""
+"ノーマライザーを使っていない場合は ``TokenBigram`` は純粋なバイグラム（最後の"
+"トークンをのぞいてすべてのトークンを2文字にする）のトークナイズ方法を使いま"
+"す。"
+
+# 6b692dc8989c4a6a92c766fd220208d9
+msgid ""
+"If normalizer is used, ``TokenBigram`` uses white-space-separate like "
+"tokenize method for ASCII characters. ``TokenBigram`` uses bigram tokenize "
+"method for non-ASCII characters."
+msgstr ""
+"ノーマライザーを使っている場合は ``TokenBigram`` はASCIIの文字には空白区切り"
+"のようなトークナイズ方法を使います。非ASCII文字にはバイグラムのトークナイズ方"
+"法を使います。"
+
+# 3f26c460089b4b70b08700059c110eaa
+msgid ""
+"You may be confused with this combined behavior. But it's reasonable for "
+"most use cases such as English text (only ASCII characters) and Japanese "
+"text (ASCII and non-ASCII characters are mixed)."
+msgstr ""
+"もしかしたら、複数の方法が混ざったこの挙動はわかりにくいかもしれません。しか"
+"し、英語のテキスト（ASCII文字列のみ）や日本語テキスト（ASCII文字列と非ASCII文"
+"字列が混ざっている）ような多くのユースケースでは合理的な方法です。"
+
+# bd338fd82e3547f6ac08c157084d283f
+msgid ""
+"Most languages consists of only ASCII characters use white-space for word "
+"separator. White-space-separate tokenize method is suitable for the case."
+msgstr ""
+"ASCII文字しか使わない多くの言語は単語の区切りに空白文字を使っています。このよ"
+"うなケースに空白区切りのトークナイズ方法は適切です。"
+
+# 50b4c96236094566a546f860373ab800
+msgid ""
+"Languages consists of non-ASCII characters don't use white-space for word "
+"separator. Bigram tokenize method is suitable for the case."
+msgstr ""
+"非ASCII文字を使う言語では単語の区切りに空白文字を使いません。このケースにはバ"
+"イグラムなトークナイズ方法は適切です。"
+
+# dfa5675000474a4caacda577da6a825f
+msgid "Mixed tokenize method is suitable for mixed language case."
+msgstr ""
+"複数の言語が混ざっている場合は、複数の方法を組み合わせたトークナイズ方法が適"
+"切です。"
+
+msgid ""
+"If you want to use bigram tokenize method for ASCII character, see "
+"``TokenBigramSplitXXX`` type tokenizers such as :ref:`token-bigram-split-"
+"symbol-alpha`."
+msgstr ""
+"ASCII文字にバイグラムなトークナイズ方法を使いたい場合は :ref:`token-bigram-"
+"split-symbol-alpha` のような ``TokenBigramSplitXXX`` というトークナイザーを参"
+"照してください。"
+
+# 970fbccb033c426eb01ed2c975616fa2
+msgid "Let's confirm ``TokenBigram`` behavior by example."
+msgstr "例を使いながら ``TokenBigram`` の挙動を確認しましょう。"
+
+# 8bf81ebae1a646bab93c0931e0abdf6a
+msgid ""
+"``TokenBigram`` uses one or more white-spaces as token delimiter for ASCII "
+"characters:"
+msgstr ""
+"``TokenBigram`` はASCII文字には1つ以上の空白文字をトークンの区切りとして使い"
+"ます。"
+
+# d31985ae36d240288c84d7314b7a63cc
+msgid ""
+"``TokenBigram`` uses character type change as token delimiter for ASCII "
+"characters. Character type is one of them:"
+msgstr ""
+"``TokenBigram`` はASCII文字には文字の種類が変わったところをトークンの区切りと"
+"します。文字の種類は次のどれかです。"
+
+# d163fb68506e454186cc06e9584d8d1f
+msgid "Alphabet"
+msgstr "アルファベット"
+
+# d2a82e2e15cd43c1b323dd247af34986
+msgid "Digit"
+msgstr "数字"
+
+# dfe6976a063841be83cc2a8f07e1b2f5
+msgid "Symbol (such as ``(``, ``)`` and ``!``)"
+msgstr "記号（たとえば ``(`` 、 ``)`` 、 ``!`` など）"
+
+# bab771f2b4194bdba3bbe65ae107d0f1
+msgid "Hiragana"
+msgstr "ひらがな"
+
+# 5df61ff6461246549bf00ba2ca07bf32
+msgid "Katakana"
+msgstr "カタカナ"
+
+# 405b1fc94e9e4dc5940874f3196a52ee
+msgid "Kanji"
+msgstr "漢字"
+
+# 57152425619b4241b4ec7de909edcf40
+msgid "Others"
+msgstr "その他"
+
+# 58516723b1054a65898d08bd25ed9a4d
+msgid "The following example shows two token delimiters:"
+msgstr "次の例は2つのトークン区切りを示しています。"
+
+# a551b032f8874a219a77d803ea0dad2d
+msgid "at between ``100`` (digits) and ``cents`` (alphabets)"
+msgstr "``100`` （数字）と ``cents`` （アルファベット）の間のところ"
+
+# 816d6802ed5049c2a42f0d9ff663baaa
+msgid "at between ``cents`` (alphabets) and ``!!!`` (symbols)"
+msgstr "``cents`` （アルファベット）と ``!!!`` （記号）の間のところ"
+
+msgid ""
+"Here is an example that ``TokenBigram`` uses bigram tokenize method for non-"
+"ASCII characters."
+msgstr ""
+"以下は ``TokenBigram`` が非ASCII文字にはトークナイズ方法としてバイグラムを使"
+"う例です。"
+
+# ff538750cc8046afbebe098ea5711254
+msgid ""
+"``TokenBigramSplitSymbol`` is similar to :ref:`token-bigram`. The difference "
+"between them is symbol handling. ``TokenBigramSplitSymbol`` tokenizes "
+"symbols by bigram tokenize method:"
+msgstr ""
+"``TokenBigramSplitSymbol`` は :ref:`token-bigram` と似ています。違いは記号の"
+"扱いです。 ``TokenBigramSplitSymbol`` は記号のトークナイズ方法にバイグラムを"
+"使います。"
+
+# d5a9f695a1dd400ebc7077f1da66c137
+msgid ""
+"``TokenBigramSplitSymbolAlpha`` is similar to :ref:`token-bigram`. The "
+"difference between them is symbol and alphabet handling. "
+"``TokenBigramSplitSymbolAlpha`` tokenizes symbols and alphabets by bigram "
+"tokenize method:"
+msgstr ""
+"``TokenBigramSplitSymbolAlpha`` は :ref:`token-bigram` と似ています。違いは記"
+"号とアルファベットの扱いです。 ``TokenBigramSplitSymbolAlpha`` は記号とアル"
+"ファベットのトークナイズ方法にバイグラムを使います。"
+
+# d30d95d4a91b42bda0759f7d7e5e9d33
+msgid ""
+"``TokenBigramSplitSymbolAlphaDigit`` is similar to :ref:`token-bigram`. The "
+"difference between them is symbol, alphabet and digit handling. "
+"``TokenBigramSplitSymbolAlphaDigit`` tokenizes symbols, alphabets and digits "
+"by bigram tokenize method. It means that all characters are tokenized by "
+"bigram tokenize method:"
+msgstr ""
+"``TokenBigramSplitSymbolAlphaDigit`` は :ref:`token-bigram` と似ています。違"
+"いは記号とアルファベットと数字の扱いです。 "
+"``TokenBigramSplitSymbolAlphaDigit`` は記号とアルファベット数字のトークナイズ"
+"方法にバイグラムを使います。つまり、すべての文字をバイグラムでトークナイズし"
+"ます。"
+
+# a02d3a3273ee4bed929e608986fc4cfa
+msgid ""
+"``TokenBigramIgnoreBlank`` is similar to :ref:`token-bigram`. The difference "
+"between them is blank handling. ``TokenBigramIgnoreBlank`` ignores white-"
+"spaces in continuous symbols and non-ASCII characters."
+msgstr ""
+"``TokenBigramIgnoreBlank`` は :ref:`token-bigram` と似ています。違いは空白文"
+"字の扱いです。 ``TokenBigramIgnoreBlank`` は連続する記号と非ASCII文字の間にあ"
+"る空白文字を無視します。"
+
+# 3cc8fd16db7b4d14b2a36f8cd856d88d
+# c92e26d5c5db49d384b7df8d75c19377
+msgid ""
+"You can find difference of them by ``日 本 語 ! ! !`` text because it has "
+"symbols and non-ASCII characters."
+msgstr ""
+"``日 本 語 ! ! !`` というテキストを使うと違いがわかります。なぜならこのテキス"
+"トは記号と非ASCII文字を両方含んでいるからです。"
+
+# 8ea0c9cdaa0042938c7898babb3dca6f
+# 861f89a31c2f4b31bfb48d84f9bfb0e4
+# 34210edac0c94889a03c76b44e8b5cc0
+# ebde3ad90c794f3f8469f1fcf685eda1
+msgid "Here is a result by :ref:`token-bigram` :"
+msgstr ":ref:`token-bigram` での実行結果です。"
+
+# 0e659e693a9d460cba9f72e6aa6a3b50
+msgid "Here is a result by ``TokenBigramIgnoreBlank``:"
+msgstr "``TokenBigramIgnoreBlank`` での実行結果です。"
+
+# 251dd2898d4c4bba83bb1136c3ce4526
+msgid ""
+"``TokenBigramIgnoreBlankSplitSymbol`` is similar to :ref:`token-bigram`. The "
+"differences between them are the followings:"
+msgstr ""
+"``TokenBigramIgnoreBlankSplitSymbol`` は :ref:`token-bigram` と似ています。違"
+"いは次の通りです。"
+
+# a5037a53c36540e69aa20acd69240d45
+# bbc5bae77572401bb1a4449293a77faf
+# c9cf625953834466bdebf928da853ad5
+msgid "Blank handling"
+msgstr "空白文字の扱い"
+
+# 7aabf97ab18448bf92ce2b98145955cd
+msgid "Symbol handling"
+msgstr "記号の扱い"
+
+# b9913ae4b73b4c5a8facb62cd58b7ecf
+msgid ""
+"``TokenBigramIgnoreBlankSplitSymbol`` ignores white-spaces in continuous "
+"symbols and non-ASCII characters."
+msgstr ""
+"``TokenBigramIgnoreBlankSplitSymbol`` は連続した記号と非ASCII文字の間の空白文"
+"字を無視します。"
+
+# f8ed0ce72e5e48b588d2d32606808e43
+msgid ""
+"``TokenBigramIgnoreBlankSplitSymbol`` tokenizes symbols by bigram tokenize "
+"method."
+msgstr ""
+"``TokenBigramIgnoreBlankSplitSymbol`` は記号をバイグラムでトークナイズしま"
+"す。"
+
+# b81d5afa88e344b4a9ac87d181fab2c6
+msgid "Here is a result by ``TokenBigramIgnoreBlankSplitSymbol``:"
+msgstr "``TokenBigramIgnoreBlankSplitSymbol`` の実行結果です。"
+
+# e9a5290f80184991b28afe58e5ae04e2
+msgid "``TokenBigramIgnoreBlankSplitSymbolAlpha``"
+msgstr ""
+
+# 55c1d6c4bdbc4fcc83a15ba9cb93eef7
+msgid ""
+"``TokenBigramIgnoreBlankSplitSymbolAlpha`` is similar to :ref:`token-"
+"bigram`. The differences between them are the followings:"
+msgstr ""
+"``TokenBigramIgnoreBlankSplitSymbolAlpha`` は :ref:`token-bigram` と似ていま"
+"す。違いは次の通りです。"
+
+# e847f789e70844bf94157ac3124ab14e
+msgid "Symbol and alphabet handling"
+msgstr "記号とアルファベットの扱い"
+
+# 71fba3a4fcf248dfb3642190a51151df
+msgid ""
+"``TokenBigramIgnoreBlankSplitSymbolAlpha`` ignores white-spaces in "
+"continuous symbols and non-ASCII characters."
+msgstr ""
+"``TokenBigramIgnoreBlankSplitSymbolAlpha`` は連続した記号と非ASCII文字の間の"
+"空白文字を無視します。"
+
+# b6d094efcc154a35ad7b67f9aae23add
+msgid ""
+"``TokenBigramIgnoreBlankSplitSymbolAlpha`` tokenizes symbols and alphabets "
+"by bigram tokenize method."
+msgstr ""
+"``TokenBigramIgnoreBlankSplitSymbolAlpha`` は記号とアルファベットをバイグラム"
+"でトークナイズします。"
+
+# 7aa65d7d4f7642b090d5deb9a80012fc
+msgid ""
+"You can find difference of them by ``Hello 日 本 語 ! ! !`` text because it "
+"has symbols and non-ASCII characters with white spaces and alphabets."
+msgstr ""
+"``Hello 日 本 語 ! ! !`` というテキストを使うと違いがわかります。なぜなら空白"
+"文字入りの記号と非ASCII文字だけでなく、アルファベットも含んでいるからです。"
+
+# 6d75c1792d99416d983cf2a46c67a24d
+msgid "Here is a result by ``TokenBigramIgnoreBlankSplitSymbolAlpha``:"
+msgstr "``TokenBigramIgnoreBlankSplitSymbolAlpha`` の実行結果です。"
+
+# bbb433d550a2487f8d57d96d16607873
+msgid "``TokenBigramIgnoreBlankSplitSymbolAlphaDigit``"
+msgstr ""
+
+# 4e4009d785d4452dbfc795e5a3214614
+msgid ""
+"``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` is similar to :ref:`token-"
+"bigram`. The differences between them are the followings:"
+msgstr ""
+"``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` は :ref:`token-bigram` と似て"
+"います。違いは次の通りです。"
+
+# e623390109044d3994d0d9c01ca32bd6
+msgid "Symbol, alphabet and digit handling"
+msgstr "記号とアルファベットと数字の扱い"
+
+# c05293d26aed4329b999b91942be5725
+msgid ""
+"``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` ignores white-spaces in "
+"continuous symbols and non-ASCII characters."
+msgstr ""
+"``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` は連続した記号と非ASCII文字の"
+"間の空白文字を無視します。"
+
+# c1d4a578aa9743e5897dfc6a0e704326
+msgid ""
+"``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` tokenizes symbols, alphabets "
+"and digits by bigram tokenize method. It means that all characters are "
+"tokenized by bigram tokenize method."
+msgstr ""
+"``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` は記号、アルファベット、数字"
+"をバイグラムでトークナイズします。つまり、すべての文字をバイグラムでトークナ"
+"イズします。"
+
+# 07031ca1239349a3a4c23c649bdce3dd
+msgid ""
+"You can find difference of them by ``Hello 日 本 語 ! ! ! 777`` text because "
+"it has symbols and non-ASCII characters with white spaces, alphabets and "
+"digits."
+msgstr ""
+"``Hello 日 本 語 ! ! ! 777`` というテキストを使うと違いがわかります。なぜな"
+"ら、このテキストは空白文字入りの記号と非ASCII文字だけでなく、アルファベットと"
+"数字も含んでいるからです。"
+
+# 5df41e25df3a42e487ddc5d51ae87edc
+msgid "Here is a result by ``TokenBigramIgnoreBlankSplitSymbolAlphaDigit``:"
+msgstr "``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` の実行結果です。"
+
+# ea6e6da188144ecb8626e859cbaf9662
+msgid ""
+"``TokenUnigram`` is similar to :ref:`token-bigram`. The differences between "
+"them is token unit. :ref:`token-bigram` uses 2 characters per token. "
+"``TokenUnigram`` uses 1 character per token."
+msgstr ""
+"``TokenUnigram`` は :ref:`token-bigram` に似ています。違いはトークンの単位で"
+"す。 :ref:`token-bigram` は各トークンが2文字ですが、 ``TokenUnigram`` は各"
+"トークンが1文字です。"
+
+# d2323e4f6a7742778dda7f1e8597f03b
+msgid ""
+"``TokenTrigram`` is similar to :ref:`token-bigram`. The differences between "
+"them is token unit. :ref:`token-bigram` uses 2 characters per token. "
+"``TokenTrigram`` uses 3 characters per token."
+msgstr ""
+"``TokenTrigram`` は :ref:`token-bigram` に似ています。違いはトークンの単位で"
+"す。 :ref:`token-bigram` は各トークンが2文字ですが、 ``TokenTrigram`` は各"
+"トークンが3文字です。"
+
+# d9cc7cc9a6d34d76a0d692a59d3fff73
+msgid ""
+"``TokenDelimit`` extracts token by splitting one or more space characters "
+"(``U+0020``). For example, ``Hello World`` is tokenized to ``Hello`` and "
+"``World``."
+msgstr ""
+"``TokenDelimit`` は1つ以上の空白文字（ ``U+0020`` ）で分割してトークンを抽出"
+"します。たとえば、 ``Hello World`` は ``Hello`` と ``World`` にトークナイズさ"
+"れます。"
+
+# b52b5ad4f5654046a920aff87d114f2f
+msgid ""
+"``TokenDelimit`` is suitable for tag text. You can extract ``groonga`` and "
+"``full-text-search`` and ``http`` as tags from ``groonga full-text-search "
+"http``."
+msgstr ""
+"``TokenDelimit`` はタグテキストに適切です。 ``groonga full-text-search "
+"http`` というテキストから ``groonga`` 、 ``full-text-search`` 、 ``http`` を"
+"抽出します。"
+
+msgid "Here is an example of ``TokenDelimit``:"
+msgstr "以下は ``TokenDelimit`` の例です。"
+
+# c77116e234764f0d8a2ca39256b93892
+msgid ""
+"``TokenDelimitNull`` is similar to :ref:`token-delimit`. The difference "
+"between them is separator character. :ref:`token-delimit` uses space "
+"character (``U+0020``) but ``TokenDelimitNull`` uses NUL character (``U"
+"+0000``)."
+msgstr ""
+"``TokenDelimitNull`` は :ref:`token-delimit` に似ています。違いは区切り文字で"
+"す。 :ref:`token-delimit` は空白文字（ ``U+0020`` ）を使いますが、 "
+"``TokenDelimitNull`` はNUL文字（ ``U+0000`` ）を使います。"
+
+# a4b09a50b87f431b81ad813bba2653ad
+msgid "``TokenDelimitNull`` is also suitable for tag text."
+msgstr "``TokenDelimitNull`` もタグテキストに適切です。"
+
+msgid "Here is an example of ``TokenDelimitNull``:"
+msgstr "以下は ``TokenDelimitNull`` の例です。"
+
+# d284c9ef27724fe9aa92077fa0c77740
+msgid ""
+"``TokenMecab`` is a tokenizer based on `MeCab <http://mecab.sourceforge.net/"
+">`_ part-of-speech and morphological analyzer."
+msgstr ""
+"``TokenMecab`` は `MeCab <http://mecab.sourceforge.net/>`_ 形態素解析器をベー"
+"スにしたトークナイザーです。"
+
+# d91e6a63165d4e48842c4c1bf2410e0e
+msgid ""
+"MeCab doesn't depend on Japanese. You can use MeCab for other languages by "
+"creating dictionary for the languages. You can use `NAIST Japanese "
+"Dictionary <http://sourceforge.jp/projects/naist-jdic/>`_ for Japanese."
+msgstr ""
+"MeCabは日本語に依存していません。その言語用の辞書を用意すれば日本語以外でも"
+"MeCabを使えます。日本語用の辞書には `NAIST Japanese Dictionary <http://"
+"sourceforge.jp/projects/naist-jdic/>`_ を使えます。"
+
+# 3798fad7a7c845b2bd7eaa60083cf7b3
+msgid ""
+"``TokenMecab`` is good for precision rather than recall. You can find ``東京"
+"都`` and ``京都`` texts by ``京都`` query with :ref:`token-bigram` but ``東京"
+"都`` isn't expected. You can find only ``京都`` text by ``京都`` query with "
+"``TokenMecab``."
+msgstr ""
+"``TokenMecab`` は再現率より適合率に優れています。 :ref:`token-bigram` では ``"
+"京都`` というクエリーで ``東京都`` も ``京都`` も見つかりますが、この場合は "
+"``東京都`` は期待した結果ではありません。 ``TokenMecab`` を使うと ``京都`` と"
+"いうクエリーで ``京都`` だけを見つけられます。"
+
+# b4e5a8f3f9b7467a94e2dff6369fc778
+msgid ""
+"If you want to support neologisms, you need to keep updating your MeCab "
+"dictionary. It needs maintain cost. (:ref:`token-bigram` doesn't require "
+"dictionary maintenance because :ref:`token-bigram` doesn't use dictionary.) "
+"`mecab-ipadic-NEologd : Neologism dictionary for MeCab <https://github.com/"
+"neologd/mecab-ipadic-neologd>`_ may help you."
+msgstr ""
+"新語をサポートしたい場合は、MeCabの辞書を更新し続ける筆意用があります。これは"
+"メンテナンスコストがかかります。（ :ref:`token-bigram` には辞書のメンテナンス"
+"コストはありません。なぜなら、 :ref:`token-bigram` は辞書を使っていないからで"
+"す。）新語への対応に `mecab-ipadic-NEologd : Neologism dictionary for MeCab "
+"<https://github.com/neologd/mecab-ipadic-neologd>`_ が役に立つかもしれませ"
+"ん。"
+
+# 2c513f7f634c45f491ff3f5a33397b1c
+msgid ""
+"Here is an example of ``TokenMeCab``. ``東京都`` is tokenized to ``東京`` "
+"and ``都``. They don't include ``京都``:"
+msgstr ""
+"以下は ``TokenMeCab`` の例です。 ``東京都`` は ``東京`` と ``都`` にトークナ"
+"イズされています。 ``京都`` というトークンはありません。"
+
+msgid "This tokenizer is experimental. Specification may be changed."
+msgstr "このトークナイザーは実験的です。仕様が変わる可能性があります。"
+
+# c2238d906c194589a05ae3bb6456c1af
+msgid ""
+"This tokenizer can be used only with UTF-8. You can't use this tokenizer "
+"with EUC-JP, Shift_JIS and so on."
+msgstr ""
+"このトークナイザーはUTF-8でしか使えません。EUC-JPやShift_JISなどと一緒には使"
+"えません。"
+
+# ea35c956dc054aa998cc4ada9bb48511
+msgid ""
+"``TokenRegexp`` is a tokenizer for supporting regular expression search by "
+"index."
+msgstr ""
+"``TokenRegexp`` はインデックスを使った正規表現検索をサポートするトークナイ"
+"ザーです。"
+
+# 246b6472a85f4c63a8053a110a0ce45b
+msgid ""
+"In general, regular expression search is evaluated as sequential search. But "
+"the following cases can be evaluated as index search:"
+msgstr ""
+"一般的に、正規表現検索は逐次検索で実行します。しかし、次のケースはインデック"
+"スを使って検索できます。"
+
+# 431228f276264bb8a7ba202e6c8f2902
+msgid "Literal only case such as ``hello``"
+msgstr "``hello`` のようにリテラルしかないケース"
+
+# 76790620652c4dbea2d133b27efae9c0
+msgid "The beginning of text and literal case such as ``\\\\A/home/alice``"
+msgstr ""
+"``\\\\A/home/alice`` のようにテキストの最初でのマッチとリテラルのみのケース"
+
+# 25d9e8cdaba945a19fcbc010c62f887f
+msgid "The end of text and literal case such as ``\\\\.txt\\\\z``"
+msgstr ""
+"``\\\\.txt\\\\z`` のようにテキストの最後でのマッチとリテラルのみのケース"
+
+# 62b97ef76dba4bdcb0ca8fa6d912e041
+msgid "In most cases, index search is faster than sequential search."
+msgstr ""
+"多くのケースでは、逐次検索よりもインデックスを使った検索の方が高速です。"
+
+# e75485b0d89c4b3dafe273b1e4610580
+msgid ""
+"``TokenRegexp`` is based on bigram tokenize method. ``TokenRegexp`` adds the "
+"beginning of text mark (``U+FFEF``) at the begging of text and the end of "
+"text mark (``U+FFF0``) to the end of text when you index text:"
+msgstr ""
+"``TokenRegexp`` はベースはバイグラムを使います。 ``TokenRegexp`` は、インデッ"
+"クス時に、テキストの先頭にテキストの先頭であるというマーク（ ``U+FFEF`` ）を"
+"入れ、テキストの最後にテキストの最後であるというマーク（ ``U+FFF0`` ）を入れ"
+"ます。"
+
+# 3fd096f4ca0546478dc4e6d6f2c18a70
+msgid ""
+"The beginning of text mark is used for the beginning of text search by ``\\"
+"\\A``. If you use ``TokenRegexp`` for tokenizing query, ``TokenRegexp`` adds "
+"the beginning of text mark (``U+FFEF``) as the first token. The beginning of "
+"text mark must be appeared at the first, you can get results of the "
+"beginning of text search."
+msgstr ""
+"``\\\\A`` で検索したとき、テキストの先頭であるというマークを使います。クエ"
+"リーをトークナイズするために ``TokenRegexp`` を使うときは、 ``TokenRegexp`` "
+"は最初のトークンとしてテキストの先頭であるというマーク（ ``U+FFEF`` ）を追加"
+"します。テキストの先頭であるというマークは先頭にしか存在しないはずなので、テ"
+"キストの先頭であるという検索結果を得ることができます。"
+
+# d83dc0889fe240d0824e46814d5ef547
+msgid ""
+"The end of text mark is used for the end of text search by ``\\\\z``. If you "
+"use ``TokenRegexp`` for tokenizing query, ``TokenRegexp`` adds the end of "
+"text mark (``U+FFF0``) as the last token. The end of text mark must be "
+"appeared at the end, you can get results of the end of text search."
+msgstr ""
+"``\\\\z`` で検索したとき、テキストの最後であるというマークを使います。クエ"
+"リーをトークナイズするために ``TokenRegexp`` を使うときは、 ``TokenRegexp`` "
+"は最後のトークンとしてテキストの最後であるというマーク（ ``U+FFF0`` ）を追加"
+"します。テキストの最後であるというマークは最後にしか存在しないはずなので、テ"
+"キストの最後であるという検索結果を得ることができます。"
 
 msgid "Tuning"
 msgstr ""
