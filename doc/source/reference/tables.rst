@@ -69,6 +69,8 @@ prefix is omitted in the table.)
 | search       |            |              |             |             |
 +--------------+------------+--------------+-------------+-------------+
 
+.. _token-no-key
+
 ``TABLE_NO_KEY``
 ^^^^^^^^^^^^^^^^
 
@@ -79,6 +81,8 @@ You cannot use ``TABLE_NO_KEY`` for lexicon for fulltext search
 because lexicon stores tokens as key. ``TABLE_NO_KEY`` is useful for
 no key records such as log.
 
+.. _token-hash-key
+
 ``TABLE_HASH_KEY``
 ^^^^^^^^^^^^^^^^^^
 
@@ -88,6 +92,8 @@ functions such as common prefix search and predictive search.
 ``TABLE_HASH_KEY`` is useful for index for exact search such as tag
 search.
 
+.. _token-pat-key
+
 ``TABLE_PAT_KEY``
 ^^^^^^^^^^^^^^^^^
 
@@ -95,6 +101,8 @@ search.
 
 ``TABLE_PAT_KEY`` is useful for lexicon for fulltext search and
 index for range search.
+
+.. _token-dat-key
 
 ``TABLE_DAT_KEY``
 ^^^^^^^^^^^^^^^^^
