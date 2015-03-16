@@ -1,0 +1,100 @@
+Execution example::
+
+  tokenize TokenRegexp "/home/alice/test.txt" NormalizerAuto --mode ADD
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     {
+  #       "position": 0, 
+  #       "value": "￯"
+  #     }, 
+  #     {
+  #       "position": 1, 
+  #       "value": "/h"
+  #     }, 
+  #     {
+  #       "position": 2, 
+  #       "value": "ho"
+  #     }, 
+  #     {
+  #       "position": 3, 
+  #       "value": "om"
+  #     }, 
+  #     {
+  #       "position": 4, 
+  #       "value": "me"
+  #     }, 
+  #     {
+  #       "position": 5, 
+  #       "value": "e/"
+  #     }, 
+  #     {
+  #       "position": 6, 
+  #       "value": "/a"
+  #     }, 
+  #     {
+  #       "position": 7, 
+  #       "value": "al"
+  #     }, 
+  #     {
+  #       "position": 8, 
+  #       "value": "li"
+  #     }, 
+  #     {
+  #       "position": 9, 
+  #       "value": "ic"
+  #     }, 
+  #     {
+  #       "position": 10, 
+  #       "value": "ce"
+  #     }, 
+  #     {
+  #       "position": 11, 
+  #       "value": "e/"
+  #     }, 
+  #     {
+  #       "position": 12, 
+  #       "value": "/t"
+  #     }, 
+  #     {
+  #       "position": 13, 
+  #       "value": "te"
+  #     }, 
+  #     {
+  #       "position": 14, 
+  #       "value": "es"
+  #     }, 
+  #     {
+  #       "position": 15, 
+  #       "value": "st"
+  #     }, 
+  #     {
+  #       "position": 16, 
+  #       "value": "t."
+  #     }, 
+  #     {
+  #       "position": 17, 
+  #       "value": ".t"
+  #     }, 
+  #     {
+  #       "position": 18, 
+  #       "value": "tx"
+  #     }, 
+  #     {
+  #       "position": 19, 
+  #       "value": "xt"
+  #     }, 
+  #     {
+  #       "position": 20, 
+  #       "value": "t"
+  #     }, 
+  #     {
+  #       "position": 21, 
+  #       "value": "￰"
+  #     }
+  #   ]
+  # ]

@@ -413,15 +413,69 @@ token. ``TokenTrigram`` uses 3 characters per token.
 ``TokenDelimit``
 ^^^^^^^^^^^^^^^^
 
+``TokenDelimit`` extracts token by splitting one or more space
+characters (``U+0020``). For example, ``Hello World`` is tokenized to
+``Hello`` and ``World``.
+
+``TokenDelimit`` is suitable for tag text. You can extract ``groonga``
+and ``full-text-search`` and ``http`` as tags from ``groonga
+full-text-search http``.
+
+Here is an example of ``TokenDelimit``:
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-delimit.log
+.. tokenize TokenDelimit "Groonga full-text-search HTTP" NormalizerAuto
+
 .. _token-delimit-null:
 
 ``TokenDelimitNull``
 ^^^^^^^^^^^^^^^^^^^^
 
+``TokenDelimitNull`` is similar to :ref:`token-delimit`. The
+difference between them is separator character. :ref:`token-delimit`
+uses space character (``U+0020``) but ``TokenDelimitNull`` uses NUL
+character (``U+0000``).
+
+``TokenDelimitNull`` is also suitable for tag text.
+
+Here is an example of ``TokenDelimitNull``:
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-delimit-null.log
+.. tokenize TokenDelimitNull "Groonga\u0000full-text-search\u0000HTTP" NormalizerAuto
+
 .. _token-mecab:
 
 ``TokenMecab``
 ^^^^^^^^^^^^^^
+
+``TokenMecab`` is a tokenizer based on `MeCab
+<http://mecab.sourceforge.net/>`_ part-of-speech and
+morphological analyzer.
+
+MeCab doesn't depend on Japanese. You can use MeCab for other
+languages by creating dictionary for the languages. You can use `NAIST
+Japanese Dictionary <http://sourceforge.jp/projects/naist-jdic/>`_
+for Japanese.
+
+``TokenMecab`` is good for precision rather than recall. You can find
+``東京都`` and ``京都`` texts by ``京都`` query with
+:ref:`token-bigram` but ``東京都`` isn't expected. You can find only
+``京都`` text by ``京都`` query with ``TokenMecab``.
+
+If you want to support neologisms, you need to keep updating your
+MeCab dictionary. It needs maintain cost. (:ref:`token-bigrma` doesn't
+require dictionary maintenance because :ref:`token-bigram` doesn't use
+dictionary.) `mecab-ipadic-NEologd : Neologism dictionary for MeCab
+<https://github.com/neologd/mecab-ipadic-neologd>`_ may help you.
+
+Here is an example of ``TokenMeCab``. ``東京都`` is tokenized to ``東
+京`` and ``都``. They don't include ``京都``:
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-mecab.log
+.. tokenize TokenMecab "東京都"
 
 .. _token-regexp:
 
@@ -433,3 +487,50 @@ token. ``TokenTrigram`` uses 3 characters per token.
 .. caution::
 
    This tokenizer is experimental. Specification may be changed.
+
+.. caution::
+
+   This tokenizer can be used only with UTF-8. You can't use this
+   tokenizer with EUC-JP, Shift_JIS and so on.
+
+``TokenRegexp`` is a tokenizer for supporting subset of regular
+expression search by index.
+
+In general, regular expression search is evaluated as sequential
+search. But the following cases can be evaluated as index search:
+
+  * Literal only case such as ``hello``
+  * The beginning of text and literal case such as ``\\A/home/alice``
+  * The end of text and literal case such as ``\\.txt\\z``
+
+In most cases, index search is faster than sequential search.
+
+``TokenRegexp`` is based on bigram tokenize method. ``TokenRegexp``
+adds the beginning of text mark (``U+FFEF``) at the begging of text
+and the end of text mark (``U+FFF0``) to the end of text when you
+index text:
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-regexp-add.log
+.. tokenize TokenRegexp "/home/alice/test.txt" NormalizerAuto --mode ADD
+
+The beginning of text mark is used for the beginning of text search by
+``\\A``. If you use ``TokenRegexp`` for tokenizing query,
+``TokenRegexp`` adds the beginning of text mark (``U+FFEF``) as the
+first token. The beginning of text mark must be appeared at the first,
+you can get results of the beginning of text search.
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-regexp-get-beginning-of-text.log
+.. tokenize TokenRegexp "\\A/home/alice/" NormalizerAuto --mode GET
+
+The end of text mark is used for the end of text search by ``\\z``.
+If you use ``TokenRegexp`` for tokenizing query, ``TokenRegexp`` adds
+the end of text mark (``U+FFF0``) as the last token. The end of text
+mark must be appeared at the end, you can get results of the end of
+text search.
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-regexp-get-end-of-text.log
+.. tokenize TokenRegexp "\\.txt\\z" NormalizerAuto --mode GET
+
