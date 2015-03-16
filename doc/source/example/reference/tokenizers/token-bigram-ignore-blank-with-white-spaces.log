@@ -1,0 +1,28 @@
+Execution example::
+
+  tokenize TokenBigramIgnoreBlank "日 本 語 ! ! !" NormalizerAuto
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     {
+  #       "position": 0, 
+  #       "value": "日本"
+  #     }, 
+  #     {
+  #       "position": 1, 
+  #       "value": "本語"
+  #     }, 
+  #     {
+  #       "position": 2, 
+  #       "value": "語"
+  #     }, 
+  #     {
+  #       "position": 3, 
+  #       "value": "!!!"
+  #     }
+  #   ]
+  # ]

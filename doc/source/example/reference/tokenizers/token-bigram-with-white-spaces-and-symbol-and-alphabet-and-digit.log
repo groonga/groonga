@@ -1,0 +1,44 @@
+Execution example::
+
+  tokenize TokenBigram "Hello 日 本 語 ! ! ! 777" NormalizerAuto
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     {
+  #       "position": 0, 
+  #       "value": "hello"
+  #     }, 
+  #     {
+  #       "position": 1, 
+  #       "value": "日"
+  #     }, 
+  #     {
+  #       "position": 2, 
+  #       "value": "本"
+  #     }, 
+  #     {
+  #       "position": 3, 
+  #       "value": "語"
+  #     }, 
+  #     {
+  #       "position": 4, 
+  #       "value": "!"
+  #     }, 
+  #     {
+  #       "position": 5, 
+  #       "value": "!"
+  #     }, 
+  #     {
+  #       "position": 6, 
+  #       "value": "!"
+  #     }, 
+  #     {
+  #       "position": 7, 
+  #       "value": "777"
+  #     }
+  #   ]
+  # ]

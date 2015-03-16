@@ -115,10 +115,10 @@ Here is a list of built-in tokenizers:
   * ``TokenBigramIgnoreBlankSplitSymbol``
   * ``TokenBigramIgnoreBlankSplitAlpha``
   * ``TokenBigramIgnoreBlankSplitAlphaDigit``
+  * ``TokenUnigram``
+  * ``TokenTrigram``
   * ``TokenDelimit``
   * ``TokenDelimitNull``
-  * ``TokenTrigram``
-  * ``TokenUnigram``
   * ``TokenMecab``
   * ``TokenRegexp``
 
@@ -129,6 +129,29 @@ Here is a list of built-in tokenizers:
 
 ``TokenBigram`` is a bigram based tokenizer. It's recommended to use
 this tokenizer for most cases.
+
+Bigram tokenize method tokenizes a text to two adjacent characters
+tokens. For example, ``Hello`` is tokenized to the following tokens:
+
+  * ``He``
+  * ``el``
+  * ``ll``
+  * ``lo``
+
+Bigram tokenize method is good for recall because you can find all
+texts by query consists of two or more characters.
+
+In general, you can't find all texts by query consists of one
+character because one character token doesn't exist. But you can find
+all texts by query consists of one character in Groonga. Because
+Groonga find tokens that start with query by predictive search. For
+example, Groonga can find ``ll`` and ``lo`` tokens by ``l`` query.
+
+Bigram tokenize method isn't good for precision because you can find
+texts that includes query in word. For example, you can find ``world``
+by ``or``. This is more sensitive for ASCII only languages rather than
+non-ASCII languages. ``TokenBigram`` has solution for this problem
+described in the bellow.
 
 ``TokenBigram`` behavior is different when it's worked with any
 :doc:/reference/normalizers .
@@ -202,35 +225,188 @@ for non-ASCII characters.
 ``TokenBigramSplitSymbol``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+``TokenBigramSplitSymbol`` is similar to :ref:`token-bigram`. The
+difference between them is symbol handling. ``TokenBigramSplitSymbol``
+tokenizes symbols by bigram tokenize method:
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-bigram-split-symbol-with-normalizer.log
+.. tokenize TokenBigramSplitSymbol "100cents!!!" NormalizerAuto
+
 .. _token-bigram-split-symbol-alpha
 
 ``TokenBigramSplitSymbolAlpha``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``TokenBigramSplitSymbolAlpha`` is similar to :ref:`token-bigram`. The
+difference between them is symbol and alphabet
+handling. ``TokenBigramSplitSymbolAlpha`` tokenizes symbols and
+alphabets by bigram tokenize method:
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-bigram-split-symbol-alpha-with-normalizer.log
+.. tokenize TokenBigramSplitSymbolAlpha "100cents!!!" NormalizerAuto
 
 .. _token-bigram-split-symbol-alpha-digit
 
 ``TokenBigramSplitSymbolAlphaDigit``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+``TokenBigramSplitSymbolAlphaDigit`` is similar to
+:ref:`token-bigram`. The difference between them is symbol, alphabet
+and digit handling. ``TokenBigramSplitSymbolAlphaDigit`` tokenizes
+symbols, alphabets and digits by bigram tokenize method:
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-bigram-split-symbol-alpha-digit-with-normalizer.log
+.. tokenize TokenBigramSplitSymbolAlphaDigit "100cents!!!" NormalizerAuto
+
 .. _token-bigramIgnoreBlank
 
 ``TokenBigramIgnoreBlank``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``TokenBigramIgnoreBlank`` is similar to :ref:`token-bigram`. The
+difference between them is blank handling. ``TokenBigramIgnoreBlank``
+ignores white-spaces in continuous symbols and non-ASCII characters.
+
+You can find difference of them by ``日 本 語 ! ! !`` text because it
+has symbols and non-ASCII characters.
+
+Here is a result by :ref:`token-bigram` :
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-bigram-with-white-spaces.log
+.. tokenize TokenBigram "日 本 語 ! ! !" NormalizerAuto
+
+Here is a result by ``TokenBigramIgnoreBlank``:
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-bigram-ignore-blank-with-white-spaces.log
+.. tokenize TokenBigramIgnoreBlank "日 本 語 ! ! !" NormalizerAuto
 
 .. _token-bigramIgnoreBlank-split-symbol
 
 ``TokenBigramIgnoreBlankSplitSymbol``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. _token-bigramIgnoreBlank-split-alpha
+``TokenBigramIgnoreBlankSplitSymbol`` is similar to
+:ref:`token-bigram`. The differences between them are the followings:
 
-``TokenBigramIgnoreBlankSplitAlpha``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  * Blank handling
+  * Symbol handling
 
-.. _token-bigramIgnoreBlank-split-alpha-digit
+``TokenBigramIgnoreBlankSplitSymbol`` ignores white-spaces in
+continuous symbols and non-ASCII characters.
 
-``TokenBigramIgnoreBlankSplitAlphaDigit``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``TokenBigramIgnoreBlankSplitSymbol`` tokenizes symbols by bigram
+tokenize method.
+
+You can find difference of them by ``日 本 語 ! ! !`` text because it
+has symbols and non-ASCII characters.
+
+Here is a result by :ref:`token-bigram` :
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-bigram-with-white-spaces-and-symbol.log
+.. tokenize TokenBigram "日 本 語 ! ! !" NormalizerAuto
+
+Here is a result by ``TokenBigramIgnoreBlankSplitSymbol``:
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-bigram-ignore-blank-split-symbol-with-white-spaces-and-symbol.log
+.. tokenize TokenBigramIgnoreBlankSplitSymbol "日 本 語 ! ! !" NormalizerAuto
+
+.. _token-bigramIgnoreBlank-split-symbol-alpha
+
+``TokenBigramIgnoreBlankSplitSymbolAlpha``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``TokenBigramIgnoreBlankSplitSymbolAlpha`` is similar to
+:ref:`token-bigram`. The differences between them are the followings:
+
+  * Blank handling
+  * Symbol and alphabet handling
+
+``TokenBigramIgnoreBlankSplitSymbolAlpha`` ignores white-spaces in
+continuous symbols and non-ASCII characters.
+
+``TokenBigramIgnoreBlankSplitSymbolAlpha`` tokenizes symbols and
+alphabets by bigram tokenize method.
+
+You can find difference of them by ``Hello 日 本 語 ! ! !`` text because it
+has symbols and non-ASCII characters with white spaces and alphabets.
+
+Here is a result by :ref:`token-bigram` :
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-bigram-with-white-spaces-and-symbol-and-alphabet.log
+.. tokenize TokenBigram "Hello 日 本 語 ! ! !" NormalizerAuto
+
+Here is a result by ``TokenBigramIgnoreBlankSplitSymbolAlpha``:
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-bigram-ignore-blank-split-symbol-with-white-spaces-and-symbol-and-alphabet.log
+.. tokenize TokenBigramIgnoreBlankSplitSymbolAlpha "Hello 日 本 語 ! ! !" NormalizerAuto
+
+.. _token-bigramIgnoreBlank-split-symbol-alpha-digit
+
+``TokenBigramIgnoreBlankSplitSymbolAlphaDigit``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` is similar to
+:ref:`token-bigram`. The differences between them are the followings:
+
+  * Blank handling
+  * Symbol, alphabet and digit handling
+
+``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` ignores white-spaces
+in continuous symbols and non-ASCII characters.
+
+``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` tokenizes symbols,
+alphabets and digits by bigram tokenize method.
+
+You can find difference of them by ``Hello 日 本 語 ! ! ! 777`` text
+because it has symbols and non-ASCII characters with white spaces,
+alphabets and digits.
+
+Here is a result by :ref:`token-bigram` :
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-bigram-with-white-spaces-and-symbol-and-alphabet-and-digit.log
+.. tokenize TokenBigram "Hello 日 本 語 ! ! ! 777" NormalizerAuto
+
+Here is a result by ``TokenBigramIgnoreBlankSplitSymbolAlphaDigit``:
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-bigram-ignore-blank-split-symbol-with-white-spaces-and-symbol-and-alphabet-digit.log
+.. tokenize TokenBigramIgnoreBlankSplitSymbolAlphaDigit "Hello 日 本 語 ! ! ! 777" NormalizerAuto
+
+.. _token-unigram
+
+``TokenUnigram``
+^^^^^^^^^^^^^^^^
+
+``TokenUnigram`` is similar to :ref:`token-bigram`. The differences
+between them is token unit. :ref:`token-bigram` uses 2 characters per
+token. ``TokenUnigram`` uses 1 character per token.
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-unigram.log
+.. tokenize TokenUnigram "100cents!!!" NormalizerAuto
+
+.. _token-trigram
+
+``TokenTrigram``
+^^^^^^^^^^^^^^^^
+
+``TokenTrigram`` is similar to :ref:`token-bigram`. The differences
+between them is token unit. :ref:`token-bigram` uses 2 characters per
+token. ``TokenTrigram`` uses 3 characters per token.
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-trigram.log
+.. tokenize TokenTrigram "10000cents!!!!!" NormalizerAuto
 
 .. _token-delimit
 
@@ -241,16 +417,6 @@ for non-ASCII characters.
 
 ``TokenDelimitNull``
 ^^^^^^^^^^^^^^^^^^^^
-
-.. _token-trigram
-
-``TokenTrigram``
-^^^^^^^^^^^^^^^^
-
-.. _token-unigram
-
-``TokenUnigram``
-^^^^^^^^^^^^^^^^
 
 .. _token-mecab
 

@@ -1,0 +1,56 @@
+Execution example::
+
+  tokenize TokenBigramIgnoreBlankSplitSymbolAlpha "Hello 日 本 語 ! ! !" NormalizerAuto
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     {
+  #       "position": 0, 
+  #       "value": "he"
+  #     }, 
+  #     {
+  #       "position": 1, 
+  #       "value": "el"
+  #     }, 
+  #     {
+  #       "position": 2, 
+  #       "value": "ll"
+  #     }, 
+  #     {
+  #       "position": 3, 
+  #       "value": "lo"
+  #     }, 
+  #     {
+  #       "position": 4, 
+  #       "value": "o日"
+  #     }, 
+  #     {
+  #       "position": 5, 
+  #       "value": "日本"
+  #     }, 
+  #     {
+  #       "position": 6, 
+  #       "value": "本語"
+  #     }, 
+  #     {
+  #       "position": 7, 
+  #       "value": "語!"
+  #     }, 
+  #     {
+  #       "position": 8, 
+  #       "value": "!!"
+  #     }, 
+  #     {
+  #       "position": 9, 
+  #       "value": "!!"
+  #     }, 
+  #     {
+  #       "position": 10, 
+  #       "value": "!"
+  #     }
+  #   ]
+  # ]
