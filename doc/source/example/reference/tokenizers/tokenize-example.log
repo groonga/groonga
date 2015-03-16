@@ -1,0 +1,56 @@
+Execution example::
+
+  tokenize TokenBigram "Hello World"
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     {
+  #       "position": 0, 
+  #       "value": "He"
+  #     }, 
+  #     {
+  #       "position": 1, 
+  #       "value": "el"
+  #     }, 
+  #     {
+  #       "position": 2, 
+  #       "value": "ll"
+  #     }, 
+  #     {
+  #       "position": 3, 
+  #       "value": "lo"
+  #     }, 
+  #     {
+  #       "position": 4, 
+  #       "value": "o "
+  #     }, 
+  #     {
+  #       "position": 5, 
+  #       "value": " W"
+  #     }, 
+  #     {
+  #       "position": 6, 
+  #       "value": "Wo"
+  #     }, 
+  #     {
+  #       "position": 7, 
+  #       "value": "or"
+  #     }, 
+  #     {
+  #       "position": 8, 
+  #       "value": "rl"
+  #     }, 
+  #     {
+  #       "position": 9, 
+  #       "value": "ld"
+  #     }, 
+  #     {
+  #       "position": 10, 
+  #       "value": "d"
+  #     }
+  #   ]
+  # ]
