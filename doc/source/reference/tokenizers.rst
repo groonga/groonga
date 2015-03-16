@@ -39,10 +39,10 @@ Normally, :ref:`token-bigram` is a suitable tokenizer. If you don't
 know much about tokenizer, it's recommended that you choose
 :ref:`token-bigram`.
 
-You can try a tokenizer by :doc:`/reference/commands/tokenize.rst` and
-:doc:`/reference/commands/table_tokenize.rst`. Here is an example to
+You can try a tokenizer by :doc:`/reference/commands/tokenize` and
+:doc:`/reference/commands/table_tokenize`. Here is an example to
 try :ref:`token-bigram` tokenizer by
-:doc:`/reference/commands/tokenize.rst`:
+:doc:`/reference/commands/tokenize`:
 
 .. groonga-command
 .. include:: ../example/reference/tokenizers/tokenize-example.log
@@ -154,7 +154,7 @@ non-ASCII languages. ``TokenBigram`` has solution for this problem
 described in the bellow.
 
 ``TokenBigram`` behavior is different when it's worked with any
-:doc:/reference/normalizers .
+:doc:`/reference/normalizers`.
 
 If no normalizer is used, ``TokenBigram`` uses pure bigram (all tokens
 except the last token have two characters) tokenize method:
@@ -255,7 +255,8 @@ alphabets by bigram tokenize method:
 ``TokenBigramSplitSymbolAlphaDigit`` is similar to
 :ref:`token-bigram`. The difference between them is symbol, alphabet
 and digit handling. ``TokenBigramSplitSymbolAlphaDigit`` tokenizes
-symbols, alphabets and digits by bigram tokenize method:
+symbols, alphabets and digits by bigram tokenize method. It means that
+all characters are tokenized by bigram tokenize method:
 
 .. groonga-command
 .. include:: ../example/reference/tokenizers/token-bigram-split-symbol-alpha-digit-with-normalizer.log
@@ -364,7 +365,8 @@ Here is a result by ``TokenBigramIgnoreBlankSplitSymbolAlpha``:
 in continuous symbols and non-ASCII characters.
 
 ``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` tokenizes symbols,
-alphabets and digits by bigram tokenize method.
+alphabets and digits by bigram tokenize method. It means that all
+characters are tokenized by bigram tokenize method.
 
 You can find difference of them by ``Hello 日 本 語 ! ! ! 777`` text
 because it has symbols and non-ASCII characters with white spaces,
@@ -465,13 +467,13 @@ for Japanese.
 ``京都`` text by ``京都`` query with ``TokenMecab``.
 
 If you want to support neologisms, you need to keep updating your
-MeCab dictionary. It needs maintain cost. (:ref:`token-bigrma` doesn't
+MeCab dictionary. It needs maintain cost. (:ref:`token-bigram` doesn't
 require dictionary maintenance because :ref:`token-bigram` doesn't use
 dictionary.) `mecab-ipadic-NEologd : Neologism dictionary for MeCab
 <https://github.com/neologd/mecab-ipadic-neologd>`_ may help you.
 
-Here is an example of ``TokenMeCab``. ``東京都`` is tokenized to ``東
-京`` and ``都``. They don't include ``京都``:
+Here is an example of ``TokenMeCab``. ``東京都`` is tokenized to ``東京``
+and ``都``. They don't include ``京都``:
 
 .. groonga-command
 .. include:: ../example/reference/tokenizers/token-mecab.log
@@ -493,15 +495,15 @@ Here is an example of ``TokenMeCab``. ``東京都`` is tokenized to ``東
    This tokenizer can be used only with UTF-8. You can't use this
    tokenizer with EUC-JP, Shift_JIS and so on.
 
-``TokenRegexp`` is a tokenizer for supporting subset of regular
-expression search by index.
+``TokenRegexp`` is a tokenizer for supporting regular expression
+search by index.
 
 In general, regular expression search is evaluated as sequential
 search. But the following cases can be evaluated as index search:
 
   * Literal only case such as ``hello``
-  * The beginning of text and literal case such as ``\\A/home/alice``
-  * The end of text and literal case such as ``\\.txt\\z``
+  * The beginning of text and literal case such as ``\A/home/alice``
+  * The end of text and literal case such as ``\.txt\z``
 
 In most cases, index search is faster than sequential search.
 
@@ -515,7 +517,7 @@ index text:
 .. tokenize TokenRegexp "/home/alice/test.txt" NormalizerAuto --mode ADD
 
 The beginning of text mark is used for the beginning of text search by
-``\\A``. If you use ``TokenRegexp`` for tokenizing query,
+``\A``. If you use ``TokenRegexp`` for tokenizing query,
 ``TokenRegexp`` adds the beginning of text mark (``U+FFEF``) as the
 first token. The beginning of text mark must be appeared at the first,
 you can get results of the beginning of text search.
@@ -524,7 +526,7 @@ you can get results of the beginning of text search.
 .. include:: ../example/reference/tokenizers/token-regexp-get-beginning-of-text.log
 .. tokenize TokenRegexp "\\A/home/alice/" NormalizerAuto --mode GET
 
-The end of text mark is used for the end of text search by ``\\z``.
+The end of text mark is used for the end of text search by ``\z``.
 If you use ``TokenRegexp`` for tokenizing query, ``TokenRegexp`` adds
 the end of text mark (``U+FFF0``) as the last token. The end of text
 mark must be appeared at the end, you can get results of the end of
