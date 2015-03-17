@@ -1,0 +1,98 @@
+table_create Lexicon TABLE_PAT_KEY ShortText   --default_tokenizer TokenRegexp
+[[0,0.0,0.0],true]
+table_tokenize Lexicon "c:\\server" --mode ADD
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "￯",
+      "position": 0
+    },
+    {
+      "value": "c:",
+      "position": 1
+    },
+    {
+      "value": ":\\",
+      "position": 2
+    },
+    {
+      "value": "\\s",
+      "position": 3
+    },
+    {
+      "value": "se",
+      "position": 4
+    },
+    {
+      "value": "er",
+      "position": 5
+    },
+    {
+      "value": "rv",
+      "position": 6
+    },
+    {
+      "value": "ve",
+      "position": 7
+    },
+    {
+      "value": "er",
+      "position": 8
+    },
+    {
+      "value": "r",
+      "position": 9
+    },
+    {
+      "value": "￰",
+      "position": 10
+    }
+  ]
+]
+table_tokenize Lexicon "c:\\\\server" --mode GET
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "c:",
+      "position": 0
+    },
+    {
+      "value": ":\\",
+      "position": 1
+    },
+    {
+      "value": "\\s",
+      "position": 2
+    },
+    {
+      "value": "se",
+      "position": 3
+    },
+    {
+      "value": "er",
+      "position": 4
+    },
+    {
+      "value": "rv",
+      "position": 5
+    },
+    {
+      "value": "ve",
+      "position": 6
+    },
+    {
+      "value": "er",
+      "position": 7
+    }
+  ]
+]

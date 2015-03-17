@@ -481,6 +481,7 @@ typedef struct {
   grn_bool is_overlapping;
   const char *next;
   const char *end;
+  grn_obj buffer;
 } grn_regexp_tokenizer;
 
 static grn_obj *
@@ -555,6 +556,8 @@ regexp_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     }
   }
 
+  GRN_TEXT_INIT(&(tokenizer->buffer), 0);
+
   return NULL;
 }
 
@@ -566,10 +569,13 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_regexp_tokenizer *tokenizer = user_data->ptr;
   unsigned int n_characters = 0;
   int ngram_unit = 2;
-  const char *start = tokenizer->next;
-  const char *current = start;
+  grn_obj *buffer = &(tokenizer->buffer);
+  const char *current = tokenizer->next;
   const char *end = tokenizer->end;
   grn_tokenize_mode mode = tokenizer->query->tokenize_mode;
+  grn_bool escaping = GRN_FALSE;
+
+  GRN_BULK_REWIND(buffer);
 
   if (mode == GRN_TOKEN_GET) {
     if (tokenizer->get.have_begin) {
@@ -620,17 +626,29 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     return NULL;
   }
 
-  n_characters++;
-  current += char_len;
-  tokenizer->next = current;
-  while (n_characters < ngram_unit) {
+  while (GRN_TRUE) {
+    if (!escaping && mode == GRN_TOKEN_GET &&
+        char_len == 1 && current[0] == '\\') {
+      current += char_len;
+      escaping = GRN_TRUE;
+    } else {
+      n_characters++;
+      GRN_TEXT_PUT(ctx, buffer, current, char_len);
+      current += char_len;
+      escaping = GRN_FALSE;
+      if (n_characters == 1) {
+        tokenizer->next = current;
+      }
+      if (n_characters == ngram_unit) {
+        break;
+      }
+    }
+
     char_len = grn_charlen_(ctx, (const char *)current, (const char *)end,
                             tokenizer->query->encoding);
     if (char_len == 0) {
       break;
     }
-    n_characters++;
-    current += char_len;
   }
 
   if (tokenizer->is_overlapping) {
@@ -654,8 +672,8 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   grn_tokenizer_token_push(ctx,
                            &(tokenizer->token),
-                           (const char *)start,
-                           current - start,
+                           GRN_TEXT_VALUE(buffer),
+                           GRN_TEXT_LEN(buffer),
                            status);
   return NULL;
 }
@@ -669,6 +687,7 @@ regexp_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
   grn_tokenizer_token_fin(ctx, &(tokenizer->token));
   grn_tokenizer_query_close(ctx, tokenizer->query);
+  GRN_OBJ_FIN(ctx, &(tokenizer->buffer));
   GRN_FREE(tokenizer);
   return NULL;
 }

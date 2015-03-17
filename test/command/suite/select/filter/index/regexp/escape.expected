@@ -1,0 +1,54 @@
+table_create Logs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs message COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create RegexpLexicon TABLE_PAT_KEY ShortText   --default_tokenizer TokenRegexp   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create RegexpLexicon logs_message_index   COLUMN_INDEX|WITH_POSITION Logs message
+[[0,0.0,0.0],true]
+load --table Logs
+[
+{"message": "host1:[error]: No memory"},
+{"message": "host1:[warning]: Remained disk space is less than 30%"},
+{"message": "host1:[error]: Disk full"},
+{"message": "host2:[error]: No memory"},
+{"message": "host2:[info]: Shutdown"}
+]
+[[0,0.0,0.0],5]
+select Logs --filter 'message @~ "\\\\[error\\\\]"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "message",
+          "Text"
+        ]
+      ],
+      [
+        1,
+        "host1:[error]: No memory"
+      ],
+      [
+        3,
+        "host1:[error]: Disk full"
+      ],
+      [
+        4,
+        "host2:[error]: No memory"
+      ]
+    ]
+  ]
+]
