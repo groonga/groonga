@@ -1,0 +1,39 @@
+Execution example::
+
+  select Logs --filter 'message @~ "er+or"'
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         3
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "message", 
+  #           "Text"
+  #         ]
+  #       ], 
+  #       [
+  #         1, 
+  #         "host1:[error]: No memory"
+  #       ], 
+  #       [
+  #         3, 
+  #         "host1:[error]: Disk full"
+  #       ], 
+  #       [
+  #         4, 
+  #         "host2:[error]: No memory"
+  #       ]
+  #     ]
+  #   ]
+  # ]
