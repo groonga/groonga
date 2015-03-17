@@ -680,7 +680,7 @@ string_match_regexp(grn_ctx *ctx,
   onig_result = onig_new(&regex,
                          pattern,
                          pattern + pattern_len,
-                         ONIG_OPTION_NONE,
+                         ONIG_OPTION_ASCII_RANGE,
                          onig_encoding,
                          ONIG_SYNTAX_RUBY,
                          &onig_error_info);
