@@ -45,10 +45,10 @@ Here are a schema definition and sample data to show usage.
 ..  "content": "Welcome! This is my first post!",
 ..  "n_likes": 5},
 .. {"_key":    "Groonga",
-..  "content": "I started to use groonga. It's very fast!",
+..  "content": "I started to use Groonga. It's very fast!",
 ..  "n_likes": 10},
 .. {"_key":    "Mroonga",
-..  "content": "I also started to use mroonga. It's also very fast! Really fast!",
+..  "content": "I also started to use Mroonga. It's also very fast! Really fast!",
 ..  "n_likes": 15},
 .. {"_key":    "Good-bye Senna",
 ..  "content": "I migrated all Senna system!",
@@ -137,7 +137,7 @@ search conditions; ``search`` and ``keyword``. If you want to
 specifies a keyword that contains one or more spaces, you can use
 ``phrase search condition`` that is described below.
 
-Here is a simple exmaple.
+Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_full_text_search.log
@@ -170,7 +170,7 @@ adjacent. Thus, ``Put a search keyword in the form`` is matched but
 ``Search by the keyword`` and ``There is a keyword. Search by it!``
 aren't matched.
 
-Here is a simple exmaple.
+Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_phrase_search.log
@@ -212,7 +212,7 @@ the following features:
 See description of ``--match_columns`` option of
 :doc:`/reference/commands/select` about them.
 
-Here is a simple exmaple.
+Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_full_text_search_with_explicit_match_column.log
@@ -239,7 +239,7 @@ advanced match columns but ``phrase search condition (with explicit
 match column)`` isn't supported. See description of ``full text search
 condition (with explicit match column)`` about advanced match columns.
 
-Here is a simple exmaple.
+Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_phrase_search_with_explicit_match_column.log
@@ -273,7 +273,7 @@ time for large records.
 It doesn't require the default match columns such as ``full text
 search condition`` and ``phrase search condition``.
 
-Here is a simple exmaple.
+Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_prefix_search.log
@@ -318,7 +318,7 @@ large records.
 It doesn't require the default match columns such as ``full text
 search condition`` and ``phrase search condition``.
 
-Here is a simple exmaple. It uses fast suffix search for hiragana in
+Here is a simple example. It uses fast suffix search for hiragana in
 Japanese that is one of non-ASCII characters.
 
 .. groonga-command
@@ -350,7 +350,7 @@ It matches records that ``column`` value is equal to ``value``.
 It doesn't require the default match columns such as ``full text
 search condition`` and ``phrase search condition``.
 
-Here is a simple exmaple.
+Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_equal.log
@@ -369,7 +369,7 @@ It matches records that ``column`` value isn't equal to ``value``.
 It doesn't require the default match columns such as ``full text
 search condition`` and ``phrase search condition``.
 
-Here is a simple exmaple.
+Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_not_equal.log
@@ -393,7 +393,7 @@ compared as bit sequence.
 It doesn't require the default match columns such as ``full text
 search condition`` and ``phrase search condition``.
 
-Here is a simple exmaple.
+Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_less_than.log
@@ -417,7 +417,7 @@ compared as bit sequence.
 It doesn't require the default match columns such as ``full text
 search condition`` and ``phrase search condition``.
 
-Here is a simple exmaple.
+Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_greater_than.log
@@ -442,7 +442,7 @@ compared as bit sequence.
 It doesn't require the default match columns such as ``full text
 search condition`` and ``phrase search condition``.
 
-Here is a simple exmaple.
+Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_less_than_or_equal_to.log
@@ -467,7 +467,7 @@ compared as bit sequence.
 It doesn't require the default match columns such as ``full text
 search condition`` and ``phrase search condition``.
 
-Here is a simple exmaple.
+Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_greater_than_or_equal_to.log
@@ -475,6 +475,30 @@ Here is a simple exmaple.
 
 The expression matches records that ``n_likes`` column value is
 greater than or equal to ``10``.
+
+.. _query-regular-expression-condition:
+
+Regular expression condition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``column:~pattern``.
+
+It matches records that ``column`` value is matched to
+``pattern``. ``pattern`` must be valid
+:doc:`/reference/regular_expression`.
+
+The following example uses ``.roonga`` as pattern. It matches
+``Groonga``, ``Mroonga`` and so on.
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/query_syntax/simple_regular_expression.log
+.. select Entries --query content:~.roonga
+
+In most cases, regular expression is evaluated sequentially. So it may
+be slow against many records.
+
+In some cases, Groonga evaluates regular expression by index. It's
+very fast. See :doc:`/reference/regular_expression` for details.
 
 .. _combined-expression:
 
@@ -493,7 +517,7 @@ assignment expressions.
 
 If at least one of ``a`` and ``b`` are matched, ``a OR b`` is matched.
 
-Here is a simple exmaple.
+Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_logical_or.log
@@ -516,7 +540,7 @@ If both ``a`` and ``b`` are matched, ``a + b`` is matched.
 You can specify ``+`` the first expression such as ``+a``. The ``+``
 is just ignored.
 
-Here is a simple exmaple.
+Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_logical_and.log
@@ -539,7 +563,7 @@ If ``a`` is matched and ``b`` is not matched, ``a - b`` is matched.
 You can not specify ``-`` the first expression such as ``-a``. It's
 syntax error.
 
-Here is a simple exmaple.
+Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_logical_not.log
@@ -559,7 +583,7 @@ processed as an expression. ``a b OR c`` means that ``a`` and ``b``
 are matched or ``c`` is matched. ``a (b OR c)`` means that ``a`` and
 one of ``b`` and ``c`` are matched.
 
-Here is a simple exmaple.
+Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_grouping.log

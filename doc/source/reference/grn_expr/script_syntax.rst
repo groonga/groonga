@@ -91,10 +91,10 @@ Here are a schema definition and sample data to show usage.
 ..  "content": "Welcome! This is my first post!",
 ..  "n_likes": 5},
 .. {"_key":    "Groonga",
-..  "content": "I started to use groonga. It's very fast!",
+..  "content": "I started to use Groonga. It's very fast!",
 ..  "n_likes": 10},
 .. {"_key":    "Mroonga",
-..  "content": "I also started to use mroonga. It's also very fast! Really fast!",
+..  "content": "I also started to use Mroonga. It's also very fast! Really fast!",
 ..  "n_likes": 15},
 .. {"_key":    "Good-bye Senna",
 ..  "content": "I migrated all Senna system!",
@@ -228,7 +228,7 @@ control syntax.
 
 ``A ? B : C`` returns ``B`` if ``A`` is true, ``C`` otherwise.
 
-Here is a simple exmaple.
+Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_control_syntax_ternary_operator.log
@@ -248,7 +248,7 @@ an expression. ``a && b || c`` means that ``a`` and ``b`` are matched
 or ``c`` is matched. ``a && (b || c)`` means that ``a`` and one of
 ``b`` and ``c`` are matched.
 
-Here is a simple exmaple.
+Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_grouping.log
@@ -273,7 +273,7 @@ Its syntax is ``name(arugment1, argument2, ...)``.
 
 See :doc:`/reference/function` for available functin list.
 
-Here is a simple exmaple.
+Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_function.log
@@ -836,7 +836,7 @@ Because tag search is also implemented by inverted index.
 
 :doc:`query_syntax` uses this operator by default.
 
-Here is a simple exmaple.
+Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_match_operator.log
@@ -866,7 +866,7 @@ Prefix search can be used with other table types but it causes all
 records scan. It's not problem for small records but it spends more
 time for large records.
 
-Here is a simple exmaple.
+Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_prefix_search_operator.log
@@ -908,7 +908,7 @@ table without ``KEY_WITH_SIS`` flag but it causes all records
 scan. It's not problem for small records but it spends more time for
 large records.
 
-Here is a simple exmaple. It uses fast suffix search for hiragana in
+Here is a simple example. It uses fast suffix search for hiragana in
 Japanese that is one of non-ASCII characters.
 
 .. groonga-command
@@ -952,7 +952,7 @@ N-gram family tokenizer.)
 Note that an index column for full text search must be defined for
 ``column``.
 
-Here is a simple exmaple.
+Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_near_search_operator.log
@@ -992,7 +992,7 @@ search searches records that have similar content to
 Note that an index column for full text search must be defined for
 ``column``.
 
-Here is a simple exmaple.
+Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_similar_search_operator.log
@@ -1018,7 +1018,7 @@ double array trie (``TABLE_DAT_KEY``). You can't use hash table
 support longest common prefix search. Longest common prefix search is
 used to implement the operator.
 
-Here is a simple exmaple.
+Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_term_extract_operator.log
@@ -1037,3 +1037,31 @@ the successor project to Senna.``. In this case, ``KEY_NORMALIZE``
 flag is specified to ``Words``. So ``Groonga`` can be extracted even
 if it is loaded as ``groonga`` into ``Words``. All of extracted terms
 are also normalized.
+
+.. _script-regular-expression-operator:
+
+Regular expression operator
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``column @~ "pattern"``.
+
+The operator searches records by the regular expression
+``pattern``. If a record's ``column`` value is matched to ``pattern``,
+the record is matched.
+
+``pattern`` must be valid regular expression syntax. See
+:doc:`/reference/regular_expression` about regular expression syntax
+details.
+
+The following example uses ``.roonga`` as pattern. It matches
+``Groonga``, ``Mroonga`` and so on.
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_regular_expression_operator.log
+.. select Entries --filter 'content @~ ".roonga"'
+
+In most cases, regular expression is evaluated sequentially. So it may
+be slow against many records.
+
+In some cases, Groonga evaluates regular expression by index. It's
+very fast. See :doc:`/reference/regular_expression` for details.
