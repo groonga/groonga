@@ -19,6 +19,6 @@ load --table Memos
 ]
 
 select Memos \
-  --match_columns "Lexicon.memo_index[0] || Lexicon.memo_index[1] || Lexicon.memo_index[2] || Lexicon.memo_index[3] * 10" \
+  --match_columns "Lexicon.memo_index[0] || Lexicon.memo_index[1] || Lexicon.memo_index[2] || Lexicon.memo_index[3] * 20" \
   --query Rroonga \
   --output_columns "title, content, _score"

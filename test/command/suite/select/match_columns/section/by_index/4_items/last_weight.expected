@@ -22,7 +22,7 @@ load --table Memos
 ["learn", "Learning Ruby and Groonga...", "learn!", "learn"]
 ]
 [[0,0.0,0.0],5]
-select Memos   --match_columns "Lexicon.memo_index[0] || Lexicon.memo_index[1] || Lexicon.memo_index[2] || Lexicon.memo_index[3] * 10"   --query Rroonga   --output_columns "title, content, _score"
+select Memos   --match_columns "Lexicon.memo_index[0] || Lexicon.memo_index[1] || Lexicon.memo_index[2] || Lexicon.memo_index[3] * 20"   --query Rroonga   --output_columns "title, content, _score"
 [
   [
     0,
@@ -51,7 +51,7 @@ select Memos   --match_columns "Lexicon.memo_index[0] || Lexicon.memo_index[1] |
       [
         "Rroonga",
         "Start Rroonga!",
-        13
+        23
       ]
     ]
   ]
