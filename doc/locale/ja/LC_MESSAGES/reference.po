@@ -12241,7 +12241,7 @@ msgstr ""
 "し、キーワードに空白を含めたい場合は以下で説明する ``フレーズ検索条件`` を"
 "使ってください。"
 
-msgid "Here is a simple exmaple."
+msgid "Here is a simple example."
 msgstr "以下は簡単な使用例です。"
 
 msgid ""
@@ -12478,7 +12478,7 @@ msgstr ""
 "ります。"
 
 msgid ""
-"Here is a simple exmaple. It uses fast suffix search for hiragana in "
+"Here is a simple example. It uses fast suffix search for hiragana in "
 "Japanese that is one of non-ASCII characters."
 msgstr ""
 "簡単な例です。ASCII文字ではない文字である日本語のひらがなに対して高速な後方一"
