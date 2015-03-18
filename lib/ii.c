@@ -6889,8 +6889,13 @@ grn_ii_inspect_values(grn_ctx *ctx, grn_ii *ii, grn_obj *buf)
 
 /********************** buffered index builder ***********************/
 
-const grn_id II_BUFFER_RID_FLAG = 0x80000000;
-const grn_id II_BUFFER_WEIGHT_FLAG = 0x40000000;
+const grn_id II_BUFFER_TYPE_MASK = 0xc0000000;
+#define II_BUFFER_TYPE_RID         0x80000000
+#define II_BUFFER_TYPE_WEIGHT      0x40000000
+#define II_BUFFER_TYPE_POSITION    0xc0000000
+#define II_BUFFER_TYPE(id)          (((id) & II_BUFFER_TYPE_MASK))
+#define II_BUFFER_PACK(value, type) ((value) | (type))
+#define II_BUFFER_UNPACK(id, type)  ((id) & ~(type))
 #ifdef II_BUFFER_ORDER_BY_ID
 const int II_BUFFER_ORDER = GRN_CURSOR_BY_ID;
 #else /* II_BUFFER_ORDER_BY_ID */
@@ -7092,17 +7097,24 @@ encode_postings(grn_ctx *ctx, grn_ii_buffer *ii_buffer, uint8_t *outbuf)
   uint32_t flags = ii_buffer->ii->header->flags;
   for (rest = ii_buffer->block_pos; rest; bp++, rest--) {
     grn_id id = *bp;
-    if (id & II_BUFFER_RID_FLAG) {
-      rid = id - II_BUFFER_RID_FLAG;
+    switch (II_BUFFER_TYPE(id)) {
+    case II_BUFFER_TYPE_RID :
+      rid = II_BUFFER_UNPACK(id, II_BUFFER_TYPE_RID);
       if ((flags & GRN_OBJ_WITH_SECTION) && rest) {
         sid = *++bp;
         rest--;
       }
       weight = 0;
       pos = 0;
-    } else if (id & II_BUFFER_WEIGHT_FLAG) {
-      weight = id - II_BUFFER_WEIGHT_FLAG;
-    } else {
+      break;
+    case II_BUFFER_TYPE_WEIGHT :
+      weight = II_BUFFER_UNPACK(id, II_BUFFER_TYPE_WEIGHT);
+      break;
+    case II_BUFFER_TYPE_POSITION :
+      pos = II_BUFFER_UNPACK(id, II_BUFFER_TYPE_POSITION);
+      break;
+    default :
+      {
       ii_buffer_counter *counter = &ii_buffer->counters[id - 1];
       if (counter->last_rid == rid && counter->last_sid == sid) {
         counter->last_tf++;
@@ -7144,7 +7156,8 @@ encode_postings(grn_ctx *ctx, grn_ii_buffer *ii_buffer, uint8_t *outbuf)
         counter->offset_pos = p - outbuf;
         counter->last_pos = pos;
       }
-      pos++;
+      }
+      break;
     }
   }
 }
@@ -7276,23 +7289,24 @@ grn_ii_buffer_tokenize(grn_ctx *ctx, grn_ii_buffer *ii_buffer, grn_id rid,
       grn_token_cursor *token_cursor;
       grn_id *buffer = ii_buffer->block_buf;
       uint32_t block_pos = ii_buffer->block_pos;
-      buffer[block_pos++] = rid + II_BUFFER_RID_FLAG;
+      buffer[block_pos++] = II_BUFFER_PACK(rid, II_BUFFER_TYPE_RID);
       if ((ii_buffer->ii->header->flags & GRN_OBJ_WITH_SECTION)) {
         buffer[block_pos++] = sid;
       }
       if (weight) {
-        buffer[block_pos++] = weight + II_BUFFER_WEIGHT_FLAG;
+        buffer[block_pos++] = II_BUFFER_PACK(weight, II_BUFFER_TYPE_WEIGHT);
       }
       if ((token_cursor = grn_token_cursor_open(ctx, tmp_lexicon,
                                                 value, value_len,
                                                 GRN_TOKEN_ADD, token_flags))) {
-        uint32_t pos;
-        for (pos = 0; !token_cursor->status; pos++) {
+        while (!token_cursor->status) {
           grn_id tid;
           if ((tid = grn_token_cursor_next(ctx, token_cursor))) {
             ii_buffer_counter *counter;
             counter = get_buffer_counter(ctx, ii_buffer, tmp_lexicon, tid);
             if (!counter) { return; }
+            buffer[block_pos++] = II_BUFFER_PACK(token_cursor->pos,
+                                                 II_BUFFER_TYPE_POSITION);
             buffer[block_pos++] = tid;
             if (counter->last_rid != rid) {
               counter->offset_rid += GRN_B_ENC_SIZE(rid - counter->last_rid);
@@ -7321,8 +7335,9 @@ grn_ii_buffer_tokenize(grn_ctx *ctx, grn_ii_buffer *ii_buffer, grn_id rid,
               counter->last_pos = 0;
               counter->nrecs++;
             }
-            counter->offset_pos += GRN_B_ENC_SIZE(pos - counter->last_pos);
-            counter->last_pos = pos;
+            counter->offset_pos +=
+              GRN_B_ENC_SIZE(token_cursor->pos - counter->last_pos);
+            counter->last_pos = token_cursor->pos;
             counter->last_tf++;
             counter->last_weight += weight;
             counter->nposts++;
