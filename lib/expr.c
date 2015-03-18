@@ -5187,7 +5187,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
             int current_vector_size;
             current_vector_size = GRN_BULK_VSIZE(&wv)/sizeof(int32_t);
             if (weight_index < current_vector_size) {
-              *((int *)GRN_BULK_HEAD(&wv)) = weight;
+              ((int *)GRN_BULK_HEAD(&wv))[weight_index] = weight;
             } else {
               GRN_INT32_SET_AT(ctx, &wv, weight_index, weight);
             }
