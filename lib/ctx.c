@@ -1890,6 +1890,7 @@ grn_rc
 grn_ctx_sendv(grn_ctx *ctx, int argc, char **argv, int flags)
 {
   grn_obj buf;
+  GRN_API_ENTER;
   GRN_TEXT_INIT(&buf, 0);
   while (argc--) {
     // todo : encode into json like syntax
@@ -1899,7 +1900,7 @@ grn_ctx_sendv(grn_ctx *ctx, int argc, char **argv, int flags)
   }
   grn_ctx_send(ctx, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf), flags);
   GRN_OBJ_FIN(ctx, &buf);
-  return ctx->rc;
+  GRN_API_RETURN(ctx->rc);
 }
 
 static int
