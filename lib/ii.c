@@ -7115,47 +7115,47 @@ encode_postings(grn_ctx *ctx, grn_ii_buffer *ii_buffer, uint8_t *outbuf)
       break;
     default :
       {
-      ii_buffer_counter *counter = &ii_buffer->counters[id - 1];
-      if (counter->last_rid == rid && counter->last_sid == sid) {
-        counter->last_tf++;
-        counter->last_weight += weight;
-      } else {
-        if (counter->last_tf) {
-          uint8_t *p = outbuf + counter->offset_tf;
-          GRN_B_ENC(counter->last_tf - 1, p);
-          counter->offset_tf = p - outbuf;
-          if (flags & GRN_OBJ_WITH_WEIGHT) {
-            p = outbuf + counter->offset_weight;
-            GRN_B_ENC(counter->last_weight, p);
-            counter->offset_weight = p - outbuf;
+        ii_buffer_counter *counter = &ii_buffer->counters[id - 1];
+        if (counter->last_rid == rid && counter->last_sid == sid) {
+          counter->last_tf++;
+          counter->last_weight += weight;
+        } else {
+          if (counter->last_tf) {
+            uint8_t *p = outbuf + counter->offset_tf;
+            GRN_B_ENC(counter->last_tf - 1, p);
+            counter->offset_tf = p - outbuf;
+            if (flags & GRN_OBJ_WITH_WEIGHT) {
+              p = outbuf + counter->offset_weight;
+              GRN_B_ENC(counter->last_weight, p);
+              counter->offset_weight = p - outbuf;
+            }
           }
-        }
-        {
-          uint8_t *p = outbuf + counter->offset_rid;
-          GRN_B_ENC(rid - counter->last_rid, p);
-          counter->offset_rid = p - outbuf;
-        }
-        if (flags & GRN_OBJ_WITH_SECTION) {
-          uint8_t *p = outbuf + counter->offset_sid;
-          if (counter->last_rid != rid) {
-            GRN_B_ENC(sid - 1, p);
-          } else {
-            GRN_B_ENC(sid - counter->last_sid - 1, p);
+          {
+            uint8_t *p = outbuf + counter->offset_rid;
+            GRN_B_ENC(rid - counter->last_rid, p);
+            counter->offset_rid = p - outbuf;
           }
-          counter->offset_sid = p - outbuf;
+          if (flags & GRN_OBJ_WITH_SECTION) {
+            uint8_t *p = outbuf + counter->offset_sid;
+            if (counter->last_rid != rid) {
+              GRN_B_ENC(sid - 1, p);
+            } else {
+              GRN_B_ENC(sid - counter->last_sid - 1, p);
+            }
+            counter->offset_sid = p - outbuf;
+          }
+          counter->last_rid = rid;
+          counter->last_sid = sid;
+          counter->last_tf = 1;
+          counter->last_weight = weight;
+          counter->last_pos = 0;
         }
-        counter->last_rid = rid;
-        counter->last_sid = sid;
-        counter->last_tf = 1;
-        counter->last_weight = weight;
-        counter->last_pos = 0;
-      }
-      if (flags & GRN_OBJ_WITH_POSITION) {
-        uint8_t *p = outbuf + counter->offset_pos;
-        GRN_B_ENC(pos - counter->last_pos, p);
-        counter->offset_pos = p - outbuf;
-        counter->last_pos = pos;
-      }
+        if (flags & GRN_OBJ_WITH_POSITION) {
+          uint8_t *p = outbuf + counter->offset_pos;
+          GRN_B_ENC(pos - counter->last_pos, p);
+          counter->offset_pos = p - outbuf;
+          counter->last_pos = pos;
+        }
       }
       break;
     }
