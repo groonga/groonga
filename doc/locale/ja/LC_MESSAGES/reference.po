@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-03-16 19:07+0900\n"
+"PO-Revision-Date: 2015-03-18 18:58+0900\n"
 "Last-Translator: Takatsugu <nokubi@gmail.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -12241,9 +12241,6 @@ msgstr ""
 "し、キーワードに空白を含めたい場合は以下で説明する ``フレーズ検索条件`` を"
 "使ってください。"
 
-msgid "Here is a simple example."
-msgstr "以下は簡単な使用例です。"
-
 msgid ""
 "The expression matches records that contain a word ``fast`` in ``content`` "
 "column value."
@@ -12592,6 +12589,45 @@ msgid ""
 "or equal to ``10``."
 msgstr ""
 "この式は ``n_likes`` カラムの値が ``10`` 以上のレコードにマッチします。"
+
+msgid "Regular expression condition"
+msgstr "正規表現条件"
+
+msgid "Its syntax is ``column:~pattern``."
+msgstr "構文は ``column:~pattern`` です。"
+
+msgid ""
+"It matches records that ``column`` value is matched to ``pattern``. "
+"``pattern`` must be valid :doc:`/reference/regular_expression`."
+msgstr ""
+"``column`` の値が ``pattern`` にマッチするレコードにマッチします。 "
+"``pattern`` は正しい :doc:`/reference/regular_expression` でなければいけませ"
+"ん。"
+
+msgid ""
+"The following example uses ``.roonga`` as pattern. It matches ``Groonga``, "
+"``Mroonga`` and so on."
+msgstr ""
+"以下の例はパターンとして ``.roonga`` を使っています。このパターンは "
+"``Groonga`` 、 ``Mroonga`` といった文字列にマッチします。"
+
+# 246b6472a85f4c63a8053a110a0ce45b
+msgid ""
+"In most cases, regular expression is evaluated sequentially. So it may be "
+"slow against many records."
+msgstr ""
+"多くの場合、各レコードの対して順に正規表現を評価します。そのため、多くのレ"
+"コードがある場合は遅くなるかもしれません。"
+
+# 77e8c70ae8fd4340a023faec67292814
+# 1d0c03b985374951bad104bf21012e25
+msgid ""
+"In some cases, Groonga evaluates regular expression by index. It's very "
+"fast. See :doc:`/reference/regular_expression` for details."
+msgstr ""
+"いくつかのケースでは、Groongaはインデックスを使って正規表現を評価します。これ"
+"はとても高速です。詳細は :doc:`/reference/regular_expression` を参照してくだ"
+"さい。"
 
 msgid "Combined expression"
 msgstr "結合式"
@@ -13947,6 +13983,29 @@ msgstr ""
 "す。そのため、 ``Words`` には ``groonga`` とロードしていますが ``Groonga`` も"
 "抽出できています。また、全ての抽出された単語も正規化されています。"
 
+msgid "Regular expression operator"
+msgstr "正規表現演算子"
+
+msgid "Its syntax is ``column @~ \"pattern\"``."
+msgstr "構文は ``column @~ \"pattern\"`` です。"
+
+# 191d5b80b7a54950926906ad04f9d198
+msgid ""
+"The operator searches records by the regular expression ``pattern``. If a "
+"record's ``column`` value is matched to ``pattern``, the record is matched."
+msgstr ""
+"この演算子は正規表現 ``pattern`` でレコードを検索します。もし、レコードの "
+"``column`` の値が ``pattern`` にマッチしたら、そのレコードはマッチしたという"
+"ことです。"
+
+# cf1f828b763e4ef6a4c4d6a12cb0a4c4
+msgid ""
+"``pattern`` must be valid regular expression syntax. See :doc:`/reference/"
+"regular_expression` about regular expression syntax details."
+msgstr ""
+"``pattern`` は正規表現の構文になっていなければいけません。正規表現の構文の詳"
+"細は :doc:`/reference/regular_expression` を参照してください。"
+
 msgid "Indexing"
 msgstr "インデックス構築"
 
@@ -14805,6 +14864,267 @@ msgstr ""
 msgid ":ref:`query-expansion`"
 msgstr ""
 
+msgid "Regular expression"
+msgstr "正規表現"
+
+# 3d75cdf6145d400e9951f0af3c7bf572
+msgid ""
+"Groonga supports pattern match by regular expression. Regular expression is "
+"widely used format to describe a pattern. Regular expression is useful to "
+"represent complex pattern."
+msgstr ""
+"Groongaは正規表現を用いたパターンマッチをサポートしています。正規表現はパター"
+"ンを表現するために広く使われています。正規表現は複雑なパターンを表現するとき"
+"に便利です。"
+
+# 246b6472a85f4c63a8053a110a0ce45b
+msgid ""
+"In most cases, pattern match by regular expression is evaluated as "
+"sequential search. It'll be slow for many records and many texts."
+msgstr ""
+"多くの場合は、正規表現検索は逐次検索で実行します。これはたくさんのレコードが"
+"あったり、たくさんのテキストがある場合は遅くなります。"
+
+# 246b6472a85f4c63a8053a110a0ce45b
+msgid ""
+"In some cases, pattern match by regular expression can be evaluated by "
+"index. It's very fast rather than sequential search. Patterns that can be "
+"evaluated by index are described later."
+msgstr ""
+"いくつかの場合では、正規表現を使ったパターンマッチをインデックスを使って実現"
+"します。これは逐次検索よりも非常に高速です。インデックスを使って評価できるパ"
+"ターンについては後述します。"
+
+# 1d4514e7a6904e77802262bf59e4d4c1
+msgid ""
+"There are many regular expression syntaxes. Groonga uses the same syntax in "
+"Ruby. Because Groonga uses the same regular expression engine as Ruby. The "
+"regular expression engine is `Onigmo <https://github.com/k-takata/Onigmo/"
+">`_. Characteristic difference with other regular expression syntax is ``^`` "
+"and ``$``. The regular expression syntax in Ruby, ``^`` means the beginning "
+"of line and ``$`` means the end of line. ``^`` means the beginning of text "
+"and ``$`` means the end of text in other most regular expression syntaxes. "
+"The regular expression syntax in Ruby uses ``\\A`` for the beginning of text "
+"and ``\\z`` for the end of text."
+msgstr ""
+"正規表現の構文はたくさんあります。GroongaはRubyと同じ構文を使います。なぜな"
+"ら、Groongaが使っている正規表現エンジンはRubyが使っている正規表現エンジンと同"
+"じだからです。この正規表現エンジンは `Onigmo <https://github.com/k-takata/"
+"Onigmo/>`_ といいます。他の正規表現の構文との特徴的な違いは ``^`` と ``$`` で"
+"す。Rubyの正規表現の構文では ``^`` は行頭を表し、 ``$`` は行末を表します。他"
+"の多くの正規表現の構文では、 ``^`` はテキストの先頭を表し、 ``$`` はテキスト"
+"の最後を表します。Rubyの正規表現の構文ではテキストの先頭を表す場合は ``\\A`` "
+"を使い、テキストの最後を表す場合は ``\\z`` を使います。"
+
+msgid ""
+"You can use regular expression in :ref:`select-query` and :ref:`select-"
+"filter` options of :doc:`/reference/commands/select` command."
+msgstr ""
+":doc:`/reference/commands/select` コマンドの :ref:`select-query` オプション"
+"と :ref:`select-filter` オプションで正規表現を使えます。"
+
+# 650e8423eecd4dabb51f97a15d064b92
+msgid ""
+"Here are a schema definition and sample data to show usage. There is only "
+"one table, ``Logs``. ``Logs`` table has only ``message`` column. Log "
+"messages are stored into the ``message`` column."
+msgstr ""
+"以下は使い方を説明するためのスキーマ定義とサンプルデータです。このスキーマに"
+"はテーブルは1つだけです。 ``Logs`` というテーブルです。 ``Logs`` テーブルは1"
+"つだけカラムを持ちます。 ``message`` というカラムです。ログメッセージは "
+"``message`` カラムに保存されています。"
+
+# 777fa67f120b4806ad5a1e62795b7cf8
+msgid ""
+"Here is an example that uses regular expression in :ref:`select-query`. You "
+"need to use ``${COLUMN}:~${REGULAR_EXPRESSION}`` syntax."
+msgstr ""
+":ref:`select-query` で正規表現を使う例です。 ``${COLUMN}:~"
+"${REGULAR_EXPRESSION}`` という構文を使います。"
+
+# a74d9014c63e4ee49fb68d184911032c
+msgid ""
+"Here is an example that uses regular expression in :ref:`select-filter`. You "
+"need to use ``${COLUMN} @~ ${REGULAR_EXPRESSION}`` syntax."
+msgstr ""
+":ref:`select-filter` で正規表現を使う例です。 ``${COLUMN} @~ "
+"${REGULAR_EXPRESSION}`` という構文を使います。"
+
+msgid "Index"
+msgstr "インデックス"
+
+# f30f2d4a680240f7b65e16134266ee4e
+msgid ""
+"Groonga can search records by regular expression with index. It's very fast "
+"rather than sequential search."
+msgstr ""
+"Groongaは正規表現を使った検索をインデックスを使って実現することができます。こ"
+"れは逐次検索より非常に高速です。"
+
+# 734cedc37a64406fb3e2ebd6b1e7402a
+msgid ""
+"But it doesn't support all regular expression patterns. It supports only the "
+"following regular expression patterns. The patterns will be increased in the "
+"future."
+msgstr ""
+"しかし、すべての正規表現には対応していません。以下の正規表現にのみ対応してい"
+"ます。対応している正規表現は今後増えていく予定です。"
+
+# 431228f276264bb8a7ba202e6c8f2902
+msgid "Literal only pattern such as ``disk``"
+msgstr "``disk`` のようにリテラルしかないパターン"
+
+# 76790620652c4dbea2d133b27efae9c0
+msgid "The begging of text and literal only pattern such as ``\\Adisk``"
+msgstr "``\\A/disk`` のようにテキストの最初でのマッチとリテラルのみのケース"
+
+# 25d9e8cdaba945a19fcbc010c62f887f
+msgid "The end of text and literal only pattern such as ``disk\\z``"
+msgstr "``disk\\z`` のようにテキストの最後でのマッチとリテラルのみのケース"
+
+msgid ""
+"You need to create an index for fast regular expression search. Here are "
+"requirements of index:"
+msgstr ""
+"高速に正規表現検索を実現するためにはインデックスを作る必要があります。以下は"
+"正規表現用のインデックスが満たさなければいけないことのリストです。"
+
+# c71c4c4c7c6d4b04a00700077c938600
+msgid "Lexicon must be :ref:`table-pat-key` table."
+msgstr "語彙表は :ref:`table-pat-key` テーブルであること。"
+
+# 93046761f269451fb95ff85d2e2cf72b
+msgid "Lexicon must use :ref:`token-regexp` tokenizer."
+msgstr "語彙表は :ref:`token-regexp` トークナイザーを使っていること。"
+
+# a6db79902a954064ae87c36988b2ef54
+msgid "Index column must has ``WITH_POSITION`` flag."
+msgstr "インデックスカラムは ``WITH_POSITION`` フラグ付きであること。"
+
+# 3378e49dd63f4c46a14012e2f4b70b6e
+msgid ""
+"Other configurations such as lexicon's normalizer are optional. You can "
+"choose what you like. If you want to use case-insensitive search, use :ref:"
+"`normalizer-auto` normalizer."
+msgstr ""
+"語彙表のノーマライザーといった他の設定は用途に応じて適切なものを設定してくだ"
+"さい。もし、大文字小文字を区別せずに検索したい場合は :ref:`normalizer-auto` "
+"ノーマライザーを使ってください。"
+
+# e2dbe11037ea4adda0b12ec2336119c2
+msgid ""
+"Here are recommended index definitions. In general, it's reasonable index "
+"definitions."
+msgstr ""
+"以下はオススメのインデックス定義です。多くの場合はこのインデックス定義が適切"
+"です。"
+
+# 8d691c29779a4ddcac359438fcbf5839
+msgid ""
+"Now, you can use index for regular expression search. The following regular "
+"expression can be evaluated by index because it uses only \"the beginning of "
+"text\" and \"literal\"."
+msgstr ""
+"これでインデックスを使って正規表現検索をできるようになりました。以下の正規表"
+"現は「テキストの先頭」と「リテラル」しか使っていないのでインデックスを使って"
+"検索できます。"
+
+# 4f270a25014e40c3847a081461724432
+msgid ""
+"Here is an example that uses :ref:`select-filter` instead of :ref:`select-"
+"query`. It uses the same regular expression as the previous example."
+msgstr ""
+"以下は :ref:`select-query` の代わりに :ref:`select-filter` を使った例です。前"
+"の例と同じ正規表現を使っています。"
+
+# 6a265a6d6d2f4227a973d213103d323b
+msgid ""
+"``\\`` escape will confuse you because there are some steps that require "
+"escape between you and Groonga. Here are steps that require ``\\`` escape:"
+msgstr ""
+"``\\`` エスケープは紛らわしいかもしれません。あなたが書いたクエリーをGroonga"
+"が実行するまでにエスケープが必要なステップがいくつもあるからです。以下は ``"
+"\\`` エスケープが必要なステップです。"
+
+# 6dd670a78095438db491c7f6f045cdbe
+msgid ""
+"Shell only when you pass Groonga command from command line the following::"
+msgstr ""
+"シェル。ただし、次のようにGroongaのコマンドをコマンドラインで指定した場合の"
+"み::"
+
+# cec4c0342f544d91ae1e4a198f7452c2
+msgid ""
+"``--filter '\"message @~ \\\"\\\\\\\\Ahost1:\\\"\"'`` is evaluated as the "
+"following two arguments by shell:"
+msgstr ""
+"``--filter '\"message @~ \\\"\\\\\\\\Ahost1:\\\"\"'`` はシェルが評価して次の2"
+"つの引数になります。"
+
+# bfdbf51ef90a4b08bb9a6858c3b642cd
+msgid "``--filter``"
+msgstr ""
+
+# 180d1aa2d3314ef0b84b89f1aa1dfde1
+msgid "``\"message @~ \\\"\\\\\\\\Ahost1:\\\"\"``"
+msgstr ""
+
+# f5c7dafb6d5c48958161b0f39e3e58a4
+msgid ""
+"Groonga command parser only when you pass Groonga command by command line "
+"style (``COMMAND ARG1_VALUE ARG2_VALUE ...``) not HTTP path style (``/d/"
+"COMMAND?ARG1_NAME=ARG1_VALUE&ARG2_NAME=ARG3_VALUE``)."
+msgstr ""
+"Groongaコマンドパーサー。ただし、GroongaのコマンドをHTTPパススタイル （ ``/d/"
+"COMMAND?ARG1_NAME=ARG1_VALUE&ARG2_NAME=ARG3_VALUE`` ） ではなく、コマンドライ"
+"ンスタイル （ ``COMMAND ARG1_VALUE ARG2_VALUE ...`` ）で指定した場合のみ。"
+
+# 4cd2910cd4fb480898a1dc6a81a889b5
+msgid ""
+"``\"message @~ \\\"\\\\\\\\Ahost1:\\\"\"`` is evaluated as the following "
+"value by Groonga command parser:"
+msgstr ""
+"``\"message @~ \\\"\\\\\\\\Ahost1:\\\"\"`` はGroongaコマンドパーサーが評価し"
+"て次の値になります。"
+
+# aec6de43082b4e8b85109d83c7862c47
+msgid "``message @~ \"\\\\Ahost1:\"``"
+msgstr ""
+
+# 402f6a626fac456bbc7a1aacc812a2a2
+msgid ""
+":doc:`/reference/grn_exr` parser. ``\\`` escape is required in both :doc:`/"
+"reference/grn_exr/query_syntax` and :doc:`/reference/grn_exr/script_syntax`."
+msgstr ""
+":doc:`/reference/grn_exr` パーサー。 :doc:`/reference/grn_exr/query_syntax` "
+"でも :doc:`/reference/grn_exr/script_syntax` でも ``\\`` エスケープが必要で"
+"す。"
+
+# 0d32cb6fbe5c4d67b6ec5e792e133de1
+msgid ""
+"``\"\\\\Ahost1:\"`` string literal in script syntax is evaluated as the "
+"following value:"
+msgstr ""
+"スクリプト構文で ``\"\\\\Ahost1:\"`` という文字列リテラルを評価すると次の値に"
+"なります。"
+
+# 2b67406d7903429e93884c917afa527e
+msgid "``\\Ahost1``"
+msgstr ""
+
+# ede625ae704748b3b35e97512be4d143
+msgid "The value is evaluated as regular expression."
+msgstr "この値が正規表現として評価されます。"
+
+# 5c25b34d6a47485591a1bdc3c2803a46
+msgid ""
+"This section describes about only commonly used syntaxes. See `Onigmo syntax "
+"documentation <https://github.com/k-takata/Onigmo/blob/master/doc/RE>`_ for "
+"other syntaxes and details."
+msgstr ""
+"このセクションでは広く使われている構文だけ説明します。他の構文と詳細は "
+"`Onigmoの構文ドキュメント <https://github.com/k-takata/Onigmo/blob/master/"
+"doc/RE.ja>`_ を参照してください。"
 msgid "Suggest"
 msgstr "サジェスト"
 
@@ -16679,7 +16999,8 @@ msgstr "``hello`` のようにリテラルしかないケース"
 
 # 76790620652c4dbea2d133b27efae9c0
 msgid "The beginning of text and literal case such as ``\\A/home/alice``"
-msgstr "``\\A/home/alice`` のようにテキストの最初でのマッチとリテラルのみのケース"
+msgstr ""
+"``\\A/home/alice`` のようにテキストの最初でのマッチとリテラルのみのケース"
 
 # 25d9e8cdaba945a19fcbc010c62f887f
 msgid "The end of text and literal case such as ``\\.txt\\z``"
@@ -16708,7 +17029,12 @@ msgid ""
 "the beginning of text mark (``U+FFEF``) as the first token. The beginning of "
 "text mark must be appeared at the first, you can get results of the "
 "beginning of text search."
-msgstr "``\\A`` で検索したとき、テキストの先頭であるというマークを使います。クエリーをトークナイズするために ``TokenRegexp`` を使うときは、 ``TokenRegexp`` は最初のトークンとしてテキストの先頭であるというマーク（ ``U+FFEF`` ）を追加します。テキストの先頭であるというマークは先頭にしか存在しないはずなので、テキストの先頭であるという検索結果を得ることができます。"
+msgstr ""
+"``\\A`` で検索したとき、テキストの先頭であるというマークを使います。クエリー"
+"をトークナイズするために ``TokenRegexp`` を使うときは、 ``TokenRegexp`` は最"
+"初のトークンとしてテキストの先頭であるというマーク（ ``U+FFEF`` ）を追加しま"
+"す。テキストの先頭であるというマークは先頭にしか存在しないはずなので、テキス"
+"トの先頭であるという検索結果を得ることができます。"
 
 # d83dc0889fe240d0824e46814d5ef547
 msgid ""
@@ -16716,7 +17042,12 @@ msgid ""
 "use ``TokenRegexp`` for tokenizing query, ``TokenRegexp`` adds the end of "
 "text mark (``U+FFF0``) as the last token. The end of text mark must be "
 "appeared at the end, you can get results of the end of text search."
-msgstr "``\\z`` で検索したとき、テキストの最後であるというマークを使います。クエリーをトークナイズするために ``TokenRegexp`` を使うときは、 ``TokenRegexp`` は最後のトークンとしてテキストの最後であるというマーク（ ``U+FFF0`` ）を追加します。テキストの最後であるというマークは最後にしか存在しないはずなので、テキストの最後であるという検索結果を得ることができます。"
+msgstr ""
+"``\\z`` で検索したとき、テキストの最後であるというマークを使います。クエリー"
+"をトークナイズするために ``TokenRegexp`` を使うときは、 ``TokenRegexp`` は最"
+"後のトークンとしてテキストの最後であるというマーク（ ``U+FFF0`` ）を追加しま"
+"す。テキストの最後であるというマークは最後にしか存在しないはずなので、テキス"
+"トの最後であるという検索結果を得ることができます。"
 
 msgid "Tuning"
 msgstr ""
