@@ -6892,7 +6892,6 @@ grn_ii_inspect_values(grn_ctx *ctx, grn_ii *ii, grn_obj *buf)
 const grn_id II_BUFFER_TYPE_MASK = 0xc0000000;
 #define II_BUFFER_TYPE_RID         0x80000000
 #define II_BUFFER_TYPE_WEIGHT      0x40000000
-#define II_BUFFER_TYPE_POSITION    0xc0000000
 #define II_BUFFER_TYPE(id)          (((id) & II_BUFFER_TYPE_MASK))
 #define II_BUFFER_PACK(value, type) ((value) | (type))
 #define II_BUFFER_UNPACK(id, type)  ((id) & ~(type))
@@ -7110,9 +7109,6 @@ encode_postings(grn_ctx *ctx, grn_ii_buffer *ii_buffer, uint8_t *outbuf)
     case II_BUFFER_TYPE_WEIGHT :
       weight = II_BUFFER_UNPACK(id, II_BUFFER_TYPE_WEIGHT);
       break;
-    case II_BUFFER_TYPE_POSITION :
-      pos = II_BUFFER_UNPACK(id, II_BUFFER_TYPE_POSITION);
-      break;
     default :
       {
         ii_buffer_counter *counter = &ii_buffer->counters[id - 1];
@@ -7150,8 +7146,10 @@ encode_postings(grn_ctx *ctx, grn_ii_buffer *ii_buffer, uint8_t *outbuf)
           counter->last_weight = weight;
           counter->last_pos = 0;
         }
-        if (flags & GRN_OBJ_WITH_POSITION) {
+        if ((flags & GRN_OBJ_WITH_POSITION) && rest) {
           uint8_t *p = outbuf + counter->offset_pos;
+          pos = *++bp;
+          rest--;
           GRN_B_ENC(pos - counter->last_pos, p);
           counter->offset_pos = p - outbuf;
           counter->last_pos = pos;
@@ -7289,8 +7287,9 @@ grn_ii_buffer_tokenize(grn_ctx *ctx, grn_ii_buffer *ii_buffer, grn_id rid,
       grn_token_cursor *token_cursor;
       grn_id *buffer = ii_buffer->block_buf;
       uint32_t block_pos = ii_buffer->block_pos;
+      uint32_t ii_flags = ii_buffer->ii->header->flags;
       buffer[block_pos++] = II_BUFFER_PACK(rid, II_BUFFER_TYPE_RID);
-      if ((ii_buffer->ii->header->flags & GRN_OBJ_WITH_SECTION)) {
+      if ((ii_flags & GRN_OBJ_WITH_SECTION)) {
         buffer[block_pos++] = sid;
       }
       if (weight) {
@@ -7305,9 +7304,10 @@ grn_ii_buffer_tokenize(grn_ctx *ctx, grn_ii_buffer *ii_buffer, grn_id rid,
             ii_buffer_counter *counter;
             counter = get_buffer_counter(ctx, ii_buffer, tmp_lexicon, tid);
             if (!counter) { return; }
-            buffer[block_pos++] = II_BUFFER_PACK(token_cursor->pos,
-                                                 II_BUFFER_TYPE_POSITION);
             buffer[block_pos++] = tid;
+            if (ii_flags & GRN_OBJ_WITH_POSITION) {
+              buffer[block_pos++] = token_cursor->pos;
+            }
             if (counter->last_rid != rid) {
               counter->offset_rid += GRN_B_ENC_SIZE(rid - counter->last_rid);
               counter->last_rid = rid;
