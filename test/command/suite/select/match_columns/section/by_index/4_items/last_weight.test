@@ -1,24 +1,22 @@
 table_create Memos TABLE_NO_KEY
-column_create Memos title COLUMN_SCALAR ShortText
-column_create Memos content COLUMN_SCALAR ShortText
-column_create Memos comment COLUMN_SCALAR ShortText
-column_create Memos category COLUMN_SCALAR ShortText
+column_create Memos column1 COLUMN_SCALAR ShortText
+column_create Memos column2 COLUMN_SCALAR ShortText
+column_create Memos column3 COLUMN_SCALAR ShortText
+column_create Memos column4 COLUMN_SCALAR ShortText
 
 table_create Lexicon TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
 column_create Lexicon memo_index COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
-  Memos title,content,comment,category
+  Memos column1,column2,column3,column4
 
 load --table Memos
 [
-["title", "content", "comment", "category"],
-["Groonga", "Start Groonga!", "Groonga!", "Groonga"],
-["Mroonga", "Start Mroonga!", "Mroonga!", "Mroonga"],
-["Rroonga", "Start Rroonga!", "Rroonga!", "Rroonga"],
-["Ruby", "Start Ruby!", "Ruby!", "Ruby"],
-["learn", "Learning Ruby and Groonga...", "learn!", "learn"]
+["column1", "column2", "column3", "column4"],
+["Groonga", "Groonga Groonga", "Groonga Groonga Groonga", "Groonga Groonga Groonga Groonga"],
+["Mroonga", "Mroonga Mroonga", "Mroonga Mroonga Mroonga", "Mroonga Mroonga Mroonga Mroonga"],
+["Rroonga", "Rroonga Rroonga", "Rroonga Rroonga Rroonga", "Rroonga Rroonga Rroonga Rroonga"]
 ]
 
 select Memos \
-  --match_columns "Lexicon.memo_index[0] || Lexicon.memo_index[1] || Lexicon.memo_index[2] || Lexicon.memo_index[3] * 20" \
+  --match_columns "Lexicon.memo_index[0] || Lexicon.memo_index[1] || Lexicon.memo_index[2] || Lexicon.memo_index[3] * 41" \
   --query Rroonga \
-  --output_columns "title, content, _score"
+  --output_columns "column1, column2, column3, column4, _score"
