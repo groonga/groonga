@@ -7271,7 +7271,7 @@ grn_ii_buffer_tokenize(grn_ctx *ctx, grn_ii_buffer *ii_buffer, grn_id rid,
 {
   if (value_len) {
     grn_obj *tmp_lexicon;
-    uint32_t est_len = value_len + 2;
+    uint32_t est_len = value_len * 2 + 2;
     if (ii_buffer->block_buf_size < ii_buffer->block_pos + est_len) {
       grn_ii_buffer_flush(ctx, ii_buffer);
     }
