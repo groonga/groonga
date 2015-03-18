@@ -7289,7 +7289,7 @@ grn_ii_buffer_tokenize(grn_ctx *ctx, grn_ii_buffer *ii_buffer, grn_id rid,
       uint32_t block_pos = ii_buffer->block_pos;
       uint32_t ii_flags = ii_buffer->ii->header->flags;
       buffer[block_pos++] = II_BUFFER_PACK(rid, II_BUFFER_TYPE_RID);
-      if ((ii_flags & GRN_OBJ_WITH_SECTION)) {
+      if (ii_flags & GRN_OBJ_WITH_SECTION) {
         buffer[block_pos++] = sid;
       }
       if (weight) {
