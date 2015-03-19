@@ -20,6 +20,7 @@ Reference manual
    reference/token_filters
    reference/query_expanders
    reference/grn_expr
+   reference/regular_expression
    reference/function
    reference/operations
    reference/suggest
