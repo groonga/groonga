@@ -8,7 +8,7 @@ column_create Lexicon1 memo_index COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
   Memos title,content
 table_create Lexicon2 TABLE_PAT_KEY ShortText --default_tokenizer TokenDelimit
 column_create Lexicon2 memo_index COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
-  Memos title,content
+  Memos content,title
 
 load --table Memos
 [
@@ -21,6 +21,6 @@ load --table Memos
 ]
 
 select Memos \
-  --match_columns "Lexicon1.memo_index.title" \
-  --query ub \
+  --match_columns "Lexicon1.memo_index.content" \
+  --query ta \
   --output_columns "title, content, _score"

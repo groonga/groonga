@@ -208,10 +208,8 @@ module Groonga
       when Accessor
         accessor = value
         index_info = accessor.find_index(@op)
-        if index_info and accessor.have_next?
-          if accessor.next.next.nil? and accessor.object.is_a?(IndexColumn)
-            index_info = IndexInfo.new(accessor.object, index_info.section_id)
-          else
+        if index_info
+          if accessor.have_next? and index_info.index != accessor.object
             index_info = IndexInfo.new(accessor, index_info.section_id)
           end
         end

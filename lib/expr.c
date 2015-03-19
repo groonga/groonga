@@ -4016,12 +4016,8 @@ scan_info_build_match_expr_codes_find_index(grn_ctx *ctx, scan_info *si,
     if (n_index_data > 0) {
       grn_accessor *a = (grn_accessor *)(ec->value);
       *sid = index_datum.section;
-      if (a->next) {
-        if (!(a->next->next) && a->obj->header.type == GRN_COLUMN_INDEX) {
-          *index = a->obj;
-        } else {
-          *index = ec->value;
-        }
+      if (a->next && a->obj != index_datum.index) {
+        *index = ec->value;
       } else {
         *index = index_datum.index;
       }
