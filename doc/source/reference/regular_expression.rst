@@ -238,7 +238,7 @@ Choice syntax is ``A|B``. The regular expression matches when either
 .. include:: ../example/reference/regular_expression/choice.log
 .. select Logs --filter 'message @~ "warning|info"'
 
-.. _caution:
+.. caution::
 
    Regular expression that uses this syntax can't be evaluated by
    index.
@@ -279,7 +279,7 @@ You can also use more powerful group related features. See
 <https://github.com/k-takata/Onigmo/blob/master/doc/RE#L225>`_ for
 details.
 
-.. _caution:
+.. caution::
 
    Regular expression that uses this syntax can't be evaluated by
    index.
@@ -310,7 +310,7 @@ You can also use more powerful character class related features. See
 <https://github.com/k-takata/Onigmo/blob/master/doc/RE#L164>`_ for
 details.
 
-.. _caution:
+.. caution::
 
    Regular expression that uses this syntax can't be evaluated by
    index.
@@ -353,7 +353,7 @@ documentation
 <https://github.com/k-takata/Onigmo/blob/master/doc/RE#L152>`_ for
 details.
 
-.. _caution:
+.. caution::
 
    Regular expression that uses this syntax except ``\A`` and ``\z``
    can't be evaluated by index.
@@ -388,7 +388,7 @@ documentation
 <https://github.com/k-takata/Onigmo/blob/master/doc/RE#L119>`_ for
 details.
 
-.. _caution:
+.. caution::
 
    Regular expression that uses this syntax can't be evaluated by
    index.
