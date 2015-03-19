@@ -1043,6 +1043,8 @@ are also normalized.
 Regular expression operator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. versionadded:: 5.0.1
+
 Its syntax is ``column @~ "pattern"``.
 
 The operator searches records by the regular expression

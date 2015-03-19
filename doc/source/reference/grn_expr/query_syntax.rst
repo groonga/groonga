@@ -481,6 +481,8 @@ greater than or equal to ``10``.
 Regular expression condition
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. versionadded:: 5.0.1
+
 Its syntax is ``column:~pattern``.
 
 It matches records that ``column`` value is matched to

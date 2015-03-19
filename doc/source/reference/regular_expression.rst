@@ -11,6 +11,12 @@ Regular expression
 Summary
 -------
 
+.. note::
+
+   Regular expression support is an experimental feature.
+
+.. versionadded:: 5.0.1
+
 Groonga supports pattern match by regular expression. Regular
 expression is widely used format to describe a pattern. Regular
 expression is useful to represent complex pattern.
