@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-03-19 15:13+0900\n"
+"PO-Revision-Date: 2015-03-19 16:07+0900\n"
 "Last-Translator: Takatsugu <nokubi@gmail.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -17769,7 +17769,3 @@ msgstr ""
 
 msgid "Object型はv1.2でサポートされます。"
 msgstr ""
-
-# 1bd2bdd54ab14c1a85587534fbaf22d5
-#~ msgid "``in_values`` function is added since Groonga 4.0.7."
-#~ msgstr "``in_values`` 関数は Groonga 4.0.7 で追加されました。"
