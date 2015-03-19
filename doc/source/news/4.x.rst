@@ -542,7 +542,7 @@ Improvements
 ^^^^^^^^^^^^
 
 * [doc] Updated documentation about
-  :doc:`/reference/executables/groonga-suggest-leaner`.
+  :doc:`/reference/executables/groonga-suggest-learner`.
 * [doc] Added documentation about how to update files.
   [GitHub#160] [Patch by cosmo0920]
 * [doc] Updated to caplitalized "Groonga" terms in
@@ -633,7 +633,7 @@ Fixes
 * Fixed a bug that a division overflow caused a fatal error.
   For example, it occurs when you execute 'COLUMN / -1' operation to Int32 or Int64 column. [#2307]
 * Fixed a bug that '%' operations performs '/' operations. [#2307]
-* [doc] Fixed a wrong documentation about :doc:`reference/commands/column_rename`. [Reported by nise_nabe]
+* [doc] Fixed a wrong documentation about :doc:`/reference/commands/column_rename`. [Reported by nise_nabe]
 * Fixed the issue that out of bound array element access may occurs. [GitHub#158] [Reported by dcb314]
 
 Thanks
