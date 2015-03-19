@@ -14867,6 +14867,9 @@ msgstr ""
 msgid "Regular expression"
 msgstr "正規表現"
 
+msgid "Regular expression support is an experimental feature."
+msgstr "正規表現は実験的な機能です。"
+
 # 3d75cdf6145d400e9951f0af3c7bf572
 msgid ""
 "Groonga supports pattern match by regular expression. Regular expression is "
@@ -15383,14 +15386,14 @@ msgstr "インデックスを使えるか"
 msgid "The beginning of line"
 msgstr "行頭"
 
-# 72359e5566684b6895c1383dd7c53c36
-# 30e926e4f6504828aa4368485ed0fc1e
-# e5e0873a8c06423ba169bb47f245672a
-msgid "No"
+msgid "o"
 msgstr ""
 
 msgid "The end of line"
 msgstr "行末"
+
+msgid "x"
+msgstr ""
 
 # 824e58702cc04cb1a866f1cbbc6ec79a
 msgid "``\\A``"
@@ -15399,9 +15402,6 @@ msgstr ""
 # d9d595b76ea648d687eac3b741d2b1f4
 msgid "The beginning of text"
 msgstr "テキストの先頭"
-
-msgid "Yes"
-msgstr ""
 
 # dfdd02d89b2a42be8665cfacb0da3f96
 msgid "``\\z``"
@@ -16268,14 +16268,8 @@ msgstr "パトリシアトライ"
 msgid "ID support"
 msgstr "IDサポート"
 
-msgid "o"
-msgstr ""
-
 msgid "Key support"
 msgstr "キーサポート"
-
-msgid "x"
-msgstr ""
 
 msgid "Value support"
 msgstr "バリューサポート"
@@ -16557,7 +16551,7 @@ msgstr ""
 "で ``develop`` も ``developing`` も ``developed`` も検索できます。"
 
 msgid "Tokenizers"
-msgstr ""
+msgstr "トークナイザー"
 
 msgid ""
 "Groonga has tokenizer module that tokenizes text. It is used when the "
