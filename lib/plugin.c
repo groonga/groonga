@@ -105,7 +105,8 @@ const char *
 grn_plugin_path(grn_ctx *ctx, grn_id id)
 {
   const char *path;
-  uint32_t key_size;
+  grn_plugin *plugin;
+  int value_size;
   const char *system_plugins_dir;
   size_t system_plugins_dir_size;
 
@@ -114,13 +115,14 @@ grn_plugin_path(grn_ctx *ctx, grn_id id)
   }
 
   CRITICAL_SECTION_ENTER(grn_plugins_lock);
-  path = _grn_hash_key(&grn_gctx, grn_plugins, id, &key_size);
+  value_size = grn_hash_get_value(&grn_gctx, grn_plugins, id, &plugin);
   CRITICAL_SECTION_LEAVE(grn_plugins_lock);
 
-  if (!path) {
+  if (!plugin) {
     return NULL;
   }
 
+  path = plugin->path;
   system_plugins_dir = grn_plugin_get_system_plugins_dir();
   system_plugins_dir_size = strlen(system_plugins_dir);
   if (strncmp(system_plugins_dir, path, system_plugins_dir_size) == 0) {
@@ -274,6 +276,7 @@ grn_plugin_open_mrb(grn_ctx *ctx, const char *filename, size_t filename_size)
     return GRN_ID_NIL;
   }
 
+  memcpy((*plugin)->path, filename, filename_size);
   (*plugin)->dl = NULL;
   (*plugin)->init_func = NULL;
   (*plugin)->register_func = NULL;
@@ -315,6 +318,7 @@ grn_plugin_open(grn_ctx *ctx, const char *filename)
                            (void **)&plugin, NULL))) {
       *plugin = GRN_GMALLOCN(grn_plugin, 1);
       if (*plugin) {
+        memcpy((*plugin)->path, filename, filename_size);
         if (grn_plugin_initialize(ctx, *plugin, dl, id, filename)) {
           GRN_GFREE(*plugin);
           *plugin = NULL;
