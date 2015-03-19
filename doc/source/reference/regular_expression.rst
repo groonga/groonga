@@ -157,9 +157,9 @@ require escape between you and Groonga. Here are steps that require
 
       * ``message @~ "\\Ahost1:"``
 
-  * :doc:`/reference/grn_exr` parser. ``\`` escape is required in both
-    :doc:`/reference/grn_exr/query_syntax` and
-    :doc:`/reference/grn_exr/script_syntax`.
+  * :doc:`/reference/grn_expr` parser. ``\`` escape is required in both
+    :doc:`/reference/grn_expr/query_syntax` and
+    :doc:`/reference/grn_expr/script_syntax`.
 
     ``"\\Ahost1:"`` string literal in script syntax is evaluated as
     the following value:

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-03-19 14:43+0900\n"
+"PO-Revision-Date: 2015-03-19 15:13+0900\n"
 "Last-Translator: Takatsugu <nokubi@gmail.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -15094,14 +15094,14 @@ msgstr ""
 msgid "``message @~ \"\\\\Ahost1:\"``"
 msgstr ""
 
-# 402f6a626fac456bbc7a1aacc812a2a2
 msgid ""
-":doc:`/reference/grn_exr` parser. ``\\`` escape is required in both :doc:`/"
-"reference/grn_exr/query_syntax` and :doc:`/reference/grn_exr/script_syntax`."
+":doc:`/reference/grn_expr` parser. ``\\`` escape is required in both :doc:`/"
+"reference/grn_expr/query_syntax` and :doc:`/reference/grn_expr/"
+"script_syntax`."
 msgstr ""
-":doc:`/reference/grn_exr` パーサー。 :doc:`/reference/grn_exr/query_syntax` "
-"でも :doc:`/reference/grn_exr/script_syntax` でも ``\\`` エスケープが必要で"
-"す。"
+":doc:`/reference/grn_expr` パーサー。 :doc:`/reference/grn_expr/"
+"query_syntax` でも :doc:`/reference/grn_expr/script_syntax` でも ``\\`` エス"
+"ケープが必要です。"
 
 # 0d32cb6fbe5c4d67b6ec5e792e133de1
 msgid ""
@@ -16639,13 +16639,13 @@ msgstr ""
 msgid "``lo``"
 msgstr ""
 
-# e7358a6d67874e0d95c211763ede30aa
-msgid "``o ``"
-msgstr ""
+# d5a41b1537d34449994f8f996d5c8ad9
+msgid "``o_`` (``_`` means a white-space)"
+msgstr "``o_`` （ ``_`` は空白文字という意味）"
 
-# 133b80a4d78e42f992b956d08949f389
-msgid "`` W``"
-msgstr ""
+# d93a2b8f820241dd9a18ed9b87561f7b
+msgid "``_W`` (``_`` means a white-space)"
+msgstr "``_W`` （ ``_`` は空白文字という意味）"
 
 # d9f4093b3d0c40fc9ca4d946c84df822
 msgid "``Wo``"
