@@ -68,6 +68,8 @@ static const char *grn_plugin_mrb_suffix = ".rb";
 #  define grn_dl_clear_error()
 #endif
 
+#define GRN_PLUGIN_KEY_SIZE(filename) (strlen((filename)) + 1)
+
 static int
 compute_name_size(const char *name, int name_size)
 {
@@ -88,7 +90,8 @@ grn_plugin_reference(grn_ctx *ctx, const char *filename)
   grn_plugin **plugin = NULL;
 
   CRITICAL_SECTION_ENTER(grn_plugins_lock);
-  id = grn_hash_get(&grn_gctx, grn_plugins, filename, strlen(filename),
+  id = grn_hash_get(&grn_gctx, grn_plugins,
+                    filename, GRN_PLUGIN_KEY_SIZE(filename),
                     (void **)&plugin);
   if (plugin) {
     (*plugin)->refcount++;
@@ -289,7 +292,7 @@ grn_plugin_open(grn_ctx *ctx, const char *filename)
   grn_plugin **plugin = NULL;
   size_t filename_size;
 
-  filename_size = strlen(filename);
+  filename_size = GRN_PLUGIN_KEY_SIZE(filename);
 
   CRITICAL_SECTION_ENTER(grn_plugins_lock);
   if ((id = grn_hash_get(&grn_gctx, grn_plugins, filename, filename_size,
@@ -746,7 +749,9 @@ grn_plugin_unregister_by_path(grn_ctx *ctx, const char *path)
   GRN_API_ENTER;
 
   CRITICAL_SECTION_ENTER(grn_plugins_lock);
-  plugin_id = grn_hash_get(&grn_gctx, grn_plugins, path, strlen(path), NULL);
+  plugin_id = grn_hash_get(&grn_gctx, grn_plugins,
+                           path, GRN_PLUGIN_KEY_SIZE(path),
+                           NULL);
   CRITICAL_SECTION_LEAVE(grn_plugins_lock);
 
   if (plugin_id == GRN_ID_NIL) {
