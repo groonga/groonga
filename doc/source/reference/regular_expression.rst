@@ -325,16 +325,16 @@ can be evaluated by index.
      - Index ready
    * - ``^``
      - The beginning of line
-     - No
+     - o
    * - ``$``
      - The end of line
-     - No
+     - x
    * - ``\A``
      - The beginning of text
-     - Yes
+     - o
    * - ``\z``
      - The end of text
-     - No
+     - x
 
 Here is an example that uses ``\z``.
 

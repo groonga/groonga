@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-03-18 18:58+0900\n"
+"PO-Revision-Date: 2015-03-19 14:43+0900\n"
 "Last-Translator: Takatsugu <nokubi@gmail.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -15125,6 +15125,361 @@ msgstr ""
 "このセクションでは広く使われている構文だけ説明します。他の構文と詳細は "
 "`Onigmoの構文ドキュメント <https://github.com/k-takata/Onigmo/blob/master/"
 "doc/RE.ja>`_ を参照してください。"
+
+msgid "In regular expression, there are the following special characters:"
+msgstr "正規表現で特別な文字は次の通りです。"
+
+# 06e4ecfd9d454619933a48c1c5af49ac
+msgid "``\\``"
+msgstr ""
+
+# dca3d8d7438e4e21bacc3e78f6a937ee
+msgid "``|``"
+msgstr ""
+
+# 50a3dd2388074b5597de6bd9b6948c3f
+msgid "``(``"
+msgstr ""
+
+# 995dcf9625cd4c0c94b28ebe922966ba
+msgid "``)``"
+msgstr ""
+
+# 39ee2308e07a46ce8a449741224000fb
+msgid "``[``"
+msgstr ""
+
+# d36dd6428a1e4620bbb1ef12e94ea248
+msgid "``]``"
+msgstr ""
+
+# 3c78a63217834b6aa2b9f73414915842
+msgid "``*``"
+msgstr ""
+
+# 12fad30697bc4d3e8fa1f1a656d2494b
+msgid "``+``"
+msgstr ""
+
+# fdc3fc9880cd476da45f4bd4a8adc4b0
+msgid "``?``"
+msgstr ""
+
+# f81d9eafcfb94221a1e00974812c87af
+msgid "``{``"
+msgstr ""
+
+# ad6f90f62cc04a61a321a70ffe61c704
+msgid "``}``"
+msgstr ""
+
+# 05a984537d6b4ef9a2a3a2eb84946266
+msgid "``^``"
+msgstr ""
+
+# 6623163d68d74db381c4b1acdc63355b
+msgid "``$``"
+msgstr ""
+
+# 438ac65ae1a54cc3afd452410c2d43e4
+msgid ""
+"If you want to write pattern that matches these special character as is, you "
+"need to escape them."
+msgstr ""
+"これらの特別な文字そのものにマッチするパターンを書きたいときはこれらの文字を"
+"エスケープする必要があります。"
+
+# dda38a6d0b214732a87bc1f88599aad5
+msgid ""
+"You can escape them by putting ``\\`` before special character. Here are "
+"regular expressions that match special character itself:"
+msgstr ""
+"特別な文字の前に ``\\`` を入れることでエスケープできます。以下は特別な文字そ"
+"のものにマッチする正規表現です。"
+
+# d10a946798a9469ca20b5d5d58455550
+msgid "``\\\\``"
+msgstr ""
+
+# 8763221442b545ea9c0466fc2cee1420
+msgid "``\\|``"
+msgstr ""
+
+# e39271c694374f8a99ea1c0287607a8e
+msgid "``\\(``"
+msgstr ""
+
+# bba43a5fcf274b38ae6b6fb1e8191730
+msgid "``\\)``"
+msgstr ""
+
+# 40340b93acde4024921cab3d4bc56d00
+msgid "``\\[``"
+msgstr ""
+
+# 9679976af120437daa80746070dc7cb1
+msgid "``\\]``"
+msgstr ""
+
+# c012c9e3897a48c4b3e8f3c47ae330d4
+msgid "``\\.``"
+msgstr ""
+
+# 01592120e4484293836d8a47c1f07af1
+msgid "``\\*``"
+msgstr ""
+
+# 57c12092806842879db22d8f356d27f7
+msgid "``\\+``"
+msgstr ""
+
+# cb1e727fdaea4c3d80525b239fb8a8c9
+msgid "``\\?``"
+msgstr ""
+
+# 118288a992b8472d9e934016587f657e
+msgid "``\\{``"
+msgstr ""
+
+# 044c53ac46174814914c4ed4237d2a8f
+msgid "``\\}``"
+msgstr ""
+
+# ebb6aef334c84d9cbe6f60c7e153a43d
+msgid "``\\^``"
+msgstr ""
+
+# 8f3f72ca91234bd1b9989f81255b3c32
+msgid "``\\$``"
+msgstr ""
+
+# b060fd6aca0a49f4aa2203bdf89454a9
+msgid ""
+"If your regular expression doesn't work as you expected, confirm that some "
+"special characters are used without escaping."
+msgstr ""
+"正規表現が期待した通りに動かないときはエスケープ無しで特別な文字が使われてい"
+"ないか確認してください。"
+
+# c4d7582c9c064e48b7ef4076309e9837
+msgid "Choice"
+msgstr "選択"
+
+# 5a89103a862e4e7db824626a552f4352
+msgid ""
+"Choice syntax is ``A|B``. The regular expression matches when either ``A`` "
+"pattern or ``B`` pattern is matched."
+msgstr ""
+"選択の構文は ``A|B`` です。 ``A`` パターンまたは ``B`` パターンにマッチすると"
+"この正規表現にマッチしたことになります。"
+
+# 6e6892e962db48fea1a0b960bb86242f
+msgid "Regular expression that uses this syntax can't be evaluated by index."
+msgstr "この構文を使った正規表現はインデックスを使って評価できません。"
+
+msgid "Group"
+msgstr "グループ"
+
+msgid "Group syntax is ``(...)``. Group provides the following features:"
+msgstr "グループの構文は ``(...)`` です。グループは次の機能を提供します。"
+
+msgid "Back reference"
+msgstr "後方参照"
+
+# f516452574024ef4a84dcb49a835d7cb
+msgid "Scope reducing"
+msgstr "スケープの限定"
+
+# 83556890e9c04ca1b311ab63e1708154
+msgid ""
+"You can refer matched groups by ``\\n`` (``n`` is the group number) syntax. "
+"For example, ``e(r)\\1o\\1`` matches ``error``. Because ``\\1`` is replaced "
+"with match result (``r``) of the first group ``(r)``."
+msgstr ""
+"マッチしたグループを ``\\n`` （ ``n`` はグループの番号とする） という構文で参"
+"照できます。例えば、 ``e(r)\\1o\\1`` は ``error`` にマッチします。なぜなら、 "
+"``\\1`` は1番目ののグループ ``(r)`` のマッチ結果（ ``r`` ）に置き換えられるか"
+"らです。"
+
+# f7d2eef54d5e4dfd8d3c55eed42a4394
+msgid ""
+"You can also use more powerful back reference features. See `\"8. Back "
+"reference\" section in Onigmo documentation <https://github.com/k-takata/"
+"Onigmo/blob/master/doc/RE#L302>`_ for details."
+msgstr ""
+"より強力な後方参照機能を使うこともできます。詳細は `Onigmoのドキュメントの"
+"「8. 後方参照」セクション <https://github.com/k-takata/Onigmo/blob/master/"
+"doc/RE.ja#L299>`_ を参照してください。"
+
+# 9453188d885846ff8a974b034fa6f09c
+msgid ""
+"Group syntax reduces scope. For example, ``\\[(warning|info)\\]`` reduces "
+"choice syntax scope. The regular expression matches ``[warning]`` and "
+"``[info]``."
+msgstr ""
+"グループ構文はスコープを小さくします。例えば、 ``\\[(warning|info)\\]`` は選"
+"択構文のスコープを小さくしています。この正規表現は ``[warning]`` と "
+"``[info]`` にマッチします。"
+
+# 6bb954f7866846d8bbc40526326e4980
+msgid ""
+"You can also use more powerful group related features. See `\"7. Extended "
+"groups\" section in Onigmo documentation <https://github.com/k-takata/Onigmo/"
+"blob/master/doc/RE#L225>`_ for details."
+msgstr ""
+"より強力なグループ関連の機能を使うこともできます。詳細は `Onigmoのドキュメン"
+"トの「7. 拡張式集合」セクション <https://github.com/k-takata/Onigmo/blob/"
+"master/doc/RE.ja#L224>`_ を参照してください。"
+
+msgid "Character class"
+msgstr "文字クラス"
+
+# cf982d3fcc5d4464b5c0ee03d90b6c14
+msgid ""
+"Character class syntax is ``[...]``. Character class is useful to specify "
+"multiple characters to be matched."
+msgstr ""
+"文字クラスの構文は ``[...]`` です。文字クラスはマッチする文字を複数指定すると"
+"きに便利です。"
+
+# c6b7f6856d7249ba996db3e06687031a
+msgid "For example, ``[Dd]`` matches ``D`` or ``d``."
+msgstr "たとえば、 ``[Dd]`` は ``D`` または ``d`` にマッチします。"
+
+# f68244a7b7d84930b12fabd2e18f5c44
+msgid ""
+"You can specify characters by range. For example, ``[0-9]`` matches one "
+"digit."
+msgstr ""
+"範囲で文字を指定することもできます。たとえば、 ``[0-9]`` は1文字の数字にマッ"
+"チします。"
+
+# d4a761152b7249ebad0620fb0db1fb96
+msgid ""
+"You can also use more powerful character class related features. See `\"6. "
+"Character class\" section in Onigmo documentation <https://github.com/k-"
+"takata/Onigmo/blob/master/doc/RE#L164>`_ for details."
+msgstr ""
+"より強力な文字クラス関連の機能も使うことができます。詳細は `Onigmoのドキュメ"
+"ントの「6. 文字集合」セクション <https://github.com/k-takata/Onigmo/blob/"
+"master/doc/RE.ja#L164>`_ を参照してください。"
+
+# b7e97f0445bb4b5a9015866c20e6fe85
+# f402a02b566b4d0a859ef932707080fb
+msgid "Anchor"
+msgstr "アンカー"
+
+# cf0d9375f55445ddb1877edce3ab5791
+msgid ""
+"There are the following commonly used anchor syntaxes. Some anchors can be "
+"evaluated by index."
+msgstr ""
+"以下はよく使われるアンカーの構文です。いくつかのアンカーはインデックスを使っ"
+"て評価できます。"
+
+msgid "Index ready"
+msgstr "インデックスを使えるか"
+
+msgid "The beginning of line"
+msgstr "行頭"
+
+# 72359e5566684b6895c1383dd7c53c36
+# 30e926e4f6504828aa4368485ed0fc1e
+# e5e0873a8c06423ba169bb47f245672a
+msgid "No"
+msgstr ""
+
+msgid "The end of line"
+msgstr "行末"
+
+# 824e58702cc04cb1a866f1cbbc6ec79a
+msgid "``\\A``"
+msgstr ""
+
+# d9d595b76ea648d687eac3b741d2b1f4
+msgid "The beginning of text"
+msgstr "テキストの先頭"
+
+msgid "Yes"
+msgstr ""
+
+# dfdd02d89b2a42be8665cfacb0da3f96
+msgid "``\\z``"
+msgstr ""
+
+msgid "The end of text"
+msgstr "テキストの末尾"
+
+msgid "Here is an example that uses ``\\z``."
+msgstr "以下は ``\\z`` を使った例です。"
+
+# 75c822f63c1844ceb2aebc4dc11b7207
+msgid ""
+"You can also use more anchors. See `\"5. Anchors\" section in Onigmo "
+"documentation <https://github.com/k-takata/Onigmo/blob/master/doc/RE#L152>`_ "
+"for details."
+msgstr ""
+"他にも使えるアンカーがあります。詳細は `Onigmoのドキュメントの「5. 錨」セク"
+"ション <https://github.com/k-takata/Onigmo/blob/master/doc/RE.ja#L152>`_ を参"
+"照してください。"
+
+# 714b22054d754e7ba5ea8f9fb362142c
+msgid ""
+"Regular expression that uses this syntax except ``\\A`` and ``\\z`` can't be "
+"evaluated by index."
+msgstr ""
+"``\\A`` と ``\\z`` 以外のアンカーを使った正規表現はインデックスを使って評価で"
+"きません。"
+
+# f0a79b9d79aa4aee9796144720b679a0
+# 4559fa6a68974f39aa288fca32067f69
+msgid "Quantifier"
+msgstr "量指定子"
+
+msgid "There are the following commonly used quantifier syntaxes."
+msgstr "以下はよく使われる量指定子の構文です。"
+
+# 67bfd3f867f94de1a88b4eabfceb10bf
+msgid "0 or 1 time"
+msgstr "0回か1回"
+
+# a6b78ebc0a59411f92e0c1003323c8fe
+msgid "0 or more times"
+msgstr "0回以上"
+
+# 0a7c47abd4ef40a585ffe89ce8127057
+msgid "1 or more times"
+msgstr "1回以上"
+
+# bfe2fc55d16c4c9db994b62acef8b54f
+msgid "For example, ``er+or`` matches ``error``, ``errror`` and so on."
+msgstr "例えば、 ``er+or`` は ``error`` 、 ``errror`` などにマッチします。"
+
+# ecd8ac2d830842ea970060c267b13a6a
+msgid ""
+"You can also use more quantifiers. See `\"4. Quantifier\" section in Onigmo "
+"documentation <https://github.com/k-takata/Onigmo/blob/master/doc/RE#L119>`_ "
+"for details."
+msgstr ""
+"他の量指定子を使うこともできます。詳細は `Onigmoのドキュメントの「4. 量指定"
+"子」セクション <https://github.com/k-takata/Onigmo/blob/master/doc/RE."
+"ja#L119>`_ を参照してください。"
+
+# 57152425619b4241b4ec7de909edcf40
+msgid "Others"
+msgstr "その他"
+
+# 922448ce3a0f40fcac832dfbea679538
+msgid ""
+"There are more syntaxes. If you're interested in them, see `Onigmo "
+"documentation <https://github.com/k-takata/Onigmo/blob/master/doc/RE>`_ for "
+"details. You may be interested in \"character type\" and \"character\" "
+"syntaxes."
+msgstr ""
+"他にも構文があります。それらに興味がある場合は `Onigmoのドキュメント "
+"<https://github.com/k-takata/Onigmo/blob/master/doc/RE.ja>`_ を参照してくださ"
+"い。「文字種」や「文字」の構文に興味があるかもしれません。"
+
 msgid "Suggest"
 msgstr "サジェスト"
 
@@ -16633,10 +16988,6 @@ msgstr "カタカナ"
 # 405b1fc94e9e4dc5940874f3196a52ee
 msgid "Kanji"
 msgstr "漢字"
-
-# 57152425619b4241b4ec7de909edcf40
-msgid "Others"
-msgstr "その他"
 
 # 58516723b1054a65898d08bd25ed9a4d
 msgid "The following example shows two token delimiters:"
