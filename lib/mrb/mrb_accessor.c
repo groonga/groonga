@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2014 Brazil
+  Copyright(C) 2013-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -26,6 +26,7 @@
 
 #include "../grn_db.h"
 #include "mrb_accessor.h"
+#include "mrb_converter.h"
 
 static struct mrb_data_type mrb_grn_accessor_type = {
   "Groonga::Accessor",
@@ -49,8 +50,7 @@ mrb_grn_accessor_next(mrb_state *mrb, mrb_value self)
   grn_accessor *accessor;
 
   accessor = DATA_PTR(self);
-  if (!accessor->next) { return mrb_nil_value(); }
-  return mrb_cptr_value(mrb, accessor->next);
+  return grn_mrb_value_from_grn_obj(mrb, (grn_obj *)(accessor->next));
 }
 
 static mrb_value
