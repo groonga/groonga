@@ -67,8 +67,8 @@ Sample data:
 .. {"_key": "rroonga's blog", "content": "content of rroonga's blog", comments: [3]},
 .. ]
 
-Here is the simple usage of ``sub_filter`` function which extracts the blog entry
- user 'A' commented out.
+Here is the simple usage of ``sub_filter`` function which extracts the
+blog entry commented by user 'A'.
 
 .. groonga-command
 .. include:: ../../example/reference/functions/sub_filter/usage_without_sub_filter.log
