@@ -1,0 +1,26 @@
+table_create Logs TABLE_NO_KEY
+column_create Logs message1 COLUMN_SCALAR Text
+column_create Logs message2 COLUMN_SCALAR Text
+column_create Logs message3 COLUMN_SCALAR Text
+column_create Logs message4 COLUMN_SCALAR Text
+
+table_create Lexicon TABLE_PAT_KEY ShortText --default_tokenizer TokenDelimit
+column_create Lexicon index1 COLUMN_INDEX|WITH_POSITION Logs message1
+column_create Lexicon index2 COLUMN_INDEX|WITH_POSITION Logs message2
+column_create Lexicon index3 COLUMN_INDEX|WITH_POSITION Logs message3
+column_create Lexicon index4 COLUMN_INDEX|WITH_POSITION Logs message4
+
+load --table Logs
+[
+["message1", "message2", "message3", "message4"],
+["a a a a a a a a", "a a a a a a a a", "a a a a a a a a", "a a a a a a a a"]
+]
+
+select Logs \
+  --match_columns 'scorer_tf_at_most(message1, 3.0) || \
+                   scorer_tf_at_most(message2, 4.0) || \
+                   scorer_tf_at_most(message3, 5.0) || \
+                   scorer_tf_at_most(message4, 7.0)' \
+  --query 'a' \
+  --output_columns '_score' \
+  --sortby -_score
