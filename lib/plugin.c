@@ -801,7 +801,7 @@ grn_plugin_unregister(grn_ctx *ctx, const char *name)
   GRN_API_ENTER;
   path = grn_plugin_find_path(ctx, name);
   if (path) {
-    grn_plugin_unregister_by_path(ctx, path);
+    rc = grn_plugin_unregister_by_path(ctx, path);
     GRN_FREE(path);
   } else {
     if (ctx->rc == GRN_SUCCESS) {
