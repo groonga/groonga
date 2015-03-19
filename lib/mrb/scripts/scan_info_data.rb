@@ -209,7 +209,11 @@ module Groonga
         accessor = value
         index_info = accessor.find_index(@op)
         if index_info and accessor.have_next?
-          index_info = IndexInfo.new(accessor, index_info.section_id)
+          if accessor.next.next.nil? and accessor.object.is_a?(IndexColumn)
+            index_info = IndexInfo.new(accessor.object, index_info.section_id)
+          else
+            index_info = IndexInfo.new(accessor, index_info.section_id)
+          end
         end
       when FixedSizeColumn, VariableSizeColumn
         index_info = value.find_index(@op)

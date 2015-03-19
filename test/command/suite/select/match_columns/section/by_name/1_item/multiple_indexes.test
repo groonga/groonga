@@ -1,0 +1,26 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos title COLUMN_SCALAR ShortText
+column_create Memos content COLUMN_SCALAR ShortText
+
+table_create Lexicon1 TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram
+column_create Lexicon1 memo_index COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
+  Memos title,content
+table_create Lexicon2 TABLE_PAT_KEY ShortText --default_tokenizer TokenDelimit
+column_create Lexicon2 memo_index COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
+  Memos title,content
+
+load --table Memos
+[
+["title", "content"],
+["Groonga", "Start Groonga!"],
+["Mroonga", "Start Mroonga!"],
+["Rroonga", "Start Rroonga!"],
+["Ruby", "Start Ruby!"],
+["learn", "Learning Ruby and Groonga..."]
+]
+
+select Memos \
+  --match_columns "Lexicon1.memo_index.title" \
+  --query ub \
+  --output_columns "title, content, _score"
