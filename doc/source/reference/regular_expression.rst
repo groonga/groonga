@@ -29,7 +29,7 @@ engine as Ruby. The regular expression engine is `Onigmo
 with other regular expression syntax is ``^`` and ``$``. The regular
 expression syntax in Ruby, ``^`` means the beginning of line and ``$``
 means the end of line. ``^`` means the beginning of text and ``$``
-means the end of text in other most regular expression. The regular
+means the end of text in other most regular expression syntaxes. The regular
 expression syntax in Ruby uses ``\A`` for the beginning of text and
 ``\z`` for the end of text.
 
