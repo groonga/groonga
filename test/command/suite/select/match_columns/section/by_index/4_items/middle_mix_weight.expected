@@ -1,0 +1,66 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos column1 COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Memos column2 COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Memos column3 COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Memos column4 COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Lexicon TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+[[0,0.0,0.0],true]
+column_create Lexicon memo_index COLUMN_INDEX|WITH_POSITION|WITH_SECTION   Memos column1,column2,column3,column4
+[[0,0.0,0.0],true]
+load --table Memos
+[
+["column1", "column2", "column3", "column4"],
+["Groonga", "Groonga Groonga", "Groonga Groonga Groonga", "Groonga Groonga Groonga Groonga"],
+["Mroonga", "Mroonga Mroonga", "Mroonga Mroonga Mroonga", "Mroonga Mroonga Mroonga Mroonga"],
+["Rroonga", "Rroonga Rroonga", "Rroonga Rroonga Rroonga", "Rroonga Rroonga Rroonga Rroonga"]
+]
+[[0,0.0,0.0],3]
+select Memos   --match_columns "Lexicon.memo_index[0] || Lexicon.memo_index[1] || Lexicon.memo_index[2] * 31 || Lexicon.memo_index[3]"   --query Rroonga   --output_columns "column1, column2, column3, column4, _score"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "column1",
+          "ShortText"
+        ],
+        [
+          "column2",
+          "ShortText"
+        ],
+        [
+          "column3",
+          "ShortText"
+        ],
+        [
+          "column4",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "Rroonga",
+        "Rroonga Rroonga",
+        "Rroonga Rroonga Rroonga",
+        "Rroonga Rroonga Rroonga Rroonga",
+        100
+      ]
+    ]
+  ]
+]
