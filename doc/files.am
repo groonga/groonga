@@ -190,6 +190,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_phrase_search.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_phrase_search_with_explicit_match_column.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_prefix_search.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_regular_expression.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_suffix_search.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_addition_assignment_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_addition_operator.log \
@@ -219,6 +220,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_not_equal_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_or_assignment_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_prefix_search_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_regular_expression_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_right_shift_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_signed_right_shift_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_similar_search_operator.log \
@@ -239,6 +241,19 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/normalizers/example-table-create.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-auto.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc51.log \
+	$(top_srcdir)/doc/source/example/reference/regular_expression/anchor_z.log \
+	$(top_srcdir)/doc/source/example/reference/regular_expression/character_class_characters.log \
+	$(top_srcdir)/doc/source/example/reference/regular_expression/character_class_range.log \
+	$(top_srcdir)/doc/source/example/reference/regular_expression/choice.log \
+	$(top_srcdir)/doc/source/example/reference/regular_expression/group_back_reference.log \
+	$(top_srcdir)/doc/source/example/reference/regular_expression/group_scope_reducing.log \
+	$(top_srcdir)/doc/source/example/reference/regular_expression/index_definitions.log \
+	$(top_srcdir)/doc/source/example/reference/regular_expression/quantifier_plus.log \
+	$(top_srcdir)/doc/source/example/reference/regular_expression/search_by_index_filter.log \
+	$(top_srcdir)/doc/source/example/reference/regular_expression/search_by_index_query.log \
+	$(top_srcdir)/doc/source/example/reference/regular_expression/usage_filter.log \
+	$(top_srcdir)/doc/source/example/reference/regular_expression/usage_query.log \
+	$(top_srcdir)/doc/source/example/reference/regular_expression/usage_setup.log \
 	$(top_srcdir)/doc/source/example/reference/suggest/complete/registered-word-japan.log \
 	$(top_srcdir)/doc/source/example/reference/suggest/complete/registered-word-japanese.log \
 	$(top_srcdir)/doc/source/example/reference/suggest/complete/rk-search-nihon.log \
@@ -250,6 +265,30 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/token_filters/example-table-create.log \
 	$(top_srcdir)/doc/source/example/reference/token_filters/stem.log \
 	$(top_srcdir)/doc/source/example/reference/token_filters/stop_word.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-ascii-and-character-type-change-with-normalizer.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-ascii-and-white-space-with-normalizer.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-ignore-blank-split-symbol-with-white-spaces-and-symbol-and-alphabet-digit.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-ignore-blank-split-symbol-with-white-spaces-and-symbol-and-alphabet.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-ignore-blank-split-symbol-with-white-spaces-and-symbol.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-ignore-blank-with-white-spaces.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-no-normalizer.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-non-ascii-with-normalizer.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-split-symbol-alpha-digit-with-normalizer.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-split-symbol-alpha-with-normalizer.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-split-symbol-with-normalizer.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-with-white-spaces-and-symbol-and-alphabet-and-digit.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-with-white-spaces-and-symbol-and-alphabet.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-with-white-spaces-and-symbol.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-with-white-spaces.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-delimit-null.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-delimit.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-mecab.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-regexp-add.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-regexp-get-beginning-of-text.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-regexp-get-end-of-text.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-trigram.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-unigram.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/tokenize-example.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-2.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-3.log \
@@ -405,6 +444,10 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/images/geo-search-in-circle.svg \
 	$(top_srcdir)/doc/source/images/geo-search-in-rectangle.png \
 	$(top_srcdir)/doc/source/images/geo-search-in-rectangle.svg \
+	$(top_srcdir)/doc/source/images/reference/tokenizers/used-when-indexing.png \
+	$(top_srcdir)/doc/source/images/reference/tokenizers/used-when-indexing.svg \
+	$(top_srcdir)/doc/source/images/reference/tokenizers/used-when-searching.png \
+	$(top_srcdir)/doc/source/images/reference/tokenizers/used-when-searching.svg \
 	$(top_srcdir)/doc/source/index.rst \
 	$(top_srcdir)/doc/source/install.rst \
 	$(top_srcdir)/doc/source/install/centos.rst \
@@ -538,6 +581,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/output.rst \
 	$(top_srcdir)/doc/source/reference/query_expanders.rst \
 	$(top_srcdir)/doc/source/reference/query_expanders/tsv.rst \
+	$(top_srcdir)/doc/source/reference/regular_expression.rst \
 	$(top_srcdir)/doc/source/reference/suggest.rst \
 	$(top_srcdir)/doc/source/reference/suggest/completion.rst \
 	$(top_srcdir)/doc/source/reference/suggest/correction.rst \
@@ -554,6 +598,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/server/http/comparison.rst \
 	$(top_srcdir)/doc/source/server/http/groonga-httpd.rst \
 	$(top_srcdir)/doc/source/server/http/groonga.rst \
+	$(top_srcdir)/doc/source/server/memcached.rst \
 	$(top_srcdir)/doc/source/server/package.rst \
 	$(top_srcdir)/doc/source/spec.rst \
 	$(top_srcdir)/doc/source/spec/gqtp.rst \
@@ -780,6 +825,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/grn_expr/query_syntax/simple_phrase_search.log \
 	source/example/reference/grn_expr/query_syntax/simple_phrase_search_with_explicit_match_column.log \
 	source/example/reference/grn_expr/query_syntax/simple_prefix_search.log \
+	source/example/reference/grn_expr/query_syntax/simple_regular_expression.log \
 	source/example/reference/grn_expr/query_syntax/simple_suffix_search.log \
 	source/example/reference/grn_expr/script_syntax/simple_addition_assignment_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_addition_operator.log \
@@ -809,6 +855,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/grn_expr/script_syntax/simple_not_equal_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_or_assignment_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_prefix_search_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_regular_expression_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_right_shift_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_signed_right_shift_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_similar_search_operator.log \
@@ -829,6 +876,19 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/normalizers/example-table-create.log \
 	source/example/reference/normalizers/normalizer-auto.log \
 	source/example/reference/normalizers/normalizer-nfkc51.log \
+	source/example/reference/regular_expression/anchor_z.log \
+	source/example/reference/regular_expression/character_class_characters.log \
+	source/example/reference/regular_expression/character_class_range.log \
+	source/example/reference/regular_expression/choice.log \
+	source/example/reference/regular_expression/group_back_reference.log \
+	source/example/reference/regular_expression/group_scope_reducing.log \
+	source/example/reference/regular_expression/index_definitions.log \
+	source/example/reference/regular_expression/quantifier_plus.log \
+	source/example/reference/regular_expression/search_by_index_filter.log \
+	source/example/reference/regular_expression/search_by_index_query.log \
+	source/example/reference/regular_expression/usage_filter.log \
+	source/example/reference/regular_expression/usage_query.log \
+	source/example/reference/regular_expression/usage_setup.log \
 	source/example/reference/suggest/complete/registered-word-japan.log \
 	source/example/reference/suggest/complete/registered-word-japanese.log \
 	source/example/reference/suggest/complete/rk-search-nihon.log \
@@ -840,6 +900,30 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/token_filters/example-table-create.log \
 	source/example/reference/token_filters/stem.log \
 	source/example/reference/token_filters/stop_word.log \
+	source/example/reference/tokenizers/token-bigram-ascii-and-character-type-change-with-normalizer.log \
+	source/example/reference/tokenizers/token-bigram-ascii-and-white-space-with-normalizer.log \
+	source/example/reference/tokenizers/token-bigram-ignore-blank-split-symbol-with-white-spaces-and-symbol-and-alphabet-digit.log \
+	source/example/reference/tokenizers/token-bigram-ignore-blank-split-symbol-with-white-spaces-and-symbol-and-alphabet.log \
+	source/example/reference/tokenizers/token-bigram-ignore-blank-split-symbol-with-white-spaces-and-symbol.log \
+	source/example/reference/tokenizers/token-bigram-ignore-blank-with-white-spaces.log \
+	source/example/reference/tokenizers/token-bigram-no-normalizer.log \
+	source/example/reference/tokenizers/token-bigram-non-ascii-with-normalizer.log \
+	source/example/reference/tokenizers/token-bigram-split-symbol-alpha-digit-with-normalizer.log \
+	source/example/reference/tokenizers/token-bigram-split-symbol-alpha-with-normalizer.log \
+	source/example/reference/tokenizers/token-bigram-split-symbol-with-normalizer.log \
+	source/example/reference/tokenizers/token-bigram-with-white-spaces-and-symbol-and-alphabet-and-digit.log \
+	source/example/reference/tokenizers/token-bigram-with-white-spaces-and-symbol-and-alphabet.log \
+	source/example/reference/tokenizers/token-bigram-with-white-spaces-and-symbol.log \
+	source/example/reference/tokenizers/token-bigram-with-white-spaces.log \
+	source/example/reference/tokenizers/token-delimit-null.log \
+	source/example/reference/tokenizers/token-delimit.log \
+	source/example/reference/tokenizers/token-mecab.log \
+	source/example/reference/tokenizers/token-regexp-add.log \
+	source/example/reference/tokenizers/token-regexp-get-beginning-of-text.log \
+	source/example/reference/tokenizers/token-regexp-get-end-of-text.log \
+	source/example/reference/tokenizers/token-trigram.log \
+	source/example/reference/tokenizers/token-unigram.log \
+	source/example/reference/tokenizers/tokenize-example.log \
 	source/example/tutorial/data-1.log \
 	source/example/tutorial/data-2.log \
 	source/example/tutorial/data-3.log \
@@ -995,6 +1079,10 @@ source_files_relative_from_doc_dir = \
 	source/images/geo-search-in-circle.svg \
 	source/images/geo-search-in-rectangle.png \
 	source/images/geo-search-in-rectangle.svg \
+	source/images/reference/tokenizers/used-when-indexing.png \
+	source/images/reference/tokenizers/used-when-indexing.svg \
+	source/images/reference/tokenizers/used-when-searching.png \
+	source/images/reference/tokenizers/used-when-searching.svg \
 	source/index.rst \
 	source/install.rst \
 	source/install/centos.rst \
@@ -1128,6 +1216,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/output.rst \
 	source/reference/query_expanders.rst \
 	source/reference/query_expanders/tsv.rst \
+	source/reference/regular_expression.rst \
 	source/reference/suggest.rst \
 	source/reference/suggest/completion.rst \
 	source/reference/suggest/correction.rst \
@@ -1144,6 +1233,7 @@ source_files_relative_from_doc_dir = \
 	source/server/http/comparison.rst \
 	source/server/http/groonga-httpd.rst \
 	source/server/http/groonga.rst \
+	source/server/memcached.rst \
 	source/server/package.rst \
 	source/spec.rst \
 	source/spec/gqtp.rst \
@@ -1289,6 +1379,8 @@ mo_files_relative_from_locale_dir = \
 html_files_relative_from_locale_dir = \
 	html/.buildinfo \
 	html/_images/geo-points.png \
+	html/_images/used-when-indexing.png \
+	html/_images/used-when-searching.png \
 	html/_sources/characteristic.txt \
 	html/_sources/client.txt \
 	html/_sources/community.txt \
@@ -1437,6 +1529,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/output.txt \
 	html/_sources/reference/query_expanders.txt \
 	html/_sources/reference/query_expanders/tsv.txt \
+	html/_sources/reference/regular_expression.txt \
 	html/_sources/reference/suggest.txt \
 	html/_sources/reference/suggest/completion.txt \
 	html/_sources/reference/suggest/correction.txt \
@@ -1453,6 +1546,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/server/http/comparison.txt \
 	html/_sources/server/http/groonga-httpd.txt \
 	html/_sources/server/http/groonga.txt \
+	html/_sources/server/memcached.txt \
 	html/_sources/server/package.txt \
 	html/_sources/spec.txt \
 	html/_sources/spec/gqtp.txt \
@@ -1647,6 +1741,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/output.html \
 	html/reference/query_expanders.html \
 	html/reference/query_expanders/tsv.html \
+	html/reference/regular_expression.html \
 	html/reference/suggest.html \
 	html/reference/suggest/completion.html \
 	html/reference/suggest/correction.html \
@@ -1665,6 +1760,7 @@ html_files_relative_from_locale_dir = \
 	html/server/http/comparison.html \
 	html/server/http/groonga-httpd.html \
 	html/server/http/groonga.html \
+	html/server/memcached.html \
 	html/server/package.html \
 	html/spec.html \
 	html/spec/gqtp.html \
