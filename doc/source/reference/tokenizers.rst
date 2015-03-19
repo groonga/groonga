@@ -61,8 +61,8 @@ bigram tokenize method:
   * ``el``
   * ``ll``
   * ``lo``
-  * ``o ``
-  * `` W``
+  * ``o_`` (``_`` means a white-space)
+  * ``_W`` (``_`` means a white-space)
   * ``Wo``
   * ``or``
   * ``rl``
