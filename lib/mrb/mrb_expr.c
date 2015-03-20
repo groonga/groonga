@@ -312,6 +312,68 @@ mrb_grn_scan_info_push_arg(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_expr_code_inspect(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_expr_code *code;
+  mrb_value inspected;
+
+  code = DATA_PTR(self);
+
+  inspected = mrb_str_buf_new(mrb, 48);
+
+  mrb_str_cat_lit(mrb, inspected, "#<");
+  mrb_str_cat_cstr(mrb, inspected, mrb_obj_classname(mrb, self));
+  mrb_str_cat_lit(mrb, inspected, ":");
+  mrb_str_concat(mrb, inspected, mrb_ptr_to_str(mrb, mrb_cptr(self)));
+
+  {
+    int32_t weight;
+    uint32_t offset;
+
+    weight = grn_expr_code_get_weight(ctx, DATA_PTR(self), &offset);
+
+    mrb_str_cat_lit(mrb, inspected, " weight=");
+    mrb_str_concat(mrb, inspected,
+                   mrb_funcall(mrb,
+                               mrb_fixnum_value(weight),
+                               "inspect",
+                               0));
+    mrb_str_cat_lit(mrb, inspected, ", offset=");
+    mrb_str_concat(mrb, inspected,
+                   mrb_funcall(mrb,
+                               mrb_fixnum_value(offset),
+                               "inspect",
+                               0));
+  }
+
+  mrb_str_cat_lit(mrb, inspected, ", op=");
+  mrb_str_concat(mrb, inspected,
+                 mrb_funcall(mrb,
+                             grn_mrb_value_from_operator(mrb, code->op),
+                             "inspect",
+                             0));
+
+  mrb_str_cat_lit(mrb, inspected, ", flags=");
+  mrb_str_concat(mrb, inspected,
+                 mrb_funcall(mrb,
+                             mrb_fixnum_value(code->flags),
+                             "inspect",
+                             0));
+
+  mrb_str_cat_lit(mrb, inspected, ", value=");
+  mrb_str_concat(mrb, inspected,
+                 mrb_funcall(mrb,
+                             grn_mrb_value_from_grn_obj(mrb, code->value),
+                             "inspect",
+                             0));
+
+  mrb_str_cat_lit(mrb, inspected, ">");
+
+  return inspected;
+}
+
+static mrb_value
 mrb_grn_expr_code_get_weight(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -692,6 +754,8 @@ grn_mrb_expr_init(grn_ctx *ctx)
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
   mrb_define_method(mrb, klass, "initialize",
                     mrb_grn_expr_code_initialize, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "inspect",
+                    mrb_grn_expr_code_inspect, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "weight",
                     mrb_grn_expr_code_get_weight, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "value",
