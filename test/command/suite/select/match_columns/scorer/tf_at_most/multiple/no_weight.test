@@ -22,5 +22,4 @@ select Logs \
                    scorer_tf_at_most(message3, 5.0) || \
                    scorer_tf_at_most(message4, 7.0)' \
   --query 'a' \
-  --output_columns '_score' \
-  --sortby -_score
+  --output_columns '_score'
