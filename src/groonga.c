@@ -2515,6 +2515,12 @@ show_version(void)
 #ifdef GRN_WITH_MESSAGE_PACK
   printf(",msgpack");
 #endif
+#ifdef GRN_WITH_MRUBY
+  printf(",mruby");
+#endif
+#ifdef GRN_WITH_ONIGMO
+  printf(",onigmo");
+#endif
 #ifdef GRN_WITH_ZLIB
   printf(",zlib");
 #endif
