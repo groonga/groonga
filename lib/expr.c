@@ -5152,7 +5152,8 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
     case GRN_OP_REGEXP :
       {
         grn_obj wv, **ip = &GRN_PTR_VALUE(&si->index);
-        int j = GRN_BULK_VSIZE(&si->index)/sizeof(grn_obj *);
+        int j;
+        int n_indexes = GRN_BULK_VSIZE(&si->index)/sizeof(grn_obj *);
         int32_t *wp = &GRN_INT32_VALUE(&si->wv);
         grn_search_optarg optarg;
         GRN_INT32_INIT(&wv, GRN_OBJ_VECTOR);
@@ -5180,7 +5181,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
         optarg.proc = NULL;
         optarg.max_size = 0;
         ctx->flags |= GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
-        for (; j--; ip++, wp += 2) {
+        for (j = 0; j < n_indexes; j++, ip++, wp += 2) {
           uint32_t sid = (uint32_t) wp[0];
           int32_t weight = wp[1];
           if (sid) {
@@ -5203,7 +5204,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
             GRN_PTR_VALUE_AT(&(si->scorer_args_exprs), j);
           optarg.scorer_args_expr_offset =
             GRN_UINT32_VALUE_AT(&(si->scorer_args_expr_offsets), j);
-          if (j) {
+          if (j < n_indexes - 1) {
             if (sid && ip[0] == ip[1]) { continue; }
           } else {
             ctx->flags &= ~GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
