@@ -32,8 +32,8 @@ select Sites --filter "_key @ uri"
     $1:#<record:hash:Sites id:(no value)>
   },
   codes:{
-    0:<get_value(), modify:2, value:_key>,
-    1:<get_value(), modify:0, value:#<column:var_size Sites.uri range:ShortText type:scalar compress:none>>,
-    2:<match(), modify:0, value:(NULL)>
+    0:<get_value n_args:1, flags:0, modify:2, value:_key>,
+    1:<get_value n_args:1, flags:0, modify:0, value:#<column:var_size Sites.uri range:ShortText type:scalar compress:none>>,
+    2:<match n_args:2, flags:0, modify:0, value:(NULL)>
   }
 >>
