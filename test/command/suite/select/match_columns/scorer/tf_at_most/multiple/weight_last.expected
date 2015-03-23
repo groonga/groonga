@@ -1,0 +1,28 @@
+table_create Logs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs message1 COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+column_create Logs message2 COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+column_create Logs message3 COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+column_create Logs message4 COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Lexicon TABLE_PAT_KEY ShortText --default_tokenizer TokenDelimit
+[[0,0.0,0.0],true]
+column_create Lexicon index1 COLUMN_INDEX|WITH_POSITION Logs message1
+[[0,0.0,0.0],true]
+column_create Lexicon index2 COLUMN_INDEX|WITH_POSITION Logs message2
+[[0,0.0,0.0],true]
+column_create Lexicon index3 COLUMN_INDEX|WITH_POSITION Logs message3
+[[0,0.0,0.0],true]
+column_create Lexicon index4 COLUMN_INDEX|WITH_POSITION Logs message4
+[[0,0.0,0.0],true]
+load --table Logs
+[
+["message1", "message2", "message3", "message4"],
+["a a a a a a a a", "a a a a a a a a", "a a a a a a a a", "a a a a a a a a"]
+]
+[[0,0.0,0.0],1]
+select Logs   --match_columns 'scorer_tf_at_most(message1, 3.0) ||                    scorer_tf_at_most(message2, 4.0) ||                    scorer_tf_at_most(message3, 5.0) ||                    scorer_tf_at_most(message4, 7.0) * 10'   --query 'a'   --output_columns '_score'
+[[0,0.0,0.0],[[[1],[["_score","Int32"]],[82]]]]
