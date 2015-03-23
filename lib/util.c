@@ -20,6 +20,7 @@
 #include "grn_ii.h"
 #include "grn_util.h"
 #include "grn_string.h"
+#include "grn_expr.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -279,6 +280,30 @@ grn_proc_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 }
 
 grn_rc
+grn_expr_code_inspect_indented(grn_ctx *ctx,
+                               grn_obj *buffer,
+                               grn_expr_code *code,
+                               const char *indent)
+{
+  if (!code) {
+    GRN_TEXT_PUTS(ctx, buffer, "(NULL)");
+    return GRN_SUCCESS;
+  }
+
+  GRN_TEXT_PUTS(ctx, buffer, "<");
+  GRN_TEXT_PUTS(ctx, buffer, grn_operator_to_string(code->op));
+  GRN_TEXT_PUTS(ctx, buffer, " ");
+  GRN_TEXT_PUTS(ctx, buffer, "modify:");
+  grn_text_itoa(ctx, buffer, code->modify);
+  GRN_TEXT_PUTS(ctx, buffer, ", ");
+  GRN_TEXT_PUTS(ctx, buffer, "value:");
+  grn_inspect_indented(ctx, buffer, code->value, "      ");
+  GRN_TEXT_PUTS(ctx, buffer, ">");
+
+  return GRN_SUCCESS;
+}
+
+grn_rc
 grn_expr_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *expr)
 {
   grn_expr *e = (grn_expr *)expr;
@@ -305,33 +330,15 @@ grn_expr_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *expr)
   }
 
   {
-    uint32_t i, j;
-    grn_expr_var *var;
+    uint32_t i;
     grn_expr_code *code;
     GRN_TEXT_PUTS(ctx, buffer, "\n  codes:{");
-    for (j = 0, code = e->codes; j < e->codes_curr; j++, code++) {
-      if (j) { GRN_TEXT_PUTC(ctx, buffer, ','); }
+    for (i = 0, code = e->codes; i < e->codes_curr; i++, code++) {
+      if (i) { GRN_TEXT_PUTC(ctx, buffer, ','); }
       GRN_TEXT_PUTS(ctx, buffer, "\n    ");
-      grn_text_itoa(ctx, buffer, j);
-      GRN_TEXT_PUTS(ctx, buffer, ":<");
-      GRN_TEXT_PUTS(ctx, buffer, grn_operator_to_string(code->op));
-      GRN_TEXT_PUTS(ctx, buffer, "(");
-      for (i = 0, var = e->vars; i < e->nvars; i++, var++) {
-        if (i) { GRN_TEXT_PUTC(ctx, buffer, ','); }
-        GRN_TEXT_PUTC(ctx, buffer, '?');
-        if (var->name_size) {
-          GRN_TEXT_PUT(ctx, buffer, var->name, var->name_size);
-        } else {
-          grn_text_itoa(ctx, buffer, (int)i);
-        }
-      }
-      GRN_TEXT_PUTS(ctx, buffer, "), ");
-      GRN_TEXT_PUTS(ctx, buffer, "modify:");
-      grn_text_itoa(ctx, buffer, code->modify);
-      GRN_TEXT_PUTS(ctx, buffer, ", ");
-      GRN_TEXT_PUTS(ctx, buffer, "value:");
-      grn_inspect_indented(ctx, buffer, code->value, "      ");
-      GRN_TEXT_PUTS(ctx, buffer, ">");
+      grn_text_itoa(ctx, buffer, i);
+      GRN_TEXT_PUTS(ctx, buffer, ":");
+      grn_expr_code_inspect_indented(ctx, buffer, code, "      ");
     }
     GRN_TEXT_PUTS(ctx, buffer, "\n  }");
   }
@@ -1252,6 +1259,17 @@ grn_p_ii_values(grn_ctx *ctx, grn_obj *ii)
 
   GRN_TEXT_INIT(&buffer, 0);
   grn_ii_inspect_values(ctx, (grn_ii *)ii, &buffer);
+  printf("%.*s\n", (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
+  grn_obj_unlink(ctx, &buffer);
+}
+
+void
+grn_p_expr_code(grn_ctx *ctx, grn_expr_code *code)
+{
+  grn_obj buffer;
+
+  GRN_TEXT_INIT(&buffer, 0);
+  grn_expr_code_inspect_indented(ctx, &buffer, code, "");
   printf("%.*s\n", (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
   grn_obj_unlink(ctx, &buffer);
 }

@@ -66,6 +66,12 @@ grn_bool grn_scan_info_push_arg(scan_info *si, grn_obj *arg);
 grn_obj *grn_scan_info_get_arg(grn_ctx *ctx, scan_info *si, int i);
 
 int32_t grn_expr_code_get_weight(grn_ctx *ctx, grn_expr_code *ec, uint32_t *offset);
+grn_rc grn_expr_code_inspect_indented(grn_ctx *ctx,
+                                      grn_obj *buffer,
+                                      grn_expr_code *code,
+                                      const char *indent);
+void grn_p_expr_code(grn_ctx *ctx, grn_expr_code *code);
+
 void grn_expr_take_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj);
 grn_obj *grn_expr_alloc_const(grn_ctx *ctx, grn_obj *expr);
 
@@ -74,3 +80,4 @@ grn_obj *grn_expr_alloc_const(grn_ctx *ctx, grn_obj *expr);
 #endif
 
 #endif /* GRN_EXPR_H */
+
