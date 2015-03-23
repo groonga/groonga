@@ -347,6 +347,13 @@ mrb_grn_expr_code_inspect(mrb_state *mrb, mrb_value self)
                                0));
   }
 
+  mrb_str_cat_lit(mrb, inspected, ", modify=");
+  mrb_str_concat(mrb, inspected,
+                 mrb_funcall(mrb,
+                             mrb_fixnum_value(code->modify),
+                             "inspect",
+                             0));
+
   mrb_str_cat_lit(mrb, inspected, ", op=");
   mrb_str_concat(mrb, inspected,
                  mrb_funcall(mrb,
