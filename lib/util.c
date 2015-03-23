@@ -293,6 +293,12 @@ grn_expr_code_inspect_indented(grn_ctx *ctx,
   GRN_TEXT_PUTS(ctx, buffer, "<");
   GRN_TEXT_PUTS(ctx, buffer, grn_operator_to_string(code->op));
   GRN_TEXT_PUTS(ctx, buffer, " ");
+  GRN_TEXT_PUTS(ctx, buffer, "n_args:");
+  grn_text_itoa(ctx, buffer, code->nargs);
+  GRN_TEXT_PUTS(ctx, buffer, ", ");
+  GRN_TEXT_PUTS(ctx, buffer, "flags:");
+  grn_text_itoh(ctx, buffer, code->flags, 1);
+  GRN_TEXT_PUTS(ctx, buffer, ", ");
   GRN_TEXT_PUTS(ctx, buffer, "modify:");
   grn_text_itoa(ctx, buffer, code->modify);
   GRN_TEXT_PUTS(ctx, buffer, ", ");
