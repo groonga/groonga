@@ -306,7 +306,7 @@ grn_plugin_open(grn_ctx *ctx, const char *filename)
 
 #ifdef GRN_WITH_MRUBY
   if (filename_size > strlen(grn_plugin_mrb_suffix) &&
-      strcmp(filename + (filename_size - strlen(grn_plugin_mrb_suffix)),
+      strcmp(filename + (strlen(filename) - strlen(grn_plugin_mrb_suffix)),
              grn_plugin_mrb_suffix) == 0) {
     id = grn_plugin_open_mrb(ctx, filename, filename_size);
     goto exit;
