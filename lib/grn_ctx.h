@@ -519,6 +519,7 @@ extern grn_timeval grn_starttime;
 
 GRN_API grn_rc grn_timeval_now(grn_ctx *ctx, grn_timeval *tv);
 GRN_API grn_rc grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf);
+struct tm *grn_timeval2tm(grn_ctx *ctx, grn_timeval *tv, struct tm *tm_buffer);
 grn_rc grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv);
 
 GRN_API void grn_ctx_log(grn_ctx *ctx, const char *fmt, ...) GRN_ATTRIBUTE_PRINTF(2);
