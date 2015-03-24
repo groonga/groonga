@@ -23,6 +23,10 @@
 #include <stdio.h>
 #include <sys/stat.h>
 
+#ifdef WIN32
+# define fileno(file) _fileno(file)
+#endif
+
 static void
 rotate_log_file(grn_ctx *ctx, const char *current_path)
 {
