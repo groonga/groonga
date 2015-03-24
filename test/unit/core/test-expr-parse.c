@@ -341,10 +341,10 @@ test_parse(gconstpointer data)
     "    $1:#<record:no_key:docs id:(no value)>\n"
     "  },\n"
     "  codes:{\n"
-    "    0:<get_value(), modify:2, "
+    "    0:<get_value n_args:1, flags:0, modify:2, "
     "value:#<column:fix_size docs.size range:UInt32 type:scalar compress:none>>,\n"
-    "    1:<push(), modify:0, value:14>,\n"
-    "    2:<equal(), modify:0, value:(NULL)>\n"
+    "    1:<push n_args:1, flags:0, modify:0, value:14>,\n"
+    "    2:<equal n_args:2, flags:0, modify:0, value:(NULL)>\n"
     "  }\n"
     ">",
     cond);
@@ -904,11 +904,11 @@ test_syntax_equal_string_reference_key(void)
     "    $1:#<record:no_key:docs id:(no value)>\n"
     "  },\n"
     "  codes:{\n"
-    "    0:<get_value(), modify:2, "
+    "    0:<get_value n_args:1, flags:0, modify:2, "
     "value:#<column:fix_size docs.author range:properties type:scalar compress:none>>,\n"
-    "    1:<push(), modify:0, "
+    "    1:<push n_args:1, flags:0, modify:0, "
     "value:#<record:hash:properties id:1 key:\"morita\">>,\n"
-    "    2:<equal(), modify:0, value:(NULL)>\n"
+    "    2:<equal n_args:2, flags:0, modify:0, value:(NULL)>\n"
     "  }\n"
     ">",
     cond);
