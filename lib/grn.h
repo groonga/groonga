@@ -128,6 +128,7 @@
 # define getpid() _getpid()
 # if !defined(__GNUC__) && _MSC_VER < 1400
 #  define fstat(fd, buf) _fstat(fd, buf)
+#  define fileno(file) _fileno(file)
 # endif /* !defined(__GNUC__) && _MSC_VER < 1400 */
 # ifdef HAVE__STRICMP
 #  ifdef strcasecmp

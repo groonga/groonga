@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <time.h>
+#include <sys/stat.h>
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
 #endif /* HAVE_NETINET_IN_H */
@@ -129,29 +130,38 @@ grn_time_now(grn_ctx *ctx, grn_obj *obj)
                                        GRN_TIME_NSEC_TO_USEC(tv.tv_nsec)));
 }
 
-grn_rc
-grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf)
+static struct tm *
+grn_timeval2tm(grn_ctx *ctx, grn_timeval *tv, struct tm *tm_buffer)
 {
   struct tm *ltm;
   const char *function_name;
 #ifdef HAVE__LOCALTIME64_S
-  struct tm tm;
   time_t t = tv->tv_sec;
   function_name = "localtime_s";
-  ltm = (localtime_s(&tm, &t) == 0) ? &tm : NULL;
+  ltm = (localtime_s(tm_buffer, &t) == 0) ? tm_buffer : NULL;
 #else /* HAVE__LOCALTIME64_S */
 # ifdef HAVE_LOCALTIME_R
-  struct tm tm;
   time_t t = tv->tv_sec;
   function_name = "localtime_r";
-  ltm = localtime_r(&t, &tm);
+  ltm = localtime_r(&t, tm_buffer);
 # else /* HAVE_LOCALTIME_R */
   time_t tvsec = (time_t) tv->tv_sec;
   function_name = "localtime";
   ltm = localtime(&tvsec);
 # endif /* HAVE_LOCALTIME_R */
 #endif /* HAVE__LOCALTIME64_S */
-  if (!ltm) { SERR(function_name); }
+  if (!ltm) {
+    SERR(function_name);
+  }
+  return ltm;
+}
+
+grn_rc
+grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf)
+{
+  struct tm tm;
+  struct tm *ltm;
+  ltm = grn_timeval2tm(ctx, tv, &tm);
   snprintf(buf, GRN_TIMEVAL_STR_SIZE - 1, GRN_TIMEVAL_STR_FORMAT,
            ltm->tm_year + 1900, ltm->tm_mon + 1, ltm->tm_mday,
            ltm->tm_hour, ltm->tm_min, ltm->tm_sec,
@@ -756,9 +766,33 @@ grn_ctx_set_finalizer(grn_ctx *ctx, grn_proc_func *finalizer)
 
 grn_timeval grn_starttime;
 
+static void
+rotate_log_file(grn_ctx *ctx, const char *current_path)
+{
+  char rotated_path[PATH_MAX];
+  grn_timeval now;
+  struct tm tm_buffer;
+  struct tm *tm;
+
+  grn_timeval_now(ctx, &now);
+  tm = grn_timeval2tm(ctx, &now, &tm_buffer);
+  snprintf(rotated_path, PATH_MAX,
+           "%s.%04d-%02d-%02d-%02d-%02d-%02d-%06d",
+           current_path,
+           tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
+           tm->tm_hour, tm->tm_min, tm->tm_sec,
+           (int)(GRN_TIME_NSEC_TO_USEC(now.tv_nsec)));
+  rename(current_path, rotated_path);
+}
+
 static char *default_logger_path = NULL;
 static FILE *default_logger_file = NULL;
 static grn_critical_section default_logger_lock;
+static size_t default_logger_size = 0;
+static size_t default_logger_rotate_size_threshold = 0;
+
+#define LOGGER_NEED_ROTATE(size, threshold) \
+  ((threshold) > 0 && (size) >= (threshold))
 
 static void
 default_logger_log(grn_ctx *ctx, grn_log_level level,
@@ -770,16 +804,34 @@ default_logger_log(grn_ctx *ctx, grn_log_level level,
     CRITICAL_SECTION_ENTER(default_logger_lock);
     if (!default_logger_file) {
       default_logger_file = fopen(default_logger_path, "a");
+      default_logger_size = 0;
+      if (default_logger_file) {
+        struct stat stat;
+        if (fstat(fileno(default_logger_file), &stat) != -1) {
+          default_logger_size = stat.st_size;
+        }
+      }
     }
     if (default_logger_file) {
+      int written;
       if (location && *location) {
-        fprintf(default_logger_file, "%s|%c|%s %s %s\n",
-                timestamp, *(slev + level), title, message, location);
+        written = fprintf(default_logger_file, "%s|%c|%s %s %s\n",
+                          timestamp, *(slev + level), title, message, location);
       } else {
-        fprintf(default_logger_file, "%s|%c|%s %s\n", timestamp,
-                *(slev + level), title, message);
+        written = fprintf(default_logger_file, "%s|%c|%s %s\n", timestamp,
+                          *(slev + level), title, message);
       }
-      fflush(default_logger_file);
+      if (written > 0) {
+        default_logger_size += written;
+        if (LOGGER_NEED_ROTATE(default_logger_size,
+                               default_logger_rotate_size_threshold)) {
+          fclose(default_logger_file);
+          default_logger_file = NULL;
+          rotate_log_file(ctx, default_logger_path);
+        } else {
+          fflush(default_logger_file);
+        }
+      }
     }
     CRITICAL_SECTION_LEAVE(default_logger_lock);
   }
@@ -1005,6 +1057,8 @@ logger_fin(grn_ctx *ctx)
 static char *default_query_logger_path = NULL;
 static FILE *default_query_logger_file = NULL;
 static grn_critical_section default_query_logger_lock;
+static size_t default_query_logger_size = 0;
+static size_t default_query_logger_rotate_size_threshold = 0;
 
 static void
 default_query_logger_log(grn_ctx *ctx, unsigned int flag,
@@ -1015,10 +1069,29 @@ default_query_logger_log(grn_ctx *ctx, unsigned int flag,
     CRITICAL_SECTION_ENTER(default_query_logger_lock);
     if (!default_query_logger_file) {
       default_query_logger_file = fopen(default_query_logger_path, "a");
+      default_query_logger_size = 0;
+      if (default_query_logger_file) {
+        struct stat stat;
+        if (fstat(fileno(default_query_logger_file), &stat) != -1) {
+          default_query_logger_size = stat.st_size;
+        }
+      }
     }
     if (default_query_logger_file) {
-      fprintf(default_query_logger_file, "%s|%s%s\n", timestamp, info, message);
-      fflush(default_query_logger_file);
+      int written;
+      written = fprintf(default_query_logger_file, "%s|%s%s\n",
+                        timestamp, info, message);
+      if (written > 0) {
+        default_query_logger_size += written;
+        if (LOGGER_NEED_ROTATE(default_query_logger_size,
+                               default_query_logger_rotate_size_threshold)) {
+          fclose(default_query_logger_file);
+          default_query_logger_file = NULL;
+          rotate_log_file(ctx, default_query_logger_path);
+        } else {
+          fflush(default_query_logger_file);
+        }
+      }
     }
     CRITICAL_SECTION_LEAVE(default_query_logger_lock);
   }
