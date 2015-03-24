@@ -27,6 +27,10 @@
 #endif /* _ISOC99_SOURCE */
 #include <math.h>
 
+#if defined(HAVE__GMTIME64_S) && defined(__GNUC__)
+# define gmtime_s(tm, time) _gmtime64_s(tm, time)
+#endif /* defined(HAVE__GMTIME64_S) && defined(__GNUC__) */
+
 /* For Visual C++ 2010. Drop the code when we drop Visual C++ 2010 support. */
 #if defined(_MSC_VER) && _MSC_VER < 1800
 # define va_copy(destination, source) destination = source
