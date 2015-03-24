@@ -1,0 +1,2 @@
+logical_range_filter Logs timestamp
+[[0,0.0,0.0],[[["memo","ShortText"],["message","Text"],["timestamp","Time"]]]]

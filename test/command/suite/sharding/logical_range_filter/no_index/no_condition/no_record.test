@@ -1,0 +1,3 @@
+#@include fixture/sharding/logical_range_filter/no_index/schema.grn
+
+logical_range_filter Logs timestamp

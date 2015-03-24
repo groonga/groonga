@@ -24,13 +24,9 @@ module Groonga
           executor.execute
 
           result_sets = executor.result_sets
-          if result_sets.empty?
-            n_elements = 0
-          else
-            n_elements = 1 # for columns
-            result_sets.each do |result_set|
-              n_elements += result_set.size
-            end
+          n_elements = 1 # for columns
+          result_sets.each do |result_set|
+            n_elements += result_set.size
           end
 
           writer.array("RESULTSET", n_elements) do
@@ -68,11 +64,24 @@ module Groonga
         end
 
         def execute
+          first_table = nil
           @enumerator.each do |table, shard_key, shard_range|
+            first_table ||= table
             filter_shard(table, @filter,
                          shard_key, shard_range,
                          @enumerator.target_range)
             break if @current_limit == 0
+          end
+          if first_table.nil?
+            message =
+              "[logical_range_filter] no shard exists: " +
+              "logical_table: <#{@enumerator.logical_table}>: " +
+              "shard_key: <#{@enumerator.shard_key_name}>"
+            raise InvalidArgument, message
+          end
+          if @result_sets.empty?
+            @result_sets << HashTable.create(:flags => ObjectFlags::WITH_SUBREC,
+                                             :key_type => first_table)
           end
         end
 
