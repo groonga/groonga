@@ -81,6 +81,7 @@ CMakeFiles
 /doc/locale/*/LC_MESSAGES/doctrees/
 /doc/locale/*/LC_MESSAGES/pot-build-stamp
 /doc/locale/*/LC_MESSAGES/edit-po-build-stamp
+/doc/locale/en/LC_MESSAGES/*.po
 /doc/commands_not_implemented/
 /doc/sphinx/
 /lib/icudump
