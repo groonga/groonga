@@ -1,0 +1,192 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+.. groonga-command
+.. database: scorer
+
+Scorer
+======
+
+Summary
+-------
+
+Groonga has scorer module that customizes score function. Score
+function computes score of matched record. The default scorer function
+uses the number of appeared terms. It is also known as TF (term
+frequency).
+
+TF is a fast score function but it's not suitable for the following
+cases:
+
+  * Search query contains one or more frequently-appearing words such
+    as "the" and "a".
+  * Document contains many same keywords such as "They are keyword,
+    keyword, keyword ... and keyword". Search engine spammer may use
+    the technique.
+
+Score function can solve these cases. For example, `TF-IDF
+<http://en.wikipedia.org/wiki/Tf%E2%80%93idf>`_ (term
+frequency-inverse document frequency) can solve the first case.
+`Okapi BM25 <http://en.wikipedia.org/wiki/Okapi_BM25>`_ can solve the
+second case. But their are slower than TF.
+
+Groonga provides TF-IDF based scorer as
+:doc:`/reference/scorers/scorer_tf_idf` but doesn't provide Okapi BM25
+based scorer yet.
+
+.. _note:
+
+   You don't need to resolve scoring only by score function. Score
+   function is highly depends on search query. You may use metadata of
+   matched record.
+
+   For example, Google uses `PageRank
+   <http://en.wikipedia.org/wiki/PageRank>`_ for scoring. You may be
+   able to use data type ("title" data are important rather than
+   "memo" data), tag, geolocation and so on.
+
+   Please stop to think about only score function for scoring.
+
+Usage
+-----
+
+This section describes how to use scorer.
+
+Here are a schema definition and sample data to show usage.
+
+Sample schema:
+
+.. groonga-command
+.. include:: ../example/reference/scorer/usage_setup_schema.log
+.. table_create Memos TABLE_HASH_KEY ShortText
+.. column_create Memos title COLUMN_SCALAR ShortText
+.. column_create Memos content COLUMN_SCALAR Text
+..
+.. table_create Terms TABLE_PAT_KEY ShortText \
+..   --default_tokenizer TokenBigram \
+..   --normalizer NormalizerAuto
+.. column_create Terms title_index COLUMN_INDEX|WITH_POSITION Memos title
+.. column_create Terms content_index COLUMN_INDEX|WITH_POSITION Memos content
+
+Sample data:
+
+.. groonga-command
+.. include:: ../example/reference/scorer/usage_setup_data.log
+.. load --table Memos
+.. [
+.. {
+..   "_key": "memo1",
+..   "title": "Groonga is easy",
+..   "content": "Groonga is very easy full text search engine!"
+.. },
+.. {
+..   "_key": "memo2",
+..   "title": "Mroonga is easy",
+..   "content": "Mroonga is more easier full text search engine!"
+.. },
+.. {
+..   "_key": "memo3",
+..   "title": "Rroonga is easy",
+..   "content": "Ruby is very helpful."
+.. },
+.. {
+..   "_key": "memo4",
+..   "title": "Groonga is fast",
+..   "content": "Groonga! Groonga! Groonga! Groonga is very fast!"
+.. },
+.. {
+..   "_key": "memo5",
+..   "title": "PGroonga is fast",
+..   "content": "PGroonga is very fast!"
+.. },
+.. {
+..   "_key": "memo6",
+..   "title": "PGroonga is useful",
+..   "content": "SQL is easy because many client libraries exist."
+.. },
+.. {
+..   "_key": "memo7",
+..   "title": "Mroonga is also useful",
+..   "content": "MySQL has replication feature. Mroonga can use it."
+.. }
+.. ]
+
+You can specify custom score function in :ref:`select-match-columns`.
+Here are syntaxes::
+
+  SCORE_FUNCTION(COLUMN)
+
+  SCORE_FUNCTION(COLUMN) * WEIGHT
+
+  SCORE_FUNCTION(COLUMN, ARGUMENT1, ARGUMENT2, ...)
+
+  SCORE_FUNCTION(COLUMN, ARGUMENT1, ARGUMENT2, ...) * WEIGHT
+
+  SCORE_FUNCTION1(COLUMN1) * WEIGHT1 ||
+    SCORE_FUNCTION2(COLUMN2) * WEIGHT2 ||
+    ...
+
+  SCORE_FUNCTION1(COLUMN1, ARGUMENT1, ARGUMENT2, ...) * WEIGHT1 ||
+    SCORE_FUNCTION2(COLUMN2, ARGUMENT1, ARGUMENT2, ...) * WEIGHT2 ||
+    ...
+
+Here is a simplest example:
+
+.. groonga-command
+.. include:: ../example/reference/scorer/usage_one_no_argument_no_weight.log
+.. select Memos \
+..   --match_columns "scorer_tf_idf(content)" \
+..   --query "Groonga" \
+..   --output_columns "content, _score" \
+..   --sortby "-_score"
+
+``Groonga! Groonga! Groonga! Groonga is very fast!`` contains 4
+``Groonga``. If you use TF based scorer that is the default scorer,
+``_score`` is ``4``. But the actual ``_score`` is ``2``. Because the
+``select`` command uses TF-IDF based scorer ``scorer_tf_idf()``.
+
+Here is an example that uses weight:
+
+.. groonga-command
+.. include:: ../example/reference/scorer/usage_one_no_argument_weight.log
+.. select Memos \
+..   --match_columns "scorer_tf_idf(content) * 10" \
+..   --query "Groonga" \
+..   --output_columns "content, _score" \
+..   --sortby "-_score"
+
+``Groonga! Groonga! Groonga! Groonga is very fast!`` has ``22`` as
+``_score``. It had ``2`` as ``_score`` in the previous example that
+doesn't specify weight.
+
+Here is an example that uses scorer that requires one
+argument. :doc:`/reference/scorers/scorer_tf_at_most` scorer requires
+one argument. You can limit TF score by the scorer.
+
+.. groonga-command
+.. include:: ../example/reference/scorer/usage_one_one_argument_no_weight.log
+.. select Memos \
+..   --match_columns "scorer_tf_at_most(content, 2.0)" \
+..   --query "Groonga" \
+..   --output_columns "content, _score" \
+..   --sortby "-_score"
+
+``Groonga! Groonga! Groonga! Groonga is very fast!`` contains 4
+``Groonga``. If you use normal TF based scorer that is the default
+scorer, ``_score`` is ``4``. But the actual ``_score`` is ``2``.
+Because the scorer used in the ``select`` command limits the maximum
+score value to ``2``.
+
+TODO: Describe about how to use multiple scorer in one match_columns.
+
+Built-in scorers
+----------------
+
+Here are built-in scores:
+
+.. toctree::
+   :maxdepth: 1
+   :glob:
+
+   scorers/*
