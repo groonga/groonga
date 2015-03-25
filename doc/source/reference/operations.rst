@@ -6,7 +6,8 @@
 Operations
 ==========
 
-Groonga has the search feature of multiple. This section describes how to search operations.
+Groonga has the multiple search operations. This section describes
+about search operations.
 
 .. toctree::
    :maxdepth: 2
