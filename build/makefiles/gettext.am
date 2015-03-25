@@ -47,7 +47,7 @@ SUFFIXES += .pot .po .mo .edit
 	msgfmt -o $@ $<
 
 if DOCUMENT_BUILDABLE
-update: pot-build-stamp edit-po-build-stamp
+update: edit-po-build-stamp
 build: update $(mo_files)
 else
 update:
@@ -68,6 +68,6 @@ pot-build-stamp: $(absolute_source_files)
 	$(MAKE) gettext
 	@touch $@
 
-edit-po-build-stamp: $(absolute_source_files)
+edit-po-build-stamp: pot-build-stamp
 	$(MAKE) $(edit_po_files)
 	@touch $@
