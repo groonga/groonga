@@ -45,7 +45,7 @@ mruby_build.timestamp: build_config.rb
 	  "mruby_build.timestamp"
 
 CLEANFILES = *.gcno *gcda
-MAINTAINERCLEANFILES = mruby-build.timestamp
+MAINTAINERCLEANFILES = mruby_build.timestamp
 endif
 
 update:
