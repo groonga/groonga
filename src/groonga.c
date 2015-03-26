@@ -2648,6 +2648,8 @@ main(int argc, char **argv)
   int flags = 0;
   uint32_t cache_limit = 0;
   grn_bool need_line_editor = GRN_FALSE;
+  grn_bool warn_default_protocol = GRN_FALSE;
+  grn_bool is_alone_mode = GRN_FALSE;
   static grn_str_getopt_opt opts[] = {
     {'p', "port", NULL, 0, GETOPT_OP_NONE},
     {'e', "encoding", NULL, 0, GETOPT_OP_NONE},
@@ -2814,6 +2816,7 @@ main(int argc, char **argv)
     grn_document_root = default_document_root;
   }
 
+  is_alone_mode = flags & (FLAG_MODE_CLIENT | FLAG_MODE_SERVER | FLAG_MODE_DAEMON);
   if (protocol_arg) {
     switch (*protocol_arg) {
     case 'g' :
@@ -2832,13 +2835,24 @@ main(int argc, char **argv)
       do_server = g_server;
       break;
     default :
+      if (is_alone_mode) {
+        warn_default_protocol = GRN_TRUE;
+      }
       do_client = g_client;
       do_server = g_server;
       break;
     }
   } else {
+    if (is_alone_mode) {
+      warn_default_protocol = GRN_TRUE;
+    }
     do_client = g_client;
     do_server = g_server;
+  }
+
+  if (warn_default_protocol) {
+    fprintf(stderr, "WARNING: specify --protocol explicitly. "
+                    "The current default protocol (GQTP) may be changed to HTTP in the future release.\n");
   }
 
   if (log_path_arg) {
