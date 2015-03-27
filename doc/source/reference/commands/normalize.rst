@@ -8,10 +8,11 @@
 ``normalize``
 =============
 
-.. Caution::
+.. note::
 
-  ``normalize`` command is the experimental feature.
-  This command may be changed in the future.
+   This command is an experimental feature.
+
+   This command may be changed in the future.
 
 Summary
 -------

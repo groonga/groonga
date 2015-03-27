@@ -9,7 +9,8 @@ Summary
 -------
 
 .. note::
-   ``request_cancel`` command is an experimental feature.
+
+   This command is an experimental feature.
 
 .. versionadded:: 4.0.9
 

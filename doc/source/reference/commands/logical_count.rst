@@ -13,7 +13,7 @@ Summary
 
 .. note::
 
-   ``logical_count`` command is an experimental feature.
+   This command is an experimental feature.
 
 .. versionadded:: 5.0.0
 
