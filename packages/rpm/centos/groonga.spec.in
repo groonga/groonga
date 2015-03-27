@@ -2,7 +2,6 @@
 %{!?use_mecab:%define use_mecab 1}
 %{!?use_jemalloc:%define use_jemalloc 0}
 %{!?use_msgpack:%define use_msgpack 0}
-%{!?use_mruby:%define use_mruby 1}
 %{?additional_configure_options:%define use_additional_configure_options 1}
 %{!?additional_configure_options:%define use_additional_configure_options 0}
 
@@ -187,9 +186,7 @@ Munin plugins for Groonga
   --without-mecab \
 %endif
   --with-munin-plugins \
-%if %{use_mruby}
   --enable-mruby \
-%endif
 %if %{use_additional_configure_options}
   %{additional_configure_options}
 %endif
