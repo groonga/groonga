@@ -17,4 +17,6 @@
 Summary
 -------
 
+``scorer_tf_at_most`` is a scorer based on TF (term frequency).
+
 TODO
