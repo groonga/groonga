@@ -102,8 +102,8 @@ Improvements
 * [doc] Added :doc:`/reference/tokenizers` document.
 * Improved POSIX.2 compatibility by using ``.`` as bash's "source"
   command replacement. [GitHub#317] [Patch by Jun Kuriyama]
-* [windows] Changed to default IO version 1. It reduces disk usage on
-  Windows. [groonga-dev,03118] [Tested by ongaeshi]
+* [windows] Changed to the default IO version 1. It reduces disk usage
+  on Windows. [groonga-dev,03118] [Tested by ongaeshi]
 * [httpd] Updated bundled Nginx version to the latest mainline
   (1.7.11).
 
