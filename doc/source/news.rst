@@ -106,6 +106,8 @@ Improvements
   on Windows. [groonga-dev,03118] [Tested by ongaeshi]
 * [httpd] Updated bundled Nginx version to the latest mainline
   (1.7.11).
+* Changed mime-type for TSV output to ``text/tab-separated-values``
+  from ``text/plain``.
 
 Fixes
 ^^^^^
@@ -115,7 +117,6 @@ Fixes
   [Reported by Dewangga]
 * [:doc:`/reference/commands/truncate`] Fixed a bug that
   :ref:`table-no-key` table can't be truncated.
-* Fixed to return proper mime-type.
 * [mecab] Fixed not to report needless "empty token" or "ignore empty
   token" multiple times.
 * Fixed a bug that wrong section is used. It is known that this bug is
