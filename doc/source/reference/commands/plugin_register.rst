@@ -39,7 +39,7 @@ that is included in
 
 .. groonga-command
 .. include:: ../../example/reference/commands/plugin_register/query_expanders_tsv.log
-.. register query_expanders/tsv
+.. plugin_register query_expanders/tsv
 
 You can omit ``${PREFIX}/lib/groonga/plugins/`` and suffix (``.so``).
 They are completed automatically.
