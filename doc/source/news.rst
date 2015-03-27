@@ -119,12 +119,16 @@ Fixes
   :ref:`table-no-key` table can't be truncated.
 * [mecab] Reduced needless logs for "empty token" and "ignore empty
   token".
-* Fixed a bug that wrong section is used. It is known that this bug is
-  occurred the following the three conditions are met. The first one is:
-  multiple indexes are available. The second one is: the first defined
-  index and/or the last defined index are multi-column indexes. The
-  last one is: when both of the first define index and the last
-  defined index are multi-column indexes.
+* Fixed a bug that wrong section in index is used. It means that wrong
+  search result is returned. If you satisfy all of the following
+  conditions, this bug is occurred:
+
+  * Multiple indexes are available.
+  * The first defined index and/or the last defined index are
+    multi-column indexes.
+  * Both of the first defined index and the last defined index are
+    multi-column indexes.
+
 * Fixed a bug that ``stop_word`` plugin use offline index
   construction. [GitHub#296] [Patch by Naoya Murakami]
 * Fixed a bug that "groonga /tmp/db XXX" always returns 0 as exit
