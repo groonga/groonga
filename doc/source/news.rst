@@ -99,8 +99,6 @@ Improvements
 * [http][:doc:`/reference/commands/load`] Added "," as chunk separator
   in POST data. It decreases internal buffer size and improves load
   time when POST data don't include any new line.
-* Added ``TokenRegexp`` tokenizer. See
-  :doc:`/reference/regular_expression` for details.
 * [doc] Added :doc:`/reference/tokenizers` document.
 * Improved POSIX.2 compatibility by using ``.`` as bash's "source"
   command replacement. [GitHub#317] [Patch by Jun Kuriyama]
