@@ -12,7 +12,7 @@
 
    This command is an experimental feature.
 
-.. _versionadded: 5.0.1
+.. versionadded:: 5.0.1
 
 Summary
 -------
