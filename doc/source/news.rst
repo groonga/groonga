@@ -120,7 +120,7 @@ Improvements
   command replacement. [GitHub#317] [Patch by Jun Kuriyama]
 * [windows] Changed to the default IO version 1. It reduces disk usage
   on Windows. [groonga-dev,03118] [Tested by ongaeshi]
-* [httpd] Updated bundled Nginx version to the latest mainline
+* [httpd] Updated bundled nginx version to the latest mainline
   (1.7.11).
 * Changed mime-type for TSV output to ``text/tab-separated-values``
   from ``text/plain``.
