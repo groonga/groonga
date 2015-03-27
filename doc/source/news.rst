@@ -38,7 +38,8 @@ Improvements
        score_value = (double)GRN_INT32_VALUE_FLOAT_VALUE(score);
      }
 
-* Added more strict check for invalid drilldown parameter.
+* [:doc:`/reference/commands/select`] Added more strict check for
+  invalid drilldown parameter.
 * Added :c:func:`grn_ctx_get_all_tables()`. [Suggested by Masatoshi
   Teruya]
 * ??? Supported sort by index value.
