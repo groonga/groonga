@@ -96,9 +96,9 @@ Improvements
   expression.
 * [experimental] Added :doc:`/reference/commands/plugin_unregister`
   command.
-* [http] Supported new line and "," for chunk separator in POST
-  data. It decreases buffer size, as a result, it reduces load time
-  without these separators.
+* [http][:doc:`/reference/commands/load`] Added "," as chunk separator
+  in POST data. It decreases internal buffer size and improves load
+  time when POST data don't include any new line.
 * Added ``TokenRegexp`` tokenizer. See
   :doc:`/reference/regular_expression` for details.
 * [doc] Added :doc:`/reference/tokenizers` document.
