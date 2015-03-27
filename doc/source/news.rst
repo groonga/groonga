@@ -45,8 +45,13 @@ Improvements
 * ??? Supported sort by index value.
 * Supported to customize score function. See :doc:`/reference/scorer`
   for details.
-* Added some functions to distinct the type of :c:type:`grn_obj` for
-  API users.
+* Added the following predicates that check :c:type:`grn_obj` type to
+  DB API:
+  * :c:func:`grn_obj_is_table()`
+  * :c:func:`grn_obj_is_proc_proc()`
+  * :c:func:`grn_obj_is_function_proc()`
+  * :c:func:`grn_obj_is_selector_proc()`
+  * :c:func:`grn_obj_is_scorer_proc()`
 * [experimental] Supported skipping posting list when searching
   popular term and rare term at the same time. It will improve
   performance. Set ``GRN_II_CURSOR_SET_MIN_ENABLE`` environment
