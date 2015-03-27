@@ -110,8 +110,8 @@ Improvements
 Fixes
 ^^^^^
 
-* Fixed not to use obsolete ``--address`` parameter in
-  groonga.conf. Use ``--bind-address`` instead.  [Groonga-talk]
+* Fixed not to use obsolete ``--address`` parameter in the default
+  groonga.conf. ``--bind-address`` is used instead.  [Groonga-talk]
   [Reported by Dewangga]
 * Fixed a bug that array can't be truncated properly if TABLE_NO_KEY
   is specified for table.
