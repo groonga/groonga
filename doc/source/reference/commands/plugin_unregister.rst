@@ -6,7 +6,7 @@
 .. database: commands_plugin_unregister
 
 ``plugin_unregister``
-============
+=====================
 
 .. versionadded: 5.0.1
 
