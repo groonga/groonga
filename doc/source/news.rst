@@ -15,7 +15,7 @@ Release 5.0.1 - 2015/03/29
 Improvements
 ^^^^^^^^^^^^
 
-* [:doc:`/references/commands/logical_range_filter`] Supported filter
+* [:doc:`/reference/commands/logical_range_filter`] Supported filter
   and sort.
 * Supported range search by multiple column index.
 * Added API :doc:`/reference/api/overview` document for users who want
