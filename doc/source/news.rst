@@ -91,8 +91,9 @@ Improvements
   :doc:`/reference/executables/groonga`.
 * [groonga-httpd] Supported graceful stop to clean Groonga. It doesn't
   terminate the open connections immediately.
-* Supported regular expression. Use ``COLUMN_NAME:~REGEXP`` in query syntax,
-  ``TARGET @~ REGEXP`` in script syntax.
+* Supported regular expression. See
+  :doc:`/reference/regular_expression` for how to use regular
+  expression.
 * [experimental] Added :doc:`/reference/commands/plugin_unregister`
   command.
 * [http] Supported new line and "," for chunk separator in POST
