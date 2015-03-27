@@ -108,6 +108,9 @@ Improvements
   (1.7.11).
 * Changed mime-type for TSV output to ``text/tab-separated-values``
   from ``text/plain``.
+* [:ref:`token-filter-stop-word`] Supported
+  :ref:`offline-index-construction`. [GitHub#296] [Patch by Naoya
+  Murakami]
 
 Fixes
 ^^^^^
@@ -129,8 +132,6 @@ Fixes
   * Both of the first defined index and the last defined index are
     multi-column indexes.
 
-* Fixed a bug that ``stop_word`` plugin use offline index
-  construction. [GitHub#296] [Patch by Naoya Murakami]
 * Fixed a bug that "groonga /tmp/db XXX" always returns 0 as exit
   code.
 * Fixed a bug that plugin path may be broken when two or more plugins
