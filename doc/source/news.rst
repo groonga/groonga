@@ -138,9 +138,10 @@ Fixes
   /tmp/db nonexistent_command`` always returned ``0`` as exist code.
 * Fixed a bug that plugin path may be broken when two or more plugins
   registered. [Reported by Naoya Murakami]
-* Fixed a bug that "Lexicon.index.section_name" doesn't work. This bug
-  happen when source column specified by "section_name" has two or
-  more indexes. [Reported by Naoya Murakami]
+* Fixed a bug that ``Lexicon.index.source_column_name`` style in
+  :ref:`select-match-columns` doesn't work when source
+  column specified by ``source_column_name`` has two or more
+  indexes. [Reported by Naoya Murakami]
 
 Thanks
 ^^^^^^
