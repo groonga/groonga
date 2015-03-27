@@ -54,7 +54,8 @@ Improvements
   default.
 * [doc] Added :doc:`/reference/functions/in_values` document.
 * [doc] Added :doc:`/reference/commands/logical_count` document.
-* [mruby] Added #inspect. Is is useful for debugging.
+* [mruby] Implemented custom ``#inspect`` method. Is is useful for
+  debugging.
 * Added :doc:`/reference/scorers/scorer_tf_at_most` scorer. It
   limits not to exceed specified score regardless of term frequency.
 * [mruby] Supported estimating size for index search. Added some
