@@ -8,6 +8,9 @@
 ``register``
 ============
 
+.. deprecated:: 5.0.1
+   Use :doc:`plugin_register` instead.
+
 Summary
 -------
 
