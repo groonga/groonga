@@ -47,7 +47,7 @@ Improvements
   for details.
 * Added some functions to distinct the type of :c:type:`grn_obj` for
   API users.
-* [experimental] Supported skip posting list when searching popular
+* [experimental] Supported skipping posting list when searching popular
   term and rare term at the same time. It will improve
   performance. Use ``GRN_II_CURSOR_SET_MIN_ENABLE`` environment
   variable.
