@@ -117,8 +117,8 @@ Fixes
   [Reported by Dewangga]
 * [:doc:`/reference/commands/truncate`] Fixed a bug that
   :ref:`table-no-key` table can't be truncated.
-* [mecab] Fixed not to report needless "empty token" or "ignore empty
-  token" multiple times.
+* [mecab] Reduced needless logs for "empty token" and "ignore empty
+  token".
 * Fixed a bug that wrong section is used. It is known that this bug is
   occurred following the three conditions are met. The first one is:
   multiple indexes are available. The second one is: the first defined
