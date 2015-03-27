@@ -15,7 +15,7 @@ DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 	dh $@
 
 override_dh_auto_configure:
-	dh_auto_configure -- --with-munin-plugins
+	dh_auto_configure -- --with-munin-plugins --enable-mruby
 
 # disable 'make check'.
 override_dh_auto_test:
