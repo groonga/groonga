@@ -8,6 +8,12 @@
 ``scorer_tf_at_most``
 =====================
 
+.. note::
+
+   This scorer is an experimental feature.
+
+.. versionadded:: 5.0.1
+
 Summary
 -------
 
