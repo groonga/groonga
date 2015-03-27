@@ -15736,6 +15736,10 @@ msgstr ""
 msgid "This scorer is an experimental feature."
 msgstr "スコアラーは実験的な機能です。"
 
+# 04fc633c12794541886c0d1da4a10360
+msgid "``scorer_tf_at_most`` is a scorer based on TF (term frequency)."
+msgstr ""
+
 msgid "``scorer_tf_idf``"
 msgstr ""
 
@@ -15805,6 +15809,30 @@ msgstr ""
 
 # 2090a41517f14934ba2beeb73556310b
 msgid ":doc:`../scorer`"
+msgstr ""
+
+# 4e2cdd1281e24007a11f361eba5dc477
+# fcc323832fe44653ba13e8a55c065eb7
+# 12dc6edb2b5b4f53b0e4b60f9c16f5e8
+msgid ""
+"You don't need to resolve scoring only by score function. Score function is "
+"highly depends on search query. You may be able to use metadata of matched "
+"record."
+msgstr ""
+
+# 234fd16a9c2c4521aa34547eb97c8264
+# d2e796c8b27c46e5b2d444478594ac01
+# 5db2b8df86eb41c797999b78ddb57fe8
+msgid ""
+"For example, Google uses `PageRank <http://en.wikipedia.org/wiki/PageRank>`_ "
+"for scoring. You may be able to use data type (\"title\" data are important "
+"rather than \"memo\" data), tag, geolocation and so on."
+msgstr ""
+
+# 52a4d5186b54437ea4e23fe4738a6b79
+# c47c62b2763b4b91aabe70a511609e97
+# 783d9c2eba194e41ad08da84fce8f862
+msgid "Please stop to think about only score function for scoring."
 msgstr ""
 
 msgid "Suggest"
@@ -18097,11 +18125,11 @@ msgstr ""
 msgid "Object型はv1.2でサポートされます。"
 msgstr ""
 
-#~ msgid "Registered plugins can't be removed for now."
-#~ msgstr "今のところ、登録したプラグインは削除できません。"
+#~ msgid "user 'A' commented out."
+#~ msgstr "ユーザー'A'のコメント"
 
 #~ msgid "``request_cancel`` command is an experimental feature."
 #~ msgstr "``request_cancel`` コマンドは実験的な機能です。"
 
-#~ msgid "user 'A' commented out."
-#~ msgstr "ユーザー'A'のコメント"
+#~ msgid "Registered plugins can't be removed for now."
+#~ msgstr "今のところ、登録したプラグインは削除できません。"
