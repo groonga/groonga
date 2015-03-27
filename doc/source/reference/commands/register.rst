@@ -61,3 +61,9 @@ Return value
 If ``register`` fails, error details are in ``HEADER``.
 
 See :doc:`/reference/command/output_format` for ``HEADER``.
+
+See also
+--------
+
+* :doc:`plugin_register`
+* :doc:`plugin_unregister`
