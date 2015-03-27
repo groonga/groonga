@@ -113,8 +113,8 @@ Fixes
 * Fixed not to use obsolete ``--address`` parameter in the default
   groonga.conf. ``--bind-address`` is used instead.  [Groonga-talk]
   [Reported by Dewangga]
-* Fixed a bug that array can't be truncated properly if TABLE_NO_KEY
-  is specified for table.
+* [:doc:`/reference/commands/truncate`] Fixed a bug that
+  :ref:`table-no-key` table can't be truncated.
 * Fixed to return proper mime-type.
 * [mecab] Fixed not to report needless "empty token" or "ignore empty
   token" multiple times.
