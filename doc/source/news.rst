@@ -34,7 +34,7 @@ Improvements
 * Added missing NormalizerAuto availability check. [GitHub#283] [Reported by Tasuku SUENAGA]
 * Dropped Visual Studio 2010 support.
 * [experimental][mecab] Supported chunked tokenization. This feature is a workaround for MeCab's "too long sentense" error.
-Specify ``GRN_MECAB_CHUNKED_TOKENIZE_ENABLED=yes`` environment variable to enable it. By this configuration, Groonga splits a long text (8192 bytes over text by default) into small chunks and passes each chunk to MeCab. so above error doesn't occur. Additionally, you can customize chunk threshold bytes by ``GRN_MECAB_CHUNK_SIZE_THRESHOLD`` environment variable. Note that ``,``, ``.``, ``!``, ``?``, ``U+3001 IDEOGRAPHIC COMMA``, ``U+3002 IDEOGRAPHIC FULL STOP``, ``U+FF01 FULLWIDTH EXCLAMATION MARK`` and ``U+FF1F FULLWIDTH QUESTION MARK`` are treated as chunk delimiter characters.
+  Specify ``GRN_MECAB_CHUNKED_TOKENIZE_ENABLED=yes`` environment variable to enable it. By this configuration, Groonga splits a long text (8192 bytes over text by default) into small chunks and passes each chunk to MeCab. so above error doesn't occur. Additionally, you can customize chunk threshold bytes by ``GRN_MECAB_CHUNK_SIZE_THRESHOLD`` environment variable. Note that ``,``, ``.``, ``!``, ``?``, ``U+3001 IDEOGRAPHIC COMMA``, ``U+3002 IDEOGRAPHIC FULL STOP``, ``U+FF01 FULLWIDTH EXCLAMATION MARK`` and ``U+FF1F FULLWIDTH QUESTION MARK`` are treated as chunk delimiter characters.
 * Supported scorer with weight. Use ``SCORER(...) * 10'`` for example.
 * Supported ``--pid-file`` in server mode for groonga command.
 * [groonga-httpd] Supported graceful stop to clean Groonga. It doesn't terminate the open connections immediately.
