@@ -38,7 +38,7 @@ Improvements
 * Supported scorer with weight. Use ``SCORER(...) * 10'`` for example.
 * Supported ``--pid-file`` in server mode for groonga command.
 * [groonga-httpd] Supported graceful stop to clean Groonga. It doesn't terminate the open connections immediately.
-* Supported REGEXP. Use ``COLUMN_NAME:~REGEXP" in query syntax, ``TARGET @~ REGEXP" in script syntax.
+* Supported REGEXP. Use ``COLUMN_NAME:~REGEXP`` in query syntax, ``TARGET @~ REGEXP`` in script syntax.
 * [experimental] Added :doc:`/reference/commands/plugin_unregister` command.
 * [http] Supported new line and "," for chunk separator in POST data. It decreases buffer size, as a result, it reduces load time without these separators.
 * Added ``TokenRegexp`` tokenizer. See :doc:`/reference/regular_expression` about details.
