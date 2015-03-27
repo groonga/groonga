@@ -92,7 +92,7 @@ Improvements
 * [groonga-httpd] Supported graceful stop to clean Groonga. It doesn't
   terminate the open connections immediately.
 * [experimental] Supported regular expression. See
-  :doc:`/reference/regular_expression` for how to use regular
+  :doc:`/reference/regular_expression` to know about how to use regular
   expression.
 * [experimental] Added :doc:`/reference/commands/plugin_unregister`
   command.
