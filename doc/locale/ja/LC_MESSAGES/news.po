@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-03-27 19:19+0900\n"
+"PO-Revision-Date: 2015-03-27 22:16+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -163,10 +163,12 @@ msgstr ""
 "ました。出現頻度が高くても、指定したスコアの閾値を越えないようにします。"
 
 # 5e816ed3bc5b4987aa7d61545b0496ef
-msgid "[mruby] Supported estimating size for index search."
+msgid ""
+"[mruby] Supported estimating matched records for selecting index search or "
+"sequential search."
 msgstr ""
-"[mruby] インデックスを使って検索するときにデータのサイズ(ヒットする件数)を推"
-"測できるようにしました。"
+"[mruby] マッチする件数を推定してインデックスを使って検索するかシーケンシャル"
+"に検索するかを選択できるようにしました。"
 
 # 897543dc2b134e509eb1b49b73ee63bf
 msgid "Added the following functions to estimate size by index:"
@@ -336,19 +338,18 @@ msgstr "複数のインデックスが張られている"
 
 # de1c700b5d124bb5813477f7bc97db15
 msgid ""
-"The first defined index and/or the last defined index are multi-column "
-"indexes."
+"The first defined index or the last defined index are multi-column indexes."
 msgstr ""
-"最初に定義したインデックスと最後に定義したインデックスの両方もしくはどちらか"
-"がマルチカラムインデックスを使っている"
+"最初に定義したインデックスか最後に定義したインデックスがマルチカラムインデッ"
+"クスを使っている"
 
 # 7012e82fdb1c442fb1d9f23cb4ca3bb2
 msgid ""
-"Both of the first defined index and the last defined index are multi-column "
-"indexes."
+"When both of the first defined index and the last defined index are multi-"
+"column indexes, source column orders are different in them."
 msgstr ""
-"最初に定義したインデックスと最後に定義したインデックスの両方ともマルチカラム"
-"インデックスである"
+"最初に定義したインデックスと最後に定義したインデックスがマルチカラムインデッ"
+"クスだったとき、そのソースカラムの指定順が異なっている"
 
 # 50089762064b4be4a86dc6c56d3d84e9
 msgid ""
