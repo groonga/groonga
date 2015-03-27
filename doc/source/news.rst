@@ -18,7 +18,7 @@ Improvements
 * [:doc:`/references/commands/logical_range_filter`] Supported filter and sort.
 * Supported range search by multiple column index.
 * Added API :doc:`/reference/api/overview` document for users who want to use Groonga as library.
-* Changed internal value type of `_score` to double. This is incompatible change for DB API users.
+* Changed internal value type of ``_score`` to double. This is incompatible change for DB API users.
 * Added more strict check for invalid drilldown parameter.
 * Added :c:func:`grn_ctx_get_all_tables()`. [Suggested by Masatoshi Teruya]
 * ??? Supported sort by index value.
@@ -50,7 +50,7 @@ Improvements
 Fixes
 ^^^^^
 
-* Fixed not to use obsolete `--address` parameter in groonga.conf. Use `--bind-address` instead.
+* Fixed not to use obsolete ``--address`` parameter in groonga.conf. Use ``--bind-address`` instead.
   [Groonga-talk] [Reported by Dewangga]
 * Fixed a bug that array can't be truncated properly if TABLE_NO_KEY is specified for table.
 * Fixed to return proper mime-type.
