@@ -43,10 +43,10 @@ Improvements
 * Added :c:func:`grn_ctx_get_all_tables()`. [Suggested by Masatoshi
   Teruya]
 * ??? Supported sort by index value.
-* Supported to customize score function.
+* Supported to customize score function. See :doc:`/reference/scorer`
+  for details.
 * Added some functions to distinct the type of :c:type:`grn_obj` for
   API users.
-* Supported scorer in :ref:`select-match-columns`.
 * [experimental] Supported skip posting list when searching popular
   term and rare term at the same time. It will improve
   performance. Use ``GRN_II_CURSOR_SET_MIN_ENABLE`` environment
