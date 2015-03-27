@@ -21,6 +21,8 @@ database because registered plugin information is written into the
 database.  When you restart your ``groonga`` process, ``groonga``
 process loads all registered plugins without ``plugin_register`` command.
 
+You can unregister a registered plugin by :doc:`plugin_unregister`.
+
 Syntax
 ------
 
