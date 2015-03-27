@@ -73,11 +73,11 @@ Improvements
 * Dropped Visual Studio 2010 support.
 * [experimental][mecab] Supported chunked tokenization. This feature
   is a workaround for MeCab's "too long sentense" error.  Specify
-  ``GRN_MECAB_CHUNKED_TOKENIZE_ENABLED=yes`` environment variable to
-  enable it. By this configuration, Groonga splits a long text (8192
-  bytes over text by default) into small chunks and passes each chunk
-  to MeCab. so above error doesn't occur. Additionally, you can
-  customize chunk threshold bytes by
+  ``yes`` to ``GRN_MECAB_CHUNKED_TOKENIZE_ENABLED`` environment
+  variable to enable it. By this configuration, Groonga splits a long
+  text (8192 bytes over text by default) into small chunks and passes
+  each chunk to MeCab. By this process, the above error isn't
+  occurred. Additionally, you can customize chunk threshold bytes by
   ``GRN_MECAB_CHUNK_SIZE_THRESHOLD`` environment variable. Note that
   ``,``, ``.``, ``!``, ``?``, ``U+3001 IDEOGRAPHIC COMMA``, ``U+3002
   IDEOGRAPHIC FULL STOP``, ``U+FF01 FULLWIDTH EXCLAMATION MARK`` and
