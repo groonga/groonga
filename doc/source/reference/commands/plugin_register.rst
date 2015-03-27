@@ -24,9 +24,9 @@ process loads all registered plugins without ``plugin_register`` command.
 Syntax
 ------
 
-``plugin_register`` has a parameter ``path``. It is required parameter::
+``plugin_register`` has a parameter ``name``. It is required parameter::
 
-  plugin_register path
+  plugin_register name
 
 Usage
 -----
