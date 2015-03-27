@@ -43,7 +43,7 @@ Improvements
 * [http] Supported new line and "," for chunk separator in POST data. It decreases buffer size, as a result, it reduces load time without these separators.
 * Added ``TokenRegexp`` tokenizer. See :doc:`/reference/regular_expression` about details.
 * [doc] Added :doc:`/reference/tokenizers` document.
-* Improved POSIX.2 compatibility by using ``.`` as bash's "source" command replacement. [GitHub#317] [Patch by Jun Kuriyama]    
+* Improved POSIX.2 compatibility by using ``.`` as bash's "source" command replacement. [GitHub#317] [Patch by Jun Kuriyama]
 * [windows] Changed to default IO version 1. It reduces disk usage on Windows. [groonga-dev,03118] [Tested by ongaeshi]
 * [httpd] Updated bundled Nginx version to the latest mainline (1.7.11).
 
