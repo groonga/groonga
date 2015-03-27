@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2012-11-26 08:57+0900\n"
+"PO-Revision-Date: 2015-03-27 23:47+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -16,6 +16,9 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
 
 msgid "Specification"
 msgstr "仕様"
@@ -506,11 +509,115 @@ msgstr ""
 msgid "Example"
 msgstr "例"
 
-msgid "TODO"
+# 5736b1d07ed84c639f562f86c1f2cf4c
+msgid "How to run a GQTP server"
+msgstr "GQTPサーバの起動"
+
+# be403c8a33364ae7af348c1b22383dcf
+msgid ""
+"Groonga has a special protocol, named Groonga Query Transfer Protocol "
+"(GQTP), for remote access to a database. The following form shows how to run "
+"Groonga as a GQTP server."
 msgstr ""
+"Groongaには、専用のプロトコルであるGQTPが存在します。GQTPを用いることにより、"
+"データベースへとリモートアクセスすることができます。以下の書式はGQTPサーバの"
+"起動方法を示しています。"
+
+# 838d93b14cf944eba08dc691cacf68df
+# 1d700a54cfa8454b974fb6baa5196fd2
+# 0c93629daa3446df985c4ffbd8ab6e9b
+msgid "Form::"
+msgstr ""
+
+# 531c3e4f3d724c80a3115db17a4481aa
+msgid ""
+"The `-s` option specifies to run Groonga as a server. DB_PATH specifies the "
+"path of the existing database to be hosted. The `-p` option and its "
+"argument, PORT_NUMBER, specify the port number of the server. The default "
+"port number is 10043, which is used when you don't specify PORT_NUMBER."
+msgstr ""
+"`-s` オプションはGroongaをサーバとして起動するためのオプションです。DB_PATHに"
+"は既存のデータベースのパスを指定します。 `-p` オプションとその引数により、"
+"サーバのポート番号を指定することができます。ポート番号を省略した場合は10043が"
+"使用されます。"
+
+# 19c88e032b9a4e43bbb20f8c48af06dc
+msgid ""
+"The following command runs a server that listens on the default port number. "
+"The server accepts operations to the specified database."
+msgstr ""
+"以下のコマンドにより、デフォルトのポート番号で待ち受けるサーバを起動すること"
+"ができます。サーバは指定されたデータベースへの操作を受け付けます。"
+
+# 39d8da9b731b414faf80025c3b73b79e
+msgid "How to run a GQTP daemon"
+msgstr "GQTPデーモンの起動"
+
+# 160381e1a4054a5ea907e31eed212759
+msgid ""
+"You can also run a GQTP server as a daemon by using the `-d` option, instead "
+"of the `-s` option."
+msgstr ""
+"GQTPサーバはデーモンとして起動することができます。オプションとして、 `-s` の"
+"代わりに `-d` を与えてください。"
+
+# 97903ab658614863b4585dc39f991300
+msgid ""
+"A Groonga daemon prints its process ID as follows. In this example, the "
+"process ID is 12345. Then, the daemon opens a specified database and accepts "
+"operations to that database."
+msgstr ""
+"Groongaをデーモンとして起動したときは、デーモンのプロセスIDが表示されます。以"
+"下の例では、12345というプロセスIDが表示されています。サーバとして起動した場合"
+"と同様に、指定されたデータベースへの操作を受け付けます。"
+
+# 54f5ec01c1654cd995b79ae830a277b2
+msgid "How to run a GQTP client"
+msgstr "GQTPサーバへの接続"
+
+# 1be8277e07294c299ace11a7f4330266
+msgid "You can run Groonga as a GQTP client as follows:"
+msgstr "GQTPサーバに接続するクライアントは、以下のように起動します。"
+
+# 3cd166348f0a4ea0a71ac1853998d95b
+msgid ""
+"This command establishes a connection with a GQTP server and then enters "
+"into interactive mode. HOST_NAME_OR_IP_ADDRESS specifies the hostname or the "
+"IP address of the server. If not specified, Groonga uses the default "
+"hostname \"localhost\". The `-p` option and its argument, PORT_NUMBER, "
+"specify the port number of the server. If not specified, Groonga uses the "
+"default port number 10043."
+msgstr ""
+"上記のコマンドによって起動されたクライアントは、サーバとの接続に成功すると対"
+"話モードに入ります。HOST_NAME_OR_IP_ADDRESSにはサーバのホスト名もしくはIPアド"
+"レスを指定します。HOST_NAME_OR_IP_ADDRESSが省略されたときは\"localhost\"を"
+"サーバのホスト名として採用します。また、 `-p` オプションとその引数により、"
+"サーバのポート番号を指定することができます。ポート番号を省略した場合は10043が"
+"使用されます。"
+
+# 7d0d1a6eaf124cd6b4c55d3f0b796185
+msgid ""
+"In interactive mode, Groonga reads commands from the standard input and "
+"executes them one by one."
+msgstr "対話モードでは、標準入力からコマンドを読み込んで順次実行します。"
+
+# 69bae006200d4e9f87de0843a76b26e0
+msgid "How to terminate a GQTP server"
+msgstr "GQTPサーバの終了"
+
+# f9560b4367d64c5586135e61c419165b
+msgid ""
+"You can terminate a GQTP server with a :doc:`/reference/commands/shutdown` "
+"command."
+msgstr ""
+"GQTPサーバを終了する安全は方法は、クライアントを起動して :doc:`/reference/"
+"commands/shutdown` を発行することです。"
 
 msgid "See also"
 msgstr "参照"
+
+msgid "TODO"
+msgstr ""
 
 msgid "検索"
 msgstr ""
@@ -725,6 +832,3 @@ msgid ""
 "そのため、descriptionに「スープカレーライス」が含まれていても、「スープカレー"
 "ライス」は「スープカレー」に完全一致しないのでヒットしません。"
 msgstr ""
-
-#~ msgid "Execution example::"
-#~ msgstr "実行例::"
