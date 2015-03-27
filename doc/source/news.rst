@@ -42,7 +42,6 @@ Improvements
   invalid drilldown parameter.
 * Added :c:func:`grn_ctx_get_all_tables()`. [Suggested by Masatoshi
   Teruya]
-* ??? Supported sort by index value.
 * Supported to customize score function. See :doc:`/reference/scorer`
   for details.
 * [incompatible] Custom score function feature introduced API and ABI
