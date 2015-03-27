@@ -1,0 +1,19 @@
+Execution example::
+
+  load --table Logs
+  [
+  {"message": "Error"},
+  {"message": "Warning"},
+  {"message": "Warning Warning"},
+  {"message": "Warning Warning Warning"},
+  {"message": "Info"},
+  {"message": "Info Info"},
+  {"message": "Info Info Info"},
+  {"message": "Info Info Info Info"},
+  {"message": "Notice"},
+  {"message": "Notice Notice"},
+  {"message": "Notice Notice Notice"},
+  {"message": "Notice Notice Notice Notice"},
+  {"message": "Notice Notice Notice Notice Notice"}
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 13]

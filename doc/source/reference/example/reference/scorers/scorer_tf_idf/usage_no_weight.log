@@ -1,0 +1,51 @@
+Execution example::
+
+  select Logs \
+    --match_columns "scorer_tf_idf(message)" \
+    --query "Error OR Info" \
+    --output_columns "message, _score" \
+    --sortby "-_score"
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         5
+  #       ], 
+  #       [
+  #         [
+  #           "message", 
+  #           "Text"
+  #         ], 
+  #         [
+  #           "_score", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         "Info Info Info Info", 
+  #         3
+  #       ], 
+  #       [
+  #         "Error", 
+  #         2
+  #       ], 
+  #       [
+  #         "Info Info Info", 
+  #         2
+  #       ], 
+  #       [
+  #         "Info Info", 
+  #         1
+  #       ], 
+  #       [
+  #         "Info", 
+  #         1
+  #       ]
+  #     ]
+  #   ]
+  # ]
