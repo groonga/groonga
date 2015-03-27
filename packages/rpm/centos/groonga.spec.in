@@ -317,6 +317,7 @@ fi
 %{_datadir}/man/*/man1/*
 %{_bindir}/groonga
 %{_bindir}/groonga-benchmark
+%{_bindir}/grndb
 
 %files libs
 %defattr(-,root,root,-)
@@ -326,9 +327,25 @@ fi
 %dir %{_libdir}/groonga/plugins
 %dir %{_libdir}/groonga/plugins/tokenizers
 %dir %{_libdir}/groonga/plugins/token_filters
+%dir %{_libdir}/groonga/plugins/ruby
+%dir %{_libdir}/groonga/plugins/sharding
+%dir %{_libdir}/groonga/scripts
+%dir %{_libdir}/groonga/scripts/ruby
+%dir %{_libdir}/groonga/scripts/ruby/command_line
+%dir %{_libdir}/groonga/scripts/ruby/context
+%dir %{_libdir}/groonga/scripts/ruby/initialize
+%dir %{_libdir}/groonga/scripts/ruby/logger
 %{_libdir}/groonga/plugins/table/table.so
 %{_libdir}/groonga/plugins/query_expanders/tsv.so
 %{_libdir}/groonga/plugins/token_filters/stop_word.so
+%{_libdir}/groonga/plugins/ruby/*.so
+%{_libdir}/groonga/plugins/*.rb
+%{_libdir}/groonga/plugins/sharding/*.rb
+%{_libdir}/groonga/scripts/ruby/*.rb
+%{_libdir}/groonga/scripts/ruby/command_line/*.rb
+%{_libdir}/groonga/scripts/ruby/context/*.rb
+%{_libdir}/groonga/scripts/ruby/initialize/*.rb
+%{_libdir}/groonga/scripts/ruby/logger/*.rb
 %{_datadir}/groonga/
 %config(noreplace) %{_sysconfdir}/groonga/synonyms.tsv
 
