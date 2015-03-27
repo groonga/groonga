@@ -11,3 +11,9 @@
 #TIMEOUT=5
 #GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO=0.01
 #GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO=0.01
+# Set 1 to enable skipping posting list
+#GRN_II_CURSOR_SET_MIN_ENABLE=0
+# Set "yes" to enable chunked tokenize feature
+#GRN_MECAB_CHUNKED_TOKENIZE_ENABLED=no
+# Set the threshold value for chunk size (default: 8192)
+#GRN_MECAB_CHUNK_SIZE_THRESHOLD=8192
