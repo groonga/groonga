@@ -113,22 +113,31 @@ Sample data:
 .. ]
 
 You can specify custom score function in :ref:`select-match-columns`.
-Here are syntaxes::
+There are some syntaxes.
+
+For score function that doesn't require any parameter such as
+:doc:`/reference/scorers/scorer_tf_idf`::
 
   SCORE_FUNCTION(COLUMN)
 
+You can specify weight::
+
   SCORE_FUNCTION(COLUMN) * WEIGHT
+
+For score function that requires one or more parameters such as
+:doc:`/reference/scorers/scorer_tf_at_most`::
 
   SCORE_FUNCTION(COLUMN, ARGUMENT1, ARGUMENT2, ...)
 
+You can specify weight::
+
   SCORE_FUNCTION(COLUMN, ARGUMENT1, ARGUMENT2, ...) * WEIGHT
 
-  SCORE_FUNCTION1(COLUMN1) * WEIGHT1 ||
-    SCORE_FUNCTION2(COLUMN2) * WEIGHT2 ||
-    ...
+You can use different score function for each match column::
 
-  SCORE_FUNCTION1(COLUMN1, ARGUMENT1, ARGUMENT2, ...) * WEIGHT1 ||
-    SCORE_FUNCTION2(COLUMN2, ARGUMENT1, ARGUMENT2, ...) * WEIGHT2 ||
+  SCORE_FUNCTION1(COLUMN1) ||
+    SCORE_FUNCTION2(COLUMN2) * WEIGHT ||
+    SCORE_FUNCTION3(COLUMN3, ARGUMENT1) ||
     ...
 
 Here is a simplest example:
@@ -178,7 +187,34 @@ scorer, ``_score`` is ``4``. But the actual ``_score`` is ``2``.
 Because the scorer used in the ``select`` command limits the maximum
 score value to ``2``.
 
-TODO: Describe about how to use multiple scorer in one match_columns.
+Here is an example that uses multiple scorers::
+
+.. groonga-command
+.. include:: ../example/reference/scorer/usage_multiple_scorers.log
+.. select Memos \
+..   --match_columns "scorer_tf_idf(title) || scorer_tf_at_most(content, 2.0)" \
+..   --query "Groonga" \
+..   --output_columns "title, content, _score" \
+..   --sortby "-_score"
+
+The ``--match_columns`` uses ``scorer_tf_idf(title)`` and
+``scorer_tf_at_most(content, 2.0)``. ``_score`` value is sum of them.
+
+You can use the default scorer and custom scorer in the same
+``--match_columns``. You can use the default scorer by just specifying
+a match column::
+
+.. groonga-command
+.. include:: ../example/reference/scorer/usage_default_and_custom_scorers.log
+.. select Memos \
+..   --match_columns "title || scorer_tf_at_most(content, 2.0)" \
+..   --query "Groonga" \
+..   --output_columns "title, content, _score" \
+..   --sortby "-_score"
+
+The ``--match_columns`` uses the default scorer (TF) for ``title`` and
+:doc:`/reference/scorers/scorer_tf_at_most` for
+``content``. ``_score`` value is sum of them.
 
 Built-in scorers
 ----------------
