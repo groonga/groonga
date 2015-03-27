@@ -81,7 +81,8 @@ Improvements
   debugging.
 * Added :doc:`/reference/scorers/scorer_tf_at_most` scorer. It
   limits not to exceed specified score regardless of term frequency.
-* [mruby] Supported estimating size for index search.
+* [mruby] Supported estimating matched records for selecting index
+  search or sequential search.
 * Added the following functions to estimate size by index:
 
   * :c:func:`grn_expr_estimate_size()`
