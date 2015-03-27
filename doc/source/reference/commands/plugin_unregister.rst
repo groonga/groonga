@@ -15,10 +15,6 @@ Summary
 
 ``plugin_unregister`` command unregisters a plugin.
 
-You need just one ``plugin_unregister`` command for a plugin in the
-same database because it removes registered plugin information which
-is written into the database.
-
 Syntax
 ------
 
