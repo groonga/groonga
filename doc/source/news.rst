@@ -45,6 +45,23 @@ Improvements
 * ??? Supported sort by index value.
 * Supported to customize score function. See :doc:`/reference/scorer`
   for details.
+* [incompatible] Custom score function feature introduced API and ABI
+  incompatibilities in DB API layer. If you're using
+  :c:type:`grn_search_optarg`, please check that your code initializes
+  your :c:type:`grn_search_optarg` by ``0`` like the following:
+
+  .. code-block:: c
+
+     grn_search_optarg options;
+     memset(&options, 0, sizeof(grn_search_optarg));
+
+  If your code do the above thing, your code is API compatible and ABI
+  incompatible. You just need to rebuild your code without
+  modification.
+
+  If your code doesn't the above thing, you need to added the above
+  thing to your code.
+
 * Added the following predicates that check :c:type:`grn_obj` type to
   DB API:
 
