@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.6\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-01-27 16:26+0900\n"
+"PO-Revision-Date: 2015-03-27 19:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -347,6 +347,31 @@ msgid ""
 msgstr ""
 "以下はcurlを使って `alice` と `bob` という2人のユーザーを `Users` テーブルに"
 "ロードするコマンドラインの例です::"
+
+# 5bfb89af5da346f5ab229f94045f4aab
+msgid "Memcached binary protocol"
+msgstr "Memcachedバイナリプロトコル"
+
+# 649ab3e4b8b543f8b6011a69a10524b0
+msgid ""
+"Groonga supports the memcached binary protocol. The following form shows how "
+"to run Groonga as a memcached binary protocol server daemon."
+msgstr ""
+"Groongaはmemcachedバイナリプロトコルをサポートしています。以下の書式は"
+"memcachedバイナリプロトコルのサーバをデーモンとして起動する方法を示していま"
+"す。"
+
+# afcbda4917d64e51a439ef6574296168
+msgid "Form::"
+msgstr ""
+
+# 3f47253e4cf54eaa9ac53e1c7c440c4d
+msgid ""
+"The `--protocol` option and its argument specify the protocol of the server. "
+"\"memcached\" specifies to use the memcached binary protocol."
+msgstr ""
+"`--protocol` オプションとその引数により、サーバのプロトコルを指定することがで"
+"きます。\"memcached\"はmemcachedバイナリプロトコルを示しています。"
 
 msgid "Server packages"
 msgstr "サーバーパッケージ"
