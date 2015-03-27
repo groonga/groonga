@@ -24,7 +24,7 @@ process loads all registered plugins without ``register`` command.
 
 .. note::
 
-   Registered plugins can't be removed for now.
+   Registered plugins can be removed since Groonga 5.0.1. Use :doc:`plugin_unregister` in such a case.
 
 Syntax
 ------
