@@ -83,7 +83,6 @@ Improvements
   IDEOGRAPHIC FULL STOP``, ``U+FF01 FULLWIDTH EXCLAMATION MARK`` and
   ``U+FF1F FULLWIDTH QUESTION MARK`` are treated as chunk delimiter
   characters.
-* Supported scorer with weight. Use ``SCORER(...) * 10'`` for example.
 * Supported ``--pid-file`` in server mode for groonga command.
 * [groonga-httpd] Supported graceful stop to clean Groonga. It doesn't
   terminate the open connections immediately.
