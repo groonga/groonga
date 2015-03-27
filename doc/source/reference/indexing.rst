@@ -11,6 +11,8 @@ Indexing
 Groonga supports both online index construction and offline
 index construction since 2.0.0.
 
+.. _online-index-construction:
+
 Online index construction
 -------------------------
 
