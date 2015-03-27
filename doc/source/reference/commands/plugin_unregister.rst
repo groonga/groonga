@@ -1,0 +1,55 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+.. groonga-command
+.. database: commands_plugin_unregister
+
+``plugin_unregister``
+============
+
+.. versionadded: 5.0.1
+
+Summary
+-------
+
+``plugin_unregister`` command unregisters a plugin.
+
+You need just one ``plugin_unregister`` command for a plugin in the
+same database because it removes registered plugin information which
+is written into the database.
+
+Syntax
+------
+
+``plugin_unregister`` has a parameter ``name``. It is required parameter::
+
+  plugin_unregister name
+
+Usage
+-----
+
+Here is a sample that unregisters ``QueryExpanderTSV`` query expander
+that is included in
+``${PREFIX}/lib/groonga/plugins/query_expanders/tsv.so``.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/plugin_unregister/query_expanders_tsv.log
+.. plugin_unregister query_expanders/tsv
+
+You can omit ``${PREFIX}/lib/groonga/plugins/`` and suffix (``.so``).
+They are completed automatically.
+
+You can specify absolute path such as ``plugin_unregister
+/usr/lib/groonga/plugins/query_expanders/tsv.so``.
+
+Return value
+------------
+
+``plugin_unregister`` returns ``true`` as body on success such as::
+
+  [HEADER, true]
+
+If ``plugin_unregister`` fails, error details are in ``HEADER``.
+
+See :doc:`/reference/command/output_format` for ``HEADER``.
