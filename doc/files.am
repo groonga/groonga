@@ -48,6 +48,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_count/setup_schema.log \
 	$(top_srcdir)/doc/source/example/reference/commands/normalize/normalizer_auto_ascii.log \
 	$(top_srcdir)/doc/source/example/reference/commands/normalizer_list/simple_example.log \
+	$(top_srcdir)/doc/source/example/reference/commands/plugin_register/query_expanders_tsv.log \
+	$(top_srcdir)/doc/source/example/reference/commands/plugin_unregister/query_expanders_tsv.log \
 	$(top_srcdir)/doc/source/example/reference/commands/register/query_expanders_tsv.log \
 	$(top_srcdir)/doc/source/example/reference/commands/ruby_eval/calc.log \
 	$(top_srcdir)/doc/source/example/reference/commands/ruby_load/load.log \
@@ -254,6 +256,11 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/regular_expression/usage_filter.log \
 	$(top_srcdir)/doc/source/example/reference/regular_expression/usage_query.log \
 	$(top_srcdir)/doc/source/example/reference/regular_expression/usage_setup.log \
+	$(top_srcdir)/doc/source/example/reference/scorer/usage_one_no_argument_no_weight.log \
+	$(top_srcdir)/doc/source/example/reference/scorer/usage_one_no_argument_weight.log \
+	$(top_srcdir)/doc/source/example/reference/scorer/usage_one_one_argument_no_weight.log \
+	$(top_srcdir)/doc/source/example/reference/scorer/usage_setup_data.log \
+	$(top_srcdir)/doc/source/example/reference/scorer/usage_setup_schema.log \
 	$(top_srcdir)/doc/source/example/reference/suggest/complete/registered-word-japan.log \
 	$(top_srcdir)/doc/source/example/reference/suggest/complete/registered-word-japanese.log \
 	$(top_srcdir)/doc/source/example/reference/suggest/complete/rk-search-nihon.log \
@@ -526,6 +533,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/logical_count.rst \
 	$(top_srcdir)/doc/source/reference/commands/normalize.rst \
 	$(top_srcdir)/doc/source/reference/commands/normalizer_list.rst \
+	$(top_srcdir)/doc/source/reference/commands/plugin_register.rst \
+	$(top_srcdir)/doc/source/reference/commands/plugin_unregister.rst \
 	$(top_srcdir)/doc/source/reference/commands/quit.rst \
 	$(top_srcdir)/doc/source/reference/commands/range_filter.rst \
 	$(top_srcdir)/doc/source/reference/commands/register.rst \
@@ -582,6 +591,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/query_expanders.rst \
 	$(top_srcdir)/doc/source/reference/query_expanders/tsv.rst \
 	$(top_srcdir)/doc/source/reference/regular_expression.rst \
+	$(top_srcdir)/doc/source/reference/scorer.rst \
+	$(top_srcdir)/doc/source/reference/scorers/scorer_tf_at_most.rst \
+	$(top_srcdir)/doc/source/reference/scorers/scorer_tf_idf.rst \
 	$(top_srcdir)/doc/source/reference/suggest.rst \
 	$(top_srcdir)/doc/source/reference/suggest/completion.rst \
 	$(top_srcdir)/doc/source/reference/suggest/correction.rst \
@@ -683,6 +695,8 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/logical_count/setup_schema.log \
 	source/example/reference/commands/normalize/normalizer_auto_ascii.log \
 	source/example/reference/commands/normalizer_list/simple_example.log \
+	source/example/reference/commands/plugin_register/query_expanders_tsv.log \
+	source/example/reference/commands/plugin_unregister/query_expanders_tsv.log \
 	source/example/reference/commands/register/query_expanders_tsv.log \
 	source/example/reference/commands/ruby_eval/calc.log \
 	source/example/reference/commands/ruby_load/load.log \
@@ -889,6 +903,11 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/regular_expression/usage_filter.log \
 	source/example/reference/regular_expression/usage_query.log \
 	source/example/reference/regular_expression/usage_setup.log \
+	source/example/reference/scorer/usage_one_no_argument_no_weight.log \
+	source/example/reference/scorer/usage_one_no_argument_weight.log \
+	source/example/reference/scorer/usage_one_one_argument_no_weight.log \
+	source/example/reference/scorer/usage_setup_data.log \
+	source/example/reference/scorer/usage_setup_schema.log \
 	source/example/reference/suggest/complete/registered-word-japan.log \
 	source/example/reference/suggest/complete/registered-word-japanese.log \
 	source/example/reference/suggest/complete/rk-search-nihon.log \
@@ -1161,6 +1180,8 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/logical_count.rst \
 	source/reference/commands/normalize.rst \
 	source/reference/commands/normalizer_list.rst \
+	source/reference/commands/plugin_register.rst \
+	source/reference/commands/plugin_unregister.rst \
 	source/reference/commands/quit.rst \
 	source/reference/commands/range_filter.rst \
 	source/reference/commands/register.rst \
@@ -1217,6 +1238,9 @@ source_files_relative_from_doc_dir = \
 	source/reference/query_expanders.rst \
 	source/reference/query_expanders/tsv.rst \
 	source/reference/regular_expression.rst \
+	source/reference/scorer.rst \
+	source/reference/scorers/scorer_tf_at_most.rst \
+	source/reference/scorers/scorer_tf_idf.rst \
 	source/reference/suggest.rst \
 	source/reference/suggest/completion.rst \
 	source/reference/suggest/correction.rst \
@@ -1476,6 +1500,8 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/logical_count.txt \
 	html/_sources/reference/commands/normalize.txt \
 	html/_sources/reference/commands/normalizer_list.txt \
+	html/_sources/reference/commands/plugin_register.txt \
+	html/_sources/reference/commands/plugin_unregister.txt \
 	html/_sources/reference/commands/quit.txt \
 	html/_sources/reference/commands/range_filter.txt \
 	html/_sources/reference/commands/register.txt \
@@ -1530,6 +1556,9 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/query_expanders.txt \
 	html/_sources/reference/query_expanders/tsv.txt \
 	html/_sources/reference/regular_expression.txt \
+	html/_sources/reference/scorer.txt \
+	html/_sources/reference/scorers/scorer_tf_at_most.txt \
+	html/_sources/reference/scorers/scorer_tf_idf.txt \
 	html/_sources/reference/suggest.txt \
 	html/_sources/reference/suggest/completion.txt \
 	html/_sources/reference/suggest/correction.txt \
@@ -1688,6 +1717,8 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/logical_count.html \
 	html/reference/commands/normalize.html \
 	html/reference/commands/normalizer_list.html \
+	html/reference/commands/plugin_register.html \
+	html/reference/commands/plugin_unregister.html \
 	html/reference/commands/quit.html \
 	html/reference/commands/range_filter.html \
 	html/reference/commands/register.html \
@@ -1742,6 +1773,9 @@ html_files_relative_from_locale_dir = \
 	html/reference/query_expanders.html \
 	html/reference/query_expanders/tsv.html \
 	html/reference/regular_expression.html \
+	html/reference/scorer.html \
+	html/reference/scorers/scorer_tf_at_most.html \
+	html/reference/scorers/scorer_tf_idf.html \
 	html/reference/suggest.html \
 	html/reference/suggest/completion.html \
 	html/reference/suggest/correction.html \
