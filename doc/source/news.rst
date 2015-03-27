@@ -87,7 +87,8 @@ Improvements
   IDEOGRAPHIC FULL STOP``, ``U+FF01 FULLWIDTH EXCLAMATION MARK`` and
   ``U+FF1F FULLWIDTH QUESTION MARK`` are treated as chunk delimiter
   characters.
-* Supported ``--pid-file`` in server mode for groonga command.
+* Supported ``--pid-file`` in server mode of
+  :doc:`/reference/executables/groonga`.
 * [groonga-httpd] Supported graceful stop to clean Groonga. It doesn't
   terminate the open connections immediately.
 * Supported REGEXP. Use ``COLUMN_NAME:~REGEXP`` in query syntax,
