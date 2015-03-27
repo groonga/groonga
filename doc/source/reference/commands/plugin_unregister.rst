@@ -34,6 +34,9 @@ that is included in
 ``${PREFIX}/lib/groonga/plugins/query_expanders/tsv.so``.
 
 .. groonga-command
+.. plugin_register query_expanders/tsv
+
+.. groonga-command
 .. include:: ../../example/reference/commands/plugin_unregister/query_expanders_tsv.log
 .. plugin_unregister query_expanders/tsv
 
