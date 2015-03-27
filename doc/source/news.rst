@@ -18,7 +18,19 @@ Improvements
 * [:doc:`/references/commands/logical_range_filter`] Supported filter and sort.
 * Supported range search by multiple column index.
 * Added API :doc:`/reference/api/overview` document for users who want to use Groonga as library.
-* Changed internal value type of ``_score`` to double. This is incompatible change for DB API users.
+* [incompatible] Changed internal type of ``_score`` to floating point number from 32bit integer number. This is incompatible change for DB API users. This *isn't* incompatible change for query API users. It means that users who just use :doc:`/reference/commands/select` aren't affected. Use the following code that works with both older and newer Groonga:
+
+  .. code-block:: c
+
+     grn_obj *score;
+     double score_value;
+
+     if (score->header.domain == GRN_DB_FLOAT) {
+       score_value = GRN_FLOAT_VALUE(score);
+     } else {
+       score_value = (double)GRN_INT32_VALUE_FLOAT_VALUE(score);
+     }
+
 * Added more strict check for invalid drilldown parameter.
 * Added :c:func:`grn_ctx_get_all_tables()`. [Suggested by Masatoshi Teruya]
 * ??? Supported sort by index value.
