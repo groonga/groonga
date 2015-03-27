@@ -2,4 +2,8 @@ usr/lib/*/libgroonga*.so.*
 usr/lib/*/groonga/plugins/table/*
 usr/lib/*/groonga/plugins/query_expanders/*
 usr/lib/*/groonga/plugins/token_filters/stop_word*
+usr/lib/*/groonga/plugins/ruby/*
+usr/lib/*/groonga/plugins/sharding.rb
+usr/lib/*/groonga/plugins/sharding/*
+usr/lib/*/groonga/scripts/*
 etc/groonga/synonyms.tsv
