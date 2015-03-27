@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-03-19 16:09+0900\n"
+"PO-Revision-Date: 2015-03-27 16:23+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -20,14 +20,367 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
+msgid "Release 5.0.1 - 2015/03/29"
+msgstr "5.0.1リリース - 2015/03/29"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid ""
+"[:doc:`/reference/commands/logical_range_filter`] Supported filter and sort."
+msgstr ""
+"[:doc:`/reference/commands/logical_range_filter`] filterとsortをサポートしま"
+"した。"
+
+msgid "Supported range search by multiple column index."
+msgstr "マルチカラムインデックスを使った指定範囲の検索をサポートしました。"
+
+# 2fe7b7a1f52f421dbea6cb4358498b31
+msgid ""
+"Added API :doc:`/reference/api/overview` document for users who want to use "
+"Groonga as library."
+msgstr ""
+"Groongaをライブラリとして使う人向けにAPIの :doc:`/reference/api/overview` を"
+"追加しました。"
+
+# 4f59eaaa631b4081804b1bde1c56c567
+msgid ""
+"[incompatible] Changed internal type of ``_score`` to floating point number "
+"from 32bit integer number. This is incompatible change for DB API users. "
+"This *isn't* incompatible change for query API users. It means that users "
+"who just use :doc:`/reference/commands/select` aren't affected. Use the "
+"following code that works with both older and newer Groonga:"
+msgstr ""
+"[非互換] 内部で使っている ``_score`` の型を 32bit整数値から浮動小数点に変更し"
+"ました。この変更はGroongaのDB APIを使っているユーザーにとって非互換な変更で"
+"す。クエリAPIを使っているユーザーには影響ありません。つまり、:doc:`/"
+"reference/commands/select` を使っているだけなら影響ないということです。新旧の"
+"バージョンのGroongaで動作するようにするには次のコードを使います:"
+
+msgid ""
+"[:doc:`/reference/commands/select`] Added more strict check for invalid "
+"drilldown parameter."
+msgstr ""
+"[:doc:`/reference/commands/select`] ドリルダウンの引数の誤りをより厳密に"
+"チェックするようにしました。"
+
+# 6180221e758b481ebd900709a5e6e761
+msgid ""
+"Added :c:func:`grn_ctx_get_all_tables()`. [Suggested by Masatoshi Teruya]"
+msgstr ":c:func:`grn_ctx_get_all_tables()` を追加しました。 [照屋さんが提案]"
+
+# f30fb4fb9e1448519a27faf9a28f759e
+msgid ""
+"Supported to customize score function. See :doc:`/reference/scorer` for "
+"details."
+msgstr ""
+"スコア関数のカスタマイズをサポートしました。詳細は :doc:`/reference/scorer` "
+"を参照してください。"
+
+# 394867a5dfcd414e8fe480842a671f13
+msgid ""
+"Added the following predicates that check :c:type:`grn_obj` type to DB API:"
+msgstr ""
+"DB APIに :c:type:`grn_obj` の型をチェックするための叙述関数を追加しました。"
+
+msgid ":c:func:`grn_obj_is_table()`"
+msgstr ""
+
+# 97248e8bf2af4ecfa3b4ac778bb4a728
+msgid ":c:func:`grn_obj_is_proc_proc()`"
+msgstr ""
+
+# 41c93ff54c014b29ad803423d4107597
+msgid ":c:func:`grn_obj_is_function_proc()`"
+msgstr ""
+
+# 8b59d974b59c4e728a62c40b8e5ce850
+msgid ":c:func:`grn_obj_is_selector_proc()`"
+msgstr ""
+
+# 259c7bdf41e04aa2b4eb7ea9347594f9
+msgid ":c:func:`grn_obj_is_scorer_proc()`"
+msgstr ""
+
+# 3b446bb3353a4f5a83eacd6f74373477
+msgid ""
+"[experimental] Supported skipping posting list when searching popular term "
+"and rare term at the same time. It will improve performance. Set "
+"``GRN_II_CURSOR_SET_MIN_ENABLE`` environment variable to ``1`` to enable the "
+"feature. The feature is disabled by default."
+msgstr ""
+"[実験的] ポスティングリストを頻出語とほとんど出現しない語が同時に検索されたと"
+"きにスキップできるようにしました。これによりパフォーマンスを改善できます。こ"
+"の機能を有効にするには ``GRN_II_CURSOR_SET_MIN_ENABLE`` 環境変数を ``1`` にし"
+"ます。デフォルトでは無効です。"
+
+msgid "[doc] Added :doc:`/reference/functions/in_values` document."
+msgstr ""
+"[doc] :doc:`/reference/functions/in_values` のドキュメントを追加しました。"
+
+msgid "[doc] Added :doc:`/reference/commands/logical_count` document."
+msgstr ""
+":doc:`/reference/commands/logical_count` のドキュメントを追加しました。"
+
+# 3bb22a1d08d045c9986265d5c4c08b6b
+msgid ""
+"[mruby] Implemented custom ``#inspect`` method. Is is useful for debugging."
+msgstr "[mruby] ``#inspect`` メソッドを実装しました。デバッグに有用です。"
+
+# 3a0cf8c9b7a348e6a4052e9ad412eb62
+msgid ""
+"Added :doc:`/reference/scorers/scorer_tf_at_most` scorer. It limits not to "
+"exceed specified score regardless of term frequency."
+msgstr ""
+"スコアラー :doc:`/reference/scorers/scorer_tf_at_most` のドキュメントを追加し"
+"ました。出現頻度が高くても、指定したスコアの閾値を越えないようにします。"
+
+# 5e816ed3bc5b4987aa7d61545b0496ef
+msgid "[mruby] Supported estimating size for index search."
+msgstr ""
+
+# 897543dc2b134e509eb1b49b73ee63bf
+msgid "Added the following functions to estimate size by index:"
+msgstr "インデックスを使ってサイズを推定するための関数を追加しました。"
+
+# 07b3758510a54358ac1a785da46b45e2
+msgid ":c:func:`grn_expr_estimate_size()`"
+msgstr ""
+
+# 0bdd8c8b686c4ccaa22cb97ffd88c882
+msgid ":c:func:`grn_ii_estimate_size_for_query()`"
+msgstr ""
+
+# 6c1e01f0c0e343f58837803c7262332a
+msgid ":c:func:`grn_ii_estimate_size_for_lexicon_cursor()`"
+msgstr ""
+
+msgid ""
+"Added missing :ref:`normalizer-auto` availability check. [GitHub#283] "
+"[Reported by Tasuku SUENAGA]"
+msgstr ""
+":ref:`normalizer-auto` が利用できるかのチェックを追加しました。[GitHub#283] "
+"[末永さんが報告]"
+
+msgid "Dropped Visual Studio 2010 support."
+msgstr "Visual Studio 2010のサポートをやめました。"
+
+# 5c87528431804abf9207851ca621b683
+msgid ""
+"[experimental][mecab] Supported chunked tokenization. This feature is a "
+"workaround for MeCab's \"too long sentense\" error.  Specify ``yes`` to "
+"``GRN_MECAB_CHUNKED_TOKENIZE_ENABLED`` environment variable to enable it. By "
+"this configuration, Groonga splits a long text (8192 bytes over text by "
+"default) into small chunks and passes each chunk to MeCab. By this process, "
+"the above error isn't occurred. Additionally, you can customize chunk "
+"threshold bytes by ``GRN_MECAB_CHUNK_SIZE_THRESHOLD`` environment variable. "
+"Note that ``,``, ``.``, ``!``, ``?``, ``U+3001 IDEOGRAPHIC COMMA``, ``U+3002 "
+"IDEOGRAPHIC FULL STOP``, ``U+FF01 FULLWIDTH EXCLAMATION MARK`` and ``U+FF1F "
+"FULLWIDTH QUESTION MARK`` are treated as chunk delimiter characters."
+msgstr ""
+"[実験的][mecab] チャンクに分割してトークナイズできるようにしました。この機能"
+"は \"\n"
+"MeCabの \"too long sentense\" エラーの回避策です。有効にするには "
+"``GRN_MECAB_CHUNKED_TOKENIZE_ENABLED`` 環境変数を ``yes`` に設定します。この"
+"設定により、Groonga は長いテキスト (デフォルトでは 8192 バイトを越えるテキス"
+"ト)を小さなチャンクと呼ばれるかたまりに分割してMeCabへと渡します。この処理に"
+"より、上記のエラーが発生しないようになります。さらに、このチャンクの閾値は "
+"``GRN_MECAB_CHUNK_SIZE_THRESHOLD`` 環境変数でカスタマイズできます。``,``, ``."
+"``, ``!``, ``?``, ``U+3001 IDEOGRAPHIC COMMA``, ``U+3002 IDEOGRAPHIC FULL "
+"STOP``, ``U+FF01 FULLWIDTH EXCLAMATION MARK`` と ``U+FF1F FULLWIDTH QUESTION "
+"MARK`` がチャンクの区切り文字として扱われます。"
+
+msgid ""
+"Supported ``--pid-file`` in server mode of :doc:`/reference/executables/"
+"groonga`."
+msgstr ""
+":doc:`/reference/executables/groonga` のサーバーモードで ``--pid-file`` をサ"
+"ポートしました。"
+
+# 53b491b1291d409daffd1b178cb8a10c
+msgid ""
+"[groonga-httpd] Supported graceful stop to clean Groonga. It doesn't "
+"terminate the open connections immediately."
+msgstr ""
+"[groonga-httpd] Groongaを緩やかに停止することができるようにしました。コネク"
+"ションを即座に強制終了しないようになります。"
+
+# b2631420e724470d8edf3dc1fd462129
+msgid ""
+"[experimental] Supported regular expression. See :doc:`/reference/"
+"regular_expression` to know about how to use regular expression."
+msgstr ""
+"[実験的] 正規表現をサポートしました。正規表現の使いかたについては :doc:`/"
+"reference/regular_expression` を参照してください。"
+
+msgid ""
+"[experimental] Added :doc:`/reference/commands/plugin_unregister` command."
+msgstr ""
+"[実験的] :doc:`/reference/commands/plugin_unregister` コマンドを追加しまし"
+"た。"
+
+# ec6c6bc78c884c129bd0bda17bc024a5
+msgid ""
+"[http][:doc:`/reference/commands/load`] Added \",\" as chunk separator in "
+"POST data. It decreases internal buffer size and improves load time when "
+"POST data don't include any new line."
+msgstr ""
+"[http][:doc:`/reference/commands/load`] \",\" をPOSTデータの区切り文字として"
+"使うようにしました。これにより、内部のバッファサイズが小さくて済むので、POST"
+"データに一切改行がない場合にロード時間を短縮できます。"
+
+msgid "[doc] Added :doc:`/reference/tokenizers` document."
+msgstr "[doc] :doc:`/reference/tokenizers` のドキュメントを追加しました。"
+
+# d3f5968ca3874718be893f4dda6a4b7c
+msgid ""
+"Improved POSIX.2 compatibility by using ``.`` as bash's \"source\" command "
+"replacement. [GitHub#317] [Patch by Jun Kuriyama]"
+msgstr ""
+"POSIX.2 との互換性を改善しました。ing ``.``  bashの \"source\" コマンドのかわ"
+"りに ``.`` を使うようにしました。[GitHub#317] [栗山さんがパッチ提供]"
+
+# 32d63d26261b48e786704e2435d8a638
+msgid ""
+"[windows] Changed to the default IO version 1. It reduces disk usage on "
+"Windows. [groonga-dev,03118] [Tested by ongaeshi]"
+msgstr ""
+"[windows] デフォルトのIOバージョンを1に変更しました。これによりWindowsでディ"
+"スク容量を削減できます。[groonga-dev,03118] [ongaeshiさんがテスト]"
+
+msgid "[httpd] Updated bundled Nginx version to the latest mainline (1.7.11)."
+msgstr "[httpd] バンドルしているNginxのバージョンを1.7.11に更新しました。"
+
+# 00c6514712c543dd9fbfe5ee01dbc558
+msgid ""
+"Changed mime-type for TSV output to ``text/tab-separated-values`` from "
+"``text/plain``."
+msgstr ""
+"TSV出力時のMIMEタイプを ``text/plain`` から ``text/tab-separated-values`` に"
+"変更しました。"
+
+msgid ""
+"[:ref:`token-filter-stop-word`] Supported :ref:`offline-index-construction`. "
+"[GitHub#296] [Patch by Naoya Murakami]"
+msgstr ""
+"[:ref:`token-filter-stop-word`] :ref:`offline-index-construction` をサポート"
+"しました。[GitHub#296] [村上さんがパッチ提供]"
+
+msgid "Fixes"
+msgstr "修正"
+
+# 18334ca249b9411481656fa87446364e
+msgid ""
+"Fixed not to use obsolete ``--address`` parameter in the default groonga."
+"conf. ``--bind-address`` is used instead.  [Groonga-talk] [Reported by "
+"Dewangga]"
+msgstr ""
+"非推奨の ``--address`` 引数をGroongaのデフォルト設定ファイル(groonga.conf)で"
+"使わないようにしました。かわりに ``--bind-address`` を使います。 [Groonga-"
+"talk] [Dewanggaさんが報告]"
+
+msgid ""
+"[:doc:`/reference/commands/truncate`] Fixed a bug that :ref:`table-no-key` "
+"table can't be truncated."
+msgstr ""
+"[:doc:`/reference/commands/truncate`] キーが :ref:`table-no-key` なテーブルで"
+"truncateができない問題を修正しました。"
+
+# 8f5aac0ee2124d1396e197dedba22cba
+msgid ""
+"[mecab] Reduced needless logs for \"empty token\" and \"ignore empty token\"."
+msgstr ""
+"[mecab] 不必要な \"empty token\" や \"ignore empty token\" といったログが出力"
+"されないようにしました。"
+
+# e2449db644504a82a9b1e6f21ad2b05b
+msgid ""
+"Fixed a bug that wrong section in index is used. It means that wrong search "
+"result is returned. If you satisfy all of the following conditions, this bug "
+"is occurred:"
+msgstr ""
+"誤ったインデックスのセクションが使われてしまう不具合を修正しました。これによ"
+"り誤った検索結果を返していました。次の条件をすべて満すと発生します。"
+
+# d8fec45cebd340a7867c0e12ef583fc5
+msgid "Multiple indexes are available."
+msgstr "複数のインデックスが張られている"
+
+# de1c700b5d124bb5813477f7bc97db15
+msgid ""
+"The first defined index and/or the last defined index are multi-column "
+"indexes."
+msgstr ""
+"最初に定義したインデックスと最後に定義したインデックスの両方もしくはどちらか"
+"がマルチカラムインデックスを使っている"
+
+# 7012e82fdb1c442fb1d9f23cb4ca3bb2
+msgid ""
+"Both of the first defined index and the last defined index are multi-column "
+"indexes."
+msgstr ""
+"最初に定義したインデックスと最後に定義したインデックスの両方ともマルチカラム"
+"インデックスである"
+
+# 50089762064b4be4a86dc6c56d3d84e9
+msgid ""
+"Fixed a bug that passing Groonga command line to :doc:`/reference/"
+"executables/groonga` from shell command line style usage always returns "
+"``0`` as exit code. For example, ``groonga DB_PATH nonexistent_command`` "
+"always returned ``0`` as exist code."
+msgstr ""
+"シェルのコマンドラインからGroongaのコマンドを :doc:`/reference/executables/"
+"groonga` に渡すと常に ``0`` を終了コードとして返す不具合を修正しました。 例え"
+"ば、 ``groonga DB_PATH 存在しないコマンド名`` を実行しても終了コードとして "
+"``0`` を常に返します。"
+
+# 9457f8b3d932428a925769b06837ebe2
+msgid ""
+"Fixed a bug that plugin path may be broken when two or more plugins "
+"registered. [Reported by Naoya Murakami]"
+msgstr ""
+"2つ以上のプラグインを登録しているときにプラグインのパスが壊れてしまう不具合を"
+"修正しました。 [村上さんが報告]"
+
+# 96940115e5734151ac2c5a5d05734afc
+msgid ""
+"Fixed a bug that ``Lexicon.index.source_column_name`` style in :ref:`select-"
+"match-columns` doesn't work when source column specified by "
+"``source_column_name`` has two or more indexes. [Reported by Naoya Murakami]"
+msgstr ""
+":ref:`select-match-columns` に ``Lexicon.index.source_column_name`` を指定し"
+"ても動作しない不具合を修正しました。``source_column_name`` として指定されたカ"
+"ラムが2つ以上のインデックスをもつ場合に発生します。 [村上さんが報告]"
+
+msgid "Thanks"
+msgstr "感謝"
+
+# 62c07e380a964062aab7c5e95ee2c6e5
+msgid "Masatoshi Teruya"
+msgstr "照屋さん"
+
+# 2e0eff6649e148e38580af1e25b0d359
+msgid "Tasuku SUENAGA"
+msgstr "末永さん"
+
+# 613b6a20652a4742a85f4a693ba4fb0d
+msgid "Dewangga"
+msgstr "Dewanggaさん"
+
+msgid "Jun Kuriyama"
+msgstr "栗山さん"
+
+msgid "ongaeshi"
+msgstr "ongaeshiさん"
+
+msgid "Naoya Murakami"
+msgstr "村上さん"
+
 msgid "Release 5.0.0 - 2015/02/09"
 msgstr "5.0.0リリース - 2015/02/09"
 
 msgid "Bump version to 5.0.0!"
 msgstr "バージョン5.0.0になりました!"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid ""
 "[doc] Added :ref:`script-syntax-security` about :doc:`/reference/grn_expr/"
@@ -60,9 +413,6 @@ msgstr ""
 "プラグインのディレクトリをカスタマイズできるようにしました。 その場合 "
 "`GRN_PLUGINS_DIR` 環境変数を設定します。"
 
-msgid "Fixes"
-msgstr "修正"
-
 msgid ""
 "Fixed build failure when system has an incompatible version of onigmo/"
 "oniguruma headers installed. [GitHub#276] [Patch by Akinori MUSHA]"
@@ -73,9 +423,6 @@ msgstr ""
 
 msgid "Fixed time related build failure on MSVC [GitHub#237]"
 msgstr "MSVCのtime関連でビルドに失敗する問題を修正しました。 [GitHub#237]"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "Akinori MUSHA"
 msgstr "武者さん"
@@ -1927,9 +2274,6 @@ msgstr ""
 msgid "Akio Tajima"
 msgstr "Akio Tajimaさん"
 
-msgid "ongaeshi"
-msgstr "ongaeshiさん"
-
 msgid "Release 2.0.8 - 2012/10/29"
 msgstr "2.0.8リリース - 2012/10/29"
 
@@ -2878,9 +3222,6 @@ msgstr "cosmo0920さん"
 
 msgid "yoku"
 msgstr "yokuさん"
-
-msgid "Naoya Murakami"
-msgstr "村上さん"
 
 msgid "Release 3.1.1 - 2013/12/29"
 msgstr "3.1.1リリース - 2013/12/29"
@@ -4484,9 +4825,6 @@ msgstr ""
 msgid "Atsushi Shinoda"
 msgstr "篠田さん"
 
-msgid "Jun Kuriyama"
-msgstr "Jun Kuriyamaさん"
-
 msgid "Release 4.0.7 - 2014/10/29"
 msgstr "4.0.7リリース - 2014/10/29"
 
@@ -5495,3 +5833,7 @@ msgid ""
 "applied ftb patch for mysql binding from <ko at yappo.ne.jp> 'IN BOOLEAN "
 "MODE' supported"
 msgstr ""
+
+#, fuzzy
+#~ msgid "??? Supported sort by index value."
+#~ msgstr "インデックスを使った後方一致検索をサポート。"
