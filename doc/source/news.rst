@@ -63,8 +63,11 @@ Improvements
   debugging.
 * Added :doc:`/reference/scorers/scorer_tf_at_most` scorer. It
   limits not to exceed specified score regardless of term frequency.
-* [mruby] Supported estimating size for index search. Added some
-  ``grn_ii_estimate_*`` functions to support it.
+* [mruby] Supported estimating size for index search.
+* Added the following functions to estimate size by index:
+  * :c:func:`grn_expr_estimate_size()`
+  * :c:func:`grn_ii_estimate_size_for_query()`
+  * :c:func:`grn_ii_estimate_size_for_lexicon_cursor()`
 * Added missing NormalizerAuto availability check. [GitHub#283]
   [Reported by Tasuku SUENAGA]
 * Dropped Visual Studio 2010 support.
