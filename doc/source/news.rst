@@ -72,7 +72,7 @@ Improvements
   * :c:func:`grn_ii_estimate_size_for_query()`
   * :c:func:`grn_ii_estimate_size_for_lexicon_cursor()`
 
-* Added missing :ref:`NormalizerAuto` availability check. [GitHub#283]
+* Added missing :ref:`normalizer-auto` availability check. [GitHub#283]
   [Reported by Tasuku SUENAGA]
 * Dropped Visual Studio 2010 support.
 * [experimental][mecab] Supported chunked tokenization. This feature
