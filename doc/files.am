@@ -256,6 +256,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/regular_expression/usage_filter.log \
 	$(top_srcdir)/doc/source/example/reference/regular_expression/usage_query.log \
 	$(top_srcdir)/doc/source/example/reference/regular_expression/usage_setup.log \
+	$(top_srcdir)/doc/source/example/reference/scorer/usage_default_and_custom_scorers.log \
+	$(top_srcdir)/doc/source/example/reference/scorer/usage_multiple_scorers.log \
 	$(top_srcdir)/doc/source/example/reference/scorer/usage_one_no_argument_no_weight.log \
 	$(top_srcdir)/doc/source/example/reference/scorer/usage_one_no_argument_weight.log \
 	$(top_srcdir)/doc/source/example/reference/scorer/usage_one_one_argument_no_weight.log \
@@ -555,6 +557,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/truncate.rst \
 	$(top_srcdir)/doc/source/reference/example/reference/executables/groonga-suggest-httpd-launch.log \
 	$(top_srcdir)/doc/source/reference/example/reference/executables/groonga-suggest-httpd-setup.log \
+	$(top_srcdir)/doc/source/reference/example/reference/scorers/scorer_tf_idf/usage_no_weight.log \
+	$(top_srcdir)/doc/source/reference/example/reference/scorers/scorer_tf_idf/usage_setup_data.log \
+	$(top_srcdir)/doc/source/reference/example/reference/scorers/scorer_tf_idf/usage_setup_schema.log \
 	$(top_srcdir)/doc/source/reference/executables.rst \
 	$(top_srcdir)/doc/source/reference/executables/grndb.rst \
 	$(top_srcdir)/doc/source/reference/executables/grnslap.rst \
@@ -595,6 +600,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/scorer.rst \
 	$(top_srcdir)/doc/source/reference/scorers/scorer_tf_at_most.rst \
 	$(top_srcdir)/doc/source/reference/scorers/scorer_tf_idf.rst \
+	$(top_srcdir)/doc/source/reference/scoring_note.rst \
 	$(top_srcdir)/doc/source/reference/suggest.rst \
 	$(top_srcdir)/doc/source/reference/suggest/completion.rst \
 	$(top_srcdir)/doc/source/reference/suggest/correction.rst \
@@ -904,6 +910,8 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/regular_expression/usage_filter.log \
 	source/example/reference/regular_expression/usage_query.log \
 	source/example/reference/regular_expression/usage_setup.log \
+	source/example/reference/scorer/usage_default_and_custom_scorers.log \
+	source/example/reference/scorer/usage_multiple_scorers.log \
 	source/example/reference/scorer/usage_one_no_argument_no_weight.log \
 	source/example/reference/scorer/usage_one_no_argument_weight.log \
 	source/example/reference/scorer/usage_one_one_argument_no_weight.log \
@@ -1203,6 +1211,9 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/truncate.rst \
 	source/reference/example/reference/executables/groonga-suggest-httpd-launch.log \
 	source/reference/example/reference/executables/groonga-suggest-httpd-setup.log \
+	source/reference/example/reference/scorers/scorer_tf_idf/usage_no_weight.log \
+	source/reference/example/reference/scorers/scorer_tf_idf/usage_setup_data.log \
+	source/reference/example/reference/scorers/scorer_tf_idf/usage_setup_schema.log \
 	source/reference/executables.rst \
 	source/reference/executables/grndb.rst \
 	source/reference/executables/grnslap.rst \
@@ -1243,6 +1254,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/scorer.rst \
 	source/reference/scorers/scorer_tf_at_most.rst \
 	source/reference/scorers/scorer_tf_idf.rst \
+	source/reference/scoring_note.rst \
 	source/reference/suggest.rst \
 	source/reference/suggest/completion.rst \
 	source/reference/suggest/correction.rst \
@@ -1562,6 +1574,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/scorer.txt \
 	html/_sources/reference/scorers/scorer_tf_at_most.txt \
 	html/_sources/reference/scorers/scorer_tf_idf.txt \
+	html/_sources/reference/scoring_note.txt \
 	html/_sources/reference/suggest.txt \
 	html/_sources/reference/suggest/completion.txt \
 	html/_sources/reference/suggest/correction.txt \
@@ -1780,6 +1793,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/scorer.html \
 	html/reference/scorers/scorer_tf_at_most.html \
 	html/reference/scorers/scorer_tf_idf.html \
+	html/reference/scoring_note.html \
 	html/reference/suggest.html \
 	html/reference/suggest/completion.html \
 	html/reference/suggest/correction.html \
