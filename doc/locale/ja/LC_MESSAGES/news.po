@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-03-27 22:16+0900\n"
+"PO-Revision-Date: 2015-03-27 23:52+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -67,7 +67,7 @@ msgstr ""
 # 6180221e758b481ebd900709a5e6e761
 msgid ""
 "Added :c:func:`grn_ctx_get_all_tables()`. [Suggested by Masatoshi Teruya]"
-msgstr ":c:func:`grn_ctx_get_all_tables()` を追加しました。 [照屋さんが提案]"
+msgstr ":c:func:`grn_ctx_get_all_tables()` を追加しました。 [Masatoshi Teruyaさんが提案]"
 
 # f30fb4fb9e1448519a27faf9a28f759e
 msgid ""
@@ -386,7 +386,7 @@ msgstr "感謝"
 
 # 62c07e380a964062aab7c5e95ee2c6e5
 msgid "Masatoshi Teruya"
-msgstr "照屋さん"
+msgstr "Masatoshi Teruyaさん"
 
 # 2e0eff6649e148e38580af1e25b0d359
 msgid "Tasuku SUENAGA"
