@@ -53,7 +53,7 @@ Improvements
 * [doc] Added :doc:`/reference/functions/in_values` document.
 * [doc] Added :doc:`/reference/commands/logical_count` document.
 * [mruby] Added #inspect. Is is useful for debugging.
-* Added :doc:`/reference/functions/scorer_tf_at_most` scorer. It
+* Added :doc:`/reference/scorers/scorer_tf_at_most` scorer. It
   limits not to exceed specified score regardless of term frequency.
 * [mruby] Supported estimating size for index search. Added some
   ``grn_ii_estimate_*`` functions to support it.
