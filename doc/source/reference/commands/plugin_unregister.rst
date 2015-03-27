@@ -8,7 +8,7 @@
 ``plugin_unregister``
 =====================
 
-.. versionadded: 5.0.1
+.. _versionadded: 5.0.1
 
 Summary
 -------
