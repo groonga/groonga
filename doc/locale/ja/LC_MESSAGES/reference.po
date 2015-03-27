@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-03-19 16:07+0900\n"
+"PO-Revision-Date: 2015-03-27 12:37+0900\n"
 "Last-Translator: Takatsugu <nokubi@gmail.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -4702,8 +4702,8 @@ msgstr ""
 msgid "``logical_count``"
 msgstr ""
 
-msgid "``logical_count`` command is an experimental feature."
-msgstr "``logical_count`` コマンドは実験的な機能です。"
+msgid "This command is an experimental feature."
+msgstr "このコマンドは実験的な機能です。"
 
 # c02e724befed451ca841c287a67d0686
 msgid ""
@@ -4886,15 +4886,15 @@ msgstr ""
 "最大値を境界値として含めるのか否かを指定します。 ``include`` もしくは "
 "``exclude`` を指定します。"
 
+# eeb8d534cd614522a58ba1d54ef432c7
+msgid "``logical_range_filter``"
+msgstr ""
+
 msgid "``normalize``"
 msgstr ""
 
-msgid ""
-"``normalize`` command is the experimental feature. This command may be "
-"changed in the future."
-msgstr ""
-"``normalize`` コマンドは実験的な機能です。このコマンドは将来的に変更されるか"
-"も知れません。"
+msgid "This command may be changed in the future."
+msgstr "このコマンドは将来的に変更されるかも知れません。"
 
 msgid "``normalize`` command normalizes text by the specified normalizer."
 msgstr ""
@@ -5077,6 +5077,93 @@ msgstr "ノーマライザー名。"
 msgid ":doc:`/reference/commands/normalize`"
 msgstr ""
 
+# 12f33039cea541ee9dd166f021b82b36
+msgid "``plugin_register``"
+msgstr ""
+
+msgid ""
+"``plugin_register`` command registers a plugin. You need to register a "
+"plugin before you use a plugin."
+msgstr "``plugin_register`` コマンドはプラグインを登録します。プラグインを使う前にプラグインを登録する必要があります。"
+
+msgid ""
+"You need just one ``plugin_register`` command for a plugin in the same "
+"database because registered plugin information is written into the "
+"database.  When you restart your ``groonga`` process, ``groonga`` process "
+"loads all registered plugins without ``plugin_register`` command."
+msgstr "同じデータベースに対しては1つのプラグインについて一度だけ ``plugin_register`` コマンドを実行すれば十分です。これは、登録されたプラグイン情報はデータベースに記録されているからです。 ``groonga`` プロセスを再起動したときは、 ``register`` コマンドを実行しなくてもすでに登録されているプラグインを読み込みます。"
+
+# 49ac54b344964fb79d5dfb837e8698ed
+msgid "You can unregister a registered plugin by :doc:`plugin_unregister`."
+msgstr ":doc:`plugin_unregister` でプラグインの登録を解除することができます。"
+
+msgid ""
+"``plugin_register`` has a parameter ``name``. It is required parameter::"
+msgstr "``plugin_register`` の引数は ``name`` だけです。これは必須の引数です::"
+
+msgid ""
+"Here is a sample that registers ``QueryExpanderTSV`` query expander that is "
+"included in ``${PREFIX}/lib/groonga/plugins/query_expanders/tsv.so``."
+msgstr ""
+"これは ``${PREFIX}/lib/groonga/plugins/query_expanders/tsv.so`` に含まれてい"
+"る ``QueryExpanderTSV`` クエリー展開オブジェクトを登録する例です。"
+
+msgid ""
+"You can omit ``${PREFIX}/lib/groonga/plugins/`` and suffix (``.so``). They "
+"are completed automatically."
+msgstr ""
+"``${PREFIX}/lib/groonga/plugins/`` と拡張子（ ``.so`` ）は省略可能です。これ"
+"らは自動で補完されます。"
+
+msgid ""
+"You can specify absolute path such as ``plugin_register /usr/lib/groonga/"
+"plugins/query_expanders/tsv.so``."
+msgstr "``plugin_register /usr/lib/groonga/plugins/query_expanders/tsv.so`` というように絶対パスを指定することもできます。"
+
+msgid "``plugin_register`` returns ``true`` as body on success such as::"
+msgstr "``plugin_register`` が成功したときは以下のようにボディは ``true`` になります::"
+
+msgid "If ``plugin_register`` fails, error details are in ``HEADER``."
+msgstr "``plugin_register`` が失敗すると、エラーの詳細は ``HEADER`` に含まれます。"
+
+msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"
+
+# dbbad212d1584251a3d44778da855d66
+# 3d2698c6f65a4d4d990befa790becc7b
+# c9cf78b4174e4e6b99535ca38c0c2120
+msgid ":doc:`plugin_unregister`"
+msgstr ""
+
+# acb6d26a140b4bf985287df695b8f52c
+msgid "``plugin_unregister``"
+msgstr ""
+
+msgid "``plugin_unregister`` command unregisters a plugin."
+msgstr "``plugin_unregister`` コマンドはプラグインの登録を解除します。"
+
+msgid ""
+"``plugin_unregister`` has a parameter ``name``. It is required parameter::"
+msgstr "``plugin_register`` の引数は ``name`` だけです。これは必須の引数です::"
+
+msgid ""
+"Here is a sample that unregisters ``QueryExpanderTSV`` query expander that "
+"is included in ``${PREFIX}/lib/groonga/plugins/query_expanders/tsv.so``."
+msgstr "これは ``${PREFIX}/lib/groonga/plugins/query_expanders/tsv.so`` に含まれている ``QueryExpanderTSV`` クエリー展開オブジェクトの登録を解除する例です。"
+
+msgid ""
+"You can specify absolute path such as ``plugin_unregister /usr/lib/groonga/"
+"plugins/query_expanders/tsv.so``."
+msgstr "``plugin_unregister /usr/lib/groonga/plugins/query_expanders/tsv.so`` というように絶対パスを指定することもできます。"
+
+msgid "``plugin_unregister`` returns ``true`` as body on success such as::"
+msgstr "``plugin_unregister`` が成功したときは以下のようにボディは ``true`` になります::"
+
+msgid "If ``plugin_unregister`` fails, error details are in ``HEADER``."
+msgstr "``plugin_unregister`` が失敗すると、エラーの詳細は ``HEADER`` に含まれます。"
+
 msgid "``quit``"
 msgstr ""
 
@@ -5106,6 +5193,10 @@ msgstr ""
 msgid "``register``"
 msgstr ""
 
+# fc3774ccd9724d3c9869727e756dbef6
+msgid "Use :doc:`plugin_register` instead."
+msgstr ""
+
 msgid ""
 "``register`` command registers a plugin. You need to register a plugin "
 "before you use a plugin."
@@ -5124,25 +5215,14 @@ msgstr ""
 "されているからです。 ``groonga`` プロセスを再起動したときは、 ``register`` コ"
 "マンドを実行しなくてもすでに登録されているプラグインを読み込みます。"
 
-msgid "Registered plugins can't be removed for now."
-msgstr "今のところ、登録したプラグインは削除できません。"
+# 9911470ac2b645f1ae334237c2b22d9f
+msgid ""
+"Registered plugins can be removed since Groonga 5.0.1. Use :doc:"
+"`plugin_unregister` in such a case."
+msgstr ""
 
 msgid "``register`` has a parameter ``path``. It is required parameter::"
 msgstr "``register`` の引数は ``path`` だけです。これは必須の引数です::"
-
-msgid ""
-"Here is a sample that registers ``QueryExpanderTSV`` query expander that is "
-"included in ``${PREFIX}/lib/groonga/plugins/query_expanders/tsv.so``."
-msgstr ""
-"これは ``${PREFIX}/lib/groonga/plugins/query_expanders/tsv.so`` に含まれてい"
-"る ``QueryExpanderTSV`` クエリー展開オブジェクトを登録する例です。"
-
-msgid ""
-"You can omit ``${PREFIX}/lib/groonga/plugins/`` and suffix (``.so``). They "
-"are completed automatically."
-msgstr ""
-"``${PREFIX}/lib/groonga/plugins/`` と拡張子（ ``.so`` ）は省略可能です。これ"
-"らは自動で補完されます。"
 
 msgid ""
 "You can specify absolute path such as ``register /usr/lib/groonga/plugins/"
@@ -5158,17 +5238,13 @@ msgstr ""
 msgid "If ``register`` fails, error details are in ``HEADER``."
 msgstr "``register`` が失敗すると、エラーの詳細は ``HEADER`` に含まれます。"
 
-msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
+# 861a5b37745843c498a7bd868970880e
+msgid ":doc:`plugin_register`"
 msgstr ""
-"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
-"さい。"
 
 # e29b646988824312888c2b9c3b5d49c5
 msgid "``request_cancel``"
 msgstr ""
-
-msgid "``request_cancel`` command is an experimental feature."
-msgstr "``request_cancel`` コマンドは実験的な機能です。"
 
 # 65840f111de64d1eb3d80ca22e496f7d
 msgid "``request_cancel`` command cancels a running request."
@@ -11891,11 +11967,8 @@ msgstr ""
 
 msgid ""
 "Here is the simple usage of ``sub_filter`` function which extracts the blog "
-"entry"
+"entry commented by user 'A'."
 msgstr "ブログのエントリを抽出する ``sub_filter`` 関数の使用例です。"
-
-msgid "user 'A' commented out."
-msgstr "ユーザー'A'のコメント"
 
 msgid ""
 "When executing the above query, not only \"groonga's blog\", but also "
@@ -14460,7 +14533,7 @@ msgid "Operations"
 msgstr "操作方法"
 
 msgid ""
-"Groonga has the search feature of multiple. This section describes how to "
+"Groonga has the multiple search operations. This section describes about "
 "search operations."
 msgstr ""
 "Groongaには複数の検索機能があります。このセクションではこの検索の操作方法を説"
@@ -15479,6 +15552,126 @@ msgstr ""
 "他にも構文があります。それらに興味がある場合は `Onigmoのドキュメント "
 "<https://github.com/k-takata/Onigmo/blob/master/doc/RE.ja>`_ を参照してくださ"
 "い。「文字種」や「文字」の構文に興味があるかもしれません。"
+
+# ba173f61de044473a5984626b9757135
+msgid "Scorer"
+msgstr ""
+
+# 9be3e930df1a4d3b88343fdad07441bf
+msgid ""
+"Groonga has scorer module that customizes score function. Score function "
+"computes score of matched record. The default scorer function uses the "
+"number of appeared terms. It is also known as TF (term frequency)."
+msgstr ""
+
+# e08f8ce9095042b3838ab191a44762dc
+msgid ""
+"TF is a fast score function but it's not suitable for the following cases:"
+msgstr ""
+
+# afd0bccbf6d44935bb4324b58852808e
+msgid ""
+"Search query contains one or more frequently-appearing words such as \"the\" "
+"and \"a\"."
+msgstr ""
+
+# 5aeb338808ec4d4f8be0dedb58166c55
+msgid ""
+"Document contains many same keywords such as \"They are keyword, keyword, "
+"keyword ... and keyword\". Search engine spammer may use the technique."
+msgstr ""
+
+# 8f758c4630224be2bb63432399446624
+msgid ""
+"Score function can solve these cases. For example, `TF-IDF <http://en."
+"wikipedia.org/wiki/Tf%E2%80%93idf>`_ (term frequency-inverse document "
+"frequency) can solve the first case. `Okapi BM25 <http://en.wikipedia.org/"
+"wiki/Okapi_BM25>`_ can solve the second case. But their are slower than TF."
+msgstr ""
+
+# 4a558b61f52e4cb1878c84fccb10907b
+msgid ""
+"Groonga provides TF-IDF based scorer as :doc:`/reference/scorers/"
+"scorer_tf_idf` but doesn't provide Okapi BM25 based scorer yet."
+msgstr ""
+
+# c7785bc684424d4b874b1a2e4e3d9fc8
+msgid ""
+"You don't need to resolve scoring only by score function. Score function is "
+"highly depends on search query. You may use metadata of matched record."
+msgstr ""
+
+# ab14f7ccbbc44517bc13b1ca3e33179a
+msgid ""
+"For example, Google uses `PageRank <http://en.wikipedia.org/wiki/PageRank>`_ "
+"for scoring. You may be able to use data type (\"title\" data are important "
+"rather than \"memo\" data), tag, geolocation and so on."
+msgstr ""
+
+# b35c72ee0bfe446292894b4a5d28593a
+msgid "Please stop to think about only score function for scoring."
+msgstr ""
+
+msgid "This section describes how to use scorer."
+msgstr "このセクションではscorerの使い方について説明します。"
+
+msgid ""
+"You can specify custom score function in :ref:`select-match-columns`. Here "
+"are syntaxes::"
+msgstr ":ref:`select-match-columns` の中でscore関数を使うこともできます。"
+
+msgid "Here is a simplest example:"
+msgstr "以下は簡単な使用例です。"
+
+# 082e92e80c7544ecad92324a7ea023b2
+msgid ""
+"``Groonga! Groonga! Groonga! Groonga is very fast!`` contains 4 ``Groonga``. "
+"If you use TF based scorer that is the default scorer, ``_score`` is ``4``. "
+"But the actual ``_score`` is ``2``. Because the ``select`` command uses TF-"
+"IDF based scorer ``scorer_tf_idf()``."
+msgstr ""
+
+msgid "Here is an example that uses weight:"
+msgstr "以下は重みを使った例です。"
+
+# 40c912b5fdb84fde8dd722a690b61dd5
+msgid ""
+"``Groonga! Groonga! Groonga! Groonga is very fast!`` has ``22`` as "
+"``_score``. It had ``2`` as ``_score`` in the previous example that doesn't "
+"specify weight."
+msgstr ""
+
+# 3242a06dcbd649aca6c943795cdaf053
+msgid ""
+"Here is an example that uses scorer that requires one argument. :doc:`/"
+"reference/scorers/scorer_tf_at_most` scorer requires one argument. You can "
+"limit TF score by the scorer."
+msgstr ""
+
+# 02cd9a4624a34c9280b537e2415cacb4
+msgid ""
+"``Groonga! Groonga! Groonga! Groonga is very fast!`` contains 4 ``Groonga``. "
+"If you use normal TF based scorer that is the default scorer, ``_score`` is "
+"``4``. But the actual ``_score`` is ``2``. Because the scorer used in the "
+"``select`` command limits the maximum score value to ``2``."
+msgstr ""
+
+# 6903bac50dc94728be0da01ab98a261e
+msgid "TODO: Describe about how to use multiple scorer in one match_columns."
+msgstr ""
+
+msgid "Built-in scorers"
+msgstr "組み込みスコアラー"
+
+msgid "Here are built-in scores:"
+msgstr "以下は組み込みのスコアラーです。"
+
+# 9438305ae81542a688b9bb1cacd596b0
+msgid "``scorer_tf_at_most``"
+msgstr ""
+
+msgid "``scorer_tf_idf``"
+msgstr ""
 
 msgid "Suggest"
 msgstr "サジェスト"
@@ -17769,3 +17962,12 @@ msgstr ""
 
 msgid "Object型はv1.2でサポートされます。"
 msgstr ""
+
+#~ msgid "user 'A' commented out."
+#~ msgstr "ユーザー'A'のコメント"
+
+#~ msgid "``request_cancel`` command is an experimental feature."
+#~ msgstr "``request_cancel`` コマンドは実験的な機能です。"
+
+#~ msgid "Registered plugins can't be removed for now."
+#~ msgstr "今のところ、登録したプラグインは削除できません。"

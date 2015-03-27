@@ -218,7 +218,8 @@ msgstr ""
 "使います。ただ、いくつか例外があって、MeCabの辞書（ ``mecab-ipadic`` や "
 "``mecab-jumandic`` ）パッケージを使うにはGroongaのyumリポジトリを使います。"
 
-msgid "Fedora 20"
+# 28c060d2aecd4e77b9822cae3ec97012
+msgid "Fedora 21"
 msgstr ""
 
 msgid ""

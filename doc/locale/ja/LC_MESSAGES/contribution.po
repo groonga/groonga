@@ -426,7 +426,8 @@ msgstr ""
 msgid "GROONGA_CLONE_DIR=$HOME/work/groonga/groonga.clean"
 msgstr ""
 
-msgid "GROONGA_GITHUB_COM_PATH=$HOME/work/groonga/groonga.github.com"
+# ec9c89403a7145299c6245d5cb49e743
+msgid "GROONGA_ORG_PATH=$HOME/work/groonga/groonga.org"
 msgstr ""
 
 msgid "CUTTER_DIR=$HOME/work/cutter"
@@ -562,13 +563,14 @@ msgid ""
 "のバージョンを置き換えることができるようになっています。"
 msgstr ""
 
+# 5c3309ece166484f9cb0f7c50f7549c6
 msgid ""
-"Groongaのウェブサイトのソースコードを$GROONGA_GITHUB_COM_PATHとして取得するた"
-"めには、$GROONGA_DIRにて以下のコマンドを実行します。::"
+"Groongaのウェブサイトのソースコードを$GROONGA_ORG_PATHとして取得するために"
+"は、$GROONGA_DIRにて以下のコマンドを実行します。::"
 msgstr ""
 
-msgid ""
-"これで、$GROONGA_GITHUB_COM_PATHにgroonga.github.comのソースを取得できます。"
+# 03b5a266842748d78ca1f92f5c0f82a5
+msgid "これで、$GROONGA_ORG_PATHにgroonga.orgのソースを取得できます。"
 msgstr ""
 
 msgid "cutterのソースコード取得"
@@ -610,9 +612,10 @@ msgid ""
 "す。::"
 msgstr ""
 
+# bd841512912340a18628038f055af15b
 msgid ""
-"configureオプションである--with-groonga-github-com-pathにはGroongaのウェブサ"
-"イトのリポジトリをcloneした場所を指定します。"
+"configureオプションである--with-groonga-org-pathにはGroongaのウェブサイトのリ"
+"ポジトリをcloneした場所を指定します。"
 msgstr ""
 
 msgid ""
@@ -1097,10 +1100,12 @@ msgstr ""
 msgid "cloneしたWebサイトのソースに対して以下のファイルを新規追加します。"
 msgstr ""
 
-msgid "groonga.github.com/en/_post/(リリース日)-release.textile"
+# 146709218a0c444281ec13e1e2a26f6f
+msgid "groonga.org/en/_post/(リリース日)-release.textile"
 msgstr ""
 
-msgid "groonga.github.com/ja/_post/(リリース日)-release.textile"
+# 0ad1e60ea19d4f5dbe15992f9ab4cd0e
+msgid "groonga.org/ja/_post/(リリース日)-release.textile"
 msgstr ""
 
 msgid ""
@@ -1134,9 +1139,10 @@ msgstr ""
 msgid "そのためにはまず以下のコマンドを実行します。::"
 msgstr ""
 
+# 7f4f8a2185724165a5bae365d4568a2c
 msgid ""
-"これによりcloneしておいたgroonga.github.comのdoc/locale以下に更新したドキュメ"
-"ントがコピーされます。"
+"これによりcloneしておいたgroonga.orgのdoc/locale以下に更新したドキュメントが"
+"コピーされます。"
 msgstr ""
 
 msgid ""
