@@ -47,10 +47,11 @@ Improvements
   for details.
 * Added some functions to distinct the type of :c:type:`grn_obj` for
   API users.
-* [experimental] Supported skipping posting list when searching popular
-  term and rare term at the same time. It will improve
-  performance. Use ``GRN_II_CURSOR_SET_MIN_ENABLE`` environment
-  variable.
+* [experimental] Supported skipping posting list when searching
+  popular term and rare term at the same time. It will improve
+  performance. Set ``GRN_II_CURSOR_SET_MIN_ENABLE`` environment
+  variable to ``1`` to enable the feature. The feature is disabled by
+  default.
 * [doc] Added :doc:`/reference/functions/in_values` document.
 * [doc] Added :doc:`/reference/commands/logical_count` document.
 * [mruby] Added #inspect. Is is useful for debugging.
