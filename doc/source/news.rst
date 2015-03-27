@@ -47,11 +47,13 @@ Improvements
   for details.
 * Added the following predicates that check :c:type:`grn_obj` type to
   DB API:
+
   * :c:func:`grn_obj_is_table()`
   * :c:func:`grn_obj_is_proc_proc()`
   * :c:func:`grn_obj_is_function_proc()`
   * :c:func:`grn_obj_is_selector_proc()`
   * :c:func:`grn_obj_is_scorer_proc()`
+
 * [experimental] Supported skipping posting list when searching
   popular term and rare term at the same time. It will improve
   performance. Set ``GRN_II_CURSOR_SET_MIN_ENABLE`` environment
@@ -65,9 +67,11 @@ Improvements
   limits not to exceed specified score regardless of term frequency.
 * [mruby] Supported estimating size for index search.
 * Added the following functions to estimate size by index:
+
   * :c:func:`grn_expr_estimate_size()`
   * :c:func:`grn_ii_estimate_size_for_query()`
   * :c:func:`grn_ii_estimate_size_for_lexicon_cursor()`
+
 * Added missing :ref:`NormalizerAuto` availability check. [GitHub#283]
   [Reported by Tasuku SUENAGA]
 * Dropped Visual Studio 2010 support.
