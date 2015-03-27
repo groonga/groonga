@@ -144,10 +144,10 @@ Fixes
   conditions, this bug is occurred:
 
   * Multiple indexes are available.
-  * The first defined index and/or the last defined index are
+  * The first defined index or the last defined index are
     multi-column indexes.
-  * Both of the first defined index and the last defined index are
-    multi-column indexes.
+  * When both of the first defined index and the last defined index are
+    multi-column indexes, source column orders are different in them.
 
 * Fixed a bug that passing Groonga command line to
   :doc:`/reference/executables/groonga` from shell command line style
