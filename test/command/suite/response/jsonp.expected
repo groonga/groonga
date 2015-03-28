@@ -1,0 +1,4 @@
+table_create Logs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+/d/select.json?table=Logs&callback=func
+func([[0,0.0,0.0],[[[0],[["_id","UInt32"]]]]]);
