@@ -36,7 +36,11 @@
 #endif /* HAVE_NETINET_IN_H */
 
 #if defined(HAVE__LOCALTIME64_S) && defined(__GNUC__)
-# define localtime_s(tm, time) _localtime64_s(tm, time)
+# ifdef _WIN64
+#  define localtime_s(tm, time) _localtime64_s(tm, time)
+# else /* _WIN64 */
+#  define localtime_s(tm, time) _localtime32_s(tm, time)
+# endif /* _WIN64 */
 #endif /* defined(HAVE__LOCALTIME64_S) && defined(__GNUC__) */
 
 #define GRN_CTX_INITIALIZER(enc) \
