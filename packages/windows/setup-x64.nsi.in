@@ -1,6 +1,6 @@
-; Copyright (c) 2010-2011 Kouhei Sutou <kou@clear-code.com>
+; Copyright (c) 2010-2015 Kouhei Sutou <kou@clear-code.com>
 
-!define PRODUCT_NAME "@PACKAGE@"
+!define PRODUCT_NAME "@PACKAGE_TITLE@"
 !define PRODUCT_VERSION "@VERSION@"
 !define PRODUCT_PUBLISHER "Brazil"
 !define PRODUCT_WEB_SITE "http://groonga.org/"
