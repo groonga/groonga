@@ -1,5 +1,6 @@
 ; Copyright (c) 2010-2015 Kouhei Sutou <kou@clear-code.com>
 
+!define PACKAGE_NAME "@PACKAGE@"
 !define PRODUCT_NAME "@PACKAGE_TITLE@"
 !define PRODUCT_VERSION "@VERSION@"
 !define PRODUCT_PUBLISHER "Brazil"
@@ -54,7 +55,7 @@ FunctionEnd
 
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "files\${PRODUCT_NAME}-${PRODUCT_VERSION}-x64.exe"
+OutFile "files\${PACKAGE_NAME}-${PRODUCT_VERSION}-x64.exe"
 InstallDir "$PROGRAMFILES64\${PRODUCT_NAME}"
 ShowInstDetails show
 ShowUnInstDetails show
