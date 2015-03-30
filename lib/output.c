@@ -1846,7 +1846,7 @@ typedef struct {
 } msgpack_writer_ctx;
 
 static inline int
-msgpack_buffer_writer(void* data, const char* buf, unsigned int len)
+msgpack_buffer_writer(void* data, const char* buf, msgpack_size_t len)
 {
   msgpack_writer_ctx *writer_ctx = (msgpack_writer_ctx *)data;
   return grn_bulk_write(writer_ctx->ctx, writer_ctx->buffer, buf, len);
