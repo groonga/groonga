@@ -41,6 +41,10 @@ mruby_onig_regexp_dir = "#{mruby_build_dir}/mrbgems/mruby-onig-regexp"
 FileUtils.mkdir_p("mruby-onig-regexp/")
 FileUtils.cp_r("#{mruby_onig_regexp_dir}/src/", "mruby-onig-regexp/")
 
+mruby_env_dir = "#{mruby_build_dir}/mrbgems/mruby-env"
+FileUtils.mkdir_p("mruby-env/")
+FileUtils.cp_r("#{mruby_env_dir}/src/", "mruby-env/")
+
 mruby_io_dir = "#{mruby_build_dir}/mrbgems/mruby-io"
 FileUtils.mkdir_p("mruby-io/")
 FileUtils.cp_r("#{mruby_io_dir}/include/", "mruby-io/")
