@@ -2648,6 +2648,7 @@ main(int argc, char **argv)
   int flags = 0;
   uint32_t cache_limit = 0;
   grn_bool need_line_editor = GRN_FALSE;
+  grn_bool is_alone_mode = GRN_FALSE;
   static grn_str_getopt_opt opts[] = {
     {'p', "port", NULL, 0, GETOPT_OP_NONE},
     {'e', "encoding", NULL, 0, GETOPT_OP_NONE},
@@ -2908,7 +2909,11 @@ main(int argc, char **argv)
     }
   }
 
-  if ((flags & FLAG_MODE_CLIENT) && !batchmode) {
+  is_alone_mode = \
+    !((flags & FLAG_MODE_CLIENT) ||
+      (flags & FLAG_MODE_SERVER) ||
+      (flags & FLAG_MODE_DAEMON));
+  if (((flags & FLAG_MODE_CLIENT) || is_alone_mode) && !batchmode) {
     need_line_editor = GRN_TRUE;
   }
 
