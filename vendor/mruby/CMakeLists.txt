@@ -45,6 +45,7 @@ if(GRN_WITH_MRUBY)
 	"${CMAKE_CURRENT_SOURCE_DIR}/build_config.rb"
 	"${CMAKE_CURRENT_SOURCE_DIR}/../mruby-source"
 	"${CMAKE_CURRENT_BINARY_DIR}/../mruby-build"
+	"${CMAKE_CURRENT_SOURCE_DIR}/../onigmo-source"
 	"${mruby_build_timestamp}"
 	WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
 	RESULT_VARIABLE MRUBY_BUILD_RESULT

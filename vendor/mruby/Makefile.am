@@ -42,6 +42,7 @@ mruby_build.timestamp: build_config.rb
 	  "$(srcdir)/build_config.rb"		\
 	  "$(srcdir)/../mruby-source"		\
 	  "$(builddir)/../mruby-build"		\
+	  "$(srcdir)/../onigmo-source"		\
 	  "mruby_build.timestamp"
 
 CLEANFILES = *.gcno *gcda
