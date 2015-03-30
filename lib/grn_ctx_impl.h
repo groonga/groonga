@@ -19,15 +19,15 @@
 #define GRN_CTX_IMPL_H
 
 #ifndef GRN_CTX_H
-#include "grn_ctx.h"
+# include "grn_ctx.h"
 #endif /* GRN_CTX_H */
 
 #ifndef GRN_COM_H
-#include "grn_com.h"
+# include "grn_com.h"
 #endif /* GRN_COM_H */
 
 #ifdef GRN_WITH_MESSAGE_PACK
-#include <msgpack.h>
+# include <msgpack.h>
 # if MSGPACK_VERSION_MAJOR < 1
 #  define msgpack_pack_str(packer, size) msgpack_pack_raw(packer, size)
 #  define msgpack_pack_str_body(packer, value, size) \
