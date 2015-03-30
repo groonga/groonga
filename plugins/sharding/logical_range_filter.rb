@@ -19,11 +19,12 @@ module Groonga
       def run_body(input)
         output_columns = input[:output_columns] || "_key, *"
 
-        executor = Executor.new(input)
+        context = ExecuteContext.new(input)
         begin
+          executor = Executor.new(context)
           executor.execute
 
-          result_sets = executor.result_sets
+          result_sets = context.result_sets
           n_elements = 1 # for columns
           result_sets.each do |result_set|
             n_elements += result_set.size
@@ -39,12 +40,20 @@ module Groonga
             end
           end
         ensure
-          executor.close
+          context.close
         end
       end
 
-      class Executor
+      class ExecuteContext
+        attr_reader :enumerator
+        attr_reader :order
+        attr_reader :filter
+        attr_reader :offset
+        attr_reader :limit
+        attr_accessor :current_offset
+        attr_accessor :current_limit
         attr_reader :result_sets
+        attr_reader :unsorted_result_sets
         def initialize(input)
           @input = input
           @enumerator = LogicalEnumerator.new("logical_range_filter", @input)
@@ -53,36 +62,11 @@ module Groonga
           @offset = (@input[:offset] || 0).to_i
           @limit = (@input[:limit] || 10).to_i
 
-          @result_sets = []
-          @unsorted_result_sets = []
           @current_offset = 0
           @current_limit = @limit
-        end
 
-        def shard_key_name
-          @enumerator.shard_key_name
-        end
-
-        def execute
-          first_table = nil
-          @enumerator.each do |table, shard_key, shard_range|
-            first_table ||= table
-            filter_shard(table, @filter,
-                         shard_key, shard_range,
-                         @enumerator.target_range)
-            break if @current_limit == 0
-          end
-          if first_table.nil?
-            message =
-              "[logical_range_filter] no shard exists: " +
-              "logical_table: <#{@enumerator.logical_table}>: " +
-              "shard_key: <#{@enumerator.shard_key_name}>"
-            raise InvalidArgument, message
-          end
-          if @result_sets.empty?
-            @result_sets << HashTable.create(:flags => ObjectFlags::WITH_SUBREC,
-                                             :key_type => first_table)
-          end
+          @result_sets = []
+          @unsorted_result_sets = []
         end
 
         def close
@@ -111,14 +95,60 @@ module Groonga
             raise InvalidArgument, message
           end
         end
+      end
 
-        def filter_shard(table, filter, shard_key, shard_range, target_range)
-          return if table.empty?
+      class Executor
+        def initialize(context)
+          @context = context
+        end
 
-          cover_type = target_range.cover_type(shard_range)
-          return if cover_type == :none
+        def execute
+          first_table = nil
+          enumerator = @context.enumerator
+          enumerator.each do |table, shard_key, shard_range|
+            first_table ||= table
+            next if table.empty?
 
-          index_info = shard_key.find_index(Operator::LESS)
+            shard_executor = ShardExecutor.new(@context,
+                                               table, shard_key, shard_range)
+            shard_executor.execute
+            break if @context.current_limit == 0
+          end
+          if first_table.nil?
+            message =
+              "[logical_range_filter] no shard exists: " +
+              "logical_table: <#{enumerator.logical_table}>: " +
+              "shard_key: <#{enumerator.shard_key_name}>"
+            raise InvalidArgument, message
+          end
+          if @context.result_sets.empty?
+            result_set = HashTable.create(:flags => ObjectFlags::WITH_SUBREC,
+                                          :key_type => first_table)
+            @context.result_sets << result_set
+          end
+        end
+      end
+
+      class ShardExecutor
+        def initialize(context, table, shard_key, shard_range)
+          @context = context
+          @table = table
+          @shard_key = shard_key
+          @shard_range = shard_range
+
+          @filter = @context.filter
+          @result_sets = @context.result_sets
+          @unsorted_result_sets = @context.unsorted_result_sets
+
+          @target_range = @context.enumerator.target_range
+
+          @cover_type = @target_range.cover_type(@shard_range)
+        end
+
+        def execute
+          return if @cover_type == :none
+
+          index_info = @shard_key.find_index(Operator::LESS)
           if index_info
             range_index = index_info.index
             # TODO: Determine whether range index is used by estimated size.
@@ -127,20 +157,20 @@ module Groonga
             range_index = nil
           end
 
-          case cover_type
+          case @cover_type
           when :all
-            filter_shard_all(table, filter, range_index)
+            filter_shard_all(range_index)
           when :partial_min
             if range_index
-              filter_by_range(range_index, filter,
-                              target_range.min, target_range.min_border,
+              filter_by_range(range_index,
+                              @target_range.min, @target_range.min_border,
                               nil, nil)
             else
-              filter_table(table, filter) do |expression|
-                expression.append_object(shard_key, Operator::PUSH, 1)
+              filter_table do |expression|
+                expression.append_object(@shard_key, Operator::PUSH, 1)
                 expression.append_operator(Operator::GET_VALUE, 1)
-                expression.append_constant(target_range.min, Operator::PUSH, 1)
-                if target_range.min_border == :include
+                expression.append_constant(@target_range.min, Operator::PUSH, 1)
+                if @target_range.min_border == :include
                   expression.append_operator(Operator::GREATER_EQUAL, 2)
                 else
                   expression.append_operator(Operator::GREATER, 2)
@@ -149,15 +179,15 @@ module Groonga
             end
           when :partial_max
             if range_index
-              filter_by_range(range_index, filter,
+              filter_by_range(range_index,
                               nil, nil,
-                              target_range.max, target_range.max_border)
+                              @target_range.max, @target_range.max_border)
             else
-              filter_table(table, filter) do |expression|
-                expression.append_object(shard_key, Operator::PUSH, 1)
+              filter_table do |expression|
+                expression.append_object(@shard_key, Operator::PUSH, 1)
                 expression.append_operator(Operator::GET_VALUE, 1)
-                expression.append_constant(target_range.max, Operator::PUSH, 1)
-                if target_range.max_border == :include
+                expression.append_constant(@target_range.max, Operator::PUSH, 1)
+                if @target_range.max_border == :include
                   expression.append_operator(Operator::LESS_EQUAL, 2)
                 else
                   expression.append_operator(Operator::LESS, 2)
@@ -166,19 +196,20 @@ module Groonga
             end
           when :partial_min_and_max
             if range_index
-              filter_by_range(range_index, filter,
-                              target_range.min, target_range.min_border,
-                              target_range.max, target_range.max_border)
+              filter_by_range(range_index,
+                              @target_range.min, @target_range.min_border,
+                              @target_range.max, @target_range.max_border)
             else
-              filter_table(table, filter) do |expression|
-                expression.append_object(context["between"], Operator::PUSH, 1)
-                expression.append_object(shard_key, Operator::PUSH, 1)
+              filter_table do |expression|
+                between = Groonga::Context.instance["between"]
+                expression.append_object(between, Operator::PUSH, 1)
+                expression.append_object(@shard_key, Operator::PUSH, 1)
                 expression.append_operator(Operator::GET_VALUE, 1)
-                expression.append_constant(target_range.min, Operator::PUSH, 1)
-                expression.append_constant(target_range.min_border,
+                expression.append_constant(@target_range.min, Operator::PUSH, 1)
+                expression.append_constant(@target_range.min_border,
                                            Operator::PUSH, 1)
-                expression.append_constant(target_range.max, Operator::PUSH, 1)
-                expression.append_constant(target_range.max_border,
+                expression.append_constant(@target_range.max, Operator::PUSH, 1)
+                expression.append_constant(@target_range.max_border,
                                            Operator::PUSH, 1)
                 expression.append_operator(Operator::CALL, 5)
               end
@@ -186,26 +217,26 @@ module Groonga
           end
         end
 
-        def filter_shard_all(table, filter, range_index)
-          if filter.nil?
-            if table.size <= @current_offset
-              @current_offset -= table.size
+        def filter_shard_all(range_index)
+          if @filter.nil?
+            if @table.size <= @context.current_offset
+              @context.current_offset -= @table.size
               return
             end
             if range_index
-              filter_by_range(range_index, filter,
+              filter_by_range(range_index,
                               nil, nil,
                               nil, nil)
             else
-              sort_result_set(table)
+              sort_result_set(@table)
             end
           else
             if range_index
-              filter_by_range(range_index, filter,
+              filter_by_range(range_index,
                               nil, nil,
                               nil, nil)
             else
-              filter_table(table, filter)
+              filter_table
             end
           end
         end
@@ -219,7 +250,7 @@ module Groonga
           end
         end
 
-        def filter_by_range(range_index, filter,
+        def filter_by_range(range_index,
                             min, min_border, max, max_border)
           lexicon = range_index.domain
           data_table = range_index.range
@@ -234,12 +265,12 @@ module Groonga
                              :max => max,
                              :flags => flags) do |table_cursor|
               options = {
-                :offset => @current_offset,
-                :limit => @current_limit,
+                :offset => @context.current_offset,
+                :limit => @context.current_limit,
               }
-              if filter
+              if @filter
                 create_expression(data_table) do |expression|
-                  expression.parse(filter)
+                  expression.parse(@filter)
                   options[:expression] = expression
                   IndexCursor.open(table_cursor, range_index) do |index_cursor|
                     n_matched_records = index_cursor.select(result_set, options)
@@ -256,22 +287,22 @@ module Groonga
             raise
           end
 
-          if n_matched_records <= @current_offset
-            @current_offset -= n_matched_records
+          if n_matched_records <= @context.current_offset
+            @context.current_offset -= n_matched_records
             result_set.close
             return
           end
 
-          if @current_offset > 0
-            @current_offset = 0
+          if @context.current_offset > 0
+            @context.current_offset = 0
           end
-          @current_limit -= result_set.size
+          @context.current_limit -= result_set.size
           @result_sets << result_set
         end
 
         def build_range_search_flags(min_border, max_border)
           flags = TableCursorFlags::BY_KEY
-          case @order
+          case @context.order
           when :ascending
             flags |= TableCursorFlags::ASCENDING
           when :descending
@@ -292,18 +323,18 @@ module Groonga
           flags
         end
 
-        def filter_table(table, filter)
-          create_expression(table) do |expression|
+        def filter_table
+          create_expression(@table) do |expression|
             if block_given?
               yield(expression)
-              if filter
-                expression.parse(filter)
+              if @filter
+                expression.parse(@filter)
                 expression.append_operator(Operator::AND, 2)
               end
             else
-              expression.parse(filter)
+              expression.parse(@filter)
             end
-            result_set = table.select(expression)
+            result_set = @table.select(expression)
             sort_result_set(result_set)
           end
         end
@@ -314,8 +345,8 @@ module Groonga
             return
           end
 
-          if result_set.size <= @current_offset
-            @current_offset -= result_set.size
+          if result_set.size <= @context.current_offset
+            @context.current_offset -= result_set.size
             result_set.close if result_set.temporary?
             return
           end
@@ -323,18 +354,18 @@ module Groonga
           @unsorted_result_sets << result_set if result_set.temporary?
           sort_keys = [
             {
-              :key => @enumerator.shard_key_name,
-              :order => @order,
+              :key => @context.enumerator.shard_key_name,
+              :order => @context.order,
             },
           ]
           sorted_result_set = result_set.sort(sort_keys,
-                                              :offset => @current_offset,
-                                              :limit => @current_limit)
+                                              :offset => @context.current_offset,
+                                              :limit => @context.current_limit)
           @result_sets << sorted_result_set
-          if @current_offset > 0
-            @current_offset = 0
+          if @context.current_offset > 0
+            @context.current_offset = 0
           end
-          @current_limit -= sorted_result_set.size
+          @context.current_limit -= sorted_result_set.size
         end
       end
     end
