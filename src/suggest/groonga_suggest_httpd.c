@@ -420,7 +420,7 @@ msgpack2json(msgpack_object *o, grn_ctx *ctx, grn_obj *buf)
   case MSGPACK_OBJECT_POSITIVE_INTEGER:
     grn_text_ulltoa(ctx, buf, o->via.u64);
     break;
-  case MSGPACK_OBJECT_RAW:
+  case MSGPACK_OBJECT_STR:
     grn_text_esc(ctx, buf, o->via.raw.ptr, o->via.raw.size);
     break;
   case MSGPACK_OBJECT_ARRAY:
@@ -447,9 +447,9 @@ load_from_learner(msgpack_object *o, grn_ctx *ctx, grn_obj *cmd_buf)
   if (o->type == MSGPACK_OBJECT_MAP && o->via.map.size) {
     msgpack_object_kv *kv;
     kv = &(o->via.map.ptr[0]);
-    if (kv->key.type == MSGPACK_OBJECT_RAW && kv->key.via.raw.size == 6 &&
+    if (kv->key.type == MSGPACK_OBJECT_STR && kv->key.via.raw.size == 6 &&
         !memcmp(kv->key.via.raw.ptr, CONST_STR_LEN("target"))) {
-      if (kv->val.type == MSGPACK_OBJECT_RAW) {
+      if (kv->val.type == MSGPACK_OBJECT_STR) {
         int i;
         GRN_BULK_REWIND(cmd_buf);
         GRN_TEXT_PUTS(ctx, cmd_buf, "load --table ");
