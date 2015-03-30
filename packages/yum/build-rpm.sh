@@ -122,6 +122,7 @@ cd
 
 run cp /vagrant/tmp/${PACKAGE}-${VERSION}.* rpmbuild/SOURCES/
 run cp /vagrant/tmp/${distribution}/${PACKAGE}.spec rpmbuild/SPECS/
+run cp /vagrant/tmp/*.patch rpmbuild/SOURCES/
 
 run rpmbuild -ba ${rpmbuild_options} rpmbuild/SPECS/${PACKAGE}.spec
 
