@@ -342,8 +342,8 @@ grn_output_str(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     break;
   case GRN_CONTENT_MSGPACK :
 #ifdef GRN_WITH_MESSAGE_PACK
-    msgpack_pack_raw(&ctx->impl->msgpacker, value_len);
-    msgpack_pack_raw_body(&ctx->impl->msgpacker, value, value_len);
+    msgpack_pack_str(&ctx->impl->msgpacker, value_len);
+    msgpack_pack_str_body(&ctx->impl->msgpacker, value, value_len);
 #endif
     break;
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
@@ -510,8 +510,8 @@ grn_output_geo_point(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type
       grn_text_itoa(ctx, &buf, value->latitude);
       GRN_TEXT_PUTC(ctx, &buf, 'x');
       grn_text_itoa(ctx, &buf, value->longitude);
-      msgpack_pack_raw(&ctx->impl->msgpacker, GRN_TEXT_LEN(&buf));
-      msgpack_pack_raw_body(&ctx->impl->msgpacker,
+      msgpack_pack_str(&ctx->impl->msgpacker, GRN_TEXT_LEN(&buf));
+      msgpack_pack_str_body(&ctx->impl->msgpacker,
                             GRN_TEXT_VALUE(&buf),
                             GRN_TEXT_LEN(&buf));
       grn_obj_close(ctx, &buf);
@@ -2024,8 +2024,8 @@ grn_output_envelope(grn_ctx *ctx,
       msgpack_pack_double(&header_packer, elapsed);
 
       if (rc != GRN_SUCCESS) {
-        msgpack_pack_raw(&header_packer, strlen(ctx->errbuf));
-        msgpack_pack_raw_body(&header_packer, ctx->errbuf, strlen(ctx->errbuf));
+        msgpack_pack_str(&header_packer, strlen(ctx->errbuf));
+        msgpack_pack_str_body(&header_packer, ctx->errbuf, strlen(ctx->errbuf));
         if (ctx->errfunc && ctx->errfile) {
           grn_obj *command = GRN_CTX_USER_DATA(ctx)->ptr;
           int error_detail_size;
@@ -2040,27 +2040,27 @@ grn_output_envelope(grn_ctx *ctx,
           }
           msgpack_pack_array(&header_packer, error_detail_size);
 
-          msgpack_pack_raw(&header_packer, strlen(ctx->errfunc));
-          msgpack_pack_raw_body(&header_packer, ctx->errfunc, strlen(ctx->errfunc));
+          msgpack_pack_str(&header_packer, strlen(ctx->errfunc));
+          msgpack_pack_str_body(&header_packer, ctx->errfunc, strlen(ctx->errfunc));
 
-          msgpack_pack_raw(&header_packer, strlen(ctx->errfile));
-          msgpack_pack_raw_body(&header_packer, ctx->errfile, strlen(ctx->errfile));
+          msgpack_pack_str(&header_packer, strlen(ctx->errfile));
+          msgpack_pack_str_body(&header_packer, ctx->errfile, strlen(ctx->errfile));
 
           msgpack_pack_int(&header_packer, ctx->errline);
 
           if (command) {
             if (file) {
-              msgpack_pack_raw(&header_packer, strlen(file));
-              msgpack_pack_raw_body(&header_packer, file, strlen(file));
+              msgpack_pack_str(&header_packer, strlen(file));
+              msgpack_pack_str_body(&header_packer, file, strlen(file));
             } else {
-              msgpack_pack_raw(&header_packer, 7);
-              msgpack_pack_raw_body(&header_packer, "(stdin)", 7);
+              msgpack_pack_str(&header_packer, 7);
+              msgpack_pack_str_body(&header_packer, "(stdin)", 7);
             }
 
             msgpack_pack_int(&header_packer, line);
 
-            msgpack_pack_raw(&header_packer, GRN_TEXT_LEN(command));
-            msgpack_pack_raw_body(&header_packer, GRN_TEXT_VALUE(command), GRN_TEXT_LEN(command));
+            msgpack_pack_str(&header_packer, GRN_TEXT_LEN(command));
+            msgpack_pack_str_body(&header_packer, GRN_TEXT_VALUE(command), GRN_TEXT_LEN(command));
           }
         }
       }
