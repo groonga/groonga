@@ -28,7 +28,11 @@
 #include <math.h>
 
 #if defined(HAVE__GMTIME64_S) && defined(__GNUC__)
-# define gmtime_s(tm, time) _gmtime64_s(tm, time)
+# ifdef _WIN64
+#  define gmtime_s(tm, time) _gmtime64_s(tm, time)
+# else /* _WIN64 */
+#  define gmtime_s(tm, time) _gmtime32_s(tm, time)
+# endif /* _WIN64 */
 #endif /* defined(HAVE__GMTIME64_S) && defined(__GNUC__) */
 
 /* For Visual C++ 2010. Drop the code when we drop Visual C++ 2010 support. */
