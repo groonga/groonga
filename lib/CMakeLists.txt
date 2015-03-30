@@ -79,7 +79,7 @@ else()
     RUNTIME DESTINATION "${BIN_DIR}")
 endif()
 
-if(GRN_WITH_MRUBY AND NOT GRN_EMBED)
+if(GRN_WITH_MRUBY)
   read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mrb/scripts/sources.am
     RUBY_SCRIPTS)
   string(REGEX REPLACE "([^;]+)" "mrb/scripts/\\1"
