@@ -2139,7 +2139,8 @@ enum {
   ACTION_ERROR
 };
 
-#define ACTION_MASK       (0x0f)
+#define ACTION_MASK          (0x0f)
+#define MODE_MASK            (0xf0)
 #define FLAG_MODE_ALONE      (1 << 4)
 #define FLAG_MODE_CLIENT     (1 << 5)
 #define FLAG_MODE_DAEMON     (1 << 6)
@@ -2648,7 +2649,6 @@ main(int argc, char **argv)
   int flags = 0;
   uint32_t cache_limit = 0;
   grn_bool need_line_editor = GRN_FALSE;
-  grn_bool is_alone_mode = GRN_FALSE;
   static grn_str_getopt_opt opts[] = {
     {'p', "port", NULL, 0, GETOPT_OP_NONE},
     {'e', "encoding", NULL, 0, GETOPT_OP_NONE},
@@ -2758,6 +2758,10 @@ main(int argc, char **argv)
   case ACTION_ERROR :
     show_usage(stderr);
     return EXIT_FAILURE;
+  }
+
+  if ((flags & MODE_MASK) == 0) {
+    flags |= FLAG_MODE_ALONE;
   }
 
   if (port_arg) {
@@ -2909,11 +2913,8 @@ main(int argc, char **argv)
     }
   }
 
-  is_alone_mode =
-    !((flags & FLAG_MODE_CLIENT) ||
-      (flags & FLAG_MODE_SERVER) ||
-      (flags & FLAG_MODE_DAEMON));
-  if (((flags & FLAG_MODE_CLIENT) || is_alone_mode) && !batchmode) {
+  if ((flags & (FLAG_MODE_ALONE | FLAG_MODE_CLIENT)) &&
+      !batchmode) {
     need_line_editor = GRN_TRUE;
   }
 
