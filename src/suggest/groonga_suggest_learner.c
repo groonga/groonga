@@ -149,7 +149,7 @@ load_to_multi_targets(grn_ctx *ctx,
 #define PACK_MAP_ITEM(col_name) do { \
   grn_obj _v; \
   msgpack_pack_str(&pk, sizeof(#col_name) - 1); \
-  msgpack_pack_str_body(&pk, CONST_STR_LEN(#col_name)); \
+  msgpack_pack_str_body(&pk, #col_name, sizeof(#col_name) - 1); \
   switch (col_##col_name->header.type) { \
   case GRN_COLUMN_FIX_SIZE: \
     GRN_VALUE_FIX_SIZE_INIT(&_v, 0, grn_obj_get_range(ctx, col_##col_name)); \
@@ -269,7 +269,7 @@ send_handler(void *zmq_send_sock, grn_ctx *ctx)
 
                 /* ["_key","ShortText"],["last","Time"],["kana","kana"],["freq2","Int32"],["freq","Int32"],["co","pair_all"],["buzz","Int32"],["boost","Int32"] */
                 msgpack_pack_str(&pk, 6);
-                msgpack_pack_str_body(&pk, CONST_STR_LEN("target"));
+                msgpack_pack_str_body(&pk, "target", strlen("target"));
                 msgpack_pack_str(&pk, name_len);
                 msgpack_pack_str_body(&pk, name_buf, name_len);
 
@@ -340,7 +340,7 @@ send_handler(void *zmq_send_sock, grn_ctx *ctx)
                 /* ["_key","UInt64"],["pre","item_all"],["post","item_all"],["freq2","Int32"],["freq1","Int32"],["freq0","Int32"] */
 
                 msgpack_pack_str(&pk, 6);
-                msgpack_pack_str_body(&pk, CONST_STR_LEN("target"));
+                msgpack_pack_str_body(&pk, "target", strlen("target"));
                 msgpack_pack_str(&pk, name_len);
                 msgpack_pack_str_body(&pk, name_buf, name_len);
 
