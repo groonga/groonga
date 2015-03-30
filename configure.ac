@@ -1164,30 +1164,48 @@ AC_SUBST(LIBEVENT_CFLAGS)
 AC_SUBST(LIBEVENT_LIBS)
 
 # MessagePack
-AC_ARG_WITH(message-pack,
-  [AS_HELP_STRING([--without-message-pack],
-    [Disable MessagePack used for suggestion. [default=/usr]])],
-  [with_message_pack="$withval"],
-  [with_message_pack="/usr"])
-if test "x$with_message_pack" != "xno"; then
-  _SAVE_CFLAGS="$CFLAGS"
-  _SAVE_LDFLAGS="$LDFLAGS"
-  _SAVE_LIBS="$LIBS"
-  CFLAGS="$CFLAGS -I$with_message_pack/include"
-  LDFLAGS="$LDFLAGS -L$with_message_pack/lib"
-  AC_SEARCH_LIBS(msgpack_version, msgpack,
-                 [message_pack_available=yes],
-                 [message_pack_available=no])
-  CFLAGS="$_SAVE_CFLAGS"
-  LDFLAGS="$_SAVE_LDFLAGS"
-  LIBS="$_SAVE_LIBS"
+AC_ARG_ENABLE(message-pack,
+  [AS_HELP_STRING([--disable-message-pack],
+    [Disable MessagePack support. [default=auto-detect]])],
+  [enable_message_pack="$enableval"],
+  [enable_message_pack"auto"])
+if test "x$enable_message_pack" != "xno"; then
+  m4_ifdef([PKG_CHECK_MODULES], [
+    PKG_CHECK_MODULES([MESSAGE_PACK], [msgpack],
+      [message_pack_available=yes],
+      [message_pack_available=no])
+    ],
+    [message_pack_vailable=no])
+
+  if test "$message_pack_available" = "no"; then
+    AC_ARG_WITH(message-pack,
+      [AS_HELP_STRING([--with-message-pack],
+        [Specify prefix where MessagePack is installed. [default=/usr]])],
+      [with_message_pack="$withval"],
+      [with_message_pack="/usr"])
+    _SAVE_CFLAGS="$CFLAGS"
+    _SAVE_LDFLAGS="$LDFLAGS"
+    _SAVE_LIBS="$LIBS"
+    CFLAGS="$CFLAGS -I$with_message_pack/include"
+    LDFLAGS="$LDFLAGS -L$with_message_pack/lib"
+    AC_SEARCH_LIBS(msgpack_version, msgpack,
+                   [message_pack_available=yes],
+                   [message_pack_available=no])
+    CFLAGS="$_SAVE_CFLAGS"
+    LDFLAGS="$_SAVE_LDFLAGS"
+    LIBS="$_SAVE_LIBS"
+
+    if test "x$message_pack_available" = "xyes"; then
+      MESSAGE_PACK_CFLAGS="-I$with_message_pack/include"
+      MESSAGE_PACK_LIBS="-L$with_message_pack/lib -lmsgpack"
+    fi
+  fi
+
   if test "x$message_pack_available" = "xyes"; then
     AC_DEFINE(GRN_WITH_MESSAGE_PACK, [1],
               [Define to 1 if MessagePack is available.])
-    MESSAGE_PACK_CFLAGS="-I$with_message_pack/include"
-    MESSAGE_PACK_LIBS="-L$with_message_pack/lib -lmsgpack"
   else
-    if test "x$with_message_pack" = "xyes"; then
+    if test "x$enable_message_pack" = "xyes"; then
       AC_MSG_ERROR("No MessagePack found")
     fi
   fi
