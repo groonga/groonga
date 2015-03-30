@@ -470,8 +470,13 @@ grn_ctx_loader_clear(grn_ctx *ctx)
 #define IMPL_SIZE ((sizeof(struct _grn_ctx_impl) + (grn_pagesize - 1)) & ~(grn_pagesize - 1))
 
 #ifdef GRN_WITH_MESSAGE_PACK
+# if MSGPACK_VERSION_MAJOR < 1
+typedef unsigned int msgpack_size_t;
+# else /* MSGPACK_VERSION_MAJOR < 1 */
+typedef size_t msgpack_size_t;
+# endif /* MSGPACK_VERSION_MAJOR < 1 */
 static int
-grn_msgpack_buffer_write(void *data, const char *buf, unsigned int len)
+grn_msgpack_buffer_write(void *data, const char *buf, msgpack_size_t len)
 {
   grn_ctx *ctx = (grn_ctx *)data;
   return grn_bulk_write(ctx, ctx->impl->outbuf, buf, len);
