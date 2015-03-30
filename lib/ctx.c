@@ -37,7 +37,7 @@
 
 #if defined(HAVE__LOCALTIME64_S) && defined(__GNUC__)
 # define localtime_s(tm, time) _localtime64_s(tm, time)
-#endif /* defined(HAVE__GMTIME64_S) && defined(__GNUC__) */
+#endif /* defined(HAVE__LOCALTIME64_S) && defined(__GNUC__) */
 
 #define GRN_CTX_INITIALIZER(enc) \
   { GRN_SUCCESS, 0, enc, 0, GRN_LOG_NOTICE,\
