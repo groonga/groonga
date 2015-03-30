@@ -433,8 +433,8 @@ msgpack2json(msgpack_object *o, grn_ctx *ctx, grn_obj *buf)
     }
     GRN_TEXT_PUTC(ctx, buf, ']');
     break;
-  case MSGPACK_OBJECT_DOUBLE:
-    grn_text_ftoa(ctx, buf, o->via.dec);
+  case MSGPACK_OBJECT_FLOAT:
+    grn_text_ftoa(ctx, buf, MSGPACK_FLOAT(o));
     break;
   default:
     print_error("cannot handle this msgpack type.");

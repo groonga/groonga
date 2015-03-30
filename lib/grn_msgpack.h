@@ -20,18 +20,28 @@
 
 #ifdef GRN_WITH_MESSAGE_PACK
 # include <msgpack.h>
+
 # if MSGPACK_VERSION_MAJOR < 1
 typedef unsigned int msgpack_size_t;
+
 #  define msgpack_pack_str(packer, size) msgpack_pack_raw(packer, size)
 #  define msgpack_pack_str_body(packer, value, size) \
   msgpack_pack_raw_body(packer, value, size)
+
 #  define MSGPACK_OBJECT_STR MSGPACK_OBJECT_RAW
+#  define MSGPACK_OBJECT_FLOAT MSGPACK_OBJECT_DOUBLE
+
 #  define MSGPACK_STR_PTR(object)  (object)->via.raw.ptr
 #  define MSGPACK_STR_SIZE(object) (object)->via.raw.size
+
+#  define MSGPACK_FLOAT(object) (object)->via.dec
 # else /* MSGPACK_VERSION_MAJOR < 1 */
 typedef size_t msgpack_size_t;
+
 #  define MSGPACK_STR_PTR(object)  (object)->via.str.ptr
 #  define MSGPACK_STR_SIZE(object) (object)->via.str.size
+
+#  define MSGPACK_FLOAT(object) (object)->via.f64
 # endif /* MSGPACK_VERSION_MAJOR < 1 */
 #endif /* GRN_WITH_MESSAGE_PACK */
 
