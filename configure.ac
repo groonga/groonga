@@ -226,6 +226,10 @@ AC_CONFIG_FILES([
   lib/dat/Makefile
   lib/mrb/Makefile
   lib/mrb/scripts/Makefile
+  lib/mrb/scripts/command_line/Makefile
+  lib/mrb/scripts/context/Makefile
+  lib/mrb/scripts/initialize/Makefile
+  lib/mrb/scripts/logger/Makefile
   include/Makefile
   include/groonga/Makefile
   plugins/Makefile
