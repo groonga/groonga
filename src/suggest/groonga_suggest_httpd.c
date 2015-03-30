@@ -421,7 +421,9 @@ msgpack2json(msgpack_object *o, grn_ctx *ctx, grn_obj *buf)
     grn_text_ulltoa(ctx, buf, o->via.u64);
     break;
   case MSGPACK_OBJECT_STR:
-    grn_text_esc(ctx, buf, MSGPACK_STR_PTR(o), MSGPACK_STR_SIZE(o));
+    grn_text_esc(ctx, buf,
+                 MSGPACK_OBJECT_STR_PTR(o),
+                 MSGPACK_OBJECT_STR_SIZE(o));
     break;
   case MSGPACK_OBJECT_ARRAY:
     GRN_TEXT_PUTC(ctx, buf, '[');
@@ -434,7 +436,7 @@ msgpack2json(msgpack_object *o, grn_ctx *ctx, grn_obj *buf)
     GRN_TEXT_PUTC(ctx, buf, ']');
     break;
   case MSGPACK_OBJECT_FLOAT:
-    grn_text_ftoa(ctx, buf, MSGPACK_FLOAT(o));
+    grn_text_ftoa(ctx, buf, MSGPACK_OBJECT_FLOAT_VALUE(o));
     break;
   default:
     print_error("cannot handle this msgpack type.");
@@ -451,20 +453,20 @@ load_from_learner(msgpack_object *o, grn_ctx *ctx, grn_obj *cmd_buf)
     kv = &(o->via.map.ptr[0]);
     key = &(kv->key);
     value = &(kv->val);
-    if (key->type == MSGPACK_OBJECT_STR && MSGPACK_STR_SIZE(key) == 6 &&
-        !memcmp(MSGPACK_STR_PTR(key), CONST_STR_LEN("target"))) {
+    if (key->type == MSGPACK_OBJECT_STR && MSGPACK_OBJECT_STR_SIZE(key) == 6 &&
+        !memcmp(MSGPACK_OBJECT_STR_PTR(key), CONST_STR_LEN("target"))) {
       if (value->type == MSGPACK_OBJECT_STR) {
         int i;
         GRN_BULK_REWIND(cmd_buf);
         GRN_TEXT_PUTS(ctx, cmd_buf, "load --table ");
         GRN_TEXT_PUT(ctx, cmd_buf,
-                     MSGPACK_STR_PTR(value),
-                     MSGPACK_STR_SIZE(value));
+                     MSGPACK_OBJECT_STR_PTR(value),
+                     MSGPACK_OBJECT_STR_SIZE(value));
         grn_ctx_send(ctx, GRN_TEXT_VALUE(cmd_buf), GRN_TEXT_LEN(cmd_buf), GRN_CTX_MORE);
         grn_ctx_send(ctx, CONST_STR_LEN("["), GRN_CTX_MORE);
-        if (MSGPACK_STR_SIZE(value) > 5) {
-          if (!memcmp(MSGPACK_STR_PTR(value), CONST_STR_LEN("item_")) ||
-              !memcmp(MSGPACK_STR_PTR(value), CONST_STR_LEN("pair_"))) {
+        if (MSGPACK_OBJECT_STR_SIZE(value) > 5) {
+          if (!memcmp(MSGPACK_OBJECT_STR_PTR(value), CONST_STR_LEN("item_")) ||
+              !memcmp(MSGPACK_OBJECT_STR_PTR(value), CONST_STR_LEN("pair_"))) {
             char delim = '{';
             GRN_BULK_REWIND(cmd_buf);
             for (i = 1; i < o->via.map.size; i++) {
