@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010-2013 Brazil
+/* Copyright(C) 2010-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -177,35 +177,35 @@ log_send(struct evkeyvalq *output_headers, struct evbuffer *res_buf,
     msgpack_pack_map(&pk, cnt);
 
     c = 'i';
-    msgpack_pack_raw(&pk, 1);
-    msgpack_pack_raw_body(&pk, &c, 1);
+    msgpack_pack_str(&pk, 1);
+    msgpack_pack_str_body(&pk, &c, 1);
     l = strlen(client_id);
-    msgpack_pack_raw(&pk, l);
-    msgpack_pack_raw_body(&pk, client_id, l);
+    msgpack_pack_str(&pk, l);
+    msgpack_pack_str_body(&pk, client_id, l);
 
     c = 'q';
-    msgpack_pack_raw(&pk, 1);
-    msgpack_pack_raw_body(&pk, &c, 1);
+    msgpack_pack_str(&pk, 1);
+    msgpack_pack_str_body(&pk, &c, 1);
     l = strlen(query);
-    msgpack_pack_raw(&pk, l);
-    msgpack_pack_raw_body(&pk, query, l);
+    msgpack_pack_str(&pk, l);
+    msgpack_pack_str_body(&pk, query, l);
 
     c = 's';
-    msgpack_pack_raw(&pk, 1);
-    msgpack_pack_raw_body(&pk, &c, 1);
+    msgpack_pack_str(&pk, 1);
+    msgpack_pack_str_body(&pk, &c, 1);
     msgpack_pack_uint64(&pk, millisec);
 
     c = 'l';
-    msgpack_pack_raw(&pk, 1);
-    msgpack_pack_raw_body(&pk, &c, 1);
+    msgpack_pack_str(&pk, 1);
+    msgpack_pack_str_body(&pk, &c, 1);
     l = strlen(learn_target_name);
-    msgpack_pack_raw(&pk, l);
-    msgpack_pack_raw_body(&pk, learn_target_name, l);
+    msgpack_pack_str(&pk, l);
+    msgpack_pack_str_body(&pk, learn_target_name, l);
 
     if (submit_flag) {
       c = 't';
-      msgpack_pack_raw(&pk, 1);
-      msgpack_pack_raw_body(&pk, &c, 1);
+      msgpack_pack_str(&pk, 1);
+      msgpack_pack_str_body(&pk, &c, 1);
       msgpack_pack_true(&pk);
     }
     {
