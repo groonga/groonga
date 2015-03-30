@@ -2909,7 +2909,7 @@ main(int argc, char **argv)
     }
   }
 
-  is_alone_mode = \
+  is_alone_mode =
     !((flags & FLAG_MODE_CLIENT) ||
       (flags & FLAG_MODE_SERVER) ||
       (flags & FLAG_MODE_DAEMON));
