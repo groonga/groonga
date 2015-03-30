@@ -90,7 +90,7 @@ if(GRN_WITH_MRUBY AND NOT GRN_EMBED)
 
   read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mrb/scripts/command_line/sources.am
     COMMANE_LINE_RUBY_SCRIPTS)
-  string(REGEX REPLACE "([^;]+)" "mrb/scripts/\\1"
+  string(REGEX REPLACE "([^;]+)" "mrb/scripts/command_line/\\1"
     COMMANE_LINE_RUBY_SCRIPTS "${COMMANE_LINE_RUBY_SCRIPTS}")
   install(
     FILES ${COMMANE_LINE_RUBY_SCRIPTS}
@@ -98,7 +98,7 @@ if(GRN_WITH_MRUBY AND NOT GRN_EMBED)
 
   read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mrb/scripts/context/sources.am
     CONTEXT_RUBY_SCRIPTS)
-  string(REGEX REPLACE "([^;]+)" "mrb/scripts/\\1"
+  string(REGEX REPLACE "([^;]+)" "mrb/scripts/context/\\1"
     CONTEXT_RUBY_SCRIPTS "${CONTEXT_RUBY_SCRIPTS}")
   install(
     FILES ${CONTEXT_RUBY_SCRIPTS}
@@ -106,7 +106,7 @@ if(GRN_WITH_MRUBY AND NOT GRN_EMBED)
 
   read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mrb/scripts/initialize/sources.am
     INITIALIZE_RUBY_SCRIPTS)
-  string(REGEX REPLACE "([^;]+)" "mrb/scripts/\\1"
+  string(REGEX REPLACE "([^;]+)" "mrb/scripts/initialize/\\1"
     INITIALIZE_RUBY_SCRIPTS "${INITIALIZE_RUBY_SCRIPTS}")
   install(
     FILES ${INITIALIZE_RUBY_SCRIPTS}
@@ -114,7 +114,7 @@ if(GRN_WITH_MRUBY AND NOT GRN_EMBED)
 
   read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mrb/scripts/logger/sources.am
     LOGGER_RUBY_SCRIPTS)
-  string(REGEX REPLACE "([^;]+)" "mrb/scripts/\\1"
+  string(REGEX REPLACE "([^;]+)" "mrb/scripts/logger/\\1"
     LOGGER_RUBY_SCRIPTS "${LOGGER_RUBY_SCRIPTS}")
   install(
     FILES ${LOGGER_RUBY_SCRIPTS}
