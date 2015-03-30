@@ -17,6 +17,7 @@
 
 /* groonga origin headers */
 #include <grn_str.h>
+#include <grn_msgpack.h>
 
 #include <stdio.h>
 #include <signal.h>
@@ -38,7 +39,6 @@
 #include "zmq_compatible.h"
 #include <event.h>
 #include <evhttp.h>
-#include <msgpack.h>
 #include <groonga.h>
 #include <pthread.h>
 
@@ -421,7 +421,7 @@ msgpack2json(msgpack_object *o, grn_ctx *ctx, grn_obj *buf)
     grn_text_ulltoa(ctx, buf, o->via.u64);
     break;
   case MSGPACK_OBJECT_STR:
-    grn_text_esc(ctx, buf, o->via.raw.ptr, o->via.raw.size);
+    grn_text_esc(ctx, buf, MSGPACK_STR_PTR(o), MSGPACK_STR_SIZE(o));
     break;
   case MSGPACK_OBJECT_ARRAY:
     GRN_TEXT_PUTC(ctx, buf, '[');
@@ -446,19 +446,25 @@ load_from_learner(msgpack_object *o, grn_ctx *ctx, grn_obj *cmd_buf)
 {
   if (o->type == MSGPACK_OBJECT_MAP && o->via.map.size) {
     msgpack_object_kv *kv;
+    msgpack_object *key;
+    msgpack_object *value;
     kv = &(o->via.map.ptr[0]);
-    if (kv->key.type == MSGPACK_OBJECT_STR && kv->key.via.raw.size == 6 &&
-        !memcmp(kv->key.via.raw.ptr, CONST_STR_LEN("target"))) {
-      if (kv->val.type == MSGPACK_OBJECT_STR) {
+    key = &(kv->key);
+    value = &(kv->val);
+    if (key->type == MSGPACK_OBJECT_STR && MSGPACK_STR_SIZE(key) == 6 &&
+        !memcmp(MSGPACK_STR_PTR(key), CONST_STR_LEN("target"))) {
+      if (value->type == MSGPACK_OBJECT_STR) {
         int i;
         GRN_BULK_REWIND(cmd_buf);
         GRN_TEXT_PUTS(ctx, cmd_buf, "load --table ");
-        GRN_TEXT_PUT(ctx, cmd_buf, kv->val.via.raw.ptr, kv->val.via.raw.size);
+        GRN_TEXT_PUT(ctx, cmd_buf,
+                     MSGPACK_STR_PTR(value),
+                     MSGPACK_STR_SIZE(value));
         grn_ctx_send(ctx, GRN_TEXT_VALUE(cmd_buf), GRN_TEXT_LEN(cmd_buf), GRN_CTX_MORE);
         grn_ctx_send(ctx, CONST_STR_LEN("["), GRN_CTX_MORE);
-        if (kv->val.via.raw.size > 5) {
-          if (!memcmp(kv->val.via.raw.ptr, CONST_STR_LEN("item_")) ||
-              !memcmp(kv->val.via.raw.ptr, CONST_STR_LEN("pair_"))) {
+        if (MSGPACK_STR_SIZE(value) > 5) {
+          if (!memcmp(MSGPACK_STR_PTR(value), CONST_STR_LEN("item_")) ||
+              !memcmp(MSGPACK_STR_PTR(value), CONST_STR_LEN("pair_"))) {
             char delim = '{';
             GRN_BULK_REWIND(cmd_buf);
             for (i = 1; i < o->via.map.size; i++) {

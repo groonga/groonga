@@ -26,18 +26,7 @@
 # include "grn_com.h"
 #endif /* GRN_COM_H */
 
-#ifdef GRN_WITH_MESSAGE_PACK
-# include <msgpack.h>
-# if MSGPACK_VERSION_MAJOR < 1
-typedef unsigned int msgpack_size_t;
-#  define msgpack_pack_str(packer, size) msgpack_pack_raw(packer, size)
-#  define msgpack_pack_str_body(packer, value, size) \
-  msgpack_pack_raw_body(packer, value, size)
-#  define MSGPACK_OBJECT_STR MSGPACK_OBJECT_RAW
-# else /* MSGPACK_VERSION_MAJOR < 1 */
-typedef size_t msgpack_size_t;
-# endif /* MSGPACK_VERSION_MAJOR < 1 */
-#endif /* GRN_WITH_MESSAGE_PACK */
+#include "grn_msgpack.h"
 
 #ifdef GRN_WITH_MRUBY
 # include <mruby.h>
