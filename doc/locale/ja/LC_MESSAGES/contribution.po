@@ -411,7 +411,8 @@ msgstr ""
 msgid "リリース手順の前提条件は以下の通りです。"
 msgstr ""
 
-msgid "ビルド環境は Ubuntu 12.04 LTS(Precise Pangolin)"
+# b87cfa8718d645c9a94b620b081ec8b6
+msgid "ビルド環境は Debian GNU/Linux (sid)"
 msgstr ""
 
 msgid "コマンドラインの実行例はzsh"
@@ -444,9 +445,10 @@ msgid ""
 "ケージを示します。"
 msgstr ""
 
+# 5f045f035e9f427d8f1deac621ace9c0
 msgid ""
-"なお、ビルド環境としては Ubuntu 12.04 LTS(Precise Pangolin)を前提として説明し"
-"ているため、その他の環境では適宜読み替えて下さい。::"
+"なお、ビルド環境としては Debian GNU/Linux (sid)を前提として説明しているため、"
+"その他の環境では適宜読み替えて下さい。::"
 msgstr ""
 
 msgid ""
@@ -1252,8 +1254,9 @@ msgstr ""
 msgid "ビルドを並列化したい"
 msgstr ""
 
+# 541875d77b9f44b48231abb54fe9a62a
 msgid ""
-"make build PALALLES=yesを指定するとchroot環境で並列にビルドを 実行できます。"
+"make build PALALLEL=yesを指定するとchroot環境で並列にビルドを 実行できます。"
 msgstr ""
 
 msgid "特定の環境向けのみビルドしたい"

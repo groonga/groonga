@@ -20,11 +20,63 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 5.0.1 - 2015/03/29"
+#, fuzzy
+msgid "Release 5.0.2 - 2015/03/31"
 msgstr "5.0.1リリース - 2015/03/29"
+
+# f4c4ce262559449b9e9f757a0c59ef65
+#, fuzzy
+msgid "It's a bug fix release of 5.0.1."
+msgstr "4.0.9のバグフィックスリリースです。"
 
 msgid "Improvements"
 msgstr "改良"
+
+# 16a023433f264d1ba2542bd0af4d7cec
+msgid "Supported MessagePack 1.0.1. [Reported by Hiroshi Hatake]"
+msgstr ""
+
+# 2da0e32a3bf84c15ab24d865a4088ead
+msgid ""
+"[logical_range_filter] Disabled range index by default. It's enabled when "
+"you set the enviromnent variable `GRN_LOGICAL_RANGE_FILTER_ENABLED` to \"yes"
+"\"."
+msgstr ""
+
+msgid "Fixes"
+msgstr "修正"
+
+# f50307e80cf5400db0aefe66a5421f24
+msgid ""
+"Fixed a regression bug that JSONP doesn't work. It was introduced in Groonga "
+"4.1.1."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"[windows] Fixed a bug that crash on x86 for Groonga 5.0.1. [groonga-"
+"dev,03131] [Reported by Atsushi Shinoda]"
+msgstr ""
+"デーモン化する課程が OS Xでは動作しない不具合を修正。[groonga-dev,01440] [小"
+"西さんが報告]"
+
+# 4f7c6209999a4dccbcfe53cbfcd1101f
+msgid ""
+"Fixed a crash bug that libedit is not properly initialized. The problem is "
+"fixed in the environment such as CentOS 7."
+msgstr ""
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "Atsushi Shinoda"
+msgstr "篠田さん"
+
+msgid "Hiroshi Hatake"
+msgstr "畑ヶさん"
+
+msgid "Release 5.0.1 - 2015/03/29"
+msgstr "5.0.1リリース - 2015/03/29"
 
 msgid ""
 "[:doc:`/reference/commands/logical_range_filter`] Supported filter and sort."
@@ -298,9 +350,6 @@ msgstr ""
 "[:ref:`token-filter-stop-word`] :ref:`offline-index-construction` をサポート"
 "しました。[GitHub#296] [村上さんがパッチ提供]"
 
-msgid "Fixes"
-msgstr "修正"
-
 # 18334ca249b9411481656fa87446364e
 msgid ""
 "Fixed not to use obsolete ``--address`` parameter in the default groonga."
@@ -382,9 +431,6 @@ msgstr ""
 ":ref:`select-match-columns` に ``Lexicon.index.source_column_name`` を指定し"
 "ても動作しない不具合を修正しました。``source_column_name`` として指定されたカ"
 "ラムが2つ以上のインデックスをもつ場合に発生します。 [村上さんが報告]"
-
-msgid "Thanks"
-msgstr "感謝"
 
 # 62c07e380a964062aab7c5e95ee2c6e5
 msgid "Masatoshi Teruya"
@@ -4635,9 +4681,6 @@ msgstr ""
 "を取得できない問題を修正しました。 [GitHub ranguba/rroonga#38] [結城さんが報"
 "告]"
 
-msgid "Hiroshi Hatake"
-msgstr "畑ヶさん"
-
 # b5f4802974b7403792f307c73df4d219
 msgid "akira yamada"
 msgstr "やまだあきらさん"
@@ -4852,9 +4895,6 @@ msgid ""
 msgstr ""
 "``\"DDL:set_token_filters\"`` のログに ``\",\"`` が抜けていたのを修正しまし"
 "た。 [村上さんが報告]"
-
-msgid "Atsushi Shinoda"
-msgstr "篠田さん"
 
 msgid "Release 4.0.7 - 2014/10/29"
 msgstr "4.0.7リリース - 2014/10/29"
