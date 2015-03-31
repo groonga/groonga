@@ -81,4 +81,3 @@ specs: tmp/centos/$(PACKAGE).spec
 tmp/centos/$(PACKAGE).spec: $(builddir)/../rpm/centos/$(PACKAGE).spec
 	mkdir -p tmp/centos
 	cp $(builddir)/../rpm/centos/$(PACKAGE).spec tmp/centos/
-	cp patches/*.patch tmp/
