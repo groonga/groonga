@@ -154,13 +154,13 @@ Makefileを生成するためにconfigureスクリプトを実行します。
 リリース用にビルドするためには以下のオプションを指定してconfigureを実行します。::
 
     % ./configure \
-          CFLAGS="-O0 -ggdb3" \
-          CXXFLAGS="-O0 -ggdb3" \
+          --with-debug \
           --prefix=/tmp/local \
-          --with-rsync-path="packages@packages.groonga.org:public" \
+          --with-launchpad-uploader-pgp-key=(Launchpadに登録したkeyID) \
           --with-groonga-org-path=$HOME/work/groonga/groonga.org \
           --enable-document \
-          --with-ruby19 \
+          --with-ruby \
+          --enable-mruby \
           --with-cutter-source-path=$HOME/work/cutter/cutter
 
 configureオプションである--with-groonga-org-pathにはGroongaのウェブサイトのリポジトリをcloneした場所を指定します。
@@ -170,13 +170,13 @@ configureオプションである--with-cutter-source-pathにはcutterのソー�
 以下のようにGroongaのソースコードをcloneした先からの相対パスを指定することもできます。::
 
     % ./configure \
-          CFLAGS="-O0 -ggdb3" \
-          CXXFLAGS="-O0 -ggdb3" \
+          --with-debug \
           --prefix=/tmp/local \
-          --with-rsync-path="packages@packages.groonga.org:public" \
+          --with-launchpad-uploader-pgp-key=(Launchpadに登録したkeyID) \
           --with-groonga-org-path=../groonga.org \
           --enable-document \
-          --with-ruby19 \
+          --with-ruby \
+          --enable-mruby \
           --with-cutter-source-path=../../cutter/cutter
 
 あらかじめpackagesユーザでpackages.groonga.orgにsshログインできることを確認しておいてください。
