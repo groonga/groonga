@@ -9,7 +9,7 @@
 
 Name:		groonga
 Version:	@VERSION@
-Release:	2%{?dist}
+Release:	1%{?dist}
 Summary:	An Embeddable Fulltext Search Engine
 
 Group:		Applications/Text
@@ -411,6 +411,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Tue Mar 31 2015 Masafumi Yokoyama <yokoyama@clear-code.com> - 5.0.2-1
+- new upstream release.
+
 * Mon Mar 30 2015 HAYASHI Kentaro <hayashi@clear-code.com> - 5.0.1-2
 - fix crash bug in standalone mode.
   added fix-crash-by-missing-libedit-initialization.patch
