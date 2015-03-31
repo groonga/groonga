@@ -19,8 +19,8 @@ Improvements
 
 * Supported MessagePack 1.0.1. [Reported by Hiroshi Hatake]
 * [logical_range_filter] Disabled range index by default. It's enabled
-  when you set the enviromnent variable `GRN_LOGICAL_RANGE_FILTER_ENABLED`
-  to "yes".
+  when you set the enviromnent variable ``GRN_LOGICAL_RANGE_FILTER_ENABLED``
+  to ``yes``.
 
 Fixes
 ^^^^^
