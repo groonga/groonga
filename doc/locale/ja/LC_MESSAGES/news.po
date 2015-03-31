@@ -67,7 +67,9 @@ msgstr ""
 # 6180221e758b481ebd900709a5e6e761
 msgid ""
 "Added :c:func:`grn_ctx_get_all_tables()`. [Suggested by Masatoshi Teruya]"
-msgstr ":c:func:`grn_ctx_get_all_tables()` を追加しました。 [Masatoshi Teruyaさんが提案]"
+msgstr ""
+":c:func:`grn_ctx_get_all_tables()` を追加しました。 [Masatoshi Teruyaさんが提"
+"案]"
 
 # f30fb4fb9e1448519a27faf9a28f759e
 msgid ""
