@@ -18124,12 +18124,3 @@ msgstr ""
 
 msgid "Object型はv1.2でサポートされます。"
 msgstr ""
-
-#~ msgid "user 'A' commented out."
-#~ msgstr "ユーザー'A'のコメント"
-
-#~ msgid "``request_cancel`` command is an experimental feature."
-#~ msgstr "``request_cancel`` コマンドは実験的な機能です。"
-
-#~ msgid "Registered plugins can't be removed for now."
-#~ msgstr "今のところ、登録したプラグインは削除できません。"
