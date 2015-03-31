@@ -255,6 +255,8 @@ module Groonga
         end
 
         def use_range_index?(range_index)
+          return false unless ENV["GRN_LOGICAL_RANGE_FILTER_ENABLED"] == "yes"
+
           required_n_records = @context.current_offset + @context.current_limit
           max_n_records = @table.size
           if max_n_records <= required_n_records
