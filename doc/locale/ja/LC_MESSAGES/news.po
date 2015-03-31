@@ -8,33 +8,33 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-03-27 23:52+0900\n"
-"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"PO-Revision-Date: 2015-03-31 16:06+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"POT-Creation-Date: \n"
+"X-Generator: Poedit 1.6.10\n"
 
 msgid "News"
 msgstr "お知らせ"
 
-#, fuzzy
 msgid "Release 5.0.2 - 2015/03/31"
-msgstr "5.0.1リリース - 2015/03/29"
+msgstr "5.0.2リリース - 2015/03/31"
 
 # f4c4ce262559449b9e9f757a0c59ef65
-#, fuzzy
 msgid "It's a bug fix release of 5.0.1."
-msgstr "4.0.9のバグフィックスリリースです。"
+msgstr "5.0.1のバグフィックスリリースです。"
 
 msgid "Improvements"
 msgstr "改良"
 
 # 16a023433f264d1ba2542bd0af4d7cec
 msgid "Supported MessagePack 1.0.1. [Reported by Hiroshi Hatake]"
-msgstr ""
+msgstr "MessagePack 1.0.1をサポート。 [畑ケさんが報告]"
 
 # 2da0e32a3bf84c15ab24d865a4088ead
 msgid ""
@@ -42,6 +42,8 @@ msgid ""
 "you set the enviromnent variable `GRN_LOGICAL_RANGE_FILTER_ENABLED` to \"yes"
 "\"."
 msgstr ""
+"[logical_range_filter] 範囲検索をデフォルトで無効にした。 環境変数"
+"`GRN_LOGICAL_RANGE_FILTER_ENABLED` に \"yes\" を設定すれば有効になる。"
 
 msgid "Fixes"
 msgstr "修正"
@@ -51,20 +53,22 @@ msgid ""
 "Fixed a regression bug that JSONP doesn't work. It was introduced in Groonga "
 "4.1.1."
 msgstr ""
+"JSONPが動作していなかった不具合を修正。これはGroonga 4.1.1で入った不具合。"
 
-#, fuzzy
 msgid ""
 "[windows] Fixed a bug that crash on x86 for Groonga 5.0.1. [groonga-"
 "dev,03131] [Reported by Atsushi Shinoda]"
 msgstr ""
-"デーモン化する課程が OS Xでは動作しない不具合を修正。[groonga-dev,01440] [小"
-"西さんが報告]"
+"Groonga 5.0.1がx86環境でクラッシュする不具合を修正。[groonga-dev,03131] [篠田"
+"さんが報告]"
 
 # 4f7c6209999a4dccbcfe53cbfcd1101f
 msgid ""
 "Fixed a crash bug that libedit is not properly initialized. The problem is "
 "fixed in the environment such as CentOS 7."
 msgstr ""
+"libeditが正しく初期化されない不具合を修正。CentOS 7などの環境で問題が解消され"
+"る。"
 
 msgid "Thanks"
 msgstr "感謝"
@@ -73,7 +77,7 @@ msgid "Atsushi Shinoda"
 msgstr "篠田さん"
 
 msgid "Hiroshi Hatake"
-msgstr "畑ヶさん"
+msgstr "畑ケさん"
 
 msgid "Release 5.0.1 - 2015/03/29"
 msgstr "5.0.1リリース - 2015/03/29"
