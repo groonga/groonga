@@ -53,7 +53,7 @@ Improvements
   to use Groonga as library.
 * [incompatible] Changed internal type of ``_score`` to floating point
   number from 32bit integer number. This is incompatible change for DB
-  API users. This *isn't* incompatible change for query API users. It.
+  API users. This *isn't* incompatible change for query API users. It
   means that users who just use :doc:`/reference/commands/select`
   aren't affected. Use the following code that works with both older
   and newer Groonga:
