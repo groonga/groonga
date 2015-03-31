@@ -338,7 +338,7 @@ Red Hat系パッケージのビルド
 Groongaのpackages/yumサブディレクトリに移動して、以下のコマンドを実行します。::
 
     % cd packages/yum
-    % make build PALALLES=yes
+    % make build PALALLEL=yes
 
 make build PALALLEL=yesコマンドを実行すると、ディストリビューションのリリースとアーキテクチャの組み合わせでビルドを平行して行うことができます。
 
@@ -638,7 +638,7 @@ $GROONGA_CLONE_DIRにて以下のコマンドを実行します。::
 ビルドを並列化したい
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-make build PALALLES=yesを指定するとchroot環境で並列にビルドを
+make build PALALLEL=yesを指定するとchroot環境で並列にビルドを
 実行できます。
 
 
