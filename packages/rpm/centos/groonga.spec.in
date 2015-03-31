@@ -16,7 +16,6 @@ Group:		Applications/Text
 License:	LGPLv2
 URL:		http://groonga.org/
 Source0:	http://packages.groonga.org/source/groonga/groonga-%{version}.tar.gz
-Patch0:         fix-crash-by-missing-libedit-initialization.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
 %if %{use_mecab}
@@ -172,7 +171,6 @@ Munin plugins for Groonga
 %prep
 #% define optflags -O0
 %setup -q
-%patch0 -p1
 
 
 %build
