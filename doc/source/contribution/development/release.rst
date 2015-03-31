@@ -10,7 +10,7 @@
 
 リリース手順の前提条件は以下の通りです。
 
-* ビルド環境は Ubuntu 12.04 LTS(Precise Pangolin)
+* ビルド環境は Debian GNU/Linux (sid)
 * コマンドラインの実行例はzsh
 
 作業ディレクトリ例は以下を使用します。
@@ -27,9 +27,9 @@
 以下にGroongaのリリース作業を行うために事前にインストール
 しておくべきパッケージを示します。
 
-なお、ビルド環境としては Ubuntu 12.04 LTS(Precise Pangolin)を前提として説明しているため、その他の環境では適宜読み替えて下さい。::
+なお、ビルド環境としては Debian GNU/Linux (sid)を前提として説明しているため、その他の環境では適宜読み替えて下さい。::
 
-    % sudo apt-get install -V debootstrap createrepo rpm mercurial python-docutils python-jinja2 ruby1.9.1-full mingw-w64 g++-mingw-w64 mecab libmecab-dev nsis gnupg2
+    % sudo apt-get install -V debootstrap createrepo rpm mercurial python-docutils python-jinja2 ruby-full mingw-w64 g++-mingw-w64 mecab libmecab-dev nsis gnupg2
 
 rinseのバージョンが古いとCentOS 5/6パッケージのビルドを行うことができません。
 別途debパッケージを以下のコマンドを実行して最新版をインストールします。::
@@ -38,7 +38,7 @@ rinseのバージョンが古いとCentOS 5/6パッケージのビルドを行�
 
 また、rubyのrakeパッケージを以下のコマンドによりインストールします。::
 
-    % sudo gem1.9.1 install rake
+    % sudo gem install rake
 
 パッケージ署名用秘密鍵のインポート
 ------------------------------------------------------------
