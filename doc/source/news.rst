@@ -7,6 +7,37 @@
 News
 ====
 
+.. _release-5-0-2:
+
+Release 5.0.2 - 2015/03/31
+--------------------------
+
+It's a bug fix release of 5.0.1.
+
+Improvements
+^^^^^^^^^^^^
+
+* Supported MessagePack 1.0.1. [Reported by Hiroshi Hatake]
+* [logical_range_filter] Disabled range index by default. It's enabled
+  when you set the enviromnent variable `GRN_LOGICAL_RANGE_FILTER_ENABLED`
+  to "yes".
+
+Fixes
+^^^^^
+
+* Fixed a regression bug that JSONP doesn't work. It was introduced
+  in Groonga 4.1.1.
+* [windows] Fixed a bug that crash on x86 for Groonga 5.0.1.
+  [groonga-dev,03131] [Reported by Atsushi Shinoda]
+* Fixed a crash bug that libedit is not properly initialized. The
+  problem is fixed in the environment such as CentOS 7.
+
+Thanks
+^^^^^^
+
+* Atsushi Shinoda
+* Hiroshi Hatake
+
 .. _release-5-0-1:
 
 Release 5.0.1 - 2015/03/29
@@ -22,7 +53,7 @@ Improvements
   to use Groonga as library.
 * [incompatible] Changed internal type of ``_score`` to floating point
   number from 32bit integer number. This is incompatible change for DB
-  API users. This *isn't* incompatible change for query API users. It
+  API users. This *isn't* incompatible change for query API users. It.
   means that users who just use :doc:`/reference/commands/select`
   aren't affected. Use the following code that works with both older
   and newer Groonga:
