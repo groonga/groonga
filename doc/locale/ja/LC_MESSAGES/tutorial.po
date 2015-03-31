@@ -2366,4 +2366,3 @@ msgid ""
 msgstr ""
 "経緯度が指定の矩形領域内であるかどうかを判定する :doc:`/reference/functions/"
 "geo_in_rectangle` も存在します。"
-
