@@ -274,7 +274,7 @@ module Groonga
             if @filter
               create_expression(@table) do |expression|
                 build_expression_all(expression)
-                estimated_n_records = expression.estimate_size
+                estimated_n_records = expression.estimate_size(@table)
               end
             else
               estimated_n_records = max_n_records
@@ -282,17 +282,17 @@ module Groonga
           when :partial_min
             create_expression(@table) do |expression|
                 build_expression_partial_min(expression)
-              estimated_n_records = expression.estimate_size
+              estimated_n_records = expression.estimate_size(@table)
             end
           when :partial_max
             create_expression(@table) do |expression|
               build_expression_partial_max(expression)
-              estimated_n_records = expression.estimate_size
+              estimated_n_records = expression.estimate_size(@table)
             end
           when :partial_min_and_max
             create_expression(@table) do |expression|
               build_expression_partial_min_and_max(expression)
-              estimated_n_records = expression.estimate_size
+              estimated_n_records = expression.estimate_size(@table)
             end
           end
 
