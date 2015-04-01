@@ -4131,7 +4131,8 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
             c->pc.pos = 0;
             if (c->pc.rid < c->min) {
               if (c->curr_chunk < c->nchunks) {
-                if (c->pc.rid + c->cinfo[c->curr_chunk + 1].dgap < c->min) {
+                uint32_t next_dgap = c->cinfo[c->curr_chunk + 1].dgap;
+                if (next_dgap > 0 && c->pc.rid + next_dgap < c->min) {
                   c->crp = c->cdp + c->cdf;
                 }
               }
