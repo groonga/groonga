@@ -26,6 +26,7 @@
 
 #include "mrb_converter.h"
 #include "mrb_index_column.h"
+#include "mrb_operator.h"
 #include "mrb_options.h"
 
 static struct mrb_data_type mrb_grn_index_column_type = {
@@ -93,7 +94,7 @@ mrb_grn_index_column_estimate_size_for_query(mrb_state *mrb, mrb_value self)
 
     mrb_mode = grn_mrb_options_get_lit(mrb, mrb_options, "mode");
     if (!mrb_nil_p(mrb_mode)) {
-      optarg.mode = mrb_fixnum(mrb_mode);
+      optarg.mode = grn_mrb_value_to_operator(mrb, mrb_mode);
     }
   }
 
