@@ -50,59 +50,54 @@ module Groonga
 
     def estimate_data(data)
       search_index = data.search_indexes.first
+      return @table_size if search_index.nil?
+
+      index_column = resolve_index_column(search_index.index_column,
+                                          data.op)
+      return @table_size if index_column.nil?
+
       size = nil
-      if search_index
-        case data.op
-        when Operator::MATCH
-          size = estimate_match(data, search_index)
-        when Operator::REGEXP
-          size = estimate_regexp(data, search_index)
-        when Operator::EQUAL
-          size = estimate_equal(data, search_index)
-        when Operator::LESS,
-             Operator::LESS_EQUAL,
-             Operator::GREATER,
-             Operator::GREATER_EQUAL
-          size = estimate_range(data, search_index)
-        when Operator::CALL
-          procedure = data.args.first
-          if procedure.is_a?(Procedure) and procedure.name == "between"
-            size = estimate_between(data, search_index)
-          end
+      case data.op
+      when Operator::MATCH
+        size = estimate_match(data, index_column)
+      when Operator::REGEXP
+        size = estimate_regexp(data, index_column)
+      when Operator::EQUAL
+        size = estimate_equal(data, index_column)
+      when Operator::LESS,
+           Operator::LESS_EQUAL,
+           Operator::GREATER,
+           Operator::GREATER_EQUAL
+        size = estimate_range(data, index_column)
+      when Operator::CALL
+        procedure = data.args.first
+        if procedure.is_a?(Procedure) and procedure.name == "between"
+          size = estimate_between(data, index_column)
         end
       end
       size || @table_size
     end
 
-    def estimate_match(data, search_index)
-      index_column = search_index.index_column
-      if index_column.is_a?(Accessor)
-        # TODO
-        return nil
-      end
-
-      index_column.estimate_size(:query => data.query.value)
-    end
-
-    def estimate_regexp(data, search_index)
-      index_column = search_index.index_column
+    def resolve_index_column(index_column, operator)
       while index_column.is_a?(Accessor)
-        index_info = index_column.find_index(Operator::REGEXP)
+        index_info = index_column.find_index(operator)
         return nil if index_info.nil?
         index_column = index_info.index
       end
 
-      index_column.estimate_size(:query => data.query.value,
-                                 :mode => Operator::REGEXP)
+      index_column
     end
 
-    def estimate_equal(data, search_index)
-      index_column = search_index.index_column
-      if index_column.is_a?(Accessor)
-        # TODO
-        return nil
-      end
+    def estimate_match(data, index_column)
+      index_column.estimate_size(:query => data.query.value)
+    end
 
+    def estimate_regexp(data, index_column)
+      index_column.estimate_size(:query => data.query.value,
+                                 :mode => data.op)
+    end
+
+    def estimate_equal(data, index_column)
       lexicon = index_column.lexicon
       term_id = lexicon[data.query]
       return 0 if term_id.nil?
@@ -110,13 +105,7 @@ module Groonga
       index_column.estimate_size(:term_id => term_id)
     end
 
-    def estimate_range(data, search_index)
-      index_column = search_index.index_column
-      if index_column.is_a?(Accessor)
-        # TODO
-        return nil
-      end
-
+    def estimate_range(data, index_column)
       lexicon = index_column.lexicon
       value = data.query.value
       options = {}
@@ -139,13 +128,7 @@ module Groonga
       end
     end
 
-    def estimate_between(data, search_index)
-      index_column = search_index.index_column
-      if index_column.is_a?(Accessor)
-        # TODO
-        return nil
-      end
-
+    def estimate_between(data, index_column)
       lexicon = index_column.lexicon
       _, _, min, min_border, max, max_border = data.args
       options = {
