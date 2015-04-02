@@ -5568,7 +5568,9 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
                              token_cursor->curr_size, token_cursor->pos, ef & EX_PREFIX);
         break;
       }
-      if (!ti) { goto exit; }
+      if (!ti) {
+        goto exit;
+      }
       tis[(*n)++] = ti;
     }
     rc = GRN_SUCCESS;
