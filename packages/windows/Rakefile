@@ -291,6 +291,34 @@ namespace :build do
     end
   end
 
+  desc "Install Groonga Admin into #{dist_dir}/."
+  task :groonga_admin do
+    tmp_dir = Pathname.new("tmp/groonga-admin")
+    rm_rf(tmp_dir)
+    mkdir_p(tmp_dir)
+    groonga_admin_version = "0.9.3"
+    groonga_admin_base = "groonga-admin-#{groonga_admin_version}"
+    groonga_admin_tar_gz_url_base =
+      "http://packages.groonga.org/source/groonga-admin"
+    groonga_admin_tar_gz_url =
+      "#{groonga_admin_tar_gz_url_base}/#{groonga_admin_base}.tar.gz"
+    groonga_admin_tar_gz = download(groonga_admin_tar_gz_url, download_dir)
+    Dir.chdir(tmp_dir) do
+      sh("tar", "xzf", groonga_admin_tar_gz.to_s) or exit(false)
+    end
+    Dir.chdir(tmp_dir + groonga_admin_base) do
+      admin_path = binary_dir + "share/groonga/html/admin"
+      mv("#{admin_path}",
+         "#{admin_path}.old")
+      mv("html", "#{admin_path}")
+
+      groonga_admin_license_dir = license_dir + "groonga-admin"
+      mkdir_p(groonga_admin_license_dir)
+      files = ["README.md", "LICENSE"]
+      cp(files, groonga_admin_license_dir)
+    end
+  end
+
   task :clean do
     rm_rf(dist_dir)
   end
@@ -340,6 +368,7 @@ build_dependencies = [
   "build:mecab",
   "build:mecab_dict",
   "build:groonga",
+  "build:groonga_admin",
   "build:post",
 ]
 desc "Build MeCab and groonga and install them into #{dist_dir}/."
