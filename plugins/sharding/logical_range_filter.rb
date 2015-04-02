@@ -230,7 +230,10 @@ module Groonga
           end
 
           threshold = @context.threshold
-          if threshold <= 0
+          if threshold <= 0.0
+            return true
+          end
+          if threshold >= 1.0
             return false
           end
 
