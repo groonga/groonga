@@ -478,6 +478,7 @@ typedef struct {
   } get;
   grn_bool is_begin;
   grn_bool is_end;
+  grn_bool is_first_token;
   grn_bool is_overlapping;
   const char *next;
   const char *end;
@@ -515,6 +516,7 @@ regexp_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   tokenizer->is_begin = GRN_TRUE;
   tokenizer->is_end   = GRN_FALSE;
+  tokenizer->is_first_token = GRN_TRUE;
   tokenizer->is_overlapping = GRN_FALSE;
 
   grn_string_get_normalized(ctx, tokenizer->query->normalized_query,
@@ -659,14 +661,30 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
   tokenizer->is_overlapping = (n_characters > 1);
 
-  if (tokenizer->next == end) {
-    tokenizer->is_end = GRN_TRUE;
-    if (mode == GRN_TOKEN_GET) {
-      if (!tokenizer->get.have_end) {
+  if (mode == GRN_TOKEN_GET) {
+    if ((end - tokenizer->next) < ngram_unit) {
+      if (tokenizer->get.have_end) {
+        if (tokenizer->next == end) {
+          tokenizer->is_end = GRN_TRUE;
+        }
+        if (status & GRN_TOKEN_UNMATURED) {
+          if (tokenizer->is_first_token) {
+            status |= GRN_TOKEN_FORCE_PREFIX;
+          } else {
+            status |= GRN_TOKEN_SKIP;
+          }
+        }
+      } else {
+        tokenizer->is_end = GRN_TRUE;
         status |= GRN_TOKEN_LAST | GRN_TOKEN_REACH_END;
-      } else if (status & GRN_TOKEN_UNMATURED) {
-        status |= GRN_TOKEN_FORCE_PREFIX;
+        if (status & GRN_TOKEN_UNMATURED) {
+          status |= GRN_TOKEN_FORCE_PREFIX;
+        }
       }
+    }
+  } else {
+    if (tokenizer->next == end) {
+      tokenizer->is_end = GRN_TRUE;
     }
   }
 
@@ -675,6 +693,8 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                            GRN_TEXT_VALUE(buffer),
                            GRN_TEXT_LEN(buffer),
                            status);
+  tokenizer->is_first_token = GRN_FALSE;
+
   return NULL;
 }
 
