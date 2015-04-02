@@ -535,10 +535,10 @@ cloneしたWebサイトのソースに対して以下のファイルを新規追
 * groonga.org/ja/_post/(リリース日)-release.textile
 
 
-編集した内容をpushする前に確認したい場合にはjekyllおよびRedClothが必要です。
+編集した内容をpushする前に確認したい場合にはjekyllおよびRedCloth、JavaScript interpreter（therubyracer、Node.jsなど）が必要です。
 インストールするには以下のコマンドを実行します。::
 
-    % sudo gem install jekyll RedCloth
+    % sudo gem install jekyll RedCloth therubyracer
 
 jekyllのインストールを行ったら、以下のコマンドでローカルにwebサーバを起動します。::
 
