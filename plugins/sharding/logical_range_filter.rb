@@ -152,6 +152,10 @@ module Groonga
           @target_range = @context.enumerator.target_range
 
           @cover_type = @target_range.cover_type(@shard_range)
+
+          @expression_builder = RangeExpressionBuilder.new(@shard_key,
+                                                           @target_range,
+                                                           @filter)
         end
 
         def execute
@@ -175,7 +179,7 @@ module Groonga
                               nil, nil)
             else
               filter_table do |expression|
-                build_expression_partial_min(expression)
+                @expression_builder.build_partial_min(expression)
               end
             end
           when :partial_max
@@ -185,7 +189,7 @@ module Groonga
                               @target_range.max, @target_range.max_border)
             else
               filter_table do |expression|
-                build_expression_partial_max(expression)
+                @expression_builder.build_partial_max(expression)
               end
             end
           when :partial_min_and_max
@@ -195,65 +199,13 @@ module Groonga
                               @target_range.max, @target_range.max_border)
             else
               filter_table do |expression|
-                build_expression_partial_min_and_max(expression)
+                @expression_builder.build_partial_min_and_max(expression)
               end
             end
           end
         end
 
         private
-        def build_expression_all(expression)
-          expression.parse(@filter)
-        end
-
-        def build_expression_partial_min(expression)
-          expression.append_object(@shard_key, Operator::PUSH, 1)
-          expression.append_operator(Operator::GET_VALUE, 1)
-          expression.append_constant(@target_range.min, Operator::PUSH, 1)
-          if @target_range.min_border == :include
-            expression.append_operator(Operator::GREATER_EQUAL, 2)
-          else
-            expression.append_operator(Operator::GREATER, 2)
-          end
-          if @filter
-            expression.parse(@filter)
-            expression.append_operator(Operator::AND, 2)
-          end
-        end
-
-        def build_expression_partial_max(expression)
-          expression.append_object(@shard_key, Operator::PUSH, 1)
-          expression.append_operator(Operator::GET_VALUE, 1)
-          expression.append_constant(@target_range.max, Operator::PUSH, 1)
-          if @target_range.max_border == :include
-            expression.append_operator(Operator::LESS_EQUAL, 2)
-          else
-            expression.append_operator(Operator::LESS, 2)
-          end
-          if @filter
-            expression.parse(@filter)
-            expression.append_operator(Operator::AND, 2)
-          end
-        end
-
-        def build_expression_partial_min_and_max(expression)
-          between = Groonga::Context.instance["between"]
-          expression.append_object(between, Operator::PUSH, 1)
-          expression.append_object(@shard_key, Operator::PUSH, 1)
-          expression.append_operator(Operator::GET_VALUE, 1)
-          expression.append_constant(@target_range.min, Operator::PUSH, 1)
-          expression.append_constant(@target_range.min_border,
-                                     Operator::PUSH, 1)
-          expression.append_constant(@target_range.max, Operator::PUSH, 1)
-          expression.append_constant(@target_range.max_border,
-                                     Operator::PUSH, 1)
-          expression.append_operator(Operator::CALL, 5)
-          if @filter
-            expression.parse(@filter)
-            expression.append_operator(Operator::AND, 2)
-          end
-        end
-
         def use_range_index?(range_index)
           required_n_records = @context.current_offset + @context.current_limit
           max_n_records = @table.size
@@ -271,7 +223,7 @@ module Groonga
           when :all
             if @filter
               create_expression(@table) do |expression|
-                build_expression_all(expression)
+                @expression_builder.build_all(expression)
                 estimated_n_records = expression.estimate_size(@table)
               end
             else
@@ -279,17 +231,17 @@ module Groonga
             end
           when :partial_min
             create_expression(@table) do |expression|
-                build_expression_partial_min(expression)
+              @expression_builder.build_partial_min(expression)
               estimated_n_records = expression.estimate_size(@table)
             end
           when :partial_max
             create_expression(@table) do |expression|
-              build_expression_partial_max(expression)
+              @expression_builder.build_partial_max(expression)
               estimated_n_records = expression.estimate_size(@table)
             end
           when :partial_min_and_max
             create_expression(@table) do |expression|
-              build_expression_partial_min_and_max(expression)
+              @expression_builder.build_partial_min_and_max(expression)
               estimated_n_records = expression.estimate_size(@table)
             end
           end
@@ -322,7 +274,7 @@ module Groonga
                               nil, nil)
             else
               filter_table do |expression|
-                build_expression_all(expression)
+                @expression_builder.build_all(expression)
               end
             end
           end
