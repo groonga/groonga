@@ -394,8 +394,8 @@ Debian系もしくはRed Hat系の場合には本番環境へとアップロー�
 
 ここでは以下のようにrubyを利用してリポジトリをwebサーバ経由で参照できるようにします。::
 
-    % ruby1.9.1 -run -e httpd -- packages/yum/repositories (yumの場合)
-    % ruby1.9.1 -run -e httpd -- packages/apt/repositories (aptの場合)
+    % ruby -run -e httpd -- packages/yum/repositories (yumの場合)
+    % ruby -run -e httpd -- packages/apt/repositories (aptの場合)
 
 grntestの準備
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -538,7 +538,7 @@ cloneしたWebサイトのソースに対して以下のファイルを新規追
 編集した内容をpushする前に確認したい場合にはjekyllおよびRedClothが必要です。
 インストールするには以下のコマンドを実行します。::
 
-    % sudo gem1.9.1 install jekyll RedCloth
+    % sudo gem install jekyll RedCloth
 
 jekyllのインストールを行ったら、以下のコマンドでローカルにwebサーバを起動します。::
 
