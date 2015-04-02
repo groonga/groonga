@@ -39,7 +39,7 @@ module Groonga
           if filter.nil?
             return table.size
           else
-            return filtered_count_n_records(table, filter) do |expression|
+            return filtered_count_n_records(table) do |expression|
               expression_builder.build_all(expression)
             end
           end
@@ -47,21 +47,21 @@ module Groonga
 
         case cover_type
         when :partial_min
-          filtered_count_n_records(table, filter) do |expression|
+          filtered_count_n_records(table) do |expression|
             expression_builder.build_partial_min(expression)
           end
         when :partial_max
-          filtered_count_n_records(table, filter) do |expression|
+          filtered_count_n_records(table) do |expression|
             expression_builder.build_partial_max(expression)
           end
         when :partial_min_and_max
-          filtered_count_n_records(table, filter) do |expression|
+          filtered_count_n_records(table) do |expression|
             expression_builder.build_partial_min_and_max(expression)
           end
         end
       end
 
-      def filtered_count_n_records(table, filter)
+      def filtered_count_n_records(table)
         expression = nil
         filtered_table = nil
 
