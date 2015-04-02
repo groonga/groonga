@@ -55,6 +55,8 @@ module Groonga
         case data.op
         when Operator::MATCH
           size = estimate_match(data, search_index)
+        when Operator::REGEXP
+          size = estimate_regexp(data, search_index)
         when Operator::EQUAL
           size = estimate_equal(data, search_index)
         when Operator::LESS,
@@ -80,6 +82,18 @@ module Groonga
       end
 
       index_column.estimate_size(:query => data.query.value)
+    end
+
+    def estimate_regexp(data, search_index)
+      index_column = search_index.index_column
+      while index_column.is_a?(Accessor)
+        index_info = index_column.find_index(Operator::REGEXP)
+        return nil if index_info.nil?
+        index_column = index_info.index
+      end
+
+      index_column.estimate_size(:query => data.query.value,
+                                 :mode => Operator::REGEXP)
     end
 
     def estimate_equal(data, search_index)
