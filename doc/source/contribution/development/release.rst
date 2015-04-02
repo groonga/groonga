@@ -31,10 +31,15 @@
 
     % sudo apt-get install -V debootstrap createrepo rpm mercurial python-docutils python-jinja2 ruby-full mingw-w64 g++-mingw-w64 mecab libmecab-dev nsis gnupg2
 
-rinseのバージョンが古いとCentOS 5/6パッケージのビルドを行うことができません。
-別途debパッケージを以下のコマンドを実行して最新版をインストールします。::
+Debian系（.deb）やRed Hat系（.rpm）パッケージのビルドには `Vagrant <https://www.vagrantup.com/>`_ を使用します。apt-getでインストールできるのは古いバージョンなので、Webサイトから最新版をダウンロードしてインストールすることをおすすめします。
 
-    % sudo dpkg -i rinse_1.9.2-1_all.deb
+Vagrantで使用する仮想化ソフトウェア（VirtualBox、VMwareなど）がない場合、合わせてインストールしてください。なお、VirtualBoxはsources.listにcontribセクションを追加すればapt-getでインストールできます。::
+
+    % cat /etc/apt/sources.list
+    deb http://ftp.jp.debian.org/debian/ sid main contrib
+    deb-src http://ftp.jp.debian.org/debian/ sid main contrib
+    % sudo apt-get update
+    % sudo apt-get install virtualbox
 
 また、rubyのrakeパッケージを以下のコマンドによりインストールします。::
 
