@@ -143,10 +143,10 @@ module Groonga
 
           return true if @min_border == :exclude
 
-          @min.hour != 0 and
-            @min.min != 0 and
-            @min.sec != 0 and
-            @min.usec != 0
+          not (@min.hour == 0 and
+               @min.min  == 0 and
+               @min.sec  == 0 and
+               @min.usec == 0)
         end
 
         def in_max?(shard_range)
