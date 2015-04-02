@@ -531,14 +531,14 @@ http://groonga.org/blog/ および http://groonga.org/blog/ にて公開され�
 
 cloneしたWebサイトのソースに対して以下のファイルを新規追加します。
 
-* groonga.org/en/_post/(リリース日)-release.textile
-* groonga.org/ja/_post/(リリース日)-release.textile
+* groonga.org/en/_post/(リリース日)-release.md
+* groonga.org/ja/_post/(リリース日)-release.md
 
 
-編集した内容をpushする前に確認したい場合にはjekyllおよびRedCloth、JavaScript interpreter（therubyracer、Node.jsなど）が必要です。
+編集した内容をpushする前に確認したい場合にはJekyllおよびRedCloth（Textileパーサー）、RDiscount（Markdownパーサー）、JavaScript interpreter（therubyracer、Node.jsなど）が必要です。
 インストールするには以下のコマンドを実行します。::
 
-    % sudo gem install jekyll RedCloth therubyracer
+    % sudo gem install jekyll RedCloth rdiscount therubyracer
 
 jekyllのインストールを行ったら、以下のコマンドでローカルにwebサーバを起動します。::
 
@@ -547,7 +547,7 @@ jekyllのインストールを行ったら、以下のコマンドでローカ�
 あとはブラウザにてhttp://localhost:4000にアクセスして内容に問題がないかを確認します。
 
 .. note::
-   記事を非公開の状態でアップロードするには.textileファイルのpublished:をfalseに設定します。::
+   記事を非公開の状態でアップロードするには.mdファイルのpublished:をfalseに設定します。::
 
     ---
     layout: post.en
