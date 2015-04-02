@@ -35,8 +35,19 @@ module Groonga
             if first_result_set
               writer.write_table_columns(first_result_set, output_columns)
             end
+            limit = context.limit
+            if limit < 0
+              n_records = result_sets.inject(0) do |n, result_set|
+                n + result_set.size
+              end
+              limit = n_records + limit + 1
+            end
+            options = {}
             result_sets.each do |result_set|
-              writer.write_table_records(result_set, output_columns)
+              options[:limit] = limit
+              writer.write_table_records(result_set, output_columns, options)
+              limit -= result_set.size
+              break if limit <= 0
             end
           end
         ensure
@@ -63,7 +74,7 @@ module Groonga
           @offset = (@input[:offset] || 0).to_i
           @limit = (@input[:limit] || 10).to_i
 
-          @current_offset = 0
+          @current_offset = @offset
           @current_limit = @limit
 
           @result_sets = []
@@ -207,7 +218,12 @@ module Groonga
 
         private
         def use_range_index?(range_index)
-          required_n_records = @context.current_offset + @context.current_limit
+          current_limit = @context.current_limit
+          if current_limit < 0
+            return false
+          end
+
+          required_n_records = @context.current_offset + current_limit
           max_n_records = @table.size
           if max_n_records <= required_n_records
             return false
@@ -305,8 +321,13 @@ module Groonga
                              :flags => flags) do |table_cursor|
               options = {
                 :offset => @context.current_offset,
-                :limit => @context.current_limit,
               }
+              current_limit = @context.current_limit
+              if current_limit < 0
+                options[:limit] = data_table.size
+              else
+                options[:limit] = current_limit
+              end
               if @filter
                 create_expression(data_table) do |expression|
                   expression.parse(@filter)
@@ -335,7 +356,9 @@ module Groonga
           if @context.current_offset > 0
             @context.current_offset = 0
           end
-          @context.current_limit -= result_set.size
+          if @context.current_limit > 0
+            @context.current_limit -= result_set.size
+          end
           @result_sets << result_set
         end
 
@@ -389,14 +412,21 @@ module Groonga
               :order => @context.order,
             },
           ]
+          if @context.current_limit > 0
+            limit = @context.current_limit
+          else
+            limit = result_set.size
+          end
           sorted_result_set = result_set.sort(sort_keys,
                                               :offset => @context.current_offset,
-                                              :limit => @context.current_limit)
+                                              :limit => limit)
           @result_sets << sorted_result_set
           if @context.current_offset > 0
             @context.current_offset = 0
           end
-          @context.current_limit -= sorted_result_set.size
+          if @context.current_limit > 0
+            @context.current_limit -= sorted_result_set.size
+          end
         end
       end
     end
