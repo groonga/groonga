@@ -136,7 +136,7 @@ namespace :build do
     tmp_dir = Pathname.new("tmp/msgpack")
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
-    msgpack_version = "0.5.9"
+    msgpack_version = "1.0.1"
     msgpack_base = "msgpack-#{msgpack_version}"
     msgpack_tar_gz = "#{msgpack_base}.tar.gz"
     msgpack_tar_gz_url_base =
