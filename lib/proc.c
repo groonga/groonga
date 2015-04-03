@@ -2876,9 +2876,16 @@ reference_column_p(grn_ctx *ctx, grn_obj *column)
   }
 }
 
+static int
+index_column_p(grn_ctx *ctx, grn_obj *column)
+{
+  return column->header.type == GRN_COLUMN_INDEX;
+}
+
 static void
 dump_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
-             grn_obj *pending_columns)
+             grn_obj *pending_reference_columns,
+             grn_obj *pending_index_columns)
 {
   grn_hash *columns;
   columns = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
@@ -2895,7 +2902,9 @@ dump_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
       grn_obj *column;
       if ((column = grn_ctx_at(ctx, *key))) {
         if (reference_column_p(ctx, column)) {
-          GRN_PTR_PUT(ctx, pending_columns, column);
+          GRN_PTR_PUT(ctx, pending_reference_columns, column);
+        } else if (index_column_p(ctx, column)) {
+          GRN_PTR_PUT(ctx, pending_index_columns, column);
         } else {
           dump_column(ctx, outbuf, table, column);
           grn_obj_unlink(ctx, column);
@@ -3107,7 +3116,8 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
 
 static void
 dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
-           grn_obj *pending_columns)
+           grn_obj *pending_reference_columns,
+           grn_obj *pending_index_columns)
 {
   grn_obj *domain = NULL, *range = NULL;
   grn_obj_flags default_flags = GRN_OBJ_PERSISTENT;
@@ -3188,7 +3198,9 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
     grn_obj_unlink(ctx, domain);
   }
 
-  dump_columns(ctx, outbuf, table, pending_columns);
+  dump_columns(ctx, outbuf, table,
+               pending_reference_columns,
+               pending_index_columns);
 }
 
 /* can we move this to groonga.h? */
@@ -3202,12 +3214,30 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
 } while (0)
 
 static void
+dump_pending_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *pending_columns)
+{
+  size_t i, n_columns;
+
+  n_columns = GRN_BULK_VSIZE(pending_columns) / sizeof(grn_obj *);
+  for (i = 0; i < n_columns; i++) {
+    grn_obj *table, *column;
+
+    column = GRN_PTR_VALUE_AT(pending_columns, i);
+    table = grn_ctx_at(ctx, column->header.domain);
+    dump_column(ctx, outbuf, table, column);
+    grn_obj_unlink(ctx, column);
+    grn_obj_unlink(ctx, table);
+  }
+}
+
+static void
 dump_schema(grn_ctx *ctx, grn_obj *outbuf)
 {
   grn_obj *db = ctx->impl->db;
   grn_table_cursor *cur;
   grn_id id;
-  grn_obj pending_columns;
+  grn_obj pending_reference_columns;
+  grn_obj pending_index_columns;
 
   cur = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1,
                               GRN_CURSOR_BY_ID);
@@ -3215,7 +3245,8 @@ dump_schema(grn_ctx *ctx, grn_obj *outbuf)
     return;
   }
 
-  GRN_PTR_INIT(&pending_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_PTR_INIT(&pending_reference_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_PTR_INIT(&pending_index_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
   while ((id = grn_table_cursor_next(ctx, cur)) != GRN_ID_NIL) {
     grn_obj *object;
 
@@ -3225,7 +3256,9 @@ dump_schema(grn_ctx *ctx, grn_obj *outbuf)
       case GRN_TABLE_PAT_KEY:
       case GRN_TABLE_DAT_KEY:
       case GRN_TABLE_NO_KEY:
-        dump_table(ctx, outbuf, object, &pending_columns);
+        dump_table(ctx, outbuf, object,
+                   &pending_reference_columns,
+                   &pending_index_columns);
         break;
       default:
         break;
@@ -3241,18 +3274,11 @@ dump_schema(grn_ctx *ctx, grn_obj *outbuf)
   }
   grn_table_cursor_close(ctx, cur);
 
-  while (GRN_TRUE) {
-    grn_obj *table, *column;
-    GRN_PTR_POP(&pending_columns, column);
-    if (!column) {
-      break;
-    }
-    table = grn_ctx_at(ctx, column->header.domain);
-    dump_column(ctx, outbuf, table, column);
-    grn_obj_unlink(ctx, column);
-    grn_obj_unlink(ctx, table);
-  }
-  grn_obj_close(ctx, &pending_columns);
+  dump_pending_columns(ctx, outbuf, &pending_reference_columns);
+  grn_obj_close(ctx, &pending_reference_columns);
+
+  dump_pending_columns(ctx, outbuf, &pending_index_columns);
+  grn_obj_close(ctx, &pending_index_columns);
 }
 
 static void
