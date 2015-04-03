@@ -45,10 +45,6 @@
 static grn_hash *grn_plugins = NULL;
 static grn_critical_section grn_plugins_lock;
 
-#ifdef GRN_WITH_MRUBY
-static const char *grn_plugin_mrb_suffix = ".rb";
-#endif /* GRN_WITH_MRUBY */
-
 #ifdef HAVE_DLFCN_H
 #  include <dlfcn.h>
 #  define grn_dl_open(filename)      dlopen(filename, RTLD_LAZY | RTLD_LOCAL)
@@ -305,11 +301,15 @@ grn_plugin_open(grn_ctx *ctx, const char *filename)
   }
 
 #ifdef GRN_WITH_MRUBY
-  if (filename_size > strlen(grn_plugin_mrb_suffix) &&
-      strcmp(filename + (strlen(filename) - strlen(grn_plugin_mrb_suffix)),
-             grn_plugin_mrb_suffix) == 0) {
-    id = grn_plugin_open_mrb(ctx, filename, filename_size);
-    goto exit;
+  {
+    const char *mrb_suffix;
+    mrb_suffix = grn_plugin_get_ruby_suffix();
+    if (filename_size > strlen(mrb_suffix) &&
+      strcmp(filename + (strlen(filename) - strlen(mrb_suffix)),
+             mrb_suffix) == 0) {
+      id = grn_plugin_open_mrb(ctx, filename, filename_size);
+      goto exit;
+    }
   }
 #endif /* GRN_WITH_MRUBY */
 
@@ -451,6 +451,12 @@ grn_plugin_get_suffix(void)
   return GRN_PLUGIN_SUFFIX;
 }
 
+const char *
+grn_plugin_get_ruby_suffix(void)
+{
+  return ".rb";
+}
+
 grn_rc
 grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
 {
@@ -538,9 +544,10 @@ static char *
 grn_plugin_find_path_mrb(grn_ctx *ctx, const char *path, size_t path_len)
 {
   char mrb_path[PATH_MAX];
-  const char *mrb_suffix = grn_plugin_mrb_suffix;
+  const char *mrb_suffix;
   size_t mrb_path_len;
 
+  mrb_suffix = grn_plugin_get_ruby_suffix();
   if (!ctx->impl->mrb.state) {
     return NULL;
   }
