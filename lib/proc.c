@@ -2940,7 +2940,8 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   grn_table_cursor *cursor;
   int i, ncolumns, n_use_columns;
   grn_obj columnbuf, delete_commands, use_columns, column_name;
-  grn_bool have_only_index_column = GRN_TRUE;
+  grn_bool have_index_column = GRN_FALSE;
+  grn_bool have_data_column = GRN_FALSE;
 
   switch (table->header.type) {
   case GRN_TABLE_HASH_KEY:
@@ -2965,11 +2966,12 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   GRN_TEXT_INIT(&column_name, 0);
   for (i = 0; i < ncolumns; i++) {
     if (GRN_OBJ_INDEX_COLUMNP(columns[i])) {
+      have_index_column = GRN_TRUE;
       continue;
     }
 
     if (columns[i]->header.type != GRN_ACCESSOR) {
-      have_only_index_column = GRN_FALSE;
+      have_data_column = GRN_TRUE;
     }
 
     GRN_BULK_REWIND(&column_name);
@@ -2993,7 +2995,7 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
     GRN_PTR_PUT(ctx, &use_columns, columns[i]);
   }
 
-  if (have_only_index_column) {
+  if (have_index_column && !have_data_column) {
     goto exit;
   }
 
