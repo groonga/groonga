@@ -43,12 +43,15 @@ select Movies --match_columns name --query seven
 [[0,0.0,0.0],[[[0],[["_id","UInt32"],["name","ShortText"]]]]]
 dump
 table_create Terms TABLE_PAT_KEY ShortText
+
 table_create Movies TABLE_NO_KEY
 column_create Movies name COLUMN_SCALAR ShortText
-column_create Terms movies_name COLUMN_INDEX Movies name
+
 load --table Movies
 [
 ["_id","name"],
 [1,"Seven Samurai"],
 [2,"The Last Samurai"]
 ]
+
+column_create Terms movies_name COLUMN_INDEX Movies name

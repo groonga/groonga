@@ -19,13 +19,16 @@ dump
 table_create Memos TABLE_NO_KEY
 column_create Memos content COLUMN_SCALAR Text
 column_create Memos title COLUMN_SCALAR ShortText
+
 table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
-column_create Terms memos_index COLUMN_INDEX|WITH_SECTION|WITH_POSITION Memos title,content
+
 load --table Memos
 [
 ["_id","content","title"],
 [1,"Groonga is fast.","Groonga"]
 ]
+
+column_create Terms memos_index COLUMN_INDEX|WITH_SECTION|WITH_POSITION Memos title,content
 select Memos --query "content:@groonga"
 [
   [

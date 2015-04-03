@@ -10,6 +10,7 @@ load --table Diaries
 dump
 table_create Diaries TABLE_NO_KEY
 column_create Diaries content COLUMN_SCALAR Text
+
 load --table Diaries
 [
 ["_id","content"],

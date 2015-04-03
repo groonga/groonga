@@ -95,11 +95,14 @@ select Terms
 dump
 table_create Logs TABLE_NO_KEY
 column_create Logs message COLUMN_SCALAR ShortText
+
 table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
-column_create Terms logs_message COLUMN_INDEX|WITH_POSITION Logs message
+
 load --table Logs
 [
 ["_id","message"],
 [1,"Hello"],
 [2,"World"]
 ]
+
+column_create Terms logs_message COLUMN_INDEX|WITH_POSITION Logs message

@@ -19,6 +19,8 @@ table_remove Names
 #|e| [table][remove] a column that references the table exists: <Users.name> -> <Names>
 dump
 table_create Names TABLE_NO_KEY
+
 table_create Users TABLE_HASH_KEY ShortText
+
 column_create Users name COLUMN_SCALAR Names
 

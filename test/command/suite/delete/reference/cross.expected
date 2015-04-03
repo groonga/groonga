@@ -22,18 +22,23 @@ delete URLs --key "http://groonga.org/"
 [[0,0.0,0.0],true]
 dump
 table_create Users TABLE_HASH_KEY ShortText
+
 table_create URLs TABLE_HASH_KEY ShortText
+
 column_create Users bookmarks COLUMN_VECTOR URLs
 column_create URLs author COLUMN_SCALAR Users
-column_create URLs bookmarks_index COLUMN_INDEX Users bookmarks
+
 load --table Users
 [
 ["_key","bookmarks"],
 ["mori",["http://mroonga.org/","http://ranguba.org/"]]
 ]
+
 load --table URLs
 [
 ["_key","author"],
 ["http://mroonga.org/",""],
 ["http://ranguba.org/",""]
 ]
+
+column_create URLs bookmarks_index COLUMN_INDEX Users bookmarks
