@@ -1,0 +1,4 @@
+plugin_register token_filters/stop_word
+plugin_register query_expanders/tsv
+
+dump
