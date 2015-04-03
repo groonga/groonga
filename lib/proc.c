@@ -2643,6 +2643,114 @@ exit :
 static const size_t DUMP_FLUSH_THRESHOLD_SIZE = 256 * 1024;
 
 static void
+dump_plugins(grn_ctx *ctx, grn_obj *outbuf)
+{
+  grn_obj *db = ctx->impl->db;
+  grn_table_cursor *cursor;
+  grn_id id;
+  grn_hash *processed_paths;
+  const char *system_plugins_dir;
+  const char *native_plugin_suffix;
+  const char *ruby_plugin_suffix;
+
+  cursor = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1,
+                                 GRN_CURSOR_BY_ID);
+  if (!cursor) {
+    return;
+  }
+
+  processed_paths = grn_hash_create(ctx, NULL, GRN_HASH_MAX_KEY_SIZE, 0,
+                                    GRN_OBJ_TABLE_HASH_KEY |
+                                    GRN_OBJ_KEY_VAR_SIZE);
+  if (!processed_paths) {
+    grn_table_cursor_close(ctx, cursor);
+    return;
+  }
+
+  system_plugins_dir = grn_plugin_get_system_plugins_dir();
+  native_plugin_suffix = grn_plugin_get_suffix();
+  ruby_plugin_suffix = grn_plugin_get_ruby_suffix();
+  while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+    grn_obj *object;
+    const char *path;
+    grn_id processed_path_id;
+
+    object = grn_ctx_at(ctx, id);
+    if (!object) {
+      ERRCLR(ctx);
+      continue;
+    }
+
+    if (!grn_obj_is_proc(ctx, object)) {
+      grn_obj_unlink(ctx, object);
+      continue;
+    }
+
+    if (grn_obj_is_builtin(ctx, object)) {
+      grn_obj_unlink(ctx, object);
+      continue;
+    }
+
+    path = grn_obj_path(ctx, object);
+    if (!path) {
+      grn_obj_unlink(ctx, object);
+      continue;
+    }
+
+    processed_path_id = grn_hash_get(ctx, processed_paths,
+                                     path, strlen(path),
+                                     NULL);
+    if (processed_path_id != GRN_ID_NIL) {
+      grn_obj_unlink(ctx, object);
+      continue;
+    }
+
+    grn_hash_add(ctx, processed_paths,
+                 path, strlen(path),
+                 NULL, NULL);
+
+    {
+      const char *relative_path;
+      const char *libs_path = "/.libs/";
+      const char *start_libs;
+      char name[PATH_MAX];
+
+      name[0] = '\0';
+      if (strncmp(path, system_plugins_dir, strlen(system_plugins_dir)) == 0) {
+        relative_path = path + strlen(system_plugins_dir);
+      } else {
+        relative_path = path;
+      }
+      start_libs = strstr(relative_path, libs_path);
+      if (start_libs) {
+        strncat(name, relative_path, start_libs - relative_path);
+        strcat(name, "/");
+        strcat(name, start_libs + strlen(libs_path));
+      } else {
+        strcat(name, relative_path);
+      }
+      if (strlen(name) > strlen(native_plugin_suffix) &&
+          strcmp(name + strlen(name) - strlen(native_plugin_suffix),
+                 native_plugin_suffix) == 0) {
+        name[strlen(name) - strlen(native_plugin_suffix)] = '\0';
+      } else if (strlen(name) > strlen(ruby_plugin_suffix) &&
+                 strcmp(name + strlen(name) - strlen(ruby_plugin_suffix),
+                        ruby_plugin_suffix) == 0) {
+        name[strlen(name) - strlen(ruby_plugin_suffix)] = '\0';
+      }
+      grn_text_printf(ctx, outbuf, "plugin_register %s\n", name);
+    }
+  }
+  grn_table_cursor_close(ctx, cursor);
+
+  if (grn_table_size(ctx, (grn_obj *)processed_paths) > 0) {
+    GRN_TEXT_PUTC(ctx, outbuf, '\n');
+  }
+
+  grn_hash_close(ctx, processed_paths);
+}
+
+static void
 dump_name(grn_ctx *ctx, grn_obj *outbuf, const char *name, int name_len)
 {
   grn_obj escaped_name;
@@ -3092,114 +3200,6 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
     value = NULL;\
   }\
 } while (0)
-
-static void
-dump_plugins(grn_ctx *ctx, grn_obj *outbuf)
-{
-  grn_obj *db = ctx->impl->db;
-  grn_table_cursor *cursor;
-  grn_id id;
-  grn_hash *processed_paths;
-  const char *system_plugins_dir;
-  const char *native_plugin_suffix;
-  const char *ruby_plugin_suffix;
-
-  cursor = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1,
-                                 GRN_CURSOR_BY_ID);
-  if (!cursor) {
-    return;
-  }
-
-  processed_paths = grn_hash_create(ctx, NULL, GRN_HASH_MAX_KEY_SIZE, 0,
-                                    GRN_OBJ_TABLE_HASH_KEY |
-                                    GRN_OBJ_KEY_VAR_SIZE);
-  if (!processed_paths) {
-    grn_table_cursor_close(ctx, cursor);
-    return;
-  }
-
-  system_plugins_dir = grn_plugin_get_system_plugins_dir();
-  native_plugin_suffix = grn_plugin_get_suffix();
-  ruby_plugin_suffix = grn_plugin_get_ruby_suffix();
-  while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
-    grn_obj *object;
-    const char *path;
-    grn_id processed_path_id;
-
-    object = grn_ctx_at(ctx, id);
-    if (!object) {
-      ERRCLR(ctx);
-      continue;
-    }
-
-    if (!grn_obj_is_proc(ctx, object)) {
-      grn_obj_unlink(ctx, object);
-      continue;
-    }
-
-    if (grn_obj_is_builtin(ctx, object)) {
-      grn_obj_unlink(ctx, object);
-      continue;
-    }
-
-    path = grn_obj_path(ctx, object);
-    if (!path) {
-      grn_obj_unlink(ctx, object);
-      continue;
-    }
-
-    processed_path_id = grn_hash_get(ctx, processed_paths,
-                                     path, strlen(path),
-                                     NULL);
-    if (processed_path_id != GRN_ID_NIL) {
-      grn_obj_unlink(ctx, object);
-      continue;
-    }
-
-    grn_hash_add(ctx, processed_paths,
-                 path, strlen(path),
-                 NULL, NULL);
-
-    {
-      const char *relative_path;
-      const char *libs_path = "/.libs/";
-      const char *start_libs;
-      char name[PATH_MAX];
-
-      name[0] = '\0';
-      if (strncmp(path, system_plugins_dir, strlen(system_plugins_dir)) == 0) {
-        relative_path = path + strlen(system_plugins_dir);
-      } else {
-        relative_path = path;
-      }
-      start_libs = strstr(relative_path, libs_path);
-      if (start_libs) {
-        strncat(name, relative_path, start_libs - relative_path);
-        strcat(name, "/");
-        strcat(name, start_libs + strlen(libs_path));
-      } else {
-        strcat(name, relative_path);
-      }
-      if (strlen(name) > strlen(native_plugin_suffix) &&
-          strcmp(name + strlen(name) - strlen(native_plugin_suffix),
-                 native_plugin_suffix) == 0) {
-        name[strlen(name) - strlen(native_plugin_suffix)] = '\0';
-      } else if (strlen(name) > strlen(ruby_plugin_suffix) &&
-                 strcmp(name + strlen(name) - strlen(ruby_plugin_suffix),
-                        ruby_plugin_suffix) == 0) {
-        name[strlen(name) - strlen(ruby_plugin_suffix)] = '\0';
-      }
-      grn_text_printf(ctx, outbuf, "plugin_register %s\n", name);
-    }
-  }
-  grn_table_cursor_close(ctx, cursor);
-
-  if (grn_table_size(ctx, (grn_obj *)processed_paths) > 0) {
-    GRN_TEXT_PUTC(ctx, outbuf, '\n');
-  }
-
-  grn_hash_close(ctx, processed_paths);
-}
 
 static void
 dump_schema(grn_ctx *ctx, grn_obj *outbuf)
