@@ -103,9 +103,3 @@ load --table Logs
 [1,"Hello"],
 [2,"World"]
 ]
-load --table Terms
-[
-["_key"],
-["hello"],
-["world"]
-]

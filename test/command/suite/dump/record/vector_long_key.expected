@@ -13,11 +13,6 @@ dump
 table_create Tags TABLE_HASH_KEY ShortText
 table_create Users TABLE_HASH_KEY ShortText
 column_create Users tags COLUMN_VECTOR Tags
-load --table Tags
-[
-["_key"],
-["long (larger than 24byte)"]
-]
 load --table Users
 [
 ["_key","tags"],

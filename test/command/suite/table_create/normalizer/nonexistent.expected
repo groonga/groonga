@@ -46,12 +46,6 @@ table_create Terms TABLE_PAT_KEY ShortText
 table_create Movies TABLE_NO_KEY
 column_create Movies name COLUMN_SCALAR ShortText
 column_create Terms movies_name COLUMN_INDEX Movies name
-load --table Terms
-[
-["_key"],
-["Seven Samurai"],
-["The Last Samurai"]
-]
 load --table Movies
 [
 ["_id","name"],

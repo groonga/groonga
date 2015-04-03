@@ -26,14 +26,6 @@ load --table Memos
 ["_id","content","title"],
 [1,"Groonga is fast.","Groonga"]
 ]
-load --table Terms
-[
-["_key"],
-["."],
-["fast"],
-["groonga"],
-["is"]
-]
 select Memos --query "content:@groonga"
 [
   [
