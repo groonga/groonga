@@ -3206,50 +3206,53 @@ dump_schema(grn_ctx *ctx, grn_obj *outbuf)
 {
   grn_obj *db = ctx->impl->db;
   grn_table_cursor *cur;
-  if ((cur = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1,
-                                   GRN_CURSOR_BY_ID))) {
-    grn_id id;
-    grn_obj pending_columns;
+  grn_id id;
+  grn_obj pending_columns;
 
-    GRN_PTR_INIT(&pending_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
-    while ((id = grn_table_cursor_next(ctx, cur)) != GRN_ID_NIL) {
-      grn_obj *object;
+  cur = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1,
+                              GRN_CURSOR_BY_ID);
+  if (!cur) {
+    return;
+  }
 
-      if ((object = grn_ctx_at(ctx, id))) {
-        switch (object->header.type) {
-        case GRN_TABLE_HASH_KEY:
-        case GRN_TABLE_PAT_KEY:
-        case GRN_TABLE_DAT_KEY:
-        case GRN_TABLE_NO_KEY:
-          dump_table(ctx, outbuf, object, &pending_columns);
-          break;
-        default:
-          break;
-        }
-        grn_obj_unlink(ctx, object);
-      } else {
-        /* XXX: this clause is executed when MeCab tokenizer is enabled in
-           database but the groonga isn't supported MeCab.
-           We should return error mesage about it and error exit status
-           but it's too difficult for this architecture. :< */
-        ERRCLR(ctx);
-      }
-    }
-    grn_table_cursor_close(ctx, cur);
+  GRN_PTR_INIT(&pending_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  while ((id = grn_table_cursor_next(ctx, cur)) != GRN_ID_NIL) {
+    grn_obj *object;
 
-    while (GRN_TRUE) {
-      grn_obj *table, *column;
-      GRN_PTR_POP(&pending_columns, column);
-      if (!column) {
+    if ((object = grn_ctx_at(ctx, id))) {
+      switch (object->header.type) {
+      case GRN_TABLE_HASH_KEY:
+      case GRN_TABLE_PAT_KEY:
+      case GRN_TABLE_DAT_KEY:
+      case GRN_TABLE_NO_KEY:
+        dump_table(ctx, outbuf, object, &pending_columns);
+        break;
+      default:
         break;
       }
-      table = grn_ctx_at(ctx, column->header.domain);
-      dump_column(ctx, outbuf, table, column);
-      grn_obj_unlink(ctx, column);
-      grn_obj_unlink(ctx, table);
+      grn_obj_unlink(ctx, object);
+    } else {
+      /* XXX: this clause is executed when MeCab tokenizer is enabled in
+         database but the groonga isn't supported MeCab.
+         We should return error mesage about it and error exit status
+         but it's too difficult for this architecture. :< */
+      ERRCLR(ctx);
     }
-    grn_obj_close(ctx, &pending_columns);
   }
+  grn_table_cursor_close(ctx, cur);
+
+  while (GRN_TRUE) {
+    grn_obj *table, *column;
+    GRN_PTR_POP(&pending_columns, column);
+    if (!column) {
+      break;
+    }
+    table = grn_ctx_at(ctx, column->header.domain);
+    dump_column(ctx, outbuf, table, column);
+    grn_obj_unlink(ctx, column);
+    grn_obj_unlink(ctx, table);
+  }
+  grn_obj_close(ctx, &pending_columns);
 }
 
 static void
