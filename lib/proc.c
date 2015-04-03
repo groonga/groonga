@@ -2876,12 +2876,6 @@ reference_column_p(grn_ctx *ctx, grn_obj *column)
   }
 }
 
-static int
-index_column_p(grn_ctx *ctx, grn_obj *column)
-{
-  return column->header.type == GRN_COLUMN_INDEX;
-}
-
 static void
 dump_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
              grn_obj *pending_reference_columns,
@@ -2903,7 +2897,7 @@ dump_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
       if ((column = grn_ctx_at(ctx, *key))) {
         if (reference_column_p(ctx, column)) {
           GRN_PTR_PUT(ctx, pending_reference_columns, column);
-        } else if (index_column_p(ctx, column)) {
+        } else if (GRN_OBJ_INDEX_COLUMNP(column)) {
           GRN_PTR_PUT(ctx, pending_index_columns, column);
         } else {
           dump_column(ctx, outbuf, table, column);
