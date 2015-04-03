@@ -382,6 +382,7 @@ test_uvector_column(gconstpointer data)
 
   expected = cut_take_printf("table_create Table TABLE_NO_KEY\n"
                              "column_create Table Column COLUMN_VECTOR %s\n"
+                             "\n"
                              "load --table Table\n"
                              "[\n"
                              "[\"_id\",\"Column\"],\n"
@@ -429,6 +430,7 @@ test_vector_column(gconstpointer data)
 
   expected = cut_take_printf("table_create Table TABLE_NO_KEY\n"
                              "column_create Table Column COLUMN_VECTOR %s\n"
+                             "\n"
                              "load --table Table\n"
                              "[\n"
                              "[\"_id\",\"Column\"],\n"
@@ -461,6 +463,7 @@ test_unsequantial_records_in_table_with_keys(void)
   grn_table_delete_by_id(context, table, 6);
 
   cut_assert_equal_string("table_create Weekdays TABLE_HASH_KEY ShortText\n"
+                          "\n"
                           "load --table Weekdays\n"
                           "[\n"
                           "[\"_key\"],\n"
@@ -495,13 +498,17 @@ test_nil_reference(void)
                  "]"));
 
   cut_assert_equal_string("table_create Users TABLE_HASH_KEY ShortText\n"
+                          "\n"
                           "table_create Initials TABLE_PAT_KEY ShortText\n"
+                          "\n"
                           "column_create Users initial COLUMN_SCALAR Initials\n"
+                          "\n"
                           "load --table Users\n"
                           "[\n"
                           "[\"_key\",\"initial\"],\n"
                           "[\"mori\",\"\"]\n"
                           "]\n"
+                          "\n"
                           "load --table Initials\n"
                           "[\n"
                           "[\"_key\"],\n"
@@ -517,15 +524,19 @@ test_load_with_vector_int32_reference_key(void)
   const gchar *commands =
     "table_create users TABLE_HASH_KEY Int32\n"
     "column_create users name COLUMN_SCALAR ShortText\n"
+    "\n"
     "table_create comments TABLE_PAT_KEY ShortText\n"
     "column_create comments text COLUMN_SCALAR ShortText\n"
+    "\n"
     "column_create comments author COLUMN_VECTOR users\n"
+    "\n"
     "load --table users\n"
     "[\n"
     "[\"_key\",\"name\"],\n"
     "[1000,\"ryoqun\"],\n"
     "[1001,\"hayamiz\"]\n"
     "]\n"
+    "\n"
     "load --table comments\n"
     "[\n"
     "[\"_key\",\"author\",\"text\"],\n"
@@ -542,10 +553,13 @@ test_tables_argument(void)
   const gchar *define_schema_commands =
     "table_create users TABLE_HASH_KEY Int32\n"
     "column_create users name COLUMN_SCALAR ShortText\n"
+    "\n"
     "table_create comments TABLE_PAT_KEY ShortText\n"
     "column_create comments text COLUMN_SCALAR ShortText\n"
+    "\n"
     "table_create sites TABLE_NO_KEY\n"
     "column_create sites url COLUMN_SCALAR ShortText\n"
+    "\n"
     "column_create comments author COLUMN_VECTOR users";
   const gchar *load_users_commands =
     "load --table users\n"
@@ -573,7 +587,9 @@ test_tables_argument(void)
   assert_send_commands(load_comments_commands);
   assert_send_commands(load_sites_commands);
   cut_assert_equal_string(cut_take_printf("%s\n"
+                                          "\n"
                                           "%s\n"
+                                          "\n"
                                           "%s",
                                           define_schema_commands,
                                           load_users_commands,

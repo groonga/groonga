@@ -104,6 +104,7 @@ test_success(void)
   cut_assert_equal_string(
       "table_create Users TABLE_HASH_KEY ShortText\n"
       "column_create Users full_name COLUMN_SCALAR ShortText\n"
+      "\n"
       "load --table Users\n"
       "[\n"
       "[\"_key\",\"full_name\"],\n"
