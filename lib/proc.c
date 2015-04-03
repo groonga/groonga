@@ -2944,6 +2944,7 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   grn_table_cursor *cursor;
   int i, ncolumns, n_use_columns;
   grn_obj columnbuf, delete_commands, use_columns, column_name;
+  grn_bool have_only_index_column = GRN_TRUE;
 
   switch (table->header.type) {
   case GRN_TABLE_HASH_KEY:
@@ -2959,12 +2960,6 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
     return;
   }
 
-  GRN_TEXT_INIT(&delete_commands, 0);
-
-  GRN_TEXT_PUTS(ctx, outbuf, "load --table ");
-  dump_obj_name(ctx, outbuf, table);
-  GRN_TEXT_PUTS(ctx, outbuf, "\n[\n");
-
   GRN_PTR_INIT(&columnbuf, GRN_OBJ_VECTOR, GRN_ID_NIL);
   grn_obj_columns(ctx, table, DUMP_COLUMNS, strlen(DUMP_COLUMNS), &columnbuf);
   columns = (grn_obj **)GRN_BULK_HEAD(&columnbuf);
@@ -2975,6 +2970,10 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   for (i = 0; i < ncolumns; i++) {
     if (GRN_OBJ_INDEX_COLUMNP(columns[i])) {
       continue;
+    }
+
+    if (columns[i]->header.type != GRN_ACCESSOR) {
+      have_only_index_column = GRN_FALSE;
     }
 
     GRN_BULK_REWIND(&column_name);
@@ -2997,6 +2996,14 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
     GRN_PTR_PUT(ctx, &use_columns, columns[i]);
   }
 
+  if (have_only_index_column) {
+    goto exit;
+  }
+
+  GRN_TEXT_PUTS(ctx, outbuf, "load --table ");
+  dump_obj_name(ctx, outbuf, table);
+  GRN_TEXT_PUTS(ctx, outbuf, "\n[\n");
+
   n_use_columns = GRN_BULK_VSIZE(&use_columns) / sizeof(grn_obj *);
   GRN_TEXT_PUTC(ctx, outbuf, '[');
   for (i = 0; i < n_use_columns; i++) {
@@ -3009,6 +3016,7 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   }
   GRN_TEXT_PUTS(ctx, outbuf, "],\n");
 
+  GRN_TEXT_INIT(&delete_commands, 0);
   cursor = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1,
                                  GRN_CURSOR_BY_KEY);
   for (i = 0; (id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL;
@@ -3096,14 +3104,16 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
       grn_ctx_output_flush(ctx, 0);
     }
   }
+  grn_table_cursor_close(ctx, cursor);
   GRN_TEXT_PUTS(ctx, outbuf, "\n]\n");
   GRN_TEXT_PUT(ctx, outbuf, GRN_TEXT_VALUE(&delete_commands),
                             GRN_TEXT_LEN(&delete_commands));
   grn_obj_unlink(ctx, &delete_commands);
+
+exit :
   grn_obj_unlink(ctx, &column_name);
   grn_obj_unlink(ctx, &use_columns);
 
-  grn_table_cursor_close(ctx, cursor);
   for (i = 0; i < ncolumns; i++) {
     grn_obj_unlink(ctx, columns[i]);
   }
