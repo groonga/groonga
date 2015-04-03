@@ -2891,10 +2891,10 @@ dump_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
     GRN_HASH_EACH(ctx, columns, id, &key, NULL, NULL, {
       grn_obj *column;
       if ((column = grn_ctx_at(ctx, *key))) {
-        if (reference_column_p(ctx, column)) {
-          GRN_PTR_PUT(ctx, pending_reference_columns, column);
-        } else if (GRN_OBJ_INDEX_COLUMNP(column)) {
+        if (GRN_OBJ_INDEX_COLUMNP(column)) {
           GRN_PTR_PUT(ctx, pending_index_columns, column);
+        } else if (reference_column_p(ctx, column)) {
+          GRN_PTR_PUT(ctx, pending_reference_columns, column);
         } else {
           dump_column(ctx, outbuf, table, column);
           grn_obj_unlink(ctx, column);
@@ -3238,13 +3238,12 @@ dump_pending_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *pending_columns)
 }
 
 static void
-dump_schema(grn_ctx *ctx, grn_obj *outbuf)
+dump_schema(grn_ctx *ctx, grn_obj *outbuf, grn_obj *pending_index_columns)
 {
   grn_obj *db = ctx->impl->db;
   grn_table_cursor *cur;
   grn_id id;
   grn_obj pending_reference_columns;
-  grn_obj pending_index_columns;
 
   cur = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1,
                               GRN_CURSOR_BY_ID);
@@ -3253,7 +3252,6 @@ dump_schema(grn_ctx *ctx, grn_obj *outbuf)
   }
 
   GRN_PTR_INIT(&pending_reference_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
-  GRN_PTR_INIT(&pending_index_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
   while ((id = grn_table_cursor_next(ctx, cur)) != GRN_ID_NIL) {
     grn_obj *object;
 
@@ -3265,7 +3263,7 @@ dump_schema(grn_ctx *ctx, grn_obj *outbuf)
       case GRN_TABLE_NO_KEY:
         dump_table(ctx, outbuf, object,
                    &pending_reference_columns,
-                   &pending_index_columns);
+                   pending_index_columns);
         break;
       default:
         break;
@@ -3283,9 +3281,6 @@ dump_schema(grn_ctx *ctx, grn_obj *outbuf)
 
   dump_pending_columns(ctx, outbuf, &pending_reference_columns);
   grn_obj_close(ctx, &pending_reference_columns);
-
-  dump_pending_columns(ctx, outbuf, &pending_index_columns);
-  grn_obj_close(ctx, &pending_index_columns);
 }
 
 static void
@@ -3374,10 +3369,15 @@ static grn_obj *
 proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *outbuf = ctx->impl->outbuf;
+  grn_obj pending_index_columns;
+
+  GRN_PTR_INIT(&pending_index_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
+
   grn_ctx_set_output_type(ctx, GRN_CONTENT_GROONGA_COMMAND_LIST);
+
   dump_plugins(ctx, outbuf);
   grn_ctx_output_flush(ctx, 0);
-  dump_schema(ctx, outbuf);
+  dump_schema(ctx, outbuf, &pending_index_columns);
   grn_ctx_output_flush(ctx, 0);
   /* To update index columns correctly, we first create the whole schema, then
      load non-derivative records, while skipping records of index columns. That
@@ -3387,6 +3387,9 @@ proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   } else {
     dump_all_records(ctx, outbuf);
   }
+
+  dump_pending_columns(ctx, outbuf, &pending_index_columns);
+  grn_obj_close(ctx, &pending_index_columns);
 
   /* remove the last newline because another one will be added by the caller.
      maybe, the caller of proc functions currently doesn't consider the
