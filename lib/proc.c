@@ -2978,7 +2978,8 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
 
     GRN_BULK_REWIND(&column_name);
     grn_column_name_(ctx, columns[i], &column_name);
-    if (GRN_TEXT_LEN(&column_name) == GRN_COLUMN_NAME_ID_LEN &&
+    if (table->header.type != GRN_TABLE_NO_KEY &&
+        GRN_TEXT_LEN(&column_name) == GRN_COLUMN_NAME_ID_LEN &&
         memcmp(GRN_TEXT_VALUE(&column_name),
                GRN_COLUMN_NAME_ID,
                GRN_COLUMN_NAME_ID_LEN) == 0) {
