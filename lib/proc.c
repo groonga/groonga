@@ -2743,10 +2743,6 @@ dump_plugins(grn_ctx *ctx, grn_obj *outbuf)
   }
   grn_table_cursor_close(ctx, cursor);
 
-  if (grn_table_size(ctx, (grn_obj *)processed_paths) > 0) {
-    GRN_TEXT_PUTC(ctx, outbuf, '\n');
-  }
-
   grn_hash_close(ctx, processed_paths);
 }
 
@@ -3001,6 +2997,8 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
     goto exit;
   }
 
+  GRN_TEXT_PUTC(ctx, outbuf, '\n');
+
   GRN_TEXT_PUTS(ctx, outbuf, "load --table ");
   dump_obj_name(ctx, outbuf, table);
   GRN_TEXT_PUTS(ctx, outbuf, "\n[\n");
@@ -3142,6 +3140,10 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
     break;
   }
 
+  if (GRN_TEXT_LEN(outbuf) > 0) {
+    GRN_TEXT_PUTC(ctx, outbuf, '\n');
+  }
+
   GRN_TEXT_PUTS(ctx, outbuf, "table_create ");
   dump_obj_name(ctx, outbuf, table);
   GRN_TEXT_PUTC(ctx, outbuf, ' ');
@@ -3216,6 +3218,14 @@ dump_pending_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *pending_columns)
   size_t i, n_columns;
 
   n_columns = GRN_BULK_VSIZE(pending_columns) / sizeof(grn_obj *);
+  if (n_columns == 0) {
+    return;
+  }
+
+  if (GRN_TEXT_LEN(outbuf) > 0) {
+    GRN_TEXT_PUTC(ctx, outbuf, '\n');
+  }
+
   for (i = 0; i < n_columns; i++) {
     grn_obj *table, *column;
 

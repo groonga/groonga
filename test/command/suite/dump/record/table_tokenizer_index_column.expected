@@ -23,9 +23,12 @@ load --table Queries
 dump
 table_create Queries TABLE_HASH_KEY UInt32
 column_create Queries content COLUMN_SCALAR ShortText
+
 table_create Words TABLE_HASH_KEY ShortText --default_tokenizer TokenDelimit
 column_create Words boost COLUMN_SCALAR UInt32
+
 column_create Words index COLUMN_INDEX Queries content
+
 load --table Queries
 [
 ["_key","content"],
@@ -38,6 +41,7 @@ load --table Queries
 [7,"Animation Raccoon"],
 [8,"Animation Music"]
 ]
+
 load --table Words
 [
 ["_key","boost"],
