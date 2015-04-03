@@ -3101,7 +3101,8 @@ dump_plugins(grn_ctx *ctx, grn_obj *outbuf)
   grn_id id;
   grn_hash *processed_paths;
   const char *system_plugins_dir;
-  const char *plugin_suffix;
+  const char *native_plugin_suffix;
+  const char *ruby_plugin_suffix;
 
   cursor = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1,
                                  GRN_CURSOR_BY_ID);
@@ -3118,7 +3119,8 @@ dump_plugins(grn_ctx *ctx, grn_obj *outbuf)
   }
 
   system_plugins_dir = grn_plugin_get_system_plugins_dir();
-  plugin_suffix = grn_plugin_get_suffix();
+  native_plugin_suffix = grn_plugin_get_suffix();
+  ruby_plugin_suffix = grn_plugin_get_ruby_suffix();
   while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
     grn_obj *object;
     const char *path;
@@ -3178,10 +3180,14 @@ dump_plugins(grn_ctx *ctx, grn_obj *outbuf)
       } else {
         strcat(name, relative_path);
       }
-      if (strlen(name) > strlen(plugin_suffix) &&
-          strcmp(name + strlen(name) - strlen(plugin_suffix),
-                 plugin_suffix) == 0) {
-        name[strlen(name) - strlen(plugin_suffix)] = '\0';
+      if (strlen(name) > strlen(native_plugin_suffix) &&
+          strcmp(name + strlen(name) - strlen(native_plugin_suffix),
+                 native_plugin_suffix) == 0) {
+        name[strlen(name) - strlen(native_plugin_suffix)] = '\0';
+      } else if (strlen(name) > strlen(ruby_plugin_suffix) &&
+                 strcmp(name + strlen(name) - strlen(ruby_plugin_suffix),
+                        ruby_plugin_suffix) == 0) {
+        name[strlen(name) - strlen(ruby_plugin_suffix)] = '\0';
       }
       grn_text_printf(ctx, outbuf, "plugin_register %s\n", name);
     }
