@@ -3209,16 +3209,6 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
                pending_index_columns);
 }
 
-/* can we move this to groonga.h? */
-#define GRN_PTR_POP(obj,value) do {\
-  if (GRN_BULK_VSIZE(obj) >= sizeof(grn_obj *)) {\
-    GRN_BULK_INCR_LEN((obj), -(sizeof(grn_obj *)));\
-    value = *(grn_obj **)(GRN_BULK_CURR(obj));\
-  } else {\
-    value = NULL;\
-  }\
-} while (0)
-
 static void
 dump_pending_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *pending_columns)
 {
@@ -5864,14 +5854,15 @@ func_highlight_html(grn_ctx *ctx, int nargs, grn_obj **args,
     }
 
     if (condition) {
+      size_t i, n_keywords;
       grn_obj current_keywords;
       GRN_PTR_INIT(&current_keywords, GRN_OBJ_VECTOR, GRN_ID_NIL);
       grn_expr_get_keywords(ctx, condition, &current_keywords);
 
-      for (;;) {
+      n_keywords = GRN_BULK_VSIZE(&current_keywords) / sizeof(grn_obj *);
+      for (i = 0; i < n_keywords; i++) {
         grn_obj *keyword;
-        GRN_PTR_POP(&current_keywords, keyword);
-        if (!keyword) { break; }
+        keyword = GRN_PTR_VALUE_AT(&current_keywords, i);
         grn_table_add(ctx, keywords,
                       GRN_TEXT_VALUE(keyword),
                       GRN_TEXT_LEN(keyword),
