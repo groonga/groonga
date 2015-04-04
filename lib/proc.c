@@ -2659,7 +2659,7 @@ dump_plugins(grn_ctx *ctx, grn_obj *outbuf)
     return;
   }
 
-  processed_paths = grn_hash_create(ctx, NULL, GRN_HASH_MAX_KEY_SIZE, 0,
+  processed_paths = grn_hash_create(ctx, NULL, GRN_TABLE_MAX_KEY_SIZE, 0,
                                     GRN_OBJ_TABLE_HASH_KEY |
                                     GRN_OBJ_KEY_VAR_SIZE);
   if (!processed_paths) {

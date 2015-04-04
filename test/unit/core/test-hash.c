@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2012  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2008-2015  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -96,7 +96,7 @@ set_value_size_to_zero(void)
 static void
 set_variable_size(void)
 {
-  grn_test_hash_factory_set_key_size(factory, GRN_HASH_MAX_KEY_SIZE);
+  grn_test_hash_factory_set_key_size(factory, GRN_HASH_MAX_KEY_SIZE_NORMAL);
   grn_test_hash_factory_add_flags(factory, GRN_OBJ_KEY_VAR_SIZE);
 }
 

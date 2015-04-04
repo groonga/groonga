@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2015  Kouhei Sutou <kou@cozmixng.org>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -156,12 +156,13 @@ retrieve_all_keys (grn_array *array, grn_id n_entries)
   while (id != GRN_ID_NIL) {
     grn_id *hash_id;
     void *array_value;
-    gchar key[GRN_HASH_MAX_KEY_SIZE];
+    gchar key[GRN_HASH_MAX_KEY_SIZE_NORMAL];
     int size;
 
     grn_array_cursor_get_value(context, cursor, &array_value);
     hash_id = array_value;
-    size = grn_hash_get_key(context, hash, *hash_id, key, GRN_HASH_MAX_KEY_SIZE);
+    size = grn_hash_get_key(context, hash, *hash_id,
+                            key, GRN_HASH_MAX_KEY_SIZE_NORMAL);
     key[size] = '\0';
     keys = g_list_append(keys, g_strdup(key));
     id = grn_array_cursor_next(context, cursor);
@@ -656,7 +657,7 @@ test_sort_by_variable_size_key(gconstpointer data)
   const GList *node;
   int n_entries;
 
-  grn_test_hash_factory_set_key_size(factory, GRN_HASH_MAX_KEY_SIZE);
+  grn_test_hash_factory_set_key_size(factory, GRN_HASH_MAX_KEY_SIZE_NORMAL);
   grn_test_hash_factory_add_flags(factory, GRN_OBJ_KEY_VAR_SIZE);
 
   if (test_data->set_parameters)

@@ -7744,7 +7744,7 @@ grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value)
       switch (DB_OBJ(obj)->header.type) {
       case GRN_TABLE_HASH_KEY :
         ((grn_hash *)obj)->tokenizer = value;
-        ((grn_hash *)obj)->header->tokenizer = grn_obj_id(ctx, value);
+        ((grn_hash *)obj)->header.common->tokenizer = grn_obj_id(ctx, value);
         rc = GRN_SUCCESS;
         break;
       case GRN_TABLE_PAT_KEY :
@@ -7765,7 +7765,7 @@ grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value)
       switch (DB_OBJ(obj)->header.type) {
       case GRN_TABLE_HASH_KEY :
         ((grn_hash *)obj)->normalizer = value;
-        ((grn_hash *)obj)->header->normalizer = grn_obj_id(ctx, value);
+        ((grn_hash *)obj)->header.common->normalizer = grn_obj_id(ctx, value);
         rc = GRN_SUCCESS;
         break;
       case GRN_TABLE_PAT_KEY :
