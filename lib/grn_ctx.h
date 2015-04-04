@@ -583,6 +583,8 @@ typedef struct {
 
 /**** cache ****/
 
+#define GRN_CACHE_MAX_KEY_SIZE GRN_HASH_MAX_KEY_SIZE_LARGE
+
 typedef struct {
   uint32_t nentries;
   uint32_t max_nentries;

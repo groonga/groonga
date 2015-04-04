@@ -865,7 +865,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
   grn_obj *outbuf = ctx->impl->outbuf;
   grn_content_type output_type = ctx->impl->output_type;
   grn_obj *table_, *match_columns_ = NULL, *cond = NULL, *scorer_, *res = NULL, *sorted;
-  char cache_key[GRN_TABLE_MAX_KEY_SIZE];
+  char cache_key[GRN_CACHE_MAX_KEY_SIZE];
   uint32_t cache_key_size;
   long long int threshold, original_threshold = 0;
   grn_cache *cache_obj = grn_cache_current_get(ctx);
@@ -886,7 +886,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
         sizeof(int) * 2;
     }
   }
-  if (cache_key_size <= GRN_TABLE_MAX_KEY_SIZE) {
+  if (cache_key_size <= GRN_CACHE_MAX_KEY_SIZE) {
     grn_obj *cache_value;
     char *cp = cache_key;
     memcpy(cp, table, table_len);
@@ -1137,7 +1137,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
       GRN_OUTPUT_ARRAY_OPEN("RESULT", 0);
     }
     GRN_OUTPUT_ARRAY_CLOSE();
-    if (!ctx->rc && cacheable && cache_key_size <= GRN_TABLE_MAX_KEY_SIZE
+    if (!ctx->rc && cacheable && cache_key_size <= GRN_CACHE_MAX_KEY_SIZE
         && (!cache || cache_len != 2 || *cache != 'n' || *(cache + 1) != 'o')) {
       grn_cache_update(ctx, cache_obj, cache_key, cache_key_size, outbuf);
     }
