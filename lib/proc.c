@@ -2874,8 +2874,7 @@ reference_column_p(grn_ctx *ctx, grn_obj *column)
 
 static void
 dump_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
-             grn_obj *pending_reference_columns,
-             grn_obj *pending_index_columns)
+             grn_obj *pending_reference_columns)
 {
   grn_hash *columns;
   columns = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
@@ -2892,7 +2891,7 @@ dump_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
       grn_obj *column;
       if ((column = grn_ctx_at(ctx, *key))) {
         if (GRN_OBJ_INDEX_COLUMNP(column)) {
-          GRN_PTR_PUT(ctx, pending_index_columns, column);
+          /* do nothing */
         } else if (reference_column_p(ctx, column)) {
           GRN_PTR_PUT(ctx, pending_reference_columns, column);
         } else {
@@ -3123,8 +3122,7 @@ exit :
 
 static void
 dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
-           grn_obj *pending_reference_columns,
-           grn_obj *pending_index_columns)
+           grn_obj *pending_reference_columns)
 {
   grn_obj *domain = NULL, *range = NULL;
   grn_obj_flags default_flags = GRN_OBJ_PERSISTENT;
@@ -3209,9 +3207,7 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
     grn_obj_unlink(ctx, domain);
   }
 
-  dump_columns(ctx, outbuf, table,
-               pending_reference_columns,
-               pending_index_columns);
+  dump_columns(ctx, outbuf, table, pending_reference_columns);
 }
 
 static void
@@ -3240,7 +3236,7 @@ dump_pending_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *pending_columns)
 }
 
 static void
-dump_schema(grn_ctx *ctx, grn_obj *outbuf, grn_obj *pending_index_columns)
+dump_schema(grn_ctx *ctx, grn_obj *outbuf)
 {
   grn_obj *db = ctx->impl->db;
   grn_table_cursor *cur;
@@ -3263,9 +3259,7 @@ dump_schema(grn_ctx *ctx, grn_obj *outbuf, grn_obj *pending_index_columns)
       case GRN_TABLE_PAT_KEY:
       case GRN_TABLE_DAT_KEY:
       case GRN_TABLE_NO_KEY:
-        dump_table(ctx, outbuf, object,
-                   &pending_reference_columns,
-                   pending_index_columns);
+        dump_table(ctx, outbuf, object, &pending_reference_columns);
         break;
       default:
         break;
@@ -3367,6 +3361,51 @@ dump_all_records(grn_ctx *ctx, grn_obj *outbuf)
   }
 }
 
+static void
+dump_indexes(grn_ctx *ctx, grn_obj *outbuf)
+{
+  grn_obj *db = ctx->impl->db;
+  grn_table_cursor *cursor;
+  grn_id id;
+  grn_bool is_first_index_column = GRN_TRUE;
+
+  cursor = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1,
+                              GRN_CURSOR_BY_ID);
+  if (!cursor) {
+    return;
+  }
+
+  while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+    grn_obj *object;
+
+    object = grn_ctx_at(ctx, id);
+    if (!object) {
+      /* XXX: this clause is executed when MeCab tokenizer is enabled in
+         database but the groonga isn't supported MeCab.
+         We should return error mesage about it and error exit status
+         but it's too difficult for this architecture. :< */
+      ERRCLR(ctx);
+      continue;
+    }
+
+    if (object->header.type == GRN_COLUMN_INDEX) {
+      grn_obj *table;
+      grn_obj *column = object;
+
+      if (is_first_index_column && GRN_TEXT_LEN(outbuf) > 0) {
+        GRN_TEXT_PUTC(ctx, outbuf, '\n');
+      }
+      is_first_index_column = GRN_FALSE;
+
+      table = grn_ctx_at(ctx, column->header.domain);
+      dump_column(ctx, outbuf, table, column);
+      grn_obj_unlink(ctx, table);
+    }
+    grn_obj_unlink(ctx, object);
+  }
+  grn_table_cursor_close(ctx, cursor);
+}
+
 static grn_bool
 bool_option_value(grn_obj *option, grn_bool default_value)
 {
@@ -3397,20 +3436,21 @@ proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *outbuf = ctx->impl->outbuf;
   grn_obj *tables = VAR(0);
   grn_obj *dump_plugins_raw = VAR(1);
+  grn_obj *dump_schema_raw = VAR(2);
   grn_bool is_dump_plugins;
-  grn_obj pending_index_columns;
-
-  GRN_PTR_INIT(&pending_index_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  grn_bool is_dump_schema;
 
   grn_ctx_set_output_type(ctx, GRN_CONTENT_GROONGA_COMMAND_LIST);
 
   is_dump_plugins = bool_option_value(dump_plugins_raw, GRN_TRUE);
+  is_dump_schema = bool_option_value(dump_schema_raw, GRN_TRUE);
+
   if (is_dump_plugins) {
     dump_plugins(ctx, outbuf);
-    grn_ctx_output_flush(ctx, 0);
   }
-  dump_schema(ctx, outbuf, &pending_index_columns);
-  grn_ctx_output_flush(ctx, 0);
+  if (is_dump_schema) {
+    dump_schema(ctx, outbuf);
+  }
   /* To update index columns correctly, we first create the whole schema, then
      load non-derivative records, while skipping records of index columns. That
      way, groonga will silently do the job of updating index columns for us. */
@@ -3420,8 +3460,7 @@ proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     dump_all_records(ctx, outbuf);
   }
 
-  dump_pending_columns(ctx, outbuf, &pending_index_columns);
-  grn_obj_close(ctx, &pending_index_columns);
+  dump_indexes(ctx, outbuf);
 
   /* remove the last newline because another one will be added by the caller.
      maybe, the caller of proc functions currently doesn't consider the
@@ -6772,7 +6811,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
 
   DEF_VAR(vars[0], "tables");
   DEF_VAR(vars[1], "dump_plugins");
-  DEF_COMMAND("dump", proc_dump, 2, vars);
+  DEF_VAR(vars[2], "dump_schema");
+  DEF_COMMAND("dump", proc_dump, 3, vars);
 
   /* Deprecated. Use "plugin_register" instead. */
   DEF_VAR(vars[0], "path");
