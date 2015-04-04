@@ -3437,13 +3437,16 @@ proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *tables = VAR(0);
   grn_obj *dump_plugins_raw = VAR(1);
   grn_obj *dump_schema_raw = VAR(2);
+  grn_obj *dump_records_raw = VAR(3);
   grn_bool is_dump_plugins;
   grn_bool is_dump_schema;
+  grn_bool is_dump_records;
 
   grn_ctx_set_output_type(ctx, GRN_CONTENT_GROONGA_COMMAND_LIST);
 
   is_dump_plugins = bool_option_value(dump_plugins_raw, GRN_TRUE);
   is_dump_schema = bool_option_value(dump_schema_raw, GRN_TRUE);
+  is_dump_records = bool_option_value(dump_records_raw, GRN_TRUE);
 
   if (is_dump_plugins) {
     dump_plugins(ctx, outbuf);
@@ -3451,13 +3454,15 @@ proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   if (is_dump_schema) {
     dump_schema(ctx, outbuf);
   }
-  /* To update index columns correctly, we first create the whole schema, then
-     load non-derivative records, while skipping records of index columns. That
-     way, groonga will silently do the job of updating index columns for us. */
-  if (GRN_TEXT_LEN(tables) > 0) {
-    dump_selected_tables_records(ctx, outbuf, tables);
-  } else {
-    dump_all_records(ctx, outbuf);
+  if (is_dump_records) {
+    /* To update index columns correctly, we first create the whole schema, then
+       load non-derivative records, while skipping records of index columns. That
+       way, groonga will silently do the job of updating index columns for us. */
+    if (GRN_TEXT_LEN(tables) > 0) {
+      dump_selected_tables_records(ctx, outbuf, tables);
+    } else {
+      dump_all_records(ctx, outbuf);
+    }
   }
 
   dump_indexes(ctx, outbuf);
@@ -6812,7 +6817,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[0], "tables");
   DEF_VAR(vars[1], "dump_plugins");
   DEF_VAR(vars[2], "dump_schema");
-  DEF_COMMAND("dump", proc_dump, 3, vars);
+  DEF_VAR(vars[3], "dump_records");
+  DEF_COMMAND("dump", proc_dump, 4, vars);
 
   /* Deprecated. Use "plugin_register" instead. */
   DEF_VAR(vars[0], "path");
