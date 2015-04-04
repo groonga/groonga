@@ -3438,15 +3438,18 @@ proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *dump_plugins_raw = VAR(1);
   grn_obj *dump_schema_raw = VAR(2);
   grn_obj *dump_records_raw = VAR(3);
+  grn_obj *dump_indexes_raw = VAR(4);
   grn_bool is_dump_plugins;
   grn_bool is_dump_schema;
   grn_bool is_dump_records;
+  grn_bool is_dump_indexes;
 
   grn_ctx_set_output_type(ctx, GRN_CONTENT_GROONGA_COMMAND_LIST);
 
   is_dump_plugins = bool_option_value(dump_plugins_raw, GRN_TRUE);
   is_dump_schema = bool_option_value(dump_schema_raw, GRN_TRUE);
   is_dump_records = bool_option_value(dump_records_raw, GRN_TRUE);
+  is_dump_indexes = bool_option_value(dump_indexes_raw, GRN_TRUE);
 
   if (is_dump_plugins) {
     dump_plugins(ctx, outbuf);
@@ -3464,8 +3467,9 @@ proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       dump_all_records(ctx, outbuf);
     }
   }
-
-  dump_indexes(ctx, outbuf);
+  if (is_dump_indexes) {
+    dump_indexes(ctx, outbuf);
+  }
 
   /* remove the last newline because another one will be added by the caller.
      maybe, the caller of proc functions currently doesn't consider the
@@ -6818,7 +6822,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[1], "dump_plugins");
   DEF_VAR(vars[2], "dump_schema");
   DEF_VAR(vars[3], "dump_records");
-  DEF_COMMAND("dump", proc_dump, 4, vars);
+  DEF_VAR(vars[4], "dump_indexes");
+  DEF_COMMAND("dump", proc_dump, 5, vars);
 
   /* Deprecated. Use "plugin_register" instead. */
   DEF_VAR(vars[0], "path");
