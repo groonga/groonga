@@ -3144,6 +3144,7 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
 
   if (GRN_TEXT_LEN(outbuf) > 0) {
     GRN_TEXT_PUTC(ctx, outbuf, '\n');
+    grn_ctx_output_flush(ctx, 0);
   }
 
   GRN_TEXT_PUTS(ctx, outbuf, "table_create ");
@@ -3224,6 +3225,7 @@ dump_pending_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *pending_columns)
 
   if (GRN_TEXT_LEN(outbuf) > 0) {
     GRN_TEXT_PUTC(ctx, outbuf, '\n');
+    grn_ctx_output_flush(ctx, 0);
   }
 
   for (i = 0; i < n_columns; i++) {
