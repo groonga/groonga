@@ -2998,7 +2998,9 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
     goto exit;
   }
 
-  GRN_TEXT_PUTC(ctx, outbuf, '\n');
+  if (GRN_TEXT_LEN(outbuf) > 0) {
+    GRN_TEXT_PUTC(ctx, outbuf, '\n');
+  }
 
   GRN_TEXT_PUTS(ctx, outbuf, "load --table ");
   dump_obj_name(ctx, outbuf, table);
