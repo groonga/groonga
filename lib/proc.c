@@ -3370,7 +3370,7 @@ dump_indexes(grn_ctx *ctx, grn_obj *outbuf)
   grn_bool is_first_index_column = GRN_TRUE;
 
   cursor = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1,
-                              GRN_CURSOR_BY_ID);
+                                 GRN_CURSOR_BY_ID);
   if (!cursor) {
     return;
   }
