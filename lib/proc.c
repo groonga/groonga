@@ -3367,25 +3367,55 @@ dump_all_records(grn_ctx *ctx, grn_obj *outbuf)
   }
 }
 
+static grn_bool
+bool_option_value(grn_obj *option, grn_bool default_value)
+{
+  const char *value;
+  size_t value_length;
+
+  value = GRN_TEXT_VALUE(option);
+  value_length = GRN_TEXT_LEN(option);
+
+  if (value_length == 0) {
+    return default_value;
+  }
+
+  if (value_length == strlen("yes") &&
+      strncmp(value, "yes", value_length) == 0) {
+    return GRN_TRUE;
+  } else if (value_length == strlen("no") &&
+             strncmp(value, "no", value_length) == 0) {
+    return GRN_FALSE;
+  } else {
+    return default_value;
+  }
+}
+
 static grn_obj *
 proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *outbuf = ctx->impl->outbuf;
+  grn_obj *tables = VAR(0);
+  grn_obj *dump_plugins_raw = VAR(1);
+  grn_bool is_dump_plugins;
   grn_obj pending_index_columns;
 
   GRN_PTR_INIT(&pending_index_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
 
   grn_ctx_set_output_type(ctx, GRN_CONTENT_GROONGA_COMMAND_LIST);
 
-  dump_plugins(ctx, outbuf);
-  grn_ctx_output_flush(ctx, 0);
+  is_dump_plugins = bool_option_value(dump_plugins_raw, GRN_TRUE);
+  if (is_dump_plugins) {
+    dump_plugins(ctx, outbuf);
+    grn_ctx_output_flush(ctx, 0);
+  }
   dump_schema(ctx, outbuf, &pending_index_columns);
   grn_ctx_output_flush(ctx, 0);
   /* To update index columns correctly, we first create the whole schema, then
      load non-derivative records, while skipping records of index columns. That
      way, groonga will silently do the job of updating index columns for us. */
-  if (GRN_TEXT_LEN(VAR(0)) > 0) {
-    dump_selected_tables_records(ctx, outbuf, VAR(0));
+  if (GRN_TEXT_LEN(tables) > 0) {
+    dump_selected_tables_records(ctx, outbuf, tables);
   } else {
     dump_all_records(ctx, outbuf);
   }
@@ -6741,7 +6771,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_COMMAND("cache_limit", proc_cache_limit, 1, vars);
 
   DEF_VAR(vars[0], "tables");
-  DEF_COMMAND("dump", proc_dump, 1, vars);
+  DEF_VAR(vars[1], "dump_plugins");
+  DEF_COMMAND("dump", proc_dump, 2, vars);
 
   /* Deprecated. Use "plugin_register" instead. */
   DEF_VAR(vars[0], "path");
