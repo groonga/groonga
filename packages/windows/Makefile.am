@@ -117,6 +117,7 @@ package:
 	  cp -a dist-$${architecture}				\
 	    files/$(PACKAGE)-$(VERSION)-$${architecture};	\
 	  (cd files &&						\
+	    rm -f $(PACKAGE)-$(VERSION)-$${architecture}.zip;	\
 	    zip -r $(PACKAGE)-$(VERSION)-$${architecture}.zip	\
 	           $(PACKAGE)-$(VERSION)-$${architecture});	\
 	  rm -rf files/$(PACKAGE)-$(VERSION)-$${architecture};	\
