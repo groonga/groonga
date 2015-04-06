@@ -14,4 +14,5 @@ column_create Memos content COLUMN_SCALAR Text
 column_create Memos title COLUMN_SCALAR ShortText
 
 table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+
 column_create Terms memos_index COLUMN_INDEX|WITH_SECTION|WITH_POSITION Memos title,content

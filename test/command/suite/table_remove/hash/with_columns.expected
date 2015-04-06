@@ -5,7 +5,6 @@ column_create Users name COLUMN_SCALAR ShortText
 dump
 table_create Users TABLE_HASH_KEY ShortText
 column_create Users name COLUMN_SCALAR ShortText
-
 table_remove Users
 [[0,0.0,0.0],true]
 dump

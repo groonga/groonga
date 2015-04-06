@@ -21,4 +21,3 @@ truncate Diaries
 dump
 table_create Diaries TABLE_DAT_KEY ShortText
 column_create Diaries content COLUMN_SCALAR Text
-

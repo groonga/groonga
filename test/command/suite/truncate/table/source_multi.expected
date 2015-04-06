@@ -14,6 +14,7 @@ column_create Diaries content COLUMN_SCALAR Text
 column_create Diaries title COLUMN_SCALAR ShortText
 
 table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+
 column_create Terms diaries_index COLUMN_INDEX|WITH_SECTION|WITH_POSITION Diaries title,content
 truncate Diaries
 [[0,0.0,0.0],true]
@@ -23,4 +24,5 @@ column_create Diaries content COLUMN_SCALAR Text
 column_create Diaries title COLUMN_SCALAR ShortText
 
 table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+
 column_create Terms diaries_index COLUMN_INDEX|WITH_SECTION|WITH_POSITION Diaries title,content

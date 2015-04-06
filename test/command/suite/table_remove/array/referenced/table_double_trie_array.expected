@@ -19,4 +19,3 @@ dump
 table_create Names TABLE_NO_KEY
 
 table_create Users TABLE_DAT_KEY Names
-
