@@ -387,7 +387,7 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
     break;\
   }\
   if (show_errno) {\
-    ERR(rc, "syscall error '%s' (%s)[%d]", str, system_message, errno_keep); \
+    ERR(rc, "syscall error '%s' (%s)[%d]", str, system_message, errno_keep);\
   } else {\
     ERR(rc, "syscall error '%s' (%s)", str, system_message);\
   }\
