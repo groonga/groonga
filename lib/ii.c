@@ -4096,12 +4096,30 @@ exit :
 static inline void
 grn_ii_cursor_set_min(grn_ctx *ctx, grn_ii_cursor *c, grn_id min)
 {
-  if (c->min > min) {
+  if (c->min >= min) {
     return;
   }
 
   if (getenv("GRN_II_CURSOR_SET_MIN_ENABLE")) {
     c->min = min;
+    if (c->buf && c->pc.rid < c->min && c->curr_chunk < c->nchunks) {
+      uint32_t i, skip_chunk = 0;
+      grn_id rid;
+      for (i = 0, rid = GRN_ID_NIL; i < c->nchunks; i++) {
+        rid += c->cinfo[i].dgap;
+        if (rid < c->min) {
+          skip_chunk = i + 1;
+        } else {
+          rid -= c->cinfo[i].dgap;
+          break;
+        }
+      }
+      if (skip_chunk > c->curr_chunk) {
+        c->pc.rid = rid;
+        c->curr_chunk = skip_chunk;
+        c->crp = c->cdp + c->cdf;
+      }
+    }
   }
 }
 
@@ -4129,15 +4147,6 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
               c->pc.weight = 0;
             }
             c->pc.pos = 0;
-            if (c->pc.rid < c->min) {
-              if (c->curr_chunk < c->nchunks) {
-                uint32_t next_dgap = c->cinfo[c->curr_chunk + 1].dgap;
-                if (next_dgap > 0 && c->pc.rid + next_dgap < c->min) {
-                  c->crp = c->cdp + c->cdf;
-                }
-              }
-              continue;
-            }
             /*
             {
               static int count = 0;
