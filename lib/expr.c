@@ -5065,7 +5065,10 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
                                 GRN_BULK_HEAD(si->query),
                                 GRN_BULK_VSIZE(si->query));
           }
-          grn_ii_at(ctx, (grn_ii *)index, tid, (grn_hash *)res, si->logical_op);
+          if (tid != GRN_ID_NIL) {
+            grn_ii_at(ctx, (grn_ii *)index, tid, (grn_hash *)res,
+                      si->logical_op);
+          }
         }
         grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
         processed = GRN_TRUE;
