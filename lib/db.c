@@ -2787,16 +2787,8 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
 
     {
       grn_id *tid;
-      grn_obj *domain;
       grn_obj *next_res;
-      grn_search_optarg next_optarg;
       grn_rset_recinfo *recinfo;
-      if (optarg) {
-        next_optarg = *optarg;
-        next_optarg.mode = GRN_OP_EXACT;
-      } else {
-        memset(&next_optarg, 0, sizeof(grn_search_optarg));
-      }
       {
         grn_obj *range = grn_ctx_at(ctx, DB_OBJ(index)->range);
         next_res = grn_table_create(ctx, NULL, 0, NULL,
@@ -2811,29 +2803,33 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
           break;
         }
       }
-      domain = grn_ctx_at(ctx, index->header.domain);
       GRN_HASH_EACH(ctx, (grn_hash *)current_res, id, &tid, NULL, &recinfo, {
-        next_optarg.weight_vector = NULL;
-        next_optarg.vector_size = recinfo->score;
-        if (domain->header.type == GRN_TABLE_NO_KEY) {
-          rc = grn_ii_sel(ctx, (grn_ii *)index,
-                          (const char *)tid, sizeof(grn_id),
-                          (grn_hash *)next_res, GRN_OP_OR,
-                          &next_optarg);
-        } else {
-          char key[GRN_TABLE_MAX_KEY_SIZE];
-          int key_len;
-          key_len = grn_table_get_key(ctx, domain, *tid,
-                                      key, GRN_TABLE_MAX_KEY_SIZE);
-          rc = grn_ii_sel(ctx, (grn_ii *)index, key, key_len,
-                          (grn_hash *)next_res, GRN_OP_OR,
-                          &next_optarg);
+        grn_ii *ii = (grn_ii *)index;
+        grn_ii_cursor *ii_cursor;
+        grn_ii_posting *posting;
+
+        ii_cursor = grn_ii_cursor_open(ctx, ii, *tid,
+                                       GRN_ID_NIL, GRN_ID_MAX,
+                                       ii->n_elements,
+                                       0);
+        if (!ii_cursor) {
+          continue;
         }
+
+        while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
+          grn_ii_posting add_posting = *posting;
+          add_posting.weight += recinfo->score - 1;
+          grn_ii_posting_add(ctx,
+                             &add_posting,
+                             (grn_hash *)next_res,
+                             GRN_OP_OR);
+        }
+        grn_ii_cursor_close(ctx, ii_cursor);
+
         if (rc != GRN_SUCCESS) {
           break;
         }
       });
-      grn_obj_unlink(ctx, domain);
       if (current_res != base_res) {
         grn_obj_unlink(ctx, current_res);
       }
