@@ -475,6 +475,7 @@ typedef struct {
   struct {
     grn_bool have_begin;
     grn_bool have_end;
+    int32_t n_skip_tokens;
   } get;
   grn_bool is_begin;
   grn_bool is_end;
@@ -513,6 +514,7 @@ regexp_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   tokenizer->get.have_begin = GRN_FALSE;
   tokenizer->get.have_end   = GRN_FALSE;
+  tokenizer->get.n_skip_tokens = 0;
 
   tokenizer->is_begin = GRN_TRUE;
   tokenizer->is_end   = GRN_FALSE;
@@ -680,6 +682,13 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         if (status & GRN_TOKEN_UNMATURED) {
           status |= GRN_TOKEN_FORCE_PREFIX;
         }
+      }
+    } else {
+      if (tokenizer->get.n_skip_tokens > 0) {
+        tokenizer->get.n_skip_tokens--;
+        status |= GRN_TOKEN_SKIP;
+      } else {
+        tokenizer->get.n_skip_tokens = ngram_unit - 1;
       }
     }
   } else {

@@ -47,10 +47,6 @@ table_tokenize Lexicon "abcd\\z" --mode GET
       "position": 0
     },
     {
-      "value": "bc",
-      "position": 1
-    },
-    {
       "value": "cd",
       "position": 2
     },

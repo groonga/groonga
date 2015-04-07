@@ -1,0 +1,98 @@
+table_create Lexicon TABLE_PAT_KEY ShortText   --default_tokenizer TokenRegexp
+[[0,0.0,0.0],true]
+table_tokenize Lexicon "abcdefghijk" --mode ADD
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "￯",
+      "position": 0
+    },
+    {
+      "value": "ab",
+      "position": 1
+    },
+    {
+      "value": "bc",
+      "position": 2
+    },
+    {
+      "value": "cd",
+      "position": 3
+    },
+    {
+      "value": "de",
+      "position": 4
+    },
+    {
+      "value": "ef",
+      "position": 5
+    },
+    {
+      "value": "fg",
+      "position": 6
+    },
+    {
+      "value": "gh",
+      "position": 7
+    },
+    {
+      "value": "hi",
+      "position": 8
+    },
+    {
+      "value": "ij",
+      "position": 9
+    },
+    {
+      "value": "jk",
+      "position": 10
+    },
+    {
+      "value": "k",
+      "position": 11
+    },
+    {
+      "value": "￰",
+      "position": 12
+    }
+  ]
+]
+table_tokenize Lexicon "abcdefghijk" --mode GET
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "ab",
+      "position": 0
+    },
+    {
+      "value": "cd",
+      "position": 2
+    },
+    {
+      "value": "ef",
+      "position": 4
+    },
+    {
+      "value": "gh",
+      "position": 6
+    },
+    {
+      "value": "ij",
+      "position": 8
+    },
+    {
+      "value": "jk",
+      "position": 9
+    }
+  ]
+]
