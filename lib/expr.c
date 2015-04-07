@@ -728,7 +728,8 @@ grn_expr_append_obj_resolve_const(grn_ctx *ctx,
   grn_obj dest;
 
   GRN_OBJ_INIT(&dest, GRN_BULK, 0, to_domain);
-  if (!grn_obj_cast(ctx, obj, &dest, GRN_FALSE)) {
+  if (!grn_obj_cast(ctx, obj, &dest, GRN_FALSE) &&
+      GRN_BULK_VSIZE(&dest) > 0) {
     grn_obj_reinit(ctx, obj, to_domain, 0);
     grn_bulk_write(ctx, obj, GRN_BULK_HEAD(&dest), GRN_BULK_VSIZE(&dest));
   }
