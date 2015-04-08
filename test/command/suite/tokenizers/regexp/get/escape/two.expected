@@ -67,24 +67,12 @@ table_tokenize Lexicon "c:\\\\server" --mode GET
       "position": 0
     },
     {
-      "value": ":\\",
-      "position": 1
-    },
-    {
       "value": "\\s",
       "position": 2
     },
     {
-      "value": "se",
-      "position": 3
-    },
-    {
       "value": "er",
       "position": 4
-    },
-    {
-      "value": "rv",
-      "position": 5
     },
     {
       "value": "ve",
