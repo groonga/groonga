@@ -35,7 +35,6 @@ static grn_obj text_buf, int_buf, ptr_buf;
 void test_equal(void);
 void test_equal_indexed(void);
 void test_equal_by_existent_reference_key(void);
-void test_equal_by_nonexistent_reference_key(void);
 void test_select(void);
 void test_search(void);
 void test_select_search(void);
@@ -284,26 +283,6 @@ test_equal_by_existent_reference_key(void)
                            "hoge",
                            "poyo moge hoge moge moge moge",
                            NULL),
-                         res,
-                         "body");
-}
-
-void
-test_equal_by_nonexistent_reference_key(void)
-{
-  grn_obj *v;
-
-  prepare_data();
-
-  GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
-  cut_assert_not_null(cond);
-  cut_assert_not_null(v);
-  PARSE(cond, "author == \"nonexistent\"", GRN_EXPR_SYNTAX_SCRIPT);
-  res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
-  cut_assert_not_null(res);
-
-  grn_test_assert_select(&context,
-                         NULL,
                          res,
                          "body");
 }
