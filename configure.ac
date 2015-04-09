@@ -240,6 +240,7 @@ AC_CONFIG_FILES([
   plugins/ruby/Makefile
   plugins/token_filters/Makefile
   plugins/sharding/Makefile
+  plugins/functions/Makefile
   examples/Makefile
   examples/dictionary/Makefile
   examples/dictionary/edict/Makefile
@@ -1368,6 +1369,9 @@ AC_SUBST(token_filter_pluginsdir)
 
 sharding_pluginsdir="\${pluginsdir}/sharding"
 AC_SUBST(sharding_pluginsdir)
+
+function_pluginsdir="\${pluginsdir}/functions"
+AC_SUBST(function_pluginsdir)
 
 AC_MSG_CHECKING(for the suffix of plugin shared libraries)
 shrext_cmds=$(./libtool --config | grep '^shrext_cmds=')
