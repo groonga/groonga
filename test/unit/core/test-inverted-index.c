@@ -40,6 +40,7 @@ void test_scalar_index(void);
 void test_int_index(void);
 void test_mroonga_index(void);
 void test_mroonga_index_score(void);
+void test_estimate_size_for_query(void);
 
 #define TYPE_SIZE 1024
 
@@ -933,4 +934,41 @@ test_mroonga_index_score(void)
   grn_obj_close(context, c1);
   grn_obj_close(context, lc);
   grn_obj_close(context, t1);
+}
+
+void
+test_estimate_size_for_query(void)
+{
+  grn_obj *index_column;
+  grn_ii *ii;
+
+  grn_obj_close(context, db);
+  db = grn_db_create(context,
+                     cut_build_path(tmp_directory, "estimate.grn", NULL),
+                     NULL);
+
+  assert_send_command("table_create Memos TABLE_NO_KEY");
+  assert_send_command("column_create Memos content COLUMN_SCALAR Text");
+  assert_send_command("table_create Terms TABLE_PAT_KEY ShortText "
+                      "--default_tokenizer TokenBigramSplitSymbolAlphaDigit "
+                      "--normalizer NormalizerAuto");
+  assert_send_command("column_create Terms index COLUMN_INDEX|WITH_POSITION "
+                      "Memos content");
+  assert_send_command("load --table Memos\n"
+                      "["
+                      "[\"content\"],"
+                      "[\"Groonga\"],"
+                      "[\"Rroonga\"],"
+                      "[\"Mroonga\"]"
+                      "]");
+
+  index_column = grn_ctx_get(context, "Terms.index", strlen("Terms.index"));
+  ii = (grn_ii *)index_column;
+
+  cut_assert_equal_double(1, DBL_EPSILON,
+                          grn_ii_estimate_size_for_query(context,
+                                                         ii,
+                                                         "Groonga",
+                                                         strlen("Groonga"),
+                                                         NULL));
 }

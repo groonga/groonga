@@ -19,6 +19,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <math.h>
 
 #include "grn_ii.h"
 #include "grn_ctx_impl.h"
@@ -6505,7 +6506,11 @@ grn_ii_estimate_size_for_query(grn_ctx *ctx, grn_ii *ii,
     token_info *ti = tis[i];
     double term_estimated_size;
     term_estimated_size = ((double)ti->size / ti->ntoken);
-    estimated_size += (term_estimated_size - estimated_size) / (i + 1);
+    if (i == 0) {
+      estimated_size = term_estimated_size;
+    } else {
+      estimated_size = fmin(estimated_size, term_estimated_size);
+    }
   }
 
 exit :
