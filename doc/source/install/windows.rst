@@ -88,5 +88,5 @@ Install::
 
   groonga-5.0.2> cmake --build . --config Release --target Install
 
-After the above steps, :doc:`/reference/executables/groonga` is found in
+After the above steps, :doc:`/reference/executables/groonga` is found at
 ``c:\Groonga\bin\groonga.exe``.
