@@ -78,7 +78,7 @@ Configure by ``cmake``. The following commnad line is for 64-bit
 version. To build 32-bit version, use ``-G "Visual Studio 12 2013"``
 parameter instead::
 
-  groonga-5.0.2> cmake . -G "Visual Studio 12 2013 Win64" -DCMAKE_INSTALL_PREFIX=C:\groonga
+  groonga-5.0.2> cmake . -G "Visual Studio 12 2013 Win64" -DCMAKE_INSTALL_PREFIX=C:\Groonga
 
 Build::
 
@@ -89,4 +89,4 @@ Install::
   groonga-5.0.2> cmake --build . --config Release --target Install
 
 After the above steps, :doc:`/reference/executables/groonga` is found in
-``c:\groonga\bin\groonga.exe``.
+``c:\Groonga\bin\groonga.exe``.
