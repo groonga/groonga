@@ -60,8 +60,8 @@ Build from source
 First, you need to install required tools for building Groonga on
 Windows. Here are required tools:
 
-  * `Microsoft Visual Studio 2010 Express
-    <http://www.microsoft.com/japan/msdn/vstudio/express/>`_
+  * `Microsoft Visual Studio Express 2013 for Windows Desktop
+    <https://www.visualstudio.com/downloads/#d-2013-express>`_
   * `CMake <http://www.cmake.org/>`_
 
 Download zipped source from packages.groonga.org:
@@ -75,10 +75,10 @@ Move to the Groonga's source folder::
   > cd c:\Users\%USERNAME%\Downloads\groonga-5.0.2
 
 Configure by ``cmake``. The following commnad line is for 64-bit
-version. To build 32-bit version, use ``-G "Visual Studio 10"``
+version. To build 32-bit version, use ``-G "Visual Studio 12 2013"``
 parameter instead::
 
-  groonga-5.0.2> cmake . -G "Visual Studio 10 Win64" -DCMAKE_INSTALL_PREFIX=C:\groonga
+  groonga-5.0.2> cmake . -G "Visual Studio 12 2013 Win64" -DCMAKE_INSTALL_PREFIX=C:\groonga
 
 Build::
 
