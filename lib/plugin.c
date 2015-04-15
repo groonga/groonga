@@ -623,7 +623,7 @@ grn_plugin_find_path_libs_so(grn_ctx *ctx, const char *path, size_t path_len)
   }
 
   libs_so_path[0] = '\0';
-  strncat(libs_so_path, path, base_name - path);
+  grn_strncat(libs_so_path, PATH_MAX, path, base_name - path);
   strcat(libs_so_path, libs_path);
   strcat(libs_so_path, base_name);
   strcat(libs_so_path, so_suffix);

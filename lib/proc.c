@@ -2728,7 +2728,7 @@ dump_plugins(grn_ctx *ctx, grn_obj *outbuf)
       }
       start_libs = strstr(relative_path, libs_path);
       if (start_libs) {
-        strncat(name, relative_path, start_libs - relative_path);
+        grn_strncat(name, PATH_MAX, relative_path, start_libs - relative_path);
         strcat(name, "/");
         strcat(name, start_libs + strlen(libs_path));
       } else {

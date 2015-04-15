@@ -83,4 +83,12 @@
 # define grn_unlink(filename) unlink((filename))
 #endif /* WIN32 */
 
+#ifdef WIN32
+# define grn_strncat(dest, dest_size, src, n)   \
+  strncat_s((dest), (dest_size), (src), (n))
+#else /* WIN32 */
+# define grn_strncat(dest, dest_size, src, n)   \
+  strncat((dest), (src), (n))
+#endif /* WIN32 */
+
 #endif /* GROONGA_PORTABILITY_H */

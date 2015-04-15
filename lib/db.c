@@ -7489,8 +7489,10 @@ grn_obj_set_info_source_validate_report_error(grn_ctx *ctx,
                                   source_name, GRN_TABLE_MAX_KEY_SIZE);
   if (GRN_OBJ_TABLEP(source)) {
     source_name[source_name_size] = '\0';
-    strncat(source_name, "._key",
-            GRN_TABLE_MAX_KEY_SIZE - source_name_size - 1);
+    grn_strncat(source_name,
+                GRN_TABLE_MAX_KEY_SIZE,
+                "._key",
+                GRN_TABLE_MAX_KEY_SIZE - source_name_size - 1);
     source_name_size = strlen(source_name);
   }
   table_domain_name_size = grn_obj_name(ctx, table_domain,
