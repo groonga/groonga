@@ -1295,7 +1295,7 @@ grn_win32_base_dir(void)
                                                     absolute_dll_filename,
                                                     MAX_PATH);
     if (absolute_dll_filename_size == 0) {
-      win32_base_dir = strdup(".");
+      win32_base_dir = grn_strdup_raw(".");
     } else {
       DWORD ansi_dll_filename_size;
       ansi_dll_filename_size =
@@ -1303,7 +1303,7 @@ grn_win32_base_dir(void)
                             absolute_dll_filename, absolute_dll_filename_size,
                             NULL, 0, NULL, NULL);
       if (ansi_dll_filename_size == 0) {
-        win32_base_dir = strdup(".");
+        win32_base_dir = grn_strdup_raw(".");
       } else {
         char *path;
         win32_base_dir = malloc(ansi_dll_filename_size + 1);

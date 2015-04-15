@@ -164,7 +164,7 @@ grn_default_logger_set_path(const char *path)
   }
 
   if (path) {
-    default_logger_path = strdup(path);
+    default_logger_path = grn_strdup_raw(path);
   } else {
     default_logger_path = NULL;
   }
@@ -298,7 +298,7 @@ void
 grn_logger_init(void)
 {
   if (!default_logger_path) {
-    default_logger_path = strdup(GRN_LOG_PATH);
+    default_logger_path = grn_strdup_raw(GRN_LOG_PATH);
   }
   grn_memcpy(&current_logger, &default_logger, sizeof(grn_logger));
   CRITICAL_SECTION_INIT(default_logger_lock);
@@ -429,7 +429,7 @@ grn_default_query_logger_set_path(const char *path)
   }
 
   if (path) {
-    default_query_logger_path = strdup(path);
+    default_query_logger_path = grn_strdup_raw(path);
   } else {
     default_query_logger_path = NULL;
   }
