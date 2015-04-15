@@ -2793,8 +2793,8 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
                       j, rdv[j].data_size, rdv[j].flags);
               for (i = 0, bufp = buf; i < rdv[j].data_size;) {
                 bufp += grn_snprintf(bufp,
-                                     buf_end - buf,
-                                     buf_end - buf,
+                                     buf_end - bufp,
+                                     buf_end - bufp,
                                      " %d", rdv[j].data[i]);
                 i++;
                 if (!(i % 32) || i == rdv[j].data_size) {
@@ -2809,8 +2809,8 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
                       j, dv[j].data_size, dv[j].flags);
               for (i = 0, bufp = buf; i < dv[j].data_size;) {
                 bufp += grn_snprintf(bufp,
-                                     buf_end - buf,
-                                     buf_end - buf,
+                                     buf_end - bufp,
+                                     buf_end - bufp,
                                      " %d", dv[j].data[i]);
                 i++;
                 if (!(i % 32) || i == dv[j].data_size) {
