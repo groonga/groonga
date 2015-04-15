@@ -15,8 +15,8 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef GROONGA_COMPAT_H
-#define GROONGA_COMPAT_H
+#ifndef GROONGA_PORTABILITY_H
+#define GROONGA_PORTABILITY_H
 
 #ifdef WIN32
 # ifdef __cplusplus
@@ -61,4 +61,4 @@
   } while (0)
 #endif /* WIN32 */
 
-#endif /* GROONGA_COMPAT_H */
+#endif /* GROONGA_PORTABILITY_H */
