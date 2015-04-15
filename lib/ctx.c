@@ -32,7 +32,7 @@
 #include <stdarg.h>
 #include <time.h>
 #ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
+# include <netinet/in.h>
 #endif /* HAVE_NETINET_IN_H */
 
 #if defined(HAVE__LOCALTIME64_S) && defined(__GNUC__)
