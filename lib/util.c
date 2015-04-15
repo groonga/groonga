@@ -212,8 +212,13 @@ grn_inspect_type(grn_ctx *ctx, grn_obj *buf, unsigned char type)
     break;
   default:
     {
-      char type_in_hex[5]; /* "0xXX" */
-      sprintf(type_in_hex, "%#02x", type);
+#define TYPE_IN_HEX_SIZE 5 /* "0xXX" */
+      char type_in_hex[TYPE_IN_HEX_SIZE];
+      grn_snprintf(type_in_hex,
+                   TYPE_IN_HEX_SIZE,
+                   TYPE_IN_HEX_SIZE,
+                   "%#02x", type);
+#undef TYPE_IN_HEX_SIZE
       GRN_TEXT_PUTS(ctx, buf, "(unknown: ");
       GRN_TEXT_PUTS(ctx, buf, type_in_hex);
       GRN_TEXT_PUTS(ctx, buf, ")");

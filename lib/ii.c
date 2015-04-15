@@ -2780,7 +2780,10 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
 
           if (sb->header.chunk_size + S_SEGMENT <= (dcp - dc) + encsize) {
             int i;
-            char buf[255], *bufp;
+#define BUF_SIZE 255
+            char buf[BUF_SIZE], *bufp, *buf_end;
+            buf_end = buf + BUF_SIZE;
+#undef BUF_SIZE
             GRN_LOG(ctx, GRN_LOG_NOTICE,
                     "cs(%d)+(%d)=(%d)<=(%" GRN_FMT_LLD ")+(%d)=(%" GRN_FMT_LLD ")",
                     sb->header.chunk_size, S_SEGMENT, sb->header.chunk_size + S_SEGMENT,
@@ -2789,7 +2792,10 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
               GRN_LOG(ctx, GRN_LOG_NOTICE, "rdv[%d] data_size=%d, flags=%d",
                       j, rdv[j].data_size, rdv[j].flags);
               for (i = 0, bufp = buf; i < rdv[j].data_size;) {
-                bufp += sprintf(bufp, " %d", rdv[j].data[i]);
+                bufp += grn_snprintf(bufp,
+                                     buf_end - buf,
+                                     buf_end - buf,
+                                     " %d", rdv[j].data[i]);
                 i++;
                 if (!(i % 32) || i == rdv[j].data_size) {
                   GRN_LOG(ctx, GRN_LOG_NOTICE, "rdv[%d].data[%d]%s", j, i, buf);
@@ -2802,7 +2808,10 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
               GRN_LOG(ctx, GRN_LOG_NOTICE, "dv[%d] data_size=%d, flags=%d",
                       j, dv[j].data_size, dv[j].flags);
               for (i = 0, bufp = buf; i < dv[j].data_size;) {
-                bufp += sprintf(bufp, " %d", dv[j].data[i]);
+                bufp += grn_snprintf(bufp,
+                                     buf_end - buf,
+                                     buf_end - buf,
+                                     " %d", dv[j].data[i]);
                 i++;
                 if (!(i % 32) || i == dv[j].data_size) {
                   GRN_LOG(ctx, GRN_LOG_NOTICE, "dv[%d].data[%d]%s", j, i, buf);

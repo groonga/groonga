@@ -2087,7 +2087,10 @@ ftoa_(grn_ctx *ctx, grn_obj *buf, double d)
 #define DIGIT_NUMBER 15
   grn_bulk_reserve(ctx, buf, DIGIT_NUMBER + 1);
   curr = GRN_BULK_CURR(buf);
-  len = sprintf(curr, "%#.*g", DIGIT_NUMBER, d);
+  len = grn_snprintf(curr,
+                     DIGIT_NUMBER + 1,
+                     DIGIT_NUMBER + 1,
+                     "%#.*g", DIGIT_NUMBER, d);
 #undef DIGIT_NUMBER
   if (curr[len - 1] == '.') {
     GRN_BULK_INCR_LEN(buf, len);

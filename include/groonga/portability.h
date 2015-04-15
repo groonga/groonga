@@ -105,4 +105,12 @@
   strncpy((dest), (src), (n))
 #endif /* WIN32 */
 
+#ifdef WIN32
+# define grn_snprintf(dest, dest_size, n, format, ...)          \
+  _snprintf_s((dest), (dest_size), (n), (format), __VA_ARGS__)
+#else /* WIN32 */
+# define grn_snprintf(dest, dest_size, n, format, ...)          \
+  snprintf((dest), (n), (format), __VA_ARGS__)
+#endif /* WIN32 */
+
 #endif /* GROONGA_PORTABILITY_H */
