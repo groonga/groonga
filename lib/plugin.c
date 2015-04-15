@@ -513,7 +513,7 @@ grn_plugin_get_default_system_plugins_dir(void)
 const char *
 grn_plugin_get_system_plugins_dir(void)
 {
-  char plugins_dir[GRN_ENV_BUFFER_SIZE];
+  static char plugins_dir[GRN_ENV_BUFFER_SIZE];
 
   grn_getenv("GRN_PLUGINS_DIR",
              plugins_dir,
