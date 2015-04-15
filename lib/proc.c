@@ -5712,9 +5712,11 @@ selector_between_sequential_search(grn_ctx *ctx,
   double too_many_index_match_ratio = 0.01;
 
   {
-    const char *too_many_index_match_ratio_env =
-      getenv("GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO");
-    if (too_many_index_match_ratio_env) {
+    char too_many_index_match_ratio_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO",
+               too_many_index_match_ratio_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (too_many_index_match_ratio_env[0]) {
       too_many_index_match_ratio = atof(too_many_index_match_ratio_env);
     }
   }
@@ -6208,9 +6210,11 @@ selector_in_values_sequential_search(grn_ctx *ctx,
   double too_many_index_match_ratio = 0.01;
 
   {
-    const char *too_many_index_match_ratio_env =
-      getenv("GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO");
-    if (too_many_index_match_ratio_env) {
+    char too_many_index_match_ratio_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO",
+               too_many_index_match_ratio_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (too_many_index_match_ratio_env[0]) {
       too_many_index_match_ratio = atof(too_many_index_match_ratio_env);
     }
   }

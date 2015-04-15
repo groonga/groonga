@@ -147,9 +147,11 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
 void
 grn_ctx_impl_mrb_init(grn_ctx *ctx)
 {
-  const char *grn_mruby_enabled;
-  grn_mruby_enabled = getenv("GRN_MRUBY_ENABLED");
-  if (grn_mruby_enabled && strcmp(grn_mruby_enabled, "no") == 0) {
+  char grn_mruby_enabled[GRN_ENV_BUFFER_SIZE];
+  grn_getenv("GRN_MRUBY_ENABLED",
+             grn_mruby_enabled,
+             GRN_ENV_BUFFER_SIZE);
+  if (grn_mruby_enabled[0] && strcmp(grn_mruby_enabled, "no") == 0) {
     ctx->impl->mrb.state = NULL;
     ctx->impl->mrb.base_directory[0] = '\0';
     ctx->impl->mrb.module = NULL;

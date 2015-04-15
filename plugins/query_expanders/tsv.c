@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2012 Brazil
+/* Copyright(C) 2012-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -195,14 +195,19 @@ parse_synonyms_file_line(grn_ctx *ctx, const char *line, int line_length,
 static void
 load_synonyms(grn_ctx *ctx)
 {
+  static char path_env[GRN_ENV_BUFFER_SIZE];
   const char *path;
   FILE *file;
   int number_of_lines;
   grn_encoding encoding;
   grn_obj line, key, value;
 
-  path = getenv("GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE");
-  if (!path) {
+  grn_getenv("GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE",
+             path_env,
+             GRN_ENV_BUFFER_SIZE);
+  if (path_env[0]) {
+    path = path_env;
+  } else {
     path = get_system_synonyms_file();
   }
   file = fopen(path, "r");

@@ -155,11 +155,15 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
     if ((s = GRN_MALLOC(sizeof(grn_db)))) {
       grn_bool use_default_db_key = GRN_TRUE;
       grn_bool use_pat_as_db_keys = GRN_FALSE;
-      if (getenv("GRN_DB_KEY")) {
-        if (!strcmp(getenv("GRN_DB_KEY"), "pat")) {
+      char grn_db_key_env[GRN_ENV_BUFFER_SIZE];
+      grn_getenv("GRN_DB_KEY",
+                 grn_db_key_env,
+                 GRN_ENV_BUFFER_SIZE);
+      if (grn_db_key_env[0]) {
+        if (!strcmp(grn_db_key_env, "pat")) {
           use_default_db_key = GRN_FALSE;
           use_pat_as_db_keys = GRN_TRUE;
-        } else if (!strcmp(getenv("GRN_DB_KEY"), "dat")) {
+        } else if (!strcmp(grn_db_key_env, "dat")) {
           use_default_db_key = GRN_FALSE;
         }
       }
@@ -7213,10 +7217,14 @@ build_index(grn_ctx *ctx, grn_obj *obj)
         }
         if (use_grn_ii_build) {
           uint64_t sparsity = 10;
-          if (getenv("GRN_INDEX_SPARSITY")) {
+          char grn_index_sparsity_env[GRN_ENV_BUFFER_SIZE];
+          grn_getenv("GRN_INDEX_SPARSITY",
+                     grn_index_sparsity_env,
+                     GRN_ENV_BUFFER_SIZE);
+          if (grn_index_sparsity_env[0]) {
             uint64_t v;
             errno = 0;
-            v = strtoull(getenv("GRN_INDEX_SPARSITY"), NULL, 0);
+            v = strtoull(grn_index_sparsity_env, NULL, 0);
             if (!errno) { sparsity = v; }
           }
           grn_ii_build(ctx, ii, sparsity);

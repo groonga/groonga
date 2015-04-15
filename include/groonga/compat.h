@@ -32,4 +32,33 @@
 # endif /* __cplusplus */
 #endif /* WIN32 */
 
+#define GRN_ENV_BUFFER_SIZE 1024
+
+#ifdef WIN32
+# define grn_getenv(name, dest, dest_size) do {                         \
+    char *dest_ = (dest);                                               \
+    size_t dest_size_ = (dest_size);                                    \
+    if (dest_size_ > 0) {                                               \
+      DWORD env_size;                                                   \
+      env_size = GetEnvironmentVariableA((name), dest_, dest_size_);    \
+      if (env_size == 0 || env_size > dest_size_) {                     \
+        dest_[0] = '\0';                                                \
+      }                                                                 \
+    }                                                                   \
+  } while (0)
+#else /* WIN32 */
+# define grn_getenv(name, dest, dest_size) do {         \
+    const char *env_value = getenv((name));             \
+    char *dest_ = (dest);                               \
+    size_t dest_size_ = (dest_size);                    \
+    if (dest_size_ > 0) {                               \
+      if (env_value) {                                  \
+        strncpy(dest_, env_value, dest_size_ - 1);      \
+      } else {                                          \
+        dest_[0] = '\0';                                \
+      }                                                 \
+    }                                                   \
+  } while (0)
+#endif /* WIN32 */
+
 #endif /* GROONGA_COMPAT_H */

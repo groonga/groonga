@@ -106,10 +106,12 @@ inline static grn_rc grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t co
 grn_rc
 grn_io_init(void)
 {
-  const char *version_env;
+  char version_env[GRN_ENV_BUFFER_SIZE];
 
-  version_env = getenv("GRN_IO_VERSION");
-  if (version_env) {
+  grn_getenv("GRN_IO_VERSION",
+             version_env,
+             GRN_ENV_BUFFER_SIZE);
+  if (version_env[0]) {
     grn_io_version_default = atoi(version_env);
   }
 

@@ -612,8 +612,14 @@ grn_ctx_init_internal(grn_ctx *ctx, int flags)
   // if (ctx->stat != GRN_CTX_FIN) { return GRN_INVALID_ARGUMENT; }
   ERRCLR(ctx);
   ctx->flags = flags;
-  if (getenv("GRN_CTX_PER_DB") && strcmp(getenv("GRN_CTX_PER_DB"), "yes") == 0) {
-    ctx->flags |= GRN_CTX_PER_DB;
+  {
+    char grn_ctx_per_db_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_CTX_PER_DB",
+               grn_ctx_per_db_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_ctx_per_db_env[0] && strcmp(grn_ctx_per_db_env, "yes") == 0) {
+      ctx->flags |= GRN_CTX_PER_DB;
+    }
   }
   if (ERRP(ctx, GRN_ERROR)) { return ctx->rc; }
   ctx->stat = GRN_CTX_INITED;
@@ -804,10 +810,12 @@ check_overcommit_memory(grn_ctx *ctx)
 static void
 check_grn_ja_skip_same_value_put(grn_ctx *ctx)
 {
-  const char *grn_ja_skip_same_value_put_env;
+  char grn_ja_skip_same_value_put_env[GRN_ENV_BUFFER_SIZE];
 
-  grn_ja_skip_same_value_put_env = getenv("GRN_JA_SKIP_SAME_VALUE_PUT");
-  if (grn_ja_skip_same_value_put_env &&
+  grn_getenv("GRN_JA_SKIP_SAME_VALUE_PUT",
+             grn_ja_skip_same_value_put_env,
+             GRN_ENV_BUFFER_SIZE);
+  if (grn_ja_skip_same_value_put_env[0] &&
       strcmp(grn_ja_skip_same_value_put_env, "no") == 0) {
     grn_ja_skip_same_value_put = GRN_FALSE;
   }
@@ -844,22 +852,50 @@ grn_init(void)
   }
   // expand_stack();
 #ifdef USE_FAIL_MALLOC
-  if (getenv("GRN_FMALLOC_PROB")) {
-    grn_fmalloc_prob = strtod(getenv("GRN_FMALLOC_PROB"), 0) * RAND_MAX;
-    if (getenv("GRN_FMALLOC_SEED")) {
-      srand((unsigned int)atoi(getenv("GRN_FMALLOC_SEED")));
-    } else {
-      srand((unsigned int)time(NULL));
+  {
+    char grn_fmalloc_prob_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_FMALLOC_PROB",
+               grn_fmalloc_prob_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_fmalloc_prob_env[0]) {
+      char grn_fmalloc_seed_env[GRN_ENV_BUFFER_SIZE];
+      grn_fmalloc_prob = strtod(grn_fmalloc_prob_env, 0) * RAND_MAX;
+      grn_getenv("GRN_FMALLOC_SEED",
+                 grn_fmalloc_seed_env,
+                 GRN_ENV_BUFFER_SIZE);
+      if (grn_fmalloc_seed_env[0]) {
+        srand((unsigned int)atoi(grn_fmalloc_seed_env));
+      } else {
+        srand((unsigned int)time(NULL));
+      }
     }
   }
-  if (getenv("GRN_FMALLOC_FUNC")) {
-    grn_fmalloc_func = getenv("GRN_FMALLOC_FUNC");
+  {
+    static char grn_fmalloc_func_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_FMALLOC_FUNC",
+               grn_fmalloc_func_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_fmalloc_func_env[0]) {
+      grn_fmalloc_func = grn_fmalloc_func_env;
+    }
   }
-  if (getenv("GRN_FMALLOC_FILE")) {
-    grn_fmalloc_file = getenv("GRN_FMALLOC_FILE");
+  {
+    static char grn_fmalloc_file_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_FMALLOC_FILE",
+               grn_fmalloc_file_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_fmalloc_file_env[0]) {
+      grn_fmalloc_file = grn_fmalloc_file_env;
+    }
   }
-  if (getenv("GRN_FMALLOC_LINE")) {
-    grn_fmalloc_line = atoi(getenv("GRN_FMALLOC_LINE"));
+  {
+    char grn_fmalloc_line_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_FMALLOC_LINE",
+               grn_fmalloc_line_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_fmalloc_line_env) {
+      grn_fmalloc_line = atoi(grn_fmalloc_line_env);
+    }
   }
 #endif /* USE_FAIL_MALLOC */
   if ((rc = grn_com_init())) {

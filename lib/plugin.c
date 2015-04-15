@@ -513,14 +513,16 @@ grn_plugin_get_default_system_plugins_dir(void)
 const char *
 grn_plugin_get_system_plugins_dir(void)
 {
-  const char *plugins_dir;
+  char plugins_dir[GRN_ENV_BUFFER_SIZE];
 
-  plugins_dir = getenv("GRN_PLUGINS_DIR");
-  if (!plugins_dir) {
-    plugins_dir = grn_plugin_get_default_system_plugins_dir();
+  grn_getenv("GRN_PLUGINS_DIR",
+             plugins_dir,
+             GRN_ENV_BUFFER_SIZE);
+  if (plugins_dir) {
+    return plugins_dir;
+  } else {
+    return grn_plugin_get_default_system_plugins_dir();
   }
-
-  return plugins_dir;
 }
 
 static char *

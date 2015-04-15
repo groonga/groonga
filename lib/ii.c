@@ -4097,11 +4097,16 @@ exit :
 static inline void
 grn_ii_cursor_set_min(grn_ctx *ctx, grn_ii_cursor *c, grn_id min)
 {
+  char grn_ii_cursor_set_min_enable_env[GRN_ENV_BUFFER_SIZE];
+
   if (c->min >= min) {
     return;
   }
 
-  if (getenv("GRN_II_CURSOR_SET_MIN_ENABLE")) {
+  grn_getenv("GRN_II_CURSOR_SET_MIN_ENABLE",
+             grn_ii_cursor_set_min_enable_env,
+             GRN_ENV_BUFFER_SIZE);
+  if (grn_ii_cursor_set_min_enable_env[0]) {
     c->min = min;
     if (c->buf && c->pc.rid < c->min && c->curr_chunk < c->nchunks) {
       uint32_t i, skip_chunk = 0;
@@ -6138,9 +6143,11 @@ grn_ii_select_sequential_search(grn_ctx *ctx,
   {
     /* Disabled by default. */
     double too_many_index_match_ratio = -1;
-    const char *too_many_index_match_ratio_env =
-      getenv("GRN_II_SELECT_TOO_MANY_INDEX_MATCH_RATIO");
-    if (too_many_index_match_ratio_env) {
+    char too_many_index_match_ratio_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_II_SELECT_TOO_MANY_INDEX_MATCH_RATIO",
+               too_many_index_match_ratio_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (too_many_index_match_ratio_env[0]) {
       too_many_index_match_ratio = atof(too_many_index_match_ratio_env);
     }
 

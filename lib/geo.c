@@ -1494,10 +1494,12 @@ grn_geo_cursor_open_in_rectangle(grn_ctx *ctx,
     }
   }
   {
-    const char *minimum_reduce_bit_env;
+    char minimum_reduce_bit_env[GRN_ENV_BUFFER_SIZE];
     cursor->minimum_reduce_bit = 0;
-    minimum_reduce_bit_env = getenv("GRN_GEO_IN_RECTANGLE_MINIMUM_REDUCE_BIT");
-    if (minimum_reduce_bit_env) {
+    grn_getenv("GRN_GEO_IN_RECTANGLE_MINIMUM_REDUCE_BIT",
+               minimum_reduce_bit_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (minimum_reduce_bit_env[0]) {
       cursor->minimum_reduce_bit = atoi(minimum_reduce_bit_env);
     }
     if (cursor->minimum_reduce_bit < 1) {

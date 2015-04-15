@@ -64,14 +64,16 @@ grn_mrb_get_default_system_ruby_scripts_dir(void)
 const char *
 grn_mrb_get_system_ruby_scripts_dir(grn_ctx *ctx)
 {
-  const char *ruby_scripts_dir;
+  static char ruby_scripts_dir[GRN_ENV_BUFFER_SIZE];
 
-  ruby_scripts_dir = getenv("GRN_RUBY_SCRIPTS_DIR");
-  if (!ruby_scripts_dir) {
-    ruby_scripts_dir = grn_mrb_get_default_system_ruby_scripts_dir();
+  grn_getenv("GRN_RUBY_SCRIPTS_DIR",
+             ruby_scripts_dir,
+             GRN_ENV_BUFFER_SIZE);
+  if (ruby_scripts_dir[0]) {
+    return ruby_scripts_dir;
+  } else {
+    return grn_mrb_get_default_system_ruby_scripts_dir();
   }
-
-  return ruby_scripts_dir;
 }
 
 static grn_bool
