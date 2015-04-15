@@ -122,7 +122,8 @@ You can specify weight::
 
   SCORE_FUNCTION(COLUMN, ARGUMENT1, ARGUMENT2, ...) * WEIGHT
 
-You can use different score function for each match column::
+You can use different score function for each
+:ref:`select-match-columns`::
 
   SCORE_FUNCTION1(COLUMN1) ||
     SCORE_FUNCTION2(COLUMN2) * WEIGHT ||
