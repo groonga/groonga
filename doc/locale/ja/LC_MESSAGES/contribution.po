@@ -451,10 +451,19 @@ msgid ""
 "その他の環境では適宜読み替えて下さい。::"
 msgstr ""
 
+# 48ed11882cf94e39a701120a20060787
 msgid ""
-"rinseのバージョンが古いとCentOS 5/6パッケージのビルドを行うことができませ"
-"ん。 別途debパッケージを以下のコマンドを実行して最新版をインストールしま"
-"す。::"
+"Debian系（.deb）やRed Hat系（.rpm）パッケージのビルドには `Vagrant <https://"
+"www.vagrantup.com/>`_ を使用します。apt-getでインストールできるのは古いバー"
+"ジョンなので、Webサイトから最新版をダウンロードしてインストールすることをおす"
+"すめします。"
+msgstr ""
+
+# 12d36103eb43481892e74a4e0c583290
+msgid ""
+"Vagrantで使用する仮想化ソフトウェア（VirtualBox、VMwareなど）がない場合、合わ"
+"せてインストールしてください。なお、VirtualBoxはsources.listにcontribセクショ"
+"ンを追加すればapt-getでインストールできます。::"
 msgstr ""
 
 msgid "また、rubyのrakeパッケージを以下のコマンドによりインストールします。::"
@@ -1102,17 +1111,19 @@ msgstr ""
 msgid "cloneしたWebサイトのソースに対して以下のファイルを新規追加します。"
 msgstr ""
 
-# 146709218a0c444281ec13e1e2a26f6f
-msgid "groonga.org/en/_post/(リリース日)-release.textile"
+# 0677f71ae5e045aa931b1801dbfb00e0
+msgid "groonga.org/en/_post/(リリース日)-release.md"
 msgstr ""
 
-# 0ad1e60ea19d4f5dbe15992f9ab4cd0e
-msgid "groonga.org/ja/_post/(リリース日)-release.textile"
+# b13d96eab044470db65dc5931cf868f9
+msgid "groonga.org/ja/_post/(リリース日)-release.md"
 msgstr ""
 
+# a262188284df43fea070b59b24918b97
 msgid ""
-"編集した内容をpushする前に確認したい場合にはjekyllおよびRedClothが必要です。 "
-"インストールするには以下のコマンドを実行します。::"
+"編集した内容をpushする前に確認したい場合にはJekyllおよびRedCloth（Textileパー"
+"サー）、RDiscount（Markdownパーサー）、JavaScript interpreter（therubyracer、"
+"Node.jsなど）が必要です。 インストールするには以下のコマンドを実行します。::"
 msgstr ""
 
 msgid ""
@@ -1125,9 +1136,10 @@ msgid ""
 "します。"
 msgstr ""
 
+# 837f1adfbf4942e081dca8ba7978478e
 msgid ""
-"記事を非公開の状態でアップロードするには.textileファイルのpublished:をfalseに"
-"設定します。::"
+"記事を非公開の状態でアップロードするには.mdファイルのpublished:をfalseに設定"
+"します。::"
 msgstr ""
 
 msgid "ドキュメントのアップロード"
