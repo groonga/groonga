@@ -91,4 +91,12 @@
   strncat((dest), (src), (n))
 #endif /* WIN32 */
 
+#ifdef WIN32
+# define grn_strncpy(dest, dest_size, src, n)   \
+  strncpy_s((dest), (dest_size), (src), (n))
+#else /* WIN32 */
+# define grn_strncpy(dest, dest_size, src, n)   \
+  strncpy((dest), (src), (n))
+#endif /* WIN32 */
+
 #endif /* GROONGA_PORTABILITY_H */

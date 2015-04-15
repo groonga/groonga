@@ -7505,7 +7505,10 @@ grn_obj_set_info_source_validate_report_error(grn_ctx *ctx,
                                          GRN_TABLE_MAX_KEY_SIZE);
     grn_obj_unlink(ctx, source_type);
   } else {
-    strncpy(source_type_name, "(nil)", GRN_TABLE_MAX_KEY_SIZE);
+    grn_strncpy(source_type_name,
+                GRN_TABLE_MAX_KEY_SIZE,
+                "(nil)",
+                GRN_TABLE_MAX_KEY_SIZE);
     source_type_name_size = strlen(source_type_name);
   }
   ERR(GRN_INVALID_ARGUMENT,
