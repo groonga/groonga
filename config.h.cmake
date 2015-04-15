@@ -154,7 +154,6 @@
 #cmakedefine HAVE_STRCASECMP
 #cmakedefine HAVE_STRNCASECMP
 #cmakedefine HAVE_STRTOULL
-#cmakedefine HAVE_UNLINK
 #cmakedefine HAVE_WRITE
 #cmakedefine HAVE_PTHREAD_MUTEXATTR_SETPSHARED
 #cmakedefine HAVE_PTHREAD_CONDATTR_SETPSHARED

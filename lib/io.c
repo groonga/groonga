@@ -718,7 +718,7 @@ grn_io_remove(grn_ctx *ctx, const char *path)
   if (stat(path, &s)) {
     SERR("stat");
     return ctx->rc;
-  } else if (unlink(path)) {
+  } else if (grn_unlink(path)) {
     ERRNO_ERR(path);
     return ctx->rc;
   } else {
@@ -727,7 +727,7 @@ grn_io_remove(grn_ctx *ctx, const char *path)
     for (fno = 1; ; fno++) {
       gen_pathname(path, buffer, fno);
       if (!stat(buffer, &s)) {
-        if (unlink(buffer)) {
+        if (grn_unlink(buffer)) {
           ERRNO_ERR(buffer);
         }
       } else {

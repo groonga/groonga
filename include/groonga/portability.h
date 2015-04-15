@@ -77,4 +77,10 @@
 # define grn_strdup_raw(string) strdup((string))
 #endif /* WIN32 */
 
+#ifdef WIN32
+# define grn_unlink(filename) _unlink((filename))
+#else /* WIN32 */
+# define grn_unlink(filename) unlink((filename))
+#endif /* WIN32 */
+
 #endif /* GROONGA_PORTABILITY_H */

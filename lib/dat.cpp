@@ -70,7 +70,7 @@ bool
 grn_dat_remove_file(grn_ctx *ctx, const char *path)
 {
   struct stat stat;
-  return !::stat(path, &stat) && !unlink(path);
+  return !::stat(path, &stat) && !grn_unlink(path);
 }
 
 grn_rc

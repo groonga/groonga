@@ -122,9 +122,6 @@
 # if !defined(__GNUC__) && _MSC_VER < 1500
 #  define vsnprintf(str, size, format, ap) _vsnprintf(str, size, format, ap)
 # endif /* !defined(__GNUC__) && _MSC_VER < 1500 */
-# ifndef HAVE_UNLINK
-#  define unlink(pathname) _unlink(pathname)
-# endif
 # define getpid() _getpid()
 # if !defined(__GNUC__) && _MSC_VER < 1400
 #  define fstat(fd, buf) _fstat(fd, buf)

@@ -7826,7 +7826,7 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
           "tmpfile_size:%" GRN_FMT_INT64D " > total_chunk_size:%" GRN_FMT_SIZE,
           ii_buffer->filepos, ii_buffer->total_chunk_size);
   GRN_CLOSE(ii_buffer->tmpfd);
-  unlink(ii_buffer->tmpfpath);
+  grn_unlink(ii_buffer->tmpfpath);
   ii_buffer->tmpfd = -1;
   return ctx->rc;
 }
@@ -7845,7 +7845,7 @@ grn_ii_buffer_close(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   }
   if (ii_buffer->tmpfd != -1) {
     GRN_CLOSE(ii_buffer->tmpfd);
-    unlink(ii_buffer->tmpfpath);
+    grn_unlink(ii_buffer->tmpfpath);
   }
   if (ii_buffer->block_buf) {
     GRN_FREE(ii_buffer->block_buf);
