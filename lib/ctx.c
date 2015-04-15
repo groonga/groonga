@@ -807,20 +807,6 @@ check_overcommit_memory(grn_ctx *ctx)
   fclose(file);
 }
 
-static void
-check_grn_ja_skip_same_value_put(grn_ctx *ctx)
-{
-  char grn_ja_skip_same_value_put_env[GRN_ENV_BUFFER_SIZE];
-
-  grn_getenv("GRN_JA_SKIP_SAME_VALUE_PUT",
-             grn_ja_skip_same_value_put_env,
-             GRN_ENV_BUFFER_SIZE);
-  if (grn_ja_skip_same_value_put_env[0] &&
-      strcmp(grn_ja_skip_same_value_put_env, "no") == 0) {
-    grn_ja_skip_same_value_put = GRN_FALSE;
-  }
-}
-
 grn_rc
 grn_init(void)
 {
@@ -935,7 +921,6 @@ grn_init(void)
   }
   GRN_LOG(ctx, GRN_LOG_NOTICE, "grn_init");
   check_overcommit_memory(ctx);
-  check_grn_ja_skip_same_value_put(ctx);
   return rc;
 }
 

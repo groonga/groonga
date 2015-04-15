@@ -338,8 +338,6 @@ struct grn_ja_header {
 #define SEGMENTS_GINFO_ON(ja,seg,width) (SEGMENTS_AT(ja,seg) = SEG_GINFO|(width))
 #define SEGMENTS_OFF(ja,seg) (SEGMENTS_AT(ja,seg) = 0)
 
-grn_bool grn_ja_skip_same_value_put = GRN_TRUE;
-
 static grn_ja *
 _grn_ja_create(grn_ctx *ctx, grn_ja *ja, const char *path,
                unsigned int max_element_size, uint32_t flags)
@@ -901,8 +899,7 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
   grn_io_win iw;
   grn_ja_einfo einfo;
 
-  if (grn_ja_skip_same_value_put &&
-      (flags & GRN_OBJ_SET_MASK) == GRN_OBJ_SET &&
+  if ((flags & GRN_OBJ_SET_MASK) == GRN_OBJ_SET &&
       value_len > 0) {
     grn_io_win jw;
     uint32_t old_len;
