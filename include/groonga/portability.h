@@ -35,7 +35,7 @@
 #ifdef WIN32
 # define grn_memmove(dest, src, n) memmove_s((dest), (n), (src), (n))
 #else /* WIN32 */
-# define grn_memmove(dest, src, n) memmove((dest), (n), (src), (n))
+# define grn_memmove(dest, src, n) memmove((dest), (src), (n))
 #endif /* WIN32 */
 
 #define GRN_ENV_BUFFER_SIZE 1024
