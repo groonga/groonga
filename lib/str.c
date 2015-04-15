@@ -2100,6 +2100,7 @@ ftoa_(grn_ctx *ctx, grn_obj *buf, double d)
                        len + 1,
                        "%#.*g", DIGIT_NUMBER, d);
   }
+#undef FIRST_BUFFER_SIZE
 #undef DIGIT_NUMBER
   if (curr[len - 1] == '.') {
     GRN_BULK_INCR_LEN(buf, len);
