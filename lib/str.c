@@ -2085,12 +2085,21 @@ ftoa_(grn_ctx *ctx, grn_obj *buf, double d)
   char *curr;
   size_t len;
 #define DIGIT_NUMBER 15
-  grn_bulk_reserve(ctx, buf, DIGIT_NUMBER + 1);
+#define FIRST_BUFFER_SIZE (DIGIT_NUMBER + 3)
+  grn_bulk_reserve(ctx, buf, FIRST_BUFFER_SIZE);
   curr = GRN_BULK_CURR(buf);
   len = grn_snprintf(curr,
-                     DIGIT_NUMBER + 1,
-                     DIGIT_NUMBER + 1,
+                     FIRST_BUFFER_SIZE,
+                     FIRST_BUFFER_SIZE,
                      "%#.*g", DIGIT_NUMBER, d);
+  if (len >= FIRST_BUFFER_SIZE) {
+    grn_bulk_reserve(ctx, buf, len + 1);
+    curr = GRN_BULK_CURR(buf);
+    len = grn_snprintf(curr,
+                       len + 1,
+                       len + 1,
+                       "%#.*g", DIGIT_NUMBER, d);
+  }
 #undef DIGIT_NUMBER
   if (curr[len - 1] == '.') {
     GRN_BULK_INCR_LEN(buf, len);
