@@ -518,7 +518,7 @@ grn_plugin_get_system_plugins_dir(void)
   grn_getenv("GRN_PLUGINS_DIR",
              plugins_dir,
              GRN_ENV_BUFFER_SIZE);
-  if (plugins_dir) {
+  if (plugins_dir[0]) {
     return plugins_dir;
   } else {
     return grn_plugin_get_default_system_plugins_dir();
