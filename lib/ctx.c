@@ -1734,10 +1734,18 @@ grn_cache_init(void)
 grn_rc
 grn_cache_set_max_n_entries(grn_ctx *ctx, grn_cache *cache, unsigned int n)
 {
+  uint32_t current_max_n_entries;
+
   if (!cache) {
     return GRN_INVALID_ARGUMENT;
   }
+
+  current_max_n_entries = cache->max_nentries;
   cache->max_nentries = n;
+  if (n < current_max_n_entries) {
+    grn_cache_expire(cache, current_max_n_entries - n);
+  }
+
   return GRN_SUCCESS;
 }
 
