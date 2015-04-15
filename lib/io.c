@@ -719,7 +719,7 @@ grn_io_remove(grn_ctx *ctx, const char *path)
     SERR("stat");
     return ctx->rc;
   } else if (unlink(path)) {
-    SERR(path);
+    ERRNO_ERR(path);
     return ctx->rc;
   } else {
     int fno;
@@ -727,7 +727,9 @@ grn_io_remove(grn_ctx *ctx, const char *path)
     for (fno = 1; ; fno++) {
       gen_pathname(path, buffer, fno);
       if (!stat(buffer, &s)) {
-        if (unlink(buffer)) { SERR(buffer); }
+        if (unlink(buffer)) {
+          ERRNO_ERR(buffer);
+        }
       } else {
         break;
       }
