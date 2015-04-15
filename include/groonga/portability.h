@@ -32,6 +32,12 @@
 # endif /* __cplusplus */
 #endif /* WIN32 */
 
+#ifdef WIN32
+# define grn_memmove(dest, src, n) memmove_s((dest), (n), (src), (n))
+#else /* WIN32 */
+# define grn_memmove(dest, src, n) memmove((dest), (n), (src), (n))
+#endif /* WIN32 */
+
 #define GRN_ENV_BUFFER_SIZE 1024
 
 #ifdef WIN32

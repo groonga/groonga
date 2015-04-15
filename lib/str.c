@@ -2097,7 +2097,7 @@ ftoa_(grn_ctx *ctx, grn_obj *buf, double d)
     curr[len] = '\0';
     if ((p = strchr(curr, 'e'))) {
       for (q = p; *(q - 2) != '.' && *(q - 1) == '0'; q--) { len--; }
-      memmove(q, p, curr + len - q);
+      grn_memmove(q, p, curr + len - q);
     } else {
       for (q = curr + len; *(q - 2) != '.' && *(q - 1) == '0'; q--) { len--; }
     }

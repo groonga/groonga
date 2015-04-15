@@ -3612,7 +3612,7 @@ put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip, grn_operator op, int star
               s_->flags &= ~SCAN_PUSH;
               s_->logical_op = op;
               grn_memcpy(&sis[i], &sis[j], sizeof(scan_info *) * (r - j));
-              memmove(&sis[j], &sis[r], sizeof(scan_info *) * (i - r));
+              grn_memmove(&sis[j], &sis[r], sizeof(scan_info *) * (i - r));
               grn_memcpy(&sis[i + j - r], &sis[i], sizeof(scan_info *) * (r - j));
             }
             break;
@@ -3812,10 +3812,10 @@ scan_info_put_index(grn_ctx *ctx, scan_info *si,
       if (index == pi[-1]) {
         if (i) {
           int32_t *pw = &GRN_INT32_VALUE_AT(&si->wv, (ni - i) * 2);
-          memmove(pw + 2, pw, sizeof(int32_t) * 2 * i);
+          grn_memmove(pw + 2, pw, sizeof(int32_t) * 2 * i);
           pw[0] = (int32_t) sid;
           pw[1] = weight;
-          memmove(pi + 1, pi, sizeof(grn_obj *) * i);
+          grn_memmove(pi + 1, pi, sizeof(grn_obj *) * i);
           pi[0] = index;
         }
         return;
