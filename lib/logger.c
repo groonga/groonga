@@ -300,7 +300,7 @@ grn_logger_init(void)
   if (!default_logger_path) {
     default_logger_path = strdup(GRN_LOG_PATH);
   }
-  memcpy(&current_logger, &default_logger, sizeof(grn_logger));
+  grn_memcpy(&current_logger, &default_logger, sizeof(grn_logger));
   CRITICAL_SECTION_INIT(default_logger_lock);
 }
 
@@ -531,7 +531,8 @@ grn_query_logger_put(grn_ctx *ctx, unsigned int flag, const char *mark,
 void
 grn_query_logger_init(void)
 {
-  memcpy(&current_query_logger, &default_query_logger, sizeof(grn_query_logger));
+  grn_memcpy(&current_query_logger,
+             &default_query_logger, sizeof(grn_query_logger));
   CRITICAL_SECTION_INIT(default_query_logger_lock);
 }
 

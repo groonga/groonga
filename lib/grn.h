@@ -712,7 +712,7 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
   lo_ = (lo_ | (lo_ <<  1)) & 0x5555555555555555ULL;\
   result_ = (la_ << 1) | lo_;\
   grn_hton_uint64(result_, result_);\
-  memcpy(keybuf, &result_, sizeof(result_));\
+  grn_memcpy(keybuf, &result_, sizeof(result_));\
 } while (0)
 
 #define grn_ntog(keybuf,key,size) do {\

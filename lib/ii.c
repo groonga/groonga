@@ -1409,7 +1409,7 @@ pack(uint32_t *p, uint32_t i, uint8_t *freq, uint8_t *rp)
     }
   }
   rp = pack_(p - i, i, w, rp);
-  memcpy(rp, ebuf, ep - ebuf);
+  grn_memcpy(rp, ebuf, ep - ebuf);
   return rp + (ep - ebuf);
 }
 
@@ -1561,7 +1561,7 @@ grn_p_encv(grn_ctx *ctx, datavec *dv, uint32_t dvlen, uint8_t *res)
   case 0x08 : \
     if (_v == 0x8f) { \
       if (_p + sizeof(uint32_t) > pe) { return 0; } \
-      memcpy(&_v, _p, sizeof(uint32_t)); \
+      grn_memcpy(&_v, _p, sizeof(uint32_t)); \
       _p += sizeof(uint32_t); \
     } \
     break; \
@@ -2005,7 +2005,7 @@ buffer_put(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt,
   buffer_rec *r_curr, *r_start = NULL;
   uint16_t last = 0, *lastp = &bt->pos_in_buffer, pos = BUFFER_REC_POS(b, rnew);
   int vdelta = 0, delta, delta0 = 0, vhops = 0, nhops = 0, reset = 1;
-  memcpy(NEXT_ADDR(rnew), bs, size - sizeof(buffer_rec));
+  grn_memcpy(NEXT_ADDR(rnew), bs, size - sizeof(buffer_rec));
   for (;;) {
     if (!*lastp) {
       rnew->step = 0;
@@ -2469,7 +2469,7 @@ chunk_flush(grn_ctx *ctx, grn_ii *ii, chunk_info *cinfo, uint8_t *enc, uint32_t 
   if (encsize) {
     if (!(rc = chunk_new(ctx, ii, &dcn, encsize))) {
       if ((dc = WIN_MAP(ii->chunk, ctx, &dw, dcn, 0, encsize, grn_io_wronly))) {
-        memcpy(dc, enc, encsize);
+        grn_memcpy(dc, enc, encsize);
         grn_io_win_unmap(&dw);
         cinfo->segno = dcn;
         cinfo->size = encsize;
@@ -2613,7 +2613,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
     if (!bt->pos_in_buffer) {
       GRN_ASSERT(!bt->size_in_buffer);
       if (bt->size_in_chunk) {
-        memcpy(dcp, sc + bt->pos_in_chunk, bt->size_in_chunk);
+        grn_memcpy(dcp, sc + bt->pos_in_chunk, bt->size_in_chunk);
         bt->pos_in_chunk = (uint32_t)(dcp - dc);
         dcp += bt->size_in_chunk;
       }
@@ -2891,7 +2891,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                           sb->header.chunk_size, grn_io_rdonly))) {
           uint16_t n = sb->header.nterms;
           memset(db, 0, S_SEGMENT);
-          memcpy(db->terms, sb->terms, n * sizeof(buffer_term));
+          grn_memcpy(db->terms, sb->terms, n * sizeof(buffer_term));
           db->header.nterms = n;
           if (!(rc = buffer_merge(ctx, ii, seg, h, sb, sc, db, dc))) {
             actual_chunk_size = db->header.chunk_size;
@@ -3169,7 +3169,7 @@ term_split(grn_ctx *ctx, grn_obj *lexicon, buffer *sb, buffer *db0, buffer *db1)
   bt = db0->terms;
   nt = &db0->header.nterms;
   for (s = 0; n + 1 < i && s <= th; n++, bt++) {
-    memcpy(bt, ts[n].bt, sizeof(buffer_term));
+    grn_memcpy(bt, ts[n].bt, sizeof(buffer_term));
     (*nt)++;
     s += ts[n].bt->size_in_chunk + 1;
   }
@@ -3177,7 +3177,7 @@ term_split(grn_ctx *ctx, grn_obj *lexicon, buffer *sb, buffer *db0, buffer *db1)
   bt = db1->terms;
   nt = &db1->header.nterms;
   for (; n < i; n++, bt++) {
-    memcpy(bt, ts[n].bt, sizeof(buffer_term));
+    grn_memcpy(bt, ts[n].bt, sizeof(buffer_term));
     (*nt)++;
   }
   GRN_FREE(ts);
@@ -7087,7 +7087,7 @@ encode_terms(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
     }
     if (outbufp_ + II_BUFFER_BLOCK_READ_UNIT_SIZE < outbufp) {
       uint32_t size = outbufp - outbufp_ + sizeof(uint32_t);
-      memcpy(pnext, &size, sizeof(uint32_t));
+      grn_memcpy(pnext, &size, sizeof(uint32_t));
       pnext = outbufp;
       outbufp += sizeof(uint32_t);
       outbufp_ = outbufp;
@@ -7096,7 +7096,7 @@ encode_terms(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
   grn_table_cursor_close(ctx, tc);
   if (outbufp_ < outbufp) {
     uint32_t size = outbufp - outbufp_;
-    memcpy(pnext, &size, sizeof(uint32_t));
+    grn_memcpy(pnext, &size, sizeof(uint32_t));
   }
   return outbufp - outbuf;
 }
@@ -7405,8 +7405,8 @@ grn_ii_buffer_fetch(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
         block->nextsize = 0;
       } else {
         block->rest = block->nextsize - sizeof(uint32_t);
-        memcpy(&block->nextsize,
-               &block->buffer[block->rest], sizeof(uint32_t));
+        grn_memcpy(&block->nextsize,
+                   &block->buffer[block->rest], sizeof(uint32_t));
       }
     }
   }

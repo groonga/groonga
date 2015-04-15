@@ -194,7 +194,7 @@ grn_io_create_tmp(uint32_t header_size, uint32_t segment_size,
     header->n_arrays = 0;
     header->flags = flags;
     header->lock = 0;
-    memcpy(header->idstr, GRN_IO_IDSTR, 16);
+    grn_memcpy(header->idstr, GRN_IO_IDSTR, 16);
     if ((io = GRN_GMALLOCN(grn_io, 1))) {
       grn_io_mapinfo *maps = NULL;
       if ((maps = GRN_GCALLOC(sizeof(grn_io_mapinfo) * max_segment))) {
@@ -294,7 +294,7 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t seg
         header->n_arrays = 0;
         header->flags = flags;
         header->lock = 0;
-        memcpy(header->idstr, GRN_IO_IDSTR, 16);
+        grn_memcpy(header->idstr, GRN_IO_IDSTR, 16);
         grn_msync(ctx, header, b);
         if ((io = GRN_GMALLOCN(grn_io, 1))) {
           grn_io_mapinfo *maps = NULL;
@@ -395,7 +395,7 @@ grn_io_create_with_array(grn_ctx *ctx, const char *path,
     if ((io = grn_io_create(ctx, path, header_size + hsize,
                             segment_size, nsegs, mode, GRN_IO_EXPIRE_GTICK))) {
       hp = io->user_header;
-      memcpy(hp, array_specs, sizeof(grn_io_array_spec) * n_arrays);
+      grn_memcpy(hp, array_specs, sizeof(grn_io_array_spec) * n_arrays);
       io->header->n_arrays = n_arrays;
       io->header->segment_tail = 1;
       if (!array_init_(io, n_arrays, hsize, msize)) {
@@ -547,7 +547,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
         return NULL;
       }
       grn_fileinfo_init(fis, max_nfiles);
-      memcpy(fis, &fi, sizeof(fileinfo));
+      grn_memcpy(fis, &fi, sizeof(fileinfo));
       if ((io = GRN_GMALLOC(sizeof(grn_io)))) {
         grn_io_mapinfo *maps = NULL;
         if ((maps = GRN_GCALLOC(sizeof(grn_io_mapinfo) * max_segment))) {
@@ -671,7 +671,7 @@ inline static void
 gen_pathname(const char *path, char *buffer, int fno)
 {
   size_t len = strlen(path);
-  memcpy(buffer, path, len);
+  grn_memcpy(buffer, path, len);
   if (fno) {
     buffer[len] = '.';
     grn_itoh(fno, buffer + len + 1, 3);
@@ -890,7 +890,7 @@ grn_io_write_ja(grn_io *io, grn_ctx *ctx, uint32_t key,
     ja_element je;
     je.head.size = value_len;
     je.head.key = key;
-    memcpy(je.body, value, value_len);
+    grn_memcpy(je.body, value, value_len);
     rc = grn_pwrite(ctx, fi, &je, size, pos);
   } else {
     grn_io_ja_ehead eh;
@@ -987,7 +987,7 @@ grn_io_win_map(grn_io *io, grn_ctx *ctx, grn_io_win *iw, uint32_t segment,
             return NULL;
           }
           s = (offset + r > segment_size) ? segment_size - offset : r;
-          memcpy(p, q + offset, s);
+          grn_memcpy(p, q + offset, s);
           GRN_IO_SEG_UNREF(io, segment);
         }
       }
@@ -1027,7 +1027,7 @@ grn_io_win_unmap(grn_io_win *iw)
           GRN_IO_SEG_REF(io, segment, q);
           if (!q) { return GRN_NO_MEMORY_AVAILABLE; }
           s = (offset + r > segment_size) ? segment_size - offset : r;
-          memcpy(q + offset, p, s);
+          grn_memcpy(q + offset, p, s);
           GRN_IO_SEG_UNREF(io, segment);
         }
       }

@@ -253,7 +253,7 @@ grn_alloc_info_set_backtrace(char *buffer, size_t size)
       if (symbol_length + 2 > rest) {
         break;
       }
-      memcpy(buffer, symbols[i], symbol_length);
+      grn_memcpy(buffer, symbols[i], symbol_length);
       buffer += symbol_length;
       rest -= symbol_length;
       buffer[0] = '\n';
@@ -1997,7 +1997,7 @@ grn_ctx_realloc(grn_ctx *ctx, void *ptr, size_t size,
     if (res && ptr) {
       int32_t *header = &((int32_t *)ptr)[-2];
       size_t size_ = header[1];
-      memcpy(res, ptr, size_ > size ? size : size_);
+      grn_memcpy(res, ptr, size_ > size ? size : size_);
       grn_ctx_free(ctx, ptr, file, line, func);
     }
   } else {
@@ -2013,7 +2013,7 @@ grn_ctx_strdup(grn_ctx *ctx, const char *s, const char* file, int line, const ch
   if (s) {
     size_t size = strlen(s) + 1;
     if ((res = grn_ctx_alloc(ctx, size, 0, file, line, func))) {
-      memcpy(res, s, size);
+      grn_memcpy(res, s, size);
     }
   }
   return res;

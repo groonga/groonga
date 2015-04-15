@@ -54,7 +54,7 @@ grn_fake_string_open(grn_ctx *ctx, grn_string *string)
       if (!grn_tokenizer_is_tokenized_delimiter(ctx,
                                                 source_current, char_length,
                                                 ctx->encoding)) {
-        memcpy(destination, source_current, char_length);
+        grn_memcpy(destination, source_current, char_length);
         destination += char_length;
         destination_length += char_length;
       }
@@ -63,7 +63,7 @@ grn_fake_string_open(grn_ctx *ctx, grn_string *string)
     nstr->normalized[destination_length] = '\0';
     nstr->normalized_length_in_bytes = destination_length;
   } else {
-    memcpy(nstr->normalized, str, str_len);
+    grn_memcpy(nstr->normalized, str, str_len);
     nstr->normalized[str_len] = '\0';
     nstr->normalized_length_in_bytes = str_len;
   }

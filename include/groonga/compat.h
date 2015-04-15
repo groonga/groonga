@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2014-2015 Brazil
+  Copyright(C) 2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -15,16 +15,21 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef GROONGA_H
-#define GROONGA_H
+#ifndef GROONGA_COMPAT_H
+#define GROONGA_COMPAT_H
 
-#include "groonga/compat.h"
-#include "groonga/groonga.h"
-#include "groonga/obj.h"
-#include "groonga/ii.h"
-#include "groonga/expr.h"
-#include "groonga/output.h"
-#include "groonga/util.h"
-#include "groonga/request_canceler.h"
+#ifdef WIN32
+# ifdef __cplusplus
+#  define grn_memcpy(dest, src, n) ::memcpy_s((dest), (n), (src), (n))
+# else /* __cplusplus */
+#  define grn_memcpy(dest, src, n) memcpy_s((dest), (n), (src), (n))
+# endif /* __cplusplus */
+#else /* WIN32 */
+# ifdef __cplusplus
+#  define grn_memcpy(dest, src, n) std::memcpy((dest), (src), (n))
+# else /* __cplusplus */
+#  define grn_memcpy(dest, src, n) memcpy((dest), (src), (n))
+# endif /* __cplusplus */
+#endif /* WIN32 */
 
-#endif /* GROONGA_H */
+#endif /* GROONGA_COMPAT_H */

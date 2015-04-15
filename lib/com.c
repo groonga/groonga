@@ -528,7 +528,7 @@ grn_com_receiver(grn_ctx *ctx, grn_com *com)
     grn_msg *msg = (grn_msg *)grn_msg_open(ctx, com, &ev->recv_old);
     grn_com_recv(ctx, msg->u.peer, &msg->header, (grn_obj *)msg);
     if (msg->u.peer /* is_edge_request(msg)*/) {
-      memcpy(&msg->edge_id, &ev->curr_edge_id, sizeof(grn_com_addr));
+      grn_memcpy(&msg->edge_id, &ev->curr_edge_id, sizeof(grn_com_addr));
       if (!com->has_sid) {
         com->has_sid = 1;
         com->sid = ev->curr_edge_id.sid++;
@@ -1069,7 +1069,7 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
     SOERR("socket");
     goto exit;
   }
-  memcpy(&ev->curr_edge_id.addr, he->h_addr, he->h_length);
+  grn_memcpy(&ev->curr_edge_id.addr, he->h_addr, he->h_length);
   ev->curr_edge_id.port = htons(port);
   ev->curr_edge_id.sid = 0;
   {

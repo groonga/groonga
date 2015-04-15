@@ -202,7 +202,7 @@ key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, int len)
     uint8_t *dest;
     KEY_AT(pat, res, dest, GRN_TABLE_ADD);
     if (!dest) { return 0; }
-    memcpy(dest, key, len);
+    grn_memcpy(dest, key, len);
   }
   pat->header->curr_key += len;
   return res;
@@ -227,7 +227,7 @@ pat_node_set_key(grn_ctx *ctx, grn_pat *pat, pat_node *n, const uint8_t *key, un
   PAT_LEN_SET(n, len);
   if (len <= sizeof(uint32_t)) {
     PAT_IMD_ON(n);
-    memcpy(&n->key, key, len);
+    grn_memcpy(&n->key, key, len);
   } else {
     PAT_IMD_OFF(n);
     n->key = key_put(ctx, pat, key, len);
@@ -725,7 +725,7 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
         pat->header->garbages[size2] = rn->lr[0];
         if (!(keybuf = pat_node_get_key(ctx, pat, rn))) { return 0; }
         PAT_LEN_SET(rn, size);
-        memcpy(keybuf, key, size);
+        grn_memcpy(keybuf, key, size);
       } else {
         if (!(rn = pat_node_new(ctx, pat, &r))) { return 0; }
         pat_node_set_key(ctx, pat, rn, key, size);
@@ -1295,7 +1295,7 @@ grn_pat_get_key(grn_ctx *ctx, grn_pat *pat, grn_id id, void *keybuf, int bufsize
     if (KEY_NEEDS_CONVERT(pat, len)) {
       KEY_DEC(pat, keybuf, key, len);
     } else {
-      memcpy(keybuf, key, len);
+      grn_memcpy(keybuf, key, len);
     }
   }
   return len;
@@ -1341,9 +1341,9 @@ grn_pat_get_value(grn_ctx *ctx, grn_pat *pat, grn_id id, void *valuebuf)
     if (v) {
       if (valuebuf) {
         if (pat->obj.header.flags & GRN_OBJ_KEY_WITH_SIS) {
-          memcpy(valuebuf, v + sizeof(sis_node), value_size);
+          grn_memcpy(valuebuf, v + sizeof(sis_node), value_size);
         } else {
-          memcpy(valuebuf, v, value_size);
+          grn_memcpy(valuebuf, v, value_size);
         }
       }
       return value_size;
@@ -1377,7 +1377,7 @@ grn_pat_set_value(grn_ctx *ctx, grn_pat *pat, grn_id id,
         if (pat->obj.header.flags & GRN_OBJ_KEY_WITH_SIS) { v += sizeof(sis_node); }
         switch ((flags & GRN_OBJ_SET_MASK)) {
         case GRN_OBJ_SET :
-          memcpy(v, value, value_size);
+          grn_memcpy(v, value, value_size);
           return GRN_SUCCESS;
         case GRN_OBJ_INCR :
           switch (value_size) {
@@ -2773,7 +2773,7 @@ rk_emit(rk_tree_node *rn, char **str)
 #define RK_OUTPUT(e,l) do {\
   if (oc < oe) {\
     uint32_t l_ = (oc + (l) < oe) ? (l) : (oe - oc);\
-    memcpy(oc, (e), l_);\
+    grn_memcpy(oc, (e), l_);\
     oc += l_;\
     ic_ = ic;\
   }\
@@ -2863,7 +2863,7 @@ search_push(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
           if (l + key_len <= GRN_TABLE_MAX_KEY_SIZE) {
             int ch = c0;
             grn_id i;
-            memcpy(key + key_len, e, l);
+            grn_memcpy(key + key_len, e, l);
             if ((i = sub_search(ctx, pat, id, &ch, key, key_len + l))) {
               search_push(ctx, pat, c, key, key_len + l, rn->next, i, ch, flags);
             }

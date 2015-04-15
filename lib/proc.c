@@ -889,49 +889,54 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
   if (cache_key_size <= GRN_CACHE_MAX_KEY_SIZE) {
     grn_obj *cache_value;
     char *cp = cache_key;
-    memcpy(cp, table, table_len);
+    grn_memcpy(cp, table, table_len);
     cp += table_len; *cp++ = '\0';
-    memcpy(cp, match_columns, match_columns_len);
+    grn_memcpy(cp, match_columns, match_columns_len);
     cp += match_columns_len; *cp++ = '\0';
-    memcpy(cp, query, query_len);
+    grn_memcpy(cp, query, query_len);
     cp += query_len; *cp++ = '\0';
-    memcpy(cp, filter, filter_len);
+    grn_memcpy(cp, filter, filter_len);
     cp += filter_len; *cp++ = '\0';
-    memcpy(cp, scorer, scorer_len);
+    grn_memcpy(cp, scorer, scorer_len);
     cp += scorer_len; *cp++ = '\0';
-    memcpy(cp, sortby, sortby_len);
+    grn_memcpy(cp, sortby, sortby_len);
     cp += sortby_len; *cp++ = '\0';
-    memcpy(cp, output_columns, output_columns_len);
+    grn_memcpy(cp, output_columns, output_columns_len);
     cp += output_columns_len; *cp++ = '\0';
     {
       unsigned int i;
       for (i = 0; i < n_drilldowns; i++) {
         drilldown_info *drilldown = &(drilldowns[i]);
-        memcpy(cp, drilldown->keys, drilldown->keys_len);
+        grn_memcpy(cp, drilldown->keys, drilldown->keys_len);
         cp += drilldown->keys_len; *cp++ = '\0';
-        memcpy(cp, drilldown->sortby, drilldown->sortby_len);
+        grn_memcpy(cp, drilldown->sortby, drilldown->sortby_len);
         cp += drilldown->sortby_len; *cp++ = '\0';
-        memcpy(cp, drilldown->output_columns, drilldown->output_columns_len);
+        grn_memcpy(cp, drilldown->output_columns, drilldown->output_columns_len);
         cp += drilldown->output_columns_len; *cp++ = '\0';
       }
     }
-    memcpy(cp, match_escalation_threshold, match_escalation_threshold_len);
+    grn_memcpy(cp, match_escalation_threshold, match_escalation_threshold_len);
     cp += match_escalation_threshold_len; *cp++ = '\0';
-    memcpy(cp, query_expander, query_expander_len);
+    grn_memcpy(cp, query_expander, query_expander_len);
     cp += query_expander_len; *cp++ = '\0';
-    memcpy(cp, query_flags, query_flags_len);
+    grn_memcpy(cp, query_flags, query_flags_len);
     cp += query_flags_len; *cp++ = '\0';
-    memcpy(cp, adjuster, adjuster_len);
+    grn_memcpy(cp, adjuster, adjuster_len);
     cp += adjuster_len; *cp++ = '\0';
-    memcpy(cp, &output_type, sizeof(grn_content_type)); cp += sizeof(grn_content_type);
-    memcpy(cp, &offset, sizeof(int)); cp += sizeof(int);
-    memcpy(cp, &limit, sizeof(int)); cp += sizeof(int);
+    grn_memcpy(cp, &output_type, sizeof(grn_content_type));
+    cp += sizeof(grn_content_type);
+    grn_memcpy(cp, &offset, sizeof(int));
+    cp += sizeof(int);
+    grn_memcpy(cp, &limit, sizeof(int));
+    cp += sizeof(int);
     {
       unsigned int i;
       for (i = 0; i < n_drilldowns; i++) {
         drilldown_info *drilldown = &(drilldowns[i]);
-        memcpy(cp, &(drilldown->offset), sizeof(int)); cp += sizeof(int);
-        memcpy(cp, &(drilldown->limit), sizeof(int)); cp += sizeof(int);
+        grn_memcpy(cp, &(drilldown->offset), sizeof(int));
+        cp += sizeof(int);
+        grn_memcpy(cp, &(drilldown->limit), sizeof(int));
+        cp += sizeof(int);
       }
     }
     cache_value = grn_cache_fetch(ctx, cache_obj, cache_key, cache_key_size);
@@ -1942,7 +1947,7 @@ proc_column_remove(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
 
   if ((fullname_len = grn_obj_name(ctx, table, fullname, GRN_TABLE_MAX_KEY_SIZE))) {
     fullname[fullname_len] = GRN_DB_DELIMITER;
-    memcpy((fullname + fullname_len + 1), colname, colname_len);
+    grn_memcpy((fullname + fullname_len + 1), colname, colname_len);
     fullname_len += colname_len + 1;
     //TODO:check fullname_len < GRN_TABLE_MAX_KEY_SIZE
     col = grn_ctx_get(ctx, fullname, fullname_len);
@@ -2335,7 +2340,7 @@ proc_missing(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
   if ((plen = GRN_TEXT_LEN(VAR(0))) + grn_document_root_len < PATH_MAX) {
     char path[PATH_MAX];
-    memcpy(path, grn_document_root, grn_document_root_len);
+    grn_memcpy(path, grn_document_root, grn_document_root_len);
     path[grn_document_root_len] = '/';
     grn_str_url_path_normalize(ctx,
                                GRN_TEXT_VALUE(VAR(0)),

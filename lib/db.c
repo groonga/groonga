@@ -89,7 +89,7 @@ inline static void
 gen_pathname(const char *path, char *buffer, int fno)
 {
   size_t len = strlen(path);
-  memcpy(buffer, path, len);
+  grn_memcpy(buffer, path, len);
   if (fno >= 0) {
     buffer[len] = '.';
     grn_itoh(fno, buffer + len + 1, 7);
@@ -2063,7 +2063,7 @@ subrecs_push(byte *subrecs, int size, int n_subrecs, double score, void *body, i
   }
   v = subrecs + n * (GRN_RSET_SCORE_SIZE + size);
   *((double *)v) = score;
-  memcpy(v + GRN_RSET_SCORE_SIZE, body, size);
+  grn_memcpy(v + GRN_RSET_SCORE_SIZE, body, size);
 }
 
 inline static void
@@ -2097,8 +2097,8 @@ subrecs_replace_min(byte *subrecs, int size, int n_subrecs, double score, void *
     }
   }
   v = subrecs + n * (GRN_RSET_SCORE_SIZE + size);
-  memcpy(v, &score, GRN_RSET_SCORE_SIZE);
-  memcpy(v + GRN_RSET_SCORE_SIZE, body, size);
+  grn_memcpy(v, &score, GRN_RSET_SCORE_SIZE);
+  grn_memcpy(v + GRN_RSET_SCORE_SIZE, body, size);
 }
 
 inline static void
@@ -3788,7 +3788,7 @@ grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *
       GRN_TABLE_EACH(ctx, table2, 0, 0, id, &key, &key_size, &value2, {
         if (grn_table_add_v_inline(ctx, table1, key, key_size, &value1, &added)) {
           if (added) {
-            memcpy(value1, value2, value_size);
+            grn_memcpy(value1, value2, value_size);
           } else {
             grn_rset_recinfo *ri1 = value1;
             grn_rset_recinfo *ri2 = value2;
@@ -3799,7 +3799,7 @@ grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *
     } else {
       GRN_TABLE_EACH(ctx, table2, 0, 0, id, &key, &key_size, &value2, {
         if (grn_table_add_v_inline(ctx, table1, key, key_size, &value1, NULL)) {
-          memcpy(value1, value2, value_size);
+          grn_memcpy(value1, value2, value_size);
         }
       });
     }
@@ -3831,7 +3831,7 @@ grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *
   case GRN_OP_ADJUST :
     GRN_TABLE_EACH(ctx, table2, 0, 0, id, &key, &key_size, &value2, {
       if (grn_table_get_v(ctx, table1, key, key_size, &value1)) {
-        memcpy(value1, value2, value_size);
+        grn_memcpy(value1, value2, value_size);
       }
     });
     break;
@@ -3880,7 +3880,7 @@ grn_obj_column_(grn_ctx *ctx, grn_obj *table, const char *name, unsigned int nam
   if (len) {
     buf[len++] = GRN_DB_DELIMITER;
     if (len + name_size <= GRN_TABLE_MAX_KEY_SIZE) {
-      memcpy(buf + len, name, name_size);
+      grn_memcpy(buf + len, name, name_size);
       column = grn_ctx_get(ctx, buf, len + name_size);
     } else {
       ERR(GRN_INVALID_ARGUMENT, "name is too long");
@@ -4026,7 +4026,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
       goto exit;
     }
     fullname[len] = GRN_DB_DELIMITER;
-    memcpy(fullname + len + 1, name, name_size);
+    grn_memcpy(fullname + len + 1, name, name_size);
     name_size += len + 1;
   } else {
     ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
@@ -4154,7 +4154,7 @@ grn_column_open(grn_ctx *ctx, grn_obj *table,
       goto exit;
     }
     fullname[len] = GRN_DB_DELIMITER;
-    memcpy(fullname + len + 1, name, name_size);
+    grn_memcpy(fullname + len + 1, name, name_size);
     name_size += len + 1;
   } else {
     ERR(GRN_INVALID_ARGUMENT, "todo : not supported yet");
@@ -4218,7 +4218,7 @@ default_column_set_value(grn_ctx *ctx, grn_proc_ctx *pctx, grn_obj *in, grn_obj 
           ERR(GRN_NO_MEMORY_AVAILABLE, "ra get failed");
           return GRN_NO_MEMORY_AVAILABLE;
         }
-        memcpy(v, in->u.p.ptr, value_size);
+        grn_memcpy(v, in->u.p.ptr, value_size);
         grn_ra_unref(ctx, (grn_ra *)pctx->obj, arg->id);
       }
       break;
@@ -6604,13 +6604,13 @@ grn_obj_set_value_column_fix_size(grn_ctx *ctx, grn_obj *obj, grn_id id,
         } else {
           void *b;
           if ((b = GRN_CALLOC(element_size))) {
-            memcpy(b, v, s);
-            memcpy(p, b, element_size);
+            grn_memcpy(b, v, s);
+            grn_memcpy(p, b, element_size);
             GRN_FREE(b);
           }
         }
       } else {
-        memcpy(p, v, s);
+        grn_memcpy(p, v, s);
       }
       rc = GRN_SUCCESS;
       break;
@@ -7384,7 +7384,7 @@ grn_hook_unpack(grn_ctx *ctx, grn_db_obj *obj, const char *buf, uint32_t buf_siz
         new->proc = NULL;
       }
       if ((new->hld_size = hld_size)) {
-        memcpy(NEXT_ADDR(new), p, hld_size);
+        grn_memcpy(NEXT_ADDR(new), p, hld_size);
         p += hld_size;
       }
       *last = new;
@@ -7618,7 +7618,7 @@ grn_obj_set_info_source_update(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
     if (!v2) {
       return ctx->rc;
     }
-    memcpy(v2, v, s);
+    grn_memcpy(v2, v, s);
     if (DB_OBJ(obj)->source) { GRN_FREE(DB_OBJ(obj)->source); }
     DB_OBJ(obj)->source = v2;
     DB_OBJ(obj)->source_size = s;
@@ -7838,7 +7838,7 @@ grn_obj_add_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry,
     new->proc = (grn_proc *)proc;
     new->hld_size = hld_size;
     if (hld_size) {
-      memcpy(NEXT_ADDR(new), hld_value, hld_size);
+      grn_memcpy(NEXT_ADDR(new), hld_value, hld_size);
     }
     for (i = 0; i != offset && *last; i++) { last = &(*last)->next; }
     new->next = *last;
@@ -8495,7 +8495,7 @@ grn_table_rename(grn_ctx *ctx, grn_obj *table, const char *name, unsigned int na
     if (!(rc = grn_obj_rename(ctx, table, name, name_size))) {
       grn_id *key;
       char fullname[GRN_TABLE_MAX_KEY_SIZE];
-      memcpy(fullname, name, name_size);
+      grn_memcpy(fullname, name, name_size);
       fullname[name_size] = GRN_DB_DELIMITER;
       GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
         grn_obj *col = grn_ctx_at(ctx, *key);
@@ -8536,7 +8536,7 @@ grn_column_rename(grn_ctx *ctx, grn_obj *column, const char *name, unsigned int 
       goto exit;
     }
     fullname[len] = GRN_DB_DELIMITER;
-    memcpy(fullname + len + 1, name, name_size);
+    grn_memcpy(fullname + len + 1, name, name_size);
     name_size += len + 1;
     rc = grn_obj_rename(ctx, column, fullname, name_size);
   }
@@ -8678,7 +8678,7 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
                                                NULL,\
                                                NULL);\
     if (size > PATH_MAX) { ERR(GRN_FILENAME_TOO_LONG, "too long path"); }\
-    memcpy(buffer, path, size);\
+    grn_memcpy(buffer, path, size);\
     buffer[size] = '\0';\
   } else {\
     gen_pathname(grn_obj_io(s->keys)->path, buffer, id);  \
@@ -8700,7 +8700,7 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
                                   NULL);\
     if (size) {\
       if ((r->source = GRN_MALLOC(size))) {\
-        memcpy(r->source, p, size);\
+        grn_memcpy(r->source, p, size);\
         r->source_size = size;\
       }\
     }\
@@ -9308,7 +9308,7 @@ grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size)
         }
         len = pe - p0;
         if (len && len <= buf_size) {
-          memcpy(namebuf, p0, len);
+          grn_memcpy(namebuf, p0, len);
         }
       }
     }
@@ -9354,7 +9354,7 @@ grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size)
     if (name) {
       len = strlen(name);
       if (len <= buf_size) {
-        memcpy(namebuf, name, len);
+        grn_memcpy(namebuf, name, len);
       }
     }
   }
