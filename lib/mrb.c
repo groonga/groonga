@@ -145,7 +145,7 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
     return mrb_nil_value();
   }
 
-  file = fopen(expanded_path, "r");
+  grn_fopen(file, expanded_path, "r");
   if (!file) {
     char message[BUFFER_SIZE];
     mrb_value exception;

@@ -785,7 +785,7 @@ check_overcommit_memory(grn_ctx *ctx)
 {
   FILE *file;
   int value;
-  file = fopen("/proc/sys/vm/overcommit_memory", "r");
+  grn_fopen(file, "/proc/sys/vm/overcommit_memory", "r");
   if (!file) { return; }
   value = fgetc(file);
   if (value != '1') {

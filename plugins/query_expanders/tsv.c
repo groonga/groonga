@@ -210,7 +210,7 @@ load_synonyms(grn_ctx *ctx)
   } else {
     path = get_system_synonyms_file();
   }
-  file = fopen(path, "r");
+  grn_fopen(file, path, "r");
   if (!file) {
     GRN_LOG(ctx, GRN_LOG_WARNING,
             "[plugin][query-expander][tsv] "

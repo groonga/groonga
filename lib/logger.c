@@ -65,7 +65,7 @@ default_logger_log(grn_ctx *ctx, grn_log_level level,
   if (default_logger_path) {
     CRITICAL_SECTION_ENTER(default_logger_lock);
     if (!default_logger_file) {
-      default_logger_file = fopen(default_logger_path, "a");
+      grn_fopen(default_logger_file, default_logger_path, "a");
       default_logger_size = 0;
       if (default_logger_file) {
         struct stat stat;
@@ -330,7 +330,7 @@ default_query_logger_log(grn_ctx *ctx, unsigned int flag,
   if (default_query_logger_path) {
     CRITICAL_SECTION_ENTER(default_query_logger_lock);
     if (!default_query_logger_file) {
-      default_query_logger_file = fopen(default_query_logger_path, "a");
+      grn_fopen(default_query_logger_file, default_query_logger_path, "a");
       default_query_logger_size = 0;
       if (default_query_logger_file) {
         struct stat stat;

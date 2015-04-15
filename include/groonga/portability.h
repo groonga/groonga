@@ -61,4 +61,14 @@
   } while (0)
 #endif /* WIN32 */
 
+#ifdef WIN32
+# define grn_fopen(file, name, mode) do {       \
+    if (!fopen_s(&file, name, mode)) {          \
+      file = NULL;                              \
+    }                                           \
+  } while (0)
+#else /* WIN32 */
+# define grn_fopen(file, name, mode) (file) = fopen((name), (mode))
+#endif /* WIN32 */
+
 #endif /* GROONGA_PORTABILITY_H */
