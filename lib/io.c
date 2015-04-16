@@ -1772,7 +1772,13 @@ grn_fail_mmap(grn_ctx *ctx, grn_io *io, fileinfo *fi,
   } else {
     MERR("fail_mmap(%" GRN_FMT_SIZE ",%d,%" GRN_FMT_LLU ") "
          "(%s:%d@%s) <%" GRN_FMT_SIZE ">",
-          length, fi ? fi->fd : 0, offset, file, line, func, mmap_size);
+         length,
+         fi ? fi->fd : 0,
+         (long long unsigned int)offset,
+         file,
+         line,
+         func,
+         mmap_size);
     return NULL;
   }
 }
