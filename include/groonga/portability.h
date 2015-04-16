@@ -68,13 +68,9 @@
 #endif /* WIN32 */
 
 #ifdef WIN32
-# define grn_fopen(file, name, mode) do {       \
-    if (fopen_s(&file, name, mode) != 0) {      \
-      file = NULL;                              \
-    }                                           \
-  } while (0)
+# define grn_fopen(name, mode) _fsopen((name), (mode), _SH_DENYNO)
 #else /* WIN32 */
-# define grn_fopen(file, name, mode) (file) = fopen((name), (mode))
+# define grn_fopen(name, mode) fopen((name), (mode))
 #endif /* WIN32 */
 
 #ifdef WIN32

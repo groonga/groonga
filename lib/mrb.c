@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013 Brazil
+  Copyright(C) 2013-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -27,6 +27,10 @@
 #endif
 
 #include <ctype.h>
+
+#ifdef WIN32
+# include <share.h>
+#endif /* WIN32 */
 
 #define BUFFER_SIZE 2048
 #define E_LOAD_ERROR (mrb_class_get(mrb, "LoadError"))
@@ -145,7 +149,7 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
     return mrb_nil_value();
   }
 
-  grn_fopen(file, expanded_path, "r");
+  file = grn_fopen(expanded_path, "r");
   if (!file) {
     char message[BUFFER_SIZE];
     mrb_value exception;

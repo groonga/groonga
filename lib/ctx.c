@@ -35,6 +35,10 @@
 # include <netinet/in.h>
 #endif /* HAVE_NETINET_IN_H */
 
+#ifdef WIN32
+# include <share.h>
+#endif /* WIN32 */
+
 #if defined(HAVE__LOCALTIME64_S) && defined(__GNUC__)
 # ifdef _WIN64
 #  define localtime_s(tm, time) _localtime64_s(tm, time)
@@ -785,7 +789,7 @@ check_overcommit_memory(grn_ctx *ctx)
 {
   FILE *file;
   int value;
-  grn_fopen(file, "/proc/sys/vm/overcommit_memory", "r");
+  file = grn_fopen("/proc/sys/vm/overcommit_memory", "r");
   if (!file) { return; }
   value = fgetc(file);
   if (value != '1') {
