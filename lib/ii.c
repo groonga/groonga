@@ -7931,7 +7931,21 @@ grn_ii_buffer_parse(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
 grn_rc
 grn_ii_build(grn_ctx *ctx, grn_ii *ii, uint64_t sparsity)
 {
-  grn_ii_buffer *ii_buffer = grn_ii_buffer_open(ctx, ii, sparsity);
+  grn_ii_buffer *ii_buffer;
+
+  {
+    grn_obj *data_table;
+
+    data_table = grn_ctx_at(ctx, DB_OBJ(ii)->range);
+    if (!data_table) {
+      return ctx->rc;
+    }
+    if (grn_table_size(ctx, data_table) == 0) {
+      return ctx->rc;
+    }
+  }
+
+  ii_buffer = grn_ii_buffer_open(ctx, ii, sparsity);
   if (ii_buffer) {
     grn_id *s = ii->obj.source;
     if ((ii->obj.source_size) && s) {
