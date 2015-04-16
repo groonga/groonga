@@ -879,7 +879,7 @@ grn_init(void)
     grn_getenv("GRN_FMALLOC_LINE",
                grn_fmalloc_line_env,
                GRN_ENV_BUFFER_SIZE);
-    if (grn_fmalloc_line_env) {
+    if (grn_fmalloc_line_env[0]) {
       grn_fmalloc_line = atoi(grn_fmalloc_line_env);
     }
   }
