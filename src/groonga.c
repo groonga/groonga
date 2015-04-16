@@ -585,7 +585,7 @@ daemonize(void)
       dup2(null_fd, STDIN_FILENO);
       dup2(null_fd, STDOUT_FILENO);
       dup2(null_fd, STDERR_FILENO);
-      if (null_fd > STDERR_FILENO) { GRN_CLOSE(null_fd); }
+      if (null_fd > STDERR_FILENO) { grn_close(null_fd); }
     }
   }
 #endif /* WIN32 */
