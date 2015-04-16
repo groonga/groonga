@@ -29,7 +29,7 @@ GRN_API grn_rc grn_normalize_offset_and_limit(grn_ctx *ctx, int size, int *offse
 GRN_API const char *grn_win32_base_dir(void);
 GRN_API char *grn_path_separator_to_system(char *dest, char *groonga_path);
 
-int grn_mktemp(char *path_template);
+int grn_mkstemp(char *path_template);
 
 #ifdef __cplusplus
 }

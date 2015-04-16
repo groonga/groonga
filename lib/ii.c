@@ -7721,7 +7721,7 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
           snprintf(ii_buffer->tmpfpath, PATH_MAX,
                    "%sXXXXXX", grn_io_path(ii->seg));
           ii_buffer->block_buf_size = II_BUFFER_BLOCK_SIZE;
-          ii_buffer->tmpfd = grn_mktemp(ii_buffer->tmpfpath);
+          ii_buffer->tmpfd = grn_mkstemp(ii_buffer->tmpfpath);
           if (ii_buffer->tmpfd != -1) {
             grn_obj_flags flags;
             grn_table_get_info(ctx, ii->lexicon, &flags, NULL, NULL, NULL, NULL);
