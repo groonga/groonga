@@ -25,9 +25,12 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 
 #ifdef WIN32
 # include <io.h>
+# include <share.h>
 #endif /* WIN32 */
 
 grn_rc
@@ -1350,8 +1353,8 @@ int
 grn_mkstemp(char *path_template)
 {
   errno_t error;
-  int fd;
   size_t path_template_size;
+  int fd;
 
   path_template_size = strlen(path_template) + 1;
   error = _mktemp_s(path_template, path_template_size);
@@ -1359,7 +1362,11 @@ grn_mkstemp(char *path_template)
     return -1;
   }
 
-  error = fopen_s(&fd, path_template, "wb");
+  error = _sopen_s(&fd,
+                   path_template,
+                   _O_RDWR | _O_CREAT | _O_EXCL | _O_BINARY,
+                   _SH_DENYNO,
+                   _S_IREAD | _S_IWRITE);
   if (error != 0) {
     return -1;
   }
