@@ -130,6 +130,7 @@ struct _grn_ctx_impl {
   grn_calloc_func calloc_func;
   grn_realloc_func realloc_func;
   grn_strdup_func strdup_func;
+  grn_free_func free_func;
 #endif
 
 #ifdef USE_MEMORY_DEBUG

@@ -504,6 +504,8 @@ typedef void *(*grn_realloc_func) (grn_ctx *ctx, void *ptr, size_t size,
                                    const char *file, int line, const char *func);
 typedef char *(*grn_strdup_func) (grn_ctx *ctx, const char *string,
                                   const char *file, int line, const char *func);
+typedef void (*grn_free_func) (grn_ctx *ctx, void *ptr,
+                               const char *file, int line, const char *func);
 grn_malloc_func grn_ctx_get_malloc(grn_ctx *ctx);
 void grn_ctx_set_malloc(grn_ctx *ctx, grn_malloc_func malloc_func);
 grn_calloc_func grn_ctx_get_calloc(grn_ctx *ctx);
@@ -512,11 +514,14 @@ grn_realloc_func grn_ctx_get_realloc(grn_ctx *ctx);
 void grn_ctx_set_realloc(grn_ctx *ctx, grn_realloc_func realloc_func);
 grn_strdup_func grn_ctx_get_strdup(grn_ctx *ctx);
 void grn_ctx_set_strdup(grn_ctx *ctx, grn_strdup_func strdup_func);
+grn_free_func grn_ctx_get_free(grn_ctx *ctx);
+void grn_ctx_set_free(grn_ctx *ctx, grn_free_func free_func);
 
 void *grn_malloc(grn_ctx *ctx, size_t size, const char* file, int line, const char *func);
 void *grn_calloc(grn_ctx *ctx, size_t size, const char* file, int line, const char *func);
 void *grn_realloc(grn_ctx *ctx, void *ptr, size_t size, const char* file, int line, const char *func);
 char *grn_strdup(grn_ctx *ctx, const char *s, const char* file, int line, const char *func);
+void grn_free(grn_ctx *ctx, void *ptr, const char *file, int line, const char *func);
 #else
 #  define grn_malloc  grn_malloc_default
 #  define grn_calloc  grn_calloc_default

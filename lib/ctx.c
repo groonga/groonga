@@ -2275,6 +2275,20 @@ grn_ctx_set_strdup(grn_ctx *ctx, grn_strdup_func strdup_func)
   ctx->impl->strdup_func = strdup_func;
 }
 
+grn_free_func
+grn_ctx_get_free(grn_ctx *ctx)
+{
+  if (!ctx || !ctx->impl) { return NULL; }
+  return ctx->impl->free_func;
+}
+
+void
+grn_ctx_set_free(grn_ctx *ctx, grn_free_func free_func)
+{
+  if (!ctx || !ctx->impl) { return; }
+  ctx->impl->free_func = free_func;
+}
+
 void *
 grn_malloc(grn_ctx *ctx, size_t size, const char* file, int line, const char *func)
 {
@@ -2312,6 +2326,16 @@ grn_strdup(grn_ctx *ctx, const char *string, const char* file, int line, const c
     return ctx->impl->strdup_func(ctx, string, file, line, func);
   } else {
     return grn_strdup_default(ctx, string, file, line, func);
+  }
+}
+
+void
+grn_free(grn_ctx *ctx, void *ptr, const char* file, int line, const char *func)
+{
+  if (ctx && ctx->impl && ctx->impl->free_func) {
+    return ctx->impl->free_func(ctx, ptr, file, line, func);
+  } else {
+    return grn_free_default(ctx, ptr, file, line, func);
   }
 }
 #endif
