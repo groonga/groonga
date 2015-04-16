@@ -21,6 +21,10 @@
 #include <sys/stat.h>
 #include <math.h>
 
+#ifdef WIN32
+# include <io.h>
+#endif /* WIN32 */
+
 #include "grn_ii.h"
 #include "grn_ctx_impl.h"
 #include "grn_token_cursor.h"
