@@ -111,13 +111,13 @@
 
 #ifdef WIN32
 # define grn_write(fd, buf, count) _write((fd), (buf), (count))
-#else
+#else /* WIN32 */
 # define grn_write(fd, buf, count) write((fd), (buf), (count))
 #endif /* WIN32 */
 
 #ifdef WIN32
 # define grn_read(fd, buf, count) _read((fd), (buf), (count))
-#else
+#else /* WIN32 */
 # define grn_read(fd, buf, count) read((fd), (buf), (count))
 #endif /* WIN32 */
 
