@@ -97,7 +97,7 @@ void
 test_dynamic_malloc_change(void)
 {
 #ifdef USE_DYNAMIC_MALLOC_CHANGE
-  cut_assert_ensue_context();
+  cut_assert_ensure_context();
   {
     grn_ctx *ctx = context;
 
