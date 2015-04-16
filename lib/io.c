@@ -324,6 +324,7 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t seg
         GRN_MUNMAP(&grn_gctx, NULL, &fis->fmo, fis, header, b);
       }
       grn_close(ctx, fis);
+      grn_unlink(path);
     }
     GRN_GFREE(fis);
   }
