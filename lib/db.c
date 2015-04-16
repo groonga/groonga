@@ -7200,6 +7200,7 @@ build_index(grn_ctx *ctx, grn_obj *obj)
         break;
       default :
         use_grn_ii_build = GRN_FALSE;
+        break;
       }
       if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
         use_grn_ii_build = GRN_FALSE;
