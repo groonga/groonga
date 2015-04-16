@@ -7401,9 +7401,17 @@ grn_ii_buffer_fetch(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
           return;
         }
       }
-      if (grn_lseek(ii_buffer->tmpfd, block->head, SEEK_SET) != block->head) {
-        ERRNO_ERR("grn_lseek");
-        return;
+      {
+        off_t seeked_position;
+        seeked_position = grn_lseek(ii_buffer->tmpfd, block->head, SEEK_SET);
+        if (seeked_position != block->head) {
+          ERRNO_ERR("grn_lseek");
+          GRN_LOG(ctx, GRN_LOG_ERROR,
+                  "failed to grn_lseek(%" GRN_FMT_OFF_T ") -> %" GRN_FMT_OFF_T,
+                  block->head,
+                  seeked_position);
+          return;
+        }
       }
       if (grn_read(ii_buffer->tmpfd, block->buffer, bytesize) != bytesize) {
         SERR("read");
