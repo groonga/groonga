@@ -100,7 +100,7 @@ grn_bulk_put_from_file(grn_ctx *ctx, grn_obj *bulk, const char *path)
     ERR(GRN_INVALID_ARGUMENT, "cannot stat file: <%s>", path);
   }
 exit :
-  GRN_CLOSE(fd);
+  grn_close(fd);
   return ret;
 }
 

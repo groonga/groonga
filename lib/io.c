@@ -68,7 +68,7 @@ static uint32_t grn_io_version_default = GRN_IO_VERSION_DEFAULT;
 inline static grn_rc grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags);
 inline static void grn_fileinfo_init(fileinfo *fis, int nfis);
 inline static int grn_opened(fileinfo *fi);
-inline static grn_rc grn_close(grn_ctx *ctx, fileinfo *fi);
+inline static grn_rc grn_fileinfo_close(grn_ctx *ctx, fileinfo *fi);
 #ifdef WIN32
 inline static void * grn_mmap(grn_ctx *ctx, grn_io *io,
                               HANDLE *fmo, fileinfo *fi,
@@ -323,7 +323,7 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t seg
         }
         GRN_MUNMAP(&grn_gctx, NULL, &fis->fmo, fis, header, b);
       }
-      grn_close(ctx, fis);
+      grn_fileinfo_close(ctx, fis);
       grn_unlink(path);
     }
     GRN_GFREE(fis);
@@ -493,7 +493,7 @@ grn_io_detect_type(grn_ctx *ctx, const char *path)
     } else {
       ERR(GRN_INVALID_FORMAT, "grn_io_detect_type failed");
     }
-    GRN_CLOSE(fd);
+    grn_close(fd);
   } else {
     SERR(path);
   }
@@ -526,7 +526,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
         }
       }
     }
-    GRN_CLOSE(fd);
+    grn_close(fd);
     if (!segment_size) { return NULL; }
   }
   b = grn_io_compute_base(header_size);
@@ -546,7 +546,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
       fis = GRN_GMALLOCN(fileinfo, max_nfiles);
       if (!fis) {
         GRN_MUNMAP(&grn_gctx, NULL, &(fi.fmo), &fi, header, b);
-        grn_close(ctx, &fi);
+        grn_fileinfo_close(ctx, &fi);
         return NULL;
       }
       grn_fileinfo_init(fis, max_nfiles);
@@ -581,7 +581,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
       GRN_GFREE(fis);
       GRN_MUNMAP(&grn_gctx, NULL, &(fi.fmo), &fi, header, b);
     }
-    grn_close(ctx, &fi);
+    grn_fileinfo_close(ctx, &fi);
   }
   return NULL;
 }
@@ -627,7 +627,7 @@ grn_io_close(grn_ctx *ctx, grn_io *io)
     int i;
     for (i = 0; i < max_nfiles; i++) {
       fileinfo *fi = &(io->fis[i]);
-      grn_close(ctx, fi);
+      grn_fileinfo_close(ctx, fi);
     }
     GRN_GFREE(io->fis);
   }
@@ -1603,7 +1603,7 @@ grn_munmap(grn_ctx *ctx, grn_io *io,
 }
 
 inline static grn_rc
-grn_close(grn_ctx *ctx, fileinfo *fi)
+grn_fileinfo_close(grn_ctx *ctx, fileinfo *fi)
 {
   if (fi->fmo != NULL) {
     CloseHandle(fi->fmo);
@@ -1715,10 +1715,10 @@ grn_opened(fileinfo *fi)
 }
 
 inline static grn_rc
-grn_close(grn_ctx *ctx, fileinfo *fi)
+grn_fileinfo_close(grn_ctx *ctx, fileinfo *fi)
 {
   if (fi->fd != -1) {
-    if (GRN_CLOSE(fi->fd) == -1) {
+    if (grn_close(fi->fd) == -1) {
       SERR("close");
       return ctx->rc;
     }

@@ -73,12 +73,6 @@
 # define GRN_OPEN(pathname, ...) _open(pathname, __VA_ARGS__)
 #endif /* HAVE_OPEN */
 
-#ifdef HAVE_CLOSE
-# define GRN_CLOSE(fd) close(fd)
-#else
-# define GRN_CLOSE(fd) _close(fd)
-#endif /* HAVE_CLOSE */
-
 #ifdef WIN32
 
 # if defined(__GNUC__) && !defined(WINVER)

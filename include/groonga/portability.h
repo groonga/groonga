@@ -121,4 +121,10 @@
 # define grn_read(fd, buf, count) read((fd), (buf), (count))
 #endif /* WIN32 */
 
+#ifdef WIN32
+# define grn_close(fd) _close((fd))
+#else /* WIN32 */
+# define grn_close(fd) close((fd))
+#endif /* WIN32 */
+
 #endif /* GROONGA_PORTABILITY_H */
