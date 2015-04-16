@@ -69,7 +69,7 @@
 
 #ifdef WIN32
 # define grn_fopen(file, name, mode) do {       \
-    if (!fopen_s(&file, name, mode)) {          \
+    if (fopen_s(&file, name, mode) != 0) {      \
       file = NULL;                              \
     }                                           \
   } while (0)
