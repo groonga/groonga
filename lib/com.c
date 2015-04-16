@@ -328,10 +328,10 @@ grn_com_event_fin(grn_ctx *ctx, grn_com_event *ev)
 #ifndef USE_SELECT
   if (ev->events) { GRN_FREE(ev->events); }
 # ifdef USE_EPOLL
-  GRN_CLOSE(ev->epfd);
+  grn_close(ev->epfd);
 # endif /* USE_EPOLL */
 # ifdef USE_KQUEUE
-  GRN_CLOSE(ev->kqfd);
+  grn_close(ev->kqfd);
 # endif /* USE_KQUEUE*/
 #endif /* USE_SELECT */
   return GRN_SUCCESS;
