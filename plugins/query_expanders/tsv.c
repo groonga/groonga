@@ -25,6 +25,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef WIN32
+# include <share.h>
+#endif /* WIN32 */
+
 #ifdef HAVE__STRNICMP
 # ifdef strncasecmp
 #  undef strncasecmp
@@ -210,7 +214,7 @@ load_synonyms(grn_ctx *ctx)
   } else {
     path = get_system_synonyms_file();
   }
-  grn_fopen(file, path, "r");
+  file = grn_fopen(path, "r");
   if (!file) {
     GRN_LOG(ctx, GRN_LOG_WARNING,
             "[plugin][query-expander][tsv] "
