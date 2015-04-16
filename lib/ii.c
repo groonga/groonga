@@ -7224,7 +7224,7 @@ grn_ii_buffer_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   encode_postings(ctx, ii_buffer, outbuf);
   encode_last_tf(ctx, ii_buffer, outbuf);
   {
-    ssize_t r = GRN_WRITE(ii_buffer->tmpfd, outbuf, encsize);
+    ssize_t r = grn_write(ii_buffer->tmpfd, outbuf, encsize);
     if (r != encsize) {
       ERR(GRN_INPUT_OUTPUT_ERROR, "write returned %" GRN_FMT_LLD " != %" GRN_FMT_LLU,
           (long long int)r, (unsigned long long int)encsize);

@@ -109,4 +109,10 @@
   snprintf((dest), (n), (format), __VA_ARGS__)
 #endif /* WIN32 */
 
+#ifdef WIN32
+# define grn_write(fd, buf, count) _write((fd), (buf), (count))
+#else
+# define grn_write(fd, buf, count) write((fd), (buf), (count))
+#endif /* WIN32 */
+
 #endif /* GROONGA_PORTABILITY_H */
