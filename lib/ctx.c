@@ -2477,7 +2477,8 @@ grn_malloc_fail(grn_ctx *ctx, size_t size, const char* file, int line, const cha
   if (grn_fail_malloc_check(size, file, line, func)) {
     return grn_malloc_default(ctx, size, file, line, func);
   } else {
-    MERR("fail_malloc (%d) (%s:%d@%s) <%d>", size, file, line, func, alloc_count);
+    MERR("fail_malloc (%" GRN_FMT_SIZE ") (%s:%d@%s) <%d>",
+         size, file, line, func, alloc_count);
     return NULL;
   }
 }
@@ -2488,7 +2489,8 @@ grn_calloc_fail(grn_ctx *ctx, size_t size, const char* file, int line, const cha
   if (grn_fail_malloc_check(size, file, line, func)) {
     return grn_calloc_default(ctx, size, file, line, func);
   } else {
-    MERR("fail_calloc (%d) (%s:%d@%s) <%d>", size, file, line, func, alloc_count);
+    MERR("fail_calloc (%" GRN_FMT_SIZE ") (%s:%d@%s) <%d>",
+         size, file, line, func, alloc_count);
     return NULL;
   }
 }
