@@ -147,7 +147,7 @@
 #cmakedefine HAVE_FPCLASSIFY
 #cmakedefine HAVE_GMTIME_R
 #cmakedefine HAVE_LOCALTIME_R
-#cmakedefine HAVE_MKOSTEMP
+#cmakedefine HAVE_MKSTEMP
 #cmakedefine HAVE_OPEN
 #cmakedefine HAVE_STRCASECMP
 #cmakedefine HAVE_STRNCASECMP

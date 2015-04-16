@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2014 Brazil
+/* Copyright(C) 2009-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -530,13 +530,6 @@ typedef int grn_cond;
   (*(p) = (v))
 # endif /* ATOMIC 64BIT SET */
 
-# ifdef HAVE_MKOSTEMP
-#  define GRN_MKOSTEMP(template,flags,mode) mkostemp(template,flags)
-# else /* HAVE_MKOSTEMP */
-#  define GRN_MKOSTEMP(template,flags,mode) \
-  (mktemp(template), GRN_OPEN((template),((flags)|O_RDWR|O_CREAT|O_EXCL),mode))
-# endif /* HAVE_MKOSTEMP */
-
 #elif (defined(WIN32) || defined (_WIN64)) /* __GNUC__ */
 
 # define GRN_ATOMIC_ADD_EX(p,i,r) \
@@ -566,9 +559,6 @@ typedef int grn_cond;
 # define GRN_BIT_SCAN_REV(v,r)  for (r = 31; r && !((1 << r) & v); r--)
 # define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
 
-# define GRN_MKOSTEMP(template,flags,mode) \
-  (mktemp(template), GRN_OPEN((template),((flags)|O_RDWR|O_CREAT),mode))
-
 #else /* __GNUC__ */
 
 # if (defined(__sun) && defined(__SVR4)) /* ATOMIC ADD */
@@ -583,9 +573,6 @@ typedef int grn_cond;
 /* todo */
 # define GRN_BIT_SCAN_REV(v,r)  for (r = 31; r && !((1 << r) & v); r--)
 # define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
-
-# define GRN_MKOSTEMP(template,flags,mode) \
-  (mktemp(template), GRN_OPEN((template),flags,mode))
 
 #endif /* __GNUC__ */
 

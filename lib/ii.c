@@ -7718,16 +7718,10 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
       if (ii_buffer->counters) {
         ii_buffer->block_buf = GRN_MALLOCN(grn_id, II_BUFFER_BLOCK_SIZE);
         if (ii_buffer->block_buf) {
-          int open_flags = 0;
-#ifdef WIN32
-          open_flags |= O_BINARY;
-#endif
           snprintf(ii_buffer->tmpfpath, PATH_MAX,
                    "%sXXXXXX", grn_io_path(ii->seg));
           ii_buffer->block_buf_size = II_BUFFER_BLOCK_SIZE;
-          ii_buffer->tmpfd = GRN_MKOSTEMP(ii_buffer->tmpfpath,
-                                          open_flags,
-                                          S_IRUSR|S_IWUSR);
+          ii_buffer->tmpfd = grn_mktemp(ii_buffer->tmpfpath);
           if (ii_buffer->tmpfd != -1) {
             grn_obj_flags flags;
             grn_table_get_info(ctx, ii->lexicon, &flags, NULL, NULL, NULL, NULL);

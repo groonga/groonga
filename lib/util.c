@@ -24,6 +24,11 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
+
+#ifdef WIN32
+# include <io.h>
+#endif /* WIN32 */
 
 grn_rc
 grn_normalize_offset_and_limit(grn_ctx *ctx, int size, int *p_offset, int *p_limit)
@@ -1339,3 +1344,37 @@ grn_win32_base_dir(void)
   return win32_base_dir;
 }
 #endif
+
+#ifdef WIN32
+int
+grn_mkstemp(char *path_template)
+{
+  errno_t error;
+  int fd;
+  size_t path_template_size;
+
+  path_template_size = strlen(path_template) + 1;
+  error = _mktemp_s(path_template, path_template_size);
+  if (error != 0) {
+    return -1;
+  }
+
+  error = fopen_s(&fd, path_template, "wb");
+  if (error != 0) {
+    return -1;
+  }
+
+  return fd;
+}
+#else /* WIN32 */
+int
+grn_mkstemp(char *path_template)
+{
+# ifdef HAVE_MKSTEMP
+  return mkstemp(path_template);
+# else /* HAVE_MKSTEMP */
+  mktemp(path_template);
+  return open(path_template, O_RDWR | O_CREAT | OEXCL, S_IRUSR | S_IWUSR);
+# endif /* HAVE_MKSTEMP */
+}
+#endif /* WIN32 */
