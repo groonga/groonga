@@ -1768,7 +1768,7 @@ grn_fail_mmap(grn_ctx *ctx, grn_io *io, fileinfo *fi,
               const char* file, int line, const char *func)
 {
   if (grn_fail_malloc_check(length, file, line, func)) {
-    return grn_mmap(ctx, fi, offset, length);
+    return grn_mmap(ctx, io, fi, offset, length);
   } else {
     MERR("fail_mmap(%" GRN_FMT_SIZE ",%d,%" GRN_FMT_LLU ") "
          "(%s:%d@%s) <%" GRN_FMT_SIZE ">",
