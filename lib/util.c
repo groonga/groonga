@@ -1381,7 +1381,7 @@ grn_mkstemp(char *path_template)
   return mkstemp(path_template);
 # else /* HAVE_MKSTEMP */
   mktemp(path_template);
-  return open(path_template, O_RDWR | O_CREAT | OEXCL, S_IRUSR | S_IWUSR);
+  return open(path_template, O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR);
 # endif /* HAVE_MKSTEMP */
 }
 #endif /* WIN32 */
