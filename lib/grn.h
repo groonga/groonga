@@ -79,18 +79,6 @@
 # define GRN_CLOSE(fd) _close(fd)
 #endif /* HAVE_CLOSE */
 
-#ifdef HAVE_READ
-# define GRN_READ(fd, buf, count) read(fd, buf, count)
-#else
-# define GRN_READ(fd, buf, count) _read(fd, buf, count)
-#endif /* HAVE_READ */
-
-#ifdef HAVE_WRITE
-# define GRN_WRITE(fd, buf, count) write(fd, buf, count)
-#else
-# define GRN_WRITE(fd, buf, count) _write(fd, buf, count)
-#endif /* HAVE_WRITE */
-
 #ifdef WIN32
 
 # if defined(__GNUC__) && !defined(WINVER)

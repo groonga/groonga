@@ -150,7 +150,6 @@
 #cmakedefine HAVE_LOCALTIME_R
 #cmakedefine HAVE_MKOSTEMP
 #cmakedefine HAVE_OPEN
-#cmakedefine HAVE_READ
 #cmakedefine HAVE_STRCASECMP
 #cmakedefine HAVE_STRNCASECMP
 #cmakedefine HAVE_STRTOULL

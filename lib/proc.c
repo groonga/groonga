@@ -90,7 +90,7 @@ grn_bulk_put_from_file(grn_ctx *ctx, grn_obj *bulk, const char *path)
     if ((buf = GRN_MALLOC(rest))) {
       ssize_t ss;
       for (bp = buf; rest; rest -= ss, bp += ss) {
-        if ((ss = GRN_READ(fd, bp, rest)) == -1) { goto exit; }
+        if ((ss = grn_read(fd, bp, rest)) == -1) { goto exit; }
       }
       GRN_TEXT_PUT(ctx, bulk, buf, stat.st_size);
       ret = 1;

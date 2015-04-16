@@ -7405,7 +7405,7 @@ grn_ii_buffer_fetch(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
         ERRNO_ERR("grn_lseek");
         return;
       }
-      if (read(ii_buffer->tmpfd, block->buffer, bytesize) != bytesize) {
+      if (grn_read(ii_buffer->tmpfd, block->buffer, bytesize) != bytesize) {
         SERR("read");
         return;
       }
