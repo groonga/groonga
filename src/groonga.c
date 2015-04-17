@@ -2596,9 +2596,21 @@ show_usage(FILE *output)
           "                           specify log level (default: %d)\n"
           "      --log-path <path>:   specify log path\n"
           "                           (default: %s)\n"
+          "      --log-rotate-threshold-size <threshold>:\n"
+          "                           specify threshold for log rotate\n"
+          "                           Log file is rotated when\n"
+          "                           log file size is larger than or\n"
+          "                           equals to the threshold\n"
+          "                           (default: 0; disabled)\n"
           "      --query-log-path <path>:\n"
           "                           specify query log path\n"
           "                           (default: %s)\n"
+          "      --query-log-rotate-threshold-size <threshold>:\n"
+          "                           specify threshold for query log rotate\n"
+          "                           Query log file is rotated when\n"
+          "                           query log file size is larger than or\n"
+          "                           equals to the threshold\n"
+          "                           (default: 0; disabled)\n"
           "\n"
           "Common options:\n"
           "      --working-directory <path>:\n"
@@ -2642,7 +2654,9 @@ main(int argc, char **argv)
   const char *hostname_arg = NULL;
   const char *protocol_arg = NULL;
   const char *log_path_arg = NULL;
+  const char *log_rotate_threshold_size_arg = NULL;
   const char *query_log_path_arg = NULL;
+  const char *query_log_rotate_threshold_size_arg = NULL;
   const char *cache_limit_arg = NULL;
   const char *document_root_arg = NULL;
   const char *default_command_version_arg = NULL;
@@ -2670,7 +2684,9 @@ main(int argc, char **argv)
     {'\0', "protocol", NULL, 0, GETOPT_OP_NONE},
     {'\0', "version", NULL, ACTION_VERSION, GETOPT_OP_UPDATE},
     {'\0', "log-path", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "log-rotate-threshold-size", NULL, 0, GETOPT_OP_NONE},
     {'\0', "query-log-path", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "query-log-rotate-threshold-size", NULL, 0, GETOPT_OP_NONE},
     {'\0', "pid-path", NULL, 0, GETOPT_OP_NONE},
     {'\0', "config-path", NULL, 0, GETOPT_OP_NONE},
     {'\0', "show-config", NULL, ACTION_SHOW_CONFIG, GETOPT_OP_UPDATE},
@@ -2692,18 +2708,20 @@ main(int argc, char **argv)
   opts[8].arg = &hostname_arg;
   opts[10].arg = &protocol_arg;
   opts[12].arg = &log_path_arg;
-  opts[13].arg = &query_log_path_arg;
-  opts[14].arg = &pid_file_path;
-  opts[15].arg = &config_path;
-  opts[17].arg = &cache_limit_arg;
-  opts[18].arg = &input_path;
-  opts[19].arg = &document_root_arg;
-  opts[20].arg = &default_command_version_arg;
-  opts[21].arg = &default_match_escalation_threshold_arg;
-  opts[22].arg = &bind_address_arg;
-  opts[23].arg = &input_fd_arg;
-  opts[24].arg = &output_fd_arg;
-  opts[25].arg = &working_directory_arg;
+  opts[13].arg = &log_rotate_threshold_size_arg;
+  opts[14].arg = &query_log_path_arg;
+  opts[15].arg = &query_log_rotate_threshold_size_arg;
+  opts[16].arg = &pid_file_path;
+  opts[17].arg = &config_path;
+  opts[19].arg = &cache_limit_arg;
+  opts[20].arg = &input_path;
+  opts[21].arg = &document_root_arg;
+  opts[22].arg = &default_command_version_arg;
+  opts[23].arg = &default_match_escalation_threshold_arg;
+  opts[24].arg = &bind_address_arg;
+  opts[25].arg = &input_fd_arg;
+  opts[26].arg = &output_fd_arg;
+  opts[27].arg = &working_directory_arg;
 
   reset_ready_notify_pipe();
 
@@ -2857,8 +2875,37 @@ main(int argc, char **argv)
     grn_default_logger_set_path(log_path_arg);
   }
 
+  if (log_rotate_threshold_size_arg) {
+    const char * const end =
+      log_rotate_threshold_size_arg +
+      strlen(log_rotate_threshold_size_arg);
+    const char *rest = NULL;
+    const uint64_t value = grn_atoull(log_rotate_threshold_size_arg, end, &rest);
+    if (end != rest) {
+      fprintf(stderr, "invalid log rotate threshold size: <%s>\n",
+              log_rotate_threshold_size_arg);
+      return EXIT_FAILURE;
+    }
+    grn_default_logger_set_rotate_threshold_size(value);
+  }
+
   if (query_log_path_arg) {
     grn_default_query_logger_set_path(query_log_path_arg);
+  }
+
+  if (query_log_rotate_threshold_size_arg) {
+    const char * const end =
+      query_log_rotate_threshold_size_arg +
+      strlen(query_log_rotate_threshold_size_arg);
+    const char *rest = NULL;
+    const uint64_t value =
+      grn_atoull(query_log_rotate_threshold_size_arg, end, &rest);
+    if (end != rest) {
+      fprintf(stderr, "invalid query log rotate threshold size: <%s>\n",
+              query_log_rotate_threshold_size_arg);
+      return EXIT_FAILURE;
+    }
+    grn_default_query_logger_set_rotate_threshold_size(value);
   }
 
   if (log_level_arg) {
