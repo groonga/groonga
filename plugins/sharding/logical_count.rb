@@ -45,18 +45,44 @@ module Groonga
           end
         end
 
+        range_index = nil
+        if filter.nil?
+          index_info = shard_key.find_index(Operator::LESS)
+          if index_info
+            range_index = index_info.index
+          end
+        end
+
         case cover_type
         when :partial_min
-          filtered_count_n_records(table) do |expression|
-            expression_builder.build_partial_min(expression)
+          if range_index
+            count_n_records_in_range(range_index,
+                                     target_range.min, target_range.min_border,
+                                     nil, nil)
+          else
+            filtered_count_n_records(table) do |expression|
+              expression_builder.build_partial_min(expression)
+            end
           end
         when :partial_max
-          filtered_count_n_records(table) do |expression|
-            expression_builder.build_partial_max(expression)
+          if range_index
+            count_n_records_in_range(range_index,
+                                     nil, nil,
+                                     target_range.max, target_range.max_border)
+          else
+            filtered_count_n_records(table) do |expression|
+              expression_builder.build_partial_max(expression)
+            end
           end
         when :partial_min_and_max
-          filtered_count_n_records(table) do |expression|
-            expression_builder.build_partial_min_and_max(expression)
+          if range_index
+            count_n_records_in_range(range_index,
+                                     target_range.min, target_range.min_border,
+                                     target_range.max, target_range.max_border)
+          else
+            filtered_count_n_records(table) do |expression|
+              expression_builder.build_partial_min_and_max(expression)
+            end
           end
         end
       end
@@ -73,6 +99,32 @@ module Groonga
         ensure
           filtered_table.close if filtered_table
           expression.close if expression
+        end
+      end
+
+      def count_n_records_in_range(range_index,
+                                   min, min_border, max, max_border)
+        flags = TableCursorFlags::BY_KEY
+        case min_border
+        when :include
+          flags |= TableCursorFlags::GE
+        when :exclude
+          flags |= TableCursorFlags::GT
+        end
+        case max_border
+        when :include
+          flags |= TableCursorFlags::LE
+        when :exclude
+          flags |= TableCursorFlags::LT
+        end
+
+        TableCursor.open(range_index.table,
+                         :min => min,
+                         :max => max,
+                         :flags => flags) do |table_cursor|
+          IndexCursor.open(table_cursor, range_index) do |index_cursor|
+            index_cursor.count
+          end
         end
       end
     end
