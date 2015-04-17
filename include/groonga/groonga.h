@@ -1154,10 +1154,10 @@ GRN_API void grn_logger_set_max_level(grn_ctx *ctx, grn_log_level max_level);
 GRN_API grn_log_level grn_logger_get_max_level(grn_ctx *ctx);
 
 #ifdef __GNUC__
-#define GRN_ATTRIBUTE_PRINTF(fmt_pos) \
+# define GRN_ATTRIBUTE_PRINTF(fmt_pos) \
   __attribute__ ((format(printf, fmt_pos, fmt_pos + 1)))
 #else
-#define GRN_ATTRIBUTE_PRINTF(fmt_pos)
+# define GRN_ATTRIBUTE_PRINTF(fmt_pos)
 #endif /* __GNUC__ */
 
 GRN_API void grn_logger_put(grn_ctx *ctx, grn_log_level level,
@@ -1167,7 +1167,7 @@ GRN_API void grn_logger_reopen(grn_ctx *ctx);
 GRN_API grn_bool grn_logger_pass(grn_ctx *ctx, grn_log_level level);
 
 #ifndef GRN_LOG_DEFAULT_LEVEL
-#define GRN_LOG_DEFAULT_LEVEL GRN_LOG_NOTICE
+# define GRN_LOG_DEFAULT_LEVEL GRN_LOG_NOTICE
 #endif /* GRN_LOG_DEFAULT_LEVEL */
 
 GRN_API void grn_default_logger_set_max_level(grn_log_level level);
