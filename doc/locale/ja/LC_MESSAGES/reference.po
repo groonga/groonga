@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-04-15 12:42+0900\n"
+"PO-Revision-Date: 2015-04-17 18:43+0900\n"
 "Last-Translator: Takatsugu <nokubi@gmail.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -8980,37 +8980,37 @@ msgstr ""
 
 # 23c91b83bdb642c0a5527406811b4371
 msgid "This executable command is an experimental feature."
-msgstr ""
+msgstr "この実行ファイルは実験的な機能です。"
 
 # 52b8357ba74747b5aeabe583eae9928c
 msgid "``grndb`` manages a Groonga database."
-msgstr ""
+msgstr "``grndb`` はGroongaのデータベースを管理します。"
 
 msgid "Here are features:"
 msgstr "機能は次の通りです。"
 
 # 3bc14c4552694f6faf256a12b240ac9a
 msgid "Checks whether database is broken or not."
-msgstr ""
+msgstr "データベースが壊れているかどうかをチェックする。"
 
 # cf830bed10f04e569822f5822b97e672
 msgid "Recovers broken database automatically if the database is recoverable."
-msgstr ""
+msgstr "壊れたデータベースが復旧可能なら自動でデータベースを復旧する。"
 
 # d3c541e881584a4cb97b16cd8a29c369
 msgid "``grndb`` requires command and database path::"
-msgstr ""
+msgstr "``grndb`` にはコマンドとデータベースのパスを渡します。::"
 
 msgid "Here are available commands:"
 msgstr "利用可能なコマンドは以下の通りです。"
 
 # d6d2b2d405794bd38b989933e4746fd8
 msgid "``check`` - Checks whether database is broken or not."
-msgstr ""
+msgstr "``check`` - データベースが壊れているかどうかをチェックします。"
 
 # 6ecfb7af81f64a1f911c0c738f7ef96e
 msgid "``recover`` - Recovers database."
-msgstr ""
+msgstr "``recover`` - データベースを復旧します。"
 
 msgid ""
 "Here is an example to check the database at ``/var/lib/groonga/db/db``::"
@@ -9032,12 +9032,17 @@ msgid ""
 "It checks an existing Groonga database. If the database is broken, ``grndb`` "
 "reports reasons and exits with non-``0`` exit status."
 msgstr ""
+"既存のGroongaデータベースをチェックします。もし、データベースが壊れていたら "
+"``grndb`` は詳細を報告し、 ``0`` 以外の終了ステータスで終了します。"
 
 # 4e974dd423d64407b304f560c2ab3714
 msgid ""
 "You must not use this command for opened database. If the database is "
 "opened, this command may report wrong result."
 msgstr ""
+"このコマンドを他のプロセスが開いているデータベースに対しては使ってはいけませ"
+"ん。もし、データベースが他のプロセスから開かれていると、このコマンドは間違っ"
+"た結果を報告する可能性があります。"
 
 # dc616dd61e0f4b249cc48a8cde423863
 msgid "``recover``"
@@ -9051,6 +9056,8 @@ msgid ""
 "If the database is not broken, ``grndb`` does nothing and exits with ``0`` "
 "exit status."
 msgstr ""
+"もしデータベースが壊れていなかったら、 ``grndb`` は何もせず終了ステータス "
+"``0`` で終了します。"
 
 # a5631bb8c67e4a5ba0fde29ee1d27ee8
 msgid ""
@@ -9058,6 +9065,10 @@ msgid ""
 "``grndb`` recovers these index columns and exists with ``0`` exit status. It "
 "may take a long time for large indexed data."
 msgstr ""
+"もしデータベースが壊れていて、壊れているのがインデックスカラムだけなら、 "
+"``grndb`` は壊れているインデックスカラムを復旧して終了ステータス ``0`` で終了"
+"します。インデックス対象のデータが大きい場合は復旧に長時間かかることもありま"
+"す。"
 
 # 61f51cfa8346488b9bf743c5b99d8e02
 msgid ""
@@ -9065,12 +9076,18 @@ msgid ""
 "reports broken reasons and exits with non-``0`` exit status. You can know "
 "whether the database is recoverable or not by ``check`` command."
 msgstr ""
+"もしデータベースが壊れていて、壊れているのがテーブルまたはデータカラムの場合"
+"は、 ``grndb`` は壊れている原因を報告して ``0`` 以外の終了ステータスで終了し"
+"ます。データベースを復旧可能かどうかは ``check`` コマンドで確認できます。"
 
 # 4b650d41c85d4cac91e035c5dfd8a623
 msgid ""
 "You must not use this command for opened database. If the database is "
 "opened, this command may break the database."
 msgstr ""
+"このコマンドを他のプロセスが開いているデータベースに対しては使ってはいけませ"
+"ん。もし、データベースが他のプロセスから開かれていると、このコマンドはデータ"
+"ベースを壊してしまう可能性があります。"
 
 msgid "grnslap"
 msgstr ""
