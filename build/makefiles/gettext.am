@@ -79,3 +79,7 @@ edit-po-build-stamp: pot-build-stamp
 mo-build-stamp: edit-po-build-stamp
 	$(MAKE) $(mo_files)
 	@touch $@
+
+if DOCUMENT_BUILDABLE
+mo-build-stamp: $(edit_po_files)
+endif
