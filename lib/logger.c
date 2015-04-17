@@ -55,7 +55,7 @@ static char *default_logger_path = NULL;
 static FILE *default_logger_file = NULL;
 static grn_critical_section default_logger_lock;
 static off_t default_logger_size = 0;
-static off_t default_logger_rotate_size_threshold = 0;
+static off_t default_logger_rotate_threshold_size = 0;
 
 #define LOGGER_NEED_ROTATE(size, threshold) \
   ((threshold) > 0 && (size) >= (threshold))
@@ -90,7 +90,7 @@ default_logger_log(grn_ctx *ctx, grn_log_level level,
       if (written > 0) {
         default_logger_size += written;
         if (LOGGER_NEED_ROTATE(default_logger_size,
-                               default_logger_rotate_size_threshold)) {
+                               default_logger_rotate_threshold_size)) {
           fclose(default_logger_file);
           default_logger_file = NULL;
           rotate_log_file(ctx, default_logger_path);
@@ -324,7 +324,7 @@ static char *default_query_logger_path = NULL;
 static FILE *default_query_logger_file = NULL;
 static grn_critical_section default_query_logger_lock;
 static off_t default_query_logger_size = 0;
-static off_t default_query_logger_rotate_size_threshold = 0;
+static off_t default_query_logger_rotate_threshold_size = 0;
 
 static void
 default_query_logger_log(grn_ctx *ctx, unsigned int flag,
@@ -350,7 +350,7 @@ default_query_logger_log(grn_ctx *ctx, unsigned int flag,
       if (written > 0) {
         default_query_logger_size += written;
         if (LOGGER_NEED_ROTATE(default_query_logger_size,
-                               default_query_logger_rotate_size_threshold)) {
+                               default_query_logger_rotate_threshold_size)) {
           fclose(default_query_logger_file);
           default_query_logger_file = NULL;
           rotate_log_file(ctx, default_query_logger_path);
