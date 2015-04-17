@@ -2634,15 +2634,22 @@ show_usage(FILE *output)
 int
 main(int argc, char **argv)
 {
-  const char *port_arg = NULL, *encoding_arg = NULL,
-    *max_num_threads_arg = NULL, *log_level_arg = NULL,
-    *bind_address_arg = NULL, *hostname_arg = NULL, *protocol_arg = NULL,
-    *log_path_arg = NULL, *query_log_path_arg = NULL,
-    *cache_limit_arg = NULL, *document_root_arg = NULL,
-    *default_command_version_arg = NULL,
-    *default_match_escalation_threshold_arg = NULL,
-    *input_fd_arg = NULL, *output_fd_arg = NULL,
-    *working_directory_arg = NULL;
+  const char *port_arg = NULL;
+  const char *encoding_arg = NULL;
+  const char *max_num_threads_arg = NULL;
+  const char *log_level_arg = NULL;
+  const char *bind_address_arg = NULL;
+  const char *hostname_arg = NULL;
+  const char *protocol_arg = NULL;
+  const char *log_path_arg = NULL;
+  const char *query_log_path_arg = NULL;
+  const char *cache_limit_arg = NULL;
+  const char *document_root_arg = NULL;
+  const char *default_command_version_arg = NULL;
+  const char *default_match_escalation_threshold_arg = NULL;
+  const char *input_fd_arg = NULL;
+  const char *output_fd_arg = NULL;
+  const char *working_directory_arg = NULL;
   const char *config_path = NULL;
   int exit_code = EXIT_SUCCESS;
   int i;
