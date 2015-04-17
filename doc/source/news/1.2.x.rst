@@ -4,7 +4,7 @@
 
 .. _release-1-2-9:
 
-Release 1.2.9 - 2011/12/29
+Release 1.2.9 - 2011-12-29
 --------------------------
 
 Improvements
@@ -54,7 +54,7 @@ Thanks
 
 .. _release-1-2-8:
 
-Release 1.2.8 - 2011/11/29
+Release 1.2.8 - 2011-11-29
 --------------------------
 
 Object, table and column renamings are supported! These
@@ -125,7 +125,7 @@ Thanks
 
 .. _release-1-2-7:
 
-Release 1.2.7 - 2011/10/29
+Release 1.2.7 - 2011-10-29
 --------------------------
 
 Improvements
@@ -152,7 +152,7 @@ Thanks
 
 .. _release-1-2-6:
 
-Release 1.2.6 - 2011/09/29
+Release 1.2.6 - 2011-09-29
 --------------------------
 
 Improvements
@@ -184,7 +184,7 @@ Thanks
 
 .. _release-1-2-5:
 
-Release 1.2.5 - 2011/08/29
+Release 1.2.5 - 2011-08-29
 --------------------------
 
 Improvements
@@ -216,7 +216,7 @@ Fixes
 
 .. _release-1-2-4:
 
-Release 1.2.4 - 2011/07/29
+Release 1.2.4 - 2011-07-29
 --------------------------
 
 Improvements
@@ -251,7 +251,7 @@ Thanks
 
 .. _release-1-2-3:
 
-Release 1.2.3 - 2011/06/29
+Release 1.2.3 - 2011-06-29
 --------------------------
 
 Improvements
@@ -277,7 +277,7 @@ Thanks
 
 .. _release-1-2-2:
 
-Release 1.2.2 - 2011/05/29
+Release 1.2.2 - 2011-05-29
 --------------------------
 
 Improvements
@@ -312,7 +312,7 @@ Fixes
 
 * Fixed a data breaking bug on multi process update. #890
 
-1.2.1リリース - 2011/04/29
+1.2.1リリース - 2011-04-29
 --------------------------
 
 改良
@@ -337,7 +337,7 @@ Fixes
 * ICHII Takashiさん
 * moozさん
 
-1.2.0リリース - 2011/03/29
+1.2.0リリース - 2011-03-29
 --------------------------
 
 改良

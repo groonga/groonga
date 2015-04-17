@@ -9,7 +9,7 @@ News
 
 .. _release-5-0-2:
 
-Release 5.0.2 - 2015/03/31
+Release 5.0.2 - 2015-03-31
 --------------------------
 
 It's a bug fix release of 5.0.1.
@@ -40,7 +40,7 @@ Thanks
 
 .. _release-5-0-1:
 
-Release 5.0.1 - 2015/03/29
+Release 5.0.1 - 2015-03-29
 --------------------------
 
 Improvements
@@ -203,7 +203,7 @@ Thanks
 
 .. _release-5-0-0:
 
-Release 5.0.0 - 2015/02/09
+Release 5.0.0 - 2015-02-09
 --------------------------
 
 * Bump version to 5.0.0!

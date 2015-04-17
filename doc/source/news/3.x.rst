@@ -4,7 +4,7 @@
 
 .. _release-3-1-2:
 
-Release 3.1.2 - 2014/01/29
+Release 3.1.2 - 2014-01-29
 --------------------------
 
 Improvements
@@ -42,7 +42,7 @@ Thanks
 
 .. _release-3-1-1:
 
-Release 3.1.1 - 2013/12/29
+Release 3.1.1 - 2013-12-29
 --------------------------
 
 Improvements
@@ -81,7 +81,7 @@ Thanks
 
 .. _release-3-1-0:
 
-Release 3.1.0 - 2013/11/29
+Release 3.1.0 - 2013-11-29
 --------------------------
 
 Improvements
@@ -122,7 +122,7 @@ Thanks
 
 .. _release-3-0-9:
 
-Release 3.0.9 - 2013/10/29
+Release 3.0.9 - 2013-10-29
 --------------------------
 
 Improvements
@@ -176,7 +176,7 @@ Thanks
 
 .. _release-3-0-8:
 
-Release 3.0.8 - 2013/09/29
+Release 3.0.8 - 2013-09-29
 --------------------------
 
 Improvements
@@ -216,7 +216,7 @@ Thanks
 
 .. _release-3-0-7:
 
-Release 3.0.7 - 2013/08/29
+Release 3.0.7 - 2013-08-29
 --------------------------
 
 Improvements
@@ -278,7 +278,7 @@ Thanks
 
 .. _release-3-0-6:
 
-Release 3.0.6 - 2013/07/29
+Release 3.0.6 - 2013-07-29
 --------------------------
 
 Improvements
@@ -311,7 +311,7 @@ Thanks
 
 .. _release-3-0-5:
 
-Release 3.0.5 - 2013/06/29
+Release 3.0.5 - 2013-06-29
 --------------------------
 
 Improvements
@@ -352,7 +352,7 @@ Thanks
 
 .. _release-3-0-4:
 
-Release 3.0.4 - 2013/05/29
+Release 3.0.4 - 2013-05-29
 --------------------------
 
 Improvements
@@ -405,7 +405,7 @@ Thanks
 
 .. _release-3-0-3:
 
-Release 3.0.3 - 2013/04/29
+Release 3.0.3 - 2013-04-29
 --------------------------
 
 Improvements
@@ -425,7 +425,7 @@ Improvements
 
 .. _release-3-0-2:
 
-Release 3.0.2 - 2013/03/29
+Release 3.0.2 - 2013-03-29
 --------------------------
 
 Improvements
@@ -477,7 +477,7 @@ Thanks
 
 .. _release-3-0-1:
 
-Release 3.0.1 - 2013/02/28
+Release 3.0.1 - 2013-02-28
 --------------------------
 
 Improvements
@@ -515,7 +515,7 @@ Thanks
 
 .. _release-3-0-0:
 
-Release 3.0.0 - 2013/02/09
+Release 3.0.0 - 2013-02-09
 --------------------------
 
 * Bump version to 3.0.0!

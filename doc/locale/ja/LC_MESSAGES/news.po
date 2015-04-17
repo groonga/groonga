@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-04-15 11:02+0900\n"
+"PO-Revision-Date: 2015-04-17 11:02+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -21,8 +21,8 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 5.0.2 - 2015/03/31"
-msgstr "5.0.2リリース - 2015/03/31"
+msgid "Release 5.0.2 - 2015-03-31"
+msgstr "5.0.2リリース - 2015-03-31"
 
 # f4c4ce262559449b9e9f757a0c59ef65
 msgid "It's a bug fix release of 5.0.1."
@@ -78,8 +78,8 @@ msgstr "篠田さん"
 msgid "Hiroshi Hatake"
 msgstr "畑ケさん"
 
-msgid "Release 5.0.1 - 2015/03/29"
-msgstr "5.0.1リリース - 2015/03/29"
+msgid "Release 5.0.1 - 2015-03-29"
+msgstr "5.0.1リリース - 2015-03-29"
 
 msgid ""
 "[:doc:`/reference/commands/logical_range_filter`] Supported filter and sort."
@@ -456,8 +456,8 @@ msgstr "ongaeshiさん"
 msgid "Naoya Murakami"
 msgstr "村上さん"
 
-msgid "Release 5.0.0 - 2015/02/09"
-msgstr "5.0.0リリース - 2015/02/09"
+msgid "Release 5.0.0 - 2015-02-09"
+msgstr "5.0.0リリース - 2015-02-09"
 
 msgid "Bump version to 5.0.0!"
 msgstr "バージョン5.0.0になりました!"
@@ -516,7 +516,7 @@ msgstr "古いリリース"
 msgid "バージョン0.xのお知らせ"
 msgstr ""
 
-msgid "0.7.7リリース - 2010/08/25"
+msgid "0.7.7リリース - 2010-08-25"
 msgstr ""
 
 msgid "改良"
@@ -552,7 +552,7 @@ msgstr ""
 msgid "前方一致検索がマッチしない問題を修正。"
 msgstr ""
 
-msgid "0.7.6リリース - 2010/08/19"
+msgid "0.7.6リリース - 2010-08-19"
 msgstr ""
 
 msgid "デーモンになるときは標準出力を閉じるようにした。"
@@ -704,7 +704,7 @@ msgstr ""
 msgid "バージョン1.0.xのお知らせ"
 msgstr ""
 
-msgid "1.0.8リリース - 2011/02/02"
+msgid "1.0.8リリース - 2011-02-02"
 msgstr ""
 
 msgid ""
@@ -715,7 +715,7 @@ msgstr ""
 msgid "Mitsuhiro Shibuyaさん"
 msgstr ""
 
-msgid "1.0.7リリース - 2011/01/29"
+msgid "1.0.7リリース - 2011-01-29"
 msgstr ""
 
 msgid "automake 1.9.6でも動作するようにした。 #508"
@@ -773,7 +773,7 @@ msgstr ""
 msgid "Kenichi Aramakiさん"
 msgstr ""
 
-msgid "1.0.6リリース - 2010/12/31"
+msgid "1.0.6リリース - 2010-12-31"
 msgstr ""
 
 msgid "\\*BSDでビルドできない問題を修正。（OBATA Akioさんが報告）"
@@ -782,7 +782,7 @@ msgstr ""
 msgid "OBATA Akioさん"
 msgstr ""
 
-msgid "1.0.5リリース - 2010/12/29"
+msgid "1.0.5リリース - 2010-12-29"
 msgstr ""
 
 msgid "サジェスト機能用の学習プログラムを追加。"
@@ -846,7 +846,7 @@ msgstr ""
 msgid "Tomita Masahiroさん"
 msgstr ""
 
-msgid "1.0.4リリース - 2010/11/29"
+msgid "1.0.4リリース - 2010-11-29"
 msgstr ""
 
 msgid "すべてのモジュールで同じ名前の関数をエクスポートするようにした。#624"
@@ -911,7 +911,7 @@ msgstr ""
 msgid "Tomoatsu Shimadaさん"
 msgstr ""
 
-msgid "1.0.3リリース - 2010/10/29"
+msgid "1.0.3リリース - 2010-10-29"
 msgstr ""
 
 msgid ""
@@ -1048,7 +1048,7 @@ msgstr ""
 msgid "SHIMODA Hiroshiさん"
 msgstr ""
 
-msgid "1.0.2リリース - 2010/09/09"
+msgid "1.0.2リリース - 2010-09-09"
 msgstr ""
 
 msgid ""
@@ -1072,7 +1072,7 @@ msgstr ""
 msgid "GeoPointの度表記の解釈を修正。 #460"
 msgstr ""
 
-msgid "1.0.1リリース - 2010/09/06"
+msgid "1.0.1リリース - 2010-09-06"
 msgstr ""
 
 msgid "CentOS 5/Fedora 13用RPMの提供。（Daiki Uenoさん作成のspecがベース）"
@@ -1090,7 +1090,7 @@ msgstr ""
 msgid "テストが失敗する問題の修正。（OBATA Akioさんが報告）"
 msgstr ""
 
-msgid "1.0.0リリース - 2010/08/29"
+msgid "1.0.0リリース - 2010-08-29"
 msgstr ""
 
 msgid ""
@@ -1117,7 +1117,7 @@ msgstr ""
 msgid "バージョン1.1.xのお知らせ"
 msgstr ""
 
-msgid "1.1.0リリース - 2011/02/09"
+msgid "1.1.0リリース - 2011-02-09"
 msgstr ""
 
 msgid "TokenDelimitNullトークナイザーを追加。"
@@ -1146,8 +1146,8 @@ msgid ""
 "告）"
 msgstr ""
 
-msgid "Release 1.2.9 - 2011/12/29"
-msgstr "1.2.9リリース - 2011/12/29"
+msgid "Release 1.2.9 - 2011-12-29"
+msgstr "1.2.9リリース - 2011-12-29"
 
 msgid "Supported Fedora 16."
 msgstr "Fedora 16をサポート。"
@@ -1254,8 +1254,8 @@ msgstr "Arnaud Fontaineさん"
 msgid "SHIDARA Yoji"
 msgstr "設樂洋爾さん"
 
-msgid "Release 1.2.8 - 2011/11/29"
-msgstr "1.2.8リリース - 2011/11/29"
+msgid "Release 1.2.8 - 2011-11-29"
+msgstr "1.2.8リリース - 2011-11-29"
 
 msgid ""
 "Object, table and column renamings are supported! These features require "
@@ -1399,8 +1399,8 @@ msgstr "zundaさん"
 msgid "Hiroshi Umemoto"
 msgstr "Hiroshi Umemotoさん"
 
-msgid "Release 1.2.7 - 2011/10/29"
-msgstr "1.2.7リリース - 2011/10/29"
+msgid "Release 1.2.7 - 2011-10-29"
+msgstr "1.2.7リリース - 2011-10-29"
 
 msgid ""
 "[libedit] Added error check for wide character to multibyte sequence "
@@ -1434,8 +1434,8 @@ msgstr "ドキュメントの誤字を修正。 [@soundkitchenさんが報告]"
 msgid "@soundkitchen"
 msgstr "@soundkitchenさん"
 
-msgid "Release 1.2.6 - 2011/09/29"
-msgstr "1.2.6リリース - 2011/09/29"
+msgid "Release 1.2.6 - 2011-09-29"
+msgstr "1.2.6リリース - 2011-09-29"
 
 msgid "Improved error message on type cast."
 msgstr "型変換時のエラーメッセージを改善。"
@@ -1486,8 +1486,8 @@ msgstr "座標値がロード時に壊れてしまう問題を修正。"
 msgid "SATOH Fumiyasu"
 msgstr "SATOH Fumiyasuさん"
 
-msgid "Release 1.2.5 - 2011/08/29"
-msgstr "1.2.5リリース - 2011/08/29"
+msgid "Release 1.2.5 - 2011-08-29"
+msgstr "1.2.5リリース - 2011-08-29"
 
 msgid "Added experimental Windows installer support."
 msgstr "実験的にWindowsインストーラの提供を開始。"
@@ -1558,8 +1558,8 @@ msgstr ""
 msgid "Fixed a bug that hash table cursor returns garbage records."
 msgstr "ハッシュテーブルのカーソルが間違ったレコードを返す問題を修正。"
 
-msgid "Release 1.2.4 - 2011/07/29"
-msgstr "1.2.4リリース - 2011/07/29"
+msgid "Release 1.2.4 - 2011-07-29"
+msgstr "1.2.4リリース - 2011-07-29"
 
 msgid "Re-supported ``*BSD``. (Reported by OBATA Akio)"
 msgstr "``*BSD`` をサポートを再サポート。（おばたさんが報告）"
@@ -1616,8 +1616,8 @@ msgstr "おばたさん"
 msgid "Daiki Ueno"
 msgstr "うえのさん"
 
-msgid "Release 1.2.3 - 2011/06/29"
-msgstr "1.2.3リリース - 2011/06/29"
+msgid "Release 1.2.3 - 2011-06-29"
+msgstr "1.2.3リリース - 2011-06-29"
 
 msgid "Added invalid table name check. #912"
 msgstr "不正なテーブル名チェックを追加。#912"
@@ -1645,8 +1645,8 @@ msgstr "getコマンドでクラッシュする問題を修正。（おばたさ
 msgid "fix elapsed time overflow in query log. #944"
 msgstr "クエリログで経過時間がオーバーフローする問題を修正。#944"
 
-msgid "Release 1.2.2 - 2011/05/29"
-msgstr "1.2.2リリース - 2011/05/29"
+msgid "Release 1.2.2 - 2011-05-29"
+msgstr "1.2.2リリース - 2011-05-29"
 
 msgid "Added packages for Ubuntu 11.04 Natty Narwhal."
 msgstr "Ubuntu 11.04 Natty Narwhalのパッケージを追加。"
@@ -1727,7 +1727,7 @@ msgstr ""
 "マルチプロセスでデータを更新した場合にShortText型などの可変長データが壊れる問"
 "題を修正。 #890"
 
-msgid "1.2.1リリース - 2011/04/29"
+msgid "1.2.1リリース - 2011-04-29"
 msgstr ""
 
 msgid "suggestコマンドにthresholdパラメーターを追加。#895"
@@ -1758,7 +1758,7 @@ msgstr ""
 msgid "moozさん"
 msgstr ""
 
-msgid "1.2.0リリース - 2011/03/29"
+msgid "1.2.0リリース - 2011-03-29"
 msgstr ""
 
 msgid "MacPortsでのインストールドキュメントを追加。"
@@ -1845,8 +1845,8 @@ msgstr ""
 msgid "@tomotaka_itoさん"
 msgstr ""
 
-msgid "Release 1.3.0 - 2012/01/29"
-msgstr "1.3.0リリース - 2012/01/29"
+msgid "Release 1.3.0 - 2012-01-29"
+msgstr "1.3.0リリース - 2012-01-29"
 
 msgid ""
 "Supported dynamic DB key table change by GRN_DB_KEY=pat or GRN_DB_KEY=dat "
@@ -1953,8 +1953,8 @@ msgstr "montywiさん"
 msgid "Masaharu IWAI"
 msgstr "Masaharu IWAIさん"
 
-msgid "Release 2.1.2 - 2013/01/29"
-msgstr "2.1.2リリース - 2013/01/29"
+msgid "Release 2.1.2 - 2013-01-29"
+msgstr "2.1.2リリース - 2013-01-29"
 
 msgid ""
 "Supported multiple ``query()`` in a select command. For example, you can "
@@ -2055,8 +2055,8 @@ msgstr ""
 msgid "wing"
 msgstr "wingさん"
 
-msgid "Release 2.1.1 - 2012/12/29"
-msgstr "2.1.1リリース - 2012/12/29"
+msgid "Release 2.1.1 - 2012-12-29"
+msgstr "2.1.1リリース - 2012-12-29"
 
 msgid ""
 "This is bug fix release of 2.1.0. All of 2.1.0 users should use 2.1.1 "
@@ -2072,8 +2072,8 @@ msgstr ""
 "groonga 2.0.8以前で作成したデータベース中の ``KEY_NORMALIZE`` 関連の情報が失"
 "われる問題を修正。"
 
-msgid "Release 2.1.0 - 2012/12/29"
-msgstr "2.1.0リリース - 2012/12/29"
+msgid "Release 2.1.0 - 2012-12-29"
+msgstr "2.1.0リリース - 2012-12-29"
 
 msgid ""
 "Use 2.1.1 instead of 2.1.0. 2.1.0 has a serious bug related "
@@ -2203,8 +2203,8 @@ msgstr "嶋田 大貴さん"
 msgid "Shimomura Tatsuya"
 msgstr "Shimomura Tatsuyaさん"
 
-msgid "Release 2.0.9 - 2012/11/29"
-msgstr "2.0.9リリース - 2012/11/29"
+msgid "Release 2.0.9 - 2012-11-29"
+msgstr "2.0.9リリース - 2012-11-29"
 
 msgid ""
 "Supported to calculate the value of distance accross border in "
@@ -2354,8 +2354,8 @@ msgstr ""
 msgid "Akio Tajima"
 msgstr "Akio Tajimaさん"
 
-msgid "Release 2.0.8 - 2012/10/29"
-msgstr "2.0.8リリース - 2012/10/29"
+msgid "Release 2.0.8 - 2012-10-29"
+msgstr "2.0.8リリース - 2012-10-29"
 
 msgid ""
 "[rpm] Improved the description of server-http and httpd packages. [Suggested "
@@ -2412,8 +2412,8 @@ msgstr "firewoodさん"
 msgid "serihiro"
 msgstr "serihiroさん"
 
-msgid "Release 2.0.7 - 2012/09/29"
-msgstr "2.0.7リリース - 2012/09/29"
+msgid "Release 2.0.7 - 2012-09-29"
+msgstr "2.0.7リリース - 2012-09-29"
 
 msgid "[doc] Added more descriptions about ``--query_flags``."
 msgstr "[doc] ``--query_flags`` の説明を追加。"
@@ -2479,8 +2479,8 @@ msgstr "Time型からFloat型へのキャストで値が壊れる不具合を修
 msgid "@Kiske"
 msgstr "@Kiskeさん"
 
-msgid "Release 2.0.6 - 2012/08/29"
-msgstr "2.0.6リリース - 2012/08/29"
+msgid "Release 2.0.6 - 2012-08-29"
+msgstr "2.0.6リリース - 2012-08-29"
 
 msgid "[deb][rpm] Added ``groonga-server-common`` meta package. [#1451]"
 msgstr "[deb][rpm] ``groonga-server-common`` メタパッケージを追加。 [#1451]"
@@ -2590,8 +2590,8 @@ msgstr "岩井さん"
 msgid "@yito"
 msgstr "@yitoさん"
 
-msgid "Release 2.0.5 - 2012/07/29"
-msgstr "2.0.5リリース - 2012/07/29"
+msgid "Release 2.0.5 - 2012-07-29"
+msgstr "2.0.5リリース - 2012-07-29"
 
 msgid ""
 "Supported calculating the value of distance with \"rect\" or \"rectangle\" "
@@ -2703,8 +2703,8 @@ msgstr ""
 msgid "SHIMADA Koji"
 msgstr "島田 浩二さん"
 
-msgid "Release 2.0.4 - 2012/06/29"
-msgstr "2.0.4リリース - 2012/06/29"
+msgid "Release 2.0.4 - 2012-06-29"
+msgstr "2.0.4リリース - 2012-06-29"
 
 msgid "Supported only KyTea 0.4.2."
 msgstr "KyTea 0.4.2のみをサポート。"
@@ -2797,8 +2797,8 @@ msgstr ""
 "``--query`` 構文で ``'=R'`` が ``'OR'`` として扱われてしまう問題を修正。 "
 "[#1393]"
 
-msgid "Release 2.0.3 - 2012/05/29"
-msgstr "2.0.3リリース - 2012/05/29"
+msgid "Release 2.0.3 - 2012-05-29"
+msgstr "2.0.3リリース - 2012-05-29"
 
 msgid "[doc] Added about release procedure."
 msgstr "[doc] リリース手順を追加。"
@@ -2897,8 +2897,8 @@ msgstr ""
 "インデックスのソースに指定したカラム経由でレコードのキーを登録するとキーが正"
 "規化されない問題を修正。"
 
-msgid "Release 2.0.2 - 2012/04/29"
-msgstr "2.0.2リリース - 2012/04/29"
+msgid "Release 2.0.2 - 2012-04-29"
+msgstr "2.0.2リリース - 2012-04-29"
 
 msgid ""
 "The package sign key is changed since this release. Import the new package "
@@ -3023,8 +3023,8 @@ msgstr ""
 msgid "Shinya Kawaji"
 msgstr "Shinya Kawajiさん"
 
-msgid "Release 2.0.1 - 2012/03/29"
-msgstr "2.0.1リリース - 2012/03/29"
+msgid "Release 2.0.1 - 2012-03-29"
+msgstr "2.0.1リリース - 2012-03-29"
 
 msgid "Supported build in other directory. [#1298] [Reported by Kazuhiko]"
 msgstr "別ディレクトリでのビルドをサポートした。 [#1298] [かずひこさんが報告]"
@@ -3116,8 +3116,8 @@ msgstr "かずひこさん"
 msgid "Markus Elfring"
 msgstr "Markus Elfringさん"
 
-msgid "Release 2.0.0 - 2012/02/29"
-msgstr "2.0.0リリース - 2012/02/29"
+msgid "Release 2.0.0 - 2012-02-29"
+msgstr "2.0.0リリース - 2012-02-29"
 
 msgid "[dat] Added 0 length key check."
 msgstr "[dat] 長さが0かどうかキーをチェックするようにした。"
@@ -3214,8 +3214,8 @@ msgstr "Masaharu YOSHIOKAさん"
 msgid "@wareohji"
 msgstr "@wareohjiさん"
 
-msgid "Release 3.1.2 - 2014/01/29"
-msgstr "3.1.2リリース - 2014/01/29"
+msgid "Release 3.1.2 - 2014-01-29"
+msgstr "3.1.2リリース - 2014-01-29"
 
 msgid ""
 "[doc] Updated to caplitalized \"Groonga\" terms in documentation. [Patch by "
@@ -3303,8 +3303,8 @@ msgstr "cosmo0920さん"
 msgid "yoku"
 msgstr "yokuさん"
 
-msgid "Release 3.1.1 - 2013/12/29"
-msgstr "3.1.1リリース - 2013/12/29"
+msgid "Release 3.1.1 - 2013-12-29"
+msgstr "3.1.1リリース - 2013-12-29"
 
 msgid ""
 "[deb] Refined Groonga packages for Debian policy. [groonga-dev,01930] "
@@ -3385,8 +3385,8 @@ msgstr "whombxさん"
 msgid "@Yappo"
 msgstr "@Yappoさん"
 
-msgid "Release 3.1.0 - 2013/11/29"
-msgstr "3.1.0リリース - 2013/11/29"
+msgid "Release 3.1.0 - 2013-11-29"
+msgstr "3.1.0リリース - 2013-11-29"
 
 msgid ""
 "[experimental] Supported an option to skip updating for the same value. It "
@@ -3464,8 +3464,8 @@ msgstr "瀧内元気さん"
 msgid "WING"
 msgstr "WINGさん"
 
-msgid "Release 3.0.9 - 2013/10/29"
-msgstr "3.0.9リリース - 2013/10/29"
+msgid "Release 3.0.9 - 2013-10-29"
+msgstr "3.0.9リリース - 2013-10-29"
 
 msgid ""
 "[doc][httpd] Added documentation about :ref:`groonga-database-auto-create` "
@@ -3602,8 +3602,8 @@ msgstr "鷲田基さん"
 msgid "Eito Katagiri"
 msgstr "Eito Katagiriさん"
 
-msgid "Release 3.0.8 - 2013/09/29"
-msgstr "3.0.8リリース - 2013/09/29"
+msgid "Release 3.0.8 - 2013-09-29"
+msgstr "3.0.8リリース - 2013-09-29"
 
 msgid ""
 "[admin] Improved error handling of select functionality. This change shows "
@@ -3698,8 +3698,8 @@ msgstr "@orangainさん"
 msgid "Kazuhiro Isobe"
 msgstr "磯部和広さん"
 
-msgid "Release 3.0.7 - 2013/08/29"
-msgstr "3.0.7リリース - 2013/08/29"
+msgid "Release 3.0.7 - 2013-08-29"
+msgstr "3.0.7リリース - 2013-08-29"
 
 msgid ""
 "[doc] Added API documentation. [groonga-dev,01593] [GitHub#79,#80,#81,#82,"
@@ -3841,8 +3841,8 @@ msgstr "横山さん"
 msgid "YOSHIDA Mitsuo"
 msgstr "吉田光男さん"
 
-msgid "Release 3.0.6 - 2013/07/29"
-msgstr "3.0.6リリース - 2013/07/29"
+msgid "Release 3.0.6 - 2013-07-29"
+msgstr "3.0.6リリース - 2013-07-29"
 
 msgid ""
 "[doc] Added documentation about parameter of :doc:`/reference/functions/"
@@ -3891,8 +3891,8 @@ msgstr "稲田尚也さん"
 msgid "Kouhei Tanabe"
 msgstr "田辺公平さん"
 
-msgid "Release 3.0.5 - 2013/06/29"
-msgstr "3.0.5リリース - 2013/06/29"
+msgid "Release 3.0.5 - 2013-06-29"
+msgstr "3.0.5リリース - 2013-06-29"
 
 msgid ""
 "[doc] Added summary about ``match_columns`` and ``query_string`` parameters "
@@ -3976,8 +3976,8 @@ msgstr "浅見公輔さん"
 msgid "@orangain"
 msgstr "@orangainさん"
 
-msgid "Release 3.0.4 - 2013/05/29"
-msgstr "3.0.4リリース - 2013/05/29"
+msgid "Release 3.0.4 - 2013-05-29"
+msgstr "3.0.4リリース - 2013-05-29"
 
 msgid ""
 "[tokenizer] Improved to show log message when normalized string is not given."
@@ -4101,8 +4101,8 @@ msgstr "中井さん"
 msgid "Masahiro KONISHI"
 msgstr "小西さん"
 
-msgid "Release 3.0.3 - 2013/04/29"
-msgstr "3.0.3リリース - 2013/04/29"
+msgid "Release 3.0.3 - 2013-04-29"
+msgstr "3.0.3リリース - 2013-04-29"
 
 msgid ""
 "[suggest] Supported to learn with the value of customized weight by using "
@@ -4151,8 +4151,8 @@ msgstr ""
 msgid "Supported Ubuntu 13.04 Raring Ringtail."
 msgstr "Ubuntu 13.04 Raring Ringtailをサポート。"
 
-msgid "Release 3.0.2 - 2013/03/29"
-msgstr "3.0.2リリース - 2013/03/29"
+msgid "Release 3.0.2 - 2013-03-29"
+msgstr "3.0.2リリース - 2013-03-29"
 
 msgid ""
 "Supported two or more indexes for a table key. This change affects to "
@@ -4262,8 +4262,8 @@ msgstr "Hendro Wibowoさん"
 msgid "hino"
 msgstr "hinoさん"
 
-msgid "Release 3.0.1 - 2013/02/28"
-msgstr "3.0.1リリース - 2013/02/28"
+msgid "Release 3.0.1 - 2013-02-28"
+msgstr "3.0.1リリース - 2013-02-28"
 
 msgid ""
 "Supported to set Bool to reference column when loading dataset by load "
@@ -4335,8 +4335,8 @@ msgstr ""
 msgid "b senboku"
 msgstr "b senbokuさん"
 
-msgid "Release 3.0.0 - 2013/02/09"
-msgstr "3.0.0リリース - 2013/02/09"
+msgid "Release 3.0.0 - 2013-02-09"
+msgstr "3.0.0リリース - 2013-02-09"
 
 msgid "Bump version to 3.0.0!"
 msgstr "バージョン3.0.0になりました!"
@@ -4708,8 +4708,8 @@ msgstr "結城洋志（Piro）さん"
 msgid "Yuya TAMANO"
 msgstr "玉野裕也さん"
 
-msgid "Release 4.0.8 - 2014/11/29"
-msgstr "4.0.8リリース - 2014/11/29"
+msgid "Release 4.0.8 - 2014-11-29"
+msgstr "4.0.8リリース - 2014-11-29"
 
 msgid "[deb] Supported Ubuntu 12.04 again because Travis-CI runs on it."
 msgstr ""
@@ -4899,8 +4899,8 @@ msgstr ""
 "``\"DDL:set_token_filters\"`` のログに ``\",\"`` が抜けていたのを修正しまし"
 "た。 [村上さんが報告]"
 
-msgid "Release 4.0.7 - 2014/10/29"
-msgstr "4.0.7リリース - 2014/10/29"
+msgid "Release 4.0.7 - 2014-10-29"
+msgstr "4.0.7リリース - 2014-10-29"
 
 msgid "[windows] Supported Groonga with mruby on Windows."
 msgstr "[windows] Windows上でもmrubyを組み込んで使えるようにしました。"
@@ -5064,8 +5064,8 @@ msgstr ""
 msgid "Sergey Vojtovich"
 msgstr "Sergey Vojtovichさん"
 
-msgid "Release 4.0.6 - 2014/09/29"
-msgstr "4.0.6リリース - 2014/09/29"
+msgid "Release 4.0.6 - 2014-09-29"
+msgstr "4.0.6リリース - 2014-09-29"
 
 msgid ""
 "[deb] Updated to follow the rule about machine-readable debian/copyright "
@@ -5205,8 +5205,8 @@ msgstr "三谷さん"
 msgid "warp kawada"
 msgstr "warp kawadaさん"
 
-msgid "Release 4.0.5 - 2014/08/29"
-msgstr "4.0.5リリース - 2014/08/29"
+msgid "Release 4.0.5 - 2014-08-29"
+msgstr "4.0.5リリース - 2014-08-29"
 
 msgid "Dropped Ubuntu 13.10 (Saucy Salamander)."
 msgstr "Ubuntu 13.10 (Saucy Salamander)のサポートをやめました。"
@@ -5331,8 +5331,8 @@ msgstr "6elzさん"
 msgid "MINAGAWA Sho"
 msgstr "皆川さん"
 
-msgid "Release 4.0.4 - 2014/07/29"
-msgstr "4.0.4リリース - 2014/07/29"
+msgid "Release 4.0.4 - 2014-07-29"
+msgstr "4.0.4リリース - 2014-07-29"
 
 msgid "[httpd] Updated bundled nginx version to the latest mainline (1.7.3)."
 msgstr "[httpd] バンドルしているnginxのバージョンを1.7.3に更新しました。"
@@ -5370,8 +5370,8 @@ msgstr ""
 msgid "niku"
 msgstr "nikuさん"
 
-msgid "Release 4.0.3 - 2014/06/29"
-msgstr "4.0.3リリース - 2014/06/29"
+msgid "Release 4.0.3 - 2014-06-29"
+msgstr "4.0.3リリース - 2014-06-29"
 
 msgid ""
 "[experimental][ :doc:`/reference/executables/groonga-server-http` ] "
@@ -5494,8 +5494,8 @@ msgstr ""
 msgid "GMO Media, Inc."
 msgstr "GMOメディア株式会社さん"
 
-msgid "Release 4.0.2 - 2014/05/29"
-msgstr "4.0.2リリース - 2014/05/29"
+msgid "Release 4.0.2 - 2014-05-29"
+msgstr "4.0.2リリース - 2014-05-29"
 
 msgid ""
 "[doc] Updated documentation about :doc:`/reference/executables/groonga-"
@@ -5636,8 +5636,8 @@ msgstr ""
 msgid "Tetsuharu OHZEKI"
 msgstr "大関さん"
 
-msgid "Release 4.0.1 - 2014/03/29"
-msgstr "4.0.1リリース - 2014/03/29"
+msgid "Release 4.0.1 - 2014-03-29"
+msgstr "4.0.1リリース - 2014-03-29"
 
 msgid ""
 "[doc] Added a link in return value to detailed header description (:doc:`/"
@@ -5747,8 +5747,8 @@ msgstr "nise_nabeさん"
 msgid "dcb314"
 msgstr "dcb314さん"
 
-msgid "Release 4.0.0 - 2014/02/09"
-msgstr "4.0.0リリース - 2014/02/09"
+msgid "Release 4.0.0 - 2014-02-09"
+msgstr "4.0.0リリース - 2014-02-09"
 
 msgid "Bump version to 4.0.0!"
 msgstr "バージョン4.0.0になりました!"
@@ -5820,10 +5820,10 @@ msgstr "山本良二さん"
 msgid "News in Senna period"
 msgstr ""
 
-msgid "Senna -> groonga - 2009/01/14"
+msgid "Senna -> groonga - 2009-01-14"
 msgstr ""
 
-msgid "2006/04/05"
+msgid "2006-04-05"
 msgstr ""
 
 msgid "SEN_INDEX_DELIMITED added"
@@ -5832,25 +5832,25 @@ msgstr ""
 msgid "sen_sel_term_extract added"
 msgstr ""
 
-msgid "2006/03/03"
+msgid "2006-03-03"
 msgstr ""
 
 msgid "snippet function added"
 msgstr ""
 
-msgid "2006/01/16"
+msgid "2006-01-16"
 msgstr ""
 
 msgid "io.c bug fix. index format changed"
 msgstr ""
 
-msgid "2006/01/12"
+msgid "2006-01-12"
 msgstr ""
 
 msgid "windows porting released"
 msgstr ""
 
-msgid "2005/12/22"
+msgid "2005-12-22"
 msgstr ""
 
 msgid ""
@@ -5858,25 +5858,25 @@ msgid ""
 "on mecab mte patch."
 msgstr ""
 
-msgid "2005/10/27"
+msgid "2005-10-27"
 msgstr ""
 
 msgid "mysql binding updated"
 msgstr ""
 
-msgid "2005/09/17"
+msgid "2005-09-17"
 msgstr ""
 
 msgid "mysql-5.0.12-beta binding from <tasuku at hottolink.co.jp>"
 msgstr ""
 
-msgid "2005/09/08"
+msgid "2005-09-08"
 msgstr ""
 
 msgid "utf-8 support enhanced. (SEN_INDEX_NORMALIZE become available)"
 msgstr ""
 
-msgid "2005/08/16"
+msgid "2005-08-16"
 msgstr ""
 
 msgid "Ruby binding has rewrited using SWIG and supports advanced API."
@@ -5885,7 +5885,7 @@ msgstr ""
 msgid "SJIS support enhanced."
 msgstr ""
 
-msgid "2005/07/05"
+msgid "2005-07-05"
 msgstr ""
 
 msgid "Changes"
@@ -5894,20 +5894,16 @@ msgstr ""
 msgid "the license has changed to LGPL from GPL."
 msgstr ""
 
-msgid "2005/06/23"
+msgid "2005-06-23"
 msgstr ""
 
 msgid "advanced API functions implemented"
 msgstr ""
 
-msgid "2005/04/12"
+msgid "2005-04-12"
 msgstr ""
 
 msgid ""
 "applied ftb patch for mysql binding from <ko at yappo.ne.jp> 'IN BOOLEAN "
 "MODE' supported"
 msgstr ""
-
-#, fuzzy
-#~ msgid "??? Supported sort by index value."
-#~ msgstr "インデックスを使った後方一致検索をサポート。"
