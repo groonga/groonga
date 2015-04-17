@@ -7,6 +7,23 @@
 News
 ====
 
+.. _release-5-0-3:
+
+Release 5.0.3 - 2015-04-29
+--------------------------
+
+Fixes
+^^^^^
+
+* [windows] Fixed a bug that :ref:`offline-index-construction` is
+  failed for large data (at least 1GB or larger) with Groonga built by
+  Microsoft Visual C++. [Reported by Hideki ARAI]
+
+Thanks
+^^^^^^
+
+* Hideki ARAI
+
 .. _release-5-0-2:
 
 Release 5.0.2 - 2015-03-31
