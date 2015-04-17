@@ -181,12 +181,12 @@ grn_default_logger_get_path(void)
 }
 
 void
-grn_default_logger_set_rotate_threshold_size(long long unsigned int threshold)
+grn_default_logger_set_rotate_threshold_size(off_t threshold)
 {
   default_logger_rotate_threshold_size = threshold;
 }
 
-long long unsigned int
+off_t
 grn_default_logger_get_rotate_threshold_size(void)
 {
   return default_logger_rotate_threshold_size;
@@ -458,12 +458,12 @@ grn_default_query_logger_get_path(void)
 }
 
 void
-grn_default_query_logger_set_rotate_threshold_size(long long unsigned int threshold)
+grn_default_query_logger_set_rotate_threshold_size(off_t threshold)
 {
   default_query_logger_rotate_threshold_size = threshold;
 }
 
-long long unsigned int
+off_t
 grn_default_query_logger_get_rotate_threshold_size(void)
 {
   return default_query_logger_rotate_threshold_size;

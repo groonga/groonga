@@ -19,6 +19,7 @@
 #define GROONGA_GROONGA_H
 
 #include <stdarg.h>
+#include <sys/types.h>
 
 #ifdef  __cplusplus
 extern "C" {
@@ -1174,8 +1175,8 @@ GRN_API void grn_default_logger_set_max_level(grn_log_level level);
 GRN_API grn_log_level grn_default_logger_get_max_level(void);
 GRN_API void grn_default_logger_set_path(const char *path);
 GRN_API const char *grn_default_logger_get_path(void);
-GRN_API void grn_default_logger_set_rotate_threshold_size(long long unsigned int threshold);
-GRN_API long long unsigned int grn_default_logger_get_rotate_threshold_size(void);
+GRN_API void grn_default_logger_set_rotate_threshold_size(off_t threshold);
+GRN_API off_t grn_default_logger_get_rotate_threshold_size(void);
 
 #define GRN_LOG(ctx,level,...) do {\
   if (grn_logger_pass(ctx, level)) {\
@@ -1208,8 +1209,8 @@ GRN_API void grn_default_query_logger_set_flags(unsigned int flags);
 GRN_API unsigned int grn_default_query_logger_get_flags(void);
 GRN_API void grn_default_query_logger_set_path(const char *path);
 GRN_API const char *grn_default_query_logger_get_path(void);
-GRN_API void grn_default_query_logger_set_rotate_threshold_size(long long unsigned int threshold);
-GRN_API long long unsigned int grn_default_query_logger_get_rotate_threshold_size(void);
+GRN_API void grn_default_query_logger_set_rotate_threshold_size(off_t threshold);
+GRN_API off_t grn_default_query_logger_get_rotate_threshold_size(void);
 
 #define GRN_QUERY_LOG(ctx, flag, mark, format, ...) do {\
   if (grn_query_logger_pass(ctx, flag)) {\
