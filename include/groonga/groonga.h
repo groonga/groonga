@@ -18,11 +18,11 @@
 #ifndef GROONGA_GROONGA_H
 #define GROONGA_GROONGA_H
 
+#include <stdarg.h>
+
 #ifdef  __cplusplus
 extern "C" {
 #endif
-
-#include <stdarg.h>
 
 #ifndef GRN_API
 # if defined(_WIN32) || defined(_WIN64)
