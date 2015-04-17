@@ -10,12 +10,21 @@ module Groonga
         initialize_parameters
       end
 
-      def each
+      def each(&block)
+        each_internal(:ascending, &block)
+      end
+
+      def reverse_each(&block)
+        each_internal(:descending, &block)
+      end
+
+      private
+      def each_internal(order)
         prefix = "#{@logical_table}_"
         context = Context.instance
         context.database.each_table(:prefix => prefix,
                                     :order_by => :key,
-                                    :order => :ascending) do |table|
+                                    :order => order) do |table|
           shard_range_raw = table.name[prefix.size..-1]
 
           next unless /\A(\d{4})(\d{2})(\d{2})\z/ =~ shard_range_raw

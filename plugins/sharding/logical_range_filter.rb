@@ -125,7 +125,12 @@ module Groonga
         def execute
           first_table = nil
           enumerator = @context.enumerator
-          enumerator.each do |table, shard_key, shard_range|
+          if @context.order == :descending
+            each_method = :reverse_each
+          else
+            each_method = :each
+          end
+          enumerator.send(each_method) do |table, shard_key, shard_range|
             first_table ||= table
             next if table.empty?
 
@@ -367,6 +372,7 @@ module Groonga
 
         def build_range_search_flags(min_border, max_border)
           flags = TableCursorFlags::BY_KEY
+          p @context.order
           case @context.order
           when :ascending
             flags |= TableCursorFlags::ASCENDING
