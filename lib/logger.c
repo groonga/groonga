@@ -181,6 +181,18 @@ grn_default_logger_get_path(void)
 }
 
 void
+grn_default_logger_set_rotate_threshold_size(long long unsigned int threshold)
+{
+  default_logger_rotate_threshold_size = threshold;
+}
+
+long long unsigned int
+grn_default_logger_get_rotate_threshold_size(void)
+{
+  return default_logger_rotate_threshold_size;
+}
+
+void
 grn_logger_reopen(grn_ctx *ctx)
 {
   if (current_logger.reopen) {
@@ -443,6 +455,18 @@ const char *
 grn_default_query_logger_get_path(void)
 {
   return default_query_logger_path;
+}
+
+void
+grn_default_query_logger_set_rotate_threshold_size(long long unsigned int threshold)
+{
+  default_query_logger_rotate_threshold_size = threshold;
+}
+
+long long unsigned int
+grn_default_query_logger_get_rotate_threshold_size(void)
+{
+  return default_query_logger_rotate_threshold_size;
 }
 
 void
