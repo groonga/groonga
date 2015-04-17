@@ -5,10 +5,10 @@
 News in Senna period
 ====================
 
-Senna -> groonga - 2009/01/14
+Senna -> groonga - 2009-01-14
 -----------------------------
 
-2006/04/05
+2006-04-05
 ----------
 
 Improvements
@@ -17,7 +17,7 @@ Improvements
 * SEN_INDEX_DELIMITED added
 * sen_sel_term_extract added
 
-2006/03/03
+2006-03-03
 ----------
 
 Improvements
@@ -25,7 +25,7 @@ Improvements
 
 * snippet function added
 
-2006/01/16
+2006-01-16
 ----------
 
 Fixes
@@ -33,7 +33,7 @@ Fixes
 
 * io.c bug fix. index format changed
 
-2006/01/12
+2006-01-12
 ----------
 
 Improvements
@@ -41,7 +41,7 @@ Improvements
 
 * windows porting released
 
-2005/12/22
+2005-12-22
 ----------
 
 Improvements
@@ -50,7 +50,7 @@ Improvements
 * support unpatched version of mecab (0.81, 0.82pre, 0.90)
   no longer depends on mecab mte patch.
 
-2005/10/27
+2005-10-27
 ----------
 
 Improvements
@@ -58,7 +58,7 @@ Improvements
 
 * mysql binding updated
 
-2005/09/17
+2005-09-17
 ----------
 
 Improvements
@@ -66,7 +66,7 @@ Improvements
 
 * mysql-5.0.12-beta binding from <tasuku at hottolink.co.jp>
 
-2005/09/08
+2005-09-08
 ----------
 
 Improvements
@@ -74,7 +74,7 @@ Improvements
 
 * utf-8 support enhanced. (SEN_INDEX_NORMALIZE become available)
 
-2005/08/16
+2005-08-16
 ----------
 
 Improvements
@@ -83,7 +83,7 @@ Improvements
 * Ruby binding has rewrited using SWIG and supports advanced API.
 * SJIS support enhanced.
 
-2005/07/05
+2005-07-05
 ----------
 
 Changes
@@ -91,7 +91,7 @@ Changes
 
 * the license has changed to LGPL from GPL.
 
-2005/06/23
+2005-06-23
 ----------
 
 Improvements
@@ -99,7 +99,7 @@ Improvements
 
 * advanced API functions implemented
 
-2005/04/12
+2005-04-12
 ----------
 
 Improvements
