@@ -1500,6 +1500,20 @@ grn_atoll(const char *nptr, const char *end, const char **rest)
   return n ? -v : v;
 }
 
+uint64_t
+grn_atoull(const char *nptr, const char *end, const char **rest)
+{
+  uint64_t v = 0, t;
+  while (nptr < end && *nptr >= '0' && *nptr <= '9') {
+    t = v * 10 + (*nptr - '0');
+    if (t < v) { v = 0; break; }
+    v = t;
+    nptr++;
+  }
+  if (rest) { *rest = nptr; }
+  return v;
+}
+
 unsigned int
 grn_htoui(const char *nptr, const char *end, const char **rest)
 {

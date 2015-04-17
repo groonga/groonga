@@ -52,6 +52,8 @@ void data_str_len(void);
 void test_str_len(gconstpointer data);
 void data_aton(void);
 void test_aton(gconstpointer data);
+void data_atoull(void);
+void test_atoull(gconstpointer data);
 void data_itoh(void);
 void test_itoh(gconstpointer data);
 
@@ -1000,6 +1002,42 @@ test_aton(gconstpointer data)
     cut_error("unknown type: %d", type);
     break;
   }
+}
+
+void
+data_atoull(void)
+{
+#define ADD_DATUM(label, expected, input)                       \
+  gcut_add_datum(label " - " #expected,                         \
+                 "expected", G_TYPE_UINT64, expected,           \
+                 "input", G_TYPE_STRING, input,                 \
+                 NULL)
+
+  ADD_DATUM("uint32 max",
+            G_GUINT64_CONSTANT(4294967295),
+            "4294967295");
+  ADD_DATUM("int64 max",
+            G_GUINT64_CONSTANT(344494643000000),
+            "344494643000000");
+  ADD_DATUM("uint64 max",
+            G_GUINT64_CONSTANT(18446744073709551615),
+            "18446744073709551615");
+
+#undef ADD_DATUM
+}
+
+void
+test_atoull(gconstpointer data)
+{
+  const gchar *input, *input_end, *rest;
+  uint64_t value;
+
+  input = gcut_data_get_string(data, "input");
+  input_end = strchr(input, '\0');
+  value = grn_atoull(input, input_end, &rest);
+  cut_assert_equal_string(input_end, rest);
+  gcut_assert_equal_uint64(gcut_data_get_uint64(data, "expected"),
+                           value);
 }
 
 void
