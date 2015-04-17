@@ -54,8 +54,8 @@ rotate_log_file(grn_ctx *ctx, const char *current_path)
 static char *default_logger_path = NULL;
 static FILE *default_logger_file = NULL;
 static grn_critical_section default_logger_lock;
-static size_t default_logger_size = 0;
-static size_t default_logger_rotate_size_threshold = 0;
+static off_t default_logger_size = 0;
+static off_t default_logger_rotate_size_threshold = 0;
 
 #define LOGGER_NEED_ROTATE(size, threshold) \
   ((threshold) > 0 && (size) >= (threshold))
@@ -323,8 +323,8 @@ grn_logger_fin(grn_ctx *ctx)
 static char *default_query_logger_path = NULL;
 static FILE *default_query_logger_file = NULL;
 static grn_critical_section default_query_logger_lock;
-static size_t default_query_logger_size = 0;
-static size_t default_query_logger_rotate_size_threshold = 0;
+static off_t default_query_logger_size = 0;
+static off_t default_query_logger_rotate_size_threshold = 0;
 
 static void
 default_query_logger_log(grn_ctx *ctx, unsigned int flag,
