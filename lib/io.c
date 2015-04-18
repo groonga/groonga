@@ -798,7 +798,7 @@ grn_io_read_ja(grn_io *io, grn_ctx *ctx, grn_io_ja_einfo *einfo, uint32_t epos, 
     rest = pos + size - file_size;
     size = file_size - pos;
   }
-  if (!grn_opened(fi)) {
+  if (!grn_fileinfo_opened(fi)) {
     char path[PATH_MAX];
     gen_pathname(io->path, path, fno);
     if (grn_fileinfo_open(ctx, fi, path, O_RDWR|O_CREAT)) {
@@ -846,7 +846,7 @@ grn_io_read_ja(grn_io *io, grn_ctx *ctx, grn_io_ja_einfo *einfo, uint32_t epos, 
     byte *vr = (byte *)v + size;
     do {
       fi = &io->fis[++fno];
-      if (!grn_opened(fi)) {
+      if (!grn_fileinfo_opened(fi)) {
         char path[PATH_MAX];
         gen_pathname(io->path, path, fno);
         if (grn_fileinfo_open(ctx, fi, path, O_RDWR|O_CREAT)) {
@@ -889,7 +889,7 @@ grn_io_write_ja(grn_io *io, grn_ctx *ctx, uint32_t key,
     rest = pos + size - file_size;
     size = file_size - pos;
   }
-  if (!grn_opened(fi)) {
+  if (!grn_fileinfo_opened(fi)) {
     char path[PATH_MAX];
     gen_pathname(io->path, path, fno);
     if ((rc = grn_fileinfo_open(ctx, fi, path, O_RDWR|O_CREAT))) { return rc; }
@@ -913,7 +913,7 @@ grn_io_write_ja(grn_io *io, grn_ctx *ctx, uint32_t key,
     byte *vr = (byte *)value + size - sizeof(grn_io_ja_ehead);
     do {
       fi = &io->fis[++fno];
-      if (!grn_opened(fi)) {
+      if (!grn_fileinfo_opened(fi)) {
         char path[PATH_MAX];
         gen_pathname(io->path, path, fno);
         if ((rc = grn_fileinfo_open(ctx, fi, path, O_RDWR|O_CREAT))) { return rc; }
@@ -940,7 +940,7 @@ grn_io_write_ja_ehead(grn_io *io, grn_ctx *ctx, uint32_t key,
   fileinfo *fi = &io->fis[fno];
   off_t base = fno ? 0 : io->base - (uint64_t)segment_size + io->base_seg;
   off_t pos = (uint64_t)segment_size * (bseg % segments_per_file) + offset + base;
-  if (!grn_opened(fi)) {
+  if (!grn_fileinfo_opened(fi)) {
     char path[PATH_MAX];
     gen_pathname(io->path, path, fno);
     if ((rc = grn_fileinfo_open(ctx, fi, path, O_RDWR|O_CREAT))) { return rc; }
@@ -1071,7 +1071,7 @@ grn_io_win_unmap(grn_io_win *iw)
     off_t base = fno ? 0 : io->base - (uint64_t)segment_size * io->base_seg;\
     off_t pos = (uint64_t)segment_size * (bseg % segments_per_file) + base;\
     fileinfo *fi = &io->fis[fno];\
-    if (!grn_opened(fi)) {\
+    if (!grn_fileinfo_opened(fi)) {\
       char path[PATH_MAX];\
       gen_pathname(io->path, path, fno);\
       if (!grn_fileinfo_open(ctx, fi, path, O_RDWR|O_CREAT)) {  \
@@ -1320,7 +1320,7 @@ static size_t mmap_size = 0;
 #ifdef WIN32
 
 inline static grn_rc
-grn_open_v1(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
+grn_fileinfo_open_v1(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 {
   CRITICAL_SECTION_INIT(fi->cs);
   return GRN_SUCCESS;
@@ -1398,7 +1398,7 @@ grn_munmap_v1(grn_ctx *ctx, HANDLE *fmo, fileinfo *fi,
 }
 
 inline static grn_rc
-grn_open_v0(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
+grn_fileinfo_open_v0(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 {
   /* signature may be wrong.. */
   fi->fmo = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, NULL);
@@ -1483,7 +1483,7 @@ grn_munmap_v0(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
 }
 
 inline static grn_rc
-grn_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
+grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 {
   /* may be wrong if flags is just only O_RDWR */
   if ((flags & O_CREAT)) {
@@ -1536,7 +1536,7 @@ grn_fileinfo_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
   DWORD read_bytes;
   int version = grn_io_version_default;
 
-  rc = grn_open_common(ctx, fi, path, flags);
+  rc = grn_fileinfo_open_common(ctx, fi, path, flags);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
@@ -1551,9 +1551,9 @@ grn_fileinfo_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
   }
 
   if (version == 0) {
-    return grn_open_v0(ctx, fi, path, flags);
+    return grn_fileinfo_open_v0(ctx, fi, path, flags);
   } else {
-    return grn_open_v1(ctx, fi, path, flags);
+    return grn_fileinfo_open_v1(ctx, fi, path, flags);
   }
 }
 
@@ -1630,7 +1630,7 @@ grn_fileinfo_init(fileinfo *fis, int nfis)
 }
 
 inline static int
-grn_opened(fileinfo *fi)
+grn_fileinfo_opened(fileinfo *fi)
 {
   return fi->fh != INVALID_HANDLE_VALUE;
 }
@@ -1712,7 +1712,7 @@ grn_fileinfo_init(fileinfo *fis, int nfis)
 }
 
 inline static int
-grn_opened(fileinfo *fi)
+grn_fileinfo_opened(fileinfo *fi)
 {
   return fi->fd != -1;
 }
