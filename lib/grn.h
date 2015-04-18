@@ -23,6 +23,10 @@
 # include <config.h>
 #endif /* HAVE_CONFIG_H */
 
+#if defined(WIN32) && defined(__GNUC__)
+# define __MINGW_MSVC_COMPAT_WARNINGS
+#endif /* defined(WIN32) && defined(__GNUC__) */
+
 #ifdef __cplusplus
 # define __STDC_LIMIT_MACROS
 #endif
