@@ -122,6 +122,18 @@
 #endif /* WIN32 */
 
 #ifdef WIN32
+# define GRN_OPEN_CREATE_MODE (_S_IREAD | _S_IWRITE)
+# define GRN_OPEN_FLAG_BINARY _O_BINARY
+# define grn_open(fd, pathname, flags)\
+  _sopen_s(&(fd), (pathname), (flags), _SH_DENYNO, GRN_OPEN_CREATE_MODE)
+#else /* WIN32 */
+# define GRN_OPEN_CREATE_MODE (S_IRUSR | S_IWUSR | S_IRGRP)
+# define GRN_OPEN_FLAG_BINARY 0
+# define grn_open(fd, pathname, flags)\
+  (fd) = open((pathname), (flags), GRN_OPEN_CREATE_MODE)
+#endif /* WIN32 */
+
+#ifdef WIN32
 # define grn_close(fd) _close((fd))
 #else /* WIN32 */
 # define grn_close(fd) close((fd))

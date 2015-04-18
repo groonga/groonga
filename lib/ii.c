@@ -23,6 +23,7 @@
 
 #ifdef WIN32
 # include <io.h>
+# include <share.h>
 #endif /* WIN32 */
 
 #include "grn_ii.h"
@@ -7793,11 +7794,9 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
           ii_buffer->nblocks, ii_buffer->update_buffer_size);
 
   datavec_init(ctx, ii_buffer->data_vectors, ii_buffer->ii->n_elements, 0, 0);
-#ifdef WIN32
-  ii_buffer->tmpfd = GRN_OPEN(ii_buffer->tmpfpath, O_RDONLY|O_BINARY);
-#else /* WIN32 */
-  ii_buffer->tmpfd = GRN_OPEN(ii_buffer->tmpfpath, O_RDONLY);
-#endif /* WIN32 */
+  grn_open(ii_buffer->tmpfd,
+           ii_buffer->tmpfpath,
+           O_RDONLY | GRN_OPEN_FLAG_BINARY);
   if (ii_buffer->tmpfd == -1) {
     ERRNO_ERR("oepn");
     return ctx->rc;

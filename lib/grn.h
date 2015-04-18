@@ -67,12 +67,6 @@
 # define GRN_VAR extern
 #endif
 
-#ifdef HAVE_OPEN
-# define GRN_OPEN(pathname, ...) open(pathname, __VA_ARGS__)
-#else
-# define GRN_OPEN(pathname, ...) _open(pathname, __VA_ARGS__)
-#endif /* HAVE_OPEN */
-
 #ifdef WIN32
 
 # if defined(__GNUC__) && !defined(WINVER)

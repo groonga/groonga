@@ -29,6 +29,10 @@
 #include "grn_hash.h"
 #include "grn_ctx_impl.h"
 
+#ifdef WIN32
+# include <share.h>
+#endif /* WIN32 */
+
 #define GRN_IO_IDSTR "GROONGA:IO:00001"
 
 #define GRN_IO_VERSION_DEFAULT 1
@@ -40,14 +44,6 @@
 #else /* WIN32 */
 # define GRN_IO_FILE_SIZE_V0  GRN_IO_FILE_SIZE_V1
 #endif /* WIN32 */
-
-#ifndef O_BINARY
-# ifdef _O_BINARY
-#  define O_BINARY _O_BINARY
-# else
-#  define O_BINARY 0
-# endif
-#endif
 
 typedef struct _grn_io_fileinfo {
 #ifdef WIN32
@@ -477,7 +473,8 @@ grn_io_detect_type(grn_ctx *ctx, const char *path)
 {
   struct _grn_io_header h;
   uint32_t res = 0;
-  int fd = GRN_OPEN(path, O_RDWR | O_BINARY);
+  int fd;
+  grn_open(fd, path, O_RDWR | GRN_OPEN_FLAG_BINARY);
   if (fd != -1) {
     struct stat s;
     if (fstat(fd, &s) != -1 && s.st_size >= sizeof(struct _grn_io_header)) {
@@ -512,7 +509,8 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
   if (!path || !*path || (strlen(path) > PATH_MAX - 4)) { return NULL; }
   {
     struct _grn_io_header h;
-    int fd = GRN_OPEN(path, O_RDWR | O_BINARY);
+    int fd;
+    grn_open(fd, path, O_RDWR | GRN_OPEN_FLAG_BINARY);
     if (fd == -1) {
       ERRNO_ERR(path);
       return NULL;
