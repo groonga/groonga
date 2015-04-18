@@ -495,7 +495,7 @@ grn_io_detect_type(grn_ctx *ctx, const char *path)
     }
     grn_close(fd);
   } else {
-    SERR(path);
+    ERRNO_ERR(path);
   }
   return res;
 }
@@ -513,7 +513,10 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
   {
     struct _grn_io_header h;
     int fd = GRN_OPEN(path, O_RDWR | O_BINARY);
-    if (fd == -1) { SERR(path); return NULL; }
+    if (fd == -1) {
+      ERRNO_ERR(path);
+      return NULL;
+    }
     if (fstat(fd, &s) != -1 && s.st_size >= sizeof(struct _grn_io_header)) {
       if (grn_read(fd, &h, sizeof(struct _grn_io_header)) == sizeof(struct _grn_io_header)) {
         if (!memcmp(h.idstr, GRN_IO_IDSTR, 16)) {

@@ -7799,7 +7799,7 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   ii_buffer->tmpfd = GRN_OPEN(ii_buffer->tmpfpath, O_RDONLY);
 #endif /* WIN32 */
   if (ii_buffer->tmpfd == -1) {
-    SERR("oepn");
+    ERRNO_ERR("oepn");
     return ctx->rc;
   }
   {
