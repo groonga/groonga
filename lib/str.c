@@ -2096,39 +2096,30 @@ grn_text_ulltoa(grn_ctx *ctx, grn_obj *buf, unsigned long long int i)
 inline static void
 ftoa_(grn_ctx *ctx, grn_obj *buf, double d)
 {
-  char *curr;
+  char *start;
+  size_t before_size;
   size_t len;
 #define DIGIT_NUMBER 15
-#define FIRST_BUFFER_SIZE (DIGIT_NUMBER + 3)
+#define FIRST_BUFFER_SIZE (DIGIT_NUMBER + 4)
+  before_size = GRN_BULK_VSIZE(buf);
   grn_bulk_reserve(ctx, buf, FIRST_BUFFER_SIZE);
-  curr = GRN_BULK_CURR(buf);
-  len = grn_snprintf(curr,
-                     FIRST_BUFFER_SIZE,
-                     FIRST_BUFFER_SIZE,
-                     "%#.*g", DIGIT_NUMBER, d);
-  if (len >= FIRST_BUFFER_SIZE) {
-    grn_bulk_reserve(ctx, buf, len + 1);
-    curr = GRN_BULK_CURR(buf);
-    len = grn_snprintf(curr,
-                       len + 1,
-                       len + 1,
-                       "%#.*g", DIGIT_NUMBER, d);
-  }
+  grn_text_printf(ctx, buf, "%#.*g", DIGIT_NUMBER, d);
+  len = GRN_BULK_VSIZE(buf) - before_size;
+  start = GRN_BULK_CURR(buf) - len;
 #undef FIRST_BUFFER_SIZE
 #undef DIGIT_NUMBER
-  if (curr[len - 1] == '.') {
-    GRN_BULK_INCR_LEN(buf, len);
+  if (start[len - 1] == '.') {
     GRN_TEXT_PUTC(ctx, buf, '0');
   } else {
     char *p, *q;
-    curr[len] = '\0';
-    if ((p = strchr(curr, 'e'))) {
+    start[len] = '\0';
+    if ((p = strchr(start, 'e'))) {
       for (q = p; *(q - 2) != '.' && *(q - 1) == '0'; q--) { len--; }
-      grn_memmove(q, p, curr + len - q);
+      grn_memmove(q, p, start + len - q);
     } else {
-      for (q = curr + len; *(q - 2) != '.' && *(q - 1) == '0'; q--) { len--; }
+      for (q = start + len; *(q - 2) != '.' && *(q - 1) == '0'; q--) { len--; }
     }
-    GRN_BULK_INCR_LEN(buf, len);
+    grn_bulk_truncate(ctx, buf, before_size + len);
   }
 }
 
