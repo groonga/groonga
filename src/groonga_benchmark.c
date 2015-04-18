@@ -1115,7 +1115,7 @@ exit:
               job->max,
               job->qnum);
       if (grntest_jobdone < grntest_jobnum) {
-        strcat(tmpbuf, ",");
+        grn_strcat(tmpbuf, BUF_LEN, ",");
       }
     }
     GRN_TEXT_PUTS(ctx, log, tmpbuf);
@@ -1261,19 +1261,19 @@ get_sysinfo(const char *path, char *result, int olen)
   if (grntest_outtype == OUT_TSV) {
     result[0] = '\0';
     sprintf(tmpbuf, "script\t%s\n", grntest_scriptname);
-    strcat(result, tmpbuf);
+    grn_strcat(result, olen, tmpbuf);
     sprintf(tmpbuf, "user\t%s\n", grntest_username);
-    strcat(result, tmpbuf);
+    grn_strcat(result, olen, tmpbuf);
     sprintf(tmpbuf, "date\t%s\n", grntest_date);
-    strcat(result, tmpbuf);
+    grn_strcat(result, olen, tmpbuf);
   } else {
     grn_strcpy(result, olen, "{");
     sprintf(tmpbuf, "\"script\": \"%s.scr\",\n", grntest_scriptname);
-    strcat(result, tmpbuf);
+    grn_strcat(result, olen, tmpbuf);
     sprintf(tmpbuf, "  \"user\": \"%s\",\n", grntest_username);
-    strcat(result, tmpbuf);
+    grn_strcat(result, olen, tmpbuf);
     sprintf(tmpbuf, "  \"date\": \"%s\",\n", grntest_date);
-    strcat(result, tmpbuf);
+    grn_strcat(result, olen, tmpbuf);
   }
 
   memset(cpustring, 0, 64);
@@ -1294,7 +1294,7 @@ get_sysinfo(const char *path, char *result, int olen)
   } else {
     sprintf(tmpbuf, "  \"CPU\": \"%s\",\n", cpustring);
   }
-  strcat(result, tmpbuf);
+  grn_strcat(result, olen, tmpbuf);
 
   if (sizeof(int *) == 8) {
     grntest_osinfo = OS_WINDOWS64;
@@ -1311,7 +1311,7 @@ get_sysinfo(const char *path, char *result, int olen)
       sprintf(tmpbuf, "  \"BIT\": 32,\n");
     }
   }
-  strcat(result, tmpbuf);
+  grn_strcat(result, olen, tmpbuf);
 
   GetSystemInfo(&sinfo);
   if (grntest_outtype == OUT_TSV) {
@@ -1319,7 +1319,7 @@ get_sysinfo(const char *path, char *result, int olen)
   } else {
     sprintf(tmpbuf, "  \"CORE\": %lu,\n", sinfo.dwNumberOfProcessors);
   }
-  strcat(result, tmpbuf);
+  grn_strcat(result, olen, tmpbuf);
 
   minfo.dwLength = sizeof(MEMORYSTATUSEX);
   GlobalMemoryStatusEx(&minfo);
@@ -1328,7 +1328,7 @@ get_sysinfo(const char *path, char *result, int olen)
   } else {
     sprintf(tmpbuf, "  \"RAM\": \"%I64dMByte\",\n", minfo.ullTotalPhys/(1024*1024));
   }
-  strcat(result, tmpbuf);
+  grn_strcat(result, olen, tmpbuf);
 
   GetDiskFreeSpaceEx(NULL, NULL, &dinfo, NULL);
   if (grntest_outtype == OUT_TSV) {
@@ -1336,7 +1336,7 @@ get_sysinfo(const char *path, char *result, int olen)
   } else {
     sprintf(tmpbuf, "  \"HDD\": \"%I64dKBytes\",\n", dinfo.QuadPart/1024 );
   }
-  strcat(result, tmpbuf);
+  grn_strcat(result, olen, tmpbuf);
 
   osinfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO); GetVersionEx(&osinfo);
   if (grntest_outtype == OUT_TSV) {
@@ -1346,21 +1346,21 @@ get_sysinfo(const char *path, char *result, int olen)
     sprintf(tmpbuf, "  \"OS\": \"Windows %lu.%lu\",\n", osinfo.dwMajorVersion,
             osinfo.dwMinorVersion);
   }
-  strcat(result, tmpbuf);
+  grn_strcat(result, olen, tmpbuf);
 
   if (grntest_outtype == OUT_TSV) {
     sprintf(tmpbuf, "%s\n", grntest_serverhost);
   } else {
     sprintf(tmpbuf, "  \"HOST\": \"%s\",\n", grntest_serverhost);
   }
-  strcat(result, tmpbuf);
+  grn_strcat(result, olen, tmpbuf);
 
   if (grntest_outtype == OUT_TSV) {
     sprintf(tmpbuf, "%d\n", grntest_serverport);
   } else {
     sprintf(tmpbuf, "  \"PORT\": \"%d\",\n", grntest_serverport);
   }
-  strcat(result, tmpbuf);
+  grn_strcat(result, olen, tmpbuf);
 
   if (grntest_outtype == OUT_TSV) {
     sprintf(tmpbuf, "%s\"\n", grn_get_version());
@@ -1368,9 +1368,9 @@ get_sysinfo(const char *path, char *result, int olen)
     sprintf(tmpbuf, "  \"VERSION\": \"%s\"\n", grn_get_version());
   }
 
-  strcat(result, tmpbuf);
+  grn_strcat(result, olen, tmpbuf);
   if (grntest_outtype != OUT_TSV) {
-    strcat(result, "}");
+    grn_strcat(result, olen, "}");
   }
 
 #else /* linux only */
@@ -1388,19 +1388,19 @@ get_sysinfo(const char *path, char *result, int olen)
   if (grntest_outtype == OUT_TSV) {
     result[0] = '\0';
     sprintf(tmpbuf, "sctipt\t%s\n", grntest_scriptname);
-    strcat(result, tmpbuf);
+    grn_strcat(result, olen, tmpbuf);
     sprintf(tmpbuf, "user\t%s\n", grntest_username);
-    strcat(result, tmpbuf);
+    grn_strcat(result, olen, tmpbuf);
     sprintf(tmpbuf, "date\t%s\n", grntest_date);
-    strcat(result, tmpbuf);
+    grn_strcat(result, olen, tmpbuf);
   } else {
     grn_strcpy(result, olen, "{");
     sprintf(tmpbuf, "\"script\": \"%s.scr\",\n", grntest_scriptname);
-    strcat(result, tmpbuf);
+    grn_strcat(result, olen, tmpbuf);
     sprintf(tmpbuf, "  \"user\": \"%s\",\n", grntest_username);
-    strcat(result, tmpbuf);
+    grn_strcat(result, olen, tmpbuf);
     sprintf(tmpbuf, "  \"date\": \"%s\",\n", grntest_date);
-    strcat(result, tmpbuf);
+    grn_strcat(result, olen, tmpbuf);
   }
 
   fp = fopen("/proc/cpuinfo", "r");
@@ -1424,7 +1424,7 @@ get_sysinfo(const char *path, char *result, int olen)
   } else {
     sprintf(tmpbuf, "  \"CPU\": \"%s\",\n", cpu_string);
   }
-  strcat(result, tmpbuf);
+  grn_strcat(result, olen, tmpbuf);
 
   if (sizeof(int *) == 8) {
     grntest_osinfo = OS_LINUX64;
@@ -1441,14 +1441,14 @@ get_sysinfo(const char *path, char *result, int olen)
       sprintf(tmpbuf, "  \"BIT\": 32,\n");
     }
   }
-  strcat(result, tmpbuf);
+  grn_strcat(result, olen, tmpbuf);
 
   if (grntest_outtype == OUT_TSV) {
     sprintf(tmpbuf, "CORE\t%d\n", cpunum);
   } else {
     sprintf(tmpbuf, "  \"CORE\": %d,\n", cpunum);
   }
-  strcat(result, tmpbuf);
+  grn_strcat(result, olen, tmpbuf);
 
   fp = fopen("/proc/meminfo", "r");
   if (!fp) {
@@ -1470,18 +1470,18 @@ get_sysinfo(const char *path, char *result, int olen)
   fclose(fp);
   if (grntest_outtype == OUT_TSV) {
     sprintf(tmpbuf, "%dMBytes\n", minfo/1024);
-    strcat(result, tmpbuf);
+    grn_strcat(result, olen, tmpbuf);
     sprintf(tmpbuf, "%dMBytes_Unevictable\n", unevictable/1024);
-    strcat(result, tmpbuf);
+    grn_strcat(result, olen, tmpbuf);
     sprintf(tmpbuf, "%dMBytes_Mlocked\n", mlocked/1024);
-    strcat(result, tmpbuf);
+    grn_strcat(result, olen, tmpbuf);
   } else {
     sprintf(tmpbuf, "  \"RAM\": \"%dMBytes\",\n", minfo/1024);
-    strcat(result, tmpbuf);
+    grn_strcat(result, olen, tmpbuf);
     sprintf(tmpbuf, "  \"Unevictable\": \"%dMBytes\",\n", unevictable/1024);
-    strcat(result, tmpbuf);
+    grn_strcat(result, olen, tmpbuf);
     sprintf(tmpbuf, "  \"Mlocked\": \"%dMBytes\",\n", mlocked/1024);
-    strcat(result, tmpbuf);
+    grn_strcat(result, olen, tmpbuf);
   }
 
   ret = statvfs(path, &vfsbuf);
@@ -1497,7 +1497,7 @@ get_sysinfo(const char *path, char *result, int olen)
             "  \"HDD\": \"%" GRN_FMT_INT64U "KBytes\",\n",
             vfsbuf.f_blocks * 4);
   }
-  strcat(result, tmpbuf);
+  grn_strcat(result, olen, tmpbuf);
 
   uname(&ubuf);
   if (grntest_outtype == OUT_TSV) {
@@ -1505,31 +1505,31 @@ get_sysinfo(const char *path, char *result, int olen)
   } else {
     sprintf(tmpbuf, "  \"OS\": \"%s %s\",\n", ubuf.sysname, ubuf.release);
   }
-  strcat(result, tmpbuf);
+  grn_strcat(result, olen, tmpbuf);
 
   if (grntest_outtype == OUT_TSV) {
     sprintf(tmpbuf, "%s\n", grntest_serverhost);
   } else {
     sprintf(tmpbuf, "  \"HOST\": \"%s\",\n", grntest_serverhost);
   }
-  strcat(result, tmpbuf);
+  grn_strcat(result, olen, tmpbuf);
 
   if (grntest_outtype == OUT_TSV) {
     sprintf(tmpbuf, "%d\n", grntest_serverport);
   } else {
     sprintf(tmpbuf, "  \"PORT\": \"%d\",\n", grntest_serverport);
   }
-  strcat(result, tmpbuf);
+  grn_strcat(result, olen, tmpbuf);
 
   if (grntest_outtype == OUT_TSV) {
     sprintf(tmpbuf, "%s\n", grn_get_version());
   } else {
     sprintf(tmpbuf, "  \"VERSION\": \"%s\"\n", grn_get_version());
   }
-  strcat(result, tmpbuf);
+  grn_strcat(result, olen, tmpbuf);
 
   if (grntest_outtype != OUT_TSV) {
-    strcat(result, "},");
+    grn_strcat(result, olen, "},");
   }
 #endif /* WIN32 */
   if (strlen(result) >= olen) {
@@ -1555,12 +1555,12 @@ start_server(const char *dbpath, int r)
   }
 
   grn_strcpy(tmpbuf, BUF_LEN, groonga_path);
-  strcat(tmpbuf, " -s --protocol ");
-  strcat(tmpbuf, groonga_protocol);
-  strcat(tmpbuf, " -p ");
+  grn_strcat(tmpbuf, BUF_LEN, " -s --protocol ");
+  grn_strcat(tmpbuf, BUF_LEN, groonga_protocol);
+  grn_strcat(tmpbuf, BUF_LEN, " -p ");
   sprintf(optbuf, "%d ", grntest_serverport);
-  strcat(tmpbuf, optbuf);
-  strcat(tmpbuf, dbpath);
+  grn_strcat(tmpbuf, BUF_LEN, optbuf);
+  grn_strcat(tmpbuf, BUF_LEN, dbpath);
   memset(&si, 0, sizeof(STARTUPINFO));
   si.cb=sizeof(STARTUPINFO);
   ret = CreateProcess(NULL, tmpbuf, NULL, NULL, FALSE,

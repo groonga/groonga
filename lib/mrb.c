@@ -50,8 +50,8 @@ grn_mrb_get_default_system_ruby_scripts_dir(void)
     base_dir = grn_win32_base_dir();
     base_dir_length = strlen(base_dir);
     grn_strcpy(win32_ruby_scripts_dir_buffer, PATH_MAX, base_dir);
-    strcat(win32_ruby_scripts_dir_buffer, "/");
-    strcat(win32_ruby_scripts_dir_buffer, relative_path);
+    grn_strcat(win32_ruby_scripts_dir_buffer, PATH_MAX, "/");
+    grn_strcat(win32_ruby_scripts_dir_buffer, PATH_MAX, relative_path);
     win32_ruby_scripts_dir = win32_ruby_scripts_dir_buffer;
   }
   return win32_ruby_scripts_dir;
@@ -106,14 +106,14 @@ grn_mrb_expand_script_path(grn_ctx *ctx, const char *path,
     expanded_path[0] = '\0';
   } else if (path[0] == '.' && path[1] == '/') {
     grn_strcpy(expanded_path, expanded_path_size, ctx->impl->mrb.base_directory);
-    strcat(expanded_path, "/");
+    grn_strcat(expanded_path, expanded_path_size, "/");
   } else {
     ruby_scripts_dir = grn_mrb_get_system_ruby_scripts_dir(ctx);
     grn_strcpy(expanded_path, expanded_path_size, ruby_scripts_dir);
 
     dir_last_char = ruby_scripts_dir[strlen(expanded_path) - 1];
     if (dir_last_char != '/') {
-      strcat(expanded_path, "/");
+      grn_strcat(expanded_path, expanded_path_size, "/");
     }
   }
 
@@ -127,7 +127,7 @@ grn_mrb_expand_script_path(grn_ctx *ctx, const char *path,
     return GRN_FALSE;
   }
 
-  strcat(expanded_path, path);
+  grn_strcat(expanded_path, expanded_path_size, path);
 
   return GRN_TRUE;
 }

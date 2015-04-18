@@ -110,6 +110,14 @@
 #endif /* WIN32 */
 
 #ifdef WIN32
+# define grn_strcat(dest, dest_size, src)       \
+  strcat_s((dest), (dest_size), (src))
+#else /* WIN32 */
+# define grn_strcat(dest, dest_size, src)       \
+  strcat((dest), (src))
+#endif /* WIN32 */
+
+#ifdef WIN32
 # define grn_snprintf(dest, dest_size, n, format, ...)          \
   _snprintf_s((dest), (dest_size), (n), (format), __VA_ARGS__)
 #else /* WIN32 */

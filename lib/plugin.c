@@ -495,8 +495,8 @@ grn_plugin_get_default_system_plugins_dir(void)
     base_dir = grn_win32_base_dir();
     base_dir_length = strlen(base_dir);
     grn_strcpy(win32_plugins_dir_buffer, PATH_MAX, base_dir);
-    strcat(win32_plugins_dir_buffer, "/");
-    strcat(win32_plugins_dir_buffer, relative_path);
+    grn_strcat(win32_plugins_dir_buffer, PATH_MAX, "/");
+    grn_strcat(win32_plugins_dir_buffer, PATH_MAX, relative_path);
     win32_plugins_dir = win32_plugins_dir_buffer;
   }
   return win32_plugins_dir;
@@ -563,7 +563,7 @@ grn_plugin_find_path_mrb(grn_ctx *ctx, const char *path, size_t path_len)
   }
 
   grn_strcpy(mrb_path, PATH_MAX, path);
-  strcat(mrb_path, mrb_suffix);
+  grn_strcat(mrb_path, PATH_MAX, mrb_suffix);
   return grn_plugin_find_path_raw(ctx, mrb_path);
 }
 #else /* GRN_WITH_MRUBY */
@@ -591,7 +591,7 @@ grn_plugin_find_path_so(grn_ctx *ctx, const char *path, size_t path_len)
   }
 
   grn_strcpy(so_path, PATH_MAX, path);
-  strcat(so_path, so_suffix);
+  grn_strcat(so_path, PATH_MAX, so_suffix);
   return grn_plugin_find_path_raw(ctx, so_path);
 }
 
@@ -624,9 +624,9 @@ grn_plugin_find_path_libs_so(grn_ctx *ctx, const char *path, size_t path_len)
 
   libs_so_path[0] = '\0';
   grn_strncat(libs_so_path, PATH_MAX, path, base_name - path);
-  strcat(libs_so_path, libs_path);
-  strcat(libs_so_path, base_name);
-  strcat(libs_so_path, so_suffix);
+  grn_strcat(libs_so_path, PATH_MAX, libs_path);
+  grn_strcat(libs_so_path, PATH_MAX, base_name);
+  grn_strcat(libs_so_path, PATH_MAX, so_suffix);
   return grn_plugin_find_path_raw(ctx, libs_so_path);
 }
 
@@ -649,7 +649,7 @@ grn_plugin_find_path(grn_ctx *ctx, const char *name)
 
     dir_last_char = plugins_dir[strlen(path) - 1];
     if (dir_last_char != '/') {
-      strcat(path, "/");
+      grn_strcat(path, PATH_MAX, "/");
     }
   }
 
@@ -662,7 +662,7 @@ grn_plugin_find_path(grn_ctx *ctx, const char *name)
         path, name);
     goto exit;
   }
-  strcat(path, name);
+  grn_strcat(path, PATH_MAX, name);
 
   found_path = grn_plugin_find_path_raw(ctx, path);
   if (found_path) {

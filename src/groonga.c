@@ -143,7 +143,7 @@ line_editor_init(int argc __attribute__((unused)), char *argv[])
 
   if (strlen(HOME_PATH) + strlen(HISTORY_PATH) < PATH_MAX) {
     grn_strcpy(line_editor_history_path, PATH_MAX, HOME_PATH);
-    strcat(line_editor_history_path, HISTORY_PATH);
+    grn_strcat(line_editor_history_path, PATH_MAX, HISTORY_PATH);
   } else {
     line_editor_history_path[0] = '\0';
   }
@@ -2439,8 +2439,9 @@ init_default_settings(void)
       fprintf(stderr, "can't use default root: too long path\n");
     } else {
       grn_strcpy(win32_default_document_root, PATH_MAX, grn_win32_base_dir());
-      strcat(win32_default_document_root, "/");
-      strcat(win32_default_document_root, GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT);
+      grn_strcat(win32_default_document_root, PATH_MAX, "/");
+      grn_strcat(win32_default_document_root, PATH_MAX,
+                 GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT);
       default_document_root = win32_default_document_root;
     }
   }
