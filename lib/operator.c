@@ -112,10 +112,12 @@ static const char *operator_names[] = {
   "regexp"
 };
 
+#define GRN_OP_LAST GRN_OP_REGEXP
+
 const char *
 grn_operator_to_string(grn_operator op)
 {
-  if (GRN_OP_PUSH <= op && op <= GRN_OP_REGEXP) {
+  if (op <= GRN_OP_LAST) {
     return operator_names[op];
   } else {
     return "unknown";
