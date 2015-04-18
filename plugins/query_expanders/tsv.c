@@ -41,24 +41,20 @@
 static grn_hash *synonyms = NULL;
 
 #ifdef WIN32
-static char *win32_synonyms_file = NULL;
+static char win32_synonyms_file[MAX_PATH] = "";
 const char *
 get_system_synonyms_file(void)
 {
-  if (!win32_synonyms_file) {
+  if (win32_synonyms_file[0] == '\0') {
     const char *base_dir;
     const char *relative_path = GRN_QUERY_EXPANDER_TSV_RELATIVE_SYNONYMS_FILE;
-    char *synonyms_file;
     size_t base_dir_length;
 
     base_dir = grn_plugin_win32_base_dir();
     base_dir_length = strlen(base_dir);
-    synonyms_file =
-      malloc(base_dir_length + strlen("/") + strlen(relative_path) + 1);
-    strcpy(synonyms_file, base_dir);
-    strcat(synonyms_file, "/");
-    strcat(synonyms_file, relative_path);
-    win32_synonyms_file = synonyms_file;
+    grn_strcpy(win32_synonyms_file, MAX_PATH, base_dir);
+    strcat(win32_synonyms_file_entity, "/");
+    strcat(win32_synonyms_file_entity, relative_path);
   }
   return win32_synonyms_file;
 }
