@@ -98,7 +98,7 @@
   strcpy_s((dest), (dest_size), (src))
 #else /* WIN32 */
 # define grn_strcpy(dest, dest_size, src)       \
-  strcpy((dest), (src), (src))
+  strcpy((dest), (src))
 #endif /* WIN32 */
 
 #ifdef WIN32
