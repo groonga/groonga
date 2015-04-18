@@ -580,7 +580,8 @@ daemonize(void)
     _exit(EXIT_SUCCESS);
   }
   {
-    int null_fd = GRN_OPEN("/dev/null", O_RDWR, 0);
+    int null_fd;
+    grn_open(null_fd, "/dev/null", O_RDWR);
     if (null_fd != -1) {
       dup2(null_fd, STDIN_FILENO);
       dup2(null_fd, STDOUT_FILENO);

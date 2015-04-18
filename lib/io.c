@@ -1690,7 +1690,8 @@ inline static grn_rc
 grn_fileinfo_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 {
   struct stat st;
-  if ((fi->fd = GRN_OPEN(path, flags, GRN_IO_FILE_CREATE_MODE)) == -1) {
+  grn_open(fi->fd, path, flags);
+  if (fi->fd == -1) {
     ERRNO_ERR(path);
     return ctx->rc;
   }
