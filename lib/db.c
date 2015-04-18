@@ -5243,7 +5243,11 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
       if (GRN_BULK_VSIZE(p_key)) {\
         id = addp ? grn_table_add_by_key(ctx, table, p_key, NULL)\
                   : grn_table_get_by_key(ctx, table, p_key);\
-        if (id) { GRN_RECORD_SET(ctx, dest, id); }\
+        if (id) {\
+          GRN_RECORD_SET(ctx, dest, id);\
+        } else {\
+          rc = GRN_INVALID_ARGUMENT;\
+        }\
       } else {\
         GRN_RECORD_SET(ctx, dest, GRN_ID_NIL);\
       }\
