@@ -47,8 +47,8 @@
 #define S_CHUNK                  (1 << GRN_II_W_CHUNK)
 #define W_SEGMENT                18
 #define S_SEGMENT                (1 << W_SEGMENT)
-#define W_ARRAY_ELEMENT	         3
-#define S_ARRAY_ELEMENT	         (1 << W_ARRAY_ELEMENT)
+#define W_ARRAY_ELEMENT          3
+#define S_ARRAY_ELEMENT          (1 << W_ARRAY_ELEMENT)
 #define W_ARRAY                  (W_SEGMENT - W_ARRAY_ELEMENT)
 #define ARRAY_MASK_IN_A_SEGMENT  ((1 << W_ARRAY) - 1)
 #define NOT_ASSIGNED             0xffffffff
