@@ -53,8 +53,8 @@ get_system_synonyms_file(void)
     base_dir = grn_plugin_win32_base_dir();
     base_dir_length = strlen(base_dir);
     grn_strcpy(win32_synonyms_file, MAX_PATH, base_dir);
-    strcat(win32_synonyms_file_entity, "/");
-    strcat(win32_synonyms_file_entity, relative_path);
+    strcat(win32_synonyms_file, "/");
+    strcat(win32_synonyms_file, relative_path);
   }
   return win32_synonyms_file;
 }
