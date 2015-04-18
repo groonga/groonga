@@ -67,7 +67,7 @@ static uint32_t grn_io_version_default = GRN_IO_VERSION_DEFAULT;
 
 inline static grn_rc grn_fileinfo_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags);
 inline static void grn_fileinfo_init(fileinfo *fis, int nfis);
-inline static int grn_opened(fileinfo *fi);
+inline static int grn_fileinfo_opened(fileinfo *fi);
 inline static grn_rc grn_fileinfo_close(grn_ctx *ctx, fileinfo *fi);
 #ifdef WIN32
 inline static void * grn_mmap(grn_ctx *ctx, grn_io *io,
