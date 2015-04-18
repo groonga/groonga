@@ -862,7 +862,7 @@ grn_geo_select_in_circle(grn_ctx *ctx, grn_obj *index,
       name_size = grn_obj_name(ctx, domain_object, name, GRN_TABLE_MAX_KEY_SIZE);
       grn_obj_unlink(ctx, domain_object);
     } else {
-      strcpy(name, "(null)");
+      grn_strcpy(name, GRN_TABLE_MAX_KEY_SIZE, "(null)");
       name_size = strlen(name);
     }
     ERR(GRN_INVALID_ARGUMENT,
@@ -1034,7 +1034,7 @@ in_rectangle_data_fill(grn_ctx *ctx, grn_obj *index,
       name_size = grn_obj_name(ctx, domain_object, name, GRN_TABLE_MAX_KEY_SIZE);
       grn_obj_unlink(ctx, domain_object);
     } else {
-      strcpy(name, "(null)");
+      grn_strcpy(name, GRN_TABLE_MAX_KEY_SIZE, "(null)");
       name_size = strlen(name);
     }
     ERR(GRN_INVALID_ARGUMENT,

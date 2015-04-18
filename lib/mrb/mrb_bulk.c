@@ -148,7 +148,7 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
                                         domain_name, GRN_TABLE_MAX_KEY_SIZE);
         grn_obj_unlink(ctx, domain);
       } else {
-        strcpy(domain_name, "unknown");
+        grn_strcpy(domain_name, GRN_TABLE_MAX_KEY_SIZE, "unknown");
         domain_name_size = strlen(domain_name);
       }
       snprintf(message, MESSAGE_SIZE,

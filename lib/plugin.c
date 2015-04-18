@@ -494,7 +494,7 @@ grn_plugin_get_default_system_plugins_dir(void)
 
     base_dir = grn_win32_base_dir();
     base_dir_length = strlen(base_dir);
-    strcpy(win32_plugins_dir_buffer, base_dir);
+    grn_strcpy(win32_plugins_dir_buffer, PATH_MAX, base_dir);
     strcat(win32_plugins_dir_buffer, "/");
     strcat(win32_plugins_dir_buffer, relative_path);
     win32_plugins_dir = win32_plugins_dir_buffer;
@@ -562,7 +562,7 @@ grn_plugin_find_path_mrb(grn_ctx *ctx, const char *path, size_t path_len)
     return NULL;
   }
 
-  strcpy(mrb_path, path);
+  grn_strcpy(mrb_path, PATH_MAX, path);
   strcat(mrb_path, mrb_suffix);
   return grn_plugin_find_path_raw(ctx, mrb_path);
 }
@@ -590,7 +590,7 @@ grn_plugin_find_path_so(grn_ctx *ctx, const char *path, size_t path_len)
     return NULL;
   }
 
-  strcpy(so_path, path);
+  grn_strcpy(so_path, PATH_MAX, path);
   strcat(so_path, so_suffix);
   return grn_plugin_find_path_raw(ctx, so_path);
 }
@@ -645,7 +645,7 @@ grn_plugin_find_path(grn_ctx *ctx, const char *name)
     path[0] = '\0';
   } else {
     plugins_dir = grn_plugin_get_system_plugins_dir();
-    strcpy(path, plugins_dir);
+    grn_strcpy(path, PATH_MAX, plugins_dir);
 
     dir_last_char = plugins_dir[strlen(path) - 1];
     if (dir_last_char != '/') {

@@ -606,7 +606,7 @@ grn_ctx_impl_set_current_error_message(grn_ctx *ctx)
   }
 
   grn_ctx_impl_clear_n_same_error_mssagges(ctx);
-  strcpy(ctx->impl->previous_errbuf, ctx->errbuf);
+  grn_strcpy(ctx->impl->previous_errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
 }
 
 static grn_rc

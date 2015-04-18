@@ -49,7 +49,7 @@ grn_mrb_get_default_system_ruby_scripts_dir(void)
 
     base_dir = grn_win32_base_dir();
     base_dir_length = strlen(base_dir);
-    strcpy(win32_ruby_scripts_dir_buffer, base_dir);
+    grn_strcpy(win32_ruby_scripts_dir_buffer, PATH_MAX, base_dir);
     strcat(win32_ruby_scripts_dir_buffer, "/");
     strcat(win32_ruby_scripts_dir_buffer, relative_path);
     win32_ruby_scripts_dir = win32_ruby_scripts_dir_buffer;
@@ -95,7 +95,8 @@ grn_mrb_is_absolute_path(const char *path)
 }
 
 static grn_bool
-grn_mrb_expand_script_path(grn_ctx *ctx, const char *path, char *expanded_path)
+grn_mrb_expand_script_path(grn_ctx *ctx, const char *path,
+                           char *expanded_path, size_t expanded_path_size)
 {
   const char *ruby_scripts_dir;
   char dir_last_char;
@@ -104,11 +105,11 @@ grn_mrb_expand_script_path(grn_ctx *ctx, const char *path, char *expanded_path)
   if (grn_mrb_is_absolute_path(path)) {
     expanded_path[0] = '\0';
   } else if (path[0] == '.' && path[1] == '/') {
-    strcpy(expanded_path, ctx->impl->mrb.base_directory);
+    grn_strcpy(expanded_path, expanded_path_size, ctx->impl->mrb.base_directory);
     strcat(expanded_path, "/");
   } else {
     ruby_scripts_dir = grn_mrb_get_system_ruby_scripts_dir(ctx);
-    strcpy(expanded_path, ruby_scripts_dir);
+    grn_strcpy(expanded_path, expanded_path_size, ruby_scripts_dir);
 
     dir_last_char = ruby_scripts_dir[strlen(expanded_path) - 1];
     if (dir_last_char != '/') {
@@ -145,7 +146,7 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
     return mrb_nil_value();
   }
 
-  if (!grn_mrb_expand_script_path(ctx, path, expanded_path)) {
+  if (!grn_mrb_expand_script_path(ctx, path, expanded_path, PATH_MAX)) {
     return mrb_nil_value();
   }
 
@@ -166,8 +167,8 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
     char current_base_directory[PATH_MAX];
     char *last_directory;
 
-    strcpy(current_base_directory, data->base_directory);
-    strcpy(data->base_directory, expanded_path);
+    grn_strcpy(current_base_directory, PATH_MAX, data->base_directory);
+    grn_strcpy(data->base_directory, PATH_MAX, expanded_path);
     last_directory = strrchr(data->base_directory, '/');
     if (last_directory) {
       last_directory[0] = '\0';
@@ -187,7 +188,7 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
     }
     mrb_parser_free(parser);
 
-    strcpy(data->base_directory, current_base_directory);
+    grn_strcpy(data->base_directory, PATH_MAX, current_base_directory);
   }
 
   return result;

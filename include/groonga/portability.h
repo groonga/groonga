@@ -94,6 +94,14 @@
 #endif /* WIN32 */
 
 #ifdef WIN32
+# define grn_strcpy(dest, dest_size, src)       \
+  strcpy_s((dest), (dest_size), (src))
+#else /* WIN32 */
+# define grn_strcpy(dest, dest_size, src)       \
+  strcpy((dest), (src), (src))
+#endif /* WIN32 */
+
+#ifdef WIN32
 # define grn_strncpy(dest, dest_size, src, n)   \
   strncpy_s((dest), (dest_size), (src), (n))
 #else /* WIN32 */

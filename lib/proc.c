@@ -2610,7 +2610,7 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                    GRN_EXPR_SYNTAX_SCRIPT);
     if (ctx->rc) {
       char original_error_message[GRN_CTX_MSGSIZE];
-      strcpy(original_error_message, ctx->errbuf);
+      grn_strcpy(original_error_message, GRN_CTX_MSGSIZE, ctx->errbuf);
       rc = ctx->rc;
       ERR(rc,
           "[table][record][delete] failed to parse filter: "

@@ -3483,7 +3483,7 @@ _grn_ii_create(grn_ctx *ctx, grn_ii *ii, const char *path, grn_obj *lexicon, uin
                       S_SEGMENT, MAX_PSEG, grn_io_auto, GRN_IO_EXPIRE_SEGMENT);
   if (!seg) { return NULL; }
   if (path) {
-    strcpy(path2, path);
+    grn_strcpy(path2, PATH_MAX, path);
     strcat(path2, ".c");
     chunk = grn_io_create(ctx, path2, 0, S_CHUNK, GRN_II_MAX_CHUNK, grn_io_auto,
                           GRN_IO_EXPIRE_SEGMENT);
@@ -3602,7 +3602,7 @@ grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
     return NULL;
   }
   if (strlen(path) + 6 >= PATH_MAX) { return NULL; }
-  strcpy(path2, path);
+  grn_strcpy(path2, PATH_MAX, path);
   strcat(path2, ".c");
   seg = grn_io_open(ctx, path, grn_io_auto);
   if (!seg) { return NULL; }

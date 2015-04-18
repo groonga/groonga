@@ -1267,7 +1267,7 @@ get_sysinfo(const char *path, char *result, int olen)
     sprintf(tmpbuf, "date\t%s\n", grntest_date);
     strcat(result, tmpbuf);
   } else {
-    strcpy(result, "{");
+    grn_strcpy(result, olen, "{");
     sprintf(tmpbuf, "\"script\": \"%s.scr\",\n", grntest_scriptname);
     strcat(result, tmpbuf);
     sprintf(tmpbuf, "  \"user\": \"%s\",\n", grntest_username);
@@ -1380,7 +1380,8 @@ get_sysinfo(const char *path, char *result, int olen)
   int minfo = 0;
   int unevictable = 0;
   int mlocked = 0;
-  char cpustring[256];
+#define CPU_STRING_SIZE 256
+  char cpu_string[CPU_STRING_SIZE];
   struct utsname ubuf;
   struct statvfs vfsbuf;
 
@@ -1393,7 +1394,7 @@ get_sysinfo(const char *path, char *result, int olen)
     sprintf(tmpbuf, "date\t%s\n", grntest_date);
     strcat(result, tmpbuf);
   } else {
-    strcpy(result, "{");
+    grn_strcpy(result, olen, "{");
     sprintf(tmpbuf, "\"script\": \"%s.scr\",\n", grntest_scriptname);
     strcat(result, tmpbuf);
     sprintf(tmpbuf, "  \"user\": \"%s\",\n", grntest_username);
@@ -1410,16 +1411,18 @@ get_sysinfo(const char *path, char *result, int olen)
   while (fgets(tmpbuf, 256, fp) != NULL) {
     tmpbuf[strlen(tmpbuf)-1] = '\0';
     if (!strncmp(tmpbuf, "model name\t: ", 13)) {
-      strcpy(cpustring, &tmpbuf[13]);
+      grn_strcpy(cpu_string, CPU_STRING_SIZE, &tmpbuf[13]);
     }
   }
   fclose(fp);
+#undef CPU_STRING_SIZE
+
   cpunum = sysconf(_SC_NPROCESSORS_CONF);
 
   if (grntest_outtype == OUT_TSV) {
-    sprintf(tmpbuf, "%s\n", cpustring);
+    sprintf(tmpbuf, "%s\n", cpu_string);
   } else {
-    sprintf(tmpbuf, "  \"CPU\": \"%s\",\n", cpustring);
+    sprintf(tmpbuf, "  \"CPU\": \"%s\",\n", cpu_string);
   }
   strcat(result, tmpbuf);
 
@@ -1551,7 +1554,7 @@ start_server(const char *dbpath, int r)
     exit(1);
   }
 
-  strcpy(tmpbuf, groonga_path);
+  grn_strcpy(tmpbuf, BUF_LEN, groonga_path);
   strcat(tmpbuf, " -s --protocol ");
   strcat(tmpbuf, groonga_protocol);
   strcat(tmpbuf, " -p ");
@@ -1767,7 +1770,7 @@ parse_line(char *buf, int start, int end, int num)
         return 15;
       }
     }
-    strcpy(grntest_job[num].logfile, tmpbuf);
+    grn_strcpy(grntest_job[num].logfile, BUF_LEN, tmpbuf);
     return 0;
   } else {
     grntest_job[num].concurrency = grntest_atoi(tmpbuf, tmpbuf + j, NULL);
@@ -2427,10 +2430,10 @@ ftp_sub(const char *user, const char *passwd, const char *host,
 
 #ifdef WIN32
   _splitpath(filename, NULL, NULL, fname, ext);
-  strcpy(base, fname);
+  grn_strcpy(base, BUF_LEN, fname);
   strcat(base, ext);
 #else
-  strcpy(buf, filename);
+  grn_strcpy(buf, BUF_LEN, filename);
   base = basename(buf);
 #endif /* WIN32 */
 
@@ -2471,7 +2474,7 @@ ftp_sub(const char *user, const char *passwd, const char *host,
   }
   if (!strncmp(buf, "213", 3)) {
     retval[BUF_LEN-2] = '\0';
-    strcpy(retval, get_ftp_date(buf));
+    grn_strcpy(retval, BUF_LEN - 2, get_ftp_date(buf));
     if (retval[BUF_LEN-2] != '\0' ) {
       fprintf(stderr, "buffer over run in ftp\n");
       exit(1);
@@ -2534,7 +2537,7 @@ static int
 get_username(char *name, int maxlen)
 {
   char *env=NULL;
-  strcpy(name, "nobody");
+  grn_strcpy(name, maxlen, "nobody");
 #ifdef WIN32
   env = getenv("USERNAME");
 #else
@@ -2545,7 +2548,7 @@ get_username(char *name, int maxlen)
     exit(1);
   }
   if (env) {
-    strcpy(name, env);
+    grn_strcpy(name, maxlen, env);
   }
   return 0;
 }
@@ -2577,7 +2580,7 @@ get_date(char *date, time_t *sec)
 }
 
 static int
-get_scriptname(const char *path, char *name, const char *suffix)
+get_scriptname(const char *path, char *name, size_t name_len, const char *suffix)
 {
   int slen = strlen(suffix);
   int len = strlen(path);
@@ -2591,7 +2594,7 @@ get_scriptname(const char *path, char *name, const char *suffix)
     exit(1);
   }
 
-  strcpy(name, path);
+  grn_strcpy(name, name_len, path);
   if (strncmp(&name[len-slen], suffix, slen)) {
     name[0] = '\0';
     return 0;
@@ -2874,7 +2877,7 @@ check_script(grn_ctx *ctx, const char *script_file_path)
   while (grn_text_fgets(ctx, &line, script_file) == GRN_SUCCESS) {
     GRN_TEXT_VALUE(&line)[GRN_TEXT_LEN(&line) - 1] = '\0';
     get_token(GRN_TEXT_VALUE(&line), token, BUF_LEN, &next);
-    strcpy(prev, token);
+    grn_strcpy(prev, BUF_LEN, token);
 
     while (next) {
       get_token(next, token, BUF_LEN, &next);
@@ -2882,10 +2885,10 @@ check_script(grn_ctx *ctx, const char *script_file_path)
         grntest_serverport = grn_atoi(token, token + strlen(token), NULL);
       }
       if (!strncmp(prev, "SET_HOST", 8)) {
-        strcpy(grntest_serverhost, token);
+        grn_strcpy(grntest_serverhost, BUF_LEN, token);
         grntest_remote_mode = 1;
       }
-      strcpy(prev, token);
+      grn_strcpy(prev, BUF_LEN, token);
     }
   }
   grn_obj_unlink(ctx, &line);
@@ -3045,10 +3048,10 @@ main(int argc, char **argv)
     usage();
   }
 
-  strcpy(grntest_serverhost, DEFAULT_DEST);
+  grn_strcpy(grntest_serverhost, BUF_LEN, DEFAULT_DEST);
   if (hoststr) {
     grntest_remote_mode = 1;
-    strcpy(grntest_serverhost, hoststr);
+    grn_strcpy(grntest_serverhost, BUF_LEN, hoststr);
   }
   grntest_serverport = DEFAULT_PORT;
   if (portstr) {
@@ -3086,7 +3089,7 @@ main(int argc, char **argv)
     }
   }
 
-  get_scriptname(scrname, grntest_scriptname, ".scr");
+  get_scriptname(scrname, grntest_scriptname, BUF_LEN, ".scr");
   get_username(grntest_username, 256);
 
   GRN_TIME_INIT(&grntest_starttime, 0);

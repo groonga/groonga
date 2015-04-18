@@ -142,7 +142,7 @@ line_editor_init(int argc __attribute__((unused)), char *argv[])
   setlocale(LC_ALL, "");
 
   if (strlen(HOME_PATH) + strlen(HISTORY_PATH) < PATH_MAX) {
-    strcpy(line_editor_history_path, HOME_PATH);
+    grn_strcpy(line_editor_history_path, PATH_MAX, HOME_PATH);
     strcat(line_editor_history_path, HISTORY_PATH);
   } else {
     line_editor_history_path[0] = '\0';
@@ -2228,7 +2228,7 @@ config_file_register(const char *path, const grn_str_getopt_opt *opts,
   char *args[4];
 
   name_buf[0] = name_buf[1] = '-';
-  strcpy(name_buf + 2, name);
+  grn_strcpy(name_buf + 2, CONFIG_FILE_MAX_NAME_LENGTH + 1, name);
 
   if (value) {
     const size_t entry_size = sizeof(config_file_entry) + value_length + 1;
@@ -2238,7 +2238,7 @@ config_file_register(const char *path, const grn_str_getopt_opt *opts,
               (unsigned int)entry_size);
       return CONFIG_FILE_MALLOC_ERROR;
     }
-    strcpy((char *)(entry + 1), value);
+    grn_strcpy((char *)(entry + 1), value_length + 1, value);
     entry->next = config_file_entry_head;
     if (!config_file_entry_head) {
       if (atexit(config_file_clear)) {
@@ -2438,7 +2438,7 @@ init_default_settings(void)
     if (document_root_length >= PATH_MAX) {
       fprintf(stderr, "can't use default root: too long path\n");
     } else {
-      strcpy(win32_default_document_root, grn_win32_base_dir());
+      grn_strcpy(win32_default_document_root, PATH_MAX, grn_win32_base_dir());
       strcat(win32_default_document_root, "/");
       strcat(win32_default_document_root, GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT);
       default_document_root = win32_default_document_root;
@@ -2998,9 +2998,9 @@ main(int argc, char **argv)
               bind_address_arg, (unsigned int)bind_address_length, HOST_NAME_MAX);
       return EXIT_FAILURE;
     }
-    strcpy(bind_address, bind_address_arg);
+    grn_strcpy(bind_address, HOST_NAME_MAX + 1, bind_address_arg);
   } else {
-    strcpy(bind_address, default_bind_address);
+    grn_strcpy(bind_address, HOST_NAME_MAX + 1, default_bind_address);
   }
 
   if (hostname_arg) {
@@ -3011,9 +3011,9 @@ main(int argc, char **argv)
               hostname_arg, (unsigned int)hostname_length, HOST_NAME_MAX);
       return EXIT_FAILURE;
     }
-    strcpy(hostname, hostname_arg);
+    grn_strcpy(hostname, HOST_NAME_MAX + 1, hostname_arg);
   } else {
-    strcpy(hostname, default_hostname);
+    grn_strcpy(hostname, HOST_NAME_MAX + 1, default_hostname);
   }
 
   if (document_root_arg) {
