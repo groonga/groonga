@@ -1691,11 +1691,11 @@ grn_fileinfo_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 {
   struct stat st;
   if ((fi->fd = GRN_OPEN(path, flags, GRN_IO_FILE_CREATE_MODE)) == -1) {
-    SERR(path);
+    ERRNO_ERR(path);
     return ctx->rc;
   }
   if (fstat(fi->fd, &st) == -1) {
-    SERR(path);
+    ERRNO_ERR(path);
     return ctx->rc;
   }
   fi->dev = st.st_dev;
