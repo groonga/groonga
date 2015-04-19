@@ -563,7 +563,9 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
   GRN_HASH_EACH(ctx, ev->hash, eh, &pfd, &dummy, &com, {
     if ((com->events & GRN_COM_POLLIN)) { FD_SET(*pfd, &rfds); }
     if ((com->events & GRN_COM_POLLOUT)) { FD_SET(*pfd, &wfds); }
+# ifndef WIN32
     if (*pfd > nfds) { nfds = *pfd; }
+# endif /* WIN32 */
   });
   nevents = select(nfds + 1, &rfds, &wfds, NULL, (timeout >= 0) ? &tv : NULL);
   if (nevents < 0) {
