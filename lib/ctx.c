@@ -169,16 +169,21 @@ grn_timeval2tm(grn_ctx *ctx, grn_timeval *tv, struct tm *tm_buffer)
 }
 
 grn_rc
-grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf)
+grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf, size_t buf_size)
 {
   struct tm tm;
   struct tm *ltm;
   ltm = grn_timeval2tm(ctx, tv, &tm);
-  snprintf(buf, GRN_TIMEVAL_STR_SIZE - 1, GRN_TIMEVAL_STR_FORMAT,
-           ltm->tm_year + 1900, ltm->tm_mon + 1, ltm->tm_mday,
-           ltm->tm_hour, ltm->tm_min, ltm->tm_sec,
-           (int)(GRN_TIME_NSEC_TO_USEC(tv->tv_nsec)));
-  buf[GRN_TIMEVAL_STR_SIZE - 1] = '\0';
+  grn_snprintf(buf, buf_size, GRN_TIMEVAL_STR_SIZE,
+               GRN_TIMEVAL_STR_FORMAT,
+               ltm->tm_year + 1900, ltm->tm_mon + 1, ltm->tm_mday,
+               ltm->tm_hour, ltm->tm_min, ltm->tm_sec,
+               (int)(GRN_TIME_NSEC_TO_USEC(tv->tv_nsec)));
+  if (buf_size > GRN_TIMEVAL_STR_SIZE) {
+    buf[GRN_TIMEVAL_STR_SIZE - 1] = '\0';
+  } else {
+    buf[buf_size - 1] = '\0';
+  }
   return ctx->rc;
 }
 

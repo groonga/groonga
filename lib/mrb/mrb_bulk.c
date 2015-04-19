@@ -151,11 +151,11 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
         grn_strcpy(domain_name, GRN_TABLE_MAX_KEY_SIZE, "unknown");
         domain_name_size = strlen(domain_name);
       }
-      snprintf(message, MESSAGE_SIZE,
-               "unsupported bulk value type: <%d>(%.*s)",
-               bulk->header.domain,
-               domain_name_size,
-               domain_name);
+      grn_snprintf(message, MESSAGE_SIZE, MESSAGE_SIZE,
+                   "unsupported bulk value type: <%d>(%.*s)",
+                   bulk->header.domain,
+                   domain_name_size,
+                   domain_name);
       mrb_raise(mrb, E_RANGE_ERROR, message);
 #undef MESSAGE_SIZE
     }

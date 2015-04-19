@@ -577,7 +577,7 @@ extern grn_timeval grn_starttime;
 #define GRN_TIME_USEC_TO_NSEC(usec) ((usec) * GRN_TIME_NSEC_PER_USEC)
 
 GRN_API grn_rc grn_timeval_now(grn_ctx *ctx, grn_timeval *tv);
-GRN_API grn_rc grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf);
+GRN_API grn_rc grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf, size_t buf_size);
 struct tm *grn_timeval2tm(grn_ctx *ctx, grn_timeval *tv, struct tm *tm_buffer);
 grn_rc grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv);
 

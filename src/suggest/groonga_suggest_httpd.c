@@ -249,9 +249,11 @@ log_send(struct evkeyvalq *output_headers, struct evbuffer *res_buf,
                                       &(thd->pass_through_parameters));
     }
     if (content_length >= 0) {
-      char num_buf[16];
-      snprintf(num_buf, 16, "%d", content_length);
+#define NUM_BUF_SIZE 16
+      char num_buf[NUM_BUF_SIZE];
+      grn_snprintf(num_buf, NUM_BUF_SIZE, NUM_BUF_SIZE, "%d", content_length);
       evhttp_add_header(output_headers, "Content-Length", num_buf);
+#undef NUM_BUF_SIZE
     }
   }
 }
@@ -321,10 +323,18 @@ generic_handler(struct evhttp_request *req, void *arg)
           time(&n);
           t_st = localtime(&n);
 
-          snprintf(p, PATH_MAX, "%s%04d%02d%02d%02d%02d%02d-%02d",
-            thd->log_base_path,
-            t_st->tm_year + 1900, t_st->tm_mon + 1, t_st->tm_mday,
-            t_st->tm_hour, t_st->tm_min, t_st->tm_sec, thd->thread_id);
+          grn_snprintf(p,
+                       PATH_MAX,
+                       PATH_MAX,
+                       "%s%04d%02d%02d%02d%02d%02d-%02d",
+                       thd->log_base_path,
+                       t_st->tm_year + 1900,
+                       t_st->tm_mon + 1,
+                       t_st->tm_mday,
+                       t_st->tm_hour,
+                       t_st->tm_min,
+                       t_st->tm_sec,
+                       thd->thread_id);
 
           if (!(thd->log_file = fopen(p, "a"))) {
             print_error("cannot open log_file %s.", p);

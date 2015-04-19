@@ -926,7 +926,8 @@ grn_com_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
 #ifdef AI_NUMERICSERV
   hints.ai_flags = AI_NUMERICSERV;
 #endif
-  snprintf(port_string, sizeof(port_string), "%d", port);
+  grn_snprintf(port_string, sizeof(port_string), sizeof(port_string),
+               "%d", port);
 
   getaddrinfo_result = getaddrinfo(dest, port_string, &hints, &addrinfo_list);
   if (getaddrinfo_result != 0) {
@@ -1034,7 +1035,8 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
   if (!bind_address) {
     bind_address = "0.0.0.0";
   }
-  snprintf(port_string, sizeof(port_string), "%d", port);
+  grn_snprintf(port_string, sizeof(port_string), sizeof(port_string),
+               "%d", port);
   memset(&hints, 0, sizeof(struct addrinfo));
   hints.ai_family = PF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;

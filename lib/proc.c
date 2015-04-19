@@ -1262,8 +1262,10 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       drilldown->label_len = label_len;
 
 #define GET_VAR(name)\
-      snprintf(key_name, GRN_TABLE_MAX_KEY_SIZE,\
-               "drilldown[%.*s]." # name, label_len, label);\
+      grn_snprintf(key_name,                                            \
+                   GRN_TABLE_MAX_KEY_SIZE,                              \
+                   GRN_TABLE_MAX_KEY_SIZE,                              \
+                   "drilldown[%.*s]." # name, label_len, label);        \
       name = GRN_PROC_GET_VAR(key_name);
 
       GET_VAR(keys);

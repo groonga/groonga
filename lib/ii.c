@@ -3540,7 +3540,8 @@ grn_ii_remove(grn_ctx *ctx, const char *path)
   char buffer[PATH_MAX];
   if (!path || strlen(path) > PATH_MAX - 4) { return GRN_INVALID_ARGUMENT; }
   if ((rc = grn_io_remove(ctx, path))) { goto exit; }
-  snprintf(buffer, PATH_MAX, "%s.c", path);
+  grn_snprintf(buffer, PATH_MAX, PATH_MAX,
+               "%s.c", path);
   rc = grn_io_remove(ctx, buffer);
 exit :
   return rc;
@@ -7724,8 +7725,8 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
       if (ii_buffer->counters) {
         ii_buffer->block_buf = GRN_MALLOCN(grn_id, II_BUFFER_BLOCK_SIZE);
         if (ii_buffer->block_buf) {
-          snprintf(ii_buffer->tmpfpath, PATH_MAX,
-                   "%sXXXXXX", grn_io_path(ii->seg));
+          grn_snprintf(ii_buffer->tmpfpath, PATH_MAX, PATH_MAX,
+                       "%sXXXXXX", grn_io_path(ii->seg));
           ii_buffer->block_buf_size = II_BUFFER_BLOCK_SIZE;
           ii_buffer->tmpfd = grn_mkstemp(ii_buffer->tmpfpath);
           if (ii_buffer->tmpfd != -1) {

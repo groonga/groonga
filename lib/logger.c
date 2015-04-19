@@ -42,12 +42,12 @@ rotate_log_file(grn_ctx *ctx, const char *current_path)
 
   grn_timeval_now(ctx, &now);
   tm = grn_timeval2tm(ctx, &now, &tm_buffer);
-  snprintf(rotated_path, PATH_MAX,
-           "%s.%04d-%02d-%02d-%02d-%02d-%02d-%06d",
-           current_path,
-           tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
-           tm->tm_hour, tm->tm_min, tm->tm_sec,
-           (int)(GRN_TIME_NSEC_TO_USEC(now.tv_nsec)));
+  grn_snprintf(rotated_path, PATH_MAX, PATH_MAX,
+               "%s.%04d-%02d-%02d-%02d-%02d-%02d-%06d",
+               current_path,
+               tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
+               tm->tm_hour, tm->tm_min, tm->tm_sec,
+               (int)(GRN_TIME_NSEC_TO_USEC(now.tv_nsec)));
   rename(current_path, rotated_path);
 }
 
@@ -288,7 +288,7 @@ grn_logger_put(grn_ctx *ctx, grn_log_level level,
     if (current_logger.flags & GRN_LOG_TIME) {
       grn_timeval tv;
       grn_timeval_now(ctx, &tv);
-      grn_timeval2str(ctx, &tv, tbuf);
+      grn_timeval2str(ctx, &tv, tbuf, TBUFSIZE);
     }
     if (current_logger.flags & GRN_LOG_MESSAGE) {
       va_list argp;
@@ -300,7 +300,8 @@ grn_logger_put(grn_ctx *ctx, grn_log_level level,
       mbuf[0] = '\0';
     }
     if (current_logger.flags & GRN_LOG_LOCATION) {
-      snprintf(lbuf, LBUFSIZE - 1, "%d %s:%d %s()", getpid(), file, line, func);
+      grn_snprintf(lbuf, LBUFSIZE, LBUFSIZE,
+                   "%d %s:%d %s()", getpid(), file, line, func);
       lbuf[LBUFSIZE - 1] = '\0';
     } else {
       lbuf[0] = '\0';
@@ -523,11 +524,12 @@ grn_query_logger_put(grn_ctx *ctx, unsigned int flag, const char *mark,
     grn_timeval tv;
     timestamp[0] = '\0';
     grn_timeval_now(ctx, &tv);
-    grn_timeval2str(ctx, &tv, timestamp);
+    grn_timeval2str(ctx, &tv, timestamp, TIMESTAMP_BUFFER_SIZE);
   }
 
   if (flag & (GRN_QUERY_LOG_COMMAND | GRN_QUERY_LOG_DESTINATION)) {
-    snprintf(info, INFO_BUFFER_SIZE - 1, "%p|%s", ctx, mark);
+    grn_snprintf(info, INFO_BUFFER_SIZE, INFO_BUFFER_SIZE,
+                 "%p|%s", ctx, mark);
     info[INFO_BUFFER_SIZE - 1] = '\0';
   } else {
     grn_timeval tv;
@@ -537,8 +539,8 @@ grn_query_logger_put(grn_ctx *ctx, unsigned int flag, const char *mark,
       (uint64_t)(tv.tv_sec - ctx->impl->tv.tv_sec) * GRN_TIME_NSEC_PER_SEC +
       (tv.tv_nsec - ctx->impl->tv.tv_nsec);
 
-    snprintf(info, INFO_BUFFER_SIZE - 1,
-             "%p|%s%015" GRN_FMT_INT64U " ", ctx, mark, elapsed_time);
+    grn_snprintf(info, INFO_BUFFER_SIZE, INFO_BUFFER_SIZE,
+                 "%p|%s%015" GRN_FMT_INT64U " ", ctx, mark, elapsed_time);
     info[INFO_BUFFER_SIZE - 1] = '\0';
   }
 

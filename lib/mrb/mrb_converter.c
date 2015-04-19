@@ -194,8 +194,8 @@ grn_mrb_class_from_grn_obj(mrb_state *mrb, grn_obj *object)
   if (!klass) {
 #define BUFFER_SIZE 1024
     char buffer[BUFFER_SIZE];
-    snprintf(buffer, BUFFER_SIZE - 1,
-             "can't find class for object type: %#x", object->header.type);
+    grn_snprintf(buffer, BUFFER_SIZE, BUFFER_SIZE,
+                 "can't find class for object type: %#x", object->header.type);
     mrb_raise(mrb, E_ARGUMENT_ERROR, buffer);
 #undef BUFFER_SIZE
   }
