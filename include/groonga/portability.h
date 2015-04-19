@@ -119,7 +119,7 @@
 
 #ifdef WIN32
 # define grn_snprintf(dest, dest_size, n, format, ...)          \
-  _snprintf_s((dest), (dest_size), (n), (format), __VA_ARGS__)
+  _snprintf_s((dest), (dest_size), (n) - 1, (format), __VA_ARGS__)
 #else /* WIN32 */
 # define grn_snprintf(dest, dest_size, n, format, ...)          \
   snprintf((dest), (n), (format), __VA_ARGS__)
