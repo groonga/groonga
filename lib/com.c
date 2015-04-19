@@ -560,13 +560,26 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
   FD_ZERO(&wfds);
   ctx->errlvl = GRN_OK;
   ctx->rc = GRN_SUCCESS;
-  GRN_HASH_EACH(ctx, ev->hash, eh, &pfd, &dummy, &com, {
-    if ((com->events & GRN_COM_POLLIN)) { FD_SET(*pfd, &rfds); }
-    if ((com->events & GRN_COM_POLLOUT)) { FD_SET(*pfd, &wfds); }
+  {
+    grn_hash_cursor *cursor;
+    cursor = grn_hash_cursor_open(ctx, ev->hash, NULL, 0, NULL, 0, 0, -1, 0);
+    if (cursor) {
+      grn_id id;
+      while ((id = grn_hash_cursor_next(ctx, cursor))) {
+        grn_hash_cursor_get_key_value(ctx,
+                                      cursor,
+                                      (void **)(&pfd),
+                                      &dummy,
+                                      (void **)(&com));
+        if ((com->events & GRN_COM_POLLIN)) { FD_SET(*pfd, &rfds); }
+        if ((com->events & GRN_COM_POLLOUT)) { FD_SET(*pfd, &wfds); }
 # ifndef WIN32
-    if (*pfd > nfds) { nfds = *pfd; }
+        if (*pfd > nfds) { nfds = *pfd; }
 # endif /* WIN32 */
-  });
+      }
+      grn_hash_cursor_close(ctx, cursor);
+    }
+  }
   nevents = select(nfds + 1, &rfds, &wfds, NULL, (timeout >= 0) ? &tv : NULL);
   if (nevents < 0) {
     SOERR("select");
