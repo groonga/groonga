@@ -482,7 +482,7 @@ check_mecab_dictionary_encoding(grn_ctx *ctx)
     int have_same_encoding_dictionary = 0;
 
     encoding = GRN_CTX_GET_ENCODING(ctx);
-    have_same_encoding_dictionary = encoding == get_mecab_encoding(mecab);
+    have_same_encoding_dictionary = (encoding == get_mecab_encoding(mecab));
     mecab_destroy(mecab);
 
     if (!have_same_encoding_dictionary) {
