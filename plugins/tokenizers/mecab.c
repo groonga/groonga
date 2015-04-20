@@ -479,7 +479,7 @@ check_mecab_dictionary_encoding(grn_ctx *ctx)
   mecab = mecab_new2("-Owakati");
   if (mecab) {
     grn_encoding encoding;
-    int have_same_encoding_dictionary = 0;
+    grn_bool have_same_encoding_dictionary;
 
     encoding = GRN_CTX_GET_ENCODING(ctx);
     have_same_encoding_dictionary = (encoding == get_mecab_encoding(mecab));
