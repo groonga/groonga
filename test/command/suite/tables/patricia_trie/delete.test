@@ -1,0 +1,17 @@
+table_create names TABLE_PAT_KEY ShortText
+
+load --table names
+[
+{"_key": "2"},
+{"_key": "1"},
+{"_key": "3"}
+]
+
+delete --table names --id 1
+select names
+
+delete --table names --id 2
+select names
+
+delete --table names --id 3
+select names
