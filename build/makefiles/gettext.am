@@ -76,10 +76,11 @@ edit-po-build-stamp: pot-build-stamp
 	$(MAKE) $(edit_po_files)
 	@touch $@
 
-mo-build-stamp: edit-po-build-stamp
+mo_build_stamp_dependencies = edit-po-build-stamp
+if DOCUMENT_BUILDABLE
+mo_build_stamp_dependencies += $(edit_po_files)
+endif
+
+mo-build-stamp: $(mo-build_stamp_dependencies)
 	$(MAKE) $(mo_files)
 	@touch $@
-
-if DOCUMENT_BUILDABLE
-mo-build-stamp: $(edit_po_files)
-endif
