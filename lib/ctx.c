@@ -577,7 +577,7 @@ grn_ctx_set_next_expr(grn_ctx *ctx, grn_obj *expr)
 }
 
 static void
-grn_ctx_impl_clear_n_same_error_mssagges(grn_ctx *ctx)
+grn_ctx_impl_clear_n_same_error_messagges(grn_ctx *ctx)
 {
   if (ctx->impl->n_same_error_messages == 0) {
     return;
@@ -610,7 +610,7 @@ grn_ctx_impl_set_current_error_message(grn_ctx *ctx)
     return;
   }
 
-  grn_ctx_impl_clear_n_same_error_mssagges(ctx);
+  grn_ctx_impl_clear_n_same_error_messagges(ctx);
   grn_strcpy(ctx->impl->previous_errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
 }
 
@@ -694,7 +694,7 @@ grn_ctx_fin(grn_ctx *ctx)
     CRITICAL_SECTION_LEAVE(grn_glock);
   }
   if (ctx->impl) {
-    grn_ctx_impl_clear_n_same_error_mssagges(ctx);
+    grn_ctx_impl_clear_n_same_error_messagges(ctx);
     if (ctx->impl->finalizer) {
       ctx->impl->finalizer(ctx, 0, NULL, &(ctx->user_data));
     }
