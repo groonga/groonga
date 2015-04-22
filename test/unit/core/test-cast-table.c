@@ -122,13 +122,14 @@ cut_teardown(void)
 }
 
 static void
-cast_text(const gchar *text)
+cast_text(grn_rc expected_rc, const gchar *text)
 {
   grn_obj_reinit(&context, &src, GRN_DB_TEXT, 0);
   if (text) {
     GRN_TEXT_PUTS(&context, &src, text);
   }
-  grn_test_assert(grn_obj_cast(&context, &src, &dest, GRN_FALSE));
+  grn_test_assert_equal_rc(expected_rc,
+                           grn_obj_cast(&context, &src, &dest, GRN_FALSE));
 }
 
 void
@@ -154,11 +155,12 @@ test_text_to_table(gconstpointer data)
   gsize expected_size;
 
   grn_obj_reinit(&context, &dest, users, 0);
-  cast_text(gcut_data_get_string(data, "text"));
   expected_size = gcut_data_get_size(data, "expected-size");
   if (expected_size == 0) {
+    cast_text(GRN_INVALID_ARGUMENT, gcut_data_get_string(data, "text"));
     cut_assert_equal_uint(0, GRN_BULK_VSIZE(&dest));
   } else {
+    cast_text(GRN_SUCCESS, gcut_data_get_string(data, "text"));
     grn_test_assert_equal_record_id(&context,
                                     grn_ctx_at(&context, users),
                                     gcut_data_get_uint(data, "expected"),
