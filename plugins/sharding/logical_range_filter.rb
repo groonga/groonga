@@ -372,7 +372,6 @@ module Groonga
 
         def build_range_search_flags(min_border, max_border)
           flags = TableCursorFlags::BY_KEY
-          p @context.order
           case @context.order
           when :ascending
             flags |= TableCursorFlags::ASCENDING
