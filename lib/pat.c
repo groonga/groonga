@@ -1137,14 +1137,18 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
     di->stat = DL_PHASE2;
     di->d = r;
     if (otherside) {
-      PAT_AT(pat, otherside, rno);
-      if (rno && c0 < PAT_CHK(rno) && PAT_CHK(rno) <= c) {
-        if (!delinfo_search(pat, otherside)) {
-          GRN_LOG(ctx, GRN_LOG_ERROR, "no delinfo found %d", otherside);
+      if (otherside == r) {
+        otherside = 0;
+      } else {
+        PAT_AT(pat, otherside, rno);
+        if (rno && c0 < PAT_CHK(rno) && PAT_CHK(rno) <= c) {
+          if (!delinfo_search(pat, otherside)) {
+            GRN_LOG(ctx, GRN_LOG_DEBUG, "no delinfo found %d", otherside);
+          }
+          PAT_CHK_SET(rno, 0);
         }
-        PAT_CHK_SET(rno, 0);
+        if (proot == p0 && !rno->check) { rno->lr[0] = rno->lr[1] = otherside; }
       }
-      if (proot == p0 && !rno->check) { rno->lr[0] = rno->lr[1] = otherside; }
     }
     *p0 = otherside;
   } else {
@@ -1201,14 +1205,18 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
       if (proot == p0 && !rn0->check) { rn0->lr[0] = rn0->lr[1] = otherside; }
     } else {
       if (otherside) {
-        PAT_AT(pat, otherside, rno);
-        if (rno && c0 < PAT_CHK(rno) && PAT_CHK(rno) <= c) {
-          if (!delinfo_search(pat, otherside)) {
-            GRN_LOG(ctx, GRN_LOG_ERROR, "no delinfo found %d", otherside);
+        if (otherside == r) {
+          otherside = 0;
+        } else {
+          PAT_AT(pat, otherside, rno);
+          if (rno && c0 < PAT_CHK(rno) && PAT_CHK(rno) <= c) {
+            if (!delinfo_search(pat, otherside)) {
+              GRN_LOG(ctx, GRN_LOG_ERROR, "no delinfo found %d", otherside);
+            }
+            PAT_CHK_SET(rno, 0);
           }
-          PAT_CHK_SET(rno, 0);
+          if (proot == p0 && !rno->check) { rno->lr[0] = rno->lr[1] = otherside; }
         }
-        if (proot == p0 && !rno->check) { rno->lr[0] = rno->lr[1] = otherside; }
       }
       *p0 = otherside;
     }
