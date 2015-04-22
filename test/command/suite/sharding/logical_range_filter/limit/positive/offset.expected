@@ -1,0 +1,55 @@
+load --table Logs_20150203
+[
+{"timestamp": "2015-02-03 23:59:58", "memo": "2015-02-03 23:59:58", "message": "Start"},
+{"timestamp": "2015-02-03 23:59:58", "memo": "2015-02-03 23:59:58", "message": "Shutdown"},
+{"timestamp": "2015-02-03 23:59:59", "memo": "2015-02-03 23:59:59", "message": "Start"},
+{"timestamp": "2015-02-03 23:59:59", "memo": "2015-02-03 23:59:59", "message": "Shutdown"}
+]
+[[0,0.0,0.0],4]
+load --table Logs_20150204
+[
+{"timestamp": "2015-02-04 00:00:00", "memo": "2015-02-04 00:00:00", "message": "Start"},
+{"timestamp": "2015-02-04 00:00:00", "memo": "2015-02-04 00:00:00", "message": "Shutdown"},
+{"timestamp": "2015-02-04 00:00:01", "memo": "2015-02-04 00:00:01", "message": "Start"},
+{"timestamp": "2015-02-04 00:00:01", "memo": "2015-02-04 00:00:01", "message": "Shutdown"},
+{"timestamp": "2015-02-04 23:59:59", "memo": "2015-02-04 23:59:59", "message": "Start"},
+{"timestamp": "2015-02-04 23:59:59", "memo": "2015-02-04 23:59:59", "message": "Shutdown"}
+]
+[[0,0.0,0.0],6]
+load --table Logs_20150205
+[
+{"timestamp": "2015-02-05 00:00:00", "memo": "2015-02-05 00:00:00", "message": "Start"},
+{"timestamp": "2015-02-05 00:00:00", "memo": "2015-02-05 00:00:00", "message": "Shutdown"},
+{"timestamp": "2015-02-05 00:00:01", "memo": "2015-02-05 00:00:01", "message": "Start"},
+{"timestamp": "2015-02-05 00:00:01", "memo": "2015-02-05 00:00:01", "message": "Shutdown"}
+]
+[[0,0.0,0.0],4]
+logical_range_filter Logs timestamp   --filter 'message == "Shutdown"'   --min "2015-02-03 23:59:59"   --min_border "include"   --max "2015-02-05 00:00:00"   --max_border "include"   --offset 2   --limit 1
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "memo",
+        "ShortText"
+      ],
+      [
+        "message",
+        "Text"
+      ],
+      [
+        "timestamp",
+        "Time"
+      ]
+    ],
+    [
+      "2015-02-04 00:00:01",
+      "Shutdown",
+      1422975601.0
+    ]
+  ]
+]
