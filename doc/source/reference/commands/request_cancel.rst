@@ -66,7 +66,7 @@ request may be ignored.
 
 You can send cancel request for the same request ID multiple times. If
 the target request is canceled or finished, ``"canceled"`` value is
-changed to ``false`` from ``true``::
+changed to ``false`` from ``true`` in return value::
 
   $ curl 'http://localhost:10041/d/request_cancel?id=unique-id-1'
   [[...], {"id": "unique-id-1", "canceled": true}]
