@@ -276,4 +276,5 @@ You can terminate a GQTP server with a :doc:`/reference/commands/shutdown` comma
 See also
 --------
 
-TODO
+* :doc:`/reference/executables/groonga`
+* :doc:`/server/gqtp`
