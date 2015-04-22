@@ -645,10 +645,8 @@ absolute_theme_files = \
 	$(top_srcdir)/doc/themes/groonga/static/favicon.ico \
 	$(top_srcdir)/doc/themes/groonga/static/groonga.css_t \
 	$(top_srcdir)/doc/themes/groonga/static/header-background.png \
-	$(top_srcdir)/doc/themes/groonga/static/jp.png \
 	$(top_srcdir)/doc/themes/groonga/static/logo.png \
 	$(top_srcdir)/doc/themes/groonga/static/navigation-bar.png \
-	$(top_srcdir)/doc/themes/groonga/static/us.png \
 	$(top_srcdir)/doc/themes/groonga/theme.conf \
 	$(NULL)
 
@@ -1299,10 +1297,8 @@ theme_files_relative_from_doc_dir = \
 	themes/groonga/static/favicon.ico \
 	themes/groonga/static/groonga.css_t \
 	themes/groonga/static/header-background.png \
-	themes/groonga/static/jp.png \
 	themes/groonga/static/logo.png \
 	themes/groonga/static/navigation-bar.png \
-	themes/groonga/static/us.png \
 	themes/groonga/theme.conf \
 	$(NULL)
 
@@ -1623,7 +1619,6 @@ html_files_relative_from_locale_dir = \
 	html/_static/file.png \
 	html/_static/groonga.css \
 	html/_static/header-background.png \
-	html/_static/jp.png \
 	html/_static/jquery.js \
 	html/_static/logo.png \
 	html/_static/minus.png \
@@ -1634,7 +1629,6 @@ html_files_relative_from_locale_dir = \
 	html/_static/underscore.js \
 	html/_static/up-pressed.png \
 	html/_static/up.png \
-	html/_static/us.png \
 	html/_static/websupport.js \
 	html/characteristic.html \
 	html/client.html \
