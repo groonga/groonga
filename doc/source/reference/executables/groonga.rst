@@ -2,23 +2,164 @@
 
 .. highlightlang:: none
 
-groonga command
-===============
+``groonga`` executable file
+===========================
 
 Summary
 -------
 
-groonga - 列指向データベース機能を持つ全文検索エンジンソフトウェア
+``groonga`` executable file provides the following features:
 
-Groongaは列指向のデータベース機能を持つ高速でスケーラブルな全文検索エンジンです。
-Groongaのデータベースは、groongaコマンドかCライブラリインタフェースを通して操作することができます。このマニュアルページでは、groongaコマンドの使い方について説明します。
+  * Fulltext search server
+  * Fulltext search shell
+  * Client for Groonga fulltext search server
+
+Groonga can be used as a library. If you want to use Groonga as a
+library, you need to write a program in C, C++ and so on. Library use
+is useful for embedding fulltext search feature to your application,
+but it's not easy to use.
+
+You can use ``groonga`` executable file to get fulltext search
+feature.
+
+If you want to try Groonga, fulltext search shell usage is useful. You
+don't need any server and client. You just need one terminal. You can
+try Groonga like the following::
+
+  % groonga -n db
+  > status
+  [[0,1429687763.70845,0.000115633010864258],{"alloc_count":195,...}]
+  > quit
+  %
+
+If you want to create an application that has fulltext search feature,
+fulltext search server usage is useful. You can use Groonga as a
+server like RDBMS (Relational DataBase Management
+System). Client-server model is a popular architecture.
+
+Normally, client for Groonga fulltext server usage isn't used.
+
 
 Syntax
 ------
 
-::
+``groonga`` executable file has the following four modes:
 
- groonga [options] [dest] [command [args]]
+  * Standalone mode
+  * Server mode
+  * Daemon mode
+  * Client mode
+
+There are common options in these modes. These common options is
+described later section.
+
+.. _groonga-executable-file-standalone-mode:
+
+Standalone mode
+^^^^^^^^^^^^^^^
+
+In standalone mode, ``groonga`` executable file runs one or more
+Groonga :doc:`/reference/command` against a local Groonga database.
+
+Here is the syntax to run shell that executes Groonga command against
+temporary database::
+
+  groonga [options]
+
+Here is the syntax to create a new database and run shell that
+executes Groonga command against the new database::
+
+  groonga [options] -n DB_PATH
+
+Here is the syntax to run shell that executes Groonga command against
+existing database::
+
+  groonga [options] DB_PATH
+
+Here is the syntax to run Groonga command against existing database
+and exit::
+
+  groonga [options] DB_PATH COMMAND [command arguments]
+
+.. _groonga-executable-file-server-mode:
+
+Server mode
+^^^^^^^^^^^
+
+In server mode, ``groonga`` executable file runs as a server. The
+server accepts connections from other processes at local machine or
+remote machine and executes received Groonga :doc:`/reference/command`
+against a local Groonga database.
+
+You can choose one protocol from :doc:`/server/http` and
+:doc:`/server/gqtp`. Normally, HTTP is suitable but GQTP is the
+default protocol. This section describes only about HTTP protocol
+usage.
+
+In server mode, ``groonga`` executable file runs in the foreground. If
+you want to run Groonga server in the background, see
+:ref:`groonga-executable-file-server-mode`.
+
+Here is the syntax to run Groonga server with temporary database::
+
+  groonga [options] --protocol http -s
+
+Here is the syntax to create a new database and run Groonga server
+with the new database::
+
+  groonga [options] --protocol http -s -n DB_PATH
+
+Here is the syntax to run Groonga server with existing database::
+
+  groonga [options] --protocol http -s DB_PATH
+
+.. _groonga-executable-file-daemon-mode:
+
+Daemon mode
+^^^^^^^^^^^
+
+In daemon mode, ``groonga`` executable file runs as a daemon. Daemon
+is similar to server but it runs in the background. See
+:ref:`_groonga-executable-file-daemon-mode` about server.
+
+Here is the syntax to run Groonga daemon with temporary database::
+
+  groonga [options] --protocol http -d
+
+Here is the syntax to create a new database and run Groonga daemon
+with the new database::
+
+  groonga [options] --protocol http -d -n DB_PATH
+
+Here is the syntax to run Groonga daemon with existing database::
+
+  groonga [options] --protocol http -d DB_PATH
+
+:option:`--pid-file` option will be useful for daemon mode.
+
+.. _groonga-executable-file-client-mode:
+
+Client mode
+^^^^^^^^^^^
+
+In client mode, ``groonga`` executable file runs as a client for GQTP
+protocol Groonga server. Its usage is similar to
+:ref:`groonga-executable-file-standalone-mode`. You can run shell and
+execute one command. You need to specify server address instead of
+local database.
+
+Note that you can use ``groonga`` executable file as a client for HTTP
+protocol Groonga server.
+
+Here is the syntax to run shell that executes Groonga command against
+Groonga server that is running at ``192.168.0.1:10043``::
+
+  groonga [options] -c --host 192.168.0.1 --port 10043
+
+Here is the syntax to run Groonga command against Groonga server that
+is running at ``192.168.0.1:10043`` and exit::
+
+  groonga [options] -c --host 192.168.0.1 --port 10043 COMMAND [command arguments]
 
 Options
 -------
