@@ -81,6 +81,6 @@ if DOCUMENT_BUILDABLE
 mo_build_stamp_dependencies += $(edit_po_files)
 endif
 
-mo-build-stamp: $(mo-build_stamp_dependencies)
+mo-build-stamp: $(mo_build_stamp_dependencies)
 	$(MAKE) $(mo_files)
 	@touch $@
