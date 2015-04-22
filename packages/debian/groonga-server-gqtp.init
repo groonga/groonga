@@ -42,8 +42,6 @@ DEFAULT_FILE=/etc/default/groonga-server-gqtp
 
 [ "$ENABLE" = "yes" ] || exit 0
 
-export GRN_JA_SKIP_SAME_VALUE_PUT="$GRN_JA_SKIP_SAME_VALUE_PUT"
-
 DAEMON_ARGS="-d --pid-path ${PIDFILE}"
 if [ -n "${ADDRESS}" ]; then
     DAEMON_ARGS="${DAEMON_ARGS} --bind-address ${ADDRESS}"
