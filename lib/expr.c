@@ -355,7 +355,7 @@ grn_expr_open(grn_ctx *ctx, grn_obj_spec *spec, const uint8_t *p, const uint8_t 
 {
   grn_expr *expr = NULL;
   if ((expr = GRN_MALLOCN(grn_expr, 1))) {
-    int size = 256;
+    int size = GRN_STACK_SIZE;
     expr->consts = NULL;
     expr->nconsts = 0;
     GRN_TEXT_INIT(&expr->name_buf, 0);
