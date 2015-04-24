@@ -14,6 +14,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       :id => "debian-wheezy-amd64",
       :box_url => "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_debian-7.8_chef-provisionerless.box",
     },
+    {
+      :id => "debian-jessie-amd64",
+      :box_url => "https://downloads.sourceforge.net/project/vagrantboxjessie/debian80.box",
+    },
   ]
 
   vms.each do |vm|
