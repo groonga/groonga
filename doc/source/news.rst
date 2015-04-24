@@ -12,12 +12,43 @@ News
 Release 5.0.3 - 2015-04-29
 --------------------------
 
+Improvements
+^^^^^^^^^^^^
+
+* [tokenizers][regexp] skip the last one character token
+* [mruby] support regexp pattern for estimating size
+* ?[mrb] support size estimation for accessor
+* logical_range_filter: remove GRN_LOGICAL_RANGE_FILTER_ENABLED
+  Use GRN_LOGICAL_RANGE_FILTER_THRESHOLD=0 to disable range index search
+  feature.
+* logical_range_filter: support negative limit and offset
+* package windows: use Groonga Admin
+* logical_range_filter: change threshold meaning
+  * threshold <= 0.0: always use range index
+  * threshold >= 1.0: never use range index
+* dump: support plugin
+* [API] Add grn_plugin_get_ruby_suffix()
+* dump: put index columns after reference columns
+  Because index column may refer reference columns.
+* dump: don't dump records of lexicon
+  /test/command/suite/dump/record/lexicon.test
+* dump: show _id for TABLE_NO_KEY again
+* dump: use offline index construnction
+* hash: increase max key size
+* cache: increase max cache key size
+
+# WIP here: commit a887763e28a9315964f4e417095c65422d5363f3
+
 Fixes
 ^^^^^
 
 * [windows] Fixed a bug that :ref:`offline-index-construction` is
   failed for large data (at least 1GB or larger) with Groonga built by
   Microsoft Visual C++. [Reported by Hideki ARAI]
+* [mrb] Made "\\" index searchable in regular expression.
+* sharding: add missing argument
+* Fix a bug that GRN_II_CURSOR_SET_MIN_ENABLE=yes doesn't return some matched records
+* sharding: fix a bug that partial range is handled as all range
 
 Thanks
 ^^^^^^
