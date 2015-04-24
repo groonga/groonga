@@ -409,6 +409,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Wed Apr 29 2015 HAYASHI Kentaro <hayashi@clear-code.com> - 5.0.3-1
+- new upstream release.
+
 * Tue Mar 31 2015 Masafumi Yokoyama <yokoyama@clear-code.com> - 5.0.2-1
 - new upstream release.
 - removed fix-crash-by-missing-libedit-initialization.patch
