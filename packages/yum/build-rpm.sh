@@ -57,8 +57,8 @@ run mkdir -p "${rpm_dir}" "${srpm_dir}"
 
 build_fedora_srpm()
 {
-    base=http://download.fedoraproject.org/pub/fedora/linux/releases/20/Everything/source/SRPMS/m
-    update=http://download.fedoraproject.org/pub/fedora/linux/updates/20/SRPMS
+    base=http://download.fedoraproject.org/pub/fedora/linux/releases/21/Everything/source/SRPMS/m
+    update=http://download.fedoraproject.org/pub/fedora/linux/updates/21/SRPMS
     srpm="$1"
     srpm_base="$2"
 
@@ -107,10 +107,10 @@ build_fedora_srpm()
 if ! rpm -q mecab-devel > /dev/null; then
     run sudo yum install -y wget
 
-    for rpm in mecab-0.996-1.fc20.src.rpm \
-               mecab-ipadic-2.7.0.20070801-8.fc20.1.src.rpm \
-               mecab-jumandic-5.1.20070304-9.fc20.src.rpm; do
-       srpm_base=`echo $rpm | sed -e 's/\.fc20.*//g'`
+    for rpm in mecab-0.996-1.fc21.src.rpm \
+               mecab-ipadic-2.7.0.20070801-10.fc21.1.src.rpm \
+               mecab-jumandic-5.1.20070304-11.fc21.src.rpm; do
+       srpm_base=`echo $rpm | sed -e 's/\.fc21.*//g'`
        run build_fedora_srpm "${rpm}" "${srpm_base}"
     done
 fi
