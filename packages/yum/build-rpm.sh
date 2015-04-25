@@ -107,7 +107,7 @@ build_fedora_srpm()
 if ! rpm -q mecab-devel > /dev/null; then
     run sudo yum install -y wget
 
-    for rpm in mecab-0.996-1.fc21.src.rpm \
+    for rpm in mecab-0.996-1.fc21.1.src.rpm \
                mecab-ipadic-2.7.0.20070801-10.fc21.1.src.rpm \
                mecab-jumandic-5.1.20070304-11.fc21.src.rpm; do
        srpm_base=`echo $rpm | sed -e 's/\.fc21.*//g'`
