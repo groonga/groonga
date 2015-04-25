@@ -322,6 +322,7 @@ fi
 %{_libdir}/*.so.*
 %dir %{_libdir}/groonga
 %dir %{_libdir}/groonga/plugins
+%dir %{_libdir}/groonga/plugins/functions
 %dir %{_libdir}/groonga/plugins/tokenizers
 %dir %{_libdir}/groonga/plugins/token_filters
 %dir %{_libdir}/groonga/plugins/ruby
@@ -332,6 +333,7 @@ fi
 %dir %{_libdir}/groonga/scripts/ruby/context
 %dir %{_libdir}/groonga/scripts/ruby/initialize
 %dir %{_libdir}/groonga/scripts/ruby/logger
+%{_libdir}/groonga/plugins/functions/vector.so
 %{_libdir}/groonga/plugins/table/table.so
 %{_libdir}/groonga/plugins/query_expanders/tsv.so
 %{_libdir}/groonga/plugins/token_filters/stop_word.so
@@ -411,6 +413,7 @@ fi
 %changelog
 * Wed Apr 29 2015 HAYASHI Kentaro <hayashi@clear-code.com> - 5.0.3-1
 - new upstream release.
+- add vector size plugin.
 
 * Tue Mar 31 2015 Masafumi Yokoyama <yokoyama@clear-code.com> - 5.0.2-1
 - new upstream release.
