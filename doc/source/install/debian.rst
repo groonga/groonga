@@ -49,14 +49,14 @@ Install groonga-token-filter-stem package::
 
 There is a package that provides `Munin
 <http://munin-monitoring.org/>`_ plugins. If you want to monitor
-groonga status by Munin, install groonga-munin-plugins package.
+Groonga status by Munin, install groonga-munin-plugins package.
 
 Install groonga-munin-plugins package::
 
   % sudo apt-get install -y -V groonga-munin-plugins
 
 There is a package that provides MySQL compatible normalizer as
-groonga plugins.
+Groonga plugins.
 If you want to use that one, install groonga-normalizer-mysql package.
 
 Install groonga-normalizer-mysql package::
@@ -100,14 +100,14 @@ Install groonga-token-filter-stem package::
 
 There is a package that provides `Munin
 <http://munin-monitoring.org/>`_ plugins. If you want to monitor
-groonga status by Munin, install groonga-munin-plugins package.
+Groonga status by Munin, install groonga-munin-plugins package.
 
 Install groonga-munin-plugins package::
 
   % sudo apt-get install -y -V groonga-munin-plugins
 
 There is a package that provides MySQL compatible normalizer as
-groonga plugins.
+Groonga plugins.
 If you want to use that one, install groonga-normalizer-mysql package.
 
 Install groonga-normalizer-mysql package::

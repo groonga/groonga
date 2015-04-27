@@ -59,7 +59,7 @@ Install groonga-token-filter-stem package::
 
 There is a package that provides `Munin
 <http://munin-monitoring.org/>`_ plugins. If you want to monitor
-groonga status by Munin, install groonga-munin-plugins package.
+Groonga status by Munin, install groonga-munin-plugins package.
 
 Install groonga-munin-plugins package::
 

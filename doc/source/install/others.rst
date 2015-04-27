@@ -42,7 +42,7 @@ Here are optional tools:
     <http://www.freedesktop.org/wiki/Software/pkg-config>`_ for
     detecting libraries
   * `sudo <http://www.gratisoft.us/sudo/>`_ for installing built
-    groonga
+    Groonga
 
 You must get them ready if you want to use optional libraries.
 
@@ -84,7 +84,7 @@ steps::
 After the above steps, :doc:`/reference/executables/groonga` is found in
 ``/usr/local/bin/groonga``.
 
-The default build will work well but you can customize groonga at
+The default build will work well but you can customize Groonga at
 ``configure`` step.
 
 The following describes details about each step.
@@ -196,7 +196,7 @@ installed with ``--prefix=/usr``, you need to specify this option with
 path that you use for building MessagePack.
 
 If you installed MessagePack with ``--prefix=$HOME/local`` option, you
-sholud specify ``--with-message-pack=$HOME/local`` to groonga's
+sholud specify ``--with-message-pack=$HOME/local`` to Groonga's
 ``configure``.
 
 The default is ``/usr``.
@@ -241,7 +241,7 @@ Shows all ``configure`` options.
 ``make``
 ^^^^^^^^
 
-``configure`` is succeeded, you can build groonga by ``make``::
+``configure`` is succeeded, you can build Groonga by ``make``::
 
   % make
 
