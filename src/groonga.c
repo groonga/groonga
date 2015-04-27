@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 
 #ifdef WIN32
 # define GROONGA_MAIN
