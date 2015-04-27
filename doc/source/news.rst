@@ -15,69 +15,65 @@ Release 5.0.3 - 2015-04-29
 Improvements
 ^^^^^^^^^^^^
 
-* [tokenizers][regexp] skip the last one character token
-* [mruby] support regexp pattern for estimating size
-* ?[mrb] support size estimation for accessor
+* [tokenizers][regexp] Skip the last one character token.
+* [mruby] Supported regexp pattern for estimating size.
+* [mruby] supported size estimation for accessor.
 * [logical_range_filter] Removed ``GRN_LOGICAL_RANGE_FILTER_ENABLED``
   environment variable which is introduced since Groonga 5.0.2.
   Use ``GRN_LOGICAL_RANGE_FILTER_THRESHOLD=0`` to disable range index search
   feature.
-* logical_range_filter: support negative limit and offset
-* package windows: use Groonga Admin
-* logical_range_filter: change threshold meaning
+* [logical_range_filter] Supported negative limit and offset.
+* [windows] Used Groonga Admin in package.
+* [logical_range_filter] Changed threshold meaning.
   * threshold <= 0.0: always use range index
   * threshold >= 1.0: never use range index
-* dump: support plugin
-  dump: add --dump_plugins option
-  You can disable dumping plugins by "--dump_plugins no".
-  dump: add --dump_schema option
-  dump: add --dump_records option
-  You can disable dumping schema by "--dump_schema no".
-  dump: add --dump_indexes option
-  You can disable dumping indexes by "--dump_indexes no".
-* [API] Add grn_plugin_get_ruby_suffix()
-* dump: put index columns after reference columns
-  Because index column may refer reference columns.
-* dump: don't dump records of lexicon
+* [dump] Supported plugin.
+* [dump] Added the following options:
+  * ``--dump_plugins``
+    * You can disable dumping plugins by ``--dump_plugins no``.
+  * ``--dump_schema``
+    * You can disable dumping records by ``--dump_records no``.
+  * ``--dump_records``
+    * You can disable dumping schema by ``--dump_schema no``.
+  * ``--dump_indexes``
+    * You can disable dumping indexes by ``--dump_indexes no``.
+* [API] Added :c:func:`grn_plugin_get_ruby_suffix()`.
+* [dump] Fixed order to put index columns after reference columns
+  because index column may refer reference columns.
+* [dump] Don't dump records of lexicon.
   /test/command/suite/dump/record/lexicon.test
-* dump: show _id for TABLE_NO_KEY again
-* dump: use offline index construnction
-* hash: increase max key size
-* cache: increase max cache key size
-# WIP here: commit a887763e28a9315964f4e417095c65422d5363f3
-* Improve performance for nested index search
-  15% speed up for a case.
+* [dump] Show ``_id`` for ``TABLE_NO_KEY`` again.
+* [dump] Used offline index construnction.
+* Increased max key size from 4KiB to 64KiB.
+* Increased max cache key size from 4KiB to 64KiB.
+* Improved performance for nested index search.
 * ?Use index for nonexistent reference column value
 * [experimental] Added plugin functions/vector. It includes ``vector_size()`` function.
   test/command/suite/select/function/vector/vector_size/reference_vector.test
   test/command/suite/select/function/vector/vector_size/vector.test
-* doc windows: update Visual Studio version
-  [GitHub: groonga/meetup#4] [Reported by Hiroyuki Mizuhara]
-* windows: show real error for lseek()
-* cache: expire old caches when the max N caches is decreased
+* [:doc:`/install/windows`] Updated Visual Studio version
+  [GitHub groonga/meetup#4] [Reported by Hiroyuki Mizuhara]
+* [windows] show real error for lseek()
+* [cache] expire old caches when the max N caches is decreased
   [Suggested by Gurunavi, Inc.]
 * See errno for error from unlink()
 *   Fix error report about open()
     open() sets errno.
-* windows: use secure functions on Windows
-* Add APIs to change log rotate threshold in file size
-    New APIs:
-      * grn_default_logger_set_rotate_threshold_size()
-      * grn_default_logger_get_rotate_threshold_size()
-      * grn_default_query_logger_set_rotate_threshold_size()
-      * grn_default_query_logger_get_rotate_threshold_size()
-* [experimental] groonga: support log rotation
-    The feature is disabled by default.
-    New options:
-      * --log-rotate-threshold-size
-      * --query-log-rotate-threshold-size
-* doc: document about GQTP server
-  :doc:`/server/gqtp`
-* doc: document groonga executable file partially
-  :doc:`/reference/executables/groonga`
-*  support Ubuntu 15.04 (Vivid Vervet)
-*  support Debian 8.0 (Jessie)
-* [groonga-httpd] update Nginx
+* [windows] Used secure functions on Windows.
+* Added the following APIs to change log rotate threshold in file size:
+    * :c:func:`grn_default_logger_set_rotate_threshold_size()`
+    * :c:func:`grn_default_logger_get_rotate_threshold_size()`
+    * :c:func:`grn_default_query_logger_set_rotate_threshold_size()`
+    * :c:func:`grn_default_query_logger_get_rotate_threshold_size()`
+* [experimental] Supported log rotation. The feature is disabled by default.
+  You can enable log rotation by the following options:
+  * ``--log-rotate-threshold-size``
+  * ``--query-log-rotate-threshold-size``
+* [:doc:`/server/gqtp`] Documented about GQTP server.
+* [:doc:`/reference/executables/groonga`] Documented groonga executable file partially.
+* Supported Ubuntu 15.04 (Vivid Vervet).
+* Supported Debian 8.0 (Jessie).
+* [httpd] Updated bundled nginx version to the latest mainline (1.8.0).
 
 Fixes
 ^^^^^
@@ -85,15 +81,14 @@ Fixes
 * [windows] Fixed a bug that :ref:`offline-index-construction` is
   failed for large data (at least 1GB or larger) with Groonga built by
   Microsoft Visual C++. [Reported by Hideki ARAI]
-* [mrb] Made "\\" index searchable in regular expression.
-* sharding: add missing argument
-* Fix a bug that GRN_II_CURSOR_SET_MIN_ENABLE=yes doesn't return some matched records
-* sharding: fix a bug that partial range is handled as all range
-* logical_range_filter: fix a bug that :order => "descending" doesn't work
-* logical_count: re-support counting with range index
-* Fix a bug causing malfunction of grn_pat_del().
-  test: add a test for invalid patricia trie node add case
-    [groonga-dev,03177] [Reported by yuya sako]
+* [mruby] Made ``\\`` index searchable in regular expression.
+* Fixed a bug that ``GRN_II_CURSOR_SET_MIN_ENABLE=yes`` doesn't return some matched records.
+* [sharding] Fixed a bug that partial range is handled as all range.
+* [logical_range_filter] Fixed a bug that ``:order => "descending"`` doesn't work.
+* [logical_count] Re-supported counting with range index.
+* Fixed a bug causing malfunction of :c:func:`grn_pat_del()`
+  and added a test for invalid patricia trie node add case.
+  [groonga-dev,03177] [Reported by yuya sako]
 
 Thanks
 ^^^^^^
