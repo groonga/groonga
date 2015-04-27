@@ -63,6 +63,57 @@ Install groonga-normalizer-mysql package::
 
   % sudo apt-get install -y -V groonga-normalizer-mysql
 
+jessie
+------
+
+.. versionadded:: 5.0.3
+
+Add the Groonga apt repository.
+
+/etc/apt/sources.list.d/groonga.list::
+
+  deb http://packages.groonga.org/debian/ jessie main
+  deb-src http://packages.groonga.org/debian/ jessie main
+
+Install::
+
+  % sudo apt-get update
+  % sudo apt-get install -y --allow-unauthenticated groonga-keyring
+  % sudo apt-get update
+  % sudo apt-get install -y -V groonga
+
+.. include:: server-use.inc
+
+If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
+tokenizer, install groonga-tokenizer-mecab package.
+
+Install groonga-tokenizer-mecab package::
+
+  % sudo apt-get install -y -V groonga-tokenizer-mecab
+
+If you want to use ``TokenFilterStem`` as a token filter, install
+groonga-token-filter-stem package.
+
+Install groonga-token-filter-stem package::
+
+  % sudo apt-get install -y -V groonga-token-filter-stem
+
+There is a package that provides `Munin
+<http://munin-monitoring.org/>`_ plugins. If you want to monitor
+groonga status by Munin, install groonga-munin-plugins package.
+
+Install groonga-munin-plugins package::
+
+  % sudo apt-get install -y -V groonga-munin-plugins
+
+There is a package that provides MySQL compatible normalizer as
+groonga plugins.
+If you want to use that one, install groonga-normalizer-mysql package.
+
+Install groonga-normalizer-mysql package::
+
+  % sudo apt-get install -y -V groonga-normalizer-mysql
+
 Build from source
 -----------------
 
