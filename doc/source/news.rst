@@ -18,8 +18,9 @@ Improvements
 * [tokenizers][regexp] skip the last one character token
 * [mruby] support regexp pattern for estimating size
 * ?[mrb] support size estimation for accessor
-* logical_range_filter: remove GRN_LOGICAL_RANGE_FILTER_ENABLED
-  Use GRN_LOGICAL_RANGE_FILTER_THRESHOLD=0 to disable range index search
+* [logical_range_filter] Removed ``GRN_LOGICAL_RANGE_FILTER_ENABLED``
+  environment variable which is introduced since Groonga 5.0.2.
+  Use ``GRN_LOGICAL_RANGE_FILTER_THRESHOLD=0`` to disable range index search
   feature.
 * logical_range_filter: support negative limit and offset
 * package windows: use Groonga Admin
