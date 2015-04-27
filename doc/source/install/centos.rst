@@ -64,7 +64,7 @@ Install groonga-munin-plugins package::
   % sudo yum install -y groonga-munin-plugins
 
 There is a package that provides MySQL compatible normalizer as
-Groonga plugins.
+a Groonga plugin.
 If you want to use that one, install groonga-normalizer-mysql package.
 
 Install groonga-normalizer-mysql package::
@@ -109,7 +109,7 @@ Install groonga-munin-plugins package::
   % sudo yum install -y groonga-munin-plugins
 
 There is a package that provides MySQL compatible normalizer as
-Groonga plugins.
+a Groonga plugin.
 If you want to use that one, install groonga-normalizer-mysql package.
 
 Install groonga-normalizer-mysql package::
@@ -154,7 +154,7 @@ Install groonga-munin-plugins package::
   % sudo yum install -y groonga-munin-plugins
 
 There is a package that provides MySQL compatible normalizer as
-Groonga plugins.
+a Groonga plugin.
 If you want to use that one, install groonga-normalizer-mysql package.
 
 Install groonga-normalizer-mysql package::
