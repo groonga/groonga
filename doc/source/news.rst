@@ -44,8 +44,8 @@ Improvements
 * [:doc:`/reference/commands/dump`] Don't dump records of lexicon.
 * [:doc:`/reference/commands/dump`] Show ``_id`` for ``TABLE_NO_KEY`` again.
 * [:doc:`/reference/commands/dump`] Used offline index construnction.
-* Increased max hash key size from 4KiB to 64KiB.
-* Increased max cache key size from 4KiB to 64KiB.
+* Increased max hash key size from 4KiB (4096Byte) to 64KiB - 1 (65535Byte).
+* Increased max cache key size from 4KiB (4096Byte) to 64KiB - 1 (65535Byte).
 * Improved performance for nested index search.
 * Used index for nonexistent reference column value.
 * [experimental] Added plugin functions/vector. It includes ``vector_size()`` function.
