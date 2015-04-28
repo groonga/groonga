@@ -196,7 +196,7 @@ installed with ``--prefix=/usr``, you need to specify this option with
 path that you use for building MessagePack.
 
 If you installed MessagePack with ``--prefix=$HOME/local`` option, you
-sholud specify ``--with-message-pack=$HOME/local`` to Groonga's
+should specify ``--with-message-pack=$HOME/local`` to Groonga's
 ``configure``.
 
 The default is ``/usr``.
