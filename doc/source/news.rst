@@ -25,14 +25,18 @@ Improvements
 * [logical_range_filter] Supported negative limit and offset.
 * [windows] Used Groonga Admin in package.
 * [logical_range_filter] Changed threshold meaning:
+
   * threshold <= 0.0: always use range index
   * threshold >= 1.0: never use range index
+
 * [dump] Supported plugin.
 * [dump] Added the following options:
+
   * ``--dump_plugins [yes(default)/no]``
   * ``--dump_schema [yes(default)/no]``
   * ``--dump_records [yes(default)/no]``
   * ``--dump_indexes [yes(default)/no]``
+
 * [API] Added :c:func:`grn_plugin_get_ruby_suffix()`.
 * [dump] Fixed order to put index columns after reference columns
   because index column may refer reference columns.
@@ -51,14 +55,18 @@ Improvements
 * Show more information such as errno for errors.
 * [windows] Used secure functions on Windows.
 * Added the following APIs to change log rotate threshold in file size.
+
   * :c:func:`grn_default_logger_set_rotate_threshold_size()`
   * :c:func:`grn_default_logger_get_rotate_threshold_size()`
   * :c:func:`grn_default_query_logger_set_rotate_threshold_size()`
   * :c:func:`grn_default_query_logger_get_rotate_threshold_size()`
+
 * [experimental] Supported log rotation. The feature is disabled by default.
   You can enable log rotation by the following options:
+
   * ``--log-rotate-threshold-size``
   * ``--query-log-rotate-threshold-size``
+
 * [:doc:`/server/gqtp`] Documented about GQTP server.
 * [:doc:`/reference/executables/groonga`] Documented groonga executable file partially.
 * Supported Ubuntu 15.04 (Vivid Vervet).
