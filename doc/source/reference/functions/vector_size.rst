@@ -58,12 +58,12 @@ Here is the simple usage of ``vector_size`` function which returns tags and size
 
 .. groonga-command
 .. include:: ../../example/reference/functions/vector_size/usage_only.log
-.. select Memos --output_columns 'tags, vector_size(tags)' --command-version 2
+.. select Memos --output_columns 'tags, vector_size(tags)' --command_version 2
 
 Parameters
 ----------
 
-There are one required parameter, ``target``.
+There is one required parameter, ``target``.
 
 ``target``
 ^^^^^^^^^^^^^^^^
