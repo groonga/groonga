@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-04-17 11:02+0900\n"
+"PO-Revision-Date: 2015-04-28 13:14+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -21,15 +21,295 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
+msgid "Release 5.0.3 - 2015-04-29"
+msgstr "5.0.3リリース - 2015-04-29"
+
+msgid "Improvements"
+msgstr "改良"
+
+# 39908ed60d254feea85a3fec5d20db85
+msgid ""
+"[:doc:`/reference/tokenizers`][:doc:`/reference/regular_expression`] Skip "
+"the last one character token."
+msgstr ""
+"[:doc:`/reference/tokenizers`][:doc:`/reference/regular_expression`] 最後の一"
+"文字のトークンをスキップするようにしました。"
+
+msgid "[mruby] Supported regexp pattern for estimating size."
+msgstr "[mruby] 正規表現パターンのサイズ推定をサポートしました。"
+
+msgid "[mruby] Supported size estimation for accessor."
+msgstr "[mruby] アクセサーのサイズ推定をサポートしました。"
+
+# 4ddc5d385ea44436b6ae4ec848da4b18
+msgid ""
+"[:doc:`/reference/commands/logical_range_filter`] Removed "
+"``GRN_LOGICAL_RANGE_FILTER_ENABLED`` environment variable which is "
+"introduced since Groonga 5.0.2. Use ``GRN_LOGICAL_RANGE_FILTER_THRESHOLD=0`` "
+"to disable range index search feature."
+msgstr ""
+"[:doc:`/reference/commands/logical_range_filter`] Groonga 5.0.2で導入された"
+"``GRN_LOGICAL_RANGE_FILTER_ENABLED``環境変数を削除しました。範囲インデックス"
+"検索を無効にするには``GRN_LOGICAL_RANGE_FILTER_THRESHOLD=0``を使ってくださ"
+"い。"
+
+msgid ""
+"[:doc:`/reference/commands/logical_range_filter`] Supported negative limit "
+"and offset."
+msgstr ""
+"[:doc:`/reference/commands/logical_range_filter`] 負の上限値とオフセットをサ"
+"ポートしました。"
+
+# 2d8b99fffcdd4baaa7dae77487eb1188
+msgid "[:doc:`/install/windows`] Used Groonga Admin in package."
+msgstr ""
+"[:doc:`/install/windows`] パッケージでGroonga Adminを使うようにしました。"
+
+msgid ""
+"[:doc:`/reference/commands/logical_range_filter`] Changed threshold meaning:"
+msgstr ""
+"[:doc:`/reference/commands/logical_range_filter`] 閾値の意味を変更しました。"
+
+# 525ae2f756eb4dc8b274197e42d398a0
+msgid "threshold <= 0.0: always use range index"
+msgstr "threshold <= 0.0: 常に範囲インデックスを使う"
+
+# a4c27247971741039ac67e151099f0a9
+msgid "threshold >= 1.0: never use range index"
+msgstr "threshold >= 1.0: 範囲インデックスを全く使わない"
+
+msgid "[:doc:`/reference/commands/dump`] Supported plugin."
+msgstr "[:doc:`/reference/commands/dump`] プラグインに対応しました。"
+
+msgid "[:doc:`/reference/commands/dump`] Added the following options:"
+msgstr "[:doc:`/reference/commands/dump`] 以下のオプションを追加しました。"
+
+# d1d1526714ff4245a13e011a854b6d18
+msgid "``--dump_plugins [yes(default)/no]``"
+msgstr ""
+
+# 6e6613315c204f68af7f225ddaeb79a2
+msgid "``--dump_schema [yes(default)/no]``"
+msgstr ""
+
+# 8997b3a6229b44be883eb8cd54b8e3cf
+msgid "``--dump_records [yes(default)/no]``"
+msgstr ""
+
+# c4be95a4ace24765bac917b636d88249
+msgid "``--dump_indexes [yes(default)/no]``"
+msgstr ""
+
+msgid "[API] Added :c:func:`grn_plugin_get_ruby_suffix()`."
+msgstr "[API] :c:func:`grn_plugin_get_ruby_suffix()` を追加しました。"
+
+# 445961a7249245ed9a6410f2bb238c42
+msgid ""
+"[:doc:`/reference/commands/dump`] Fixed order to put index columns after "
+"reference columns because index column may refer reference columns."
+msgstr ""
+"[:doc:`/reference/commands/dump`] インデックスカラムはリファレンスカラムを参"
+"照するので、インデックスカラムを参照カラムの後に置くように修正しました。"
+
+msgid "[:doc:`/reference/commands/dump`] Don't dump records of lexicon."
+msgstr ""
+"[:doc:`/reference/commands/truncate`] 語彙表のレコードをダンプしないようにし"
+"ました。"
+
+# 325eca6e052b4fd9b3d332f694be5e63
+msgid ""
+"[:doc:`/reference/commands/dump`] Show ``_id`` for ``TABLE_NO_KEY`` again."
+msgstr ""
+"[:doc:`/reference/commands/dump`] 再度``TABLE_NO_KEY``のときに``_id``を表示す"
+"るようにしました。"
+
+msgid "[:doc:`/reference/commands/dump`] Used offline index construnction."
+msgstr ""
+"[:doc:`/reference/commands/dump`] オフラインインデックス構築するようにしまし"
+"た。"
+
+# 4292e6c6b76d4a25b1e6439add7e07a9
+msgid "Increased max hash key size from 4KiB to 64KiB."
+msgstr "ハッシュのキーサイズの上限値を4KiBから64KiBに増やしました。"
+
+# 175a9581f039498180e535bb5ddfffa2
+msgid "Increased max cache key size from 4KiB to 64KiB."
+msgstr "キャッシュのキーサイズの上限値を4KiBから64KiBに増やしました。"
+
+# 31ca96ea6cc64d1bb88da7a0971b3211
+msgid "Improved performance for nested index search."
+msgstr "ネストしたインデックス検索のパフォーマンスを改善しました。"
+
+# 70a7717b2ec24a69b986f51832eeda14
+msgid "Used index for nonexistent reference column value."
+msgstr "存在しない参照カラムにインデックスを使うようにしました。"
+
+msgid ""
+"[experimental] Added plugin functions/vector. It includes ``vector_size()`` "
+"function."
+msgstr ""
+"[実験的] ``vector_size()``関数を含むfunctions/vectorプラグインを追加しまし"
+"た。"
+
+# 74f661eb78f04d21a8ef2c9cb866b483
+msgid ""
+"[:doc:`/install/windows`] Updated Visual Studio version [GitHub groonga/"
+"meetup#4] [Reported by Hiroyuki Mizuhara]"
+msgstr ""
+"[:doc:`/install/windows`] Visual Studioのバージョンを更新しました。 [GitHub "
+"groonga/meetup#4] [Hiroyuki Mizuharaが報告]"
+
+# b8eaf377a9be44299d709129dbc52140
+msgid ""
+"[:doc:`/reference/commands/cache_limit`] Expired old caches when the max N "
+"caches is decreased. [Suggested by Gurunavi, Inc.]"
+msgstr ""
+"[:doc:`/reference/commands/cache_limit`] キャッシュの上限値が減ったときに古い"
+"キャッシュから無効にするようにしました。 [株式会社ぐるなびさんが提案]"
+
+msgid "Show more information such as errno for errors."
+msgstr "エラー時にerrnoなどの情報を表示するようにしました。"
+
+msgid "[windows] Used secure functions on Windows."
+msgstr "[windows] 安全な関数を使うようにしました。"
+
+# 18e814d7f2df47d2ba7682bca384e2d4
+msgid "Added the following APIs to change log rotate threshold in file size."
+msgstr "ログローテーションの閾値を変更するためのAPIを追加しました。"
+
+# 2c2c8bfd7d8d430db87e584a15d6333d
+msgid ":c:func:`grn_default_logger_set_rotate_threshold_size()`"
+msgstr ""
+
+# 22be5334451c4d49a5a8370e2585c82a
+msgid ":c:func:`grn_default_logger_get_rotate_threshold_size()`"
+msgstr ""
+
+# c760cada52dc4159a3f3a44c553ee088
+msgid ":c:func:`grn_default_query_logger_set_rotate_threshold_size()`"
+msgstr ""
+
+# b0ffc6c0ba0045ca9525fe9643695a95
+msgid ":c:func:`grn_default_query_logger_get_rotate_threshold_size()`"
+msgstr ""
+
+# beafd6dbe07642b495041ca70c9f0a41
+msgid ""
+"[experimental] Supported log rotation. The feature is disabled by default. "
+"You can enable log rotation by the following options:"
+msgstr ""
+"[実験的] ログローテーションをサポートしました。この機能はデフォルトでは無効で"
+"す。以下のオプションで有効にできます。"
+
+# 1fe8d65537a44b18ab007750b2abb9b3
+msgid "``--log-rotate-threshold-size``"
+msgstr ""
+
+# 8d58839bdda64e6aa68081ead707d2cd
+msgid "``--query-log-rotate-threshold-size``"
+msgstr ""
+
+# 25974fcd7f0e404099981bf4d78f6780
+msgid "[:doc:`/server/gqtp`] Documented about GQTP server."
+msgstr ""
+"[:doc:`/server/gqtp`] GQTPサーバーについてのドキュメントを追加しました。"
+
+msgid ""
+"[:doc:`/reference/executables/groonga`] Documented groonga executable file "
+"partially."
+msgstr ""
+"[:doc:`/reference/executables/groonga`] groonga実行ファイルのドキュメントを一"
+"部追加しました。"
+
+msgid "Supported Ubuntu 15.04 (Vivid Vervet)."
+msgstr "Supported Ubuntu 15.04 (Vivid Vervet)をサポートしました。"
+
+msgid "Supported Debian 8.0 (Jessie)."
+msgstr "Debian 8.0 (Jessie)をサポートしました。"
+
+msgid ""
+"[:doc:`/reference/executables/groonga-httpd`] Updated bundled nginx version "
+"to the latest mainline (1.8.0)."
+msgstr ""
+"[:doc:`/reference/executables/groonga-httpd`] バンドルしているnginxのバージョ"
+"ンを最新（1.8.0）に更新しました。"
+
+msgid "Fixes"
+msgstr "修正"
+
+# dd3d2eb3f07c42c99bbdbae1bb51380d
+msgid ""
+"[windows] Fixed a bug that :ref:`offline-index-construction` is failed for "
+"large data (at least 1GB or larger) with Groonga built by Microsoft Visual C+"
+"+. [Reported by Hideki ARAI]"
+msgstr ""
+"[windows] Microsoft Visual C++でビルドしたGroongaで、大きいデータ（少なくとも"
+"1GB以上）のオフラインインデックス構築（:ref:`offline-index-construction`） に"
+"失敗していた不具合を修正しました。 [Hideki ARAIさんが報告]"
+
+# 8176e9a7448d412ca17370128319e587
+msgid "[mruby] Made ``\\\\`` index searchable in regular expression."
+msgstr "[mruby] 正規表現の中の``\\\\``をインデックス検索可能にしました。"
+
+# 1b945a0f88f440068de96f8ebd55f859
+msgid ""
+"Fixed a bug that ``GRN_II_CURSOR_SET_MIN_ENABLE=yes`` doesn't return some "
+"matched records."
+msgstr ""
+"``GRN_II_CURSOR_SET_MIN_ENABLE=yes``のときにいくつかマッチ済みのレコードを返"
+"していなかった不具合を修正しました。"
+
+msgid "[sharding] Fixed a bug that partial range is handled as all range."
+msgstr "[sharding] 部分範囲がすべての範囲として扱われる不具合を修正しました。"
+
+msgid ""
+"[:doc:`/reference/commands/logical_range_filter`] Fixed a bug that ``:order "
+"=> \"descending\"`` doesn't work."
+msgstr ""
+"[:doc:`/reference/commands/logical_range_filter`] ``:order => \"descending"
+"\"``が動作しない不具合を修正しました。"
+
+msgid ""
+"[:doc:`/reference/commands/logical_count`] Re-supported counting with range "
+"index."
+msgstr ""
+"[:doc:`/reference/commands/logical_count`] 範囲インデックスの集計を再度サポー"
+"トしました。"
+
+# b8437f03de644992876ce247dcf145ef
+msgid ""
+"Fixed a bug causing malfunction of :c:func:`grn_pat_del()` and added a test "
+"for invalid patricia trie node add case. [groonga-dev,03177] [Reported by "
+"yuya sako]"
+msgstr ""
+"誤動作の原因となる:c:func:`grn_pat_del()`の不具合を修正し、無効なパトリシアト"
+"ライノードのテストを追加しました。 [groonga-dev,03177] [yuya sakoさんが報告]"
+
+msgid "Thanks"
+msgstr "感謝"
+
+# f2c6419172f545dbb9cbdce36e96339a
+msgid "Hideki ARAI"
+msgstr "Hideki ARAIさん"
+
+# 7c637f45d0804be689ffe3a814731b86
+msgid "Hiroyuki Mizuhara"
+msgstr "Hiroyuki Mizuharaさん"
+
+# a53a8f9ee560494995f8882fbe51e78d
+msgid "Gurunavi, Inc."
+msgstr "株式会社ぐるなびさん"
+
+# 6b15d4f093de47129f1a92c6926fc57a
+msgid "yuya sako"
+msgstr "yuya sakoさん"
+
 msgid "Release 5.0.2 - 2015-03-31"
 msgstr "5.0.2リリース - 2015-03-31"
 
 # f4c4ce262559449b9e9f757a0c59ef65
 msgid "It's a bug fix release of 5.0.1."
 msgstr "5.0.1のバグフィックスリリースです。"
-
-msgid "Improvements"
-msgstr "改良"
 
 # 16a023433f264d1ba2542bd0af4d7cec
 msgid "Supported MessagePack 1.0.1. [Reported by Hiroshi Hatake]"
@@ -43,9 +323,6 @@ msgid ""
 msgstr ""
 "[logical_range_filter] 範囲検索をデフォルトで無効にした。 環境変数 "
 "``GRN_LOGICAL_RANGE_FILTER_ENABLED`` に ``yes`` を設定すれば有効になる。"
-
-msgid "Fixes"
-msgstr "修正"
 
 # f50307e80cf5400db0aefe66a5421f24
 msgid ""
@@ -68,9 +345,6 @@ msgid ""
 msgstr ""
 "libeditが正しく初期化されない不具合を修正。CentOS 7などの環境で問題が解消され"
 "る。"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "Atsushi Shinoda"
 msgstr "篠田さん"
