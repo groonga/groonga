@@ -38,6 +38,7 @@ Here is a schema definition and sample data.
 Sample schema:
 
 .. groonga-command
+.. plugin_register functions/vector
 .. include:: ../../example/reference/functions/vector_size/usage_setup_schema.log
 .. table_create Memos TABLE_HASH_KEY ShortText
 .. column_create Memos tags COLUMN_VECTOR ShortText
