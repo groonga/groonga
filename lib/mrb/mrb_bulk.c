@@ -28,6 +28,7 @@
 
 #include "../grn_db.h"
 #include "mrb_bulk.h"
+#include "mrb_object.h"
 
 static struct mrb_data_type mrb_grn_bulk_type = {
   "Groonga::Bulk",
@@ -234,5 +235,7 @@ grn_mrb_bulk_init(grn_ctx *ctx)
                     mrb_grn_bulk_get_value, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "==",
                     mrb_grn_bulk_equal, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "inspect",
+                    grn_mrb_object_inspect, MRB_ARGS_NONE());
 }
 #endif

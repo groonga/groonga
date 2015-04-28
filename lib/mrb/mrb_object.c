@@ -30,8 +30,8 @@
 #include "mrb_operator.h"
 #include "mrb_converter.h"
 
-static mrb_value
-object_inspect(mrb_state *mrb, mrb_value self)
+mrb_value
+grn_mrb_object_inspect(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_obj *object;
@@ -237,7 +237,7 @@ grn_mrb_object_init(grn_ctx *ctx)
   data->object_class = klass;
 
   mrb_define_method(mrb, klass, "inspect",
-                    object_inspect, MRB_ARGS_NONE());
+                    grn_mrb_object_inspect, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "id", object_get_id, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "name", object_get_name, MRB_ARGS_NONE());
