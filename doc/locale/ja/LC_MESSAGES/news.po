@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-04-28 14:58+0900\n"
+"PO-Revision-Date: 2015-04-28 15:12+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -61,9 +61,12 @@ msgstr ""
 "ポートしました。"
 
 # 2d8b99fffcdd4baaa7dae77487eb1188
-msgid "[:doc:`/install/windows`] Used Groonga Admin in package."
+msgid ""
+"[:doc:`/install/windows`] Used `Groonga Admin <https://github.com/groonga/"
+"groonga-admin>`_ in package."
 msgstr ""
-"[:doc:`/install/windows`] パッケージでGroonga Adminを使うようにしました。"
+"[:doc:`/install/windows`] パッケージで `Groonga Admin <https://github.com/"
+"groonga/groonga-admin>`_ を使うようにしました。"
 
 msgid ""
 "[:doc:`/reference/commands/logical_range_filter`] Changed threshold meaning:"
@@ -129,12 +132,18 @@ msgstr ""
 "た。"
 
 # 4292e6c6b76d4a25b1e6439add7e07a9
-msgid "Increased max hash key size from 4KiB to 64KiB."
-msgstr "ハッシュのキーサイズの上限値を4KiBから64KiBに増やしました。"
+msgid ""
+"Increased max hash key size from 4KiB (4096Byte) to 64KiB - 1 (65535Byte)."
+msgstr ""
+"ハッシュのキーサイズの上限値を4KiB（4096バイト）から64KiB - 1（65535バイト）"
+"に増やしました。"
 
 # 175a9581f039498180e535bb5ddfffa2
-msgid "Increased max cache key size from 4KiB to 64KiB."
-msgstr "キャッシュのキーサイズの上限値を4KiBから64KiBに増やしました。"
+msgid ""
+"Increased max cache key size from 4KiB (4096Byte) to 64KiB - 1 (65535Byte)."
+msgstr ""
+"キャッシュのキーサイズの上限値を4KiB（4096バイト）から64KiB - 1（65535バイ"
+"ト）に増やしました。"
 
 # 31ca96ea6cc64d1bb88da7a0971b3211
 msgid "Improved performance for nested index search."
