@@ -2,6 +2,9 @@
 
 .. highlightlang:: none
 
+.. groonga-command
+.. database: commands_dump
+
 ``dump``
 ========
 
@@ -26,7 +29,11 @@ Syntax
 ------
 ::
 
-  dump [tables]
+   dump [tables]
+        [dump_plugins]
+        [dump_schema]
+        [dump_records]
+        [dump_indexes]
 
 Usage
 -----
