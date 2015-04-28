@@ -127,7 +127,7 @@ grn_mrb_value_to_raw_data(mrb_state *mrb,
     domain_name_size = grn_obj_name(ctx, domain, domain_name,
                                     GRN_TABLE_MAX_KEY_SIZE);
     mrb_raisef(mrb, E_ARGUMENT_ERROR,
-               "%s: failed to convert to %S: %S",
+               "%S: failed to convert to %S: %S",
                mrb_str_new_static(mrb, context, strlen(context)),
                mrb_str_new_static(mrb, domain_name, domain_name_size),
                mrb_value_);
