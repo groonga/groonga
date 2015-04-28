@@ -38,47 +38,110 @@ Syntax
 Usage
 -----
 
-データベース内のすべてのデータを出力::
+Here is the sample schema and data to check dump behaviour::
 
-  > dump
-  table_create LocalNames 48 ShortText
-  table_create Entries 48 ShortText
-  column_create Entries local_name 0 LocalNames
-  column_create LocalNames Entries_local_name 2 Entries local_name
-  ...
-  load --table LocalNames
-  [
-  ["_key"],
-  ["Items"],
-  ["BLT"],
-  ...
-  ]
-  ...
-
-データベース内のスキーマと特定のテーブルのデータのみ出力::
-
-  > dump --tables Users,Sites
-  table_create Users TABLE_HASH_KEY ShortText
-  column_create Users name COLUMN_SCALAR ShortText
-  table_create Comments TABLE_PAT_KEY ShortText
-  column_create Comments text COLUMN_SCALAR ShortText
+  plugin_register token_filters/stop_word
+  table_create Bookmarks TABLE_HASH_KEY ShortText
+  column_create Bookmarks title COLUMN_SCALAR ShortText
+  table_create Lexicon TABLE_PAT_KEY ShortText
   table_create Sites TABLE_NO_KEY
   column_create Sites url COLUMN_SCALAR ShortText
-  load --table Users
+  column_create Lexicon bookmark_title COLUMN_INDEX Bookmarks title
+  load --table Bookmarks
   [
-  ["_key"],
-  ["mori"],
-  ["yu"],
-  ...
+  {"_key":"Groonga", "title":"Introduction to Groonga"},
+  {"_key":"Mroonga", "title":"Introduction to Mroonga"}
   ]
   load --table Sites
   [
-  ["_id","url"],
-  [1,"http://groonga.org/"],
-  [2,"http://qwik.jp/senna/"],
-  ...
+  {"_key": 1, "url":"http://groonga.org"},
+  {"_key": 2, "url":"http://mroonga.org"}
   ]
 
+Dump all data in database::
+
+  > dump
+  plugin_register token_filters/stop_word
+  
+  table_create Sites TABLE_NO_KEY
+  column_create Sites url COLUMN_SCALAR ShortText
+  
+  table_create Bookmarks TABLE_HASH_KEY ShortText
+  column_create Bookmarks title COLUMN_SCALAR ShortText
+  
+  table_create Lexicon TABLE_PAT_KEY ShortText
+  
+  load --table Sites
+  [
+  ["_id","url"],
+  [1,"http://groonga.org"],
+  [2,"http://mroonga.org"]
+  ]
+  
+  load --table Bookmarks
+  [
+  ["_key","title"],
+  ["Groonga","Introduction to Groonga"],
+  ["Mroonga","Introduction to Mroonga"]
+  ]
+  
+  create Lexicon bookmark_title COLUMN_INDEX Bookmarks title
+
+Dump schema and specific table data::
+
+  > dump Bookmarks
+  plugin_register token_filters/stop_word
+  
+  table_create Sites TABLE_NO_KEY
+  column_create Sites url COLUMN_SCALAR ShortText
+  
+  table_create Bookmarks TABLE_HASH_KEY ShortText
+  column_create Bookmarks title COLUMN_SCALAR ShortText
+  
+  table_create Lexicon TABLE_PAT_KEY ShortText
+  
+  load --table Bookmarks
+  [
+  ["_key","title"],
+  ["Groonga","Introduction to Groonga"],
+  ["Mroonga","Introduction to Mroonga"]
+  ]
+  
+  column_create Lexicon bookmark_title COLUMN_INDEX Bookmarks title
+
+Dump plugin only::
+
+  > dump --dump_schema no --dump_records no --dump_indexes no
+  plugin_register token_filters/stop_word
+
+Dump records only::
+
+  > dump --dump_schema no --dump_plugins no --dump_indexes no
+  load --table Sites
+  [
+  ["_id","url"],
+  [1,"http://groonga.org"],
+  [2,"http://mroonga.org"]
+  ]
+  
+  load --table Bookmarks
+  [
+  ["_key","title"],
+  ["Groonga","Introduction to Groonga"],
+  ["Mroonga","Introduction to Mroonga"]
+  ]
+  
+Dump schema only::
+
+  > dump --dump_records no --dump_plugins no --dump_indexes no
+  table_create Sites TABLE_NO_KEY
+  column_create Sites url COLUMN_SCALAR ShortText
+  
+  table_create Bookmarks TABLE_HASH_KEY ShortText
+  column_create Bookmarks title COLUMN_SCALAR ShortText
+  
+  table_create Lexicon TABLE_PAT_KEY ShortText
+  
 Parameters
 ----------
 
