@@ -22,6 +22,10 @@ Syntax
 
 ``vector_size`` requires one argument - ``target``.
 
+To enable this function, register ``functions/vector`` plugin by following the command::
+
+  plugin_register functions/vector
+
 ::
 
   vector_size(target)
