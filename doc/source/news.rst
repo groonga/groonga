@@ -24,7 +24,7 @@ Improvements
   Use ``GRN_LOGICAL_RANGE_FILTER_THRESHOLD=0`` to disable range index search
   feature.
 * [:doc:`/reference/commands/logical_range_filter`] Supported negative limit and offset.
-* [:doc:`/install/windows`] Used Groonga Admin in package.
+* [:doc:`/install/windows`] Used `Groonga Admin <https://github.com/groonga/groonga-admin>`_ in package.
 * [:doc:`/reference/commands/logical_range_filter`] Changed threshold meaning:
 
   * threshold <= 0.0: always use range index
