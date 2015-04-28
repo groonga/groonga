@@ -17,54 +17,44 @@ Improvements
 
 * [tokenizers][regexp] Skip the last one character token.
 * [mruby] Supported regexp pattern for estimating size.
-* [mruby] supported size estimation for accessor.
+* [mruby] Supported size estimation for accessor.
 * [logical_range_filter] Removed ``GRN_LOGICAL_RANGE_FILTER_ENABLED``
   environment variable which is introduced since Groonga 5.0.2.
   Use ``GRN_LOGICAL_RANGE_FILTER_THRESHOLD=0`` to disable range index search
   feature.
 * [logical_range_filter] Supported negative limit and offset.
 * [windows] Used Groonga Admin in package.
-* [logical_range_filter] Changed threshold meaning.
+* [logical_range_filter] Changed threshold meaning:
   * threshold <= 0.0: always use range index
   * threshold >= 1.0: never use range index
 * [dump] Supported plugin.
 * [dump] Added the following options:
-  * ``--dump_plugins``
-    * You can disable dumping plugins by ``--dump_plugins no``.
-  * ``--dump_schema``
-    * You can disable dumping records by ``--dump_records no``.
-  * ``--dump_records``
-    * You can disable dumping schema by ``--dump_schema no``.
-  * ``--dump_indexes``
-    * You can disable dumping indexes by ``--dump_indexes no``.
+  * ``--dump_plugins [yes(default)/no]``
+  * ``--dump_schema [yes(default)/no]``
+  * ``--dump_records [yes(default)/no]``
+  * ``--dump_indexes [yes(default)/no]``
 * [API] Added :c:func:`grn_plugin_get_ruby_suffix()`.
 * [dump] Fixed order to put index columns after reference columns
   because index column may refer reference columns.
 * [dump] Don't dump records of lexicon.
-  /test/command/suite/dump/record/lexicon.test
 * [dump] Show ``_id`` for ``TABLE_NO_KEY`` again.
 * [dump] Used offline index construnction.
 * Increased max key size from 4KiB to 64KiB.
 * Increased max cache key size from 4KiB to 64KiB.
 * Improved performance for nested index search.
-* ?Use index for nonexistent reference column value
+* Used index for nonexistent reference column value.
 * [experimental] Added plugin functions/vector. It includes ``vector_size()`` function.
-  test/command/suite/select/function/vector/vector_size/reference_vector.test
-  test/command/suite/select/function/vector/vector_size/vector.test
 * [:doc:`/install/windows`] Updated Visual Studio version
   [GitHub groonga/meetup#4] [Reported by Hiroyuki Mizuhara]
-* [windows] show real error for lseek()
-* [cache] expire old caches when the max N caches is decreased
+* [cache] Expired old caches when the max N caches is decreased.
   [Suggested by Gurunavi, Inc.]
-* See errno for error from unlink()
-*   Fix error report about open()
-    open() sets errno.
+* Show more information such as errno for errors.
 * [windows] Used secure functions on Windows.
-* Added the following APIs to change log rotate threshold in file size:
-    * :c:func:`grn_default_logger_set_rotate_threshold_size()`
-    * :c:func:`grn_default_logger_get_rotate_threshold_size()`
-    * :c:func:`grn_default_query_logger_set_rotate_threshold_size()`
-    * :c:func:`grn_default_query_logger_get_rotate_threshold_size()`
+* Added the following APIs to change log rotate threshold in file size.
+  * :c:func:`grn_default_logger_set_rotate_threshold_size()`
+  * :c:func:`grn_default_logger_get_rotate_threshold_size()`
+  * :c:func:`grn_default_query_logger_set_rotate_threshold_size()`
+  * :c:func:`grn_default_query_logger_get_rotate_threshold_size()`
 * [experimental] Supported log rotation. The feature is disabled by default.
   You can enable log rotation by the following options:
   * ``--log-rotate-threshold-size``
