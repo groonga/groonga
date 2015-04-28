@@ -82,9 +82,47 @@ Usage
 Parameters
 ----------
 
+There are optional parameters.
+
+Optional parameters
+^^^^^^^^^^^^^^^^^^^
+
 ``tables``
+""""""""""
 
   出力対象のテーブルを「,」（カンマ）区切りで指定します。存在しないテーブルを指定した場合は無視されます。
+
+``dump_plugins``
+""""""""""""""""
+
+You can customize the output whether it contains registered plugins or not.
+To exclude registered plugins from the output, specify ``no``.
+
+The default value is ``yes``.
+
+``dump_schema``
+"""""""""""""""
+
+You can customize the output whether it contains database schema or not.
+To exclude database schema from the output, specify ``no``.
+
+The default value is ``yes``.
+
+``dump_records``
+""""""""""""""""
+
+You can customize the output whether it contains records or not.
+To exclude records from the output, specify ``no``.
+
+The default value is ``yes``.
+
+``dump_indexes``
+""""""""""""""""
+
+You can customize the output whether it contains indexes or not.
+To exclude indexes from the output, specify ``no``.
+
+The default value is ``yes``.
 
 Return value
 ------------
