@@ -1097,6 +1097,26 @@ msgid ""
 "アーカイブ等がpackages.groonga.orgへと反映されます。"
 msgstr ""
 
+# ddf96a837faa4faa96be2c2b0c3e05a2
+msgid "Ubuntu用パッケージのアップロード"
+msgstr ""
+
+# 39b0089a164246d0b3dbd8c35a39b1cb
+msgid "Ubuntu向けのパッケージのアップロードには以下のコマンドを実行します。::"
+msgstr ""
+
+# e10d3e6597db4840b2c03e59f2f2c87f
+msgid ""
+"アップロードが正常終了すると、launchpad.net上でビルドが実行され、ビルド結果が"
+"メールで通知されます。ビルドに成功すると、リリース対象のパッケージが"
+"launchpad.netのGroongaチームのPPAへと反映されます。公開されているパッケージは"
+"以下のURLで確認できます。"
+msgstr ""
+
+# 19588d171d894cde9eff27d3e19de25b
+msgid "https://launchpad.net/~groonga/+archive/ubuntu/ppa"
+msgstr ""
+
 msgid "blogroonga(ブログ)の更新"
 msgstr ""
 
