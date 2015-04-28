@@ -15,16 +15,16 @@ Summary
 
 ``vector_size`` returns the value of vector column size.
 
-Use ``--command_version 2`` to enable this feature.
+To enable this function, register ``functions/vector`` plugin by following the command::
+
+  plugin_register functions/vector
+
+Then, use ``vector_size`` function with ``--command_version 2`` option.
 
 Syntax
 ------
 
 ``vector_size`` requires one argument - ``target``.
-
-To enable this function, register ``functions/vector`` plugin by following the command::
-
-  plugin_register functions/vector
 
 ::
 
