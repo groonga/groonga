@@ -48,7 +48,7 @@ Improvements
 * Increased max cache key size from 4KiB (4096Byte) to 64KiB - 1 (65535Byte).
 * Improved performance for nested index search.
 * Used index for nonexistent reference column value.
-* [experimental] Added plugin functions/vector. It includes ``vector_size()`` function.
+* [experimental] Added plugin functions/vector. It includes :doc:/reference/functions/vector_size function.
 * [:doc:`/install/windows`] Updated Visual Studio version
   [GitHub groonga/meetup#4] [Reported by Hiroyuki Mizuhara]
 * [:doc:`/reference/commands/cache_limit`] Expired old caches when the max N caches is decreased.
