@@ -15,22 +15,23 @@ Release 5.0.3 - 2015-04-29
 Improvements
 ^^^^^^^^^^^^
 
-* [tokenizers][regexp] Skip the last one character token.
+* [:doc:`/reference/tokenizers`][:doc:`/reference/regular_expression`]
+  Skip the last one character token.
 * [mruby] Supported regexp pattern for estimating size.
 * [mruby] Supported size estimation for accessor.
-* [logical_range_filter] Removed ``GRN_LOGICAL_RANGE_FILTER_ENABLED``
+* [:doc:`/reference/commands/logical_range_filter`] Removed ``GRN_LOGICAL_RANGE_FILTER_ENABLED``
   environment variable which is introduced since Groonga 5.0.2.
   Use ``GRN_LOGICAL_RANGE_FILTER_THRESHOLD=0`` to disable range index search
   feature.
-* [logical_range_filter] Supported negative limit and offset.
-* [windows] Used Groonga Admin in package.
-* [logical_range_filter] Changed threshold meaning:
+* [:doc:`/reference/commands/logical_range_filter`] Supported negative limit and offset.
+* [:doc:`/install/windows`] Used Groonga Admin in package.
+* [:doc:`/reference/commands/logical_range_filter`] Changed threshold meaning:
 
   * threshold <= 0.0: always use range index
   * threshold >= 1.0: never use range index
 
-* [dump] Supported plugin.
-* [dump] Added the following options:
+* [:doc:`/reference/commands/dump`] Supported plugin.
+* [:doc:`/reference/commands/dump`] Added the following options:
 
   * ``--dump_plugins [yes(default)/no]``
   * ``--dump_schema [yes(default)/no]``
@@ -38,11 +39,11 @@ Improvements
   * ``--dump_indexes [yes(default)/no]``
 
 * [API] Added :c:func:`grn_plugin_get_ruby_suffix()`.
-* [dump] Fixed order to put index columns after reference columns
+* [:doc:`/reference/commands/dump`] Fixed order to put index columns after reference columns
   because index column may refer reference columns.
-* [dump] Don't dump records of lexicon.
-* [dump] Show ``_id`` for ``TABLE_NO_KEY`` again.
-* [dump] Used offline index construnction.
+* [:doc:`/reference/commands/dump`] Don't dump records of lexicon.
+* [:doc:`/reference/commands/dump`] Show ``_id`` for ``TABLE_NO_KEY`` again.
+* [:doc:`/reference/commands/dump`] Used offline index construnction.
 * Increased max key size from 4KiB to 64KiB.
 * Increased max cache key size from 4KiB to 64KiB.
 * Improved performance for nested index search.
@@ -50,7 +51,7 @@ Improvements
 * [experimental] Added plugin functions/vector. It includes ``vector_size()`` function.
 * [:doc:`/install/windows`] Updated Visual Studio version
   [GitHub groonga/meetup#4] [Reported by Hiroyuki Mizuhara]
-* [cache] Expired old caches when the max N caches is decreased.
+* [:doc:`/reference/commands/cache_limit`] Expired old caches when the max N caches is decreased.
   [Suggested by Gurunavi, Inc.]
 * Show more information such as errno for errors.
 * [windows] Used secure functions on Windows.
@@ -71,7 +72,7 @@ Improvements
 * [:doc:`/reference/executables/groonga`] Documented groonga executable file partially.
 * Supported Ubuntu 15.04 (Vivid Vervet).
 * Supported Debian 8.0 (Jessie).
-* [httpd] Updated bundled nginx version to the latest mainline (1.8.0).
+* [:doc:`/reference/executables/groonga-httpd`] Updated bundled nginx version to the latest mainline (1.8.0).
 
 Fixes
 ^^^^^
@@ -82,8 +83,8 @@ Fixes
 * [mruby] Made ``\\`` index searchable in regular expression.
 * Fixed a bug that ``GRN_II_CURSOR_SET_MIN_ENABLE=yes`` doesn't return some matched records.
 * [sharding] Fixed a bug that partial range is handled as all range.
-* [logical_range_filter] Fixed a bug that ``:order => "descending"`` doesn't work.
-* [logical_count] Re-supported counting with range index.
+* [:doc:`/reference/commands/logical_range_filter`] Fixed a bug that ``:order => "descending"`` doesn't work.
+* [:doc:`/reference/commands/logical_count`] Re-supported counting with range index.
 * Fixed a bug causing malfunction of :c:func:`grn_pat_del()`
   and added a test for invalid patricia trie node add case.
   [groonga-dev,03177] [Reported by yuya sako]
