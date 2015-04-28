@@ -105,17 +105,19 @@ Groonga is very fast because it use such indexes against the column which contai
 
 .. groonga-command
 .. include:: ../example/tutorial/index-6.log
+.. table_create --name GeoSite --flags TABLE_HASH_KEY --key_type ShortText
+.. column_create --table GeoSite --name location --type WGS84GeoPoint
 .. table_create --name GeoIndex --flags TABLE_PAT_KEY --key_type WGS84GeoPoint
-.. column_create --table GeoIndex --name index_point --type Site --flags COLUMN_INDEX --source location
-.. load --table Site
+.. column_create --table GeoIndex --name index_point --type GeoSite --flags COLUMN_INDEX --source location
+.. load --table GeoSite
 .. [
 ..  {"_key":"http://example.org/","location":"128452975x503157902"},
 ..  {"_key":"http://example.net/","location":"128487316x502920929"}
 .. ]
-.. select --table Site --filter 'geo_in_circle(location, "128515259x503187188", 5000)' --output_columns _key,location
+.. select --table GeoSite --filter 'geo_in_circle(location, "128515259x503187188", 5000)' --output_columns _key,location
 
 These indexes are also used when sorting the records with geo location search.
 
 .. groonga-command
 .. include:: ../example/tutorial/index-7.log
-.. select --table Site --filter 'geo_in_circle(location, "128515259x503187188", 50000)' --output_columns _key,location,_score --sortby '-geo_distance(location, "128515259x503187188")' --scorer '_score = geo_distance(location, "128515259x503187188")'
+.. select --table GeoSite --filter 'geo_in_circle(location, "128515259x503187188", 50000)' --output_columns _key,location,_score --sortby '-geo_distance(location, "128515259x503187188")' --scorer '_score = geo_distance(location, "128515259x503187188")'
