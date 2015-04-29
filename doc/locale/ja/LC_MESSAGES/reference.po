@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-04-22 12:10+0900\n"
+"PO-Revision-Date: 2015-04-29 09:42+0900\n"
 "Last-Translator: Takatsugu <nokubi@gmail.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -4418,11 +4418,34 @@ msgid ""
 "め、以下のようにしてデータベース>をコピーすることができます。::"
 msgstr ""
 
-msgid "データベース内のすべてのデータを出力::"
+msgid "Here is the sample schema and data to check dump behaviour::"
+msgstr ""
+"dumpの挙動を確認するためのスキーマ定義とサンプルデータは以下の通りです。"
+
+# cb44899106c14122ac2e01bb871764e2
+msgid "Dump all data in database::"
 msgstr ""
 
-msgid "データベース内のスキーマと特定のテーブルのデータのみ出力::"
+# bc418391a6b9463cb3727b5e387ca6e7
+msgid "Dump schema and specific table data::"
 msgstr ""
+
+# ec2746146e8b4ded81b89c91bc64c29e
+msgid "Dump plugin only::"
+msgstr ""
+
+# d437728a2c4f4f8e8cf91e0010c28944
+msgid "Dump records only::"
+msgstr ""
+
+msgid "Dump schema only::"
+msgstr "スキーマのみダンプ:"
+
+msgid "There are optional parameters."
+msgstr "いくつか省略可能な引数があります。"
+
+msgid "Optional parameters"
+msgstr "省略可能引数"
 
 msgid "``tables``"
 msgstr ""
@@ -4430,6 +4453,49 @@ msgstr ""
 msgid ""
 "出力対象のテーブルを「,」（カンマ）区切りで指定します。存在しないテーブルを指"
 "定した場合は無視されます。"
+msgstr ""
+
+# 177e7e20097f40daa53b320750d27cee
+msgid "``dump_plugins``"
+msgstr ""
+
+# e9df9e07e5bf4c83aaabaa7e4b4a54dd
+msgid ""
+"You can customize the output whether it contains registered plugins or not. "
+"To exclude registered plugins from the output, specify ``no``."
+msgstr ""
+
+msgid "The default value is ``yes``."
+msgstr "デフォルト値は ``yes`` です。"
+
+# cde1739b9c5048ebb1f1427bc61d367a
+msgid "``dump_schema``"
+msgstr ""
+
+# 1ec304d3c3e94c0b9a729d4bc53a29a2
+msgid ""
+"You can customize the output whether it contains database schema or not. To "
+"exclude database schema from the output, specify ``no``."
+msgstr ""
+
+# 1c0056aaf21740c3ad81b757474e21a2
+msgid "``dump_records``"
+msgstr ""
+
+# 5113673783634314b804ad359df99f5e
+msgid ""
+"You can customize the output whether it contains records or not. To exclude "
+"records from the output, specify ``no``."
+msgstr ""
+
+# ec040696877747ba9ac51e029cd5ac97
+msgid "``dump_indexes``"
+msgstr ""
+
+# ed813e39ac674de687db008ad4237f0f
+msgid ""
+"You can customize the output whether it contains indexes or not. To exclude "
+"indexes from the output, specify ``no``."
 msgstr ""
 
 msgid ""
@@ -4846,12 +4912,6 @@ msgstr ""
 msgid ""
 "Specifies column name which is treated as shared key in each parted table."
 msgstr "個々のテーブルで共通のキーとして扱うカラム名を指定します。"
-
-msgid "Optional parameters"
-msgstr "省略可能引数"
-
-msgid "There are optional parameters."
-msgstr "いくつか省略可能な引数があります。"
 
 msgid "``min``"
 msgstr ""
@@ -10441,17 +10501,198 @@ msgid ""
 "``event_query`` table is used."
 msgstr ""
 
-msgid "groonga command"
-msgstr "groongaコマンド"
-
-msgid "groonga - 列指向データベース機能を持つ全文検索エンジンソフトウェア"
+# 39316c645a5741fb8a165d2ddc234f52
+msgid "``groonga`` executable file"
 msgstr ""
 
+msgid "``groonga`` executable file provides the following features:"
+msgstr "``groonga`` 実行ファイルは以下の機能を提供します。:"
+
+msgid "Fulltext search server"
+msgstr "全文検索(サーバー)"
+
+msgid "Fulltext search shell"
+msgstr "全文検索(シェル)"
+
+# 40a324b2bae14edbbac98fc36333dd35
+msgid "Client for Groonga fulltext search server"
+msgstr ""
+
+# 90e04f516f4d454fa6e3cc597ee85824
 msgid ""
-"Groongaは列指向のデータベース機能を持つ高速でスケーラブルな全文検索エンジンで"
-"す。 Groongaのデータベースは、groongaコマンドかCライブラリインタフェースを通"
-"して操作することができます。このマニュアルページでは、groongaコマンドの使い方"
-"について説明します。"
+"Groonga can be used as a library. If you want to use Groonga as a library, "
+"you need to write a program in C, C++ and so on. Library use is useful for "
+"embedding fulltext search feature to your application, but it's not easy to "
+"use."
+msgstr ""
+
+# de84a793cab3446a8246cf6e63b4a78d
+msgid "You can use ``groonga`` executable file to get fulltext search feature."
+msgstr ""
+
+# 66e3128729b04ef0ae2e003c91300b01
+msgid ""
+"If you want to try Groonga, fulltext search shell usage is useful. You don't "
+"need any server and client. You just need one terminal. You can try Groonga "
+"like the following::"
+msgstr ""
+
+# f438800a168f436cb75befdd5c05f979
+msgid ""
+"If you want to create an application that has fulltext search feature, "
+"fulltext search server usage is useful. You can use Groonga as a server like "
+"RDBMS (Relational DataBase Management System). Client-server model is a "
+"popular architecture."
+msgstr ""
+
+# 629bf9b2aeac4628a4328238a13d190e
+msgid "Normally, client for Groonga fulltext server usage isn't used."
+msgstr ""
+
+msgid "``groonga`` executable file has the following four modes:"
+msgstr "``groonga`` 実行ファイルには以下の4つのモードがあります。"
+
+# 6070df5df4b148ab82377b69a9cfcdb7
+# 9afd437dadff4afb816485820fe3949c
+msgid "Standalone mode"
+msgstr ""
+
+# 985875531c184faca8ae02f94100cfdf
+# 32fed8b6268749efb104a6e30f0b0301
+msgid "Server mode"
+msgstr ""
+
+# 46e95332f1234766b80777637afb730c
+# c3e318c0206d4e00b7bd9d2ed611aa26
+msgid "Daemon mode"
+msgstr ""
+
+# 401e1e8a7825468a84289425f5fda240
+# b14d509f967a40d39432a4afa292da3f
+msgid "Client mode"
+msgstr ""
+
+# 167a0dff5cb44d758ab6bae2552ed00f
+msgid ""
+"There are common options in these modes. These common options is described "
+"later section."
+msgstr ""
+
+# 49d3f178e57146c79294898bb59dc399
+msgid ""
+"In standalone mode, ``groonga`` executable file runs one or more Groonga :"
+"doc:`/reference/command` against a local Groonga database."
+msgstr ""
+
+# 5006e167401544f1ab8215deac4fe857
+msgid ""
+"Here is the syntax to run shell that executes Groonga command against "
+"temporary database::"
+msgstr ""
+
+# a69769b91add4036a812f18429393bd2
+msgid ""
+"Here is the syntax to create a new database and run shell that executes "
+"Groonga command against the new database::"
+msgstr ""
+
+# 184bd63f6c5e4669833a70cdd502a32d
+msgid ""
+"Here is the syntax to run shell that executes Groonga command against "
+"existing database::"
+msgstr ""
+
+# 13f007c0c05942dc8247eed392927adc
+msgid ""
+"Here is the syntax to run Groonga command against existing database and "
+"exit::"
+msgstr ""
+
+# f8aec07919e748fc96891d9cf35e296f
+msgid ""
+"In server mode, ``groonga`` executable file runs as a server. The server "
+"accepts connections from other processes at local machine or remote machine "
+"and executes received Groonga :doc:`/reference/command` against a local "
+"Groonga database."
+msgstr ""
+
+# 31f295eef1f941e4b93eae8281163842
+msgid ""
+"You can choose one protocol from :doc:`/server/http` and :doc:`/server/"
+"gqtp`. Normally, HTTP is suitable but GQTP is the default protocol. This "
+"section describes only about HTTP protocol usage."
+msgstr ""
+
+# 73aec747daae432cb14714db2a858812
+msgid ""
+"In server mode, ``groonga`` executable file runs in the foreground. If you "
+"want to run Groonga server in the background, see :ref:`groonga-executable-"
+"file-server-mode`."
+msgstr ""
+
+# 031bdae4406c42e28ac6a82959aaa3a1
+msgid "Here is the syntax to run Groonga server with temporary database::"
+msgstr ""
+
+# f18159eef18044b18a89498491b53eb1
+msgid ""
+"Here is the syntax to create a new database and run Groonga server with the "
+"new database::"
+msgstr ""
+
+# 5c5fa886742a45e9b74f9f3c7768eab4
+msgid "Here is the syntax to run Groonga server with existing database::"
+msgstr ""
+
+# b3a4a9a4ad604d62b9f8fe3bc4c5df8d
+msgid ""
+"In daemon mode, ``groonga`` executable file runs as a daemon. Daemon is "
+"similar to server but it runs in the background. See :ref:`_groonga-"
+"executable-file-daemon-mode` about server."
+msgstr ""
+
+# 72b0b6cc2f4f4c22a14cb72ee71d4b3c
+msgid "Here is the syntax to run Groonga daemon with temporary database::"
+msgstr ""
+
+# 12a38d7611d44b8e935c85de7e36f4a2
+msgid ""
+"Here is the syntax to create a new database and run Groonga daemon with the "
+"new database::"
+msgstr ""
+
+# 7a058d86ab5842f4ae886e4880da09b6
+msgid "Here is the syntax to run Groonga daemon with existing database::"
+msgstr ""
+
+# e581db12b7ef4a7f8c7b086ce421e126
+msgid ":option:`--pid-file` option will be useful for daemon mode."
+msgstr ""
+
+# 859f27405e4d4346be06dfc575603987
+msgid ""
+"In client mode, ``groonga`` executable file runs as a client for GQTP "
+"protocol Groonga server. Its usage is similar to :ref:`groonga-executable-"
+"file-standalone-mode`. You can run shell and execute one command. You need "
+"to specify server address instead of local database."
+msgstr ""
+
+# da5d0e928e1a420f8d5ac93127509a04
+msgid ""
+"Note that you can use ``groonga`` executable file as a client for HTTP "
+"protocol Groonga server."
+msgstr ""
+
+# 696ff0f6ade9490b9bc3a6858d43fb10
+msgid ""
+"Here is the syntax to run shell that executes Groonga command against "
+"Groonga server that is running at ``192.168.0.1:10043``::"
+msgstr ""
+
+# 12953edb086648e3b051da8a92e35462
+msgid ""
+"Here is the syntax to run Groonga command against Groonga server that is "
+"running at ``192.168.0.1:10043`` and exit::"
 msgstr ""
 
 msgid "Creates new database."
@@ -12143,6 +12384,51 @@ msgstr ""
 "``sub_filter`` は1つでもレコードがマッチしたかどうかを返します。もし、1つ以上"
 "のレコードがマッチしたら ``true`` を返します。1つもマッチしなかったら "
 "``false`` を返します。"
+
+# b0e040b701204bd1affba54f2c7e79ea
+msgid "vector_size"
+msgstr ""
+
+# 6a962331c3ea4a5088098d3f47f77ff7
+msgid "``vector_size`` returns the value of vector column size."
+msgstr ""
+
+# 4d4ce7c951994569bc1e18100f6bda97
+msgid ""
+"To enable this function, register ``functions/vector`` plugin by following "
+"the command::"
+msgstr ""
+
+# 51aa64ffdd7143f1b835423837f60cbb
+msgid "Then, use ``vector_size`` function with ``--command_version 2`` option."
+msgstr ""
+
+msgid "``vector_size`` requires one argument - ``target``."
+msgstr "``vector_size`` は引数を一つだけとります。 それは ``target`` です。"
+
+# 7fcf76658cac43d9af59636f569f6671
+msgid ""
+"Here is the simple usage of ``vector_size`` function which returns tags and "
+"size - the value of ``tags`` column and size of it."
+msgstr "``vector_size`` 関数が ``tag`` カラムの値とそのサイズを返す例です。"
+
+msgid "There is one required parameter, ``target``."
+msgstr "必須引数が一つあり、それは ``targer`` です。"
+
+# 0a399748163449b2996143ef15eae938
+msgid "``target``"
+msgstr ""
+
+msgid ""
+"Specifies a vector column of table that is specified by ``table`` parameter "
+"in ``select``."
+msgstr ""
+"``select`` 対象の ``table`` に指定されたテーブルのベクターカラムを指定しま"
+"す。"
+
+# d4b3e106cec44fd08aaf0ca3cb468095
+msgid "``vector_size`` returns the value of target vector column size."
+msgstr ""
 
 msgid ""
 "Grn_expr is an object that searches records with specified conditions and "
@@ -18174,3 +18460,6 @@ msgstr ""
 
 msgid "Object型はv1.2でサポートされます。"
 msgstr ""
+
+#~ msgid "groonga command"
+#~ msgstr "groongaコマンド"

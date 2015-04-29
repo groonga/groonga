@@ -616,7 +616,12 @@ msgstr ""
 msgid "See also"
 msgstr "参照"
 
-msgid "TODO"
+# b6ef8381a7d04bfb99f7cec0736dad08
+msgid ":doc:`/reference/executables/groonga`"
+msgstr ""
+
+# 3f097349883044c88c95f53790e47939
+msgid ":doc:`/server/gqtp`"
 msgstr ""
 
 msgid "検索"
