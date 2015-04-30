@@ -258,6 +258,10 @@ Options
 
    クエリーログを出力するファイルのパスを指定します。(デフォルトでは出力されません)
 
+.. cmdoption:: --query-log-rotate-threshold-size <threshold>
+
+   Specifies threshold for query log rotation. Query log file is rotated when query log file size is larger than or equals to the threshold (default: 0; disabled).
+
 .. cmdoption:: -t, --max-threads <max threasd>
 
    最大で利用するスレッド数を指定します。(デフォルトはマシンのCPUコア数と同じ数です)
