@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-04-30 11:40+0900\n"
+"PO-Revision-Date: 2015-04-30 12:08+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -4424,19 +4424,19 @@ msgstr ""
 
 # cb44899106c14122ac2e01bb871764e2
 msgid "Dump all data in database::"
-msgstr ""
+msgstr "データベースのすべてのデータをダンプ::"
 
 # bc418391a6b9463cb3727b5e387ca6e7
 msgid "Dump schema and specific table data::"
-msgstr ""
+msgstr "スキーマと指定したテーブルのデータをダンプ::"
 
 # ec2746146e8b4ded81b89c91bc64c29e
 msgid "Dump plugin only::"
-msgstr ""
+msgstr "プラグインのみダンプ::"
 
 # d437728a2c4f4f8e8cf91e0010c28944
 msgid "Dump records only::"
-msgstr ""
+msgstr "レコードのみダンプ::"
 
 msgid "Dump schema only::"
 msgstr "スキーマのみダンプ:"
@@ -4464,6 +4464,8 @@ msgid ""
 "You can customize the output whether it contains registered plugins or not. "
 "To exclude registered plugins from the output, specify ``no``."
 msgstr ""
+"登録されたプラグインを出力に含めるかどうかをカスタマイズすることができます。"
+"登録されたプラグインを出力から除外する場合、 ``no`` を指定します。"
 
 msgid "The default value is ``yes``."
 msgstr "デフォルト値は ``yes`` です。"
@@ -4477,6 +4479,8 @@ msgid ""
 "You can customize the output whether it contains database schema or not. To "
 "exclude database schema from the output, specify ``no``."
 msgstr ""
+"データベーススキーマを出力に含めるかどうかをカスタマイズすることができます。"
+"データベーススキーマを出力から除外する場合、 ``no`` を指定します。"
 
 # 1c0056aaf21740c3ad81b757474e21a2
 msgid "``dump_records``"
@@ -4487,6 +4491,8 @@ msgid ""
 "You can customize the output whether it contains records or not. To exclude "
 "records from the output, specify ``no``."
 msgstr ""
+"レコードを出力に含めるかどうかをカスタマイズすることができます。レコードを出"
+"力から除外する場合、 ``no`` を指定します。"
 
 # ec040696877747ba9ac51e029cd5ac97
 msgid "``dump_indexes``"
@@ -4497,6 +4503,8 @@ msgid ""
 "You can customize the output whether it contains indexes or not. To exclude "
 "indexes from the output, specify ``no``."
 msgstr ""
+"インデックスを出力に含めるかどうかをカスタマイズすることができます。インデッ"
+"クスを出力から除外する場合、 ``no`` を指定します。"
 
 msgid ""
 "データベースのスキーマとデータをGroongaの組み込みコマンド呼び出し形式で出力し"
