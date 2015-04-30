@@ -97,8 +97,8 @@ default protocol. This section describes only about HTTP protocol
 usage.
 
 In server mode, ``groonga`` executable file runs in the foreground. If
-you want to run Groonga server in the background, see
-:ref:`groonga-executable-file-server-mode`.
+you want to run Groonga server in the background, see 
+:ref:`groonga-executable-file-daemon-mode`.
 
 Here is the syntax to run Groonga server with temporary database::
 
@@ -119,8 +119,8 @@ Daemon mode
 ^^^^^^^^^^^
 
 In daemon mode, ``groonga`` executable file runs as a daemon. Daemon
-is similar to server but it runs in the background. See
-:ref:`_groonga-executable-file-daemon-mode` about server.
+is similar to server but it runs in the background. See 
+:ref:`_groonga-executable-file-server-mode` about server.
 
 Here is the syntax to run Groonga daemon with temporary database::
 
