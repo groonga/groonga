@@ -19,7 +19,7 @@ To enable this function, register ``functions/vector`` plugin by following the c
 
   plugin_register functions/vector
 
-Then, use ``vector_size`` function with ``--command_version 2`` option.
+Then, use ``vector_size`` function with ``--command_version 2`` option. Note that you must specify ``--command_version 2`` to use ``vector_size`` function."
 
 Syntax
 ------
