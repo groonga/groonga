@@ -980,7 +980,6 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
         if (query_len) {
           grn_expr_flags flags;
           grn_obj query_expander_buf;
-          GRN_TEXT_INIT(&query_expander_buf, 0);
           flags = GRN_EXPR_SYNTAX_QUERY;
           if (query_flags_len) {
             flags |= grn_parse_query_flags(ctx, query_flags, query_flags_len);
@@ -990,6 +989,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
           } else {
             flags |= GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN;
           }
+          GRN_TEXT_INIT(&query_expander_buf, 0);
           if (query_expander_len) {
             if (expand_query(ctx, query, query_len, flags,
                              query_expander, query_expander_len,
