@@ -250,6 +250,10 @@ Options
 
    ログを出力するファイルのパスを指定します。(デフォルトは/var/log/groonga/groonga.logです)
 
+.. cmdoption:: --log-rotate-threshold-size <threshold>
+
+   Specifies threshold for log rotation. Log file is rotated when log file size is larger than or equals to the threshold (default: 0; disabled).
+
 .. cmdoption:: --query-log-path <path>
 
    クエリーログを出力するファイルのパスを指定します。(デフォルトでは出力されません)
