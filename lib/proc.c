@@ -984,11 +984,11 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
           flags = GRN_EXPR_SYNTAX_QUERY;
           if (query_flags_len) {
             flags |= grn_parse_query_flags(ctx, query_flags, query_flags_len);
-          } else {
-            flags |= GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN;
             if (ctx->rc) {
               goto exit;
             }
+          } else {
+            flags |= GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN;
           }
           if (query_expander_len) {
             if (expand_query(ctx, query, query_len, flags,
