@@ -252,6 +252,8 @@ Options
 
 .. cmdoption:: --log-rotate-threshold-size <threshold>
 
+   .. versionadded:: 5.0.3
+
    Specifies threshold for log rotation. Log file is rotated when log file size is larger than or equals to the threshold (default: 0; disabled).
 
 .. cmdoption:: --query-log-path <path>
@@ -259,6 +261,8 @@ Options
    クエリーログを出力するファイルのパスを指定します。(デフォルトでは出力されません)
 
 .. cmdoption:: --query-log-rotate-threshold-size <threshold>
+
+   .. versionadded:: 5.0.3
 
    Specifies threshold for query log rotation. Query log file is rotated when query log file size is larger than or equals to the threshold (default: 0; disabled).
 
