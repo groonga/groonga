@@ -12446,7 +12446,7 @@ msgid ""
 msgstr "``vector_size`` 関数が ``tag`` カラムの値とそのサイズを返す例です。"
 
 msgid "There is one required parameter, ``target``."
-msgstr "必須引数が一つあり、それは ``targer`` です。"
+msgstr "必須引数が一つあり、それは ``target`` です。"
 
 # 0a399748163449b2996143ef15eae938
 msgid "``target``"
