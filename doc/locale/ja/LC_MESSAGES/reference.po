@@ -10631,11 +10631,11 @@ msgid ""
 "section describes only about HTTP protocol usage."
 msgstr ""
 
-# 73aec747daae432cb14714db2a858812
+# 84154ffd25234d86b3274efda790a06e
 msgid ""
 "In server mode, ``groonga`` executable file runs in the foreground. If you "
 "want to run Groonga server in the background, see :ref:`groonga-executable-"
-"file-server-mode`."
+"file-daemon-mode`."
 msgstr ""
 
 # 031bdae4406c42e28ac6a82959aaa3a1
@@ -10652,11 +10652,11 @@ msgstr ""
 msgid "Here is the syntax to run Groonga server with existing database::"
 msgstr ""
 
-# b3a4a9a4ad604d62b9f8fe3bc4c5df8d
+# 60129f96b7cb487792d8ecd52d7629ab
 msgid ""
 "In daemon mode, ``groonga`` executable file runs as a daemon. Daemon is "
 "similar to server but it runs in the background. See :ref:`_groonga-"
-"executable-file-daemon-mode` about server."
+"executable-file-server-mode` about server."
 msgstr ""
 
 # 72b0b6cc2f4f4c22a14cb72ee71d4b3c
