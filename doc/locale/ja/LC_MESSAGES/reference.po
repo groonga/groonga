@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-04-30 12:08+0900\n"
+"PO-Revision-Date: 2015-04-30 13:00+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -12417,17 +12417,24 @@ msgstr ""
 
 # 6a962331c3ea4a5088098d3f47f77ff7
 msgid "``vector_size`` returns the value of vector column size."
-msgstr ""
+msgstr "``vector_size`` はベクターカラムのサイズを返します。"
 
 # 4d4ce7c951994569bc1e18100f6bda97
 msgid ""
 "To enable this function, register ``functions/vector`` plugin by following "
 "the command::"
 msgstr ""
+"この関数を有効にするには、以下のコマンドで ``functions/vector`` プラグインを"
+"登録します::"
 
-# 51aa64ffdd7143f1b835423837f60cbb
-msgid "Then, use ``vector_size`` function with ``--command_version 2`` option."
+msgid ""
+"Then, use ``vector_size`` function with ``--command_version 2`` option. Note "
+"that you must specify ``--command_version 2`` to use ``vector_size`` "
+"function.\""
 msgstr ""
+"その後、 ``--command_version 2`` オプションと一緒に ``vector_size`` 関数を"
+"使ってください。``vector_size`` を使うには ``--command_vesion 2`` を指定しな"
+"ければならないことに注意してください。"
 
 msgid "``vector_size`` requires one argument - ``target``."
 msgstr "``vector_size`` は引数を一つだけとります。 それは ``target`` です。"
@@ -12454,7 +12461,7 @@ msgstr ""
 
 # d4b3e106cec44fd08aaf0ca3cb468095
 msgid "``vector_size`` returns the value of target vector column size."
-msgstr ""
+msgstr "``vector_size`` は対象のベクターカラムのサイズを返します。"
 
 msgid ""
 "Grn_expr is an object that searches records with specified conditions and "
