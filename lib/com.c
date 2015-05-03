@@ -36,6 +36,7 @@
 # ifdef HAVE_SIGNAL_H
 #  include <signal.h>
 # endif /* HAVE_SIGNAL_H */
+# include <sys/uio.h>
 #endif /* WIN32 */
 
 #include "grn_ctx.h"
