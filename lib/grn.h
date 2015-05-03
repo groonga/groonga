@@ -37,9 +37,7 @@
 # include <stdint.h>
 #endif /* HAVE_STDINT_H */
 
-#ifdef HAVE_SYS_TYPES_H
-# include <sys/types.h>
-#endif /* HAVE_SYS_TYPES_H */
+#include <sys/types.h>
 
 #ifdef HAVE_SYS_PARAM_H
 # include <sys/param.h>
