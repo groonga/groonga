@@ -53,6 +53,8 @@
 
 #ifdef WIN32
 # include <io.h>
+#else /* WIN32 */
+# include <sys/uio.h>
 #endif /* WIN32 */
 
 #ifdef HAVE__STRNICMP
