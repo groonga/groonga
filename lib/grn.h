@@ -31,9 +31,7 @@
 # define __STDC_LIMIT_MACROS
 #endif
 
-#ifdef HAVE_STDLIB_H
-# include <stdlib.h>
-#endif /* HAVE_STDLIB_H */
+#include <stdlib.h>
 
 #ifdef HAVE_STDINT_H
 # include <stdint.h>

@@ -108,7 +108,6 @@
 #cmakedefine HAVE_SIGNAL_H
 #cmakedefine HAVE_STDARG_H
 #cmakedefine HAVE_STDINT_H
-#cmakedefine HAVE_STDLIB_H
 #cmakedefine HAVE_STRINGS_H
 #cmakedefine HAVE_STRING_H
 #cmakedefine HAVE_SYS_MMAN_H
