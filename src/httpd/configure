@@ -96,10 +96,12 @@ auto/configure \
   ${configure_args}
 
 if [ "${GROONGA_HTTPD_DEBUG}" = "yes" ]; then
-  sed -i".without-debug-flags" \
+  objs_makefile_backup="objs/Makefile.with-debug-flags"
+  mv objs/Makefile "${objs_makefile_backup}"
+  sed \
     -e '/^CFLAGS =/ s/ -O / -O0 /' \
     -e '/^CFLAGS =/ s/ -g / -g3 /' \
-    objs/Makefile
+    objs_makefile_backup > objs/Makefile
 fi
 
 # Consider security by using position independent code (PIE).
