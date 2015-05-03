@@ -101,7 +101,7 @@ if [ "${GROONGA_HTTPD_DEBUG}" = "yes" ]; then
   sed \
     -e '/^CFLAGS =/ s/ -O / -O0 /' \
     -e '/^CFLAGS =/ s/ -g / -g3 /' \
-    objs_makefile_backup > objs/Makefile
+    "${objs_makefile_backup}" > objs/Makefile
 fi
 
 # Consider security by using position independent code (PIE).
