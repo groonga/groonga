@@ -1508,6 +1508,7 @@ AM_CONDITIONAL(WITH_SHARED_ONIGMO, test "$enable_shared_onigmo" = "yes")
 
 # TODO: Support using system Onigmo instead of bundled Onigmo.
 AC_DEFINE(GRN_WITH_ONIGMO, [1], [Use Onigmo.])
+GRN_WITH_ONIGMO="yes"
 AC_SUBST(GRN_WITH_ONIGMO)
 AC_CONFIG_SUBDIRS([vendor/onigmo])
 
