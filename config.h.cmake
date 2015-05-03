@@ -98,7 +98,6 @@
 #cmakedefine HAVE_ERRNO_H
 #cmakedefine HAVE_EXECINFO_H
 #cmakedefine HAVE_INTTYPES_H
-#cmakedefine HAVE_IO_H
 #cmakedefine HAVE_LINUX_FUTEX_H
 #cmakedefine HAVE_MEMORY_H
 #cmakedefine HAVE_NETDB_H

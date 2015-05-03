@@ -51,9 +51,9 @@
 # include <sys/sysctl.h>
 #endif /* HAVE_SYS_SYSCTL_H */
 
-#ifdef HAVE_IO_H
+#ifdef WIN32
 # include <io.h>
-#endif /* HAVE_IO_H */
+#endif /* WIN32 */
 
 #ifdef HAVE__STRNICMP
 # ifdef strncasecmp
