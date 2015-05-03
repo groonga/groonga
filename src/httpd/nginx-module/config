@@ -50,7 +50,7 @@ if [ $ngx_found = yes ]; then
   CORE_LIBS="$CORE_LIBS $groonga_libs"
 else
   cat << END
-$0: error: the groonga module requires the groonga library.
+$0: error: the groonga module requires the Groonga library.
 END
   exit 1
 fi
