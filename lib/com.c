@@ -22,20 +22,20 @@
 #include "grn_ctx_impl.h"
 
 #ifdef WIN32
-#  include <ws2tcpip.h>
+# include <ws2tcpip.h>
 #else
-#  ifdef HAVE_SYS_SOCKET_H
-#    include <sys/socket.h>
-#  endif /* HAVE_SYS_SOCKET_H */
-#  ifdef HAVE_NETINET_IN_H
-#    include <netinet/in.h>
-#  endif /* HAVE_NETINET_IN_H */
-#  ifdef HAVE_NETINET_TCP_H
-#   include <netinet/tcp.h>
-#  endif /* HAVE_NETINET_TCP_H */
-#  ifdef HAVE_SIGNAL_H
-#   include <signal.h>
-#  endif /* HAVE_SIGNAL_H */
+# ifdef HAVE_SYS_SOCKET_H
+#  include <sys/socket.h>
+# endif /* HAVE_SYS_SOCKET_H */
+# ifdef HAVE_NETINET_IN_H
+#  include <netinet/in.h>
+# endif /* HAVE_NETINET_IN_H */
+# ifdef HAVE_NETINET_TCP_H
+#  include <netinet/tcp.h>
+# endif /* HAVE_NETINET_TCP_H */
+# ifdef HAVE_SIGNAL_H
+#  include <signal.h>
+# endif /* HAVE_SIGNAL_H */
 #endif /* WIN32 */
 
 #include "grn_ctx.h"
