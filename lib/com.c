@@ -733,13 +733,11 @@ grn_com_send(grn_ctx *ctx, grn_com *cs,
 #else /* WIN32 */
     struct iovec msg_iov[2];
     struct msghdr msg;
+    memset(&msg, 0, sizeof(struct msghdr));
     msg.msg_name = NULL;
     msg.msg_namelen = 0;
     msg.msg_iov = msg_iov;
     msg.msg_iovlen = 2;
-    msg.msg_control = NULL;
-    msg.msg_controllen = 0;
-    msg.msg_flags = 0;
     msg_iov[0].iov_base = header;
     msg_iov[0].iov_len = sizeof(grn_com_header);
     msg_iov[1].iov_base = (char *)body;
