@@ -31,12 +31,11 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <time.h>
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif /* HAVE_NETINET_IN_H */
 
 #ifdef WIN32
 # include <share.h>
+#else /* WIN32 */
+# include <netinet/in.h>
 #endif /* WIN32 */
 
 #if defined(HAVE__LOCALTIME64_S) && defined(__GNUC__)
