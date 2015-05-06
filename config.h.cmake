@@ -101,7 +101,6 @@
 #cmakedefine HAVE_LINUX_FUTEX_H
 #cmakedefine HAVE_MEMORY_H
 #cmakedefine HAVE_NETDB_H
-#cmakedefine HAVE_NETINET_TCP_H
 #cmakedefine HAVE_PTHREAD_H
 #cmakedefine HAVE_SIGNAL_H
 #cmakedefine HAVE_STDARG_H

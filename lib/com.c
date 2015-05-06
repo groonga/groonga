@@ -28,9 +28,7 @@
 #  include <sys/socket.h>
 # endif /* HAVE_SYS_SOCKET_H */
 # include <netinet/in.h>
-# ifdef HAVE_NETINET_TCP_H
-#  include <netinet/tcp.h>
-# endif /* HAVE_NETINET_TCP_H */
+# include <netinet/tcp.h>
 # ifdef HAVE_SIGNAL_H
 #  include <signal.h>
 # endif /* HAVE_SIGNAL_H */
