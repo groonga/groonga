@@ -13,18 +13,21 @@ column_create Lexicon comments_content COLUMN_INDEX|WITH_POSITION \
   Comments content
 
 
-load --table Comments
-[
-{"_key": "comment1", "article": "article1", "content": "I'm using Groonga too!"},
-{"_key": "comment2", "article": "article3", "content": "I'm using Groonga and Mroonga!"},
-{"_key": "comment3", "article": "article1", "content": "I'm using Groonga too!"}
-]
-
 load --table Articles
 [
 {"_key": "article1", "content": "Groonga is fast!"},
 {"_key": "article2", "content": "Groonga is useful!"},
 {"_key": "article3", "content": "Mroonga is fast!"}
+]
+
+load --table Comments
+[
+{"_key": "comment1", "article": "article1", "content": "I'm using Groonga too!"},
+{"_key": "comment2", "article": "article3", "content": "I'm using Groonga and Mroonga!"},
+{"_key": "comment3", "article": "article1", "content": "I'm using Groonga too!"},
+{"_key": "comment4", "article": "article2", "content": "Good news!"},
+{"_key": "comment5", "article": "article3", "content": "Wow!"},
+{"_key": "comment6", "article": "article1", "content": "Mroonga is also fast!"}
 ]
 
 select Articles \

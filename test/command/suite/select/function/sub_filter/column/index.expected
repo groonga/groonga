@@ -14,13 +14,6 @@ table_create Lexicon TABLE_PAT_KEY|KEY_NORMALIZE ShortText   --default_tokenizer
 [[0,0.0,0.0],true]
 column_create Lexicon comments_content COLUMN_INDEX|WITH_POSITION   Comments content
 [[0,0.0,0.0],true]
-load --table Comments
-[
-{"_key": "comment1", "article": "article1", "content": "I'm using Groonga too!"},
-{"_key": "comment2", "article": "article3", "content": "I'm using Groonga and Mroonga!"},
-{"_key": "comment3", "article": "article1", "content": "I'm using Groonga too!"}
-]
-[[0,0.0,0.0],3]
 load --table Articles
 [
 {"_key": "article1", "content": "Groonga is fast!"},
@@ -28,6 +21,16 @@ load --table Articles
 {"_key": "article3", "content": "Mroonga is fast!"}
 ]
 [[0,0.0,0.0],3]
+load --table Comments
+[
+{"_key": "comment1", "article": "article1", "content": "I'm using Groonga too!"},
+{"_key": "comment2", "article": "article3", "content": "I'm using Groonga and Mroonga!"},
+{"_key": "comment3", "article": "article1", "content": "I'm using Groonga too!"},
+{"_key": "comment4", "article": "article2", "content": "Good news!"},
+{"_key": "comment5", "article": "article3", "content": "Wow!"},
+{"_key": "comment6", "article": "article1", "content": "Mroonga is also fast!"}
+]
+[[0,0.0,0.0],6]
 select Articles   --filter 'sub_filter(comment_index, "content @ \\"Mroonga\\"")'   --output_columns "_key, content"
 [
   [
@@ -38,7 +41,7 @@ select Articles   --filter 'sub_filter(comment_index, "content @ \\"Mroonga\\"")
   [
     [
       [
-        1
+        2
       ],
       [
         [
@@ -53,6 +56,10 @@ select Articles   --filter 'sub_filter(comment_index, "content @ \\"Mroonga\\"")
       [
         "article3",
         "Mroonga is fast!"
+      ],
+      [
+        "article1",
+        "Groonga is fast!"
       ]
     ]
   ]
