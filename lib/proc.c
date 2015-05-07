@@ -5134,6 +5134,7 @@ run_sub_filter(grn_ctx *ctx, grn_obj *table,
   case GRN_ACCESSOR :
   case GRN_COLUMN_FIX_SIZE :
   case GRN_COLUMN_VAR_SIZE :
+  case GRN_COLUMN_INDEX :
     break;
   default :
     /* TODO: put inspected the 1st argument to message */

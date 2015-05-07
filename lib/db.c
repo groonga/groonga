@@ -2784,9 +2784,13 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
     grn_operator index_op = GRN_OP_MATCH;
 
     a = (grn_accessor *)GRN_PTR_VALUE_AT(&accessor_stack, i - 1);
-    if (grn_column_index(ctx, a->obj, index_op, &index, 1, NULL) == 0) {
-      rc = GRN_INVALID_ARGUMENT;
-      break;
+    if (a->obj->header.type == GRN_COLUMN_INDEX) {
+      index = a->obj;
+    } else {
+      if (grn_column_index(ctx, a->obj, index_op, &index, 1, NULL) == 0) {
+        rc = GRN_INVALID_ARGUMENT;
+        break;
+      }
     }
 
     {
