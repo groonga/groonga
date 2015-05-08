@@ -115,8 +115,12 @@ using ``TokenBigram`` tokenizer. So both ``Entries._key`` and
 
 OK. The schema and data for examples are ready.
 
+.. _script-syntax-literals:
+
 Literals
 --------
+
+.. _script-syntax-literal-integer:
 
 Integer
 ^^^^^^^
@@ -130,6 +134,8 @@ The maximum value of integer literal is ``9223372036854775807`` (``= 2
 ** 63 - 1``). The minimum value of integer literal is
 ``-9223372036854775808`` (``= -(2 ** 63)``).
 
+.. _script-syntax-literal-float:
+
 Float
 ^^^^^
 
@@ -138,6 +144,8 @@ such as ``3.14``. ``+`` or ``-`` can be prepended as sign such as
 ``+3.14`` and ``-3.14``. ``${RADIX}e${EXPORNENTIAL}`` and
 ``${RADIX}E${EXPORNENTIAL}`` formats are also supported. For example,
 ``314e-2`` is the same as ``3.14``.
+
+.. _script-syntax-literal-string:
 
 String
 ^^^^^^
@@ -151,17 +159,23 @@ encoding is UTF-8. It can be changed by ``--with-default-encoding``
 configure option, ``--encodiong`` :doc:`/reference/executables/groonga` option
 and so on.
 
+.. _script-syntax-literal-boolean:
+
 Boolean
 ^^^^^^^
 
 Boolean literal is ``true`` and ``false``. ``true`` means true and
 ``false`` means false.
 
+.. _script-syntax-literal-null:
+
 Null
 ^^^^
 
 Null literal is ``null``. Groonga doesn't support null value but null
 literal is supported.
+
+.. _script-syntax-literal-time:
 
 Time
 ^^^^
@@ -189,6 +203,8 @@ have elapsed since midnight UTC, January 1, 1970. For example,
 ``1343011270.436218`` is ``2012-07-23T02:41:10.436218Z`` in ISO 8601
 format.
 
+.. _script-syntax-literal-geo-point:
+
 Geo point
 ^^^^^^^^^
 
@@ -208,10 +224,14 @@ String geo point notation has the following patterns:
 ``x`` and ``,`` can be used for separator. Latitude and longitude can
 be represented in milliseconds or degree.
 
+.. _script-syntax-literal-array:
+
 Array
 ^^^^^
 
 Array literal is ``[element1, element2, ...]``.
+
+.. _script-syntax-literal-object:
 
 Object literal
 ^^^^^^^^^^^^^^
