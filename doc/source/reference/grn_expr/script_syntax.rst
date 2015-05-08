@@ -65,8 +65,9 @@ input value. Here is a list how to escape user input value:
 
   * True value: Convert it to ``true``.
   * False value: Convert it to ``false``.
-  * Numerical value: Convert it to number. For example, ``1.2`` should
-    be converted to ``1.2``.
+  * Numerical value: Convert it to :ref:`script-syntax-literal-integer`
+    or :ref:`script-syntax-literal-float`. For example, ``1.2``,
+    ``-10``, ``314e-2`` and so on.
   * String value: Replace ``"`` with ``\"`` and ``\`` with ``\\`` in
     the string value and surround substituted string value by
     ``"``. For example, ``double " quote and back \ slash`` should be
