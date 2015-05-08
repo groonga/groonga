@@ -2907,6 +2907,7 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
             break;
           }
         });
+        GRN_OBJ_FIN(ctx, &column_value);
       }
       if (current_res != base_res) {
         grn_obj_unlink(ctx, current_res);
