@@ -664,7 +664,7 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   tokenizer->is_overlapping = (n_characters > 1);
 
   if (mode == GRN_TOKEN_GET) {
-    if ((end - tokenizer->next) < ngram_unit) {
+    if (current == end) {
       if (tokenizer->get.have_end) {
         if (tokenizer->next == end) {
           tokenizer->is_end = GRN_TRUE;
