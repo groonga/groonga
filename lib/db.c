@@ -11315,6 +11315,11 @@ grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned int str_size
   const char *p = str;
   const char **tokbuf;
   grn_table_sort_key *keys = NULL, *k = NULL;
+
+  if (str_size == 0) {
+    return NULL;
+  }
+
   if ((keys = grn_table_sort_key_from_str_geo(ctx, str, str_size, table, nkeys))) {
     return keys;
   }
