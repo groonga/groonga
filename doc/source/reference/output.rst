@@ -29,7 +29,7 @@ Command line
 
 You can use command line query interface by ``groonga
 DB_PATH`` or ``groonga -c``. Those groonga commands shows
-``> `` prompt. In this query interface, you can specify
+``>`` prompt. In this query interface, you can specify
 output format type by ``output_type`` option.
 
 If you don't specify ``output_type`` option, you will get
