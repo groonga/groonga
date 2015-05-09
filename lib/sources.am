@@ -15,6 +15,8 @@ libgroonga_la_SOURCES =				\
 	grn_error.h				\
 	expr.c					\
 	grn_expr.h				\
+	expr_code.c				\
+	grn_expr_code.h				\
 	geo.c					\
 	grn_geo.h				\
 	grn.h					\

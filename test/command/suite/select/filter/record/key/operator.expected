@@ -1,0 +1,59 @@
+table_create Keywords TABLE_HASH_KEY ShortText   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Keywords label COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tag COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Keywords
+[
+{"_key": "groonga", "label": "Groonga"}
+]
+[[0,0.0,0.0],1]
+load --table Memos
+[
+{"_key": "Groonga is very fast",       "tag": "Groonga"},
+{"_key": "Groonga is easy to install", "tag": "Groonga"},
+{"_key": "Mroonga is very fast",       "tag": "Mroonga"}
+]
+[[0,0.0,0.0],3]
+select Memos --filter 'tag == Keywords["groo" + "nga"].label'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tag",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "Groonga is very fast",
+        "Groonga"
+      ],
+      [
+        2,
+        "Groonga is easy to install",
+        "Groonga"
+      ]
+    ]
+  ]
+]

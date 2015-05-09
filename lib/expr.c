@@ -22,6 +22,7 @@
 #include "grn_ii.h"
 #include "grn_geo.h"
 #include "grn_expr.h"
+#include "grn_expr_code.h"
 #include "grn_util.h"
 #include "grn_mrb.h"
 #include "mrb/mrb_expr.h"
@@ -6157,14 +6158,30 @@ parse_script_extract_name_resolve_context(grn_ctx *ctx, efs_info *q)
   grn_expr_code *code_start;
   grn_expr_code *code_last;
 
+  if (expr->codes_curr == 0) {
+    return NULL;
+  }
+
   code_start = expr->codes;
   code_last = code_start + (expr->codes_curr - 1);
   switch (code_last->op) {
   case GRN_OP_GET_MEMBER :
+    if (code_last - 1 < code_start) {
+      return NULL;
+    }
     {
+      unsigned int n_used_codes_for_key;
+      grn_expr_code *code_key;
       grn_expr_code *code_receiver;
-      /* TODO: Support non literal key case. */
-      code_receiver = code_last - 2;
+
+      code_key = code_last - 1;
+      n_used_codes_for_key = grn_expr_code_n_used_codes(ctx,
+                                                        code_start,
+                                                        code_key);
+      if (n_used_codes_for_key == 0) {
+        return NULL;
+      }
+      code_receiver = code_key - n_used_codes_for_key;
       if (code_receiver < code_start) {
         return NULL;
       }

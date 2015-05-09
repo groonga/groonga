@@ -1,0 +1,20 @@
+table_create Keywords TABLE_HASH_KEY ShortText \
+  --normalizer NormalizerAuto
+column_create Keywords label COLUMN_SCALAR ShortText
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos tag COLUMN_SCALAR ShortText
+
+load --table Keywords
+[
+{"_key": "groonga", "label": "Groonga"}
+]
+
+load --table Memos
+[
+{"_key": "Groonga is very fast",       "tag": "Groonga"},
+{"_key": "Groonga is easy to install", "tag": "Groonga"},
+{"_key": "Mroonga is very fast",       "tag": "Mroonga"}
+]
+
+select Memos --filter 'tag == Keywords["groo" + "nga"].label'
