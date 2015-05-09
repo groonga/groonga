@@ -1367,13 +1367,13 @@ grn_output_table_records_by_expression(grn_ctx *ctx, grn_obj *outbuf,
         have_comma = GRN_TRUE;
         if (is_first_comma) {
           int second_code_offset;
-          unsigned int second_code_n_used_code;
+          unsigned int second_code_n_used_codes;
           second_code_offset = code - expr->codes - 1;
-          second_code_n_used_code =
+          second_code_n_used_codes =
             grn_expr_code_n_used_codes(ctx,
                                        expr->codes,
                                        expr->codes + second_code_offset);
-          expr->codes_curr = second_code_offset - second_code_n_used_code + 1;
+          expr->codes_curr = second_code_offset - second_code_n_used_codes + 1;
           grn_output_table_record_by_expression(ctx, outbuf, output_type,
                                                 format->expression);
           code_start_offset = expr->codes_curr;
