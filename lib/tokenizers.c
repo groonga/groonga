@@ -582,8 +582,7 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *buffer = &(tokenizer->buffer);
   const char *current = tokenizer->next;
   const char *end = tokenizer->end;
-  const const uint_least8_t *char_types =
-    tokenizer->char_types + tokenizer->nth_char;
+  const const uint_least8_t *char_types = tokenizer->char_types;
   grn_tokenize_mode mode = tokenizer->query->tokenize_mode;
   grn_bool is_first_token = tokenizer->is_first_token;
   grn_bool escaping = GRN_FALSE;
@@ -591,6 +590,10 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   GRN_BULK_REWIND(buffer);
   tokenizer->is_first_token = GRN_FALSE;
+
+  if (char_types) {
+    char_types += tokenizer->nth_char;
+  }
 
   if (mode == GRN_TOKEN_GET) {
     if (tokenizer->get.have_begin) {
@@ -646,9 +649,10 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         char_len == 1 && current[0] == '\\') {
       current += char_len;
       escaping = GRN_TRUE;
-      char_types++;
+      if (char_types) {
+        char_types++;
+      }
     } else {
-      uint_least8_t char_type;
       n_characters++;
       GRN_TEXT_PUT(ctx, buffer, current, char_len);
       current += char_len;
@@ -660,11 +664,14 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         }
       }
       escaping = GRN_FALSE;
-      char_type = char_types[0];
-      char_types++;
-      if (GRN_STR_ISBLANK(char_type)) {
-        break_by_blank = GRN_TRUE;
-        break;
+      if (char_types) {
+        uint_least8_t char_type;
+        char_type = char_types[0];
+        char_types++;
+        if (GRN_STR_ISBLANK(char_type)) {
+          break_by_blank = GRN_TRUE;
+          break;
+        }
       }
       if (n_characters == ngram_unit) {
         break;
