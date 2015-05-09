@@ -483,13 +483,15 @@ typedef struct {
   grn_bool is_overlapping;
   const char *next;
   const char *end;
+  unsigned int nth_char;
+  const uint_least8_t *char_types;
   grn_obj buffer;
 } grn_regexp_tokenizer;
 
 static grn_obj *
 regexp_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  unsigned int normalize_flags = 0;
+  unsigned int normalize_flags = GRN_STRING_WITH_TYPES;
   grn_tokenizer_query *query;
   const char *normalized;
   unsigned int normalized_length_in_bytes;
@@ -526,6 +528,9 @@ regexp_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                             NULL);
   tokenizer->next = normalized;
   tokenizer->end = tokenizer->next + normalized_length_in_bytes;
+  tokenizer->nth_char = 0;
+  tokenizer->char_types =
+    grn_string_get_types(ctx, tokenizer->query->normalized_query);
 
   if (tokenizer->query->tokenize_mode == GRN_TOKEN_GET) {
     unsigned int query_length = tokenizer->query->length;
@@ -541,6 +546,7 @@ regexp_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                         encoding);
         tokenizer->next += grn_charlen_(ctx, tokenizer->next, tokenizer->end,
                                         encoding);
+        tokenizer->nth_char = 2;
       }
       if (query_string[query_length - 2] == '\\' &&
           query_string[query_length - 1] == 'z') {
@@ -576,8 +582,11 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *buffer = &(tokenizer->buffer);
   const char *current = tokenizer->next;
   const char *end = tokenizer->end;
+  const const uint_least8_t *char_types =
+    tokenizer->char_types + tokenizer->nth_char;
   grn_tokenize_mode mode = tokenizer->query->tokenize_mode;
   grn_bool escaping = GRN_FALSE;
+  grn_bool break_by_blank = GRN_FALSE;
 
   GRN_BULK_REWIND(buffer);
 
@@ -635,15 +644,24 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         char_len == 1 && current[0] == '\\') {
       current += char_len;
       escaping = GRN_TRUE;
+      char_types++;
     } else {
+      uint_least8_t char_type;
       n_characters++;
       GRN_TEXT_PUT(ctx, buffer, current, char_len);
       current += char_len;
       escaping = GRN_FALSE;
       if (n_characters == 1) {
         tokenizer->next = current;
+        tokenizer->nth_char++;
       }
       if (n_characters == ngram_unit) {
+        break;
+      }
+      char_type = char_types[0];
+      char_types++;
+      if (GRN_STR_ISBLANK(char_type)) {
+        break_by_blank = GRN_TRUE;
         break;
       }
     }
@@ -658,7 +676,7 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   if (tokenizer->is_overlapping) {
     status |= GRN_TOKEN_OVERLAP;
   }
-  if (n_characters < ngram_unit) {
+  if (n_characters < ngram_unit && !break_by_blank) {
     status |= GRN_TOKEN_UNMATURED;
   }
   tokenizer->is_overlapping = (n_characters > 1);
