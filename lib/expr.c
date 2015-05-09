@@ -2226,11 +2226,11 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
 } while (0)
 
 inline static void
-grn_expr_exec_get_member(grn_ctx *ctx,
-                         grn_obj *expr,
-                         grn_obj *column_and_record_id,
-                         grn_obj *index,
-                         grn_obj *result)
+grn_expr_exec_get_member_vector(grn_ctx *ctx,
+                                grn_obj *expr,
+                                grn_obj *column_and_record_id,
+                                grn_obj *index,
+                                grn_obj *result)
 {
   grn_obj *column;
   grn_id record_id;
@@ -2266,6 +2266,34 @@ grn_expr_exec_get_member(grn_ctx *ctx,
   }
 
   GRN_OBJ_FIN(ctx, &values);
+}
+
+inline static void
+grn_expr_exec_get_member_table(grn_ctx *ctx,
+                               grn_obj *expr,
+                               grn_obj *table,
+                               grn_obj *key,
+                               grn_obj *result)
+{
+  grn_id id;
+
+  if (table->header.domain == key->header.domain) {
+    id = grn_table_get(ctx, table, GRN_BULK_HEAD(key), GRN_BULK_VSIZE(key));
+  } else {
+    grn_obj casted_key;
+    GRN_OBJ_INIT(&casted_key, GRN_BULK, 0, table->header.domain);
+    if (grn_obj_cast(ctx, key, &casted_key, GRN_FALSE) == GRN_SUCCESS) {
+      id = grn_table_get(ctx, table,
+                         GRN_BULK_HEAD(&casted_key),
+                         GRN_BULK_VSIZE(&casted_key));
+    } else {
+      id = GRN_ID_NIL;
+    }
+    GRN_OBJ_FIN(ctx, &casted_key);
+  }
+
+  grn_obj_reinit(ctx, result, DB_OBJ(table)->id, 0);
+  GRN_RECORD_SET(ctx, result, id);
 }
 
 static inline grn_bool
@@ -3458,9 +3486,15 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_GET_MEMBER :
         {
-          grn_obj *column_and_record_id, *index;
-          POP2ALLOC1(column_and_record_id, index, res);
-          grn_expr_exec_get_member(ctx, expr, column_and_record_id, index, res);
+          grn_obj *receiver, *index_or_key;
+          POP2ALLOC1(receiver, index_or_key, res);
+          if (receiver->header.type == GRN_PTR) {
+            grn_obj *index = index_or_key;
+            grn_expr_exec_get_member_vector(ctx, expr, receiver, index, res);
+          } else {
+            grn_obj *key = index_or_key;
+            grn_expr_exec_get_member_table(ctx, expr, receiver, key, res);
+          }
           code++;
         }
         break;
@@ -5996,7 +6030,7 @@ resolve_top_level_name(grn_ctx *ctx, const char *name, unsigned int name_size)
 }
 
 static grn_rc
-get_identifier(grn_ctx *ctx, efs_info *q)
+get_identifier(grn_ctx *ctx, efs_info *q, grn_obj *name_resolve_context)
 {
   const char *s;
   unsigned int len;
@@ -6072,6 +6106,14 @@ done :
     grn_obj *obj;
     const char *name = q->cur;
     unsigned int name_size = s - q->cur;
+    if (name_resolve_context) {
+      if ((obj = grn_obj_column(ctx, name_resolve_context, name, name_size))) {
+        grn_expr_take_obj(ctx, q->e, obj);
+        PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
+        grn_expr_append_obj(ctx, q->e, obj, GRN_OP_GET_VALUE, 2);
+        goto exit;
+      }
+    }
     if ((obj = grn_expr_get_var(ctx, q->e, name, name_size))) {
       PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
       grn_expr_append_obj(ctx, q->e, obj, GRN_OP_PUSH, 1);
@@ -6108,11 +6150,42 @@ set_tos_minor_to_curr(grn_ctx *ctx, efs_info *q)
   yytos->minor.yy0 = ((grn_expr *)(q->e))->codes_curr;
 }
 
+static grn_obj *
+parse_script_extract_name_resolve_context(grn_ctx *ctx, efs_info *q)
+{
+  grn_expr *expr = (grn_expr *)(q->e);
+  grn_expr_code *code_start;
+  grn_expr_code *code_last;
+
+  code_start = expr->codes;
+  code_last = code_start + (expr->codes_curr - 1);
+  switch (code_last->op) {
+  case GRN_OP_GET_MEMBER :
+    {
+      grn_expr_code *code_receiver;
+      /* TODO: Support non literal key case. */
+      code_receiver = code_last - 2;
+      if (code_receiver < code_start) {
+        return NULL;
+      }
+      return code_receiver->value;
+    }
+    break;
+  default :
+    /* TODO: Support other operators. */
+    return NULL;
+    break;
+  }
+}
+
 static grn_rc
 parse_script(grn_ctx *ctx, efs_info *q)
 {
   grn_rc rc = GRN_SUCCESS;
+  grn_obj *name_resolve_context = NULL;
   for (;;) {
+    grn_obj *current_name_resolve_context = name_resolve_context;
+    name_resolve_context = NULL;
     skip_space(ctx, q);
     if (q->cur >= q->str_end) { rc = GRN_END_OF_DATA; goto exit; }
     switch (*q->cur) {
@@ -6150,6 +6223,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
       break;
     case '.' :
       PARSE(GRN_EXPR_TOKEN_DOT);
+      name_resolve_context = parse_script_extract_name_resolve_context(ctx, q);
       q->cur++;
       break;
     case ':' :
@@ -6538,7 +6612,9 @@ parse_script(grn_ctx *ctx, efs_info *q)
       }
       break;
     default :
-      if ((rc = get_identifier(ctx, q))) { goto exit; }
+      if ((rc = get_identifier(ctx, q, current_name_resolve_context))) {
+        goto exit;
+      }
       break;
     }
     if (ctx->rc) { rc = ctx->rc; break; }
