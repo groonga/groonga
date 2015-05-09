@@ -1,0 +1,6 @@
+table_create Lexicon TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenRegexp \
+  --normalizer NormalizerAuto
+table_tokenize Lexicon "abc\nd" --mode ADD
+
+table_tokenize Lexicon "abc\nd" --mode GET

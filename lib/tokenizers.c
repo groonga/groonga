@@ -585,10 +585,12 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   const const uint_least8_t *char_types =
     tokenizer->char_types + tokenizer->nth_char;
   grn_tokenize_mode mode = tokenizer->query->tokenize_mode;
+  grn_bool is_first_token = tokenizer->is_first_token;
   grn_bool escaping = GRN_FALSE;
   grn_bool break_by_blank = GRN_FALSE;
 
   GRN_BULK_REWIND(buffer);
+  tokenizer->is_first_token = GRN_FALSE;
 
   if (mode == GRN_TOKEN_GET) {
     if (tokenizer->get.have_begin) {
@@ -650,18 +652,21 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       n_characters++;
       GRN_TEXT_PUT(ctx, buffer, current, char_len);
       current += char_len;
-      escaping = GRN_FALSE;
       if (n_characters == 1) {
         tokenizer->next = current;
         tokenizer->nth_char++;
+        if (escaping) {
+          tokenizer->nth_char++;
+        }
       }
-      if (n_characters == ngram_unit) {
-        break;
-      }
+      escaping = GRN_FALSE;
       char_type = char_types[0];
       char_types++;
       if (GRN_STR_ISBLANK(char_type)) {
         break_by_blank = GRN_TRUE;
+        break;
+      }
+      if (n_characters == ngram_unit) {
         break;
       }
     }
@@ -676,7 +681,7 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   if (tokenizer->is_overlapping) {
     status |= GRN_TOKEN_OVERLAP;
   }
-  if (n_characters < ngram_unit && !break_by_blank) {
+  if (n_characters < ngram_unit) {
     status |= GRN_TOKEN_UNMATURED;
   }
   tokenizer->is_overlapping = (n_characters > 1);
@@ -688,7 +693,7 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
           tokenizer->is_end = GRN_TRUE;
         }
         if (status & GRN_TOKEN_UNMATURED) {
-          if (tokenizer->is_first_token) {
+          if (is_first_token) {
             status |= GRN_TOKEN_FORCE_PREFIX;
           } else {
             status |= GRN_TOKEN_SKIP;
@@ -702,7 +707,10 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         }
       }
     } else {
-      if (tokenizer->get.n_skip_tokens > 0) {
+      if (break_by_blank) {
+        tokenizer->get.n_skip_tokens = 0;
+        tokenizer->is_first_token = GRN_TRUE;
+      } else if (tokenizer->get.n_skip_tokens > 0) {
         tokenizer->get.n_skip_tokens--;
         status |= GRN_TOKEN_SKIP;
       } else {
@@ -720,7 +728,6 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                            GRN_TEXT_VALUE(buffer),
                            GRN_TEXT_LEN(buffer),
                            status);
-  tokenizer->is_first_token = GRN_FALSE;
 
   return NULL;
 }

@@ -1,0 +1,58 @@
+table_create Lexicon TABLE_PAT_KEY ShortText   --default_tokenizer TokenRegexp   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+table_tokenize Lexicon "a\ndef" --mode ADD
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "￯",
+      "position": 0
+    },
+    {
+      "value": "a",
+      "position": 1
+    },
+    {
+      "value": "de",
+      "position": 2
+    },
+    {
+      "value": "ef",
+      "position": 3
+    },
+    {
+      "value": "f",
+      "position": 4
+    },
+    {
+      "value": "￰",
+      "position": 5
+    }
+  ]
+]
+table_tokenize Lexicon "a\ndef" --mode GET
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "a",
+      "position": 0
+    },
+    {
+      "value": "de",
+      "position": 1
+    },
+    {
+      "value": "ef",
+      "position": 2
+    }
+  ]
+]
