@@ -6166,15 +6166,16 @@ parse_script_extract_name_resolve_context(grn_ctx *ctx, efs_info *q)
   code_last = code_start + (expr->codes_curr - 1);
   switch (code_last->op) {
   case GRN_OP_GET_MEMBER :
-    if (code_last - 1 < code_start) {
-      return NULL;
-    }
     {
       unsigned int n_used_codes_for_key;
       grn_expr_code *code_key;
       grn_expr_code *code_receiver;
 
       code_key = code_last - 1;
+      if (code_key < code_start) {
+        return NULL;
+      }
+
       n_used_codes_for_key = grn_expr_code_n_used_codes(ctx,
                                                         code_start,
                                                         code_key);
