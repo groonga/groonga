@@ -30,7 +30,7 @@ table_tokenize Lexicon "xyz" --mode ADD
     }
   ]
 ]
-table_tokenize Lexicon "xyz\\z" --mode GET
+table_tokenize Lexicon "xyz￰" --mode GET
 [
   [
     0,

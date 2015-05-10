@@ -1,0 +1,42 @@
+table_create Paths TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create RegexpTokens TABLE_PAT_KEY ShortText   --default_tokenizer TokenRegexp   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create RegexpTokens memos_content COLUMN_INDEX|WITH_POSITION   Paths _key
+[[0,0.0,0.0],true]
+load --table Paths
+[
+{"_key": "c:\\Users\\alice"},
+{"_key": "c:\\Users\\alice\\Downloads"},
+{"_key": "c:\\Users\\bob\\Downloads"}
+]
+[[0,0.0,0.0],3]
+select Paths --filter '_key @ "\\\\Users\\\\alice\\\\"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        2,
+        "c:\\Users\\alice\\Downloads"
+      ]
+    ]
+  ]
+]

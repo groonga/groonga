@@ -34,7 +34,7 @@ table_tokenize Lexicon "abcd" --mode ADD
     }
   ]
 ]
-table_tokenize Lexicon "abcd\\z" --mode GET
+table_tokenize Lexicon "abcd￰" --mode GET
 [
   [
     0,

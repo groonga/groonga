@@ -473,8 +473,6 @@ typedef struct {
   grn_tokenizer_token token;
   grn_tokenizer_query *query;
   struct {
-    grn_bool have_begin;
-    grn_bool have_end;
     int32_t n_skip_tokens;
   } get;
   grn_bool is_begin;
@@ -514,8 +512,6 @@ regexp_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_tokenizer_token_init(ctx, &(tokenizer->token));
   tokenizer->query = query;
 
-  tokenizer->get.have_begin = GRN_FALSE;
-  tokenizer->get.have_end   = GRN_FALSE;
   tokenizer->get.n_skip_tokens = 0;
 
   tokenizer->is_begin = GRN_TRUE;
@@ -531,40 +527,6 @@ regexp_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   tokenizer->nth_char = 0;
   tokenizer->char_types =
     grn_string_get_types(ctx, tokenizer->query->normalized_query);
-
-  if (tokenizer->query->tokenize_mode == GRN_TOKEN_GET) {
-    unsigned int query_length = tokenizer->query->length;
-    if (query_length >= 2) {
-      const char *query_string = tokenizer->query->ptr;
-      grn_encoding encoding = tokenizer->query->encoding;
-      if (query_string[0] == '\\' && query_string[1] == 'A') {
-        tokenizer->get.have_begin = GRN_TRUE;
-        /* TODO: It assumes that both "\\" and "A" are normalized to 1
-           characters. Normalizer may omit character or expand to
-           multiple characters. */
-        tokenizer->next += grn_charlen_(ctx, tokenizer->next, tokenizer->end,
-                                        encoding);
-        tokenizer->next += grn_charlen_(ctx, tokenizer->next, tokenizer->end,
-                                        encoding);
-        tokenizer->nth_char = 2;
-      }
-      if (query_string[query_length - 2] == '\\' &&
-          query_string[query_length - 1] == 'z') {
-        tokenizer->get.have_end = GRN_TRUE;
-        /* TODO: It assumes that both "\\" and "z" are normalized to 1
-           byte characters. Normalizer may omit character or expand to
-           multiple characters. */
-        tokenizer->end -= grn_charlen_(ctx,
-                                       tokenizer->end - 1,
-                                       tokenizer->end,
-                                       encoding);
-        tokenizer->end -= grn_charlen_(ctx,
-                                       tokenizer->end - 1,
-                                       tokenizer->end,
-                                       encoding);
-      }
-    }
-  }
 
   GRN_TEXT_INIT(&(tokenizer->buffer), 0);
 
@@ -584,45 +546,26 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   const char *end = tokenizer->end;
   const const uint_least8_t *char_types = tokenizer->char_types;
   grn_tokenize_mode mode = tokenizer->query->tokenize_mode;
+  grn_bool is_begin = tokenizer->is_begin;
   grn_bool is_start_token = tokenizer->is_start_token;
-  grn_bool escaping = GRN_FALSE;
   grn_bool break_by_blank = GRN_FALSE;
+  grn_bool break_by_end_mark = GRN_FALSE;
 
   GRN_BULK_REWIND(buffer);
+  tokenizer->is_begin = GRN_FALSE;
   tokenizer->is_start_token = GRN_FALSE;
 
   if (char_types) {
     char_types += tokenizer->nth_char;
   }
 
-  if (mode == GRN_TOKEN_GET) {
-    if (tokenizer->get.have_begin) {
+  if (mode != GRN_TOKEN_GET) {
+    if (is_begin) {
       grn_tokenizer_token_push(ctx,
                                &(tokenizer->token),
                                GRN_TOKENIZER_BEGIN_MARK_UTF8,
                                GRN_TOKENIZER_BEGIN_MARK_UTF8_LEN,
                                status);
-      tokenizer->get.have_begin = GRN_FALSE;
-      return NULL;
-    }
-
-    if (tokenizer->is_end && tokenizer->get.have_end) {
-      status |= GRN_TOKEN_LAST | GRN_TOKEN_REACH_END;
-      grn_tokenizer_token_push(ctx,
-                               &(tokenizer->token),
-                               GRN_TOKENIZER_END_MARK_UTF8,
-                               GRN_TOKENIZER_END_MARK_UTF8_LEN,
-                               status);
-      return NULL;
-    }
-  } else {
-    if (tokenizer->is_begin) {
-      grn_tokenizer_token_push(ctx,
-                               &(tokenizer->token),
-                               GRN_TOKENIZER_BEGIN_MARK_UTF8,
-                               GRN_TOKENIZER_BEGIN_MARK_UTF8_LEN,
-                               status);
-      tokenizer->is_begin = GRN_FALSE;
       return NULL;
     }
 
@@ -651,43 +594,75 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     return NULL;
   }
 
-  while (GRN_TRUE) {
-    if (!escaping && mode == GRN_TOKEN_GET &&
-        char_len == 1 && current[0] == '\\') {
-      current += char_len;
-      escaping = GRN_TRUE;
-      if (char_types) {
-        char_types++;
-      }
-    } else {
+  if (mode == GRN_TOKEN_GET) {
+    if (is_begin &&
+        char_len == GRN_TOKENIZER_BEGIN_MARK_UTF8_LEN &&
+        memcmp(current, GRN_TOKENIZER_BEGIN_MARK_UTF8, char_len) == 0) {
       n_characters++;
       GRN_TEXT_PUT(ctx, buffer, current, char_len);
       current += char_len;
-      if (n_characters == 1) {
-        tokenizer->next = current;
-        tokenizer->nth_char++;
-        if (escaping) {
-          tokenizer->nth_char++;
-        }
+      tokenizer->next = current;
+      tokenizer->nth_char++;
+      if (current == end) {
+        status |= GRN_TOKEN_LAST | GRN_TOKEN_REACH_END;
       }
-      escaping = GRN_FALSE;
-      if (char_types) {
-        uint_least8_t char_type;
-        char_type = char_types[0];
-        char_types++;
-        if (GRN_STR_ISBLANK(char_type)) {
-          break_by_blank = GRN_TRUE;
-          break;
-        }
-      }
-      if (n_characters == ngram_unit) {
-        break;
+      grn_tokenizer_token_push(ctx,
+                               &(tokenizer->token),
+                               GRN_TOKENIZER_BEGIN_MARK_UTF8,
+                               GRN_TOKENIZER_BEGIN_MARK_UTF8_LEN,
+                               status);
+      return NULL;
+    }
+
+    if (current + char_len == end &&
+        char_len == GRN_TOKENIZER_END_MARK_UTF8_LEN &&
+        memcmp(current, GRN_TOKENIZER_END_MARK_UTF8, char_len) == 0) {
+      status |= GRN_TOKEN_LAST | GRN_TOKEN_REACH_END;
+      grn_tokenizer_token_push(ctx,
+                               &(tokenizer->token),
+                               GRN_TOKENIZER_END_MARK_UTF8,
+                               GRN_TOKENIZER_END_MARK_UTF8_LEN,
+                               status);
+      return NULL;
+    }
+  }
+
+  while (GRN_TRUE) {
+    n_characters++;
+    GRN_TEXT_PUT(ctx, buffer, current, char_len);
+    current += char_len;
+    if (n_characters == 1) {
+      tokenizer->next = current;
+      tokenizer->nth_char++;
+    }
+
+    if (char_types) {
+      uint_least8_t char_type;
+      char_type = char_types[0];
+      char_types++;
+      if (GRN_STR_ISBLANK(char_type)) {
+        break_by_blank = GRN_TRUE;
       }
     }
 
     char_len = grn_charlen_(ctx, (const char *)current, (const char *)end,
                             tokenizer->query->encoding);
     if (char_len == 0) {
+      break;
+    }
+
+    if (mode == GRN_TOKEN_GET &&
+        current + char_len == end &&
+        char_len == GRN_TOKENIZER_END_MARK_UTF8_LEN &&
+        memcmp(current, GRN_TOKENIZER_END_MARK_UTF8, char_len) == 0) {
+      break_by_end_mark = GRN_TRUE;
+    }
+
+    if (break_by_blank || break_by_end_mark) {
+      break;
+    }
+
+    if (n_characters == ngram_unit) {
       break;
     }
   }
@@ -702,28 +677,19 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   if (mode == GRN_TOKEN_GET) {
     if (current == end) {
-      if (tokenizer->get.have_end) {
-        if (tokenizer->next == end) {
-          tokenizer->is_end = GRN_TRUE;
-        }
-        if (status & GRN_TOKEN_UNMATURED) {
-          if (is_start_token) {
-            status |= GRN_TOKEN_FORCE_PREFIX;
-          } else {
-            status |= GRN_TOKEN_SKIP;
-          }
-        }
-      } else {
-        tokenizer->is_end = GRN_TRUE;
-        status |= GRN_TOKEN_LAST | GRN_TOKEN_REACH_END;
-        if (status & GRN_TOKEN_UNMATURED) {
-          status |= GRN_TOKEN_FORCE_PREFIX;
-        }
+      tokenizer->is_end = GRN_TRUE;
+      status |= GRN_TOKEN_LAST | GRN_TOKEN_REACH_END;
+      if (status & GRN_TOKEN_UNMATURED) {
+        status |= GRN_TOKEN_FORCE_PREFIX;
       }
     } else {
       if (break_by_blank) {
         tokenizer->get.n_skip_tokens = 0;
         tokenizer->is_start_token = GRN_TRUE;
+      } else if (break_by_end_mark) {
+        if (!is_start_token && (status & GRN_TOKEN_UNMATURED)) {
+          status |= GRN_TOKEN_SKIP;
+        }
       } else if (tokenizer->get.n_skip_tokens > 0) {
         tokenizer->get.n_skip_tokens--;
         status |= GRN_TOKEN_SKIP;

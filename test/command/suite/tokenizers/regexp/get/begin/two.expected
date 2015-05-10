@@ -26,5 +26,5 @@ table_tokenize Lexicon "xy" --mode ADD
     }
   ]
 ]
-table_tokenize Lexicon "\\Axy" --mode GET
+table_tokenize Lexicon "￯xy" --mode GET
 [[0,0.0,0.0],[{"value":"￯","position":0},{"value":"xy","position":1}]]

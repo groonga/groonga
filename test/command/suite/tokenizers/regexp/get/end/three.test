@@ -2,4 +2,4 @@ table_create Lexicon TABLE_PAT_KEY ShortText \
   --default_tokenizer TokenRegexp
 table_tokenize Lexicon "xyz" --mode ADD
 
-table_tokenize Lexicon "xyz\\z" --mode GET
+table_tokenize Lexicon "xyz￰" --mode GET

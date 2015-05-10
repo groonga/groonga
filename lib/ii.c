@@ -6019,6 +6019,77 @@ grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
   return rc;
 }
 
+static grn_rc
+grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
+                     const char *string, unsigned int string_len,
+                     grn_hash *s, grn_operator op, grn_select_optarg *optarg)
+{
+  grn_rc rc;
+  grn_obj parsed_string;
+  grn_bool escaping = GRN_FALSE;
+  int nth_char = 0;
+  const char *current = string;
+  const char *string_end = string + string_len;
+
+  GRN_TEXT_INIT(&parsed_string, 0);
+  while (current < string_end) {
+    const char *target;
+    int char_len;
+
+    char_len = grn_charlen(ctx, current, string_end);
+    if (char_len == 0) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "[ii][select][regexp] invalid encoding character: <%.*s|%#x|>",
+          (int)(current - string), string,
+          *current);
+      return ctx->rc;
+    }
+    target = current;
+    current += char_len;
+
+    if (escaping) {
+      escaping = GRN_FALSE;
+      if (char_len == 1) {
+        switch (*target) {
+        case 'A' :
+          if (nth_char == 0) {
+            target = GRN_TOKENIZER_BEGIN_MARK_UTF8;
+            char_len = GRN_TOKENIZER_BEGIN_MARK_UTF8_LEN;
+          }
+          break;
+        case 'z' :
+          if (current == string_end) {
+            target = GRN_TOKENIZER_END_MARK_UTF8;
+            char_len = GRN_TOKENIZER_END_MARK_UTF8_LEN;
+          }
+          break;
+        default :
+          break;
+        }
+      }
+    } else {
+      if (char_len == 1 && *target == '\\') {
+        escaping = GRN_TRUE;
+        continue;
+      }
+    }
+
+    GRN_TEXT_PUT(ctx, &parsed_string, target, char_len);
+    nth_char++;
+  }
+
+  if (optarg) {
+    optarg->mode = GRN_OP_MATCH;
+  }
+
+  rc = grn_ii_select(ctx, ii,
+                     GRN_TEXT_VALUE(&parsed_string),
+                     GRN_TEXT_LEN(&parsed_string),
+                     s, op, optarg);
+
+  return rc;
+}
+
 #ifdef GRN_II_SELECT_ENABLE_SEQUENTIAL_SEARCH
 static grn_bool
 grn_ii_select_sequential_search_should_use(grn_ctx *ctx,
@@ -6258,6 +6329,9 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
   }
   if (mode == GRN_OP_TERM_EXTRACT) {
     return grn_ii_term_extract(ctx, ii, string, string_len, s, op, optarg);
+  }
+  if (mode == GRN_OP_REGEXP) {
+    return grn_ii_select_regexp(ctx, ii, string, string_len, s, op, optarg);
   }
   /* todo : support subrec
   rep = (s->record_unit == grn_rec_position || s->subrec_unit == grn_rec_position);
