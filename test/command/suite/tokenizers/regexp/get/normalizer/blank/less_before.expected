@@ -18,19 +18,19 @@ table_tokenize Lexicon "a\ndef" --mode ADD
     },
     {
       "value": "de",
-      "position": 2
-    },
-    {
-      "value": "ef",
       "position": 3
     },
     {
-      "value": "f",
+      "value": "ef",
       "position": 4
     },
     {
-      "value": "￰",
+      "value": "f",
       "position": 5
+    },
+    {
+      "value": "￰",
+      "position": 6
     }
   ]
 ]

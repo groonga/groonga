@@ -635,6 +635,13 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                status);
       return NULL;
     }
+    if (is_start_token) {
+      if (char_types && GRN_STR_ISBLANK(char_types[-1])) {
+        status |= GRN_TOKEN_SKIP;
+        grn_tokenizer_token_push(ctx, &(tokenizer->token), "", 0, status);
+        return NULL;
+      }
+    }
   }
 
   char_len = grn_charlen_(ctx, current, end, tokenizer->query->encoding);
@@ -727,6 +734,9 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   } else {
     if (tokenizer->next == end) {
       tokenizer->is_end = GRN_TRUE;
+    }
+    if (break_by_blank) {
+      tokenizer->is_start_token = GRN_TRUE;
     }
   }
 

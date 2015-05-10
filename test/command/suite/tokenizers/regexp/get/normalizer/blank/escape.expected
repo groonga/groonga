@@ -26,19 +26,19 @@ table_tokenize Lexicon "abc\ndef" --mode ADD
     },
     {
       "value": "de",
-      "position": 4
-    },
-    {
-      "value": "ef",
       "position": 5
     },
     {
-      "value": "f",
+      "value": "ef",
       "position": 6
     },
     {
-      "value": "￰",
+      "value": "f",
       "position": 7
+    },
+    {
+      "value": "￰",
+      "position": 8
     }
   ]
 ]

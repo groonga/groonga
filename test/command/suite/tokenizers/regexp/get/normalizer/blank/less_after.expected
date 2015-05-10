@@ -26,11 +26,11 @@ table_tokenize Lexicon "abc\nd" --mode ADD
     },
     {
       "value": "d",
-      "position": 4
+      "position": 5
     },
     {
       "value": "￰",
-      "position": 5
+      "position": 6
     }
   ]
 ]

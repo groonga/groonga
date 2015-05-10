@@ -30,23 +30,23 @@ table_tokenize Lexicon "abcd\nefgh" --mode ADD
     },
     {
       "value": "ef",
-      "position": 5
-    },
-    {
-      "value": "fg",
       "position": 6
     },
     {
-      "value": "gh",
+      "value": "fg",
       "position": 7
     },
     {
-      "value": "h",
+      "value": "gh",
       "position": 8
     },
     {
-      "value": "￰",
+      "value": "h",
       "position": 9
+    },
+    {
+      "value": "￰",
+      "position": 10
     }
   ]
 ]
