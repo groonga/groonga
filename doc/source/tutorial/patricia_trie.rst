@@ -33,14 +33,14 @@ table_create command which uses TABLE_PAT_KEY for flags option supports prefix s
 .. ]
 .. select --table PatPrefix --query _key:^Je
 
-主キーによる後方一致検索
-------------------------
+Suffix search by primary key
+----------------------------
 
-table_createコマンドのflagsオプションにTABLE_PAT_KEYとKEY_WITH_SISを指定することで、主キーによる前方一致検索・後方一致検索の両方が可能となります。
+table_create command which uses TABLE_PAT_KEY and KEY_WITH_SIS for flags option supports prefix search and suffix search by primary key.
 
-KEY_WITH_SISフラグを付与すると、データを追加する際に後方一致用のレコードも追加されてしまいます。そのため、単純に検索すると、元のレコードに加えて自動的に追加されたレコードまでヒットしてしまいます。元のレコードのみ検索するために、一工夫必要になります。
+If you set KEY_WITH_SIS flag, suffix search records also are added when you add the data. So if you search simply, the automatically added records are hit in addition to the original records. In order to search only the original records, you need a plan.
 
-例えば、元のレコードと自動的に追加されたレコードとの区別をつけるために、元のレコードであることを示すoriginalカラムを追加して、検索時にはoriginalカラムが ``true`` も検索条件に加えます。 ``--query`` オプションでは ``Bool`` 型の値を直感的に指定することができないので ``--filter`` オプションを使っていることに注意してください。
+For example, in order to make this distinction between the original records and automatically added records, add the original column indicating that it is the original record, and add original column is ``true`` to the search condition. For attention, use ``--filter`` option because ``--query`` option is not specify ``Bool`` type value intuitively.
 
 .. groonga-command
 .. include:: ../example/tutorial/patricia_trie-2.log
