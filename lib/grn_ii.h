@@ -87,6 +87,9 @@ struct _grn_ii_updspec {
 
 typedef struct _grn_ii_updspec grn_ii_updspec;
 
+grn_rc grn_ii_init(void);
+grn_rc grn_ii_fin(void);
+
 GRN_API grn_ii *grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon,
                               uint32_t flags);
 GRN_API grn_ii *grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon);

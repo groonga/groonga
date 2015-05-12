@@ -74,6 +74,44 @@
 # define S_IWUSR 0200
 #endif /* S_IWUSR */
 
+static grn_bool grn_ii_cursor_set_min_enable = GRN_FALSE;
+static double grn_ii_select_too_many_index_match_ratio = -1;
+
+grn_rc
+grn_ii_init(void)
+{
+  {
+    char grn_ii_cursor_set_min_enable_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_II_CURSOR_SET_MIN_ENABLE",
+               grn_ii_cursor_set_min_enable_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_ii_cursor_set_min_enable_env[0]) {
+      grn_ii_cursor_set_min_enable = GRN_TRUE;
+    } else {
+      grn_ii_cursor_set_min_enable = GRN_FALSE;
+    }
+  }
+
+  {
+    char grn_ii_select_too_many_index_match_ratio_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_II_SELECT_TOO_MANY_INDEX_MATCH_RATIO",
+               grn_ii_select_too_many_index_match_ratio_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_ii_select_too_many_index_match_ratio_env[0]) {
+      grn_ii_select_too_many_index_match_ratio =
+        atof(grn_ii_select_too_many_index_match_ratio_env);
+    }
+  }
+
+  return GRN_SUCCESS;
+}
+
+grn_rc
+grn_ii_fin(void)
+{
+  return GRN_SUCCESS;
+}
+
 /* segment */
 
 inline static uint32_t
@@ -4112,16 +4150,11 @@ exit :
 static inline void
 grn_ii_cursor_set_min(grn_ctx *ctx, grn_ii_cursor *c, grn_id min)
 {
-  char grn_ii_cursor_set_min_enable_env[GRN_ENV_BUFFER_SIZE];
-
   if (c->min >= min) {
     return;
   }
 
-  grn_getenv("GRN_II_CURSOR_SET_MIN_ENABLE",
-             grn_ii_cursor_set_min_enable_env,
-             GRN_ENV_BUFFER_SIZE);
-  if (grn_ii_cursor_set_min_enable_env[0]) {
+  if (grn_ii_cursor_set_min_enable) {
     c->min = min;
     if (c->buf && c->pc.rid < c->min && c->curr_chunk < c->nchunks) {
       uint32_t i, skip_chunk = 0;
@@ -6227,16 +6260,6 @@ grn_ii_select_sequential_search(grn_ctx *ctx,
   grn_bool processed = GRN_TRUE;
 
   {
-    /* Disabled by default. */
-    double too_many_index_match_ratio = -1;
-    char too_many_index_match_ratio_env[GRN_ENV_BUFFER_SIZE];
-    grn_getenv("GRN_II_SELECT_TOO_MANY_INDEX_MATCH_RATIO",
-               too_many_index_match_ratio_env,
-               GRN_ENV_BUFFER_SIZE);
-    if (too_many_index_match_ratio_env[0]) {
-      too_many_index_match_ratio = atof(too_many_index_match_ratio_env);
-    }
-
     if (!grn_ii_select_sequential_search_should_use(ctx,
                                                     ii,
                                                     raw_query,
@@ -6247,7 +6270,7 @@ grn_ii_select_sequential_search(grn_ctx *ctx,
                                                     optarg,
                                                     token_infos,
                                                     n_token_infos,
-                                                    too_many_index_match_ratio)) {
+                                                    grn_ii_select_too_many_index_match_ratio)) {
       return GRN_FALSE;
     }
   }

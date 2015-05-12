@@ -21,6 +21,7 @@
 #include "grn_request_canceler.h"
 #include "grn_tokenizers.h"
 #include "grn_ctx_impl.h"
+#include "grn_ii.h"
 #include "grn_pat.h"
 #include "grn_plugin.h"
 #include "grn_snip.h"
@@ -901,6 +902,10 @@ grn_init(void)
     GRN_LOG(ctx, GRN_LOG_ALERT, "io initialize failed (%d)", rc);
     return rc;
   }
+  if ((rc = grn_ii_init())) {
+    GRN_LOG(ctx, GRN_LOG_ALERT, "ii initialize failed (%d)", rc);
+    return rc;
+  }
   if ((rc = grn_plugins_init())) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "plugins initialize failed (%d)", rc);
     return rc;
@@ -1017,6 +1022,7 @@ grn_fin(void)
   grn_tokenizers_fin();
   grn_normalizer_fin();
   grn_plugins_fin();
+  grn_ii_fin();
   grn_io_fin();
   grn_ctx_fin(ctx);
   grn_com_fin();
