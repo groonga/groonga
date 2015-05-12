@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-05-08 17:14+0900\n"
+"PO-Revision-Date: 2015-05-13 03:09+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -10093,73 +10093,106 @@ msgstr ""
 "Expressions）がない場合はHttpRewriteModuleは無効になります。標準モジュールの"
 "一覧は、 http://wiki.nginx.org/Modules を参照してください。"
 
-msgid "groonga HTTPサーバー"
-msgstr ""
+# 9e382a7b60e64b449fb421b8cde391f4
+# 834deb7e86c84d8099904b9b03cb96c9
+msgid "Groonga HTTP server"
+msgstr "Groonga HTTPサーバー"
 
+# f01dacbd6e26428cbf58b93224e29e02
 msgid ""
-"groongaサーバを起動する時に--protocolオプションにhttpを指定すると、httpで通信"
-"可能になります。また、--document-root によって静的ページのパスを指定すると、"
-"httpリクエストに指定されたURIに対応する、パス配下に置かれたファイルを出力しま"
-"す。"
+"You can communicate by HTTP if you specify ``http`` to ``--protocol`` "
+"option. And output a file that is put under the path, and correspond to "
+"specified URI to HTTP request if you specify static page path by ``--"
+"document-root``."
 msgstr ""
+"Groongaサーバを起動する時に ``--protocol`` オプションに ``http`` を指定する"
+"と、HTTPで通信可能になります。また、 ``--document-root`` によって静的ページの"
+"パスを指定すると、HTTPリクエストに指定されたURIに対応する、パス配下に置かれた"
+"ファイルを出力します。"
 
+# e526624f322d4806aeac930b0c22a4bb
 msgid ""
-"groongaにはHTML + JavaScriptで実装された管理ツールが標準で付属しています。--"
-"document-rootを指定しない場合は管理ツールがインストールされているパスが指定さ"
-"れたとみなされますので、ウェブブラウザでhttp://hostname:port/にアクセスする"
-"と、管理ツールを利用できます。"
+"Groonga has an Web-based administration tool implemented with HTML and "
+"JavaScript. If you don't specify ``--document-root``, regarded as "
+"administration tool installed path is specified, so you can use "
+"administration tool to access ``http://HOSTNAME:PORT/`` in Web browser."
 msgstr ""
+"GroongaにはHTML + JavaScriptで実装された管理ツールが標準で付属しています。 "
+"``--document-root`` を指定しない場合は管理ツールがインストールされているパス"
+"が指定されたとみなされますので、ウェブブラウザで ``http://HOSTNAME:PORT/`` に"
+"アクセスすると、管理ツールを利用できます。"
 
-msgid "コマンド"
-msgstr ""
-
+# 0cda546ea96c495499acbe5af3b4521a
 msgid ""
-"httpを指定して起動したgroongaサーバに対しても、他のモードで起動したgroongaと"
-"同じコマンドが使用できます。"
+"You can use the same commands of Groonga that starts of the other mode to "
+"Groonga server that starts to specify ``http``."
 msgstr ""
+"``http`` を指定して起動したGroongaサーバーに対しても、他のモードで起動した"
+"Groongaと同じコマンドが使用できます。"
 
+# 0b74350b87e94b7fb8cf5b3fe9924281
 msgid ""
+"A command takes the arguments. An argument has a name. And there are special "
+"arguments ``output_type`` and ``command_version``."
+msgstr ""
 "コマンドは、複数の引数をとります。引数にはそれぞれ名前があります。また、特殊"
-"な引数である「output_type」と「command_version」があります。"
-msgstr ""
+"な引数である ``output_type`` と ``command_version`` があります。"
 
+# 04dd764f5ea64579a34bc5c67548fa1a
 msgid ""
+"In standalone mode or client mode, a command is specified by the following "
+"format."
+msgstr ""
 "スタンドアロンやクライアントモードでは、コマンドは以下のような形式で指定しま"
 "す。"
-msgstr ""
 
-msgid "形式1: コマンド名 値1 値2,.."
-msgstr ""
+# 53208b692db54466937732238e13f0c0
+msgid "Format 1: COMMAND_NAME VALUE1 VALUE2,.."
+msgstr "形式1: コマンド名 値1 値2,.."
 
-msgid "形式2: コマンド名 --引数名1 値1 --引数名2 値2,.."
-msgstr ""
-
+# b10827ca98cd495592ed7d626aef4710
 msgid ""
-"形式1と形式2は混在させることができます。これらの形式では、output_typeという引"
-"数名を用いてoutput_typeを指定します。"
-msgstr ""
+"Format 2: COMMAND_NAME --PARAMETER_NAME1 VALUE1 --PARAMETER_NAME2 VALUE2,.."
+msgstr "形式2: コマンド名 --引数名1 値1 --引数名2 値2,.."
 
+# 0b7732b76222489496be589cb0ab9a7b
 msgid ""
-"httpでgroongaサーバと通信する際には、以下のような形式でコマンドを指定しま"
+"Format 1 and Format 2 are possible to mix. Output type is specified by "
+"``output_type`` in the formats."
+msgstr ""
+"形式1と形式2は混在させることができます。これらの形式では、 ``output_type`` と"
+"いう引数名を用いて出力形式を指定します。"
+
+msgid "In HTTP server mode, the following formats to specify command::"
+msgstr ""
+"HTTPでGroongaサーバーと通信する際には、以下のような形式でコマンドを指定しま"
 "す。::"
-msgstr ""
 
-msgid "ただし、コマンド名、引数名、値はURLエンコードが必要です。"
-msgstr ""
+# 4debec9e8abf47eb8f3207307b8035cc
+msgid ""
+"But, they need URL encode for command names, arguments names and values."
+msgstr "ただし、コマンド名、引数名、値はURLエンコードが必要です。"
 
-msgid "GETメソッドのみが使用可能です。"
-msgstr ""
+# 84650f07948545e4bff39b780053862a
+msgid "You can use GET method only."
+msgstr "GETメソッドのみが使用可能です。"
 
-msgid "output_typeにはjson, tsv, xmlが指定可能です。"
-msgstr ""
+# a57a8a38b3384db3ba571d98e6268c98
+msgid "You can specify JSON, TSV and XML to output type."
+msgstr "出力形式にはJSON, TSV, XMLが指定可能です。"
 
 msgid ""
-"command_versionはコマンドの仕様の互換性を指定します。詳細は :doc:`/reference/"
-"command/command_version` を参照してください。"
+"``command_version`` is specified for command specification compatibility. "
+"See :doc:`/reference/command/command_version` for details."
 msgstr ""
+"``command_version`` はコマンドの仕様の互換性を指定します。詳細は :doc:`/"
+"reference/command/command_version` を参照してください。"
 
-msgid "output_typeの指定に従って、コマンドの実行結果を出力します。"
-msgstr ""
+# 2208819c63464362bd3b9c3420320780
+msgid ""
+"The execution result is output that follows output type specification by the "
+"command."
+msgstr "出力形式の指定に従って、コマンドの実行結果を出力します。"
 
 msgid "groonga-suggest-create-dataset"
 msgstr ""
