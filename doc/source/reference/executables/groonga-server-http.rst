@@ -2,55 +2,56 @@
 
 .. highlightlang:: none
 
-groonga HTTPサーバー
-====================
+Groonga HTTP server
+===================
 
-名前
+Name
 ----
 
-groonga HTTPサーバー
+Groonga HTTP server
 
-書式
-----
+Synopsis
+--------
+
 ::
 
  groonga -d --protocol http DB_PATH
 
-説明
-----
+Summary
+-------
 
-groongaサーバを起動する時に--protocolオプションにhttpを指定すると、httpで通信可能になります。また、--document-root によって静的ページのパスを指定すると、httpリクエストに指定されたURIに対応する、パス配下に置かれたファイルを出力します。
+You can communicate by HTTP if you specify ``http`` to ``--protocol`` option. And output a file that is put under the path, and correspond to specified URI to HTTP request if you specify static page path by ``--document-root``.
 
-groongaにはHTML + JavaScriptで実装された管理ツールが標準で付属しています。--document-rootを指定しない場合は管理ツールがインストールされているパスが指定されたとみなされますので、ウェブブラウザでhttp://hostname:port/にアクセスすると、管理ツールを利用できます。
+Groonga has an Web-based administration tool implemented with HTML and JavaScript. If you don't specify ``--document-root``, regarded as administration tool installed path is specified, so you can use administration tool to access ``http://HOSTNAME:PORT/`` in Web browser.
 
-コマンド
---------
+Command
+-------
 
-httpを指定して起動したgroongaサーバに対しても、他のモードで起動したgroongaと同じコマンドが使用できます。
+You can use the same commands of Groonga that starts of the other mode to Groonga server that starts to specify ``http``.
 
-コマンドは、複数の引数をとります。引数にはそれぞれ名前があります。また、特殊な引数である「output_type」と「command_version」があります。
+A command takes the arguments. An argument has a name. And there are special arguments ``output_type`` and ``command_version``.
 
-スタンドアロンやクライアントモードでは、コマンドは以下のような形式で指定します。
+In standalone mode or client mode, a command is specified by the following format.
 
- 形式1: コマンド名 値1 値2,..
+ Format 1: COMMAND_NAME VALUE1 VALUE2,..
 
- 形式2: コマンド名 --引数名1 値1 --引数名2 値2,..
+ Format 2: COMMAND_NAME --PARAMETER_NAME1 VALUE1 --PARAMETER_NAME2 VALUE2,..
 
-形式1と形式2は混在させることができます。これらの形式では、output_typeという引数名を用いてoutput_typeを指定します。
+Format 1 and Format 2 are possible to mix. Output type is specified by ``output_type`` in the formats.
 
-httpでgroongaサーバと通信する際には、以下のような形式でコマンドを指定します。::
+In HTTP server mode, the following formats to specify command::
 
- 形式: /d/コマンド名.output_type?引数名1=値1&引数名2=値2&...
+ Format: /d/COMMAND_NAME.OUTPUT_TYPE?ARGUMENT_NAME1=VALUE1&ARGUMENT_NAME2=VALUE2&...
 
-ただし、コマンド名、引数名、値はURLエンコードが必要です。
+But, they need URL encode for command names, arguments names and values.
 
-GETメソッドのみが使用可能です。
+You can use GET method only.
 
-output_typeにはjson, tsv, xmlが指定可能です。
+You can specify JSON, TSV and XML to output type.
 
-command_versionはコマンドの仕様の互換性を指定します。詳細は :doc:`/reference/command/command_version` を参照してください。
+``command_version`` is specified for command specification compatibility. See :doc:`/reference/command/command_version` for details.
 
-返値
-----
+Return value
+------------
 
-output_typeの指定に従って、コマンドの実行結果を出力します。
+The execution result is output that follows output type specification by the command.
