@@ -900,11 +900,11 @@ grn_init(void)
   }
   grn_ctx_impl_init(ctx);
   if ((rc = grn_io_init())) {
-    GRN_LOG(ctx, GRN_LOG_ALERT, "io initialize failed (%d)", rc);
+    GRN_LOG(ctx, GRN_LOG_ALERT, "grn_io_init failed (%d)", rc);
     return rc;
   }
   if ((rc = grn_ii_init())) {
-    GRN_LOG(ctx, GRN_LOG_ALERT, "ii initialize failed (%d)", rc);
+    GRN_LOG(ctx, GRN_LOG_ALERT, "grn_ii_init failed (%d)", rc);
     return rc;
   }
   if ((rc = grn_proc_init())) {
@@ -912,7 +912,7 @@ grn_init(void)
     return rc;
   }
   if ((rc = grn_plugins_init())) {
-    GRN_LOG(ctx, GRN_LOG_ALERT, "plugins initialize failed (%d)", rc);
+    GRN_LOG(ctx, GRN_LOG_ALERT, "grn_plugins_init failed (%d)", rc);
     return rc;
   }
   if ((rc = grn_normalizer_init())) {
