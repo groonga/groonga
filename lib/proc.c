@@ -6296,9 +6296,11 @@ selector_in_values_sequential_search(grn_ctx *ctx,
 
     /*
      * Same as:
-     * ((n_existing_record / n_indexed_records) > too_many_index_match_ratio)
+     * ((n_existing_record / n_indexed_records) >
+     *  grn_in_values_too_many_index_match_ratio)
     */
-    if (n_existing_records > (n_indexed_records * too_many_index_match_ratio)) {
+    if (n_existing_records >
+        (n_indexed_records * grn_in_values_too_many_index_match_ratio)) {
       grn_obj_unlink(ctx, &value_ids);
       grn_obj_unlink(ctx, source);
       return GRN_FALSE;
