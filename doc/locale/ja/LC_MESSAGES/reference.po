@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-05-13 03:09+0900\n"
+"PO-Revision-Date: 2015-05-14 01:49+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -18306,35 +18306,51 @@ msgstr "このセクションではFreeBSD上で引数をカスタマイズす�
 msgid "kern.maxfileperproc"
 msgstr ""
 
-msgid "データ型"
-msgstr ""
+# 8eafd8e97f1748ab87f1fdfe570aa582
+msgid "Data types"
+msgstr "データ型"
 
-msgid "Groonga データ型"
-msgstr ""
+# 5e0335ff851e478c8746ce1c2664ac39
+msgid "Groonga data types"
+msgstr "Groonga データ型"
 
-msgid "Groonga は、格納するデータの型を区別します。"
-msgstr ""
+# c57c89ba99424bd1861320f9641860b1
+msgid "Groonga identifies data types to store."
+msgstr "Groonga は、格納するデータの型を区別します。"
 
+# f98e1fad43a047e483b4204ba291cf1d
 msgid ""
+"A primary key of table and column value belong to some kind of data types in "
+"Groonga database. And normaly, column values become in common with all "
+"records in one table."
+msgstr ""
 "Groongaのデータベースでは、テーブルの主キーや、カラムの値はいずれも何らかの型"
 "に属します。また通常は、一つのテーブルの中の全てのレコードについて、カラムの"
 "値は共通となります。"
-msgstr ""
 
+# 54be8604aa454960b5f838e6fe640592
 msgid ""
+"A primary key type and column type can be specified Groonga defined types, "
+"user defined types or user defined table."
+msgstr ""
 "主キーの型とカラムの型には、Groongaで予め定義済みの型か、ユーザが定義する型、"
 "またはユーザが定義したテーブルを指定することができます。"
-msgstr ""
 
+# 4c132a1a94fb4dd1bf3c909c7ffd276b
 msgid ""
+"If you specify other table to primary key type, this table becomes subset of "
+"the table of primary key type."
+msgstr ""
 "主キーの型に他のテーブルを指定する場合は、そのテーブルは、主キーの型となる"
 "テーブルのサブセットとなります。"
-msgstr ""
 
+# 63b5532e11d3432980906940f9822c20
 msgid ""
+"If you specify other table to column type, this column becomes reference key "
+"of the table of column type."
+msgstr ""
 "カラムの型に他のテーブルを指定する場合は、そのカラムは、カラムの型となるテー"
 "ブルの参照キーとなります。"
-msgstr ""
 
 msgid "組込型"
 msgstr ""
