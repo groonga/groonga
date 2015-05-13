@@ -90,6 +90,8 @@ grn_init_from_env(void)
       grn_ctx_per_db = GRN_TRUE;
     }
   }
+
+  grn_plugin_init_from_env();
 }
 
 void
