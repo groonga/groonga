@@ -91,6 +91,7 @@ grn_init_from_env(void)
     }
   }
 
+  grn_db_init_from_env();
   grn_plugin_init_from_env();
 }
 

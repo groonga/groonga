@@ -85,6 +85,33 @@ inline static void
 grn_obj_get_range_info(grn_ctx *ctx, grn_obj *obj,
                        grn_id *range_id, grn_obj_flags *range_flags);
 
+
+static char grn_db_key[GRN_ENV_BUFFER_SIZE];
+static uint64_t grn_index_sparsity = 10;
+
+void
+grn_db_init_from_env(void)
+{
+  grn_getenv("GRN_DB_KEY",
+             grn_db_key,
+             GRN_ENV_BUFFER_SIZE);
+
+  {
+    char grn_index_sparsity_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_INDEX_SPARSITY",
+               grn_index_sparsity_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_index_sparsity_env[0]) {
+      uint64_t sparsity;
+      errno = 0;
+      sparsity = strtoull(grn_index_sparsity_env, NULL, 0);
+      if (errno == 0) {
+        grn_index_sparsity = sparsity;
+      }
+    }
+  }
+}
+
 inline static void
 gen_pathname(const char *path, char *buffer, int fno)
 {
@@ -155,15 +182,11 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
     if ((s = GRN_MALLOC(sizeof(grn_db)))) {
       grn_bool use_default_db_key = GRN_TRUE;
       grn_bool use_pat_as_db_keys = GRN_FALSE;
-      char grn_db_key_env[GRN_ENV_BUFFER_SIZE];
-      grn_getenv("GRN_DB_KEY",
-                 grn_db_key_env,
-                 GRN_ENV_BUFFER_SIZE);
-      if (grn_db_key_env[0]) {
-        if (!strcmp(grn_db_key_env, "pat")) {
+      if (grn_db_key[0]) {
+        if (!strcmp(grn_db_key, "pat")) {
           use_default_db_key = GRN_FALSE;
           use_pat_as_db_keys = GRN_TRUE;
-        } else if (!strcmp(grn_db_key_env, "dat")) {
+        } else if (!strcmp(grn_db_key, "dat")) {
           use_default_db_key = GRN_FALSE;
         }
       }
@@ -7359,18 +7382,7 @@ build_index(grn_ctx *ctx, grn_obj *obj)
           }
         }
         if (use_grn_ii_build) {
-          uint64_t sparsity = 10;
-          char grn_index_sparsity_env[GRN_ENV_BUFFER_SIZE];
-          grn_getenv("GRN_INDEX_SPARSITY",
-                     grn_index_sparsity_env,
-                     GRN_ENV_BUFFER_SIZE);
-          if (grn_index_sparsity_env[0]) {
-            uint64_t v;
-            errno = 0;
-            v = strtoull(grn_index_sparsity_env, NULL, 0);
-            if (!errno) { sparsity = v; }
-          }
-          grn_ii_build(ctx, ii, sparsity);
+          grn_ii_build(ctx, ii, grn_index_sparsity);
         } else {
           grn_table_cursor  *tc;
           if ((tc = grn_table_cursor_open(ctx, target, NULL, 0, NULL, 0,
