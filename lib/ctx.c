@@ -75,6 +75,22 @@ int grn_lock_timeout = GRN_LOCK_TIMEOUT;
 int grn_uyield_count = 0;
 #endif
 
+static grn_bool grn_ctx_per_db = GRN_FALSE;
+
+static void
+grn_init_from_env(void)
+{
+  {
+    char grn_ctx_per_db_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_CTX_PER_DB",
+               grn_ctx_per_db_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_ctx_per_db_env[0] && strcmp(grn_ctx_per_db_env, "yes") == 0) {
+      grn_ctx_per_db = GRN_TRUE;
+    }
+  }
+}
+
 void
 grn_sleep(uint32_t seconds)
 {
@@ -622,14 +638,8 @@ grn_ctx_init_internal(grn_ctx *ctx, int flags)
   // if (ctx->stat != GRN_CTX_FIN) { return GRN_INVALID_ARGUMENT; }
   ERRCLR(ctx);
   ctx->flags = flags;
-  {
-    char grn_ctx_per_db_env[GRN_ENV_BUFFER_SIZE];
-    grn_getenv("GRN_CTX_PER_DB",
-               grn_ctx_per_db_env,
-               GRN_ENV_BUFFER_SIZE);
-    if (grn_ctx_per_db_env[0] && strcmp(grn_ctx_per_db_env, "yes") == 0) {
-      ctx->flags |= GRN_CTX_PER_DB;
-    }
+  if (grn_ctx_per_db) {
+    ctx->flags |= GRN_CTX_PER_DB;
   }
   if (ERRP(ctx, GRN_ERROR)) { return ctx->rc; }
   ctx->stat = GRN_CTX_INITED;
@@ -822,6 +832,7 @@ grn_init(void)
 {
   grn_rc rc;
   grn_ctx *ctx = &grn_gctx;
+  grn_init_from_env();
   grn_logger_init();
   grn_query_logger_init();
   CRITICAL_SECTION_INIT(grn_glock);
