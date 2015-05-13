@@ -23,8 +23,7 @@
 extern "C" {
 #endif
 
-grn_rc grn_proc_init(void);
-grn_rc grn_proc_fin(void);
+void grn_proc_init_from_env(void);
 
 GRN_VAR const char *grn_document_root;
 void grn_db_init_builtin_query(grn_ctx *ctx);

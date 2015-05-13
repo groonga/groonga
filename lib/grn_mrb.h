@@ -31,8 +31,7 @@ extern "C" {
 #endif
 
 #ifdef GRN_WITH_MRUBY
-grn_rc grn_mrb_init(void);
-grn_rc grn_mrb_fin(void);
+void grn_mrb_init_from_env(void);
 
 GRN_API mrb_value grn_mrb_eval(grn_ctx *ctx, const char *script, int script_length);
 GRN_API mrb_value grn_mrb_load(grn_ctx *ctx, const char *path);

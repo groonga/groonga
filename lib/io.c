@@ -99,8 +99,8 @@ inline static int grn_msync(grn_ctx *ctx, void *start, size_t length);
 inline static grn_rc grn_pread(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset);
 inline static grn_rc grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset);
 
-grn_rc
-grn_io_init(void)
+void
+grn_io_init_from_env(void)
 {
   char version_env[GRN_ENV_BUFFER_SIZE];
 
@@ -110,14 +110,6 @@ grn_io_init(void)
   if (version_env[0]) {
     grn_io_version_default = atoi(version_env);
   }
-
-  return GRN_SUCCESS;
-}
-
-grn_rc
-grn_io_fin(void)
-{
-  return GRN_SUCCESS;
 }
 
 static inline uint32_t

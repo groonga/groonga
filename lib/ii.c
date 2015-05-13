@@ -77,8 +77,8 @@
 static grn_bool grn_ii_cursor_set_min_enable = GRN_FALSE;
 static double grn_ii_select_too_many_index_match_ratio = -1;
 
-grn_rc
-grn_ii_init(void)
+void
+grn_ii_init_from_env(void)
 {
   {
     char grn_ii_cursor_set_min_enable_env[GRN_ENV_BUFFER_SIZE];
@@ -102,14 +102,6 @@ grn_ii_init(void)
         atof(grn_ii_select_too_many_index_match_ratio_env);
     }
   }
-
-  return GRN_SUCCESS;
-}
-
-grn_rc
-grn_ii_fin(void)
-{
-  return GRN_SUCCESS;
 }
 
 /* segment */

@@ -61,8 +61,8 @@ const char *grn_document_root = NULL;
 static double grn_between_too_many_index_match_ratio = 0.01;
 static double grn_in_values_too_many_index_match_ratio = 0.01;
 
-grn_rc
-grn_proc_init(void)
+void
+grn_proc_init_from_env(void)
 {
   {
     char grn_between_too_many_index_match_ratio_env[GRN_ENV_BUFFER_SIZE];
@@ -85,14 +85,6 @@ grn_proc_init(void)
         atof(grn_in_values_too_many_index_match_ratio_env);
     }
   }
-
-  return GRN_SUCCESS;
-}
-
-grn_rc
-grn_proc_fin(void)
-{
-  return GRN_SUCCESS;
 }
 
 /* bulk must be initialized grn_bulk or grn_msg */

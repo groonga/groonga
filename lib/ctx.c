@@ -91,7 +91,12 @@ grn_init_from_env(void)
     }
   }
 
+  grn_mrb_init_from_env();
+  grn_ctx_impl_mrb_init_from_env();
+  grn_io_init_from_env();
+  grn_ii_init_from_env();
   grn_db_init_from_env();
+  grn_proc_init_from_env();
   grn_plugin_init_from_env();
 }
 
@@ -837,17 +842,10 @@ grn_init(void)
   grn_rc rc;
   grn_ctx *ctx = &grn_gctx;
   grn_init_from_env();
-  grn_ctx_impl_mrb_init_from_env();
   grn_logger_init();
   grn_query_logger_init();
   CRITICAL_SECTION_INIT(grn_glock);
   grn_gtick = 0;
-#ifdef GRN_WITH_MRUBY
-  if ((rc = grn_mrb_init())) {
-    GRN_LOG(ctx, GRN_LOG_ALERT, "grn_mrb_init failed (%d)", rc);
-    return rc;
-  }
-#endif
   ctx->next = ctx;
   ctx->prev = ctx;
   grn_ctx_init_internal(ctx, 0);
@@ -921,18 +919,6 @@ grn_init(void)
     return rc;
   }
   grn_ctx_impl_init(ctx);
-  if ((rc = grn_io_init())) {
-    GRN_LOG(ctx, GRN_LOG_ALERT, "grn_io_init failed (%d)", rc);
-    return rc;
-  }
-  if ((rc = grn_ii_init())) {
-    GRN_LOG(ctx, GRN_LOG_ALERT, "grn_ii_init failed (%d)", rc);
-    return rc;
-  }
-  if ((rc = grn_proc_init())) {
-    GRN_LOG(ctx, GRN_LOG_ALERT, "grn_proc_init failed (%d)", rc);
-    return rc;
-  }
   if ((rc = grn_plugins_init())) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_plugins_init failed (%d)", rc);
     return rc;
@@ -1049,11 +1035,7 @@ grn_fin(void)
   grn_tokenizers_fin();
   grn_normalizer_fin();
   grn_plugins_fin();
-  grn_proc_fin();
-  grn_ii_fin();
-  grn_io_fin();
   grn_ctx_fin(ctx);
-  grn_mrb_fin();
   grn_com_fin();
   GRN_LOG(ctx, GRN_LOG_NOTICE, "grn_fin (%d)", alloc_count);
   grn_logger_fin(ctx);

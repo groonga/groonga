@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2012 Brazil
+/* Copyright(C) 2009-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -87,8 +87,7 @@ struct _grn_ii_updspec {
 
 typedef struct _grn_ii_updspec grn_ii_updspec;
 
-grn_rc grn_ii_init(void);
-grn_rc grn_ii_fin(void);
+void grn_ii_init_from_env(void);
 
 GRN_API grn_ii *grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon,
                               uint32_t flags);

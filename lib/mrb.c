@@ -35,25 +35,17 @@
 #define BUFFER_SIZE 2048
 #define E_LOAD_ERROR (mrb_class_get(mrb, "LoadError"))
 
-#ifdef GRN_WITH_MRUBY
 static char grn_mrb_ruby_scripts_dir[GRN_ENV_BUFFER_SIZE];
 
-grn_rc
-grn_mrb_init(void)
+void
+grn_mrb_init_from_env(void)
 {
   grn_getenv("GRN_RUBY_SCRIPTS_DIR",
              grn_mrb_ruby_scripts_dir,
              GRN_ENV_BUFFER_SIZE);
-
-  return GRN_SUCCESS;
 }
 
-grn_rc
-grn_mrb_fin(void)
-{
-  return GRN_SUCCESS;
-}
-
+#ifdef GRN_WITH_MRUBY
 # ifdef WIN32
 static char *win32_ruby_scripts_dir = NULL;
 static char win32_ruby_scripts_dir_buffer[PATH_MAX];
