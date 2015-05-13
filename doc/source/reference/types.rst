@@ -2,26 +2,26 @@
 
 .. highlightlang:: none
 
-データ型
-========
+Data types
+==========
 
-名前
+Name
 ----
 
-Groonga データ型
+Groonga data types
 
-説明
-----
+Description
+-----------
 
-Groonga は、格納するデータの型を区別します。
+Groonga identifies data types to store.
 
-Groongaのデータベースでは、テーブルの主キーや、カラムの値はいずれも何らかの型に属します。また通常は、一つのテーブルの中の全てのレコードについて、カラムの値は共通となります。
+A primary key of table and column value belong to some kind of data types in Groonga database. And normaly, column values become in common with all records in one table.
 
-主キーの型とカラムの型には、Groongaで予め定義済みの型か、ユーザが定義する型、またはユーザが定義したテーブルを指定することができます。
+A primary key type and column type can be specified Groonga defined types, user defined types or user defined table.
 
-主キーの型に他のテーブルを指定する場合は、そのテーブルは、主キーの型となるテーブルのサブセットとなります。
+If you specify other table to primary key type, this table becomes subset of the table of primary key type.
 
-カラムの型に他のテーブルを指定する場合は、そのカラムは、カラムの型となるテーブルの参照キーとなります。
+If you specify other table to column type, this column becomes reference key of the table of column type.
 
 組込型
 ------
