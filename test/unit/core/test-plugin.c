@@ -22,6 +22,7 @@
 #include "../lib/grn-assertions.h"
 
 #include <grn_str.h>
+#include <grn_plugin.h>
 
 void test_register_function(void);
 void test_register_with_too_long_name(void);
@@ -62,6 +63,7 @@ setup_plugins_dir(void)
                                  NULL);
   plugins_dir_env = g_strdup(g_getenv("GRN_PLUGINS_DIR"));
   g_setenv("GRN_PLUGINS_DIR", plugins_dir, TRUE);
+  grn_plugin_init_from_env();
 }
 
 void
@@ -89,6 +91,7 @@ teardown_plugins_dir(void)
   } else {
     g_unsetenv("GRN_PLUGINS_DIR");
   }
+  grn_plugin_init_from_env();
   g_free(plugins_dir_env);
   g_free(plugins_dir);
 }
