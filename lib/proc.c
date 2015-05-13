@@ -85,6 +85,8 @@ grn_proc_init(void)
         atof(grn_in_values_too_many_index_match_ratio_env);
     }
   }
+
+  return GRN_SUCCESS;
 }
 
 /* bulk must be initialized grn_bulk or grn_msg */

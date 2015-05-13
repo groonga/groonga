@@ -44,11 +44,14 @@ grn_mrb_init(void)
   grn_getenv("GRN_RUBY_SCRIPTS_DIR",
              grn_mrb_ruby_scripts_dir,
              GRN_ENV_BUFFER_SIZE);
+
+  return GRN_SUCCESS;
 }
 
 grn_rc
 grn_mrb_fin(void)
 {
+  return GRN_SUCCESS;
 }
 
 # ifdef WIN32
