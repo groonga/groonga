@@ -834,6 +834,7 @@ grn_init(void)
   grn_rc rc;
   grn_ctx *ctx = &grn_gctx;
   grn_init_from_env();
+  grn_ctx_impl_mrb_init_from_env();
   grn_logger_init();
   grn_query_logger_init();
   CRITICAL_SECTION_INIT(grn_glock);
