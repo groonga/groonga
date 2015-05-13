@@ -57,6 +57,36 @@ const char *grn_document_root = NULL;
 #define GRN_SELECT_INTERNAL_VAR_CONDITION     "$condition"
 #define GRN_SELECT_INTERNAL_VAR_MATCH_COLUMNS "$match_columns"
 
+
+static double grn_between_too_many_index_match_ratio = 0.01;
+static double grn_in_values_too_many_index_match_ratio = 0.01;
+
+grn_rc
+grn_proc_init(void)
+{
+  {
+    char grn_between_too_many_index_match_ratio_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO",
+               grn_between_too_many_index_match_ratio_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_between_too_many_index_match_ratio_env[0]) {
+      grn_between_too_many_index_match_ratio =
+        atof(grn_between_too_many_index_match_ratio_env);
+    }
+  }
+
+  {
+    char grn_in_values_too_many_index_match_ratio_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO",
+               grn_in_values_too_many_index_match_ratio_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_in_values_too_many_index_match_ratio_env[0]) {
+      grn_in_values_too_many_index_match_ratio =
+        atof(grn_in_values_too_many_index_match_ratio_env);
+    }
+  }
+}
+
 /* bulk must be initialized grn_bulk or grn_msg */
 static int
 grn_bulk_put_from_file(grn_ctx *ctx, grn_obj *bulk, const char *path)
@@ -5713,21 +5743,9 @@ selector_between_sequential_search(grn_ctx *ctx,
                                    between_data *data,
                                    grn_obj *res, grn_operator op)
 {
-  double too_many_index_match_ratio = 0.01;
-
-  {
-    char too_many_index_match_ratio_env[GRN_ENV_BUFFER_SIZE];
-    grn_getenv("GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO",
-               too_many_index_match_ratio_env,
-               GRN_ENV_BUFFER_SIZE);
-    if (too_many_index_match_ratio_env[0]) {
-      too_many_index_match_ratio = atof(too_many_index_match_ratio_env);
-    }
-  }
-
   if (!selector_between_sequential_search_should_use(
         ctx, table, index, index_table, data, res, op,
-        too_many_index_match_ratio)) {
+        grn_between_too_many_index_match_ratio)) {
     return GRN_FALSE;
   }
 
@@ -6211,19 +6229,8 @@ selector_in_values_sequential_search(grn_ctx *ctx,
 {
   grn_obj *source;
   int n_existing_records;
-  double too_many_index_match_ratio = 0.01;
 
-  {
-    char too_many_index_match_ratio_env[GRN_ENV_BUFFER_SIZE];
-    grn_getenv("GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO",
-               too_many_index_match_ratio_env,
-               GRN_ENV_BUFFER_SIZE);
-    if (too_many_index_match_ratio_env[0]) {
-      too_many_index_match_ratio = atof(too_many_index_match_ratio_env);
-    }
-  }
-
-  if (too_many_index_match_ratio < 0.0) {
+  if (grn_in_values_too_many_index_match_ratio < 0.0) {
     return GRN_FALSE;
   }
 
