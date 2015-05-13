@@ -89,6 +89,12 @@ grn_proc_init(void)
   return GRN_SUCCESS;
 }
 
+grn_rc
+grn_proc_fin(void)
+{
+  return GRN_SUCCESS;
+}
+
 /* bulk must be initialized grn_bulk or grn_msg */
 static int
 grn_bulk_put_from_file(grn_ctx *ctx, grn_obj *bulk, const char *path)
