@@ -28,6 +28,7 @@
 #include "grn_snip.h"
 #include "grn_output.h"
 #include "grn_normalizer.h"
+#include "grn_mrb.h"
 #include "grn_ctx_impl_mrb.h"
 #include "grn_logger.h"
 #include <stdio.h>
@@ -837,6 +838,12 @@ grn_init(void)
   grn_query_logger_init();
   CRITICAL_SECTION_INIT(grn_glock);
   grn_gtick = 0;
+#ifdef GRN_WITH_MRUBY
+  if ((rc = grn_mrb_init())) {
+    GRN_LOG(ctx, GRN_LOG_ALERT, "grn_mrb_init failed (%d)", rc);
+    return rc;
+  }
+#endif
   ctx->next = ctx;
   ctx->prev = ctx;
   grn_ctx_init_internal(ctx, 0);
@@ -1042,6 +1049,7 @@ grn_fin(void)
   grn_ii_fin();
   grn_io_fin();
   grn_ctx_fin(ctx);
+  grn_mrb_fin();
   grn_com_fin();
   GRN_LOG(ctx, GRN_LOG_NOTICE, "grn_fin (%d)", alloc_count);
   grn_logger_fin(ctx);

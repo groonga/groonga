@@ -36,6 +36,21 @@
 #define E_LOAD_ERROR (mrb_class_get(mrb, "LoadError"))
 
 #ifdef GRN_WITH_MRUBY
+static char grn_mrb_ruby_scripts_dir[GRN_ENV_BUFFER_SIZE];
+
+grn_rc
+grn_mrb_init(void)
+{
+  grn_getenv("GRN_RUBY_SCRIPTS_DIR",
+             grn_mrb_ruby_scripts_dir,
+             GRN_ENV_BUFFER_SIZE);
+}
+
+grn_rc
+grn_mrb_fin(void)
+{
+}
+
 # ifdef WIN32
 static char *win32_ruby_scripts_dir = NULL;
 static char win32_ruby_scripts_dir_buffer[PATH_MAX];
@@ -68,13 +83,8 @@ grn_mrb_get_default_system_ruby_scripts_dir(void)
 const char *
 grn_mrb_get_system_ruby_scripts_dir(grn_ctx *ctx)
 {
-  static char ruby_scripts_dir[GRN_ENV_BUFFER_SIZE];
-
-  grn_getenv("GRN_RUBY_SCRIPTS_DIR",
-             ruby_scripts_dir,
-             GRN_ENV_BUFFER_SIZE);
-  if (ruby_scripts_dir[0]) {
-    return ruby_scripts_dir;
+  if (grn_mrb_ruby_scripts_dir[0]) {
+    return grn_mrb_ruby_scripts_dir;
   } else {
     return grn_mrb_get_default_system_ruby_scripts_dir();
   }
