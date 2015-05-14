@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-05-14 01:49+0900\n"
+"PO-Revision-Date: 2015-05-15 01:56+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -18352,104 +18352,135 @@ msgstr ""
 "カラムの型に他のテーブルを指定する場合は、そのカラムは、カラムの型となるテー"
 "ブルの参照キーとなります。"
 
-msgid "組込型"
-msgstr ""
+msgid "Builtin types"
+msgstr "組込型"
 
-msgid "以下の型が組込型としてあらかじめ定義されています。"
-msgstr ""
+# 397197d5c6c54235bc63d804a1f9f3d3
+msgid "The following types are defined as builtin types."
+msgstr "以下の型が組込型としてあらかじめ定義されています。"
 
 msgid "``Object``"
 msgstr ""
 
-msgid "任意のテーブルに属する全てのレコードです。 [#]_"
-msgstr ""
+# 57661c9028254179a17c4e5f7424e43f
+msgid "All records that belong to any table. [#]_"
+msgstr "以下の型が組込型としてあらかじめ定義されています。 [#]_"
 
 msgid "``Bool``"
 msgstr ""
 
-msgid ""
+# 09fb3d2426db43b782d6bd131f944dc0
+msgid "Boolean type. The possible values are true and false. (default: false)"
+msgstr ""
 "ブーリアン型やブール型などと呼ばれる型であり、真偽値を表します。取り得る値は"
 "trueとfalseです。（デフォルト値: false）"
-msgstr ""
 
+# 46e5d6c5a5674cbaa34dee01835a45be
 msgid ""
+"To store a value by :doc:`/reference/commands/load` command, becomes false "
+"if you specify false, 0 or empty string, becomes true if you specify others."
+msgstr ""
 ":doc:`/reference/commands/load` コマンドで値を格納するときは、false、0、空文"
 "字列のいずれかを指定するとfalseになり、それ以外を指定するとtrueになります。"
-msgstr ""
 
 msgid "``Int8``"
 msgstr ""
 
-msgid ""
-"8bit符号付き整数であり、-128以上127以下の整数を表します。（デフォルト値: 0）"
+# c3b5c4cfc7144fd89e03a7b5bbf07e97
+msgid "Signed 8bit integer. It's -128 or more and 127 or less. (default: 0)"
 msgstr ""
+"8bit符号付き整数であり、-128以上127以下の整数を表します。（デフォルト値: 0）"
 
 msgid "``UInt8``"
 msgstr ""
 
-msgid ""
-"8bit符号なし整数であり、0以上255以下の整数を表します。（デフォルト値: 0）"
+# a6bb6a94da5549efa0a7d7b385dac38d
+msgid "Unsigned 8bit integer. Is't 0 or more and 255 or less. (default: 0)"
 msgstr ""
+"8bit符号なし整数であり、0以上255以下の整数を表します。（デフォルト値: 0）"
 
 msgid "``Int16``"
 msgstr ""
 
+# a066e515e33e4ce3a54b840b16097b22
 msgid ""
+"Signed 16bit integer. It's -32,768 or more and 32,767 or less. (default: 0)"
+msgstr ""
 "16bit符号付き整数であり、-32,768以上32,767以下の整数を表します。（デフォルト"
 "値: 0）"
-msgstr ""
 
 msgid "``UInt16``"
 msgstr ""
 
-msgid ""
-"16bit符号なし整数であり、0以上65,535以下の整数を表します。（デフォルト値: 0）"
+# 647af997a12242328ee2ce892ebe5cb6
+msgid "Unsigned 16bit integer. It's 0 or more and 65,535 or less. (default: 0)"
 msgstr ""
+"16bit符号なし整数であり、0以上65,535以下の整数を表します。（デフォルト値: 0）"
 
 msgid "``Int32``"
 msgstr ""
 
+# 08b555e9f73a491882d2d5f318887d57
 msgid ""
+"Signed 32bit integer. It's -2,147,483,648 or more and 2,147,483,647 or less. "
+"(default: 0)"
+msgstr ""
 "32bit符号付き整数であり、-2,147,483,648以上2,147,483,647以下の整数を表しま"
 "す。（デフォルト値: 0）"
-msgstr ""
 
 msgid "``UInt32``"
 msgstr ""
 
+# c38abb68eb8148e6a347a230206fb778
 msgid ""
+"Unsigned 32bit integer. It's 0 or more and 4,294,967,295 or less. (default: "
+"0)"
+msgstr ""
 "32bit符号なし整数であり、0以上4,294,967,295以下の整数を表します。（デフォルト"
 "値: 0）"
-msgstr ""
 
 msgid "``Int64``"
 msgstr ""
 
+# 3aa288eca388485f83968d83062f4485
 msgid ""
+"Signed 64bit integer. It's -9,223,372,036,854,775,808 or more and "
+"9,223,372,036,854,775,807 or less. (default: 0)"
+msgstr ""
 "64bit符号付き整数であり、-9,223,372,036,854,775,808以上"
 "9,223,372,036,854,775,807以下の整数を表します。（デフォルト値: 0）"
-msgstr ""
 
 msgid "``UInt64``"
 msgstr ""
 
+# 861e737161474fd887592cb259507217
 msgid ""
+"Unsigned 64bit integer. It's 0 or more and 18,446,744,073,709,551,615 or "
+"less. (default: 0)"
+msgstr ""
 "64bit符号なし整数であり、0以上18,446,744,073,709,551,615以下の整数を表しま"
 "す。（デフォルト値: 0）"
-msgstr ""
 
 msgid "``Float``"
 msgstr "``Float``"
 
+# 45d0ccae484b4641b66d7863508f7663
 msgid ""
-"IEEE 754形式の倍精度浮動小数点数であり、実数を表します。（デフォルト値: 0.0）"
+"Double-precision floating-point number of IEEE 754 as a real number. "
+"(default: 0.0)"
 msgstr ""
+"IEEE 754形式の倍精度浮動小数点数であり、実数を表します。（デフォルト値: 0.0）"
 
+# 417af1a60a9a4d23918be0029498a19c
 msgid ""
+"See `IEEE floating point - Wikipedia, the free encyclopedia <http://en."
+"wikipedia.org/wiki/IEEE_floating_point>`_ or `IEEE 754: Standard for Binary "
+"Floating-Point <http://grouper.ieee.org/groups/754/>`_ for details of IEEE "
+"754 format."
+msgstr ""
 "IEEE 754形式の詳細については、 `IEEE 754 - Wikipedia <http://ja.wikipedia."
 "org/wiki/IEEE_754>`_ や `IEEE 754: Standard for Binary Floating-Point "
 "<http://grouper.ieee.org/groups/754/>`_ を参照してください。"
-msgstr ""
 
 msgid "``Time``"
 msgstr "``Time``"
@@ -18468,20 +18499,23 @@ msgstr ""
 msgid "``ShortText``"
 msgstr ""
 
-msgid "4,095バイト以下の文字列を表します。（デフォルト値: \"\"）"
-msgstr ""
+# 2ec19c75c44743c096198aacd34d0a01
+msgid "String of 4,095 or less bytes. (default \"\")"
+msgstr "4,095バイト以下の文字列を表します。（デフォルト値: \"\"）"
 
 msgid "``Text``"
 msgstr ""
 
-msgid "65,535バイト以下の文字列を表します。（デフォルト値: \"\"）"
-msgstr ""
+# 3b07da98ccb3436d9e4b72d57643af7c
+msgid "String of 65,535 or less bytes. (default \"\")"
+msgstr "65,535バイト以下の文字列を表します。（デフォルト値: \"\"）"
 
 msgid "``LongText``"
 msgstr ""
 
-msgid "2,147,483,647バイト以下の文字列を表します。（デフォルト値: \"\"）"
-msgstr ""
+# f972394f797249b0a94a46c07e38a58c
+msgid "String of 2,147,483,647 or less bytes. (default \"\")"
+msgstr "2,147,483,647バイト以下の文字列を表します。（デフォルト値: \"\"）"
 
 msgid "``TokyoGeoPoint``"
 msgstr ""
