@@ -23,58 +23,58 @@ If you specify other table to primary key type, this table becomes subset of the
 
 If you specify other table to column type, this column becomes reference key of the table of column type.
 
-組込型
-------
+Builtin types
+-------------
 
-以下の型が組込型としてあらかじめ定義されています。
+The following types are defined as builtin types.
 
 ``Object``
 
-  任意のテーブルに属する全てのレコードです。 [#]_
+  All records that belong to any table. [#]_
 
 ``Bool``
 
-  ブーリアン型やブール型などと呼ばれる型であり、真偽値を表します。取り得る値はtrueとfalseです。（デフォルト値: false）
+  Boolean type. The possible values are true and false. (default: false)
 
-  :doc:`/reference/commands/load` コマンドで値を格納するときは、false、0、空文字列のいずれかを指定するとfalseになり、それ以外を指定するとtrueになります。
+  To store a value by :doc:`/reference/commands/load` command, becomes false if you specify false, 0 or empty string, becomes true if you specify others.
 
 ``Int8``
 
-  8bit符号付き整数であり、-128以上127以下の整数を表します。（デフォルト値: 0）
+  Signed 8bit integer. It's -128 or more and 127 or less. (default: 0)
 
 ``UInt8``
 
-  8bit符号なし整数であり、0以上255以下の整数を表します。（デフォルト値: 0）
+  Unsigned 8bit integer. Is't 0 or more and 255 or less. (default: 0)
 
 ``Int16``
 
-  16bit符号付き整数であり、-32,768以上32,767以下の整数を表します。（デフォルト値: 0）
+  Signed 16bit integer. It's -32,768 or more and 32,767 or less. (default: 0)
 
 ``UInt16``
 
-  16bit符号なし整数であり、0以上65,535以下の整数を表します。（デフォルト値: 0）
+  Unsigned 16bit integer. It's 0 or more and 65,535 or less. (default: 0)
 
 ``Int32``
 
-  32bit符号付き整数であり、-2,147,483,648以上2,147,483,647以下の整数を表します。（デフォルト値: 0）
+  Signed 32bit integer. It's -2,147,483,648 or more and 2,147,483,647 or less. (default: 0)
 
 ``UInt32``
 
-  32bit符号なし整数であり、0以上4,294,967,295以下の整数を表します。（デフォルト値: 0）
+  Unsigned 32bit integer. It's 0 or more and 4,294,967,295 or less. (default: 0)
 
 ``Int64``
 
-  64bit符号付き整数であり、-9,223,372,036,854,775,808以上9,223,372,036,854,775,807以下の整数を表します。（デフォルト値: 0）
+  Signed 64bit integer. It's -9,223,372,036,854,775,808 or more and 9,223,372,036,854,775,807 or less. (default: 0)
 
 ``UInt64``
 
-  64bit符号なし整数であり、0以上18,446,744,073,709,551,615以下の整数を表します。（デフォルト値: 0）
+  Unsigned 64bit integer. It's 0 or more and 18,446,744,073,709,551,615 or less. (default: 0)
 
 ``Float``
 
-  IEEE 754形式の倍精度浮動小数点数であり、実数を表します。（デフォルト値: 0.0）
+  Double-precision floating-point number of IEEE 754 as a real number. (default: 0.0)
 
-  IEEE 754形式の詳細については、 `IEEE 754 - Wikipedia <http://ja.wikipedia.org/wiki/IEEE_754>`_ や `IEEE 754: Standard for Binary Floating-Point <http://grouper.ieee.org/groups/754/>`_ を参照してください。
+  See `IEEE floating point - Wikipedia, the free encyclopedia <http://en.wikipedia.org/wiki/IEEE_floating_point>`_ or `IEEE 754: Standard for Binary Floating-Point <http://grouper.ieee.org/groups/754/>`_ for details of IEEE 754 format.
 
 ``Time``
 
@@ -84,15 +84,15 @@ If you specify other table to column type, this column becomes reference key of 
 
 ``ShortText``
 
-  4,095バイト以下の文字列を表します。（デフォルト値: ""）
+  String of 4,095 or less bytes. (default "")
 
 ``Text``
 
-  65,535バイト以下の文字列を表します。（デフォルト値: ""）
+  String of 65,535 or less bytes. (default "")
 
 ``LongText``
 
-  2,147,483,647バイト以下の文字列を表します。（デフォルト値: ""）
+  String of 2,147,483,647 or less bytes. (default "")
 
 ``TokyoGeoPoint``
 
