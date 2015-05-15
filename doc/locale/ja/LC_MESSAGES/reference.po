@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-05-15 01:56+0900\n"
+"PO-Revision-Date: 2015-05-16 01:26+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -18485,36 +18485,43 @@ msgstr ""
 msgid "``Time``"
 msgstr "``Time``"
 
+# e6384dbca0da4f79ba44752d2f310387
 msgid ""
+"Date and Time, the number of seconds that have elapsed since 1970-01-01 "
+"00:00:00 by 64 bit signed integer. (default: 0)"
+msgstr ""
 "日時を表す型であり、1970年1月1日0時0分0秒からの経過時間を、マイクロ秒単位で"
 "64bit符号付き整数により表現します。（デフォルト値: 0）"
-msgstr ""
 
+# 46e5d6c5a5674cbaa34dee01835a45be
 msgid ""
+"To store a value by :doc:`/reference/commands/load` command, specifies the "
+"number of elapsed seconds since 1970-01-01 00:00:00. To specify the detailed "
+"date and time than seconds, use the decimal."
+msgstr ""
 ":doc:`/reference/commands/load` コマンドで値を格納するときは、1970年1月1日0時"
 "0分0秒からの経過秒数を指定します。秒単位より詳細な日時を指定するには、小数を"
 "使います。"
-msgstr ""
 
 msgid "``ShortText``"
 msgstr ""
 
 # 2ec19c75c44743c096198aacd34d0a01
-msgid "String of 4,095 or less bytes. (default \"\")"
+msgid "String of 4,095 or less bytes. (default: \"\")"
 msgstr "4,095バイト以下の文字列を表します。（デフォルト値: \"\"）"
 
 msgid "``Text``"
 msgstr ""
 
 # 3b07da98ccb3436d9e4b72d57643af7c
-msgid "String of 65,535 or less bytes. (default \"\")"
+msgid "String of 65,535 or less bytes. (default: \"\")"
 msgstr "65,535バイト以下の文字列を表します。（デフォルト値: \"\"）"
 
 msgid "``LongText``"
 msgstr ""
 
 # f972394f797249b0a94a46c07e38a58c
-msgid "String of 2,147,483,647 or less bytes. (default \"\")"
+msgid "String of 2,147,483,647 or less bytes. (default: \"\")"
 msgstr "2,147,483,647バイト以下の文字列を表します。（デフォルト値: \"\"）"
 
 msgid "``TokyoGeoPoint``"
@@ -18551,15 +18558,16 @@ msgid ""
 "ドにおける指定方法はTokyoGeoPointと同じです。"
 msgstr ""
 
-msgid "型に関する制限事項"
-msgstr ""
+msgid "Limitations about types"
+msgstr "型に関する制限事項"
 
-msgid "テーブルの主キーに指定できない型"
-msgstr ""
+# 19f1e4ff8a034c55b0b940509f78c930
+msgid "Types that can't be specified in primary key of table"
+msgstr "テーブルの主キーに指定できない型"
 
-msgid ""
+msgid "``Text`` and ``LongText`` can't be specified in primary key of table."
+msgstr ""
 "Text型とLongText型については、テーブルの主キーに指定することはできません。"
-msgstr ""
 
 msgid "ベクターとして格納できない型"
 msgstr ""
