@@ -78,21 +78,21 @@ The following types are defined as builtin types.
 
 ``Time``
 
-  日時を表す型であり、1970年1月1日0時0分0秒からの経過時間を、マイクロ秒単位で64bit符号付き整数により表現します。（デフォルト値: 0）
+  Date and Time, the number of seconds that have elapsed since 1970-01-01 00:00:00 by 64 bit signed integer. (default: 0)
 
-  :doc:`/reference/commands/load` コマンドで値を格納するときは、1970年1月1日0時0分0秒からの経過秒数を指定します。秒単位より詳細な日時を指定するには、小数を使います。
+  To store a value by :doc:`/reference/commands/load` command, specifies the number of elapsed seconds since 1970-01-01 00:00:00. To specify the detailed date and time than seconds, use the decimal.
 
 ``ShortText``
 
-  String of 4,095 or less bytes. (default "")
+  String of 4,095 or less bytes. (default: "")
 
 ``Text``
 
-  String of 65,535 or less bytes. (default "")
+  String of 65,535 or less bytes. (default: "")
 
 ``LongText``
 
-  String of 2,147,483,647 or less bytes. (default "")
+  String of 2,147,483,647 or less bytes. (default: "")
 
 ``TokyoGeoPoint``
 
@@ -109,13 +109,13 @@ The following types are defined as builtin types.
 
   度分秒形式からミリ秒形式への変換方法や :doc:`/reference/commands/load` コマンドにおける指定方法はTokyoGeoPointと同じです。
 
-型に関する制限事項
-------------------
+Limitations about types
+-----------------------
 
-テーブルの主キーに指定できない型
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Types that can't be specified in primary key of table
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Text型とLongText型については、テーブルの主キーに指定することはできません。
+``Text`` and ``LongText`` can't be specified in primary key of table.
 
 ベクターとして格納できない型
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
