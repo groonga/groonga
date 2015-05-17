@@ -169,7 +169,7 @@ if test "$GCC" = "yes"; then
   if test "$CLANG" = "no"; then
     CHECK_BUILD_FLAG([-Wcast-align])
   fi
-  CHECK_BUILD_FLAG([-Wredundant-decls])
+#  CHECK_BUILD_FLAG([-Wredundant-decls])
 #  CHECK_BUILD_FLAG([-Wunsafe-loop-optimizations])
 #  CHECK_BUILD_FLAG([-Wunreachable-code])
 #  CHECK_BUILD_FLAG([-Wswitch-enum])
