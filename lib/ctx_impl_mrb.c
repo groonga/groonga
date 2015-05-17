@@ -18,9 +18,9 @@
 
 #include "grn_ctx_impl.h"
 
-#ifdef GRN_WITH_MRUBY
-# include <string.h>
+#include <string.h>
 
+#ifdef GRN_WITH_MRUBY
 # include "grn_ctx_impl_mrb.h"
 
 # include "grn_mrb.h"
