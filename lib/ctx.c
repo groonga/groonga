@@ -1551,7 +1551,6 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
       goto exit;
     } else {
       grn_obj *expr = NULL;
-      if (comment_command_p(str, str_len)) { goto output; };
       if (ctx->impl->qe_next) {
         grn_obj *val;
         expr = ctx->impl->qe_next;
@@ -1562,6 +1561,7 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
         }
         grn_expr_exec(ctx, expr, 0);
       } else {
+        if (comment_command_p(str, str_len)) { goto output; };
         ctx->impl->mime_type = "application/json";
         ctx->impl->output_type = GRN_CONTENT_JSON;
         grn_timeval_now(ctx, &ctx->impl->tv);
