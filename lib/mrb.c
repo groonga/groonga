@@ -20,6 +20,8 @@
 #include "grn_ctx_impl.h"
 #include "grn_util.h"
 
+#include <string.h>
+
 #ifdef GRN_WITH_MRUBY
 # include <mruby/proc.h>
 # include <mruby/compile.h>
