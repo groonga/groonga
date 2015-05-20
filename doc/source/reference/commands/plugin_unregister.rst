@@ -60,4 +60,4 @@ See :doc:`/reference/command/output_format` for ``HEADER``.
 See also
 --------
 
-* :doc:`plugin_unregister`
+* :doc:`plugin_register`
