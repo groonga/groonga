@@ -458,7 +458,7 @@ morphological analyzer.
 
 MeCab doesn't depend on Japanese. You can use MeCab for other
 languages by creating dictionary for the languages. You can use `NAIST
-Japanese Dictionary <http://sourceforge.jp/projects/naist-jdic/>`_
+Japanese Dictionary <http://osdn.jp/projects/naist-jdic/>`_
 for Japanese.
 
 ``TokenMecab`` is good for precision rather than recall. You can find

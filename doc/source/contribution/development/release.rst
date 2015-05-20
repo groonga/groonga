@@ -497,7 +497,7 @@ news.txtに変更点をまとめましたが、それを元にリリースアナ
 
 * [groonga-dev,00794] [ANN] Groonga 2.0.2
 
-    * http://sourceforge.jp/projects/groonga/lists/archive/dev/2012-April/000794.html
+    * http://osdn.jp/projects/groonga/lists/archive/dev/2012-April/000794.html
 
 
 パッケージのアップロード
@@ -608,7 +608,7 @@ Groonga 3.0.6のときは以下のように更新してpull requestを送りま�
 
 作成したリリースアナウンスをメーリングリストへと流します。
 
-* groonga-dev groonga-dev@lists.sourceforge.jp
+* groonga-dev groonga-dev@lists.osdn.me
 * Groonga-talk groonga-talk@lists.sourceforge.net
 
 Twitterでリリースアナウンスをする
