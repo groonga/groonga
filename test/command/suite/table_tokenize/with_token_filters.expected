@@ -14,23 +14,28 @@ table_tokenize Terms "Hello and Good-bye" --mode ADD
   [
     {
       "value": "hello",
-      "position": 0
+      "position": 0,
+      "force_prefix": false
     },
     {
       "value": "and",
-      "position": 1
+      "position": 1,
+      "force_prefix": false
     },
     {
       "value": "good",
-      "position": 2
+      "position": 2,
+      "force_prefix": false
     },
     {
       "value": "-",
-      "position": 3
+      "position": 3,
+      "force_prefix": false
     },
     {
       "value": "bye",
-      "position": 4
+      "position": 4,
+      "force_prefix": false
     }
   ]
 ]
@@ -49,19 +54,23 @@ table_tokenize Terms "Hello and Good-bye"
   [
     {
       "value": "hello",
-      "position": 0
+      "position": 0,
+      "force_prefix": false
     },
     {
       "value": "good",
-      "position": 2
+      "position": 2,
+      "force_prefix": false
     },
     {
       "value": "-",
-      "position": 3
+      "position": 3,
+      "force_prefix": false
     },
     {
       "value": "bye",
-      "position": 4
+      "position": 4,
+      "force_prefix": false
     }
   ]
 ]

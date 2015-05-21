@@ -10,27 +10,33 @@ table_tokenize Lexicon "a\ndef" --mode ADD
   [
     {
       "value": "￯",
-      "position": 0
+      "position": 0,
+      "force_prefix": false
     },
     {
       "value": "a",
-      "position": 1
+      "position": 1,
+      "force_prefix": false
     },
     {
       "value": "de",
-      "position": 3
+      "position": 3,
+      "force_prefix": false
     },
     {
       "value": "ef",
-      "position": 4
+      "position": 4,
+      "force_prefix": false
     },
     {
       "value": "f",
-      "position": 5
+      "position": 5,
+      "force_prefix": false
     },
     {
       "value": "￰",
-      "position": 6
+      "position": 6,
+      "force_prefix": false
     }
   ]
 ]
@@ -44,15 +50,18 @@ table_tokenize Lexicon "a\ndef" --mode GET
   [
     {
       "value": "a",
-      "position": 0
+      "position": 0,
+      "force_prefix": false
     },
     {
       "value": "de",
-      "position": 1
+      "position": 1,
+      "force_prefix": false
     },
     {
       "value": "ef",
-      "position": 2
+      "position": 2,
+      "force_prefix": false
     }
   ]
 ]

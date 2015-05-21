@@ -10,15 +10,18 @@ tokenize TokenBigram "I developed Groonga" NormalizerAuto --token_filters TokenF
   [
     {
       "value": "i",
-      "position": 0
+      "position": 0,
+      "force_prefix": false
     },
     {
       "value": "develop",
-      "position": 1
+      "position": 1,
+      "force_prefix": false
     },
     {
       "value": "groonga",
-      "position": 2
+      "position": 2,
+      "force_prefix": false
     }
   ]
 ]

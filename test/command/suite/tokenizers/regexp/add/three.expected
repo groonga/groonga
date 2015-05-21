@@ -8,23 +8,28 @@ tokenize TokenRegexp "xyz"
   [
     {
       "value": "￯",
-      "position": 0
+      "position": 0,
+      "force_prefix": false
     },
     {
       "value": "xy",
-      "position": 1
+      "position": 1,
+      "force_prefix": false
     },
     {
       "value": "yz",
-      "position": 2
+      "position": 2,
+      "force_prefix": false
     },
     {
       "value": "z",
-      "position": 3
+      "position": 3,
+      "force_prefix": false
     },
     {
       "value": "￰",
-      "position": 4
+      "position": 4,
+      "force_prefix": false
     }
   ]
 ]
