@@ -1,0 +1,20 @@
+tokenize TokenTrigram "ABCだ" NormalizerAuto --mode GET
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "abc",
+      "position": 0,
+      "force_prefix": false
+    },
+    {
+      "value": "だ",
+      "position": 1,
+      "force_prefix": true
+    }
+  ]
+]
