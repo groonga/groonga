@@ -139,6 +139,7 @@ ngx_http_groonga_write_fd(int fd,
                           const char *message, size_t message_size)
 {
   size_t rest_message_size = message_size;
+  const char *current_message = message;
 
   while (rest_message_size > 0) {
     size_t current_message_size;
@@ -149,9 +150,10 @@ ngx_http_groonga_write_fd(int fd,
       current_message_size = rest_message_size;
     }
 
-    grn_memcpy(buffer, message, current_message_size);
-    rest_message_size -= current_message_size;
+    grn_memcpy(buffer, current_message, current_message_size);
     ngx_write_fd(fd, buffer, current_message_size);
+    rest_message_size -= current_message_size;
+    current_message += current_message_size;
   }
 }
 
