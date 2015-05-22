@@ -14,7 +14,7 @@ tokenize TokenTrigram "ABCだよ" NormalizerAuto --mode GET
     {
       "value": "だよ",
       "position": 1,
-      "force_prefix": false
+      "force_prefix": true
     }
   ]
 ]
