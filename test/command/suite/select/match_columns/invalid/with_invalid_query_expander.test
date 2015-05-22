@@ -1,0 +1,16 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos title COLUMN_SCALAR ShortText
+
+table_create Lexicon TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+column_create Lexicon memo_index COLUMN_INDEX|WITH_POSITION Memos title
+
+load --table Memos
+[
+["title"],
+["Groonga"]
+]
+
+select Memos \
+  --match_columns Memos.nonexistent_column \
+  --query Groonga \
+  --query_expander nonexistent_query_expander

@@ -1,0 +1,17 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos title COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Lexicon TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+[[0,0.0,0.0],true]
+column_create Lexicon memo_index COLUMN_INDEX|WITH_POSITION Memos title
+[[0,0.0,0.0],true]
+load --table Memos
+[
+["title"],
+["Groonga"]
+]
+[[0,0.0,0.0],1]
+select Memos   --match_columns Memos.nonexistent_column   --query Groonga   --query_expander nonexistent_query_expander
+[[[-63,0.0,0.0],"Syntax error: <Memos.nonexistent_column||>"]]
+#|e| Syntax error: <Memos.nonexistent_column||>

@@ -1003,6 +1003,9 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
             grn_expr_parse(ctx, match_columns_, match_columns, match_columns_len,
                            NULL, GRN_OP_MATCH, GRN_OP_AND,
                            GRN_EXPR_SYNTAX_SCRIPT);
+            if (ctx->rc) {
+              goto exit;
+            }
           } else {
             /* todo */
           }
