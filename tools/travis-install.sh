@@ -28,4 +28,4 @@ if [ "${ENABLE_MRUBY}" = "yes" ]; then
 fi
 
 # TODO: Remove me when groonga-command-parser is released
-gem install ffi ffi_yajl
+gem install ffi ffi-yajl
