@@ -10,43 +10,53 @@ table_tokenize Lexicon "abcd\nefgh" --mode ADD
   [
     {
       "value": "￯",
-      "position": 0
+      "position": 0,
+      "force_prefix": false
     },
     {
       "value": "ab",
-      "position": 1
+      "position": 1,
+      "force_prefix": false
     },
     {
       "value": "bc",
-      "position": 2
+      "position": 2,
+      "force_prefix": false
     },
     {
       "value": "cd",
-      "position": 3
+      "position": 3,
+      "force_prefix": false
     },
     {
       "value": "d",
-      "position": 4
+      "position": 4,
+      "force_prefix": false
     },
     {
       "value": "ef",
-      "position": 6
+      "position": 6,
+      "force_prefix": false
     },
     {
       "value": "fg",
-      "position": 7
+      "position": 7,
+      "force_prefix": false
     },
     {
       "value": "gh",
-      "position": 8
+      "position": 8,
+      "force_prefix": false
     },
     {
       "value": "h",
-      "position": 9
+      "position": 9,
+      "force_prefix": false
     },
     {
       "value": "￰",
-      "position": 10
+      "position": 10,
+      "force_prefix": false
     }
   ]
 ]

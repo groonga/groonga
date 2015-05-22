@@ -8,27 +8,33 @@ tokenize   TokenBigram   "4097byte string: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
   [
     {
       "value": "4097",
-      "position": 0
+      "position": 0,
+      "force_prefix": false
     },
     {
       "value": "byte",
-      "position": 1
+      "position": 1,
+      "force_prefix": false
     },
     {
       "value": "string",
-      "position": 2
+      "position": 2,
+      "force_prefix": false
     },
     {
       "value": ":",
-      "position": 3
+      "position": 3,
+      "force_prefix": false
     },
     {
       "value": "after",
-      "position": 4
+      "position": 4,
+      "force_prefix": false
     },
     {
       "value": "string",
-      "position": 5
+      "position": 5,
+      "force_prefix": false
     }
   ]
 ]

@@ -1,0 +1,1 @@
+tokenize TokenTrigram "だよ" NormalizerAuto --mode GET

@@ -3983,6 +3983,7 @@ parse_tokenize_flags(grn_ctx *ctx, grn_obj *flag_names)
 typedef struct {
   grn_id id;
   int32_t position;
+  grn_bool force_prefix;
 } tokenize_token;
 
 static void
@@ -3999,7 +4000,7 @@ output_tokens(grn_ctx *ctx, grn_obj *tokens, grn_obj *lexicon)
 
     token = ((tokenize_token *)(GRN_BULK_HEAD(tokens))) + i;
 
-    GRN_OUTPUT_MAP_OPEN("TOKEN", 2);
+    GRN_OUTPUT_MAP_OPEN("TOKEN", 3);
 
     GRN_OUTPUT_CSTR("value");
     value_size = grn_table_get_key(ctx, lexicon, token->id,
@@ -4008,6 +4009,9 @@ output_tokens(grn_ctx *ctx, grn_obj *tokens, grn_obj *lexicon)
 
     GRN_OUTPUT_CSTR("position");
     GRN_OUTPUT_INT32(token->position);
+
+    GRN_OUTPUT_CSTR("force_prefix");
+    GRN_OUTPUT_BOOL(token->force_prefix);
 
     GRN_OUTPUT_MAP_CLOSE();
   }
@@ -4118,6 +4122,7 @@ tokenize(grn_ctx *ctx, grn_obj *lexicon, grn_obj *string, grn_tokenize_mode mode
     current_token = ((tokenize_token *)(GRN_BULK_CURR(tokens))) - 1;
     current_token->id = token_id;
     current_token->position = token_cursor->pos;
+    current_token->force_prefix = token_cursor->force_prefix;
   }
   grn_token_cursor_close(ctx, token_cursor);
 }

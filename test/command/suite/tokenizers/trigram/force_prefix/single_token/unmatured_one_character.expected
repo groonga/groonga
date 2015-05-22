@@ -1,0 +1,2 @@
+tokenize TokenTrigram "だ" NormalizerAuto --mode GET
+[[0,0.0,0.0],[{"value":"だ","position":0,"force_prefix":true}]]

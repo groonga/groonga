@@ -8,27 +8,33 @@ tokenize TokenMecab '日本のエンジンとエンジン'
   [
     {
       "value": "日本",
-      "position": 0
+      "position": 0,
+      "force_prefix": false
     },
     {
       "value": "の",
-      "position": 1
+      "position": 1,
+      "force_prefix": false
     },
     {
       "value": "エンジン",
-      "position": 2
+      "position": 2,
+      "force_prefix": false
     },
     {
       "value": "と",
-      "position": 3
+      "position": 3,
+      "force_prefix": false
     },
     {
       "value": "エン",
-      "position": 4
+      "position": 4,
+      "force_prefix": false
     },
     {
       "value": "ジン",
-      "position": 5
+      "position": 5,
+      "force_prefix": false
     }
   ]
 ]

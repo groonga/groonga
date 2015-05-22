@@ -10,55 +10,68 @@ table_tokenize Lexicon "abcdefghijk" --mode ADD
   [
     {
       "value": "￯",
-      "position": 0
+      "position": 0,
+      "force_prefix": false
     },
     {
       "value": "ab",
-      "position": 1
+      "position": 1,
+      "force_prefix": false
     },
     {
       "value": "bc",
-      "position": 2
+      "position": 2,
+      "force_prefix": false
     },
     {
       "value": "cd",
-      "position": 3
+      "position": 3,
+      "force_prefix": false
     },
     {
       "value": "de",
-      "position": 4
+      "position": 4,
+      "force_prefix": false
     },
     {
       "value": "ef",
-      "position": 5
+      "position": 5,
+      "force_prefix": false
     },
     {
       "value": "fg",
-      "position": 6
+      "position": 6,
+      "force_prefix": false
     },
     {
       "value": "gh",
-      "position": 7
+      "position": 7,
+      "force_prefix": false
     },
     {
       "value": "hi",
-      "position": 8
+      "position": 8,
+      "force_prefix": false
     },
     {
       "value": "ij",
-      "position": 9
+      "position": 9,
+      "force_prefix": false
     },
     {
       "value": "jk",
-      "position": 10
+      "position": 10,
+      "force_prefix": false
     },
     {
       "value": "k",
-      "position": 11
+      "position": 11,
+      "force_prefix": false
     },
     {
       "value": "￰",
-      "position": 12
+      "position": 12,
+      "force_prefix": false
     }
   ]
 ]
@@ -72,27 +85,33 @@ table_tokenize Lexicon "abcdefghijk" --mode GET
   [
     {
       "value": "ab",
-      "position": 0
+      "position": 0,
+      "force_prefix": false
     },
     {
       "value": "cd",
-      "position": 2
+      "position": 2,
+      "force_prefix": false
     },
     {
       "value": "ef",
-      "position": 4
+      "position": 4,
+      "force_prefix": false
     },
     {
       "value": "gh",
-      "position": 6
+      "position": 6,
+      "force_prefix": false
     },
     {
       "value": "ij",
-      "position": 8
+      "position": 8,
+      "force_prefix": false
     },
     {
       "value": "jk",
-      "position": 9
+      "position": 9,
+      "force_prefix": false
     }
   ]
 ]

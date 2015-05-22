@@ -10,15 +10,18 @@ table_tokenize Terms "aB￾cDe 1￾23" ENABLE_TOKENIZED_DELIMITER ADD
   [
     {
       "value": "ab",
-      "position": 0
+      "position": 0,
+      "force_prefix": false
     },
     {
       "value": "cde 1",
-      "position": 1
+      "position": 1,
+      "force_prefix": false
     },
     {
       "value": "23",
-      "position": 2
+      "position": 2,
+      "force_prefix": false
     }
   ]
 ]

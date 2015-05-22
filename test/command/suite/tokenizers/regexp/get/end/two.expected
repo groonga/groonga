@@ -10,21 +10,43 @@ table_tokenize Lexicon "xy" --mode ADD
   [
     {
       "value": "￯",
-      "position": 0
+      "position": 0,
+      "force_prefix": false
     },
     {
       "value": "xy",
-      "position": 1
+      "position": 1,
+      "force_prefix": false
     },
     {
       "value": "y",
-      "position": 2
+      "position": 2,
+      "force_prefix": false
     },
     {
       "value": "￰",
-      "position": 3
+      "position": 3,
+      "force_prefix": false
     }
   ]
 ]
 table_tokenize Lexicon "xy￰" --mode GET
-[[0,0.0,0.0],[{"value":"xy","position":0},{"value":"￰","position":2}]]
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "xy",
+      "position": 0,
+      "force_prefix": false
+    },
+    {
+      "value": "￰",
+      "position": 2,
+      "force_prefix": false
+    }
+  ]
+]

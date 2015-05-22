@@ -10,23 +10,28 @@ table_tokenize Terms "あいabアイ" --mode ADD
   [
     {
       "value": "あい",
-      "position": 0
+      "position": 0,
+      "force_prefix": false
     },
     {
       "value": "い",
-      "position": 1
+      "position": 1,
+      "force_prefix": false
     },
     {
       "value": "ab",
-      "position": 2
+      "position": 2,
+      "force_prefix": false
     },
     {
       "value": "アイ",
-      "position": 3
+      "position": 3,
+      "force_prefix": false
     },
     {
       "value": "イ",
-      "position": 4
+      "position": 4,
+      "force_prefix": false
     }
   ]
 ]

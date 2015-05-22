@@ -1,2 +1,20 @@
 tokenize TokenBigram "aBcDe 123" NormalizerAuto
-[[0,0.0,0.0],[{"value":"abcde","position":0},{"value":"123","position":1}]]
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "abcde",
+      "position": 0,
+      "force_prefix": false
+    },
+    {
+      "value": "123",
+      "position": 1,
+      "force_prefix": false
+    }
+  ]
+]
