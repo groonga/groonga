@@ -4053,6 +4053,7 @@ grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
   uint32_t pos, *a;
   if (!(a = array_at(ctx, ii, tid))) { return NULL; }
   for (;;) {
+    c = NULL;
     if (!(pos = a[0])) { goto exit; }
     if (!(c = GRN_MALLOC(sizeof(grn_ii_cursor)))) { goto exit; }
     memset(c, 0, sizeof(grn_ii_cursor));
