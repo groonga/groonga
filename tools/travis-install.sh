@@ -26,6 +26,3 @@ esac
 if [ "${ENABLE_MRUBY}" = "yes" ]; then
   gem install pkg-config groonga-client
 fi
-
-# TODO: Remove me when groonga-command-parser is released
-gem install ffi ffi-yajl
