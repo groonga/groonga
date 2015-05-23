@@ -1,0 +1,10 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR ShortText
+
+load --table Memos
+[
+{"content": "Groonga - test that requires outplace bulk (>= GRN_BULK_BUFSIZE)"},
+{"content": "short text"}
+]
+
+select Memos --match_columns content --query Groonga

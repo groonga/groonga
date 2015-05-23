@@ -7005,7 +7005,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
   }
   switch (value->header.type) {
   case GRN_VOID :
-    GRN_TEXT_INIT(value, 0);
+    grn_obj_reinit(ctx, value, GRN_DB_TEXT, 0);
     break;
   case GRN_BULK :
   case GRN_VECTOR :
