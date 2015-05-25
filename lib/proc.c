@@ -901,6 +901,19 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
   long long int threshold, original_threshold = 0;
   grn_cache *cache_obj = grn_cache_current_get(ctx);
 
+  {
+    const char *query_end = query + query_len;
+    int space_len;
+    while (query < query_end) {
+      space_len = grn_isspace(query, ctx->encoding);
+      if (space_len == 0) {
+        break;
+      }
+      query += space_len;
+      query_len -= space_len;
+    }
+  }
+
   cache_key_size = table_len + 1 + match_columns_len + 1 + query_len + 1 +
     filter_len + 1 + scorer_len + 1 + sortby_len + 1 + output_columns_len + 1 +
     match_escalation_threshold_len + 1 +

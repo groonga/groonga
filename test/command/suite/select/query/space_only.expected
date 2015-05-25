@@ -1,0 +1,46 @@
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is fast"},
+{"_key": "Mroonga is also fast"},
+{"_key": "Ruby is an object oriented script language"}
+]
+[[0,0.0,0.0],3]
+select Memos   --match_columns _key   --query ' 　 '
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "Groonga is fast"
+      ],
+      [
+        2,
+        "Mroonga is also fast"
+      ],
+      [
+        3,
+        "Ruby is an object oriented script language"
+      ]
+    ]
+  ]
+]
