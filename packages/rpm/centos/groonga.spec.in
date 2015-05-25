@@ -411,6 +411,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Fri May 29 2015 Masafumi Yokoyama <yokoyama@clear-code.com> - 5.0.4-1
+- new upstream release.
+
 * Wed Apr 29 2015 HAYASHI Kentaro <hayashi@clear-code.com> - 5.0.3-1
 - new upstream release.
 - add vector size plugin.
