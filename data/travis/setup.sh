@@ -21,7 +21,7 @@ set -e
 if [ "$GROONGA_MASTER" = "yes" ]; then
     sudo apt-get install -qq -y -V autotools-dev pkg-config libmecab-dev \
 	libmsgpack-dev libevent-dev
-    git clone --recursive --depth 1 https://github.com/groonga/groonga.git
+    git clone --recursive --depth 1 --branch master https://github.com/groonga/groonga.git
     cd groonga
     ./autogen.sh
     ./configure --prefix=/usr --localstatedir=/var --enable-debug
