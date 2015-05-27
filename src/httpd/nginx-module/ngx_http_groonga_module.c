@@ -134,7 +134,7 @@ ngx_str_is_custom_path(ngx_str_t *string)
 }
 
 static void
-ngx_http_groonga_write_fd(int fd,
+ngx_http_groonga_write_fd(ngx_fd_t fd,
                           u_char *buffer, size_t buffer_size,
                           const char *message, size_t message_size)
 {
