@@ -29,7 +29,7 @@
 
 なお、ビルド環境としては Debian GNU/Linux (sid)を前提として説明しているため、その他の環境では適宜読み替えて下さい。::
 
-    % sudo apt-get install -V debootstrap createrepo rpm mercurial python-docutils python-jinja2 ruby-full mingw-w64 g++-mingw-w64 mecab libmecab-dev nsis gnupg2 dh-autoreconf python-sphinx
+    % sudo apt-get install -V debootstrap createrepo rpm mercurial python-docutils python-jinja2 ruby-full mingw-w64 g++-mingw-w64 mecab libmecab-dev nsis gnupg2 dh-autoreconf python-sphinx bison
 
 Debian系（.deb）やRed Hat系（.rpm）パッケージのビルドには `Vagrant <https://www.vagrantup.com/>`_ を使用します。apt-getでインストールできるのは古いバージョンなので、Webサイトから最新版をダウンロードしてインストールすることをおすすめします。
 
