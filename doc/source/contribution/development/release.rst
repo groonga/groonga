@@ -159,7 +159,7 @@ Makefileを生成するためにconfigureスクリプトを実行します。
 リリース用にビルドするためには以下のオプションを指定してconfigureを実行します。::
 
     % ./configure \
-          --with-debug \
+          --enable-debug \
           --prefix=/tmp/local \
           --with-launchpad-uploader-pgp-key=(Launchpadに登録したkeyID) \
           --with-groonga-org-path=$HOME/work/groonga/groonga.org \
@@ -175,7 +175,7 @@ configureオプションである--with-cutter-source-pathにはcutterのソー�
 以下のようにGroongaのソースコードをcloneした先からの相対パスを指定することもできます。::
 
     % ./configure \
-          --with-debug \
+          --enable-debug \
           --prefix=/tmp/local \
           --with-launchpad-uploader-pgp-key=(Launchpadに登録したkeyID) \
           --with-groonga-org-path=../groonga.org \
