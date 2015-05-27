@@ -15,67 +15,55 @@ Release 5.0.4 - 2015-05-29
 Improvements
 ^^^^^^^^^^^^
 
-* [mruby] Used inspect for error value.
-* [mruby] Added bulk content to ``Groonga::Bulk#inspect``.
-* [mruby] Supported ``Bulk#value`` for record.
-* [mruby] Supported estimating size for ``reference_column == record_id``.
-* [:doc:`/reference/functions/sub_filter`] Supported index column as scope.
-* [:doc:`/reference/functions/sub_filter`] Supported accessor that contains
-  index column as scope.
-* Ignored no keys labeled drilldown.
+* [mruby] Changed to use ``inspect`` to show meaningful error message for error value.
+* [mruby] Supported ``Groonga::Bulk#inspect`` to inspect bulk content.
+* [mruby] Supported ``Bulk#value`` to extract the value of record from bulk content.
+* [mruby] Supported estimating size for ``reference_column == record_id`` in
+  :doc:`/reference/commands/logical_range_filter`. In above case, it can be searched
+  more effectively.
+* [:doc:`/reference/functions/sub_filter`] Supported index column as ``scope`` parameter.
 * [:doc:`/reference/grn_expr/script_syntax`] Described clearly about numerical
   value. [GitHub groonga/groonga.org#16] [Suggested by Hiroyuki Sato]
 * [:doc:`/reference/commands/select`] Supported accessing other table's record in filter.
-  See https://github.com/groonga/groonga/blob/master/test/command/suite/select/filter/record/key/literal.expected
+  You can use ``--filter 'OHTER_TABLE[KEY].COLUMN'`` for example.
 * [:doc:`/reference/commands/select`] Supported operator as table key.
-  See https://github.com/groonga/groonga/blob/master/test/command/suite/select/filter/record/key/operator.expected
+  You can use ``--filter 'OHTER_TABLE["SOME STRING" + "ANOTHER STRING"].COLUMN'"`` for example.
 * [:doc:`/reference/tokenizers`] [TokenRegexp] Don't ignore blank.
 * [:doc:`/reference/tokenizers`] [TokenRegexp] Don't require character types to normalizer.
 * [:doc:`/reference/tokenizers`] [TokenRegexp] Added one position after blank character.
   By this change, "abcd" isn't matched to "ab\ncd".
-* [example] Used Ruby 2.0 or later API.
+* [example] Used Ruby 2.0 or later API in script for converting dictionary data.
 * Set error message for invalid keys type.
-* Migrated sourceforge.jp to osdn.me or osdn.jp. Because SourceForge.jp is
-  marked as obsoleted because of branding issue since May 11, 2015.
-* [:doc:`/reference/commands/tokenize`] Added force_prefix. [Patch by Naoya Murakami]
+* [doc] Fixed link from sourceforge.jp to osdn.me or osdn.jp about mailing list preference page.
+  SourceForge.jp is marked as obsoleted because of branding issue since May 11, 2015.
+* [:doc:`/reference/commands/tokenize`] Added ``force_prefix``. [Patch by Naoya Murakami]
 * Supported force prefix search when unmatured token is 2 characters or more.
   [Patch by Naoya Murakami]
 
 Fixes
 ^^^^^
 
-* Fixed rc check position. [GitHub#336] [Reported by Hiroaki Nakamura]
-* Don't require "-i" option for sed. Because sed on some BSD systems doesn't
-  have "-i" option.
-* Initialize msghdr by memset(). Because msg_control, msg_controllen and
-  msg_flags doesn't exist on Solaris by default.
+* Fixed a crash bug when empty key is specified for ``drilldown[label].keys``.
+* Fixed a bug that the return value of ``grn_parse_query_flags`` is not properly checked.
+  [GitHub#336] [Reported by Hiroaki Nakamura]
+* Fixed a build error on some BSD systems. They doesn't have "-i" option for sed.
+* Fixed a build error on Solaris. It is changed to initialize by ``sizeof(msghdr)`` in ``memset()`` because
+  ``msg_control``, ``msg_controllen`` and ``msg_flags`` doesn't exist on Solaris by default.
 * [:doc:`/reference/tokenizers`] Fixed a typo. [GitHub#338] [Reported by Hiroyuki Sato]
 * [:doc:`/reference/output`] Fixed markup. [GitHub groonga/groonga.org#17]
   [Reported by Hiroyuki Sato]
 * [:doc:`/reference/tokenizers`] [TokenRegexp] Fixed a bug that too much token
   is emitted.
-* Reduced getenv() in each grn_ii_cursor_set_min(). This fixes performance
+* Reduced getenv() in each ``grn_ii_cursor_set_min()``. This fixes performance
   regression on Windows.
-* Fixed a build error on OpenBSD. [groonga-dev,03255]
+* Fixed a build error on OpenBSD. [groonga-dev,03255] [Reported by fbnteqr]
 * [:doc:`/reference/executables/groonga-httpd`] Fixed a bug that same message is
   logged.
-* Fixed a crash bug. It is occurred by the following sequence:
-
-  1. thread1: call grn_ii_cursor_open()
-  2. thread1: find one entry in ii
-  3. thread2: change ii
-  4. thread1: detect buffer or chunk change
-  5. thread1: call grn_ii_cursor_close() and run the next loop
-  6. thread2: delete entry in ii
-  7. thread1: find no entry and break loop
-  8. thread1: return grn_ii_cursor that is already closed by grn_ii_cursor_close() at 5.
-  9. thread1: call grn_ii_cursor_close() for the grn_ii_cursor that is already closed
-
-  We can replace "thread" with "process" in the above sequence.
-
-* Fixd a memory leak. It's occurred when ``--match_columns`` and ``--query`` are
+* Fixed a crash bug which is caused by double free memory.
+* Fixed a memory leak. It's occurred when ``--match_columns`` and ``--query`` are
   used for non indexed text field and text fields have a value that isn't bulk
-  embeddable. Normally, 32byte over size text isn't bulk embeddable.
+  embeddable. Normally, 32byte over size text isn't bulk embeddable, so this bug
+  doesn't affect to the case if only small text less than 32byte are stored.
 
 Thanks
 ^^^^^^
@@ -83,6 +71,7 @@ Thanks
 * Hiroaki Nakamura
 * Hiroyuki Sato
 * Naoya Murakami
+* fbnteqr
 
 .. _release-5-0-3:
 
