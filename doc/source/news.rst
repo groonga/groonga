@@ -28,10 +28,6 @@ Improvements
   You can use ``--filter 'OHTER_TABLE[KEY].COLUMN'`` for example.
 * [:doc:`/reference/commands/select`] Supported operator as table key.
   You can use ``--filter 'OHTER_TABLE["SOME STRING" + "ANOTHER STRING"].COLUMN'"`` for example.
-* [:doc:`/reference/tokenizers`] [TokenRegexp] Don't ignore blank.
-* [:doc:`/reference/tokenizers`] [TokenRegexp] Don't require character types to normalizer.
-* [:doc:`/reference/tokenizers`] [TokenRegexp] Added one position after blank character.
-  By this change, "abcd" isn't matched to "ab\ncd".
 * [example] Used Ruby 2.0 or later API in script for converting dictionary data.
 * Set error message for invalid keys type.
 * [doc] Fixed link from sourceforge.jp to osdn.me or osdn.jp about mailing list preference page.
@@ -64,6 +60,9 @@ Fixes
   used for non indexed text field and text fields have a value that isn't bulk
   embeddable. Normally, 32byte over size text isn't bulk embeddable, so this bug
   doesn't affect to the case if only small text less than 32byte are stored.
+* [:doc:`/reference/tokenizers`] [TokenRegexp] Fixed a bug that it can't be searched
+  correctly when query contains characters which are treated as blank character.
+  For example, the newline - "\\n" is typical one.
 
 Thanks
 ^^^^^^
