@@ -1067,9 +1067,9 @@ msgstr ""
 msgid "[groonga-dev,00794] [ANN] Groonga 2.0.2"
 msgstr ""
 
+# 1ccdab7f94284244b5d9c57d471e01c1
 msgid ""
-"http://sourceforge.jp/projects/groonga/lists/archive/dev/2012-April/000794."
-"html"
+"http://osdn.jp/projects/groonga/lists/archive/dev/2012-April/000794.html"
 msgstr ""
 
 msgid "パッケージのアップロード"
@@ -1221,7 +1221,8 @@ msgstr ""
 msgid "作成したリリースアナウンスをメーリングリストへと流します。"
 msgstr ""
 
-msgid "groonga-dev groonga-dev@lists.sourceforge.jp"
+# 85344d1acf86445fad4b86a85463b95a
+msgid "groonga-dev groonga-dev@lists.osdn.me"
 msgstr ""
 
 msgid "Groonga-talk groonga-talk@lists.sourceforge.net"

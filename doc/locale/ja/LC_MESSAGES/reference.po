@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-05-16 01:26+0900\n"
+"PO-Revision-Date: 2015-05-27 18:56+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -5269,6 +5269,10 @@ msgid "If ``plugin_unregister`` fails, error details are in ``HEADER``."
 msgstr ""
 "``plugin_unregister`` が失敗すると、エラーの詳細は ``HEADER`` に含まれます。"
 
+# 861a5b37745843c498a7bd868970880e
+msgid ":doc:`plugin_register`"
+msgstr ""
+
 msgid "``quit``"
 msgstr ""
 
@@ -5342,10 +5346,6 @@ msgstr ""
 
 msgid "If ``register`` fails, error details are in ``HEADER``."
 msgstr "``register`` が失敗すると、エラーの詳細は ``HEADER`` に含まれます。"
-
-# 861a5b37745843c498a7bd868970880e
-msgid ":doc:`plugin_register`"
-msgstr ""
 
 # e29b646988824312888c2b9c3b5d49c5
 msgid "``request_cancel``"
@@ -18030,7 +18030,7 @@ msgstr ""
 msgid ""
 "MeCab doesn't depend on Japanese. You can use MeCab for other languages by "
 "creating dictionary for the languages. You can use `NAIST Japanese "
-"Dictionary <http://sourceforge.jp/projects/naist-jdic/>`_ for Japanese."
+"Dictionary <http://osdn.jp/projects/naist-jdic/>`_ for Japanese."
 msgstr ""
 "MeCabは日本語に依存していません。その言語用の辞書を用意すれば日本語以外でも"
 "MeCabを使えます。日本語用の辞書には `NAIST Japanese Dictionary <http://"
