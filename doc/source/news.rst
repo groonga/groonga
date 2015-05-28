@@ -29,7 +29,7 @@ Improvements
 * [:doc:`/reference/commands/select`] Supported operator as table key.
   You can use ``--filter 'OHTER_TABLE["SOME STRING" + "ANOTHER STRING"].COLUMN'"`` for example.
 * [example] Used Ruby 2.0 or later API in script for converting dictionary data.
-* Set error message for invalid keys type.
+* Changed to show error message about invalid type of keys about table.
 * [doc] Fixed link from sourceforge.jp to osdn.me or osdn.jp about mailing list preference page.
   SourceForge.jp is marked as obsoleted because of branding issue since May 11, 2015.
 * [:doc:`/reference/commands/tokenize`] Added ``force_prefix``. [Patch by Naoya Murakami]
