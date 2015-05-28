@@ -48,8 +48,6 @@ Fixes
 * [:doc:`/reference/tokenizers`] Fixed a typo. [GitHub#338] [Reported by Hiroyuki Sato]
 * [:doc:`/reference/output`] Fixed markup. [GitHub groonga/groonga.org#17]
   [Reported by Hiroyuki Sato]
-* [:doc:`/reference/tokenizers`] [TokenRegexp] Fixed a bug that too much token
-  is emitted.
 * Reduced getenv() in each ``grn_ii_cursor_set_min()``. This fixes performance
   regression on Windows.
 * Fixed a build error on OpenBSD. [groonga-dev,03255] [Reported by fbnteqr]
