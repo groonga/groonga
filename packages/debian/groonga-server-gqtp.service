@@ -1,0 +1,13 @@
+[Unit]
+Description=Groonga GQTP Server
+After=network.target
+
+[Service]
+Type=forking
+EnvironmentFile=-/etc/default/groonga-server-gqtp
+User=groonga
+Group=groonga
+ExecStart=/usr/bin/groonga --protocol gqtp -d --pid-path /var/run/groonga/groonga-gqtp.pid --bind-address $ADDRESS --log-path $LOG_PATH --query-log-path $QUERY_LOG_PATH --port $PORT $DATABASE
+
+[Install]
+WantedBy=multi-user.target
