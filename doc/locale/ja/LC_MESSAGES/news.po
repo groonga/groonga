@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-04-28 16:15+0900\n"
+"PO-Revision-Date: 2015-05-28 12:36+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -21,11 +21,234 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 5.0.3 - 2015-04-29"
-msgstr "5.0.3リリース - 2015-04-29"
+msgid "Release 5.0.4 - 2015-05-29"
+msgstr "5.0.4リリース - 2015-05-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+# 8056905d9faf41819fea3aae0fbf62bc
+msgid ""
+"[mruby] Changed to use ``inspect`` to show meaningful error message for "
+"error value."
+msgstr ""
+"[mruby] ``inspect`` を意味のあるわかりやすいエラーメッセージを表示するために"
+"使うようにしました。"
+
+# 71dc45917fb64464b1b9fe0785cb52d7
+msgid "[mruby] Supported ``Groonga::Bulk#inspect`` to inspect bulk content."
+msgstr ""
+"[mruby] バルクオブジェクトを調査するための ``Groonga::Bulk#inspect`` をサポー"
+"トしました。"
+
+# f89a83ad7232439483795beb48aa5e82
+msgid ""
+"[mruby] Supported ``Bulk#value`` to extract the value of record from bulk "
+"content."
+msgstr ""
+"[mruby] バルクオブジェクトからレコードの値を取得するための ``Bulk#value`` を"
+"サポートしました。"
+
+# 9a564ead25914715bf04e2907839681d
+msgid ""
+"[mruby] Supported estimating size for ``reference_column == record_id`` in :"
+"doc:`/reference/commands/logical_range_filter`. In above case, it can be "
+"searched more effectively."
+msgstr ""
+"[mruby] :doc:`/reference/commands/logical_range_filter` で参照型のカラムの値"
+"が特定のレコードのIDにマッチする場合 (``reference_column == record_id``) を効"
+"率良く検索するために必要なマッチするレコード数を見積もれるようになりました。"
+
+msgid ""
+"[:doc:`/reference/functions/sub_filter`] Supported index column as ``scope`` "
+"parameter."
+msgstr ""
+"[:doc:`/reference/functions/sub_filter`] インデックスカラムを ``scope`` 引数"
+"に指定できるようになりました。"
+
+# 606c45f4a8ba4f38a5646b45347edd90
+msgid ""
+"[:doc:`/reference/grn_expr/script_syntax`] Described clearly about numerical "
+"value. [GitHub groonga/groonga.org#16] [Suggested by Hiroyuki Sato]"
+msgstr ""
+"[:doc:`/reference/grn_expr/script_syntax`] 数値に関する記述をよりわかりやすく"
+"しました。 [GitHub groonga/groonga.org#16] [佐藤さんが提案]"
+
+# e043cfe59fdd49efa6e00639b7d31347
+msgid ""
+"[:doc:`/reference/commands/select`] Supported accessing other table's record "
+"in filter. You can use ``--filter 'OHTER_TABLE[KEY].COLUMN'`` for example."
+msgstr ""
+"[:doc:`/reference/commands/select`] Select対象でない他のテーブルのレコードを"
+"フィルタに指定できるようになりました。``--filter 'OHTER_TABLE[KEY].COLUMN'`` "
+"といったようにフィルタで指定できます。"
+
+# cca0e1aae6f648d8aad700c3c07753fa
+msgid ""
+"[:doc:`/reference/commands/select`] Supported operator as table key. You can "
+"use ``--filter 'OHTER_TABLE[\"SOME STRING\" + \"ANOTHER STRING\"]."
+"COLUMN'\"`` for example."
+msgstr ""
+"[:doc:`/reference/commands/select`] テーブルのキーでオペレータを指定できるよ"
+"うになりました。 ``--filter 'OHTER_TABLE[\\\"SOME STRING\\\" + \\\"ANOTHER "
+"STRING\\\"] というようにキーを連結した文字列として指定することができます。"
+
+msgid ""
+"[example] Used Ruby 2.0 or later API in script for converting dictionary "
+"data."
+msgstr ""
+"[example] Ruby 2.0以降のAPIを辞書の変換スクリプトで使うようにしました。"
+
+# 7ec2aa17d4b646988cb7bf6800b14dfa
+msgid "Changed to show error message about invalid type of keys about table."
+msgstr ""
+"テーブルのキーの型が正しくないときにエラーメッセージを表示するようにしまし"
+"た。"
+
+# 76fe8a454f3d4806a8b69178940313e4
+msgid ""
+"[doc] Fixed link from sourceforge.jp to osdn.me or osdn.jp about mailing "
+"list preference page. SourceForge.jp is marked as obsoleted because of "
+"branding issue since May 11, 2015."
+msgstr ""
+"[doc] メーリングリストの案内ページへのリンクをsourceforge.jpからosdn.meや"
+"osdn.jpに修正しました。"
+
+msgid ""
+"[:doc:`/reference/commands/tokenize`] Added ``force_prefix``. [Patch by "
+"Naoya Murakami]"
+msgstr ""
+"[:doc:`/reference/commands/tokenize`] ``force_prefix`` を追加しました。[村上"
+"さんがパッチ提供]"
+
+msgid ""
+"Supported force prefix search when unmatured token is 2 characters or more. "
+"[Patch by Naoya Murakami]"
+msgstr ""
+"2文字以上のトークンに対しても前方一致検索を強制できるようにしました。"
+"TokenBigramで1文字トークンであっても強制前方一致検索することでうまく検索でき"
+"る仕組みをTokenTrigram等でも適用できるようになりました。 [GitHub#341] [村上さ"
+"んがパッチ提供]"
+
+msgid "Fixes"
+msgstr "修正"
+
+# 8ba791566f8b460a8723fc27bb6f580a
+msgid ""
+"Fixed a crash bug when empty key is specified for ``drilldown[label].keys``."
+msgstr ""
+"空のキーが ``drilldown[label].keys``.に指定されるとクラッシュする不具合を修正"
+"しました。"
+
+# 9df77c74163d49319b84a241a8bd7320
+msgid ""
+"Fixed a bug that the return value of ``grn_parse_query_flags`` is not "
+"properly checked. [GitHub#336] [Reported by Hiroaki Nakamura]"
+msgstr ""
+"``grn_parse_query_flags`` の返り値を適切にチェックしていないのを修正しまし"
+"た。 [GitHub#336] [Hiiroaki Nakamuraさんが報告]"
+
+# bae9a336a3f44e6b98aba0a824aa0606
+msgid ""
+"Fixed a build error on some BSD systems. They doesn't have \"-i\" option for "
+"sed."
+msgstr ""
+"BSD系でビルドエラーになる不具合を修正しました。sedに \"-i\" オプションがない"
+"ためエラーになっていました。"
+
+# 677f13e0ac464dcc9f81dac0808e0018
+msgid ""
+"Fixed a build error on Solaris. It is changed to initialize by "
+"``sizeof(msghdr)`` in ``memset()`` because ``msg_control``, "
+"``msg_controllen`` and ``msg_flags`` doesn't exist on Solaris by default."
+msgstr ""
+"Solarisでビルドエラーになる不具合を修正しました。``memset()`` にて "
+"``sizeof(msghdr)`` だけ初期化するようにしました。これは Solarisでは "
+"``msg_control`` や ``msg_controllen`` ``msg_flags``、が存在しないためです。"
+
+msgid ""
+"[:doc:`/reference/tokenizers`] Fixed a typo. [GitHub#338] [Reported by "
+"Hiroyuki Sato]"
+msgstr ""
+"[:doc:`/reference/tokenizers`] ドキュメントの誤字を修正しました。"
+"[GitHub#338] [佐藤さんが報告]"
+
+# 2b03d1052e494594a15ce6f08f92e04d
+msgid ""
+"[:doc:`/reference/output`] Fixed markup. [GitHub groonga/groonga.org#17] "
+"[Reported by Hiroyuki Sato]"
+msgstr ""
+"[:doc:`/reference/output`] ドキュメントのマークアップを修正しました。 "
+"[GitHub groonga/groonga.org#17] [佐藤さんが報告]"
+
+# 2ac111003b9e4966bc68ec685937d047
+msgid ""
+"Reduced getenv() in each ``grn_ii_cursor_set_min()``. This fixes performance "
+"regression on Windows."
+msgstr ""
+"``grn_ii_cursor_set_min()`` を呼ぶごとに getenv()しないようにしました。これに"
+"よりWindows上でのパフォーマンスのリグレッションが解決します。"
+
+msgid ""
+"Fixed a build error on OpenBSD. [groonga-dev,03255] [Reported by fbnteqr]"
+msgstr ""
+"OpenBSDでビルドエラーになる不具合を修正しました。 [groonga-dev,03255] "
+"[fbnteqrさんが報告]"
+
+msgid ""
+"[:doc:`/reference/executables/groonga-httpd`] Fixed a bug that same message "
+"is logged."
+msgstr ""
+"[:doc:`/reference/executables/groonga-httpd`] 同じメッセージが重複してログに"
+"記録される不具合を修正しました。"
+
+msgid "Fixed a crash bug which is caused by double free memory."
+msgstr "二重にメモリを開放することでクラッシュする不具合を修正しました。"
+
+# d19abb26deca4e59a0f0b70792028bc5
+msgid ""
+"Fixed a memory leak. It's occurred when ``--match_columns`` and ``--query`` "
+"are used for non indexed text field and text fields have a value that isn't "
+"bulk embeddable. Normally, 32byte over size text isn't bulk embeddable, so "
+"this bug doesn't affect to the case if only small text less than 32byte are "
+"stored."
+msgstr ""
+"メモリリークを修正しました。 ``--match_columns`` と ``--query`` にインデック"
+"スを張っていないテキストカラムを指定し、そのテキストカムの内容がバルクオブ"
+"ジェクトに収まりきらないと発生します。バルクオブジェクトに収まりきらないの"
+"32byteを越える場合です。そのため、テキストがそれよりも短いものばかりならばこ"
+"の不具合の影響を受けません。"
+
+# 9bc4ec7a5b88456cabfe8163f0756da4
+msgid ""
+"[:doc:`/reference/tokenizers`] [TokenRegexp] Fixed a bug that it can't be "
+"searched correctly when query contains characters which are treated as blank "
+"character. For example, the newline - \"\\\\n\" is typical one."
+msgstr ""
+"[:doc:`/reference/tokenizers`] [TokenRegexp] クエリに空白として扱われる文字が"
+"含まれている場合に正しく検索できない不具合を修正しました。典型的な例は改行 "
+"(\"\\\\n\")が含まれている場合です。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+# 7c637f45d0804be689ffe3a814731b86
+msgid "Hiroaki Nakamura"
+msgstr "Hiroaki Nakamuraさん"
+
+# 7c637f45d0804be689ffe3a814731b86
+msgid "Hiroyuki Sato"
+msgstr "佐藤さん"
+
+msgid "Naoya Murakami"
+msgstr "村上さん"
+
+# 46444a1851c042558cb23820ce648493
+msgid "fbnteqr"
+msgstr "fbnteqrさん"
+
+msgid "Release 5.0.3 - 2015-04-29"
+msgstr "5.0.3リリース - 2015-04-29"
 
 # 39908ed60d254feea85a3fec5d20db85
 msgid ""
@@ -243,9 +466,6 @@ msgstr ""
 "[:doc:`/reference/executables/groonga-httpd`] バンドルしているnginxのバージョ"
 "ンを最新（1.8.0）に更新しました。"
 
-msgid "Fixes"
-msgstr "修正"
-
 # dd3d2eb3f07c42c99bbdbae1bb51380d
 msgid ""
 "[windows] Fixed a bug that :ref:`offline-index-construction` is failed for "
@@ -294,9 +514,6 @@ msgstr ""
 "誤動作の原因となる :c:func:`grn_pat_del()` の不具合を修正し、無効なパトリシア"
 "トライノードのテストを追加しました。 [groonga-dev,03177] [yuya sakoさんが報"
 "告]"
-
-msgid "Thanks"
-msgstr "感謝"
 
 # f2c6419172f545dbb9cbdce36e96339a
 msgid "Hideki ARAI"
@@ -736,9 +953,6 @@ msgstr "栗山さん"
 
 msgid "ongaeshi"
 msgstr "ongaeshiさん"
-
-msgid "Naoya Murakami"
-msgstr "村上さん"
 
 msgid "Release 5.0.0 - 2015-02-09"
 msgstr "5.0.0リリース - 2015-02-09"
