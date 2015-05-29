@@ -35,6 +35,7 @@ Improvements
 * [:doc:`/reference/commands/tokenize`] Added ``force_prefix``. [Patch by Naoya Murakami]
 * Supported to search by shorter words such as 2 or less characters for TokenTrigram.
   [Patch by Naoya Murakami]
+* [deb] Added service file for Systemd into groonga-httpd and groonga-server-gqtp packages.
 
 Fixes
 ^^^^^
