@@ -6,7 +6,6 @@ PORT=10043
 DATABASE=/var/lib/groonga/db/db
 LOG_PATH=/var/log/groonga/groonga-gqtp.log
 QUERY_LOG_PATH=/var/log/groonga/query-gqtp.log
-#PROTOCOL=gqtp
 #GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE=/usr/share/groonga/synonyms.tsv
 
 # Comment out this to disable groonga daemon.
