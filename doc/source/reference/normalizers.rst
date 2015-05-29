@@ -125,7 +125,7 @@ Additional normalizers
 
 There are additional normalizers:
 
-  * `groonga-normalizer-mysql <https://github.com/groonga/groonga-normalizer-mysql>_`
+  * `groonga-normalizer-mysql <https://github.com/groonga/groonga-normalizer-mysql>`_
 
 See also
 --------
