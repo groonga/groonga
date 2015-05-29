@@ -25,9 +25,9 @@ Improvements
 * [:doc:`/reference/grn_expr/script_syntax`] Described clearly about numerical
   value. [GitHub groonga/groonga.org#16] [Suggested by Hiroyuki Sato]
 * [:doc:`/reference/commands/select`] Supported accessing other table's record in filter.
-  You can use ``--filter 'OHTER_TABLE[KEY].COLUMN'`` for example.
+  You can use ``--filter 'OTHER_TABLE[KEY].COLUMN'`` for example.
 * [:doc:`/reference/commands/select`] Supported operator as table key.
-  You can use ``--filter 'OHTER_TABLE["SOME STRING" + "ANOTHER STRING"].COLUMN'"`` for example.
+  You can use ``--filter 'OTHER_TABLE["SOME STRING" + "ANOTHER STRING"].COLUMN'"`` for example.
 * [example] Used Ruby 2.0 or later API in script for converting dictionary data.
 * Changed to show error message about invalid type of keys about table.
 * [doc] Fixed link from sourceforge.jp to osdn.me or osdn.jp about mailing list preference page.
