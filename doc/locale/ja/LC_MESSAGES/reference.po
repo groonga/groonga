@@ -14961,10 +14961,10 @@ msgstr "追加のノーマライザー一覧"
 msgid "There are additional normalizers:"
 msgstr "いくつか追加のノーマライザーがあります。"
 
-# 6f7e59af1a4f4b3aa9412c1adfd4f1a9
+# 2f872069a3a04074b4ab92b3c989185d
 msgid ""
 "`groonga-normalizer-mysql <https://github.com/groonga/groonga-normalizer-"
-"mysql>_`"
+"mysql>`_"
 msgstr ""
 
 msgid ":doc:`/reference/commands/table_create`"
