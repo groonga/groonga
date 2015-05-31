@@ -8,6 +8,7 @@ Type=forking
 User=root
 Group=root
 ExecStartPre=-/bin/mkdir -p /var/log/groonga/httpd
+ExecStartPre=-/bin/mkdir -p /var/run/groonga
 ExecStart=/usr/sbin/groonga-httpd
 ExecStop=/usr/sbin/groonga-httpd -s stop
 
