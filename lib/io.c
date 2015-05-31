@@ -1049,34 +1049,30 @@ grn_io_win_unmap(grn_io_win *iw)
   }\
 } while (0)
 
-#define SEG_MAP(io,segno,info) do {\
-  uint32_t segment_size = io->header->segment_size;\
-  if ((io->flags & GRN_IO_TEMPORARY)) {\
-    DO_MAP(io, &info->fmo, NULL, 0, segment_size, segno, info->map);\
-  } else {\
-    unsigned long file_size = grn_io_compute_file_size(io->header->version);\
-    uint32_t segments_per_file = file_size / segment_size;\
-    uint32_t bseg = segno + io->base_seg;\
-    uint32_t fno = bseg / segments_per_file;\
-    off_t base = fno ? 0 : io->base - (uint64_t)segment_size * io->base_seg;\
-    off_t pos = (uint64_t)segment_size * (bseg % segments_per_file) + base;\
-    fileinfo *fi = &io->fis[fno];\
-    if (!grn_fileinfo_opened(fi)) {\
-      char path[PATH_MAX];\
-      gen_pathname(io->path, path, fno);\
-      if (!grn_fileinfo_open(ctx, fi, path, O_RDWR|O_CREAT)) {  \
-        DO_MAP(io, &info->fmo, fi, pos, segment_size, segno, info->map);\
-      }\
-    } else {\
-      DO_MAP(io, &info->fmo, fi, pos, segment_size, segno, info->map);\
-    }\
-  }\
-} while (0)
-
 void
 grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *info)
 {
-  SEG_MAP(io, segno, info);
+  uint32_t segment_size = io->header->segment_size;
+  if ((io->flags & GRN_IO_TEMPORARY)) {
+    DO_MAP(io, &info->fmo, NULL, 0, segment_size, segno, info->map);
+  } else {
+    unsigned long file_size = grn_io_compute_file_size(io->header->version);
+    uint32_t segments_per_file = file_size / segment_size;
+    uint32_t bseg = segno + io->base_seg;
+    uint32_t fno = bseg / segments_per_file;
+    off_t base = fno ? 0 : io->base - (uint64_t)segment_size * io->base_seg;
+    off_t pos = (uint64_t)segment_size * (bseg % segments_per_file) + base;
+    fileinfo *fi = &io->fis[fno];
+    if (!grn_fileinfo_opened(fi)) {
+      char path[PATH_MAX];
+      gen_pathname(io->path, path, fno);
+      if (!grn_fileinfo_open(ctx, fi, path, O_RDWR|O_CREAT)) {
+        DO_MAP(io, &info->fmo, fi, pos, segment_size, segno, info->map);
+      }
+    } else {
+      DO_MAP(io, &info->fmo, fi, pos, segment_size, segno, info->map);
+    }
+  }
 }
 
 grn_rc
