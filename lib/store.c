@@ -47,7 +47,7 @@ _grn_ra_create(grn_ctx *ctx, grn_ra *ra, const char *path, unsigned int element_
   grn_io_set_type(io, GRN_COLUMN_FIX_SIZE);
   header->element_size = actual_size;
   n_elm = GRN_RA_SEGMENT_SIZE / header->element_size;
-  for (w_elm = 22; (1 << w_elm) > n_elm; w_elm--);
+  for (w_elm = GRN_RA_W_SEGMENT; (1 << w_elm) > n_elm; w_elm--);
   ra->io = io;
   ra->header = header;
   ra->element_mask =  n_elm - 1;
