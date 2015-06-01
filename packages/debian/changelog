@@ -1,3 +1,11 @@
+groonga (5.0.4-2) unstable; urgency=low
+
+  * debian/groonga-httpd.service
+    - Use /bin/mkdir instead of /usr/bin/mkdir.
+    - Prepare a directory for .pid file.
+
+ -- Masafumi Yokoyama <yokoyama@clear-code.com>  Mon, 1 Jun 2015 00:00:00 +0900
+
 groonga (5.0.4-1) unstable; urgency=low
 
   * New upstream release.
