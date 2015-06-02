@@ -269,8 +269,8 @@ grn_db_open(grn_ctx *ctx, const char *path)
       default :
         s->keys = NULL;
         if (ctx->rc == GRN_SUCCESS) {
-        ERR(GRN_INVALID_ARGUMENT,
-            "[db][open] invalid keys table's type: %#x", type);
+          ERR(GRN_INVALID_ARGUMENT,
+              "[db][open] invalid keys table's type: %#x", type);
         }
         break;
       }
