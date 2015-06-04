@@ -155,10 +155,10 @@ Query for searching the records described above::
 
   select Articles --match_columns comment.content --query groonga --output_columns "_id, _score, *"
 
-You need to concatenate comment column of Articles table and content column of Comments table with period(.) as --match_columns arguments.
+You need to concatenate comment column of Articles table and content column of Comments table with period( ``.`` ) as ``--match_columns`` arguments.
 
 At first, this query execute fulltext search from content of Comments table, then fetch the records of Articles table which refers to already searched records of Comments table.
-(Because of this, if you comment out the query which create column index 'article' of Comments table, you can't get intended search results.)
+(Because of this, if you comment out the query which create column index ``article`` of Comments table, you can't get intended search results.)
 
 .. groonga-command
 .. include:: ../example/tutorial/match_columns-nested-index-select.log
