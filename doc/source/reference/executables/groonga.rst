@@ -119,7 +119,7 @@ Daemon mode
 ^^^^^^^^^^^
 
 In daemon mode, ``groonga`` executable file runs as a daemon. Daemon
-is similar to server but it runs in the background. See 
+is similar to server but it runs in the background. See
 :ref:`groonga-executable-file-server-mode` about server.
 
 Here is the syntax to run Groonga daemon with temporary database::
