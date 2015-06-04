@@ -29,7 +29,7 @@ Then create ``IndexBlog1`` table for column indexes, add ``index_title`` column 
 .. table_create --name Blog1 --flags TABLE_HASH_KEY --key_type ShortText
 .. column_create --table Blog1 --name title --flags COLUMN_SCALAR --type ShortText
 .. column_create --table Blog1 --name message --flags COLUMN_SCALAR --type ShortText
-.. table_create --name IndexBlog1 --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
+.. table_create --name IndexBlog1 --flags TABLE_PAT_KEY --key_type ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
 .. column_create --table IndexBlog1 --name index_title --flags COLUMN_INDEX|WITH_POSITION --type Blog1 --source title
 .. column_create --table IndexBlog1 --name index_message --flags COLUMN_INDEX|WITH_POSITION --type Blog1 --source message
 .. load --table Blog1
@@ -64,7 +64,7 @@ Even though same column index is used, Groonga supports to search against title 
 .. table_create --name Blog2 --flags TABLE_HASH_KEY --key_type ShortText
 .. column_create --table Blog2 --name title --flags COLUMN_SCALAR --type ShortText
 .. column_create --table Blog2 --name message --flags COLUMN_SCALAR --type ShortText
-.. table_create --name IndexBlog2 --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
+.. table_create --name IndexBlog2 --flags TABLE_PAT_KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
 .. column_create --table IndexBlog2 --name index_blog --flags COLUMN_INDEX|WITH_POSITION|WITH_SECTION --type Blog2 --source title,message
 .. load --table Blog2
 .. [
@@ -127,7 +127,7 @@ Here is the sample schema.
 .. table_create Articles TABLE_NO_KEY
 .. column_create Articles content COLUMN_SCALAR Text
 .. column_create Articles comment COLUMN_SCALAR Comments
-.. table_create Lexicon TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+.. table_create Lexicon TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
 .. column_create Lexicon articles_content COLUMN_INDEX|WITH_POSITION Articles content
 .. column_create Lexicon comments_content COLUMN_INDEX|WITH_POSITION Comments content
 .. column_create Comments article COLUMN_INDEX Articles comment
@@ -180,7 +180,7 @@ Here is the sample schema similar to previous one. The difference is added table
 .. table_create Articles2 TABLE_NO_KEY
 .. column_create Articles2 content COLUMN_SCALAR Text
 .. column_create Articles2 comment COLUMN_SCALAR Comments2
-.. table_create Lexicon2 TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+.. table_create Lexicon2 TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
 .. column_create Lexicon2 articles_content COLUMN_INDEX|WITH_POSITION Articles2 content
 .. column_create Lexicon2 comments_content COLUMN_INDEX|WITH_POSITION Comments2 content
 .. column_create Lexicon2 replies_content COLUMN_INDEX|WITH_POSITION Replies2 content
