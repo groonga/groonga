@@ -39,9 +39,9 @@
 #ifdef HAVE_SYS_SOCKET_H
 # include <sys/socket.h>
 #endif /* HAVE_SYS_SOCKET_H */
-#ifdef HAVE_NETINET_IN_H
+#ifndef WIN32
 # include <netinet/in.h>
-#endif /* HAVE_NETINET_IN_H */
+#endif /* WIN32 */
 
 #ifdef HAVE_SYS_RESOURCE_H
 # include <sys/resource.h>

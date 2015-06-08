@@ -23,9 +23,9 @@
 #ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
 #endif /* HAVE_SYS_WAIT_H */
-#ifdef HAVE_NETINET_IN_H
+#ifndef WIN32
 #include <netinet/in.h>
-#endif /* HAVE_NETINET_IN_H */
+#endif /* WIN32 */
 
 #define DEFAULT_PORT 10041
 #define DEFAULT_HOST "localhost"
