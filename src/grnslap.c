@@ -21,10 +21,10 @@
 #include <string.h>
 #include <stdio.h>
 #ifdef HAVE_SYS_WAIT_H
-#include <sys/wait.h>
+# include <sys/wait.h>
 #endif /* HAVE_SYS_WAIT_H */
 #ifndef WIN32
-#include <netinet/in.h>
+# include <netinet/in.h>
 #endif /* WIN32 */
 
 #define DEFAULT_PORT 10041
