@@ -3062,6 +3062,8 @@ main(int argc, char **argv)
     grntest_outtype = OUT_TSV;
   }
 
+  grn_default_logger_set_path(GRN_LOG_PATH);
+
   grn_init();
   CRITICAL_SECTION_INIT(grntest_cs);
 

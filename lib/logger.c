@@ -314,9 +314,6 @@ grn_logger_put(grn_ctx *ctx, grn_log_level level,
 void
 grn_logger_init(void)
 {
-  if (!default_logger_path) {
-    default_logger_path = grn_strdup_raw(GRN_LOG_PATH);
-  }
   grn_memcpy(&current_logger, &default_logger, sizeof(grn_logger));
   CRITICAL_SECTION_INIT(default_logger_lock);
 }

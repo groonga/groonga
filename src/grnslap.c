@@ -362,6 +362,8 @@ main(int argc, char **argv)
     flags |= flag_usage;
   }
 
+  grn_default_logger_set_path(GRN_LOG_PATH);
+
   if (grn_init()) { return -1; }
   if (flags & flag_usage) {
     usage(); r = -1;

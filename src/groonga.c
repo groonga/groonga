@@ -2658,7 +2658,7 @@ main(int argc, char **argv)
   const char *bind_address_arg = NULL;
   const char *hostname_arg = NULL;
   const char *protocol_arg = NULL;
-  const char *log_path_arg = NULL;
+  const char *log_path_arg = GRN_LOG_PATH;
   const char *log_rotate_threshold_size_arg = NULL;
   const char *query_log_path_arg = NULL;
   const char *query_log_rotate_threshold_size_arg = NULL;
