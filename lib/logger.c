@@ -572,6 +572,7 @@ grn_query_logger_fin(grn_ctx *ctx)
   current_query_logger_fin(ctx);
   if (default_query_logger_path) {
     free(default_query_logger_path);
+    default_query_logger_path = NULL;
   }
   CRITICAL_SECTION_FIN(default_query_logger_lock);
 }
