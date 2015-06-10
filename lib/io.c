@@ -1332,8 +1332,10 @@ grn_mmap_v1(grn_ctx *ctx, HANDLE *fmo, fileinfo *fi, off_t offset, size_t length
   if (!*fmo) {
     SERR("CreateFileMapping");
     GRN_LOG(ctx, GRN_LOG_ERROR,
-            "CreateFileMapping() failed <%lu:%" GRN_FMT_SIZE ">",
-            (DWORD)offset, length);
+            "CreateFileMapping(%lu + %" GRN_FMT_SIZE ") failed "
+            "<%" GRN_FMT_SIZE ">",
+            (DWORD)offset, length,
+            mmap_size);
     return NULL;
   }
   res = MapViewOfFile(*fmo, FILE_MAP_WRITE, 0, (DWORD)offset, (SIZE_T)length);
