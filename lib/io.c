@@ -1329,7 +1329,13 @@ grn_mmap_v1(grn_ctx *ctx, HANDLE *fmo, fileinfo *fi, off_t offset, size_t length
   /* CRITICAL_SECTION_ENTER(fi->cs); */
   /* try to create fmo */
   *fmo = CreateFileMapping(fi->fh, NULL, PAGE_READWRITE, 0, offset + length, NULL);
-  if (!*fmo) { return NULL; }
+  if (!*fmo) {
+    SERR("CreateFileMapping");
+    GRN_LOG(ctx, GRN_LOG_ERROR,
+            "CreateFileMapping() failed <%lu:%" GRN_FMT_SIZE ">",
+            (DWORD)offset, length);
+    return NULL;
+  }
   res = MapViewOfFile(*fmo, FILE_MAP_WRITE, 0, (DWORD)offset, (SIZE_T)length);
   if (!res) {
     SERR("MapViewOfFile");
