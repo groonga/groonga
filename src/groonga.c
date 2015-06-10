@@ -53,6 +53,7 @@
 
 #ifdef WIN32
 # include <io.h>
+# include <direct.h>
 #else /* WIN32 */
 # include <sys/uio.h>
 #endif /* WIN32 */
