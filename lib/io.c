@@ -1483,16 +1483,22 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
   /* may be wrong if flags is just only O_RDWR */
   if ((flags & O_CREAT)) {
     DWORD dwCreationDisposition;
+    const char *flags_description;
     if (flags & O_EXCL) {
       dwCreationDisposition = CREATE_NEW;
+      flags_description = "O_RDWR|O_CREAT|O_EXCL";
     } else {
       dwCreationDisposition = OPEN_ALWAYS;
+      flags_description = "O_RDWR|O_CREAT";
     }
     fi->fh = CreateFile(path, GRN_IO_FILE_CREATE_MODE,
                         FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
                         dwCreationDisposition, FILE_ATTRIBUTE_NORMAL, 0);
     if (fi->fh == INVALID_HANDLE_VALUE) {
       SERR("CreateFile");
+      GRN_LOG(ctx, GRN_LOG_ERROR,
+              "CreateFile(<%s>, <%s>) failed",
+              path, flags_description);
       goto exit;
     }
     goto exit;
@@ -1505,6 +1511,9 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
                         TRUNCATE_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
     if (fi->fh == INVALID_HANDLE_VALUE) {
       SERR("CreateFile");
+      GRN_LOG(ctx, GRN_LOG_ERROR,
+              "CreateFile(<%s>, <O_RDWR|O_TRUNC>) failed",
+              path);
       goto exit;
     }
     goto exit;
@@ -1515,6 +1524,9 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
                       OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
   if (fi->fh == INVALID_HANDLE_VALUE) {
     SERR("CreateFile");
+    GRN_LOG(ctx, GRN_LOG_ERROR,
+            "CreateFile(<%s>, <O_RDWR>) failed",
+            path);
     goto exit;
   }
 
