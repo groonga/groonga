@@ -10685,10 +10685,10 @@ msgstr ""
 msgid "Here is the syntax to run Groonga server with existing database::"
 msgstr ""
 
-# 60129f96b7cb487792d8ecd52d7629ab
+# 2bb1240a51004157bc17d335bbed5650
 msgid ""
 "In daemon mode, ``groonga`` executable file runs as a daemon. Daemon is "
-"similar to server but it runs in the background. See :ref:`_groonga-"
+"similar to server but it runs in the background. See :ref:`groonga-"
 "executable-file-server-mode` about server."
 msgstr ""
 
