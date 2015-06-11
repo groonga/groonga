@@ -897,6 +897,7 @@ grn_table_create_with_max_n_subrecs(grn_ctx *ctx, const char *name,
         path = buffer;
       } else {
         ERR(GRN_INVALID_ARGUMENT, "path not assigned for persistent table");
+        grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
         return NULL;
       }
     } else {
@@ -905,10 +906,12 @@ grn_table_create_with_max_n_subrecs(grn_ctx *ctx, const char *name,
   } else {
     if (path) {
       ERR(GRN_INVALID_ARGUMENT, "path assigned for temporary table");
+      grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
       return NULL;
     }
     if (GRN_DB_PERSISTENT_P(db) && name && name_size) {
       ERR(GRN_INVALID_ARGUMENT, "name assigned for temporary table");
+      grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
       return NULL;
     }
   }
