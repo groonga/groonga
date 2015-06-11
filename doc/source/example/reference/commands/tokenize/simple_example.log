@@ -10,62 +10,77 @@ Execution example::
   #   [
   #     {
   #       "position": 0, 
+  #       "force_prefix": false, 
   #       "value": "Fu"
   #     }, 
   #     {
   #       "position": 1, 
+  #       "force_prefix": false, 
   #       "value": "ul"
   #     }, 
   #     {
   #       "position": 2, 
+  #       "force_prefix": false, 
   #       "value": "ll"
   #     }, 
   #     {
   #       "position": 3, 
+  #       "force_prefix": false, 
   #       "value": "lt"
   #     }, 
   #     {
   #       "position": 4, 
+  #       "force_prefix": false, 
   #       "value": "te"
   #     }, 
   #     {
   #       "position": 5, 
+  #       "force_prefix": false, 
   #       "value": "ex"
   #     }, 
   #     {
   #       "position": 6, 
+  #       "force_prefix": false, 
   #       "value": "xt"
   #     }, 
   #     {
   #       "position": 7, 
+  #       "force_prefix": false, 
   #       "value": "t "
   #     }, 
   #     {
   #       "position": 8, 
+  #       "force_prefix": false, 
   #       "value": " S"
   #     }, 
   #     {
   #       "position": 9, 
+  #       "force_prefix": false, 
   #       "value": "Se"
   #     }, 
   #     {
   #       "position": 10, 
+  #       "force_prefix": false, 
   #       "value": "ea"
   #     }, 
   #     {
   #       "position": 11, 
+  #       "force_prefix": false, 
   #       "value": "ar"
   #     }, 
   #     {
   #       "position": 12, 
+  #       "force_prefix": false, 
   #       "value": "rc"
   #     }, 
   #     {
   #       "position": 13, 
+  #       "force_prefix": false, 
   #       "value": "ch"
   #     }, 
   #     {
   #       "position": 14, 
+  #       "force_prefix": false, 
   #       "value": "h"
   #     }
   #   ]

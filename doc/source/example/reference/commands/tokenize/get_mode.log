@@ -4,65 +4,79 @@ Execution example::
   # [
   #   [
   #     0, 
-  #     1408017732.62883, 
-  #     0.000665903091430664
+  #     1337566253.89858, 
+  #     0.000355720520019531
   #   ], 
   #   [
   #     {
-  #       "value": "Fu",
-  #       "position": 0
+  #       "position": 0, 
+  #       "force_prefix": false, 
+  #       "value": "Fu"
   #     }, 
   #     {
-  #       "value": "ul",
-  #       "position": 1
+  #       "position": 1, 
+  #       "force_prefix": false, 
+  #       "value": "ul"
   #     }, 
   #     {
-  #       "value": "ll",
-  #       "position": 2
+  #       "position": 2, 
+  #       "force_prefix": false, 
+  #       "value": "ll"
   #     }, 
   #     {
-  #       "value": "lt",
-  #       "position": 3
+  #       "position": 3, 
+  #       "force_prefix": false, 
+  #       "value": "lt"
   #     }, 
   #     {
-  #       "value": "te",
-  #       "position": 4
+  #       "position": 4, 
+  #       "force_prefix": false, 
+  #       "value": "te"
   #     }, 
   #     {
-  #       "value": "ex",
-  #       "position": 5
+  #       "position": 5, 
+  #       "force_prefix": false, 
+  #       "value": "ex"
   #     }, 
   #     {
-  #       "value": "xt",
-  #       "position": 6
+  #       "position": 6, 
+  #       "force_prefix": false, 
+  #       "value": "xt"
   #     }, 
   #     {
-  #       "value": "t ",
-  #       "position": 7
+  #       "position": 7, 
+  #       "force_prefix": false, 
+  #       "value": "t "
   #     }, 
   #     {
-  #       "value": " S",
-  #       "position": 8
+  #       "position": 8, 
+  #       "force_prefix": false, 
+  #       "value": " S"
   #     }, 
   #     {
-  #       "value": "Se",
-  #       "position": 9
+  #       "position": 9, 
+  #       "force_prefix": false, 
+  #       "value": "Se"
   #     }, 
   #     {
-  #       "value": "ea",
-  #       "position": 10
+  #       "position": 10, 
+  #       "force_prefix": false, 
+  #       "value": "ea"
   #     }, 
   #     {
-  #       "value": "ar",
-  #       "position": 11
+  #       "position": 11, 
+  #       "force_prefix": false, 
+  #       "value": "ar"
   #     }, 
   #     {
-  #       "value": "rc",
-  #       "position": 12
+  #       "position": 12, 
+  #       "force_prefix": false, 
+  #       "value": "rc"
   #     }, 
   #     {
-  #       "value": "ch",
-  #       "position": 13
+  #       "position": 13, 
+  #       "force_prefix": false, 
+  #       "value": "ch"
   #     }
   #   ]
   # ]

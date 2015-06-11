@@ -10,162 +10,202 @@ Execution example::
   #   [
   #     {
   #       "position": 0, 
+  #       "force_prefix": false, 
   #       "value": "Gr"
   #     }, 
   #     {
   #       "position": 1, 
+  #       "force_prefix": false, 
   #       "value": "ro"
   #     }, 
   #     {
   #       "position": 2, 
+  #       "force_prefix": false, 
   #       "value": "oo"
   #     }, 
   #     {
   #       "position": 3, 
+  #       "force_prefix": false, 
   #       "value": "on"
   #     }, 
   #     {
   #       "position": 4, 
+  #       "force_prefix": false, 
   #       "value": "ng"
   #     }, 
   #     {
   #       "position": 5, 
+  #       "force_prefix": false, 
   #       "value": "ga"
   #     }, 
   #     {
   #       "position": 6, 
+  #       "force_prefix": false, 
   #       "value": "a "
   #     }, 
   #     {
   #       "position": 7, 
+  #       "force_prefix": false, 
   #       "value": " i"
   #     }, 
   #     {
   #       "position": 8, 
+  #       "force_prefix": false, 
   #       "value": "is"
   #     }, 
   #     {
   #       "position": 9, 
+  #       "force_prefix": false, 
   #       "value": "s "
   #     }, 
   #     {
   #       "position": 10, 
+  #       "force_prefix": false, 
   #       "value": " a"
   #     }, 
   #     {
   #       "position": 11, 
+  #       "force_prefix": false, 
   #       "value": "a "
   #     }, 
   #     {
   #       "position": 12, 
+  #       "force_prefix": false, 
   #       "value": " f"
   #     }, 
   #     {
   #       "position": 13, 
+  #       "force_prefix": false, 
   #       "value": "fa"
   #     }, 
   #     {
   #       "position": 14, 
+  #       "force_prefix": false, 
   #       "value": "as"
   #     }, 
   #     {
   #       "position": 15, 
+  #       "force_prefix": false, 
   #       "value": "st"
   #     }, 
   #     {
   #       "position": 16, 
+  #       "force_prefix": false, 
   #       "value": "t "
   #     }, 
   #     {
   #       "position": 17, 
+  #       "force_prefix": false, 
   #       "value": " f"
   #     }, 
   #     {
   #       "position": 18, 
+  #       "force_prefix": false, 
   #       "value": "fu"
   #     }, 
   #     {
   #       "position": 19, 
+  #       "force_prefix": false, 
   #       "value": "ul"
   #     }, 
   #     {
   #       "position": 20, 
+  #       "force_prefix": false, 
   #       "value": "ll"
   #     }, 
   #     {
   #       "position": 21, 
+  #       "force_prefix": false, 
   #       "value": "lt"
   #     }, 
   #     {
   #       "position": 22, 
+  #       "force_prefix": false, 
   #       "value": "te"
   #     }, 
   #     {
   #       "position": 23, 
+  #       "force_prefix": false, 
   #       "value": "ex"
   #     }, 
   #     {
   #       "position": 24, 
+  #       "force_prefix": false, 
   #       "value": "xt"
   #     }, 
   #     {
   #       "position": 25, 
+  #       "force_prefix": false, 
   #       "value": "t "
   #     }, 
   #     {
   #       "position": 26, 
+  #       "force_prefix": false, 
   #       "value": " e"
   #     }, 
   #     {
   #       "position": 27, 
+  #       "force_prefix": false, 
   #       "value": "ea"
   #     }, 
   #     {
   #       "position": 28, 
+  #       "force_prefix": false, 
   #       "value": "ar"
   #     }, 
   #     {
   #       "position": 29, 
+  #       "force_prefix": false, 
   #       "value": "rc"
   #     }, 
   #     {
   #       "position": 30, 
+  #       "force_prefix": false, 
   #       "value": "ch"
   #     }, 
   #     {
   #       "position": 31, 
+  #       "force_prefix": false, 
   #       "value": "h "
   #     }, 
   #     {
   #       "position": 32, 
+  #       "force_prefix": false, 
   #       "value": " e"
   #     }, 
   #     {
   #       "position": 33, 
+  #       "force_prefix": false, 
   #       "value": "en"
   #     }, 
   #     {
   #       "position": 34, 
+  #       "force_prefix": false, 
   #       "value": "ng"
   #     }, 
   #     {
   #       "position": 35, 
+  #       "force_prefix": false, 
   #       "value": "gi"
   #     }, 
   #     {
   #       "position": 36, 
+  #       "force_prefix": false, 
   #       "value": "in"
   #     }, 
   #     {
   #       "position": 37, 
+  #       "force_prefix": false, 
   #       "value": "ne"
   #     }, 
   #     {
   #       "position": 38, 
+  #       "force_prefix": false, 
   #       "value": "e!"
   #     }, 
   #     {
   #       "position": 39, 
+  #       "force_prefix": false, 
   #       "value": "!"
   #     }
   #   ]
