@@ -171,7 +171,7 @@ msgid ""
 msgstr ""
 "Solarisでビルドエラーになる不具合を修正しました。``memset()`` にて "
 "``sizeof(msghdr)`` だけ初期化するようにしました。これは Solarisでは "
-"``msg_control`` や ``msg_controllen`` ``msg_flags``、が存在しないためです。"
+"``msg_control`` と ``msg_controllen`` と ``msg_flags`` が存在しないためです。"
 
 msgid ""
 "[:doc:`/reference/tokenizers`] Fixed a typo. [GitHub#338] [Reported by "
