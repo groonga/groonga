@@ -43,7 +43,7 @@ Fixes
 * Fixed a crash bug when empty key is specified for ``drilldown[label].keys``.
 * Fixed a bug that the return value of ``grn_parse_query_flags`` is not properly checked.
   [GitHub#336] [Reported by Hiroaki Nakamura]
-* Fixed a build error on some BSD systems. They doesn't have "-i" option for sed.
+* Fixed a build error on some BSD systems. They doesn't have ``-i`` option for ``sed``.
 * Fixed a build error on Solaris. It is changed to initialize by ``sizeof(msghdr)`` in ``memset()`` because
   ``msg_control``, ``msg_controllen`` and ``msg_flags`` doesn't exist on Solaris by default.
 * [:doc:`/reference/tokenizers`] Fixed a typo. [GitHub#338] [Reported by Hiroyuki Sato]

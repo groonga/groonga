@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-06-11 11:52+0900\n"
+"PO-Revision-Date: 2015-06-11 11:56+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -157,10 +157,10 @@ msgstr ""
 
 # bae9a336a3f44e6b98aba0a824aa0606
 msgid ""
-"Fixed a build error on some BSD systems. They doesn't have \"-i\" option for "
-"sed."
+"Fixed a build error on some BSD systems. They doesn't have ``-i`` option for "
+"``sed``."
 msgstr ""
-"BSD系でビルドエラーになる不具合を修正しました。sedに \"-i\" オプションがない"
+"BSD系でビルドエラーになる不具合を修正しました。 ``sed`` に ``-i`` オプションがない"
 "ためエラーになっていました。"
 
 # 677f13e0ac464dcc9f81dac0808e0018
