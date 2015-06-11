@@ -33,7 +33,7 @@ Improvements
 * [doc] Fixed link from sourceforge.jp to osdn.me or osdn.jp about mailing list preference page.
   SourceForge.jp is marked as obsoleted because of branding issue since May 11, 2015.
 * [:doc:`/reference/commands/tokenize`] Added ``force_prefix`` value to each token information. [Patch by Naoya Murakami]
-* Supported to search by shorter words such as 2 or less characters for TokenTrigram.
+* Supported to search by shorter words such as 2 or less characters for :ref:`token-torigram`.
   [Patch by Naoya Murakami]
 * [deb] Added service file for Systemd into groonga-httpd and groonga-server-gqtp packages.
 
