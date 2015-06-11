@@ -36,6 +36,10 @@ Improvements
 * Supported to search by shorter words such as 2 or less characters for :ref:`token-trigram`.
   [Patch by Naoya Murakami]
 * [deb] Added service file for Systemd into groonga-httpd and groonga-server-gqtp packages.
+* [:doc:`/reference/commands/select`] Ignored ``--query`` when its
+  value consists of only space characters. Space characters include
+  full-width space (``U+3000 IDEOGRAPHIC SPACE`` in
+  Unicode). [Suggested by TomyGX]
 
 Fixes
 ^^^^^
@@ -70,6 +74,7 @@ Thanks
 * Hiroyuki Sato
 * Naoya Murakami
 * fbnteqr
+* TomyGX
 
 .. _release-5-0-3:
 

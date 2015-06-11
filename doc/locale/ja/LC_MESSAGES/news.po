@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-06-11 11:57+0900\n"
+"PO-Revision-Date: 2015-06-11 12:10+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -137,6 +137,13 @@ msgstr ""
 "[deb] groonga-httpdとgroonga-server-gqtpのパッケージにSystemd用serviceファイ"
 "ルを追加しました。"
 
+# 8630855497574c329a8f223c04d93335
+msgid ""
+"[:doc:`/reference/commands/select`] Ignored ``--query`` when its value "
+"consists of only space characters. Space characters include full-width space "
+"(``U+3000 IDEOGRAPHIC SPACE`` in Unicode). [Suggested by TomyGX]"
+msgstr "[:doc:`/reference/commands/select`] ``--query`` の値が空白文字だけなら無視するようにしました。空白文字にはいわゆる全角スペース（Unicodeでいうと ``U+3000 IDEOGRAPHIC SPACE`` ）も含みます。 [TomyGXさんが提案]"
+
 msgid "Fixes"
 msgstr "修正"
 
@@ -253,6 +260,10 @@ msgstr "村上さん"
 # 46444a1851c042558cb23820ce648493
 msgid "fbnteqr"
 msgstr "fbnteqrさん"
+
+# 7420ca7c6c91428ea40d9e5ef683fcaa
+msgid "TomyGX"
+msgstr "TomyGXさん"
 
 msgid "Release 5.0.3 - 2015-04-29"
 msgstr "5.0.3リリース - 2015-04-29"
