@@ -26,7 +26,7 @@ Improvements
   value. [GitHub groonga/groonga.org#16] [Suggested by Hiroyuki Sato]
 * [:doc:`/reference/commands/select`] Supported accessing other table's record in filter.
   You can use ``--filter 'OTHER_TABLE[KEY].COLUMN'`` for example.
-* [:doc:`/reference/commands/select`] Supported operator as table key.
+* [:doc:`/reference/commands/select`] Supported operator in table key.
   You can use ``--filter 'OTHER_TABLE["SOME STRING" + "ANOTHER STRING"].COLUMN'"`` for example.
 * [example] Used Ruby 2.0 or later API in script for converting dictionary data.
 * Changed to show error message about invalid type of keys about table.
