@@ -9681,6 +9681,7 @@ grn_obj_clear_lock(grn_ctx *ctx, grn_obj *obj)
             case GRN_TABLE_DAT_KEY:
             case GRN_TABLE_NO_KEY:
               grn_obj_clear_lock(ctx, tbl);
+              break;
             }
           } else {
             if (ctx->rc != GRN_SUCCESS) {
