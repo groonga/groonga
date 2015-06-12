@@ -6741,6 +6741,47 @@ proc_plugin_unregister(grn_ctx *ctx, int nargs, grn_obj **args,
   return NULL;
 }
 
+static grn_obj *
+proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *target_name;
+  grn_obj *recursive;
+  grn_obj *target;
+  grn_bool is_recursive;
+
+  target_name = VAR(0);
+  recursive = VAR(1);
+
+  if (GRN_TEXT_LEN(target_name) > 0) {
+    target = grn_ctx_get(ctx,
+                         GRN_TEXT_VALUE(target_name),
+                         GRN_TEXT_LEN(target_name));
+    if (!target) {
+      ERR(GRN_INVALID_ARGUMENT, "[io_flush] unknown target: <%.*s>",
+          (int)GRN_TEXT_LEN(target_name),
+          GRN_TEXT_VALUE(target_name));
+      GRN_OUTPUT_BOOL(GRN_FALSE);
+      return NULL;
+    }
+  } else {
+    target = grn_ctx_db(ctx);
+  }
+
+  is_recursive = bool_option_value(recursive, GRN_TRUE);
+  {
+    grn_rc rc;
+    if (is_recursive) {
+      rc = grn_obj_flush_recursive(ctx, target);
+    } else {
+      rc = grn_obj_flush(ctx, target);
+    }
+
+    GRN_OUTPUT_BOOL(rc == GRN_SUCCESS);
+  }
+
+  return NULL;
+}
+
 #define DEF_VAR(v,name_str) do {\
   (v).name = (name_str);\
   (v).name_size = GRN_STRLEN(name_str);\
@@ -7019,4 +7060,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
 
   DEF_VAR(vars[0], "name");
   DEF_COMMAND("plugin_unregister", proc_plugin_unregister, 1, vars);
+
+  DEF_VAR(vars[0], "target_name");
+  DEF_VAR(vars[1], "recursive");
+  DEF_COMMAND("io_flush", proc_io_flush, 2, vars);
 }

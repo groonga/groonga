@@ -1,0 +1,13 @@
+io_flush TokenBigram
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[flush] object must be DB, table or column: <#<proc:tokenizer TokenBigram arguments:[$1, $2, $3]>>"
+  ],
+  false
+]
+#|e| [flush] object must be DB, table or column: <#<proc:tokenizer TokenBigram arguments:[$1, $2, $3]>>
