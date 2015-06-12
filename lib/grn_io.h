@@ -355,6 +355,8 @@ void grn_io_init_from_env(void);
 uint32_t grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limit);
 uint32_t grn_expire(grn_ctx *ctx, int count_thresh, uint32_t limit);
 
+grn_rc grn_io_flush(grn_ctx *ctx, grn_io *io);
+
 /* encode/decode */
 
 #define GRN_B_ENC(v,p) do {\

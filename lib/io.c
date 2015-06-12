@@ -1300,6 +1300,33 @@ grn_io_is_locked(grn_io *io)
   return io ? *io->lock : 0;
 }
 
+grn_rc
+grn_io_flush(grn_ctx *ctx, grn_io *io)
+{
+  grn_rc rc = GRN_SUCCESS;
+  struct _grn_io_header *header;
+  uint32_t i;
+  uint32_t max_mapped_segment;
+  uint32_t segment_size;
+
+  header = io->header;
+  max_mapped_segment = io->max_map_seg;
+  segment_size = header->segment_size;
+
+  for (i = 0; i < max_mapped_segment; i++) {
+    grn_io_mapinfo *info = &(io->maps[i]);
+    if (!info) {
+      continue;
+    }
+    if (!grn_msync(ctx, info->map, segment_size)) {
+      rc = ctx->rc;
+      break;
+    }
+  }
+
+  return rc;
+}
+
 /** mmap abstraction **/
 
 static size_t mmap_size = 0;
