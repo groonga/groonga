@@ -1645,8 +1645,15 @@ grn_fileinfo_opened(fileinfo *fi)
 inline static int
 grn_msync(grn_ctx *ctx, void *start, size_t length)
 {
-  /* return value may be wrong... */
-  return FlushViewOfFile(start, length);
+  BOOL succeeded;
+
+  succeeded = FlushViewOfFile(start, length);
+  if (succeeded) {
+    return 0;
+  } else {
+    SERR("FlushViewOfFile");
+    return -1;
+  }
 }
 
 inline static grn_rc
