@@ -9734,6 +9734,113 @@ grn_obj_is_locked(grn_ctx *ctx, grn_obj *obj)
   GRN_API_RETURN(res);
 }
 
+grn_rc
+grn_obj_flush(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_rc rc = GRN_SUCCESS;
+  GRN_API_ENTER;
+  rc = grn_io_flush(ctx, grn_obj_io(obj));
+  GRN_API_RETURN(rc);
+}
+
+grn_rc
+grn_obj_flush_recursive(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_rc rc = GRN_SUCCESS;
+
+  GRN_API_ENTER;
+  switch (obj->header.type) {
+  case GRN_DB:
+    {
+      grn_table_cursor *cursor;
+      grn_id id;
+
+      cursor = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0, 0, -1, 0);
+      if (!cursor) {
+        GRN_API_RETURN(ctx->rc);
+      }
+
+      while ((id = grn_table_cursor_next_inline(ctx, cursor)) != GRN_ID_NIL) {
+        grn_obj *table = grn_ctx_at(ctx, id);
+        rc = GRN_SUCCESS;
+        if (table) {
+          switch (table->header.type) {
+          case GRN_TABLE_HASH_KEY :
+          case GRN_TABLE_PAT_KEY:
+          case GRN_TABLE_DAT_KEY:
+          case GRN_TABLE_NO_KEY:
+            rc = grn_obj_flush_recursive(ctx, table);
+            break;
+          }
+        } else {
+          if (ctx->rc != GRN_SUCCESS) {
+            ERRCLR(ctx);
+          }
+        }
+        if (rc != GRN_SUCCESS) {
+          break;
+        }
+      }
+      grn_table_cursor_close(ctx, cursor);
+    }
+    if (rc == GRN_SUCCESS) {
+      rc = grn_obj_flush(ctx, obj);
+    }
+    break;
+  case GRN_TABLE_NO_KEY :
+  case GRN_TABLE_HASH_KEY :
+  case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_DAT_KEY :
+    {
+      grn_hash *columns;
+      columns = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                                GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
+      if (!columns) {
+        GRN_API_RETURN(ctx->rc);
+      }
+
+      if (grn_table_columns(ctx, obj, "", 0, (grn_obj *)columns) > 0) {
+        grn_id *key;
+        GRN_HASH_EACH(ctx, columns, id, &key, NULL, NULL, {
+          grn_obj *column = grn_ctx_at(ctx, *key);
+          if (column) {
+            rc = grn_obj_flush(ctx, column);
+            if (rc != GRN_SUCCESS) {
+              break;
+            }
+          }
+        });
+      }
+      grn_hash_close(ctx, columns);
+    }
+
+    if (rc == GRN_SUCCESS) {
+      rc = grn_obj_flush(ctx, obj);
+    }
+    break;
+  case GRN_COLUMN_FIX_SIZE :
+  case GRN_COLUMN_VAR_SIZE :
+  case GRN_COLUMN_INDEX :
+    rc = grn_obj_flush(ctx, obj);
+    break;
+  default :
+    {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, obj);
+      ERR(GRN_INVALID_ARGUMENT,
+          "[flush] object must be DB, table or column: <%.*s>",
+          (int)GRN_TEXT_LEN(&inspected),
+          GRN_TEXT_VALUE(&inspected));
+      rc = ctx->rc;
+      GRN_OBJ_FIN(ctx, &inspected);
+    }
+    break;
+  }
+
+  GRN_API_RETURN(rc);
+}
+
 grn_obj *
 grn_obj_db(grn_ctx *ctx, grn_obj *obj)
 {
