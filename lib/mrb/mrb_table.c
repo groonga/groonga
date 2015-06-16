@@ -226,6 +226,76 @@ mrb_grn_table_sort(mrb_state *mrb, mrb_value self)
   return grn_mrb_value_from_grn_obj(mrb, result);
 }
 
+static mrb_value
+mrb_grn_table_delete(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *table;
+  mrb_value mrb_options;
+  mrb_value mrb_id;
+  mrb_value mrb_key;
+  mrb_value mrb_expression;
+
+  table = DATA_PTR(self);
+  mrb_get_args(mrb, "H", &mrb_options);
+
+  mrb_id = grn_mrb_options_get_lit(mrb, mrb_options, "id");
+  if (!mrb_nil_p(mrb_id)) {
+    grn_table_delete_by_id(ctx, table, mrb_fixnum(mrb_id));
+    grn_mrb_ctx_check(mrb);
+    return mrb_nil_value();
+  }
+
+  mrb_key = grn_mrb_options_get_lit(mrb, mrb_options, "key");
+  if (!mrb_nil_p(mrb_key)) {
+    grn_id key_domain_id;
+    void *key;
+    unsigned int key_size;
+    grn_mrb_value_to_raw_data_buffer buffer;
+
+    key_domain_id = table->header.domain;
+    grn_mrb_value_to_raw_data_buffer_init(mrb, &buffer);
+    grn_mrb_value_to_raw_data(mrb, "key", mrb_key, key_domain_id,
+                              &buffer, &key, &key_size);
+    grn_table_delete(ctx, table, key, key_size);
+    grn_mrb_value_to_raw_data_buffer_fin(mrb, &buffer);
+    grn_mrb_ctx_check(mrb);
+    return mrb_nil_value();
+  }
+
+  mrb_expression = grn_mrb_options_get_lit(mrb, mrb_options, "expression");
+  if (!mrb_nil_p(mrb_expression)) {
+    grn_obj *expression;
+    grn_obj *selected_records;
+    grn_table_cursor *cursor;
+
+    expression = DATA_PTR(mrb_expression);
+    selected_records = grn_table_select(ctx, table, expression, NULL, GRN_OP_OR);
+    grn_mrb_ctx_check(mrb);
+    cursor = grn_table_cursor_open(ctx, selected_records,
+                                   NULL, 0,
+                                   NULL, 0,
+                                   0, -1, 0);
+    if (cursor) {
+      while (grn_table_cursor_next(ctx, cursor) != GRN_ID_NIL) {
+        grn_id *id;
+        grn_table_cursor_get_key(ctx, cursor, (void **)&id);
+        grn_table_delete_by_id(ctx, table, *id);
+      }
+      grn_table_cursor_close(ctx, cursor);
+    }
+    grn_mrb_ctx_check(mrb);
+
+    return mrb_nil_value();
+  }
+
+  mrb_raisef(mrb, E_ARGUMENT_ERROR,
+             "must have :id, :key or :expression: %S",
+             mrb_options);
+
+  return mrb_nil_value();
+}
+
 void
 grn_mrb_table_init(grn_ctx *ctx)
 {
@@ -253,5 +323,9 @@ grn_mrb_table_init(grn_ctx *ctx)
                     mrb_grn_table_select, MRB_ARGS_ARG(1, 1));
   mrb_define_method(mrb, klass, "sort",
                     mrb_grn_table_sort, MRB_ARGS_ARG(1, 1));
+
+  mrb_define_method(mrb, klass, "delete",
+                    mrb_grn_table_delete, MRB_ARGS_REQ(1));
+
 }
 #endif
