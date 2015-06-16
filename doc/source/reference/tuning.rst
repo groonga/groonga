@@ -8,13 +8,12 @@ Tuning
 Summary
 -------
 
-There are some tuning parameters for improving Groonga performance or
-handling a large database.
+There are some tuning parameters for handling a large database.
 
 Parameters
 ----------
 
-This section describes parameters.
+This section describes tuning parameters.
 
 .. _tuning-max-n-open-files:
 
@@ -64,16 +63,19 @@ Memory usage
 This parameter is for handling a large database.
 
 Groonga maps database files onto memory and accesses to them. Groonga
-doesn't maps unnecessary files onto memory until they are needed.
+doesn't maps unnecessary files onto memory. Groonga maps files when
+they are needed.
 
 If you access to all data in database, all database files are mapped
 onto memory. If total size of your database files is 6GiB, your
 Groonga process uses 6GiB memory.
 
-Normally, your all database files aren't mapped onto memry. But it may
+Normally, your all database files aren't mapped onto memory. But it may
 be occurred. It is an example case that you dump your database.
 
-You must have memory and swap that is larger than database.
+Normally, you must have memory and swap that is larger than
+database. Linux has tuning parameter to work with less memory and swap
+than database size.
 
 .. _tuning-linux:
 
@@ -84,8 +86,8 @@ This section describes how to configure parameters on Linux.
 
 .. _tuning-linux-nofile:
 
-nofile
-^^^^^^
+``nofile``
+^^^^^^^^^^
 
 You can relax the :ref:`tuning-max-n-open-files` parameter by creating
 a configuration file ``/etc/security/limits.d/groonga.conf`` that has
@@ -106,15 +108,14 @@ or re-login as your ``groonga`` user.
 
 .. _tuning-linux-overcommit-memory:
 
-vm.overcommit_memory
-^^^^^^^^^^^^^^^^^^^^
+``vm.overcommit_memory``
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 This is :ref:`tuning-memory-usage` related parameter. You can handle a
 database that is larger than your memory and swap by setting
 ``vm.overcommit_memory`` kernel parameter to ``1``. ``1`` means that
-Groonga can always map database files onto memory. It is no problem
-until Groonga touch mapped database files that their size is larger
-than memory and swap. Groonga recommends the configuration.
+Groonga can always map database files onto memory. Groonga recommends
+the configuration.
 
 See `Linux kernel documentation about overcommit
 <https://www.kernel.org/doc/Documentation/vm/overcommit-accounting>`_
@@ -133,16 +134,17 @@ following command::
 
 .. _tuning-linux-max-map-count:
 
-vm.max_map_count
-^^^^^^^^^^^^^^^^
+``vm.max_map_count``
+^^^^^^^^^^^^^^^^^^^^
 
 This is :ref:`tuning-memory-usage` related parameter. You can handle a
 16GiB or more larger size database by increasing ``vm.max_map_count``
 kernel parameter. The parameter limits the max number of memory maps.
 
-The default value of the kernel parameter may be 65530 or 65536.
-Groonga maps 256KiB memory chunk at one time. If a database is larger
-than 16GiB, Groonga reaches the limitation. (``256KiB * 65536 = 16GiB``)
+The default value of the kernel parameter may be ``65530`` or
+``65536``.  Groonga maps 256KiB memory chunk at one time. If a
+database is larger than 16GiB, Groonga reaches the
+limitation. (``256KiB * 65536 = 16GiB``)
 
 You needs to increase the value of the kernel parameter to handle
 16GiB or more larger size database. For example, you can handle almost
@@ -152,7 +154,7 @@ configuration by putting a configuration file
 
   vm.max_map_count = 131072
 
-Note that your real confiugration file will be the following because
+Note that your real configuration file will be the following because
 you already have ``vm.overcommit_memory`` configuration::
 
   vm.overcommit_memory = 1
@@ -170,7 +172,7 @@ This section describes how to configure parameters on FreeBSD.
 
 .. _tuning-freebsd-maxfilesperproc:
 
-kern.maxfileperproc
-^^^^^^^^^^^^^^^^^^^
+``kern.maxfileperproc``
+^^^^^^^^^^^^^^^^^^^^^^^
 
 TODO
