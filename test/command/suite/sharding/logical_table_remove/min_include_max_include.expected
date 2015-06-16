@@ -1,0 +1,99 @@
+register sharding
+[[0,0.0,0.0],true]
+table_create Logs_20150203 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20150203 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+table_create Times_20150203 TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Times_20150203 timestamp_index COLUMN_INDEX Logs_20150203 timestamp
+[[0,0.0,0.0],true]
+table_create Logs_20150204 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20150204 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+table_create Times_20150204 TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Times_20150204 timestamp_index COLUMN_INDEX Logs_20150204 timestamp
+[[0,0.0,0.0],true]
+table_create Logs_20150205 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20150205 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+table_create Times_20150205 TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Times_20150205 timestamp_index COLUMN_INDEX Logs_20150205 timestamp
+[[0,0.0,0.0],true]
+load --table Logs_20150203
+[
+{"timestamp": "2015-02-03 12:49:00"},
+{"timestamp": "2015-02-03 23:59:59"}
+]
+[[0,0.0,0.0],2]
+load --table Logs_20150204
+[
+{"timestamp": "2015-02-04 00:00:00"},
+{"timestamp": "2015-02-04 00:00:01"},
+{"timestamp": "2015-02-04 13:49:00"},
+{"timestamp": "2015-02-04 13:50:00"},
+{"timestamp": "2015-02-04 23:59:59"}
+]
+[[0,0.0,0.0],5]
+load --table Logs_20150205
+[
+{"timestamp": "2015-02-05 00:00:00"},
+{"timestamp": "2015-02-05 13:49:00"},
+{"timestamp": "2015-02-05 13:50:00"},
+{"timestamp": "2015-02-05 13:51:00"},
+{"timestamp": "2015-02-05 13:52:00"},
+{"timestamp": "2015-02-05 13:53:00"}
+]
+[[0,0.0,0.0],6]
+logical_table_remove Logs timestamp   --min "2015-02-04 00:00:00"   --min_border "include"   --max "2015-02-05 00:00:00"   --max_border "include"
+[[0,0.0,0.0],true]
+dump
+plugin_register sharding
+
+table_create Logs_20150203 TABLE_NO_KEY
+column_create Logs_20150203 timestamp COLUMN_SCALAR Time
+
+table_create Times_20150203 TABLE_PAT_KEY Time
+
+table_create Times_20150204 TABLE_PAT_KEY Time
+
+table_create Logs_20150205 TABLE_NO_KEY
+column_create Logs_20150205 timestamp COLUMN_SCALAR Time
+
+table_create Times_20150205 TABLE_PAT_KEY Time
+
+load --table Logs_20150203
+[
+["_id","timestamp"],
+[1,1422935340.0],
+[2,1422975599.0]
+]
+
+load --table Times_20150204
+[
+["_key"],
+[1422975600.0],
+[1422975601.0],
+[1423025340.0],
+[1423025400.0],
+[1423061999.0]
+]
+
+load --table Logs_20150205
+[
+["_id","timestamp"],
+[],
+[2,1423111740.0],
+[3,1423111800.0],
+[4,1423111860.0],
+[5,1423111920.0],
+[6,1423111980.0]
+]
+delete --table Logs_20150205 --id 1
+
+column_create Times_20150203 timestamp_index COLUMN_INDEX Logs_20150203 timestamp
+column_create Times_20150205 timestamp_index COLUMN_INDEX Logs_20150205 timestamp
