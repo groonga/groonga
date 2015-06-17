@@ -1679,6 +1679,9 @@ grn_msync(grn_ctx *ctx, void *start, size_t length)
     return 0;
   } else {
     SERR("FlushViewOfFile");
+    GRN_LOG(ctx, GRN_LOG_ERROR,
+            "FlushViewOfFile(<%p>, <%" GRN_FMT_SIZE ">) failed",
+            start, length);
     return -1;
   }
 }
