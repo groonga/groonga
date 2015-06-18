@@ -26,6 +26,10 @@
 #include "grn_token_cursor.h"
 #include "grn_expr.h"
 
+#ifdef GRN_WITH_EGN
+# include "grn_egn.h"
+#endif /* GRN_WITH_EGN */
+
 #include <string.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -1007,6 +1011,19 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
   }
   if ((table_ = grn_ctx_get(ctx, table, table_len))) {
     // match_columns_ = grn_obj_column(ctx, table_, match_columns, match_columns_len);
+#ifdef GRN_WITH_EGN
+    if (filter_len && (filter[0] == '?') &&
+        (ctx->impl->output_type == GRN_CONTENT_JSON)) {
+      ctx->rc = grn_egn_select(ctx, table_, filter + 1, filter_len - 1,
+                               output_columns, output_columns_len,
+                               offset, limit);
+      if (!ctx->rc && cacheable && cache_key_size <= GRN_CACHE_MAX_KEY_SIZE &&
+          (!cache || cache_len != 2 || cache[0] != 'n' || cache[1] != 'o')) {
+        grn_cache_update(ctx, cache_obj, cache_key, cache_key_size, outbuf);
+      }
+      goto exit;
+    }
+#endif /* GRN_WITH_EGN */
     if (query_len || filter_len) {
       grn_obj *v;
       GRN_EXPR_CREATE_FOR_QUERY(ctx, table_, cond, v);
