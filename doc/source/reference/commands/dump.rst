@@ -158,6 +158,8 @@ Optional parameters
 ``dump_plugins``
 """"""""""""""""
 
+.. versionadded:: 5.0.3
+
 You can customize the output whether it contains registered plugins or not.
 To exclude registered plugins from the output, specify ``no``.
 
@@ -165,6 +167,8 @@ The default value is ``yes``.
 
 ``dump_schema``
 """""""""""""""
+
+.. versionadded:: 5.0.3
 
 You can customize the output whether it contains database schema or not.
 To exclude database schema from the output, specify ``no``.
@@ -174,6 +178,8 @@ The default value is ``yes``.
 ``dump_records``
 """"""""""""""""
 
+.. versionadded:: 5.0.3
+
 You can customize the output whether it contains records or not.
 To exclude records from the output, specify ``no``.
 
@@ -181,6 +187,8 @@ The default value is ``yes``.
 
 ``dump_indexes``
 """"""""""""""""
+
+.. versionadded:: 5.0.3
 
 You can customize the output whether it contains indexes or not.
 To exclude indexes from the output, specify ``no``.
