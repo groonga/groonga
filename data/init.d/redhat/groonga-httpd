@@ -57,7 +57,7 @@ restart() {
 	${GROONGA_HTTPD_RESTART}
 	RETVAL=$?
 	echo
-	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/$prog
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/$prog
 	return $RETVAL
 }
 
