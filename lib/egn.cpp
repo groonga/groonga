@@ -3099,10 +3099,8 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
               break;
             }
             case GRN_DB_TEXT: {
-              GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '"');
               grn_egn_text text = ((grn_egn_text *)&bufs[j][0])[i];
-              GRN_TEXT_PUT(ctx, ctx->impl->outbuf, text.ptr, text.size);
-              GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '"');
+              grn_text_esc(ctx, ctx->impl->outbuf, text.ptr, text.size);
               break;
             }
             case GRN_DB_WGS84_GEO_POINT: {
