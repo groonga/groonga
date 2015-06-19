@@ -31,6 +31,7 @@
 #include "grn_ctx_impl.h"
 #include "grn_db.h"
 #include "grn_output.h"
+#include "grn_str.h"
 
 // TODO: Error handling.
 
@@ -2974,9 +2975,7 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
   GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_ARRAY_OPEN("RESULTSET", 2 + num_records);
   GRN_OUTPUT_ARRAY_OPEN("NHITS", 1);
-  char buf[32];
-  int len = std::sprintf(buf, "%zu", num_hits);
-  GRN_TEXT_PUT(ctx, ctx->impl->outbuf, buf, len);
+  grn_text_ulltoa(ctx, ctx->impl->outbuf, num_hits);
   GRN_OUTPUT_ARRAY_CLOSE();  // NHITS.
   GRN_OUTPUT_ARRAY_OPEN("COLUMNS", expressions.size());
   for (size_t i = 0; i < expressions.size(); ++i) {
