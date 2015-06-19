@@ -3084,10 +3084,8 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
               break;
             }
             case GRN_DB_INT64: {
-              char buf[32];
-              int len = std::sprintf(buf, "%ld",
-                                     ((grn_egn_int *)&bufs[j][0])[i]);
-              GRN_TEXT_PUT(ctx, ctx->impl->outbuf, buf, len);
+              grn_text_lltoa(ctx, ctx->impl->outbuf,
+                             ((grn_egn_int *)&bufs[j][0])[i]);
               break;
             }
             case GRN_DB_FLOAT: {
