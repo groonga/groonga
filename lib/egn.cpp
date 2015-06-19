@@ -2588,7 +2588,9 @@ grn_rc Expression::push_column_object(grn_obj *obj) {
       switch (column_type) {
         case GRN_OBJ_COLUMN_SCALAR: {
           switch (range) {
-            case GRN_DB_TEXT: {
+            case GRN_DB_SHORT_TEXT:
+            case GRN_DB_TEXT:
+            case GRN_DB_LONG_TEXT: {
               rc = ColumnNode<Text>::open(ctx_, obj, &node);
               break;
             }
@@ -3000,7 +3002,9 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Time");
         break;
       }
-      case GRN_DB_TEXT: {
+      case GRN_DB_SHORT_TEXT:
+      case GRN_DB_TEXT:
+      case GRN_DB_LONG_TEXT: {
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Text");
         break;
       }
