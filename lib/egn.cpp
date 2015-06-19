@@ -3106,12 +3106,13 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
               break;
             }
             case GRN_DB_WGS84_GEO_POINT: {
-              char buf[32];
               grn_egn_geo_point geo_point =
                 ((grn_egn_geo_point *)&bufs[j][0])[i];
-              int len = std::sprintf(buf, "\"%dx%d\"",
-                                     geo_point.latitude, geo_point.longitude);
-              GRN_TEXT_PUT(ctx, ctx->impl->outbuf, buf, len);
+              GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '"');
+              grn_text_itoa(ctx, ctx->impl->outbuf, geo_point.latitude);
+              GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, 'x');
+              grn_text_itoa(ctx, ctx->impl->outbuf, geo_point.longitude);
+              GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '"');
               break;
             }
             default: {
