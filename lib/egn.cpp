@@ -39,6 +39,23 @@ namespace {
 
 enum { GRN_EGN_MAX_BATCH_SIZE = 1024 };
 
+bool grn_egn_is_table_cursor(grn_obj *obj) {
+  if (!obj) {
+    return false;
+  }
+  switch (obj->header.type) {
+    case GRN_CURSOR_TABLE_PAT_KEY:
+    case GRN_CURSOR_TABLE_DAT_KEY:
+    case GRN_CURSOR_TABLE_HASH_KEY:
+    case GRN_CURSOR_TABLE_NO_KEY: {
+      return true;
+    }
+    default: {
+      return false;
+    }
+  }
+}
+
 bool grn_egn_is_table(grn_obj *obj) {
   if (!obj) {
     return false;
@@ -63,19 +80,40 @@ namespace egn {
 
 // -- TableCursor --
 
+// TableCursor is a wrapper for grn_table_cursor:
+// - GRN_CURSOR_PAT_KEY
+// - GRN_CURSOR_DAT_KEY
+// - GRN_CURSOR_HASH_KEY
+// - GRN_CURSOR_NO_KEY
 class TableCursor : public Cursor {
  public:
-  TableCursor(grn_ctx *ctx, grn_table_cursor *cursor)
-    : Cursor(), ctx_(ctx), cursor_(cursor) {}
   ~TableCursor() {
     grn_table_cursor_close(ctx_, cursor_);
+  }
+
+  static grn_rc open(grn_ctx *ctx, grn_obj *cursor, Score default_score,
+                     Cursor **wrapper) {
+    if (!ctx || !grn_egn_is_table_cursor(cursor) || !wrapper) {
+      return GRN_INVALID_ARGUMENT;
+    }
+    TableCursor *new_wrapper =
+      new (std::nothrow) TableCursor(ctx, cursor, default_score);
+    if (!new_wrapper) {
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+    *wrapper = new_wrapper;
+    return GRN_SUCCESS;
   }
 
   grn_rc read(Record *records, size_t size, size_t *count);
 
  private:
   grn_ctx *ctx_;
-  grn_table_cursor *cursor_;
+  grn_obj *cursor_;
+  Score default_score_;
+
+  TableCursor(grn_ctx *ctx, grn_obj *cursor, Score default_score)
+    : Cursor(), ctx_(ctx), cursor_(cursor), default_score_(default_score) {}
 };
 
 grn_rc TableCursor::read(Record *records, size_t size, size_t *count) {
@@ -89,8 +127,7 @@ grn_rc TableCursor::read(Record *records, size_t size, size_t *count) {
       return GRN_SUCCESS;
     }
     records[i].id = id;
-    // FIXME: The default score should be configurable (e.g. 1.0)?
-    records[i].score = 0.0;
+    records[i].score = default_score_;
   }
   *count = size;
   return GRN_SUCCESS;
@@ -109,13 +146,11 @@ grn_rc Cursor::open_table_cursor(
   if (!table_cursor) {
     return ctx->rc;
   }
-  Cursor *new_cursor = new (std::nothrow) TableCursor(ctx, table_cursor);
-  if (!new_cursor) {
+  grn_rc rc = TableCursor::open(ctx, table_cursor, 0.0, cursor);
+  if (rc != GRN_SUCCESS) {
     grn_table_cursor_close(ctx, table_cursor);
-    return GRN_NO_MEMORY_AVAILABLE;
   }
-  *cursor = new_cursor;
-  return GRN_SUCCESS;
+  return rc;
 }
 
 grn_rc Cursor::read(Record *records, size_t size, size_t *count) {
