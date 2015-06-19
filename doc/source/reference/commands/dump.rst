@@ -130,7 +130,7 @@ Dump records only::
   ["Groonga","Introduction to Groonga"],
   ["Mroonga","Introduction to Mroonga"]
   ]
-  
+
 Dump schema only::
 
   > dump --dump_records no --dump_plugins no --dump_indexes no
@@ -141,7 +141,7 @@ Dump schema only::
   column_create Bookmarks title COLUMN_SCALAR ShortText
   
   table_create Lexicon TABLE_PAT_KEY ShortText
-  
+
 Parameters
 ----------
 
