@@ -31,8 +31,6 @@ elif [ -f /etc/sysconfig/${SERVICE_NAME} ]; then
     . /etc/sysconfig/${SERVICE_NAME}
 fi
 
-OLD_PID_FILE=${PID_FILE}.oldbin
-
 wait_until () {
     for n in $(seq ${TIMEOUT}); do
         if "$@"; then
@@ -75,11 +73,6 @@ fi
 
 OLD_PID=$(cat ${PID_FILE})
 start_master ${OLD_PID}
-
-if ! wait_until [ -f ${OLD_PID_FILE} ]; then
-    echo "Failed to create old PID file: <${PID_FILE}>"
-    exit 1
-fi
 
 if ! wait_until [ -f ${PID_FILE} ]; then
     echo "Failed to start new groonga-httpd master."
