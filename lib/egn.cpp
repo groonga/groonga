@@ -3089,17 +3089,13 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
               break;
             }
             case GRN_DB_FLOAT: {
-              char buf[64];
-              int len = std::sprintf(buf, "%f",
-                                     ((grn_egn_float *)&bufs[j][0])[i]);
-              GRN_TEXT_PUT(ctx, ctx->impl->outbuf, buf, len);
+              grn_text_ftoa(ctx, ctx->impl->outbuf,
+                            ((grn_egn_float *)&bufs[j][0])[i]);
               break;
             }
             case GRN_DB_TIME: {
-              char buf[64];
-              int len = std::sprintf(
-                buf, "%f", ((grn_egn_time *)&bufs[j][0])[i] * 0.000001);
-              GRN_TEXT_PUT(ctx, ctx->impl->outbuf, buf, len);
+              grn_text_ftoa(ctx, ctx->impl->outbuf,
+                            ((grn_egn_time *)&bufs[j][0])[i] * 0.000001);
               break;
             }
             case GRN_DB_TEXT: {
