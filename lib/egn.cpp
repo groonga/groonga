@@ -120,14 +120,62 @@ grn_rc TableCursor::read(Record *records, size_t size, size_t *count) {
   if ((!records && (size != 0)) || !count) {
     return GRN_INVALID_ARGUMENT;
   }
-  for (size_t i = 0; i < size; ++i) {
-    grn_id id = grn_table_cursor_next(ctx_, cursor_);
-    if (id == GRN_ID_NIL) {
-      *count = i;
-      return GRN_SUCCESS;
+  switch (cursor_->header.type) {
+    case GRN_CURSOR_TABLE_PAT_KEY: {
+      for (size_t i = 0; i < size; ++i) {
+        grn_id id = grn_pat_cursor_next(
+          ctx_, reinterpret_cast<grn_pat_cursor *>(cursor_));
+        if (id == GRN_ID_NIL) {
+          *count = i;
+          return GRN_SUCCESS;
+        }
+        records[i].id = id;
+        records[i].score = default_score_;
+      }
+      break;
     }
-    records[i].id = id;
-    records[i].score = default_score_;
+    case GRN_CURSOR_TABLE_DAT_KEY: {
+      for (size_t i = 0; i < size; ++i) {
+        grn_id id = grn_dat_cursor_next(
+          ctx_, reinterpret_cast<grn_dat_cursor *>(cursor_));
+        if (id == GRN_ID_NIL) {
+          *count = i;
+          return GRN_SUCCESS;
+        }
+        records[i].id = id;
+        records[i].score = default_score_;
+      }
+      break;
+    }
+    case GRN_CURSOR_TABLE_HASH_KEY: {
+      for (size_t i = 0; i < size; ++i) {
+        grn_id id = grn_hash_cursor_next(
+          ctx_, reinterpret_cast<grn_hash_cursor *>(cursor_));
+        if (id == GRN_ID_NIL) {
+          *count = i;
+          return GRN_SUCCESS;
+        }
+        records[i].id = id;
+        records[i].score = default_score_;
+      }
+      break;
+    }
+    case GRN_CURSOR_TABLE_NO_KEY: {
+      for (size_t i = 0; i < size; ++i) {
+        grn_id id = grn_array_cursor_next(
+          ctx_, reinterpret_cast<grn_array_cursor *>(cursor_));
+        if (id == GRN_ID_NIL) {
+          *count = i;
+          return GRN_SUCCESS;
+        }
+        records[i].id = id;
+        records[i].score = default_score_;
+      }
+      break;
+    }
+    default: {
+      return GRN_UNKNOWN_ERROR;
+    }
   }
   *count = size;
   return GRN_SUCCESS;
