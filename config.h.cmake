@@ -14,7 +14,7 @@
 #define PACKAGE_URL          "${PACKAGE_URL}"
 #define PACKAGE_VERSION      "${VERSION}"
 
-/* groonga related constants */
+/* Groonga related constants */
 #define GRN_CONFIG_PATH      "${GRN_CONFIG_PATH}"
 #define GRN_LOG_PATH         "${GRN_LOG_PATH}"
 #define GRN_VERSION          "${GRN_VERSION}"
