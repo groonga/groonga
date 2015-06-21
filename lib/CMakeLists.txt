@@ -36,7 +36,7 @@ string(REGEX REPLACE "([^;]+)" "mrb/\\1"
 set_source_files_properties(${LIBGROONGA_SOURCES} ${LIBGRNMRB_SOURCES}
   PROPERTIES
   COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
-set_source_files_properties(dat.cpp ${LIBGRNDAT_SOURCES}
+set_source_files_properties(dat.cpp egn.cpp ${LIBGRNDAT_SOURCES}
   PROPERTIES
   COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS}")
 
