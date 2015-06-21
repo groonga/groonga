@@ -67,9 +67,14 @@ set(GRN_ALL_LIBRARIES
     ${MRUBY_LIBS}
     ${ONIGMO_LIBS})
 if(GRN_EMBED)
+  set(GRN_EMBEDDED_PLUGIN_LIBRARIES "")
+  if(GRN_WITH_MECAB)
+    list(APPEND GRN_EMBEDDED_PLUGIN_LIBRARIES mecab_tokenizer)
+  endif()
   target_link_libraries(libgroonga
     ${GRN_ALL_LIBRARIES}
-    ${STDCPP_LIBS})
+    ${STDCPP_LIBS}
+    ${GRN_EMBEDDED_PLUGIN_LIBRARIES})
 else()
   target_link_libraries(libgroonga
     ${GRN_ALL_LIBRARIES})

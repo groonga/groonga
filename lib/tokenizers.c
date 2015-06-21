@@ -759,6 +759,20 @@ grn_db_init_mecab_tokenizer(grn_ctx *ctx)
   case GRN_ENC_EUC_JP :
   case GRN_ENC_UTF8 :
   case GRN_ENC_SJIS :
+#ifdef GRN_EMBEDDED
+    {
+      GRN_PLUGIN_DECLARE_FUNCTIONS(tokenizers_mecab);
+      grn_rc rc;
+      rc = GRN_PLUGIN_IMPL_NAME_TAGGED(init, tokenizers_mecab)(ctx);
+      if (rc == GRN_SUCCESS) {
+        rc = GRN_PLUGIN_IMPL_NAME_TAGGED(register, tokenizers_mecab)(ctx);
+        if (rc != GRN_SUCCESS) {
+          GRN_PLUGIN_IMPL_NAME_TAGGED(fin, tokenizers_mecab)(ctx);
+        }
+      }
+      return rc;
+    }
+#else
     {
       const char *mecab_plugin_name = "tokenizers/mecab";
       char *path;
@@ -770,6 +784,7 @@ grn_db_init_mecab_tokenizer(grn_ctx *ctx)
         return GRN_NO_SUCH_FILE_OR_DIRECTORY;
       }
     }
+#endif
     break;
   default :
     return GRN_OPERATION_NOT_SUPPORTED;

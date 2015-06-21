@@ -210,6 +210,9 @@ endif()
 add_definitions(
   -DHAVE_CONFIG_H
   )
+if(GRN_EMBED)
+  add_definitions(-DGRN_EMBEDDED)
+endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGCXX)
   set(_GNU_SOURCE TRUE)
@@ -556,6 +559,9 @@ set(ONIGMO_LIBS onigmo)
 add_definitions(-DONIG_EXTERN=extern)
 
 add_subdirectory(vendor)
+if(GRN_EMBED)
+  add_subdirectory(plugins)
+endif()
 add_subdirectory(lib)
 if(NOT GRN_EMBED)
   add_subdirectory(src)
