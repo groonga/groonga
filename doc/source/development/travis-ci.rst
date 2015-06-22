@@ -30,10 +30,15 @@ can use ``before_install`` hook or ``install`` hook. You should use
 ``before_install`` if your software uses a language that is supported
 by Travis CI such as Ruby. You should use ``install`` otherwise.
 
-Add the following ``before_install`` configuration to ``.travis.yml``::
+Add the following ``sudo`` and ``before_install`` configuration to
+``.travis.yml``::
 
+  sudo: required
   before_install:
     - curl --silent --location https://github.com/groonga/groonga/raw/master/data/travis/setup.sh | sh
+
+``sudo: required`` configuration is required because ``sudo`` command
+is used in the setup script.
 
 If you need to use ``install`` hook instead of ``before_install``, you
 just substitute ``before_install:`` with ``install:``.
