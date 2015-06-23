@@ -1318,6 +1318,9 @@ grn_io_flush(grn_ctx *ctx, grn_io *io)
     if (!info) {
       continue;
     }
+    if (!info->map) {
+      continue;
+    }
     if (!grn_msync(ctx, info->map, segment_size)) {
       rc = ctx->rc;
       break;
