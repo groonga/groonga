@@ -1,0 +1,5 @@
+#@include fixture/sharding/logical_range_filter/shard_type/month_day.grn
+
+logical_range_filter Logs timestamp \
+  --order descending \
+  --limit -1

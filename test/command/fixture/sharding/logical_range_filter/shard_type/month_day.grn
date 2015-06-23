@@ -1,0 +1,142 @@
+#@disable-logging
+
+#@on-error omit
+register sharding
+#@on-error default
+
+table_create Logs_201501 TABLE_NO_KEY
+column_create Logs_201501 timestamp COLUMN_SCALAR Time
+column_create Logs_201501 memo COLUMN_SCALAR ShortText
+column_create Logs_201501 message COLUMN_SCALAR Text
+
+table_create Timestamps_201501 TABLE_PAT_KEY Time
+column_create Timestamps_201501 index COLUMN_INDEX Logs_201501 timestamp
+
+
+table_create Logs_201502 TABLE_NO_KEY
+column_create Logs_201502 timestamp COLUMN_SCALAR Time
+column_create Logs_201502 memo COLUMN_SCALAR ShortText
+column_create Logs_201502 message COLUMN_SCALAR Text
+
+table_create Timestamps_201502 TABLE_PAT_KEY Time
+column_create Timestamps_201502 index COLUMN_INDEX Logs_201502 timestamp
+
+
+table_create Logs_20150203 TABLE_NO_KEY
+column_create Logs_20150203 timestamp COLUMN_SCALAR Time
+column_create Logs_20150203 memo COLUMN_SCALAR ShortText
+column_create Logs_20150203 message COLUMN_SCALAR Text
+
+table_create Timestamps_20150203 TABLE_PAT_KEY Time
+column_create Timestamps_20150203 index COLUMN_INDEX Logs_20150203 timestamp
+
+
+table_create Logs_20150228 TABLE_NO_KEY
+column_create Logs_20150228 timestamp COLUMN_SCALAR Time
+column_create Logs_20150228 memo COLUMN_SCALAR ShortText
+column_create Logs_20150228 message COLUMN_SCALAR Text
+
+table_create Timestamps_20150228 TABLE_PAT_KEY Time
+column_create Timestamps_20150228 index COLUMN_INDEX Logs_20150228 timestamp
+
+
+table_create Logs_201503 TABLE_NO_KEY
+column_create Logs_201503 timestamp COLUMN_SCALAR Time
+column_create Logs_201503 memo COLUMN_SCALAR ShortText
+column_create Logs_201503 message COLUMN_SCALAR Text
+
+table_create Timestamps_201503 TABLE_PAT_KEY Time
+column_create Timestamps_201503 index COLUMN_INDEX Logs_201503 timestamp
+
+
+load --table Logs_201501
+[
+{
+  "timestamp": "2015-01-31 23:59:58",
+  "memo":      "2015-01-31 23:59:58",
+  "message":   "Start"
+},
+{
+  "timestamp": "2015-01-31 23:59:59",
+  "memo":      "2015-01-31 23:59:59",
+  "message":   "Shutdown"
+}
+]
+
+load --table Logs_201502
+[
+{
+  "timestamp": "2015-02-01 00:00:00",
+  "memo":      "2015-02-01 00:00:00",
+  "message":   "Start"
+},
+{
+  "timestamp": "2015-02-01 00:00:01",
+  "memo":      "2015-02-01 00:00:01",
+  "message":   "Shutdown"
+},
+{
+  "timestamp": "2015-02-02 00:00:00",
+  "memo":      "2015-02-02 00:00:00",
+  "message":   "Start"
+},
+{
+  "timestamp": "2015-02-02 00:00:01",
+  "memo":      "2015-02-02 00:00:01",
+  "message":   "Shutdown"
+}
+]
+
+load --table Logs_20150203
+[
+{
+  "timestamp": "2015-02-03 00:00:00",
+  "memo":      "2015-02-03 00:00:00",
+  "message":   "Start"
+},
+{
+  "timestamp": "2015-02-03 00:00:01",
+  "memo":      "2015-02-03 00:00:01",
+  "message":   "Shutdown"
+},
+{
+  "timestamp": "2015-02-03 23:59:58",
+  "memo":      "2015-02-03 23:59:58",
+  "message":   "Start"
+},
+{
+  "timestamp": "2015-02-03 23:59:59",
+  "memo":      "2015-02-03 23:59:59",
+  "message":   "Shutdown"
+}
+]
+
+load --table Logs_20150228
+[
+{
+  "timestamp": "2015-02-28 23:59:58",
+  "memo":      "2015-02-28 23:59:58",
+  "message":   "Start"
+},
+{
+  "timestamp": "2015-02-28 23:59:59",
+  "memo":      "2015-02-28 23:59:59",
+  "message":   "Shutdown"
+}
+]
+
+load --table Logs_201503
+[
+{
+  "timestamp": "2015-03-01 00:00:00",
+  "memo":      "2015-03-01 00:00:00",
+  "message":   "Start"
+},
+{
+  "timestamp": "2015-03-01 00:00:01",
+  "memo":      "2015-03-01 00:00:01",
+  "message":   "Shutdown"
+}
+]
+
+#@enable-logging
