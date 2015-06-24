@@ -15,7 +15,7 @@ Release 5.0.5 - 2015-06-29
 Improvements
 ^^^^^^^^^^^^
 
-* Show correct error information such as NoSuchFileOrDirectory when opening database.
+* Show correct error information such as NoSuchFileOrDirectory when opening a database.
 * Don't set the default logger path for library use.
 
   * It's backward incompatible change. But it will not effect to many users.
