@@ -7,6 +7,56 @@
 News
 ====
 
+.. _release-5-0-5:
+
+Release 5.0.5 - 2015-06-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Don't override error such as NoSuchFileOrDirectory when opening database.
+* Don't set the default logger path for library use.
+
+  * It's backward incompatible change. But it will not effect to many users.
+  * Server use (groonga command, Mroonga, PGroonga and so on) users can get
+    log by default. In server use, developers set up log in their software.
+  * Most library use (Rroonga, groonga-gobject and so on) users couldn't get
+    log by default with earlier versions. The default log path is system
+    path such as /var/log/groonga/groonga.log. It's not writable for normal
+    users.
+
+* [windows] Show error information when memory isn't enough on failing ``CreateFileMapping()``.
+* [:doc:`/reference/commands/tokenize`] Updated example to show new "force_prefix" value.
+* [windows] Show error information when disk has any problem on failing ``FlushViewOfFile()``.
+* [API] Added :c:func:`grn_obj_flush()`.
+* [API] Added :c:func:`grn_obj_flush_recursive()`.
+* [:doc:`/reference/commands/io_flush`] Added. It flushes memory mapped data to disk.
+* [mruby] Binded ``grn_obj_remove()`` to Object#remove.
+* [mruby] Binded ``grn_table_delete()`` and ``grn_table_delete_by_id()`` to Table#delete.
+* [:doc:`/reference/commands/logical_table_remove`] Added.
+* [:doc:`/reference/commands/logical_table_select`] Added. ``--filter`` is only supported for now.
+* [experimental] Added grn_egn. grn_egn is enabled if GRN_WITH_EGN is defined.
+  If enabled, grn_egn is used when select is invoked with --filter starting with '?'.
+* [cmake] Supported embedded MeCab tokenizer.
+* [:doc:`/reference/commands/logical_count`] Supported month and day mixed shards.
+  In the same month, month shard must have earlier records rather than day
+  shards in the same month.
+
+Fixes
+^^^^^
+
+* Fixed wrong macro to include netinet/in.h.
+  [GitHub#348] [Reported by OBATA Akio]
+* [rpm][:doc:`/reference/executables/groonga-httpd`] Fixed failing restart.
+  [GitHub#351] [Patch by jacob16bit]
+
+Thanks
+^^^^^^
+
+* OBATA Akio
+* jacob16bit
+
 .. _release-5-0-4:
 
 Release 5.0.4 - 2015-05-29
