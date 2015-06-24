@@ -1,6 +1,7 @@
 [Unit]
 Description=Groonga HTTP Server
 Wants=network-online.target
+After=network-online.target
 Conflicts=groonga.service
 
 [Service]
