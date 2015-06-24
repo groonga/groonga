@@ -9739,7 +9739,15 @@ grn_obj_flush(grn_ctx *ctx, grn_obj *obj)
 {
   grn_rc rc = GRN_SUCCESS;
   GRN_API_ENTER;
-  rc = grn_io_flush(ctx, grn_obj_io(obj));
+  if (obj->header.type == GRN_DB) {
+    rc = grn_io_flush(ctx, grn_obj_io(obj));
+    if (rc == GRN_SUCCESS) {
+      grn_db *db = (grn_db *)obj;
+      rc = grn_obj_flush(ctx, (grn_obj *)(db->specs));
+    }
+  } else {
+    rc = grn_io_flush(ctx, grn_obj_io(obj));
+  }
   GRN_API_RETURN(rc);
 }
 
