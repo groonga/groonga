@@ -9758,7 +9758,7 @@ grn_obj_flush_recursive(grn_ctx *ctx, grn_obj *obj)
 
   GRN_API_ENTER;
   switch (obj->header.type) {
-  case GRN_DB:
+  case GRN_DB :
     {
       grn_table_cursor *cursor;
       grn_id id;
