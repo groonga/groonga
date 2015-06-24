@@ -15,7 +15,7 @@ Release 5.0.5 - 2015-06-29
 Improvements
 ^^^^^^^^^^^^
 
-* Don't override error such as NoSuchFileOrDirectory when opening database.
+* Show correct error information such as NoSuchFileOrDirectory when opening database.
 * Don't set the default logger path for library use.
 
   * It's backward incompatible change. But it will not effect to many users.
