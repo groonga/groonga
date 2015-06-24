@@ -66,7 +66,7 @@ Install groonga-normalizer-mysql package::
 jessie
 ------
 
-.. versionadded:: 5.0.4
+.. versionadded:: 5.0.5
 
 Add the Groonga apt repository.
 
@@ -123,9 +123,9 @@ Install required packages to build Groonga::
 
 Download source::
 
-  % wget http://packages.groonga.org/source/groonga/groonga-5.0.4.tar.gz
-  % tar xvzf groonga-5.0.4.tar.gz
-  % cd groonga-5.0.4
+  % wget http://packages.groonga.org/source/groonga/groonga-5.0.5.tar.gz
+  % tar xvzf groonga-5.0.5.tar.gz
+  % cd groonga-5.0.5
 
 Configure (see :ref:`source-configure` about ``configure`` options)::
 

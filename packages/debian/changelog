@@ -1,3 +1,9 @@
+groonga (5.0.5-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Masafumi Yokoyama <myokoym@gmail.com>  Mon, 29 Jun 2015 00:00:00 +0900
+
 groonga (5.0.4-2) unstable; urgency=low
 
   * debian/groonga-httpd.service

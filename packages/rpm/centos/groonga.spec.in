@@ -411,6 +411,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Mon Jun 29 2015 Masafumi Yokoyama <myokoym@gmail.com> - 5.0.5-1
+- new upstream release.
+
 * Fri May 29 2015 Masafumi Yokoyama <yokoyama@clear-code.com> - 5.0.4-1
 - new upstream release.
 
