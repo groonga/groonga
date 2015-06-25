@@ -29,7 +29,7 @@ Improvements
 * [windows] Show error information when memory isn't enough on failing ``CreateFileMapping()``.
 * [:doc:`/reference/commands/tokenize`] Updated example to show new "force_prefix" value.
   This value is added since 5.0.4.
-* [windows] Show error information when disk has any problem on failing ``FlushViewOfFile()``.
+* [windows] Show error information when disk has any problem (disk full and so on) on failing ``FlushViewOfFile()``.
 * [API] Added :c:func:`grn_obj_flush()`.
 * [API] Added :c:func:`grn_obj_flush_recursive()`.
 * [:doc:`/reference/commands/io_flush`] Added. It flushes memory mapped data to disk.
