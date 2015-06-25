@@ -35,6 +35,7 @@
 #endif /* WIN32 */
 
 #define GRN_IO_IDSTR "GROONGA:IO:00001"
+#define GRN_IO_IDSTR_LEN (sizeof(GRN_IO_IDSTR) - 1)
 
 #define GRN_IO_VERSION_DEFAULT 1
 
@@ -472,10 +473,13 @@ grn_io_detect_type(grn_ctx *ctx, const char *path)
     struct stat s;
     if (fstat(fd, &s) != -1 && s.st_size >= sizeof(struct _grn_io_header)) {
       if (grn_read(fd, &h, sizeof(struct _grn_io_header)) == sizeof(struct _grn_io_header)) {
-        if (!memcmp(h.idstr, GRN_IO_IDSTR, 16)) {
+        if (!memcmp(h.idstr, GRN_IO_IDSTR, GRN_IO_IDSTR_LEN)) {
           res = h.type;
         } else {
-          ERR(GRN_INCOMPATIBLE_FILE_FORMAT, "incompatible file format");
+          ERR(GRN_INCOMPATIBLE_FILE_FORMAT,
+              "failed to detect type: format ID is different: <%s>: <%.*s>",
+              path,
+              (int)GRN_IO_IDSTR_LEN, GRN_IO_IDSTR);
         }
       } else {
         SERR(path);
@@ -510,13 +514,16 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
     }
     if (fstat(fd, &s) != -1 && s.st_size >= sizeof(struct _grn_io_header)) {
       if (grn_read(fd, &h, sizeof(struct _grn_io_header)) == sizeof(struct _grn_io_header)) {
-        if (!memcmp(h.idstr, GRN_IO_IDSTR, 16)) {
+        if (!memcmp(h.idstr, GRN_IO_IDSTR, GRN_IO_IDSTR_LEN)) {
           header_size = h.header_size;
           segment_size = h.segment_size;
           max_segment = h.max_segment;
           flags = h.flags;
         } else {
-          ERR(GRN_INCOMPATIBLE_FILE_FORMAT, "incompatible file format");
+          ERR(GRN_INCOMPATIBLE_FILE_FORMAT,
+              "failed to open: format ID is different: <%s>: <%.*s>",
+              path,
+              (int)GRN_IO_IDSTR_LEN, GRN_IO_IDSTR);
         }
       }
     }
