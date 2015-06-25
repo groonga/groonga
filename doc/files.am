@@ -530,6 +530,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/defrag.rst \
 	$(top_srcdir)/doc/source/reference/commands/delete.rst \
 	$(top_srcdir)/doc/source/reference/commands/dump.rst \
+	$(top_srcdir)/doc/source/reference/commands/io_flush.rst \
 	$(top_srcdir)/doc/source/reference/commands/load.rst \
 	$(top_srcdir)/doc/source/reference/commands/lock_clear.rst \
 	$(top_srcdir)/doc/source/reference/commands/log_level.rst \
@@ -1188,6 +1189,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/defrag.rst \
 	source/reference/commands/delete.rst \
 	source/reference/commands/dump.rst \
+	source/reference/commands/io_flush.rst \
 	source/reference/commands/load.rst \
 	source/reference/commands/lock_clear.rst \
 	source/reference/commands/log_level.rst \
@@ -1514,6 +1516,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/defrag.txt \
 	html/_sources/reference/commands/delete.txt \
 	html/_sources/reference/commands/dump.txt \
+	html/_sources/reference/commands/io_flush.txt \
 	html/_sources/reference/commands/load.txt \
 	html/_sources/reference/commands/lock_clear.txt \
 	html/_sources/reference/commands/log_level.txt \
@@ -1734,6 +1737,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/defrag.html \
 	html/reference/commands/delete.html \
 	html/reference/commands/dump.html \
+	html/reference/commands/io_flush.html \
 	html/reference/commands/load.html \
 	html/reference/commands/lock_clear.html \
 	html/reference/commands/log_level.html \
