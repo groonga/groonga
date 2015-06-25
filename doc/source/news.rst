@@ -38,7 +38,7 @@ Improvements
 * [mruby] Binded ``grn_obj_remove()`` to Object#remove.
 * [mruby] Binded ``grn_table_delete()`` and ``grn_table_delete_by_id()`` to Table#delete.
 * [:doc:`/reference/commands/logical_table_remove`] Added.
-* [:doc:`/reference/commands/logical_table_select`] Added. ``--filter`` is only supported for now.
+* [:doc:`/reference/commands/logical_select`] Added. ``--filter`` is only supported for now.
 * [experimental] Added grn_egn. grn_egn is enabled if GRN_WITH_EGN is defined.
   If enabled, grn_egn is used when select is invoked with --filter starting with '?'.
 * [cmake] Supported embedded MeCab tokenizer.
