@@ -3,9 +3,9 @@
 .. highlightlang:: none
 
 .. groonga-command
-.. database: logical_table_select
+.. database: logical_select
 
-``logical_table_select``
+``logical_select``
 ========================
 
 Summary
@@ -22,17 +22,17 @@ TODO
 Syntax
 ------
 
-``logical_table_select`` command has seven parameters.
+``logical_select`` command has seven parameters.
 
 The required parameters are ``logical_table`` and ``shard_key``::
 
-  logical_table_select logical_table
-                       shard_key
-                       [min]
-                       [min_border]
-                       [max]
-                       [max_border]
-                       [filter]
+  logical_select logical_table
+                 shard_key
+                 [min]
+                 [min_border]
+                 [max]
+                 [max_border]
+                 [filter]
 
 Usage
 -----
@@ -42,7 +42,7 @@ TODO
 Parameters
 ----------
 
-This section describes parameters of ``logical_table_select``.
+This section describes parameters of ``logical_select``.
 
 Required parameter
 ^^^^^^^^^^^^^^^^^^

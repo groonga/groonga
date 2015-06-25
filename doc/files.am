@@ -539,7 +539,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/logical_count.rst \
 	$(top_srcdir)/doc/source/reference/commands/logical_range_filter.rst \
 	$(top_srcdir)/doc/source/reference/commands/logical_table_remove.rst \
-	$(top_srcdir)/doc/source/reference/commands/logical_table_select.rst \
+	$(top_srcdir)/doc/source/reference/commands/logical_select.rst \
 	$(top_srcdir)/doc/source/reference/commands/normalize.rst \
 	$(top_srcdir)/doc/source/reference/commands/normalizer_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/plugin_register.rst \
@@ -1198,7 +1198,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/logical_count.rst \
 	source/reference/commands/logical_range_filter.rst \
 	source/reference/commands/logical_table_remove.rst \
-	source/reference/commands/logical_table_select.rst \
+	source/reference/commands/logical_select.rst \
 	source/reference/commands/normalize.rst \
 	source/reference/commands/normalizer_list.rst \
 	source/reference/commands/plugin_register.rst \
@@ -1525,7 +1525,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/logical_count.txt \
 	html/_sources/reference/commands/logical_range_filter.txt \
 	html/_sources/reference/commands/logical_table_remove.txt \
-	html/_sources/reference/commands/logical_table_select.txt \
+	html/_sources/reference/commands/logical_select.txt \
 	html/_sources/reference/commands/normalize.txt \
 	html/_sources/reference/commands/normalizer_list.txt \
 	html/_sources/reference/commands/plugin_register.txt \
@@ -1746,7 +1746,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/logical_count.html \
 	html/reference/commands/logical_range_filter.html \
 	html/reference/commands/logical_table_remove.html \
-	html/reference/commands/logical_table_select.html \
+	html/reference/commands/logical_select.html \
 	html/reference/commands/normalize.html \
 	html/reference/commands/normalizer_list.html \
 	html/reference/commands/plugin_register.html \
