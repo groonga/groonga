@@ -33,6 +33,8 @@ Improvements
 * [API] Added :c:func:`grn_obj_flush()`.
 * [API] Added :c:func:`grn_obj_flush_recursive()`.
 * [:doc:`/reference/commands/io_flush`] Added. It flushes memory mapped data to disk.
+  Usually memory data automatically flush by an OS, but you can explicitly flush with
+  this command.
 * [mruby] Binded ``grn_obj_remove()`` to Object#remove.
 * [mruby] Binded ``grn_table_delete()`` and ``grn_table_delete_by_id()`` to Table#delete.
 * [:doc:`/reference/commands/logical_table_remove`] Added.
