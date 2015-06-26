@@ -39,8 +39,9 @@ Improvements
 * [mruby] Binded ``grn_table_delete()`` and ``grn_table_delete_by_id()`` to Table#delete.
 * [:doc:`/reference/commands/logical_table_remove`] Added.
 * [:doc:`/reference/commands/logical_select`] Added. ``--filter`` is only supported for now.
-* [experimental] Added grn_egn. grn_egn is enabled if GRN_WITH_EGN is defined.
-  If enabled, grn_egn is used when select is invoked with --filter starting with '?'.
+* [experimental] Added grn_egn. It's a compatible faster query engine. It's enabled
+  if ``GRN_WITH_EGN`` macro is defined at compiling. If enabled, It's used when
+  select is invoked with ``--filter`` starting with ``?``.
 * [cmake] Supported embedded MeCab tokenizer.
 * [:doc:`/reference/commands/logical_count`] Supported month and day mixed shards.
   In the same month, month shard must have earlier records rather than day
