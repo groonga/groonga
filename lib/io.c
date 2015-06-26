@@ -1312,10 +1312,7 @@ grn_io_flush(grn_ctx *ctx, grn_io *io)
 {
   grn_rc rc = GRN_SUCCESS;
   struct _grn_io_header *header;
-  uint32_t i;
   uint32_t aligned_header_size;
-  uint32_t max_mapped_segment;
-  uint32_t segment_size;
 
   if (!io->path) {
     return GRN_SUCCESS;
@@ -1323,24 +1320,30 @@ grn_io_flush(grn_ctx *ctx, grn_io *io)
 
   header = io->header;
   aligned_header_size = grn_io_compute_base(header->header_size);
-  max_mapped_segment = io->max_map_seg;
-  segment_size = header->segment_size;
 
   if (grn_msync(ctx, header, aligned_header_size) != 0) {
     return ctx->rc;
   }
 
-  for (i = 0; i < max_mapped_segment; i++) {
-    grn_io_mapinfo *info = &(io->maps[i]);
-    if (!info) {
-      continue;
-    }
-    if (!info->map) {
-      continue;
-    }
-    if (grn_msync(ctx, info->map, segment_size) != 0) {
-      rc = ctx->rc;
-      break;
+  if (io->maps) {
+    uint32_t i;
+    uint32_t max_mapped_segment;
+    uint32_t segment_size;
+
+    max_mapped_segment = grn_io_max_segment(io);
+    segment_size = header->segment_size;
+    for (i = 0; i < max_mapped_segment; i++) {
+      grn_io_mapinfo *info = &(io->maps[i]);
+      if (!info) {
+        continue;
+      }
+      if (!info->map) {
+        continue;
+      }
+      if (grn_msync(ctx, info->map, segment_size) != 0) {
+        rc = ctx->rc;
+        break;
+      }
     }
   }
 
