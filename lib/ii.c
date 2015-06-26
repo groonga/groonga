@@ -3522,6 +3522,7 @@ _grn_ii_create(grn_ctx *ctx, grn_ii *ii, const char *path, grn_obj *lexicon, uin
   }
   if (!chunk) {
     grn_io_close(ctx, seg);
+    grn_io_remove(ctx, path);
     return NULL;
   }
   header = grn_io_header(seg);
