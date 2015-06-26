@@ -2398,9 +2398,8 @@ grn_calloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const 
       grn_alloc_info_add(res, file, line, func);
     } else {
       if (!(res = calloc(size, 1))) {
-        MERR("calloc fail (%" GRN_FMT_LLU ")=%p (%s:%d) <%" GRN_FMT_LLU ">",
-             (unsigned long long int)size, res, file, line,
-             (unsigned long long int)alloc_count);
+        MERR("calloc fail (%" GRN_FMT_SIZE ")=%p (%s:%d) <%d>",
+             size, res, file, line, alloc_count);
       } else {
         GRN_ADD_ALLOC_COUNT(1);
         grn_alloc_info_add(res, file, line, func);
