@@ -483,6 +483,9 @@ grn_io_detect_type(grn_ctx *ctx, const char *path)
         }
       } else {
         SERR(path);
+        GRN_LOG(ctx, GRN_LOG_ERROR,
+                "failed to read enough data for detecting type: <%s>",
+                path);
       }
     } else {
       ERR(GRN_INVALID_FORMAT, "grn_io_detect_type failed");
@@ -490,6 +493,9 @@ grn_io_detect_type(grn_ctx *ctx, const char *path)
     grn_close(fd);
   } else {
     ERRNO_ERR(path);
+    GRN_LOG(ctx, GRN_LOG_ERROR,
+            "failed to open path for detecting type: <%s>",
+            path);
   }
   return res;
 }
@@ -510,6 +516,9 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
     grn_open(fd, path, O_RDWR | GRN_OPEN_FLAG_BINARY);
     if (fd == -1) {
       ERRNO_ERR(path);
+      GRN_LOG(ctx, GRN_LOG_ERROR,
+              "failed to open path: <%s>",
+              path);
       return NULL;
     }
     if (fstat(fd, &s) != -1 && s.st_size >= sizeof(struct _grn_io_header)) {
@@ -705,6 +714,9 @@ grn_io_size(grn_ctx *ctx, grn_io *io, uint64_t *size)
     gen_pathname(io->path, buffer, fno);
     if (stat(buffer, &s)) {
       SERR(buffer);
+      GRN_LOG(ctx, GRN_LOG_ERROR,
+              "failed to stat path to compute size: <%s>",
+              buffer);
     } else {
       tsize += s.st_size;
     }
@@ -722,6 +734,9 @@ grn_io_remove(grn_ctx *ctx, const char *path)
     return ctx->rc;
   } else if (grn_unlink(path)) {
     ERRNO_ERR(path);
+    GRN_LOG(ctx, GRN_LOG_ERROR,
+            "failed to remove path: <%s>",
+            path);
     return ctx->rc;
   } else {
     int fno;
@@ -731,6 +746,9 @@ grn_io_remove(grn_ctx *ctx, const char *path)
       if (!stat(buffer, &s)) {
         if (grn_unlink(buffer)) {
           ERRNO_ERR(buffer);
+          GRN_LOG(ctx, GRN_LOG_ERROR,
+                  "failed to remove path: <%s>",
+                  buffer);
         }
       } else {
         break;
@@ -749,6 +767,9 @@ grn_io_rename(grn_ctx *ctx, const char *old_name, const char *new_name)
     return ctx->rc;
   } else if (rename(old_name, new_name)) {
     SERR(old_name);
+    GRN_LOG(ctx, GRN_LOG_ERROR,
+            "failed to rename path: <%s> -> <%s>",
+            old_name, new_name);
     return ctx->rc;
   } else {
     int fno;
@@ -758,9 +779,17 @@ grn_io_rename(grn_ctx *ctx, const char *old_name, const char *new_name)
       gen_pathname(old_name, old_buffer, fno);
       if (!stat(old_buffer, &s)) {
         gen_pathname(new_name, new_buffer, fno);
-        if (rename(old_buffer, new_buffer)) { SERR(old_buffer); }
+        if (rename(old_buffer, new_buffer)) {
+          SERR(old_buffer);
+          GRN_LOG(ctx, GRN_LOG_ERROR,
+                  "failed to rename path: <%s> -> <%s>",
+                  old_buffer, new_buffer);
+        }
       } else {
         SERR("stat");
+        GRN_LOG(ctx, GRN_LOG_ERROR,
+                "failed to stat path to rename: <%s>",
+                old_buffer);
         return ctx->rc;
       }
     }
@@ -1762,10 +1791,16 @@ grn_fileinfo_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
   grn_open(fi->fd, path, flags);
   if (fi->fd == -1) {
     ERRNO_ERR(path);
+    GRN_LOG(ctx, GRN_LOG_ERROR,
+            "failed to open file info path: <%s>",
+            path);
     return ctx->rc;
   }
   if (fstat(fi->fd, &st) == -1) {
     ERRNO_ERR(path);
+    GRN_LOG(ctx, GRN_LOG_ERROR,
+            "failed to stat file info path: <%s>",
+            path);
     return ctx->rc;
   }
   fi->dev = st.st_dev;
