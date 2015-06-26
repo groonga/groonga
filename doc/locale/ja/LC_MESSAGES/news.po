@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-06-11 12:10+0900\n"
+"PO-Revision-Date: 2015-06-26 11:40+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -16,16 +16,174 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 1.6.10\n"
+"X-Generator: Poedit 1.7.7\n"
 
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 5.0.4 - 2015-05-29"
-msgstr "5.0.4リリース - 2015-05-29"
+msgid "Release 5.0.5 - 2015-06-29"
+msgstr "5.0.5リリース - 2015-06-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+# 876a0fccc9234a9ebe95be49f84b68fd
+msgid ""
+"Show correct error information such as NoSuchFileOrDirectory when opening a "
+"database."
+msgstr ""
+"データベースを開くときにファイルが存在しなかった場合などに、正しいエラー情報"
+"を表示するようにしました。"
+
+# 80e2fe0f33d94ba4bd18c39481bdeb5d
+msgid "Don't set the default logger path for library use."
+msgstr ""
+"ライブラリーとして使うときに、デフォルトのロガーのパスを設定しないようにしま"
+"した。"
+
+# 04e7aff17907450b9573442a2faa675e
+msgid ""
+"It's backward incompatible change. But it will not effect to many users."
+msgstr ""
+"これは後方互換性のない変更ですが、ほとんどのユーザーには影響がありません。"
+
+# c78209fbbb344b55bf86707372653555
+msgid ""
+"Server use (groonga command, Mroonga, PGroonga and so on) users can get log "
+"by default. In server use, developers set up log in their software."
+msgstr ""
+"サーバーとして使うとき（groongaコマンドやMroonga、PGroongaなど）は、開発者が"
+"それらのソフトウェアでログを設定するため、ユーザーはデフォルトでログを取得で"
+"きます。"
+
+# 4daf36678fcc45ca91b4e6d5506f836d
+msgid ""
+"Most library use (Rroonga, groonga-gobject and so on) users couldn't get log "
+"by default with earlier versions. The default log path is system path such "
+"as /var/log/groonga/groonga.log. It's not writable for normal users."
+msgstr ""
+"ライブラリーとして使うとき（Rroongaやgroonga-gobjectなど）は、以前のバージョ"
+"ンでもデフォルトでログを取得できませんでした。デフォルトのログのパスは/var/"
+"log/groonga/groonga.logなどのシステムのパスでしたが、通常ユーザーはそのパスに"
+"対する書き込み権限がないためです。"
+
+# 8a5455a145514a16ae93594224da31e5
+msgid ""
+"[windows] Show error information when memory isn't enough on failing "
+"``CreateFileMapping()``."
+msgstr ""
+"[windows] メモリ不足などで ``CreateFileMapping()`` が失敗した場合、エラー情報"
+"を表示するようにしました。"
+
+msgid ""
+"[:doc:`/reference/commands/tokenize`] Updated example to show new "
+"\"force_prefix\" value. This value is added since 5.0.4."
+msgstr ""
+"[:doc:`/reference/commands/tokenize`] 例に \"force_prefix\" を表示するように"
+"しました。これは5.0.4で追加された値です。"
+
+# d745e701ec8e489389ef32e9c399f2e6
+msgid ""
+"[windows] Show error information when disk has any problem (disk full and so "
+"on) on failing ``FlushViewOfFile()``."
+msgstr ""
+"[windows] ディスクに問題があり（ディスクフルなど） ``FlushViewOfFile()``　が"
+"失敗した場合、エラー情報を表示するようにしました。"
+
+msgid "[API] Added :c:func:`grn_obj_flush()`."
+msgstr "[API] :c:func:`grn_obj_flush()`　を追加しました。"
+
+msgid "[API] Added :c:func:`grn_obj_flush_recursive()`."
+msgstr "[API] :c:func:`grn_obj_flush_recursive()`　を追加しました。"
+
+# 94b53a70f24c4fe9994e9682a384bbf3
+msgid ""
+"[:doc:`/reference/commands/io_flush`] Added. It flushes memory mapped data "
+"to disk. Usually memory data automatically flush by an OS, but you can "
+"explicitly flush with this command."
+msgstr ""
+"[:doc:`/reference/commands/io_flush`] 追加しました。メモリーにマップされた"
+"データをディスクに書き込む（フラッシュする）コマンドです。通常、フラッシュは"
+"OSが自動で行いますが、このコマンドを使えば明示的にフラッシュすることができま"
+"す。"
+
+# 03f0903cabe04a40875cdeb0e90db3f7
+msgid "[mruby] Binded ``grn_obj_remove()`` to Object#remove."
+msgstr "[mruby] ``grn_obj_remove()`` をObject#removeにバインドしました。"
+
+# 46fb5154ade24853aba6d9c1c9f4e873
+msgid ""
+"[mruby] Binded ``grn_table_delete()`` and ``grn_table_delete_by_id()`` to "
+"Table#delete."
+msgstr ""
+"[mruby] ``grn_table_delete()`` と ``grn_table_delete_by_id()`` をTable#delete"
+"にバインドしました。"
+
+msgid "[:doc:`/reference/commands/logical_table_remove`] Added."
+msgstr "[:doc:`/reference/commands/logical_table_remove`] 追加しました。"
+
+msgid ""
+"[:doc:`/reference/commands/logical_select`] Added. ``--filter`` is only "
+"supported for now."
+msgstr ""
+"[:doc:`/reference/commands/logical_select`] 追加しました。現在は ``--"
+"filter`` のみサポートされています。"
+
+# 6c89da58953343f3abffdf85cd9a540a
+msgid ""
+"[experimental] Added grn_egn. It's a compatible faster query engine. It's "
+"enabled if ``GRN_WITH_EGN`` macro is defined at compiling. If enabled, It's "
+"used when select is invoked with ``--filter`` starting with ``?``."
+msgstr ""
+"[実験的] grn_egnを追加しました。これは互換性のあるより高速なクエリエンジンで"
+"す。コンパイル時に ``GRN_WITH_EGN`` マクロが定義されている場合に有効になりま"
+"す。有効の場合、selectコマンドが ``?`` で始まる ``--filter`` と一緒に実行され"
+"た場合にgrn_egnが使用されます。"
+
+# 7a45381fe3d24be2a1fdf955701e7063
+msgid "[cmake] Supported embedded MeCab tokenizer."
+msgstr "[cmake] MeCabトークナイザーの組み込みをサポートしました。"
+
+# c4c66d7d01b74be39d9bb9e0ec541139
+msgid ""
+"[:doc:`/reference/commands/logical_count`] Supported month and day mixed "
+"shards. In the same month, month shard must have earlier records rather than "
+"day shards in the same month. For example::"
+msgstr ""
+"[:doc:`/reference/commands/logical_count`] 月次と日次が混在するケースをサポー"
+"トしました。同じ月内では、日次に切り替わる前のレコードが月次として扱われま"
+"す。例::"
+
+msgid "Fixes"
+msgstr "修正"
+
+# c874f9c2690242f99a9dc4448f6c92ef
+msgid ""
+"Fixed wrong macro to include netinet/in.h. [GitHub#348] [Reported by OBATA "
+"Akio]"
+msgstr ""
+"netinet/in.hインクルード時の不正なマクロを修正しました。 [GitHub#348] [おばた"
+"さんが報告]"
+
+msgid ""
+"[rpm][:doc:`/reference/executables/groonga-httpd`] Fixed failing restart. "
+"[GitHub#351] [Patch by jacob16bit]"
+msgstr ""
+"[rpm][:doc:`/reference/executables/groonga-httpd`] 再起動が失敗する不具合を修"
+"正しました。 [GitHub#351] [jacob16bitさんがパッチ提供]"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "OBATA Akio"
+msgstr "おばたさん"
+
+# bc06b2a10b50407aafb329efc65b96b7
+msgid "jacob16bit"
+msgstr "jacob16bitさん"
+
+msgid "Release 5.0.4 - 2015-05-29"
+msgstr "5.0.4リリース - 2015-05-29"
 
 # 8056905d9faf41819fea3aae0fbf62bc
 msgid ""
@@ -147,9 +305,6 @@ msgstr ""
 "るようにしました。空白文字にはいわゆる全角スペース（Unicodeでいうと ``U+3000 "
 "IDEOGRAPHIC SPACE`` ）も含みます。 [TomyGXさんが提案]"
 
-msgid "Fixes"
-msgstr "修正"
-
 # 8ba791566f8b460a8723fc27bb6f580a
 msgid ""
 "Fixed a crash bug when empty key is specified for ``drilldown[label].keys``."
@@ -245,9 +400,6 @@ msgstr ""
 "[:doc:`/reference/tokenizers`] [TokenRegexp] クエリに空白として扱われる文字が"
 "含まれている場合に正しく検索できない不具合を修正しました。典型的な例は改行 "
 "(\"\\\\n\")が含まれている場合です。"
-
-msgid "Thanks"
-msgstr "感謝"
 
 # 7c637f45d0804be689ffe3a814731b86
 msgid "Hiroaki Nakamura"
@@ -2128,9 +2280,6 @@ msgid ""
 msgstr ""
 "レコード削除時に他のレコードのデータを削除してしまう可能性があるという問題を"
 "修正。"
-
-msgid "OBATA Akio"
-msgstr "おばたさん"
 
 msgid "Daiki Ueno"
 msgstr "うえのさん"
