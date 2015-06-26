@@ -3718,6 +3718,19 @@ grn_ii_expire(grn_ctx *ctx, grn_ii *ii)
   grn_io_expire(ctx, ii->chunk, 0, 1000000);
 }
 
+grn_rc
+grn_ii_flush(grn_ctx *ctx, grn_ii *ii)
+{
+  grn_rc rc;
+
+  rc = grn_io_flush(ctx, ii->seg);
+  if (rc == GRN_SUCCESS) {
+    rc = grn_io_flush(ctx, ii->chunk);
+  }
+
+  return rc;
+}
+
 #define BIT11_01(x) ((x >> 1) & 0x7ff)
 #define BIT31_12(x) (x >> 12)
 

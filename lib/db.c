@@ -9752,6 +9752,9 @@ grn_obj_flush(grn_ctx *ctx, grn_obj *obj)
   case GRN_TABLE_DAT_KEY :
     rc = grn_dat_flush(ctx, (grn_dat *)obj);
     break;
+  case GRN_COLUMN_INDEX :
+    rc = grn_ii_flush(ctx, (grn_ii *)obj);
+    break;
   default :
     rc = grn_io_flush(ctx, grn_obj_io(obj));
     break;
