@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-06-16 18:38+0900\n"
+"PO-Revision-Date: 2015-06-26 16:18+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 1.6.10\n"
+"X-Generator: Poedit 1.7.7\n"
 "X-POOTLE-MTIME: 1411061943.000000\n"
 
 msgid "Execution example::"
@@ -4511,6 +4511,26 @@ msgid ""
 "ます。output_type指定は無視されます。"
 msgstr ""
 
+# 513d0650faee43ad838ce9acb520dc5c
+msgid "``io_flush``"
+msgstr ""
+
+msgid "This command is an experimental feature."
+msgstr "このコマンドは実験的な機能です。"
+
+msgid "``io_flush`` command has two parameters. ::"
+msgstr "``io_flush`` コマンドには2つの引数があります。::"
+
+msgid "This section describes parameters of ``io_flush``."
+msgstr "このセクションでは ``io_flush`` の引数について説明します。"
+
+msgid "``target_name``"
+msgstr ""
+
+# 8636bcea58dc461bbba52c71671defb6
+msgid "``recursive``"
+msgstr ""
+
 msgid "``load``"
 msgstr ""
 
@@ -4667,9 +4687,6 @@ msgstr ""
 msgid "Here is an example to clear the lock of ``Site.title`` column:"
 msgstr "以下は ``Site.title`` カラムのロックを解放する例です::"
 
-msgid "``target_name``"
-msgstr ""
-
 msgid "Specifies the name of table or column."
 msgstr "テーブル名またはカラム名を指定します。"
 
@@ -4775,9 +4792,6 @@ msgstr ""
 # dd508ab3d2e54c9ba32372396e2b1919
 msgid "``logical_count``"
 msgstr ""
-
-msgid "This command is an experimental feature."
-msgstr "このコマンドは実験的な機能です。"
 
 # c02e724befed451ca841c287a67d0686
 msgid ""
@@ -4975,6 +4989,30 @@ msgstr "このセクションでは ``logical_range_filter`` の引数につい�
 # 5e433758a04b489d8a2768292bc850c0
 msgid "``order``"
 msgstr ""
+
+# 26f6896f991341569e381e95aebf1f73
+msgid "``logical_select``"
+msgstr ""
+
+msgid "``logical_select`` command has seven parameters."
+msgstr "``logical_select`` コマンドには7つの引数があります。"
+
+msgid "This section describes parameters of ``logical_select``."
+msgstr "このセクションでは ``logical_select`` の引数について説明します。"
+
+# 371d355e15474f24919b8433eeeb214a
+msgid "TODO: add more description for RESULTS"
+msgstr ""
+
+# 8bc444a3ddb44917be34528f7dd90126
+msgid "``logical_table_remove``"
+msgstr ""
+
+msgid "``logical_table_remove`` command has six parameters."
+msgstr "``logical_table_remove`` コマンドには6つの引数があります。"
+
+msgid "This section describes parameters of ``logical_table_remove``."
+msgstr "このセクションでは ``logical_table_remove`` の引数について説明します。"
 
 msgid "``normalize``"
 msgstr ""
