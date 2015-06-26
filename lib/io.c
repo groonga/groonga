@@ -316,7 +316,8 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t seg
       grn_fileinfo_close(ctx, fis);
       if (grn_unlink(path) == -1) {
         GRN_LOG(ctx, GRN_LOG_ERROR,
-                "failed to grn_unlink() path on grn_io_create() error: <%s>",
+                "failed to grn_unlink() path on grn_io_create() error: "
+                "<%s>: <%s>",
                 path, grn_strerror(errno));
       }
     }
