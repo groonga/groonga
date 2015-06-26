@@ -45,7 +45,11 @@ Improvements
 * [cmake] Supported embedded MeCab tokenizer.
 * [:doc:`/reference/commands/logical_count`] Supported month and day mixed shards.
   In the same month, month shard must have earlier records rather than day
-  shards in the same month.
+  shards in the same month. For example::
+
+    XXX_201506   <- includes only 2015-06-01 and 2015-06-02 records
+    XXX_20150603 <- includes only 2015-06-03 records
+    XXX_20150604 <- includes only 2015-06-04 records
 
 Fixes
 ^^^^^
