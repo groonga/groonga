@@ -25,10 +25,12 @@ See doc/source/ directory or http://groonga.org/docs/.
 
 ## Build and Install
 
+```
  $ ./autogen.sh
  $ ./configure
  $ make
  $ sudo make install
+```
 
 ## Authors
 
