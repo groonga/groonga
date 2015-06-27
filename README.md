@@ -23,6 +23,13 @@ See doc/source/ directory or http://groonga.org/docs/.
   * Path: vendor/nginx-${VERSION}
   * License: BSD license. See vendor/nginx-${VERSION}/LICENSE for details.
 
+## Build and Install
+
+ $ ./autogen.sh
+ $ ./configure
+ $ make
+ $ sudo make install
+
 ## Authors
 
 ### Primary authors
