@@ -41,6 +41,7 @@
 # include "mrb/mrb_patricia_trie.h"
 # include "mrb/mrb_double_array_trie.h"
 # include "mrb/mrb_table_group_result.h"
+# include "mrb/mrb_table_sort_flags.h"
 # include "mrb/mrb_table_sort_key.h"
 # include "mrb/mrb_column.h"
 # include "mrb/mrb_fixed_size_column.h"
@@ -145,6 +146,7 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   grn_mrb_patricia_trie_init(ctx);
   grn_mrb_double_array_trie_init(ctx);
   grn_mrb_table_group_result_init(ctx);
+  grn_mrb_table_sort_flags_init(ctx);
   grn_mrb_table_sort_key_init(ctx);
   grn_mrb_column_init(ctx);
   grn_mrb_fixed_size_column_init(ctx);
