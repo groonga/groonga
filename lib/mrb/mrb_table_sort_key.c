@@ -78,6 +78,59 @@ mrb_grn_table_sort_key_close(mrb_state *mrb, mrb_value self)
   return mrb_nil_value();
 }
 
+static mrb_value
+mrb_grn_table_sort_key_set_key(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_table_sort_key *sort_key;
+  mrb_value mrb_key;
+
+  sort_key = DATA_PTR(self);
+  mrb_get_args(mrb, "o", &mrb_key);
+
+  if (sort_key->key) {
+    grn_obj_unlink(ctx, sort_key->key);
+  }
+
+  if (mrb_nil_p(mrb_key)) {
+    sort_key->key = NULL;
+  } else {
+    sort_key->key = DATA_PTR(mrb_key);
+  }
+
+  return mrb_nil_value();
+}
+
+static mrb_value
+mrb_grn_table_sort_key_set_flags(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_table_sort_key *sort_key;
+  mrb_int flags;
+
+  sort_key = DATA_PTR(self);
+  mrb_get_args(mrb, "i", &flags);
+
+  sort_key->flags = flags;
+
+  return mrb_nil_value();
+}
+
+static mrb_value
+mrb_grn_table_sort_key_set_offset(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_table_sort_key *sort_key;
+  mrb_int offset;
+
+  sort_key = DATA_PTR(self);
+  mrb_get_args(mrb, "i", &offset);
+
+  sort_key->offset = offset;
+
+  return mrb_nil_value();
+}
+
 void
 grn_mrb_table_sort_key_init(grn_ctx *ctx)
 {
@@ -95,5 +148,12 @@ grn_mrb_table_sort_key_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "close",
                     mrb_grn_table_sort_key_close, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, klass, "key=",
+                    mrb_grn_table_sort_key_set_key, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "flags=",
+                    mrb_grn_table_sort_key_set_flags, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "offset=",
+                    mrb_grn_table_sort_key_set_offset, MRB_ARGS_REQ(1));
 }
 #endif
