@@ -29,9 +29,25 @@
 #include "mrb_ctx.h"
 #include "mrb_table_sort_key.h"
 
+static void
+mrb_grn_table_sort_key_free(mrb_state *mrb, void *data)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_table_sort_key *sort_key = data;
+
+  if (!sort_key) {
+    return;
+  }
+
+  if (sort_key->key) {
+    grn_obj_unlink(ctx, sort_key->key);
+  }
+  mrb_free(mrb, sort_key);
+}
+
 static struct mrb_data_type mrb_grn_table_sort_key_type = {
   "Groonga::TableSortKey",
-  mrb_free
+  mrb_grn_table_sort_key_free
 };
 
 static mrb_value
@@ -55,7 +71,7 @@ mrb_grn_table_sort_key_close(mrb_state *mrb, mrb_value self)
 
   sort_key = DATA_PTR(self);
   if (sort_key) {
-    mrb_free(mrb, sort_key);
+    mrb_grn_table_sort_key_free(mrb, sort_key);
     DATA_PTR(self) = NULL;
   }
 
