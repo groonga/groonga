@@ -51,11 +51,11 @@ mrb_grn_table_sort_key_initialize(mrb_state *mrb, mrb_value self)
 static mrb_value
 mrb_grn_table_sort_key_close(mrb_state *mrb, mrb_value self)
 {
-  grn_table_sort_key *result;
+  grn_table_sort_key *sort_key;
 
-  result = DATA_PTR(self);
-  if (result) {
-    mrb_free(mrb, result);
+  sort_key = DATA_PTR(self);
+  if (sort_key) {
+    mrb_free(mrb, sort_key);
     DATA_PTR(self) = NULL;
   }
 
