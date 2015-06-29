@@ -10,6 +10,7 @@ module Groonga
                  "max",
                  "max_border",
                  "filter",
+                 "offset",
                  "limit",
                  "drilldown",
                  "drilldown_sortby",
@@ -52,15 +53,24 @@ module Groonga
                 writer.write_table_columns(first_result_set, output_columns)
               end
 
+              current_offset = context.offset
+              current_offset += n_hits if current_offset < 0
               current_limit = context.limit
               current_limit += n_hits + 1 if current_limit < 0
               options = {
+                :offset => current_offset,
                 :limit => current_limit,
               }
               result_sets.each do |result_set|
-                writer.write_table_records(result_set, output_columns, options)
+                if result_set.size > current_offset
+                  writer.write_table_records(result_set, output_columns, options)
+                end
+                if current_offset > 0
+                  current_offset = [current_offset - result_set.size, 0].max
+                end
                 current_limit -= result_set.size
                 break if current_limit <= 0
+                options[:offset] = current_offset
                 options[:limit] = current_limit
               end
             end
@@ -98,7 +108,7 @@ module Groonga
           @input = input
           @enumerator = LogicalEnumerator.new("logical_select", @input)
           @filter = @input[:filter]
-          @offset = 0
+          @offset = (@input[:offset] || 0).to_i
           @limit = (@input[:limit] || 10).to_i
 
           @result_sets = []
