@@ -22,10 +22,6 @@ module Groonga
                ])
 
       def run_body(input)
-        output_columns = input[:output_columns] || "_key, *"
-        drilldown_output_columns = input[:drilldown_output_columns]
-        drilldown_output_columns ||= "_key, _nsubrecs"
-
         enumerator = LogicalEnumerator.new("logical_select", input)
 
         context = ExecuteContext.new(input)
@@ -37,65 +33,79 @@ module Groonga
           drilldowns = context.drilldown.result_sets
           n_results += drilldowns.size
 
-          result_sets = context.result_sets
-          n_hits = 0
-          n_elements = 2 # for N hits and columns
-          result_sets.each do |result_set|
-            n_hits += result_set.size
-            n_elements += result_set.size
-          end
-
           writer.array("RESULT", n_results) do
-            writer.array("RESULTSET", n_elements) do
-              writer.array("NHITS", 1) do
-                writer.write(n_hits)
-              end
-              first_result_set = result_sets.first
-              if first_result_set
-                writer.write_table_columns(first_result_set, output_columns)
-              end
-
-              current_offset = context.offset
-              current_offset += n_hits if current_offset < 0
-              current_limit = context.limit
-              current_limit += n_hits + 1 if current_limit < 0
-              options = {
-                :offset => current_offset,
-                :limit => current_limit,
-              }
-              result_sets.each do |result_set|
-                if result_set.size > current_offset
-                  writer.write_table_records(result_set, output_columns, options)
-                end
-                if current_offset > 0
-                  current_offset = [current_offset - result_set.size, 0].max
-                end
-                current_limit -= result_set.size
-                break if current_limit <= 0
-                options[:offset] = current_offset
-                options[:limit] = current_limit
-              end
-            end
-
-            drilldown_options = {
-              :offset => context.drilldown.output_offset,
-              :limit  => context.drilldown.limit,
-            }
-            drilldowns.each do |drilldown|
-              n_drilldown_elements = 2 # for N hits and columns
-              n_drilldown_elements += drilldown.size
-              writer.array("RESULTSET", n_drilldown_elements) do
-                writer.array("NHITS", 1) do
-                  writer.write(drilldown.size)
-                end
-                writer.write_table_columns(drilldown, drilldown_output_columns)
-                writer.write_table_records(drilldown, drilldown_output_columns,
-                                           drilldown_options)
-              end
-            end
+            write_records(writer, context)
+            write_drilldowns(writer, context, drilldowns)
           end
         ensure
           context.close
+        end
+      end
+
+      private
+      def write_records(writer, context)
+        result_sets = context.result_sets
+
+        n_hits = 0
+        n_elements = 2 # for N hits and columns
+        result_sets.each do |result_set|
+          n_hits += result_set.size
+          n_elements += result_set.size
+        end
+
+        output_columns = context.output_columns
+
+        writer.array("RESULTSET", n_elements) do
+          writer.array("NHITS", 1) do
+            writer.write(n_hits)
+          end
+          first_result_set = result_sets.first
+          if first_result_set
+            writer.write_table_columns(first_result_set, output_columns)
+          end
+
+          current_offset = context.offset
+          current_offset += n_hits if current_offset < 0
+          current_limit = context.limit
+          current_limit += n_hits + 1 if current_limit < 0
+          options = {
+            :offset => current_offset,
+            :limit => current_limit,
+          }
+          result_sets.each do |result_set|
+            if result_set.size > current_offset
+              writer.write_table_records(result_set, output_columns, options)
+            end
+            if current_offset > 0
+              current_offset = [current_offset - result_set.size, 0].max
+            end
+            current_limit -= result_set.size
+            break if current_limit <= 0
+            options[:offset] = current_offset
+            options[:limit] = current_limit
+          end
+        end
+      end
+
+      def write_drilldowns(writer, context, drilldowns)
+        output_columns = context.drilldown.output_columns
+
+        options = {
+          :offset => context.drilldown.output_offset,
+          :limit  => context.drilldown.limit,
+        }
+
+        drilldowns.each do |drilldown|
+          n_elements = 2 # for N hits and columns
+          n_elements += drilldown.size
+          writer.array("RESULTSET", n_elements) do
+            writer.array("NHITS", 1) do
+              writer.write(drilldown.size)
+            end
+            writer.write_table_columns(drilldown, output_columns)
+            writer.write_table_records(drilldown, output_columns,
+                                       options)
+          end
         end
       end
 
@@ -116,6 +126,7 @@ module Groonga
         attr_reader :offset
         attr_reader :limit
         attr_reader :sort_keys
+        attr_reader :output_columns
         attr_reader :result_sets
         attr_reader :drilldown
         def initialize(input)
@@ -125,6 +136,7 @@ module Groonga
           @offset = (@input[:offset] || 0).to_i
           @limit = (@input[:limit] || 10).to_i
           @sort_keys = parse_keys(@input[:sortby])
+          @output_columns = @input[:output_columns] || "_key, *"
 
           @result_sets = []
 
@@ -147,6 +159,7 @@ module Groonga
         attr_reader :offset
         attr_reader :limit
         attr_reader :sort_keys
+        attr_reader :output_columns
         attr_reader :output_offset
         attr_reader :result_sets
         attr_reader :unsorted_result_sets
@@ -156,6 +169,8 @@ module Groonga
           @offset = (@input[:drilldown_offset] || 0).to_i
           @limit = (@input[:drilldown_limit] || 10).to_i
           @sort_keys = parse_keys(@input[:drilldown_sortby])
+          @output_columns = @input[:drilldown_output_columns]
+          @output_columns ||= "_key, _nsubrecs"
 
           if @sort_keys.empty?
             @output_offset = @offset
