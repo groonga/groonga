@@ -56,7 +56,9 @@ module Groonga
               end
             end
 
-            drilldown_options = {}
+            drilldown_options = {
+              :offset => context.drilldown.offset,
+            }
             drilldowns.each do |drilldown|
               n_drilldown_elements = 2 # for N hits and columns
               n_drilldown_elements += drilldown.size
@@ -111,7 +113,7 @@ module Groonga
         def initialize(input)
           @input = input
           @keys = parse_keys(input[:drilldown])
-          @offset = input[:drilldown_offset] || 0
+          @offset = (input[:drilldown_offset] || 0).to_i
           @limit = input[:drilldown_limit] || 10
 
           @result_sets = []
