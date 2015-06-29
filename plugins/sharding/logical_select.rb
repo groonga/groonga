@@ -10,6 +10,7 @@ module Groonga
                  "max",
                  "max_border",
                  "filter",
+                 "output_columns",
                  "offset",
                  "limit",
                  "drilldown",
