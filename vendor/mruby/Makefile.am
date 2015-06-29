@@ -3,10 +3,11 @@ EXTRA_DIST =					\
 	mruby_build.rb				\
 	mruby_build.timestamp
 
-DEFAULT_INCLUDES =				\
-	-I$(srcdir)/../mruby-source/include	\
-	-I$(srcdir)/../mruby-source/src		\
-	-Imruby-io/include			\
+DEFAULT_INCLUDES =						\
+	-I$(srcdir)/../mruby-source/include			\
+	-I$(srcdir)/../mruby-source/src				\
+	-I$(srcdir)/../mruby-source/mrbgems/mruby-compiler/core	\
+	-Imruby-io/include					\
 	-I$(srcdir)/mruby-io/include
 
 CFLAGS += $(NO_FLOAT_EQUAL_CFLAGS)

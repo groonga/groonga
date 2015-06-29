@@ -28,7 +28,8 @@ end
 
 FileUtils.touch(timestamp_file)
 
-FileUtils.cp("#{mruby_build_dir}/host/src/y.tab.c", "parse.c")
+FileUtils.cp("#{mruby_build_dir}/host/mrbgems/mruby-compiler/core/y.tab.c",
+             "parse.c")
 FileUtils.cp("#{mruby_build_dir}/host/mrblib/mrblib.c", "./")
 
 File.open("mrbgems_init.c", "w") do |mrbgems_init|
