@@ -152,10 +152,10 @@ module Groonga
         attr_reader :unsorted_result_sets
         def initialize(input)
           @input = input
-          @keys = parse_keys(input[:drilldown])
-          @offset = (input[:drilldown_offset] || 0).to_i
-          @limit = (input[:drilldown_limit] || 10).to_i
-          @sort_keys = parse_keys(input[:drilldown_sortby])
+          @keys = parse_keys(@input[:drilldown])
+          @offset = (@input[:drilldown_offset] || 0).to_i
+          @limit = (@input[:drilldown_limit] || 10).to_i
+          @sort_keys = parse_keys(@input[:drilldown_sortby])
 
           if @sort_keys.empty?
             @output_offset = @offset
