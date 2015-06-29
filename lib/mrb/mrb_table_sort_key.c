@@ -104,7 +104,6 @@ mrb_grn_table_sort_key_set_key(mrb_state *mrb, mrb_value self)
 static mrb_value
 mrb_grn_table_sort_key_set_flags(mrb_state *mrb, mrb_value self)
 {
-  grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_table_sort_key *sort_key;
   mrb_int flags;
 
@@ -119,7 +118,6 @@ mrb_grn_table_sort_key_set_flags(mrb_state *mrb, mrb_value self)
 static mrb_value
 mrb_grn_table_sort_key_set_offset(mrb_state *mrb, mrb_value self)
 {
-  grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_table_sort_key *sort_key;
   mrb_int offset;
 
