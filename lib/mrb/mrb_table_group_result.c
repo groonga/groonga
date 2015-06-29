@@ -27,6 +27,8 @@
 #include <mruby/string.h>
 
 #include "mrb_ctx.h"
+#include "mrb_converter.h"
+#include "mrb_operator.h"
 #include "mrb_table_group_result.h"
 
 static void
@@ -81,6 +83,128 @@ mrb_grn_table_group_result_close(mrb_state *mrb, mrb_value self)
   return mrb_nil_value();
 }
 
+static mrb_value
+mrb_grn_table_group_result_get_table(mrb_state *mrb, mrb_value self)
+{
+  grn_table_group_result *result;
+
+  result = DATA_PTR(self);
+
+  return grn_mrb_value_from_grn_obj(mrb, result->table);
+}
+
+static mrb_value
+mrb_grn_table_group_result_set_table(mrb_state *mrb, mrb_value self)
+{
+  grn_table_group_result *result;
+  mrb_value mrb_table;
+
+  result = DATA_PTR(self);
+  mrb_get_args(mrb, "o", &mrb_table);
+
+  result->table = DATA_PTR(mrb_table);
+
+  return mrb_nil_value();
+}
+
+static mrb_value
+mrb_grn_table_group_result_set_key_begin(mrb_state *mrb, mrb_value self)
+{
+  grn_table_group_result *result;
+  mrb_int key_begin;
+
+  result = DATA_PTR(self);
+  mrb_get_args(mrb, "i", &key_begin);
+
+  result->key_begin = key_begin;
+
+  return mrb_nil_value();
+}
+
+static mrb_value
+mrb_grn_table_group_result_set_key_end(mrb_state *mrb, mrb_value self)
+{
+  grn_table_group_result *result;
+  mrb_int key_end;
+
+  result = DATA_PTR(self);
+  mrb_get_args(mrb, "i", &key_end);
+
+  result->key_end = key_end;
+
+  return mrb_nil_value();
+}
+
+static mrb_value
+mrb_grn_table_group_result_set_limit(mrb_state *mrb, mrb_value self)
+{
+  grn_table_group_result *result;
+  mrb_int limit;
+
+  result = DATA_PTR(self);
+  mrb_get_args(mrb, "i", &limit);
+
+  result->limit = limit;
+
+  return mrb_nil_value();
+}
+
+static mrb_value
+mrb_grn_table_group_result_set_flags(mrb_state *mrb, mrb_value self)
+{
+  grn_table_group_result *result;
+  mrb_int flags;
+
+  result = DATA_PTR(self);
+  mrb_get_args(mrb, "i", &flags);
+
+  result->flags = flags;
+
+  return mrb_nil_value();
+}
+
+static mrb_value
+mrb_grn_table_group_result_set_operator(mrb_state *mrb, mrb_value self)
+{
+  grn_table_group_result *result;
+  mrb_value mrb_operator;
+
+  result = DATA_PTR(self);
+  mrb_get_args(mrb, "o", &mrb_operator);
+
+  result->op = grn_mrb_value_to_operator(mrb, mrb_operator);
+
+  return mrb_nil_value();
+}
+
+static mrb_value
+mrb_grn_table_group_result_set_max_n_subrecs(mrb_state *mrb, mrb_value self)
+{
+  grn_table_group_result *result;
+  mrb_int max_n_subrecs;
+
+  result = DATA_PTR(self);
+  mrb_get_args(mrb, "i", &max_n_subrecs);
+
+  result->max_n_subrecs = max_n_subrecs;
+
+  return mrb_nil_value();
+}
+
+static mrb_value
+mrb_grn_table_group_result_set_calc_target(mrb_state *mrb, mrb_value self)
+{
+  grn_table_group_result *result;
+  mrb_value mrb_calc_target;
+
+  result = DATA_PTR(self);
+  mrb_get_args(mrb, "o", &mrb_calc_target);
+
+  result->calc_target = DATA_PTR(mrb_calc_target);
+
+  return mrb_nil_value();
+}
+
 void
 grn_mrb_table_group_result_init(grn_ctx *ctx)
 {
@@ -98,5 +222,25 @@ grn_mrb_table_group_result_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "close",
                     mrb_grn_table_group_result_close, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, klass, "table",
+                    mrb_grn_table_group_result_get_table, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "table=",
+                    mrb_grn_table_group_result_set_table, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "key_begin=",
+                    mrb_grn_table_group_result_set_key_begin, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "key_end=",
+                    mrb_grn_table_group_result_set_key_end, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "limit=",
+                    mrb_grn_table_group_result_set_limit, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "flags=",
+                    mrb_grn_table_group_result_set_flags, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "operator=",
+                    mrb_grn_table_group_result_set_operator, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "max_n_subrecs=",
+                    mrb_grn_table_group_result_set_max_n_subrecs,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "calc_target=",
+                    mrb_grn_table_group_result_set_calc_target, MRB_ARGS_REQ(1));
 }
 #endif
