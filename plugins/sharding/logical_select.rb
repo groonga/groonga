@@ -124,7 +124,7 @@ module Groonga
           @filter = @input[:filter]
           @offset = (@input[:offset] || 0).to_i
           @limit = (@input[:limit] || 10).to_i
-          @sort_keys = parse_keys(input[:drilldown_sortby])
+          @sort_keys = parse_keys(@input[:sortby])
 
           @result_sets = []
 
