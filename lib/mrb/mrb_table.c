@@ -192,6 +192,38 @@ mrb_grn_table_sort_raw(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_table_group_raw(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *table;
+  mrb_value mrb_keys;
+  grn_table_sort_key *keys;
+  int i, n_keys;
+  mrb_value mrb_result;
+  grn_table_group_result *result;
+
+  table = DATA_PTR(self);
+  mrb_get_args(mrb, "oo", &mrb_keys, &mrb_result);
+
+  mrb_keys = mrb_convert_type(mrb, mrb_keys,
+                              MRB_TT_ARRAY, "Array", "to_ary");
+
+  n_keys = RARRAY_LEN(mrb_keys);
+  keys = GRN_MALLOCN(grn_table_sort_key, n_keys);
+  for (i = 0; i < n_keys; i++) {
+    memcpy(&(keys[i]),
+           DATA_PTR(RARRAY_PTR(mrb_keys)[i]),
+           sizeof(grn_table_sort_key));
+  }
+  result = DATA_PTR(mrb_result);
+  grn_table_group(ctx, table, keys, n_keys, result, 1);
+  GRN_FREE(keys);
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_result;
+}
+
+static mrb_value
 mrb_grn_table_delete(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -291,6 +323,8 @@ grn_mrb_table_init(grn_ctx *ctx)
                     mrb_grn_table_select, MRB_ARGS_ARG(1, 1));
   mrb_define_method(mrb, klass, "sort_raw",
                     mrb_grn_table_sort_raw, MRB_ARGS_REQ(4));
+  mrb_define_method(mrb, klass, "group_raw",
+                    mrb_grn_table_group_raw, MRB_ARGS_REQ(2));
 
   mrb_define_method(mrb, klass, "delete",
                     mrb_grn_table_delete, MRB_ARGS_REQ(1));

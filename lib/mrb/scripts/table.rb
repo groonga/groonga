@@ -15,6 +15,12 @@ module Groonga
       end
     end
 
+    def group(keys, result)
+      ensure_sort_keys(keys) do |sort_keys|
+        group_raw(sort_keys, result)
+      end
+    end
+
     private
     def ensure_sort_keys(keys)
       if keys.is_a?(::Array) and keys.all? {|key| key.is_a?(TableSortKey)}
