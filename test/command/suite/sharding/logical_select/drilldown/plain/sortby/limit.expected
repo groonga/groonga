@@ -81,7 +81,7 @@ load --table Logs_20150205
 }
 ]
 [[0,0.0,0.0],4]
-logical_select Logs timestamp   --limit 0   --drilldown action   --drilldown_offset -1
+logical_select Logs timestamp   --limit 0   --drilldown action   --drilldown_sortby _nsubrecs   --drilldown_limit 1
 [
   [
     0,
@@ -110,7 +110,7 @@ logical_select Logs timestamp   --limit 0   --drilldown action   --drilldown_off
     ],
     [
       [
-        3
+        1
       ],
       [
         [
@@ -123,8 +123,8 @@ logical_select Logs timestamp   --limit 0   --drilldown action   --drilldown_off
         ]
       ],
       [
-        "Restart",
-        6
+        "Shutdown",
+        1
       ]
     ]
   ]

@@ -50,9 +50,17 @@ module Groonga
               if first_result_set
                 writer.write_table_columns(first_result_set, output_columns)
               end
-              options = {}
+
+              current_limit = context.limit
+              current_limit += n_hits + 1 if current_limit < 0
+              options = {
+                :limit => current_limit,
+              }
               result_sets.each do |result_set|
                 writer.write_table_records(result_set, output_columns, options)
+                current_limit -= result_set.size
+                break if current_limit <= 0
+                options[:limit] = current_limit
               end
             end
 
@@ -90,7 +98,7 @@ module Groonga
           @enumerator = LogicalEnumerator.new("logical_select", @input)
           @filter = @input[:filter]
           @offset = 0
-          @limit = 10
+          @limit = (@input[:limit] || 10).to_i
 
           @result_sets = []
 
