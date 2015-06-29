@@ -29,9 +29,28 @@
 #include "mrb_ctx.h"
 #include "mrb_table_group_result.h"
 
+static void
+mrb_grn_table_group_result_free(mrb_state *mrb, void *data)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_table_group_result *result = data;
+
+  if (!result) {
+    return;
+  }
+
+  if (result->calc_target) {
+    grn_obj_unlink(ctx, result->calc_target);
+  }
+  if (result->table) {
+    grn_obj_unlink(ctx, result->table);
+  }
+  mrb_free(mrb, result);
+}
+
 static struct mrb_data_type mrb_grn_table_group_result_type = {
   "Groonga::TableGroupResult",
-  mrb_free
+  mrb_grn_table_group_result_free
 };
 
 static mrb_value
@@ -55,7 +74,7 @@ mrb_grn_table_group_result_close(mrb_state *mrb, mrb_value self)
 
   result = DATA_PTR(self);
   if (result) {
-    mrb_free(mrb, result);
+    mrb_grn_table_group_result_free(mrb, result);
     DATA_PTR(self) = NULL;
   }
 
