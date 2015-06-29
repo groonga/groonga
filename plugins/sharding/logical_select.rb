@@ -57,7 +57,7 @@ module Groonga
             end
 
             drilldown_options = {
-              :offset => context.drilldown.offset,
+              :offset => context.drilldown.output_offset,
               :limit  => context.drilldown.limit,
             }
             drilldowns.each do |drilldown|
@@ -110,18 +110,32 @@ module Groonga
         attr_reader :keys
         attr_reader :offset
         attr_reader :limit
+        attr_reader :sort_keys
+        attr_reader :output_offset
         attr_reader :result_sets
+        attr_reader :unsorted_result_sets
         def initialize(input)
           @input = input
           @keys = parse_keys(input[:drilldown])
           @offset = (input[:drilldown_offset] || 0).to_i
           @limit = (input[:drilldown_limit] || 10).to_i
+          @sort_keys = parse_sort_keys(input[:drilldown_sortby])
+
+          if @sort_keys.empty?
+            @output_offset = @offset
+          else
+            @output_offset = 0
+          end
 
           @result_sets = []
+          @unsorted_result_sets = []
         end
 
         def close
           @result_sets.each do |result_set|
+            result_set.close
+          end
+          @unsorted_result_sets.each do |result_set|
             result_set.close
           end
         end
@@ -131,6 +145,12 @@ module Groonga
           return [] if raw_keys.nil?
 
           raw_keys.strip.split(/ *, */)
+        end
+
+        def parse_sort_keys(raw_sort_keys)
+          return [] if raw_sort_keys.nil?
+
+          raw_sort_keys.strip.split(/ *, */)
         end
       end
 
@@ -173,6 +193,10 @@ module Groonga
         def execute_drilldown
           drilldown = @context.drilldown
           group_result = TableGroupResult.new
+          sort_options = {
+            :offset => drilldown.offset,
+            :limit  => drilldown.limit,
+          }
           begin
             group_result.key_begin = 0
             group_result.key_end = 0
@@ -183,7 +207,13 @@ module Groonga
                 result_set.group([key], group_result)
               end
               result_set = group_result.table
-              drilldown.result_sets << result_set
+              if drilldown.sort_keys.empty?
+                drilldown.result_sets << result_set
+              else
+                drilldown.result_sets << result_set.sort(drilldown.sort_keys,
+                                                         sort_options)
+                drilldown.unsorted_result_sets << result_set
+              end
               group_result.table = nil
             end
           ensure

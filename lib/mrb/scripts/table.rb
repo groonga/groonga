@@ -70,6 +70,13 @@ module Groonga
         raise ArgumentError, message
       end
 
+      if key_name.start_with?("-")
+        key_name[0] = ""
+        order = :descending
+      elsif key_name.start_with?("+")
+        key_name[0] = ""
+      end
+
       sort_key.key = find_column(key_name)
       if order == :ascending
         sort_key.flags = Groonga::TableSortFlags::ASCENDING
