@@ -102,7 +102,11 @@ mrb_grn_table_group_result_set_table(mrb_state *mrb, mrb_value self)
   result = DATA_PTR(self);
   mrb_get_args(mrb, "o", &mrb_table);
 
-  result->table = DATA_PTR(mrb_table);
+  if (mrb_nil_p(mrb_table)) {
+    result->table = NULL;
+  } else {
+    result->table = DATA_PTR(mrb_table);
+  }
 
   return mrb_nil_value();
 }
