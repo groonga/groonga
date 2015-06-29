@@ -10,6 +10,7 @@ module Groonga
                  "max",
                  "max_border",
                  "filter",
+                 "limit",
                  "drilldown",
                  "drilldown_sortby",
                  "drilldown_output_columns",
