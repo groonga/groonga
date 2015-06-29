@@ -22,6 +22,8 @@ module Groonga
           executor = Executor.new(context)
           executor.execute
 
+          n_results = 1
+
           result_sets = context.result_sets
           n_hits = 0
           n_elements = 2 # for N hits and columns
@@ -30,17 +32,19 @@ module Groonga
             n_elements += result_set.size
           end
 
-          writer.array("RESULTSET", n_elements) do
-            writer.array("NHITS", 1) do
-              writer.write(n_hits)
-            end
-            first_result_set = result_sets.first
-            if first_result_set
-              writer.write_table_columns(first_result_set, output_columns)
-            end
-            options = {}
-            result_sets.each do |result_set|
-              writer.write_table_records(result_set, output_columns, options)
+          writer.array("RESULT", n_results) do
+            writer.array("RESULTSET", n_elements) do
+              writer.array("NHITS", 1) do
+                writer.write(n_hits)
+              end
+              first_result_set = result_sets.first
+              if first_result_set
+                writer.write_table_columns(first_result_set, output_columns)
+              end
+              options = {}
+              result_sets.each do |result_set|
+                writer.write_table_records(result_set, output_columns, options)
+              end
             end
           end
         ensure
