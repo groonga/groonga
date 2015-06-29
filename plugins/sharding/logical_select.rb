@@ -10,6 +10,7 @@ module Groonga
                  "max",
                  "max_border",
                  "filter",
+                 "sortby",
                  "output_columns",
                  "offset",
                  "limit",
@@ -98,11 +99,23 @@ module Groonga
         end
       end
 
+      module KeysParsable
+        private
+        def parse_keys(raw_keys)
+          return [] if raw_keys.nil?
+
+          raw_keys.strip.split(/ *, */)
+        end
+      end
+
       class ExecuteContext
+        include KeysParsable
+
         attr_reader :enumerator
         attr_reader :filter
         attr_reader :offset
         attr_reader :limit
+        attr_reader :sort_keys
         attr_reader :result_sets
         attr_reader :drilldown
         def initialize(input)
@@ -111,6 +124,7 @@ module Groonga
           @filter = @input[:filter]
           @offset = (@input[:offset] || 0).to_i
           @limit = (@input[:limit] || 10).to_i
+          @sort_keys = parse_keys(input[:drilldown_sortby])
 
           @result_sets = []
 
@@ -127,6 +141,8 @@ module Groonga
       end
 
       class DrilldownExecuteContext
+        include KeysParsable
+
         attr_reader :keys
         attr_reader :offset
         attr_reader :limit
@@ -139,7 +155,7 @@ module Groonga
           @keys = parse_keys(input[:drilldown])
           @offset = (input[:drilldown_offset] || 0).to_i
           @limit = (input[:drilldown_limit] || 10).to_i
-          @sort_keys = parse_sort_keys(input[:drilldown_sortby])
+          @sort_keys = parse_keys(input[:drilldown_sortby])
 
           if @sort_keys.empty?
             @output_offset = @offset
@@ -158,19 +174,6 @@ module Groonga
           @unsorted_result_sets.each do |result_set|
             result_set.close
           end
-        end
-
-        private
-        def parse_keys(raw_keys)
-          return [] if raw_keys.nil?
-
-          raw_keys.strip.split(/ *, */)
-        end
-
-        def parse_sort_keys(raw_sort_keys)
-          return [] if raw_sort_keys.nil?
-
-          raw_sort_keys.strip.split(/ *, */)
         end
       end
 
