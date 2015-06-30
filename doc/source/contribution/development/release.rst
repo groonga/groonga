@@ -313,9 +313,12 @@ make build PALALLEL=yesコマンドを実行すると、ディストリビュー
 現在サポートされているのは以下の通りです。
 
 * Debian GNU/Linux
+
   * wheezy i386/amd64
   * jessie i386/amd64
+
 * Ubuntu
+
   * trusty i386/amd64
   * utopic i386/amd64
   * vivid i386/amd64
