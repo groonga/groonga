@@ -314,10 +314,11 @@ make build PALALLEL=yesコマンドを実行すると、ディストリビュー
 
 * Debian GNU/Linux
   * wheezy i386/amd64
+  * jessie i386/amd64
 * Ubuntu
-  * precise i386/amd64
   * trusty i386/amd64
   * utopic i386/amd64
+  * vivid i386/amd64
 
 正常にビルドが終了すると$GROONGA_CLONE_DIR/packages/apt/repositories配下に.debパッケージが生成されます。
 
