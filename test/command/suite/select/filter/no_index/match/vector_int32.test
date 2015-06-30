@@ -1,0 +1,9 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos numbers COLUMN_VECTOR Int32
+
+load --table Memos
+[
+{"numbers": [1, 2, 3]}
+]
+
+select Memos --filter 'numbers @ 2'
