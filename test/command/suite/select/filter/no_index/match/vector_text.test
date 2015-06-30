@@ -1,0 +1,9 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos tags COLUMN_VECTOR Text
+
+load --table Memos
+[
+{"tags": ["Groonga", "Rroonga", "Mroonga"]}
+]
+
+select Memos --filter 'tags @ "Rroonga"'
