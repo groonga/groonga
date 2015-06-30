@@ -319,6 +319,7 @@ make build PALALLEL=yesコマンドを実行すると、ディストリビュー
 
 * Ubuntu
 
+  * precise i386/amd64
   * trusty i386/amd64
   * utopic i386/amd64
   * vivid i386/amd64
