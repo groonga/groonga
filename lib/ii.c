@@ -8011,6 +8011,20 @@ grn_ii_buffer_parse(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
           grn_ii_buffer_tokenize(ctx, ii_buffer, rid, sid, 0,
                                  GRN_TEXT_VALUE(&rv), GRN_TEXT_LEN(&rv));
           break;
+        case GRN_UVECTOR :
+          {
+            unsigned int i, size;
+            unsigned int element_size;
+
+            size = grn_uvector_size(ctx, &rv);
+            element_size = grn_uvector_element_size(ctx, &rv);
+            for (i = 0; i < size; i++) {
+              grn_ii_buffer_tokenize(ctx, ii_buffer, rid, sid, 0,
+                                     GRN_BULK_HEAD(&rv) + (element_size * i),
+                                     element_size);
+            }
+          }
+          break;
         case GRN_VECTOR :
           if (rv.u.v.body) {
             int i;
