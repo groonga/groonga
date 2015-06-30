@@ -355,7 +355,7 @@ make build PALALLEL=yesコマンドを実行すると、ディストリビュー
 
 * centos-5 i386/x86_64
 * centos-6 i386/x86_64
-* fedora-17 i386/x86_64
+* centos-7 i386/x86_64
 
 ビルドが正常終了すると$GROONGA_CLONE_DIR/packages/yum/repositories配下にRPMパッケージが生成されます。
 
@@ -363,8 +363,8 @@ make build PALALLEL=yesコマンドを実行すると、ディストリビュー
 * repositories/yum/centos/5/x86_64/Packages
 * repositories/yum/centos/6/i386/Packages
 * repositories/yum/centos/6/x86_64/Packages
-* repositories/yum/fedora/17/i386/Packages
-* repositories/yum/fedora/17/x86_64/Packages
+* repositories/yum/centos/7/i386/Packages
+* repositories/yum/centos/7/x86_64/Packages
 
 リリース対象のRPMに署名を行うには以下のコマンドを実行します。::
 
