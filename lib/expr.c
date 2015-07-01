@@ -783,8 +783,9 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
           for (i = 0; i < nargs; i++) {
             int rest_n_codes = 1;
             while (rest_n_codes > 0) {
-              if (!code->value) {
-                rest_n_codes += code->nargs;
+              rest_n_codes += code->nargs;
+              if (code->value) {
+                rest_n_codes--;
               }
               rest_n_codes--;
               code--;
