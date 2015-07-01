@@ -1275,7 +1275,10 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
 }
 
 #define PUSH1(v) do {\
-  if (EXPRVP(v)) { vp++; }\
+  if (EXPRVP(v)) {\
+    vp++;\
+    if (vp - e->values > e->values_tail) { e->values_tail = vp - e->values; }\
+  }\
   s1 = s0;\
   *sp++ = s0 = v;\
 } while (0)
@@ -1302,6 +1305,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   } else {\
     if (sp < s_ + 1) { ERR(GRN_INVALID_ARGUMENT, "stack underflow"); goto exit; }\
     sp[-1] = s0 = value = vp++;\
+    if (vp - e->values > e->values_tail) { e->values_tail = vp - e->values; }\
     s0->header.impl_flags |= GRN_OBJ_EXPRVALUE;\
   }\
 } while (0)
@@ -1315,6 +1319,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   if (sp < s_ + 1) { ERR(GRN_INVALID_ARGUMENT, "stack underflow"); goto exit; }\
   s1 = sp[-2];\
   sp[-1] = s0 = value = vp++;\
+  if (vp - e->values > e->values_tail) { e->values_tail = vp - e->values; }\
   s0->header.impl_flags |= GRN_OBJ_EXPRVALUE;\
 } while (0)
 
