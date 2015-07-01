@@ -3074,16 +3074,16 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_GEO_DISTANCE1 :
         {
-          grn_obj *e;
+          grn_obj *value;
           double lng1, lat1, lng2, lat2, x, y, d;
-          POP1(e);
-          lng1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1(e);
-          lat1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1(e);
-          lng2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1ALLOC1(e, res);
-          lat2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1(value);
+          lng1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+          POP1(value);
+          lat1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+          POP1(value);
+          lng2 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+          POP1ALLOC1(value, res);
+          lat2 = GEO_INT2RAD(GRN_INT32_VALUE(value));
           x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
           y = (lat2 - lat1);
           d = sqrt((x * x) + (y * y)) * GEO_RADIOUS;
@@ -3095,16 +3095,16 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_GEO_DISTANCE2 :
         {
-          grn_obj *e;
+          grn_obj *value;
           double lng1, lat1, lng2, lat2, x, y, d;
-          POP1(e);
-          lng1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1(e);
-          lat1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1(e);
-          lng2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1ALLOC1(e, res);
-          lat2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1(value);
+          lng1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+          POP1(value);
+          lat1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+          POP1(value);
+          lng2 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+          POP1ALLOC1(value, res);
+          lat2 = GEO_INT2RAD(GRN_INT32_VALUE(value));
           x = sin(fabs(lng2 - lng1) * 0.5);
           y = sin(fabs(lat2 - lat1) * 0.5);
           d = asin(sqrt((y * y) + cos(lat1) * cos(lat2) * x * x)) * 2 * GEO_RADIOUS;
@@ -3116,16 +3116,16 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_GEO_DISTANCE3 :
         {
-          grn_obj *e;
+          grn_obj *value;
           double lng1, lat1, lng2, lat2, p, q, m, n, x, y, d;
-          POP1(e);
-          lng1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1(e);
-          lat1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1(e);
-          lng2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1ALLOC1(e, res);
-          lat2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1(value);
+          lng1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+          POP1(value);
+          lat1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+          POP1(value);
+          lng2 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+          POP1ALLOC1(value, res);
+          lat2 = GEO_INT2RAD(GRN_INT32_VALUE(value));
           p = (lat1 + lat2) * 0.5;
           q = (1 - GEO_BES_C3 * sin(p) * sin(p));
           m = GEO_BES_C1 / sqrt(q * q * q);
@@ -3141,16 +3141,16 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_GEO_DISTANCE4 :
         {
-          grn_obj *e;
+          grn_obj *value;
           double lng1, lat1, lng2, lat2, p, q, m, n, x, y, d;
-          POP1(e);
-          lng1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1(e);
-          lat1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1(e);
-          lng2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1ALLOC1(e, res);
-          lat2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1(value);
+          lng1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+          POP1(value);
+          lat1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+          POP1(value);
+          lng2 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+          POP1ALLOC1(value, res);
+          lat2 = GEO_INT2RAD(GRN_INT32_VALUE(value));
           p = (lat1 + lat2) * 0.5;
           q = (1 - GEO_GRS_C3 * sin(p) * sin(p));
           m = GEO_GRS_C1 / sqrt(q * q * q);
@@ -3167,26 +3167,26 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_GEO_WITHINP5 :
         {
           int r;
-          grn_obj *e;
+          grn_obj *value;
           double lng0, lat0, lng1, lat1, x, y, d;
-          POP1(e);
-          lng0 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1(e);
-          lat0 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1(e);
-          lng1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1(e);
-          lat1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1ALLOC1(e, res);
+          POP1(value);
+          lng0 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+          POP1(value);
+          lat0 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+          POP1(value);
+          lng1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+          POP1(value);
+          lat1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+          POP1ALLOC1(value, res);
           x = (lng1 - lng0) * cos((lat0 + lat1) * 0.5);
           y = (lat1 - lat0);
           d = sqrt((x * x) + (y * y)) * GEO_RADIOUS;
-          switch (e->header.domain) {
+          switch (value->header.domain) {
           case GRN_DB_INT32 :
-            r = d <= GRN_INT32_VALUE(e);
+            r = d <= GRN_INT32_VALUE(value);
             break;
           case GRN_DB_FLOAT :
-            r = d <= GRN_FLOAT_VALUE(e);
+            r = d <= GRN_FLOAT_VALUE(value);
             break;
           default :
             r = 0;
@@ -3201,20 +3201,20 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_GEO_WITHINP6 :
         {
           int r;
-          grn_obj *e;
+          grn_obj *value;
           double lng0, lat0, lng1, lat1, lng2, lat2, x, y, d;
-          POP1(e);
-          lng0 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1(e);
-          lat0 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1(e);
-          lng1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1(e);
-          lat1 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1(e);
-          lng2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
-          POP1ALLOC1(e, res);
-          lat2 = GEO_INT2RAD(GRN_INT32_VALUE(e));
+          POP1(value);
+          lng0 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+          POP1(value);
+          lat0 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+          POP1(value);
+          lng1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+          POP1(value);
+          lat1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+          POP1(value);
+          lng2 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+          POP1ALLOC1(value, res);
+          lat2 = GEO_INT2RAD(GRN_INT32_VALUE(value));
           x = (lng1 - lng0) * cos((lat0 + lat1) * 0.5);
           y = (lat1 - lat0);
           d = (x * x) + (y * y);
@@ -3230,24 +3230,24 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_GEO_WITHINP8 :
         {
           int r;
-          grn_obj *e;
+          grn_obj *value;
           int64_t ln0, la0, ln1, la1, ln2, la2, ln3, la3;
-          POP1(e);
-          ln0 = GRN_INT32_VALUE(e);
-          POP1(e);
-          la0 = GRN_INT32_VALUE(e);
-          POP1(e);
-          ln1 = GRN_INT32_VALUE(e);
-          POP1(e);
-          la1 = GRN_INT32_VALUE(e);
-          POP1(e);
-          ln2 = GRN_INT32_VALUE(e);
-          POP1(e);
-          la2 = GRN_INT32_VALUE(e);
-          POP1(e);
-          ln3 = GRN_INT32_VALUE(e);
-          POP1ALLOC1(e, res);
-          la3 = GRN_INT32_VALUE(e);
+          POP1(value);
+          ln0 = GRN_INT32_VALUE(value);
+          POP1(value);
+          la0 = GRN_INT32_VALUE(value);
+          POP1(value);
+          ln1 = GRN_INT32_VALUE(value);
+          POP1(value);
+          la1 = GRN_INT32_VALUE(value);
+          POP1(value);
+          ln2 = GRN_INT32_VALUE(value);
+          POP1(value);
+          la2 = GRN_INT32_VALUE(value);
+          POP1(value);
+          ln3 = GRN_INT32_VALUE(value);
+          POP1ALLOC1(value, res);
+          la3 = GRN_INT32_VALUE(value);
           r = ((ln2 <= ln0) && (ln0 <= ln3) && (la2 <= la0) && (la0 <= la3));
           GRN_INT32_SET(ctx, res, r);
           res->header.type = GRN_BULK;
