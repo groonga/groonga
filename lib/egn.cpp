@@ -1651,17 +1651,17 @@ class ExpressionToken {
 ExpressionTokenType ExpressionToken::get_operator_token_type(
   OperatorType operator_type) {
   switch (operator_type) {
-    case GRN_OP_NOT: {
+    case GRN_EGN_LOGICAL_NOT: {
       return UNARY_OPERATOR_TOKEN;
     }
-    case GRN_OP_AND:
-    case GRN_OP_OR:
-    case GRN_OP_EQUAL:
-    case GRN_OP_NOT_EQUAL:
-    case GRN_OP_LESS:
-    case GRN_OP_LESS_EQUAL:
-    case GRN_OP_GREATER:
-    case GRN_OP_GREATER_EQUAL: {
+    case GRN_EGN_LOGICAL_AND:
+    case GRN_EGN_LOGICAL_OR:
+    case GRN_EGN_EQUAL:
+    case GRN_EGN_NOT_EQUAL:
+    case GRN_EGN_LESS:
+    case GRN_EGN_LESS_EQUAL:
+    case GRN_EGN_GREATER:
+    case GRN_EGN_GREATER_EQUAL: {
       return BINARY_OPERATOR_TOKEN;
     }
     default: {
@@ -1675,7 +1675,7 @@ ExpressionTokenType ExpressionToken::get_operator_token_type(
 int ExpressionToken::get_operator_priority(
   OperatorType operator_type) {
   switch (operator_type) {
-    case GRN_OP_NOT: {
+    case GRN_EGN_LOGICAL_NOT: {
 //    case GRN_OP_BITWISE_NOT:
 //    case GRN_OP_POSITIVE:
 //    case GRN_OP_NEGATIVE:
@@ -1683,20 +1683,20 @@ int ExpressionToken::get_operator_priority(
 //    case GRN_OP_TO_FLOAT: {
       return 3;
     }
-    case GRN_OP_AND: {
+    case GRN_EGN_LOGICAL_AND: {
       return 13;
     }
-    case GRN_OP_OR: {
+    case GRN_EGN_LOGICAL_OR: {
       return 14;
     }
-    case GRN_OP_EQUAL:
-    case GRN_OP_NOT_EQUAL: {
+    case GRN_EGN_EQUAL:
+    case GRN_EGN_NOT_EQUAL: {
       return 9;
     }
-    case GRN_OP_LESS:
-    case GRN_OP_LESS_EQUAL:
-    case GRN_OP_GREATER:
-    case GRN_OP_GREATER_EQUAL: {
+    case GRN_EGN_LESS:
+    case GRN_EGN_LESS_EQUAL:
+    case GRN_EGN_GREATER:
+    case GRN_EGN_GREATER_EQUAL: {
       return 8;
     }
 //    case GRN_OP_BITWISE_AND: {
@@ -1790,11 +1790,11 @@ grn_rc ExpressionParser::tokenize(const char *query, size_t query_size) {
     switch (rest[0]) {
       case '!': {
         if ((rest_size >= 2) && (rest[1] == '=')) {
-          tokens_.push_back(ExpressionToken("!=", GRN_OP_NOT_EQUAL));
+          tokens_.push_back(ExpressionToken("!=", GRN_EGN_NOT_EQUAL));
           rest += 2;
           rest_size -= 2;
         } else {
-          tokens_.push_back(ExpressionToken("!", GRN_OP_NOT));
+          tokens_.push_back(ExpressionToken("!", GRN_EGN_LOGICAL_NOT));
           ++rest;
           --rest_size;
         }
@@ -1807,7 +1807,7 @@ grn_rc ExpressionParser::tokenize(const char *query, size_t query_size) {
 //      }
       case '=': {
         if ((rest_size >= 2) && (rest[1] == '=')) {
-          tokens_.push_back(ExpressionToken("==", GRN_OP_EQUAL));
+          tokens_.push_back(ExpressionToken("==", GRN_EGN_EQUAL));
           rest += 2;
           rest_size -= 2;
         } else {
@@ -1817,11 +1817,11 @@ grn_rc ExpressionParser::tokenize(const char *query, size_t query_size) {
       }
       case '<': {
         if ((rest_size >= 2) && (rest[1] == '=')) {
-          tokens_.push_back(ExpressionToken("<=", GRN_OP_LESS_EQUAL));
+          tokens_.push_back(ExpressionToken("<=", GRN_EGN_LESS_EQUAL));
           rest += 2;
           rest_size -= 2;
         } else {
-          tokens_.push_back(ExpressionToken("<", GRN_OP_LESS));
+          tokens_.push_back(ExpressionToken("<", GRN_EGN_LESS));
           ++rest;
           --rest_size;
         }
@@ -1829,11 +1829,11 @@ grn_rc ExpressionParser::tokenize(const char *query, size_t query_size) {
       }
       case '>': {
         if ((rest_size >= 2) && (rest[1] == '=')) {
-          tokens_.push_back(ExpressionToken(">=", GRN_OP_GREATER_EQUAL));
+          tokens_.push_back(ExpressionToken(">=", GRN_EGN_GREATER_EQUAL));
           rest += 2;
           rest_size -= 2;
         } else {
-          tokens_.push_back(ExpressionToken(">", GRN_OP_GREATER));
+          tokens_.push_back(ExpressionToken(">", GRN_EGN_GREATER));
           ++rest;
           --rest_size;
         }
@@ -1841,7 +1841,7 @@ grn_rc ExpressionParser::tokenize(const char *query, size_t query_size) {
       }
       case '&': {
         if ((rest_size >= 2) && (rest[1] == '&')) {
-          tokens_.push_back(ExpressionToken("&&", GRN_OP_AND));
+          tokens_.push_back(ExpressionToken("&&", GRN_EGN_LOGICAL_AND));
           rest += 2;
           rest_size -= 2;
         } else {
@@ -1854,7 +1854,7 @@ grn_rc ExpressionParser::tokenize(const char *query, size_t query_size) {
       }
       case '|': {
         if ((rest_size >= 2) && (rest[1] == '|')) {
-          tokens_.push_back(ExpressionToken("||", GRN_OP_OR));
+          tokens_.push_back(ExpressionToken("||", GRN_EGN_LOGICAL_OR));
           rest += 2;
           rest_size -= 2;
         } else {
@@ -2375,7 +2375,7 @@ grn_rc Expression::push_operator(OperatorType operator_type) {
   grn_rc rc = GRN_UNKNOWN_ERROR;
   ExpressionNode *node;
   switch (operator_type) {
-    case GRN_OP_NOT: {
+    case GRN_EGN_LOGICAL_NOT: {
       if (stack_.size() < 1) {
         return GRN_INVALID_FORMAT;
       }
@@ -2386,14 +2386,14 @@ grn_rc Expression::push_operator(OperatorType operator_type) {
       }
       break;
     }
-    case GRN_OP_AND:
-    case GRN_OP_OR:
-    case GRN_OP_EQUAL:
-    case GRN_OP_NOT_EQUAL:
-    case GRN_OP_LESS:
-    case GRN_OP_LESS_EQUAL:
-    case GRN_OP_GREATER:
-    case GRN_OP_GREATER_EQUAL: {
+    case GRN_EGN_LOGICAL_AND:
+    case GRN_EGN_LOGICAL_OR:
+    case GRN_EGN_EQUAL:
+    case GRN_EGN_NOT_EQUAL:
+    case GRN_EGN_LESS:
+    case GRN_EGN_LESS_EQUAL:
+    case GRN_EGN_GREATER:
+    case GRN_EGN_GREATER_EQUAL: {
       if (stack_.size() < 2) {
         return GRN_INVALID_FORMAT;
       }
@@ -2710,7 +2710,7 @@ grn_rc Expression::create_unary_node(OperatorType operator_type,
   ExpressionNode *arg, ExpressionNode **node) {
   grn_rc rc = GRN_SUCCESS;
   switch (operator_type) {
-    case GRN_OP_NOT: {
+    case GRN_EGN_LOGICAL_NOT: {
       if (arg->data_type() != GRN_DB_BOOL) {
         return GRN_UNKNOWN_ERROR;
       }
@@ -2727,21 +2727,21 @@ grn_rc Expression::create_unary_node(OperatorType operator_type,
 grn_rc Expression::create_binary_node(OperatorType operator_type,
   ExpressionNode *arg1, ExpressionNode *arg2, ExpressionNode **node) {
   switch (operator_type) {
-    case GRN_OP_AND: {
+    case GRN_EGN_LOGICAL_AND: {
       if ((arg1->data_type() != GRN_DB_BOOL) ||
           (arg1->data_type() != GRN_DB_BOOL)) {
         return GRN_INVALID_FORMAT;
       }
       return LogicalAndNode::open(arg1, arg2, node);
     }
-    case GRN_OP_OR: {
+    case GRN_EGN_LOGICAL_OR: {
       if ((arg1->data_type() != GRN_DB_BOOL) ||
           (arg1->data_type() != GRN_DB_BOOL)) {
         return GRN_INVALID_FORMAT;
       }
       return LogicalOrNode::open(arg1, arg2, node);
     }
-    case GRN_OP_EQUAL: {
+    case GRN_EGN_EQUAL: {
       if (arg1->data_type() != arg2->data_type()) {
         return GRN_INVALID_FORMAT;
       }
@@ -2769,7 +2769,7 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
         }
       }
     }
-    case GRN_OP_NOT_EQUAL: {
+    case GRN_EGN_NOT_EQUAL: {
       if (arg1->data_type() != arg2->data_type()) {
         return GRN_INVALID_FORMAT;
       }
@@ -2803,7 +2803,7 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
         }
       }
     }
-    case GRN_OP_LESS: {
+    case GRN_EGN_LESS: {
       if (arg1->data_type() != arg2->data_type()) {
         return GRN_INVALID_FORMAT;
       }
@@ -2825,7 +2825,7 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
         }
       }
     }
-    case GRN_OP_LESS_EQUAL: {
+    case GRN_EGN_LESS_EQUAL: {
       if (arg1->data_type() != arg2->data_type()) {
         return GRN_INVALID_FORMAT;
       }
@@ -2851,7 +2851,7 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
         }
       }
     }
-    case GRN_OP_GREATER: {
+    case GRN_EGN_GREATER: {
       if (arg1->data_type() != arg2->data_type()) {
         return GRN_INVALID_FORMAT;
       }
@@ -2873,7 +2873,7 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
         }
       }
     }
-    case GRN_OP_GREATER_EQUAL: {
+    case GRN_EGN_GREATER_EQUAL: {
       if (arg1->data_type() != arg2->data_type()) {
         return GRN_INVALID_FORMAT;
       }

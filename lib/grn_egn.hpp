@@ -279,7 +279,7 @@ class Expression {
   }
 
   grn_rc push_object(grn_obj *obj);
-  grn_rc push_operator(grn_operator operator_type);
+  grn_rc push_operator(OperatorType operator_type);
 
   grn_rc filter(Record *input, size_t input_size,
                 Record *output, size_t *output_size);

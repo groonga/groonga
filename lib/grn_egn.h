@@ -27,7 +27,19 @@ extern "C" {
 
 // Constant values.
 
-typedef grn_operator grn_egn_operator_type;
+typedef enum {
+  GRN_EGN_NOP,
+  GRN_EGN_LOGICAL_NOT,
+  GRN_EGN_LOGICAL_AND,
+  GRN_EGN_LOGICAL_OR,
+  GRN_EGN_EQUAL,
+  GRN_EGN_NOT_EQUAL,
+  GRN_EGN_LESS,
+  GRN_EGN_LESS_EQUAL,
+  GRN_EGN_GREATER,
+  GRN_EGN_GREATER_EQUAL
+} grn_egn_operator_type;
+
 typedef grn_builtin_type grn_egn_data_type;
 
 typedef enum {
