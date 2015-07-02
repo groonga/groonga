@@ -512,29 +512,33 @@ send_ready_notify(void)
 static void
 create_pid_file(void)
 {
-#ifndef WIN32
   FILE *pid_file = NULL;
-  pid_t pid;
 
   if (!pid_file_path) {
     return;
   }
 
   pid_file = fopen(pid_file_path, "w");
-  pid = getpid();
-  fprintf(pid_file, "%d\n", pid);
+  {
+#ifdef WIN32
+    DWORD pid;
+    pid = GetCurrentProcessId();
+    fprintf(pid_file, "%" GRN_FMT_DWORD "\n", pid);
+#else /* WIN32 */
+    pid_t pid;
+    pid = getpid();
+    fprintf(pid_file, "%d\n", pid);
+#endif /* WIN32 */
+  }
   fclose(pid_file);
-#endif
 }
 
 static void
 clean_pid_file(void)
 {
-#ifndef WIN32
   if (pid_file_path) {
-    unlink(pid_file_path);
+    grn_unlink(pid_file_path);
   }
-#endif
 }
 
 static int
