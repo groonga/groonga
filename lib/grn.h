@@ -447,7 +447,7 @@ typedef int grn_cond;
 # ifdef WIN64
 #  define GRN_FMT_SOCKET GRN_FMT_INT64U
 # else /* WIN64 */
-#  define GRN_FMT_SOCKET "u"
+#  define GRN_FMT_SOCKET GRN_FMT_INT32U
 # endif /* WIN64 */
 # define GRN_FMT_OFF64_T GRN_FMT_LLD
 #else /* WIN32 */
