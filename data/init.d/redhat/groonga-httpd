@@ -35,7 +35,8 @@ DAEMON_ARGS=""
 RETVAL=0
 
 start() {
-	echo -n "Starting $name: "
+	echo -n $"Starting $prog: "
+	[ -f /var/lock/subsys/$prog ] && passed && echo && exit 0
 	daemon $DAEMON_ARGS ${GROONGA_HTTPD} ${GROONGA_HTTPD_ARGS}
 	RETVAL=$?
 	echo
@@ -44,19 +45,15 @@ start() {
 }
 
 stop() {
-	echo -n "Shutting down $name: "
-	${GROONGA_HTTPD} -s stop
+	action $"Stopping $prog: " ${GROONGA_HTTPD} -s stop
 	RETVAL=$?
-	echo
 	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/$prog
 	return $RETVAL
 }
 
 restart() {
-	echo -n "Restarting $name: "
-	${GROONGA_HTTPD_RESTART}
+	action $"Reloading $prog: " ${GROONGA_HTTPD_RESTART}
 	RETVAL=$?
-	echo
 	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/$prog
 	return $RETVAL
 }
