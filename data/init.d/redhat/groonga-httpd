@@ -36,11 +36,15 @@ RETVAL=0
 
 start() {
 	echo -n $"Starting $prog: "
-	[ -f /var/lock/subsys/$prog ] && passed && echo && exit 0
-	daemon $DAEMON_ARGS ${GROONGA_HTTPD} ${GROONGA_HTTPD_ARGS}
-	RETVAL=$?
+	if [ -f /var/lock/subsys/$prog ]; then
+		passed
+		RETVAL=0
+	else
+		daemon $DAEMON_ARGS ${GROONGA_HTTPD} ${GROONGA_HTTPD_ARGS}
+		RETVAL=$?
+		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/$prog
+	fi
 	echo
-	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/$prog
 	return $RETVAL
 }
 
