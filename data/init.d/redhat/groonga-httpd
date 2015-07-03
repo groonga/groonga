@@ -49,10 +49,10 @@ stop() {
 	RETVAL=$?
 	if [ $RETVAL -eq 0 ]; then
 		rm -f /var/lock/subsys/$prog
-		echo_success
+		success
 		echo
 	else
-		echo_failure
+		failure
 		echo
 	fi
 	return $RETVAL
@@ -64,10 +64,10 @@ restart() {
 	RETVAL=$?
 	if [ $RETVAL -eq 0 ]; then
 		touch /var/lock/subsys/$prog
-		echo_success
+		success
 		echo
 	else
-		echo_failure
+		failure
 		echo
 	fi
 	return $RETVAL
