@@ -140,7 +140,7 @@ module Groonga
 
           @result_sets = []
 
-          @drilldown = DrilldownExecuteContext.new(@input)
+          @drilldown = PlainDrilldownExecuteContext.new(@input)
         end
 
         def close
@@ -152,7 +152,7 @@ module Groonga
         end
       end
 
-      class DrilldownExecuteContext
+      class PlainDrilldownExecuteContext
         include KeysParsable
 
         attr_reader :keys
