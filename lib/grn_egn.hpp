@@ -41,55 +41,6 @@ typedef grn_egn_id ID;
 typedef grn_egn_score Score;
 typedef grn_egn_record Record;
 
-//typedef grn_egn_bool Bool;
-//typedef grn_egn_int Int;
-//typedef grn_egn_float Float;
-//typedef grn_egn_time Time;
-//typedef grn_egn_text Text;
-//typedef grn_egn_geo_point GeoPoint;
-
-//inline bool operator==(const Text &lhs, const Text &rhs) {
-//  if (lhs.size != rhs.size) {
-//    return false;
-//  }
-//  return std::memcmp(lhs.ptr, rhs.ptr, lhs.size) == 0;
-//}
-//inline bool operator!=(const Text &lhs, const Text &rhs) {
-//  if (lhs.size != rhs.size) {
-//    return true;
-//  }
-//  return std::memcmp(lhs.ptr, rhs.ptr, lhs.size) != 0;
-//}
-//inline bool operator<(const Text &lhs, const Text &rhs) {
-//  size_t min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;
-//  int result = std::memcmp(lhs.ptr, rhs.ptr, min_size);
-//  if (result == 0) {
-//    return lhs.size < rhs.size;
-//  }
-//  return result < 0;
-//}
-//inline bool operator<=(const Text &lhs, const Text &rhs) {
-//  size_t min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;
-//  int result = std::memcmp(lhs.ptr, rhs.ptr, min_size);
-//  if (result == 0) {
-//    return lhs.size <= rhs.size;
-//  }
-//  return result <= 0;
-//}
-//inline bool operator>(const Text &lhs, const Text &rhs) {
-//  return rhs < lhs;
-//}
-//inline bool operator>=(const Text &lhs, const Text &rhs) {
-//  return rhs <= lhs;
-//}
-
-//inline bool operator==(const GeoPoint &lhs, const GeoPoint &rhs) {
-//  return (lhs.latitude == rhs.latitude) && (lhs.longitude == rhs.longitude);
-//}
-//inline bool operator!=(const GeoPoint &lhs, const GeoPoint &rhs) {
-//  return (lhs.latitude != rhs.latitude) || (lhs.longitude != rhs.longitude);
-//}
-
 struct Bool {
   typedef grn_egn_bool Raw;
   Raw raw;
