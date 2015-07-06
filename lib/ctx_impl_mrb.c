@@ -28,6 +28,7 @@
 # include "mrb/mrb_error.h"
 # include "mrb/mrb_id.h"
 # include "mrb/mrb_operator.h"
+# include "mrb/mrb_command_version.h"
 # include "mrb/mrb_ctx.h"
 # include "mrb/mrb_logger.h"
 # include "mrb/mrb_void.h"
@@ -135,6 +136,7 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   grn_mrb_error_init(ctx);
   grn_mrb_id_init(ctx);
   grn_mrb_operator_init(ctx);
+  grn_mrb_command_version_init(ctx);
   grn_mrb_ctx_init(ctx);
   grn_mrb_logger_init(ctx);
   grn_mrb_void_init(ctx);
