@@ -34,6 +34,16 @@ module Groonga
       logger.log_error(error)
     end
 
+    def with_command_version(version)
+      old_version = command_version
+      begin
+        self.command_version = version
+        yield
+      ensure
+        self.command_version = old_version
+      end
+    end
+
     private
     def set_error_raw(rc, error_level, message, backtrace)
       self.rc = rc.to_i
