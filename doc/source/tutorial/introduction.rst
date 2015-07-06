@@ -19,7 +19,7 @@ Form::
 
   groonga -n DB_PATH
 
-The `-n` option specifies to create a new database and DB_PATH specifies the path of the new database. Actually, a database consists of a series of files and DB_PATH specifies the file which will be the entrance to the new database. DB_PATH also specifies the path prefix for other files. Note that database creation fails if DB_PATH points to an existing file.
+The `-n` option specifies to create a new database and DB_PATH specifies the path of the new database. Actually, a database consists of a series of files and DB_PATH specifies the file which will be the entrance to the new database. DB_PATH also specifies the path prefix for other files. Note that database creation fails if DB_PATH points to an existing file (For example, ``db open failed (DB_PATH): syscall error 'DB_PATH' (File exists)``. You can operate an existing database in a way that is in the next chapter).
 
 This command creates a new database and then enters into interactive mode in which Groonga prompts you to enter commands for operating that database. You can terminate this mode with Ctrl-d.
 
