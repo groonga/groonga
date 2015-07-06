@@ -98,8 +98,8 @@ module Groonga
         end
       end
 
-      def write_plain_drilldowns(writer, context)
-        plain_drilldown = context.plain_drilldown
+      def write_plain_drilldowns(writer, execute_context)
+        plain_drilldown = execute_context.plain_drilldown
 
         drilldowns = plain_drilldown.result_sets
         output_columns = plain_drilldown.output_columns
@@ -122,8 +122,9 @@ module Groonga
         end
       end
 
-      def write_labeled_drilldowns(writer, context)
-        labeled_drilldowns = context.labeled_drilldowns
+      def write_labeled_drilldowns(writer, execute_context)
+        labeled_drilldowns = execute_context.labeled_drilldowns
+        is_command_version1 = (context.command_version == 1)
 
         writer.map("DRILLDOWNS", labeled_drilldowns.n_result_sets) do
           labeled_drilldowns.each do |drilldown|
@@ -143,7 +144,15 @@ module Groonga
                 writer.write(result_set.size)
               end
               writer.write_table_columns(result_set, output_columns)
-              writer.write_table_records(result_set, output_columns, options)
+              if is_command_version1 and drilldown.need_command_version2?
+                context.with_command_version(2) do
+                  writer.write_table_records(result_set,
+                                             drilldown.output_columns_v2,
+                                             options)
+                end
+              else
+                writer.write_table_records(result_set, output_columns, options)
+              end
             end
           end
         end
@@ -335,6 +344,28 @@ module Groonga
         def calc_target(table)
           return nil if @calc_target_name.nil?
           table.column(@calc_target_name)
+        end
+
+        def need_command_version2?
+          /[.\[]/ === @output_columns
+        end
+
+        def output_columns_v2
+          columns = @output_columns.strip.split(/ *, */)
+          converted_columns = columns.collect do |column|
+            match_data = /\A_value\.(.+)\z/.match(column)
+            if match_data.nil?
+              column
+            else
+              nth_key = keys.index(match_data[1])
+              if nth_key
+                "_key[#{nth_key}]"
+              else
+                column
+              end
+            end
+          end
+          converted_columns.join(",")
         end
 
         private
