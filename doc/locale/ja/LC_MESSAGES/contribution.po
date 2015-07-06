@@ -711,6 +711,12 @@ msgstr ""
 msgid "リリース用のタグを打つには以下のコマンドを実行します。::"
 msgstr ""
 
+# 5ff076781dea4e2a83b8d8ab88e60eca
+msgid ""
+"タグを打った後にconfigureを実行することで、ドキュメント生成時のバージョン番号"
+"に反映されます。"
+msgstr ""
+
 msgid "リリース用アーカイブファイルの作成"
 msgstr ""
 
@@ -811,16 +817,15 @@ msgstr ""
 msgid "現在サポートされているのは以下の通りです。"
 msgstr ""
 
+# 68abb7cc42a54eab8b2577bed4970689
+msgid "Debian GNU/Linux"
+msgstr ""
+
 msgid "wheezy i386/amd64"
 msgstr ""
 
-msgid "precise i386/amd64"
-msgstr ""
-
-msgid "trusty i386/amd64"
-msgstr ""
-
-msgid "utopic i386/amd64"
+# afd38fcbd8ca4ecca5c2213bd2aa2159
+msgid "jessie i386/amd64"
 msgstr ""
 
 msgid ""
@@ -859,7 +864,8 @@ msgstr ""
 msgid "centos-6 i386/x86_64"
 msgstr ""
 
-msgid "fedora-17 i386/x86_64"
+# d4827cd271d640699519f55a1ce9b1e6
+msgid "centos-7 i386/x86_64"
 msgstr ""
 
 msgid ""
@@ -879,10 +885,12 @@ msgstr ""
 msgid "repositories/yum/centos/6/x86_64/Packages"
 msgstr ""
 
-msgid "repositories/yum/fedora/17/i386/Packages"
+# 52fb09bd131e426e8887f8a4b7135e00
+msgid "repositories/yum/centos/7/i386/Packages"
 msgstr ""
 
-msgid "repositories/yum/fedora/17/x86_64/Packages"
+# 70275578d5e34063a0f7341a3909533f
+msgid "repositories/yum/centos/7/x86_64/Packages"
 msgstr ""
 
 msgid "リリース対象のRPMに署名を行うには以下のコマンドを実行します。::"
@@ -1103,6 +1111,19 @@ msgstr ""
 
 # 39b0089a164246d0b3dbd8c35a39b1cb
 msgid "Ubuntu向けのパッケージのアップロードには以下のコマンドを実行します。::"
+msgstr ""
+
+msgid "precise i386/amd64"
+msgstr ""
+
+msgid "trusty i386/amd64"
+msgstr ""
+
+msgid "utopic i386/amd64"
+msgstr ""
+
+# 18fb46d6fbc3483bb079db3c1a76d878
+msgid "vivid i386/amd64"
 msgstr ""
 
 # e10d3e6597db4840b2c03e59f2f2c87f
