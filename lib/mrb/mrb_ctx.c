@@ -202,6 +202,26 @@ ctx_set_error_message(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+ctx_get_command_version(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+
+  return mrb_fixnum_value(grn_ctx_get_command_version(ctx));
+}
+
+static mrb_value
+ctx_set_command_version(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_int command_version;
+
+  mrb_get_args(mrb, "i", &command_version);
+  grn_ctx_set_command_version(ctx, command_version);
+
+  return mrb_fixnum_value(command_version);
+}
+
+static mrb_value
 ctx_get_database(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -711,6 +731,10 @@ grn_mrb_ctx_init(grn_ctx *ctx)
                     MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "error_message=", ctx_set_error_message,
                     MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "command_version",
+                    ctx_get_command_version, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "command_version=",
+                    ctx_set_command_version, MRB_ARGS_REQ(1));
 
   mrb_define_method(mrb, klass, "database", ctx_get_database,
                     MRB_ARGS_NONE());
