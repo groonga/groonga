@@ -177,6 +177,7 @@ module Groonga
         attr_reader :sort_keys
         attr_reader :output_columns
         attr_reader :result_sets
+        attr_reader :unsorted_result_sets
         attr_reader :plain_drilldown
         attr_reader :labeled_drilldowns
         def initialize(input)
@@ -189,6 +190,7 @@ module Groonga
           @output_columns = @input[:output_columns] || "_key, *"
 
           @result_sets = []
+          @unsorted_result_sets = []
 
           @plain_drilldown = PlainDrilldownExecuteContext.new(@input)
           @labeled_drilldowns = LabeledDrilldowns.parse(@input)
@@ -196,6 +198,9 @@ module Groonga
 
         def close
           @result_sets.each do |result_set|
+            result_set.close if result_set.temporary?
+          end
+          @unsorted_result_sets.each do |result_set|
             result_set.close if result_set.temporary?
           end
 
@@ -512,7 +517,9 @@ module Groonga
           @shard_range = shard_range
 
           @filter = @context.filter
+          @sort_keys = @context.sort_keys
           @result_sets = @context.result_sets
+          @unsorted_result_sets = @context.unsorted_result_sets
 
           @target_range = @context.enumerator.target_range
 
@@ -547,7 +554,7 @@ module Groonga
         private
         def filter_shard_all
           if @filter.nil?
-            @result_sets << @table
+            add_result_set(@table)
           else
             filter_table do |expression|
               @expression_builder.build_all(expression)
@@ -567,7 +574,19 @@ module Groonga
         def filter_table
           create_expression(@table) do |expression|
             yield(expression)
-            @result_sets << @table.select(expression)
+            add_result_set(@table.select(expression))
+          end
+        end
+
+        def add_result_set(result_set)
+          return if result_set.empty?
+
+          if @sort_keys
+            @unsorted_result_sets << result_set
+            sorted_result_set = result_set.sort(@sort_keys)
+            @result_sets << sorted_result_set
+          else
+            @result_sets << result_set
           end
         end
       end
