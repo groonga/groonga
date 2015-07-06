@@ -204,7 +204,11 @@ mrb_grn_table_group_result_set_calc_target(mrb_state *mrb, mrb_value self)
   result = DATA_PTR(self);
   mrb_get_args(mrb, "o", &mrb_calc_target);
 
-  result->calc_target = DATA_PTR(mrb_calc_target);
+  if (mrb_nil_p(mrb_calc_target)) {
+    result->calc_target = NULL;
+  } else {
+    result->calc_target = DATA_PTR(mrb_calc_target);
+  }
 
   return mrb_nil_value();
 }
