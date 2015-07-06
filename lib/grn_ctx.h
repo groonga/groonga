@@ -627,6 +627,7 @@ typedef struct {
   (db_obj)->obj.header.type = (obj_type);\
   (db_obj)->obj.header.impl_flags = 0;\
   (db_obj)->obj.header.flags = 0;\
+  (db_obj)->obj.header.domain = GRN_ID_NIL;\
   (db_obj)->obj.id = GRN_ID_NIL;\
   (db_obj)->obj.user_data.ptr = NULL;\
   (db_obj)->obj.finalizer = NULL;\
