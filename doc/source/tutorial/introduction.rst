@@ -51,6 +51,10 @@ Let's see the status of a Groonga process by using a :doc:`/reference/commands/s
 
 As shown in the above example, a command returns a JSON array. The first element contains an error code, execution time, etc. The second element is the result of an operation.
 
+.. note::
+
+   You can format a JSON using additional tools. For example, `grnwrap <https://github.com/michisu/grnwrap>`_, `Grnline <https://github.com/yoshihara/grnline>`_, `jq <http://stedolan.github.io/jq/>`_ and so on.
+
 Command format
 --------------
 
