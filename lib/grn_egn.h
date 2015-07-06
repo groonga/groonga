@@ -28,6 +28,23 @@ extern "C" {
 // Constant values.
 
 typedef enum {
+  GRN_EGN_VOID,
+  GRN_EGN_BOOL,
+  GRN_EGN_INT,
+  GRN_EGN_FLOAT,
+  GRN_EGN_TIME,
+  GRN_EGN_TEXT,
+  GRN_EGN_GEO_POINT,
+  GRN_EGN_BOOL_VECTOR,
+  GRN_EGN_INT_VECTOR,
+  GRN_EGN_FLOAT_VECTOR,
+  GRN_EGN_TIME_VECTOR,
+  GRN_EGN_TEXT_VECTOR,
+  GRN_EGN_GEO_POINT_VECTOR,
+  GRN_EGN_DEEP_VECTOR
+} grn_egn_data_type;
+
+typedef enum {
   GRN_EGN_NOP,
   GRN_EGN_LOGICAL_NOT,
   GRN_EGN_LOGICAL_AND,
@@ -39,8 +56,6 @@ typedef enum {
   GRN_EGN_GREATER,
   GRN_EGN_GREATER_EQUAL
 } grn_egn_operator_type;
-
-typedef grn_builtin_type grn_egn_data_type;
 
 typedef enum {
   GRN_EGN_ID_NODE,

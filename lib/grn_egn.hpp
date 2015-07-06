@@ -95,7 +95,7 @@ struct Bool {
   Raw raw;
 
   static DataType data_type() {
-    return GRN_DB_BOOL;
+    return GRN_EGN_BOOL;
   }
 
   Bool() : raw() {}
@@ -113,7 +113,7 @@ struct Int {
   Raw raw;
 
   static DataType data_type() {
-    return GRN_DB_INT64;
+    return GRN_EGN_INT;
   }
 
   Int() : raw() {}
@@ -134,7 +134,7 @@ struct Float {
   Raw raw;
 
   static DataType data_type() {
-    return GRN_DB_FLOAT;
+    return GRN_EGN_FLOAT;
   }
 
   Float() : raw() {}
@@ -155,7 +155,7 @@ struct Time {
   Raw raw;
 
   static DataType data_type() {
-    return GRN_DB_TIME;
+    return GRN_EGN_TIME;
   }
 
   Time() : raw() {}
@@ -176,7 +176,7 @@ struct Text {
   Raw raw;
 
   static DataType data_type() {
-    return GRN_DB_TEXT;
+    return GRN_EGN_TEXT;
   }
 
   Text() : raw() {}
@@ -224,7 +224,7 @@ struct GeoPoint {
   Raw raw;
 
   static DataType data_type() {
-    return GRN_DB_WGS84_GEO_POINT;
+    return GRN_EGN_GEO_POINT;
   }
 
   GeoPoint() : raw() {}

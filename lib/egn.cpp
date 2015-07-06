@@ -2228,7 +2228,7 @@ grn_rc ExpressionParser::push_token(const ExpressionToken &token) {
 
 Expression::Expression(grn_ctx *ctx, grn_obj *table)
   : ctx_(ctx), table_(table), type_(GRN_EGN_INCOMPLETE),
-    data_type_(GRN_DB_VOID), stack_() {}
+    data_type_(GRN_EGN_VOID), stack_() {}
 
 Expression::~Expression() {
   for (size_t i = 0; i < stack_.size(); ++i) {
@@ -2515,7 +2515,7 @@ void Expression::update_types() {
   ExpressionNode *root = this->root();
   if (!root) {
     type_ = GRN_EGN_INCOMPLETE;
-    data_type_ = GRN_DB_VOID;
+    data_type_ = GRN_EGN_VOID;
   } else {
     switch (root->type()) {
       case GRN_EGN_ID_NODE: {
@@ -2711,7 +2711,7 @@ grn_rc Expression::create_unary_node(OperatorType operator_type,
   grn_rc rc = GRN_SUCCESS;
   switch (operator_type) {
     case GRN_EGN_LOGICAL_NOT: {
-      if (arg->data_type() != GRN_DB_BOOL) {
+      if (arg->data_type() != GRN_EGN_BOOL) {
         return GRN_UNKNOWN_ERROR;
       }
       rc = LogicalNotNode::open(arg, node);
@@ -2728,15 +2728,15 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
   ExpressionNode *arg1, ExpressionNode *arg2, ExpressionNode **node) {
   switch (operator_type) {
     case GRN_EGN_LOGICAL_AND: {
-      if ((arg1->data_type() != GRN_DB_BOOL) ||
-          (arg1->data_type() != GRN_DB_BOOL)) {
+      if ((arg1->data_type() != GRN_EGN_BOOL) ||
+          (arg1->data_type() != GRN_EGN_BOOL)) {
         return GRN_INVALID_FORMAT;
       }
       return LogicalAndNode::open(arg1, arg2, node);
     }
     case GRN_EGN_LOGICAL_OR: {
-      if ((arg1->data_type() != GRN_DB_BOOL) ||
-          (arg1->data_type() != GRN_DB_BOOL)) {
+      if ((arg1->data_type() != GRN_EGN_BOOL) ||
+          (arg1->data_type() != GRN_EGN_BOOL)) {
         return GRN_INVALID_FORMAT;
       }
       return LogicalOrNode::open(arg1, arg2, node);
@@ -2746,22 +2746,22 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
         return GRN_INVALID_FORMAT;
       }
       switch (arg1->data_type()) {
-        case GRN_DB_BOOL: {
+        case GRN_EGN_BOOL: {
           return equal_node_open(EqualOperator<Bool>(), arg1, arg2, node);
         }
-        case GRN_DB_INT64: {
+        case GRN_EGN_INT: {
           return equal_node_open(EqualOperator<Int>(), arg1, arg2, node);
         }
-        case GRN_DB_FLOAT: {
+        case GRN_EGN_FLOAT: {
           return equal_node_open(EqualOperator<Float>(), arg1, arg2, node);
         }
-        case GRN_DB_TIME: {
+        case GRN_EGN_TIME: {
           return equal_node_open(EqualOperator<Time>(), arg1, arg2, node);
         }
-        case GRN_DB_TEXT: {
+        case GRN_EGN_TEXT: {
           return equal_node_open(EqualOperator<Text>(), arg1, arg2, node);
         }
-        case GRN_DB_WGS84_GEO_POINT: {
+        case GRN_EGN_GEO_POINT: {
           return equal_node_open(EqualOperator<GeoPoint>(), arg1, arg2, node);
         }
         default: {
@@ -2774,27 +2774,27 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
         return GRN_INVALID_FORMAT;
       }
       switch (arg1->data_type()) {
-        case GRN_DB_BOOL: {
+        case GRN_EGN_BOOL: {
           return not_equal_node_open(
             NotEqualOperator<Bool>(), arg1, arg2, node);
         }
-        case GRN_DB_INT64: {
+        case GRN_EGN_INT: {
           return not_equal_node_open(
             NotEqualOperator<Int>(), arg1, arg2, node);
         }
-        case GRN_DB_FLOAT: {
+        case GRN_EGN_FLOAT: {
           return not_equal_node_open(
             NotEqualOperator<Float>(), arg1, arg2, node);
         }
-        case GRN_DB_TIME: {
+        case GRN_EGN_TIME: {
           return not_equal_node_open(
             NotEqualOperator<Time>(), arg1, arg2, node);
         }
-        case GRN_DB_TEXT: {
+        case GRN_EGN_TEXT: {
           return not_equal_node_open(
             NotEqualOperator<Text>(), arg1, arg2, node);
         }
-        case GRN_DB_WGS84_GEO_POINT: {
+        case GRN_EGN_GEO_POINT: {
           return not_equal_node_open(
             NotEqualOperator<GeoPoint>(), arg1, arg2, node);
         }
@@ -2808,16 +2808,16 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
         return GRN_INVALID_FORMAT;
       }
       switch (arg1->data_type()) {
-        case GRN_DB_INT64: {
+        case GRN_EGN_INT: {
           return less_node_open(LessOperator<Int>(), arg1, arg2, node);
         }
-        case GRN_DB_FLOAT: {
+        case GRN_EGN_FLOAT: {
           return less_node_open(LessOperator<Float>(), arg1, arg2, node);
         }
-        case GRN_DB_TIME: {
+        case GRN_EGN_TIME: {
           return less_node_open(LessOperator<Time>(), arg1, arg2, node);
         }
-        case GRN_DB_TEXT: {
+        case GRN_EGN_TEXT: {
           return less_node_open(LessOperator<Text>(), arg1, arg2, node);
         }
         default: {
@@ -2830,19 +2830,19 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
         return GRN_INVALID_FORMAT;
       }
       switch (arg1->data_type()) {
-        case GRN_DB_INT64: {
+        case GRN_EGN_INT: {
           return less_equal_node_open(
             LessEqualOperator<Int>(), arg1, arg2, node);
         }
-        case GRN_DB_FLOAT: {
+        case GRN_EGN_FLOAT: {
           return less_equal_node_open(
             LessEqualOperator<Float>(), arg1, arg2, node);
         }
-        case GRN_DB_TIME: {
+        case GRN_EGN_TIME: {
           return less_equal_node_open(
             LessEqualOperator<Time>(), arg1, arg2, node);
         }
-        case GRN_DB_TEXT: {
+        case GRN_EGN_TEXT: {
           return less_equal_node_open(
             LessEqualOperator<Text>(), arg1, arg2, node);
         }
@@ -2856,16 +2856,16 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
         return GRN_INVALID_FORMAT;
       }
       switch (arg1->data_type()) {
-        case GRN_DB_INT64: {
+        case GRN_EGN_INT: {
           return greater_node_open(GreaterOperator<Int>(), arg1, arg2, node);
         }
-        case GRN_DB_FLOAT: {
+        case GRN_EGN_FLOAT: {
           return greater_node_open(GreaterOperator<Float>(), arg1, arg2, node);
         }
-        case GRN_DB_TIME: {
+        case GRN_EGN_TIME: {
           return greater_node_open(GreaterOperator<Time>(), arg1, arg2, node);
         }
-        case GRN_DB_TEXT: {
+        case GRN_EGN_TEXT: {
           return greater_node_open(GreaterOperator<Text>(), arg1, arg2, node);
         }
         default: {
@@ -2878,19 +2878,19 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
         return GRN_INVALID_FORMAT;
       }
       switch (arg1->data_type()) {
-        case GRN_DB_INT64: {
+        case GRN_EGN_INT: {
           return greater_equal_node_open(
             GreaterEqualOperator<Int>(), arg1, arg2, node);
         }
-        case GRN_DB_FLOAT: {
+        case GRN_EGN_FLOAT: {
           return greater_equal_node_open(
             GreaterEqualOperator<Float>(), arg1, arg2, node);
         }
-        case GRN_DB_TIME: {
+        case GRN_EGN_TIME: {
           return greater_equal_node_open(
             GreaterEqualOperator<Time>(), arg1, arg2, node);
         }
-        case GRN_DB_TEXT: {
+        case GRN_EGN_TEXT: {
           return greater_equal_node_open(
             GreaterEqualOperator<Text>(), arg1, arg2, node);
         }
@@ -3069,29 +3069,27 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
     GRN_TEXT_PUT(ctx, ctx->impl->outbuf, names[i].data(), names[i].size());
     GRN_TEXT_PUT(ctx, ctx->impl->outbuf, "\",\"", 3);
     switch (expressions[i]->data_type()) {
-      case GRN_DB_BOOL: {
+      case GRN_EGN_BOOL: {
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Bool");
         break;
       }
-      case GRN_DB_INT64: {
+      case GRN_EGN_INT: {
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Int64");
         break;
       }
-      case GRN_DB_FLOAT: {
+      case GRN_EGN_FLOAT: {
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Float");
         break;
       }
-      case GRN_DB_TIME: {
+      case GRN_EGN_TIME: {
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Time");
         break;
       }
-      case GRN_DB_SHORT_TEXT:
-      case GRN_DB_TEXT:
-      case GRN_DB_LONG_TEXT: {
+      case GRN_EGN_TEXT: {
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Text");
         break;
       }
-      case GRN_DB_WGS84_GEO_POINT: {
+      case GRN_EGN_GEO_POINT: {
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "GeoPoint");
         break;
       }
@@ -3114,37 +3112,37 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
       }
       for (size_t i = 0; i < expressions.size(); ++i) {
         switch (expressions[i]->data_type()) {
-          case GRN_DB_BOOL: {
+          case GRN_EGN_BOOL: {
             bufs[i].resize(sizeof(grn_egn_bool) * batch_size);
             expressions[i]->evaluate(records + count, batch_size,
                                      (grn::egn::Bool *)&bufs[i][0]);
             break;
           }
-          case GRN_DB_INT64: {
+          case GRN_EGN_INT: {
             bufs[i].resize(sizeof(grn_egn_int) * batch_size);
             expressions[i]->evaluate(records + count, batch_size,
                                      (grn::egn::Int *)&bufs[i][0]);
             break;
           }
-          case GRN_DB_FLOAT: {
+          case GRN_EGN_FLOAT: {
             bufs[i].resize(sizeof(grn_egn_float) * batch_size);
             expressions[i]->evaluate(records + count, batch_size,
                                      (grn::egn::Float *)&bufs[i][0]);
             break;
           }
-          case GRN_DB_TIME: {
+          case GRN_EGN_TIME: {
             bufs[i].resize(sizeof(grn_egn_time) * batch_size);
             expressions[i]->evaluate(records + count, batch_size,
                                      (grn::egn::Time *)&bufs[i][0]);
             break;
           }
-          case GRN_DB_TEXT: {
+          case GRN_EGN_TEXT: {
             bufs[i].resize(sizeof(grn_egn_text) * batch_size);
             expressions[i]->evaluate(records + count, batch_size,
                                      (grn::egn::Text *)&bufs[i][0]);
             break;
           }
-          case GRN_DB_WGS84_GEO_POINT: {
+          case GRN_EGN_GEO_POINT: {
             bufs[i].resize(sizeof(grn_egn_geo_point) * batch_size);
             expressions[i]->evaluate(records + count, batch_size,
                                      (grn::egn::GeoPoint *)&bufs[i][0]);
@@ -3162,7 +3160,7 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
             GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
           }
           switch (expressions[j]->data_type()) {
-            case GRN_DB_BOOL: {
+            case GRN_EGN_BOOL: {
               if (((grn_egn_bool *)&bufs[j][0])[i]) {
                 GRN_TEXT_PUT(ctx, ctx->impl->outbuf, "true", 4);
               } else {
@@ -3170,27 +3168,27 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
               }
               break;
             }
-            case GRN_DB_INT64: {
+            case GRN_EGN_INT: {
               grn_text_lltoa(ctx, ctx->impl->outbuf,
                              ((grn_egn_int *)&bufs[j][0])[i]);
               break;
             }
-            case GRN_DB_FLOAT: {
+            case GRN_EGN_FLOAT: {
               grn_text_ftoa(ctx, ctx->impl->outbuf,
                             ((grn_egn_float *)&bufs[j][0])[i]);
               break;
             }
-            case GRN_DB_TIME: {
+            case GRN_EGN_TIME: {
               grn_text_ftoa(ctx, ctx->impl->outbuf,
                             ((grn_egn_time *)&bufs[j][0])[i] * 0.000001);
               break;
             }
-            case GRN_DB_TEXT: {
+            case GRN_EGN_TEXT: {
               grn_egn_text text = ((grn_egn_text *)&bufs[j][0])[i];
               grn_text_esc(ctx, ctx->impl->outbuf, text.ptr, text.size);
               break;
             }
-            case GRN_DB_WGS84_GEO_POINT: {
+            case GRN_EGN_GEO_POINT: {
               grn_egn_geo_point geo_point =
                 ((grn_egn_geo_point *)&bufs[j][0])[i];
               GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '"');
