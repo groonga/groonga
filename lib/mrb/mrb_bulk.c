@@ -131,9 +131,9 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
   case GRN_DB_SHORT_TEXT :
   case GRN_DB_TEXT :
   case GRN_DB_LONG_TEXT :
-    mrb_value_ = mrb_str_new_static(mrb,
-                                    GRN_TEXT_VALUE(bulk),
-                                    GRN_TEXT_LEN(bulk));
+    mrb_value_ = mrb_str_new(mrb,
+                             GRN_TEXT_VALUE(bulk),
+                             GRN_TEXT_LEN(bulk));
     break;
   default :
     {
