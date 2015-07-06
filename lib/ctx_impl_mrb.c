@@ -44,6 +44,7 @@
 # include "mrb/mrb_table_group_result.h"
 # include "mrb/mrb_table_sort_flags.h"
 # include "mrb/mrb_table_sort_key.h"
+# include "mrb/mrb_record.h"
 # include "mrb/mrb_column.h"
 # include "mrb/mrb_fixed_size_column.h"
 # include "mrb/mrb_variable_size_column.h"
@@ -150,6 +151,7 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   grn_mrb_table_group_result_init(ctx);
   grn_mrb_table_sort_flags_init(ctx);
   grn_mrb_table_sort_key_init(ctx);
+  grn_mrb_record_init(ctx);
   grn_mrb_column_init(ctx);
   grn_mrb_fixed_size_column_init(ctx);
   grn_mrb_variable_size_column_init(ctx);
