@@ -1,5 +1,18 @@
 module Groonga
   class Table
+    include Enumerable
+
+    def each
+      flags =
+        TableCursorFlags::ASCENDING |
+        TableCursorFlags::BY_ID
+      TableCursor.open(self, :flags => flags) do |cursor|
+        cursor.each do |id|
+          yield(id)
+        end
+      end
+    end
+
     def sort(keys, options={})
       offset = options[:offset] || 0
       limit = options[:limit] || -1
