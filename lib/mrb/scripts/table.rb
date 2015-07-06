@@ -90,7 +90,15 @@ module Groonga
         key_name[0] = ""
       end
 
-      sort_key.key = find_column(key_name)
+      key = find_column(key_name)
+      if key.nil?
+        table_name = table.name || "(temporary)"
+        message = "unknown key: #{key_name.inspect}: "
+        message << "#{table_name}(#{table.size})"
+        raise ArgumentError, message
+      end
+
+      sort_key.key = key
       if order == :ascending
         sort_key.flags = Groonga::TableSortFlags::ASCENDING
       else
