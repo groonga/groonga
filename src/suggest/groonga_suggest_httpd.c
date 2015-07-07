@@ -54,10 +54,10 @@
 #define MAX_THREADS 128 /* max 256 */
 
 typedef enum {
-  run_mode_none = 0,
-  run_mode_usage,
-  run_mode_daemon,
-  run_mode_error
+  RUN_MODE_NONE = 0,
+  RUN_MODE_USAGE,
+  RUN_MODE_DAEMON,
+  RUN_MODE_ERROR
 } run_mode;
 
 #define RUN_MODE_MASK                0x007f
@@ -736,7 +736,7 @@ main(int argc, char **argv)
   const char *send_endpoint = NULL, *recv_endpoint = NULL, *log_base_path = NULL;
   const char *n_lines_per_log_file_string = NULL;
   int n_processed_args, flags = RUN_MODE_ENABLE_MAX_FD_CHECK;
-  run_mode mode = run_mode_none;
+  run_mode mode = RUN_MODE_NONE;
 
   if (!(default_max_threads = get_core_number())) {
     default_max_threads = DEFAULT_MAX_THREADS;
@@ -747,14 +747,14 @@ main(int argc, char **argv)
     static grn_str_getopt_opt opts[] = {
       {'c', NULL, NULL, 0, GETOPT_OP_NONE}, /* deprecated */
       {'t', "n-threads", NULL, 0, GETOPT_OP_NONE},
-      {'h', "help", NULL, run_mode_usage, GETOPT_OP_UPDATE},
+      {'h', "help", NULL, RUN_MODE_USAGE, GETOPT_OP_UPDATE},
       {'p', "port", NULL, 0, GETOPT_OP_NONE},
       {'\0', "bind-address", NULL, 0, GETOPT_OP_NONE}, /* not supported yet */
       {'s', "send-endpoint", NULL, 0, GETOPT_OP_NONE},
       {'r', "receive-endpoint", NULL, 0, GETOPT_OP_NONE},
       {'l', "log-base-path", NULL, 0, GETOPT_OP_NONE},
       {'\0', "n-lines-per-log-file", NULL, 0, GETOPT_OP_NONE},
-      {'d', "daemon", NULL, run_mode_daemon, GETOPT_OP_UPDATE},
+      {'d', "daemon", NULL, RUN_MODE_DAEMON, GETOPT_OP_UPDATE},
       {'\0', "disable-max-fd-check", NULL, RUN_MODE_ENABLE_MAX_FD_CHECK,
        GETOPT_OP_OFF},
       {'\0', NULL, NULL, 0, 0}
@@ -775,10 +775,10 @@ main(int argc, char **argv)
   mode = (flags & RUN_MODE_MASK);
   if (n_processed_args < 0 ||
       (argc - n_processed_args) != 1 ||
-      mode == run_mode_error) {
+      mode == RUN_MODE_ERROR) {
     usage(stderr);
     return EXIT_FAILURE;
-  } else if (mode == run_mode_usage) {
+  } else if (mode == RUN_MODE_USAGE) {
     usage(stdout);
     return EXIT_SUCCESS;
   } else {
@@ -830,7 +830,7 @@ main(int argc, char **argv)
       n_lines_per_log_file = (uint32_t)n_lines;
     }
 
-    if (mode == run_mode_daemon) {
+    if (mode == RUN_MODE_DAEMON) {
       daemonize();
     }
 
