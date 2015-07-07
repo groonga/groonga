@@ -581,12 +581,12 @@ module Groonga
         def add_result_set(result_set)
           return if result_set.empty?
 
-          if @sort_keys
+          if @sort_keys.empty?
+            @result_sets << result_set
+          else
             @unsorted_result_sets << result_set
             sorted_result_set = result_set.sort(@sort_keys)
             @result_sets << sorted_result_set
-          else
-            @result_sets << result_set
           end
         end
       end
