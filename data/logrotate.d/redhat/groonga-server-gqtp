@@ -11,7 +11,7 @@
         . /etc/sysconfig/groonga-server-gqtp
         if x"$ENABLE" = x"yes"; then
             /usr/bin/groonga --port "${PORT:-10043}" -c 127.0.0.1 \
-	        log_reopen > /dev/null
+                log_reopen > /dev/null
         fi
     endscript
 }
