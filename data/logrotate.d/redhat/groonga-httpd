@@ -5,7 +5,6 @@
     compress
     delaycompress
     notifempty
-    create 640 groonga groonga
     sharedscripts
     postrotate
         if [ -f /var/lock/subsys/groonga-httpd ]; then
