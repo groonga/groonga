@@ -135,7 +135,7 @@ module Groonga
             n_elements += result_set.size
             output_columns = drilldown.output_columns
             options = {
-              :offset => drilldown.output_offset,
+              :offset => drilldown.offset,
               :limit  => drilldown.limit,
             }
 
@@ -308,7 +308,6 @@ module Groonga
         attr_reader :limit
         attr_reader :sort_keys
         attr_reader :output_columns
-        attr_reader :output_offset
         attr_reader :calc_target_name
         attr_reader :calc_types
         attr_accessor :result_set
@@ -323,12 +322,6 @@ module Groonga
           @output_columns ||= "_key, _nsubrecs"
           @calc_target_name = parameters["calc_target"]
           @calc_types = parse_calc_types(parameters["calc_types"])
-
-          if @sort_keys.empty?
-            @output_offset = @offset
-          else
-            @output_offset = 0
-          end
 
           @result_set = nil
           @unsorted_result_set = nil
@@ -465,10 +458,6 @@ module Groonga
           drilldowns.each do |drilldown|
             group_result = TableGroupResult.new
             keys = drilldown.keys
-            sort_options = {
-              :offset => drilldown.offset,
-              :limit  => drilldown.limit,
-            }
             begin
               group_result.key_begin = 0
               group_result.key_end = keys.size - 1
@@ -485,8 +474,7 @@ module Groonga
               if drilldown.sort_keys.empty?
                 drilldown.result_set = result_set
               else
-                drilldown.result_set = result_set.sort(drilldown.sort_keys,
-                                                       sort_options)
+                drilldown.result_set = result_set.sort(drilldown.sort_keys)
                 drilldown.unsorted_result_set = result_set
               end
               group_result.table = nil

@@ -1,35 +1,25 @@
+#@on-error omit
 register sharding
-[[0,0.0,0.0],true]
+#@on-error default
+
 table_create Logs_20150203 TABLE_NO_KEY
-[[0,0.0,0.0],true]
 column_create Logs_20150203 timestamp COLUMN_SCALAR Time
-[[0,0.0,0.0],true]
 column_create Logs_20150203 memo COLUMN_SCALAR ShortText
-[[0,0.0,0.0],true]
 column_create Logs_20150203 date COLUMN_SCALAR ShortText
-[[0,0.0,0.0],true]
 column_create Logs_20150203 action COLUMN_SCALAR ShortText
-[[0,0.0,0.0],true]
+
 table_create Logs_20150204 TABLE_NO_KEY
-[[0,0.0,0.0],true]
 column_create Logs_20150204 timestamp COLUMN_SCALAR Time
-[[0,0.0,0.0],true]
 column_create Logs_20150204 memo COLUMN_SCALAR ShortText
-[[0,0.0,0.0],true]
 column_create Logs_20150204 date COLUMN_SCALAR ShortText
-[[0,0.0,0.0],true]
 column_create Logs_20150204 action COLUMN_SCALAR ShortText
-[[0,0.0,0.0],true]
+
 table_create Logs_20150205 TABLE_NO_KEY
-[[0,0.0,0.0],true]
 column_create Logs_20150205 timestamp COLUMN_SCALAR Time
-[[0,0.0,0.0],true]
 column_create Logs_20150205 memo COLUMN_SCALAR ShortText
-[[0,0.0,0.0],true]
 column_create Logs_20150205 date COLUMN_SCALAR ShortText
-[[0,0.0,0.0],true]
 column_create Logs_20150205 action COLUMN_SCALAR ShortText
-[[0,0.0,0.0],true]
+
 load --table Logs_20150203
 [
 {
@@ -45,7 +35,7 @@ load --table Logs_20150203
   "action":    "Shutdown"
 }
 ]
-[[0,0.0,0.0],2]
+
 load --table Logs_20150204
 [
 {
@@ -67,7 +57,7 @@ load --table Logs_20150204
   "action":    "Restart"
 }
 ]
-[[0,0.0,0.0],3]
+
 load --table Logs_20150205
 [
 {
@@ -95,63 +85,10 @@ load --table Logs_20150205
   "action":    "Restart"
 }
 ]
-[[0,0.0,0.0],4]
-logical_select Logs timestamp   --limit 0   --drilldown[action_date].keys action,date   --drilldown[action_date].output_columns _value.action,_value.date,_nsubrecs   --drilldown[action_date].limit 1
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        9
-      ],
-      [
-        [
-          "action",
-          "ShortText"
-        ],
-        [
-          "date",
-          "ShortText"
-        ],
-        [
-          "memo",
-          "ShortText"
-        ],
-        [
-          "timestamp",
-          "Time"
-        ]
-      ]
-    ],
-    {
-      "action_date": [
-        [
-          5
-        ],
-        [
-          [
-            "action",
-            "ShortText"
-          ],
-          [
-            "date",
-            "ShortText"
-          ],
-          [
-            "_nsubrecs",
-            "Int32"
-          ]
-        ],
-        [
-          "Start",
-          "2015-02-03",
-          1
-        ]
-      ]
-    }
-  ]
-]
+
+logical_select Logs timestamp \
+  --limit 0 \
+  --drilldown[action_date].keys action,date \
+  --drilldown[action_date].output_columns _value.action,_value.date,_nsubrecs \
+  --drilldown[action_date].sortby _nsubrecs \
+  --drilldown[action_date].offset 1
