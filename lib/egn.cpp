@@ -218,6 +218,7 @@ class ExpressionNode {
 
   virtual ExpressionNodeType type() const = 0;
   virtual DataType data_type() const = 0;
+  virtual grn_builtin_type builtin_type() const = 0;
 
   virtual grn_rc filter(Record *input, size_t input_size,
                         Record *output, size_t *output_size) {
@@ -239,6 +240,9 @@ class TypedNode : public ExpressionNode {
   DataType data_type() const {
     return T::data_type();
   }
+  virtual grn_builtin_type builtin_type() const {
+    return T::default_builtin_type();
+  }
 
   virtual grn_rc evaluate(
     const Record *records, size_t num_records, T *results) = 0;
@@ -254,6 +258,9 @@ class TypedNode<Bool> : public ExpressionNode {
 
   DataType data_type() const {
     return Bool::data_type();
+  }
+  grn_builtin_type builtin_type() const {
+    return Bool::default_builtin_type();
   }
 
   virtual grn_rc filter(Record *input, size_t input_size,
@@ -297,6 +304,9 @@ class TypedNode<Float> : public ExpressionNode {
   DataType data_type() const {
     return Float::data_type();
   }
+  grn_builtin_type builtin_type() const {
+    return Float::default_builtin_type();
+  }
 
   virtual grn_rc adjust(Record *records, size_t num_records);
 
@@ -338,6 +348,9 @@ class IDNode : public TypedNode<Int> {
 
   ExpressionNodeType type() const {
     return GRN_EGN_ID_NODE;
+  }
+  grn_builtin_type builtin_type() const {
+    return GRN_DB_UINT32;
   }
 
   grn_rc evaluate(
@@ -471,6 +484,47 @@ grn_rc ConstantNode<Bool>::filter(
   return GRN_SUCCESS;
 }
 
+// -- ConstantNode<Int> --
+
+
+template <>
+class ConstantNode<Int> : public TypedNode<Int> {
+ public:
+  ~ConstantNode() {}
+
+  static grn_rc open(grn_builtin_type builtin_type, Int value,
+                     ExpressionNode **node) {
+    ConstantNode *new_node =
+      new (std::nothrow) ConstantNode(builtin_type, value);
+    if (!new_node) {
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+    *node = new_node;
+    return GRN_SUCCESS;
+  }
+
+  ExpressionNodeType type() const {
+    return GRN_EGN_CONSTANT_NODE;
+  }
+  grn_builtin_type builtin_type() const {
+    return builtin_type_;
+  }
+
+  grn_rc evaluate(const Record *records, size_t num_records, Int *results) {
+    for (size_t i = 0; i < num_records; ++i) {
+      results[i] = value_;
+    }
+    return GRN_SUCCESS;
+  }
+
+ private:
+  grn_builtin_type builtin_type_;
+  Int value_;
+
+  explicit ConstantNode(grn_builtin_type builtin_type, Int value)
+    : TypedNode<Int>(), builtin_type_(builtin_type), value_(value) {}
+};
+
 // -- ConstantNode<Float> --
 
 template <>
@@ -519,7 +573,8 @@ class ConstantNode<Text> : public TypedNode<Text> {
  public:
   ~ConstantNode() {}
 
-  static grn_rc open(const Text &value, ExpressionNode **node) {
+  static grn_rc open(grn_builtin_type builtin_type, const Text &value,
+                     ExpressionNode **node) {
     ConstantNode *new_node = new (std::nothrow) ConstantNode(value);
     if (!new_node) {
       return GRN_NO_MEMORY_AVAILABLE;
@@ -539,6 +594,9 @@ class ConstantNode<Text> : public TypedNode<Text> {
   ExpressionNodeType type() const {
     return GRN_EGN_CONSTANT_NODE;
   }
+  grn_builtin_type builtin_type() const {
+    return builtin_type_;
+  }
 
   grn_rc evaluate(
     const Record *records, size_t num_records, Text *results) {
@@ -549,6 +607,7 @@ class ConstantNode<Text> : public TypedNode<Text> {
   }
 
  private:
+  grn_builtin_type builtin_type_;
   Text value_;
   std::vector<char> value_buf_;
 
@@ -681,6 +740,9 @@ class ColumnNode<Int> : public TypedNode<Int> {
 
   ExpressionNodeType type() const {
     return GRN_EGN_COLUMN_NODE;
+  }
+  grn_builtin_type builtin_type() const {
+    return static_cast<grn_builtin_type>(grn_obj_get_range(ctx_, column_));
   }
 
   grn_rc evaluate(
@@ -900,6 +962,9 @@ class ColumnNode<Text> : public TypedNode<Text> {
   ExpressionNodeType type() const {
     return GRN_EGN_COLUMN_NODE;
   }
+  grn_builtin_type builtin_type() const {
+    return static_cast<grn_builtin_type>(grn_obj_get_range(ctx_, column_));
+  }
 
   grn_rc evaluate(
     const Record *records, size_t num_records, Text *results);
@@ -954,6 +1019,9 @@ class ColumnNode<GeoPoint> : public TypedNode<GeoPoint> {
 
   ExpressionNodeType type() const {
     return GRN_EGN_COLUMN_NODE;
+  }
+  grn_builtin_type builtin_type() const {
+    return static_cast<grn_builtin_type>(grn_obj_get_range(ctx_, column_));
   }
 
   grn_rc evaluate(
@@ -2228,7 +2296,7 @@ grn_rc ExpressionParser::push_token(const ExpressionToken &token) {
 
 Expression::Expression(grn_ctx *ctx, grn_obj *table)
   : ctx_(ctx), table_(table), type_(GRN_EGN_INCOMPLETE),
-    data_type_(GRN_EGN_VOID), stack_() {}
+    data_type_(GRN_EGN_VOID), builtin_type_(GRN_DB_VOID), stack_() {}
 
 Expression::~Expression() {
   for (size_t i = 0; i < stack_.size(); ++i) {
@@ -2516,6 +2584,7 @@ void Expression::update_types() {
   if (!root) {
     type_ = GRN_EGN_INCOMPLETE;
     data_type_ = GRN_EGN_VOID;
+    builtin_type_ = GRN_DB_VOID;
   } else {
     switch (root->type()) {
       case GRN_EGN_ID_NODE: {
@@ -2541,48 +2610,59 @@ void Expression::update_types() {
       }
     }
     data_type_ = root->data_type();
+    builtin_type_ = root->builtin_type();
   }
 }
 
 grn_rc Expression::push_bulk_object(grn_obj *obj) {
   grn_rc rc;
   ExpressionNode *node;
-  switch (obj->header.domain) {
+  grn_builtin_type builtin_type =
+    static_cast<grn_builtin_type>(obj->header.domain);
+  switch (builtin_type) {
     case GRN_DB_BOOL: {
       rc = ConstantNode<Bool>::open(Bool(GRN_BOOL_VALUE(obj)), &node);
       break;
     }
     case GRN_DB_INT8: {
-      rc = ConstantNode<Int>::open(Int(GRN_INT8_VALUE(obj)), &node);
+      rc = ConstantNode<Int>::open(
+        builtin_type, Int(GRN_INT8_VALUE(obj)), &node);
       break;
     }
     case GRN_DB_INT16: {
-      rc = ConstantNode<Int>::open(Int(GRN_INT16_VALUE(obj)), &node);
+      rc = ConstantNode<Int>::open(
+        builtin_type, Int(GRN_INT16_VALUE(obj)), &node);
       break;
     }
     case GRN_DB_INT32: {
-      rc = ConstantNode<Int>::open(Int(GRN_INT32_VALUE(obj)), &node);
+      rc = ConstantNode<Int>::open(
+        builtin_type, Int(GRN_INT32_VALUE(obj)), &node);
       break;
     }
     case GRN_DB_INT64: {
-      rc = ConstantNode<Int>::open(Int(GRN_INT64_VALUE(obj)), &node);
+      rc = ConstantNode<Int>::open(
+        builtin_type, Int(GRN_INT64_VALUE(obj)), &node);
       break;
     }
     case GRN_DB_UINT8: {
-      rc = ConstantNode<Int>::open(Int(GRN_UINT8_VALUE(obj)), &node);
+      rc = ConstantNode<Int>::open(
+        builtin_type, Int(GRN_UINT8_VALUE(obj)), &node);
       break;
     }
     case GRN_DB_UINT16: {
-      rc = ConstantNode<Int>::open(Int(GRN_UINT16_VALUE(obj)), &node);
+      rc = ConstantNode<Int>::open(
+        builtin_type, Int(GRN_UINT16_VALUE(obj)), &node);
       break;
     }
     case GRN_DB_UINT32: {
-      rc = ConstantNode<Int>::open(Int(GRN_UINT32_VALUE(obj)), &node);
+      rc = ConstantNode<Int>::open(
+        builtin_type, Int(GRN_UINT32_VALUE(obj)), &node);
       break;
     }
     case GRN_DB_UINT64: {
       // FIXME: Type conversion from UInt64 to Int may lose the content.
-      rc = ConstantNode<Int>::open(Int(GRN_UINT64_VALUE(obj)), &node);
+      rc = ConstantNode<Int>::open(
+        builtin_type, Int(GRN_UINT64_VALUE(obj)), &node);
       break;
     }
     case GRN_DB_FLOAT: {
@@ -2597,7 +2677,7 @@ grn_rc Expression::push_bulk_object(grn_obj *obj) {
     case GRN_DB_TEXT:
     case GRN_DB_LONG_TEXT: {
       Text value(GRN_TEXT_VALUE(obj), GRN_TEXT_LEN(obj));
-      rc = ConstantNode<Text>::open(value, &node);
+      rc = ConstantNode<Text>::open(builtin_type, value, &node);
       break;
     }
     // TODO: TokyoGeoPoint and Wgs84GeoPoint should be provided?
@@ -3074,7 +3154,44 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
         break;
       }
       case GRN_EGN_INT: {
-        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Int64");
+        switch (expressions[i]->builtin_type()) {
+          case GRN_DB_INT8: {
+            GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Int8");
+            break;
+          }
+          case GRN_DB_INT16: {
+            GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Int16");
+            break;
+          }
+          case GRN_DB_INT32: {
+            GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Int32");
+            break;
+          }
+          case GRN_DB_INT64: {
+            GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Int64");
+            break;
+          }
+          case GRN_DB_UINT8: {
+            GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "UInt8");
+            break;
+          }
+          case GRN_DB_UINT16: {
+            GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "UInt16");
+            break;
+          }
+          case GRN_DB_UINT32: {
+            GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "UInt32");
+            break;
+          }
+          case GRN_DB_UINT64: {
+            GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "UInt64");
+            break;
+          }
+          default: {
+            GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Int");
+            break;
+          }
+        }
         break;
       }
       case GRN_EGN_FLOAT: {
@@ -3086,15 +3203,45 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
         break;
       }
       case GRN_EGN_TEXT: {
-        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Text");
+        switch (expressions[i]->builtin_type()) {
+          case GRN_DB_SHORT_TEXT: {
+            GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "ShortText");
+            break;
+          }
+          case GRN_DB_TEXT: {
+            GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Text");
+            break;
+          }
+          case GRN_DB_LONG_TEXT: {
+            GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "LongText");
+            break;
+          }
+          default: {
+            GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Text");
+            break;
+          }
+        }
         break;
       }
       case GRN_EGN_GEO_POINT: {
-        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "GeoPoint");
+        switch (expressions[i]->builtin_type()) {
+          case GRN_DB_TOKYO_GEO_POINT: {
+            GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "TokyoGeoPoint");
+            break;
+          }
+          case GRN_DB_WGS84_GEO_POINT: {
+            GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "WGS84GeoPoint");
+            break;
+          }
+          default: {
+            GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "GeoPoint");
+            break;
+          }
+        }
         break;
       }
       default: {
-        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "N/A");
+        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Void");
         break;
       }
     }

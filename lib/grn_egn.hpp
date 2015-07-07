@@ -48,6 +48,9 @@ struct Bool {
   static DataType data_type() {
     return GRN_EGN_BOOL;
   }
+  static grn_builtin_type default_builtin_type() {
+    return GRN_DB_BOOL;
+  }
 
   Bool() : raw() {}
   Bool(const Bool &value) : raw(value.raw) {}
@@ -65,6 +68,9 @@ struct Int {
 
   static DataType data_type() {
     return GRN_EGN_INT;
+  }
+  static grn_builtin_type default_builtin_type() {
+    return GRN_DB_INT64;
   }
 
   Int() : raw() {}
@@ -87,6 +93,9 @@ struct Float {
   static DataType data_type() {
     return GRN_EGN_FLOAT;
   }
+  static grn_builtin_type default_builtin_type() {
+    return GRN_DB_FLOAT;
+  }
 
   Float() : raw() {}
   Float(const Float &value) : raw(value.raw) {}
@@ -108,6 +117,9 @@ struct Time {
   static DataType data_type() {
     return GRN_EGN_TIME;
   }
+  static grn_builtin_type default_builtin_type() {
+    return GRN_DB_TIME;
+  }
 
   Time() : raw() {}
   Time(const Time &value) : raw(value.raw) {}
@@ -128,6 +140,9 @@ struct Text {
 
   static DataType data_type() {
     return GRN_EGN_TEXT;
+  }
+  static grn_builtin_type default_builtin_type() {
+    return GRN_DB_TEXT;
   }
 
   Text() : raw() {}
@@ -176,6 +191,9 @@ struct GeoPoint {
 
   static DataType data_type() {
     return GRN_EGN_GEO_POINT;
+  }
+  static grn_builtin_type default_builtin_type() {
+    return GRN_DB_VOID;
   }
 
   GeoPoint() : raw() {}
@@ -228,6 +246,9 @@ class Expression {
   DataType data_type() const {
     return data_type_;
   }
+  grn_builtin_type builtin_type() const {
+    return builtin_type_;
+  }
 
   grn_rc push_object(grn_obj *obj);
   grn_rc push_operator(OperatorType operator_type);
@@ -244,6 +265,7 @@ class Expression {
   grn_obj *table_;
   ExpressionType type_;
   DataType data_type_;
+  grn_builtin_type builtin_type_;
   std::vector<ExpressionNode *> stack_;
 
   // Disable copy and assignment.
