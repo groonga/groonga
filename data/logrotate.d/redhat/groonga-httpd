@@ -8,8 +8,7 @@
     create 640 groonga groonga
     sharedscripts
     postrotate
-        . /etc/sysconfig/groonga-httpd
-        if [ x"$ENABLE" = x"yes" ]; then
+        if [ -f /var/lock/subsys/groonga-httpd ]; then
             /usr/bin/curl --silent --output /dev/null \
                 "http://127.0.0.1:10041/d/log_reopen"
         fi
