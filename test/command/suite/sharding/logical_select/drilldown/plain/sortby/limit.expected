@@ -110,7 +110,7 @@ logical_select Logs timestamp   --limit 0   --drilldown action   --drilldown_sor
     ],
     [
       [
-        1
+        3
       ],
       [
         [
