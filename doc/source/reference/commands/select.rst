@@ -126,6 +126,8 @@ using ``TokenBigram`` tokenizer. So both ``Entries._key`` and
 
 OK. The schema and data for examples are ready.
 
+.. _select-simple-usage:
+
 Simple usage
 ^^^^^^^^^^^^
 
@@ -839,6 +841,8 @@ The ``select`` command outputs from the 4th record because the total
 number of records is ``5``.
 
 The default value is ``0``.
+
+.. _select-limit:
 
 ``limit``
 """""""""
@@ -1642,73 +1646,214 @@ the same value. You can change increase score for each record that has
 the same ``"KEYWORD"``. It is useful to tune search score. See
 :ref:`weight-vector-column` for details.
 
-返値
-----
+.. _select-return-value:
 
-TODO: write in English and add example.
+Return value
+------------
 
-以下のようなjson形式で値が返却されます。
+``select`` returns response with the following format::
 
-::
+  [
+    HEADER,
+    [
+      SEARCH_RESULT,
+      DRILLDOWN_RESULT_1,
+      DRILLDOWN_RESULT_2,
+      ...,
+      DRILLDOWN_RESULT_N
+    ]
+  ]
 
- [[リターンコード, 処理開始時間, 処理時間], [検索結果, ドリルダウン結果]]
+If ``select`` fails, error details are in ``HEADER``.
 
-``リターンコード``
+See :doc:`/reference/command/output_format` for ``HEADER``.
 
-  grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内容を示す
-  文字列が返されます。
+There are zero or more ``DRILLDOWN_RESULT``. If no ``drilldown`` and
+``drilldown[${LABEL}].keys`` are specified, they are omitted like the
+following::
 
-``処理開始時間``
+  [
+    HEADER,
+    [
+      SEARCH_RESULT
+    ]
+  ]
 
-  処理を開始した時間について、1970年1月1日0時0分0秒を起点とした秒数を小数で返します。
+If ``drilldown`` has two or more keys like ``--drilldown "_key,
+column1, column2"``, multiple ``DRILLDOWN_RESULT`` exist::
 
-``処理時間``
+  [
+    HEADER,
+    [
+      SEARCH_RESULT,
+      DRILLDOWN_RESULT_FOR_KEY,
+      DRILLDOWN_RESULT_FOR_COLUMN1,
+      DRILLDOWN_RESULT_FOR_COLUMN2
+    ]
+  ]
 
-  処理にかかった秒数を返します。
+If ``drilldown[${LABEL}].keys`` is used, only one ``DRILLDOWN_RESULT``
+exist::
 
-``検索結果``
+  [
+    HEADER,
+    [
+      SEARCH_RESULT,
+      DRILLDOWN_RESULT_FOR_LABELED_DRILLDOWN
+    ]
+  ]
 
-  drilldown条件が実行される前の検索結果が以下のように出力されます。::
+``DRILLDOWN_RESULT`` format is different between ``drilldown`` and
+``drilldown[${LABEL}].keys``. It's described later.
 
-    [[ヒット数], [[カラム名1,カラム型1],..], 検索結果1,..]
+``SEARCH_RESULT`` is the following format::
 
-  ``ヒット数``
+  [
+    [N_HITS],
+    COLUMNS,
+    RECORDS
+  ]
 
-    検索条件にヒットしたレコードの数が出力されます。 ``--limit`` オプションで出力件数を制限した場合は出力するレコード数と一致しません。 ``ヒット数`` は ``--limit`` オプションに関係なく常にヒットしたレコードの数になります。
+See :ref:`select-simple-usage` for concrete example of the format.
 
-  ``カラム名n``
+``N_HITS`` is the number of matched records before :ref:`select-limit`
+is applied.
 
-    output_columnsに指定された条件に従って、対象となるカラム名が出力されます。
+``COLUMNS`` describes about output columns specified by
+:ref:`select-output-columns`. It uses the following format::
 
-  ``カラム型n``
+  [
+    [COLUMN_NAME_1, COLUMN_TYPE_1],
+    [COLUMN_NAME_2, COLUMN_TYPE_2],
+    ...,
+    [COLUMN_NAME_N, COLUMN_TYPE_N]
+  ]
 
-    output_columnsに指定された条件に従って、対象となるカラム型が出力されます。
+``COLUMNS`` includes one or more output column information. Each
+output column information includes the followings:
 
-  ``検索結果n``
+  * Column name as string
+  * Column type as string or ``null``
 
-    output_columns, offset, limitによって指定された条件に従って各レコードの値が出力されます。
+Column name is extracted from value specified as
+:ref:`select-output-columns`.
 
-``drilldown結果``
+Column type is Groonga's type name or ``null``. It doesn't describe
+whether the column value is vector or scalar. You need to determine it
+by whether real column value is array or not.
 
-  drilldown処理の結果が以下のように出力されます。::
+See :doc:`/reference/types` for type details.
 
-    [[[件数], [[カラム名1,カラム型1],..], 検索結果1,..],..]
+``null`` is used when column value type isn't determined. For example,
+function call in :ref:`select-output-columns` such as
+``--output_columns "snippet_html(content)"`` uses ``null``.
 
-  ``件数``
+Here is an example of ``COLUMNS``::
 
-    drilldownに指定されたカラムの値の異なり数が出力されます。
+  [
+    ["_id",     "UInt32"],
+    ["_key",    "ShortText"],
+    ["n_likes", "UInt32"],
+  ]
 
-  ``カラム名n``
+``RECORDS`` includes column values for each matched record. Included
+records are selected by :ref:`select-offset` and
+:ref:`select-limit`. It uses the following format::
 
-    drilldown_output_columnsに指定された条件に従って、対象となるカラム名が出力されます。
+  [
+    [
+      RECORD_1_COLUMN_1,
+      RECORD_1_COLUMN_2,
+      ...,
+      RECORD_1_COLUMN_N
+    ],
+    [
+      RECORD_2_COLUMN_1,
+      RECORD_2_COLUMN_2,
+      ...,
+      RECORD_2_COLUMN_N
+    ],
+    ...
+    [
+      RECORD_N_COLUMN_1,
+      RECORD_N_COLUMN_2,
+      ...,
+      RECORD_N_COLUMN_N
+    ]
+  ]
 
-  ``カラム型n``
+Here is an example ``RECORDS``::
 
-    drilldown_output_columnsに指定された条件に従って、対象となるカラム型が出力されます。
+  [
+    [
+      1,
+      "The first post!",
+      5
+    ],
+    [
+      2,
+      "Groonga",
+      10
+    ],
+    [
+      3,
+      "Mroonga",
+      15
+    ]
+  ]
 
-  ``ドリルダウン結果n``
+``DRILLDOWN_RESULT`` format is different between ``drilldown`` and
+``drilldown[${LABEL}].keys``.
 
-    drilldown_output_columns, drilldown_offset, drilldown_limitによって指定された条件に従って各レコードの値が出力されます。
+``drilldown`` uses the same format as ``SEARCH_RESULT``::
+
+  [
+    [N_HITS],
+    COLUMNS,
+    RECORDS
+  ]
+
+And ``drilldown`` generates one or more ``DRILLDOWN_RESULT`` when
+:ref:`select-drilldown` has one ore more keys.
+
+``drilldown[${LABEL}].keys`` uses the following format. Multiple
+``drilldown[${LABEL}].keys`` are mapped to one object (key-value
+pairs)::
+
+  {
+    "LABEL_1": [
+      [N_HITS],
+      COLUMNS,
+      RECORDS
+    ],
+    "LABEL_2": [
+      [N_HITS],
+      COLUMNS,
+      RECORDS
+    ],
+    ...,
+    "LABEL_N": [
+      [N_HITS],
+      COLUMNS,
+      RECORDS
+    ]
+  }
+
+Each ``drilldown[${LABEL}].keys`` corresponds to the following::
+
+  "LABEL": [
+    [N_HITS],
+    COLUMNS,
+    RECORDS
+  ]
+
+The following value part is the same format as ``SEARCH_RESULT``::
+
+  [
+    [N_HITS],
+    COLUMNS,
+    RECORDS
+  ]
 
 See also
 --------
