@@ -1,0 +1,63 @@
+Execution example::
+
+  logical_select \
+    --logical_table Entries \
+    --shard_key created_at \
+    --max "2015/07/08 23:59:59"
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         3
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "content", 
+  #           "Text"
+  #         ], 
+  #         [
+  #           "created_at", 
+  #           "Time"
+  #         ], 
+  #         [
+  #           "n_likes", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "tag", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         "The first post!", 
+  #         "Welcome! This is my first post!", 
+  #         1436281200.0, 
+  #         5, 
+  #         "Hello"
+  #       ], 
+  #       [
+  #         "Groonga", 
+  #         "I started to use Groonga. It's very fast!", 
+  #         1436284800.0, 
+  #         10, 
+  #         "Groonga"
+  #       ], 
+  #       [
+  #         "Mroonga", 
+  #         "I also started to use Mroonga. It's also very fast! Really fast!", 
+  #         1436288400.0, 
+  #         15, 
+  #         "Groonga"
+  #       ]
+  #     ]
+  #   ]
+  # ]
