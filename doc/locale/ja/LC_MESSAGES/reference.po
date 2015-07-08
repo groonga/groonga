@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-07-08 22:36+0900\n"
+"PO-Revision-Date: 2015-07-08 23:00+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -4999,6 +4999,9 @@ msgid ""
 "``logical_select`` is a sharding version of :doc:`select`. "
 "``logical_select`` searches records from multiple tables and outputs them."
 msgstr ""
+"``logical_select`` は :doc:`select` のシャーディングバージョンです。 "
+"``logical_select`` は複数のテーブルからレコードを検索し、マッチしたレコードを"
+"出力します。"
 
 msgid ""
 "You need to :doc:`plugin_register` ``sharding`` plugin because "
@@ -5238,9 +5241,9 @@ msgid ""
 "postfix. If you use actual table such as ``Entries_20150708``, "
 "``Entries_20150709`` and so on, logical table name is ``Entries``."
 msgstr ""
-"論理テーブル名を指定します。これは ``_YYYYMMDD`` をテーブル名から除いたもので"
-"す。実際のテーブルが \"Entries_20150708\" や \"Entries_20150709\" といったも"
-"のなら、論理テーブル名は \"Entries\" です。"
+"論理テーブル名を指定します。これは ``_YYYYMMDD`` をテーブル名からのぞいたもの"
+"です。実際のテーブルが ``Entries_20150708`` や ``Entries_20150709`` といった"
+"ものなら、論理テーブル名は ``Entries`` です。"
 
 # b91f7e6433b541cfaa5d48146d585be8
 msgid ""
@@ -8094,14 +8097,11 @@ msgstr ""
 "を変えることができます。これは検索スコアーをチューニングするときに便利です。"
 "詳細は :ref:`weight-vector-column` を参照してください。"
 
-#, fuzzy
 msgid "``select`` returns response with the following format::"
-msgstr "この ``select`` コマンドは次の情報を出力します。"
+msgstr "``select`` は以下のフォーマットのレスポンスを返します::"
 
-#, fuzzy
 msgid "If ``select`` fails, error details are in ``HEADER``."
-msgstr ""
-"``table_create`` が失敗すると、エラーの詳細は ``HEADER`` に含まれます。"
+msgstr "``select`` が失敗すると、 ``HEADER`` にエラーの詳細が含まれます。"
 
 # 01d15d4538594f22840342adce9418c1
 msgid ""
@@ -8109,66 +8109,77 @@ msgid ""
 "``drilldown[${LABEL}].keys`` are specified, they are omitted like the "
 "following::"
 msgstr ""
+"0個以上の ``DRILLDOWN_RESULT`` があります。もし、 ``drilldown`` も "
+"``drilldown[${LABEL}].keys`` も指定していない場合、次のように "
+"``DRILLDOWN_RESULT`` は出力されません::"
 
 # 3430f3ea532e412e905c90793cdebf40
 msgid ""
 "If ``drilldown`` has two or more keys like ``--drilldown \"_key, column1, "
 "column2\"``, multiple ``DRILLDOWN_RESULT`` exist::"
 msgstr ""
+"``--drilldown \"_key, column1, column2\"`` というように ``drilldown`` に2つ以"
+"上のキーがある場合、複数の ``DRILLDOWN_RESULT`` が存在します::"
 
 # d14e54c7182740058bf6a2b0ebd61a1a
 msgid ""
 "If ``drilldown[${LABEL}].keys`` is used, only one ``DRILLDOWN_RESULT`` "
 "exist::"
 msgstr ""
+"もし ``drilldown[${LABEL}].keys`` を使っているなら、 ``DRILLDOWN_RESULT`` が1"
+"つだけ存在します::"
 
 # f58266b95a7041c9b422af8be8aad52c
 msgid ""
 "``DRILLDOWN_RESULT`` format is different between ``drilldown`` and "
 "``drilldown[${LABEL}].keys``. It's described later."
 msgstr ""
+"``DRILLDOWN_RESULT`` のフォーマットは ``drilldown`` と ``drilldown[${LABEL}]."
+"keys`` で違います。これについては後述します。"
 
-#, fuzzy
 msgid "``SEARCH_RESULT`` is the following format::"
-msgstr "``COLUMN_LIST_HEADER`` は以下の形式です::"
+msgstr "``SEARCH_RESULT`` は以下のフォーマットです::"
 
 # 3261e6200c6943c5b597c0ce09a7f0bd
 msgid "See :ref:`select-simple-usage` for concrete example of the format."
-msgstr ""
+msgstr "このフォーマットの具体例は :ref:`select-simple-usage` を見てください。"
 
 # f5f72801b9ce4dc1b5a036a7509b8be7
 msgid ""
 "``N_HITS`` is the number of matched records before :ref:`select-limit` is "
 "applied."
 msgstr ""
+"``N_HITS`` は :ref:`select-limit` を適用する前のマッチしたレコード数です。"
 
 # fd1d1b399c984e89b316395a0d7a5e56
 msgid ""
 "``COLUMNS`` describes about output columns specified by :ref:`select-output-"
 "columns`. It uses the following format::"
 msgstr ""
+"``COLUMNS`` は :ref:`select-output-columns` で指定した出力カラムの情報を表し"
+"ています。これは次のフォーマットになっています::"
 
 # d0a21e9230d14ec99a5e651a84f2c766
 msgid ""
 "``COLUMNS`` includes one or more output column information. Each output "
 "column information includes the followings:"
 msgstr ""
+"``COLUMNS`` は1つ以上の出力カラムの情報を含んでいます。各出力カラムの情報は次"
+"の情報を含んでいます。"
 
 # 9187e8fdec8f458e98c3ecf9f3c70a46
 msgid "Column name as string"
-msgstr ""
+msgstr "カラム名（文字列）"
 
 # e03136389ce946bf9d1474afd4fc9893
 msgid "Column type as string or ``null``"
-msgstr ""
+msgstr "カラムの型（文字列または ``null`` ）"
 
-#, fuzzy
 msgid ""
 "Column name is extracted from value specified as :ref:`select-output-"
 "columns`."
 msgstr ""
-"``html_untag`` は :ref:`select-output-columns` で説明している ``--"
-"output_columns`` で使います。"
+"カラム名は :ref:`select-output-columns` で指定された値から抽出しています。"
 
 # fc51c38d0a1a4f428c19068091be1f89
 msgid ""
@@ -8176,10 +8187,12 @@ msgid ""
 "the column value is vector or scalar. You need to determine it by whether "
 "real column value is array or not."
 msgstr ""
+"カラムの方はGroongaでの型名または ``null`` です。カラムがベクターかスカラーか"
+"の情報は持っていません。実際のカラムの値が配列かどうかで判断する必要がありま"
+"す。"
 
-#, fuzzy
 msgid "See :doc:`/reference/types` for type details."
-msgstr "型の一覧は :doc:`/reference/types` にあります。"
+msgstr "型の詳細は :doc:`/reference/types` を見てください。"
 
 # 3b6a9ac91fc349088cb913d5e4f772cb
 msgid ""
@@ -8187,10 +8200,12 @@ msgid ""
 "function call in :ref:`select-output-columns` such as ``--output_columns "
 "\"snippet_html(content)\"`` uses ``null``."
 msgstr ""
+"``null`` になるときはカラムの値の型を決められないときです。たとえば、 ``--"
+"output_columns \"snippet_html(content)\"`` というように :ref:`select-output-"
+"columns` の中で関数呼び出しを使ったときは ``null`` になります。"
 
-#, fuzzy
 msgid "Here is an example of ``COLUMNS``::"
-msgstr "以下は ``ALLOW_COLUMN`` の使用例です。"
+msgstr "以下は ``COLUMNS`` の使用例です::"
 
 # 0458e34640b947abaf2caf0eb5cd5bd8
 msgid ""
@@ -8198,40 +8213,49 @@ msgid ""
 "are selected by :ref:`select-offset` and :ref:`select-limit`. It uses the "
 "following format::"
 msgstr ""
+"``RECORDS`` はマッチした各レコードのカラムの値を含んでいます。 ``RECORDS`` に"
+"含まれるレコードは :ref:`select-offset` と :ref:`select-limit` で選択されたレ"
+"コードです。 ``RECORDS`` は次のフォーマットです::"
 
-#, fuzzy
 msgid "Here is an example ``RECORDS``::"
-msgstr "以下は例です。"
+msgstr "以下は ``RECORDS`` の例です::"
 
 # 9a5d110872984c3fb176a8a754d092e4
 msgid ""
 "``DRILLDOWN_RESULT`` format is different between ``drilldown`` and "
 "``drilldown[${LABEL}].keys``."
 msgstr ""
+"``DRILLDOWN_RESULT`` のフォーマットは ``drilldown`` と ``drilldown[${LABEL}]."
+"keys`` で違います。"
 
 # 1f5703c031714dd9b65a3a31f32807d0
 msgid "``drilldown`` uses the same format as ``SEARCH_RESULT``::"
-msgstr ""
+msgstr "``drilldown`` は ``SEARCH_RESULT`` と同じフォーマットです::"
 
 # db9b7f45658b463987320805dd0a95d4
 msgid ""
 "And ``drilldown`` generates one or more ``DRILLDOWN_RESULT`` when :ref:"
 "`select-drilldown` has one ore more keys."
 msgstr ""
+":ref:`select-drilldown` で1つ以上のキーを指定すると、 ``drilldown`` は1つ以上"
+"の ``DRILLDOWN_RESULT`` を出力します。"
 
 # 5f8ab1c0924847faa28c9ab7253a0885
 msgid ""
 "``drilldown[${LABEL}].keys`` uses the following format. Multiple "
 "``drilldown[${LABEL}].keys`` are mapped to one object (key-value pairs)::"
 msgstr ""
+"``drilldown[${LABEL}].keys`` は次のフォーマットを使います。複数の "
+"``drilldown[${LABEL}].keys`` は1つのオブジェクト（キーと値のペアの集合）にな"
+"ります::"
 
 # c7ffb6cb4ced433890e7c7a9aa4af468
 msgid "Each ``drilldown[${LABEL}].keys`` corresponds to the following::"
-msgstr ""
+msgstr "各 ``drilldown[${LABEL}].keys`` は次の部分に対応します::"
 
 # 4303d9ec19a244f78626232e55cb4d6a
 msgid "The following value part is the same format as ``SEARCH_RESULT``::"
-msgstr ""
+msgstr "以下の値の部分は ``SEARCH_RESULT`` と同じフォーマットです::"
 
 msgid "``shutdown``"
 msgstr ""
