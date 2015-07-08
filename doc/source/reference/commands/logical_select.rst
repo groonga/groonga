@@ -298,13 +298,50 @@ Here is an example for ``exclude``. The result doesn't include the
 ``max``
 """""""
 
-Specifies the max value of ``shard_key``.
+Specifies the maximum value of ``shard_key`` column. If shard doesn't
+have any matched records, the shard isn't searched.
+
+For example, ``max`` is ``"2015/07/08 23:59:59"``, ``Entry_20150709``
+isn't searched. Because ``Entry_20150709`` has only records for
+``""2015/07/09"``.
+
+The following example only uses ``Entry_20150708``
+table. ``Entry_20150709`` isn't used.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/max.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --max "2015/07/08 23:59:59"
 
 ``max_border``
 """"""""""""""
 
-Specifies whether the max value of borderline must be include or not.
-Specify ``include`` or ``exclude`` as the value of this parameter.
+Specifies whether the maximum value is include or not. Here is
+available values.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Value
+     - Description
+   * - ``include``
+     - Includes ``max`` value. This is the default.
+   * - ``exclude``
+     - Doesn't include ``max`` value.
+
+Here is an example for ``exclude``. The result doesn't include the
+``"Good-bye Senna"`` record because its ``created_at`` value is
+``"2015/07/09 00:00:00"``.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/max_border.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --max "2015/07/09 00:00:00" \
+..   --max_border "exclude"
 
 ``filter``
 """"""""""
