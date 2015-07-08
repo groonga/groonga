@@ -249,13 +249,50 @@ There are optional parameters.
 ``min``
 """""""
 
-Specifies the min value of ``shard_key``.
+Specifies the minimum value of ``shard_key`` column. If shard doesn't
+have any matched records, the shard isn't searched.
+
+For example, ``min`` is ``"2015/07/09 00:00:00"``, ``Entry_20150708``
+isn't searched. Because ``Entry_20150708`` has only records for
+``""2015/07/08"``.
+
+The following example only uses ``Entry_20150709``
+table. ``Entry_20150708`` isn't used.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/min.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --min "2015/07/09 00:00:00"
 
 ``min_border``
 """"""""""""""
 
-Specifies whether the min value of borderline must be include or not.
-Specify ``include`` or ``exclude`` as the value of this parameter.
+Specifies whether the minimum value is include or not. Here is
+available values.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Value
+     - Description
+   * - ``include``
+     - Includes ``min`` value. This is the default.
+   * - ``exclude``
+     - Doesn't include ``min`` value.
+
+Here is an example for ``exclude``. The result doesn't include the
+``"Good-bye Senna"`` record because its ``created_at`` value is
+``"2015/07/09 00:00:00"``.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/min_border.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --min "2015/07/09 00:00:00" \
+..   --min_border "exclude"
 
 ``max``
 """""""
