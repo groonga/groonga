@@ -488,5 +488,29 @@ class TestEstimateSize < QueryOptimizerTestCase
                                     "type == 1" +
                                     ")"))
     end
+
+    def test_or_and
+      @logs.add(:message => "Groonga is fast", :type => 1)
+      @logs.add(:message => "Rroonga is fast", :type => 1)
+      @logs.add(:message => "Mroonga is fast", :type => 1)
+      @logs.add(:timestamp => "2015-02-19 02:17:00", :type => 2)
+      @logs.add(:timestamp => "2015-02-19 02:17:00", :type => 2)
+      @logs.add(:timestamp => "2015-02-19 02:18:00", :type => 2)
+      @logs.add(:timestamp => "2015-02-19 02:18:00", :type => 2)
+      @logs.add(:timestamp => "2015-02-19 02:19:00", :type => 3)
+      @logs.add(:timestamp => "2015-02-19 02:19:00", :type => 3)
+      @logs.add(:timestamp => "2015-02-19 02:19:00", :type => 3)
+      @logs.add(:timestamp => "2015-02-19 02:19:00", :type => 3)
+
+      assert_equal(1,
+                   estimate_size("(" +
+                                 "timestamp < '2015-02-19 02:19:00' || " +
+                                 "type == 2 " +
+                                 ") && " +
+                                 "(" +
+                                 "message @ 'Groonga' || " +
+                                 "message @ 'Rroonga'" +
+                                 ")"))
+    end
   end
 end

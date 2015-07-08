@@ -11,43 +11,46 @@ module Groonga
       data_list = builder.build
       return @table_size if data_list.nil?
 
-      or_data_list = group_data_list(data_list)
-      or_sizes = or_data_list.collect do |and_data_list|
-        and_sizes = and_data_list.collect do |data|
+      current_size = 0
+      sizes = []
+      data_list.each do |data|
+        if (data.flags & ScanInfo::Flags::POP) != 0
+          size = sizes.pop
+          case data.logical_op
+          when Operator::AND, Operator::AND_NOT
+            current_size = size if size < current_size
+          when Operator::OR
+            current_size = size if size > current_size
+          else
+            message = "invalid logical operator: <#{data.logical_op.inspect}>"
+            raise InvalidArgument, message
+          end
+        else
+          if (data.flags & ScanInfo::Flags::PUSH) != 0
+            sizes.push(current_size)
+            current_size = 0
+          end
+
           size = estimate_data(data)
-          if data.logical_op == Operator::AND_NOT
+          case data.logical_op
+          when Operator::AND
+            current_size = size if size < current_size
+          when Operator::AND_NOT
             size = @table_size - size
             size = 0 if size < 0
+            current_size = size if size < current_size
+          when Operator::OR
+            current_size = size if size > current_size
+          else
+            message = "invalid logical operator: <#{data.logical_op.inspect}>"
+            raise InvalidArgument, message
           end
-          size
         end
-        and_sizes.min
       end
-      or_sizes.max
+      current_size
     end
 
     private
-    def group_data_list(data_list)
-      or_data_list = [[]]
-      data_list.each do |data|
-        next if data.op == Operator::NOP
-
-        and_data_list = or_data_list.last
-        if and_data_list.empty?
-          and_data_list << data
-        else
-          case data.logical_op
-          when Operator::AND, Operator::AND_NOT
-            and_data_list << data
-          else
-            and_data_list = [data]
-            or_data_list << and_data_list
-          end
-        end
-      end
-      or_data_list
-    end
-
     def estimate_data(data)
       search_index = data.search_indexes.first
       return @table_size if search_index.nil?
