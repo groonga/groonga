@@ -6,7 +6,7 @@
 .. database: logical_select
 
 ``logical_select``
-========================
+==================
 
 Summary
 -------
@@ -17,25 +17,181 @@ Summary
 
 .. versionadded:: 5.0.5
 
-TODO
+``logical_select`` is a sharding version of
+:doc:`select`. ``logical_select`` searches records from multiple
+tables and outputs them.
+
+You need to :doc:`plugin_register` ``sharding`` plugin because
+``logical_select`` is included in ``sharding`` plugin.
 
 Syntax
 ------
 
-``logical_select`` command has seven parameters.
+``logical_select`` has many parameters.
 
-The required parameters are ``logical_table`` and ``shard_key``::
+The required parameters are ``logical_table`` and ``shard_key``. Other
+parameters are optional::
 
   logical_select logical_table
                  shard_key
-                 [min]
-                 [min_border]
-                 [max]
-                 [max_border]
-                 [filter]
+                 [min=null]
+                 [min_border="include"]
+                 [max=null]
+                 [max_border="include"]
+                 [filter=null]
+                 [sortby=null]
+                 [output_columns="_key, *"]
+                 [offset=0]
+                 [limit=10]
+                 [drilldown=null]
+                 [drilldown_sortby=null]
+                 [drilldown_output_columns="_key, _nsubrecs"]
+                 [drilldown_offset=0]
+                 [drilldown_limit=10]
+
+``logical_select`` has the following named parameters for advanced
+drilldown:
+
+  * ``drilldown[${LABEL}].keys=null``
+  * ``drilldown[${LABEL}].sortby=null``
+  * ``drilldown[${LABEL}].output_columns="_key, _nsubrecs"``
+  * ``drilldown[${LABEL}].offset=0``
+  * ``drilldown[${LABEL}].limit=10``
+  * ``drilldown[${LABEL}].calc_types=NONE``
+  * ``drilldown[${LABEL}].calc_target=null``
+
+You can use one or more alphabets, digits, ``_`` and ``.`` for
+``${LABEL}``. For example, ``parent.sub1`` is a valid ``${LABEL}``.
+
+Parameters that have the same ``${LABEL}`` are grouped.
+
+For example, the following parameters specify one drilldown:
+
+  * ``--drilldown[label].keys column``
+  * ``--drilldown[label].sortby -_nsubrecs``
+
+The following parameters specify two drilldowns:
+
+  * ``--drilldown[label1].keys column1``
+  * ``--drilldown[label1].sortby -_nsubrecs``
+  * ``--drilldown[label2].keys column2``
+  * ``--drilldown[label2].sortby _key``
+
+Differences from ``select``
+---------------------------
+
+Most of ``logical_select`` features can be used like corresponding
+:doc:`select` features. For example, parameter name is same, output
+format is same and so on.
+
+But there are some differences from :doc:`select`:
+
+  * ``logical_table`` and ``shard_key`` parameters are required
+    instead of ``table`` parameter.
+  * ``sortby``, ``drilldown_sortby`` and
+    ``drilldown[${LABEL}].sortby`` aren't supported when multiple
+    shards are used. (Only one shard is used, they are supported.)
 
 Usage
 -----
+
+Let's learn about ``logical_select`` usage with examples. This section
+shows many popular usages.
+
+You need to register ``sharding`` plugin because ``logical_select`` is
+included in ``sharding`` plugin.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/usage_plugin_register.log
+.. plugin_register sharding
+
+
+Here are a schema definition and sample data to show usage.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/usage_setup.log
+.. table_create Entries_20150708 TABLE_HASH_KEY ShortText
+.. column_create Entries_20150708 created_at COLUMN_SCALAR Time
+.. column_create Entries_20150708 content COLUMN_SCALAR Text
+.. column_create Entries_20150708 likes COLUMN_SCALAR UInt32
+.. column_create Entries_20150708 tag COLUMN_SCALAR ShortText
+..
+.. table_create Entries_20150709 TABLE_HASH_KEY ShortText
+.. column_create Entries_20150709 created_at COLUMN_SCALAR Time
+.. column_create Entries_20150709 content COLUMN_SCALAR Text
+.. column_create Entries_20150709 likes COLUMN_SCALAR UInt32
+.. column_create Entries_20150709 tag COLUMN_SCALAR ShortText
+..
+.. table_create Terms TABLE_PAT_KEY ShortText \
+..   --default_tokenizer TokenBigram \
+..   --normalizer NormalizerAuto
+.. column_create Terms entries_key_index_20150708 \
+..   COLUMN_INDEX|WITH_POSITION Entries_20150708 _key
+.. column_create Terms entries_content_index_20150708 \
+..   COLUMN_INDEX|WITH_POSITION Entries_20150708 content
+.. column_create Terms entries_key_index_20150709 \
+..   COLUMN_INDEX|WITH_POSITION Entries_20150709 _key
+.. column_create Terms entries_content_index_20150709 \
+..   COLUMN_INDEX|WITH_POSITION Entries_20150709 content
+..
+.. load --table Entries_20150708
+.. [
+.. {"_key":       "The first post!",
+..  "created_at": "2015/07/08 00:00:00",
+..  "content":    "Welcome! This is my first post!",
+..  "n_likes":    5,
+..  "tag":        "Hello"},
+.. {"_key":       "Groonga",
+..  "created_at": "2015/07/08 01:00:00",
+..  "content":    "I started to use Groonga. It's very fast!",
+..  "n_likes":    10,
+..  "tag":        "Groonga"},
+.. {"_key":       "Mroonga",
+..  "created_at": "2015/07/08 02:00:00",
+..  "content":    "I also started to use Mroonga. It's also very fast! Really fast!",
+..  "n_likes":    15,
+..  "tag":        "Groonga"}
+.. ]
+..
+.. load --table Entries_20150708
+.. [
+.. {"_key":       "Good-bye Senna",
+..  "created_at": "2015/07/09 00:00:00",
+..  "content":    "I migrated all Senna system!",
+..  "n_likes":    3,
+..  "tag":        "Senna"},
+.. {"_key":       "Good-bye Tritonn",
+..  "created_at": "2015/07/09 01:00:00",
+..  "content":    "I also migrated all Tritonn system!",
+..  "n_likes":    3,
+..  "tag":        "Senna"}
+.. ]
+
+There are two tables, ``Entries_20150708`` and ``Entries_20150709``,
+for blog entries.
+
+.. note::
+
+   You need to use ``${LOGICAL_TABLE_NAME}_${YYYYMMDD}`` naming rule
+   for table names. In this example, ``LOGICAL_TABLE_NAME`` is
+   ``Entries`` and ``YYYYMMDD`` is ``20150708`` or ``20150709``.
+
+An entry has title, created time, content, the number of likes for the
+entry and tag. Title is key of ``Entries_YYYYMMDD``. Created time is
+value of ``Entries_YYYYMMDD.created_at`` column. Content is value of
+``Entries_YYYYMMDD.content`` column. The number of likes is value of
+``Entries_YYYYMMDD.n_likes`` column. Tag is value of
+``Entries_YYYYMMDD.tag`` column.
+
+``Entries_YYYYMMDD._key`` column and ``Entries_YYYYMMDD.content``
+column are indexed using ``TokenBigram`` tokenizer. So both
+``Entries_YYYYMMDD._key`` and ``Entries_YYYYMMDD.content`` are
+fulltext search ready.
+
+OK. The schema and data for examples are ready.
+
+Simple usage
+^^^^^^^^^^^^
 
 TODO
 
@@ -49,16 +205,41 @@ Required parameter
 
 There are required parameters, ``logical_table`` and ``shard_key``.
 
+.. _logical-select-logical-table:
+
 ``logical_table``
 """""""""""""""""
 
-Specifies logical table name. It means table name without "_YYYYMMDD" postfix.
-If you use actual table such as "Logs_20150203", "Logs_20150203" and so on, logical table name is "Logs".
+Specifies logical table name. It means table name without
+``_YYYYMMDD`` postfix. If you use actual table such as
+``Entries_20150708``, ``Entries_20150709`` and so on, logical table
+name is ``Entries``.
+
+You can show 10 records by specifying ``logical_table`` and
+``shard_key`` parameters. They are required parameters.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/logical_table_existent.log
+.. logical_select --logical_table Entries --shard_key created_at
+
+If nonexistent table is specified, an error is returned.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/logical_table_nonexistent.log
+.. logical_select --logical_table Nonexistent --shard_key created_at
+
+.. _logical-select-shard-key:
 
 ``shard_key``
 """""""""""""
 
-Specifies column name which is treated as shared key in each parted table.
+Specifies column name which is treated as shared key. Shard key is a
+column that stores data that is used for distributing records to
+suitable shards.
+
+Shard key must be ``Time`` type for now.
+
+See :ref:`logical-select-logical-table` how to specify ``shard_key``.
 
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^
@@ -68,7 +249,7 @@ There are optional parameters.
 ``min``
 """""""
 
-Specifies the min value of ``shard_key``
+Specifies the min value of ``shard_key``.
 
 ``min_border``
 """"""""""""""
