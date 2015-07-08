@@ -230,96 +230,96 @@ struct BoolVector {
   ~BoolVector() {}
 };
 
-//struct IntVector {
-//  typedef grn_egn_int_vector Raw;
-//  Raw raw;
+struct IntVector {
+  typedef grn_egn_int_vector Raw;
+  Raw raw;
 
-//  static DataType data_type() {
-//    return GRN_EGN_INT_VECTOR;
-//  }
-//  static grn_builtin_type default_builtin_type() {
-//    return GRN_DB_INT64;
-//  }
+  static DataType data_type() {
+    return GRN_EGN_INT_VECTOR;
+  }
+  static grn_builtin_type default_builtin_type() {
+    return GRN_DB_INT64;
+  }
 
-//  IntVector() : raw() {}
-//  IntVector(const IntVector &value) : raw(value.raw) {}
-//  explicit IntVector(const Raw &value) : raw(value) {}
-//  IntVector(const grn_egn_int *ptr, size_t size) : raw((Raw){ptr, size}) {}
-//  ~IntVector() {}
-//};
+  IntVector() : raw() {}
+  IntVector(const IntVector &value) : raw(value.raw) {}
+  explicit IntVector(const Raw &value) : raw(value) {}
+  IntVector(const grn_egn_int *ptr, size_t size) : raw((Raw){ptr, size}) {}
+  ~IntVector() {}
+};
 
-//struct FloatVector {
-//  typedef grn_egn_float_vector Raw;
-//  Raw raw;
+struct FloatVector {
+  typedef grn_egn_float_vector Raw;
+  Raw raw;
 
-//  static DataType data_type() {
-//    return GRN_EGN_FLOAT_VECTOR;
-//  }
-//  static grn_builtin_type default_builtin_type() {
-//    return GRN_DB_FLOAT;
-//  }
+  static DataType data_type() {
+    return GRN_EGN_FLOAT_VECTOR;
+  }
+  static grn_builtin_type default_builtin_type() {
+    return GRN_DB_FLOAT;
+  }
 
-//  FloatVector() : raw() {}
-//  FloatVector(const FloatVector &value) : raw(value.raw) {}
-//  explicit FloatVector(const Raw &value) : raw(value) {}
-//  FloatVector(const grn_egn_float *ptr, size_t size) : raw((Raw){ptr, size}) {}
-//  ~FloatVector() {}
-//};
+  FloatVector() : raw() {}
+  FloatVector(const FloatVector &value) : raw(value.raw) {}
+  explicit FloatVector(const Raw &value) : raw(value) {}
+  FloatVector(const grn_egn_float *ptr, size_t size) : raw((Raw){ptr, size}) {}
+  ~FloatVector() {}
+};
 
-//struct TimeVector {
-//  typedef grn_egn_time_vector Raw;
-//  Raw raw;
+struct TimeVector {
+  typedef grn_egn_time_vector Raw;
+  Raw raw;
 
-//  static DataType data_type() {
-//    return GRN_EGN_INT_VECTOR;
-//  }
-//  static grn_builtin_type default_builtin_type() {
-//    return GRN_DB_INT64;
-//  }
+  static DataType data_type() {
+    return GRN_EGN_INT_VECTOR;
+  }
+  static grn_builtin_type default_builtin_type() {
+    return GRN_DB_INT64;
+  }
 
-//  TimeVector() : raw() {}
-//  TimeVector(const TimeVector &value) : raw(value.raw) {}
-//  explicit TimeVector(const Raw &value) : raw(value) {}
-//  TimeVector(const grn_egn_time *ptr, size_t size) : raw((Raw){ptr, size}) {}
-//  ~TimeVector() {}
-//};
+  TimeVector() : raw() {}
+  TimeVector(const TimeVector &value) : raw(value.raw) {}
+  explicit TimeVector(const Raw &value) : raw(value) {}
+  TimeVector(const grn_egn_time *ptr, size_t size) : raw((Raw){ptr, size}) {}
+  ~TimeVector() {}
+};
 
-//struct TextVector {
-//  typedef grn_egn_text_vector Raw;
-//  Raw raw;
+struct TextVector {
+  typedef grn_egn_text_vector Raw;
+  Raw raw;
 
-//  static DataType data_type() {
-//    return GRN_EGN_TEXT_VECTOR;
-//  }
-//  static grn_builtin_type default_builtin_type() {
-//    return GRN_DB_TEXT;
-//  }
+  static DataType data_type() {
+    return GRN_EGN_TEXT_VECTOR;
+  }
+  static grn_builtin_type default_builtin_type() {
+    return GRN_DB_TEXT;
+  }
 
-//  TextVector() : raw() {}
-//  TextVector(const TextVector &value) : raw(value.raw) {}
-//  explicit TextVector(const Raw &value) : raw(value) {}
-//  TextVector(const grn_egn_text *ptr, size_t size) : raw((Raw){ptr, size}) {}
-//  ~TextVector() {}
-//};
+  TextVector() : raw() {}
+  TextVector(const TextVector &value) : raw(value.raw) {}
+  explicit TextVector(const Raw &value) : raw(value) {}
+  TextVector(const grn_egn_text *ptr, size_t size) : raw((Raw){ptr, size}) {}
+  ~TextVector() {}
+};
 
-//struct GeoPointVector {
-//  typedef grn_egn_geo_point_vector Raw;
-//  Raw raw;
+struct GeoPointVector {
+  typedef grn_egn_geo_point_vector Raw;
+  Raw raw;
 
-//  static DataType data_type() {
-//    return GRN_EGN_GEO_POINT_VECTOR;
-//  }
-//  static grn_builtin_type default_builtin_type() {
-//    return GRN_DB_VOID;
-//  }
+  static DataType data_type() {
+    return GRN_EGN_GEO_POINT_VECTOR;
+  }
+  static grn_builtin_type default_builtin_type() {
+    return GRN_DB_VOID;
+  }
 
-//  GeoPointVector() : raw() {}
-//  GeoPointVector(const GeoPointVector &value) : raw(value.raw) {}
-//  explicit GeoPointVector(const Raw &value) : raw(value) {}
-//  GeoPointVector(const grn_egn_geo_point *ptr, size_t size)
-//    : raw((Raw){ptr, size}) {}
-//  ~GeoPointVector() {}
-//};
+  GeoPointVector() : raw() {}
+  GeoPointVector(const GeoPointVector &value) : raw(value.raw) {}
+  explicit GeoPointVector(const Raw &value) : raw(value) {}
+  GeoPointVector(const grn_egn_geo_point *ptr, size_t size)
+    : raw((Raw){ptr, size}) {}
+  ~GeoPointVector() {}
+};
 
 // Cursor is a base class which provides an interface for sequential access to
 // records.

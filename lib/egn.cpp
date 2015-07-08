@@ -22,6 +22,7 @@
 
 #include <cctype>
 #include <cstdio>
+#include <cstdlib>
 #include <limits>
 #include <memory>
 #include <string>
@@ -1149,6 +1150,395 @@ grn_rc ColumnNode<BoolVector>::evaluate(
     offset = next_offset;
   }
   grn_egn_bool *ptr = reinterpret_cast<grn_egn_bool *>(GRN_BULK_HEAD(&buf_));
+  for (size_t i = 0; i < num_records; i++) {
+    results[i].raw.ptr = ptr;
+    ptr += results[i].raw.size;
+  }
+  return GRN_SUCCESS;
+}
+
+// -- ColumnNode<IntVector> --
+
+template <>
+class ColumnNode<IntVector> : public TypedNode<IntVector> {
+ public:
+  ~ColumnNode() {
+    GRN_OBJ_FIN(ctx_, &buf_);
+    std::free(int_buf_);
+  }
+
+  static grn_rc open(grn_ctx *ctx, grn_obj *column, ExpressionNode **node) {
+    ColumnNode *new_node = new (std::nothrow) ColumnNode(ctx, column);
+    if (!new_node) {
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+    *node = new_node;
+    return GRN_SUCCESS;
+  }
+
+  ExpressionNodeType type() const {
+    return GRN_EGN_COLUMN_NODE;
+  }
+  grn_builtin_type builtin_type() const {
+    return static_cast<grn_builtin_type>(grn_obj_get_range(ctx_, column_));
+  }
+
+  grn_rc evaluate(
+    const Record *records, size_t num_records, IntVector *results);
+
+ private:
+  grn_ctx *ctx_;
+  grn_obj *column_;
+  grn_obj buf_;
+  grn_egn_int *int_buf_;
+
+  ColumnNode(grn_ctx *ctx, grn_obj *column)
+    : TypedNode<IntVector>(), ctx_(ctx), column_(column), buf_(),
+      int_buf_(NULL) {
+    switch (grn_obj_get_range(ctx_, column_)) {
+      case GRN_DB_INT8: {
+        GRN_INT8_INIT(&buf_, GRN_OBJ_VECTOR);
+        break;
+      }
+      case GRN_DB_INT16: {
+        GRN_INT16_INIT(&buf_, GRN_OBJ_VECTOR);
+        break;
+      }
+      case GRN_DB_INT32: {
+        GRN_INT32_INIT(&buf_, GRN_OBJ_VECTOR);
+        break;
+      }
+      case GRN_DB_INT64: {
+        GRN_INT64_INIT(&buf_, GRN_OBJ_VECTOR);
+        break;
+      }
+      case GRN_DB_UINT8: {
+        GRN_UINT8_INIT(&buf_, GRN_OBJ_VECTOR);
+        break;
+      }
+      case GRN_DB_UINT16: {
+        GRN_UINT16_INIT(&buf_, GRN_OBJ_VECTOR);
+        break;
+      }
+      case GRN_DB_UINT32: {
+        GRN_UINT32_INIT(&buf_, GRN_OBJ_VECTOR);
+        break;
+      }
+      case GRN_DB_UINT64: {
+        GRN_UINT64_INIT(&buf_, GRN_OBJ_VECTOR);
+        break;
+      }
+    }
+  }
+};
+
+grn_rc ColumnNode<IntVector>::evaluate(
+  const Record *records, size_t num_records, IntVector *results) {
+  GRN_BULK_REWIND(&buf_);
+  size_t offset = 0;
+  for (size_t i = 0; i < num_records; i++) {
+    grn_obj_get_value(ctx_, column_, records[i].id, &buf_);
+    if (ctx_->rc != GRN_SUCCESS) {
+      return ctx_->rc;
+    }
+    size_t next_size = GRN_BULK_VSIZE(&buf_);
+    size_t next_offset;
+    switch (builtin_type()) {
+      case GRN_DB_INT8: {
+        next_offset = next_size / sizeof(int8_t);
+        break;
+      }
+      case GRN_DB_INT16: {
+        next_offset = next_size / sizeof(int16_t);
+        break;
+      }
+      case GRN_DB_INT32: {
+        next_offset = next_size / sizeof(int32_t);
+        break;
+      }
+      case GRN_DB_INT64: {
+        next_offset = next_size / sizeof(int64_t);
+        break;
+      }
+      case GRN_DB_UINT8: {
+        next_offset = next_size / sizeof(uint8_t);
+        break;
+      }
+      case GRN_DB_UINT16: {
+        next_offset = next_size / sizeof(uint16_t);
+        break;
+      }
+      case GRN_DB_UINT32: {
+        next_offset = next_size / sizeof(uint32_t);
+        break;
+      }
+      case GRN_DB_UINT64: {
+        next_offset = next_size / sizeof(uint64_t);
+        break;
+      }
+      default: {
+        return GRN_UNKNOWN_ERROR;
+      }
+    }
+    results[i].raw.size = next_offset - offset;
+    offset = next_offset;
+  }
+  grn_egn_int *new_buf = static_cast<grn_egn_int *>(
+    std::realloc(int_buf_, sizeof(grn_egn_int) * offset));
+  if (!new_buf) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  int_buf_ = new_buf;
+  switch (builtin_type()) {
+    case GRN_DB_INT8: {
+      int8_t *ptr = reinterpret_cast<int8_t *>(GRN_BULK_HEAD(&buf_));
+      for (size_t i = 0; i < offset; ++i) {
+        int_buf_[i] = ptr[i];
+      }
+      break;
+    }
+    case GRN_DB_INT16: {
+      int16_t *ptr = reinterpret_cast<int16_t *>(GRN_BULK_HEAD(&buf_));
+      for (size_t i = 0; i < offset; ++i) {
+        int_buf_[i] = ptr[i];
+      }
+      break;
+    }
+    case GRN_DB_INT32: {
+      int32_t *ptr = reinterpret_cast<int32_t *>(GRN_BULK_HEAD(&buf_));
+      for (size_t i = 0; i < offset; ++i) {
+        int_buf_[i] = ptr[i];
+      }
+      break;
+    }
+    case GRN_DB_INT64: {
+      int64_t *ptr = reinterpret_cast<int64_t *>(GRN_BULK_HEAD(&buf_));
+      for (size_t i = 0; i < offset; ++i) {
+        int_buf_[i] = ptr[i];
+      }
+      break;
+    }
+    case GRN_DB_UINT8: {
+      uint8_t *ptr = reinterpret_cast<uint8_t *>(GRN_BULK_HEAD(&buf_));
+      for (size_t i = 0; i < offset; ++i) {
+        int_buf_[i] = ptr[i];
+      }
+      break;
+    }
+    case GRN_DB_UINT16: {
+      uint16_t *ptr = reinterpret_cast<uint16_t *>(GRN_BULK_HEAD(&buf_));
+      for (size_t i = 0; i < offset; ++i) {
+        int_buf_[i] = ptr[i];
+      }
+      break;
+    }
+    case GRN_DB_UINT32: {
+      uint32_t *ptr = reinterpret_cast<uint32_t *>(GRN_BULK_HEAD(&buf_));
+      for (size_t i = 0; i < offset; ++i) {
+        int_buf_[i] = ptr[i];
+      }
+      break;
+    }
+    case GRN_DB_UINT64: {
+      uint64_t *ptr = reinterpret_cast<uint64_t *>(GRN_BULK_HEAD(&buf_));
+      for (size_t i = 0; i < offset; ++i) {
+        int_buf_[i] = ptr[i];
+      }
+      break;
+    }
+    default: {
+      return GRN_UNKNOWN_ERROR;
+    }
+  }
+  grn_egn_int *ptr = int_buf_;
+  for (size_t i = 0; i < num_records; i++) {
+    results[i].raw.ptr = ptr;
+    ptr += results[i].raw.size;
+  }
+  return GRN_SUCCESS;
+}
+
+// -- ColumnNode<FloatVector> --
+
+template <>
+class ColumnNode<FloatVector> : public TypedNode<FloatVector> {
+ public:
+  ~ColumnNode() {
+    GRN_OBJ_FIN(ctx_, &buf_);
+  }
+
+  static grn_rc open(grn_ctx *ctx, grn_obj *column, ExpressionNode **node) {
+    ColumnNode *new_node = new (std::nothrow) ColumnNode(ctx, column);
+    if (!new_node) {
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+    *node = new_node;
+    return GRN_SUCCESS;
+  }
+
+  ExpressionNodeType type() const {
+    return GRN_EGN_COLUMN_NODE;
+  }
+  grn_builtin_type builtin_type() const {
+    return static_cast<grn_builtin_type>(grn_obj_get_range(ctx_, column_));
+  }
+
+  grn_rc evaluate(
+    const Record *records, size_t num_records, FloatVector *results);
+
+ private:
+  grn_ctx *ctx_;
+  grn_obj *column_;
+  grn_obj buf_;
+
+  ColumnNode(grn_ctx *ctx, grn_obj *column)
+    : TypedNode<FloatVector>(), ctx_(ctx), column_(column), buf_() {
+    GRN_FLOAT_INIT(&buf_, GRN_OBJ_VECTOR);
+  }
+};
+
+grn_rc ColumnNode<FloatVector>::evaluate(
+  const Record *records, size_t num_records, FloatVector *results) {
+  GRN_BULK_REWIND(&buf_);
+  size_t offset = 0;
+  for (size_t i = 0; i < num_records; i++) {
+    grn_obj_get_value(ctx_, column_, records[i].id, &buf_);
+    if (ctx_->rc != GRN_SUCCESS) {
+      return ctx_->rc;
+    }
+    size_t next_size = GRN_BULK_VSIZE(&buf_);
+    size_t next_offset = next_size / sizeof(grn_egn_float);
+    results[i].raw.size = next_offset - offset;
+    offset = next_offset;
+  }
+  grn_egn_float *ptr = reinterpret_cast<grn_egn_float *>(GRN_BULK_HEAD(&buf_));
+  for (size_t i = 0; i < num_records; i++) {
+    results[i].raw.ptr = ptr;
+    ptr += results[i].raw.size;
+  }
+  return GRN_SUCCESS;
+}
+
+// -- ColumnNode<TimeVector> --
+
+template <>
+class ColumnNode<TimeVector> : public TypedNode<TimeVector> {
+ public:
+  ~ColumnNode() {
+    GRN_OBJ_FIN(ctx_, &buf_);
+  }
+
+  static grn_rc open(grn_ctx *ctx, grn_obj *column, ExpressionNode **node) {
+    ColumnNode *new_node = new (std::nothrow) ColumnNode(ctx, column);
+    if (!new_node) {
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+    *node = new_node;
+    return GRN_SUCCESS;
+  }
+
+  ExpressionNodeType type() const {
+    return GRN_EGN_COLUMN_NODE;
+  }
+  grn_builtin_type builtin_type() const {
+    return static_cast<grn_builtin_type>(grn_obj_get_range(ctx_, column_));
+  }
+
+  grn_rc evaluate(
+    const Record *records, size_t num_records, TimeVector *results);
+
+ private:
+  grn_ctx *ctx_;
+  grn_obj *column_;
+  grn_obj buf_;
+
+  ColumnNode(grn_ctx *ctx, grn_obj *column)
+    : TypedNode<TimeVector>(), ctx_(ctx), column_(column), buf_() {
+    GRN_TIME_INIT(&buf_, GRN_OBJ_VECTOR);
+  }
+};
+
+grn_rc ColumnNode<TimeVector>::evaluate(
+  const Record *records, size_t num_records, TimeVector *results) {
+  GRN_BULK_REWIND(&buf_);
+  size_t offset = 0;
+  for (size_t i = 0; i < num_records; i++) {
+    grn_obj_get_value(ctx_, column_, records[i].id, &buf_);
+    if (ctx_->rc != GRN_SUCCESS) {
+      return ctx_->rc;
+    }
+    size_t next_size = GRN_BULK_VSIZE(&buf_);
+    size_t next_offset = next_size / sizeof(grn_egn_time);
+    results[i].raw.size = next_offset - offset;
+    offset = next_offset;
+  }
+  grn_egn_time *ptr = reinterpret_cast<grn_egn_time *>(GRN_BULK_HEAD(&buf_));
+  for (size_t i = 0; i < num_records; i++) {
+    results[i].raw.ptr = ptr;
+    ptr += results[i].raw.size;
+  }
+  return GRN_SUCCESS;
+}
+
+// -- ColumnNode<GeoPointVector> --
+
+template <>
+class ColumnNode<GeoPointVector> : public TypedNode<GeoPointVector> {
+ public:
+  ~ColumnNode() {
+    GRN_OBJ_FIN(ctx_, &buf_);
+  }
+
+  static grn_rc open(grn_ctx *ctx, grn_obj *column, ExpressionNode **node) {
+    ColumnNode *new_node = new (std::nothrow) ColumnNode(ctx, column);
+    if (!new_node) {
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+    *node = new_node;
+    return GRN_SUCCESS;
+  }
+
+  ExpressionNodeType type() const {
+    return GRN_EGN_COLUMN_NODE;
+  }
+  grn_builtin_type builtin_type() const {
+    return static_cast<grn_builtin_type>(grn_obj_get_range(ctx_, column_));
+  }
+
+  grn_rc evaluate(
+    const Record *records, size_t num_records, GeoPointVector *results);
+
+ private:
+  grn_ctx *ctx_;
+  grn_obj *column_;
+  grn_obj buf_;
+
+  ColumnNode(grn_ctx *ctx, grn_obj *column)
+    : TypedNode<GeoPointVector>(), ctx_(ctx), column_(column), buf_() {
+    if (grn_obj_get_range(ctx_, column_) == GRN_DB_TOKYO_GEO_POINT) {
+      GRN_TOKYO_GEO_POINT_INIT(&buf_, GRN_OBJ_VECTOR);
+    } else {
+      GRN_WGS84_GEO_POINT_INIT(&buf_, GRN_OBJ_VECTOR);
+    }
+  }
+};
+
+grn_rc ColumnNode<GeoPointVector>::evaluate(
+  const Record *records, size_t num_records, GeoPointVector *results) {
+  GRN_BULK_REWIND(&buf_);
+  size_t offset = 0;
+  for (size_t i = 0; i < num_records; i++) {
+    grn_obj_get_value(ctx_, column_, records[i].id, &buf_);
+    if (ctx_->rc != GRN_SUCCESS) {
+      return ctx_->rc;
+    }
+    size_t next_size = GRN_BULK_VSIZE(&buf_);
+    size_t next_offset = next_size / sizeof(grn_egn_geo_point);
+    results[i].raw.size = next_offset - offset;
+    offset = next_offset;
+  }
+  grn_egn_geo_point *ptr =
+    reinterpret_cast<grn_egn_geo_point *>(GRN_BULK_HEAD(&buf_));
   for (size_t i = 0; i < num_records; i++) {
     results[i].raw.ptr = ptr;
     ptr += results[i].raw.size;
@@ -2903,6 +3293,30 @@ grn_rc Expression::push_column_object(grn_obj *obj) {
               rc = ColumnNode<BoolVector>::open(ctx_, obj, &node);
               break;
             }
+            case GRN_DB_INT8:
+            case GRN_DB_INT16:
+            case GRN_DB_INT32:
+            case GRN_DB_INT64:
+            case GRN_DB_UINT8:
+            case GRN_DB_UINT16:
+            case GRN_DB_UINT32:
+            case GRN_DB_UINT64: {
+              rc = ColumnNode<IntVector>::open(ctx_, obj, &node);
+              break;
+            }
+            case GRN_DB_FLOAT: {
+              rc = ColumnNode<FloatVector>::open(ctx_, obj, &node);
+              break;
+            }
+            case GRN_DB_TIME: {
+              rc = ColumnNode<TimeVector>::open(ctx_, obj, &node);
+              break;
+            }
+            case GRN_DB_TOKYO_GEO_POINT:
+            case GRN_DB_WGS84_GEO_POINT: {
+              rc = ColumnNode<GeoPointVector>::open(ctx_, obj, &node);
+              break;
+            }
             default: {
               return GRN_INVALID_ARGUMENT;
             }
@@ -3296,7 +3710,8 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Bool");
         break;
       }
-      case GRN_EGN_INT: {
+      case GRN_EGN_INT:
+      case GRN_EGN_INT_VECTOR: {
         switch (expressions[i]->builtin_type()) {
           case GRN_DB_INT8: {
             GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Int8");
@@ -3337,11 +3752,13 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
         }
         break;
       }
-      case GRN_EGN_FLOAT: {
+      case GRN_EGN_FLOAT:
+      case GRN_EGN_FLOAT_VECTOR: {
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Float");
         break;
       }
-      case GRN_EGN_TIME: {
+      case GRN_EGN_TIME:
+      case GRN_EGN_TIME_VECTOR: {
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Time");
         break;
       }
@@ -3366,7 +3783,8 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
         }
         break;
       }
-      case GRN_EGN_GEO_POINT: {
+      case GRN_EGN_GEO_POINT:
+      case GRN_EGN_GEO_POINT_VECTOR: {
         switch (expressions[i]->builtin_type()) {
           case GRN_DB_TOKYO_GEO_POINT: {
             GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "TokyoGeoPoint");
@@ -3444,6 +3862,30 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
                                      (grn::egn::BoolVector *)&bufs[i][0]);
             break;
           }
+          case GRN_EGN_INT_VECTOR: {
+            bufs[i].resize(sizeof(grn_egn_int_vector) * batch_size);
+            expressions[i]->evaluate(records + count, batch_size,
+                                     (grn::egn::IntVector *)&bufs[i][0]);
+            break;
+          }
+          case GRN_EGN_FLOAT_VECTOR: {
+            bufs[i].resize(sizeof(grn_egn_float_vector) * batch_size);
+            expressions[i]->evaluate(records + count, batch_size,
+                                     (grn::egn::FloatVector *)&bufs[i][0]);
+            break;
+          }
+          case GRN_EGN_TIME_VECTOR: {
+            bufs[i].resize(sizeof(grn_egn_time_vector) * batch_size);
+            expressions[i]->evaluate(records + count, batch_size,
+                                     (grn::egn::TimeVector *)&bufs[i][0]);
+            break;
+          }
+          case GRN_EGN_GEO_POINT_VECTOR: {
+            bufs[i].resize(sizeof(grn_egn_geo_point_vector) * batch_size);
+            expressions[i]->evaluate(records + count, batch_size,
+                                     (grn::egn::GeoPointVector *)&bufs[i][0]);
+            break;
+          }
           default: {
             break;
           }
@@ -3507,6 +3949,62 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
                 } else {
                   GRN_TEXT_PUT(ctx, ctx->impl->outbuf, "false", 5);
                 }
+              }
+              GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ']');
+              break;
+            }
+            case GRN_EGN_INT_VECTOR: {
+              GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '[');
+              grn_egn_int_vector value =
+                ((grn_egn_int_vector *)&bufs[j][0])[i];
+              for (size_t k = 0; k < value.size; ++k) {
+                if (k != 0) {
+                  GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
+                }
+                grn_text_lltoa(ctx, ctx->impl->outbuf, value.ptr[k]);
+              }
+              GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ']');
+              break;
+            }
+            case GRN_EGN_FLOAT_VECTOR: {
+              GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '[');
+              grn_egn_float_vector value =
+                ((grn_egn_float_vector *)&bufs[j][0])[i];
+              for (size_t k = 0; k < value.size; ++k) {
+                if (k != 0) {
+                  GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
+                }
+                grn_text_ftoa(ctx, ctx->impl->outbuf, value.ptr[k]);
+              }
+              GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ']');
+              break;
+            }
+            case GRN_EGN_TIME_VECTOR: {
+              GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '[');
+              grn_egn_time_vector value =
+                ((grn_egn_time_vector *)&bufs[j][0])[i];
+              for (size_t k = 0; k < value.size; ++k) {
+                if (k != 0) {
+                  GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
+                }
+                grn_text_ftoa(ctx, ctx->impl->outbuf, value.ptr[k] * 0.000001);
+              }
+              GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ']');
+              break;
+            }
+            case GRN_EGN_GEO_POINT_VECTOR: {
+              GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '[');
+              grn_egn_geo_point_vector value =
+                ((grn_egn_geo_point_vector *)&bufs[j][0])[i];
+              for (size_t k = 0; k < value.size; ++k) {
+                if (k != 0) {
+                  GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
+                }
+                GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '"');
+                grn_text_itoa(ctx, ctx->impl->outbuf, value.ptr[k].latitude);
+                GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, 'x');
+                grn_text_itoa(ctx, ctx->impl->outbuf, value.ptr[k].longitude);
+                GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '"');
               }
               GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ']');
               break;
