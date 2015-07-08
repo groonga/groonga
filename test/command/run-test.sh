@@ -121,7 +121,7 @@ for argument in "$@"; do
       ;;
     *)
       if test "$next_argument_is_long_option_value" != "true"; then
-	have_targets="true"
+        have_targets="true"
       fi
       ;;
   esac
