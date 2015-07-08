@@ -91,6 +91,7 @@ But there are some differences from :doc:`select`:
   * ``sortby``, ``drilldown_sortby`` and
     ``drilldown[${LABEL}].sortby`` aren't supported when multiple
     shards are used. (Only one shard is used, they are supported.)
+  * ``match_columns`` and ``query`` aren't supported yet.
 
 Usage
 -----
