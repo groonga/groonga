@@ -1255,6 +1255,15 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   grn_proc *p = (grn_proc *)proc;
   if (nargs > ctx->impl->stack_curr) { return GRN_INVALID_ARGUMENT; }
   GRN_API_ENTER;
+  if (grn_obj_is_selector_only_proc(ctx, proc)) {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+    name_size = grn_obj_name(ctx, proc, name, GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+        "selector only proc can't be called: <%.*s>",
+        name_size, name);
+    GRN_API_RETURN(ctx->rc);
+  }
   args = ctx->impl->stack + ctx->impl->stack_curr - nargs;
   pctx.proc = p;
   pctx.caller = caller;

@@ -5283,23 +5283,6 @@ exit :
   return rc;
 }
 
-static grn_obj *
-func_sub_filter(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{
-  selector_to_function_data data;
-
-  if (selector_to_function_data_init(ctx, &data, user_data)) {
-    grn_rc rc;
-    rc = run_sub_filter(ctx, data.table, nargs, args, data.records, GRN_OP_AND);
-    if (rc == GRN_SUCCESS) {
-      selector_to_function_data_selected(ctx, &data);
-    }
-  }
-  selector_to_function_data_fin(ctx, &data);
-
-  return data.found;
-}
-
 static grn_rc
 selector_sub_filter(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                     int nargs, grn_obj **args,
@@ -7028,7 +7011,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
     grn_obj *selector_proc;
 
     selector_proc = grn_proc_create(ctx, "sub_filter", -1, GRN_PROC_FUNCTION,
-                                    func_sub_filter, NULL, NULL, 0, NULL);
+                                    NULL, NULL, NULL, 0, NULL);
     grn_proc_set_selector(ctx, selector_proc, selector_sub_filter);
   }
 

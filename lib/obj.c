@@ -93,6 +93,19 @@ grn_obj_is_selector_proc(grn_ctx *ctx, grn_obj *obj)
 }
 
 grn_bool
+grn_obj_is_selector_only_proc(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_proc *proc;
+
+  if (!grn_obj_is_selector_proc(ctx, obj)) {
+    return GRN_FALSE;
+  }
+
+  proc = (grn_proc *)obj;
+  return proc->funcs[PROC_INIT] == NULL;
+}
+
+grn_bool
 grn_obj_is_scorer_proc(grn_ctx *ctx, grn_obj *obj)
 {
   grn_proc *proc;
