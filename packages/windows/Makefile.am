@@ -4,6 +4,7 @@ SUBDIRS =					\
 EXTRA_DIST = Rakefile
 LICENSE_DIR = dist-x64/share/license
 ARCHITECTURES = x86 x64
+SUFFIX =
 
 all:
 
@@ -20,6 +21,12 @@ download: ensure-rsync-path
 
 upload: ensure-rsync-path
 	rsync -avz --progress --delete files/ $(RSYNC_PATH)/windows/groonga
+
+upload-to-tmp:
+	for architecture in $(ARCHITECTURES); do			\
+	  scp $(PACKAGE)-$(VERSION)-$${architecture}$(SUFFIX).zip	\
+	    packages@packages.groonga.org:public/tmp/;			\
+	done
 
 build_options =					\
 	VERSION=$(VERSION)			\
@@ -111,16 +118,16 @@ installer-x64: LICENSE setup-x64.nsi
 	makensis setup-x64.nsi
 
 package:
-	for architecture in $(ARCHITECTURES); do		\
-	  mkdir -p files;					\
-	  rm -rf files/$(PACKAGE)-$(VERSION)-$${architecture};	\
-	  cp -a dist-$${architecture}				\
-	    files/$(PACKAGE)-$(VERSION)-$${architecture};	\
-	  (cd files &&						\
-	    rm -f $(PACKAGE)-$(VERSION)-$${architecture}.zip;	\
-	    zip -r $(PACKAGE)-$(VERSION)-$${architecture}.zip	\
-	           $(PACKAGE)-$(VERSION)-$${architecture});	\
-	  rm -rf files/$(PACKAGE)-$(VERSION)-$${architecture};	\
+	for architecture in $(ARCHITECTURES); do			\
+	  mkdir -p files;						\
+	  rm -rf files/$(PACKAGE)-$(VERSION)-$${architecture}$(SUFFIX);	\
+	  cp -a dist-$${architecture}					\
+	    files/$(PACKAGE)-$(VERSION)-$${architecture}$(SUFFIX);	\
+	  (cd files &&							\
+	    rm -f $(PACKAGE)-$(VERSION)-$${architecture}$(SUFFIX).zip;	\
+	    zip -r $(PACKAGE)-$(VERSION)-$${architecture}$(SUFFIX).zip	\
+	           $(PACKAGE)-$(VERSION)-$${architecture}$(SUFFIX));	\
+	  rm -rf files/$(PACKAGE)-$(VERSION)-$${architecture}$(SUFFIX);	\
 	done
 
 SOURCE=../$(PACKAGE)-$(VERSION).tar.gz
