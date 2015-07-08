@@ -88,10 +88,21 @@ But there are some differences from :doc:`select`:
 
   * ``logical_table`` and ``shard_key`` parameters are required
     instead of ``table`` parameter.
+  * The default ``output_columns`` value doesn't include
+    ``_id``. Because ``_id`` is meaningless when multiple shards are
+    used. ``_id`` may be duplicated because ``_id`` is managed in each
+    shard not in all shards.
   * ``sortby``, ``drilldown_sortby`` and
     ``drilldown[${LABEL}].sortby`` aren't supported when multiple
     shards are used. (Only one shard is used, they are supported.)
   * ``match_columns`` and ``query`` aren't supported yet.
+  * ``cache`` isn't supported yet.
+  * ``match_escalation_threshold`` isn't supported yet.
+  * ``query_flags`` isn't supported yet.
+  * ``query_expander`` isn't supported yet.
+  * ``adjuster`` isn't supported yet.
+  * ``drilldown_calc_types`` and ``drilldown_calc_target`` aren't
+    supported yet.
 
 Usage
 -----
