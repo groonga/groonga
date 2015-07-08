@@ -1,0 +1,86 @@
+load --table Errors
+[
+{
+    "_key": "error1",
+   "level": "critical",
+  "action": "Shutdown"
+}
+]
+[[0,0.0,0.0],1]
+load --table Logs_20150203
+[
+{
+  "timestamp": "2015-02-03 12:49:00",
+       "memo": "2015-02-03 12:49:00",
+     "action": "Start"
+}
+]
+[[0,0.0,0.0],1]
+load --table Logs_20150204
+[
+{
+  "timestamp": "2015-02-04 13:49:00",
+       "memo": "2015-02-04 13:49:00",
+     "action": "Start"
+},
+{
+  "timestamp": "2015-02-04 13:50:00",
+       "memo": "2015-02-04 13:50:00",
+     "action": "Shutdown"
+}
+]
+[[0,0.0,0.0],2]
+load --table Logs_20150205
+[
+{
+  "timestamp": "2015-02-05 13:49:00",
+       "memo": "2015-02-05 13:49:00",
+     "action": "Start"
+},
+{
+  "timestamp": "2015-02-05 13:50:00",
+       "memo": "2015-02-05 13:50:00",
+     "action": "Running"
+},
+{
+  "timestamp": "2015-02-05 13:51:00",
+       "memo": "2015-02-05 13:51:00",
+     "action": "Shutdown"
+}
+]
+[[0,0.0,0.0],3]
+log_level --level debug
+[[0,0.0,0.0],true]
+logical_range_filter Logs timestamp   --limit 1   --filter 'sub_filter(action.errors_action, "level == \\"critical\\"")'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "action",
+        "Actions"
+      ],
+      [
+        "memo",
+        "ShortText"
+      ],
+      [
+        "timestamp",
+        "Time"
+      ]
+    ],
+    [
+      "Shutdown",
+      "2015-02-04 13:50:00",
+      1423025400.0
+    ]
+  ]
+]
+#|d| [logical_range_filter][select] <Logs_20150203>: the number of required records (1) >= the number of records in shard (1)
+#|d| [logical_range_filter][select] <Logs_20150204>: selector only procedure can't be used: <sub_filter>
+log_level --level notice
+[[0,0.0,0.0],true]
