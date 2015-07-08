@@ -15,7 +15,7 @@ Summary
 from a table and then outputs them.
 
 ``select`` is the most important command in groonga. You need to
-understand ``select`` to use the full power of groonga.
+understand ``select`` to use the full power of Groonga.
 
 Syntax
 ------
