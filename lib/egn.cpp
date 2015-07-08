@@ -615,6 +615,52 @@ class ConstantNode<Text> : public TypedNode<Text> {
     : TypedNode<Text>(), value_(value), value_buf_() {}
 };
 
+// -- ConstantNode<BoolVector> --
+
+template <>
+class ConstantNode<BoolVector> : public TypedNode<BoolVector> {
+ public:
+  ~ConstantNode() {}
+
+  static grn_rc open(const BoolVector &value, ExpressionNode **node) {
+    ConstantNode *new_node = new (std::nothrow) ConstantNode(value);
+    if (!new_node) {
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+    try {
+      new_node->value_buf_.resize(value.raw.size);
+    } catch (const std::bad_alloc &) {
+      delete new_node;
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+    std::memcpy(&*new_node->value_buf_.begin(), value.raw.ptr,
+                sizeof(grn_egn_bool) * value.raw.size);
+    new_node->value_.raw.ptr = &*new_node->value_buf_.begin();
+    *node = new_node;
+    return GRN_SUCCESS;
+  }
+
+  ExpressionNodeType type() const {
+    return GRN_EGN_CONSTANT_NODE;
+  }
+
+  grn_rc evaluate(
+    const Record *records, size_t num_records, BoolVector *results) {
+    for (size_t i = 0; i < num_records; ++i) {
+      results[i] = value_;
+    }
+    return GRN_SUCCESS;
+  }
+
+ private:
+  grn_builtin_type builtin_type_;
+  BoolVector value_;
+  std::vector<grn_egn_bool> value_buf_;
+
+  explicit ConstantNode(const BoolVector &value)
+    : TypedNode<BoolVector>(), value_(value), value_buf_() {}
+};
+
 // -- ColumnNode --
 
 template <typename T>
@@ -1046,6 +1092,67 @@ grn_rc ColumnNode<GeoPoint>::evaluate(
       &value, results[i].raw.latitude, results[i].raw.longitude);
   }
   GRN_OBJ_FIN(ctx_, &value);
+  return GRN_SUCCESS;
+}
+
+// -- ColumnNode<BoolVector> --
+
+template <>
+class ColumnNode<BoolVector> : public TypedNode<BoolVector> {
+ public:
+  ~ColumnNode() {
+    GRN_OBJ_FIN(ctx_, &buf_);
+  }
+
+  static grn_rc open(grn_ctx *ctx, grn_obj *column, ExpressionNode **node) {
+    ColumnNode *new_node = new (std::nothrow) ColumnNode(ctx, column);
+    if (!new_node) {
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+    *node = new_node;
+    return GRN_SUCCESS;
+  }
+
+  ExpressionNodeType type() const {
+    return GRN_EGN_COLUMN_NODE;
+  }
+  grn_builtin_type builtin_type() const {
+    return static_cast<grn_builtin_type>(grn_obj_get_range(ctx_, column_));
+  }
+
+  grn_rc evaluate(
+    const Record *records, size_t num_records, BoolVector *results);
+
+ private:
+  grn_ctx *ctx_;
+  grn_obj *column_;
+  grn_obj buf_;
+
+  ColumnNode(grn_ctx *ctx, grn_obj *column)
+    : TypedNode<BoolVector>(), ctx_(ctx), column_(column), buf_() {
+    GRN_BOOL_INIT(&buf_, GRN_OBJ_VECTOR);
+  }
+};
+
+grn_rc ColumnNode<BoolVector>::evaluate(
+  const Record *records, size_t num_records, BoolVector *results) {
+  GRN_BULK_REWIND(&buf_);
+  size_t offset = 0;
+  for (size_t i = 0; i < num_records; i++) {
+    grn_obj_get_value(ctx_, column_, records[i].id, &buf_);
+    if (ctx_->rc != GRN_SUCCESS) {
+      return ctx_->rc;
+    }
+    size_t next_size = GRN_BULK_VSIZE(&buf_);
+    size_t next_offset = next_size / sizeof(grn_egn_bool);
+    results[i].raw.size = next_offset - offset;
+    offset = next_offset;
+  }
+  grn_egn_bool *ptr = reinterpret_cast<grn_egn_bool *>(GRN_BULK_HEAD(&buf_));
+  for (size_t i = 0; i < num_records; i++) {
+    results[i].raw.ptr = ptr;
+    ptr += results[i].raw.size;
+  }
   return GRN_SUCCESS;
 }
 
@@ -2341,7 +2448,7 @@ grn_rc Expression::push_object(grn_obj *obj) {
       return GRN_INVALID_ARGUMENT;
     }
     case GRN_VECTOR: {
-      // FIXME: To be supported.
+      rc = push_vector_object(obj);
       return GRN_INVALID_ARGUMENT;
     }
     case GRN_ACCESSOR: {
@@ -2701,6 +2808,32 @@ grn_rc Expression::push_bulk_object(grn_obj *obj) {
   return rc;
 }
 
+grn_rc Expression::push_vector_object(grn_obj *obj) {
+  grn_rc rc;
+  ExpressionNode *node;
+  grn_builtin_type builtin_type =
+    static_cast<grn_builtin_type>(obj->header.domain);
+  switch (builtin_type) {
+    case GRN_DB_BOOL: {
+      BoolVector value;
+      value.raw.ptr = reinterpret_cast<grn_egn_bool *>(GRN_BULK_HEAD(obj));
+      value.raw.size = GRN_BULK_VSIZE(obj) / sizeof(grn_egn_bool);
+      rc = ConstantNode<BoolVector>::open(value, &node);
+      break;
+    }
+    default: {
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+  if (rc == GRN_SUCCESS) try {
+    stack_.push_back(node);
+  } catch (const std::bad_alloc &) {
+    delete node;
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  return rc;
+}
+
 grn_rc Expression::push_column_object(grn_obj *obj) {
   grn_obj *owner_table = grn_column_table(ctx_, obj);
   if (owner_table != table_) {
@@ -2765,7 +2898,16 @@ grn_rc Expression::push_column_object(grn_obj *obj) {
           break;
         }
         case GRN_OBJ_COLUMN_VECTOR: {
-          return GRN_OPERATION_NOT_SUPPORTED;
+          switch (range) {
+            case GRN_DB_BOOL: {
+              rc = ColumnNode<BoolVector>::open(ctx_, obj, &node);
+              break;
+            }
+            default: {
+              return GRN_INVALID_ARGUMENT;
+            }
+          }
+          break;
         }
         default: {
           return GRN_INVALID_ARGUMENT;
@@ -3149,7 +3291,8 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
     GRN_TEXT_PUT(ctx, ctx->impl->outbuf, names[i].data(), names[i].size());
     GRN_TEXT_PUT(ctx, ctx->impl->outbuf, "\",\"", 3);
     switch (expressions[i]->data_type()) {
-      case GRN_EGN_BOOL: {
+      case GRN_EGN_BOOL:
+      case GRN_EGN_BOOL_VECTOR: {
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Bool");
         break;
       }
@@ -3295,6 +3438,12 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
                                      (grn::egn::GeoPoint *)&bufs[i][0]);
             break;
           }
+          case GRN_EGN_BOOL_VECTOR: {
+            bufs[i].resize(sizeof(grn_egn_bool_vector) * batch_size);
+            expressions[i]->evaluate(records + count, batch_size,
+                                     (grn::egn::BoolVector *)&bufs[i][0]);
+            break;
+          }
           default: {
             break;
           }
@@ -3343,6 +3492,23 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
               GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, 'x');
               grn_text_itoa(ctx, ctx->impl->outbuf, geo_point.longitude);
               GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '"');
+              break;
+            }
+            case GRN_EGN_BOOL_VECTOR: {
+              GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '[');
+              grn_egn_bool_vector value =
+                ((grn_egn_bool_vector *)&bufs[j][0])[i];
+              for (size_t k = 0; k < value.size; ++k) {
+                if (k != 0) {
+                  GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
+                }
+                if (value.ptr[k]) {
+                  GRN_TEXT_PUT(ctx, ctx->impl->outbuf, "true", 4);
+                } else {
+                  GRN_TEXT_PUT(ctx, ctx->impl->outbuf, "false", 5);
+                }
+              }
+              GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ']');
               break;
             }
             default: {

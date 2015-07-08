@@ -91,6 +91,30 @@ typedef struct {
   size_t size;
 } grn_egn_text;
 typedef grn_geo_point grn_egn_geo_point;
+typedef struct {
+  const grn_egn_bool *ptr;
+  size_t size;
+} grn_egn_bool_vector;
+//typedef struct {
+//  const grn_egn_int *ptr;
+//  size_t size;
+//} grn_egn_int_vector;
+//typedef struct {
+//  const grn_egn_float *ptr;
+//  size_t size;
+//} grn_egn_float_vector;
+//typedef struct {
+//  const grn_egn_time *ptr;
+//  size_t size;
+//} grn_egn_time_vector;
+//typedef struct {
+//  const grn_egn_text *ptr;
+//  size_t size;
+//} grn_egn_text_vector;
+//typedef struct {
+//  const grn_egn_geo_point *ptr;
+//  size_t size;
+//} grn_egn_geo_point_vector;
 
 /*
  * grn_egn_select() finds records passing through a filter (specified by
