@@ -113,13 +113,13 @@ Here are a schema definition and sample data to show usage.
 .. table_create Entries_20150708 TABLE_HASH_KEY ShortText
 .. column_create Entries_20150708 created_at COLUMN_SCALAR Time
 .. column_create Entries_20150708 content COLUMN_SCALAR Text
-.. column_create Entries_20150708 likes COLUMN_SCALAR UInt32
+.. column_create Entries_20150708 n_likes COLUMN_SCALAR UInt32
 .. column_create Entries_20150708 tag COLUMN_SCALAR ShortText
 ..
 .. table_create Entries_20150709 TABLE_HASH_KEY ShortText
 .. column_create Entries_20150709 created_at COLUMN_SCALAR Time
 .. column_create Entries_20150709 content COLUMN_SCALAR Text
-.. column_create Entries_20150709 likes COLUMN_SCALAR UInt32
+.. column_create Entries_20150709 n_likes COLUMN_SCALAR UInt32
 .. column_create Entries_20150709 tag COLUMN_SCALAR ShortText
 ..
 .. table_create Terms TABLE_PAT_KEY ShortText \
@@ -153,7 +153,7 @@ Here are a schema definition and sample data to show usage.
 ..  "tag":        "Groonga"}
 .. ]
 ..
-.. load --table Entries_20150708
+.. load --table Entries_20150709
 .. [
 .. {"_key":       "Good-bye Senna",
 ..  "created_at": "2015/07/09 00:00:00",
