@@ -1480,6 +1480,80 @@ grn_rc ColumnNode<TimeVector>::evaluate(
   return GRN_SUCCESS;
 }
 
+// -- ColumnNode<TextVector> --
+
+template <>
+class ColumnNode<TextVector> : public TypedNode<TextVector> {
+ public:
+  ~ColumnNode() {
+    GRN_OBJ_FIN(ctx_, &buf_);
+  }
+
+  static grn_rc open(grn_ctx *ctx, grn_obj *column, ExpressionNode **node) {
+    ColumnNode *new_node = new (std::nothrow) ColumnNode(ctx, column);
+    if (!new_node) {
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+    *node = new_node;
+    return GRN_SUCCESS;
+  }
+
+  ExpressionNodeType type() const {
+    return GRN_EGN_COLUMN_NODE;
+  }
+  grn_builtin_type builtin_type() const {
+    return static_cast<grn_builtin_type>(grn_obj_get_range(ctx_, column_));
+  }
+
+  grn_rc evaluate(
+    const Record *records, size_t num_records, TextVector *results);
+
+ private:
+  grn_ctx *ctx_;
+  grn_obj *column_;
+  grn_obj buf_;
+  std::vector<grn_egn_text> refs_;
+
+  ColumnNode(grn_ctx *ctx, grn_obj *column)
+    : TypedNode<TextVector>(), ctx_(ctx), column_(column), buf_(), refs_() {
+    GRN_TEXT_INIT(&buf_, GRN_OBJ_VECTOR);
+  }
+};
+
+grn_rc ColumnNode<TextVector>::evaluate(
+  const Record *records, size_t num_records, TextVector *results) {
+  GRN_BULK_REWIND(&buf_);
+  size_t offset = 0;
+  for (size_t i = 0; i < num_records; i++) {
+    grn_obj_get_value(ctx_, column_, records[i].id, &buf_);
+    if (ctx_->rc != GRN_SUCCESS) {
+      return ctx_->rc;
+    }
+    size_t next_offset = grn_vector_size(ctx_, &buf_);
+    results[i].raw.size = next_offset - offset;
+    offset = next_offset;
+  }
+  try {
+    refs_.resize(offset);
+  } catch (const std::bad_alloc &) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  offset = 0;
+  size_t total = 0;
+  for (size_t i = 0; i < num_records; i++) {
+    size_t partial_total = 0;
+    for (size_t j = 0; j < results[i].raw.size; ++j) {
+      refs_[offset + j].size = grn_vector_get_element(
+        ctx_, &buf_, offset + j, &refs_[offset + j].ptr, NULL, NULL);
+      partial_total += refs_[offset + j].size;
+    }
+    total += partial_total;
+    results[i].raw.ptr = &*refs_.begin() + offset;
+    offset += results[i].raw.size;
+  }
+  return GRN_SUCCESS;
+}
+
 // -- ColumnNode<GeoPointVector> --
 
 template <>
@@ -3312,6 +3386,12 @@ grn_rc Expression::push_column_object(grn_obj *obj) {
               rc = ColumnNode<TimeVector>::open(ctx_, obj, &node);
               break;
             }
+            case GRN_DB_SHORT_TEXT:
+            case GRN_DB_TEXT:
+            case GRN_DB_LONG_TEXT: {
+              rc = ColumnNode<TextVector>::open(ctx_, obj, &node);
+              break;
+            }
             case GRN_DB_TOKYO_GEO_POINT:
             case GRN_DB_WGS84_GEO_POINT: {
               rc = ColumnNode<GeoPointVector>::open(ctx_, obj, &node);
@@ -3762,7 +3842,8 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Time");
         break;
       }
-      case GRN_EGN_TEXT: {
+      case GRN_EGN_TEXT:
+      case GRN_EGN_TEXT_VECTOR: {
         switch (expressions[i]->builtin_type()) {
           case GRN_DB_SHORT_TEXT: {
             GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "ShortText");
@@ -3880,6 +3961,12 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
                                      (grn::egn::TimeVector *)&bufs[i][0]);
             break;
           }
+          case GRN_EGN_TEXT_VECTOR: {
+            bufs[i].resize(sizeof(grn_egn_text_vector) * batch_size);
+            expressions[i]->evaluate(records + count, batch_size,
+                                     (grn::egn::TextVector *)&bufs[i][0]);
+            break;
+          }
           case GRN_EGN_GEO_POINT_VECTOR: {
             bufs[i].resize(sizeof(grn_egn_geo_point_vector) * batch_size);
             expressions[i]->evaluate(records + count, batch_size,
@@ -3988,6 +4075,20 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
                   GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
                 }
                 grn_text_ftoa(ctx, ctx->impl->outbuf, value.ptr[k] * 0.000001);
+              }
+              GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ']');
+              break;
+            }
+            case GRN_EGN_TEXT_VECTOR: {
+              GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '[');
+              grn_egn_text_vector value =
+                ((grn_egn_text_vector *)&bufs[j][0])[i];
+              for (size_t k = 0; k < value.size; ++k) {
+                if (k != 0) {
+                  GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
+                }
+                grn_text_esc(ctx, ctx->impl->outbuf, value.ptr[k].ptr,
+                             value.ptr[k].size);
               }
               GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ']');
               break;
