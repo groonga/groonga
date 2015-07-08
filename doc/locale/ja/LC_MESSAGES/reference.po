@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-07-08 15:47+0900\n"
+"PO-Revision-Date: 2015-07-08 22:36+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -4994,15 +4994,389 @@ msgstr ""
 msgid "``logical_select``"
 msgstr ""
 
-msgid "``logical_select`` command has seven parameters."
-msgstr "``logical_select`` コマンドには7つの引数があります。"
+# 533d096460b9491e8647fa32c40546f2
+msgid ""
+"``logical_select`` is a sharding version of :doc:`select`. "
+"``logical_select`` searches records from multiple tables and outputs them."
+msgstr ""
+
+msgid ""
+"You need to :doc:`plugin_register` ``sharding`` plugin because "
+"``logical_select`` is included in ``sharding`` plugin."
+msgstr ""
+"``logical_select`` は ``sharding`` プラグインに含まれているので、 "
+"``sharding`` プラグインを :doc:`plugin_register` する必要があります。"
+
+msgid "``logical_select`` has many parameters."
+msgstr "``logical_select`` コマンドにはたくさんの引数があります。"
+
+msgid ""
+"The required parameters are ``logical_table`` and ``shard_key``. Other "
+"parameters are optional::"
+msgstr ""
+"必須の引数は ``logical_table`` と ``shard_key`` です。それ以外の引数は省略可"
+"能です::"
+
+msgid ""
+"``logical_select`` has the following named parameters for advanced drilldown:"
+msgstr ""
+"``logical_select`` には高度なドリルダウン機能のために以下の名前付き引数があり"
+"ます。"
+
+# bb37d24c839d485e8464c562b0049de0
+msgid "``drilldown[${LABEL}].keys=null``"
+msgstr ""
+
+# e72a2089d86e48af8b29fe829dfc318f
+msgid "``drilldown[${LABEL}].sortby=null``"
+msgstr ""
+
+# 5b6e1254a8ce48a88c28ece081ca3af4
+msgid "``drilldown[${LABEL}].output_columns=\"_key, _nsubrecs\"``"
+msgstr ""
+
+# 6de3c351bf884e0aac65618bf513e5c0
+msgid "``drilldown[${LABEL}].offset=0``"
+msgstr ""
+
+# 83c813b5a92e4af7831f2d7fec050153
+msgid "``drilldown[${LABEL}].limit=10``"
+msgstr ""
+
+# f0f30ebc793f4596888dfab42ca3e74f
+msgid "``drilldown[${LABEL}].calc_types=NONE``"
+msgstr ""
+
+# a09d04c57050443ca6c7697d8ee1b041
+msgid "``drilldown[${LABEL}].calc_target=null``"
+msgstr ""
+
+# b0dd873585054b0cb28a01ced40dad93
+msgid ""
+"You can use one or more alphabets, digits, ``_`` and ``.`` for ``${LABEL}``. "
+"For example, ``parent.sub1`` is a valid ``${LABEL}``."
+msgstr ""
+"``${LABEL}`` には1つ以上のアルファベット、数字、 ``_`` 、 ``.`` を使うことが"
+"できます。たとえば、 ``parent.sub1`` は有効な ``${LABEL}`` です。"
+
+# d85a0a6ec3974ff7b0e275abe264d9f2
+msgid "Parameters that have the same ``${LABEL}`` are grouped."
+msgstr "同じ ``${LABEL}`` も持つ引数は同じグループになります。"
+
+msgid "For example, the following parameters specify one drilldown:"
+msgstr "たとえば、以下の引数は1つのドリルダウンを指定しています。"
+
+# a84edc397f27402ea760bcc832fa960b
+msgid "``--drilldown[label].keys column``"
+msgstr ""
+
+# 99b7866b3052448b8f5796e8a2ac3dff
+msgid "``--drilldown[label].sortby -_nsubrecs``"
+msgstr ""
+
+# 1e68b9823e1c4e8ca6c2657091d3064f
+msgid "The following parameters specify two drilldowns:"
+msgstr "以下の引数は2つのドリルダウンを指定しています。"
+
+# 529c31b0a4ad4009a3b1bf0797059ccf
+msgid "``--drilldown[label1].keys column1``"
+msgstr ""
+
+# 8b689f5b8f764831bbf64d82f844df3f
+msgid "``--drilldown[label1].sortby -_nsubrecs``"
+msgstr ""
+
+# fd1dcdb8651444e3892064f9e7117c06
+msgid "``--drilldown[label2].keys column2``"
+msgstr ""
+
+# 1d7785b0c39949c2a8c36c3c5dd2ec99
+msgid "``--drilldown[label2].sortby _key``"
+msgstr ""
+
+# 8919162bc76f40bca78a80c6e5477bd6
+msgid "Differences from ``select``"
+msgstr "``select`` との違い"
+
+# 8528cef1238a44a8a0688b351a46f555
+msgid ""
+"Most of ``logical_select`` features can be used like corresponding :doc:"
+"`select` features. For example, parameter name is same, output format is "
+"same and so on."
+msgstr ""
+"``logical_select`` の多くの機能は :doc:`select` の機能と対応しています。たと"
+"えば、引数名は同じですし、出力フォーマットも同じです。"
+
+# df29ab0eacf9446eb17871019710b0d2
+msgid "But there are some differences from :doc:`select`:"
+msgstr "しかし、いくつか :doc:`select` と違うところもあります。"
+
+msgid ""
+"``logical_table`` and ``shard_key`` parameters are required instead of "
+"``table`` parameter."
+msgstr ""
+"``table`` 引数ではなく、 ``logical_table`` と ``shard_key`` 引数が必須です。"
+
+# e899dc90b5f64cf5a3762a08e3414a67
+msgid ""
+"The default ``output_columns`` value doesn't include ``_id``. Because "
+"``_id`` is meaningless when multiple shards are used. ``_id`` may be "
+"duplicated because ``_id`` is managed in each shard not in all shards."
+msgstr ""
+"デフォルトの ``output_columns`` の値に ``_id`` が含まれていません。これは、複"
+"数のシャードを使った場合は ``_id`` の意味がなくなるからです。 ``_id`` はすべ"
+"てのシャードをまたがって管理されているわけではなく、各シャードで管理されてい"
+"るので、 ``_id`` は重複する可能性があります。"
+
+# 91ae8001df0542b0858d09ba5941ea2a
+msgid ""
+"``sortby``, ``drilldown_sortby`` and ``drilldown[${LABEL}].sortby`` aren't "
+"supported when multiple shards are used. (Only one shard is used, they are "
+"supported.)"
+msgstr ""
+"複数のシャードを使った場合の ``sortby`` と ``drilldown_sortby`` と "
+"``drilldown[${LABEL}].sortby`` はサポートしていません。（1つのシャードのみを"
+"使った場合はサポートしています。）"
+
+# b030a6961c6b4c0bbc5331751450caa4
+msgid "``match_columns`` and ``query`` aren't supported yet."
+msgstr "``match_columns`` と ``query`` はまだサポートしていません。"
+
+msgid "``cache`` isn't supported yet."
+msgstr "``cache`` はまだサポートしていません。"
+
+msgid "``match_escalation_threshold`` isn't supported yet."
+msgstr "``match_escalation_threshold`` はまだサポートしていません。"
+
+# 7b960439a2d847c0820b8fde8ab67103
+msgid "``query_flags`` isn't supported yet."
+msgstr "``query_flags`` はまだサポートしていません。"
+
+# 0dd1b5f119e34c14a995ee59c4c6f2d2
+msgid "``query_expander`` isn't supported yet."
+msgstr "``query_expander`` はまだサポートしていません。"
+
+# 1bef3c4d0d004f1a9dcb1c4b40f820ae
+msgid "``adjuster`` isn't supported yet."
+msgstr "``adjuster`` はまだサポートしていません。"
+
+# 6fabf6b56acb42afaf75505e2836d4c6
+msgid ""
+"``drilldown_calc_types`` and ``drilldown_calc_target`` aren't supported yet."
+msgstr ""
+"``drilldown_calc_types`` と ``drilldown_calc_target`` はまだサポートしていま"
+"せん。"
+
+msgid ""
+"Let's learn about ``logical_select`` usage with examples. This section shows "
+"many popular usages."
+msgstr ""
+"例を使いながら ``logical_select`` の使い方を学びましょう。このセクションでは"
+"よく使われる使い方を紹介します。"
+
+msgid ""
+"You need to register ``sharding`` plugin because ``logical_select`` is "
+"included in ``sharding`` plugin."
+msgstr ""
+"``logical_select`` は ``sharding`` プラグインに含まれているので ``sharding`` "
+"プラグインを登録する必要があります。"
+
+# 0ef67dd8135e442c85e1ef025d0fd674
+msgid ""
+"There are two tables, ``Entries_20150708`` and ``Entries_20150709``, for "
+"blog entries."
+msgstr ""
+"ブログエントリー用に ``Entries_20150708`` と ``Entries_20150709`` の2つのテー"
+"ブルがあります。"
+
+# 7f62e1581b794cbc906600bd129e88bd
+msgid ""
+"You need to use ``${LOGICAL_TABLE_NAME}_${YYYYMMDD}`` naming rule for table "
+"names. In this example, ``LOGICAL_TABLE_NAME`` is ``Entries`` and "
+"``YYYYMMDD`` is ``20150708`` or ``20150709``."
+msgstr ""
+"テーブル名には ``${論理テーブル名}_${YYYYMMDD}`` という命名規則を使う必要があ"
+"ります。この例では、 ``論理テーブル名`` は ``Entries`` で ``YYYYMMDD`` は "
+"``20150708`` または ``20150709`` です。"
+
+msgid ""
+"An entry has title, created time, content, the number of likes for the entry "
+"and tag. Title is key of ``Entries_YYYYMMDD``. Created time is value of "
+"``Entries_YYYYMMDD.created_at`` column. Content is value of "
+"``Entries_YYYYMMDD.content`` column. The number of likes is value of "
+"``Entries_YYYYMMDD.n_likes`` column. Tag is value of ``Entries_YYYYMMDD."
+"tag`` column."
+msgstr ""
+"各エントリはタイトルと作成日時と内容と「いいね！」数、タグを持っています。タ"
+"イトルは ``Entries_YYYYMMDD`` のキーとします。作成日時は ``Entries__YYYYMMDD."
+"created_at`` カラムの値とします。内容は ``Entries_YYYYMMDD.content`` カラムの"
+"値とします。「いいね！」数は ``Entries_YYYYMMDD.n_likes`` カラムの値としま"
+"す。タグは ``Entries_YYYYMMDD.tag`` カラムの値とします。"
+
+msgid ""
+"``Entries_YYYYMMDD._key`` column and ``Entries_YYYYMMDD.content`` column are "
+"indexed using ``TokenBigram`` tokenizer. So both ``Entries_YYYYMMDD._key`` "
+"and ``Entries_YYYYMMDD.content`` are fulltext search ready."
+msgstr ""
+"``Entries_YYYYMMDD._key`` カラムと ``Entries_YYYYMMDD.content`` カラムには "
+"``TokenBigram`` トークナイザーを使ったインデックスを作成します。そのため、 "
+"``Entries_YYYYMMDD._key`` と ``Entries_YYYYMMDD.content`` は両方とも全文検索"
+"できます。"
+
+msgid "OK. The schema and data for examples are ready."
+msgstr "これで例を示すためのスキーマとデータの準備ができました。"
+
+msgid "Simple usage"
+msgstr "簡単な使い方"
 
 msgid "This section describes parameters of ``logical_select``."
 msgstr "このセクションでは ``logical_select`` の引数について説明します。"
 
-# 371d355e15474f24919b8433eeeb214a
-msgid "TODO: add more description for RESULTS"
+# fa7a11d06cb843b9a2b8d6e6f7d0d491
+msgid ""
+"Specifies logical table name. It means table name without ``_YYYYMMDD`` "
+"postfix. If you use actual table such as ``Entries_20150708``, "
+"``Entries_20150709`` and so on, logical table name is ``Entries``."
 msgstr ""
+"論理テーブル名を指定します。これは ``_YYYYMMDD`` をテーブル名から除いたもので"
+"す。実際のテーブルが \"Entries_20150708\" や \"Entries_20150709\" といったも"
+"のなら、論理テーブル名は \"Entries\" です。"
+
+# b91f7e6433b541cfaa5d48146d585be8
+msgid ""
+"You can show 10 records by specifying ``logical_table`` and ``shard_key`` "
+"parameters. They are required parameters."
+msgstr ""
+"``logical_table`` と ``shard_key`` 引数を指定すると10レコード表示できます。こ"
+"れらの引数は必須の引数です。"
+
+msgid "If nonexistent table is specified, an error is returned."
+msgstr "存在しないテーブルを指定するとエラーが返ります。"
+
+# 9ac6056030d54374967cb7da463effd0
+msgid ""
+"Specifies column name which is treated as shared key. Shard key is a column "
+"that stores data that is used for distributing records to suitable shards."
+msgstr "個々のテーブルで共通のキーとして扱うカラム名を指定します。"
+
+# 72de3929eb854cb7ab88a6d6fa654fd0
+msgid "Shard key must be ``Time`` type for now."
+msgstr "今のところ、シャードキーは ``Time`` 型でなければいけません。"
+
+# 6fabf6b56acb42afaf75505e2836d4c6
+msgid "See :ref:`logical-select-logical-table` how to specify ``shard_key``."
+msgstr ""
+"``shard_key`` の指定方法は :ref:`logical-select-logical-table` を見てくださ"
+"い。"
+
+# 4d2b6ca0e6994c418db1cecbc8e3dbd2
+msgid ""
+"Specifies the minimum value of ``shard_key`` column. If shard doesn't have "
+"any matched records, the shard isn't searched."
+msgstr ""
+"``shard_key`` カラムの最小値を指定します。シャードにマッチするレコードがない"
+"場合は、そのシャードは検索対象外になります。"
+
+# 7ddd0e312a4647b7943aa325b46a440b
+msgid ""
+"For example, ``min`` is ``\"2015/07/09 00:00:00\"``, ``Entry_20150708`` "
+"isn't searched. Because ``Entry_20150708`` has only records for ``"
+"\"\"2015/07/08\"``."
+msgstr ""
+"たとえば、 ``min`` が ``\"2015/07/09 00:00:00\"`` なら、 ``Entry_20150708`` "
+"は検索対象外です。なぜなら、 ``Entry_20150708`` は ``\"\"2015/07/08\"`` のレ"
+"コードしかないからです。"
+
+# b4e5c4fc11f247189a0b703617248ca8
+msgid ""
+"The following example only uses ``Entry_20150709`` table. ``Entry_20150708`` "
+"isn't used."
+msgstr ""
+"以下の例は ``Entry_20150709`` テーブルだけを使う例です。 ``Entry_20150708`` "
+"は使われません。"
+
+# 4e29f7d070594734bd7f42f2b2a1951f
+msgid ""
+"Specifies whether the minimum value is include or not. Here is available "
+"values."
+msgstr "最小値を含めるかどうかを指定します。指定可能な値は次の通りです。"
+
+# 8bbc0aa08e3345dbbc945809464c8939
+# de54a4255428435ba6c6d58819964ff7
+msgid "``include``"
+msgstr ""
+
+# 41e90985794c4559baf962d155c3630d
+msgid "Includes ``min`` value. This is the default."
+msgstr "``min`` の値を含みます。これがデフォルト値です。"
+
+# 98856ec4b4d44f7ea3fd4c86360055bc
+# ae7a654404c94152802e317feadd0452
+msgid "``exclude``"
+msgstr ""
+
+# d827ce5c02994527b7ede9bea803b49c
+msgid "Doesn't include ``min`` value."
+msgstr "``min`` の値を含みません。"
+
+# 102e4009bf464d68b4547587e795299f
+# 397df3f2095342acbba12cab042b994c
+msgid ""
+"Here is an example for ``exclude``. The result doesn't include the ``\"Good-"
+"bye Senna\"`` record because its ``created_at`` value is ``\"2015/07/09 "
+"00:00:00\"``."
+msgstr ""
+"次の例は ``exclude`` の使用例です。結果には ``\"Good-bye Senna\"`` レコードは"
+"含まれません。このレコードの ``created_at`` の値が ``\"2015/07/09 "
+"00:00:00\"`` だからです。"
+
+# 5c2e57bd438c45ea82b24d5cb1bf1d0c
+msgid ""
+"Specifies the maximum value of ``shard_key`` column. If shard doesn't have "
+"any matched records, the shard isn't searched."
+msgstr ""
+"``shard_key`` カラムの最大値を指定します。シャードにマッチするレコードがない"
+"場合、そのシャードは検索対象外になります。"
+
+# 63eb5dd4d5d7439fa3deebb9ecde057d
+msgid ""
+"For example, ``max`` is ``\"2015/07/08 23:59:59\"``, ``Entry_20150709`` "
+"isn't searched. Because ``Entry_20150709`` has only records for ``"
+"\"\"2015/07/09\"``."
+msgstr ""
+"たとえば、 ``max`` が ``\"2015/07/08 23:59:59\"`` なら ``Entry_20150709`` は"
+"検索対象外です。なぜなら ``Entry_20150709`` には ``\"\"2015/07/09\"`` のレ"
+"コードしかないからです。"
+
+# 53e0240d412c4c929edb7098ea02bfb4
+msgid ""
+"The following example only uses ``Entry_20150708`` table. ``Entry_20150709`` "
+"isn't used."
+msgstr ""
+"以下の例は ``Entry_20150708`` テーブルだけを使います。 ``Entry_20150709`` は"
+"使いません。"
+
+# a475a66f07f34738b25d1f0d71deb232
+msgid ""
+"Specifies whether the maximum value is include or not. Here is available "
+"values."
+msgstr "最大値を含めるかどうかを指定します。指定可能な値は次の通りです。"
+
+# 5e208e3901c243f9937bfe8e26c6f8aa
+msgid "Includes ``max`` value. This is the default."
+msgstr "``max`` の値を含みます。これがデフォルト値です。"
+
+# a846198d5dae41d39987c080105fff26
+msgid "Doesn't include ``max`` value."
+msgstr "``max`` の値を含みません。"
+
+# e00eb783c12c44c2b3e718c8bac4c690
+msgid ""
+"The return value format of ``logical_select`` is compatible with :doc:"
+"`select`. See :ref:`select-return-value` for details."
+msgstr ""
+"``logical_select`` の戻り値のフォーマットは :doc:`select` と同じです。詳細"
+"は :ref:`select-return-value` を見てください。"
 
 # 8bc444a3ddb44917be34528f7dd90126
 msgid "``logical_table_remove``"
@@ -5675,83 +6049,12 @@ msgid ""
 "``select`` has many parameters. The required parameter is only ``table``. "
 "Other parameters are optional::"
 msgstr ""
-"``select`` には多くの引数があります。必須の引数は ``table`` だけです。残りは省"
-"略できます。::"
+"``select`` には多くの引数があります。必須の引数は ``table`` だけです。残りは"
+"省略できます。::"
 
 msgid "``select`` has the following named parameters for advanced drilldown:"
 msgstr ""
 "``select`` には高度なドリルダウン機能のために以下の名前付き引数があります。"
-
-# bb37d24c839d485e8464c562b0049de0
-msgid "``drilldown[${LABEL}].keys=null``"
-msgstr ""
-
-# e72a2089d86e48af8b29fe829dfc318f
-msgid "``drilldown[${LABEL}].sortby=null``"
-msgstr ""
-
-# 5b6e1254a8ce48a88c28ece081ca3af4
-msgid "``drilldown[${LABEL}].output_columns=\"_key, _nsubrecs\"``"
-msgstr ""
-
-# 6de3c351bf884e0aac65618bf513e5c0
-msgid "``drilldown[${LABEL}].offset=0``"
-msgstr ""
-
-# 83c813b5a92e4af7831f2d7fec050153
-msgid "``drilldown[${LABEL}].limit=10``"
-msgstr ""
-
-# f0f30ebc793f4596888dfab42ca3e74f
-msgid "``drilldown[${LABEL}].calc_types=NONE``"
-msgstr ""
-
-# a09d04c57050443ca6c7697d8ee1b041
-msgid "``drilldown[${LABEL}].calc_target=null``"
-msgstr ""
-
-# b0dd873585054b0cb28a01ced40dad93
-msgid ""
-"You can use one or more alphabets, digits, ``_`` and ``.`` for ``${LABEL}``. "
-"For example, ``parent.sub1`` is a valid ``${LABEL}``."
-msgstr ""
-"``${LABEL}`` には1つ以上のアルファベット、数字、 ``_`` 、 ``.`` を使うことが"
-"できます。たとえば、 ``parent.sub1`` は有効な ``${LABEL}`` です。"
-
-# d85a0a6ec3974ff7b0e275abe264d9f2
-msgid "Parameters that have the same ``${LABEL}`` are grouped."
-msgstr "同じ ``${LABEL}`` も持つ引数は同じグループになります。"
-
-msgid "For example, the following parameters specify one drilldown:"
-msgstr "たとえば、以下の引数は1つのドリルダウンを指定しています。"
-
-# a84edc397f27402ea760bcc832fa960b
-msgid "``--drilldown[label].keys column``"
-msgstr ""
-
-# 99b7866b3052448b8f5796e8a2ac3dff
-msgid "``--drilldown[label].sortby -_nsubrecs``"
-msgstr ""
-
-# 1e68b9823e1c4e8ca6c2657091d3064f
-msgid "The following parameters specify two drilldowns:"
-msgstr "以下の引数は2つのドリルダウンを指定しています。"
-
-# 529c31b0a4ad4009a3b1bf0797059ccf
-msgid "``--drilldown[label1].keys column1``"
-msgstr ""
-
-# 8b689f5b8f764831bbf64d82f844df3f
-msgid "``--drilldown[label1].sortby -_nsubrecs``"
-msgstr ""
-
-# fd1dcdb8651444e3892064f9e7117c06
-msgid "``--drilldown[label2].keys column2``"
-msgstr ""
-
-# 1d7785b0c39949c2a8c36c3c5dd2ec99
-msgid "``--drilldown[label2].sortby _key``"
-msgstr ""
 
 msgid ""
 "Let's learn about ``select`` usage with examples. This section shows many "
@@ -5780,12 +6083,6 @@ msgstr ""
 "``Entries._key`` カラムと ``Entries.content`` カラムには ``TokenBigram`` トー"
 "クナイザーを使ったインデックスを作成します。そのため、 ``Entries._key`` と "
 "``Entries.content`` は両方とも全文検索できます。"
-
-msgid "OK. The schema and data for examples are ready."
-msgstr "これで例を示すためのスキーマとデータの準備ができました。"
-
-msgid "Simple usage"
-msgstr "簡単な使い方"
 
 msgid ""
 "Here is the most simple usage with the above schema and data. It outputs all "
@@ -6047,9 +6344,6 @@ msgstr "``table`` だけが必須の引数です。"
 msgid "Specifies a table to be searched. ``table`` must be specified."
 msgstr ""
 "検索対象のテーブルを指定します。 ``table`` は必ず指定しなければいけません。"
-
-msgid "If nonexistent table is specified, an error is returned."
-msgstr "存在しないテーブルを指定するとエラーが返ります。"
 
 msgid "Search related parameters"
 msgstr "検索関係の引数"
@@ -7800,99 +8094,143 @@ msgstr ""
 "を変えることができます。これは検索スコアーをチューニングするときに便利です。"
 "詳細は :ref:`weight-vector-column` を参照してください。"
 
-msgid "返値"
-msgstr ""
+#, fuzzy
+msgid "``select`` returns response with the following format::"
+msgstr "この ``select`` コマンドは次の情報を出力します。"
 
-msgid "以下のようなjson形式で値が返却されます。"
+#, fuzzy
+msgid "If ``select`` fails, error details are in ``HEADER``."
 msgstr ""
+"``table_create`` が失敗すると、エラーの詳細は ``HEADER`` に含まれます。"
 
-msgid "``リターンコード``"
-msgstr ""
-
+# 01d15d4538594f22840342adce9418c1
 msgid ""
-"grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内"
-"容を示す 文字列が返されます。"
+"There are zero or more ``DRILLDOWN_RESULT``. If no ``drilldown`` and "
+"``drilldown[${LABEL}].keys`` are specified, they are omitted like the "
+"following::"
 msgstr ""
 
-msgid "``処理開始時間``"
-msgstr ""
-
+# 3430f3ea532e412e905c90793cdebf40
 msgid ""
-"処理を開始した時間について、1970年1月1日0時0分0秒を起点とした秒数を小数で返し"
-"ます。"
+"If ``drilldown`` has two or more keys like ``--drilldown \"_key, column1, "
+"column2\"``, multiple ``DRILLDOWN_RESULT`` exist::"
 msgstr ""
 
-msgid "``処理時間``"
-msgstr ""
-
-msgid "処理にかかった秒数を返します。"
-msgstr ""
-
-msgid "``検索結果``"
-msgstr ""
-
-msgid "drilldown条件が実行される前の検索結果が以下のように出力されます。::"
-msgstr ""
-
-msgid "``ヒット数``"
-msgstr ""
-
+# d14e54c7182740058bf6a2b0ebd61a1a
 msgid ""
-"検索条件にヒットしたレコードの数が出力されます。 ``--limit`` オプションで出力"
-"件数を制限した場合は出力するレコード数と一致しません。 ``ヒット数`` は ``--"
-"limit`` オプションに関係なく常にヒットしたレコードの数になります。"
+"If ``drilldown[${LABEL}].keys`` is used, only one ``DRILLDOWN_RESULT`` "
+"exist::"
 msgstr ""
 
-msgid "``カラム名n``"
-msgstr ""
-
+# f58266b95a7041c9b422af8be8aad52c
 msgid ""
-"output_columnsに指定された条件に従って、対象となるカラム名が出力されます。"
+"``DRILLDOWN_RESULT`` format is different between ``drilldown`` and "
+"``drilldown[${LABEL}].keys``. It's described later."
 msgstr ""
 
-msgid "``カラム型n``"
+#, fuzzy
+msgid "``SEARCH_RESULT`` is the following format::"
+msgstr "``COLUMN_LIST_HEADER`` は以下の形式です::"
+
+# 3261e6200c6943c5b597c0ce09a7f0bd
+msgid "See :ref:`select-simple-usage` for concrete example of the format."
 msgstr ""
 
+# f5f72801b9ce4dc1b5a036a7509b8be7
 msgid ""
-"output_columnsに指定された条件に従って、対象となるカラム型が出力されます。"
+"``N_HITS`` is the number of matched records before :ref:`select-limit` is "
+"applied."
 msgstr ""
 
-msgid "``検索結果n``"
-msgstr ""
-
+# fd1d1b399c984e89b316395a0d7a5e56
 msgid ""
-"output_columns, offset, limitによって指定された条件に従って各レコードの値が出"
-"力されます。"
+"``COLUMNS`` describes about output columns specified by :ref:`select-output-"
+"columns`. It uses the following format::"
 msgstr ""
 
-msgid "``drilldown結果``"
-msgstr ""
-
-msgid "drilldown処理の結果が以下のように出力されます。::"
-msgstr ""
-
-msgid "``件数``"
-msgstr ""
-
-msgid "drilldownに指定されたカラムの値の異なり数が出力されます。"
-msgstr ""
-
+# d0a21e9230d14ec99a5e651a84f2c766
 msgid ""
-"drilldown_output_columnsに指定された条件に従って、対象となるカラム名が出力さ"
-"れます。"
+"``COLUMNS`` includes one or more output column information. Each output "
+"column information includes the followings:"
 msgstr ""
 
+# 9187e8fdec8f458e98c3ecf9f3c70a46
+msgid "Column name as string"
+msgstr ""
+
+# e03136389ce946bf9d1474afd4fc9893
+msgid "Column type as string or ``null``"
+msgstr ""
+
+#, fuzzy
 msgid ""
-"drilldown_output_columnsに指定された条件に従って、対象となるカラム型が出力さ"
-"れます。"
+"Column name is extracted from value specified as :ref:`select-output-"
+"columns`."
 msgstr ""
+"``html_untag`` は :ref:`select-output-columns` で説明している ``--"
+"output_columns`` で使います。"
 
-msgid "``ドリルダウン結果n``"
-msgstr ""
-
+# fc51c38d0a1a4f428c19068091be1f89
 msgid ""
-"drilldown_output_columns, drilldown_offset, drilldown_limitによって指定された"
-"条件に従って各レコードの値が出力されます。"
+"Column type is Groonga's type name or ``null``. It doesn't describe whether "
+"the column value is vector or scalar. You need to determine it by whether "
+"real column value is array or not."
+msgstr ""
+
+#, fuzzy
+msgid "See :doc:`/reference/types` for type details."
+msgstr "型の一覧は :doc:`/reference/types` にあります。"
+
+# 3b6a9ac91fc349088cb913d5e4f772cb
+msgid ""
+"``null`` is used when column value type isn't determined. For example, "
+"function call in :ref:`select-output-columns` such as ``--output_columns "
+"\"snippet_html(content)\"`` uses ``null``."
+msgstr ""
+
+#, fuzzy
+msgid "Here is an example of ``COLUMNS``::"
+msgstr "以下は ``ALLOW_COLUMN`` の使用例です。"
+
+# 0458e34640b947abaf2caf0eb5cd5bd8
+msgid ""
+"``RECORDS`` includes column values for each matched record. Included records "
+"are selected by :ref:`select-offset` and :ref:`select-limit`. It uses the "
+"following format::"
+msgstr ""
+
+#, fuzzy
+msgid "Here is an example ``RECORDS``::"
+msgstr "以下は例です。"
+
+# 9a5d110872984c3fb176a8a754d092e4
+msgid ""
+"``DRILLDOWN_RESULT`` format is different between ``drilldown`` and "
+"``drilldown[${LABEL}].keys``."
+msgstr ""
+
+# 1f5703c031714dd9b65a3a31f32807d0
+msgid "``drilldown`` uses the same format as ``SEARCH_RESULT``::"
+msgstr ""
+
+# db9b7f45658b463987320805dd0a95d4
+msgid ""
+"And ``drilldown`` generates one or more ``DRILLDOWN_RESULT`` when :ref:"
+"`select-drilldown` has one ore more keys."
+msgstr ""
+
+# 5f8ab1c0924847faa28c9ab7253a0885
+msgid ""
+"``drilldown[${LABEL}].keys`` uses the following format. Multiple "
+"``drilldown[${LABEL}].keys`` are mapped to one object (key-value pairs)::"
+msgstr ""
+
+# c7ffb6cb4ced433890e7c7a9aa4af468
+msgid "Each ``drilldown[${LABEL}].keys`` corresponds to the following::"
+msgstr ""
+
+# 4303d9ec19a244f78626232e55cb4d6a
+msgid "The following value part is the same format as ``SEARCH_RESULT``::"
 msgstr ""
 
 msgid "``shutdown``"
@@ -11233,6 +11571,9 @@ msgid "``string2``"
 msgstr ""
 
 msgid "もうひとつの文字列を指定します"
+msgstr ""
+
+msgid "返値"
 msgstr ""
 
 msgid "指定した2つ文字列の編集距離をUint32型の値として返します。"
