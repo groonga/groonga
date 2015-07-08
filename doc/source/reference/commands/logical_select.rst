@@ -360,8 +360,5 @@ Here is an example for ``exclude``. The result doesn't include the
 Return value
 ------------
 
-TODO: add more description for RESULTS
-
-::
-
-  [HEADER, RESULTS]
+The return value format of ``logical_select`` is compatible with
+:doc:`select`. See :ref:`select-return-value` for details.
