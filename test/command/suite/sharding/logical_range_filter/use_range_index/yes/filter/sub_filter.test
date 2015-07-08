@@ -1,0 +1,56 @@
+#@include fixture/sharding/logical_range_filter/use_range_index/schema.grn
+
+load --table Errors
+[
+{
+    "_key": "error1",
+   "level": "critical",
+  "action": "Shutdown"
+}
+]
+
+load --table Logs_20150203
+[
+{
+  "timestamp": "2015-02-03 12:49:00",
+       "memo": "2015-02-03 12:49:00",
+     "action": "Start"
+}
+]
+
+load --table Logs_20150204
+[
+{
+  "timestamp": "2015-02-04 13:49:00",
+       "memo": "2015-02-04 13:49:00",
+     "action": "Start"
+},
+{
+  "timestamp": "2015-02-04 13:50:00",
+       "memo": "2015-02-04 13:50:00",
+     "action": "Shutdown"
+}
+]
+
+load --table Logs_20150205
+[
+{
+  "timestamp": "2015-02-05 13:49:00",
+       "memo": "2015-02-05 13:49:00",
+     "action": "Start"
+},
+{
+  "timestamp": "2015-02-05 13:50:00",
+       "memo": "2015-02-05 13:50:00",
+     "action": "Running"
+},
+{
+  "timestamp": "2015-02-05 13:51:00",
+       "memo": "2015-02-05 13:51:00",
+     "action": "Shutdown"
+}
+]
+
+logical_range_filter Logs timestamp \
+  --use_range_index yes \
+  --filter 'sub_filter(action.errors_action, "level == \\"critical\\"")'

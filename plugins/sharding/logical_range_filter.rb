@@ -14,6 +14,7 @@ module Groonga
                  "offset",
                  "limit",
                  "output_columns",
+                 "use_range_index",
                ])
 
       def run_body(input)
@@ -56,6 +57,7 @@ module Groonga
       end
 
       class ExecuteContext
+        attr_reader :use_range_index
         attr_reader :enumerator
         attr_reader :order
         attr_reader :filter
@@ -68,6 +70,7 @@ module Groonga
         attr_reader :threshold
         def initialize(input)
           @input = input
+          @use_range_index = parse_use_range_index(@input["use_range_index"])
           @enumerator = LogicalEnumerator.new("logical_range_filter", @input)
           @order = parse_order(@input, :order)
           @filter = @input[:filter]
@@ -93,6 +96,17 @@ module Groonga
         end
 
         private
+        def parse_use_range_index(use_range_index)
+          case use_range_index
+          when "yes"
+            true
+          when "no"
+            false
+          else
+            nil
+          end
+        end
+
         def parse_order(input, name)
           order = input[name]
           return :ascending if order.nil?
@@ -223,6 +237,13 @@ module Groonga
 
         private
         def use_range_index?(range_index)
+          case @context.use_range_index
+          when true
+            return true
+          when false
+            return false
+          end
+
           current_limit = @context.current_limit
           if current_limit < 0
             return false

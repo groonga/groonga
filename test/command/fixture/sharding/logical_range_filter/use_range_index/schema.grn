@@ -1,0 +1,59 @@
+#@disable-logging
+
+#@on-error omit
+register sharding
+#@on-error default
+
+table_create Actions TABLE_PAT_KEY ShortText
+
+table_create Errors TABLE_PAT_KEY ShortText
+column_create Errors level COLUMN_SCALAR ShortText
+column_create Errors action COLUMN_SCALAR Actions
+
+column_create Actions errors_action COLUMN_INDEX Errors action
+
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenizerBigram \
+  --normalizer NormalizserAuto
+
+table_create Logs_20150203 TABLE_NO_KEY
+column_create Logs_20150203 timestamp COLUMN_SCALAR Time
+column_create Logs_20150203 memo COLUMN_SCALAR ShortText
+column_create Logs_20150203 action COLUMN_SCALAR Actions
+
+table_create Timestamp_20150203 TABLE_PAT_KEY Time
+column_create Timestamp_20150203 index COLUMN_INDEX Logs_20150203 timestamp
+
+column_create Terms index_20150203 COLUMN_INDEX|WITH_POSITION Logs_20150203 memo
+
+column_create Actions index_20150203 COLUMN_INDEX Logs_20150203 action
+
+
+table_create Logs_20150204 TABLE_NO_KEY
+column_create Logs_20150204 timestamp COLUMN_SCALAR Time
+column_create Logs_20150204 memo COLUMN_SCALAR ShortText
+column_create Logs_20150204 action COLUMN_SCALAR Actions
+
+table_create Timestamp_20150204 TABLE_PAT_KEY Time
+column_create Timestamp_20150204 index COLUMN_INDEX Logs_20150204 timestamp
+
+column_create Terms index_20150204 COLUMN_INDEX|WITH_POSITION Logs_20150204 memo
+
+column_create Actions index_20150204 COLUMN_INDEX Logs_20150204 action
+
+
+table_create Logs_20150205 TABLE_NO_KEY
+column_create Logs_20150205 timestamp COLUMN_SCALAR Time
+column_create Logs_20150205 memo COLUMN_SCALAR ShortText
+column_create Logs_20150205 action COLUMN_SCALAR Actions
+
+table_create Timestamp_20150205 TABLE_PAT_KEY Time
+column_create Timestamp_20150205 index COLUMN_INDEX Logs_20150205 timestamp
+
+column_create Terms index_20150205 COLUMN_INDEX|WITH_POSITION Logs_20150205 memo
+
+column_create Actions index_20150205 COLUMN_INDEX Logs_20150205 action
+
+
+#@enable-logging
