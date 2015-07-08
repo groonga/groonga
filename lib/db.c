@@ -4634,21 +4634,20 @@ grn_vector_decode(grn_ctx *ctx, grn_obj *v, const char *data, uint32_t data_size
   }
   {
     grn_section *vp;
+    grn_obj *body = grn_vector_body(ctx, v);
+    uint32_t offset = GRN_BULK_VSIZE(body);
     uint32_t o = 0, l, i;
     for (i = n, vp = v->u.v.sections + n0; i; i--, vp++) {
       if (pe <= p) { return GRN_INVALID_ARGUMENT; }
       GRN_B_DEC(l, p);
       vp->length = l;
-      vp->offset = o;
+      vp->offset = offset + o;
       vp->weight = 0;
       vp->domain = 0;
       o += l;
     }
     if (pe < p + o) { return GRN_INVALID_ARGUMENT; }
-    {
-      grn_obj *body = grn_vector_body(ctx, v);
-      grn_bulk_write(ctx, body, (char *)p, o);
-    }
+    grn_bulk_write(ctx, body, (char *)p, o);
     p += o;
     if (p < pe) {
       for (i = n, vp = v->u.v.sections + n0; i; i--, vp++) {
