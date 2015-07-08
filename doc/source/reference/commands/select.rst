@@ -21,7 +21,7 @@ Syntax
 ------
 
 ``select`` has many parameters. The required parameter is only
-``table`` and others are optional::
+``table``. Other parameters are optional::
 
   select table
          [match_columns=null]
