@@ -42,6 +42,24 @@ mrb_grn_procedure_initialize(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_procedure_selector_p(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *proc = DATA_PTR(self);
+
+  return mrb_bool_value(grn_obj_is_selector_proc(ctx, proc));
+}
+
+static mrb_value
+mrb_grn_procedure_selector_only_p(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *proc = DATA_PTR(self);
+
+  return mrb_bool_value(grn_obj_is_selector_only_proc(ctx, proc));
+}
+
+static mrb_value
 mrb_grn_procedure_scorer_p(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -64,6 +82,10 @@ grn_mrb_procedure_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "initialize",
                     mrb_grn_procedure_initialize, MRB_ARGS_REQ(1));
 
+  mrb_define_method(mrb, klass, "selector?",
+                    mrb_grn_procedure_selector_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "selector_only?",
+                    mrb_grn_procedure_selector_only_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "scorer?",
                     mrb_grn_procedure_scorer_p, MRB_ARGS_NONE());
 }
