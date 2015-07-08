@@ -236,31 +236,63 @@ module Groonga
         end
 
         private
+        def decide_use_range_index(use, reason, line, method)
+          message = "[logical_range_filter]"
+          if use
+            message << "[range-index] "
+          else
+            message << "[select] "
+          end
+          message << "<#{@table.name}>: "
+          message << reason
+          Context.instance.logger.log(Logger::Level::DEBUG,
+                                      __FILE__,
+                                      line,
+                                      method.to_s,
+                                      message)
+
+          use
+        end
+
         def use_range_index?(range_index)
           case @context.use_range_index
           when true
-            return true
+            return decide_use_range_index(true,
+                                          "force by use_range_index parameter",
+                                          __LINE__, __method__)
           when false
-            return false
+            return decide_use_range_index(false,
+                                          "force by use_range_index parameter",
+                                          __LINE__, __method__)
           end
 
           current_limit = @context.current_limit
           if current_limit < 0
-            return false
+            reason = "limit is negative: <#{current_limit}>"
+            return decide_use_range_index(false, reason,
+                                          __LINE__, __method__)
           end
 
           required_n_records = @context.current_offset + current_limit
           max_n_records = @table.size
           if max_n_records <= required_n_records
-            return false
+            reason = "the number of required records (#{required_n_records}) "
+            reason << ">= "
+            reason << "the number of records in shard (#{max_n_records})"
+            return decide_use_range_index(false, reason,
+                                          __LINE__, __method__)
           end
 
           threshold = @context.threshold
           if threshold <= 0.0
-            return true
+            reason = "threshold is negative: <#{threshold}>"
+            return decide_use_range_index(true, reason,
+                                          __LINE__, __method__)
           end
           if threshold >= 1.0
-            return false
+            reason = "threshold (#{threshold}) >= 1.0"
+            return decide_use_range_index(false, reason,
+                                          __LINE__, __method__)
           end
 
           estimated_n_records = 0
@@ -292,11 +324,25 @@ module Groonga
           end
 
           if estimated_n_records <= required_n_records
-            return false
+            reason = "the number of required records (#{required_n_records}) "
+            reason << ">= "
+            reason << "the number of estimated records (#{estimated_n_records})"
+            return decide_use_range_index(false, reason,
+                                          __LINE__, __method__)
           end
 
           hit_ratio = estimated_n_records / max_n_records.to_f
-          hit_ratio >= threshold
+          use_range_index_by_hit_ratio = (hit_ratio >= threshold)
+          if use_range_index_by_hit_ratio
+            relation = ">="
+          else
+            relation = "<"
+          end
+          reason = "hit ratio "
+          reason << "(#{hit_ratio}=#{estimated_n_records}/#{max_n_records})"
+          reason << "#{relation} threshold (#{threshold})"
+          decide_use_range_index(use_range_index_by_hit_ratio, reason,
+                                 __LINE__, __method__)
         end
 
         def filter_shard_all(range_index)
