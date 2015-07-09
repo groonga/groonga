@@ -1,0 +1,6 @@
+table_create Logs TABLE_NO_KEY
+column_create Logs content COLUMN_SCALAR ShortText
+column_create Logs timestamp COLUMN_SCALAR Time
+
+select Logs \
+  --output_columns _key,*
