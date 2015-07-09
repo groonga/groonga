@@ -334,7 +334,7 @@ module Groonga
 
         def calc_target(table)
           return nil if @calc_target_name.nil?
-          table.column(@calc_target_name)
+          table.find_column(@calc_target_name)
         end
 
         def need_command_version2?
