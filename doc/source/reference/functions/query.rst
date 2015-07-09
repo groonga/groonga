@@ -149,7 +149,7 @@ See :doc:`/reference/query_expanders/tsv` about details.
 Specifies the substitution table and substitution column name
 by following format such as ``${TABLE}.${COLUMN}`` for query expansion.
 
-See :ref:`query-expander` about details.
+See :ref:`select-query-expander` about details.
 
 Return value
 ------------

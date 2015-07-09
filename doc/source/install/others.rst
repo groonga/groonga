@@ -157,7 +157,7 @@ Here is an example that Shift_JIS is used as the default encoding::
 ++++++++++++++++++++++++++++++++++++++++++++
 
 Specifies the default match escalation threshold. See
-:ref:`match-escalation-threshold` about match
+:ref:`select-match-escalation-threshold` about match
 escalation threshold. -1 means that match operation never escalate.
 
 The default is 0.

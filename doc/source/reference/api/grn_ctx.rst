@@ -13,7 +13,7 @@ keeps the current infomation such as:
 
 * The last occurred error.
 * The current encoding.
-* The default thresholds. (e.g. :ref:`match-escalation-threshold`)
+* The default thresholds. (e.g. :ref:`select-match-escalation-threshold`)
 * The default command version. (See :doc:`/reference/command/command_version`)
 
 :c:type:`grn_ctx` provides platform features such as:

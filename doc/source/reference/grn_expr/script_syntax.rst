@@ -49,7 +49,7 @@ here is the constructed :ref:`select-filter` parameter::
   column @ "query"
 
 If the input is ``x" || true || "``, here is the constructed
-ref:`select-filter` parameter::
+:ref:`select-filter` parameter::
 
   column @ "x" || true || ""
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-07-09 16:46+0900\n"
+"PO-Revision-Date: 2015-07-09 16:57+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -539,8 +539,8 @@ msgstr "最後に発生したエラー。"
 msgid "The current encoding."
 msgstr "その時点のエンコーディング。"
 
-msgid "The default thresholds. (e.g. :ref:`match-escalation-threshold`)"
-msgstr "デフォルトの閾値。（例: :ref:`match-escalation-threshold`）"
+msgid "The default thresholds. (e.g. :ref:`select-match-escalation-threshold`)"
+msgstr "デフォルトの閾値。（例: :ref:`select-match-escalation-threshold`）"
 
 msgid ""
 "The default command version. (See :doc:`/reference/command/command_version`)"
@@ -5128,6 +5128,16 @@ msgstr ""
 "複数のシャードを使った場合の ``sortby`` はサポートしていません。（1つのシャー"
 "ドのみを使った場合はサポートしています。）"
 
+# 8bf769bf671b4f9b8385c186e58054f3
+# 1377ff69ae744784899e9baf23140c33
+msgid ""
+"``_value.${KEY_NAME}`` in ``drilldown[${LABEL}].sortby`` doesn't work with "
+"multiple shards. It works with one shard. ``_key`` in ``drilldown[${LABEL}]."
+"sortby`` work with multiple shards."
+msgstr ""
+"複数のシャードを使った場合、 ``drilldown[${LABEL}].sortby`` の中で ``_value."
+"${KEY_NAME}`` を使えません。1つのシャードのみを使った場合は使えます。"
+
 # b030a6961c6b4c0bbc5331751450caa4
 msgid "``match_columns`` and ``query`` aren't supported yet."
 msgstr "``match_columns`` と ``query`` はまだサポートしていません。"
@@ -5547,16 +5557,6 @@ msgstr ""
 
 msgid "There are some limitations:"
 msgstr "いくつか制限があります。"
-
-# 8bf769bf671b4f9b8385c186e58054f3
-# 1377ff69ae744784899e9baf23140c33
-msgid ""
-"``_value.${KEY_NAME}`` in ``drilldown[${LABEL}].sortby`` doesn't work with "
-"multiple shards. It works with one shard. ``_key`` in ``drilldown[${LABEL}]."
-"sortby`` work with multiple shards."
-msgstr ""
-"複数のシャードを使った場合、 ``drilldown[${LABEL}].sortby`` の中で ``_value."
-"${KEY_NAME}`` を使えません。1つのシャードのみを使った場合は使えます。"
 
 # ecaa0e9e25584f13accd4ba2078f057e
 # 56837b22eb944e5da35be0a5b4816aec
@@ -12802,8 +12802,8 @@ msgstr ""
 "置換テーブルとカラム名を ``${TABLE}.${COLUMN}`` という書式でクエリ展開のため"
 "に指定します。"
 
-msgid "See :ref:`query-expander` about details."
-msgstr "詳細については :ref:`query-expander` を参照してください。"
+msgid "See :ref:`select-query-expander` about details."
+msgstr "詳細については :ref:`select-query-expander` を参照してください。"
 
 msgid ""
 "``query`` returns whether any record is matched or not. If one or more "
@@ -13997,7 +13997,7 @@ msgstr ""
 
 # 22133c8405ab48f7946c246e158b361d
 msgid ""
-"If the input is ``x\" || true || \"``, here is the constructed ref:`select-"
+"If the input is ``x\" || true || \"``, here is the constructed :ref:`select-"
 "filter` parameter::"
 msgstr ""
 "もし、入力が ``x\" || true || \"`` だった場合は構築された :ref:`select-"
@@ -16013,8 +16013,8 @@ msgstr ""
 "同義語を再読み込みするにはgroongaを再起動する必要があります。TSVファイルはプ"
 "ラグイン読み込み時に一度だけ読み込みます。"
 
-msgid ":ref:`query-expansion`"
-msgstr ""
+msgid ":ref:`select-query-expansion`"
+msgstr "詳細については :ref:`select-query-expander` を参照してください。"
 
 msgid "Regular expression"
 msgstr "正規表現"
@@ -19282,29 +19282,3 @@ msgstr ""
 
 msgid "Object型はv1.2でサポートされます。"
 msgstr ""
-
-#~ msgid ""
-#~ "There are some tuning parameters for improving Groonga performance or "
-#~ "handling a large database."
-#~ msgstr ""
-#~ "Groongaの性能改善とGroongaで大きなデータベースを扱えるようにするための"
-#~ "チューニングパラメーターがいくつかあります。"
-
-# 6fabf6b56acb42afaf75505e2836d4c6
-#~ msgid ""
-#~ "``drilldown_calc_types`` and ``drilldown_calc_target`` aren't supported "
-#~ "yet."
-#~ msgstr ""
-#~ "``drilldown_calc_types`` と ``drilldown_calc_target`` はまだサポートしてい"
-#~ "ません。"
-
-# e899dc90b5f64cf5a3762a08e3414a67
-#~ msgid ""
-#~ "The default ``output_columns`` value doesn't include ``_id``. Because "
-#~ "``_id`` is meaningless when multiple shards are used. ``_id`` may be "
-#~ "duplicated because ``_id`` is managed in each shard not in all shards."
-#~ msgstr ""
-#~ "デフォルトの ``output_columns`` の値に ``_id`` が含まれていません。これ"
-#~ "は、複数のシャードを使った場合は ``_id`` の意味がなくなるからです。 "
-#~ "``_id`` はすべてのシャードをまたがって管理されているわけではなく、各シャー"
-#~ "ドで管理されているので、 ``_id`` は重複する可能性があります。"
