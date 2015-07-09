@@ -1,0 +1,81 @@
+register sharding
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenRegexp
+[[0,0.0,0.0],true]
+table_create Logs_20150205 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20150205 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20150205 memo COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Logs_20150205 comment COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Timestamp_20150205 TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Timestamp_20150205 index COLUMN_INDEX Logs_20150205 timestamp
+[[0,0.0,0.0],true]
+column_create Terms index_20150205 COLUMN_INDEX|WITH_POSITION|WITH_SECTION   Logs_20150205 memo,comment
+[[0,0.0,0.0],true]
+load --table Logs_20150205
+[
+{
+  "timestamp": "2015-02-05 13:49:00",
+       "memo": "2015-02-05 13:49:00",
+    "comment": "Start"
+},
+{
+  "timestamp": "2015-02-05 13:50:00",
+       "memo": "2015-02-05 13:50:00",
+    "comment": "Running"
+},
+{
+  "timestamp": "2015-02-05 13:51:00",
+       "memo": "2015-02-05 13:51:00",
+    "comment": "Running"
+},
+{
+  "timestamp": "2015-02-05 13:52:00",
+       "memo": "2015-02-05 13:52:00",
+    "comment": "Shutdown"
+}
+]
+[[0,0.0,0.0],4]
+log_level --level debug
+[[0,0.0,0.0],true]
+logical_range_filter Logs timestamp   --limit 4   --filter 'comment @~ "nn"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "comment",
+        "Text"
+      ],
+      [
+        "memo",
+        "ShortText"
+      ],
+      [
+        "timestamp",
+        "Time"
+      ]
+    ],
+    [
+      "Running",
+      "2015-02-05 13:50:00",
+      1423111800.0
+    ],
+    [
+      "Running",
+      "2015-02-05 13:51:00",
+      1423111860.0
+    ]
+  ]
+]
+#|d| [logical_range_filter][select] <Logs_20150205>: the number of required records (4) >= the number of records in shard (4)
+log_level --level notice
+[[0,0.0,0.0],true]
