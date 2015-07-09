@@ -26,6 +26,20 @@ module Groonga
       end
 
       private
+      def log_use_range_index(use, line, method)
+        message = "[logical_count]"
+        if use
+          message << "[range-index]"
+        else
+          message << "[select]"
+        end
+        Context.instance.logger.log(Logger::Level::DEBUG,
+                                    __FILE__,
+                                    line,
+                                    method.to_s,
+                                    message)
+      end
+
       def count_n_records(table, filter,
                           shard_key, shard_range,
                           target_range)
@@ -36,6 +50,7 @@ module Groonga
                                                         target_range,
                                                         filter)
         if cover_type == :all
+          log_use_range_index(false, __LINE__, __method__)
           if filter.nil?
             return table.size
           else
@@ -52,6 +67,9 @@ module Groonga
             range_index = index_info.index
           end
         end
+
+        use_range_index = (!range_index.nil?)
+        log_use_range_index(use_range_index, __LINE__, __method__)
 
         case cover_type
         when :partial_min
