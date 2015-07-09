@@ -1,0 +1,48 @@
+#@on-error omit
+register sharding
+#@on-error default
+
+table_create Actions TABLE_PAT_KEY ShortText
+
+table_create Logs_20150205 TABLE_NO_KEY
+column_create Logs_20150205 timestamp COLUMN_SCALAR Time
+column_create Logs_20150205 memo COLUMN_SCALAR ShortText
+column_create Logs_20150205 action COLUMN_SCALAR Actions
+
+table_create Timestamp_20150205 TABLE_PAT_KEY Time
+column_create Timestamp_20150205 index COLUMN_INDEX Logs_20150205 timestamp
+
+column_create Actions index_20150205 COLUMN_INDEX Logs_20150205 action
+
+
+load --table Logs_20150205
+[
+{
+  "timestamp": "2015-02-05 13:49:00",
+       "memo": "2015-02-05 13:49:00",
+     "action": "Start"
+},
+{
+  "timestamp": "2015-02-05 13:50:00",
+       "memo": "2015-02-05 13:50:00",
+     "action": "Running"
+},
+{
+  "timestamp": "2015-02-05 13:51:00",
+       "memo": "2015-02-05 13:51:00",
+     "action": "Running"
+},
+{
+  "timestamp": "2015-02-05 13:52:00",
+       "memo": "2015-02-05 13:5:00",
+     "action": "Shutdown"
+}
+]
+
+#@add-important-log-levels debug
+log_level --level debug
+logical_range_filter Logs timestamp \
+  --limit 4 \
+  --filter 'action == "Running" || action == "Start"'
+log_level --level notice
+#@remove-important-log-levels debug
