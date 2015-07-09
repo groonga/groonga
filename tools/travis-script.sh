@@ -17,7 +17,8 @@ case "${BUILD_TOOL}" in
     fi
     test/command/run-test.sh ${command_test_options} --interface http
     mkdir -p ${prefix}/var/log/groonga/httpd
-    test/command/run-test.sh ${command_test_options} --testee groonga-httpd
+    # TODO: Re-enable me
+    # test/command/run-test.sh ${command_test_options} --testee groonga-httpd
     ;;
   cmake)
     test/command/run-test.sh ${command_test_options}
