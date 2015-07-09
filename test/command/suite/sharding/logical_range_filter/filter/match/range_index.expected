@@ -1,0 +1,76 @@
+register sharding
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram
+[[0,0.0,0.0],true]
+table_create Logs_20150205 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20150205 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20150205 memo COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Logs_20150205 action COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Timestamp_20150205 TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Timestamp_20150205 index COLUMN_INDEX Logs_20150205 timestamp
+[[0,0.0,0.0],true]
+column_create Terms index_20150205 COLUMN_INDEX|WITH_POSITION|WITH_SECTION   Logs_20150205 memo,action
+[[0,0.0,0.0],true]
+load --table Logs_20150205
+[
+{
+  "timestamp": "2015-02-05 13:49:00",
+       "memo": "2015-02-05 13:49:00",
+     "action": "Start"
+},
+{
+  "timestamp": "2015-02-05 13:50:00",
+       "memo": "2015-02-05 13:50:00",
+     "action": "Running"
+},
+{
+  "timestamp": "2015-02-05 13:51:00",
+       "memo": "2015-02-05 13:51:00",
+     "action": "Running"
+},
+{
+  "timestamp": "2015-02-05 13:52:00",
+       "memo": "2015-02-05 13:5:00",
+     "action": "Shutdown"
+}
+]
+[[0,0.0,0.0],4]
+log_level --level debug
+[[0,0.0,0.0],true]
+logical_range_filter Logs timestamp   --limit 1   --filter 'action @ "nn"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "action",
+        "Text"
+      ],
+      [
+        "memo",
+        "ShortText"
+      ],
+      [
+        "timestamp",
+        "Time"
+      ]
+    ],
+    [
+      "Running",
+      "2015-02-05 13:50:00",
+      1423111800.0
+    ]
+  ]
+]
+#|d| [logical_range_filter][range-index] <Logs_20150205>: hit ratio (1.5=6/4)>= threshold (0.2)
+log_level --level notice
+[[0,0.0,0.0],true]
