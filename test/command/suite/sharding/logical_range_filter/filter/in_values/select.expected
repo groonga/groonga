@@ -1,0 +1,86 @@
+register sharding
+[[0,0.0,0.0],true]
+table_create Actions TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Logs_20150205 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20150205 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20150205 memo COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Logs_20150205 action COLUMN_SCALAR Actions
+[[0,0.0,0.0],true]
+table_create Timestamp_20150205 TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Timestamp_20150205 index COLUMN_INDEX Logs_20150205 timestamp
+[[0,0.0,0.0],true]
+column_create Actions index_20150205 COLUMN_INDEX Logs_20150205 action
+[[0,0.0,0.0],true]
+load --table Logs_20150205
+[
+{
+  "timestamp": "2015-02-05 13:49:00",
+       "memo": "2015-02-05 13:49:00",
+     "action": "Start"
+},
+{
+  "timestamp": "2015-02-05 13:50:00",
+       "memo": "2015-02-05 13:50:00",
+     "action": "Running"
+},
+{
+  "timestamp": "2015-02-05 13:51:00",
+       "memo": "2015-02-05 13:51:00",
+     "action": "Running"
+},
+{
+  "timestamp": "2015-02-05 13:52:00",
+       "memo": "2015-02-05 13:5:00",
+     "action": "Shutdown"
+}
+]
+[[0,0.0,0.0],4]
+log_level --level debug
+[[0,0.0,0.0],true]
+logical_range_filter Logs timestamp   --limit 4   --filter 'in_values(action, "Running", "Start")'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "action",
+        "Actions"
+      ],
+      [
+        "memo",
+        "ShortText"
+      ],
+      [
+        "timestamp",
+        "Time"
+      ]
+    ],
+    [
+      "Start",
+      "2015-02-05 13:49:00",
+      1423111740.0
+    ],
+    [
+      "Running",
+      "2015-02-05 13:50:00",
+      1423111800.0
+    ],
+    [
+      "Running",
+      "2015-02-05 13:51:00",
+      1423111860.0
+    ]
+  ]
+]
+#|d| [logical_range_filter][select] <Logs_20150205>: the number of required records (4) >= the number of records in shard (4)
+log_level --level notice
+[[0,0.0,0.0],true]
