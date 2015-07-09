@@ -14,7 +14,7 @@ column_create Actions errors_action COLUMN_INDEX Errors action
 
 
 table_create Terms TABLE_PAT_KEY ShortText \
-  --default_tokenizer TokenizerBigram \
+  --default_tokenizer TokenBigram \
   --normalizer NormalizserAuto
 
 table_create Logs_20150203 TABLE_NO_KEY
