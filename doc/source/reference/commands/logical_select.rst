@@ -48,6 +48,8 @@ parameters are optional::
                  [drilldown_output_columns="_key, _nsubrecs"]
                  [drilldown_offset=0]
                  [drilldown_limit=10]
+                 [drilldown_calc_types=NONE]
+                 [drilldown_calc_target=null]
 
 ``logical_select`` has the following named parameters for advanced
 drilldown:
@@ -88,17 +90,17 @@ But there are some differences from :doc:`select`:
 
   * ``logical_table`` and ``shard_key`` parameters are required
     instead of ``table`` parameter.
-  * ``sortby``, ``drilldown_sortby`` and
-    ``drilldown[${LABEL}].sortby`` aren't supported when multiple
-    shards are used. (Only one shard is used, they are supported.)
+  * ``sortby`` isn't supported when multiple shards are used. (Only
+    one shard is used, they are supported.)
+  * ``_value.${KEY_NAME}`` in ``drilldown[${LABEL}].sortby`` isn't
+    supported when multiple shards are used. (Only one shard is used,
+    they are supported.)
   * ``match_columns`` and ``query`` aren't supported yet.
   * ``cache`` isn't supported yet.
   * ``match_escalation_threshold`` isn't supported yet.
   * ``query_flags`` isn't supported yet.
   * ``query_expander`` isn't supported yet.
   * ``adjuster`` isn't supported yet.
-  * ``drilldown_calc_types`` and ``drilldown_calc_target`` aren't
-    supported yet.
 
 Usage
 -----
@@ -529,11 +531,6 @@ Drilldown related parameters
 Most of drilldown related parameters in :doc:`select` are supported.
 See :ref:`select-drilldown-related-parameters` for details.
 
-The following parameters aren't supported yet:
-
-  * ``drilldown_calc_types``
-  * ``drilldown_calc_target``
-
 .. _logical-select-drilldown:
 
 ``drilldown``
@@ -637,14 +634,32 @@ Here is an example:
 ``drilldown_calc_types``
 """"""""""""""""""""""""
 
-Not implemented yet.
+Corresponds to :ref:`select-drilldown-calc-types` in
+:doc:`select`. See :ref:`select-drilldown-calc-types` for details.
+
+Here is an example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/drilldown_calc_types.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --limit -1 \
+..   --output_columns tag,n_likes \
+..   --drilldown tag \
+..   --drilldown_calc_types MAX,MIN,SUM,AVG \
+..   --drilldown_calc_target n_likes \
+..   --drilldown_output_columns _key,_nsubrecs,_max,_min,_sum,_avg
 
 .. _logical-select-drilldown-calc-target:
 
 ``drilldown_calc_target``
 """""""""""""""""""""""""
 
-Not implemented yet.
+Corresponds to :ref:`select-drilldown-calc-target` in
+:doc:`select`. See :ref:`select-drilldown-calc-target` for details.
+
+See also :ref:`logical-select-drilldown-calc-types` for an example.
 
 .. _logical-select-advanced-drilldown-related-parameters:
 
