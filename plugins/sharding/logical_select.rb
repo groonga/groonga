@@ -19,6 +19,8 @@ module Groonga
                  "drilldown_output_columns",
                  "drilldown_offset",
                  "drilldown_limit",
+                 "drilldown_calc_types",
+                 "drilldown_calc_target",
                ])
 
       def run_body(input)
@@ -167,6 +169,39 @@ module Groonga
         end
       end
 
+      module Calculatable
+        def calc_target(table)
+          return nil if @calc_target_name.nil?
+          table.find_column(@calc_target_name)
+        end
+
+        private
+        def parse_calc_types(raw_types)
+          return TableGroupFlags::CALC_COUNT if raw_types.nil?
+
+          types = 0
+          raw_types.strip.split(/ *, */).each do |name|
+            case name
+            when "COUNT"
+              types |= TableGroupFlags::CALC_COUNT
+            when "MAX"
+              types |= TableGroupFlags::CALC_MAX
+            when "MIN"
+              types |= TableGroupFlags::CALC_MIN
+            when "SUM"
+              types |= TableGroupFlags::CALC_SUM
+            when "AVG"
+              types |= TableGroupFlags::CALC_AVG
+            when "NONE"
+              # Do nothing
+            else
+              raise InvalidArgument, "invalid drilldown calc type: <#{name}>"
+            end
+          end
+          types
+        end
+      end
+
       class ExecuteContext
         include KeysParsable
 
@@ -211,12 +246,15 @@ module Groonga
 
       class PlainDrilldownExecuteContext
         include KeysParsable
+        include Calculatable
 
         attr_reader :keys
         attr_reader :offset
         attr_reader :limit
         attr_reader :sort_keys
         attr_reader :output_columns
+        attr_reader :calc_target_name
+        attr_reader :calc_types
         attr_reader :result_sets
         attr_reader :unsorted_result_sets
         def initialize(input)
@@ -227,6 +265,8 @@ module Groonga
           @sort_keys = parse_keys(@input[:drilldown_sortby])
           @output_columns = @input[:drilldown_output_columns]
           @output_columns ||= "_key, _nsubrecs"
+          @calc_target_name = @input[:drilldown_calc_target]
+          @calc_types = parse_calc_types(@input[:drilldown_calc_types])
 
           @result_sets = []
           @unsorted_result_sets = []
@@ -301,6 +341,7 @@ module Groonga
 
       class LabeledDrilldownExecuteContext
         include KeysParsable
+        include Calculatable
 
         attr_reader :label
         attr_reader :keys
@@ -332,11 +373,6 @@ module Groonga
           @unsorted_result_set.close if @unsored_result_set
         end
 
-        def calc_target(table)
-          return nil if @calc_target_name.nil?
-          table.find_column(@calc_target_name)
-        end
-
         def need_command_version2?
           /[.\[]/ === @output_columns
         end
@@ -357,32 +393,6 @@ module Groonga
             end
           end
           converted_columns.join(",")
-        end
-
-        private
-        def parse_calc_types(raw_types)
-          return TableGroupFlags::CALC_COUNT if raw_types.nil?
-
-          types = 0
-          raw_types.strip.split(/ *, */).each do |name|
-            case name
-            when "COUNT"
-              types |= TableGroupFlags::CALC_COUNT
-            when "MAX"
-              types |= TableGroupFlags::CALC_MAX
-            when "MIN"
-              types |= TableGroupFlags::CALC_MIN
-            when "SUM"
-              types |= TableGroupFlags::CALC_SUM
-            when "AVG"
-              types |= TableGroupFlags::CALC_AVG
-            when "NONE"
-              # Do nothing
-            else
-              raise InvalidArgument, "invalid drilldown calc type: <#{name}>"
-            end
-          end
-          types
         end
       end
 
@@ -433,10 +443,13 @@ module Groonga
             group_result.key_begin = 0
             group_result.key_end = 0
             group_result.limit = 1
-            group_result.flags = TableGroupFlags::CALC_COUNT
+            group_result.flags = drilldown.calc_types
             drilldown.keys.each do |key|
               @context.result_sets.each do |result_set|
-                result_set.group([key], group_result)
+                with_calc_target(group_result,
+                                 drilldown.calc_target(result_set)) do
+                  result_set.group([key], group_result)
+                end
               end
               result_set = group_result.table
               if drilldown.sort_keys.empty?
@@ -467,8 +480,10 @@ module Groonga
               group_result.limit = 1
               group_result.flags = drilldown.calc_types
               @context.result_sets.each do |result_set|
-                group_result.calc_target = drilldown.calc_target(result_set)
-                result_set.group(keys, group_result)
+                with_calc_target(group_result,
+                                 drilldown.calc_target(result_set)) do
+                  result_set.group(keys, group_result)
+                end
               end
               result_set = group_result.table
               if drilldown.sort_keys.empty?
@@ -481,6 +496,16 @@ module Groonga
             ensure
               group_result.close
             end
+          end
+        end
+
+        def with_calc_target(group_result, calc_target)
+          group_result.calc_target = calc_target
+          begin
+            yield
+          ensure
+            calc_target.close if calc_target
+            group_result.calc_target = nil
           end
         end
       end
