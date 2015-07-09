@@ -92,6 +92,10 @@ logical_select Logs timestamp   --max "2015-02-04 00:00:00"   --max_border "incl
       ],
       [
         [
+          "_id",
+          "UInt32"
+        ],
+        [
           "memo",
           "ShortText"
         ],
@@ -101,14 +105,17 @@ logical_select Logs timestamp   --max "2015-02-04 00:00:00"   --max_border "incl
         ]
       ],
       [
+        1,
         "2015-02-03 12:49:00",
         1422935340.0
       ],
       [
+        2,
         "2015-02-03 23:59:59",
         1422975599.0
       ],
       [
+        1,
         "2015-02-04 00:00:00",
         1422975600.0
       ]

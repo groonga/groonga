@@ -97,6 +97,10 @@ logical_select Logs timestamp   --limit 0   --drilldown action
       ],
       [
         [
+          "_id",
+          "UInt32"
+        ],
+        [
           "action",
           "Actions"
         ],

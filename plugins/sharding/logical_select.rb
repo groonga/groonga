@@ -187,7 +187,7 @@ module Groonga
           @offset = (@input[:offset] || 0).to_i
           @limit = (@input[:limit] || 10).to_i
           @sort_keys = parse_keys(@input[:sortby])
-          @output_columns = @input[:output_columns] || "_key, *"
+          @output_columns = @input[:output_columns] || "_id, _key, *"
 
           @result_sets = []
           @unsorted_result_sets = []

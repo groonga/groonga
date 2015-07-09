@@ -116,6 +116,10 @@ logical_select Logs timestamp   --min "2015-02-05 00:00:00"   --min_border "incl
       ],
       [
         [
+          "_id",
+          "UInt32"
+        ],
+        [
           "action",
           "ShortText"
         ],

@@ -110,12 +110,12 @@ logical_select Logs timestamp   --command_version 2   --limit 0   --drilldown[ac
       ],
       [
         [
-          "action",
-          "ShortText"
+          "_id",
+          "UInt32"
         ],
         [
-          null,
-          null
+          "action",
+          "ShortText"
         ],
         [
           "date",
@@ -124,6 +124,10 @@ logical_select Logs timestamp   --command_version 2   --limit 0   --drilldown[ac
         [
           "memo",
           "ShortText"
+        ],
+        [
+          "timestamp",
+          "Time"
         ]
       ]
     ],
