@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-07-08 23:00+0900\n"
+"PO-Revision-Date: 2015-07-09 15:55+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -7401,7 +7401,7 @@ msgid "``COUNT``"
 msgstr ""
 
 # 2cdb94fda1264f8b8346ec000276a449
-msgid "Counting grouped records. It's always enabled. So you don't specify it."
+msgid "Counting grouped records. It's always enabled. So you don't need to specify it."
 msgstr "グループ内のレコードの数を数える。常に有効なので指定する必要はない。"
 
 # 696ca82f696b4b8a8d2fa56784ab3cf4

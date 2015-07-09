@@ -1200,7 +1200,7 @@ You can use the following calculation types:
      - ``_nsubrecs``
      - Not needs.
      - Counting grouped records. It's always enabled. So you don't
-       specify it.
+       need to specify it.
    * - ``MAX``
      - ``_max``
      - Needs.
