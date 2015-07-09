@@ -37,6 +37,9 @@ def reconnect(name):
 
 fout = None
 
+def normalize_file_name(file_name):
+  return re.sub('^.*?/lib/', 'lib/', file_name)
+
 def normalize_output(output):
   status = output[0]
   if status:
@@ -44,6 +47,13 @@ def normalize_output(output):
     normalized_elapsed_time = 0.000355720520019531
     status[1] = normalized_start_time
     status[2] = normalized_elapsed_time
+    return_code = status[0]
+    if return_code != 0:
+      backtraces = status[4]
+      if backtraces:
+        for backtrace in backtraces:
+          file_name = backtrace[1]
+          backtrace[1] = normalize_file_name(file_name)
   return output
 
 def remove_continuous_marks(command):
