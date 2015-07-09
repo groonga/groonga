@@ -3,8 +3,11 @@ Execution example::
   logical_select \
     --logical_table Entries \
     --shard_key created_at \
+    --min "2015/07/08 00:00:00" \
+    --min_border "include" \
     --max "2015/07/09 00:00:00" \
-    --max_border "exclude"
+    --max_border "exclude" \
+    --sortby _key
   # [
   #   [
   #     0, 
@@ -43,14 +46,6 @@ Execution example::
   #         ]
   #       ], 
   #       [
-  #         1, 
-  #         "The first post!", 
-  #         "Welcome! This is my first post!", 
-  #         1436281200.0, 
-  #         5, 
-  #         "Hello"
-  #       ], 
-  #       [
   #         2, 
   #         "Groonga", 
   #         "I started to use Groonga. It's very fast!", 
@@ -65,6 +60,14 @@ Execution example::
   #         1436288400.0, 
   #         15, 
   #         "Groonga"
+  #       ], 
+  #       [
+  #         1, 
+  #         "The first post!", 
+  #         "Welcome! This is my first post!", 
+  #         1436281200.0, 
+  #         5, 
+  #         "Hello"
   #       ]
   #     ]
   #   ]

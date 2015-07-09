@@ -1,0 +1,70 @@
+Execution example::
+
+  logical_select \
+    --logical_table Entries \
+    --shard_key created_at \
+    --min "2015/07/08 00:00:00" \
+    --min_border "include" \
+    --max "2015/07/09 00:00:00" \
+    --max_border "exclude" \
+    --limit 0 \
+    --output_columns _id \
+    --drilldown[tag.n_likes].keys tag,n_likes \
+    --drilldown[tag.n_likes].output_columns _nsubrecs,_value.n_likes,_value.tag \
+    --drilldown[tag.n_likes].sortby -_nsubrecs,_value.n_likes,_value.tag
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         3
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ]
+  #       ]
+  #     ], 
+  #     {
+  #       "tag.n_likes": [
+  #         [
+  #           3
+  #         ], 
+  #         [
+  #           [
+  #             "_nsubrecs", 
+  #             "Int32"
+  #           ], 
+  #           [
+  #             "n_likes", 
+  #             "UInt32"
+  #           ], 
+  #           [
+  #             "tag", 
+  #             "ShortText"
+  #           ]
+  #         ], 
+  #         [
+  #           1, 
+  #           5, 
+  #           "Hello"
+  #         ], 
+  #         [
+  #           1, 
+  #           10, 
+  #           "Groonga"
+  #         ], 
+  #         [
+  #           1, 
+  #           15, 
+  #           "Groonga"
+  #         ]
+  #       ]
+  #     }
+  #   ]
+  # ]

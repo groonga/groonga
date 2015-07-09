@@ -3,8 +3,7 @@ Execution example::
   logical_select \
     --logical_table Entries \
     --shard_key created_at \
-    --max "2015/07/09 00:00:00" \
-    --max_border "exclude"
+    --filter "n_likes <= 5"
   # [
   #   [
   #     0, 
@@ -51,20 +50,20 @@ Execution example::
   #         "Hello"
   #       ], 
   #       [
-  #         2, 
-  #         "Groonga", 
-  #         "I started to use Groonga. It's very fast!", 
-  #         1436284800.0, 
-  #         10, 
-  #         "Groonga"
+  #         1, 
+  #         "Good-bye Senna", 
+  #         "I migrated all Senna system!", 
+  #         1436367600.0, 
+  #         3, 
+  #         "Senna"
   #       ], 
   #       [
+  #         2, 
+  #         "Good-bye Tritonn", 
+  #         "I also migrated all Tritonn system!", 
+  #         1436371200.0, 
   #         3, 
-  #         "Mroonga", 
-  #         "I also started to use Mroonga. It's also very fast! Really fast!", 
-  #         1436288400.0, 
-  #         15, 
-  #         "Groonga"
+  #         "Senna"
   #       ]
   #     ]
   #   ]

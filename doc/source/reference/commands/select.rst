@@ -307,6 +307,8 @@ If nonexistent table is specified, an error is returned.
 .. include:: ../../example/reference/commands/select/table_nonexistent.log
 .. select Nonexistent
 
+.. _select-search-related-parameters:
+
 Search related parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -487,10 +489,12 @@ is less than ``11`` from ``Entries`` table.
 
 See :doc:`/reference/grn_expr/script_syntax` for other operators.
 
+.. _select-advanced-search-parameters:
+
 Advanced search parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. _match-escalation-threshold:
+.. _select-match-escalation-threshold:
 
 ``match_escalation_threshold``
 """"""""""""""""""""""""""""""
@@ -540,14 +544,14 @@ storategy escalation is not used because the number of matched
 records (0) is larger than ``match_escalation_threshold`` (-1). So no
 more searches aren't executed. And no records are matched.
 
-.. _query-expansion:
+.. _select-query-expansion:
 
 ``query_expansion``
 """""""""""""""""""
 
-Deprecated. Use :ref:`query-expander` instead.
+Deprecated. Use :ref:`select-query-expander` instead.
 
-.. _query-flags:
+.. _select-query-flags:
 
 ``query_flags``
 """""""""""""""
@@ -639,7 +643,7 @@ specified.
 
 See also :doc:`/reference/grn_expr/query_syntax`.
 
-.. _query-expander:
+.. _select-query-expander:
 
 ``query_expander``
 """"""""""""""""""
@@ -871,6 +875,8 @@ Here is a simple negative ``limit`` value usage example.
 The ``select`` command outputs all records.
 
 The default value is ``10``.
+
+.. _select-scorer:
 
 ``scorer``
 """"""""""
@@ -1362,7 +1368,9 @@ parameters:
   * ``.``
   * ``_``
 
-.. You can use more characters but it's better that you use only these
+.. note::
+
+   You can use more characters but it's better that you use only these
    characters.
 
 Parameters that has the same ``${LABEL}`` value are grouped. Grouped
@@ -1854,6 +1862,10 @@ The following value part is the same format as ``SEARCH_RESULT``::
     COLUMNS,
     RECORDS
   ]
+
+See also :ref:`select-drilldown-label-output-format` for
+``drilldown[${LABEL}]`` style drilldown output format.
+
 
 See also
 --------

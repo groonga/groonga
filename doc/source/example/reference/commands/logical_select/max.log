@@ -17,6 +17,10 @@ Execution example::
   #       ], 
   #       [
   #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
   #           "_key", 
   #           "ShortText"
   #         ], 
@@ -38,6 +42,7 @@ Execution example::
   #         ]
   #       ], 
   #       [
+  #         1, 
   #         "The first post!", 
   #         "Welcome! This is my first post!", 
   #         1436281200.0, 
@@ -45,6 +50,7 @@ Execution example::
   #         "Hello"
   #       ], 
   #       [
+  #         2, 
   #         "Groonga", 
   #         "I started to use Groonga. It's very fast!", 
   #         1436284800.0, 
@@ -52,6 +58,7 @@ Execution example::
   #         "Groonga"
   #       ], 
   #       [
+  #         3, 
   #         "Mroonga", 
   #         "I also started to use Mroonga. It's also very fast! Really fast!", 
   #         1436288400.0, 

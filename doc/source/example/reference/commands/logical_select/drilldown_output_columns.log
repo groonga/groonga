@@ -1,0 +1,49 @@
+Execution example::
+
+  logical_select \
+    --logical_table Entries \
+    --shard_key created_at \
+    --limit 0 \
+    --output_columns _id \
+    --drilldown tag \
+    --drilldown_output_columns _key
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         5
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ]
+  #       ]
+  #     ], 
+  #     [
+  #       [
+  #         3
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         "Hello"
+  #       ], 
+  #       [
+  #         "Groonga"
+  #       ], 
+  #       [
+  #         "Senna"
+  #       ]
+  #     ]
+  #   ]
+  # ]

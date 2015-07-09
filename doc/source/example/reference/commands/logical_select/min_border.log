@@ -18,6 +18,10 @@ Execution example::
   #       ], 
   #       [
   #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
   #           "_key", 
   #           "ShortText"
   #         ], 
@@ -39,6 +43,7 @@ Execution example::
   #         ]
   #       ], 
   #       [
+  #         2, 
   #         "Good-bye Tritonn", 
   #         "I also migrated all Tritonn system!", 
   #         1436371200.0, 

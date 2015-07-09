@@ -3,8 +3,7 @@ Execution example::
   logical_select \
     --logical_table Entries \
     --shard_key created_at \
-    --max "2015/07/09 00:00:00" \
-    --max_border "exclude"
+    --limit 2
   # [
   #   [
   #     0, 
@@ -14,7 +13,7 @@ Execution example::
   #   [
   #     [
   #       [
-  #         3
+  #         5
   #       ], 
   #       [
   #         [
@@ -56,14 +55,6 @@ Execution example::
   #         "I started to use Groonga. It's very fast!", 
   #         1436284800.0, 
   #         10, 
-  #         "Groonga"
-  #       ], 
-  #       [
-  #         3, 
-  #         "Mroonga", 
-  #         "I also started to use Mroonga. It's also very fast! Really fast!", 
-  #         1436288400.0, 
-  #         15, 
   #         "Groonga"
   #       ]
   #     ]

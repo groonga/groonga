@@ -40,7 +40,7 @@ parameters are optional::
                  [max_border="include"]
                  [filter=null]
                  [sortby=null]
-                 [output_columns="_key, *"]
+                 [output_columns="_id, _key, *"]
                  [offset=0]
                  [limit=10]
                  [drilldown=null]
@@ -88,10 +88,6 @@ But there are some differences from :doc:`select`:
 
   * ``logical_table`` and ``shard_key`` parameters are required
     instead of ``table`` parameter.
-  * The default ``output_columns`` value doesn't include
-    ``_id``. Because ``_id`` is meaningless when multiple shards are
-    used. ``_id`` may be duplicated because ``_id`` is managed in each
-    shard not in all shards.
   * ``sortby``, ``drilldown_sortby`` and
     ``drilldown[${LABEL}].sortby`` aren't supported when multiple
     shards are used. (Only one shard is used, they are supported.)
@@ -258,6 +254,8 @@ Optional parameters
 
 There are optional parameters.
 
+.. _logical-select-min:
+
 ``min``
 """""""
 
@@ -277,6 +275,8 @@ table. ``Entry_20150708`` isn't used.
 ..   --logical_table Entries \
 ..   --shard_key created_at \
 ..   --min "2015/07/09 00:00:00"
+
+.. _logical-select-min-border:
 
 ``min_border``
 """"""""""""""
@@ -306,6 +306,8 @@ Here is an example for ``exclude``. The result doesn't include the
 ..   --min "2015/07/09 00:00:00" \
 ..   --min_border "exclude"
 
+.. _logical-select-max:
+
 ``max``
 """""""
 
@@ -325,6 +327,8 @@ table. ``Entry_20150709`` isn't used.
 ..   --logical_table Entries \
 ..   --shard_key created_at \
 ..   --max "2015/07/08 23:59:59"
+
+.. _logical-select-max-border:
 
 ``max_border``
 """"""""""""""
@@ -354,8 +358,454 @@ Here is an example for ``exclude``. The result doesn't include the
 ..   --max "2015/07/09 00:00:00" \
 ..   --max_border "exclude"
 
+.. _logical-select-search-related-parameters:
+
+Search related parameters
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``logical_select`` provides :doc:`select` compatible search related
+parameters.
+
+``match_columns`` and ``query`` aren't supported yet. ``filter`` is
+only supported for now.
+
+.. _logical-select-match-columns:
+
+``match_columns``
+"""""""""""""""""
+
+Not implemented yet.
+
+.. _logical-select-query:
+
+``query``
+"""""""""
+
+Not implemented yet.
+
+.. _logical-select-filter:
+
 ``filter``
 """"""""""
+
+Corresponds to :ref:`select-filter` in :doc:`select`. See
+:ref:`select-filter` for details.
+
+Here is an example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/filter.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --filter "n_likes <= 5"
+
+.. _logical-select-advanced-search-parameters:
+
+Advanced search parameters
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``logical_select`` doesn't implement advanced search parameters yet.
+
+.. _logical-select-match-escalation-threshold:
+
+``match_escalation_threshold``
+""""""""""""""""""""""""""""""
+
+Not implemented yet.
+
+.. _logical-select-match-escalation-threshold:
+
+``match_escalation_threshold``
+""""""""""""""""""""""""""""""
+
+Not implemented yet.
+
+.. _logical-select-query-flags:
+
+``query_flags``
+"""""""""""""""
+
+Not implemented yet.
+
+.. _logical-select-query-expander:
+
+``query_expander``
+""""""""""""""""""
+
+Not implemented yet.
+
+Output related parameters
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. _logical-select-output-columns:
+
+``output_columns``
+""""""""""""""""""
+
+Corresponds to :ref:`select-output-columns` in :doc:`select`. See
+:ref:`select-output-columns` for details.
+
+Here is an example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/output_columns.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --output_columns '_key, *'
+
+.. _logical-select-sortby:
+
+``sortby``
+""""""""""
+
+Corresponds to :ref:`select-sortby` in :doc:`select`. See
+:ref:`select-sortby` for details.
+
+``sortby`` has a limitation. It works only when the number of search
+target shards is one. If the number of search target shards is larger
+than one, ``sortby`` doesn't work.
+
+Here is an example that uses only one shard:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/sortby.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --min "2015/07/08 00:00:00" \
+..   --min_border "include" \
+..   --max "2015/07/09 00:00:00" \
+..   --max_border "exclude" \
+..   --sortby _key
+
+.. _logical-select-offset:
+
+``offset``
+""""""""""
+
+Corresponds to :ref:`select-offset` in :doc:`select`. See
+:ref:`select-offset` for details.
+
+Here is an example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/offset.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --offset 2
+
+.. _logical-select-limit:
+
+``limit``
+"""""""""
+
+Corresponds to :ref:`select-limit` in :doc:`select`. See
+:ref:`select-limit` for details.
+
+Here is an example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/limit.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --limit 2
+
+.. _logical-select-scorer:
+
+``scorer``
+""""""""""
+
+Not implemented yet.
+
+.. _logical-select-drilldown-related-parameters:
+
+Drilldown related parameters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Most of drilldown related parameters in :doc:`select` are supported.
+See :ref:`select-drilldown-related-parameters` for details.
+
+The following parameters aren't supported yet:
+
+  * ``drilldown_calc_types``
+  * ``drilldown_calc_target``
+
+.. _logical-select-drilldown:
+
+``drilldown``
+"""""""""""""
+
+Corresponds to :ref:`select-drilldown` in :doc:`select`. See
+:ref:`select-drilldown` for details.
+
+Here is an example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/drilldown.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --output_columns _key,tag \
+..   --drilldown tag
+
+.. _logical-select-drilldown-sortby:
+
+``drilldown_sortby``
+""""""""""""""""""""
+
+Corresponds to :ref:`select-drilldown-sortby` in :doc:`select`. See
+:ref:`select-drilldown-sortby` for details.
+
+Here is an example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/drilldown_sortby.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --limit 0 \
+..   --output_columns _id \
+..   --drilldown tag \
+..   --drilldown_sortby -_nsubrecs,_key
+
+.. _logical-select-drilldown-output-columns:
+
+``drilldown_output_columns``
+""""""""""""""""""""""""""""
+
+Corresponds to :ref:`select-drilldown-output-columns` in
+:doc:`select`. See :ref:`select-drilldown-output-columns` for details.
+
+Here is an example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/drilldown_output_columns.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --limit 0 \
+..   --output_columns _id \
+..   --drilldown tag \
+..   --drilldown_output_columns _key
+
+.. _logical-select-drilldown-offset:
+
+``drilldown_offset``
+""""""""""""""""""""
+
+Corresponds to :ref:`select-drilldown-offset` in :doc:`select`. See
+:ref:`select-drilldown-offset` for details.
+
+Here is an example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/drilldown_offset.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --limit 0 \
+..   --output_columns _id \
+..   --drilldown tag \
+..   --drilldown_offset 1
+
+.. _logical-select-drilldown-limit:
+
+``drilldown_limit``
+"""""""""""""""""""
+
+Corresponds to :ref:`select-drilldown-limit` in :doc:`select`. See
+:ref:`select-drilldown-limit` for details.
+
+Here is an example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/drilldown_limit.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --limit 0 \
+..   --output_columns _id \
+..   --drilldown tag \
+..   --drilldown_limit 2
+
+.. _logical-select-drilldown-calc-types:
+
+``drilldown_calc_types``
+""""""""""""""""""""""""
+
+Not implemented yet.
+
+.. _logical-select-drilldown-calc-target:
+
+``drilldown_calc_target``
+"""""""""""""""""""""""""
+
+Not implemented yet.
+
+.. _logical-select-advanced-drilldown-related-parameters:
+
+Advanced drilldown related parameters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+All advanced drilldown related parameters in :doc:`select` are
+supported. See :ref:`select-advanced-drilldown-related-parameters` for
+details.
+
+There are some limitations:
+
+  * ``_value.${KEY_NAME}`` in ``drilldown[${LABEL}].sortby`` doesn't
+    work with multiple shards. It works with one shard. ``_key`` in
+    ``drilldown[${LABEL}].sortby`` work with multiple shards.
+
+.. _logical-select-drilldown-label-keys:
+
+``drilldown[${LABEL}].keys``
+""""""""""""""""""""""""""""
+
+Corresponds to :ref:`select-drilldown-label-keys` in
+:doc:`select`. See :ref:`select-drilldown-label-keys` for details.
+
+Here is an example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/drilldown_label_keys.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --limit 0 \
+..   --output_columns _id \
+..   --drilldown[tag.n_likes].keys tag,n_likes \
+..   --drilldown[tag.n_likes].output_columns _value.tag,_value.n_likes,_nsubrecs
+
+.. _logical-select-drilldown-label-output-columns:
+
+``drilldown[${LABEL}].output_columns``
+""""""""""""""""""""""""""""""""""""""
+
+Corresponds to :ref:`select-drilldown-label-output-columns` in
+:doc:`select`. See :ref:`select-drilldown-label-output-columns` for
+details.
+
+Here is an example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/drilldown_label_output_columns.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --limit 0 \
+..   --output_columns _id \
+..   --drilldown[tag].keys tag \
+..   --drilldown[tag].output_columns _key,_nsubrecs
+
+.. _logical-select-drilldown-label-sortby:
+
+``drilldown[${LABEL}].sortby``
+""""""""""""""""""""""""""""""
+
+Corresponds to :ref:`logical-select-drilldown-sortby` in not labeled
+drilldown.
+
+``drilldown[${LABEL}].sortby`` has a limitation.
+
+``_value.${KEY_NAME}`` in ``drilldown[${LABEL}].sortby`` doesn't work
+with multiple shards. It works with one shard. ``_key`` in
+``drilldown[${LABEL}].sortby`` work with multiple shards.
+
+Here is an example that uses ``_value.${KEY_NAME}`` with only one
+shard:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/drilldown_label_sortby.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --min "2015/07/08 00:00:00" \
+..   --min_border "include" \
+..   --max "2015/07/09 00:00:00" \
+..   --max_border "exclude" \
+..   --limit 0 \
+..   --output_columns _id \
+..   --drilldown[tag.n_likes].keys tag,n_likes \
+..   --drilldown[tag.n_likes].output_columns _nsubrecs,_value.n_likes,_value.tag \
+..   --drilldown[tag.n_likes].sortby -_nsubrecs,_value.n_likes,_value.tag
+
+.. _logical-select-drilldown-label-offset:
+
+``drilldown[${LABEL}].offset``
+""""""""""""""""""""""""""""""
+
+Corresponds to :ref:`logical-select-drilldown-offset` in not labeled
+drilldown.
+
+Here is an example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/drilldown_label_offset.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --limit 0 \
+..   --output_columns _id \
+..   --drilldown[tag.n_likes].keys tag \
+..   --drilldown[tag.n_likes].offset 1
+
+.. _logical-select-drilldown-label-limit:
+
+``drilldown[${LABEL}].limit``
+"""""""""""""""""""""""""""""
+
+Corresponds to :ref:`logical-select-drilldown-limit` in not labeled
+drilldown.
+
+Here is an example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/drilldown_label_limit.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --limit 0 \
+..   --output_columns _id \
+..   --drilldown[tag.n_likes].keys tag \
+..   --drilldown[tag.n_likes].limit 2
+
+.. _logical-select-drilldown-label-calc-types:
+
+``drilldown[${LABEL}].calc_types``
+""""""""""""""""""""""""""""""""""
+
+Corresponds to :ref:`logical-select-drilldown-calc-types` in not
+labeled drilldown.
+
+Here is an example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/drilldown_label_calc_types.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --limit 0 \
+..   --output_columns _id \
+..   --drilldown[tag].keys tag \
+..   --drilldown[tag].calc_types MAX,MIN,SUM,AVG \
+..   --drilldown[tag].calc_target n_likes \
+..   --drilldown[tag].output_columns _key,_nsubrecs,_max,_min,_sum,_avg
+
+.. _logical-select-drilldown-label-calc-target:
+
+``drilldown[${LABEL}].calc_target``
+"""""""""""""""""""""""""""""""""""
+
+Corresponds to :ref:`logical-select-drilldown-calc-target` in not
+labeled drilldown.
+
+See also :ref:`logical-select-drilldown-label-calc-types`
+for an example.
 
 Return value
 ------------

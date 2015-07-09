@@ -17,6 +17,10 @@ Execution example::
   #       ], 
   #       [
   #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
   #           "_key", 
   #           "ShortText"
   #         ], 
@@ -38,6 +42,7 @@ Execution example::
   #         ]
   #       ], 
   #       [
+  #         1, 
   #         "Good-bye Senna", 
   #         "I migrated all Senna system!", 
   #         1436367600.0, 
@@ -45,6 +50,7 @@ Execution example::
   #         "Senna"
   #       ], 
   #       [
+  #         2, 
   #         "Good-bye Tritonn", 
   #         "I also migrated all Tritonn system!", 
   #         1436371200.0, 

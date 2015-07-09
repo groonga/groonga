@@ -3,8 +3,7 @@ Execution example::
   logical_select \
     --logical_table Entries \
     --shard_key created_at \
-    --max "2015/07/09 00:00:00" \
-    --max_border "exclude"
+    --output_columns '_key, *'
   # [
   #   [
   #     0, 
@@ -14,13 +13,9 @@ Execution example::
   #   [
   #     [
   #       [
-  #         3
+  #         5
   #       ], 
   #       [
-  #         [
-  #           "_id", 
-  #           "UInt32"
-  #         ], 
   #         [
   #           "_key", 
   #           "ShortText"
@@ -43,7 +38,6 @@ Execution example::
   #         ]
   #       ], 
   #       [
-  #         1, 
   #         "The first post!", 
   #         "Welcome! This is my first post!", 
   #         1436281200.0, 
@@ -51,7 +45,6 @@ Execution example::
   #         "Hello"
   #       ], 
   #       [
-  #         2, 
   #         "Groonga", 
   #         "I started to use Groonga. It's very fast!", 
   #         1436284800.0, 
@@ -59,12 +52,25 @@ Execution example::
   #         "Groonga"
   #       ], 
   #       [
-  #         3, 
   #         "Mroonga", 
   #         "I also started to use Mroonga. It's also very fast! Really fast!", 
   #         1436288400.0, 
   #         15, 
   #         "Groonga"
+  #       ], 
+  #       [
+  #         "Good-bye Senna", 
+  #         "I migrated all Senna system!", 
+  #         1436367600.0, 
+  #         3, 
+  #         "Senna"
+  #       ], 
+  #       [
+  #         "Good-bye Tritonn", 
+  #         "I also migrated all Tritonn system!", 
+  #         1436371200.0, 
+  #         3, 
+  #         "Senna"
   #       ]
   #     ]
   #   ]
