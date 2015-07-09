@@ -173,7 +173,7 @@ ngx_http_groonga_logger_log(grn_ctx *ctx, grn_log_level level,
   size_t postfix_size;
   size_t log_message_size;
 
-#define LOG_PREFIX_FORMAT "%s|%c|%s "
+#define LOG_PREFIX_FORMAT "%s|%c|%s"
   prefix_size =
     strlen(timestamp) +
     1 /* | */ +
