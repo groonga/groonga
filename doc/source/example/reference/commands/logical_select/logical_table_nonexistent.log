@@ -10,7 +10,7 @@ Execution example::
   #     [
   #       [
   #         "Groonga::Context.set_groonga_error", 
-  #         "/home/kou/work/c/groonga.clean/lib/mrb/scripts/context.rb", 
+  #         "lib/mrb/scripts/context.rb", 
   #         27
   #       ]
   #     ]

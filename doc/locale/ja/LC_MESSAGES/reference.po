@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-07-09 15:55+0900\n"
+"PO-Revision-Date: 2015-07-09 16:46+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -5120,26 +5120,13 @@ msgid ""
 msgstr ""
 "``table`` 引数ではなく、 ``logical_table`` と ``shard_key`` 引数が必須です。"
 
-# e899dc90b5f64cf5a3762a08e3414a67
-msgid ""
-"The default ``output_columns`` value doesn't include ``_id``. Because "
-"``_id`` is meaningless when multiple shards are used. ``_id`` may be "
-"duplicated because ``_id`` is managed in each shard not in all shards."
-msgstr ""
-"デフォルトの ``output_columns`` の値に ``_id`` が含まれていません。これは、複"
-"数のシャードを使った場合は ``_id`` の意味がなくなるからです。 ``_id`` はすべ"
-"てのシャードをまたがって管理されているわけではなく、各シャードで管理されてい"
-"るので、 ``_id`` は重複する可能性があります。"
-
 # 91ae8001df0542b0858d09ba5941ea2a
 msgid ""
-"``sortby``, ``drilldown_sortby`` and ``drilldown[${LABEL}].sortby`` aren't "
-"supported when multiple shards are used. (Only one shard is used, they are "
-"supported.)"
+"``sortby`` isn't supported when multiple shards are used. (Only one shard is "
+"used, they are supported.)"
 msgstr ""
-"複数のシャードを使った場合の ``sortby`` と ``drilldown_sortby`` と "
-"``drilldown[${LABEL}].sortby`` はサポートしていません。（1つのシャードのみを"
-"使った場合はサポートしています。）"
+"複数のシャードを使った場合の ``sortby`` はサポートしていません。（1つのシャー"
+"ドのみを使った場合はサポートしています。）"
 
 # b030a6961c6b4c0bbc5331751450caa4
 msgid "``match_columns`` and ``query`` aren't supported yet."
@@ -5162,13 +5149,6 @@ msgstr "``query_expander`` はまだサポートしていません。"
 # 1bef3c4d0d004f1a9dcb1c4b40f820ae
 msgid "``adjuster`` isn't supported yet."
 msgstr "``adjuster`` はまだサポートしていません。"
-
-# 6fabf6b56acb42afaf75505e2836d4c6
-msgid ""
-"``drilldown_calc_types`` and ``drilldown_calc_target`` aren't supported yet."
-msgstr ""
-"``drilldown_calc_types`` と ``drilldown_calc_target`` はまだサポートしていま"
-"せん。"
 
 msgid ""
 "Let's learn about ``logical_select`` usage with examples. This section shows "
@@ -5260,7 +5240,9 @@ msgstr "存在しないテーブルを指定するとエラーが返ります。
 msgid ""
 "Specifies column name which is treated as shared key. Shard key is a column "
 "that stores data that is used for distributing records to suitable shards."
-msgstr "個々のテーブルで共通のキーとして扱うカラム名を指定します。"
+msgstr ""
+"シャードキーとして使うカラム名を指定します。シャードキーは適切なシャードへレ"
+"コードを分配するために使う値を保存しているカラムです。"
 
 # 72de3929eb854cb7ab88a6d6fa654fd0
 msgid "Shard key must be ``Time`` type for now."
@@ -5284,10 +5266,10 @@ msgstr ""
 msgid ""
 "For example, ``min`` is ``\"2015/07/09 00:00:00\"``, ``Entry_20150708`` "
 "isn't searched. Because ``Entry_20150708`` has only records for ``"
-"\"\"2015/07/08\"``."
+"\"2015/07/08\"``."
 msgstr ""
 "たとえば、 ``min`` が ``\"2015/07/09 00:00:00\"`` なら、 ``Entry_20150708`` "
-"は検索対象外です。なぜなら、 ``Entry_20150708`` は ``\"\"2015/07/08\"`` のレ"
+"は検索対象外です。なぜなら、 ``Entry_20150708`` は ``\"2015/07/08\"`` のレ"
 "コードしかないからです。"
 
 # b4e5c4fc11f247189a0b703617248ca8
@@ -5372,6 +5354,311 @@ msgstr "``max`` の値を含みます。これがデフォルト値です。"
 # a846198d5dae41d39987c080105fff26
 msgid "Doesn't include ``max`` value."
 msgstr "``max`` の値を含みません。"
+
+msgid "Search related parameters"
+msgstr "検索関係の引数"
+
+# ae89ef0eeecd4dd4b9fa4ed592f88f2c
+msgid ""
+"``logical_select`` provides :doc:`select` compatible search related "
+"parameters."
+msgstr ""
+"``logical_select`` は :doc:`select` 互換の検索関連パラメーターをサポートして"
+"います。"
+
+# b030a6961c6b4c0bbc5331751450caa4
+msgid ""
+"``match_columns`` and ``query`` aren't supported yet. ``filter`` is only "
+"supported for now."
+msgstr ""
+"``match_columns`` と ``query`` はまだサポートしていません。今のところ、 "
+"``filter`` だけサポートしています。"
+
+# 50d09ebaab484e149c0b2548a4b71464
+# 42087bd2a9194ddcb27ed9e5e881b276
+# c549c5da42ee4fb39a45a60437ff57af
+# 2da6e73086914844b01a7d662f164cc8
+# 41a80291cb5940ed99731c2097c150d2
+# 827baf573a5648a69c02c2ba13adb401
+# 166632e116cf41ff92cbf7c7d076f272
+msgid "Not implemented yet."
+msgstr "未実装です。"
+
+# e00eb783c12c44c2b3e718c8bac4c690
+msgid ""
+"Corresponds to :ref:`select-filter` in :doc:`select`. See :ref:`select-"
+"filter` for details."
+msgstr ""
+":doc:`select` の :ref:`select-filter` に対応しています。詳細は :ref:`select-"
+"filter` を見てください。"
+
+msgid "Advanced search parameters"
+msgstr "高度な検索のための引数"
+
+msgid "``logical_select`` doesn't implement advanced search parameters yet."
+msgstr "``logical_select`` は高度な検索パラメーターをまだ実装していません。"
+
+msgid "``match_escalation_threshold``"
+msgstr ""
+
+msgid "``query_flags``"
+msgstr ""
+
+msgid "``query_expander``"
+msgstr ""
+
+msgid "Output related parameters"
+msgstr "出力関連の引数"
+
+# e00eb783c12c44c2b3e718c8bac4c690
+msgid ""
+"Corresponds to :ref:`select-output-columns` in :doc:`select`. See :ref:"
+"`select-output-columns` for details."
+msgstr ""
+":doc:`select` の :ref:`select-output-columns` に対応しています。詳細は :ref:"
+"`select-output-columns` を見てください。"
+
+# e00eb783c12c44c2b3e718c8bac4c690
+msgid ""
+"Corresponds to :ref:`select-sortby` in :doc:`select`. See :ref:`select-"
+"sortby` for details."
+msgstr ""
+":doc:`select` の :ref:`select-sortby` に対応しています。詳細は :ref:`select-"
+"sortby` を見てください。"
+
+# 8468514398ab4a24bdbeac7dcda4c662
+msgid ""
+"``sortby`` has a limitation. It works only when the number of search target "
+"shards is one. If the number of search target shards is larger than one, "
+"``sortby`` doesn't work."
+msgstr ""
+"``sortby`` には制限があります。検索対象のシャードが1つの場合のみ動作します。"
+"もし、検索対象のシャードが複数ある場合、 ``sortby`` は正常な動作をしません。"
+
+msgid "Here is an example that uses only one shard:"
+msgstr "以下は1つのシャードのみを使っている例です。"
+
+# e00eb783c12c44c2b3e718c8bac4c690
+msgid ""
+"Corresponds to :ref:`select-offset` in :doc:`select`. See :ref:`select-"
+"offset` for details."
+msgstr ""
+":doc:`select` の :ref:`select-offset` に対応しています。詳細は :ref:`select-"
+"offset` を見てください。"
+
+# e00eb783c12c44c2b3e718c8bac4c690
+msgid ""
+"Corresponds to :ref:`select-limit` in :doc:`select`. See :ref:`select-limit` "
+"for details."
+msgstr ""
+":doc:`select` の :ref:`select-limit` に対応しています。詳細は :ref:`select-"
+"limit` を見てください。"
+
+msgid "Drilldown related parameters"
+msgstr "ドリルダウン関連の引数"
+
+# 3e5c30e2caf745edacd8145ab1e4341c
+msgid ""
+"All drilldown related parameters in :doc:`select` are supported. See :ref:"
+"`select-drilldown-related-parameters` for details."
+msgstr ""
+":doc:`select` のすべてのドリルダウン関連パラメーターをサポートしています。詳"
+"細は :ref:`select-drilldown-related-parameters` を見てください。"
+
+# e00eb783c12c44c2b3e718c8bac4c690
+msgid ""
+"Corresponds to :ref:`select-drilldown` in :doc:`select`. See :ref:`select-"
+"drilldown` for details."
+msgstr ""
+":doc:`select` の :ref:`select-drilldown` に対応しています。詳細は :ref:"
+"`select-drilldown` を見てください。"
+
+# e00eb783c12c44c2b3e718c8bac4c690
+msgid ""
+"Corresponds to :ref:`select-drilldown-sortby` in :doc:`select`. See :ref:"
+"`select-drilldown-sortby` for details."
+msgstr ""
+":doc:`select` の :ref:`select-drilldown-sortby` に対応しています。詳細は :"
+"ref:`select-drilldown-sortby` を見てください。"
+
+# bf6a8b5a1f6649c5900907ae1497cf28
+msgid ""
+"Corresponds to :ref:`select-drilldown-output-columns` in :doc:`select`. See :"
+"ref:`select-drilldown-output-columns` for details."
+msgstr ""
+":doc:`select` の :ref:`select-drilldown-output-columns` に対応しています。詳"
+"細は :ref:`select-drilldown-output-columns` を見てください。"
+
+# 6f96fc57fe904af6ab5ebf410867ede6
+msgid ""
+"Corresponds to :ref:`select-drilldown-offset` in :doc:`select`. See :ref:"
+"`select-drilldown-offset` for details."
+msgstr ""
+":doc:`select` の :ref:`select-drilldown-offset` に対応しています。詳細は :"
+"ref:`select-drilldown-offset` を見てください。"
+
+# e00eb783c12c44c2b3e718c8bac4c690
+msgid ""
+"Corresponds to :ref:`select-drilldown-limit` in :doc:`select`. See :ref:"
+"`select-drilldown-limit` for details."
+msgstr ""
+":doc:`select` の :ref:`select-drilldown-limit` に対応しています。詳細は :ref:"
+"`select-drilldown-limit` を見てください。"
+
+# 21ca15a610c94f0a9ae3d527f60daba7
+msgid "``drilldown_calc_types``"
+msgstr ""
+
+# 6fabf6b56acb42afaf75505e2836d4c6
+msgid ""
+"Corresponds to :ref:`select-drilldown-calc-types` in :doc:`select`. See :ref:"
+"`select-drilldown-calc-types` for details."
+msgstr ""
+":doc:`select` の :ref:`select-drilldown-calc-types` に対応しています。詳細"
+"は :ref:`select-drilldown-calc-types` を見てください。"
+
+# 47919acbf86340cfa00e2fec1a92ebeb
+msgid "``drilldown_calc_target``"
+msgstr ""
+
+# 6fabf6b56acb42afaf75505e2836d4c6
+msgid ""
+"Corresponds to :ref:`select-drilldown-calc-target` in :doc:`select`. See :"
+"ref:`select-drilldown-calc-target` for details."
+msgstr ""
+":doc:`select` の :ref:`select-drilldown-calc-target` に対応しています。詳細"
+"は :ref:`select-drilldown-calc-target` を見てください。"
+
+# d383cb1889334034b283ca5b0328c4da
+msgid "See also :ref:`logical-select-drilldown-calc-types` for an example."
+msgstr "具体例は :ref:`select-drilldown-calc-types` を見てください。"
+
+msgid "Advanced drilldown related parameters"
+msgstr "高度なドリルダウン関連のパラメーター"
+
+# 897fbd392aea4d66b78e10cf309a6532
+msgid ""
+"All advanced drilldown related parameters in :doc:`select` are supported. "
+"See :ref:`select-advanced-drilldown-related-parameters` for details."
+msgstr ""
+":doc:`select` のすべての高度なドリルダウン関連のパラメーターをサポートしてい"
+"ます。詳細は :ref:`select-advanced-drilldown-related-parameters` を見てくださ"
+"い。"
+
+msgid "There are some limitations:"
+msgstr "いくつか制限があります。"
+
+# 8bf769bf671b4f9b8385c186e58054f3
+# 1377ff69ae744784899e9baf23140c33
+msgid ""
+"``_value.${KEY_NAME}`` in ``drilldown[${LABEL}].sortby`` doesn't work with "
+"multiple shards. It works with one shard. ``_key`` in ``drilldown[${LABEL}]."
+"sortby`` work with multiple shards."
+msgstr ""
+"複数のシャードを使った場合、 ``drilldown[${LABEL}].sortby`` の中で ``_value."
+"${KEY_NAME}`` を使えません。1つのシャードのみを使った場合は使えます。"
+
+# ecaa0e9e25584f13accd4ba2078f057e
+# 56837b22eb944e5da35be0a5b4816aec
+# 5ea60ccf294d4a459e23ad18d520bc87
+msgid "``drilldown[${LABEL}].keys``"
+msgstr ""
+
+# e00eb783c12c44c2b3e718c8bac4c690
+msgid ""
+"Corresponds to :ref:`select-drilldown-label-keys` in :doc:`select`. See :ref:"
+"`select-drilldown-label-keys` for details."
+msgstr ""
+":doc:`select` の :ref:`select-drilldown-label-keys` に対応しています。詳細"
+"は :ref:`select-drilldown-label-keys` を見てください。"
+
+# c41c684b5a1f4fd8a32e795ca4b59502
+# 0a83c2cb207f488ea9d127af0bc29ed2
+# 823f729ec35f4ae6b353a6d74f2d3495
+msgid "``drilldown[${LABEL}].output_columns``"
+msgstr ""
+
+# bf6a8b5a1f6649c5900907ae1497cf28
+msgid ""
+"Corresponds to :ref:`select-drilldown-label-output-columns` in :doc:"
+"`select`. See :ref:`select-drilldown-label-output-columns` for details."
+msgstr ""
+":doc:`select` の :ref:`select-drilldown-label-output-columns` に対応していま"
+"す。詳細は :ref:`select-drilldown-label-output-columns` を見てください。"
+
+# 5ea3b36ea00b4a0d86a5d4fdbdbde808
+msgid "``drilldown[${LABEL}].sortby``"
+msgstr ""
+
+# 19632c82ab3844698a84d5864a19ad31
+msgid ""
+"Corresponds to :ref:`logical-select-drilldown-sortby` in not labeled "
+"drilldown."
+msgstr ""
+"ラベルなしドリルダウンの :ref:`logical-select-drilldown-sortby` に対応してい"
+"ます。"
+
+# 8a93f73b22a24f5cbd46d77817c34a50
+msgid "``drilldown[${LABEL}].sortby`` has a limitation."
+msgstr "``drilldown[${LABEL}].sortby`` には制限があります。"
+
+msgid ""
+"Here is an example that uses ``_value.${KEY_NAME}`` with only one shard:"
+msgstr "以下は1つのシャードに対して ``_value.${KEY_NAME}`` を使う例です。"
+
+# 60c71d6aef34410889978207f7517b54
+msgid "``drilldown[${LABEL}].offset``"
+msgstr ""
+
+# 389ff71799d34844ae26540e26663940
+msgid ""
+"Corresponds to :ref:`logical-select-drilldown-offset` in not labeled "
+"drilldown."
+msgstr ""
+"ラベルなしドリルダウンの :ref:`logical-select-drilldown-offset` に対応してい"
+"ます。"
+
+# fc3db25077d444d999e13511a18e0342
+msgid "``drilldown[${LABEL}].limit``"
+msgstr ""
+
+# 515d631e83924eb38e1208545f8fe361
+msgid ""
+"Corresponds to :ref:`logical-select-drilldown-limit` in not labeled "
+"drilldown."
+msgstr ""
+"ラベルなしドリルダウンの :ref:`logical-select-drilldown-limit` に対応していま"
+"す。"
+
+# 8e4ae172f00340daa25375d6cf01aad5
+msgid "``drilldown[${LABEL}].calc_types``"
+msgstr ""
+
+# 6fabf6b56acb42afaf75505e2836d4c6
+msgid ""
+"Corresponds to :ref:`logical-select-drilldown-calc-types` in not labeled "
+"drilldown."
+msgstr ""
+"ラベルなしドリルダウンの :ref:`logical-select-drilldown-calc-types` に対応し"
+"ています。"
+
+# fbb8afa8c18e4528b6ea59318f7ef684
+msgid "``drilldown[${LABEL}].calc_target``"
+msgstr ""
+
+# aa960cfab154409fb7c16193351acf89
+msgid ""
+"Corresponds to :ref:`logical-select-drilldown-calc-target` in not labeled "
+"drilldown."
+msgstr ""
+"ラベルなしドリルダウンの :ref:`logical-select-drilldown-calc-target` に対応し"
+"ています。"
+
+# d383cb1889334034b283ca5b0328c4da
+msgid ""
+"See also :ref:`logical-select-drilldown-label-calc-types` for an example."
+msgstr ""
+"例は :ref:`logical-select-drilldown-label-calc-types` を参照してください。"
 
 # e00eb783c12c44c2b3e718c8bac4c690
 msgid ""
@@ -5769,9 +6056,6 @@ msgstr ""
 # 65840f111de64d1eb3d80ca22e496f7d
 msgid "``request_cancel`` command cancels a running request."
 msgstr "``request_cancel`` コマンドは実行中のリクエストをキャンセルします。"
-
-msgid "There are some limitations:"
-msgstr "いくつか制限があります。"
 
 # c9ae0a9e56ab4799993cac130adcdbde
 msgid ""
@@ -6348,9 +6632,6 @@ msgid "Specifies a table to be searched. ``table`` must be specified."
 msgstr ""
 "検索対象のテーブルを指定します。 ``table`` は必ず指定しなければいけません。"
 
-msgid "Search related parameters"
-msgstr "検索関係の引数"
-
 msgid ""
 "There are search related parameters. Typically, ``match_columns`` and "
 "``query`` parameters are used for implementing a search box. ``filter`` "
@@ -6582,12 +6863,6 @@ msgid "See :doc:`/reference/grn_expr/script_syntax` for other operators."
 msgstr ""
 "他の演算子は :doc:`/reference/grn_expr/script_syntax` を参照してください。"
 
-msgid "Advanced search parameters"
-msgstr "高度な検索のための引数"
-
-msgid "``match_escalation_threshold``"
-msgstr ""
-
 msgid ""
 "Specifies threshold to determine whether search storategy escalation is used "
 "or not. The threshold is compared against the number of matched records. If "
@@ -6670,11 +6945,8 @@ msgstr ""
 msgid "``query_expansion``"
 msgstr ""
 
-msgid "Deprecated. Use :ref:`query-expander` instead."
-msgstr ""
-
-msgid "``query_flags``"
-msgstr ""
+msgid "Deprecated. Use :ref:`select-query-expander` instead."
+msgstr "非推奨です。代わりに :ref:`select-query-expander` を使ってください。"
 
 msgid ""
 "It customs ``query`` parameter syntax. You cannot update column value by "
@@ -6797,9 +7069,6 @@ msgstr ""
 
 msgid "See also :doc:`/reference/grn_expr/query_syntax`."
 msgstr ":doc:`/reference/grn_expr/query_syntax` も見てください。"
-
-msgid "``query_expander``"
-msgstr ""
 
 msgid ""
 "It's for query expansion. Query expansion substitutes specific words to "
@@ -6935,9 +7204,6 @@ msgid ""
 msgstr ""
 "この ``select`` コマンドは ``Entries`` テーブルの中から ``n_likes`` カラムの"
 "値が ``10`` 以上のレコードを出力します。"
-
-msgid "Output related parameters"
-msgstr "出力関連の引数"
 
 msgid "Specifies output columns separated by ``,``."
 msgstr "出力するカラムを ``,`` 区切りで指定します。"
@@ -7100,9 +7366,6 @@ msgid ""
 "て、各レコードのスコアを操作する式を指定しておけば、検索結果のソート順序をカ"
 "スタマイズできるようになります。"
 msgstr ""
-
-msgid "Drilldown related parameters"
-msgstr "ドリルダウン関連の引数"
 
 msgid ""
 "This section describes basic drilldown related parameters. Advanced "
@@ -7345,10 +7608,6 @@ msgstr "この ``select`` コマンドはすべてのグループを出力しま
 msgid "The default value of ``drilldown_limit`` is ``10``."
 msgstr "``drilldown_limit`` のデフォルト値は ``10`` です。"
 
-# 21ca15a610c94f0a9ae3d527f60daba7
-msgid "``drilldown_calc_types``"
-msgstr ""
-
 msgid ""
 "Specifies how to calculate (aggregate) values in grouped records by a "
 "drilldown. You can specify multiple calculation types separated by \"``,``"
@@ -7401,7 +7660,9 @@ msgid "``COUNT``"
 msgstr ""
 
 # 2cdb94fda1264f8b8346ec000276a449
-msgid "Counting grouped records. It's always enabled. So you don't need to specify it."
+msgid ""
+"Counting grouped records. It's always enabled. So you don't need to specify "
+"it."
 msgstr "グループ内のレコードの数を数える。常に有効なので指定する必要はない。"
 
 # 696ca82f696b4b8a8d2fa56784ab3cf4
@@ -7554,10 +7815,6 @@ msgstr ""
 "だけが有効になっているという意味です。なぜなら、 ``NONE`` は単に無視されて、 "
 "``COUNT`` は常に有効だからです。"
 
-# 47919acbf86340cfa00e2fec1a92ebeb
-msgid "``drilldown_calc_target``"
-msgstr ""
-
 # d383cb1889334034b283ca5b0328c4da
 msgid "Specifies the target column for :ref:`select-drilldown-calc-types`."
 msgstr ":ref:`select-drilldown-calc-types` の計算対象のカラムを指定します。"
@@ -7608,9 +7865,6 @@ msgstr ""
 "``drilldown_calc_target`` のデフォルト値は ``null`` です。これは計算対象カラ"
 "ムは何も指定されていないということです。"
 
-msgid "Advanced drilldown related parameters"
-msgstr "高度なドリルダウン関連の引数"
-
 # 44a2e92ae3b9407f9e492d0ebc7a2b7a
 msgid ""
 "You can get multiple drilldown results by specifying multiple group keys by :"
@@ -7628,38 +7882,6 @@ msgid ""
 "You can use a configuration for each drilldown by the following parameters:"
 msgstr ""
 "以下の引数を使うことで、各ドリルダウンで別々の設定を使うことができます。"
-
-# ecaa0e9e25584f13accd4ba2078f057e
-# 56837b22eb944e5da35be0a5b4816aec
-# 5ea60ccf294d4a459e23ad18d520bc87
-msgid "``drilldown[${LABEL}].keys``"
-msgstr ""
-
-# 5ea3b36ea00b4a0d86a5d4fdbdbde808
-msgid "``drilldown[${LABEL}].sortby``"
-msgstr ""
-
-# c41c684b5a1f4fd8a32e795ca4b59502
-# 0a83c2cb207f488ea9d127af0bc29ed2
-# 823f729ec35f4ae6b353a6d74f2d3495
-msgid "``drilldown[${LABEL}].output_columns``"
-msgstr ""
-
-# 60c71d6aef34410889978207f7517b54
-msgid "``drilldown[${LABEL}].offset``"
-msgstr ""
-
-# fc3db25077d444d999e13511a18e0342
-msgid "``drilldown[${LABEL}].limit``"
-msgstr ""
-
-# 8e4ae172f00340daa25375d6cf01aad5
-msgid "``drilldown[${LABEL}].calc_types``"
-msgstr ""
-
-# fbb8afa8c18e4528b6ea59318f7ef684
-msgid "``drilldown[${LABEL}].calc_target``"
-msgstr ""
 
 # 6cec134a6321435eae491ebc8238e077
 msgid ""
@@ -7683,6 +7905,12 @@ msgstr ""
 # 6a2e848b723a4478802c5eea641f6a41
 msgid "``_``"
 msgstr ""
+
+# 41e1b13184c34eee9ed36ad28907328f
+msgid ""
+"You can use more characters but it's better that you use only these "
+"characters."
+msgstr "他の文字も使えますが、これらの文字だけを使ってください。"
 
 # d355a644382743ddbe54d988290814d8
 msgid ""
@@ -8256,6 +8484,13 @@ msgstr "各 ``drilldown[${LABEL}].keys`` は次の部分に対応します::"
 # 4303d9ec19a244f78626232e55cb4d6a
 msgid "The following value part is the same format as ``SEARCH_RESULT``::"
 msgstr "以下の値の部分は ``SEARCH_RESULT`` と同じフォーマットです::"
+
+msgid ""
+"See also :ref:`select-drilldown-label-output-format` for "
+"``drilldown[${LABEL}]`` style drilldown output format."
+msgstr ""
+"``drilldown[${LABEL}]`` スタイルのドリルダウンの出力形式については :ref:"
+"`select-drilldown-label-output-format` も見てください。"
 
 msgid "``shutdown``"
 msgstr ""
@@ -19054,3 +19289,22 @@ msgstr ""
 #~ msgstr ""
 #~ "Groongaの性能改善とGroongaで大きなデータベースを扱えるようにするための"
 #~ "チューニングパラメーターがいくつかあります。"
+
+# 6fabf6b56acb42afaf75505e2836d4c6
+#~ msgid ""
+#~ "``drilldown_calc_types`` and ``drilldown_calc_target`` aren't supported "
+#~ "yet."
+#~ msgstr ""
+#~ "``drilldown_calc_types`` と ``drilldown_calc_target`` はまだサポートしてい"
+#~ "ません。"
+
+# e899dc90b5f64cf5a3762a08e3414a67
+#~ msgid ""
+#~ "The default ``output_columns`` value doesn't include ``_id``. Because "
+#~ "``_id`` is meaningless when multiple shards are used. ``_id`` may be "
+#~ "duplicated because ``_id`` is managed in each shard not in all shards."
+#~ msgstr ""
+#~ "デフォルトの ``output_columns`` の値に ``_id`` が含まれていません。これ"
+#~ "は、複数のシャードを使った場合は ``_id`` の意味がなくなるからです。 "
+#~ "``_id`` はすべてのシャードをまたがって管理されているわけではなく、各シャー"
+#~ "ドで管理されているので、 ``_id`` は重複する可能性があります。"

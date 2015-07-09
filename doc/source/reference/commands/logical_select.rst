@@ -92,9 +92,9 @@ But there are some differences from :doc:`select`:
     instead of ``table`` parameter.
   * ``sortby`` isn't supported when multiple shards are used. (Only
     one shard is used, they are supported.)
-  * ``_value.${KEY_NAME}`` in ``drilldown[${LABEL}].sortby`` isn't
-    supported when multiple shards are used. (Only one shard is used,
-    they are supported.)
+  * ``_value.${KEY_NAME}`` in ``drilldown[${LABEL}].sortby`` doesn't
+    work with multiple shards. It works with one shard. ``_key`` in
+    ``drilldown[${LABEL}].sortby`` work with multiple shards.
   * ``match_columns`` and ``query`` aren't supported yet.
   * ``cache`` isn't supported yet.
   * ``match_escalation_threshold`` isn't supported yet.
@@ -266,7 +266,7 @@ have any matched records, the shard isn't searched.
 
 For example, ``min`` is ``"2015/07/09 00:00:00"``, ``Entry_20150708``
 isn't searched. Because ``Entry_20150708`` has only records for
-``""2015/07/08"``.
+``"2015/07/08"``.
 
 The following example only uses ``Entry_20150709``
 table. ``Entry_20150708`` isn't used.
@@ -416,13 +416,6 @@ Advanced search parameters
 
 Not implemented yet.
 
-.. _logical-select-match-escalation-threshold:
-
-``match_escalation_threshold``
-""""""""""""""""""""""""""""""
-
-Not implemented yet.
-
 .. _logical-select-query-flags:
 
 ``query_flags``
@@ -528,8 +521,8 @@ Not implemented yet.
 Drilldown related parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Most of drilldown related parameters in :doc:`select` are supported.
-See :ref:`select-drilldown-related-parameters` for details.
+All drilldown related parameters in :doc:`select` are supported. See
+:ref:`select-drilldown-related-parameters` for details.
 
 .. _logical-select-drilldown:
 
