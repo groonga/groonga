@@ -6060,18 +6060,16 @@ grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
 }
 
 static grn_rc
-grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
-                     const char *string, unsigned int string_len,
-                     grn_hash *s, grn_operator op, grn_select_optarg *optarg)
+grn_ii_parse_regexp_query(grn_ctx *ctx,
+                          const char *log_tag,
+                          const char *string, unsigned int string_len,
+                          grn_obj *parsed_string)
 {
-  grn_rc rc;
-  grn_obj parsed_string;
   grn_bool escaping = GRN_FALSE;
   int nth_char = 0;
   const char *current = string;
   const char *string_end = string + string_len;
 
-  GRN_TEXT_INIT(&parsed_string, 0);
   while (current < string_end) {
     const char *target;
     int char_len;
@@ -6079,7 +6077,8 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
     char_len = grn_charlen(ctx, current, string_end);
     if (char_len == 0) {
       ERR(GRN_INVALID_ARGUMENT,
-          "[ii][select][regexp] invalid encoding character: <%.*s|%#x|>",
+          "%s invalid encoding character: <%.*s|%#x|>",
+          log_tag,
           (int)(current - string), string,
           *current);
       return ctx->rc;
@@ -6114,8 +6113,27 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
       }
     }
 
-    GRN_TEXT_PUT(ctx, &parsed_string, target, char_len);
+    GRN_TEXT_PUT(ctx, parsed_string, target, char_len);
     nth_char++;
+  }
+
+  return GRN_SUCCESS;
+}
+
+static grn_rc
+grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
+                     const char *string, unsigned int string_len,
+                     grn_hash *s, grn_operator op, grn_select_optarg *optarg)
+{
+  grn_rc rc;
+  grn_obj parsed_string;
+
+  GRN_TEXT_INIT(&parsed_string, 0);
+  rc = grn_ii_parse_regexp_query(ctx, "[ii][select][regexp]",
+                                 string, string_len, &parsed_string);
+  if (rc != GRN_SUCCESS) {
+    GRN_OBJ_FIN(ctx, &parsed_string);
+    return rc;
   }
 
   if (optarg) {
@@ -6126,6 +6144,11 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
                      GRN_TEXT_VALUE(&parsed_string),
                      GRN_TEXT_LEN(&parsed_string),
                      s, op, optarg);
+  GRN_OBJ_FIN(ctx, &parsed_string);
+
+  if (optarg) {
+    optarg->mode = GRN_OP_REGEXP;
+  }
 
   return rc;
 }
@@ -6582,6 +6605,40 @@ exit :
   return rc;
 }
 
+static uint32_t
+grn_ii_estimate_size_for_query_regexp(grn_ctx *ctx, grn_ii *ii,
+                                      const char *query, unsigned int query_len,
+                                      grn_search_optarg *optarg)
+{
+  grn_rc rc;
+  grn_obj parsed_query;
+  uint32_t size;
+
+  GRN_TEXT_INIT(&parsed_query, 0);
+  rc = grn_ii_parse_regexp_query(ctx, "[ii][estimate-size][query][regexp]",
+                                 query, query_len, &parsed_query);
+  if (rc != GRN_SUCCESS) {
+    GRN_OBJ_FIN(ctx, &parsed_query);
+    return 0;
+  }
+
+  if (optarg) {
+    optarg->mode = GRN_OP_MATCH;
+  }
+
+  size = grn_ii_estimate_size_for_query(ctx, ii,
+                                        GRN_TEXT_VALUE(&parsed_query),
+                                        GRN_TEXT_LEN(&parsed_query),
+                                        optarg);
+  GRN_OBJ_FIN(ctx, &parsed_query);
+
+  if (optarg) {
+    optarg->mode = GRN_OP_REGEXP;
+  }
+
+  return size;
+}
+
 uint32_t
 grn_ii_estimate_size_for_query(grn_ctx *ctx, grn_ii *ii,
                                const char *query, unsigned int query_len,
@@ -6600,11 +6657,6 @@ grn_ii_estimate_size_for_query(grn_ctx *ctx, grn_ii *ii,
     return 0;
   }
 
-  tis = GRN_MALLOC(sizeof(token_info *) * query_len * 2);
-  if (!tis) {
-    return 0;
-  }
-
   if (optarg) {
     switch (optarg->mode) {
     case GRN_OP_NEAR :
@@ -6620,6 +6672,16 @@ grn_ii_estimate_size_for_query(grn_ctx *ctx, grn_ii *ii,
     default :
       break;
     }
+  }
+
+  if (mode == GRN_OP_REGEXP) {
+    return grn_ii_estimate_size_for_query_regexp(ctx, ii, query, query_len,
+                                                 optarg);
+  }
+
+  tis = GRN_MALLOC(sizeof(token_info *) * query_len * 2);
+  if (!tis) {
+    return 0;
   }
 
   rc = token_info_build(ctx, lexicon, ii, query, query_len,
