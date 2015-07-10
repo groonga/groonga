@@ -1397,6 +1397,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
     grn_expr_exec(ctx, expr, 0);
   }
 exit :
+  GRN_OBJ_FIN(ctx, &request_id);
   GRN_OBJ_FIN(ctx, &buf);
   return expr;
 }
