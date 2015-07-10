@@ -1,0 +1,81 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create IDs TABLE_PAT_KEY UInt32
+[[0,0.0,0.0],true]
+table_create Logs_20150205 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20150205 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20150205 memo COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Logs_20150205 ids COLUMN_VECTOR IDs
+[[0,0.0,0.0],true]
+table_create Timestamp_20150205 TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Timestamp_20150205 index COLUMN_INDEX Logs_20150205 timestamp
+[[0,0.0,0.0],true]
+column_create IDs index_20150205 COLUMN_INDEX Logs_20140205 ids
+[[[-22,0.0,0.0],"[column][create] type doesn't exist: <Logs_20140205>"],false]
+#|e| [column][create] type doesn't exist: <Logs_20140205>
+load --table Logs_20150205
+[
+{
+  "timestamp": "2015-02-05 13:49:00",
+       "memo": "2015-02-05 13:49:00",
+        "ids": [1, 2, 3]
+},
+{
+  "timestamp": "2015-02-05 13:50:00",
+       "memo": "2015-02-05 13:50:00",
+        "ids": [2, 3, 4]
+},
+{
+  "timestamp": "2015-02-05 13:51:00",
+       "memo": "2015-02-05 13:51:00",
+        "ids": [2, 3, 4]
+},
+{
+  "timestamp": "2015-02-05 13:52:00",
+       "memo": "2015-02-05 13:52:00",
+        "ids": [3, 4, 5]
+}
+]
+[[0,0.0,0.0],4]
+log_level --level debug
+[[0,0.0,0.0],true]
+logical_range_filter Logs timestamp   --limit 1   --filter 'ids @ 4'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "ids",
+        "IDs"
+      ],
+      [
+        "memo",
+        "ShortText"
+      ],
+      [
+        "timestamp",
+        "Time"
+      ]
+    ],
+    [
+      [
+        2,
+        3,
+        4
+      ],
+      "2015-02-05 13:50:00",
+      1423111800.0
+    ]
+  ]
+]
+#|d| [logical_range_filter][range-index] <Logs_20150205>: hit ratio (1=4/4)>= threshold (0.2)
+log_level --level notice
+[[0,0.0,0.0],true]
