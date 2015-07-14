@@ -44,6 +44,42 @@ mrb_grn_column_array_reference(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_column_is_scalar(mrb_state *mrb, mrb_value self)
+{
+  grn_obj *column;
+  grn_obj_flags column_type;
+
+  column = DATA_PTR(self);
+  column_type = (column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK);
+
+  return mrb_bool_value(column_type == GRN_OBJ_COLUMN_SCALAR);
+}
+
+static mrb_value
+mrb_grn_column_is_vector(mrb_state *mrb, mrb_value self)
+{
+  grn_obj *column;
+  grn_obj_flags column_type;
+
+  column = DATA_PTR(self);
+  column_type = (column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK);
+
+  return mrb_bool_value(column_type == GRN_OBJ_COLUMN_VECTOR);
+}
+
+static mrb_value
+mrb_grn_column_is_index(mrb_state *mrb, mrb_value self)
+{
+  grn_obj *column;
+  grn_obj_flags column_type;
+
+  column = DATA_PTR(self);
+  column_type = (column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK);
+
+  return mrb_bool_value(column_type == GRN_OBJ_COLUMN_INDEX);
+}
+
+static mrb_value
 mrb_grn_column_is_locked(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -83,6 +119,13 @@ grn_mrb_column_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "[]",
                     mrb_grn_column_array_reference, MRB_ARGS_REQ(1));
+
+  mrb_define_method(mrb, klass, "scalar?",
+                    mrb_grn_column_is_scalar, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "vector?",
+                    mrb_grn_column_is_vector, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "index?",
+                    mrb_grn_column_is_index, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "locked?",
                     mrb_grn_column_is_locked, MRB_ARGS_NONE());
