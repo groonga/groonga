@@ -57,23 +57,6 @@ bool grn_egn_is_table_cursor(grn_obj *obj) {
   }
 }
 
-bool grn_egn_is_table(grn_obj *obj) {
-  if (!obj) {
-    return false;
-  }
-  switch (obj->header.type) {
-    case GRN_TABLE_HASH_KEY:
-    case GRN_TABLE_PAT_KEY:
-    case GRN_TABLE_DAT_KEY:
-    case GRN_TABLE_NO_KEY: {
-      return true;
-    }
-    default: {
-      return false;
-    }
-  }
-}
-
 }  // namespace
 
 namespace grn {
@@ -186,7 +169,7 @@ grn_rc TableCursor::read(Record *records, size_t size, size_t *count) {
 
 grn_rc Cursor::open_table_cursor(
   grn_ctx *ctx, grn_obj *table, Cursor **cursor) {
-  if (!ctx || !grn_egn_is_table(table) || !cursor) {
+  if (!ctx || !grn_obj_is_table(ctx, table) || !cursor) {
     return GRN_INVALID_ARGUMENT;
   }
   grn_table_cursor *table_cursor = grn_table_cursor_open(
@@ -2877,7 +2860,7 @@ Expression::~Expression() {
 
 grn_rc Expression::open(
   grn_ctx *ctx, grn_obj *table, Expression **expression) {
-  if (!ctx || !grn_egn_is_table(table) || !expression) {
+  if (!ctx || !grn_obj_is_table(ctx, table) || !expression) {
     return GRN_INVALID_ARGUMENT;
   }
   Expression *new_expression = new (std::nothrow) Expression(ctx, table);
@@ -2890,7 +2873,7 @@ grn_rc Expression::open(
 
 grn_rc Expression::parse(grn_ctx *ctx, grn_obj *table,
   const char *query, size_t query_size, Expression **expression) {
-  if (!ctx || !grn_egn_is_table(table) ||
+  if (!ctx || !grn_obj_is_table(ctx, table) ||
       !query || (query_size == 0) || !expression) {
     return GRN_INVALID_ARGUMENT;
   }
@@ -4133,7 +4116,8 @@ grn_egn_select(grn_ctx *ctx, grn_obj *table,
                const char *filter, size_t filter_size,
                const char *output_columns, size_t output_columns_size,
                int offset, int limit) {
-  if (!ctx || !grn_egn_is_table(table) || (!filter && (filter_size != 0)) ||
+  if (!ctx || !grn_obj_is_table(ctx, table) ||
+      (!filter && (filter_size != 0)) ||
       (!output_columns && (output_columns_size != 0))) {
     return GRN_INVALID_ARGUMENT;
   }
