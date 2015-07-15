@@ -26,7 +26,7 @@ recursively. The target object is one of database, table and column.
 Syntax
 ------
 
-``truncate`` command takes only one parameter.
+``lock_clear`` command takes only one parameter.
 
 There is no required parameter::
 
