@@ -295,21 +295,15 @@ module Groonga
                                           __LINE__, __method__)
           end
 
-          selector_only_procedure_reason =
-            "selector only procedure can't be used"
           estimated_n_records = 0
           case @cover_type
           when :all
             if @filter
               create_expression(@table) do |expression|
                 @expression_builder.build_all(expression)
-                selector_only_procedure =
-                  find_selector_only_procedure(expression)
-                if selector_only_procedure
-                  reason = "#{selector_only_procedure_reason}: "
-                  reason << "<#{selector_only_procedure.name}>"
-                  return decide_use_range_index(false, reason,
-                                                __LINE__, __method__)
+                unless range_index_available_expression?(expression,
+                                                         __LINE__, __method__)
+                  return false
                 end
                 estimated_n_records = expression.estimate_size(@table)
               end
@@ -319,36 +313,27 @@ module Groonga
           when :partial_min
             create_expression(@table) do |expression|
               @expression_builder.build_partial_min(expression)
-              selector_only_procedure = find_selector_only_procedure(expression)
-              if selector_only_procedure
-                reason = "#{selector_only_procedure_reason}: "
-                reason << "<#{selector_only_procedure.name}>"
-                return decide_use_range_index(false, reason,
-                                              __LINE__, __method__)
+              unless range_index_available_expression?(expression,
+                                                       __LINE__, __method__)
+                return false
               end
               estimated_n_records = expression.estimate_size(@table)
             end
           when :partial_max
             create_expression(@table) do |expression|
               @expression_builder.build_partial_max(expression)
-              selector_only_procedure = find_selector_only_procedure(expression)
-              if selector_only_procedure
-                reason = "#{selector_only_procedure_reason}: "
-                reason << "<#{selector_only_procedure.name}>"
-                return decide_use_range_index(false, reason,
-                                              __LINE__, __method__)
+              unless range_index_available_expression?(expression,
+                                                       __LINE__, __method__)
+                return false
               end
               estimated_n_records = expression.estimate_size(@table)
             end
           when :partial_min_and_max
             create_expression(@table) do |expression|
               @expression_builder.build_partial_min_and_max(expression)
-              selector_only_procedure = find_selector_only_procedure(expression)
-              if selector_only_procedure
-                reason = "#{selector_only_procedure_reason}: "
-                reason << "<#{selector_only_procedure.name}>"
-                return decide_use_range_index(false, reason,
-                                              __LINE__, __method__)
+              unless range_index_available_expression?(expression,
+                                                       __LINE__, __method__)
+                return false
               end
               estimated_n_records = expression.estimate_size(@table)
             end
@@ -374,6 +359,17 @@ module Groonga
           reason << "#{relation} threshold (#{threshold})"
           decide_use_range_index(use_range_index_by_hit_ratio, reason,
                                  __LINE__, __method__)
+        end
+
+        def range_index_available_expression?(expression, line, method_name)
+          selector_only_procedure = find_selector_only_procedure(expression)
+          if selector_only_procedure
+            reason = "selector only procedure can't be used: "
+            reason << "<#{selector_only_procedure.name}>"
+            return decide_use_range_index(false, reason, line, method_name)
+          end
+
+          true
         end
 
         def find_selector_only_procedure(expression)
