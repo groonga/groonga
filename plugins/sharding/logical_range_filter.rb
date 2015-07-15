@@ -362,6 +362,14 @@ module Groonga
         end
 
         def range_index_available_expression?(expression, line, method_name)
+          nested_reference_vector_column_accessor =
+            find_nested_reference_vector_column_accessor(expression)
+          if nested_reference_vector_column_accessor
+            reason = "nested reference vector column accessor can't be used: "
+            reason << "<#{nested_reference_vector_column_accessor.name}>"
+            return decide_use_range_index(false, reason, line, method_name)
+          end
+
           selector_only_procedure = find_selector_only_procedure(expression)
           if selector_only_procedure
             reason = "selector only procedure can't be used: "
@@ -370,6 +378,21 @@ module Groonga
           end
 
           true
+        end
+
+        def find_nested_reference_vector_column_accessor(expression)
+          expression.codes.each do |code|
+            value = code.value
+            next unless value.is_a?(Accessor)
+
+            sub_accessor = value
+            while sub_accessor.have_next?
+              object = sub_accessor.object
+              return value if object.is_a?(Column) and object.vector?
+              sub_accessor = sub_accessor.next
+            end
+          end
+          nil
         end
 
         def find_selector_only_procedure(expression)

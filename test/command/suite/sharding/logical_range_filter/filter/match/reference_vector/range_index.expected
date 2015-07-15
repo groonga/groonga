@@ -1,0 +1,95 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create Users TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users tags COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Tags users COLUMN_INDEX Users tags
+[[0,0.0,0.0],true]
+table_create Logs_20150205 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20150205 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20150205 memo COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Logs_20150205 user COLUMN_SCALAR Users
+[[0,0.0,0.0],true]
+table_create Timestamp_20150205 TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Timestamp_20150205 index COLUMN_INDEX Logs_20150205 timestamp
+[[0,0.0,0.0],true]
+column_create Users index_20150205 COLUMN_INDEX Logs_20150205 user
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "alice",  "tags": ["student", "programming", "search"]},
+{"_key": "bob",    "tags": ["worker", "programming"]},
+{"_key": "carlos", "tags": ["programming"]},
+{"_key": "david",  "tags": ["search", "worker"]}
+]
+[[0,0.0,0.0],4]
+load --table Logs_20150205
+[
+{
+  "timestamp": "2015-02-05 13:49:00",
+       "memo": "2015-02-05 13:49:00",
+       "user": "alice"
+},
+{
+  "timestamp": "2015-02-05 13:50:00",
+       "memo": "2015-02-05 13:50:00",
+       "user": "bob"
+},
+{
+  "timestamp": "2015-02-05 13:51:00",
+       "memo": "2015-02-05 13:51:00",
+       "user": "carlos"
+},
+{
+  "timestamp": "2015-02-05 13:52:00",
+       "memo": "2015-02-05 13:52:00",
+       "user": "david"
+}
+]
+[[0,0.0,0.0],4]
+log_level --level debug
+[[0,0.0,0.0],true]
+logical_range_filter Logs timestamp   --limit 2   --filter 'user.tags @ "search"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "memo",
+        "ShortText"
+      ],
+      [
+        "timestamp",
+        "Time"
+      ],
+      [
+        "user",
+        "Users"
+      ]
+    ],
+    [
+      "2015-02-05 13:49:00",
+      1423111740.0,
+      "alice"
+    ],
+    [
+      "2015-02-05 13:52:00",
+      1423111920.0,
+      "david"
+    ]
+  ]
+]
+#|d| [logical_range_filter][range-index] <Logs_20150205>: hit ratio (1=4/4)>= threshold (0.2)
+log_level --level notice
+[[0,0.0,0.0],true]

@@ -1,0 +1,103 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigramSplitSymbolAlpha   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+table_create Users TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Logs_20150205 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20150205 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20150205 memo COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Logs_20150205 users COLUMN_VECTOR Users
+[[0,0.0,0.0],true]
+table_create Timestamp_20150205 TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Timestamp_20150205 index COLUMN_INDEX Logs_20150205 timestamp
+[[0,0.0,0.0],true]
+column_create Users index_20150205 COLUMN_INDEX Logs_20150205 users
+[[0,0.0,0.0],true]
+column_create Terms users_name COLUMN_INDEX|WITH_SECTION   Users name
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "alice",  "name": "Alice"},
+{"_key": "bob",    "name": "Bob"},
+{"_key": "carlos", "name": "Carlos"},
+{"_key": "david",  "name": "David"}
+]
+[[0,0.0,0.0],4]
+load --table Logs_20150205
+[
+{
+  "timestamp": "2015-02-05 13:49:00",
+       "memo": "2015-02-05 13:49:00",
+      "users": ["alice", "bob", "carlos"]
+},
+{
+  "timestamp": "2015-02-05 13:50:00",
+       "memo": "2015-02-05 13:50:00",
+      "users": ["bob", "carlos", "david"]
+},
+{
+  "timestamp": "2015-02-05 13:51:00",
+       "memo": "2015-02-05 13:51:00",
+      "users": ["bob", "carlos", "david"]
+},
+{
+  "timestamp": "2015-02-05 13:52:00",
+       "memo": "2015-02-05 13:52:00",
+      "users": ["carlos", "david", "alice"]
+}
+]
+[[0,0.0,0.0],4]
+log_level --level debug
+[[0,0.0,0.0],true]
+logical_range_filter Logs timestamp   --limit 2   --filter 'users.name @ "ce"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "memo",
+        "ShortText"
+      ],
+      [
+        "timestamp",
+        "Time"
+      ],
+      [
+        "users",
+        "Users"
+      ]
+    ],
+    [
+      "2015-02-05 13:49:00",
+      1423111740.0,
+      [
+        "alice",
+        "bob",
+        "carlos"
+      ]
+    ],
+    [
+      "2015-02-05 13:52:00",
+      1423111920.0,
+      [
+        "carlos",
+        "david",
+        "alice"
+      ]
+    ]
+  ]
+]
+#|d| [logical_range_filter][select] <Logs_20150205>: nested reference vector column accessor can't be used: <users.name>
+log_level --level notice
+[[0,0.0,0.0],true]

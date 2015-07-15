@@ -1,0 +1,59 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Users TABLE_PAT_KEY ShortText
+column_create Users tags COLUMN_VECTOR ShortText
+
+table_create Tags TABLE_PAT_KEY ShortText
+column_create Tags users COLUMN_INDEX Users tags
+
+table_create Logs_20150205 TABLE_NO_KEY
+column_create Logs_20150205 timestamp COLUMN_SCALAR Time
+column_create Logs_20150205 memo COLUMN_SCALAR ShortText
+column_create Logs_20150205 user COLUMN_SCALAR Users
+
+table_create Timestamp_20150205 TABLE_PAT_KEY Time
+column_create Timestamp_20150205 index COLUMN_INDEX Logs_20150205 timestamp
+
+column_create Users index_20150205 COLUMN_INDEX Logs_20150205 user
+
+load --table Users
+[
+{"_key": "alice",  "tags": ["student", "programming", "search"]},
+{"_key": "bob",    "tags": ["worker", "programming"]},
+{"_key": "carlos", "tags": ["programming"]},
+{"_key": "david",  "tags": ["search", "worker"]}
+]
+
+load --table Logs_20150205
+[
+{
+  "timestamp": "2015-02-05 13:49:00",
+       "memo": "2015-02-05 13:49:00",
+       "user": "alice"
+},
+{
+  "timestamp": "2015-02-05 13:50:00",
+       "memo": "2015-02-05 13:50:00",
+       "user": "bob"
+},
+{
+  "timestamp": "2015-02-05 13:51:00",
+       "memo": "2015-02-05 13:51:00",
+       "user": "carlos"
+},
+{
+  "timestamp": "2015-02-05 13:52:00",
+       "memo": "2015-02-05 13:52:00",
+       "user": "david"
+}
+]
+
+#@add-important-log-levels debug
+log_level --level debug
+logical_range_filter Logs timestamp \
+  --limit -1 \
+  --filter 'user.tags @ "search"'
+log_level --level notice
+#@remove-important-log-levels debug

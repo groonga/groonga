@@ -1,0 +1,63 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigramSplitSymbolAlpha \
+  --normalizer NormalizerAuto
+
+table_create Users TABLE_PAT_KEY ShortText
+column_create Users name COLUMN_SCALAR ShortText
+
+table_create Logs_20150205 TABLE_NO_KEY
+column_create Logs_20150205 timestamp COLUMN_SCALAR Time
+column_create Logs_20150205 memo COLUMN_SCALAR ShortText
+column_create Logs_20150205 users COLUMN_VECTOR Users
+
+table_create Timestamp_20150205 TABLE_PAT_KEY Time
+column_create Timestamp_20150205 index COLUMN_INDEX Logs_20150205 timestamp
+
+column_create Users index_20150205 COLUMN_INDEX Logs_20150205 users
+
+column_create Terms users_name COLUMN_INDEX|WITH_SECTION \
+  Users name
+
+load --table Users
+[
+{"_key": "alice",  "name": "Alice"},
+{"_key": "bob",    "name": "Bob"},
+{"_key": "carlos", "name": "Carlos"},
+{"_key": "david",  "name": "David"}
+]
+
+load --table Logs_20150205
+[
+{
+  "timestamp": "2015-02-05 13:49:00",
+       "memo": "2015-02-05 13:49:00",
+      "users": ["alice", "bob", "carlos"]
+},
+{
+  "timestamp": "2015-02-05 13:50:00",
+       "memo": "2015-02-05 13:50:00",
+      "users": ["bob", "carlos", "david"]
+},
+{
+  "timestamp": "2015-02-05 13:51:00",
+       "memo": "2015-02-05 13:51:00",
+      "users": ["bob", "carlos", "david"]
+},
+{
+  "timestamp": "2015-02-05 13:52:00",
+       "memo": "2015-02-05 13:52:00",
+      "users": ["carlos", "david", "alice"]
+}
+]
+
+#@add-important-log-levels debug
+log_level --level debug
+logical_range_filter Logs timestamp \
+  --limit 2 \
+  --filter 'users.name @ "ce"'
+log_level --level notice
+#@remove-important-log-levels debug
