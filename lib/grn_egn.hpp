@@ -212,115 +212,6 @@ inline bool operator!=(GeoPoint lhs, GeoPoint rhs) {
          (lhs.raw.longitude != rhs.raw.longitude);
 }
 
-struct BoolVector {
-  typedef grn_egn_bool_vector Raw;
-  Raw raw;
-
-  static DataType data_type() {
-    return GRN_EGN_BOOL_VECTOR;
-  }
-  static grn_builtin_type default_builtin_type() {
-    return GRN_DB_BOOL;
-  }
-
-  BoolVector() : raw() {}
-  BoolVector(const BoolVector &value) : raw(value.raw) {}
-  explicit BoolVector(const Raw &value) : raw(value) {}
-  BoolVector(const grn_egn_bool *ptr, size_t size) : raw((Raw){ptr, size}) {}
-  ~BoolVector() {}
-};
-
-struct IntVector {
-  typedef grn_egn_int_vector Raw;
-  Raw raw;
-
-  static DataType data_type() {
-    return GRN_EGN_INT_VECTOR;
-  }
-  static grn_builtin_type default_builtin_type() {
-    return GRN_DB_INT64;
-  }
-
-  IntVector() : raw() {}
-  IntVector(const IntVector &value) : raw(value.raw) {}
-  explicit IntVector(const Raw &value) : raw(value) {}
-  IntVector(const grn_egn_int *ptr, size_t size) : raw((Raw){ptr, size}) {}
-  ~IntVector() {}
-};
-
-struct FloatVector {
-  typedef grn_egn_float_vector Raw;
-  Raw raw;
-
-  static DataType data_type() {
-    return GRN_EGN_FLOAT_VECTOR;
-  }
-  static grn_builtin_type default_builtin_type() {
-    return GRN_DB_FLOAT;
-  }
-
-  FloatVector() : raw() {}
-  FloatVector(const FloatVector &value) : raw(value.raw) {}
-  explicit FloatVector(const Raw &value) : raw(value) {}
-  FloatVector(const grn_egn_float *ptr, size_t size) : raw((Raw){ptr, size}) {}
-  ~FloatVector() {}
-};
-
-struct TimeVector {
-  typedef grn_egn_time_vector Raw;
-  Raw raw;
-
-  static DataType data_type() {
-    return GRN_EGN_INT_VECTOR;
-  }
-  static grn_builtin_type default_builtin_type() {
-    return GRN_DB_INT64;
-  }
-
-  TimeVector() : raw() {}
-  TimeVector(const TimeVector &value) : raw(value.raw) {}
-  explicit TimeVector(const Raw &value) : raw(value) {}
-  TimeVector(const grn_egn_time *ptr, size_t size) : raw((Raw){ptr, size}) {}
-  ~TimeVector() {}
-};
-
-struct TextVector {
-  typedef grn_egn_text_vector Raw;
-  Raw raw;
-
-  static DataType data_type() {
-    return GRN_EGN_TEXT_VECTOR;
-  }
-  static grn_builtin_type default_builtin_type() {
-    return GRN_DB_TEXT;
-  }
-
-  TextVector() : raw() {}
-  TextVector(const TextVector &value) : raw(value.raw) {}
-  explicit TextVector(const Raw &value) : raw(value) {}
-  TextVector(const grn_egn_text *ptr, size_t size) : raw((Raw){ptr, size}) {}
-  ~TextVector() {}
-};
-
-struct GeoPointVector {
-  typedef grn_egn_geo_point_vector Raw;
-  Raw raw;
-
-  static DataType data_type() {
-    return GRN_EGN_GEO_POINT_VECTOR;
-  }
-  static grn_builtin_type default_builtin_type() {
-    return GRN_DB_VOID;
-  }
-
-  GeoPointVector() : raw() {}
-  GeoPointVector(const GeoPointVector &value) : raw(value.raw) {}
-  explicit GeoPointVector(const Raw &value) : raw(value) {}
-  GeoPointVector(const grn_egn_geo_point *ptr, size_t size)
-    : raw((Raw){ptr, size}) {}
-  ~GeoPointVector() {}
-};
-
 // Cursor is a base class which provides an interface for sequential access to
 // records.
 class Cursor {
@@ -352,12 +243,10 @@ class Expression {
   ExpressionType type() const {
     return type_;
   }
-  DataType data_type() const {
-    return data_type_;
-  }
-  grn_builtin_type builtin_type() const {
-    return builtin_type_;
-  }
+  DataType data_type() const;
+  grn_builtin_type builtin_type() const;
+  grn_obj *ref_table() const;
+  int dimension() const;
 
   grn_rc push_object(grn_obj *obj);
   grn_rc push_operator(OperatorType operator_type);
@@ -366,15 +255,12 @@ class Expression {
                 Record *output, size_t *output_size);
   grn_rc adjust(Record *records, size_t num_records);
 
-  template <typename T>
-  grn_rc evaluate(const Record *records, size_t num_records, T *results);
+  grn_rc evaluate(const Record *records, size_t num_records, void *results);
 
  private:
   grn_ctx *ctx_;
   grn_obj *table_;
   ExpressionType type_;
-  DataType data_type_;
-  grn_builtin_type builtin_type_;
   std::vector<ExpressionNode *> stack_;
 
   // Disable copy and assignment.
@@ -383,10 +269,9 @@ class Expression {
 
   ExpressionNode *root() const;
 
-  void update_types();
+  void update_type();
 
-  grn_rc push_bulk_object(grn_obj *obj);
-  grn_rc push_vector_object(grn_obj *obj);
+  grn_rc push_constant_object(grn_obj *obj);
   grn_rc push_column_object(grn_obj *obj);
 
   grn_rc create_unary_node(OperatorType operator_type,

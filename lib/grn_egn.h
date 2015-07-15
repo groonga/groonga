@@ -28,21 +28,31 @@ extern "C" {
 // Constant values.
 
 typedef enum {
-  GRN_EGN_VOID,
-  GRN_EGN_BOOL,
-  GRN_EGN_INT,
-  GRN_EGN_FLOAT,
-  GRN_EGN_TIME,
-  GRN_EGN_TEXT,
-  GRN_EGN_GEO_POINT,
-  GRN_EGN_BOOL_VECTOR,
-  GRN_EGN_INT_VECTOR,
-  GRN_EGN_FLOAT_VECTOR,
-  GRN_EGN_TIME_VECTOR,
-  GRN_EGN_TEXT_VECTOR,
-  GRN_EGN_GEO_POINT_VECTOR,
-  GRN_EGN_DEEP_VECTOR
+  GRN_EGN_VOID,     // GRN_DB_VOID.
+  GRN_EGN_BOOL,     // GRN_DB_BOOL.
+  GRN_EGN_INT,      // GRN_DB_(U)INT8/16/32/64.
+  GRN_EGN_FLOAT,    // GRN_DB_FLOAT.
+  GRN_EGN_TIME,     // GRN_DB_TIME.
+  GRN_EGN_TEXT,     // GRN_DB_(SHORT_/LONG_)TEST
+  GRN_EGN_GEO_POINT // GRN_DB_TOKYO/WGS84_GEO_POINT.
 } grn_egn_data_type;
+
+//typedef enum {
+//  GRN_EGN_VOID,
+//  GRN_EGN_BOOL,
+//  GRN_EGN_INT,
+//  GRN_EGN_FLOAT,
+//  GRN_EGN_TIME,
+//  GRN_EGN_TEXT,
+//  GRN_EGN_GEO_POINT,
+//  GRN_EGN_BOOL_VECTOR,
+//  GRN_EGN_INT_VECTOR,
+//  GRN_EGN_FLOAT_VECTOR,
+//  GRN_EGN_TIME_VECTOR,
+//  GRN_EGN_TEXT_VECTOR,
+//  GRN_EGN_GEO_POINT_VECTOR,
+//  GRN_EGN_DEEP_VECTOR
+//} grn_egn_data_type;
 
 typedef enum {
   GRN_EGN_NOP,
@@ -92,29 +102,9 @@ typedef struct {
 } grn_egn_text;
 typedef grn_geo_point grn_egn_geo_point;
 typedef struct {
-  const grn_egn_bool *ptr;
+  const void *ptr;
   size_t size;
-} grn_egn_bool_vector;
-typedef struct {
-  const grn_egn_int *ptr;
-  size_t size;
-} grn_egn_int_vector;
-typedef struct {
-  const grn_egn_float *ptr;
-  size_t size;
-} grn_egn_float_vector;
-typedef struct {
-  const grn_egn_time *ptr;
-  size_t size;
-} grn_egn_time_vector;
-typedef struct {
-  const grn_egn_text *ptr;
-  size_t size;
-} grn_egn_text_vector;
-typedef struct {
-  const grn_egn_geo_point *ptr;
-  size_t size;
-} grn_egn_geo_point_vector;
+} grn_egn_vector;
 
 /*
  * grn_egn_select() finds records passing through a filter (specified by
