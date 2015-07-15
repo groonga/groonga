@@ -24,6 +24,11 @@
 #include <string.h>
 
 #ifdef WIN32
+
+# define LANG_ID_NEUTRAL()        MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL)
+# define LANG_ID_USER_DEFAULT()   MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT)
+# define LANG_ID_SYSTEM_DEFAULT() MAKELANGID(LANG_NEUTRAL, SUBLANG_SYS_DEFAULT)
+
 const char *
 grn_current_error_message(void)
 {
@@ -36,7 +41,7 @@ grn_current_error_message(void)
                                 FORMAT_MESSAGE_IGNORE_INSERTS,
                                 NULL,
                                 error_code,
-                                MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                                LANG_ID_USER_DEFAULT(),
                                 message,
                                 ERROR_MESSAGE_BUFFER_SIZE,
                                 NULL);
