@@ -1576,7 +1576,8 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
       flags_description = "O_RDWR|O_CREAT";
     }
     fi->fh = CreateFile(path, GRN_IO_FILE_CREATE_MODE,
-                        FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
+                        FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+                        NULL,
                         dwCreationDisposition, FILE_ATTRIBUTE_NORMAL, 0);
     if (fi->fh == INVALID_HANDLE_VALUE) {
       SERR("CreateFile");
@@ -1591,7 +1592,8 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
     CloseHandle(fi->fh);
     /* unable to assign OPEN_ALWAYS and TRUNCATE_EXISTING at once */
     fi->fh = CreateFile(path, GRN_IO_FILE_CREATE_MODE,
-                        FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
+                        FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+                        NULL,
                         TRUNCATE_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
     if (fi->fh == INVALID_HANDLE_VALUE) {
       SERR("CreateFile");
@@ -1604,7 +1606,8 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
   }
   /* O_RDWR only */
   fi->fh = CreateFile(path, GRN_IO_FILE_CREATE_MODE,
-                      FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
+                      FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+                      NULL,
                       OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
   if (fi->fh == INVALID_HANDLE_VALUE) {
     SERR("CreateFile");

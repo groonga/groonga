@@ -135,7 +135,7 @@ void FileImpl::flush() {
 void FileImpl::create_(const char *path, UInt64 size) {
   if ((path != NULL) && (path[0] != '\0')) {
     file_ = ::CreateFileA(path, GRN_IO_FILE_CREATE_MODE,
-                          FILE_SHARE_READ | FILE_SHARE_WRITE,
+                          FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
                           NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     GRN_DAT_THROW_IF(IO_ERROR, file_ == INVALID_HANDLE_VALUE);
 
@@ -178,7 +178,7 @@ void FileImpl::open_(const char *path) {
       static_cast<UInt64>(st.st_size) > std::numeric_limits< ::size_t>::max());
 
   file_ = ::CreateFileA(path, GRN_IO_FILE_CREATE_MODE,
-                        FILE_SHARE_READ | FILE_SHARE_WRITE,
+                        FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
                         NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
   GRN_DAT_THROW_IF(IO_ERROR, file_ == NULL);
 
