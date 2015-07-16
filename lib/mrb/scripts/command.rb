@@ -20,9 +20,31 @@ module Groonga
       @writer ||= context.writer
     end
 
+    def cache_key(input)
+      nil
+    end
+
+    def cache_output(key)
+      if key.nil?
+        yield
+      else
+        cache = Cache.current
+        cached_value = cache.fetch(key)
+        if cached_value
+          context.output = cached_value
+          cache.unref(key)
+        else
+          yield
+          cache.update(context.output)
+        end
+      end
+    end
+
     def run_internal(input)
       begin
-        run_body(input)
+        cache_output(cache_key(input)) do
+          run_body(input)
+        end
       rescue GroongaError => groonga_error
         context.set_groonga_error(groonga_error)
         nil
