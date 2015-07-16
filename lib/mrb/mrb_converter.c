@@ -136,6 +136,63 @@ grn_mrb_value_to_raw_data(mrb_state *mrb,
   *raw_value_size = GRN_BULK_VSIZE(&(buffer->to));
 }
 
+mrb_value
+grn_mrb_value_from_raw_data(mrb_state *mrb,
+                            grn_id domain,
+                            void *raw_value,
+                            unsigned int raw_value_size)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_value mrb_value_;
+
+  switch (domain) {
+  case GRN_DB_INT32 :
+    if (raw_value_size == 0) {
+      mrb_value_ = mrb_fixnum_value(0);
+    } else {
+      int32_t value;
+      value = *((int32_t *)raw_value);
+      mrb_value_ = mrb_fixnum_value(value);
+    }
+    break;
+  case GRN_DB_SHORT_TEXT :
+  case GRN_DB_TEXT :
+  case GRN_DB_LONG_TEXT :
+    mrb_value_ = mrb_str_new(mrb,
+                             raw_value,
+                             raw_value_size);
+    break;
+  default :
+    {
+      grn_obj *domain_object;
+#define MESSAGE_SIZE 4096
+      char message[MESSAGE_SIZE];
+      char domain_name[GRN_TABLE_MAX_KEY_SIZE];
+      int domain_name_size;
+
+      domain_object = grn_ctx_at(ctx, domain);
+      if (domain_object) {
+        domain_name_size = grn_obj_name(ctx, domain_object,
+                                        domain_name, GRN_TABLE_MAX_KEY_SIZE);
+        grn_obj_unlink(ctx, domain_object);
+      } else {
+        grn_strcpy(domain_name, GRN_TABLE_MAX_KEY_SIZE, "unknown");
+        domain_name_size = strlen(domain_name);
+      }
+      grn_snprintf(message, MESSAGE_SIZE, MESSAGE_SIZE,
+                   "unsupported raw value type: <%d>(%.*s)",
+                   domain,
+                   domain_name_size,
+                   domain_name);
+      mrb_raise(mrb, E_RANGE_ERROR, message);
+    }
+#undef MESSAGE_SIZE
+    break;
+  }
+
+  return mrb_value_;
+}
+
 struct RClass *
 grn_mrb_class_from_grn_obj(mrb_state *mrb, grn_obj *object)
 {

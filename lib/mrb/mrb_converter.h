@@ -46,6 +46,10 @@ void grn_mrb_value_to_raw_data(mrb_state *mrb,
                                grn_mrb_value_to_raw_data_buffer *buffer,
                                void **raw_value,
                                unsigned int *raw_value_size);
+mrb_value grn_mrb_value_from_raw_data(mrb_state *mrb,
+                                      grn_id domain,
+                                      void *raw_value,
+                                      unsigned int raw_value_size);
 
 struct RClass *grn_mrb_class_from_grn_obj(mrb_state *mrb, grn_obj *object);
 mrb_value      grn_mrb_value_from_grn_obj(mrb_state *mrb, grn_obj *object);
