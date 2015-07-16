@@ -91,6 +91,10 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
   mrb_value mrb_value_;
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
 
+  if (!bulk) {
+    return mrb_nil_value();
+  }
+
   switch (bulk->header.domain) {
   case GRN_DB_INT32 :
     {
