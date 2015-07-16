@@ -90,7 +90,7 @@ mrb_grn_cache_update(mrb_state *mrb, mrb_value self)
   cache = DATA_PTR(self);
   mrb_get_args(mrb, "ss", &key, &key_size, &value, &value_size);
 
-  GRN_TEXT_INIT(&value_buffer, GRN_OBJ_REFER);
+  GRN_TEXT_INIT(&value_buffer, GRN_OBJ_DO_SHALLOW_COPY);
   GRN_TEXT_SET(ctx, &value_buffer, value, value_size);
   grn_cache_update(ctx, cache, key, key_size, &value_buffer);
   GRN_OBJ_FIN(ctx, &value_buffer);
