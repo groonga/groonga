@@ -70,7 +70,7 @@ module Groonga
         attr_reader :threshold
         def initialize(input)
           @input = input
-          @use_range_index = parse_use_range_index(@input["use_range_index"])
+          @use_range_index = parse_use_range_index(@input[:use_range_index])
           @enumerator = LogicalEnumerator.new("logical_range_filter", @input)
           @order = parse_order(@input, :order)
           @filter = @input[:filter]
