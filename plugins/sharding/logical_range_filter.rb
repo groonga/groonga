@@ -56,6 +56,24 @@ module Groonga
         end
       end
 
+      private
+      def cache_key(input)
+        key = "logical_range_filter\0"
+        key << "#{input[:logical_table]}\0"
+        key << "#{input[:shard_key]}\0"
+        key << "#{input[:min]}\0"
+        key << "#{input[:min_border]}\0"
+        key << "#{input[:max]}\0"
+        key << "#{input[:max_border]}\0"
+        key << "#{input[:order]}\0"
+        key << "#{input[:filter]}\0"
+        key << "#{input[:offset]}\0"
+        key << "#{input[:limit]}\0"
+        key << "#{input[:output_columns]}\0"
+        key << "#{input[:use_range_index]}\0"
+        key
+      end
+
       class ExecuteContext
         attr_reader :use_range_index
         attr_reader :enumerator
