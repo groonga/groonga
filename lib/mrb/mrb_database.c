@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014 Brazil
+  Copyright(C) 2014-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -43,7 +43,7 @@ mrb_grn_database_initialize(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-mrb_grn_database_singleton_open(mrb_state *mrb, mrb_value klass)
+mrb_grn_database_class_open(mrb_state *mrb, mrb_value klass)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_obj *database;
@@ -58,7 +58,7 @@ mrb_grn_database_singleton_open(mrb_state *mrb, mrb_value klass)
 }
 
 static mrb_value
-mrb_grn_database_singleton_create(mrb_state *mrb, mrb_value klass)
+mrb_grn_database_class_create(mrb_state *mrb, mrb_value klass)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_obj *database;
@@ -107,12 +107,12 @@ grn_mrb_database_init(grn_ctx *ctx)
   klass = mrb_define_class_under(mrb, module, "Database", object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
 
-  mrb_define_singleton_method(mrb, (struct RObject *)klass, "open",
-                              mrb_grn_database_singleton_open,
-                              MRB_ARGS_REQ(1));
-  mrb_define_singleton_method(mrb, (struct RObject *)klass, "create",
-                              mrb_grn_database_singleton_create,
-                              MRB_ARGS_REQ(1));
+  mrb_define_class_method(mrb, klass, "open",
+                          mrb_grn_database_class_open,
+                          MRB_ARGS_REQ(1));
+  mrb_define_class_method(mrb, klass, "create",
+                          mrb_grn_database_class_create,
+                          MRB_ARGS_REQ(1));
 
   mrb_define_method(mrb, klass, "initialize",
                     mrb_grn_database_initialize, MRB_ARGS_REQ(1));

@@ -250,7 +250,7 @@ grn_mrb_class_to_type(mrb_state *mrb, struct RClass *klass)
 }
 
 static mrb_value
-mrb_grn_converter_singleton_convert(mrb_state *mrb, mrb_value klass)
+mrb_grn_converter_class_convert(mrb_state *mrb, mrb_value klass)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_obj *from = &(ctx->impl->mrb.buffer.from);
@@ -282,8 +282,8 @@ grn_mrb_converter_init(grn_ctx *ctx)
 
   module = mrb_define_module_under(mrb, data->module, "Converter");
 
-  mrb_define_singleton_method(mrb, (struct RObject *)module, "convert",
-                              mrb_grn_converter_singleton_convert,
-                              MRB_ARGS_REQ(2));
+  mrb_define_class_method(mrb, module, "convert",
+                          mrb_grn_converter_class_convert,
+                          MRB_ARGS_REQ(2));
 }
 #endif

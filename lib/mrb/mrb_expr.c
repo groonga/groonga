@@ -422,7 +422,7 @@ mrb_grn_expr_code_get_flags(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-mrb_grn_expression_singleton_create(mrb_state *mrb, mrb_value klass)
+mrb_grn_expression_class_create(mrb_state *mrb, mrb_value klass)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   mrb_value mrb_expr;
@@ -783,9 +783,9 @@ grn_mrb_expr_init(grn_ctx *ctx)
   klass = mrb_define_class_under(mrb, module, "Expression", object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
 
-  mrb_define_singleton_method(mrb, (struct RObject *)klass, "create",
-                              mrb_grn_expression_singleton_create,
-                              MRB_ARGS_REQ(1));
+  mrb_define_class_method(mrb, klass, "create",
+                          mrb_grn_expression_class_create,
+                          MRB_ARGS_REQ(1));
 
   mrb_define_method(mrb, klass, "initialize",
                     mrb_grn_expression_initialize, MRB_ARGS_REQ(1));
