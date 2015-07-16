@@ -5,6 +5,8 @@ libgrnmrb_la_SOURCES =				\
 	mrb_array.h				\
 	mrb_bulk.c				\
 	mrb_bulk.h				\
+	mrb_cache.c				\
+	mrb_cache.h				\
 	mrb_column.c				\
 	mrb_column.h				\
 	mrb_command.c				\
