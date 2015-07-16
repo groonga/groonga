@@ -33,6 +33,19 @@ static struct mrb_data_type mrb_grn_cache_type = {
 };
 
 static mrb_value
+mrb_grn_cache_class_current(mrb_state *mrb, mrb_value klass)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_cache *cache;
+  mrb_value mrb_cache;
+
+  cache = grn_cache_current_get(ctx);
+  mrb_cache = mrb_funcall(mrb, klass, "new", 1, mrb_cptr_value(mrb, cache));
+
+  return mrb_cache;
+}
+
+static mrb_value
 mrb_grn_cache_initialize(mrb_state *mrb, mrb_value self)
 {
   mrb_value mrb_cache_ptr;
@@ -108,6 +121,9 @@ grn_mrb_cache_init(grn_ctx *ctx)
 
   klass = mrb_define_class_under(mrb, module, "Cache", mrb->object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
+
+  mrb_define_class_method(mrb, klass, "current",
+                          mrb_grn_cache_class_current, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "initialize",
                     mrb_grn_cache_initialize, MRB_ARGS_REQ(1));
