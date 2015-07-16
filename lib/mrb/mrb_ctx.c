@@ -27,6 +27,7 @@
 
 #include "../grn_mrb.h"
 #include "mrb_ctx.h"
+#include "mrb_bulk.h"
 #include "mrb_converter.h"
 
 static mrb_value
@@ -219,6 +220,28 @@ ctx_set_command_version(mrb_state *mrb, mrb_value self)
   grn_ctx_set_command_version(ctx, command_version);
 
   return mrb_fixnum_value(command_version);
+}
+
+static mrb_value
+ctx_get_output(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+
+  return grn_mrb_value_from_bulk(mrb, ctx->impl->outbuf);
+}
+
+static mrb_value
+ctx_set_output(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_value mrb_value_;
+
+  mrb_get_args(mrb, "S", &mrb_value_);
+  GRN_TEXT_SET(ctx, ctx->impl->outbuf,
+               RSTRING_PTR(mrb_value_),
+               RSTRING_LEN(mrb_value_));
+
+  return mrb_value_;
 }
 
 static mrb_value
@@ -735,6 +758,11 @@ grn_mrb_ctx_init(grn_ctx *ctx)
                     ctx_get_command_version, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "command_version=",
                     ctx_set_command_version, MRB_ARGS_REQ(1));
+
+  mrb_define_method(mrb, klass, "output",
+                    ctx_get_output, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "output=",
+                    ctx_set_output, MRB_ARGS_REQ(1));
 
   mrb_define_method(mrb, klass, "database", ctx_get_database,
                     MRB_ARGS_NONE());
