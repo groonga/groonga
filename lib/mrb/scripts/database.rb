@@ -30,6 +30,7 @@ module Groonga
       flags |= TableCursorFlags::PREFIX if min
       TableCursor.open(self, :min => min, :flags => flags) do |cursor|
         cursor.each do |id|
+          next if cursor.key.include?(".")
           object = context[id]
           yield(object) if object.is_a?(Table)
         end
