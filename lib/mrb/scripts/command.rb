@@ -35,7 +35,7 @@ module Groonga
           cache.unref(key)
         else
           yield
-          cache.update(context.output)
+          cache.update(key, context.output)
         end
       end
     end
