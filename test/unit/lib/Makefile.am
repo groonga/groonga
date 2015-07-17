@@ -18,6 +18,9 @@ AM_CFLAGS =						\
 	$(GCUTTER_CFLAGS)				\
 	$(TEST_CFLAGS)
 
+CFLAGS +=						\
+	$(NO_BAD_FUNCTION_CAST_CFLAGS)
+
 # We just need to add -rpath option to make .so. We use
 # $(libdir) here but we can use other absolute path like
 # $(abs_builddir).  $(abs_builddir) is more reasonable
