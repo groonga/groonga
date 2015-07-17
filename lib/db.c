@@ -8210,12 +8210,12 @@ _grn_obj_remove_db_reference_tables(grn_ctx *ctx, grn_obj *db)
         }
 
         switch (domain->header.type) {
-          case GRN_TABLE_NO_KEY :
-          case GRN_TABLE_HASH_KEY :
-          case GRN_TABLE_PAT_KEY :
-          case GRN_TABLE_DAT_KEY :
-            _grn_obj_remove(ctx, obj);
-            break;
+        case GRN_TABLE_NO_KEY :
+        case GRN_TABLE_HASH_KEY :
+        case GRN_TABLE_PAT_KEY :
+        case GRN_TABLE_DAT_KEY :
+          _grn_obj_remove(ctx, obj);
+          break;
         }
         break;
       }
