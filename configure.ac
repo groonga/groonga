@@ -143,6 +143,7 @@ TEST_CXXFLAGS=""
 NO_STRICT_ALIASING_CFLAGS=""
 NO_FLOAT_EQUAL_CFLAGS=""
 NO_BAD_FUNCTION_CAST_CFLAGS=""
+NO_FORMAT_NONLITERAL_CFLAGS=""
 if test "$GCC" = "yes"; then
   CHECK_BUILD_FLAG([-Wall])
   CHECK_BUILD_FLAG([-Wextra])
@@ -169,6 +170,10 @@ if test "$GCC" = "yes"; then
   CHECK_CFLAG([-Wbad-function-cast])
   if test "x$check_cflag" = "xyes"; then
     NO_BAD_FUNCTION_CAST_CFLAGS="-Wno-bad-function-cast"
+  fi
+  CHECK_CFLAG([-Wformat-nonliteral])
+  if test "x$check_cflag" = "xyes"; then
+    NO_FORMAT_NONLITERAL_CFLAGS="-Wno-format-nonliteral"
   fi
   if test "$CLANG" = "no"; then
     CHECK_BUILD_FLAG([-Wcast-align])
@@ -202,6 +207,7 @@ AC_SUBST(TEST_CXXFLAGS)
 AC_SUBST(NO_STRICT_ALIASING_CFLAGS)
 AC_SUBST(NO_FLOAT_EQUAL_CFLAGS)
 AC_SUBST(NO_BAD_FUNCTION_CAST_CFLAGS)
+AC_SUBST(NO_FORMAT_NONLITERAL_CFLAGS)
 
 AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
