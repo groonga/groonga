@@ -8,8 +8,7 @@
     sharedscripts
     postrotate
         if [ -f /var/lock/subsys/groonga-httpd ]; then
-            /usr/bin/curl --silent --output /dev/null \
-                "http://127.0.0.1:10041/d/log_reopen"
+            /bin/kill -USR1 $(cat /var/run/groonga/groonga-httpd.pid)
         fi
     endscript
 }
