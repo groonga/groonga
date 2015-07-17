@@ -10,7 +10,9 @@ DEFAULT_INCLUDES =						\
 	-Imruby-io/include					\
 	-I$(srcdir)/mruby-io/include
 
-CFLAGS += $(NO_FLOAT_EQUAL_CFLAGS)
+CFLAGS +=					\
+	$(NO_FLOAT_EQUAL_CFLAGS)		\
+	$(NO_BAD_FUNCTION_CAST_CFLAGS)
 
 if WITH_MRUBY
 noinst_LTLIBRARIES = libmruby.la
