@@ -22,7 +22,6 @@ module Groonga
       def each_internal(order)
         context = Context.instance
         each_shard_with_around(order) do |prev_shard, current_shard, next_shard|
-          table = current_shard.table
           shard_range_data = current_shard.range_data
           shard_range = nil
 
@@ -52,16 +51,7 @@ module Groonga
                                             shard_range_data.day)
           end
 
-          physical_shard_key_name = "#{table.name}.#{@shard_key_name}"
-          shard_key = context[physical_shard_key_name]
-          if shard_key.nil?
-            message =
-              "[#{@command_name}] shard_key doesn't exist: " +
-              "<#{physical_shard_key_name}>"
-            raise InvalidArgument, message
-          end
-
-          yield(table, shard_key, shard_range)
+          yield(current_shard, shard_range)
         end
       end
 
@@ -70,10 +60,10 @@ module Groonga
         prefix = "#{@logical_table}_"
 
         shards = [nil]
-        context.database.each_table(:prefix => prefix,
-                                    :order_by => :key,
-                                    :order => order) do |table|
-          shard_range_raw = table.name[prefix.size..-1]
+        context.database.each_name(:prefix => prefix,
+                                   :order_by => :key,
+                                   :order => order) do |name|
+          shard_range_raw = name[prefix.size..-1]
 
           case shard_range_raw
           when /\A(\d{4})(\d{2})\z/
@@ -84,7 +74,7 @@ module Groonga
             next
           end
 
-          shards << Shard.new(table, shard_range_data)
+          shards << Shard.new(name, @shard_key_name, shard_range_data)
           next if shards.size < 3
           yield(*shards)
           shards.shift
@@ -119,10 +109,23 @@ module Groonga
       end
 
       class Shard
-        attr_reader :table, :range_data
-        def initialize(table, range_data)
-          @table = table
+        attr_reader :table_name, :key_name, :range_data
+        def initialize(table_name, key_name, range_data)
+          @table_name = table_name
+          @key_name = key_name
           @range_data = range_data
+        end
+
+        def table
+          @table ||= Context.instance[@table_name]
+        end
+
+        def full_key_name
+          "#{@table_name}.#{@key_name}"
+        end
+
+        def key
+          @key ||= Context.instance[full_key_name]
         end
       end
 

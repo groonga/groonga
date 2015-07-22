@@ -412,17 +412,14 @@ module Groonga
 
         private
         def execute_search
-          first_table = nil
+          first_shard = nil
           enumerator = @context.enumerator
-          enumerator.each do |table, shard_key, shard_range|
-            first_table ||= table
-            next if table.empty?
-
-            shard_executor = ShardExecutor.new(@context,
-                                               table, shard_key, shard_range)
+          enumerator.each do |shard, shard_range|
+            first_shard ||= shard
+            shard_executor = ShardExecutor.new(@context, shard, shard_range)
             shard_executor.execute
           end
-          if first_table.nil?
+          if first_shard.nil?
             message =
               "[logical_select] no shard exists: " +
               "logical_table: <#{enumerator.logical_table}>: " +
@@ -431,7 +428,7 @@ module Groonga
           end
           if @context.result_sets.empty?
             result_set = HashTable.create(:flags => ObjectFlags::WITH_SUBREC,
-                                          :key_type => first_table)
+                                          :key_type => first_shard.table)
             @context.result_sets << result_set
           end
         end
@@ -511,10 +508,9 @@ module Groonga
       end
 
       class ShardExecutor
-        def initialize(context, table, shard_key, shard_range)
+        def initialize(context, shard, shard_range)
           @context = context
-          @table = table
-          @shard_key = shard_key
+          @shard = shard
           @shard_range = shard_range
 
           @filter = @context.filter
@@ -525,40 +521,47 @@ module Groonga
           @target_range = @context.enumerator.target_range
 
           @cover_type = @target_range.cover_type(@shard_range)
-
-          @expression_builder = RangeExpressionBuilder.new(@shard_key,
-                                                           @target_range,
-                                                           @filter)
         end
 
         def execute
           return if @cover_type == :none
+          return if @shard.table.empty?
 
+          shard_key = @shard.key
+          if shard_key.nil?
+            message = "[logical_select] shard_key doesn't exist: " +
+                      "<#{@shard.key_name}>"
+            raise InvalidArgument, message
+          end
+
+          expression_builder = RangeExpressionBuilder.new(shard_key,
+                                                          @target_range,
+                                                          @filter)
           case @cover_type
           when :all
-            filter_shard_all
+            filter_shard_all(expression_builder)
           when :partial_min
             filter_table do |expression|
-              @expression_builder.build_partial_min(expression)
+              expression_builder.build_partial_min(expression)
             end
           when :partial_max
             filter_table do |expression|
-              @expression_builder.build_partial_max(expression)
+              expression_builder.build_partial_max(expression)
             end
           when :partial_min_and_max
             filter_table do |expression|
-              @expression_builder.build_partial_min_and_max(expression)
+              expression_builder.build_partial_min_and_max(expression)
             end
           end
         end
 
         private
-        def filter_shard_all
+        def filter_shard_all(expression_builder)
           if @filter.nil?
-            add_result_set(@table)
+            add_result_set(@shard.table)
           else
             filter_table do |expression|
-              @expression_builder.build_all(expression)
+              expression_builder.build_all(expression)
             end
           end
         end
@@ -573,9 +576,10 @@ module Groonga
         end
 
         def filter_table
-          create_expression(@table) do |expression|
+          table = @shard.table
+          create_expression(table) do |expression|
             yield(expression)
-            add_result_set(@table.select(expression))
+            add_result_set(table.select(expression))
           end
         end
 

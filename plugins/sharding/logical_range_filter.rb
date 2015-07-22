@@ -155,23 +155,21 @@ module Groonga
         end
 
         def execute
-          first_table = nil
+          first_shard = nil
           enumerator = @context.enumerator
+          target_range = enumerator.target_range
           if @context.order == :descending
             each_method = :reverse_each
           else
             each_method = :each
           end
-          enumerator.send(each_method) do |table, shard_key, shard_range|
-            first_table ||= table
-            next if table.empty?
-
-            shard_executor = ShardExecutor.new(@context,
-                                               table, shard_key, shard_range)
+          enumerator.send(each_method) do |shard, shard_range|
+            first_shard ||= shard
+            shard_executor = ShardExecutor.new(@context, shard, shard_range)
             shard_executor.execute
             break if @context.current_limit == 0
           end
-          if first_table.nil?
+          if first_shard.nil?
             message =
               "[logical_range_filter] no shard exists: " +
               "logical_table: <#{enumerator.logical_table}>: " +
@@ -180,17 +178,16 @@ module Groonga
           end
           if @context.result_sets.empty?
             result_set = HashTable.create(:flags => ObjectFlags::WITH_SUBREC,
-                                          :key_type => first_table)
+                                          :key_type => first_shard.table)
             @context.result_sets << result_set
           end
         end
       end
 
       class ShardExecutor
-        def initialize(context, table, shard_key, shard_range)
+        def initialize(context, shard, shard_range)
           @context = context
-          @table = table
-          @shard_key = shard_key
+          @shard = shard
           @shard_range = shard_range
 
           @filter = @context.filter
@@ -200,26 +197,36 @@ module Groonga
           @target_range = @context.enumerator.target_range
 
           @cover_type = @target_range.cover_type(@shard_range)
-
-          @expression_builder = RangeExpressionBuilder.new(@shard_key,
-                                                           @target_range,
-                                                           @filter)
         end
 
         def execute
           return if @cover_type == :none
+          return if @shard.table.empty?
 
-          index_info = @shard_key.find_index(Operator::LESS)
+          shard_key = @shard.key
+          if shard_key.nil?
+            message = "[logical_range_filter] shard_key doesn't exist: " +
+                      "<#{@shard.key_name}>"
+            raise InvalidArgument, message
+          end
+
+          expression_builder = RangeExpressionBuilder.new(shard_key,
+                                                          @target_range,
+                                                          @filter)
+
+          index_info = shard_key.find_index(Operator::LESS)
           if index_info
             range_index = index_info.index
-            range_index = nil unless use_range_index?(range_index)
+            unless use_range_index?(range_index, expression_builder)
+              range_index = nil
+            end
           else
             range_index = nil
           end
 
           case @cover_type
           when :all
-            filter_shard_all(range_index)
+            filter_shard_all(range_index, expression_builder)
           when :partial_min
             if range_index
               filter_by_range(range_index,
@@ -227,7 +234,7 @@ module Groonga
                               nil, nil)
             else
               filter_table do |expression|
-                @expression_builder.build_partial_min(expression)
+                expression_builder.build_partial_min(expression)
               end
             end
           when :partial_max
@@ -237,7 +244,7 @@ module Groonga
                               @target_range.max, @target_range.max_border)
             else
               filter_table do |expression|
-                @expression_builder.build_partial_max(expression)
+                expression_builder.build_partial_max(expression)
               end
             end
           when :partial_min_and_max
@@ -247,7 +254,7 @@ module Groonga
                               @target_range.max, @target_range.max_border)
             else
               filter_table do |expression|
-                @expression_builder.build_partial_min_and_max(expression)
+                expression_builder.build_partial_min_and_max(expression)
               end
             end
           end
@@ -261,7 +268,7 @@ module Groonga
           else
             message << "[select] "
           end
-          message << "<#{@table.name}>: "
+          message << "<#{@shard.table_name}>: "
           message << reason
           Context.instance.logger.log(Logger::Level::DEBUG,
                                       __FILE__,
@@ -272,7 +279,7 @@ module Groonga
           use
         end
 
-        def use_range_index?(range_index)
+        def use_range_index?(range_index, expression_builder)
           case @context.use_range_index
           when true
             return decide_use_range_index(true,
@@ -292,7 +299,7 @@ module Groonga
           end
 
           required_n_records = @context.current_offset + current_limit
-          max_n_records = @table.size
+          max_n_records = @shard.table.size
           if max_n_records <= required_n_records
             reason = "the number of required records (#{required_n_records}) "
             reason << ">= "
@@ -313,47 +320,48 @@ module Groonga
                                           __LINE__, __method__)
           end
 
+          table = @shard.table
           estimated_n_records = 0
           case @cover_type
           when :all
             if @filter
-              create_expression(@table) do |expression|
-                @expression_builder.build_all(expression)
+              create_expression(table) do |expression|
+                expression_builder.build_all(expression)
                 unless range_index_available_expression?(expression,
                                                          __LINE__, __method__)
                   return false
                 end
-                estimated_n_records = expression.estimate_size(@table)
+                estimated_n_records = expression.estimate_size(table)
               end
             else
               estimated_n_records = max_n_records
             end
           when :partial_min
-            create_expression(@table) do |expression|
-              @expression_builder.build_partial_min(expression)
+            create_expression(table) do |expression|
+              expression_builder.build_partial_min(expression)
               unless range_index_available_expression?(expression,
                                                        __LINE__, __method__)
                 return false
               end
-              estimated_n_records = expression.estimate_size(@table)
+              estimated_n_records = expression.estimate_size(table)
             end
           when :partial_max
-            create_expression(@table) do |expression|
-              @expression_builder.build_partial_max(expression)
+            create_expression(table) do |expression|
+              expression_builder.build_partial_max(expression)
               unless range_index_available_expression?(expression,
                                                        __LINE__, __method__)
                 return false
               end
-              estimated_n_records = expression.estimate_size(@table)
+              estimated_n_records = expression.estimate_size(table)
             end
           when :partial_min_and_max
-            create_expression(@table) do |expression|
-              @expression_builder.build_partial_min_and_max(expression)
+            create_expression(table) do |expression|
+              expression_builder.build_partial_min_and_max(expression)
               unless range_index_available_expression?(expression,
                                                        __LINE__, __method__)
                 return false
               end
-              estimated_n_records = expression.estimate_size(@table)
+              estimated_n_records = expression.estimate_size(table)
             end
           end
 
@@ -421,10 +429,11 @@ module Groonga
           nil
         end
 
-        def filter_shard_all(range_index)
+        def filter_shard_all(range_index, expression_builder)
+          table = @shard.table
           if @filter.nil?
-            if @table.size <= @context.current_offset
-              @context.current_offset -= @table.size
+            if table.size <= @context.current_offset
+              @context.current_offset -= table.size
               return
             end
             if range_index
@@ -432,7 +441,7 @@ module Groonga
                               nil, nil,
                               nil, nil)
             else
-              sort_result_set(@table)
+              sort_result_set(table)
             end
           else
             if range_index
@@ -441,7 +450,7 @@ module Groonga
                               nil, nil)
             else
               filter_table do |expression|
-                @expression_builder.build_all(expression)
+                expression_builder.build_all(expression)
               end
             end
           end
@@ -537,9 +546,10 @@ module Groonga
         end
 
         def filter_table
-          create_expression(@table) do |expression|
+          table = @shard.table
+          create_expression(table) do |expression|
             yield(expression)
-            result_set = @table.select(expression)
+            result_set = table.select(expression)
             sort_result_set(result_set)
           end
         end

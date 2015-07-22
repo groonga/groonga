@@ -17,23 +17,22 @@ module Groonga
         filter = input[:filter]
 
         total = 0
-        enumerator.each do |table, shard_key, shard_range|
-          total += count_n_records(table, filter,
-                                   shard_key, shard_range,
+        enumerator.each do |shard, shard_range|
+          total += count_n_records(filter, shard, shard_range,
                                    enumerator.target_range)
         end
         writer.write(total)
       end
 
       private
-      def log_use_range_index(use, table, line, method)
+      def log_use_range_index(use, table_name, line, method)
         message = "[logical_count]"
         if use
           message << "[range-index]"
         else
           message << "[select]"
         end
-        message << " <#{table.name}>"
+        message << " <#{table_name}>"
         Context.instance.logger.log(Logger::Level::DEBUG,
                                     __FILE__,
                                     line,
@@ -41,17 +40,24 @@ module Groonga
                                     message)
       end
 
-      def count_n_records(table, filter,
-                          shard_key, shard_range,
-                          target_range)
+      def count_n_records(filter, shard, shard_range, target_range)
         cover_type = target_range.cover_type(shard_range)
         return 0 if cover_type == :none
+
+        shard_key = shard.key
+        if shard_key.nil?
+          message = "[logical_count] shard_key doesn't exist: " +
+                    "<#{shard.key_name}>"
+          raise InvalidArgument, message
+        end
+        table = shard.table
+        table_name = shard.table_name
 
         expression_builder = RangeExpressionBuilder.new(shard_key,
                                                         target_range,
                                                         filter)
         if cover_type == :all
-          log_use_range_index(false, table, __LINE__, __method__)
+          log_use_range_index(false, table_name, __LINE__, __method__)
           if filter.nil?
             return table.size
           else
@@ -70,7 +76,7 @@ module Groonga
         end
 
         use_range_index = (!range_index.nil?)
-        log_use_range_index(use_range_index, table, __LINE__, __method__)
+        log_use_range_index(use_range_index, table_name, __LINE__, __method__)
 
         case cover_type
         when :partial_min

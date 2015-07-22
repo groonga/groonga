@@ -15,19 +15,24 @@ module Groonga
         enumerator = LogicalEnumerator.new("logical_table_remove", input)
 
         succeess = true
-        enumerator.each do |table, shard_key, shard_range|
-          remove_table(table,
-                       shard_key,
-                       shard_range,
-                       enumerator.target_range)
+        enumerator.each do |shard, shard_range|
+          remove_table(shard, shard_range, enumerator.target_range)
         end
         writer.write(succeess)
       end
 
       private
-      def remove_table(table, shard_key, shard_range, target_range)
+      def remove_table(shard, shard_range, target_range)
         cover_type = target_range.cover_type(shard_range)
         return if cover_type == :none
+
+        shard_key = shard.key
+        if shard_key.nil?
+          message = "[logical_table_remove] shard_key doesn't exist: " +
+                    "<#{shard.key_name}>"
+          raise InvalidArgument, message
+        end
+        table = shard.table
 
         expression_builder = RangeExpressionBuilder.new(shard_key,
                                                         target_range,
