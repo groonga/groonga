@@ -215,16 +215,16 @@ Query for searching the records described above::
   select Articles2 --match_columns comment.content --query mroonga --output_columns "_id, _score, *"
   select Articles2 --match_columns comment.comment.content --query mroonga --output_columns "_id, _score, *"
 
-The first query searches 'mroonga' from Comments2 table, the second one searches 'mroonga' from Replies2 and Comment2 table by using reference column index.
+The first query searches ``mroonga`` from ``Comments2`` table, the second one searches ``mroonga`` from ``Replies2`` and ``Comments2`` table by using reference column index.
 
 .. groonga-command
 .. include:: ../example/tutorial/match_columns-nested-index-select-with-three-relationship.log
 .. select Articles2 --match_columns comment.content --query mroonga --output_columns "_id, _score, *"
 .. select Articles2 --match_columns comment.comment.content --query mroonga --output_columns "_id, _score, *"
 
-As a result, the first query matches two article because of Comments2 table has two records which contains 'mroonga' as keyword.
+As a result, the first query matches two article because of ``Comments2`` table has two records which contains ``mroonga`` as keyword.
 
-On the other hand, the second one matches one article only because of Replies2 table has only one record which contains 'mroonga' as keyword, and there is one record which contains same keyword and refers to the record in Comments2 table.
+On the other hand, the second one matches one article only because of ``Replies2`` table has only one record which contains ``mroonga`` as keyword, and there is one record which contains same keyword and refers to the record in ``Comments2`` table.
 
 Indexes with Weight
 -------------------
