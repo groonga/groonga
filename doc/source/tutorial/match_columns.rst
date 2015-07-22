@@ -64,7 +64,7 @@ Even though same column index is used, Groonga supports to search against title 
 .. table_create --name Blog2 --flags TABLE_HASH_KEY --key_type ShortText
 .. column_create --table Blog2 --name title --flags COLUMN_SCALAR --type ShortText
 .. column_create --table Blog2 --name message --flags COLUMN_SCALAR --type ShortText
-.. table_create --name IndexBlog2 --flags TABLE_PAT_KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+.. table_create --name IndexBlog2 --flags TABLE_PAT_KEY --key_type ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
 .. column_create --table IndexBlog2 --name index_blog --flags COLUMN_INDEX|WITH_POSITION|WITH_SECTION --type Blog2 --source title,message
 .. load --table Blog2
 .. [
