@@ -13,8 +13,7 @@ module Groonga
       end
     end
 
-    def each_table(options={})
-      context = Context.instance
+    def each_name(options={})
       min = options[:prefix]
       flags = 0
       if options[:order] == :descending
@@ -30,10 +29,18 @@ module Groonga
       flags |= TableCursorFlags::PREFIX if min
       TableCursor.open(self, :min => min, :flags => flags) do |cursor|
         cursor.each do |id|
-          next if cursor.key.include?(".")
-          object = context[id]
-          yield(object) if object.is_a?(Table)
+          name = cursor.key
+          yield(name)
         end
+      end
+    end
+
+    def each_table(options={})
+      context = Context.instance
+      each_name(options) do |name|
+        next if name.include?(".")
+        object = context[name]
+        yield(object) if object.is_a?(Table)
       end
     end
   end
