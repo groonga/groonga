@@ -34,9 +34,9 @@ Then create ``IndexBlog1`` table for column indexes, add ``index_title`` column 
 .. column_create --table IndexBlog1 --name index_message --flags COLUMN_INDEX|WITH_POSITION --type Blog1 --source message
 .. load --table Blog1
 .. [
-.. {"_key":"grn1","title":"groonga test","message":"groonga message"},
-.. {"_key":"grn2","title":"baseball result","message":"rakutan eggs 4 - 4 groonga moritars"},
-.. {"_key":"grn3","title":"groonga message","message":"none"}
+.. {"_key":"grn1","title":"Groonga test","message":"Groonga message"},
+.. {"_key":"grn2","title":"baseball result","message":"rakutan eggs 4 - 4 Groonga moritars"},
+.. {"_key":"grn3","title":"Groonga message","message":"none"}
 .. ]
 
 ``match_columns`` option of ``select`` command accepts multiple columns as search target.
@@ -68,9 +68,9 @@ Even though same column index is used, Groonga supports to search against title 
 .. column_create --table IndexBlog2 --name index_blog --flags COLUMN_INDEX|WITH_POSITION|WITH_SECTION --type Blog2 --source title,message
 .. load --table Blog2
 .. [
-.. {"_key":"grn1","title":"groonga test","message":"groonga message"},
-.. {"_key":"grn2","title":"baseball result","message":"rakutan eggs 4 - 4 groonga moritars"},
-.. {"_key":"grn3","title":"groonga message","message":"none"}
+.. {"_key":"grn1","title":"Groonga test","message":"Groonga message"},
+.. {"_key":"grn2","title":"baseball result","message":"rakutan eggs 4 - 4 Groonga moritars"},
+.. {"_key":"grn3","title":"Groonga message","message":"none"}
 .. ]
 
 Let's search same query in previous section. You can get same search results.
@@ -138,9 +138,9 @@ Here is the sample data.
 .. include:: ../example/tutorial/match_columns-nested-index-data.log
 .. load --table Comments
 .. [
-.. {"_key": 1, "content": "I'm using groonga too!"},
-.. {"_key": 2, "content": "I'm using groonga and mroonga!"},
-.. {"_key": 3, "content": "I'm using mroonga too!"}
+.. {"_key": 1, "content": "I'm using Groonga too!"},
+.. {"_key": 2, "content": "I'm using Groonga and Mroonga!"},
+.. {"_key": 3, "content": "I'm using Mroonga too!"}
 .. ]
 .. load --table Articles
 .. [
@@ -193,15 +193,15 @@ Here is the sample data.
 .. include:: ../example/tutorial/match_columns-nested-index-data-with-three-relationship.log
 .. load --table Replies2
 .. [
-.. {"_key": 1, "content": "I'm using rroonga too!"},
-.. {"_key": 2, "content": "I'm using groonga and mroonga and rroonga!"},
-.. {"_key": 3, "content": "I'm using nroonga too!"}
+.. {"_key": 1, "content": "I'm using Rroonga too!"},
+.. {"_key": 2, "content": "I'm using Groonga and Mroonga and Rroonga!"},
+.. {"_key": 3, "content": "I'm using Nroonga too!"}
 .. ]
 .. load --table Comments2
 .. [
-.. {"_key": 1, "content": "I'm using groonga too!", "comment": 1},
-.. {"_key": 2, "content": "I'm using groonga and mroonga!", "comment": 2},
-.. {"_key": 3, "content": "I'm using mroonga too!"}
+.. {"_key": 1, "content": "I'm using Groonga too!", "comment": 1},
+.. {"_key": 2, "content": "I'm using Groonga and Mroonga!", "comment": 2},
+.. {"_key": 3, "content": "I'm using Mroonga too!"}
 .. ]
 .. load --table Articles2
 .. [
