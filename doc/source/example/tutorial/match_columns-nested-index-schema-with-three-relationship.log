@@ -16,7 +16,7 @@ Execution example::
   # [[0, 1337566253.89858, 0.000355720520019531], true]
   column_create Articles2 comment COLUMN_SCALAR Comments2
   # [[0, 1337566253.89858, 0.000355720520019531], true]
-  table_create Lexicon2 TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+  table_create Lexicon2 TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
   # [[0, 1337566253.89858, 0.000355720520019531], true]
   column_create Lexicon2 articles_content COLUMN_INDEX|WITH_POSITION Articles2 content
   # [[0, 1337566253.89858, 0.000355720520019531], true]

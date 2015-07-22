@@ -33,19 +33,19 @@ Execution example::
   #       [
   #         1, 
   #         "grn1", 
-  #         "groonga message", 
-  #         "groonga test"
+  #         "Groonga message", 
+  #         "Groonga test"
   #       ], 
   #       [
   #         3, 
   #         "grn3", 
   #         "none", 
-  #         "groonga message"
+  #         "Groonga message"
   #       ], 
   #       [
   #         2, 
   #         "grn2", 
-  #         "rakutan eggs 4 - 4 groonga moritars", 
+  #         "rakutan eggs 4 - 4 Groonga moritars", 
   #         "baseball result"
   #       ]
   #     ]
@@ -85,13 +85,13 @@ Execution example::
   #         3, 
   #         "grn3", 
   #         "none", 
-  #         "groonga message"
+  #         "Groonga message"
   #       ], 
   #       [
   #         1, 
   #         "grn1", 
-  #         "groonga message", 
-  #         "groonga test"
+  #         "Groonga message", 
+  #         "Groonga test"
   #       ]
   #     ]
   #   ]
@@ -130,7 +130,7 @@ Execution example::
   #         3, 
   #         "grn3", 
   #         "none", 
-  #         "groonga message"
+  #         "Groonga message"
   #       ]
   #     ]
   #   ]
