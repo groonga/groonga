@@ -138,7 +138,7 @@ correspondence table between command and flush targets.
        Database::
 
          io_flush --recursive no
-   * - :doc:`table_create` and :doc:`table_rename`
+   * - :doc:`table_remove` and :doc:`table_rename`
      - Database.
      - Database::
 
@@ -152,7 +152,7 @@ correspondence table between command and flush targets.
        Database::
 
          io_flush --recursive no
-   * - :doc:`column_create` and :doc:`column_rename`
+   * - :doc:`column_remove` and :doc:`column_rename`
      - Database.
      - Database::
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-07-23 17:14+0900\n"
+"PO-Revision-Date: 2015-07-23 17:18+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -4696,8 +4696,8 @@ msgid "Table::"
 msgstr "テーブル::"
 
 # e2d9ddbf60d9407a9433c7196982f7a7
-msgid ":doc:`table_create` and :doc:`table_rename`"
-msgstr ":doc:`table_create` と :doc:`table_rename`"
+msgid ":doc:`table_remove` and :doc:`table_rename`"
+msgstr ":doc:`table_remove` と :doc:`table_rename`"
 
 # 9478ec95d89c45bcbc61b8f57e9b48cf
 # 2d24db9cc66f425e886dec7fa4950429
@@ -4709,8 +4709,8 @@ msgid "Target column and database."
 msgstr "処理対象のカラムとデータベース。"
 
 # dff23b6bdc68470fa8bba8c6f6e745d5
-msgid ":doc:`column_create` and :doc:`column_rename`"
-msgstr ":doc:`column_create` と :doc:`column_rename`"
+msgid ":doc:`column_remove` and :doc:`column_rename`"
+msgstr ":doc:`column_remove` と :doc:`column_rename`"
 
 # 49ac54b344964fb79d5dfb837e8698ed
 msgid ":doc:`plugin_register` and :doc:`plugin_unregister`"
