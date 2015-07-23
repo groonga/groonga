@@ -7,6 +7,99 @@
 News
 ====
 
+.. _release-5-0-6:
+
+Release 5.0.6 - 2015-07-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [mrb] Binded :c:func:`grn_table_group_flags()` to ``TableGroupFlags``.
+* [mrb] Binded :c:func:`grn_table_group()` to ``Table#group``.
+* [:doc:`/reference/commands/logical_select`] Fixed output format.
+  It has become :doc:`/reference/commands/select` compatible format.
+* [:doc:`/reference/commands/logical_select`] Supported the following parameters.
+
+  * ``--output_columns``
+  * ``--offset``
+  * ``--limit``
+  * ``--drilldown``
+  * ``--drilldown_sortby``
+  * ``--drilldown_offset``
+  * ``--drilldown_limit``
+
+* [plugin] Added :c:func:`grn_command_input_get_arguments()`.
+* [mrb] Binded :c:func:`grn_command_input_get_arguments()` to ``CommandInput#arguments``.
+* Supported offline index construction for reference vector. For example::
+
+    table_create Entries TABLE_NO_KEY
+    column_create Entries numbers COLUMN_VECTOR Int32
+
+    load --table Entries
+    [
+    ["numbers"],
+    [[18, 19, 20]],
+    [[100, 200]]
+    ]
+
+    table_create Numbers TABLE_PAT_KEY Int32
+    column_create Numbers entries_numbers COLUMN_INDEX Entries numbers
+
+    select Numbers --output_columns _key
+
+* Supported ``'vector_text_column @ "element"'`` without index. For example::
+
+    table_create Memos TABLE_NO_KEY
+    column_create Memos tags COLUMN_VECTOR Text
+
+    load --table Memos
+    [
+    {"tags": ["Groonga", "Rroonga", "Mroonga"]}
+    ]
+
+    select Memos --filter 'tags @ "Rroonga"'
+
+* Supported ``'fixed_size_type_vector_column @ element'`` without index. For example::
+
+    table_create Memos TABLE_NO_KEY
+    column_create Memos numbers COLUMN_VECTOR Int32
+
+    load --table Memos
+    [
+    {"numbers": [1, 2, 3]}
+    ]
+
+    select Memos --filter 'numbers @ 2'
+
+* [:doc:`/reference/commands/logical_range_filter`] Supported ``'fixed_size_type_vector_column @ element'``.
+* TODO: commit 35968348ecea7ae0573b138cb18b42236abc0811
+
+Fixes
+^^^^^
+
+* Fixed a memory leak when an error is occurred in grn_expr_exec().
+  For example, unsupported operator (e.g. GRN_OP_TERM_EXTRACT) is used.
+  "not implemented operator assigned" is occurred for the case.
+
+* Fix a bug function can't be found in function call with complex argument
+
+    An example complex argument is 'Table["key"].column'.
+
+        function(_key, Table["key"].column)
+
+    can't be found "function" as function object. It detects "_key" as
+    function but it's not function object. So the function call report an
+    error.
+
+* [bindings/php] Added a missing check for a memory allocation failure.
+  [Reported by Bill Parker]
+
+Thanks
+^^^^^^
+
+* Bill Parker
+
 .. _release-5-0-5:
 
 Release 5.0.5 - 2015-06-29
