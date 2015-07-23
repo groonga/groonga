@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-07-23 15:37+0900\n"
+"PO-Revision-Date: 2015-07-23 17:14+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -4638,21 +4638,37 @@ msgstr "``io_flush`` の引数"
 msgid ":doc:`load` and :doc:`delete`"
 msgstr ":doc:`load` と :doc:`delete`"
 
+# 2145331209cc44d3af543c4e5e3fd5c5
+# c0ad302ffb28489c89f91a52efdb8306
+msgid "Target table and its columns."
+msgstr "テーブルとそのテーブルのカラム。"
+
+# 5f01dec2fa224ed4a863390eaf37ed0a
+# 3d3d128f8ca94323b686d1efcb573354
+msgid ""
+"If there are one or more reference columns in these columns, referenced "
+"tables are also flush targets."
+msgstr ""
+"カラムの中に参照カラムがある場合、参照されているテーブルも書き出し対象にな"
+"る。"
+
 # 9ef552f962054f95aa95daf5020cfb24
 # a09fef1fc05044198e09000c14b8ab5b
 msgid ""
-"Target table and its columns. If these columns are indexed, tables of "
+"If there are one or more indexed columns in these columns, tables of "
 "corresponding index columns and corresponding index columns are also flush "
 "targets."
 msgstr ""
-"処理対象のテーブルとそのテーブルのカラム。もし、カラムにインデックスが張られ"
-"ている場合は、対応するインデックスカラムとインデックスカラムのテーブルも書き"
-"出し対象になる。"
+"インデックスが張られているカラムがある場合、対応するインデックスカラムとその"
+"インデックスカラムのテーブルも書き出し対象になる。"
 
 # 2145331209cc44d3af543c4e5e3fd5c5
 # c0ad302ffb28489c89f91a52efdb8306
 msgid "Table and its columns::"
 msgstr "テーブルとそのテーブルのカラム::"
+
+msgid "A referenced table::"
+msgstr "参照されているテーブル::"
 
 msgid "A table of an index column::"
 msgstr "インデックスカラムのテーブル::"
@@ -4661,7 +4677,7 @@ msgid "An index column::"
 msgstr "インデックスカラム::"
 
 # 142e33f55d794877a67f48b4cf3944aa
-msgid "And database is also flush target."
+msgid "Database is also flush target."
 msgstr "データベースも書き出し対象。"
 
 # bac68693a4014614a3ef2f914475a22a

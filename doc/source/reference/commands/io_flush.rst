@@ -76,12 +76,21 @@ correspondence table between command and flush targets.
      - Flush targets
      - ``io_flush`` arguments
    * - :doc:`load` and :doc:`delete`
-     - Target table and its columns. If these columns are indexed,
+     - Target table and its columns.
+
+       If there are one or more reference columns in these columns,
+       referenced tables are also flush targets.
+
+       If there are one or more indexed columns in these columns,
        tables of corresponding index columns and corresponding index
        columns are also flush targets.
      - Table and its columns::
 
          io_flush --target_name TABLE_NAME
+
+       A referenced table::
+
+         io_flush --target_name REFERENCED_TABLE_NAME --recursive no
 
        A table of an index column::
 
@@ -91,14 +100,23 @@ correspondence table between command and flush targets.
 
          io_flush --target_name TABLE_NAME_OF_INDEX_COLUMN.INDEX_COLUMN
    * - :doc:`truncate`
-     - Target table and its columns. If these columns are indexed,
+     - Target table and its columns.
+
+       If there are one or more reference columns in these columns,
+       referenced tables are also flush targets.
+
+       If there are one or more indexed columns in these columns,
        tables of corresponding index columns and corresponding index
        columns are also flush targets.
 
-       And database is also flush target.
+       Database is also flush target.
      - Table and its columns::
 
          io_flush --target_name TABLE_NAME
+
+       A referenced table::
+
+         io_flush --target_name REFERENCED_TABLE_NAME --recursive no
 
        A table of an index column::
 
