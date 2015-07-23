@@ -19610,18 +19610,3 @@ msgstr ""
 
 msgid "Object型はv1.2でサポートされます。"
 msgstr ""
-
-#, fuzzy
-#~ msgid "``io_flush`` returns ``true`` as body on success such as::"
-#~ msgstr ""
-#~ "``register`` が成功したときは以下のようにボディは ``true`` になります::"
-
-#, fuzzy
-#~ msgid "If ``io_flush`` fails, error details are in ``HEADER``."
-#~ msgstr "``register`` が失敗すると、エラーの詳細は ``HEADER`` に含まれます。"
-
-#~ msgid "``io_flush`` command has two parameters. ::"
-#~ msgstr "``io_flush`` コマンドには2つの引数があります。::"
-
-#~ msgid "This section describes parameters of ``io_flush``."
-#~ msgstr "このセクションでは ``io_flush`` の引数について説明します。"
