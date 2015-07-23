@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-07-23 12:25+0900\n"
+"PO-Revision-Date: 2015-07-23 12:44+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -4106,44 +4106,44 @@ msgid ""
 "It is a light operation. It just changes a relationship between name and the "
 "column object. It doesn't copy column values."
 msgstr ""
-"軽い操作です。名前とカラムオブジェクト間の関係を変更するだけです。カラムの値"
-"をコピーしません。"
+"これは軽い操作です。名前とカラムオブジェクト間の関係を変更するだけです。カラ"
+"ムの値をコピーしません。"
 
 msgid ""
 "It is a dangerous operation. You must stop all operations including read "
 "operations while you run ``column_rename``. If the following case is "
 "occurred, Groonga process may be crashed:"
 msgstr ""
-"危険な操作です。 ``column_rename`` が走っている間、読み取り操作を含む全ての操"
-"作を停止しなければいけません。以下のケースが起こった場合、Groongaプロセスはク"
-"ラッシュするかもしれません。"
+"これは危険な操作です。 ``column_rename`` を実行している間、読み取り操作を含む"
+"全ての操作を停止しなければいけません。以下のケースが起こった場合、Groongaプロ"
+"セスはクラッシュするかもしれません。"
 
 msgid ""
 "Starts an operation (like ``select``) that accesses the column to be renamed "
 "by the current column name. The current column name is called as ``the old "
 "column name`` in the below because the column name is renamed."
 msgstr ""
-"現在のカラム名によって名前が変更されるカラムにアクセスする操作( ``select`` の"
-"ような)を開始します。カラム名が変更されるため、下記では現在のカラム名は ``古"
-"いカラム名`` と呼ばれます。"
+"現在のカラム名で名前を変更しようとしているカラムにアクセスする操作（たとえば "
+"``select`` ）を開始します。以降、現在のカラム名を ``古いカラム名`` と呼ぶこと"
+"にします。これは、今、このカラム名を変更しようとしているからです。"
 
 msgid "Runs ``column_rename``. The ``select`` is still running."
-msgstr "``column_rename`` を走らせます。 ``select`` はまだ実行されています。"
+msgstr "``column_rename`` を実行します。 ``select`` は実行中です。"
 
 msgid ""
 "The ``select`` accesses the column to be renamed by the old column name. But "
 "the ``select`` can't find the column by the old name because the column has "
 "been renamed to the new column name. It may crash the Groonga process."
 msgstr ""
-"``select`` は古いカラム名によって名前が変更されたカラムにアクセスします。しか"
-"し、カラムはすでに新しいカラム名に変更されているため、``select`` は古いカラム"
-"名によってカラムを見つけることができません。Groongaプロセスはクラッシュするで"
-"しょう。"
+"``select`` は古いカラム名で名前が変更されたカラムにアクセスします。しかし、カ"
+"ラムはすでに新しいカラム名に変更されているため、 ``select`` は古いカラム名で"
+"カラムを見つけることができません。このときGroongaプロセスがクラッシュするかも"
+"しれません。"
 
 msgid ""
 "``column_rename`` command takes three parameters. All parameters are "
 "required::"
-msgstr "``column_rename`` コマンドは引数を3つとります。すべて必須です::"
+msgstr "``column_rename`` コマンドは引数を3つとります。すべて必須です。::"
 
 msgid "Here is a simple example of ``column_rename`` command."
 msgstr "以下は ``column_rename`` コマンドの簡単な使用例です。"
@@ -4155,7 +4155,7 @@ msgid "Specifies the name of table that has the column to be renamed."
 msgstr "名前を変更したいカラムが所属するテーブルの名前を指定します。"
 
 msgid "Specifies the column name to be renamed."
-msgstr "名前を変更するカラムを指定します。"
+msgstr "名前を変更するカラムの名前を指定します。"
 
 msgid "``new_name``"
 msgstr ""
@@ -4654,8 +4654,11 @@ msgstr ""
 msgid "Table and its columns::"
 msgstr "テーブルとそのテーブルのカラム::"
 
-msgid "An index table::"
-msgstr ""
+msgid "A table of an index column::"
+msgstr "インデックスカラムのテーブル::"
+
+msgid "An index column::"
+msgstr "インデックスカラム::"
 
 # 142e33f55d794877a67f48b4cf3944aa
 msgid "And database is also flush target."
@@ -9570,77 +9573,66 @@ msgid ""
 "ンデックスも再帰的に削除されます。"
 msgstr ""
 
-#, fuzzy
 msgid "``table_rename``"
-msgstr "開始時間"
+msgstr ""
 
-#, fuzzy
 msgid "``table_rename`` command renames a table."
-msgstr "``column_rename`` コマンドはカラム名を変更します。"
+msgstr "``table_rename`` コマンドはテーブル名を変更します。"
 
-#, fuzzy
 msgid ""
 "It is a light operation. It just changes a relationship between name and the "
 "table object. It doesn't copy table and its column values."
 msgstr ""
-"軽い操作です。名前とカラムオブジェクト間の関係を変更するだけです。カラムの値"
-"をコピーしません。"
+"これは軽い操作です。名前とテーブルオブジェクト間の関係を変更するだけです。"
+"テーブルの値とテーブルのカラムの値をコピーしません。"
 
-#, fuzzy
 msgid ""
 "It is a dangerous operation. You must stop all operations including read "
 "operations while you run ``table_rename``. If the following case is "
 "occurred, Groonga process may be crashed:"
 msgstr ""
-"危険な操作です。 ``column_rename`` が走っている間、読み取り操作を含む全ての操"
-"作を停止しなければいけません。以下のケースが起こった場合、Groongaプロセスはク"
-"ラッシュするかもしれません。"
+"これは危険な操作です。 ``table_rename`` を実行している間、読み取り操作を含む"
+"すべての操作を停止しなければいけません。以下のケースが起こった場合、Groongaプ"
+"ロセスはクラッシュするかもしれません。"
 
-#, fuzzy
 msgid ""
 "Starts an operation (like ``select``) that accesses the table to be renamed "
 "by the current table name. The current table name is called as ``the old "
 "table name`` in the below because the table name is renamed."
 msgstr ""
-"現在のカラム名によって名前が変更されるカラムにアクセスする操作( ``select`` の"
-"ような)を開始します。カラム名が変更されるため、下記では現在のカラム名は ``古"
-"いカラム名`` と呼ばれます。"
+"現在のテーブル名で名前を変更しようとしているテーブルにアクセスする操作（たと"
+"えば ``select`` ）を開始します。以降、現在のテーブル名を ``古いテーブル名`` "
+"と呼ぶことにします。これは、今、このテーブル名を変更しようとしているからで"
+"す。"
 
-#, fuzzy
 msgid "Runs ``table_rename``. The ``select`` is still running."
-msgstr "``column_rename`` を走らせます。 ``select`` はまだ実行されています。"
+msgstr "``table_rename`` を実行します。 ``select`` は実行中です。"
 
-#, fuzzy
 msgid ""
 "The ``select`` accesses the table to be renamed by the old table name. But "
 "the ``select`` can't find the table by the old name because the table has "
 "been renamed to the new table name. It may crash the Groonga process."
 msgstr ""
-"``select`` は古いカラム名によって名前が変更されたカラムにアクセスします。しか"
-"し、カラムはすでに新しいカラム名に変更されているため、``select`` は古いカラム"
-"名によってカラムを見つけることができません。Groongaプロセスはクラッシュするで"
-"しょう。"
+"``select`` は古いテーブル名で、名前が変更されたテーブルにアクセスします。しか"
+"し、テーブルはすでに新しいテーブル名に変更されているため、 ``select`` は古い"
+"テーブル名でテーブルを見つけることができません。このときGroongaプロセスがク"
+"ラッシュするかもしれません。"
 
-#, fuzzy
 msgid ""
 "``table_rename`` command takes two parameters. All parameters are required::"
-msgstr "``column_rename`` コマンドは引数を3つとります。すべて必須です::"
+msgstr "``table_rename`` コマンドは引数を3つとります。すべて必須です。::"
 
-#, fuzzy
 msgid "Here is a simple example of ``table_rename`` command."
-msgstr "以下は ``column_rename`` コマンドの簡単な使用例です。"
+msgstr "以下は ``table_rename`` コマンドの簡単な使用例です。"
 
-#, fuzzy
 msgid "This section describes parameters of ``table_rename``."
-msgstr "このセクションでは ``column_rename`` の引数について説明します。"
+msgstr "このセクションでは ``table_rename`` の引数について説明します。"
 
-#, fuzzy
 msgid "Specifies the table name to be renamed."
-msgstr "名前を変更するカラムを指定します。"
+msgstr "名前を変更するテーブルの名前を指定します。"
 
-#, fuzzy
 msgid "Specifies the new table name."
-msgstr "新しいカラム名を指定します。"
+msgstr "新しいテーブル名を指定します。"
 
 msgid "``table_tokenize``"
 msgstr ""
@@ -19619,17 +19611,17 @@ msgstr ""
 msgid "Object型はv1.2でサポートされます。"
 msgstr ""
 
-#~ msgid "This section describes parameters of ``io_flush``."
-#~ msgstr "このセクションでは ``io_flush`` の引数について説明します。"
-
-#~ msgid "``io_flush`` command has two parameters. ::"
-#~ msgstr "``io_flush`` コマンドには2つの引数があります。::"
+#, fuzzy
+#~ msgid "``io_flush`` returns ``true`` as body on success such as::"
+#~ msgstr ""
+#~ "``register`` が成功したときは以下のようにボディは ``true`` になります::"
 
 #, fuzzy
 #~ msgid "If ``io_flush`` fails, error details are in ``HEADER``."
 #~ msgstr "``register`` が失敗すると、エラーの詳細は ``HEADER`` に含まれます。"
 
-#, fuzzy
-#~ msgid "``io_flush`` returns ``true`` as body on success such as::"
-#~ msgstr ""
-#~ "``register`` が成功したときは以下のようにボディは ``true`` になります::"
+#~ msgid "``io_flush`` command has two parameters. ::"
+#~ msgstr "``io_flush`` コマンドには2つの引数があります。::"
+
+#~ msgid "This section describes parameters of ``io_flush``."
+#~ msgstr "このセクションでは ``io_flush`` の引数について説明します。"
