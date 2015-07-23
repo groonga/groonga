@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-07-15 11:53+0900\n"
+"PO-Revision-Date: 2015-07-23 12:25+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -4518,18 +4518,294 @@ msgstr ""
 msgid "This command is an experimental feature."
 msgstr "このコマンドは実験的な機能です。"
 
-msgid "``io_flush`` command has two parameters. ::"
-msgstr "``io_flush`` コマンドには2つの引数があります。::"
+# 84a255d8908f4d63afc9cd794aa840c4
+msgid ""
+"``io_flush`` flushes all changes in memory to disk explicitly. Normally, you "
+"don't need to use ``io_flush`` explicitly. Because flushing is done "
+"automatically by OS. And flushing by OS is effective."
+msgstr ""
+"``io_flush`` はメモリー上のすべての変更を明示的にディスクに書き出します。通"
+"常、明示的に ``io_flush`` を使う必要はありません。なぜなら、OSが自動的に書き"
+"出してくれるからです。また、OSが書き出した方が効率的だからです。"
 
-msgid "This section describes parameters of ``io_flush``."
-msgstr "このセクションでは ``io_flush`` の引数について説明します。"
+# 2e465067279b411a936e6d67e4bf6ac8
+msgid ""
+"You need to use ``io_flush`` explicitly when your system may often crash "
+"unexpectedly or you may not shutdown your Groonga process in a normal way. "
+"(For example, using :doc:`shutdown` is a normal shutdown process.) It's "
+"better that you use ``io_flush`` after you change your Groonga database for "
+"the case. Here are commands that change your Groonga database:"
+msgstr ""
+"いくつか明示的に ``io_flush`` を使う必要があるケースがあります。1つは、システ"
+"ムが不意にクラッシュすることがよくあるケースです。もう1つは、Groongaプロセス"
+"を通常の終了プロセスで終了できない可能性があるケースです。（通常の終了プロセ"
+"スとは、例えば、 :doc:`shutdown` を使った終了プロセスです。）これらのケースで"
+"は、Groongaデータベースに変更を加えた後に ``io_flush`` を使うとよいです。以下"
+"はGroongaデータベースに変更を加えるコマンドのリストです。"
+
+# f79b943bb5da404389b1f846e06ba7ab
+msgid ":doc:`delete`"
+msgstr ""
+
+# 19dbd6ba71a34d52aa758301c98cc6a9
+# 60c5cc28865247f49d35b522cabe847c
+msgid ":doc:`truncate`"
+msgstr ""
+
+# bc2342c13d60423483fa0831b72000c0
+# c65e16983da842f79b54be3fb98864aa
+msgid ":doc:`table_create`"
+msgstr ""
+
+# 94dd34929f2b447cb319f3b0da76dffb
+msgid ":doc:`table_remove`"
+msgstr ""
+
+# 119ec94770ba42c0b14e096ddad089c9
+msgid ":doc:`table_rename`"
+msgstr ""
+
+# 0d20b41b75164aefb3fbe1ac0467ee0a
+# 510d7f7f3e344b548312eb8285febabc
+msgid ":doc:`column_create`"
+msgstr ""
+
+# 6db1755519094c66bf983dc4a3e7d487
+msgid ":doc:`column_remove`"
+msgstr ""
+
+# 39b68b141974487b8137d18adf01cd87
+msgid ":doc:`column_rename`"
+msgstr ""
+
+# 861a5b37745843c498a7bd868970880e
+msgid ":doc:`plugin_register`"
+msgstr ""
+
+# dbbad212d1584251a3d44778da855d66
+# 3d2698c6f65a4d4d990befa790becc7b
+# c9cf78b4174e4e6b99535ca38c0c2120
+msgid ":doc:`plugin_unregister`"
+msgstr ""
+
+# 22f8834af1e44ef194ee847e5b471385
+msgid ""
+"If you're using :ref:`select-scorer` parameter in :doc:`select` to change "
+"existing column values, :doc:`select` is added to the above list."
+msgstr ""
+"もし、 :doc:`select` の :ref:`select-scorer` パラメーターをカラムの値を変更す"
+"るために使っているなら、 :doc:`select` もこのリストに入ります。"
+
+# 5bebdbaba69b46d38848f43aac925e2d
+msgid ""
+"Note that ``io_flush`` may be a heavy process. If there are many changes in "
+"memory, flushing them to disk is a heavy process."
+msgstr ""
+"``io_flush`` は重い処理になる可能性があることに注意してください。もし、メモ"
+"リー上に多くの変更があるなら、それらをディスクに書き出す処理は重い処理になり"
+"ます。"
+
+msgid ""
+"``io_flush`` doesn't has any required parameters. ``io_flush`` has has two "
+"optional parameters::"
+msgstr ""
+"``io_flush`` には必須のパラメーターはありません。 ``io_flush`` には2つの省略"
+"可能なパラメーターがあります。::"
+
+# 77cf20be044f4f94a529eeb2ce2238b9
+msgid "You can flush all changes in memory to disk with no arguments:"
+msgstr ""
+"引数無しで実行するとメモリー上のすべての変更をディスクに書き出すことができま"
+"す。"
+
+# 51e0e3ce24f44388821781d3060d3de7
+msgid ""
+"If you know what is changed, you can narrow flush targets. Here is a "
+"correspondence table between command and flush targets."
+msgstr ""
+"もし変更点を把握しているなら、書き出し対象を狭めることができます。以下はコマ"
+"ンドと書き出し対象の対応表です。"
+
+# 2cae95ff2f7e45fa9990443972d3ba96
+msgid "Flush targets"
+msgstr "書き出し対象"
+
+# e314734d6642457a8444fe31f4f89b9f
+msgid "``io_flush`` arguments"
+msgstr "``io_flush`` の引数"
+
+# 27816899eef343bdb616f430bfeb8432
+msgid ":doc:`load` and :doc:`delete`"
+msgstr ":doc:`load` と :doc:`delete`"
+
+# 9ef552f962054f95aa95daf5020cfb24
+# a09fef1fc05044198e09000c14b8ab5b
+msgid ""
+"Target table and its columns. If these columns are indexed, tables of "
+"corresponding index columns and corresponding index columns are also flush "
+"targets."
+msgstr ""
+"処理対象のテーブルとそのテーブルのカラム。もし、カラムにインデックスが張られ"
+"ている場合は、対応するインデックスカラムとインデックスカラムのテーブルも書き"
+"出し対象になる。"
+
+# 2145331209cc44d3af543c4e5e3fd5c5
+# c0ad302ffb28489c89f91a52efdb8306
+msgid "Table and its columns::"
+msgstr "テーブルとそのテーブルのカラム::"
+
+msgid "An index table::"
+msgstr ""
+
+# 142e33f55d794877a67f48b4cf3944aa
+msgid "And database is also flush target."
+msgstr "データベースも書き出し対象。"
+
+# bac68693a4014614a3ef2f914475a22a
+# 6598395f0b874063ab31bcc5c8631eb6
+# eb014c3df61c4cae9cf6bbc0fb720965
+# 3f62ded85dcf4bd49cd4120a39d22d49
+# bacfda2e63804b23821f7f8a9fa16025
+# 3454654016e0405a9a24a71c222623dd
+msgid "Database::"
+msgstr "データベース::"
+
+msgid "Target table and database."
+msgstr "処理対象のテーブルとデータベース。"
+
+msgid "Table::"
+msgstr "テーブル::"
+
+# e2d9ddbf60d9407a9433c7196982f7a7
+msgid ":doc:`table_create` and :doc:`table_rename`"
+msgstr ":doc:`table_create` と :doc:`table_rename`"
+
+# 9478ec95d89c45bcbc61b8f57e9b48cf
+# 2d24db9cc66f425e886dec7fa4950429
+# 8e31d5b5207b473fb6458d19d1abc994
+msgid "Database."
+msgstr "データベース。"
+
+msgid "Target column and database."
+msgstr "処理対象のカラムとデータベース。"
+
+# dff23b6bdc68470fa8bba8c6f6e745d5
+msgid ":doc:`column_create` and :doc:`column_rename`"
+msgstr ":doc:`column_create` と :doc:`column_rename`"
+
+# 49ac54b344964fb79d5dfb837e8698ed
+msgid ":doc:`plugin_register` and :doc:`plugin_unregister`"
+msgstr ":doc:`plugin_register` と :doc:`plugin_unregister`"
+
+msgid "There is no required parameters."
+msgstr "必須の引数はありません。"
 
 msgid "``target_name``"
 msgstr ""
 
+# 44f5e1766bed4e1ba9ba3ee548cbe231
+msgid ""
+"Specifies a flush target object name. Target object is one of database, "
+"table or column."
+msgstr ""
+"書き出し対象オブジェクトの名前を指定します。書き出し対象オブジェクトはデータ"
+"ベース、テーブル、カラムのどれかです。"
+
+# 68d50be4ff0d4be4bd02bdf815fd0313
+msgid "If you omit this parameter, database is flush target object:"
+msgstr ""
+"このパラメーターを省略すると、データベースが書き出し対象オブジェクトになりま"
+"す。"
+
+# ac81176df271464f82d275c8a39d3188
+msgid "If you specify table name, the table is flush target object:"
+msgstr ""
+"テーブル名を指定すると、そのテーブルが書き出し対象オブジェクトになります。"
+
+# 891eacf2bde14a24b0077166ecb77f91
+msgid "If you specify column name, the column is flush target object:"
+msgstr "カラム名を指定すると、そのカラムが書き出し対象オブジェクトになります。"
+
 # 8636bcea58dc461bbba52c71671defb6
 msgid "``recursive``"
 msgstr ""
+
+# 10e63c2a9052442fbfca25373f30d1db
+msgid ""
+"Specifies whether child objects of the flush target object are also flush "
+"target objects."
+msgstr ""
+"書き出し対象オブジェクトの子オブジェクトも書き出し対象にするかどうかを指定し"
+"ます。"
+
+# a71d2bb0c6c5419bb837a3cc39701c5e
+msgid "Child objects of database is all tables and all columns."
+msgstr "データベースの子オブジェクトはすべてのテーブルとすべてのカラムです。"
+
+msgid "Child objects of table is all its columns."
+msgstr "テーブルの子オブジェクトはそのテーブルのすべてのカラムです。"
+
+# bdc6b10494264358b446187a7e627589
+msgid "Child objects of column is nothing."
+msgstr "カラムの子オブジェクトはありません。"
+
+# c5b2bc1b243c469eade4c43bc622f4ef
+msgid ""
+"``recursive`` value must be ``yes`` or ``no``. ``yes`` means that all of the "
+"specified flush target object and child objects are flush target objects. "
+"``no`` means that only the specified flush target object is flush target "
+"object."
+msgstr ""
+"``recursive`` の値は ``yes`` または ``no`` でなければいけません。 ``yes`` は"
+"指定した書き出し対象オブジェクトとその子オブジェクトすべてを書き出し対象オブ"
+"ジェクトにするという意味です。 ``no`` は指定した書き出し対象オブジェクトのみ"
+"を書き出し対象オブジェクトにするという意味です。"
+
+# 99b7fc4dc5954f45a0bbd460bbff70a5
+msgid ""
+"The following ``io_flush`` flushes all changes in database, all tables and "
+"all columns:"
+msgstr ""
+"次の ``io_flush`` はデータベースとすべてのテーブルとすべてのカラムのすべての"
+"変更を書き出します。"
+
+# 0d076d76bf344fb7b172fa67cd4fffe1
+msgid "The following ``io_flush`` flushes all changes only in database:"
+msgstr "次の ``io_flush`` はデータベースの変更だけを書き出します。"
+
+# 13d0dbee5638435486e1304515ee982d
+msgid ""
+"If you specify other value (not ``yes`` neither ``no``) or omit "
+"``recursive`` parameter, ``yes`` is used."
+msgstr ""
+"他の値（つまり、 ``yes`` でも ``no`` でもない値）を指定した場合、または "
+"``recursive`` パラメーターを指定しない場合は ``yes`` が使われます。"
+
+# 1ba7bc39d94447c6b67f2fa572eb04a6
+msgid ""
+"``yes`` is used in the following case because invalid ``recursive`` argument "
+"is specified:"
+msgstr ""
+"``recursive`` 引数の値が不正なので、次のケースでは ``yes`` が使われます。"
+
+# 7d90f47a66e74d26aef99a911e2c102a
+msgid ""
+"``yes`` is used in the following case because ``recursive`` parameter isn't "
+"specified:"
+msgstr ""
+"``recursive`` パラメーターが指定されていないので、次のケースでは ``yes`` が使"
+"われます。"
+
+msgid "The command returns ``true`` as body on success such as::"
+msgstr "このコマンドが成功したときは以下のようにボディは ``true`` になります::"
+
+msgid "If the command fails, error details are in ``HEADER``."
+msgstr "このコマンドが失敗すると、 ``HEADER`` にエラーの詳細が含まれます。"
+
+msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"
 
 msgid "``load``"
 msgstr ""
@@ -5926,17 +6202,6 @@ msgid "If ``plugin_register`` fails, error details are in ``HEADER``."
 msgstr ""
 "``plugin_register`` が失敗すると、エラーの詳細は ``HEADER`` に含まれます。"
 
-msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
-msgstr ""
-"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
-"さい。"
-
-# dbbad212d1584251a3d44778da855d66
-# 3d2698c6f65a4d4d990befa790becc7b
-# c9cf78b4174e4e6b99535ca38c0c2120
-msgid ":doc:`plugin_unregister`"
-msgstr ""
-
 # acb6d26a140b4bf985287df695b8f52c
 msgid "``plugin_unregister``"
 msgstr ""
@@ -5970,10 +6235,6 @@ msgstr ""
 msgid "If ``plugin_unregister`` fails, error details are in ``HEADER``."
 msgstr ""
 "``plugin_unregister`` が失敗すると、エラーの詳細は ``HEADER`` に含まれます。"
-
-# 861a5b37745843c498a7bd868970880e
-msgid ":doc:`plugin_register`"
-msgstr ""
 
 msgid "``quit``"
 msgstr ""
@@ -9308,6 +9569,78 @@ msgid ""
 "table_removeはテーブルと定義されているカラムを削除します。カラムに付随するイ"
 "ンデックスも再帰的に削除されます。"
 msgstr ""
+
+#, fuzzy
+msgid "``table_rename``"
+msgstr "開始時間"
+
+#, fuzzy
+msgid "``table_rename`` command renames a table."
+msgstr "``column_rename`` コマンドはカラム名を変更します。"
+
+#, fuzzy
+msgid ""
+"It is a light operation. It just changes a relationship between name and the "
+"table object. It doesn't copy table and its column values."
+msgstr ""
+"軽い操作です。名前とカラムオブジェクト間の関係を変更するだけです。カラムの値"
+"をコピーしません。"
+
+#, fuzzy
+msgid ""
+"It is a dangerous operation. You must stop all operations including read "
+"operations while you run ``table_rename``. If the following case is "
+"occurred, Groonga process may be crashed:"
+msgstr ""
+"危険な操作です。 ``column_rename`` が走っている間、読み取り操作を含む全ての操"
+"作を停止しなければいけません。以下のケースが起こった場合、Groongaプロセスはク"
+"ラッシュするかもしれません。"
+
+#, fuzzy
+msgid ""
+"Starts an operation (like ``select``) that accesses the table to be renamed "
+"by the current table name. The current table name is called as ``the old "
+"table name`` in the below because the table name is renamed."
+msgstr ""
+"現在のカラム名によって名前が変更されるカラムにアクセスする操作( ``select`` の"
+"ような)を開始します。カラム名が変更されるため、下記では現在のカラム名は ``古"
+"いカラム名`` と呼ばれます。"
+
+#, fuzzy
+msgid "Runs ``table_rename``. The ``select`` is still running."
+msgstr "``column_rename`` を走らせます。 ``select`` はまだ実行されています。"
+
+#, fuzzy
+msgid ""
+"The ``select`` accesses the table to be renamed by the old table name. But "
+"the ``select`` can't find the table by the old name because the table has "
+"been renamed to the new table name. It may crash the Groonga process."
+msgstr ""
+"``select`` は古いカラム名によって名前が変更されたカラムにアクセスします。しか"
+"し、カラムはすでに新しいカラム名に変更されているため、``select`` は古いカラム"
+"名によってカラムを見つけることができません。Groongaプロセスはクラッシュするで"
+"しょう。"
+
+#, fuzzy
+msgid ""
+"``table_rename`` command takes two parameters. All parameters are required::"
+msgstr "``column_rename`` コマンドは引数を3つとります。すべて必須です::"
+
+#, fuzzy
+msgid "Here is a simple example of ``table_rename`` command."
+msgstr "以下は ``column_rename`` コマンドの簡単な使用例です。"
+
+#, fuzzy
+msgid "This section describes parameters of ``table_rename``."
+msgstr "このセクションでは ``column_rename`` の引数について説明します。"
+
+#, fuzzy
+msgid "Specifies the table name to be renamed."
+msgstr "名前を変更するカラムを指定します。"
+
+#, fuzzy
+msgid "Specifies the new table name."
+msgstr "新しいカラム名を指定します。"
 
 msgid "``table_tokenize``"
 msgstr ""
@@ -19285,3 +19618,18 @@ msgstr ""
 
 msgid "Object型はv1.2でサポートされます。"
 msgstr ""
+
+#~ msgid "This section describes parameters of ``io_flush``."
+#~ msgstr "このセクションでは ``io_flush`` の引数について説明します。"
+
+#~ msgid "``io_flush`` command has two parameters. ::"
+#~ msgstr "``io_flush`` コマンドには2つの引数があります。::"
+
+#, fuzzy
+#~ msgid "If ``io_flush`` fails, error details are in ``HEADER``."
+#~ msgstr "``register`` が失敗すると、エラーの詳細は ``HEADER`` に含まれます。"
+
+#, fuzzy
+#~ msgid "``io_flush`` returns ``true`` as body on success such as::"
+#~ msgstr ""
+#~ "``register`` が成功したときは以下のようにボディは ``true`` になります::"

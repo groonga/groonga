@@ -3,7 +3,7 @@
 .. highlightlang:: none
 
 .. groonga-command
-.. database: io_flush
+.. database: commands_io_flush
 
 ``io_flush``
 ============
@@ -17,44 +17,234 @@ Summary
 
 .. versionadded:: 5.0.5
 
-TODO
+``io_flush`` flushes all changes in memory to disk
+explicitly. Normally, you don't need to use ``io_flush``
+explicitly. Because flushing is done automatically by OS. And flushing
+by OS is effective.
+
+You need to use ``io_flush`` explicitly when your system may often
+crash unexpectedly or you may not shutdown your Groonga process in a
+normal way. (For example, using :doc:`shutdown` is a normal shutdown
+process.) It's better that you use ``io_flush`` after you change your
+Groonga database for the case. Here are commands that change your
+Groonga database:
+
+  * :doc:`load`
+  * :doc:`delete`
+  * :doc:`truncate`
+  * :doc:`table_create`
+  * :doc:`table_remove`
+  * :doc:`table_rename`
+  * :doc:`column_create`
+  * :doc:`column_remove`
+  * :doc:`column_rename`
+  * :doc:`plugin_register`
+  * :doc:`plugin_unregister`
+
+If you're using :ref:`select-scorer` parameter in :doc:`select` to
+change existing column values, :doc:`select` is added to the above
+list.
+
+Note that ``io_flush`` may be a heavy process. If there are many
+changes in memory, flushing them to disk is a heavy process.
 
 Syntax
 ------
 
-``io_flush`` command has two parameters. ::
+``io_flush`` doesn't has any required parameters. ``io_flush`` has has
+two optional parameters::
 
-  io_flush [target_name]
+  io_flush [target_name=null]
            [recursive=yes]
 
 Usage
 -----
 
-TODO
+You can flush all changes in memory to disk with no arguments:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/io_flush/all.log
+.. io_flush
+
+If you know what is changed, you can narrow flush targets. Here is a
+correspondence table between command and flush targets.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Command
+     - Flush targets
+     - ``io_flush`` arguments
+   * - :doc:`load` and :doc:`delete`
+     - Target table and its columns. If these columns are indexed,
+       tables of corresponding index columns and corresponding index
+       columns are also flush targets.
+     - Table and its columns::
+
+         io_flush --target_name TABLE_NAME
+
+       A table of an index column::
+
+         io_flush --target_name TABLE_NAME_OF_INDEX_COLUMN --recursive no
+
+       An index column::
+
+         io_flush --target_name TABLE_NAME_OF_INDEX_COLUMN.INDEX_COLUMN
+   * - :doc:`truncate`
+     - Target table and its columns. If these columns are indexed,
+       tables of corresponding index columns and corresponding index
+       columns are also flush targets.
+
+       And database is also flush target.
+     - Table and its columns::
+
+         io_flush --target_name TABLE_NAME
+
+       A table of an index column::
+
+         io_flush --target_name TABLE_NAME_OF_INDEX_COLUMN --recursive no
+
+       An index column::
+
+         io_flush --target_name TABLE_NAME_OF_INDEX_COLUMN.INDEX_COLUMN
+
+       Database::
+
+         io_flush --recursive no
+   * - :doc:`table_create`
+     - Target table and database.
+     - Table::
+
+         io_flush --target_name TABLE_NAME
+
+       Database::
+
+         io_flush --recursive no
+   * - :doc:`table_create` and :doc:`table_rename`
+     - Database.
+     - Database::
+
+         io_flush --recursive no
+   * - :doc:`column_create`
+     - Target column and database.
+     - Table::
+
+         io_flush --target_name TABLE_NAME.COLUMN_NAME
+
+       Database::
+
+         io_flush --recursive no
+   * - :doc:`column_create` and :doc:`column_rename`
+     - Database.
+     - Database::
+
+         io_flush --recursive no
+   * - :doc:`plugin_register` and :doc:`plugin_unregister`
+     - Database.
+     - Database::
+
+         io_flush --recursive no
+
 
 Parameters
 ----------
 
-This section describes parameters of ``io_flush``.
+This section describes all parameters.
+
+Required parameters
+^^^^^^^^^^^^^^^^^^^
+
+There is no required parameters.
 
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^
 
 There are optional parameters.
 
+.. _io-flush-target-name:
+
 ``target_name``
 """""""""""""""
 
-TODO
+Specifies a flush target object name. Target object is one of
+database, table or column.
+
+If you omit this parameter, database is flush target object:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/io_flush/target_name_database.log
+.. io_flush
+
+If you specify table name, the table is flush target object:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/io_flush/target_name_table.log
+.. table_create Users TABLE_HASH_KEY ShortText
+.. io_flush --target_name Users
+
+If you specify column name, the column is flush target object:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/io_flush/target_name_column.log
+.. column_create Users age COLUMN_SCALAR UInt8
+.. io_flush --target_name Users.age
+
+.. _io-flush-recursive:
 
 ``recursive``
 """""""""""""
 
-TODO
+Specifies whether child objects of the flush target object are also
+flush target objects.
+
+Child objects of database is all tables and all columns.
+
+Child objects of table is all its columns.
+
+Child objects of column is nothing.
+
+``recursive`` value must be ``yes`` or ``no``. ``yes`` means that all
+of the specified flush target object and child objects are flush
+target objects. ``no`` means that only the specified flush target
+object is flush target object.
+
+The following ``io_flush`` flushes all changes in database, all tables
+and all columns:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/io_flush/recursive_yes.log
+.. io_flush --recursive yes
+
+The following ``io_flush`` flushes all changes only in database:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/io_flush/recursive_no.log
+.. io_flush --recursive no
+
+If you specify other value (not ``yes`` neither ``no``) or omit
+``recursive`` parameter, ``yes`` is used.
+
+``yes`` is used in the following case because invalid ``recursive``
+argument is specified:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/io_flush/recursive_invalid.log
+.. io_flush --recursive invalid
+
+``yes`` is used in the following case because ``recursive`` parameter
+isn't specified:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/io_flush/recursive_default.log
+.. io_flush
 
 Return value
 ------------
 
-::
+The command returns ``true`` as body on success such as::
 
   [HEADER, true]
+
+If the command fails, error details are in ``HEADER``.
+
+See :doc:`/reference/command/output_format` for ``HEADER``.
