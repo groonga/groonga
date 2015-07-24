@@ -105,7 +105,6 @@
 #cmakedefine HAVE_SIGNAL_H
 #cmakedefine HAVE_STDARG_H
 #cmakedefine HAVE_STRINGS_H
-#cmakedefine HAVE_STRING_H
 #cmakedefine HAVE_SYS_MMAN_H
 #cmakedefine HAVE_SYS_PARAM_H
 #cmakedefine HAVE_SYS_RESOURCE_H
