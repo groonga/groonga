@@ -6871,6 +6871,45 @@ proc_exist(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return NULL;
 }
 
+static grn_obj *
+proc_thread_count(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *new_count_bulk;
+  uint32_t current_count;
+
+  current_count = grn_thread_get_count();
+  GRN_OUTPUT_INT64(current_count);
+
+  new_count_bulk = VAR(0);
+  if (GRN_TEXT_LEN(new_count_bulk) > 0) {
+    uint32_t new_count;
+    const char *new_count_text = GRN_TEXT_VALUE(new_count_bulk);
+    const char *new_count_text_end;
+    const char *new_count_text_rest;
+
+    new_count_text_end = new_count_text + GRN_TEXT_LEN(new_count_bulk);
+    new_count = grn_atoui(new_count_text, new_count_text_end,
+                          &new_count_text_rest);
+    if (new_count_text_rest != new_count_text_end) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "[thread_count] new_count must be unsigned integer value: <%.*s>",
+          (int)GRN_TEXT_LEN(new_count_bulk),
+          new_count_text);
+      return NULL;
+    }
+    if (new_count == 0) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "[thread_count] new_count must be 1 or larger: <%.*s>",
+          (int)GRN_TEXT_LEN(new_count_bulk),
+          new_count_text);
+      return NULL;
+    }
+    grn_thread_set_count(new_count);
+  }
+
+  return NULL;
+}
+
 #define DEF_VAR(v,name_str) do {\
   (v).name = (name_str);\
   (v).name_size = GRN_STRLEN(name_str);\
@@ -7157,4 +7196,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
 
   DEF_VAR(vars[0], "name");
   DEF_COMMAND("exist", proc_exist, 1, vars);
+
+  DEF_VAR(vars[0], "new_count");
+  DEF_COMMAND("thread_count", proc_thread_count, 1, vars);
 }
