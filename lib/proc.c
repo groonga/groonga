@@ -2369,6 +2369,22 @@ proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
     GRN_PTR_INIT(&tables, GRN_OBJ_VECTOR, GRN_ID_NIL);
     while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
       grn_obj *object;
+      const char *name;
+      void *key;
+      int i, key_size;
+      grn_bool have_period = GRN_FALSE;
+
+      key_size = grn_table_cursor_get_key(ctx, cursor, &key);
+      name = key;
+      for (i = 0; i < key_size; i++) {
+        if (name[i] == '.') {
+          have_period = GRN_TRUE;
+          break;
+        }
+      }
+      if (have_period) {
+        continue;
+      }
 
       object = grn_ctx_at(ctx, id);
       if (object) {

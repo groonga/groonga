@@ -1,0 +1,16 @@
+table_create  Logs_20150630 TABLE_NO_KEY
+column_create Logs_20150630 message COLUMN_SCALAR Text
+
+table_create  Logs_20150724 TABLE_NO_KEY
+column_create Logs_20150724 message COLUMN_SCALAR Text
+
+table_create  Logs_20150725 TABLE_NO_KEY
+column_create Logs_20150725 message COLUMN_SCALAR Text
+
+table_create  Logs_20150726 TABLE_NO_KEY
+column_create Logs_20150726 message COLUMN_SCALAR Text
+
+table_create  Logs_20150801 TABLE_NO_KEY
+column_create Logs_20150801 message COLUMN_SCALAR Text
+
+table_list --prefix Logs_201507
