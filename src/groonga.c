@@ -1910,8 +1910,8 @@ h_worker(void *arg)
   grn_ctx_init(ctx, 0);
   grn_ctx_use(ctx, (grn_obj *)arg);
   grn_ctx_recv_handler_set(ctx, h_output, &hc);
-  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)", nfthreads, nthreads);
   MUTEX_LOCK(q_mutex);
+  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)", nfthreads, nthreads);
   do {
     grn_obj *msg;
     nfthreads++;
@@ -1932,8 +1932,8 @@ h_worker(void *arg)
   } while (nfthreads < max_nfthreads && grn_gctx.stat != GRN_CTX_QUIT);
 exit :
   nthreads--;
-  MUTEX_UNLOCK(q_mutex);
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)", nfthreads, nthreads);
+  MUTEX_UNLOCK(q_mutex);
   grn_ctx_fin(ctx);
   return GRN_THREAD_FUNC_RETURN_VALUE;
 }
@@ -1983,8 +1983,8 @@ h_server(char *path)
 static grn_thread_func_result CALLBACK
 g_worker(void *arg)
 {
-  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)", nfthreads, nthreads);
   MUTEX_LOCK(q_mutex);
+  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)", nfthreads, nthreads);
   do {
     grn_ctx *ctx;
     grn_edge *edge;
@@ -2039,8 +2039,8 @@ g_worker(void *arg)
   } while (nfthreads < max_nfthreads && grn_gctx.stat != GRN_CTX_QUIT);
 exit :
   nthreads--;
-  MUTEX_UNLOCK(q_mutex);
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)", nfthreads, nthreads);
+  MUTEX_UNLOCK(q_mutex);
   return GRN_THREAD_FUNC_RETURN_VALUE;
 }
 
