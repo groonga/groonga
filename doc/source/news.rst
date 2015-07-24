@@ -73,32 +73,100 @@ Improvements
     select Memos --filter 'numbers @ 2'
 
 * [:doc:`/reference/commands/logical_range_filter`] Supported ``'fixed_size_type_vector_column @ element'``.
-* TODO: commit 35968348ecea7ae0573b138cb18b42236abc0811
+* [mrb] Added ``Column#[]``.
+* [:doc:`/install/windows`][:doc:`/reference/executables/groonga`] Supported ``--pid-path``.
+* [:doc:`/install/centos`][:doc:`/server/package`][:doc:`/reference/executables/groonga-httpd`]
+  Show exit status. [GitHub#357] [Patch by jacob16bit]
+* [mrb] Added ``Record``.
+* [mrb] Added ``Table#each``.
+* [mrb] Added ``Context#command_version`` and ``Context#command_version=`` (accessors).
+* [mrb] Binded ``GRN_COMMAND_VERSION_DEFAULT``.
+* [mrb] Added ``Context#with_command_version``.
+* [doc][:doc:`/tutorial`] Added more description about database creation fails if DB_PATH
+  points to an existing file. [GitHub#354] [Suggested by Hirotaka Takayama]
+* [doc][:doc:`/tutorial`] Described JSON formatting tools.
+  [GitHub#355] [Suggested by tiwawan]
+* [:doc:`/reference/commands/logical_range_filter`] Added ``use_range_index`` parameter.
+  It's a parameter for test. It should not be used for production.
+* [:doc:`/reference/commands/logical_range_filter`] Log which mode (range-index or select mode) is used.
+* [mrb][estimate_size] Supported ``(... || ...) && (... || ...)`` case.
+* [doc][:doc:`/reference/commands/select`] Updated.
+* [:doc:`/reference/commands/logical_select`] Used the same default output_columns as select.
+* logical_select: support calc_types and calc_target for labeled drilldown
+* logical_count: support logging whether range index is used or not
+* logical_count: show target table name
+* [mrb] Added ``Column#scalar?``, ``Column#vector?`` and ``Column#index?``.
+* [:doc:`/install/windows`] Allowed to delete file that is opened by other process.
+* [:doc:`/reference/commands/logical_range_filter`] Supported cache.
+* [mrb] Binded ``grn_cache``.
+* [mrb] Added ``Groonga::Cache.current``.
+* [mrb] Added ``TableCursor#key``.
+* [mrb] Added ``Database#each_name``.
+
+.. TODO:
+.. * logical_range_filter: don't use range index if query has nested reference vector accessor
+..
+..   Nested reference vector accessor is an accessor that has one or more
+..   reference vector columns not in the last element.
+..
+..   users.name is a nested reference vector when "users" is defined as the
+..   following because "users" isn't the last element:
+..
+..       column_create XXX users COLUMN_VECTOR Users
+..
+..   user.tags isn't a nested reference vector when "user" and "tags" are
+..   defined as the following because "tags" is the last element:
+..
+..       column_create XXX user COLUMN_SCALAR Users
+..       column_create Users tags COLUMN_VECTOR Tags
 
 Fixes
 ^^^^^
 
-* Fixed a memory leak when an error is occurred in grn_expr_exec().
-  For example, unsupported operator (e.g. GRN_OP_TERM_EXTRACT) is used.
-  "not implemented operator assigned" is occurred for the case.
+* Fixed a memory leak when an error is occurred in :c:func:`grn_expr_exec()`.
+  For example, unsupported operator (e.g. ``GRN_OP_TERM_EXTRACT``) is used
+  (``not implemented operator assigned`` is occurred for the case).
 
-* Fix a bug function can't be found in function call with complex argument
-
-    An example complex argument is 'Table["key"].column'.
-
-        function(_key, Table["key"].column)
-
-    can't be found "function" as function object. It detects "_key" as
-    function but it's not function object. So the function call report an
-    error.
+.. TODO:
+.. * Fix a bug function can't be found in function call with complex argument
+..
+..   An example complex argument is 'Table["key"].column'.
+..
+..     function(_key, Table["key"].column)
+..
+..   can't be found ``function`` as function object. It detects "_key" as
+..   function but it's not function object. So the function call report an
+..   error.
 
 * [bindings/php] Added a missing check for a memory allocation failure.
   [Reported by Bill Parker]
+* [:doc:`/install/centos`][:doc:`/server/package`][logrotate] Fixed syntax error in script.
+* [:doc:`/install/centos`][:doc:`/server/package`][logrotate] Fixed wrong daemon running check.
+* [:doc:`/install/centos`][:doc:`/server/package`][logrotate] Stop to set owner/group to log files.
+  Because it's not consistent. groonga-httpd creates log files with root
+  owner/group. But logrotated log files are created with groonga
+  owner/group. [GitHub#358] [Reported by jacob16bit]
+* [:doc:`/reference/executables/groonga`] Fixed reported the maximum number of threads.
+* Fixed a bug that ``grn_vector_decode()`` sets wrong offsets in append mode.
+* [:doc:`/reference/executables/groonga-httpd`] Remove a needless space in log message ::
+
+    old: 2015-07-09 18:10:00.863253|n|  grn_fin (0) ->
+    new: 2015-07-09 18:10:00.863253|n| grn_fin (0)
+
+* Fixed a bug that estimating size by regexp query with anchor doesn't work.
+* Fixed a memory leak when ``request_id`` byte size >= 24.
+* [:doc:`/reference/commands/lock_clear`] Fixed a typo. [GitHub#363] [Reported by Christian Kakesa]
+* [mrb] Defineed ``Accessor#name``.
+* [sharding] Fixed wrong min include detection for month range type.
 
 Thanks
 ^^^^^^
 
 * Bill Parker
+* jacob16bit
+* Hirotaka Takayama
+* tiwawan
+* Christian Kakesa
 
 .. _release-5-0-5:
 
