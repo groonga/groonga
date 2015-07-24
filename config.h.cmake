@@ -103,7 +103,6 @@
 #cmakedefine HAVE_NETDB_H
 #cmakedefine HAVE_PTHREAD_H
 #cmakedefine HAVE_SIGNAL_H
-#cmakedefine HAVE_STDARG_H
 #cmakedefine HAVE_SYS_MMAN_H
 #cmakedefine HAVE_SYS_PARAM_H
 #cmakedefine HAVE_SYS_RESOURCE_H
