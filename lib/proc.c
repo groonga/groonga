@@ -6844,6 +6844,33 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return NULL;
 }
 
+static grn_obj *
+proc_db_exist(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *db;
+  grn_obj *name;
+  grn_id id;
+
+  db = grn_ctx_db(ctx);
+  if (!db) {
+    ERR(GRN_INVALID_ARGUMENT, "[db_exist] DB isn't opened");
+    return NULL;
+  }
+
+  name = VAR(0);
+  if (GRN_TEXT_LEN(name) == 0) {
+    ERR(GRN_INVALID_ARGUMENT, "[db_exist] name is missing");
+    GRN_OUTPUT_BOOL(GRN_FALSE);
+    return NULL;
+  }
+
+  id = grn_table_get(ctx, db,
+                     GRN_TEXT_VALUE(name),
+                     GRN_TEXT_LEN(name));
+  GRN_OUTPUT_BOOL(id != GRN_ID_NIL);
+  return NULL;
+}
+
 #define DEF_VAR(v,name_str) do {\
   (v).name = (name_str);\
   (v).name_size = GRN_STRLEN(name_str);\
@@ -7127,4 +7154,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[0], "target_name");
   DEF_VAR(vars[1], "recursive");
   DEF_COMMAND("io_flush", proc_io_flush, 2, vars);
+
+  DEF_VAR(vars[0], "name");
+  DEF_COMMAND("db_exist", proc_db_exist, 1, vars);
 }
