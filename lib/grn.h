@@ -32,10 +32,7 @@
 #endif
 
 #include <stdlib.h>
-
-#ifdef HAVE_STDINT_H
-# include <stdint.h>
-#endif /* HAVE_STDINT_H */
+#include <stdint.h>
 
 #include <sys/types.h>
 
@@ -106,19 +103,7 @@
 #  define strcasecmp(s1, s2) _stricmp(s1, s2)
 # endif /* defined(HAVE__STRICMP) */
 
-# ifdef __GNUC__
-#  include <stdint.h>
-# else
-typedef UINT8 uint8_t;
-typedef INT8 int8_t;
-typedef INT8 int_least8_t;
-typedef UINT8 uint_least8_t;
-typedef INT16 int16_t;
-typedef UINT16 uint16_t;
-typedef INT32 int32_t;
-typedef UINT32 uint32_t;
-typedef INT64 int64_t;
-typedef UINT64 uint64_t;
+# ifndef __GNUC__
 typedef SSIZE_T ssize_t;
 typedef int pid_t;
 typedef int64_t off64_t;
