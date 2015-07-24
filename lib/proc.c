@@ -2331,14 +2331,60 @@ output_table_info(grn_ctx *ctx, grn_obj *table)
 static grn_obj *
 proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
+  grn_obj *db;
   grn_obj tables;
   int n_top_level_elements;
   int n_elements_for_header = 1;
   int n_tables;
   int i;
 
-  GRN_PTR_INIT(&tables, GRN_OBJ_VECTOR, GRN_ID_NIL);
-  grn_ctx_get_all_tables(ctx, &tables);
+  db = grn_ctx_db(ctx);
+  if (!db) {
+    ERR(GRN_INVALID_ARGUMENT, "[table_list] DB isn't opened");
+    return NULL;
+  }
+
+  {
+    grn_table_cursor *cursor;
+    grn_id id;
+    grn_obj *prefix;
+    const void *min = NULL;
+    unsigned int min_size = 0;
+    int flags = 0;
+
+    prefix = VAR(0);
+    if (GRN_TEXT_LEN(prefix) > 0) {
+      min = GRN_TEXT_VALUE(prefix);
+      min_size = GRN_TEXT_LEN(prefix);
+      flags |= GRN_CURSOR_PREFIX;
+    }
+    cursor = grn_table_cursor_open(ctx, db,
+                                   min, min_size,
+                                   NULL, 0,
+                                   0, -1, flags);
+    if (!cursor) {
+      return NULL;
+    }
+
+    GRN_PTR_INIT(&tables, GRN_OBJ_VECTOR, GRN_ID_NIL);
+    while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+      grn_obj *object;
+
+      object = grn_ctx_at(ctx, id);
+      if (object) {
+        if (grn_obj_is_table(ctx, object)) {
+          GRN_PTR_PUT(ctx, &tables, object);
+        } else {
+          grn_obj_unlink(ctx, object);
+        }
+      } else {
+        if (ctx->rc != GRN_SUCCESS) {
+          ERRCLR(ctx);
+        }
+      }
+    }
+    grn_table_cursor_close(ctx, cursor);
+  }
   n_tables = GRN_BULK_VSIZE(&tables) / sizeof(grn_obj *);
   n_top_level_elements = n_elements_for_header + n_tables;
   GRN_OUTPUT_ARRAY_OPEN("TABLE_LIST", n_top_level_elements);
@@ -6834,7 +6880,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
 
   DEF_COMMAND("status", proc_status, 0, vars);
 
-  DEF_COMMAND("table_list", proc_table_list, 0, vars);
+  DEF_VAR(vars[0], "prefix");
+  DEF_COMMAND("table_list", proc_table_list, 1, vars);
 
   DEF_VAR(vars[0], "table");
   DEF_COMMAND("column_list", proc_column_list, 1, vars);

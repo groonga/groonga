@@ -1,0 +1,84 @@
+table_create Logs_20150630 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+table_create Logs_20150724 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+table_create Logs_20150725 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+table_create Logs_20150726 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+table_create Logs_20150801 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+table_list --prefix Logs_201507
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "id",
+        "UInt32"
+      ],
+      [
+        "name",
+        "ShortText"
+      ],
+      [
+        "path",
+        "ShortText"
+      ],
+      [
+        "flags",
+        "ShortText"
+      ],
+      [
+        "domain",
+        "ShortText"
+      ],
+      [
+        "range",
+        "ShortText"
+      ],
+      [
+        "default_tokenizer",
+        "ShortText"
+      ],
+      [
+        "normalizer",
+        "ShortText"
+      ]
+    ],
+    [
+      257,
+      "Logs_20150724",
+      "db/db.0000101",
+      "TABLE_NO_KEY|PERSISTENT",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      258,
+      "Logs_20150725",
+      "db/db.0000102",
+      "TABLE_NO_KEY|PERSISTENT",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      259,
+      "Logs_20150726",
+      "db/db.0000103",
+      "TABLE_NO_KEY|PERSISTENT",
+      null,
+      null,
+      null,
+      null
+    ]
+  ]
+]

@@ -1,0 +1,5 @@
+table_create Logs_20150724 TABLE_NO_KEY
+table_create Logs_20150725 TABLE_NO_KEY
+table_create Logs_20150726 TABLE_NO_KEY
+
+table_list --prefix Logs_201508

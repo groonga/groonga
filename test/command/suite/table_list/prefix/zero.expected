@@ -1,0 +1,50 @@
+table_create Logs_20150724 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+table_create Logs_20150725 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+table_create Logs_20150726 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+table_list --prefix Logs_201508
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "id",
+        "UInt32"
+      ],
+      [
+        "name",
+        "ShortText"
+      ],
+      [
+        "path",
+        "ShortText"
+      ],
+      [
+        "flags",
+        "ShortText"
+      ],
+      [
+        "domain",
+        "ShortText"
+      ],
+      [
+        "range",
+        "ShortText"
+      ],
+      [
+        "default_tokenizer",
+        "ShortText"
+      ],
+      [
+        "normalizer",
+        "ShortText"
+      ]
+    ]
+  ]
+]
