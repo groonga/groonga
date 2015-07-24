@@ -478,6 +478,32 @@ static grn_mutex q_mutex;
 static grn_cond q_cond;
 static uint32_t nthreads = 0, nfthreads = 0, max_nfthreads;
 
+static uint32_t
+groonga_get_thread_count(void *data)
+{
+  return max_nfthreads;
+}
+
+static void
+groonga_set_thread_count(uint32_t new_count, void *data)
+{
+  uint32_t i;
+  uint32_t current_nfthreads;
+
+  MUTEX_LOCK(q_mutex);
+  current_nfthreads = nfthreads;
+  max_nfthreads = new_count;
+  MUTEX_UNLOCK(q_mutex);
+
+  if (current_nfthreads > new_count) {
+    for (i = 0; i < current_nfthreads; i++) {
+      MUTEX_LOCK(q_mutex);
+      COND_SIGNAL(q_cond);
+      MUTEX_UNLOCK(q_mutex);
+    }
+  }
+}
+
 static void
 reset_ready_notify_pipe(void)
 {
@@ -1921,6 +1947,10 @@ h_worker(void *arg)
         nfthreads--;
         goto exit;
       }
+      if (nthreads > max_nfthreads) {
+        nfthreads--;
+        goto exit;
+      }
     }
     nfthreads--;
     MUTEX_UNLOCK(q_mutex);
@@ -1992,6 +2022,10 @@ g_worker(void *arg)
     while (!(edge = (grn_edge *)grn_com_queue_deque(&grn_gctx, &ctx_new))) {
       COND_WAIT(q_cond, q_mutex);
       if (grn_gctx.stat == GRN_CTX_QUIT) {
+        nfthreads--;
+        goto exit;
+      }
+      if (nthreads > max_nfthreads) {
         nfthreads--;
         goto exit;
       }
@@ -2945,6 +2979,9 @@ main(int argc, char **argv)
   } else {
     max_nfthreads = default_max_num_threads;
   }
+
+  grn_thread_set_get_count_func(groonga_get_thread_count, NULL);
+  grn_thread_set_set_count_func(groonga_set_thread_count, NULL);
 
   if (input_path) {
     if (!freopen(input_path, "r", stdin)) {
