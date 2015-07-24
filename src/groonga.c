@@ -1933,7 +1933,7 @@ h_worker(void *arg)
 exit :
   nthreads--;
   MUTEX_UNLOCK(q_mutex);
-  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)", nfthreads, nthreads + 1);
+  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)", nfthreads, nthreads);
   grn_ctx_fin(ctx);
   return GRN_THREAD_FUNC_RETURN_VALUE;
 }
@@ -2040,7 +2040,7 @@ g_worker(void *arg)
 exit :
   nthreads--;
   MUTEX_UNLOCK(q_mutex);
-  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)", nfthreads, nthreads + 1);
+  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)", nfthreads, nthreads);
   return GRN_THREAD_FUNC_RETURN_VALUE;
 }
 
