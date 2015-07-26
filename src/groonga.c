@@ -2957,6 +2957,7 @@ main(int argc, char **argv)
     if (windows_event_source_name_arg) {
       grn_windows_event_logger_set_source_name(windows_event_source_name_arg);
     }
+    grn_windows_event_logger_set(NULL);
   }
 
   if (log_path_arg) {
@@ -3171,10 +3172,6 @@ main(int argc, char **argv)
   if (grn_init()) { return EXIT_FAILURE; }
 
   grn_set_default_encoding(encoding);
-
-  if (use_windows_event_log) {
-    grn_windows_event_logger_set(&grn_gctx);
-  }
 
   if (default_command_version_arg) {
     grn_set_default_command_version(default_command_version);
