@@ -31,6 +31,10 @@ GRN_API char *grn_path_separator_to_system(char *dest, char *groonga_path);
 
 int grn_mkstemp(char *path_template);
 
+#ifdef WIN32
+GRN_API UINT grn_windows_encoding_to_code_page(grn_encoding encoding);
+#endif /* WIN32 */
+
 #ifdef __cplusplus
 }
 #endif

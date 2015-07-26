@@ -16,6 +16,7 @@
 */
 
 #include "grn_error.h"
+#include "grn_util.h"
 
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
@@ -129,26 +130,43 @@ grn_current_error_message(void)
 {
 # define ERROR_MESSAGE_BUFFER_SIZE 4096
   int error_code = GetLastError();
+  static WCHAR utf16_message[ERROR_MESSAGE_BUFFER_SIZE];
+  DWORD written_utf16_chars;
   static char message[ERROR_MESSAGE_BUFFER_SIZE];
-  DWORD written_bytes;
 
-  written_bytes = FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM |
-                                FORMAT_MESSAGE_IGNORE_INSERTS,
-                                NULL,
-                                error_code,
-                                LANG_ID_USER_DEFAULT(),
-                                message,
-                                ERROR_MESSAGE_BUFFER_SIZE,
-                                NULL);
-  if (written_bytes >= 2) {
-    if (message[written_bytes - 1] == '\n') {
-      message[written_bytes - 1] = '\0';
-      written_bytes--;
+  written_utf16_chars = FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM |
+                                       FORMAT_MESSAGE_IGNORE_INSERTS,
+                                       NULL,
+                                       error_code,
+                                       LANG_ID_USER_DEFAULT(),
+                                       utf16_message,
+                                       ERROR_MESSAGE_BUFFER_SIZE,
+                                       NULL);
+  if (written_utf16_chars >= 2) {
+    if (utf16_message[written_utf16_chars - 1] == L'\n') {
+      utf16_message[written_utf16_chars - 1] = L'\0';
+      written_utf16_chars--;
     }
-    if (message[written_bytes - 1] == '\r') {
-      message[written_bytes - 1] = '\0';
-      written_bytes--;
+    if (utf16_message[written_utf16_chars - 1] == L'\r') {
+      utf16_message[written_utf16_chars - 1] = L'\0';
+      written_utf16_chars--;
     }
+  }
+
+  {
+    UINT code_page;
+    DWORD convert_flags = 0;
+    int written_bytes;
+
+    code_page = grn_windows_encoding_to_code_page(grn_get_default_encoding());
+    written_bytes = WideCharToMultiByte(code_page,
+                                        convert_flags,
+                                        utf16_message,
+                                        written_utf16_chars,
+                                        message,
+                                        ERROR_MESSAGE_BUFFER_SIZE,
+                                        NULL,
+                                        NULL);
   }
 
   return message;

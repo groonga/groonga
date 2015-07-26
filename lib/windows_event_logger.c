@@ -18,6 +18,7 @@
 
 #include "grn_logger.h"
 #include "grn_ctx.h"
+#include "grn_util.h"
 
 #include <string.h>
 
@@ -106,26 +107,7 @@ windows_event_logger_log(grn_ctx *ctx, grn_log_level level,
                       timestamp, level_marks[level], title, message);
     }
 
-    switch (ctx->encoding) {
-    case GRN_ENC_EUC_JP :
-      code_page = 20932;
-      break;
-    case GRN_ENC_UTF8 :
-      code_page = CP_UTF8;
-      break;
-    case GRN_ENC_SJIS :
-      code_page = 932;
-      break;
-    case GRN_ENC_LATIN1 :
-      code_page = 1252;
-      break;
-    case GRN_ENC_KOI8R :
-      code_page = 20866;
-      break;
-    default :
-      code_page = CP_ACP;
-      break;
-    }
+    code_page = grn_windows_encoding_to_code_page(ctx->encoding);
 
     n_converted_chars = MultiByteToWideChar(code_page,
                                             convert_flags,
