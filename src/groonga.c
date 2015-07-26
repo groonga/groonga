@@ -2189,6 +2189,7 @@ enum {
 #define FLAG_MODE_DAEMON     (1 << 6)
 #define FLAG_MODE_SERVER     (1 << 7)
 #define FLAG_NEW_DB     (1 << 8)
+#define FLAG_USE_WINDOWS_EVENT_LOG (1 << 9)
 
 static uint32_t
 get_core_number(void)
@@ -2646,6 +2647,13 @@ show_usage(FILE *output)
           "                           log file size is larger than or\n"
           "                           equals to the threshold\n"
           "                           (default: 0; disabled)\n"
+#ifdef WIN32
+          "      --use-windows-event-log:\n"
+          "                           report logs as Windows events\n"
+          "      --windows-event-source-name <name>:\n"
+          "                           specify event source name\n"
+          "                           (default: Groonga)\n"
+#endif /* WIN32 */
           "      --query-log-path <path>:\n"
           "                           specify query log path\n"
           "                           (default: %s)\n"
@@ -2708,12 +2716,14 @@ main(int argc, char **argv)
   const char *input_fd_arg = NULL;
   const char *output_fd_arg = NULL;
   const char *working_directory_arg = NULL;
+  const char *windows_event_source_name_arg = NULL;
   const char *config_path = NULL;
   int exit_code = EXIT_SUCCESS;
   int i;
   int flags = 0;
   uint32_t cache_limit = 0;
   grn_bool need_line_editor = GRN_FALSE;
+  grn_bool use_windows_event_log = GRN_FALSE;
   static grn_str_getopt_opt opts[] = {
     {'p', "port", NULL, 0, GETOPT_OP_NONE},
     {'e', "encoding", NULL, 0, GETOPT_OP_NONE},
@@ -2743,6 +2753,9 @@ main(int argc, char **argv)
     {'\0', "input-fd", NULL, 0, GETOPT_OP_NONE},
     {'\0', "output-fd", NULL, 0, GETOPT_OP_NONE},
     {'\0', "working-directory", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "use-windows-event-log", NULL,
+     FLAG_USE_WINDOWS_EVENT_LOG, GETOPT_OP_ON},
+    {'\0', "windows-event-source-name", NULL, 0, GETOPT_OP_NONE},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &port_arg;
@@ -2766,6 +2779,7 @@ main(int argc, char **argv)
   opts[25].arg = &input_fd_arg;
   opts[26].arg = &output_fd_arg;
   opts[27].arg = &working_directory_arg;
+  opts[29].arg = &windows_event_source_name_arg;
 
   reset_ready_notify_pipe();
 
@@ -2913,6 +2927,19 @@ main(int argc, char **argv)
   } else {
     do_client = g_client;
     do_server = g_server;
+  }
+
+#ifdef WIN32
+  if (flags & FLAG_USE_WINDOWS_EVENT_LOG) {
+    use_windows_event_log = GRN_TRUE;
+  }
+#endif /* WIN32 */
+
+  if (use_windows_event_log) {
+    if (windows_event_source_name_arg) {
+      grn_windows_event_logger_set_source_name(windows_event_source_name_arg);
+    }
+    grn_windows_event_logger_set(NULL);
   }
 
   if (log_path_arg) {
