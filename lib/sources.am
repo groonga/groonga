@@ -71,4 +71,5 @@ libgroonga_la_SOURCES =				\
 	grn_tokenizers.h			\
 	token_filter.c				\
 	util.c					\
-	grn_util.h
+	grn_util.h				\
+	windows_event_logger.c

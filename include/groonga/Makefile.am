@@ -16,4 +16,5 @@ groonga_include_HEADERS =			\
 	token_filter.h				\
 	nfkc.h					\
 	normalizer.h				\
-	util.h
+	util.h					\
+	windows_event_logger.h

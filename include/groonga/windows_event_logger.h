@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2014-2015 Brazil
+  Copyright(C) 2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -15,18 +15,21 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef GROONGA_H
-#define GROONGA_H
 
-#include "groonga/portability.h"
-#include "groonga/groonga.h"
-#include "groonga/obj.h"
-#include "groonga/ii.h"
-#include "groonga/expr.h"
-#include "groonga/output.h"
-#include "groonga/util.h"
-#include "groonga/request_canceler.h"
-#include "groonga/thread.h"
-#include "groonga/windows_event_logger.h"
+#ifndef GROONGA_WINDOWS_EVENT_LOGGER_H
+#define GROONGA_WINDOWS_EVENT_LOGGER_H
 
-#endif /* GROONGA_H */
+#ifdef  __cplusplus
+extern "C" {
+#endif
+
+GRN_API const char *grn_windows_event_logger_get_source_name(void);
+GRN_API void grn_windows_event_logger_set_source_name(const char *name);
+
+GRN_API grn_rc grn_windows_event_logger_set(grn_ctx *ctx);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* GROONGA_WINDOWS_EVENT_LOGGER_H */
