@@ -111,6 +111,7 @@ static grn_encoding encoding;
 static grn_command_version default_command_version;
 static int64_t default_match_escalation_threshold;
 static int log_level;
+static grn_bool use_windows_event_log = GRN_FALSE;
 
 static int
 grn_rc_to_exit_code(grn_rc rc)
@@ -364,6 +365,9 @@ do_alone(int argc, char **argv)
   grn_obj *db;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
+  if (use_windows_event_log) {
+    grn_windows_event_logger_set(ctx);
+  }
   if (argc > 0 && argv) { path = *argv++; argc--; }
   db = (newdb || !path) ? grn_db_create(ctx, path, NULL) : grn_db_open(ctx, path);
   if (db) {
@@ -441,6 +445,9 @@ g_client(int argc, char **argv)
   const char *hostname = DEFAULT_DEST;
   if (argc > 0 && argv) { hostname = *argv++; argc--; }
   grn_ctx_init(ctx, 0);
+  if (use_windows_event_log) {
+    grn_windows_event_logger_set(ctx);
+  }
   if (!grn_ctx_connect(ctx, hostname, port, 0)) {
     if (!argc) {
       grn_obj text;
@@ -1934,6 +1941,9 @@ h_worker(void *arg)
   ht_context hc;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
+  if (use_windows_event_log) {
+    grn_windows_event_logger_set(ctx);
+  }
   grn_ctx_use(ctx, (grn_obj *)arg);
   grn_ctx_recv_handler_set(ctx, h_output, &hc);
   MUTEX_LOCK(q_mutex);
@@ -1999,6 +2009,9 @@ h_server(char *path)
   int exit_code = EXIT_FAILURE;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
+  if (use_windows_event_log) {
+    grn_windows_event_logger_set(ctx);
+  }
   MUTEX_INIT(q_mutex);
   COND_INIT(q_cond);
   CRITICAL_SECTION_INIT(cache_lock);
@@ -2138,6 +2151,9 @@ g_handler(grn_ctx *ctx, grn_obj *msg)
     edge = grn_edges_add(ctx, &((grn_msg *)msg)->edge_id, &added);
     if (added) {
       grn_ctx_init(&edge->ctx, 0);
+      if (use_windows_event_log) {
+        grn_windows_event_logger_set(&edge->ctx);
+      }
       GRN_COM_QUEUE_INIT(&edge->recv_new);
       GRN_COM_QUEUE_INIT(&edge->send_old);
       grn_ctx_use(&edge->ctx, (grn_obj *)com->ev->opaque);
@@ -2164,6 +2180,9 @@ g_server(char *path)
   int exit_code = EXIT_FAILURE;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
+  if (use_windows_event_log) {
+    grn_windows_event_logger_set(ctx);
+  }
   MUTEX_INIT(q_mutex);
   COND_INIT(q_cond);
   CRITICAL_SECTION_INIT(cache_lock);
@@ -2723,7 +2742,6 @@ main(int argc, char **argv)
   int flags = 0;
   uint32_t cache_limit = 0;
   grn_bool need_line_editor = GRN_FALSE;
-  grn_bool use_windows_event_log = GRN_FALSE;
   static grn_str_getopt_opt opts[] = {
     {'p', "port", NULL, 0, GETOPT_OP_NONE},
     {'e', "encoding", NULL, 0, GETOPT_OP_NONE},
@@ -2939,7 +2957,6 @@ main(int argc, char **argv)
     if (windows_event_source_name_arg) {
       grn_windows_event_logger_set_source_name(windows_event_source_name_arg);
     }
-    grn_windows_event_logger_set(NULL);
   }
 
   if (log_path_arg) {
@@ -3154,6 +3171,10 @@ main(int argc, char **argv)
   if (grn_init()) { return EXIT_FAILURE; }
 
   grn_set_default_encoding(encoding);
+
+  if (use_windows_event_log) {
+    grn_windows_event_logger_set(&grn_gctx);
+  }
 
   if (default_command_version_arg) {
     grn_set_default_command_version(default_command_version);
