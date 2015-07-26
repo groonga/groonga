@@ -30,13 +30,13 @@ typedef struct _grn_windows_event_logger_data {
 #endif /* WIN32 */
 
 const char *
-grn_windows_event_looger_get_source_name(void)
+grn_windows_event_logger_get_source_name(void)
 {
   return windows_event_source_name;
 }
 
 void
-grn_windows_event_looger_set_source_name(const char *name)
+grn_windows_event_logger_set_source_name(const char *name)
 {
   if (windows_event_source_name) {
     free(windows_event_source_name);
