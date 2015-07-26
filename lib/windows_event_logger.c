@@ -193,7 +193,7 @@ windows_event_logger_fin(grn_ctx *ctx, void *user_data)
   if (data->event_log) {
     DeregisterEventSource(data->event_log);
   }
-  GRN_FREE(data);
+  free(data);
 }
 #endif /* WIN32 */
 
@@ -205,13 +205,19 @@ grn_windows_event_logger_set(grn_ctx *ctx)
   grn_logger windows_event_logger;
   grn_windows_event_logger_data *data;
   const char *source_name;
-  GRN_API_ENTER;
+  if (ctx) {
+    GRN_API_ENTER;
+  }
 
-  data = GRN_MALLOC(sizeof(grn_windows_event_logger_data));
+  data = malloc(sizeof(grn_windows_event_logger_data));
   if (!data) {
-    ERR(GRN_NO_MEMORY_AVAILABLE,
-        "failed to allocate user data for Windows event logger");
-    GRN_API_RETURN(ctx->rc);
+    if (ctx) {
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "failed to allocate user data for Windows event logger");
+      GRN_API_RETURN(ctx->rc);
+    } else {
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
   }
 
   if (windows_event_source_name) {
@@ -221,12 +227,16 @@ grn_windows_event_logger_set(grn_ctx *ctx)
   }
   data->event_log = RegisterEventSourceA(NULL, source_name);
   if (!data->event_log) {
-    GRN_FREE(data);
-    SERR("RegisterEventSource");
-    GRN_LOG(ctx, GRN_LOG_ERROR,
-            "failed to register event source: <%s>",
-            source_name);
-    GRN_API_RETURN(ctx->rc);
+    free(data);
+    if (ctx) {
+      SERR("RegisterEventSource");
+      GRN_LOG(ctx, GRN_LOG_ERROR,
+              "failed to register event source: <%s>",
+              source_name);
+      GRN_API_RETURN(ctx->rc);
+    } else {
+      return grn_windows_error_code_to_rc(GetLastError());
+    }
   }
 
   windows_event_logger.max_level = GRN_LOG_DEFAULT_LEVEL;
@@ -241,7 +251,11 @@ grn_windows_event_logger_set(grn_ctx *ctx)
     windows_event_logger.fin(ctx, windows_event_logger.user_data);
   }
 
-  GRN_API_RETURN(rc);
+  if (ctx) {
+    GRN_API_RETURN(rc);
+  } else {
+    return rc;
+  }
 #else /* WIN32 */
   return GRN_FUNCTION_NOT_IMPLEMENTED;
 #endif /* WIN32 */
