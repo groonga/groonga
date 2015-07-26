@@ -93,6 +93,7 @@ windows_event_logger_log(grn_ctx *ctx, grn_log_level level,
     const char level_marks[] = " EACewnid-";
     grn_obj formatted_buffer;
     UINT code_page;
+    DWORD convert_flags = 0;
     int n_converted_chars;
 #define CONVERTED_BUFFER_SIZE 512
 
@@ -127,7 +128,7 @@ windows_event_logger_log(grn_ctx *ctx, grn_log_level level,
     }
 
     n_converted_chars = MultiByteToWideChar(code_page,
-                                            MB_PRECOMPOSED,
+                                            convert_flags,
                                             GRN_TEXT_VALUE(&formatted_buffer),
                                             GRN_TEXT_LEN(&formatted_buffer),
                                             NULL,
@@ -136,7 +137,7 @@ windows_event_logger_log(grn_ctx *ctx, grn_log_level level,
       WCHAR converted_buffer[CONVERTED_BUFFER_SIZE];
       const WCHAR *strings[1];
       n_converted_chars = MultiByteToWideChar(code_page,
-                                              MB_PRECOMPOSED,
+                                              convert_flags,
                                               GRN_TEXT_VALUE(&formatted_buffer),
                                               GRN_TEXT_LEN(&formatted_buffer),
                                               converted_buffer,
@@ -157,7 +158,7 @@ windows_event_logger_log(grn_ctx *ctx, grn_log_level level,
       const WCHAR *strings[1];
       converted = GRN_MALLOCN(WCHAR, n_converted_chars);
       n_converted_chars = MultiByteToWideChar(code_page,
-                                              MB_PRECOMPOSED,
+                                              convert_flags,
                                               GRN_TEXT_VALUE(&formatted_buffer),
                                               GRN_TEXT_LEN(&formatted_buffer),
                                               converted,
