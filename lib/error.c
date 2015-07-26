@@ -25,6 +25,101 @@
 
 #ifdef WIN32
 
+grn_rc
+grn_windows_error_code_to_rc(int error_code)
+{
+  grn_rc rc;
+
+  switch (error_code) {
+  case ERROR_FILE_NOT_FOUND :
+  case ERROR_PATH_NOT_FOUND :
+    rc = GRN_NO_SUCH_FILE_OR_DIRECTORY;
+    break;
+  case ERROR_TOO_MANY_OPEN_FILES :
+    rc = GRN_TOO_MANY_OPEN_FILES;
+    break;
+  case ERROR_ACCESS_DENIED :
+    rc = GRN_PERMISSION_DENIED;
+    break;
+  case ERROR_INVALID_HANDLE :
+    rc = GRN_INVALID_ARGUMENT;
+    break;
+  case ERROR_ARENA_TRASHED :
+    rc = GRN_ADDRESS_IS_NOT_AVAILABLE;
+    break;
+  case ERROR_NOT_ENOUGH_MEMORY :
+    rc = GRN_NO_MEMORY_AVAILABLE;
+    break;
+  case ERROR_INVALID_BLOCK :
+  case ERROR_BAD_ENVIRONMENT :
+    rc = GRN_INVALID_ARGUMENT;
+    break;
+  case ERROR_BAD_FORMAT :
+    rc = GRN_INVALID_FORMAT;
+    break;
+  case ERROR_INVALID_DATA :
+    rc = GRN_INVALID_ARGUMENT;
+    break;
+  case ERROR_OUTOFMEMORY :
+    rc = GRN_NO_MEMORY_AVAILABLE;
+    break;
+  case ERROR_INVALID_DRIVE :
+    rc = GRN_INVALID_ARGUMENT;
+    break;
+  case ERROR_WRITE_PROTECT :
+    rc = GRN_PERMISSION_DENIED;
+    break;
+  case ERROR_BAD_LENGTH :
+    rc = GRN_INVALID_ARGUMENT;
+    break;
+  case ERROR_SEEK :
+    rc = GRN_INVALID_SEEK;
+    break;
+  case ERROR_NOT_SUPPORTED :
+    rc = GRN_OPERATION_NOT_SUPPORTED;
+    break;
+  case ERROR_NETWORK_ACCESS_DENIED :
+    rc = GRN_OPERATION_NOT_PERMITTED;
+    break;
+  case ERROR_FILE_EXISTS :
+    rc = GRN_FILE_EXISTS;
+    break;
+  case ERROR_INVALID_PARAMETER :
+    rc = GRN_INVALID_ARGUMENT;
+    break;
+  case ERROR_BROKEN_PIPE :
+    rc = GRN_BROKEN_PIPE;
+    break;
+  case ERROR_CALL_NOT_IMPLEMENTED :
+    rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+    break;
+  case ERROR_INVALID_NAME :
+    rc = GRN_INVALID_ARGUMENT;
+    break;
+  case ERROR_BUSY_DRIVE :
+  case ERROR_PATH_BUSY :
+    rc = GRN_RESOURCE_BUSY;
+    break;
+  case ERROR_BAD_ARGUMENTS :
+    rc = GRN_INVALID_ARGUMENT;
+    break;
+  case ERROR_BUSY :
+    rc = GRN_RESOURCE_BUSY;
+    break;
+  case ERROR_ALREADY_EXISTS :
+    rc = GRN_FILE_EXISTS;
+    break;
+  case ERROR_BAD_EXE_FORMAT :
+    rc = GRN_EXEC_FORMAT_ERROR;
+    break;
+  default:
+    rc = GRN_UNKNOWN_ERROR;
+    break;
+  }
+
+  return rc;
+}
+
 # define LANG_ID_NEUTRAL()        MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL)
 # define LANG_ID_USER_DEFAULT()   MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT)
 # define LANG_ID_SYSTEM_DEFAULT() MAKELANGID(LANG_NEUTRAL, SUBLANG_SYS_DEFAULT)
