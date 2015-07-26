@@ -314,8 +314,10 @@ grn_logger_put(grn_ctx *ctx, grn_log_level level,
 void
 grn_logger_init(void)
 {
-  grn_memcpy(&current_logger, &default_logger, sizeof(grn_logger));
   CRITICAL_SECTION_INIT(default_logger_lock);
+  if (!current_logger.log) {
+    grn_memcpy(&current_logger, &default_logger, sizeof(grn_logger));
+  }
 }
 
 void
