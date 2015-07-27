@@ -1184,7 +1184,7 @@ ngx_http_groonga_conf_set_log_level_slot(ngx_conf_t *cf, ngx_command_t *cmd,
     groonga_location_conf->log_level = GRN_LOG_DUMP;
   } else {
     status = "must be one of 'none', 'emergency', 'alert', "
-      "'ciritical', 'error', 'warning', 'notice', 'info', 'debug' and 'dump'";
+      "'critical', 'error', 'warning', 'notice', 'info', 'debug' and 'dump'";
   }
   ngx_pfree(cf->cycle->pool, value);
 
