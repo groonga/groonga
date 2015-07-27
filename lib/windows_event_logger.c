@@ -23,8 +23,11 @@
 #include <string.h>
 
 #ifdef WIN32
+
+# include <evntprov.h>
+
 typedef struct _grn_windows_event_logger_data {
-  HANDLE event_log;
+  REGHANDLE registration_handle;
 } grn_windows_event_logger_data;
 
 static void
@@ -34,108 +37,62 @@ windows_event_logger_log(grn_ctx *ctx, grn_log_level level,
                          void *user_data)
 {
   grn_windows_event_logger_data *data = user_data;
-  WORD type;
-  WORD category = 0;
-  DWORD event_id = 0;
-  PSID user_sid = NULL;
-  WORD n_strings = 1;
-  DWORD data_size = 0;
-  void *raw_data = NULL;
+  const char level_marks[] = " EACewnid-";
+  grn_obj formatted_buffer;
+  UINT code_page;
+  DWORD convert_flags = 0;
+  int n_converted_chars;
+  ULONGLONG keyword = 0;
 
-  switch (level) {
-  case GRN_LOG_NONE :
-    type = EVENTLOG_INFORMATION_TYPE;
-    break;
-  case GRN_LOG_EMERG :
-  case GRN_LOG_ALERT :
-  case GRN_LOG_CRIT :
-  case GRN_LOG_ERROR :
-    type = EVENTLOG_ERROR_TYPE;
-    break;
-  case GRN_LOG_WARNING :
-    type = EVENTLOG_WARNING_TYPE;
-    break;
-  case GRN_LOG_NOTICE :
-  case GRN_LOG_INFO :
-  case GRN_LOG_DEBUG :
-  case GRN_LOG_DUMP :
-    type = EVENTLOG_INFORMATION_TYPE;
-    break;
-  default :
-    type = EVENTLOG_INFORMATION_TYPE;
-    break;
+  GRN_TEXT_INIT(&formatted_buffer, 0);
+  if (location && location[0]) {
+    grn_text_printf(ctx, &formatted_buffer, "%s|%c|%s %s %s",
+                    timestamp, level_marks[level], title, message, location);
+  } else {
+    grn_text_printf(ctx, &formatted_buffer, "%s|%c|%s %s",
+                    timestamp, level_marks[level], title, message);
   }
 
-  {
-    const char level_marks[] = " EACewnid-";
-    grn_obj formatted_buffer;
-    UINT code_page;
-    DWORD convert_flags = 0;
-    int n_converted_chars;
+  code_page = grn_windows_encoding_to_code_page(ctx->encoding);
+
+  n_converted_chars = MultiByteToWideChar(code_page,
+                                          convert_flags,
+                                          GRN_TEXT_VALUE(&formatted_buffer),
+                                          GRN_TEXT_LEN(&formatted_buffer),
+                                          NULL,
+                                          0);
 #define CONVERTED_BUFFER_SIZE 512
-
-    GRN_TEXT_INIT(&formatted_buffer, 0);
-    if (location && location[0]) {
-      grn_text_printf(ctx, &formatted_buffer, "%s|%c|%s %s %s",
-                      timestamp, level_marks[level], title, message, location);
-    } else {
-      grn_text_printf(ctx, &formatted_buffer, "%s|%c|%s %s",
-                      timestamp, level_marks[level], title, message);
-    }
-
-    code_page = grn_windows_encoding_to_code_page(ctx->encoding);
-
+  if (n_converted_chars < CONVERTED_BUFFER_SIZE) {
+    WCHAR converted_buffer[CONVERTED_BUFFER_SIZE];
     n_converted_chars = MultiByteToWideChar(code_page,
                                             convert_flags,
                                             GRN_TEXT_VALUE(&formatted_buffer),
                                             GRN_TEXT_LEN(&formatted_buffer),
-                                            NULL,
-                                            0);
-    if (n_converted_chars < CONVERTED_BUFFER_SIZE) {
-      WCHAR converted_buffer[CONVERTED_BUFFER_SIZE];
-      const WCHAR *strings[1];
-      n_converted_chars = MultiByteToWideChar(code_page,
-                                              convert_flags,
-                                              GRN_TEXT_VALUE(&formatted_buffer),
-                                              GRN_TEXT_LEN(&formatted_buffer),
-                                              converted_buffer,
-                                              CONVERTED_BUFFER_SIZE);
-      converted_buffer[n_converted_chars] = L'\0';
-      strings[0] = converted_buffer;
-      ReportEventW(data->event_log,
-                   type,
-                   category,
-                   event_id,
-                   user_sid,
-                   n_strings,
-                   data_size,
-                   strings,
-                   raw_data);
-    } else {
-      WCHAR *converted;
-      const WCHAR *strings[1];
-      converted = GRN_MALLOCN(WCHAR, n_converted_chars);
-      n_converted_chars = MultiByteToWideChar(code_page,
-                                              convert_flags,
-                                              GRN_TEXT_VALUE(&formatted_buffer),
-                                              GRN_TEXT_LEN(&formatted_buffer),
-                                              converted,
-                                              n_converted_chars);
-      converted[n_converted_chars] = L'\0';
-      strings[0] = converted;
-      ReportEventW(data->event_log,
-                   type,
-                   category,
-                   event_id,
-                   user_sid,
-                   n_strings,
-                   data_size,
-                   strings,
-                   raw_data);
-      GRN_FREE(converted);
-    }
-    GRN_OBJ_FIN(ctx, &formatted_buffer);
+                                            converted_buffer,
+                                            CONVERTED_BUFFER_SIZE);
+    converted_buffer[n_converted_chars] = L'\0';
+    EventWriteString(data->registration_handle,
+                     level,
+                     keyword,
+                     converted_buffer);
+#undef CONVERTED_BUFFER_SIZE
+  } else {
+    WCHAR *converted;
+    converted = GRN_MALLOCN(WCHAR, n_converted_chars);
+    n_converted_chars = MultiByteToWideChar(code_page,
+                                            convert_flags,
+                                            GRN_TEXT_VALUE(&formatted_buffer),
+                                            GRN_TEXT_LEN(&formatted_buffer),
+                                            converted,
+                                            n_converted_chars);
+    converted[n_converted_chars] = L'\0';
+    EventWriteString(data->registration_handle,
+                     level,
+                     keyword,
+                     converted);
+    GRN_FREE(converted);
   }
+  GRN_OBJ_FIN(ctx, &formatted_buffer);
 }
 
 static void
@@ -148,8 +105,8 @@ windows_event_logger_fin(grn_ctx *ctx, void *user_data)
 {
   grn_windows_event_logger_data *data = user_data;
 
-  if (data->event_log) {
-    DeregisterEventSource(data->event_log);
+  if (data->registration_handle) {
+    EventUnregister(data->registration_handle);
   }
   free(data);
 }
@@ -162,7 +119,7 @@ grn_windows_event_logger_set(grn_ctx *ctx)
   grn_rc rc;
   grn_logger windows_event_logger;
   grn_windows_event_logger_data *data;
-  const char *source_name = "Groonga";
+
   if (ctx) {
     GRN_API_ENTER;
   }
@@ -178,17 +135,26 @@ grn_windows_event_logger_set(grn_ctx *ctx)
     }
   }
 
-  data->event_log = RegisterEventSourceA(NULL, source_name);
-  if (!data->event_log) {
-    free(data);
-    if (ctx) {
-      SERR("RegisterEventSource");
-      GRN_LOG(ctx, GRN_LOG_ERROR,
-              "failed to register event source: <%s>",
-              source_name);
-      GRN_API_RETURN(ctx->rc);
-    } else {
-      return grn_windows_error_code_to_rc(GetLastError());
+  {
+    ULONG status;
+    const GUID provide_id = {
+      0x851d655e,
+      0x1970,
+      0x400b,
+      {0x99, 0xa3, 0x1c, 0x6f, 0xac, 0x5c, 0xbe, 0x18}
+    };
+    status = EventRegister(&provide_id,
+                           NULL, NULL,
+                           &(data->registration_handle));
+    if (status != ERROR_SUCCESS) {
+      free(data);
+      if (ctx) {
+        SERR("EventRegister");
+        GRN_LOG(ctx, GRN_LOG_ERROR, "failed to register event: <%lu>", status);
+        GRN_API_RETURN(ctx->rc);
+      } else {
+        return grn_windows_error_code_to_rc(GetLastError());
+      }
     }
   }
 

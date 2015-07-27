@@ -1,0 +1,24 @@
+<?xml version="1.0"?><!-- -*- mode: xml -*- -->
+<instrumentationManifest
+    xmlns="http://schemas.microsoft.com/win/2004/08/events"
+    xmlns:win="http://manifests.microsoft.com/win/2004/08/windows/events"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <instrumentation>
+    <events>
+      <provider name="Groonga"
+                guid="{851d655e-1970-400b-99a3-1c6fac5cbe18}">
+        <levels>
+          <level name="Emergency" value="1"/>
+          <level name="Alert"     value="2"/>
+          <level name="Critical"  value="3"/>
+          <level name="Error"     value="4"/>
+          <level name="Warning"   value="5"/>
+          <level name="Notice"    value="6"/>
+          <level name="Info"      value="7"/>
+          <level name="Debug"     value="8"/>
+          <level name="Dump"      value="9"/>
+        </levels>
+      </provider>
+    </events>
+  </instrumentation>
+</instrumentationManifest>

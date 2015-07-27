@@ -68,7 +68,7 @@
 
 # if defined(__GNUC__) && !defined(WINVER)
 #  include <w32api.h>
-#  define WINVER WindowsXP
+#  define WINVER WindowsVista
 # endif /* defined(__GNUC__) && !defined(WINVER) */
 
 # include <basetsd.h>
