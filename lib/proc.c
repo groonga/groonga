@@ -2558,18 +2558,21 @@ proc_defrag(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return NULL;
 }
 
-static char slev[] = " EACewnid-";
-
 static grn_obj *
 proc_log_level(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  char *p;
-  if (GRN_TEXT_LEN(VAR(0)) &&
-      (p = strchr(slev, GRN_TEXT_VALUE(VAR(0))[0]))) {
-    grn_log_level max_level = (grn_log_level)(p - slev);
-    grn_logger_set_max_level(ctx, max_level);
+  grn_obj *level_name = VAR(0);
+  if (GRN_TEXT_LEN(level_name) > 0) {
+    grn_log_level max_level;
+    GRN_TEXT_PUTC(ctx, level_name, '\0');
+    if (grn_log_level_parse(GRN_TEXT_VALUE(level_name), &max_level)) {
+      grn_logger_set_max_level(ctx, max_level);
+    } else {
+      ERR(GRN_INVALID_ARGUMENT,
+          "invalid log level: <%s>", GRN_TEXT_VALUE(level_name));
+    }
   } else {
-    ERR(GRN_INVALID_ARGUMENT, "invalid log level.");
+    ERR(GRN_INVALID_ARGUMENT, "log level is missing");
   }
   GRN_OUTPUT_BOOL(!ctx->rc);
   return NULL;
@@ -2578,13 +2581,21 @@ proc_log_level(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
 static grn_obj *
 proc_log_put(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  char *p;
-  if (GRN_TEXT_LEN(VAR(0)) &&
-      (p = strchr(slev, GRN_TEXT_VALUE(VAR(0))[0]))) {
-    GRN_TEXT_PUTC(ctx, VAR(1), '\0');
-    GRN_LOG(ctx, (int)(p - slev), "%s", GRN_TEXT_VALUE(VAR(1)));
+  grn_obj *level_name = VAR(0);
+  grn_obj *message = VAR(1);
+  if (GRN_TEXT_LEN(level_name) > 0) {
+    grn_log_level level;
+    GRN_TEXT_PUTC(ctx, level_name, '\0');
+    if (grn_log_level_parse(GRN_TEXT_VALUE(level_name), &level)) {
+      GRN_LOG(ctx, level, "%.*s",
+              (int)GRN_TEXT_LEN(message),
+              GRN_TEXT_VALUE(message));
+    } else {
+      ERR(GRN_INVALID_ARGUMENT,
+          "invalid log level: <%s>", GRN_TEXT_VALUE(level_name));
+    }
   } else {
-    ERR(GRN_INVALID_ARGUMENT, "invalid log level.");
+    ERR(GRN_INVALID_ARGUMENT, "log level is missing");
   }
   GRN_OUTPUT_BOOL(!ctx->rc);
   return NULL;
