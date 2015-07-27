@@ -25,6 +25,18 @@ module Groonga
       end
 
       private
+      def cache_key(input)
+        key = "logical_count\0"
+        key << "#{input[:logical_table]}\0"
+        key << "#{input[:shard_key]}\0"
+        key << "#{input[:min]}\0"
+        key << "#{input[:min_border]}\0"
+        key << "#{input[:max]}\0"
+        key << "#{input[:max_border]}\0"
+        key << "#{input[:filter]}\0"
+        key
+      end
+
       def log_use_range_index(use, table_name, line, method)
         message = "[logical_count]"
         if use
