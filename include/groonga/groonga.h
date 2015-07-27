@@ -162,6 +162,9 @@ typedef enum {
   GRN_LOG_DUMP
 } grn_log_level;
 
+GRN_API const char *grn_log_level_to_string(grn_log_level level);
+GRN_API grn_bool grn_log_level_parse(const char *string, grn_log_level *level);
+
 /* query log flags */
 #define GRN_QUERY_LOG_NONE        (0x00)
 #define GRN_QUERY_LOG_COMMAND     (0x01<<0)

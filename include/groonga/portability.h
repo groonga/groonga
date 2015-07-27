@@ -118,6 +118,14 @@
 #endif /* WIN32 */
 
 #ifdef WIN32
+# define grn_strcasecmp(string1, string2)       \
+  _stricmp((string1), (string2))
+#else /* WIN32 */
+# define grn_strcasecmp(string1, string2)       \
+  strcasecmp((string1), (string2))
+#endif /* WIN32 */
+
+#ifdef WIN32
 # define grn_snprintf(dest, dest_size, n, format, ...)          \
   _snprintf_s((dest), (dest_size), (n) - 1, (format), __VA_ARGS__)
 #else /* WIN32 */

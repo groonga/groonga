@@ -32,6 +32,82 @@
 # define fileno(file) _fileno(file)
 #endif
 
+static const char *log_level_names[] = {
+  "none",
+  "emergency",
+  "alert",
+  "critical",
+  "error",
+  "warning",
+  "notice",
+  "info",
+  "debug",
+  "dump"
+};
+
+#define GRN_LOG_LAST GRN_LOG_DUMP
+
+const char *
+grn_log_level_to_string(grn_log_level level)
+{
+  if (level <= GRN_LOG_LAST) {
+    return log_level_names[level];
+  } else {
+    return "unknown";
+  }
+}
+
+grn_bool
+grn_log_level_parse(const char *string, grn_log_level *level)
+{
+  if (strcmp(string, " ") == 0 ||
+      grn_strcasecmp(string, "none") == 0) {
+    *level = GRN_LOG_NONE;
+    return GRN_TRUE;
+  } else if (strcmp(string, "E") == 0 ||
+             grn_strcasecmp(string, "emerg") == 0 ||
+             grn_strcasecmp(string, "emergency") == 0) {
+    *level = GRN_LOG_EMERG;
+    return GRN_TRUE;
+  } else if (strcmp(string, "A") == 0 ||
+             grn_strcasecmp(string, "alert") == 0) {
+    *level = GRN_LOG_ALERT;
+    return GRN_TRUE;
+  } else if (strcmp(string, "C") == 0 ||
+             grn_strcasecmp(string, "crit") == 0 ||
+             grn_strcasecmp(string, "critical") == 0) {
+    *level = GRN_LOG_CRIT;
+    return GRN_TRUE;
+  } else if (strcmp(string, "e") == 0 ||
+             grn_strcasecmp(string, "error") == 0) {
+    *level = GRN_LOG_ERROR;
+    return GRN_TRUE;
+  } else if (strcmp(string, "w") == 0 ||
+             grn_strcasecmp(string, "warn") == 0 ||
+             grn_strcasecmp(string, "warning") == 0) {
+    *level = GRN_LOG_WARNING;
+    return GRN_TRUE;
+  } else if (strcmp(string, "n") == 0 ||
+             grn_strcasecmp(string, "notice") == 0) {
+    *level = GRN_LOG_NOTICE;
+    return GRN_TRUE;
+  } else if (strcmp(string, "i") == 0 ||
+             grn_strcasecmp(string, "info") == 0) {
+    *level = GRN_LOG_INFO;
+    return GRN_TRUE;
+  } else if (strcmp(string, "d") == 0 ||
+             grn_strcasecmp(string, "debug") == 0) {
+    *level = GRN_LOG_DEBUG;
+    return GRN_TRUE;
+  } else if (strcmp(string, "-") == 0 ||
+             grn_strcasecmp(string, "dump") == 0) {
+    *level = GRN_LOG_DUMP;
+    return GRN_TRUE;
+  } else {
+    return GRN_FALSE;
+  }
+}
+
 static void
 rotate_log_file(grn_ctx *ctx, const char *current_path)
 {
