@@ -5190,8 +5190,8 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
                              si->op, (grn_obj *)pres, GRN_OP_OR);
             grn_obj_unlink(ctx, domain);
             GRN_HASH_EACH(ctx, pres, id, &key, NULL, NULL, {
-                grn_ii_at(ctx, (grn_ii *)index, *key, (grn_hash *)res, si->logical_op);
-              });
+              grn_ii_at(ctx, (grn_ii *)index, *key, (grn_hash *)res, si->logical_op);
+            });
             grn_hash_close(ctx, pres);
           }
           grn_obj_unlink(ctx, domain);
