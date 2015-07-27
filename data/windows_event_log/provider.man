@@ -26,8 +26,6 @@
                  template="message" channel="system"/>
           <event value="4" level="win:Informational"
                  template="message" channel="system"/>
-          <event value="5" level="win:Verbose"
-                 template="message" channel="system"/>
         </events>
       </provider>
     </events>
