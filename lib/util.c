@@ -1329,8 +1329,8 @@ grn_win32_base_dir(void)
           *path = '\0';
         }
         path = strrchr(win32_base_dir, '\\');
-        if (path && (strcasecmp(path + 1, "bin") == 0 ||
-                     strcasecmp(path + 1, "lib") == 0)) {
+        if (path && (grn_strcasecmp(path + 1, "bin") == 0 ||
+                     grn_strcasecmp(path + 1, "lib") == 0)) {
           *path = '\0';
         } else {
           path = win32_base_dir + strlen(win32_base_dir);
