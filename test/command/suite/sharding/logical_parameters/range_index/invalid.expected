@@ -1,0 +1,13 @@
+register sharding
+[[0,0.0,0.0],true]
+logical_parameters --range_index invalid
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[logical_parameters][range_index] must be auto, always or never: <invalid>"
+  ]
+]

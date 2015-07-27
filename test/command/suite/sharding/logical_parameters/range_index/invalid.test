@@ -1,0 +1,5 @@
+#@on-error omit
+register sharding
+#@on-error default
+
+logical_parameters --range_index invalid
