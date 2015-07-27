@@ -4780,6 +4780,24 @@ grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
   GRN_OBJ_FIN(ctx, &score_buffer);
 }
 
+static const grn_log_level index_report_log_level = GRN_LOG_INFO;
+
+static inline void
+grn_table_select_index_report(grn_ctx *ctx, const char *tag, grn_obj *index)
+{
+  char index_name[GRN_TABLE_MAX_KEY_SIZE];
+  int index_name_size;
+
+  if (!grn_logger_pass(ctx, index_report_log_level)) {
+    return;
+  }
+
+  index_name_size = grn_obj_name(ctx, index, index_name, GRN_TABLE_MAX_KEY_SIZE);
+  GRN_LOG(ctx, index_report_log_level,
+          "[table][select][index]%s <%.*s>",
+          tag, index_name_size, index_name);
+}
+
 static inline grn_bool
 grn_table_select_index_range_column(grn_ctx *ctx, grn_obj *table,
                                     grn_obj *index,
@@ -4803,6 +4821,8 @@ grn_table_select_index_range_column(grn_ctx *ctx, grn_obj *table,
     int offset = 0;
     int limit = -1;
     int flags = GRN_CURSOR_ASCENDING;
+
+    grn_table_select_index_report(ctx, "[range]", index_table);
 
     switch (si->op) {
     case GRN_OP_LESS :
@@ -4905,6 +4925,9 @@ grn_table_select_index_range_accessor(grn_ctx *ctx, grn_obj *table,
     }
   }
 
+  grn_table_select_index_report(ctx, "[range][accessor]",
+                                GRN_PTR_VALUE_AT(accessor_stack, 0));
+
   {
     int i;
     grn_obj weight_vector;
@@ -4942,6 +4965,15 @@ grn_table_select_index_range_accessor(grn_ctx *ctx, grn_obj *table,
         }
         index = index_datum.index;
         section = index_datum.section;
+      }
+
+      if (grn_logger_pass(ctx, index_report_log_level)) {
+#define TAG_BUFFER_SIZE 128
+        char tag[TAG_BUFFER_SIZE];
+        grn_snprintf(tag, TAG_BUFFER_SIZE, TAG_BUFFER_SIZE,
+                     "[range][accessor][%d]", i - 1);
+        grn_table_select_index_report(ctx, tag, index);
+#undef TAG_BUFFER_SIZE
       }
 
       if (section > 0) {
@@ -5073,6 +5105,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
           posting.weight = 0;
           switch (a->action) {
           case GRN_ACCESSOR_GET_ID :
+            grn_table_select_index_report(ctx, "[equal][accessor][id]", table);
             GRN_UINT32_INIT(&dest, 0);
             if (!grn_obj_cast(ctx, si->query, &dest, GRN_FALSE)) {
               posting.rid = GRN_UINT32_VALUE(&dest);
@@ -5088,6 +5121,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
             GRN_OBJ_FIN(ctx, &dest);
             break;
           case GRN_ACCESSOR_GET_KEY :
+            grn_table_select_index_report(ctx, "[equal][accessor][key]", table);
             GRN_OBJ_INIT(&dest, GRN_BULK, 0, table->header.domain);
             if (!grn_obj_cast(ctx, si->query, &dest, GRN_FALSE)) {
               if ((posting.rid = grn_table_get(ctx, table,
@@ -5115,6 +5149,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
                                 GRN_BULK_VSIZE(si->query));
           }
           if (tid != GRN_ID_NIL) {
+            grn_table_select_index_report(ctx, "[equal]", index);
             grn_ii_at(ctx, (grn_ii *)index, tid, (grn_hash *)res,
                       si->logical_op);
           }
@@ -5154,6 +5189,13 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
             /* todo */
             break;
           case GRN_ACCESSOR_GET_KEY :
+            if (si->op == GRN_OP_SUFFIX) {
+              grn_table_select_index_report(ctx,
+                                            "[suffix][accessor][key]", table);
+            } else {
+              grn_table_select_index_report(ctx,
+                                            "[prefix][accessor][key]", table);
+            }
             GRN_OBJ_INIT(&dest, GRN_BULK, 0, table->header.domain);
             if (!grn_obj_cast(ctx, si->query, &dest, GRN_FALSE)) {
               grn_hash *pres;
@@ -5184,6 +5226,11 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
           if ((pres = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
                                       GRN_OBJ_TABLE_HASH_KEY))) {
             grn_id *key;
+            if (si->op == GRN_OP_SUFFIX) {
+              grn_table_select_index_report(ctx, "[suffix]", index);
+            } else {
+              grn_table_select_index_report(ctx, "[prefix]", index);
+            }
             grn_table_search(ctx, domain,
                              GRN_BULK_HEAD(si->query),
                              GRN_BULK_VSIZE(si->query),
@@ -5211,6 +5258,27 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
         int n_indexes = GRN_BULK_VSIZE(&si->index)/sizeof(grn_obj *);
         int32_t *wp = &GRN_INT32_VALUE(&si->wv);
         grn_search_optarg optarg;
+        const char *tag = "";
+        switch (si->op) {
+        case GRN_OP_MATCH :
+          tag = "[match]";
+          break;
+        case GRN_OP_NEAR :
+          tag = "[near]";
+          break;
+        case GRN_OP_NEAR2 :
+          tag = "[near2]";
+          break;
+        case GRN_OP_SIMILAR :
+          tag = "[similar]";
+          break;
+        case GRN_OP_REGEXP :
+          tag = "[regexp]";
+          break;
+        default :
+          tag = "[unknown]";
+          break;
+        }
         GRN_INT32_INIT(&wv, GRN_OBJ_VECTOR);
         if (si->op == GRN_OP_MATCH) {
           optarg.mode = GRN_OP_EXACT;
@@ -5264,6 +5332,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
           } else {
             ctx->flags &= ~GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
           }
+          grn_table_select_index_report(ctx, tag, ip[0]);
           grn_obj_search(ctx, ip[0], si->query, res, si->logical_op, &optarg);
           if (optarg.weight_vector) {
             int i;
@@ -5284,6 +5353,8 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
           grn_accessor *a = (grn_accessor *)index;
           switch (a->action) {
           case GRN_ACCESSOR_GET_KEY :
+            grn_table_select_index_report(ctx, "[term-extract][accessor][key]",
+                                          table);
             grn_table_search(ctx, table,
                              GRN_TEXT_VALUE(si->query), GRN_TEXT_LEN(si->query),
                              GRN_OP_TERM_EXTRACT, res, si->logical_op);
@@ -5297,6 +5368,17 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
       if (grn_obj_is_selector_proc(ctx, si->args[0])) {
         grn_rc rc;
         grn_proc *proc = (grn_proc *)(si->args[0]);
+        if (grn_logger_pass(ctx, index_report_log_level)) {
+          char proc_name[GRN_TABLE_MAX_KEY_SIZE];
+          int proc_name_size;
+          char tag[GRN_TABLE_MAX_KEY_SIZE];
+          proc_name_size = grn_obj_name(ctx, (grn_obj *)proc,
+                                        proc_name, GRN_TABLE_MAX_KEY_SIZE);
+          proc_name[proc_name_size] = '\0';
+          grn_snprintf(tag, GRN_TABLE_MAX_KEY_SIZE, GRN_TABLE_MAX_KEY_SIZE,
+                       "[selector][%s]", proc_name);
+          grn_table_select_index_report(ctx, tag, index);
+        }
         rc = proc->selector(ctx, table, index, si->nargs, si->args,
                             res, si->logical_op);
         if (rc) {
@@ -5323,6 +5405,17 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
       if (grn_obj_is_selector_proc(ctx, si->args[0])) {
         grn_rc rc;
         grn_proc *proc = (grn_proc *)(si->args[0]);
+        if (grn_logger_pass(ctx, index_report_log_level)) {
+          char proc_name[GRN_TABLE_MAX_KEY_SIZE];
+          int proc_name_size;
+          char tag[GRN_TABLE_MAX_KEY_SIZE];
+          proc_name_size = grn_obj_name(ctx, (grn_obj *)proc,
+                                        proc_name, GRN_TABLE_MAX_KEY_SIZE);
+          proc_name[proc_name_size] = '\0';
+          grn_snprintf(tag, GRN_TABLE_MAX_KEY_SIZE, GRN_TABLE_MAX_KEY_SIZE,
+                       "[selector][no-index][%s]", proc_name);
+          grn_table_select_index_report(ctx, tag, table);
+        }
         rc = proc->selector(ctx, table, NULL, si->nargs, si->args,
                             res, si->logical_op);
         if (rc) {
