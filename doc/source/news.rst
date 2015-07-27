@@ -76,8 +76,8 @@ Improvements
 * [experimental][:doc:`/reference/executables/groonga`] Supported changing the number
   of threads by thread_count command.
 * [experimental][:doc:`/install/windows`] Added Windows event log support.
-* [experimental][:doc:`/reference/executables/groonga`] Added Windows event log related option
-  ``--use-windows-event-log``. It reports logs as Windows events.
+* [experimental][:doc:`/reference/executables/groonga`] Added Windows event log related
+  option ``--use-windows-event-log``. It reports logs as Windows events.
 * [:doc:`/install/windows`] Used Groonga's default encoding for log message.
 * [plugin] Added :c:func:`grn_command_input_get_arguments()`.
 * Updated sharding plugins.
@@ -94,16 +94,22 @@ Improvements
     * ``--drilldown_offset``
     * ``--drilldown_limit``
 
-  * [:doc:`/reference/commands/logical_select`] Used the same default output_columns as :doc:`/reference/commands/select`.
-  * [:doc:`/reference/commands/logical_select`] Supported calc_types and calc_target for labeled drilldown.
-  * [:doc:`/reference/commands/logical_count`] Supported logging whether range index is used or not.
+  * [:doc:`/reference/commands/logical_select`] Used the same default output_columns as
+    :doc:`/reference/commands/select`.
+  * [:doc:`/reference/commands/logical_select`] Supported calc_types and calc_target for
+    labeled drilldown.
+  * [:doc:`/reference/commands/logical_count`] Supported logging whether range index is
+    used or not.
   * [:doc:`/reference/commands/logical_count`] Show target table name.
-  * [:doc:`/reference/commands/logical_range_filter`] Supported ``'fixed_size_type_vector_column @ element'``.
+  * [:doc:`/reference/commands/logical_range_filter`] Supported
+    ``'fixed_size_type_vector_column @ element'``.
   * [:doc:`/reference/commands/logical_range_filter`] Added ``use_range_index`` parameter.
     It's a parameter for test. It should not be used for production.
-  * [:doc:`/reference/commands/logical_range_filter`] Log which mode (range-index or select mode) is used.
+  * [:doc:`/reference/commands/logical_range_filter`] Log which mode (range-index or
+    select mode) is used.
   * [:doc:`/reference/commands/logical_range_filter`] Supported cache.
-  * [:doc:`/reference/commands/logical_range_filter`] Supported nested reference vector accessor.
+  * [:doc:`/reference/commands/logical_range_filter`] Supported nested reference vector
+    accessor.
 
 * Added mruby APIs.
 
