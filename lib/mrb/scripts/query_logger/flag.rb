@@ -2,8 +2,10 @@ module Groonga
   class QueryLogger
     class Flag
       @@names = {}
-      def self.find(name)
-        @@names[name]
+      class << self
+        def find(name)
+          @@names[name]
+        end
       end
 
       attr_reader :name
