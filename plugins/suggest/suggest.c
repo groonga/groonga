@@ -28,13 +28,6 @@
 #include "grn_output.h"
 #include <groonga/plugin.h>
 
-#ifdef HAVE__STRNICMP
-# ifdef strncasecmp
-#  undef strncasecmp
-# endif /* strcasecmp */
-# define strncasecmp(s1,s2,n) _strnicmp(s1,s2,n)
-#endif /* HAVE__STRNICMP */
-
 #define VAR GRN_PROC_GET_VAR_BY_OFFSET
 #define CONST_STR_LEN(x) x, x ? sizeof(x) - 1 : 0
 #define TEXT_VALUE_LEN(x) GRN_TEXT_VALUE(x), GRN_TEXT_LEN(x)
@@ -536,10 +529,10 @@ parse_search_mode(grn_ctx *ctx, grn_obj *mode_text)
 
   mode_length = GRN_TEXT_LEN(mode_text);
   if (mode_length == 3 &&
-      strncasecmp("yes", GRN_TEXT_VALUE(mode_text), 3) == 0) {
+      grn_strncasecmp("yes", GRN_TEXT_VALUE(mode_text), 3) == 0) {
     mode = GRN_SUGGEST_SEARCH_YES;
   } else if (mode_length == 2 &&
-             strncasecmp("no", GRN_TEXT_VALUE(mode_text), 2) == 0) {
+             grn_strncasecmp("no", GRN_TEXT_VALUE(mode_text), 2) == 0) {
     mode = GRN_SUGGEST_SEARCH_NO;
   } else {
     mode = GRN_SUGGEST_SEARCH_AUTO;

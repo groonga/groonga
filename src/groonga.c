@@ -58,13 +58,6 @@
 # include <sys/uio.h>
 #endif /* WIN32 */
 
-#ifdef HAVE__STRNICMP
-# ifdef strncasecmp
-#  undef strncasecmp
-# endif /* strcasecmp */
-# define strncasecmp(s1,s2,n) _strnicmp(s1,s2,n)
-#endif /* HAVE__STRNICMP */
-
 #ifndef USE_MSG_NOSIGNAL
 # ifdef MSG_NOSIGNAL
 #  undef MSG_NOSIGNAL
@@ -1040,7 +1033,7 @@ typedef struct {
 
 #define STRING_EQUAL_CI(string, string_length, constant_string)\
   (string_length == strlen(constant_string) &&\
-   strncasecmp(string, constant_string, string_length) == 0)
+   grn_strncasecmp(string, constant_string, string_length) == 0)
 
 static const char *
 do_htreq_post_parse_header_request_line(grn_ctx *ctx,

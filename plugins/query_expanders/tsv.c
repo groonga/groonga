@@ -33,13 +33,6 @@
 # include <share.h>
 #endif /* WIN32 */
 
-#ifdef HAVE__STRNICMP
-# ifdef strncasecmp
-#  undef strncasecmp
-# endif /* strncasecmp */
-# define strncasecmp(s1,s2,n) _strnicmp(s1,s2,n)
-#endif /* HAVE__STRNICMP */
-
 #define MAX_SYNONYM_BYTES 4096
 
 static grn_hash *synonyms = NULL;
@@ -95,19 +88,19 @@ detect_coding_part(grn_ctx *ctx, const char *line, size_t line_length)
   coding_part = strstr(c_line, coding_part_keyword);
   if (coding_part) {
     encoding_name = coding_part + strlen(coding_part_keyword);
-    if (strncasecmp(encoding_name, "utf-8", strlen("utf-8")) == 0 ||
-        strncasecmp(encoding_name, "utf8", strlen("utf8")) == 0) {
+    if (grn_strncasecmp(encoding_name, "utf-8", strlen("utf-8")) == 0 ||
+        grn_strncasecmp(encoding_name, "utf8", strlen("utf8")) == 0) {
       encoding = GRN_ENC_UTF8;
-    } else if (strncasecmp(encoding_name, "sjis", strlen("sjis")) == 0 ||
-               strncasecmp(encoding_name, "Shift_JIS", strlen("Shift_JIS")) == 0) {
+    } else if (grn_strncasecmp(encoding_name, "sjis", strlen("sjis")) == 0 ||
+               grn_strncasecmp(encoding_name, "Shift_JIS", strlen("Shift_JIS")) == 0) {
       encoding = GRN_ENC_SJIS;
-    } else if (strncasecmp(encoding_name, "EUC-JP", strlen("EUC-JP")) == 0 ||
-               strncasecmp(encoding_name, "euc_jp", strlen("euc_jp")) == 0) {
+    } else if (grn_strncasecmp(encoding_name, "EUC-JP", strlen("EUC-JP")) == 0 ||
+               grn_strncasecmp(encoding_name, "euc_jp", strlen("euc_jp")) == 0) {
       encoding = GRN_ENC_EUC_JP;
-    } else if (strncasecmp(encoding_name, "latin1", strlen("latin1")) == 0) {
+    } else if (grn_strncasecmp(encoding_name, "latin1", strlen("latin1")) == 0) {
       encoding = GRN_ENC_LATIN1;
-    } else if (strncasecmp(encoding_name, "KOI8-R", strlen("KOI8-R")) == 0 ||
-               strncasecmp(encoding_name, "koi8r", strlen("koi8r")) == 0) {
+    } else if (grn_strncasecmp(encoding_name, "KOI8-R", strlen("KOI8-R")) == 0 ||
+               grn_strncasecmp(encoding_name, "koi8r", strlen("koi8r")) == 0) {
       encoding = GRN_ENC_KOI8R;
     }
   } else {
