@@ -71,13 +71,16 @@ Improvements
   points to an existing file. [GitHub#354] [Suggested by Hirotaka Takayama]
 * [doc][:doc:`/tutorial`] Described JSON formatting tools.
   [GitHub#355] [Suggested by tiwawan]
-* [experimental] Added an API to get/set the number of threads.
+* [experimental] Added an API to get/set the number of threads. It's a experimental API.
 * [experimental][thread_count] Added a command that get/set the number of threads.
+  It's a experimental command.
 * [experimental][:doc:`/reference/executables/groonga`] Supported changing the number
-  of threads by thread_count command.
+  of threads by thread_count command. It's a experimental feature.
 * [experimental][:doc:`/install/windows`] Added Windows event log support.
+  It's a experimental feature.
 * [experimental][:doc:`/reference/executables/groonga`] Added Windows event log related
   option ``--use-windows-event-log``. It reports logs as Windows events.
+  It's a experimental feature.
 * [:doc:`/install/windows`] Used Groonga's default encoding for log message.
 * [plugin] Added :c:func:`grn_command_input_get_arguments()`.
 * Updated sharding plugins.
