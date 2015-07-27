@@ -102,23 +102,12 @@ Improvements
 * [mrb] Added ``Groonga::Cache.current``.
 * [mrb] Added ``TableCursor#key``.
 * [mrb] Added ``Database#each_name``.
+* Accepted selector only proc. Note that the proc can't be used as function. It means
+  that the proc can't be used with sequential search.
+* [:doc:`/reference/commands/logical_range_filter`] Supported nested reference vector accessor.
+* Supported function call with complex argument. For example ::
 
-.. TODO:
-.. * logical_range_filter: don't use range index if query has nested reference vector accessor
-..
-..   Nested reference vector accessor is an accessor that has one or more
-..   reference vector columns not in the last element.
-..
-..   users.name is a nested reference vector when "users" is defined as the
-..   following because "users" isn't the last element:
-..
-..       column_create XXX users COLUMN_VECTOR Users
-..
-..   user.tags isn't a nested reference vector when "user" and "tags" are
-..   defined as the following because "tags" is the last element:
-..
-..       column_create XXX user COLUMN_SCALAR Users
-..       column_create Users tags COLUMN_VECTOR Tags
+    function(_key, Table["key"].column)
 
 Fixes
 ^^^^^
@@ -126,18 +115,6 @@ Fixes
 * Fixed a memory leak when an error is occurred in :c:func:`grn_expr_exec()`.
   For example, unsupported operator (e.g. ``GRN_OP_TERM_EXTRACT``) is used
   (``not implemented operator assigned`` is occurred for the case).
-
-.. TODO:
-.. * Fix a bug function can't be found in function call with complex argument
-..
-..   An example complex argument is 'Table["key"].column'.
-..
-..     function(_key, Table["key"].column)
-..
-..   can't be found ``function`` as function object. It detects "_key" as
-..   function but it's not function object. So the function call report an
-..   error.
-
 * [bindings/php] Added a missing check for a memory allocation failure.
   [Reported by Bill Parker]
 * [:doc:`/install/centos`][:doc:`/server/package`][logrotate] Fixed syntax error in script.
