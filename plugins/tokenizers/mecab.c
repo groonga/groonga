@@ -64,14 +64,14 @@ mecab_global_error_message(void)
 static grn_encoding
 translate_mecab_charset_to_grn_encoding(const char *charset)
 {
-  if (strcasecmp(charset, "euc-jp") == 0) {
+  if (grn_strcasecmp(charset, "euc-jp") == 0) {
     return GRN_ENC_EUC_JP;
-  } else if (strcasecmp(charset, "utf-8") == 0 ||
-             strcasecmp(charset, "utf8") == 0) {
+  } else if (grn_strcasecmp(charset, "utf-8") == 0 ||
+             grn_strcasecmp(charset, "utf8") == 0) {
     return GRN_ENC_UTF8;
-  } else if (strcasecmp(charset, "shift_jis") == 0 ||
-             strcasecmp(charset, "shift-jis") == 0 ||
-             strcasecmp(charset, "sjis") == 0) {
+  } else if (grn_strcasecmp(charset, "shift_jis") == 0 ||
+             grn_strcasecmp(charset, "shift-jis") == 0 ||
+             grn_strcasecmp(charset, "sjis") == 0) {
     return GRN_ENC_SJIS;
   }
   return GRN_ENC_NONE;
