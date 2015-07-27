@@ -25,6 +25,7 @@
 #ifdef WIN32
 
 # include <evntprov.h>
+# include <evntrace.h>
 
 typedef struct _grn_windows_event_logger_data {
   REGHANDLE registration_handle;
@@ -42,7 +43,40 @@ windows_event_logger_log(grn_ctx *ctx, grn_log_level level,
   UINT code_page;
   DWORD convert_flags = 0;
   int n_converted_chars;
-  ULONGLONG keyword = 0;
+  EVENT_DESCRIPTOR event;
+
+  switch (level) {
+  case GRN_LOG_NONE :
+    event.Level = TRACE_LEVEL_NONE;
+    break;
+  case GRN_LOG_EMERG :
+  case GRN_LOG_ALERT :
+  case GRN_LOG_CRIT :
+    event.Level = TRACE_LEVEL_CRITICAL;
+    break;
+  case GRN_LOG_ERROR :
+    event.Level = TRACE_LEVEL_ERROR;
+    break;
+  case GRN_LOG_WARNING :
+    event.Level = TRACE_LEVEL_WARNING;
+    break;
+  case GRN_LOG_NOTICE :
+  case GRN_LOG_INFO :
+  case GRN_LOG_DEBUG :
+  case GRN_LOG_DUMP :
+    event.Level = TRACE_LEVEL_INFORMATION;
+    break;
+  default :
+    event.Level = TRACE_LEVEL_INFORMATION;
+    break;
+  }
+
+  event.Id = event.Level;
+  event.Version = 0;
+  event.Channel = 0x08;
+  event.Opcode = 0;
+  event.Task = 0;
+  event.Keyword = 0x00;
 
   GRN_TEXT_INIT(&formatted_buffer, 0);
   if (location && location[0]) {
@@ -64,6 +98,7 @@ windows_event_logger_log(grn_ctx *ctx, grn_log_level level,
 #define CONVERTED_BUFFER_SIZE 512
   if (n_converted_chars < CONVERTED_BUFFER_SIZE) {
     WCHAR converted_buffer[CONVERTED_BUFFER_SIZE];
+    EVENT_DATA_DESCRIPTOR descriptor;
     n_converted_chars = MultiByteToWideChar(code_page,
                                             convert_flags,
                                             GRN_TEXT_VALUE(&formatted_buffer),
@@ -71,13 +106,16 @@ windows_event_logger_log(grn_ctx *ctx, grn_log_level level,
                                             converted_buffer,
                                             CONVERTED_BUFFER_SIZE);
     converted_buffer[n_converted_chars] = L'\0';
-    EventWriteString(data->registration_handle,
-                     level,
-                     keyword,
-                     converted_buffer);
+    EventDataDescCreate(&descriptor, converted_buffer,
+                        sizeof(WCHAR) * n_converted_chars);
+    EventWrite(data->registration_handle,
+               &event,
+               1,
+               &descriptor);
 #undef CONVERTED_BUFFER_SIZE
   } else {
     WCHAR *converted;
+    EVENT_DATA_DESCRIPTOR descriptor;
     converted = GRN_MALLOCN(WCHAR, n_converted_chars);
     n_converted_chars = MultiByteToWideChar(code_page,
                                             convert_flags,
@@ -86,10 +124,12 @@ windows_event_logger_log(grn_ctx *ctx, grn_log_level level,
                                             converted,
                                             n_converted_chars);
     converted[n_converted_chars] = L'\0';
-    EventWriteString(data->registration_handle,
-                     level,
-                     keyword,
-                     converted);
+    EventDataDescCreate(&descriptor, converted,
+                        sizeof(WCHAR) * n_converted_chars);
+    EventWrite(data->registration_handle,
+               &event,
+               1,
+               &descriptor);
     GRN_FREE(converted);
   }
   GRN_OBJ_FIN(ctx, &formatted_buffer);
