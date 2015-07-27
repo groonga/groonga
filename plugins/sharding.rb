@@ -1,3 +1,4 @@
+require "sharding/parameters"
 require "sharding/range_expression_builder"
 require "sharding/logical_enumerator"
 
