@@ -15,22 +15,6 @@ Release 5.0.6 - 2015-07-29
 Improvements
 ^^^^^^^^^^^^
 
-* [mrb] Binded :c:func:`grn_table_group_flags()` to ``TableGroupFlags``.
-* [mrb] Binded :c:func:`grn_table_group()` to ``Table#group``.
-* [:doc:`/reference/commands/logical_select`] Fixed output format.
-  It has become :doc:`/reference/commands/select` compatible format.
-* [:doc:`/reference/commands/logical_select`] Supported the following parameters.
-
-  * ``--output_columns``
-  * ``--offset``
-  * ``--limit``
-  * ``--drilldown``
-  * ``--drilldown_sortby``
-  * ``--drilldown_offset``
-  * ``--drilldown_limit``
-
-* [plugin] Added :c:func:`grn_command_input_get_arguments()`.
-* [mrb] Binded :c:func:`grn_command_input_get_arguments()` to ``CommandInput#arguments``.
 * Supported offline index construction for reference vector. For example::
 
     table_create Entries TABLE_NO_KEY
@@ -60,7 +44,7 @@ Improvements
 
     select Memos --filter 'tags @ "Rroonga"'
 
-* Supported ``'fixed_size_type_vector_column @ element'`` without index. For example::
+* Supported ``'fixed_size_type_vector_column @ n'`` without index. For example::
 
     table_create Memos TABLE_NO_KEY
     column_create Memos numbers COLUMN_VECTOR Int32
@@ -72,42 +56,65 @@ Improvements
 
     select Memos --filter 'numbers @ 2'
 
-* [:doc:`/reference/commands/logical_range_filter`] Supported ``'fixed_size_type_vector_column @ element'``.
-* [mrb] Added ``Column#[]``.
-* [:doc:`/install/windows`][:doc:`/reference/executables/groonga`] Supported ``--pid-path``.
 * [:doc:`/install/centos`][:doc:`/server/package`][:doc:`/reference/executables/groonga-httpd`]
   Show exit status. [GitHub#357] [Patch by jacob16bit]
-* [mrb] Added ``Record``.
-* [mrb] Added ``Table#each``.
-* [mrb] Added ``Context#command_version`` and ``Context#command_version=`` (accessors).
-* [mrb] Binded ``GRN_COMMAND_VERSION_DEFAULT``.
-* [mrb] Added ``Context#with_command_version``.
+* [:doc:`/install/windows`][:doc:`/reference/executables/groonga`] Supported ``--pid-path``.
+* [:doc:`/install/windows`] Allowed to delete file that is opened by other process.
+* Accepted selector only proc. Note that the proc can't be used as function. It means
+  that the proc can't be used with sequential search.
+* Supported function call with complex argument. For example::
+
+    function(_key, Table["key"].column)
+
+* [doc][:doc:`/reference/commands/select`] Updated.
 * [doc][:doc:`/tutorial`] Added more description about database creation fails if DB_PATH
   points to an existing file. [GitHub#354] [Suggested by Hirotaka Takayama]
 * [doc][:doc:`/tutorial`] Described JSON formatting tools.
   [GitHub#355] [Suggested by tiwawan]
-* [:doc:`/reference/commands/logical_range_filter`] Added ``use_range_index`` parameter.
-  It's a parameter for test. It should not be used for production.
-* [:doc:`/reference/commands/logical_range_filter`] Log which mode (range-index or select mode) is used.
-* [mrb][estimate_size] Supported ``(... || ...) && (... || ...)`` case.
-* [doc][:doc:`/reference/commands/select`] Updated.
-* [:doc:`/reference/commands/logical_select`] Used the same default output_columns as select.
-* logical_select: support calc_types and calc_target for labeled drilldown
-* logical_count: support logging whether range index is used or not
-* logical_count: show target table name
-* [mrb] Added ``Column#scalar?``, ``Column#vector?`` and ``Column#index?``.
-* [:doc:`/install/windows`] Allowed to delete file that is opened by other process.
-* [:doc:`/reference/commands/logical_range_filter`] Supported cache.
-* [mrb] Binded ``grn_cache``.
-* [mrb] Added ``Groonga::Cache.current``.
-* [mrb] Added ``TableCursor#key``.
-* [mrb] Added ``Database#each_name``.
-* Accepted selector only proc. Note that the proc can't be used as function. It means
-  that the proc can't be used with sequential search.
-* [:doc:`/reference/commands/logical_range_filter`] Supported nested reference vector accessor.
-* Supported function call with complex argument. For example ::
+* [plugin] Added :c:func:`grn_command_input_get_arguments()`.
+* Updated sharding plugins.
 
-    function(_key, Table["key"].column)
+  * [:doc:`/reference/commands/logical_select`] Fixed output format.
+    It has become :doc:`/reference/commands/select` compatible format.
+  * [:doc:`/reference/commands/logical_select`] Supported the following parameters.
+
+    * ``--output_columns``
+    * ``--offset``
+    * ``--limit``
+    * ``--drilldown``
+    * ``--drilldown_sortby``
+    * ``--drilldown_offset``
+    * ``--drilldown_limit``
+
+  * [:doc:`/reference/commands/logical_select`] Used the same default output_columns as select.
+  * [:doc:`/reference/commands/logical_select`] Supported calc_types and calc_target for labeled drilldown.
+  * [:doc:`/reference/commands/logical_count`] Supported logging whether range index is used or not.
+  * [:doc:`/reference/commands/logical_count`] Show target table name.
+  * [:doc:`/reference/commands/logical_range_filter`] Supported ``'fixed_size_type_vector_column @ element'``.
+  * [:doc:`/reference/commands/logical_range_filter`] Added ``use_range_index`` parameter.
+    It's a parameter for test. It should not be used for production.
+  * [:doc:`/reference/commands/logical_range_filter`] Log which mode (range-index or select mode) is used.
+  * [:doc:`/reference/commands/logical_range_filter`] Supported cache.
+  * [:doc:`/reference/commands/logical_range_filter`] Supported nested reference vector accessor.
+
+* Added mruby APIs.
+
+  * [mrb] Added ``Accessor#name``.
+  * [mrb] Added ``Column#[]``.
+  * [mrb] Added ``Column#scalar?``, ``Column#vector?`` and ``Column#index?``.
+  * [mrb] Added ``Context#command_version`` and ``Context#command_version=`` (accessors).
+  * [mrb] Added ``Context#with_command_version``.
+  * [mrb] Added ``Database#each_name``.
+  * [mrb] Added ``Groonga::Cache.current``.
+  * [mrb] Added ``Record``.
+  * [mrb] Added ``Table#each``.
+  * [mrb] Added ``TableCursor#key``.
+  * [mrb] Binded :c:func:`grn_command_input_get_arguments()` to ``CommandInput#arguments``.
+  * [mrb] Binded :c:func:`grn_table_group()` to ``Table#group``.
+  * [mrb] Binded :c:func:`grn_table_group_flags()` to ``TableGroupFlags``.
+  * [mrb] Binded ``GRN_COMMAND_VERSION_DEFAULT``.
+  * [mrb] Binded ``grn_cache``.
+  * [mrb][estimate_size] Supported ``(... || ...) && (... || ...)`` case.
 
 Fixes
 ^^^^^
@@ -125,15 +132,15 @@ Fixes
   owner/group. [GitHub#358] [Reported by jacob16bit]
 * [:doc:`/reference/executables/groonga`] Fixed reported the maximum number of threads.
 * Fixed a bug that ``grn_vector_decode()`` sets wrong offsets in append mode.
-* [:doc:`/reference/executables/groonga-httpd`] Remove a needless space in log message ::
+* [:doc:`/reference/executables/groonga-httpd`] Remove a needless space in log message::
 
-    old: 2015-07-09 18:10:00.863253|n|  grn_fin (0) ->
-    new: 2015-07-09 18:10:00.863253|n| grn_fin (0)
+    |n|  grn_fin (0) ->
+    |n| grn_fin (0)
+        ^
 
 * Fixed a bug that estimating size by regexp query with anchor doesn't work.
 * Fixed a memory leak when ``request_id`` byte size >= 24.
 * [:doc:`/reference/commands/lock_clear`] Fixed a typo. [GitHub#363] [Reported by Christian Kakesa]
-* [mrb] Defineed ``Accessor#name``.
 * [sharding] Fixed wrong min include detection for month range type.
 
 Thanks
