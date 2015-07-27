@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-06-26 12:04+0900\n"
+"PO-Revision-Date: 2015-07-27 16:40+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -21,11 +21,447 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 5.0.5 - 2015-06-29"
-msgstr "5.0.5リリース - 2015-06-29"
+msgid "Release 5.0.6 - 2015-07-29"
+msgstr "5.0.6リリース - 2015-07-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid ""
+"Supported offline index construction for reference vector. For example::"
+msgstr "参照ベクターカラムの静的なインデックス構築をサポートしました。例::"
+
+msgid ""
+"Supported ``'vector_text_column @ \"element\"'`` without index. For example::"
+msgstr ""
+"インデックスなしの ``'vector_text_column @ \"element\"'`` をサポートしまし"
+"た。例::"
+
+msgid ""
+"Supported ``'fixed_size_type_vector_column @ n'`` without index. For "
+"example::"
+msgstr ""
+"インデックスなしの ``'fixed_size_type_vector_column @ n'`` をサポートしまし"
+"た。例::"
+
+msgid ""
+"[:doc:`/install/centos`][:doc:`/server/package`][:doc:`/reference/"
+"executables/groonga-httpd`] Show exit status. [GitHub#357] [Patch by "
+"jacob16bit]"
+msgstr ""
+"[:doc:`/install/centos`][:doc:`/server/package`][:doc:`/reference/"
+"executables/groonga-httpd`] 終了ステータスを表示するようにしました。"
+"[GitHub#357] [jacob16bitさんがパッチ提供]"
+
+msgid ""
+"[:doc:`/install/windows`][:doc:`/reference/executables/groonga`] Supported "
+"``--pid-path``."
+msgstr ""
+"[:doc:`/install/windows`][:doc:`/reference/executables/groonga`] ``--pid-"
+"path`` をサポートしました。"
+
+# 372680e0f2ae4c4bbd432d39446fc8b3
+msgid ""
+"[:doc:`/install/windows`] Allowed to delete file that is opened by other "
+"process."
+msgstr ""
+"[:doc:`/install/windows`] 他のプロセスが開いているファイルの削除を可能にしま"
+"した。"
+
+# 44eb210b482f4e6ea889a0061d04d641
+msgid ""
+"Accepted selector only proc. Note that the proc can't be used as function. "
+"It means that the proc can't be used with sequential search."
+msgstr ""
+"セレクターのみで使えるprocを作れるようになりました。ただし、そのようなprocは"
+"関数として使えません（シーケンシャルサーチに使えないため）。"
+
+# dda183e9ef8542eabe63df61e4435278
+msgid "Supported function call with complex argument. For example::"
+msgstr "複雑な引数の関数呼び出しをサポートしました。例::"
+
+msgid "[doc][:doc:`/reference/commands/select`] Updated."
+msgstr "[doc][:doc:`/reference/commands/select`] 更新しました。"
+
+# 3bd826b41d2b40898fbaa89be108b6b3
+msgid ""
+"[doc][:doc:`/tutorial`] Added more description about database creation fails "
+"if DB_PATH points to an existing file. [GitHub#354] [Suggested by Hirotaka "
+"Takayama]"
+msgstr ""
+"[doc][:doc:`/tutorial`] データベース作成時に既にファイルが存在するパスを指定"
+"したときのエラーについて追記しました。 [GitHub#354] [Hirotaka Takayamaさんが"
+"提案]"
+
+# deea43c36606412bb5d086f74565f94e
+msgid ""
+"[doc][:doc:`/tutorial`] Described JSON formatting tools. [GitHub#355] "
+"[Suggested by tiwawan]"
+msgstr ""
+"[doc][:doc:`/tutorial`] JSONを整形するためのツールについて追記しました。 "
+"[GitHub#355] [tiwawanさんが提案]"
+
+# 0f586b5df15240f3aa891dfc2ff71cc2
+msgid "[experimental] Added an API to get/set the number of threads."
+msgstr ""
+"[experimental] スレッド数を取得・設定するAPIを追加しました。これは実験的なAPI"
+"です。"
+
+# 07b31f015a8c4e91b6983b3f02093361
+msgid ""
+"[experimental][thread_count] Added a command that get/set the number of "
+"threads."
+msgstr ""
+"[experimental][thread_count] スレッド数を取得・設定するコマンドを追加しまし"
+"た。これは実験的なコマンドです。"
+
+msgid ""
+"[experimental][:doc:`/reference/executables/groonga`] Supported changing the "
+"number of threads by thread_count command."
+msgstr ""
+"[experimental][:doc:`/reference/executables/groonga`] thread_countコマンドに"
+"よるスレッドの最大数の変更をサポートしました。これは実験的な機能です。"
+
+# 08c3740bbbca4afe9ec782e3ce0b39ae
+msgid ""
+"[experimental][:doc:`/install/windows`] Added Windows event log support."
+msgstr ""
+"[experimental][:doc:`/install/windows`] Windowsのイベントログのサポートを追加"
+"しました。これは実験的な機能です。"
+
+# 0e78f41e2b7f4e0caf6ae1d00b3d08be
+msgid ""
+"[experimental][:doc:`/reference/executables/groonga`] Added Windows event "
+"log related option ``--use-windows-event-log``. It reports logs as Windows "
+"events."
+msgstr ""
+"[experimental][:doc:`/reference/executables/groonga`] Windowsのイベントログに"
+"関連するオプション ``--use-windows-event-log`` を追加しました。このオプション"
+"を指定すると、ログをWindowsのイベントとして報告します。これは実験的な機能で"
+"す。"
+
+# 2d8b99fffcdd4baaa7dae77487eb1188
+msgid ""
+"[:doc:`/install/windows`] Used Groonga's default encoding for log message."
+msgstr ""
+"[:doc:`/install/windows`] ログメッセージにGroongaのデフォルトのエンコーディン"
+"グを使うようにしました。"
+
+msgid "[plugin] Added :c:func:`grn_command_input_get_arguments()`."
+msgstr "[plugin] :c:func:`grn_command_input_get_arguments()`　を追加しました。"
+
+# 83475548ed7b499abf9a641cd2f025b6
+msgid "Updated sharding plugins."
+msgstr "shardingプラグインを更新しました。"
+
+# 5411a67d7ded4d6b862fdc5790ec1453
+msgid ""
+"[:doc:`/reference/commands/logical_select`] Fixed output format. It has "
+"become :doc:`/reference/commands/select` compatible format."
+msgstr ""
+"[:doc:`/reference/commands/logical_select`] 出力フォーマットを :doc:`/"
+"reference/commands/select` との互換フォーマットになるように修正しました。"
+
+msgid ""
+"[:doc:`/reference/commands/logical_select`] Supported the following "
+"parameters."
+msgstr ""
+"[:doc:`/reference/commands/logical_select`] 以下のパラメーターをサポートしま"
+"した。"
+
+# 8e03af2342bf47ca8048665a5fa69978
+msgid "``--output_columns``"
+msgstr ""
+
+# b9b3e06b410d42439ca96a9c50049160
+msgid "``--offset``"
+msgstr ""
+
+# 1402ec1412694cf79819ee1ada4dd519
+msgid "``--limit``"
+msgstr ""
+
+# 48773bb1422c4890b3ce1c0d309b5e29
+msgid "``--drilldown``"
+msgstr ""
+
+# fbf41ef736c84b7f9202b2ea56cae62a
+msgid "``--drilldown_sortby``"
+msgstr ""
+
+# fab1859002f8464eb85949f2f09fc228
+msgid "``--drilldown_offset``"
+msgstr ""
+
+# 55226a2e6fe84b0a915759f7740ce274
+msgid "``--drilldown_limit``"
+msgstr ""
+
+msgid ""
+"[:doc:`/reference/commands/logical_select`] Used the same default "
+"output_columns as :doc:`/reference/commands/select`."
+msgstr ""
+"[:doc:`/reference/commands/logical_select`] 出力カラム（output_columns）に :"
+"doc:`/reference/commands/select`　のデフォルトと同じものを使うようにしまし"
+"た。"
+
+msgid ""
+"[:doc:`/reference/commands/logical_select`] Supported calc_types and "
+"calc_target for labeled drilldown."
+msgstr ""
+"[:doc:`/reference/commands/logical_select`] ラベル付きドリルダウンで"
+"calc_typesとcalc_targetをサポートしました。"
+
+msgid ""
+"[:doc:`/reference/commands/logical_count`] Supported logging whether range "
+"index is used or not."
+msgstr ""
+"[:doc:`/reference/commands/logical_count`] 範囲インデックス（range index）が"
+"使われたかどうかのロギングをサポートしました。"
+
+msgid "[:doc:`/reference/commands/logical_count`] Show target table name."
+msgstr ""
+"[:doc:`/reference/commands/logical_count`] 対象テーブル名を表示するようにしま"
+"した。"
+
+msgid ""
+"[:doc:`/reference/commands/logical_range_filter`] Supported "
+"``'fixed_size_type_vector_column @ element'``."
+msgstr ""
+"[:doc:`/reference/commands/logical_range_filter`] "
+"``'fixed_size_type_vector_column @ element'``　をサポートしました。"
+
+# 6f7a2a5288dc4cb5a9c414416f1fcb1a
+msgid ""
+"[:doc:`/reference/commands/logical_range_filter`] Added ``use_range_index`` "
+"parameter. It's a parameter for test. It should not be used for production."
+msgstr ""
+"[:doc:`/reference/commands/logical_range_filter`] ``use_range_index`` パラ"
+"メーターを追加しました。これはテスト用のパラメーターなので、本番で使うべきで"
+"はありません。"
+
+msgid ""
+"[:doc:`/reference/commands/logical_range_filter`] Log which mode (range-"
+"index or select mode) is used."
+msgstr ""
+"[:doc:`/reference/commands/logical_range_filter`] どちらのモード（range-index"
+"かselect mode）が使われているかログに出力するようにしました。"
+
+msgid "[:doc:`/reference/commands/logical_range_filter`] Supported cache."
+msgstr ""
+"[:doc:`/reference/commands/logical_range_filter`] キャッシュをサポートしまし"
+"た。"
+
+msgid ""
+"[:doc:`/reference/commands/logical_range_filter`] Supported nested reference "
+"vector accessor."
+msgstr ""
+"[:doc:`/reference/commands/logical_range_filter`] ネストした参照ベクターカラ"
+"ムのアクセサーをサポートしました。"
+
+# 6e906eff9c5c4ca1a3d2c7dd8cea4932
+msgid "Added mruby APIs."
+msgstr "mrubyのAPIを追加しました。"
+
+# 9cd54b91bf7c466da33f3cca63244a85
+msgid "[mrb] Added ``Accessor#name``."
+msgstr "[mrb] ``Accessor#name``　を追加。"
+
+# c7c30a7fc117407ab487447588db84ec
+msgid "[mrb] Added ``Column#[]``."
+msgstr "[mrb] ``Column#[]``　を追加。"
+
+# c0fbe8aacd7b46f89e3c14bb83a0bbe1
+msgid ""
+"[mrb] Added ``Column#scalar?``, ``Column#vector?`` and ``Column#index?``."
+msgstr ""
+"[mrb] ``Column#scalar?``　と ``Column#vector?`` 、 ``Column#index?``　を追"
+"加。"
+
+# 7e3a505544724521ad5d6804dcb98cab
+msgid ""
+"[mrb] Added ``Context#command_version`` and ``Context#command_version=`` "
+"(accessors)."
+msgstr ""
+"[mrb] ``Context#command_version`` と ``Context#command_version=`` （アクセ"
+"サー） を追加。"
+
+# 94cad67e7dbd49bea36f4fae8946e54c
+msgid "[mrb] Added ``Context#with_command_version``."
+msgstr "[mrb] ``Context#with_command_version``　を追加。"
+
+msgid "[mrb] Added ``Database#each_name``."
+msgstr "[mrb] ``Database#each_name``　を追加。"
+
+# ae6933128ea7405ca722335f31eec9f3
+msgid "[mrb] Added ``Groonga::Cache.current``."
+msgstr "[mrb] ``Groonga::Cache.current``　を追加。"
+
+# 5b72283cb85c4cb1816211c27f841e8d
+msgid "[mrb] Added ``Record``."
+msgstr "[mrb] ``Record``　を追加。"
+
+# f066123341cd4b3da522aa4fa8a4f04d
+msgid "[mrb] Added ``Table#each``."
+msgstr "[mrb] ``Table#each``　を追加。"
+
+# 99dbc7b834e0454297cebebfbf7fb762
+msgid "[mrb] Added ``TableCursor#key``."
+msgstr "[mrb] ``TableCursor#key``　を追加。"
+
+# 94032d44ba0548a4bed446c80747b78b
+msgid ""
+"[mrb] Binded :c:func:`grn_command_input_get_arguments()` to "
+"``CommandInput#arguments``."
+msgstr ""
+"[mrb] :c:func:`grn_command_input_get_arguments()` を "
+"``CommandInput#arguments`` にバインド。"
+
+# 03f0903cabe04a40875cdeb0e90db3f7
+msgid "[mrb] Binded :c:func:`grn_table_group()` to ``Table#group``."
+msgstr "[mrb] :c:func:`grn_table_group()` を ``Table#group`` にバインド。"
+
+# 2c30feabce684f529edd6904260158ff
+msgid "[mrb] Binded :c:func:`grn_table_group_flags()` to ``TableGroupFlags``."
+msgstr ""
+"[mrb] :c:func:`grn_table_group_flags()` を ``TableGroupFlags``　にバインド。"
+
+# 0325602920c0441092b7575411b26b03
+msgid "[mrb] Binded ``GRN_COMMAND_VERSION_DEFAULT``."
+msgstr "[mrb] ``GRN_COMMAND_VERSION_DEFAULT`` をバインド。"
+
+# 56fd1d8f1cee4d1bb7b614dbbde00ef6
+msgid "[mrb] Binded ``grn_cache``."
+msgstr "[mrb] ``grn_cache`` をバインド。"
+
+# d58583588e2048889b8d5d429fb889ca
+msgid "[mrb][estimate_size] Supported ``(... || ...) && (... || ...)`` case."
+msgstr ""
+"[mrb][estimate_size] ``(... || ...) && (... || ...)`` のようなケースをサポー"
+"ト。"
+
+msgid "Fixes"
+msgstr "修正"
+
+# 73e9a35c456549cbb7876f55706085b6
+msgid ""
+"Fixed a memory leak when an error is occurred in :c:func:`grn_expr_exec()`. "
+"For example, unsupported operator (e.g. ``GRN_OP_TERM_EXTRACT``) is used "
+"(``not implemented operator assigned`` is occurred for the case)."
+msgstr ""
+":c:func:`grn_expr_exec()`　でエラーが発生したときのメモリーリークを修正しまし"
+"た。例えば、サポートしていないオペレーター（例： ``GRN_OP_TERM_EXTRACT``）が"
+"使われた場合です（ ``not implemented operator assigned`` が発生するケース）。"
+
+# bcc17fdb657c47ee953b7d85426e43fd
+msgid ""
+"[bindings/php] Added a missing check for a memory allocation failure. "
+"[Reported by Bill Parker]"
+msgstr ""
+"[bindings/php] メモリーアロケーションに失敗したときのチェックが抜けていたのを"
+"追加しました。[Bill Parkerさんが報告]"
+
+# 187f2391660c4fb4ad27bf152d59ee10
+msgid ""
+"[:doc:`/install/centos`][:doc:`/server/package`][logrotate] Fixed syntax "
+"error in script."
+msgstr ""
+"[:doc:`/install/centos`][:doc:`/server/package`][ログローテート] スクリプト内"
+"のシンタックスエラーを修正しました。"
+
+# caf4856c54c342478c797a3c046d094a
+msgid ""
+"[:doc:`/install/centos`][:doc:`/server/package`][logrotate] Fixed wrong "
+"daemon running check."
+msgstr ""
+"[:doc:`/install/centos`][:doc:`/server/package`][ログローテート] デーモンの起"
+"動チェックを修正しました。"
+
+# 436049daa72b4727b2b7ad0c5b65d631
+msgid ""
+"[:doc:`/install/centos`][:doc:`/server/package`][logrotate] Stop to set "
+"owner/group to log files. Because it's not consistent. groonga-httpd creates "
+"log files with root owner/group. But logrotated log files are created with "
+"groonga owner/group. [GitHub#358] [Reported by jacob16bit]"
+msgstr ""
+"[:doc:`/install/centos`][:doc:`/server/package`][ログローテート] ログファイル"
+"にオーナー・グループを設定するのをやめました。理由は、一貫性がないためです。"
+"groonga-httpdはログファイルをrootオーナー・rootグループで作成しますが、ログ"
+"ローテート時はgroongaオーナー・groongaグループで作成されていました。 "
+"[GitHub#358] [jacob16bitさんが報告]"
+
+msgid ""
+"[:doc:`/reference/executables/groonga`] Fixed reported the maximum number of "
+"threads."
+msgstr ""
+"[:doc:`/reference/executables/groonga`] 報告されるスレッドの最大数を修正しま"
+"した。"
+
+# ee2347969bb648d989d8755ba3e05b51
+msgid ""
+"Fixed a bug that ``grn_vector_decode()`` sets wrong offsets in append mode."
+msgstr ""
+"``grn_vector_decode()`` がアペンドモードで不正なオフセットを設定していたのを"
+"修正しました。"
+
+msgid ""
+"[:doc:`/reference/executables/groonga-httpd`] Remove a needless space in log "
+"message::"
+msgstr ""
+"[:doc:`/reference/executables/groonga-httpd`] ログメッセージ内の不要なスペー"
+"スを削除しました::"
+
+# a65423d21f6e4b4d87b182be36af10b4
+msgid ""
+"Fixed a bug that estimating size by regexp query with anchor doesn't work."
+msgstr ""
+"正規表現クエリーがアンカー（文字列が一致する位置）と一緒に使われた時にサイズ"
+"推定が動作しない不具合を修正しました。"
+
+# 5ea59909f50e427ca597c39973c6f646
+msgid "Fixed a memory leak when ``request_id`` byte size >= 24."
+msgstr ""
+"``request_id`` のバイトサイズが24以上だった場合にメモリーリークが発生していた"
+"問題を修正しました。"
+
+msgid ""
+"[:doc:`/reference/commands/lock_clear`] Fixed a typo. [GitHub#363] [Reported "
+"by Christian Kakesa]"
+msgstr ""
+"[:doc:`/reference/commands/lock_clear`] 誤字を修正しました。[GitHub#363] "
+"[Christian Kakesaさんが報告]"
+
+# 845ff42973d442a2ae370fb2e3ff765a
+msgid "[sharding] Fixed wrong min include detection for month range type."
+msgstr ""
+"[sharding] 月の範囲に最小値が含まれているかどうかの検出方法が誤っていたのを修"
+"正しました。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+# dee0455f64054336846650b6a2ac4438
+msgid "Bill Parker"
+msgstr "Bill Parkerさん"
+
+# bc06b2a10b50407aafb329efc65b96b7
+msgid "jacob16bit"
+msgstr "jacob16bitさん"
+
+# 7c637f45d0804be689ffe3a814731b86
+msgid "Hirotaka Takayama"
+msgstr "Hirotaka Takayamaさん"
+
+# d64cadf5d3104fafaa460dcfff73d29a
+msgid "tiwawan"
+msgstr "tiwawanさん"
+
+# 33b0daa61d2b4d3e89ce7baa7dcf8db9
+msgid "Christian Kakesa"
+msgstr "Christian Kakesaさん"
+
+msgid "Release 5.0.5 - 2015-06-29"
+msgstr "5.0.5リリース - 2015-06-29"
 
 # 876a0fccc9234a9ebe95be49f84b68fd
 msgid ""
@@ -143,9 +579,6 @@ msgstr ""
 "トしました。同じ月内では、日次に切り替わる前のレコードが月次として扱われま"
 "す。例::"
 
-msgid "Fixes"
-msgstr "修正"
-
 # c874f9c2690242f99a9dc4448f6c92ef
 msgid ""
 "Fixed wrong macro to include netinet/in.h. [GitHub#348] [Reported by OBATA "
@@ -161,15 +594,8 @@ msgstr ""
 "[rpm][:doc:`/reference/executables/groonga-httpd`] 再起動が失敗する不具合を修"
 "正しました。 [GitHub#351] [jacob16bitさんがパッチ提供]"
 
-msgid "Thanks"
-msgstr "感謝"
-
 msgid "OBATA Akio"
 msgstr "おばたさん"
-
-# bc06b2a10b50407aafb329efc65b96b7
-msgid "jacob16bit"
-msgstr "jacob16bitさん"
 
 msgid "Release 5.0.4 - 2015-05-29"
 msgstr "5.0.4リリース - 2015-05-29"
