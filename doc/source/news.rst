@@ -71,6 +71,14 @@ Improvements
   points to an existing file. [GitHub#354] [Suggested by Hirotaka Takayama]
 * [doc][:doc:`/tutorial`] Described JSON formatting tools.
   [GitHub#355] [Suggested by tiwawan]
+* [experimental] Added an API to get/set the number of threads.
+* [experimental][thread_count] Added a command that get/set the number of threads.
+* [experimental][:doc:`/reference/executables/groonga`] Supported changing the number
+  of threads by thread_count command.
+* [experimental][:doc:`/install/windows`] Added Windows event log support.
+* [experimental][:doc:`/reference/executables/groonga`] Added Windows event log related option
+  ``--use-windows-event-log``. It reports logs as Windows events.
+* [:doc:`/install/windows`] Used Groonga's default encoding for log message.
 * [plugin] Added :c:func:`grn_command_input_get_arguments()`.
 * Updated sharding plugins.
 
@@ -86,7 +94,7 @@ Improvements
     * ``--drilldown_offset``
     * ``--drilldown_limit``
 
-  * [:doc:`/reference/commands/logical_select`] Used the same default output_columns as select.
+  * [:doc:`/reference/commands/logical_select`] Used the same default output_columns as :doc:`/reference/commands/select`.
   * [:doc:`/reference/commands/logical_select`] Supported calc_types and calc_target for labeled drilldown.
   * [:doc:`/reference/commands/logical_count`] Supported logging whether range index is used or not.
   * [:doc:`/reference/commands/logical_count`] Show target table name.
