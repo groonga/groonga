@@ -1162,27 +1162,7 @@ ngx_http_groonga_conf_set_log_level_slot(ngx_conf_t *cf, ngx_command_t *cmd,
 
   value = ngx_str_null_terminate(cf->cycle->pool,
                                  ((ngx_str_t *)cf->args->elts) + 1);
-  if (strcasecmp(value, "none") == 0) {
-    groonga_location_conf->log_level = GRN_LOG_NONE;
-  } else if (strcasecmp(value, "emergency") == 0) {
-    groonga_location_conf->log_level = GRN_LOG_EMERG;
-  } else if (strcasecmp(value, "alert") == 0) {
-    groonga_location_conf->log_level = GRN_LOG_ALERT;
-  } else if (strcasecmp(value, "critical") == 0) {
-    groonga_location_conf->log_level = GRN_LOG_CRIT;
-  } else if (strcasecmp(value, "error") == 0) {
-    groonga_location_conf->log_level = GRN_LOG_ERROR;
-  } else if (strcasecmp(value, "warning") == 0) {
-    groonga_location_conf->log_level = GRN_LOG_WARNING;
-  } else if (strcasecmp(value, "notice") == 0) {
-    groonga_location_conf->log_level = GRN_LOG_NOTICE;
-  } else if (strcasecmp(value, "info") == 0) {
-    groonga_location_conf->log_level = GRN_LOG_INFO;
-  } else if (strcasecmp(value, "debug") == 0) {
-    groonga_location_conf->log_level = GRN_LOG_DEBUG;
-  } else if (strcasecmp(value, "dump") == 0) {
-    groonga_location_conf->log_level = GRN_LOG_DUMP;
-  } else {
+  if (!grn_log_level_parse(value, &(groonga_location_conf->log_level))) {
     status = "must be one of 'none', 'emergency', 'alert', "
       "'critical', 'error', 'warning', 'notice', 'info', 'debug' and 'dump'";
   }
