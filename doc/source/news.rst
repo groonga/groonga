@@ -154,7 +154,8 @@ Fixes
 
 * Fixed a bug that estimating size by regexp query with anchor doesn't work.
 * [:doc:`/reference/command/request_id`] Fixed a memory leak when ``request_id`` byte size >= 24.
-* [:doc:`/reference/commands/lock_clear`] Fixed a typo. [GitHub#363] [Reported by Christian Kakesa]
+* [:doc:`/reference/commands/lock_clear`] Fixed a typo in command name in Syntax section.
+  [GitHub#363] [Reported by Christian Kakesa]
 * [sharding] Fixed wrong min include detection for month range type.
 
 Thanks
