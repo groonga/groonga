@@ -126,11 +126,11 @@
 #endif /* WIN32 */
 
 #ifdef WIN32
-# define grn_strncasecmp(string1, string2)      \
-  _strnicmp((string1), (string2))
+# define grn_strncasecmp(string1, string2, n)   \
+  _strnicmp((string1), (string2), (n))
 #else /* WIN32 */
-# define grn_strncasecmp(string1, string2)      \
-  strncasecmp((string1), (string2))
+# define grn_strncasecmp(string1, string2, n)   \
+  strncasecmp((string1), (string2), (n))
 #endif /* WIN32 */
 
 #ifdef WIN32
