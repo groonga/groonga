@@ -110,7 +110,6 @@ static int ready_notify_pipe[2];
 static grn_encoding encoding;
 static grn_command_version default_command_version;
 static int64_t default_match_escalation_threshold;
-static int log_level;
 static grn_bool use_windows_event_log = GRN_FALSE;
 
 static int
@@ -2429,7 +2428,7 @@ static const int default_http_port = DEFAULT_HTTP_PORT;
 static const int default_gqtp_port = DEFAULT_GQTP_PORT;
 static grn_encoding default_encoding = GRN_ENC_DEFAULT;
 static uint32_t default_max_num_threads = DEFAULT_MAX_NFTHREADS;
-static const int default_log_level = GRN_LOG_DEFAULT_LEVEL;
+static const grn_log_level default_log_level = GRN_LOG_DEFAULT_LEVEL;
 static const char * const default_protocol = "gqtp";
 static const char *default_hostname = "localhost";
 static const char * const default_dest = "localhost";
@@ -2657,7 +2656,10 @@ show_usage(FILE *output)
           "\n"
           "Logging options:\n"
           "  -l, --log-level <log level>:\n"
-          "                           specify log level (default: %d)\n"
+          "                           specify log level\n"
+          "                           [none|emergency|alert|critical|\n"
+          "                            error|warning|notice|info|debug|dump]\n"
+          "                           (default: %s)\n"
           "      --log-path <path>:   specify log path\n"
           "                           (default: %s)\n"
           "      --log-rotate-threshold-size <threshold>:\n"
@@ -2705,7 +2707,8 @@ show_usage(FILE *output)
           default_gqtp_port, default_bind_address,
           default_http_port, default_gqtp_port, default_hostname, default_protocol,
           default_document_root, default_cache_limit, default_max_num_threads,
-          default_log_level, default_log_path, default_query_log_path,
+          grn_log_level_to_string(default_log_level),
+          default_log_path, default_query_log_path,
           default_config_path, default_default_command_version,
           (long long int)default_default_match_escalation_threshold,
           default_dest);
@@ -2988,19 +2991,29 @@ main(int argc, char **argv)
     grn_default_query_logger_set_rotate_threshold_size(value);
   }
 
-  if (log_level_arg) {
-    const char * const end = log_level_arg + strlen(log_level_arg);
-    const char *rest = NULL;
-    const int value = grn_atoi(log_level_arg, end, &rest);
-    if (end != rest || value < 0 || value > 9) {
-      fprintf(stderr, "invalid log level: <%s>\n", log_level_arg);
-      return EXIT_FAILURE;
+  {
+    grn_log_level log_level;
+
+    if (log_level_arg) {
+      grn_bool parsed;
+
+      parsed = grn_log_level_parse(log_level_arg, &log_level);
+      if (!parsed) {
+        const char * const end = log_level_arg + strlen(log_level_arg);
+        const char *rest = NULL;
+        const int value = grn_atoi(log_level_arg, end, &rest);
+        if (end != rest || value < GRN_LOG_NONE || value > GRN_LOG_DUMP) {
+          fprintf(stderr, "invalid log level: <%s>\n", log_level_arg);
+          return EXIT_FAILURE;
+        }
+        log_level = value;
+      }
+    } else {
+      log_level = default_log_level;
     }
-    log_level = value;
-  } else {
-    log_level = default_log_level;
+
+    grn_default_logger_set_max_level(log_level);
   }
-  grn_default_logger_set_max_level(log_level);
 
   if (max_num_threads_arg) {
     const char * const end = max_num_threads_arg + strlen(max_num_threads_arg);
