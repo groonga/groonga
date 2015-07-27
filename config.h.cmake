@@ -129,7 +129,6 @@
 /* functions */
 #cmakedefine HAVE__GMTIME64_S
 #cmakedefine HAVE__LOCALTIME64_S
-#cmakedefine HAVE__STRICMP
 #cmakedefine HAVE__STRTOUI64
 #cmakedefine HAVE_BACKTRACE
 #cmakedefine HAVE_CLOCK

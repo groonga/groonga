@@ -96,12 +96,6 @@
 # if !defined(__GNUC__) && _MSC_VER < 1400
 #  define fstat(fd, buf) _fstat(fd, buf)
 # endif /* !defined(__GNUC__) && _MSC_VER < 1400 */
-# ifdef HAVE__STRICMP
-#  ifdef strcasecmp
-#   undef strcasecmp
-#  endif /* strcasecmp */
-#  define strcasecmp(s1, s2) _stricmp(s1, s2)
-# endif /* defined(HAVE__STRICMP) */
 
 # ifndef __GNUC__
 typedef SSIZE_T ssize_t;
