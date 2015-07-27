@@ -280,14 +280,29 @@ module Groonga
         end
 
         def use_range_index?(range_index, expression_builder)
+          use_range_index_parameter_message =
+            "force by use_range_index parameter"
           case @context.use_range_index
           when true
             return decide_use_range_index(true,
-                                          "force by use_range_index parameter",
+                                          use_range_index_parameter_message,
                                           __LINE__, __method__)
           when false
             return decide_use_range_index(false,
-                                          "force by use_range_index parameter",
+                                          use_range_index_parameter_message,
+                                          __LINE__, __method__)
+          end
+
+          range_index_logical_parameter_message =
+            "force by range_index logical parameter"
+          case Parameters.range_index
+          when :always
+            return decide_use_range_index(true,
+                                          range_index_logical_parameter_message,
+                                          __LINE__, __method__)
+          when :never
+            return decide_use_range_index(false,
+                                          range_index_logical_parameter_message,
                                           __LINE__, __method__)
           end
 
