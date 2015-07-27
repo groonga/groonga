@@ -179,9 +179,9 @@ mrb_grn_table_sort_raw(mrb_state *mrb, mrb_value self)
   n_keys = RARRAY_LEN(mrb_keys);
   keys = GRN_MALLOCN(grn_table_sort_key, n_keys);
   for (i = 0; i < n_keys; i++) {
-    memcpy(&(keys[i]),
-           DATA_PTR(RARRAY_PTR(mrb_keys)[i]),
-           sizeof(grn_table_sort_key));
+    grn_memcpy(&(keys[i]),
+               DATA_PTR(RARRAY_PTR(mrb_keys)[i]),
+               sizeof(grn_table_sort_key));
   }
   result = DATA_PTR(mrb_result);
   grn_table_sort(ctx, table, offset, limit, result, keys, n_keys);
@@ -211,9 +211,9 @@ mrb_grn_table_group_raw(mrb_state *mrb, mrb_value self)
   n_keys = RARRAY_LEN(mrb_keys);
   keys = GRN_MALLOCN(grn_table_sort_key, n_keys);
   for (i = 0; i < n_keys; i++) {
-    memcpy(&(keys[i]),
-           DATA_PTR(RARRAY_PTR(mrb_keys)[i]),
-           sizeof(grn_table_sort_key));
+    grn_memcpy(&(keys[i]),
+               DATA_PTR(RARRAY_PTR(mrb_keys)[i]),
+               sizeof(grn_table_sort_key));
   }
   result = DATA_PTR(mrb_result);
   grn_table_group(ctx, table, keys, n_keys, result, 1);
