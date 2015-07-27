@@ -6845,7 +6845,8 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 }
 
 static grn_obj *
-proc_exist(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+proc_object_exist(grn_ctx *ctx, int nargs, grn_obj **args,
+                  grn_user_data *user_data)
 {
   grn_obj *db;
   grn_obj *name;
@@ -6853,13 +6854,13 @@ proc_exist(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   db = grn_ctx_db(ctx);
   if (!db) {
-    ERR(GRN_INVALID_ARGUMENT, "[exist] DB isn't opened");
+    ERR(GRN_INVALID_ARGUMENT, "[object_exist] DB isn't opened");
     return NULL;
   }
 
   name = VAR(0);
   if (GRN_TEXT_LEN(name) == 0) {
-    ERR(GRN_INVALID_ARGUMENT, "[exist] name is missing");
+    ERR(GRN_INVALID_ARGUMENT, "[object_exist] name is missing");
     GRN_OUTPUT_BOOL(GRN_FALSE);
     return NULL;
   }
@@ -7195,7 +7196,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_COMMAND("io_flush", proc_io_flush, 2, vars);
 
   DEF_VAR(vars[0], "name");
-  DEF_COMMAND("exist", proc_exist, 1, vars);
+  DEF_COMMAND("object_exist", proc_object_exist, 1, vars);
 
   DEF_VAR(vars[0], "new_count");
   DEF_COMMAND("thread_count", proc_thread_count, 1, vars);
