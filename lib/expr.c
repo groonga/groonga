@@ -5178,8 +5178,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
           }
         }
       } else {
-        grn_obj *i = GRN_PTR_VALUE(&si->index);
-        grn_obj *domain = grn_ctx_at(ctx, i->header.domain);
+        grn_obj *domain = grn_ctx_at(ctx, index->header.domain);
         if (domain) {
           grn_hash *pres;
           if ((pres = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
