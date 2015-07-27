@@ -2,7 +2,8 @@ SUBDIRS =					\
 	command_line				\
 	context					\
 	initialize				\
-	logger
+	logger					\
+	query_logger
 
 include sources.am
 

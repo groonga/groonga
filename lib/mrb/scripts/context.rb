@@ -16,6 +16,10 @@ module Groonga
       @logger ||= Logger.new
     end
 
+    def query_logger
+      @query_logger ||= QueryLogger.new
+    end
+
     def writer
       @writer ||= Writer.new
     end

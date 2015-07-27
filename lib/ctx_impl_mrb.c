@@ -31,6 +31,7 @@
 # include "mrb/mrb_command_version.h"
 # include "mrb/mrb_ctx.h"
 # include "mrb/mrb_logger.h"
+# include "mrb/mrb_query_logger.h"
 # include "mrb/mrb_void.h"
 # include "mrb/mrb_bulk.h"
 # include "mrb/mrb_cache.h"
@@ -140,6 +141,7 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   grn_mrb_command_version_init(ctx);
   grn_mrb_ctx_init(ctx);
   grn_mrb_logger_init(ctx);
+  grn_mrb_query_logger_init(ctx);
   grn_mrb_void_init(ctx);
   grn_mrb_bulk_init(ctx);
   grn_mrb_cache_init(ctx);

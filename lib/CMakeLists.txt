@@ -124,4 +124,12 @@ if(GRN_WITH_MRUBY)
   install(
     FILES ${LOGGER_RUBY_SCRIPTS}
     DESTINATION "${GRN_RELATIVE_RUBY_SCRIPTS_DIR}/logger")
+
+  read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mrb/scripts/query_logger/sources.am
+    QUERY_LOGGER_RUBY_SCRIPTS)
+  string(REGEX REPLACE "([^;]+)" "mrb/scripts/query_logger/\\1"
+    QUERY_LOGGER_RUBY_SCRIPTS "${QUERY_LOGGER_RUBY_SCRIPTS}")
+  install(
+    FILES ${QUERY_LOGGER_RUBY_SCRIPTS}
+    DESTINATION "${GRN_RELATIVE_RUBY_SCRIPTS_DIR}/query_logger")
 endif()

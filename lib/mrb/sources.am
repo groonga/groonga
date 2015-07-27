@@ -53,6 +53,8 @@ libgrnmrb_la_SOURCES =				\
 	mrb_patricia_trie.h			\
 	mrb_procedure.c				\
 	mrb_procedure.h				\
+	mrb_query_logger.c			\
+	mrb_query_logger.h			\
 	mrb_record.c				\
 	mrb_record.h				\
 	mrb_table.c				\
