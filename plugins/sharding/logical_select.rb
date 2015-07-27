@@ -56,6 +56,39 @@ module Groonga
       end
 
       private
+      def cache_key(input)
+        key = "logical_select\0"
+        key << "#{input[:logical_table]}\0"
+        key << "#{input[:shard_key]}\0"
+        key << "#{input[:min]}\0"
+        key << "#{input[:min_border]}\0"
+        key << "#{input[:max]}\0"
+        key << "#{input[:max_border]}\0"
+        key << "#{input[:filter]}\0"
+        key << "#{input[:sortby]}\0"
+        key << "#{input[:output_columns]}\0"
+        key << "#{input[:offset]}\0"
+        key << "#{input[:limit]}\0"
+        key << "#{input[:drilldown]}\0"
+        key << "#{input[:drilldown_sortby]}\0"
+        key << "#{input[:drilldown_output_columns]}\0"
+        key << "#{input[:drilldown_offset]}\0"
+        key << "#{input[:drilldown_limit]}\0"
+        key << "#{input[:drilldown_calc_types]}\0"
+        key << "#{input[:drilldown_calc_target]}\0"
+        labeled_drilldowns = LabeledDrilldowns.parse(input).sort_by(&:label)
+        labeled_drilldowns.each do |drilldown|
+          key << "#{drilldown.label}\0"
+          key << "#{drilldown.keys.join(',')}\0"
+          key << "#{drilldown.output_columns}\0"
+          key << "#{drilldown.offset}\0"
+          key << "#{drilldown.limit}\0"
+          key << "#{drilldown.calc_types}\0"
+          key << "#{drilldown.calc_target_name}\0"
+        end
+        key
+      end
+
       def write_records(writer, context)
         result_sets = context.result_sets
 
@@ -291,6 +324,8 @@ module Groonga
       end
 
       class LabeledDrilldowns
+        include Enumerable
+
         class << self
           def parse(input)
             drilldowns = {}
