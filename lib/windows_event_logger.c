@@ -22,35 +22,11 @@
 
 #include <string.h>
 
-static char *windows_event_source_name = NULL;
-
 #ifdef WIN32
 typedef struct _grn_windows_event_logger_data {
   HANDLE event_log;
 } grn_windows_event_logger_data;
-#endif /* WIN32 */
 
-const char *
-grn_windows_event_logger_get_source_name(void)
-{
-  return windows_event_source_name;
-}
-
-void
-grn_windows_event_logger_set_source_name(const char *name)
-{
-  if (windows_event_source_name) {
-    free(windows_event_source_name);
-  }
-
-  if (name) {
-    windows_event_source_name = grn_strdup_raw(name);
-  } else {
-    windows_event_source_name = NULL;
-  }
-}
-
-#ifdef WIN32
 static void
 windows_event_logger_log(grn_ctx *ctx, grn_log_level level,
                          const char *timestamp, const char *title,
@@ -186,7 +162,7 @@ grn_windows_event_logger_set(grn_ctx *ctx)
   grn_rc rc;
   grn_logger windows_event_logger;
   grn_windows_event_logger_data *data;
-  const char *source_name;
+  const char *source_name = "Groonga";
   if (ctx) {
     GRN_API_ENTER;
   }
@@ -202,11 +178,6 @@ grn_windows_event_logger_set(grn_ctx *ctx)
     }
   }
 
-  if (windows_event_source_name) {
-    source_name = windows_event_source_name;
-  } else {
-    source_name = "Groonga";
-  }
   data->event_log = RegisterEventSourceA(NULL, source_name);
   if (!data->event_log) {
     free(data);

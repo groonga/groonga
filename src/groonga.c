@@ -2669,9 +2669,6 @@ show_usage(FILE *output)
 #ifdef WIN32
           "      --use-windows-event-log:\n"
           "                           report logs as Windows events\n"
-          "      --windows-event-source-name <name>:\n"
-          "                           specify event source name\n"
-          "                           (default: Groonga)\n"
 #endif /* WIN32 */
           "      --query-log-path <path>:\n"
           "                           specify query log path\n"
@@ -2735,7 +2732,6 @@ main(int argc, char **argv)
   const char *input_fd_arg = NULL;
   const char *output_fd_arg = NULL;
   const char *working_directory_arg = NULL;
-  const char *windows_event_source_name_arg = NULL;
   const char *config_path = NULL;
   int exit_code = EXIT_SUCCESS;
   int i;
@@ -2773,7 +2769,6 @@ main(int argc, char **argv)
     {'\0', "working-directory", NULL, 0, GETOPT_OP_NONE},
     {'\0', "use-windows-event-log", NULL,
      FLAG_USE_WINDOWS_EVENT_LOG, GETOPT_OP_ON},
-    {'\0', "windows-event-source-name", NULL, 0, GETOPT_OP_NONE},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &port_arg;
@@ -2797,7 +2792,6 @@ main(int argc, char **argv)
   opts[25].arg = &input_fd_arg;
   opts[26].arg = &output_fd_arg;
   opts[27].arg = &working_directory_arg;
-  opts[29].arg = &windows_event_source_name_arg;
 
   reset_ready_notify_pipe();
 
@@ -2954,9 +2948,6 @@ main(int argc, char **argv)
 #endif /* WIN32 */
 
   if (use_windows_event_log) {
-    if (windows_event_source_name_arg) {
-      grn_windows_event_logger_set_source_name(windows_event_source_name_arg);
-    }
     grn_windows_event_logger_set(NULL);
   }
 

@@ -23,9 +23,6 @@
 extern "C" {
 #endif
 
-GRN_API const char *grn_windows_event_logger_get_source_name(void);
-GRN_API void grn_windows_event_logger_set_source_name(const char *name);
-
 GRN_API grn_rc grn_windows_event_logger_set(grn_ctx *ctx);
 
 #ifdef __cplusplus
