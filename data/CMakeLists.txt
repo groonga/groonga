@@ -1,4 +1,4 @@
-# Copyright(C) 2012 Brazil
+# Copyright(C) 2012-2015 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -16,3 +16,5 @@
 add_subdirectory(html)
 
 install(FILES groonga.conf DESTINATION "${GRN_CONFIG_DIR}/")
+install(FILES windows_event_log/provider.man
+  DESTINATION "${GRN_CONFIG_DIR}/windows_event_log/")
