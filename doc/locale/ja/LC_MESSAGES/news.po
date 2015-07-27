@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-07-27 16:40+0900\n"
+"PO-Revision-Date: 2015-07-27 18:41+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -148,7 +148,7 @@ msgstr ""
 "グを使うようにしました。"
 
 msgid "[plugin] Added :c:func:`grn_command_input_get_arguments()`."
-msgstr "[plugin] :c:func:`grn_command_input_get_arguments()`　を追加しました。"
+msgstr "[plugin] :c:func:`grn_command_input_get_arguments()` を追加しました。"
 
 # 83475548ed7b499abf9a641cd2f025b6
 msgid "Updated sharding plugins."
@@ -202,8 +202,7 @@ msgid ""
 "output_columns as :doc:`/reference/commands/select`."
 msgstr ""
 "[:doc:`/reference/commands/logical_select`] 出力カラム（output_columns）に :"
-"doc:`/reference/commands/select`　のデフォルトと同じものを使うようにしまし"
-"た。"
+"doc:`/reference/commands/select` のデフォルトと同じものを使うようにしました。"
 
 msgid ""
 "[:doc:`/reference/commands/logical_select`] Supported calc_types and "
@@ -229,7 +228,7 @@ msgid ""
 "``'fixed_size_type_vector_column @ element'``."
 msgstr ""
 "[:doc:`/reference/commands/logical_range_filter`] "
-"``'fixed_size_type_vector_column @ element'``　をサポートしました。"
+"``'fixed_size_type_vector_column @ element'`` をサポートしました。"
 
 # 6f7a2a5288dc4cb5a9c414416f1fcb1a
 msgid ""
@@ -265,18 +264,17 @@ msgstr "mrubyのAPIを追加しました。"
 
 # 9cd54b91bf7c466da33f3cca63244a85
 msgid "[mrb] Added ``Accessor#name``."
-msgstr "[mrb] ``Accessor#name``　を追加。"
+msgstr "[mrb] ``Accessor#name`` を追加。"
 
 # c7c30a7fc117407ab487447588db84ec
 msgid "[mrb] Added ``Column#[]``."
-msgstr "[mrb] ``Column#[]``　を追加。"
+msgstr "[mrb] ``Column#[]`` を追加。"
 
 # c0fbe8aacd7b46f89e3c14bb83a0bbe1
 msgid ""
 "[mrb] Added ``Column#scalar?``, ``Column#vector?`` and ``Column#index?``."
 msgstr ""
-"[mrb] ``Column#scalar?``　と ``Column#vector?`` 、 ``Column#index?``　を追"
-"加。"
+"[mrb] ``Column#scalar?`` と ``Column#vector?`` 、 ``Column#index?`` を追加。"
 
 # 7e3a505544724521ad5d6804dcb98cab
 msgid ""
@@ -288,26 +286,26 @@ msgstr ""
 
 # 94cad67e7dbd49bea36f4fae8946e54c
 msgid "[mrb] Added ``Context#with_command_version``."
-msgstr "[mrb] ``Context#with_command_version``　を追加。"
+msgstr "[mrb] ``Context#with_command_version`` を追加。"
 
 msgid "[mrb] Added ``Database#each_name``."
-msgstr "[mrb] ``Database#each_name``　を追加。"
+msgstr "[mrb] ``Database#each_name`` を追加。"
 
 # ae6933128ea7405ca722335f31eec9f3
 msgid "[mrb] Added ``Groonga::Cache.current``."
-msgstr "[mrb] ``Groonga::Cache.current``　を追加。"
+msgstr "[mrb] ``Groonga::Cache.current`` を追加。"
 
 # 5b72283cb85c4cb1816211c27f841e8d
 msgid "[mrb] Added ``Record``."
-msgstr "[mrb] ``Record``　を追加。"
+msgstr "[mrb] ``Record`` を追加。"
 
 # f066123341cd4b3da522aa4fa8a4f04d
 msgid "[mrb] Added ``Table#each``."
-msgstr "[mrb] ``Table#each``　を追加。"
+msgstr "[mrb] ``Table#each`` を追加。"
 
 # 99dbc7b834e0454297cebebfbf7fb762
 msgid "[mrb] Added ``TableCursor#key``."
-msgstr "[mrb] ``TableCursor#key``　を追加。"
+msgstr "[mrb] ``TableCursor#key`` を追加。"
 
 # 94032d44ba0548a4bed446c80747b78b
 msgid ""
@@ -324,7 +322,7 @@ msgstr "[mrb] :c:func:`grn_table_group()` を ``Table#group`` にバインド。
 # 2c30feabce684f529edd6904260158ff
 msgid "[mrb] Binded :c:func:`grn_table_group_flags()` to ``TableGroupFlags``."
 msgstr ""
-"[mrb] :c:func:`grn_table_group_flags()` を ``TableGroupFlags``　にバインド。"
+"[mrb] :c:func:`grn_table_group_flags()` を ``TableGroupFlags`` にバインド。"
 
 # 0325602920c0441092b7575411b26b03
 msgid "[mrb] Binded ``GRN_COMMAND_VERSION_DEFAULT``."
@@ -349,7 +347,7 @@ msgid ""
 "For example, unsupported operator (e.g. ``GRN_OP_TERM_EXTRACT``) is used "
 "(``not implemented operator assigned`` is occurred for the case)."
 msgstr ""
-":c:func:`grn_expr_exec()`　でエラーが発生したときのメモリーリークを修正しまし"
+":c:func:`grn_expr_exec()` でエラーが発生したときのメモリーリークを修正しまし"
 "た。例えば、サポートしていないオペレーター（例： ``GRN_OP_TERM_EXTRACT``）が"
 "使われた場合です（ ``not implemented operator assigned`` が発生するケース）。"
 
@@ -527,10 +525,10 @@ msgstr ""
 "敗した場合、エラー情報を表示するようにしました。"
 
 msgid "[API] Added :c:func:`grn_obj_flush()`."
-msgstr "[API] :c:func:`grn_obj_flush()`　を追加しました。"
+msgstr "[API] :c:func:`grn_obj_flush()` を追加しました。"
 
 msgid "[API] Added :c:func:`grn_obj_flush_recursive()`."
-msgstr "[API] :c:func:`grn_obj_flush_recursive()`　を追加しました。"
+msgstr "[API] :c:func:`grn_obj_flush_recursive()` を追加しました。"
 
 # 94b53a70f24c4fe9994e9682a384bbf3
 msgid ""
