@@ -51,6 +51,15 @@ writer_write(mrb_state *mrb, mrb_value self)
   case MRB_TT_FLOAT :
     GRN_OUTPUT_FLOAT(mrb_float(target));
     break;
+  case MRB_TT_SYMBOL :
+    {
+      const char *name;
+      mrb_int name_length;
+
+      name = mrb_sym2name_len(mrb, mrb_symbol(target), &name_length);
+      GRN_OUTPUT_STR(name, name_length);
+    }
+    break;
   case MRB_TT_STRING :
     GRN_OUTPUT_STR(RSTRING_PTR(target), RSTRING_LEN(target));
     break;
