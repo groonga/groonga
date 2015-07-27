@@ -20,6 +20,10 @@ module Groonga
       @writer ||= context.writer
     end
 
+    def query_logger
+      @query_logger ||= context.query_logger
+    end
+
     def cache_key(input)
       nil
     end
@@ -33,6 +37,7 @@ module Groonga
         if cached_value
           context.output = cached_value
           cache.unref(key)
+          query_logger.log(:cache, ":", "cache(#{cached_value.bytesize})")
         else
           yield
           cache.update(key, context.output)
