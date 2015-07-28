@@ -540,7 +540,6 @@ Ubuntu向けのパッケージのアップロードには以下のコマンド�
 
 * precise i386/amd64
 * trusty i386/amd64
-* utopic i386/amd64
 * vivid i386/amd64
 
 アップロードが正常終了すると、launchpad.net上でビルドが実行され、ビルド結果がメールで通知されます。ビルドに成功すると、リリース対象のパッケージがlaunchpad.netのGroongaチームのPPAへと反映されます。公開されているパッケージは以下のURLで確認できます。
