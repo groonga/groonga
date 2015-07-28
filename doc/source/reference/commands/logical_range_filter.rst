@@ -45,7 +45,7 @@ Register ``sharding`` plugin to use ``logical_range_filter`` command in advance.
 .. groonga-command
 .. register sharding
 
-.. TODO: Add examples
+TODO: Add examples
 
 Parameters
 ----------
@@ -63,14 +63,14 @@ There are required parameters, ``logical_table`` and ``shard_key``.
 Specifies logical table name. It means table name without "_YYYYMMDD" postfix.
 If you use actual table such as "Logs_20150203", "Logs_20150203" and so on, logical table name is "Logs".
 
-.. TODO: Add examples
+TODO: Add examples
 
 ``shard_key``
 """""""""""""
 
 Specifies column name which is treated as shared key in each parted table.
 
-.. TODO: Add examples
+TODO: Add examples
 
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^
@@ -82,7 +82,7 @@ There are optional parameters.
 
 Specifies the min value of ``shard_key``
 
-.. TODO: Add examples
+TODO: Add examples
 
 ``min_border``
 """"""""""""""
@@ -90,14 +90,14 @@ Specifies the min value of ``shard_key``
 Specifies whether the min value of borderline must be include or not.
 Specify ``include`` or ``exclude`` as the value of this parameter.
 
-.. TODO: Add examples
+TODO: Add examples
 
 ``max``
 """""""
 
 Specifies the max value of ``shard_key``.
 
-.. TODO: Add examples
+TODO: Add examples
 
 ``max_border``
 """"""""""""""
@@ -105,27 +105,27 @@ Specifies the max value of ``shard_key``.
 Specifies whether the max value of borderline must be include or not.
 Specify ``include`` or ``exclude`` as the value of this parameter.
 
-.. TODO: Add examples
+TODO: Add examples
 
 ``order``
 """"""""""
 
-.. TODO
+TODO
 
 ``filter``
 """"""""""
 
-.. TODO
+TODO
 
 ``offset``
 """"""""""
 
-.. TODO
+TODO
 
 ``output_columns``
 """"""""""""""""""
 
-.. TODO
+TODO
 
 ``use_range_index``
 """""""""""""""""""
@@ -133,7 +133,7 @@ Specify ``include`` or ``exclude`` as the value of this parameter.
 Specifies whether range_index is used or not.
 Note that it's a parameter for test. It should not be used for production.
 
-.. TODO: Add examples
+TODO: Add examples
 
 Return value
 ------------
