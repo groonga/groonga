@@ -5263,12 +5263,36 @@ msgstr ""
 "最大値を境界値として含めるのか否かを指定します。 ``include`` もしくは "
 "``exclude`` を指定します。"
 
-# eeb8d534cd614522a58ba1d54ef432c7
-msgid "``logical_range_filter``"
-msgstr ""
+#, fuzzy
+msgid "``logical_parameters``"
+msgstr "``logical_select`` コマンドにはたくさんの引数があります。"
 
 # 4207d2acd4fd497091e401db9bfae3a6
 msgid "TODO: Write summary"
+msgstr ""
+
+# 0ff4d0e6a33448a189a665a4287b0af4
+msgid "logical_parameters [range_index]"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"Register ``sharding`` plugin to use ``logical_parameters`` command in "
+"advance."
+msgstr ""
+"``logical_range_filter`` コマンドを使うには事前に ``sharding`` プラグインを登"
+"録します。"
+
+#, fuzzy
+msgid "This section describes parameters of ``logical_parameters``."
+msgstr "このセクションでは ``logical_range_filter`` の引数について説明します。"
+
+# 7e5f958ab4f44a8087b0833fc60a0136
+msgid "``range_index``"
+msgstr ""
+
+# eeb8d534cd614522a58ba1d54ef432c7
+msgid "``logical_range_filter``"
 msgstr ""
 
 msgid ""
@@ -5283,6 +5307,16 @@ msgstr "このセクションでは ``logical_range_filter`` の引数につい�
 
 # 5e433758a04b489d8a2768292bc850c0
 msgid "``order``"
+msgstr ""
+
+# 17a46a098e654e1abfb5528037027a1f
+msgid "``use_range_index``"
+msgstr ""
+
+# 23bbec3d6af94f40b26d807fbd9129ec
+msgid ""
+"Specifies whether range_index is used or not. Note that it's a parameter for "
+"test. It should not be used for production."
 msgstr ""
 
 # 26f6896f991341569e381e95aebf1f73
