@@ -1119,9 +1119,6 @@ msgstr ""
 msgid "trusty i386/amd64"
 msgstr ""
 
-msgid "utopic i386/amd64"
-msgstr ""
-
 # 18fb46d6fbc3483bb079db3c1a76d878
 msgid "vivid i386/amd64"
 msgstr ""

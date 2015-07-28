@@ -27,6 +27,12 @@ msgstr "5.0.6リリース - 2015-07-29"
 msgid "Improvements"
 msgstr "改良"
 
+# 3837013797dc481e953cfc0ef4b3cfee
+msgid ""
+"[:doc:`/install/ubuntu`] Dropped Ubuntu 14.10 (Utopic Unicorn) support. It "
+"had been End of Life on July 23, 2015."
+msgstr ""
+
 msgid ""
 "Supported offline index construction for reference vector. For example, "
 "``load`` data before ``column_create`` an index::"
