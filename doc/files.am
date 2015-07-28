@@ -40,12 +40,46 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/column_rename/column_rename.log \
 	$(top_srcdir)/doc/source/example/reference/commands/delete/cascade.log \
 	$(top_srcdir)/doc/source/example/reference/commands/delete/status.log \
+	$(top_srcdir)/doc/source/example/reference/commands/io_flush/all.log \
+	$(top_srcdir)/doc/source/example/reference/commands/io_flush/recursive_default.log \
+	$(top_srcdir)/doc/source/example/reference/commands/io_flush/recursive_invalid.log \
+	$(top_srcdir)/doc/source/example/reference/commands/io_flush/recursive_no.log \
+	$(top_srcdir)/doc/source/example/reference/commands/io_flush/recursive_yes.log \
+	$(top_srcdir)/doc/source/example/reference/commands/io_flush/target_name_column.log \
+	$(top_srcdir)/doc/source/example/reference/commands/io_flush/target_name_database.log \
+	$(top_srcdir)/doc/source/example/reference/commands/io_flush/target_name_table.log \
 	$(top_srcdir)/doc/source/example/reference/commands/lock_clear/column.log \
 	$(top_srcdir)/doc/source/example/reference/commands/lock_clear/database.log \
 	$(top_srcdir)/doc/source/example/reference/commands/lock_clear/table.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_count/count_shutdown.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_count/setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_count/setup_schema.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_calc_types.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_label_calc_types.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_label_keys.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_label_limit.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_label_offset.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_label_output_columns.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_label_sortby.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_limit.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_offset.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_output_columns.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_sortby.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/filter.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/limit.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/logical_table_existent.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/logical_table_nonexistent.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/max.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/max_border.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/min.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/min_border.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/offset.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/output_columns.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/shard_key_existent.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/sortby.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/usage_plugin_register.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/usage_setup.log \
 	$(top_srcdir)/doc/source/example/reference/commands/normalize/normalizer_auto_ascii.log \
 	$(top_srcdir)/doc/source/example/reference/commands/normalizer_list/simple_example.log \
 	$(top_srcdir)/doc/source/example/reference/commands/plugin_register/query_expanders_tsv.log \
@@ -124,6 +158,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/table_create/range_index_table_dat_key.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_create/tag_index_table_hash_key.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_list.log \
+	$(top_srcdir)/doc/source/example/reference/commands/table_rename/usage.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_tokenize/simple_example.log \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/add_mode.log \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/flags_enable_tokenized_delimiter.log \
@@ -537,9 +572,10 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/log_put.rst \
 	$(top_srcdir)/doc/source/reference/commands/log_reopen.rst \
 	$(top_srcdir)/doc/source/reference/commands/logical_count.rst \
+	$(top_srcdir)/doc/source/reference/commands/logical_parameters.rst \
 	$(top_srcdir)/doc/source/reference/commands/logical_range_filter.rst \
-	$(top_srcdir)/doc/source/reference/commands/logical_table_remove.rst \
 	$(top_srcdir)/doc/source/reference/commands/logical_select.rst \
+	$(top_srcdir)/doc/source/reference/commands/logical_table_remove.rst \
 	$(top_srcdir)/doc/source/reference/commands/normalize.rst \
 	$(top_srcdir)/doc/source/reference/commands/normalizer_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/plugin_register.rst \
@@ -557,6 +593,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/table_create.rst \
 	$(top_srcdir)/doc/source/reference/commands/table_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/table_remove.rst \
+	$(top_srcdir)/doc/source/reference/commands/table_rename.rst \
 	$(top_srcdir)/doc/source/reference/commands/table_tokenize.rst \
 	$(top_srcdir)/doc/source/reference/commands/tokenize.rst \
 	$(top_srcdir)/doc/source/reference/commands/tokenizer_list.rst \
@@ -699,12 +736,46 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/column_rename/column_rename.log \
 	source/example/reference/commands/delete/cascade.log \
 	source/example/reference/commands/delete/status.log \
+	source/example/reference/commands/io_flush/all.log \
+	source/example/reference/commands/io_flush/recursive_default.log \
+	source/example/reference/commands/io_flush/recursive_invalid.log \
+	source/example/reference/commands/io_flush/recursive_no.log \
+	source/example/reference/commands/io_flush/recursive_yes.log \
+	source/example/reference/commands/io_flush/target_name_column.log \
+	source/example/reference/commands/io_flush/target_name_database.log \
+	source/example/reference/commands/io_flush/target_name_table.log \
 	source/example/reference/commands/lock_clear/column.log \
 	source/example/reference/commands/lock_clear/database.log \
 	source/example/reference/commands/lock_clear/table.log \
 	source/example/reference/commands/logical_count/count_shutdown.log \
 	source/example/reference/commands/logical_count/setup_data.log \
 	source/example/reference/commands/logical_count/setup_schema.log \
+	source/example/reference/commands/logical_select/drilldown.log \
+	source/example/reference/commands/logical_select/drilldown_calc_types.log \
+	source/example/reference/commands/logical_select/drilldown_label_calc_types.log \
+	source/example/reference/commands/logical_select/drilldown_label_keys.log \
+	source/example/reference/commands/logical_select/drilldown_label_limit.log \
+	source/example/reference/commands/logical_select/drilldown_label_offset.log \
+	source/example/reference/commands/logical_select/drilldown_label_output_columns.log \
+	source/example/reference/commands/logical_select/drilldown_label_sortby.log \
+	source/example/reference/commands/logical_select/drilldown_limit.log \
+	source/example/reference/commands/logical_select/drilldown_offset.log \
+	source/example/reference/commands/logical_select/drilldown_output_columns.log \
+	source/example/reference/commands/logical_select/drilldown_sortby.log \
+	source/example/reference/commands/logical_select/filter.log \
+	source/example/reference/commands/logical_select/limit.log \
+	source/example/reference/commands/logical_select/logical_table_existent.log \
+	source/example/reference/commands/logical_select/logical_table_nonexistent.log \
+	source/example/reference/commands/logical_select/max.log \
+	source/example/reference/commands/logical_select/max_border.log \
+	source/example/reference/commands/logical_select/min.log \
+	source/example/reference/commands/logical_select/min_border.log \
+	source/example/reference/commands/logical_select/offset.log \
+	source/example/reference/commands/logical_select/output_columns.log \
+	source/example/reference/commands/logical_select/shard_key_existent.log \
+	source/example/reference/commands/logical_select/sortby.log \
+	source/example/reference/commands/logical_select/usage_plugin_register.log \
+	source/example/reference/commands/logical_select/usage_setup.log \
 	source/example/reference/commands/normalize/normalizer_auto_ascii.log \
 	source/example/reference/commands/normalizer_list/simple_example.log \
 	source/example/reference/commands/plugin_register/query_expanders_tsv.log \
@@ -783,6 +854,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/table_create/range_index_table_dat_key.log \
 	source/example/reference/commands/table_create/tag_index_table_hash_key.log \
 	source/example/reference/commands/table_list.log \
+	source/example/reference/commands/table_rename/usage.log \
 	source/example/reference/commands/table_tokenize/simple_example.log \
 	source/example/reference/commands/tokenize/add_mode.log \
 	source/example/reference/commands/tokenize/flags_enable_tokenized_delimiter.log \
@@ -1196,9 +1268,10 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/log_put.rst \
 	source/reference/commands/log_reopen.rst \
 	source/reference/commands/logical_count.rst \
+	source/reference/commands/logical_parameters.rst \
 	source/reference/commands/logical_range_filter.rst \
-	source/reference/commands/logical_table_remove.rst \
 	source/reference/commands/logical_select.rst \
+	source/reference/commands/logical_table_remove.rst \
 	source/reference/commands/normalize.rst \
 	source/reference/commands/normalizer_list.rst \
 	source/reference/commands/plugin_register.rst \
@@ -1216,6 +1289,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/table_create.rst \
 	source/reference/commands/table_list.rst \
 	source/reference/commands/table_remove.rst \
+	source/reference/commands/table_rename.rst \
 	source/reference/commands/table_tokenize.rst \
 	source/reference/commands/tokenize.rst \
 	source/reference/commands/tokenizer_list.rst \
@@ -1523,9 +1597,10 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/log_put.txt \
 	html/_sources/reference/commands/log_reopen.txt \
 	html/_sources/reference/commands/logical_count.txt \
+	html/_sources/reference/commands/logical_parameters.txt \
 	html/_sources/reference/commands/logical_range_filter.txt \
-	html/_sources/reference/commands/logical_table_remove.txt \
 	html/_sources/reference/commands/logical_select.txt \
+	html/_sources/reference/commands/logical_table_remove.txt \
 	html/_sources/reference/commands/normalize.txt \
 	html/_sources/reference/commands/normalizer_list.txt \
 	html/_sources/reference/commands/plugin_register.txt \
@@ -1543,6 +1618,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/table_create.txt \
 	html/_sources/reference/commands/table_list.txt \
 	html/_sources/reference/commands/table_remove.txt \
+	html/_sources/reference/commands/table_rename.txt \
 	html/_sources/reference/commands/table_tokenize.txt \
 	html/_sources/reference/commands/tokenize.txt \
 	html/_sources/reference/commands/tokenizer_list.txt \
@@ -1744,9 +1820,10 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/log_put.html \
 	html/reference/commands/log_reopen.html \
 	html/reference/commands/logical_count.html \
+	html/reference/commands/logical_parameters.html \
 	html/reference/commands/logical_range_filter.html \
-	html/reference/commands/logical_table_remove.html \
 	html/reference/commands/logical_select.html \
+	html/reference/commands/logical_table_remove.html \
 	html/reference/commands/normalize.html \
 	html/reference/commands/normalizer_list.html \
 	html/reference/commands/plugin_register.html \
@@ -1764,6 +1841,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/table_create.html \
 	html/reference/commands/table_list.html \
 	html/reference/commands/table_remove.html \
+	html/reference/commands/table_rename.html \
 	html/reference/commands/table_tokenize.html \
 	html/reference/commands/tokenize.html \
 	html/reference/commands/tokenizer_list.html \
