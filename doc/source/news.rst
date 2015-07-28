@@ -132,7 +132,7 @@ Improvements
   * [mrb] Binded :c:func:`grn_table_group_flags()` to ``TableGroupFlags``.
   * [mrb] Binded ``GRN_COMMAND_VERSION_DEFAULT``.
   * [mrb] Binded ``grn_cache``.
-  * [mrb][estimate_size] Supported ``(... || ...) && (... || ...)`` case.
+  * [mrb][estimate_size] Supported ``(... || ...) && (... || ...)`` as expression case.
 
 Fixes
 ^^^^^
@@ -155,7 +155,9 @@ Fixes
     |n| grn_fin (0)
         ^
 
-* Fixed a bug that estimating size by regexp query with anchor doesn't work.
+* Fixed a bug that estimating size by regexp query with anchor (e.g. ``\\\\A`` in
+  ``--filter 'comment @~ "\\\\Abc"'``) doesn't work. The feature is used in
+  :doc:`/reference/commands/logical_range_filter`.
 * [:doc:`/reference/command/request_id`] Fixed a memory leak when ``request_id`` byte size >= 24.
 * [:doc:`/reference/commands/lock_clear`] Fixed a typo in command name in Syntax section.
   [GitHub#363] [Reported by Christian Kakesa]
