@@ -66,7 +66,7 @@ Install groonga-normalizer-mysql package::
 jessie
 ------
 
-.. versionadded:: 5.0.6
+.. versionadded:: 5.0.3
 
 Add the Groonga apt repository.
 
