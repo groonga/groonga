@@ -35,6 +35,7 @@ The required parameters are ``logical_table`` and ``shard_key``::
                 [filter]
                 [offset]
                 [output_columns]
+                [use_range_index]
 
 Usage
 -----
@@ -103,6 +104,12 @@ Specify ``include`` or ``exclude`` as the value of this parameter.
 
 ``output_columns``
 """"""""""""""""""
+
+``use_range_index``
+"""""""""""""""""""
+
+Specifies whether range_index is used or not.
+Note that it's a parameter for test. It should not be used for production.
 
 Return value
 ------------
