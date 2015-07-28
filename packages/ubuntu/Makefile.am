@@ -1,4 +1,4 @@
-CODE_NAMES = trusty,utopic,vivid
+CODE_NAMES = trusty,vivid
 SOURCE = ../$(PACKAGE)-$(VERSION).tar.gz
 
 all:
