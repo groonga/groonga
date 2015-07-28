@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-07-28 12:38+0900\n"
+"PO-Revision-Date: 2015-07-28 12:47+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -7054,25 +7054,3 @@ msgid ""
 "applied ftb patch for mysql binding from <ko at yappo.ne.jp> 'IN BOOLEAN "
 "MODE' supported"
 msgstr ""
-
-#~ msgid "[doc][:doc:`/reference/commands/select`] Updated."
-#~ msgstr "[doc][:doc:`/reference/commands/select`] 更新しました。"
-
-# ee2347969bb648d989d8755ba3e05b51
-#~ msgid ""
-#~ "Fixed a bug that ``grn_vector_decode()`` sets wrong offsets in append "
-#~ "mode."
-#~ msgstr ""
-#~ "``grn_vector_decode()`` がアペンドモードで不正なオフセットを設定していたの"
-#~ "を修正しました。"
-
-# a65423d21f6e4b4d87b182be36af10b4
-#~ msgid ""
-#~ "Fixed a bug that estimating size by regexp query with anchor doesn't work."
-#~ msgstr ""
-#~ "正規表現クエリーがアンカー（文字列が一致する位置）と一緒に使われた時にサイ"
-#~ "ズ推定が動作しない不具合を修正しました。"
-
-#, fuzzy
-#~ msgid "[logical_parameters] Added."
-#~ msgstr "[:doc:`/reference/commands/logical_table_remove`] 追加しました。"
