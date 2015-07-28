@@ -127,8 +127,8 @@ Improvements
   * [:doc:`/reference/commands/logical_range_filter`] Supported nested reference vector
     accessor.
   * [:doc:`/reference/commands/logical_range_filter`] Used range_index value set by
-    logical_parameters.
-  * [logical_parameters] Added.
+    :doc:`/reference/commands/logical_parameters`.
+  * [:doc:`/reference/commands/logical_parameters`] Added.
 
 * Added mruby APIs.
 
