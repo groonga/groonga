@@ -8,7 +8,12 @@
       <provider name="Groonga"
                 guid="{851d655e-1970-400b-99a3-1c6fac5cbe18}">
         <channels>
-          <importChannel chid="system" name="System"/>
+          <channel chid="all"
+                   value="16"
+                   name="Groonga"
+                   enabled="true"
+                   isolation="Application"
+                   type="Admin"/>
         </channels>
 
         <templates>
@@ -19,13 +24,13 @@
 
         <events>
           <event value="1" level="win:Critical"
-                 template="message" channel="system"/>
+                 template="message" channel="all"/>
           <event value="2" level="win:Error"
-                 template="message" channel="system"/>
+                 template="message" channel="all"/>
           <event value="3" level="win:Warning"
-                 template="message" channel="system"/>
+                 template="message" channel="all"/>
           <event value="4" level="win:Informational"
-                 template="message" channel="system"/>
+                 template="message" channel="all"/>
         </events>
       </provider>
     </events>

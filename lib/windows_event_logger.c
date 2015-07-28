@@ -73,7 +73,9 @@ windows_event_logger_log(grn_ctx *ctx, grn_log_level level,
 
   event.Id = event.Level;
   event.Version = 0;
-  event.Channel = 0x08;
+  /* 16 is the value of //channel[@value] in
+     data/windows_event_log/provider.man. */
+  event.Channel = 16;
   event.Opcode = 0;
   event.Task = 0;
   event.Keyword = 0x00;
