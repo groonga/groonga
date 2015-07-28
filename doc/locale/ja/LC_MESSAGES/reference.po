@@ -5299,6 +5299,17 @@ msgstr ""
 "``logical_range_filter`` コマンドを使うには事前に ``sharding`` プラグインを登"
 "録します。"
 
+# 9b0c2ca2328b424f8ee09a53e5f7dad4
+# c64396ae7c6d45b8881af4b2d1a147f3
+# 5dfaacc9dab046c4b4ffac720a009e76
+# a090576c59d94961b71d319661d30a64
+# 82a429b18c4b46faad71f5bcf1f8e81e
+# 3b16dcdfa08b42e583726e69dd93f3e5
+# 00a518e18cf345fa999fece21f40e7e8
+# 875df723ba35415fa7c7e05152a03022
+msgid "TODO: Add examples"
+msgstr ""
+
 msgid "This section describes parameters of ``logical_range_filter``."
 msgstr "このセクションでは ``logical_range_filter`` の引数について説明します。"
 
