@@ -99,8 +99,9 @@ Improvements
 
   * [:doc:`/reference/commands/logical_select`] Used the same default output_columns as
     :doc:`/reference/commands/select`.
-  * [:doc:`/reference/commands/logical_select`] Supported calc_types and calc_target for
-    labeled drilldown.
+  * [:doc:`/reference/commands/logical_select`] Supported
+    :ref:`logical-select-drilldown-label-calc-types` and
+    :ref:`logical-select-drilldown-label-calc-target` for labeled drilldown.
   * [:doc:`/reference/commands/logical_count`] Supported logging whether range index is
     used or not.
   * [:doc:`/reference/commands/logical_count`] Show target table name.
