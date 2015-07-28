@@ -15,7 +15,8 @@ Release 5.0.6 - 2015-07-29
 Improvements
 ^^^^^^^^^^^^
 
-* Supported offline index construction for reference vector. For example::
+* Supported offline index construction for reference vector. For example, ``load``
+  data before ``column_create`` an index::
 
     table_create Entries TABLE_NO_KEY
     column_create Entries numbers COLUMN_VECTOR Int32
@@ -32,7 +33,8 @@ Improvements
 
     select Numbers --output_columns _key
 
-* Supported ``'vector_text_column @ "element"'`` without index. For example::
+* Supported ``'vector_text_column @ "element"'`` without index. For example, the
+  ``select`` command in the following commands::
 
     table_create Memos TABLE_NO_KEY
     column_create Memos tags COLUMN_VECTOR Text
@@ -44,7 +46,8 @@ Improvements
 
     select Memos --filter 'tags @ "Rroonga"'
 
-* Supported ``'fixed_size_type_vector_column @ n'`` without index. For example::
+* Supported ``'fixed_size_type_vector_column @ n'`` without index. For example, the
+  ``select`` command in the following commands::
 
     table_create Memos TABLE_NO_KEY
     column_create Memos numbers COLUMN_VECTOR Int32
