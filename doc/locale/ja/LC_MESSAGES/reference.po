@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-07-23 17:18+0900\n"
+"PO-Revision-Date: 2015-07-28 12:54+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -5263,9 +5263,8 @@ msgstr ""
 "最大値を境界値として含めるのか否かを指定します。 ``include`` もしくは "
 "``exclude`` を指定します。"
 
-#, fuzzy
 msgid "``logical_parameters``"
-msgstr "``logical_select`` コマンドにはたくさんの引数があります。"
+msgstr ""
 
 # 4207d2acd4fd497091e401db9bfae3a6
 msgid "TODO: Write summary"
@@ -5275,17 +5274,15 @@ msgstr ""
 msgid "logical_parameters [range_index]"
 msgstr ""
 
-#, fuzzy
 msgid ""
 "Register ``sharding`` plugin to use ``logical_parameters`` command in "
 "advance."
 msgstr ""
-"``logical_range_filter`` コマンドを使うには事前に ``sharding`` プラグインを登"
-"録します。"
+"``logical_parameters`` コマンドを使うには事前に ``sharding`` プラグインを登録"
+"します。"
 
-#, fuzzy
 msgid "This section describes parameters of ``logical_parameters``."
-msgstr "このセクションでは ``logical_range_filter`` の引数について説明します。"
+msgstr "このセクションでは ``logical_parameters`` の引数について説明します。"
 
 # 7e5f958ab4f44a8087b0833fc60a0136
 msgid "``range_index``"
@@ -5318,6 +5315,8 @@ msgid ""
 "Specifies whether range_index is used or not. Note that it's a parameter for "
 "test. It should not be used for production."
 msgstr ""
+"range_indexを使うかどうか指定します。ただし、この引数はテスト用なので、本番で"
+"使うべきではありません。"
 
 # 26f6896f991341569e381e95aebf1f73
 msgid "``logical_select``"
