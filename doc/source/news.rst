@@ -67,7 +67,6 @@ Improvements
 
     function(_key, Table["key"].column)
 
-* [doc][:doc:`/reference/commands/select`] Updated.
 * [doc][:doc:`/tutorial`] Added more description about database creation fails if DB_PATH
   points to an existing file. [GitHub#354] [Suggested by Hirotaka Takayama]
 * [doc][:doc:`/tutorial`] Described JSON formatting tools.
@@ -150,7 +149,6 @@ Fixes
   owner/group. But logrotated log files are created with groonga
   owner/group. [GitHub#358] [Reported by jacob16bit]
 * [:doc:`/reference/executables/groonga`] Fixed reported the maximum number of threads.
-* Fixed a bug that ``grn_vector_decode()`` sets wrong offsets in append mode.
 * [:doc:`/reference/executables/groonga-httpd`] Remove a needless space in log message::
 
     |n|  grn_fin (0) ->
