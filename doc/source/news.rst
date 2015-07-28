@@ -82,6 +82,13 @@ Improvements
   option ``--use-windows-event-log``. It reports logs as Windows events.
   It's a experimental feature.
 * [:doc:`/install/windows`] Used Groonga's default encoding for log message.
+* Log used indexes in ``INFO`` level. The default level ``NOTICE``. So the logs aren't
+  showed by default.
+* [API] Added :c:func:`grn_log_level_to_string()` and :c:func:`grn_log_level_parse()`.
+* [:doc:`/reference/executables/groonga`] Accepted log level name (e.g. ``info``,
+  ``debug`` and so on) for ``--log-level`` value.
+* [:doc:`/reference/commands/log_level`][:doc:`/reference/commands/log_put`]
+  Accepted log level name for ``--level`` argument.
 * [plugin] Added :c:func:`grn_command_input_get_arguments()`.
 * Updated sharding plugins.
 
@@ -102,9 +109,11 @@ Improvements
   * [:doc:`/reference/commands/logical_select`] Supported
     :ref:`logical-select-drilldown-label-calc-types` and
     :ref:`logical-select-drilldown-label-calc-target` for labeled drilldown.
+  * [:doc:`/reference/commands/logical_select`] Supported cache.
   * [:doc:`/reference/commands/logical_count`] Supported logging whether range index is
     used or not.
   * [:doc:`/reference/commands/logical_count`] Show target table name in debug log.
+  * [:doc:`/reference/commands/logical_count`] Supported cache.
   * [:doc:`/reference/commands/logical_range_filter`] Supported
     ``'fixed_size_type_vector_column @ element'``.
   * [:doc:`/reference/commands/logical_range_filter`] Added ``use_range_index`` parameter.
@@ -114,6 +123,9 @@ Improvements
   * [:doc:`/reference/commands/logical_range_filter`] Supported cache.
   * [:doc:`/reference/commands/logical_range_filter`] Supported nested reference vector
     accessor.
+  * [:doc:`/reference/commands/logical_range_filter`] Used range_index value set by
+    logical_parameters.
+  * [logical_parameters] Added.
 
 * Added mruby APIs.
 
@@ -133,6 +145,7 @@ Improvements
   * [mrb] Binded ``GRN_COMMAND_VERSION_DEFAULT``.
   * [mrb] Binded ``grn_cache``.
   * [mrb][estimate_size] Supported ``(... || ...) && (... || ...)`` as expression case.
+  * [mrb] Supported query log.
 
 Fixes
 ^^^^^
