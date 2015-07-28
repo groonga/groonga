@@ -15,6 +15,8 @@ Release 5.0.6 - 2015-07-29
 Improvements
 ^^^^^^^^^^^^
 
+* [:doc:`/install/ubuntu`] Dropped Ubuntu 14.10 (Utopic Unicorn) support. It had been
+  End of Life on July 23, 2015.
 * Supported offline index construction for reference vector. For example, ``load``
   data before ``column_create`` an index::
 
