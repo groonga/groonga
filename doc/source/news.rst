@@ -62,7 +62,8 @@ Improvements
 * [:doc:`/install/windows`] Allowed to delete file that is opened by other process.
 * Accepted selector only proc. Note that the proc can't be used as function. It means
   that the proc can't be used with sequential search.
-* Supported function call with complex argument. For example::
+* Supported function call with complex argument. An example complex argument is
+  ``Table["key"].column``. For example::
 
     function(_key, Table["key"].column)
 
@@ -97,14 +98,14 @@ Improvements
     * ``--drilldown_offset``
     * ``--drilldown_limit``
 
-  * [:doc:`/reference/commands/logical_select`] Used the same default output_columns as
-    :doc:`/reference/commands/select`.
+  * [:doc:`/reference/commands/logical_select`] Used the same default output_columns
+    (``"_id, _key, *"``) as :doc:`/reference/commands/select`.
   * [:doc:`/reference/commands/logical_select`] Supported
     :ref:`logical-select-drilldown-label-calc-types` and
     :ref:`logical-select-drilldown-label-calc-target` for labeled drilldown.
   * [:doc:`/reference/commands/logical_count`] Supported logging whether range index is
     used or not.
-  * [:doc:`/reference/commands/logical_count`] Show target table name.
+  * [:doc:`/reference/commands/logical_count`] Show target table name in debug log.
   * [:doc:`/reference/commands/logical_range_filter`] Supported
     ``'fixed_size_type_vector_column @ element'``.
   * [:doc:`/reference/commands/logical_range_filter`] Added ``use_range_index`` parameter.
