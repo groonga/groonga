@@ -8,7 +8,7 @@ environment:
 
 build_script:
   - git submodule update --init
-  - cmake . -G %CMAKE_GENERATOR_NAME%
+  - cmake . -G "%CMAKE_GENERATOR_NAME%"
   - cmake --build . --config Debug
 
 notifications:
