@@ -2,8 +2,9 @@ version: "{build}"
 clone_depth: 10
 
 environment:
-  - CMAKE_GENERATOR_NAME: "Visual Studio 12 2013"
-  - CMAKE_GENERATOR_NAME: "Visual Studio 12 2013 Win64"
+  matrix:
+    - CMAKE_GENERATOR_NAME: "Visual Studio 12 2013"
+    - CMAKE_GENERATOR_NAME: "Visual Studio 12 2013 Win64"
 
 build_script:
   - git submodule update --init
