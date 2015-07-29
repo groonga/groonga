@@ -333,6 +333,7 @@ fi
 %dir %{_libdir}/groonga/scripts/ruby/context
 %dir %{_libdir}/groonga/scripts/ruby/initialize
 %dir %{_libdir}/groonga/scripts/ruby/logger
+%dir %{_libdir}/groonga/scripts/ruby/query_logger
 %{_libdir}/groonga/plugins/functions/vector.so
 %{_libdir}/groonga/plugins/table/table.so
 %{_libdir}/groonga/plugins/query_expanders/tsv.so
@@ -345,6 +346,7 @@ fi
 %{_libdir}/groonga/scripts/ruby/context/*.rb
 %{_libdir}/groonga/scripts/ruby/initialize/*.rb
 %{_libdir}/groonga/scripts/ruby/logger/*.rb
+%{_libdir}/groonga/scripts/ruby/query_logger/*.rb
 %{_datadir}/groonga/
 %config(noreplace) %{_sysconfdir}/groonga/synonyms.tsv
 
