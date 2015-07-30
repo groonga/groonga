@@ -119,16 +119,22 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
   case GRN_DB_TIME :
     {
       int64_t value;
-      int32_t sec;
+      int64_t sec;
       int32_t usec;
+      mrb_value mrb_sec;
 
       value = GRN_TIME_VALUE(bulk);
       GRN_TIME_UNPACK(value, sec, usec);
+      if (sec > MRB_INT_MAX) {
+        mrb_sec = mrb_float_value(mrb, sec);
+      } else {
+        mrb_sec = mrb_fixnum_value(sec);
+      }
       mrb_value_ = mrb_funcall(mrb,
                                mrb_obj_value(ctx->impl->mrb.builtin.time_class),
                                "at",
                                2,
-                               mrb_fixnum_value(sec),
+                               mrb_sec,
                                mrb_fixnum_value(usec));
     }
     break;
