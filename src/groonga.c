@@ -21,6 +21,7 @@
 #include <ctype.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <errno.h>
 
 #ifdef WIN32
 # define GROONGA_MAIN
@@ -32,6 +33,7 @@
 #include <grn_proc.h>
 #include <grn_db.h>
 #include <grn_util.h>
+#include <grn_error.h>
 
 #ifdef HAVE_SYS_WAIT_H
 # include <sys/wait.h>
@@ -544,6 +546,13 @@ create_pid_file(void)
   }
 
   pid_file = fopen(pid_file_path, "w");
+  if (!pid_file) {
+    fprintf(stderr,
+            "Failed to open PID file: <%s>: <%s>\n",
+            pid_file_path, grn_strerror(errno));
+    return;
+  }
+
   {
 #ifdef WIN32
     DWORD pid;
