@@ -1,0 +1,47 @@
+register sharding
+[[0,0.0,0.0],true]
+table_create Logs_20150201 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+table_create Logs_20150202 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+table_create Logs_20150227 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+table_create Logs_20150301 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+table_create Logs_20150302 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+table_create Logs_20150130 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+table_create Logs_20150131 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+logical_shard_list Logs
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "name": "Logs_20150130"
+    },
+    {
+      "name": "Logs_20150131"
+    },
+    {
+      "name": "Logs_20150201"
+    },
+    {
+      "name": "Logs_20150202"
+    },
+    {
+      "name": "Logs_20150227"
+    },
+    {
+      "name": "Logs_20150301"
+    },
+    {
+      "name": "Logs_20150302"
+    }
+  ]
+]

@@ -1,12 +1,15 @@
 module Groonga
   module Sharding
     class LogicalEnumerator
+      include Enumerable
+
       attr_reader :target_range
       attr_reader :logical_table
       attr_reader :shard_key_name
-      def initialize(command_name, input)
+      def initialize(command_name, input, options={})
         @command_name = command_name
         @input = input
+        @options = options
         initialize_parameters
       end
 
@@ -94,7 +97,11 @@ module Groonga
 
         @shard_key_name = @input[:shard_key]
         if @shard_key_name.nil?
-          raise InvalidArgument, "[#{@command_name}] shard_key is missing"
+          require_shard_key = @options[:require_shard_key]
+          require_shard_key = true if require_shard_key.nil?
+          if require_shard_key
+            raise InvalidArgument, "[#{@command_name}] shard_key is missing"
+          end
         end
 
         @target_range = TargetRange.new(@command_name, @input)

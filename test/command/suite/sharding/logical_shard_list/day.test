@@ -1,0 +1,7 @@
+#@on-error omit
+register sharding
+#@on-error default
+
+table_create Logs_20150806 TABLE_NO_KEY
+
+logical_shard_list Logs

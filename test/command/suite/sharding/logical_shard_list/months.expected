@@ -1,0 +1,32 @@
+register sharding
+[[0,0.0,0.0],true]
+table_create Logs_201501 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+table_create Logs_201412 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+table_create Logs_201512 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+table_create Logs_201401 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+logical_shard_list Logs
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "name": "Logs_201401"
+    },
+    {
+      "name": "Logs_201412"
+    },
+    {
+      "name": "Logs_201501"
+    },
+    {
+      "name": "Logs_201512"
+    }
+  ]
+]
