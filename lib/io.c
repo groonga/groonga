@@ -1586,8 +1586,30 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
               path, flags_description);
       goto exit;
     }
+
+    {
+      FILE_SET_SPARSE_BUFFER buffer;
+      buffer.SetSparse = TRUE;
+      DWORD returned_bytes;
+      if (!DeviceIoControl(fi->fh,
+                           FSCTL_SET_SPARSE,
+                           &buffer,
+                           sizeof(FILE_SET_SPARSE_BUFFER),
+                           NULL,
+                           0,
+                           &returned_bytes,
+                           NULL)) {
+        GRN_LOG(ctx, GRN_LOG_INFO,
+                "Tried to make file sparse but failed: "
+                "DeviceIoControl(FSCTL_SET_SPARSE): "
+                "<%s>: <%s>",
+                path, grn_current_error_message());
+      }
+    }
+
     goto exit;
   }
+
   if ((flags & O_TRUNC)) {
     CloseHandle(fi->fh);
     /* unable to assign OPEN_ALWAYS and TRUNCATE_EXISTING at once */
