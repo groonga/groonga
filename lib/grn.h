@@ -70,6 +70,9 @@
 #  include <w32api.h>
 #  define WINVER WindowsVista
 # endif /* defined(__GNUC__) && !defined(WINVER) */
+# if defined(_MSC_VER) && !defined(WINVER)
+#  define WINVER _WIN32_WINNT_VISTA
+# endif /* defined(_MSC_VER) && !defined(WINVER) */
 
 # include <basetsd.h>
 # include <process.h>
