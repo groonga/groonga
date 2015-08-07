@@ -1,0 +1,16 @@
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users name COLUMN_SCALAR ShortText
+
+load --table Users
+[
+{"_key": "alice",   "name": "Alice"},
+{"_key": "bob",     "name": "Bob"},
+{"_key": "charlie", "name": "Charlie"}
+]
+
+#@disable-logging
+thread_count 1
+#@enable-logging
+database_reopen
+
+select Users
