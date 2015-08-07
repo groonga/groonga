@@ -434,6 +434,7 @@ GRN_API grn_obj *grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_opt
 GRN_API grn_obj *grn_db_open(grn_ctx *ctx, const char *path);
 GRN_API void grn_db_touch(grn_ctx *ctx, grn_obj *db);
 GRN_API grn_rc grn_db_recover(grn_ctx *ctx, grn_obj *db);
+GRN_API grn_rc grn_db_unmap(grn_ctx *ctx, grn_obj *db);
 
 GRN_API grn_rc grn_ctx_use(grn_ctx *ctx, grn_obj *db);
 GRN_API grn_obj *grn_ctx_db(grn_ctx *ctx);
