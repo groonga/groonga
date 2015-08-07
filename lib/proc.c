@@ -6922,28 +6922,6 @@ proc_thread_count(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
   return NULL;
 }
 
-static grn_obj *
-proc_database_reopen(grn_ctx *ctx, int nargs, grn_obj **args,
-                     grn_user_data *user_data)
-{
-  grn_rc rc;
-  uint32_t current_count;
-
-  current_count = grn_thread_get_count();
-  if (current_count != 1) {
-    ERR(GRN_OPERATION_NOT_PERMITTED,
-        "[database_reopen] the number of threads must be 1: <%u>",
-        current_count);
-    GRN_OUTPUT_BOOL(GRN_FALSE);
-    return NULL;
-  }
-
-  rc = grn_db_reopen(ctx, grn_ctx_db(ctx));
-  GRN_OUTPUT_BOOL(rc == GRN_SUCCESS);
-
-  return NULL;
-}
-
 #define DEF_VAR(v,name_str) do {\
   (v).name = (name_str);\
   (v).name_size = GRN_STRLEN(name_str);\
@@ -7233,6 +7211,4 @@ grn_db_init_builtin_query(grn_ctx *ctx)
 
   DEF_VAR(vars[0], "new_count");
   DEF_COMMAND("thread_count", proc_thread_count, 1, vars);
-
-  DEF_COMMAND("database_reopen", proc_database_reopen, 0, vars);
 }
