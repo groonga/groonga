@@ -138,6 +138,8 @@ TODO: Add examples
 Return value
 ------------
 
+TODO
+
 ::
 
   [HEADER, LOGICAL_FILTERED]
