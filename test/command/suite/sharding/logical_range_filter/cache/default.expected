@@ -1,0 +1,69 @@
+register sharding
+[[0,0.0,0.0],true]
+table_create Logs_20150203 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20150203 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20150203 memo COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Logs_20150203
+[
+{"timestamp": "2015-02-03 23:59:58", "memo": "2015-02-03 23:59:58"},
+{"timestamp": "2015-02-03 23:59:58", "memo": "2015-02-03 23:59:58"},
+{"timestamp": "2015-02-03 23:59:59", "memo": "2015-02-03 23:59:59"},
+{"timestamp": "2015-02-03 23:59:59", "memo": "2015-02-03 23:59:59"}
+]
+[[0,0.0,0.0],4]
+logical_range_filter Logs timestamp --limit 1
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "memo",
+        "ShortText"
+      ],
+      [
+        "timestamp",
+        "Time"
+      ]
+    ],
+    [
+      "2015-02-03 23:59:58",
+      1422975598.0
+    ]
+  ]
+]
+#>logical_range_filter Logs timestamp --limit 1 --output_type json
+#<000000000000000 rc=0
+logical_range_filter Logs timestamp --limit 1
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "memo",
+        "ShortText"
+      ],
+      [
+        "timestamp",
+        "Time"
+      ]
+    ],
+    [
+      "2015-02-03 23:59:58",
+      1422975598.0
+    ]
+  ]
+]
+#>logical_range_filter Logs timestamp --limit 1 --output_type json
+#:000000000000000 cache(0)
+#<000000000000000 rc=0

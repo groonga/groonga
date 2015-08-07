@@ -28,7 +28,7 @@ module Groonga
       nil
     end
 
-    def cache_output(key)
+    def cache_output(key, options={})
       if key.nil?
         yield
       else
@@ -40,14 +40,17 @@ module Groonga
           query_logger.log(:cache, ":", "cache(#{cached_value.bytesize})")
         else
           yield
-          cache.update(key, context.output)
+          cache.update(key, context.output) if options[:update]
         end
       end
     end
 
     def run_internal(input)
       begin
-        cache_output(cache_key(input)) do
+        options = {
+          :update => (input["cache"] != "no"),
+        }
+        cache_output(cache_key(input), options) do
           run_body(input)
         end
       rescue GroongaError => groonga_error
