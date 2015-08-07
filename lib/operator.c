@@ -698,19 +698,17 @@ string_have_prefix(grn_ctx *ctx,
           strncmp(target, prefix, prefix_len) == 0);
 }
 
-static grn_bool
-string_match_regexp(grn_ctx *ctx,
-                    const char *target, unsigned int target_len,
-                    const char *pattern, unsigned int pattern_len)
-{
 #ifdef GRN_SUPPORT_REGEXP
+static OnigRegex
+regexp_compile(grn_ctx *ctx, const char *pattern, unsigned int pattern_len)
+{
   OnigRegex regex;
   OnigEncoding onig_encoding;
   int onig_result;
   OnigErrorInfo onig_error_info;
 
   if (ctx->encoding == GRN_ENC_NONE) {
-    return GRN_FALSE;
+    return NULL;
   }
 
   switch (ctx->encoding) {
@@ -730,7 +728,7 @@ string_match_regexp(grn_ctx *ctx,
     onig_encoding = ONIG_ENCODING_KOI8_R;
     break;
   default :
-    return GRN_FALSE;
+    return NULL;
   }
 
   onig_result = onig_new(&regex,
@@ -748,21 +746,46 @@ string_match_regexp(grn_ctx *ctx,
         "failed to create regular expression object: <%.*s>: %s",
         pattern_len, pattern,
         message);
+    return NULL;
+  }
+
+  return regex;
+}
+
+static grn_bool
+regexp_is_match(grn_ctx *ctx, OnigRegex regex,
+                const char *target, unsigned int target_len)
+{
+  OnigPosition position;
+
+  position = onig_search(regex,
+                         target,
+                         target + target_len,
+                         target,
+                         target + target_len,
+                         NULL,
+                         ONIG_OPTION_NONE);
+  return position != ONIG_MISMATCH;
+}
+#endif
+
+static grn_bool
+string_match_regexp(grn_ctx *ctx,
+                    const char *target, unsigned int target_len,
+                    const char *pattern, unsigned int pattern_len)
+{
+#ifdef GRN_SUPPORT_REGEXP
+  OnigRegex regex;
+  grn_bool matched;
+
+  regex = regexp_compile(ctx, pattern, pattern_len);
+  if (!regex) {
     return GRN_FALSE;
   }
 
-  {
-    OnigPosition position;
-    position = onig_search(regex,
-                           target,
-                           target + target_len,
-                           target,
-                           target + target_len,
-                           NULL,
-                           ONIG_OPTION_NONE);
-    onig_free(regex);
-    return position != ONIG_MISMATCH;
-  }
+  matched = regexp_is_match(ctx, regex, target, target_len);
+  onig_free(regex);
+  return matched;
 #else
   return GRN_FALSE;
 #endif
@@ -982,11 +1005,60 @@ grn_operator_exec_prefix(grn_ctx *ctx, grn_obj *target, grn_obj *prefix)
   GRN_API_RETURN(matched);
 }
 
+static grn_bool
+exec_regexp_vector_bulk(grn_ctx *ctx, grn_obj *vector, grn_obj *pattern)
+{
+#ifdef GRN_SUPPORT_REGEXP
+  grn_bool matched = GRN_FALSE;
+  unsigned int i, size;
+  OnigRegex regex;
+
+  size = grn_vector_size(ctx, vector);
+  if (size == 0) {
+    return GRN_FALSE;
+  }
+
+  regex = regexp_compile(ctx, GRN_TEXT_VALUE(pattern), GRN_TEXT_LEN(pattern));
+  if (!regex) {
+    return GRN_FALSE;
+  }
+
+  for (i = 0; i < size; i++) {
+    const char *content;
+    unsigned int content_size;
+    grn_id domain_id;
+
+    content_size = grn_vector_get_element(ctx, vector, i,
+                                          &content, NULL, &domain_id);
+    if (regexp_is_match(ctx, regex, content, content_size)) {
+      matched = GRN_TRUE;
+      break;
+    }
+  }
+
+  onig_free(regex);
+
+  return matched;
+#else
+  return GRN_FALSE;
+#endif
+}
+
 grn_bool
 grn_operator_exec_regexp(grn_ctx *ctx, grn_obj *target, grn_obj *pattern)
 {
   grn_bool matched;
   GRN_API_ENTER;
-  matched = exec_text_operator_bulk_bulk(ctx, GRN_OP_REGEXP, target, pattern);
+  switch (target->header.type) {
+  case GRN_VECTOR :
+    matched = exec_regexp_vector_bulk(ctx, target, pattern);
+    break;
+  case GRN_BULK :
+    matched = exec_text_operator_bulk_bulk(ctx, GRN_OP_REGEXP, target, pattern);
+    break;
+  default :
+    matched = GRN_FALSE;
+    break;
+  }
   GRN_API_RETURN(matched);
 }
