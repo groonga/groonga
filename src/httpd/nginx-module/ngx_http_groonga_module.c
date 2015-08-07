@@ -133,6 +133,12 @@ ngx_str_is_custom_path(ngx_str_t *string)
   return GRN_TRUE;
 }
 
+static uint32_t
+ngx_http_groonga_get_thread_count(void *data)
+{
+  return 1;
+}
+
 static void
 ngx_http_groonga_write_fd(ngx_fd_t fd,
                           u_char *buffer, size_t buffer_size,
@@ -1484,6 +1490,8 @@ ngx_http_groonga_init_process(ngx_cycle_t *cycle)
   grn_rc rc;
   ngx_http_conf_ctx_t *http_conf;
   ngx_http_groonga_database_callback_data_t data;
+
+  grn_thread_set_get_count_func(ngx_http_groonga_get_thread_count, NULL);
 
   rc = grn_init();
   if (rc != GRN_SUCCESS) {
