@@ -38,7 +38,7 @@ logical_range_filter Logs timestamp --limit 1
     ]
   ]
 ]
-#>logical_range_filter Logs timestamp --limit 1 --output_type json
+#>logical_range_filter --limit "1" --logical_table "Logs" --output_type "json" --shard_key "timestamp"
 #<000000000000000 rc=0
 logical_range_filter Logs timestamp --limit 1
 [
@@ -64,6 +64,6 @@ logical_range_filter Logs timestamp --limit 1
     ]
   ]
 ]
-#>logical_range_filter Logs timestamp --limit 1 --output_type json
+#>logical_range_filter --limit "1" --logical_table "Logs" --output_type "json" --shard_key "timestamp"
 #:000000000000000 cache(0)
 #<000000000000000 rc=0
