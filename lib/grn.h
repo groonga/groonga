@@ -27,6 +27,28 @@
 # define __MINGW_MSVC_COMPAT_WARNINGS
 #endif /* defined(WIN32) && defined(__GNUC__) */
 
+#ifdef WIN32
+# ifdef __GNUC__
+#  include <w32api.h>
+#  define GRN_MINIMUM_WINDOWS_VERSION WindowsVista
+# else /* __GNUC__ */
+#  define GRN_MINIMUM_WINDOWS_VERSION _WIN32_WINNT_VISTA
+# endif /* __GNUC__ */
+
+# ifdef WINVER
+#  undef WINVER
+# endif /* WINVER */
+# define WINVER GRN_MINIMUM_WINDOWS_VERSION
+# ifdef _WIN32_WINNT
+#  undef _WIN32_WINNT
+# endif /* _WIN32_WINNT */
+# define _WIN32_WINNT GRN_MINIMUM_WINDOWS_VERSION
+# ifdef NTDDI_VERSION
+#  undef NTDDI_VERSION
+# endif /* NTDDI_VERSION */
+# define NTDDI_VERSION GRN_MINIMUM_WINDOWS_VERSION
+#endif /* WIN32 */
+
 #ifdef __cplusplus
 # define __STDC_LIMIT_MACROS
 #endif
@@ -65,27 +87,6 @@
 #endif
 
 #ifdef WIN32
-
-# ifdef __GNUC__
-#  include <w32api.h>
-#  define GRN_MINIMUM_WINDOWS_VERSION WindowsVista
-# else /* __GNUC__ */
-#  define GRN_MINIMUM_WINDOWS_VERSION _WIN32_WINNT_VISTA
-# endif /* __GNUC__ */
-
-# ifdef WINVER
-#  undef WINVER
-# endif /* WINVER */
-# define WINVER GRN_MINIMUM_WINDOWS_VERSION
-# ifdef _WIN32_WINNT
-#  undef _WIN32_WINNT
-# endif /* _WIN32_WINNT */
-# define _WIN32_WINNT GRN_MINIMUM_WINDOWS_VERSION
-# ifdef NTDDI_VERSION
-#  undef NTDDI_VERSION
-# endif /* NTDDI_VERSION */
-# define NTDDI_VERSION GRN_MINIMUM_WINDOWS_VERSION
-
 # include <basetsd.h>
 # include <process.h>
 # include <winsock2.h>
