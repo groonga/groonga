@@ -32,7 +32,7 @@
 #  include <w32api.h>
 #  define GRN_MINIMUM_WINDOWS_VERSION WindowsVista
 # else /* __GNUC__ */
-#  define GRN_MINIMUM_WINDOWS_VERSION _WIN32_WINNT_VISTA
+#  define GRN_MINIMUM_WINDOWS_VERSION 0x0600 /* Vista */
 # endif /* __GNUC__ */
 
 # ifdef WINVER
