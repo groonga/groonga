@@ -66,10 +66,25 @@
 
 #ifdef WIN32
 
-# if defined(__GNUC__) && !defined(WINVER)
+# ifdef __GNUC__
 #  include <w32api.h>
-#  define WINVER WindowsVista
-# endif /* defined(__GNUC__) && !defined(WINVER) */
+#  define GRN_MINIMUM_WINDOWS_VERSION WindowsVista
+# else /* __GNUC__ */
+#  define GRN_MINIMUM_WINDOWS_VERSION _WIN32_WINNT_VISTA
+# endif /* __GNUC__ */
+
+# ifdef WINVER
+#  undef WINVER
+# endif /* WINVER */
+# define WINVER GRN_MINIMUM_WINDOWS_VERSION
+# ifdef _WIN32_WINNT
+#  undef _WIN32_WINNT
+# endif /* _WIN32_WINNT */
+# define _WIN32_WINNT GRN_MINIMUM_WINDOWS_VERSION
+# ifdef NTDDI_VERSION
+#  undef NTDDI_VERSION
+# endif /* NTDDI_VERSION */
+# define NTDDI_VERSION GRN_MINIMUM_WINDOWS_VERSION
 
 # include <basetsd.h>
 # include <process.h>
