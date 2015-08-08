@@ -23,11 +23,11 @@
 # include <config.h>
 #endif /* HAVE_CONFIG_H */
 
-#if defined(WIN32) && defined(__GNUC__)
-# define __MINGW_MSVC_COMPAT_WARNINGS
-#endif /* defined(WIN32) && defined(__GNUC__) */
-
 #ifdef WIN32
+# ifdef __GNUC__
+#  define __MINGW_MSVC_COMPAT_WARNINGS
+# endif /* __GNUC__ */
+
 # ifdef __GNUC__
 #  include <w32api.h>
 #  define GRN_MINIMUM_WINDOWS_VERSION WindowsVista
