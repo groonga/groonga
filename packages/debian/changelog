@@ -7,6 +7,9 @@ groonga (5.0.6-1) unstable; urgency=low
 groonga (5.0.5-1) unstable; urgency=low
 
   * New upstream release.
+  * debian/groonga-httpd.service,groonga-server-gqtp.service
+    - Use network-online.target to wait configured network strictly.
+    - Ensure unit dependency with After= option.
 
  -- Masafumi Yokoyama <myokoym@gmail.com>  Mon, 29 Jun 2015 00:00:00 +0900
 
