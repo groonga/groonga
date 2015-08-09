@@ -88,7 +88,7 @@ Files: vendor/mruby-source/*
 Copyright: 2014 mruby devevlopers
 License: MIT
 
-Files: vendor/mruby/parse.c
+Files: vendor/mruby/mruby-compiler/core/parse.c
 Copyright: 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
 License: GPL-3+-WITH-BISON-EXCEPTION
 
