@@ -1,0 +1,6 @@
+# Build uses -D_FORTIFY_SOURCE=2, but hardening-check reports false positive:
+# % hardening-check -v /usr/lib/x86_64-linux-gnu/groonga/plugins/query_expanders/tsv.so
+# Fortify Source functions: no, only unprotected functions found!
+#        unprotected: strncpy
+#        unprotected: memcpy
+libgroonga0: hardening-no-fortify-functions usr/lib/*/groonga/plugins/query_expanders/tsv*
