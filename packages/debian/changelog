@@ -39,6 +39,12 @@ groonga (5.0.2-1) unstable; urgency=low
 groonga (5.0.1-1) unstable; urgency=low
 
   * New upstream release.
+  * debian/rules
+    - Enable mruby by default.
+  * debian/libgroonga0.install
+    - Bundle mruby related files.
+  * debian/groonga-{httpd,server-gqtp}.default
+    - Set default experimental environment variable.
 
  -- HAYASHI Kentaro <hayashi@clear-code.com>  Sun, 29 Mar 2015 00:00:00 +0900
 
