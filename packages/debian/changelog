@@ -21,6 +21,8 @@ groonga (5.0.4-2) unstable; urgency=low
 groonga (5.0.4-1) unstable; urgency=low
 
   * New upstream release.
+  * debian/groonga-httpd.service,groonga-server-gqtp.service
+    - Support Systemd for groonga-httpd and groonga-server-gqtp.
 
  -- Masafumi Yokoyama <yokoyama@clear-code.com>  Fri, 29 May 2015 00:00:00 +0900
 
