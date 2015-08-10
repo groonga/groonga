@@ -7113,6 +7113,13 @@ const size_t II_BUFFER_BLOCK_SIZE = 0x1000000;
 const uint32_t II_BUFFER_BLOCK_READ_UNIT_SIZE = 0x200000;
 
 typedef struct {
+  unsigned int sid;
+  unsigned int weight;
+  const char *p;
+  uint32_t len;
+} ii_buffer_value;
+
+typedef struct {
   uint32_t nrecs;
   uint32_t nposts;
   grn_id last_rid;
@@ -7478,14 +7485,7 @@ grn_ii_buffer_tokenize(grn_ctx *ctx, grn_ii_buffer *ii_buffer, grn_id rid,
     grn_obj *tmp_lexicon;
     uint32_t est_len = value_len * 2 + 2;
     if (ii_buffer->block_buf_size < ii_buffer->block_pos + est_len) {
-      grn_ii_buffer_flush(ctx, ii_buffer);
-    }
-    if (ii_buffer->block_buf_size < est_len) {
-      grn_id *block_buf = (grn_id *)GRN_REALLOC(ii_buffer->block_buf,
-                                                est_len * sizeof(grn_id));
-      if (!block_buf) { return; }
-      ii_buffer->block_buf = block_buf;
-      ii_buffer->block_buf_size = est_len;
+      return;
     }
     if ((tmp_lexicon = get_tmp_lexicon(ctx, ii_buffer))) {
       unsigned int token_flags = 0;
@@ -8048,70 +8048,136 @@ grn_ii_buffer_close(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
 }
 
 static void
+ii_buffer_values_append(grn_ctx *ctx, ii_buffer_value **values,
+                        unsigned *nvalues, unsigned *max_nvalues,
+                        unsigned int sid, unsigned weight,
+                        const char *p, uint32_t len) {
+  if (*nvalues == *max_nvalues) {
+    unsigned new_max_nvalues = *max_nvalues ? (*max_nvalues * 2) : 1;
+    unsigned new_size = new_max_nvalues * sizeof(ii_buffer_value);
+    ii_buffer_value *new_values;
+    new_values = (ii_buffer_value *)GRN_REALLOC(*values, new_size);
+    if (new_values) {
+      *values = new_values;
+      *max_nvalues = new_max_nvalues;
+    }
+  }
+  if (*values) {
+    (*values)[*nvalues].sid = sid;
+    (*values)[*nvalues].weight = weight;
+    (*values)[*nvalues].p = p;
+    (*values)[*nvalues].len = len;
+    ++*nvalues;
+  }
+}
+
+static void
 grn_ii_buffer_parse(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
                     grn_obj *target, int ncols, grn_obj **cols)
 {
   grn_table_cursor  *tc;
-  if ((tc = grn_table_cursor_open(ctx, target,
-                                  NULL, 0, NULL, 0, 0, -1,
-                                  GRN_CURSOR_BY_ID))) {
-    grn_id rid;
-    grn_obj rv;
-    GRN_TEXT_INIT(&rv, 0);
-    while ((rid = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
-      int sid;
-      grn_obj **col;
-      for (sid = 1, col = cols; sid <= ncols; sid++, col++) {
-        grn_obj_reinit_for(ctx, &rv, *col);
-        if (GRN_OBJ_TABLEP(*col)) {
-          grn_table_get_key2(ctx, *col, rid, &rv);
-        } else {
-          grn_obj_get_value(ctx, *col, rid, &rv);
-        }
-        switch (rv.header.type) {
-        case GRN_BULK :
-          grn_ii_buffer_tokenize(ctx, ii_buffer, rid, sid, 0,
-                                 GRN_TEXT_VALUE(&rv), GRN_TEXT_LEN(&rv));
-          break;
-        case GRN_UVECTOR :
-          {
-            unsigned int i, size;
-            unsigned int element_size;
-
-            size = grn_uvector_size(ctx, &rv);
-            element_size = grn_uvector_element_size(ctx, &rv);
-            for (i = 0; i < size; i++) {
-              grn_ii_buffer_tokenize(ctx, ii_buffer, rid, sid, 0,
-                                     GRN_BULK_HEAD(&rv) + (element_size * i),
-                                     element_size);
-            }
-          }
-          break;
-        case GRN_VECTOR :
-          if (rv.u.v.body) {
-            int i;
-            int n_sections = rv.u.v.n_sections;
-            grn_section *sections = rv.u.v.sections;
-            const char *head = GRN_BULK_HEAD(rv.u.v.body);
-            for (i = 0; i < n_sections; i++) {
-              grn_section *section = sections + i;
-              if (section->length == 0) {
-                continue;
-              }
-              grn_ii_buffer_tokenize(ctx, ii_buffer, rid,
-                                     sid, section->weight,
-                                     head + section->offset, section->length);
-            }
-          }
-          break;
-        default :
-          ERR(GRN_INVALID_ARGUMENT, "[index] invalid object assigned as value");
-          break;
-        }
-      }
+  grn_obj *vobjs;
+  if ((vobjs = GRN_MALLOCN(grn_obj, ncols))) {
+    int i;
+    for (i = 0; i < ncols; i++) {
+      GRN_TEXT_INIT(&vobjs[i], 0);
     }
-    GRN_OBJ_FIN(ctx, &rv);
-    grn_table_cursor_close(ctx, tc);
+    if ((tc = grn_table_cursor_open(ctx, target,
+                                    NULL, 0, NULL, 0, 0, -1,
+                                    GRN_CURSOR_BY_ID))) {
+      ii_buffer_value *values = NULL;
+      unsigned int nvalues = 0;
+      unsigned int max_nvalues = 0;
+      uint32_t est_len;
+      grn_id rid;
+      while ((rid = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
+        unsigned int j;
+        int sid;
+        grn_obj **col;
+        for (sid = 1, col = cols; sid <= ncols; sid++, col++) {
+          grn_obj *rv = &vobjs[sid - 1];
+          grn_obj_reinit_for(ctx, rv, *col);
+          if (GRN_OBJ_TABLEP(*col)) {
+            grn_table_get_key2(ctx, *col, rid, rv);
+          } else {
+            grn_obj_get_value(ctx, *col, rid, rv);
+          }
+          switch (rv->header.type) {
+          case GRN_BULK :
+            ii_buffer_values_append(ctx, &values, &nvalues, &max_nvalues, sid,
+                                    0, GRN_TEXT_VALUE(rv), GRN_TEXT_LEN(rv));
+            break;
+          case GRN_UVECTOR :
+            {
+              unsigned int size;
+              unsigned int elem_size;
+              size = grn_uvector_size(ctx, rv);
+              elem_size = grn_uvector_element_size(ctx, rv);
+              for (j = 0; j < size; j++) {
+                ii_buffer_values_append(ctx, &values, &nvalues, &max_nvalues,
+                                        sid, 0,
+                                        GRN_BULK_HEAD(rv) + (elem_size * j),
+                                        elem_size);
+              }
+            }
+            break;
+          case GRN_VECTOR :
+            if (rv->u.v.body) {
+              int j;
+              int n_sections = rv->u.v.n_sections;
+              grn_section *sections = rv->u.v.sections;
+              const char *head = GRN_BULK_HEAD(rv->u.v.body);
+              for (j = 0; j < n_sections; j++) {
+                grn_section *section = sections + j;
+                if (section->length == 0) {
+                  continue;
+                }
+                ii_buffer_values_append(ctx, &values, &nvalues, &max_nvalues,
+                                        sid, section->weight,
+                                        head + section->offset,
+                                        section->length);
+              }
+            }
+            break;
+          default :
+            ERR(GRN_INVALID_ARGUMENT,
+                "[index] invalid object assigned as value");
+            break;
+          }
+        }
+
+        est_len = 0;
+        for (j = 0; j < nvalues; j++) {
+          est_len += values[j].len * 2 + 2;
+        }
+        if (ii_buffer->block_buf_size < ii_buffer->block_pos + est_len) {
+          grn_ii_buffer_flush(ctx, ii_buffer);
+        }
+        if (ii_buffer->block_buf_size < est_len) {
+          grn_id *block_buf = (grn_id *)GRN_REALLOC(ii_buffer->block_buf,
+                                                    est_len * sizeof(grn_id));
+          if (block_buf) {
+            ii_buffer->block_buf = block_buf;
+            ii_buffer->block_buf_size = est_len;
+          }
+        }
+
+        for (j = 0; j < nvalues; j++) {
+          grn_ii_buffer_tokenize(ctx, ii_buffer, rid, values[j].sid,
+                                 values[j].weight, values[j].p,
+                                 values[j].len);
+        }
+        nvalues = 0;
+      }
+      if (values) {
+        GRN_FREE(values);
+      }
+      grn_table_cursor_close(ctx, tc);
+    }
+    for (i = 0; i < ncols; i++) {
+      GRN_OBJ_FIN(ctx, &vobjs[i]);
+    }
+    GRN_FREE(vobjs);
   }
 }
 
