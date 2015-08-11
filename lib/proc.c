@@ -1014,9 +1014,9 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
 #ifdef GRN_WITH_TS
     if (filter_len && (filter[0] == '?') &&
         (ctx->impl->output_type == GRN_CONTENT_JSON)) {
-      ctx->rc = grn_egn_select(ctx, table_, filter + 1, filter_len - 1,
-                               output_columns, output_columns_len,
-                               offset, limit);
+      ctx->rc = grn_ts_select(ctx, table_, filter + 1, filter_len - 1,
+                              output_columns, output_columns_len,
+                              offset, limit);
       if (!ctx->rc && cacheable && cache_key_size <= GRN_CACHE_MAX_KEY_SIZE &&
           (!cache || cache_len != 2 || cache[0] != 'n' || cache[1] != 'o')) {
         grn_cache_update(ctx, cache_obj, cache_key, cache_key_size, outbuf);

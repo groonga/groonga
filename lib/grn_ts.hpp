@@ -29,20 +29,20 @@ namespace egn {
 
 // Constant values.
 
-typedef grn_egn_operator_type OperatorType;
-typedef grn_egn_data_type DataType;
+typedef grn_ts_operator_type OperatorType;
+typedef grn_ts_data_type DataType;
 
-typedef grn_egn_expression_node_type ExpressionNodeType;
-typedef grn_egn_expression_type ExpressionType;
+typedef grn_ts_expression_node_type ExpressionNodeType;
+typedef grn_ts_expression_type ExpressionType;
 
 // Built-in data types.
 
-typedef grn_egn_id ID;
-typedef grn_egn_score Score;
-typedef grn_egn_record Record;
+typedef grn_ts_id ID;
+typedef grn_ts_score Score;
+typedef grn_ts_record Record;
 
 struct Bool {
-  typedef grn_egn_bool Raw;
+  typedef grn_ts_bool Raw;
   Raw raw;
 
   static DataType data_type() {
@@ -63,7 +63,7 @@ inline bool operator==(Bool lhs, Bool rhs) { return lhs.raw == rhs.raw; }
 inline bool operator!=(Bool lhs, Bool rhs) { return lhs.raw != rhs.raw; }
 
 struct Int {
-  typedef grn_egn_int Raw;
+  typedef grn_ts_int Raw;
   Raw raw;
 
   static DataType data_type() {
@@ -87,7 +87,7 @@ inline bool operator>(Int lhs, Int rhs) { return lhs.raw > rhs.raw; }
 inline bool operator>=(Int lhs, Int rhs) { return lhs.raw >= rhs.raw; }
 
 struct Float {
-  typedef grn_egn_float Raw;
+  typedef grn_ts_float Raw;
   Raw raw;
 
   static DataType data_type() {
@@ -111,7 +111,7 @@ inline bool operator>(Float lhs, Float rhs) { return lhs.raw > rhs.raw; }
 inline bool operator>=(Float lhs, Float rhs) { return lhs.raw >= rhs.raw; }
 
 struct Time {
-  typedef grn_egn_time Raw;
+  typedef grn_ts_time Raw;
   Raw raw;
 
   static DataType data_type() {
@@ -135,7 +135,7 @@ inline bool operator>(Time lhs, Time rhs) { return lhs.raw > rhs.raw; }
 inline bool operator>=(Time lhs, Time rhs) { return lhs.raw >= rhs.raw; }
 
 struct Text {
-  typedef grn_egn_text Raw;
+  typedef grn_ts_text Raw;
   Raw raw;
 
   static DataType data_type() {
@@ -186,7 +186,7 @@ inline bool operator>(const Text &lhs, const Text &rhs) { return rhs < lhs; }
 inline bool operator>=(const Text &lhs, const Text &rhs) { return rhs <= lhs; }
 
 struct GeoPoint {
-  typedef grn_egn_geo_point Raw;
+  typedef grn_ts_geo_point Raw;
   Raw raw;
 
   static DataType data_type() {

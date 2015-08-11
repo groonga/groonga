@@ -43,7 +43,7 @@ enum {
   GRN_TS_MAX_BATCH_SIZE = 1024
 };
 
-grn_egn_data_type grn_egn_simplify_builtin_type(grn_builtin_type builtin_type) {
+grn_ts_data_type grn_ts_simplify_builtin_type(grn_builtin_type builtin_type) {
   switch (builtin_type) {
     case GRN_DB_VOID: {
       return GRN_TS_VOID;
@@ -289,7 +289,7 @@ class IDNode : public ExpressionNode {
 
   grn_rc evaluate(const Record *records, size_t num_records, void *results) {
     for (size_t i = 0; i < num_records; ++i) {
-      static_cast<grn_egn_int *>(results)[i] = records[i].id;
+      static_cast<grn_ts_int *>(results)[i] = records[i].id;
     }
     return GRN_SUCCESS;
   }
@@ -335,7 +335,7 @@ class ScoreNode : public ExpressionNode {
   grn_rc evaluate(
     const Record *records, size_t num_records, void *results) {
     for (size_t i = 0; i < num_records; ++i) {
-      static_cast<grn_egn_float *>(results)[i] = records[i].score;
+      static_cast<grn_ts_float *>(results)[i] = records[i].score;
     }
     return GRN_SUCCESS;
   }
@@ -405,7 +405,7 @@ class ConstantNode : public ExpressionNode {
       buf_(buf),
       builtin_type_(builtin_type),
       dimension_(dimension),
-      data_type_(grn_egn_simplify_builtin_type(builtin_type)) {}
+      data_type_(grn_ts_simplify_builtin_type(builtin_type)) {}
 };
 
 grn_rc ConstantNode::open(grn_ctx *ctx, grn_obj *obj, ExpressionNode **node) {
@@ -441,7 +441,7 @@ grn_rc ConstantNode::filter(Record *input, size_t input_size,
   if ((dimension() != 0) || (data_type() != GRN_TS_BOOL)) {
     return GRN_OPERATION_NOT_PERMITTED;
   }
-  grn_egn_bool value = GRN_BOOL_VALUE(obj_);
+  grn_ts_bool value = GRN_BOOL_VALUE(obj_);
   if (value) {
     // If the I/O areas are the same, there is no need to copy records.
     if (input != output) {
@@ -460,7 +460,7 @@ grn_rc ConstantNode::adjust(Record *records, size_t num_records) {
   if ((dimension() != 0) || (data_type() != GRN_TS_FLOAT)) {
     return GRN_OPERATION_NOT_PERMITTED;
   }
-  grn_egn_float value = GRN_FLOAT_VALUE(obj_);
+  grn_ts_float value = GRN_FLOAT_VALUE(obj_);
   for (size_t i = 0; i < num_records; ++i) {
     records[i].score = value;
   }
@@ -476,9 +476,9 @@ grn_rc ConstantNode::evaluate(const Record *records, size_t num_records,
     // Scalar types.
     switch (data_type()) {
       case GRN_TS_BOOL: {
-        grn_egn_bool value = GRN_BOOL_VALUE(obj_);
+        grn_ts_bool value = GRN_BOOL_VALUE(obj_);
         for (size_t i = 0; i < num_records; ++i) {
-          static_cast<grn_egn_bool *>(results)[i] = value;
+          static_cast<grn_ts_bool *>(results)[i] = value;
         }
         break;
       }
@@ -495,11 +495,11 @@ grn_rc ConstantNode::evaluate(const Record *records, size_t num_records,
         break;
       }
       case GRN_TS_TEXT: {
-        grn_egn_text value;
+        grn_ts_text value;
         value.ptr = GRN_BULK_HEAD(obj_);
         value.size = GRN_BULK_VSIZE(obj_);
         for (size_t i = 0; i < num_records; ++i) {
-          static_cast<grn_egn_text *>(results)[i] = value;
+          static_cast<grn_ts_text *>(results)[i] = value;
         }
         break;
       }
@@ -515,20 +515,20 @@ grn_rc ConstantNode::evaluate(const Record *records, size_t num_records,
       case GRN_TS_FLOAT:
       case GRN_TS_TIME:
       case GRN_TS_GEO_POINT: {
-        grn_egn_vector value;
+        grn_ts_vector value;
         value.ptr = GRN_BULK_HEAD(obj_);
         value.size = grn_vector_size(ctx_, obj_);
         for (size_t i = 0; i < num_records; ++i) {
-          static_cast<grn_egn_vector *>(results)[i] = value;
+          static_cast<grn_ts_vector *>(results)[i] = value;
         }
         break;
       }
       case GRN_TS_TEXT: {
-        grn_egn_vector value;
+        grn_ts_vector value;
         value.ptr = GRN_BULK_HEAD(obj_);
-        value.size = GRN_BULK_VSIZE(obj_) / sizeof(grn_egn_text);
+        value.size = GRN_BULK_VSIZE(obj_) / sizeof(grn_ts_text);
         for (size_t i = 0; i < num_records; ++i) {
-          static_cast<grn_egn_vector *>(results)[i] = value;
+          static_cast<grn_ts_vector *>(results)[i] = value;
         }
         break;
       }
@@ -680,15 +680,15 @@ grn_rc ConstantNode::convert_vector(grn_ctx *ctx, grn_obj *obj,
     return GRN_NO_MEMORY_AVAILABLE;
   }
   size_t size = grn_vector_size(ctx, obj);
-  rc = grn_bulk_resize(ctx, *new_obj, sizeof(grn_egn_text) * size);
+  rc = grn_bulk_resize(ctx, *new_obj, sizeof(grn_ts_text) * size);
   if (rc == GRN_SUCCESS) {
     *buf = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_TEXT);
     if (!*buf) {
       grn_obj_close(ctx, *new_obj);
       return GRN_NO_MEMORY_AVAILABLE;
     }
-    grn_egn_text *values =
-      reinterpret_cast<grn_egn_text *>(GRN_BULK_HEAD(*new_obj));
+    grn_ts_text *values =
+      reinterpret_cast<grn_ts_text *>(GRN_BULK_HEAD(*new_obj));
     for (size_t i = 0; i < size; ++i) {
       const char *ptr;
       values[i].size = grn_vector_get_element(ctx, obj, i, &ptr, NULL, NULL);
@@ -778,7 +778,7 @@ class ColumnNode : public ExpressionNode {
       builtin_type_(builtin_type),
       ref_table_(ref_table),
       dimension_(dimension),
-      data_type_(grn_egn_simplify_builtin_type(builtin_type)) {}
+      data_type_(grn_ts_simplify_builtin_type(builtin_type)) {}
 
   grn_rc evaluate_scalar(const Record *records, size_t num_records,
                          void *results);
@@ -911,7 +911,7 @@ grn_rc ColumnNode::evaluate(const Record *records, size_t num_records,
   }
 }
 
-#define GRN_TS_EVALUATE_SCALAR_CASE_BLOCK(type, egn_type)\
+#define GRN_TS_EVALUATE_SCALAR_CASE_BLOCK(type, ts_type)\
   case GRN_DB_ ## type: {\
     GRN_ ## type ## _INIT(&value, 0);\
     for (size_t i = 0; i < num_records; ++i) {\
@@ -920,7 +920,7 @@ grn_rc ColumnNode::evaluate(const Record *records, size_t num_records,
       if (ctx_->rc != GRN_SUCCESS) {\
         break;\
       }\
-      static_cast<grn_egn_ ## egn_type *>(results)[i] =\
+      static_cast<grn_ts_ ## ts_type *>(results)[i] =\
         GRN_ ## type ## _VALUE(&value);\
     }\
     break;\
@@ -958,7 +958,7 @@ grn_rc ColumnNode::evaluate_scalar(const Record *records, size_t num_records,
         if (ctx_->rc != GRN_SUCCESS) {
           break;
         }
-        grn_egn_geo_point *ptr = &static_cast<grn_egn_geo_point *>(results)[i];
+        grn_ts_geo_point *ptr = &static_cast<grn_ts_geo_point *>(results)[i];
         GRN_GEO_POINT_VALUE(&value, ptr->latitude, ptr->longitude);
       }
       break;
@@ -987,7 +987,7 @@ grn_rc ColumnNode::evaluate_scalar_text(const Record *records,
     }
   }
   GRN_BULK_REWIND(buf_);
-  grn_egn_text *values = static_cast<grn_egn_text *>(results);
+  grn_ts_text *values = static_cast<grn_ts_text *>(results);
   size_t offset = 0;
   for (size_t i = 0; i < num_records; ++i) {
     grn_obj_get_value(ctx_, column_, records[i].id, buf_);
@@ -1006,7 +1006,7 @@ grn_rc ColumnNode::evaluate_scalar_text(const Record *records,
   return GRN_SUCCESS;
 }
 
-#define GRN_TS_EVALUATE_VECTOR_CASE_BLOCK(type, egn_type)\
+#define GRN_TS_EVALUATE_VECTOR_CASE_BLOCK(type, ts_type)\
   case GRN_DB_ ## type: {\
     if (!buf_) {\
       buf_ = grn_obj_open(ctx_, GRN_UVECTOR, 0, GRN_DB_ ## type);\
@@ -1018,7 +1018,7 @@ grn_rc ColumnNode::evaluate_scalar_text(const Record *records,
       }\
     }\
     GRN_BULK_REWIND(buf_);\
-    grn_egn_vector *vectors = static_cast<grn_egn_vector *>(results);\
+    grn_ts_vector *vectors = static_cast<grn_ts_vector *>(results);\
     size_t offset = 0;\
     for (size_t i = 0; i < num_records; i++) {\
       grn_obj_get_value(ctx_, column_, records[i].id, buf_);\
@@ -1029,8 +1029,8 @@ grn_rc ColumnNode::evaluate_scalar_text(const Record *records,
       vectors[i].size = size - offset;\
       offset = size;\
     }\
-    grn_egn_ ## egn_type *ptr =\
-      reinterpret_cast<grn_egn_ ## egn_type *>(GRN_BULK_HEAD(buf_));\
+    grn_ts_ ## ts_type *ptr =\
+      reinterpret_cast<grn_ts_ ## ts_type *>(GRN_BULK_HEAD(buf_));\
     for (size_t i = 0; i < num_records; i++) {\
       vectors[i].ptr = ptr;\
       ptr += vectors[i].size;\
@@ -1070,7 +1070,7 @@ grn_rc ColumnNode::evaluate_vector(const Record *records, size_t num_records,
         }
       }
       GRN_BULK_REWIND(buf_);
-      grn_egn_vector *vectors = static_cast<grn_egn_vector *>(results);
+      grn_ts_vector *vectors = static_cast<grn_ts_vector *>(results);
       size_t offset = 0;
       for (size_t i = 0; i < num_records; i++) {
         grn_obj_get_value(ctx_, column_, records[i].id, buf_);
@@ -1081,8 +1081,8 @@ grn_rc ColumnNode::evaluate_vector(const Record *records, size_t num_records,
         vectors[i].size = size - offset;
         offset = size;
       }
-      grn_egn_geo_point *ptr =
-        reinterpret_cast<grn_egn_geo_point *>(GRN_BULK_HEAD(buf_));
+      grn_ts_geo_point *ptr =
+        reinterpret_cast<grn_ts_geo_point *>(GRN_BULK_HEAD(buf_));
       for (size_t i = 0; i < num_records; i++) {
         vectors[i].ptr = ptr;
         ptr += vectors[i].size;
@@ -1107,7 +1107,7 @@ grn_rc ColumnNode::evaluate_vector(const Record *records, size_t num_records,
       }\
     }\
     GRN_BULK_REWIND(deep_buf_);\
-    grn_egn_vector *vectors = static_cast<grn_egn_vector *>(results);\
+    grn_ts_vector *vectors = static_cast<grn_ts_vector *>(results);\
     size_t offset = 0;\
     for (size_t i = 0; i < num_records; i++) {\
       grn_obj_get_value(ctx_, column_, records[i].id, deep_buf_);\
@@ -1118,11 +1118,11 @@ grn_rc ColumnNode::evaluate_vector(const Record *records, size_t num_records,
       vectors[i].size = size - offset;\
       offset = size;\
     }\
-    grn_rc rc = grn_bulk_resize(ctx_, buf_, sizeof(grn_egn_int) * offset);\
+    grn_rc rc = grn_bulk_resize(ctx_, buf_, sizeof(grn_ts_int) * offset);\
     if (rc != GRN_SUCCESS) {\
       return rc;\
     }\
-    grn_egn_int *ptr = reinterpret_cast<grn_egn_int *>(GRN_BULK_HEAD(buf_));\
+    grn_ts_int *ptr = reinterpret_cast<grn_ts_int *>(GRN_BULK_HEAD(buf_));\
     for (size_t i = 0; i < offset; ++i) {\
       ptr[i] = GRN_ ## type ## _VALUE_AT(deep_buf_, i);\
     }\
@@ -1170,7 +1170,7 @@ grn_rc ColumnNode::evaluate_vector_text(const Record *records,
     }
   }
   GRN_BULK_REWIND(deep_buf_);
-  grn_egn_vector *vectors = static_cast<grn_egn_vector *>(results);
+  grn_ts_vector *vectors = static_cast<grn_ts_vector *>(results);
   size_t offset = 0;
   for (size_t i = 0; i < num_records; ++i) {
     grn_obj_get_value(ctx_, column_, records[i].id, deep_buf_);
@@ -1190,11 +1190,11 @@ grn_rc ColumnNode::evaluate_vector_text(const Record *records,
       return GRN_UNKNOWN_ERROR;
     }
   }
-  grn_rc rc = grn_bulk_resize(ctx_, buf_, sizeof(grn_egn_text) * offset);
+  grn_rc rc = grn_bulk_resize(ctx_, buf_, sizeof(grn_ts_text) * offset);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  grn_egn_text *texts = reinterpret_cast<grn_egn_text *>(GRN_BULK_HEAD(buf_));
+  grn_ts_text *texts = reinterpret_cast<grn_ts_text *>(GRN_BULK_HEAD(buf_));
   offset = 0;
   for (size_t i = 0; i < num_records; ++i) {
     for (size_t j = 0; j < vectors[i].size; ++j) {
@@ -2941,11 +2941,11 @@ extern "C" {
 #endif
 
 static grn_rc
-grn_egn_select_filter(grn_ctx *ctx, grn_obj *table,
-                      const char *filter, size_t filter_size,
-                      int offset, int limit,
-                      std::vector<grn_egn_record> *records,
-                      size_t *num_hits) {
+grn_ts_select_filter(grn_ctx *ctx, grn_obj *table,
+                     const char *filter, size_t filter_size,
+                     int offset, int limit,
+                     std::vector<grn_ts_record> *records,
+                     size_t *num_hits) {
   if (offset < 0) {
     offset = 0;
   }
@@ -2990,7 +2990,7 @@ grn_egn_select_filter(grn_ctx *ctx, grn_obj *table,
             batch_size = 0;
           } else {
             std::memcpy(&(*records)[0], &(*records)[offset],
-                        sizeof(grn_egn_record) * (batch_size - offset));
+                        sizeof(grn_ts_record) * (batch_size - offset));
             batch_size -= offset;
             offset = 0;
           }
@@ -3012,10 +3012,10 @@ grn_egn_select_filter(grn_ctx *ctx, grn_obj *table,
 }
 
 static grn_rc
-grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
-                      const char *output_columns, size_t output_columns_size,
-                      const grn_egn_record *records, size_t num_records,
-                      size_t num_hits) {
+grn_ts_select_output(grn_ctx *ctx, grn_obj *table,
+                     const char *output_columns, size_t output_columns_size,
+                     const grn_ts_record *records, size_t num_records,
+                     size_t num_hits) {
   grn_rc rc = GRN_SUCCESS;
   std::vector<std::string> names;
   std::vector<grn::egn::Expression *> expressions;
@@ -3185,37 +3185,37 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
         if (expressions[i]->dimension() == 0) {
           switch (expressions[i]->data_type()) {
             case GRN_TS_BOOL: {
-              bufs[i].resize(sizeof(grn_egn_bool) * batch_size);
+              bufs[i].resize(sizeof(grn_ts_bool) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
                                        (grn::egn::Bool *)&bufs[i][0]);
               break;
             }
             case GRN_TS_INT: {
-              bufs[i].resize(sizeof(grn_egn_int) * batch_size);
+              bufs[i].resize(sizeof(grn_ts_int) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
                                        (grn::egn::Int *)&bufs[i][0]);
               break;
             }
             case GRN_TS_FLOAT: {
-              bufs[i].resize(sizeof(grn_egn_float) * batch_size);
+              bufs[i].resize(sizeof(grn_ts_float) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
                                        (grn::egn::Float *)&bufs[i][0]);
               break;
             }
             case GRN_TS_TIME: {
-              bufs[i].resize(sizeof(grn_egn_time) * batch_size);
+              bufs[i].resize(sizeof(grn_ts_time) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
                                        (grn::egn::Time *)&bufs[i][0]);
               break;
             }
             case GRN_TS_TEXT: {
-              bufs[i].resize(sizeof(grn_egn_text) * batch_size);
+              bufs[i].resize(sizeof(grn_ts_text) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
                                        (grn::egn::Text *)&bufs[i][0]);
               break;
             }
             case GRN_TS_GEO_POINT: {
-              bufs[i].resize(sizeof(grn_egn_geo_point) * batch_size);
+              bufs[i].resize(sizeof(grn_ts_geo_point) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
                                        (grn::egn::GeoPoint *)&bufs[i][0]);
               break;
@@ -3227,39 +3227,39 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
         } else {
           switch (expressions[i]->data_type()) {
             case GRN_TS_BOOL: {
-              bufs[i].resize(sizeof(grn_egn_vector) * batch_size);
+              bufs[i].resize(sizeof(grn_ts_vector) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
-                                       (grn_egn_vector *)&bufs[i][0]);
+                                       (grn_ts_vector *)&bufs[i][0]);
               break;
             }
             case GRN_TS_INT: {
-              bufs[i].resize(sizeof(grn_egn_vector) * batch_size);
+              bufs[i].resize(sizeof(grn_ts_vector) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
-                                       (grn_egn_vector *)&bufs[i][0]);
+                                       (grn_ts_vector *)&bufs[i][0]);
               break;
             }
             case GRN_TS_FLOAT: {
-              bufs[i].resize(sizeof(grn_egn_vector) * batch_size);
+              bufs[i].resize(sizeof(grn_ts_vector) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
-                                       (grn_egn_vector *)&bufs[i][0]);
+                                       (grn_ts_vector *)&bufs[i][0]);
               break;
             }
             case GRN_TS_TIME: {
-              bufs[i].resize(sizeof(grn_egn_vector) * batch_size);
+              bufs[i].resize(sizeof(grn_ts_vector) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
-                                       (grn_egn_vector *)&bufs[i][0]);
+                                       (grn_ts_vector *)&bufs[i][0]);
               break;
             }
             case GRN_TS_TEXT: {
-              bufs[i].resize(sizeof(grn_egn_vector) * batch_size);
+              bufs[i].resize(sizeof(grn_ts_vector) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
-                                       (grn_egn_vector *)&bufs[i][0]);
+                                       (grn_ts_vector *)&bufs[i][0]);
               break;
             }
             case GRN_TS_GEO_POINT: {
-              bufs[i].resize(sizeof(grn_egn_vector) * batch_size);
+              bufs[i].resize(sizeof(grn_ts_vector) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
-                                       (grn_egn_vector *)&bufs[i][0]);
+                                       (grn_ts_vector *)&bufs[i][0]);
               break;
             }
             default: {
@@ -3277,7 +3277,7 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
           if (expressions[j]->dimension() == 0) {
             switch (expressions[j]->data_type()) {
               case GRN_TS_BOOL: {
-                if (((grn_egn_bool *)&bufs[j][0])[i]) {
+                if (((grn_ts_bool *)&bufs[j][0])[i]) {
                   GRN_TEXT_PUT(ctx, ctx->impl->outbuf, "true", 4);
                 } else {
                   GRN_TEXT_PUT(ctx, ctx->impl->outbuf, "false", 5);
@@ -3286,27 +3286,27 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
               }
               case GRN_TS_INT: {
                 grn_text_lltoa(ctx, ctx->impl->outbuf,
-                               ((grn_egn_int *)&bufs[j][0])[i]);
+                               ((grn_ts_int *)&bufs[j][0])[i]);
                 break;
               }
               case GRN_TS_FLOAT: {
                 grn_text_ftoa(ctx, ctx->impl->outbuf,
-                              ((grn_egn_float *)&bufs[j][0])[i]);
+                              ((grn_ts_float *)&bufs[j][0])[i]);
                 break;
               }
               case GRN_TS_TIME: {
                 grn_text_ftoa(ctx, ctx->impl->outbuf,
-                              ((grn_egn_time *)&bufs[j][0])[i] * 0.000001);
+                              ((grn_ts_time *)&bufs[j][0])[i] * 0.000001);
                 break;
               }
               case GRN_TS_TEXT: {
-                grn_egn_text text = ((grn_egn_text *)&bufs[j][0])[i];
+                grn_ts_text text = ((grn_ts_text *)&bufs[j][0])[i];
                 grn_text_esc(ctx, ctx->impl->outbuf, text.ptr, text.size);
                 break;
               }
               case GRN_TS_GEO_POINT: {
-                grn_egn_geo_point geo_point =
-                  ((grn_egn_geo_point *)&bufs[j][0])[i];
+                grn_ts_geo_point geo_point =
+                  ((grn_ts_geo_point *)&bufs[j][0])[i];
                 GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '"');
                 grn_text_itoa(ctx, ctx->impl->outbuf, geo_point.latitude);
                 GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, 'x');
@@ -3319,12 +3319,12 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
               }
             }
           } else {
-            grn_egn_vector vector =
-              reinterpret_cast<grn_egn_vector *>(&bufs[j][0])[i];
+            grn_ts_vector vector =
+              reinterpret_cast<grn_ts_vector *>(&bufs[j][0])[i];
             switch (expressions[j]->data_type()) {
               case GRN_TS_BOOL: {
-                const grn_egn_bool *ptr =
-                  static_cast<const grn_egn_bool *>(vector.ptr);
+                const grn_ts_bool *ptr =
+                  static_cast<const grn_ts_bool *>(vector.ptr);
                 GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '[');
                 for (size_t k = 0; k < vector.size; ++k) {
                   if (k != 0) {
@@ -3340,8 +3340,8 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
                 break;
               }
               case GRN_TS_INT: {
-                const grn_egn_int *ptr =
-                  static_cast<const grn_egn_int *>(vector.ptr);
+                const grn_ts_int *ptr =
+                  static_cast<const grn_ts_int *>(vector.ptr);
                 GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '[');
                 for (size_t k = 0; k < vector.size; ++k) {
                   if (k != 0) {
@@ -3353,8 +3353,8 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
                 break;
               }
               case GRN_TS_FLOAT: {
-                const grn_egn_float *ptr =
-                  static_cast<const grn_egn_float *>(vector.ptr);
+                const grn_ts_float *ptr =
+                  static_cast<const grn_ts_float *>(vector.ptr);
                 GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '[');
                 for (size_t k = 0; k < vector.size; ++k) {
                   if (k != 0) {
@@ -3366,8 +3366,8 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
                 break;
               }
               case GRN_TS_TIME: {
-                const grn_egn_time *ptr =
-                  static_cast<const grn_egn_time *>(vector.ptr);
+                const grn_ts_time *ptr =
+                  static_cast<const grn_ts_time *>(vector.ptr);
                 GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '[');
                 for (size_t k = 0; k < vector.size; ++k) {
                   if (k != 0) {
@@ -3379,8 +3379,8 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
                 break;
               }
               case GRN_TS_TEXT: {
-                const grn_egn_text *ptr =
-                  static_cast<const grn_egn_text *>(vector.ptr);
+                const grn_ts_text *ptr =
+                  static_cast<const grn_ts_text *>(vector.ptr);
                 GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '[');
                 for (size_t k = 0; k < vector.size; ++k) {
                   if (k != 0) {
@@ -3392,8 +3392,8 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
                 break;
               }
               case GRN_TS_GEO_POINT: {
-                const grn_egn_geo_point *ptr =
-                  static_cast<const grn_egn_geo_point *>(vector.ptr);
+                const grn_ts_geo_point *ptr =
+                  static_cast<const grn_ts_geo_point *>(vector.ptr);
                 GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '[');
                 for (size_t k = 0; k < vector.size; ++k) {
                   if (k != 0) {
@@ -3428,22 +3428,22 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
 }
 
 grn_rc
-grn_egn_select(grn_ctx *ctx, grn_obj *table,
-               const char *filter, size_t filter_size,
-               const char *output_columns, size_t output_columns_size,
-               int offset, int limit) {
+grn_ts_select(grn_ctx *ctx, grn_obj *table,
+              const char *filter, size_t filter_size,
+              const char *output_columns, size_t output_columns_size,
+              int offset, int limit) {
   if (!ctx || !grn_obj_is_table(ctx, table) ||
       (!filter && (filter_size != 0)) ||
       (!output_columns && (output_columns_size != 0))) {
     return GRN_INVALID_ARGUMENT;
   }
-  std::vector<grn_egn_record> records;
+  std::vector<grn_ts_record> records;
   size_t num_hits;
-  grn_rc rc = grn_egn_select_filter(ctx, table, filter, filter_size,
-                                    offset, limit, &records, &num_hits);
+  grn_rc rc = grn_ts_select_filter(ctx, table, filter, filter_size,
+                                   offset, limit, &records, &num_hits);
   if (rc == GRN_SUCCESS) {
-    rc = grn_egn_select_output(ctx, table, output_columns, output_columns_size,
-                               &*records.begin(), records.size(), num_hits);
+    rc = grn_ts_select_output(ctx, table, output_columns, output_columns_size,
+                              &*records.begin(), records.size(), num_hits);
   }
   return rc;
 }
