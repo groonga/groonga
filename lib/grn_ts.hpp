@@ -16,13 +16,13 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef GRN_EGN_HPP
-#define GRN_EGN_HPP
+#ifndef GRN_TS_HPP
+#define GRN_TS_HPP
 
 #include <cstring>
 #include <vector>
 
-#include "grn_egn.h"
+#include "grn_ts.h"
 
 namespace grn {
 namespace egn {
@@ -283,4 +283,4 @@ class Expression {
 }  // namespace egn
 }  // namespace grn
 
-#endif  // GRN_EGN_HPP
+#endif  // GRN_TS_HPP

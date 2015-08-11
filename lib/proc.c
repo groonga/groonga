@@ -27,7 +27,7 @@
 #include "grn_expr.h"
 
 #ifdef GRN_WITH_EGN
-# include "grn_egn.h"
+# include "grn_ts.h"
 #endif /* GRN_WITH_EGN */
 
 #include <string.h>

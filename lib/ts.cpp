@@ -18,7 +18,7 @@
 
 #ifdef GRN_WITH_EGN
 
-#include "grn_egn.hpp"
+#include "grn_ts.hpp"
 
 #include <cctype>
 #include <cstdio>

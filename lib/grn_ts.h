@@ -16,8 +16,8 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef GRN_EGN_H
-#define GRN_EGN_H
+#ifndef GRN_TS_H
+#define GRN_TS_H
 
 #include "grn.h"
 
@@ -128,4 +128,4 @@ grn_rc grn_egn_select(grn_ctx *ctx, grn_obj *table,
 }
 #endif
 
-#endif /* GRN_EGN_H */
+#endif /* GRN_TS_H */
