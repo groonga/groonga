@@ -39,17 +39,17 @@
 namespace {
 
 enum {
-  GRN_EGN_MAX_BUILTIN_TYPE = GRN_DB_WGS84_GEO_POINT,
-  GRN_EGN_MAX_BATCH_SIZE = 1024
+  GRN_TS_MAX_BUILTIN_TYPE = GRN_DB_WGS84_GEO_POINT,
+  GRN_TS_MAX_BATCH_SIZE = 1024
 };
 
 grn_egn_data_type grn_egn_simplify_builtin_type(grn_builtin_type builtin_type) {
   switch (builtin_type) {
     case GRN_DB_VOID: {
-      return GRN_EGN_VOID;
+      return GRN_TS_VOID;
     }
     case GRN_DB_BOOL: {
-      return GRN_EGN_BOOL;
+      return GRN_TS_BOOL;
     }
     case GRN_DB_INT8:
     case GRN_DB_INT16:
@@ -59,25 +59,25 @@ grn_egn_data_type grn_egn_simplify_builtin_type(grn_builtin_type builtin_type) {
     case GRN_DB_UINT16:
     case GRN_DB_UINT32:
     case GRN_DB_UINT64: {
-      return GRN_EGN_INT;
+      return GRN_TS_INT;
     }
     case GRN_DB_FLOAT: {
-      return GRN_EGN_FLOAT;
+      return GRN_TS_FLOAT;
     }
     case GRN_DB_TIME: {
-      return GRN_EGN_TIME;
+      return GRN_TS_TIME;
     }
     case GRN_DB_SHORT_TEXT:
     case GRN_DB_TEXT:
     case GRN_DB_LONG_TEXT: {
-      return GRN_EGN_TEXT;
+      return GRN_TS_TEXT;
     }
     case GRN_DB_TOKYO_GEO_POINT:
     case GRN_DB_WGS84_GEO_POINT: {
-      return GRN_EGN_GEO_POINT;
+      return GRN_TS_GEO_POINT;
     }
     default: {
-      return GRN_EGN_VOID;
+      return GRN_TS_VOID;
     }
   }
 }
@@ -272,7 +272,7 @@ class IDNode : public ExpressionNode {
   }
 
   ExpressionNodeType type() const {
-    return GRN_EGN_ID_NODE;
+    return GRN_TS_ID_NODE;
   }
   grn_builtin_type builtin_type() const {
     return GRN_DB_UINT32;
@@ -284,7 +284,7 @@ class IDNode : public ExpressionNode {
     return 0;
   }
   DataType data_type() const {
-    return GRN_EGN_INT;
+    return GRN_TS_INT;
   }
 
   grn_rc evaluate(const Record *records, size_t num_records, void *results) {
@@ -314,7 +314,7 @@ class ScoreNode : public ExpressionNode {
   }
 
   ExpressionNodeType type() const {
-    return GRN_EGN_SCORE_NODE;
+    return GRN_TS_SCORE_NODE;
   }
   grn_builtin_type builtin_type() const {
     return GRN_DB_FLOAT;
@@ -326,7 +326,7 @@ class ScoreNode : public ExpressionNode {
     return 0;
   }
   DataType data_type() const {
-    return GRN_EGN_FLOAT;
+    return GRN_TS_FLOAT;
   }
 
   grn_rc adjust(Record *records, size_t num_records) {
@@ -360,7 +360,7 @@ class ConstantNode : public ExpressionNode {
   static grn_rc open(grn_ctx *ctx, grn_obj *obj, ExpressionNode **node);
 
   ExpressionNodeType type() const {
-    return GRN_EGN_CONSTANT_NODE;
+    return GRN_TS_CONSTANT_NODE;
   }
   grn_builtin_type builtin_type() const {
     return builtin_type_;
@@ -438,7 +438,7 @@ grn_rc ConstantNode::open(grn_ctx *ctx, grn_obj *obj, ExpressionNode **node) {
 
 grn_rc ConstantNode::filter(Record *input, size_t input_size,
                             Record *output, size_t *output_size) {
-  if ((dimension() != 0) || (data_type() != GRN_EGN_BOOL)) {
+  if ((dimension() != 0) || (data_type() != GRN_TS_BOOL)) {
     return GRN_OPERATION_NOT_PERMITTED;
   }
   grn_egn_bool value = GRN_BOOL_VALUE(obj_);
@@ -457,7 +457,7 @@ grn_rc ConstantNode::filter(Record *input, size_t input_size,
 }
 
 grn_rc ConstantNode::adjust(Record *records, size_t num_records) {
-  if ((dimension() != 0) || (data_type() != GRN_EGN_FLOAT)) {
+  if ((dimension() != 0) || (data_type() != GRN_TS_FLOAT)) {
     return GRN_OPERATION_NOT_PERMITTED;
   }
   grn_egn_float value = GRN_FLOAT_VALUE(obj_);
@@ -475,17 +475,17 @@ grn_rc ConstantNode::evaluate(const Record *records, size_t num_records,
   if (dimension() == 0) {
     // Scalar types.
     switch (data_type()) {
-      case GRN_EGN_BOOL: {
+      case GRN_TS_BOOL: {
         grn_egn_bool value = GRN_BOOL_VALUE(obj_);
         for (size_t i = 0; i < num_records; ++i) {
           static_cast<grn_egn_bool *>(results)[i] = value;
         }
         break;
       }
-      case GRN_EGN_INT:
-      case GRN_EGN_FLOAT:
-      case GRN_EGN_TIME:
-      case GRN_EGN_GEO_POINT: {
+      case GRN_TS_INT:
+      case GRN_TS_FLOAT:
+      case GRN_TS_TIME:
+      case GRN_TS_GEO_POINT: {
         const void *head = GRN_BULK_HEAD(obj_);
         char *ptr = static_cast<char *>(results);
         for (size_t i = 0; i < num_records; ++i) {
@@ -494,7 +494,7 @@ grn_rc ConstantNode::evaluate(const Record *records, size_t num_records,
         }
         break;
       }
-      case GRN_EGN_TEXT: {
+      case GRN_TS_TEXT: {
         grn_egn_text value;
         value.ptr = GRN_BULK_HEAD(obj_);
         value.size = GRN_BULK_VSIZE(obj_);
@@ -510,11 +510,11 @@ grn_rc ConstantNode::evaluate(const Record *records, size_t num_records,
   } else {
     // Vector types.
     switch (data_type()) {
-      case GRN_EGN_BOOL:
-      case GRN_EGN_INT:
-      case GRN_EGN_FLOAT:
-      case GRN_EGN_TIME:
-      case GRN_EGN_GEO_POINT: {
+      case GRN_TS_BOOL:
+      case GRN_TS_INT:
+      case GRN_TS_FLOAT:
+      case GRN_TS_TIME:
+      case GRN_TS_GEO_POINT: {
         grn_egn_vector value;
         value.ptr = GRN_BULK_HEAD(obj_);
         value.size = grn_vector_size(ctx_, obj_);
@@ -523,7 +523,7 @@ grn_rc ConstantNode::evaluate(const Record *records, size_t num_records,
         }
         break;
       }
-      case GRN_EGN_TEXT: {
+      case GRN_TS_TEXT: {
         grn_egn_vector value;
         value.ptr = GRN_BULK_HEAD(obj_);
         value.size = GRN_BULK_VSIZE(obj_) / sizeof(grn_egn_text);
@@ -560,7 +560,7 @@ grn_rc ConstantNode::convert(grn_ctx *ctx, grn_obj *obj,
   }
 }
 
-#define GRN_EGN_CONVERT_BULK_INT_CASE_BLOCK(type)\
+#define GRN_TS_CONVERT_BULK_INT_CASE_BLOCK(type)\
   case GRN_DB_ ## type: {\
     GRN_INT64_SET(ctx, *new_obj, GRN_ ## type ## _VALUE(obj));\
     break;\
@@ -591,13 +591,13 @@ grn_rc ConstantNode::convert_bulk(grn_ctx *ctx, grn_obj *obj,
         return GRN_NO_MEMORY_AVAILABLE;
       }
       switch (obj->header.domain) {
-        GRN_EGN_CONVERT_BULK_INT_CASE_BLOCK(INT8)
-        GRN_EGN_CONVERT_BULK_INT_CASE_BLOCK(INT16)
-        GRN_EGN_CONVERT_BULK_INT_CASE_BLOCK(INT32)
-        GRN_EGN_CONVERT_BULK_INT_CASE_BLOCK(UINT8)
-        GRN_EGN_CONVERT_BULK_INT_CASE_BLOCK(UINT16)
-        GRN_EGN_CONVERT_BULK_INT_CASE_BLOCK(UINT32)
-        GRN_EGN_CONVERT_BULK_INT_CASE_BLOCK(UINT64)
+        GRN_TS_CONVERT_BULK_INT_CASE_BLOCK(INT8)
+        GRN_TS_CONVERT_BULK_INT_CASE_BLOCK(INT16)
+        GRN_TS_CONVERT_BULK_INT_CASE_BLOCK(INT32)
+        GRN_TS_CONVERT_BULK_INT_CASE_BLOCK(UINT8)
+        GRN_TS_CONVERT_BULK_INT_CASE_BLOCK(UINT16)
+        GRN_TS_CONVERT_BULK_INT_CASE_BLOCK(UINT32)
+        GRN_TS_CONVERT_BULK_INT_CASE_BLOCK(UINT64)
         default: {
           return GRN_UNKNOWN_ERROR;
         }
@@ -609,9 +609,9 @@ grn_rc ConstantNode::convert_bulk(grn_ctx *ctx, grn_obj *obj,
     }
   }
 }
-#undef GRN_EGN_CONVERT_BULK_INT_CASE_BLOCK
+#undef GRN_TS_CONVERT_BULK_INT_CASE_BLOCK
 
-#define GRN_EGN_CONVERT_UVECTOR_INT_CASE_BLOCK(type)\
+#define GRN_TS_CONVERT_UVECTOR_INT_CASE_BLOCK(type)\
   case GRN_DB_ ## type: {\
     for (size_t i = 0; i < size; ++i) {\
       GRN_INT64_SET_AT(ctx, *new_obj, i, GRN_ ## type ## _VALUE_AT(obj, i));\
@@ -642,13 +642,13 @@ grn_rc ConstantNode::convert_uvector(grn_ctx *ctx, grn_obj *obj,
       }
       size_t size = grn_vector_size(ctx, obj);
       switch (obj->header.domain) {
-        GRN_EGN_CONVERT_UVECTOR_INT_CASE_BLOCK(INT8)
-        GRN_EGN_CONVERT_UVECTOR_INT_CASE_BLOCK(INT16)
-        GRN_EGN_CONVERT_UVECTOR_INT_CASE_BLOCK(INT32)
-        GRN_EGN_CONVERT_UVECTOR_INT_CASE_BLOCK(UINT8)
-        GRN_EGN_CONVERT_UVECTOR_INT_CASE_BLOCK(UINT16)
-        GRN_EGN_CONVERT_UVECTOR_INT_CASE_BLOCK(UINT32)
-        GRN_EGN_CONVERT_UVECTOR_INT_CASE_BLOCK(UINT64)
+        GRN_TS_CONVERT_UVECTOR_INT_CASE_BLOCK(INT8)
+        GRN_TS_CONVERT_UVECTOR_INT_CASE_BLOCK(INT16)
+        GRN_TS_CONVERT_UVECTOR_INT_CASE_BLOCK(INT32)
+        GRN_TS_CONVERT_UVECTOR_INT_CASE_BLOCK(UINT8)
+        GRN_TS_CONVERT_UVECTOR_INT_CASE_BLOCK(UINT16)
+        GRN_TS_CONVERT_UVECTOR_INT_CASE_BLOCK(UINT32)
+        GRN_TS_CONVERT_UVECTOR_INT_CASE_BLOCK(UINT64)
         default: {
           return GRN_UNKNOWN_ERROR;
         }
@@ -660,7 +660,7 @@ grn_rc ConstantNode::convert_uvector(grn_ctx *ctx, grn_obj *obj,
     }
   }
 }
-#undef GRN_EGN_CONVERT_UVECTOR_INT_CASE_BLOCK
+#undef GRN_TS_CONVERT_UVECTOR_INT_CASE_BLOCK
 
 grn_rc ConstantNode::convert_vector(grn_ctx *ctx, grn_obj *obj,
                                     grn_obj **new_obj, grn_obj **buf) {
@@ -738,7 +738,7 @@ class ColumnNode : public ExpressionNode {
   static grn_rc open(grn_ctx *ctx, grn_obj *column, ExpressionNode **node);
 
   ExpressionNodeType type() const {
-    return GRN_EGN_COLUMN_NODE;
+    return GRN_TS_COLUMN_NODE;
   }
   grn_builtin_type builtin_type() const {
     return builtin_type_;
@@ -838,7 +838,7 @@ grn_rc ColumnNode::open(grn_ctx *ctx, grn_obj *column, ExpressionNode **node) {
       return GRN_INVALID_ARGUMENT;
     }
   }
-  if (static_cast<int>(builtin_type) > GRN_EGN_MAX_BUILTIN_TYPE) {
+  if (static_cast<int>(builtin_type) > GRN_TS_MAX_BUILTIN_TYPE) {
     builtin_type = GRN_DB_UINT32;
     ref_table = grn_ctx_at(ctx, column->header.domain);
     if (!ref_table) {
@@ -862,7 +862,7 @@ grn_rc ColumnNode::open(grn_ctx *ctx, grn_obj *column, ExpressionNode **node) {
 
 grn_rc ColumnNode::filter(Record *input, size_t input_size,
                           Record *output, size_t *output_size) {
-  if ((dimension() != 0) || (data_type() != GRN_EGN_BOOL)) {
+  if ((dimension() != 0) || (data_type() != GRN_TS_BOOL)) {
     return GRN_OPERATION_NOT_PERMITTED;
   }
   grn_obj value;
@@ -885,7 +885,7 @@ grn_rc ColumnNode::filter(Record *input, size_t input_size,
 }
 
 grn_rc ColumnNode::adjust(Record *records, size_t num_records) {
-  if ((dimension() != 0) || (data_type() != GRN_EGN_FLOAT)) {
+  if ((dimension() != 0) || (data_type() != GRN_TS_FLOAT)) {
     return GRN_OPERATION_NOT_PERMITTED;
   }
   grn_obj value;
@@ -911,7 +911,7 @@ grn_rc ColumnNode::evaluate(const Record *records, size_t num_records,
   }
 }
 
-#define GRN_EGN_EVALUATE_SCALAR_CASE_BLOCK(type, egn_type)\
+#define GRN_TS_EVALUATE_SCALAR_CASE_BLOCK(type, egn_type)\
   case GRN_DB_ ## type: {\
     GRN_ ## type ## _INIT(&value, 0);\
     for (size_t i = 0; i < num_records; ++i) {\
@@ -929,17 +929,17 @@ grn_rc ColumnNode::evaluate_scalar(const Record *records, size_t num_records,
                                    void *results) {
   grn_obj value;
   switch (builtin_type()) {
-    GRN_EGN_EVALUATE_SCALAR_CASE_BLOCK(BOOL, bool)
-    GRN_EGN_EVALUATE_SCALAR_CASE_BLOCK(INT8, int)
-    GRN_EGN_EVALUATE_SCALAR_CASE_BLOCK(INT16, int)
-    GRN_EGN_EVALUATE_SCALAR_CASE_BLOCK(INT32, int)
-    GRN_EGN_EVALUATE_SCALAR_CASE_BLOCK(INT64, int)
-    GRN_EGN_EVALUATE_SCALAR_CASE_BLOCK(UINT8, int)
-    GRN_EGN_EVALUATE_SCALAR_CASE_BLOCK(UINT16, int)
-    GRN_EGN_EVALUATE_SCALAR_CASE_BLOCK(UINT32, int)
-    GRN_EGN_EVALUATE_SCALAR_CASE_BLOCK(UINT64, int)
-    GRN_EGN_EVALUATE_SCALAR_CASE_BLOCK(FLOAT, float)
-    GRN_EGN_EVALUATE_SCALAR_CASE_BLOCK(TIME, time)
+    GRN_TS_EVALUATE_SCALAR_CASE_BLOCK(BOOL, bool)
+    GRN_TS_EVALUATE_SCALAR_CASE_BLOCK(INT8, int)
+    GRN_TS_EVALUATE_SCALAR_CASE_BLOCK(INT16, int)
+    GRN_TS_EVALUATE_SCALAR_CASE_BLOCK(INT32, int)
+    GRN_TS_EVALUATE_SCALAR_CASE_BLOCK(INT64, int)
+    GRN_TS_EVALUATE_SCALAR_CASE_BLOCK(UINT8, int)
+    GRN_TS_EVALUATE_SCALAR_CASE_BLOCK(UINT16, int)
+    GRN_TS_EVALUATE_SCALAR_CASE_BLOCK(UINT32, int)
+    GRN_TS_EVALUATE_SCALAR_CASE_BLOCK(UINT64, int)
+    GRN_TS_EVALUATE_SCALAR_CASE_BLOCK(FLOAT, float)
+    GRN_TS_EVALUATE_SCALAR_CASE_BLOCK(TIME, time)
     case GRN_DB_SHORT_TEXT:
     case GRN_DB_TEXT:
     case GRN_DB_LONG_TEXT: {
@@ -973,7 +973,7 @@ grn_rc ColumnNode::evaluate_scalar(const Record *records, size_t num_records,
   }
   return GRN_SUCCESS;
 }
-#undef GRN_EGN_EVALUATE_CASE_BLOCK
+#undef GRN_TS_EVALUATE_CASE_BLOCK
 
 grn_rc ColumnNode::evaluate_scalar_text(const Record *records,
                                         size_t num_records, void *results) {
@@ -1006,7 +1006,7 @@ grn_rc ColumnNode::evaluate_scalar_text(const Record *records,
   return GRN_SUCCESS;
 }
 
-#define GRN_EGN_EVALUATE_VECTOR_CASE_BLOCK(type, egn_type)\
+#define GRN_TS_EVALUATE_VECTOR_CASE_BLOCK(type, egn_type)\
   case GRN_DB_ ## type: {\
     if (!buf_) {\
       buf_ = grn_obj_open(ctx_, GRN_UVECTOR, 0, GRN_DB_ ## type);\
@@ -1048,11 +1048,11 @@ grn_rc ColumnNode::evaluate_vector(const Record *records, size_t num_records,
     case GRN_DB_UINT32: {
       return evaluate_vector_int(records, num_records, results);
     }
-    GRN_EGN_EVALUATE_VECTOR_CASE_BLOCK(BOOL, bool)
-    GRN_EGN_EVALUATE_VECTOR_CASE_BLOCK(INT64, int)
-    GRN_EGN_EVALUATE_VECTOR_CASE_BLOCK(UINT64, int)
-    GRN_EGN_EVALUATE_VECTOR_CASE_BLOCK(FLOAT, float)
-    GRN_EGN_EVALUATE_VECTOR_CASE_BLOCK(TIME, float)
+    GRN_TS_EVALUATE_VECTOR_CASE_BLOCK(BOOL, bool)
+    GRN_TS_EVALUATE_VECTOR_CASE_BLOCK(INT64, int)
+    GRN_TS_EVALUATE_VECTOR_CASE_BLOCK(UINT64, int)
+    GRN_TS_EVALUATE_VECTOR_CASE_BLOCK(FLOAT, float)
+    GRN_TS_EVALUATE_VECTOR_CASE_BLOCK(TIME, float)
     case GRN_DB_SHORT_TEXT:
     case GRN_DB_TEXT:
     case GRN_DB_LONG_TEXT: {
@@ -1095,7 +1095,7 @@ grn_rc ColumnNode::evaluate_vector(const Record *records, size_t num_records,
   }
 }
 
-#define GRN_EGN_EVALUATE_VECTOR_INT_CASE_BLOCK(type)\
+#define GRN_TS_EVALUATE_VECTOR_INT_CASE_BLOCK(type)\
   case GRN_DB_ ## type: {\
     if (!deep_buf_) {\
       deep_buf_ = grn_obj_open(ctx_, GRN_UVECTOR, 0, GRN_DB_ ## type);\
@@ -1145,18 +1145,18 @@ grn_rc ColumnNode::evaluate_vector_int(const Record *records,
   }
   GRN_BULK_REWIND(buf_);
   switch (builtin_type()) {
-    GRN_EGN_EVALUATE_VECTOR_INT_CASE_BLOCK(INT8)
-    GRN_EGN_EVALUATE_VECTOR_INT_CASE_BLOCK(INT16)
-    GRN_EGN_EVALUATE_VECTOR_INT_CASE_BLOCK(INT32)
-    GRN_EGN_EVALUATE_VECTOR_INT_CASE_BLOCK(UINT8)
-    GRN_EGN_EVALUATE_VECTOR_INT_CASE_BLOCK(UINT16)
-    GRN_EGN_EVALUATE_VECTOR_INT_CASE_BLOCK(UINT32)
+    GRN_TS_EVALUATE_VECTOR_INT_CASE_BLOCK(INT8)
+    GRN_TS_EVALUATE_VECTOR_INT_CASE_BLOCK(INT16)
+    GRN_TS_EVALUATE_VECTOR_INT_CASE_BLOCK(INT32)
+    GRN_TS_EVALUATE_VECTOR_INT_CASE_BLOCK(UINT8)
+    GRN_TS_EVALUATE_VECTOR_INT_CASE_BLOCK(UINT16)
+    GRN_TS_EVALUATE_VECTOR_INT_CASE_BLOCK(UINT32)
     default: {
       return GRN_UNKNOWN_ERROR;
     }
   }
 }
-#undef GRN_EGN_EVALUATE_VECTOR_INT_CASE_BLOCK
+#undef GRN_TS_EVALUATE_VECTOR_INT_CASE_BLOCK
 
 grn_rc ColumnNode::evaluate_vector_text(const Record *records,
                                         size_t num_records, void *results) {
@@ -1216,7 +1216,7 @@ grn_rc ColumnNode::evaluate_vector_text(const Record *records,
 //  virtual ~OperatorNode() {}
 
 //  ExpressionNodeType type() const {
-//    return GRN_EGN_OPERATOR_NODE;
+//    return GRN_TS_OPERATOR_NODE;
 //  }
 //};
 
@@ -1231,7 +1231,7 @@ grn_rc ColumnNode::evaluate_vector_text(const Record *records,
 //    return GRN_NO_MEMORY_AVAILABLE;
 //  }
 //  switch (arg->type()) {
-//    case GRN_EGN_CONSTANT_NODE: {
+//    case GRN_TS_CONSTANT_NODE: {
 //      if (old_size < num_records) {
 //        return arg->evaluate(records + old_size, num_records - old_size,
 //          &*arg_values->begin() + old_size);
@@ -1877,17 +1877,17 @@ class ExpressionToken {
 ExpressionTokenType ExpressionToken::get_operator_token_type(
   OperatorType operator_type) {
   switch (operator_type) {
-    case GRN_EGN_LOGICAL_NOT: {
+    case GRN_TS_LOGICAL_NOT: {
       return UNARY_OPERATOR_TOKEN;
     }
-    case GRN_EGN_LOGICAL_AND:
-    case GRN_EGN_LOGICAL_OR:
-    case GRN_EGN_EQUAL:
-    case GRN_EGN_NOT_EQUAL:
-    case GRN_EGN_LESS:
-    case GRN_EGN_LESS_EQUAL:
-    case GRN_EGN_GREATER:
-    case GRN_EGN_GREATER_EQUAL: {
+    case GRN_TS_LOGICAL_AND:
+    case GRN_TS_LOGICAL_OR:
+    case GRN_TS_EQUAL:
+    case GRN_TS_NOT_EQUAL:
+    case GRN_TS_LESS:
+    case GRN_TS_LESS_EQUAL:
+    case GRN_TS_GREATER:
+    case GRN_TS_GREATER_EQUAL: {
       return BINARY_OPERATOR_TOKEN;
     }
     default: {
@@ -1901,7 +1901,7 @@ ExpressionTokenType ExpressionToken::get_operator_token_type(
 int ExpressionToken::get_operator_priority(
   OperatorType operator_type) {
   switch (operator_type) {
-    case GRN_EGN_LOGICAL_NOT: {
+    case GRN_TS_LOGICAL_NOT: {
 //    case GRN_OP_BITWISE_NOT:
 //    case GRN_OP_POSITIVE:
 //    case GRN_OP_NEGATIVE:
@@ -1909,20 +1909,20 @@ int ExpressionToken::get_operator_priority(
 //    case GRN_OP_TO_FLOAT: {
       return 3;
     }
-    case GRN_EGN_LOGICAL_AND: {
+    case GRN_TS_LOGICAL_AND: {
       return 13;
     }
-    case GRN_EGN_LOGICAL_OR: {
+    case GRN_TS_LOGICAL_OR: {
       return 14;
     }
-    case GRN_EGN_EQUAL:
-    case GRN_EGN_NOT_EQUAL: {
+    case GRN_TS_EQUAL:
+    case GRN_TS_NOT_EQUAL: {
       return 9;
     }
-    case GRN_EGN_LESS:
-    case GRN_EGN_LESS_EQUAL:
-    case GRN_EGN_GREATER:
-    case GRN_EGN_GREATER_EQUAL: {
+    case GRN_TS_LESS:
+    case GRN_TS_LESS_EQUAL:
+    case GRN_TS_GREATER:
+    case GRN_TS_GREATER_EQUAL: {
       return 8;
     }
 //    case GRN_OP_BITWISE_AND: {
@@ -2016,11 +2016,11 @@ grn_rc ExpressionParser::tokenize(const char *query, size_t query_size) {
     switch (rest[0]) {
 //      case '!': {
 //        if ((rest_size >= 2) && (rest[1] == '=')) {
-//          tokens_.push_back(ExpressionToken("!=", GRN_EGN_NOT_EQUAL));
+//          tokens_.push_back(ExpressionToken("!=", GRN_TS_NOT_EQUAL));
 //          rest += 2;
 //          rest_size -= 2;
 //        } else {
-//          tokens_.push_back(ExpressionToken("!", GRN_EGN_LOGICAL_NOT));
+//          tokens_.push_back(ExpressionToken("!", GRN_TS_LOGICAL_NOT));
 //          ++rest;
 //          --rest_size;
 //        }
@@ -2033,7 +2033,7 @@ grn_rc ExpressionParser::tokenize(const char *query, size_t query_size) {
 ////      }
 //      case '=': {
 //        if ((rest_size >= 2) && (rest[1] == '=')) {
-//          tokens_.push_back(ExpressionToken("==", GRN_EGN_EQUAL));
+//          tokens_.push_back(ExpressionToken("==", GRN_TS_EQUAL));
 //          rest += 2;
 //          rest_size -= 2;
 //        } else {
@@ -2043,11 +2043,11 @@ grn_rc ExpressionParser::tokenize(const char *query, size_t query_size) {
 //      }
 //      case '<': {
 //        if ((rest_size >= 2) && (rest[1] == '=')) {
-//          tokens_.push_back(ExpressionToken("<=", GRN_EGN_LESS_EQUAL));
+//          tokens_.push_back(ExpressionToken("<=", GRN_TS_LESS_EQUAL));
 //          rest += 2;
 //          rest_size -= 2;
 //        } else {
-//          tokens_.push_back(ExpressionToken("<", GRN_EGN_LESS));
+//          tokens_.push_back(ExpressionToken("<", GRN_TS_LESS));
 //          ++rest;
 //          --rest_size;
 //        }
@@ -2055,11 +2055,11 @@ grn_rc ExpressionParser::tokenize(const char *query, size_t query_size) {
 //      }
 //      case '>': {
 //        if ((rest_size >= 2) && (rest[1] == '=')) {
-//          tokens_.push_back(ExpressionToken(">=", GRN_EGN_GREATER_EQUAL));
+//          tokens_.push_back(ExpressionToken(">=", GRN_TS_GREATER_EQUAL));
 //          rest += 2;
 //          rest_size -= 2;
 //        } else {
-//          tokens_.push_back(ExpressionToken(">", GRN_EGN_GREATER));
+//          tokens_.push_back(ExpressionToken(">", GRN_TS_GREATER));
 //          ++rest;
 //          --rest_size;
 //        }
@@ -2067,7 +2067,7 @@ grn_rc ExpressionParser::tokenize(const char *query, size_t query_size) {
 //      }
 //      case '&': {
 //        if ((rest_size >= 2) && (rest[1] == '&')) {
-//          tokens_.push_back(ExpressionToken("&&", GRN_EGN_LOGICAL_AND));
+//          tokens_.push_back(ExpressionToken("&&", GRN_TS_LOGICAL_AND));
 //          rest += 2;
 //          rest_size -= 2;
 //        } else {
@@ -2080,7 +2080,7 @@ grn_rc ExpressionParser::tokenize(const char *query, size_t query_size) {
 //      }
 //      case '|': {
 //        if ((rest_size >= 2) && (rest[1] == '|')) {
-//          tokens_.push_back(ExpressionToken("||", GRN_EGN_LOGICAL_OR));
+//          tokens_.push_back(ExpressionToken("||", GRN_TS_LOGICAL_OR));
 //          rest += 2;
 //          rest_size -= 2;
 //        } else {
@@ -2471,7 +2471,7 @@ grn_rc ExpressionParser::push_token(const ExpressionToken &token) {
 // -- Expression --
 
 Expression::Expression(grn_ctx *ctx, grn_obj *table)
-  : ctx_(ctx), table_(table), type_(GRN_EGN_INCOMPLETE), stack_() {}
+  : ctx_(ctx), table_(table), type_(GRN_TS_INCOMPLETE), stack_() {}
 
 Expression::~Expression() {
   for (size_t i = 0; i < stack_.size(); ++i) {
@@ -2503,7 +2503,7 @@ grn_rc Expression::parse(grn_ctx *ctx, grn_obj *table,
 
 DataType Expression::data_type() const {
   ExpressionNode *root = this->root();
-  return root ? root->data_type() : GRN_EGN_VOID;
+  return root ? root->data_type() : GRN_TS_VOID;
 }
 grn_builtin_type Expression::builtin_type() const {
   ExpressionNode *root = this->root();
@@ -2552,7 +2552,7 @@ grn_rc Expression::push_operator(OperatorType operator_type) {
   grn_rc rc = GRN_UNKNOWN_ERROR;
   ExpressionNode *node;
   switch (operator_type) {
-    case GRN_EGN_LOGICAL_NOT: {
+    case GRN_TS_LOGICAL_NOT: {
       if (stack_.size() < 1) {
         return GRN_INVALID_FORMAT;
       }
@@ -2563,14 +2563,14 @@ grn_rc Expression::push_operator(OperatorType operator_type) {
       }
       break;
     }
-    case GRN_EGN_LOGICAL_AND:
-    case GRN_EGN_LOGICAL_OR:
-    case GRN_EGN_EQUAL:
-    case GRN_EGN_NOT_EQUAL:
-    case GRN_EGN_LESS:
-    case GRN_EGN_LESS_EQUAL:
-    case GRN_EGN_GREATER:
-    case GRN_EGN_GREATER_EQUAL: {
+    case GRN_TS_LOGICAL_AND:
+    case GRN_TS_LOGICAL_OR:
+    case GRN_TS_EQUAL:
+    case GRN_TS_NOT_EQUAL:
+    case GRN_TS_LESS:
+    case GRN_TS_LESS_EQUAL:
+    case GRN_TS_GREATER:
+    case GRN_TS_GREATER_EQUAL: {
       if (stack_.size() < 2) {
         return GRN_INVALID_FORMAT;
       }
@@ -2609,7 +2609,7 @@ grn_rc Expression::filter(
   }
   size_t total_output_size = 0;
   while (input_size > 0) {
-    size_t batch_input_size = GRN_EGN_MAX_BATCH_SIZE;
+    size_t batch_input_size = GRN_TS_MAX_BATCH_SIZE;
     if (input_size < batch_input_size) {
       batch_input_size = input_size;
     }
@@ -2637,7 +2637,7 @@ grn_rc Expression::adjust(Record *records, size_t num_records) {
     return GRN_UNKNOWN_ERROR;
   }
   while (num_records > 0) {
-    size_t batch_size = GRN_EGN_MAX_BATCH_SIZE;
+    size_t batch_size = GRN_TS_MAX_BATCH_SIZE;
     if (num_records < batch_size) {
       batch_size = num_records;
     }
@@ -2675,28 +2675,28 @@ ExpressionNode *Expression::root() const {
 void Expression::update_type() {
   ExpressionNode *root = this->root();
   if (!root) {
-    type_ = GRN_EGN_INCOMPLETE;
+    type_ = GRN_TS_INCOMPLETE;
   } else {
     switch (root->type()) {
-      case GRN_EGN_ID_NODE: {
-        type_ = GRN_EGN_ID;
+      case GRN_TS_ID_NODE: {
+        type_ = GRN_TS_ID;
         break;
       }
-      case GRN_EGN_SCORE_NODE: {
-        type_ = GRN_EGN_SCORE;
+      case GRN_TS_SCORE_NODE: {
+        type_ = GRN_TS_SCORE;
         break;
       }
-      case GRN_EGN_CONSTANT_NODE: {
-        type_ = GRN_EGN_CONSTANT;
+      case GRN_TS_CONSTANT_NODE: {
+        type_ = GRN_TS_CONSTANT;
         break;
       }
-      case GRN_EGN_COLUMN_NODE:
-      case GRN_EGN_OPERATOR_NODE: {
-        type_ = GRN_EGN_VARIABLE;
+      case GRN_TS_COLUMN_NODE:
+      case GRN_TS_OPERATOR_NODE: {
+        type_ = GRN_TS_VARIABLE;
         break;
       }
       default: {
-        type_ = GRN_EGN_INCOMPLETE;
+        type_ = GRN_TS_INCOMPLETE;
         break;
       }
     }
@@ -2738,8 +2738,8 @@ grn_rc Expression::create_unary_node(OperatorType operator_type,
   ExpressionNode *arg, ExpressionNode **node) {
   grn_rc rc = GRN_SUCCESS;
   switch (operator_type) {
-//    case GRN_EGN_LOGICAL_NOT: {
-//      if (arg->data_type() != GRN_EGN_BOOL) {
+//    case GRN_TS_LOGICAL_NOT: {
+//      if (arg->data_type() != GRN_TS_BOOL) {
 //        return GRN_UNKNOWN_ERROR;
 //      }
 //      rc = LogicalNotNode::open(arg, node);
@@ -2755,41 +2755,41 @@ grn_rc Expression::create_unary_node(OperatorType operator_type,
 grn_rc Expression::create_binary_node(OperatorType operator_type,
   ExpressionNode *arg1, ExpressionNode *arg2, ExpressionNode **node) {
   switch (operator_type) {
-//    case GRN_EGN_LOGICAL_AND: {
-//      if ((arg1->data_type() != GRN_EGN_BOOL) ||
-//          (arg1->data_type() != GRN_EGN_BOOL)) {
+//    case GRN_TS_LOGICAL_AND: {
+//      if ((arg1->data_type() != GRN_TS_BOOL) ||
+//          (arg1->data_type() != GRN_TS_BOOL)) {
 //        return GRN_INVALID_FORMAT;
 //      }
 //      return LogicalAndNode::open(arg1, arg2, node);
 //    }
-//    case GRN_EGN_LOGICAL_OR: {
-//      if ((arg1->data_type() != GRN_EGN_BOOL) ||
-//          (arg1->data_type() != GRN_EGN_BOOL)) {
+//    case GRN_TS_LOGICAL_OR: {
+//      if ((arg1->data_type() != GRN_TS_BOOL) ||
+//          (arg1->data_type() != GRN_TS_BOOL)) {
 //        return GRN_INVALID_FORMAT;
 //      }
 //      return LogicalOrNode::open(arg1, arg2, node);
 //    }
-//    case GRN_EGN_EQUAL: {
+//    case GRN_TS_EQUAL: {
 //      if (arg1->data_type() != arg2->data_type()) {
 //        return GRN_INVALID_FORMAT;
 //      }
 //      switch (arg1->data_type()) {
-//        case GRN_EGN_BOOL: {
+//        case GRN_TS_BOOL: {
 //          return equal_node_open(EqualOperator<Bool>(), arg1, arg2, node);
 //        }
-//        case GRN_EGN_INT: {
+//        case GRN_TS_INT: {
 //          return equal_node_open(EqualOperator<Int>(), arg1, arg2, node);
 //        }
-//        case GRN_EGN_FLOAT: {
+//        case GRN_TS_FLOAT: {
 //          return equal_node_open(EqualOperator<Float>(), arg1, arg2, node);
 //        }
-//        case GRN_EGN_TIME: {
+//        case GRN_TS_TIME: {
 //          return equal_node_open(EqualOperator<Time>(), arg1, arg2, node);
 //        }
-//        case GRN_EGN_TEXT: {
+//        case GRN_TS_TEXT: {
 //          return equal_node_open(EqualOperator<Text>(), arg1, arg2, node);
 //        }
-//        case GRN_EGN_GEO_POINT: {
+//        case GRN_TS_GEO_POINT: {
 //          return equal_node_open(EqualOperator<GeoPoint>(), arg1, arg2, node);
 //        }
 //        default: {
@@ -2797,32 +2797,32 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
 //        }
 //      }
 //    }
-//    case GRN_EGN_NOT_EQUAL: {
+//    case GRN_TS_NOT_EQUAL: {
 //      if (arg1->data_type() != arg2->data_type()) {
 //        return GRN_INVALID_FORMAT;
 //      }
 //      switch (arg1->data_type()) {
-//        case GRN_EGN_BOOL: {
+//        case GRN_TS_BOOL: {
 //          return not_equal_node_open(
 //            NotEqualOperator<Bool>(), arg1, arg2, node);
 //        }
-//        case GRN_EGN_INT: {
+//        case GRN_TS_INT: {
 //          return not_equal_node_open(
 //            NotEqualOperator<Int>(), arg1, arg2, node);
 //        }
-//        case GRN_EGN_FLOAT: {
+//        case GRN_TS_FLOAT: {
 //          return not_equal_node_open(
 //            NotEqualOperator<Float>(), arg1, arg2, node);
 //        }
-//        case GRN_EGN_TIME: {
+//        case GRN_TS_TIME: {
 //          return not_equal_node_open(
 //            NotEqualOperator<Time>(), arg1, arg2, node);
 //        }
-//        case GRN_EGN_TEXT: {
+//        case GRN_TS_TEXT: {
 //          return not_equal_node_open(
 //            NotEqualOperator<Text>(), arg1, arg2, node);
 //        }
-//        case GRN_EGN_GEO_POINT: {
+//        case GRN_TS_GEO_POINT: {
 //          return not_equal_node_open(
 //            NotEqualOperator<GeoPoint>(), arg1, arg2, node);
 //        }
@@ -2831,21 +2831,21 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
 //        }
 //      }
 //    }
-//    case GRN_EGN_LESS: {
+//    case GRN_TS_LESS: {
 //      if (arg1->data_type() != arg2->data_type()) {
 //        return GRN_INVALID_FORMAT;
 //      }
 //      switch (arg1->data_type()) {
-//        case GRN_EGN_INT: {
+//        case GRN_TS_INT: {
 //          return less_node_open(LessOperator<Int>(), arg1, arg2, node);
 //        }
-//        case GRN_EGN_FLOAT: {
+//        case GRN_TS_FLOAT: {
 //          return less_node_open(LessOperator<Float>(), arg1, arg2, node);
 //        }
-//        case GRN_EGN_TIME: {
+//        case GRN_TS_TIME: {
 //          return less_node_open(LessOperator<Time>(), arg1, arg2, node);
 //        }
-//        case GRN_EGN_TEXT: {
+//        case GRN_TS_TEXT: {
 //          return less_node_open(LessOperator<Text>(), arg1, arg2, node);
 //        }
 //        default: {
@@ -2853,24 +2853,24 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
 //        }
 //      }
 //    }
-//    case GRN_EGN_LESS_EQUAL: {
+//    case GRN_TS_LESS_EQUAL: {
 //      if (arg1->data_type() != arg2->data_type()) {
 //        return GRN_INVALID_FORMAT;
 //      }
 //      switch (arg1->data_type()) {
-//        case GRN_EGN_INT: {
+//        case GRN_TS_INT: {
 //          return less_equal_node_open(
 //            LessEqualOperator<Int>(), arg1, arg2, node);
 //        }
-//        case GRN_EGN_FLOAT: {
+//        case GRN_TS_FLOAT: {
 //          return less_equal_node_open(
 //            LessEqualOperator<Float>(), arg1, arg2, node);
 //        }
-//        case GRN_EGN_TIME: {
+//        case GRN_TS_TIME: {
 //          return less_equal_node_open(
 //            LessEqualOperator<Time>(), arg1, arg2, node);
 //        }
-//        case GRN_EGN_TEXT: {
+//        case GRN_TS_TEXT: {
 //          return less_equal_node_open(
 //            LessEqualOperator<Text>(), arg1, arg2, node);
 //        }
@@ -2879,21 +2879,21 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
 //        }
 //      }
 //    }
-//    case GRN_EGN_GREATER: {
+//    case GRN_TS_GREATER: {
 //      if (arg1->data_type() != arg2->data_type()) {
 //        return GRN_INVALID_FORMAT;
 //      }
 //      switch (arg1->data_type()) {
-//        case GRN_EGN_INT: {
+//        case GRN_TS_INT: {
 //          return greater_node_open(GreaterOperator<Int>(), arg1, arg2, node);
 //        }
-//        case GRN_EGN_FLOAT: {
+//        case GRN_TS_FLOAT: {
 //          return greater_node_open(GreaterOperator<Float>(), arg1, arg2, node);
 //        }
-//        case GRN_EGN_TIME: {
+//        case GRN_TS_TIME: {
 //          return greater_node_open(GreaterOperator<Time>(), arg1, arg2, node);
 //        }
-//        case GRN_EGN_TEXT: {
+//        case GRN_TS_TEXT: {
 //          return greater_node_open(GreaterOperator<Text>(), arg1, arg2, node);
 //        }
 //        default: {
@@ -2901,24 +2901,24 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
 //        }
 //      }
 //    }
-//    case GRN_EGN_GREATER_EQUAL: {
+//    case GRN_TS_GREATER_EQUAL: {
 //      if (arg1->data_type() != arg2->data_type()) {
 //        return GRN_INVALID_FORMAT;
 //      }
 //      switch (arg1->data_type()) {
-//        case GRN_EGN_INT: {
+//        case GRN_TS_INT: {
 //          return greater_equal_node_open(
 //            GreaterEqualOperator<Int>(), arg1, arg2, node);
 //        }
-//        case GRN_EGN_FLOAT: {
+//        case GRN_TS_FLOAT: {
 //          return greater_equal_node_open(
 //            GreaterEqualOperator<Float>(), arg1, arg2, node);
 //        }
-//        case GRN_EGN_TIME: {
+//        case GRN_TS_TIME: {
 //          return greater_equal_node_open(
 //            GreaterEqualOperator<Time>(), arg1, arg2, node);
 //        }
-//        case GRN_EGN_TEXT: {
+//        case GRN_TS_TEXT: {
 //          return greater_equal_node_open(
 //            GreaterEqualOperator<Text>(), arg1, arg2, node);
 //        }
@@ -2963,14 +2963,14 @@ grn_egn_select_filter(grn_ctx *ctx, grn_obj *table,
       for ( ; ; ) {
         size_t records_offset = records->size();
         try {
-          records->resize(records->size() + GRN_EGN_MAX_BATCH_SIZE);
+          records->resize(records->size() + GRN_TS_MAX_BATCH_SIZE);
         } catch (const std::bad_alloc &) {
           rc = GRN_NO_MEMORY_AVAILABLE;
           break;
         }
         size_t batch_size;
         rc = cursor->read(&(*records)[records_offset],
-                          GRN_EGN_MAX_BATCH_SIZE, &batch_size);
+                          GRN_TS_MAX_BATCH_SIZE, &batch_size);
         if (rc != GRN_SUCCESS) {
           break;
         }
@@ -3177,44 +3177,44 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
     size_t count = 0;
     std::vector<std::vector<char> > bufs(expressions.size());
     while (count < num_records) {
-      size_t batch_size = GRN_EGN_MAX_BATCH_SIZE;
+      size_t batch_size = GRN_TS_MAX_BATCH_SIZE;
       if (batch_size > (num_records - count)) {
         batch_size = num_records - count;
       }
       for (size_t i = 0; i < expressions.size(); ++i) {
         if (expressions[i]->dimension() == 0) {
           switch (expressions[i]->data_type()) {
-            case GRN_EGN_BOOL: {
+            case GRN_TS_BOOL: {
               bufs[i].resize(sizeof(grn_egn_bool) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
                                        (grn::egn::Bool *)&bufs[i][0]);
               break;
             }
-            case GRN_EGN_INT: {
+            case GRN_TS_INT: {
               bufs[i].resize(sizeof(grn_egn_int) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
                                        (grn::egn::Int *)&bufs[i][0]);
               break;
             }
-            case GRN_EGN_FLOAT: {
+            case GRN_TS_FLOAT: {
               bufs[i].resize(sizeof(grn_egn_float) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
                                        (grn::egn::Float *)&bufs[i][0]);
               break;
             }
-            case GRN_EGN_TIME: {
+            case GRN_TS_TIME: {
               bufs[i].resize(sizeof(grn_egn_time) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
                                        (grn::egn::Time *)&bufs[i][0]);
               break;
             }
-            case GRN_EGN_TEXT: {
+            case GRN_TS_TEXT: {
               bufs[i].resize(sizeof(grn_egn_text) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
                                        (grn::egn::Text *)&bufs[i][0]);
               break;
             }
-            case GRN_EGN_GEO_POINT: {
+            case GRN_TS_GEO_POINT: {
               bufs[i].resize(sizeof(grn_egn_geo_point) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
                                        (grn::egn::GeoPoint *)&bufs[i][0]);
@@ -3226,37 +3226,37 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
           }
         } else {
           switch (expressions[i]->data_type()) {
-            case GRN_EGN_BOOL: {
+            case GRN_TS_BOOL: {
               bufs[i].resize(sizeof(grn_egn_vector) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
                                        (grn_egn_vector *)&bufs[i][0]);
               break;
             }
-            case GRN_EGN_INT: {
+            case GRN_TS_INT: {
               bufs[i].resize(sizeof(grn_egn_vector) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
                                        (grn_egn_vector *)&bufs[i][0]);
               break;
             }
-            case GRN_EGN_FLOAT: {
+            case GRN_TS_FLOAT: {
               bufs[i].resize(sizeof(grn_egn_vector) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
                                        (grn_egn_vector *)&bufs[i][0]);
               break;
             }
-            case GRN_EGN_TIME: {
+            case GRN_TS_TIME: {
               bufs[i].resize(sizeof(grn_egn_vector) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
                                        (grn_egn_vector *)&bufs[i][0]);
               break;
             }
-            case GRN_EGN_TEXT: {
+            case GRN_TS_TEXT: {
               bufs[i].resize(sizeof(grn_egn_vector) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
                                        (grn_egn_vector *)&bufs[i][0]);
               break;
             }
-            case GRN_EGN_GEO_POINT: {
+            case GRN_TS_GEO_POINT: {
               bufs[i].resize(sizeof(grn_egn_vector) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
                                        (grn_egn_vector *)&bufs[i][0]);
@@ -3276,7 +3276,7 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
           }
           if (expressions[j]->dimension() == 0) {
             switch (expressions[j]->data_type()) {
-              case GRN_EGN_BOOL: {
+              case GRN_TS_BOOL: {
                 if (((grn_egn_bool *)&bufs[j][0])[i]) {
                   GRN_TEXT_PUT(ctx, ctx->impl->outbuf, "true", 4);
                 } else {
@@ -3284,27 +3284,27 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
                 }
                 break;
               }
-              case GRN_EGN_INT: {
+              case GRN_TS_INT: {
                 grn_text_lltoa(ctx, ctx->impl->outbuf,
                                ((grn_egn_int *)&bufs[j][0])[i]);
                 break;
               }
-              case GRN_EGN_FLOAT: {
+              case GRN_TS_FLOAT: {
                 grn_text_ftoa(ctx, ctx->impl->outbuf,
                               ((grn_egn_float *)&bufs[j][0])[i]);
                 break;
               }
-              case GRN_EGN_TIME: {
+              case GRN_TS_TIME: {
                 grn_text_ftoa(ctx, ctx->impl->outbuf,
                               ((grn_egn_time *)&bufs[j][0])[i] * 0.000001);
                 break;
               }
-              case GRN_EGN_TEXT: {
+              case GRN_TS_TEXT: {
                 grn_egn_text text = ((grn_egn_text *)&bufs[j][0])[i];
                 grn_text_esc(ctx, ctx->impl->outbuf, text.ptr, text.size);
                 break;
               }
-              case GRN_EGN_GEO_POINT: {
+              case GRN_TS_GEO_POINT: {
                 grn_egn_geo_point geo_point =
                   ((grn_egn_geo_point *)&bufs[j][0])[i];
                 GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '"');
@@ -3322,7 +3322,7 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
             grn_egn_vector vector =
               reinterpret_cast<grn_egn_vector *>(&bufs[j][0])[i];
             switch (expressions[j]->data_type()) {
-              case GRN_EGN_BOOL: {
+              case GRN_TS_BOOL: {
                 const grn_egn_bool *ptr =
                   static_cast<const grn_egn_bool *>(vector.ptr);
                 GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '[');
@@ -3339,7 +3339,7 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
                 GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ']');
                 break;
               }
-              case GRN_EGN_INT: {
+              case GRN_TS_INT: {
                 const grn_egn_int *ptr =
                   static_cast<const grn_egn_int *>(vector.ptr);
                 GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '[');
@@ -3352,7 +3352,7 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
                 GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ']');
                 break;
               }
-              case GRN_EGN_FLOAT: {
+              case GRN_TS_FLOAT: {
                 const grn_egn_float *ptr =
                   static_cast<const grn_egn_float *>(vector.ptr);
                 GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '[');
@@ -3365,7 +3365,7 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
                 GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ']');
                 break;
               }
-              case GRN_EGN_TIME: {
+              case GRN_TS_TIME: {
                 const grn_egn_time *ptr =
                   static_cast<const grn_egn_time *>(vector.ptr);
                 GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '[');
@@ -3378,7 +3378,7 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
                 GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ']');
                 break;
               }
-              case GRN_EGN_TEXT: {
+              case GRN_TS_TEXT: {
                 const grn_egn_text *ptr =
                   static_cast<const grn_egn_text *>(vector.ptr);
                 GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '[');
@@ -3391,7 +3391,7 @@ grn_egn_select_output(grn_ctx *ctx, grn_obj *table,
                 GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ']');
                 break;
               }
-              case GRN_EGN_GEO_POINT: {
+              case GRN_TS_GEO_POINT: {
                 const grn_egn_geo_point *ptr =
                   static_cast<const grn_egn_geo_point *>(vector.ptr);
                 GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '[');
