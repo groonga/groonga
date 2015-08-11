@@ -25,7 +25,7 @@
 #include "grn_ts.h"
 
 namespace grn {
-namespace egn {
+namespace ts {
 
 // Constant values.
 
@@ -280,7 +280,7 @@ class Expression {
     ExpressionNode *arg1, ExpressionNode *arg2, ExpressionNode **node);
 };
 
-}  // namespace egn
+}  // namespace ts
 }  // namespace grn
 
 #endif  // GRN_TS_HPP

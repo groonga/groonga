@@ -85,7 +85,7 @@ grn_ts_data_type grn_ts_simplify_builtin_type(grn_builtin_type builtin_type) {
 }  // namespace
 
 namespace grn {
-namespace egn {
+namespace ts {
 
 // -- TableCursor --
 
@@ -2933,7 +2933,7 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
   }
 }
 
-}  // namespace egn
+}  // namespace ts
 }  // namespace grn
 
 #ifdef __cplusplus
@@ -2952,11 +2952,11 @@ grn_ts_select_filter(grn_ctx *ctx, grn_obj *table,
   if (limit < 0) {
     limit = std::numeric_limits<int>::max();
   }
-  grn::egn::Cursor *cursor;
-  grn_rc rc = grn::egn::Cursor::open_table_cursor(ctx, table, &cursor);
+  grn::ts::Cursor *cursor;
+  grn_rc rc = grn::ts::Cursor::open_table_cursor(ctx, table, &cursor);
   if (rc == GRN_SUCCESS) {
-    grn::egn::Expression *expression;
-    rc = grn::egn::Expression::parse(
+    grn::ts::Expression *expression;
+    rc = grn::ts::Expression::parse(
       ctx, table, filter, filter_size, &expression);
     if (rc == GRN_SUCCESS) {
       size_t count = 0;
@@ -3018,7 +3018,7 @@ grn_ts_select_output(grn_ctx *ctx, grn_obj *table,
                      size_t num_hits) {
   grn_rc rc = GRN_SUCCESS;
   std::vector<std::string> names;
-  std::vector<grn::egn::Expression *> expressions;
+  std::vector<grn::ts::Expression *> expressions;
 
   const char *rest = output_columns;
   size_t rest_size = output_columns_size;
@@ -3055,8 +3055,8 @@ grn_ts_select_output(grn_ctx *ctx, grn_obj *table,
               char name_buf[1024];
               int name_size = grn_column_name(
                 ctx, column, name_buf, sizeof(name_buf));
-              grn::egn::Expression *expression;
-              grn_rc r = grn::egn::Expression::open(ctx, table, &expression);
+              grn::ts::Expression *expression;
+              grn_rc r = grn::ts::Expression::open(ctx, table, &expression);
               if (r == GRN_SUCCESS) {
                 r = expression->push_object(column);
                 if (r == GRN_SUCCESS) {
@@ -3070,8 +3070,8 @@ grn_ts_select_output(grn_ctx *ctx, grn_obj *table,
         grn_hash_close(ctx, columns);
       }
     } else {
-      grn::egn::Expression *expression;
-      grn_rc r = grn::egn::Expression::parse(
+      grn::ts::Expression *expression;
+      grn_rc r = grn::ts::Expression::parse(
         ctx, table, rest, pos, &expression);
       if (r == GRN_SUCCESS) {
         names.push_back(name);
@@ -3187,37 +3187,37 @@ grn_ts_select_output(grn_ctx *ctx, grn_obj *table,
             case GRN_TS_BOOL: {
               bufs[i].resize(sizeof(grn_ts_bool) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
-                                       (grn::egn::Bool *)&bufs[i][0]);
+                                       (grn::ts::Bool *)&bufs[i][0]);
               break;
             }
             case GRN_TS_INT: {
               bufs[i].resize(sizeof(grn_ts_int) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
-                                       (grn::egn::Int *)&bufs[i][0]);
+                                       (grn::ts::Int *)&bufs[i][0]);
               break;
             }
             case GRN_TS_FLOAT: {
               bufs[i].resize(sizeof(grn_ts_float) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
-                                       (grn::egn::Float *)&bufs[i][0]);
+                                       (grn::ts::Float *)&bufs[i][0]);
               break;
             }
             case GRN_TS_TIME: {
               bufs[i].resize(sizeof(grn_ts_time) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
-                                       (grn::egn::Time *)&bufs[i][0]);
+                                       (grn::ts::Time *)&bufs[i][0]);
               break;
             }
             case GRN_TS_TEXT: {
               bufs[i].resize(sizeof(grn_ts_text) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
-                                       (grn::egn::Text *)&bufs[i][0]);
+                                       (grn::ts::Text *)&bufs[i][0]);
               break;
             }
             case GRN_TS_GEO_POINT: {
               bufs[i].resize(sizeof(grn_ts_geo_point) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
-                                       (grn::egn::GeoPoint *)&bufs[i][0]);
+                                       (grn::ts::GeoPoint *)&bufs[i][0]);
               break;
             }
             default: {
