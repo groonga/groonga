@@ -8068,10 +8068,11 @@ ii_buffer_values_append(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
     unsigned new_size = new_max_nvalues * sizeof(ii_buffer_value);
     ii_buffer_value *new_values;
     new_values = (ii_buffer_value *)GRN_REALLOC(ii_buffer->values, new_size);
-    if (new_values) {
-      ii_buffer->values = new_values;
-      ii_buffer->max_nvalues = new_max_nvalues;
+    if (!new_values) {
+      return;
     }
+    ii_buffer->values = new_values;
+    ii_buffer->max_nvalues = new_max_nvalues;
   }
   if (ii_buffer->values) {
     ii_buffer->values[ii_buffer->nvalues].sid = sid;
