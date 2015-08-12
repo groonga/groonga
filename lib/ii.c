@@ -7177,6 +7177,9 @@ struct _grn_ii_buffer {
   size_t packed_buf_size;
   size_t packed_len;
   size_t total_chunk_size;
+  ii_buffer_value *values;
+  unsigned int nvalues;
+  unsigned int max_nvalues;
 };
 
 static ii_buffer_block *
@@ -7888,6 +7891,9 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
       ii_buffer->packed_len = 0;
       ii_buffer->packed_buf_size = 0;
       ii_buffer->total_chunk_size = 0;
+      ii_buffer->values = NULL;
+      ii_buffer->nvalues = 0;
+      ii_buffer->max_nvalues = 0;
       if (ii_buffer->counters) {
         ii_buffer->block_buf = GRN_MALLOCN(grn_id, II_BUFFER_BLOCK_SIZE);
         if (ii_buffer->block_buf) {
@@ -8044,30 +8050,35 @@ grn_ii_buffer_close(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
     GRN_FREE(ii_buffer->blocks);
   }
   GRN_FREE(ii_buffer);
+  if (ii_buffer->values) {
+    GRN_FREE(ii_buffer->values);
+  }
   return ctx->rc;
 }
 
 static void
-ii_buffer_values_append(grn_ctx *ctx, ii_buffer_value **values,
-                        unsigned *nvalues, unsigned *max_nvalues,
+ii_buffer_values_append(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
                         unsigned int sid, unsigned weight,
                         const char *p, uint32_t len) {
-  if (*nvalues == *max_nvalues) {
-    unsigned new_max_nvalues = *max_nvalues ? (*max_nvalues * 2) : 1;
+  if (ii_buffer->nvalues == ii_buffer->max_nvalues) {
+    unsigned new_max_nvalues = ii_buffer->max_nvalues * 2;
+    if (new_max_nvalues == 0) {
+      new_max_nvalues = 1;
+    }
     unsigned new_size = new_max_nvalues * sizeof(ii_buffer_value);
     ii_buffer_value *new_values;
-    new_values = (ii_buffer_value *)GRN_REALLOC(*values, new_size);
+    new_values = (ii_buffer_value *)GRN_REALLOC(ii_buffer->values, new_size);
     if (new_values) {
-      *values = new_values;
-      *max_nvalues = new_max_nvalues;
+      ii_buffer->values = new_values;
+      ii_buffer->max_nvalues = new_max_nvalues;
     }
   }
-  if (*values) {
-    (*values)[*nvalues].sid = sid;
-    (*values)[*nvalues].weight = weight;
-    (*values)[*nvalues].p = p;
-    (*values)[*nvalues].len = len;
-    ++*nvalues;
+  if (ii_buffer->values) {
+    ii_buffer->values[ii_buffer->nvalues].sid = sid;
+    ii_buffer->values[ii_buffer->nvalues].weight = weight;
+    ii_buffer->values[ii_buffer->nvalues].p = p;
+    ii_buffer->values[ii_buffer->nvalues].len = len;
+    ii_buffer->nvalues++;
   }
 }
 
@@ -8085,9 +8096,6 @@ grn_ii_buffer_parse(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
     if ((tc = grn_table_cursor_open(ctx, target,
                                     NULL, 0, NULL, 0, 0, -1,
                                     GRN_CURSOR_BY_ID))) {
-      ii_buffer_value *values = NULL;
-      unsigned int nvalues = 0;
-      unsigned int max_nvalues = 0;
       uint32_t est_len;
       grn_id rid;
       while ((rid = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
@@ -8104,8 +8112,8 @@ grn_ii_buffer_parse(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
           }
           switch (rv->header.type) {
           case GRN_BULK :
-            ii_buffer_values_append(ctx, &values, &nvalues, &max_nvalues, sid,
-                                    0, GRN_TEXT_VALUE(rv), GRN_TEXT_LEN(rv));
+            ii_buffer_values_append(ctx, ii_buffer, sid, 0,
+                                    GRN_TEXT_VALUE(rv), GRN_TEXT_LEN(rv));
             break;
           case GRN_UVECTOR :
             {
@@ -8114,8 +8122,7 @@ grn_ii_buffer_parse(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
               size = grn_uvector_size(ctx, rv);
               elem_size = grn_uvector_element_size(ctx, rv);
               for (j = 0; j < size; j++) {
-                ii_buffer_values_append(ctx, &values, &nvalues, &max_nvalues,
-                                        sid, 0,
+                ii_buffer_values_append(ctx, ii_buffer, sid, 0,
                                         GRN_BULK_HEAD(rv) + (elem_size * j),
                                         elem_size);
               }
@@ -8132,8 +8139,7 @@ grn_ii_buffer_parse(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
                 if (section->length == 0) {
                   continue;
                 }
-                ii_buffer_values_append(ctx, &values, &nvalues, &max_nvalues,
-                                        sid, section->weight,
+                ii_buffer_values_append(ctx, ii_buffer, sid, section->weight,
                                         head + section->offset,
                                         section->length);
               }
@@ -8147,8 +8153,8 @@ grn_ii_buffer_parse(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
         }
 
         est_len = 0;
-        for (j = 0; j < nvalues; j++) {
-          est_len += values[j].len * 2 + 2;
+        for (j = 0; j < ii_buffer->nvalues; j++) {
+          est_len += ii_buffer->values[j].len * 2 + 2;
         }
         if (ii_buffer->block_buf_size < ii_buffer->block_pos + est_len) {
           grn_ii_buffer_flush(ctx, ii_buffer);
@@ -8162,15 +8168,13 @@ grn_ii_buffer_parse(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
           }
         }
 
-        for (j = 0; j < nvalues; j++) {
-          grn_ii_buffer_tokenize(ctx, ii_buffer, rid, values[j].sid,
-                                 values[j].weight, values[j].p,
-                                 values[j].len);
+        for (j = 0; j < ii_buffer->nvalues; j++) {
+          grn_ii_buffer_tokenize(ctx, ii_buffer, rid, ii_buffer->values[j].sid,
+                                 ii_buffer->values[j].weight,
+                                 ii_buffer->values[j].p,
+                                 ii_buffer->values[j].len);
         }
-        nvalues = 0;
-      }
-      if (values) {
-        GRN_FREE(values);
+        ii_buffer->nvalues = 0;
       }
       grn_table_cursor_close(ctx, tc);
     }
