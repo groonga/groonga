@@ -1,0 +1,23 @@
+table_create Logs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs timestamp_text COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+load --table Logs
+[
+{"timestamp_text": "2015-08-12 00:00:00"},
+{"timestamp_text": "2015-08-12 00:00:01"},
+{"timestamp_text": "2015-08-12 00:00:02"}
+]
+[[0,0.0,0.0],3]
+column_create Logs timestamp_time COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_copy Logs timestamp_text Logs timestamp_time
+[[0,0.0,0.0],true]
+dump --dump_schema no
+load --table Logs
+[
+["_id","timestamp_text","timestamp_time"],
+[1,"2015-08-12 00:00:00",1439305200.0],
+[2,"2015-08-12 00:00:01",1439305201.0],
+[3,"2015-08-12 00:00:02",1439305202.0]
+]

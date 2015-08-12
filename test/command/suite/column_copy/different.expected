@@ -1,0 +1,33 @@
+table_create SmallNumbers TABLE_HASH_KEY UInt8
+[[0,0.0,0.0],true]
+column_create SmallNumbers id_uint8 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+load --table SmallNumbers
+[
+{"_key": 10, "id_uint8": 11},
+{"_key": 20, "id_uint8": 22},
+{"_key": 30, "id_uint8": 33}
+]
+[[0,0.0,0.0],3]
+table_create LargeNumbers TABLE_HASH_KEY UInt64
+[[0,0.0,0.0],true]
+column_create LargeNumbers id_text COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+column_copy SmallNumbers id_uint8 LargeNumbers id_text
+[[0,0.0,0.0],true]
+dump --dump_schema no
+load --table SmallNumbers
+[
+["_key","id_uint8"],
+[10,11],
+[20,22],
+[30,33]
+]
+
+load --table LargeNumbers
+[
+["_key","id_text"],
+[10,"11"],
+[20,"22"],
+[30,"33"]
+]

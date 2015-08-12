@@ -1,0 +1,15 @@
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users age_text COLUMN_SCALAR Text
+
+load --table Users
+[
+{"_key": "alice",   "age_text": "12"},
+{"_key": "bob",     "age_text": "29"},
+{"_key": "charlie", "age_text": "9"}
+]
+
+table_create Friends TABLE_PAT_KEY ShortText
+column_create Friends age_uint8 COLUMN_SCALAR UInt8
+column_copy Users age_text Friends age_uint8
+
+dump --dump_schema no

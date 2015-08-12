@@ -1,0 +1,14 @@
+table_create Logs TABLE_NO_KEY
+column_create Logs timestamp_text COLUMN_SCALAR Text
+
+load --table Logs
+[
+{"timestamp_text": "2015-08-12 00:00:00"},
+{"timestamp_text": "2015-08-12 00:00:01"},
+{"timestamp_text": "2015-08-12 00:00:02"}
+]
+
+column_create Logs timestamp_time COLUMN_SCALAR Time
+column_copy Logs timestamp_text Logs timestamp_time
+
+dump --dump_schema no
