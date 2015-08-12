@@ -16,6 +16,8 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+/* TS is an acronym for "Turbo Selector". */
+
 #ifdef GRN_WITH_TS
 
 #include "grn_ts.hpp"
