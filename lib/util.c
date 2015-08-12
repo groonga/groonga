@@ -368,6 +368,30 @@ grn_expr_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *expr)
 }
 
 static grn_rc
+grn_ptr_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *ptr)
+{
+  size_t size;
+
+  GRN_TEXT_PUTS(ctx, buffer, "#<ptr:");
+
+  size = GRN_BULK_VSIZE(ptr);
+  if (size == 0) {
+    GRN_TEXT_PUTS(ctx, buffer, "(empty)");
+  } else if (size >= sizeof(grn_obj *)) {
+    grn_obj *content = GRN_PTR_VALUE(ptr);
+    grn_inspect(ctx, buffer, content);
+    if (size > sizeof(grn_obj *)) {
+      grn_text_printf(ctx, buffer,
+                      " (and more data: %" GRN_FMT_SIZE ")",
+                      size - sizeof(grn_obj *));
+    }
+  }
+  GRN_TEXT_PUTS(ctx, buffer, ">");
+
+  return GRN_SUCCESS;
+}
+
+static grn_rc
 grn_pvector_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *pvector)
 {
   int i, n;
@@ -1126,7 +1150,7 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
     }
     break;
   case GRN_PTR :
-    /* TODO */
+    grn_ptr_inspect(ctx, buffer, obj);
     break;
   case GRN_UVECTOR :
     domain = grn_ctx_at(ctx, obj->header.domain);

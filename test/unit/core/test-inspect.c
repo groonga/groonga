@@ -51,6 +51,8 @@ void test_patricia_trie_empty(void);
 void test_patricia_trie_with_records(void);
 void test_patricia_trie_cursor_empty(void);
 void test_patricia_trie_cursor_with_records(void);
+void test_ptr_empty(void);
+void test_ptr_with_object(void);
 void test_uvector_empty(void);
 void test_uvector_with_records(void);
 void test_uvector_bool(void);
@@ -84,6 +86,7 @@ static grn_obj *time_value;
 static grn_obj *bool_value;
 static grn_obj *text;
 static grn_obj *geo_point_tokyo, *geo_point_wgs84;
+static grn_obj *ptr;
 static grn_obj *uvector;
 static grn_obj *pvector;
 static grn_obj *vector;
@@ -121,6 +124,7 @@ setup_values(void)
   bool_value = NULL;
   text = NULL;
   geo_point_tokyo = geo_point_wgs84 = NULL;
+  ptr = NULL;
   uvector = NULL;
   pvector = NULL;
   vector = NULL;
@@ -164,6 +168,7 @@ teardown_values(void)
   grn_obj_unlink(context, text);
   grn_obj_unlink(context, geo_point_tokyo);
   grn_obj_unlink(context, geo_point_wgs84);
+  grn_obj_unlink(context, ptr);
   grn_obj_unlink(context, uvector);
   grn_obj_unlink(context, pvector);
   grn_obj_unlink(context, vector);
@@ -560,6 +565,26 @@ test_patricia_trie_cursor_with_records(void)
                           "entries:[[2,{0,3,0}], [1,{0,3,0}]]"
                           ">",
                           inspected_string());
+}
+
+void
+test_ptr_empty(void)
+{
+  ptr = grn_obj_open(context, GRN_PTR, 0, GRN_ID_NIL);
+  inspected = grn_inspect(context, NULL, ptr);
+  cut_assert_equal_string("#<ptr:(empty)>", inspected_string());
+}
+
+void
+test_ptr_with_object(void)
+{
+  text = grn_obj_open(context, GRN_BULK, 0, GRN_DB_TEXT);
+  GRN_TEXT_PUTS(context, text, "niku");
+
+  ptr = grn_obj_open(context, GRN_PTR, 0, GRN_ID_NIL);
+  GRN_PTR_SET(context, ptr, text);
+  inspected = grn_inspect(context, NULL, ptr);
+  cut_assert_equal_string("#<ptr:\"niku\">", inspected_string());
 }
 
 void
