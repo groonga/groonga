@@ -515,24 +515,3 @@ index text:
 .. groonga-command
 .. include:: ../example/reference/tokenizers/token-regexp-add.log
 .. tokenize TokenRegexp "/home/alice/test.txt" NormalizerAuto --mode ADD
-
-The beginning of text mark is used for the beginning of text search by
-``\A``. If you use ``TokenRegexp`` for tokenizing query,
-``TokenRegexp`` adds the beginning of text mark (``U+FFEF``) as the
-first token. The beginning of text mark must be appeared at the first,
-you can get results of the beginning of text search.
-
-.. groonga-command
-.. include:: ../example/reference/tokenizers/token-regexp-get-beginning-of-text.log
-.. tokenize TokenRegexp "\\A/home/alice/" NormalizerAuto --mode GET
-
-The end of text mark is used for the end of text search by ``\z``.
-If you use ``TokenRegexp`` for tokenizing query, ``TokenRegexp`` adds
-the end of text mark (``U+FFF0``) as the last token. The end of text
-mark must be appeared at the end, you can get results of the end of
-text search.
-
-.. groonga-command
-.. include:: ../example/reference/tokenizers/token-regexp-get-end-of-text.log
-.. tokenize TokenRegexp "\\.txt\\z" NormalizerAuto --mode GET
-
