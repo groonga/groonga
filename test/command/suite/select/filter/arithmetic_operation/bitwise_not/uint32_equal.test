@@ -1,0 +1,11 @@
+table_create Values TABLE_NO_KEY
+column_create Values value COLUMN_SCALAR UInt32
+
+load --table Values
+[
+{"value": 5}
+]
+
+select Values \
+  --filter '~value == -6' \
+  --output_columns 'value'

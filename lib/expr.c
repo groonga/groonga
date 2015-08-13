@@ -961,7 +961,25 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       }
       break;
     case GRN_OP_BITWISE_NOT :
+      DFI_POP(e, dfi);
+      if (dfi) {
+        type = dfi->type;
+        domain = dfi->domain;
+        switch (domain) {
+        case GRN_DB_UINT8 :
+          domain = GRN_DB_INT16;
+          break;
+        case GRN_DB_UINT16 :
+          domain = GRN_DB_INT32;
+          break;
+        case GRN_DB_UINT32 :
+        case GRN_DB_UINT64 :
+          domain = GRN_DB_INT64;
+          break;
+        }
+      }
       PUSH_CODE(e, op, obj, nargs, code);
+      DFI_PUT(e, type, domain, code);
       break;
     case GRN_OP_STAR :
     case GRN_OP_SLASH :
