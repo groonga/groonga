@@ -42,7 +42,6 @@ Here are a schema definition and sample data to show usage.
 .. column_create Terms document_index COLUMN_INDEX|WITH_POSITION Entries body
 .. load --table Entries
 .. [
-.. ["content"],
 .. {"body": "Mroonga is a ＭｙＳＱＬ storage engine based on Groonga. <b>Rroonga</b> is a Ruby binding of Groonga."}
 .. ]
 
