@@ -18,10 +18,10 @@ Example
 -------
 
 Here is a real word use case of ``grn_thread_*`` APIs by
-:doc:`/executables/groonga`. :doc:`/executables/groonga` increases its
-thread pool size when the max number of threads is
-increased. :doc:`/executables/groonga` decreases its thread pool size
-and stops too many threads when the max number of threads is
+:doc:`/reference/executables/groonga`. :doc:`/reference/executables/groonga`
+increases its thread pool size when the max number of threads is
+increased. :doc:`/reference/executables/groonga` decreases its thread
+pool size and stops too many threads when the max number of threads is
 decreased.
 
 .. code-block :: c
