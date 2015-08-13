@@ -10,26 +10,32 @@ Execution example::
   #   [
   #     {
   #       "position": 0, 
+  #       "force_prefix": false, 
   #       "value": "日本"
   #     }, 
   #     {
   #       "position": 1, 
+  #       "force_prefix": false, 
   #       "value": "本語"
   #     }, 
   #     {
   #       "position": 2, 
+  #       "force_prefix": false, 
   #       "value": "語!"
   #     }, 
   #     {
   #       "position": 3, 
+  #       "force_prefix": false, 
   #       "value": "!!"
   #     }, 
   #     {
   #       "position": 4, 
+  #       "force_prefix": false, 
   #       "value": "!!"
   #     }, 
   #     {
   #       "position": 5, 
+  #       "force_prefix": false, 
   #       "value": "!"
   #     }
   #   ]

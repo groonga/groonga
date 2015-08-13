@@ -10,6 +10,7 @@ Execution example::
   #   [
   #     {
   #       "position": 0, 
+  #       "force_prefix": false, 
   #       "value": "groongau0000full-text-searchu0000http"
   #     }
   #   ]

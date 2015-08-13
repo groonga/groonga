@@ -10,22 +10,27 @@ Execution example::
   #   [
   #     {
   #       "position": 0, 
+  #       "force_prefix": false, 
   #       "value": "100"
   #     }, 
   #     {
   #       "position": 1, 
+  #       "force_prefix": false, 
   #       "value": "cents"
   #     }, 
   #     {
   #       "position": 2, 
+  #       "force_prefix": false, 
   #       "value": "!!"
   #     }, 
   #     {
   #       "position": 3, 
+  #       "force_prefix": false, 
   #       "value": "!!"
   #     }, 
   #     {
   #       "position": 4, 
+  #       "force_prefix": false, 
   #       "value": "!"
   #     }
   #   ]

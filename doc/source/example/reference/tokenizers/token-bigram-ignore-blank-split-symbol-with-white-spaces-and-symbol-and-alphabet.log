@@ -10,46 +10,57 @@ Execution example::
   #   [
   #     {
   #       "position": 0, 
+  #       "force_prefix": false, 
   #       "value": "he"
   #     }, 
   #     {
   #       "position": 1, 
+  #       "force_prefix": false, 
   #       "value": "el"
   #     }, 
   #     {
   #       "position": 2, 
+  #       "force_prefix": false, 
   #       "value": "ll"
   #     }, 
   #     {
   #       "position": 3, 
+  #       "force_prefix": false, 
   #       "value": "lo"
   #     }, 
   #     {
   #       "position": 4, 
+  #       "force_prefix": false, 
   #       "value": "o日"
   #     }, 
   #     {
   #       "position": 5, 
+  #       "force_prefix": false, 
   #       "value": "日本"
   #     }, 
   #     {
   #       "position": 6, 
+  #       "force_prefix": false, 
   #       "value": "本語"
   #     }, 
   #     {
   #       "position": 7, 
+  #       "force_prefix": false, 
   #       "value": "語!"
   #     }, 
   #     {
   #       "position": 8, 
+  #       "force_prefix": false, 
   #       "value": "!!"
   #     }, 
   #     {
   #       "position": 9, 
+  #       "force_prefix": false, 
   #       "value": "!!"
   #     }, 
   #     {
   #       "position": 10, 
+  #       "force_prefix": false, 
   #       "value": "!"
   #     }
   #   ]

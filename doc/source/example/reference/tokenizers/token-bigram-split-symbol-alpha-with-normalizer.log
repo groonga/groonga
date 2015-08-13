@@ -10,38 +10,47 @@ Execution example::
   #   [
   #     {
   #       "position": 0, 
+  #       "force_prefix": false, 
   #       "value": "100"
   #     }, 
   #     {
   #       "position": 1, 
+  #       "force_prefix": false, 
   #       "value": "ce"
   #     }, 
   #     {
   #       "position": 2, 
+  #       "force_prefix": false, 
   #       "value": "en"
   #     }, 
   #     {
   #       "position": 3, 
+  #       "force_prefix": false, 
   #       "value": "nt"
   #     }, 
   #     {
   #       "position": 4, 
+  #       "force_prefix": false, 
   #       "value": "ts"
   #     }, 
   #     {
   #       "position": 5, 
+  #       "force_prefix": false, 
   #       "value": "s!"
   #     }, 
   #     {
   #       "position": 6, 
+  #       "force_prefix": false, 
   #       "value": "!!"
   #     }, 
   #     {
   #       "position": 7, 
+  #       "force_prefix": false, 
   #       "value": "!!"
   #     }, 
   #     {
   #       "position": 8, 
+  #       "force_prefix": false, 
   #       "value": "!"
   #     }
   #   ]

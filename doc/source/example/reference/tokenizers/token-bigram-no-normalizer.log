@@ -10,46 +10,57 @@ Execution example::
   #   [
   #     {
   #       "position": 0, 
+  #       "force_prefix": false, 
   #       "value": "He"
   #     }, 
   #     {
   #       "position": 1, 
+  #       "force_prefix": false, 
   #       "value": "el"
   #     }, 
   #     {
   #       "position": 2, 
+  #       "force_prefix": false, 
   #       "value": "ll"
   #     }, 
   #     {
   #       "position": 3, 
+  #       "force_prefix": false, 
   #       "value": "lo"
   #     }, 
   #     {
   #       "position": 4, 
+  #       "force_prefix": false, 
   #       "value": "o "
   #     }, 
   #     {
   #       "position": 5, 
+  #       "force_prefix": false, 
   #       "value": " W"
   #     }, 
   #     {
   #       "position": 6, 
+  #       "force_prefix": false, 
   #       "value": "Wo"
   #     }, 
   #     {
   #       "position": 7, 
+  #       "force_prefix": false, 
   #       "value": "or"
   #     }, 
   #     {
   #       "position": 8, 
+  #       "force_prefix": false, 
   #       "value": "rl"
   #     }, 
   #     {
   #       "position": 9, 
+  #       "force_prefix": false, 
   #       "value": "ld"
   #     }, 
   #     {
   #       "position": 10, 
+  #       "force_prefix": false, 
   #       "value": "d"
   #     }
   #   ]
