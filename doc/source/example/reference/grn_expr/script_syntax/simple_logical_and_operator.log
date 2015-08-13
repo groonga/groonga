@@ -33,13 +33,13 @@ Execution example::
   #       [
   #         2, 
   #         "Groonga", 
-  #         "I started to use groonga. It's very fast!", 
+  #         "I started to use Groonga. It's very fast!", 
   #         10
   #       ], 
   #       [
   #         3, 
   #         "Mroonga", 
-  #         "I also started to use mroonga. It's also very fast! Really fast!", 
+  #         "I also started to use Mroonga. It's also very fast! Really fast!", 
   #         15
   #       ]
   #     ]
