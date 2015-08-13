@@ -1,3 +1,5 @@
+:orphan:
+
 .. _note:
 
    You don't need to resolve scoring only by score function. Score
