@@ -331,8 +331,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-delimit.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-mecab.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-regexp-add.log \
-	$(top_srcdir)/doc/source/example/reference/tokenizers/token-regexp-get-beginning-of-text.log \
-	$(top_srcdir)/doc/source/example/reference/tokenizers/token-regexp-get-end-of-text.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-trigram.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-unigram.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/tokenize-example.log \
@@ -1027,8 +1025,6 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/tokenizers/token-delimit.log \
 	source/example/reference/tokenizers/token-mecab.log \
 	source/example/reference/tokenizers/token-regexp-add.log \
-	source/example/reference/tokenizers/token-regexp-get-beginning-of-text.log \
-	source/example/reference/tokenizers/token-regexp-get-end-of-text.log \
 	source/example/reference/tokenizers/token-trigram.log \
 	source/example/reference/tokenizers/token-unigram.log \
 	source/example/reference/tokenizers/tokenize-example.log \
