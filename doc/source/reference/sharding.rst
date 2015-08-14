@@ -17,12 +17,13 @@ Groonga has :doc:`/limitations` against table size. You can't add
 Groonga supports time based sharding to resolve the limitation.
 
 It works in the same database. It doesn't work with multiple
-databases. It means that this sharding feature isn't distributed.
+databases. It means that this sharding feature isn't for distributing
+large data to multiple hosts.
 
 If you want distributed sharding feature, use `Mroonga
 <http://mroonga.org/>`_ or `PGroonga
-<http://pgroonga.github.io>`_. You can use sharding feature by MySQL
-or PostgreSQL. You'll be able to use `Droonga <http://droonga.org>`_
+<http://pgroonga.github.io/>`_. You can use sharding feature by MySQL
+or PostgreSQL. You'll be able to use `Droonga <http://droonga.org/>`_
 for distributed sharding feature soon.
 
 Summary
@@ -53,7 +54,7 @@ load commands yet. You need to use existing commands such as
 :doc:`/reference/commands/column_create` and
 :doc:`/reference/commands/load`.
 
-``sharding`` plugin requires some rules for table name and column. You
+``sharding`` plugin requires some rules against table and column. You
 need to follow these rules. They are described later.
 
 .. _sharding-glossary:

@@ -17672,6 +17672,165 @@ msgstr ""
 msgid "Please stop to think about only score function for scoring."
 msgstr ""
 
+# 10554355660e4dd598895dbf8a619c45
+msgid "Sharding"
+msgstr "シャーディング"
+
+# f92b83ec052449648dc7f3fdcc9b1946
+msgid ""
+"Groonga has :doc:`/limitations` against table size. You can't add "
+"268,435,455 more records in one table."
+msgstr ""
+"Groongaにはテーブルに格納できるレコード数に :doc:`/limitations` があります。1"
+"つのテーブルに268,435,455以上のレコードを追加できません。"
+
+# a35062787fa4480d9419f33c1f0da5a8
+msgid "Groonga supports time based sharding to resolve the limitation."
+msgstr ""
+"この制限を解決するために、Groongaは時間ベースのシャーディング機能をサポートし"
+"ています。"
+
+# 604a72d0128d442bb321addd59eda3f4
+msgid ""
+"It works in the same database. It doesn't work with multiple databases. It "
+"means that this sharding feature isn't for distributing large data to "
+"multiple hosts."
+msgstr ""
+"この機能は同一データベース内で動きます。複数のデータベースをまたいでは動きま"
+"せん。これは、このシャーディング機能はデータを複数のマシンに分散する用途では"
+"使えないということです。"
+
+# 0bea9dd4feab46bca8803b177fe3e1f7
+msgid ""
+"If you want distributed sharding feature, use `Mroonga <http://mroonga.org/"
+">`_ or `PGroonga <http://pgroonga.github.io/>`_. You can use sharding "
+"feature by MySQL or PostgreSQL. You'll be able to use `Droonga <http://"
+"droonga.org/>`_ for distributed sharding feature soon."
+msgstr ""
+"もし、分散対応のシャーディング機能が欲しい場合は、 `Mroonga <http://mroonga."
+"org/>`_ または `PGroonga <http://pgroonga.github.io/>`_ を使ってください。"
+"MySQLまたはPostgreSQLが提供しているシャーディング機能を使うことができます。近"
+"い将来、 `Droonga <http://droonga.org/>`_ でも分散対応のシャーディング機能を"
+"使えるようになる予定です。"
+
+# 00715e91ec5c4f59b9f8a5631046f71e
+msgid ""
+"Sharding is implemented in ``sharding`` plugin. The plugin is written in "
+"mruby. You need to enable mruby when you build Groonga."
+msgstr ""
+"シャーディングは ``sharding`` プラグインとして実装されています。このプラグイ"
+"ンはmrubyで書かれています。そのため、Groongaをビルドするときにmrubyを有効にす"
+"る必要があります。"
+
+# 035b548609c34b2b86f3fd85425cdd1d
+msgid ""
+"You can confirm whether your Groonga supports mruby or not by ``--version`` "
+"command line argument of :doc:`/reference/executables/groonga`::"
+msgstr ""
+"Groongaがmrubyをサポートしているかは :doc:`/reference/executables/groonga` "
+"の ``--version`` 引数を使うとわかります::"
+
+# 0f41a6e14a8044f58cf0e49488596417
+msgid "If you find ``mruby``, your Groonga supports mruby."
+msgstr "``mruby`` があればあなたのGroongaはmrubyをサポートしています。"
+
+# 058df67eb68b47a4b501fc12b0db1143
+msgid ""
+"``sharding`` plugin provides only search commands. They have ``logical_`` "
+"prefix in their command names such as :doc:`/reference/commands/"
+"logical_select` and :doc:`/reference/commands/logical_range_filter`."
+msgstr ""
+"``sharding`` プラグインは検索系のコマンドだけを提供しています。これらのコマン"
+"ドは :doc:`/reference/commands/logical_select` や :doc:`/reference/commands/"
+"logical_range_filter` というように、コマンド名に ``logical_`` プレフィックス"
+"がついています。"
+
+# f7364db6297d4167a6735e5c22fa7ec6
+msgid ""
+"``sharding`` plugin doesn't provide schema define commands and data load "
+"commands yet. You need to use existing commands such as :doc:`/reference/"
+"commands/table_create`, :doc:`/reference/commands/column_create` and :doc:`/"
+"reference/commands/load`."
+msgstr ""
+"``sharding`` プラグインはスキーマ定義コマンドとデータロードコマンドをまだ提供"
+"していません。そのため、既存の :doc:`/reference/commands/table_create` 、 :"
+"doc:`/reference/commands/column_create` 、 :doc:`/reference/commands/load` コ"
+"マンドを使う必要があります。"
+
+# 7fae3c5d39bb4f63a930779a0fcc55cf
+msgid ""
+"``sharding`` plugin requires some rules against table and column. You need "
+"to follow these rules. They are described later."
+msgstr ""
+"``sharding`` プラグインを使うにはいくつかのルールに則ってテーブルとカラムを作"
+"る必要があります。これについては後述します。"
+
+# 7ca5572826914032b688630f93a44867
+msgid "Glossary"
+msgstr "用語集"
+
+msgid "Logical table"
+msgstr "論理テーブル"
+
+# 71320a255f20467991d51bea2c379477
+msgid ""
+"It's a table that consists of shards. It doesn't exist in Groonga database. "
+"It just exists in our minds."
+msgstr ""
+"複数のシャードをあわせて1つに見せているテーブルです。Groongaのデータベースの"
+"中には存在しません。私たちの頭の中にだけあります。"
+
+# bd6091fd7a904426bed514c39db67dbf
+msgid "Logical table name"
+msgstr "論理テーブル名"
+
+# e5917d22f7f84aa18f7bc302ba7590bc
+msgid ""
+"The name of logical table. It's prefix of shard names. For example, ``Logs`` "
+"is a logical table name and ``Logs_20150814`` and ``Logs_20150815`` are "
+"shard names."
+msgstr ""
+"論理テーブルの名前です。これはシャード名のプレフィックスです。例えば、 "
+"``Logs`` が論理テーブル名で、 ``Logs_20150814`` と ``Logs_20150815`` がシャー"
+"ド名です。"
+
+# d067ef92484248e883e2559572317d42
+msgid "Shard"
+msgstr "シャード"
+
+# 595ff57be58e4974a9b44d3715b12631
+msgid ""
+"It's a table that has records in a day or month.  One shard has only partial "
+"records."
+msgstr ""
+"1日分または1ヶ月分のレコードを格納しているテーブルです。1つのシャードには一部"
+"のレコードのみがあります。"
+
+# f789c10f87964cd99d9653c1ec0e5f85
+msgid ""
+"Shard name (= table name) must follow ``${LOGICAL_TABLE_NAME}_${YYYYMMDD}`` "
+"format or ``${LOGICAL_TABLE_NAME}_${YYYYMM}`` format. ``${LOGICAL_TABLE_NAME}"
+"`` is expanded to logical table name. ``${YYYYMMDD}`` is expanded to day. ``"
+"${YYYYMM}`` is expanded to month."
+msgstr ""
+"シャード名（＝テーブル名）は ``${LOGICAL_TABLE_NAME}_${YYYYMMDD}`` という"
+"フォーマットか ``${LOGICAL_TABLE_NAME}_${YYYYMM}`` というフォーマットになって"
+"います。 ``${LOGICAL_TABLE_NAME}`` は論理テーブル名に置き換えてください。 ``"
+"${YYYYMMDD}`` は日に置き換えてください。 ``${YYYYMM}`` は月に置き換えてくださ"
+"い。"
+
+# 6f5bb79830824e888ce0665eec655c18
+msgid ""
+"For example, ``Logs_20150814`` is consists of ``Logs`` logical name and "
+"``20150814`` day."
+msgstr ""
+"例えば、 ``Logs_20150814`` を分解すると ``Logs`` という論理テーブル名と "
+"``20150814`` という日になります。"
+
+# f5f8a8429f494d15a21542397a48b5b4
+msgid "Rules"
+msgstr "ルール"
+
 msgid "Suggest"
 msgstr "サジェスト"
 
