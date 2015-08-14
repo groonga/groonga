@@ -25,7 +25,7 @@ Summary
 supports full ``thread_count`` features.
 
 :doc:`/reference/executables/groonga-httpd` supports only one feature
-that returns the max number of threads. ``thread_count`` for
+that returns the max number of threads. The max number of threads of
 :doc:`/reference/executables/groonga-httpd` always returns ``1``
 because :doc:`/reference/executables/groonga-httpd` uses single thread
 model.
@@ -79,6 +79,8 @@ There is no required parameters.
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^
 
+There is one optional parameter.
+
 .. _thread-count-new-count:
 
 ``new_count``
@@ -86,7 +88,7 @@ Optional parameters
 
 Specifies the new max number of threads.
 
-You must specify unsigned integer:
+You must specify positive integer:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/thread_count/new_count.log

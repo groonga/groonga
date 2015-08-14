@@ -5440,6 +5440,9 @@ msgstr ""
 msgid "This section describes parameters of ``logical_parameters``."
 msgstr "このセクションでは ``logical_parameters`` の引数について説明します。"
 
+msgid "There is one optional parameter."
+msgstr "省略可能な引数が1つあります。"
+
 # 7e5f958ab4f44a8087b0833fc60a0136
 msgid "``range_index``"
 msgstr ""
@@ -10025,6 +10028,103 @@ msgstr ""
 
 msgid ":doc:`/reference/commands/tokenize`"
 msgstr ""
+
+# 4e8b0f6aec594ec2b72eaf738d2e7dbc
+msgid "``thread_count``"
+msgstr ""
+
+msgid "``thread_count`` has the following two features:"
+msgstr "``thread_count`` は次の2つの機能を提供します。"
+
+# 764c7094f55347f1baf508249903cddb
+msgid ""
+":doc:`/reference/executables/groonga` is the only Groonga server that "
+"supports full ``thread_count`` features."
+msgstr ""
+":doc:`/reference/executables/groonga` は ``thread_count`` のすべての機能を提"
+"供する唯一のGroongaサーバーです。"
+
+# ee3a08a9f8cd4ffda0d2d70fbe286883
+msgid ""
+":doc:`/reference/executables/groonga-httpd` supports only one feature that "
+"returns the max number of threads. The max number of threads of :doc:`/"
+"reference/executables/groonga-httpd` always returns ``1`` because :doc:`/"
+"reference/executables/groonga-httpd` uses single thread model."
+msgstr ""
+":doc:`/reference/executables/groonga-httpd` は最大スレッド数を返す機能だけを"
+"サポートしています。 :doc:`/reference/executables/groonga-httpd` の最大スレッ"
+"ド数は常に1です。なぜなら、 :doc:`/reference/executables/groonga-httpd` はシ"
+"ングルスレッドモデルを採用しているからです。"
+
+# d2dd04f9a8634435b8efffbb57b98ea5
+msgid ""
+"If you're using Groonga as a library, ``thread_count`` doesn't work without "
+"you set custom functions by :c:func:`grn_thread_set_get_count_func()` and :c:"
+"func:`grn_thread_set_set_count_func()`. If you set a function by :c:func:"
+"`grn_thread_set_get_count_func()`, the feature that returns the max number "
+"of threads works. If you set a function by :c:func:"
+"`grn_thread_set_set_count_func()`, the feature that sets the max number of "
+"threads works."
+msgstr ""
+"Groongaをライブラリーとして使っている場合、 :c:func:"
+"`grn_thread_set_get_count_func()` と :c:func:"
+"`grn_thread_set_set_count_func()` でカスタム関数を設定しない限り動きませ"
+"ん。 :c:func:`grn_thread_set_get_count_func()` でカスタム関数を設定すると最大"
+"スレッド数を返す機能が動きます。 :c:func:`grn_thread_set_set_count_func()` で"
+"カスタム関数を設定すると最大スレッド数を設定する機能が動きます。"
+
+msgid "``thread_count`` has only one optional parameter::"
+msgstr "``thread_count`` には省略可能な引数が1つあります::"
+
+msgid ""
+"You can get the max number of threads by calling without any parameters:"
+msgstr "引数なしで呼び出すと最大スレッド数を得られます。"
+
+# ad36efbec335413f819ba98807755916
+msgid "If it returns ``0``, your Groonga server doesn't support the feature."
+msgstr ""
+"``0`` が返ってきたら、そのGroongaサーバーはこの機能をサポートしていないという"
+"ことです。"
+
+msgid ""
+"You can set the max number of threads by calling ``new_count`` parameter:"
+msgstr "``new_count`` 引数つきで呼び出すと最大スレッド数を設定できます。"
+
+# c9ebfcbe84104711bd3a7ff497f253eb
+msgid ""
+"It returns the previous max number of threads when you pass ``new_count`` "
+"parameter."
+msgstr "``new_count`` 引数を渡したときは設定前の最大スレッド数が返ります。"
+
+# 4a4375d392864b309ad02aa21d744ad7
+msgid "``new_count``"
+msgstr ""
+
+msgid "Specifies the new max number of threads."
+msgstr "新しい最大スレッド数を指定します。"
+
+# 6e615cb18ac04fca9e0207df881e943b
+msgid "You must specify positive integer:"
+msgstr "正の整数を指定してください。"
+
+# c4d28ae72ea943b18a2797132f2f6f1d
+msgid ""
+"If you specify ``new_count`` parameter, ``thread_count`` returns the max "
+"number of threads before ``new_count`` is applied."
+msgstr ""
+"``new_count`` 引数を指定した場合、 ``thread_count`` は ``new_count`` を適用す"
+"る前の最大スレッド数を返します。"
+
+msgid "The command returns the max number of threads as body::"
+msgstr "このコマンドのボディは最大スレッド数になります::"
+
+# 2e855028334b42bf967eca5a26a37df8
+msgid ""
+"If ``new_count`` is specified, ``N_MAX_THREADS`` is the max number of "
+"threads before ``new_count`` is applied."
+msgstr ""
+"``new_count`` を指定したときは ``N_MAX_THREADS`` は ``new_count`` を適用する"
+"前の最大スレッド数になります。"
 
 msgid "``tokenize``"
 msgstr ""
