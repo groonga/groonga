@@ -15,7 +15,7 @@ for argument in "$@"; do
       options="${options} ${argument}"
       ;;
     --enable-debug=*)
-      options="${options} CFLAGS='-O0 -g3'"
+      options="${options} CFLAGS='${CFLAGS} -O0 -g3'"
       ;;
     --enable-shared-onigmo)
       options="${options} --enable-shared"
