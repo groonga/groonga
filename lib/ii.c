@@ -7167,6 +7167,9 @@ struct _grn_ii_buffer {
   uint32_t ncounters;
   size_t total_size;
   size_t curr_size;
+  ii_buffer_value *values;
+  unsigned int nvalues;
+  unsigned int max_nvalues;
   // stuff for merging
   grn_ii *ii;
   uint32_t lseg;
@@ -7177,9 +7180,6 @@ struct _grn_ii_buffer {
   size_t packed_buf_size;
   size_t packed_len;
   size_t total_chunk_size;
-  ii_buffer_value *values;
-  unsigned int nvalues;
-  unsigned int max_nvalues;
 };
 
 static ii_buffer_block *
