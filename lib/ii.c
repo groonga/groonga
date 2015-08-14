@@ -7555,7 +7555,25 @@ grn_ii_buffer_tokenize_value(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
 static void
 grn_ii_buffer_tokenize(grn_ctx *ctx, grn_ii_buffer *ii_buffer, grn_id rid)
 {
+  // Estimate the size of tokenized values and resize the internal buffer if
+  // the buffer size is not enough.
   unsigned int i;
+  uint32_t est_len = 0;
+  for (i = 0; i < ii_buffer->nvalues; i++) {
+    est_len += ii_buffer->values[i].len * 2 + 2;
+  }
+  if (ii_buffer->block_buf_size < ii_buffer->block_pos + est_len) {
+    grn_ii_buffer_flush(ctx, ii_buffer);
+  }
+  if (ii_buffer->block_buf_size < est_len) {
+    grn_id *block_buf = (grn_id *)GRN_REALLOC(ii_buffer->block_buf,
+                                              est_len * sizeof(grn_id));
+    if (block_buf) {
+      ii_buffer->block_buf = block_buf;
+      ii_buffer->block_buf_size = est_len;
+    }
+  }
+  // Tokenize values.
   for (i = 0; i < ii_buffer->nvalues; i++) {
     const ii_buffer_value *value = &ii_buffer->values[i];
     if (value->len) {
@@ -8111,7 +8129,6 @@ grn_ii_buffer_parse(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
     if ((tc = grn_table_cursor_open(ctx, target,
                                     NULL, 0, NULL, 0, 0, -1,
                                     GRN_CURSOR_BY_ID))) {
-      uint32_t est_len;
       grn_id rid;
       while ((rid = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
         unsigned int j;
@@ -8164,22 +8181,6 @@ grn_ii_buffer_parse(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
             ERR(GRN_INVALID_ARGUMENT,
                 "[index] invalid object assigned as value");
             break;
-          }
-        }
-
-        est_len = 0;
-        for (j = 0; j < ii_buffer->nvalues; j++) {
-          est_len += ii_buffer->values[j].len * 2 + 2;
-        }
-        if (ii_buffer->block_buf_size < ii_buffer->block_pos + est_len) {
-          grn_ii_buffer_flush(ctx, ii_buffer);
-        }
-        if (ii_buffer->block_buf_size < est_len) {
-          grn_id *block_buf = (grn_id *)GRN_REALLOC(ii_buffer->block_buf,
-                                                    est_len * sizeof(grn_id));
-          if (block_buf) {
-            ii_buffer->block_buf = block_buf;
-            ii_buffer->block_buf_size = est_len;
           }
         }
         grn_ii_buffer_tokenize(ctx, ii_buffer, rid);
