@@ -26,6 +26,7 @@ Reference manual
    reference/operations
    reference/suggest
    reference/indexing
+   reference/sharding
    reference/log
    reference/tuning
    reference/api
