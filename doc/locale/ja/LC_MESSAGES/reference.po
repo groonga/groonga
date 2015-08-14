@@ -5113,12 +5113,6 @@ msgid ""
 "it, your database may be broken and/or your process may be crashed."
 msgstr ""
 
-msgid "``lock_clear`` command takes only one parameter."
-msgstr "``lock_clear`` コマンドの引数は1つだけです::"
-
-msgid "There is no required parameter::"
-msgstr "必須の引数はありません::"
-
 # 088d6f28963e451aba302359d0045188
 msgid ""
 "If ``target_name`` parameters is omitted, database is used for the target "
@@ -5271,8 +5265,8 @@ msgstr ""
 msgid "Load proper data into parted tables on your own."
 msgstr "自分で個々のテーブルへ適切なデータをロードしないといけない"
 
-msgid "``logical_count`` command has seven parameters."
-msgstr "``logical_count`` コマンドは7つの引数があります。"
+msgid "This command takes many parameters."
+msgstr "このコマンドにはたくさんの引数があります。"
 
 msgid "The required parameters are ``logical_table`` and ``shard_key``::"
 msgstr "必須引数は2つあります。 ``logical_table`` と ``shard_key`` です。"
@@ -5451,8 +5445,6 @@ msgstr ""
 msgid "``logical_range_filter``"
 msgstr ""
 
-msgid "This command takes many parameters."
-msgstr "このコマンドにはたくさんの引数があります。"
 
 msgid ""
 "Register ``sharding`` plugin to use ``logical_range_filter`` command in "
@@ -9895,9 +9887,6 @@ msgstr ""
 "``table_tokenize`` コマンドは指定したテーブルのトークナイザーでテキストをトー"
 "クナイズします。"
 
-msgid "This command takes required parameters and optional parameters."
-msgstr ""
-
 msgid "``table`` and ``string`` are required parameters. Others are optional::"
 msgstr "``table`` と ``string `` は必須の引数です。残りは省略できます::"
 
@@ -10087,7 +10076,8 @@ msgstr ""
 
 msgid ""
 "``tokenizer`` and ``string`` are required parameters. Others are optional::"
-msgstr "``tokenizer`` と ``string`` が必須の引数で、他の引数はすべて省略できます::"
+msgstr ""
+"``tokenizer`` と ``string`` が必須の引数で、他の引数はすべて省略できます::"
 
 msgid ""
 "It has only required parameters. ``tokenizer`` is ``TokenBigram`` and "
