@@ -6204,6 +6204,86 @@ msgstr "ノーマライザー名。"
 msgid ":doc:`/reference/commands/normalize`"
 msgstr ""
 
+# a79921df5e4748a8bb6005ff6d80c831
+msgid "``object_exist``"
+msgstr ""
+
+# 3b753d3f94de4e03a34f1cdf2878c00e
+msgid ""
+"``object_exist`` returns whether object with the specified name exists or "
+"not in database."
+msgstr ""
+"``object_exist`` は指定した名前のオブジェクトがデータベースに存在するかどうか"
+"を返します。"
+
+msgid ""
+"It's a light operation. It just checks existence of the name in the "
+"database. It doesn't load the specified object from disk."
+msgstr ""
+"これは軽い操作です。データベース内に名前が存在するかだけをチェックします。"
+"ディスクから該当オブジェクトをロードしません。"
+
+# cbd53a668fac448a8a908fedd821f03e
+msgid ""
+"``object_exist`` doesn't check object type. The existing object may be "
+"table, column, function and so on."
+msgstr ""
+"``object_exist`` はオブジェクトの種類をチェックしません。存在しているオブジェ"
+"クトはテーブルかもしれませんし、カラムや関数かもしれません。"
+
+msgid "``object_exist`` has only one required parameter::"
+msgstr "``object_exist`` には必須な引数が1つあります::"
+
+# 51711cc395bb43a99e7b2335e597038f
+msgid "You can check whether the name is already used in database:"
+msgstr "データベース内で指定した名前がすでに使われているかをチェックできます。"
+
+# 514205147f2546fdb2ab3b590719fd43
+msgid ""
+"The ``object_exist Users`` returns ``false`` before we create ``Users`` "
+"table."
+msgstr ""
+"``object_exist Users`` は ``Users`` テーブルを作る前は ``false`` を返します。"
+
+# 39f96b62e72e49bfbc2ad33320641781
+msgid ""
+"The ``object_exist Users`` returns ``true`` after we create ``Users`` table."
+msgstr ""
+"``object_exist Users`` は ``Users`` テーブルを作った後は ``true`` を返しま"
+"す。"
+
+msgid "There is only one required parameters."
+msgstr "1つだけ必須の引数があります。"
+
+msgid "Specifies the object name to be checked."
+msgstr "チェック対象のオブジェクト名を指定してください。"
+
+# 50ec7e9633aa436fbe70a37e6eadc7c3
+msgid ""
+"If you want to check existence of a column, use ``TABLE_NAME.COLUMN_NAME`` "
+"format like the following:"
+msgstr ""
+"カラムが存在するかどうかをチェックしたいときは、次のように ``テーブル名.カラ"
+"ム名`` という書式を使ってください。"
+
+# 449e58caa8f747a8a70058dcc9331c38
+msgid ""
+"``Logs`` is table name and ``timestamp`` is column name in ``Logs."
+"timestamp``."
+msgstr ""
+"``Logs.timestamp`` 内の ``Logs`` がテーブル名で ``timestamp`` がカラム名で"
+"す。"
+
+msgid ""
+"The command returns ``true`` as body if object with the specified name "
+"exists in database such as::"
+msgstr ""
+"データベース内に指定した名前のオブジェクトが存在するときは、このコマンドは以"
+"下のようにボディとして ``true`` を返します::"
+
+msgid "The command returns ``false`` otherwise such as::"
+msgstr "そうでない場合は ``false`` を返します::"
+
 # 12f33039cea541ee9dd166f021b82b36
 msgid "``plugin_register``"
 msgstr ""
@@ -19152,33 +19232,6 @@ msgstr ""
 "クス時に、テキストの先頭にテキストの先頭であるというマーク（ ``U+FFEF`` ）を"
 "入れ、テキストの最後にテキストの最後であるというマーク（ ``U+FFF0`` ）を入れ"
 "ます。"
-
-# 3fd096f4ca0546478dc4e6d6f2c18a70
-msgid ""
-"The beginning of text mark is used for the beginning of text search by ``"
-"\\A``. If you use ``TokenRegexp`` for tokenizing query, ``TokenRegexp`` adds "
-"the beginning of text mark (``U+FFEF``) as the first token. The beginning of "
-"text mark must be appeared at the first, you can get results of the "
-"beginning of text search."
-msgstr ""
-"``\\A`` で検索したとき、テキストの先頭であるというマークを使います。クエリー"
-"をトークナイズするために ``TokenRegexp`` を使うときは、 ``TokenRegexp`` は最"
-"初のトークンとしてテキストの先頭であるというマーク（ ``U+FFEF`` ）を追加しま"
-"す。テキストの先頭であるというマークは先頭にしか存在しないはずなので、テキス"
-"トの先頭であるという検索結果を得ることができます。"
-
-# d83dc0889fe240d0824e46814d5ef547
-msgid ""
-"The end of text mark is used for the end of text search by ``\\z``. If you "
-"use ``TokenRegexp`` for tokenizing query, ``TokenRegexp`` adds the end of "
-"text mark (``U+FFF0``) as the last token. The end of text mark must be "
-"appeared at the end, you can get results of the end of text search."
-msgstr ""
-"``\\z`` で検索したとき、テキストの最後であるというマークを使います。クエリー"
-"をトークナイズするために ``TokenRegexp`` を使うときは、 ``TokenRegexp`` は最"
-"後のトークンとしてテキストの最後であるというマーク（ ``U+FFF0`` ）を追加しま"
-"す。テキストの最後であるというマークは最後にしか存在しないはずなので、テキス"
-"トの最後であるという検索結果を得ることができます。"
 
 msgid "Tuning"
 msgstr "チューニング"
