@@ -7957,7 +7957,8 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
 static void
 ii_buffer_values_append(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
                         unsigned int sid, unsigned weight,
-                        const char *p, uint32_t len, grn_bool need_copy) {
+                        const char *p, uint32_t len, grn_bool need_copy)
+{
   // TODO: Make a copy of a given value if need_copy == GRN_TRUE.
   if (ii_buffer->nvalues == ii_buffer->max_nvalues) {
     unsigned new_max_nvalues = ii_buffer->max_nvalues * 2;
