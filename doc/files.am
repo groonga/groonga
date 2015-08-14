@@ -38,6 +38,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/cache_limit/set.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_list/column_list.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_rename/column_rename.log \
+	$(top_srcdir)/doc/source/example/reference/commands/database_unmap/usage_failure.log \
+	$(top_srcdir)/doc/source/example/reference/commands/database_unmap/usage_success.log \
 	$(top_srcdir)/doc/source/example/reference/commands/delete/cascade.log \
 	$(top_srcdir)/doc/source/example/reference/commands/delete/status.log \
 	$(top_srcdir)/doc/source/example/reference/commands/io_flush/all.log \
@@ -54,6 +56,12 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_count/count_shutdown.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_count/setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_count/setup_schema.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_parameters/range_index_always.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_parameters/range_index_auto.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_parameters/range_index_never.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_parameters/usage_get.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_parameters/usage_register.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_parameters/usage_set.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_calc_types.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_label_calc_types.log \
@@ -80,8 +88,14 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/sortby.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/usage_plugin_register.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/usage_setup.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_shard_list/logical_table.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_shard_list/usage_list.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_shard_list/usage_register.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_shard_list/usage_shards.log \
 	$(top_srcdir)/doc/source/example/reference/commands/normalize/normalizer_auto_ascii.log \
 	$(top_srcdir)/doc/source/example/reference/commands/normalizer_list/simple_example.log \
+	$(top_srcdir)/doc/source/example/reference/commands/object_exist/name_column.log \
+	$(top_srcdir)/doc/source/example/reference/commands/object_exist/usage.log \
 	$(top_srcdir)/doc/source/example/reference/commands/plugin_register/query_expanders_tsv.log \
 	$(top_srcdir)/doc/source/example/reference/commands/plugin_unregister/query_expanders_tsv.log \
 	$(top_srcdir)/doc/source/example/reference/commands/register/query_expanders_tsv.log \
@@ -160,6 +174,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/table_list.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_rename/usage.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_tokenize/simple_example.log \
+	$(top_srcdir)/doc/source/example/reference/commands/thread_count/new_count.log \
+	$(top_srcdir)/doc/source/example/reference/commands/thread_count/usage_get.log \
+	$(top_srcdir)/doc/source/example/reference/commands/thread_count/usage_set.log \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/add_mode.log \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/flags_enable_tokenized_delimiter.log \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/get_mode.log \
@@ -537,6 +554,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/api/grn_search.rst \
 	$(top_srcdir)/doc/source/reference/api/grn_table.rst \
 	$(top_srcdir)/doc/source/reference/api/grn_table_cursor.rst \
+	$(top_srcdir)/doc/source/reference/api/grn_thread.rst \
 	$(top_srcdir)/doc/source/reference/api/grn_type.rst \
 	$(top_srcdir)/doc/source/reference/api/grn_user_data.rst \
 	$(top_srcdir)/doc/source/reference/api/overview.rst \
@@ -559,6 +577,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/column_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/column_remove.rst \
 	$(top_srcdir)/doc/source/reference/commands/column_rename.rst \
+	$(top_srcdir)/doc/source/reference/commands/database_unmap.rst \
 	$(top_srcdir)/doc/source/reference/commands/define_selector.rst \
 	$(top_srcdir)/doc/source/reference/commands/defrag.rst \
 	$(top_srcdir)/doc/source/reference/commands/delete.rst \
@@ -573,9 +592,11 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/logical_parameters.rst \
 	$(top_srcdir)/doc/source/reference/commands/logical_range_filter.rst \
 	$(top_srcdir)/doc/source/reference/commands/logical_select.rst \
+	$(top_srcdir)/doc/source/reference/commands/logical_shard_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/logical_table_remove.rst \
 	$(top_srcdir)/doc/source/reference/commands/normalize.rst \
 	$(top_srcdir)/doc/source/reference/commands/normalizer_list.rst \
+	$(top_srcdir)/doc/source/reference/commands/object_exist.rst \
 	$(top_srcdir)/doc/source/reference/commands/plugin_register.rst \
 	$(top_srcdir)/doc/source/reference/commands/plugin_unregister.rst \
 	$(top_srcdir)/doc/source/reference/commands/quit.rst \
@@ -593,6 +614,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/table_remove.rst \
 	$(top_srcdir)/doc/source/reference/commands/table_rename.rst \
 	$(top_srcdir)/doc/source/reference/commands/table_tokenize.rst \
+	$(top_srcdir)/doc/source/reference/commands/thread_count.rst \
 	$(top_srcdir)/doc/source/reference/commands/tokenize.rst \
 	$(top_srcdir)/doc/source/reference/commands/tokenizer_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/truncate.rst \
@@ -643,6 +665,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/scorers/scorer_tf_at_most.rst \
 	$(top_srcdir)/doc/source/reference/scorers/scorer_tf_idf.rst \
 	$(top_srcdir)/doc/source/reference/scoring_note.rst \
+	$(top_srcdir)/doc/source/reference/sharding.rst \
 	$(top_srcdir)/doc/source/reference/suggest.rst \
 	$(top_srcdir)/doc/source/reference/suggest/completion.rst \
 	$(top_srcdir)/doc/source/reference/suggest/correction.rst \
@@ -732,6 +755,8 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/cache_limit/set.log \
 	source/example/reference/commands/column_list/column_list.log \
 	source/example/reference/commands/column_rename/column_rename.log \
+	source/example/reference/commands/database_unmap/usage_failure.log \
+	source/example/reference/commands/database_unmap/usage_success.log \
 	source/example/reference/commands/delete/cascade.log \
 	source/example/reference/commands/delete/status.log \
 	source/example/reference/commands/io_flush/all.log \
@@ -748,6 +773,12 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/logical_count/count_shutdown.log \
 	source/example/reference/commands/logical_count/setup_data.log \
 	source/example/reference/commands/logical_count/setup_schema.log \
+	source/example/reference/commands/logical_parameters/range_index_always.log \
+	source/example/reference/commands/logical_parameters/range_index_auto.log \
+	source/example/reference/commands/logical_parameters/range_index_never.log \
+	source/example/reference/commands/logical_parameters/usage_get.log \
+	source/example/reference/commands/logical_parameters/usage_register.log \
+	source/example/reference/commands/logical_parameters/usage_set.log \
 	source/example/reference/commands/logical_select/drilldown.log \
 	source/example/reference/commands/logical_select/drilldown_calc_types.log \
 	source/example/reference/commands/logical_select/drilldown_label_calc_types.log \
@@ -774,8 +805,14 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/logical_select/sortby.log \
 	source/example/reference/commands/logical_select/usage_plugin_register.log \
 	source/example/reference/commands/logical_select/usage_setup.log \
+	source/example/reference/commands/logical_shard_list/logical_table.log \
+	source/example/reference/commands/logical_shard_list/usage_list.log \
+	source/example/reference/commands/logical_shard_list/usage_register.log \
+	source/example/reference/commands/logical_shard_list/usage_shards.log \
 	source/example/reference/commands/normalize/normalizer_auto_ascii.log \
 	source/example/reference/commands/normalizer_list/simple_example.log \
+	source/example/reference/commands/object_exist/name_column.log \
+	source/example/reference/commands/object_exist/usage.log \
 	source/example/reference/commands/plugin_register/query_expanders_tsv.log \
 	source/example/reference/commands/plugin_unregister/query_expanders_tsv.log \
 	source/example/reference/commands/register/query_expanders_tsv.log \
@@ -854,6 +891,9 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/table_list.log \
 	source/example/reference/commands/table_rename/usage.log \
 	source/example/reference/commands/table_tokenize/simple_example.log \
+	source/example/reference/commands/thread_count/new_count.log \
+	source/example/reference/commands/thread_count/usage_get.log \
+	source/example/reference/commands/thread_count/usage_set.log \
 	source/example/reference/commands/tokenize/add_mode.log \
 	source/example/reference/commands/tokenize/flags_enable_tokenized_delimiter.log \
 	source/example/reference/commands/tokenize/get_mode.log \
@@ -1231,6 +1271,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/api/grn_search.rst \
 	source/reference/api/grn_table.rst \
 	source/reference/api/grn_table_cursor.rst \
+	source/reference/api/grn_thread.rst \
 	source/reference/api/grn_type.rst \
 	source/reference/api/grn_user_data.rst \
 	source/reference/api/overview.rst \
@@ -1253,6 +1294,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/column_list.rst \
 	source/reference/commands/column_remove.rst \
 	source/reference/commands/column_rename.rst \
+	source/reference/commands/database_unmap.rst \
 	source/reference/commands/define_selector.rst \
 	source/reference/commands/defrag.rst \
 	source/reference/commands/delete.rst \
@@ -1267,9 +1309,11 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/logical_parameters.rst \
 	source/reference/commands/logical_range_filter.rst \
 	source/reference/commands/logical_select.rst \
+	source/reference/commands/logical_shard_list.rst \
 	source/reference/commands/logical_table_remove.rst \
 	source/reference/commands/normalize.rst \
 	source/reference/commands/normalizer_list.rst \
+	source/reference/commands/object_exist.rst \
 	source/reference/commands/plugin_register.rst \
 	source/reference/commands/plugin_unregister.rst \
 	source/reference/commands/quit.rst \
@@ -1287,6 +1331,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/table_remove.rst \
 	source/reference/commands/table_rename.rst \
 	source/reference/commands/table_tokenize.rst \
+	source/reference/commands/thread_count.rst \
 	source/reference/commands/tokenize.rst \
 	source/reference/commands/tokenizer_list.rst \
 	source/reference/commands/truncate.rst \
@@ -1337,6 +1382,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/scorers/scorer_tf_at_most.rst \
 	source/reference/scorers/scorer_tf_idf.rst \
 	source/reference/scoring_note.rst \
+	source/reference/sharding.rst \
 	source/reference/suggest.rst \
 	source/reference/suggest/completion.rst \
 	source/reference/suggest/correction.rst \
@@ -1560,6 +1606,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/api/grn_search.txt \
 	html/_sources/reference/api/grn_table.txt \
 	html/_sources/reference/api/grn_table_cursor.txt \
+	html/_sources/reference/api/grn_thread.txt \
 	html/_sources/reference/api/grn_type.txt \
 	html/_sources/reference/api/grn_user_data.txt \
 	html/_sources/reference/api/overview.txt \
@@ -1582,6 +1629,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/column_list.txt \
 	html/_sources/reference/commands/column_remove.txt \
 	html/_sources/reference/commands/column_rename.txt \
+	html/_sources/reference/commands/database_unmap.txt \
 	html/_sources/reference/commands/define_selector.txt \
 	html/_sources/reference/commands/defrag.txt \
 	html/_sources/reference/commands/delete.txt \
@@ -1596,9 +1644,11 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/logical_parameters.txt \
 	html/_sources/reference/commands/logical_range_filter.txt \
 	html/_sources/reference/commands/logical_select.txt \
+	html/_sources/reference/commands/logical_shard_list.txt \
 	html/_sources/reference/commands/logical_table_remove.txt \
 	html/_sources/reference/commands/normalize.txt \
 	html/_sources/reference/commands/normalizer_list.txt \
+	html/_sources/reference/commands/object_exist.txt \
 	html/_sources/reference/commands/plugin_register.txt \
 	html/_sources/reference/commands/plugin_unregister.txt \
 	html/_sources/reference/commands/quit.txt \
@@ -1616,6 +1666,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/table_remove.txt \
 	html/_sources/reference/commands/table_rename.txt \
 	html/_sources/reference/commands/table_tokenize.txt \
+	html/_sources/reference/commands/thread_count.txt \
 	html/_sources/reference/commands/tokenize.txt \
 	html/_sources/reference/commands/tokenizer_list.txt \
 	html/_sources/reference/commands/truncate.txt \
@@ -1661,6 +1712,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/scorers/scorer_tf_at_most.txt \
 	html/_sources/reference/scorers/scorer_tf_idf.txt \
 	html/_sources/reference/scoring_note.txt \
+	html/_sources/reference/sharding.txt \
 	html/_sources/reference/suggest.txt \
 	html/_sources/reference/suggest/completion.txt \
 	html/_sources/reference/suggest/correction.txt \
@@ -1783,6 +1835,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/api/grn_search.html \
 	html/reference/api/grn_table.html \
 	html/reference/api/grn_table_cursor.html \
+	html/reference/api/grn_thread.html \
 	html/reference/api/grn_type.html \
 	html/reference/api/grn_user_data.html \
 	html/reference/api/overview.html \
@@ -1805,6 +1858,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/column_list.html \
 	html/reference/commands/column_remove.html \
 	html/reference/commands/column_rename.html \
+	html/reference/commands/database_unmap.html \
 	html/reference/commands/define_selector.html \
 	html/reference/commands/defrag.html \
 	html/reference/commands/delete.html \
@@ -1819,9 +1873,11 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/logical_parameters.html \
 	html/reference/commands/logical_range_filter.html \
 	html/reference/commands/logical_select.html \
+	html/reference/commands/logical_shard_list.html \
 	html/reference/commands/logical_table_remove.html \
 	html/reference/commands/normalize.html \
 	html/reference/commands/normalizer_list.html \
+	html/reference/commands/object_exist.html \
 	html/reference/commands/plugin_register.html \
 	html/reference/commands/plugin_unregister.html \
 	html/reference/commands/quit.html \
@@ -1839,6 +1895,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/table_remove.html \
 	html/reference/commands/table_rename.html \
 	html/reference/commands/table_tokenize.html \
+	html/reference/commands/thread_count.html \
 	html/reference/commands/tokenize.html \
 	html/reference/commands/tokenizer_list.html \
 	html/reference/commands/truncate.html \
@@ -1884,6 +1941,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/scorers/scorer_tf_at_most.html \
 	html/reference/scorers/scorer_tf_idf.html \
 	html/reference/scoring_note.html \
+	html/reference/sharding.html \
 	html/reference/suggest.html \
 	html/reference/suggest/completion.html \
 	html/reference/suggest/correction.html \
