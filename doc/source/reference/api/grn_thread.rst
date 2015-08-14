@@ -106,7 +106,7 @@ Reference
    :c:func:`grn_thread_get_count()`.
 
    :param func: The custom function that returns the max number of threads.
-   :param data: An opaque data to be passed to ``func`` when ``func``
+   :param data: An user data to be passed to ``func`` when ``func``
                 is called.
 
 .. c:function:: void grn_thread_set_set_count_func(grn_thread_set_count_func func, void *data)
@@ -117,6 +117,6 @@ Reference
    :c:func:`grn_thread_set_count()`.
 
    :param func: The custom function that sets the max number of threads.
-   :param data: An opaque data to be passed to ``func`` when ``func``
+   :param data: An user data to be passed to ``func`` when ``func``
                 is called.
 

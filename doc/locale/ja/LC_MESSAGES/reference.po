@@ -2065,6 +2065,107 @@ msgstr ""
 msgid "cursorが属するtableを返します。"
 msgstr ""
 
+msgid "``grn_thread_*``"
+msgstr ""
+
+# c6ae5cc760684f3ab05845887ae2f555
+msgid "Groonga provides thread related APIs with ``grn_thread_`` prefix."
+msgstr "スレッド関連のAPIには ``grn_thread_`` プレフィックスがついています。"
+
+# 4a6f0e1846e84cc592d76474ecac91cf
+msgid "Normally, you don't need to use these APIs."
+msgstr "通常、このAPIを使う必要はありません。"
+
+# 6316ce83e25349549d0e032d37d9258b
+msgid "You may want to use these APIs when you write a Groonga server."
+msgstr "Groongaサーバーを実装するときにこのAPIを使いたくなるかもしれません。"
+
+# b30994eeed2d48e3bff36b3415bc8e9e
+msgid ""
+"Here is a real word use case of ``grn_thread_*`` APIs by :doc:`/reference/"
+"executables/groonga`. :doc:`/reference/executables/groonga` increases its "
+"thread pool size when the max number of threads is increased. :doc:`/"
+"reference/executables/groonga` decreases its thread pool size and stops too "
+"many threads when the max number of threads is decreased."
+msgstr ""
+"以下は、 :doc:`/reference/executables/groonga` が実際に使っている "
+"``grn_thread_*`` APIの使い方です。 :doc:`/reference/executables/groonga` は最"
+"大スレッド数を増やすと、スレッドプールのサイズを増やします。一方、最大スレッ"
+"ド数を減らすと、スレッドプールのサイズを減らします。もし、すでに減少後のス"
+"レッドプールのサイズ以上のスレッドが動いていたらそれらを止めます。"
+
+# baa405e8975446ca8b30c57d3b9061ca
+msgid "It's the type of function that returns the max number of threads."
+msgstr "最大スレッド数を返す関数の型です。"
+
+# b438b4843d3d41ac9ea350e141c0155c
+msgid "It's the type of function that sets the max number of threads."
+msgstr "最大スレッド数を設定する関数の型です。"
+
+msgid "It returns the max number of threads."
+msgstr "最大スレッド数を返します。"
+
+# ae854b13510149c18f28da3daab30415
+msgid ""
+"If :c:type:`grn_thread_get_count_func` isn't set by :c:func:"
+"`grn_thread_set_get_count_func()`, it always returns ``0``."
+msgstr ""
+":c:func:`grn_thread_set_get_count_func()` で :c:type:"
+"`grn_thread_get_count_func` を設定していない場合は、常に ``0`` を返します。"
+
+msgid "The max number of threads or ``0``."
+msgstr "最大スレッド数または ``0`` 。"
+
+msgid "It sets the max number of threads."
+msgstr "最大スレッド数を設定します。"
+
+# d70504eb8c29440f92fad6f12e5c95d1
+msgid ""
+"If :c:type:`grn_thread_set_count_func` isn't set by :c:func:"
+"`grn_thread_set_set_count_func()`, it does nothing."
+msgstr ""
+":c:func:`grn_thread_set_set_count_func()` で :c:type:"
+"`grn_thread_set_count_func` を設定していない場合はなにもしません。"
+
+msgid "The new max number of threads."
+msgstr "新しい最大スレッド数。"
+
+# 0b4f70d33fd941f8b591094c96210969
+msgid "It sets the custom function that returns the max number of threads."
+msgstr "最大スレッド数を返すカスタム関数を設定します。"
+
+# 28662d6ecdd146208aab442bb5008656
+msgid ""
+"``data`` is passed to ``func`` when ``func`` is called from :c:func:"
+"`grn_thread_get_count()`."
+msgstr ""
+"``data`` は :c:func:`grn_thread_get_count()` が ``func`` を呼ぶときに "
+"``func`` に渡されます。"
+
+# 2ef1d134699b415298538ec3b54b7618
+msgid "The custom function that returns the max number of threads."
+msgstr "最大スレッド数を返すカスタム関数。"
+
+# 6b2b8035c1a847e888aeb0183667051d
+# 6b112bf59dbc4320a4df44f4bfc5104a
+msgid "An user data to be passed to ``func`` when ``func`` is called."
+msgstr "``func`` が呼ばれるときに ``func`` に渡されるユーザーのためのデータ。"
+
+# 7baf2fa75fb44a47871dff12b7632e49
+msgid "It sets the custom function that sets the max number of threads."
+msgstr "最大スレッド数を設定するカスタム関数を設定します。"
+
+# e43438da901146a7b8e6d9510e17502c
+msgid ""
+"``data`` is passed to ``func`` when ``func`` is called from :c:func:"
+"`grn_thread_set_count()`."
+msgstr ""
+"``data`` は :c:func:`grn_thread_set_count()` が ``func`` を呼ぶときに "
+"``func`` に渡されます。"
+
+msgid "The custom function that sets the max number of threads."
+msgstr "最大スレッド数を設定するカスタム関数。"
+
 msgid "``grn_type``"
 msgstr ""
 
