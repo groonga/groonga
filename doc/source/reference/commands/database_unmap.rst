@@ -28,7 +28,7 @@ database. It releases memory to map tables and columns.
 
 .. caution::
 
-   You ca use this command only when :doc:`thread_count` returns
+   You can use this command only when :doc:`thread_count` returns
    ``1``. It means that this command doesn't work with multithreading.
 
 Syntax
