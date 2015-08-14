@@ -7480,82 +7480,92 @@ get_buffer_counter(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
 }
 
 static void
-grn_ii_buffer_tokenize(grn_ctx *ctx, grn_ii_buffer *ii_buffer, grn_id rid,
-                       unsigned int sid, unsigned int weight,
-                       const char *value, uint32_t value_len)
+grn_ii_buffer_tokenize_value(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
+                             grn_id rid, const ii_buffer_value *value)
 {
-  if (value_len) {
-    grn_obj *tmp_lexicon;
-    uint32_t est_len = value_len * 2 + 2;
-    if (ii_buffer->block_buf_size < ii_buffer->block_pos + est_len) {
-      return;
+  grn_obj *tmp_lexicon;
+  if ((tmp_lexicon = get_tmp_lexicon(ctx, ii_buffer))) {
+    unsigned int token_flags = 0;
+    grn_token_cursor *token_cursor;
+    grn_id *buffer = ii_buffer->block_buf;
+    uint32_t block_pos = ii_buffer->block_pos;
+    uint32_t ii_flags = ii_buffer->ii->header->flags;
+    buffer[block_pos++] = II_BUFFER_PACK(rid, II_BUFFER_TYPE_RID);
+    if (ii_flags & GRN_OBJ_WITH_SECTION) {
+      buffer[block_pos++] = value->sid;
     }
-    if ((tmp_lexicon = get_tmp_lexicon(ctx, ii_buffer))) {
-      unsigned int token_flags = 0;
-      grn_token_cursor *token_cursor;
-      grn_id *buffer = ii_buffer->block_buf;
-      uint32_t block_pos = ii_buffer->block_pos;
-      uint32_t ii_flags = ii_buffer->ii->header->flags;
-      buffer[block_pos++] = II_BUFFER_PACK(rid, II_BUFFER_TYPE_RID);
-      if (ii_flags & GRN_OBJ_WITH_SECTION) {
-        buffer[block_pos++] = sid;
-      }
-      if (weight) {
-        buffer[block_pos++] = II_BUFFER_PACK(weight, II_BUFFER_TYPE_WEIGHT);
-      }
-      if ((token_cursor = grn_token_cursor_open(ctx, tmp_lexicon,
-                                                value, value_len,
-                                                GRN_TOKEN_ADD, token_flags))) {
-        while (!token_cursor->status) {
-          grn_id tid;
-          if ((tid = grn_token_cursor_next(ctx, token_cursor))) {
-            ii_buffer_counter *counter;
-            counter = get_buffer_counter(ctx, ii_buffer, tmp_lexicon, tid);
-            if (!counter) { return; }
-            buffer[block_pos++] = tid;
-            if (ii_flags & GRN_OBJ_WITH_POSITION) {
-              buffer[block_pos++] = token_cursor->pos;
-            }
-            if (counter->last_rid != rid) {
-              counter->offset_rid += GRN_B_ENC_SIZE(rid - counter->last_rid);
-              counter->last_rid = rid;
-              counter->offset_sid += GRN_B_ENC_SIZE(sid - 1);
-              counter->last_sid = sid;
-              if (counter->last_tf) {
-                counter->offset_tf += GRN_B_ENC_SIZE(counter->last_tf - 1);
-                counter->last_tf = 0;
-                counter->offset_weight += GRN_B_ENC_SIZE(counter->last_weight);
-                counter->last_weight = 0;
-              }
-              counter->last_pos = 0;
-              counter->nrecs++;
-            } else if (counter->last_sid != sid) {
-              counter->offset_rid += GRN_B_ENC_SIZE(0);
-              counter->offset_sid +=
-                GRN_B_ENC_SIZE(sid - counter->last_sid - 1);
-              counter->last_sid = sid;
-              if (counter->last_tf) {
-                counter->offset_tf += GRN_B_ENC_SIZE(counter->last_tf - 1);
-                counter->last_tf = 0;
-                counter->offset_weight += GRN_B_ENC_SIZE(counter->last_weight);
-                counter->last_weight = 0;
-              }
-              counter->last_pos = 0;
-              counter->nrecs++;
-            }
-            counter->offset_pos +=
-              GRN_B_ENC_SIZE(token_cursor->pos - counter->last_pos);
-            counter->last_pos = token_cursor->pos;
-            counter->last_tf++;
-            counter->last_weight += weight;
-            counter->nposts++;
+    if (value->weight) {
+      buffer[block_pos++] = II_BUFFER_PACK(value->weight,
+                                           II_BUFFER_TYPE_WEIGHT);
+    }
+    if ((token_cursor = grn_token_cursor_open(ctx, tmp_lexicon,
+                                              value->p, value->len,
+                                              GRN_TOKEN_ADD, token_flags))) {
+      while (!token_cursor->status) {
+        grn_id tid;
+        if ((tid = grn_token_cursor_next(ctx, token_cursor))) {
+          ii_buffer_counter *counter;
+          counter = get_buffer_counter(ctx, ii_buffer, tmp_lexicon, tid);
+          if (!counter) { return; }
+          buffer[block_pos++] = tid;
+          if (ii_flags & GRN_OBJ_WITH_POSITION) {
+            buffer[block_pos++] = token_cursor->pos;
           }
+          if (counter->last_rid != rid) {
+            counter->offset_rid += GRN_B_ENC_SIZE(rid - counter->last_rid);
+            counter->last_rid = rid;
+            counter->offset_sid += GRN_B_ENC_SIZE(value->sid - 1);
+            counter->last_sid = value->sid;
+            if (counter->last_tf) {
+              counter->offset_tf += GRN_B_ENC_SIZE(counter->last_tf - 1);
+              counter->last_tf = 0;
+              counter->offset_weight += GRN_B_ENC_SIZE(counter->last_weight);
+              counter->last_weight = 0;
+            }
+            counter->last_pos = 0;
+            counter->nrecs++;
+          } else if (counter->last_sid != value->sid) {
+            counter->offset_rid += GRN_B_ENC_SIZE(0);
+            counter->offset_sid +=
+              GRN_B_ENC_SIZE(value->sid - counter->last_sid - 1);
+            counter->last_sid = value->sid;
+            if (counter->last_tf) {
+              counter->offset_tf += GRN_B_ENC_SIZE(counter->last_tf - 1);
+              counter->last_tf = 0;
+              counter->offset_weight += GRN_B_ENC_SIZE(counter->last_weight);
+              counter->last_weight = 0;
+            }
+            counter->last_pos = 0;
+            counter->nrecs++;
+          }
+          counter->offset_pos +=
+            GRN_B_ENC_SIZE(token_cursor->pos - counter->last_pos);
+          counter->last_pos = token_cursor->pos;
+          counter->last_tf++;
+          counter->last_weight += value->weight;
+          counter->nposts++;
         }
-        grn_token_cursor_close(ctx, token_cursor);
       }
-      ii_buffer->block_pos = block_pos;
+      grn_token_cursor_close(ctx, token_cursor);
+    }
+    ii_buffer->block_pos = block_pos;
+  }
+}
+
+static void
+grn_ii_buffer_tokenize(grn_ctx *ctx, grn_ii_buffer *ii_buffer, grn_id rid)
+{
+  unsigned int i;
+  for (i = 0; i < ii_buffer->nvalues; i++) {
+    const ii_buffer_value *value = &ii_buffer->values[i];
+    if (value->len) {
+      uint32_t est_len = value->len * 2 + 2;
+      if (ii_buffer->block_buf_size >= ii_buffer->block_pos + est_len) {
+        grn_ii_buffer_tokenize_value(ctx, ii_buffer, rid, value);
+      }
     }
   }
+  ii_buffer->nvalues = 0;
 }
 
 static void
@@ -7928,8 +7938,12 @@ grn_rc
 grn_ii_buffer_append(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
                      grn_id rid, unsigned int sid, grn_obj *value)
 {
-  grn_ii_buffer_tokenize(ctx, ii_buffer, rid, sid, 0,
-                         GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
+  ii_buffer_value tmp_value;
+  tmp_value.sid = sid;
+  tmp_value.weight = 0;
+  tmp_value.p = GRN_TEXT_VALUE(value);
+  tmp_value.len = GRN_TEXT_LEN(value);
+  grn_ii_buffer_tokenize_value(ctx, ii_buffer, rid, &tmp_value);
   return ctx->rc;
 }
 
@@ -8168,14 +8182,7 @@ grn_ii_buffer_parse(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
             ii_buffer->block_buf_size = est_len;
           }
         }
-
-        for (j = 0; j < ii_buffer->nvalues; j++) {
-          grn_ii_buffer_tokenize(ctx, ii_buffer, rid, ii_buffer->values[j].sid,
-                                 ii_buffer->values[j].weight,
-                                 ii_buffer->values[j].p,
-                                 ii_buffer->values[j].len);
-        }
-        ii_buffer->nvalues = 0;
+        grn_ii_buffer_tokenize(ctx, ii_buffer, rid);
       }
       grn_table_cursor_close(ctx, tc);
     }
