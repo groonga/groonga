@@ -7117,6 +7117,8 @@ typedef struct {
   unsigned int weight;
   const char *p;
   uint32_t len;
+  char *buf;
+  uint32_t cap;
 } ii_buffer_value;
 
 typedef struct {
@@ -7955,14 +7957,33 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
 }
 
 static void
+ii_buffer_value_init(grn_ctx *ctx, ii_buffer_value *value)
+{
+  value->sid = 0;
+  value->weight = 0;
+  value->p = NULL;
+  value->len = 0;
+  value->buf = NULL;
+  value->cap = 0;
+}
+
+static void
+ii_buffer_value_fin(grn_ctx *ctx, ii_buffer_value *value)
+{
+  if (value->buf) {
+    GRN_FREE(value->buf);
+  }
+}
+
+static void
 ii_buffer_values_append(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
                         unsigned int sid, unsigned weight,
                         const char *p, uint32_t len, grn_bool need_copy)
 {
-  // TODO: Make a copy of a given value if need_copy == GRN_TRUE.
   if (ii_buffer->nvalues == ii_buffer->max_nvalues) {
-    unsigned new_max_nvalues = ii_buffer->max_nvalues * 2;
-    unsigned new_size;
+    unsigned int i;
+    unsigned int new_max_nvalues = ii_buffer->max_nvalues * 2;
+    unsigned int new_size;
     ii_buffer_value *new_values;
     if (new_max_nvalues == 0) {
       new_max_nvalues = 1;
@@ -7972,14 +7993,31 @@ ii_buffer_values_append(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
     if (!new_values) {
       return;
     }
+    for (i = ii_buffer->max_nvalues; i < new_max_nvalues; i++) {
+      ii_buffer_value_init(ctx, &new_values[i]);
+    }
     ii_buffer->values = new_values;
     ii_buffer->max_nvalues = new_max_nvalues;
   }
-  if (ii_buffer->values) {
-    ii_buffer->values[ii_buffer->nvalues].sid = sid;
-    ii_buffer->values[ii_buffer->nvalues].weight = weight;
-    ii_buffer->values[ii_buffer->nvalues].p = p;
-    ii_buffer->values[ii_buffer->nvalues].len = len;
+
+  {
+    ii_buffer_value *value = &ii_buffer->values[ii_buffer->nvalues];
+    if (need_copy) {
+      if (len > value->cap) {
+        char *new_buf = (char *)GRN_REALLOC(value->buf, len);
+        if (!new_buf) {
+          return;
+        }
+        value->buf = new_buf;
+        value->cap = len;
+      }
+      memcpy(value->buf, p, len);
+      p = value->buf;
+    }
+    value->sid = sid;
+    value->weight = weight;
+    value->p = p;
+    value->len = len;
     ii_buffer->nvalues++;
   }
 }
@@ -8121,6 +8159,9 @@ grn_ii_buffer_close(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   }
   GRN_FREE(ii_buffer);
   if (ii_buffer->values) {
+    for (i = 0; i < ii_buffer->max_nvalues; i++) {
+      ii_buffer_value_fin(ctx, &ii_buffer->values[i]);
+    }
     GRN_FREE(ii_buffer->values);
   }
   return ctx->rc;
