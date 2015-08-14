@@ -17,7 +17,8 @@ Summary
 .. versionadded:: 5.0.7
 
 ``database_unmap`` unmaps already mapped tables and columns in the
-database. It releases memory to map tables and columns.
+database. "Map" means that loading from disk to memory. "Unmap" means
+that releasing mapped memory.
 
 .. note::
 
