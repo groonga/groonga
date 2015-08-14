@@ -42,7 +42,7 @@ load --table Logs_20150205
 ]
 [[0,0.0,0.0],4]
 logical_parameters --range_index never
-[[0,0.0,0.0],{"range_index":"never"}]
+[[0,0.0,0.0],{"range_index":"auto"}]
 log_level --level debug
 [[0,0.0,0.0],true]
 logical_range_filter Logs timestamp   --limit -1   --filter 'user_id == 2'

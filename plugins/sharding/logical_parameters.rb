@@ -8,7 +8,6 @@ module Groonga
 
       def run_body(input)
         range_index = parse_range_index(input[:range_index])
-        Parameters.range_index = range_index if range_index
 
         parameters = [
           :range_index,
@@ -19,6 +18,8 @@ module Groonga
             writer.write(Parameters.__send__(name))
           end
         end
+
+        Parameters.range_index = range_index if range_index
       end
 
       private
