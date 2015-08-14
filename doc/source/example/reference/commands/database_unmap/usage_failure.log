@@ -1,0 +1,21 @@
+Execution example::
+
+  thread_count --new_count 2
+  # [[0, 1337566253.89858, 0.000355720520019531], 1]
+  database_unmap
+  # [
+  #   [
+  #     -2, 
+  #     1337566253.89858, 
+  #     0.000355720520019531, 
+  #     "[database_unmap] the number of threads must be 1: <2>", 
+  #     [
+  #       [
+  #         "proc_database_unmap", 
+  #         "proc.c", 
+  #         6932
+  #       ]
+  #     ]
+  #   ], 
+  #   false
+  # ]
