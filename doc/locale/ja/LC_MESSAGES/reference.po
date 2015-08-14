@@ -2090,9 +2090,10 @@ msgid ""
 msgstr ""
 "以下は、 :doc:`/reference/executables/groonga` が実際に使っている "
 "``grn_thread_*`` APIの使い方です。 :doc:`/reference/executables/groonga` は最"
-"大スレッド数を増やすと、スレッドプールのサイズを増やします。一方、最大スレッ"
-"ド数を減らすと、スレッドプールのサイズを減らします。もし、すでに減少後のス"
-"レッドプールのサイズ以上のスレッドが動いていたらそれらを止めます。"
+"大スレッド数を増やすと、スレッドプールのサイズを増やします。一方、 :doc:`/"
+"reference/executables/groonga` は最大スレッド数を減らすと、スレッドプールのサ"
+"イズを減らします。もし、すでに減少後のスレッドプールのサイズ以上のスレッドが"
+"動いていたらそれらを止めます。"
 
 # baa405e8975446ca8b30c57d3b9061ca
 msgid "It's the type of function that returns the max number of threads."
@@ -4270,6 +4271,77 @@ msgstr ""
 msgid "It is ``true`` on success, ``false`` otherwise."
 msgstr "コマンドの実行が成功するとtrueを返します。失敗するとfalseを返します。"
 
+# 47c8d2319f114fb48ecaca97dd0da365
+msgid "``database_unmap``"
+msgstr ""
+
+# b6007524dd2946dabc2aa5a87d6eeb13
+msgid ""
+"``database_unmap`` unmaps already mapped tables and columns in the database. "
+"\"Map\" means that loading from disk to memory. \"Unmap\" means that "
+"releasing mapped memory."
+msgstr ""
+"``database_unmap`` はデータベース中のすでにマップしてあるテーブルとカラムをア"
+"ンマップします。「マップ」とはテーブルとカラムをディスクからロードしてメモ"
+"リー上に展開することです。「アンマップ」とはマップしたメモリーを解放すること"
+"です。"
+
+# a81fd2d037c943b7a8d8eb034777a858
+msgid ""
+"Normally, you don't need to use ``database_unmap`` because OS manages memory "
+"cleverly. If remained system memory is reduced, OS moves memory used by "
+"Groonga to disk until Groonga needs the memory. OS moves unused memory "
+"preferentially."
+msgstr ""
+"通常、 ``database_unmap`` を使う必要はありません。なぜなら、OSが賢くメモリー"
+"を管理してくれるからです。もし、システムの残メモリーが少なくなったら、OSは"
+"Groongaが使っているメモリーをディスクに退避します。対比したメモリーは必要に"
+"なったらまたメモリーに戻します。OSは使っていないメモリーを優先して退避しま"
+"す。"
+
+# 1a1d821590c143aba13d738c2616a1e8
+msgid ""
+"You can use this command only when :doc:`thread_count` returns ``1``. It "
+"means that this command doesn't work with multithreading."
+msgstr ""
+"このコマンドは :doc:`thread_count` が ``1`` を返すときしか使えません。つま"
+"り、マルチスレッド環境ではこのコマンドは動かないということです。"
+
+msgid "``database_unmap`` has no parameters::"
+msgstr "``database_unmap`` には引数はありません::"
+
+# 635a84fcfc1c47d3ac46e21c3337c0db
+msgid ""
+"You can unmap database after you change the max number of threads to ``1``:"
+msgstr ""
+"最大スレッド数を ``1`` に変更したあとならデータベースをアンマップできます。"
+
+# 95beb24a1494405aa89504c77c35dc5d
+msgid ""
+"If the max number of threads is larger than ``1``, ``database_unmap`` fails:"
+msgstr ""
+"最大スレッド数が ``1`` より大きい場合は ``database_unmap`` は失敗します。"
+
+msgid "There is no required parameters."
+msgstr "必須の引数はありません。"
+
+msgid "Optional parameters"
+msgstr "省略可能引数"
+
+msgid "There is no optional parameters."
+msgstr "省略可能な引数はありません。"
+
+msgid "The command returns ``true`` as body on success such as::"
+msgstr "このコマンドが成功したときは以下のようにボディは ``true`` になります::"
+
+msgid "If the command fails, error details are in ``HEADER``."
+msgstr "このコマンドが失敗すると、 ``HEADER`` にエラーの詳細が含まれます。"
+
+msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"
+
 msgid "``define_selector``"
 msgstr ""
 
@@ -4545,9 +4617,6 @@ msgstr "スキーマのみダンプ:"
 msgid "There are optional parameters."
 msgstr "いくつか省略可能な引数があります。"
 
-msgid "Optional parameters"
-msgstr "省略可能引数"
-
 msgid "``tables``"
 msgstr ""
 
@@ -4817,9 +4886,6 @@ msgstr ":doc:`column_remove` と :doc:`column_rename`"
 msgid ":doc:`plugin_register` and :doc:`plugin_unregister`"
 msgstr ":doc:`plugin_register` と :doc:`plugin_unregister`"
 
-msgid "There is no required parameters."
-msgstr "必須の引数はありません。"
-
 msgid "``target_name``"
 msgstr ""
 
@@ -4915,17 +4981,6 @@ msgid ""
 msgstr ""
 "``recursive`` パラメーターが指定されていないので、次のケースでは ``yes`` が使"
 "われます。"
-
-msgid "The command returns ``true`` as body on success such as::"
-msgstr "このコマンドが成功したときは以下のようにボディは ``true`` になります::"
-
-msgid "If the command fails, error details are in ``HEADER``."
-msgstr "このコマンドが失敗すると、 ``HEADER`` にエラーの詳細が含まれます。"
-
-msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
-msgstr ""
-"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
-"さい。"
 
 msgid "``load``"
 msgstr ""
