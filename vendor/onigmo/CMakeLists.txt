@@ -49,6 +49,9 @@ if(GRN_WITH_ONIGMO)
     add_definitions(-DHAVE_INTTYPES_H)
   endif()
 
+  add_definitions(-DUSE_MULTI_THREAD_SYSTEM)
+  add_definitions(-DUSE_DEFAULT_MULTI_THREAD_SYSTEM)
+
   include_directories(
     BEFORE
     ${ONIGMO_BINARY_DIR}
