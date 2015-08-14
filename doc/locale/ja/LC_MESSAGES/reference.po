@@ -6158,6 +6158,53 @@ msgstr ""
 "``logical_select`` の戻り値のフォーマットは :doc:`select` と同じです。詳細"
 "は :ref:`select-return-value` を見てください。"
 
+# 9af178c5b1424bcaa5c74ab1ef9e650b
+msgid "``logical_shard_list``"
+msgstr ""
+
+# d1d2534487f247779d92f93280019236
+msgid ""
+"``logical_shard_list`` returns all existing shard names against the "
+"specified logical table name."
+msgstr ""
+"``logical_shard_list`` は指定した論理テーブル名に対するすべてのシャード名を返"
+"します。"
+
+msgid "Here are sample shards:"
+msgstr "サンプルシャードは次の通りです。"
+
+# 615ff8d1cccb48ada9c233d1f139b8ef
+msgid ""
+"You can get the all shard names in ascending order by specifying ``Logs`` as "
+"the logical table name:"
+msgstr ""
+"論理テーブル名として ``Logs`` を指定すると昇順ですべてのシャード名を取得でき"
+"ます。"
+
+msgid "This section describes parameters."
+msgstr "このセクションでは引数について説明します。"
+
+msgid "There is one required parameter."
+msgstr "必須の引数が1つあります。"
+
+# 960a2abfffe2408280e0adbfdcdcb5ca
+msgid ""
+"Specifies the logical table name. ``logical_shard_list`` returns a list of "
+"shard name of the logical table:"
+msgstr ""
+"論理テーブル名を指定します。 ``logical_shard_list`` は指定した論理テーブルの"
+"シャード名のリストを返します。"
+
+# cbfe4c9839d94f78ad51f66e6b334e5c
+msgid "The list is sorted by shard name in ascending order."
+msgstr "このリストは昇順でソート済みです。"
+
+msgid "The command returns a list of shard names in ascending order::"
+msgstr "このコマンドは昇順でソートしたシャード名のリストを返します::"
+
+msgid ":doc:`/reference/sharding`"
+msgstr ""
+
 # 8bc444a3ddb44917be34528f7dd90126
 msgid "``logical_table_remove``"
 msgstr ""

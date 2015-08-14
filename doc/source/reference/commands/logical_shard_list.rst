@@ -58,7 +58,7 @@ You can get the all shard names in ascending order by specifying
 Parameters
 ----------
 
-This section describes parameters of ``logical_shard_list``.
+This section describes parameters.
 
 Required parameters
 ^^^^^^^^^^^^^^^^^^^
@@ -79,7 +79,7 @@ list of shard name of the logical table:
 
 The list is sorted by shard name in ascending order.
 
-Optional shard_list
+Optional parameters
 ^^^^^^^^^^^^^^^^^^^
 
 There is no optional parameters.
