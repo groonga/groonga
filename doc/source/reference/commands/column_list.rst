@@ -16,7 +16,7 @@ Summary
 Syntax
 ------
 
-``column_list`` command takes one required parameter::
+This command takes only one required parameter::
 
   column_list table
 

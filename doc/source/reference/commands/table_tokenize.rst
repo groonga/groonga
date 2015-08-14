@@ -16,7 +16,8 @@ Summary
 Syntax
 ------
 
-``table_tokenize`` command has required parameters and optional parameters.
+This command takes many parameters.
+
 ``table`` and ``string`` are required parameters. Others are
 optional::
 

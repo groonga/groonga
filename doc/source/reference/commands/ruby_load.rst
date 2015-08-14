@@ -16,7 +16,7 @@ Summary
 Syntax
 ------
 
-``ruby_load`` has one required parameter::
+This command takes only one required parameter::
 
   ruby_load path
 

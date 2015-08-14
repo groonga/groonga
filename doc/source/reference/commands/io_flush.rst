@@ -51,8 +51,9 @@ changes in memory, flushing them to disk is a heavy process.
 Syntax
 ------
 
-``io_flush`` doesn't has any required parameters. ``io_flush`` has has
-two optional parameters::
+This command takes two parameters.
+
+All parameters are optional::
 
   io_flush [target_name=null]
            [recursive=yes]

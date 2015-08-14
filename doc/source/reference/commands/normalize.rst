@@ -25,10 +25,9 @@ It is useful for you to check the results of normalizer.
 Syntax
 --------
 
-``normalize`` commands has two required parameters. They are
-``normalizer`` and ``string``.
+This command takes three parameters.
 
-::
+``normalizer`` and ``string`` are required. Others are optional::
 
   normalize normalizer
             string

@@ -27,7 +27,7 @@ You need to :doc:`plugin_register` ``sharding`` plugin because
 Syntax
 ------
 
-``logical_select`` has many parameters.
+This command takes many parameters.
 
 The required parameters are ``logical_table`` and ``shard_key``. Other
 parameters are optional::

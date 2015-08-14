@@ -13,12 +13,10 @@ Summary
 
 ``tokenizer_list`` command lists tokenizers in a database.
 
-
 Syntax
 ------
 
-``tokenizer_list`` command takes no parameter.
-::
+This command takes no parameters::
 
   tokenizer_list
 

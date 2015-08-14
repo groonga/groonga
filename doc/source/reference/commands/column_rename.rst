@@ -33,7 +33,9 @@ is occurred, Groonga process may be crashed:
 Syntax
 ------
 
-``column_rename`` command takes three parameters. All parameters are required::
+This command takes three parameters.
+
+All parameters are required::
 
   column_rename table name new_name
 

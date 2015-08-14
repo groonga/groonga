@@ -22,7 +22,7 @@ TODO
 Syntax
 ------
 
-``logical_table_remove`` command has six parameters.
+This command takes many parameters.
 
 The required parameters are ``logical_table`` and ``shard_key``::
 

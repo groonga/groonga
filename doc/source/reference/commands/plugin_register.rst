@@ -26,7 +26,7 @@ You can unregister a registered plugin by :doc:`plugin_unregister`.
 Syntax
 ------
 
-``plugin_register`` has a parameter ``name``. It is required parameter::
+This command takes only one required parameter::
 
   plugin_register name
 

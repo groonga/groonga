@@ -20,8 +20,10 @@ understand ``select`` to use the full power of Groonga.
 Syntax
 ------
 
-``select`` has many parameters. The required parameter is only
-``table``. Other parameters are optional::
+This command takes many parameters.
+
+The required parameter is only ``table``. Other parameters are
+optional::
 
   select table
          [match_columns=null]

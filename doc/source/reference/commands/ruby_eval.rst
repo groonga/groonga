@@ -16,7 +16,7 @@ Summary
 Syntax
 ------
 
-``ruby_eval`` has one required parameter::
+This command takes only one required parameter::
 
   ruby_eval script
 

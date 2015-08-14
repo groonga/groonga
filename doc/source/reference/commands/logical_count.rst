@@ -27,7 +27,7 @@ Note that this feature is not matured yet, so there are some limitations.
 Syntax
 ------
 
-``logical_count`` command has seven parameters.
+This command takes many parameters.
 
 The required parameters are ``logical_table`` and ``shard_key``::
 

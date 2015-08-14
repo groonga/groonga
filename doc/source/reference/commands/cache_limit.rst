@@ -22,7 +22,7 @@ If the max number of query cache entries is 100, the recent 100
 Syntax
 ------
 
-``cache_limit`` has one optional parameter::
+This command takes only one optional parameter::
 
   cache_limit [max=null]
 

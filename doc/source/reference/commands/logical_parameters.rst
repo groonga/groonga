@@ -32,15 +32,14 @@ Here is a list of parameters:
 Syntax
 ------
 
-``logical_parameters`` has only one optional parameter::
+This command takes only one optional parameter::
 
   logical_parameters [range_index=null]
 
 Usage
 -----
 
-You need to register ``sharding`` plugin to use ``logical_parameters``
-command:
+You need to register ``sharding`` plugin to use this command:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/logical_parameters/usage_register.log

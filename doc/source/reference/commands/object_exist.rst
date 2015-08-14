@@ -25,7 +25,7 @@ table, column, function and so on.
 Syntax
 ------
 
-``object_exist`` has only one required parameter::
+This command takes only one required parameter::
 
   object_exist name
 

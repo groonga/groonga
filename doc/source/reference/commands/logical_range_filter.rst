@@ -22,6 +22,8 @@ TODO: Write summary
 Syntax
 ------
 
+This command takes many parameters.
+
 The required parameters are ``logical_table`` and ``shard_key``::
 
   logical_range_filter

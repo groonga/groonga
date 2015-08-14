@@ -17,7 +17,8 @@ It is useful to debug tokenization.
 Syntax
 ------
 
-``tokenize`` command has required parameters and optional parameters.
+This command takes many parameters.
+
 ``tokenizer`` and ``string`` are required parameters. Others are
 optional::
 

@@ -30,7 +30,7 @@ process loads all registered plugins without ``register`` command.
 Syntax
 ------
 
-``register`` has a parameter ``path``. It is required parameter::
+This command takes only one required parameter::
 
   register path
 

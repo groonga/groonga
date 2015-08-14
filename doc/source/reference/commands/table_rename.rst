@@ -33,8 +33,9 @@ is occurred, Groonga process may be crashed:
 Syntax
 ------
 
-``table_rename`` command takes two parameters. All parameters are
-required::
+This command takes two parameters.
+
+All parameters are required::
 
   table_rename name new_name
 

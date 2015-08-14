@@ -23,15 +23,14 @@ specified logical table name.
 Syntax
 ------
 
-``logical_shard_list`` has only one required parameter::
+This command takes only one required parameter::
 
   logical_shard_list logical_table
 
 Usage
 -----
 
-You need to register ``sharding`` plugin to use ``logical_parameters``
-command:
+You need to register ``sharding`` plugin to use this command:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/logical_shard_list/usage_register.log

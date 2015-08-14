@@ -17,8 +17,7 @@ Summary
 Syntax
 ------
 
-``normalizer_list`` command takes no parameter.
-::
+This command takes no parameters::
 
   normalizer_list
 

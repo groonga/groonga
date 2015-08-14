@@ -35,7 +35,7 @@ that releasing mapped memory.
 Syntax
 ------
 
-``database_unmap`` has no parameters::
+This command takes no parameters::
 
   database_unmap
 

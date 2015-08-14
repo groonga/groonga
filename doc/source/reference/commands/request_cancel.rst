@@ -35,9 +35,7 @@ If request is canceled, the canceled request has ``-5``
 Syntax
 ------
 
-``request_cancel`` command takes only one parameter.
-
-The required parameter is only ``id``::
+This command takes only one required parameter::
 
   request_cancel id
 

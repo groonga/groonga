@@ -17,8 +17,9 @@ to create one or more tables to store and search data.
 Syntax
 ------
 
-``table_create`` has many parameters. The required parameter is only
-``name`` and otehrs are optional::
+This command takes many parameters.
+
+The required parameter is only ``name`` and otehrs are optional::
 
   table_create name
                [flags=TABLE_HASH_KEY]

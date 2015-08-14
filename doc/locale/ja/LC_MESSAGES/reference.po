@@ -3499,8 +3499,8 @@ msgstr ""
 msgid "Syntax"
 msgstr "構文"
 
-msgid "``cache_limit`` has one optional parameter::"
-msgstr "``cache_limit`` には省略可能な引数が1つあります::"
+msgid "This command takes only one optional parameter::"
+msgstr "このコマンドの引数は1つで省略できます::"
 
 msgid ""
 "You can get the current max number of cache entries by executing "
@@ -3926,8 +3926,8 @@ msgstr ""
 msgid "``column_list`` command lists columns in a table."
 msgstr "``column_list`` コマンドはテーブルにあるカラムの一覧を返します。"
 
-msgid "``column_list`` command takes one required parameter::"
-msgstr "``column_list`` コマンドの引数は1つで必須です::"
+msgid "This command takes only one required parameter::"
+msgstr "このコマンドの引数は1つで必須です::"
 
 msgid "Here is a simple example of ``column_list`` command."
 msgstr "以下は ``column_list`` コマンドの簡単な使用例です。"
@@ -4242,10 +4242,11 @@ msgstr ""
 "カラムを見つけることができません。このときGroongaプロセスがクラッシュするかも"
 "しれません。"
 
-msgid ""
-"``column_rename`` command takes three parameters. All parameters are "
-"required::"
-msgstr "``column_rename`` コマンドは引数を3つとります。すべて必須です。::"
+msgid "This command takes three parameters."
+msgstr "このコマンドの引数は3つです。"
+
+msgid "All parameters are required::"
+msgstr "すべての引数は必須です::"
 
 msgid "Here is a simple example of ``column_rename`` command."
 msgstr "以下は ``column_rename`` コマンドの簡単な使用例です。"
@@ -4307,8 +4308,8 @@ msgstr ""
 "このコマンドは :doc:`thread_count` が ``1`` を返すときしか使えません。つま"
 "り、マルチスレッド環境ではこのコマンドは動かないということです。"
 
-msgid "``database_unmap`` has no parameters::"
-msgstr "``database_unmap`` には引数はありません::"
+msgid "This command takes no parameters::"
+msgstr "このコマンドに引数はありません::"
 
 # 635a84fcfc1c47d3ac46e21c3337c0db
 msgid ""
@@ -4775,12 +4776,11 @@ msgstr ""
 "リー上に多くの変更があるなら、それらをディスクに書き出す処理は重い処理になり"
 "ます。"
 
-msgid ""
-"``io_flush`` doesn't has any required parameters. ``io_flush`` has has two "
-"optional parameters::"
-msgstr ""
-"``io_flush`` には必須のパラメーターはありません。 ``io_flush`` には2つの省略"
-"可能なパラメーターがあります。::"
+msgid "This command takes two parameters."
+msgstr "このコマンドには2つの引数があります。"
+
+msgid "All parameters are optional::"
+msgstr "すべての引数は省略可能です::"
 
 # 77cf20be044f4f94a529eeb2ce2238b9
 msgid "You can flush all changes in memory to disk with no arguments:"
@@ -5275,7 +5275,7 @@ msgid "``logical_count`` command has seven parameters."
 msgstr "``logical_count`` コマンドは7つの引数があります。"
 
 msgid "The required parameters are ``logical_table`` and ``shard_key``::"
-msgstr "必須引数は二つあります。 ``logical_table`` と ``shard_key`` です。"
+msgstr "必須引数は2つあります。 ``logical_table`` と ``shard_key`` です。"
 
 msgid ""
 "Register ``sharding`` plugin to use ``logical_count`` command in advance."
@@ -5451,6 +5451,9 @@ msgstr ""
 msgid "``logical_range_filter``"
 msgstr ""
 
+msgid "This command takes many parameters."
+msgstr "このコマンドにはたくさんの引数があります。"
+
 msgid ""
 "Register ``sharding`` plugin to use ``logical_range_filter`` command in "
 "advance."
@@ -5507,9 +5510,6 @@ msgid ""
 msgstr ""
 "``logical_select`` は ``sharding`` プラグインに含まれているので、 "
 "``sharding`` プラグインを :doc:`plugin_register` する必要があります。"
-
-msgid "``logical_select`` has many parameters."
-msgstr "``logical_select`` コマンドにはたくさんの引数があります。"
 
 msgid ""
 "The required parameters are ``logical_table`` and ``shard_key``. Other "
@@ -6170,9 +6170,6 @@ msgstr ""
 msgid "``logical_table_remove``"
 msgstr ""
 
-msgid "``logical_table_remove`` command has six parameters."
-msgstr "``logical_table_remove`` コマンドには6つの引数があります。"
-
 msgid "This section describes parameters of ``logical_table_remove``."
 msgstr "このセクションでは ``logical_table_remove`` の引数について説明します。"
 
@@ -6193,12 +6190,8 @@ msgstr ""
 "``normalize`` コマンドを使うのにテーブルを作成する必要はありません。このコマ"
 "ンドは、ノーマライザーの結果を確認するのに便利です。"
 
-msgid ""
-"``normalize`` commands has two required parameters. They are ``normalizer`` "
-"and ``string``."
-msgstr ""
-"``normalize`` コマンドは ``normalizer`` と ``string`` という二つの引数をとり"
-"ます。これらの引数はどちらも必須です。"
+msgid "``normalizer`` and ``string`` are required. Others are optional::"
+msgstr "``normalizer`` と ``string`` が必須です。他は省略できます::"
 
 msgid "Here is a simple example of ``normalize`` command."
 msgstr "以下は ``normalize`` コマンドの簡単な使用例です。"
@@ -6329,9 +6322,6 @@ msgstr ""
 "``normalizer_list`` コマンドはデータベースに登録されているノーマライザーの一"
 "覧を返します。"
 
-msgid "``normalizer_list`` command takes no parameter. ::"
-msgstr "``normalizer_list`` コマンドに引数はありません。::"
-
 msgid "Here is a simple example."
 msgstr "以下は簡単な使用例です。"
 
@@ -6389,9 +6379,6 @@ msgid ""
 msgstr ""
 "``object_exist`` はオブジェクトの種類をチェックしません。存在しているオブジェ"
 "クトはテーブルかもしれませんし、カラムや関数かもしれません。"
-
-msgid "``object_exist`` has only one required parameter::"
-msgstr "``object_exist`` には必須な引数が1つあります::"
 
 # 51711cc395bb43a99e7b2335e597038f
 msgid "You can check whether the name is already used in database:"
@@ -6471,10 +6458,6 @@ msgid "You can unregister a registered plugin by :doc:`plugin_unregister`."
 msgstr ":doc:`plugin_unregister` でプラグインの登録を解除することができます。"
 
 msgid ""
-"``plugin_register`` has a parameter ``name``. It is required parameter::"
-msgstr "``plugin_register`` の引数は ``name`` だけです。これは必須の引数です::"
-
-msgid ""
 "Here is a sample that registers ``QueryExpanderTSV`` query expander that is "
 "included in ``${PREFIX}/lib/groonga/plugins/query_expanders/tsv.so``."
 msgstr ""
@@ -6510,10 +6493,6 @@ msgstr ""
 
 msgid "``plugin_unregister`` command unregisters a plugin."
 msgstr "``plugin_unregister`` コマンドはプラグインの登録を解除します。"
-
-msgid ""
-"``plugin_unregister`` has a parameter ``name``. It is required parameter::"
-msgstr "``plugin_register`` の引数は ``name`` だけです。これは必須の引数です::"
 
 msgid ""
 "Here is a sample that unregisters ``QueryExpanderTSV`` query expander that "
@@ -6595,9 +6574,6 @@ msgid ""
 "`plugin_unregister` in such a case."
 msgstr ""
 
-msgid "``register`` has a parameter ``path``. It is required parameter::"
-msgstr "``register`` の引数は ``path`` だけです。これは必須の引数です::"
-
 msgid ""
 "You can specify absolute path such as ``register /usr/lib/groonga/plugins/"
 "query_expanders/tsv.so``."
@@ -6659,12 +6635,6 @@ msgstr ""
 "リクエストがキャンセルされたら、キャンセルされたリクエストの :doc:`/"
 "reference/command/return_code` は ``-5`` "
 "（ ``GRN_INTERRUPTED_FUNCTION_CALL`` ）になります。"
-
-msgid "``request_cancel`` command takes only one parameter."
-msgstr "``request_cancel`` コマンドの引数は1つだけです。"
-
-msgid "The required parameter is only ``id``::"
-msgstr "``id`` だけが必須の引数です。"
 
 msgid "Here is an example of ``request_cancel`` command::"
 msgstr "以下は ``request_cancel`` コマンドの使用例です::"
@@ -6772,9 +6742,6 @@ msgstr ""
 msgid "``ruby_eval`` command evaluates Ruby script and returns the result."
 msgstr "``ruby_eval`` コマンドはRubyスクリプトを評価して評価結果を返します。"
 
-msgid "``ruby_eval`` has one required parameter::"
-msgstr "``ruby_eval`` には必須な引数が1つあります::"
-
 msgid ""
 "You can execute any scripts which mruby supports by calling ``ruby_eval``."
 msgstr ""
@@ -6825,9 +6792,6 @@ msgstr ""
 
 msgid "``ruby_load`` command loads specified Ruby script."
 msgstr "``ruby_load`` コマンドは指定したRubyスクリプトを読み込みます。"
-
-msgid "``ruby_load`` has one required parameter::"
-msgstr "``ruby_load`` には必須な引数が1つあります::"
 
 msgid ""
 "You can load any script file which mruby supports by calling ``ruby_load``."
@@ -6896,11 +6860,8 @@ msgstr ""
 "には ``select`` を理解する必要があります。"
 
 msgid ""
-"``select`` has many parameters. The required parameter is only ``table``. "
-"Other parameters are optional::"
-msgstr ""
-"``select`` には多くの引数があります。必須の引数は ``table`` だけです。残りは"
-"省略できます。::"
+"The required parameter is only ``table``. Other parameters are optional::"
+msgstr "必須の引数は ``table`` だけです。残りは省略できます::"
 
 msgid "``select`` has the following named parameters for advanced drilldown:"
 msgstr ""
@@ -9346,12 +9307,8 @@ msgstr ""
 "``table_create`` は現在のデータベースに新しいテーブルを作成します。データを保"
 "存したり検索したりするために、1つ以上のテーブルを作成する必要があります。"
 
-msgid ""
-"``table_create`` has many parameters. The required parameter is only "
-"``name`` and otehrs are optional::"
-msgstr ""
-"``table_create`` には多くの引数があります。必須の引数は ``name`` だけで、残り"
-"は省略できます。::"
+msgid "The required parameter is only ``name`` and otehrs are optional::"
+msgstr "必須の引数は ``name`` だけで、残りは省略できます::"
 
 msgid ""
 "``table_create`` command creates a new persistent table. See :doc:`/"
@@ -9917,10 +9874,6 @@ msgstr ""
 "テーブル名でテーブルを見つけることができません。このときGroongaプロセスがク"
 "ラッシュするかもしれません。"
 
-msgid ""
-"``table_rename`` command takes two parameters. All parameters are required::"
-msgstr "``table_rename`` コマンドは引数を3つとります。すべて必須です。::"
-
 msgid "Here is a simple example of ``table_rename`` command."
 msgstr "以下は ``table_rename`` コマンドの簡単な使用例です。"
 
@@ -9942,12 +9895,11 @@ msgstr ""
 "``table_tokenize`` コマンドは指定したテーブルのトークナイザーでテキストをトー"
 "クナイズします。"
 
-msgid ""
-"``table_tokenize`` command has required parameters and optional parameters. "
-"``table`` and ``string`` are required parameters. Others are optional::"
+msgid "This command takes required parameters and optional parameters."
 msgstr ""
-"``table_tokenize`` コマンドには必須の引数と省略可能な引数があります。 "
-"``table`` と ``string`` が必須の引数で、他の引数はすべて省略可能です。"
+
+msgid "``table`` and ``string`` are required parameters. Others are optional::"
+msgstr "``table`` と ``string `` は必須の引数です。残りは省略できます::"
 
 msgid ""
 "``Terms`` table is set ``TokenBigram`` tokenizer, ``NormalizerAuto`` "
@@ -9964,7 +9916,7 @@ msgstr ""
 "``TokenFilterStopWord`` トークンフィルターで除去されています。"
 
 msgid "There are required parameters, ``table`` and ``string``."
-msgstr "必須引数は二つあります。 ``table`` と ``string`` です。"
+msgstr "必須の引数は2つです。 ``table`` と ``string`` です。"
 
 msgid ""
 "Specifies the lexicon table. ``table_tokenize`` command uses the tokenizer, "
@@ -10073,9 +10025,6 @@ msgstr ""
 "スレッド数を返す機能が動きます。 :c:func:`grn_thread_set_set_count_func()` で"
 "カスタム関数を設定すると最大スレッド数を設定する機能が動きます。"
 
-msgid "``thread_count`` has only one optional parameter::"
-msgstr "``thread_count`` には省略可能な引数が1つあります::"
-
 msgid ""
 "You can get the max number of threads by calling without any parameters:"
 msgstr "引数なしで呼び出すと最大スレッド数を得られます。"
@@ -10137,11 +10086,8 @@ msgstr ""
 "これはトークナイズ処理のデバッグに便利です。"
 
 msgid ""
-"``tokenize`` command has required parameters and optional parameters. "
 "``tokenizer`` and ``string`` are required parameters. Others are optional::"
-msgstr ""
-"``tokenize`` コマンドには必須の引数と省略可能な引数があります。 "
-"``tokenizer`` と ``string`` が必須の引数で、他の引数はすべて省略可能です。"
+msgstr "``tokenizer`` と ``string`` が必須の引数で、他の引数はすべて省略できます::"
 
 msgid ""
 "It has only required parameters. ``tokenizer`` is ``TokenBigram`` and "
@@ -10356,9 +10302,6 @@ msgstr ""
 "``tokenizer_list`` コマンドはデータベースに登録されているトークナイザーの一覧"
 "を返します。"
 
-msgid "``tokenizer_list`` command takes no parameter. ::"
-msgstr "``tokenizer_list`` コマンドに引数はありません。::"
-
 msgid "It returns tokenizers in a database."
 msgstr "データベースに登録されているトークナイザーの一覧を返します。"
 
@@ -10392,12 +10335,6 @@ msgid ""
 msgstr ""
 "``truncate`` コマンドは指定したテーブルのレコードをすべて削除します。カラムを"
 "指定した場合はカラムの値をすべて削除します。"
-
-msgid "``truncate`` command takes only one parameter."
-msgstr "``truncate`` コマンドの引数は1つだけです::"
-
-msgid "The required parameter is only ``target_name``::"
-msgstr "``target_name`` だけが必須の引数です。"
 
 # 54155f46293441f8b3f333255cbf0e03
 msgid ""

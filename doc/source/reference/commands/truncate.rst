@@ -14,9 +14,7 @@ values from specified column.
 Syntax
 ------
 
-``truncate`` command takes only one parameter.
-
-The required parameter is only ``target_name``::
+This command takes only one required parameter::
 
   truncate target_name
 

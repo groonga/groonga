@@ -42,7 +42,7 @@ max number of threads works.
 Syntax
 ------
 
-``thread_count`` has only one optional parameter::
+This command takes only one optional parameter::
 
   thread_count [new_count=null]
 

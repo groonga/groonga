@@ -22,7 +22,7 @@ Summary
 Syntax
 ------
 
-``plugin_unregister`` has a parameter ``name``. It is required parameter::
+This command takes only one required parameter::
 
   plugin_unregister name
 
