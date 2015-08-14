@@ -7170,6 +7170,7 @@ struct _grn_ii_buffer {
   ii_buffer_value *values;
   unsigned int nvalues;
   unsigned int max_nvalues;
+  grn_id last_rid;
   // stuff for merging
   grn_ii *ii;
   uint32_t lseg;
@@ -7922,6 +7923,7 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
       ii_buffer->values = NULL;
       ii_buffer->nvalues = 0;
       ii_buffer->max_nvalues = 0;
+      ii_buffer->last_rid = 0;
       if (ii_buffer->counters) {
         ii_buffer->block_buf = GRN_MALLOCN(grn_id, II_BUFFER_BLOCK_SIZE);
         if (ii_buffer->block_buf) {
@@ -7952,22 +7954,56 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
   return NULL;
 }
 
+static void
+ii_buffer_values_append(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
+                        unsigned int sid, unsigned weight,
+                        const char *p, uint32_t len, grn_bool need_copy) {
+  // TODO: Make a copy of a given value if need_copy == GRN_TRUE.
+  if (ii_buffer->nvalues == ii_buffer->max_nvalues) {
+    unsigned new_max_nvalues = ii_buffer->max_nvalues * 2;
+    if (new_max_nvalues == 0) {
+      new_max_nvalues = 1;
+    }
+    unsigned new_size = new_max_nvalues * sizeof(ii_buffer_value);
+    ii_buffer_value *new_values;
+    new_values = (ii_buffer_value *)GRN_REALLOC(ii_buffer->values, new_size);
+    if (!new_values) {
+      return;
+    }
+    ii_buffer->values = new_values;
+    ii_buffer->max_nvalues = new_max_nvalues;
+  }
+  if (ii_buffer->values) {
+    ii_buffer->values[ii_buffer->nvalues].sid = sid;
+    ii_buffer->values[ii_buffer->nvalues].weight = weight;
+    ii_buffer->values[ii_buffer->nvalues].p = p;
+    ii_buffer->values[ii_buffer->nvalues].len = len;
+    ii_buffer->nvalues++;
+  }
+}
+
 grn_rc
 grn_ii_buffer_append(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
                      grn_id rid, unsigned int sid, grn_obj *value)
 {
-  ii_buffer_value tmp_value;
-  tmp_value.sid = sid;
-  tmp_value.weight = 0;
-  tmp_value.p = GRN_TEXT_VALUE(value);
-  tmp_value.len = GRN_TEXT_LEN(value);
-  grn_ii_buffer_tokenize_value(ctx, ii_buffer, rid, &tmp_value);
+  if (rid != ii_buffer->last_rid) {
+    if (ii_buffer->last_rid) {
+      grn_ii_buffer_tokenize(ctx, ii_buffer, ii_buffer->last_rid);
+    }
+    ii_buffer->last_rid = rid;
+  }
+  ii_buffer_values_append(ctx, ii_buffer, sid, 0,
+                          GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value),
+                          GRN_TRUE);
   return ctx->rc;
 }
 
 grn_rc
 grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
 {
+  if (ii_buffer->last_rid && ii_buffer->nvalues) {
+    grn_ii_buffer_tokenize(ctx, ii_buffer, ii_buffer->last_rid);
+  }
   if (ii_buffer->block_pos) {
     grn_ii_buffer_flush(ctx, ii_buffer);
   }
@@ -8089,33 +8125,6 @@ grn_ii_buffer_close(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
 }
 
 static void
-ii_buffer_values_append(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
-                        unsigned int sid, unsigned weight,
-                        const char *p, uint32_t len) {
-  if (ii_buffer->nvalues == ii_buffer->max_nvalues) {
-    unsigned new_max_nvalues = ii_buffer->max_nvalues * 2;
-    if (new_max_nvalues == 0) {
-      new_max_nvalues = 1;
-    }
-    unsigned new_size = new_max_nvalues * sizeof(ii_buffer_value);
-    ii_buffer_value *new_values;
-    new_values = (ii_buffer_value *)GRN_REALLOC(ii_buffer->values, new_size);
-    if (!new_values) {
-      return;
-    }
-    ii_buffer->values = new_values;
-    ii_buffer->max_nvalues = new_max_nvalues;
-  }
-  if (ii_buffer->values) {
-    ii_buffer->values[ii_buffer->nvalues].sid = sid;
-    ii_buffer->values[ii_buffer->nvalues].weight = weight;
-    ii_buffer->values[ii_buffer->nvalues].p = p;
-    ii_buffer->values[ii_buffer->nvalues].len = len;
-    ii_buffer->nvalues++;
-  }
-}
-
-static void
 grn_ii_buffer_parse(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
                     grn_obj *target, int ncols, grn_obj **cols)
 {
@@ -8145,7 +8154,8 @@ grn_ii_buffer_parse(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
           switch (rv->header.type) {
           case GRN_BULK :
             ii_buffer_values_append(ctx, ii_buffer, sid, 0,
-                                    GRN_TEXT_VALUE(rv), GRN_TEXT_LEN(rv));
+                                    GRN_TEXT_VALUE(rv), GRN_TEXT_LEN(rv),
+                                    GRN_FALSE);
             break;
           case GRN_UVECTOR :
             {
@@ -8156,7 +8166,7 @@ grn_ii_buffer_parse(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
               for (j = 0; j < size; j++) {
                 ii_buffer_values_append(ctx, ii_buffer, sid, 0,
                                         GRN_BULK_HEAD(rv) + (elem_size * j),
-                                        elem_size);
+                                        elem_size, GRN_FALSE);
               }
             }
             break;
@@ -8173,7 +8183,7 @@ grn_ii_buffer_parse(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
                 }
                 ii_buffer_values_append(ctx, ii_buffer, sid, section->weight,
                                         head + section->offset,
-                                        section->length);
+                                        section->length, GRN_FALSE);
               }
             }
             break;
