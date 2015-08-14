@@ -5416,20 +5416,47 @@ msgstr ""
 msgid "``logical_parameters``"
 msgstr ""
 
-# 4207d2acd4fd497091e401db9bfae3a6
-msgid "TODO: Write summary"
+# d5704291726642b3a2fa0e25a795acd7
+msgid ""
+"``logical_parameters`` is a command for test. Normally, you don't need to "
+"use this command."
+msgstr ""
+"``logical_parameters`` はテスト用のコマンドです。通常はこのコマンドを使う必要"
+"はありません。"
+
+msgid "``logical_parameters`` provides the following two features:"
+msgstr "``logical_parameters`` は次の2つの機能を提供します。"
+
+msgid "It returns the current parameters for ``logical_*`` commands."
+msgstr "``logical_*`` コマンドが使うパラメーターの現在地を返します。"
+
+msgid "It sets new parameters for ``logical_*`` commands."
+msgstr "``logical_*`` コマンドが使うパラメーターを新しく設定します。"
+
+msgid "Here is a list of parameters:"
+msgstr "以下はパラメーターのリストです。"
+
+# beaec03c70344aebb8c7996170946a56
+msgid ":ref:`logical-parameters-range-index`"
 msgstr ""
 
-# 0ff4d0e6a33448a189a665a4287b0af4
-msgid "logical_parameters [range_index]"
-msgstr ""
+msgid "You need to register ``sharding`` plugin to use this command:"
+msgstr "このコマンドを使うには事前に ``sharding`` プラグインを登録します。"
 
 msgid ""
-"Register ``sharding`` plugin to use ``logical_parameters`` command in "
-"advance."
+"You can get the all current parameter values by calling without parameters:"
+msgstr "引数無しで呼び出すとすべてのパラメーターの現在の値を返します。"
+
+msgid "You can set new values by calling with parameters:"
+msgstr "引数を指定して呼び出すと新しい値を設定できます。"
+
+# ac03183d8cce4bbeb4eeb03aa596190d
+msgid ""
+"``logical_parameters`` returns the parameter values before new values are "
+"set when you set new values."
 msgstr ""
-"``logical_parameters`` コマンドを使うには事前に ``sharding`` プラグインを登録"
-"します。"
+"``logical_parameters`` は、新しい値を設定するときは、新しい値を設定する前の値"
+"を返します。"
 
 msgid "This section describes parameters of ``logical_parameters``."
 msgstr "このセクションでは ``logical_parameters`` の引数について説明します。"
@@ -5441,10 +5468,79 @@ msgstr "省略可能な引数が1つあります。"
 msgid "``range_index``"
 msgstr ""
 
+# cecba7f88437400fb99d2aec9f3642ed
+msgid ""
+"Specifies how to use range index in :doc:`logical_range_filter` by keyword."
+msgstr ""
+":doc:`logical_range_filter` でどのように範囲インデックスを使うかをキーワード"
+"で指定します。"
+
+msgid "Here are available keywords:"
+msgstr "指定できるキーワードは以下の通りです。"
+
+# 7ac848355e47433c8ffe213503cc5fea
+msgid "``auto`` (default)"
+msgstr "``auto`` （デフォルト）"
+
+# ed7eff04e9e44f4c91e08c0bccda0dbe
+msgid "``always``"
+msgstr ""
+
+# 091e4dec7ba24deb83bc5590464b94f8
+msgid "``never``"
+msgstr ""
+
+# e660986184d5444d851def4df48f5a17
+msgid ""
+"If ``auto`` is specified, range index is used only when it'll be efficient. "
+"This is the default value."
+msgstr ""
+"``auto`` を指定すると、効果がでそうなときだけ範囲インデックスを使います。これ"
+"がデフォルトの値です。"
+
+# 972fe5612fdb499ea473799a9d922a2b
+msgid ""
+"If ``always`` is specified, range index is always used. It'll be useful for "
+"testing a case that range index is used."
+msgstr ""
+"``always`` を指定すると、常に範囲インデックスを使います。範囲インデックスが使"
+"われるケースをテストするときに便利です。"
+
+# 9e99e73a87204a2590c520c4511dd03b
+msgid ""
+"If ``never`` is specified, range index is never used. It'll be useful for "
+"testing a case that range index isn't used."
+msgstr ""
+"``never`` を指定すると、範囲インデックスは使いません。範囲インデックスが使わ"
+"れないケースをテストするときに便利です。"
+
+msgid "The command returns the current parameters for ``logical_*`` command::"
+msgstr ""
+"このコマンドは ``logical_*`` コマンドが使うパラメーターの現在地を返します::"
+
+# 66c2823ea953494a9772c21bc0cadbaf
+msgid "``HOW_TO_USE_RANGE_INDEX`` value is one of the followings:"
+msgstr "``HOW_TO_USE_RANGE_INDEX`` の値は次のどれかです。"
+
+# 5e19e05b9c564ce3b9da231e693d762c
+msgid "``\"auto\"``"
+msgstr ""
+
+# 5b77d92d588a4d79878a634b28c421cc
+msgid "``\"always\"``"
+msgstr ""
+
+# 3bc5dbd894d84bb2927806c96e0f5843
+msgid "``\"never\"``"
+msgstr ""
+
 # eeb8d534cd614522a58ba1d54ef432c7
 msgid "``logical_range_filter``"
 msgstr ""
 
+# 4207d2acd4fd497091e401db9bfae3a6
+msgid "TODO: Write summary"
+msgstr ""
 
 msgid ""
 "Register ``sharding`` plugin to use ``logical_range_filter`` command in "
