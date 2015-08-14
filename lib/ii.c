@@ -7962,11 +7962,12 @@ ii_buffer_values_append(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
   // TODO: Make a copy of a given value if need_copy == GRN_TRUE.
   if (ii_buffer->nvalues == ii_buffer->max_nvalues) {
     unsigned new_max_nvalues = ii_buffer->max_nvalues * 2;
+    unsigned new_size;
+    ii_buffer_value *new_values;
     if (new_max_nvalues == 0) {
       new_max_nvalues = 1;
     }
-    unsigned new_size = new_max_nvalues * sizeof(ii_buffer_value);
-    ii_buffer_value *new_values;
+    new_size = new_max_nvalues * sizeof(ii_buffer_value);
     new_values = (ii_buffer_value *)GRN_REALLOC(ii_buffer->values, new_size);
     if (!new_values) {
       return;
