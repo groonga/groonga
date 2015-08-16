@@ -157,7 +157,7 @@ namespace :build do
 
       msgpack_license_dir = license_dir + "msgpack"
       mkdir_p(msgpack_license_dir)
-      files = ["AUTHORS", "COPYING", "LICENSE"]
+      files = ["README", "COPYING", "LICENSE"]
       cp(files, msgpack_license_dir)
     end
   end
