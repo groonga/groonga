@@ -6515,7 +6515,21 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
           if (tip == tie) {
             for (;;) {
               ti = bt->min; min = ti->pos; max = bt->max->pos;
-              if (min > max) { exit(0); }
+              if (min > max) {
+                char ii_name[GRN_TABLE_MAX_KEY_SIZE];
+                int ii_name_size;
+                ii_name_size = grn_obj_name(ctx, (grn_obj *)ii, ii_name,
+                                            GRN_TABLE_MAX_KEY_SIZE);
+                ERR(GRN_FILE_CORRUPT,
+                    "[ii][select][near] "
+                    "max position must be larger than min position: "
+                    "min:<%d> max:<%d> ii:<%.*s> string:<%.*s>",
+                    min, max,
+                    ii_name_size, ii_name,
+                    string_len, string);
+                rc = ctx->rc;
+                goto exit;
+              }
               if (max - min <= max_interval) {
                 if (rep) { pi.pos = min; res_add(ctx, s, &pi, weight, op); }
                 noccur++;
