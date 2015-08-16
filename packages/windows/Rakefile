@@ -283,7 +283,6 @@ namespace :build do
       mkdir_p(onigmo_license_dir)
       files = [
         "vendor/onigmo-source/README",
-        "vendor/onigmo-source/README",
         "vendor/onigmo-source/AUTHORS",
         "vendor/onigmo-source/COPYING",
       ]
