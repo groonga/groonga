@@ -40,9 +40,9 @@ build: source
 	done
 
 build-groonga: source
-	for architecture in $(ARCHITECTURES); do		\
-	  $(RUBY) -S rake build:groonga $(build_options)	\
-	     ARCHITECTURE=$${architecture};			\
+	for architecture in $(ARCHITECTURES); do			\
+	  $(RUBY) -S rake build:groonga build:post $(build_options)	\
+	     ARCHITECTURE=$${architecture};				\
 	done
 
 LICENSE:
