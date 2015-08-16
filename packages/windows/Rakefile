@@ -68,8 +68,20 @@ end
 namespace :build do
   download_dir = Pathname.new("tmp/download").expand_path
 
+  task :pkg_config do
+    ENV["PKG_CONFIG_PATH"] = nil
+    ENV["PKG_CONFIG_LIBDIR"] = (lib_dir + "pkgconfig").to_s
+  end
+
+  task :flags do
+    ENV["CPPFLAGS"] = "-I#{include_dir}"
+    ENV["LDFLAGS"] = "-L#{lib_dir}"
+  end
+
+  task :env => [:pkg_config, :flags]
+
   desc "Build zlib and install it into #{dist_dir}."
-  task :zlib do
+  task :zlib => :env do
     tmp_dir = Pathname.new("tmp/zlib")
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
@@ -102,7 +114,7 @@ namespace :build do
   end
 
   desc "Build LZ4 and install it into #{dist_dir}."
-  task :lz4 do
+  task :lz4 => :env do
     tmp_dir = Pathname.new("tmp/lz4")
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
@@ -132,7 +144,7 @@ namespace :build do
   end
 
   desc "Build MessagePack and install it into #{dist_dir}."
-  task :msgpack do
+  task :msgpack => :env do
     tmp_dir = Pathname.new("tmp/msgpack")
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
@@ -163,7 +175,7 @@ namespace :build do
   end
 
   desc "Build MeCab and install it into #{dist_dir}."
-  task :mecab do
+  task :mecab => :env do
     tmp_dir = Pathname.new("tmp/mecab")
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
@@ -198,7 +210,7 @@ namespace :build do
   end
 
   desc "Build MeCab dictionary and install it into #{dist_dir}."
-  task :mecab_dict do
+  task :mecab_dict => :env do
     tmp_dir = Pathname.new("tmp/mecab_dict")
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
@@ -231,7 +243,7 @@ namespace :build do
   end
 
   desc "Build Groonga and install it into #{dist_dir}/."
-  task :groonga do
+  task :groonga => :env do
     tmp_dir = Pathname.new("tmp/groonga")
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
@@ -291,7 +303,7 @@ namespace :build do
   end
 
   desc "Install Groonga Admin into #{dist_dir}/."
-  task :groonga_admin do
+  task :groonga_admin => :env do
     tmp_dir = Pathname.new("tmp/groonga-admin")
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
@@ -322,17 +334,7 @@ namespace :build do
     rm_rf(dist_dir)
   end
 
-  task :pkg_config do
-    ENV["PKG_CONFIG_PATH"] = nil
-    ENV["PKG_CONFIG_LIBDIR"] = (lib_dir + "pkgconfig").to_s
-  end
-
-  task :flags do
-    ENV["CPPFLAGS"] = "-I#{include_dir}"
-    ENV["LDFLAGS"] = "-L#{lib_dir}"
-  end
-
-  task :pre => [:clean, :pkg_config, :flags]
+  task :pre => [:clean]
   task :post
 end
 
