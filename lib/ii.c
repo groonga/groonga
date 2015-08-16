@@ -8157,13 +8157,13 @@ grn_ii_buffer_close(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
     }
     GRN_FREE(ii_buffer->blocks);
   }
-  GRN_FREE(ii_buffer);
   if (ii_buffer->values) {
     for (i = 0; i < ii_buffer->max_nvalues; i++) {
       ii_buffer_value_fin(ctx, &ii_buffer->values[i]);
     }
     GRN_FREE(ii_buffer->values);
   }
+  GRN_FREE(ii_buffer);
   return ctx->rc;
 }
 
