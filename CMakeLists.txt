@@ -97,23 +97,23 @@ set(GRN_DEFAULT_ENCODING
   CACHE STRING "Groonga's default encoding")
 set(GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD
   0
-  CACHE STRING "groonga default match escalation threshold")
+  CACHE STRING "Groonga's default match escalation threshold")
 set(GRN_DEFAULT_DOCUMENT_ROOT_BASE
   "html/admin"
-  CACHE PATH "groonga default document root base path")
+  CACHE PATH "Groonga's default document root base path")
 set(GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT
   "share/${GRN_PROJECT_NAME}/${GRN_DEFAULT_DOCUMENT_ROOT_BASE}"
-  CACHE PATH "groonga default relative document root")
+  CACHE PATH "Groonga's default relative document root")
 set(GRN_DEFAULT_DOCUMENT_ROOT
   "${CMAKE_INSTALL_PREFIX}/${GRN_DATA_DIR}/${GRN_DEFAULT_DOCUMENT_ROOT_BASE}"
-  CACHE PATH "groonga default document root")
+  CACHE PATH "Groonga's default document root")
 set(GRN_DEFAULT_DB_KEY
   "auto"
   CACHE STRING "Groonga's default DB key management algorithm")
 set(GRN_STACK_SIZE
   1024
   CACHE STRING
-  "DANGER!!! groonga stack size. Normarlly, you should not change this variable.")
+  "DANGER!!! Groonga's stack size. Normarlly, you should not change this variable.")
 set(GRN_LOCK_TIMEOUT
   10000000
   CACHE STRING
