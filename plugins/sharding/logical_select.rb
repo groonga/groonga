@@ -617,7 +617,10 @@ module Groonga
         end
 
         def add_result_set(result_set)
-          return if result_set.empty?
+          if result_set.empty?
+            result_set.close
+            return
+          end
 
           if @sort_keys.empty?
             @result_sets << result_set
