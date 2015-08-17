@@ -403,7 +403,7 @@ module Groonga
 
         def close
           @result_set.close if @result_set
-          @unsorted_result_set.close if @unsored_result_set
+          @unsorted_result_set.close if @unsorted_result_set
         end
 
         def need_command_version2?
