@@ -37,23 +37,6 @@ typedef enum {
   GRN_TS_GEO_POINT // GRN_DB_TOKYO/WGS84_GEO_POINT.
 } grn_ts_data_type;
 
-//typedef enum {
-//  GRN_TS_VOID,
-//  GRN_TS_BOOL,
-//  GRN_TS_INT,
-//  GRN_TS_FLOAT,
-//  GRN_TS_TIME,
-//  GRN_TS_TEXT,
-//  GRN_TS_GEO_POINT,
-//  GRN_TS_BOOL_VECTOR,
-//  GRN_TS_INT_VECTOR,
-//  GRN_TS_FLOAT_VECTOR,
-//  GRN_TS_TIME_VECTOR,
-//  GRN_TS_TEXT_VECTOR,
-//  GRN_TS_GEO_POINT_VECTOR,
-//  GRN_TS_DEEP_VECTOR
-//} grn_ts_data_type;
-
 typedef enum {
   GRN_TS_NOP,
   GRN_TS_LOGICAL_NOT,
