@@ -28,12 +28,14 @@ module Groonga
       set_error_raw(groonga_error.class.rc,
                     ErrorLevel::ERROR,
                     groonga_error.message,
-                    groonga_error.backtrace)
+                    # TODO: Re-enable backtrace after mruby/mruby#2917 has been merged
+                    nil) # groonga_error.backtrace)
     end
 
     def record_error(rc, error)
       rc = RC.find(rc) if rc.is_a?(Symbol)
-      set_error_raw(rc, ErrorLevel::ERROR, error.message, error.backtrace)
+      # TODO: Re-enable backtrace after mruby/mruby#2917 has been merged
+      set_error_raw(rc, ErrorLevel::ERROR, error.message, nil) # error.backtrace)
 
       logger.log_error(error)
     end
