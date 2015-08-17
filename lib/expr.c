@@ -5499,13 +5499,6 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
             res_ = grn_table_create(ctx, NULL, 0, NULL,
                                     GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL);
             if (!res_) {
-              int i = 0;
-              if (!res_created) { i++; }
-              for (; i < GRN_BULK_VSIZE(&res_stack) / sizeof(grn_obj *); i++) {
-                grn_obj *stacked_res;
-                stacked_res = *((grn_obj **)GRN_BULK_HEAD(&res_stack) + i);
-                grn_obj_close(ctx, stacked_res);
-              }
               break;
             }
             GRN_PTR_PUT(ctx, &res_stack, res);
@@ -5533,6 +5526,13 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
       for (i = 0; i < n; i++) {
         scan_info *si = sis[i];
         SI_FREE(si);
+      }
+      i = 0;
+      if (!res_created) { i++; }
+      for (; i < GRN_BULK_VSIZE(&res_stack) / sizeof(grn_obj *); i++) {
+        grn_obj *stacked_res;
+        stacked_res = *((grn_obj **)GRN_BULK_HEAD(&res_stack) + i);
+        grn_obj_close(ctx, stacked_res);
       }
       GRN_OBJ_FIN(ctx, &res_stack);
       GRN_FREE(sis);
