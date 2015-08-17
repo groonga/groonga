@@ -5524,7 +5524,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                       ":", "filter(%d)", grn_table_size(ctx, res));
         if (ctx->rc) {
           if (res_created) {
-            GRN_OBJ_FIN(ctx, res);
+            grn_obj_close(ctx, res);
           }
           res = NULL;
           break;
@@ -5543,7 +5543,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
         grn_table_select_sequential(ctx, table, expr, v, res, op);
         if (ctx->rc) {
           if (res_created) {
-            GRN_OBJ_FIN(ctx, res);
+            grn_obj_close(ctx, res);
           }
           res = NULL;
         }
