@@ -62,6 +62,7 @@ typedef struct _grn_io_fileinfo {
 #define IO_HEADER_SIZE 64
 
 static uint32_t grn_io_version_default = GRN_IO_VERSION_DEFAULT;
+static grn_bool grn_io_use_sparse = GRN_FALSE;
 
 inline static grn_rc grn_fileinfo_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags);
 inline static void grn_fileinfo_init(fileinfo *fis, int nfis);
@@ -104,13 +105,26 @@ inline static grn_rc grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t co
 void
 grn_io_init_from_env(void)
 {
-  char version_env[GRN_ENV_BUFFER_SIZE];
+  {
+    char version_env[GRN_ENV_BUFFER_SIZE];
 
-  grn_getenv("GRN_IO_VERSION",
-             version_env,
-             GRN_ENV_BUFFER_SIZE);
-  if (version_env[0]) {
-    grn_io_version_default = atoi(version_env);
+    grn_getenv("GRN_IO_VERSION",
+               version_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (version_env[0]) {
+      grn_io_version_default = atoi(version_env);
+    }
+  }
+
+  {
+    char use_sparse_env[GRN_ENV_BUFFER_SIZE];
+
+    grn_getenv("GRN_IO_USE_SPARSE",
+               use_sparse_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (use_sparse_env[0] && strcmp(use_sparse_env, "yes") == 0) {
+      grn_io_use_spare = GRN_TRUE;
+    }
   }
 }
 
@@ -1587,7 +1601,7 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
       goto exit;
     }
 
-    {
+    if (grn_io_use_sparse) {
       FILE_SET_SPARSE_BUFFER buffer;
       buffer.SetSparse = TRUE;
       DWORD returned_bytes;
