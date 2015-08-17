@@ -1,5 +1,7 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
-/* Copyright(C) 2009 Brazil
+/*
+  Copyright(C) 2009 Brazil
+  Copyright(C) 2015 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1330,7 +1332,7 @@ test_arithmetic_operator_error(gconstpointer data)
         GRN_EXPR_SYNTAX_SCRIPT | GRN_EXPR_ALLOW_UPDATE);
 
   res = grn_table_select(&context, docs, expr, NULL, GRN_OP_OR);
-  cut_assert_not_null(res);
+  cut_assert_null(res);
   grn_test_assert_error(gcut_data_get_uint(data, "rc"),
                         gcut_data_get_string(data, "message"),
                         &context);
