@@ -3107,7 +3107,7 @@ grn_ts_select_output(grn_ctx *ctx, grn_obj *table,
     GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '"');
     GRN_TEXT_PUT(ctx, ctx->impl->outbuf, names[i].data(), names[i].size());
     GRN_TEXT_PUT(ctx, ctx->impl->outbuf, "\",\"", 3);
-    switch (expressions[i]->builtin_type()) {
+    switch (expressions[i]->output_type()) {
       case GRN_DB_BOOL: {
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Bool");
         break;
@@ -3137,9 +3137,6 @@ grn_ts_select_output(grn_ctx *ctx, grn_obj *table,
         break;
       }
       case GRN_DB_UINT32: {
-        // TODO
-//        if (expressions[i]->ref_table()) {
-//        }
         GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "UInt32");
         break;
       }
@@ -3176,7 +3173,13 @@ grn_ts_select_output(grn_ctx *ctx, grn_obj *table,
         break;
       }
       default: {
-        GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Void");
+        grn_obj *obj = grn_ctx_at(ctx, expressions[i]->output_type());
+        if (obj && grn_obj_is_table(ctx, obj)) {
+          char name[GRN_TABLE_MAX_KEY_SIZE];
+          int len = grn_obj_name(ctx, obj, name, sizeof(name));
+          GRN_TEXT_PUT(ctx, ctx->impl->outbuf, name, len);
+          grn_obj_unlink(ctx, obj);
+        }
         break;
       }
     }
