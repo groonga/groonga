@@ -24,8 +24,6 @@ module Groonga
                ])
 
       def run_body(input)
-        enumerator = LogicalEnumerator.new("logical_select", input)
-
         context = ExecuteContext.new(input)
         begin
           executor = Executor.new(context)
