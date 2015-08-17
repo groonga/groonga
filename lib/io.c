@@ -123,7 +123,7 @@ grn_io_init_from_env(void)
                use_sparse_env,
                GRN_ENV_BUFFER_SIZE);
     if (use_sparse_env[0] && strcmp(use_sparse_env, "yes") == 0) {
-      grn_io_use_spare = GRN_TRUE;
+      grn_io_use_sparse = GRN_TRUE;
     }
   }
 }
