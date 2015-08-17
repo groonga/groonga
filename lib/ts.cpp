@@ -1205,42 +1205,155 @@ grn_rc ColumnNode::evaluate_vector_text(const Record *records,
   return GRN_SUCCESS;
 }
 
-//// -- OperatorNode --
+// -- OperatorNode --
 
-//template <typename T>
-//class OperatorNode : public TypedNode<T> {
-// public:
-//  OperatorNode() : TypedNode<T>() {}
-//  virtual ~OperatorNode() {}
+class OperatorNode : public ExpressionNode {
+ public:
+  OperatorNode() : ExpressionNode() {}
+  virtual ~OperatorNode() {}
 
-//  ExpressionNodeType type() const {
-//    return GRN_TS_OPERATOR_NODE;
-//  }
-//};
+  ExpressionNodeType type() const {
+    return GRN_TS_OPERATOR_NODE;
+  }
+};
 
-//template <typename T>
-//grn_rc operator_node_fill_arg_values(
-//  const Record *records, size_t num_records,
-//  TypedNode<T> *arg, std::vector<T> *arg_values) {
-//  size_t old_size = arg_values->size();
-//  if (old_size < num_records) try {
-//    arg_values->resize(num_records);
-//  } catch (const std::bad_alloc &) {
-//    return GRN_NO_MEMORY_AVAILABLE;
-//  }
-//  switch (arg->type()) {
-//    case GRN_TS_CONSTANT_NODE: {
-//      if (old_size < num_records) {
-//        return arg->evaluate(records + old_size, num_records - old_size,
-//          &*arg_values->begin() + old_size);
-//      }
-//      return GRN_SUCCESS;
-//    }
-//    default: {
-//      return arg->evaluate(records, num_records, &*arg_values->begin());
-//    }
-//  }
-//}
+/*
+grn_rc operator_node_fill_arg_values(const Record *records, size_t num_records,
+                                     ExpressionNode *arg,
+                                     std::vector<char> *arg_values) {
+  size_t value_size = 0;
+  switch (arg->data_kind()) {
+    case GRN_TS_BOOL: {
+      value_size = sizeof(grn_ts_bool);
+      break;
+    }
+    case GRN_TS_INT: {
+      value_size = sizeof(grn_ts_int);
+      break;
+    }
+    case GRN_TS_FLOAT: {
+      value_size = sizeof(grn_ts_float);
+      break;
+    }
+    case GRN_TS_TIME: {
+      value_size = sizeof(grn_ts_time);
+      break;
+    }
+    case GRN_TS_TEXT: {
+      value_size = sizeof(grn_ts_text);
+      break;
+    }
+    case GRN_TS_GEO_POINT: {
+      value_size = sizeof(grn_ts_geo_point);
+      break;
+    }
+    default: {
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+  size_t old_size = arg_values->size() / value_size;
+  if (old_size < num_records) try {
+    arg_values->resize(value_size * num_records);
+  } catch (const std::bad_alloc &) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  return arg->evaluate(records, num_records, &*arg_values->begin());
+}
+*/
+
+// ---- LogicalNotNode ----
+
+class LogicalNotNode : public OperatorNode {
+ public:
+  ~LogicalNotNode() {
+    delete arg_;
+  }
+
+  static grn_rc open(ExpressionNode *arg, ExpressionNode **node) {
+    LogicalNotNode *new_node = new (std::nothrow) LogicalNotNode(arg);
+    if (!new_node) {
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+    *node = new_node;
+    return GRN_SUCCESS;
+  }
+
+  DataKind data_kind() const {
+    return GRN_TS_BOOL;
+  }
+  DataType data_type() const {
+    return GRN_DB_BOOL;
+  }
+  grn_obj *ref_table() const {
+    return NULL;
+  }
+  int dimension() const {
+    return 0;
+  }
+
+  grn_rc filter(Record *input, size_t input_size,
+                Record *output, size_t *output_size);
+
+  grn_rc evaluate(const Record *records, size_t num_records, void *results);
+
+ private:
+  ExpressionNode *arg_;
+  std::vector<Record> temp_records_;
+
+  explicit LogicalNotNode(ExpressionNode *arg)
+    : OperatorNode(), arg_(arg), temp_records_() {}
+};
+
+grn_rc LogicalNotNode::filter(Record *input, size_t input_size,
+                              Record *output, size_t *output_size) {
+  if (temp_records_.size() <= input_size) {
+    try {
+      temp_records_.resize(input_size + 1);
+      temp_records_[input_size].id = GRN_ID_NIL;
+    } catch (const std::bad_alloc &) {
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+  }
+  size_t temp_size;
+  grn_rc rc =
+    arg_->filter(input, input_size, &*temp_records_.begin(), &temp_size);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  if (temp_size == 0) {
+    if (input != output) {
+      for (size_t i = 0; i < input_size; ++i) {
+        output[i] = input[i];
+      }
+    }
+    *output_size = input_size;
+    return GRN_SUCCESS;
+  } else if (temp_size == input_size) {
+    *output_size = 0;
+    return GRN_SUCCESS;
+  }
+
+  size_t count = 0;
+  for (size_t i = 0; i < input_size; ++i) {
+    if (input[i].id != temp_records_[i - count].id) {
+      output[count] = input[i];
+      ++count;
+    }
+  }
+  *output_size = count;
+  return GRN_SUCCESS;
+}
+
+grn_rc LogicalNotNode::evaluate(const Record *records, size_t num_records,
+                                void *results) {
+  grn_rc rc = arg_->evaluate(records, num_records, results);
+  if (rc == GRN_SUCCESS) {
+    for (size_t i = 0; i < num_records; ++i) {
+      ((grn_ts_bool *)results)[i] = !((grn_ts_bool *)results)[i];
+    }
+  }
+  return rc;
+}
 
 //// --- UnaryNode ---
 
@@ -1263,79 +1376,6 @@ grn_rc ColumnNode::evaluate_vector_text(const Record *records,
 //      records, num_records, arg_, &arg_values_);
 //  }
 //};
-
-//// ---- LogicalNotNode ----
-
-//class LogicalNotNode : public UnaryNode<Bool, Bool> {
-// public:
-//  ~LogicalNotNode() {}
-
-//  static grn_rc open(ExpressionNode *arg, ExpressionNode **node) {
-//    LogicalNotNode *new_node = new (std::nothrow) LogicalNotNode(arg);
-//    if (!new_node) {
-//      return GRN_NO_MEMORY_AVAILABLE;
-//    }
-//    *node = new_node;
-//    return GRN_SUCCESS;
-//  }
-
-//  grn_rc filter(
-//    Record *input, size_t input_size,
-//    Record *output, size_t *output_size);
-
-//  grn_rc evaluate(
-//    const Record *records, size_t num_records, Bool *results);
-
-// private:
-//  std::vector<Record> temp_records_;
-
-//  explicit LogicalNotNode(ExpressionNode *arg)
-//    : UnaryNode<Bool, Bool>(arg), temp_records_() {}
-//};
-
-//grn_rc LogicalNotNode::filter(
-//  Record *input, size_t input_size,
-//  Record *output, size_t *output_size) {
-//  if (temp_records_.size() <= input_size) {
-//    try {
-//      temp_records_.resize(input_size + 1);
-//      temp_records_[input_size].id = GRN_ID_NIL;
-//    } catch (const std::bad_alloc &) {
-//      return GRN_NO_MEMORY_AVAILABLE;
-//    }
-//  }
-//  size_t temp_size;
-//  grn_rc rc =
-//    arg_->filter(input, input_size, &*temp_records_.begin(), &temp_size);
-//  if (rc != GRN_SUCCESS) {
-//    return rc;
-//  }
-//  if (temp_size == 0) {
-//    *output_size = 0;
-//    return GRN_SUCCESS;
-//  }
-
-//  size_t count = 0;
-//  for (size_t i = 0; i < input_size; ++i) {
-//    if (input[i].id != temp_records_[i - count].id) {
-//      output[count] = input[i];
-//      ++count;
-//    }
-//  }
-//  *output_size = count;
-//  return GRN_SUCCESS;
-//}
-
-//grn_rc LogicalNotNode::evaluate(
-//  const Record *records, size_t num_records, Bool *results) {
-//  grn_rc rc = arg_->evaluate(records, num_records, results);
-//  if (rc == GRN_SUCCESS) {
-//    for (size_t i = 0; i < num_records; ++i) {
-//      results[i] = Bool(results[i].raw != GRN_TRUE);
-//    }
-//  }
-//  return rc;
-//}
 
 //// --- BinaryNode ---
 
@@ -2012,18 +2052,18 @@ grn_rc ExpressionParser::tokenize(const char *query, size_t query_size) {
     rest += pos;
     rest_size -= pos;
     switch (rest[0]) {
-//      case '!': {
+      case '!': {
 //        if ((rest_size >= 2) && (rest[1] == '=')) {
 //          tokens_.push_back(ExpressionToken("!=", GRN_TS_NOT_EQUAL));
 //          rest += 2;
 //          rest_size -= 2;
 //        } else {
-//          tokens_.push_back(ExpressionToken("!", GRN_TS_LOGICAL_NOT));
-//          ++rest;
-//          --rest_size;
+          tokens_.push_back(ExpressionToken("!", GRN_TS_LOGICAL_NOT));
+          ++rest;
+          --rest_size;
 //        }
-//        break;
-//      }
+        break;
+      }
 ////      case '~': {
 ////        tokens_.push_back(ExpressionToken("~", GRN_OP_BITWISE_NOT));
 ////        rest = rest.substring(1);
@@ -2738,13 +2778,13 @@ grn_rc Expression::create_unary_node(OperatorType operator_type,
   ExpressionNode *arg, ExpressionNode **node) {
   grn_rc rc = GRN_SUCCESS;
   switch (operator_type) {
-//    case GRN_TS_LOGICAL_NOT: {
-//      if (arg->data_kind() != GRN_TS_BOOL) {
-//        return GRN_UNKNOWN_ERROR;
-//      }
-//      rc = LogicalNotNode::open(arg, node);
-//      break;
-//    }
+    case GRN_TS_LOGICAL_NOT: {
+      if (arg->data_kind() != GRN_TS_BOOL) {
+        return GRN_UNKNOWN_ERROR;
+      }
+      rc = LogicalNotNode::open(arg, node);
+      break;
+    }
     default: {
       return GRN_INVALID_ARGUMENT;
     }
