@@ -5522,7 +5522,13 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
         }
         GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                       ":", "filter(%d)", grn_table_size(ctx, res));
-        if (ctx->rc) { break; }
+        if (ctx->rc) {
+          if (res_created) {
+            GRN_OBJ_FIN(ctx, res);
+          }
+          res = NULL;
+          break;
+        }
       }
       for (i = 0; i < n; i++) {
         scan_info *si = sis[i];
@@ -5535,6 +5541,12 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
     } else {
       if (!ctx->rc) {
         grn_table_select_sequential(ctx, table, expr, v, res, op);
+        if (ctx->rc) {
+          if (res_created) {
+            GRN_OBJ_FIN(ctx, res);
+          }
+          res = NULL;
+        }
       }
     }
   }

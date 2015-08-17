@@ -153,9 +153,6 @@ mrb_grn_table_select(mrb_state *mrb, mrb_value self)
 
   result = grn_table_select(ctx, table, expr, result, operator);
   if (ctx->rc != GRN_SUCCESS) {
-    if (result) {
-      grn_obj_unlink(ctx, result);
-    }
     grn_mrb_ctx_check(mrb);
   }
 
