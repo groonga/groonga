@@ -242,6 +242,9 @@ class ExpressionNode {
   virtual ~ExpressionNode() {}
 
   virtual ExpressionNodeType type() const = 0;
+  virtual grn_id output_type() const {
+    return static_cast<grn_id>(builtin_type());
+  }
   virtual grn_builtin_type builtin_type() const = 0;
   virtual grn_obj *ref_table() const = 0;
   virtual int dimension() const = 0;
@@ -2507,6 +2510,12 @@ DataType Expression::data_type() const {
   ExpressionNode *root = this->root();
   return root ? root->data_type() : GRN_TS_VOID;
 }
+
+grn_id Expression::output_type() const {
+  ExpressionNode *root = this->root();
+  return root ? root->output_type() : GRN_ID_NIL;
+}
+
 grn_builtin_type Expression::builtin_type() const {
   ExpressionNode *root = this->root();
   return root ? root->builtin_type() : GRN_DB_VOID;

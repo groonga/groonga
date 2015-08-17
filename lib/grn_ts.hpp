@@ -244,6 +244,7 @@ class Expression {
     return type_;
   }
   DataType data_type() const;
+  grn_id output_type() const;
   grn_builtin_type builtin_type() const;
   grn_obj *ref_table() const;
   int dimension() const;
