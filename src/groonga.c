@@ -105,7 +105,7 @@ static int ready_notify_pipe[2];
 static grn_encoding encoding;
 static grn_command_version default_command_version;
 static int64_t default_match_escalation_threshold;
-static char *windows_event_source_name = "Groonga";
+static const char *windows_event_source_name = "Groonga";
 static grn_bool use_windows_event_log = GRN_FALSE;
 
 static int
