@@ -27,15 +27,18 @@ extern "C" {
 
 // Constant values.
 
+typedef grn_id grn_ts_data_type;
+
 typedef enum {
-  GRN_TS_VOID,     // GRN_DB_VOID.
-  GRN_TS_BOOL,     // GRN_DB_BOOL.
-  GRN_TS_INT,      // GRN_DB_(U)INT8/16/32/64.
-  GRN_TS_FLOAT,    // GRN_DB_FLOAT.
-  GRN_TS_TIME,     // GRN_DB_TIME.
-  GRN_TS_TEXT,     // GRN_DB_(SHORT_/LONG_)TEST
-  GRN_TS_GEO_POINT // GRN_DB_TOKYO/WGS84_GEO_POINT.
-} grn_ts_data_type;
+  GRN_TS_VOID,      // GRN_DB_VOID.
+  GRN_TS_BOOL,      // GRN_DB_BOOL.
+  GRN_TS_INT,       // GRN_DB_(U)INT8/16/32/64.
+  GRN_TS_FLOAT,     // GRN_DB_FLOAT.
+  GRN_TS_TIME,      // GRN_DB_TIME.
+  GRN_TS_TEXT,      // GRN_DB_(SHORT_/LONG_)TEST.
+  GRN_TS_GEO_POINT, // GRN_DB_TOKYO/WGS84_GEO_POINT.
+  GRN_TS_REF        // Table reference.
+} grn_ts_data_kind;
 
 typedef enum {
   GRN_TS_NOP,

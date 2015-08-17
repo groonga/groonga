@@ -41,12 +41,12 @@
 namespace {
 
 enum {
-  GRN_TS_MAX_BUILTIN_TYPE = GRN_DB_WGS84_GEO_POINT,
+  GRN_TS_MAX_DATA_TYPE = GRN_DB_WGS84_GEO_POINT,
   GRN_TS_MAX_BATCH_SIZE = 1024
 };
 
-grn_ts_data_type grn_ts_simplify_builtin_type(grn_builtin_type builtin_type) {
-  switch (builtin_type) {
+grn_ts_data_kind grn_ts_data_type_to_kind(grn_ts_data_type data_type) {
+  switch (data_type) {
     case GRN_DB_VOID: {
       return GRN_TS_VOID;
     }
@@ -79,7 +79,7 @@ grn_ts_data_type grn_ts_simplify_builtin_type(grn_builtin_type builtin_type) {
       return GRN_TS_GEO_POINT;
     }
     default: {
-      return GRN_TS_VOID;
+      return GRN_TS_REF;
     }
   }
 }
@@ -242,13 +242,10 @@ class ExpressionNode {
   virtual ~ExpressionNode() {}
 
   virtual ExpressionNodeType type() const = 0;
-  virtual grn_id output_type() const {
-    return static_cast<grn_id>(builtin_type());
-  }
-  virtual grn_builtin_type builtin_type() const = 0;
+  virtual DataKind data_kind() const = 0;
+  virtual DataType data_type() const = 0;
   virtual grn_obj *ref_table() const = 0;
   virtual int dimension() const = 0;
-  virtual DataType data_type() const = 0;
 
   virtual grn_rc filter(Record *input, size_t input_size,
                         Record *output, size_t *output_size) {
@@ -279,7 +276,10 @@ class IDNode : public ExpressionNode {
   ExpressionNodeType type() const {
     return GRN_TS_ID_NODE;
   }
-  grn_builtin_type builtin_type() const {
+  DataKind data_kind() const {
+    return GRN_TS_INT;
+  }
+  DataType data_type() const {
     return GRN_DB_UINT32;
   }
   grn_obj *ref_table() const {
@@ -287,9 +287,6 @@ class IDNode : public ExpressionNode {
   }
   int dimension() const {
     return 0;
-  }
-  DataType data_type() const {
-    return GRN_TS_INT;
   }
 
   grn_rc evaluate(const Record *records, size_t num_records, void *results) {
@@ -321,7 +318,10 @@ class ScoreNode : public ExpressionNode {
   ExpressionNodeType type() const {
     return GRN_TS_SCORE_NODE;
   }
-  grn_builtin_type builtin_type() const {
+  DataKind data_kind() const {
+    return GRN_TS_FLOAT;
+  }
+  DataType data_type() const {
     return GRN_DB_FLOAT;
   }
   grn_obj *ref_table() const {
@@ -329,9 +329,6 @@ class ScoreNode : public ExpressionNode {
   }
   int dimension() const {
     return 0;
-  }
-  DataType data_type() const {
-    return GRN_TS_FLOAT;
   }
 
   grn_rc adjust(Record *records, size_t num_records) {
@@ -367,17 +364,17 @@ class ConstantNode : public ExpressionNode {
   ExpressionNodeType type() const {
     return GRN_TS_CONSTANT_NODE;
   }
-  grn_builtin_type builtin_type() const {
-    return builtin_type_;
+  DataKind data_kind() const {
+    return data_kind_;
+  }
+  DataType data_type() const {
+    return data_type_;
   }
   grn_obj *ref_table() const {
     return NULL;
   }
   int dimension() const {
     return dimension_;
-  }
-  DataType data_type() const {
-    return data_type_;
   }
 
   grn_rc filter(Record *input, size_t input_size,
@@ -389,9 +386,9 @@ class ConstantNode : public ExpressionNode {
   grn_ctx *ctx_;
   grn_obj *obj_;
   grn_obj *buf_;
-  grn_builtin_type builtin_type_;
-  int dimension_;
+  DataKind data_kind_;
   DataType data_type_;
+  int dimension_;
 
   static grn_rc convert(grn_ctx *ctx, grn_obj *obj,
                         grn_obj **new_obj, grn_obj **buf);
@@ -403,14 +400,14 @@ class ConstantNode : public ExpressionNode {
                                grn_obj **new_obj, grn_obj **buf);
 
   ConstantNode(grn_ctx *ctx, grn_obj *obj, grn_obj *buf,
-               grn_builtin_type builtin_type, int dimension)
+               DataType data_type, int dimension)
     : ExpressionNode(),
       ctx_(ctx),
       obj_(obj),
       buf_(buf),
-      builtin_type_(builtin_type),
-      dimension_(dimension),
-      data_type_(grn_ts_simplify_builtin_type(builtin_type)) {}
+      data_kind_(grn_ts_data_type_to_kind(data_type)),
+      data_type_(data_type),
+      dimension_(dimension) {}
 };
 
 grn_rc ConstantNode::open(grn_ctx *ctx, grn_obj *obj, ExpressionNode **node) {
@@ -420,11 +417,10 @@ grn_rc ConstantNode::open(grn_ctx *ctx, grn_obj *obj, ExpressionNode **node) {
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  grn_builtin_type builtin_type =
-    static_cast<grn_builtin_type>(obj->header.domain);
+  DataType data_type = obj->header.domain;
   int dimension = obj->header.type != GRN_BULK;
   ConstantNode *new_node = new (std::nothrow) ConstantNode(
-    ctx, new_obj ? new_obj : obj, buf, builtin_type, dimension);
+    ctx, new_obj ? new_obj : obj, buf, data_type, dimension);
   if (!new_node) {
     if (new_obj) {
       grn_obj_close(ctx, new_obj);
@@ -443,7 +439,7 @@ grn_rc ConstantNode::open(grn_ctx *ctx, grn_obj *obj, ExpressionNode **node) {
 
 grn_rc ConstantNode::filter(Record *input, size_t input_size,
                             Record *output, size_t *output_size) {
-  if ((dimension() != 0) || (data_type() != GRN_TS_BOOL)) {
+  if ((dimension() != 0) || (data_kind() != GRN_TS_BOOL)) {
     return GRN_OPERATION_NOT_PERMITTED;
   }
   grn_ts_bool value = GRN_BOOL_VALUE(obj_);
@@ -462,7 +458,7 @@ grn_rc ConstantNode::filter(Record *input, size_t input_size,
 }
 
 grn_rc ConstantNode::adjust(Record *records, size_t num_records) {
-  if ((dimension() != 0) || (data_type() != GRN_TS_FLOAT)) {
+  if ((dimension() != 0) || (data_kind() != GRN_TS_FLOAT)) {
     return GRN_OPERATION_NOT_PERMITTED;
   }
   grn_ts_float value = GRN_FLOAT_VALUE(obj_);
@@ -479,7 +475,7 @@ grn_rc ConstantNode::evaluate(const Record *records, size_t num_records,
   }
   if (dimension() == 0) {
     // Scalar types.
-    switch (data_type()) {
+    switch (data_kind()) {
       case GRN_TS_BOOL: {
         grn_ts_bool value = GRN_BOOL_VALUE(obj_);
         for (size_t i = 0; i < num_records; ++i) {
@@ -514,7 +510,7 @@ grn_rc ConstantNode::evaluate(const Record *records, size_t num_records,
     }
   } else {
     // Vector types.
-    switch (data_type()) {
+    switch (data_kind()) {
       case GRN_TS_BOOL:
       case GRN_TS_INT:
       case GRN_TS_FLOAT:
@@ -745,17 +741,17 @@ class ColumnNode : public ExpressionNode {
   ExpressionNodeType type() const {
     return GRN_TS_COLUMN_NODE;
   }
-  grn_builtin_type builtin_type() const {
-    return builtin_type_;
+  DataKind data_kind() const {
+    return data_kind_;
+  }
+  DataType data_type() const {
+    return data_type_;
   }
   grn_obj *ref_table() const {
     return NULL;
   }
   int dimension() const {
     return dimension_;
-  }
-  DataType data_type() const {
-    return data_type_;
   }
 
   grn_rc filter(Record *input, size_t input_size,
@@ -768,22 +764,22 @@ class ColumnNode : public ExpressionNode {
   grn_obj *column_;
   grn_obj *buf_;
   grn_obj *deep_buf_;
-  grn_builtin_type builtin_type_;
+  DataKind data_kind_;
+  DataType data_type_;
   grn_obj *ref_table_;
   int dimension_;
-  DataType data_type_;
 
-  ColumnNode(grn_ctx *ctx, grn_obj *column, grn_builtin_type builtin_type,
+  ColumnNode(grn_ctx *ctx, grn_obj *column, DataType data_type,
              grn_obj *ref_table, int dimension)
     : ExpressionNode(),
       ctx_(ctx),
       column_(column),
       buf_(NULL),
       deep_buf_(NULL),
-      builtin_type_(builtin_type),
+      data_kind_(grn_ts_data_type_to_kind(data_type)),
+      data_type_(data_type),
       ref_table_(ref_table),
-      dimension_(dimension),
-      data_type_(grn_ts_simplify_builtin_type(builtin_type)) {}
+      dimension_(dimension) {}
 
   grn_rc evaluate_scalar(const Record *records, size_t num_records,
                          void *results);
@@ -798,13 +794,13 @@ class ColumnNode : public ExpressionNode {
 };
 
 grn_rc ColumnNode::open(grn_ctx *ctx, grn_obj *column, ExpressionNode **node) {
-  grn_builtin_type builtin_type = GRN_DB_VOID;
+  DataType data_type = GRN_DB_VOID;
   grn_obj *ref_table = NULL;
   int dimension = 0;
   switch (column->header.type) {
     case GRN_COLUMN_FIX_SIZE:
     case GRN_COLUMN_VAR_SIZE: {
-      builtin_type = static_cast<grn_builtin_type>(DB_OBJ(column)->range);
+      data_type = DB_OBJ(column)->range;
       if (column->header.type == GRN_COLUMN_VAR_SIZE) {
         grn_obj_flags column_type =
           column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK;
@@ -821,13 +817,11 @@ grn_rc ColumnNode::open(grn_ctx *ctx, grn_obj *column, ExpressionNode **node) {
           return IDNode::open(node);
         }
         case GRN_ACCESSOR_GET_KEY: {
-          builtin_type = static_cast<grn_builtin_type>(
-            accessor->obj->header.domain);
+          data_type = accessor->obj->header.domain;
           break;
         }
         case GRN_ACCESSOR_GET_VALUE: {
-          builtin_type = static_cast<grn_builtin_type>(
-            DB_OBJ(accessor->obj)->range);
+          data_type = DB_OBJ(accessor->obj)->range;
           break;
         }
         case GRN_ACCESSOR_GET_SCORE: {
@@ -843,8 +837,7 @@ grn_rc ColumnNode::open(grn_ctx *ctx, grn_obj *column, ExpressionNode **node) {
       return GRN_INVALID_ARGUMENT;
     }
   }
-  if (static_cast<int>(builtin_type) > GRN_TS_MAX_BUILTIN_TYPE) {
-    builtin_type = GRN_DB_UINT32;
+  if (data_type > GRN_TS_MAX_DATA_TYPE) {
     ref_table = grn_ctx_at(ctx, column->header.domain);
     if (!ref_table) {
       if (ctx->rc != GRN_SUCCESS) {
@@ -857,7 +850,7 @@ grn_rc ColumnNode::open(grn_ctx *ctx, grn_obj *column, ExpressionNode **node) {
     }
   }
   ColumnNode *new_node = new (std::nothrow) ColumnNode(
-    ctx, column, builtin_type, ref_table, dimension);
+    ctx, column, data_type, ref_table, dimension);
   if (!new_node) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
@@ -867,7 +860,7 @@ grn_rc ColumnNode::open(grn_ctx *ctx, grn_obj *column, ExpressionNode **node) {
 
 grn_rc ColumnNode::filter(Record *input, size_t input_size,
                           Record *output, size_t *output_size) {
-  if ((dimension() != 0) || (data_type() != GRN_TS_BOOL)) {
+  if ((dimension() != 0) || (data_kind() != GRN_TS_BOOL)) {
     return GRN_OPERATION_NOT_PERMITTED;
   }
   grn_obj value;
@@ -890,7 +883,7 @@ grn_rc ColumnNode::filter(Record *input, size_t input_size,
 }
 
 grn_rc ColumnNode::adjust(Record *records, size_t num_records) {
-  if ((dimension() != 0) || (data_type() != GRN_TS_FLOAT)) {
+  if ((dimension() != 0) || (data_kind() != GRN_TS_FLOAT)) {
     return GRN_OPERATION_NOT_PERMITTED;
   }
   grn_obj value;
@@ -933,7 +926,7 @@ grn_rc ColumnNode::evaluate(const Record *records, size_t num_records,
 grn_rc ColumnNode::evaluate_scalar(const Record *records, size_t num_records,
                                    void *results) {
   grn_obj value;
-  switch (builtin_type()) {
+  switch (data_type()) {
     GRN_TS_EVALUATE_SCALAR_CASE_BLOCK(BOOL, bool)
     GRN_TS_EVALUATE_SCALAR_CASE_BLOCK(INT8, int)
     GRN_TS_EVALUATE_SCALAR_CASE_BLOCK(INT16, int)
@@ -952,7 +945,7 @@ grn_rc ColumnNode::evaluate_scalar(const Record *records, size_t num_records,
     }
     case GRN_DB_TOKYO_GEO_POINT:
     case GRN_DB_WGS84_GEO_POINT: {
-      if (builtin_type() == GRN_DB_TOKYO_GEO_POINT) {
+      if (data_type() == GRN_DB_TOKYO_GEO_POINT) {
         GRN_TOKYO_GEO_POINT_INIT(&value, 0);
       } else {
         GRN_WGS84_GEO_POINT_INIT(&value, 0);
@@ -1044,7 +1037,7 @@ grn_rc ColumnNode::evaluate_scalar_text(const Record *records,
   }
 grn_rc ColumnNode::evaluate_vector(const Record *records, size_t num_records,
                                    void *results) {
-  switch (builtin_type()) {
+  switch (data_type()) {
     case GRN_DB_INT8:
     case GRN_DB_INT16:
     case GRN_DB_INT32:
@@ -1066,7 +1059,7 @@ grn_rc ColumnNode::evaluate_vector(const Record *records, size_t num_records,
     case GRN_DB_TOKYO_GEO_POINT:
     case GRN_DB_WGS84_GEO_POINT: {
       if (!buf_) {
-        buf_ = grn_obj_open(ctx_, GRN_UVECTOR, 0, builtin_type());
+        buf_ = grn_obj_open(ctx_, GRN_UVECTOR, 0, data_type());
         if (!buf_) {
           if (ctx_->rc != GRN_SUCCESS) {
             return ctx_->rc;
@@ -1149,7 +1142,7 @@ grn_rc ColumnNode::evaluate_vector_int(const Record *records,
     }
   }
   GRN_BULK_REWIND(buf_);
-  switch (builtin_type()) {
+  switch (data_type()) {
     GRN_TS_EVALUATE_VECTOR_INT_CASE_BLOCK(INT8)
     GRN_TS_EVALUATE_VECTOR_INT_CASE_BLOCK(INT16)
     GRN_TS_EVALUATE_VECTOR_INT_CASE_BLOCK(INT32)
@@ -2476,7 +2469,8 @@ grn_rc ExpressionParser::push_token(const ExpressionToken &token) {
 // -- Expression --
 
 Expression::Expression(grn_ctx *ctx, grn_obj *table)
-  : ctx_(ctx), table_(table), type_(GRN_TS_INCOMPLETE), stack_() {}
+  : ctx_(ctx), table_(table), type_(GRN_TS_INCOMPLETE),
+    output_type_(GRN_DB_VOID), stack_() {}
 
 Expression::~Expression() {
   for (size_t i = 0; i < stack_.size(); ++i) {
@@ -2506,24 +2500,18 @@ grn_rc Expression::parse(grn_ctx *ctx, grn_obj *table,
   return ExpressionParser::parse(ctx, table, query, query_size, expression);
 }
 
+DataKind Expression::data_kind() const {
+  ExpressionNode *root = this->root();
+  return root ? root->data_kind() : GRN_TS_VOID;
+}
+
 DataType Expression::data_type() const {
   ExpressionNode *root = this->root();
-  return root ? root->data_type() : GRN_TS_VOID;
+  return root ? root->data_type() : GRN_ID_NIL;
 }
 
-grn_id Expression::output_type() const {
-  ExpressionNode *root = this->root();
-  return root ? root->output_type() : GRN_ID_NIL;
-}
-
-grn_builtin_type Expression::builtin_type() const {
-  ExpressionNode *root = this->root();
-  return root ? root->builtin_type() : GRN_DB_VOID;
-}
-
-grn_obj *Expression::ref_table() const {
-  ExpressionNode *root = this->root();
-  return root ? root->ref_table() : NULL;
+DataType Expression::output_type() const {
+  return output_type_;
 }
 
 int Expression::dimension() const {
@@ -2711,6 +2699,7 @@ void Expression::update_type() {
         break;
       }
     }
+    output_type_ = data_type();
   }
 }
 
@@ -2750,7 +2739,7 @@ grn_rc Expression::create_unary_node(OperatorType operator_type,
   grn_rc rc = GRN_SUCCESS;
   switch (operator_type) {
 //    case GRN_TS_LOGICAL_NOT: {
-//      if (arg->data_type() != GRN_TS_BOOL) {
+//      if (arg->data_kind() != GRN_TS_BOOL) {
 //        return GRN_UNKNOWN_ERROR;
 //      }
 //      rc = LogicalNotNode::open(arg, node);
@@ -2767,24 +2756,24 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
   ExpressionNode *arg1, ExpressionNode *arg2, ExpressionNode **node) {
   switch (operator_type) {
 //    case GRN_TS_LOGICAL_AND: {
-//      if ((arg1->data_type() != GRN_TS_BOOL) ||
-//          (arg1->data_type() != GRN_TS_BOOL)) {
+//      if ((arg1->data_kind() != GRN_TS_BOOL) ||
+//          (arg1->data_kind() != GRN_TS_BOOL)) {
 //        return GRN_INVALID_FORMAT;
 //      }
 //      return LogicalAndNode::open(arg1, arg2, node);
 //    }
 //    case GRN_TS_LOGICAL_OR: {
-//      if ((arg1->data_type() != GRN_TS_BOOL) ||
-//          (arg1->data_type() != GRN_TS_BOOL)) {
+//      if ((arg1->data_kind() != GRN_TS_BOOL) ||
+//          (arg1->data_kind() != GRN_TS_BOOL)) {
 //        return GRN_INVALID_FORMAT;
 //      }
 //      return LogicalOrNode::open(arg1, arg2, node);
 //    }
 //    case GRN_TS_EQUAL: {
-//      if (arg1->data_type() != arg2->data_type()) {
+//      if (arg1->data_kind() != arg2->data_kind()) {
 //        return GRN_INVALID_FORMAT;
 //      }
-//      switch (arg1->data_type()) {
+//      switch (arg1->data_kind()) {
 //        case GRN_TS_BOOL: {
 //          return equal_node_open(EqualOperator<Bool>(), arg1, arg2, node);
 //        }
@@ -2809,10 +2798,10 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
 //      }
 //    }
 //    case GRN_TS_NOT_EQUAL: {
-//      if (arg1->data_type() != arg2->data_type()) {
+//      if (arg1->data_kind() != arg2->data_kind()) {
 //        return GRN_INVALID_FORMAT;
 //      }
-//      switch (arg1->data_type()) {
+//      switch (arg1->data_kind()) {
 //        case GRN_TS_BOOL: {
 //          return not_equal_node_open(
 //            NotEqualOperator<Bool>(), arg1, arg2, node);
@@ -2843,10 +2832,10 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
 //      }
 //    }
 //    case GRN_TS_LESS: {
-//      if (arg1->data_type() != arg2->data_type()) {
+//      if (arg1->data_kind() != arg2->data_kind()) {
 //        return GRN_INVALID_FORMAT;
 //      }
-//      switch (arg1->data_type()) {
+//      switch (arg1->data_kind()) {
 //        case GRN_TS_INT: {
 //          return less_node_open(LessOperator<Int>(), arg1, arg2, node);
 //        }
@@ -2865,10 +2854,10 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
 //      }
 //    }
 //    case GRN_TS_LESS_EQUAL: {
-//      if (arg1->data_type() != arg2->data_type()) {
+//      if (arg1->data_kind() != arg2->data_kind()) {
 //        return GRN_INVALID_FORMAT;
 //      }
-//      switch (arg1->data_type()) {
+//      switch (arg1->data_kind()) {
 //        case GRN_TS_INT: {
 //          return less_equal_node_open(
 //            LessEqualOperator<Int>(), arg1, arg2, node);
@@ -2891,10 +2880,10 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
 //      }
 //    }
 //    case GRN_TS_GREATER: {
-//      if (arg1->data_type() != arg2->data_type()) {
+//      if (arg1->data_kind() != arg2->data_kind()) {
 //        return GRN_INVALID_FORMAT;
 //      }
-//      switch (arg1->data_type()) {
+//      switch (arg1->data_kind()) {
 //        case GRN_TS_INT: {
 //          return greater_node_open(GreaterOperator<Int>(), arg1, arg2, node);
 //        }
@@ -2913,10 +2902,10 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
 //      }
 //    }
 //    case GRN_TS_GREATER_EQUAL: {
-//      if (arg1->data_type() != arg2->data_type()) {
+//      if (arg1->data_kind() != arg2->data_kind()) {
 //        return GRN_INVALID_FORMAT;
 //      }
-//      switch (arg1->data_type()) {
+//      switch (arg1->data_kind()) {
 //        case GRN_TS_INT: {
 //          return greater_equal_node_open(
 //            GreaterEqualOperator<Int>(), arg1, arg2, node);
@@ -3197,7 +3186,7 @@ grn_ts_select_output(grn_ctx *ctx, grn_obj *table,
       }
       for (size_t i = 0; i < expressions.size(); ++i) {
         if (expressions[i]->dimension() == 0) {
-          switch (expressions[i]->data_type()) {
+          switch (expressions[i]->data_kind()) {
             case GRN_TS_BOOL: {
               bufs[i].resize(sizeof(grn_ts_bool) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
@@ -3239,7 +3228,7 @@ grn_ts_select_output(grn_ctx *ctx, grn_obj *table,
             }
           }
         } else {
-          switch (expressions[i]->data_type()) {
+          switch (expressions[i]->data_kind()) {
             case GRN_TS_BOOL: {
               bufs[i].resize(sizeof(grn_ts_vector) * batch_size);
               expressions[i]->evaluate(records + count, batch_size,
@@ -3289,7 +3278,7 @@ grn_ts_select_output(grn_ctx *ctx, grn_obj *table,
             GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
           }
           if (expressions[j]->dimension() == 0) {
-            switch (expressions[j]->data_type()) {
+            switch (expressions[j]->data_kind()) {
               case GRN_TS_BOOL: {
                 if (((grn_ts_bool *)&bufs[j][0])[i]) {
                   GRN_TEXT_PUT(ctx, ctx->impl->outbuf, "true", 4);
@@ -3335,7 +3324,7 @@ grn_ts_select_output(grn_ctx *ctx, grn_obj *table,
           } else {
             grn_ts_vector vector =
               reinterpret_cast<grn_ts_vector *>(&bufs[j][0])[i];
-            switch (expressions[j]->data_type()) {
+            switch (expressions[j]->data_kind()) {
               case GRN_TS_BOOL: {
                 const grn_ts_bool *ptr =
                   static_cast<const grn_ts_bool *>(vector.ptr);

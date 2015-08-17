@@ -31,6 +31,7 @@ namespace ts {
 
 typedef grn_ts_operator_type OperatorType;
 typedef grn_ts_data_type DataType;
+typedef grn_ts_data_kind DataKind;
 
 typedef grn_ts_expression_node_type ExpressionNodeType;
 typedef grn_ts_expression_type ExpressionType;
@@ -45,13 +46,6 @@ struct Bool {
   typedef grn_ts_bool Raw;
   Raw raw;
 
-  static DataType data_type() {
-    return GRN_TS_BOOL;
-  }
-  static grn_builtin_type default_builtin_type() {
-    return GRN_DB_BOOL;
-  }
-
   Bool() : raw() {}
   Bool(const Bool &value) : raw(value.raw) {}
   explicit Bool(Raw value) : raw(value) {}
@@ -65,13 +59,6 @@ inline bool operator!=(Bool lhs, Bool rhs) { return lhs.raw != rhs.raw; }
 struct Int {
   typedef grn_ts_int Raw;
   Raw raw;
-
-  static DataType data_type() {
-    return GRN_TS_INT;
-  }
-  static grn_builtin_type default_builtin_type() {
-    return GRN_DB_INT64;
-  }
 
   Int() : raw() {}
   Int(const Int &value) : raw(value.raw) {}
@@ -90,13 +77,6 @@ struct Float {
   typedef grn_ts_float Raw;
   Raw raw;
 
-  static DataType data_type() {
-    return GRN_TS_FLOAT;
-  }
-  static grn_builtin_type default_builtin_type() {
-    return GRN_DB_FLOAT;
-  }
-
   Float() : raw() {}
   Float(const Float &value) : raw(value.raw) {}
   explicit Float(Raw value) : raw(value) {}
@@ -114,13 +94,6 @@ struct Time {
   typedef grn_ts_time Raw;
   Raw raw;
 
-  static DataType data_type() {
-    return GRN_TS_TIME;
-  }
-  static grn_builtin_type default_builtin_type() {
-    return GRN_DB_TIME;
-  }
-
   Time() : raw() {}
   Time(const Time &value) : raw(value.raw) {}
   explicit Time(Raw value) : raw(value) {}
@@ -137,13 +110,6 @@ inline bool operator>=(Time lhs, Time rhs) { return lhs.raw >= rhs.raw; }
 struct Text {
   typedef grn_ts_text Raw;
   Raw raw;
-
-  static DataType data_type() {
-    return GRN_TS_TEXT;
-  }
-  static grn_builtin_type default_builtin_type() {
-    return GRN_DB_TEXT;
-  }
 
   Text() : raw() {}
   Text(const Text &value) : raw(value.raw) {}
@@ -188,13 +154,6 @@ inline bool operator>=(const Text &lhs, const Text &rhs) { return rhs <= lhs; }
 struct GeoPoint {
   typedef grn_ts_geo_point Raw;
   Raw raw;
-
-  static DataType data_type() {
-    return GRN_TS_GEO_POINT;
-  }
-  static grn_builtin_type default_builtin_type() {
-    return GRN_DB_VOID;
-  }
 
   GeoPoint() : raw() {}
   GeoPoint(const GeoPoint &value) : raw(value.raw) {}
@@ -243,10 +202,9 @@ class Expression {
   ExpressionType type() const {
     return type_;
   }
+  DataKind data_kind() const;
   DataType data_type() const;
-  grn_id output_type() const;
-  grn_builtin_type builtin_type() const;
-  grn_obj *ref_table() const;
+  DataType output_type() const;
   int dimension() const;
 
   grn_rc push_object(grn_obj *obj);
@@ -262,6 +220,7 @@ class Expression {
   grn_ctx *ctx_;
   grn_obj *table_;
   ExpressionType type_;
+  DataType output_type_;
   std::vector<ExpressionNode *> stack_;
 
   // Disable copy and assignment.
