@@ -24,11 +24,9 @@
 
 #ifdef WIN32
 
-# include <evntprov.h>
-# include <evntrace.h>
-
 typedef struct _grn_windows_event_logger_data {
-  REGHANDLE registration_handle;
+  char *event_source_name;
+  HANDLE event_source;
 } grn_windows_event_logger_data;
 
 static void
@@ -38,47 +36,50 @@ windows_event_logger_log(grn_ctx *ctx, grn_log_level level,
                          void *user_data)
 {
   grn_windows_event_logger_data *data = user_data;
+  WORD type;
+  WORD category = 0;
+  DWORD event_id = 0;
+  PSID user_sid = NULL;
+  WORD n_strings = 1;
+  DWORD event_data_size = 0;
+  const WCHAR *strings[1];
+  LPVOID event_data = NULL;
   const char level_marks[] = " EACewnid-";
   grn_obj formatted_buffer;
   UINT code_page;
   DWORD convert_flags = 0;
   int n_converted_chars;
-  EVENT_DESCRIPTOR event;
 
   switch (level) {
   case GRN_LOG_NONE :
-    event.Level = TRACE_LEVEL_NONE;
+    return;
     break;
   case GRN_LOG_EMERG :
   case GRN_LOG_ALERT :
   case GRN_LOG_CRIT :
-    event.Level = TRACE_LEVEL_CRITICAL;
-    break;
   case GRN_LOG_ERROR :
-    event.Level = TRACE_LEVEL_ERROR;
+    type = EVENTLOG_ERROR_TYPE;
     break;
   case GRN_LOG_WARNING :
-    event.Level = TRACE_LEVEL_WARNING;
+    type = EVENTLOG_WARNING_TYPE;
     break;
   case GRN_LOG_NOTICE :
   case GRN_LOG_INFO :
   case GRN_LOG_DEBUG :
   case GRN_LOG_DUMP :
-    event.Level = TRACE_LEVEL_INFORMATION;
+    type = EVENTLOG_INFORMATION_TYPE;
     break;
   default :
-    event.Level = TRACE_LEVEL_INFORMATION;
+    type = EVENTLOG_ERROR_TYPE;
     break;
   }
 
-  event.Id = event.Level;
-  event.Version = 0;
-  /* 16 is the value of //channel[@value] in
-     data/windows_event_log/provider.man. */
-  event.Channel = 16;
-  event.Opcode = 0;
-  event.Task = 0;
-  event.Keyword = 0x00;
+  if (data->event_source == INVALID_HANDLE_VALUE) {
+    data->event_source = RegisterEventSourceA(NULL, data->event_source_name);
+    if (data->event_source == INVALID_HANDLE_VALUE) {
+      return;
+    }
+  }
 
   GRN_TEXT_INIT(&formatted_buffer, 0);
   if (location && location[0]) {
@@ -100,7 +101,6 @@ windows_event_logger_log(grn_ctx *ctx, grn_log_level level,
 #define CONVERTED_BUFFER_SIZE 512
   if (n_converted_chars < CONVERTED_BUFFER_SIZE) {
     WCHAR converted_buffer[CONVERTED_BUFFER_SIZE];
-    EVENT_DATA_DESCRIPTOR descriptor;
     n_converted_chars = MultiByteToWideChar(code_page,
                                             convert_flags,
                                             GRN_TEXT_VALUE(&formatted_buffer),
@@ -108,16 +108,13 @@ windows_event_logger_log(grn_ctx *ctx, grn_log_level level,
                                             converted_buffer,
                                             CONVERTED_BUFFER_SIZE);
     converted_buffer[n_converted_chars] = L'\0';
-    EventDataDescCreate(&descriptor, converted_buffer,
-                        sizeof(WCHAR) * n_converted_chars);
-    EventWrite(data->registration_handle,
-               &event,
-               1,
-               &descriptor);
+    strings[0] = converted_buffer;
+    ReportEventW(data->event_source, type, category, event_id, user_sid,
+                 n_strings, event_data_size,
+                 strings, event_data);
 #undef CONVERTED_BUFFER_SIZE
   } else {
     WCHAR *converted;
-    EVENT_DATA_DESCRIPTOR descriptor;
     converted = GRN_MALLOCN(WCHAR, n_converted_chars);
     n_converted_chars = MultiByteToWideChar(code_page,
                                             convert_flags,
@@ -126,12 +123,10 @@ windows_event_logger_log(grn_ctx *ctx, grn_log_level level,
                                             converted,
                                             n_converted_chars);
     converted[n_converted_chars] = L'\0';
-    EventDataDescCreate(&descriptor, converted,
-                        sizeof(WCHAR) * n_converted_chars);
-    EventWrite(data->registration_handle,
-               &event,
-               1,
-               &descriptor);
+    strings[0] = converted;
+    ReportEventW(data->event_source, type, category, event_id, user_sid,
+                 n_strings, event_data_size,
+                 strings, event_data);
     GRN_FREE(converted);
   }
   GRN_OBJ_FIN(ctx, &formatted_buffer);
@@ -147,15 +142,16 @@ windows_event_logger_fin(grn_ctx *ctx, void *user_data)
 {
   grn_windows_event_logger_data *data = user_data;
 
-  if (data->registration_handle) {
-    EventUnregister(data->registration_handle);
+  free(data->name);
+  if (data->event_source != INVALID_HANDLE_VALUE) {
+    DeregisterEventSource(data->event_source);
   }
   free(data);
 }
 #endif /* WIN32 */
 
 grn_rc
-grn_windows_event_logger_set(grn_ctx *ctx)
+grn_windows_event_logger_set(grn_ctx *ctx, const char *event_source_name)
 {
 #ifdef WIN32
   grn_rc rc;
@@ -177,28 +173,12 @@ grn_windows_event_logger_set(grn_ctx *ctx)
     }
   }
 
-  {
-    ULONG status;
-    const GUID provide_id = {
-      0x851d655e,
-      0x1970,
-      0x400b,
-      {0x99, 0xa3, 0x1c, 0x6f, 0xac, 0x5c, 0xbe, 0x18}
-    };
-    status = EventRegister(&provide_id,
-                           NULL, NULL,
-                           &(data->registration_handle));
-    if (status != ERROR_SUCCESS) {
-      free(data);
-      if (ctx) {
-        SERR("EventRegister");
-        GRN_LOG(ctx, GRN_LOG_ERROR, "failed to register event: <%lu>", status);
-        GRN_API_RETURN(ctx->rc);
-      } else {
-        return grn_windows_error_code_to_rc(GetLastError());
-      }
-    }
+  if (event_source_name) {
+    data->event_source_name = grn_strdup_raw(event_source_name);
+  } else {
+    data->event_source_name = grn_strdup_raw("libgroonga");
   }
+  data->event_source = INVALID_HANDLE_VALUE;
 
   windows_event_logger.max_level = GRN_LOG_DEFAULT_LEVEL;
   windows_event_logger.flags     = GRN_LOG_TIME | GRN_LOG_MESSAGE;

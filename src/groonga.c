@@ -105,6 +105,7 @@ static int ready_notify_pipe[2];
 static grn_encoding encoding;
 static grn_command_version default_command_version;
 static int64_t default_match_escalation_threshold;
+static char *windows_event_source_name = "Groonga";
 static grn_bool use_windows_event_log = GRN_FALSE;
 
 static int
@@ -360,7 +361,7 @@ do_alone(int argc, char **argv)
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
   if (use_windows_event_log) {
-    grn_windows_event_logger_set(ctx);
+    grn_windows_event_logger_set(ctx, windows_event_source_name);
   }
   if (argc > 0 && argv) { path = *argv++; argc--; }
   db = (newdb || !path) ? grn_db_create(ctx, path, NULL) : grn_db_open(ctx, path);
@@ -440,7 +441,7 @@ g_client(int argc, char **argv)
   if (argc > 0 && argv) { hostname = *argv++; argc--; }
   grn_ctx_init(ctx, 0);
   if (use_windows_event_log) {
-    grn_windows_event_logger_set(ctx);
+    grn_windows_event_logger_set(ctx, windows_event_source_name);
   }
   if (!grn_ctx_connect(ctx, hostname, port, 0)) {
     if (!argc) {
@@ -1943,7 +1944,7 @@ h_worker(void *arg)
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
   if (use_windows_event_log) {
-    grn_windows_event_logger_set(ctx);
+    grn_windows_event_logger_set(ctx, windows_event_source_name);
   }
   grn_ctx_use(ctx, (grn_obj *)arg);
   grn_ctx_recv_handler_set(ctx, h_output, &hc);
@@ -2011,7 +2012,7 @@ h_server(char *path)
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
   if (use_windows_event_log) {
-    grn_windows_event_logger_set(ctx);
+    grn_windows_event_logger_set(ctx, windows_event_source_name);
   }
   MUTEX_INIT(q_mutex);
   COND_INIT(q_cond);
@@ -2153,7 +2154,7 @@ g_handler(grn_ctx *ctx, grn_obj *msg)
     if (added) {
       grn_ctx_init(&edge->ctx, 0);
       if (use_windows_event_log) {
-        grn_windows_event_logger_set(&edge->ctx);
+        grn_windows_event_logger_set(&edge->ctx, windows_event_source_name);
       }
       GRN_COM_QUEUE_INIT(&edge->recv_new);
       GRN_COM_QUEUE_INIT(&edge->send_old);
@@ -2182,7 +2183,7 @@ g_server(char *path)
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
   if (use_windows_event_log) {
-    grn_windows_event_logger_set(ctx);
+    grn_windows_event_logger_set(ctx, windows_event_source_name);
   }
   MUTEX_INIT(q_mutex);
   COND_INIT(q_cond);
@@ -2953,7 +2954,7 @@ main(int argc, char **argv)
 #endif /* WIN32 */
 
   if (use_windows_event_log) {
-    grn_windows_event_logger_set(NULL);
+    grn_windows_event_logger_set(NULL, windows_event_source_name);
   }
 
   if (log_path_arg) {

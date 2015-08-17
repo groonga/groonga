@@ -23,7 +23,8 @@
 extern "C" {
 #endif
 
-GRN_API grn_rc grn_windows_event_logger_set(grn_ctx *ctx);
+GRN_API grn_rc grn_windows_event_logger_set(grn_ctx *ctx,
+                                            const char *event_source_name);
 
 #ifdef __cplusplus
 }
