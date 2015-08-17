@@ -142,7 +142,7 @@ windows_event_logger_fin(grn_ctx *ctx, void *user_data)
 {
   grn_windows_event_logger_data *data = user_data;
 
-  free(data->name);
+  free(data->event_source_name);
   if (data->event_source != INVALID_HANDLE_VALUE) {
     DeregisterEventSource(data->event_source);
   }
