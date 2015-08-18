@@ -2430,7 +2430,7 @@ config_file_load(const char *path, const grn_str_getopt_opt *opts, int *flags)
 static const int default_http_port = DEFAULT_HTTP_PORT;
 static const int default_gqtp_port = DEFAULT_GQTP_PORT;
 static grn_encoding default_encoding = GRN_ENC_DEFAULT;
-static uint32_t default_max_num_threads = DEFAULT_MAX_NFTHREADS;
+static uint32_t default_max_n_threads = DEFAULT_MAX_NFTHREADS;
 static const grn_log_level default_log_level = GRN_LOG_DEFAULT_LEVEL;
 static const char * const default_protocol = "gqtp";
 static const char *default_hostname = "localhost";
@@ -2475,9 +2475,9 @@ init_default_settings(void)
   default_encoding = grn_encoding_parse(GRN_DEFAULT_ENCODING);
 
   {
-    const uint32_t num_cores = get_core_number();
-    if (num_cores != 0) {
-      default_max_num_threads = num_cores;
+    const uint32_t n_cores = get_core_number();
+    if (n_cores != 0) {
+      default_max_n_threads = n_cores;
     }
   }
 
@@ -2709,7 +2709,7 @@ show_usage(FILE *output)
           grn_encoding_to_string(default_encoding),
           default_gqtp_port, default_bind_address,
           default_http_port, default_gqtp_port, default_hostname, default_protocol,
-          default_document_root, default_cache_limit, default_max_num_threads,
+          default_document_root, default_cache_limit, default_max_n_threads,
           grn_log_level_to_string(default_log_level),
           default_log_path, default_query_log_path,
           default_config_path, default_default_command_version,
@@ -2722,7 +2722,7 @@ main(int argc, char **argv)
 {
   const char *port_arg = NULL;
   const char *encoding_arg = NULL;
-  const char *max_num_threads_arg = NULL;
+  const char *max_n_threads_arg = NULL;
   const char *log_level_arg = NULL;
   const char *bind_address_arg = NULL;
   const char *hostname_arg = NULL;
@@ -2779,7 +2779,7 @@ main(int argc, char **argv)
   };
   opts[0].arg = &port_arg;
   opts[1].arg = &encoding_arg;
-  opts[2].arg = &max_num_threads_arg;
+  opts[2].arg = &max_n_threads_arg;
   opts[7].arg = &log_level_arg;
   opts[8].arg = &hostname_arg;
   opts[10].arg = &protocol_arg;
@@ -3018,18 +3018,18 @@ main(int argc, char **argv)
     grn_default_logger_set_max_level(log_level);
   }
 
-  if (max_num_threads_arg) {
-    const char * const end = max_num_threads_arg + strlen(max_num_threads_arg);
+  if (max_n_threads_arg) {
+    const char * const end = max_n_threads_arg + strlen(max_n_threads_arg);
     const char *rest = NULL;
-    const uint32_t value = grn_atoui(max_num_threads_arg, end, &rest);
+    const uint32_t value = grn_atoui(max_n_threads_arg, end, &rest);
     if (end != rest || value < 1 || value > 100) {
       fprintf(stderr, "invalid max number of threads: <%s>\n",
-              max_num_threads_arg);
+              max_n_threads_arg);
       return EXIT_FAILURE;
     }
     max_nfthreads = value;
   } else {
-    max_nfthreads = default_max_num_threads;
+    max_nfthreads = default_max_n_threads;
   }
 
   grn_thread_set_get_count_func(groonga_get_thread_count, NULL);
