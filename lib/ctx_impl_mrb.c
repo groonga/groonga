@@ -65,6 +65,7 @@
 # include "mrb/mrb_writer.h"
 
 # include <mruby/array.h>
+# include <mruby/string.h>
 # include <mruby/variable.h>
 #endif /* GRN_WITH_MRUBY */
 
@@ -104,13 +105,12 @@ mrb_kernel_load(mrb_state *mrb, mrb_value self)
   return mrb_true_value();
 }
 
-static void
-grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
+static mrb_value
+mrb_groonga_init(mrb_state *mrb, mrb_value self)
 {
-  mrb_state *mrb = ctx->impl->mrb.state;
+  grn_ctx *ctx = mrb->ud;
 
-  mrb->ud = ctx;
-  ctx->impl->mrb.module = mrb_define_module(mrb, "Groonga");
+  mrb_undef_class_method(mrb, ctx->impl->mrb.module, "init");
 
   mrb_define_class(mrb, "LoadError", mrb_class_get(mrb, "ScriptError"));
   mrb_define_method(mrb, mrb->kernel_module,
@@ -175,6 +175,20 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   grn_mrb_writer_init(ctx);
 
   grn_mrb_load(ctx, "initialize/post.rb");
+
+  return mrb_nil_value();
+}
+
+static void
+grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
+{
+  mrb_state *mrb = ctx->impl->mrb.state;
+
+  mrb->ud = ctx;
+  ctx->impl->mrb.module = mrb_define_module(mrb, "Groonga");
+  mrb_define_class_method(mrb, ctx->impl->mrb.module,
+                          "init", mrb_groonga_init, MRB_ARGS_NONE());
+  mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "init", 0);
 }
 
 void
@@ -195,17 +209,23 @@ grn_ctx_impl_mrb_init(grn_ctx *ctx)
     ctx->impl->mrb.state = mrb;
     ctx->impl->mrb.base_directory[0] = '\0';
     grn_ctx_impl_mrb_init_bindings(ctx);
-    /* TODO: Implement better error handling on init. */
     if (ctx->impl->mrb.state->exc) {
-      mrb_print_error(mrb);
+      mrb_value reason;
+      reason = mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0);
+      ERR(GRN_UNKNOWN_ERROR,
+          "failed to initialize mruby: %.*s",
+          RSTRING_LEN(reason), RSTRING_PTR(reason));
+      mrb_close(ctx->impl->mrb.state);
+      ctx->impl->mrb.state = NULL;
+    } else {
+      ctx->impl->mrb.checked_procs =
+        grn_hash_create(ctx, NULL, sizeof(grn_id), 0, GRN_HASH_TINY);
+      ctx->impl->mrb.registered_plugins =
+        grn_hash_create(ctx, NULL, sizeof(grn_id), 0, GRN_HASH_TINY);
+      GRN_VOID_INIT(&(ctx->impl->mrb.buffer.from));
+      GRN_VOID_INIT(&(ctx->impl->mrb.buffer.to));
+      ctx->impl->mrb.builtin.time_class = mrb_class_get(mrb, "Time");
     }
-    ctx->impl->mrb.checked_procs =
-      grn_hash_create(ctx, NULL, sizeof(grn_id), 0, GRN_HASH_TINY);
-    ctx->impl->mrb.registered_plugins =
-      grn_hash_create(ctx, NULL, sizeof(grn_id), 0, GRN_HASH_TINY);
-    GRN_VOID_INIT(&(ctx->impl->mrb.buffer.from));
-    GRN_VOID_INIT(&(ctx->impl->mrb.buffer.to));
-    ctx->impl->mrb.builtin.time_class = mrb_class_get(mrb, "Time");
   }
 }
 

@@ -513,13 +513,13 @@ grn_msgpack_buffer_write(void *data, const char *buf, msgpack_size_t len)
 }
 #endif
 
-static void
+static grn_rc
 grn_ctx_impl_init(grn_ctx *ctx)
 {
   grn_io_mapinfo mi;
   if (!(ctx->impl = grn_io_anon_map(ctx, &mi, IMPL_SIZE))) {
     ctx->impl = NULL;
-    return;
+    return ctx->rc;
   }
 #ifdef USE_DYNAMIC_MALLOC_CHANGE
   grn_ctx_impl_init_malloc(ctx);
@@ -536,7 +536,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
     CRITICAL_SECTION_FIN(ctx->impl->lock);
     grn_io_anon_unmap(ctx, &mi, IMPL_SIZE);
     ctx->impl = NULL;
-    return;
+    return ctx->rc;
   }
   if (!(ctx->impl->ios = grn_hash_create(ctx, NULL, GRN_TABLE_MAX_KEY_SIZE,
                                          sizeof(grn_io *),
@@ -545,7 +545,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
     CRITICAL_SECTION_FIN(ctx->impl->lock);
     grn_io_anon_unmap(ctx, &mi, IMPL_SIZE);
     ctx->impl = NULL;
-    return;
+    return ctx->rc;
   }
   ctx->impl->db = NULL;
 
@@ -594,6 +594,8 @@ grn_ctx_impl_init(grn_ctx *ctx)
 #endif
 
   grn_ctx_impl_mrb_init(ctx);
+
+  return ctx->rc;
 }
 
 void
@@ -918,7 +920,10 @@ grn_init(void)
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_com_init failed (%d)", rc);
     return rc;
   }
-  grn_ctx_impl_init(ctx);
+  if ((rc = grn_ctx_impl_init(ctx))) {
+    GRN_LOG(ctx, GRN_LOG_ALERT, "grn_ctx_impl_init failed (%d)", rc);
+    return rc;
+  }
   if ((rc = grn_plugins_init())) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_plugins_init failed (%d)", rc);
     return rc;

@@ -3176,7 +3176,11 @@ main(int argc, char **argv)
     line_editor_init(argc, argv);
   }
 #endif
-  if (grn_init()) { return EXIT_FAILURE; }
+  grn_gctx.errbuf[0] = '\0';
+  if (grn_init()) {
+    fprintf(stderr, "failed to initialize Groonga: %s\n", grn_gctx.errbuf);
+    return EXIT_FAILURE;
+  }
 
   grn_set_default_encoding(encoding);
 
