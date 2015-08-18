@@ -24,6 +24,7 @@
 #include "grn_expr.h"
 #include "grn_expr_code.h"
 #include "grn_util.h"
+#include "grn_report.h"
 #include "grn_mrb.h"
 #include "mrb/mrb_expr.h"
 
@@ -4798,22 +4799,10 @@ grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
   GRN_OBJ_FIN(ctx, &score_buffer);
 }
 
-static const grn_log_level index_report_log_level = GRN_LOG_INFO;
-
 static inline void
 grn_table_select_index_report(grn_ctx *ctx, const char *tag, grn_obj *index)
 {
-  char index_name[GRN_TABLE_MAX_KEY_SIZE];
-  int index_name_size;
-
-  if (!grn_logger_pass(ctx, index_report_log_level)) {
-    return;
-  }
-
-  index_name_size = grn_obj_name(ctx, index, index_name, GRN_TABLE_MAX_KEY_SIZE);
-  GRN_LOG(ctx, index_report_log_level,
-          "[table][select][index]%s <%.*s>",
-          tag, index_name_size, index_name);
+  grn_report_index(ctx, "[table][select]", tag, index);
 }
 
 static inline grn_bool
@@ -4985,7 +4974,7 @@ grn_table_select_index_range_accessor(grn_ctx *ctx, grn_obj *table,
         section = index_datum.section;
       }
 
-      if (grn_logger_pass(ctx, index_report_log_level)) {
+      if (grn_logger_pass(ctx, GRN_REPORT_INDEX_LOG_LEVEL)) {
 #define TAG_BUFFER_SIZE 128
         char tag[TAG_BUFFER_SIZE];
         grn_snprintf(tag, TAG_BUFFER_SIZE, TAG_BUFFER_SIZE,
@@ -5386,7 +5375,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
       if (grn_obj_is_selector_proc(ctx, si->args[0])) {
         grn_rc rc;
         grn_proc *proc = (grn_proc *)(si->args[0]);
-        if (grn_logger_pass(ctx, index_report_log_level)) {
+        if (grn_logger_pass(ctx, GRN_REPORT_INDEX_LOG_LEVEL)) {
           char proc_name[GRN_TABLE_MAX_KEY_SIZE];
           int proc_name_size;
           char tag[GRN_TABLE_MAX_KEY_SIZE];
@@ -5423,7 +5412,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
       if (grn_obj_is_selector_proc(ctx, si->args[0])) {
         grn_rc rc;
         grn_proc *proc = (grn_proc *)(si->args[0]);
-        if (grn_logger_pass(ctx, index_report_log_level)) {
+        if (grn_logger_pass(ctx, GRN_REPORT_INDEX_LOG_LEVEL)) {
           char proc_name[GRN_TABLE_MAX_KEY_SIZE];
           int proc_name_size;
           char tag[GRN_TABLE_MAX_KEY_SIZE];
