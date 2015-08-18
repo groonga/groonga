@@ -12861,24 +12861,18 @@ grn_db_unmap(grn_ctx *ctx, grn_obj *db)
   GRN_TINY_ARRAY_EACH(&s->values, 1, grn_db_curr_id(ctx, db), id, vp, {
     grn_obj *obj = vp->ptr;
 
-    if (!obj) {
-      continue;
-    }
-
-    switch (obj->header.type) {
-    case GRN_TABLE_HASH_KEY :
-    case GRN_TABLE_PAT_KEY :
-    case GRN_TABLE_DAT_KEY :
-    case GRN_TABLE_NO_KEY :
-    case GRN_COLUMN_FIX_SIZE :
-    case GRN_COLUMN_VAR_SIZE :
-    case GRN_COLUMN_INDEX :
-      grn_obj_close(ctx, obj);
-      break;
-    }
-
-    if (ctx->rc != GRN_SUCCESS) {
-      break;
+    if (obj) {
+      switch (obj->header.type) {
+      case GRN_TABLE_HASH_KEY :
+      case GRN_TABLE_PAT_KEY :
+      case GRN_TABLE_DAT_KEY :
+      case GRN_TABLE_NO_KEY :
+      case GRN_COLUMN_FIX_SIZE :
+      case GRN_COLUMN_VAR_SIZE :
+      case GRN_COLUMN_INDEX :
+        grn_obj_close(ctx, obj);
+        break;
+      }
     }
   });
 
