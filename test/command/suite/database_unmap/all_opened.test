@@ -9,7 +9,7 @@ load --table Users
 ]
 
 #@disable-logging
-thread_count 1
+thread_limit 1
 #@enable-logging
 database_unmap
 
