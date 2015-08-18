@@ -1511,205 +1511,163 @@ grn_rc LogicalAndNode::evaluate(const Record *records, size_t num_records,
   return GRN_SUCCESS;
 }
 
-//// ---- LogicalAndNode ----
+// ---- LogicalOrNode ----
 
-//class LogicalAndNode : public BinaryNode<Bool, Bool, Bool> {
-// public:
-//  ~LogicalAndNode() {}
+class LogicalOrNode : public OperatorNode {
+ public:
+  ~LogicalOrNode() {}
 
-//  static grn_rc open(
-//    ExpressionNode *arg1, ExpressionNode *arg2, ExpressionNode **node) {
-//    LogicalAndNode *new_node = new (std::nothrow) LogicalAndNode(arg1, arg2);
-//    if (!new_node) {
-//      return GRN_NO_MEMORY_AVAILABLE;
-//    }
-//    *node = new_node;
-//    return GRN_SUCCESS;
-//  }
+  static grn_rc open(ExpressionNode *arg1, ExpressionNode *arg2,
+                     ExpressionNode **node);
 
-//  grn_rc filter(
-//    Record *input, size_t input_size,
-//    Record *output, size_t *output_size) {
-//    grn_rc rc = arg1_->filter(input, input_size, output, output_size);
-//    if (rc == GRN_SUCCESS) {
-//      rc = arg2_->filter(output, *output_size, output, output_size);
-//    }
-//    return rc;
-//  }
+  DataKind data_kind() const {
+    return GRN_TS_BOOL;
+  }
+  DataType data_type() const {
+    return GRN_DB_BOOL;
+  }
+  grn_obj *ref_table() const {
+    return NULL;
+  }
+  int dimension() const {
+    return 0;
+  }
 
-//  grn_rc evaluate(
-//    const Record *records, size_t num_records, Bool *results);
+  grn_rc filter(Record *input, size_t input_size,
+                Record *output, size_t *output_size);
+  grn_rc evaluate(const Record *records, size_t num_records, void *results);
 
-// private:
-//  std::vector<Record> temp_records_;
+ private:
+  ExpressionNode *arg1_;
+  ExpressionNode *arg2_;
+  std::vector<grn_ts_bool> arg1_values_;
+  std::vector<grn_ts_bool> arg2_values_;
+  std::vector<Record> temp_records_;
 
-//  LogicalAndNode(ExpressionNode *arg1, ExpressionNode *arg2)
-//    : BinaryNode<Bool, Bool, Bool>(arg1, arg2), temp_records_() {}
-//};
+  LogicalOrNode(ExpressionNode *arg1, ExpressionNode *arg2)
+    : OperatorNode(), arg1_(arg1), arg2_(arg2), arg1_values_(),
+      arg2_values_(), temp_records_() {}
 
-//grn_rc LogicalAndNode::evaluate(
-//  const Record *records, size_t num_records, Bool *results) {
-//  // Evaluate "arg1" for all the records.
-//  // Then, evaluate "arg2" for non-false records.
-//  grn_rc rc = arg1_->evaluate(records, num_records, results);
-//  if (rc != GRN_SUCCESS) {
-//    return rc;
-//  }
-//  if (temp_records_.size() < num_records) try {
-//    temp_records_.resize(num_records);
-//  } catch (const std::bad_alloc &) {
-//    return GRN_NO_MEMORY_AVAILABLE;
-//  }
-//  size_t count = 0;
-//  for (size_t i = 0; i < num_records; ++i) {
-//    if (results[i].raw == GRN_TRUE) {
-//      temp_records_[count] = records[i];
-//      ++count;
-//    }
-//  }
-//  if (count == 0) {
-//    // Nothing to do.
-//    return GRN_SUCCESS;
-//  }
-//  rc = fill_arg2_values(&*temp_records_.begin(), count);
-//  if (rc != GRN_SUCCESS) {
-//    return rc;
-//  }
+  grn_rc fill_arg_values(ExpressionNode *arg,
+                         const Record *records, size_t num_records,
+                         std::vector<grn_ts_bool> *arg_values);
+};
 
-//  // Merge the evaluation results.
-//  count = 0;
-//  for (size_t i = 0; i < num_records; ++i) {
-//    if (results[i].raw == GRN_TRUE) {
-//      results[i] = arg2_values_[count];
-//      ++count;
-//    }
-//  }
-//  return GRN_SUCCESS;
-//}
+grn_rc LogicalOrNode::open(ExpressionNode *arg1, ExpressionNode *arg2,
+                            ExpressionNode **node) {
+  LogicalOrNode *new_node = new (std::nothrow) LogicalOrNode(arg1, arg2);
+  if (!new_node) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  *node = new_node;
+  return GRN_SUCCESS;
+}
 
-//// ---- LogicalOrNode ----
+grn_rc LogicalOrNode::filter(Record *input, size_t input_size,
+                             Record *output, size_t *output_size) {
+  // Evaluate "arg1" for all the records.
+  // Then, evaluate "arg2" for false records.
+  grn_rc rc = fill_arg_values(arg1_, input, input_size, &arg1_values_);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  if (temp_records_.size() < input_size) try {
+    temp_records_.resize(input_size);
+  } catch (const std::bad_alloc &) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  size_t count = 0;
+  for (size_t i = 0; i < input_size; ++i) {
+    if (!arg1_values_[i]) {
+      temp_records_[count] = input[i];
+      ++count;
+    }
+  }
+  if (count == 0) {
+    if (input != output) {
+      for (size_t i = 0; i < input_size; ++i) {
+        output[i] = input[i];
+      }
+    }
+    *output_size = input_size;
+    return GRN_SUCCESS;
+  }
+  rc = fill_arg_values(arg2_, &*temp_records_.begin(), count, &arg2_values_);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
 
-//class LogicalOrNode : public BinaryNode<Bool, Bool, Bool> {
-// public:
-//  ~LogicalOrNode() {}
+  // Merge the evaluation results.
+  count = 0;
+  size_t output_count = 0;
+  for (size_t i = 0; i < input_size; ++i) {
+    if (arg1_values_[i]) {
+      output[output_count] = input[i];
+      ++output_count;
+    } else {
+      if (arg2_values_[count]) {
+        output[output_count] = input[i];
+        ++output_count;
+      }
+      ++count;
+    }
+  }
+  *output_size = output_count;
+  return GRN_SUCCESS;
+}
 
-//  static grn_rc open(
-//    ExpressionNode *arg1, ExpressionNode *arg2, ExpressionNode **node) {
-//    LogicalOrNode *new_node = new (std::nothrow) LogicalOrNode(arg1, arg2);
-//    if (!new_node) {
-//      return GRN_NO_MEMORY_AVAILABLE;
-//    }
-//    *node = new_node;
-//    return GRN_SUCCESS;
-//  }
+grn_rc LogicalOrNode::evaluate(const Record *records, size_t num_records,
+                               void *results) {
+  // Evaluate "arg1" for all the records.
+  // Then, evaluate "arg2" for false records.
+  grn_rc rc = arg1_->evaluate(records, num_records, results);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  if (temp_records_.size() < num_records) try {
+    temp_records_.resize(num_records);
+  } catch (const std::bad_alloc &) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  size_t count = 0;
+  for (size_t i = 0; i < num_records; ++i) {
+    if (!static_cast<grn_ts_bool *>(results)[i]) {
+      temp_records_[count] = records[i];
+      ++count;
+    }
+  }
+  if (count == 0) {
+    // Nothing to do.
+    return GRN_SUCCESS;
+  }
+  rc = fill_arg_values(arg2_, &*temp_records_.begin(), count, &arg2_values_);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
 
-//  grn_rc filter(
-//    Record *input, size_t input_size,
-//    Record *output, size_t *output_size);
+  // Merge the evaluation results.
+  count = 0;
+  for (size_t i = 0; i < num_records; ++i) {
+    if (!static_cast<grn_ts_bool *>(results)[i]) {
+      static_cast<grn_ts_bool *>(results)[i] = arg2_values_[count];
+      ++count;
+    }
+  }
+  return GRN_SUCCESS;
+}
 
-//  grn_rc evaluate(
-//    const Record *records, size_t num_records, Bool *results);
-
-// private:
-//  std::vector<Record> temp_records_;
-
-//  LogicalOrNode(ExpressionNode *arg1, ExpressionNode *arg2)
-//    : BinaryNode<Bool, Bool, Bool>(arg1, arg2), temp_records_() {}
-//};
-
-//grn_rc LogicalOrNode::filter(
-//  Record *input, size_t input_size,
-//  Record *output, size_t *output_size) {
-//  // Evaluate "arg1" for all the records.
-//  // Then, evaluate "arg2" for non-true records.
-//  grn_rc rc = fill_arg1_values(input, input_size);
-//  if (rc != GRN_SUCCESS) {
-//    return rc;
-//  }
-//  if (temp_records_.size() < input_size) try {
-//    temp_records_.resize(input_size);
-//  } catch (const std::bad_alloc &) {
-//    return GRN_NO_MEMORY_AVAILABLE;
-//  }
-//  size_t count = 0;
-//  for (size_t i = 0; i < input_size; ++i) {
-//    if (arg1_values_[i].raw == GRN_FALSE) {
-//      temp_records_[count] = input[i];
-//      ++count;
-//    }
-//  }
-//  if (count == 0) {
-//    if (input != output) {
-//      for (size_t i = 0; i < input_size; ++i) {
-//        output[i] = input[i];
-//      }
-//    }
-//    *output_size = input_size;
-//    return GRN_SUCCESS;
-//  }
-//  rc = fill_arg2_values(&*temp_records_.begin(), count);
-//  if (rc != GRN_SUCCESS) {
-//    return rc;
-//  }
-
-//  // Merge the evaluation results.
-//  count = 0;
-//  size_t output_count = 0;
-//  for (size_t i = 0; i < input_size; ++i) {
-//    if (arg1_values_[i].raw == GRN_TRUE) {
-//      output[output_count] = input[i];
-//      ++output_count;
-//    } else {
-//      if (arg2_values_[count].raw == GRN_TRUE) {
-//        output[output_count] = input[i];
-//        ++output_count;
-//      }
-//      ++count;
-//    }
-//  }
-//  *output_size = output_count;
-//  return GRN_SUCCESS;
-//}
-
-//grn_rc LogicalOrNode::evaluate(
-//  const Record *records, size_t num_records, Bool *results) {
-//  // Evaluate "arg1" for all the records.
-//  // Then, evaluate "arg2" for non-true records.
-//  grn_rc rc = arg1_->evaluate(records, num_records, results);
-//  if (rc != GRN_SUCCESS) {
-//    return rc;
-//  }
-//  if (temp_records_.size() < num_records) try {
-//    temp_records_.resize(num_records);
-//  } catch (const std::bad_alloc &) {
-//    return GRN_NO_MEMORY_AVAILABLE;
-//  }
-//  size_t count = 0;
-//  for (size_t i = 0; i < num_records; ++i) {
-//    if (results[i].raw == GRN_FALSE) {
-//      temp_records_[count] = records[i];
-//      ++count;
-//    }
-//  }
-//  if (count == 0) {
-//    // Nothing to do.
-//    return GRN_SUCCESS;
-//  }
-//  rc = fill_arg2_values(&*temp_records_.begin(), count);
-//  if (rc != GRN_SUCCESS) {
-//    return rc;
-//  }
-
-//  // Merge the evaluation results.
-//  count = 0;
-//  for (size_t i = 0; i < num_records; ++i) {
-//    if (results[i].raw == GRN_FALSE) {
-//      results[i] = arg2_values_[count];
-//      ++count;
-//    }
-//  }
-//  return GRN_SUCCESS;
-//}
+grn_rc LogicalOrNode::fill_arg_values(ExpressionNode *arg,
+                                      const Record *records,
+                                      size_t num_records,
+                                      std::vector<grn_ts_bool> *arg_values) {
+  size_t old_size = arg_values->size() / sizeof(grn_ts_bool);
+  if (old_size < num_records) try {
+    arg_values->resize(sizeof(grn_ts_bool) * num_records);
+  } catch (const std::bad_alloc &) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  return arg->evaluate(records, num_records, &*arg_values->begin());
+}
 
 //// -- GenericBinaryNode --
 
