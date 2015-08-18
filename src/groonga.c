@@ -3029,7 +3029,11 @@ main(int argc, char **argv)
     }
     max_nfthreads = value;
   } else {
-    max_nfthreads = default_max_n_threads;
+    if (flags & FLAG_MODE_ALONE) {
+      max_nfthreads = 1;
+    } else {
+      max_nfthreads = default_max_n_threads;
+    }
   }
 
   grn_thread_set_get_count_func(groonga_get_thread_count, NULL);
