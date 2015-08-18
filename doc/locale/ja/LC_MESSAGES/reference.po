@@ -10189,10 +10189,6 @@ msgid ""
 "parameter."
 msgstr "``max`` 引数を渡したときは設定前の最大スレッド数が返ります。"
 
-# 4a4375d392864b309ad02aa21d744ad7
-msgid "``max``"
-msgstr ""
-
 msgid "Specifies the new max number of threads."
 msgstr "新しい最大スレッド数を指定します。"
 
