@@ -174,9 +174,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/table_list.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_rename/usage.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_tokenize/simple_example.log \
-	$(top_srcdir)/doc/source/example/reference/commands/thread_count/new_count.log \
-	$(top_srcdir)/doc/source/example/reference/commands/thread_count/usage_get.log \
-	$(top_srcdir)/doc/source/example/reference/commands/thread_count/usage_set.log \
+	$(top_srcdir)/doc/source/example/reference/commands/thread_limit/max.log \
+	$(top_srcdir)/doc/source/example/reference/commands/thread_limit/usage_get.log \
+	$(top_srcdir)/doc/source/example/reference/commands/thread_limit/usage_set.log \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/add_mode.log \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/flags_enable_tokenized_delimiter.log \
 	$(top_srcdir)/doc/source/example/reference/commands/tokenize/get_mode.log \
@@ -614,7 +614,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/table_remove.rst \
 	$(top_srcdir)/doc/source/reference/commands/table_rename.rst \
 	$(top_srcdir)/doc/source/reference/commands/table_tokenize.rst \
-	$(top_srcdir)/doc/source/reference/commands/thread_count.rst \
+	$(top_srcdir)/doc/source/reference/commands/thread_limit.rst \
 	$(top_srcdir)/doc/source/reference/commands/tokenize.rst \
 	$(top_srcdir)/doc/source/reference/commands/tokenizer_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/truncate.rst \
@@ -891,9 +891,9 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/table_list.log \
 	source/example/reference/commands/table_rename/usage.log \
 	source/example/reference/commands/table_tokenize/simple_example.log \
-	source/example/reference/commands/thread_count/new_count.log \
-	source/example/reference/commands/thread_count/usage_get.log \
-	source/example/reference/commands/thread_count/usage_set.log \
+	source/example/reference/commands/thread_limit/max.log \
+	source/example/reference/commands/thread_limit/usage_get.log \
+	source/example/reference/commands/thread_limit/usage_set.log \
 	source/example/reference/commands/tokenize/add_mode.log \
 	source/example/reference/commands/tokenize/flags_enable_tokenized_delimiter.log \
 	source/example/reference/commands/tokenize/get_mode.log \
@@ -1331,7 +1331,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/table_remove.rst \
 	source/reference/commands/table_rename.rst \
 	source/reference/commands/table_tokenize.rst \
-	source/reference/commands/thread_count.rst \
+	source/reference/commands/thread_limit.rst \
 	source/reference/commands/tokenize.rst \
 	source/reference/commands/tokenizer_list.rst \
 	source/reference/commands/truncate.rst \
@@ -1666,7 +1666,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/table_remove.txt \
 	html/_sources/reference/commands/table_rename.txt \
 	html/_sources/reference/commands/table_tokenize.txt \
-	html/_sources/reference/commands/thread_count.txt \
+	html/_sources/reference/commands/thread_limit.txt \
 	html/_sources/reference/commands/tokenize.txt \
 	html/_sources/reference/commands/tokenizer_list.txt \
 	html/_sources/reference/commands/truncate.txt \
@@ -1895,7 +1895,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/table_remove.html \
 	html/reference/commands/table_rename.html \
 	html/reference/commands/table_tokenize.html \
-	html/reference/commands/thread_count.html \
+	html/reference/commands/thread_limit.html \
 	html/reference/commands/tokenize.html \
 	html/reference/commands/tokenizer_list.html \
 	html/reference/commands/truncate.html \

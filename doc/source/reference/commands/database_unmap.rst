@@ -6,7 +6,7 @@
 .. database: commands_database_unmap
 
 .. groonga-command
-.. thread_count 2
+.. thread_limit 2
 
 ``database_unmap``
 ==================
@@ -29,7 +29,7 @@ that releasing mapped memory.
 
 .. caution::
 
-   You can use this command only when :doc:`thread_count` returns
+   You can use this command only when :doc:`thread_limit` returns
    ``1``. It means that this command doesn't work with multithreading.
 
 Syntax
@@ -47,7 +47,7 @@ You can unmap database after you change the max number of threads to
 
 .. groonga-command
 .. include:: ../../example/reference/commands/database_unmap/usage_success.log
-.. thread_count --new_count 1
+.. thread_limit --max 1
 .. database_unmap
 
 If the max number of threads is larger than ``1``, ``database_unmap``
@@ -55,7 +55,7 @@ fails:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/database_unmap/usage_failure.log
-.. thread_count --new_count 2
+.. thread_limit --max 2
 .. database_unmap
 
 Parameters

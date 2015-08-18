@@ -6880,39 +6880,38 @@ proc_object_exist(grn_ctx *ctx, int nargs, grn_obj **args,
 }
 
 static grn_obj *
-proc_thread_count(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+proc_thread_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_obj *new_count_bulk;
-  uint32_t current_count;
+  grn_obj *max_bulk;
+  uint32_t current_limit;
 
-  current_count = grn_thread_get_count();
-  GRN_OUTPUT_INT64(current_count);
+  current_limit = grn_thread_get_limit();
+  GRN_OUTPUT_INT64(current_limit);
 
-  new_count_bulk = VAR(0);
-  if (GRN_TEXT_LEN(new_count_bulk) > 0) {
-    uint32_t new_count;
-    const char *new_count_text = GRN_TEXT_VALUE(new_count_bulk);
-    const char *new_count_text_end;
-    const char *new_count_text_rest;
+  max_bulk = VAR(0);
+  if (GRN_TEXT_LEN(max_bulk) > 0) {
+    uint32_t max;
+    const char *max_text = GRN_TEXT_VALUE(max_bulk);
+    const char *max_text_end;
+    const char *max_text_rest;
 
-    new_count_text_end = new_count_text + GRN_TEXT_LEN(new_count_bulk);
-    new_count = grn_atoui(new_count_text, new_count_text_end,
-                          &new_count_text_rest);
-    if (new_count_text_rest != new_count_text_end) {
+    max_text_end = max_text + GRN_TEXT_LEN(max_bulk);
+    max = grn_atoui(max_text, max_text_end, &max_text_rest);
+    if (max_text_rest != max_text_end) {
       ERR(GRN_INVALID_ARGUMENT,
-          "[thread_count] new_count must be unsigned integer value: <%.*s>",
-          (int)GRN_TEXT_LEN(new_count_bulk),
-          new_count_text);
+          "[thread_limit] max must be unsigned integer value: <%.*s>",
+          (int)GRN_TEXT_LEN(max_bulk),
+          max_text);
       return NULL;
     }
-    if (new_count == 0) {
+    if (max == 0) {
       ERR(GRN_INVALID_ARGUMENT,
-          "[thread_count] new_count must be 1 or larger: <%.*s>",
-          (int)GRN_TEXT_LEN(new_count_bulk),
-          new_count_text);
+          "[thread_limit] max must be 1 or larger: <%.*s>",
+          (int)GRN_TEXT_LEN(max_bulk),
+          max_text);
       return NULL;
     }
-    grn_thread_set_count(new_count);
+    grn_thread_set_limit(max);
   }
 
   return NULL;
@@ -6923,13 +6922,13 @@ proc_database_unmap(grn_ctx *ctx, int nargs, grn_obj **args,
                     grn_user_data *user_data)
 {
   grn_rc rc;
-  uint32_t current_count;
+  uint32_t current_limit;
 
-  current_count = grn_thread_get_count();
-  if (current_count != 1) {
+  current_limit = grn_thread_get_limit();
+  if (current_limit != 1) {
     ERR(GRN_OPERATION_NOT_PERMITTED,
-        "[database_unmap] the number of threads must be 1: <%u>",
-        current_count);
+        "[database_unmap] the max number of threads must be 1: <%u>",
+        current_limit);
     GRN_OUTPUT_BOOL(GRN_FALSE);
     return NULL;
   }
@@ -7515,8 +7514,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[0], "name");
   DEF_COMMAND("object_exist", proc_object_exist, 1, vars);
 
-  DEF_VAR(vars[0], "new_count");
-  DEF_COMMAND("thread_count", proc_thread_count, 1, vars);
+  DEF_VAR(vars[0], "max");
+  DEF_COMMAND("thread_limit", proc_thread_limit, 1, vars);
 
   DEF_COMMAND("database_unmap", proc_database_unmap, 0, vars);
 

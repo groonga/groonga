@@ -24,15 +24,15 @@
 extern "C" {
 #endif
 
-GRN_API uint32_t grn_thread_get_count(void);
-GRN_API void grn_thread_set_count(uint32_t new_count);
+GRN_API uint32_t grn_thread_get_limit(void);
+GRN_API void grn_thread_set_limit(uint32_t new_limit);
 
 
-typedef uint32_t (*grn_thread_get_count_func)(void *data);
-GRN_API void grn_thread_set_get_count_func(grn_thread_get_count_func func,
+typedef uint32_t (*grn_thread_get_limit_func)(void *data);
+GRN_API void grn_thread_set_get_limit_func(grn_thread_get_limit_func func,
                                            void *data);
-typedef void (*grn_thread_set_count_func)(uint32_t new_count, void *data);
-GRN_API void grn_thread_set_set_count_func(grn_thread_set_count_func func,
+typedef void (*grn_thread_set_limit_func)(uint32_t new_limit, void *data);
+GRN_API void grn_thread_set_set_limit_func(grn_thread_set_limit_func func,
                                            void *data);
 
 #ifdef __cplusplus

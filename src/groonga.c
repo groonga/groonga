@@ -481,23 +481,23 @@ static grn_cond q_cond;
 static uint32_t nthreads = 0, nfthreads = 0, max_nfthreads;
 
 static uint32_t
-groonga_get_thread_count(void *data)
+groonga_get_thread_limit(void *data)
 {
   return max_nfthreads;
 }
 
 static void
-groonga_set_thread_count(uint32_t new_count, void *data)
+groonga_set_thread_limit(uint32_t new_limit, void *data)
 {
   uint32_t i;
   uint32_t current_nfthreads;
 
   MUTEX_LOCK(q_mutex);
   current_nfthreads = nfthreads;
-  max_nfthreads = new_count;
+  max_nfthreads = new_limit;
   MUTEX_UNLOCK(q_mutex);
 
-  if (current_nfthreads > new_count) {
+  if (current_nfthreads > new_limit) {
     for (i = 0; i < current_nfthreads; i++) {
       MUTEX_LOCK(q_mutex);
       COND_SIGNAL(q_cond);
@@ -3036,8 +3036,8 @@ main(int argc, char **argv)
     }
   }
 
-  grn_thread_set_get_count_func(groonga_get_thread_count, NULL);
-  grn_thread_set_set_count_func(groonga_set_thread_count, NULL);
+  grn_thread_set_get_limit_func(groonga_get_thread_limit, NULL);
+  grn_thread_set_set_limit_func(groonga_set_thread_limit, NULL);
 
   if (input_path) {
     if (!freopen(input_path, "r", stdin)) {

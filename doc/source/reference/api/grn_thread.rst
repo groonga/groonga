@@ -32,23 +32,23 @@ decreased.
    static uint32_t max_nfthreads;
 
    static uint32_t
-   groonga_get_thread_count(void *data)
+   groonga_get_thread_limit(void *data)
    {
      return max_nfthreads;
    }
 
    static void
-   groonga_set_thread_count(uint32_t new_count, void *data)
+   groonga_set_thread_limit(uint32_t new_limit, void *data)
    {
      uint32_t i;
      uint32_t current_nfthreads;
 
      MUTEX_LOCK(q_mutex);
      current_nfthreads = nfthreads;
-     max_nfthreads = new_count;
+     max_nfthreads = new_limit;
      MUTEX_UNLOCK(q_mutex);
 
-     if (current_nfthreads > new_count) {
+     if (current_nfthreads > new_limit) {
        for (i = 0; i < current_nfthreads; i++) {
          MUTEX_LOCK(q_mutex);
          COND_SIGNAL(q_cond);
@@ -61,8 +61,8 @@ decreased.
    main(int argc, char *argv)
    {
      /* ... */
-     grn_thread_set_get_count_func(groonga_get_thread_count, NULL);
-     grn_thread_set_set_count_func(groonga_set_thread_count, NULL);
+     grn_thread_set_get_limit_func(groonga_get_thread_limit, NULL);
+     grn_thread_set_set_limit_func(groonga_set_thread_limit, NULL);
 
      grn_init();
 
@@ -72,49 +72,49 @@ decreased.
 Reference
 ---------
 
-.. c:type:: uint32_t (*grn_thread_get_count_func)(void *data)
+.. c:type:: uint32_t (*grn_thread_get_limit_func)(void *data)
 
    It's the type of function that returns the max number of threads.
 
-.. c:type:: void (*grn_thread_set_count_func)(uint32_t new_count, void *data)
+.. c:type:: void (*grn_thread_set_limit_func)(uint32_t new_limit, void *data)
 
    It's the type of function that sets the max number of threads.
 
-.. c:function:: uint32_t grn_thread_get_count(void)
+.. c:function:: uint32_t grn_thread_get_limit(void)
 
    It returns the max number of threads.
 
-   If :c:type:`grn_thread_get_count_func` isn't set by
-   :c:func:`grn_thread_set_get_count_func()`, it always returns ``0``.
+   If :c:type:`grn_thread_get_limit_func` isn't set by
+   :c:func:`grn_thread_set_get_limit_func()`, it always returns ``0``.
 
    :return: The max number of threads or ``0``.
 
-.. c:function:: void_t grn_thread_set_count(uint32_t new_count)
+.. c:function:: void_t grn_thread_set_limit(uint32_t new_limit)
 
    It sets the max number of threads.
 
-   If :c:type:`grn_thread_set_count_func` isn't set by
-   :c:func:`grn_thread_set_set_count_func()`, it does nothing.
+   If :c:type:`grn_thread_set_limit_func` isn't set by
+   :c:func:`grn_thread_set_set_limit_func()`, it does nothing.
 
-   :param new_count: The new max number of threads.
+   :param new_limit: The new max number of threads.
 
-.. c:function:: void grn_thread_set_get_count_func(grn_thread_get_count_func func, void *data)
+.. c:function:: void grn_thread_set_get_limit_func(grn_thread_get_limit_func func, void *data)
 
    It sets the custom function that returns the max number of threads.
 
    ``data`` is passed to ``func`` when ``func`` is called from
-   :c:func:`grn_thread_get_count()`.
+   :c:func:`grn_thread_get_limit()`.
 
    :param func: The custom function that returns the max number of threads.
    :param data: An user data to be passed to ``func`` when ``func``
                 is called.
 
-.. c:function:: void grn_thread_set_set_count_func(grn_thread_set_count_func func, void *data)
+.. c:function:: void grn_thread_set_set_limit_func(grn_thread_set_limit_func func, void *data)
 
    It sets the custom function that sets the max number of threads.
 
    ``data`` is passed to ``func`` when ``func`` is called from
-   :c:func:`grn_thread_set_count()`.
+   :c:func:`grn_thread_set_limit()`.
 
    :param func: The custom function that sets the max number of threads.
    :param data: An user data to be passed to ``func`` when ``func``

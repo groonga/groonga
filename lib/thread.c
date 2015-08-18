@@ -18,42 +18,42 @@
 
 #include "grn_ctx.h"
 
-static grn_thread_get_count_func get_count_func = NULL;
-static void *get_count_func_data = NULL;
-static grn_thread_set_count_func set_count_func = NULL;
-static void *set_count_func_data = NULL;
+static grn_thread_get_limit_func get_limit_func = NULL;
+static void *get_limit_func_data = NULL;
+static grn_thread_set_limit_func set_limit_func = NULL;
+static void *set_limit_func_data = NULL;
 
 uint32_t
-grn_thread_get_count(void)
+grn_thread_get_limit(void)
 {
-  if (get_count_func) {
-    return get_count_func(get_count_func_data);
+  if (get_limit_func) {
+    return get_limit_func(get_limit_func_data);
   } else {
     return 0;
   }
 }
 
 void
-grn_thread_set_count(uint32_t new_count)
+grn_thread_set_limit(uint32_t new_limit)
 {
-  if (!set_count_func) {
+  if (!set_limit_func) {
     return;
   }
 
-  set_count_func(new_count, set_count_func_data);
+  set_limit_func(new_limit, set_limit_func_data);
 }
 
 void
-grn_thread_set_get_count_func(grn_thread_get_count_func func,
+grn_thread_set_get_limit_func(grn_thread_get_limit_func func,
                               void *data)
 {
-  get_count_func = func;
-  get_count_func_data = data;
+  get_limit_func = func;
+  get_limit_func_data = data;
 }
 
 void
-grn_thread_set_set_count_func(grn_thread_set_count_func func, void *data)
+grn_thread_set_set_limit_func(grn_thread_set_limit_func func, void *data)
 {
-  set_count_func = func;
-  set_count_func_data = data;
+  set_limit_func = func;
+  set_limit_func_data = data;
 }

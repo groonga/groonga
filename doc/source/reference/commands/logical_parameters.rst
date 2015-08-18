@@ -34,7 +34,7 @@ Here is a list of parameters:
    The parameters are independent in each thread. (To be exact, each
    :c:type:`grn_ctx`.) If you want to control the parameters
    perfectly, you should reduce the max number of threads to ``1`` by
-   :doc:`/reference/commands/thread_count` while you're using the
+   :doc:`/reference/commands/thread_limit` while you're using the
    parameters.
 
 Syntax
