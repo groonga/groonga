@@ -1261,6 +1261,59 @@ grn_rc operator_node_fill_arg_values(const Record *records, size_t num_records,
 }
 */
 
+//// --- UnaryNode ---
+
+//template <typename T, typename U>
+//class UnaryNode : public OperatorNode<T> {
+// public:
+//  explicit UnaryNode(ExpressionNode *arg)
+//    : OperatorNode<T>(), arg_(static_cast<TypedNode<U> *>(arg)),
+//      arg_values_() {}
+//  virtual ~UnaryNode() {
+//    delete arg_;
+//  }
+
+// protected:
+//  TypedNode<U> *arg_;
+//  std::vector<U> arg_values_;
+
+//  grn_rc fill_arg_values(const Record *records, size_t num_records) {
+//    return operator_node_fill_arg_values(
+//      records, num_records, arg_, &arg_values_);
+//  }
+//};
+
+//// --- BinaryNode ---
+
+//template <typename T, typename U, typename V>
+//class BinaryNode : public OperatorNode<T> {
+// public:
+//  BinaryNode(ExpressionNode *arg1, ExpressionNode *arg2)
+//    : OperatorNode<T>(),
+//      arg1_(static_cast<TypedNode<U> *>(arg1)),
+//      arg2_(static_cast<TypedNode<V> *>(arg2)),
+//      arg1_values_(), arg2_values_() {}
+//  virtual ~BinaryNode() {
+//    delete arg1_;
+//    delete arg2_;
+//  }
+
+// protected:
+//  TypedNode<U> *arg1_;
+//  TypedNode<V> *arg2_;
+//  std::vector<U> arg1_values_;
+//  std::vector<V> arg2_values_;
+
+//  grn_rc fill_arg1_values(const Record *records, size_t num_records) {
+//    return operator_node_fill_arg_values(
+//      records, num_records, arg1_, &arg1_values_);
+//  }
+//  grn_rc fill_arg2_values(const Record *records, size_t num_records) {
+//    return operator_node_fill_arg_values(
+//      records, num_records, arg2_, &arg2_values_);
+//  }
+//};
+
 // ---- LogicalNotNode ----
 
 class LogicalNotNode : public OperatorNode {
@@ -1355,58 +1408,108 @@ grn_rc LogicalNotNode::evaluate(const Record *records, size_t num_records,
   return rc;
 }
 
-//// --- UnaryNode ---
+// ---- LogicalAndNode ----
 
-//template <typename T, typename U>
-//class UnaryNode : public OperatorNode<T> {
-// public:
-//  explicit UnaryNode(ExpressionNode *arg)
-//    : OperatorNode<T>(), arg_(static_cast<TypedNode<U> *>(arg)),
-//      arg_values_() {}
-//  virtual ~UnaryNode() {
-//    delete arg_;
-//  }
+class LogicalAndNode : public OperatorNode {
+ public:
+  ~LogicalAndNode() {}
 
-// protected:
-//  TypedNode<U> *arg_;
-//  std::vector<U> arg_values_;
+  static grn_rc open(ExpressionNode *arg1, ExpressionNode *arg2,
+                     ExpressionNode **node);
 
-//  grn_rc fill_arg_values(const Record *records, size_t num_records) {
-//    return operator_node_fill_arg_values(
-//      records, num_records, arg_, &arg_values_);
-//  }
-//};
+  DataKind data_kind() const {
+    return GRN_TS_BOOL;
+  }
+  DataType data_type() const {
+    return GRN_DB_BOOL;
+  }
+  grn_obj *ref_table() const {
+    return NULL;
+  }
+  int dimension() const {
+    return 0;
+  }
 
-//// --- BinaryNode ---
+  grn_rc filter(Record *input, size_t input_size,
+                Record *output, size_t *output_size);
+  grn_rc evaluate(const Record *records, size_t num_records, void *results);
 
-//template <typename T, typename U, typename V>
-//class BinaryNode : public OperatorNode<T> {
-// public:
-//  BinaryNode(ExpressionNode *arg1, ExpressionNode *arg2)
-//    : OperatorNode<T>(),
-//      arg1_(static_cast<TypedNode<U> *>(arg1)),
-//      arg2_(static_cast<TypedNode<V> *>(arg2)),
-//      arg1_values_(), arg2_values_() {}
-//  virtual ~BinaryNode() {
-//    delete arg1_;
-//    delete arg2_;
-//  }
+ private:
+  ExpressionNode *arg1_;
+  ExpressionNode *arg2_;
+  std::vector<grn_ts_bool> arg_values_;
+  std::vector<Record> temp_records_;
 
-// protected:
-//  TypedNode<U> *arg1_;
-//  TypedNode<V> *arg2_;
-//  std::vector<U> arg1_values_;
-//  std::vector<V> arg2_values_;
+  LogicalAndNode(ExpressionNode *arg1, ExpressionNode *arg2)
+    : OperatorNode(), arg1_(arg1), arg2_(arg2), arg_values_(),
+      temp_records_() {}
+};
 
-//  grn_rc fill_arg1_values(const Record *records, size_t num_records) {
-//    return operator_node_fill_arg_values(
-//      records, num_records, arg1_, &arg1_values_);
-//  }
-//  grn_rc fill_arg2_values(const Record *records, size_t num_records) {
-//    return operator_node_fill_arg_values(
-//      records, num_records, arg2_, &arg2_values_);
-//  }
-//};
+grn_rc LogicalAndNode::open(ExpressionNode *arg1, ExpressionNode *arg2,
+                            ExpressionNode **node) {
+  LogicalAndNode *new_node = new (std::nothrow) LogicalAndNode(arg1, arg2);
+  if (!new_node) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  *node = new_node;
+  return GRN_SUCCESS;
+}
+
+grn_rc LogicalAndNode::filter(Record *input, size_t input_size,
+                              Record *output, size_t *output_size) {
+  grn_rc rc = arg1_->filter(input, input_size, output, output_size);
+  if (rc == GRN_SUCCESS) {
+    rc = arg2_->filter(output, *output_size, output, output_size);
+  }
+  return rc;
+}
+
+grn_rc LogicalAndNode::evaluate(const Record *records, size_t num_records,
+                                void *results) {
+  // Evaluate "arg1" for all the records.
+  // Then, evaluate "arg2" for non-false records.
+  grn_rc rc = arg1_->evaluate(records, num_records, results);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  if (temp_records_.size() < num_records) try {
+    temp_records_.resize(num_records);
+  } catch (const std::bad_alloc &) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  size_t count = 0;
+  for (size_t i = 0; i < num_records; ++i) {
+    if (((grn_ts_bool *)results)[i]) {
+      temp_records_[count] = records[i];
+      ++count;
+    }
+  }
+  if (count == 0) {
+    // Nothing to do.
+    return GRN_SUCCESS;
+  }
+
+  size_t old_size = arg_values_.size() / sizeof(grn_ts_bool);
+  if (old_size < num_records) try {
+    arg_values_.resize(sizeof(grn_ts_bool) * num_records);
+  } catch (const std::bad_alloc &) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  rc = arg2_->evaluate(&*temp_records_.begin(), count, &*arg_values_.begin());
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+
+  // Merge the evaluation results.
+  count = 0;
+  for (size_t i = 0; i < num_records; ++i) {
+    if (((grn_ts_bool *)results)[i]) {
+      ((grn_ts_bool *)results)[i] = arg_values_[count];
+      ++count;
+    }
+  }
+  return GRN_SUCCESS;
+}
 
 //// ---- LogicalAndNode ----
 
@@ -2103,19 +2206,19 @@ grn_rc ExpressionParser::tokenize(const char *query, size_t query_size) {
 //        }
 //        break;
 //      }
-//      case '&': {
-//        if ((rest_size >= 2) && (rest[1] == '&')) {
-//          tokens_.push_back(ExpressionToken("&&", GRN_TS_LOGICAL_AND));
-//          rest += 2;
-//          rest_size -= 2;
-//        } else {
-////          tokens_.push_back(ExpressionToken("&", GRN_OP_BITWISE_AND));
-////          ++rest;
-////          --rest_size;
-//          return GRN_INVALID_ARGUMENT;
-//        }
-//        break;
-//      }
+      case '&': {
+        if ((rest_size >= 2) && (rest[1] == '&')) {
+          tokens_.push_back(ExpressionToken("&&", GRN_TS_LOGICAL_AND));
+          rest += 2;
+          rest_size -= 2;
+        } else {
+//          tokens_.push_back(ExpressionToken("&", GRN_OP_BITWISE_AND));
+//          ++rest;
+//          --rest_size;
+          return GRN_INVALID_ARGUMENT;
+        }
+        break;
+      }
 //      case '|': {
 //        if ((rest_size >= 2) && (rest[1] == '|')) {
 //          tokens_.push_back(ExpressionToken("||", GRN_TS_LOGICAL_OR));
@@ -2795,13 +2898,13 @@ grn_rc Expression::create_unary_node(OperatorType operator_type,
 grn_rc Expression::create_binary_node(OperatorType operator_type,
   ExpressionNode *arg1, ExpressionNode *arg2, ExpressionNode **node) {
   switch (operator_type) {
-//    case GRN_TS_LOGICAL_AND: {
-//      if ((arg1->data_kind() != GRN_TS_BOOL) ||
-//          (arg1->data_kind() != GRN_TS_BOOL)) {
-//        return GRN_INVALID_FORMAT;
-//      }
-//      return LogicalAndNode::open(arg1, arg2, node);
-//    }
+    case GRN_TS_LOGICAL_AND: {
+      if ((arg1->data_kind() != GRN_TS_BOOL) ||
+          (arg1->data_kind() != GRN_TS_BOOL)) {
+        return GRN_INVALID_FORMAT;
+      }
+      return LogicalAndNode::open(arg1, arg2, node);
+    }
 //    case GRN_TS_LOGICAL_OR: {
 //      if ((arg1->data_kind() != GRN_TS_BOOL) ||
 //          (arg1->data_kind() != GRN_TS_BOOL)) {
