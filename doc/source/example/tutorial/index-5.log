@@ -27,7 +27,7 @@ Execution example::
   #         ], 
   #         [
   #           "index_friends", 
-  #           "User"
+  #           "UInt32"
   #         ], 
   #         [
   #           "username", 

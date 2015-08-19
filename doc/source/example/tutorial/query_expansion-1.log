@@ -4,7 +4,7 @@ Execution example::
   # [[0, 1337566253.89858, 0.000355720520019531], true]
   column_create Doc body COLUMN_SCALAR ShortText
   # [[0, 1337566253.89858, 0.000355720520019531], true]
-  table_create Term TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+  table_create Term TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
   # [[0, 1337566253.89858, 0.000355720520019531], true]
   column_create Term Doc_body COLUMN_INDEX|WITH_POSITION Doc body
   # [[0, 1337566253.89858, 0.000355720520019531], true]
