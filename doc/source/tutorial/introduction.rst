@@ -192,7 +192,7 @@ The following shows a command which creates a lexicon table named Terms. The dat
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-10.log
-.. table_create --name Terms --flags TABLE_PAT_KEY --key_type ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto KEY_NORMALIZE
+.. table_create --name Terms --flags TABLE_PAT_KEY --key_type ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
 
 The :doc:`/reference/commands/table_create` command takes many parameters but you don't need to understand all of them. Please skip the next paragraph if you are not interested in how it works.
 
