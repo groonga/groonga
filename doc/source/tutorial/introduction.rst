@@ -196,7 +196,9 @@ The following shows a command which creates a lexicon table named Terms. The dat
 
 The :doc:`/reference/commands/table_create` command takes many parameters but you don't need to understand all of them. Please skip the next paragraph if you are not interested in how it works.
 
-The TABLE_PAT_KEY flag specifies to store index terms in a patricia trie. The `default_tokenizer` parameter specifies the method for tokenizing text. This example uses TokenBigram that is generally called N-gram. The `normalizer` parameter specifies to normalize index terms.
+The TABLE_PAT_KEY flag specifies to store index terms in a patricia trie. The `default_tokenizer` parameter specifies the method for tokenizing text. This example uses TokenBigram that is generally called N-gram.
+
+The `normalizer` parameter specifies to normalize index terms.
 
 Create an index column for full text search
 -------------------------------------------
