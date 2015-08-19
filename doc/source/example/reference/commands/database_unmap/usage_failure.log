@@ -8,12 +8,12 @@ Execution example::
   #     -2, 
   #     1337566253.89858, 
   #     0.000355720520019531, 
-  #     "[database_unmap] the number of threads must be 1: <2>", 
+  #     "[database_unmap] the max number of threads must be 1: <2>", 
   #     [
   #       [
   #         "proc_database_unmap", 
   #         "proc.c", 
-  #         6932
+  #         6931
   #       ]
   #     ]
   #   ], 
