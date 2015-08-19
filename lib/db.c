@@ -30,6 +30,7 @@
 #include "grn_snip.h"
 #include "grn_string.h"
 #include "grn_normalizer.h"
+#include "grn_report.h"
 #include "grn_util.h"
 #include <string.h>
 
@@ -3022,6 +3023,12 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
   return rc;
 }
 
+static inline void
+grn_obj_search_index_report(grn_ctx *ctx, const char *tag, grn_obj *index)
+{
+  grn_report_index(ctx, "[object][search]", tag, index);
+}
+
 static inline grn_rc
 grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
                         grn_obj *res, grn_operator op, grn_search_optarg *optarg)
@@ -3106,8 +3113,12 @@ grn_obj_search_column_index_by_id(grn_ctx *ctx, grn_obj *obj,
                                   grn_obj *res, grn_operator op,
                                   grn_search_optarg *optarg)
 {
-  grn_ii_cursor *c = grn_ii_cursor_open(ctx, (grn_ii *)obj, tid,
-                                        GRN_ID_NIL, GRN_ID_MAX, 1, 0);
+  grn_ii_cursor *c;
+
+  grn_obj_search_index_report(ctx, "[id]", obj);
+
+  c = grn_ii_cursor_open(ctx, (grn_ii *)obj, tid,
+                         GRN_ID_NIL, GRN_ID_MAX, 1, 0);
   if (c) {
     grn_ii_posting *pos;
     grn_hash *s = (grn_hash *)res;
@@ -3157,6 +3168,37 @@ grn_obj_search_column_index_by_key(grn_ctx *ctx, grn_obj *obj,
     key_len = GRN_BULK_VSIZE(query);
   }
   if (rc == GRN_SUCCESS) {
+    if (grn_logger_pass(ctx, GRN_REPORT_INDEX_LOG_LEVEL)) {
+      const char *tag;
+      if (optarg) {
+        switch (optarg->mode) {
+        case GRN_OP_MATCH :
+          tag = "[key][match]";
+          break;
+        case GRN_OP_EXACT :
+          tag = "[key][exact]";
+          break;
+        case GRN_OP_NEAR :
+          tag = "[key][near]";
+          break;
+        case GRN_OP_NEAR2 :
+          tag = "[key][near2]";
+          break;
+        case GRN_OP_SIMILAR :
+          tag = "[key][similar]";
+          break;
+        case GRN_OP_REGEXP :
+          tag = "[key][regexp]";
+          break;
+        default :
+          tag = "[key][unknown]";
+          break;
+        }
+      } else {
+        tag = "[key][exact]";
+      }
+      grn_obj_search_index_report(ctx, tag, obj);
+    }
     rc = grn_ii_sel(ctx, (grn_ii *)obj, key, key_len,
                     (grn_hash *)res, op, optarg);
   }
@@ -3213,6 +3255,34 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
         uint32_t key_size = GRN_BULK_VSIZE(query);
         grn_operator mode = optarg ? optarg->mode : GRN_OP_EXACT;
         if (key && key_size) {
+          if (grn_logger_pass(ctx, GRN_REPORT_INDEX_LOG_LEVEL)) {
+            const char *tag;
+            if (optarg) {
+              switch (optarg->mode) {
+              case GRN_OP_EXACT :
+                tag = "[table][exact]";
+                break;
+              case GRN_OP_LCP :
+                tag = "[table][lcp]";
+                break;
+              case GRN_OP_SUFFIX :
+                tag = "[table][suffix]";
+                break;
+              case GRN_OP_PREFIX :
+                tag = "[table][prefix]";
+                break;
+              case GRN_OP_TERM_EXTRACT :
+                tag = "[table][term-extract]";
+                break;
+              default :
+                tag = "[table][unknown]";
+                break;
+              }
+            } else {
+              tag = "[table][exact]";
+            }
+            grn_obj_search_index_report(ctx, tag, obj);
+          }
           rc = grn_table_search(ctx, obj, key, key_size, mode, res, op);
         }
       }

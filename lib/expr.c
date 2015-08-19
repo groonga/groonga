@@ -5265,27 +5265,6 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
         int n_indexes = GRN_BULK_VSIZE(&si->index)/sizeof(grn_obj *);
         int32_t *wp = &GRN_INT32_VALUE(&si->wv);
         grn_search_optarg optarg;
-        const char *tag = "";
-        switch (si->op) {
-        case GRN_OP_MATCH :
-          tag = "[match]";
-          break;
-        case GRN_OP_NEAR :
-          tag = "[near]";
-          break;
-        case GRN_OP_NEAR2 :
-          tag = "[near2]";
-          break;
-        case GRN_OP_SIMILAR :
-          tag = "[similar]";
-          break;
-        case GRN_OP_REGEXP :
-          tag = "[regexp]";
-          break;
-        default :
-          tag = "[unknown]";
-          break;
-        }
         GRN_INT32_INIT(&wv, GRN_OBJ_VECTOR);
         if (si->op == GRN_OP_MATCH) {
           optarg.mode = GRN_OP_EXACT;
@@ -5339,7 +5318,6 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
           } else {
             ctx->flags &= ~GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
           }
-          grn_table_select_index_report(ctx, tag, ip[0]);
           grn_obj_search(ctx, ip[0], si->query, res, si->logical_op, &optarg);
           if (optarg.weight_vector) {
             int i;
