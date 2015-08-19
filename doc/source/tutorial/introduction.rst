@@ -95,7 +95,7 @@ Create a table
 
 A :doc:`/reference/commands/table_create` command creates a new table.
 
-In most cases, a table has a primary key which must be specified with its data type and index type. 
+In most cases, a table has a primary key which must be specified with its data type and index type.
 
 There are various data types such as integers, strings, etc. See also :doc:`/reference/types` for more details. The index type determines the search performance and the availability of prefix searches. The details will be described later.
 
@@ -192,11 +192,11 @@ The following shows a command which creates a lexicon table named Terms. The dat
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-10.log
-.. table_create --name Terms --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
+.. table_create --name Terms --flags TABLE_PAT_KEY --key_type ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto KEY_NORMALIZE
 
 The :doc:`/reference/commands/table_create` command takes many parameters but you don't need to understand all of them. Please skip the next paragraph if you are not interested in how it works.
 
-The TABLE_PAT_KEY flag specifies to store index terms in a patricia trie. The KEY_NORMALIZE flag specifies to normalize index terms. In this example, both flags are validated by using a '|'. The `default_tokenizer` parameter specifies the method for tokenizing text. This example uses TokenBigram that is generally called N-gram.
+The TABLE_PAT_KEY flag specifies to store index terms in a patricia trie. The `default_tokenizer` parameter specifies the method for tokenizing text. This example uses TokenBigram that is generally called N-gram. The `normalizer` parameter specifies to normalize index terms.
 
 Create an index column for full text search
 -------------------------------------------
@@ -220,7 +220,7 @@ Full text search
 
 It's time. You can make full text search with a :doc:`/reference/commands/select` command.
 
-A query for full text search is specified with a `query` parameter. The following example searches records whose "title" column contains "this". The '@' specifies to make full text search. Note that a lower case query matches upper case and capitalized terms in a record if KEY_NORMALIZE was specified when creating a lexcon table.
+A query for full text search is specified with a `query` parameter. The following example searches records whose "title" column contains "this". The '@' specifies to make full text search. Note that a lower case query matches upper case and capitalized terms in a record if NormalizerAuto was specified when creating a lexcon table.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-12.log

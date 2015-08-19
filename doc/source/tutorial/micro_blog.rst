@@ -21,7 +21,7 @@ Let's create table.
  table_create --name Users --flags TABLE_HASH_KEY --key_type ShortText
  table_create --name Comments --flags TABLE_HASH_KEY --key_type ShortText
  table_create --name HashTags --flags TABLE_HASH_KEY --key_type ShortText
- table_create --name Bigram --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
+ table_create --name Bigram --flags TABLE_PAT_KEY --key_type ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
  table_create --name GeoIndex --flags TABLE_PAT_KEY --key_type WGS84GeoPoint
 
  column_create --table Users --name name --flags COLUMN_SCALAR --type ShortText
@@ -270,9 +270,9 @@ when data is loaded.
  table_create --name Users --flags TABLE_HASH_KEY --key_type ShortText
  table_create --name Comments --flags TABLE_HASH_KEY --key_type ShortText
  table_create --name HashTags --flags TABLE_HASH_KEY --key_type ShortText
- table_create --name Bigram --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
+ table_create --name Bigram --flags TABLE_PAT_KEY --key_type ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
  table_create --name GeoIndex --flags TABLE_PAT_KEY --key_type WGS84GeoPoint
- 
+
  column_create --table Users --name name --flags COLUMN_SCALAR --type ShortText
  column_create --table Users --name follower --flags COLUMN_VECTOR --type Users
  column_create --table Users --name favorites --flags COLUMN_VECTOR --type Comments
@@ -280,7 +280,7 @@ when data is loaded.
  column_create --table Users --name location_str --flags COLUMN_SCALAR --type ShortText
  column_create --table Users --name description --flags COLUMN_SCALAR --type ShortText
  column_create --table Users --name followee --flags COLUMN_INDEX --type Users --source follower
- 
+
  column_create --table Comments --name comment --flags COLUMN_SCALAR --type ShortText
  column_create --table Comments --name last_modified --flags COLUMN_SCALAR --type Time
  column_create --table Comments --name replied_to --flags COLUMN_SCALAR --type Comments
@@ -289,15 +289,15 @@ when data is loaded.
  column_create --table Comments --name location --flags COLUMN_SCALAR --type WGS84GeoPoint
  column_create --table Comments --name posted_by --flags COLUMN_SCALAR --type Users
  column_create --table Comments --name favorited_by --flags COLUMN_INDEX --type Users --source favorites
- 
+
  column_create --table HashTags --name hash_index --flags COLUMN_INDEX --type Comments --source hash_tags
- 
+
  column_create --table Bigram --name users_index --flags COLUMN_INDEX|WITH_POSITION|WITH_SECTION --type Users --source name,location_str,description
  column_create --table Bigram --name comment_index --flags COLUMN_INDEX|WITH_POSITION --type Comments --source comment
- 
+
  column_create --table GeoIndex --name users_location --type Users --flags COLUMN_INDEX --source location
  column_create --table GeoIndex --name comments_location --type Comments --flags COLUMN_INDEX --source location
- 
+
  load --table Users
  [
    {
@@ -328,7 +328,7 @@ when data is loaded.
      "description": "Hmm,Hmm"
    }
  ]
- 
+
  load --table Comments
  [
    {

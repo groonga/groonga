@@ -29,7 +29,7 @@ Let's create document table and synonym table.
 .. include:: ../example/tutorial/query_expansion-1.log
 .. table_create Doc TABLE_PAT_KEY ShortText
 .. column_create Doc body COLUMN_SCALAR ShortText
-.. table_create Term TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+.. table_create Term TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
 .. column_create Term Doc_body COLUMN_INDEX|WITH_POSITION Doc body
 .. table_create Synonym TABLE_PAT_KEY ShortText
 .. column_create Synonym body COLUMN_SCALAR ShortText
