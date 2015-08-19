@@ -74,7 +74,7 @@ We register data:
 .. {"content":"I'm sleepy... Have a nice day... Good night..."}
 .. ]
 
-We search without index. We get no result:
+We can search with sequential search when we don't have index:
 
 .. groonga-command
 .. include:: ../example/reference/indexing-search-without-index.log
