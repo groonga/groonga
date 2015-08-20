@@ -61,7 +61,7 @@ We define a schema:
 .. include:: ../example/reference/indexing-schema.log
 .. table_create Tweets TABLE_NO_KEY
 .. column_create Tweets content COLUMN_SCALAR ShortText
-.. table_create Lexicon TABLE_HASH_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+.. table_create Lexicon TABLE_HASH_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
 
 We register data:
 
