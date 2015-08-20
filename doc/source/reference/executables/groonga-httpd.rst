@@ -72,8 +72,6 @@ To check, request a simple query (:doc:`/reference/commands/status`).
 Loading data by POST
 ^^^^^^^^^^^^^^^^^^^^
 
-The feature of groonga-httpd in contrast to groonga is supporting POST method.
-
 You can load data by POST JSON data.
 
 Here is an example curl command line that loads two users alice and bob to Users table::
