@@ -83,7 +83,7 @@ Here are a schema definition and sample data to show usage.
 .. table_create Entries TABLE_PAT_KEY ShortText
 .. column_create Entries content COLUMN_SCALAR Text
 .. column_create Entries n_likes COLUMN_SCALAR UInt32
-.. table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+.. table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
 .. column_create Terms entries_key_index COLUMN_INDEX|WITH_POSITION Entries _key
 .. column_create Terms entries_content_index COLUMN_INDEX|WITH_POSITION Entries content
 .. load --table Entries
@@ -1043,7 +1043,7 @@ Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_term_extract_operator.log
-.. table_create Words TABLE_PAT_KEY|KEY_NORMALIZE ShortText
+.. table_create Words TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
 .. load --table Words
 .. [
 .. {"_key": "groonga"},
@@ -1054,8 +1054,8 @@ Here is a simple example.
 .. select Words --filter '_key *T "Groonga is the successor project to Senna."' --output_columns _key
 
 The expression extrcts terms that included in document ``Groonga is
-the successor project to Senna.``. In this case, ``KEY_NORMALIZE``
-flag is specified to ``Words``. So ``Groonga`` can be extracted even
+the successor project to Senna.``. In this case, ``NormalizerAuto``
+option is specified to ``Words``. So ``Groonga`` can be extracted even
 if it is loaded as ``groonga`` into ``Words``. All of extracted terms
 are also normalized.
 

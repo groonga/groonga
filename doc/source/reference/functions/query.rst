@@ -47,7 +47,7 @@ Sample schema:
 .. include:: ../../example/reference/functions/query/usage_setup_schema.log
 .. table_create Documents TABLE_NO_KEY
 .. column_create Documents content COLUMN_SCALAR Text
-.. table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+.. table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram  --normalizer NormalizerAuto
 .. column_create Terms documents_content_index COLUMN_INDEX|WITH_POSITION Documents content
 .. table_create Users TABLE_NO_KEY
 .. column_create Users name COLUMN_SCALAR ShortText
