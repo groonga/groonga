@@ -74,7 +74,8 @@ Loading data by POST
 
 You can load data by POST JSON data.
 
-Here is an example curl command line that loads two users alice and bob to Users table::
+Here is an example ``curl`` command line that loads two users ``alice``
+and ``bob`` to ``Users`` table::
 
     % curl --data-binary '[{"_key": "alice"}, {"_key": "bob"}]' -H "Content-Type: application/json" "http://localhost:10041/d/load?table=Users"
 
@@ -85,7 +86,7 @@ If you loads users from JSON file, prepare JSON file like this::
     {"_key": "bob"}
     ]
 
-Then specify JSON file in curl command line::
+Then specify JSON file in ``curl`` command line::
 
     % curl -X POST 'http://localhost:10041/d/load?table=Users' -H 'Content-Type: application/json' -d @users.json
 
