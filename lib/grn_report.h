@@ -25,7 +25,7 @@
 extern "C" {
 #endif
 
-const grn_log_level GRN_REPORT_INDEX_LOG_LEVEL;
+extern const grn_log_level GRN_REPORT_INDEX_LOG_LEVEL;
 
 void grn_report_index(grn_ctx *ctx,
                       const char *action,
