@@ -83,8 +83,12 @@ struct Float {
   ~Float() {}
 };
 
-inline bool operator==(Float lhs, Float rhs) { return lhs.raw == rhs.raw; }
-inline bool operator!=(Float lhs, Float rhs) { return lhs.raw != rhs.raw; }
+inline bool operator==(Float lhs, Float rhs) {
+  return (lhs.raw <= rhs.raw) && (lhs.raw >= rhs.raw);
+}
+inline bool operator!=(Float lhs, Float rhs) {
+  return (lhs.raw < rhs.raw) || (lhs.raw > rhs.raw);
+}
 inline bool operator<(Float lhs, Float rhs) { return lhs.raw < rhs.raw; }
 inline bool operator<=(Float lhs, Float rhs) { return lhs.raw <= rhs.raw; }
 inline bool operator>(Float lhs, Float rhs) { return lhs.raw > rhs.raw; }
