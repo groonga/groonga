@@ -1748,335 +1748,71 @@ grn_rc LogicalOrNode::fill_arg_values(ExpressionNode *arg,
   return arg->evaluate(records, num_records, &*arg_values->begin());
 }
 
-// ---- EqualNode ----
-
-class EqualNode : public OperatorNode {
- public:
-  ~EqualNode() {}
-
-  static grn_rc open(ExpressionNode *arg1, ExpressionNode *arg2,
-                     ExpressionNode **node);
-
-  DataKind data_kind() const {
-    return GRN_TS_BOOL;
-  }
-  DataType data_type() const {
-    return GRN_DB_BOOL;
-  }
-  grn_obj *ref_table() const {
-    return NULL;
-  }
-  int dimension() const {
-    return 0;
-  }
-
-  grn_rc filter(Record *input, size_t input_size,
-                Record *output, size_t *output_size);
-  grn_rc evaluate(const Record *records, size_t num_records, void *results);
-
- private:
-  ExpressionNode *arg1_;
-  ExpressionNode *arg2_;
-  std::vector<char> arg1_values_;
-  std::vector<char> arg2_values_;
-
-  EqualNode(ExpressionNode *arg1, ExpressionNode *arg2)
-    : OperatorNode(), arg1_(arg1), arg2_(arg2), arg1_values_(),
-      arg2_values_() {}
-
-  template <DataKind KIND>
-  grn_rc _filter(Record *input, size_t input_size,
-                 Record *output, size_t *output_size);
-  template <DataKind KIND>
-  grn_rc _evaluate(const Record *records, size_t num_records, void *results);
-};
-
-grn_rc EqualNode::open(ExpressionNode *arg1, ExpressionNode *arg2,
-                       ExpressionNode **node) {
-  EqualNode *new_node = new (std::nothrow) EqualNode(arg1, arg2);
-  if (!new_node) {
-    return GRN_NO_MEMORY_AVAILABLE;
-  }
-  *node = new_node;
-  return GRN_SUCCESS;
-}
-
-grn_rc EqualNode::filter(Record *input, size_t input_size,
-                         Record *output, size_t *output_size) {
-  switch (arg1_->data_kind()) {
-    case GRN_TS_BOOL: {
-      return _filter<GRN_TS_BOOL>(input, input_size, output, output_size);
-    }
-    case GRN_TS_INT: {
-      return _filter<GRN_TS_INT>(input, input_size, output, output_size);
-    }
-    case GRN_TS_FLOAT: {
-      return _filter<GRN_TS_FLOAT>(input, input_size, output, output_size);
-    }
-    case GRN_TS_TIME: {
-      return _filter<GRN_TS_TIME>(input, input_size, output, output_size);
-    }
-    case GRN_TS_TEXT: {
-      return _filter<GRN_TS_TEXT>(input, input_size, output, output_size);
-    }
-    case GRN_TS_GEO_POINT: {
-      return _filter<GRN_TS_GEO_POINT>(input, input_size, output, output_size);
-    }
-    default: {
-      return GRN_OPERATION_NOT_SUPPORTED;
-    }
-  }
-}
-
-grn_rc EqualNode::evaluate(const Record *records, size_t num_records,
-                           void *results) {
-  switch (arg1_->data_kind()) {
-    case GRN_TS_BOOL: {
-      return _evaluate<GRN_TS_BOOL>(records, num_records, results);
-    }
-    case GRN_TS_INT: {
-      return _evaluate<GRN_TS_INT>(records, num_records, results);
-    }
-    case GRN_TS_FLOAT: {
-      return _evaluate<GRN_TS_FLOAT>(records, num_records, results);
-    }
-    case GRN_TS_TIME: {
-      return _evaluate<GRN_TS_TIME>(records, num_records, results);
-    }
-    case GRN_TS_TEXT: {
-      return _evaluate<GRN_TS_TEXT>(records, num_records, results);
-    }
-    case GRN_TS_GEO_POINT: {
-      return _evaluate<GRN_TS_GEO_POINT>(records, num_records, results);
-    }
-    default: {
-      return GRN_OPERATION_NOT_SUPPORTED;
-    }
-  }
-}
-
-template <DataKind KIND>
-grn_rc EqualNode::_filter(Record *input, size_t input_size,
-                          Record *output, size_t *output_size) {
-  typedef KindTraits<KIND> Traits;
-  typedef typename Traits::Type Type;
-
-  grn_rc rc = operator_node_evaluate_arg<KIND>(input, input_size,
-                                               arg1_, &arg1_values_);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  rc = operator_node_evaluate_arg<KIND>(input, input_size,
-                                        arg2_, &arg2_values_);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-
-  Type *input1 = reinterpret_cast<Type *>(&*arg1_values_.begin());
-  Type *input2 = reinterpret_cast<Type *>(&*arg2_values_.begin());
-  size_t count = 0;
-  for (size_t i = 0; i < input_size; ++i) {
-    if (Traits::equal(input1[i], input2[i])) {
-      output[count] = input[i];
-      ++count;
-    }
-  }
-  *output_size = count;
-  return GRN_SUCCESS;
-}
-
-template <DataKind KIND>
-grn_rc EqualNode::_evaluate(const Record *records, size_t num_records,
-                            void *results) {
-  typedef KindTraits<KIND> Traits;
-  typedef typename Traits::Type Type;
-
-  grn_rc rc = operator_node_evaluate_arg<KIND>(records, num_records,
-                                               arg1_, &arg1_values_);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  rc =  operator_node_evaluate_arg<KIND>(records, num_records,
-                                         arg2_, &arg2_values_);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-
-  Type *input1 = reinterpret_cast<Type *>(&*arg1_values_.begin());
-  Type *input2 = reinterpret_cast<Type *>(&*arg2_values_.begin());
-  grn_ts_bool *output = static_cast<grn_ts_bool *>(results);
-  for (size_t i = 0; i < num_records; ++i) {
-    output[i] = Traits::equal(input1[i], input2[i]);
-  }
-  return GRN_SUCCESS;
-}
-
-// ---- NotEqualNode ----
-
-class NotEqualNode : public OperatorNode {
- public:
-  ~NotEqualNode() {}
-
-  static grn_rc open(ExpressionNode *arg1, ExpressionNode *arg2,
-                     ExpressionNode **node);
-
-  DataKind data_kind() const {
-    return GRN_TS_BOOL;
-  }
-  DataType data_type() const {
-    return GRN_DB_BOOL;
-  }
-  grn_obj *ref_table() const {
-    return NULL;
-  }
-  int dimension() const {
-    return 0;
-  }
-
-  grn_rc filter(Record *input, size_t input_size,
-                Record *output, size_t *output_size);
-  grn_rc evaluate(const Record *records, size_t num_records, void *results);
-
- private:
-  ExpressionNode *arg1_;
-  ExpressionNode *arg2_;
-  std::vector<char> arg1_values_;
-  std::vector<char> arg2_values_;
-
-  NotEqualNode(ExpressionNode *arg1, ExpressionNode *arg2)
-    : OperatorNode(), arg1_(arg1), arg2_(arg2), arg1_values_(),
-      arg2_values_() {}
-
-  template <DataKind KIND>
-  grn_rc _filter(Record *input, size_t input_size,
-                 Record *output, size_t *output_size);
-  template <DataKind KIND>
-  grn_rc _evaluate(const Record *records, size_t num_records, void *results);
-};
-
-grn_rc NotEqualNode::open(ExpressionNode *arg1, ExpressionNode *arg2,
-                       ExpressionNode **node) {
-  NotEqualNode *new_node = new (std::nothrow) NotEqualNode(arg1, arg2);
-  if (!new_node) {
-    return GRN_NO_MEMORY_AVAILABLE;
-  }
-  *node = new_node;
-  return GRN_SUCCESS;
-}
-
-grn_rc NotEqualNode::filter(Record *input, size_t input_size,
-                            Record *output, size_t *output_size) {
-  switch (arg1_->data_kind()) {
-    case GRN_TS_BOOL: {
-      return _filter<GRN_TS_BOOL>(input, input_size, output, output_size);
-    }
-    case GRN_TS_INT: {
-      return _filter<GRN_TS_INT>(input, input_size, output, output_size);
-    }
-    case GRN_TS_FLOAT: {
-      return _filter<GRN_TS_FLOAT>(input, input_size, output, output_size);
-    }
-    case GRN_TS_TIME: {
-      return _filter<GRN_TS_TIME>(input, input_size, output, output_size);
-    }
-    case GRN_TS_TEXT: {
-      return _filter<GRN_TS_TEXT>(input, input_size, output, output_size);
-    }
-    case GRN_TS_GEO_POINT: {
-      return _filter<GRN_TS_GEO_POINT>(input, input_size, output, output_size);
-    }
-    default: {
-      return GRN_OPERATION_NOT_SUPPORTED;
-    }
-  }
-}
-
-grn_rc NotEqualNode::evaluate(const Record *records, size_t num_records,
-                              void *results) {
-  switch (arg1_->data_kind()) {
-    case GRN_TS_BOOL: {
-      return _evaluate<GRN_TS_BOOL>(records, num_records, results);
-    }
-    case GRN_TS_INT: {
-      return _evaluate<GRN_TS_INT>(records, num_records, results);
-    }
-    case GRN_TS_FLOAT: {
-      return _evaluate<GRN_TS_FLOAT>(records, num_records, results);
-    }
-    case GRN_TS_TIME: {
-      return _evaluate<GRN_TS_TIME>(records, num_records, results);
-    }
-    case GRN_TS_TEXT: {
-      return _evaluate<GRN_TS_TEXT>(records, num_records, results);
-    }
-    case GRN_TS_GEO_POINT: {
-      return _evaluate<GRN_TS_GEO_POINT>(records, num_records, results);
-    }
-    default: {
-      return GRN_OPERATION_NOT_SUPPORTED;
-    }
-  }
-}
-
-template <DataKind KIND>
-grn_rc NotEqualNode::_filter(Record *input, size_t input_size,
-                             Record *output, size_t *output_size) {
-  typedef KindTraits<KIND> Traits;
-  typedef typename Traits::Type Type;
-
-  grn_rc rc = operator_node_evaluate_arg<KIND>(input, input_size,
-                                               arg1_, &arg1_values_);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  rc =  operator_node_evaluate_arg<KIND>(input, input_size,
-                                         arg2_, &arg2_values_);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-
-  Type *input1 = reinterpret_cast<Type *>(&*arg1_values_.begin());
-  Type *input2 = reinterpret_cast<Type *>(&*arg2_values_.begin());
-  size_t count = 0;
-  for (size_t i = 0; i < input_size; ++i) {
-    if (Traits::not_equal(input1[i], input2[i])) {
-      output[count] = input[i];
-      ++count;
-    }
-  }
-  *output_size = count;
-  return GRN_SUCCESS;
-}
-
-template <DataKind KIND>
-grn_rc NotEqualNode::_evaluate(const Record *records, size_t num_records,
-                            void *results) {
-  typedef KindTraits<KIND> Traits;
-  typedef typename Traits::Type Type;
-
-  grn_rc rc = operator_node_evaluate_arg<KIND>(records, num_records,
-                                               arg1_, &arg1_values_);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  rc = operator_node_evaluate_arg<KIND>(records, num_records,
-                                        arg2_, &arg2_values_);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-
-  Type *input1 = reinterpret_cast<Type *>(&*arg1_values_.begin());
-  Type *input2 = reinterpret_cast<Type *>(&*arg2_values_.begin());
-  grn_ts_bool *output = static_cast<grn_ts_bool *>(results);
-  for (size_t i = 0; i < num_records; ++i) {
-    output[i] = Traits::not_equal(input1[i], input2[i]);
-  }
-  return GRN_SUCCESS;
-}
-
 // ---- Comparer ----
 
 template <OperatorType OPERATOR, DataKind KIND> struct Comparer;
+
+template <> struct Comparer<GRN_TS_EQUAL, GRN_TS_BOOL> {
+  grn_bool operator()(grn_ts_bool lhs, grn_ts_bool rhs) const {
+    return lhs == rhs;
+  }
+};
+template <> struct Comparer<GRN_TS_EQUAL, GRN_TS_INT> {
+  grn_bool operator()(grn_ts_int lhs, grn_ts_int rhs) const {
+    return lhs == rhs;
+  }
+};
+template <> struct Comparer<GRN_TS_EQUAL, GRN_TS_FLOAT> {
+  grn_bool operator()(grn_ts_float lhs, grn_ts_float rhs) const {
+    return (lhs <= rhs) && (lhs >= rhs);
+  }
+};
+template <> struct Comparer<GRN_TS_EQUAL, GRN_TS_TIME> {
+  grn_bool operator()(grn_ts_time lhs, grn_ts_time rhs) const {
+    return lhs == rhs;
+  }
+};
+template <> struct Comparer<GRN_TS_EQUAL, GRN_TS_TEXT> {
+  grn_bool operator()(grn_ts_text lhs, grn_ts_text rhs) const {
+    return (lhs.size == rhs.size) && !std::memcmp(lhs.ptr, rhs.ptr, lhs.size);
+  }
+};
+template <> struct Comparer<GRN_TS_EQUAL, GRN_TS_GEO_POINT> {
+  grn_bool operator()(grn_ts_geo_point lhs, grn_ts_geo_point rhs) const {
+    return (lhs.latitude == rhs.latitude) && (lhs.longitude == rhs.longitude);
+  }
+};
+
+template <> struct Comparer<GRN_TS_NOT_EQUAL, GRN_TS_BOOL> {
+  grn_bool operator()(grn_ts_bool lhs, grn_ts_bool rhs) const {
+    return lhs != rhs;
+  }
+};
+template <> struct Comparer<GRN_TS_NOT_EQUAL, GRN_TS_INT> {
+  grn_bool operator()(grn_ts_int lhs, grn_ts_int rhs) const {
+    return lhs != rhs;
+  }
+};
+template <> struct Comparer<GRN_TS_NOT_EQUAL, GRN_TS_FLOAT> {
+  grn_bool operator()(grn_ts_float lhs, grn_ts_float rhs) const {
+    return (lhs < rhs) || (lhs > rhs);
+  }
+};
+template <> struct Comparer<GRN_TS_NOT_EQUAL, GRN_TS_TIME> {
+  grn_bool operator()(grn_ts_time lhs, grn_ts_time rhs) const {
+    return lhs != rhs;
+  }
+};
+template <> struct Comparer<GRN_TS_NOT_EQUAL, GRN_TS_TEXT> {
+  grn_bool operator()(grn_ts_text lhs, grn_ts_text rhs) const {
+    return (lhs.size != rhs.size) || !!std::memcmp(lhs.ptr, rhs.ptr, lhs.size);
+  }
+};
+template <> struct Comparer<GRN_TS_NOT_EQUAL, GRN_TS_GEO_POINT> {
+  grn_bool operator()(grn_ts_geo_point lhs, grn_ts_geo_point rhs) const {
+    return (lhs.latitude != rhs.latitude) || (lhs.longitude != rhs.longitude);
+  }
+};
 
 template <> struct Comparer<GRN_TS_LESS, GRN_TS_INT> {
   grn_bool operator()(grn_ts_int lhs, grn_ts_int rhs) const {
@@ -2172,14 +1908,17 @@ template <> struct Comparer<GRN_TS_GREATER_EQUAL, GRN_TS_TEXT> {
 
 // -- ComparerNode --
 
-template <OperatorType OPERATOR>
-class ComparerNode : public OperatorNode {
+class ComparerNode : public ExpressionNode {
  public:
   ~ComparerNode() {}
 
-  static grn_rc open(ExpressionNode *arg1, ExpressionNode *arg2,
+  static grn_rc open(OperatorType operator_type,
+                     ExpressionNode *arg1, ExpressionNode *arg2,
                      ExpressionNode **node);
 
+  ExpressionNodeType type() const {
+    return GRN_TS_OPERATOR_NODE;
+  }
   DataKind data_kind() const {
     return GRN_TS_BOOL;
   }
@@ -2198,26 +1937,71 @@ class ComparerNode : public OperatorNode {
   grn_rc evaluate(const Record *records, size_t num_records, void *results);
 
  private:
+  OperatorType operator_type_;
   ExpressionNode *arg1_;
   ExpressionNode *arg2_;
   std::vector<char> arg1_values_;
   std::vector<char> arg2_values_;
 
-  ComparerNode(ExpressionNode *arg1, ExpressionNode *arg2)
-    : OperatorNode(), arg1_(arg1), arg2_(arg2), arg1_values_(),
-      arg2_values_() {}
+  ComparerNode(OperatorType operator_type,
+               ExpressionNode *arg1, ExpressionNode *arg2)
+    : ExpressionNode(), operator_type_(operator_type),
+      arg1_(arg1), arg2_(arg2), arg1_values_(), arg2_values_() {}
 
-  template <DataKind KIND>
+  grn_rc fill_args(const Record *input, size_t input_size);
+
+  template <OperatorType OPERATOR>
+  grn_rc filter_eq(Record *input, size_t input_size,
+                   Record *output, size_t *output_size);
+  template <OperatorType OPERATOR>
+  grn_rc filter_cmp(Record *input, size_t input_size,
+                    Record *output, size_t *output_size);
+  template <OperatorType OPERATOR, DataKind KIND>
   grn_rc _filter(Record *input, size_t input_size,
                  Record *output, size_t *output_size);
-  template <DataKind KIND>
+
+  template <OperatorType OPERATOR>
+  grn_rc evaluate_eq(const Record *records, size_t num_records, void *results);
+  template <OperatorType OPERATOR>
+  grn_rc evaluate_cmp(const Record *records, size_t num_records, void *results);
+  template <OperatorType OPERATOR, DataKind KIND>
   grn_rc _evaluate(const Record *records, size_t num_records, void *results);
 };
 
-template <OperatorType OPERATOR>
-grn_rc ComparerNode<OPERATOR>::open(ExpressionNode *arg1, ExpressionNode *arg2,
-                                    ExpressionNode **node) {
-  ComparerNode *new_node = new (std::nothrow) ComparerNode(arg1, arg2);
+grn_rc ComparerNode::open(OperatorType operator_type,
+                          ExpressionNode *arg1, ExpressionNode *arg2,
+                          ExpressionNode **node) {
+  if (arg1->data_kind() != arg2->data_kind()) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  switch (operator_type) {
+    case GRN_TS_EQUAL:
+    case GRN_TS_NOT_EQUAL: {
+      break;
+    }
+    case GRN_TS_LESS:
+    case GRN_TS_LESS_EQUAL:
+    case GRN_TS_GREATER:
+    case GRN_TS_GREATER_EQUAL: {
+      switch (arg1->data_kind()) {
+        case GRN_TS_INT:
+        case GRN_TS_FLOAT:
+        case GRN_TS_TIME:
+        case GRN_TS_TEXT: {
+          break;
+        }
+        default: {
+          return GRN_INVALID_ARGUMENT;
+        }
+      }
+      break;
+    }
+    default: {
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+  ComparerNode *new_node = new (std::nothrow) ComparerNode(operator_type,
+                                                           arg1, arg2);
   if (!new_node) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
@@ -2225,21 +2009,113 @@ grn_rc ComparerNode<OPERATOR>::open(ExpressionNode *arg1, ExpressionNode *arg2,
   return GRN_SUCCESS;
 }
 
+grn_rc ComparerNode::filter(Record *input, size_t input_size,
+                            Record *output, size_t *output_size) {
+  grn_rc rc = fill_args(input, input_size);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  switch (operator_type_) {
+    case GRN_TS_EQUAL: {
+      return filter_eq<GRN_TS_EQUAL>(input, input_size, output, output_size);
+    }
+    case GRN_TS_NOT_EQUAL: {
+      return filter_eq<GRN_TS_NOT_EQUAL>(input, input_size,
+                                         output, output_size);
+    }
+    case GRN_TS_LESS: {
+      return filter_cmp<GRN_TS_LESS>(input, input_size, output, output_size);
+    }
+    case GRN_TS_LESS_EQUAL: {
+      return filter_cmp<GRN_TS_LESS_EQUAL>(input, input_size,
+                                           output, output_size);
+    }
+    case GRN_TS_GREATER: {
+      return filter_cmp<GRN_TS_GREATER>(input, input_size,
+                                        output, output_size);
+    }
+    case GRN_TS_GREATER_EQUAL: {
+      return filter_cmp<GRN_TS_GREATER_EQUAL>(input, input_size,
+                                              output, output_size);
+    }
+    default: {
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+}
+
+grn_rc ComparerNode::evaluate(const Record *records,
+                              size_t num_records, void *results) {
+  grn_rc rc = fill_args(records, num_records);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  switch (operator_type_) {
+    case GRN_TS_EQUAL: {
+      return evaluate_eq<GRN_TS_EQUAL>(records, num_records, results);
+    }
+    case GRN_TS_NOT_EQUAL: {
+      return evaluate_eq<GRN_TS_NOT_EQUAL>(records, num_records, results);
+    }
+    case GRN_TS_LESS: {
+      return evaluate_cmp<GRN_TS_LESS>(records, num_records, results);
+    }
+    case GRN_TS_LESS_EQUAL: {
+      return evaluate_cmp<GRN_TS_LESS_EQUAL>(records, num_records, results);
+    }
+    case GRN_TS_GREATER: {
+      return evaluate_cmp<GRN_TS_GREATER>(records, num_records, results);
+    }
+    case GRN_TS_GREATER_EQUAL: {
+      return evaluate_cmp<GRN_TS_GREATER_EQUAL>(records, num_records, results);
+    }
+    default: {
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+}
+
+grn_rc ComparerNode::fill_args(const Record *input, size_t input_size) {
+  grn_rc rc = operator_node_fill_arg_values(input, input_size,
+                                            arg1_, &arg1_values_);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  rc = operator_node_fill_arg_values(input, input_size,
+                                     arg2_, &arg2_values_);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  return GRN_SUCCESS;
+}
+
 template <OperatorType OPERATOR>
-grn_rc ComparerNode<OPERATOR>::filter(Record *input, size_t input_size,
-                                      Record *output, size_t *output_size) {
+grn_rc ComparerNode::filter_eq(Record *input, size_t input_size,
+                               Record *output, size_t *output_size) {
   switch (arg1_->data_kind()) {
+    case GRN_TS_BOOL: {
+      return _filter<OPERATOR, GRN_TS_BOOL>(input, input_size,
+                                            output, output_size);
+    }
     case GRN_TS_INT: {
-      return _filter<GRN_TS_INT>(input, input_size, output, output_size);
+      return _filter<OPERATOR, GRN_TS_INT>(input, input_size,
+                                           output, output_size);
     }
     case GRN_TS_FLOAT: {
-      return _filter<GRN_TS_FLOAT>(input, input_size, output, output_size);
+      return _filter<OPERATOR, GRN_TS_FLOAT>(input, input_size,
+                                             output, output_size);
     }
     case GRN_TS_TIME: {
-      return _filter<GRN_TS_TIME>(input, input_size, output, output_size);
+      return _filter<OPERATOR, GRN_TS_TIME>(input, input_size,
+                                            output, output_size);
     }
     case GRN_TS_TEXT: {
-      return _filter<GRN_TS_TEXT>(input, input_size, output, output_size);
+      return _filter<OPERATOR, GRN_TS_TEXT>(input, input_size,
+                                            output, output_size);
+    }
+    case GRN_TS_GEO_POINT: {
+      return _filter<OPERATOR, GRN_TS_GEO_POINT>(input, input_size,
+                                                 output, output_size);
     }
     default: {
       return GRN_OPERATION_NOT_SUPPORTED;
@@ -2248,20 +2124,24 @@ grn_rc ComparerNode<OPERATOR>::filter(Record *input, size_t input_size,
 }
 
 template <OperatorType OPERATOR>
-grn_rc ComparerNode<OPERATOR>::evaluate(const Record *records,
-                                        size_t num_records, void *results) {
+grn_rc ComparerNode::filter_cmp(Record *input, size_t input_size,
+                                Record *output, size_t *output_size) {
   switch (arg1_->data_kind()) {
     case GRN_TS_INT: {
-      return _evaluate<GRN_TS_INT>(records, num_records, results);
+      return _filter<OPERATOR, GRN_TS_INT>(input, input_size,
+                                           output, output_size);
     }
     case GRN_TS_FLOAT: {
-      return _evaluate<GRN_TS_FLOAT>(records, num_records, results);
+      return _filter<OPERATOR, GRN_TS_FLOAT>(input, input_size,
+                                             output, output_size);
     }
     case GRN_TS_TIME: {
-      return _evaluate<GRN_TS_TIME>(records, num_records, results);
+      return _filter<OPERATOR, GRN_TS_TIME>(input, input_size,
+                                            output, output_size);
     }
     case GRN_TS_TEXT: {
-      return _evaluate<GRN_TS_TEXT>(records, num_records, results);
+      return _filter<OPERATOR, GRN_TS_TEXT>(input, input_size,
+                                            output, output_size);
     }
     default: {
       return GRN_OPERATION_NOT_SUPPORTED;
@@ -2269,24 +2149,11 @@ grn_rc ComparerNode<OPERATOR>::evaluate(const Record *records,
   }
 }
 
-template <OperatorType OPERATOR>
-template <DataKind KIND>
-grn_rc ComparerNode<OPERATOR>::_filter(Record *input, size_t input_size,
-                                       Record *output, size_t *output_size) {
+template <OperatorType OPERATOR, DataKind KIND>
+grn_rc ComparerNode::_filter(Record *input, size_t input_size,
+                             Record *output, size_t *output_size) {
   typedef KindTraits<KIND> Traits;
   typedef typename Traits::Type Type;
-
-  grn_rc rc = operator_node_evaluate_arg<KIND>(input, input_size,
-                                               arg1_, &arg1_values_);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  rc =  operator_node_evaluate_arg<KIND>(input, input_size,
-                                         arg2_, &arg2_values_);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-
   Type *input1 = reinterpret_cast<Type *>(&*arg1_values_.begin());
   Type *input2 = reinterpret_cast<Type *>(&*arg2_values_.begin());
   size_t count = 0;
@@ -2301,23 +2168,61 @@ grn_rc ComparerNode<OPERATOR>::_filter(Record *input, size_t input_size,
 }
 
 template <OperatorType OPERATOR>
-template <DataKind KIND>
-grn_rc ComparerNode<OPERATOR>::_evaluate(const Record *records,
-                                         size_t num_records, void *results) {
+grn_rc ComparerNode::evaluate_eq(const Record *records, size_t num_records,
+                                 void *results) {
+  switch (arg1_->data_kind()) {
+    case GRN_TS_BOOL: {
+      return _evaluate<OPERATOR, GRN_TS_BOOL>(records, num_records, results);
+    }
+    case GRN_TS_INT: {
+      return _evaluate<OPERATOR, GRN_TS_INT>(records, num_records, results);
+    }
+    case GRN_TS_FLOAT: {
+      return _evaluate<OPERATOR, GRN_TS_FLOAT>(records, num_records, results);
+    }
+    case GRN_TS_TIME: {
+      return _evaluate<OPERATOR, GRN_TS_TIME>(records, num_records, results);
+    }
+    case GRN_TS_TEXT: {
+      return _evaluate<OPERATOR, GRN_TS_TEXT>(records, num_records, results);
+    }
+    case GRN_TS_GEO_POINT: {
+      return _evaluate<OPERATOR, GRN_TS_GEO_POINT>(records, num_records,
+                                                   results);
+    }
+    default: {
+      return GRN_OPERATION_NOT_SUPPORTED;
+    }
+  }
+}
+
+template <OperatorType OPERATOR>
+grn_rc ComparerNode::evaluate_cmp(const Record *records, size_t num_records,
+                                  void *results) {
+  switch (arg1_->data_kind()) {
+    case GRN_TS_INT: {
+      return _evaluate<OPERATOR, GRN_TS_INT>(records, num_records, results);
+    }
+    case GRN_TS_FLOAT: {
+      return _evaluate<OPERATOR, GRN_TS_FLOAT>(records, num_records, results);
+    }
+    case GRN_TS_TIME: {
+      return _evaluate<OPERATOR, GRN_TS_TIME>(records, num_records, results);
+    }
+    case GRN_TS_TEXT: {
+      return _evaluate<OPERATOR, GRN_TS_TEXT>(records, num_records, results);
+    }
+    default: {
+      return GRN_OPERATION_NOT_SUPPORTED;
+    }
+  }
+}
+
+template <OperatorType OPERATOR, DataKind KIND>
+grn_rc ComparerNode::_evaluate(const Record *records, size_t num_records,
+                               void *results) {
   typedef KindTraits<KIND> Traits;
   typedef typename Traits::Type Type;
-
-  grn_rc rc = operator_node_evaluate_arg<KIND>(records, num_records,
-                                               arg1_, &arg1_values_);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  rc = operator_node_evaluate_arg<KIND>(records, num_records,
-                                        arg2_, &arg2_values_);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-
   Type *input1 = reinterpret_cast<Type *>(&*arg1_values_.begin());
   Type *input2 = reinterpret_cast<Type *>(&*arg2_values_.begin());
   grn_ts_bool *output = static_cast<grn_ts_bool *>(results);
@@ -2326,106 +2231,6 @@ grn_rc ComparerNode<OPERATOR>::_evaluate(const Record *records,
   }
   return GRN_SUCCESS;
 }
-
-typedef ComparerNode<GRN_TS_LESS>          LessNode;
-typedef ComparerNode<GRN_TS_LESS_EQUAL>    LessEqualNode;
-typedef ComparerNode<GRN_TS_GREATER>       GreaterNode;
-typedef ComparerNode<GRN_TS_GREATER_EQUAL> GreaterEqualNode;
-
-//// -- GenericBinaryNode --
-
-//template <typename T,
-//          typename U = typename T::Value,
-//          typename V = typename T::Arg1,
-//          typename W = typename T::Arg2>
-//class GenericBinaryNode : public BinaryNode<U, V, W> {
-// public:
-//  GenericBinaryNode(ExpressionNode *arg1, ExpressionNode *arg2)
-//    : BinaryNode<U, V, W>(arg1, arg2), operator_() {}
-//  ~GenericBinaryNode() {}
-
-//  grn_rc evaluate(
-//    const Record *records, size_t num_records, Bool *results);
-
-// private:
-//  T operator_;
-//};
-
-//template <typename T, typename U, typename V, typename W>
-//grn_rc GenericBinaryNode<T, U, V, W>::evaluate(
-//    const Record *records, size_t num_records, Bool *results) {
-//  grn_rc rc = this->fill_arg1_values(records, num_records);
-//  if (rc != GRN_SUCCESS) {
-//    return rc;
-//  }
-//  rc = this->fill_arg2_values(records, num_records);
-//  if (rc != GRN_SUCCESS) {
-//    return rc;
-//  }
-//  for (size_t i = 0; i < num_records; ++i) {
-//    results[i] = operator_(this->arg1_values_[i], this->arg2_values_[i]);
-//  }
-//  return GRN_SUCCESS;
-//}
-
-//template <typename T, typename V, typename W>
-//class GenericBinaryNode<T, Bool, V, W> : public BinaryNode<Bool, V, W> {
-// public:
-//  GenericBinaryNode(ExpressionNode *arg1, ExpressionNode *arg2)
-//    : BinaryNode<Bool, V, W>(arg1, arg2), operator_() {}
-//  ~GenericBinaryNode() {}
-
-//  grn_rc filter(
-//    Record *input, size_t input_size,
-//    Record *output, size_t *output_size);
-
-//  grn_rc evaluate(
-//    const Record *records, size_t num_records, Bool *results);
-
-// private:
-//  T operator_;
-//};
-
-//template <typename T, typename V, typename W>
-//grn_rc GenericBinaryNode<T, Bool, V, W>::filter(
-//    Record *input, size_t input_size,
-//    Record *output, size_t *output_size) {
-//  grn_rc rc = this->fill_arg1_values(input, input_size);
-//  if (rc != GRN_SUCCESS) {
-//    return rc;
-//  }
-//  rc = this->fill_arg2_values(input, input_size);
-//  if (rc != GRN_SUCCESS) {
-//    return rc;
-//  }
-//  size_t count = 0;
-//  for (size_t i = 0; i < input_size; ++i) {
-//    if (operator_(this->arg1_values_[i], this->arg2_values_[i]).raw ==
-//      GRN_TRUE) {
-//      output[count] = input[i];
-//      ++count;
-//    }
-//  }
-//  *output_size = count;
-//  return GRN_SUCCESS;
-//}
-
-//template <typename T, typename V, typename W>
-//grn_rc GenericBinaryNode<T, Bool, V, W>::evaluate(
-//  const Record *records, size_t num_records, Bool *results) {
-//  grn_rc rc = this->fill_arg1_values(records, num_records);
-//  if (rc != GRN_SUCCESS) {
-//    return rc;
-//  }
-//  rc = this->fill_arg2_values(records, num_records);
-//  if (rc != GRN_SUCCESS) {
-//    return rc;
-//  }
-//  for (size_t i = 0; i < num_records; ++i) {
-//    results[i] = operator_(this->arg1_values_[i], this->arg2_values_[i]);
-//  }
-//  return GRN_SUCCESS;
-//}
 
 // -- ExpressionToken --
 
@@ -2696,19 +2501,19 @@ grn_rc ExpressionParser::tokenize(const char *query, size_t query_size) {
         }
         break;
       }
-//      case '|': {
-//        if ((rest_size >= 2) && (rest[1] == '|')) {
-//          tokens_.push_back(ExpressionToken("||", GRN_TS_LOGICAL_OR));
-//          rest += 2;
-//          rest_size -= 2;
-//        } else {
-////          tokens_.push_back(ExpressionToken("|", GRN_OP_BITWISE_OR));
-////          ++rest;
-////          --rest_size;
-//          return GRN_INVALID_ARGUMENT;
-//        }
-//        break;
-//      }
+      case '|': {
+        if ((rest_size >= 2) && (rest[1] == '|')) {
+          tokens_.push_back(ExpressionToken("||", GRN_TS_LOGICAL_OR));
+          rest += 2;
+          rest_size -= 2;
+        } else {
+//          tokens_.push_back(ExpressionToken("|", GRN_OP_BITWISE_OR));
+//          ++rest;
+//          --rest_size;
+          return GRN_INVALID_ARGUMENT;
+        }
+        break;
+      }
 //      case '^': {
 //        tokens_.push_back(ExpressionToken("^", GRN_OP_BITWISE_XOR));
 //        rest = rest.substring(1);
@@ -3382,76 +3187,26 @@ grn_rc Expression::create_binary_node(OperatorType operator_type,
       }
       return LogicalAndNode::open(arg1, arg2, node);
     }
-//    case GRN_TS_LOGICAL_OR: {
-//      if ((arg1->data_kind() != GRN_TS_BOOL) ||
-//          (arg1->data_kind() != GRN_TS_BOOL)) {
-//        return GRN_INVALID_FORMAT;
-//      }
-//      return LogicalOrNode::open(arg1, arg2, node);
-//    }
-    case GRN_TS_EQUAL: {
-      if (arg1->data_kind() != arg2->data_kind()) {
+    case GRN_TS_LOGICAL_OR: {
+      if ((arg1->data_kind() != GRN_TS_BOOL) ||
+          (arg1->data_kind() != GRN_TS_BOOL)) {
         return GRN_INVALID_FORMAT;
       }
-      return EqualNode::open(arg1, arg2, node);
+      return LogicalOrNode::open(arg1, arg2, node);
     }
-//    case GRN_TS_NOT_EQUAL: {
+//    case GRN_TS_EQUAL: {
 //      if (arg1->data_kind() != arg2->data_kind()) {
 //        return GRN_INVALID_FORMAT;
 //      }
-//      switch (arg1->data_kind()) {
-//        case GRN_TS_BOOL: {
-//          return not_equal_node_open(
-//            NotEqualOperator<Bool>(), arg1, arg2, node);
-//        }
-//        case GRN_TS_INT: {
-//          return not_equal_node_open(
-//            NotEqualOperator<Int>(), arg1, arg2, node);
-//        }
-//        case GRN_TS_FLOAT: {
-//          return not_equal_node_open(
-//            NotEqualOperator<Float>(), arg1, arg2, node);
-//        }
-//        case GRN_TS_TIME: {
-//          return not_equal_node_open(
-//            NotEqualOperator<Time>(), arg1, arg2, node);
-//        }
-//        case GRN_TS_TEXT: {
-//          return not_equal_node_open(
-//            NotEqualOperator<Text>(), arg1, arg2, node);
-//        }
-//        case GRN_TS_GEO_POINT: {
-//          return not_equal_node_open(
-//            NotEqualOperator<GeoPoint>(), arg1, arg2, node);
-//        }
-//        default: {
-//          return GRN_UNKNOWN_ERROR;
-//        }
-//      }
+//      return EqualNode::open(arg1, arg2, node);
 //    }
-    case GRN_TS_LESS: {
-      if (arg1->data_kind() != arg2->data_kind()) {
-        return GRN_INVALID_FORMAT;
-      }
-      return ComparerNode<GRN_TS_LESS>::open(arg1, arg2, node);
-    }
-    case GRN_TS_LESS_EQUAL: {
-      if (arg1->data_kind() != arg2->data_kind()) {
-        return GRN_INVALID_FORMAT;
-      }
-      return ComparerNode<GRN_TS_LESS_EQUAL>::open(arg1, arg2, node);
-    }
-    case GRN_TS_GREATER: {
-      if (arg1->data_kind() != arg2->data_kind()) {
-        return GRN_INVALID_FORMAT;
-      }
-      return ComparerNode<GRN_TS_GREATER>::open(arg1, arg2, node);
-    }
+    case GRN_TS_EQUAL:
+    case GRN_TS_NOT_EQUAL:
+    case GRN_TS_LESS:
+    case GRN_TS_LESS_EQUAL:
+    case GRN_TS_GREATER:
     case GRN_TS_GREATER_EQUAL: {
-      if (arg1->data_kind() != arg2->data_kind()) {
-        return GRN_INVALID_FORMAT;
-      }
-      return ComparerNode<GRN_TS_GREATER_EQUAL>::open(arg1, arg2, node);
+      return ComparerNode::open(operator_type, arg1, arg2, node);
     }
     default: {
       return GRN_INVALID_ARGUMENT;
