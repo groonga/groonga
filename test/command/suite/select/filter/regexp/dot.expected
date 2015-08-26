@@ -8,12 +8,15 @@ column_create RegexpTokens memos_content COLUMN_INDEX|WITH_POSITION   Memos cont
 [[0,0.0,0.0],true]
 load --table Memos
 [
-{"content": "Groonga"},
-{"content": "Mroonga"},
-{"content": "mruby"}
+{"content": "alphabet: aXb"},
+{"content": "space:    a b"},
+{"content": "tab:      a\tb"},
+{"content": "CR:       a\rb"},
+{"content": "LF:       a\nb"},
+{"content": "not match: ab"}
 ]
-[[0,0.0,0.0],3]
-select Memos --filter 'content @~ ".ro"'
+[[0,0.0,0.0],6]
+select Memos --filter 'content @~ "a.b"'
 [
   [
     0,
@@ -23,7 +26,7 @@ select Memos --filter 'content @~ ".ro"'
   [
     [
       [
-        2
+        5
       ],
       [
         [
@@ -37,11 +40,23 @@ select Memos --filter 'content @~ ".ro"'
       ],
       [
         1,
-        "Groonga"
+        "alphabet: aXb"
       ],
       [
         2,
-        "Mroonga"
+        "space:    a b"
+      ],
+      [
+        3,
+        "tab:      a\tb"
+      ],
+      [
+        4,
+        "CR:       a\rb"
+      ],
+      [
+        5,
+        "LF:       a\nb"
       ]
     ]
   ]

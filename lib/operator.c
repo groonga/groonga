@@ -734,7 +734,8 @@ regexp_compile(grn_ctx *ctx, const char *pattern, unsigned int pattern_len)
   onig_result = onig_new(&regex,
                          pattern,
                          pattern + pattern_len,
-                         ONIG_OPTION_ASCII_RANGE,
+                         ONIG_OPTION_ASCII_RANGE |
+                         ONIG_OPTION_MULTILINE,
                          onig_encoding,
                          ONIG_SYNTAX_RUBY,
                          &onig_error_info);
