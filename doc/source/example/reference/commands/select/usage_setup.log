@@ -8,7 +8,7 @@ Execution example::
   # [[0, 1337566253.89858, 0.000355720520019531], true]
   column_create Entries tag COLUMN_SCALAR ShortText
   # [[0, 1337566253.89858, 0.000355720520019531], true]
-  table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+  table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
   # [[0, 1337566253.89858, 0.000355720520019531], true]
   column_create Terms entries_key_index COLUMN_INDEX|WITH_POSITION Entries _key
   # [[0, 1337566253.89858, 0.000355720520019531], true]

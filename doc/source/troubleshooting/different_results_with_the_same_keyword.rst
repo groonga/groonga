@@ -17,7 +17,7 @@ DDLは以下の通りです。BlogsテーブルのbodyカラムをTokenMecabト�
   table_create Blogs TABLE_NO_KEY
   column_create Blogs body COLUMN_SCALAR ShortText
   column_create Blogs updated_at COLUMN_SCALAR Time
-  table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenMecab
+  table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenMecab  --normalizer NormalizerAuto
   column_create Terms blog_body COLUMN_INDEX|WITH_POSITION Blogs body
 
 テスト用のデータは1件だけ投入します。::
@@ -85,7 +85,7 @@ TokenMecabトークナイザーは事前に準備した辞書を用いてトー�
 
 ここでも、前述の例を使って具体例を示します。まず、TokenBigramを用いた索引を追加します。::
 
-  table_create Bigram TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+  table_create Bigram TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram  --normalizer NormalizerAuto
   column_create Bigram blog_body COLUMN_INDEX|WITH_POSITION Blogs body
 
 この状態でも以前はマッチしなかったレコードがヒットするようになります。::
