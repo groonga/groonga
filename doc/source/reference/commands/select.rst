@@ -691,9 +691,12 @@ Here is a sample substitution table to show a simple
 ``"groonga"``. If an user searches with ``"mroonga"``, groonga
 searches with ``"((mroonga) OR (tritonn) OR (groonga mysql))"``. If an
 user searches with ``"groonga"``, groonga searches with ``"((groonga)
-OR (senna))"``. Nomrally, it's good idea that substitution table has
-``NormalizerAuto`` option. If the option is used, substitute target word is
-matched in case insensitive manner.
+OR (senna))"``.
+
+Normally, it's good idea that substitution table uses a
+normalizer. For example, if normalizer is used, substitute target word
+is matched in case insensitive manner. See
+:doc:`/reference/normalizers` for available normalizers.
 
 Note that those synonym values include the key value such as
 ``"mroonga"`` and ``"groonga"``. It's recommended that you include the
