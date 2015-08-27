@@ -39,6 +39,9 @@ means the end of text in other most regular expression syntaxes. The regular
 expression syntax in Ruby uses ``\A`` for the beginning of text and
 ``\z`` for the end of text.
 
+Groonga uses multiline mode since 5.0.6. It means that ``.`` matches
+on ``\n``.
+
 You can use regular expression in :ref:`select-query` and
 :ref:`select-filter` options of :doc:`/reference/commands/select`
 command.
