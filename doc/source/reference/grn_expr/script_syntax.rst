@@ -1055,9 +1055,9 @@ Here is a simple example.
 
 The expression extrcts terms that included in document ``Groonga is
 the successor project to Senna.``. In this case, ``NormalizerAuto``
-option is specified to ``Words``. So ``Groonga`` can be extracted even
-if it is loaded as ``groonga`` into ``Words``. All of extracted terms
-are also normalized.
+normalizer is specified to ``Words``. So ``Groonga`` can be extracted
+even if it is loaded as ``groonga`` into ``Words``. All of extracted
+terms are also normalized.
 
 .. _script-regular-expression-operator:
 
