@@ -688,9 +688,9 @@ Here is a sample substitution table to show a simple
 .. ]
 
 ``Thesaurus`` substitution table has two synonyms, ``"mroonga"`` and
-``"groonga"``. If an user searches with ``"mroonga"``, groonga
+``"groonga"``. If an user searches with ``"mroonga"``, Groonga
 searches with ``"((mroonga) OR (tritonn) OR (groonga mysql))"``. If an
-user searches with ``"groonga"``, groonga searches with ``"((groonga)
+user searches with ``"groonga"``, Groonga searches with ``"((groonga)
 OR (senna))"``.
 
 Normally, it's good idea that substitution table uses a
