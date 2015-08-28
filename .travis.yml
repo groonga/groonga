@@ -2,9 +2,9 @@ notifications:
   email:
     recipients:
       - groonga-commit@lists.sourceforge.jp
-# os:
-#   - linux
-#   - osx
+os:
+  - linux
+  - osx
 language: cpp
 compiler:
   - gcc
