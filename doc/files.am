@@ -6,6 +6,10 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/conf.py \
 	$(top_srcdir)/doc/source/contribution.rst \
 	$(top_srcdir)/doc/source/contribution/development.rst \
+	$(top_srcdir)/doc/source/contribution/development/build.rst \
+	$(top_srcdir)/doc/source/contribution/development/build/unix_autotools.rst \
+	$(top_srcdir)/doc/source/contribution/development/build/unix_cmake.rst \
+	$(top_srcdir)/doc/source/contribution/development/build/windows_cmake.rst \
 	$(top_srcdir)/doc/source/contribution/development/com.rst \
 	$(top_srcdir)/doc/source/contribution/development/cooperation.rst \
 	$(top_srcdir)/doc/source/contribution/development/query.rst \
@@ -723,6 +727,10 @@ source_files_relative_from_doc_dir = \
 	source/conf.py \
 	source/contribution.rst \
 	source/contribution/development.rst \
+	source/contribution/development/build.rst \
+	source/contribution/development/build/unix_autotools.rst \
+	source/contribution/development/build/unix_cmake.rst \
+	source/contribution/development/build/windows_cmake.rst \
 	source/contribution/development/com.rst \
 	source/contribution/development/cooperation.rst \
 	source/contribution/development/query.rst \
@@ -1550,6 +1558,10 @@ html_files_relative_from_locale_dir = \
 	html/_sources/community.txt \
 	html/_sources/contribution.txt \
 	html/_sources/contribution/development.txt \
+	html/_sources/contribution/development/build.txt \
+	html/_sources/contribution/development/build/unix_autotools.txt \
+	html/_sources/contribution/development/build/unix_cmake.txt \
+	html/_sources/contribution/development/build/windows_cmake.txt \
 	html/_sources/contribution/development/com.txt \
 	html/_sources/contribution/development/cooperation.txt \
 	html/_sources/contribution/development/query.txt \
@@ -1777,6 +1789,10 @@ html_files_relative_from_locale_dir = \
 	html/community.html \
 	html/contribution.html \
 	html/contribution/development.html \
+	html/contribution/development/build.html \
+	html/contribution/development/build/unix_autotools.html \
+	html/contribution/development/build/unix_cmake.html \
+	html/contribution/development/build/windows_cmake.html \
 	html/contribution/development/com.html \
 	html/contribution/development/cooperation.html \
 	html/contribution/development/query.html \
