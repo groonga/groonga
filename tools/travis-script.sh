@@ -4,7 +4,7 @@ set -e
 
 prefix=/tmp/local
 
-command_test_options="--n-workers=4"
+command_test_options="--n-workers=4 --reporter=mark"
 
 set -x
 
