@@ -10050,7 +10050,7 @@ msgstr ""
 "クナイズします。"
 
 msgid "``table`` and ``string`` are required parameters. Others are optional::"
-msgstr "``table`` と ``string `` は必須の引数です。残りは省略できます::"
+msgstr "``table`` と ``string`` は必須の引数です。残りは省略できます::"
 
 msgid ""
 "``Terms`` table is set ``TokenBigram`` tokenizer, ``NormalizerAuto`` "
