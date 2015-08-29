@@ -157,6 +157,8 @@ Parameters
 
 This section describes all parameters.
 
+.. _table-create-name:
+
 ``name``
 ^^^^^^^^
 
@@ -176,6 +178,8 @@ Here are available characters:
 You need to create a name with one or more the above chracters. Note
 that you cannot use ``_`` as the first character such as
 ``_name``.
+
+.. _table-create-flags:
 
 ``flags``
 ^^^^^^^^^
@@ -214,6 +218,8 @@ See :doc:`/reference/tables` for difference between table types.
 
 The default flags are ``TABLE_HASH_KEY``.
 
+.. _table-create-key-type:
+
 ``key_type``
 ^^^^^^^^^^^^
 
@@ -227,6 +233,8 @@ See :doc:`/reference/types` for all types.
 
 The default value is none.
 
+.. _table-create-value-type:
+
 ``value_type``
 ^^^^^^^^^^^^^^
 
@@ -239,19 +247,36 @@ but ``ShortText`` cannot be used. Use columns instead of value.
 
 The default value is none.
 
+.. _table-create-default-tokenizer:
+
 ``default_tokenizer``
 ^^^^^^^^^^^^^^^^^^^^^
 
 Specifies the default tokenizer that is used on searching and data
 loading.
 
-You cannot use ``default_tokenizer`` with ``TABLE_NO_KEY`` because
-``TABLE_NO_KEY`` cannot be used for index.
-
 You must specify ``default_tokenizer`` for a table that is used for
-fulltext search index.
+lexicon of fulltext search index. See :doc:`/reference/tokenizers` for
+available tokenizers. You must choose a tokenizer from the list for
+fulltext search.
 
-See :doc:`/reference/tokenizers` for all tokenizers
+You don't need to specify ``default_tokenizer`` in the following
+cases:
+
+  * You don't use the table as a lexicon.
+
+  * You use the table as a lexicon but you don't need fulltext
+    search. For example:
+
+      * Index target data isn't text data such as ``Int32`` and ``Time``.
+      * You just need exact match search, prefix search and so on.
+
+You can't use ``default_tokenizer`` with ``TABLE_NO_KEY`` flag because
+a table that uses ``TABLE_NO_KEY`` flag can't be used as lexicon.
+
+You must specify ``TABLE_HASH_KEY``, ``TABLE_PAT_KEY``,
+``TABLE_DAT_KEY`` to :ref:`table-create-flags` when you want to use
+the table as a lexicon.
 
 The default value is none.
 
