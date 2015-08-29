@@ -31,6 +31,7 @@ relative_nginx_directory="vendor/nginx-${nginx_version}"
 nginx_directory="${top_srcdir}/${relative_nginx_directory}"
 
 export GROONGA_HTTPD_IN_TREE=yes
+cat "${top_builddir}/groonga-httpd-conf.sh"
 . "${top_builddir}/groonga-httpd-conf.sh"
 
 eval "$(${top_builddir}/libtool --config)"
