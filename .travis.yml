@@ -2,22 +2,36 @@ notifications:
   email:
     recipients:
       - groonga-commit@lists.sourceforge.jp
-os:
-  - linux
-  - osx
 language: cpp
-compiler:
-  - gcc
-  - clang
-env:
-  - BUILD_TOOL=autotools
-  - BUILD_TOOL=autotools ENABLE_MRUBY=yes
-  - BUILD_TOOL=autotools CFLAGS=-funsigned-char CXXFLAGS=-funsigned-char
-  - BUILD_TOOL=cmake
-  - BUILD_TOOL=cmake ENABLE_MRUBY=yes
-# matrix:
-#   allow_failures:
-#     - env: BUILD_TOOL=cmake ENABLE_MRUBY=yes
+matrix:
+  include:
+    - os: linux
+      compiler: gcc
+      env: BUILD_TOOL=autotools
+    - os: linux
+      compiler: gcc
+      env: BUILD_TOOL=autotools ENABLE_RUBY=yes
+    - os: linux
+      compiler: gcc
+      env: BUILD_TOOL=autotools CFLAGS=-funsigned-char CXXFLAGS=-funsigned-char
+    - os: linux
+      compiler: gcc
+      env: BUILD_TOOL=cmake
+    - os: linux
+      compiler: gcc
+      env: BUILD_TOOL=cmake ENABLE_RUBY=yes
+    - os: linux
+      compiler: clang
+      env: BUILD_TOOL=autotools ENABLE_RUBY=yes
+    - os: linux
+      compiler: clang
+      env: BUILD_TOOL=cmake ENABLE_RUBY=yes
+    - os: osx
+      compiler: gcc
+      env: BUILD_TOOL=autotools ENABLE_RUBY=yes
+    - os: osx
+      compiler: clang
+      env: BUILD_TOOL=cmake ENABLE_RUBY=yes
 before_install:
   - rvm use 2.1
 install:
