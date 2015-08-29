@@ -19,8 +19,6 @@ case "${TRAVIS_OS_NAME}" in
     brew install \
          msgpack \
          libevent \
-         mecab \
-         mecab-ipadic \
          pkg-config \
          pcre \
          cutter
