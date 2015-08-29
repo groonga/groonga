@@ -5,6 +5,10 @@
 テスト方法
 ===========
 
+TODO: Write in English.
+
+TODO: Write about ``test/command/run-test.sh``.
+
 テスト環境の構築
 ----------------
 

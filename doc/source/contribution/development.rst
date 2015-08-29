@@ -2,12 +2,13 @@
 
 .. highlightlang:: none
 
-Groonga開発者向け情報
-=====================
+For Groonga developers
+======================
 
 .. toctree::
    :maxdepth: 1
    :glob:
 
    development/repository
+   development/build
    development/*

@@ -6,6 +6,12 @@ Groonga is an open-source fulltext search engine and column store.
 
 See doc/source/ directory or http://groonga.org/docs/.
 
+Here are shortcut links:
+
+  * How to install: http://groonga.org/docs/install.html
+  * Tutorial: http://groonga.org/docs/tutorial.html
+  * How to build as a developer: http://groonga.org/docs/contribution/development/build.html
+
 ## Bundled software
 
 ### mruby
