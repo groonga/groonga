@@ -27,11 +27,8 @@ matrix:
       compiler: clang
       env: BUILD_TOOL=cmake ENABLE_RUBY=yes
     - os: osx
-      compiler: gcc
-      env: BUILD_TOOL=autotools ENABLE_RUBY=yes
-    - os: osx
       compiler: clang
-      env: BUILD_TOOL=cmake ENABLE_RUBY=yes
+      env: BUILD_TOOL=autotools ENABLE_RUBY=yes
 before_install:
   - rvm use 2.1
 install:
