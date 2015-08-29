@@ -15,11 +15,14 @@ case "${TRAVIS_OS_NAME}" in
          cmake
     ;;
   osx)
+    brew update
     brew install \
          msgpack \
          libevent \
          mecab \
-         mecab-ipadic
+         mecab-ipadic \
+         pkg-config \
+         pcre
     ;;
 esac
 
