@@ -11,7 +11,7 @@ CMake on Windows.
 If you want to use GNU/Linux or Unix for developing Groonga, see
 :doc:`unix_cmake`.
 
-Unix is *BSD, Solaris, OS X and so on.
+Unix is \*BSD, Solaris, OS X and so on.
 
 Install depended software
 -------------------------

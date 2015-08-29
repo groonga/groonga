@@ -8,7 +8,7 @@ How to build Groonga at the repository by CMake on GNU/Linux or Unix
 This document describes how to build Groonga at the repository by
 CMake on GNU/Linux or Unix.
 
-Unix is *BSD, Solaris, OS X and so on.
+Unix is \*BSD, Solaris, OS X and so on.
 
 If you want to use Windows for developing Groonga, see
 :doc:`windows_cmake`.
