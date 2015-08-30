@@ -29,6 +29,9 @@ matrix:
     - os: osx
       compiler: clang
       env: BUILD_TOOL=autotools ENABLE_MRUBY=yes
+    - os: osx
+      compiler: clang
+      env: BUILD_TOOL=cmake ENABLE_MRUBY=yes
 before_install:
   - rvm use 2.1
 install:
