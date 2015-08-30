@@ -1,0 +1,55 @@
+Execution example::
+
+  table_create NewIDs TABLE_HASH_KEY Int32
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create NewIDs label COLUMN_SCALAR ShortText
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create NewIDs used COLUMN_SCALAR Bool
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_copy IDs label NewIDs label
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_copy IDs used  NewIDs used
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  table_remove IDs
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  table_rename NewIDs IDs
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  select IDs
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "Int32"
+  #         ], 
+  #         [
+  #           "label", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "used", 
+  #           "Bool"
+  #         ]
+  #       ], 
+  #       [
+  #         1, 
+  #         100, 
+  #         "ID 100", 
+  #         true
+  #       ]
+  #     ]
+  #   ]
+  # ]
