@@ -40,6 +40,20 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/columns/vector/usage_query_weight_weight.log \
 	$(top_srcdir)/doc/source/example/reference/commands/cache_limit/get.log \
 	$(top_srcdir)/doc/source/example/reference/commands/cache_limit/set.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_copy/change_column_type.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_copy/change_column_type_setup.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_copy/change_column_value_type.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_copy/change_column_value_type_setup.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_copy/change_table_key_type.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_copy/change_table_key_type_setup.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_copy/change_table_type.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_copy/change_table_type_setup.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_copy/from_table.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_copy/from_table_setup.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_copy/move_column.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_copy/move_column_setup.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_copy/to_table.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_copy/to_table_setup.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_list/column_list.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_rename/column_rename.log \
 	$(top_srcdir)/doc/source/example/reference/commands/database_unmap/usage_failure.log \
@@ -109,6 +123,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/select/adjuster_no_factor.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/adjuster_no_weight.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/adjuster_one.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/cache_no.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_calc_types_all.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_calc_types_avg.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_calc_types_max.log \
@@ -577,6 +592,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/cache_limit.rst \
 	$(top_srcdir)/doc/source/reference/commands/check.rst \
 	$(top_srcdir)/doc/source/reference/commands/clearlock.rst \
+	$(top_srcdir)/doc/source/reference/commands/column_copy.rst \
 	$(top_srcdir)/doc/source/reference/commands/column_create.rst \
 	$(top_srcdir)/doc/source/reference/commands/column_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/column_remove.rst \
@@ -761,6 +777,20 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/columns/vector/usage_query_weight_weight.log \
 	source/example/reference/commands/cache_limit/get.log \
 	source/example/reference/commands/cache_limit/set.log \
+	source/example/reference/commands/column_copy/change_column_type.log \
+	source/example/reference/commands/column_copy/change_column_type_setup.log \
+	source/example/reference/commands/column_copy/change_column_value_type.log \
+	source/example/reference/commands/column_copy/change_column_value_type_setup.log \
+	source/example/reference/commands/column_copy/change_table_key_type.log \
+	source/example/reference/commands/column_copy/change_table_key_type_setup.log \
+	source/example/reference/commands/column_copy/change_table_type.log \
+	source/example/reference/commands/column_copy/change_table_type_setup.log \
+	source/example/reference/commands/column_copy/from_table.log \
+	source/example/reference/commands/column_copy/from_table_setup.log \
+	source/example/reference/commands/column_copy/move_column.log \
+	source/example/reference/commands/column_copy/move_column_setup.log \
+	source/example/reference/commands/column_copy/to_table.log \
+	source/example/reference/commands/column_copy/to_table_setup.log \
 	source/example/reference/commands/column_list/column_list.log \
 	source/example/reference/commands/column_rename/column_rename.log \
 	source/example/reference/commands/database_unmap/usage_failure.log \
@@ -830,6 +860,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/select/adjuster_no_factor.log \
 	source/example/reference/commands/select/adjuster_no_weight.log \
 	source/example/reference/commands/select/adjuster_one.log \
+	source/example/reference/commands/select/cache_no.log \
 	source/example/reference/commands/select/drilldown_calc_types_all.log \
 	source/example/reference/commands/select/drilldown_calc_types_avg.log \
 	source/example/reference/commands/select/drilldown_calc_types_max.log \
@@ -1298,6 +1329,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/cache_limit.rst \
 	source/reference/commands/check.rst \
 	source/reference/commands/clearlock.rst \
+	source/reference/commands/column_copy.rst \
 	source/reference/commands/column_create.rst \
 	source/reference/commands/column_list.rst \
 	source/reference/commands/column_remove.rst \
@@ -1637,6 +1669,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/cache_limit.txt \
 	html/_sources/reference/commands/check.txt \
 	html/_sources/reference/commands/clearlock.txt \
+	html/_sources/reference/commands/column_copy.txt \
 	html/_sources/reference/commands/column_create.txt \
 	html/_sources/reference/commands/column_list.txt \
 	html/_sources/reference/commands/column_remove.txt \
@@ -1872,6 +1905,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/cache_limit.html \
 	html/reference/commands/check.html \
 	html/reference/commands/clearlock.html \
+	html/reference/commands/column_copy.html \
 	html/reference/commands/column_create.html \
 	html/reference/commands/column_list.html \
 	html/reference/commands/column_remove.html \
