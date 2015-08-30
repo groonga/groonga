@@ -1560,7 +1560,7 @@ Specifies whether caching the result of this query or not.
 If the result of this query is cached, the next same query returns
 response quickly by using the cache.
 
-It doesn't control whether existing cached output is used or not.
+It doesn't control whether existing cached result is used or not.
 
 Here are available values:
 
