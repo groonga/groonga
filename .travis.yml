@@ -10,7 +10,7 @@ matrix:
       env: BUILD_TOOL=autotools
     - os: linux
       compiler: gcc
-      env: BUILD_TOOL=autotools ENABLE_RUBY=yes
+      env: BUILD_TOOL=autotools ENABLE_MRUBY=yes
     - os: linux
       compiler: gcc
       env: BUILD_TOOL=autotools CFLAGS=-funsigned-char CXXFLAGS=-funsigned-char
@@ -19,16 +19,16 @@ matrix:
       env: BUILD_TOOL=cmake
     - os: linux
       compiler: gcc
-      env: BUILD_TOOL=cmake ENABLE_RUBY=yes
+      env: BUILD_TOOL=cmake ENABLE_MRUBY=yes
     - os: linux
       compiler: clang
-      env: BUILD_TOOL=autotools ENABLE_RUBY=yes
+      env: BUILD_TOOL=autotools ENABLE_MRUBY=yes
     - os: linux
       compiler: clang
-      env: BUILD_TOOL=cmake ENABLE_RUBY=yes
+      env: BUILD_TOOL=cmake ENABLE_MRUBY=yes
     - os: osx
       compiler: clang
-      env: BUILD_TOOL=autotools ENABLE_RUBY=yes
+      env: BUILD_TOOL=autotools ENABLE_MRUBY=yes
 before_install:
   - rvm use 2.1
 install:
