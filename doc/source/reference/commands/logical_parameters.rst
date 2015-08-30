@@ -72,7 +72,7 @@ are set when you set new values.
 Parameters
 ----------
 
-This section describes parameters of ``logical_parameters``.
+This section describes parameters.
 
 Required parameters
 ^^^^^^^^^^^^^^^^^^^
