@@ -12,10 +12,10 @@ News
 Release 5.0.7 - 2015-08-31
 --------------------------
 
-This release includes a bug fix of :ref:`online-index-construction`.
+This release includes a bug fix of :ref:`offline-index-construction`.
 
 If you're using any multiple column index (index column with
-``WITH_SECTION`` flag) and :ref:`online-index-construction`, we
+``WITH_SECTION`` flag) and :ref:`offline-index-construction`, we
 recommend that you upgrade your Groonga.
 
 This release has an important experimental feature for Windows users.
@@ -29,7 +29,7 @@ Improvements
   feature. It's disabled by default. You can enable it by specifying
   ``GRN_IO_USE_SPARSE=yes`` environment variable.
 
-  It reduced database file size on Windows. Please try the feature and
+  It reduces database file size on Windows. Please try the feature and
   report the result. Groonga developers are interested in the
   followings:
 
@@ -40,8 +40,9 @@ Improvements
 * [experimental][:doc:`/reference/commands/logical_shard_list`] Added
   a command that returns a shard list of the specified logical table.
 
-* [experimental][:ref:`script-regular-expression-operator`] Supported
-  regular expression match against vector column without index.
+* [experimental][:ref:`script-syntax-regular-expression-operator`]
+  Supported regular expression match against vector column without
+  index.
 
 * [:doc:`/reference/commands/logical_range_filter`] Supported
   ``--cache no`` option. It's same as :ref:`select-cache` option in
@@ -52,7 +53,7 @@ Improvements
   :doc:`/reference/commands/thread_limit`. You can't set the max
   number of threads.
 
-* [:c:func:`grn_db_unmap()`] Added a new API that unmap all opened
+* [:c:func:`grn_db_unmap()`] Added a new API that unmaps all opened
   tables and columns. It's a thread unsafe operation. You can't touch
   the database while :c:func:`grn_db_unmap()` is running.
 
@@ -66,8 +67,8 @@ Improvements
 * [:doc:`/reference/commands/column_copy`] Added a command that copies
   all values from source column to destination column.
 
-  You can use this command to change column type, table type, rename
-  table and so on.
+  You can use this command to change column value type, column type,
+  table type and so on.
 
 * Stopped to use non-standard ``__uint32_t``
   type. [GitHub#375][Reported by Natanael Copa]
@@ -89,7 +90,7 @@ Improvements
 * [doc] Removed needless Sphinx configurations.
   [GitHub#379] [Patch by Ayumu Osanai]
 
-* [experimental][incompatible][:ref:`script-regular-expression-operator`]
+* [experimental][incompatible][:ref:`script-syntax-regular-expression-operator`]
   Changed ``.`` match behavior. ``.`` matches new line. It's backward
   incompatible change.
 
@@ -126,8 +127,8 @@ Fixes
 
     ~UINT32_COLUMN == -6
 
-* Fixed a bug that :ref:`script-regular-expression-operator` doesn't
-  work in multithread.
+* Fixed a bug that :ref:`script-syntax-regular-expression-operator`
+  doesn't work in multithread.
 
 * Fixed some memory leaks.
 
