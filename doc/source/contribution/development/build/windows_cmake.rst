@@ -90,4 +90,4 @@ Here is a command line to build Groonga by ``cmake --build``::
 See also
 --------
 
-  * :doc:`/contribution/development/test.rst`
+  * :doc:`/contribution/development/test`

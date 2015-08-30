@@ -91,4 +91,4 @@ commit.
 See also
 --------
 
-  * :doc:`/contribution/development/test.rst`
+  * :doc:`/contribution/development/test`

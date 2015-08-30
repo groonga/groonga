@@ -230,7 +230,7 @@ msgstr ""
 msgid "See also"
 msgstr "参考"
 
-msgid ":doc:`/contribution/development/test.rst`"
+msgid ":doc:`/contribution/development/test`"
 msgstr ""
 
 msgid "How to build Groonga at the repository by CMake on GNU/Linux or Unix"
