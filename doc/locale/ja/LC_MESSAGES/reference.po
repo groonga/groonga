@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-08-29 20:49+0900\n"
+"PO-Revision-Date: 2015-08-30 13:44+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -5555,6 +5555,20 @@ msgid "TODO: Write summary"
 msgstr ""
 
 msgid ""
+"There are some parameters that can be only used as named parameters. You "
+"can't use these parameters as ordered parameters. You must specify parameter "
+"name."
+msgstr ""
+"いくつか名前付き引数としてしか使えない引数があります。これらの引数を「○番目の"
+"引数」として使うことはできません。必ず名前を指定する必要があります。"
+
+msgid "Here are parameters that can be only used as named parameters:"
+msgstr "名前付き引数としてしか使えない引数は次の通りです。"
+
+msgid "``cache=no``"
+msgstr ""
+
+msgid ""
 "Register ``sharding`` plugin to use ``logical_range_filter`` command in "
 "advance."
 msgstr ""
@@ -5590,6 +5604,26 @@ msgid ""
 msgstr ""
 "range_indexを使うかどうかを指定します。ただし、この引数はテスト用なので、本番"
 "で使うべきではありません。"
+
+msgid "Cache related parameter"
+msgstr "キャッシュ関連の引数"
+
+msgid "``cache``"
+msgstr ""
+
+msgid "Specifies whether caching the result of this query or not."
+msgstr "このクエリーの結果をキャッシュするかどうかを指定します。"
+
+msgid ""
+"If the result of this query is cached, the next same query returns response "
+"quickly by using the cache."
+msgstr ""
+"このクエリーの結果がキャッシュしてあると、次に同じクエリーを実行するときは"
+"キャッシュを使って高速にレスポンスを返すことができます。"
+
+msgid "It doesn't control whether existing cached result is used or not."
+msgstr ""
+"これは既存のキャッシュされた結果を使うかどうかを指定するものではありません。"
 
 # 26f6896f991341569e381e95aebf1f73
 msgid "``logical_select``"
@@ -8844,23 +8878,20 @@ msgid ":ref:`select-drilldown-label-keys` uses the following output format::"
 msgstr ""
 ":ref:`select-drilldown-label-keys` の出力フォーマットは以下の通りです::"
 
-msgid "Cache related parameter"
-msgstr "キャッシュ関連の引数"
-
-msgid "``cache``"
-msgstr ""
-
-msgid "クエリキャッシュに関する動作を設定します。"
-msgstr ""
-
 msgid "``no``"
 msgstr ""
 
-msgid ""
-"検索結果をクエリキャッシュに残しません。キャッシュして再利用される可能性が低"
-"いクエリに対して用います。キャッシュ容量は有限です。有効なキャッシュが多く"
-"ヒットするために、このパラメータは有効です。"
+msgid "Don't cache the output of this query."
+msgstr "このクエリーの出力をキャッシュしない。"
+
+msgid "``yes``"
 msgstr ""
+
+msgid "Cache the output of this query. It's the default value."
+msgstr "このクエリーの出力をキャッシュする。デフォルト値。"
+
+msgid "Here is an example to disable caching the result of this query:"
+msgstr "このクエリーの結果をキャッシュしないようにする例です。"
 
 msgid "Score related parameters"
 msgstr "スコアー関連の引数"
@@ -9390,9 +9421,6 @@ msgstr "補完時に前方一致検索を実行するかどうかを指定しま
 
 msgid "Prefix search is always used."
 msgstr "常に前方一致検索を実行します。"
-
-msgid "``yes``"
-msgstr ""
 
 msgid "Prefix search is never used."
 msgstr "前方一致検索を実行しません。"
