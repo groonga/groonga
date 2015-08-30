@@ -15,7 +15,8 @@ case "${BUILD_TOOL}" in
       test/unit/run-test.sh
     fi
     test/command/run-test.sh ${command_test_options}
-    if [ "${ENABLE_MRUBY}" = "yes" ]; then
+    # TODO: Re-enable me on OS X
+    if [ "${TRAVIS_OS_NAME}" = "linux" -a "${ENABLE_MRUBY}" = "yes" ]; then
       test/query_optimizer/run-test.rb
     fi
     test/command/run-test.sh ${command_test_options} --interface http
