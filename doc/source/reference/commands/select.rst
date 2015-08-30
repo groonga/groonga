@@ -1565,7 +1565,6 @@ It doesn't control whether existing cached output is used or not.
 Here are available values:
 
 .. list-table::
-
    :header-rows: 1
 
    * - Value
