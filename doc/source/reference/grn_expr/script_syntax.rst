@@ -462,10 +462,14 @@ Here is a simple example.
 The expression matches records that ``content`` column value has the
 word ``fast`` but doesn't have the word ``mroonga``.
 
+.. _script-syntax-bitwise-operators:
+
 Bitwise operators
 ^^^^^^^^^^^^^^^^^
 
 Here are bitwise operators.
+
+.. _script-syntax-bitwise-not:
 
 Bitwise NOT operator
 """"""""""""""""""""
@@ -482,6 +486,8 @@ Here is a simple example.
 
 The expression matches records that ``n_likes`` column value is equal
 to ``5`` because bitwise NOT of ``5`` is equal to ``-6``.
+
+.. _script-syntax-bitwise-and:
 
 Bitwise AND operator
 """"""""""""""""""""
@@ -501,6 +507,8 @@ number because bitwise AND between an even number and ``1`` is equal
 to ``1`` and bitwise AND between an odd number and ``1`` is equal to
 ``0``.
 
+.. _script-syntax-bitwise-or:
+
 Bitwise OR operator
 ^^^^^^^^^^^^^^^^^^^
 
@@ -516,6 +524,8 @@ Here is a simple example.
 
 The expression matches records that ``n_likes`` column value is equal
 to ``5`` (= ``1 | 4``).
+
+.. _script-syntax-bitwise-xor:
 
 Bitwise XOR operator
 ^^^^^^^^^^^^^^^^^^^^
@@ -533,10 +543,14 @@ Here is a simple example.
 The expression matches records that ``n_likes`` column value is equal
 to ``5`` (= ``10 ^ 15``).
 
+.. _script-syntax-shift-operators:
+
 Shift operators
 ^^^^^^^^^^^^^^^
 
 Here are shift operators.
+
+.. _script-syntax-shift-left:
 
 Left shift operator
 """""""""""""""""""
@@ -555,6 +569,8 @@ Here is a simple example.
 The expression matches records that ``n_likes`` column value is equal
 to ``10`` (= ``5 << 1``).
 
+.. _script-syntax-shift-signed-right:
+
 Signed right shift operator
 """""""""""""""""""""""""""
 
@@ -571,6 +587,8 @@ Here is a simple example.
 
 The expression matches records that ``n_likes`` column value is equal
 to ``5`` (= ``-(-10 >> 1)`` = ``-(-5)``).
+
+.. _script-syntax-shift-unsigned-right:
 
 Unsigned right shift operator
 """""""""""""""""""""""""""""
@@ -798,6 +816,8 @@ For example, the value of ``_score`` about the record which stores "Groonga" as 
 is 10.
 
 So the expression ``1 & 10`` is evaluated and stored to ``_score`` column as the execution result.
+
+.. _script-syntax-bitwise-or-assign:
 
 Bitwise OR assignment operator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
