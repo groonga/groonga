@@ -27,17 +27,26 @@ This command takes many parameters.
 The required parameters are ``logical_table`` and ``shard_key``::
 
   logical_range_filter
-                logical_table
-                shard_key
-                [min]
-                [min_border]
-                [max]
-                [max_border]
-                [order]
-                [filter]
-                [offset]
-                [output_columns]
-                [use_range_index]
+    logical_table
+    shard_key
+    [min=null]
+    [min_border=null]
+    [max=null]
+    [max_border=null]
+    [order=ascending]
+    [filter=null]
+    [offset=0]
+    [limit=10]
+    [output_columns=_key,*]
+    [use_range_index=null]
+
+There are some parameters that can be only used as named
+parameters. You can't use these parameters as ordered parameters. You
+must specify parameter name.
+
+Here are parameters that can be only used as named parameters:
+
+  * ``cache=no``
 
 Usage
 -----
@@ -124,6 +133,11 @@ TODO
 
 TODO
 
+``limit``
+"""""""""
+
+TODO
+
 ``output_columns``
 """"""""""""""""""
 
@@ -136,6 +150,45 @@ Specifies whether range_index is used or not.
 Note that it's a parameter for test. It should not be used for production.
 
 TODO: Add examples
+
+Cache related parameter
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. _logical-range-filter-cache:
+
+``cache``
+"""""""""
+
+Specifies whether caching the result of this query or not.
+
+If the result of this query is cached, the next same query returns
+response quickly by using the cache.
+
+It doesn't control whether existing cached result is used or not.
+
+Here are available values:
+
+.. list-table::
+
+   :header-rows: 1
+
+   * - Value
+     - Description
+   * - ``no``
+     - Don't cache the output of this query.
+   * - ``yes``
+     - Cache the output of this query.
+       It's the default value.
+
+TODO: Add examples
+
+.. Here is an example to disable caching the result of this query:
+
+.. .. groonga-command
+.. .. include:: ../../example/reference/commands/logical_range_filter/cache_no.log
+.. .. logical_range_filter ... --cache no
+
+The default value is ``yes``.
 
 Return value
 ------------
