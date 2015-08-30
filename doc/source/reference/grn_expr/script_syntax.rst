@@ -864,7 +864,7 @@ Script syntax adds the original binary opearators to ECMAScript
 syntax. They operate search specific operations. They are starts with
 ``@`` or ``*``.
 
-.. _match-oeprator:
+.. _script-syntax-match-oeprator:
 
 Match operator
 ^^^^^^^^^^^^^^
@@ -886,7 +886,7 @@ Here is a simple example.
 The expression matches records that contain a word ``fast`` in
 ``content`` column value.
 
-.. _prefix-search-operator:
+.. _script-syntax-prefix-search-operator:
 
 Prefix search operator
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -917,7 +917,7 @@ The expression matches records that contain a word that starts with
 ``Goo`` in ``_key`` pseudo column value. ``Good-bye Senna`` and
 ``Good-bye Tritonn`` are matched with the expression.
 
-.. _suffix-search-operator:
+.. _script-syntax-suffix-search-operator:
 
 Suffix search operator
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -971,7 +971,7 @@ The expression matches records that have value that ends with ``んが``
 in ``content`` column value. ``ぐるんが`` and ``むるんが`` are matched
 with the expression.
 
-.. _near-search-operator:
+.. _script-syntax-near-search-operator:
 
 Near search operator
 ^^^^^^^^^^^^^^^^^^^^
@@ -1019,7 +1019,7 @@ the record that its content is ``I also st arted to use mroonga. It's
 also very fast! Really fast!`` is matched. The number of words between
 ``also`` and ``Really`` is 10.
 
-.. _similar-search-operator:
+.. _script-syntax-similar-search-operator:
 
 Similar search
 ^^^^^^^^^^^^^^
@@ -1043,7 +1043,7 @@ The expression matches records that have similar content to ``I
 migrated all Solr system!``. In this case, records that have ``I
 migrated all XXX system!`` content are matched.
 
-.. _term-extract-operator:
+.. _script-syntax-term-extract-operator:
 
 Term extract operator
 ^^^^^^^^^^^^^^^^^^^^^
@@ -1079,7 +1079,7 @@ normalizer is specified to ``Words``. So ``Groonga`` can be extracted
 even if it is loaded as ``groonga`` into ``Words``. All of extracted
 terms are also normalized.
 
-.. _script-regular-expression-operator:
+.. _script-syntax-regular-expression-operator:
 
 Regular expression operator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
