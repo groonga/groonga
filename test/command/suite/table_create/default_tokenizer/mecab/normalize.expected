@@ -8,10 +8,9 @@ column_create Terms memos_content COLUMN_INDEX Memos content
 [[0,0.0,0.0],true]
 load --table Memos
 [
-{"content": "This is a pen."},
-{"content": "これはペンです。"}
+{"content": "これはﾍﾟﾝです。"}
 ]
-[[0,0.0,0.0],2]
+[[0,0.0,0.0],1]
 select Terms --output_columns _key --limit -1
 [
   [
@@ -22,31 +21,13 @@ select Terms --output_columns _key --limit -1
   [
     [
       [
-        11
+        5
       ],
       [
         [
           "_key",
           "ShortText"
         ]
-      ],
-      [
-        "."
-      ],
-      [
-        "a"
-      ],
-      [
-        "i"
-      ],
-      [
-        "pen"
-      ],
-      [
-        "s"
-      ],
-      [
-        "this"
       ],
       [
         "。"
