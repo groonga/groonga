@@ -67,8 +67,8 @@ if [ "${GROONGA_HTTPD_DEBUG}" = "yes" ]; then
   configure_args="${configure_args} --with-debug"
 fi
 
-cc_opt=""
-ld_opt=""
+cc_opt="${CFLAGS} ${CPPFLAGS}"
+ld_opt="${LDFLAGS}"
 if [ "${GROONGA_HTTPD_WITH_PCRE}" = "yes" ]; then
   cc_opt="${cc_opt} ${GROONGA_HTTPD_PCRE_CFLAGS}"
   ld_opt="${ld_opt} ${GROONGA_HTTPD_PCRE_LIBS_ONLY_L}"
