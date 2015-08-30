@@ -23,7 +23,6 @@ case "${TRAVIS_OS_NAME}" in
          mecab-ipadic \
          pkg-config \
          pcre \
-         cmake \
          cutter
     ;;
 esac
