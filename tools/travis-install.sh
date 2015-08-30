@@ -15,7 +15,7 @@ case "${TRAVIS_OS_NAME}" in
          cmake
     ;;
   osx)
-    brew update --quiet
+    brew update > /dev/null
     brew install \
          msgpack \
          libevent \
