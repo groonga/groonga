@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-07-28 18:43+0900\n"
+"PO-Revision-Date: 2015-08-30 23:38+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -21,11 +21,275 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 5.0.6 - 2015-07-29"
-msgstr "5.0.6リリース - 2015-07-29"
+msgid "Release 5.0.7 - 2015-08-31"
+msgstr "5.0.7リリース - 2015-08-31"
+
+msgid "This release includes a bug fix of :ref:`offline-index-construction`."
+msgstr ""
+"このリリースは :ref:`offline-index-construction` のバグフィックスが含まれてい"
+"ます。"
+
+msgid ""
+"If you're using any multiple column index (index column with "
+"``WITH_SECTION`` flag) and :ref:`offline-index-construction`, we recommend "
+"that you upgrade your Groonga."
+msgstr ""
+"もし、マルチカラムインデックス（ ``WITH_SECTION`` フラグ付きのインデックスカ"
+"ラム）と :ref:`offline-index-construction` を使っている場合は、Groongaのアッ"
+"プグレードを推奨します。"
+
+msgid ""
+"This release has an important experimental feature for Windows users. See "
+"\"sparse file support\" entry in the following improvement list for details."
+msgstr ""
+"このリリースはWindowsユーザー向けの重要な実験的な機能が含まれています。詳細は"
+"以下の改良点リストの中の「スパースファイルサポート」を参照してください。"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid ""
+"[experimental][Windows] Added sparse file support. It's experimental "
+"feature. It's disabled by default. You can enable it by specifying "
+"``GRN_IO_USE_SPARSE=yes`` environment variable."
+msgstr ""
+"[実験的][Windows] スパースファイルをサポートしました。この機能は実験的な機能"
+"です。デフォルトでは無効です。 ``GRN_IO_USE_SPARSE=yes`` 環境変数を指定すると"
+"有効にできます。"
+
+msgid ""
+"It reduces database file size on Windows. Please try the feature and report "
+"the result. Groonga developers are interested in the followings:"
+msgstr ""
+"Windows上でデータベースのファイルサイズを小さくできます。この機能を試して結果"
+"を報告してください。Groonga開発者は次の点に興味があります。"
+
+msgid "Disk usage"
+msgstr "ディスク使用量"
+
+msgid "Performance (Improved? Degraded? No difference?)"
+msgstr "パフォーマンス（速くなったか？遅くなったか？変化はないか？）"
+
+msgid "Memory usage (Especially virtual memory usage)"
+msgstr "メモリー使用量（特に仮想メモリー使用量）"
+
+msgid ""
+"[experimental][:doc:`/reference/commands/logical_shard_list`] Added a "
+"command that returns a shard list of the specified logical table."
+msgstr ""
+"[実験的][:doc:`/reference/commands/logical_shard_list`] 指定された論理テーブ"
+"ルのシャードのリストを返すコマンドを追加しました。"
+
+msgid ""
+"[experimental][:ref:`script-syntax-regular-expression-operator`] Supported "
+"regular expression match against vector column without index."
+msgstr ""
+"[実験的][:ref:`script-syntax-regular-expression-operator`] インデックスなしで"
+"もベクターカラムに対して正規表現を使えるようになりました。"
+
+msgid ""
+"[:doc:`/reference/commands/logical_range_filter`] Supported ``--cache no`` "
+"option. It's same as :ref:`select-cache` option in :doc:`/reference/commands/"
+"select`."
+msgstr ""
+"[:doc:`/reference/commands/logical_range_filter`] ``--cache no`` オプションを"
+"サポートしました。これは、 :doc:`/reference/commands/select` の :ref:`select-"
+"cache` オプションと同じ機能です。"
+
+msgid ""
+"[:doc:`/reference/executables/groonga-httpd`] Supported returning the max "
+"number of threads feature of :doc:`/reference/commands/thread_limit`. You "
+"can't set the max number of threads."
+msgstr ""
+"[:doc:`/reference/executables/groonga-httpd`] :doc:`/reference/commands/"
+"thread_limit` の最大スレッド数を返す機能に対応しました。最大スレッド数を設定"
+"することはできません。"
+
+msgid ""
+"[:c:func:`grn_db_unmap()`] Added a new API that unmaps all opened tables and "
+"columns. It's a thread unsafe operation. You can't touch the database while :"
+"c:func:`grn_db_unmap()` is running."
+msgstr ""
+"[:c:func:`grn_db_unmap()`] 開いているすべてのテーブルとカラムをアンマップする"
+"APIを追加しました。これはスレッドセーフではない操作です。 :c:func:"
+"`grn_db_unmap()` 実行中はデータベースを触ることはできません。"
+
+msgid ""
+"[:doc:`/reference/commands/database_unmap`] Added a command that unmaps all "
+"opened tables and columns in database."
+msgstr ""
+"[:doc:`/reference/commands/database_unmap`] データベース内の開いているすべて"
+"のテーブルとカラムをアンマップするコマンドを追加しました。"
+
+msgid ""
+"[:doc:`/reference/commands/object_exist`] Added a command that checks "
+"whether object with the specified name exists or not in database."
+msgstr ""
+"[:doc:`/reference/commands/object_exist`] データベース内に指定された名前のオ"
+"ブジェクトが存在するかどうかを返すコマンドを追加しました。"
+
+msgid ""
+"[:doc:`/reference/commands/column_copy`] Added a command that copies all "
+"values from source column to destination column."
+msgstr ""
+"[:doc:`/reference/commands/column_copy`] コピー元カラムからコピー先カラムへす"
+"べての値をコピーするコマンドを追加しました。"
+
+msgid ""
+"You can use this command to change column value type, change column type, "
+"table type and so on."
+msgstr ""
+"このコマンドを使うと、カラムの値の型を変更したり、カラムの種類を変更したり、"
+"テーブルの種類を変更したりできます。"
+
+msgid ""
+"Stopped to use non-standard ``__uint32_t`` type. [GitHub#375][Reported by "
+"Natanael Copa]"
+msgstr ""
+"非標準の ``__uint32_t`` 型を使うことを止めました。 [GitHub#375][Natanael Copa"
+"さんが報告]"
+
+msgid "[experimental][Windows] Supported Windows Event log."
+msgstr "[実験的][Windows] Windowsイベントログをサポートしました。"
+
+msgid "[mruby] Supported error handling on mruby initialization error."
+msgstr "[mruby] mrubyの初期化エラー処理をサポートしました。"
+
+msgid ""
+"[experimental][:doc:`/reference/commands/thread_limit`] Renamed from "
+"``thread_count``."
+msgstr ""
+"[実験的][:doc:`/reference/commands/thread_limit`] ``thread_count`` からリネー"
+"ムしました。"
+
+msgid ""
+"Supported logging used indexes in ``info`` level and ``debug`` level. It can "
+"be used like ``EXPLAIN`` in RDBMS. It's useful to improve slow query."
+msgstr ""
+"``info`` レベルと ``debug`` レベルで使用したインデックスをログに出力するよう"
+"になりました。これはRDBMSの ``EXPLAIN`` のように使うことができます。スローク"
+"エリーを改良するときに便利です。"
+
+msgid ""
+"[doc] Replaced deprecated ``KEY_NORMALIZE`` flags. [GitHub#378][GitHub#380]"
+"[GitHub#382] [Patch by Hiroyuki Sato]"
+msgstr ""
+"[ドキュメント] 非推奨の ``KEY_NORMALIZE`` フラグを置き換えました。 "
+"[GitHub#378][GitHub#380][GitHub#382] [佐藤さんがパッチ提供]"
+
+msgid ""
+"[doc] Removed needless Sphinx configurations. [GitHub#379] [Patch by Ayumu "
+"Osanai]"
+msgstr ""
+"[ドキュメント] 必要のないSphinxの設定を削除しました。 [GitHub#379] [長内さん"
+"がパッチ提供]"
+
+msgid ""
+"[experimental][incompatible][:ref:`script-syntax-regular-expression-"
+"operator`] Changed ``.`` match behavior. ``.`` matches new line. It's "
+"backward incompatible change."
+msgstr ""
+"[実験的][非互換][:ref:`script-syntax-regular-expression-operator`] ``.`` の"
+"マッチの挙動が変わりました。 ``.`` は改行にもマッチします。これは後方非互換な"
+"変更です。"
+
+msgid ""
+"[doc][:doc:`/contribution/development/build`] Added a document about "
+"building Groonga as Groonga developer. [GitHub#353] [Suggested by Hiro "
+"Yoshioka]"
+msgstr ""
+"[ドキュメント][:doc:`/contribution/development/build`] Groongaの開発者として"
+"Groongaをビルドするためのドキュメントを追加しました。 [GitHub#353] [吉岡さん"
+"が提案]"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "[mruby] Fixed a time overflow bug."
+msgstr "[mruby] 時間の値がオーバーフローするバグを修正しました。"
+
+msgid ""
+"[:doc:`/reference/executables/groonga`] Fixed a crash bug when PID file "
+"can't be created. [GitHub#368] [Reported by Hiroyuki Sato]"
+msgstr ""
+"[:doc:`/reference/executables/groonga`] PIDファイルを作成できないときにクラッ"
+"シュする問題を修正しました。 [GitHub#368] [佐藤さんが報告]"
+
+msgid ""
+"Fixed a bug that :ref:`offline-index-construction` may generate broken "
+"index. It may be caused for multiple column index. In other words, index "
+"column with ``WITH_SECTION`` flag may be broken."
+msgstr ""
+":ref:`offline-index-construction` が壊れたインデックスを構築する可能性がある"
+"問題を修正しました。この問題はマルチカラムインデックスのインデックスを構築す"
+"るときに発生する可能性があります。言いかえると、 ``WITH_SECTION`` フラグ付き"
+"のインデックスカラムは壊れる可能性があるということです。"
+
+msgid ""
+"If you're using :ref:`online-index-construction` for index columns with "
+"``WITH_SECTION`` flag, this bug isn't affected."
+msgstr ""
+"``WITH_SECTION`` フラグ付きのインデックスカラムに :ref:`online-index-"
+"construction` を使っている場合はこのバグの影響はありません。"
+
+msgid ""
+"You can recover this bug by recreating existing multiple column indexes."
+msgstr ""
+"このバグで壊れたインデックスは既存のマルチカラムインデックスを再作成すると復"
+"旧できます。"
+
+msgid ""
+"[:doc:`/reference/functions/query`] Fixed a crash bug when :doc:`/reference/"
+"functions/query` is used in :ref:`select-scorer`."
+msgstr ""
+"[:doc:`/reference/functions/query`] :ref:`select-scorer` で :doc:`/reference/"
+"functions/query` を使うとクラッシュするバグを修正しました。"
+
+msgid ""
+"[:ref:`select-filter`] Fixed a bug that :ref:`script-syntax-bitwise-not` "
+"against unsigned int value doesn't work for comparing to ``-NUMBER_LITERAL``."
+msgstr ""
+"[:ref:`select-filter`] 符号なし整数に :ref:`script-syntax-bitwise-not` を使う"
+"と、  ``-数値リテラル`` との比較が正常に動かないバグを修正しました。"
+
+msgid "For example, the following expression doesn't work::"
+msgstr "たとえば、次の式は正常に動きません。::"
+
+msgid ""
+"Fixed a bug that :ref:`script-syntax-regular-expression-operator` doesn't "
+"work in multithread."
+msgstr ""
+":ref:`script-syntax-regular-expression-operator` がマルチスレッド環境で動かな"
+"い問題を修正しました。"
+
+msgid "Fixed some memory leaks."
+msgstr "メモリーリークをいくつか修正しました。"
+
+msgid "Fixed a build error. [GitHub#381] [Patch by Hiroshi Hatake]"
+msgstr "ビルドエラーを修正しました。 [GitHub#381] [畑ケさんがパッチ提供]"
+
+msgid "Thanks"
+msgstr "感謝"
+
+# 7c637f45d0804be689ffe3a814731b86
+msgid "Hiroyuki Sato"
+msgstr "佐藤さん"
+
+msgid "Natanael Copa"
+msgstr "Natanael Copaさん"
+
+# d6e0bea9da104abcb02709f49f3ca023
+msgid "Ayumu Osanai"
+msgstr "長内歩さん"
+
+msgid "Hiroshi Hatake"
+msgstr "畑ケさん"
+
+msgid "Hiro Yoshioka"
+msgstr "吉岡さん"
+
+msgid "Release 5.0.6 - 2015-07-29"
+msgstr "5.0.6リリース - 2015-07-29"
 
 # 3837013797dc481e953cfc0ef4b3cfee
 msgid ""
@@ -124,18 +388,18 @@ msgstr ""
 
 # 07b31f015a8c4e91b6983b3f02093361
 msgid ""
-"[experimental][thread_count] Added a command that get/set the number of "
+"[experimental][``thread_count``] Added a command that get/set the number of "
 "threads. It's a experimental command."
 msgstr ""
-"[実験的][thread_count] スレッド数を取得・設定するコマンドを追加しました。これ"
-"は実験的なコマンドです。"
+"[実験的][``thread_count``] スレッド数を取得・設定するコマンドを追加しました。"
+"これは実験的なコマンドです。"
 
 msgid ""
 "[experimental][:doc:`/reference/executables/groonga`] Supported changing the "
-"number of threads by thread_count command. It's a experimental feature."
+"number of threads by ``thread_count`` command. It's a experimental feature."
 msgstr ""
-"[実験的][:doc:`/reference/executables/groonga`] thread_countコマンドによるス"
-"レッドの最大数の変更をサポートしました。これは実験的な機能です。"
+"[実験的][:doc:`/reference/executables/groonga`] ``thread_count`` コマンドによ"
+"るスレッドの最大数の変更をサポートしました。これは実験的な機能です。"
 
 # 08c3740bbbca4afe9ec782e3ce0b39ae
 msgid ""
@@ -413,9 +677,6 @@ msgstr ""
 msgid "[mrb] Supported query log."
 msgstr "[mrb] クエリーログをサポートしました。"
 
-msgid "Fixes"
-msgstr "修正"
-
 # 73e9a35c456549cbb7876f55706085b6
 msgid ""
 "Fixed a memory leak when an error is occurred in :c:func:`grn_expr_exec()`. "
@@ -508,9 +769,6 @@ msgid "[sharding] Fixed wrong min include detection for month range type."
 msgstr ""
 "[sharding] 月の範囲に最小値が含まれているかどうかの検出方法が誤っていたのを修"
 "正しました。"
-
-msgid "Thanks"
-msgstr "感謝"
 
 # dee0455f64054336846650b6a2ac4438
 msgid "Bill Parker"
@@ -892,10 +1150,6 @@ msgstr ""
 msgid "Hiroaki Nakamura"
 msgstr "Hiroaki Nakamuraさん"
 
-# 7c637f45d0804be689ffe3a814731b86
-msgid "Hiroyuki Sato"
-msgstr "佐藤さん"
-
 msgid "Naoya Murakami"
 msgstr "村上さん"
 
@@ -1235,9 +1489,6 @@ msgstr ""
 
 msgid "Atsushi Shinoda"
 msgstr "篠田さん"
-
-msgid "Hiroshi Hatake"
-msgstr "畑ケさん"
 
 msgid "Release 5.0.1 - 2015-03-29"
 msgstr "5.0.1リリース - 2015-03-29"
@@ -5846,10 +6097,6 @@ msgstr "やまだあきらさん"
 # 0d0f745dd8b54064b8829924fa8bd14a
 msgid "kashihara"
 msgstr "kashiharaさん"
-
-# d6e0bea9da104abcb02709f49f3ca023
-msgid "Ayumu Osanai"
-msgstr "長内歩さん"
 
 # 49c51e15e1004cc885f50f26ee4b0f32
 msgid "funa 1g"
