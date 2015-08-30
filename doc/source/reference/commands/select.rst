@@ -1550,16 +1550,39 @@ result.
 Cache related parameter
 ^^^^^^^^^^^^^^^^^^^^^^^
 
+.. _select-query:
+
 ``cache``
 """""""""
 
-TODO: write in English and add example.
+Specifies whether caching the result of this query or not.
 
-クエリキャッシュに関する動作を設定します。
+If the result of this query is cached, the next same query returns
+response quickly by using the cache.
 
-``no``
+It doesn't control whether existing cached output is used or not.
 
-  検索結果をクエリキャッシュに残しません。キャッシュして再利用される可能性が低いクエリに対して用います。キャッシュ容量は有限です。有効なキャッシュが多くヒットするために、このパラメータは有効です。
+Here are available values:
+
+.. list-table::
+
+   :header-rows: 1
+
+   * - Value
+     - Description
+   * - ``no``
+     - Don't cache the output of this query.
+   * - ``yes``
+     - Cache the output of this query.
+       It's the default value.
+
+Here is an example to disable caching the result of this query:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/cache_no.log
+.. select Entries --cache no
+
+The default value is ``yes``.
 
 Score related parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^
