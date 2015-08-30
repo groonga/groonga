@@ -89,7 +89,7 @@ Here are a schema definition and sample data to show usage.
 .. column_create Entries content COLUMN_SCALAR Text
 .. column_create Entries n_likes COLUMN_SCALAR UInt32
 .. column_create Entries tag COLUMN_SCALAR ShortText
-.. table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram  --normalizer NormalizerAuto
+.. table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
 .. column_create Terms entries_key_index COLUMN_INDEX|WITH_POSITION Entries _key
 .. column_create Terms entries_content_index COLUMN_INDEX|WITH_POSITION Entries content
 .. load --table Entries
@@ -679,7 +679,7 @@ Here is a sample substitution table to show a simple
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/query_expander_substitution_table.log
-.. table_create Thesaurus TABLE_PAT_KEY ShortText  --normalizer NormalizerAuto
+.. table_create Thesaurus TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
 .. column_create Thesaurus synonym COLUMN_VECTOR ShortText
 .. load --table Thesaurus
 .. [
