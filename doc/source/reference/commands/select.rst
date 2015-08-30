@@ -1550,7 +1550,7 @@ result.
 Cache related parameter
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-.. _select-query:
+.. _select-cache:
 
 ``cache``
 """""""""
