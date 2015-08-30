@@ -18,7 +18,6 @@ case "${BUILD_TOOL}" in
       configure_args="${configure_args} --with-ruby --enable-mruby"
     fi
 
-    echo "configure_args: <${configure_args}>"
     ./configure --prefix=${prefix} --with-ruby ${configure_args}
     ;;
   cmake)
