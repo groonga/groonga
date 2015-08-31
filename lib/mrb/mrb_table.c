@@ -17,6 +17,7 @@
 */
 
 #include "../grn_ctx_impl.h"
+#include <string.h>
 
 #ifdef GRN_WITH_MRUBY
 #include <mruby.h>
