@@ -47,6 +47,10 @@
 #  undef NTDDI_VERSION
 # endif /* NTDDI_VERSION */
 # define NTDDI_VERSION GRN_MINIMUM_WINDOWS_VERSION
+
+# ifdef WIN32_LEAN_AND_MEAN
+#  undef WIN32_LEAN_AND_MEAN
+# endif /* WIN32_LEAN_AND_MEAN */
 #endif /* WIN32 */
 
 #ifdef __cplusplus
