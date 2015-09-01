@@ -8,6 +8,9 @@ prefix=/tmp/local
 
 case "${BUILD_TOOL}" in
   autotools)
+    if [ "$(uname)" = "Darwin" ]; then
+      glibtoolize --version
+    fi
     ./autogen.sh
 
     configure_args=""
