@@ -1505,7 +1505,6 @@ grn_ts_expr_const_node_adjust(grn_ctx *ctx, grn_ts_expr_const_node *node,
 }
 
 /* grn_ts_expr_column_node_adjust() updates scores. */
-/* FIXME: Errors are ignored. */
 static grn_rc
 grn_ts_expr_column_node_adjust(grn_ctx *ctx, grn_ts_expr_column_node *node,
                                grn_ts_record *io, size_t n_io) {
