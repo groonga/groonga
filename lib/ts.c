@@ -27,9 +27,12 @@
 #include <string.h>
 
 #include "grn_ctx_impl.h"
+#include "grn_dat.h"
 #include "grn_db.h"
 #include "grn_geo.h"
+#include "grn_hash.h"
 #include "grn_output.h"
+#include "grn_pat.h"
 #include "grn_store.h"
 #include "grn_str.h"
 
