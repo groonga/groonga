@@ -356,7 +356,7 @@ grn_ts_table_get_key(grn_ctx *ctx, grn_obj *table, grn_id id,
       return grn_pat_get_key(ctx, (grn_pat *)table, id, buf, buf_size);
     }
     case GRN_TABLE_DAT_KEY: {
-      return grn_pat_get_key(ctx, (grn_pat *)table, id, buf, buf_size);
+      return grn_dat_get_key(ctx, (grn_pat *)table, id, buf, buf_size);
     }
     /* GRN_TABLE_NO_KEY does not support _key. */
     default: {
