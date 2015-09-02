@@ -23,4 +23,6 @@ if [ ! -e vendor/mruby-source/.git ]; then
 fi
 git submodule update --init
 
+mkdir -p m4
+
 ${AUTORECONF:-autoreconf} --force --install "$@"

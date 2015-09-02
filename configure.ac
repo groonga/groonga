@@ -1,6 +1,7 @@
 AC_PREREQ(2.59)
 m4_define([groonga_version], m4_include(base_version))
 AC_INIT([groonga], groonga_version, [groonga@razil.jp])
+AC_CONFIG_MACRO_DIR([m4])
 AM_CONFIG_HEADER(config.h)
 
 AM_INIT_AUTOMAKE([foreign tar-pax subdir-objects])

@@ -14,7 +14,8 @@
 .gdb_history
 .libs
 *~
-aclocal.m4
+/m4/
+/aclocal.m4
 /autom4te.cache
 /compile
 /config.guess
@@ -29,9 +30,8 @@ aclocal.m4
 /depcomp
 /dist
 /install-sh
-/libtool*
+/libtool
 /ltmain.sh
-/lt*.m4
 /missing
 /test-driver
 /groonga.pc
