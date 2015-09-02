@@ -62,28 +62,28 @@ typedef enum {
   GRN_TS_OP_NOP,
 
   /* Unary operators. */
-  GRN_TS_OP_LOGICAL_NOT,    /* ! */
-  GRN_TS_OP_BITWISE_NOT,    /* ~ */
-  GRN_TS_OP_POSITIVE,       /* + */
-  GRN_TS_OP_NEGATIVE,       /* - */
+  GRN_TS_OP_LOGICAL_NOT,    /* !X */
+  GRN_TS_OP_BITWISE_NOT,    /* ~X */
+  GRN_TS_OP_POSITIVE,       /* +X */
+  GRN_TS_OP_NEGATIVE,       /* -X */
 
   /* Binary operators. */
-  GRN_TS_OP_LOGICAL_AND,    /* && */
-  GRN_TS_OP_LOGICAL_OR,     /* || */
-  GRN_TS_OP_BITWISE_AND,    /* & */
-  GRN_TS_OP_BITWISE_OR,     /* | */
-  GRN_TS_OP_BITWISE_XOR,    /* ^ */
-  GRN_TS_OP_EQUAL,          /* == */
-  GRN_TS_OP_NOT_EQUAL,      /* != */
-  GRN_TS_OP_LESS,           /* < */
-  GRN_TS_OP_LESS_EQUAL,     /* <= */
-  GRN_TS_OP_GREATER,        /* > */
-  GRN_TS_OP_GREATER_EQUAL,  /* >= */
-  GRN_TS_OP_PLUS,           /* + */
-  GRN_TS_OP_MINUS,          /* - */
-  GRN_TS_OP_MULTIPLICATION, /* * */
-  GRN_TS_OP_DIVISION,       /* / */
-  GRN_TS_OP_MODULUS         /* % */
+  GRN_TS_OP_LOGICAL_AND,    /* X && Y */
+  GRN_TS_OP_LOGICAL_OR,     /* X || Y */
+  GRN_TS_OP_BITWISE_AND,    /* X & Y  */
+  GRN_TS_OP_BITWISE_OR,     /* X | Y  */
+  GRN_TS_OP_BITWISE_XOR,    /* X ^ Y  */
+  GRN_TS_OP_EQUAL,          /* X == Y */
+  GRN_TS_OP_NOT_EQUAL,      /* X != Y */
+  GRN_TS_OP_LESS,           /* X < Y  */
+  GRN_TS_OP_LESS_EQUAL,     /* X <= Y */
+  GRN_TS_OP_GREATER,        /* X > Y  */
+  GRN_TS_OP_GREATER_EQUAL,  /* X >= Y */
+  GRN_TS_OP_PLUS,           /* X + Y  */
+  GRN_TS_OP_MINUS,          /* X - Y  */
+  GRN_TS_OP_MULTIPLICATION, /* X * Y  */
+  GRN_TS_OP_DIVISION,       /* X / Y  */
+  GRN_TS_OP_MODULUS         /* X % Y  */
 } grn_ts_op_type;
 
 typedef enum {
