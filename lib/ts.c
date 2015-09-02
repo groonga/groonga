@@ -812,8 +812,9 @@ grn_ts_expr_score_node_evaluate(grn_ctx *ctx, grn_ts_expr_score_node *node,
     size_t i;\
     grn_ts_ ## kind *out_ptr = (grn_ts_ ## kind *)out;\
     for (i = 0; i < n_in; i++) {\
-      if (!grn_table_get_key(ctx, node->table, in[i].id, &out_ptr[i],\
-                             sizeof(grn_ts_ ## kind))) {\
+      size_t size = grn_ts_table_get_key(ctx, node->table, in[i].id,\
+                                         &out_ptr[i], sizeof(out_ptr[i]));\
+      if (size != sizeof(out_ptr[i])) {\
         out_ptr[i] = grn_ts_ ## kind ## _zero();\
       }\
     }\
@@ -823,8 +824,9 @@ grn_ts_expr_score_node_evaluate(grn_ctx *ctx, grn_ts_expr_score_node *node,
   case GRN_DB_ ## TYPE: {\
     for (i = 0; i < n_in; i++) {\
       type ## _t key;\
-      if (grn_table_get_key(ctx, node->table, in[i].id, &key,\
-                            sizeof(type ## _t))) {\
+      size_t size = grn_ts_table_get_key(ctx, node->table, in[i].id,\
+                                         &key, sizeof(key));\
+      if (size == sizeof(key)) {\
         out_ptr[i] = (grn_ts_int)key;\
       } else {\
         out_ptr[i] = grn_ts_int_zero();\
@@ -865,6 +867,7 @@ grn_ts_expr_key_node_evaluate(grn_ctx *ctx, grn_ts_expr_key_node *node,
       grn_ts_text *out_ptr = (grn_ts_text *)out;
       GRN_BULK_REWIND(&node->buf);
       for (i = 0; i < n_in; i++) {
+        /* TODO: Detect an error. */
         out_ptr[i].size = grn_table_get_key2(ctx, node->table, in[i].id,
                                              &node->buf);
       }
@@ -880,11 +883,13 @@ grn_ts_expr_key_node_evaluate(grn_ctx *ctx, grn_ts_expr_key_node *node,
       size_t i;
       grn_ts_ref *out_ptr = (grn_ts_ref *)out;
       for (i = 0; i < n_in; i++) {
-        if (!grn_table_get_key(ctx, node->table, in[i].id, &out_ptr[i].id,
-                               sizeof(grn_ts_id))) {
-          out_ptr[i].id = GRN_ID_NIL;
+        size_t size = grn_ts_table_get_key(ctx, node->table, in[i].id,
+                                           &out_ptr[i].id, sizeof(grn_ts_id));
+        if (size != sizeof(grn_ts_id)) {
+          out_ptr[i] = grn_ts_ref_zero();
+        } else {
+          out_ptr[i].score = in[i].score;
         }
-        out_ptr[i].score = in[i].score;
       }
       return GRN_SUCCESS;
     }
@@ -901,8 +906,9 @@ grn_ts_expr_key_node_evaluate(grn_ctx *ctx, grn_ts_expr_key_node *node,
     size_t i;\
     grn_ts_ ## kind *out_ptr = (grn_ts_ ## kind *)out;\
     for (i = 0; i < n_in; i++) {\
-      if (!grn_ts_table_get_value(ctx, node->table, in[i].id,\
-                                  &out_ptr[i])) {\
+      size_t size = grn_ts_table_get_value(ctx, node->table, in[i].id,\
+                                           &out_ptr[i]);\
+      if (size != sizeof(out_ptr[i])) {\
         out_ptr[i] = grn_ts_ ## kind ## _zero();\
       }\
     }\
@@ -912,7 +918,9 @@ grn_ts_expr_key_node_evaluate(grn_ctx *ctx, grn_ts_expr_key_node *node,
   case GRN_DB_ ## TYPE: {\
     for (i = 0; i < n_in; i++) {\
       type ## _t value;\
-      if (grn_ts_table_get_value(ctx, node->table, in[i].id, &value)) {\
+      size_t size = grn_ts_table_get_value(ctx, node->table, in[i].id,\
+                                           &value);\
+      if (size == sizeof(value)) {\
         out_ptr[i] = (grn_ts_int)value;\
       } else {\
         out_ptr[i] = grn_ts_int_zero();\
@@ -952,11 +960,13 @@ grn_ts_expr_value_node_evaluate(grn_ctx *ctx, grn_ts_expr_value_node *node,
       size_t i;
       grn_ts_ref *out_ptr = (grn_ts_ref *)out;
       for (i = 0; i < n_in; i++) {
-        if (!grn_ts_table_get_value(ctx, node->table, in[i].id,
-                                    &out_ptr[i].id)) {
-          out_ptr[i].id = GRN_ID_NIL;
+        size_t size = grn_ts_table_get_value(ctx, node->table, in[i].id,
+                                             &out_ptr[i].id);
+        if (size != sizeof(grn_ts_id)) {
+          out_ptr[i] = grn_ts_ref_zero();
+        } else {
+          out_ptr[i].score = in[i].score;
         }
-        out_ptr[i].score = in[i].score;
       }
       return GRN_SUCCESS;
     }
