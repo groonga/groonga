@@ -517,4 +517,4 @@ load --table Users
 {"name": "Alice 512"}
 ]
 
-select Users --filter 'name @ "a" || name @ "a" | "invalid operator causes overflow"'
+select Users --filter 'name @ "a" || (1 | "invalid operator causes overflow")'
