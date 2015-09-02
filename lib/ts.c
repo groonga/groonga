@@ -344,6 +344,27 @@ grn_ts_table_has_value(grn_ctx *ctx, grn_obj *table) {
   return DB_OBJ(table)->range != GRN_DB_VOID;
 }
 
+/* grn_ts_table_get_key() writes a key (_key) into buf. */
+static size_t
+grn_ts_table_get_key(grn_ctx *ctx, grn_obj *table, grn_id id,
+                     void *buf, size_t buf_size) {
+  switch (table->header.type) {
+    case GRN_TABLE_HASH_KEY: {
+      return grn_hash_get_key(ctx, (grn_hash *)table, id, buf, buf_size);
+    }
+    case GRN_TABLE_PAT_KEY: {
+      return grn_pat_get_key(ctx, (grn_pat *)table, id, buf, buf_size);
+    }
+    case GRN_TABLE_DAT_KEY: {
+      return grn_pat_get_key(ctx, (grn_pat *)table, id, buf, buf_size);
+    }
+    /* GRN_TABLE_NO_KEY does not support _key. */
+    default: {
+      return 0;
+    }
+  }
+}
+
 /* grn_ts_table_get_value() writes a value (_value) into buf. */
 static size_t
 grn_ts_table_get_value(grn_ctx *ctx, grn_obj *table, grn_id id, void *buf) {
@@ -354,6 +375,7 @@ grn_ts_table_get_value(grn_ctx *ctx, grn_obj *table, grn_id id, void *buf) {
     case GRN_TABLE_PAT_KEY: {
       return grn_pat_get_value(ctx, (grn_pat *)table, id, buf);
     }
+    /* GRN_TABLE_DAT_KEY does not support _value. */
     case GRN_TABLE_NO_KEY: {
       return grn_array_get_value(ctx, (grn_array *)table, id, buf);
     }
@@ -1323,8 +1345,9 @@ grn_ts_expr_key_node_filter(grn_ctx *ctx, grn_ts_expr_key_node *node,
   size_t i, count = 0;
   for (i = 0; i < n_in; i++) {
     grn_ts_bool key;
-    grn_table_get_key(ctx, node->table, in[i].id, &key, sizeof(key));
-    if (key) {
+    size_t key_size = grn_ts_table_get_key(ctx, node->table, in[i].id,
+                                           &key, sizeof(key));
+    if ((key_size == sizeof(key)) && key) {
       out[count++] = in[i];
     }
   }
@@ -1340,8 +1363,9 @@ grn_ts_expr_value_node_filter(grn_ctx *ctx, grn_ts_expr_value_node *node,
   size_t i, count = 0;
   for (i = 0; i < n_in; i++) {
     grn_ts_bool value;
-    grn_ts_table_get_value(ctx, node->table, in[i].id, &value);
-    if (value) {
+    size_t value_size = grn_ts_table_get_value(ctx, node->table, in[i].id,
+                                               &value);
+    if ((value_size == sizeof(value)) && value) {
       out[count++] = in[i];
     }
   }
@@ -1443,8 +1467,11 @@ grn_ts_expr_key_node_adjust(grn_ctx *ctx, grn_ts_expr_key_node *node,
   size_t i;
   for (i = 0; i < n_io; i++) {
     grn_ts_float key;
-    grn_table_get_key(ctx, node->table, io[i].id, &key, sizeof(key));
-    io[i].score = (grn_ts_score)key;
+    size_t key_size = grn_ts_table_get_key(ctx, node->table, io[i].id,
+                                           &key, sizeof(key));
+    if (key_size == sizeof(key)) {
+      io[i].score = (grn_ts_score)key;
+    }
   }
   return GRN_SUCCESS;
 }
@@ -1456,8 +1483,11 @@ grn_ts_expr_value_node_adjust(grn_ctx *ctx, grn_ts_expr_value_node *node,
   size_t i;
   for (i = 0; i < n_io; i++) {
     grn_ts_float value;
-    grn_ts_table_get_value(ctx, node->table, io[i].id, &value);
-    io[i].score = (grn_ts_score)value;
+    size_t value_size = grn_ts_table_get_value(ctx, node->table, io[i].id,
+                                               &value);
+    if (value_size == sizeof(value)) {
+      io[i].score = (grn_ts_score)value;
+    }
   }
   return GRN_SUCCESS;
 }
