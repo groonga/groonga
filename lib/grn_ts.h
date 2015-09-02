@@ -19,58 +19,93 @@
 #ifndef GRN_TS_H
 #define GRN_TS_H
 
+#ifdef GRN_WITH_TS
+
+#include <stddef.h>
+#include <stdint.h>
+
 #include "grn.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-// Constant values.
+/*-------------------------------------------------------------
+ * Enumeration types.
+ */
 
+/* grn_builtin_type or table ID. */
 typedef grn_id grn_ts_data_type;
 
+enum { GRN_TS_VECTOR_FLAG = 1 << 7 };
+
 typedef enum {
-  GRN_TS_VOID,      // GRN_DB_VOID.
-  GRN_TS_BOOL,      // GRN_DB_BOOL.
-  GRN_TS_INT,       // GRN_DB_(U)INT8/16/32/64.
-  GRN_TS_FLOAT,     // GRN_DB_FLOAT.
-  GRN_TS_TIME,      // GRN_DB_TIME.
-  GRN_TS_TEXT,      // GRN_DB_(SHORT_/LONG_)TEST.
-  GRN_TS_GEO_POINT, // GRN_DB_TOKYO/WGS84_GEO_POINT.
-  GRN_TS_REF        // Table reference.
+  GRN_TS_VOID             = 0, /* GRN_DB_VOID */
+  GRN_TS_BOOL             = 1, /* GRN_DB_BOOL */
+  GRN_TS_INT              = 2, /* GRN_DB_[U]INT(8/16/32/64) */
+  GRN_TS_FLOAT            = 3, /* GRN_DB_FLOAT */
+  GRN_TS_TIME             = 4, /* GRN_DB_TIME */
+  GRN_TS_TEXT             = 5, /* GRN_DB_[SHORT_/LONG_]TEST */
+  GRN_TS_GEO_POINT        = 6, /* GRN_DB_(TOKYO/WGS84)_GEO_POINT */
+  GRN_TS_REF              = 7, /* Table reference. */
+  GRN_TS_BOOL_VECTOR      = GRN_TS_VECTOR_FLAG | GRN_TS_BOOL,
+  GRN_TS_INT_VECTOR       = GRN_TS_VECTOR_FLAG | GRN_TS_INT,
+  GRN_TS_FLOAT_VECTOR     = GRN_TS_VECTOR_FLAG | GRN_TS_FLOAT,
+  GRN_TS_TIME_VECTOR      = GRN_TS_VECTOR_FLAG | GRN_TS_TIME,
+  GRN_TS_TEXT_VECTOR      = GRN_TS_VECTOR_FLAG | GRN_TS_TEXT,
+  GRN_TS_GEO_POINT_VECTOR = GRN_TS_VECTOR_FLAG | GRN_TS_GEO_POINT,
+  GRN_TS_REF_VECTOR       = GRN_TS_VECTOR_FLAG | GRN_TS_REF
 } grn_ts_data_kind;
 
 typedef enum {
-  GRN_TS_NOP,
-  GRN_TS_LOGICAL_NOT,
-  GRN_TS_LOGICAL_AND,
-  GRN_TS_LOGICAL_OR,
-  GRN_TS_EQUAL,
-  GRN_TS_NOT_EQUAL,
-  GRN_TS_LESS,
-  GRN_TS_LESS_EQUAL,
-  GRN_TS_GREATER,
-  GRN_TS_GREATER_EQUAL
-} grn_ts_operator_type;
+  /* Invalid operator. */
+  GRN_TS_OP_NOP,
+
+  /* Unary operators. */
+  GRN_TS_OP_LOGICAL_NOT,  /* ! */
+  GRN_TS_OP_BITWISE_NOT,  /* ~ */
+  GRN_TS_OP_POSITIVE,     /* + */
+  GRN_TS_OP_NEGATIVE,     /* - */
+
+  /* Binary operators. */
+  GRN_TS_OP_LOGICAL_AND,  /* && */
+  GRN_TS_OP_LOGICAL_OR,   /* || */
+  GRN_TS_OP_BITWISE_AND,  /* & */
+  GRN_TS_OP_BITWISE_OR,   /* | */
+  GRN_TS_OP_BITWISE_XOR,  /* ^ */
+  GRN_TS_OP_EQUAL,        /* == */
+  GRN_TS_OP_NOT_EQUAL,    /* != */
+  GRN_TS_OP_LESS,         /* < */
+  GRN_TS_OP_LESS_EQUAL,   /* <= */
+  GRN_TS_OP_GREATER,      /* > */
+  GRN_TS_OP_GREATER_EQUAL /* >= */
+} grn_ts_op_type;
 
 typedef enum {
-  GRN_TS_ID_NODE,
-  GRN_TS_SCORE_NODE,
-  GRN_TS_CONSTANT_NODE,
-  GRN_TS_COLUMN_NODE,
-  GRN_TS_OPERATOR_NODE
-} grn_ts_expression_node_type;
+  GRN_TS_EXPR_INCOMPLETE, /* An incomplete expression. */
+  GRN_TS_EXPR_BROKEN,     /* A broken expression. */
+                          /* Any operation fails for a broken expression. */
+  GRN_TS_EXPR_ID,         /* An expression associated with _id. */
+  GRN_TS_EXPR_SCORE,      /* An expression associated with _score. */
+  GRN_TS_EXPR_CONST,      /* A const. */
+  GRN_TS_EXPR_VARIABLE    /* An expression that contains a variable. */
+} grn_ts_expr_type;
 
 typedef enum {
-  GRN_TS_INCOMPLETE,
-  GRN_TS_ID,
-  GRN_TS_SCORE,
-  GRN_TS_CONSTANT,
-  GRN_TS_VARIABLE
-} grn_ts_expression_type;
+  GRN_TS_EXPR_ID_NODE,     /* Associated with the ID (_id). */
+  GRN_TS_EXPR_SCORE_NODE,  /* Asscoaited with the score (_score). */
+  GRN_TS_EXPR_KEY_NODE,    /* Asscoaited with the key (_key). */
+  GRN_TS_EXPR_VALUE_NODE,  /* Asscoaited with the embedded value (_value). */
+  GRN_TS_EXPR_CONST_NODE,  /* Associated with a const. */
+  GRN_TS_EXPR_COLUMN_NODE, /* Associated with a column. */
+  GRN_TS_EXPR_OP_NODE      /* Associated with an operator. */
+} grn_ts_expr_node_type;
 
-// Built-in data types.
+/*-------------------------------------------------------------
+ * Built-in data types.
+ */
 
+/* ID (_id), score (_score), and record types. */
 typedef grn_id grn_ts_id;
 typedef float grn_ts_score;
 typedef struct {
@@ -78,6 +113,7 @@ typedef struct {
   grn_ts_score score;
 } grn_ts_record;
 
+/* Built-in scalar data types. */
 typedef grn_bool grn_ts_bool;
 typedef int64_t grn_ts_int;
 typedef double grn_ts_float;
@@ -87,10 +123,223 @@ typedef struct {
   size_t size;
 } grn_ts_text;
 typedef grn_geo_point grn_ts_geo_point;
+typedef grn_geo_point grn_ts_tokyo_geo_point;
+typedef grn_geo_point grn_ts_wgs84_geo_point;
+typedef grn_ts_record grn_ts_ref;
+
+/* Built-in vector data types. */
 typedef struct {
-  const void *ptr;
+  const grn_ts_bool *ptr;
   size_t size;
-} grn_ts_vector;
+} grn_ts_bool_vector;
+typedef struct {
+  const grn_ts_int *ptr;
+  size_t size;
+} grn_ts_int_vector;
+typedef struct {
+  const grn_ts_float *ptr;
+  size_t size;
+} grn_ts_float_vector;
+typedef struct {
+  const grn_ts_time *ptr;
+  size_t size;
+} grn_ts_time_vector;
+typedef struct {
+  const grn_ts_text *ptr;
+  size_t size;
+} grn_ts_text_vector;
+typedef struct {
+  const grn_ts_geo_point *ptr;
+  size_t size;
+} grn_ts_geo_point_vector;
+typedef grn_ts_geo_point_vector grn_ts_tokyo_geo_point_vector;
+typedef grn_ts_geo_point_vector grn_ts_wgs84_geo_point_vector;
+typedef struct {
+  const grn_ts_ref *ptr;
+  size_t size;
+} grn_ts_ref_vector;
+
+/*-------------------------------------------------------------
+ * Expression components.
+ */
+
+#define GRN_TS_EXPR_NODE_COMMON_MEMBERS\
+  grn_ts_expr_node_type type; /* Node type. */\
+  grn_ts_data_kind data_kind; /* Abstract data type. */\
+  grn_ts_data_type data_type; /* Detailed data type. */
+
+typedef struct {
+  GRN_TS_EXPR_NODE_COMMON_MEMBERS
+} grn_ts_expr_node;
+
+typedef struct {
+  grn_obj *table;             /* Associated table. */
+  grn_obj *curr_table;        /* Current table. */
+  grn_ts_expr_type type;      /* Expression type. */
+  grn_ts_data_kind data_kind; /* Abstract data type. */
+  grn_ts_data_type data_type; /* Detailed data type. */
+  grn_ts_expr_node *root;     /* Root node. */
+  grn_ts_expr_node **nodes;   /* Buffer for a node stack. */
+  size_t n_nodes;             /* Number of nodes. */
+  size_t max_n_nodes;         /* Max. number (capacity) of nodes. */
+  grn_ts_expr_node **stack;   /* Node stack. */
+  size_t stack_depth;         /* Node stack's current depth. */
+  size_t stack_size;          /* Node stack's size (capacity). */
+} grn_ts_expr;
+
+/* grn_ts_expr_open() creates an empty expression. */
+grn_rc grn_ts_expr_open(grn_ctx *ctx, grn_obj *table, grn_ts_expr **expr);
+
+/* grn_ts_expr_parse() creates an expression from a string. */
+grn_rc grn_ts_expr_parse(grn_ctx *ctx, grn_obj *table,
+                         const char *str, size_t str_size,
+                         grn_ts_expr **expr);
+
+/* grn_ts_expr_close() destroys an expression. */
+grn_rc grn_ts_expr_close(grn_ctx *ctx, grn_ts_expr *expr);
+
+/*
+ * grn_ts_expr_get_table() returns the associated table.
+ * If arguments are invalid, the return value is NULL.
+ */
+grn_obj *grn_ts_expr_get_table(grn_ctx *ctx, grn_ts_expr *expr);
+
+/*
+ * grn_ts_expr_get_type() returns the expression type.
+ * If arguments are invalid, the return value is GRN_EXPR_BROKEN.
+ */
+grn_ts_expr_type grn_ts_expr_get_type(grn_ctx *ctx, grn_ts_expr *expr);
+
+/*
+ * grn_ts_expr_get_data_kind() returns the data kind.
+ * If arguments are invalid, the return value is GRN_TS_VOID.
+ */
+grn_ts_data_kind grn_ts_expr_get_data_kind(grn_ctx *ctx, grn_ts_expr *expr);
+
+/*
+ * grn_ts_expr_get_data_type() returns the data type.
+ * If arguments are invalid, the return value is GRN_DB_VOID.
+ */
+
+grn_ts_data_type grn_ts_expr_get_data_type(grn_ctx *ctx, grn_ts_expr *expr);
+
+/*
+ * grn_ts_expr_get_root() returns the root node.
+ * If arguments are invalid, the return value is NULL.
+ */
+grn_ts_expr_node *grn_ts_expr_get_root(grn_ctx *ctx, grn_ts_expr *expr);
+
+/* grn_ts_expr_push() pushes expression nodes expressed by a string. */
+grn_rc grn_ts_expr_push(grn_ctx *ctx, grn_ts_expr *expr,
+                        const char *str, size_t str_size);
+
+/*
+ * grn_ts_expr_push_obj() pushes an object.
+ *
+ * Acceptable objects are as follows:
+ * - Consts
+ *  - GRN_BULK: GRN_DB_*.
+ *  - GRN_UVECTOR: GRN_DB_* except GRN_DB_[SHORT/LONG_]TEXT.
+ *  - GRN_VECTOR: GRN_DB_[SHORT/LONG_]TEXT.
+ * - Columns
+ *  - GRN_ACCESSOR: _id, _score, _key, and _value.
+ *  - GRN_COLUMN_FIX_SIZE: GRN_DB_* except GRN_DB_[SHORT/LONG_]TEXT.
+ *  - GRN_COLUMN_VAR_SIZE: GRN_DB_[SHORT/LONG_]TEXT.
+ */
+grn_rc grn_ts_expr_push_obj(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj);
+
+/* grn_ts_expr_push_id() pushes "_id". */
+grn_rc grn_ts_expr_push_id(grn_ctx *ctx, grn_ts_expr *expr);
+/* grn_ts_expr_push_score() pushes "_score". */
+grn_rc grn_ts_expr_push_score(grn_ctx *ctx, grn_ts_expr *expr);
+/* grn_ts_expr_push_key() pushes "_key". */
+grn_rc grn_ts_expr_push_key(grn_ctx *ctx, grn_ts_expr *expr);
+/* grn_ts_expr_push_key() pushes "_value". */
+grn_rc grn_ts_expr_push_value(grn_ctx *ctx, grn_ts_expr *expr);
+/* grn_ts_expr_push_const() pushes a column. */
+grn_rc grn_ts_expr_push_const(grn_ctx *ctx, grn_ts_expr *expr,
+                              grn_ts_data_kind kind, const void *value);
+/* grn_ts_expr_push_column() pushes a column. */
+grn_rc grn_ts_expr_push_column(grn_ctx *ctx, grn_ts_expr *expr,
+                               grn_obj *column);
+/* grn_ts_expr_push_operator() pushes an operator. */
+grn_rc grn_ts_expr_push_operator(grn_ctx *ctx, grn_ts_expr *expr,
+                                 grn_ts_op_type op_type);
+
+/* grn_ts_expr_push_bool() pushes a Bool const. */
+grn_rc grn_ts_expr_push_bool(grn_ctx *ctx, grn_ts_expr *expr,
+                             grn_ts_bool value);
+/* grn_ts_expr_push_int() pushes an Int64 const. */
+grn_rc grn_ts_expr_push_int(grn_ctx *ctx, grn_ts_expr *expr,
+                            grn_ts_int value);
+/* grn_ts_expr_push_float() pushes a Float const. */
+grn_rc grn_ts_expr_push_float(grn_ctx *ctx, grn_ts_expr *expr,
+                              grn_ts_float value);
+/* grn_ts_expr_push_time() pushes a Time const. */
+grn_rc grn_ts_expr_push_time(grn_ctx *ctx, grn_ts_expr *expr,
+                             grn_ts_time value);
+/* grn_ts_expr_push_text() pushes a Text const. */
+grn_rc grn_ts_expr_push_text(grn_ctx *ctx, grn_ts_expr *expr,
+                             grn_ts_text value);
+/* grn_ts_expr_push_geo_point() pushes a GeoPoint const. */
+grn_rc grn_ts_expr_push_geo_point(grn_ctx *ctx, grn_ts_expr *expr,
+                                  grn_ts_geo_point value);
+/* grn_ts_expr_push_tokyo_geo_point() pushes a TokyoGeoPoint const. */
+grn_rc grn_ts_expr_push_tokyo_geo_point(grn_ctx *ctx, grn_ts_expr *expr,
+                                        grn_ts_geo_point value);
+/* grn_ts_expr_push_wgs84_geo_point() pushes a WGS84GeoPoint const. */
+grn_rc grn_ts_expr_push_wgs84_geo_point(grn_ctx *ctx, grn_ts_expr *expr,
+                                        grn_ts_geo_point value);
+/* grn_ts_expr_push_bool_vector() pushes a Bool vector const. */
+grn_rc grn_ts_expr_push_bool_vector(grn_ctx *ctx, grn_ts_expr *expr,
+                                    grn_ts_bool_vector value);
+/* grn_ts_expr_push_int_vector() pushes an Int64 vector const. */
+grn_rc grn_ts_expr_push_int_vector(grn_ctx *ctx, grn_ts_expr *expr,
+                                   grn_ts_int_vector value);
+/* grn_ts_expr_push_float_vector() pushes a Float vector const. */
+grn_rc grn_ts_expr_push_float_vector(grn_ctx *ctx, grn_ts_expr *expr,
+                                     grn_ts_float_vector value);
+/* grn_ts_expr_push_time_vector() pushes a Time vector const. */
+grn_rc grn_ts_expr_push_time_vector(grn_ctx *ctx, grn_ts_expr *expr,
+                                    grn_ts_time_vector value);
+/* grn_ts_expr_push_text_vector() pushes a Text vector const. */
+grn_rc grn_ts_expr_push_text_vector(grn_ctx *ctx, grn_ts_expr *expr,
+                                    grn_ts_text_vector value);
+/* grn_ts_expr_push_geo_point_vector() pushes a GeoPoint vector const. */
+grn_rc grn_ts_expr_push_geo_point_vector(grn_ctx *ctx, grn_ts_expr *expr,
+                                         grn_ts_geo_point_vector value);
+/*
+ * grn_ts_expr_push_tokyo_geo_point_vector() pushes a TokyoGeoPoint vector
+ * const.
+ */
+grn_rc grn_ts_expr_push_tokyo_geo_point_vector(grn_ctx *ctx, grn_ts_expr *expr,
+                                               grn_ts_geo_point_vector value);
+/*
+ * grn_ts_expr_push_wgs84_geo_point_vector() pushes a WGS84GeoPoint vector
+ * const.
+ */
+grn_rc grn_ts_expr_push_wgs84_geo_point_vector(grn_ctx *ctx, grn_ts_expr *expr,
+                                               grn_ts_geo_point_vector value);
+
+/* grn_rc grn_ts_expr_complete() completes an expression. */
+grn_rc grn_ts_expr_complete(grn_ctx *ctx, grn_ts_expr *expr);
+
+/* grn_ts_expr_evaluate() evaluates an expression. */
+grn_rc grn_ts_expr_evaluate(grn_ctx *ctx, grn_ts_expr *expr,
+                            const grn_ts_record *in, size_t n_in, void *out);
+
+/* grn_ts_expr_filter() filters records. */
+grn_rc grn_ts_expr_filter(grn_ctx *ctx, grn_ts_expr *expr,
+                          grn_ts_record *in, size_t n_in,
+                          grn_ts_record *out, size_t *n_out);
+
+/* grn_ts_expr_adjust() updates scores. */
+grn_rc grn_ts_expr_adjust(grn_ctx *ctx, grn_ts_expr *expr,
+                          grn_ts_record *io, size_t n_io);
+
+/*-------------------------------------------------------------
+ * API.
+ */
 
 /*
  * grn_ts_select() finds records passing through a filter (specified by
@@ -108,10 +357,12 @@ typedef struct {
 grn_rc grn_ts_select(grn_ctx *ctx, grn_obj *table,
                      const char *filter, size_t filter_size,
                      const char *output_columns, size_t output_columns_size,
-                     int offset, int limit);
+                     size_t offset, size_t limit);
 
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* GRN_WITH_TS */
 
 #endif /* GRN_TS_H */
