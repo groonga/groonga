@@ -2976,14 +2976,16 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_AND_NOT :
         {
           grn_obj *x, *y;
+          grn_bool x_boolean, y_boolean;
           POP2ALLOC1(x, y, res);
-          if (GRN_INT32_VALUE(x) == 0 || GRN_INT32_VALUE(y) == 1) {
-            GRN_INT32_SET(ctx, res, 0);
+          GRN_TRUEP(ctx, x, x_boolean);
+          GRN_TRUEP(ctx, y, y_boolean);
+          grn_obj_reinit(ctx, res, GRN_DB_BOOL, 0);
+          if (!x_boolean || y_boolean) {
+            GRN_BOOL_SET(ctx, res, GRN_FALSE);
           } else {
-            GRN_INT32_SET(ctx, res, 1);
+            GRN_BOOL_SET(ctx, res, GRN_TRUE);
           }
-          res->header.type = GRN_BULK;
-          res->header.domain = GRN_DB_INT32;
         }
         code++;
         break;
