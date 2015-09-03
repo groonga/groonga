@@ -326,6 +326,36 @@ grn_ts_obj_is_column(grn_ctx *ctx, grn_obj *obj) {
   }
 }
 
+/* grn_ts_ja_get_value() appends a value into buf. */
+static grn_rc
+grn_ts_ja_get_value(grn_ctx *ctx, grn_ja *ja, grn_id id,
+                    grn_obj *buf, size_t *value_size) {
+  grn_rc rc, tmp_rc;
+  uint32_t size;
+  grn_io_win iw;
+  char *ptr = (char *)grn_ja_ref(ctx, ja, id, &iw, &size);
+  if (!ptr) {
+    if (value_size) {
+      *value_size = 0;
+    }
+    return GRN_SUCCESS;
+  }
+  rc = grn_bulk_write(ctx, buf, ptr, size);
+  tmp_rc = grn_ja_unref(ctx, &iw);
+  if (rc == GRN_SUCCESS) {
+    if (tmp_rc == GRN_SUCCESS) {
+      if (value_size) {
+        *value_size = size;
+      }
+    } else {
+      /* Discard the value read. */
+      grn_bulk_resize(ctx, buf, GRN_BULK_VSIZE(buf) - size);
+      rc = tmp_rc;
+    }
+  }
+  return rc;
+}
+
 /* grn_ts_table_has_key() returns whether a table has _key or not. */
 static grn_bool
 grn_ts_table_has_key(grn_ctx *ctx, grn_obj *table) {
@@ -1077,20 +1107,15 @@ grn_ts_expr_column_node_evaluate_scalar(grn_ctx *ctx,
     GRN_TS_EXPR_COLUMN_NODE_EVALUATE_SCALAR_CASE_BLOCK(FLOAT, float)
     GRN_TS_EXPR_COLUMN_NODE_EVALUATE_SCALAR_CASE_BLOCK(TIME, time)
     case GRN_TS_TEXT: {
-      size_t i, offset = 0;
+      size_t i, size;
       char *buf_ptr;
       grn_ja *ja = (grn_ja *)node->column;
       grn_ts_text *out_ptr = (grn_ts_text *)out;
       /* Read column values into node->buf and save the size of each value. */
       GRN_BULK_REWIND(&node->buf);
       for (i = 0; i < n_in; i++) {
-        if (grn_ja_get_value(ctx, ja, in[i].id, &node->buf)) {
-          size_t size = GRN_BULK_VSIZE(&node->buf);
-          out_ptr[i].size = size - offset;
-          offset = size;
-        } else {
-          out_ptr[i].size = 0;
-        }
+        grn_rc rc = grn_ts_ja_get_value(ctx, ja, in[i].id, &node->buf, &size);
+        out_ptr[i].size = (rc == GRN_SUCCESS) ? size : 0;
       }
       buf_ptr = GRN_BULK_HEAD(&node->buf);
       for (i = 0; i < n_in; i++) {
