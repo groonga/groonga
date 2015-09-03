@@ -418,6 +418,31 @@ grn_ts_table_get_value(grn_ctx *ctx, grn_obj *table, grn_id id, void *buf) {
   }
 }
 
+#define GRN_TS_TABLE_GET_KEY2_CASE_BLOCK(TYPE, type)\
+  case GRN_TABLE_ ## TYPE ## _KEY: {\
+    uint32_t key_size;\
+    grn_ ## type *type = (grn_ ## type *)table;\
+    const void *key = _grn_ ## type ## _key(ctx, type, id, &key_size);\
+    if (size) {\
+      *size = key_size;\
+    }\
+    return key;\
+  }
+/* grn_ts_table_get_key2() gets a reference to a key (_key). */
+static const void *
+grn_ts_table_get_key2(grn_ctx *ctx, grn_obj *table, grn_id id, size_t *size) {
+  switch (table->header.type) {
+    GRN_TS_TABLE_GET_KEY2_CASE_BLOCK(HASH, hash)
+    GRN_TS_TABLE_GET_KEY2_CASE_BLOCK(PAT, pat)
+    GRN_TS_TABLE_GET_KEY2_CASE_BLOCK(DAT, dat)
+    /* GRN_TABLE_NO_KEY does not support _key. */
+    default: {
+      return NULL;
+    }
+  }
+}
+#undef GRN_TS_TABLE_GET_KEY2_CASE_BLOCK
+
 /*-------------------------------------------------------------
  * grn_ts_expr_node.
  */
