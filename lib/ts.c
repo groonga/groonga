@@ -907,9 +907,16 @@ grn_ts_expr_key_node_evaluate(grn_ctx *ctx, grn_ts_expr_key_node *node,
       grn_ts_text *out_ptr = (grn_ts_text *)out;
       GRN_BULK_REWIND(&node->buf);
       for (i = 0; i < n_in; i++) {
-        /* TODO: Detect an error. */
-        out_ptr[i].size = grn_table_get_key2(ctx, node->table, in[i].id,
-                                             &node->buf);
+        const char *key;
+        size_t key_size;
+        key = (const char *)grn_ts_table_get_key(ctx, node->table, in[i].id,
+                                                 &key_size);
+        if (key && key_size) {
+          grn_rc rc = grn_bulk_write(ctx, &node->buf, key, key_size);
+          if (rc == GRN_SUCCESS) {
+            out_ptr[i].size = key_size;
+          }
+        }
       }
       buf_ptr = GRN_BULK_HEAD(&node->buf);
       for (i = 0; i < n_in; i++) {
