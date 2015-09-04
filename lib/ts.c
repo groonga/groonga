@@ -1313,7 +1313,7 @@ grn_ts_expr_column_node_evaluate_vector(grn_ctx *ctx,
           n_bytes = 0;
           size = 0;
         }
-        memcpy(&out_ptr[i].ptr, &n_bytes, sizeof(n_bytes));
+        grn_memcpy(&out_ptr[i].ptr, &n_bytes, sizeof(n_bytes));
         out_ptr[i].size = size;
         total_n_bytes += n_bytes;
         total_size += size;
@@ -1338,7 +1338,7 @@ grn_ts_expr_column_node_evaluate_vector(grn_ctx *ctx,
       for (i = 0; i < n_in; i++) {
         char *ptr = buf_ptr, end;
         size_t n_bytes, size;
-        memcpy(&n_bytes, &out_ptr[i].ptr, sizeof(n_bytes));
+        grn_memcpy(&n_bytes, &out_ptr[i].ptr, sizeof(n_bytes));
         buf_ptr += n_bytes;
         GRN_B_DEC(size, ptr);
         out_ptr[i].ptr = text_ptr;
@@ -2036,7 +2036,7 @@ grn_ts_expr_push(grn_ctx *ctx, grn_ts_expr *expr,
     if (str_size >= sizeof(buf)) {
       return GRN_INVALID_ARGUMENT;
     }
-    memcpy(buf, str, str_size);
+    grn_memcpy(buf, str, str_size);
     buf[str_size] = '\0';
     value = strtol(buf, NULL, 10);
     return grn_ts_expr_push_int(ctx, expr, value);
@@ -2660,7 +2660,7 @@ grn_ts_select_filter(grn_ctx *ctx, grn_obj *table,
           batch_size = 0;
         } else {
           size_t n_bytes = sizeof(grn_ts_record) * (batch_size - offset);
-          memcpy(batch, batch + offset, n_bytes);
+          grn_memcpy(batch, batch + offset, n_bytes);
           batch_size -= offset;
           offset = 0;
         }
