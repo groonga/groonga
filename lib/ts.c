@@ -879,7 +879,6 @@ grn_ts_expr_score_node_evaluate(grn_ctx *ctx, grn_ts_expr_score_node *node,
     return GRN_SUCCESS;\
   }
 /* grn_ts_expr_key_node_evaluate() outputs keys. */
-/* FIXME: Errors are ignored. */
 static grn_rc
 grn_ts_expr_key_node_evaluate(grn_ctx *ctx, grn_ts_expr_key_node *node,
                               const grn_ts_record *in, size_t n_in,
@@ -979,7 +978,6 @@ grn_ts_expr_key_node_evaluate(grn_ctx *ctx, grn_ts_expr_key_node *node,
     return GRN_SUCCESS;\
   }
 /* grn_ts_expr_value_node_evaluate() outputs values. */
-/* FIXME: Errors are ignored. */
 static grn_rc
 grn_ts_expr_value_node_evaluate(grn_ctx *ctx, grn_ts_expr_value_node *node,
                                 const grn_ts_record *in, size_t n_in,
@@ -1100,7 +1098,6 @@ grn_ts_expr_const_node_evaluate(grn_ctx *ctx, grn_ts_expr_const_node *node,
     return GRN_SUCCESS;\
   }
 /* grn_ts_expr_column_node_evaluate_scalar() outputs scalar column values. */
-/* FIXME: Errors are ignored. */
 static grn_rc
 grn_ts_expr_column_node_evaluate_scalar(grn_ctx *ctx,
                                         grn_ts_expr_column_node *node,
