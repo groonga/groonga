@@ -829,9 +829,12 @@ grn_ts_expr_column_node_open(grn_ctx *ctx, grn_obj *column,
       GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(UINT64)
       GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(FLOAT)
       GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(TIME)
-      GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(SHORT_TEXT)
-      GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(TEXT)
-      GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(LONG_TEXT)
+      case GRN_DB_SHORT_TEXT:
+      case GRN_DB_TEXT:
+      case GRN_DB_LONG_TEXT: {
+        GRN_TEXT_INIT(&new_node->buf, 0);
+        break;
+      }
       GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(TOKYO_GEO_POINT)
       GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(WGS84_GEO_POINT)
       default: {
@@ -1292,41 +1295,60 @@ grn_ts_expr_column_node_evaluate_vector(grn_ctx *ctx,
     GRN_TS_EXPR_COLUMN_NODE_EVALUATE_VECTOR_CASE_BLOCK(FLOAT, float)
     GRN_TS_EXPR_COLUMN_NODE_EVALUATE_VECTOR_CASE_BLOCK(TIME, time)
     case GRN_TS_TEXT_VECTOR: {
-      size_t i, offset = 0;
+      size_t i, j, total_n_bytes = 0, total_size = 0;
+      char *buf_ptr;
       grn_ts_text *text_ptr;
       grn_ts_text_vector *out_ptr = (grn_ts_text_vector *)out;
-      /* Read column values into node->buf and save the size of each value. */
+      /* Read encoded values into node->buf and save the size of each value. */
       GRN_BULK_REWIND(&node->buf);
       for (i = 0; i < n_in; i++) {
-        // FIXME: Errors are ignored.
-        if (grn_obj_get_value(ctx, node->column, in[i].id, &node->buf)) {
-          size_t size = grn_vector_size(ctx, &node->buf);
-          out_ptr[i].size = size - offset;
-          offset = size;
+        char *ptr;
+        size_t n_bytes, size;
+        grn_rc rc = grn_ts_ja_get_value(ctx, (grn_ja *)node->column, in[i].id,
+                                        &node->buf, &n_bytes);
+        if (rc == GRN_SUCCESS) {
+          ptr = GRN_BULK_HEAD(&node->buf) + total_n_bytes;
+          GRN_B_DEC(size, ptr);
         } else {
-          out_ptr[i].size = 0;
+          n_bytes = 0;
+          size = 0;
         }
+        memcpy(&out_ptr[i].ptr, &n_bytes, sizeof(n_bytes));
+        out_ptr[i].size = size;
+        total_n_bytes += n_bytes;
+        total_size += size;
       }
       /* Resize node->body.text_buf. */
-      if (node->body.text_buf.size < offset) {
-        size_t n_bytes = sizeof(grn_ts_text) * offset;
+      if (node->body.text_buf.size < total_size) {
+        size_t n_bytes = sizeof(grn_ts_text) * total_size;
         grn_ts_text *new_buf;
         new_buf = (grn_ts_text *)GRN_REALLOC(node->body.text_buf.ptr, n_bytes);
         if (!new_buf) {
-          return GRN_NO_MEMORY_AVAILABLE;
+          for (i = 0; i < n_in; i++) {
+            out_ptr[i] = grn_ts_text_vector_zero();
+          }
+          return GRN_SUCCESS;
         }
         node->body.text_buf.ptr = new_buf;
-        node->body.text_buf.size = offset;
+        node->body.text_buf.size = total_size;
       }
-      /* Compose the result. */
+      /* Decode values and compose the result. */
+      buf_ptr = GRN_BULK_HEAD(&node->buf);
       text_ptr = node->body.text_buf.ptr;
-      for (i = 0; i < offset; i++) {
-        text_ptr[i].size = grn_vector_get_element(ctx, &node->buf, i,
-                                                  &text_ptr[i].ptr,
-                                                  NULL, NULL);
-      }
       for (i = 0; i < n_in; i++) {
+        char *ptr = buf_ptr, end;
+        size_t n_bytes, size;
+        memcpy(&n_bytes, &out_ptr[i].ptr, sizeof(n_bytes));
+        buf_ptr += n_bytes;
+        GRN_B_DEC(size, ptr);
         out_ptr[i].ptr = text_ptr;
+        for (j = 0; j < out_ptr[i].size; j++) {
+          GRN_B_DEC(text_ptr[j].size, ptr);
+        }
+        for (j = 0; j < out_ptr[i].size; j++) {
+          text_ptr[j].ptr = ptr;
+          ptr += text_ptr[j].size;
+        }
         text_ptr += out_ptr[i].size;
       }
       return GRN_SUCCESS;
