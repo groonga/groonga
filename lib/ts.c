@@ -402,22 +402,24 @@ grn_ts_table_get_key(grn_ctx *ctx, grn_obj *table, grn_id id, size_t *size) {
 }
 #undef GRN_TS_TABLE_GET_KEY_CASE_BLOCK
 
-/* grn_ts_table_get_value() writes a value (_value) into buf. */
-static size_t
-grn_ts_table_get_value(grn_ctx *ctx, grn_obj *table, grn_id id, void *buf) {
+/* grn_ts_table_get_value() gets a reference to a value (_value). */
+static const void *
+grn_ts_table_get_value(grn_ctx *ctx, grn_obj *table, grn_id id) {
   switch (table->header.type) {
     case GRN_TABLE_HASH_KEY: {
-      return grn_hash_get_value(ctx, (grn_hash *)table, id, buf);
+      uint32_t size;
+      return grn_hash_get_value_(ctx, (grn_hash *)table, id, &size);
     }
     case GRN_TABLE_PAT_KEY: {
-      return grn_pat_get_value(ctx, (grn_pat *)table, id, buf);
+      uint32_t size;
+      return grn_pat_get_value_(ctx, (grn_pat *)table, id, &size);
     }
     /* GRN_TABLE_DAT_KEY does not support _value. */
     case GRN_TABLE_NO_KEY: {
-      return grn_array_get_value(ctx, (grn_array *)table, id, buf);
+      return _grn_array_get_value(ctx, (grn_array *)table, id);
     }
     default: {
-      return 0;
+      return NULL;
     }
   }
 }
@@ -956,25 +958,23 @@ grn_ts_expr_key_node_evaluate(grn_ctx *ctx, grn_ts_expr_key_node *node,
     size_t i;\
     grn_ts_ ## kind *out_ptr = (grn_ts_ ## kind *)out;\
     for (i = 0; i < n_in; i++) {\
-      size_t size = grn_ts_table_get_value(ctx, node->table, in[i].id,\
-                                           &out_ptr[i]);\
-      if (size != sizeof(out_ptr[i])) {\
-        out_ptr[i] = grn_ts_ ## kind ## _zero();\
-      }\
+      const grn_ts_ ## kind *value;\
+      value = (const grn_ts_ ## kind *)grn_ts_table_get_value(ctx,\
+                                                              node->table,\
+                                                              in[i].id);\
+      out_ptr[i] = value ? *value : grn_ts_ ## kind ## _zero();\
     }\
     return GRN_SUCCESS;\
   }
 #define GRN_TS_EXPR_VALUE_NODE_EVALUATE_INT_CASE_BLOCK(TYPE, type)\
   case GRN_DB_ ## TYPE: {\
+    size_t i;\
+    grn_ts_int *out_ptr = (grn_ts_int *)out;\
     for (i = 0; i < n_in; i++) {\
-      type ## _t value;\
-      size_t size = grn_ts_table_get_value(ctx, node->table, in[i].id,\
-                                           &value);\
-      if (size == sizeof(value)) {\
-        out_ptr[i] = (grn_ts_int)value;\
-      } else {\
-        out_ptr[i] = grn_ts_int_zero();\
-      }\
+      const type ## _t *value;\
+      value = (const type ## _t *)grn_ts_table_get_value(ctx, node->table,\
+                                                         in[i].id);\
+      out_ptr[i] = value ? (grn_ts_int)*value : grn_ts_int_zero();\
     }\
     return GRN_SUCCESS;\
   }
@@ -987,8 +987,6 @@ grn_ts_expr_value_node_evaluate(grn_ctx *ctx, grn_ts_expr_value_node *node,
   switch (node->data_kind) {
     GRN_TS_EXPR_VALUE_NODE_EVALUATE_CASE_BLOCK(BOOL, bool)
     case GRN_TS_INT: {
-      size_t i;
-      grn_ts_int *out_ptr = (grn_ts_int *)out;
       switch (node->data_type) {
         GRN_TS_EXPR_VALUE_NODE_EVALUATE_INT_CASE_BLOCK(INT8, int8)
         GRN_TS_EXPR_VALUE_NODE_EVALUATE_INT_CASE_BLOCK(INT16, int16)
@@ -1010,12 +1008,14 @@ grn_ts_expr_value_node_evaluate(grn_ctx *ctx, grn_ts_expr_value_node *node,
       size_t i;
       grn_ts_ref *out_ptr = (grn_ts_ref *)out;
       for (i = 0; i < n_in; i++) {
-        size_t size = grn_ts_table_get_value(ctx, node->table, in[i].id,
-                                             &out_ptr[i].id);
-        if (size != sizeof(grn_ts_id)) {
-          out_ptr[i] = grn_ts_ref_zero();
-        } else {
+        const grn_ts_id *value;
+        value = (const grn_ts_id *)grn_ts_table_get_value(ctx, node->table,
+                                                          in[i].id);
+        if (value) {
+          out_ptr[i].id = *value;
           out_ptr[i].score = in[i].score;
+        } else {
+          out_ptr[i] = grn_ts_ref_zero();
         }
       }
       return GRN_SUCCESS;
@@ -1421,10 +1421,10 @@ grn_ts_expr_value_node_filter(grn_ctx *ctx, grn_ts_expr_value_node *node,
                               grn_ts_record *out, size_t *n_out) {
   size_t i, count = 0;
   for (i = 0; i < n_in; i++) {
-    grn_ts_bool value;
-    size_t value_size = grn_ts_table_get_value(ctx, node->table, in[i].id,
-                                               &value);
-    if ((value_size == sizeof(value)) && value) {
+    const grn_ts_bool *value;
+    value = (const grn_ts_bool *)grn_ts_table_get_value(ctx, node->table,
+                                                        in[i].id);
+    if (value && *value) {
       out[count++] = in[i];
     }
   }
@@ -1542,11 +1542,11 @@ grn_ts_expr_value_node_adjust(grn_ctx *ctx, grn_ts_expr_value_node *node,
                               grn_ts_record *io, size_t n_io) {
   size_t i;
   for (i = 0; i < n_io; i++) {
-    grn_ts_float value;
-    size_t value_size = grn_ts_table_get_value(ctx, node->table, io[i].id,
-                                               &value);
-    if (value_size == sizeof(value)) {
-      io[i].score = (grn_ts_score)value;
+    const grn_ts_float *value;
+    value = (const grn_ts_float *)grn_ts_table_get_value(ctx, node->table,
+                                                         io[i].id);
+    if (value) {
+      io[i].score = (grn_ts_score)*value;
     }
   }
   return GRN_SUCCESS;
