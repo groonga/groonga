@@ -1200,6 +1200,128 @@ grn_ts_expr_column_node_evaluate_scalar(grn_ctx *ctx,
 #undef GRN_TS_EXPR_COLUMN_NODE_EVALUATE_SCALAR_INT_CASE_BLOCK
 #undef GRN_TS_EXPR_COLUMN_NODE_EVALUATE_SCALAR_CASE_BLOCK
 
+/*
+ * grn_ts_expr_column_node_evaluate_text_vector() outputs text vector column
+ * values.
+ */
+static grn_rc
+grn_ts_expr_column_node_evaluate_text_vector(grn_ctx *ctx,
+                                             grn_ts_expr_column_node *node,
+                                             const grn_ts_record *in,
+                                             size_t n_in, void *out) {
+  size_t i, j, total_n_bytes = 0, total_size = 0;
+  char *buf_ptr;
+  grn_ts_text *text_ptr;
+  grn_ts_text_vector *out_ptr = (grn_ts_text_vector *)out;
+  /* Read encoded values into node->buf and save the size of each value. */
+  GRN_BULK_REWIND(&node->buf);
+  for (i = 0; i < n_in; i++) {
+    char *ptr;
+    size_t n_bytes, size;
+    grn_rc rc = grn_ts_ja_get_value(ctx, (grn_ja *)node->column, in[i].id,
+                                    &node->buf, &n_bytes);
+    if (rc == GRN_SUCCESS) {
+      ptr = GRN_BULK_HEAD(&node->buf) + total_n_bytes;
+      GRN_B_DEC(size, ptr);
+    } else {
+      n_bytes = 0;
+      size = 0;
+    }
+    grn_memcpy(&out_ptr[i].ptr, &n_bytes, sizeof(n_bytes));
+    out_ptr[i].size = size;
+    total_n_bytes += n_bytes;
+    total_size += size;
+  }
+  /* Resize node->body.text_buf. */
+  if (node->body.text_buf.size < total_size) {
+    size_t n_bytes = sizeof(grn_ts_text) * total_size;
+    grn_ts_text *new_buf;
+    new_buf = (grn_ts_text *)GRN_REALLOC(node->body.text_buf.ptr, n_bytes);
+    if (!new_buf) {
+      for (i = 0; i < n_in; i++) {
+        out_ptr[i] = grn_ts_text_vector_zero();
+      }
+      return GRN_SUCCESS;
+    }
+    node->body.text_buf.ptr = new_buf;
+    node->body.text_buf.size = total_size;
+  }
+  /* Decode values and compose the result. */
+  buf_ptr = GRN_BULK_HEAD(&node->buf);
+  text_ptr = node->body.text_buf.ptr;
+  for (i = 0; i < n_in; i++) {
+    char *ptr = buf_ptr;
+    size_t n_bytes, size;
+    grn_memcpy(&n_bytes, &out_ptr[i].ptr, sizeof(n_bytes));
+    buf_ptr += n_bytes;
+    GRN_B_DEC(size, ptr);
+    out_ptr[i].ptr = text_ptr;
+    for (j = 0; j < out_ptr[i].size; j++) {
+      GRN_B_DEC(text_ptr[j].size, ptr);
+    }
+    for (j = 0; j < out_ptr[i].size; j++) {
+      text_ptr[j].ptr = ptr;
+      ptr += text_ptr[j].size;
+    }
+    text_ptr += out_ptr[i].size;
+  }
+  return GRN_SUCCESS;
+}
+
+/*
+ * grn_ts_expr_column_node_evaluate_ref_vector() outputs ref vector column
+ * values.
+ */
+static grn_rc
+grn_ts_expr_column_node_evaluate_ref_vector(grn_ctx *ctx,
+                                             grn_ts_expr_column_node *node,
+                                             const grn_ts_record *in,
+                                             size_t n_in, void *out) {
+  size_t i, j, offset = 0;
+  grn_ts_id *buf_ptr;
+  grn_ts_ref *ref_ptr;
+  grn_ts_ref_vector *out_ptr = (grn_ts_ref_vector *)out;
+  /* Read column values into node->buf and save the size of each value. */
+  GRN_BULK_REWIND(&node->buf);
+  for (i = 0; i < n_in; i++) {
+    size_t size;
+    grn_rc rc;
+    rc = grn_ts_ja_get_value(ctx, (grn_ja *)node->column, in[i].id,
+                             &node->buf, &size);
+    if (rc == GRN_SUCCESS) {
+      out_ptr[i].size = size / sizeof(grn_ts_id);
+      offset += out_ptr[i].size;
+    } else {
+      out_ptr[i].size = 0;
+    }
+  }
+  /* Resize node->body.ref_buf. */
+  if (node->body.ref_buf.size < offset) {
+    size_t n_bytes = sizeof(grn_ts_ref) * offset;
+    grn_ts_ref *new_buf;
+    new_buf = (grn_ts_ref *)GRN_REALLOC(node->body.ref_buf.ptr, n_bytes);
+    if (!new_buf) {
+      for (i = 0; i < n_in; i++) {
+        out_ptr[i] = grn_ts_ref_vector_zero();
+      }
+      return GRN_SUCCESS;
+    }
+    node->body.ref_buf.ptr = new_buf;
+    node->body.ref_buf.size = offset;
+  }
+  /* Compose the result. */
+  buf_ptr = (grn_ts_id *)GRN_BULK_HEAD(&node->buf);
+  ref_ptr = node->body.ref_buf.ptr;
+  for (i = 0; i < n_in; i++) {
+    out_ptr[i].ptr = ref_ptr;
+    for (j = 0; j < out_ptr[i].size; j++, buf_ptr++, ref_ptr++) {
+      ref_ptr->id = *buf_ptr;
+      ref_ptr->score = in[i].score;
+    }
+  }
+  return GRN_SUCCESS;
+}
+
 #define GRN_TS_EXPR_COLUMN_NODE_EVALUATE_VECTOR_CASE_BLOCK(KIND, kind)\
   case GRN_TS_ ## KIND ## _VECTOR: {\
     size_t i;\
@@ -1300,109 +1422,13 @@ grn_ts_expr_column_node_evaluate_vector(grn_ctx *ctx,
     GRN_TS_EXPR_COLUMN_NODE_EVALUATE_VECTOR_CASE_BLOCK(FLOAT, float)
     GRN_TS_EXPR_COLUMN_NODE_EVALUATE_VECTOR_CASE_BLOCK(TIME, time)
     case GRN_TS_TEXT_VECTOR: {
-      size_t i, j, total_n_bytes = 0, total_size = 0;
-      char *buf_ptr;
-      grn_ts_text *text_ptr;
-      grn_ts_text_vector *out_ptr = (grn_ts_text_vector *)out;
-      /* Read encoded values into node->buf and save the size of each value. */
-      GRN_BULK_REWIND(&node->buf);
-      for (i = 0; i < n_in; i++) {
-        char *ptr;
-        size_t n_bytes, size;
-        grn_rc rc = grn_ts_ja_get_value(ctx, (grn_ja *)node->column, in[i].id,
-                                        &node->buf, &n_bytes);
-        if (rc == GRN_SUCCESS) {
-          ptr = GRN_BULK_HEAD(&node->buf) + total_n_bytes;
-          GRN_B_DEC(size, ptr);
-        } else {
-          n_bytes = 0;
-          size = 0;
-        }
-        grn_memcpy(&out_ptr[i].ptr, &n_bytes, sizeof(n_bytes));
-        out_ptr[i].size = size;
-        total_n_bytes += n_bytes;
-        total_size += size;
-      }
-      /* Resize node->body.text_buf. */
-      if (node->body.text_buf.size < total_size) {
-        size_t n_bytes = sizeof(grn_ts_text) * total_size;
-        grn_ts_text *new_buf;
-        new_buf = (grn_ts_text *)GRN_REALLOC(node->body.text_buf.ptr, n_bytes);
-        if (!new_buf) {
-          for (i = 0; i < n_in; i++) {
-            out_ptr[i] = grn_ts_text_vector_zero();
-          }
-          return GRN_SUCCESS;
-        }
-        node->body.text_buf.ptr = new_buf;
-        node->body.text_buf.size = total_size;
-      }
-      /* Decode values and compose the result. */
-      buf_ptr = GRN_BULK_HEAD(&node->buf);
-      text_ptr = node->body.text_buf.ptr;
-      for (i = 0; i < n_in; i++) {
-        char *ptr = buf_ptr;
-        size_t n_bytes, size;
-        grn_memcpy(&n_bytes, &out_ptr[i].ptr, sizeof(n_bytes));
-        buf_ptr += n_bytes;
-        GRN_B_DEC(size, ptr);
-        out_ptr[i].ptr = text_ptr;
-        for (j = 0; j < out_ptr[i].size; j++) {
-          GRN_B_DEC(text_ptr[j].size, ptr);
-        }
-        for (j = 0; j < out_ptr[i].size; j++) {
-          text_ptr[j].ptr = ptr;
-          ptr += text_ptr[j].size;
-        }
-        text_ptr += out_ptr[i].size;
-      }
-      return GRN_SUCCESS;
+      return grn_ts_expr_column_node_evaluate_text_vector(ctx, node, in, n_in,
+                                                          out);
     }
     GRN_TS_EXPR_COLUMN_NODE_EVALUATE_VECTOR_CASE_BLOCK(GEO_POINT, geo_point)
     case GRN_TS_REF_VECTOR: {
-      size_t i, j, offset = 0;
-      grn_ts_id *buf_ptr;
-      grn_ts_ref *ref_ptr;
-      grn_ts_ref_vector *out_ptr = (grn_ts_ref_vector *)out;
-      /* Read column values into node->buf and save the size of each value. */
-      GRN_BULK_REWIND(&node->buf);
-      for (i = 0; i < n_in; i++) {
-        size_t size;
-        grn_rc rc;
-        rc = grn_ts_ja_get_value(ctx, (grn_ja *)node->column, in[i].id,
-                                 &node->buf, &size);
-        if (rc == GRN_SUCCESS) {
-          out_ptr[i].size = size / sizeof(grn_ts_id);
-          offset += out_ptr[i].size;
-        } else {
-          out_ptr[i].size = 0;
-        }
-      }
-      /* Resize node->body.ref_buf. */
-      if (node->body.ref_buf.size < offset) {
-        size_t n_bytes = sizeof(grn_ts_ref) * offset;
-        grn_ts_ref *new_buf;
-        new_buf = (grn_ts_ref *)GRN_REALLOC(node->body.ref_buf.ptr, n_bytes);
-        if (!new_buf) {
-          for (i = 0; i < n_in; i++) {
-            out_ptr[i] = grn_ts_ref_vector_zero();
-          }
-          return GRN_SUCCESS;
-        }
-        node->body.ref_buf.ptr = new_buf;
-        node->body.ref_buf.size = offset;
-      }
-      /* Compose the result. */
-      buf_ptr = (grn_ts_id *)GRN_BULK_HEAD(&node->buf);
-      ref_ptr = node->body.ref_buf.ptr;
-      for (i = 0; i < n_in; i++) {
-        out_ptr[i].ptr = ref_ptr;
-        for (j = 0; j < out_ptr[i].size; j++, buf_ptr++, ref_ptr++) {
-          ref_ptr->id = *buf_ptr;
-          ref_ptr->score = in[i].score;
-        }
-      }
-      return GRN_SUCCESS;
+      return grn_ts_expr_column_node_evaluate_ref_vector(ctx, node, in, n_in,
+                                                         out);
     }
     default: {
       return GRN_OBJECT_CORRUPT;
