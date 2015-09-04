@@ -1251,8 +1251,13 @@ grn_ts_expr_column_node_evaluate_scalar(grn_ctx *ctx,
           grn_rc rc = grn_bulk_write(ctx, &node->buf, (char *)&value,\
                                      sizeof(value));\
           if (rc != GRN_SUCCESS) {\
-            GRN_OBJ_FIN(ctx, &src_buf);\
-            return rc;\
+            if (j) {\
+              /* Cancel written values. */\
+              size_t size_written = sizeof(value) * j;\
+              grn_bulk_resize(ctx, &node->buf,\
+                              GRN_BULK_VSIZE(&node->buf) - size_written);\
+            }\
+            out_ptr[i].size = 0;\
           }\
         }\
       } else {\
@@ -1268,7 +1273,6 @@ grn_ts_expr_column_node_evaluate_scalar(grn_ctx *ctx,
     return GRN_SUCCESS;\
   }
 /* grn_ts_expr_column_node_evaluate_vector() outputs vector column values. */
-/* FIXME: Errors are ignored. */
 static grn_rc
 grn_ts_expr_column_node_evaluate_vector(grn_ctx *ctx,
                                         grn_ts_expr_column_node *node,
