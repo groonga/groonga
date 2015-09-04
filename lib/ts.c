@@ -1336,7 +1336,7 @@ grn_ts_expr_column_node_evaluate_vector(grn_ctx *ctx,
       buf_ptr = GRN_BULK_HEAD(&node->buf);
       text_ptr = node->body.text_buf.ptr;
       for (i = 0; i < n_in; i++) {
-        char *ptr = buf_ptr, end;
+        char *ptr = buf_ptr;
         size_t n_bytes, size;
         grn_memcpy(&n_bytes, &out_ptr[i].ptr, sizeof(n_bytes));
         buf_ptr += n_bytes;
