@@ -786,6 +786,11 @@ grn_ts_expr_const_node_open(grn_ctx *ctx, grn_ts_data_kind kind,
   return GRN_SUCCESS;
 }
 
+#define GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(TYPE)\
+  case GRN_DB_ ## TYPE: {\
+    GRN_ ## TYPE ## _INIT(&new_node->buf, GRN_OBJ_VECTOR);\
+    break;\
+  }
 /* grn_ts_expr_column_node_open() creates a node associated with a column. */
 static grn_rc
 grn_ts_expr_column_node_open(grn_ctx *ctx, grn_obj *column,
@@ -811,11 +816,36 @@ grn_ts_expr_column_node_open(grn_ctx *ctx, grn_obj *column,
   }
   new_node->data_type = DB_OBJ(column)->range;
   new_node->column = column;
-  GRN_TEXT_INIT(&new_node->buf, 0);
+  if (new_node->data_kind & GRN_TS_VECTOR_FLAG) {
+    switch (new_node->data_type) {
+      GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(BOOL)
+      GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(INT8)
+      GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(INT16)
+      GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(INT32)
+      GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(INT64)
+      GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(UINT8)
+      GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(UINT16)
+      GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(UINT32)
+      GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(UINT64)
+      GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(FLOAT)
+      GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(TIME)
+      GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(SHORT_TEXT)
+      GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(TEXT)
+      GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(LONG_TEXT)
+      GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(TOKYO_GEO_POINT)
+      GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(WGS84_GEO_POINT)
+      default: {
+        break;
+      }
+    }
+  } else {
+    GRN_TEXT_INIT(&new_node->buf, 0);
+  }
   new_node->body.buf = NULL;
   *node = (grn_ts_expr_node *)new_node;
   return GRN_SUCCESS;
 }
+#undef GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK
 
 /* grn_ts_expr_id_node_evaluate() outputs IDs. */
 static grn_rc
