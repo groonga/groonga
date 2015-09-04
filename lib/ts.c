@@ -1199,18 +1199,19 @@ grn_ts_expr_column_node_evaluate_scalar(grn_ctx *ctx,
 
 #define GRN_TS_EXPR_COLUMN_NODE_EVALUATE_VECTOR_CASE_BLOCK(KIND, kind)\
   case GRN_TS_ ## KIND ## _VECTOR: {\
-    size_t i, offset = 0;\
+    size_t i;\
     grn_ts_ ## kind *buf_ptr;\
     grn_ts_ ## kind ## _vector *out_ptr = (grn_ts_ ## kind ## _vector *)out;\
     /* Read column values into node->buf and save the size of each value. */\
     GRN_BULK_REWIND(&node->buf);\
     for (i = 0; i < n_in; i++) {\
-      if (grn_obj_get_value(ctx, node->column, in[i].id, &node->buf)) {\
-        size_t size = GRN_BULK_VSIZE(&node->buf) / sizeof(grn_ts_ ## kind);\
-        out_ptr[i].size = size - offset;\
-        offset = size;\
+      size_t size;\
+      grn_rc rc = grn_ts_ja_get_value(ctx, (grn_ja *)node->column, in[i].id,\
+                                      &node->buf, &size);\
+      if (rc == GRN_SUCCESS) {\
+        out_ptr[i].size = size / sizeof(grn_ts_ ## kind);\
       } else {\
-        return GRN_UNKNOWN_ERROR;\
+        out_ptr[i].size = 0;\
       }\
     }\
     buf_ptr = (grn_ts_ ## kind *)GRN_BULK_HEAD(&node->buf);\
@@ -1234,10 +1235,14 @@ grn_ts_expr_column_node_evaluate_scalar(grn_ctx *ctx,
      */\
     GRN_BULK_REWIND(&node->buf);\
     for (i = 0; i < n_in; i++) {\
+      grn_rc rc;\
+      size_t size;\
       GRN_BULK_REWIND(&src_buf);\
-      if (grn_obj_get_value(ctx, node->column, in[i].id, &src_buf)) {\
+      rc = grn_ts_ja_get_value(ctx, (grn_ja *)node->column, in[i].id,\
+                               &src_buf, &size);\
+      if (rc == GRN_SUCCESS) {\
         type ## _t *src_ptr = (type ## _t *)GRN_BULK_HEAD(&src_buf);\
-        out_ptr[i].size = GRN_BULK_VSIZE(&src_buf) / sizeof(type ## _t);\
+        out_ptr[i].size = size / sizeof(type ## _t);\
         for (j = 0; j < out_ptr[i].size; j++) {\
           grn_ts_int value = (grn_ts_int)src_ptr[j];\
           grn_rc rc = grn_bulk_write(ctx, &node->buf, (char *)&value,\
@@ -1248,8 +1253,7 @@ grn_ts_expr_column_node_evaluate_scalar(grn_ctx *ctx,
           }\
         }\
       } else {\
-        GRN_OBJ_FIN(ctx, &src_buf);\
-        return GRN_UNKNOWN_ERROR;\
+        out_ptr[i].size = 0;\
       }\
     }\
     buf_ptr = (grn_ts_int *)GRN_BULK_HEAD(&node->buf);\
@@ -1294,6 +1298,7 @@ grn_ts_expr_column_node_evaluate_vector(grn_ctx *ctx,
       /* Read column values into node->buf and save the size of each value. */
       GRN_BULK_REWIND(&node->buf);
       for (i = 0; i < n_in; i++) {
+        // FIXME: Errors are ignored.
         if (grn_obj_get_value(ctx, node->column, in[i].id, &node->buf)) {
           size_t size = grn_vector_size(ctx, &node->buf);
           out_ptr[i].size = size - offset;
@@ -1335,12 +1340,15 @@ grn_ts_expr_column_node_evaluate_vector(grn_ctx *ctx,
       /* Read column values into node->buf and save the size of each value. */
       GRN_BULK_REWIND(&node->buf);
       for (i = 0; i < n_in; i++) {
-        if (grn_obj_get_value(ctx, node->column, in[i].id, &node->buf)) {
-          size_t size = GRN_BULK_VSIZE(&node->buf) / sizeof(grn_ts_id);
-          out_ptr[i].size = size - offset;
-          offset = size;
+        size_t size;
+        grn_rc rc;
+        rc = grn_ts_ja_get_value(ctx, (grn_ja *)node->column, in[i].id,
+                                 &node->buf, &size);
+        if (rc == GRN_SUCCESS) {
+          out_ptr[i].size = size / sizeof(grn_ts_id);
+          offset += out_ptr[i].size;
         } else {
-          return GRN_UNKNOWN_ERROR;
+          out_ptr[i].size = 0;
         }
       }
       /* Resize node->body.ref_buf. */
@@ -1349,7 +1357,10 @@ grn_ts_expr_column_node_evaluate_vector(grn_ctx *ctx,
         grn_ts_ref *new_buf;
         new_buf = (grn_ts_ref *)GRN_REALLOC(node->body.ref_buf.ptr, n_bytes);
         if (!new_buf) {
-          return GRN_NO_MEMORY_AVAILABLE;
+          for (i = 0; i < n_in; i++) {
+            out_ptr[i] = grn_ts_ref_vector_zero();
+          }
+          return GRN_SUCCESS;
         }
         node->body.ref_buf.ptr = new_buf;
         node->body.ref_buf.size = offset;
