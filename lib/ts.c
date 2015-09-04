@@ -1258,6 +1258,7 @@ grn_ts_expr_column_node_evaluate_scalar(grn_ctx *ctx,
                               GRN_BULK_VSIZE(&node->buf) - size_written);\
             }\
             out_ptr[i].size = 0;\
+            break;\
           }\
         }\
       } else {\
