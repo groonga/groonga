@@ -484,7 +484,7 @@ grn_array_create_io_array(grn_ctx *ctx, const char *path, uint32_t value_size)
   array_spec[GRN_ARRAY_BITMAP_SEGMENT].w_of_element = 0;
   array_spec[GRN_ARRAY_BITMAP_SEGMENT].max_n_segments = 1U << (30 - (22 + 3));
   return grn_io_create_with_array(ctx, path, sizeof(struct grn_array_header),
-                                  GRN_ARRAY_SEGMENT_SIZE, grn_io_auto,
+                                  GRN_ARRAY_SEGMENT_SIZE, GRN_IO_AUTO,
                                   2, array_spec);
 }
 
@@ -574,7 +574,7 @@ grn_array *
 grn_array_open(grn_ctx *ctx, const char *path)
 {
   if (ctx) {
-    grn_io * const io = grn_io_open(ctx, path, grn_io_auto);
+    grn_io * const io = grn_io_open(ctx, path, GRN_IO_AUTO);
     if (io) {
       struct grn_array_header * const header = grn_io_header(io);
       if (grn_io_get_type(io) == GRN_TABLE_NO_KEY) {
@@ -1565,7 +1565,7 @@ grn_io_hash_create_io(grn_ctx *ctx, const char *path,
   array_spec[GRN_HASH_BITMAP_SEGMENT].max_n_segments = 1U << (30 - (22 + 3));
   return grn_io_create_with_array(ctx, path, header_size,
                                   GRN_HASH_SEGMENT_SIZE,
-                                  grn_io_auto, 4, array_spec);
+                                  GRN_IO_AUTO, 4, array_spec);
 }
 
 static grn_rc
@@ -1752,7 +1752,7 @@ grn_hash *
 grn_hash_open(grn_ctx *ctx, const char *path)
 {
   if (ctx) {
-    grn_io * const io = grn_io_open(ctx, path, grn_io_auto);
+    grn_io * const io = grn_io_open(ctx, path, GRN_IO_AUTO);
     if (io) {
       grn_hash_header_common * const header = grn_io_header(io);
       if (grn_io_get_type(io) == GRN_TABLE_HASH_KEY) {
@@ -3142,7 +3142,7 @@ grn_rhash_init(grn_ctx *ctx, grn_hash *hash, grn_rec_unit record_unit, int recor
   grn_rc rc;
   record_size = grn_rec_unit_size(record_unit, record_size);
   subrec_size = grn_rec_unit_size(subrec_unit, subrec_size);
-  if (record_unit != grn_rec_userdef && subrec_unit != grn_rec_userdef) {
+  if (record_unit != GRN_REC_USERDEF && subrec_unit != GRN_REC_USERDEF) {
     subrec_size -= record_size;
   }
   if (!hash) { return GRN_INVALID_ARGUMENT; }
@@ -3262,12 +3262,12 @@ grn_rhash_group(grn_hash *s, int limit, grn_group_optarg *optarg)
   unsigned int rsize;
   if (!s || !s->index) { return NULL; }
   if (optarg) {
-    unit = grn_rec_userdef;
+    unit = GRN_REC_USERDEF;
     rsize = optarg->key_size;
     funcp = optarg->func ? 1 : 0;
     dir = (optarg->mode == grn_sort_ascending) ? -1 : 1;
   } else {
-    unit = grn_rec_document;
+    unit = GRN_REC_DOCUMENT;
     rsize = grn_rec_unit_size(unit, sizeof(grn_id));
     funcp = 0;
     dir = 1;
@@ -3341,30 +3341,30 @@ grn_rhash_subrec_info(grn_hash *s, grn_id rh, int index,
   if (score) { *score = p[0]; }
   if (subrec) { *subrec = &p[1]; }
   switch (s->record_unit) {
-  case grn_rec_document :
+  case GRN_REC_DOCUMENT:
     if (rid) { *rid = pi->rid; }
-    if (section) { *section = (s->subrec_unit != grn_rec_userdef) ? p[1] : 0; }
-    if (pos) { *pos = (s->subrec_unit == grn_rec_position) ? p[2] : 0; }
+    if (section) { *section = (s->subrec_unit != GRN_REC_USERDEF) ? p[1] : 0; }
+    if (pos) { *pos = (s->subrec_unit == GRN_REC_POSITION) ? p[2] : 0; }
     break;
-  case grn_rec_section :
+  case GRN_REC_SECTION:
     if (rid) { *rid = pi->rid; }
     if (section) { *section = pi->sid; }
-    if (pos) { *pos = (s->subrec_unit == grn_rec_position) ? p[1] : 0; }
+    if (pos) { *pos = (s->subrec_unit == GRN_REC_POSITION) ? p[1] : 0; }
     break;
   default :
     pi = (grn_rset_posinfo *)&p[1];
     switch (s->subrec_unit) {
-    case grn_rec_document :
+    case GRN_REC_DOCUMENT:
       if (rid) { *rid = pi->rid; }
       if (section) { *section = 0; }
       if (pos) { *pos = 0; }
       break;
-    case grn_rec_section :
+    case GRN_REC_SECTION:
       if (rid) { *rid = pi->rid; }
       if (section) { *section = pi->sid; }
       if (pos) { *pos = 0; }
       break;
-    case grn_rec_position :
+    case GRN_REC_POSITION:
       if (rid) { *rid = pi->rid; }
       if (section) { *section = pi->sid; }
       if (pos) { *pos = pi->pos; }

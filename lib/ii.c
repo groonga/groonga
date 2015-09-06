@@ -330,7 +330,7 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
       iw_.addr = NULL;
       gseg = &ii->header->garbages[m - GRN_II_W_LEAST_CHUNK];
       while (*gseg != NOT_ASSIGNED) {
-        ginfo = WIN_MAP(ii->chunk, ctx, &iw, *gseg, 0, S_GARBAGE, grn_io_rdwr);
+        ginfo = WIN_MAP(ii->chunk, ctx, &iw, *gseg, 0, S_GARBAGE, GRN_IO_RDWR);
         //GRN_IO_SEG_MAP2(ii->chunk, *gseg, ginfo);
         if (!ginfo) {
           if (iw_.addr) { grn_io_win_unmap(&iw_); }
@@ -403,7 +403,7 @@ chunk_free(grn_ctx *ctx, grn_ii *ii, uint32_t offset, uint32_t dummy, uint32_t s
   gseg = &ii->header->garbages[m - GRN_II_W_LEAST_CHUNK];
   iw_.addr = NULL;
   while (*gseg != NOT_ASSIGNED) {
-    ginfo = WIN_MAP(ii->chunk, ctx, &iw, *gseg, 0, S_GARBAGE, grn_io_rdwr);
+    ginfo = WIN_MAP(ii->chunk, ctx, &iw, *gseg, 0, S_GARBAGE, GRN_IO_RDWR);
     // GRN_IO_SEG_MAP2(ii->chunk, *gseg, ginfo);
     if (!ginfo) {
       if (iw_.addr) { grn_io_win_unmap(&iw_); }
@@ -420,7 +420,7 @@ chunk_free(grn_ctx *ctx, grn_ii *ii, uint32_t offset, uint32_t dummy, uint32_t s
       if (iw_.addr) { grn_io_win_unmap(&iw_); }
       return rc;
     }
-    ginfo = WIN_MAP(ii->chunk, ctx, &iw, *gseg, 0, S_GARBAGE, grn_io_rdwr);
+    ginfo = WIN_MAP(ii->chunk, ctx, &iw, *gseg, 0, S_GARBAGE, GRN_IO_RDWR);
     /*
     uint32_t i = 0;
     while (HEADER_CHUNK_AT(ii, i)) {
@@ -2503,7 +2503,7 @@ chunk_flush(grn_ctx *ctx, grn_ii *ii, chunk_info *cinfo, uint8_t *enc, uint32_t 
   grn_io_win dw;
   if (encsize) {
     if (!(rc = chunk_new(ctx, ii, &dcn, encsize))) {
-      if ((dc = WIN_MAP(ii->chunk, ctx, &dw, dcn, 0, encsize, grn_io_wronly))) {
+      if ((dc = WIN_MAP(ii->chunk, ctx, &dw, dcn, 0, encsize, GRN_IO_WRONLY))) {
         grn_memcpy(dc, enc, encsize);
         grn_io_win_unmap(&dw);
         cinfo->segno = dcn;
@@ -2531,7 +2531,7 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, buffer_term *bt,
   uint32_t segno = cinfo->segno, size = cinfo->size, sdf = 0, ndf = 0;
   uint32_t *ridp = NULL, *sidp = NULL, *tfp, *weightp = NULL, *posp = NULL;
   docinfo cid = {0, 0, 0, 0, 0}, lid = {0, 0, 0, 0, 0}, bid = *bidp;
-  uint8_t *scp = WIN_MAP(ii->chunk, ctx, &sw, segno, 0, size, grn_io_rdonly);
+  uint8_t *scp = WIN_MAP(ii->chunk, ctx, &sw, segno, 0, size, GRN_IO_RDONLY);
   if (scp) {
     uint16_t nextb = *nextbp;
     uint32_t snn = 0, *srp, *ssp = NULL, *stp, *sop = NULL, *snp;
@@ -2905,7 +2905,7 @@ fake_map(grn_ctx *ctx, grn_io *io, grn_io_win *iw, void *addr, uint32_t seg, uin
   iw->ctx = ctx;
   iw->diff = 0;
   iw->io = io;
-  iw->mode = grn_io_wronly;
+  iw->mode = GRN_IO_WRONLY;
   iw->segment = ((seg) >> GRN_II_N_CHUNK_VARIATION);
   iw->offset = (((seg) & ((1 << GRN_II_N_CHUNK_VARIATION) - 1)) << GRN_II_W_LEAST_CHUNK);
   iw->size = size;
@@ -2932,7 +2932,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
       if ((dc = GRN_MALLOC(max_dest_chunk_size * 2))) {
         if ((scn = sb->header.chunk) == NOT_ASSIGNED ||
             (sc = WIN_MAP(ii->chunk, ctx, &sw, scn, 0,
-                          sb->header.chunk_size, grn_io_rdonly))) {
+                          sb->header.chunk_size, GRN_IO_RDONLY))) {
           uint16_t n = sb->header.nterms;
           memset(db, 0, S_SEGMENT);
           grn_memcpy(db->terms, sb->terms, n * sizeof(buffer_term));
@@ -3028,7 +3028,7 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
     GRN_OUTPUT_CSTR("void chunk size");
     GRN_OUTPUT_INT64(sb->header.chunk_size);
   } else {
-    if ((sc = WIN_MAP(ii->chunk, ctx, &sw, scn, 0, sb->header.chunk_size, grn_io_rdonly))) {
+    if ((sc = WIN_MAP(ii->chunk, ctx, &sw, scn, 0, sb->header.chunk_size, GRN_IO_RDONLY))) {
       GRN_OUTPUT_CSTR("chunk size");
       GRN_OUTPUT_INT64(sb->header.chunk_size);
     } else {
@@ -3274,7 +3274,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
           if ((dc1 = GRN_MALLOC(max_dest_chunk_size * 2))) {
             if ((scn = sb->header.chunk) == NOT_ASSIGNED ||
                 (sc = WIN_MAP(ii->chunk, ctx, &sw, scn, 0,
-                              sb->header.chunk_size, grn_io_rdonly))) {
+                              sb->header.chunk_size, GRN_IO_RDONLY))) {
               term_split(ctx, ii->lexicon, sb, db0, db1);
               if (!(rc = buffer_merge(ctx, ii, seg, h, sb, sc, db0, dc0))) {
                 actual_db0_chunk_size = db0->header.chunk_size;
@@ -3510,15 +3510,15 @@ _grn_ii_create(grn_ctx *ctx, grn_ii *ii, const char *path, grn_obj *lexicon, uin
   }
   if (path && strlen(path) + 6 >= PATH_MAX) { return NULL; }
   seg = grn_io_create(ctx, path, sizeof(struct grn_ii_header),
-                      S_SEGMENT, MAX_PSEG, grn_io_auto, GRN_IO_EXPIRE_SEGMENT);
+                      S_SEGMENT, MAX_PSEG, GRN_IO_AUTO, GRN_IO_EXPIRE_SEGMENT);
   if (!seg) { return NULL; }
   if (path) {
     grn_strcpy(path2, PATH_MAX, path);
     grn_strcat(path2, PATH_MAX, ".c");
-    chunk = grn_io_create(ctx, path2, 0, S_CHUNK, GRN_II_MAX_CHUNK, grn_io_auto,
+    chunk = grn_io_create(ctx, path2, 0, S_CHUNK, GRN_II_MAX_CHUNK, GRN_IO_AUTO,
                           GRN_IO_EXPIRE_SEGMENT);
   } else {
-    chunk = grn_io_create(ctx, NULL, 0, S_CHUNK, GRN_II_MAX_CHUNK, grn_io_auto, 0);
+    chunk = grn_io_create(ctx, NULL, 0, S_CHUNK, GRN_II_MAX_CHUNK, GRN_IO_AUTO, 0);
   }
   if (!chunk) {
     grn_io_close(ctx, seg);
@@ -3636,9 +3636,9 @@ grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
   if (strlen(path) + 6 >= PATH_MAX) { return NULL; }
   grn_strcpy(path2, PATH_MAX, path);
   grn_strcat(path2, PATH_MAX, ".c");
-  seg = grn_io_open(ctx, path, grn_io_auto);
+  seg = grn_io_open(ctx, path, GRN_IO_AUTO);
   if (!seg) { return NULL; }
-  chunk = grn_io_open(ctx, path2, grn_io_auto);
+  chunk = grn_io_open(ctx, path2, GRN_IO_AUTO);
   if (!chunk) {
     grn_io_close(ctx, seg);
     return NULL;
@@ -4036,7 +4036,7 @@ chunk_is_reused(grn_ctx *ctx, grn_ii *ii, grn_ii_cursor *c, uint32_t offset, uin
     gseg = ii->header->garbages[m - GRN_II_W_LEAST_CHUNK];
     while (gseg != NOT_ASSIGNED) {
       grn_io_win iw;
-      grn_ii_ginfo *ginfo = WIN_MAP(ii->chunk, ctx, &iw, gseg, 0, S_GARBAGE, grn_io_rdwr);
+      grn_ii_ginfo *ginfo = WIN_MAP(ii->chunk, ctx, &iw, gseg, 0, S_GARBAGE, GRN_IO_RDWR);
       if (!ginfo) { break; }
       for (i = 0; i < ginfo->nrecs; i++) {
         if (ginfo->recs[i] == offset) {
@@ -4101,7 +4101,7 @@ grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
       c->ppseg = &ii->header->binfo[LSEG(pos)];
       if (bt->size_in_chunk && (chunk = c->buf->header.chunk) != NOT_ASSIGNED) {
         if (!(c->cp = WIN_MAP(ii->chunk, ctx, &c->iw, chunk, bt->pos_in_chunk,
-                              bt->size_in_chunk, grn_io_rdonly))) {
+                              bt->size_in_chunk, GRN_IO_RDONLY))) {
           buffer_close(ctx, ii, c->buffer_pseg);
           GRN_FREE(c);
           c = NULL;
@@ -4247,7 +4247,7 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
                 uint32_t size = c->cinfo[c->curr_chunk].size;
                 if (size && (cp = WIN_MAP(c->ii->chunk, ctx, &iw,
                                           c->cinfo[c->curr_chunk].segno, 0,
-                                          size, grn_io_rdonly))) {
+                                          size, GRN_IO_RDONLY))) {
                   grn_p_decv(ctx, cp, size, c->rdv, c->ii->n_elements);
                   grn_io_win_unmap(&iw);
                   if (chunk_is_reused(ctx, c->ii, c,
@@ -5813,10 +5813,10 @@ bt_pop(btr *bt)
 #endif /* USE_BHEAP */
 
 typedef enum {
-  grn_wv_none = 0,
-  grn_wv_static,
-  grn_wv_dynamic,
-  grn_wv_constant
+  GRN_WV_NONE = 0,
+  GRN_WV_STATIC,
+  GRN_WV_DYNAMIC,
+  GRN_WV_CONSTANT
 } grn_wv_mode;
 
 inline static double
@@ -5824,11 +5824,11 @@ get_weight(grn_ctx *ctx, grn_hash *s, grn_id rid, int sid,
            grn_wv_mode wvm, grn_select_optarg *optarg)
 {
   switch (wvm) {
-  case grn_wv_none :
+  case GRN_WV_NONE :
     return 1;
-  case grn_wv_static :
+  case GRN_WV_STATIC :
     return sid <= optarg->vector_size ? optarg->weight_vector[sid - 1] : 0;
-  case grn_wv_dynamic :
+  case GRN_WV_DYNAMIC :
     /* todo : support hash with keys
     if (s->keys) {
       uint32_t key_size;
@@ -5839,7 +5839,7 @@ get_weight(grn_ctx *ctx, grn_hash *s, grn_id rid, int sid,
     */
     /* todo : cast */
     return optarg->func(ctx, (void *)s, (void *)(intptr_t)rid, sid, optarg->func_arg);
-  case grn_wv_constant :
+  case GRN_WV_CONSTANT :
     return optarg->vector_size;
   default :
     return 1;
@@ -5913,7 +5913,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
     int w2, rep;
     grn_ii_cursor *c;
     grn_ii_posting *pos;
-    grn_wv_mode wvm = grn_wv_none;
+    grn_wv_mode wvm = GRN_WV_NONE;
     grn_table_sort_optarg arg = {
       GRN_TABLE_SORT_DESC|GRN_TABLE_SORT_BY_VALUE|GRN_TABLE_SORT_AS_NUMBER,
       NULL,
@@ -5928,13 +5928,13 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
     }
     grn_hash_sort(ctx, h, limit, sorted, &arg);
     /* todo support subrec
-    rep = (s->record_unit == grn_rec_position || s->subrec_unit == grn_rec_position);
+    rep = (s->record_unit == GRN_REC_POSITION || s->subrec_unit == GRN_REC_POSITION);
     */
     rep = 0;
     if (optarg->func) {
-      wvm = grn_wv_dynamic;
+      wvm = GRN_WV_DYNAMIC;
     } else if (optarg->vector_size) {
-      wvm = optarg->weight_vector ? grn_wv_static : grn_wv_constant;
+      wvm = optarg->weight_vector ? GRN_WV_STATIC : GRN_WV_CONSTANT;
     }
     for (j = 1; j <= limit; j++) {
       grn_array_get_value(ctx, sorted, j, &id);
@@ -5991,7 +5991,7 @@ grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
   grn_ii_posting *pos;
   int skip, rep, policy;
   grn_rc rc = GRN_SUCCESS;
-  grn_wv_mode wvm = grn_wv_none;
+  grn_wv_mode wvm = GRN_WV_NONE;
   if (!ii || !string || !string_len || !s || !optarg) {
     return GRN_INVALID_ARGUMENT;
   }
@@ -6000,15 +6000,15 @@ grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
   }
   policy = optarg->max_interval;
   if (optarg->func) {
-    wvm = grn_wv_dynamic;
+    wvm = GRN_WV_DYNAMIC;
   } else if (optarg->vector_size) {
-    wvm = optarg->weight_vector ? grn_wv_static : grn_wv_constant;
+    wvm = optarg->weight_vector ? GRN_WV_STATIC : GRN_WV_CONSTANT;
   }
   /* todo support subrec
   if (policy == TERM_EXTRACT_EACH_POST) {
     if ((rc = grn_records_reopen(s, grn_rec_section, grn_rec_none, 0))) { goto exit; }
   }
-  rep = (s->record_unit == grn_rec_position || s->subrec_unit == grn_rec_position);
+  rep = (s->record_unit == GRN_REC_POSITION || s->subrec_unit == GRN_REC_POSITION);
   */
   rep = 0;
   grn_string_get_normalized(ctx, nstr, &normalized, &normalized_length_in_bytes,
@@ -6363,7 +6363,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
   uint32_t n = 0, rid, sid, nrid, nsid;
   grn_bool only_skip_token = GRN_FALSE;
   grn_operator mode = GRN_OP_EXACT;
-  grn_wv_mode wvm = grn_wv_none;
+  grn_wv_mode wvm = GRN_WV_NONE;
   grn_obj *lexicon = ii->lexicon;
   grn_scorer_score_func *score_func = NULL;
   grn_scorer_matched_record record;
@@ -6372,9 +6372,9 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
   if (optarg) {
     mode = optarg->mode;
     if (optarg->func) {
-      wvm = grn_wv_dynamic;
+      wvm = GRN_WV_DYNAMIC;
     } else if (optarg->vector_size) {
-      wvm = optarg->weight_vector ? grn_wv_static : grn_wv_constant;
+      wvm = optarg->weight_vector ? GRN_WV_STATIC : GRN_WV_CONSTANT;
     }
   }
   if (mode == GRN_OP_SIMILAR) {
@@ -6387,8 +6387,8 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
     return grn_ii_select_regexp(ctx, ii, string, string_len, s, op, optarg);
   }
   /* todo : support subrec
-  rep = (s->record_unit == grn_rec_position || s->subrec_unit == grn_rec_position);
-  orp = (s->record_unit == grn_rec_position || op == GRN_OP_OR);
+  rep = (s->record_unit == GRN_REC_POSITION || s->subrec_unit == GRN_REC_POSITION);
+  orp = (s->record_unit == GRN_REC_POSITION || op == GRN_OP_OR);
   */
   rep = 0;
   orp = op == GRN_OP_OR;
@@ -6912,7 +6912,7 @@ grn_ii_cursor_next_all(grn_ctx *ctx, grn_ii_cursor *c)
                 uint32_t size = c->cinfo[c->curr_chunk].size;
                 if (size && (cp = WIN_MAP(c->ii->chunk, ctx, &iw,
                                           c->cinfo[c->curr_chunk].segno, 0,
-                                          size, grn_io_rdonly))) {
+                                          size, GRN_IO_RDONLY))) {
                   grn_p_decv(ctx, cp, size, c->rdv, c->ii->n_elements);
                   grn_io_win_unmap(&iw);
                 } else {

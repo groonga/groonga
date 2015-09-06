@@ -95,9 +95,9 @@ typedef struct {
 } sis_node;
 
 enum {
-  segment_key = 0,
-  segment_pat = 1,
-  segment_sis = 2
+  SEGMENT_KEY = 0,
+  SEGMENT_PAT = 1,
+  SEGMENT_SIS = 2,
 };
 
 /* bit operation */
@@ -110,7 +110,7 @@ enum {
 
 #define PAT_AT(pat,id,n) do {\
   int flags = 0;\
-  GRN_IO_ARRAY_AT(pat->io, segment_pat, id, &flags, n);\
+  GRN_IO_ARRAY_AT(pat->io, SEGMENT_PAT, id, &flags, n);\
 } while (0)
 
 inline static pat_node *
@@ -119,7 +119,7 @@ pat_get(grn_ctx *ctx, grn_pat *pat, grn_id id)
   pat_node *res;
   int flags = GRN_TABLE_ADD;
   if (id > GRN_ID_MAX) { return NULL; }
-  GRN_IO_ARRAY_AT(pat->io, segment_pat, id, &flags, res);
+  GRN_IO_ARRAY_AT(pat->io, SEGMENT_PAT, id, &flags, res);
   return res;
 }
 
@@ -145,7 +145,7 @@ sis_at(grn_ctx *ctx, grn_pat *pat, grn_id id)
   sis_node *res;
   int flags = 0;
   if (id > GRN_ID_MAX) { return NULL; }
-  GRN_IO_ARRAY_AT(pat->io, segment_sis, id, &flags, res);
+  GRN_IO_ARRAY_AT(pat->io, SEGMENT_SIS, id, &flags, res);
   return res;
 }
 
@@ -155,7 +155,7 @@ sis_get(grn_ctx *ctx, grn_pat *pat, grn_id id)
   sis_node *res;
   int flags = GRN_TABLE_ADD;
   if (id > GRN_ID_MAX) { return NULL; }
-  GRN_IO_ARRAY_AT(pat->io, segment_sis, id, &flags, res);
+  GRN_IO_ARRAY_AT(pat->io, SEGMENT_SIS, id, &flags, res);
   return res;
 }
 
@@ -185,7 +185,7 @@ sis_collect(grn_ctx *ctx, grn_pat *pat, grn_hash *h, grn_id id, uint32_t level)
 
 #define KEY_AT(pat,pos,ptr,addp) do {\
   int flags = addp;\
-  GRN_IO_ARRAY_AT(pat->io, segment_key, pos, &flags, ptr);\
+  GRN_IO_ARRAY_AT(pat->io, SEGMENT_KEY, pos, &flags, ptr);\
 } while (0)
 
 inline static uint32_t
@@ -399,14 +399,14 @@ _grn_pat_create(grn_ctx *ctx, grn_pat *pat,
   }
   {
     grn_io_array_spec array_spec[3];
-    array_spec[segment_key].w_of_element = 0;
-    array_spec[segment_key].max_n_segments = 0x400;
-    array_spec[segment_pat].w_of_element = 4;
-    array_spec[segment_pat].max_n_segments = 1 << (30 - (22 - 4));
-    array_spec[segment_sis].w_of_element = w_of_element;
-    array_spec[segment_sis].max_n_segments = 1 << (30 - (22 - w_of_element));
+    array_spec[SEGMENT_KEY].w_of_element = 0;
+    array_spec[SEGMENT_KEY].max_n_segments = 0x400;
+    array_spec[SEGMENT_PAT].w_of_element = 4;
+    array_spec[SEGMENT_PAT].max_n_segments = 1 << (30 - (22 - 4));
+    array_spec[SEGMENT_SIS].w_of_element = w_of_element;
+    array_spec[SEGMENT_SIS].max_n_segments = 1 << (30 - (22 - w_of_element));
     io = grn_io_create_with_array(ctx, path, sizeof(struct grn_pat_header),
-                                  GRN_PAT_SEGMENT_SIZE, grn_io_auto, 3, array_spec);
+                                  GRN_PAT_SEGMENT_SIZE, GRN_IO_AUTO, 3, array_spec);
   }
   if (!io) { return NULL; }
   if (encoding == GRN_ENC_DEFAULT) { encoding = grn_gctx.encoding; }
@@ -508,7 +508,7 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   grn_pat *pat;
   pat_node *node0;
   struct grn_pat_header *header;
-  io = grn_io_open(ctx, path, grn_io_auto);
+  io = grn_io_open(ctx, path, GRN_IO_AUTO);
   if (!io) { return NULL; }
   header = grn_io_header(io);
   if (grn_io_get_type(io) != GRN_TABLE_PAT_KEY) {

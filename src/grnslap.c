@@ -319,8 +319,8 @@ do_client()
 }
 
 enum {
-  flag_usage = 1,
-  flag_verbose = 2
+  FLAG_USAGE = 1,
+  FLAG_VERBOSE = 2
 };
 
 int
@@ -332,8 +332,8 @@ main(int argc, char **argv)
     {'P', NULL, NULL, 0, GETOPT_OP_NONE},
     {'m', NULL, NULL, 0, GETOPT_OP_NONE},
     {'t', NULL, NULL, 0, GETOPT_OP_NONE},
-    {'h', NULL, NULL, flag_usage, GETOPT_OP_ON},
-    {'v', NULL, NULL, flag_verbose, GETOPT_OP_ON},
+    {'h', NULL, NULL, FLAG_USAGE, GETOPT_OP_ON},
+    {'v', NULL, NULL, FLAG_VERBOSE, GETOPT_OP_ON},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &protostr;
@@ -343,7 +343,7 @@ main(int argc, char **argv)
   if (protostr) { proto = *protostr; }
   if (maxconstr) { max_con = atoi(maxconstr); }
   if (maxtpstr) { max_tp = atoi(maxtpstr); }
-  if (flags & flag_verbose) { verbose = 1; }
+  if (flags & FLAG_VERBOSE) { verbose = 1; }
 
   if (argc <= i) {
     dests[0].host = DEFAULT_HOST;
@@ -356,16 +356,16 @@ main(int argc, char **argv)
         dest_cnt++;
       }
     }
-    if (!dest_cnt) { flags |= flag_usage; }
+    if (!dest_cnt) { flags |= FLAG_USAGE; }
   } else {
     /* too much dests */
-    flags |= flag_usage;
+    flags |= FLAG_USAGE;
   }
 
   grn_default_logger_set_path(GRN_LOG_PATH);
 
   if (grn_init()) { return -1; }
-  if (flags & flag_usage) {
+  if (flags & FLAG_USAGE) {
     usage(); r = -1;
   } else {
     r = do_client();

@@ -145,14 +145,14 @@ ccdump(void)
 }
 
 enum {
-  ctype_null = 0,
-  ctype_alpha,
-  ctype_digit,
-  ctype_symbol,
-  ctype_hiragana,
-  ctype_katakana,
-  ctype_kanji,
-  ctype_others
+  CTYPE_NULL = 0,
+  CTYPE_ALPHA,
+  CTYPE_DIGIT,
+  CTYPE_SYMBOL,
+  CTYPE_HIRAGANA,
+  CTYPE_KATAKANA,
+  CTYPE_KANJI,
+  CTYPE_OTHERS
 };
 
 static const char *ctypes[] = {
@@ -193,20 +193,20 @@ gcdump(void)
     case UBLOCK_CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B: /* cjk letter */
     case UBLOCK_CJK_COMPATIBILITY_IDEOGRAPHS_SUPPLEMENT: /* cjk letter */
     case UBLOCK_CJK_STROKES: /* kakijun*/
-      ctype = ctype_kanji;
+      ctype = CTYPE_KANJI;
       break;
     case UBLOCK_CJK_SYMBOLS_AND_PUNCTUATION: /* symbols ex. JIS mark */
     case UBLOCK_ENCLOSED_CJK_LETTERS_AND_MONTHS: /* ex. (kabu) */
     case UBLOCK_CJK_COMPATIBILITY: /* symbols ex. ton doll */
     case UBLOCK_CJK_COMPATIBILITY_FORMS: /* symbols ex. tategaki kagi-kakko */
-      ctype = ctype_symbol;
+      ctype = CTYPE_SYMBOL;
       break;
     case UBLOCK_HIRAGANA:
-      ctype = ctype_hiragana;
+      ctype = CTYPE_HIRAGANA;
       break;
     case UBLOCK_KATAKANA:
     case UBLOCK_KATAKANA_PHONETIC_EXTENSIONS:
-      ctype = ctype_katakana;
+      ctype = CTYPE_KATAKANA;
       break;
     default:
       cat = u_charType(ch);
@@ -216,12 +216,12 @@ gcdump(void)
       case U_TITLECASE_LETTER:
       case U_MODIFIER_LETTER:
       case U_OTHER_LETTER:
-        ctype = ctype_alpha;
+        ctype = CTYPE_ALPHA;
         break;
       case U_DECIMAL_DIGIT_NUMBER:
       case U_LETTER_NUMBER:
       case U_OTHER_NUMBER:
-        ctype = ctype_digit;
+        ctype = CTYPE_DIGIT;
         break;
       case U_DASH_PUNCTUATION:
       case U_START_PUNCTUATION:
@@ -232,10 +232,10 @@ gcdump(void)
       case U_CURRENCY_SYMBOL:
       case U_MODIFIER_SYMBOL:
       case U_OTHER_SYMBOL:
-        ctype = ctype_symbol;
+        ctype = CTYPE_SYMBOL;
         break;
       default:
-        ctype = ctype_others;
+        ctype = CTYPE_OTHERS;
         break;
       }
       break;

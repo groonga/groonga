@@ -66,6 +66,15 @@
 #define OUT_JSON 0
 #define OUT_TSV  1
 
+enum {
+  MODE_DEFAULT= 0,
+  MODE_LIST,
+  MODE_GET,
+  MODE_PUT,
+  MODE_TIME,
+  MODE_USAGE
+};
+
 static int grntest_outtype = OUT_JSON;
 
 static grn_critical_section grntest_cs;
@@ -2171,11 +2180,6 @@ check_server(grn_ctx *ctx)
   return 0;
 }
 
-#define MODE_LIST 1
-#define MODE_GET  2
-#define MODE_PUT  3
-#define MODE_TIME 4
-
 static int
 check_response(char *buf)
 {
@@ -2788,12 +2792,6 @@ usage(void)
   exit(1);
 }
 
-enum {
-  mode_default = 0,
-  mode_list,
-  mode_usage,
-};
-
 #define MODE_MASK      0x007f
 #define MODE_FTP       0x0080
 #define MODE_LOCALONLY 0x0100
@@ -2964,9 +2962,9 @@ main(int argc, char **argv)
     {'p', "port", NULL, 0, GETOPT_OP_NONE},
     {'\0', "log-output-dir", NULL, 0, GETOPT_OP_NONE},
     {'\0', "output-type", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "dir", NULL, mode_list, GETOPT_OP_UPDATE},
+    {'\0', "dir", NULL, MODE_LIST, GETOPT_OP_UPDATE},
     {'\0', "ftp", NULL, MODE_FTP, GETOPT_OP_ON},
-    {'h', "help", NULL, mode_usage, GETOPT_OP_UPDATE},
+    {'h', "help", NULL, MODE_USAGE, GETOPT_OP_UPDATE},
     {'\0', "localonly", NULL, MODE_LOCALONLY, GETOPT_OP_ON},
     {'\0', "onmemory", NULL, MODE_ONMEMORY, GETOPT_OP_ON},
     {'\0', "owndb", NULL, MODE_OWNDB, GETOPT_OP_ON},
@@ -2992,12 +2990,12 @@ main(int argc, char **argv)
   }
 
   switch (mode & MODE_MASK) {
-  case mode_list :
+  case MODE_LIST:
     ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, "*.scr", 1, "data",
              NULL);
     return 0;
     break;
-  case mode_usage :
+  case MODE_USAGE:
     usage();
     break;
   default :
