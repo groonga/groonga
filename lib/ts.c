@@ -2183,6 +2183,7 @@ grn_ts_expr_push(grn_ctx *ctx, grn_ts_expr *expr,
   } else if ((str_size == 5) && !memcmp(str, "false", 5)) {
     return grn_ts_expr_push_bool(ctx, expr, GRN_FALSE);
   } else if (isdigit((unsigned char)str[0])) {
+    /* Push a number (Int or Float). */
     char *buf, *end;
     grn_rc rc;
     grn_ts_int int_value;
@@ -2207,6 +2208,7 @@ grn_ts_expr_push(grn_ctx *ctx, grn_ts_expr *expr,
     GRN_FREE(buf);
     return rc;
   } else if (str[0] == '"') {
+    /* Push a Text. */
     char *buf;
     size_t i, len, end;
     grn_rc rc;
@@ -2250,6 +2252,7 @@ grn_ts_expr_push(grn_ctx *ctx, grn_ts_expr *expr,
     GRN_FREE(buf);
     return rc;
   } else {
+    /* Push a column. */
     grn_rc rc;
     grn_obj *column = grn_obj_column(ctx, expr->curr_table, str, str_size);
     if (!column) {
