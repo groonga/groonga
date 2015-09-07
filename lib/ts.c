@@ -2205,6 +2205,49 @@ grn_ts_expr_push(grn_ctx *ctx, grn_ts_expr *expr,
     }
     GRN_FREE(buf);
     return rc;
+  } else if (str[0] == '"') {
+    char *buf;
+    size_t i, len, end;
+    grn_rc rc;
+    if (str[str_size - 1] != '"') {
+      return GRN_INVALID_ARGUMENT;
+    }
+    if (str_size == 2) {
+      return grn_ts_expr_push_text(ctx, expr, grn_ts_text_zero());
+    }
+    buf = GRN_MALLOCN(char, str_size - 2);
+    if (!buf) {
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+    rc = GRN_SUCCESS;
+    len = 0;
+    end = str_size - 1;
+    for (i = 1; (rc == GRN_SUCCESS) && (i < end); i++) {
+      switch (str[i]) {
+        case '\\': {
+          if (i == (end - 1)) {
+            rc = GRN_INVALID_ARGUMENT;
+            break;
+          }
+          buf[len++] = str[++i];
+          break;
+        }
+        case '"': {
+          rc = GRN_INVALID_ARGUMENT;
+          break;
+        }
+        default: {
+          buf[len++] = str[i];
+          break;
+        }
+      }
+    }
+    if (rc == GRN_SUCCESS) {
+      grn_ts_text value = { buf, len };
+      rc = grn_ts_expr_push_text(ctx, expr, value);
+    }
+    GRN_FREE(buf);
+    return rc;
   } else {
     grn_rc rc;
     grn_obj *column = grn_obj_column(ctx, expr->curr_table, str, str_size);
