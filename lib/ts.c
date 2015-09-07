@@ -24,6 +24,7 @@
 
 #include <ctype.h>
 #include <math.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "grn_ctx_impl.h"
@@ -2182,15 +2183,28 @@ grn_ts_expr_push(grn_ctx *ctx, grn_ts_expr *expr,
   } else if ((str_size == 5) && !memcmp(str, "false", 5)) {
     return grn_ts_expr_push_bool(ctx, expr, GRN_FALSE);
   } else if (isdigit((unsigned char)str[0])) {
-    char buf[1024];
-    grn_ts_int value;
-    if (str_size >= sizeof(buf)) {
-      return GRN_INVALID_ARGUMENT;
+    char *buf, *end;
+    grn_rc rc;
+    grn_ts_int int_value;
+    buf = GRN_MALLOCN(char, str_size + 1);
+    if (!buf) {
+      return GRN_NO_MEMORY_AVAILABLE;
     }
     grn_memcpy(buf, str, str_size);
     buf[str_size] = '\0';
-    value = strtol(buf, NULL, 10);
-    return grn_ts_expr_push_int(ctx, expr, value);
+    int_value = strtol(buf, &end, 0);
+    if (*end == '\0') {
+      rc = grn_ts_expr_push_int(ctx, expr, int_value);
+    } else if (*end == '.') {
+      grn_ts_float float_value = strtod(buf, &end);
+      if (*end == '\0') {
+        rc = grn_ts_expr_push_float(ctx, expr, float_value);
+      } else {
+        rc = GRN_INVALID_ARGUMENT;
+      }
+    }
+    GRN_FREE(buf);
+    return rc;
   } else {
     grn_rc rc;
     grn_obj *column = grn_obj_column(ctx, expr->curr_table, str, str_size);
@@ -2201,8 +2215,6 @@ grn_ts_expr_push(grn_ctx *ctx, grn_ts_expr *expr,
     grn_obj_unlink(ctx, column);
     return rc;
   }
-  // TODO: Parse the given string and push it.
-  return GRN_SUCCESS;
 }
 
 #define GRN_TS_EXPR_PUSH_BULK_CASE_BLOCK(TYPE, kind)\
