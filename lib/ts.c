@@ -2192,6 +2192,7 @@ grn_ts_expr_push(grn_ctx *ctx, grn_ts_expr *expr,
     }
     grn_memcpy(buf, str, str_size);
     buf[str_size] = '\0';
+    // FIXME: strtol() converts a string to a long integer, not int64_t.
     int_value = strtol(buf, &end, 0);
     if (*end == '\0') {
       rc = grn_ts_expr_push_int(ctx, expr, int_value);
