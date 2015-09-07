@@ -259,6 +259,118 @@ grn_ts_data_type_to_kind(grn_ts_data_type type) {
   }
 }
 
+/* grn_ts_bool_output() outputs a value. */
+static grn_rc
+grn_ts_bool_output(grn_ctx *ctx, grn_ts_bool value) {
+  if (value) {
+    return grn_bulk_write(ctx, ctx->impl->outbuf, "true", 4);
+  } else {
+    return grn_bulk_write(ctx, ctx->impl->outbuf, "false", 5);
+  }
+}
+
+/* grn_ts_int_output() outputs a value. */
+static grn_rc
+grn_ts_int_output(grn_ctx *ctx, grn_ts_int value) {
+  return grn_text_lltoa(ctx, ctx->impl->outbuf, value);
+}
+
+/* grn_ts_float_output() outputs a value. */
+static grn_rc
+grn_ts_float_output(grn_ctx *ctx, grn_ts_float value) {
+  return grn_text_ftoa(ctx, ctx->impl->outbuf, value);
+}
+
+/* grn_ts_time_output() outputs a value. */
+static grn_rc
+grn_ts_time_output(grn_ctx *ctx, grn_ts_time value) {
+  return grn_text_ftoa(ctx, ctx->impl->outbuf, value * 0.000001);
+}
+
+/* grn_ts_text_output() outputs a value. */
+static grn_rc
+grn_ts_text_output(grn_ctx *ctx, grn_ts_text value) {
+  return grn_text_esc(ctx, ctx->impl->outbuf, value.ptr, value.size);
+}
+
+/* grn_ts_geo_point_output() outputs a value. */
+static grn_rc
+grn_ts_geo_point_output(grn_ctx *ctx, grn_ts_geo_point value) {
+  grn_rc rc = grn_bulk_write(ctx, ctx->impl->outbuf, "\"", 1);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  rc = grn_text_itoa(ctx, ctx->impl->outbuf, value.latitude);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  rc = grn_bulk_write(ctx, ctx->impl->outbuf, "x", 1);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  rc = grn_text_itoa(ctx, ctx->impl->outbuf, value.longitude);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  return grn_bulk_write(ctx, ctx->impl->outbuf, "\"", 1);
+}
+
+#define GRN_TS_VECTOR_OUTPUT(kind)\
+  size_t i;\
+  grn_rc rc = grn_bulk_write(ctx, ctx->impl->outbuf, "[", 1);\
+  if (rc != GRN_SUCCESS) {\
+    return rc;\
+  }\
+  for (i = 0; i < value.size; ++i) {\
+    if (i) {\
+      rc = grn_bulk_write(ctx, ctx->impl->outbuf, ",", 1);\
+      if (rc != GRN_SUCCESS) {\
+        return rc;\
+      }\
+    }\
+    rc = grn_ts_ ## kind ## _output(ctx, value.ptr[i]);\
+    if (rc != GRN_SUCCESS) {\
+      return rc;\
+    }\
+  }\
+  return grn_bulk_write(ctx, ctx->impl->outbuf, "]", 1);
+/* grn_ts_bool_vector_output() outputs a value. */
+static grn_rc
+grn_ts_bool_vector_output(grn_ctx *ctx, grn_ts_bool_vector value) {
+  GRN_TS_VECTOR_OUTPUT(bool)
+}
+
+/* grn_ts_int_vector_output() outputs a value. */
+static grn_rc
+grn_ts_int_vector_output(grn_ctx *ctx, grn_ts_int_vector value) {
+  GRN_TS_VECTOR_OUTPUT(int)
+}
+
+/* grn_ts_float_vector_output() outputs a value. */
+static grn_rc
+grn_ts_float_vector_output(grn_ctx *ctx, grn_ts_float_vector value) {
+  GRN_TS_VECTOR_OUTPUT(float)
+}
+
+/* grn_ts_time_vector_output() outputs a value. */
+static grn_rc
+grn_ts_time_vector_output(grn_ctx *ctx, grn_ts_time_vector value) {
+  GRN_TS_VECTOR_OUTPUT(time)
+}
+
+/* grn_ts_text_vector_output() outputs a value. */
+static grn_rc
+grn_ts_text_vector_output(grn_ctx *ctx, grn_ts_text_vector value) {
+  GRN_TS_VECTOR_OUTPUT(text)
+}
+
+/* grn_ts_geo_point_vector_output() outputs a value. */
+static grn_rc
+grn_ts_geo_point_vector_output(grn_ctx *ctx, grn_ts_geo_point_vector value) {
+  GRN_TS_VECTOR_OUTPUT(geo_point)
+}
+#undef GRN_TS_VECTOR_OUTPUT
+
 /* grn_ts_data_kind_to_type() returns a type associated with a kind. */
 static grn_ts_data_type
 grn_ts_data_kind_to_type(grn_ts_data_kind kind) {
@@ -2794,6 +2906,190 @@ grn_ts_select_output_parse(grn_ctx *ctx, grn_obj *table,
   return GRN_SUCCESS;
 }
 
+#define GRN_TS_SELECT_OUTPUT_COLUMNS_CASE_BLOCK(TYPE, name)\
+  case GRN_DB_ ## TYPE: {\
+    GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, name);\
+    break;\
+  }
+/* grn_ts_select_output_columns() outputs column names and data types. */
+// FIXME: Errors are ignored.
+static grn_rc
+grn_ts_select_output_columns(grn_ctx *ctx, const grn_ts_text *names,
+                             grn_ts_expr **exprs, size_t n_exprs) {
+  GRN_OUTPUT_ARRAY_OPEN("COLUMNS", n_exprs);
+  for (size_t i = 0; i < n_exprs; ++i) {
+    GRN_OUTPUT_ARRAY_OPEN("COLUMN", 2);
+    /* Output a column name. */
+    GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '"');
+    GRN_TEXT_PUT(ctx, ctx->impl->outbuf, names[i].ptr, names[i].size);
+    GRN_TEXT_PUT(ctx, ctx->impl->outbuf, "\",\"", 3);
+    /* Output a data type. */
+    switch (exprs[i]->data_type) {
+      case GRN_DB_VOID: {
+        if (exprs[i]->data_kind == GRN_TS_GEO_POINT) {
+          GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "GeoPoint");
+        } else {
+          GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Void");
+        }
+        break;
+      }
+      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE_BLOCK(BOOL, "Bool")
+      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE_BLOCK(INT8, "Int8")
+      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE_BLOCK(INT16, "Int16")
+      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE_BLOCK(INT32, "Int32")
+      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE_BLOCK(INT64, "Int64")
+      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE_BLOCK(UINT8, "UInt8")
+      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE_BLOCK(UINT16, "UInt16")
+      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE_BLOCK(UINT32, "UInt32")
+      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE_BLOCK(UINT64, "UInt64")
+      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE_BLOCK(FLOAT, "Float")
+      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE_BLOCK(TIME, "Time")
+      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE_BLOCK(SHORT_TEXT, "ShortText")
+      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE_BLOCK(TEXT, "Text")
+      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE_BLOCK(LONG_TEXT, "LongText")
+      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE_BLOCK(TOKYO_GEO_POINT, "TokyoGeoPoint")
+      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE_BLOCK(WGS84_GEO_POINT, "WGS84GeoPoint")
+      default: {
+        grn_obj *obj = grn_ctx_at(ctx, exprs[i]->data_type);
+        if (obj && grn_ts_obj_is_table(ctx, obj)) {
+          char name[GRN_TABLE_MAX_KEY_SIZE];
+          int len = grn_obj_name(ctx, obj, name, sizeof(name));
+          GRN_TEXT_PUT(ctx, ctx->impl->outbuf, name, len);
+          grn_obj_unlink(ctx, obj);
+        } else {
+          GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Unknown");
+        }
+        break;
+      }
+    }
+    GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '"');
+    GRN_OUTPUT_ARRAY_CLOSE();
+  }
+  GRN_OUTPUT_ARRAY_CLOSE(); /* COLUMNS. */
+  return GRN_SUCCESS;
+}
+#undef GRN_TS_SELECT_OUTPUT_COLUMNS_CASE_BLOCK
+
+/* grn_ts_select_output_values() evaluates expressions and output results. */
+// FIXME: Errors are ignored.
+static grn_rc
+grn_ts_select_output_values(grn_ctx *ctx, const grn_ts_record *in, size_t n_in,
+                            grn_ts_expr **exprs, size_t n_exprs) {
+  grn_rc rc = GRN_SUCCESS;
+  size_t i, j, count = 0;
+  void **bufs;
+
+  if (!n_in) {
+    return GRN_SUCCESS;
+  }
+  bufs = GRN_MALLOCN(void *, n_exprs);
+  if (!bufs) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+
+  /* Allocate memory for results. */
+  for (i = 0; i < n_exprs; i++) {
+    switch (exprs[i]->data_kind) {
+#define GRN_TS_SELECT_OUTPUT_MALLOC_CASE_BLOCK(KIND, kind)\
+  case GRN_TS_ ## KIND: {\
+    bufs[i] = GRN_MALLOCN(grn_ts_ ## kind, GRN_TS_BATCH_SIZE);\
+    break;\
+  }
+#define GRN_TS_SELECT_OUTPUT_MALLOC_VECTOR_CASE_BLOCK(KIND, kind)\
+  GRN_TS_SELECT_OUTPUT_MALLOC_CASE_BLOCK(KIND ## _VECTOR, kind ## _vector)
+      GRN_TS_SELECT_OUTPUT_MALLOC_CASE_BLOCK(BOOL, bool)
+      GRN_TS_SELECT_OUTPUT_MALLOC_CASE_BLOCK(INT, int)
+      GRN_TS_SELECT_OUTPUT_MALLOC_CASE_BLOCK(FLOAT, float)
+      GRN_TS_SELECT_OUTPUT_MALLOC_CASE_BLOCK(TIME, time)
+      GRN_TS_SELECT_OUTPUT_MALLOC_CASE_BLOCK(TEXT, text)
+      GRN_TS_SELECT_OUTPUT_MALLOC_CASE_BLOCK(GEO_POINT, geo_point)
+      GRN_TS_SELECT_OUTPUT_MALLOC_VECTOR_CASE_BLOCK(BOOL, bool)
+      GRN_TS_SELECT_OUTPUT_MALLOC_VECTOR_CASE_BLOCK(INT, int)
+      GRN_TS_SELECT_OUTPUT_MALLOC_VECTOR_CASE_BLOCK(FLOAT, float)
+      GRN_TS_SELECT_OUTPUT_MALLOC_VECTOR_CASE_BLOCK(TIME, time)
+      GRN_TS_SELECT_OUTPUT_MALLOC_VECTOR_CASE_BLOCK(TEXT, text)
+      GRN_TS_SELECT_OUTPUT_MALLOC_VECTOR_CASE_BLOCK(GEO_POINT, geo_point)
+#undef GRN_TS_SELECT_OUTPUT_MALLOC_VECTOR_CASE_BLOCK
+#undef GRN_TS_SELECT_OUTPUT_MALLOC_CASE_BLOCK
+      default: {
+        bufs[i] = NULL;
+        // FIXME: GRN_OBJECT_CORRUPT?
+        break;
+      }
+    }
+    if (!bufs[i]) {
+      while (i) {
+        GRN_FREE(bufs[--i]);
+      }
+      GRN_FREE(bufs);
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+  }
+
+  /* Evaluate expressions and output results. */
+  while (count < n_in) {
+    size_t batch_size = GRN_TS_BATCH_SIZE;
+    if (batch_size > (n_in - count)) {
+      batch_size = n_in - count;
+    }
+    for (i = 0; i < n_exprs; ++i) {
+      if (!bufs[i]) {
+        continue;
+      }
+      rc = grn_ts_expr_evaluate(ctx, exprs[i], in + count,
+                                batch_size, bufs[i]);
+      if (rc != GRN_SUCCESS) {
+        break;
+      }
+    }
+    for (i = 0; i < batch_size; ++i) {
+      GRN_OUTPUT_ARRAY_OPEN("HIT", n_exprs);
+      for (j = 0; j < n_exprs; ++j) {
+        if (j) {
+          GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
+        }
+#define GRN_TS_SELECT_OUTPUT_CASE_BLOCK(KIND, kind)\
+  case GRN_TS_ ## KIND: {\
+    grn_ts_ ## kind *value = (grn_ts_ ## kind *)bufs[j];\
+    grn_ts_ ## kind ## _output(ctx, value[i]);\
+    break;\
+  }
+#define GRN_TS_SELECT_OUTPUT_VECTOR_CASE_BLOCK(KIND, kind)\
+  GRN_TS_SELECT_OUTPUT_CASE_BLOCK(KIND ## _VECTOR, kind ## _vector)
+        switch (exprs[j]->data_kind) {
+          GRN_TS_SELECT_OUTPUT_CASE_BLOCK(BOOL, bool);
+          GRN_TS_SELECT_OUTPUT_CASE_BLOCK(INT, int);
+          GRN_TS_SELECT_OUTPUT_CASE_BLOCK(FLOAT, float);
+          GRN_TS_SELECT_OUTPUT_CASE_BLOCK(TIME, time);
+          GRN_TS_SELECT_OUTPUT_CASE_BLOCK(TEXT, text);
+          GRN_TS_SELECT_OUTPUT_CASE_BLOCK(GEO_POINT, geo_point);
+          GRN_TS_SELECT_OUTPUT_VECTOR_CASE_BLOCK(BOOL, bool);
+          GRN_TS_SELECT_OUTPUT_VECTOR_CASE_BLOCK(INT, int);
+          GRN_TS_SELECT_OUTPUT_VECTOR_CASE_BLOCK(FLOAT, float);
+          GRN_TS_SELECT_OUTPUT_VECTOR_CASE_BLOCK(TIME, time);
+          GRN_TS_SELECT_OUTPUT_VECTOR_CASE_BLOCK(TEXT, text);
+          GRN_TS_SELECT_OUTPUT_VECTOR_CASE_BLOCK(GEO_POINT, geo_point);
+#undef GRN_TS_SELECT_OUTPUT_VECTOR_CASE_BLOCK
+#undef GRN_TS_SELECT_OUTPUT_CASE_BLOCK
+          default: {
+            break;
+          }
+        }
+      }
+      GRN_OUTPUT_ARRAY_CLOSE(); /* HITS. */
+    }
+    count += batch_size;
+  }
+
+  for (i = 0; i < n_exprs; i++) {
+    if (bufs[i]) {
+      GRN_FREE(bufs[i]);
+    }
+  }
+  GRN_FREE(bufs);
+  return rc;
+}
+
 /* grn_ts_select_output() outputs the results. */
 /* FIXME: Too long. */
 /* FIXME: Errors are ignored. */
@@ -2803,7 +3099,7 @@ grn_ts_select_output(grn_ctx *ctx, grn_obj *table,
                      const grn_ts_record *in, size_t n_in, size_t n_hits) {
   grn_rc rc;
   grn_ts_expr **exprs = NULL;
-  size_t i, j, k, n_exprs = 0;
+  size_t i, n_exprs = 0;
   grn_obj name_buf;
   grn_ts_text *names = NULL;
 
@@ -2848,263 +3144,16 @@ grn_ts_select_output(grn_ctx *ctx, grn_obj *table,
   grn_text_ulltoa(ctx, ctx->impl->outbuf, n_hits);
   GRN_OUTPUT_ARRAY_CLOSE(); /* NHITS. */
 
-  GRN_OUTPUT_ARRAY_OPEN("COLUMNS", n_exprs);
-  for (size_t i = 0; i < n_exprs; ++i) {
-    GRN_OUTPUT_ARRAY_OPEN("COLUMN", 2);
-    GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '"');
-    GRN_TEXT_PUT(ctx, ctx->impl->outbuf, names[i].ptr, names[i].size);
-    GRN_TEXT_PUT(ctx, ctx->impl->outbuf, "\",\"", 3);
-    switch (exprs[i]->data_type) {
-      case GRN_DB_VOID: {
-        if (exprs[i]->data_kind == GRN_TS_GEO_POINT) {
-          GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "GeoPoint");
-        } else {
-          GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Void");
-        }
-        break;
-      }
-#define GRN_TS_SELECT_OUTPUT_TYPE_CASE_BLOCK(TYPE, name)\
-  case GRN_DB_ ## TYPE: {\
-    GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, name);\
-    break;\
+  rc = grn_ts_select_output_columns(ctx, names, exprs, n_exprs);
+  if (rc != GRN_SUCCESS) {
+    // FIXME: Stop here.
   }
-      GRN_TS_SELECT_OUTPUT_TYPE_CASE_BLOCK(BOOL, "Bool")
-      GRN_TS_SELECT_OUTPUT_TYPE_CASE_BLOCK(INT8, "Int8")
-      GRN_TS_SELECT_OUTPUT_TYPE_CASE_BLOCK(INT16, "Int16")
-      GRN_TS_SELECT_OUTPUT_TYPE_CASE_BLOCK(INT32, "Int32")
-      GRN_TS_SELECT_OUTPUT_TYPE_CASE_BLOCK(INT64, "Int64")
-      GRN_TS_SELECT_OUTPUT_TYPE_CASE_BLOCK(UINT8, "UInt8")
-      GRN_TS_SELECT_OUTPUT_TYPE_CASE_BLOCK(UINT16, "UInt16")
-      GRN_TS_SELECT_OUTPUT_TYPE_CASE_BLOCK(UINT32, "UInt32")
-      GRN_TS_SELECT_OUTPUT_TYPE_CASE_BLOCK(UINT64, "UInt64")
-      GRN_TS_SELECT_OUTPUT_TYPE_CASE_BLOCK(FLOAT, "Float")
-      GRN_TS_SELECT_OUTPUT_TYPE_CASE_BLOCK(TIME, "Time")
-      GRN_TS_SELECT_OUTPUT_TYPE_CASE_BLOCK(SHORT_TEXT, "ShortText")
-      GRN_TS_SELECT_OUTPUT_TYPE_CASE_BLOCK(TEXT, "Text")
-      GRN_TS_SELECT_OUTPUT_TYPE_CASE_BLOCK(LONG_TEXT, "LongText")
-      GRN_TS_SELECT_OUTPUT_TYPE_CASE_BLOCK(TOKYO_GEO_POINT, "TokyoGeoPoint")
-      GRN_TS_SELECT_OUTPUT_TYPE_CASE_BLOCK(WGS84_GEO_POINT, "WGS84GeoPoint")
-#undef GRN_TS_SELECT_OUTPUT_TYPE_CASE_BLOCK
-      default: {
-        grn_obj *obj = grn_ctx_at(ctx, exprs[i]->data_type);
-        if (obj && grn_ts_obj_is_table(ctx, obj)) {
-          char name[GRN_TABLE_MAX_KEY_SIZE];
-          int len = grn_obj_name(ctx, obj, name, sizeof(name));
-          GRN_TEXT_PUT(ctx, ctx->impl->outbuf, name, len);
-          grn_obj_unlink(ctx, obj);
-        } else {
-          GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Unknown");
-        }
-        break;
-      }
-    }
-    GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '"');
-    GRN_OUTPUT_ARRAY_CLOSE();
-  }
-  GRN_OUTPUT_ARRAY_CLOSE(); /* COLUMNS. */
 
-  if (n_in) {
-    size_t count = 0;
-    void **bufs = GRN_MALLOCN(void *, n_exprs);
-    if (bufs) {
-      for (i = 0; i < n_exprs; i++) {
-        switch (exprs[i]->data_kind) {
-#define GRN_TS_SELECT_OUTPUT_MALLOC_CASE_BLOCK(KIND, kind)\
-  case GRN_TS_ ## KIND: {\
-    bufs[i] = GRN_MALLOCN(grn_ts_ ## kind, GRN_TS_BATCH_SIZE);\
-    break;\
+  rc = grn_ts_select_output_values(ctx, in, n_in, exprs, n_exprs);
+  if (rc != GRN_SUCCESS) {
+    // FIXME: Stop here.
   }
-#define GRN_TS_SELECT_OUTPUT_MALLOC_VECTOR_CASE_BLOCK(KIND, kind)\
-  GRN_TS_SELECT_OUTPUT_MALLOC_CASE_BLOCK(KIND ## _VECTOR, kind ## _vector)
-          GRN_TS_SELECT_OUTPUT_MALLOC_CASE_BLOCK(BOOL, bool)
-          GRN_TS_SELECT_OUTPUT_MALLOC_CASE_BLOCK(INT, int)
-          GRN_TS_SELECT_OUTPUT_MALLOC_CASE_BLOCK(FLOAT, float)
-          GRN_TS_SELECT_OUTPUT_MALLOC_CASE_BLOCK(TIME, time)
-          GRN_TS_SELECT_OUTPUT_MALLOC_CASE_BLOCK(TEXT, text)
-          GRN_TS_SELECT_OUTPUT_MALLOC_CASE_BLOCK(GEO_POINT, geo_point)
-          GRN_TS_SELECT_OUTPUT_MALLOC_VECTOR_CASE_BLOCK(BOOL, bool)
-          GRN_TS_SELECT_OUTPUT_MALLOC_VECTOR_CASE_BLOCK(INT, int)
-          GRN_TS_SELECT_OUTPUT_MALLOC_VECTOR_CASE_BLOCK(FLOAT, float)
-          GRN_TS_SELECT_OUTPUT_MALLOC_VECTOR_CASE_BLOCK(TIME, time)
-          GRN_TS_SELECT_OUTPUT_MALLOC_VECTOR_CASE_BLOCK(TEXT, text)
-          GRN_TS_SELECT_OUTPUT_MALLOC_VECTOR_CASE_BLOCK(GEO_POINT, geo_point)
-#undef GRN_TS_SELECT_OUTPUT_MALLOC_VECTOR_CASE_BLOCK
-#undef GRN_TS_SELECT_OUTPUT_MALLOC_CASE_BLOCK
-          default: {
-            bufs[i] = NULL;
-            break;
-          }
-        }
-      }
-      while (count < n_in) {
-        size_t batch_size = GRN_TS_BATCH_SIZE;
-        if (batch_size > (n_in - count)) {
-          batch_size = n_in - count;
-        }
-        for (i = 0; i < n_exprs; ++i) {
-          if (!bufs[i]) {
-            continue;
-          }
-          grn_ts_expr_evaluate(ctx, exprs[i], in + count, batch_size, bufs[i]);
-        }
-        for (i = 0; i < batch_size; ++i) {
-          GRN_OUTPUT_ARRAY_OPEN("HIT", n_exprs);
-          for (j = 0; j < n_exprs; ++j) {
-            if (j) {
-              GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
-            }
-            if (!bufs[j]) {
-              GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "null");
-              continue;
-            }
-            /* TODO: Define a function for each data kind. */
-            switch (exprs[j]->data_kind) {
-              case GRN_TS_BOOL: {
-                grn_ts_bool *batch = (grn_ts_bool *)bufs[j];
-                if (batch[i]) {
-                  GRN_TEXT_PUT(ctx, ctx->impl->outbuf, "true", 4);
-                } else {
-                  GRN_TEXT_PUT(ctx, ctx->impl->outbuf, "false", 5);
-                }
-                break;
-              }
-              case GRN_TS_INT: {
-                grn_ts_int *batch = (grn_ts_int *)bufs[j];
-                grn_text_lltoa(ctx, ctx->impl->outbuf, batch[i]);
-                break;
-              }
-              case GRN_TS_FLOAT: {
-                grn_ts_float *batch = (grn_ts_float *)bufs[j];
-                grn_text_ftoa(ctx, ctx->impl->outbuf, batch[i]);
-                break;
-              }
-              case GRN_TS_TIME: {
-                grn_ts_time *batch = (grn_ts_time *)bufs[j];
-                grn_text_ftoa(ctx, ctx->impl->outbuf, batch[i] * 0.000001);
-                break;
-              }
-              case GRN_TS_TEXT: {
-                grn_ts_text *batch = (grn_ts_text *)bufs[j];
-                grn_text_esc(ctx, ctx->impl->outbuf,
-                             batch[i].ptr, batch[i].size);
-                break;
-              }
-              case GRN_TS_GEO_POINT: {
-                grn_ts_geo_point *batch = (grn_ts_geo_point *)bufs[j];
-                GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '"');
-                grn_text_itoa(ctx, ctx->impl->outbuf, batch[i].latitude);
-                GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, 'x');
-                grn_text_itoa(ctx, ctx->impl->outbuf, batch[i].longitude);
-                GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '"');
-                break;
-              }
-              case GRN_TS_BOOL_VECTOR: {
-                grn_ts_bool_vector vector;
-                vector = ((grn_ts_bool_vector *)bufs[j])[i];
-                GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '[');
-                for (k = 0; k < vector.size; ++k) {
-                  if (k) {
-                    GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
-                  }
-                  if (vector.ptr[k]) {
-                    GRN_TEXT_PUT(ctx, ctx->impl->outbuf, "true", 4);
-                  } else {
-                    GRN_TEXT_PUT(ctx, ctx->impl->outbuf, "false", 5);
-                  }
-                }
-                GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ']');
-                break;
-              }
-              case GRN_TS_INT_VECTOR: {
-                grn_ts_int_vector vector;
-                vector = ((grn_ts_int_vector *)bufs[j])[i];
-                GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '[');
-                for (k = 0; k < vector.size; ++k) {
-                  if (k) {
-                    GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
-                  }
-                  grn_text_lltoa(ctx, ctx->impl->outbuf, vector.ptr[k]);
-                }
-                GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ']');
-                break;
-              }
-              case GRN_TS_FLOAT_VECTOR: {
-                grn_ts_float_vector vector;
-                vector = ((grn_ts_float_vector *)bufs[j])[i];
-                GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '[');
-                for (k = 0; k < vector.size; ++k) {
-                  if (k) {
-                    GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
-                  }
-                  grn_text_ftoa(ctx, ctx->impl->outbuf, vector.ptr[k]);
-                }
-                GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ']');
-                break;
-              }
-              case GRN_TS_TIME_VECTOR: {
-                grn_ts_time_vector vector;
-                vector = ((grn_ts_time_vector *)bufs[j])[i];
-                GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '[');
-                for (k = 0; k < vector.size; ++k) {
-                  if (k) {
-                    GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
-                  }
-                  grn_text_ftoa(ctx, ctx->impl->outbuf,
-                                vector.ptr[k] * 0.000001);
-                }
-                GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ']');
-                break;
-              }
-              case GRN_TS_TEXT_VECTOR: {
-                grn_ts_text_vector vector;
-                vector = ((grn_ts_text_vector *)bufs[j])[i];
-                GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '[');
-                for (k = 0; k < vector.size; ++k) {
-                  if (k) {
-                    GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
-                  }
-                  grn_text_esc(ctx, ctx->impl->outbuf,
-                               vector.ptr[k].ptr, vector.ptr[k].size);
-                }
-                GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ']');
-                break;
-              }
-              case GRN_TS_GEO_POINT_VECTOR: {
-                grn_ts_geo_point_vector vector;
-                vector = ((grn_ts_geo_point_vector *)bufs[j])[i];
-                GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '[');
-                for (k = 0; k < vector.size; ++k) {
-                  if (k) {
-                    GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
-                  }
-                  GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '"');
-                  grn_text_itoa(ctx, ctx->impl->outbuf,
-                                vector.ptr[k].latitude);
-                  GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, 'x');
-                  grn_text_itoa(ctx, ctx->impl->outbuf,
-                                vector.ptr[k].longitude);
-                  GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '"');
-                }
-                GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ']');
-                break;
-              }
-              default: {
-                break;
-              }
-            }
-          }
-          GRN_OUTPUT_ARRAY_CLOSE(); /* HITS. */
-        }
-        count += batch_size;
-      }
-      for (i = 0; i < n_exprs; i++) {
-        if (bufs[i]) {
-          GRN_FREE(bufs[i]);
-        }
-      }
-      GRN_FREE(bufs);
-    }
-  }
+
   GRN_OUTPUT_ARRAY_CLOSE(); /* RESULTSET. */
   GRN_OUTPUT_ARRAY_CLOSE(); /* RESET. */
 
