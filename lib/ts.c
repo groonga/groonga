@@ -409,6 +409,24 @@ grn_ts_data_kind_to_type(grn_ts_data_kind kind) {
  * Operators.
  */
 
+/* Logical Not operator (!X). */
+inline static grn_bool
+grn_ts_op_logical_not(grn_bool arg) {
+  return !arg;
+}
+
+/* Logical And operator (X && Y). */
+inline static grn_bool
+grn_ts_op_logical_and(grn_bool arg1, grn_bool arg2) {
+  return arg1 & arg2;
+}
+
+/* Logical Or operator (X || Y). */
+inline static grn_bool
+grn_ts_op_logical_or(grn_bool arg1, grn_bool arg2) {
+  return arg1 | arg2;
+}
+
 /* grn_ts_op_get_n_args() returns the number of arguments. */
 static size_t
 grn_ts_op_get_n_args(grn_ts_op_type op_type) {
