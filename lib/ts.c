@@ -406,6 +406,44 @@ grn_ts_data_kind_to_type(grn_ts_data_kind kind) {
 }
 
 /*-------------------------------------------------------------
+ * Operators.
+ */
+
+/* grn_ts_op_get_n_args() returns the number of arguments. */
+static size_t
+grn_ts_op_get_n_args(grn_ts_op_type op_type) {
+  switch (op_type) {
+    case GRN_TS_OP_LOGICAL_NOT:    /* !X */
+    case GRN_TS_OP_BITWISE_NOT:    /* ~X */
+    case GRN_TS_OP_POSITIVE:       /* +X */
+    case GRN_TS_OP_NEGATIVE: {     /* -X */
+      return 1;
+    }
+    case GRN_TS_OP_LOGICAL_AND:    /* X && Y */
+    case GRN_TS_OP_LOGICAL_OR:     /* X || Y */
+    case GRN_TS_OP_BITWISE_AND:    /* X & Y  */
+    case GRN_TS_OP_BITWISE_OR:     /* X | Y  */
+    case GRN_TS_OP_BITWISE_XOR:    /* X ^ Y  */
+    case GRN_TS_OP_EQUAL:          /* X == Y */
+    case GRN_TS_OP_NOT_EQUAL:      /* X != Y */
+    case GRN_TS_OP_LESS:           /* X < Y  */
+    case GRN_TS_OP_LESS_EQUAL:     /* X <= Y */
+    case GRN_TS_OP_GREATER:        /* X > Y  */
+    case GRN_TS_OP_GREATER_EQUAL:  /* X >= Y */
+    case GRN_TS_OP_PLUS:           /* X + Y  */
+    case GRN_TS_OP_MINUS:          /* X - Y  */
+    case GRN_TS_OP_MULTIPLICATION: /* X * Y  */
+    case GRN_TS_OP_DIVISION:       /* X / Y  */
+    case GRN_TS_OP_MODULUS: {      /* X % Y  */
+      return 2;
+    }
+    default: {
+      return 0;
+    }
+  }
+}
+
+/*-------------------------------------------------------------
  * Groonga objects.
  */
 
