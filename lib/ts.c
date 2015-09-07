@@ -2722,21 +2722,13 @@ grn_ts_select_filter(grn_ctx *ctx, grn_obj *table,
   return GRN_SUCCESS;
 }
 
-/* grn_ts_select_output() outputs the results. */
-/* FIXME: Too long. */
-/* FIXME: Errors are ignored. */
+/* grn_ts_select_output_parse() parses an output_columns option. */
 static grn_rc
-grn_ts_select_output(grn_ctx *ctx, grn_obj *table,
-                     const char *str, size_t str_size,
-                     const grn_ts_record *in, size_t n_in, size_t n_hits) {
+grn_ts_select_output_parse(grn_ctx *ctx, grn_obj *table,
+                           const char *str, size_t str_size,
+                           grn_obj *name_buf) {
   const char *rest = str;
-  size_t rest_size = str_size;
-  grn_ts_expr **exprs = NULL;
-  size_t i, j, k, n_exprs = 0;
-  grn_obj name_buf;
-  grn_ts_text *names = NULL;
-
-  GRN_TEXT_INIT(&name_buf, GRN_OBJ_VECTOR);
+  size_t i, rest_size = str_size;
   while (rest_size) {
     const char *name = rest;
     size_t name_size;
@@ -2788,7 +2780,7 @@ grn_ts_select_output(grn_ctx *ctx, grn_obj *table,
             if (column) {
               char buf[1024];
               size_t len = grn_column_name(ctx, column, buf, 1024);
-              grn_vector_add_element(ctx, &name_buf, buf, len, 0, GRN_DB_TEXT);
+              grn_vector_add_element(ctx, name_buf, buf, len, 0, GRN_DB_TEXT);
               grn_obj_unlink(ctx, column);
             }
           });
@@ -2796,8 +2788,30 @@ grn_ts_select_output(grn_ctx *ctx, grn_obj *table,
         grn_hash_close(ctx, columns);
       }
     } else {
-      grn_vector_add_element(ctx, &name_buf, name, name_size, 0, GRN_DB_TEXT);
+      grn_vector_add_element(ctx, name_buf, name, name_size, 0, GRN_DB_TEXT);
     }
+  }
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_select_output() outputs the results. */
+/* FIXME: Too long. */
+/* FIXME: Errors are ignored. */
+static grn_rc
+grn_ts_select_output(grn_ctx *ctx, grn_obj *table,
+                     const char *str, size_t str_size,
+                     const grn_ts_record *in, size_t n_in, size_t n_hits) {
+  grn_rc rc;
+  grn_ts_expr **exprs = NULL;
+  size_t i, j, k, n_exprs = 0;
+  grn_obj name_buf;
+  grn_ts_text *names = NULL;
+
+  GRN_TEXT_INIT(&name_buf, GRN_OBJ_VECTOR);
+  rc = grn_ts_select_output_parse(ctx, table, str, str_size, &name_buf);
+  if (rc != GRN_SUCCESS) {
+    GRN_OBJ_FIN(ctx, &name_buf);
+    return rc;
   }
 
   /* Create expressions. */
