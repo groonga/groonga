@@ -2627,7 +2627,7 @@ grn_ts_select_filter(grn_ctx *ctx, grn_obj *table,
                      const char *str, size_t str_size,
                      size_t offset, size_t limit,
                      grn_ts_record **out, size_t *n_out, size_t *n_hits) {
-  grn_rc rc, tmp_rc;
+  grn_rc rc;
   grn_table_cursor *cursor;
   grn_ts_expr *expr;
   grn_ts_record *buf = NULL;
@@ -2704,16 +2704,11 @@ grn_ts_select_filter(grn_ctx *ctx, grn_obj *table,
       }
       *n_out += batch_size;
     }
-    tmp_rc = grn_ts_expr_close(ctx, expr);
-    if (rc == GRN_SUCCESS) {
-      rc = tmp_rc;
-    }
+    /* Ignore a failure of destruction. */
+    grn_ts_expr_close(ctx, expr);
   }
-
-  tmp_rc = grn_table_cursor_close(ctx, cursor);
-  if (rc == GRN_SUCCESS) {
-    rc = tmp_rc;
-  }
+  /* Ignore a failure of  destruction. */
+  grn_table_cursor_close(ctx, cursor);
 
   if (rc != GRN_SUCCESS) {
     if (buf) {
