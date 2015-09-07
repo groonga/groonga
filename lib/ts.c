@@ -2984,9 +2984,8 @@ grn_ts_select_output_columns(grn_ctx *ctx, const grn_ts_text *names,
   for (size_t i = 0; i < n_exprs; ++i) {
     GRN_OUTPUT_ARRAY_OPEN("COLUMN", 2);
     /* Output a column name. */
-    GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '"');
-    GRN_TEXT_PUT(ctx, ctx->impl->outbuf, names[i].ptr, names[i].size);
-    GRN_TEXT_PUT(ctx, ctx->impl->outbuf, "\",\"", 3);
+    grn_text_esc(ctx, ctx->impl->outbuf, names[i].ptr, names[i].size);
+    GRN_TEXT_PUT(ctx, ctx->impl->outbuf, ",\"", 2);
     /* Output a data type. */
     switch (exprs[i]->data_type) {
       case GRN_DB_VOID: {
