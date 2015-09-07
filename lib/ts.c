@@ -42,6 +42,10 @@
 
 enum { GRN_TS_BATCH_SIZE = 1024 };
 
+/*-------------------------------------------------------------
+ * Built-in data kinds.
+ */
+
 /* grn_ts_bool_is_valid() returns whether a value is valid or not. */
 inline static grn_bool
 grn_ts_bool_is_valid(grn_ts_bool value) {
@@ -218,47 +222,6 @@ grn_ts_ref_vector_zero(void) {
   return (grn_ts_ref_vector){ NULL, 0 };
 }
 
-/* grn_ts_data_type_to_kind() returns a kind associated with a type. */
-static grn_ts_data_kind
-grn_ts_data_type_to_kind(grn_ts_data_type type) {
-  switch (type) {
-    case GRN_DB_VOID: {
-      return GRN_TS_VOID;
-    }
-    case GRN_DB_BOOL: {
-      return GRN_TS_BOOL;
-    }
-    case GRN_DB_INT8:
-    case GRN_DB_INT16:
-    case GRN_DB_INT32:
-    case GRN_DB_INT64:
-    case GRN_DB_UINT8:
-    case GRN_DB_UINT16:
-    case GRN_DB_UINT32:
-    case GRN_DB_UINT64: {
-      return GRN_TS_INT;
-    }
-    case GRN_DB_FLOAT: {
-      return GRN_TS_FLOAT;
-    }
-    case GRN_DB_TIME: {
-      return GRN_TS_TIME;
-    }
-    case GRN_DB_SHORT_TEXT:
-    case GRN_DB_TEXT:
-    case GRN_DB_LONG_TEXT: {
-      return GRN_TS_TEXT;
-    }
-    case GRN_DB_TOKYO_GEO_POINT:
-    case GRN_DB_WGS84_GEO_POINT: {
-      return GRN_TS_GEO_POINT;
-    }
-    default: {
-      return GRN_TS_REF;
-    }
-  }
-}
-
 /* grn_ts_bool_output() outputs a value. */
 static grn_rc
 grn_ts_bool_output(grn_ctx *ctx, grn_ts_bool value) {
@@ -371,6 +334,47 @@ grn_ts_geo_point_vector_output(grn_ctx *ctx, grn_ts_geo_point_vector value) {
 }
 #undef GRN_TS_VECTOR_OUTPUT
 
+/* grn_ts_data_type_to_kind() returns a kind associated with a type. */
+static grn_ts_data_kind
+grn_ts_data_type_to_kind(grn_ts_data_type type) {
+  switch (type) {
+    case GRN_DB_VOID: {
+      return GRN_TS_VOID;
+    }
+    case GRN_DB_BOOL: {
+      return GRN_TS_BOOL;
+    }
+    case GRN_DB_INT8:
+    case GRN_DB_INT16:
+    case GRN_DB_INT32:
+    case GRN_DB_INT64:
+    case GRN_DB_UINT8:
+    case GRN_DB_UINT16:
+    case GRN_DB_UINT32:
+    case GRN_DB_UINT64: {
+      return GRN_TS_INT;
+    }
+    case GRN_DB_FLOAT: {
+      return GRN_TS_FLOAT;
+    }
+    case GRN_DB_TIME: {
+      return GRN_TS_TIME;
+    }
+    case GRN_DB_SHORT_TEXT:
+    case GRN_DB_TEXT:
+    case GRN_DB_LONG_TEXT: {
+      return GRN_TS_TEXT;
+    }
+    case GRN_DB_TOKYO_GEO_POINT:
+    case GRN_DB_WGS84_GEO_POINT: {
+      return GRN_TS_GEO_POINT;
+    }
+    default: {
+      return GRN_TS_REF;
+    }
+  }
+}
+
 /* grn_ts_data_kind_to_type() returns a type associated with a kind. */
 static grn_ts_data_type
 grn_ts_data_kind_to_type(grn_ts_data_kind kind) {
@@ -399,6 +403,10 @@ grn_ts_data_kind_to_type(grn_ts_data_kind kind) {
     }
   }
 }
+
+/*-------------------------------------------------------------
+ * Groonga objects.
+ */
 
 /*
  * grn_ts_obj_increment_ref_count() increments the reference count of an
