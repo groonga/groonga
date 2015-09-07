@@ -2450,14 +2450,10 @@ grn_ts_expr_push_id(grn_ctx *ctx, grn_ts_expr *expr) {
     return GRN_INVALID_ARGUMENT;
   }
   rc = grn_ts_expr_open_id_node(ctx, expr, &node);
-  if (rc != GRN_SUCCESS) {
-    return rc;
+  if (rc == GRN_SUCCESS) {
+    rc = grn_ts_expr_push_node(ctx, expr, node);
   }
-  rc = grn_ts_expr_push_node(ctx, expr, node);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  return GRN_SUCCESS;
+  return rc;
 }
 
 grn_rc
@@ -2468,14 +2464,10 @@ grn_ts_expr_push_score(grn_ctx *ctx, grn_ts_expr *expr) {
     return GRN_INVALID_ARGUMENT;
   }
   rc = grn_ts_expr_open_score_node(ctx, expr, &node);
-  if (rc != GRN_SUCCESS) {
-    return rc;
+  if (rc == GRN_SUCCESS) {
+    rc = grn_ts_expr_push_node(ctx, expr, node);
   }
-  rc = grn_ts_expr_push_node(ctx, expr, node);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  return GRN_SUCCESS;
+  return rc;
 }
 
 grn_rc
@@ -2486,14 +2478,10 @@ grn_ts_expr_push_key(grn_ctx *ctx, grn_ts_expr *expr) {
     return GRN_INVALID_ARGUMENT;
   }
   rc = grn_ts_expr_open_key_node(ctx, expr, &node);
-  if (rc != GRN_SUCCESS) {
-    return rc;
+  if (rc == GRN_SUCCESS) {
+    rc = grn_ts_expr_push_node(ctx, expr, node);
   }
-  rc = grn_ts_expr_push_node(ctx, expr, node);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  return GRN_SUCCESS;
+  return rc;
 }
 
 grn_rc
@@ -2504,14 +2492,10 @@ grn_ts_expr_push_value(grn_ctx *ctx, grn_ts_expr *expr) {
     return GRN_INVALID_ARGUMENT;
   }
   rc = grn_ts_expr_open_value_node(ctx, expr, &node);
-  if (rc != GRN_SUCCESS) {
-    return rc;
+  if (rc == GRN_SUCCESS) {
+    rc = grn_ts_expr_push_node(ctx, expr, node);
   }
-  rc = grn_ts_expr_push_node(ctx, expr, node);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  return GRN_SUCCESS;
+  return rc;
 }
 
 #define GRN_TS_EXPR_PUSH_CONST_CASE_BLOCK(KIND, kind)\
@@ -2555,14 +2539,10 @@ grn_ts_expr_push_column(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *column) {
     return GRN_INVALID_ARGUMENT;
   }
   rc = grn_ts_expr_open_column_node(ctx, expr, column, &node);
-  if (rc != GRN_SUCCESS) {
-    return rc;
+  if (rc == GRN_SUCCESS) {
+    rc = grn_ts_expr_push_node(ctx, expr, node);
   }
-  rc = grn_ts_expr_push_node(ctx, expr, node);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  return GRN_SUCCESS;
+  return rc;
 }
 
 grn_rc
@@ -2583,48 +2563,44 @@ grn_ts_expr_push_operator(grn_ctx *ctx, grn_ts_expr *expr,
     return GRN_INVALID_ARGUMENT;\
   }\
   rc = grn_ts_expr_open_const_node(ctx, expr, GRN_TS_ ## KIND, &value, &node);\
-  if (rc != GRN_SUCCESS) {\
-    return rc;\
-  }\
-  rc = grn_ts_expr_push_node(ctx, expr, node);\
-  if (rc != GRN_SUCCESS) {\
-    return rc;\
+  if (rc == GRN_SUCCESS) {\
+    rc = grn_ts_expr_push_node(ctx, expr, node);\
   }
 grn_rc
 grn_ts_expr_push_bool(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_bool value) {
   GRN_TS_EXPR_PUSH_CONST(BOOL, bool)
-  return GRN_SUCCESS;
+  return rc;
 }
 
 grn_rc
 grn_ts_expr_push_int(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_int value) {
   GRN_TS_EXPR_PUSH_CONST(INT, int)
-  return GRN_SUCCESS;
+  return rc;
 }
 
 grn_rc
 grn_ts_expr_push_float(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_float value) {
   GRN_TS_EXPR_PUSH_CONST(FLOAT, float)
-  return GRN_SUCCESS;
+  return rc;
 }
 
 grn_rc
 grn_ts_expr_push_time(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_time value) {
   GRN_TS_EXPR_PUSH_CONST(TIME, time)
-  return GRN_SUCCESS;
+  return rc;
 }
 
 grn_rc
 grn_ts_expr_push_text(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_text value) {
   GRN_TS_EXPR_PUSH_CONST(TEXT, text)
-  return GRN_SUCCESS;
+  return rc;
 }
 
 grn_rc
 grn_ts_expr_push_geo_point(grn_ctx *ctx, grn_ts_expr *expr,
                            grn_ts_geo_point value) {
   GRN_TS_EXPR_PUSH_CONST(GEO_POINT, geo_point)
-  return GRN_SUCCESS;
+  return rc;
 }
 
 grn_rc
@@ -2632,7 +2608,7 @@ grn_ts_expr_push_tokyo_geo_point(grn_ctx *ctx, grn_ts_expr *expr,
                                  grn_ts_geo_point value) {
   GRN_TS_EXPR_PUSH_CONST(GEO_POINT, geo_point)
   node->data_type = GRN_DB_TOKYO_GEO_POINT;
-  return GRN_SUCCESS;
+  return rc;
 }
 
 grn_rc
@@ -2640,49 +2616,49 @@ grn_ts_expr_push_wgs84_geo_point(grn_ctx *ctx, grn_ts_expr *expr,
                                  grn_ts_geo_point value) {
   GRN_TS_EXPR_PUSH_CONST(GEO_POINT, geo_point)
   node->data_type = GRN_DB_WGS84_GEO_POINT;
-  return GRN_SUCCESS;
+  return rc;
 }
 
 grn_rc
 grn_ts_expr_push_bool_vector(grn_ctx *ctx, grn_ts_expr *expr,
                              grn_ts_bool_vector value) {
   GRN_TS_EXPR_PUSH_CONST(BOOL_VECTOR, bool_vector)
-  return GRN_SUCCESS;
+  return rc;
 }
 
 grn_rc
 grn_ts_expr_push_int_vector(grn_ctx *ctx, grn_ts_expr *expr,
                             grn_ts_int_vector value) {
   GRN_TS_EXPR_PUSH_CONST(INT_VECTOR, int_vector)
-  return GRN_SUCCESS;
+  return rc;
 }
 
 grn_rc
 grn_ts_expr_push_float_vector(grn_ctx *ctx, grn_ts_expr *expr,
                               grn_ts_float_vector value) {
   GRN_TS_EXPR_PUSH_CONST(FLOAT_VECTOR, float_vector)
-  return GRN_SUCCESS;
+  return rc;
 }
 
 grn_rc
 grn_ts_expr_push_time_vector(grn_ctx *ctx, grn_ts_expr *expr,
                              grn_ts_time_vector value) {
   GRN_TS_EXPR_PUSH_CONST(TIME_VECTOR, time_vector)
-  return GRN_SUCCESS;
+  return rc;
 }
 
 grn_rc
 grn_ts_expr_push_text_vector(grn_ctx *ctx, grn_ts_expr *expr,
                              grn_ts_text_vector value) {
   GRN_TS_EXPR_PUSH_CONST(TEXT_VECTOR, text_vector)
-  return GRN_SUCCESS;
+  return rc;
 }
 
 grn_rc
 grn_ts_expr_push_geo_point_vector(grn_ctx *ctx, grn_ts_expr *expr,
                                   grn_ts_geo_point_vector value) {
   GRN_TS_EXPR_PUSH_CONST(GEO_POINT_VECTOR, geo_point_vector)
-  return GRN_SUCCESS;
+  return rc;
 }
 
 grn_rc
@@ -2690,7 +2666,7 @@ grn_ts_expr_push_tokyo_geo_point_vector(grn_ctx *ctx, grn_ts_expr *expr,
                                         grn_ts_geo_point_vector value) {
   GRN_TS_EXPR_PUSH_CONST(GEO_POINT_VECTOR, geo_point_vector)
   node->data_type = GRN_DB_TOKYO_GEO_POINT;
-  return GRN_SUCCESS;
+  return rc;
 }
 
 grn_rc
@@ -2698,7 +2674,7 @@ grn_ts_expr_push_wgs84_geo_point_vector(grn_ctx *ctx, grn_ts_expr *expr,
                                         grn_ts_geo_point_vector value) {
   GRN_TS_EXPR_PUSH_CONST(GEO_POINT_VECTOR, geo_point_vector)
   node->data_type = GRN_DB_TOKYO_GEO_POINT;
-  return GRN_SUCCESS;
+  return rc;
 }
 #undef GRN_TS_EXPR_PUSH_CONST
 
