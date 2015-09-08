@@ -93,7 +93,7 @@ grn_ts_buf_reserve(grn_ctx *ctx, grn_ts_buf *buf, size_t new_size) {
   if (new_size <= buf->size) {
     return GRN_SUCCESS;
   }
-  enough_size = new_size ? new_size : 1;
+  enough_size = buf->size ? (buf->size << 1) : 1;
   while (enough_size < new_size) {
     enough_size <<= 1;
   }
