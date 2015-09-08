@@ -664,6 +664,8 @@ typedef struct {
 typedef struct {
   GRN_TS_EXPR_NODE_COMMON_MEMBERS
   grn_ts_op_type op_type;
+  grn_ts_expr_node **args;
+  size_t n_args;
   // TODO
 } grn_ts_expr_op_node;
 
@@ -712,7 +714,11 @@ grn_ts_expr_node_fin(grn_ctx *ctx, grn_ts_expr_node *node) {
       return GRN_SUCCESS;
     }
     case GRN_TS_EXPR_OP_NODE: {
+      grn_ts_expr_op_node *op_node = (grn_ts_expr_op_node *)node;
       // TODO: Unlink objects and free memory.
+      if (op_node->args) {
+        GRN_FREE(op_node->args);
+      }
       return GRN_SUCCESS;
     }
     default: {
@@ -1026,6 +1032,61 @@ grn_ts_expr_column_node_open(grn_ctx *ctx, grn_obj *column,
   return GRN_SUCCESS;
 }
 #undef GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK
+
+/* grn_ts_expr_column_node_open() creates a node associated with a column. */
+static grn_rc
+grn_ts_expr_op_node_open(grn_ctx *ctx, grn_ts_op_type op_type,
+                         grn_ts_expr_node **args, size_t n_args,
+                         grn_ts_expr_node **node) {
+  grn_rc rc = GRN_SUCCESS;
+  grn_ts_data_kind data_kind = GRN_TS_VOID;
+  grn_ts_data_type data_type = GRN_DB_VOID;
+  grn_ts_expr_node **args_clone = NULL;
+  grn_ts_expr_op_node *new_node;
+  switch (op_type) {
+    case GRN_TS_OP_LOGICAL_AND:
+    case GRN_TS_OP_LOGICAL_OR: {
+      if (args[1]->data_kind != GRN_TS_BOOL) {
+        return GRN_INVALID_ARGUMENT;
+      }
+      /* Fall through. */
+    }
+    case GRN_TS_OP_LOGICAL_NOT: {
+      if (args[0]->data_kind != GRN_TS_BOOL) {
+        return GRN_INVALID_ARGUMENT;
+      }
+      data_kind = GRN_TS_BOOL;
+      data_type = GRN_DB_BOOL;
+      break;
+    }
+    default: {
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+  if (rc == GRN_SUCCESS) {
+    args_clone = GRN_MALLOCN(grn_ts_expr_node *, n_args);
+    if (!args_clone) {
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+  } else {
+    return rc;
+  }
+
+  new_node = GRN_MALLOCN(grn_ts_expr_op_node, 1);
+  if (!new_node) {
+    if (args_clone) {
+      GRN_FREE(args_clone);
+    }
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  new_node->type = GRN_TS_EXPR_OP_NODE;
+  new_node->data_kind = data_kind;
+  new_node->data_type = data_type;
+  new_node->op_type = op_type;
+  new_node->args = args_clone;
+  new_node->n_args = n_args;
+  return rc;
+}
 
 /* grn_ts_expr_id_node_evaluate() outputs IDs. */
 static grn_rc
@@ -2189,6 +2250,28 @@ grn_ts_expr_open_column_node(grn_ctx *ctx, grn_ts_expr *expr,
   return GRN_SUCCESS;
 }
 
+/*
+ * grn_ts_expr_open_op_node() opens and registers an operator.
+ * Registered nodes will be closed in grn_ts_expr_fin().
+ */
+static grn_rc
+grn_ts_expr_open_op_node(grn_ctx *ctx, grn_ts_expr *expr,
+                         grn_ts_op_type op_type, grn_ts_expr_node **args,
+                         size_t n_args, grn_ts_expr_node **node) {
+  grn_ts_expr_node *new_node;
+  grn_rc rc = grn_ts_expr_reserve_nodes(ctx, expr);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  rc = grn_ts_expr_op_node_open(ctx, op_type, args, n_args, &new_node);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  expr->nodes[expr->n_nodes++] = new_node;
+  *node = new_node;
+  return GRN_SUCCESS;
+}
+
 /* grn_ts_expr_push_node() pushes a node to stack. */
 static grn_rc
 grn_ts_expr_push_node(grn_ctx *ctx, grn_ts_expr *expr,
@@ -2604,11 +2687,31 @@ grn_ts_expr_push_column(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *column) {
 grn_rc
 grn_ts_expr_push_operator(grn_ctx *ctx, grn_ts_expr *expr,
                           grn_ts_op_type op_type) {
+  grn_rc rc;
+  grn_ts_expr_node **args, *node;
+  size_t n_args;
   if (!ctx || !expr || (expr->type == GRN_TS_EXPR_BROKEN)) {
     return GRN_INVALID_ARGUMENT;
   }
-  // TODO
-  return GRN_SUCCESS;
+  n_args = grn_ts_op_get_n_args(op_type);
+  if (!n_args) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  if (n_args > expr->stack_depth) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  /* Arguments are the top n_args nodes in the stack. */
+  args = &expr->stack[expr->stack_depth - n_args];
+  rc = grn_ts_expr_open_op_node(ctx, expr, op_type, args, n_args, &node);
+  if (rc == GRN_SUCCESS) {
+    /*
+     * In practice, the following grn_ts_expr_push_node() must not fail because
+     * the required memory is already reserved.
+     */
+    expr->stack_depth -= n_args;
+    rc = grn_ts_expr_push_node(ctx, expr, node);
+  }
+  return rc;
 }
 
 #define GRN_TS_EXPR_PUSH_CONST(KIND, kind)\
