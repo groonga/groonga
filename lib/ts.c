@@ -85,7 +85,11 @@ grn_ts_buf_close(grn_ctx *ctx, grn_ts_buf *buf) {
   }
 }
 
-/* grn_ts_buf_reserve() reserves enough memory to store new_size bytes. */
+/*
+ * grn_ts_buf_reserve() reserves enough memory to store new_size bytes.
+ * Note that this function never shrinks a buffer and does nothing if new_size
+ * is not greater than the current size.
+ */
 static grn_rc
 grn_ts_buf_reserve(grn_ctx *ctx, grn_ts_buf *buf, size_t new_size) {
   void *new_ptr;
