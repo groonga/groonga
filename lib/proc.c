@@ -61,6 +61,7 @@ const char *grn_document_root = NULL;
 
 #define GRN_SELECT_INTERNAL_VAR_CONDITION     "$condition"
 #define GRN_SELECT_INTERNAL_VAR_MATCH_COLUMNS "$match_columns"
+#define GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME    "$highlight_html"
 
 
 static double grn_between_too_many_index_match_ratio = 0.01;
@@ -6028,6 +6029,53 @@ grn_pat_tag_keys(grn_ctx *ctx, grn_obj *keywords,
 }
 
 static grn_obj *
+func_highlight_html_create_keywords_table(grn_ctx *ctx, grn_obj *expression)
+{
+  grn_obj *keywords;
+  grn_obj *condition_ptr = NULL;
+  grn_obj *condition = NULL;
+
+  keywords = grn_table_create(ctx, NULL, 0, NULL,
+                              GRN_OBJ_TABLE_PAT_KEY,
+                              grn_ctx_at(ctx, GRN_DB_SHORT_TEXT),
+                              NULL);
+
+  {
+    grn_obj *normalizer;
+    normalizer = grn_ctx_get(ctx, "NormalizerAuto", -1);
+    grn_obj_set_info(ctx, keywords, GRN_INFO_NORMALIZER, normalizer);
+    grn_obj_unlink(ctx, normalizer);
+  }
+
+  condition_ptr = grn_expr_get_var(ctx, expression,
+                                   GRN_SELECT_INTERNAL_VAR_CONDITION,
+                                   strlen(GRN_SELECT_INTERNAL_VAR_CONDITION));
+  if (condition_ptr) {
+    condition = GRN_PTR_VALUE(condition_ptr);
+  }
+
+  if (condition) {
+    size_t i, n_keywords;
+    grn_obj current_keywords;
+    GRN_PTR_INIT(&current_keywords, GRN_OBJ_VECTOR, GRN_ID_NIL);
+    grn_expr_get_keywords(ctx, condition, &current_keywords);
+
+    n_keywords = GRN_BULK_VSIZE(&current_keywords) / sizeof(grn_obj *);
+    for (i = 0; i < n_keywords; i++) {
+      grn_obj *keyword;
+      keyword = GRN_PTR_VALUE_AT(&current_keywords, i);
+      grn_table_add(ctx, keywords,
+                    GRN_TEXT_VALUE(keyword),
+                    GRN_TEXT_LEN(keyword),
+                    NULL);
+    }
+    grn_obj_unlink(ctx, &current_keywords);
+  }
+
+  return keywords;
+}
+
+static grn_obj *
 func_highlight_html(grn_ctx *ctx, int nargs, grn_obj **args,
                     grn_user_data *user_data)
 {
@@ -6037,57 +6085,38 @@ func_highlight_html(grn_ctx *ctx, int nargs, grn_obj **args,
   if (nargs == N_REQUIRED_ARGS) {
     grn_obj *string = args[0];
     grn_obj *expression = NULL;
-    grn_obj *condition_ptr = NULL;
-    grn_obj *condition = NULL;
+    grn_obj *keywords;
+    grn_obj *keywords_ptr;
     grn_bool use_html_escape = GRN_TRUE;
     unsigned int n_keyword_sets = 1;
     const char *open_tags[1];
     unsigned int open_tag_lengths[1];
     const char *close_tags[1];
     unsigned int close_tag_lengths[1];
-    grn_obj *keywords;
+
+    grn_proc_get_info(ctx, user_data, NULL, NULL, &expression);
+
+    keywords_ptr = grn_expr_get_var(ctx, expression,
+                                    GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME,
+                                    strlen(GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME));
+    if (keywords_ptr) {
+      keywords = GRN_PTR_VALUE(keywords_ptr);
+    } else {
+      keywords_ptr =
+        grn_expr_get_or_add_var(ctx, expression,
+                                GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME,
+                                strlen(GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME));
+      GRN_OBJ_FIN(ctx, keywords_ptr);
+      GRN_PTR_INIT(keywords_ptr, GRN_OBJ_OWN, GRN_DB_OBJECT);
+
+      keywords = func_highlight_html_create_keywords_table(ctx, expression);
+      GRN_PTR_SET(ctx, keywords_ptr, keywords);
+    }
 
     open_tags[0] = "<span class=\"keyword\">";
     open_tag_lengths[0] = strlen("<span class=\"keyword\">");
     close_tags[0]  = "</span>";
     close_tag_lengths[0] = strlen("</span>");
-
-    keywords = grn_table_create(ctx, NULL, 0, NULL,
-                                GRN_OBJ_TABLE_PAT_KEY,
-                                grn_ctx_at(ctx, GRN_DB_SHORT_TEXT),
-                                NULL);
-    {
-      grn_obj *normalizer;
-      normalizer = grn_ctx_get(ctx, "NormalizerAuto", -1);
-      grn_obj_set_info(ctx, keywords, GRN_INFO_NORMALIZER, normalizer);
-      grn_obj_unlink(ctx, normalizer);
-    }
-
-    grn_proc_get_info(ctx, user_data, NULL, NULL, &expression);
-    condition_ptr = grn_expr_get_var(ctx, expression,
-                                     GRN_SELECT_INTERNAL_VAR_CONDITION,
-                                     strlen(GRN_SELECT_INTERNAL_VAR_CONDITION));
-    if (condition_ptr) {
-      condition = GRN_PTR_VALUE(condition_ptr);
-    }
-
-    if (condition) {
-      size_t i, n_keywords;
-      grn_obj current_keywords;
-      GRN_PTR_INIT(&current_keywords, GRN_OBJ_VECTOR, GRN_ID_NIL);
-      grn_expr_get_keywords(ctx, condition, &current_keywords);
-
-      n_keywords = GRN_BULK_VSIZE(&current_keywords) / sizeof(grn_obj *);
-      for (i = 0; i < n_keywords; i++) {
-        grn_obj *keyword;
-        keyword = GRN_PTR_VALUE_AT(&current_keywords, i);
-        grn_table_add(ctx, keywords,
-                      GRN_TEXT_VALUE(keyword),
-                      GRN_TEXT_LEN(keyword),
-                      NULL);
-      }
-      grn_obj_unlink(ctx, &current_keywords);
-    }
 
     highlighted = GRN_PROC_ALLOC(GRN_DB_TEXT, 0);
     grn_pat_tag_keys(ctx, keywords,
@@ -6099,8 +6128,6 @@ func_highlight_html(grn_ctx *ctx, int nargs, grn_obj **args,
                      n_keyword_sets,
                      highlighted,
                      use_html_escape);
-
-    grn_obj_unlink(ctx, keywords);
   }
 #undef N_REQUIRED_ARGS
 
