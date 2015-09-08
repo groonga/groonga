@@ -697,7 +697,7 @@ typedef struct {
 typedef struct {
   GRN_TS_EXPR_NODE_COMMON_MEMBERS
   grn_obj *table;
-  grn_obj buf;
+  grn_ts_buf buf;
 } grn_ts_expr_key_node;
 
 typedef struct {
@@ -762,7 +762,7 @@ grn_ts_expr_node_fin(grn_ctx *ctx, grn_ts_expr_node *node) {
     }
     case GRN_TS_EXPR_KEY_NODE: {
       grn_ts_expr_key_node *key_node = (grn_ts_expr_key_node *)node;
-      GRN_OBJ_FIN(ctx, &key_node->buf);
+      grn_ts_buf_fin(ctx, &key_node->buf);
       if (key_node->table) {
         grn_obj_unlink(ctx, key_node->table);
       }
@@ -878,7 +878,7 @@ grn_ts_expr_key_node_open(grn_ctx *ctx, grn_obj *table,
   new_node->data_kind = grn_ts_data_type_to_kind(table->header.domain);
   new_node->data_type = table->header.domain;
   new_node->table = table;
-  GRN_TEXT_INIT(&new_node->buf, 0);
+  grn_ts_buf_init(ctx, &new_node->buf);
   *node = (grn_ts_expr_node *)new_node;
   return GRN_SUCCESS;
 }
@@ -1272,20 +1272,20 @@ grn_ts_expr_key_node_evaluate(grn_ctx *ctx, grn_ts_expr_key_node *node,
       size_t i;
       char *buf_ptr;
       grn_ts_text *out_ptr = (grn_ts_text *)out;
-      GRN_BULK_REWIND(&node->buf);
+      node->buf.pos = 0;
       for (i = 0; i < n_in; i++) {
         const char *key;
         size_t key_size;
         key = (const char *)grn_ts_table_get_key(ctx, node->table, in[i].id,
                                                  &key_size);
         if (key && key_size) {
-          grn_rc rc = grn_bulk_write(ctx, &node->buf, key, key_size);
+          grn_rc rc = grn_ts_buf_write(ctx, &node->buf, key, key_size);
           if (rc == GRN_SUCCESS) {
             out_ptr[i].size = key_size;
           }
         }
       }
-      buf_ptr = GRN_BULK_HEAD(&node->buf);
+      buf_ptr = (char *)node->buf.ptr;
       for (i = 0; i < n_in; i++) {
         out_ptr[i].ptr = buf_ptr;
         buf_ptr += out_ptr[i].size;
