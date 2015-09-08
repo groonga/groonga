@@ -1019,6 +1019,58 @@ grn_operator_exec_prefix(grn_ctx *ctx, grn_obj *target, grn_obj *prefix)
 }
 
 static grn_bool
+exec_regexp_uvector_bulk(grn_ctx *ctx, grn_obj *uvector, grn_obj *pattern)
+{
+#ifdef GRN_SUPPORT_REGEXP
+  grn_bool matched = GRN_FALSE;
+  unsigned int i, size;
+  OnigRegex regex;
+  grn_obj *domain;
+
+  size = grn_uvector_size(ctx, uvector);
+  if (size == 0) {
+    return GRN_FALSE;
+  }
+
+  regex = regexp_compile(ctx, GRN_TEXT_VALUE(pattern), GRN_TEXT_LEN(pattern));
+  if (!regex) {
+    return GRN_FALSE;
+  }
+
+  domain = grn_ctx_at(ctx, uvector->header.domain);
+  if (!domain) {
+    onig_free(regex);
+    return GRN_FALSE;
+  }
+
+  for (i = 0; i < size; i++) {
+    grn_id record_id;
+    char key[GRN_TABLE_MAX_KEY_SIZE];
+    int key_size;
+
+    record_id = grn_uvector_get_element(ctx, uvector, i, NULL);
+    key_size = grn_table_get_key(ctx, domain, record_id,
+                                 key, GRN_TABLE_MAX_KEY_SIZE);
+    if (key_size > 0) {
+      matched = regexp_is_match(ctx, regex, key, key_size);
+    }
+
+    if (matched) {
+      break;
+    }
+  }
+
+  grn_obj_unlink(ctx, domain);
+
+  onig_free(regex);
+
+  return matched;
+#else
+  return GRN_FALSE;
+#endif
+}
+
+static grn_bool
 exec_regexp_vector_bulk(grn_ctx *ctx, grn_obj *vector, grn_obj *pattern)
 {
 #ifdef GRN_SUPPORT_REGEXP
@@ -1084,6 +1136,9 @@ grn_operator_exec_regexp(grn_ctx *ctx, grn_obj *target, grn_obj *pattern)
   grn_bool matched;
   GRN_API_ENTER;
   switch (target->header.type) {
+  case GRN_UVECTOR :
+    matched = exec_regexp_uvector_bulk(ctx, target, pattern);
+    break;
   case GRN_VECTOR :
     matched = exec_regexp_vector_bulk(ctx, target, pattern);
     break;
