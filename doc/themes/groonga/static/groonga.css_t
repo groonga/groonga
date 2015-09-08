@@ -230,7 +230,8 @@ div.admonition ol
     margin-bottom: 5px;
 }
 
-div.note
+div.note,
+div.caution
 {
     background-color: #eee;
     border: 1px solid #ccc;
@@ -301,6 +302,13 @@ div.related a:hover
     color:#FFF;
     text-decoration: underline;
     background:none;
+}
+
+div.versionadded
+{
+    background-color: #eee;
+    border: 1px solid #ccc;
+    padding: 7px;
 }
 
 div.document
