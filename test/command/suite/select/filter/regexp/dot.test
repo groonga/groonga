@@ -10,9 +10,6 @@ load --table Memos
 [
 {"content": "alphabet: aXb"},
 {"content": "space:    a b"},
-{"content": "tab:      a\tb"},
-{"content": "CR:       a\rb"},
-{"content": "LF:       a\nb"},
 {"content": "not match: ab"}
 ]
 

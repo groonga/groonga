@@ -10,12 +10,9 @@ load --table Memos
 [
 {"content": "alphabet: aXb"},
 {"content": "space:    a b"},
-{"content": "tab:      a\tb"},
-{"content": "CR:       a\rb"},
-{"content": "LF:       a\nb"},
 {"content": "not match: ab"}
 ]
-[[0,0.0,0.0],6]
+[[0,0.0,0.0],3]
 select Memos --filter 'content @~ "a.b"'
 [
   [
@@ -26,7 +23,7 @@ select Memos --filter 'content @~ "a.b"'
   [
     [
       [
-        5
+        2
       ],
       [
         [
@@ -45,18 +42,6 @@ select Memos --filter 'content @~ "a.b"'
       [
         2,
         "space:    a b"
-      ],
-      [
-        3,
-        "tab:      a\tb"
-      ],
-      [
-        4,
-        "CR:       a\rb"
-      ],
-      [
-        5,
-        "LF:       a\nb"
       ]
     ]
   ]
