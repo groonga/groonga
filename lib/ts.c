@@ -1119,7 +1119,7 @@ grn_ts_expr_column_node_open(grn_ctx *ctx, grn_obj *column,
 }
 #undef GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK
 
-/* grn_ts_expr_column_node_open() creates a node associated with a column. */
+/* grn_ts_expr_op_node_open() creates a node associated with an operator. */
 static grn_rc
 grn_ts_expr_op_node_open(grn_ctx *ctx, grn_ts_op_type op_type,
                          grn_ts_expr_node **args, size_t n_args,
