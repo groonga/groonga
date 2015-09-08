@@ -1022,6 +1022,7 @@ static grn_bool
 exec_regexp_vector_bulk(grn_ctx *ctx, grn_obj *vector, grn_obj *pattern)
 {
 #ifdef GRN_SUPPORT_REGEXP
+  grn_obj *normalizer = NULL;
   grn_bool matched = GRN_FALSE;
   unsigned int i, size;
   OnigRegex regex;
@@ -1036,18 +1037,38 @@ exec_regexp_vector_bulk(grn_ctx *ctx, grn_obj *vector, grn_obj *pattern)
     return GRN_FALSE;
   }
 
+  normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
   for (i = 0; i < size; i++) {
     const char *content;
     unsigned int content_size;
     grn_id domain_id;
+    grn_obj *norm_content;
+    const char *norm_content_raw;
+    unsigned int norm_content_raw_length_in_bytes;
 
     content_size = grn_vector_get_element(ctx, vector, i,
                                           &content, NULL, &domain_id);
-    if (regexp_is_match(ctx, regex, content, content_size)) {
-      matched = GRN_TRUE;
+    if (content_size == 0) {
+      continue;
+    }
+
+    norm_content = grn_string_open(ctx, content, content_size, normalizer, 0);
+    grn_string_get_normalized(ctx, norm_content,
+                              &norm_content_raw,
+                              &norm_content_raw_length_in_bytes,
+                              NULL);
+
+    matched = regexp_is_match(ctx, regex,
+                              norm_content_raw,
+                              norm_content_raw_length_in_bytes);
+
+    grn_obj_unlink(ctx, norm_content);
+
+    if (matched) {
       break;
     }
   }
+  grn_obj_unlink(ctx, normalizer);
 
   onig_free(regex);
 

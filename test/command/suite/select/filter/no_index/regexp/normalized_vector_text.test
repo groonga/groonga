@@ -3,8 +3,8 @@ column_create Memos tags COLUMN_VECTOR Text
 
 load --table Memos
 [
-{"tags": ["groonga", "rroonga",  "mroonga"]},
-{"tags": ["groonga", "pgroonga", "mroonga"]}
+{"tags": ["Groonga", "Rroonga",  "Mroonga"]},
+{"tags": ["Groonga", "PGroonga", "Mroonga"]}
 ]
 
 select Memos --filter 'tags @~ "\\\\Apgr"'
