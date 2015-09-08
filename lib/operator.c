@@ -841,23 +841,24 @@ exec_text_operator_raw_text_raw_text(grn_ctx *ctx,
     return GRN_FALSE;
   }
 
-  if (op == GRN_OP_REGEXP) {
-    return exec_text_operator(ctx, op,
-                              target, target_len,
-                              query, query_len);
-  }
-
   normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
   norm_target = grn_string_open(ctx, target, target_len, normalizer, 0);
-  norm_query  = grn_string_open(ctx, query,  query_len,  normalizer, 0);
   grn_string_get_normalized(ctx, norm_target,
                             &norm_target_raw,
                             &norm_target_raw_length_in_bytes,
                             NULL);
-  grn_string_get_normalized(ctx, norm_query,
-                            &norm_query_raw,
-                            &norm_query_raw_length_in_bytes,
-                            NULL);
+
+  if (op == GRN_OP_REGEXP) {
+    norm_query = NULL;
+    norm_query_raw = query;
+    norm_query_raw_length_in_bytes = query_len;
+  } else {
+    norm_query = grn_string_open(ctx, query,  query_len,  normalizer, 0);
+    grn_string_get_normalized(ctx, norm_query,
+                              &norm_query_raw,
+                              &norm_query_raw_length_in_bytes,
+                              NULL);
+  }
 
   matched = exec_text_operator(ctx, op,
                                norm_target_raw,
@@ -866,7 +867,9 @@ exec_text_operator_raw_text_raw_text(grn_ctx *ctx,
                                norm_query_raw_length_in_bytes);
 
   grn_obj_close(ctx, norm_target);
-  grn_obj_close(ctx, norm_query);
+  if (norm_query) {
+    grn_obj_close(ctx, norm_query);
+  }
   grn_obj_unlink(ctx, normalizer);
 
   return matched;
