@@ -1387,7 +1387,8 @@ GRN_API void grn_ctx_recv_handler_set(grn_ctx *,
 #define GRN_RECORD_INIT GRN_VALUE_FIX_SIZE_INIT
 #define GRN_PTR_INIT(obj,flags,domain)\
   GRN_OBJ_INIT((obj), ((flags) & GRN_OBJ_VECTOR) ? GRN_PVECTOR : GRN_PTR,\
-               ((flags) & GRN_OBJ_DO_SHALLOW_COPY), (domain))
+               ((flags) & (GRN_OBJ_DO_SHALLOW_COPY | GRN_OBJ_OWN)),\
+               (domain))
 #define GRN_TOKYO_GEO_POINT_INIT(obj,flags) \
   GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_TOKYO_GEO_POINT)
 #define GRN_WGS84_GEO_POINT_INIT(obj,flags) \
