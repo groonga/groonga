@@ -43,6 +43,88 @@
 
 enum { GRN_TS_BATCH_SIZE = 1024 };
 
+typedef struct {
+  void *ptr;   /* The starting address. */
+  size_t size; /* The size in bytes. */
+} grn_ts_buf;
+
+/* grn_ts_buf_init() initializes a buffer. */
+static void
+grn_ts_buf_init(grn_ctx *ctx, grn_ts_buf *buf) {
+  buf->ptr = NULL;
+  buf->size = 0;
+}
+
+/* grn_ts_buf_open() creates a buffer. */
+static grn_rc
+grn_ts_buf_open(grn_ctx *ctx, grn_ts_buf **buf) {
+  grn_ts_buf *new_buf = GRN_MALLOCN(grn_ts_buf, 1);
+  if (!new_buf) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  grn_ts_buf_init(ctx, new_buf);
+  *buf = new_buf;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_buf_fin() finalizes a buffer. */
+static void
+grn_ts_buf_fin(grn_ctx *ctx, grn_ts_buf *buf) {
+  if (buf->ptr) {
+    GRN_FREE(buf->ptr);
+  }
+}
+
+/* grn_ts_buf_close() destroys a buffer. */
+static void
+grn_ts_buf_close(grn_ctx *ctx, grn_ts_buf *buf) {
+  if (buf) {
+    grn_ts_buf_fin(ctx, buf);
+  }
+}
+
+/* grn_ts_buf_reserve() reserves enough memory to store new_size bytes. */
+static grn_rc
+grn_ts_buf_reserve(grn_ctx *ctx, grn_ts_buf *buf, size_t new_size) {
+  void *new_ptr;
+  size_t enough_size;
+  if (new_size <= buf->size) {
+    return GRN_SUCCESS;
+  }
+  enough_size = new_size ? new_size : 1;
+  while (enough_size < new_size) {
+    enough_size <<= 1;
+  }
+  new_ptr = GRN_REALLOC(buf->ptr, enough_size);
+  if (!new_ptr) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  buf->ptr = new_ptr;
+  buf->size = enough_size;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_buf_resize() resizes a buffer. */
+static grn_rc
+grn_ts_buf_resize(grn_ctx *ctx, grn_ts_buf *buf, size_t new_size) {
+  void *new_ptr;
+  if (!new_size) {
+    if (buf->ptr) {
+      GRN_FREE(buf->ptr);
+      buf->ptr = NULL;
+      buf->size = new_size;
+    }
+    return GRN_SUCCESS;
+  }
+  new_ptr = GRN_REALLOC(buf->ptr, new_size);
+  if (!new_ptr) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  buf->ptr = new_ptr;
+  buf->size = new_size;
+  return GRN_SUCCESS;
+}
+
 /*-------------------------------------------------------------
  * Built-in data kinds.
  */
