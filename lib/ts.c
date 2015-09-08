@@ -2130,17 +2130,15 @@ grn_ts_expr_reserve_nodes(grn_ctx *ctx, grn_ts_expr *expr) {
 static grn_rc
 grn_ts_expr_open_id_node(grn_ctx *ctx, grn_ts_expr *expr,
                          grn_ts_expr_node **node) {
-  grn_ts_expr_node *new_node;
   grn_rc rc = grn_ts_expr_reserve_nodes(ctx, expr);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = grn_ts_expr_id_node_open(ctx, &new_node);
+  rc = grn_ts_expr_id_node_open(ctx, node);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  expr->nodes[expr->n_nodes++] = new_node;
-  *node = new_node;
+  expr->nodes[expr->n_nodes++] = *node;
   return GRN_SUCCESS;
 }
 
@@ -2151,17 +2149,15 @@ grn_ts_expr_open_id_node(grn_ctx *ctx, grn_ts_expr *expr,
 static grn_rc
 grn_ts_expr_open_score_node(grn_ctx *ctx, grn_ts_expr *expr,
                             grn_ts_expr_node **node) {
-  grn_ts_expr_node *new_node;
   grn_rc rc = grn_ts_expr_reserve_nodes(ctx, expr);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = grn_ts_expr_score_node_open(ctx, &new_node);
+  rc = grn_ts_expr_score_node_open(ctx, node);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  expr->nodes[expr->n_nodes++] = new_node;
-  *node = new_node;
+  expr->nodes[expr->n_nodes++] = *node;
   return GRN_SUCCESS;
 }
 
@@ -2172,17 +2168,15 @@ grn_ts_expr_open_score_node(grn_ctx *ctx, grn_ts_expr *expr,
 static grn_rc
 grn_ts_expr_open_key_node(grn_ctx *ctx, grn_ts_expr *expr,
                           grn_ts_expr_node **node) {
-  grn_ts_expr_node *new_node;
   grn_rc rc = grn_ts_expr_reserve_nodes(ctx, expr);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = grn_ts_expr_key_node_open(ctx, expr->curr_table, &new_node);
+  rc = grn_ts_expr_key_node_open(ctx, expr->curr_table, node);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  expr->nodes[expr->n_nodes++] = new_node;
-  *node = new_node;
+  expr->nodes[expr->n_nodes++] = *node;
   return GRN_SUCCESS;
 }
 
@@ -2193,17 +2187,15 @@ grn_ts_expr_open_key_node(grn_ctx *ctx, grn_ts_expr *expr,
 static grn_rc
 grn_ts_expr_open_value_node(grn_ctx *ctx, grn_ts_expr *expr,
                             grn_ts_expr_node **node) {
-  grn_ts_expr_node *new_node;
   grn_rc rc = grn_ts_expr_reserve_nodes(ctx, expr);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = grn_ts_expr_value_node_open(ctx, expr->curr_table, &new_node);
+  rc = grn_ts_expr_value_node_open(ctx, expr->curr_table, node);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  expr->nodes[expr->n_nodes++] = new_node;
-  *node = new_node;
+  expr->nodes[expr->n_nodes++] = *node;
   return GRN_SUCCESS;
 }
 
@@ -2215,17 +2207,15 @@ static grn_rc
 grn_ts_expr_open_const_node(grn_ctx *ctx, grn_ts_expr *expr,
                             grn_ts_data_kind kind, const void *value,
                             grn_ts_expr_node **node) {
-  grn_ts_expr_node *new_node;
   grn_rc rc = grn_ts_expr_reserve_nodes(ctx, expr);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = grn_ts_expr_const_node_open(ctx, kind, value, &new_node);
+  rc = grn_ts_expr_const_node_open(ctx, kind, value, node);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  expr->nodes[expr->n_nodes++] = new_node;
-  *node = new_node;
+  expr->nodes[expr->n_nodes++] = *node;
   return GRN_SUCCESS;
 }
 
@@ -2236,17 +2226,15 @@ grn_ts_expr_open_const_node(grn_ctx *ctx, grn_ts_expr *expr,
 static grn_rc
 grn_ts_expr_open_column_node(grn_ctx *ctx, grn_ts_expr *expr,
                              grn_obj *column, grn_ts_expr_node **node) {
-  grn_ts_expr_node *new_node;
   grn_rc rc = grn_ts_expr_reserve_nodes(ctx, expr);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = grn_ts_expr_column_node_open(ctx, column, &new_node);
+  rc = grn_ts_expr_column_node_open(ctx, column, node);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  expr->nodes[expr->n_nodes++] = new_node;
-  *node = new_node;
+  expr->nodes[expr->n_nodes++] = *node;
   return GRN_SUCCESS;
 }
 
@@ -2258,17 +2246,15 @@ static grn_rc
 grn_ts_expr_open_op_node(grn_ctx *ctx, grn_ts_expr *expr,
                          grn_ts_op_type op_type, grn_ts_expr_node **args,
                          size_t n_args, grn_ts_expr_node **node) {
-  grn_ts_expr_node *new_node;
   grn_rc rc = grn_ts_expr_reserve_nodes(ctx, expr);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = grn_ts_expr_op_node_open(ctx, op_type, args, n_args, &new_node);
+  rc = grn_ts_expr_op_node_open(ctx, op_type, args, n_args, node);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  expr->nodes[expr->n_nodes++] = new_node;
-  *node = new_node;
+  expr->nodes[expr->n_nodes++] = *node;
   return GRN_SUCCESS;
 }
 
