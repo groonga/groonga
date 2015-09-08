@@ -406,6 +406,7 @@ struct _grn_obj {
 
 #define GRN_OBJ_REFER                  (0x01<<0)
 #define GRN_OBJ_OUTPLACE               (0x01<<1)
+#define GRN_OBJ_OWN                    (0x01<<5)
 
 #define GRN_OBJ_INIT(obj,obj_type,obj_flags,obj_domain) do { \
   (obj)->header.type = (obj_type);\
