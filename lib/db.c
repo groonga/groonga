@@ -9578,6 +9578,30 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
   if (!GRN_OBJ_MUTABLE(obj)) {
     ERR(GRN_INVALID_ARGUMENT, "invalid obj assigned");
   } else {
+    switch (obj->header.type) {
+    case GRN_PTR :
+      if (obj->header.impl_flags & GRN_OBJ_OWN) {
+        if (GRN_BULK_VSIZE(obj) == sizeof(grn_obj *)) {
+          grn_obj_close(ctx, GRN_PTR_VALUE(obj));
+        }
+        obj->header.impl_flags &= ~GRN_OBJ_OWN;
+      }
+      break;
+    case GRN_PVECTOR :
+      if (obj->header.impl_flags & GRN_OBJ_OWN) {
+        unsigned int i, n_elements;
+        n_elements = GRN_BULK_VSIZE(obj) / sizeof(grn_obj *);
+        for (i = 0; i < n_elements; i++) {
+          grn_obj *element = GRN_PTR_VALUE_AT(obj, i);
+          grn_obj_close(ctx, element);
+        }
+        obj->header.impl_flags &= ~GRN_OBJ_OWN;
+      }
+      break;
+    default :
+      break;
+    }
+
     switch (domain) {
     case GRN_DB_VOID :
       if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx, obj); }
