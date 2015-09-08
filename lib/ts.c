@@ -409,24 +409,6 @@ grn_ts_data_kind_to_type(grn_ts_data_kind kind) {
  * Operators.
  */
 
-/* Logical Not operator (!X). */
-inline static grn_bool
-grn_ts_op_logical_not(grn_bool arg) {
-  return !arg;
-}
-
-/* Logical And operator (X && Y). */
-inline static grn_bool
-grn_ts_op_logical_and(grn_bool arg1, grn_bool arg2) {
-  return arg1 & arg2;
-}
-
-/* Logical Or operator (X || Y). */
-inline static grn_bool
-grn_ts_op_logical_or(grn_bool arg1, grn_bool arg2) {
-  return arg1 | arg2;
-}
-
 /* grn_ts_op_get_n_args() returns the number of arguments. */
 static size_t
 grn_ts_op_get_n_args(grn_ts_op_type op_type) {
@@ -666,6 +648,8 @@ typedef struct {
   grn_ts_op_type op_type;
   grn_ts_expr_node **args;
   size_t n_args;
+  void *buf;
+  size_t buf_size; /* Size in bytes. */
   // TODO
 } grn_ts_expr_op_node;
 
@@ -715,7 +699,10 @@ grn_ts_expr_node_fin(grn_ctx *ctx, grn_ts_expr_node *node) {
     }
     case GRN_TS_EXPR_OP_NODE: {
       grn_ts_expr_op_node *op_node = (grn_ts_expr_op_node *)node;
-      // TODO: Unlink objects and free memory.
+      // TODO: Free memory.
+      if (op_node->buf) {
+        GRN_FREE(op_node->buf);
+      }
       if (op_node->args) {
         GRN_FREE(op_node->args);
       }
@@ -1038,11 +1025,13 @@ static grn_rc
 grn_ts_expr_op_node_open(grn_ctx *ctx, grn_ts_op_type op_type,
                          grn_ts_expr_node **args, size_t n_args,
                          grn_ts_expr_node **node) {
-  grn_rc rc = GRN_SUCCESS;
+  size_t i;
   grn_ts_data_kind data_kind = GRN_TS_VOID;
   grn_ts_data_type data_type = GRN_DB_VOID;
   grn_ts_expr_node **args_clone = NULL;
   grn_ts_expr_op_node *new_node;
+
+  /* Check arguments. */
   switch (op_type) {
     case GRN_TS_OP_LOGICAL_AND:
     case GRN_TS_OP_LOGICAL_OR: {
@@ -1063,15 +1052,20 @@ grn_ts_expr_op_node_open(grn_ctx *ctx, grn_ts_op_type op_type,
       return GRN_INVALID_ARGUMENT;
     }
   }
-  if (rc == GRN_SUCCESS) {
-    args_clone = GRN_MALLOCN(grn_ts_expr_node *, n_args);
-    if (!args_clone) {
-      return GRN_NO_MEMORY_AVAILABLE;
-    }
-  } else {
-    return rc;
+  if ((data_kind == GRN_TS_VOID) || (data_type == GRN_DB_VOID)) {
+    return GRN_UNKNOWN_ERROR;
   }
 
+  /* Create a copy of args. */
+  args_clone = GRN_MALLOCN(grn_ts_expr_node *, n_args);
+  if (!args_clone) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  for (i = 0; i < n_args; i++) {
+    args_clone[i] = args[i];
+  }
+
+  /* Create an operator node. */
   new_node = GRN_MALLOCN(grn_ts_expr_op_node, 1);
   if (!new_node) {
     if (args_clone) {
@@ -1085,7 +1079,9 @@ grn_ts_expr_op_node_open(grn_ctx *ctx, grn_ts_op_type op_type,
   new_node->op_type = op_type;
   new_node->args = args_clone;
   new_node->n_args = n_args;
-  return rc;
+  new_node->buf = NULL;
+  new_node->buf_size = 0;
+  return GRN_SUCCESS;
 }
 
 /* grn_ts_expr_id_node_evaluate() outputs IDs. */
@@ -1688,13 +1684,122 @@ grn_ts_expr_column_node_evaluate(grn_ctx *ctx, grn_ts_expr_column_node *node,
   }
 }
 
-/* grn_ts_expr_op_node_evaluate() outputs results of an operator. */
+/* Forward declaration for operator nodes. */
+static grn_rc
+grn_ts_expr_node_evaluate(grn_ctx *ctx, grn_ts_expr_node *node,
+                          const grn_ts_record *in, size_t n_in, void *out);
+
+/*
+ * grn_ts_expr_op_node_reserve_buf() allocates memory to the 1st internal
+ * buffer.
+ */
+static grn_rc
+grn_ts_expr_op_node_reserve_buf(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                                size_t new_size) {
+  void *new_buf;
+  if (new_size <= node->buf_size) {
+    return GRN_SUCCESS;
+  }
+  new_buf = GRN_REALLOC(node->buf, new_size);
+  if (!new_buf) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  node->buf = new_buf;
+  node->buf_size = new_size;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_op_logical_not_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_logical_not_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                               const grn_ts_record *in, size_t n_in,
+                               void *out) {
+  size_t i;
+  grn_ts_bool *out_ptr = (grn_ts_bool *)out;
+  grn_rc rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, out);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  for (i = 0; i < n_in; i++) {
+    out_ptr[i] = !out_ptr[i];
+  }
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_op_logical_and_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_logical_and_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                               const grn_ts_record *in, size_t n_in,
+                               void *out) {
+  size_t i;
+  grn_ts_bool *out_ptr = (grn_ts_bool *)out;
+  grn_ts_bool *buf_ptr;
+  grn_rc rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, out);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  rc = grn_ts_expr_op_node_reserve_buf(ctx, node, sizeof(grn_ts_bool) * n_in);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  buf_ptr = (grn_ts_bool *)node->buf;
+  rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, node->buf);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  for (i = 0; i < n_in; i++) {
+    out_ptr[i] &= buf_ptr[i];
+  }
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_op_logical_or_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_logical_or_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                               const grn_ts_record *in, size_t n_in,
+                               void *out) {
+  size_t i;
+  grn_ts_bool *out_ptr = (grn_ts_bool *)out;
+  grn_ts_bool *buf_ptr;
+  grn_rc rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, out);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  rc = grn_ts_expr_op_node_reserve_buf(ctx, node, sizeof(grn_ts_bool) * n_in);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  buf_ptr = (grn_ts_bool *)node->buf;
+  rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, node->buf);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  for (i = 0; i < n_in; i++) {
+    out_ptr[i] |= buf_ptr[i];
+  }
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_expr_op_node_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_expr_op_node_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
                              const grn_ts_record *in, size_t n_in,
                              void *out) {
-  // TODO
-  return GRN_SUCCESS;
+  switch (node->op_type) {
+    case GRN_TS_OP_LOGICAL_NOT: {
+      return grn_ts_op_logical_not_evaluate(ctx, node, in, n_in, out);
+    }
+    case GRN_TS_OP_LOGICAL_AND: {
+      return grn_ts_op_logical_and_evaluate(ctx, node, in, n_in, out);
+    }
+    case GRN_TS_OP_LOGICAL_OR: {
+      return grn_ts_op_logical_or_evaluate(ctx, node, in, n_in, out);
+    }
+    // TODO
+    default: {
+      return GRN_OPERATION_NOT_SUPPORTED;
+    }
+  }
 }
 
 #define GRN_TS_EXPR_NODE_EVALUATE_CASE_BLOCK(TYPE, type)\
@@ -1707,8 +1812,7 @@ grn_ts_expr_op_node_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 /* grn_ts_expr_node_evaluate() evaluates a subexpression. */
 static grn_rc
 grn_ts_expr_node_evaluate(grn_ctx *ctx, grn_ts_expr_node *node,
-                          const grn_ts_record *in, size_t n_in,
-                          void *out) {
+                          const grn_ts_record *in, size_t n_in, void *out) {
   switch (node->type) {
     GRN_TS_EXPR_NODE_EVALUATE_CASE_BLOCK(ID, id)
     GRN_TS_EXPR_NODE_EVALUATE_CASE_BLOCK(SCORE, score)
@@ -1803,13 +1907,80 @@ grn_ts_expr_column_node_filter(grn_ctx *ctx, grn_ts_expr_column_node *node,
   return GRN_SUCCESS;
 }
 
+/* Forward declaration for operator nodes. */
+static grn_rc
+grn_ts_expr_node_filter(grn_ctx *ctx, grn_ts_expr_node *node,
+                        grn_ts_record *in, size_t n_in,
+                        grn_ts_record *out, size_t *n_out);
+
+/* grn_ts_op_logical_not_filter() filters records. */
+static grn_rc
+grn_ts_op_logical_not_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                             grn_ts_record *in, size_t n_in,
+                             grn_ts_record *out, size_t *n_out) {
+  size_t i, count;
+  grn_rc rc;
+  grn_ts_bool *buf_ptr;
+  rc = grn_ts_expr_op_node_reserve_buf(ctx, node, sizeof(grn_ts_bool) * n_in);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  buf_ptr = (grn_ts_bool *)node->buf;
+  rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, node->buf);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  for (i = 0, count = 0; i < n_in; i++) {
+    if (!buf_ptr[i]) {
+      out[count++] = in[i];
+    }
+  }
+  *n_out = count;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_op_logical_and_filter() filters records. */
+static grn_rc
+grn_ts_op_logical_and_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                             grn_ts_record *in, size_t n_in,
+                             grn_ts_record *out, size_t *n_out) {
+  grn_rc rc = grn_ts_expr_node_filter(ctx, node->args[0], in, n_in,
+                                      out, n_out);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  return grn_ts_expr_node_filter(ctx, node->args[1], out, *n_out, out, n_out);
+}
+
+/* grn_ts_op_logical_or_filter() filters records. */
+static grn_rc
+grn_ts_op_logical_or_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                            grn_ts_record *in, size_t n_in,
+                            grn_ts_record *out, size_t *n_out) {
+  // TODO
+  return GRN_FUNCTION_NOT_IMPLEMENTED;
+}
+
 /* grn_ts_expr_op_node_filter() filters records. */
 static grn_rc
 grn_ts_expr_op_node_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
                            grn_ts_record *in, size_t n_in,
                            grn_ts_record *out, size_t *n_out) {
-  // TODO
-  return GRN_SUCCESS;
+  switch (node->op_type) {
+    case GRN_TS_OP_LOGICAL_NOT: {
+      return grn_ts_op_logical_not_filter(ctx, node, in, n_in, out, n_out);
+    }
+    case GRN_TS_OP_LOGICAL_AND: {
+      return grn_ts_op_logical_and_filter(ctx, node, in, n_in, out, n_out);
+    }
+    case GRN_TS_OP_LOGICAL_OR: {
+      return grn_ts_op_logical_or_filter(ctx, node, in, n_in, out, n_out);
+    }
+    // TODO
+    default: {
+      return GRN_OPERATION_NOT_SUPPORTED;
+    }
+  }
 }
 
 #define GRN_TS_EXPR_NODE_FILTER_CASE_BLOCK(TYPE, type)\
@@ -1918,8 +2089,12 @@ grn_ts_expr_column_node_adjust(grn_ctx *ctx, grn_ts_expr_column_node *node,
 static grn_rc
 grn_ts_expr_op_node_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
                            grn_ts_record *io, size_t n_io) {
-  // TODO
-  return GRN_SUCCESS;
+  switch (node->op_type) {
+    // TODO
+    default: {
+      return GRN_OPERATION_NOT_SUPPORTED;
+    }
+  }
 }
 
 #define GRN_TS_EXPR_NODE_ADJUST_CASE_BLOCK(TYPE, type)\
