@@ -1026,6 +1026,8 @@ exec_regexp_uvector_bulk(grn_ctx *ctx, grn_obj *uvector, grn_obj *pattern)
   unsigned int i, size;
   OnigRegex regex;
   grn_obj *domain;
+  grn_obj *normalizer;
+  grn_obj *normalizer_auto = NULL;
 
   size = grn_uvector_size(ctx, uvector);
   if (size == 0) {
@@ -1043,6 +1045,11 @@ exec_regexp_uvector_bulk(grn_ctx *ctx, grn_obj *uvector, grn_obj *pattern)
     return GRN_FALSE;
   }
 
+  grn_table_get_info(ctx, domain, NULL, NULL, NULL, &normalizer, NULL);
+  if (!normalizer) {
+    normalizer_auto = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
+  }
+
   for (i = 0; i < size; i++) {
     grn_id record_id;
     char key[GRN_TABLE_MAX_KEY_SIZE];
@@ -1051,13 +1058,35 @@ exec_regexp_uvector_bulk(grn_ctx *ctx, grn_obj *uvector, grn_obj *pattern)
     record_id = grn_uvector_get_element(ctx, uvector, i, NULL);
     key_size = grn_table_get_key(ctx, domain, record_id,
                                  key, GRN_TABLE_MAX_KEY_SIZE);
-    if (key_size > 0) {
+    if (key_size == 0) {
+      continue;
+    }
+
+    if (normalizer) {
       matched = regexp_is_match(ctx, regex, key, key_size);
+    } else {
+      grn_obj *norm_key;
+      const char *norm_key_raw;
+      unsigned int norm_key_raw_length_in_bytes;
+
+      norm_key = grn_string_open(ctx, key, key_size, normalizer_auto, 0);
+      grn_string_get_normalized(ctx, norm_key,
+                                &norm_key_raw,
+                                &norm_key_raw_length_in_bytes,
+                                NULL);
+      matched = regexp_is_match(ctx, regex,
+                                norm_key_raw,
+                                norm_key_raw_length_in_bytes);
+      grn_obj_unlink(ctx, norm_key);
     }
 
     if (matched) {
       break;
     }
+  }
+
+  if (normalizer_auto) {
+    grn_obj_unlink(ctx, normalizer_auto);
   }
 
   grn_obj_unlink(ctx, domain);
