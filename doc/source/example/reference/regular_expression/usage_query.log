@@ -1,6 +1,6 @@
 Execution example::
 
-  select Logs --query 'message:~"[Dd]isk"'
+  select Logs --query 'message:~"disk (space|full)"'
   # [
   #   [
   #     0, 

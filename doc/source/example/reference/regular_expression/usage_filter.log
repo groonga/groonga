@@ -1,6 +1,6 @@
 Execution example::
 
-  select Logs --filter 'message @~ "[Dd]isk"'
+  select Logs --filter 'message @~ "disk (space|full)"'
   # [
   #   [
   #     0, 

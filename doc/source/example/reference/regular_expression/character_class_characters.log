@@ -1,6 +1,6 @@
 Execution example::
 
-  select Logs --filter 'message @~ "[Dd]isk"'
+  select Logs --filter 'message @~ "host[12]"'
   # [
   #   [
   #     0, 
@@ -10,7 +10,7 @@ Execution example::
   #   [
   #     [
   #       [
-  #         2
+  #         5
   #       ], 
   #       [
   #         [
@@ -23,12 +23,24 @@ Execution example::
   #         ]
   #       ], 
   #       [
+  #         1, 
+  #         "host1:[error]: No memory"
+  #       ], 
+  #       [
   #         2, 
   #         "host1:[warning]: Remained disk space is less than 30%"
   #       ], 
   #       [
   #         3, 
   #         "host1:[error]: Disk full"
+  #       ], 
+  #       [
+  #         4, 
+  #         "host2:[error]: No memory"
+  #       ], 
+  #       [
+  #         5, 
+  #         "host2:[info]: Shutdown"
   #       ]
   #     ]
   #   ]

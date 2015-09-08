@@ -28,6 +28,27 @@ In some cases, pattern match by regular expression can be evaluated
 by index. It's very fast rather than sequential search. Patterns
 that can be evaluated by index are described later.
 
+.. versionadded:: 5.0.7
+
+   Groonga normalizes match target text by :ref:`normalizer-auto`
+   normalizer when Groonga doesn't use index for regular expression
+   search. It means that regular expression that has upper case such
+   as ``Groonga`` never match. Because :ref:`normalizer-auto`
+   normalizer normalizes all alphabets to lower case. ``groonga``
+   matches to both ``Groonga`` and ``groonga``.
+
+   Why is match target text normalizered? It's for increasing index
+   search-able patterns. If Groonga doesn't normalize match target
+   text, you need to write complex regular expression such as
+   ``[Dd][Ii][Ss][Kk]`` and ``(?i)disk`` for case-insensitive match.
+   Groonga can't use index against complex regular expression.
+
+   If you write ``disk`` regular expression for case-insensitive
+   match, Groonga can search the pattern with index. It's fast.
+
+   You may feel the behavior is strange. But fast search based on this
+   behavior will help you.
+
 There are many regular expression syntaxes. Groonga uses the same
 syntax in Ruby. Because Groonga uses the same regular expression
 engine as Ruby. The regular expression engine is `Onigmo
@@ -39,8 +60,13 @@ means the end of text in other most regular expression syntaxes. The regular
 expression syntax in Ruby uses ``\A`` for the beginning of text and
 ``\z`` for the end of text.
 
-Groonga uses multiline mode since 5.0.6. It means that ``.`` matches
-on ``\n``.
+.. versionadded:: 5.0.6
+
+   Groonga uses multiline mode since 5.0.6. It means that ``.``
+   matches on ``\n``.
+
+   But it's meaningless. Because ``\n`` is removed by
+   :ref:`normalizer-auto` normalizer.
 
 You can use regular expression in :ref:`select-query` and
 :ref:`select-filter` options of :doc:`/reference/commands/select`
@@ -73,7 +99,7 @@ Here is an example that uses regular expression in
 
 .. groonga-command
 .. include:: ../example/reference/regular_expression/usage_query.log
-.. select Logs --query 'message:~"[Dd]isk"'
+.. select Logs --query 'message:~"disk (space|full)"'
 
 Here is an example that uses regular expression in
 :ref:`select-filter`. You need to use
@@ -81,7 +107,7 @@ Here is an example that uses regular expression in
 
 .. groonga-command
 .. include:: ../example/reference/regular_expression/usage_filter.log
-.. select Logs --filter 'message @~ "[Dd]isk"'
+.. select Logs --filter 'message @~ "disk (space|full)"'
 
 Index
 -----
@@ -295,11 +321,11 @@ Character class
 Character class syntax is ``[...]``. Character class is useful to
 specify multiple characters to be matched.
 
-For example, ``[Dd]`` matches ``D`` or ``d``.
+For example, ``[12]`` matches ``1`` or ``2``.
 
 .. groonga-command
 .. include:: ../example/reference/regular_expression/character_class_characters.log
-.. select Logs --filter 'message @~ "[Dd]isk"'
+.. select Logs --filter 'message @~ "host[12]"'
 
 You can specify characters by range. For example, ``[0-9]`` matches
 one digit.
