@@ -114,6 +114,9 @@ grn_ts_buf_reserve(grn_ctx *ctx, grn_ts_buf *buf, size_t new_size) {
 static grn_rc
 grn_ts_buf_resize(grn_ctx *ctx, grn_ts_buf *buf, size_t new_size) {
   void *new_ptr;
+  if (new_size == buf->size) {
+    return GRN_SUCCESS;
+  }
   if (!new_size) {
     if (buf->ptr) {
       GRN_FREE(buf->ptr);
