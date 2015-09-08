@@ -308,7 +308,7 @@ div.versionadded
 {
     background-color: #eee;
     border: 1px solid #ccc;
-    padding: 7px;
+    padding: 0px 7px;
 }
 
 div.document
