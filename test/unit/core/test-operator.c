@@ -609,8 +609,8 @@ test_exec_regexp_true(gconstpointer data)
   lhs_type = gcut_data_get_string(data, "lhs_type");
   rhs_type = gcut_data_get_string(data, "rhs_type");
 
-  set_text(&lhs, "Hello");
-  set_text(&rhs, "\\AHe");
+  set_text(&lhs, "hello");
+  set_text(&rhs, "\\Ahe");
   cut_assert_true(grn_operator_exec_regexp(context, &lhs, &rhs));
 }
 
@@ -637,7 +637,7 @@ test_exec_regexp_false(gconstpointer data)
   lhs_type = gcut_data_get_string(data, "lhs_type");
   rhs_type = gcut_data_get_string(data, "rhs_type");
 
-  set_text(&lhs, "Hello");
+  set_text(&lhs, "hello");
   set_text(&rhs, "llox\\z");
   cut_assert_false(grn_operator_exec_regexp(context, &lhs, &rhs));
 }
