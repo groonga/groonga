@@ -46,6 +46,7 @@ enum { GRN_TS_BATCH_SIZE = 1024 };
 typedef struct {
   void *ptr;   /* The starting address. */
   size_t size; /* The size in bytes. */
+  size_t pos;  /* The current position. */
 } grn_ts_buf;
 
 /* grn_ts_buf_init() initializes a buffer. */
@@ -53,6 +54,7 @@ static void
 grn_ts_buf_init(grn_ctx *ctx, grn_ts_buf *buf) {
   buf->ptr = NULL;
   buf->size = 0;
+  buf->pos = 0;
 }
 
 /* grn_ts_buf_open() creates a buffer. */
@@ -122,6 +124,21 @@ grn_ts_buf_resize(grn_ctx *ctx, grn_ts_buf *buf, size_t new_size) {
   }
   buf->ptr = new_ptr;
   buf->size = new_size;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_buf_write() appends data into a buffer. */
+static grn_rc
+grn_ts_buf_write(grn_ctx *ctx, grn_ts_buf *buf, const void *ptr, size_t size) {
+  size_t new_pos = buf->pos + size;
+  if (new_pos > buf->size) {
+    grn_rc rc = grn_ts_buf_reserve(ctx, buf, new_pos);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+  }
+  grn_memcpy((char *)buf->ptr + buf->pos, ptr, size);
+  buf->pos += size;
   return GRN_SUCCESS;
 }
 
