@@ -897,26 +897,35 @@ exec_text_operator_record_text(grn_ctx *ctx,
   record_key_len = grn_table_get_key(ctx, table, GRN_RECORD_VALUE(record),
                                      record_key, GRN_TABLE_MAX_KEY_SIZE);
   grn_table_get_info(ctx, table, NULL, NULL, NULL, &normalizer, NULL);
-  if (normalizer && (op != GRN_OP_REGEXP)) {
+  if (normalizer) {
     grn_obj *norm_query;
     const char *norm_query_raw;
     unsigned int norm_query_raw_length_in_bytes;
-    norm_query = grn_string_open(ctx,
-                                 GRN_TEXT_VALUE(query),
-                                 GRN_TEXT_LEN(query),
-                                 normalizer,
-                                 0);
-    grn_string_get_normalized(ctx, norm_query,
-                              &norm_query_raw,
-                              &norm_query_raw_length_in_bytes,
-                              NULL);
+
+    if (op == GRN_OP_REGEXP) {
+      norm_query = NULL;
+      norm_query_raw = GRN_TEXT_VALUE(query);
+      norm_query_raw_length_in_bytes = GRN_TEXT_LEN(query);
+    } else {
+      norm_query = grn_string_open(ctx,
+                                   GRN_TEXT_VALUE(query),
+                                   GRN_TEXT_LEN(query),
+                                   normalizer,
+                                   0);
+      grn_string_get_normalized(ctx, norm_query,
+                                &norm_query_raw,
+                                &norm_query_raw_length_in_bytes,
+                                NULL);
+    }
     matched = exec_text_operator(ctx,
                                  op,
                                  record_key,
                                  record_key_len,
                                  norm_query_raw,
                                  norm_query_raw_length_in_bytes);
-    grn_obj_close(ctx, norm_query);
+    if (norm_query) {
+      grn_obj_close(ctx, norm_query);
+    }
   } else {
     matched = exec_text_operator_raw_text_raw_text(ctx,
                                                    op,

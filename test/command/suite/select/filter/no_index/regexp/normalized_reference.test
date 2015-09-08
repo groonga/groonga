@@ -1,0 +1,12 @@
+table_create Products TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+
+table_create Memos TABLE_NO_KEY
+column_create Memos product COLUMN_SCALAR Products
+
+load --table Memos
+[
+{"product": "Groonga"},
+{"product": "Mroonga"}
+]
+
+select Memos --filter 'product @~ "\\\\Agr"'
