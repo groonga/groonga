@@ -1361,7 +1361,7 @@ msgid ""
 "There may be a question that \"which is the better solution for indexing.\" "
 "It depends on the case."
 msgstr ""
-"\"インデックスはどちらがよい方法なのか\"と疑問に思うかも知れません。それは場"
+"\"インデックスはどちらがよい方法なのか\"と疑問に思うかもしれません。それは場"
 "合によります。"
 
 msgid ""
