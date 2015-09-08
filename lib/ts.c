@@ -690,135 +690,12 @@ grn_ts_table_get_value(grn_ctx *ctx, grn_obj *table, grn_id id) {
 }
 
 /*-------------------------------------------------------------
- * grn_ts_expr_node.
+ * grn_ts_expr_id_node.
  */
 
 typedef struct {
   GRN_TS_EXPR_NODE_COMMON_MEMBERS
 } grn_ts_expr_id_node;
-
-typedef struct {
-  GRN_TS_EXPR_NODE_COMMON_MEMBERS
-} grn_ts_expr_score_node;
-
-typedef struct {
-  GRN_TS_EXPR_NODE_COMMON_MEMBERS
-  grn_obj *table;
-  grn_ts_buf buf;
-} grn_ts_expr_key_node;
-
-typedef struct {
-  GRN_TS_EXPR_NODE_COMMON_MEMBERS
-  grn_obj *table;
-} grn_ts_expr_value_node;
-
-typedef struct {
-  GRN_TS_EXPR_NODE_COMMON_MEMBERS
-  union {
-    grn_ts_bool bool_value;
-    grn_ts_int int_value;
-    grn_ts_float float_value;
-    grn_ts_time time_value;
-    grn_ts_text text_value;
-    grn_ts_geo_point geo_point_value;
-    grn_ts_bool_vector bool_vector_value;
-    grn_ts_int_vector int_vector_value;
-    grn_ts_float_vector float_vector_value;
-    grn_ts_time_vector time_vector_value;
-    grn_ts_text_vector text_vector_value;
-    grn_ts_geo_point_vector geo_point_vector_value;
-  } content;
-  char *text_buf;
-  void *vector_buf;
-} grn_ts_expr_const_node;
-
-typedef struct {
-  GRN_TS_EXPR_NODE_COMMON_MEMBERS
-  grn_obj *column;
-  grn_ts_buf buf;
-  grn_ts_buf body_buf;
-} grn_ts_expr_column_node;
-
-typedef struct {
-  GRN_TS_EXPR_NODE_COMMON_MEMBERS
-  grn_ts_op_type op_type;
-  grn_ts_expr_node **args;
-  size_t n_args;
-  void *buf;
-  size_t buf_size; /* Size in bytes. */
-  // TODO
-} grn_ts_expr_op_node;
-
-/* grn_ts_expr_node_fin() finalizes a node. */
-static grn_rc
-grn_ts_expr_node_fin(grn_ctx *ctx, grn_ts_expr_node *node) {
-  switch (node->type) {
-    case GRN_TS_EXPR_ID_NODE:
-    case GRN_TS_EXPR_SCORE_NODE: {
-      return GRN_SUCCESS;
-    }
-    case GRN_TS_EXPR_KEY_NODE: {
-      grn_ts_expr_key_node *key_node = (grn_ts_expr_key_node *)node;
-      grn_ts_buf_fin(ctx, &key_node->buf);
-      if (key_node->table) {
-        grn_obj_unlink(ctx, key_node->table);
-      }
-      return GRN_SUCCESS;
-    }
-    case GRN_TS_EXPR_VALUE_NODE: {
-      grn_ts_expr_value_node *value_node = (grn_ts_expr_value_node *)node;
-      if (value_node->table) {
-        grn_obj_unlink(ctx, value_node->table);
-      }
-      return GRN_SUCCESS;
-    }
-    case GRN_TS_EXPR_CONST_NODE: {
-      grn_ts_expr_const_node *const_node = (grn_ts_expr_const_node *)node;
-      if (const_node->vector_buf) {
-        GRN_FREE(const_node->vector_buf);
-      }
-      if (const_node->text_buf) {
-        GRN_FREE(const_node->text_buf);
-      }
-      return GRN_SUCCESS;
-    }
-    case GRN_TS_EXPR_COLUMN_NODE: {
-      grn_ts_expr_column_node *column_node = (grn_ts_expr_column_node *)node;
-      grn_ts_buf_fin(ctx, &column_node->body_buf);
-      grn_ts_buf_fin(ctx, &column_node->buf);
-      if (column_node->column) {
-        grn_obj_unlink(ctx, column_node->column);
-      }
-      return GRN_SUCCESS;
-    }
-    case GRN_TS_EXPR_OP_NODE: {
-      grn_ts_expr_op_node *op_node = (grn_ts_expr_op_node *)node;
-      // TODO: Free memory.
-      if (op_node->buf) {
-        GRN_FREE(op_node->buf);
-      }
-      if (op_node->args) {
-        GRN_FREE(op_node->args);
-      }
-      return GRN_SUCCESS;
-    }
-    default: {
-      return GRN_INVALID_ARGUMENT;
-    }
-  }
-}
-
-/* grn_ts_expr_node_close() destroys a node. */
-static grn_rc
-grn_ts_expr_node_close(grn_ctx *ctx, grn_ts_expr_node *node) {
-  grn_rc rc;
-  if (!node) {
-    return GRN_SUCCESS;
-  }
-  rc = grn_ts_expr_node_fin(ctx, node);
-  GRN_FREE(node);
-  return rc;
-}
 
 /* grn_ts_expr_id_node_open() creates a node associated with ID (_id). */
 static grn_rc
@@ -833,6 +710,27 @@ grn_ts_expr_id_node_open(grn_ctx *ctx, grn_ts_expr_node **node) {
   *node = (grn_ts_expr_node *)new_node;
   return GRN_SUCCESS;
 }
+
+/* grn_ts_expr_id_node_evaluate() outputs IDs. */
+static grn_rc
+grn_ts_expr_id_node_evaluate(grn_ctx *ctx, grn_ts_expr_id_node *node,
+                             const grn_ts_record *in, size_t n_in,
+                             void *out) {
+  size_t i;
+  grn_ts_int *out_ptr = (grn_ts_int *)out;
+  for (i = 0; i < n_in; i++) {
+    out_ptr[i] = (grn_ts_int)in[i].id;
+  }
+  return GRN_SUCCESS;
+}
+
+/*-------------------------------------------------------------
+ * grn_ts_expr_score_node.
+ */
+
+typedef struct {
+  GRN_TS_EXPR_NODE_COMMON_MEMBERS
+} grn_ts_expr_score_node;
 
 /*
  * grn_ts_expr_score_node_open() creates a node associated with score
@@ -850,6 +748,37 @@ grn_ts_expr_score_node_open(grn_ctx *ctx, grn_ts_expr_node **node) {
   *node = (grn_ts_expr_node *)new_node;
   return GRN_SUCCESS;
 }
+
+/* grn_ts_expr_score_node_evaluate() outputs scores. */
+static grn_rc
+grn_ts_expr_score_node_evaluate(grn_ctx *ctx, grn_ts_expr_score_node *node,
+                                const grn_ts_record *in, size_t n_in,
+                                void *out) {
+  size_t i;
+  grn_ts_float *out_ptr = (grn_ts_float *)out;
+  for (i = 0; i < n_in; i++) {
+    out_ptr[i] = (grn_ts_float)in[i].score;
+  }
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_expr_score_node_adjust() updates scores. */
+static grn_rc
+grn_ts_expr_score_node_adjust(grn_ctx *ctx, grn_ts_expr_score_node *node,
+                              grn_ts_record *io, size_t n_io) {
+  /* Nothing to do. */
+  return GRN_SUCCESS;
+}
+
+/*-------------------------------------------------------------
+ * grn_ts_expr_key_node.
+ */
+
+typedef struct {
+  GRN_TS_EXPR_NODE_COMMON_MEMBERS
+  grn_obj *table;
+  grn_ts_buf buf;
+} grn_ts_expr_key_node;
 
 /* grn_ts_expr_key_node_open() creates a node associated with key (_key). */
 static grn_rc
@@ -877,6 +806,160 @@ grn_ts_expr_key_node_open(grn_ctx *ctx, grn_obj *table,
   *node = (grn_ts_expr_node *)new_node;
   return GRN_SUCCESS;
 }
+
+#define GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE_BLOCK(KIND, kind)\
+  case GRN_TS_ ## KIND: {\
+    size_t i;\
+    grn_ts_ ## kind *out_ptr = (grn_ts_ ## kind *)out;\
+    for (i = 0; i < n_in; i++) {\
+      const grn_ts_ ## kind *key;\
+      size_t key_size;\
+      key = (const grn_ts_ ## kind *)grn_ts_table_get_key(ctx, node->table,\
+                                                          in[i].id,\
+                                                          &key_size);\
+      if (key && (key_size == sizeof(*key))) {\
+        out_ptr[i] = *key;\
+      } else {\
+        out_ptr[i] = grn_ts_ ## kind ## _zero();\
+      }\
+    }\
+    return GRN_SUCCESS;\
+  }
+#define GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE_BLOCK(TYPE, type)\
+  case GRN_DB_ ## TYPE: {\
+    size_t i;\
+    grn_ts_int *out_ptr = (grn_ts_int *)out;\
+    for (i = 0; i < n_in; i++) {\
+      const type ## _t *key;\
+      size_t key_size;\
+      key = (const type ## _t *)grn_ts_table_get_key(ctx, node->table,\
+                                                     in[i].id, &key_size);\
+      if (key && (key_size == sizeof(*key))) {\
+        out_ptr[i] = (grn_ts_int)*key;\
+      } else {\
+        out_ptr[i] = grn_ts_int_zero();\
+      }\
+    }\
+    return GRN_SUCCESS;\
+  }
+/* grn_ts_expr_key_node_evaluate() outputs keys. */
+static grn_rc
+grn_ts_expr_key_node_evaluate(grn_ctx *ctx, grn_ts_expr_key_node *node,
+                              const grn_ts_record *in, size_t n_in,
+                              void *out) {
+  switch (node->data_kind) {
+    GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE_BLOCK(BOOL, bool)
+    case GRN_TS_INT: {
+      switch (node->data_type) {
+        GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE_BLOCK(INT8, int8)
+        GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE_BLOCK(INT16, int16)
+        GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE_BLOCK(INT32, int32)
+        GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE_BLOCK(INT64, int64)
+        GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE_BLOCK(UINT8, uint8)
+        GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE_BLOCK(UINT16, uint16)
+        GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE_BLOCK(UINT32, uint32)
+        GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE_BLOCK(UINT64, uint64)
+        default: {
+          return GRN_OBJECT_CORRUPT;
+        }
+      }
+    }
+    GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE_BLOCK(FLOAT, float)
+    GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE_BLOCK(TIME, time)
+    case GRN_TS_TEXT: {
+      size_t i;
+      char *buf_ptr;
+      grn_ts_text *out_ptr = (grn_ts_text *)out;
+      node->buf.pos = 0;
+      for (i = 0; i < n_in; i++) {
+        const char *key;
+        size_t key_size;
+        key = (const char *)grn_ts_table_get_key(ctx, node->table, in[i].id,
+                                                 &key_size);
+        if (key && key_size) {
+          grn_rc rc = grn_ts_buf_write(ctx, &node->buf, key, key_size);
+          if (rc == GRN_SUCCESS) {
+            out_ptr[i].size = key_size;
+          }
+        }
+      }
+      buf_ptr = (char *)node->buf.ptr;
+      for (i = 0; i < n_in; i++) {
+        out_ptr[i].ptr = buf_ptr;
+        buf_ptr += out_ptr[i].size;
+      }
+      return GRN_SUCCESS;
+    }
+    GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE_BLOCK(GEO_POINT, geo_point)
+    case GRN_TS_REF: {
+      size_t i;
+      grn_ts_ref *out_ptr = (grn_ts_ref *)out;
+      for (i = 0; i < n_in; i++) {
+        const grn_ts_id *id;
+        size_t key_size;
+        id = (const grn_ts_id *)grn_ts_table_get_key(ctx, node->table,
+                                                     in[i].id, &key_size);
+        if (id && (key_size == sizeof(*id))) {
+          out_ptr[i].id = *id;
+          out_ptr[i].score = in[i].score;
+        } else {
+          out_ptr[i] = grn_ts_ref_zero();
+        }
+      }
+      return GRN_SUCCESS;
+    }
+    default: {
+      return GRN_OBJECT_CORRUPT;
+    }
+  }
+}
+#undef GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE_BLOCK
+#undef GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE_BLOCK
+
+/* grn_ts_expr_key_node_filter() filters records. */
+static grn_rc
+grn_ts_expr_key_node_filter(grn_ctx *ctx, grn_ts_expr_key_node *node,
+                            grn_ts_record *in, size_t n_in,
+                            grn_ts_record *out, size_t *n_out) {
+  size_t i, count = 0;
+  for (i = 0; i < n_in; i++) {
+    const grn_ts_bool *key;
+    size_t key_size;
+    key = (const grn_ts_bool *)grn_ts_table_get_key(ctx, node->table,
+                                                    in[i].id, &key_size);
+    if (key && (key_size == sizeof(*key)) && *key) {
+      out[count++] = in[i];
+    }
+  }
+  *n_out = count;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_expr_key_node_adjust() updates scores. */
+static grn_rc
+grn_ts_expr_key_node_adjust(grn_ctx *ctx, grn_ts_expr_key_node *node,
+                            grn_ts_record *io, size_t n_io) {
+  size_t i;
+  for (i = 0; i < n_io; i++) {
+    const grn_ts_float *key;
+    size_t key_size;
+    key = (const grn_ts_float *)grn_ts_table_get_key(ctx, node->table,
+                                                     io[i].id, &key_size);
+    if (key && (key_size == sizeof(*key))) {
+      io[i].score = (grn_ts_score)*key;
+    }
+  }
+  return GRN_SUCCESS;
+}
+
+/*-------------------------------------------------------------
+ * grn_ts_expr_value_node.
+ */
+
+typedef struct {
+  GRN_TS_EXPR_NODE_COMMON_MEMBERS
+  grn_obj *table;
+} grn_ts_expr_value_node;
 
 /*
  * grn_ts_expr_value_node_open() creates a node associated with value
@@ -907,6 +990,138 @@ grn_ts_expr_value_node_open(grn_ctx *ctx, grn_obj *table,
   *node = (grn_ts_expr_node *)new_node;
   return GRN_SUCCESS;
 }
+
+#define GRN_TS_EXPR_VALUE_NODE_EVALUATE_CASE_BLOCK(KIND, kind)\
+  case GRN_TS_ ## KIND: {\
+    size_t i;\
+    grn_ts_ ## kind *out_ptr = (grn_ts_ ## kind *)out;\
+    for (i = 0; i < n_in; i++) {\
+      const grn_ts_ ## kind *value;\
+      value = (const grn_ts_ ## kind *)grn_ts_table_get_value(ctx,\
+                                                              node->table,\
+                                                              in[i].id);\
+      out_ptr[i] = value ? *value : grn_ts_ ## kind ## _zero();\
+    }\
+    return GRN_SUCCESS;\
+  }
+#define GRN_TS_EXPR_VALUE_NODE_EVALUATE_INT_CASE_BLOCK(TYPE, type)\
+  case GRN_DB_ ## TYPE: {\
+    size_t i;\
+    grn_ts_int *out_ptr = (grn_ts_int *)out;\
+    for (i = 0; i < n_in; i++) {\
+      const type ## _t *value;\
+      value = (const type ## _t *)grn_ts_table_get_value(ctx, node->table,\
+                                                         in[i].id);\
+      out_ptr[i] = value ? (grn_ts_int)*value : grn_ts_int_zero();\
+    }\
+    return GRN_SUCCESS;\
+  }
+/* grn_ts_expr_value_node_evaluate() outputs values. */
+static grn_rc
+grn_ts_expr_value_node_evaluate(grn_ctx *ctx, grn_ts_expr_value_node *node,
+                                const grn_ts_record *in, size_t n_in,
+                                void *out) {
+  switch (node->data_kind) {
+    GRN_TS_EXPR_VALUE_NODE_EVALUATE_CASE_BLOCK(BOOL, bool)
+    case GRN_TS_INT: {
+      switch (node->data_type) {
+        GRN_TS_EXPR_VALUE_NODE_EVALUATE_INT_CASE_BLOCK(INT8, int8)
+        GRN_TS_EXPR_VALUE_NODE_EVALUATE_INT_CASE_BLOCK(INT16, int16)
+        GRN_TS_EXPR_VALUE_NODE_EVALUATE_INT_CASE_BLOCK(INT32, int32)
+        GRN_TS_EXPR_VALUE_NODE_EVALUATE_INT_CASE_BLOCK(INT64, int64)
+        GRN_TS_EXPR_VALUE_NODE_EVALUATE_INT_CASE_BLOCK(UINT8, uint8)
+        GRN_TS_EXPR_VALUE_NODE_EVALUATE_INT_CASE_BLOCK(UINT16, uint16)
+        GRN_TS_EXPR_VALUE_NODE_EVALUATE_INT_CASE_BLOCK(UINT32, uint32)
+        GRN_TS_EXPR_VALUE_NODE_EVALUATE_INT_CASE_BLOCK(UINT64, uint64)
+        default: {
+          return GRN_OBJECT_CORRUPT;
+        }
+      }
+    }
+    GRN_TS_EXPR_VALUE_NODE_EVALUATE_CASE_BLOCK(FLOAT, float)
+    GRN_TS_EXPR_VALUE_NODE_EVALUATE_CASE_BLOCK(TIME, time)
+    GRN_TS_EXPR_VALUE_NODE_EVALUATE_CASE_BLOCK(GEO_POINT, geo_point)
+    case GRN_TS_REF: {
+      size_t i;
+      grn_ts_ref *out_ptr = (grn_ts_ref *)out;
+      for (i = 0; i < n_in; i++) {
+        const grn_ts_id *value;
+        value = (const grn_ts_id *)grn_ts_table_get_value(ctx, node->table,
+                                                          in[i].id);
+        if (value) {
+          out_ptr[i].id = *value;
+          out_ptr[i].score = in[i].score;
+        } else {
+          out_ptr[i] = grn_ts_ref_zero();
+        }
+      }
+      return GRN_SUCCESS;
+    }
+    default: {
+      return GRN_OBJECT_CORRUPT;
+    }
+  }
+}
+#undef GRN_TS_EXPR_VALUE_NODE_EVALUATE_INT_CASE_BLOCK
+#undef GRN_TS_EXPR_VALUE_NODE_EVALUATE_CASE_BLOCK
+
+/* grn_ts_expr_value_node_filter() filters records. */
+static grn_rc
+grn_ts_expr_value_node_filter(grn_ctx *ctx, grn_ts_expr_value_node *node,
+                              grn_ts_record *in, size_t n_in,
+                              grn_ts_record *out, size_t *n_out) {
+  size_t i, count = 0;
+  for (i = 0; i < n_in; i++) {
+    const grn_ts_bool *value;
+    value = (const grn_ts_bool *)grn_ts_table_get_value(ctx, node->table,
+                                                        in[i].id);
+    if (value && *value) {
+      out[count++] = in[i];
+    }
+  }
+  *n_out = count;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_expr_value_node_adjust() updates scores. */
+static grn_rc
+grn_ts_expr_value_node_adjust(grn_ctx *ctx, grn_ts_expr_value_node *node,
+                              grn_ts_record *io, size_t n_io) {
+  size_t i;
+  for (i = 0; i < n_io; i++) {
+    const grn_ts_float *value;
+    value = (const grn_ts_float *)grn_ts_table_get_value(ctx, node->table,
+                                                         io[i].id);
+    if (value) {
+      io[i].score = (grn_ts_score)*value;
+    }
+  }
+  return GRN_SUCCESS;
+}
+
+/*-------------------------------------------------------------
+ * grn_ts_expr_const_node.
+ */
+
+typedef struct {
+  GRN_TS_EXPR_NODE_COMMON_MEMBERS
+  union {
+    grn_ts_bool bool_value;
+    grn_ts_int int_value;
+    grn_ts_float float_value;
+    grn_ts_time time_value;
+    grn_ts_text text_value;
+    grn_ts_geo_point geo_point_value;
+    grn_ts_bool_vector bool_vector_value;
+    grn_ts_int_vector int_vector_value;
+    grn_ts_float_vector float_vector_value;
+    grn_ts_time_vector time_vector_value;
+    grn_ts_text_vector text_vector_value;
+    grn_ts_geo_point_vector geo_point_vector_value;
+  } content;
+  char *text_buf;
+  void *vector_buf;
+} grn_ts_expr_const_node;
 
 #define GRN_TS_EXPR_CONST_NODE_OPEN_CASE_BLOCK(KIND, kind)\
   case GRN_TS_ ## KIND: {\
@@ -1043,322 +1258,17 @@ grn_ts_expr_const_node_open(grn_ctx *ctx, grn_ts_data_kind kind,
     rc = grn_ts_expr_const_node_init_scalar(ctx, new_node, value);
   }
   if (rc != GRN_SUCCESS) {
-    grn_ts_expr_node_close(ctx, (grn_ts_expr_node *)new_node);
+    if (new_node->vector_buf) {
+      GRN_FREE(new_node->vector_buf);
+    }
+    if (new_node->text_buf) {
+      GRN_FREE(new_node->text_buf);
+    }
     return rc;
   }
   *node = (grn_ts_expr_node *)new_node;
   return GRN_SUCCESS;
 }
-
-#define GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(TYPE)\
-  case GRN_DB_ ## TYPE: {\
-    GRN_ ## TYPE ## _INIT(&new_node->buf, GRN_OBJ_VECTOR);\
-    break;\
-  }
-/* grn_ts_expr_column_node_open() creates a node associated with a column. */
-static grn_rc
-grn_ts_expr_column_node_open(grn_ctx *ctx, grn_obj *column,
-                             grn_ts_expr_node **node) {
-  grn_rc rc;
-  grn_ts_expr_column_node *new_node = GRN_MALLOCN(grn_ts_expr_column_node, 1);
-  if (!new_node) {
-    return GRN_NO_MEMORY_AVAILABLE;
-  }
-  memset(new_node, 0, sizeof(*new_node));
-  rc = grn_ts_obj_increment_ref_count(ctx, column);
-  if (rc != GRN_SUCCESS) {
-    GRN_FREE(new_node);
-    return rc;
-  }
-  new_node->type = GRN_TS_EXPR_COLUMN_NODE;
-  new_node->data_kind = grn_ts_data_type_to_kind(DB_OBJ(column)->range);
-  if (column->header.type == GRN_COLUMN_VAR_SIZE) {
-    grn_obj_flags type = column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK;
-    if (type == GRN_OBJ_COLUMN_VECTOR) {
-      new_node->data_kind |= GRN_TS_VECTOR_FLAG;
-    }
-  }
-  new_node->data_type = DB_OBJ(column)->range;
-  new_node->column = column;
-  grn_ts_buf_init(ctx, &new_node->buf);
-  grn_ts_buf_init(ctx, &new_node->body_buf);
-  *node = (grn_ts_expr_node *)new_node;
-  return GRN_SUCCESS;
-}
-#undef GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK
-
-/* grn_ts_expr_op_node_open() creates a node associated with an operator. */
-static grn_rc
-grn_ts_expr_op_node_open(grn_ctx *ctx, grn_ts_op_type op_type,
-                         grn_ts_expr_node **args, size_t n_args,
-                         grn_ts_expr_node **node) {
-  size_t i;
-  grn_ts_data_kind data_kind = GRN_TS_VOID;
-  grn_ts_data_type data_type = GRN_DB_VOID;
-  grn_ts_expr_node **args_clone = NULL;
-  grn_ts_expr_op_node *new_node;
-
-  /* Check arguments. */
-  switch (op_type) {
-    case GRN_TS_OP_LOGICAL_AND:
-    case GRN_TS_OP_LOGICAL_OR: {
-      if (args[1]->data_kind != GRN_TS_BOOL) {
-        return GRN_INVALID_ARGUMENT;
-      }
-      /* Fall through. */
-    }
-    case GRN_TS_OP_LOGICAL_NOT: {
-      if (args[0]->data_kind != GRN_TS_BOOL) {
-        return GRN_INVALID_ARGUMENT;
-      }
-      data_kind = GRN_TS_BOOL;
-      data_type = GRN_DB_BOOL;
-      break;
-    }
-    default: {
-      return GRN_INVALID_ARGUMENT;
-    }
-  }
-  if ((data_kind == GRN_TS_VOID) || (data_type == GRN_DB_VOID)) {
-    return GRN_UNKNOWN_ERROR;
-  }
-
-  /* Create a copy of args. */
-  args_clone = GRN_MALLOCN(grn_ts_expr_node *, n_args);
-  if (!args_clone) {
-    return GRN_NO_MEMORY_AVAILABLE;
-  }
-  for (i = 0; i < n_args; i++) {
-    args_clone[i] = args[i];
-  }
-
-  /* Create an operator node. */
-  new_node = GRN_MALLOCN(grn_ts_expr_op_node, 1);
-  if (!new_node) {
-    if (args_clone) {
-      GRN_FREE(args_clone);
-    }
-    return GRN_NO_MEMORY_AVAILABLE;
-  }
-  new_node->type = GRN_TS_EXPR_OP_NODE;
-  new_node->data_kind = data_kind;
-  new_node->data_type = data_type;
-  new_node->op_type = op_type;
-  new_node->args = args_clone;
-  new_node->n_args = n_args;
-  new_node->buf = NULL;
-  new_node->buf_size = 0;
-  return GRN_SUCCESS;
-}
-
-/* grn_ts_expr_id_node_evaluate() outputs IDs. */
-static grn_rc
-grn_ts_expr_id_node_evaluate(grn_ctx *ctx, grn_ts_expr_id_node *node,
-                             const grn_ts_record *in, size_t n_in,
-                             void *out) {
-  size_t i;
-  grn_ts_int *out_ptr = (grn_ts_int *)out;
-  for (i = 0; i < n_in; i++) {
-    out_ptr[i] = (grn_ts_int)in[i].id;
-  }
-  return GRN_SUCCESS;
-}
-
-/* grn_ts_expr_score_node_evaluate() outputs scores. */
-static grn_rc
-grn_ts_expr_score_node_evaluate(grn_ctx *ctx, grn_ts_expr_score_node *node,
-                                const grn_ts_record *in, size_t n_in,
-                                void *out) {
-  size_t i;
-  grn_ts_float *out_ptr = (grn_ts_float *)out;
-  for (i = 0; i < n_in; i++) {
-    out_ptr[i] = (grn_ts_float)in[i].score;
-  }
-  return GRN_SUCCESS;
-}
-
-#define GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE_BLOCK(KIND, kind)\
-  case GRN_TS_ ## KIND: {\
-    size_t i;\
-    grn_ts_ ## kind *out_ptr = (grn_ts_ ## kind *)out;\
-    for (i = 0; i < n_in; i++) {\
-      const grn_ts_ ## kind *key;\
-      size_t key_size;\
-      key = (const grn_ts_ ## kind *)grn_ts_table_get_key(ctx, node->table,\
-                                                          in[i].id,\
-                                                          &key_size);\
-      if (key && (key_size == sizeof(*key))) {\
-        out_ptr[i] = *key;\
-      } else {\
-        out_ptr[i] = grn_ts_ ## kind ## _zero();\
-      }\
-    }\
-    return GRN_SUCCESS;\
-  }
-#define GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE_BLOCK(TYPE, type)\
-  case GRN_DB_ ## TYPE: {\
-    size_t i;\
-    grn_ts_int *out_ptr = (grn_ts_int *)out;\
-    for (i = 0; i < n_in; i++) {\
-      const type ## _t *key;\
-      size_t key_size;\
-      key = (const type ## _t *)grn_ts_table_get_key(ctx, node->table,\
-                                                     in[i].id, &key_size);\
-      if (key && (key_size == sizeof(*key))) {\
-        out_ptr[i] = (grn_ts_int)*key;\
-      } else {\
-        out_ptr[i] = grn_ts_int_zero();\
-      }\
-    }\
-    return GRN_SUCCESS;\
-  }
-/* grn_ts_expr_key_node_evaluate() outputs keys. */
-static grn_rc
-grn_ts_expr_key_node_evaluate(grn_ctx *ctx, grn_ts_expr_key_node *node,
-                              const grn_ts_record *in, size_t n_in,
-                              void *out) {
-  switch (node->data_kind) {
-    GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE_BLOCK(BOOL, bool)
-    case GRN_TS_INT: {
-      switch (node->data_type) {
-        GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE_BLOCK(INT8, int8)
-        GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE_BLOCK(INT16, int16)
-        GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE_BLOCK(INT32, int32)
-        GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE_BLOCK(INT64, int64)
-        GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE_BLOCK(UINT8, uint8)
-        GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE_BLOCK(UINT16, uint16)
-        GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE_BLOCK(UINT32, uint32)
-        GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE_BLOCK(UINT64, uint64)
-        default: {
-          return GRN_OBJECT_CORRUPT;
-        }
-      }
-    }
-    GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE_BLOCK(FLOAT, float)
-    GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE_BLOCK(TIME, time)
-    case GRN_TS_TEXT: {
-      size_t i;
-      char *buf_ptr;
-      grn_ts_text *out_ptr = (grn_ts_text *)out;
-      node->buf.pos = 0;
-      for (i = 0; i < n_in; i++) {
-        const char *key;
-        size_t key_size;
-        key = (const char *)grn_ts_table_get_key(ctx, node->table, in[i].id,
-                                                 &key_size);
-        if (key && key_size) {
-          grn_rc rc = grn_ts_buf_write(ctx, &node->buf, key, key_size);
-          if (rc == GRN_SUCCESS) {
-            out_ptr[i].size = key_size;
-          }
-        }
-      }
-      buf_ptr = (char *)node->buf.ptr;
-      for (i = 0; i < n_in; i++) {
-        out_ptr[i].ptr = buf_ptr;
-        buf_ptr += out_ptr[i].size;
-      }
-      return GRN_SUCCESS;
-    }
-    GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE_BLOCK(GEO_POINT, geo_point)
-    case GRN_TS_REF: {
-      size_t i;
-      grn_ts_ref *out_ptr = (grn_ts_ref *)out;
-      for (i = 0; i < n_in; i++) {
-        const grn_ts_id *id;
-        size_t key_size;
-        id = (const grn_ts_id *)grn_ts_table_get_key(ctx, node->table,
-                                                     in[i].id, &key_size);
-        if (id && (key_size == sizeof(*id))) {
-          out_ptr[i].id = *id;
-          out_ptr[i].score = in[i].score;
-        } else {
-          out_ptr[i] = grn_ts_ref_zero();
-        }
-      }
-      return GRN_SUCCESS;
-    }
-    default: {
-      return GRN_OBJECT_CORRUPT;
-    }
-  }
-}
-#undef GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE_BLOCK
-#undef GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE_BLOCK
-
-#define GRN_TS_EXPR_VALUE_NODE_EVALUATE_CASE_BLOCK(KIND, kind)\
-  case GRN_TS_ ## KIND: {\
-    size_t i;\
-    grn_ts_ ## kind *out_ptr = (grn_ts_ ## kind *)out;\
-    for (i = 0; i < n_in; i++) {\
-      const grn_ts_ ## kind *value;\
-      value = (const grn_ts_ ## kind *)grn_ts_table_get_value(ctx,\
-                                                              node->table,\
-                                                              in[i].id);\
-      out_ptr[i] = value ? *value : grn_ts_ ## kind ## _zero();\
-    }\
-    return GRN_SUCCESS;\
-  }
-#define GRN_TS_EXPR_VALUE_NODE_EVALUATE_INT_CASE_BLOCK(TYPE, type)\
-  case GRN_DB_ ## TYPE: {\
-    size_t i;\
-    grn_ts_int *out_ptr = (grn_ts_int *)out;\
-    for (i = 0; i < n_in; i++) {\
-      const type ## _t *value;\
-      value = (const type ## _t *)grn_ts_table_get_value(ctx, node->table,\
-                                                         in[i].id);\
-      out_ptr[i] = value ? (grn_ts_int)*value : grn_ts_int_zero();\
-    }\
-    return GRN_SUCCESS;\
-  }
-/* grn_ts_expr_value_node_evaluate() outputs values. */
-static grn_rc
-grn_ts_expr_value_node_evaluate(grn_ctx *ctx, grn_ts_expr_value_node *node,
-                                const grn_ts_record *in, size_t n_in,
-                                void *out) {
-  switch (node->data_kind) {
-    GRN_TS_EXPR_VALUE_NODE_EVALUATE_CASE_BLOCK(BOOL, bool)
-    case GRN_TS_INT: {
-      switch (node->data_type) {
-        GRN_TS_EXPR_VALUE_NODE_EVALUATE_INT_CASE_BLOCK(INT8, int8)
-        GRN_TS_EXPR_VALUE_NODE_EVALUATE_INT_CASE_BLOCK(INT16, int16)
-        GRN_TS_EXPR_VALUE_NODE_EVALUATE_INT_CASE_BLOCK(INT32, int32)
-        GRN_TS_EXPR_VALUE_NODE_EVALUATE_INT_CASE_BLOCK(INT64, int64)
-        GRN_TS_EXPR_VALUE_NODE_EVALUATE_INT_CASE_BLOCK(UINT8, uint8)
-        GRN_TS_EXPR_VALUE_NODE_EVALUATE_INT_CASE_BLOCK(UINT16, uint16)
-        GRN_TS_EXPR_VALUE_NODE_EVALUATE_INT_CASE_BLOCK(UINT32, uint32)
-        GRN_TS_EXPR_VALUE_NODE_EVALUATE_INT_CASE_BLOCK(UINT64, uint64)
-        default: {
-          return GRN_OBJECT_CORRUPT;
-        }
-      }
-    }
-    GRN_TS_EXPR_VALUE_NODE_EVALUATE_CASE_BLOCK(FLOAT, float)
-    GRN_TS_EXPR_VALUE_NODE_EVALUATE_CASE_BLOCK(TIME, time)
-    GRN_TS_EXPR_VALUE_NODE_EVALUATE_CASE_BLOCK(GEO_POINT, geo_point)
-    case GRN_TS_REF: {
-      size_t i;
-      grn_ts_ref *out_ptr = (grn_ts_ref *)out;
-      for (i = 0; i < n_in; i++) {
-        const grn_ts_id *value;
-        value = (const grn_ts_id *)grn_ts_table_get_value(ctx, node->table,
-                                                          in[i].id);
-        if (value) {
-          out_ptr[i].id = *value;
-          out_ptr[i].score = in[i].score;
-        } else {
-          out_ptr[i] = grn_ts_ref_zero();
-        }
-      }
-      return GRN_SUCCESS;
-    }
-    default: {
-      return GRN_OBJECT_CORRUPT;
-    }
-  }
-}
-#undef GRN_TS_EXPR_VALUE_NODE_EVALUATE_INT_CASE_BLOCK
-#undef GRN_TS_EXPR_VALUE_NODE_EVALUATE_CASE_BLOCK
 
 #define GRN_TS_EXPR_CONST_NODE_EVALUATE_CASE_BLOCK(KIND, kind)\
   case GRN_TS_ ## KIND: {\
@@ -1396,6 +1306,85 @@ grn_ts_expr_const_node_evaluate(grn_ctx *ctx, grn_ts_expr_const_node *node,
 }
 #undef GRN_TS_EXPR_CONST_NODE_EVALUATE_VECTOR_CASE_BLOCK
 #undef GRN_TS_EXPR_CONST_NODE_EVALUATE_CASE_BLOCK
+
+/* grn_ts_expr_const_node_filter() filters records. */
+static grn_rc
+grn_ts_expr_const_node_filter(grn_ctx *ctx, grn_ts_expr_const_node *node,
+                              grn_ts_record *in, size_t n_in,
+                              grn_ts_record *out, size_t *n_out) {
+  if (node->content.bool_value) {
+    if (in != out) {
+      size_t i;
+      for (i = 0; i < n_in; i++) {
+        out[i] = in[i];
+      }
+    }
+    *n_out = n_in;
+  } else {
+    *n_out = 0;
+  }
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_expr_const_node_adjust() updates scores. */
+static grn_rc
+grn_ts_expr_const_node_adjust(grn_ctx *ctx, grn_ts_expr_const_node *node,
+                              grn_ts_record *io, size_t n_io) {
+  size_t i;
+  grn_ts_score score = (grn_ts_score)node->content.float_value;
+  for (i = 0; i < n_io; i++) {
+    io[i].score = score;
+  }
+  return GRN_SUCCESS;
+}
+
+/*-------------------------------------------------------------
+ * grn_ts_expr_column_node.
+ */
+
+typedef struct {
+  GRN_TS_EXPR_NODE_COMMON_MEMBERS
+  grn_obj *column;
+  grn_ts_buf buf;
+  grn_ts_buf body_buf;
+} grn_ts_expr_column_node;
+
+#define GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK(TYPE)\
+  case GRN_DB_ ## TYPE: {\
+    GRN_ ## TYPE ## _INIT(&new_node->buf, GRN_OBJ_VECTOR);\
+    break;\
+  }
+/* grn_ts_expr_column_node_open() creates a node associated with a column. */
+static grn_rc
+grn_ts_expr_column_node_open(grn_ctx *ctx, grn_obj *column,
+                             grn_ts_expr_node **node) {
+  grn_rc rc;
+  grn_ts_expr_column_node *new_node = GRN_MALLOCN(grn_ts_expr_column_node, 1);
+  if (!new_node) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  memset(new_node, 0, sizeof(*new_node));
+  rc = grn_ts_obj_increment_ref_count(ctx, column);
+  if (rc != GRN_SUCCESS) {
+    GRN_FREE(new_node);
+    return rc;
+  }
+  new_node->type = GRN_TS_EXPR_COLUMN_NODE;
+  new_node->data_kind = grn_ts_data_type_to_kind(DB_OBJ(column)->range);
+  if (column->header.type == GRN_COLUMN_VAR_SIZE) {
+    grn_obj_flags type = column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK;
+    if (type == GRN_OBJ_COLUMN_VECTOR) {
+      new_node->data_kind |= GRN_TS_VECTOR_FLAG;
+    }
+  }
+  new_node->data_type = DB_OBJ(column)->range;
+  new_node->column = column;
+  grn_ts_buf_init(ctx, &new_node->buf);
+  grn_ts_buf_init(ctx, &new_node->body_buf);
+  *node = (grn_ts_expr_node *)new_node;
+  return GRN_SUCCESS;
+}
+#undef GRN_TS_EXPR_COLUMN_NODE_OPEN_CASE_BLOCK
 
 #define GRN_TS_EXPR_COLUMN_NODE_EVALUATE_SCALAR_CASE_BLOCK(KIND, kind)\
   case GRN_TS_ ## KIND: {\
@@ -1729,10 +1718,137 @@ grn_ts_expr_column_node_evaluate(grn_ctx *ctx, grn_ts_expr_column_node *node,
   }
 }
 
-/* Forward declaration for operator nodes. */
+/* grn_ts_expr_column_node_filter() filters records. */
 static grn_rc
-grn_ts_expr_node_evaluate(grn_ctx *ctx, grn_ts_expr_node *node,
-                          const grn_ts_record *in, size_t n_in, void *out);
+grn_ts_expr_column_node_filter(grn_ctx *ctx, grn_ts_expr_column_node *node,
+                               grn_ts_record *in, size_t n_in,
+                               grn_ts_record *out, size_t *n_out) {
+  size_t i, count = 0;
+  grn_ra *ra = (grn_ra *)node->column;
+  grn_ra_cache cache;
+  GRN_RA_CACHE_INIT(ra, &cache);
+  for (i = 0; i < n_in; i++) {
+    grn_ts_bool *ptr = NULL;
+    if (in[i].id) {
+      ptr = grn_ra_ref_cache(ctx, ra, in[i].id, &cache);
+    }
+    if (ptr && *ptr) {
+      out[count++] = in[i];
+    }
+  }
+  GRN_RA_CACHE_FIN(ra, &cache);
+  *n_out = count;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_expr_column_node_adjust() updates scores. */
+static grn_rc
+grn_ts_expr_column_node_adjust(grn_ctx *ctx, grn_ts_expr_column_node *node,
+                               grn_ts_record *io, size_t n_io) {
+  size_t i;
+  grn_ra *ra = (grn_ra *)node->column;
+  grn_ra_cache cache;
+  GRN_RA_CACHE_INIT(ra, &cache);
+  for (i = 0; i < n_io; i++) {
+    grn_ts_float *ptr = NULL;
+    if (io[i].id) {
+      ptr = grn_ra_ref_cache(ctx, ra, io[i].id, &cache);
+    }
+    if (ptr) {
+      io[i].score = (grn_ts_score)*ptr;
+    }
+  }
+  GRN_RA_CACHE_FIN(ra, &cache);
+  return GRN_SUCCESS;
+}
+
+/*-------------------------------------------------------------
+ * grn_ts_expr_op_node.
+ */
+
+/* Forward declarations. */
+static grn_rc grn_ts_expr_node_evaluate(grn_ctx *ctx, grn_ts_expr_node *node,
+                                        const grn_ts_record *in, size_t n_in,
+                                        void *out);
+static grn_rc grn_ts_expr_node_filter(grn_ctx *ctx, grn_ts_expr_node *node,
+                                      grn_ts_record *in, size_t n_in,
+                                      grn_ts_record *out, size_t *n_out);
+static grn_rc grn_ts_expr_node_adjust(grn_ctx *ctx, grn_ts_expr_node *node,
+                                      grn_ts_record *io, size_t n_io);
+
+typedef struct {
+  GRN_TS_EXPR_NODE_COMMON_MEMBERS
+  grn_ts_op_type op_type;
+  grn_ts_expr_node **args;
+  size_t n_args;
+  void *buf;
+  size_t buf_size; /* Size in bytes. */
+  // TODO
+} grn_ts_expr_op_node;
+
+/* grn_ts_expr_op_node_open() creates a node associated with an operator. */
+static grn_rc
+grn_ts_expr_op_node_open(grn_ctx *ctx, grn_ts_op_type op_type,
+                         grn_ts_expr_node **args, size_t n_args,
+                         grn_ts_expr_node **node) {
+  size_t i;
+  grn_ts_data_kind data_kind = GRN_TS_VOID;
+  grn_ts_data_type data_type = GRN_DB_VOID;
+  grn_ts_expr_node **args_clone = NULL;
+  grn_ts_expr_op_node *new_node;
+
+  /* Check arguments. */
+  switch (op_type) {
+    case GRN_TS_OP_LOGICAL_AND:
+    case GRN_TS_OP_LOGICAL_OR: {
+      if (args[1]->data_kind != GRN_TS_BOOL) {
+        return GRN_INVALID_ARGUMENT;
+      }
+      /* Fall through. */
+    }
+    case GRN_TS_OP_LOGICAL_NOT: {
+      if (args[0]->data_kind != GRN_TS_BOOL) {
+        return GRN_INVALID_ARGUMENT;
+      }
+      data_kind = GRN_TS_BOOL;
+      data_type = GRN_DB_BOOL;
+      break;
+    }
+    default: {
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+  if ((data_kind == GRN_TS_VOID) || (data_type == GRN_DB_VOID)) {
+    return GRN_UNKNOWN_ERROR;
+  }
+
+  /* Create a copy of args. */
+  args_clone = GRN_MALLOCN(grn_ts_expr_node *, n_args);
+  if (!args_clone) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  for (i = 0; i < n_args; i++) {
+    args_clone[i] = args[i];
+  }
+
+  /* Create an operator node. */
+  new_node = GRN_MALLOCN(grn_ts_expr_op_node, 1);
+  if (!new_node) {
+    if (args_clone) {
+      GRN_FREE(args_clone);
+    }
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  new_node->type = GRN_TS_EXPR_OP_NODE;
+  new_node->data_kind = data_kind;
+  new_node->data_type = data_type;
+  new_node->op_type = op_type;
+  new_node->args = args_clone;
+  new_node->n_args = n_args;
+  new_node->buf = NULL;
+  new_node->buf_size = 0;
+  return GRN_SUCCESS;
+}
 
 /*
  * grn_ts_expr_op_node_reserve_buf() allocates memory to the 1st internal
@@ -1847,117 +1963,6 @@ grn_ts_expr_op_node_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
   }
 }
 
-#define GRN_TS_EXPR_NODE_EVALUATE_CASE_BLOCK(TYPE, type)\
-  case GRN_TS_EXPR_ ## TYPE ## _NODE: {\
-    grn_ts_expr_ ## type ## _node *type ## _node;\
-    type ## _node = (grn_ts_expr_ ## type ## _node *)node;\
-    return grn_ts_expr_ ## type ## _node_evaluate(ctx, type ## _node,\
-                                                  in, n_in, out);\
-  }
-/* grn_ts_expr_node_evaluate() evaluates a subexpression. */
-static grn_rc
-grn_ts_expr_node_evaluate(grn_ctx *ctx, grn_ts_expr_node *node,
-                          const grn_ts_record *in, size_t n_in, void *out) {
-  switch (node->type) {
-    GRN_TS_EXPR_NODE_EVALUATE_CASE_BLOCK(ID, id)
-    GRN_TS_EXPR_NODE_EVALUATE_CASE_BLOCK(SCORE, score)
-    GRN_TS_EXPR_NODE_EVALUATE_CASE_BLOCK(KEY, key)
-    GRN_TS_EXPR_NODE_EVALUATE_CASE_BLOCK(VALUE, value)
-    GRN_TS_EXPR_NODE_EVALUATE_CASE_BLOCK(CONST, const)
-    GRN_TS_EXPR_NODE_EVALUATE_CASE_BLOCK(COLUMN, column)
-    GRN_TS_EXPR_NODE_EVALUATE_CASE_BLOCK(OP, op)
-    default: {
-      return GRN_INVALID_ARGUMENT;
-    }
-  }
-}
-#undef GRN_TS_EXPR_NODE_EVALUATE_CASE_BLOCK
-
-/* grn_ts_expr_key_node_filter() filters records. */
-static grn_rc
-grn_ts_expr_key_node_filter(grn_ctx *ctx, grn_ts_expr_key_node *node,
-                            grn_ts_record *in, size_t n_in,
-                            grn_ts_record *out, size_t *n_out) {
-  size_t i, count = 0;
-  for (i = 0; i < n_in; i++) {
-    const grn_ts_bool *key;
-    size_t key_size;
-    key = (const grn_ts_bool *)grn_ts_table_get_key(ctx, node->table,
-                                                    in[i].id, &key_size);
-    if (key && (key_size == sizeof(*key)) && *key) {
-      out[count++] = in[i];
-    }
-  }
-  *n_out = count;
-  return GRN_SUCCESS;
-}
-
-/* grn_ts_expr_value_node_filter() filters records. */
-static grn_rc
-grn_ts_expr_value_node_filter(grn_ctx *ctx, grn_ts_expr_value_node *node,
-                              grn_ts_record *in, size_t n_in,
-                              grn_ts_record *out, size_t *n_out) {
-  size_t i, count = 0;
-  for (i = 0; i < n_in; i++) {
-    const grn_ts_bool *value;
-    value = (const grn_ts_bool *)grn_ts_table_get_value(ctx, node->table,
-                                                        in[i].id);
-    if (value && *value) {
-      out[count++] = in[i];
-    }
-  }
-  *n_out = count;
-  return GRN_SUCCESS;
-}
-
-/* grn_ts_expr_const_node_filter() filters records. */
-static grn_rc
-grn_ts_expr_const_node_filter(grn_ctx *ctx, grn_ts_expr_const_node *node,
-                              grn_ts_record *in, size_t n_in,
-                              grn_ts_record *out, size_t *n_out) {
-  if (node->content.bool_value) {
-    if (in != out) {
-      size_t i;
-      for (i = 0; i < n_in; i++) {
-        out[i] = in[i];
-      }
-    }
-    *n_out = n_in;
-  } else {
-    *n_out = 0;
-  }
-  return GRN_SUCCESS;
-}
-
-/* grn_ts_expr_column_node_filter() filters records. */
-static grn_rc
-grn_ts_expr_column_node_filter(grn_ctx *ctx, grn_ts_expr_column_node *node,
-                               grn_ts_record *in, size_t n_in,
-                               grn_ts_record *out, size_t *n_out) {
-  size_t i, count = 0;
-  grn_ra *ra = (grn_ra *)node->column;
-  grn_ra_cache cache;
-  GRN_RA_CACHE_INIT(ra, &cache);
-  for (i = 0; i < n_in; i++) {
-    grn_ts_bool *ptr = NULL;
-    if (in[i].id) {
-      ptr = grn_ra_ref_cache(ctx, ra, in[i].id, &cache);
-    }
-    if (ptr && *ptr) {
-      out[count++] = in[i];
-    }
-  }
-  GRN_RA_CACHE_FIN(ra, &cache);
-  *n_out = count;
-  return GRN_SUCCESS;
-}
-
-/* Forward declaration for operator nodes. */
-static grn_rc
-grn_ts_expr_node_filter(grn_ctx *ctx, grn_ts_expr_node *node,
-                        grn_ts_record *in, size_t n_in,
-                        grn_ts_record *out, size_t *n_out);
-
 /* grn_ts_op_logical_not_filter() filters records. */
 static grn_rc
 grn_ts_op_logical_not_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
@@ -2028,6 +2033,119 @@ grn_ts_expr_op_node_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
   }
 }
 
+/* grn_ts_expr_op_node_adjust() updates scores. */
+static grn_rc
+grn_ts_expr_op_node_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                           grn_ts_record *io, size_t n_io) {
+  switch (node->op_type) {
+    // TODO
+    default: {
+      return GRN_OPERATION_NOT_SUPPORTED;
+    }
+  }
+}
+
+/*-------------------------------------------------------------
+ * grn_ts_expr_node.
+ */
+
+/* grn_ts_expr_node_fin() finalizes a node. */
+static grn_rc
+grn_ts_expr_node_fin(grn_ctx *ctx, grn_ts_expr_node *node) {
+  switch (node->type) {
+    case GRN_TS_EXPR_ID_NODE:
+    case GRN_TS_EXPR_SCORE_NODE: {
+      return GRN_SUCCESS;
+    }
+    case GRN_TS_EXPR_KEY_NODE: {
+      grn_ts_expr_key_node *key_node = (grn_ts_expr_key_node *)node;
+      grn_ts_buf_fin(ctx, &key_node->buf);
+      if (key_node->table) {
+        grn_obj_unlink(ctx, key_node->table);
+      }
+      return GRN_SUCCESS;
+    }
+    case GRN_TS_EXPR_VALUE_NODE: {
+      grn_ts_expr_value_node *value_node = (grn_ts_expr_value_node *)node;
+      if (value_node->table) {
+        grn_obj_unlink(ctx, value_node->table);
+      }
+      return GRN_SUCCESS;
+    }
+    case GRN_TS_EXPR_CONST_NODE: {
+      grn_ts_expr_const_node *const_node = (grn_ts_expr_const_node *)node;
+      if (const_node->vector_buf) {
+        GRN_FREE(const_node->vector_buf);
+      }
+      if (const_node->text_buf) {
+        GRN_FREE(const_node->text_buf);
+      }
+      return GRN_SUCCESS;
+    }
+    case GRN_TS_EXPR_COLUMN_NODE: {
+      grn_ts_expr_column_node *column_node = (grn_ts_expr_column_node *)node;
+      grn_ts_buf_fin(ctx, &column_node->body_buf);
+      grn_ts_buf_fin(ctx, &column_node->buf);
+      if (column_node->column) {
+        grn_obj_unlink(ctx, column_node->column);
+      }
+      return GRN_SUCCESS;
+    }
+    case GRN_TS_EXPR_OP_NODE: {
+      grn_ts_expr_op_node *op_node = (grn_ts_expr_op_node *)node;
+      // TODO: Free memory.
+      if (op_node->buf) {
+        GRN_FREE(op_node->buf);
+      }
+      if (op_node->args) {
+        GRN_FREE(op_node->args);
+      }
+      return GRN_SUCCESS;
+    }
+    default: {
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+}
+
+/* grn_ts_expr_node_close() destroys a node. */
+static grn_rc
+grn_ts_expr_node_close(grn_ctx *ctx, grn_ts_expr_node *node) {
+  grn_rc rc;
+  if (!node) {
+    return GRN_SUCCESS;
+  }
+  rc = grn_ts_expr_node_fin(ctx, node);
+  GRN_FREE(node);
+  return rc;
+}
+
+#define GRN_TS_EXPR_NODE_EVALUATE_CASE_BLOCK(TYPE, type)\
+  case GRN_TS_EXPR_ ## TYPE ## _NODE: {\
+    grn_ts_expr_ ## type ## _node *type ## _node;\
+    type ## _node = (grn_ts_expr_ ## type ## _node *)node;\
+    return grn_ts_expr_ ## type ## _node_evaluate(ctx, type ## _node,\
+                                                  in, n_in, out);\
+  }
+/* grn_ts_expr_node_evaluate() evaluates a subexpression. */
+static grn_rc
+grn_ts_expr_node_evaluate(grn_ctx *ctx, grn_ts_expr_node *node,
+                          const grn_ts_record *in, size_t n_in, void *out) {
+  switch (node->type) {
+    GRN_TS_EXPR_NODE_EVALUATE_CASE_BLOCK(ID, id)
+    GRN_TS_EXPR_NODE_EVALUATE_CASE_BLOCK(SCORE, score)
+    GRN_TS_EXPR_NODE_EVALUATE_CASE_BLOCK(KEY, key)
+    GRN_TS_EXPR_NODE_EVALUATE_CASE_BLOCK(VALUE, value)
+    GRN_TS_EXPR_NODE_EVALUATE_CASE_BLOCK(CONST, const)
+    GRN_TS_EXPR_NODE_EVALUATE_CASE_BLOCK(COLUMN, column)
+    GRN_TS_EXPR_NODE_EVALUATE_CASE_BLOCK(OP, op)
+    default: {
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+}
+#undef GRN_TS_EXPR_NODE_EVALUATE_CASE_BLOCK
+
 #define GRN_TS_EXPR_NODE_FILTER_CASE_BLOCK(TYPE, type)\
   case GRN_TS_EXPR_ ## TYPE ## _NODE: {\
     grn_ts_expr_ ## type ## _node *type ## _node;\
@@ -2055,92 +2173,6 @@ grn_ts_expr_node_filter(grn_ctx *ctx, grn_ts_expr_node *node,
   }
 }
 #undef GRN_TS_EXPR_NODE_FILTER_CASE_BLOCK
-
-/* grn_ts_expr_score_node_adjust() updates scores. */
-static grn_rc
-grn_ts_expr_score_node_adjust(grn_ctx *ctx, grn_ts_expr_score_node *node,
-                              grn_ts_record *io, size_t n_io) {
-  /* Nothing to do. */
-  return GRN_SUCCESS;
-}
-
-/* grn_ts_expr_key_node_adjust() updates scores. */
-static grn_rc
-grn_ts_expr_key_node_adjust(grn_ctx *ctx, grn_ts_expr_key_node *node,
-                            grn_ts_record *io, size_t n_io) {
-  size_t i;
-  for (i = 0; i < n_io; i++) {
-    const grn_ts_float *key;
-    size_t key_size;
-    key = (const grn_ts_float *)grn_ts_table_get_key(ctx, node->table,
-                                                     io[i].id, &key_size);
-    if (key && (key_size == sizeof(*key))) {
-      io[i].score = (grn_ts_score)*key;
-    }
-  }
-  return GRN_SUCCESS;
-}
-
-/* grn_ts_expr_value_node_adjust() updates scores. */
-static grn_rc
-grn_ts_expr_value_node_adjust(grn_ctx *ctx, grn_ts_expr_value_node *node,
-                              grn_ts_record *io, size_t n_io) {
-  size_t i;
-  for (i = 0; i < n_io; i++) {
-    const grn_ts_float *value;
-    value = (const grn_ts_float *)grn_ts_table_get_value(ctx, node->table,
-                                                         io[i].id);
-    if (value) {
-      io[i].score = (grn_ts_score)*value;
-    }
-  }
-  return GRN_SUCCESS;
-}
-
-/* grn_ts_expr_const_node_adjust() updates scores. */
-static grn_rc
-grn_ts_expr_const_node_adjust(grn_ctx *ctx, grn_ts_expr_const_node *node,
-                              grn_ts_record *io, size_t n_io) {
-  size_t i;
-  grn_ts_score score = (grn_ts_score)node->content.float_value;
-  for (i = 0; i < n_io; i++) {
-    io[i].score = score;
-  }
-  return GRN_SUCCESS;
-}
-
-/* grn_ts_expr_column_node_adjust() updates scores. */
-static grn_rc
-grn_ts_expr_column_node_adjust(grn_ctx *ctx, grn_ts_expr_column_node *node,
-                               grn_ts_record *io, size_t n_io) {
-  size_t i;
-  grn_ra *ra = (grn_ra *)node->column;
-  grn_ra_cache cache;
-  GRN_RA_CACHE_INIT(ra, &cache);
-  for (i = 0; i < n_io; i++) {
-    grn_ts_float *ptr = NULL;
-    if (io[i].id) {
-      ptr = grn_ra_ref_cache(ctx, ra, io[i].id, &cache);
-    }
-    if (ptr) {
-      io[i].score = (grn_ts_score)*ptr;
-    }
-  }
-  GRN_RA_CACHE_FIN(ra, &cache);
-  return GRN_SUCCESS;
-}
-
-/* grn_ts_expr_op_node_adjust() updates scores. */
-static grn_rc
-grn_ts_expr_op_node_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                           grn_ts_record *io, size_t n_io) {
-  switch (node->op_type) {
-    // TODO
-    default: {
-      return GRN_OPERATION_NOT_SUPPORTED;
-    }
-  }
-}
 
 #define GRN_TS_EXPR_NODE_ADJUST_CASE_BLOCK(TYPE, type)\
   case GRN_TS_EXPR_ ## TYPE ## _NODE: {\
