@@ -2295,44 +2295,6 @@ grn_ts_expr_op_node_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
  * grn_ts_expr_node.
  */
 
-/* grn_ts_expr_node_fin() finalizes a node. */
-static grn_rc
-grn_ts_expr_node_fin(grn_ctx *ctx, grn_ts_expr_node *node) {
-  switch (node->type) {
-    case GRN_TS_EXPR_ID_NODE: {
-      grn_ts_expr_id_node_fin(ctx, (grn_ts_expr_id_node *)node);
-      return GRN_SUCCESS;
-    }
-    case GRN_TS_EXPR_SCORE_NODE: {
-      grn_ts_expr_score_node_fin(ctx, (grn_ts_expr_score_node *)node);
-      return GRN_SUCCESS;
-    }
-    case GRN_TS_EXPR_KEY_NODE: {
-      grn_ts_expr_key_node_fin(ctx, (grn_ts_expr_key_node *)node);
-      return GRN_SUCCESS;
-    }
-    case GRN_TS_EXPR_VALUE_NODE: {
-      grn_ts_expr_value_node_fin(ctx, (grn_ts_expr_value_node *)node);
-      return GRN_SUCCESS;
-    }
-    case GRN_TS_EXPR_CONST_NODE: {
-      grn_ts_expr_const_node_fin(ctx, (grn_ts_expr_const_node *)node);
-      return GRN_SUCCESS;
-    }
-    case GRN_TS_EXPR_COLUMN_NODE: {
-      grn_ts_expr_column_node_fin(ctx, (grn_ts_expr_column_node *)node);
-      return GRN_SUCCESS;
-    }
-    case GRN_TS_EXPR_OP_NODE: {
-      grn_ts_expr_op_node_fin(ctx, (grn_ts_expr_op_node *)node);
-      return GRN_SUCCESS;
-    }
-    default: {
-      return GRN_INVALID_ARGUMENT;
-    }
-  }
-}
-
 /* grn_ts_expr_node_close() destroys a node. */
 static grn_rc
 grn_ts_expr_node_close(grn_ctx *ctx, grn_ts_expr_node *node) {
