@@ -1721,11 +1721,11 @@ grn_ts_expr_column_node_evaluate_ref_vector(grn_ctx *ctx,
     /* Read column values into node->buf and save the size of each value. */\
     node->buf.pos = 0;\
     for (i = 0; i < n_in; i++) {\
-      size_t size;\
+      size_t n_bytes;\
       grn_rc rc = grn_ts_ja_get_value(ctx, (grn_ja *)node->column, in[i].id,\
-                                      &node->buf, &size);\
+                                      &node->buf, &n_bytes);\
       if (rc == GRN_SUCCESS) {\
-        out_ptr[i].size = size / sizeof(grn_ts_ ## kind);\
+        out_ptr[i].size = n_bytes / sizeof(grn_ts_ ## kind);\
       } else {\
         out_ptr[i].size = 0;\
       }\
@@ -1750,13 +1750,13 @@ grn_ts_expr_column_node_evaluate_ref_vector(grn_ctx *ctx,
     node->buf.pos = 0;\
     for (i = 0; i < n_in; i++) {\
       grn_rc rc;\
-      size_t size;\
+      size_t n_bytes;\
       node->body_buf.pos = 0;\
       rc = grn_ts_ja_get_value(ctx, (grn_ja *)node->column, in[i].id,\
-                               &node->body_buf, &size);\
+                               &node->body_buf, &n_bytes);\
       if (rc == GRN_SUCCESS) {\
         type ## _t *src_ptr = (type ## _t *)node->body_buf.ptr;\
-        out_ptr[i].size = size / sizeof(type ## _t);\
+        out_ptr[i].size = n_bytes / sizeof(type ## _t);\
         for (j = 0; j < out_ptr[i].size; j++) {\
           grn_ts_int value = (grn_ts_int)src_ptr[j];\
           grn_rc rc = grn_ts_buf_write(ctx, &node->buf, &value,\
