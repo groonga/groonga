@@ -1210,8 +1210,8 @@ typedef struct {
     grn_ts_text_vector text_vector_value;
     grn_ts_geo_point_vector geo_point_vector_value;
   } content;
-  char *text_buf;
-  void *vector_buf;
+  grn_ts_buf text_buf;
+  grn_ts_buf vector_buf;
 } grn_ts_expr_const_node;
 
 /* grn_ts_expr_const_node_init() initializes a node. */
@@ -1219,19 +1219,15 @@ static void
 grn_ts_expr_const_node_init(grn_ctx *ctx, grn_ts_expr_const_node *node) {
   memset(node, 0, sizeof(*node));
   node->type = GRN_TS_EXPR_CONST_NODE;
-  node->text_buf = NULL;
-  node->vector_buf = NULL;
+  grn_ts_buf_init(ctx, &node->text_buf);
+  grn_ts_buf_init(ctx, &node->vector_buf);
 }
 
 /* grn_ts_expr_const_node_fin() finalizes a node. */
 static void
 grn_ts_expr_const_node_fin(grn_ctx *ctx, grn_ts_expr_const_node *node) {
-  if (node->vector_buf) {
-    GRN_FREE(node->vector_buf);
-  }
-  if (node->text_buf) {
-    GRN_FREE(node->text_buf);
-  }
+  grn_ts_buf_fin(ctx, &node->vector_buf);
+  grn_ts_buf_fin(ctx, &node->text_buf);
 }
 
 #define GRN_TS_EXPR_CONST_NODE_SET_SCALAR_CASE_BLOCK(KIND, kind)\
@@ -1249,21 +1245,13 @@ grn_ts_expr_const_node_set_scalar(grn_ctx *ctx, grn_ts_expr_const_node *node,
     GRN_TS_EXPR_CONST_NODE_SET_SCALAR_CASE_BLOCK(FLOAT, float)
     GRN_TS_EXPR_CONST_NODE_SET_SCALAR_CASE_BLOCK(TIME, time)
     case GRN_TS_TEXT: {
-      grn_ts_text text_value;
-      char *text_buf;
-      text_value = *(const grn_ts_text *)value;
-      if (!text_value.size) {
-        node->content.text_value.ptr = NULL;
-        node->content.text_value.size = 0;
-        return GRN_SUCCESS;
+      grn_ts_text text_value = *(const grn_ts_text *)value;
+      grn_rc rc = grn_ts_buf_write(ctx, &node->text_buf,
+                                   text_value.ptr, text_value.size);
+      if (rc != GRN_SUCCESS) {
+        return rc;
       }
-      text_buf = (char *)GRN_MALLOC(text_value.size);
-      if (!text_buf) {
-        return GRN_NO_MEMORY_AVAILABLE;
-      }
-      node->text_buf = text_buf;
-      grn_memcpy(text_buf, text_value.ptr, text_value.size);
-      node->content.text_value.ptr = text_buf;
+      node->content.text_value.ptr = (const char *)node->text_buf.ptr;
       node->content.text_value.size = text_value.size;
       return GRN_SUCCESS;
     }
@@ -1277,22 +1265,17 @@ grn_ts_expr_const_node_set_scalar(grn_ctx *ctx, grn_ts_expr_const_node *node,
 
 #define GRN_TS_EXPR_CONST_NODE_SET_VECTOR_CASE_BLOCK(KIND, kind)\
   case GRN_TS_ ## KIND ## _VECTOR: {\
+    grn_rc rc;\
+    const grn_ts_ ## kind *buf_ptr;\
     grn_ts_ ## kind ## _vector vector;\
-    grn_ts_ ## kind *vector_buf;\
     vector = *(const grn_ts_ ## kind ## _vector *)value;\
-    if (!vector.size) {\
-      node->content.kind ## _vector_value.ptr = NULL;\
-      node->content.kind ## _vector_value.size = 0;\
-      return GRN_SUCCESS;\
+    rc = grn_ts_buf_write(ctx, &node->vector_buf, vector.ptr,\
+                          sizeof(grn_ts_ ## kind) * vector.size);\
+    if (rc != GRN_SUCCESS) {\
+      return rc;\
     }\
-    vector_buf = GRN_MALLOCN(grn_ts_ ## kind, vector.size);\
-    if (!vector_buf) {\
-      return GRN_NO_MEMORY_AVAILABLE;\
-    }\
-    node->vector_buf = vector_buf;\
-    grn_memcpy(vector_buf, vector.ptr,\
-               sizeof(grn_ts_ ## kind) * vector.size);\
-    node->content.kind ## _vector_value.ptr = vector_buf;\
+    buf_ptr = (const grn_ts_ ## kind *)node->vector_buf.ptr;\
+    node->content.kind ## _vector_value.ptr = buf_ptr;\
     node->content.kind ## _vector_value.size = vector.size;\
     return GRN_SUCCESS;\
   }
@@ -1306,31 +1289,27 @@ grn_ts_expr_const_node_set_vector(grn_ctx *ctx, grn_ts_expr_const_node *node,
     GRN_TS_EXPR_CONST_NODE_SET_VECTOR_CASE_BLOCK(FLOAT, float)
     GRN_TS_EXPR_CONST_NODE_SET_VECTOR_CASE_BLOCK(TIME, time)
     case GRN_TS_TEXT_VECTOR: {
-      size_t i, offset = 0, total_size = 0;
-      grn_ts_text_vector vector;
+      grn_rc rc;
+      size_t i, offset, total_size;
+      grn_ts_text_vector vector = *(const grn_ts_text_vector *)value;
       grn_ts_text *vector_buf;
       char *text_buf;
-      vector = *(const grn_ts_text_vector *)value;
-      if (!vector.size) {
-        node->content.text_vector_value.ptr = NULL;
-        node->content.text_vector_value.size = 0;
-        return GRN_SUCCESS;
+      rc = grn_ts_buf_resize(ctx, &node->vector_buf,
+                             sizeof(grn_ts_text) * vector.size);
+      if (rc != GRN_SUCCESS) {
+        return rc;
       }
-      vector_buf = GRN_MALLOCN(grn_ts_text, vector.size);
-      if (!vector_buf) {
-        return GRN_NO_MEMORY_AVAILABLE;
-      }
-      node->vector_buf = vector_buf;
+      vector_buf = (grn_ts_text *)node->vector_buf.ptr;
+      total_size = 0;
       for (i = 0; i < vector.size; i++) {
         total_size += vector.ptr[i].size;
       }
-      if (total_size) {
-        text_buf = (char *)GRN_MALLOC(total_size);
-        if (!text_buf) {
-          return GRN_NO_MEMORY_AVAILABLE;
-        }
-        node->text_buf = text_buf;
+      rc = grn_ts_buf_resize(ctx, &node->text_buf, total_size);
+      if (rc != GRN_SUCCESS) {
+        return rc;
       }
+      text_buf = (char *)node->text_buf.ptr;
+      offset = 0;
       for (i = 0; i < vector.size; i++) {
         grn_memcpy(text_buf + offset, vector.ptr[i].ptr, vector.ptr[i].size);
         vector_buf[i].ptr = text_buf + offset;
