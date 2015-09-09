@@ -2049,11 +2049,13 @@ grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
     }
     case GRN_TS_OP_EQUAL:
     case GRN_TS_OP_NOT_EQUAL: {
+      grn_ts_data_kind scalar_data_kind;
       if (node->args[0]->data_kind != node->args[1]->data_kind) {
         return GRN_INVALID_ARGUMENT;
       }
-      if (((node->args[0]->data_kind == GRN_TS_REF) ||
-           (node->args[0]->data_kind == GRN_TS_REF_VECTOR)) &&
+      scalar_data_kind = node->args[0]->data_kind & ~GRN_TS_VECTOR_FLAG;
+      if (((scalar_data_kind == GRN_TS_REF) ||
+           (scalar_data_kind == GRN_TS_GEO_POINT)) &&
           (node->args[0]->data_type != node->args[1]->data_type)) {
         return GRN_INVALID_ARGUMENT;
       }
