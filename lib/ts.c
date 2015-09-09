@@ -1750,26 +1750,25 @@ grn_ts_expr_column_node_evaluate_ref_vector(grn_ctx *ctx,
     node->buf.pos = 0;\
     for (i = 0; i < n_in; i++) {\
       grn_rc rc;\
-      size_t n_bytes;\
+      size_t n_bytes, new_n_bytes;\
       node->body_buf.pos = 0;\
       rc = grn_ts_ja_get_value(ctx, (grn_ja *)node->column, in[i].id,\
                                &node->body_buf, &n_bytes);\
       if (rc == GRN_SUCCESS) {\
-        type ## _t *src_ptr = (type ## _t *)node->body_buf.ptr;\
         out_ptr[i].size = n_bytes / sizeof(type ## _t);\
+      } else {\
+        out_ptr[i].size = 0;\
+      }\
+      new_n_bytes = node->buf.pos + (sizeof(grn_ts_int) * out_ptr[i].size);\
+      rc = grn_ts_buf_reserve(ctx, &node->buf, new_n_bytes);\
+      if (rc == GRN_SUCCESS) {\
+        type ## _t *src_ptr = (type ## _t *)node->body_buf.ptr;\
+        grn_ts_int *dest_ptr;\
+        dest_ptr = (grn_ts_int *)((char *)node->buf.ptr + node->buf.pos);\
         for (j = 0; j < out_ptr[i].size; j++) {\
-          grn_ts_int value = (grn_ts_int)src_ptr[j];\
-          grn_rc rc = grn_ts_buf_write(ctx, &node->buf, &value,\
-                                       sizeof(value));\
-          if (rc != GRN_SUCCESS) {\
-            if (j) {\
-              /* Cancel written values. */\
-              node->buf.pos -= sizeof(value) * j;\
-            }\
-            out_ptr[i].size = 0;\
-            break;\
-          }\
+          dest_ptr[j] = (grn_ts_int)src_ptr[j];\
         }\
+        node->buf.pos = new_n_bytes;\
       } else {\
         out_ptr[i].size = 0;\
       }\
