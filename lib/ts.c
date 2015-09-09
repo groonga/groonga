@@ -2022,21 +2022,17 @@ grn_ts_op_logical_and_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
                                const grn_ts_record *in, size_t n_in,
                                void *out) {
   size_t i;
-  grn_ts_bool *out_ptr = (grn_ts_bool *)out;
-  grn_ts_bool *buf_ptr;
+  grn_ts_buf *buf = &node->bufs[0];
+  grn_ts_bool *buf_ptr, *out_ptr = (grn_ts_bool *)out;
   grn_rc rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, out);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = grn_ts_buf_reserve(ctx, &node->bufs[0], sizeof(grn_ts_bool) * n_in);
+  rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[1], in, n_in, buf);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  buf_ptr = (grn_ts_bool *)node->bufs[0].ptr;
-  rc = grn_ts_expr_node_evaluate(ctx, node->args[1], in, n_in, buf_ptr);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
+  buf_ptr = (grn_ts_bool *)buf->ptr;
   for (i = 0; i < n_in; i++) {
     out_ptr[i] &= buf_ptr[i];
   }
@@ -2049,21 +2045,17 @@ grn_ts_op_logical_or_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
                                const grn_ts_record *in, size_t n_in,
                                void *out) {
   size_t i;
-  grn_ts_bool *out_ptr = (grn_ts_bool *)out;
-  grn_ts_bool *buf_ptr;
+  grn_ts_buf *buf = &node->bufs[0];
+  grn_ts_bool *buf_ptr, *out_ptr = (grn_ts_bool *)out;
   grn_rc rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, out);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = grn_ts_buf_reserve(ctx, &node->bufs[0], sizeof(grn_ts_bool) * n_in);
+  rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[1], in, n_in, buf);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  buf_ptr = (grn_ts_bool *)node->bufs[0].ptr;
-  rc = grn_ts_expr_node_evaluate(ctx, node->args[1], in, n_in, buf_ptr);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
+  buf_ptr = (grn_ts_bool *)buf->ptr;
   for (i = 0; i < n_in; i++) {
     out_ptr[i] |= buf_ptr[i];
   }
