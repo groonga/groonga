@@ -2021,20 +2021,43 @@ static grn_rc
 grn_ts_op_logical_and_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
                                const grn_ts_record *in, size_t n_in,
                                void *out) {
-  size_t i;
-  grn_ts_buf *buf = &node->bufs[0];
-  grn_ts_bool *buf_ptr, *out_ptr = (grn_ts_bool *)out;
-  grn_rc rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, out);
+  size_t i, j, count;
+  grn_rc rc;
+  grn_ts_buf *arg1_buf = &node->bufs[0], *arg2_buf = &node->bufs[1];
+  grn_ts_bool *arg1_ptr, *arg2_ptr, *out_ptr = (grn_ts_bool *)out;
+  grn_ts_buf *tmp_in_buf = &node->bufs[2];
+  grn_ts_record *tmp_in;
+
+  /* Evaluate the 1st argument. */
+  rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[0], in, n_in,
+                                        arg1_buf);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[1], in, n_in, buf);
+  arg1_ptr = (grn_ts_bool *)arg1_buf->ptr;
+
+  /* Create a list of true records. */
+  rc = grn_ts_buf_reserve(ctx, tmp_in_buf, sizeof(grn_ts_record) * n_in);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  buf_ptr = (grn_ts_bool *)buf->ptr;
+  tmp_in = (grn_ts_record *)tmp_in_buf->ptr;
+  count = 0;
   for (i = 0; i < n_in; i++) {
-    out_ptr[i] &= buf_ptr[i];
+    if (arg1_ptr[i]) {
+      tmp_in[count++] = in[i];
+    }
+  }
+
+  /* Evaluate the 2nd argument. */
+  rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[1],
+                                        tmp_in, count, arg2_buf);
+  arg2_ptr = (grn_ts_bool *)arg2_buf->ptr;
+
+  /* Merge the results. */
+  count = 0;
+  for (i = 0, j = 0; i < n_in; i++) {
+    out_ptr[count++] = arg1_ptr[i] && arg2_ptr[j++];
   }
   return GRN_SUCCESS;
 }
@@ -2044,20 +2067,43 @@ static grn_rc
 grn_ts_op_logical_or_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
                                const grn_ts_record *in, size_t n_in,
                                void *out) {
-  size_t i;
-  grn_ts_buf *buf = &node->bufs[0];
-  grn_ts_bool *buf_ptr, *out_ptr = (grn_ts_bool *)out;
-  grn_rc rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, out);
+  size_t i, j, count;
+  grn_rc rc;
+  grn_ts_buf *arg1_buf = &node->bufs[0], *arg2_buf = &node->bufs[1];
+  grn_ts_bool *arg1_ptr, *arg2_ptr, *out_ptr = (grn_ts_bool *)out;
+  grn_ts_buf *tmp_in_buf = &node->bufs[2];
+  grn_ts_record *tmp_in;
+
+  /* Evaluate the 1st argument. */
+  rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[0], in, n_in,
+                                        arg1_buf);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[1], in, n_in, buf);
+  arg1_ptr = (grn_ts_bool *)arg1_buf->ptr;
+
+  /* Create a list of false records. */
+  rc = grn_ts_buf_reserve(ctx, tmp_in_buf, sizeof(grn_ts_record) * n_in);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  buf_ptr = (grn_ts_bool *)buf->ptr;
+  tmp_in = (grn_ts_record *)tmp_in_buf->ptr;
+  count = 0;
   for (i = 0; i < n_in; i++) {
-    out_ptr[i] |= buf_ptr[i];
+    if (!arg1_ptr[i]) {
+      tmp_in[count++] = in[i];
+    }
+  }
+
+  /* Evaluate the 2nd argument. */
+  rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[1],
+                                        tmp_in, count, arg2_buf);
+  arg2_ptr = (grn_ts_bool *)arg2_buf->ptr;
+
+  /* Merge the results. */
+  count = 0;
+  for (i = 0, j = 0; i < n_in; i++) {
+    out_ptr[count++] = arg1_ptr[i] || arg2_ptr[j++];
   }
   return GRN_SUCCESS;
 }
