@@ -222,8 +222,9 @@ grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv)
   memset(&tm, 0, sizeof(struct tm));
 
   tm.tm_year = (int)grn_atoui(str, rend, &r1) - 1900;
-  if ((r1 + 1) >= rend || (*r1 != '/' && *r1 != '-') ||
-      tm.tm_year < 0) { return GRN_INVALID_ARGUMENT; }
+  if ((r1 + 1) >= rend || (*r1 != '/' && *r1 != '-')) {
+    return GRN_INVALID_ARGUMENT;
+  }
   r1++;
   tm.tm_mon = (int)grn_atoui(r1, rend, &r1) - 1;
   if ((r1 + 1) >= rend || (*r1 != '/' && *r1 != '-') ||
