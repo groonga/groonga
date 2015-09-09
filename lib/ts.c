@@ -590,6 +590,13 @@ grn_ts_op_equal_geo_point(grn_ts_geo_point lhs, grn_ts_geo_point rhs) {
   return (lhs.latitude == rhs.latitude) && (lhs.longitude == rhs.longitude);
 }
 
+/* grn_ts_op_equal_ref() returns lhs == rhs. */
+inline static grn_bool
+grn_ts_op_equal_ref(grn_ts_ref lhs, grn_ts_ref rhs) {
+  /* Ignore scores. */
+  return lhs.id == rhs.id;
+}
+
 #define GRN_TS_OP_EQUAL_VECTOR(kind)\
   size_t i;\
   if (lhs.size != rhs.size) {\
@@ -638,6 +645,12 @@ grn_ts_op_equal_geo_point_vector(grn_ts_geo_point_vector lhs,
                                  grn_ts_geo_point_vector rhs) {
   GRN_TS_OP_EQUAL_VECTOR(geo_point)
 }
+
+/* grn_ts_op_equal_ref_vector() returns lhs == rhs. */
+inline static grn_bool
+grn_ts_op_equal_ref_vector(grn_ts_ref_vector lhs, grn_ts_ref_vector rhs) {
+  GRN_TS_OP_EQUAL_VECTOR(ref)
+}
 #undef GRN_TS_OP_EQUAL_VECTOR
 
 /* grn_ts_op_not_equal_bool() returns lhs != rhs. */
@@ -675,6 +688,13 @@ grn_ts_op_not_equal_text(grn_ts_text lhs, grn_ts_text rhs) {
 inline static grn_bool
 grn_ts_op_not_equal_geo_point(grn_ts_geo_point lhs, grn_ts_geo_point rhs) {
   return (lhs.latitude != rhs.latitude) && (lhs.longitude != rhs.longitude);
+}
+
+/* grn_ts_op_not_equal_ref() returns lhs != rhs. */
+inline static grn_bool
+grn_ts_op_not_equal_ref(grn_ts_ref lhs, grn_ts_ref rhs) {
+  /* Ignore scores. */
+  return lhs.id != rhs.id;
 }
 
 #define GRN_TS_OP_NOT_EQUAL_VECTOR(kind)\
@@ -724,6 +744,12 @@ inline static grn_bool
 grn_ts_op_not_equal_geo_point_vector(grn_ts_geo_point_vector lhs,
                                  grn_ts_geo_point_vector rhs) {
   GRN_TS_OP_NOT_EQUAL_VECTOR(geo_point)
+}
+
+/* grn_ts_op_not_equal_ref_vector() returns lhs != rhs. */
+inline static grn_bool
+grn_ts_op_not_equal_ref_vector(grn_ts_ref_vector lhs, grn_ts_ref_vector rhs) {
+  GRN_TS_OP_NOT_EQUAL_VECTOR(ref)
 }
 #undef GRN_TS_OP_NOT_EQUAL_VECTOR
 
@@ -2378,14 +2404,14 @@ grn_ts_op_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     GRN_TS_OP_EQUAL_EVALUATE_CASE_BLOCK(TIME, time)
     GRN_TS_OP_EQUAL_EVALUATE_CASE_BLOCK(TEXT, text)
     GRN_TS_OP_EQUAL_EVALUATE_CASE_BLOCK(GEO_POINT, geo_point)
-    // TODO: GRN_TS_REF.
+    GRN_TS_OP_EQUAL_EVALUATE_CASE_BLOCK(REF, ref)
     GRN_TS_OP_EQUAL_EVALUATE_VECTOR_CASE_BLOCK(BOOL, bool)
     GRN_TS_OP_EQUAL_EVALUATE_VECTOR_CASE_BLOCK(INT, int)
     GRN_TS_OP_EQUAL_EVALUATE_VECTOR_CASE_BLOCK(FLOAT, float)
     GRN_TS_OP_EQUAL_EVALUATE_VECTOR_CASE_BLOCK(TIME, time)
     GRN_TS_OP_EQUAL_EVALUATE_VECTOR_CASE_BLOCK(TEXT, text)
     GRN_TS_OP_EQUAL_EVALUATE_VECTOR_CASE_BLOCK(GEO_POINT, geo_point)
-    // TODO: GRN_TS_REF_VECTOR.
+    GRN_TS_OP_EQUAL_EVALUATE_VECTOR_CASE_BLOCK(REF, ref)
     default: {
       return GRN_INVALID_ARGUMENT;
     }
@@ -2448,14 +2474,14 @@ grn_ts_op_not_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     GRN_TS_OP_NOT_EQUAL_EVALUATE_CASE_BLOCK(TIME, time)
     GRN_TS_OP_NOT_EQUAL_EVALUATE_CASE_BLOCK(TEXT, text)
     GRN_TS_OP_NOT_EQUAL_EVALUATE_CASE_BLOCK(GEO_POINT, geo_point)
-    // TODO: GRN_TS_REF.
+    GRN_TS_OP_NOT_EQUAL_EVALUATE_CASE_BLOCK(REF, ref)
     GRN_TS_OP_NOT_EQUAL_EVALUATE_VECTOR_CASE_BLOCK(BOOL, bool)
     GRN_TS_OP_NOT_EQUAL_EVALUATE_VECTOR_CASE_BLOCK(INT, int)
     GRN_TS_OP_NOT_EQUAL_EVALUATE_VECTOR_CASE_BLOCK(FLOAT, float)
     GRN_TS_OP_NOT_EQUAL_EVALUATE_VECTOR_CASE_BLOCK(TIME, time)
     GRN_TS_OP_NOT_EQUAL_EVALUATE_VECTOR_CASE_BLOCK(TEXT, text)
     GRN_TS_OP_NOT_EQUAL_EVALUATE_VECTOR_CASE_BLOCK(GEO_POINT, geo_point)
-    // TODO: GRN_TS_REF_VECTOR.
+    GRN_TS_OP_NOT_EQUAL_EVALUATE_VECTOR_CASE_BLOCK(REF, ref)
     default: {
       return GRN_INVALID_ARGUMENT;
     }
