@@ -58,6 +58,7 @@ grn_ts_buf_init(grn_ctx *ctx, grn_ts_buf *buf) {
 }
 
 /* grn_ts_buf_open() creates a buffer. */
+/*
 static grn_rc
 grn_ts_buf_open(grn_ctx *ctx, grn_ts_buf **buf) {
   grn_ts_buf *new_buf = GRN_MALLOCN(grn_ts_buf, 1);
@@ -68,6 +69,7 @@ grn_ts_buf_open(grn_ctx *ctx, grn_ts_buf **buf) {
   *buf = new_buf;
   return GRN_SUCCESS;
 }
+*/
 
 /* grn_ts_buf_fin() finalizes a buffer. */
 static void
@@ -78,12 +80,14 @@ grn_ts_buf_fin(grn_ctx *ctx, grn_ts_buf *buf) {
 }
 
 /* grn_ts_buf_close() destroys a buffer. */
+/*
 static void
 grn_ts_buf_close(grn_ctx *ctx, grn_ts_buf *buf) {
   if (buf) {
     grn_ts_buf_fin(ctx, buf);
   }
 }
+*/
 
 /*
  * grn_ts_buf_reserve() reserves enough memory to store new_size bytes.
