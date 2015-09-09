@@ -710,7 +710,8 @@ grn_ts_op_not_equal_ref(grn_ts_ref lhs, grn_ts_ref rhs) {
   return GRN_TRUE;
 /* grn_ts_op_not_equal_bool_vector() returns lhs != rhs. */
 inline static grn_bool
-grn_ts_op_not_equal_bool_vector(grn_ts_bool_vector lhs, grn_ts_bool_vector rhs) {
+grn_ts_op_not_equal_bool_vector(grn_ts_bool_vector lhs,
+                                grn_ts_bool_vector rhs) {
   GRN_TS_OP_NOT_EQUAL_VECTOR(bool)
 }
 
@@ -729,13 +730,15 @@ grn_ts_op_not_equal_float_vector(grn_ts_float_vector lhs,
 
 /* grn_ts_op_not_equal_time_vector() returns lhs != rhs. */
 inline static grn_bool
-grn_ts_op_not_equal_time_vector(grn_ts_time_vector lhs, grn_ts_time_vector rhs) {
+grn_ts_op_not_equal_time_vector(grn_ts_time_vector lhs,
+                                grn_ts_time_vector rhs) {
   GRN_TS_OP_NOT_EQUAL_VECTOR(time)
 }
 
 /* grn_ts_op_not_equal_text_vector() returns lhs != rhs. */
 inline static grn_bool
-grn_ts_op_not_equal_text_vector(grn_ts_text_vector lhs, grn_ts_text_vector rhs) {
+grn_ts_op_not_equal_text_vector(grn_ts_text_vector lhs,
+                                grn_ts_text_vector rhs) {
   GRN_TS_OP_NOT_EQUAL_VECTOR(text)
 }
 
