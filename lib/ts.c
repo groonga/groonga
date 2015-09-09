@@ -1884,6 +1884,10 @@ grn_ts_expr_column_node_adjust(grn_ctx *ctx, grn_ts_expr_column_node *node,
  * grn_ts_expr_op_node.
  */
 
+enum {
+  GRN_TS_EXPR_OP_NODE_MAX_N_ARGS = 3
+};
+
 /* Forward declarations. */
 static grn_rc grn_ts_expr_node_evaluate(grn_ctx *ctx, grn_ts_expr_node *node,
                                         const grn_ts_record *in, size_t n_in,
@@ -1897,7 +1901,7 @@ static grn_rc grn_ts_expr_node_adjust(grn_ctx *ctx, grn_ts_expr_node *node,
 typedef struct {
   GRN_TS_EXPR_NODE_COMMON_MEMBERS
   grn_ts_op_type op_type;
-  grn_ts_expr_node **args;
+  grn_ts_expr_node *args[GRN_TS_EXPR_OP_NODE_MAX_N_ARGS];
   size_t n_args;
   grn_ts_buf buf;
   // TODO: More buffers.
@@ -1906,20 +1910,21 @@ typedef struct {
 /* grn_ts_expr_op_node_init() initializes a node. */
 static void
 grn_ts_expr_op_node_init(grn_ctx *ctx, grn_ts_expr_op_node *node) {
+  size_t i;
   memset(node, 0, sizeof(*node));
   node->type = GRN_TS_EXPR_OP_NODE;
-  node->args = NULL;
+  for (i = 0; i < GRN_TS_EXPR_OP_NODE_MAX_N_ARGS; i++) {
+    node->args[i] = NULL;
+  }
   grn_ts_buf_init(ctx, &node->buf);
+  // TODO: Initialize buffers.
 }
 
 /* grn_ts_expr_op_node_fin() finalizes a node. */
 static void
 grn_ts_expr_op_node_fin(grn_ctx *ctx, grn_ts_expr_op_node *node) {
-  // TODO: Free memory.
+  // TODO: Finalize buffers.
   grn_ts_buf_fin(ctx, &node->buf);
-  if (node->args) {
-    GRN_FREE(node->args);
-  }
 }
 
 /* grn_ts_expr_op_node_open() creates a node associated with an operator. */
@@ -1935,14 +1940,6 @@ grn_ts_expr_op_node_open(grn_ctx *ctx, grn_ts_op_type op_type,
   }
   grn_ts_expr_op_node_init(ctx, new_node);
   new_node->op_type = op_type;
-
-  /* Create a copy of args. */
-  new_node->args = GRN_MALLOCN(grn_ts_expr_node *, n_args);
-  if (!new_node->args) {
-    grn_ts_expr_op_node_fin(ctx, new_node);
-    GRN_FREE(new_node);
-    return GRN_NO_MEMORY_AVAILABLE;
-  }
   for (i = 0; i < n_args; i++) {
     new_node->args[i] = args[i];
   }
