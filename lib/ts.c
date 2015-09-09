@@ -1885,7 +1885,8 @@ grn_ts_expr_column_node_adjust(grn_ctx *ctx, grn_ts_expr_column_node *node,
  */
 
 enum {
-  GRN_TS_EXPR_OP_NODE_MAX_N_ARGS = 3
+  GRN_TS_EXPR_OP_NODE_MAX_N_ARGS = 3,
+  GRN_TS_EXPR_OP_NODE_N_BUFS = 3
 };
 
 /* Forward declarations. */
@@ -1903,8 +1904,7 @@ typedef struct {
   grn_ts_op_type op_type;
   grn_ts_expr_node *args[GRN_TS_EXPR_OP_NODE_MAX_N_ARGS];
   size_t n_args;
-  grn_ts_buf buf;
-  // TODO: More buffers.
+  grn_ts_buf bufs[GRN_TS_EXPR_OP_NODE_N_BUFS];
 } grn_ts_expr_op_node;
 
 /* grn_ts_expr_op_node_init() initializes a node. */
@@ -1916,15 +1916,18 @@ grn_ts_expr_op_node_init(grn_ctx *ctx, grn_ts_expr_op_node *node) {
   for (i = 0; i < GRN_TS_EXPR_OP_NODE_MAX_N_ARGS; i++) {
     node->args[i] = NULL;
   }
-  grn_ts_buf_init(ctx, &node->buf);
-  // TODO: Initialize buffers.
+  for (i = 0; i < GRN_TS_EXPR_OP_NODE_N_BUFS; i++) {
+    grn_ts_buf_init(ctx, &node->bufs[0]);
+  }
 }
 
 /* grn_ts_expr_op_node_fin() finalizes a node. */
 static void
 grn_ts_expr_op_node_fin(grn_ctx *ctx, grn_ts_expr_op_node *node) {
-  // TODO: Finalize buffers.
-  grn_ts_buf_fin(ctx, &node->buf);
+  size_t i;
+  for (i = 0; i < GRN_TS_EXPR_OP_NODE_N_BUFS; i++) {
+    grn_ts_buf_fin(ctx, &node->bufs[i]);
+  }
 }
 
 /* grn_ts_expr_op_node_open() creates a node associated with an operator. */
@@ -2020,11 +2023,11 @@ grn_ts_op_logical_and_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = grn_ts_buf_reserve(ctx, &node->buf, sizeof(grn_ts_bool) * n_in);
+  rc = grn_ts_buf_reserve(ctx, &node->bufs[0], sizeof(grn_ts_bool) * n_in);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  buf_ptr = (grn_ts_bool *)node->buf.ptr;
+  buf_ptr = (grn_ts_bool *)node->bufs[0].ptr;
   rc = grn_ts_expr_node_evaluate(ctx, node->args[1], in, n_in, buf_ptr);
   if (rc != GRN_SUCCESS) {
     return rc;
@@ -2047,11 +2050,11 @@ grn_ts_op_logical_or_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = grn_ts_buf_reserve(ctx, &node->buf, sizeof(grn_ts_bool) * n_in);
+  rc = grn_ts_buf_reserve(ctx, &node->bufs[0], sizeof(grn_ts_bool) * n_in);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  buf_ptr = (grn_ts_bool *)node->buf.ptr;
+  buf_ptr = (grn_ts_bool *)node->bufs[0].ptr;
   rc = grn_ts_expr_node_evaluate(ctx, node->args[1], in, n_in, buf_ptr);
   if (rc != GRN_SUCCESS) {
     return rc;
@@ -2092,11 +2095,11 @@ grn_ts_op_logical_not_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
   size_t i, count;
   grn_rc rc;
   grn_ts_bool *buf_ptr;
-  rc = grn_ts_buf_reserve(ctx, &node->buf, sizeof(grn_ts_bool) * n_in);
+  rc = grn_ts_buf_reserve(ctx, &node->bufs[0], sizeof(grn_ts_bool) * n_in);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  buf_ptr = (grn_ts_bool *)node->buf.ptr;
+  buf_ptr = (grn_ts_bool *)node->bufs[0].ptr;
   rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, buf_ptr);
   if (rc != GRN_SUCCESS) {
     return rc;
