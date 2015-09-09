@@ -1893,6 +1893,11 @@ enum {
 static grn_rc grn_ts_expr_node_evaluate(grn_ctx *ctx, grn_ts_expr_node *node,
                                         const grn_ts_record *in, size_t n_in,
                                         void *out);
+static grn_rc grn_ts_expr_node_evaluate_to_buf(grn_ctx *ctx,
+                                               grn_ts_expr_node *node,
+                                               const grn_ts_record *in,
+                                               size_t n_in,
+                                               grn_ts_buf *out);
 static grn_rc grn_ts_expr_node_filter(grn_ctx *ctx, grn_ts_expr_node *node,
                                       grn_ts_record *in, size_t n_in,
                                       grn_ts_record *out, size_t *n_out);
@@ -2274,6 +2279,44 @@ grn_ts_expr_node_evaluate(grn_ctx *ctx, grn_ts_expr_node *node,
   }
 }
 #undef GRN_TS_EXPR_NODE_EVALUATE_CASE_BLOCK
+
+#define GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_CASE_BLOCK(KIND, kind)\
+  case GRN_TS_ ## KIND: {\
+    grn_rc rc = grn_ts_buf_reserve(ctx, out, sizeof(grn_ts_ ## kind) * n_in);\
+    if (rc != GRN_SUCCESS) {\
+      return rc;\
+    }\
+    return grn_ts_expr_node_evaluate(ctx, node, in, n_in, out);\
+  }
+#define GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_VECTOR_CASE_BLOCK(KIND, kind)\
+  GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_CASE_BLOCK(KIND ## _VECTOR, kind ## _vector)
+/* grn_ts_expr_node_evaluate_to_buf() evaluates a subexpression. */
+static grn_rc
+grn_ts_expr_node_evaluate_to_buf(grn_ctx *ctx, grn_ts_expr_node *node,
+                                 const grn_ts_record *in, size_t n_in,
+                                 grn_ts_buf *out) {
+  switch (node->data_kind) {
+    GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_CASE_BLOCK(BOOL, bool)
+    GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_CASE_BLOCK(INT, int)
+    GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_CASE_BLOCK(FLOAT, float)
+    GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_CASE_BLOCK(TIME, time)
+    GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_CASE_BLOCK(TEXT, text)
+    GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_CASE_BLOCK(GEO_POINT, geo_point)
+    GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_CASE_BLOCK(REF, ref)
+    GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_VECTOR_CASE_BLOCK(BOOL, bool)
+    GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_VECTOR_CASE_BLOCK(INT, int)
+    GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_VECTOR_CASE_BLOCK(FLOAT, float)
+    GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_VECTOR_CASE_BLOCK(TIME, time)
+    GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_VECTOR_CASE_BLOCK(TEXT, text)
+    GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_VECTOR_CASE_BLOCK(GEO_POINT, geo_point)
+    GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_VECTOR_CASE_BLOCK(REF, ref)
+    default: {
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+}
+#undef GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_VECTOR_CASE_BLOCK
+#undef GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_CASE_BLOCK
 
 #define GRN_TS_EXPR_NODE_FILTER_CASE_BLOCK(TYPE, type)\
   case GRN_TS_EXPR_ ## TYPE ## _NODE: {\
