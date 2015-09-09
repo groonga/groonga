@@ -553,6 +553,93 @@ grn_ts_op_get_n_args(grn_ts_op_type op_type) {
   }
 }
 
+/* grn_ts_op_equal_bool() returns lhs == rhs. */
+inline static grn_bool
+grn_ts_op_equal_bool(grn_ts_bool lhs, grn_ts_bool rhs) {
+  return lhs == rhs;
+}
+
+/* grn_ts_op_equal_int() returns lhs == rhs. */
+inline static grn_bool
+grn_ts_op_equal_int(grn_ts_int lhs, grn_ts_int rhs) {
+  return lhs == rhs;
+}
+
+/* grn_ts_op_equal_float() returns lhs == rhs. */
+inline static grn_bool
+grn_ts_op_equal_float(grn_ts_float lhs, grn_ts_float rhs) {
+  /* To suppress warnings, "lhs == rhs" is not used. */
+  return (lhs <= rhs) && (lhs >= rhs);
+}
+
+/* grn_ts_op_equal_time() returns lhs == rhs. */
+inline static grn_bool
+grn_ts_op_equal_time(grn_ts_time lhs, grn_ts_time rhs) {
+  return lhs == rhs;
+}
+
+/* grn_ts_op_equal_text() returns lhs == rhs. */
+inline static grn_bool
+grn_ts_op_equal_text(grn_ts_text lhs, grn_ts_text rhs) {
+  return (lhs.size == rhs.size) && !memcmp(lhs.ptr, rhs.ptr, lhs.size);
+}
+
+/* grn_ts_op_equal_geo_point() returns lhs == rhs. */
+inline static grn_bool
+grn_ts_op_equal_geo_point(grn_ts_geo_point lhs, grn_ts_geo_point rhs) {
+  return (lhs.latitude == rhs.latitude) && (lhs.longitude == rhs.longitude);
+}
+
+#define GRN_TS_OP_EQUAL_VECTOR(kind)\
+  size_t i;\
+  if (lhs.size != rhs.size) {\
+    return GRN_FALSE;\
+  }\
+  for (i = 0; i < lhs.size; i++) {\
+    if (!grn_ts_op_equal_ ## kind(lhs.ptr[i], rhs.ptr[i])) {\
+      return GRN_FALSE;\
+    }\
+  }\
+  return GRN_TRUE;
+/* grn_ts_op_equal_bool_vector() returns lhs == rhs. */
+inline static grn_bool
+grn_ts_op_equal_bool_vector(grn_ts_bool_vector lhs, grn_ts_bool_vector rhs) {
+  GRN_TS_OP_EQUAL_VECTOR(bool)
+}
+
+/* grn_ts_op_equal_int_vector() returns lhs == rhs. */
+inline static grn_bool
+grn_ts_op_equal_int_vector(grn_ts_int_vector lhs, grn_ts_int_vector rhs) {
+  GRN_TS_OP_EQUAL_VECTOR(int)
+}
+
+/* grn_ts_op_equal_float_vector() returns lhs == rhs. */
+inline static grn_bool
+grn_ts_op_equal_float_vector(grn_ts_float_vector lhs,
+                             grn_ts_float_vector rhs) {
+  GRN_TS_OP_EQUAL_VECTOR(float)
+}
+
+/* grn_ts_op_equal_time_vector() returns lhs == rhs. */
+inline static grn_bool
+grn_ts_op_equal_time_vector(grn_ts_time_vector lhs, grn_ts_time_vector rhs) {
+  GRN_TS_OP_EQUAL_VECTOR(time)
+}
+
+/* grn_ts_op_equal_text_vector() returns lhs == rhs. */
+inline static grn_bool
+grn_ts_op_equal_text_vector(grn_ts_text_vector lhs, grn_ts_text_vector rhs) {
+  GRN_TS_OP_EQUAL_VECTOR(text)
+}
+
+/* grn_ts_op_equal_geo_point_vector() returns lhs == rhs. */
+inline static grn_bool
+grn_ts_op_equal_geo_point_vector(grn_ts_geo_point_vector lhs,
+                                 grn_ts_geo_point_vector rhs) {
+  GRN_TS_OP_EQUAL_VECTOR(geo_point)
+}
+#undef GRN_TS_OP_EQUAL_VECTOR
+
 /*-------------------------------------------------------------
  * Groonga objects.
  */
@@ -2149,7 +2236,21 @@ grn_ts_op_logical_or_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
   return GRN_SUCCESS;
 }
 
-/* grn_ts_op_logical_and_evaluate() evaluates an operator. */
+
+#define GRN_TS_OP_EQUAL_EVALUATE_CASE_BLOCK(KIND, kind)\
+  case GRN_TS_ ## KIND: {\
+    grn_ts_ ## kind *arg_ptrs[] = {\
+      (grn_ts_ ## kind *)node->bufs[0].ptr,\
+      (grn_ts_ ## kind *)node->bufs[1].ptr\
+    };\
+    for (i = 0; i < n_in; i++) {\
+      out_ptr[i] = grn_ts_op_equal_ ## kind(arg_ptrs[0][i], arg_ptrs[1][i]);\
+    }\
+    return GRN_SUCCESS;\
+  }
+#define GRN_TS_OP_EQUAL_EVALUATE_VECTOR_CASE_BLOCK(KIND, kind)\
+  GRN_TS_OP_EQUAL_EVALUATE_CASE_BLOCK(KIND ## _VECTOR, kind ## _vector)
+/* grn_ts_op_equal_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_op_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
                          const grn_ts_record *in, size_t n_in, void *out) {
@@ -2158,7 +2259,10 @@ grn_ts_op_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
   grn_ts_bool *out_ptr = (grn_ts_bool *)out;
 
   if (node->args[0]->data_kind == GRN_TS_BOOL) {
-    /* Use the output buffer to put temporary data. */
+    /*
+     * Use the output buffer to put evaluation results of the 1st argument,
+     * because the data kind is same.
+     */
     rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, out);
     if (rc == GRN_SUCCESS) {
       grn_ts_buf *buf = &node->bufs[0];
@@ -2166,7 +2270,7 @@ grn_ts_op_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
       if (rc == GRN_SUCCESS) {
         grn_ts_bool *buf_ptr = (grn_ts_bool *)buf->ptr;
         for (i = 0; i < n_in; i++) {
-          out_ptr[i] = out_ptr[i] == buf_ptr[i];
+          out_ptr[i] = grn_ts_op_equal_bool(out_ptr[i], buf_ptr[i]);
         }
       }
     }
@@ -2181,22 +2285,24 @@ grn_ts_op_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     }
   }
   switch (node->args[0]->data_kind) {
-    case GRN_TS_INT: {
-      grn_ts_int *arg_ptrs[] = {
-        (grn_ts_int *)node->bufs[0].ptr,
-        (grn_ts_int *)node->bufs[1].ptr
-      };
-      for (i = 0; i < n_in; i++) {
-        out_ptr[i] = arg_ptrs[0][i] == arg_ptrs[1][i];
-      }
-      return GRN_SUCCESS;
-    }
-    // TODO: Support other data kinds.
+    GRN_TS_OP_EQUAL_EVALUATE_CASE_BLOCK(INT, int)
+    GRN_TS_OP_EQUAL_EVALUATE_CASE_BLOCK(FLOAT, float)
+    GRN_TS_OP_EQUAL_EVALUATE_CASE_BLOCK(TIME, time)
+    GRN_TS_OP_EQUAL_EVALUATE_CASE_BLOCK(TEXT, text)
+    GRN_TS_OP_EQUAL_EVALUATE_CASE_BLOCK(GEO_POINT, geo_point)
+    GRN_TS_OP_EQUAL_EVALUATE_VECTOR_CASE_BLOCK(BOOL, bool)
+    GRN_TS_OP_EQUAL_EVALUATE_VECTOR_CASE_BLOCK(INT, int)
+    GRN_TS_OP_EQUAL_EVALUATE_VECTOR_CASE_BLOCK(FLOAT, float)
+    GRN_TS_OP_EQUAL_EVALUATE_VECTOR_CASE_BLOCK(TIME, time)
+    GRN_TS_OP_EQUAL_EVALUATE_VECTOR_CASE_BLOCK(TEXT, text)
+    GRN_TS_OP_EQUAL_EVALUATE_VECTOR_CASE_BLOCK(GEO_POINT, geo_point)
     default: {
       return GRN_UNKNOWN_ERROR;
     }
   }
 }
+#undef GRN_TS_OP_EQUAL_EVALUATE_VECTOR_CASE_BLOCK
+#undef GRN_TS_OP_EQUAL_EVALUATE_CASE_BLOCK
 
 /* grn_ts_expr_op_node_evaluate() evaluates an operator. */
 static grn_rc
