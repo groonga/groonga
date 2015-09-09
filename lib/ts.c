@@ -1934,6 +1934,69 @@ grn_ts_expr_op_node_fin(grn_ctx *ctx, grn_ts_expr_op_node *node) {
   }
 }
 
+/*
+ * grn_ts_expr_op_node_check_args() checks arguments and sets data_kind and
+ * data_type.
+ */
+static grn_rc
+grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
+  switch (node->op_type) {
+    case GRN_TS_OP_LOGICAL_AND:
+    case GRN_TS_OP_LOGICAL_OR: {
+      if (node->args[1]->data_kind != GRN_TS_BOOL) {
+        return GRN_INVALID_ARGUMENT;
+      }
+      /* Fall through. */
+    }
+    case GRN_TS_OP_LOGICAL_NOT: {
+      if (node->args[0]->data_kind != GRN_TS_BOOL) {
+        return GRN_INVALID_ARGUMENT;
+      }
+      node->data_kind = GRN_TS_BOOL;
+      node->data_type = GRN_DB_BOOL;
+      return GRN_SUCCESS;
+    }
+    case GRN_TS_OP_EQUAL:
+    case GRN_TS_OP_NOT_EQUAL: {
+      if (node->args[0]->data_kind != node->args[1]->data_kind) {
+        return GRN_INVALID_ARGUMENT;
+      }
+      if (((node->args[0]->data_kind == GRN_TS_REF) ||
+           (node->args[0]->data_kind == GRN_TS_REF_VECTOR)) &&
+          (node->args[0]->data_type != node->args[1]->data_type)) {
+        return GRN_INVALID_ARGUMENT;
+      }
+      node->data_kind = GRN_TS_BOOL;
+      node->data_type = GRN_DB_BOOL;
+      return GRN_SUCCESS;
+    }
+    case GRN_TS_OP_LESS:
+    case GRN_TS_OP_LESS_EQUAL:
+    case GRN_TS_OP_GREATER:
+    case GRN_TS_OP_GREATER_EQUAL: {
+      if (node->args[0]->data_kind != node->args[1]->data_kind) {
+        return GRN_INVALID_ARGUMENT;
+      }
+      switch (node->args[0]->data_kind) {
+        case GRN_TS_INT:
+        case GRN_TS_FLOAT:
+        case GRN_TS_TIME:
+        case GRN_TS_TEXT: {
+          node->data_kind = GRN_TS_BOOL;
+          node->data_type = GRN_DB_BOOL;
+          return GRN_SUCCESS;
+        }
+        default: {
+          return GRN_INVALID_ARGUMENT;
+        }
+      }
+    }
+    default: {
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+}
+
 /* grn_ts_expr_op_node_open() creates a node associated with an operator. */
 static grn_rc
 grn_ts_expr_op_node_open(grn_ctx *ctx, grn_ts_op_type op_type,
@@ -1953,30 +2016,7 @@ grn_ts_expr_op_node_open(grn_ctx *ctx, grn_ts_op_type op_type,
   new_node->n_args = n_args;
 
   /* Check arguments. */
-  rc = GRN_SUCCESS;
-  switch (op_type) {
-    case GRN_TS_OP_LOGICAL_AND:
-    case GRN_TS_OP_LOGICAL_OR: {
-      if (args[1]->data_kind != GRN_TS_BOOL) {
-        rc = GRN_INVALID_ARGUMENT;
-        break;
-      }
-      /* Fall through. */
-    }
-    case GRN_TS_OP_LOGICAL_NOT: {
-      if (args[0]->data_kind != GRN_TS_BOOL) {
-        rc = GRN_INVALID_ARGUMENT;
-        break;
-      }
-      new_node->data_kind = GRN_TS_BOOL;
-      new_node->data_type = GRN_DB_BOOL;
-      break;
-    }
-    default: {
-      rc = GRN_INVALID_ARGUMENT;
-      break;
-    }
-  }
+  rc = grn_ts_expr_op_node_check_args(ctx, new_node);
   if ((rc == GRN_SUCCESS) &&
       ((new_node->data_kind == GRN_TS_VOID) ||
        (new_node->data_type == GRN_DB_VOID))) {
