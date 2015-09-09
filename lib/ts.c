@@ -2151,6 +2151,55 @@ grn_ts_op_logical_or_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
   return GRN_SUCCESS;
 }
 
+/* grn_ts_op_logical_and_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                         const grn_ts_record *in, size_t n_in, void *out) {
+  size_t i;
+  grn_rc rc;
+  grn_ts_bool *out_ptr = (grn_ts_bool *)out;
+
+  if (node->args[0]->data_kind == GRN_TS_BOOL) {
+    /* Use the output buffer to put temporary data. */
+    rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, out);
+    if (rc == GRN_SUCCESS) {
+      grn_ts_buf *buf = &node->bufs[0];
+      rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[1], in, n_in, buf);
+      if (rc == GRN_SUCCESS) {
+        grn_ts_bool *buf_ptr = (grn_ts_bool *)buf->ptr;
+        for (i = 0; i < n_in; i++) {
+          out_ptr[i] = out_ptr[i] == buf_ptr[i];
+        }
+      }
+    }
+    return rc;
+  }
+
+  for (i = 0; i < 2; i++) {
+    rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[i], in, n_in,
+                                          &node->bufs[i]);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+  }
+  switch (node->args[0]->data_kind) {
+    case GRN_TS_INT: {
+      grn_ts_int *arg_ptrs[] = {
+        (grn_ts_int *)node->bufs[0].ptr,
+        (grn_ts_int *)node->bufs[1].ptr
+      };
+      for (i = 0; i < n_in; i++) {
+        out_ptr[i] = arg_ptrs[0][i] == arg_ptrs[1][i];
+      }
+      return GRN_SUCCESS;
+    }
+    // TODO: Support other data kinds.
+    default: {
+      return GRN_UNKNOWN_ERROR;
+    }
+  }
+}
+
 /* grn_ts_expr_op_node_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_expr_op_node_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
@@ -2165,6 +2214,9 @@ grn_ts_expr_op_node_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     }
     case GRN_TS_OP_LOGICAL_OR: {
       return grn_ts_op_logical_or_evaluate(ctx, node, in, n_in, out);
+    }
+    case GRN_TS_OP_EQUAL: {
+      return grn_ts_op_equal_evaluate(ctx, node, in, n_in, out);
     }
     // TODO
     default: {
