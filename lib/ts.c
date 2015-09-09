@@ -2028,7 +2028,7 @@ grn_ts_op_logical_and_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     return rc;
   }
   buf_ptr = (grn_ts_bool *)node->buf.ptr;
-  rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, buf_ptr);
+  rc = grn_ts_expr_node_evaluate(ctx, node->args[1], in, n_in, buf_ptr);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
@@ -2055,7 +2055,7 @@ grn_ts_op_logical_or_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     return rc;
   }
   buf_ptr = (grn_ts_bool *)node->buf.ptr;
-  rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, buf_ptr);
+  rc = grn_ts_expr_node_evaluate(ctx, node->args[1], in, n_in, buf_ptr);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
