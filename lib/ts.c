@@ -2609,7 +2609,7 @@ grn_ts_op_not_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     }\
     return GRN_SUCCESS;\
   }
-#define GRN_TS_OP_CMP_EVALUATE(TYPE, type)\
+#define GRN_TS_OP_CMP_EVALUATE(type)\
   size_t i;\
   grn_rc rc;\
   grn_ts_bool *out_ptr = (grn_ts_bool *)out;\
@@ -2633,7 +2633,7 @@ grn_ts_op_not_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 static grn_rc
 grn_ts_op_less_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
                         const grn_ts_record *in, size_t n_in, void *out) {
-  GRN_TS_OP_CMP_EVALUATE(LESS, less)
+  GRN_TS_OP_CMP_EVALUATE(less)
 }
 
 /* grn_ts_op_less_equal_evaluate() evaluates an operator. */
@@ -2641,14 +2641,14 @@ static grn_rc
 grn_ts_op_less_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
                               const grn_ts_record *in, size_t n_in,
                               void *out) {
-  GRN_TS_OP_CMP_EVALUATE(LESS_EQUAL, less_equal)
+  GRN_TS_OP_CMP_EVALUATE(less_equal)
 }
 
 /* grn_ts_op_greater_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_op_greater_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
                            const grn_ts_record *in, size_t n_in, void *out) {
-  GRN_TS_OP_CMP_EVALUATE(GREATER, greater)
+  GRN_TS_OP_CMP_EVALUATE(greater)
 }
 
 /* grn_ts_op_greater_equal_evaluate() evaluates an operator. */
@@ -2656,7 +2656,7 @@ static grn_rc
 grn_ts_op_greater_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
                                  const grn_ts_record *in, size_t n_in,
                                  void *out) {
-  GRN_TS_OP_CMP_EVALUATE(GREATER_EQUAL, greater_equal)
+  GRN_TS_OP_CMP_EVALUATE(greater_equal)
 }
 #undef GRN_TS_OP_CMP_EVALUATE
 #undef GRN_TS_OP_CMP_EVALUATE_CASE_BLOCK
