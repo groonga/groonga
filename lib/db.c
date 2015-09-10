@@ -9322,6 +9322,38 @@ exit :
   GRN_API_RETURN(res);
 }
 
+grn_bool
+grn_ctx_is_opened(grn_ctx *ctx, grn_id id)
+{
+  grn_bool is_opened = GRN_FALSE;
+
+  if (!ctx || !ctx->impl || !id) {
+    return GRN_FALSE;
+  }
+
+  GRN_API_ENTER;
+  if (id & GRN_OBJ_TMP_OBJECT) {
+    if (ctx->impl->values) {
+      grn_obj **tmp_obj;
+      tmp_obj = _grn_array_get_value(ctx, ctx->impl->values,
+                                     id & ~GRN_OBJ_TMP_OBJECT);
+      if (tmp_obj) {
+        is_opened = GRN_TRUE;
+      }
+    }
+  } else {
+    grn_db *s = (grn_db *)ctx->impl->db;
+    if (s) {
+      db_value *vp;
+      vp = grn_tiny_array_at(&s->values, id);
+      if (vp && vp->ptr) {
+        is_opened = GRN_TRUE;
+      }
+    }
+  }
+  GRN_API_RETURN(is_opened);
+}
+
 grn_obj *
 grn_obj_open(grn_ctx *ctx, unsigned char type, grn_obj_flags flags, grn_id domain)
 {
