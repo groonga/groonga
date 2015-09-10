@@ -2340,6 +2340,7 @@ grn_ts_expr_op_node_open(grn_ctx *ctx, grn_ts_op_type op_type,
     GRN_FREE(new_node);
     return rc;
   }
+  *node = (grn_ts_expr_node *)new_node;
   return GRN_SUCCESS;
 }
 
