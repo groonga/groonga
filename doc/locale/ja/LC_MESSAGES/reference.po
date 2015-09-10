@@ -7070,7 +7070,7 @@ msgstr ""
 
 msgid ""
 "quitは、groongaプロセスとのセッションを終了します。クライアントプロセスならば"
-"groongaプロセスとの接続を切りま す。"
+"groongaプロセスとの接続を切ります。"
 msgstr ""
 
 msgid "``range_filter``"
@@ -7287,7 +7287,7 @@ msgstr ""
 "``ruby_eval`` を使うと、mrubyがサポートしているスクリプトを実行できます。"
 
 msgid "Here is an example that just calculate ``1 + 2`` as Ruby script."
-msgstr "Ruby ``1 + 2`` という計算するだけの例です。"
+msgstr "``1 + 2`` という計算するだけの例です。"
 
 msgid "Register ``ruby/eval`` plugin to use ``ruby_eval`` command in advance."
 msgstr ""
@@ -7339,7 +7339,7 @@ msgstr ""
 "す。"
 
 msgid "Here is an example that just load ``expression.rb`` as Ruby script."
-msgstr "Rubyスクリプトとして ``expression.rb`` を単に読むこむ例です。"
+msgstr "Rubyスクリプトとして ``expression.rb`` を単に読み込む例です。"
 
 msgid "Register ``ruby/load`` plugin to use ``ruby_load`` command in advance."
 msgstr ""
