@@ -2744,7 +2744,7 @@ grn_ts_op_logical_or_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
 #define GRN_TS_OP_CHK_FILTER_VECTOR_CASE_BLOCK(type, KIND, kind)\
   GRN_TS_OP_CHK_FILTER_CASE_BLOCK(type, KIND ## _VECTOR, kind ## _vector)
 #define GRN_TS_OP_CHK_FILTER(type)\
-  size_t i, count;\
+  size_t i, count = 0;\
   for (i = 0; i < 2; i++) {\
     grn_rc rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[i], in, n_in,\
                                                  &node->bufs[i]);\
@@ -2805,7 +2805,7 @@ grn_ts_op_not_equal_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
     return GRN_SUCCESS;\
   }
 #define GRN_TS_OP_CMP_FILTER(type)\
-  size_t i, count;\
+  size_t i, count = 0;\
   for (i = 0; i < 2; i++) {\
     grn_rc rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[i], in, n_in,\
                                                  &node->bufs[i]);\
