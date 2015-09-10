@@ -3070,6 +3070,43 @@ grn_ts_expr_node_adjust(grn_ctx *ctx, grn_ts_expr_node *node,
 #undef GRN_TS_EXPR_NODE_ADJUST_CASE_BLOCK
 
 /*-------------------------------------------------------------
+ * grn_ts_expr_parser.
+ */
+
+typedef struct {
+  // TODO
+} grn_ts_expr_parser;
+
+static void
+grn_ts_expr_parser_init(grn_ctx *ctx, grn_ts_expr_parser *parser) {
+  memset(parser, 0, sizeof(*parser));
+  // TODO
+}
+
+static grn_rc
+grn_ts_expr_parser_open(grn_ctx *ctx, grn_ts_expr_parser **parser) {
+  grn_ts_expr_parser *new_parser = GRN_MALLOCN(grn_ts_expr_parser, 1);
+  if (!new_parser) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  grn_ts_expr_parser_init(ctx, new_parser);
+  // TODO
+  *parser = new_parser;
+  return GRN_SUCCESS;
+}
+
+static void
+grn_ts_expr_parser_fin(grn_ctx *ctx, grn_ts_expr_parser *parser) {
+  // TODO
+}
+
+static void
+grn_ts_expr_parser_close(grn_ctx *ctx, grn_ts_expr_parser *parser) {
+  grn_ts_expr_parser_fin(ctx, parser);
+  GRN_FREE(parser);
+}
+
+/*-------------------------------------------------------------
  * grn_ts_expr.
  */
 
