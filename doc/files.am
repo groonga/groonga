@@ -191,6 +191,19 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/table_create/range_index_table_dat_key.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_create/tag_index_table_hash_key.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_list.log \
+	$(top_srcdir)/doc/source/example/reference/commands/table_remove/basic_usage_create_entries_table.log \
+	$(top_srcdir)/doc/source/example/reference/commands/table_remove/basic_usage_create_index_for_entries_table.log \
+	$(top_srcdir)/doc/source/example/reference/commands/table_remove/basic_usage_create_index_for_entries_table_column.log \
+	$(top_srcdir)/doc/source/example/reference/commands/table_remove/basic_usage_dump_after_table_remove.log \
+	$(top_srcdir)/doc/source/example/reference/commands/table_remove/basic_usage_dump_before_table_remove.log \
+	$(top_srcdir)/doc/source/example/reference/commands/table_remove/basic_usage_table_remove.log \
+	$(top_srcdir)/doc/source/example/reference/commands/table_remove/decreases_used_resources_close_temporary_opened_objects.log \
+	$(top_srcdir)/doc/source/example/reference/commands/table_remove/unremovable_cases_key_type_create.log \
+	$(top_srcdir)/doc/source/example/reference/commands/table_remove/unremovable_cases_key_type_remove_fail.log \
+	$(top_srcdir)/doc/source/example/reference/commands/table_remove/unremovable_cases_key_type_remove_success.log \
+	$(top_srcdir)/doc/source/example/reference/commands/table_remove/unremovable_cases_value_type_create.log \
+	$(top_srcdir)/doc/source/example/reference/commands/table_remove/unremovable_cases_value_type_remove_fail.log \
+	$(top_srcdir)/doc/source/example/reference/commands/table_remove/unremovable_cases_value_type_remove_success.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_rename/usage.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_tokenize/simple_example.log \
 	$(top_srcdir)/doc/source/example/reference/commands/thread_limit/max.log \
@@ -928,6 +941,19 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/table_create/range_index_table_dat_key.log \
 	source/example/reference/commands/table_create/tag_index_table_hash_key.log \
 	source/example/reference/commands/table_list.log \
+	source/example/reference/commands/table_remove/basic_usage_create_entries_table.log \
+	source/example/reference/commands/table_remove/basic_usage_create_index_for_entries_table.log \
+	source/example/reference/commands/table_remove/basic_usage_create_index_for_entries_table_column.log \
+	source/example/reference/commands/table_remove/basic_usage_dump_after_table_remove.log \
+	source/example/reference/commands/table_remove/basic_usage_dump_before_table_remove.log \
+	source/example/reference/commands/table_remove/basic_usage_table_remove.log \
+	source/example/reference/commands/table_remove/decreases_used_resources_close_temporary_opened_objects.log \
+	source/example/reference/commands/table_remove/unremovable_cases_key_type_create.log \
+	source/example/reference/commands/table_remove/unremovable_cases_key_type_remove_fail.log \
+	source/example/reference/commands/table_remove/unremovable_cases_key_type_remove_success.log \
+	source/example/reference/commands/table_remove/unremovable_cases_value_type_create.log \
+	source/example/reference/commands/table_remove/unremovable_cases_value_type_remove_fail.log \
+	source/example/reference/commands/table_remove/unremovable_cases_value_type_remove_success.log \
 	source/example/reference/commands/table_rename/usage.log \
 	source/example/reference/commands/table_tokenize/simple_example.log \
 	source/example/reference/commands/thread_limit/max.log \
