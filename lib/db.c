@@ -8423,10 +8423,18 @@ static grn_bool
 is_removable_table(grn_ctx *ctx, grn_obj *table, grn_obj *db)
 {
   grn_bool removable = GRN_TRUE;
+  grn_bool is_close_opened_object_mode = GRN_FALSE;
+  grn_obj not_opened_ids;
   grn_id table_id;
   char table_name[GRN_TABLE_MAX_KEY_SIZE];
   int table_name_size;
   grn_table_cursor *cursor;
+
+  if (grn_thread_get_limit() == 1) {
+    is_close_opened_object_mode = GRN_TRUE;
+  }
+
+  GRN_TEXT_INIT(&not_opened_ids, 0);
 
   table_id = DB_OBJ(table)->id;
   table_name_size = grn_obj_name(ctx, table, table_name, GRN_TABLE_MAX_KEY_SIZE);
@@ -8435,6 +8443,15 @@ is_removable_table(grn_ctx *ctx, grn_obj *table, grn_obj *db)
     grn_id id;
     while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
       grn_obj *object;
+      grn_bool is_opened = GRN_TRUE;
+
+      if (is_close_opened_object_mode) {
+        is_opened = grn_ctx_is_opened(ctx, id);
+        if (!is_opened) {
+          grn_bulk_write(ctx, &not_opened_ids,
+                         (const char *)&id, sizeof(grn_id));
+        }
+      }
 
       object = grn_ctx_at(ctx, id);
       if (!object) {
@@ -8464,6 +8481,8 @@ is_removable_table(grn_ctx *ctx, grn_obj *table, grn_obj *db)
           removable = GRN_FALSE;
         }
         break;
+      case GRN_TABLE_NO_KEY :
+        break;
       case GRN_COLUMN_VAR_SIZE :
       case GRN_COLUMN_FIX_SIZE :
         if (object->header.domain == table_id) {
@@ -8482,10 +8501,18 @@ is_removable_table(grn_ctx *ctx, grn_obj *table, grn_obj *db)
           removable = GRN_FALSE;
         }
         break;
+      case GRN_COLUMN_INDEX :
+        break;
       default:
+        is_opened = GRN_TRUE;
         break;
       }
-      grn_obj_unlink(ctx, object);
+
+      if (is_close_opened_object_mode && !is_opened) {
+        grn_obj_close(ctx, object);
+      } else {
+        grn_obj_unlink(ctx, object);
+      }
 
       if (!removable) {
         break;
@@ -8493,6 +8520,25 @@ is_removable_table(grn_ctx *ctx, grn_obj *table, grn_obj *db)
     }
     grn_table_cursor_close(ctx, cursor);
   }
+
+  if (is_close_opened_object_mode) {
+    int i, n_not_opened_ids;
+
+    n_not_opened_ids = GRN_TEXT_LEN(&not_opened_ids) / sizeof(grn_id);
+    for (i = 0; i < n_not_opened_ids; i++) {
+      grn_id id = ((grn_id *)GRN_BULK_HEAD(&not_opened_ids))[i];
+      grn_obj *opened_object;
+
+      if (!grn_ctx_is_opened(ctx, id)) {
+        continue;
+      }
+
+      opened_object = grn_ctx_at(ctx, id);
+      grn_obj_close(ctx, opened_object);
+    }
+  }
+
+  GRN_OBJ_FIN(ctx, &not_opened_ids);
 
   return removable;
 }
