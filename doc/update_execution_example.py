@@ -98,19 +98,23 @@ def execmd(command, fout):
       else:
         output_buffer += char
         if char == '\n':
-          parsed_output = json.loads(output_buffer)
-          normalized_output = normalize_output(parsed_output)
-          if len(output_buffer) < 80:
-            formatted_output = json.dumps(normalized_output,
-                                          ensure_ascii=False)
+          if command == 'dump':
+            formatted_output = output_buffer
+            stdout.write(output_buffer)
           else:
-            formatted_output = json.dumps(normalized_output,
-                                          indent=2,
-                                          ensure_ascii=False)
-            formatted_output += "\n"
-            formatted_output = formatted_output.encode("utf-8")
-          stdout.write(formatted_output)
-          stdout.write("\n")
+            parsed_output = json.loads(output_buffer)
+            normalized_output = normalize_output(parsed_output)
+            if len(output_buffer) < 80:
+              formatted_output = json.dumps(normalized_output,
+                                            ensure_ascii=False)
+            else:
+              formatted_output = json.dumps(normalized_output,
+                                            indent=2,
+                                            ensure_ascii=False)
+              formatted_output += "\n"
+              formatted_output = formatted_output.encode("utf-8")
+            stdout.write(formatted_output)
+            stdout.write("\n")
           if fout:
             if is_console:
               prefix = "  # "
