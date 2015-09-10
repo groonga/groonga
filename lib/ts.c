@@ -2534,6 +2534,7 @@ grn_ts_op_not_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
                              const grn_ts_record *in, size_t n_in, void *out) {
   GRN_TS_OP_CHK_EVALUATE(not_equal)
 }
+#undef GRN_TS_OP_CHK_EVALUATE
 #undef GRN_TS_OP_CHK_EVALUATE_VECTOR_CASE_BLOCK
 #undef GRN_TS_OP_CHK_EVALUATE_CASE_BLOCK
 
