@@ -1,0 +1,6 @@
+Execution example::
+
+  dump
+  # table_create EntryKeys TABLE_HASH_KEY UInt32
+  # 
+  # table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto

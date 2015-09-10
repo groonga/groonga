@@ -1,0 +1,13 @@
+Execution example::
+
+  dump
+  # table_create Entries TABLE_HASH_KEY UInt32
+  # column_create Entries content COLUMN_SCALAR Text
+  # column_create Entries title COLUMN_SCALAR ShortText
+  # 
+  # table_create EntryKeys TABLE_HASH_KEY UInt32
+  # 
+  # table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+  # 
+  # column_create EntryKeys key_index COLUMN_INDEX Entries _key
+  # column_create Terms content_index COLUMN_INDEX Entries content
