@@ -295,6 +295,11 @@ s_output_raw(grn_ctx *ctx, int flags, FILE *stream)
   if (flags & GRN_CTX_TAIL) {
     grn_obj *command;
 
+    if (grn_ctx_get_output_type(ctx) == GRN_CONTENT_GROONGA_COMMAND_LIST &&
+        chunk_size > 0 &&
+        chunk[chunk_size - 1] != '\n') {
+      fwrite("\n", 1, 1, stream);
+    }
     fflush(stream);
 
     command = GRN_CTX_USER_DATA(ctx)->ptr;
