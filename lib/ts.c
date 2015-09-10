@@ -2597,7 +2597,6 @@ grn_ts_op_not_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 #undef GRN_TS_OP_NOT_EQUAL_EVALUATE_VECTOR_CASE_BLOCK
 #undef GRN_TS_OP_NOT_EQUAL_EVALUATE_CASE_BLOCK
 
-
 #define GRN_TS_OP_CMP_EVALUATE_CASE_BLOCK(type, KIND, kind)\
   case GRN_TS_ ## KIND: {\
     grn_ts_ ## kind *buf_ptrs[] = {\
@@ -2893,6 +2892,72 @@ grn_ts_op_not_equal_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
 #undef GRN_TS_OP_NOT_EQUAL_FILTER_VECTOR_CASE_BLOCK
 #undef GRN_TS_OP_NOT_EQUAL_FILTER_CASE_BLOCK
 
+#define GRN_TS_OP_CMP_FILTER_CASE_BLOCK(type, KIND, kind)\
+  case GRN_TS_ ## KIND: {\
+    grn_ts_ ## kind *buf_ptrs[] = {\
+      (grn_ts_ ## kind *)node->bufs[0].ptr,\
+      (grn_ts_ ## kind *)node->bufs[1].ptr\
+    };\
+    for (i = 0; i < n_in; i++) {\
+      if (grn_ts_op_ ## type ## _ ## kind(buf_ptrs[0][i], buf_ptrs[1][i])) {\
+        out[count++] = in[i];\
+      }\
+    }\
+    *n_out = count;\
+    return GRN_SUCCESS;\
+  }
+#define GRN_TS_OP_CMP_FILTER(type)\
+  size_t i, count;\
+  for (i = 0; i < 2; i++) {\
+    grn_rc rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[i], in, n_in,\
+                                                 &node->bufs[i]);\
+    if (rc != GRN_SUCCESS) {\
+      return rc;\
+    }\
+  }\
+  switch (node->args[0]->data_kind) {\
+    GRN_TS_OP_CMP_FILTER_CASE_BLOCK(type, INT, int)\
+    GRN_TS_OP_CMP_FILTER_CASE_BLOCK(type, FLOAT, float)\
+    GRN_TS_OP_CMP_FILTER_CASE_BLOCK(type, TIME, time)\
+    GRN_TS_OP_CMP_FILTER_CASE_BLOCK(type, TEXT, text)\
+    default: {\
+      return GRN_INVALID_ARGUMENT;\
+    }\
+  }
+/* grn_ts_op_less_filter() filters records. */
+static grn_rc
+grn_ts_op_less_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                      const grn_ts_record *in, size_t n_in,
+                      grn_ts_record *out, size_t *n_out) {
+  GRN_TS_OP_CMP_FILTER(less)
+}
+
+/* grn_ts_op_less_equal_filter() filters records. */
+static grn_rc
+grn_ts_op_less_equal_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                            const grn_ts_record *in, size_t n_in,
+                            grn_ts_record *out, size_t *n_out) {
+  GRN_TS_OP_CMP_FILTER(less_equal)
+}
+
+/* grn_ts_op_greater_filter() filters records. */
+static grn_rc
+grn_ts_op_greater_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                         const grn_ts_record *in, size_t n_in,
+                         grn_ts_record *out, size_t *n_out) {
+  GRN_TS_OP_CMP_FILTER(greater)
+}
+
+/* grn_ts_op_greater_equal_filter() filters records. */
+static grn_rc
+grn_ts_op_greater_equal_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                               const grn_ts_record *in, size_t n_in,
+                               grn_ts_record *out, size_t *n_out) {
+  GRN_TS_OP_CMP_FILTER(greater_equal)
+}
+#undef GRN_TS_OP_CMP_FILTER_CASE_BLOCK
+#undef GRN_TS_OP_CMP_FILTER
+
 /* grn_ts_expr_op_node_filter() filters records. */
 static grn_rc
 grn_ts_expr_op_node_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
@@ -2913,6 +2978,18 @@ grn_ts_expr_op_node_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
     }
     case GRN_TS_OP_NOT_EQUAL: {
       return grn_ts_op_not_equal_filter(ctx, node, in, n_in, out, n_out);
+    }
+    case GRN_TS_OP_LESS: {
+      return grn_ts_op_less_filter(ctx, node, in, n_in, out, n_out);
+    }
+    case GRN_TS_OP_LESS_EQUAL: {
+      return grn_ts_op_less_equal_filter(ctx, node, in, n_in, out, n_out);
+    }
+    case GRN_TS_OP_GREATER: {
+      return grn_ts_op_greater_filter(ctx, node, in, n_in, out, n_out);
+    }
+    case GRN_TS_OP_GREATER_EQUAL: {
+      return grn_ts_op_greater_equal_filter(ctx, node, in, n_in, out, n_out);
     }
     // TODO
     default: {
