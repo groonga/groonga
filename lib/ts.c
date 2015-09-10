@@ -2597,6 +2597,71 @@ grn_ts_op_not_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 #undef GRN_TS_OP_NOT_EQUAL_EVALUATE_VECTOR_CASE_BLOCK
 #undef GRN_TS_OP_NOT_EQUAL_EVALUATE_CASE_BLOCK
 
+
+#define GRN_TS_OP_CMP_EVALUATE_CASE_BLOCK(type, KIND, kind)\
+  case GRN_TS_ ## KIND: {\
+    grn_ts_ ## kind *buf_ptrs[] = {\
+      (grn_ts_ ## kind *)node->bufs[0].ptr,\
+      (grn_ts_ ## kind *)node->bufs[1].ptr\
+    };\
+    for (i = 0; i < n_in; i++) {\
+      out_ptr[i] = grn_ts_op_ ## type ## _ ## kind(buf_ptrs[0][i],\
+                                                   buf_ptrs[1][i]);\
+    }\
+    return GRN_SUCCESS;\
+  }
+#define GRN_TS_OP_CMP_EVALUATE(TYPE, type)\
+  size_t i;\
+  grn_rc rc;\
+  grn_ts_bool *out_ptr = (grn_ts_bool *)out;\
+  for (i = 0; i < 2; i++) {\
+    rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[i], in, n_in,\
+                                          &node->bufs[i]);\
+    if (rc != GRN_SUCCESS) {\
+      return rc;\
+    }\
+  }\
+  switch (node->args[0]->data_kind) {\
+    GRN_TS_OP_CMP_EVALUATE_CASE_BLOCK(type, INT, int)\
+    GRN_TS_OP_CMP_EVALUATE_CASE_BLOCK(type, FLOAT, float)\
+    GRN_TS_OP_CMP_EVALUATE_CASE_BLOCK(type, TIME, time)\
+    GRN_TS_OP_CMP_EVALUATE_CASE_BLOCK(type, TEXT, text)\
+    default: {\
+      return GRN_INVALID_ARGUMENT;\
+    }\
+  }
+/* grn_ts_op_less_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_less_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                        const grn_ts_record *in, size_t n_in, void *out) {
+  GRN_TS_OP_CMP_EVALUATE(LESS, less)
+}
+
+/* grn_ts_op_less_equal_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_less_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                              const grn_ts_record *in, size_t n_in,
+                              void *out) {
+  GRN_TS_OP_CMP_EVALUATE(LESS_EQUAL, less_equal)
+}
+
+/* grn_ts_op_greater_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_greater_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                           const grn_ts_record *in, size_t n_in, void *out) {
+  GRN_TS_OP_CMP_EVALUATE(GREATER, greater)
+}
+
+/* grn_ts_op_greater_equal_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_greater_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                                 const grn_ts_record *in, size_t n_in,
+                                 void *out) {
+  GRN_TS_OP_CMP_EVALUATE(GREATER_EQUAL, greater_equal)
+}
+#undef GRN_TS_OP_CMP_EVALUATE
+#undef GRN_TS_OP_CMP_EVALUATE_CASE_BLOCK
+
 /* grn_ts_expr_op_node_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_expr_op_node_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
@@ -2617,6 +2682,18 @@ grn_ts_expr_op_node_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     }
     case GRN_TS_OP_NOT_EQUAL: {
       return grn_ts_op_not_equal_evaluate(ctx, node, in, n_in, out);
+    }
+    case GRN_TS_OP_LESS: {
+      return grn_ts_op_less_evaluate(ctx, node, in, n_in, out);
+    }
+    case GRN_TS_OP_LESS_EQUAL: {
+      return grn_ts_op_less_equal_evaluate(ctx, node, in, n_in, out);
+    }
+    case GRN_TS_OP_GREATER: {
+      return grn_ts_op_greater_evaluate(ctx, node, in, n_in, out);
+    }
+    case GRN_TS_OP_GREATER_EQUAL: {
+      return grn_ts_op_greater_equal_evaluate(ctx, node, in, n_in, out);
     }
     // TODO
     default: {
