@@ -756,6 +756,110 @@ grn_ts_op_not_equal_ref_vector(grn_ts_ref_vector lhs, grn_ts_ref_vector rhs) {
 }
 #undef GRN_TS_OP_NOT_EQUAL_VECTOR
 
+/* grn_ts_op_less_int() returns lhs < rhs. */
+inline static grn_bool
+grn_ts_op_less_int(grn_ts_int lhs, grn_ts_int rhs) {
+  return lhs < rhs;
+}
+
+/* grn_ts_op_less_float() returns lhs < rhs. */
+inline static grn_bool
+grn_ts_op_less_float(grn_ts_float lhs, grn_ts_float rhs) {
+  return lhs < rhs;
+}
+
+/* grn_ts_op_less_time() returns lhs < rhs. */
+inline static grn_bool
+grn_ts_op_less_time(grn_ts_time lhs, grn_ts_time rhs) {
+  return lhs < rhs;
+}
+
+/* grn_ts_op_less_text() returns lhs < rhs. */
+inline static grn_bool
+grn_ts_op_less_text(grn_ts_text lhs, grn_ts_text rhs) {
+  size_t min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;
+  int cmp = memcmp(lhs.ptr, rhs.ptr, min_size);
+  return cmp ? (cmp < 0) : (lhs.size < rhs.size);
+}
+
+/* grn_ts_op_less_equal_int() returns lhs <= rhs. */
+inline static grn_bool
+grn_ts_op_less_equal_int(grn_ts_int lhs, grn_ts_int rhs) {
+  return lhs <= rhs;
+}
+
+/* grn_ts_op_less_equal_float() returns lhs <= rhs. */
+inline static grn_bool
+grn_ts_op_less_equal_float(grn_ts_float lhs, grn_ts_float rhs) {
+  return lhs <= rhs;
+}
+
+/* grn_ts_op_less_equal_time() returns lhs <= rhs. */
+inline static grn_bool
+grn_ts_op_less_equal_time(grn_ts_time lhs, grn_ts_time rhs) {
+  return lhs <= rhs;
+}
+
+/* grn_ts_op_less_equal_text() returns lhs <= rhs. */
+inline static grn_bool
+grn_ts_op_less_equal_text(grn_ts_text lhs, grn_ts_text rhs) {
+  size_t min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;
+  int cmp = memcmp(lhs.ptr, rhs.ptr, min_size);
+  return cmp ? (cmp < 0) : (lhs.size <= rhs.size);
+}
+
+/* grn_ts_op_greater_int() returns lhs > rhs. */
+inline static grn_bool
+grn_ts_op_greater_int(grn_ts_int lhs, grn_ts_int rhs) {
+  return lhs > rhs;
+}
+
+/* grn_ts_op_greater_float() returns lhs > rhs. */
+inline static grn_bool
+grn_ts_op_greater_float(grn_ts_float lhs, grn_ts_float rhs) {
+  return lhs > rhs;
+}
+
+/* grn_ts_op_greater_time() returns lhs > rhs. */
+inline static grn_bool
+grn_ts_op_greater_time(grn_ts_time lhs, grn_ts_time rhs) {
+  return lhs > rhs;
+}
+
+/* grn_ts_op_greater_text() returns lhs > rhs. */
+inline static grn_bool
+grn_ts_op_greater_text(grn_ts_text lhs, grn_ts_text rhs) {
+  size_t min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;
+  int cmp = memcmp(lhs.ptr, rhs.ptr, min_size);
+  return cmp ? (cmp > 0) : (lhs.size > rhs.size);
+}
+
+/* grn_ts_op_greater_equal_int() returns lhs >= rhs. */
+inline static grn_bool
+grn_ts_op_greater_equal_int(grn_ts_int lhs, grn_ts_int rhs) {
+  return lhs >= rhs;
+}
+
+/* grn_ts_op_greater_equal_float() returns lhs >= rhs. */
+inline static grn_bool
+grn_ts_op_greater_equal_float(grn_ts_float lhs, grn_ts_float rhs) {
+  return lhs >= rhs;
+}
+
+/* grn_ts_op_greater_equal_time() returns lhs >= rhs. */
+inline static grn_bool
+grn_ts_op_greater_equal_time(grn_ts_time lhs, grn_ts_time rhs) {
+  return lhs >= rhs;
+}
+
+/* grn_ts_op_greater_equal_text() returns lhs >= rhs. */
+inline static grn_bool
+grn_ts_op_greater_equal_text(grn_ts_text lhs, grn_ts_text rhs) {
+  size_t min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;
+  int cmp = memcmp(lhs.ptr, rhs.ptr, min_size);
+  return cmp ? (cmp > 0) : (lhs.size >= rhs.size);
+}
+
 /*-------------------------------------------------------------
  * Groonga objects.
  */
