@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2012-08-08 16:18+0900\n"
+"PO-Revision-Date: 2015-09-11 23:10+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -34,7 +34,7 @@ msgid "There are mailing lists for discussion about Groonga."
 msgstr "Groongaに関する話題を扱うメーリングリストがあります。"
 
 msgid "For English speakers"
-msgstr ""
+msgstr "英語"
 
 msgid ""
 "`groonga-talk@lists.sourceforge.net <http://lists.sourceforge.net/mailman/"
@@ -42,13 +42,23 @@ msgid ""
 msgstr ""
 
 msgid "For Japanese speakers"
-msgstr ""
+msgstr "日本語"
 
 # 632aabf6869b4d06994c3d6c9237b003
 msgid ""
 "`groonga-dev@lists.osdn.me <http://lists.osdn.me/mailman/listinfo/groonga-"
 "dev>`_"
 msgstr ""
+
+msgid "Chat room"
+msgstr "チャットルーム"
+
+msgid ""
+"You can join `groonga/public chat room on Gitter <https://gitter.im/groonga/"
+"public>`_."
+msgstr ""
+"`Gitterにあるgroonga/publicチャットルーム <https://gitter.im/groonga/"
+"public>`_ に参加してください。（英語です。）"
 
 msgid "Twitter"
 msgstr ""
