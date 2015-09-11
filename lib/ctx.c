@@ -951,7 +951,7 @@ grn_init(void)
             "failed to initialize request canceler (%d)", rc);
     return rc;
   }
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "grn_init");
+  GRN_LOG(ctx, GRN_LOG_NOTICE, "grn_init: <%s>", grn_get_version());
   check_overcommit_memory(ctx);
   return rc;
 }
