@@ -12,6 +12,13 @@ Here are shortcut links:
   * Tutorial: http://groonga.org/docs/tutorial.html
   * How to build as a developer: http://groonga.org/docs/contribution/development/build.html
 
+## Community
+
+  * [@groonga on Twitter](https://twitter.com/groonga/)
+  * [Groonga page on Facebook](https://www.facebook.com/groonga)
+  * [Mailing list on SourceForge.net](http://lists.sourceforge.net/mailman/listinfo/groonga-talk)
+  * [Chat room on Gitter](https://gitter.im/groonga/public)
+
 ## Bundled software
 
 ### mruby
