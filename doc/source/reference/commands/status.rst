@@ -2,7 +2,8 @@
 
 .. highlightlang:: none
 
-.. _command-status:
+.. groonga-command
+.. database: commands_status
 
 ``status``
 ==========
@@ -10,46 +11,141 @@
 Summary
 -------
 
-status - groongaプロセスの状態表示
+``status`` returns the current status of the context that processes
+the request.
 
-Groonga組込コマンドの一つであるstatusについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
-
-statusコマンドは、groongaプロセスの状態を表示します。主にgroongaサーバプロセスに対して使用することを想定しています。
+Context is an unit that processes requests. Normally, context is
+created for each thread.
 
 Syntax
 ------
-::
 
- status
+This command takes no parameters::
+
+  status
+
+.. _status-usage:
 
 Usage
 -----
+
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/status.log
 .. status
 
+It returns the current status of the context that processes the
+request. See :ref:`status-return-value` for details.
+
 Parameters
 ----------
 
-ありません。
+This section describes all parameters.
+
+Required parameters
+^^^^^^^^^^^^^^^^^^^
+
+There is no required parameters.
+
+Optional parameters
+^^^^^^^^^^^^^^^^^^^
+
+There is no optional parameters.
+
+.. _status-return-value:
 
 Return value
 ------------
 
-::
+The command returns the current status as an object::
 
-  下記の項目がハッシュ形式で出力されます。
+  [
+    HEADER,
+    {
+      "alloc_count": ALLOC_COUNT,
+      "cache_hit_rate": CACHE_HIT_RATE,
+      "command_version": COMMAND_VERSION,
+      "default_command_version": DEFAULT_COMMAND_VERSION,
+      "max_command_version": MAX_COMMAND_VERSION,
+      "n_queries": N_QUERIES,
+      "start_time": START_TIME,
+      "starttime": STARTTIME,
+      "uptime": UPTIME,
+      "version": VERSION
+    }
+  ]
 
-``alloc_count``
+See :doc:`/reference/command/output_format` for ``HEADER``.
 
-  groongaプロセスの内部でアロケートされ、まだ解放されてないメモリブロックの数を示します。Groongaをbuildする際に、configureオプションで --enable-exact-alloc-countが指定されていたならば、正確な値を返します。それ以外の場合は不正確な値を返す場合があります。
+Here are descriptions about values. See :ref:`status-usage` for real
+values:
 
-``starttime``
+.. list-table::
+   :header-rows: 1
 
-  groongaプロセスが起動した時刻のtvsec値を返します。
+   * - Key
+     - Description
+     - Example
+   * - ``alloc_count``
+     - The number of allocated memory blocks that aren't freed.  If
+       this value is continuously increased, there may be a memory
+       leak.
+     - ``1400``
+   * - ``cache_hit_rate``
+     - Percentage of cache used responses in the Groonga process. If
+       there are 10 requests and 7 responses are created from cache,
+       ``cache_hit_rate`` is ``70.0``. The percentage is computed from
+       only requests that use commands that support cache.
 
-``uptime``
+       Here are commands that support cache:
 
-    groongaプロセスが起動してから経過した秒数を返します。
+         * :doc:`select`
+         * :doc:`logical_select`
+         * :doc:`logical_range_filter`
+         * :doc:`logical_count`
 
+     - ``29.4``
+   * - ``command_version``
+     - The :doc:`/reference/command/command_version` that is used by
+       the context.
+     - ``1``
+   * - ``default_command_version``
+     - The default :doc:`/reference/command/command_version` of the
+       Groonga process.
+     - ``1``
+   * - ``max_command_version``
+     - The max :doc:`/reference/command/command_version` of the
+       Groonga process.
+     - ``2``
+   * - ``n_queries``
+     - The number of requests processed by the Groonga process. It
+       counts only requests that use commands that support cache.
+
+       Here are commands that support cache:
+
+         * :doc:`select`
+         * :doc:`logical_select`
+         * :doc:`logical_range_filter`
+         * :doc:`logical_count`
+
+     - ``29``
+   * - ``start_time``
+     - .. versionadded:: 5.0.8
+
+       The time that the Groonga process started in UNIX time.
+     - ``1441761403``
+   * - ``starttime``
+     - .. deprecated:: 5.0.8
+          Use ``start_time`` instead.
+     - ``1441761403``
+   * - ``uptime``
+     - The elapsed time since the Groonga process started in second.
+
+       For example, ``216639`` means that ``2.5`` (= ``216639 / 60 /
+       60 / 24 = 2.507``) days.
+
+     - ``216639``
+   * - ``version``
+     - The version of the Groonga process.
+     - ``5.0.7``
