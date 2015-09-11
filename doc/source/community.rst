@@ -20,6 +20,12 @@ For English speakers
 For Japanese speakers
   `groonga-dev@lists.osdn.me <http://lists.osdn.me/mailman/listinfo/groonga-dev>`_
 
+Chat room
+---------
+
+You can join `groonga/public chat room on Gitter
+<https://gitter.im/groonga/public>`_.
+
 Twitter
 -------
 
