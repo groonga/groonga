@@ -365,9 +365,6 @@ do_alone(int argc, char **argv)
   grn_obj *db;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
-  if (use_windows_event_log) {
-    grn_windows_event_logger_set(ctx, windows_event_source_name);
-  }
   if (argc > 0 && argv) { path = *argv++; argc--; }
   db = (newdb || !path) ? grn_db_create(ctx, path, NULL) : grn_db_open(ctx, path);
   if (db) {
@@ -445,9 +442,6 @@ g_client(int argc, char **argv)
   const char *hostname = DEFAULT_DEST;
   if (argc > 0 && argv) { hostname = *argv++; argc--; }
   grn_ctx_init(ctx, 0);
-  if (use_windows_event_log) {
-    grn_windows_event_logger_set(ctx, windows_event_source_name);
-  }
   if (!grn_ctx_connect(ctx, hostname, port, 0)) {
     if (!argc) {
       grn_obj text;
@@ -1948,9 +1942,6 @@ h_worker(void *arg)
   ht_context hc;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
-  if (use_windows_event_log) {
-    grn_windows_event_logger_set(ctx, windows_event_source_name);
-  }
   grn_ctx_use(ctx, (grn_obj *)arg);
   grn_ctx_recv_handler_set(ctx, h_output, &hc);
   MUTEX_LOCK(q_mutex);
@@ -2016,9 +2007,6 @@ h_server(char *path)
   int exit_code = EXIT_FAILURE;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
-  if (use_windows_event_log) {
-    grn_windows_event_logger_set(ctx, windows_event_source_name);
-  }
   MUTEX_INIT(q_mutex);
   COND_INIT(q_cond);
   CRITICAL_SECTION_INIT(cache_lock);
@@ -2158,9 +2146,6 @@ g_handler(grn_ctx *ctx, grn_obj *msg)
     edge = grn_edges_add(ctx, &((grn_msg *)msg)->edge_id, &added);
     if (added) {
       grn_ctx_init(&edge->ctx, 0);
-      if (use_windows_event_log) {
-        grn_windows_event_logger_set(&edge->ctx, windows_event_source_name);
-      }
       GRN_COM_QUEUE_INIT(&edge->recv_new);
       GRN_COM_QUEUE_INIT(&edge->send_old);
       grn_ctx_use(&edge->ctx, (grn_obj *)com->ev->opaque);
@@ -2187,9 +2172,6 @@ g_server(char *path)
   int exit_code = EXIT_FAILURE;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
-  if (use_windows_event_log) {
-    grn_windows_event_logger_set(ctx, windows_event_source_name);
-  }
   MUTEX_INIT(q_mutex);
   COND_INIT(q_cond);
   CRITICAL_SECTION_INIT(cache_lock);
