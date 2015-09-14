@@ -801,6 +801,41 @@ grn_ts_op_less_text(grn_ts_text lhs, grn_ts_text rhs) {
   return cmp ? (cmp < 0) : (lhs.size < rhs.size);
 }
 
+#define GRN_TS_OP_LESS_VECTOR(kind)\
+  size_t i, min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;\
+  for (i = 0; i < min_size; i++) {\
+    if (grn_ts_op_not_equal_ ## kind(lhs.ptr[i], rhs.ptr[i])) {\
+      if (grn_ts_op_less_ ## kind(lhs.ptr[i], rhs.ptr[i])) {\
+        return GRN_TRUE;\
+      }\
+    }\
+  }\
+  return lhs.size < rhs.size;
+/* grn_ts_op_less_int_vector() returns lhs < rhs. */
+inline static grn_bool
+grn_ts_op_less_int_vector(grn_ts_int_vector lhs, grn_ts_int_vector rhs) {
+  GRN_TS_OP_LESS_VECTOR(int)
+}
+
+/* grn_ts_op_less_float_vector() returns lhs < rhs. */
+inline static grn_bool
+grn_ts_op_less_float_vector(grn_ts_float_vector lhs, grn_ts_float_vector rhs) {
+  GRN_TS_OP_LESS_VECTOR(float)
+}
+
+/* grn_ts_op_less_time_vector() returns lhs < rhs. */
+inline static grn_bool
+grn_ts_op_less_time_vector(grn_ts_time_vector lhs, grn_ts_time_vector rhs) {
+  GRN_TS_OP_LESS_VECTOR(time)
+}
+
+/* grn_ts_op_less_text_vector() returns lhs < rhs. */
+inline static grn_bool
+grn_ts_op_less_text_vector(grn_ts_text_vector lhs, grn_ts_text_vector rhs) {
+  GRN_TS_OP_LESS_VECTOR(text)
+}
+#undef GRN_TS_OP_LESS_VECTOR
+
 /* grn_ts_op_less_equal_int() returns lhs <= rhs. */
 inline static grn_bool
 grn_ts_op_less_equal_int(grn_ts_int lhs, grn_ts_int rhs) {
@@ -826,6 +861,44 @@ grn_ts_op_less_equal_text(grn_ts_text lhs, grn_ts_text rhs) {
   int cmp = memcmp(lhs.ptr, rhs.ptr, min_size);
   return cmp ? (cmp < 0) : (lhs.size <= rhs.size);
 }
+
+#define GRN_TS_OP_LESS_EQUAL_VECTOR(kind)\
+  size_t i, min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;\
+  for (i = 0; i < min_size; i++) {\
+    if (grn_ts_op_not_equal_ ## kind(lhs.ptr[i], rhs.ptr[i])) {\
+      if (grn_ts_op_less_ ## kind(lhs.ptr[i], rhs.ptr[i])) {\
+        return GRN_TRUE;\
+      }\
+    }\
+  }\
+  return lhs.size <= rhs.size;
+/* grn_ts_op_less_equal_int_vector() returns lhs <= rhs. */
+inline static grn_bool
+grn_ts_op_less_equal_int_vector(grn_ts_int_vector lhs, grn_ts_int_vector rhs) {
+  GRN_TS_OP_LESS_EQUAL_VECTOR(int)
+}
+
+/* grn_ts_op_less_equal_float_vector() returns lhs <= rhs. */
+inline static grn_bool
+grn_ts_op_less_equal_float_vector(grn_ts_float_vector lhs,
+                                  grn_ts_float_vector rhs) {
+  GRN_TS_OP_LESS_EQUAL_VECTOR(float)
+}
+
+/* grn_ts_op_less_equal_time_vector() returns lhs <= rhs. */
+inline static grn_bool
+grn_ts_op_less_equal_time_vector(grn_ts_time_vector lhs,
+                                 grn_ts_time_vector rhs) {
+  GRN_TS_OP_LESS_EQUAL_VECTOR(time)
+}
+
+/* grn_ts_op_less_equal_text_vector() returns lhs <= rhs. */
+inline static grn_bool
+grn_ts_op_less_equal_text_vector(grn_ts_text_vector lhs,
+                                 grn_ts_text_vector rhs) {
+  GRN_TS_OP_LESS_EQUAL_VECTOR(text)
+}
+#undef GRN_TS_OP_LESS_EQUAL_VECTOR
 
 /* grn_ts_op_greater_int() returns lhs > rhs. */
 inline static grn_bool
@@ -853,6 +926,42 @@ grn_ts_op_greater_text(grn_ts_text lhs, grn_ts_text rhs) {
   return cmp ? (cmp > 0) : (lhs.size > rhs.size);
 }
 
+#define GRN_TS_OP_GREATER_VECTOR(kind)\
+  size_t i, min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;\
+  for (i = 0; i < min_size; i++) {\
+    if (grn_ts_op_not_equal_ ## kind(lhs.ptr[i], rhs.ptr[i])) {\
+      if (grn_ts_op_greater_ ## kind(lhs.ptr[i], rhs.ptr[i])) {\
+        return GRN_TRUE;\
+      }\
+    }\
+  }\
+  return lhs.size > rhs.size;
+/* grn_ts_op_greater_int_vector() returns lhs > rhs. */
+inline static grn_bool
+grn_ts_op_greater_int_vector(grn_ts_int_vector lhs, grn_ts_int_vector rhs) {
+  GRN_TS_OP_GREATER_VECTOR(int)
+}
+
+/* grn_ts_op_greater_float_vector() returns lhs > rhs. */
+inline static grn_bool
+grn_ts_op_greater_float_vector(grn_ts_float_vector lhs,
+                               grn_ts_float_vector rhs) {
+  GRN_TS_OP_GREATER_VECTOR(float)
+}
+
+/* grn_ts_op_greater_time_vector() returns lhs > rhs. */
+inline static grn_bool
+grn_ts_op_greater_time_vector(grn_ts_time_vector lhs, grn_ts_time_vector rhs) {
+  GRN_TS_OP_GREATER_VECTOR(time)
+}
+
+/* grn_ts_op_greater_text_vector() returns lhs > rhs. */
+inline static grn_bool
+grn_ts_op_greater_text_vector(grn_ts_text_vector lhs, grn_ts_text_vector rhs) {
+  GRN_TS_OP_GREATER_VECTOR(text)
+}
+#undef GRN_TS_OP_GREATER_VECTOR
+
 /* grn_ts_op_greater_equal_int() returns lhs >= rhs. */
 inline static grn_bool
 grn_ts_op_greater_equal_int(grn_ts_int lhs, grn_ts_int rhs) {
@@ -878,6 +987,45 @@ grn_ts_op_greater_equal_text(grn_ts_text lhs, grn_ts_text rhs) {
   int cmp = memcmp(lhs.ptr, rhs.ptr, min_size);
   return cmp ? (cmp > 0) : (lhs.size >= rhs.size);
 }
+
+#define GRN_TS_OP_GREATER_EQUAL_VECTOR(kind)\
+  size_t i, min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;\
+  for (i = 0; i < min_size; i++) {\
+    if (grn_ts_op_not_equal_ ## kind(lhs.ptr[i], rhs.ptr[i])) {\
+      if (grn_ts_op_greater_ ## kind(lhs.ptr[i], rhs.ptr[i])) {\
+        return GRN_TRUE;\
+      }\
+    }\
+  }\
+  return lhs.size >= rhs.size;
+/* grn_ts_op_greater_equal_int_vector() returns lhs >= rhs. */
+inline static grn_bool
+grn_ts_op_greater_equal_int_vector(grn_ts_int_vector lhs,
+                                   grn_ts_int_vector rhs) {
+  GRN_TS_OP_GREATER_EQUAL_VECTOR(int)
+}
+
+/* grn_ts_op_greater_equal_float_vector() returns lhs >= rhs. */
+inline static grn_bool
+grn_ts_op_greater_equal_float_vector(grn_ts_float_vector lhs,
+                                     grn_ts_float_vector rhs) {
+  GRN_TS_OP_GREATER_EQUAL_VECTOR(float)
+}
+
+/* grn_ts_op_greater_equal_time_vector() returns lhs >= rhs. */
+inline static grn_bool
+grn_ts_op_greater_equal_time_vector(grn_ts_time_vector lhs,
+                                    grn_ts_time_vector rhs) {
+  GRN_TS_OP_GREATER_EQUAL_VECTOR(time)
+}
+
+/* grn_ts_op_greater_equal_text_vector() returns lhs >= rhs. */
+inline static grn_bool
+grn_ts_op_greater_equal_text_vector(grn_ts_text_vector lhs,
+                                    grn_ts_text_vector rhs) {
+  GRN_TS_OP_GREATER_EQUAL_VECTOR(text)
+}
+#undef GRN_TS_OP_GREATER_EQUAL_VECTOR
 
 /*-------------------------------------------------------------
  * Groonga objects.
@@ -2307,7 +2455,11 @@ grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
         case GRN_TS_INT:
         case GRN_TS_FLOAT:
         case GRN_TS_TIME:
-        case GRN_TS_TEXT: {
+        case GRN_TS_TEXT:
+        case GRN_TS_INT_VECTOR:
+        case GRN_TS_FLOAT_VECTOR:
+        case GRN_TS_TIME_VECTOR:
+        case GRN_TS_TEXT_VECTOR: {
           node->data_kind = GRN_TS_BOOL;
           node->data_type = GRN_DB_BOOL;
           return GRN_SUCCESS;
@@ -2562,6 +2714,8 @@ grn_ts_op_not_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     }\
     return GRN_SUCCESS;\
   }
+#define GRN_TS_OP_CMP_EVALUATE_VECTOR_CASE_BLOCK(type, KIND, kind)\
+  GRN_TS_OP_CMP_EVALUATE_CASE_BLOCK(type, KIND ## _VECTOR, kind ## _vector)
 #define GRN_TS_OP_CMP_EVALUATE(type)\
   size_t i;\
   grn_rc rc;\
@@ -2578,6 +2732,10 @@ grn_ts_op_not_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     GRN_TS_OP_CMP_EVALUATE_CASE_BLOCK(type, FLOAT, float)\
     GRN_TS_OP_CMP_EVALUATE_CASE_BLOCK(type, TIME, time)\
     GRN_TS_OP_CMP_EVALUATE_CASE_BLOCK(type, TEXT, text)\
+    GRN_TS_OP_CMP_EVALUATE_VECTOR_CASE_BLOCK(type, INT, int)\
+    GRN_TS_OP_CMP_EVALUATE_VECTOR_CASE_BLOCK(type, FLOAT, float)\
+    GRN_TS_OP_CMP_EVALUATE_VECTOR_CASE_BLOCK(type, TIME, time)\
+    GRN_TS_OP_CMP_EVALUATE_VECTOR_CASE_BLOCK(type, TEXT, text)\
     default: {\
       return GRN_INVALID_ARGUMENT;\
     }\
@@ -2612,6 +2770,7 @@ grn_ts_op_greater_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
   GRN_TS_OP_CMP_EVALUATE(greater_equal)
 }
 #undef GRN_TS_OP_CMP_EVALUATE
+#undef GRN_TS_OP_CMP_EVALUATE_VECTOR_CASE_BLOCK
 #undef GRN_TS_OP_CMP_EVALUATE_CASE_BLOCK
 
 /* grn_ts_expr_op_node_evaluate() evaluates an operator. */
@@ -2818,6 +2977,8 @@ grn_ts_op_not_equal_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
     *n_out = count;\
     return GRN_SUCCESS;\
   }
+#define GRN_TS_OP_CMP_FILTER_VECTOR_CASE_BLOCK(type, KIND, kind)\
+  GRN_TS_OP_CMP_FILTER_CASE_BLOCK(type, KIND ## _VECTOR, kind ## _vector)
 #define GRN_TS_OP_CMP_FILTER(type)\
   size_t i, count = 0;\
   for (i = 0; i < 2; i++) {\
@@ -2832,6 +2993,10 @@ grn_ts_op_not_equal_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
     GRN_TS_OP_CMP_FILTER_CASE_BLOCK(type, FLOAT, float)\
     GRN_TS_OP_CMP_FILTER_CASE_BLOCK(type, TIME, time)\
     GRN_TS_OP_CMP_FILTER_CASE_BLOCK(type, TEXT, text)\
+    GRN_TS_OP_CMP_FILTER_VECTOR_CASE_BLOCK(type, INT, int)\
+    GRN_TS_OP_CMP_FILTER_VECTOR_CASE_BLOCK(type, FLOAT, float)\
+    GRN_TS_OP_CMP_FILTER_VECTOR_CASE_BLOCK(type, TIME, time)\
+    GRN_TS_OP_CMP_FILTER_VECTOR_CASE_BLOCK(type, TEXT, text)\
     default: {\
       return GRN_INVALID_ARGUMENT;\
     }\
@@ -2867,8 +3032,9 @@ grn_ts_op_greater_equal_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
                                grn_ts_record *out, size_t *n_out) {
   GRN_TS_OP_CMP_FILTER(greater_equal)
 }
-#undef GRN_TS_OP_CMP_FILTER_CASE_BLOCK
 #undef GRN_TS_OP_CMP_FILTER
+#undef GRN_TS_OP_CMP_FILTER_VECTOR_CASE_BLOCK
+#undef GRN_TS_OP_CMP_FILTER_CASE_BLOCK
 
 /* grn_ts_expr_op_node_filter() filters records. */
 static grn_rc
@@ -3966,26 +4132,38 @@ grn_ts_expr_parser_parse(grn_ctx *ctx, grn_ts_expr_parser *parser,
  */
 
 /* grn_ts_expr_init() initializes an expression. */
-static grn_rc
-grn_ts_expr_init(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *table) {
-  /* Increment a reference count for table and curr_table. */
-  grn_rc rc = grn_ts_obj_increment_ref_count(ctx, table);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  rc = grn_ts_obj_increment_ref_count(ctx, table);
-  if (rc != GRN_SUCCESS) {
-    grn_obj_unlink(ctx, table);
-    return rc;
-  }
+static void
+grn_ts_expr_init(grn_ctx *ctx, grn_ts_expr *expr) {
   memset(expr, 0, sizeof(*expr));
-  expr->table = table;
-  expr->curr_table = table;
+  expr->table = NULL;
+  expr->curr_table = NULL;
   expr->root = NULL;
   expr->nodes = NULL;
   expr->stack = NULL;
-  // TODO: Initialize new members.
-  return GRN_SUCCESS;
+}
+
+/* grn_ts_expr_fin() finalizes an expression. */
+static void
+grn_ts_expr_fin(grn_ctx *ctx, grn_ts_expr *expr) {
+  // TODO: Finalize new members.
+  if (expr->stack) {
+    GRN_FREE(expr->stack);
+  }
+  if (expr->nodes) {
+    size_t i;
+    for (i = 0; i < expr->n_nodes; i++) {
+      if (expr->nodes[i]) {
+        grn_ts_expr_node_close(ctx, expr->nodes[i]);
+      }
+    }
+    GRN_FREE(expr->nodes);
+  }
+  if (expr->curr_table) {
+    grn_obj_unlink(ctx, expr->curr_table);
+  }
+  if (expr->table) {
+    grn_obj_unlink(ctx, expr->table);
+  }
 }
 
 grn_rc
@@ -3999,8 +4177,17 @@ grn_ts_expr_open(grn_ctx *ctx, grn_obj *table, grn_ts_expr **expr) {
   if (!new_expr) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
-  rc = grn_ts_expr_init(ctx, new_expr, table);
+  grn_ts_expr_init(ctx, new_expr);
+  rc = grn_ts_obj_increment_ref_count(ctx, table);
+  if (rc == GRN_SUCCESS) {
+    new_expr->table = table;
+    rc = grn_ts_obj_increment_ref_count(ctx, table);
+    if (rc == GRN_SUCCESS) {
+      new_expr->curr_table = table;
+    }
+  }
   if (rc != GRN_SUCCESS) {
+    grn_ts_expr_fin(ctx, new_expr);
     GRN_FREE(new_expr);
     return rc;
   }
@@ -4031,30 +4218,6 @@ grn_ts_expr_parse(grn_ctx *ctx, grn_obj *table,
   }
   *expr = new_expr;
   return GRN_SUCCESS;
-}
-
-/* grn_ts_expr_fin() finalizes an expression. */
-static void
-grn_ts_expr_fin(grn_ctx *ctx, grn_ts_expr *expr) {
-  // TODO: Finalize new members.
-  if (expr->stack) {
-    GRN_FREE(expr->stack);
-  }
-  if (expr->nodes) {
-    size_t i;
-    for (i = 0; i < expr->n_nodes; i++) {
-      if (expr->nodes[i]) {
-        grn_ts_expr_node_close(ctx, expr->nodes[i]);
-      }
-    }
-    GRN_FREE(expr->nodes);
-  }
-  if (expr->curr_table) {
-    grn_obj_unlink(ctx, expr->curr_table);
-  }
-  if (expr->table) {
-    grn_obj_unlink(ctx, expr->table);
-  }
 }
 
 grn_rc
