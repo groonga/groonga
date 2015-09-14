@@ -2251,7 +2251,7 @@ grn_ts_expr_op_node_init(grn_ctx *ctx, grn_ts_expr_op_node *node) {
     node->args[i] = NULL;
   }
   for (i = 0; i < GRN_TS_EXPR_OP_NODE_N_BUFS; i++) {
-    grn_ts_buf_init(ctx, &node->bufs[0]);
+    grn_ts_buf_init(ctx, &node->bufs[i]);
   }
 }
 
