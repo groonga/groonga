@@ -3003,7 +3003,7 @@ grn_ts_expr_node_evaluate(grn_ctx *ctx, grn_ts_expr_node *node,
     if (rc != GRN_SUCCESS) {\
       return rc;\
     }\
-    return grn_ts_expr_node_evaluate(ctx, node, in, n_in, out);\
+    return grn_ts_expr_node_evaluate(ctx, node, in, n_in, out->ptr);\
   }
 #define GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_VECTOR_CASE_BLOCK(KIND, kind)\
   GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_CASE_BLOCK(KIND ## _VECTOR, kind ## _vector)
