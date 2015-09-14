@@ -114,9 +114,6 @@ if(GRN_WITH_ONIGMO)
     )
 
   set(ONIGMO_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
-  if(CFLAG_WWRITE_STRINGS)
-    set(ONIGMO_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS} -Wno-write-strings")
-  endif()
 
   add_library(onigmo STATIC ${ONIGMO_SOURCES})
   set_source_files_properties(${ONIGMO_SOURCES}
