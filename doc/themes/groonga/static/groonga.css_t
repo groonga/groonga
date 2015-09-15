@@ -206,7 +206,7 @@ div.body dd,
 div.body li
 {
     text-align: justify;
-    line-height: 130%;
+    line-height: 150%;
 }
 
 div.admonition p.admonition-title + p
@@ -441,15 +441,26 @@ div.footer
     font-size: 75%;
 }
 
+code,
+pre
+{
+    font-family: monospace;
+    background-color: #FAFAFA;
+    border: 1px solid #DDD;
+}
+
+code
+{
+    padding: 0 4px;
+}
+
 pre
 {
     overflow: auto;
     overflow-y: hidden;
     padding: 20px;
-    background-color: #FAFAFA;
     color: #000;
     line-height: 120%;
-    border: 1px solid #DDD;
     white-space: pre-wrap;
     word-wrap: normal;
 }
