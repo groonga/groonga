@@ -171,6 +171,7 @@ struct _grn_ctx_impl {
 
   grn_obj *db;
   grn_array *values;        /* temporary objects */
+  grn_pat *temporary_columns;
   grn_hash *ios;        /* IOs */
   grn_obj *outbuf;
   void (*output)(grn_ctx *, int, void *);

@@ -111,6 +111,7 @@ struct _grn_type {
 #define GRN_TABLE_SORT_GEO            (0x02<<0)
 
 #define GRN_OBJ_TMP_OBJECT 0x80000000
+#define GRN_OBJ_TMP_COLUMN 0x40000000
 
 #define GRN_DB_OBJP(obj) \
   (obj &&\

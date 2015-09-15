@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2009-2012  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2009-2015  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -33,6 +33,7 @@ static grn_obj *database;
 static grn_obj *bookmarks;
 static grn_obj *count_column;
 static grn_id groonga_bookmark_id;
+static grn_hash *columns;
 
 static void
 create_bookmarks_table(void)
@@ -88,6 +89,8 @@ cut_setup(void)
   context = g_new0(grn_ctx, 1);
   grn_ctx_init(context, 0);
   database = grn_db_create(context, NULL, NULL);
+  columns = grn_hash_create(context, NULL, sizeof(grn_id), 0,
+                            GRN_OBJ_TABLE_HASH_KEY);
 
   create_bookmarks_table();
   add_count_column_to_bookmarks_table();
@@ -97,6 +100,7 @@ cut_setup(void)
 void
 cut_teardown(void)
 {
+  grn_hash_close(context, columns);
   grn_obj_close(context, database);
   grn_ctx_fin(context);
   g_free(context);
@@ -173,8 +177,14 @@ test_create_on_temporary_table(void)
                              strlen(column_name),
                              NULL, 0,
                              get_object("Int32"));
-  grn_test_assert_error(GRN_INVALID_ARGUMENT,
-                        "[column][create] "
-                        "temporary table doesn't support column: <count>",
-                        context);
+  grn_test_assert_context(context);
+  cut_assert_equal_int(1,
+                       grn_table_columns(context, table, NULL, 0,
+                                         (grn_obj *)columns));
+  {
+    grn_id found_column_id = GRN_ID_NIL;
+    grn_hash_get_key(context, columns, 1, &found_column_id, sizeof(grn_id));
+    cut_assert_equal_uint(grn_obj_id(context, column),
+                          found_column_id);
+  }
 }
