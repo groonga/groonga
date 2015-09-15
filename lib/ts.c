@@ -2812,7 +2812,7 @@ grn_ts_expr_op_node_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     case GRN_TS_OP_GREATER_EQUAL: {
       return grn_ts_op_greater_equal_evaluate(ctx, node, in, n_in, out);
     }
-    // TODO
+    // TODO: Add operators.
     default: {
       return GRN_OPERATION_NOT_SUPPORTED;
     }
@@ -3075,7 +3075,7 @@ grn_ts_expr_op_node_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
     case GRN_TS_OP_GREATER_EQUAL: {
       return grn_ts_op_greater_equal_filter(ctx, node, in, n_in, out, n_out);
     }
-    // TODO
+    // TODO: Add operators.
     default: {
       return GRN_OPERATION_NOT_SUPPORTED;
     }
@@ -3087,7 +3087,7 @@ static grn_rc
 grn_ts_expr_op_node_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
                            grn_ts_record *io, size_t n_io) {
   switch (node->op_type) {
-    // TODO
+    // TODO: Add operators.
     default: {
       return GRN_OPERATION_NOT_SUPPORTED;
     }
@@ -3535,7 +3535,7 @@ grn_ts_expr_parser_close(grn_ctx *ctx, grn_ts_expr_parser *parser) {
 static grn_rc
 grn_ts_expr_parser_tokenize_number(grn_ctx *ctx, grn_ts_expr_parser *parser,
                                    grn_ts_str str, grn_ts_expr_token **token) {
-  // FIXME: Temporary implementation.
+  // TODO: Improve this not to make a copy of str.
   char *buf, *end;
   grn_rc rc;
   grn_ts_int int_value;
@@ -3826,7 +3826,7 @@ grn_ts_expr_parser_tokenize_next(grn_ctx *ctx, grn_ts_expr_parser *parser,
       if ((rest.size >= 2) && isdigit((unsigned char)rest.ptr[1])) {
         rc = grn_ts_expr_parser_tokenize_number(ctx, parser, rest, &new_token);
       } else {
-        // TODO: Not supported yet.
+        // TODO: Dereferencing is not supported yet.
         rc = GRN_INVALID_ARGUMENT;
       }
       break;
@@ -3892,7 +3892,7 @@ grn_ts_expr_parser_tokenize(grn_ctx *ctx, grn_ts_expr_parser *parser,
 /* grn_ts_expr_parser_analyze() analyzes tokens. */
 static grn_rc
 grn_ts_expr_parser_analyze(grn_ctx *ctx, grn_ts_expr_parser *parser) {
-  // FIXME: Support Infix notation!
+  // TODO: Analyze as an expression of Infix Notation!
   size_t i;
   for (i = 1; i < (parser->n_tokens - 1); i++) {
     grn_rc rc;
@@ -4013,7 +4013,6 @@ grn_ts_expr_init(grn_ctx *ctx, grn_ts_expr *expr) {
 /* grn_ts_expr_fin() finalizes an expression. */
 static void
 grn_ts_expr_fin(grn_ctx *ctx, grn_ts_expr *expr) {
-  // TODO: Finalize new members.
   if (expr->stack) {
     GRN_FREE(expr->stack);
   }
