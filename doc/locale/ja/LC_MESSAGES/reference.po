@@ -13996,8 +13996,8 @@ msgstr ""
 "キーワード ``groonga`` でタグ付けされたテキストは ``I am a <span class="
 "\"keyword\">groonga</span> user. &lt;3`` となります。"
 
-msgid "``highlight_html`` has only one parameter::"
-msgstr "``highlight_html`` の引数は1つだけです::"
+msgid "This function has only one parameter::"
+msgstr "この関数の引数は1つです。::"
 
 msgid ""
 "``highlight_html`` can be used in only ``--output_columns`` in :doc:`/"
@@ -14005,9 +14005,6 @@ msgid ""
 msgstr ""
 "``highlight_html`` は :doc:`/reference/commands/select` コマンドの ``--"
 "output_columns`` 内でのみ指定できます。"
-
-msgid "``highlight_html`` requires Groonga 4.0.5 or later."
-msgstr "``highlight_html`` を使うにはGroonga 4.0.5以降が必要です。"
 
 msgid ""
 "``highlight_html`` requires :doc:`/reference/command/command_version` 2 or "
@@ -14040,8 +14037,11 @@ msgstr ""
 "``highlight_html(body)`` は、テキスト中に含まれるキーワード ``groonga`` と "
 "``mysql`` を ``<span class=\"keyword\">`` と ``</span>`` で囲みます。"
 
-msgid "There is only one parameter ``column`` ."
-msgstr "引数は1つあります。 ``column`` です。"
+msgid "``text``"
+msgstr ""
+
+msgid "The text to be highlighted in HTML."
+msgstr "HTMLでハイライトする対象のテキストです。"
 
 msgid ""
 "``highlight_html`` returns a tagged string or ``null``. If "
