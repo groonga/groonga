@@ -2949,6 +2949,76 @@ grn_ts_op_multiplication_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     }
   }
 }
+
+/* grn_ts_op_division_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_division_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                            const grn_ts_record *in, size_t n_in, void *out) {
+  switch (node->data_kind) {
+    case GRN_TS_INT: {
+      /* Specialized to detect a critical error. */
+      size_t i;
+      grn_rc rc;
+      grn_ts_int *out_ptr = (grn_ts_int *)out;
+      rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, out);
+      if (rc == GRN_SUCCESS) {
+        rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[1],
+                                              in, n_in, &node->bufs[0]);
+        if (rc == GRN_SUCCESS) {
+          grn_ts_int *buf_ptr = (grn_ts_int *)node->bufs[0].ptr;
+          for (i = 0; i < n_in; i++) {
+            if (!buf_ptr[i] ||
+                ((out_ptr[i] == INT64_MIN) && (buf_ptr[i] == -1))) {
+              rc = GRN_INVALID_ARGUMENT;
+              break;
+            }
+            out_ptr[i] = grn_ts_op_division_int(out_ptr[i], buf_ptr[i]);
+          }
+        }
+      }
+      return rc;
+    }
+    GRN_TS_OP_ARITH_EVALUATE_CASE_BLOCK(division, FLOAT, float)
+    default: {
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+}
+
+/* grn_ts_op_modulus_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_modulus_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                        const grn_ts_record *in, size_t n_in, void *out) {
+  switch (node->data_kind) {
+    case GRN_TS_INT: {
+      /* Specialized to detect a critical error. */
+      size_t i;
+      grn_rc rc;
+      grn_ts_int *out_ptr = (grn_ts_int *)out;
+      rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, out);
+      if (rc == GRN_SUCCESS) {
+        rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[1],
+                                              in, n_in, &node->bufs[0]);
+        if (rc == GRN_SUCCESS) {
+          grn_ts_int *buf_ptr = (grn_ts_int *)node->bufs[0].ptr;
+          for (i = 0; i < n_in; i++) {
+            if (!buf_ptr[i] ||
+                ((out_ptr[i] == INT64_MIN) && (buf_ptr[i] == -1))) {
+              rc = GRN_INVALID_ARGUMENT;
+              break;
+            }
+            out_ptr[i] = grn_ts_op_modulus_int(out_ptr[i], buf_ptr[i]);
+          }
+        }
+      }
+      return rc;
+    }
+    GRN_TS_OP_ARITH_EVALUATE_CASE_BLOCK(modulus, FLOAT, float)
+    default: {
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+}
 #undef GRN_TS_OP_ARITH_EVALUATE_CASE_BLOCK
 
 /* grn_ts_expr_op_node_evaluate() evaluates an operator. */
@@ -2992,6 +3062,12 @@ grn_ts_expr_op_node_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     }
     case GRN_TS_OP_MULTIPLICATION: {
       return grn_ts_op_multiplication_evaluate(ctx, node, in, n_in, out);
+    }
+    case GRN_TS_OP_DIVISION: {
+      return grn_ts_op_division_evaluate(ctx, node, in, n_in, out);
+    }
+    case GRN_TS_OP_MODULUS: {
+      return grn_ts_op_modulus_evaluate(ctx, node, in, n_in, out);
     }
     // TODO: Add operators.
     default: {
