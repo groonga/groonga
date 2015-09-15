@@ -2515,10 +2515,123 @@ grn_ts_expr_op_node_fin(grn_ctx *ctx, grn_ts_expr_op_node *node) {
   }
 }
 
-/*
- * grn_ts_expr_op_node_check_args() checks arguments and sets data_kind and
- * data_type.
- */
+/* grn_ts_op_plus_check_args() checks arguments. */
+static grn_rc
+grn_ts_op_plus_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
+  switch (node->args[0]->data_kind) {
+    case GRN_TS_INT: {
+      switch (node->args[1]->data_kind) {
+        case GRN_TS_INT: {
+          /* Int + Int = Int. */
+          node->data_kind = GRN_TS_INT;
+          node->data_type = GRN_DB_INT64;
+          return GRN_SUCCESS;
+        }
+        case GRN_TS_TIME: {
+          /* Int + Time = Time + Int = Time. */
+          grn_ts_expr_node *tmp = node->args[0];
+          node->args[0] = node->args[1];
+          node->args[1] = tmp;
+          node->data_kind = GRN_TS_TIME;
+          node->data_type = GRN_DB_TIME;
+          return GRN_SUCCESS;
+        }
+        default: {
+          return GRN_INVALID_ARGUMENT;
+        }
+      }
+    }
+    case GRN_TS_FLOAT: {
+      switch (node->args[1]->data_kind) {
+        case GRN_TS_FLOAT: {
+          /* Float + Float = Float. */
+          node->data_kind = GRN_TS_FLOAT;
+          node->data_type = GRN_DB_FLOAT;
+          return GRN_SUCCESS;
+        }
+        case GRN_TS_TIME: {
+          /* Float + Time = Time + Float = Time. */
+          grn_ts_expr_node *tmp = node->args[0];
+          node->args[0] = node->args[1];
+          node->args[1] = tmp;
+          node->data_kind = GRN_TS_TIME;
+          node->data_type = GRN_DB_TIME;
+          return GRN_SUCCESS;
+        }
+        default: {
+          return GRN_INVALID_ARGUMENT;
+        }
+      }
+    }
+    case GRN_TS_TIME: {
+      switch (node->args[1]->data_kind) {
+        case GRN_TS_INT:
+        case GRN_TS_FLOAT: {
+          /* Time + Int or Float = Time. */
+          node->data_kind = GRN_TS_TIME;
+          node->data_type = GRN_DB_TIME;
+          return GRN_SUCCESS;
+        }
+        default: {
+          return GRN_INVALID_ARGUMENT;
+        }
+      }
+    }
+    default: {
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+}
+
+/* grn_ts_op_minus_check_args() checks arguments. */
+static grn_rc
+grn_ts_op_minus_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
+  switch (node->args[0]->data_kind) {
+    case GRN_TS_INT: {
+      if (node->args[1]->data_kind == GRN_TS_INT) {
+        /* Int - Int = Int. */
+        node->data_kind = GRN_TS_INT;
+        node->data_type = GRN_DB_INT64;
+        return GRN_SUCCESS;
+      }
+      return GRN_INVALID_ARGUMENT;
+    }
+    case GRN_TS_FLOAT: {
+      if (node->args[1]->data_kind == GRN_TS_FLOAT) {
+        /* Float - Float = Float. */
+        node->data_kind = GRN_TS_FLOAT;
+        node->data_type = GRN_DB_FLOAT;
+        return GRN_SUCCESS;
+      }
+      return GRN_INVALID_ARGUMENT;
+    }
+    case GRN_TS_TIME: {
+      switch (node->args[1]->data_kind) {
+        case GRN_TS_INT:
+        case GRN_TS_FLOAT: {
+          /* Time - Int or Float = Time. */
+          node->data_kind = GRN_TS_TIME;
+          node->data_type = GRN_DB_TIME;
+          return GRN_SUCCESS;
+        }
+        case GRN_TS_TIME: {
+          /* Time - Time = Float. */
+          node->data_kind = GRN_TS_FLOAT;
+          node->data_type = GRN_DB_FLOAT;
+          return GRN_SUCCESS;
+        }
+        default: {
+          return GRN_INVALID_ARGUMENT;
+        }
+      }
+    }
+    default: {
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+}
+
+/* grn_ts_expr_op_node_check_args() checks arguments. */
 static grn_rc
 grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
   switch (node->op_type) {
@@ -2577,19 +2690,12 @@ grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
           return GRN_INVALID_ARGUMENT;
         }
       }
-      /*
-       * TODO: Time + Int (sec) -> Time
-       *       Time + Float (sec) -> Time
-       *       Int + Time (sec) -> Time
-       *       Float + Time (sec) -> Time
-       */
-      case GRN_TS_OP_PLUS:
-      /*
-       * TODO: Time - Time -> Float (sec)
-       *       Time - Int (sec) -> Float (sec)
-       *       Time - Float (sec) -> Float (sec)
-       */
-      case GRN_TS_OP_MINUS:
+      case GRN_TS_OP_PLUS: {
+        return grn_ts_op_plus_check_args(ctx, node);
+      }
+      case GRN_TS_OP_MINUS: {
+        return grn_ts_op_minus_check_args(ctx, node);
+      }
       case GRN_TS_OP_MULTIPLICATION:
       case GRN_TS_OP_DIVISION:
       case GRN_TS_OP_MODULUS: {
@@ -2943,7 +3049,7 @@ grn_ts_op_plus_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
   switch (node->data_kind) {
     GRN_TS_OP_ARITH_EVALUATE_CASE_BLOCK(plus, INT, int)
     GRN_TS_OP_ARITH_EVALUATE_CASE_BLOCK(plus, FLOAT, float)
-    /* TODO: (Time + Int), (Time + Float), (Int + Time) and (Float + Time). */
+    /* TODO: (Time + Int) and (Time + Float). */
     default: {
       return GRN_INVALID_ARGUMENT;
     }
@@ -2957,7 +3063,7 @@ grn_ts_op_minus_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
   switch (node->data_kind) {
     GRN_TS_OP_ARITH_EVALUATE_CASE_BLOCK(minus, INT, int)
     GRN_TS_OP_ARITH_EVALUATE_CASE_BLOCK(minus, FLOAT, float)
-    /* TODO: (Time - Time), (Time - Int) and (Time - Float). */
+    /* TODO: (Time - Int), (Time - Float) and (Time - Time). */
     default: {
       return GRN_INVALID_ARGUMENT;
     }
