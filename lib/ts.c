@@ -572,6 +572,8 @@ grn_ts_op_get_n_args(grn_ts_op_type op_type) {
   }
 }
 
+/* FIXME: The following implementation assumes that NaN values don't appear. */
+
 /* grn_ts_op_equal_bool() returns lhs == rhs. */
 inline static grn_bool
 grn_ts_op_equal_bool(grn_ts_bool lhs, grn_ts_bool rhs) {
@@ -719,14 +721,14 @@ grn_ts_op_not_equal_ref(grn_ts_ref lhs, grn_ts_ref rhs) {
 #define GRN_TS_OP_NOT_EQUAL_VECTOR(kind)\
   size_t i;\
   if (lhs.size != rhs.size) {\
-    return GRN_FALSE;\
+    return GRN_TRUE;\
   }\
   for (i = 0; i < lhs.size; i++) {\
-    if (!grn_ts_op_not_equal_ ## kind(lhs.ptr[i], rhs.ptr[i])) {\
-      return GRN_FALSE;\
+    if (grn_ts_op_not_equal_ ## kind(lhs.ptr[i], rhs.ptr[i])) {\
+      return GRN_TRUE;\
     }\
   }\
-  return GRN_TRUE;
+  return GRN_FALSE;
 /* grn_ts_op_not_equal_bool_vector() returns lhs != rhs. */
 inline static grn_bool
 grn_ts_op_not_equal_bool_vector(grn_ts_bool_vector lhs,
