@@ -3042,14 +3042,45 @@ grn_ts_op_greater_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     }\
     return rc;\
   }
+#define GRN_TS_OP_ARITH_EVALUATE_TIME_CASE_BLOCK(type, KIND, lhs, rhs)\
+  case GRN_TS_ ## KIND: {\
+    /*
+     * Use the output buffer to put evaluation results of the 1st argument,
+     * because the data kind is same.
+     */\
+    size_t i;\
+    grn_rc rc;\
+    grn_ts_ ## lhs *out_ptr = (grn_ts_ ## lhs *)out;\
+    rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, out);\
+    if (rc == GRN_SUCCESS) {\
+      rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[1],\
+                                            in, n_in, &node->bufs[0]);\
+      if (rc == GRN_SUCCESS) {\
+        grn_ts_ ## rhs *buf_ptr = (grn_ts_ ## rhs *)node->bufs[0].ptr;\
+        for (i = 0; i < n_in; i++) {\
+          out_ptr[i] = grn_ts_op_ ## type ## _ ## lhs ## _ ## rhs(out_ptr[i],\
+                                                                  buf_ptr[i]);\
+        }\
+      }\
+    }\
+    return rc;\
+  }
 /* grn_ts_op_plus_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_op_plus_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
                         const grn_ts_record *in, size_t n_in, void *out) {
-  switch (node->data_kind) {
+  switch (node->args[0]->data_kind) {
     GRN_TS_OP_ARITH_EVALUATE_CASE_BLOCK(plus, INT, int)
     GRN_TS_OP_ARITH_EVALUATE_CASE_BLOCK(plus, FLOAT, float)
-    /* TODO: (Time + Int) and (Time + Float). */
+    case GRN_TS_TIME: {
+      switch (node->args[1]->data_kind) {
+        GRN_TS_OP_ARITH_EVALUATE_TIME_CASE_BLOCK(plus, INT, time, int)
+        GRN_TS_OP_ARITH_EVALUATE_TIME_CASE_BLOCK(plus, FLOAT, time, float)
+        default: {
+          return GRN_INVALID_ARGUMENT;
+        }
+      }
+    }
     default: {
       return GRN_INVALID_ARGUMENT;
     }
@@ -3059,16 +3090,48 @@ grn_ts_op_plus_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 /* grn_ts_op_minus_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_op_minus_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                        const grn_ts_record *in, size_t n_in, void *out) {
-  switch (node->data_kind) {
+                         const grn_ts_record *in, size_t n_in, void *out) {
+  switch (node->args[0]->data_kind) {
     GRN_TS_OP_ARITH_EVALUATE_CASE_BLOCK(minus, INT, int)
     GRN_TS_OP_ARITH_EVALUATE_CASE_BLOCK(minus, FLOAT, float)
-    /* TODO: (Time - Int), (Time - Float) and (Time - Time). */
+    case GRN_TS_TIME: {
+      switch (node->args[1]->data_kind) {
+        GRN_TS_OP_ARITH_EVALUATE_TIME_CASE_BLOCK(minus, INT, time, int)
+        GRN_TS_OP_ARITH_EVALUATE_TIME_CASE_BLOCK(minus, FLOAT, time, float)
+        case GRN_TS_TIME: {
+          size_t i;
+          grn_rc rc;
+          grn_ts_float *out_ptr = (grn_ts_float *)out;
+          grn_ts_time *buf_ptrs[2];
+          rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[0], in, n_in,
+                                                &node->bufs[0]);
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
+          rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[1], in, n_in,
+                                                &node->bufs[1]);
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
+          buf_ptrs[0] = (grn_ts_time *)node->bufs[0].ptr;
+          buf_ptrs[1] = (grn_ts_time *)node->bufs[1].ptr;
+          for (i = 0; i < n_in; i++) {
+            out_ptr[i] = grn_ts_op_minus_time_time(buf_ptrs[0][i],
+                                                   buf_ptrs[1][i]);
+          }
+          return GRN_SUCCESS;
+        }
+        default: {
+          return GRN_INVALID_ARGUMENT;
+        }
+      }
+    }
     default: {
       return GRN_INVALID_ARGUMENT;
     }
   }
 }
+#undef GRN_TS_OP_ARITH_EVALUATE_TIME_CASE_BLOCK
 
 /* grn_ts_op_multiplication_evaluate() evaluates an operator. */
 static grn_rc
