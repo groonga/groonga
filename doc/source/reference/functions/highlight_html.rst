@@ -12,6 +12,8 @@ highlight_html
 
    This feature is experimental. API will be changed.
 
+.. versionadded:: 4.0.5
+
 Summary
 -------
 
@@ -25,9 +27,9 @@ For example, a tagged text of ``I am a groonga user. <3`` for keyword
 Syntax
 ------
 
-``highlight_html`` has only one parameter::
+This function has only one parameter::
 
-  highlight_html(column)
+  highlight_html(text)
 
 Usage
 -----
@@ -47,8 +49,6 @@ Here are a schema definition and sample data to show usage.
 
 ``highlight_html`` can be used in only ``--output_columns`` in
 :doc:`/reference/commands/select`.
-
-``highlight_html`` requires Groonga 4.0.5 or later.
 
 ``highlight_html`` requires :doc:`/reference/command/command_version` 2
 or later.
@@ -79,12 +79,22 @@ You can specify string literal instead of column.
 Parameters
 ----------
 
-There is only one parameter ``column`` .
+This section describes all parameters.
 
-``column``
-^^^^^^^^^^
+Required parameters
+^^^^^^^^^^^^^^^^^^^
 
-Specifies a column of the table.
+There is only one required parameters.
+
+``text``
+""""""""
+
+The text to be highlighted in HTML.
+
+Optional parameters
+^^^^^^^^^^^^^^^^^^^
+
+There is no optional parameters.
 
 Return value
 ------------
