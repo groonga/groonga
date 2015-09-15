@@ -1090,7 +1090,7 @@ grn_ts_obj_is_column(grn_ctx *ctx, grn_obj *obj) {
 
 /* grn_ts_ja_get_value() appends a value into buf. */
 static grn_rc
-grn_ts_ja_get_value(grn_ctx *ctx, grn_ja *ja, grn_id id,
+grn_ts_ja_get_value(grn_ctx *ctx, grn_ja *ja, grn_ts_id id,
                     grn_ts_buf *buf, size_t *value_size) {
   grn_rc rc, tmp_rc;
   uint32_t size;
@@ -1151,7 +1151,8 @@ grn_ts_table_has_value(grn_ctx *ctx, grn_obj *table) {
   }
 /* grn_ts_table_get_key() gets a reference to a key (_key). */
 static const void *
-grn_ts_table_get_key(grn_ctx *ctx, grn_obj *table, grn_id id, size_t *size) {
+grn_ts_table_get_key(grn_ctx *ctx, grn_obj *table, grn_ts_id id,
+                     size_t *size) {
   switch (table->header.type) {
     GRN_TS_TABLE_GET_KEY_CASE_BLOCK(HASH, hash)
     GRN_TS_TABLE_GET_KEY_CASE_BLOCK(PAT, pat)
@@ -1166,7 +1167,7 @@ grn_ts_table_get_key(grn_ctx *ctx, grn_obj *table, grn_id id, size_t *size) {
 
 /* grn_ts_table_get_value() gets a reference to a value (_value). */
 static const void *
-grn_ts_table_get_value(grn_ctx *ctx, grn_obj *table, grn_id id) {
+grn_ts_table_get_value(grn_ctx *ctx, grn_obj *table, grn_ts_id id) {
   switch (table->header.type) {
     case GRN_TABLE_HASH_KEY: {
       uint32_t size;
@@ -4964,12 +4965,12 @@ grn_ts_select_output_parse(grn_ctx *ctx, grn_obj *table,
     /* Add column names to name_buf. */
     if (name[name_size - 1] == '*') {
       /* Expand a wildcard. */
-      grn_hash *columns = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+      grn_hash *columns = grn_hash_create(ctx, NULL, sizeof(grn_ts_id), 0,
                                           GRN_OBJ_TABLE_HASH_KEY |
                                           GRN_HASH_TINY);
       if (columns) {
         if (grn_table_columns(ctx, table, "", 0, (grn_obj *)columns)) {
-          grn_id *key;
+          grn_ts_id *key;
           GRN_HASH_EACH(ctx, columns, id, &key, NULL, NULL, {
             grn_obj *column = grn_ctx_at(ctx, *key);
             if (column) {
