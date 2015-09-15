@@ -328,11 +328,11 @@ and ``filter`` aren't specified, all records are selected.
 ``match_columns``
 """""""""""""""""
 
-Specifies the default target column for fulltext search by
-``query`` parameter value. A target column for fulltext search can be
-specified in ``query`` parameter. The difference between
-``match_columns`` and ``query`` is whether weight is supported or
-not. ``match_columns`` supports weight but ``query`` doesn't.
+Specifies the default target column for fulltext search by ``query``
+parameter value. A target column for fulltext search can be specified
+in ``query`` parameter. The difference between ``match_columns`` and
+``query`` is whether weight and score function are supported or
+not. ``match_columns`` supports them but ``query`` doesn't.
 
 Weight is relative importance of target column. A higher weight target
 column gets more hit score rather than a lower weight target column
@@ -391,6 +391,12 @@ columns for fulltext search are ``_key`` and ``content`` columns and
 is 1. This weight allocation means ``_key`` column value is more
 important rather than ``content`` column value. In this example, title
 of blog entry is more important rather thatn content of blog entry.
+
+You can also specify score function. See :doc:`/reference/scorer` for
+details.
+
+Note that score function isn't related to :ref:`select-scorer`
+parameter.
 
 .. _select-query:
 
