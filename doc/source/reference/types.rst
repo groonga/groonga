@@ -118,7 +118,7 @@ To store a value by :doc:`/reference/commands/load` command, specifies the numbe
 
 String of 4,095 or less bytes. (default: "")
 
-.. _builtin-type:-ext
+.. _builtin-type-text:
 
 ``Text``
 ^^^^^^^^
