@@ -43,7 +43,18 @@ doesn't guard from the technique.
 case. But it's more slower than TF-IDF and not implemented yet in
 Groonga.
 
+Groonga provides :doc:`scorer_tf_at_most` scorer that can also solve
+the case.
+
 .. include:: ../scoring_note.rst
+
+Syntax
+------
+
+This scorer has only one parameter::
+
+  scorer_tf_idf(column)
+  scorer_tf_idf(index)
 
 Usage
 -----
@@ -103,6 +114,42 @@ documents that include ``Info`` is ``4``. The number of documents that
 include ``Error`` is ``1``. Term that is included in less documents
 means that the term is more characteristic term. Characteristic term
 is important term.
+
+Parameters
+----------
+
+This section describes all parameters.
+
+Required parameters
+^^^^^^^^^^^^^^^^^^^
+
+There is only one required parameters.
+
+``column``
+""""""""""
+
+The data column that is match target. The data column must be indexed.
+
+``index``
+"""""""""
+
+The index column to be used for search.
+
+Optional parameters
+^^^^^^^^^^^^^^^^^^^
+
+There is no optional parameters.
+
+Return value
+------------
+
+This scorer returns score as :ref:`builtin-type-float`.
+
+:doc:`/reference/commands/select` returns ``_score`` as ``Int32`` not
+``Float``. Because it casts to ``Int32`` from ``Float`` for keeping
+backward compatibility.
+
+Score is computed as TF-IDF based algorithm.
 
 See also
 --------
