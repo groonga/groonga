@@ -3263,7 +3263,7 @@ grn_ts_expr_op_node_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
   }
 }
 
-#define GRN_TS_OP_ARITH_FILTER(type)\
+#define GRN_TS_OP_ARITH_ADJUST(type)\
   size_t i, count = 0;\
   for (i = 0; i < 2; i++) {\
     grn_rc rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[i], io, n_io,\
@@ -3286,37 +3286,37 @@ grn_ts_expr_op_node_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
 static grn_rc
 grn_ts_op_plus_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
                       grn_ts_record *io, size_t n_io) {
-  GRN_TS_OP_ARITH_FILTER(plus)
+  GRN_TS_OP_ARITH_ADJUST(plus)
 }
 
 /* grn_ts_op_minus_adjust() updates scores. */
 static grn_rc
 grn_ts_op_minus_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
                        grn_ts_record *io, size_t n_io) {
-  GRN_TS_OP_ARITH_FILTER(minus)
+  GRN_TS_OP_ARITH_ADJUST(minus)
 }
 
 /* grn_ts_op_multiplication_adjust() updates scores. */
 static grn_rc
 grn_ts_op_multiplication_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
                                 grn_ts_record *io, size_t n_io) {
-  GRN_TS_OP_ARITH_FILTER(multiplication)
+  GRN_TS_OP_ARITH_ADJUST(multiplication)
 }
 
 /* grn_ts_op_division_adjust() updates scores. */
 static grn_rc
 grn_ts_op_division_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
                           grn_ts_record *io, size_t n_io) {
-  GRN_TS_OP_ARITH_FILTER(division)
+  GRN_TS_OP_ARITH_ADJUST(division)
 }
 
 /* grn_ts_op_modulus_adjust() updates scores. */
 static grn_rc
 grn_ts_op_modulus_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
                          grn_ts_record *io, size_t n_io) {
-  GRN_TS_OP_ARITH_FILTER(modulus)
+  GRN_TS_OP_ARITH_ADJUST(modulus)
 }
-#undef GRN_TS_OP_ARITH_FILTER
+#undef GRN_TS_OP_ARITH_ADJUST
 
 /* grn_ts_expr_op_node_adjust() updates scores. */
 static grn_rc
