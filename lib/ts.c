@@ -194,37 +194,37 @@ typedef union {
 } grn_ts_any;
 
 /* grn_ts_bool_is_valid() returns whether a value is valid or not. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_bool_is_valid(grn_ts_bool value) {
   return GRN_TRUE;
 }
 
 /* grn_ts_int_is_valid() returns whether a value is valid or not. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_int_is_valid(grn_ts_int value) {
   return GRN_TRUE;
 }
 
 /* grn_ts_float_is_valid() returns whether a value is valid or not. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_float_is_valid(grn_ts_float value) {
   return !isnan(value);
 }
 
 /* grn_ts_time_is_valid() returns whether a value is valid or not. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_time_is_valid(grn_ts_time value) {
   return GRN_TRUE;
 }
 
 /* grn_ts_text_is_valid() returns whether a value is valid or not. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_text_is_valid(grn_ts_text value) {
   return value.ptr || !value.size;
 }
 
 /* grn_ts_geo_point_is_valid() returns whether a value is valid or not. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_geo_point_is_valid(grn_ts_geo_point value) {
   return ((value.latitude >= GRN_GEO_MIN_LATITUDE) &&
           (value.latitude <= GRN_GEO_MAX_LATITUDE)) &&
@@ -246,31 +246,31 @@ grn_ts_geo_point_is_valid(grn_ts_geo_point value) {
   }\
   return GRN_TRUE;
 /* grn_ts_bool_vector_is_valid() returns whether a value is valid or not. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_bool_vector_is_valid(grn_ts_bool_vector value) {
   GRN_TS_VECTOR_IS_VALID(bool)
 }
 
 /* grn_ts_int_vector_is_valid() returns whether a value is valid or not. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_int_vector_is_valid(grn_ts_int_vector value) {
   GRN_TS_VECTOR_IS_VALID(int)
 }
 
 /* grn_ts_float_vector_is_valid() returns whether a value is valid or not. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_float_vector_is_valid(grn_ts_float_vector value) {
   GRN_TS_VECTOR_IS_VALID(float)
 }
 
 /* grn_ts_time_vector_is_valid() returns whether a value is valid or not. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_time_vector_is_valid(grn_ts_time_vector value) {
   GRN_TS_VECTOR_IS_VALID(time)
 }
 
 /* grn_ts_text_vector_is_valid() returns whether a value is valid or not. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_text_vector_is_valid(grn_ts_text_vector value) {
   GRN_TS_VECTOR_IS_VALID(text)
 }
@@ -279,7 +279,7 @@ grn_ts_text_vector_is_valid(grn_ts_text_vector value) {
  * grn_ts_geo_point_vector_is_valid() returns whether a value is valid or
  * not.
  */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_geo_point_vector_is_valid(grn_ts_geo_point_vector value) {
   GRN_TS_VECTOR_IS_VALID(geo_point)
 }
@@ -592,44 +592,44 @@ grn_ts_op_get_n_args(grn_ts_op_type op_type) {
 /* FIXME: The following implementation assumes that NaN values don't appear. */
 
 /* grn_ts_op_equal_bool() returns lhs == rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_equal_bool(grn_ts_bool lhs, grn_ts_bool rhs) {
   return lhs == rhs;
 }
 
 /* grn_ts_op_equal_int() returns lhs == rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_equal_int(grn_ts_int lhs, grn_ts_int rhs) {
   return lhs == rhs;
 }
 
 /* grn_ts_op_equal_float() returns lhs == rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_equal_float(grn_ts_float lhs, grn_ts_float rhs) {
   /* To suppress warnings, "lhs == rhs" is not used. */
   return (lhs <= rhs) && (lhs >= rhs);
 }
 
 /* grn_ts_op_equal_time() returns lhs == rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_equal_time(grn_ts_time lhs, grn_ts_time rhs) {
   return lhs == rhs;
 }
 
 /* grn_ts_op_equal_text() returns lhs == rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_equal_text(grn_ts_text lhs, grn_ts_text rhs) {
   return (lhs.size == rhs.size) && !memcmp(lhs.ptr, rhs.ptr, lhs.size);
 }
 
 /* grn_ts_op_equal_geo_point() returns lhs == rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_equal_geo_point(grn_ts_geo_point lhs, grn_ts_geo_point rhs) {
   return (lhs.latitude == rhs.latitude) && (lhs.longitude == rhs.longitude);
 }
 
 /* grn_ts_op_equal_ref() returns lhs == rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_equal_ref(grn_ts_ref lhs, grn_ts_ref rhs) {
   /* Ignore scores. */
   return lhs.id == rhs.id;
@@ -647,89 +647,89 @@ grn_ts_op_equal_ref(grn_ts_ref lhs, grn_ts_ref rhs) {
   }\
   return GRN_TRUE;
 /* grn_ts_op_equal_bool_vector() returns lhs == rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_equal_bool_vector(grn_ts_bool_vector lhs, grn_ts_bool_vector rhs) {
   GRN_TS_OP_EQUAL_VECTOR(bool)
 }
 
 /* grn_ts_op_equal_int_vector() returns lhs == rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_equal_int_vector(grn_ts_int_vector lhs, grn_ts_int_vector rhs) {
   GRN_TS_OP_EQUAL_VECTOR(int)
 }
 
 /* grn_ts_op_equal_float_vector() returns lhs == rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_equal_float_vector(grn_ts_float_vector lhs,
                              grn_ts_float_vector rhs) {
   GRN_TS_OP_EQUAL_VECTOR(float)
 }
 
 /* grn_ts_op_equal_time_vector() returns lhs == rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_equal_time_vector(grn_ts_time_vector lhs, grn_ts_time_vector rhs) {
   GRN_TS_OP_EQUAL_VECTOR(time)
 }
 
 /* grn_ts_op_equal_text_vector() returns lhs == rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_equal_text_vector(grn_ts_text_vector lhs, grn_ts_text_vector rhs) {
   GRN_TS_OP_EQUAL_VECTOR(text)
 }
 
 /* grn_ts_op_equal_geo_point_vector() returns lhs == rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_equal_geo_point_vector(grn_ts_geo_point_vector lhs,
                                  grn_ts_geo_point_vector rhs) {
   GRN_TS_OP_EQUAL_VECTOR(geo_point)
 }
 
 /* grn_ts_op_equal_ref_vector() returns lhs == rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_equal_ref_vector(grn_ts_ref_vector lhs, grn_ts_ref_vector rhs) {
   GRN_TS_OP_EQUAL_VECTOR(ref)
 }
 #undef GRN_TS_OP_EQUAL_VECTOR
 
 /* grn_ts_op_not_equal_bool() returns lhs != rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_not_equal_bool(grn_ts_bool lhs, grn_ts_bool rhs) {
   return lhs != rhs;
 }
 
 /* grn_ts_op_not_equal_int() returns lhs != rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_not_equal_int(grn_ts_int lhs, grn_ts_int rhs) {
   return lhs != rhs;
 }
 
 /* grn_ts_op_not_equal_float() returns lhs != rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_not_equal_float(grn_ts_float lhs, grn_ts_float rhs) {
   /* To suppress warnings, "lhs != rhs" is not used. */
   return (lhs < rhs) || (lhs > rhs);
 }
 
 /* grn_ts_op_not_equal_time() returns lhs != rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_not_equal_time(grn_ts_time lhs, grn_ts_time rhs) {
   return lhs != rhs;
 }
 
 /* grn_ts_op_not_equal_text() returns lhs != rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_not_equal_text(grn_ts_text lhs, grn_ts_text rhs) {
   return (lhs.size != rhs.size) && !memcmp(lhs.ptr, rhs.ptr, lhs.size);
 }
 
 /* grn_ts_op_not_equal_geo_point() returns lhs != rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_not_equal_geo_point(grn_ts_geo_point lhs, grn_ts_geo_point rhs) {
   return (lhs.latitude != rhs.latitude) && (lhs.longitude != rhs.longitude);
 }
 
 /* grn_ts_op_not_equal_ref() returns lhs != rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_not_equal_ref(grn_ts_ref lhs, grn_ts_ref rhs) {
   /* Ignore scores. */
   return lhs.id != rhs.id;
@@ -747,73 +747,73 @@ grn_ts_op_not_equal_ref(grn_ts_ref lhs, grn_ts_ref rhs) {
   }\
   return GRN_FALSE;
 /* grn_ts_op_not_equal_bool_vector() returns lhs != rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_not_equal_bool_vector(grn_ts_bool_vector lhs,
                                 grn_ts_bool_vector rhs) {
   GRN_TS_OP_NOT_EQUAL_VECTOR(bool)
 }
 
 /* grn_ts_op_not_equal_int_vector() returns lhs != rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_not_equal_int_vector(grn_ts_int_vector lhs, grn_ts_int_vector rhs) {
   GRN_TS_OP_NOT_EQUAL_VECTOR(int)
 }
 
 /* grn_ts_op_not_equal_float_vector() returns lhs != rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_not_equal_float_vector(grn_ts_float_vector lhs,
                              grn_ts_float_vector rhs) {
   GRN_TS_OP_NOT_EQUAL_VECTOR(float)
 }
 
 /* grn_ts_op_not_equal_time_vector() returns lhs != rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_not_equal_time_vector(grn_ts_time_vector lhs,
                                 grn_ts_time_vector rhs) {
   GRN_TS_OP_NOT_EQUAL_VECTOR(time)
 }
 
 /* grn_ts_op_not_equal_text_vector() returns lhs != rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_not_equal_text_vector(grn_ts_text_vector lhs,
                                 grn_ts_text_vector rhs) {
   GRN_TS_OP_NOT_EQUAL_VECTOR(text)
 }
 
 /* grn_ts_op_not_equal_geo_point_vector() returns lhs != rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_not_equal_geo_point_vector(grn_ts_geo_point_vector lhs,
                                  grn_ts_geo_point_vector rhs) {
   GRN_TS_OP_NOT_EQUAL_VECTOR(geo_point)
 }
 
 /* grn_ts_op_not_equal_ref_vector() returns lhs != rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_not_equal_ref_vector(grn_ts_ref_vector lhs, grn_ts_ref_vector rhs) {
   GRN_TS_OP_NOT_EQUAL_VECTOR(ref)
 }
 #undef GRN_TS_OP_NOT_EQUAL_VECTOR
 
 /* grn_ts_op_less_int() returns lhs < rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_less_int(grn_ts_int lhs, grn_ts_int rhs) {
   return lhs < rhs;
 }
 
 /* grn_ts_op_less_float() returns lhs < rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_less_float(grn_ts_float lhs, grn_ts_float rhs) {
   return lhs < rhs;
 }
 
 /* grn_ts_op_less_time() returns lhs < rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_less_time(grn_ts_time lhs, grn_ts_time rhs) {
   return lhs < rhs;
 }
 
 /* grn_ts_op_less_text() returns lhs < rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_less_text(grn_ts_text lhs, grn_ts_text rhs) {
   size_t min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;
   int cmp = memcmp(lhs.ptr, rhs.ptr, min_size);
@@ -831,50 +831,50 @@ grn_ts_op_less_text(grn_ts_text lhs, grn_ts_text rhs) {
   }\
   return lhs.size < rhs.size;
 /* grn_ts_op_less_int_vector() returns lhs < rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_less_int_vector(grn_ts_int_vector lhs, grn_ts_int_vector rhs) {
   GRN_TS_OP_LESS_VECTOR(int)
 }
 
 /* grn_ts_op_less_float_vector() returns lhs < rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_less_float_vector(grn_ts_float_vector lhs, grn_ts_float_vector rhs) {
   GRN_TS_OP_LESS_VECTOR(float)
 }
 
 /* grn_ts_op_less_time_vector() returns lhs < rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_less_time_vector(grn_ts_time_vector lhs, grn_ts_time_vector rhs) {
   GRN_TS_OP_LESS_VECTOR(time)
 }
 
 /* grn_ts_op_less_text_vector() returns lhs < rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_less_text_vector(grn_ts_text_vector lhs, grn_ts_text_vector rhs) {
   GRN_TS_OP_LESS_VECTOR(text)
 }
 #undef GRN_TS_OP_LESS_VECTOR
 
 /* grn_ts_op_less_equal_int() returns lhs <= rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_less_equal_int(grn_ts_int lhs, grn_ts_int rhs) {
   return lhs <= rhs;
 }
 
 /* grn_ts_op_less_equal_float() returns lhs <= rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_less_equal_float(grn_ts_float lhs, grn_ts_float rhs) {
   return lhs <= rhs;
 }
 
 /* grn_ts_op_less_equal_time() returns lhs <= rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_less_equal_time(grn_ts_time lhs, grn_ts_time rhs) {
   return lhs <= rhs;
 }
 
 /* grn_ts_op_less_equal_text() returns lhs <= rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_less_equal_text(grn_ts_text lhs, grn_ts_text rhs) {
   size_t min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;
   int cmp = memcmp(lhs.ptr, rhs.ptr, min_size);
@@ -892,27 +892,27 @@ grn_ts_op_less_equal_text(grn_ts_text lhs, grn_ts_text rhs) {
   }\
   return lhs.size <= rhs.size;
 /* grn_ts_op_less_equal_int_vector() returns lhs <= rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_less_equal_int_vector(grn_ts_int_vector lhs, grn_ts_int_vector rhs) {
   GRN_TS_OP_LESS_EQUAL_VECTOR(int)
 }
 
 /* grn_ts_op_less_equal_float_vector() returns lhs <= rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_less_equal_float_vector(grn_ts_float_vector lhs,
                                   grn_ts_float_vector rhs) {
   GRN_TS_OP_LESS_EQUAL_VECTOR(float)
 }
 
 /* grn_ts_op_less_equal_time_vector() returns lhs <= rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_less_equal_time_vector(grn_ts_time_vector lhs,
                                  grn_ts_time_vector rhs) {
   GRN_TS_OP_LESS_EQUAL_VECTOR(time)
 }
 
 /* grn_ts_op_less_equal_text_vector() returns lhs <= rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_less_equal_text_vector(grn_ts_text_vector lhs,
                                  grn_ts_text_vector rhs) {
   GRN_TS_OP_LESS_EQUAL_VECTOR(text)
@@ -920,25 +920,25 @@ grn_ts_op_less_equal_text_vector(grn_ts_text_vector lhs,
 #undef GRN_TS_OP_LESS_EQUAL_VECTOR
 
 /* grn_ts_op_greater_int() returns lhs > rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_greater_int(grn_ts_int lhs, grn_ts_int rhs) {
   return lhs > rhs;
 }
 
 /* grn_ts_op_greater_float() returns lhs > rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_greater_float(grn_ts_float lhs, grn_ts_float rhs) {
   return lhs > rhs;
 }
 
 /* grn_ts_op_greater_time() returns lhs > rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_greater_time(grn_ts_time lhs, grn_ts_time rhs) {
   return lhs > rhs;
 }
 
 /* grn_ts_op_greater_text() returns lhs > rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_greater_text(grn_ts_text lhs, grn_ts_text rhs) {
   size_t min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;
   int cmp = memcmp(lhs.ptr, rhs.ptr, min_size);
@@ -956,51 +956,51 @@ grn_ts_op_greater_text(grn_ts_text lhs, grn_ts_text rhs) {
   }\
   return lhs.size > rhs.size;
 /* grn_ts_op_greater_int_vector() returns lhs > rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_greater_int_vector(grn_ts_int_vector lhs, grn_ts_int_vector rhs) {
   GRN_TS_OP_GREATER_VECTOR(int)
 }
 
 /* grn_ts_op_greater_float_vector() returns lhs > rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_greater_float_vector(grn_ts_float_vector lhs,
                                grn_ts_float_vector rhs) {
   GRN_TS_OP_GREATER_VECTOR(float)
 }
 
 /* grn_ts_op_greater_time_vector() returns lhs > rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_greater_time_vector(grn_ts_time_vector lhs, grn_ts_time_vector rhs) {
   GRN_TS_OP_GREATER_VECTOR(time)
 }
 
 /* grn_ts_op_greater_text_vector() returns lhs > rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_greater_text_vector(grn_ts_text_vector lhs, grn_ts_text_vector rhs) {
   GRN_TS_OP_GREATER_VECTOR(text)
 }
 #undef GRN_TS_OP_GREATER_VECTOR
 
 /* grn_ts_op_greater_equal_int() returns lhs >= rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_greater_equal_int(grn_ts_int lhs, grn_ts_int rhs) {
   return lhs >= rhs;
 }
 
 /* grn_ts_op_greater_equal_float() returns lhs >= rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_greater_equal_float(grn_ts_float lhs, grn_ts_float rhs) {
   return lhs >= rhs;
 }
 
 /* grn_ts_op_greater_equal_time() returns lhs >= rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_greater_equal_time(grn_ts_time lhs, grn_ts_time rhs) {
   return lhs >= rhs;
 }
 
 /* grn_ts_op_greater_equal_text() returns lhs >= rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_greater_equal_text(grn_ts_text lhs, grn_ts_text rhs) {
   size_t min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;
   int cmp = memcmp(lhs.ptr, rhs.ptr, min_size);
@@ -1018,28 +1018,28 @@ grn_ts_op_greater_equal_text(grn_ts_text lhs, grn_ts_text rhs) {
   }\
   return lhs.size >= rhs.size;
 /* grn_ts_op_greater_equal_int_vector() returns lhs >= rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_greater_equal_int_vector(grn_ts_int_vector lhs,
                                    grn_ts_int_vector rhs) {
   GRN_TS_OP_GREATER_EQUAL_VECTOR(int)
 }
 
 /* grn_ts_op_greater_equal_float_vector() returns lhs >= rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_greater_equal_float_vector(grn_ts_float_vector lhs,
                                      grn_ts_float_vector rhs) {
   GRN_TS_OP_GREATER_EQUAL_VECTOR(float)
 }
 
 /* grn_ts_op_greater_equal_time_vector() returns lhs >= rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_greater_equal_time_vector(grn_ts_time_vector lhs,
                                     grn_ts_time_vector rhs) {
   GRN_TS_OP_GREATER_EQUAL_VECTOR(time)
 }
 
 /* grn_ts_op_greater_equal_text_vector() returns lhs >= rhs. */
-inline static grn_bool
+inline static grn_ts_bool
 grn_ts_op_greater_equal_text_vector(grn_ts_text_vector lhs,
                                     grn_ts_text_vector rhs) {
   GRN_TS_OP_GREATER_EQUAL_VECTOR(text)
@@ -1068,13 +1068,13 @@ grn_ts_obj_increment_ref_count(grn_ctx *ctx, grn_obj *obj) {
 }
 
 /* grn_ts_obj_is_table() returns whether an object is a column or not */
-static grn_bool
+static grn_ts_bool
 grn_ts_obj_is_table(grn_ctx *ctx, grn_obj *obj) {
   return grn_obj_is_table(ctx, obj);
 }
 
 /* grn_ts_obj_is_column() returns whether an object is a column or not */
-static grn_bool
+static grn_ts_bool
 grn_ts_obj_is_column(grn_ctx *ctx, grn_obj *obj) {
   switch (obj->header.type) {
     case GRN_COLUMN_FIX_SIZE:
@@ -1119,7 +1119,7 @@ grn_ts_ja_get_value(grn_ctx *ctx, grn_ja *ja, grn_id id,
 }
 
 /* grn_ts_table_has_key() returns whether a table has _key or not. */
-static grn_bool
+static grn_ts_bool
 grn_ts_table_has_key(grn_ctx *ctx, grn_obj *table) {
   switch (table->header.type) {
     case GRN_TABLE_HASH_KEY:
@@ -1134,7 +1134,7 @@ grn_ts_table_has_key(grn_ctx *ctx, grn_obj *table) {
 }
 
 /* grn_ts_table_has_value() returns whether a table has _value or not. */
-static grn_bool
+static grn_ts_bool
 grn_ts_table_has_value(grn_ctx *ctx, grn_obj *table) {
   return DB_OBJ(table)->range != GRN_DB_VOID;
 }
