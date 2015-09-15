@@ -26,9 +26,9 @@ cases:
     the technique.
 
 Score function can solve these cases. For example, `TF-IDF
-<http://en.wikipedia.org/wiki/Tf%E2%80%93idf>`_ (term
+<https://en.wikipedia.org/wiki/Tf%E2%80%93idf>`_ (term
 frequency-inverse document frequency) can solve the first case.
-`Okapi BM25 <http://en.wikipedia.org/wiki/Okapi_BM25>`_ can solve the
+`Okapi BM25 <https://en.wikipedia.org/wiki/Okapi_BM25>`_ can solve the
 second case. But their are slower than TF.
 
 Groonga provides TF-IDF based scorer as

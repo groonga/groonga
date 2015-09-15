@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-09-11 23:08+0900\n"
+"PO-Revision-Date: 2015-09-15 11:37+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -18211,7 +18211,7 @@ msgstr ""
 
 # ba173f61de044473a5984626b9757135
 msgid "Scorer"
-msgstr ""
+msgstr "スコアラー"
 
 # 9be3e930df1a4d3b88343fdad07441bf
 msgid ""
@@ -18219,40 +18219,56 @@ msgid ""
 "computes score of matched record. The default scorer function uses the "
 "number of appeared terms. It is also known as TF (term frequency)."
 msgstr ""
+"Groongaにはスコアー関数をカスタマイズするスコアーモジュールがあります。スコ"
+"アー関数はマッチしたレコードのスコアーを計算します。デフォルトのスコアー関数"
+"は出現単語数をスコアーにします。これはTF（term frequency。単語の出現数）と呼"
+"ばれている計算方法です。"
 
 # e08f8ce9095042b3838ab191a44762dc
 msgid ""
 "TF is a fast score function but it's not suitable for the following cases:"
-msgstr ""
+msgstr "TFは高速なスコアー関数ですが、次のケースには適していません。"
 
 # afd0bccbf6d44935bb4324b58852808e
 msgid ""
 "Search query contains one or more frequently-appearing words such as \"the\" "
 "and \"a\"."
 msgstr ""
+"検索クエリーが「the」や「a」のように非常によく出現する単語を含んでいる。"
 
 # 5aeb338808ec4d4f8be0dedb58166c55
 msgid ""
 "Document contains many same keywords such as \"They are keyword, keyword, "
 "keyword ... and keyword\". Search engine spammer may use the technique."
 msgstr ""
+"文書中に「They are keyword, keyword, keyword ... and keyword」というように同"
+"じキーワードが大量に含まれている。検索エンジンのスパマーはこのテクニックを使"
+"うかもしれません。"
 
 # 8f758c4630224be2bb63432399446624
 msgid ""
-"Score function can solve these cases. For example, `TF-IDF <http://en."
+"Score function can solve these cases. For example, `TF-IDF <https://en."
 "wikipedia.org/wiki/Tf%E2%80%93idf>`_ (term frequency-inverse document "
-"frequency) can solve the first case. `Okapi BM25 <http://en.wikipedia.org/"
+"frequency) can solve the first case. `Okapi BM25 <https://en.wikipedia.org/"
 "wiki/Okapi_BM25>`_ can solve the second case. But their are slower than TF."
 msgstr ""
+"スコアー関数でこれらのケースを解決できます。例えば、 `TF-IDF <https://ja."
+"wikipedia.org/wiki/Tf-idf>`_ （term frequency-inverse document frequency。そ"
+"の文書中での単語の出現数を、文書全体での単語の出現数で割ったもの）は最初の"
+"ケースを解決できます。 `Okapi BM25 <https://en.wikipedia.org/wiki/"
+"Okapi_BM25>`_ は2番目のケースを解決できます。しかし、これらはTFより遅いです。"
 
 # 4a558b61f52e4cb1878c84fccb10907b
 msgid ""
 "Groonga provides TF-IDF based scorer as :doc:`/reference/scorers/"
 "scorer_tf_idf` but doesn't provide Okapi BM25 based scorer yet."
 msgstr ""
+"Groongaは :doc:`/reference/scorers/scorer_tf_idf` としてTF-IDFベースのスコア"
+"ラーを提供しています。しかし、Okapi BM25ベースのスコアラーはまだ提供していま"
+"せん。"
 
 msgid "This section describes how to use scorer."
-msgstr "このセクションではscorerの使い方について説明します。"
+msgstr "このセクションではスコアラーの使い方について説明します。"
 
 msgid ""
 "You can specify custom score function in :ref:`select-match-columns`. There "
@@ -18266,17 +18282,21 @@ msgid ""
 "For score function that doesn't require any parameter such as :doc:`/"
 "reference/scorers/scorer_tf_idf`::"
 msgstr ""
+":doc:`/reference/scorers/scorer_tf_idf` のように、いくつかのスコアー関数には"
+"引数はありません。::"
 
 # 338e793a2d2946489fd1e2dd1400cba3
 # 56a9899e34844c619c232b2d3ad1e5c8
 msgid "You can specify weight::"
-msgstr ""
+msgstr "重みを指定することができます。::"
 
 # 481e916d02df461886db702e64f3d75d
 msgid ""
 "For score function that requires one or more parameters such as :doc:`/"
 "reference/scorers/scorer_tf_at_most`::"
 msgstr ""
+":doc:`/reference/scorers/scorer_tf_at_most` のように引数が必要なスコアー関数"
+"もあります。::"
 
 msgid ""
 "You can use different score function for each :ref:`select-match-columns`::"
@@ -18294,6 +18314,11 @@ msgid ""
 "But the actual ``_score`` is ``2``. Because the ``select`` command uses TF-"
 "IDF based scorer ``scorer_tf_idf()``."
 msgstr ""
+"``Groonga! Groonga! Groonga! Groonga is very fast!`` には ``Groonga`` が4つ含"
+"まれています。デフォルトのTFベースのスコアラーを使うと、 ``_score`` は ``4`` "
+"です。しかし、実際は ``_score`` は ``2`` になります。なぜなら、この "
+"``select`` コマンドはTF-IDFベースの  ``scorer_tf_idf()`` スコアラーを使ってい"
+"るからです。"
 
 msgid "Here is an example that uses weight:"
 msgstr "以下は重みを使った例です。"
@@ -18304,6 +18329,8 @@ msgid ""
 "``_score``. It had ``2`` as ``_score`` in the previous example that doesn't "
 "specify weight."
 msgstr ""
+"``Groonga! Groonga! Groonga! Groonga is very fast!`` の ``_score`` は ``22`` "
+"です。重みを指定していない前の例では ``_score`` は ``2`` でした。"
 
 # 3242a06dcbd649aca6c943795cdaf053
 msgid ""
@@ -18311,6 +18338,10 @@ msgid ""
 "reference/scorers/scorer_tf_at_most` scorer requires one argument. You can "
 "limit TF score by the scorer."
 msgstr ""
+"以下は必ず引数を1つ指定しなければいけないスコアラーを使う例です。 :doc:`/"
+"reference/scorers/scorer_tf_at_most` スコアラーには引数を1つ指定しなければい"
+"けません。このスコアラーを使うと、TFのスコアーの最大値を制限することができま"
+"す。"
 
 # 02cd9a4624a34c9280b537e2415cacb4
 msgid ""
@@ -18319,8 +18350,13 @@ msgid ""
 "``4``. But the actual ``_score`` is ``2``. Because the scorer used in the "
 "``select`` command limits the maximum score value to ``2``."
 msgstr ""
+"``Groonga! Groonga! Groonga! Groonga is very fast!`` は ``Groonga`` を4つ含ん"
+"でいます。もし、デフォルトのスコアラーである標準のTFベースのスコアラーを使っ"
+"ていた場合、 ``_score`` は ``4`` になります。しかし、実際の ``_score`` は "
+"``2`` です。なぜなら、この ``select`` コマンドが使っているスコアラーは最大ス"
+"コアーを ``2`` に制限しているからです。"
 
-msgid "Here is an example that uses multiple scorers::"
+msgid "Here is an example that uses multiple scorers:"
 msgstr "以下は複数のスコアラーを使う例です。"
 
 # 09dac15dbe374f57b42402a658668d9f
@@ -18328,13 +18364,18 @@ msgid ""
 "The ``--match_columns`` uses ``scorer_tf_idf(title)`` and "
 "``scorer_tf_at_most(content, 2.0)``. ``_score`` value is sum of them."
 msgstr ""
+"この ``--match_columns`` は ``scorer_tf_idf(title)`` と "
+"``scorer_tf_at_most(content, 2.0)`` を使っています。 ``_score`` の値はこれら2"
+"つの値の合計になります。"
 
-# 4935322f841e4151bb667e8341fbe005
 msgid ""
 "You can use the default scorer and custom scorer in the same ``--"
 "match_columns``. You can use the default scorer by just specifying a match "
-"column::"
+"column:"
 msgstr ""
+"同じ ``--match_columns`` の中でデフォルトのスコアラーとカスタムスコアラーを使"
+"うことができます。単にマッチ対象のカラムを指定するとデフォルトのスコアラーを"
+"使います。"
 
 # 5b2b78f6154a46bc9a8e2e863790d624
 msgid ""
@@ -18342,6 +18383,9 @@ msgid ""
 "`/reference/scorers/scorer_tf_at_most` for ``content``. ``_score`` value is "
 "sum of them."
 msgstr ""
+"この ``--match_columns`` は ``title`` にはデフォルトのスコアラー（TF）を使"
+"い、 ``content`` には :doc:`/reference/scorers/scorer_tf_at_most` を使いま"
+"す。 ``_score`` の値はこれらのスコアラーの結果の合計になります。"
 
 msgid "Built-in scorers"
 msgstr "組み込みスコアラー"
@@ -18359,15 +18403,21 @@ msgstr "スコアラーは実験的な機能です。"
 # 04fc633c12794541886c0d1da4a10360
 msgid "``scorer_tf_at_most`` is a scorer based on TF (term frequency)."
 msgstr ""
+"``scorer_tf_at_most`` はTF（term frequency。単語の出現数）ベースのスコアラー"
+"です。"
 
 msgid "``scorer_tf_idf``"
 msgstr ""
 
 # 0dead751464842c79ced4fd44c575a25
 msgid ""
-"``scorer_tf_idf`` is a scorer based of `TF-IDF <http://en.wikipedia.org/wiki/"
-"Tf%E2%80%93idf>`_ (term frequency-inverse document frequency) score function."
+"``scorer_tf_idf`` is a scorer based of `TF-IDF <https://en.wikipedia.org/"
+"wiki/Tf%E2%80%93idf>`_ (term frequency-inverse document frequency) score "
+"function."
 msgstr ""
+"``scorer_tf_idf`` は `TF-IDF <https://en.wikipedia.org/wiki/Tf"
+"%E2%80%93idf>`_ （term frequency-inverse document frequency。その文書中での単"
+"語の出現数を、その単語を文書の数で割ったもの）ベースのスコアー関数です。"
 
 # 08b0bf10f21f4fc497765fc271a90a8e
 msgid ""
@@ -18376,36 +18426,52 @@ msgid ""
 "\"TF divided by DF\" means that \"the number of occurrences of important "
 "term is more important\"."
 msgstr ""
+"簡単に言うと、TF-IDFとはTF（term frequency。その文書中での単語出現数）を"
+"DF（document frequency。その単語を含むドキュメント数）で割ったものです。"
+"「TF」は「単語がたくさん出現している方がより重要」という意味を表します。「TF"
+"をDFで割る」というのは「重要な単語がたくさん出現している方がより重要」という"
+"意味を表します。"
 
 # 49a1f39c10964f20985c42336945a33b
 msgid ""
 "The default score function in Groonga is TF (term frequency). It doesn't "
 "care about term importance but is fast."
 msgstr ""
+"Groongaのデフォルトのスコアー関数はTF（term frequency。単語の出現数）です。こ"
+"の関数は単語の重要度は考慮しませんが高速です。"
 
 # a07f30b4e1dd4cb4b2690b2c2771fae3
 msgid "TF-IDF cares about term importance but is slower than TF."
-msgstr ""
+msgstr "TF-IDFは単語の重要度を考慮しますが、TFより遅くなります。"
 
 # d2b62f9460124ed0b5f1eff91a1e02d6
 msgid ""
 "TF-IDF will compute more suitable score rather than TF for many cases. But "
 "it's not perfect."
 msgstr ""
+"TF-IDFは多くの場合でTFよりも適切なスコアーを計算しますが、完璧ではありませ"
+"ん。"
 
 # 77c24913f6944f0181e93a2be8a4bf84
 msgid ""
 "If document contains many same keywords such as \"They are keyword, keyword, "
-"keyword ... and keyword\". It increases score by TF and TF-IDF. Search "
+"keyword ... and keyword\", it increases score by TF and TF-IDF. Search "
 "engine spammer may use the technique. But TF-IDF doesn't guard from the "
 "technique."
 msgstr ""
+"「They are keyword, keyword, keyword ... and keyword」のように文書中に同じ"
+"キーワードがたくさん含まれている場合、TFでもTF-IDFでもスコアーが増えます。検"
+"索エンジンのスパマーはこのテクニックを使うかもしれません。しかし、TF-IDFはこ"
+"のテクニックを防ぐことができません。"
 
 # 54598f0d259c490eb8482793e0eb0dcc
 msgid ""
-"`Okapi BM25 <http://en.wikipedia.org/wiki/Okapi_BM25>`_ can solve the case. "
+"`Okapi BM25 <https://en.wikipedia.org/wiki/Okapi_BM25>`_ can solve the case. "
 "But it's more slower than TF-IDF and not implemented yet in Groonga."
 msgstr ""
+"`Okapi BM25 <https://en.wikipedia.org/wiki/Okapi_BM25>`_ はこのケースを解決で"
+"きます。しかし、TF-IDFよりも遅くなります。また、Groongaではまだ実装されていま"
+"せん。"
 
 msgid "This section describes how to use this scorer."
 msgstr "このセクションではscorerの使い方について説明します。"
@@ -18426,6 +18492,12 @@ msgid ""
 "``1``. Term that is included in less documents means that the term is more "
 "characteristic term. Characteristic term is important term."
 msgstr ""
+"``Info Info Info`` には ``Info`` という単語が3回もでてきますが、 ``Info Info "
+"Info`` も ``Error`` もどちらもスコアーは ``2`` です。なぜなら、 ``Error`` は "
+"``Info`` よりもより重要な単語だからです。 ``Info`` を含むドキュメントの数は "
+"``4`` です。 ``Error`` を含むドキュメントの数は ``1`` です。少しのドキュメン"
+"トにしか含まれていない単語はより特徴的な単語です。特徴的な単語は重要な単語で"
+"す。"
 
 # 2090a41517f14934ba2beeb73556310b
 msgid ":doc:`../scorer`"
@@ -18439,21 +18511,28 @@ msgid ""
 "highly depends on search query. You may be able to use metadata of matched "
 "record."
 msgstr ""
+"スコアー関数だけでスコアの計算をする必要はありません。スコアー関数は検索クエ"
+"リーに非常に依存しています。検索クエリーだけでなく、マッチしたレコードのメタ"
+"データも使えないか検討しましょう。"
 
 # 234fd16a9c2c4521aa34547eb97c8264
 # d2e796c8b27c46e5b2d444478594ac01
 # 5db2b8df86eb41c797999b78ddb57fe8
 msgid ""
-"For example, Google uses `PageRank <http://en.wikipedia.org/wiki/PageRank>`_ "
-"for scoring. You may be able to use data type (\"title\" data are important "
-"rather than \"memo\" data), tag, geolocation and so on."
+"For example, Google uses `PageRank <https://en.wikipedia.org/wiki/"
+"PageRank>`_ for scoring. You may be able to use data type (\"title\" data "
+"are important rather than \"memo\" data), tag, geolocation and so on."
 msgstr ""
+"たとえば、Googleはスコアーの計算に `ページランク <https://ja.wikipedia.org/"
+"wiki/%E3%83%9A%E3%83%BC%E3%82%B8%E3%83%A9%E3%83%B3%E3%82%AF>`_ を使っていま"
+"す。あなたも、データの種類（たとえば、「メモ」データよりも「タイトル」データ"
+"の方が重要など）、タグ、位置情報などを使えないか検討してみましょう。"
 
 # 52a4d5186b54437ea4e23fe4738a6b79
 # c47c62b2763b4b91aabe70a511609e97
 # 783d9c2eba194e41ad08da84fce8f862
 msgid "Please stop to think about only score function for scoring."
-msgstr ""
+msgstr "スコアーの計算をスコアー関数だけで考えることはやめましょう。"
 
 # 10554355660e4dd598895dbf8a619c45
 msgid "Sharding"

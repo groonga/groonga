@@ -18,7 +18,7 @@ Summary
 -------
 
 ``scorer_tf_idf`` is a scorer based of `TF-IDF
-<http://en.wikipedia.org/wiki/Tf%E2%80%93idf>`_ (term
+<https://en.wikipedia.org/wiki/Tf%E2%80%93idf>`_ (term
 frequency-inverse document frequency) score function.
 
 To put it simply, TF (term frequency) divided by DF (document
@@ -35,11 +35,11 @@ TF-IDF will compute more suitable score rather than TF for many cases.
 But it's not perfect.
 
 If document contains many same keywords such as "They are keyword,
-keyword, keyword ... and keyword". It increases score by TF and
+keyword, keyword ... and keyword", it increases score by TF and
 TF-IDF. Search engine spammer may use the technique. But TF-IDF
 doesn't guard from the technique.
 
-`Okapi BM25 <http://en.wikipedia.org/wiki/Okapi_BM25>`_ can solve the
+`Okapi BM25 <https://en.wikipedia.org/wiki/Okapi_BM25>`_ can solve the
 case. But it's more slower than TF-IDF and not implemented yet in
 Groonga.
 
