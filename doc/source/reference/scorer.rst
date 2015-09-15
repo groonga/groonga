@@ -177,7 +177,7 @@ scorer, ``_score`` is ``4``. But the actual ``_score`` is ``2``.
 Because the scorer used in the ``select`` command limits the maximum
 score value to ``2``.
 
-Here is an example that uses multiple scorers::
+Here is an example that uses multiple scorers:
 
 .. groonga-command
 .. include:: ../example/reference/scorer/usage_multiple_scorers.log
@@ -192,7 +192,7 @@ The ``--match_columns`` uses ``scorer_tf_idf(title)`` and
 
 You can use the default scorer and custom scorer in the same
 ``--match_columns``. You can use the default scorer by just specifying
-a match column::
+a match column:
 
 .. groonga-command
 .. include:: ../example/reference/scorer/usage_default_and_custom_scorers.log
