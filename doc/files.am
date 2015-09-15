@@ -1788,7 +1788,6 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/scorer.txt \
 	html/_sources/reference/scorers/scorer_tf_at_most.txt \
 	html/_sources/reference/scorers/scorer_tf_idf.txt \
-	html/_sources/reference/scoring_note.txt \
 	html/_sources/reference/sharding.txt \
 	html/_sources/reference/suggest.txt \
 	html/_sources/reference/suggest/completion.txt \
@@ -2024,7 +2023,6 @@ html_files_relative_from_locale_dir = \
 	html/reference/scorer.html \
 	html/reference/scorers/scorer_tf_at_most.html \
 	html/reference/scorers/scorer_tf_idf.html \
-	html/reference/scoring_note.html \
 	html/reference/sharding.html \
 	html/reference/suggest.html \
 	html/reference/suggest/completion.html \
