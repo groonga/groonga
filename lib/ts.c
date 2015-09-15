@@ -1082,8 +1082,6 @@ grn_ts_op_multiplication_float(grn_ts_float lhs, grn_ts_float rhs) {
   return lhs * rhs;
 }
 
-/* TODO: Division and modulus (Note for division by zero). */
-
 /*
  * grn_ts_op_division_int() returns lhs / rhs.
  *
@@ -2988,7 +2986,7 @@ grn_ts_op_division_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 /* grn_ts_op_modulus_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_op_modulus_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                        const grn_ts_record *in, size_t n_in, void *out) {
+                           const grn_ts_record *in, size_t n_in, void *out) {
   switch (node->data_kind) {
     case GRN_TS_INT: {
       /* Specialized to detect a critical error. */
