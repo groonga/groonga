@@ -1084,6 +1084,42 @@ grn_ts_op_multiplication_float(grn_ts_float lhs, grn_ts_float rhs) {
 
 /* TODO: Division and modulus (Note for division by zero). */
 
+/*
+ * grn_ts_op_division_int() returns lhs / rhs.
+ *
+ * This function causes a critical error in the following cases:
+ * - rhs == 0
+ * - (lhs == INT64_MIN) && (rhs == -1)
+ */
+inline static grn_ts_int
+grn_ts_op_division_int(grn_ts_int lhs, grn_ts_int rhs) {
+  return lhs / rhs;
+}
+
+/* grn_ts_op_division_float() returns lhs / rhs. */
+inline static grn_ts_float
+grn_ts_op_division_float(grn_ts_float lhs, grn_ts_float rhs) {
+  return lhs / rhs;
+}
+
+/*
+ * grn_ts_op_modulus_int() returns lhs % rhs.
+ *
+ * This function causes a critical error in the following cases:
+ * - rhs == 0
+ * - (lhs == INT64_MIN) && (rhs == -1)
+ */
+inline static grn_ts_int
+grn_ts_op_modulus_int(grn_ts_int lhs, grn_ts_int rhs) {
+  return lhs % rhs;
+}
+
+/* grn_ts_op_modulus_float() returns lhs % rhs. */
+inline static grn_ts_float
+grn_ts_op_modulus_float(grn_ts_float lhs, grn_ts_float rhs) {
+  return fmod(lhs, rhs);
+}
+
 /*-------------------------------------------------------------
  * Groonga objects.
  */
@@ -3266,6 +3302,20 @@ grn_ts_op_multiplication_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
                                 grn_ts_record *io, size_t n_io) {
   GRN_TS_OP_ARITH_FILTER(multiplication)
 }
+
+/* grn_ts_op_division_adjust() updates scores. */
+static grn_rc
+grn_ts_op_division_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                          grn_ts_record *io, size_t n_io) {
+  GRN_TS_OP_ARITH_FILTER(division)
+}
+
+/* grn_ts_op_modulus_adjust() updates scores. */
+static grn_rc
+grn_ts_op_modulus_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                         grn_ts_record *io, size_t n_io) {
+  GRN_TS_OP_ARITH_FILTER(modulus)
+}
 #undef GRN_TS_OP_ARITH_FILTER
 
 /* grn_ts_expr_op_node_adjust() updates scores. */
@@ -3281,6 +3331,12 @@ grn_ts_expr_op_node_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
     }
     case GRN_TS_OP_MULTIPLICATION: {
       return grn_ts_op_multiplication_adjust(ctx, node, io, n_io);
+    }
+    case GRN_TS_OP_DIVISION: {
+      return grn_ts_op_division_adjust(ctx, node, io, n_io);
+    }
+    case GRN_TS_OP_MODULUS: {
+      return grn_ts_op_modulus_adjust(ctx, node, io, n_io);
     }
     // TODO: Add operators.
     default: {
