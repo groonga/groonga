@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-09-15 11:50+0900\n"
+"PO-Revision-Date: 2015-09-15 14:19+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -18419,6 +18419,105 @@ msgstr ""
 "``scorer_tf_at_most`` はTF（term frequency。単語の出現数）ベースのスコアラー"
 "です。"
 
+# e08f8ce9095042b3838ab191a44762dc
+msgid ""
+"TF based scorer includes TF-IDF based scorer has a problem for the following "
+"case:"
+msgstr ""
+"TF-IDFベースのスコアラーを含むTFベースのスコアラーは次のケースに対して適して"
+"いません。"
+
+# 5aeb338808ec4d4f8be0dedb58166c55
+msgid ""
+"If document contains many same keywords such as \"They are keyword, keyword, "
+"keyword ... and keyword\", the document has high score. It's not expected. "
+"Search engine spammer may use the technique."
+msgstr ""
+"文書中に「They are keyword, keyword, keyword ... and keyword」というように同"
+"じキーワードが大量に含まれているとその文書のスコアーが高くなってしまいます。"
+"これは意図した挙動ではありません。検索エンジンのスパマーはこのテクニックを使"
+"うかもしれません。"
+
+# 04fc633c12794541886c0d1da4a10360
+msgid "``scorer_tf_at_most`` is a TF based scorer but it can solve the case."
+msgstr ""
+"``scorer_tf_at_most`` はTFベースのスコアラーですが、このケースを解決できま"
+"す。"
+
+msgid ""
+"``scorer_tf_at_most`` limits the maximum score value. It means that "
+"``scorer_tf_at_most`` limits effect of a match."
+msgstr ""
+"``scorer_tf_at_most`` はスコアーの最大値を制限します。つまり、 "
+"``scorer_tf_at_most`` は1つのマッチの影響を制限することができるということで"
+"す。"
+
+# 5aeb338808ec4d4f8be0dedb58166c55
+msgid ""
+"If document contains many same keywords such as \"They are keyword, keyword, "
+"keyword ... and keyword\", ``scorer_tf_at_most(column, 2.0)`` returns at "
+"most ``2`` as score."
+msgstr ""
+"文書中に「They are keyword, keyword, keyword ... and keyword」というように同"
+"じキーワードが大量に含まれていても、 ``scorer_tf_at_most(column, 2.0)`` はス"
+"コアーの値として大きくても ``2`` しか返しません。"
+
+msgid "This scorer has two parameters::"
+msgstr "このスコアラーの引数は1つです。::"
+
+msgid "This section describes how to use this scorer."
+msgstr "このセクションではscorerの使い方について説明します。"
+
+msgid ""
+"You specify ``scorer_tf_at_most`` in :ref:`select-match-columns` like the "
+"following:"
+msgstr ""
+"次のように :ref:`select-match-columns` で ``scorer_tf_at_most`` を指定しま"
+"す。"
+
+msgid ""
+"If a document has three or more ``Notice`` terms, its score is ``3``. "
+"Because the ``select`` specify ``3.0`` as the max score."
+msgstr ""
+"もし、文書が ``Notice`` という単語を3個以上含んでいたら、スコアーは ``3`` に"
+"なります。なぜなら、この ``select`` ではスコアーの最大値を ``3.0`` と指定して"
+"いるからです。"
+
+msgid ""
+"If a document has one or two ``Notice`` terms, its score is ``1`` or ``2``. "
+"Because the score is less than ``3.0`` specified as the max score."
+msgstr ""
+"もし、文書が ``Notice`` という単語を1つか2つしか含んでいなかったら、スコアー"
+"は ``1`` か ``2`` になります。なぜなら、スコアーが指定された最大値 ``3.0`` よ"
+"り小さいからです。"
+
+msgid "The data column that is match target. The data column must be indexed."
+msgstr ""
+"マッチ対象のデータカラムです。このデータカラムにはインデックスが張られていな"
+"ければいけません。"
+
+msgid "The index column to be used for search."
+msgstr "検索に使うインデックスカラムです。"
+
+msgid "This scorer returns score as :ref:`builtin-type-float`."
+msgstr "このスコアラーは :ref:`builtin-type-float` でスコアーの値を返します。"
+
+msgid ""
+":doc:`/reference/commands/select` returns ``_score`` as ``Int32`` not "
+"``Float``. Because it casts to ``Int32`` from ``Float`` for keeping backward "
+"compatibility."
+msgstr ""
+":doc:`/reference/commands/select` は ``Float`` ではなく ``Int32`` で "
+"``_score`` を返します。これは、後方互換性を維持するために ``Float`` から "
+"``Int32`` にキャストしているためです。"
+
+msgid "Score is computed as TF with limitation."
+msgstr "スコアーは制限つきのTFで計算します。"
+
+# 2090a41517f14934ba2beeb73556310b
+msgid ":doc:`../scorer`"
+msgstr ""
+
 msgid "``scorer_tf_idf``"
 msgstr ""
 
@@ -18486,8 +18585,16 @@ msgstr ""
 "きます。しかし、TF-IDFよりも遅くなります。また、Groongaではまだ実装されていま"
 "せん。"
 
-msgid "This section describes how to use this scorer."
-msgstr "このセクションではscorerの使い方について説明します。"
+# 04fc633c12794541886c0d1da4a10360
+msgid ""
+"Groonga provides :doc:`scorer_tf_at_most` scorer that can also solve the "
+"case."
+msgstr ""
+"Groongaは ``scorer_tf_at_most`` スコアラーという別の方法でこのケースを解決で"
+"きるスコアラーを提供空いています。"
+
+msgid "This scorer has only one parameter::"
+msgstr "このスコアラーの引数は1つです。::"
 
 msgid ""
 "You specify ``scorer_tf_idf`` in :ref:`select-match-columns` like the "
@@ -18512,9 +18619,8 @@ msgstr ""
 "トにしか含まれていない単語はより特徴的な単語です。特徴的な単語は重要な単語で"
 "す。"
 
-# 2090a41517f14934ba2beeb73556310b
-msgid ":doc:`../scorer`"
-msgstr ""
+msgid "Score is computed as TF-IDF based algorithm."
+msgstr "スコアーはTF-IDFベースのアルゴリズムで計算します。"
 
 # 4e2cdd1281e24007a11f361eba5dc477
 # fcc323832fe44653ba13e8a55c065eb7
@@ -20855,13 +20961,6 @@ msgstr "組込型"
 msgid "The following types are defined as builtin types."
 msgstr "以下の型が組込型としてあらかじめ定義されています。"
 
-msgid "``Object``"
-msgstr ""
-
-# 57661c9028254179a17c4e5f7424e43f
-msgid "All records that belong to any table. [#]_"
-msgstr "以下の型が組込型としてあらかじめ定義されています。 [#]_"
-
 msgid "``Bool``"
 msgstr ""
 
@@ -21030,10 +21129,14 @@ msgstr ""
 
 msgid ""
 "度分秒形式でx度y分z秒となる経度・緯度は、(((x * 60) + y) * 60 + z) * 1000とい"
-"う計算式でミリ秒単位へと変換されます。 :doc:`/reference/commands/load` コマン"
-"ドで値を格納するときは、\"ミリ秒単位の経度xミリ秒単位の緯度\" もしくは \"経度"
-"の小数表記x緯度の小数表記\" という文字列表現を使って指定します。経度と緯度の"
-"区切りとしては、'x' のほかに ',' を使うことができます。"
+"う計算式でミリ秒単位へと変換されます。"
+msgstr ""
+
+msgid ""
+":doc:`/reference/commands/load` コマンドで値を格納するときは、\"ミリ秒単位の"
+"経度xミリ秒単位の緯度\" もしくは \"経度の小数表記x緯度の小数表記\" という文字"
+"列表現を使って指定します。経度と緯度の区切りとしては、'x' のほかに ',' を使う"
+"ことができます。"
 msgstr ""
 
 msgid ""
@@ -21079,7 +21182,4 @@ msgid ""
 "テーブル型は、ベクターとして格納することができます。よって、ShortTextのベク"
 "ターを検索条件やドリルダウン条件に使用したい場合には、主キーがShortText型の"
 "テーブルを別途作成し、そのテーブルを型として利用します。"
-msgstr ""
-
-msgid "Object型はv1.2でサポートされます。"
 msgstr ""
