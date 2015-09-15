@@ -176,6 +176,23 @@ grn_ts_buf_write(grn_ctx *ctx, grn_ts_buf *buf, const void *ptr, size_t size) {
  * Built-in data kinds.
  */
 
+typedef union {
+  grn_ts_bool as_bool;
+  grn_ts_int as_int;
+  grn_ts_float as_float;
+  grn_ts_time as_time;
+  grn_ts_text as_text;
+  grn_ts_geo_point as_geo_point;
+  grn_ts_ref as_ref;
+  grn_ts_bool_vector as_bool_vector;
+  grn_ts_int_vector as_int_vector;
+  grn_ts_float_vector as_float_vector;
+  grn_ts_time_vector as_time_vector;
+  grn_ts_text_vector as_text_vector;
+  grn_ts_geo_point_vector as_geo_point_vector;
+  grn_ts_ref_vector as_ref_vector;
+} grn_ts_any;
+
 /* grn_ts_bool_is_valid() returns whether a value is valid or not. */
 inline static grn_bool
 grn_ts_bool_is_valid(grn_ts_bool value) {
@@ -1672,20 +1689,7 @@ grn_ts_expr_value_node_adjust(grn_ctx *ctx, grn_ts_expr_value_node *node,
 
 typedef struct {
   GRN_TS_EXPR_NODE_COMMON_MEMBERS
-  union {
-    grn_ts_bool bool_value;
-    grn_ts_int int_value;
-    grn_ts_float float_value;
-    grn_ts_time time_value;
-    grn_ts_text text_value;
-    grn_ts_geo_point geo_point_value;
-    grn_ts_bool_vector bool_vector_value;
-    grn_ts_int_vector int_vector_value;
-    grn_ts_float_vector float_vector_value;
-    grn_ts_time_vector time_vector_value;
-    grn_ts_text_vector text_vector_value;
-    grn_ts_geo_point_vector geo_point_vector_value;
-  } content;
+  grn_ts_any content;
   grn_ts_buf text_buf;
   grn_ts_buf vector_buf;
 } grn_ts_expr_const_node;
@@ -1708,7 +1712,7 @@ grn_ts_expr_const_node_fin(grn_ctx *ctx, grn_ts_expr_const_node *node) {
 
 #define GRN_TS_EXPR_CONST_NODE_SET_SCALAR_CASE_BLOCK(KIND, kind)\
   case GRN_TS_ ## KIND: {\
-    node->content.kind ## _value = *(const grn_ts_ ## kind *)value;\
+    node->content.as_ ## kind = *(const grn_ts_ ## kind *)value;\
     return GRN_SUCCESS;\
   }
 /* grn_ts_expr_const_node_set_scalar() sets a scalar value. */
@@ -1727,8 +1731,8 @@ grn_ts_expr_const_node_set_scalar(grn_ctx *ctx, grn_ts_expr_const_node *node,
       if (rc != GRN_SUCCESS) {
         return rc;
       }
-      node->content.text_value.ptr = (const char *)node->text_buf.ptr;
-      node->content.text_value.size = text_value.size;
+      node->content.as_text.ptr = (const char *)node->text_buf.ptr;
+      node->content.as_text.size = text_value.size;
       return GRN_SUCCESS;
     }
     GRN_TS_EXPR_CONST_NODE_SET_SCALAR_CASE_BLOCK(GEO_POINT, geo_point)
@@ -1751,8 +1755,8 @@ grn_ts_expr_const_node_set_scalar(grn_ctx *ctx, grn_ts_expr_const_node *node,
       return rc;\
     }\
     buf_ptr = (const grn_ts_ ## kind *)node->vector_buf.ptr;\
-    node->content.kind ## _vector_value.ptr = buf_ptr;\
-    node->content.kind ## _vector_value.size = vector.size;\
+    node->content.as_ ## kind ## _vector.ptr = buf_ptr;\
+    node->content.as_ ## kind ## _vector.size = vector.size;\
     return GRN_SUCCESS;\
   }
 /* grn_ts_expr_const_node_set_vector() sets a vector value. */
@@ -1792,8 +1796,8 @@ grn_ts_expr_const_node_set_vector(grn_ctx *ctx, grn_ts_expr_const_node *node,
         vector_buf[i].size = vector.ptr[i].size;
         offset += vector.ptr[i].size;
       }
-      node->content.text_vector_value.ptr = vector_buf;
-      node->content.text_vector_value.size = vector.size;
+      node->content.as_text_vector.ptr = vector_buf;
+      node->content.as_text_vector.size = vector.size;
       return GRN_SUCCESS;
     }
     GRN_TS_EXPR_CONST_NODE_SET_VECTOR_CASE_BLOCK(GEO_POINT, geo_point)
@@ -1842,7 +1846,7 @@ grn_ts_expr_const_node_close(grn_ctx *ctx, grn_ts_expr_const_node *node) {
     size_t i;\
     grn_ts_ ## kind *out_ptr = (grn_ts_ ## kind *)out;\
     for (i = 0; i < n_in; i++) {\
-      out_ptr[i] = node->content.kind ## _value;\
+      out_ptr[i] = node->content.as_ ## kind;\
     }\
     return GRN_SUCCESS;\
   }
@@ -1879,7 +1883,7 @@ static grn_rc
 grn_ts_expr_const_node_filter(grn_ctx *ctx, grn_ts_expr_const_node *node,
                               grn_ts_record *in, size_t n_in,
                               grn_ts_record *out, size_t *n_out) {
-  if (node->content.bool_value) {
+  if (node->content.as_bool) {
     if (in != out) {
       size_t i;
       for (i = 0; i < n_in; i++) {
@@ -1898,7 +1902,7 @@ static grn_rc
 grn_ts_expr_const_node_adjust(grn_ctx *ctx, grn_ts_expr_const_node *node,
                               grn_ts_record *io, size_t n_io) {
   size_t i;
-  grn_ts_score score = (grn_ts_score)node->content.float_value;
+  grn_ts_score score = (grn_ts_score)node->content.as_float;
   for (i = 0; i < n_io; i++) {
     io[i].score = score;
   }
@@ -3264,13 +3268,8 @@ typedef grn_ts_expr_token grn_ts_expr_end_token;
 typedef struct {
   GRN_TS_EXPR_TOKEN_COMMON_MEMBERS
   grn_ts_data_kind data_kind;
-  union {
-    grn_ts_bool bool_value;   /* GRN_TS_EXPR_BOOL_TOKEN. */
-    grn_ts_int int_value;     /* GRN_TS_EXPR_INT_TOKEN. */
-    grn_ts_float float_value; /* GRN_TS_EXPR_FLOAT_TOKEN. */
-    grn_ts_text text_value;   /* GRN_TS_EXPR_TEXT_TOKEN. */
-  } content;
-  grn_ts_buf buf;             /* Buffer for content.text_value. */
+  grn_ts_any content;
+  grn_ts_buf buf;             /* Buffer for content.as_text. */
 } grn_ts_expr_const_token;
 
 typedef grn_ts_expr_token grn_ts_expr_name_token;
@@ -3692,7 +3691,7 @@ grn_ts_expr_parser_tokenize_number(grn_ctx *ctx, grn_ts_expr_parser *parser,
     if (rc == GRN_SUCCESS) {
       const_token = (grn_ts_expr_const_token *)new_token;
       const_token->data_kind = GRN_TS_INT;
-      const_token->content.int_value = int_value;
+      const_token->content.as_int = int_value;
     }
   } else {
     grn_ts_float float_value = strtod(buf, &end);
@@ -3702,7 +3701,7 @@ grn_ts_expr_parser_tokenize_number(grn_ctx *ctx, grn_ts_expr_parser *parser,
     if (rc == GRN_SUCCESS) {
       const_token = (grn_ts_expr_const_token *)new_token;
       const_token->data_kind = GRN_TS_FLOAT;
-      const_token->content.float_value = float_value;
+      const_token->content.as_float = float_value;
     }
   }
   GRN_FREE(buf);
@@ -3757,11 +3756,11 @@ grn_ts_expr_parser_tokenize_text(grn_ctx *ctx, grn_ts_expr_parser *parser,
       }
       buf_ptr[i] = str_ptr[i];
     }
-    const_token->content.text_value.ptr = buf_ptr;
-    const_token->content.text_value.size = size;
+    const_token->content.as_text.ptr = buf_ptr;
+    const_token->content.as_text.size = size;
   } else {
-    const_token->content.text_value.ptr = token_str.ptr + 1;
-    const_token->content.text_value.size = token_str.size - 2;
+    const_token->content.as_text.ptr = token_str.ptr + 1;
+    const_token->content.as_text.size = token_str.size - 2;
   }
   *token = new_token;
   return GRN_SUCCESS;
@@ -3793,9 +3792,9 @@ grn_ts_expr_parser_tokenize_name(grn_ctx *ctx, grn_ts_expr_parser *parser,
     const_token = (grn_ts_expr_const_token *)new_token;
     const_token->data_kind = GRN_TS_BOOL;
     if (token_str.ptr[0] == 't') {
-      const_token->content.bool_value = GRN_TRUE;
+      const_token->content.as_bool = GRN_TRUE;
     } else {
-      const_token->content.bool_value = GRN_FALSE;
+      const_token->content.as_bool = GRN_FALSE;
     }
   } else {
     rc = grn_ts_expr_name_token_open(ctx, token_str, &new_token);
@@ -4038,22 +4037,22 @@ grn_ts_expr_parser_analyze(grn_ctx *ctx, grn_ts_expr_parser *parser) {
         switch (const_token->data_kind) {
           case GRN_TS_BOOL: {
             rc = grn_ts_expr_push_bool(ctx, parser->expr,
-                                       const_token->content.bool_value);
+                                       const_token->content.as_bool);
             break;
           }
           case GRN_TS_INT: {
             rc = grn_ts_expr_push_int(ctx, parser->expr,
-                                      const_token->content.int_value);
+                                      const_token->content.as_int);
             break;
           }
           case GRN_TS_FLOAT: {
             rc = grn_ts_expr_push_float(ctx, parser->expr,
-                                        const_token->content.float_value);
+                                        const_token->content.as_float);
             break;
           }
           case GRN_TS_TEXT: {
             rc = grn_ts_expr_push_text(ctx, parser->expr,
-                                       const_token->content.text_value);
+                                       const_token->content.as_text);
             break;
           }
           default: {
