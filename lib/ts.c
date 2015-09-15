@@ -1046,6 +1046,44 @@ grn_ts_op_greater_equal_text_vector(grn_ts_text_vector lhs,
 }
 #undef GRN_TS_OP_GREATER_EQUAL_VECTOR
 
+/* grn_ts_op_plus_int() returns lhs + rhs. */
+inline static grn_ts_int
+grn_ts_op_plus_int(grn_ts_int lhs, grn_ts_int rhs) {
+  return lhs + rhs;
+}
+
+/* grn_ts_op_plus_float() returns lhs + rhs. */
+inline static grn_ts_float
+grn_ts_op_plus_float(grn_ts_float lhs, grn_ts_float rhs) {
+  return lhs + rhs;
+}
+
+/* grn_ts_op_minus_int() returns lhs - rhs. */
+inline static grn_ts_int
+grn_ts_op_minus_int(grn_ts_int lhs, grn_ts_int rhs) {
+  return lhs - rhs;
+}
+
+/* grn_ts_op_minus_float() returns lhs - rhs. */
+inline static grn_ts_float
+grn_ts_op_minus_float(grn_ts_float lhs, grn_ts_float rhs) {
+  return lhs - rhs;
+}
+
+/* grn_ts_op_multiplication_int() returns lhs * rhs. */
+inline static grn_ts_int
+grn_ts_op_multiplication_int(grn_ts_int lhs, grn_ts_int rhs) {
+  return lhs * rhs;
+}
+
+/* grn_ts_op_multiplication_float() returns lhs * rhs. */
+inline static grn_ts_float
+grn_ts_op_multiplication_float(grn_ts_float lhs, grn_ts_float rhs) {
+  return lhs * rhs;
+}
+
+/* TODO: Division and modulus (Note for division by zero). */
+
 /*-------------------------------------------------------------
  * Groonga objects.
  */
@@ -2475,6 +2513,37 @@ grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
           return GRN_INVALID_ARGUMENT;
         }
       }
+      /*
+       * TODO: Time + Int (sec) -> Time
+       *       Time + Float (sec) -> Time
+       *       Int + Time (sec) -> Time
+       *       Float + Time (sec) -> Time
+       */
+      case GRN_TS_OP_PLUS:
+      /*
+       * TODO: Time - Time -> Float (sec)
+       *       Time - Int (sec) -> Float (sec)
+       *       Time - Float (sec) -> Float (sec)
+       */
+      case GRN_TS_OP_MINUS:
+      case GRN_TS_OP_MULTIPLICATION:
+      case GRN_TS_OP_DIVISION:
+      case GRN_TS_OP_MODULUS: {
+        if (node->args[0]->data_kind != node->args[1]->data_kind) {
+          return GRN_INVALID_ARGUMENT;
+        }
+        switch (node->args[0]->data_kind) {
+          case GRN_TS_INT:
+          case GRN_TS_FLOAT: {
+            node->data_kind = node->args[0]->data_kind;
+            node->data_type = grn_ts_data_kind_to_type(node->data_kind);
+            return GRN_SUCCESS;
+          }
+          default: {
+            return GRN_INVALID_ARGUMENT;
+          }
+        }
+      }
     }
     default: {
       return GRN_INVALID_ARGUMENT;
@@ -2780,6 +2849,72 @@ grn_ts_op_greater_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 #undef GRN_TS_OP_CMP_EVALUATE_VECTOR_CASE_BLOCK
 #undef GRN_TS_OP_CMP_EVALUATE_CASE_BLOCK
 
+#define GRN_TS_OP_ARITH_EVALUATE_CASE_BLOCK(type, KIND, kind)\
+  case GRN_TS_ ## KIND: {\
+    /*
+     * Use the output buffer to put evaluation results of the 1st argument,
+     * because the data kind is same.
+     */\
+    size_t i;\
+    grn_rc rc;\
+    grn_ts_ ## kind *out_ptr = (grn_ts_ ## kind *)out;\
+    rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, out);\
+    if (rc == GRN_SUCCESS) {\
+      rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[1],\
+                                            in, n_in, &node->bufs[0]);\
+      if (rc == GRN_SUCCESS) {\
+        grn_ts_ ## kind *buf_ptr = (grn_ts_ ## kind *)node->bufs[0].ptr;\
+        for (i = 0; i < n_in; i++) {\
+          out_ptr[i] = grn_ts_op_ ## type ## _ ## kind(out_ptr[i],\
+                                                       buf_ptr[i]);\
+        }\
+      }\
+    }\
+    return rc;\
+  }
+/* grn_ts_op_plus_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_plus_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                        const grn_ts_record *in, size_t n_in, void *out) {
+  switch (node->data_kind) {
+    GRN_TS_OP_ARITH_EVALUATE_CASE_BLOCK(plus, INT, int)
+    GRN_TS_OP_ARITH_EVALUATE_CASE_BLOCK(plus, FLOAT, float)
+    /* TODO: (Time + Int), (Time + Float), (Int + Time) and (Float + Time). */
+    default: {
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+}
+
+/* grn_ts_op_minus_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_minus_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                        const grn_ts_record *in, size_t n_in, void *out) {
+  switch (node->data_kind) {
+    GRN_TS_OP_ARITH_EVALUATE_CASE_BLOCK(minus, INT, int)
+    GRN_TS_OP_ARITH_EVALUATE_CASE_BLOCK(minus, FLOAT, float)
+    /* TODO: (Time - Time), (Time - Int) and (Time - Float). */
+    default: {
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+}
+
+/* grn_ts_op_multiplication_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_multiplication_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                                  const grn_ts_record *in, size_t n_in,
+                                  void *out) {
+  switch (node->data_kind) {
+    GRN_TS_OP_ARITH_EVALUATE_CASE_BLOCK(multiplication, INT, int)
+    GRN_TS_OP_ARITH_EVALUATE_CASE_BLOCK(multiplication, FLOAT, float)
+    default: {
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+}
+#undef GRN_TS_OP_ARITH_EVALUATE_CASE_BLOCK
+
 /* grn_ts_expr_op_node_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_expr_op_node_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
@@ -2812,6 +2947,15 @@ grn_ts_expr_op_node_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     }
     case GRN_TS_OP_GREATER_EQUAL: {
       return grn_ts_op_greater_equal_evaluate(ctx, node, in, n_in, out);
+    }
+    case GRN_TS_OP_PLUS: {
+      return grn_ts_op_plus_evaluate(ctx, node, in, n_in, out);
+    }
+    case GRN_TS_OP_MINUS: {
+      return grn_ts_op_minus_evaluate(ctx, node, in, n_in, out);
+    }
+    case GRN_TS_OP_MULTIPLICATION: {
+      return grn_ts_op_multiplication_evaluate(ctx, node, in, n_in, out);
     }
     // TODO: Add operators.
     default: {
@@ -3083,11 +3227,61 @@ grn_ts_expr_op_node_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
   }
 }
 
+#define GRN_TS_OP_ARITH_FILTER(type)\
+  size_t i, count = 0;\
+  for (i = 0; i < 2; i++) {\
+    grn_rc rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[i], io, n_io,\
+                                                 &node->bufs[i]);\
+    if (rc != GRN_SUCCESS) {\
+      return rc;\
+    }\
+  }\
+  grn_ts_float *buf_ptrs[] = {\
+    (grn_ts_float *)node->bufs[0].ptr,\
+    (grn_ts_float *)node->bufs[1].ptr\
+  };\
+  for (i = 0; i < n_io; i++) {\
+    grn_ts_float result = grn_ts_op_ ## type ## _float(buf_ptrs[0][i],\
+                                                       buf_ptrs[1][i]);\
+    io[count++].score = (grn_ts_score)result;\
+  }\
+  return GRN_SUCCESS;
+/* grn_ts_op_plus_adjust() updates scores. */
+static grn_rc
+grn_ts_op_plus_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                      grn_ts_record *io, size_t n_io) {
+  GRN_TS_OP_ARITH_FILTER(plus)
+}
+
+/* grn_ts_op_minus_adjust() updates scores. */
+static grn_rc
+grn_ts_op_minus_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                       grn_ts_record *io, size_t n_io) {
+  GRN_TS_OP_ARITH_FILTER(minus)
+}
+
+/* grn_ts_op_multiplication_adjust() updates scores. */
+static grn_rc
+grn_ts_op_multiplication_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                                grn_ts_record *io, size_t n_io) {
+  GRN_TS_OP_ARITH_FILTER(multiplication)
+}
+#undef GRN_TS_OP_ARITH_FILTER
+
 /* grn_ts_expr_op_node_adjust() updates scores. */
 static grn_rc
 grn_ts_expr_op_node_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
                            grn_ts_record *io, size_t n_io) {
   switch (node->op_type) {
+    case GRN_TS_OP_PLUS: {
+      return grn_ts_op_plus_adjust(ctx, node, io, n_io);
+    }
+    case GRN_TS_OP_MINUS: {
+      return grn_ts_op_minus_adjust(ctx, node, io, n_io);
+    }
+    case GRN_TS_OP_MULTIPLICATION: {
+      return grn_ts_op_multiplication_adjust(ctx, node, io, n_io);
+    }
     // TODO: Add operators.
     default: {
       return GRN_OPERATION_NOT_SUPPORTED;
