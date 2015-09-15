@@ -1058,6 +1058,18 @@ grn_ts_op_plus_float(grn_ts_float lhs, grn_ts_float rhs) {
   return lhs + rhs;
 }
 
+/* grn_ts_op_plus_time_int() returns lhs + rhs (Time + Int = Time). */
+inline static grn_ts_time
+grn_ts_op_plus_time_int(grn_ts_time lhs, grn_ts_int rhs) {
+  return lhs + (rhs * 1000000);
+}
+
+/* grn_ts_op_plus_time_float() returns lhs + rhs (Time + Float = Time). */
+inline static grn_ts_time
+grn_ts_op_plus_time_float(grn_ts_time lhs, grn_ts_float rhs) {
+  return lhs + (grn_ts_int)(rhs * 1000000.0);
+}
+
 /* grn_ts_op_minus_int() returns lhs - rhs. */
 inline static grn_ts_int
 grn_ts_op_minus_int(grn_ts_int lhs, grn_ts_int rhs) {
@@ -1068,6 +1080,24 @@ grn_ts_op_minus_int(grn_ts_int lhs, grn_ts_int rhs) {
 inline static grn_ts_float
 grn_ts_op_minus_float(grn_ts_float lhs, grn_ts_float rhs) {
   return lhs - rhs;
+}
+
+/* grn_ts_op_minus_time_time() returns lhs - rhs (Time - Time = Float). */
+inline static grn_ts_float
+grn_ts_op_minus_time_time(grn_ts_time lhs, grn_ts_time rhs) {
+  return (lhs - rhs) * 0.000001;
+}
+
+/* grn_ts_op_minus_time_int() returns lhs - rhs (Time - Int = Time). */
+inline static grn_ts_time
+grn_ts_op_minus_time_int(grn_ts_time lhs, grn_ts_int rhs) {
+  return lhs - (rhs * 1000000);
+}
+
+/* grn_ts_op_minus_time_float() returns lhs - rhs (Time - Float = Time). */
+inline static grn_ts_time
+grn_ts_op_minus_time_float(grn_ts_time lhs, grn_ts_float rhs) {
+  return lhs - (grn_ts_int)(rhs * 1000000.0);
 }
 
 /* grn_ts_op_multiplication_int() returns lhs * rhs. */
