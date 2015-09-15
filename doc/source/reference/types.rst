@@ -28,7 +28,7 @@ Builtin types
 
 The following types are defined as builtin types.
 
-.. _bultin-type-bool:
+.. _builtin-type-bool:
 
 ``Bool``
 ^^^^^^^^
@@ -37,63 +37,63 @@ Boolean type. The possible values are true and false. (default: false)
 
 To store a value by :doc:`/reference/commands/load` command, becomes false if you specify false, 0 or empty string, becomes true if you specify others.
 
-.. _bultin-type-int8:
+.. _builtin-type-int8:
 
 ``Int8``
 ^^^^^^^^
 
 Signed 8bit integer. It's -128 or more and 127 or less. (default: 0)
 
-.. _bultin-type-uint8:
+.. _builtin-type-uint8:
 
 ``UInt8``
 ^^^^^^^^^
 
 Unsigned 8bit integer. Is't 0 or more and 255 or less. (default: 0)
 
-.. _bultin-type-int16:
+.. _builtin-type-int16:
 
 ``Int16``
 ^^^^^^^^^
 
 Signed 16bit integer. It's -32,768 or more and 32,767 or less. (default: 0)
 
-.. _bultin-type-uint16:
+.. _builtin-type-uint16:
 
 ``UInt16``
 ^^^^^^^^^^
 
 Unsigned 16bit integer. It's 0 or more and 65,535 or less. (default: 0)
 
-.. _bultin-type-int32:
+.. _builtin-type-int32:
 
 ``Int32``
 ^^^^^^^^^
 
 Signed 32bit integer. It's -2,147,483,648 or more and 2,147,483,647 or less. (default: 0)
 
-.. _bultin-type-uint32:
+.. _builtin-type-uint32:
 
 ``UInt32``
 ^^^^^^^^^^
 
 Unsigned 32bit integer. It's 0 or more and 4,294,967,295 or less. (default: 0)
 
-.. _bultin-type-int64:
+.. _builtin-type-int64:
 
 ``Int64``
 ^^^^^^^^^
 
 Signed 64bit integer. It's -9,223,372,036,854,775,808 or more and 9,223,372,036,854,775,807 or less. (default: 0)
 
-.. _bultin-type-uint64:
+.. _builtin-type-uint64:
 
 ``UInt64``
 ^^^^^^^^^^
 
 Unsigned 64bit integer. It's 0 or more and 18,446,744,073,709,551,615 or less. (default: 0)
 
-.. _bultin-type-float:
+.. _builtin-type-float:
 
 ``Float``
 ^^^^^^^^^
@@ -102,7 +102,7 @@ Double-precision floating-point number of IEEE 754 as a real number. (default: 0
 
 See `IEEE floating point - Wikipedia, the free encyclopedia <http://en.wikipedia.org/wiki/IEEE_floating_point>`_ or `IEEE 754: Standard for Binary Floating-Point <http://grouper.ieee.org/groups/754/>`_ for details of IEEE 754 format.
 
-.. _bultin-type-time:
+.. _builtin-type-time:
 
 ``Time``
 ^^^^^^^^
@@ -111,28 +111,28 @@ Date and Time, the number of seconds that have elapsed since 1970-01-01 00:00:00
 
 To store a value by :doc:`/reference/commands/load` command, specifies the number of elapsed seconds since 1970-01-01 00:00:00. To specify the detailed date and time than seconds, use the decimal.
 
-.. _bultin-type-short-text:
+.. _builtin-type-short-text:
 
 ``ShortText``
 ^^^^^^^^^^^^^
 
 String of 4,095 or less bytes. (default: "")
 
-.. _bultin-type:-ext
+.. _builtin-type:-ext
 
 ``Text``
 ^^^^^^^^
 
 String of 65,535 or less bytes. (default: "")
 
-.. _bultin-type-long-text:
+.. _builtin-type-long-text:
 
 ``LongText``
 ^^^^^^^^^^^^
 
 String of 2,147,483,647 or less bytes. (default: "")
 
-.. _bultin-type-tokyo-geo-point:
+.. _builtin-type-tokyo-geo-point:
 
 ``TokyoGeoPoint``
 ^^^^^^^^^^^^^^^^^
@@ -145,7 +145,7 @@ String of 2,147,483,647 or less bytes. (default: "")
 
 測地系の詳細については、 `測地系 - Wikipedia <http://ja.wikipedia.org/wiki/%E6%B8%AC%E5%9C%B0%E7%B3%BB>`_ を参照してください。
 
-.. _bultin-type-wgs84-geo-pointer:
+.. _builtin-type-wgs84-geo-pointer:
 
 ``WGS84GeoPoint``
 ^^^^^^^^^^^^^^^^^
