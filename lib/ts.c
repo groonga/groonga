@@ -5441,6 +5441,115 @@ grn_ts_select_filter(grn_ctx *ctx, grn_obj *table,
   return GRN_SUCCESS;
 }
 
+/*
+ * grn_ts_split_output_columns() splits an --output_columns option string which
+ * is separated by commas.
+ */
+static grn_rc
+grn_ts_split_output_columns(grn_ctx *ctx, grn_ts_str str,
+                            grn_ts_str **out, size_t *n_out) {
+  grn_rc rc = GRN_SUCCESS;
+  grn_ts_str rest = str;
+  grn_ts_buf stack;
+  grn_ts_str *tokens = NULL;
+  size_t n_tokens = 0, max_n_tokens = 0;
+
+  grn_ts_buf_init(ctx, &stack);
+  while (rest.size) {
+    size_t i, token_size, next_offset;
+    char stack_top = '\0';
+    rest = grn_ts_str_trim_left(rest);
+    if (!rest.size) {
+      break;
+    }
+    /* Find the end of the current token. */
+    for (i = 0; i < rest.size; i++) {
+      if (stack.pos) {
+        if (rest.ptr[i] == stack_top) {
+          stack.pos--;
+          stack_top = stack.pos ? ((char *)stack.ptr)[stack.pos - 1] : '\0';
+          continue;
+        }
+        if (stack_top == '"') {
+          /* '\' works as an escape character in a string. */
+          if (rest.ptr[i] == '\\') {
+            /* Skip the next byte if exists. */
+            if (i < (rest.size - 1)) {
+              i++;
+            }
+          }
+          continue;
+        }
+      } else if (rest.ptr[i] == ',') {
+        break;
+      }
+      switch (rest.ptr[i]) {
+        case '(': {
+          stack_top = ')';
+          rc = grn_ts_buf_write(ctx, &stack, &stack_top, 1);
+          break;
+        }
+        case '[': {
+          stack_top = ']';
+          rc = grn_ts_buf_write(ctx, &stack, &stack_top, 1);
+          break;
+        }
+        case '{': {
+          stack_top = '}';
+          rc = grn_ts_buf_write(ctx, &stack, &stack_top, 1);
+          break;
+        }
+        case '"': {
+          stack_top = '"';
+          rc = grn_ts_buf_write(ctx, &stack, &stack_top, 1);
+          break;
+        }
+      }
+      if (rc != GRN_SUCCESS) {
+        break;
+      }
+    }
+    if (rc != GRN_SUCCESS) {
+      break;
+    }
+
+    /* Append the current token. */
+    token_size = i;
+    if (token_size) {
+      grn_ts_str new_token = { rest.ptr, token_size };
+      if (n_tokens == max_n_tokens) {
+        size_t new_max_n_tokens = n_tokens ? (n_tokens * 2) : 1;
+        size_t n_bytes = sizeof(grn_ts_str) * new_max_n_tokens;
+        grn_ts_str *new_tokens = (grn_ts_str *)GRN_REALLOC(tokens, n_bytes);
+        if (!new_tokens) {
+          rc = GRN_NO_MEMORY_AVAILABLE;
+          break;
+        }
+        tokens = new_tokens;
+        max_n_tokens = new_max_n_tokens;
+      }
+      tokens[n_tokens++] = new_token;
+    }
+
+    /* Update the rest. */
+    next_offset = token_size;
+    if (token_size != rest.size) {
+      next_offset++;
+    }
+    rest.ptr = (char *)rest.ptr + next_offset;
+    rest.size -= next_offset;
+  }
+
+  grn_ts_buf_fin(ctx, &stack);
+  if (rc == GRN_SUCCESS) {
+    *out = tokens;
+    *n_out = n_tokens;
+  } else if (tokens) {
+    GRN_FREE(tokens);
+  }
+  return rc;
+}
+
 /* grn_ts_select_output_parse() parses an output_columns option. */
 static grn_rc
 grn_ts_select_output_parse(grn_ctx *ctx, grn_obj *table,
