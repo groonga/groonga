@@ -43,6 +43,23 @@
 
 enum { GRN_TS_BATCH_SIZE = 1024 };
 
+/*-------------------------------------------------------------
+ * grn_ts_str.
+ */
+
+/*
+ * grn_ts_byte_is_name_char() returns whether or not a byte is allowed as a
+ * part of a name.
+ */
+inline static grn_ts_bool
+grn_ts_byte_is_name_char(unsigned char byte) {
+  if (((byte >= '0') && (byte <= '9')) || ((byte >= 'A') && (byte <= 'Z')) ||
+      ((byte >= 'a') && (byte <= 'z')) || (byte == '_')) {
+    return GRN_TRUE;
+  }
+  return GRN_FALSE;
+}
+
 typedef struct {
   const char *ptr; /* The starting address. */
   size_t size;     /* The size in bytes. */
@@ -61,6 +78,25 @@ grn_ts_str_trim_left(grn_ts_str str) {
   str.size -= i;
   return str;
 }
+
+/*
+ * grn_ts_str_is_name_prefix() returns whether or not a string is valid as a
+ * name prefix.
+ */
+static grn_ts_bool
+grn_ts_str_is_name_prefix(grn_ts_str str) {
+  size_t i;
+  for (i = 0; i < str.size; i++) {
+    if (!grn_ts_byte_is_name_char(str.ptr[i])) {
+      return GRN_FALSE;
+    }
+  }
+  return GRN_TRUE;
+}
+
+/*-------------------------------------------------------------
+ * grn_ts_buf.
+ */
 
 typedef struct {
   void *ptr;   /* The starting address. */
@@ -5653,7 +5689,8 @@ grn_ts_select_output_parse(grn_ctx *ctx, grn_obj *table,
     }
 
     /* Add column names to name_buf. */
-    if (token.ptr[token.size - 1] == '*') {
+    if ((token.ptr[token.size - 1] == '*') &&
+        grn_ts_str_is_name_prefix((grn_ts_str){ token.ptr, token.size - 1 })) {
       /* Expand a wildcard. */
       grn_hash *columns = grn_hash_create(ctx, NULL, sizeof(grn_ts_id), 0,
                                           GRN_OBJ_TABLE_HASH_KEY |
