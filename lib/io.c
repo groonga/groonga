@@ -487,7 +487,7 @@ grn_io_detect_type(grn_ctx *ctx, const char *path)
   struct _grn_io_header h;
   uint32_t res = 0;
   int fd;
-  grn_open(fd, path, O_RDWR | GRN_OPEN_FLAG_BINARY);
+  grn_open(fd, path, O_RDONLY | GRN_OPEN_FLAG_BINARY);
   if (fd != -1) {
     struct stat s;
     if (fstat(fd, &s) != -1 && s.st_size >= sizeof(struct _grn_io_header)) {
