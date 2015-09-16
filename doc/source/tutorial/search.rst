@@ -26,7 +26,7 @@ See the detail of above query. Here is the condition which is specified as ``fil
 
   _id <= 1
 
-In this case, this query returns the records which meets the condition that the value of ``_id`` is equal to 1.
+In this case, this query returns the records which meets the condition that the value of ``_id`` is equal to or less than 1.
 
 Moreover, you can use ``&&`` for AND search, ``||`` for OR search.
 
