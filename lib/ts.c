@@ -5442,6 +5442,89 @@ grn_ts_select_filter(grn_ctx *ctx, grn_obj *table,
 }
 
 /*
+ * grn_ts_tokenize_output_columns() gets the first token.
+ * If the input is empty, this function returns GRN_END_OF_DATA.
+ */
+static grn_rc
+grn_ts_tokenize_output_columns(grn_ctx *ctx, grn_ts_str in,
+                               grn_ts_str *token, grn_ts_str *rest) {
+  char stack_top;
+  size_t i;
+  grn_rc rc;
+  grn_ts_str str;
+  grn_ts_buf stack;
+
+  str = grn_ts_str_trim_left(in);
+  if (!str.size) {
+    *token = str;
+    *rest = str;
+    return GRN_END_OF_DATA;
+  }
+
+  /* Find the end of the first token. */
+  grn_ts_buf_init(ctx, &stack);
+  for (i = 0; i < str.size; i++) {
+    if (stack.pos) {
+      if (str.ptr[i] == stack_top) {
+        if (--stack.pos) {
+          stack_top = ((char *)stack.ptr)[stack.pos - 1];
+        }
+        continue;
+      }
+      if (stack_top == '"') {
+        /* Skip the next byte of an escape character. */
+        if ((str.ptr[i] == '\\') && (i < (str.size - 1))) {
+          i++;
+        }
+        continue;
+      }
+    } else if (str.ptr[i] == ',') {
+      break;
+    }
+    switch (str.ptr[i]) {
+      case '(': {
+        stack_top = ')';
+        rc = grn_ts_buf_write(ctx, &stack, &stack_top, 1);
+        break;
+      }
+      case '[': {
+        stack_top = ']';
+        rc = grn_ts_buf_write(ctx, &stack, &stack_top, 1);
+        break;
+      }
+      case '{': {
+        stack_top = '}';
+        rc = grn_ts_buf_write(ctx, &stack, &stack_top, 1);
+        break;
+      }
+      case '"': {
+        stack_top = '"';
+        rc = grn_ts_buf_write(ctx, &stack, &stack_top, 1);
+        break;
+      }
+    }
+    if (rc != GRN_SUCCESS) {
+      break;
+    }
+  }
+  grn_ts_buf_fin(ctx, &stack);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+
+  token->ptr = str.ptr;
+  token->size = i;
+  if (token->size == str.size) {
+    rest->ptr = str.ptr + str.size;
+    rest->size = 0;
+  } else {
+    rest->ptr = str.ptr + token->size + 1;
+    rest->size = str.size - token->size + 1;
+  }
+  return GRN_SUCCESS;
+}
+
+/*
  * grn_ts_split_output_columns() splits an --output_columns option string which
  * is separated by commas.
  */
