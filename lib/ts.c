@@ -53,6 +53,10 @@ enum { GRN_TS_BATCH_SIZE = 1024 };
  */
 inline static grn_ts_bool
 grn_ts_byte_is_name_char(unsigned char byte) {
+  /*
+   * Note: A table name allows '#', '@' and '-'.
+   * http://groonga.org/docs/reference/commands/table_create.html#name
+   */
   if (((byte >= '0') && (byte <= '9')) || ((byte >= 'A') && (byte <= 'Z')) ||
       ((byte >= 'a') && (byte <= 'z')) || (byte == '_')) {
     return GRN_TRUE;
