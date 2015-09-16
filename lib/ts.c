@@ -5638,58 +5638,29 @@ grn_ts_split_output_columns(grn_ctx *ctx, grn_ts_str str,
   return rc;
 }
 
+
 /* grn_ts_select_output_parse() parses an output_columns option. */
 static grn_rc
 grn_ts_select_output_parse(grn_ctx *ctx, grn_obj *table,
-                           const char *str, size_t str_size,
-                           grn_obj *name_buf) {
-  const char *rest = str;
-  size_t i, rest_size = str_size;
-  while (rest_size) {
-    const char *name = rest;
-    size_t name_size;
-
-    /* Find a delimiter. */
-    for (i = 0; i < rest_size; i++) {
-      if (rest[i] == ',') {
-        break;
-      }
-    }
-    name_size = i;
-
-    rest += name_size;
-    rest_size -= name_size;
-    if (rest_size) {
-      rest++;
-      rest_size--;
-    }
-
-    /* Trim spaces. */
-    for (i = 0; i < name_size; i++) {
-      if (!isspace((unsigned char)name[i])) {
-        break;
-      }
-    }
-    name += i;
-    name_size -= i;
-    for (i = name_size; i > 0; i--) {
-      if (!isspace((unsigned char)name[i - 1])) {
-        break;
-      }
-    }
-    name_size = i;
-    if (!name_size) {
-      continue;
+                           grn_ts_str str, grn_obj *name_buf) {
+  grn_ts_str rest = str;
+  for ( ; ; ) {
+    grn_rc rc;
+    grn_ts_str token;
+    rc = grn_ts_tokenize_output_columns(ctx, rest, &token, &rest);
+    if (rc != GRN_SUCCESS) {
+      return (rc == GRN_END_OF_DATA) ? GRN_SUCCESS : rc;
     }
 
     /* Add column names to name_buf. */
-    if (name[name_size - 1] == '*') {
+    if (token.ptr[token.size - 1] == '*') {
       /* Expand a wildcard. */
       grn_hash *columns = grn_hash_create(ctx, NULL, sizeof(grn_ts_id), 0,
                                           GRN_OBJ_TABLE_HASH_KEY |
                                           GRN_HASH_TINY);
       if (columns) {
-        if (grn_table_columns(ctx, table, "", 0, (grn_obj *)columns)) {
+        if (grn_table_columns(ctx, table, token.ptr, token.size - 1,
+                              (grn_obj *)columns)) {
           grn_ts_id *key;
           GRN_HASH_EACH(ctx, columns, id, &key, NULL, NULL, {
             grn_obj *column = grn_ctx_at(ctx, *key);
@@ -5704,7 +5675,8 @@ grn_ts_select_output_parse(grn_ctx *ctx, grn_obj *table,
         grn_hash_close(ctx, columns);
       }
     } else {
-      grn_vector_add_element(ctx, name_buf, name, name_size, 0, GRN_DB_TEXT);
+      grn_vector_add_element(ctx, name_buf, token.ptr, token.size, 0,
+                             GRN_DB_TEXT);
     }
   }
   return GRN_SUCCESS;
@@ -5906,7 +5878,8 @@ grn_ts_select_output(grn_ctx *ctx, grn_obj *table,
   grn_ts_text *names = NULL;
 
   GRN_TEXT_INIT(&name_buf, GRN_OBJ_VECTOR);
-  rc = grn_ts_select_output_parse(ctx, table, str, str_size, &name_buf);
+  rc = grn_ts_select_output_parse(ctx, table, (grn_ts_str){ str, str_size },
+                                  &name_buf);
   if (rc != GRN_SUCCESS) {
     GRN_OBJ_FIN(ctx, &name_buf);
     return rc;
