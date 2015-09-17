@@ -47,6 +47,12 @@ enum { GRN_TS_BATCH_SIZE = 1024 };
  * grn_ts_str.
  */
 
+/* grn_ts_byte_is_decimal() returns whether or not a byte is decimal. */
+inline static grn_ts_bool
+grn_ts_byte_is_decimal(unsigned char byte) {
+  return (byte >= '0') && (byte <= '9');
+}
+
 /*
  * grn_ts_byte_is_name_char() returns whether or not a byte is allowed as a
  * part of a name.
@@ -4396,7 +4402,7 @@ grn_ts_expr_parser_tokenize_next(grn_ctx *ctx, grn_ts_expr_parser *parser,
       break;
     }
     case '.': {
-      if ((rest.size >= 2) && isdigit((unsigned char)rest.ptr[1])) {
+      if ((rest.size >= 2) && grn_ts_byte_is_decimal(rest.ptr[1])) {
         rc = grn_ts_expr_parser_tokenize_number(ctx, parser, rest, &new_token);
       } else {
         // TODO: Dereferencing is not supported yet.
