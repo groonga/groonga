@@ -1,6 +1,10 @@
 groonga (5.0.7-1) unstable; urgency=low
 
   * New upstream release.
+  * debian/groonga-tokenizer-mecab.lintian-overrides
+    debian/libgroonga0.lintian-overrides
+    - Add lintian-overrides because of false positive
+      about hardening-no-fortify-functions.
 
  -- Kouhei Sutou <kou@clear-code.com>  Mon, 31 Aug 2015 00:00:00 +0900
 
