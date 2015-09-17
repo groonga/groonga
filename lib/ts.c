@@ -3856,6 +3856,9 @@ typedef struct {
   grn_ts_expr_token **tokens; /* Tokens. */
   size_t n_tokens;            /* Number of tokens. */
   size_t max_n_tokens;        /* Max. number (capacity) of tokens. */
+  grn_ts_expr_token **stack;  /* Token stack. */
+  size_t stack_depth;         /* Token stack's current depth. */
+  size_t stack_size;          /* Token stack's size (capacity). */
 } grn_ts_expr_parser;
 
 #define GRN_TS_EXPR_TOKEN_INIT(TYPE)\
@@ -4051,11 +4054,15 @@ grn_ts_expr_parser_init(grn_ctx *ctx, grn_ts_expr *expr,
   memset(parser, 0, sizeof(*parser));
   parser->expr = expr;
   parser->tokens = NULL;
+  parser->stack = NULL;
 }
 
 /* grn_ts_expr_parser_fin() finalizes a parser. */
 static void
 grn_ts_expr_parser_fin(grn_ctx *ctx, grn_ts_expr_parser *parser) {
+  if (parser->stack) {
+    GRN_FREE(parser->stack);
+  }
   if (parser->tokens) {
     size_t i;
     for (i = 0; i < parser->n_tokens; i++) {
