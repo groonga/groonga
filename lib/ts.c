@@ -4434,21 +4434,30 @@ grn_ts_expr_parser_tokenize_next(grn_ctx *ctx, grn_ts_expr_parser *parser,
   }
 }
 
-/* grn_ts_expr_parser_push_token() appends a token. */
+/*
+ * grn_ts_expr_parser_reserve_tokens() extends a token buffer for a new token.
+ */
 static grn_rc
-grn_ts_expr_parser_push_token(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                              grn_ts_expr_token *token) {
-  size_t new_max_n_tokens, n_bytes;
+grn_ts_expr_parser_reserve_tokens(grn_ctx *ctx, grn_ts_expr_parser *parser) {
+  size_t i, n_bytes, new_max_n_tokens;
   grn_ts_expr_token **new_tokens;
-  new_max_n_tokens = parser->max_n_tokens ? (parser->max_n_tokens * 2) : 1;
+  if (parser->n_tokens < parser->max_n_tokens) {
+    return GRN_SUCCESS;
+  }
+  new_max_n_tokens = parser->n_tokens * 2;
+  if (!new_max_n_tokens) {
+    new_max_n_tokens = 1;
+  }
   n_bytes = sizeof(grn_ts_expr_token *) * new_max_n_tokens;
   new_tokens = (grn_ts_expr_token **)GRN_REALLOC(parser->tokens, n_bytes);
   if (!new_tokens) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
+  for (i = parser->n_tokens; i < new_max_n_tokens; i++) {
+    new_tokens[i] = NULL;
+  }
   parser->tokens = new_tokens;
   parser->max_n_tokens = new_max_n_tokens;
-  parser->tokens[parser->n_tokens++] = token;
   return GRN_SUCCESS;
 }
 
@@ -4460,15 +4469,15 @@ grn_ts_expr_parser_tokenize(grn_ctx *ctx, grn_ts_expr_parser *parser,
   const char *end = str.ptr + str.size;
   grn_ts_expr_token *token;
   do {
-    grn_rc rc = grn_ts_expr_parser_tokenize_next(ctx, parser, rest, &token);
+    grn_rc rc = grn_ts_expr_parser_reserve_tokens(ctx, parser);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
-    rc = grn_ts_expr_parser_push_token(ctx, parser, token);
+    rc = grn_ts_expr_parser_tokenize_next(ctx, parser, rest, &token);
     if (rc != GRN_SUCCESS) {
-      grn_ts_expr_token_close(ctx, token);
       return rc;
     }
+    parser->tokens[parser->n_tokens++] = token;
     rest.ptr = token->src.ptr + token->src.size;
     rest.size = end - rest.ptr;
   } while (token->type != GRN_TS_EXPR_END_TOKEN);
