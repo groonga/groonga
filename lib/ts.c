@@ -4448,9 +4448,9 @@ grn_ts_expr_parser_push_token(grn_ctx *ctx, grn_ts_expr_parser *parser,
 /* grn_ts_expr_parser_tokenize() tokenizes a string. */
 static grn_rc
 grn_ts_expr_parser_tokenize(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                            const char *str, size_t str_size) {
-  const char *end = str + str_size;
-  grn_ts_str rest = { str, str_size };
+                            grn_ts_str str) {
+  grn_ts_str rest = str;
+  const char *end = str.ptr + str.size;
   grn_ts_expr_token *token;
   do {
     grn_rc rc = grn_ts_expr_parser_tokenize_next(ctx, parser, rest, &token);
@@ -4561,9 +4561,10 @@ grn_ts_expr_parser_analyze(grn_ctx *ctx, grn_ts_expr_parser *parser) {
  */
 static grn_rc
 grn_ts_expr_parser_parse(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                         const char *str, size_t str_size) {
+                         const char *str_ptr, size_t str_size) {
   grn_rc rc;
-  rc = grn_ts_expr_parser_tokenize(ctx, parser, str, str_size);
+  grn_ts_str str = { str_ptr, str_size };
+  rc = grn_ts_expr_parser_tokenize(ctx, parser, str);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
@@ -4643,18 +4644,18 @@ grn_ts_expr_open(grn_ctx *ctx, grn_obj *table, grn_ts_expr **expr) {
 
 grn_rc
 grn_ts_expr_parse(grn_ctx *ctx, grn_obj *table,
-                  const char *str, size_t str_size, grn_ts_expr **expr) {
+                  const char *str_ptr, size_t str_size, grn_ts_expr **expr) {
   grn_rc rc;
   grn_ts_expr *new_expr;
   if (!ctx || !table || !grn_ts_obj_is_table(ctx, table) ||
-      (!str && str_size) || !expr) {
+      (!str_ptr && str_size) || !expr) {
     return GRN_INVALID_ARGUMENT;
   }
   rc = grn_ts_expr_open(ctx, table, &new_expr);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = grn_ts_expr_push(ctx, new_expr, str, str_size);
+  rc = grn_ts_expr_push(ctx, new_expr, str_ptr, str_size);
   if (rc == GRN_SUCCESS) {
     rc = grn_ts_expr_complete(ctx, new_expr);
   }
@@ -4847,18 +4848,18 @@ grn_ts_expr_push_node(grn_ctx *ctx, grn_ts_expr *expr,
 
 grn_rc
 grn_ts_expr_push(grn_ctx *ctx, grn_ts_expr *expr,
-                 const char *str, size_t str_size) {
+                 const char *str_ptr, size_t str_size) {
   grn_rc rc;
   grn_ts_expr_parser *parser;
   if (!ctx || !expr || (expr->type == GRN_TS_EXPR_BROKEN) ||
-      (!str && str_size)) {
+      (!str_ptr && str_size)) {
     return GRN_INVALID_ARGUMENT;
   }
   rc = grn_ts_expr_parser_open(ctx, expr, &parser);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = grn_ts_expr_parser_parse(ctx, parser, str, str_size);
+  rc = grn_ts_expr_parser_parse(ctx, parser, str_ptr, str_size);
   grn_ts_expr_parser_close(ctx, parser);
   return rc;
 }
@@ -5397,8 +5398,7 @@ grn_ts_expr_adjust(grn_ctx *ctx, grn_ts_expr *expr,
 
 /* grn_ts_select_filter() applies a filter to all the records of a table. */
 static grn_rc
-grn_ts_select_filter(grn_ctx *ctx, grn_obj *table,
-                     const char *str, size_t str_size,
+grn_ts_select_filter(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
                      size_t offset, size_t limit,
                      grn_ts_record **out, size_t *n_out, size_t *n_hits) {
   grn_rc rc;
@@ -5417,7 +5417,7 @@ grn_ts_select_filter(grn_ctx *ctx, grn_obj *table,
     return (ctx->rc != GRN_SUCCESS) ? ctx->rc : GRN_UNKNOWN_ERROR;
   }
 
-  rc = grn_ts_expr_parse(ctx, table, str, str_size, &expr);
+  rc = grn_ts_expr_parse(ctx, table, str.ptr, str.size, &expr);
   if (rc == GRN_SUCCESS) {
     for ( ; ; ) {
       size_t i, batch_size;
@@ -5814,8 +5814,7 @@ grn_ts_select_output_values(grn_ctx *ctx, const grn_ts_record *in, size_t n_in,
 /* grn_ts_select_output() outputs the results. */
 /* FIXME: Errors are ignored. */
 static grn_rc
-grn_ts_select_output(grn_ctx *ctx, grn_obj *table,
-                     const char *str, size_t str_size,
+grn_ts_select_output(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
                      const grn_ts_record *in, size_t n_in, size_t n_hits) {
   grn_rc rc;
   grn_ts_expr **exprs = NULL;
@@ -5824,8 +5823,7 @@ grn_ts_select_output(grn_ctx *ctx, grn_obj *table,
   grn_ts_text *names = NULL;
 
   GRN_TEXT_INIT(&name_buf, GRN_OBJ_VECTOR);
-  rc = grn_ts_select_output_parse(ctx, table, (grn_ts_str){ str, str_size },
-                                  &name_buf);
+  rc = grn_ts_select_output_parse(ctx, table, str, &name_buf);
   if (rc != GRN_SUCCESS) {
     GRN_OBJ_FIN(ctx, &name_buf);
     return rc;
@@ -5910,20 +5908,23 @@ grn_ts_select_output(grn_ctx *ctx, grn_obj *table,
 
 grn_rc
 grn_ts_select(grn_ctx *ctx, grn_obj *table,
-              const char *filter, size_t filter_size,
-              const char *output_columns, size_t output_columns_size,
+              const char *filter_ptr, size_t filter_size,
+              const char *output_columns_ptr, size_t output_columns_size,
               size_t offset, size_t limit) {
   grn_rc rc;
+  grn_ts_str filter = { filter_ptr, filter_size };
+  grn_ts_str output_columns = { output_columns_ptr, output_columns_size };
   grn_ts_record *records = NULL;
   size_t n_records, n_hits;
   if (!ctx || !table || !grn_ts_obj_is_table(ctx, table) ||
-      (!filter && filter_size) || (!output_columns && output_columns_size)) {
+      (!filter_ptr && filter_size) ||
+      (!output_columns_ptr && output_columns_size)) {
     return GRN_INVALID_ARGUMENT;
   }
-  rc = grn_ts_select_filter(ctx, table, filter, filter_size, offset, limit,
+  rc = grn_ts_select_filter(ctx, table, filter, offset, limit,
                             &records, &n_records, &n_hits);
   if (rc == GRN_SUCCESS) {
-    rc = grn_ts_select_output(ctx, table, output_columns, output_columns_size,
+    rc = grn_ts_select_output(ctx, table, output_columns,
                               records, n_records, n_hits);
   }
   if (records) {

@@ -197,7 +197,7 @@ grn_rc grn_ts_expr_open(grn_ctx *ctx, grn_obj *table, grn_ts_expr **expr);
 
 /* grn_ts_expr_parse() creates an expression from a string. */
 grn_rc grn_ts_expr_parse(grn_ctx *ctx, grn_obj *table,
-                         const char *str, size_t str_size,
+                         const char *str_ptr, size_t str_size,
                          grn_ts_expr **expr);
 
 /* grn_ts_expr_close() destroys an expression. */
@@ -240,7 +240,7 @@ grn_ts_expr_node *grn_ts_expr_get_root(grn_ctx *ctx, grn_ts_expr *expr);
  * than one operators, such as '-' (negative and minus).
  */
 grn_rc grn_ts_expr_push(grn_ctx *ctx, grn_ts_expr *expr,
-                        const char *str, size_t str_size);
+                        const char *str_ptr, size_t str_size);
 
 /*
  * grn_ts_expr_push_obj() pushes an object.
@@ -364,8 +364,9 @@ grn_rc grn_ts_expr_adjust(grn_ctx *ctx, grn_ts_expr *expr,
  * `ctx`.
  */
 grn_rc grn_ts_select(grn_ctx *ctx, grn_obj *table,
-                     const char *filter, size_t filter_size,
-                     const char *output_columns, size_t output_columns_size,
+                     const char *filter_ptr, size_t filter_size,
+                     const char *output_columns_ptr,
+                     size_t output_columns_size,
                      size_t offset, size_t limit);
 
 #ifdef __cplusplus
