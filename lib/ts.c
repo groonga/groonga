@@ -4845,29 +4845,25 @@ grn_ts_expr_open_op_node(grn_ctx *ctx, grn_ts_expr *expr,
 }
 #undef GRN_TS_EXPR_OPEN_NODE
 
-/* grn_ts_expr_push_node() pushes a node to stack. */
+/* grn_ts_expr_reserve_stack() extends a stack. */
 static grn_rc
-grn_ts_expr_push_node(grn_ctx *ctx, grn_ts_expr *expr,
-                      grn_ts_expr_node *node) {
-  if (expr->stack_depth == expr->stack_size) {
-    size_t i, n_bytes, new_size;
-    grn_ts_expr_node **new_stack;
-    new_size = expr->stack_size * 2;
-    if (!new_size) {
-      new_size = 1;
-    }
-    n_bytes = sizeof(grn_ts_expr_node *) * new_size;
-    new_stack = GRN_REALLOC(expr->stack, n_bytes);
-    if (!new_stack) {
-      return GRN_NO_MEMORY_AVAILABLE;
-    }
-    for (i = expr->stack_size; i < new_size; i++) {
-      new_stack[i] = NULL;
-    }
-    expr->stack = new_stack;
-    expr->stack_size = new_size;
+grn_ts_expr_reserve_stack(grn_ctx *ctx, grn_ts_expr *expr) {
+  size_t i, n_bytes, new_size;
+  grn_ts_expr_node **new_stack;
+  if (expr->stack_depth < expr->stack_size) {
+    return GRN_SUCCESS;
   }
-  expr->stack[expr->stack_depth++] = node;
+  new_size = expr->stack_size ? (expr->stack_size * 2) : 1;
+  n_bytes = sizeof(grn_ts_expr_node *) * new_size;
+  new_stack = GRN_REALLOC(expr->stack, n_bytes);
+  if (!new_stack) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  for (i = expr->stack_size; i < new_size; i++) {
+    new_stack[i] = NULL;
+  }
+  expr->stack = new_stack;
+  expr->stack_size = new_size;
   return GRN_SUCCESS;
 }
 
@@ -5074,9 +5070,12 @@ grn_ts_expr_push_id(grn_ctx *ctx, grn_ts_expr *expr) {
   if (!ctx || !expr || (expr->type == GRN_TS_EXPR_BROKEN)) {
     return GRN_INVALID_ARGUMENT;
   }
-  rc = grn_ts_expr_open_id_node(ctx, expr, &node);
+  rc = grn_ts_expr_reserve_stack(ctx, expr);
   if (rc == GRN_SUCCESS) {
-    rc = grn_ts_expr_push_node(ctx, expr, node);
+    rc = grn_ts_expr_open_id_node(ctx, expr, &node);
+    if (rc == GRN_SUCCESS) {
+      expr->stack[expr->stack_depth++] = node;
+    }
   }
   return rc;
 }
@@ -5088,9 +5087,12 @@ grn_ts_expr_push_score(grn_ctx *ctx, grn_ts_expr *expr) {
   if (!ctx || !expr || (expr->type == GRN_TS_EXPR_BROKEN)) {
     return GRN_INVALID_ARGUMENT;
   }
-  rc = grn_ts_expr_open_score_node(ctx, expr, &node);
+  rc = grn_ts_expr_reserve_stack(ctx, expr);
   if (rc == GRN_SUCCESS) {
-    rc = grn_ts_expr_push_node(ctx, expr, node);
+    rc = grn_ts_expr_open_score_node(ctx, expr, &node);
+    if (rc == GRN_SUCCESS) {
+      expr->stack[expr->stack_depth++] = node;
+    }
   }
   return rc;
 }
@@ -5102,9 +5104,12 @@ grn_ts_expr_push_key(grn_ctx *ctx, grn_ts_expr *expr) {
   if (!ctx || !expr || (expr->type == GRN_TS_EXPR_BROKEN)) {
     return GRN_INVALID_ARGUMENT;
   }
-  rc = grn_ts_expr_open_key_node(ctx, expr, &node);
+  rc = grn_ts_expr_reserve_stack(ctx, expr);
   if (rc == GRN_SUCCESS) {
-    rc = grn_ts_expr_push_node(ctx, expr, node);
+    rc = grn_ts_expr_open_key_node(ctx, expr, &node);
+    if (rc == GRN_SUCCESS) {
+      expr->stack[expr->stack_depth++] = node;
+    }
   }
   return rc;
 }
@@ -5116,9 +5121,12 @@ grn_ts_expr_push_value(grn_ctx *ctx, grn_ts_expr *expr) {
   if (!ctx || !expr || (expr->type == GRN_TS_EXPR_BROKEN)) {
     return GRN_INVALID_ARGUMENT;
   }
-  rc = grn_ts_expr_open_value_node(ctx, expr, &node);
+  rc = grn_ts_expr_reserve_stack(ctx, expr);
   if (rc == GRN_SUCCESS) {
-    rc = grn_ts_expr_push_node(ctx, expr, node);
+    rc = grn_ts_expr_open_value_node(ctx, expr, &node);
+    if (rc == GRN_SUCCESS) {
+      expr->stack[expr->stack_depth++] = node;
+    }
   }
   return rc;
 }
@@ -5163,9 +5171,12 @@ grn_ts_expr_push_column(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *column) {
       (DB_OBJ(expr->curr_table)->id != column->header.domain)) {
     return GRN_INVALID_ARGUMENT;
   }
-  rc = grn_ts_expr_open_column_node(ctx, expr, column, &node);
+  rc = grn_ts_expr_reserve_stack(ctx, expr);
   if (rc == GRN_SUCCESS) {
-    rc = grn_ts_expr_push_node(ctx, expr, node);
+    rc = grn_ts_expr_open_column_node(ctx, expr, column, &node);
+    if (rc == GRN_SUCCESS) {
+      expr->stack[expr->stack_depth++] = node;
+    }
   }
   return rc;
 }
@@ -5190,12 +5201,8 @@ grn_ts_expr_push_operator(grn_ctx *ctx, grn_ts_expr *expr,
   args = &expr->stack[expr->stack_depth - n_args];
   rc = grn_ts_expr_open_op_node(ctx, expr, op_type, args, n_args, &node);
   if (rc == GRN_SUCCESS) {
-    /*
-     * In practice, the following grn_ts_expr_push_node() must not fail because
-     * the required memory is already reserved.
-     */
     expr->stack_depth -= n_args;
-    rc = grn_ts_expr_push_node(ctx, expr, node);
+    expr->stack[expr->stack_depth++] = node;
   }
   return rc;
 }
@@ -5207,9 +5214,13 @@ grn_ts_expr_push_operator(grn_ctx *ctx, grn_ts_expr *expr,
       !grn_ts_ ## kind ## _is_valid(value)) {\
     return GRN_INVALID_ARGUMENT;\
   }\
-  rc = grn_ts_expr_open_const_node(ctx, expr, GRN_TS_ ## KIND, &value, &node);\
+  rc = grn_ts_expr_reserve_stack(ctx, expr);\
   if (rc == GRN_SUCCESS) {\
-    rc = grn_ts_expr_push_node(ctx, expr, node);\
+    rc = grn_ts_expr_open_const_node(ctx, expr, GRN_TS_ ## KIND,\
+                                     &value, &node);\
+    if (rc == GRN_SUCCESS) {\
+      expr->stack[expr->stack_depth++] = node;\
+    }\
   }
 grn_rc
 grn_ts_expr_push_bool(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_bool value) {
