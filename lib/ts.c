@@ -4475,86 +4475,88 @@ grn_ts_expr_parser_tokenize(grn_ctx *ctx, grn_ts_expr_parser *parser,
   return GRN_SUCCESS;
 }
 
+/* grn_ts_expr_parser_analyze_token() analyzes a token. */
+static grn_rc
+grn_ts_expr_parser_analyze_token(grn_ctx *ctx, grn_ts_expr_parser *parser,
+                                 grn_ts_expr_token *token) {
+  switch (token->type) {
+    case GRN_TS_EXPR_START_TOKEN:
+    case GRN_TS_EXPR_END_TOKEN: {
+      return GRN_SUCCESS;
+    }
+    case GRN_TS_EXPR_CONST_TOKEN: {
+      grn_ts_expr_const_token *const_token;
+      const_token = (grn_ts_expr_const_token *)token;
+      switch (const_token->data_kind) {
+        case GRN_TS_BOOL: {
+          return grn_ts_expr_push_bool(ctx, parser->expr,
+                                       const_token->content.as_bool);
+        }
+        case GRN_TS_INT: {
+          return grn_ts_expr_push_int(ctx, parser->expr,
+                                      const_token->content.as_int);
+        }
+        case GRN_TS_FLOAT: {
+          return grn_ts_expr_push_float(ctx, parser->expr,
+                                        const_token->content.as_float);
+        }
+        case GRN_TS_TEXT: {
+          return grn_ts_expr_push_text(ctx, parser->expr,
+                                       const_token->content.as_text);
+        }
+        default: {
+          return GRN_OBJECT_CORRUPT;
+        }
+      }
+    }
+    case GRN_TS_EXPR_NAME_TOKEN: {
+      grn_ts_expr_name_token *name_token = (grn_ts_expr_name_token *)token;
+      grn_ts_str name = name_token->src;
+      if ((name.size == GRN_COLUMN_NAME_ID_LEN) &&
+          !memcmp(name.ptr, GRN_COLUMN_NAME_ID, GRN_COLUMN_NAME_ID_LEN)) {
+        return grn_ts_expr_push_id(ctx, parser->expr);
+      } else if ((name.size == GRN_COLUMN_NAME_KEY_LEN) &&
+                 !memcmp(name.ptr, GRN_COLUMN_NAME_KEY,
+                         GRN_COLUMN_NAME_KEY_LEN)) {
+        return grn_ts_expr_push_key(ctx, parser->expr);
+      } else if ((name.size == GRN_COLUMN_NAME_VALUE_LEN) &&
+                 !memcmp(name.ptr, GRN_COLUMN_NAME_VALUE,
+                         GRN_COLUMN_NAME_VALUE_LEN)) {
+        return grn_ts_expr_push_value(ctx, parser->expr);
+      } else if ((name.size == GRN_COLUMN_NAME_SCORE_LEN) &&
+                 !memcmp(name.ptr, GRN_COLUMN_NAME_SCORE,
+                         GRN_COLUMN_NAME_SCORE_LEN)) {
+        return grn_ts_expr_push_score(ctx, parser->expr);
+      } else {
+        grn_obj *column = grn_obj_column(ctx, parser->expr->curr_table,
+                                         name.ptr, name.size);
+        if (!column) {
+          return GRN_INVALID_ARGUMENT;
+        } else {
+          grn_rc rc = grn_ts_expr_push_column(ctx, parser->expr, column);
+          grn_obj_unlink(ctx, column);
+          return rc;
+        }
+      }
+    }
+    case GRN_TS_EXPR_OP_TOKEN: {
+      grn_ts_expr_op_token *op_token = (grn_ts_expr_op_token *)token;
+      return grn_ts_expr_push_operator(ctx, parser->expr, op_token->op_type);
+    }
+    default: {
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+}
+
 /* grn_ts_expr_parser_analyze() analyzes tokens. */
 static grn_rc
 grn_ts_expr_parser_analyze(grn_ctx *ctx, grn_ts_expr_parser *parser) {
-  // TODO: Analyze as an expression of Infix Notation!
-  size_t i;
-  for (i = 1; i < (parser->n_tokens - 1); i++) {
+  /* Copy the number of tokens because new tokens will be added. */
+  size_t i, n_tokens = parser->n_tokens;
+  for (i = 0; i < n_tokens; i++) {
     grn_rc rc;
-    grn_ts_expr_token *token = parser->tokens[i];
-    switch (token->type) {
-      case GRN_TS_EXPR_CONST_TOKEN: {
-        grn_ts_expr_const_token *const_token;
-        const_token = (grn_ts_expr_const_token *)token;
-        switch (const_token->data_kind) {
-          case GRN_TS_BOOL: {
-            rc = grn_ts_expr_push_bool(ctx, parser->expr,
-                                       const_token->content.as_bool);
-            break;
-          }
-          case GRN_TS_INT: {
-            rc = grn_ts_expr_push_int(ctx, parser->expr,
-                                      const_token->content.as_int);
-            break;
-          }
-          case GRN_TS_FLOAT: {
-            rc = grn_ts_expr_push_float(ctx, parser->expr,
-                                        const_token->content.as_float);
-            break;
-          }
-          case GRN_TS_TEXT: {
-            rc = grn_ts_expr_push_text(ctx, parser->expr,
-                                       const_token->content.as_text);
-            break;
-          }
-          default: {
-            rc = GRN_OBJECT_CORRUPT;
-            break;
-          }
-        }
-        break;
-      }
-      case GRN_TS_EXPR_NAME_TOKEN: {
-        grn_ts_expr_name_token *name_token = (grn_ts_expr_name_token *)token;
-        grn_ts_str name = name_token->src;
-        if ((name.size == GRN_COLUMN_NAME_ID_LEN) &&
-            !memcmp(name.ptr, GRN_COLUMN_NAME_ID, GRN_COLUMN_NAME_ID_LEN)) {
-          rc = grn_ts_expr_push_id(ctx, parser->expr);
-        } else if ((name.size == GRN_COLUMN_NAME_KEY_LEN) &&
-                   !memcmp(name.ptr, GRN_COLUMN_NAME_KEY,
-                           GRN_COLUMN_NAME_KEY_LEN)) {
-          rc = grn_ts_expr_push_key(ctx, parser->expr);
-        } else if ((name.size == GRN_COLUMN_NAME_VALUE_LEN) &&
-                   !memcmp(name.ptr, GRN_COLUMN_NAME_VALUE,
-                           GRN_COLUMN_NAME_VALUE_LEN)) {
-          rc = grn_ts_expr_push_value(ctx, parser->expr);
-        } else if ((name.size == GRN_COLUMN_NAME_SCORE_LEN) &&
-                   !memcmp(name.ptr, GRN_COLUMN_NAME_SCORE,
-                           GRN_COLUMN_NAME_SCORE_LEN)) {
-          rc = grn_ts_expr_push_score(ctx, parser->expr);
-        } else {
-          grn_obj *column = grn_obj_column(ctx, parser->expr->curr_table,
-                                           name.ptr, name.size);
-          if (!column) {
-            rc = GRN_INVALID_ARGUMENT;
-          } else {
-            rc = grn_ts_expr_push_column(ctx, parser->expr, column);
-            grn_obj_unlink(ctx, column);
-          }
-        }
-        break;
-      }
-      case GRN_TS_EXPR_OP_TOKEN: {
-        grn_ts_expr_op_token *op_token = (grn_ts_expr_op_token *)token;
-        rc = grn_ts_expr_push_operator(ctx, parser->expr, op_token->op_type);
-        break;
-      }
-      default: {
-        rc = GRN_INVALID_ARGUMENT;
-        break;
-      }
-    }
+    rc = grn_ts_expr_parser_analyze_token(ctx, parser, parser->tokens[i]);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
