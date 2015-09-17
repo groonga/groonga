@@ -3851,22 +3851,6 @@ typedef struct {
 
 typedef grn_ts_expr_token grn_ts_expr_bracket_token;
 
-#if 0
-typedef struct {
-  grn_ts_expr_token_type type; /* Token type. */
-  grn_ts_str str;              /* Source string. */
-  union {
-    grn_ts_bool bool_value;    /* GRN_TS_EXPR_BOOL_TOKEN. */
-    grn_ts_int int_value;      /* GRN_TS_EXPR_INT_TOKEN. */
-    grn_ts_float float_value;  /* GRN_TS_EXPR_FLOAT_TOKEN. */
-    grn_ts_text text_value;    /* GRN_TS_EXPR_TEXT_TOKEN. */
-    grn_ts_str name;           /* GRN_TS_EXPR_NAME_TOKEN. */
-    grn_ts_op_type op_type;    /* GRN_TS_EXPR_OP_TOKEN. */
-  } content;
-  grn_ts_buf buf;              /* Buffer for content.text_value. */
-} grn_ts_expr_token;
-#endif
-
 typedef struct {
   grn_ts_expr *expr;          /* Associated expression. */
   grn_ts_expr_token **tokens; /* Tokens. */
