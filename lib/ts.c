@@ -4095,6 +4095,61 @@ grn_ts_expr_parser_close(grn_ctx *ctx, grn_ts_expr_parser *parser) {
   GRN_FREE(parser);
 }
 
+/*
+ * grn_ts_expr_parsre_tokenize_sign() extracts a '+' or '-' as the next token.
+ *
+ * Note that '+' and '-' have two roles as follows:
+ * - '+': GRN_TS_OP_POSITIVE and GRN_TS_OP_PLUS.
+ * - '-': GRN_TS_OP_NEGATIVE and GRN_TS_OP_MINUS.
+ */
+static grn_rc
+grn_ts_expr_parser_tokenize_sign(grn_ctx *ctx, grn_ts_expr_parser *parser,
+                                 grn_ts_str str, grn_ts_expr_token **token) {
+  size_t n_args;
+  grn_ts_op_type op_type;
+  grn_ts_str token_str = { str.ptr, 1 };
+  grn_ts_expr_token *prev_token = parser->tokens[parser->n_tokens - 1];
+  switch (prev_token->type) {
+    case GRN_TS_EXPR_START_TOKEN:
+    case GRN_TS_EXPR_OP_TOKEN: {
+      n_args = 1;
+      break;
+    }
+    case GRN_TS_EXPR_CONST_TOKEN:
+    case GRN_TS_EXPR_NAME_TOKEN: {
+      n_args = 2;
+      break;
+    }
+    case GRN_TS_EXPR_BRACKET_TOKEN: {
+      const grn_ts_expr_bracket_token *bracket_token;
+      bracket_token = (const grn_ts_expr_bracket_token *)prev_token;
+      switch (bracket_token->src.ptr[0]) {
+        case '(': case '[': {
+          n_args = 1;
+          break;
+        }
+        case ')': case ']': {
+          n_args = 2;
+          break;
+        }
+        default: {
+          return GRN_UNKNOWN_ERROR;
+        }
+      }
+      break;
+    }
+    default: {
+      return GRN_INVALID_FORMAT;
+    }
+  }
+  if (token_str.ptr[0] == '+') {
+    op_type = (n_args == 1) ? GRN_TS_OP_POSITIVE : GRN_TS_OP_PLUS;
+  } else {
+    op_type = (n_args == 1) ? GRN_TS_OP_NEGATIVE : GRN_TS_OP_MINUS;
+  }
+  return grn_ts_expr_op_token_open(ctx, token_str, op_type, token);
+}
+
 /* grn_ts_expr_parser_tokenize_number() extracts the next token. */
 static grn_rc
 grn_ts_expr_parser_tokenize_number(grn_ctx *ctx, grn_ts_expr_parser *parser,
@@ -4328,53 +4383,7 @@ grn_ts_expr_parser_tokenize_next(grn_ctx *ctx, grn_ts_expr_parser *parser,
     GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE('%', MODULUS)
 #undef GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE
     case '+': case '-': {
-      size_t n_args = 0;
-      grn_ts_expr_token *prev_token = parser->tokens[parser->n_tokens - 1];
-      token_str.size = 1;
-      switch (prev_token->type) {
-        case GRN_TS_EXPR_START_TOKEN:
-        case GRN_TS_EXPR_OP_TOKEN: {
-          n_args = 1;
-          break;
-        }
-        case GRN_TS_EXPR_CONST_TOKEN:
-        case GRN_TS_EXPR_NAME_TOKEN: {
-          n_args = 2;
-          break;
-        }
-        case GRN_TS_EXPR_BRACKET_TOKEN: {
-          const grn_ts_expr_bracket_token *bracket_token;
-          bracket_token = (const grn_ts_expr_bracket_token *)prev_token;
-          switch (bracket_token->src.ptr[0]) {
-            case '(': case '[': {
-              n_args = 1;
-              break;
-            }
-            case ')': case ']': {
-              n_args = 2;
-              break;
-            }
-            default: {
-              break;
-            }
-          }
-          break;
-        }
-        default: {
-          break;
-        }
-      }
-      if (!n_args) {
-        rc = GRN_INVALID_ARGUMENT;
-      } else {
-        grn_ts_op_type op_type;
-        if (rest.ptr[0] == '+') {
-          op_type = (n_args == 1) ? GRN_TS_OP_POSITIVE : GRN_TS_OP_PLUS;
-        } else {
-          op_type = (n_args == 1) ? GRN_TS_OP_NEGATIVE : GRN_TS_OP_MINUS;
-        }
-        rc = grn_ts_expr_op_token_open(ctx, token_str, op_type, &new_token);
-      }
+      rc = grn_ts_expr_parser_tokenize_sign(ctx, parser, rest, &new_token);
       break;
     }
     case '(': case ')': case '[': case ']': {
