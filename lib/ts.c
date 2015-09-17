@@ -3978,11 +3978,11 @@ grn_ts_expr_bracket_token_fin(grn_ctx *ctx, grn_ts_expr_bracket_token *token) {
     return GRN_NO_MEMORY_AVAILABLE;\
   }\
   grn_ts_expr_ ## type ## _token_init(ctx, new_token, src);\
-  *token = (grn_ts_expr_token *)new_token;
+  *token = new_token;
 /* grn_ts_expr_dummy_token_open() creates a token. */
 static grn_rc
 grn_ts_expr_dummy_token_open(grn_ctx *ctx, grn_ts_str src,
-                             grn_ts_expr_token **token) {
+                             grn_ts_expr_dummy_token **token) {
   GRN_TS_EXPR_TOKEN_OPEN(DUMMY, dummy)
   return GRN_SUCCESS;
 }
@@ -3990,7 +3990,7 @@ grn_ts_expr_dummy_token_open(grn_ctx *ctx, grn_ts_str src,
 /* grn_ts_expr_start_token_open() creates a token. */
 static grn_rc
 grn_ts_expr_start_token_open(grn_ctx *ctx, grn_ts_str src,
-                             grn_ts_expr_token **token) {
+                             grn_ts_expr_start_token **token) {
   GRN_TS_EXPR_TOKEN_OPEN(START, start)
   return GRN_SUCCESS;
 }
@@ -3998,7 +3998,7 @@ grn_ts_expr_start_token_open(grn_ctx *ctx, grn_ts_str src,
 /* grn_ts_expr_end_token_open() creates a token. */
 static grn_rc
 grn_ts_expr_end_token_open(grn_ctx *ctx, grn_ts_str src,
-                           grn_ts_expr_token **token) {
+                           grn_ts_expr_end_token **token) {
   GRN_TS_EXPR_TOKEN_OPEN(END, end)
   return GRN_SUCCESS;
 }
@@ -4006,7 +4006,7 @@ grn_ts_expr_end_token_open(grn_ctx *ctx, grn_ts_str src,
 /* grn_ts_expr_const_token_open() creates a token. */
 static grn_rc
 grn_ts_expr_const_token_open(grn_ctx *ctx, grn_ts_str src,
-                             grn_ts_expr_token **token) {
+                             grn_ts_expr_const_token **token) {
   GRN_TS_EXPR_TOKEN_OPEN(CONST, const)
   return GRN_SUCCESS;
 }
@@ -4014,7 +4014,7 @@ grn_ts_expr_const_token_open(grn_ctx *ctx, grn_ts_str src,
 /* grn_ts_expr_name_token_open() creates a token. */
 static grn_rc
 grn_ts_expr_name_token_open(grn_ctx *ctx, grn_ts_str src,
-                            grn_ts_expr_token **token) {
+                            grn_ts_expr_name_token **token) {
   GRN_TS_EXPR_TOKEN_OPEN(NAME, name)
   return GRN_SUCCESS;
 }
@@ -4022,7 +4022,7 @@ grn_ts_expr_name_token_open(grn_ctx *ctx, grn_ts_str src,
 /* grn_ts_expr_op_token_open() creates a token. */
 static grn_rc
 grn_ts_expr_op_token_open(grn_ctx *ctx, grn_ts_str src, grn_ts_op_type op_type,
-                          grn_ts_expr_token **token) {
+                          grn_ts_expr_op_token **token) {
   GRN_TS_EXPR_TOKEN_OPEN(OP, op)
   new_token->op_type = op_type;
   return GRN_SUCCESS;
@@ -4031,7 +4031,7 @@ grn_ts_expr_op_token_open(grn_ctx *ctx, grn_ts_str src, grn_ts_op_type op_type,
 /* grn_ts_expr_bracket_token_open() creates a token. */
 static grn_rc
 grn_ts_expr_bracket_token_open(grn_ctx *ctx, grn_ts_str src,
-                               grn_ts_expr_token **token) {
+                               grn_ts_expr_bracket_token **token) {
   GRN_TS_EXPR_TOKEN_OPEN(BRACKET, bracket)
   return GRN_SUCCESS;
 }
@@ -4101,20 +4101,194 @@ grn_ts_expr_parser_close(grn_ctx *ctx, grn_ts_expr_parser *parser) {
   GRN_FREE(parser);
 }
 
+/* grn_ts_expr_parser_tokenize_start() creates the start token. */
+static grn_rc
+grn_ts_expr_parser_tokenize_start(grn_ctx *ctx, grn_ts_expr_parser *parser,
+                                  grn_ts_str str, grn_ts_expr_token **token) {
+  grn_ts_str token_str = { str.ptr, 0 };
+  grn_ts_expr_start_token *new_token;
+  grn_rc rc = grn_ts_expr_start_token_open(ctx, token_str, &new_token);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  *token = new_token;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_expr_parser_tokenize_end() creates the end token. */
+static grn_rc
+grn_ts_expr_parser_tokenize_end(grn_ctx *ctx, grn_ts_expr_parser *parser,
+                                grn_ts_str str, grn_ts_expr_token **token) {
+  grn_ts_str token_str = { str.ptr, 0 };
+  grn_ts_expr_end_token *new_token;
+  grn_rc rc = grn_ts_expr_end_token_open(ctx, token_str, &new_token);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  *token = new_token;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_expr_parser_tokenize_number() tokenizes an Int or Float literal. */
+static grn_rc
+grn_ts_expr_parser_tokenize_number(grn_ctx *ctx, grn_ts_expr_parser *parser,
+                                   grn_ts_str str, grn_ts_expr_token **token) {
+  // TODO: Improve this not to make a copy of str.
+  char *buf, *end;
+  grn_rc rc;
+  grn_ts_int int_value;
+  grn_ts_str token_str;
+  grn_ts_expr_const_token *new_token;
+
+  buf = GRN_MALLOCN(char, str.size + 1);
+  if (!buf) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  grn_memcpy(buf, str.ptr, str.size);
+  buf[str.size] = '\0';
+
+  int_value = strtol(buf, &end, 0);
+  if (*end != '.') {
+    token_str.ptr = str.ptr;
+    token_str.size = end - buf;
+    rc = grn_ts_expr_const_token_open(ctx, token_str, &new_token);
+    if (rc == GRN_SUCCESS) {
+      new_token->data_kind = GRN_TS_INT;
+      new_token->content.as_int = int_value;
+    }
+  } else {
+    grn_ts_float float_value = strtod(buf, &end);
+    token_str.ptr = str.ptr;
+    token_str.size = end - buf;
+    rc = grn_ts_expr_const_token_open(ctx, token_str, &new_token);
+    if (rc == GRN_SUCCESS) {
+      new_token->data_kind = GRN_TS_FLOAT;
+      new_token->content.as_float = float_value;
+    }
+  }
+  GRN_FREE(buf);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  *token = (grn_ts_expr_token *)new_token;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_expr_parser_tokenize_text() tokenizes a Text literal. */
+static grn_rc
+grn_ts_expr_parser_tokenize_text(grn_ctx *ctx, grn_ts_expr_parser *parser,
+                                 grn_ts_str str, grn_ts_expr_token **token) {
+  size_t i, n_escapes = 0;
+  grn_rc rc;
+  grn_ts_str token_str;
+  grn_ts_expr_const_token *new_token;
+  for (i = 1; i < str.size; i++) {
+    if (str.ptr[i] == '\\') {
+      i++;
+      n_escapes++;
+    } else if (str.ptr[i] == '"') {
+      break;
+    }
+  }
+  if (i >= str.size) {
+    /* No closing double-quote. */
+    return GRN_INVALID_ARGUMENT;
+  }
+  token_str.ptr = str.ptr;
+  token_str.size = i + 1;
+  rc = grn_ts_expr_const_token_open(ctx, token_str, &new_token);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  new_token->data_kind = GRN_TS_TEXT;
+  if (n_escapes) {
+    char *buf_ptr;
+    const char *str_ptr = str.ptr + 1;
+    size_t size = token_str.size - 2 - n_escapes;
+    rc = grn_ts_buf_resize(ctx, &new_token->buf, size);
+    if (rc != GRN_SUCCESS) {
+      grn_ts_expr_token_close(ctx, (grn_ts_expr_token *)new_token);
+      return rc;
+    }
+    buf_ptr = (char *)new_token->buf.ptr;
+    for (i = 0; i < size; i++) {
+      if (str_ptr[i] == '\\') {
+        str_ptr++;
+      }
+      buf_ptr[i] = str_ptr[i];
+    }
+    new_token->content.as_text.ptr = buf_ptr;
+    new_token->content.as_text.size = size;
+  } else {
+    new_token->content.as_text.ptr = token_str.ptr + 1;
+    new_token->content.as_text.size = token_str.size - 2;
+  }
+  *token = (grn_ts_expr_token *)new_token;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_expr_parser_tokenize_name() tokenizes a Bool literal or a name. */
+static grn_rc
+grn_ts_expr_parser_tokenize_name(grn_ctx *ctx, grn_ts_expr_parser *parser,
+                                 grn_ts_str str, grn_ts_expr_token **token) {
+  size_t i;
+  grn_ts_str token_str;
+  for (i = 1; i < str.size; i++) {
+    if (!grn_ts_byte_is_name_char(str.ptr[i])) {
+      break;
+    }
+  }
+  token_str.ptr = str.ptr;
+  token_str.size = i;
+
+  if (((token_str.size == 4) && !memcmp(token_str.ptr, "true", 4)) ||
+      ((token_str.size == 5) && !memcmp(token_str.ptr, "false", 5))) {
+    grn_ts_expr_const_token *new_token;
+    grn_rc rc = grn_ts_expr_const_token_open(ctx, token_str, &new_token);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+    new_token->data_kind = GRN_TS_BOOL;
+    if (token_str.ptr[0] == 't') {
+      new_token->content.as_bool = GRN_TRUE;
+    } else {
+      new_token->content.as_bool = GRN_FALSE;
+    }
+    *token = (grn_ts_expr_token *)new_token;
+    return GRN_SUCCESS;
+  }
+  return grn_ts_expr_name_token_open(ctx, token_str, token);
+}
+
+/* grn_ts_expr_parser_tokenize_bracket() tokenizes a bracket. */
+static grn_rc
+grn_ts_expr_parser_tokenize_bracket(grn_ctx *ctx, grn_ts_expr_parser *parser,
+                                grn_ts_str str, grn_ts_expr_token **token) {
+  grn_ts_str token_str = { str.ptr, 1 };
+  grn_ts_expr_bracket_token *new_token;
+  grn_rc rc = grn_ts_expr_bracket_token_open(ctx, token_str, &new_token);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  *token = new_token;
+  return GRN_SUCCESS;
+}
+
 /*
- * grn_ts_expr_parsre_tokenize_sign() extracts a '+' or '-' as the next token.
- *
- * Note that '+' and '-' have two roles as follows:
- * - '+': GRN_TS_OP_POSITIVE and GRN_TS_OP_PLUS.
- * - '-': GRN_TS_OP_NEGATIVE and GRN_TS_OP_MINUS.
+ * grn_ts_expr_parsre_tokenize_sign() tokenizes an operator '+' or '-'.
+ * Note that '+' and '-' have two roles each.
+ * '+' is GRN_TS_OP_POSITIVE or GRN_TS_OP_PLUS.
+ * '-' is GRN_TS_OP_NEGATIVE or GRN_TS_OP_MINUS.
  */
 static grn_rc
 grn_ts_expr_parser_tokenize_sign(grn_ctx *ctx, grn_ts_expr_parser *parser,
                                  grn_ts_str str, grn_ts_expr_token **token) {
   size_t n_args;
+  grn_rc rc;
   grn_ts_op_type op_type;
   grn_ts_str token_str = { str.ptr, 1 };
   grn_ts_expr_token *prev_token = parser->tokens[parser->n_tokens - 1];
+  grn_ts_expr_op_token *new_token;
   switch (prev_token->type) {
     case GRN_TS_EXPR_START_TOKEN:
     case GRN_TS_EXPR_OP_TOKEN: {
@@ -4153,190 +4327,29 @@ grn_ts_expr_parser_tokenize_sign(grn_ctx *ctx, grn_ts_expr_parser *parser,
   } else {
     op_type = (n_args == 1) ? GRN_TS_OP_NEGATIVE : GRN_TS_OP_MINUS;
   }
-  return grn_ts_expr_op_token_open(ctx, token_str, op_type, token);
-}
-
-/* grn_ts_expr_parser_tokenize_number() extracts the next token. */
-static grn_rc
-grn_ts_expr_parser_tokenize_number(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                                   grn_ts_str str, grn_ts_expr_token **token) {
-  // TODO: Improve this not to make a copy of str.
-  char *buf, *end;
-  grn_rc rc;
-  grn_ts_int int_value;
-  grn_ts_str token_str;
-  grn_ts_expr_token *new_token;
-  grn_ts_expr_const_token *const_token;
-
-  buf = GRN_MALLOCN(char, str.size + 1);
-  if (!buf) {
-    return GRN_NO_MEMORY_AVAILABLE;
-  }
-  grn_memcpy(buf, str.ptr, str.size);
-  buf[str.size] = '\0';
-
-  int_value = strtol(buf, &end, 0);
-  if (*end != '.') {
-    token_str.ptr = str.ptr;
-    token_str.size = end - buf;
-    rc = grn_ts_expr_const_token_open(ctx, token_str, &new_token);
-    if (rc == GRN_SUCCESS) {
-      const_token = (grn_ts_expr_const_token *)new_token;
-      const_token->data_kind = GRN_TS_INT;
-      const_token->content.as_int = int_value;
-    }
-  } else {
-    grn_ts_float float_value = strtod(buf, &end);
-    token_str.ptr = str.ptr;
-    token_str.size = end - buf;
-    rc = grn_ts_expr_const_token_open(ctx, token_str, &new_token);
-    if (rc == GRN_SUCCESS) {
-      const_token = (grn_ts_expr_const_token *)new_token;
-      const_token->data_kind = GRN_TS_FLOAT;
-      const_token->content.as_float = float_value;
-    }
-  }
-  GRN_FREE(buf);
-  if (rc == GRN_SUCCESS) {
-    *token = new_token;
-  }
-  return rc;
-}
-
-/* grn_ts_expr_parser_tokenize_text() extracts the next token. */
-static grn_rc
-grn_ts_expr_parser_tokenize_text(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                                 grn_ts_str str, grn_ts_expr_token **token) {
-  size_t i, n_escapes = 0;
-  grn_rc rc;
-  grn_ts_str token_str;
-  grn_ts_expr_token *new_token;
-  grn_ts_expr_const_token *const_token;
-  for (i = 1; i < str.size; i++) {
-    if (str.ptr[i] == '\\') {
-      i++;
-      n_escapes++;
-    } else if (str.ptr[i] == '"') {
-      break;
-    }
-  }
-  if (i >= str.size) {
-    /* No closing double-quote. */
-    return GRN_INVALID_ARGUMENT;
-  }
-  token_str.ptr = str.ptr;
-  token_str.size = i + 1;
-  rc = grn_ts_expr_const_token_open(ctx, token_str, &new_token);
+  rc = grn_ts_expr_op_token_open(ctx, token_str, op_type, &new_token);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  const_token = (grn_ts_expr_const_token *)new_token;
-  const_token->data_kind = GRN_TS_TEXT;
-  if (n_escapes) {
-    char *buf_ptr;
-    const char *str_ptr = str.ptr + 1;
-    size_t size = token_str.size - 2 - n_escapes;
-    rc = grn_ts_buf_resize(ctx, &const_token->buf, size);
-    if (rc != GRN_SUCCESS) {
-      grn_ts_expr_token_close(ctx, new_token);
-      return rc;
-    }
-    buf_ptr = (char *)const_token->buf.ptr;
-    for (i = 0; i < size; i++) {
-      if (str_ptr[i] == '\\') {
-        str_ptr++;
-      }
-      buf_ptr[i] = str_ptr[i];
-    }
-    const_token->content.as_text.ptr = buf_ptr;
-    const_token->content.as_text.size = size;
-  } else {
-    const_token->content.as_text.ptr = token_str.ptr + 1;
-    const_token->content.as_text.size = token_str.size - 2;
-  }
-  *token = new_token;
+  *token = (grn_ts_expr_token *)new_token;
   return GRN_SUCCESS;
 }
 
-/* grn_ts_expr_parser_tokenize_name() extracts the next token. */
+/* grn_ts_expr_parser_tokenize_op() tokenizes an operator. */
 static grn_rc
-grn_ts_expr_parser_tokenize_name(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                                 grn_ts_str str, grn_ts_expr_token **token) {
-  size_t i;
-  grn_rc rc;
-  grn_ts_str token_str;
-  grn_ts_expr_token *new_token;
-  for (i = 1; i < str.size; i++) {
-    if ((str.ptr[i] != '_') && !isalnum((unsigned char)str.ptr[i])) {
-      break;
-    }
-  }
-  token_str.ptr = str.ptr;
-  token_str.size = i;
-
-  if (((token_str.size == 4) && !memcmp(token_str.ptr, "true", 4)) ||
-      ((token_str.size == 5) && !memcmp(token_str.ptr, "false", 5))) {
-    grn_ts_expr_const_token *const_token;
-    rc = grn_ts_expr_const_token_open(ctx, token_str, &new_token);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-    const_token = (grn_ts_expr_const_token *)new_token;
-    const_token->data_kind = GRN_TS_BOOL;
-    if (token_str.ptr[0] == 't') {
-      const_token->content.as_bool = GRN_TRUE;
-    } else {
-      const_token->content.as_bool = GRN_FALSE;
-    }
-  } else {
-    rc = grn_ts_expr_name_token_open(ctx, token_str, &new_token);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-  }
-  *token = new_token;
-  return GRN_SUCCESS;
-}
-
-/* grn_ts_expr_parser_tokenize_next() extracts the next token. */
-static grn_rc
-grn_ts_expr_parser_tokenize_next(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                                 grn_ts_str str, grn_ts_expr_token **token) {
-  grn_rc rc;
-  grn_ts_str rest, token_str;
+grn_ts_expr_parser_tokenize_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
+                               grn_ts_str str, grn_ts_expr_token **token) {
+  grn_rc rc = GRN_SUCCESS;
+  grn_ts_str token_str = str;
   grn_ts_op_type op_type;
-  grn_ts_expr_token *new_token;
-
-  if (!parser->n_tokens) {
-    /* The start token. */
-    token_str.ptr = str.ptr;
-    token_str.size = 0;
-    rc = grn_ts_expr_start_token_open(ctx, token_str, &new_token);
-    if (rc != GRN_SUCCESS) {
-      return rc;
+  grn_ts_expr_op_token *new_token;
+  switch (str.ptr[0]) {
+    case '+': case '-': {
+      return grn_ts_expr_parser_tokenize_sign(ctx, parser, str, token);
     }
-    *token = new_token;
-    return GRN_SUCCESS;
-  }
-
-  rest = grn_ts_str_trim_left(str);
-  if (!rest.size) {
-    /* The end token. */
-    token_str = rest;
-    rc = grn_ts_expr_end_token_open(ctx, token_str, &new_token);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-    *token = new_token;
-    return GRN_SUCCESS;
-  }
-
-  rc = GRN_SUCCESS;
-  token_str.ptr = rest.ptr;
-  switch (rest.ptr[0]) {
 #define GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE(label, TYPE, EQUAL_TYPE)\
   case label: {\
-    if ((rest.size >= 2) && (rest.ptr[1] == '=')) {\
+    if ((str.size >= 2) && (str.ptr[1] == '=')) {\
       token_str.size = 2;\
       op_type = GRN_TS_OP_ ## EQUAL_TYPE;\
     } else {\
@@ -4352,7 +4365,7 @@ grn_ts_expr_parser_tokenize_next(grn_ctx *ctx, grn_ts_expr_parser *parser,
 #undef GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE
 #define GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE(label, TYPE, DOUBLE_TYPE)\
   case label: {\
-    if ((rest.size >= 2) && (rest.ptr[1] == rest.ptr[0])) {\
+    if ((str.size >= 2) && (str.ptr[1] == str.ptr[0])) {\
       token_str.size = 2;\
       op_type = GRN_TS_OP_ ## DOUBLE_TYPE;\
     } else {\
@@ -4366,7 +4379,7 @@ grn_ts_expr_parser_tokenize_next(grn_ctx *ctx, grn_ts_expr_parser *parser,
     GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE('|', BITWISE_OR, LOGICAL_OR)
 #undef GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE
     case '=': {
-      if ((rest.size >= 2) && (rest.ptr[1] == '=')) {
+      if ((str.size >= 2) && (str.ptr[1] == '=')) {
         token_str.size = 2;
         rc = grn_ts_expr_op_token_open(ctx, token_str, GRN_TS_OP_EQUAL,
                                        &new_token);
@@ -4379,7 +4392,7 @@ grn_ts_expr_parser_tokenize_next(grn_ctx *ctx, grn_ts_expr_parser *parser,
   case label: {\
     token_str.size = 1;\
     rc = grn_ts_expr_op_token_open(ctx, token_str, GRN_TS_OP_ ## TYPE,\
-                                 &new_token);\
+                                   &new_token);\
     break;\
   }
     GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE('~', BITWISE_NOT)
@@ -4388,43 +4401,53 @@ grn_ts_expr_parser_tokenize_next(grn_ctx *ctx, grn_ts_expr_parser *parser,
     GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE('/', DIVISION)
     GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE('%', MODULUS)
 #undef GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE
-    case '+': case '-': {
-      rc = grn_ts_expr_parser_tokenize_sign(ctx, parser, rest, &new_token);
-      break;
-    }
-    case '(': case ')': case '[': case ']': {
-      token_str.size = 1;
-      rc = grn_ts_expr_bracket_token_open(ctx, token_str, &new_token);
-      break;
-    }
-    case '"': {
-      rc = grn_ts_expr_parser_tokenize_text(ctx, parser, rest, &new_token);
-      break;
-    }
     case '.': {
-      if ((rest.size >= 2) && grn_ts_byte_is_decimal(rest.ptr[1])) {
-        rc = grn_ts_expr_parser_tokenize_number(ctx, parser, rest, &new_token);
-      } else {
-        // TODO: Dereferencing is not supported yet.
-        rc = GRN_INVALID_ARGUMENT;
-      }
-      break;
-    }
-    case '0': case '1': case '2': case '3': case '4': case '5': case '6':
-    case '7': case '8': case '9': {
-      rc = grn_ts_expr_parser_tokenize_number(ctx, parser, rest, &new_token);
+      // TODO: Dereferencing is not supported yet.
+      rc = GRN_INVALID_ARGUMENT;
       break;
     }
     default: {
-      rc = grn_ts_expr_parser_tokenize_name(ctx, parser, rest, &new_token);
+      rc = GRN_INVALID_ARGUMENT;
       break;
     }
   }
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  *token = new_token;
+  *token = (grn_ts_expr_token *)new_token;
   return GRN_SUCCESS;
+}
+
+/* grn_ts_expr_parser_tokenize_next() extracts the next token. */
+static grn_rc
+grn_ts_expr_parser_tokenize_next(grn_ctx *ctx, grn_ts_expr_parser *parser,
+                                 grn_ts_str str, grn_ts_expr_token **token) {
+  grn_ts_str rest;
+  if (!parser->n_tokens) {
+    return grn_ts_expr_parser_tokenize_start(ctx, parser, str, token);
+  }
+  rest = grn_ts_str_trim_left(str);
+  if (!rest.size) {
+    return grn_ts_expr_parser_tokenize_end(ctx, parser, rest, token);
+  }
+  if (grn_ts_byte_is_decimal(rest.ptr[0]) ||
+      ((rest.size >= 2) && grn_ts_byte_is_decimal(rest.ptr[1]))) {
+    return grn_ts_expr_parser_tokenize_number(ctx, parser, rest, token);
+  }
+  if (rest.ptr[0] == '"') {
+    return grn_ts_expr_parser_tokenize_text(ctx, parser, rest, token);
+  }
+  if (grn_ts_byte_is_name_char(rest.ptr[0])) {
+    return grn_ts_expr_parser_tokenize_name(ctx, parser, rest, token);
+  }
+  switch (rest.ptr[0]) {
+    case '(': case ')': case '[': case ']': {
+      return grn_ts_expr_parser_tokenize_bracket(ctx, parser, rest, token);
+    }
+    default: {
+      return grn_ts_expr_parser_tokenize_op(ctx, parser, rest, token);
+    }
+  }
 }
 
 /* grn_ts_expr_parser_push_token() appends a token. */
