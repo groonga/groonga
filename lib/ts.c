@@ -4450,7 +4450,7 @@ grn_ts_expr_parser_tokenize_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
     case '+': case '-': {
       return grn_ts_expr_parser_tokenize_sign(ctx, parser, str, token);
     }
-#define GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE(label, TYPE, EQUAL_TYPE)\
+#define GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE(label, TYPE, EQUAL_TYPE)\
   case label: {\
     if ((str.size >= 2) && (str.ptr[1] == '=')) {\
       token_str.size = 2;\
@@ -4462,11 +4462,11 @@ grn_ts_expr_parser_tokenize_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
     rc = grn_ts_expr_op_token_open(ctx, token_str, op_type, &new_token);\
     break;\
   }
-    GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE('!', BITWISE_NOT, NOT_EQUAL)
-    GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE('<', LESS, LESS_EQUAL)
-    GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE('>', GREATER, GREATER_EQUAL)
-#undef GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE
-#define GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE(label, TYPE, DOUBLE_TYPE)\
+    GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('!', BITWISE_NOT, NOT_EQUAL)
+    GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('<', LESS, LESS_EQUAL)
+    GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('>', GREATER, GREATER_EQUAL)
+#undef GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE
+#define GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE(label, TYPE, DOUBLE_TYPE)\
   case label: {\
     if ((str.size >= 2) && (str.ptr[1] == str.ptr[0])) {\
       token_str.size = 2;\
@@ -4478,9 +4478,9 @@ grn_ts_expr_parser_tokenize_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
     rc = grn_ts_expr_op_token_open(ctx, token_str, op_type, &new_token);\
     break;\
   }
-    GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE('&', BITWISE_AND, LOGICAL_AND)
-    GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE('|', BITWISE_OR, LOGICAL_OR)
-#undef GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE
+    GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('&', BITWISE_AND, LOGICAL_AND)
+    GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('|', BITWISE_OR, LOGICAL_OR)
+#undef GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE
     case '=': {
       if ((str.size >= 2) && (str.ptr[1] == '=')) {
         token_str.size = 2;
@@ -4491,19 +4491,19 @@ grn_ts_expr_parser_tokenize_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
       }
       break;
     }
-#define GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE(label, TYPE)\
+#define GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE(label, TYPE)\
   case label: {\
     token_str.size = 1;\
     rc = grn_ts_expr_op_token_open(ctx, token_str, GRN_TS_OP_ ## TYPE,\
                                    &new_token);\
     break;\
   }
-    GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE('~', BITWISE_NOT)
-    GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE('^', BITWISE_XOR)
-    GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE('*', MULTIPLICATION)
-    GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE('/', DIVISION)
-    GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE('%', MODULUS)
-#undef GRN_TS_EXPR_PARSER_TOKENIZE_NEXT_CASE
+    GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('~', BITWISE_NOT)
+    GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('^', BITWISE_XOR)
+    GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('*', MULTIPLICATION)
+    GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('/', DIVISION)
+    GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('%', MODULUS)
+#undef GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE
     case '.': {
       // TODO: Dereferencing is not supported yet.
       rc = GRN_INVALID_ARGUMENT;
