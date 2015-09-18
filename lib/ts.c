@@ -89,6 +89,24 @@ grn_ts_str_trim_left(grn_ts_str str) {
   return str;
 }
 
+/* grn_ts_str_is_true() returns whether or not a string is true. */
+static grn_ts_bool
+grn_ts_str_is_true(grn_ts_str str) {
+  return (str.size == 4) && !memcmp(str.ptr, "true", 4);
+}
+
+/* grn_ts_str_is_false() returns whether or not a string is false. */
+static grn_ts_bool
+grn_ts_str_is_false(grn_ts_str str) {
+  return (str.size == 5) && !memcmp(str.ptr, "false", 5);
+}
+
+/* grn_ts_str_is_bool() returns whether or not a string is true or false. */
+static grn_ts_bool
+grn_ts_str_is_bool(grn_ts_str str) {
+  return grn_ts_str_is_true(str) || grn_ts_str_is_false(str);
+}
+
 /*
  * grn_ts_str_is_name_prefix() returns whether or not a string is valid as a
  * name prefix.
@@ -102,6 +120,34 @@ grn_ts_str_is_name_prefix(grn_ts_str str) {
     }
   }
   return GRN_TRUE;
+}
+
+/* grn_ts_str_is_id_name() returns whether or not a string is "_id". */
+static grn_ts_bool
+grn_ts_str_is_id_name(grn_ts_str str) {
+  return (str.size == GRN_COLUMN_NAME_ID_LEN) &&
+         !memcmp(str.ptr, GRN_COLUMN_NAME_ID, GRN_COLUMN_NAME_ID_LEN);
+}
+
+/* grn_ts_str_is_score_name() returns whether or not a string is "_score". */
+static grn_ts_bool
+grn_ts_str_is_score_name(grn_ts_str str) {
+  return (str.size == GRN_COLUMN_NAME_SCORE_LEN) &&
+         !memcmp(str.ptr, GRN_COLUMN_NAME_SCORE, GRN_COLUMN_NAME_SCORE_LEN);
+}
+
+/* grn_ts_str_is_key_name() returns whether or not a string is "_key". */
+static grn_ts_bool
+grn_ts_str_is_key_name(grn_ts_str str) {
+  return (str.size == GRN_COLUMN_NAME_KEY_LEN) &&
+         !memcmp(str.ptr, GRN_COLUMN_NAME_KEY, GRN_COLUMN_NAME_KEY_LEN);
+}
+
+/* grn_ts_str_is_value_name() returns whether or not a string is "_value". */
+static grn_ts_bool
+grn_ts_str_is_value_name(grn_ts_str str) {
+  return (str.size == GRN_COLUMN_NAME_VALUE_LEN) &&
+         !memcmp(str.ptr, GRN_COLUMN_NAME_VALUE, GRN_COLUMN_NAME_VALUE_LEN);
 }
 
 /*-------------------------------------------------------------
@@ -4232,8 +4278,7 @@ grn_ts_expr_parser_tokenize_name(grn_ctx *ctx, grn_ts_expr_parser *parser,
   token_str.ptr = str.ptr;
   token_str.size = i;
 
-  if (((token_str.size == 4) && !memcmp(token_str.ptr, "true", 4)) ||
-      ((token_str.size == 5) && !memcmp(token_str.ptr, "false", 5))) {
+  if (grn_ts_str_is_bool(token_str)) {
     grn_ts_expr_const_token *new_token;
     grn_rc rc = grn_ts_expr_const_token_open(ctx, token_str, &new_token);
     if (rc != GRN_SUCCESS) {
@@ -4544,21 +4589,17 @@ grn_ts_expr_parser_push_name_token(grn_ctx *ctx, grn_ts_expr_parser *parser,
   grn_rc rc;
   grn_obj *column;
   grn_ts_str name = token->src;
-  if ((name.size == GRN_COLUMN_NAME_ID_LEN) &&
-      !memcmp(name.ptr, GRN_COLUMN_NAME_ID, GRN_COLUMN_NAME_ID_LEN)) {
+  if (grn_ts_str_is_id_name(name)) {
     return grn_ts_expr_push_id(ctx, parser->expr);
   }
-  if ((name.size == GRN_COLUMN_NAME_KEY_LEN) &&
-      !memcmp(name.ptr, GRN_COLUMN_NAME_KEY, GRN_COLUMN_NAME_KEY_LEN)) {
+  if (grn_ts_str_is_score_name(name)) {
+    return grn_ts_expr_push_score(ctx, parser->expr);
+  }
+  if (grn_ts_str_is_key_name(name)) {
     return grn_ts_expr_push_key(ctx, parser->expr);
   }
-  if ((name.size == GRN_COLUMN_NAME_VALUE_LEN) &&
-      !memcmp(name.ptr, GRN_COLUMN_NAME_VALUE, GRN_COLUMN_NAME_VALUE_LEN)) {
+  if (grn_ts_str_is_value_name(name)) {
     return grn_ts_expr_push_value(ctx, parser->expr);
-  }
-  if ((name.size == GRN_COLUMN_NAME_SCORE_LEN) &&
-      !memcmp(name.ptr, GRN_COLUMN_NAME_SCORE, GRN_COLUMN_NAME_SCORE_LEN)) {
-    return grn_ts_expr_push_score(ctx, parser->expr);
   }
   column = grn_obj_column(ctx, parser->expr->curr_table, name.ptr, name.size);
   if (!column) {
