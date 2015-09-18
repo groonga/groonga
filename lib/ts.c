@@ -4491,6 +4491,28 @@ grn_ts_expr_parser_tokenize(grn_ctx *ctx, grn_ts_expr_parser *parser,
   return GRN_SUCCESS;
 }
 
+/* grn_ts_expr_parser_reserve_stack() extends a stack. */
+static grn_rc
+grn_ts_expr_parser_reserve_stack(grn_ctx *ctx, grn_ts_expr_parser *parser) {
+  size_t i, n_bytes, new_size;
+  grn_ts_expr_token **new_stack;
+  if (parser->stack_depth < parser->stack_size) {
+    return GRN_SUCCESS;
+  }
+  new_size = parser->stack_size ? (parser->stack_size * 2) : 1;
+  n_bytes = sizeof(grn_ts_expr_token *) * new_size;
+  new_stack = GRN_REALLOC(parser->stack, n_bytes);
+  if (!new_stack) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  for (i = parser->stack_size; i < new_size; i++) {
+    new_stack[i] = NULL;
+  }
+  parser->stack = new_stack;
+  parser->stack_size = new_size;
+  return GRN_SUCCESS;
+}
+
 /* grn_ts_expr_parser_analyze_token() analyzes a token. */
 static grn_rc
 grn_ts_expr_parser_analyze_token(grn_ctx *ctx, grn_ts_expr_parser *parser,
