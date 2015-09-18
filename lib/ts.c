@@ -647,6 +647,9 @@ grn_ts_data_kind_to_type(grn_ts_data_kind kind) {
  * Operators.
  */
 
+/* Operator precedence. */
+typedef int grn_ts_op_precedence;
+
 /* grn_ts_op_get_n_args() returns the number of arguments. */
 static size_t
 grn_ts_op_get_n_args(grn_ts_op_type op_type) {
@@ -674,6 +677,59 @@ grn_ts_op_get_n_args(grn_ts_op_type op_type) {
     case GRN_TS_OP_DIVISION:       /* X / Y  */
     case GRN_TS_OP_MODULUS: {      /* X % Y  */
       return 2;
+    }
+    default: {
+      return 0;
+    }
+  }
+}
+
+/*
+ * grn_ts_op_get_precedence() returns the precedence.
+ * A prior operator has a higher precedence.
+ */
+static grn_ts_op_precedence
+grn_ts_op_get_precedence(grn_ts_op_type op_type) {
+  switch (op_type) {
+    case GRN_TS_OP_LOGICAL_NOT:
+    case GRN_TS_OP_BITWISE_NOT:
+    case GRN_TS_OP_POSITIVE:
+    case GRN_TS_OP_NEGATIVE: {
+      return 14;
+    }
+    case GRN_TS_OP_LOGICAL_AND: {
+      return 5;
+    }
+    case GRN_TS_OP_LOGICAL_OR: {
+      return 4;
+    }
+    case GRN_TS_OP_EQUAL:
+    case GRN_TS_OP_NOT_EQUAL: {
+      return 9;
+    }
+    case GRN_TS_OP_LESS:
+    case GRN_TS_OP_LESS_EQUAL:
+    case GRN_TS_OP_GREATER:
+    case GRN_TS_OP_GREATER_EQUAL: {
+      return 10;
+    }
+    case GRN_TS_OP_BITWISE_AND: {
+      return 8;
+    }
+    case GRN_TS_OP_BITWISE_OR: {
+      return 6;
+    }
+    case GRN_TS_OP_BITWISE_XOR: {
+      return 7;
+    }
+    case GRN_TS_OP_PLUS:
+    case GRN_TS_OP_MINUS: {
+      return 12;
+    }
+    case GRN_TS_OP_MULTIPLICATION:
+    case GRN_TS_OP_DIVISION:
+    case GRN_TS_OP_MODULUS: {
+      return 13;
     }
     default: {
       return 0;
@@ -4608,7 +4664,8 @@ grn_ts_expr_parser_push_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
 
 /* grn_ts_expr_parser_apply_op() applies prior operators. */
 static grn_rc
-grn_ts_expr_parser_apply_op(grn_ctx *ctx, grn_ts_expr_parser *parser) {
+grn_ts_expr_parser_apply_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
+                            grn_ts_op_precedence precedence_threshold) {
   grn_rc rc = GRN_SUCCESS;
   grn_ts_expr_token **stack = parser->stack;
   size_t depth = parser->stack_depth;
@@ -4616,6 +4673,7 @@ grn_ts_expr_parser_apply_op(grn_ctx *ctx, grn_ts_expr_parser *parser) {
     size_t n_args;
     grn_ts_str src;
     grn_ts_expr_op_token *op_token;
+    grn_ts_op_precedence precedence;
     grn_ts_expr_dummy_token *dummy_token;
     if (stack[depth - 1]->type != GRN_TS_EXPR_DUMMY_TOKEN) {
       rc = GRN_INVALID_ARGUMENT;
@@ -4625,7 +4683,10 @@ grn_ts_expr_parser_apply_op(grn_ctx *ctx, grn_ts_expr_parser *parser) {
       break;
     }
     op_token = (grn_ts_expr_op_token *)stack[depth - 2];
-    // TODO: Check the priority.
+    precedence = grn_ts_op_get_precedence(op_token->op_type);
+    if (precedence < precedence_threshold) {
+      break;
+    }
     rc = grn_ts_expr_parser_push_op(ctx, parser, op_token);
     if (rc != GRN_SUCCESS) {
       break;
@@ -4661,8 +4722,8 @@ grn_ts_expr_parser_analyze_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
       return GRN_INVALID_FORMAT;
     }
   } else if (n_args == 2) {
-    // TODO: Pass the priority.
-    grn_rc rc = grn_ts_expr_parser_apply_op(ctx, parser);
+    grn_ts_op_precedence precedence = grn_ts_op_get_precedence(token->op_type);
+    grn_rc rc = grn_ts_expr_parser_apply_op(ctx, parser, precedence);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
@@ -4693,7 +4754,7 @@ grn_ts_expr_parser_analyze_bracket(grn_ctx *ctx, grn_ts_expr_parser *parser,
     }
     case ')': case ']': {
       grn_ts_expr_token *ex_ex_token;
-      grn_rc rc = grn_ts_expr_parser_apply_op(ctx, parser);
+      grn_rc rc = grn_ts_expr_parser_apply_op(ctx, parser, 0);
       if (rc != GRN_SUCCESS) {
         return rc;
       }
@@ -4745,7 +4806,7 @@ grn_ts_expr_parser_analyze_token(grn_ctx *ctx, grn_ts_expr_parser *parser,
       return GRN_SUCCESS;
     }
     case GRN_TS_EXPR_END_TOKEN: {
-      return grn_ts_expr_parser_apply_op(ctx, parser);
+      return grn_ts_expr_parser_apply_op(ctx, parser, 0);
     }
     case GRN_TS_EXPR_CONST_TOKEN: {
       grn_ts_expr_const_token *const_token = (grn_ts_expr_const_token *)token;
