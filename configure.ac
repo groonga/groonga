@@ -1459,8 +1459,7 @@ AC_ARG_WITH(groonga-org-path,
 AC_SUBST(GROONGA_ORG_PATH)
 
 # groonga-httpd
-m4_define([nginx_version], m4_include(nginx_version))
-NGINX_VERSION=nginx_version
+NGINX_VERSION=m4_include([nginx_version])
 AC_SUBST(NGINX_VERSION)
 
 # groonga-httpd binary path
