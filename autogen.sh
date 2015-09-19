@@ -10,7 +10,7 @@ Darwin)
         fi
         gettext_aclocal="$(echo /usr/local/Cellar/gettext/*/share/aclocal | awk '{ print $NF }')"
         if [ -d "$gettext_aclocal" ]; then
-          $ACLOCAL_ARGS="$ACLOCAL_ARGS -I $gettext_aclocal"
+          ACLOCAL_ARGS="$ACLOCAL_ARGS -I $gettext_aclocal"
         fi
 	;;
 FreeBSD)
