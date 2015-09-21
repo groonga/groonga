@@ -8,9 +8,14 @@ Darwin)
         if [ -d $homebrew_aclocal ]; then
           ACLOCAL_ARGS="$ACLOCAL_ARGS -I $homebrew_aclocal"
         fi
-        gettext_aclocal="$(echo /usr/local/Cellar/gettext/*/share/aclocal | awk '{ print $NF }')"
-        if [ -d "$gettext_aclocal" ]; then
-          ACLOCAL_ARGS="$ACLOCAL_ARGS -I $gettext_aclocal"
+        gettext_prefix=/usr/local/Cellar/gettext
+        if [ -d $gettext_prefix ]; then
+          gettext_aclocal=$(ls $gettext_prefix/*/share/aclocal | \
+                               sort --version-sort | \
+                               tail -n 1)
+          if [ -d $gettext_aclocal ]; then
+            ACLOCAL_ARGS="$ACLOCAL_ARGS -I $gettext_aclocal"
+          fi
         fi
 	;;
 FreeBSD)
