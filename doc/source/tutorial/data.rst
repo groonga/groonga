@@ -67,7 +67,9 @@ String types
 
 The string types are divided according to the maximum length. For more details, see :doc:`/reference/types`. The default value is the zero-length string.
 
-The following example creates a ShortText column and updates existing records. The third record has the default value because not updated.
+The following example creates a ``ShortText`` column and updates
+existing records. The third record (``"Block"`` key record) has the
+default value (zero-length string) because it's not updated.
 
 .. groonga-command
 .. include:: ../example/tutorial/data-4.log
@@ -89,7 +91,9 @@ The date and time type of Groonga is Time. Actually, a Time column stores a date
    Groonga internally holds the value of Epoch as pair of integer. The first integer represents the value of seconds, on the other hand, the second integer represents the value of micro seconds.
    So, Groonga shows the value of Epoch as floating point. Integral part means the value of seconds, fraction part means the value of micro seconds.
 
-The following example creates a Time column and updates existing records. The first record has the default value because not updated.
+The following example creates a ``Time`` column and updates existing
+records. The first record (``"Monkey"`` key record) has the default
+value (``0.0``) because it's not updated.
 
 .. groonga-command
 .. include:: ../example/tutorial/data-5.log
@@ -111,7 +115,9 @@ The longitude and latitude types are divided according to the geographic coordin
 
 A number with/without a decimal point represents a longitude or latitude in milliseconds/degrees respectively. Note that a combination of a number with a decimal point and a number without a decimal point (e.g. 35.1x139) must not be used. A comma (',') is also available as a delimiter. The default value is "0x0".
 
-The following example creates a WGS84GeoPoint column and updates existing records. The second record has the default value because not updated.
+The following example creates a ``WGS84GeoPoint`` column and updates
+existing records. The second record (``"Flower"`` key record) has the
+default value (``"0x0"``) because it's not updated.
 
 .. groonga-command
 .. include:: ../example/tutorial/data-6.log
@@ -128,9 +134,12 @@ Reference types
 
 Groonga supports a reference column, which stores references to records in its associated table. In practice, a reference column stores the IDs of the referred records in the associated table and enables access to those records.
 
-You can specify a column in the associated table to the `output_columns` parameter of a :doc:`/reference/commands/select` command. The format is "Src.Dest" where Src is the name of the reference column and Dest is the name of the target column. If only the reference column is specified, it is handled as "Src._key". Note that if a reference does not point to a valid record, a :doc:`/reference/commands/select` command outputs the default value of the target column.
+You can specify a column in the associated table to the ``output_columns`` parameter of a :doc:`/reference/commands/select` command. The format is ``Src.Dest`` where Src is the name of the reference column and Dest is the name of the target column. If only the reference column is specified, it is handled as ``Src._key``. Note that if a reference does not point to a valid record, a :doc:`/reference/commands/select` command outputs the default value of the target column.
 
-The following example adds a reference column to the Site table that was created in the previous tutorial. The new column, named link, is designed for storing links among records in the Site table.
+The following example adds a reference column to the ``Site`` table
+that was created in :ref:`tutorial-introduction-create-table`. The new
+column, named ``link``, is designed for storing links among records in
+the ``Site`` table.
 
 .. groonga-command
 .. include:: ../example/tutorial/data-7.log

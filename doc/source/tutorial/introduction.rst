@@ -90,6 +90,8 @@ Basic commands
  :doc:`/reference/commands/load`
   inserts records to a table.
 
+.. _tutorial-introduction-create-table:
+
 Create a table
 --------------
 
