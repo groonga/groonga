@@ -8,8 +8,8 @@ Darwin)
         if [ -d $homebrew_aclocal ]; then
           ACLOCAL_ARGS="$ACLOCAL_ARGS -I $homebrew_aclocal"
         fi
-        gettext_aclocal="$(echo /usr/local/Cellar/gettext/*/share/aclocal)"
-        if [ -d $gettext_aclocal ]; then
+        gettext_aclocal="$(echo /usr/local/Cellar/gettext/*/share/aclocal | awk '{ print $NF }')"
+        if [ -d "$gettext_aclocal" ]; then
           ACLOCAL_ARGS="$ACLOCAL_ARGS -I $gettext_aclocal"
         fi
 	;;
