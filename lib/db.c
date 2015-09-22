@@ -4112,20 +4112,34 @@ static grn_obj *grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj,
 static grn_obj *
 grn_obj_column_(grn_ctx *ctx, grn_obj *table, const char *name, unsigned int name_size)
 {
+  grn_id table_id = DB_OBJ(table)->id;
   grn_obj *column = NULL;
-  char buf[GRN_TABLE_MAX_KEY_SIZE];
-  int len = grn_obj_name(ctx, table, buf, GRN_TABLE_MAX_KEY_SIZE);
-  if (len) {
-    buf[len++] = GRN_DB_DELIMITER;
-    if (len + name_size <= GRN_TABLE_MAX_KEY_SIZE) {
-      grn_memcpy(buf + len, name, name_size);
-      column = grn_ctx_get(ctx, buf, len + name_size);
-    } else {
-      ERR(GRN_INVALID_ARGUMENT, "name is too long");
+
+  if (table_id & GRN_OBJ_TMP_OBJECT) {
+    char column_name[GRN_TABLE_MAX_KEY_SIZE];
+    void *value = NULL;
+    grn_snprintf(column_name, GRN_TABLE_MAX_KEY_SIZE, GRN_TABLE_MAX_KEY_SIZE,
+                 "%u%c%.*s", table_id, GRN_DB_DELIMITER, name_size, name);
+    grn_pat_get(ctx, ctx->impl->temporary_columns,
+                column_name, strlen(column_name),
+                &value);
+    if (value) {
+      column = *((grn_obj **)value);
     }
   } else {
-    /* todo : support temporary table */
+    char buf[GRN_TABLE_MAX_KEY_SIZE];
+    int len = grn_obj_name(ctx, table, buf, GRN_TABLE_MAX_KEY_SIZE);
+    if (len) {
+      buf[len++] = GRN_DB_DELIMITER;
+      if (len + name_size <= GRN_TABLE_MAX_KEY_SIZE) {
+        grn_memcpy(buf + len, name, name_size);
+        column = grn_ctx_get(ctx, buf, len + name_size);
+      } else {
+        ERR(GRN_INVALID_ARGUMENT, "name is too long");
+      }
+    }
   }
+
   return column;
 }
 
@@ -4150,14 +4164,41 @@ grn_table_columns(grn_ctx *ctx, grn_obj *table, const char *name, unsigned int n
                   grn_obj *res)
 {
   int n = 0;
+  grn_id id;
+
   GRN_API_ENTER;
-  if (GRN_OBJ_TABLEP(table) && DB_OBJ(table)->id &&
-      !(DB_OBJ(table)->id & GRN_OBJ_TMP_OBJECT)) {
+
+  if (!GRN_OBJ_TABLEP(table)) {
+    GRN_API_RETURN(n);
+  }
+
+  id = DB_OBJ(table)->id;
+  if (id & GRN_OBJ_TMP_OBJECT) {
+    char search_key[GRN_TABLE_MAX_KEY_SIZE];
+    grn_pat_cursor *cursor;
+    grn_snprintf(search_key, GRN_TABLE_MAX_KEY_SIZE, GRN_TABLE_MAX_KEY_SIZE,
+                 "%u%c%.*s", id, GRN_DB_DELIMITER, name_size, name);
+    cursor = grn_pat_cursor_open(ctx, ctx->impl->temporary_columns,
+                                 search_key, strlen(search_key),
+                                 NULL, 0,
+                                 0, -1, GRN_CURSOR_PREFIX);
+    if (cursor) {
+      grn_id column_id;
+      while ((column_id = grn_pat_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+        column_id |= GRN_OBJ_TMP_OBJECT | GRN_OBJ_TMP_COLUMN;
+        grn_hash_add(ctx, (grn_hash *)res,
+                     &column_id, sizeof(grn_id),
+                     NULL, NULL);
+        n++;
+      }
+      grn_pat_cursor_close(ctx, cursor);
+    }
+  } else {
     grn_db *s = (grn_db *)DB_OBJ(table)->db;
     if (s->keys) {
       grn_obj bulk;
       GRN_TEXT_INIT(&bulk, 0);
-      grn_table_get_key2(ctx, s->keys, DB_OBJ(table)->id, &bulk);
+      grn_table_get_key2(ctx, s->keys, id, &bulk);
       GRN_TEXT_PUTC(ctx, &bulk, GRN_DB_DELIMITER);
       grn_bulk_write(ctx, &bulk, name, name_size);
       grn_table_search(ctx, s->keys, GRN_BULK_HEAD(&bulk), GRN_BULK_VSIZE(&bulk),
@@ -4166,6 +4207,7 @@ grn_table_columns(grn_ctx *ctx, grn_obj *table, const char *name, unsigned int n
       n = grn_table_size(ctx, res);
     }
   }
+
   GRN_API_RETURN(n);
 }
 
@@ -4211,8 +4253,10 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
   grn_id id = GRN_ID_NIL;
   grn_id range = GRN_ID_NIL;
   grn_id domain = GRN_ID_NIL;
+  grn_bool is_persistent_table;
   char fullname[GRN_TABLE_MAX_KEY_SIZE];
   char buffer[PATH_MAX];
+
   GRN_API_ENTER;
   if (!table) {
     ERR(GRN_INVALID_ARGUMENT, "[column][create] table is missing");
@@ -4237,40 +4281,50 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
         table_name_len, table_name, name_size, name);
     goto exit;
   }
-  if (DB_OBJ(table)->id & GRN_OBJ_TMP_OBJECT) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[column][create] temporary table doesn't support column: <%.*s>",
-        name_size, name);
-    goto exit;
-  }
-  {
-    uint32_t s = 0;
-    const char *n = _grn_table_key(ctx, ctx->impl->db, DB_OBJ(table)->id, &s);
-    GRN_LOG(ctx, GRN_LOG_NOTICE,
-            "DDL:column_create %.*s %.*s", s, n, name_size, name);
-  }
+
   if (grn_db_check_name(ctx, name, name_size)) {
     GRN_DB_CHECK_NAME_ERR("[column][create]", name, name_size);
     goto exit;
   }
-  if ((domain = DB_OBJ(table)->id)) {
-    int len = grn_table_get_key(ctx, s->keys, domain, fullname, GRN_TABLE_MAX_KEY_SIZE);
-    if (name_size + 1 + len > GRN_TABLE_MAX_KEY_SIZE) {
-      ERR(GRN_INVALID_ARGUMENT,
-          "[column][create] too long column name: required name_size(%d) < %d"
-          ": <%.*s>.<%.*s>",
-          name_size, GRN_TABLE_MAX_KEY_SIZE - 1 - len,
-          len, fullname, name_size, name);
-      goto exit;
-    }
-    fullname[len] = GRN_DB_DELIMITER;
-    grn_memcpy(fullname + len + 1, name, name_size);
-    name_size += len + 1;
-  } else {
+
+  domain = DB_OBJ(table)->id;
+  is_persistent_table = !(domain & GRN_OBJ_TMP_OBJECT);
+  if (is_persistent_table) {
+    uint32_t s = 0;
+    const char *n = _grn_table_key(ctx, ctx->impl->db, domain, &s);
+    GRN_LOG(ctx, GRN_LOG_NOTICE,
+            "DDL:column_create %.*s %.*s", s, n, name_size, name);
+  }
+
+  if (!domain) {
     ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
         "[column][create] [todo] table-less column isn't supported yet");
     goto exit;
   }
+
+  {
+    int table_name_len;
+    if (is_persistent_table) {
+      table_name_len = grn_table_get_key(ctx, s->keys, domain,
+                                         fullname, GRN_TABLE_MAX_KEY_SIZE);
+    } else {
+      grn_snprintf(fullname, GRN_TABLE_MAX_KEY_SIZE, GRN_TABLE_MAX_KEY_SIZE,
+                   "%u", domain);
+      table_name_len = strlen(fullname);
+    }
+    if (name_size + 1 + table_name_len > GRN_TABLE_MAX_KEY_SIZE) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "[column][create] too long column name: required name_size(%d) < %d"
+          ": <%.*s>.<%.*s>",
+          name_size, GRN_TABLE_MAX_KEY_SIZE - 1 - table_name_len,
+          table_name_len, fullname, name_size, name);
+      goto exit;
+    }
+    fullname[table_name_len] = GRN_DB_DELIMITER;
+    grn_memcpy(fullname + table_name_len + 1, name, name_size);
+    name_size += table_name_len + 1;
+  }
+
   range = DB_OBJ(type)->id;
   switch (type->header.type) {
   case GRN_TYPE :
@@ -4294,9 +4348,32 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     */
     value_size = sizeof(grn_id);
   }
-  id = grn_obj_register(ctx, db, fullname, name_size);
-  if (ERRP(ctx, GRN_ERROR)) { goto exit;  }
-  if (GRN_OBJ_PERSISTENT & flags) {
+
+  if (is_persistent_table) {
+    id = grn_obj_register(ctx, db, fullname, name_size);
+    if (ERRP(ctx, GRN_ERROR)) { goto exit; }
+  } else {
+    int added;
+    id = grn_pat_add(ctx, ctx->impl->temporary_columns,
+                     fullname, name_size, NULL,
+                     &added);
+    if (!id) {
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[column][create][temporary] "
+          "failed to register temporary column name: <%.*s>",
+          name_size, fullname);
+      goto exit;
+    } else if (!added) {
+      id = GRN_ID_NIL;
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[column][create][temporary] already used name was assigned: <%.*s>",
+          name_size, fullname);
+      goto exit;
+    }
+    id |= GRN_OBJ_TMP_OBJECT | GRN_OBJ_TMP_COLUMN;
+  }
+
+  if (is_persistent_table && flags & GRN_OBJ_PERSISTENT) {
     if (!path) {
       if (GRN_DB_PERSISTENT_P(db)) {
         gen_pathname(grn_obj_io(db)->path, buffer, id);
@@ -9023,9 +9100,19 @@ grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, grn_bool removep)
   GRN_API_ENTER;
   if (id) {
     if (id & GRN_OBJ_TMP_OBJECT) {
-      if (ctx->impl && ctx->impl->values) {
-        rc = grn_array_delete_by_id(ctx, ctx->impl->values,
-                                      id & ~GRN_OBJ_TMP_OBJECT, NULL);
+      if (ctx->impl) {
+        if (id & GRN_OBJ_TMP_COLUMN) {
+          if (ctx->impl->temporary_columns) {
+            rc = grn_pat_delete_by_id(ctx, ctx->impl->temporary_columns,
+                                      id & ~(GRN_OBJ_TMP_COLUMN | GRN_OBJ_TMP_OBJECT),
+                                      NULL);
+          }
+        } else {
+          if (ctx->impl->values) {
+            rc = grn_array_delete_by_id(ctx, ctx->impl->values,
+                                        id & ~GRN_OBJ_TMP_OBJECT, NULL);
+          }
+        }
       }
     } else {
       db_value *vp;
@@ -9074,9 +9161,17 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
   grn_rc rc = GRN_SUCCESS;
   if (id) {
     if (id & GRN_OBJ_TMP_OBJECT) {
-      if (ctx->impl && ctx->impl->values) {
-        rc = grn_array_set_value(ctx, ctx->impl->values,
-                                 id & ~GRN_OBJ_TMP_OBJECT, &obj, GRN_OBJ_SET);
+      if (id & GRN_OBJ_TMP_COLUMN) {
+        if (ctx->impl && ctx->impl->temporary_columns) {
+          grn_id real_id = id & ~(GRN_OBJ_TMP_COLUMN | GRN_OBJ_TMP_OBJECT);
+          rc = grn_pat_set_value(ctx, ctx->impl->temporary_columns,
+                                 real_id, &obj, GRN_OBJ_SET);
+        }
+      } else {
+        if (ctx->impl && ctx->impl->values) {
+          rc = grn_array_set_value(ctx, ctx->impl->values,
+                                   id & ~GRN_OBJ_TMP_OBJECT, &obj, GRN_OBJ_SET);
+        }
       }
     } else {
       db_value *vp;
@@ -9198,11 +9293,27 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
   if (!ctx || !ctx->impl || !id) { return res; }
   GRN_API_ENTER;
   if (id & GRN_OBJ_TMP_OBJECT) {
-    if (ctx->impl->values) {
-      grn_obj **tmp_obj;
-      tmp_obj = _grn_array_get_value(ctx, ctx->impl->values, id & ~GRN_OBJ_TMP_OBJECT);
-      if (tmp_obj) {
-        res = *tmp_obj;
+    if (id & GRN_OBJ_TMP_COLUMN) {
+      if (ctx->impl->temporary_columns) {
+        grn_id real_id = id & ~(GRN_OBJ_TMP_COLUMN | GRN_OBJ_TMP_OBJECT);
+        grn_obj **tmp_obj;
+        uint32_t size;
+        tmp_obj = (grn_obj **)grn_pat_get_value_(ctx,
+                                                 ctx->impl->temporary_columns,
+                                                 real_id,
+                                                 &size);
+        if (tmp_obj) {
+          res = *tmp_obj;
+        }
+      }
+    } else {
+      if (ctx->impl->values) {
+        grn_obj **tmp_obj;
+        tmp_obj = _grn_array_get_value(ctx, ctx->impl->values,
+                                       id & ~GRN_OBJ_TMP_OBJECT);
+        if (tmp_obj) {
+          res = *tmp_obj;
+        }
       }
     }
   } else {
@@ -9801,8 +9912,15 @@ grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size)
   if (GRN_DB_OBJP(obj)) {
     if (DB_OBJ(obj)->id) {
       grn_db *s = (grn_db *)DB_OBJ(obj)->db;
-      if (!(DB_OBJ(obj)->id & GRN_OBJ_TMP_OBJECT)) {
-        len = grn_table_get_key(ctx, s->keys, DB_OBJ(obj)->id, namebuf, buf_size);
+      grn_id id = DB_OBJ(obj)->id;
+      if (id & GRN_OBJ_TMP_OBJECT) {
+        if (id & GRN_OBJ_TMP_COLUMN) {
+          grn_id real_id = id & ~(GRN_OBJ_TMP_OBJECT | GRN_OBJ_TMP_COLUMN);
+          len = grn_pat_get_key(ctx, ctx->impl->temporary_columns,
+                                real_id, namebuf, buf_size);
+        }
+      } else {
+        len = grn_table_get_key(ctx, s->keys, id, namebuf, buf_size);
       }
     }
   }
@@ -9817,19 +9935,26 @@ grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size)
   if (!obj) { return len; }
   GRN_API_ENTER;
   if (GRN_DB_OBJP(obj)) {
-    if (DB_OBJ(obj)->id && DB_OBJ(obj)->id < GRN_ID_MAX) {
+    grn_id id = DB_OBJ(obj)->id;
+    if (id & GRN_OBJ_TMP_OBJECT) {
+      if (id & GRN_OBJ_TMP_COLUMN) {
+        grn_id real_id = id & ~(GRN_OBJ_TMP_OBJECT | GRN_OBJ_TMP_COLUMN);
+        len = grn_pat_get_key(ctx, ctx->impl->temporary_columns,
+                              real_id, buf, GRN_TABLE_MAX_KEY_SIZE);
+      }
+    } else if (id && id < GRN_ID_MAX) {
       grn_db *s = (grn_db *)DB_OBJ(obj)->db;
-      len = grn_table_get_key(ctx, s->keys, DB_OBJ(obj)->id, buf, GRN_TABLE_MAX_KEY_SIZE);
-      if (len) {
-        int cl;
-        char *p = buf, *p0 = p, *pe = p + len;
-        for (; p < pe && (cl = grn_charlen(ctx, p, pe)); p += cl) {
-          if (*p == GRN_DB_DELIMITER && cl == 1) { p0 = p + cl; }
-        }
-        len = pe - p0;
-        if (len && len <= buf_size) {
-          grn_memcpy(namebuf, p0, len);
-        }
+      len = grn_table_get_key(ctx, s->keys, id, buf, GRN_TABLE_MAX_KEY_SIZE);
+    }
+    if (len) {
+      int cl;
+      char *p = buf, *p0 = p, *pe = p + len;
+      for (; p < pe && (cl = grn_charlen(ctx, p, pe)); p += cl) {
+        if (*p == GRN_DB_DELIMITER && cl == 1) { p0 = p + cl; }
+      }
+      len = pe - p0;
+      if (len && len <= buf_size) {
+        grn_memcpy(namebuf, p0, len);
       }
     }
   } else if (obj->header.type == GRN_ACCESSOR) {
@@ -9885,18 +10010,25 @@ grn_rc
 grn_column_name_(grn_ctx *ctx, grn_obj *obj, grn_obj *buf)
 {
   if (GRN_DB_OBJP(obj)) {
-    if (DB_OBJ(obj)->id && DB_OBJ(obj)->id < GRN_ID_MAX) {
-      uint32_t len;
-      grn_db *s = (grn_db *)DB_OBJ(obj)->db;
-      const char *p = _grn_table_key(ctx, s->keys, DB_OBJ(obj)->id, &len);
-      if (len) {
-        int cl;
-        const char *p0 = p, *pe = p + len;
-        for (; p < pe && (cl = grn_charlen(ctx, p, pe)); p += cl) {
-          if (*p == GRN_DB_DELIMITER && cl == 1) { p0 = p + cl; }
-        }
-        GRN_TEXT_PUT(ctx, buf, p0, pe - p0);
+    uint32_t len = 0;
+    const char *p = NULL;
+    grn_id id = DB_OBJ(obj)->id;
+    if (id & GRN_OBJ_TMP_OBJECT) {
+      if (id & GRN_OBJ_TMP_COLUMN) {
+        grn_id real_id = id & ~(GRN_OBJ_TMP_OBJECT | GRN_OBJ_TMP_COLUMN);
+        p = _grn_pat_key(ctx, ctx->impl->temporary_columns, real_id, &len);
       }
+    } else if (id && id < GRN_ID_MAX) {
+      grn_db *s = (grn_db *)DB_OBJ(obj)->db;
+      p = _grn_table_key(ctx, s->keys, id, &len);
+    }
+    if (len) {
+      int cl;
+      const char *p0 = p, *pe = p + len;
+      for (; p < pe && (cl = grn_charlen(ctx, p, pe)); p += cl) {
+        if (*p == GRN_DB_DELIMITER && cl == 1) { p0 = p + cl; }
+      }
+      GRN_TEXT_PUT(ctx, buf, p0, pe - p0);
     }
   } else if (obj->header.type == GRN_ACCESSOR) {
     grn_accessor *a;

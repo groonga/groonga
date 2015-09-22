@@ -539,10 +539,21 @@ grn_ctx_impl_init(grn_ctx *ctx)
     ctx->impl = NULL;
     return ctx->rc;
   }
+  if (!(ctx->impl->temporary_columns = grn_pat_create(ctx, NULL,
+                                                      GRN_TABLE_MAX_KEY_SIZE,
+                                                      sizeof(grn_obj *),
+                                                      0))) {
+    grn_array_close(ctx, ctx->impl->values);
+    CRITICAL_SECTION_FIN(ctx->impl->lock);
+    grn_io_anon_unmap(ctx, &mi, IMPL_SIZE);
+    ctx->impl = NULL;
+    return ctx->rc;
+  }
   if (!(ctx->impl->ios = grn_hash_create(ctx, NULL, GRN_TABLE_MAX_KEY_SIZE,
                                          sizeof(grn_io *),
                                          GRN_OBJ_KEY_VAR_SIZE|GRN_HASH_TINY))) {
     grn_array_close(ctx, ctx->impl->values);
+    grn_pat_close(ctx, ctx->impl->temporary_columns);
     CRITICAL_SECTION_FIN(ctx->impl->lock);
     grn_io_anon_unmap(ctx, &mi, IMPL_SIZE);
     ctx->impl = NULL;
@@ -734,6 +745,15 @@ grn_ctx_fin(grn_ctx *ctx)
       });
 #endif
       grn_array_close(ctx, ctx->impl->values);
+    }
+    if (ctx->impl->temporary_columns) {
+#ifndef USE_MEMORY_DEBUG
+      grn_obj *value;
+      GRN_PAT_EACH(ctx, ctx->impl->temporary_columns, id, NULL, NULL, &value, {
+        grn_obj_close(ctx, *((grn_obj **)value));
+      });
+#endif
+      grn_pat_close(ctx, ctx->impl->temporary_columns);
     }
     if (ctx->impl->ios) {
       grn_hash_close(ctx, ctx->impl->ios);
