@@ -21,7 +21,6 @@ body
 
 body
 {
-    font-family: #666666;
     font-size: 100%;
     background-color: #ffffff;
     color: #000;
