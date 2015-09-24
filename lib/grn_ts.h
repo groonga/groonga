@@ -179,18 +179,27 @@ typedef struct {
 } grn_ts_expr_node;
 
 typedef struct {
-  grn_obj *table;             /* Associated table. */
-  grn_obj *curr_table;        /* Current table. */
-  grn_ts_expr_type type;      /* Expression type. */
-  grn_ts_data_kind data_kind; /* Abstract data type. */
-  grn_ts_data_type data_type; /* Detailed data type. */
-  grn_ts_expr_node *root;     /* Root node. */
-  grn_ts_expr_node **nodes;   /* Buffer for a node stack. */
-  size_t n_nodes;             /* Number of nodes. */
-  size_t max_n_nodes;         /* Max. number (capacity) of nodes. */
-  grn_ts_expr_node **stack;   /* Node stack. */
-  size_t stack_depth;         /* Node stack's current depth. */
-  size_t stack_size;          /* Node stack's size (capacity). */
+  grn_obj *src_table;  /* The source table of a bridge (no ref. count). */
+  grn_obj *dest_table; /* The destination table of a bridge. */
+  size_t stack_depth;  /* The stack depth (position) of a bridge. */
+} grn_ts_expr_bridge;
+
+typedef struct {
+  grn_obj *table;              /* Associated table. */
+  grn_obj *curr_table;         /* Current table (no ref. count). */
+  grn_ts_expr_type type;       /* Expression type. */
+  grn_ts_data_kind data_kind;  /* Abstract data type. */
+  grn_ts_data_type data_type;  /* Detailed data type. */
+  grn_ts_expr_node *root;      /* Root node. */
+  grn_ts_expr_node **nodes;    /* Buffer for a node stack. */
+  size_t n_nodes;              /* Number of nodes. */
+  size_t max_n_nodes;          /* Max. number (capacity) of nodes. */
+  grn_ts_expr_node **stack;    /* Node stack. */
+  size_t stack_depth;          /* Node stack's current depth. */
+  size_t stack_size;           /* Node stack's size (capacity). */
+  grn_ts_expr_bridge *bridges; /* Bridges to subexpressions. */
+  size_t n_bridges;            /* Number of bridges (subexpression depth). */
+  size_t max_n_bridges;        /* Max. number (capacity) of bridges. */
 } grn_ts_expr;
 
 /* grn_ts_expr_open() creates an empty expression. */

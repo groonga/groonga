@@ -3819,6 +3819,8 @@ grn_ts_expr_bridge_node_open(grn_ctx *ctx, grn_ts_expr_node *src,
     return GRN_NO_MEMORY_AVAILABLE;
   }
   grn_ts_expr_bridge_node_init(ctx, new_node);
+  new_node->data_kind = dest->data_kind;
+  new_node->data_type = dest->data_type;
   new_node->src = src;
   new_node->dest = dest;
   *node = (grn_ts_expr_node *)new_node;
@@ -4834,6 +4836,10 @@ grn_ts_expr_parser_apply(grn_ctx *ctx, grn_ts_expr_parser *parser,
     /* Check the number of arguments. */
     if (stack[depth - 2]->type == GRN_TS_EXPR_BRIDGE_TOKEN) {
       n_args = 2;
+      rc = grn_ts_expr_end_subexpr(ctx, parser->expr);
+      if (rc != GRN_SUCCESS) {
+        break;
+      }
     } else if (stack[depth - 2]->type == GRN_TS_EXPR_OP_TOKEN) {
       grn_ts_expr_op_token *op_token;
       grn_ts_op_precedence precedence;
@@ -5075,6 +5081,27 @@ grn_ts_expr_parser_parse(grn_ctx *ctx, grn_ts_expr_parser *parser,
 }
 
 /*-------------------------------------------------------------
+ * grn_ts_expr_bridge.
+ */
+
+/* grn_ts_expr_bridge_init() initializes a bridge. */
+static void
+grn_ts_expr_bridge_init(grn_ctx *ctx, grn_ts_expr_bridge *bridge) {
+  memset(bridge, 0, sizeof(*bridge));
+  bridge->src_table = NULL;
+  bridge->dest_table = NULL;
+}
+
+/* grn_ts_expr_bridge_fin() finalizes a bridge. */
+static void
+grn_ts_expr_bridge_fin(grn_ctx *ctx, grn_ts_expr_bridge *bridge) {
+  if (bridge->dest_table) {
+    grn_obj_unlink(ctx, bridge->dest_table);
+  }
+  /* Note: bridge->src_count does not increment a reference count. */
+}
+
+/*-------------------------------------------------------------
  * grn_ts_expr.
  */
 
@@ -5087,16 +5114,23 @@ grn_ts_expr_init(grn_ctx *ctx, grn_ts_expr *expr) {
   expr->root = NULL;
   expr->nodes = NULL;
   expr->stack = NULL;
+  expr->bridges = NULL;
 }
 
 /* grn_ts_expr_fin() finalizes an expression. */
 static void
 grn_ts_expr_fin(grn_ctx *ctx, grn_ts_expr *expr) {
+  size_t i;
+  if (expr->bridges) {
+    for (i = 0; i < expr->n_bridges; i++) {
+      grn_ts_expr_bridge_fin(ctx, &expr->bridges[i]);
+    }
+    GRN_FREE(expr->bridges);
+  }
   if (expr->stack) {
     GRN_FREE(expr->stack);
   }
   if (expr->nodes) {
-    size_t i;
     for (i = 0; i < expr->n_nodes; i++) {
       if (expr->nodes[i]) {
         grn_ts_expr_node_close(ctx, expr->nodes[i]);
@@ -5104,9 +5138,7 @@ grn_ts_expr_fin(grn_ctx *ctx, grn_ts_expr *expr) {
     }
     GRN_FREE(expr->nodes);
   }
-  if (expr->curr_table) {
-    grn_obj_unlink(ctx, expr->curr_table);
-  }
+  /* Note: expr->curr_table does not increment a reference count. */
   if (expr->table) {
     grn_obj_unlink(ctx, expr->table);
   }
@@ -5123,20 +5155,14 @@ grn_ts_expr_open(grn_ctx *ctx, grn_obj *table, grn_ts_expr **expr) {
   if (!new_expr) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
-  grn_ts_expr_init(ctx, new_expr);
   rc = grn_ts_obj_increment_ref_count(ctx, table);
-  if (rc == GRN_SUCCESS) {
-    new_expr->table = table;
-    rc = grn_ts_obj_increment_ref_count(ctx, table);
-    if (rc == GRN_SUCCESS) {
-      new_expr->curr_table = table;
-    }
-  }
   if (rc != GRN_SUCCESS) {
-    grn_ts_expr_fin(ctx, new_expr);
     GRN_FREE(new_expr);
     return rc;
   }
+  grn_ts_expr_init(ctx, new_expr);
+  new_expr->table = table;
+  new_expr->curr_table = table;
   *expr = new_expr;
   return GRN_SUCCESS;
 }
@@ -5851,33 +5877,95 @@ grn_ts_expr_push_wgs84_geo_point_vector(grn_ctx *ctx, grn_ts_expr *expr,
 }
 #undef GRN_TS_EXPR_PUSH_CONST
 
+/* grn_ts_expr_reserve_bridges() extends a bridge buffer for a new bridge. */
+static grn_rc
+grn_ts_expr_reserve_bridges(grn_ctx *ctx, grn_ts_expr *expr) {
+  size_t n_bytes, new_max_n_bridges;
+  grn_ts_expr_bridge *new_bridges;
+  if (expr->n_bridges < expr->max_n_bridges) {
+    return GRN_SUCCESS;
+  }
+  new_max_n_bridges = expr->n_bridges * 2;
+  if (!new_max_n_bridges) {
+    new_max_n_bridges = 1;
+  }
+  n_bytes = sizeof(grn_ts_expr_bridge) * new_max_n_bridges;
+  new_bridges = (grn_ts_expr_bridge *)GRN_REALLOC(expr->bridges, n_bytes);
+  if (!new_bridges) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  expr->bridges = new_bridges;
+  expr->max_n_bridges = new_max_n_bridges;
+  return GRN_SUCCESS;
+}
+
 grn_rc
 grn_ts_expr_begin_subexpr(grn_ctx *ctx, grn_ts_expr *expr) {
-  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE)) {
+  grn_rc rc;
+  grn_obj *obj;
+  grn_ts_expr_node *node;
+  grn_ts_expr_bridge *bridge;
+  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE) ||
+      !expr->stack_depth) {
     return GRN_INVALID_ARGUMENT;
   }
-  // TODO
-  return GRN_FUNCTION_NOT_IMPLEMENTED;
+
+  /* Check whehter or not the latest node refers to a table. */
+  node = expr->stack[expr->stack_depth - 1];
+  if ((node->data_kind & ~GRN_TS_VECTOR_FLAG) != GRN_TS_REF) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  obj = grn_ctx_at(ctx, node->data_type);
+  if (!obj) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  if (!grn_ts_obj_is_table(ctx, obj)) {
+    grn_obj_unlink(ctx, obj);
+    return GRN_INVALID_ARGUMENT;
+  }
+
+  /* Creates a bridge to a subexpression. */
+  rc = grn_ts_expr_reserve_bridges(ctx, expr);
+  if (rc != GRN_SUCCESS) {
+    grn_obj_unlink(ctx, obj);
+    return rc;
+  }
+  bridge = &expr->bridges[expr->n_bridges++];
+  grn_ts_expr_bridge_init(ctx, bridge);
+  bridge->src_table = expr->curr_table;
+  bridge->dest_table = obj;
+  bridge->stack_depth = expr->stack_depth;
+  expr->curr_table = bridge->dest_table;
+  return GRN_SUCCESS;
 }
 
 grn_rc
 grn_ts_expr_end_subexpr(grn_ctx *ctx, grn_ts_expr *expr) {
   grn_rc rc;
   grn_ts_expr_node **args, *node;
-  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE)) {
+  grn_ts_expr_bridge *bridge;
+  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE) ||
+      (expr->stack_depth < 2) || !expr->n_bridges) {
     return GRN_INVALID_ARGUMENT;
   }
-  if (expr->stack_depth < 2) {
+  /* Check whehter or not the subexpression is complete.*/
+  bridge = &expr->bridges[expr->n_bridges - 1];
+  if (expr->stack_depth != (bridge->stack_depth + 1)) {
     return GRN_INVALID_ARGUMENT;
   }
-  // TODO: End a subexpression.
+  /* Creates a bridge node. */
   args = &expr->stack[expr->stack_depth - 2];
   rc = grn_ts_expr_open_bridge_node(ctx, expr, args[0], args[1], &node);
-  if (rc == GRN_SUCCESS) {
-    expr->stack_depth -= 2;
-    expr->stack[expr->stack_depth++] = node;
+  if (rc != GRN_SUCCESS) {
+    return rc;
   }
-  return rc;
+  /* Note: grn_ts_expr_reserve_stack() is not required. */
+  expr->stack_depth -= 2;
+  expr->stack[expr->stack_depth++] = node;
+  expr->curr_table = bridge->src_table;
+  grn_ts_expr_bridge_fin(ctx, bridge);
+  expr->n_bridges--;
+  return GRN_SUCCESS;
 }
 
 grn_rc
@@ -5918,7 +6006,8 @@ grn_ts_expr_complete(grn_ctx *ctx, grn_ts_expr *expr) {
       break;
     }
     case GRN_TS_EXPR_COLUMN_NODE:
-    case GRN_TS_EXPR_OP_NODE: {
+    case GRN_TS_EXPR_OP_NODE:
+    case GRN_TS_EXPR_BRIDGE_NODE: {
       expr->type = GRN_TS_EXPR_VARIABLE;
       break;
     }
