@@ -3931,6 +3931,7 @@ typedef enum {
   GRN_TS_EXPR_CONST_TOKEN,  /* +data_kind, content and buf. */
   GRN_TS_EXPR_NAME_TOKEN,   /* +name. */
   GRN_TS_EXPR_OP_TOKEN,     /* +op_type. */
+  GRN_TS_EXPR_BRIDGE_TOKEN, /* No extra data. */
   GRN_TS_EXPR_BRACKET_TOKEN /* No extra data. */
 } grn_ts_expr_token_type;
 
@@ -3960,6 +3961,7 @@ typedef struct {
   grn_ts_op_type op_type;     /* Operator type. */
 } grn_ts_expr_op_token;
 
+typedef grn_ts_expr_token grn_ts_expr_bridge_token;
 typedef grn_ts_expr_token grn_ts_expr_bracket_token;
 
 typedef struct {
@@ -4020,6 +4022,13 @@ grn_ts_expr_op_token_init(grn_ctx *ctx, grn_ts_expr_op_token *token,
   GRN_TS_EXPR_TOKEN_INIT(OP);
 }
 
+/* grn_ts_expr_bridge_token_init() initializes a token. */
+static void
+grn_ts_expr_bridge_token_init(grn_ctx *ctx, grn_ts_expr_bridge_token *token,
+                              grn_ts_str src) {
+  GRN_TS_EXPR_TOKEN_INIT(BRIDGE)
+}
+
 /* grn_ts_expr_bracket_token_init() initializes a token. */
 static void
 grn_ts_expr_bracket_token_init(grn_ctx *ctx, grn_ts_expr_bracket_token *token,
@@ -4061,6 +4070,12 @@ grn_ts_expr_name_token_fin(grn_ctx *ctx, grn_ts_expr_name_token *token) {
 /* grn_ts_expr_op_token_fin() finalizes a token. */
 static void
 grn_ts_expr_op_token_fin(grn_ctx *ctx, grn_ts_expr_op_token *token) {
+  /* Nothing to do. */
+}
+
+/* grn_ts_expr_bridge_token_fin() finalizes a token. */
+static void
+grn_ts_expr_bridge_token_fin(grn_ctx *ctx, grn_ts_expr_bridge_token *token) {
   /* Nothing to do. */
 }
 
@@ -4129,6 +4144,14 @@ grn_ts_expr_op_token_open(grn_ctx *ctx, grn_ts_str src, grn_ts_op_type op_type,
   return GRN_SUCCESS;
 }
 
+/* grn_ts_expr_bridge_token_open() creates a token. */
+static grn_rc
+grn_ts_expr_bridge_token_open(grn_ctx *ctx, grn_ts_str src,
+                              grn_ts_expr_bridge_token **token) {
+  GRN_TS_EXPR_TOKEN_OPEN(BRIDGE, bridge)
+  return GRN_SUCCESS;
+}
+
 /* grn_ts_expr_bracket_token_open() creates a token. */
 static grn_rc
 grn_ts_expr_bracket_token_open(grn_ctx *ctx, grn_ts_str src,
@@ -4156,6 +4179,7 @@ grn_ts_expr_token_close(grn_ctx *ctx, grn_ts_expr_token *token) {
     GRN_TS_EXPR_TOKEN_CLOSE_CASE(NAME, name)
     GRN_TS_EXPR_TOKEN_CLOSE_CASE(OP, op)
     GRN_TS_EXPR_TOKEN_CLOSE_CASE(BRACKET, bracket)
+    GRN_TS_EXPR_TOKEN_CLOSE_CASE(BRIDGE, bridge)
   }
   GRN_FREE(token);
 }
@@ -4372,6 +4396,20 @@ grn_ts_expr_parser_tokenize_name(grn_ctx *ctx, grn_ts_expr_parser *parser,
   return grn_ts_expr_name_token_open(ctx, token_str, token);
 }
 
+/* grn_ts_expr_parser_tokenize_bridge() tokenizes a bridge. */
+static grn_rc
+grn_ts_expr_parser_tokenize_bridge(grn_ctx *ctx, grn_ts_expr_parser *parser,
+                                   grn_ts_str str, grn_ts_expr_token **token) {
+  grn_ts_str token_str = { str.ptr, 1 };
+  grn_ts_expr_bridge_token *new_token;
+  grn_rc rc = grn_ts_expr_bridge_token_open(ctx, token_str, &new_token);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  *token = new_token;
+  return GRN_SUCCESS;
+}
+
 /* grn_ts_expr_parser_tokenize_bracket() tokenizes a bracket. */
 static grn_rc
 grn_ts_expr_parser_tokenize_bracket(grn_ctx *ctx, grn_ts_expr_parser *parser,
@@ -4513,11 +4551,6 @@ grn_ts_expr_parser_tokenize_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
     GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('/', DIVISION)
     GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('%', MODULUS)
 #undef GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE
-    case '.': {
-      // TODO: Dereferencing is not supported yet.
-      rc = GRN_INVALID_ARGUMENT;
-      break;
-    }
     default: {
       rc = GRN_INVALID_ARGUMENT;
       break;
@@ -4555,6 +4588,9 @@ grn_ts_expr_parser_tokenize_next(grn_ctx *ctx, grn_ts_expr_parser *parser,
   switch (rest.ptr[0]) {
     case '(': case ')': case '[': case ']': {
       return grn_ts_expr_parser_tokenize_bracket(ctx, parser, rest, token);
+    }
+    case '.': {
+      return grn_ts_expr_parser_tokenize_bridge(ctx, parser, rest, token);
     }
     default: {
       return grn_ts_expr_parser_tokenize_op(ctx, parser, rest, token);
