@@ -1722,7 +1722,7 @@ grn_ts_expr_key_node_evaluate(grn_ctx *ctx, grn_ts_expr_key_node *node,
         id = (const grn_ts_id *)grn_ts_table_get_key(ctx, node->table,
                                                      in[i].id, &key_size);
         if (id && (key_size == sizeof(*id))) {
-          out_ptr[i].id = *id;
+          grn_ntoh(&out_ptr[i].id, id, sizeof(*id));
           out_ptr[i].score = in[i].score;
         } else {
           out_ptr[i] = grn_ts_ref_zero();
