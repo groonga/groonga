@@ -103,7 +103,8 @@ typedef enum {
   GRN_TS_EXPR_VALUE_NODE,  /* Asscoaited with the embedded value (_value). */
   GRN_TS_EXPR_CONST_NODE,  /* Associated with a const. */
   GRN_TS_EXPR_COLUMN_NODE, /* Associated with a column. */
-  GRN_TS_EXPR_OP_NODE      /* Associated with an operator. */
+  GRN_TS_EXPR_OP_NODE,     /* Associated with an operator. */
+  GRN_TS_EXPR_BRIDGE_NODE  /* Associated with a bridge to a subexpression. */
 } grn_ts_expr_node_type;
 
 /*-------------------------------------------------------------
