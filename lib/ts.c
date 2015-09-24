@@ -4413,7 +4413,8 @@ grn_ts_expr_parser_tokenize_bridge(grn_ctx *ctx, grn_ts_expr_parser *parser,
 /* grn_ts_expr_parser_tokenize_bracket() tokenizes a bracket. */
 static grn_rc
 grn_ts_expr_parser_tokenize_bracket(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                                grn_ts_str str, grn_ts_expr_token **token) {
+                                    grn_ts_str str,
+                                    grn_ts_expr_token **token) {
   grn_ts_str token_str = { str.ptr, 1 };
   grn_ts_expr_bracket_token *new_token;
   grn_rc rc = grn_ts_expr_bracket_token_open(ctx, token_str, &new_token);
