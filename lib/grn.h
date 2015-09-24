@@ -222,9 +222,10 @@ typedef void * grn_thread_func_result;
   (pthread_create(&(thread), NULL, (func), (arg)))
 # define THREAD_JOIN(thread) (pthread_join(thread, NULL))
 typedef pthread_mutex_t grn_mutex;
-# define MUTEX_INIT(m)   pthread_mutex_init(&m, NULL)
-# define MUTEX_LOCK(m)   pthread_mutex_lock(&m)
-# define MUTEX_UNLOCK(m) pthread_mutex_unlock(&m)
+# define MUTEX_INIT(m)       pthread_mutex_init(&m, NULL)
+# define MUTEX_LOCK(m)       pthread_mutex_lock(&m)
+# define MUTEX_LOCK_CHECK(m) (MUTEX_LOCK(m) == 0)
+# define MUTEX_UNLOCK(m)     pthread_mutex_unlock(&m)
 # define MUTEX_FIN(m)
 # ifdef HAVE_PTHREAD_MUTEXATTR_SETPSHARED
 #  define MUTEX_INIT_SHARED(m) do {\
@@ -315,10 +316,11 @@ typedef unsigned int grn_thread_func_result;
 #  define THREAD_JOIN(thread) \
   (WaitForSingleObject((HANDLE)(thread), INFINITE) == WAIT_FAILED)
 typedef HANDLE grn_mutex;
-#  define MUTEX_INIT(m)   ((m) = CreateMutex(0, FALSE, NULL))
-#  define MUTEX_LOCK(m)   WaitForSingleObject((m), INFINITE)
-#  define MUTEX_UNLOCK(m) ReleaseMutex(m)
-#  define MUTEX_FIN(m)    CloseHandle(m)
+#  define MUTEX_INIT(m)       ((m) = CreateMutex(0, FALSE, NULL))
+#  define MUTEX_LOCK(m)       WaitForSingleObject((m), INFINITE)
+#  define MUTEX_LOCK_CHECK(m) (MUTEX_LOCK(m) == WAIT_OBJECT_0)
+#  define MUTEX_UNLOCK(m)     ReleaseMutex(m)
+#  define MUTEX_FIN(m)        CloseHandle(m)
 typedef CRITICAL_SECTION grn_critical_section;
 #  define CRITICAL_SECTION_INIT(cs)  InitializeCriticalSection(&(cs))
 #  define CRITICAL_SECTION_ENTER(cs) EnterCriticalSection(&(cs))
@@ -411,6 +413,20 @@ typedef int grn_cond;
 # define GRN_TEST_YIELD() do {} while (0)
 
 #endif /* HAVE_PTHREAD_H */
+
+#define MUTEX_LOCK_ENSURE(ctx_, mutex) do {     \
+  grn_ctx *ctx__ = (ctx_);                      \
+  do {                                          \
+    grn_ctx *ctx = ctx__;                       \
+    if (MUTEX_LOCK_CHECK(mutex)) {              \
+      break;                                    \
+    }                                           \
+    if (ctx) {                                  \
+      SERR("MUTEX_LOCK");                       \
+    }                                           \
+    grn_nanosleep(1000000);                     \
+  } while (GRN_TRUE);                           \
+} while (GRN_FALSE)
 
 /* format string for printf */
 #ifdef HAVE_INTTYPES_H
