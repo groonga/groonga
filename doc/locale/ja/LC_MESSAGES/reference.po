@@ -8301,7 +8301,7 @@ msgstr ""
 msgid ""
 "``*`` is a special value. It means that all columns that are not :doc:`/"
 "reference/columns/pseudo`."
-msgstr ""
+msgstr "``*``は特別な値で:doc:`reference/columns/pseudo` 擬似カラム以外の全てのカラムという意味です。"
 
 msgid "Here is a ``*`` usage example."
 msgstr "以下は ``*`` の使用例です。"
