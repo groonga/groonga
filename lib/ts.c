@@ -5167,7 +5167,7 @@ grn_ts_expr_push(grn_ctx *ctx, grn_ts_expr *expr,
                  const char *str_ptr, size_t str_size) {
   grn_rc rc;
   grn_ts_expr_parser *parser;
-  if (!ctx || !expr || (expr->type == GRN_TS_EXPR_BROKEN) ||
+  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE) ||
       (!str_ptr && str_size)) {
     return GRN_INVALID_ARGUMENT;
   }
@@ -5332,7 +5332,7 @@ grn_ts_expr_push_accessor(grn_ctx *ctx, grn_ts_expr *expr,
 
 grn_rc
 grn_ts_expr_push_obj(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj) {
-  if (!ctx || !expr || (expr->type == GRN_TS_EXPR_BROKEN) || !obj) {
+  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE) || !obj) {
     return GRN_INVALID_ARGUMENT;
   }
   switch (obj->header.type) {
@@ -5362,7 +5362,7 @@ grn_rc
 grn_ts_expr_push_id(grn_ctx *ctx, grn_ts_expr *expr) {
   grn_rc rc;
   grn_ts_expr_node *node;
-  if (!ctx || !expr || (expr->type == GRN_TS_EXPR_BROKEN)) {
+  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE)) {
     return GRN_INVALID_ARGUMENT;
   }
   rc = grn_ts_expr_reserve_stack(ctx, expr);
@@ -5379,7 +5379,7 @@ grn_rc
 grn_ts_expr_push_score(grn_ctx *ctx, grn_ts_expr *expr) {
   grn_rc rc;
   grn_ts_expr_node *node;
-  if (!ctx || !expr || (expr->type == GRN_TS_EXPR_BROKEN)) {
+  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE)) {
     return GRN_INVALID_ARGUMENT;
   }
   rc = grn_ts_expr_reserve_stack(ctx, expr);
@@ -5396,7 +5396,7 @@ grn_rc
 grn_ts_expr_push_key(grn_ctx *ctx, grn_ts_expr *expr) {
   grn_rc rc;
   grn_ts_expr_node *node;
-  if (!ctx || !expr || (expr->type == GRN_TS_EXPR_BROKEN)) {
+  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE)) {
     return GRN_INVALID_ARGUMENT;
   }
   rc = grn_ts_expr_reserve_stack(ctx, expr);
@@ -5413,7 +5413,7 @@ grn_rc
 grn_ts_expr_push_value(grn_ctx *ctx, grn_ts_expr *expr) {
   grn_rc rc;
   grn_ts_expr_node *node;
-  if (!ctx || !expr || (expr->type == GRN_TS_EXPR_BROKEN)) {
+  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE)) {
     return GRN_INVALID_ARGUMENT;
   }
   rc = grn_ts_expr_reserve_stack(ctx, expr);
@@ -5434,7 +5434,7 @@ grn_ts_expr_push_value(grn_ctx *ctx, grn_ts_expr *expr) {
 grn_rc
 grn_ts_expr_push_const(grn_ctx *ctx, grn_ts_expr *expr,
                        grn_ts_data_kind kind, const void *value) {
-  if (!ctx || !expr || (expr->type == GRN_TS_EXPR_BROKEN) || !value) {
+  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE) || !value) {
     return GRN_INVALID_ARGUMENT;
   }
   switch (kind) {
@@ -5461,7 +5461,7 @@ grn_rc
 grn_ts_expr_push_column(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *column) {
   grn_rc rc;
   grn_ts_expr_node *node;
-  if (!ctx || !expr || (expr->type == GRN_TS_EXPR_BROKEN) ||
+  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE) ||
       !column || !grn_ts_obj_is_column(ctx, column) ||
       (DB_OBJ(expr->curr_table)->id != column->header.domain)) {
     return GRN_INVALID_ARGUMENT;
@@ -5482,7 +5482,7 @@ grn_ts_expr_push_operator(grn_ctx *ctx, grn_ts_expr *expr,
   grn_rc rc;
   grn_ts_expr_node **args, *node;
   size_t n_args;
-  if (!ctx || !expr || (expr->type == GRN_TS_EXPR_BROKEN)) {
+  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE)) {
     return GRN_INVALID_ARGUMENT;
   }
   n_args = grn_ts_op_get_n_args(op_type);
@@ -5505,7 +5505,7 @@ grn_ts_expr_push_operator(grn_ctx *ctx, grn_ts_expr *expr,
 #define GRN_TS_EXPR_PUSH_CONST(KIND, kind)\
   grn_rc rc;\
   grn_ts_expr_node *node;\
-  if (!ctx || !expr || (expr->type == GRN_TS_EXPR_BROKEN) ||\
+  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE) ||\
       !grn_ts_ ## kind ## _is_valid(value)) {\
     return GRN_INVALID_ARGUMENT;\
   }\
