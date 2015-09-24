@@ -122,6 +122,15 @@ grn_ts_str_is_name_prefix(grn_ts_str str) {
   return GRN_TRUE;
 }
 
+/* grn_ts_str_is_name() returns whether or not a string is valid as a name. */
+static grn_ts_bool
+grn_ts_str_is_name(grn_ts_str str) {
+  if (!str.size) {
+    return GRN_FALSE;
+  }
+  return grn_ts_str_is_name_prefix(str);
+}
+
 /* grn_ts_str_is_id_name() returns whether or not a string is "_id". */
 static grn_ts_bool
 grn_ts_str_is_id_name(grn_ts_str str) {
@@ -4631,28 +4640,8 @@ grn_ts_expr_parser_push_const(grn_ctx *ctx, grn_ts_expr_parser *parser,
 static grn_rc
 grn_ts_expr_parser_push_name(grn_ctx *ctx, grn_ts_expr_parser *parser,
                              grn_ts_expr_name_token *token) {
-  grn_rc rc;
-  grn_obj *column;
-  grn_ts_str name = token->src;
-  if (grn_ts_str_is_id_name(name)) {
-    return grn_ts_expr_push_id(ctx, parser->expr);
-  }
-  if (grn_ts_str_is_score_name(name)) {
-    return grn_ts_expr_push_score(ctx, parser->expr);
-  }
-  if (grn_ts_str_is_key_name(name)) {
-    return grn_ts_expr_push_key(ctx, parser->expr);
-  }
-  if (grn_ts_str_is_value_name(name)) {
-    return grn_ts_expr_push_value(ctx, parser->expr);
-  }
-  column = grn_obj_column(ctx, parser->expr->curr_table, name.ptr, name.size);
-  if (!column) {
-    return GRN_INVALID_ARGUMENT;
-  }
-  rc = grn_ts_expr_push_column(ctx, parser->expr, column);
-  grn_obj_unlink(ctx, column);
-  return rc;
+  return grn_ts_expr_push_name(ctx, parser->expr,
+                               token->src.ptr, token->src.size);
 }
 
 /* grn_ts_expr_parser_push_op() pushes a token to an expression. */
@@ -5177,6 +5166,38 @@ grn_ts_expr_push(grn_ctx *ctx, grn_ts_expr *expr,
   }
   rc = grn_ts_expr_parser_parse(ctx, parser, str_ptr, str_size);
   grn_ts_expr_parser_close(ctx, parser);
+  return rc;
+}
+
+grn_rc
+grn_ts_expr_push_name(grn_ctx *ctx, grn_ts_expr *expr,
+                     const char *name_ptr, size_t name_size) {
+  grn_rc rc;
+  grn_obj *column;
+  grn_ts_str name = { name_ptr, name_size };
+  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE) ||
+      !grn_ts_str_is_name(name)) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  if (grn_ts_str_is_id_name(name)) {
+    return grn_ts_expr_push_id(ctx, expr);
+  }
+  if (grn_ts_str_is_score_name(name)) {
+    return grn_ts_expr_push_score(ctx, expr);
+  }
+  if (grn_ts_str_is_key_name(name)) {
+    return grn_ts_expr_push_key(ctx, expr);
+  }
+  if (grn_ts_str_is_value_name(name)) {
+    return grn_ts_expr_push_value(ctx, expr);
+  }
+  /* TODO: Resolve references. */
+  column = grn_obj_column(ctx, expr->curr_table, name.ptr, name.size);
+  if (!column) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  rc = grn_ts_expr_push_column(ctx, expr, column);
+  grn_obj_unlink(ctx, column);
   return rc;
 }
 

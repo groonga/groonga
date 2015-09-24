@@ -242,6 +242,10 @@ grn_ts_expr_node *grn_ts_expr_get_root(grn_ctx *ctx, grn_ts_expr *expr);
 grn_rc grn_ts_expr_push(grn_ctx *ctx, grn_ts_expr *expr,
                         const char *str_ptr, size_t str_size);
 
+/* grn_ts_expr_push_name() pushes a named object. */
+grn_rc grn_ts_expr_push_name(grn_ctx *ctx, grn_ts_expr *expr,
+                             const char *name_ptr, size_t name_size);
+
 /*
  * grn_ts_expr_push_obj() pushes an object.
  *
