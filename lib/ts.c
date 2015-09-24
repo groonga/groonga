@@ -4688,10 +4688,10 @@ grn_ts_expr_parser_push_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
   return grn_ts_expr_push_operator(ctx, parser->expr, token->op_type);
 }
 
-/* grn_ts_expr_parser_apply_op() applies prior operators. */
+/* grn_ts_expr_parser_apply() applies bridges and prior operators. */
 static grn_rc
-grn_ts_expr_parser_apply_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                            grn_ts_op_precedence precedence_threshold) {
+grn_ts_expr_parser_apply(grn_ctx *ctx, grn_ts_expr_parser *parser,
+                         grn_ts_op_precedence precedence_threshold) {
   grn_rc rc = GRN_SUCCESS;
   grn_ts_expr_token **stack = parser->stack;
   size_t depth = parser->stack_depth;
@@ -4758,7 +4758,7 @@ grn_ts_expr_parser_analyze_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
     }
   } else if (n_args == 2) {
     grn_ts_op_precedence precedence = grn_ts_op_get_precedence(token->op_type);
-    grn_rc rc = grn_ts_expr_parser_apply_op(ctx, parser, precedence);
+    grn_rc rc = grn_ts_expr_parser_apply(ctx, parser, precedence);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
@@ -4801,7 +4801,7 @@ grn_ts_expr_parser_analyze_bracket(grn_ctx *ctx, grn_ts_expr_parser *parser,
     }
     case ')': case ']': {
       grn_ts_expr_token *ex_ex_token;
-      grn_rc rc = grn_ts_expr_parser_apply_op(ctx, parser, 0);
+      grn_rc rc = grn_ts_expr_parser_apply(ctx, parser, 0);
       if (rc != GRN_SUCCESS) {
         return rc;
       }
@@ -4853,7 +4853,7 @@ grn_ts_expr_parser_analyze_token(grn_ctx *ctx, grn_ts_expr_parser *parser,
       return GRN_SUCCESS;
     }
     case GRN_TS_EXPR_END_TOKEN: {
-      return grn_ts_expr_parser_apply_op(ctx, parser, 0);
+      return grn_ts_expr_parser_apply(ctx, parser, 0);
     }
     case GRN_TS_EXPR_CONST_TOKEN: {
       grn_ts_expr_const_token *const_token = (grn_ts_expr_const_token *)token;
