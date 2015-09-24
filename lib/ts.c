@@ -5688,6 +5688,24 @@ grn_ts_expr_push_wgs84_geo_point_vector(grn_ctx *ctx, grn_ts_expr *expr,
 #undef GRN_TS_EXPR_PUSH_CONST
 
 grn_rc
+grn_ts_expr_begin_subexpr(grn_ctx *ctx, grn_ts_expr *expr) {
+  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE)) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  // TODO
+  return GRN_FUNCTION_NOT_IMPLEMENTED;
+}
+
+grn_rc
+grn_ts_expr_end_subexpr(grn_ctx *ctx, grn_ts_expr *expr) {
+  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE)) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  // TODO
+  return GRN_FUNCTION_NOT_IMPLEMENTED;
+}
+
+grn_rc
 grn_ts_expr_complete(grn_ctx *ctx, grn_ts_expr *expr) {
   grn_ts_expr_node *root;
   if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE)) {

@@ -334,6 +334,12 @@ grn_rc grn_ts_expr_push_tokyo_geo_point_vector(grn_ctx *ctx, grn_ts_expr *expr,
 grn_rc grn_ts_expr_push_wgs84_geo_point_vector(grn_ctx *ctx, grn_ts_expr *expr,
                                                grn_ts_geo_point_vector value);
 
+/* grn_ts_expr_begin_subexpr() begins a subexpression. */
+grn_rc grn_ts_expr_begin_subexpr(grn_ctx *ctx, grn_ts_expr *expr);
+
+/* grn_ts_expr_end_subexpr() ends a subexpression. */
+grn_rc grn_ts_expr_end_subexpr(grn_ctx *ctx, grn_ts_expr *expr);
+
 /* grn_rc grn_ts_expr_complete() completes an expression. */
 grn_rc grn_ts_expr_complete(grn_ctx *ctx, grn_ts_expr *expr);
 
