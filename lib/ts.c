@@ -1377,17 +1377,17 @@ grn_ts_ja_get_value(grn_ctx *ctx, grn_ja *ja, grn_ts_id id,
   return rc;
 }
 
-#define GRN_TS_HASH_GET_KEY()\
+#define GRN_TS_TABLE_GET_KEY(type)\
   uint32_t key_size;\
-  const void *key_ptr = _grn_hash_key(ctx, hash, id, &key_size);\
-  if (!key_ptr || (key_size != sizeof(*key))) {\
+  const void *key_ptr = _grn_ ## type ## _key(ctx, type, id, &key_size);\
+  if (!key_ptr) {\
     return GRN_INVALID_ARGUMENT;\
   }\
 /* grn_ts_hash_get_bool_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_hash_get_bool_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
                          grn_ts_bool *key) {
-  GRN_TS_HASH_GET_KEY()
+  GRN_TS_TABLE_GET_KEY(hash)
   *key = *(const grn_ts_bool *)key_ptr;
   return GRN_SUCCESS;
 }
@@ -1396,7 +1396,7 @@ grn_ts_hash_get_bool_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 static grn_rc
 grn_ts_hash_get_int8_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
                          grn_ts_int *key) {
-  GRN_TS_HASH_GET_KEY()
+  GRN_TS_TABLE_GET_KEY(hash)
   *key = *(const int8_t *)key_ptr;
   return GRN_SUCCESS;
 }
@@ -1405,7 +1405,7 @@ grn_ts_hash_get_int8_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 static grn_rc
 grn_ts_hash_get_int16_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
                           grn_ts_int *key) {
-  GRN_TS_HASH_GET_KEY()
+  GRN_TS_TABLE_GET_KEY(hash)
   *key = *(const int16_t *)key_ptr;
   return GRN_SUCCESS;
 }
@@ -1414,7 +1414,7 @@ grn_ts_hash_get_int16_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 static grn_rc
 grn_ts_hash_get_int32_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
                           grn_ts_int *key) {
-  GRN_TS_HASH_GET_KEY()
+  GRN_TS_TABLE_GET_KEY(hash)
   *key = *(const int32_t *)key_ptr;
   return GRN_SUCCESS;
 }
@@ -1423,7 +1423,7 @@ grn_ts_hash_get_int32_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 static grn_rc
 grn_ts_hash_get_int64_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
                           grn_ts_int *key) {
-  GRN_TS_HASH_GET_KEY()
+  GRN_TS_TABLE_GET_KEY(hash)
   *key = *(const int64_t *)key_ptr;
   return GRN_SUCCESS;
 }
@@ -1432,7 +1432,7 @@ grn_ts_hash_get_int64_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 static grn_rc
 grn_ts_hash_get_uint8_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
                           grn_ts_int *key) {
-  GRN_TS_HASH_GET_KEY()
+  GRN_TS_TABLE_GET_KEY(hash)
   *key = *(const uint8_t *)key_ptr;
   return GRN_SUCCESS;
 }
@@ -1441,7 +1441,7 @@ grn_ts_hash_get_uint8_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 static grn_rc
 grn_ts_hash_get_uint16_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
                            grn_ts_int *key) {
-  GRN_TS_HASH_GET_KEY()
+  GRN_TS_TABLE_GET_KEY(hash)
   *key = *(const uint16_t *)key_ptr;
   return GRN_SUCCESS;
 }
@@ -1450,7 +1450,7 @@ grn_ts_hash_get_uint16_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 static grn_rc
 grn_ts_hash_get_uint32_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
                            grn_ts_int *key) {
-  GRN_TS_HASH_GET_KEY()
+  GRN_TS_TABLE_GET_KEY(hash)
   *key = *(const uint32_t *)key_ptr;
   return GRN_SUCCESS;
 }
@@ -1459,7 +1459,7 @@ grn_ts_hash_get_uint32_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 static grn_rc
 grn_ts_hash_get_uint64_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
                            grn_ts_int *key) {
-  GRN_TS_HASH_GET_KEY()
+  GRN_TS_TABLE_GET_KEY(hash)
   *key = (grn_ts_int)*(const uint64_t *)key_ptr;
   return GRN_SUCCESS;
 }
@@ -1468,7 +1468,7 @@ grn_ts_hash_get_uint64_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 static grn_rc
 grn_ts_hash_get_float_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
                           grn_ts_float *key) {
-  GRN_TS_HASH_GET_KEY()
+  GRN_TS_TABLE_GET_KEY(hash)
   *key = *(const grn_ts_float *)key_ptr;
   return GRN_SUCCESS;
 }
@@ -1477,21 +1477,16 @@ grn_ts_hash_get_float_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 static grn_rc
 grn_ts_hash_get_geo_point_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
                               grn_ts_geo_point *key) {
-  GRN_TS_HASH_GET_KEY()
+  GRN_TS_TABLE_GET_KEY(hash)
   *key = *(const grn_ts_geo_point *)key_ptr;
   return GRN_SUCCESS;
 }
-#undef GRN_TS_HASH_GET_KEY
 
 /* grn_ts_hash_get_text_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_hash_get_text_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
                          grn_ts_text *key) {
-  uint32_t key_size;
-  const char *key_ptr = _grn_hash_key(ctx, hash, id, &key_size);
-  if (!key_ptr) {
-    return GRN_INVALID_ARGUMENT;
-  }
+  GRN_TS_TABLE_GET_KEY(hash)
   key->ptr = key_ptr;
   key->size = key_size;
   return GRN_SUCCESS;
@@ -1510,17 +1505,11 @@ grn_ts_hash_get_ref_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
   return GRN_SUCCESS;
 }
 
-#define GRN_TS_PAT_GET_KEY()\
-  uint32_t key_size;\
-  const void *key_ptr = _grn_pat_key(ctx, pat, id, &key_size);\
-  if (!key_ptr || (key_size != sizeof(*key))) {\
-    return GRN_INVALID_ARGUMENT;\
-  }\
 /* grn_ts_pat_get_bool_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_pat_get_bool_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
                         grn_ts_bool *key) {
-  GRN_TS_PAT_GET_KEY()
+  GRN_TS_TABLE_GET_KEY(pat)
   *key = *(const grn_ts_bool *)key_ptr;
   return GRN_SUCCESS;
 }
@@ -1529,8 +1518,10 @@ grn_ts_pat_get_bool_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
 static grn_rc
 grn_ts_pat_get_int8_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
                         grn_ts_int *key) {
-  GRN_TS_PAT_GET_KEY()
-  *key = *(const int8_t *)key_ptr;
+  int8_t tmp;
+  GRN_TS_TABLE_GET_KEY(pat)
+  grn_ntohi(&tmp, key_ptr, sizeof(tmp));
+  *key = tmp;
   return GRN_SUCCESS;
 }
 
@@ -1539,7 +1530,7 @@ static grn_rc
 grn_ts_pat_get_int16_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
                          grn_ts_int *key) {
   int16_t tmp;
-  GRN_TS_PAT_GET_KEY()
+  GRN_TS_TABLE_GET_KEY(pat)
   grn_ntohi(&tmp, key_ptr, sizeof(tmp));
   *key = tmp;
   return GRN_SUCCESS;
@@ -1550,7 +1541,7 @@ static grn_rc
 grn_ts_pat_get_int32_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
                          grn_ts_int *key) {
   int32_t tmp;
-  GRN_TS_PAT_GET_KEY()
+  GRN_TS_TABLE_GET_KEY(pat)
   grn_ntohi(&tmp, key_ptr, sizeof(tmp));
   *key = tmp;
   return GRN_SUCCESS;
@@ -1560,7 +1551,7 @@ grn_ts_pat_get_int32_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
 static grn_rc
 grn_ts_pat_get_int64_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
                          grn_ts_int *key) {
-  GRN_TS_PAT_GET_KEY()
+  GRN_TS_TABLE_GET_KEY(pat)
   grn_ntohi(key, key_ptr, sizeof(grn_ts_int));
   return GRN_SUCCESS;
 }
@@ -1569,7 +1560,7 @@ grn_ts_pat_get_int64_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
 static grn_rc
 grn_ts_pat_get_uint8_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
                          grn_ts_int *key) {
-  GRN_TS_PAT_GET_KEY()
+  GRN_TS_TABLE_GET_KEY(pat)
   *key = *(const uint8_t *)key_ptr;
   return GRN_SUCCESS;
 }
@@ -1579,7 +1570,7 @@ static grn_rc
 grn_ts_pat_get_uint16_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
                           grn_ts_int *key) {
   uint16_t tmp;
-  GRN_TS_PAT_GET_KEY()
+  GRN_TS_TABLE_GET_KEY(pat)
   grn_ntoh(&tmp, key_ptr, sizeof(tmp));
   *key = tmp;
   return GRN_SUCCESS;
@@ -1590,7 +1581,7 @@ static grn_rc
 grn_ts_pat_get_uint32_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
                           grn_ts_int *key) {
   uint32_t tmp;
-  GRN_TS_PAT_GET_KEY()
+  GRN_TS_TABLE_GET_KEY(pat)
   grn_ntoh(&tmp, key_ptr, sizeof(tmp));
   *key = tmp;
   return GRN_SUCCESS;
@@ -1600,7 +1591,7 @@ grn_ts_pat_get_uint32_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
 static grn_rc
 grn_ts_pat_get_uint64_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
                           grn_ts_int *key) {
-  GRN_TS_PAT_GET_KEY()
+  GRN_TS_TABLE_GET_KEY(pat)
   grn_ntoh(key, key_ptr, sizeof(grn_ts_int));
   return GRN_SUCCESS;
 }
@@ -1610,7 +1601,7 @@ static grn_rc
 grn_ts_pat_get_float_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
                          grn_ts_float *key) {
   int64_t tmp;
-  GRN_TS_PAT_GET_KEY()
+  GRN_TS_TABLE_GET_KEY(pat)
   grn_ntoh(&tmp, key_ptr, sizeof(tmp));
   tmp ^= (((tmp ^ ((int64_t)1 << 63)) >> 63) | ((int64_t)1 << 63));
   *(int64_t *)key = tmp;
@@ -1621,21 +1612,16 @@ grn_ts_pat_get_float_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
 static grn_rc
 grn_ts_pat_get_geo_point_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
                              grn_ts_geo_point *key) {
-  GRN_TS_PAT_GET_KEY()
+  GRN_TS_TABLE_GET_KEY(pat)
   grn_ntog(key, key_ptr, sizeof(grn_ts_geo_point));
   return GRN_SUCCESS;
 }
-#undef GRN_TS_PAT_GET_KEY
 
 /* grn_ts_pat_get_text_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_pat_get_text_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
                         grn_ts_text *key) {
-  uint32_t key_size;
-  const char *key_ptr = _grn_pat_key(ctx, pat, id, &key_size);
-  if (!key_ptr) {
-    return GRN_INVALID_ARGUMENT;
-  }
+  GRN_TS_TABLE_GET_KEY(pat)
   key->ptr = key_ptr;
   key->size = key_size;
   return GRN_SUCCESS;
@@ -1645,11 +1631,7 @@ grn_ts_pat_get_text_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
 static grn_rc
 grn_ts_pat_get_ref_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
                        grn_ts_ref *key) {
-  uint32_t key_size;
-  const char *key_ptr = _grn_pat_key(ctx, pat, id, &key_size);
-  if (!key_ptr || (key_size != sizeof(grn_ts_id))) {
-    return GRN_INVALID_ARGUMENT;
-  }
+  GRN_TS_TABLE_GET_KEY(pat)
   grn_ntoh(&key->id, key_ptr, sizeof(key->id));
   return GRN_SUCCESS;
 }
@@ -1658,15 +1640,12 @@ grn_ts_pat_get_ref_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
 static grn_rc
 grn_ts_dat_get_text_key(grn_ctx *ctx, grn_dat *dat, grn_ts_id id,
                         grn_ts_text *key) {
-  uint32_t key_size;
-  const char *key_ptr = _grn_dat_key(ctx, dat, id, &key_size);
-  if (!key_ptr) {
-    return GRN_INVALID_ARGUMENT;
-  }
+  GRN_TS_TABLE_GET_KEY(dat)
   key->ptr = key_ptr;
   key->size = key_size;
   return GRN_SUCCESS;
 }
+#undef GRN_TS_TABLE_GET_KEY
 
 /* grn_ts_table_has_key() returns whether a table has _key or not. */
 static grn_ts_bool
@@ -1920,38 +1899,64 @@ grn_ts_expr_key_node_close(grn_ctx *ctx, grn_ts_expr_key_node *node) {
   GRN_FREE(node);
 }
 
-#define GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE(KIND, kind)\
+#define GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE(table, KIND, kind)\
   case GRN_TS_ ## KIND: {\
-    size_t i;\
     grn_ts_ ## kind *out_ptr = (grn_ts_ ## kind *)out;\
     for (i = 0; i < n_in; i++) {\
-      const grn_ts_ ## kind *key;\
-      size_t key_size;\
-      key = (const grn_ts_ ## kind *)grn_ts_table_get_key(ctx, node->table,\
-                                                          in[i].id,\
-                                                          &key_size);\
-      if (key && (key_size == sizeof(*key))) {\
-        out_ptr[i] = *key;\
-      } else {\
-        out_ptr[i] = grn_ts_ ## kind ## _zero();\
+      rc = grn_ts_ ## table ## _get_ ## kind ## _key(ctx, table, in[i].id,\
+                                                     &out_ptr[i]);\
+      if (rc != GRN_SUCCESS) {\
+        return rc;\
       }\
     }\
     return GRN_SUCCESS;\
   }
-#define GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(TYPE, type)\
+#define GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(table, TYPE, type)\
   case GRN_DB_ ## TYPE: {\
-    size_t i;\
     grn_ts_int *out_ptr = (grn_ts_int *)out;\
     for (i = 0; i < n_in; i++) {\
-      const type ## _t *key;\
-      size_t key_size;\
-      key = (const type ## _t *)grn_ts_table_get_key(ctx, node->table,\
-                                                     in[i].id, &key_size);\
-      if (key && (key_size == sizeof(*key))) {\
-        out_ptr[i] = (grn_ts_int)*key;\
-      } else {\
-        out_ptr[i] = grn_ts_int_zero();\
+      rc = grn_ts_ ## table ## _get_ ## type ## _key(ctx, table, in[i].id,\
+                                                     &out_ptr[i]);\
+      if (rc != GRN_SUCCESS) {\
+        return rc;\
       }\
+    }\
+    return GRN_SUCCESS;\
+  }
+#define GRN_TS_EXPR_KEY_NODE_EVALUATE_TEXT_CASE(table)\
+  case GRN_TS_TEXT: {\
+    char *buf_ptr;\
+    grn_ts_text *out_ptr = (grn_ts_text *)out;\
+    node->buf.pos = 0;\
+    for (i = 0; i < n_in; i++) {\
+      grn_ts_text key;\
+      rc = grn_ts_ ## table ## _get_text_key(ctx, table, in[i].id, &key);\
+      if (rc != GRN_SUCCESS) {\
+        return rc;\
+      }\
+      rc = grn_ts_buf_write(ctx, &node->buf, key.ptr, key.size);\
+      if (rc != GRN_SUCCESS) {\
+        return rc;\
+      }\
+      out_ptr[i].size = key.size;\
+    }\
+    buf_ptr = (char *)node->buf.ptr;\
+    for (i = 0; i < n_in; i++) {\
+      out_ptr[i].ptr = buf_ptr;\
+      buf_ptr += out_ptr[i].size;\
+    }\
+    return GRN_SUCCESS;\
+  }
+#define GRN_TS_EXPR_KEY_NODE_EVALUATE_REF_CASE(table)\
+  case GRN_TS_REF: {\
+    grn_ts_ref *out_ptr = (grn_ts_ref *)out;\
+    for (i = 0; i < n_in; i++) {\
+      rc = grn_ts_ ## table ## _get_ref_key(ctx, table, in[i].id,\
+                                            &out_ptr[i]);\
+      if (rc != GRN_SUCCESS) {\
+        return rc;\
+      }\
+      out_ptr[i].score = in[i].score;\
     }\
     return GRN_SUCCESS;\
   }
@@ -1960,72 +1965,77 @@ static grn_rc
 grn_ts_expr_key_node_evaluate(grn_ctx *ctx, grn_ts_expr_key_node *node,
                               const grn_ts_record *in, size_t n_in,
                               void *out) {
-  switch (node->data_kind) {
-    GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE(BOOL, bool)
-    case GRN_TS_INT: {
-      switch (node->data_type) {
-        GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(INT8, int8)
-        GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(INT16, int16)
-        GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(INT32, int32)
-        GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(INT64, int64)
-        GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(UINT8, uint8)
-        GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(UINT16, uint16)
-        GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(UINT32, uint32)
-        GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(UINT64, uint64)
-        default: {
-          return GRN_OBJECT_CORRUPT;
-        }
-      }
-    }
-    GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE(FLOAT, float)
-    GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE(TIME, time)
-    case GRN_TS_TEXT: {
-      size_t i;
-      char *buf_ptr;
-      grn_ts_text *out_ptr = (grn_ts_text *)out;
-      node->buf.pos = 0;
-      for (i = 0; i < n_in; i++) {
-        const char *key;
-        size_t key_size;
-        key = (const char *)grn_ts_table_get_key(ctx, node->table, in[i].id,
-                                                 &key_size);
-        if (key && key_size) {
-          grn_rc rc = grn_ts_buf_write(ctx, &node->buf, key, key_size);
-          if (rc == GRN_SUCCESS) {
-            out_ptr[i].size = key_size;
+  size_t i;
+  grn_rc rc;
+  switch (node->table->header.type) {
+    case GRN_TABLE_HASH_KEY: {
+      grn_hash *hash = (grn_hash *)node->table;
+      switch (node->data_kind) {
+        GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE(hash, BOOL, bool)
+        case GRN_TS_INT: {
+          switch (node->data_type) {
+            GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(hash, INT8, int8)
+            GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(hash, INT16, int16)
+            GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(hash, INT32, int32)
+            GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(hash, INT64, int64)
+            GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(hash, UINT8, uint8)
+            GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(hash, UINT16, uint16)
+            GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(hash, UINT32, uint32)
+            GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(hash, UINT64, uint64)
           }
         }
-      }
-      buf_ptr = (char *)node->buf.ptr;
-      for (i = 0; i < n_in; i++) {
-        out_ptr[i].ptr = buf_ptr;
-        buf_ptr += out_ptr[i].size;
-      }
-      return GRN_SUCCESS;
-    }
-    GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE(GEO_POINT, geo_point)
-    case GRN_TS_REF: {
-      size_t i;
-      grn_ts_ref *out_ptr = (grn_ts_ref *)out;
-      for (i = 0; i < n_in; i++) {
-        const grn_ts_id *id;
-        size_t key_size;
-        id = (const grn_ts_id *)grn_ts_table_get_key(ctx, node->table,
-                                                     in[i].id, &key_size);
-        if (id && (key_size == sizeof(*id))) {
-          grn_ntoh(&out_ptr[i].id, id, sizeof(*id));
-          out_ptr[i].score = in[i].score;
-        } else {
-          out_ptr[i] = grn_ts_ref_zero();
+        GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE(hash, FLOAT, float)
+        GRN_TS_EXPR_KEY_NODE_EVALUATE_TEXT_CASE(hash)
+        GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE(hash, GEO_POINT, geo_point)
+        GRN_TS_EXPR_KEY_NODE_EVALUATE_REF_CASE(hash)
+        default: {
+          return GRN_INVALID_ARGUMENT;
         }
       }
-      return GRN_SUCCESS;
     }
+    case GRN_TABLE_PAT_KEY: {
+      grn_pat *pat = (grn_pat *)node->table;
+      switch (node->data_kind) {
+        GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE(pat, BOOL, bool)
+        case GRN_TS_INT: {
+          switch (node->data_type) {
+            GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(pat, INT8, int8)
+            GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(pat, INT16, int16)
+            GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(pat, INT32, int32)
+            GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(pat, INT64, int64)
+            GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(pat, UINT8, uint8)
+            GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(pat, UINT16, uint16)
+            GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(pat, UINT32, uint32)
+            GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE(pat, UINT64, uint64)
+          }
+        }
+        GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE(pat, FLOAT, float)
+        GRN_TS_EXPR_KEY_NODE_EVALUATE_TEXT_CASE(pat)
+        GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE(pat, GEO_POINT, geo_point)
+        GRN_TS_EXPR_KEY_NODE_EVALUATE_REF_CASE(pat)
+        default: {
+          return GRN_INVALID_ARGUMENT;
+        }
+      }
+    }
+    case GRN_TABLE_DAT_KEY: {
+      grn_dat *dat = (grn_dat *)node->table;
+      switch (node->data_kind) {
+        GRN_TS_EXPR_KEY_NODE_EVALUATE_TEXT_CASE(dat)
+        /* GRN_TABLE_DAT_KEY supports only Text. */
+        default: {
+          return GRN_INVALID_ARGUMENT;
+        }
+      }
+    }
+    /* GRN_TABLE_NO_KEY doesn't support _key. */
     default: {
-      return GRN_OBJECT_CORRUPT;
+      return GRN_INVALID_ARGUMENT;
     }
   }
 }
+#undef GRN_TS_EXPR_KEY_NODE_EVALUATE_REF_CASE
+#undef GRN_TS_EXPR_KEY_NODE_EVALUATE_TEXT_CASE
 #undef GRN_TS_EXPR_KEY_NODE_EVALUATE_INT_CASE
 #undef GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE
 
@@ -2034,18 +2044,42 @@ static grn_rc
 grn_ts_expr_key_node_filter(grn_ctx *ctx, grn_ts_expr_key_node *node,
                             grn_ts_record *in, size_t n_in,
                             grn_ts_record *out, size_t *n_out) {
-  size_t i, count = 0;
-  for (i = 0; i < n_in; i++) {
-    const grn_ts_bool *key;
-    size_t key_size;
-    key = (const grn_ts_bool *)grn_ts_table_get_key(ctx, node->table,
-                                                    in[i].id, &key_size);
-    if (key && (key_size == sizeof(*key)) && *key) {
-      out[count++] = in[i];
+  size_t i, count;
+  grn_ts_bool key;
+  switch (node->table->header.type) {
+    case GRN_TABLE_HASH_KEY: {
+      grn_hash *hash = (grn_hash *)node->table;
+      for (i = 0, count = 0; i < n_in; i++) {
+        grn_rc rc = grn_ts_hash_get_bool_key(ctx, hash, in[i].id, &key);
+        if (rc != GRN_SUCCESS) {
+          return GRN_INVALID_ARGUMENT;
+        }
+        if (key) {
+          out[count++] = in[i];
+        }
+      }
+      *n_out = count;
+      return GRN_SUCCESS;
+    }
+    case GRN_TABLE_PAT_KEY: {
+      grn_pat *pat = (grn_pat *)node->table;
+      for (i = 0, count = 0; i < n_in; i++) {
+        grn_rc rc = grn_ts_pat_get_bool_key(ctx, pat, in[i].id, &key);
+        if (rc != GRN_SUCCESS) {
+          return GRN_INVALID_ARGUMENT;
+        }
+        if (key) {
+          out[count++] = in[i];
+        }
+      }
+      *n_out = count;
+      return GRN_SUCCESS;
+    }
+    /* GRN_TABLE_DAT_KEY and GRN_TABLE_NO_KEY don't support a Bool key. */
+    default: {
+      return GRN_INVALID_ARGUMENT;
     }
   }
-  *n_out = count;
-  return GRN_SUCCESS;
 }
 
 /* grn_ts_expr_key_node_adjust() updates scores. */
@@ -2053,16 +2087,35 @@ static grn_rc
 grn_ts_expr_key_node_adjust(grn_ctx *ctx, grn_ts_expr_key_node *node,
                             grn_ts_record *io, size_t n_io) {
   size_t i;
-  for (i = 0; i < n_io; i++) {
-    const grn_ts_float *key;
-    size_t key_size;
-    key = (const grn_ts_float *)grn_ts_table_get_key(ctx, node->table,
-                                                     io[i].id, &key_size);
-    if (key && (key_size == sizeof(*key))) {
-      io[i].score = (grn_ts_score)*key;
+  grn_ts_float key;
+  switch (node->table->header.type) {
+    case GRN_TABLE_HASH_KEY: {
+      grn_hash *hash = (grn_hash *)node->table;
+      for (i = 0; i < n_io; i++) {
+        grn_rc rc = grn_ts_hash_get_float_key(ctx, hash, io[i].id, &key);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+        io[i].score = (grn_ts_score)key;
+      }
+      return GRN_SUCCESS;
+    }
+    case GRN_TABLE_PAT_KEY: {
+      grn_pat *pat = (grn_pat *)node->table;
+      for (i = 0; i < n_io; i++) {
+        grn_rc rc = grn_ts_pat_get_float_key(ctx, pat, io[i].id, &key);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+        io[i].score = (grn_ts_score)key;
+      }
+      return GRN_SUCCESS;
+    }
+    /* GRN_TABLE_DAT_KEY and GRN_TABLE_NO_KEY don't support a Float key. */
+    default: {
+      return GRN_INVALID_ARGUMENT;
     }
   }
-  return GRN_SUCCESS;
 }
 
 /*-------------------------------------------------------------
