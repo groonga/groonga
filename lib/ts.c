@@ -1668,32 +1668,6 @@ grn_ts_table_has_value(grn_ctx *ctx, grn_obj *table) {
   return DB_OBJ(table)->range != GRN_DB_VOID;
 }
 
-#define GRN_TS_TABLE_GET_KEY_CASE(TYPE, type)\
-  case GRN_TABLE_ ## TYPE ## _KEY: {\
-    uint32_t key_size;\
-    grn_ ## type *type = (grn_ ## type *)table;\
-    const void *key = _grn_ ## type ## _key(ctx, type, id, &key_size);\
-    if (size) {\
-      *size = key_size;\
-    }\
-    return key;\
-  }
-/* grn_ts_table_get_key() gets a reference to a key (_key). */
-static const void *
-grn_ts_table_get_key(grn_ctx *ctx, grn_obj *table, grn_ts_id id,
-                     size_t *size) {
-  switch (table->header.type) {
-    GRN_TS_TABLE_GET_KEY_CASE(HASH, hash)
-    GRN_TS_TABLE_GET_KEY_CASE(PAT, pat)
-    GRN_TS_TABLE_GET_KEY_CASE(DAT, dat)
-    /* GRN_TABLE_NO_KEY does not support _key. */
-    default: {
-      return NULL;
-    }
-  }
-}
-#undef GRN_TS_TABLE_GET_KEY_CASE
-
 /* grn_ts_table_get_value() gets a reference to a value (_value). */
 static const void *
 grn_ts_table_get_value(grn_ctx *ctx, grn_obj *table, grn_ts_id id) {
