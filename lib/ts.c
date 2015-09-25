@@ -1377,6 +1377,297 @@ grn_ts_ja_get_value(grn_ctx *ctx, grn_ja *ja, grn_ts_id id,
   return rc;
 }
 
+#define GRN_TS_HASH_GET_KEY()\
+  uint32_t key_size;\
+  const void *key_ptr = _grn_hash_key(ctx, hash, id, &key_size);\
+  if (!key_ptr || (key_size != sizeof(*key))) {\
+    return GRN_INVALID_ARGUMENT;\
+  }\
+/* grn_ts_hash_get_bool_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_hash_get_bool_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
+                         grn_ts_bool *key) {
+  GRN_TS_HASH_GET_KEY()
+  *key = *(const grn_ts_bool *)key_ptr;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_hash_get_int8_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_hash_get_int8_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
+                         grn_ts_int *key) {
+  GRN_TS_HASH_GET_KEY()
+  *key = *(const int8_t *)key_ptr;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_hash_get_int16_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_hash_get_int16_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
+                          grn_ts_int *key) {
+  GRN_TS_HASH_GET_KEY()
+  *key = *(const int16_t *)key_ptr;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_hash_get_int32_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_hash_get_int32_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
+                          grn_ts_int *key) {
+  GRN_TS_HASH_GET_KEY()
+  *key = *(const int32_t *)key_ptr;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_hash_get_int64_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_hash_get_int64_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
+                          grn_ts_int *key) {
+  GRN_TS_HASH_GET_KEY()
+  *key = *(const int64_t *)key_ptr;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_hash_get_uint8_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_hash_get_uint8_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
+                          grn_ts_int *key) {
+  GRN_TS_HASH_GET_KEY()
+  *key = *(const uint8_t *)key_ptr;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_hash_get_uint16_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_hash_get_uint16_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
+                           grn_ts_int *key) {
+  GRN_TS_HASH_GET_KEY()
+  *key = *(const uint16_t *)key_ptr;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_hash_get_uint32_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_hash_get_uint32_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
+                           grn_ts_int *key) {
+  GRN_TS_HASH_GET_KEY()
+  *key = *(const uint32_t *)key_ptr;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_hash_get_uint64_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_hash_get_uint64_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
+                           grn_ts_int *key) {
+  GRN_TS_HASH_GET_KEY()
+  *key = (grn_ts_int)*(const uint64_t *)key_ptr;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_hash_get_float_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_hash_get_float_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
+                          grn_ts_float *key) {
+  GRN_TS_HASH_GET_KEY()
+  *key = *(const grn_ts_float *)key_ptr;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_hash_get_geo_point_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_hash_get_geo_point_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
+                              grn_ts_geo_point *key) {
+  GRN_TS_HASH_GET_KEY()
+  *key = *(const grn_ts_geo_point *)key_ptr;
+  return GRN_SUCCESS;
+}
+#undef GRN_TS_HASH_GET_KEY
+
+/* grn_ts_hash_get_text_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_hash_get_text_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
+                         grn_ts_text *key) {
+  uint32_t key_size;
+  const char *key_ptr = _grn_hash_key(ctx, hash, id, &key_size);
+  if (!key_ptr) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  key->ptr = key_ptr;
+  key->size = key_size;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_hash_get_ref_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_hash_get_ref_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
+                        grn_ts_ref *key) {
+  uint32_t key_size;
+  const char *key_ptr = _grn_hash_key(ctx, hash, id, &key_size);
+  if (!key_ptr || (key_size != sizeof(grn_ts_id))) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  key->id = *(const grn_ts_id *)key_ptr;
+  return GRN_SUCCESS;
+}
+
+#define GRN_TS_PAT_GET_KEY()\
+  uint32_t key_size;\
+  const void *key_ptr = _grn_pat_key(ctx, pat, id, &key_size);\
+  if (!key_ptr || (key_size != sizeof(*key))) {\
+    return GRN_INVALID_ARGUMENT;\
+  }\
+/* grn_ts_pat_get_bool_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_pat_get_bool_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
+                        grn_ts_bool *key) {
+  GRN_TS_PAT_GET_KEY()
+  *key = *(const grn_ts_bool *)key_ptr;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_pat_get_int8_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_pat_get_int8_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
+                        grn_ts_int *key) {
+  GRN_TS_PAT_GET_KEY()
+  *key = *(const int8_t *)key_ptr;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_pat_get_int16_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_pat_get_int16_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
+                         grn_ts_int *key) {
+  int16_t tmp;
+  GRN_TS_PAT_GET_KEY()
+  grn_ntohi(&tmp, key_ptr, sizeof(tmp));
+  *key = tmp;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_pat_get_int32_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_pat_get_int32_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
+                         grn_ts_int *key) {
+  int32_t tmp;
+  GRN_TS_PAT_GET_KEY()
+  grn_ntohi(&tmp, key_ptr, sizeof(tmp));
+  *key = tmp;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_pat_get_int64_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_pat_get_int64_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
+                         grn_ts_int *key) {
+  GRN_TS_PAT_GET_KEY()
+  grn_ntohi(key, key_ptr, sizeof(grn_ts_int));
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_pat_get_uint8_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_pat_get_uint8_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
+                         grn_ts_int *key) {
+  GRN_TS_PAT_GET_KEY()
+  *key = *(const uint8_t *)key_ptr;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_pat_get_uint16_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_pat_get_uint16_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
+                          grn_ts_int *key) {
+  uint16_t tmp;
+  GRN_TS_PAT_GET_KEY()
+  grn_ntoh(&tmp, key_ptr, sizeof(tmp));
+  *key = tmp;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_pat_get_uint32_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_pat_get_uint32_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
+                          grn_ts_int *key) {
+  uint32_t tmp;
+  GRN_TS_PAT_GET_KEY()
+  grn_ntoh(&tmp, key_ptr, sizeof(tmp));
+  *key = tmp;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_pat_get_uint64_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_pat_get_uint64_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
+                          grn_ts_int *key) {
+  GRN_TS_PAT_GET_KEY()
+  grn_ntoh(key, key_ptr, sizeof(grn_ts_int));
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_pat_get_float_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_pat_get_float_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
+                         grn_ts_float *key) {
+  int64_t tmp;
+  GRN_TS_PAT_GET_KEY()
+  grn_ntoh(&tmp, key_ptr, sizeof(tmp));
+  tmp ^= (((tmp ^ ((int64_t)1 << 63)) >> 63) | ((int64_t)1 << 63));
+  *(int64_t *)key = tmp;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_pat_get_geo_point_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_pat_get_geo_point_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
+                             grn_ts_geo_point *key) {
+  GRN_TS_PAT_GET_KEY()
+  grn_ntog(key, key_ptr, sizeof(grn_ts_geo_point));
+  return GRN_SUCCESS;
+}
+#undef GRN_TS_PAT_GET_KEY
+
+/* grn_ts_pat_get_text_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_pat_get_text_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
+                        grn_ts_text *key) {
+  uint32_t key_size;
+  const char *key_ptr = _grn_pat_key(ctx, pat, id, &key_size);
+  if (!key_ptr) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  key->ptr = key_ptr;
+  key->size = key_size;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_pat_get_ref_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_pat_get_ref_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
+                       grn_ts_ref *key) {
+  uint32_t key_size;
+  const char *key_ptr = _grn_pat_key(ctx, pat, id, &key_size);
+  if (!key_ptr || (key_size != sizeof(grn_ts_id))) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  grn_ntoh(&key->id, key_ptr, sizeof(key->id));
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_dat_get_text_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_dat_get_text_key(grn_ctx *ctx, grn_dat *dat, grn_ts_id id,
+                        grn_ts_text *key) {
+  uint32_t key_size;
+  const char *key_ptr = _grn_dat_key(ctx, dat, id, &key_size);
+  if (!key_ptr) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  key->ptr = key_ptr;
+  key->size = key_size;
+  return GRN_SUCCESS;
+}
+
 /* grn_ts_table_has_key() returns whether a table has _key or not. */
 static grn_ts_bool
 grn_ts_table_has_key(grn_ctx *ctx, grn_obj *table) {
