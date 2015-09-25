@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010-2013 Brazil
+/* Copyright(C) 2010-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -157,20 +157,23 @@ main(int argc, char **argv)
       grn_obj query;
       GRN_TEXT_INIT(&query, 0);
       GRN_TEXT_PUTS(ctx, &query,
-                    "table_create bigram TABLE_PAT_KEY|KEY_NORMALIZE ShortText "
+                    "table_create bigram TABLE_PAT_KEY ShortText "
                     "--default_tokenizer ");
       if (default_tokenizer) {
         GRN_TEXT_PUTS(ctx, &query, default_tokenizer);
       } else {
         GRN_TEXT_PUTS(ctx, &query, DEFAULT_DEFAULT_TOKENIZER);
       }
+      GRN_TEXT_PUTS(ctx, &query, " --normalizer NormalizerAuto");
       GRN_TEXT_PUTC(ctx, &query, '\0');
       SEND(GRN_TEXT_VALUE(&query));
       GRN_OBJ_FIN(ctx, &query);
     }
-    SEND("table_create kana TABLE_PAT_KEY|KEY_NORMALIZE ShortText");
-    SEND("table_create item_${DATASET} TABLE_PAT_KEY|KEY_NORMALIZE "
-         "ShortText --default_tokenizer TokenDelimit");
+    SEND("table_create kana TABLE_PAT_KEY ShortText "
+         "--normalizer NormalizerAuto");
+    SEND("table_create item_${DATASET} TABLE_PAT_KEY "
+         "ShortText --default_tokenizer TokenDelimit "
+         "--normalizer NormalizerAuto");
     SEND("column_create bigram item_${DATASET}_key "
          "COLUMN_INDEX|WITH_POSITION item_${DATASET} _key");
     SEND("column_create item_${DATASET} kana COLUMN_VECTOR kana");
