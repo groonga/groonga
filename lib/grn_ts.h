@@ -371,10 +371,9 @@ grn_rc grn_ts_expr_adjust(grn_ctx *ctx, grn_ts_expr *expr,
  */
 
 /*
- * grn_ts_select() finds records passing through a filter (specified by
- * `filter' and `filter_size') and writes the associated values (specified by
- * `output_columns' and `output_columns_size') into the output buffer of `ctx'
- * (`ctx->impl->outbuf').
+ * grn_ts_select() finds records passing through a filter and writes the values
+ * of output columns (the evaluation results of output expressions) into the
+ * output buffer (`ctx->impl->outbuf`).
  *
  * Note that the first `offset` records will be discarded and at most `limit`
  * records will be output.
