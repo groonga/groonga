@@ -8,6 +8,9 @@ command_test_options="--n-workers=4 --reporter=buffered-mark"
 
 set -x
 
+env
+TERM_WIDTH=79
+
 case "${BUILD_TOOL}" in
   autotools)
     # TODO: Re-enable me on OS X
