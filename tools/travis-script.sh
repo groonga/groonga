@@ -8,7 +8,6 @@ command_test_options="--n-workers=4 --reporter=buffered-mark"
 
 set -x
 
-stty -a
 export COLUMNS=79
 
 case "${BUILD_TOOL}" in
