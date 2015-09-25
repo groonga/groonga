@@ -491,14 +491,14 @@ groonga_set_thread_limit(uint32_t new_limit, void *data)
   uint32_t i;
   uint32_t current_nfthreads;
 
-  MUTEX_LOCK_ENSURE(NULL, q_mutex);
+  MUTEX_LOCK_ENSURE(&grn_gctx, q_mutex);
   current_nfthreads = nfthreads;
   max_nfthreads = new_limit;
   MUTEX_UNLOCK(q_mutex);
 
   if (current_nfthreads > new_limit) {
     for (i = 0; i < current_nfthreads; i++) {
-      MUTEX_LOCK_ENSURE(NULL, q_mutex);
+      MUTEX_LOCK_ENSURE(&grn_gctx, q_mutex);
       COND_SIGNAL(q_cond);
       MUTEX_UNLOCK(q_mutex);
     }
