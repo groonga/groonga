@@ -226,7 +226,7 @@ typedef pthread_mutex_t grn_mutex;
 # define MUTEX_LOCK(m)       pthread_mutex_lock(&m)
 # define MUTEX_LOCK_CHECK(m) (MUTEX_LOCK(m) == 0)
 # define MUTEX_UNLOCK(m)     pthread_mutex_unlock(&m)
-# define MUTEX_FIN(m)
+# define MUTEX_FIN(m)        pthread_mutex_destroy(&m)
 # ifdef HAVE_PTHREAD_MUTEXATTR_SETPSHARED
 #  define MUTEX_INIT_SHARED(m) do {\
   pthread_mutexattr_t mutexattr;\
@@ -259,6 +259,7 @@ typedef pthread_cond_t grn_cond;
 # else
 #  define COND_INIT_SHARED COND_INIT
 # endif /* HAVE_PTHREAD_CONDATTR_SETPSHARE */
+# define COND_FIN(c)    pthread_cond_destroy(&c)
 
 typedef pthread_key_t grn_thread_key;
 # define THREAD_KEY_CREATE(key, destr)  pthread_key_create(key, destr)
@@ -393,6 +394,12 @@ typedef struct
   } \
 } while (0)
 
+#  define COND_FIN(c) do { \
+  CloseHandle((c).waiters_done_); \
+  MUTEX_FIN((c).waiters_count_lock_); \
+  CloseHandle((c).sema_); \
+} while (0)
+
 # else /* WIN32 */
 /* todo */
 typedef int grn_cond;
@@ -403,6 +410,7 @@ typedef int grn_cond;
   grn_nanosleep(1000000); \
   MUTEX_LOCK(m); \
 } while (0)
+#  define COND_FIN(c)
 /* todo : must be enhanced! */
 
 # endif /* WIN32 */

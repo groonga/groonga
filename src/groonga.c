@@ -2007,9 +2007,6 @@ h_server(char *path)
   int exit_code = EXIT_FAILURE;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
-  MUTEX_INIT(q_mutex);
-  COND_INIT(q_cond);
-  CRITICAL_SECTION_INIT(cache_lock);
   GRN_COM_QUEUE_INIT(&ctx_new);
   GRN_COM_QUEUE_INIT(&ctx_old);
   check_rlimit_nofile(ctx);
@@ -2172,9 +2169,6 @@ g_server(char *path)
   int exit_code = EXIT_FAILURE;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
-  MUTEX_INIT(q_mutex);
-  COND_INIT(q_cond);
-  CRITICAL_SECTION_INIT(cache_lock);
   GRN_COM_QUEUE_INIT(&ctx_new);
   GRN_COM_QUEUE_INIT(&ctx_old);
   check_rlimit_nofile(ctx);
@@ -3193,6 +3187,10 @@ main(int argc, char **argv)
     grn_cache_set_max_n_entries(&grn_gctx, cache, cache_limit);
   }
 
+  MUTEX_INIT(q_mutex);
+  COND_INIT(q_cond);
+  CRITICAL_SECTION_INIT(cache_lock);
+
   newdb = (flags & FLAG_NEW_DB);
   is_daemon_mode = (flags & FLAG_MODE_DAEMON);
   if (flags & FLAG_MODE_CLIENT) {
@@ -3202,6 +3200,10 @@ main(int argc, char **argv)
   } else {
     exit_code = do_alone(argc - i, argv + i);
   }
+
+  CRITICAL_SECTION_FIN(cache_lock);
+  COND_FIN(q_cond);
+  MUTEX_FIN(q_mutex);
 
 #ifdef GRN_WITH_LIBEDIT
   if (need_line_editor) {
