@@ -8,8 +8,8 @@ command_test_options="--n-workers=4 --reporter=buffered-mark"
 
 set -x
 
-env
-TERM_WIDTH=79
+stty -a
+export COLUMNS=79
 
 case "${BUILD_TOOL}" in
   autotools)
