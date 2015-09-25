@@ -5,9 +5,6 @@ set -e
 prefix=/tmp/local
 
 command_test_options="--n-workers=4 --reporter=mark"
-if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-  command_test_options="--n-workers=1 --reporter=stream"
-fi
 
 set -x
 
