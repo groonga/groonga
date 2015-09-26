@@ -11233,6 +11233,30 @@ grn_db_init_builtin_types(grn_ctx *ctx)
 
 #define MULTI_COLUMN_INDEXP(i) (DB_OBJ(i)->source_size > sizeof(grn_id))
 
+static inline grn_obj *
+grn_index_column_get_tokenizer(grn_ctx *ctx, grn_obj *index_column)
+{
+  grn_obj *tokenizer;
+  grn_obj *lexicon;
+
+  lexicon = grn_ctx_at(ctx, index_column->header.domain);
+  if (!lexicon) {
+    return NULL;
+  }
+
+  grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL, NULL);
+  return tokenizer;
+}
+
+static inline grn_bool
+is_full_text_searchable_index(grn_ctx *ctx, grn_obj *index_column)
+{
+  grn_obj *tokenizer;
+
+  tokenizer = grn_index_column_get_tokenizer(ctx, index_column);
+  return tokenizer != NULL;
+}
+
 static inline int
 grn_column_find_index_data_column_equal(grn_ctx *ctx, grn_obj *obj,
                                         grn_operator op,
@@ -11250,14 +11274,11 @@ grn_column_find_index_data_column_equal(grn_ctx *ctx, grn_obj *obj,
     grn_obj *target = grn_ctx_at(ctx, data->target);
     int section;
     if (target->header.type != GRN_COLUMN_INDEX) { continue; }
+    if (obj->header.type != GRN_COLUMN_FIX_SIZE) {
+      if (is_full_text_searchable_index(ctx, target)) { continue; }
+    }
     section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0;
     if (section_buf) { *section_buf = section; }
-    if (obj->header.type != GRN_COLUMN_FIX_SIZE) {
-      grn_obj *tokenizer, *lexicon = grn_ctx_at(ctx, target->header.domain);
-      if (!lexicon) { continue; }
-      grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL, NULL);
-      if (tokenizer) { continue; }
-    }
     if (n < buf_size) {
       *ip++ = target;
     }
@@ -11275,21 +11296,10 @@ static inline grn_bool
 is_valid_regexp_index(grn_ctx *ctx, grn_obj *index_column)
 {
   grn_obj *tokenizer;
-  grn_obj *lexicon;
 
-  lexicon = grn_ctx_at(ctx, index_column->header.domain);
-  if (!lexicon) {
-    return GRN_FALSE;
-  }
-
-  grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL, NULL);
-  grn_obj_unlink(ctx, lexicon);
-  if (!tokenizer) {
-    return GRN_FALSE;
-  }
-
+  tokenizer = grn_index_column_get_tokenizer(ctx, index_column);
   /* TODO: Restrict to TokenRegexp? */
-  return GRN_TRUE;
+  return tokenizer != NULL;
 }
 
 static inline int
@@ -11304,6 +11314,7 @@ grn_column_find_index_data_column_match(grn_ctx *ctx, grn_obj *obj,
   grn_obj **ip = index_buf;
   grn_hook_entry hook_entry;
   grn_hook *hooks;
+  grn_bool prefer_full_text_search_index = GRN_FALSE;
 
   switch (obj->header.type) {
   case GRN_TABLE_HASH_KEY :
@@ -11317,14 +11328,44 @@ grn_column_find_index_data_column_match(grn_ctx *ctx, grn_obj *obj,
     break;
   }
 
+  if (op != GRN_OP_REGEXP && !grn_column_is_vector(ctx, obj)) {
+    prefer_full_text_search_index = GRN_TRUE;
+  }
+
+  if (prefer_full_text_search_index) {
+    for (hooks = DB_OBJ(obj)->hooks[hook_entry]; hooks; hooks = hooks->next) {
+      default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
+      grn_obj *target = grn_ctx_at(ctx, data->target);
+      int section;
+      if (target->header.type != GRN_COLUMN_INDEX) { continue; }
+      if (!is_full_text_searchable_index(ctx, target)) { continue; }
+      section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0;
+      if (section_buf) { *section_buf = section; }
+      if (n < buf_size) {
+        *ip++ = target;
+      }
+      if (n < n_index_data) {
+        index_data[n].index = target;
+        index_data[n].section = section;
+      }
+      n++;
+    }
+  }
+
   for (hooks = DB_OBJ(obj)->hooks[hook_entry]; hooks; hooks = hooks->next) {
     default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
     grn_obj *target = grn_ctx_at(ctx, data->target);
     int section;
+
     if (target->header.type != GRN_COLUMN_INDEX) { continue; }
     if (op == GRN_OP_REGEXP && !is_valid_regexp_index(ctx, target)) {
       continue;
     }
+
+    if (prefer_full_text_search_index) {
+      if (is_full_text_searchable_index(ctx, target)) { continue; }
+    }
+
     section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0;
     if (section_buf) { *section_buf = section; }
     if (n < buf_size) {

@@ -1,0 +1,17 @@
+table_create Users TABLE_NO_KEY
+column_create Users name COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+column_create Terms index COLUMN_INDEX|WITH_POSITION Users name
+
+table_create Names TABLE_PAT_KEY ShortText
+column_create Names index COLUMN_INDEX Users name
+
+load --table Users
+[
+{"name": "Alice"},
+{"name": "Bob"},
+{"name": "Carlos"}
+]
+
+select Users --query name:@lic
