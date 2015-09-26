@@ -5024,7 +5024,8 @@ grn_ts_expr_parser_tokenize_next(grn_ctx *ctx, grn_ts_expr_parser *parser,
     return grn_ts_expr_parser_tokenize_end(ctx, parser, rest, token);
   }
   if (grn_ts_byte_is_decimal(rest.ptr[0]) ||
-      ((rest.size >= 2) && grn_ts_byte_is_decimal(rest.ptr[1]))) {
+      ((rest.size >= 2) && (rest.ptr[0] == '.') &&
+       grn_ts_byte_is_decimal(rest.ptr[1]))) {
     return grn_ts_expr_parser_tokenize_number(ctx, parser, rest, token);
   }
   if (rest.ptr[0] == '"') {
