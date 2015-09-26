@@ -31,6 +31,11 @@ GRN_API grn_bool grn_obj_is_selector_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_selector_only_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_scorer_proc(grn_ctx *ctx, grn_obj *obj);
 
+GRN_API grn_rc grn_obj_cast(grn_ctx *ctx,
+                            grn_obj *src,
+                            grn_obj *dest,
+                            grn_bool add_record_if_not_exist);
+
 #ifdef __cplusplus
 }
 #endif

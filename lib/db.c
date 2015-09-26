@@ -5551,8 +5551,11 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
         p_key = &key;\
       }\
       if (GRN_BULK_VSIZE(p_key)) {\
-        id = addp ? grn_table_add_by_key(ctx, table, p_key, NULL)\
-                  : grn_table_get_by_key(ctx, table, p_key);\
+        if (add_record_if_not_exist) {\
+          id = grn_table_add_by_key(ctx, table, p_key, NULL);\
+        } else {\
+          id = grn_table_get_by_key(ctx, table, p_key);\
+        }\
         if (id) {\
           GRN_RECORD_SET(ctx, dest, id);\
         } else {\
@@ -5579,7 +5582,8 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
 } while (0)
 
 inline static grn_rc
-grn_obj_cast_bool(grn_ctx *ctx, grn_obj *src, grn_obj *dest, grn_bool addp)
+grn_obj_cast_bool(grn_ctx *ctx, grn_obj *src, grn_obj *dest,
+                  grn_bool add_record_if_not_exist)
 {
   grn_rc rc = GRN_SUCCESS;
 
@@ -5698,7 +5702,7 @@ grn_obj_cast_bool(grn_ctx *ctx, grn_obj *src, grn_obj *dest, grn_bool addp)
     GRN_VOID_INIT(&buf);\
     rc = grn_aton(ctx, str, str_end, &rest, &buf);\
     if (!rc) {\
-      rc = grn_obj_cast(ctx, &buf, dest, addp);\
+      rc = grn_obj_cast(ctx, &buf, dest, add_record_if_not_exist);\
     }\
     GRN_OBJ_FIN(ctx, &buf);\
   } else {\
@@ -5727,12 +5731,13 @@ grn_obj_cast_bool(grn_ctx *ctx, grn_obj *src, grn_obj *dest, grn_bool addp)
   GRN_FLOAT_SET(ctx, dest, value);
 
 grn_rc
-grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, grn_bool addp)
+grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest,
+             grn_bool add_record_if_not_exist)
 {
   grn_rc rc = GRN_SUCCESS;
   switch (src->header.domain) {
   case GRN_DB_BOOL :
-    rc = grn_obj_cast_bool(ctx, src, dest, addp);
+    rc = grn_obj_cast_bool(ctx, src, dest, add_record_if_not_exist);
     break;
   case GRN_DB_INT8 :
     NUM2DEST(GRN_INT8_VALUE, grn_text_itoa, NUM2BOOL, NUM2TIME, NUM2FLOAT);
