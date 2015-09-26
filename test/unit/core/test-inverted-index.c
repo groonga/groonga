@@ -367,7 +367,7 @@ retrieve_record_ids(const gchar *term)
 {
   grn_id term_id;
   grn_ii_cursor *cursor;
-  grn_ii_posting *posting;
+  grn_posting *posting;
 
   term_id = grn_table_get(context, lexicon, term, strlen(term));
   if (term_id == GRN_ID_NIL)

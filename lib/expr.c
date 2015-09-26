@@ -4871,11 +4871,9 @@ grn_table_select_index_range_column(grn_ctx *ctx, grn_obj *table,
         grn_posting *posting;
         while ((posting = grn_index_cursor_next(ctx, index_cursor, NULL))) {
           if (sid == 0 || posting->sid == sid) {
-            grn_ii_posting ii_posting;
-            ii_posting.rid = posting->rid;
-            ii_posting.sid = posting->sid;
-            ii_posting.weight = posting->weight * weight;
-            grn_ii_posting_add(ctx, &ii_posting, (grn_hash *)res, logical_op);
+            grn_posting new_posting = *posting;
+            new_posting.weight *= weight;
+            grn_ii_posting_add(ctx, &new_posting, (grn_hash *)res, logical_op);
           }
         }
         processed = GRN_TRUE;
@@ -5106,7 +5104,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
             !((grn_accessor *)index)->next) {
           grn_obj dest;
           grn_accessor *a = (grn_accessor *)index;
-          grn_ii_posting posting;
+          grn_posting posting;
           posting.sid = 1;
           posting.pos = 0;
           posting.weight = 0;
@@ -5187,7 +5185,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
             !((grn_accessor *)index)->next) {
           grn_obj dest;
           grn_accessor *a = (grn_accessor *)index;
-          grn_ii_posting posting;
+          grn_posting posting;
           posting.sid = 1;
           posting.pos = 0;
           posting.weight = 0;
@@ -6960,7 +6958,7 @@ grn_column_filter(grn_ctx *ctx, grn_obj *column,
                   grn_operator set_operation)
 {
   uint32_t *vp;
-  grn_ii_posting posting;
+  grn_posting posting;
   uint32_t value_ = grn_atoui(GRN_TEXT_VALUE(value), GRN_BULK_CURR(value), NULL);
   posting.sid = 1;
   posting.pos = 0;

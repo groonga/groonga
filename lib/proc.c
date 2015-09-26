@@ -4936,9 +4936,9 @@ selector_all_records(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                      int nargs, grn_obj **args,
                      grn_obj *res, grn_operator op)
 {
-  grn_ii_posting posting;
+  grn_posting posting;
 
-  memset(&posting, 0, sizeof(grn_ii_posting));
+  memset(&posting, 0, sizeof(grn_posting));
   GRN_TABLE_EACH(ctx, table, 0, 0, id, NULL, NULL, NULL, {
     posting.rid = id;
     grn_ii_posting_add(ctx, &posting, (grn_hash *)res, GRN_OP_OR);
@@ -5898,7 +5898,7 @@ selector_between_sequential_search(grn_ctx *ctx,
         grn_bool result_boolean;
         GRN_TRUEP(ctx, result, result_boolean);
         if (result_boolean) {
-          grn_ii_posting posting;
+          grn_posting posting;
           posting.rid = record_id;
           posting.sid = 1;
           posting.pos = 0;
@@ -6468,7 +6468,7 @@ selector_in_values_sequential_search(grn_ctx *ctx,
           for (i = 0; i < n_value_ids; i++) {
             grn_id value_id = GRN_RECORD_VALUE_AT(&value_ids, i);
             if (value_id == GRN_RECORD_VALUE(&record_value)) {
-              grn_ii_posting posting;
+              grn_posting posting;
               posting.rid = record_id;
               posting.sid = 1;
               posting.pos = 0;
@@ -6748,12 +6748,7 @@ proc_range_filter(grn_ctx *ctx, int nargs, grn_obj **args,
 
           if (result_boolean) {
             if (n_records >= real_offset) {
-              grn_ii_posting ii_posting;
-              ii_posting.rid = posting->rid;
-              ii_posting.sid = posting->sid;
-              ii_posting.pos = posting->pos;
-              ii_posting.weight = posting->weight;
-              grn_ii_posting_add(ctx, &ii_posting, (grn_hash *)res, op);
+              grn_ii_posting_add(ctx, posting, (grn_hash *)res, op);
             }
             n_records++;
             if (n_records == real_limit) {

@@ -3973,12 +3973,12 @@ struct _grn_ii_cursor {
   grn_ctx *ctx;
   grn_ii *ii;
   grn_id id;
-  grn_ii_posting *post;
+  grn_posting *post;
 
   grn_id min;
   grn_id max;
-  grn_ii_posting pc;
-  grn_ii_posting pb;
+  grn_posting pc;
+  grn_posting pb;
 
   uint32_t cdf;
   uint32_t *cdp;
@@ -4184,7 +4184,7 @@ grn_ii_cursor_set_min(grn_ctx *ctx, grn_ii_cursor *c, grn_id min)
   }
 }
 
-grn_ii_posting *
+grn_posting *
 grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
 {
   if (c->buf) {
@@ -4394,7 +4394,7 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
   return c->post;
 }
 
-grn_ii_posting *
+grn_posting *
 grn_ii_cursor_next_pos(grn_ctx *ctx, grn_ii_cursor *c)
 {
   uint32_t gap;
@@ -5359,7 +5359,7 @@ typedef struct {
   int pos;
   int size;
   int ntoken;
-  grn_ii_posting *p;
+  grn_posting *p;
 } token_info;
 
 #define EX_NONE   0
@@ -5499,7 +5499,7 @@ token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
   {
     grn_ii_cursor *ic;
     if (ti->cursors && (ic = cursor_heap_min(ti->cursors))) {
-      grn_ii_posting *p = ic->post;
+      grn_posting *p = ic->post;
       ti->pos = p->pos - ti->offset;
       ti->p = p;
     } else {
@@ -5514,7 +5514,7 @@ static inline grn_rc
 token_info_skip(grn_ctx *ctx, token_info *ti, uint32_t rid, uint32_t sid)
 {
   grn_ii_cursor *c;
-  grn_ii_posting *p;
+  grn_posting *p;
   for (;;) {
     if (!(c = cursor_heap_min(ti->cursors))) { return GRN_END_OF_DATA; }
     p = c->post;
@@ -5530,7 +5530,7 @@ static inline grn_rc
 token_info_skip_pos(grn_ctx *ctx, token_info *ti, uint32_t rid, uint32_t sid, uint32_t pos)
 {
   grn_ii_cursor *c;
-  grn_ii_posting *p;
+  grn_posting *p;
   pos += ti->offset;
   for (;;) {
     if (!(c = cursor_heap_min(ti->cursors))) { return GRN_END_OF_DATA; }
@@ -5701,7 +5701,7 @@ res_add(grn_ctx *ctx, grn_hash *s, grn_rset_posinfo *pi, double score,
 }
 
 grn_rc
-grn_ii_posting_add(grn_ctx *ctx, grn_ii_posting *pos, grn_hash *s, grn_operator op)
+grn_ii_posting_add(grn_ctx *ctx, grn_posting *pos, grn_hash *s, grn_operator op)
 {
   res_add(ctx, s, (grn_rset_posinfo *)(pos), (1 + pos->weight), op);
   return ctx->rc;
@@ -5912,7 +5912,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
     grn_id j, id;
     int w2, rep;
     grn_ii_cursor *c;
-    grn_ii_posting *pos;
+    grn_posting *pos;
     grn_wv_mode wvm = grn_wv_none;
     grn_table_sort_optarg arg = {
       GRN_TABLE_SORT_DESC|GRN_TABLE_SORT_BY_VALUE|GRN_TABLE_SORT_AS_NUMBER,
@@ -5988,7 +5988,7 @@ grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
   const char *normalized;
   unsigned int normalized_length_in_bytes;
   grn_ii_cursor *c;
-  grn_ii_posting *pos;
+  grn_posting *pos;
   int skip, rep, policy;
   grn_rc rc = GRN_SUCCESS;
   grn_wv_mode wvm = grn_wv_none;
@@ -6427,7 +6427,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
     if ((rc = grn_hash_array_init(s, (*tis)->size + 32768))) { goto exit; }
     do {
       grn_rset_recinfo *ri;
-      grn_ii_posting *p = c->post;
+      grn_posting *p = c->post;
       if ((weight = get_weight(ctx, s, p->rid, p->sid, wvm, optarg))) {
         GRN_HASH_INT_ADD(s, p, ri);
         ri->score = (p->tf + p->score) * weight;
@@ -6815,7 +6815,7 @@ grn_ii_at(grn_ctx *ctx, grn_ii *ii, grn_id id, grn_hash *s, grn_operator op)
 {
   int rep = 0;
   grn_ii_cursor *c;
-  grn_ii_posting *pos;
+  grn_posting *pos;
   if ((c = grn_ii_cursor_open(ctx, ii, id, GRN_ID_NIL, GRN_ID_MAX,
                               rep ? ii->n_elements : ii->n_elements - 1, 0))) {
     while ((pos = grn_ii_cursor_next(ctx, c))) {
@@ -6849,7 +6849,7 @@ grn_ii_resolve_sel_and(grn_ctx *ctx, grn_hash *s, grn_operator op)
 }
 
 /* just for inspect */
-static grn_ii_posting *
+static grn_posting *
 grn_ii_cursor_next_all(grn_ctx *ctx, grn_ii_cursor *c)
 {
   if (c->buf) {
@@ -7050,7 +7050,7 @@ grn_ii_cursor_inspect(grn_ctx *ctx, grn_ii_cursor *c, grn_obj *buf)
 
   GRN_TEXT_PUTS(ctx, buf, "\n    elements:[\n      ");
   while (grn_ii_cursor_next_all(ctx, c)) {
-    grn_ii_posting *pos = c->post;
+    grn_posting *pos = c->post;
     if (i > 0) {
       GRN_TEXT_PUTS(ctx, buf, ",\n      ");
     }

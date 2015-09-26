@@ -107,26 +107,17 @@ int grn_ii_updspec_cmp(grn_ii_updspec *a, grn_ii_updspec *b);
 void grn_ii_expire(grn_ctx *ctx, grn_ii *ii);
 grn_rc grn_ii_flush(grn_ctx *ctx, grn_ii *ii);
 
-typedef struct {
-  grn_id rid;
-  uint32_t sid;
-  uint32_t pos;
-  uint32_t tf;
-  uint32_t weight;
-  uint32_t rest;
-} grn_ii_posting;
-
 typedef struct _grn_ii_cursor grn_ii_cursor;
 
-GRN_API grn_rc grn_ii_posting_add(grn_ctx *ctx, grn_ii_posting *pos,
+GRN_API grn_rc grn_ii_posting_add(grn_ctx *ctx, grn_posting *pos,
                                   grn_hash *s, grn_operator op);
 
 GRN_API grn_ii_cursor *grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
                                           grn_id min, grn_id max, int nelements, int flags);
 grn_ii_cursor *grn_ii_cursor_openv1(grn_ii *ii, uint32_t key);
 grn_rc grn_ii_cursor_openv2(grn_ii_cursor **cursors, int ncursors);
-GRN_API grn_ii_posting *grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c);
-grn_ii_posting *grn_ii_cursor_next_pos(grn_ctx *ctx, grn_ii_cursor *c);
+GRN_API grn_posting *grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c);
+grn_posting *grn_ii_cursor_next_pos(grn_ctx *ctx, grn_ii_cursor *c);
 GRN_API grn_rc grn_ii_cursor_close(grn_ctx *ctx, grn_ii_cursor *c);
 
 uint32_t grn_ii_max_section(grn_ii *ii);

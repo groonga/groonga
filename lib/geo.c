@@ -280,7 +280,7 @@ grn_geo_table_sort_detect_far_point(grn_ctx *ctx, grn_obj *table, grn_obj *index
   while ((tid = grn_pat_cursor_next(ctx, pc))) {
     grn_ii_cursor *ic = grn_ii_cursor_open(ctx, (grn_ii *)index, tid, 0, 0, 1, 0);
     if (ic) {
-      grn_ii_posting *posting;
+      grn_posting *posting;
       grn_gton(geo_key_prev, &point, sizeof(grn_geo_point));
       grn_pat_get_key(ctx, pat, tid, &point, sizeof(grn_geo_point));
       grn_gton(geo_key_curr, &point, sizeof(grn_geo_point));
@@ -553,7 +553,7 @@ grn_geo_table_sort_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
         if (ic) {
           double d;
           grn_geo_point pos;
-          grn_ii_posting *posting;
+          grn_posting *posting;
           grn_pat_get_key(ctx, pat, tid, &pos, sizeof(grn_geo_point));
           d = grn_geo_distance_rectangle_raw(ctx, base_point, &pos);
           inspect_tid(ctx, tid, &pos, d);
@@ -704,7 +704,7 @@ grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
         while (i < e && (tid = grn_pat_cursor_next(ctx, pc))) {
           grn_ii_cursor *ic = grn_ii_cursor_open(ctx, (grn_ii *)index, tid, 0, 0, 1, 0);
           if (ic) {
-            grn_ii_posting *posting;
+            grn_posting *posting;
             while (i < e && (posting = grn_ii_cursor_next(ctx, ic))) {
               if (offset <= i) {
                 grn_id *v;
@@ -1788,7 +1788,7 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
   return GRN_TRUE;
 }
 
-typedef grn_bool (*grn_geo_cursor_callback)(grn_ctx *ctx, grn_ii_posting *posting, void *user_data);
+typedef grn_bool (*grn_geo_cursor_callback)(grn_ctx *ctx, grn_posting *posting, void *user_data);
 
 static void
 grn_geo_cursor_each(grn_ctx *ctx, grn_obj *geo_cursor,
@@ -1799,7 +1799,7 @@ grn_geo_cursor_each(grn_ctx *ctx, grn_obj *geo_cursor,
   grn_table_cursor *pat_cursor;
   grn_ii *ii;
   grn_ii_cursor *ii_cursor;
-  grn_ii_posting *posting = NULL;
+  grn_posting *posting = NULL;
   grn_geo_point *current, *top_left, *bottom_right;
   grn_id index_id;
 
@@ -1886,10 +1886,10 @@ grn_geo_cursor_each(grn_ctx *ctx, grn_obj *geo_cursor,
 }
 
 static grn_bool
-grn_geo_cursor_next_callback(grn_ctx *ctx, grn_ii_posting *posting,
+grn_geo_cursor_next_callback(grn_ctx *ctx, grn_posting *posting,
                              void *user_data)
 {
-  grn_ii_posting **return_posting = user_data;
+  grn_posting **return_posting = user_data;
   *return_posting = posting;
   return GRN_FALSE;
 }
@@ -1897,7 +1897,7 @@ grn_geo_cursor_next_callback(grn_ctx *ctx, grn_ii_posting *posting,
 grn_posting *
 grn_geo_cursor_next(grn_ctx *ctx, grn_obj *geo_cursor)
 {
-  grn_ii_posting *posting = NULL;
+  grn_posting *posting = NULL;
   grn_geo_cursor_each(ctx, geo_cursor, grn_geo_cursor_next_callback, &posting);
   return (grn_posting *)posting;
 }
@@ -1925,7 +1925,7 @@ typedef struct {
 } grn_geo_select_in_rectangle_data;
 
 static grn_bool
-grn_geo_select_in_rectangle_callback(grn_ctx *ctx, grn_ii_posting *posting,
+grn_geo_select_in_rectangle_callback(grn_ctx *ctx, grn_posting *posting,
                                      void *user_data)
 {
   grn_geo_select_in_rectangle_data *data = user_data;

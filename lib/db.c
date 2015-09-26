@@ -1594,7 +1594,7 @@ delete_reference_records_in_index(grn_ctx *ctx, grn_obj *table, grn_id id,
 {
   grn_ii *ii = (grn_ii *)index;
   grn_ii_cursor *ii_cursor = NULL;
-  grn_ii_posting *posting;
+  grn_posting *posting;
   grn_obj source_ids;
   unsigned int i, n_ids;
   grn_obj sources;
@@ -2606,7 +2606,7 @@ grn_index_cursor_open(grn_ctx *ctx, grn_table_cursor *tc,
 grn_posting *
 grn_index_cursor_next(grn_ctx *ctx, grn_obj *c, grn_id *tid)
 {
-  grn_ii_posting *ip = NULL;
+  grn_posting *ip = NULL;
   grn_index_cursor *ic = (grn_index_cursor *)c;
   GRN_API_ENTER;
   if (ic->iic) {
@@ -2843,7 +2843,7 @@ grn_accessor_resolve_one_index_column(grn_ctx *ctx, grn_accessor *accessor,
   {
     grn_obj_flags column_value_flags = 0;
     grn_obj column_value;
-    grn_ii_posting add_posting;
+    grn_posting add_posting;
     grn_id *tid;
     grn_rset_recinfo *recinfo;
 
@@ -2928,7 +2928,7 @@ grn_accessor_resolve_one_data_column(grn_ctx *ctx, grn_accessor *accessor,
     GRN_HASH_EACH(ctx, (grn_hash *)current_res, id, &tid, NULL, &recinfo, {
       grn_ii *ii = (grn_ii *)index;
       grn_ii_cursor *ii_cursor;
-      grn_ii_posting *posting;
+      grn_posting *posting;
 
       ii_cursor = grn_ii_cursor_open(ctx, ii, *tid,
                                      GRN_ID_NIL, GRN_ID_MAX,
@@ -2939,7 +2939,7 @@ grn_accessor_resolve_one_data_column(grn_ctx *ctx, grn_accessor *accessor,
       }
 
       while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
-        grn_ii_posting add_posting = *posting;
+        grn_posting add_posting = *posting;
         add_posting.weight += recinfo->score - 1;
         rc = grn_ii_posting_add(ctx,
                                 &add_posting,
@@ -3089,7 +3089,7 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
         grn_rset_recinfo *recinfo;
         GRN_HASH_EACH(ctx, (grn_hash *)resolve_res, id, &record_id, NULL,
                       &recinfo, {
-          grn_ii_posting posting;
+          grn_posting posting;
           posting.rid = *record_id;
           posting.sid = 1;
           posting.pos = 0;
@@ -3120,7 +3120,7 @@ grn_obj_search_column_index_by_id(grn_ctx *ctx, grn_obj *obj,
   c = grn_ii_cursor_open(ctx, (grn_ii *)obj, tid,
                          GRN_ID_NIL, GRN_ID_MAX, 1, 0);
   if (c) {
-    grn_ii_posting *pos;
+    grn_posting *pos;
     grn_hash *s = (grn_hash *)res;
     while ((pos = grn_ii_cursor_next(ctx, c))) {
       /* todo: support orgarg(op)
@@ -11024,7 +11024,7 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
       while (i < e && (tid = grn_pat_cursor_next(ctx, pc))) {
         grn_ii_cursor *ic = grn_ii_cursor_open(ctx, (grn_ii *)index, tid, 0, 0, 1, 0);
         if (ic) {
-          grn_ii_posting *posting;
+          grn_posting *posting;
           while (i < e && (posting = grn_ii_cursor_next(ctx, ic))) {
             if (offset <= i) {
               grn_id *v;

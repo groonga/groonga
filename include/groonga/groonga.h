@@ -577,11 +577,11 @@ GRN_API grn_obj *grn_table_cursor_table(grn_ctx *ctx, grn_table_cursor *tc);
 
 typedef struct {
   grn_id rid;
-  grn_id sid;
-  unsigned int pos;
-  unsigned int tf;
-  unsigned int weight;
-  unsigned int rest;
+  uint32_t sid;
+  uint32_t pos;
+  uint32_t tf;
+  uint32_t weight;
+  uint32_t rest;
 } grn_posting;
 
 GRN_API grn_obj *grn_index_cursor_open(grn_ctx *ctx, grn_table_cursor *tc, grn_obj *index,

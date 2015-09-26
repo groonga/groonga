@@ -159,7 +159,7 @@ cooccurrence_search(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_id i
     }
     if ((c = grn_ii_cursor_open(ctx, (grn_ii *)co, id, GRN_ID_NIL, GRN_ID_MAX,
                                 ((grn_ii *)co)->n_elements - 1, 0))) {
-      grn_ii_posting *p;
+      grn_posting *p;
       grn_obj post, pair_freq, item_freq, item_freq2, item_boost;
       GRN_RECORD_INIT(&post, 0, grn_obj_id(ctx, items));
       GRN_INT32_INIT(&pair_freq, 0);
@@ -323,7 +323,7 @@ complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
             grn_ii_cursor *icur;
             if ((icur = grn_ii_cursor_open(ctx, (grn_ii *)index, id,
                                            GRN_ID_NIL, GRN_ID_MAX, 1, 0))) {
-              grn_ii_posting *p;
+              grn_posting *p;
               while ((p = grn_ii_cursor_next(ctx, icur))) {
                 complete_add_item(ctx, p->rid, res, frequency_threshold,
                                   items_freq, items_boost,

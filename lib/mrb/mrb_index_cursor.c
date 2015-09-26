@@ -190,7 +190,7 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
       offset--;
       continue;
     }
-    grn_ii_posting_add(ctx, (grn_ii_posting *)posting, result_set, op);
+    grn_ii_posting_add(ctx, posting, result_set, op);
     limit--;
     if (limit == 0) {
       break;
