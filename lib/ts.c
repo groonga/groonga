@@ -6339,6 +6339,21 @@ grn_ts_expr_complete(grn_ctx *ctx, grn_ts_expr *expr) {
   return GRN_SUCCESS;
 }
 
+/* grn_ts_expr_evaluate_to_buf() evaluates an expression. */
+static grn_rc
+grn_ts_expr_evaluate_to_buf(grn_ctx *ctx, grn_ts_expr *expr,
+                            const grn_ts_record *in, size_t n_in,
+                            grn_ts_buf *out) {
+  if (!ctx || !expr || (expr->type == GRN_TS_EXPR_INCOMPLETE) ||
+      (expr->type == GRN_TS_EXPR_BROKEN) || (!in && n_in) || !out) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  if (!n_in) {
+    return GRN_SUCCESS;
+  }
+  return grn_ts_expr_node_evaluate_to_buf(ctx, expr->root, in, n_in, out);
+}
+
 grn_rc
 grn_ts_expr_evaluate(grn_ctx *ctx, grn_ts_expr *expr,
                      const grn_ts_record *in, size_t n_in, void *out) {
@@ -6379,6 +6394,444 @@ grn_ts_expr_adjust(grn_ctx *ctx, grn_ts_expr *expr,
     return GRN_SUCCESS;
   }
   return grn_ts_expr_node_adjust(ctx, expr->root, io, n_io);
+}
+
+/*-------------------------------------------------------------
+ * grn_ts_writer.
+ */
+
+typedef struct {
+  grn_ts_expr **exprs;
+  size_t n_exprs;
+  size_t max_n_exprs;
+  grn_obj name_buf;
+  grn_ts_str *names;
+  grn_ts_buf *bufs;
+} grn_ts_writer;
+
+/* grn_ts_writer_init() initializes a writer. */
+static void
+grn_ts_writer_init(grn_ctx *ctx, grn_ts_writer *writer) {
+  memset(writer, 0, sizeof(*writer));
+  writer->exprs = NULL;
+  GRN_TEXT_INIT(&writer->name_buf, GRN_OBJ_VECTOR);
+  writer->names = NULL;
+  writer->bufs = NULL;
+}
+
+/* grn_ts_writer_fin() initializes a writer. */
+static void
+grn_ts_writer_fin(grn_ctx *ctx, grn_ts_writer *writer) {
+  size_t i;
+  if (writer->bufs) {
+    for (i = 0; i < writer->n_exprs; i++) {
+      grn_ts_buf_fin(ctx, &writer->bufs[i]);
+    }
+    GRN_FREE(writer->bufs);
+  }
+  if (writer->names) {
+    GRN_FREE(writer->names);
+  }
+  GRN_OBJ_FIN(ctx, &writer->name_buf);
+  if (writer->exprs) {
+    for (i = 0; i < writer->n_exprs; i++) {
+      grn_ts_expr_close(ctx, writer->exprs[i]);
+    }
+    GRN_FREE(writer->exprs);
+  }
+}
+
+/*
+ * grn_ts_writer_tokenize() extracts the first expression string.
+ * If the input is empty, this function returns GRN_END_OF_DATA.
+ */
+static grn_rc
+grn_ts_writer_tokenize(grn_ctx *ctx, grn_ts_writer *writer,
+                       grn_ts_str in, grn_ts_str *token, grn_ts_str *rest) {
+  size_t i;
+  char stack_top;
+  grn_rc rc = GRN_SUCCESS;
+  grn_ts_str str = in;
+  grn_ts_buf stack;
+
+  /* Find a non-empty token. */
+  grn_ts_buf_init(ctx, &stack);
+  for ( ; ; ) {
+    str = grn_ts_str_trim_left(str);
+    if (!str.size) {
+      rc = GRN_END_OF_DATA;
+      break;
+    }
+    for (i = 0; i < str.size; i++) {
+      if (stack.pos) {
+        if (str.ptr[i] == stack_top) {
+          if (--stack.pos) {
+            stack_top = ((char *)stack.ptr)[stack.pos - 1];
+          }
+          continue;
+        }
+        if (stack_top == '"') {
+          /* Skip the next byte of an escape character. */
+          if ((str.ptr[i] == '\\') && (i < (str.size - 1))) {
+            i++;
+          }
+          continue;
+        }
+      } else if (str.ptr[i] == ',') {
+        break;
+      }
+      switch (str.ptr[i]) {
+        case '(': {
+          stack_top = ')';
+          rc = grn_ts_buf_write(ctx, &stack, &stack_top, 1);
+          break;
+        }
+        case '[': {
+          stack_top = ']';
+          rc = grn_ts_buf_write(ctx, &stack, &stack_top, 1);
+          break;
+        }
+        case '{': {
+          stack_top = '}';
+          rc = grn_ts_buf_write(ctx, &stack, &stack_top, 1);
+          break;
+        }
+        case '"': {
+          stack_top = '"';
+          rc = grn_ts_buf_write(ctx, &stack, &stack_top, 1);
+          break;
+        }
+      }
+      if (rc != GRN_SUCCESS) {
+        break;
+      }
+    }
+    if (rc != GRN_SUCCESS) {
+      break;
+    }
+    if (i) {
+      /* Output the result. */
+      token->ptr = str.ptr;
+      token->size = i;
+      if (token->size == str.size) {
+        rest->ptr = str.ptr + str.size;
+        rest->size = 0;
+      } else {
+        rest->ptr = str.ptr + token->size + 1;
+        rest->size = str.size - token->size - 1;
+      }
+      break;
+    }
+    str.ptr++;
+    str.size--;
+  }
+  grn_ts_buf_fin(ctx, &stack);
+  return rc;
+}
+
+/* grn_ts_writer_expand() expands a wildcard. */
+static grn_rc
+grn_ts_writer_expand(grn_ctx *ctx, grn_ts_writer *writer,
+                     grn_obj *table, grn_ts_str str) {
+  grn_rc rc = GRN_SUCCESS;
+  grn_hash_cursor *cursor;
+  grn_hash *hash = grn_hash_create(ctx, NULL, sizeof(grn_ts_id), 0,
+                                   GRN_OBJ_TABLE_HASH_KEY | GRN_HASH_TINY);
+  if (!hash) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  grn_table_columns(ctx, table, str.ptr, str.size - 1, (grn_obj *)hash);
+  if (ctx->rc != GRN_SUCCESS) {
+    return ctx->rc;
+  }
+  cursor = grn_hash_cursor_open(ctx, hash, NULL, 0, NULL, 0, 0, -1, 0);
+  if (!cursor) {
+    rc = GRN_INVALID_ARGUMENT;
+  } else {
+    while (grn_hash_cursor_next(ctx, cursor) != GRN_ID_NIL) {
+      char name_buf[GRN_TABLE_MAX_KEY_SIZE];
+      size_t name_size;
+      grn_obj *column;
+      grn_ts_id *column_id;
+      if (!grn_hash_cursor_get_key(ctx, cursor, (void **)&column_id)) {
+        rc = GRN_INVALID_ARGUMENT;
+        break;
+      }
+      column = grn_ctx_at(ctx, *column_id);
+      if (!column) {
+        rc = GRN_INVALID_ARGUMENT;
+        break;
+      }
+      name_size = grn_column_name(ctx, column, name_buf, sizeof(name_buf));
+      grn_obj_unlink(ctx, column);
+      rc = grn_vector_add_element(ctx, &writer->name_buf,
+                                  name_buf, name_size, 0, GRN_DB_TEXT);
+      if (rc != GRN_SUCCESS) {
+        break;
+      }
+    }
+    grn_hash_cursor_close(ctx, cursor);
+  }
+  grn_hash_close(ctx, hash);
+  return rc;
+}
+
+/* grn_ts_writer_parse() parses output expressions. */
+static grn_rc
+grn_ts_writer_parse(grn_ctx *ctx, grn_ts_writer *writer,
+                    grn_obj *table, grn_ts_str str) {
+  grn_rc rc;
+  grn_ts_str rest = str;
+  for ( ; ; ) {
+    grn_ts_str token;
+    rc = grn_ts_writer_tokenize(ctx, writer, rest, &token, &rest);
+    if (rc != GRN_SUCCESS) {
+      return (rc == GRN_END_OF_DATA) ? GRN_SUCCESS : rc;
+    }
+    if ((token.ptr[token.size - 1] == '*') &&
+        grn_ts_str_is_name_prefix((grn_ts_str){ token.ptr, token.size - 1 })) {
+      rc = grn_ts_writer_expand(ctx, writer, table, token);
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+    } else {
+      rc = grn_vector_add_element(ctx, &writer->name_buf,
+                                  token.ptr, token.size, 0, GRN_DB_TEXT);
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+    }
+  }
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_writer_build() builds output expresions. */
+static grn_rc
+grn_ts_writer_build(grn_ctx *ctx, grn_ts_writer *writer, grn_obj *table) {
+  size_t i;
+  size_t n_names = grn_vector_size(ctx, &writer->name_buf);
+  if (!n_names) {
+    return GRN_SUCCESS;
+  }
+  writer->names = GRN_MALLOCN(grn_ts_str, n_names);
+  if (!writer->names) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  writer->exprs = GRN_MALLOCN(grn_ts_expr *, n_names);
+  if (!writer->exprs) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  for (i = 0; i < n_names; i++) {
+    grn_rc rc;
+    grn_ts_str *name = &writer->names[writer->n_exprs];
+    name->size = grn_vector_get_element(ctx, &writer->name_buf, i,
+                                        &name->ptr, NULL, NULL);
+    rc = grn_ts_expr_parse(ctx, table, name->ptr, name->size,
+                           &writer->exprs[writer->n_exprs]);
+    if (rc == GRN_SUCCESS) {
+      writer->n_exprs++;
+    } else if (!grn_ts_str_is_key_name(*name)) {
+      /*
+       * Ignore an error for _key because the default output_columns option
+       * contains _key.
+       */
+      return rc;
+    }
+  }
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_writer_open() creates a writer. */
+static grn_rc
+grn_ts_writer_open(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
+                   grn_ts_writer **writer) {
+  grn_rc rc;
+  grn_ts_writer *new_writer = GRN_MALLOCN(grn_ts_writer, 1);
+  if (!new_writer) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  grn_ts_writer_init(ctx, new_writer);
+  rc = grn_ts_writer_parse(ctx, new_writer, table, str);
+  if (rc == GRN_SUCCESS) {
+    rc = grn_ts_writer_build(ctx, new_writer, table);
+  }
+  if (rc != GRN_SUCCESS) {
+    grn_ts_writer_fin(ctx, new_writer);
+    GRN_FREE(new_writer);
+    return rc;
+  }
+  *writer = new_writer;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_writer_close() destroys a writer. */
+static void
+grn_ts_writer_close(grn_ctx *ctx, grn_ts_writer *writer) {
+  grn_ts_writer_fin(ctx, writer);
+  GRN_FREE(writer);
+}
+
+/* TODO: Errors of output macros, such as GRN_TEXT_*(), are ignored. */
+
+#define GRN_TS_WRITER_OUTPUT_HEADER_CASE(TYPE, name)\
+  case GRN_DB_ ## TYPE: {\
+    GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, name);\
+    break;\
+  }
+/* grn_ts_writer_output_header() outputs names and data types. */
+static grn_rc
+grn_ts_writer_output_header(grn_ctx *ctx, grn_ts_writer *writer) {
+  grn_rc rc;
+  GRN_OUTPUT_ARRAY_OPEN("COLUMNS", writer->n_exprs);
+  for (size_t i = 0; i < writer->n_exprs; ++i) {
+    GRN_OUTPUT_ARRAY_OPEN("COLUMN", 2);
+    rc = grn_text_esc(ctx, ctx->impl->outbuf,
+                      writer->names[i].ptr, writer->names[i].size);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+    GRN_TEXT_PUT(ctx, ctx->impl->outbuf, ",\"", 2);
+    switch (writer->exprs[i]->data_type) {
+      case GRN_DB_VOID: {
+        if (writer->exprs[i]->data_kind == GRN_TS_GEO_POINT) {
+          GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "GeoPoint");
+        } else {
+          GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Void");
+        }
+        break;
+      }
+      GRN_TS_WRITER_OUTPUT_HEADER_CASE(BOOL, "Bool")
+      GRN_TS_WRITER_OUTPUT_HEADER_CASE(INT8, "Int8")
+      GRN_TS_WRITER_OUTPUT_HEADER_CASE(INT16, "Int16")
+      GRN_TS_WRITER_OUTPUT_HEADER_CASE(INT32, "Int32")
+      GRN_TS_WRITER_OUTPUT_HEADER_CASE(INT64, "Int64")
+      GRN_TS_WRITER_OUTPUT_HEADER_CASE(UINT8, "UInt8")
+      GRN_TS_WRITER_OUTPUT_HEADER_CASE(UINT16, "UInt16")
+      GRN_TS_WRITER_OUTPUT_HEADER_CASE(UINT32, "UInt32")
+      GRN_TS_WRITER_OUTPUT_HEADER_CASE(UINT64, "UInt64")
+      GRN_TS_WRITER_OUTPUT_HEADER_CASE(FLOAT, "Float")
+      GRN_TS_WRITER_OUTPUT_HEADER_CASE(TIME, "Time")
+      GRN_TS_WRITER_OUTPUT_HEADER_CASE(SHORT_TEXT, "ShortText")
+      GRN_TS_WRITER_OUTPUT_HEADER_CASE(TEXT, "Text")
+      GRN_TS_WRITER_OUTPUT_HEADER_CASE(LONG_TEXT, "LongText")
+      GRN_TS_WRITER_OUTPUT_HEADER_CASE(TOKYO_GEO_POINT, "TokyoGeoPoint")
+      GRN_TS_WRITER_OUTPUT_HEADER_CASE(WGS84_GEO_POINT, "WGS84GeoPoint")
+      default: {
+        char name_buf[GRN_TABLE_MAX_KEY_SIZE];
+        size_t name_size;
+        grn_obj *obj = grn_ctx_at(ctx, writer->exprs[i]->data_type);
+        if (!obj) {
+          return GRN_INVALID_ARGUMENT;
+        }
+        if (!grn_ts_obj_is_table(ctx, obj)) {
+          grn_obj_unlink(ctx, obj);
+          return GRN_INVALID_ARGUMENT;
+        }
+        name_size = grn_obj_name(ctx, obj, name_buf, sizeof(name_buf));
+        GRN_TEXT_PUT(ctx, ctx->impl->outbuf, name_buf, name_size);
+        grn_obj_unlink(ctx, obj);
+        break;
+      }
+    }
+    GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '"');
+    GRN_OUTPUT_ARRAY_CLOSE();
+  }
+  GRN_OUTPUT_ARRAY_CLOSE(); /* COLUMNS. */
+  return GRN_SUCCESS;
+}
+#undef GRN_TS_WRITER_OUTPUT_HEADER_CASE
+
+#define GRN_TS_WRITER_OUTPUT_BODY_CASE(KIND, kind)\
+  case GRN_TS_ ## KIND: {\
+    grn_ts_ ## kind *value = (grn_ts_ ## kind *)writer->bufs[j].ptr;\
+    grn_ts_ ## kind ## _output(ctx, value[i]);\
+    break;\
+  }
+#define GRN_TS_WRITER_OUTPUT_BODY_VECTOR_CASE(KIND, kind)\
+  GRN_TS_WRITER_OUTPUT_BODY_CASE(KIND ## _VECTOR, kind ## _vector)
+/*
+ * grn_ts_writer_output_body() evaluates expressions and outputs the results.
+ */
+static grn_rc
+grn_ts_writer_output_body(grn_ctx *ctx, grn_ts_writer *writer,
+                          const grn_ts_record *in, size_t n_in) {
+  size_t i, j, count = 0;
+  writer->bufs = GRN_MALLOCN(grn_ts_buf, writer->n_exprs);
+  if (!writer->bufs) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  for (i = 0; i < writer->n_exprs; i++) {
+    grn_ts_buf_init(ctx, &writer->bufs[i]);
+  }
+  while (count < n_in) {
+    size_t batch_size = GRN_TS_BATCH_SIZE;
+    if (batch_size > (n_in - count)) {
+      batch_size = n_in - count;
+    }
+    for (i = 0; i < writer->n_exprs; ++i) {
+      grn_rc rc = grn_ts_expr_evaluate_to_buf(ctx, writer->exprs[i], in + count,
+                                              batch_size, &writer->bufs[i]);
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+    }
+    for (i = 0; i < batch_size; ++i) {
+      GRN_OUTPUT_ARRAY_OPEN("HIT", writer->n_exprs);
+      for (j = 0; j < writer->n_exprs; ++j) {
+        if (j) {
+          GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
+        }
+        switch (writer->exprs[j]->data_kind) {
+          GRN_TS_WRITER_OUTPUT_BODY_CASE(BOOL, bool);
+          GRN_TS_WRITER_OUTPUT_BODY_CASE(INT, int);
+          GRN_TS_WRITER_OUTPUT_BODY_CASE(FLOAT, float);
+          GRN_TS_WRITER_OUTPUT_BODY_CASE(TIME, time);
+          GRN_TS_WRITER_OUTPUT_BODY_CASE(TEXT, text);
+          GRN_TS_WRITER_OUTPUT_BODY_CASE(GEO_POINT, geo_point);
+          GRN_TS_WRITER_OUTPUT_BODY_VECTOR_CASE(BOOL, bool);
+          GRN_TS_WRITER_OUTPUT_BODY_VECTOR_CASE(INT, int);
+          GRN_TS_WRITER_OUTPUT_BODY_VECTOR_CASE(FLOAT, float);
+          GRN_TS_WRITER_OUTPUT_BODY_VECTOR_CASE(TIME, time);
+          GRN_TS_WRITER_OUTPUT_BODY_VECTOR_CASE(TEXT, text);
+          GRN_TS_WRITER_OUTPUT_BODY_VECTOR_CASE(GEO_POINT, geo_point);
+          default: {
+            break;
+          }
+        }
+      }
+      GRN_OUTPUT_ARRAY_CLOSE(); /* HITS. */
+    }
+    count += batch_size;
+  }
+  return GRN_SUCCESS;
+}
+#undef GRN_TS_WRITER_OUTPUT_BODY_VECTOR_CASE
+#undef GRN_TS_WRITER_OUTPUT_BODY_CASE
+
+/* grn_ts_writer_output() outputs search results into the output buffer. */
+static grn_rc
+grn_ts_writer_output(grn_ctx *ctx, grn_ts_writer *writer,
+                     const grn_ts_record *in, size_t n_in, size_t n_hits) {
+  grn_rc rc;
+  GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
+  GRN_OUTPUT_ARRAY_OPEN("RESULTSET", 2 + n_in);
+  GRN_OUTPUT_ARRAY_OPEN("NHITS", 1);
+  rc = grn_text_ulltoa(ctx, ctx->impl->outbuf, n_hits);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  GRN_OUTPUT_ARRAY_CLOSE(); /* NHITS. */
+  rc = grn_ts_writer_output_header(ctx, writer);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  rc = grn_ts_writer_output_body(ctx, writer, in, n_in);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  GRN_OUTPUT_ARRAY_CLOSE(); /* RESULTSET. */
+  GRN_OUTPUT_ARRAY_CLOSE(); /* RESET. */
+  return GRN_SUCCESS;
 }
 
 /*-------------------------------------------------------------
@@ -6485,413 +6938,17 @@ grn_ts_select_filter(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
   return GRN_SUCCESS;
 }
 
-/*
- * grn_ts_tokenize_output_columns() gets the first token.
- * If the input is empty, this function returns GRN_END_OF_DATA.
- */
-static grn_rc
-grn_ts_tokenize_output_columns(grn_ctx *ctx, grn_ts_str in,
-                               grn_ts_str *token, grn_ts_str *rest) {
-  size_t i;
-  char stack_top;
-  grn_rc rc = GRN_SUCCESS;
-  grn_ts_str str = in;
-  grn_ts_buf stack;
-
-  /* Find a non-empty token. */
-  grn_ts_buf_init(ctx, &stack);
-  for ( ; ; ) {
-    str = grn_ts_str_trim_left(str);
-    if (!str.size) {
-      rc = GRN_END_OF_DATA;
-      break;
-    }
-    for (i = 0; i < str.size; i++) {
-      if (stack.pos) {
-        if (str.ptr[i] == stack_top) {
-          if (--stack.pos) {
-            stack_top = ((char *)stack.ptr)[stack.pos - 1];
-          }
-          continue;
-        }
-        if (stack_top == '"') {
-          /* Skip the next byte of an escape character. */
-          if ((str.ptr[i] == '\\') && (i < (str.size - 1))) {
-            i++;
-          }
-          continue;
-        }
-      } else if (str.ptr[i] == ',') {
-        break;
-      }
-      switch (str.ptr[i]) {
-        case '(': {
-          stack_top = ')';
-          rc = grn_ts_buf_write(ctx, &stack, &stack_top, 1);
-          break;
-        }
-        case '[': {
-          stack_top = ']';
-          rc = grn_ts_buf_write(ctx, &stack, &stack_top, 1);
-          break;
-        }
-        case '{': {
-          stack_top = '}';
-          rc = grn_ts_buf_write(ctx, &stack, &stack_top, 1);
-          break;
-        }
-        case '"': {
-          stack_top = '"';
-          rc = grn_ts_buf_write(ctx, &stack, &stack_top, 1);
-          break;
-        }
-      }
-      if (rc != GRN_SUCCESS) {
-        break;
-      }
-    }
-    if (rc != GRN_SUCCESS) {
-      break;
-    }
-    if (i) {
-      /* Output the result. */
-      token->ptr = str.ptr;
-      token->size = i;
-      if (token->size == str.size) {
-        rest->ptr = str.ptr + str.size;
-        rest->size = 0;
-      } else {
-        rest->ptr = str.ptr + token->size + 1;
-        rest->size = str.size - token->size - 1;
-      }
-      break;
-    }
-    str.ptr++;
-    str.size--;
-  }
-  grn_ts_buf_fin(ctx, &stack);
-  return rc;
-}
-
-/* grn_ts_select_output_parse() parses an output_columns option. */
-static grn_rc
-grn_ts_select_output_parse(grn_ctx *ctx, grn_obj *table,
-                           grn_ts_str str, grn_obj *name_buf) {
-  grn_ts_str rest = str;
-  for ( ; ; ) {
-    grn_rc rc;
-    grn_ts_str token;
-    rc = grn_ts_tokenize_output_columns(ctx, rest, &token, &rest);
-    if (rc != GRN_SUCCESS) {
-      return (rc == GRN_END_OF_DATA) ? GRN_SUCCESS : rc;
-    }
-
-    /* Add column names to name_buf. */
-    if ((token.ptr[token.size - 1] == '*') &&
-        grn_ts_str_is_name_prefix((grn_ts_str){ token.ptr, token.size - 1 })) {
-      /* Expand a wildcard. */
-      grn_hash *columns = grn_hash_create(ctx, NULL, sizeof(grn_ts_id), 0,
-                                          GRN_OBJ_TABLE_HASH_KEY |
-                                          GRN_HASH_TINY);
-      if (columns) {
-        if (grn_table_columns(ctx, table, token.ptr, token.size - 1,
-                              (grn_obj *)columns)) {
-          grn_ts_id *key;
-          GRN_HASH_EACH(ctx, columns, id, &key, NULL, NULL, {
-            grn_obj *column = grn_ctx_at(ctx, *key);
-            if (column) {
-              char buf[1024];
-              size_t len = grn_column_name(ctx, column, buf, 1024);
-              grn_vector_add_element(ctx, name_buf, buf, len, 0, GRN_DB_TEXT);
-              grn_obj_unlink(ctx, column);
-            }
-          });
-        }
-        grn_hash_close(ctx, columns);
-      }
-    } else {
-      grn_vector_add_element(ctx, name_buf, token.ptr, token.size, 0,
-                             GRN_DB_TEXT);
-    }
-  }
-  return GRN_SUCCESS;
-}
-
-#define GRN_TS_SELECT_OUTPUT_COLUMNS_CASE(TYPE, name)\
-  case GRN_DB_ ## TYPE: {\
-    GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, name);\
-    break;\
-  }
-/* grn_ts_select_output_columns() outputs column names and data types. */
-// FIXME: Errors are ignored.
-static grn_rc
-grn_ts_select_output_columns(grn_ctx *ctx, const grn_ts_text *names,
-                             grn_ts_expr **exprs, size_t n_exprs) {
-  GRN_OUTPUT_ARRAY_OPEN("COLUMNS", n_exprs);
-  for (size_t i = 0; i < n_exprs; ++i) {
-    GRN_OUTPUT_ARRAY_OPEN("COLUMN", 2);
-    /* Output a column name. */
-    grn_text_esc(ctx, ctx->impl->outbuf, names[i].ptr, names[i].size);
-    GRN_TEXT_PUT(ctx, ctx->impl->outbuf, ",\"", 2);
-    /* Output a data type. */
-    switch (exprs[i]->data_type) {
-      case GRN_DB_VOID: {
-        if (exprs[i]->data_kind == GRN_TS_GEO_POINT) {
-          GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "GeoPoint");
-        } else {
-          GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Void");
-        }
-        break;
-      }
-      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE(BOOL, "Bool")
-      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE(INT8, "Int8")
-      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE(INT16, "Int16")
-      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE(INT32, "Int32")
-      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE(INT64, "Int64")
-      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE(UINT8, "UInt8")
-      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE(UINT16, "UInt16")
-      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE(UINT32, "UInt32")
-      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE(UINT64, "UInt64")
-      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE(FLOAT, "Float")
-      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE(TIME, "Time")
-      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE(SHORT_TEXT, "ShortText")
-      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE(TEXT, "Text")
-      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE(LONG_TEXT, "LongText")
-      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE(TOKYO_GEO_POINT, "TokyoGeoPoint")
-      GRN_TS_SELECT_OUTPUT_COLUMNS_CASE(WGS84_GEO_POINT, "WGS84GeoPoint")
-      default: {
-        grn_obj *obj = grn_ctx_at(ctx, exprs[i]->data_type);
-        if (obj && grn_ts_obj_is_table(ctx, obj)) {
-          char name[GRN_TABLE_MAX_KEY_SIZE];
-          int len = grn_obj_name(ctx, obj, name, sizeof(name));
-          GRN_TEXT_PUT(ctx, ctx->impl->outbuf, name, len);
-          grn_obj_unlink(ctx, obj);
-        } else {
-          GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Unknown");
-        }
-        break;
-      }
-    }
-    GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '"');
-    GRN_OUTPUT_ARRAY_CLOSE();
-  }
-  GRN_OUTPUT_ARRAY_CLOSE(); /* COLUMNS. */
-  return GRN_SUCCESS;
-}
-#undef GRN_TS_SELECT_OUTPUT_COLUMNS_CASE
-
-/* grn_ts_select_output_values() evaluates expressions and output results. */
-// FIXME: Errors are ignored.
-static grn_rc
-grn_ts_select_output_values(grn_ctx *ctx, const grn_ts_record *in, size_t n_in,
-                            grn_ts_expr **exprs, size_t n_exprs) {
-  grn_rc rc = GRN_SUCCESS;
-  size_t i, j, count = 0;
-  void **bufs;
-
-  if (!n_in) {
-    return GRN_SUCCESS;
-  }
-  bufs = GRN_MALLOCN(void *, n_exprs);
-  if (!bufs) {
-    return GRN_NO_MEMORY_AVAILABLE;
-  }
-
-  /* Allocate memory for results. */
-  for (i = 0; i < n_exprs; i++) {
-    switch (exprs[i]->data_kind) {
-#define GRN_TS_SELECT_OUTPUT_MALLOC_CASE(KIND, kind)\
-  case GRN_TS_ ## KIND: {\
-    bufs[i] = GRN_MALLOCN(grn_ts_ ## kind, GRN_TS_BATCH_SIZE);\
-    break;\
-  }
-#define GRN_TS_SELECT_OUTPUT_MALLOC_VECTOR_CASE(KIND, kind)\
-  GRN_TS_SELECT_OUTPUT_MALLOC_CASE(KIND ## _VECTOR, kind ## _vector)
-      GRN_TS_SELECT_OUTPUT_MALLOC_CASE(BOOL, bool)
-      GRN_TS_SELECT_OUTPUT_MALLOC_CASE(INT, int)
-      GRN_TS_SELECT_OUTPUT_MALLOC_CASE(FLOAT, float)
-      GRN_TS_SELECT_OUTPUT_MALLOC_CASE(TIME, time)
-      GRN_TS_SELECT_OUTPUT_MALLOC_CASE(TEXT, text)
-      GRN_TS_SELECT_OUTPUT_MALLOC_CASE(GEO_POINT, geo_point)
-      GRN_TS_SELECT_OUTPUT_MALLOC_VECTOR_CASE(BOOL, bool)
-      GRN_TS_SELECT_OUTPUT_MALLOC_VECTOR_CASE(INT, int)
-      GRN_TS_SELECT_OUTPUT_MALLOC_VECTOR_CASE(FLOAT, float)
-      GRN_TS_SELECT_OUTPUT_MALLOC_VECTOR_CASE(TIME, time)
-      GRN_TS_SELECT_OUTPUT_MALLOC_VECTOR_CASE(TEXT, text)
-      GRN_TS_SELECT_OUTPUT_MALLOC_VECTOR_CASE(GEO_POINT, geo_point)
-#undef GRN_TS_SELECT_OUTPUT_MALLOC_VECTOR_CASE
-#undef GRN_TS_SELECT_OUTPUT_MALLOC_CASE
-      default: {
-        bufs[i] = NULL;
-        // FIXME: GRN_OBJECT_CORRUPT?
-        break;
-      }
-    }
-    if (!bufs[i]) {
-      while (i) {
-        GRN_FREE(bufs[--i]);
-      }
-      GRN_FREE(bufs);
-      return GRN_NO_MEMORY_AVAILABLE;
-    }
-  }
-
-  /* Evaluate expressions and output results. */
-  while (count < n_in) {
-    size_t batch_size = GRN_TS_BATCH_SIZE;
-    if (batch_size > (n_in - count)) {
-      batch_size = n_in - count;
-    }
-    for (i = 0; i < n_exprs; ++i) {
-      if (!bufs[i]) {
-        continue;
-      }
-      rc = grn_ts_expr_evaluate(ctx, exprs[i], in + count,
-                                batch_size, bufs[i]);
-      if (rc != GRN_SUCCESS) {
-        break;
-      }
-    }
-    for (i = 0; i < batch_size; ++i) {
-      GRN_OUTPUT_ARRAY_OPEN("HIT", n_exprs);
-      for (j = 0; j < n_exprs; ++j) {
-        if (j) {
-          GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
-        }
-#define GRN_TS_SELECT_OUTPUT_CASE(KIND, kind)\
-  case GRN_TS_ ## KIND: {\
-    grn_ts_ ## kind *value = (grn_ts_ ## kind *)bufs[j];\
-    grn_ts_ ## kind ## _output(ctx, value[i]);\
-    break;\
-  }
-#define GRN_TS_SELECT_OUTPUT_VECTOR_CASE(KIND, kind)\
-  GRN_TS_SELECT_OUTPUT_CASE(KIND ## _VECTOR, kind ## _vector)
-        switch (exprs[j]->data_kind) {
-          GRN_TS_SELECT_OUTPUT_CASE(BOOL, bool);
-          GRN_TS_SELECT_OUTPUT_CASE(INT, int);
-          GRN_TS_SELECT_OUTPUT_CASE(FLOAT, float);
-          GRN_TS_SELECT_OUTPUT_CASE(TIME, time);
-          GRN_TS_SELECT_OUTPUT_CASE(TEXT, text);
-          GRN_TS_SELECT_OUTPUT_CASE(GEO_POINT, geo_point);
-          GRN_TS_SELECT_OUTPUT_VECTOR_CASE(BOOL, bool);
-          GRN_TS_SELECT_OUTPUT_VECTOR_CASE(INT, int);
-          GRN_TS_SELECT_OUTPUT_VECTOR_CASE(FLOAT, float);
-          GRN_TS_SELECT_OUTPUT_VECTOR_CASE(TIME, time);
-          GRN_TS_SELECT_OUTPUT_VECTOR_CASE(TEXT, text);
-          GRN_TS_SELECT_OUTPUT_VECTOR_CASE(GEO_POINT, geo_point);
-#undef GRN_TS_SELECT_OUTPUT_VECTOR_CASE
-#undef GRN_TS_SELECT_OUTPUT_CASE
-          default: {
-            break;
-          }
-        }
-      }
-      GRN_OUTPUT_ARRAY_CLOSE(); /* HITS. */
-    }
-    count += batch_size;
-  }
-
-  for (i = 0; i < n_exprs; i++) {
-    if (bufs[i]) {
-      GRN_FREE(bufs[i]);
-    }
-  }
-  GRN_FREE(bufs);
-  return rc;
-}
-
 /* grn_ts_select_output() outputs the results. */
-/* FIXME: Errors are ignored. */
 static grn_rc
 grn_ts_select_output(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
                      const grn_ts_record *in, size_t n_in, size_t n_hits) {
-  grn_rc rc;
-  grn_ts_expr **exprs = NULL;
-  size_t i, n_exprs = 0;
-  grn_obj name_buf;
-  grn_ts_text *names = NULL;
-
-  GRN_TEXT_INIT(&name_buf, GRN_OBJ_VECTOR);
-  rc = grn_ts_select_output_parse(ctx, table, str, &name_buf);
+  grn_ts_writer *writer;
+  grn_rc rc = grn_ts_writer_open(ctx, table, str, &writer);
   if (rc != GRN_SUCCESS) {
-    GRN_OBJ_FIN(ctx, &name_buf);
     return rc;
   }
-
-  /* Create expressions. */
-  n_exprs = grn_vector_size(ctx, &name_buf);
-  if (n_exprs) {
-    size_t count = 0;
-    names = GRN_MALLOCN(grn_ts_text, n_exprs);
-    exprs = GRN_MALLOCN(grn_ts_expr *, n_exprs);
-    if (!names || !exprs) {
-      n_exprs = 0;
-    }
-    for (i = 0; i < n_exprs; i++) {
-      exprs[i] = NULL;
-    }
-    for (i = 0; i < n_exprs; i++) {
-      names[i].size = grn_vector_get_element(ctx, &name_buf, i, &names[i].ptr,
-                                             NULL, NULL);
-      rc = grn_ts_expr_parse(ctx, table, names[i].ptr, names[i].size,
-                             &exprs[i]);
-      if (rc != GRN_SUCCESS) {
-        if ((names[i].size == GRN_COLUMN_NAME_KEY_LEN) &&
-            !memcmp(names[i].ptr, GRN_COLUMN_NAME_KEY,
-                    GRN_COLUMN_NAME_KEY_LEN)) {
-          /*
-           * Ignore an error for _key because the default output_columns option
-           * contains _key.
-           */
-          rc = GRN_SUCCESS;
-        } else {
-          break;
-        }
-      }
-    }
-    for (i = 0; i < n_exprs; i++) {
-      if (exprs[i]) {
-        names[count] = names[i];
-        exprs[count] = exprs[i];
-        count++;
-      }
-    }
-    n_exprs = count;
-  }
-
-  if (rc == GRN_SUCCESS) {
-    GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
-    GRN_OUTPUT_ARRAY_OPEN("RESULTSET", 2 + n_in);
-
-    GRN_OUTPUT_ARRAY_OPEN("NHITS", 1);
-    rc = grn_text_ulltoa(ctx, ctx->impl->outbuf, n_hits);
-    GRN_OUTPUT_ARRAY_CLOSE(); /* NHITS. */
-
-    if (rc == GRN_SUCCESS) {
-      rc = grn_ts_select_output_columns(ctx, names, exprs, n_exprs);
-      if (rc == GRN_SUCCESS) {
-        rc = grn_ts_select_output_values(ctx, in, n_in, exprs, n_exprs);
-      }
-    }
-
-    GRN_OUTPUT_ARRAY_CLOSE(); /* RESULTSET. */
-    GRN_OUTPUT_ARRAY_CLOSE(); /* RESET. */
-  }
-
-  /* Finalize. */
-  if (exprs) {
-    for (i = 0; i < n_exprs; i++) {
-      if (exprs[i]) {
-        /* Ignore a failure of destruction. */
-        grn_ts_expr_close(ctx, exprs[i]);
-      }
-    }
-    GRN_FREE(exprs);
-  }
-  if (names) {
-    GRN_FREE(names);
-  }
-  GRN_OBJ_FIN(ctx, &name_buf);
+  rc = grn_ts_writer_output(ctx, writer, in, n_in, n_hits);
+  grn_ts_writer_close(ctx, writer);
   return rc;
 }
 
