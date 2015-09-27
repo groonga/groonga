@@ -16,5 +16,3 @@
 add_subdirectory(html)
 
 install(FILES groonga.conf DESTINATION "${GRN_CONFIG_DIR}/")
-install(FILES windows_event_log/provider.man
-  DESTINATION "${GRN_CONFIG_DIR}/windows_event_log/")

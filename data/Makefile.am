@@ -5,8 +5,7 @@ SUBDIRS =			\
 	init.d			\
 	logrotate.d		\
 	systemd			\
-	scripts			\
-	windows_event_log
+	scripts
 
 pkgsysconfdir = $(sysconfdir)/$(PACKAGE)
 dist_pkgsysconf_DATA =		\
