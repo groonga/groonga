@@ -864,7 +864,7 @@ Script syntax adds the original binary opearators to ECMAScript
 syntax. They operate search specific operations. They are starts with
 ``@`` or ``*``.
 
-.. _script-syntax-match-oeprator:
+.. _script-syntax-match-operator:
 
 Match operator
 ^^^^^^^^^^^^^^
