@@ -65,7 +65,7 @@ Improvements
 
 * [:c:func:`grn_obj_remove()`] Reduced the maximum memory usage. If
   :c:func:`grn_thread_get_limit()` returns ``1``, it closes temporary
-   opened objects after it finished to use them.
+  opened objects after it finished to use them.
 
 * [:doc:`/reference/commands/table_remove`] Updated with many
   descriptions.
