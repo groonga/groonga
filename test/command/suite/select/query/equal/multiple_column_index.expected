@@ -1,0 +1,60 @@
+table_create Paths TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Files TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Files path COLUMN_SCALAR Paths
+[[0,0.0,0.0],true]
+column_create Files sub_paths COLUMN_VECTOR Paths
+[[0,0.0,0.0],true]
+column_create Paths index COLUMN_INDEX|WITH_SECTION Files path,sub_paths
+[[0,0.0,0.0],true]
+load --table Files
+[
+{
+  "path": "/var/lib/www/index.html",
+  "sub_paths": ["var", "lib", "www", "index.html"]
+},
+{
+  "path": "/var/log/messages",
+  "sub_paths": ["var", "log", "messages"]
+},
+{
+  "path": "var",
+  "sub_paths": []
+}
+]
+[[0,0.0,0.0],3]
+select Files --query path:var --output_columns _id,path,_score
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "path",
+          "Paths"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        3,
+        "var",
+        1
+      ]
+    ]
+  ]
+]

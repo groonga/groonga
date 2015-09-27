@@ -5153,14 +5153,40 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
                                 GRN_BULK_HEAD(si->query),
                                 GRN_BULK_VSIZE(si->query));
           }
-          if (tid != GRN_ID_NIL) {
+          if (tid == GRN_ID_NIL) {
+            processed = GRN_TRUE;
+          } else {
+            uint32_t sid;
+            int32_t weight;
+            grn_ii *ii = (grn_ii *)index;
+            grn_ii_cursor *ii_cursor;
+
             grn_table_select_index_report(ctx, "[equal]", index);
-            grn_ii_at(ctx, (grn_ii *)index, tid, (grn_hash *)res,
-                      si->logical_op);
+
+            /* TODO: extract this routine as a function. */
+            sid = GRN_UINT32_VALUE_AT(&(si->wv), 0);
+            weight = GRN_INT32_VALUE_AT(&(si->wv), 1);
+            ii_cursor = grn_ii_cursor_open(ctx, ii, tid,
+                                           GRN_ID_NIL, GRN_ID_MAX,
+                                           ii->n_elements, 0);
+            if (ii_cursor) {
+              grn_posting *posting;
+              while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
+                if (sid == 0 || posting->sid == sid) {
+                  grn_posting new_posting = *posting;
+                  new_posting.weight *= weight;
+                  grn_ii_posting_add(ctx, &new_posting, (grn_hash *)res,
+                                     si->logical_op);
+                }
+              }
+              grn_ii_cursor_close(ctx, ii_cursor);
+              processed = GRN_TRUE;
+            }
           }
         }
-        grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
-        processed = GRN_TRUE;
+        if (processed) {
+          grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
+        }
       }
       break;
     case GRN_OP_SUFFIX :
