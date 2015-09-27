@@ -612,6 +612,8 @@ Comparison operators
 
 Here are comparison operators.
 
+.. _script-syntax-equal-operator:
+
 Equal operator
 """"""""""""""
 

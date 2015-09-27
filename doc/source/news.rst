@@ -7,6 +7,131 @@
 News
 ====
 
+.. _release-5-0-8:
+
+Release 5.0.8 - 2015-09-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [Windows] Supported build with MySQL again.
+
+* [:doc:`/reference/grn_expr/script_syntax`] Changed return value type
+  to ``Bool`` from ``Int32`` for predicate operations such as
+  :ref:`script-syntax-match-operator` and
+  :ref:`script-syntax-equal-operator`.
+
+* [:doc:`/reference/api`] Supported owning other ``grn_obj`` by
+  ``GRN_PTR`` and ``GRN_PVECTOR`` bulk. if you specify ``GRN_OBJ_OWN``
+  flag to ``GRN_PTR`` and ``GRN_PVECTOR`` bulks, they call
+  ``g_obj_close()`` against ``grn_obj`` that is held by them.
+
+* [incompatible][:doc:`/reference/regular_expression`] Changed to
+  normalize regular expression match target text before matching. It's
+  for consistency and performance.
+
+  Other operations such as :ref:`script-syntax-prefix-search-operator`
+  normalized target text.
+
+  Some simple regular expressions such as ``\\Ahello`` can be
+  evaluated by index. It's fast.
+
+  If target text isn't normalized, you need to use complex regular
+  expressions such as ``\\A[Hh]ello`` and ``\\A(?i)hello``. Complex
+  regular expressions can't be evaluated by index. If target text is
+  normalized, you can use simple regular expressions. They may be
+  evaluated by index. It's fast.
+
+* [doc] Improved documents.
+  [GitHub#393][GitHub#396][GitHub#397][GitHub#399][GitHub#403]
+  [GitHub#405][GitHub#409]
+  [Reported by Hiroyuki Sato][Patch by Hiroyuki Sato]
+
+* [:doc:`/reference/functions/highlight_html`] Improved performance.
+  [groonga-dev,03427] [Reported by Hiroyuki Sato]
+
+* [:doc:`/reference/functions/snippet_html`] Improved performance.
+
+* [CMake] Stopped to run ``pkg-config`` twice.
+  [Patch by Sergei Golubchik]
+
+* Removed needless check for year in time. B.C. is always invalid time
+  without this change. B.C. is valid time when system (``mktime()``)
+  supports it with this change.
+
+* [:c:func:`grn_ctx_is_opened()`] Added a new API that checks whether
+  object with the ID is opened or not.
+
+* [:c:func:`grn_obj_remove()`] Reduced the maximum memory usage. If
+  :c:func:`grn_thread_get_limit()` returns ``1``, it closes temporary
+   opened objects after it finished to use them.
+
+* [:doc:`/reference/commands/table_remove`] Updated with many
+  descriptions.
+
+* [:doc:`/reference/executables/groonga`] Ensured to add the last new
+  line to :doc:`/reference/commands/dump` result on stand alone mode.
+
+* [:ref:`process-log`] Added Groonga version into ``grn_init`` log.
+
+* Opened `chat room on Gitter <https://gitter.im/groonga/public>`_.
+
+* [:doc:`/reference/commands/status`] Added ``start_time`` as alias of
+  ``starttime`` for consistency. Other keys use ``snake_case`` style.
+  ``starttime`` is deprecated. Use ``start_time`` instead.
+
+* Updated bundled Onigmo.
+
+* [doc][:doc:`/reference/scorers/scorer_tf_at_most`] Documented.
+
+* Supported columns for temporary table. It's only available C API
+  users for now. :doc:`/reference/commands/select` will use this
+  feature in the next release.
+
+* [``grn_vector_pop_element()``] Exported.
+
+* [:doc:`/reference/executables/groonga`] Added checks whether
+  acquiring lock is succeeded or not.
+
+* [:doc:`/reference/executables/groonga-suggest-create-dataset`]
+  Changed to use ``--normalizer`` instead of ``KEY_NORMALIZE`` because
+  ``KEY_NORMALIZE`` is deprecated.
+
+* [``grn_obj_cast()``] Exported.
+
+* [experimental][``grn_ii_cursor``] Exported.
+
+* [experimental][``grn_ii_cursor_open()``] Exported.
+
+* [experimental][``grn_ii_cursor_next()``] Exported.
+
+* [experimental][``grn_ii_cursor_close()``] Exported.
+
+* [:ref:`script-syntax-match-operator`] Improved index detection.
+  Index its lexicon has a tokenizer is preferred.
+
+* [:doc:`/reference/executables/groonga-httpd`] Updated bundled nginx
+  to 1.9.5 that supports HTTP/2. HTTP/2 module is enabled.
+
+Fixes
+^^^^^
+
+* [:doc:`/reference/grn_expr/script_syntax`] Fixed a bug that ``&!``
+  does nothing when right hand side is ``true``.
+
+* Fixed performance regression with libtool 2.4.6.
+  [GitHub#406][GitHub#407] [Patch by Hiroyuki Sato]
+
+* [:ref:`script-syntax-equal-operator`] Fixed a bug that section is
+  ignored.
+
+Thanks
+^^^^^^
+
+* Hiroyuki Sato
+* Sergei Golubchik
+
 .. _release-5-0-7:
 
 Release 5.0.7 - 2015-08-31
