@@ -42,6 +42,9 @@ http {
       # groonga_query_log_path off;
       # You can custom database path.
       # groonga_database /path/to/groonga/db;
+      # If you send large data bay one 'load' command, you may need to
+      # increate the max size limitation.
+      # client_max_body_size 50m;
     }
 
     location / {
