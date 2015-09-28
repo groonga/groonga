@@ -3881,7 +3881,7 @@ grn_ts_op_logical_or_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
     }\
   }\
   switch (node->args[0]->data_kind) {\
-    GRN_TS_OP_CHK_FILTER_CASE(type, BOOL, int)\
+    GRN_TS_OP_CHK_FILTER_CASE(type, BOOL, bool)\
     GRN_TS_OP_CHK_FILTER_CASE(type, INT, int)\
     GRN_TS_OP_CHK_FILTER_CASE(type, FLOAT, float)\
     GRN_TS_OP_CHK_FILTER_CASE(type, TIME, time)\
