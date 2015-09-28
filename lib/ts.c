@@ -3902,8 +3902,8 @@ grn_ts_op_logical_or_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
 /* grn_ts_op_equal_filter() filters records. */
 static grn_rc
 grn_ts_op_equal_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                         const grn_ts_record *in, size_t n_in,
-                         grn_ts_record *out, size_t *n_out) {
+                       const grn_ts_record *in, size_t n_in,
+                       grn_ts_record *out, size_t *n_out) {
   GRN_TS_OP_CHK_FILTER(equal)
 }
 
