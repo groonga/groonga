@@ -1473,6 +1473,15 @@ grn_ts_hash_get_float_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
   return GRN_SUCCESS;
 }
 
+/* grn_ts_hash_get_time_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_hash_get_time_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
+                         grn_ts_time *key) {
+  GRN_TS_TABLE_GET_KEY(hash)
+  *key = *(const grn_ts_time *)key_ptr;
+  return GRN_SUCCESS;
+}
+
 /* grn_ts_hash_get_geo_point_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_hash_get_geo_point_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
@@ -1605,6 +1614,15 @@ grn_ts_pat_get_float_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
   grn_ntoh(&tmp, key_ptr, sizeof(tmp));
   tmp ^= (((tmp ^ ((int64_t)1 << 63)) >> 63) | ((int64_t)1 << 63));
   *(int64_t *)key = tmp;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_pat_get_time_key() gets a reference to a key (_key). */
+static grn_rc
+grn_ts_pat_get_time_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
+                        grn_ts_time *key) {
+  GRN_TS_TABLE_GET_KEY(pat)
+  grn_ntohi(key, key_ptr, sizeof(grn_ts_time));
   return GRN_SUCCESS;
 }
 
@@ -1959,6 +1977,7 @@ grn_ts_expr_key_node_evaluate(grn_ctx *ctx, grn_ts_expr_key_node *node,
           }
         }
         GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE(hash, FLOAT, float)
+        GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE(hash, TIME, time)
         GRN_TS_EXPR_KEY_NODE_EVALUATE_TEXT_CASE(hash)
         GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE(hash, GEO_POINT, geo_point)
         GRN_TS_EXPR_KEY_NODE_EVALUATE_REF_CASE(hash)
@@ -1984,6 +2003,7 @@ grn_ts_expr_key_node_evaluate(grn_ctx *ctx, grn_ts_expr_key_node *node,
           }
         }
         GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE(pat, FLOAT, float)
+        GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE(pat, TIME, time)
         GRN_TS_EXPR_KEY_NODE_EVALUATE_TEXT_CASE(pat)
         GRN_TS_EXPR_KEY_NODE_EVALUATE_CASE(pat, GEO_POINT, geo_point)
         GRN_TS_EXPR_KEY_NODE_EVALUATE_REF_CASE(pat)
