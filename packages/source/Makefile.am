@@ -20,7 +20,7 @@ ensure-rsync-path:
 	fi
 
 download: ensure-rsync-path
-	rsync -avz --progress $(RSYNC_PATH)/source/groonga/ files
+	rsync -avz --progress --delete $(RSYNC_PATH)/source/groonga/ files
 
 upload: ensure-rsync-path $(FILES)
 	rsync -avz --progress --delete files/ $(RSYNC_PATH)/source/groonga
