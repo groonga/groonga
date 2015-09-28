@@ -5132,7 +5132,7 @@ grn_ts_expr_parser_tokenize(grn_ctx *ctx, grn_ts_expr_parser *parser,
                             grn_ts_str str) {
   grn_ts_str rest = str;
   const char *end = str.ptr + str.size;
-  grn_ts_expr_token *token;
+  grn_ts_expr_token *token = NULL;
   do {
     grn_rc rc = grn_ts_expr_parser_reserve_tokens(ctx, parser);
     if (rc != GRN_SUCCESS) {
