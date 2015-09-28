@@ -23,22 +23,23 @@ Improvements
   :ref:`script-syntax-equal-operator`.
 
 * [:doc:`/reference/api`] Supported owning other ``grn_obj`` by
-  ``GRN_PTR`` and ``GRN_PVECTOR`` bulk. if you specify ``GRN_OBJ_OWN``
+  ``GRN_PTR`` and ``GRN_PVECTOR`` bulk. If you specify ``GRN_OBJ_OWN``
   flag to ``GRN_PTR`` and ``GRN_PVECTOR`` bulks, they call
-  ``g_obj_close()`` against ``grn_obj`` that is held by them.
+  :c:func:`grn_obj_close()` against ``grn_obj`` that is held by
+  them when they are closed.
 
 * [incompatible][:doc:`/reference/regular_expression`] Changed to
   normalize regular expression match target text before matching. It's
   for consistency and performance.
 
   Other operations such as :ref:`script-syntax-prefix-search-operator`
-  normalized target text.
+  normalize target text.
 
-  Some simple regular expressions such as ``\\Ahello`` can be
+  Some simple regular expressions such as ``\Ahello`` can be
   evaluated by index. It's fast.
 
   If target text isn't normalized, you need to use complex regular
-  expressions such as ``\\A[Hh]ello`` and ``\\A(?i)hello``. Complex
+  expressions such as ``\A[Hh]ello`` and ``\A(?i)hello``. Complex
   regular expressions can't be evaluated by index. If target text is
   normalized, you can use simple regular expressions. They may be
   evaluated by index. It's fast.
@@ -67,7 +68,7 @@ Improvements
   :c:func:`grn_thread_get_limit()` returns ``1``, it closes temporary
   opened objects after it finished to use them.
 
-* [:doc:`/reference/commands/table_remove`] Updated with many
+* [doc][:doc:`/reference/commands/table_remove`] Updated with many
   descriptions.
 
 * [:doc:`/reference/executables/groonga`] Ensured to add the last new
