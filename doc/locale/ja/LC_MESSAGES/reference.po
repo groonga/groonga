@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-09-24 22:05+0900\n"
+"PO-Revision-Date: 2015-09-28 14:26+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -711,6 +711,18 @@ msgstr ""
 
 msgid "The new output type."
 msgstr "新しい出力形式。"
+
+# 3bc14c4552694f6faf256a12b240ac9a
+msgid "Checks whether object with the ID is opened or not."
+msgstr "指定したIDのオブジェクトが開かれているかどうかをチェックします。"
+
+msgid "The object ID to be checked."
+msgstr "チェック対象のオブジェクトのID。"
+
+msgid "``GRN_TRUE`` if object with the ID is opened, ``GRN_FALSE`` otherwise."
+msgstr ""
+"指定したIDのオブジェクトが開かれていたら ``GRN_TRUE`` 、そうでなければ "
+"``GRN_FALSE`` 。"
 
 msgid "``grn_db``"
 msgstr ""
@@ -1517,6 +1529,33 @@ msgid "dbのidに対応するpathを返します。mroonga向けに用意した�
 msgstr ""
 
 msgid "path string corresponding to the id will be set in this buffer."
+msgstr ""
+
+msgid ""
+"It casts value of ``source`` to value with type of ``destination``. Casted "
+"value is appended to ``destination``."
+msgstr ""
+
+msgid "Both ``source`` and ``destination`` must be bulk."
+msgstr ""
+
+msgid ""
+"If ``destination`` is a reference type bulk. (Reference type bulk means that "
+"type of ``destination`` is a table.) ``add_record_if_not_exist`` is used. If "
+"``source`` value doesn't exist in the table that is a type of "
+"``destination``. The ``source`` value is added to the table."
+msgstr ""
+
+msgid "The bulk to be casted."
+msgstr ""
+
+msgid "The bulk to specify cast target type and store casted value."
+msgstr ""
+
+msgid ""
+"Whether adding a new record if ``source`` value doesn't exist in cast target "
+"table. This parameter is only used when ``destination`` is a reference type "
+"bulk."
 msgstr ""
 
 msgid "``grn_proc``"
