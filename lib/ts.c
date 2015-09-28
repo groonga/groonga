@@ -5237,6 +5237,9 @@ grn_ts_expr_parser_apply(grn_ctx *ctx, grn_ts_expr_parser *parser,
       grn_ts_expr_token *args[2] = { stack[depth - 3], stack[depth - 1] };
       src.ptr = args[0]->src.ptr;
       src.size = (args[1]->src.ptr + args[1]->src.size) - src.ptr;
+    } else {
+      rc = GRN_UNKNOWN_ERROR;
+      break;
     }
 
     /* Replace the operator and argument tokens with a dummy token. */
