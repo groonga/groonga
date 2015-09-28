@@ -41,6 +41,9 @@ mecab_patches = [
   "mecab-0.98-not-use-locale-on-mingw.diff",
   "mecab-0.98-add-missing-dll-export.diff",
 ]
+nginx_patches = [
+  "nginx-1.9-5-fix-build-error.diff",
+]
 if groonga_win32_x86_p
   host = "i686-w64-mingw32"
 else
@@ -251,6 +254,12 @@ namespace :build do
       sh("tar", "xzf", groonga_source.to_s) or exit(false)
     end
     Dir.chdir(tmp_dir + "groonga-#{groonga_version}") do
+      Dir.chdir("vendor") do
+        nginx_patches.each do |patch|
+          sh("patch -p0 < #{patches_dir + patch}")
+        end
+      end
+
       mecab_config = binary_dir + "bin" + "mecab-config"
       options = [
         "--prefix=#{binary_dir}",
