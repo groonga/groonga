@@ -159,6 +159,40 @@ grn_ts_str_is_value_name(grn_ts_str str) {
          !memcmp(str.ptr, GRN_COLUMN_NAME_VALUE, GRN_COLUMN_NAME_VALUE_LEN);
 }
 
+/*
+ * grn_ts_str_has_number_prefix() returns whether or not a string starts with a
+ * number or not.
+ */
+static grn_ts_bool
+grn_ts_str_has_number_prefix(grn_ts_str str) {
+  if (!str.size) {
+    return GRN_FALSE;
+  }
+  if (grn_ts_byte_is_decimal(str.ptr[0])) {
+    return GRN_TRUE;
+  }
+  if (str.size == 1) {
+    return GRN_FALSE;
+  }
+  switch (str.ptr[0]) {
+    case '+': case '-': {
+      if (grn_ts_byte_is_decimal(str.ptr[1])) {
+        return GRN_TRUE;
+      }
+      if (str.size == 2) {
+        return GRN_FALSE;
+      }
+      return (str.ptr[1] == '.') && grn_ts_byte_is_decimal(str.ptr[2]);
+    }
+    case '.': {
+      return grn_ts_byte_is_decimal(str.ptr[1]);
+    }
+    default: {
+      return GRN_FALSE;
+    }
+  }
+}
+
 /*-------------------------------------------------------------
  * grn_ts_buf.
  */
@@ -5043,9 +5077,7 @@ grn_ts_expr_parser_tokenize_next(grn_ctx *ctx, grn_ts_expr_parser *parser,
   if (!rest.size) {
     return grn_ts_expr_parser_tokenize_end(ctx, parser, rest, token);
   }
-  if (grn_ts_byte_is_decimal(rest.ptr[0]) ||
-      ((rest.size >= 2) && (rest.ptr[0] == '.') &&
-       grn_ts_byte_is_decimal(rest.ptr[1]))) {
+  if (grn_ts_str_has_number_prefix(rest)) {
     return grn_ts_expr_parser_tokenize_number(ctx, parser, rest, token);
   }
   if (rest.ptr[0] == '"') {
