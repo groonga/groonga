@@ -4977,7 +4977,7 @@ grn_ts_expr_parser_tokenize_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
     rc = grn_ts_expr_op_token_open(ctx, token_str, op_type, &new_token);\
     break;\
   }
-    GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('!', BITWISE_NOT, NOT_EQUAL)
+    GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('!', LOGICAL_NOT, NOT_EQUAL)
     GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('<', LESS, LESS_EQUAL)
     GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('>', GREATER, GREATER_EQUAL)
 #undef GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE
