@@ -4786,7 +4786,7 @@ grn_ts_expr_parser_tokenize_number(grn_ctx *ctx, grn_ts_expr_parser *parser,
   buf[str.size] = '\0';
 
   int_value = strtol(buf, &end, 0);
-  if (*end != '.') {
+  if ((end != buf) && (*end != '.')) {
     token_str.ptr = str.ptr;
     token_str.size = end - buf;
     rc = grn_ts_expr_const_token_open(ctx, token_str, &new_token);
@@ -4796,6 +4796,9 @@ grn_ts_expr_parser_tokenize_number(grn_ctx *ctx, grn_ts_expr_parser *parser,
     }
   } else {
     grn_ts_float float_value = strtod(buf, &end);
+    if (end == buf) {
+      return GRN_INVALID_FORMAT;
+    }
     token_str.ptr = str.ptr;
     token_str.size = end - buf;
     rc = grn_ts_expr_const_token_open(ctx, token_str, &new_token);
