@@ -4780,45 +4780,35 @@ grn_ts_expr_parser_tokenize_end(grn_ctx *ctx, grn_ts_expr_parser *parser,
 static grn_rc
 grn_ts_expr_parser_tokenize_number(grn_ctx *ctx, grn_ts_expr_parser *parser,
                                    grn_ts_str str, grn_ts_expr_token **token) {
-  // TODO: Improve this not to make a copy of str.
-  char *buf, *end;
+  char *end;
   grn_rc rc;
   grn_ts_int int_value;
   grn_ts_str token_str;
   grn_ts_expr_const_token *new_token;
 
-  buf = GRN_MALLOCN(char, str.size + 1);
-  if (!buf) {
-    return GRN_NO_MEMORY_AVAILABLE;
-  }
-  grn_memcpy(buf, str.ptr, str.size);
-  buf[str.size] = '\0';
-
-  int_value = strtol(buf, &end, 0);
-  if ((end != buf) && (*end != '.')) {
+  int_value = strtol(str.ptr, &end, 0);
+  if ((end != str.ptr) && (*end != '.')) {
     token_str.ptr = str.ptr;
-    token_str.size = end - buf;
+    token_str.size = end - str.ptr;
     rc = grn_ts_expr_const_token_open(ctx, token_str, &new_token);
-    if (rc == GRN_SUCCESS) {
-      new_token->data_kind = GRN_TS_INT;
-      new_token->content.as_int = int_value;
+    if (rc != GRN_SUCCESS) {
+      return rc;
     }
+    new_token->data_kind = GRN_TS_INT;
+    new_token->content.as_int = int_value;
   } else {
-    grn_ts_float float_value = strtod(buf, &end);
-    if (end == buf) {
+    grn_ts_float float_value = strtod(str.ptr, &end);
+    if (end == str.ptr) {
       return GRN_INVALID_FORMAT;
     }
     token_str.ptr = str.ptr;
-    token_str.size = end - buf;
+    token_str.size = end - str.ptr;
     rc = grn_ts_expr_const_token_open(ctx, token_str, &new_token);
-    if (rc == GRN_SUCCESS) {
-      new_token->data_kind = GRN_TS_FLOAT;
-      new_token->content.as_float = float_value;
+    if (rc != GRN_SUCCESS) {
+      return rc;
     }
-  }
-  GRN_FREE(buf);
-  if (rc != GRN_SUCCESS) {
-    return rc;
+    new_token->data_kind = GRN_TS_FLOAT;
+    new_token->content.as_float = float_value;
   }
   *token = (grn_ts_expr_token *)new_token;
   return GRN_SUCCESS;
