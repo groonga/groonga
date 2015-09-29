@@ -6966,7 +6966,7 @@ grn_ts_select_filter(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
           batch_size = 0;
         } else {
           size_t n_bytes = sizeof(grn_ts_record) * (batch_size - offset);
-          grn_memcpy(batch, batch + offset, n_bytes);
+          grn_memmove(batch, batch + offset, n_bytes);
           batch_size -= offset;
           offset = 0;
         }
