@@ -5187,7 +5187,7 @@ grn_ts_expr_parser_push_name(grn_ctx *ctx, grn_ts_expr_parser *parser,
 static grn_rc
 grn_ts_expr_parser_push_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
                            grn_ts_expr_op_token *token) {
-  return grn_ts_expr_push_operator(ctx, parser->expr, token->op_type);
+  return grn_ts_expr_push_op(ctx, parser->expr, token->op_type);
 }
 
 /* grn_ts_expr_parser_apply() applies bridges and prior operators. */
@@ -6109,8 +6109,7 @@ grn_ts_expr_push_column(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *column) {
 }
 
 grn_rc
-grn_ts_expr_push_operator(grn_ctx *ctx, grn_ts_expr *expr,
-                          grn_ts_op_type op_type) {
+grn_ts_expr_push_op(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_op_type op_type) {
   grn_rc rc;
   grn_ts_expr_node **args, *node;
   size_t n_args;

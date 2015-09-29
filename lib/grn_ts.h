@@ -285,9 +285,9 @@ grn_rc grn_ts_expr_push_const(grn_ctx *ctx, grn_ts_expr *expr,
 /* grn_ts_expr_push_column() pushes a column. */
 grn_rc grn_ts_expr_push_column(grn_ctx *ctx, grn_ts_expr *expr,
                                grn_obj *column);
-/* grn_ts_expr_push_operator() pushes an operator. */
-grn_rc grn_ts_expr_push_operator(grn_ctx *ctx, grn_ts_expr *expr,
-                                 grn_ts_op_type op_type);
+/* grn_ts_expr_push_op() pushes an operator. */
+grn_rc grn_ts_expr_push_op(grn_ctx *ctx, grn_ts_expr *expr,
+                           grn_ts_op_type op_type);
 
 /* grn_ts_expr_push_bool() pushes a Bool const. */
 grn_rc grn_ts_expr_push_bool(grn_ctx *ctx, grn_ts_expr *expr,
