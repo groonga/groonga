@@ -4425,6 +4425,12 @@ grn_ts_expr_node_adjust(grn_ctx *ctx, grn_ts_expr_node *node,
  * grn_ts_expr_parser.
  */
 
+/*
+ * FIXME: A grn_ts_expr_parser object is designed to parse one expression
+ *        string. grn_ts_expr_parser_parse() should not be called more than
+ *        once.
+ */
+
 typedef enum {
   GRN_TS_EXPR_DUMMY_TOKEN,  /* No extra data. */
   GRN_TS_EXPR_START_TOKEN,  /* No extra data. */
@@ -4467,6 +4473,7 @@ typedef grn_ts_expr_token grn_ts_expr_bracket_token;
 
 typedef struct {
   grn_ts_expr *expr;                     /* Associated expression. */
+  grn_ts_buf str_buf;                    /* Buffer for a source string. */
   grn_ts_expr_token **tokens;            /* Tokens. */
   size_t n_tokens;                       /* Number of tokens. */
   size_t max_n_tokens;                   /* Max. number of tokens. */
@@ -4692,6 +4699,7 @@ grn_ts_expr_parser_init(grn_ctx *ctx, grn_ts_expr *expr,
                         grn_ts_expr_parser *parser) {
   memset(parser, 0, sizeof(*parser));
   parser->expr = expr;
+  grn_ts_buf_init(ctx, &parser->str_buf);
   parser->tokens = NULL;
   parser->dummy_tokens = NULL;
   parser->stack = NULL;
@@ -4717,6 +4725,7 @@ grn_ts_expr_parser_fin(grn_ctx *ctx, grn_ts_expr_parser *parser) {
     }
     GRN_FREE(parser->tokens);
   }
+  grn_ts_buf_fin(ctx, &parser->str_buf);
 }
 
 /* grn_ts_expr_parser_open() creates a parser. */
@@ -5445,7 +5454,15 @@ static grn_rc
 grn_ts_expr_parser_parse(grn_ctx *ctx, grn_ts_expr_parser *parser,
                          const char *str_ptr, size_t str_size) {
   grn_rc rc;
-  grn_ts_str str = { str_ptr, str_size };
+  grn_ts_str str;
+  rc = grn_ts_buf_reserve(ctx, &parser->str_buf, str_size + 1);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  grn_memcpy(parser->str_buf.ptr, str_ptr, str_size);
+  ((char *)parser->str_buf.ptr)[str_size] = '\0';
+  str.ptr = (const char *)parser->str_buf.ptr;
+  str.size = str_size;
   rc = grn_ts_expr_parser_tokenize(ctx, parser, str);
   if (rc != GRN_SUCCESS) {
     return rc;
