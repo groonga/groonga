@@ -218,6 +218,7 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
           if ((s->specs = grn_ja_create(ctx, specs_path, 65536, 0))) {
             grn_ctx_use(ctx, (grn_obj *)s);
             grn_db_init_builtin_types(ctx);
+            grn_obj_flush(ctx, (grn_obj *)s);
             GRN_API_RETURN((grn_obj *)s);
           } else {
             ERR(GRN_NO_MEMORY_AVAILABLE,
