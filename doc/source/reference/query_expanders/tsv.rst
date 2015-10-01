@@ -22,15 +22,15 @@ Install
 You need to register ``query_expanders/tsv`` as a plugin before you
 use ``QueryExpanderTSV``::
 
-  register query_expanders/tsv
+  plugin_register query_expanders/tsv
 
 Usage
 -----
 
-You just add ``--query_expansion QueryExpanderTSV`` parameter to
+You just add ``--query_expander QueryExpanderTSV`` parameter to
 ``select`` command::
 
-  select --query "QUERY" --query_expansion QueryExpanderTSV
+  select --query "QUERY" --query_expander QueryExpanderTSV
 
 If ``QUERY`` has registered synonyms, they are expanded. For example,
 there are the following synonyms.
@@ -50,20 +50,20 @@ The table means that ``synonym 1`` and ``synonym 2`` are synonyms of
 
 Here is an example of query expnasion that uses ``groonga`` as query::
 
-  select --query "groonga" --query_expansion QueryExpanderTSV
+  select --query "groonga" --query_expander QueryExpanderTSV
 
 The above command equals to the following command::
 
-  select --query "groonga OR Senna" --query_expansion QueryExpanderTSV
+  select --query "groonga OR Senna" --query_expander QueryExpanderTSV
 
 Here is another example of query expnasion that uses ``mroonga
 search`` as query::
 
-  select --query "mroonga search" --query_expansion QueryExpanderTSV
+  select --query "mroonga search" --query_expander QueryExpanderTSV
 
 The above command equals to the following command::
 
-  select --query "(mroonga OR (groonga MySQL)) search" --query_expansion QueryExpanderTSV
+  select --query "(mroonga OR (groonga MySQL)) search" --query_expander QueryExpanderTSV
 
 It is important that registered words (``groonga`` and ``mroonga``)
 are only expanded to synonyms and not registered words (``search``)
@@ -89,11 +89,11 @@ synonyms.
 
 Here is an example of using query expnasion as spelling correction::
 
-  select --query "gronga" --query_expansion QueryExpanderTSV
+  select --query "gronga" --query_expander QueryExpanderTSV
 
 The above command equals to the following command::
 
-  select --query "groonga" --query_expansion QueryExpanderTSV
+  select --query "groonga" --query_expander QueryExpanderTSV
 
 The former command has a typo in ``--query`` value but the latter
 command doesn't have any typos.
