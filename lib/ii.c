@@ -1821,7 +1821,7 @@ grn_p_decv(grn_ctx *ctx, uint8_t *data, uint32_t data_size, datavec *dv, uint32_
     }
     GRN_ASSERT(dp == dpe);
     if (dp != dpe) {
-      GRN_LOG(ctx, GRN_LOG_NOTICE, "data_size=%d, %" GRN_FMT_LLD,
+      GRN_LOG(ctx, GRN_LOG_DEBUG, "data_size=%d, %" GRN_FMT_LLD,
               data_size, (long long int)(dpe - dp));
     }
   }
@@ -2747,7 +2747,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
           if (tf) { GRN_TEXT_PUTC(ctx, &buf, ','); }
         }
         GRN_TEXT_PUTC(ctx, &buf, '\0');
-        GRN_LOG(ctx, GRN_LOG_NOTICE, "Posting:%s", GRN_TEXT_VALUE(&buf));
+        GRN_LOG(ctx, GRN_LOG_DEBUG, "Posting:%s", GRN_TEXT_VALUE(&buf));
       }
       GRN_OBJ_FIN(ctx, &buf);
     }
@@ -2756,7 +2756,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
       grn_id tid = bt->tid & GRN_ID_MAX;
       uint32_t *a = array_at(ctx, ii, tid);
       if (!a) {
-        GRN_LOG(ctx, GRN_LOG_NOTICE, "array_entry not found tid=%d", tid);
+        GRN_LOG(ctx, GRN_LOG_DEBUG, "array_entry not found tid=%d", tid);
         memset(bt, 0, sizeof(buffer_term));
         nterms_void++;
       } else {
@@ -2819,12 +2819,12 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
             char buf[BUF_SIZE], *bufp, *buf_end;
             buf_end = buf + BUF_SIZE;
 #undef BUF_SIZE
-            GRN_LOG(ctx, GRN_LOG_NOTICE,
+            GRN_LOG(ctx, GRN_LOG_DEBUG,
                     "cs(%d)+(%d)=(%d)<=(%" GRN_FMT_LLD ")+(%d)=(%" GRN_FMT_LLD ")",
                     sb->header.chunk_size, S_SEGMENT, sb->header.chunk_size + S_SEGMENT,
                     (long long int)(dcp - dc), encsize, (long long int)((dcp - dc) + encsize));
             for (j = 0; j < ii->n_elements; j++) {
-              GRN_LOG(ctx, GRN_LOG_NOTICE, "rdv[%d] data_size=%d, flags=%d",
+              GRN_LOG(ctx, GRN_LOG_DEBUG, "rdv[%d] data_size=%d, flags=%d",
                       j, rdv[j].data_size, rdv[j].flags);
               for (i = 0, bufp = buf; i < rdv[j].data_size;) {
                 bufp += grn_snprintf(bufp,
@@ -2833,14 +2833,14 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
                                      " %d", rdv[j].data[i]);
                 i++;
                 if (!(i % 32) || i == rdv[j].data_size) {
-                  GRN_LOG(ctx, GRN_LOG_NOTICE, "rdv[%d].data[%d]%s", j, i, buf);
+                  GRN_LOG(ctx, GRN_LOG_DEBUG, "rdv[%d].data[%d]%s", j, i, buf);
                   bufp = buf;
                 }
               }
             }
 
             for (j = 0; j < ii->n_elements; j++) {
-              GRN_LOG(ctx, GRN_LOG_NOTICE, "dv[%d] data_size=%d, flags=%d",
+              GRN_LOG(ctx, GRN_LOG_DEBUG, "dv[%d] data_size=%d, flags=%d",
                       j, dv[j].data_size, dv[j].flags);
               for (i = 0, bufp = buf; i < dv[j].data_size;) {
                 bufp += grn_snprintf(bufp,
@@ -2849,7 +2849,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
                                      " %d", dv[j].data[i]);
                 i++;
                 if (!(i % 32) || i == dv[j].data_size) {
-                  GRN_LOG(ctx, GRN_LOG_NOTICE, "dv[%d].data[%d]%s", j, i, buf);
+                  GRN_LOG(ctx, GRN_LOG_DEBUG, "dv[%d].data[%d]%s", j, i, buf);
                   bufp = buf;
                 }
               }
@@ -2872,7 +2872,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
                 GRN_B_ENC(cinfo[i].dgap, dcp);
               }
             }
-            GRN_LOG(ctx, GRN_LOG_NOTICE, "split (%d) encsize=%d", tid, encsize);
+            GRN_LOG(ctx, GRN_LOG_DEBUG, "split (%d) encsize=%d", tid, encsize);
             bt->tid |= CHUNK_SPLIT;
           } else {
             dcp += encsize;
@@ -3225,7 +3225,7 @@ term_split(grn_ctx *ctx, grn_obj *lexicon, buffer *sb, buffer *db0, buffer *db1)
     (*nt)++;
   }
   GRN_FREE(ts);
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "d0=%d d1=%d", db0->header.nterms, db1->header.nterms);
+  GRN_LOG(ctx, GRN_LOG_DEBUG, "d0=%d d1=%d", db0->header.nterms, db1->header.nterms);
   return GRN_SUCCESS;
 }
 
@@ -3433,7 +3433,7 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
                b->header.nterms * sizeof(buffer_term)) * 4 <
                b->header.chunk_size) */
             {
-              GRN_LOG(ctx, GRN_LOG_NOTICE,
+              GRN_LOG(ctx, GRN_LOG_DEBUG,
                       "nterms=%d chunk=%d total=%" GRN_FMT_INT64U,
                       b->header.nterms,
                       b->header.chunk_size,
@@ -3467,7 +3467,7 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
       if (!b->terms[offset].tid) { break; }
     }
     if (offset == b->header.nterms) {
-      GRN_LOG(ctx, GRN_LOG_NOTICE, "inconsistent buffer(%d)", lseg);
+      GRN_LOG(ctx, GRN_LOG_DEBUG, "inconsistent buffer(%d)", lseg);
       b->header.nterms_void = 0;
       b->header.nterms++;
       b->header.buffer_free -= size + sizeof(buffer_term);
@@ -3681,7 +3681,7 @@ grn_ii_close(grn_ctx *ctx, grn_ii *ii)
   {
     int i;
     for (i = 0; i < 32; i++) {
-      GRN_LOG(ctx, GRN_LOG_NOTICE, "new[%d]=%d free[%d]=%d",
+      GRN_LOG(ctx, GRN_LOG_DEBUG, "new[%d]=%d free[%d]=%d",
               i, new_histogram[i],
               i, free_histogram[i]);
     }
@@ -3769,7 +3769,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                b->header.nterms * sizeof(buffer_term)) * 4 <
                b->header.chunk_size)*/
             {
-              GRN_LOG(ctx, GRN_LOG_NOTICE,
+              GRN_LOG(ctx, GRN_LOG_DEBUG,
                       "nterms=%d chunk=%d total=%" GRN_FMT_INT64U,
                       b->header.nterms,
                       b->header.chunk_size,
@@ -4228,7 +4228,7 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
               }
               GRN_TEXT_PUTC(ctx, &buf, ')');
               GRN_TEXT_PUTC(ctx, &buf, '\0');
-              GRN_LOG(ctx, GRN_LOG_NOTICE, "posting(%d):%s", count, GRN_TEXT_VALUE(&buf));
+              GRN_LOG(ctx, GRN_LOG_DEBUG, "posting(%d):%s", count, GRN_TEXT_VALUE(&buf));
               GRN_OBJ_FIN(ctx, &buf);
             }
             */
@@ -4294,7 +4294,7 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
             uint32_t lrid = c->pb.rid, lsid = c->pb.sid; /* for check */
             buffer_rec *br = BUFFER_REC_AT(c->buf, c->nextb);
             if (buffer_is_reused(ctx, c->ii, c)) {
-              GRN_LOG(ctx, GRN_LOG_NOTICE, "buffer reused(%d,%d)", c->buffer_pseg, *c->ppseg);
+              GRN_LOG(ctx, GRN_LOG_DEBUG, "buffer reused(%d,%d)", c->buffer_pseg, *c->ppseg);
               // todo : rewind;
             }
             c->bp = NEXT_ADDR(br);
@@ -4410,7 +4410,7 @@ grn_ii_cursor_next_pos(grn_ctx *ctx, grn_ii_cursor *c)
           }
         } else if (c->post == &c->pb) {
           if (buffer_is_reused(ctx, c->ii, c)) {
-            GRN_LOG(ctx, GRN_LOG_NOTICE, "buffer reused(%d,%d)", c->buffer_pseg, *c->ppseg);
+            GRN_LOG(ctx, GRN_LOG_DEBUG, "buffer reused(%d,%d)", c->buffer_pseg, *c->ppseg);
             // todo : rewind;
           }
           if (c->pb.rest) {
@@ -6893,7 +6893,7 @@ grn_ii_cursor_next_all(grn_ctx *ctx, grn_ii_cursor *c)
               }
               GRN_TEXT_PUTC(ctx, &buf, ')');
               GRN_TEXT_PUTC(ctx, &buf, '\0');
-              GRN_LOG(ctx, GRN_LOG_NOTICE, "posting(%d):%s", count, GRN_TEXT_VALUE(&buf));
+              GRN_LOG(ctx, GRN_LOG_DEBUG, "posting(%d):%s", count, GRN_TEXT_VALUE(&buf));
               GRN_OBJ_FIN(ctx, &buf);
             }
             */
@@ -6950,7 +6950,7 @@ grn_ii_cursor_next_all(grn_ctx *ctx, grn_ii_cursor *c)
           uint32_t lrid = c->pb.rid, lsid = c->pb.sid; /* for check */
           buffer_rec *br = BUFFER_REC_AT(c->buf, c->nextb);
           if (buffer_is_reused(ctx, c->ii, c)) {
-            GRN_LOG(ctx, GRN_LOG_NOTICE, "buffer reused(%d,%d)", c->buffer_pseg, *c->ppseg);
+            GRN_LOG(ctx, GRN_LOG_DEBUG, "buffer reused(%d,%d)", c->buffer_pseg, *c->ppseg);
             // todo : rewind;
           }
           c->bp = NEXT_ADDR(br);
@@ -7415,7 +7415,7 @@ grn_ii_buffer_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   size_t encsize;
   uint8_t *outbuf;
   ii_buffer_block *block;
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "flushing:%d npostings:%" GRN_FMT_SIZE,
+  GRN_LOG(ctx, GRN_LOG_DEBUG, "flushing:%d npostings:%" GRN_FMT_SIZE,
           ii_buffer->nblocks, ii_buffer->block_pos);
   if (!(block = block_new(ctx, ii_buffer))) { return; }
   if (!(outbuf = allocate_outbuf(ctx, ii_buffer))) { return; }
@@ -7437,7 +7437,7 @@ grn_ii_buffer_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
          grn_table_size(ctx, ii_buffer->tmp_lexicon) *
          sizeof(ii_buffer_counter));
   grn_obj_close(ctx, ii_buffer->tmp_lexicon);
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "flushed: %d encsize:%" GRN_FMT_SIZE,
+  GRN_LOG(ctx, GRN_LOG_DEBUG, "flushed: %d encsize:%" GRN_FMT_SIZE,
           ii_buffer->nblocks, encsize);
   ii_buffer->tmp_lexicon = NULL;
   ii_buffer->nblocks++;
@@ -7687,7 +7687,7 @@ grn_ii_buffer_chunk_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   buffer_segment_update(ii_buffer->ii, ii_buffer->lseg, ii_buffer->dseg);
   ii_buffer->ii->header->total_chunk_size += ii_buffer->packed_len;
   ii_buffer->total_chunk_size += ii_buffer->packed_len;
-  GRN_LOG(ctx, GRN_LOG_NOTICE,
+  GRN_LOG(ctx, GRN_LOG_DEBUG,
           "nterms=%d chunk=%d total=%" GRN_FMT_INT64U "KB",
           ii_buffer->term_buffer->header.nterms,
           ii_buffer->term_buffer->header.chunk_size,
@@ -8084,7 +8084,7 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
     }
   }
 
-  GRN_LOG(ctx, GRN_LOG_NOTICE,
+  GRN_LOG(ctx, GRN_LOG_DEBUG,
           "nblocks=%d, update_buffer_size=%" GRN_FMT_INT64U,
           ii_buffer->nblocks, ii_buffer->update_buffer_size);
 
@@ -8132,7 +8132,7 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
     }
   }
   datavec_fin(ctx, ii_buffer->data_vectors);
-  GRN_LOG(ctx, GRN_LOG_NOTICE,
+  GRN_LOG(ctx, GRN_LOG_DEBUG,
           "tmpfile_size:%" GRN_FMT_INT64D " > total_chunk_size:%" GRN_FMT_SIZE,
           ii_buffer->filepos, ii_buffer->total_chunk_size);
   grn_close(ii_buffer->tmpfd);
