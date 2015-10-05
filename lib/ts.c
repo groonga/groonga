@@ -276,7 +276,8 @@ grn_ts_buf_reserve(grn_ctx *ctx, grn_ts_buf *buf, size_t new_size) {
   }
   new_ptr = GRN_REALLOC(buf->ptr, enough_size);
   if (!new_ptr) {
-    return GRN_NO_MEMORY_AVAILABLE;
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_REALLOC failed: %zu", enough_size);
   }
   buf->ptr = new_ptr;
   buf->size = enough_size;
@@ -300,7 +301,8 @@ grn_ts_buf_resize(grn_ctx *ctx, grn_ts_buf *buf, size_t new_size) {
   }
   new_ptr = GRN_REALLOC(buf->ptr, new_size);
   if (!new_ptr) {
-    return GRN_NO_MEMORY_AVAILABLE;
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_REALLOC failed: %zu", new_size);
   }
   buf->ptr = new_ptr;
   buf->size = new_size;
@@ -5153,7 +5155,8 @@ grn_ts_expr_parser_reserve_tokens(grn_ctx *ctx, grn_ts_expr_parser *parser) {
   n_bytes = sizeof(grn_ts_expr_token *) * new_max_n_tokens;
   new_tokens = (grn_ts_expr_token **)GRN_REALLOC(parser->tokens, n_bytes);
   if (!new_tokens) {
-    return GRN_NO_MEMORY_AVAILABLE;
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_REALLOC failed: %zu", n_bytes);
   }
   for (i = parser->n_tokens; i < new_max_n_tokens; i++) {
     new_tokens[i] = NULL;
@@ -5680,7 +5683,8 @@ grn_ts_expr_reserve_nodes(grn_ctx *ctx, grn_ts_expr *expr) {
   n_bytes = sizeof(grn_ts_expr_node *) * new_max_n_nodes;
   new_nodes = (grn_ts_expr_node **)GRN_REALLOC(expr->nodes, n_bytes);
   if (!new_nodes) {
-    return GRN_NO_MEMORY_AVAILABLE;
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_REALLOC failed: %zu", n_bytes);
   }
   for (i = expr->n_nodes; i < new_max_n_nodes; i++) {
     new_nodes[i] = NULL;
@@ -5799,7 +5803,8 @@ grn_ts_expr_reserve_stack(grn_ctx *ctx, grn_ts_expr *expr) {
   n_bytes = sizeof(grn_ts_expr_node *) * new_size;
   new_stack = GRN_REALLOC(expr->stack, n_bytes);
   if (!new_stack) {
-    return GRN_NO_MEMORY_AVAILABLE;
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_REALLOC failed: %zu", n_bytes);
   }
   for (i = expr->stack_size; i < new_size; i++) {
     new_stack[i] = NULL;
@@ -6326,7 +6331,8 @@ grn_ts_expr_reserve_bridges(grn_ctx *ctx, grn_ts_expr *expr) {
   n_bytes = sizeof(grn_ts_expr_bridge) * new_max_n_bridges;
   new_bridges = (grn_ts_expr_bridge *)GRN_REALLOC(expr->bridges, n_bytes);
   if (!new_bridges) {
-    return GRN_NO_MEMORY_AVAILABLE;
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_REALLOC failed: %zu", n_bytes);
   }
   expr->bridges = new_bridges;
   expr->max_n_bridges = new_max_n_bridges;
@@ -6994,7 +7000,9 @@ grn_ts_select_filter(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
         size_t n_bytes = sizeof(grn_ts_record) * new_size;
         grn_ts_record *new_buf = (grn_ts_record *)GRN_REALLOC(buf, n_bytes);
         if (!new_buf) {
-          rc = GRN_NO_MEMORY_AVAILABLE;
+          GRN_TS_ERR(GRN_NO_MEMORY_AVAILABLE,
+                     "GRN_REALLOC failed: %zu", n_bytes);
+          rc = ctx->rc;
           break;
         }
         buf = new_buf;
