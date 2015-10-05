@@ -1419,7 +1419,7 @@ grn_ts_ja_get_value(grn_ctx *ctx, grn_ja *ja, grn_ts_id id,
   rc = grn_ts_buf_write(ctx, buf, ptr, size);
   grn_ja_unref(ctx, &iw);
   if (rc != GRN_SUCCESS) {
-    GRN_TS_ERR_RETURN(rc, "grn_ts_buf_write failed: %p, %u", ptr, size);
+    return rc;
   }
   if (value_size) {
     *value_size = size;
@@ -1924,7 +1924,7 @@ grn_ts_expr_key_node_open(grn_ctx *ctx, grn_obj *table,
   if (rc != GRN_SUCCESS) {
     grn_ts_expr_key_node_fin(ctx, new_node);
     GRN_FREE(new_node);
-    GRN_TS_ERR_RETURN(rc, "grn_ts_obj_increment_ref_count failed");
+    return rc;
   }
   new_node->data_kind = grn_ts_data_type_to_kind(table->header.domain);
   new_node->data_type = table->header.domain;
@@ -1947,8 +1947,7 @@ grn_ts_expr_key_node_close(grn_ctx *ctx, grn_ts_expr_key_node *node) {
       rc = grn_ts_ ## table ## _get_ ## kind ## _key(ctx, table, in[i].id,\
                                                      &out_ptr[i]);\
       if (rc != GRN_SUCCESS) {\
-        GRN_TS_ERR_RETURN(rc, "grn_ts_" #table "_get_" #kind "_key failed: "\
-                          "%u", in[i].id);\
+        return rc;\
       }\
     }\
     return GRN_SUCCESS;\
@@ -1960,8 +1959,7 @@ grn_ts_expr_key_node_close(grn_ctx *ctx, grn_ts_expr_key_node *node) {
       rc = grn_ts_ ## table ## _get_ ## type ## _key(ctx, table, in[i].id,\
                                                      &out_ptr[i]);\
       if (rc != GRN_SUCCESS) {\
-        GRN_TS_ERR_RETURN(rc, "grn_ts_" #table "_get_" #type "_key failed: "\
-                          "%u", in[i].id);\
+        return rc;\
       }\
     }\
     return GRN_SUCCESS;\
@@ -1975,13 +1973,11 @@ grn_ts_expr_key_node_close(grn_ctx *ctx, grn_ts_expr_key_node *node) {
       grn_ts_text key;\
       rc = grn_ts_ ## table ## _get_text_key(ctx, table, in[i].id, &key);\
       if (rc != GRN_SUCCESS) {\
-        GRN_TS_ERR_RETURN(rc, "grn_ts_" #table "_get_text_key failed: %u",\
-                          in[i].id);\
+        return rc;\
       }\
       rc = grn_ts_buf_write(ctx, &node->buf, key.ptr, key.size);\
       if (rc != GRN_SUCCESS) {\
-        GRN_TS_ERR_RETURN(rc, "grn_ts_buf_write failed: %p, %zu",\
-                          key.ptr, key.size);\
+        return rc;\
       }\
       out_ptr[i].size = key.size;\
     }\
@@ -1999,8 +1995,7 @@ grn_ts_expr_key_node_close(grn_ctx *ctx, grn_ts_expr_key_node *node) {
       rc = grn_ts_ ## table ## _get_ref_key(ctx, table, in[i].id,\
                                             &out_ptr[i]);\
       if (rc != GRN_SUCCESS) {\
-        GRN_TS_ERR_RETURN(rc, "grn_ts_" #table "_get_ref_key failed: %u",\
-                          in[i].id);\
+        return rc;\
       }\
       out_ptr[i].score = in[i].score;\
     }\
@@ -2104,8 +2099,7 @@ grn_ts_expr_key_node_filter(grn_ctx *ctx, grn_ts_expr_key_node *node,
       for (i = 0, count = 0; i < n_in; i++) {
         grn_rc rc = grn_ts_hash_get_bool_key(ctx, hash, in[i].id, &key);
         if (rc != GRN_SUCCESS) {
-          GRN_TS_ERR_RETURN(rc, "grn_ts_hash_get_bool_key failed: %u",
-                            in[i].id);
+          return rc;
         }
         if (key) {
           out[count++] = in[i];
@@ -2119,8 +2113,7 @@ grn_ts_expr_key_node_filter(grn_ctx *ctx, grn_ts_expr_key_node *node,
       for (i = 0, count = 0; i < n_in; i++) {
         grn_rc rc = grn_ts_pat_get_bool_key(ctx, pat, in[i].id, &key);
         if (rc != GRN_SUCCESS) {
-          GRN_TS_ERR_RETURN(rc, "grn_ts_hash_get_bool_key failed: %u",
-                            in[i].id);
+          return rc;
         }
         if (key) {
           out[count++] = in[i];
@@ -2149,8 +2142,7 @@ grn_ts_expr_key_node_adjust(grn_ctx *ctx, grn_ts_expr_key_node *node,
       for (i = 0; i < n_io; i++) {
         grn_rc rc = grn_ts_hash_get_float_key(ctx, hash, io[i].id, &key);
         if (rc != GRN_SUCCESS) {
-          GRN_TS_ERR_RETURN(rc, "grn_ts_hash_get_float_key failed: %u",
-                            io[i].id);
+          return rc;
         }
         io[i].score = (grn_ts_score)key;
       }
@@ -2161,8 +2153,7 @@ grn_ts_expr_key_node_adjust(grn_ctx *ctx, grn_ts_expr_key_node *node,
       for (i = 0; i < n_io; i++) {
         grn_rc rc = grn_ts_pat_get_float_key(ctx, pat, io[i].id, &key);
         if (rc != GRN_SUCCESS) {
-          GRN_TS_ERR_RETURN(rc, "grn_ts_hash_get_float_key failed: %u",
-                            io[i].id);
+          return rc;
         }
         io[i].score = (grn_ts_score)key;
       }
@@ -2222,7 +2213,7 @@ grn_ts_expr_value_node_open(grn_ctx *ctx, grn_obj *table,
   rc = grn_ts_obj_increment_ref_count(ctx, table);
   if (rc != GRN_SUCCESS) {
     GRN_FREE(new_node);
-    GRN_TS_ERR_RETURN(rc, "grn_ts_obj_increment_ref_count failed");
+    return rc;
   }
   new_node->data_kind = grn_ts_data_type_to_kind(DB_OBJ(table)->range);
   new_node->data_type = DB_OBJ(table)->range;
@@ -2394,8 +2385,7 @@ grn_ts_expr_const_node_set_scalar(grn_ctx *ctx, grn_ts_expr_const_node *node,
       grn_rc rc = grn_ts_buf_write(ctx, &node->text_buf,
                                    text_value.ptr, text_value.size);
       if (rc != GRN_SUCCESS) {
-        GRN_TS_ERR_RETURN(rc, "grn_ts_buf_write failed: %p, %zu",
-                          text_value.ptr, text_value.size);
+        return rc;
       }
       node->content.as_text.ptr = (const char *)node->text_buf.ptr;
       node->content.as_text.size = text_value.size;
@@ -2420,8 +2410,7 @@ grn_ts_expr_const_node_set_scalar(grn_ctx *ctx, grn_ts_expr_const_node *node,
     n_bytes = sizeof(grn_ts_ ## kind) * vector.size;\
     rc = grn_ts_buf_write(ctx, &node->vector_buf, vector.ptr, n_bytes);\
     if (rc != GRN_SUCCESS) {\
-      GRN_TS_ERR_RETURN(rc, "grn_ts_buf_write failed: %p, %zu",\
-                        vector.ptr, n_bytes);\
+      return rc;\
     }\
     buf_ptr = (const grn_ts_ ## kind *)node->vector_buf.ptr;\
     node->content.as_ ## kind ## _vector.ptr = buf_ptr;\
@@ -2446,7 +2435,7 @@ grn_ts_expr_const_node_set_vector(grn_ctx *ctx, grn_ts_expr_const_node *node,
       n_bytes = sizeof(grn_ts_text) * vector.size;
       rc = grn_ts_buf_resize(ctx, &node->vector_buf, n_bytes);
       if (rc != GRN_SUCCESS) {
-        GRN_TS_ERR_RETURN(rc, "grn_ts_buf_resize failed: %zu", n_bytes);
+        return rc;
       }
       vector_buf = (grn_ts_text *)node->vector_buf.ptr;
       total_size = 0;
@@ -2455,7 +2444,7 @@ grn_ts_expr_const_node_set_vector(grn_ctx *ctx, grn_ts_expr_const_node *node,
       }
       rc = grn_ts_buf_resize(ctx, &node->text_buf, total_size);
       if (rc != GRN_SUCCESS) {
-        GRN_TS_ERR_RETURN(rc, "grn_ts_buf_resize failed: %zu", total_size);
+        return rc;
       }
       text_buf = (char *)node->text_buf.ptr;
       offset = 0;
@@ -2640,7 +2629,7 @@ grn_ts_expr_column_node_open(grn_ctx *ctx, grn_obj *column,
   if (rc != GRN_SUCCESS) {
     grn_ts_expr_column_node_fin(ctx, new_node);
     GRN_FREE(new_node);
-    GRN_TS_ERR_RETURN(rc, "grn_ts_obj_increment_ref_count failed");
+    return rc;
   }
   new_node->column = column;
   *node = (grn_ts_expr_node *)new_node;
@@ -2797,7 +2786,7 @@ grn_ts_expr_column_node_evaluate_text_vector(grn_ctx *ctx,
   n_bytes = sizeof(grn_ts_text) * total_n_values;
   rc = grn_ts_buf_reserve(ctx, &node->buf, n_bytes);
   if (rc != GRN_SUCCESS) {
-    GRN_TS_ERR_RETURN(rc, "grn_ts_buf_reserve failed: %zu", n_bytes);
+    return rc;
   }
   /* Decode values and compose the result. */
   buf_ptr = (char *)node->body_buf.ptr;
@@ -2851,7 +2840,7 @@ grn_ts_expr_column_node_evaluate_ref_vector(grn_ctx *ctx,
   n_bytes = sizeof(grn_ts_ref) * offset;
   rc = grn_ts_buf_reserve(ctx, &node->buf, n_bytes);
   if (rc != GRN_SUCCESS) {
-    GRN_TS_ERR_RETURN(rc, "grn_ts_buf_reserve failed: %zu", n_bytes);
+    return rc;
   }
   /* Compose the result. */
   buf_ptr = (grn_ts_id *)node->body_buf.ptr;
@@ -3111,7 +3100,8 @@ grn_ts_op_plus_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
           return GRN_SUCCESS;
         }
         default: {
-          return GRN_INVALID_ARGUMENT;
+          GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d",
+                            node->args[1]->data_kind);
         }
       }
     }
@@ -3133,7 +3123,8 @@ grn_ts_op_plus_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
           return GRN_SUCCESS;
         }
         default: {
-          return GRN_INVALID_ARGUMENT;
+          GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d",
+                            node->args[1]->data_kind);
         }
       }
     }
@@ -3147,12 +3138,14 @@ grn_ts_op_plus_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
           return GRN_SUCCESS;
         }
         default: {
-          return GRN_INVALID_ARGUMENT;
+          GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d",
+                            node->args[1]->data_kind);
         }
       }
     }
     default: {
-      return GRN_INVALID_ARGUMENT;
+      GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d",
+                        node->args[0]->data_kind);
     }
   }
 }
@@ -3162,22 +3155,24 @@ static grn_rc
 grn_ts_op_minus_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
   switch (node->args[0]->data_kind) {
     case GRN_TS_INT: {
-      if (node->args[1]->data_kind == GRN_TS_INT) {
-        /* Int - Int = Int. */
-        node->data_kind = GRN_TS_INT;
-        node->data_type = GRN_DB_INT64;
-        return GRN_SUCCESS;
+      if (node->args[1]->data_kind != GRN_TS_INT) {
+        GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d",
+                          node->args[1]->data_kind);
       }
-      return GRN_INVALID_ARGUMENT;
+      /* Int - Int = Int. */
+      node->data_kind = GRN_TS_INT;
+      node->data_type = GRN_DB_INT64;
+      return GRN_SUCCESS;
     }
     case GRN_TS_FLOAT: {
-      if (node->args[1]->data_kind == GRN_TS_FLOAT) {
-        /* Float - Float = Float. */
-        node->data_kind = GRN_TS_FLOAT;
-        node->data_type = GRN_DB_FLOAT;
-        return GRN_SUCCESS;
+      if (node->args[1]->data_kind != GRN_TS_FLOAT) {
+        GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d",
+                          node->args[1]->data_kind);
       }
-      return GRN_INVALID_ARGUMENT;
+      /* Float - Float = Float. */
+      node->data_kind = GRN_TS_FLOAT;
+      node->data_type = GRN_DB_FLOAT;
+      return GRN_SUCCESS;
     }
     case GRN_TS_TIME: {
       switch (node->args[1]->data_kind) {
@@ -3195,12 +3190,14 @@ grn_ts_op_minus_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
           return GRN_SUCCESS;
         }
         default: {
-          return GRN_INVALID_ARGUMENT;
+          GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d",
+                            node->args[1]->data_kind);
         }
       }
     }
     default: {
-      return GRN_INVALID_ARGUMENT;
+      GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d",
+                        node->args[0]->data_kind);
     }
   }
 }
@@ -3212,13 +3209,15 @@ grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
     case GRN_TS_OP_LOGICAL_AND:
     case GRN_TS_OP_LOGICAL_OR: {
       if (node->args[1]->data_kind != GRN_TS_BOOL) {
-        return GRN_INVALID_ARGUMENT;
+        GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d",
+                          node->args[1]->data_kind);
       }
       /* Fall through. */
     }
     case GRN_TS_OP_LOGICAL_NOT: {
       if (node->args[0]->data_kind != GRN_TS_BOOL) {
-        return GRN_INVALID_ARGUMENT;
+        GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d",
+                          node->args[0]->data_kind);
       }
       node->data_kind = GRN_TS_BOOL;
       node->data_type = GRN_DB_BOOL;
@@ -3228,13 +3227,15 @@ grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
     case GRN_TS_OP_NOT_EQUAL: {
       grn_ts_data_kind scalar_data_kind;
       if (node->args[0]->data_kind != node->args[1]->data_kind) {
-        return GRN_INVALID_ARGUMENT;
+        GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "data kind conflict: %d != %d",
+                          node->args[0]->data_kind, node->args[1]->data_kind);
       }
       scalar_data_kind = node->args[0]->data_kind & ~GRN_TS_VECTOR_FLAG;
       if (((scalar_data_kind == GRN_TS_REF) ||
            (scalar_data_kind == GRN_TS_GEO_POINT)) &&
           (node->args[0]->data_type != node->args[1]->data_type)) {
-        return GRN_INVALID_ARGUMENT;
+        GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "data type conflict: %d != %d",
+                          node->args[0]->data_type, node->args[1]->data_type);
       }
       node->data_kind = GRN_TS_BOOL;
       node->data_type = GRN_DB_BOOL;
@@ -3245,7 +3246,8 @@ grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
     case GRN_TS_OP_GREATER:
     case GRN_TS_OP_GREATER_EQUAL: {
       if (node->args[0]->data_kind != node->args[1]->data_kind) {
-        return GRN_INVALID_ARGUMENT;
+        GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "data kind conflict: %d != %d",
+                          node->args[0]->data_kind, node->args[1]->data_kind);
       }
       switch (node->args[0]->data_kind) {
         case GRN_TS_INT:
@@ -3261,7 +3263,8 @@ grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
           return GRN_SUCCESS;
         }
         default: {
-          return GRN_INVALID_ARGUMENT;
+          GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d",
+                            node->args[0]->data_kind);
         }
       }
       case GRN_TS_OP_PLUS: {
@@ -3274,7 +3277,10 @@ grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
       case GRN_TS_OP_DIVISION:
       case GRN_TS_OP_MODULUS: {
         if (node->args[0]->data_kind != node->args[1]->data_kind) {
-          return GRN_INVALID_ARGUMENT;
+          GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT,
+                            "data kind conflict: %d != %d",
+                            node->args[0]->data_kind,
+                            node->args[1]->data_kind);
         }
         switch (node->args[0]->data_kind) {
           case GRN_TS_INT:
@@ -3284,13 +3290,15 @@ grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
             return GRN_SUCCESS;
           }
           default: {
-            return GRN_INVALID_ARGUMENT;
+            GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d",
+                              node->args[0]->data_kind);
           }
         }
       }
     }
     default: {
-      return GRN_INVALID_ARGUMENT;
+      GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid operator: %d",
+                        node->op_type);
     }
   }
 }
@@ -3316,10 +3324,14 @@ grn_ts_expr_op_node_open(grn_ctx *ctx, grn_ts_op_type op_type,
 
   /* Check arguments. */
   rc = grn_ts_expr_op_node_check_args(ctx, new_node);
-  if ((rc == GRN_SUCCESS) &&
-      ((new_node->data_kind == GRN_TS_VOID) ||
-       (new_node->data_type == GRN_DB_VOID))) {
-    rc = GRN_UNKNOWN_ERROR;
+  if (rc == GRN_SUCCESS) {
+    if (new_node->data_kind == GRN_TS_VOID) {
+      GRN_TS_ERR(GRN_OBJECT_CORRUPT, "invalid data kind: %d", GRN_TS_VOID);
+      rc = ctx->rc;
+    } else if (new_node->data_type == GRN_DB_VOID) {
+      GRN_TS_ERR(GRN_OBJECT_CORRUPT, "invalid data type: %d", GRN_DB_VOID);
+      rc = ctx->rc;
+    }
   }
   if (rc != GRN_SUCCESS) {
     grn_ts_expr_op_node_fin(ctx, new_node);
