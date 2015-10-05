@@ -5149,6 +5149,7 @@ grn_ts_expr_parser_tokenize(grn_ctx *ctx, grn_ts_expr_parser *parser,
   grn_ts_str rest = str;
   const char *end = str.ptr + str.size;
   grn_ts_expr_token *token = NULL;
+  GRN_TS_DEBUG("str = \"%.*s\"", (int)str.size, str.ptr);
   do {
     grn_rc rc = grn_ts_expr_parser_reserve_tokens(ctx, parser);
     if (rc != GRN_SUCCESS) {
@@ -5157,6 +5158,10 @@ grn_ts_expr_parser_tokenize(grn_ctx *ctx, grn_ts_expr_parser *parser,
     rc = grn_ts_expr_parser_tokenize_next(ctx, parser, rest, &token);
     if (rc != GRN_SUCCESS) {
       return rc;
+    }
+    if ((token->type != GRN_TS_EXPR_START_TOKEN) &&
+        (token->type != GRN_TS_EXPR_END_TOKEN)) {
+      GRN_TS_DEBUG("token = \"%.*s\"", (int)token->src.size, token->src.ptr);
     }
     parser->tokens[parser->n_tokens++] = token;
     rest.ptr = token->src.ptr + token->src.size;
@@ -5260,6 +5265,7 @@ grn_ts_expr_parser_apply(grn_ctx *ctx, grn_ts_expr_parser *parser,
 
     /* Replace the operator and argument tokens with a dummy token. */
     dummy_token = &parser->dummy_tokens[parser->n_dummy_tokens++];
+    GRN_TS_DEBUG("dummy token: \"%.*s\"", (int)src.size, src.ptr);
     grn_ts_expr_dummy_token_init(ctx, dummy_token, src);
     depth -= n_args + 1;
     stack[depth++] = dummy_token;
@@ -5345,6 +5351,7 @@ grn_ts_expr_parser_analyze_bracket(grn_ctx *ctx, grn_ts_expr_parser *parser,
         src.ptr = ex_ex_token->src.ptr;
         src.size = (token->src.ptr + token->src.size) - src.ptr;
         dummy_token = &parser->dummy_tokens[parser->n_dummy_tokens++];
+        GRN_TS_DEBUG("dummy token: \"%.*s\"", (int)src.size, src.ptr);
         grn_ts_expr_dummy_token_init(ctx, dummy_token, src);
         parser->stack[depth - 2] = dummy_token;
         parser->stack_depth--;
