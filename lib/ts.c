@@ -3515,7 +3515,8 @@ grn_ts_op_logical_or_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     GRN_TS_OP_CHK_EVALUATE_VECTOR_CASE(type, GEO_POINT, geo_point)\
     GRN_TS_OP_CHK_EVALUATE_VECTOR_CASE(type, REF, ref)\
     default: {\
-      return GRN_INVALID_ARGUMENT;\
+      GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "invalid data kind: %d",\
+                        node->args[0]->data_kind);\
     }\
   }
 /* grn_ts_op_equal_evaluate() evaluates an operator. */
@@ -3570,7 +3571,8 @@ grn_ts_op_not_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     GRN_TS_OP_CMP_EVALUATE_VECTOR_CASE(type, TIME, time)\
     GRN_TS_OP_CMP_EVALUATE_VECTOR_CASE(type, TEXT, text)\
     default: {\
-      return GRN_INVALID_ARGUMENT;\
+      GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "invalid data kind: %d",\
+                        node->args[0]->data_kind);\
     }\
   }
 /* grn_ts_op_less_evaluate() evaluates an operator. */
@@ -3664,12 +3666,15 @@ grn_ts_op_plus_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
         GRN_TS_OP_ARITH_EVALUATE_TIME_CASE(plus, INT, time, int)
         GRN_TS_OP_ARITH_EVALUATE_TIME_CASE(plus, FLOAT, time, float)
         default: {
-          return GRN_INVALID_ARGUMENT;
+          GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "data kind conflict: %d, %d",
+                            node->args[0]->data_kind,
+                            node->args[1]->data_kind);
         }
       }
     }
     default: {
-      return GRN_INVALID_ARGUMENT;
+      GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "invalid data kind: %d",
+                        node->args[0]->data_kind);
     }
   }
 }
@@ -3709,12 +3714,15 @@ grn_ts_op_minus_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
           return GRN_SUCCESS;
         }
         default: {
-          return GRN_INVALID_ARGUMENT;
+          GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "data kind conflict: %d, %d",
+                            node->args[0]->data_kind,
+                            node->args[1]->data_kind);
         }
       }
     }
     default: {
-      return GRN_INVALID_ARGUMENT;
+      GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "invalid data kind: %d",
+                        node->args[0]->data_kind);
     }
   }
 }
@@ -3729,7 +3737,8 @@ grn_ts_op_multiplication_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     GRN_TS_OP_ARITH_EVALUATE_CASE(multiplication, INT, int)
     GRN_TS_OP_ARITH_EVALUATE_CASE(multiplication, FLOAT, float)
     default: {
-      return GRN_INVALID_ARGUMENT;
+      GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "invalid data kind: %d",
+                        node->data_kind);
     }
   }
 }
@@ -3751,9 +3760,13 @@ grn_ts_op_division_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
         if (rc == GRN_SUCCESS) {
           grn_ts_int *buf_ptr = (grn_ts_int *)node->bufs[0].ptr;
           for (i = 0; i < n_in; i++) {
-            if (!buf_ptr[i] ||
-                ((out_ptr[i] == INT64_MIN) && (buf_ptr[i] == -1))) {
-              rc = GRN_INVALID_ARGUMENT;
+            if (!buf_ptr[i]) {
+              GRN_TS_ERR(GRN_INVALID_ARGUMENT, "integer division by zero");
+              rc = ctx->rc;
+              break;
+            } else if ((out_ptr[i] == INT64_MIN) && (buf_ptr[i] == -1)) {
+              GRN_TS_ERR(GRN_INVALID_ARGUMENT, "integer division overflow");
+              rc = ctx->rc;
               break;
             }
             out_ptr[i] = grn_ts_op_division_int(out_ptr[i], buf_ptr[i]);
@@ -3764,7 +3777,8 @@ grn_ts_op_division_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     }
     GRN_TS_OP_ARITH_EVALUATE_CASE(division, FLOAT, float)
     default: {
-      return GRN_INVALID_ARGUMENT;
+      GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "invalid data kind: %d",
+                        node->data_kind);
     }
   }
 }
@@ -3786,9 +3800,13 @@ grn_ts_op_modulus_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
         if (rc == GRN_SUCCESS) {
           grn_ts_int *buf_ptr = (grn_ts_int *)node->bufs[0].ptr;
           for (i = 0; i < n_in; i++) {
-            if (!buf_ptr[i] ||
-                ((out_ptr[i] == INT64_MIN) && (buf_ptr[i] == -1))) {
-              rc = GRN_INVALID_ARGUMENT;
+            if (!buf_ptr[i]) {
+              GRN_TS_ERR(GRN_INVALID_ARGUMENT, "integer division by zero");
+              rc = ctx->rc;
+              break;
+            } else if ((out_ptr[i] == INT64_MIN) && (buf_ptr[i] == -1)) {
+              GRN_TS_ERR(GRN_INVALID_ARGUMENT, "integer division overflow");
+              rc = ctx->rc;
               break;
             }
             out_ptr[i] = grn_ts_op_modulus_int(out_ptr[i], buf_ptr[i]);
@@ -3799,7 +3817,8 @@ grn_ts_op_modulus_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     }
     GRN_TS_OP_ARITH_EVALUATE_CASE(modulus, FLOAT, float)
     default: {
-      return GRN_INVALID_ARGUMENT;
+      GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "invalid data kind: %d",
+                        node->data_kind);
     }
   }
 }
@@ -3855,7 +3874,8 @@ grn_ts_expr_op_node_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     }
     // TODO: Add operators.
     default: {
-      return GRN_OPERATION_NOT_SUPPORTED;
+      GRN_TS_ERR_RETURN(GRN_OPERATION_NOT_SUPPORTED,
+                        "operator not supported: %d", node->op_type);
     }
   }
 }
@@ -3988,7 +4008,8 @@ grn_ts_op_logical_or_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
     GRN_TS_OP_CHK_FILTER_VECTOR_CASE(type, GEO_POINT, geo_point)\
     GRN_TS_OP_CHK_FILTER_VECTOR_CASE(type, REF, ref)\
     default: {\
-      return GRN_INVALID_ARGUMENT;\
+      GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "invalid data kind: %d",\
+                        node->args[0]->data_kind);\
     }\
   }
 /* grn_ts_op_equal_filter() filters records. */
@@ -4045,7 +4066,8 @@ grn_ts_op_not_equal_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
     GRN_TS_OP_CMP_FILTER_VECTOR_CASE(type, TIME, time)\
     GRN_TS_OP_CMP_FILTER_VECTOR_CASE(type, TEXT, text)\
     default: {\
-      return GRN_INVALID_ARGUMENT;\
+      GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "invalid data kind: %d",\
+                        node->args[0]->data_kind);\
     }\
   }
 /* grn_ts_op_less_filter() filters records. */
@@ -4118,7 +4140,8 @@ grn_ts_expr_op_node_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
     }
     // TODO: Add operators.
     default: {
-      return GRN_OPERATION_NOT_SUPPORTED;
+      GRN_TS_ERR_RETURN(GRN_OPERATION_NOT_SUPPORTED,
+                        "operator not supported: %d", node->op_type);
     }
   }
 }
@@ -4200,7 +4223,8 @@ grn_ts_expr_op_node_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
     }
     // TODO: Add operators.
     default: {
-      return GRN_OPERATION_NOT_SUPPORTED;
+      GRN_TS_ERR_RETURN(GRN_OPERATION_NOT_SUPPORTED,
+                        "operator not supported: %d", node->op_type);
     }
   }
 }
@@ -4379,7 +4403,8 @@ grn_ts_expr_node_evaluate(grn_ctx *ctx, grn_ts_expr_node *node,
     GRN_TS_EXPR_NODE_EVALUATE_CASE(OP, op)
     GRN_TS_EXPR_NODE_EVALUATE_CASE(BRIDGE, bridge)
     default: {
-      return GRN_INVALID_ARGUMENT;
+      GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT,
+                        "invalid node type: %d", node->type);
     }
   }
 }
@@ -4416,7 +4441,8 @@ grn_ts_expr_node_evaluate_to_buf(grn_ctx *ctx, grn_ts_expr_node *node,
     GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_VECTOR_CASE(GEO_POINT, geo_point)
     GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_VECTOR_CASE(REF, ref)
     default: {
-      return GRN_INVALID_ARGUMENT;
+      GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT,
+                        "invalid data kind: %d", node->data_kind);
     }
   }
 }
@@ -4436,7 +4462,8 @@ grn_ts_expr_node_filter(grn_ctx *ctx, grn_ts_expr_node *node,
                         grn_ts_record *in, size_t n_in,
                         grn_ts_record *out, size_t *n_out) {
   if (node->data_kind != GRN_TS_BOOL) {
-    return GRN_INVALID_ARGUMENT;
+    GRN_TS_ERR_RETURN(GRN_OPERATION_NOT_SUPPORTED,
+                      "invalid data kind: %d", node->data_kind);
   }
   switch (node->type) {
     GRN_TS_EXPR_NODE_FILTER_CASE(KEY, key)
@@ -4446,7 +4473,8 @@ grn_ts_expr_node_filter(grn_ctx *ctx, grn_ts_expr_node *node,
     GRN_TS_EXPR_NODE_FILTER_CASE(OP, op)
     GRN_TS_EXPR_NODE_FILTER_CASE(BRIDGE, bridge)
     default: {
-      return GRN_INVALID_ARGUMENT;
+      GRN_TS_ERR_RETURN(GRN_OPERATION_NOT_SUPPORTED,
+                        "invalid node type: %d", node->type);
     }
   }
 }
@@ -4463,7 +4491,8 @@ static grn_rc
 grn_ts_expr_node_adjust(grn_ctx *ctx, grn_ts_expr_node *node,
                         grn_ts_record *io, size_t n_io) {
   if (node->data_kind != GRN_TS_FLOAT) {
-    return GRN_INVALID_ARGUMENT;
+    GRN_TS_ERR_RETURN(GRN_OPERATION_NOT_SUPPORTED,
+                      "invalid data kind: %d", node->data_kind);
   }
   switch (node->type) {
     GRN_TS_EXPR_NODE_ADJUST_CASE(SCORE, score)
@@ -4474,7 +4503,8 @@ grn_ts_expr_node_adjust(grn_ctx *ctx, grn_ts_expr_node *node,
     GRN_TS_EXPR_NODE_ADJUST_CASE(OP, op)
     GRN_TS_EXPR_NODE_ADJUST_CASE(BRIDGE, bridge)
     default: {
-      return GRN_INVALID_ARGUMENT;
+      GRN_TS_ERR_RETURN(GRN_OPERATION_NOT_SUPPORTED,
+                        "invalid node type: %d", node->type);
     }
   }
 }
