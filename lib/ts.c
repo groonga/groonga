@@ -7041,6 +7041,14 @@ grn_ts_select(grn_ctx *ctx, grn_obj *table,
   if (records) {
     GRN_FREE(records);
   }
+  if (rc != GRN_SUCCESS) {
+    GRN_BULK_REWIND(ctx->impl->outbuf);
+    if ((ctx->rc == GRN_SUCCESS) || !ctx->errbuf[0]) {
+      ERR(rc, "error message is missing");
+    } else if (ctx->errlvl < GRN_LOG_ERROR) {
+      ctx->errlvl = GRN_LOG_ERROR;
+    }
+  }
   return rc;
 }
 
