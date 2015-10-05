@@ -231,8 +231,8 @@ static grn_rc
 grn_ts_buf_open(grn_ctx *ctx, grn_ts_buf **buf) {
   grn_ts_buf *new_buf = GRN_MALLOCN(grn_ts_buf, 1);
   if (!new_buf) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_MALLOCN failed: %zu x 1", sizeof(grn_ts_buf));
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
+                      sizeof(grn_ts_buf));
   }
   grn_ts_buf_init(ctx, new_buf);
   *buf = new_buf;
@@ -276,8 +276,8 @@ grn_ts_buf_reserve(grn_ctx *ctx, grn_ts_buf *buf, size_t new_size) {
   }
   new_ptr = GRN_REALLOC(buf->ptr, enough_size);
   if (!new_ptr) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_REALLOC failed: %zu", enough_size);
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_REALLOC failed: %zu",
+                      enough_size);
   }
   buf->ptr = new_ptr;
   buf->size = enough_size;
@@ -301,8 +301,8 @@ grn_ts_buf_resize(grn_ctx *ctx, grn_ts_buf *buf, size_t new_size) {
   }
   new_ptr = GRN_REALLOC(buf->ptr, new_size);
   if (!new_ptr) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_REALLOC failed: %zu", new_size);
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_REALLOC failed: %zu",
+                      new_size);
   }
   buf->ptr = new_ptr;
   buf->size = new_size;
@@ -520,6 +520,8 @@ inline static grn_ts_ref_vector
 grn_ts_ref_vector_zero(void) {
   return (grn_ts_ref_vector){ NULL, 0 };
 }
+
+/* TODO: Error handling. */
 
 /* grn_ts_bool_output() outputs a value. */
 static grn_rc
@@ -1366,13 +1368,15 @@ grn_ts_op_modulus_float(grn_ts_float lhs, grn_ts_float rhs) {
  */
 static grn_rc
 grn_ts_obj_increment_ref_count(grn_ctx *ctx, grn_obj *obj) {
-  grn_obj *obj_clone = grn_ctx_at(ctx, grn_obj_id(ctx, obj));
+  grn_id id = grn_obj_id(ctx, obj);
+  grn_obj *obj_clone = grn_ctx_at(ctx, id);
   if (!obj_clone) {
-    return GRN_INVALID_ARGUMENT;
+    GRN_TS_ERR_RETURN(GRN_UNKNOWN_ERROR, "grn_ctx_at failed: %d", id);
   }
   if (obj_clone != obj) {
     grn_obj_unlink(ctx, obj_clone);
-    return GRN_INVALID_ARGUMENT;
+    GRN_TS_ERR_RETURN(GRN_UNKNOWN_ERROR, "wrong object: %p != %p",
+                      obj, obj_clone);
   }
   return GRN_SUCCESS;
 }
@@ -1402,7 +1406,7 @@ grn_ts_obj_is_column(grn_ctx *ctx, grn_obj *obj) {
 static grn_rc
 grn_ts_ja_get_value(grn_ctx *ctx, grn_ja *ja, grn_ts_id id,
                     grn_ts_buf *buf, size_t *value_size) {
-  grn_rc rc, tmp_rc;
+  grn_rc rc;
   uint32_t size;
   grn_io_win iw;
   char *ptr = (char *)grn_ja_ref(ctx, ja, id, &iw, &size);
@@ -1413,26 +1417,22 @@ grn_ts_ja_get_value(grn_ctx *ctx, grn_ja *ja, grn_ts_id id,
     return GRN_SUCCESS;
   }
   rc = grn_ts_buf_write(ctx, buf, ptr, size);
-  tmp_rc = grn_ja_unref(ctx, &iw);
-  if (rc == GRN_SUCCESS) {
-    if (tmp_rc == GRN_SUCCESS) {
-      if (value_size) {
-        *value_size = size;
-      }
-    } else {
-      /* Discard the value read. */
-      buf->pos = buf->size - size;
-      rc = tmp_rc;
-    }
+  grn_ja_unref(ctx, &iw);
+  if (rc != GRN_SUCCESS) {
+    GRN_TS_ERR_RETURN(rc, "grn_ts_buf_write failed: %p, %zu",
+                      ptr, (size_t)size);
   }
-  return rc;
+  if (value_size) {
+    *value_size = size;
+  }
+  return GRN_SUCCESS;
 }
 
 #define GRN_TS_TABLE_GET_KEY(type)\
   uint32_t key_size;\
   const void *key_ptr = _grn_ ## type ## _key(ctx, type, id, &key_size);\
   if (!key_ptr) {\
-    return GRN_INVALID_ARGUMENT;\
+    GRN_TS_ERR_RETURN(GRN_UNKNOWN_ERROR, "_grn_" #type "_key failed");\
   }\
 /* grn_ts_hash_get_bool_key() gets a reference to a key (_key). */
 static grn_rc
@@ -1556,11 +1556,7 @@ grn_ts_hash_get_text_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 static grn_rc
 grn_ts_hash_get_ref_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
                         grn_ts_ref *key) {
-  uint32_t key_size;
-  const char *key_ptr = _grn_hash_key(ctx, hash, id, &key_size);
-  if (!key_ptr || (key_size != sizeof(grn_ts_id))) {
-    return GRN_INVALID_ARGUMENT;
-  }
+  GRN_TS_TABLE_GET_KEY(hash)
   key->id = *(const grn_ts_id *)key_ptr;
   return GRN_SUCCESS;
 }
@@ -1787,8 +1783,7 @@ static grn_rc
 grn_ts_expr_id_node_open(grn_ctx *ctx, grn_ts_expr_node **node) {
   grn_ts_expr_id_node *new_node = GRN_MALLOCN(grn_ts_expr_id_node, 1);
   if (!new_node) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_MALLOCN failed: %zu x 1",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
                       sizeof(grn_ts_expr_id_node));
   }
   grn_ts_expr_id_node_init(ctx, new_node);
@@ -1847,8 +1842,7 @@ static grn_rc
 grn_ts_expr_score_node_open(grn_ctx *ctx, grn_ts_expr_node **node) {
   grn_ts_expr_score_node *new_node = GRN_MALLOCN(grn_ts_expr_score_node, 1);
   if (!new_node) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_MALLOCN failed: %zu x 1",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
                       sizeof(grn_ts_expr_score_node));
   }
   grn_ts_expr_score_node_init(ctx, new_node);
@@ -1919,12 +1913,11 @@ grn_ts_expr_key_node_open(grn_ctx *ctx, grn_obj *table,
   grn_rc rc;
   grn_ts_expr_key_node *new_node;
   if (!grn_ts_table_has_key(ctx, table)) {
-    return GRN_INVALID_ARGUMENT;
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "the table has no key");
   }
   new_node = GRN_MALLOCN(grn_ts_expr_key_node, 1);
   if (!new_node) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_MALLOCN failed: %zu x 1",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
                       sizeof(grn_ts_expr_key_node));
   }
   grn_ts_expr_key_node_init(ctx, new_node);
@@ -1932,7 +1925,7 @@ grn_ts_expr_key_node_open(grn_ctx *ctx, grn_obj *table,
   if (rc != GRN_SUCCESS) {
     grn_ts_expr_key_node_fin(ctx, new_node);
     GRN_FREE(new_node);
-    return rc;
+    GRN_TS_ERR_RETURN(rc, "grn_ts_obj_increment_ref_count failed");
   }
   new_node->data_kind = grn_ts_data_type_to_kind(table->header.domain);
   new_node->data_type = table->header.domain;
@@ -2208,8 +2201,7 @@ grn_ts_expr_value_node_open(grn_ctx *ctx, grn_obj *table,
   }
   new_node = GRN_MALLOCN(grn_ts_expr_value_node, 1);
   if (!new_node) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_MALLOCN failed: %zu x 1",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
                       sizeof(grn_ts_expr_value_node));
   }
   grn_ts_expr_value_node_init(ctx, new_node);
@@ -2472,8 +2464,7 @@ grn_ts_expr_const_node_open(grn_ctx *ctx, grn_ts_data_kind kind,
   grn_rc rc;
   grn_ts_expr_const_node *new_node = GRN_MALLOCN(grn_ts_expr_const_node, 1);
   if (!new_node) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_MALLOCN failed: %zu x 1",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
                       sizeof(grn_ts_expr_const_node));
   }
   grn_ts_expr_const_node_init(ctx, new_node);
@@ -2611,8 +2602,7 @@ grn_ts_expr_column_node_open(grn_ctx *ctx, grn_obj *column,
   grn_rc rc;
   grn_ts_expr_column_node *new_node = GRN_MALLOCN(grn_ts_expr_column_node, 1);
   if (!new_node) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_MALLOCN failed: %zu x 1",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
                       sizeof(grn_ts_expr_column_node));
   }
   grn_ts_expr_column_node_init(ctx, new_node);
@@ -3288,8 +3278,7 @@ grn_ts_expr_op_node_open(grn_ctx *ctx, grn_ts_op_type op_type,
   grn_rc rc;
   grn_ts_expr_op_node *new_node = GRN_MALLOCN(grn_ts_expr_op_node, 1);
   if (!new_node) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_MALLOCN failed: %zu x 1",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
                       sizeof(grn_ts_expr_op_node));
   }
   grn_ts_expr_op_node_init(ctx, new_node);
@@ -4219,8 +4208,7 @@ grn_ts_expr_bridge_node_open(grn_ctx *ctx, grn_ts_expr_node *src,
                              grn_ts_expr_node *dest, grn_ts_expr_node **node) {
   grn_ts_expr_bridge_node *new_node = GRN_MALLOCN(grn_ts_expr_bridge_node, 1);
   if (!new_node) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_MALLOCN failed: %zu x 1",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
                       sizeof(grn_ts_expr_bridge_node));
   }
   grn_ts_expr_bridge_node_init(ctx, new_node);
@@ -4630,8 +4618,7 @@ grn_ts_expr_bracket_token_fin(grn_ctx *ctx, grn_ts_expr_bracket_token *token) {
   grn_ts_expr_ ## type ## _token *new_token;\
   new_token = GRN_MALLOCN(grn_ts_expr_ ## type ## _token, 1);\
   if (!new_token) {\
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,\
-                      "GRN_MALLOCN failed: %zu x 1",\
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",\
                       sizeof(grn_ts_expr_ ## type ## _token));\
   }\
   grn_ts_expr_ ## type ## _token_init(ctx, new_token, src);\
@@ -4769,8 +4756,7 @@ grn_ts_expr_parser_open(grn_ctx *ctx, grn_ts_expr *expr,
                         grn_ts_expr_parser **parser) {
   grn_ts_expr_parser *new_parser = GRN_MALLOCN(grn_ts_expr_parser, 1);
   if (!new_parser) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_MALLOCN failed: %zu x 1",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
                       sizeof(grn_ts_expr_parser));
   }
   grn_ts_expr_parser_init(ctx, expr, new_parser);
@@ -5155,8 +5141,8 @@ grn_ts_expr_parser_reserve_tokens(grn_ctx *ctx, grn_ts_expr_parser *parser) {
   n_bytes = sizeof(grn_ts_expr_token *) * new_max_n_tokens;
   new_tokens = (grn_ts_expr_token **)GRN_REALLOC(parser->tokens, n_bytes);
   if (!new_tokens) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_REALLOC failed: %zu", n_bytes);
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_REALLOC failed: %zu",
+                      n_bytes);
   }
   for (i = parser->n_tokens; i < new_max_n_tokens; i++) {
     new_tokens[i] = NULL;
@@ -5460,14 +5446,12 @@ grn_ts_expr_parser_analyze(grn_ctx *ctx, grn_ts_expr_parser *parser) {
   parser->dummy_tokens = GRN_MALLOCN(grn_ts_expr_dummy_token,
                                      parser->n_tokens);
   if (!parser->dummy_tokens) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_MALLOCN failed: %zu x %zu",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x %zu",
                       sizeof(grn_ts_expr_dummy_token), parser->n_tokens);
   }
   parser->stack = GRN_MALLOCN(grn_ts_expr_token *, parser->n_tokens);
   if (!parser->stack) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_MALLOCN failed: %zu x %zu",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x %zu",
                       sizeof(grn_ts_expr_token *), parser->n_tokens);
   }
 
@@ -5586,8 +5570,8 @@ grn_ts_expr_open(grn_ctx *ctx, grn_obj *table, grn_ts_expr **expr) {
   }
   new_expr = GRN_MALLOCN(grn_ts_expr, 1);
   if (!new_expr) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_MALLOCN failed: %zu x 1", sizeof(grn_ts_expr));
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
+                      sizeof(grn_ts_expr));
   }
   rc = grn_ts_obj_increment_ref_count(ctx, table);
   if (rc != GRN_SUCCESS) {
@@ -5683,8 +5667,8 @@ grn_ts_expr_reserve_nodes(grn_ctx *ctx, grn_ts_expr *expr) {
   n_bytes = sizeof(grn_ts_expr_node *) * new_max_n_nodes;
   new_nodes = (grn_ts_expr_node **)GRN_REALLOC(expr->nodes, n_bytes);
   if (!new_nodes) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_REALLOC failed: %zu", n_bytes);
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_REALLOC failed: %zu",
+                      n_bytes);
   }
   for (i = expr->n_nodes; i < new_max_n_nodes; i++) {
     new_nodes[i] = NULL;
@@ -5803,8 +5787,8 @@ grn_ts_expr_reserve_stack(grn_ctx *ctx, grn_ts_expr *expr) {
   n_bytes = sizeof(grn_ts_expr_node *) * new_size;
   new_stack = GRN_REALLOC(expr->stack, n_bytes);
   if (!new_stack) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_REALLOC failed: %zu", n_bytes);
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_REALLOC failed: %zu",
+                      n_bytes);
   }
   for (i = expr->stack_size; i < new_size; i++) {
     new_stack[i] = NULL;
@@ -6331,8 +6315,8 @@ grn_ts_expr_reserve_bridges(grn_ctx *ctx, grn_ts_expr *expr) {
   n_bytes = sizeof(grn_ts_expr_bridge) * new_max_n_bridges;
   new_bridges = (grn_ts_expr_bridge *)GRN_REALLOC(expr->bridges, n_bytes);
   if (!new_bridges) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_REALLOC failed: %zu", n_bytes);
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_REALLOC failed: %zu",
+                      n_bytes);
   }
   expr->bridges = new_bridges;
   expr->max_n_bridges = new_max_n_bridges;
@@ -6737,14 +6721,12 @@ grn_ts_writer_build(grn_ctx *ctx, grn_ts_writer *writer, grn_obj *table) {
   }
   writer->names = GRN_MALLOCN(grn_ts_str, n_names);
   if (!writer->names) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_MALLOCN failed: %zu x %zu",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x %zu",
                       sizeof(grn_ts_str), n_names);
   }
   writer->exprs = GRN_MALLOCN(grn_ts_expr *, n_names);
   if (!writer->exprs) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_MALLOCN failed: %zu x %zu",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x %zu",
                       sizeof(grn_ts_expr *), n_names);
   }
   for (i = 0; i < n_names; i++) {
@@ -6774,8 +6756,8 @@ grn_ts_writer_open(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
   grn_rc rc;
   grn_ts_writer *new_writer = GRN_MALLOCN(grn_ts_writer, 1);
   if (!new_writer) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_MALLOCN failed: %zu x 1", sizeof(grn_ts_writer));
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
+                      sizeof(grn_ts_writer));
   }
   grn_ts_writer_init(ctx, new_writer);
   rc = grn_ts_writer_parse(ctx, new_writer, table, str);
@@ -6885,8 +6867,7 @@ grn_ts_writer_output_body(grn_ctx *ctx, grn_ts_writer *writer,
   size_t i, j, count = 0;
   writer->bufs = GRN_MALLOCN(grn_ts_buf, writer->n_exprs);
   if (!writer->bufs) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_MALLOCN failed: %zu x %zu",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x %zu",
                       sizeof(grn_ts_buf), writer->n_exprs);
   }
   for (i = 0; i < writer->n_exprs; i++) {
