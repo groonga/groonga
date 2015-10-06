@@ -6768,6 +6768,13 @@ grn_ts_writer_parse(grn_ctx *ctx, grn_ts_writer *writer,
       if (rc != GRN_SUCCESS) {
         return rc;
       }
+    } else if (grn_ts_str_is_key_name(token) &&
+               !grn_ts_table_has_key(ctx, table)) {
+      /*
+       * Skip _key if the table has no _key, because the default output_columns
+       * option contains _key.
+       */
+      GRN_TS_DEBUG("skip \"_key\" because the table has no _key");
     } else {
       rc = grn_vector_add_element(ctx, &writer->name_buf,
                                   token.ptr, token.size, 0, GRN_DB_TEXT);
@@ -6782,8 +6789,7 @@ grn_ts_writer_parse(grn_ctx *ctx, grn_ts_writer *writer,
 /* grn_ts_writer_build() builds output expresions. */
 static grn_rc
 grn_ts_writer_build(grn_ctx *ctx, grn_ts_writer *writer, grn_obj *table) {
-  size_t i;
-  size_t n_names = grn_vector_size(ctx, &writer->name_buf);
+  size_t i, n_names = grn_vector_size(ctx, &writer->name_buf);
   if (!n_names) {
     return GRN_SUCCESS;
   }
@@ -6799,20 +6805,18 @@ grn_ts_writer_build(grn_ctx *ctx, grn_ts_writer *writer, grn_obj *table) {
   }
   for (i = 0; i < n_names; i++) {
     grn_rc rc;
-    grn_ts_str *name = &writer->names[writer->n_exprs];
-    name->size = grn_vector_get_element(ctx, &writer->name_buf, i,
-                                        &name->ptr, NULL, NULL);
-    rc = grn_ts_expr_parse(ctx, table, name->ptr, name->size,
-                           &writer->exprs[writer->n_exprs]);
-    if (rc == GRN_SUCCESS) {
-      writer->n_exprs++;
-    } else if (!grn_ts_str_is_key_name(*name)) {
-      /*
-       * Ignore an error for _key because the default output_columns option
-       * contains _key.
-       */
+    grn_ts_expr *new_expr;
+    const char *name_ptr;
+    size_t name_size = grn_vector_get_element(ctx, &writer->name_buf, i,
+                                              &name_ptr, NULL, NULL);
+    rc = grn_ts_expr_parse(ctx, table, name_ptr, name_size, &new_expr);
+    if (rc != GRN_SUCCESS) {
       return rc;
     }
+    writer->names[i].ptr = name_ptr;
+    writer->names[i].size = name_size;
+    writer->exprs[i] = new_expr;
+    writer->n_exprs++;
   }
   return GRN_SUCCESS;
 }
