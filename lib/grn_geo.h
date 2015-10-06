@@ -125,9 +125,6 @@ typedef struct {
 grn_rc grn_geo_cursor_close(grn_ctx *ctx, grn_obj *geo_cursor);
 
 
-int grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
-                       grn_obj *result, grn_table_sort_key *keys, int n_keys);
-
 grn_rc grn_geo_resolve_approximate_type(grn_ctx *ctx, grn_obj *type_name,
                                         grn_geo_approximate_type *type);
 

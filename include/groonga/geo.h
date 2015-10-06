@@ -1,5 +1,6 @@
+/* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014-2015 Brazil
+  Copyright(C) 2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -15,19 +16,24 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef GROONGA_H
-#define GROONGA_H
 
-#include "groonga/portability.h"
-#include "groonga/groonga.h"
-#include "groonga/obj.h"
-#include "groonga/ii.h"
-#include "groonga/geo.h"
-#include "groonga/expr.h"
-#include "groonga/output.h"
-#include "groonga/util.h"
-#include "groonga/request_canceler.h"
-#include "groonga/thread.h"
-#include "groonga/windows_event_logger.h"
+#ifndef GROONGA_GEO_H
+#define GROONGA_GEO_H
 
-#endif /* GROONGA_H */
+#ifdef  __cplusplus
+extern "C" {
+#endif
+
+GRN_API int grn_geo_table_sort(grn_ctx *ctx,
+                               grn_obj *table,
+                               int offset,
+                               int limit,
+                               grn_obj *result,
+                               grn_obj *column,
+                               grn_obj *geo_point);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* GROONGA_GEO_H */

@@ -11008,7 +11008,12 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     e = offset + limit;
   }
   if (keys->flags & GRN_TABLE_SORT_GEO) {
-    i = grn_geo_table_sort(ctx, table, offset, limit, result, keys, n_keys);
+    if (n_keys == 2) {
+      i = grn_geo_table_sort(ctx, table, offset, limit, result,
+                             keys[0].key, keys[1].key);
+    } else {
+      i = 0;
+    }
     goto exit;
   }
   if (n_keys == 1 && !GRN_ACCESSORP(keys->key) &&
