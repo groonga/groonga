@@ -929,13 +929,13 @@ grn_ts_op_not_equal_time(grn_ts_time lhs, grn_ts_time rhs) {
 /* grn_ts_op_not_equal_text() returns lhs != rhs. */
 inline static grn_ts_bool
 grn_ts_op_not_equal_text(grn_ts_text lhs, grn_ts_text rhs) {
-  return (lhs.size != rhs.size) && !memcmp(lhs.ptr, rhs.ptr, lhs.size);
+  return (lhs.size != rhs.size) || memcmp(lhs.ptr, rhs.ptr, lhs.size);
 }
 
 /* grn_ts_op_not_equal_geo_point() returns lhs != rhs. */
 inline static grn_ts_bool
 grn_ts_op_not_equal_geo_point(grn_ts_geo_point lhs, grn_ts_geo_point rhs) {
-  return (lhs.latitude != rhs.latitude) && (lhs.longitude != rhs.longitude);
+  return (lhs.latitude != rhs.latitude) || (lhs.longitude != rhs.longitude);
 }
 
 /* grn_ts_op_not_equal_ref() returns lhs != rhs. */
