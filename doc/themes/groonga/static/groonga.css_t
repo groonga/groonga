@@ -19,6 +19,15 @@ body
     padding: 0px;
 }
 
+@media screen and (max-width: 640px)
+{
+    html,
+    body
+    {
+        margin: 0;
+    }
+}
+
 body
 {
     font-family: sans-serif;
@@ -39,6 +48,16 @@ div.header h1.title
 {
     background: url(logo.png) no-repeat;
     margin: 20px;
+}
+
+@media screen and (max-width: 640px)
+{
+    div.header h1.title
+    {
+        margin: 0;
+        margin-top: 5px;
+        margint-left: 5px;
+    }
 }
 
 div.header h1.title a,
@@ -64,6 +83,15 @@ div.header h1.title a
     border: 1px solid #FFF;
 }
 
+@media screen and (max-width: 640px)
+{
+    div.header h1.title a
+    {
+        height: auto;
+        margin-bottom: 5px;
+    }
+}
+
 div.header h1.title span
 {
 }
@@ -79,6 +107,17 @@ div.header h1.title span.description
     display: block;
     padding: 0;
     margin: 35px 0 0 240px;
+}
+
+@media screen and (max-width: 640px)
+{
+    div.header h1.title span.description
+    {
+        margin-top: 75px;
+        margin-bottom: 0;
+        margin-left: 5px;
+        margin-right: 5px;
+    }
 }
 
 div.header div.facebook-buttons
@@ -98,12 +137,28 @@ div.header div.facebook-buttons
     overflow: hidden;
 }
 
+@media screen and (max-width: 640px)
+{
+    div.header div.facebook-buttons
+    {
+        display: none;
+    }
+}
+
 div.header div.other-language-links
 {
     position: absolute;
     top: 5px;
     right: 0;
     font-size: small;
+}
+
+@media screen and (max-width: 640px)
+{
+    div.header div.other-language-links
+    {
+        right: 5px;
+    }
 }
 
 div.header div.other-language-links ul,
@@ -139,6 +194,15 @@ div.documentwrapper
     width: 100%;
 }
 
+@media screen and (max-width: 640px)
+{
+    div.documentwrapper
+    {
+	float: none;
+	width: auto;
+    }
+}
+
 div.bodywrapper
 {
     background-color: #FAFAFA;
@@ -150,12 +214,32 @@ div.bodywrapper
     margin-bottom: 10px;
 }
 
+@media screen and (max-width: 640px)
+{
+    div.bodywrapper
+    {
+	border-width: 0;
+	padding: 0;
+	margin: 0;
+    }
+}
+
 div.body
 {
     background-color: #ffffff;
     color: #000000;
     padding: 0 20px 30px 20px;
     padding-top: 10px;
+}
+
+@media screen and (max-width: 640px)
+{
+    div.body
+    {
+	padding: 0;
+	padding-left: 5px;
+	padding-right: 5px;
+    }
 }
 
 div.body h1,
@@ -185,6 +269,15 @@ div.body h1
     padding: 10px;
     padding-left: 30px;
     margin-top: 0;
+}
+
+@media screen and (max-width: 640px)
+{
+    div.body h1
+    {
+        margin: 0;
+	padding-left: 10px;
+    }
 }
 
 div.body h2
@@ -286,6 +379,23 @@ div.related li
     margin-left:20px;
 }
 
+@media screen and (max-width: 640px)
+{
+    div.related ul
+    {
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 5px;
+        padding-right: 5px;
+        line-height: 1.5em;
+    }
+
+    div.related li
+    {
+        margin-left: 0;
+    }
+}
+
 div.related a,
 div.related a:link,
 div.related a:visited,
@@ -337,6 +447,14 @@ div.sphinxsidebar
     background-color: white;
     overflow: auto;
     float: right;
+}
+
+@media screen and (max-width: 640px)
+{
+    div.sphinxsidebar
+    {
+        display: none;
+    }
 }
 
 div.sphinxsidebar h3
@@ -463,6 +581,14 @@ pre
     line-height: 120%;
     white-space: pre-wrap;
     word-wrap: normal;
+}
+
+@media screen and (max-width: 640px)
+{
+    pre
+    {
+        padding: 5px;
+    }
 }
 
 tt
