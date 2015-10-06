@@ -26,6 +26,7 @@ typedef struct _BenchmarkData
 {
   gchar *base_dir;
   grn_ctx *context;
+  grn_obj *source_table;
   grn_obj *result_set;
 } BenchmarkData;
 
@@ -69,29 +70,11 @@ static void
 bench_setup(gpointer user_data)
 {
   BenchmarkData *data = user_data;
-  gchar *database_path;
-  grn_obj *source_table;
-  const gchar *source_table_name = "Sources";
 
-  bench_utils_remove_path_recursive_force(data->base_dir);
-  g_mkdir_with_parents(data->base_dir, 0755);
-
-  grn_ctx_init(data->context, 0);
-  database_path = g_build_filename(data->base_dir, "db", NULL);
-  grn_db_create(data->context, database_path, NULL);
-  g_free(database_path);
-
-  source_table = grn_table_create(data->context,
-                                  source_table_name,
-                                  strlen(source_table_name),
-                                  NULL,
-                                  GRN_TABLE_PAT_KEY | GRN_OBJ_PERSISTENT,
-                                  grn_ctx_at(data->context, GRN_DB_SHORT_TEXT),
-                                  NULL);
   data->result_set = grn_table_create(data->context,
                                       NULL, 0, NULL,
                                       GRN_TABLE_HASH_KEY | GRN_OBJ_WITH_SUBREC,
-                                      source_table,
+                                      data->source_table,
                                       NULL);
 
 }
@@ -101,8 +84,7 @@ bench_teardown(gpointer user_data)
 {
   BenchmarkData *data = user_data;
 
-  grn_ctx_fin(data->context);
-  bench_utils_remove_path_recursive_force(data->base_dir);
+  grn_obj_close(data->context, data->result_set);
 }
 
 int
@@ -110,13 +92,36 @@ main(int argc, gchar **argv)
 {
   BenchmarkData data;
   BenchReporter *reporter;
-  gint n = 1;
+  gchar *base_dir;
+  grn_ctx ctx;
+  gint n = 100;
 
   grn_init();
   bench_init(&argc, &argv);
 
-  data.context = g_new(grn_ctx, 1);
-  data.base_dir = g_build_filename(g_get_tmp_dir(), "groonga-bench", NULL);
+  data.context = &ctx;
+
+  base_dir = g_build_filename(g_get_tmp_dir(), "groonga-bench", NULL);
+  bench_utils_remove_path_recursive_force(base_dir);
+  g_mkdir_with_parents(base_dir, 0755);
+
+  {
+    gchar *database_path;
+    const gchar *source_table_name = "Sources";
+
+    grn_ctx_init(&ctx, 0);
+    database_path = g_build_filename(base_dir, "db", NULL);
+    grn_db_create(&ctx, database_path, NULL);
+    g_free(database_path);
+
+    data.source_table = grn_table_create(&ctx,
+                                         source_table_name,
+                                         strlen(source_table_name),
+                                         NULL,
+                                         GRN_TABLE_PAT_KEY | GRN_OBJ_PERSISTENT,
+                                         grn_ctx_at(&ctx, GRN_DB_SHORT_TEXT),
+                                         NULL);
+  }
 
   reporter = bench_reporter_new();
   bench_reporter_register(reporter, "1000", n,
@@ -128,9 +133,9 @@ main(int argc, gchar **argv)
   bench_reporter_run(reporter);
   g_object_unref(reporter);
 
-  bench_utils_remove_path_recursive_force(data.base_dir);
+  grn_ctx_fin(&ctx);
 
-  g_free(data.context);
+  bench_utils_remove_path_recursive_force(data.base_dir);
 
   bench_quit();
   grn_fin();
