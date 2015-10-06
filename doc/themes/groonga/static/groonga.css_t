@@ -302,6 +302,11 @@ div.body li
     line-height: 150%;
 }
 
+div.body ul
+{
+    padding-left: 25px;
+}
+
 div.admonition p.admonition-title + p
 {
     display: inline;
