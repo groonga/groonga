@@ -11,7 +11,8 @@ noinst_PROGRAMS =		\
 	bench-geo-select	\
 	bench-ctx-create	\
 	bench-query-optimizer	\
-	bench-range-select
+	bench-range-select	\
+	bench-result-set
 endif
 
 EXTRA_DIST =					\
@@ -50,13 +51,17 @@ nodist_EXTRA_bench_query_optimizer_SOURCES = $(NONEXISTENT_CXX_SOURCE)
 bench_range_select_SOURCES = bench-range-select.c
 nodist_EXTRA_bench_range_select_SOURCES = $(NONEXISTENT_CXX_SOURCE)
 
+bench_result_set_SOURCES = bench-result-set.c
+nodist_EXTRA_bench_result_set_SOURCES = $(NONEXISTENT_CXX_SOURCE)
+
 benchmarks =					\
 	run-bench-table-factory			\
 	run-bench-geo-distance			\
 	run-bench-geo-select			\
 	run-bench-ctx-create			\
 	run-bench-query-optimizer		\
-	run-bench-range-select
+	run-bench-range-select			\
+	run-bench-result-set
 
 run-bench-table-factory: bench-table-factory
 	@echo $@:
@@ -98,5 +103,9 @@ run-bench-range-select: bench-range-select
 	env							\
 	  GRN_RUBY_SCRIPTS_DIR=$(top_srcdir)/lib/mrb/scripts	\
 	  ./bench-range-select
+
+run-bench-result-set: bench-result-set
+	@echo $@:
+	./bench-result-set
 
 benchmark: $(benchmarks)

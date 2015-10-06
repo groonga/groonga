@@ -102,6 +102,7 @@ CMakeFiles
 /benchmark/bench-ctx-create
 /benchmark/bench-query-optimizer
 /benchmark/bench-range-select
+/benchmark/bench-result-set
 /packages/*/*.log
 /packages/apt/env.sh
 /packages/apt/debian/groonga-keyring.postrm
