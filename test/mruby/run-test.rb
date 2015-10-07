@@ -8,7 +8,7 @@ current_dir_path    = Pathname.pwd
 base_dir_path       = Pathname(__FILE__).dirname
 source_top_dir_path = base_dir_path.parent.parent
 build_top_dir_path  = current_dir_path
-build_base_dir_path = build_top_dir_path + "test/query_optimizer"
+build_base_dir_path = build_top_dir_path + "test/mruby"
 
 Dir.chdir(build_top_dir_path.to_s) do
   system("make -j8 > /dev/null") or exit(false)

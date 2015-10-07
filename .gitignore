@@ -168,7 +168,7 @@ CMakeFiles
 /test/command/run-test.sh.log
 /test/command/run-test.sh.trs
 /test/command/test-suite.log
-/test/query_optimizer/rroonga.built
-/test/query_optimizer/groonga.pc
+/test/mruby/rroonga.built
+/test/mruby/groonga.pc
 /*.tar.gz
 /tmp
