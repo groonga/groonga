@@ -5105,6 +5105,7 @@ grn_ts_expr_parser_tokenize_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
   grn_ts_expr_op_token *new_token;
   switch (str.ptr[0]) {
     case '+': case '-': {
+      // FIXME: Suppress a warning.
       rc = grn_ts_expr_parser_tokenize_sign(ctx, parser, str, &new_token);
       break;
     }
@@ -5308,69 +5309,99 @@ grn_ts_expr_parser_push_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
   return grn_ts_expr_push_op(ctx, parser->expr, token->op_type);
 }
 
-/* grn_ts_expr_parser_apply() applies bridges and prior operators. */
+/*
+ * grn_ts_expr_parser_apply_one() applies a bridge or prior operator.
+ * If there is no target, this function returns GRN_END_OF_DATA.
+ */
+// FIXME: Support a ternary operator.
 static grn_rc
-grn_ts_expr_parser_apply(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                         grn_ts_op_precedence precedence_threshold) {
-  grn_rc rc = GRN_SUCCESS;
+grn_ts_expr_parser_apply_one(grn_ctx *ctx, grn_ts_expr_parser *parser,
+                             grn_ts_op_precedence precedence_threshold) {
+  grn_rc rc;
+  grn_ts_str src;
   grn_ts_expr_token **stack = parser->stack;
-  size_t depth = parser->stack_depth;
-  while (depth >= 2) {
-    size_t n_args;
-    grn_ts_str src;
-    grn_ts_expr_dummy_token *dummy_token;
-    if (stack[depth - 1]->type != GRN_TS_EXPR_DUMMY_TOKEN) {
-      rc = GRN_INVALID_ARGUMENT;
-      break;
-    }
+  grn_ts_expr_dummy_token *dummy_token;
+  size_t n_args, depth = parser->stack_depth;
+  if (depth < 2) {
+    return GRN_END_OF_DATA;
+  }
+  if (stack[depth - 1]->type != GRN_TS_EXPR_DUMMY_TOKEN) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT, "argument must be dummy token");
+  }
 
-    /* Check the number of arguments. */
-    if (stack[depth - 2]->type == GRN_TS_EXPR_BRIDGE_TOKEN) {
-      n_args = 2;
+  /* Check the number of arguments. */
+  switch (stack[depth - 2]->type) {
+    case GRN_TS_EXPR_BRIDGE_TOKEN: {
       rc = grn_ts_expr_end_subexpr(ctx, parser->expr);
       if (rc != GRN_SUCCESS) {
-        break;
+        return rc;
       }
-    } else if (stack[depth - 2]->type == GRN_TS_EXPR_OP_TOKEN) {
+      n_args = 2;
+      break;
+    }
+    case GRN_TS_EXPR_OP_TOKEN: {
       grn_ts_expr_op_token *op_token;
       grn_ts_op_precedence precedence;
       op_token = (grn_ts_expr_op_token *)stack[depth - 2];
       precedence = grn_ts_op_get_precedence(op_token->op_type);
       if (precedence < precedence_threshold) {
-        break;
+        return GRN_END_OF_DATA;
       }
       rc = grn_ts_expr_parser_push_op(ctx, parser, op_token);
       if (rc != GRN_SUCCESS) {
-        break;
+        return rc;
       }
       n_args = grn_ts_op_get_n_args(op_token->op_type);
-    } else {
       break;
     }
+    default: {
+      return GRN_END_OF_DATA;
+    }
+  }
 
-    /* Concatenate the source strings. */
-    if (n_args == 1) {
+  /* Concatenate the source strings. */
+  switch (n_args) {
+    case 1: {
       grn_ts_expr_token *arg = stack[depth - 1];
       src.ptr = stack[depth - 2]->src.ptr;
       src.size = (arg->src.ptr + arg->src.size) - src.ptr;
-    } else if (n_args == 2) {
+      break;
+    }
+    case 2: {
       grn_ts_expr_token *args[2] = { stack[depth - 3], stack[depth - 1] };
       src.ptr = args[0]->src.ptr;
       src.size = (args[1]->src.ptr + args[1]->src.size) - src.ptr;
-    } else {
-      rc = GRN_UNKNOWN_ERROR;
       break;
     }
-
-    /* Replace the operator and argument tokens with a dummy token. */
-    dummy_token = &parser->dummy_tokens[parser->n_dummy_tokens++];
-    GRN_TS_DEBUG("dummy token: \"%.*s\"", (int)src.size, src.ptr);
-    grn_ts_expr_dummy_token_init(ctx, dummy_token, src);
-    depth -= n_args + 1;
-    stack[depth++] = dummy_token;
+    default: {
+      GRN_TS_ERR_RETURN(GRN_OPERATION_NOT_SUPPORTED,
+                        "invalid number of arguments: %zu", n_args);
+    }
   }
+
+  /* Replace the operator and argument tokens with a dummy token. */
+  dummy_token = &parser->dummy_tokens[parser->n_dummy_tokens++];
+  GRN_TS_DEBUG("dummy token: \"%.*s\"", (int)src.size, src.ptr);
+  grn_ts_expr_dummy_token_init(ctx, dummy_token, src);
+  depth -= n_args + 1;
+  stack[depth++] = dummy_token;
   parser->stack_depth = depth;
-  return rc;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_expr_parser_apply() applies bridges and prior operators. */
+static grn_rc
+grn_ts_expr_parser_apply(grn_ctx *ctx, grn_ts_expr_parser *parser,
+                         grn_ts_op_precedence precedence_threshold) {
+  for ( ; ; ) {
+    grn_rc rc = grn_ts_expr_parser_apply_one(ctx, parser,
+                                             precedence_threshold);
+    if (rc == GRN_END_OF_DATA) {
+      return GRN_SUCCESS;
+    } else if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+  }
 }
 
 /* grn_ts_expr_parser_analyze_op() analyzes a token. */
@@ -5381,7 +5412,7 @@ grn_ts_expr_parser_analyze_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
   grn_ts_expr_token *ex_token = parser->stack[parser->stack_depth - 1];
   if (n_args == 1) {
     if (ex_token->type == GRN_TS_EXPR_DUMMY_TOKEN) {
-      return GRN_INVALID_FORMAT;
+      GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT, "invalid token sequence");
     }
   } else if (n_args == 2) {
     grn_ts_op_precedence precedence = grn_ts_op_get_precedence(token->op_type);
@@ -5414,14 +5445,14 @@ grn_ts_expr_parser_analyze_bracket(grn_ctx *ctx, grn_ts_expr_parser *parser,
   switch (token->src.ptr[0]) {
     case '(': {
       if (ex_token->type == GRN_TS_EXPR_DUMMY_TOKEN) {
-        return GRN_INVALID_FORMAT;
+        GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT, "invalid token sequence");
       }
       parser->stack[parser->stack_depth++] = (grn_ts_expr_token *)token;
       return GRN_SUCCESS;
     }
     case '[': {
       if (ex_token->type != GRN_TS_EXPR_DUMMY_TOKEN) {
-        return GRN_INVALID_FORMAT;
+        GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT, "invalid token sequence");
       }
       parser->stack[parser->stack_depth++] = (grn_ts_expr_token *)token;
       return GRN_SUCCESS;
@@ -5433,18 +5464,18 @@ grn_ts_expr_parser_analyze_bracket(grn_ctx *ctx, grn_ts_expr_parser *parser,
         return rc;
       }
       if (parser->stack_depth < 2) {
-        return GRN_INVALID_FORMAT;
+        GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT, "invalid token sequence");
       }
       ex_ex_token = parser->stack[parser->stack_depth - 2];
       if (ex_ex_token->type != GRN_TS_EXPR_BRACKET_TOKEN) {
-        return GRN_INVALID_FORMAT;
+        GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT, "invalid token sequence");
       }
       if (token->src.ptr[0] == ')') {
         size_t depth = parser->stack_depth;
         grn_ts_str src;
         grn_ts_expr_dummy_token *dummy_token;
         if (ex_ex_token->src.ptr[0] != '(') {
-          return GRN_INVALID_FORMAT;
+          GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT, "invalid token sequence");
         }
         src.ptr = ex_ex_token->src.ptr;
         src.size = (token->src.ptr + token->src.size) - src.ptr;
@@ -5457,7 +5488,7 @@ grn_ts_expr_parser_analyze_bracket(grn_ctx *ctx, grn_ts_expr_parser *parser,
       } else if (token->src.ptr[0] == ']') {
         size_t depth = parser->stack_depth;
         if (ex_ex_token->src.ptr[0] != '[') {
-          return GRN_INVALID_FORMAT;
+          GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT, "invalid token sequence");
         }
         parser->stack[depth - 2] = parser->stack[depth - 1];
         parser->stack_depth--;
@@ -5466,7 +5497,8 @@ grn_ts_expr_parser_analyze_bracket(grn_ctx *ctx, grn_ts_expr_parser *parser,
       return GRN_SUCCESS;
     }
     default: {
-      return GRN_INVALID_FORMAT;
+      GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT, "undefined bracket: \"%.*s\"",
+                        (int)token->src.size, token->src.ptr);
     }
   }
 }
@@ -5522,7 +5554,8 @@ grn_ts_expr_parser_analyze_token(grn_ctx *ctx, grn_ts_expr_parser *parser,
       return grn_ts_expr_parser_analyze_bracket(ctx, parser, bracket_token);
     }
     default: {
-      return GRN_INVALID_ARGUMENT;
+      GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "invalid token type: %d",
+                        token->type);
     }
   }
 }
@@ -5552,7 +5585,8 @@ grn_ts_expr_parser_analyze(grn_ctx *ctx, grn_ts_expr_parser *parser) {
     }
   }
   if (parser->stack_depth != 2) {
-    return GRN_INVALID_FORMAT;
+    GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT, "tokens left in stack: %zu",
+                      parser->stack_depth);
   }
   return GRN_SUCCESS;
 }
