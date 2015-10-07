@@ -5375,7 +5375,7 @@ grn_ts_expr_parser_apply_one(grn_ctx *ctx, grn_ts_expr_parser *parser,
     }
     default: {
       GRN_TS_ERR_RETURN(GRN_OPERATION_NOT_SUPPORTED,
-                        "invalid number of arguments: %zu", n_args);
+                        "invalid #arguments: %zu", n_args);
     }
   }
 
@@ -5687,8 +5687,11 @@ grn_rc
 grn_ts_expr_open(grn_ctx *ctx, grn_obj *table, grn_ts_expr **expr) {
   grn_rc rc;
   grn_ts_expr *new_expr;
-  if (!ctx || !table || !grn_ts_obj_is_table(ctx, table) || !expr) {
+  if (!ctx) {
     return GRN_INVALID_ARGUMENT;
+  }
+  if (!table || !grn_ts_obj_is_table(ctx, table) || !expr) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
   }
   new_expr = GRN_MALLOCN(grn_ts_expr, 1);
   if (!new_expr) {
@@ -5712,9 +5715,12 @@ grn_ts_expr_parse(grn_ctx *ctx, grn_obj *table,
                   const char *str_ptr, size_t str_size, grn_ts_expr **expr) {
   grn_rc rc;
   grn_ts_expr *new_expr;
-  if (!ctx || !table || !grn_ts_obj_is_table(ctx, table) ||
-      (!str_ptr && str_size) || !expr) {
+  if (!ctx) {
     return GRN_INVALID_ARGUMENT;
+  }
+  if (!table || !grn_ts_obj_is_table(ctx, table) ||
+      (!str_ptr && str_size) || !expr) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
   }
   rc = grn_ts_expr_open(ctx, table, &new_expr);
   if (rc != GRN_SUCCESS) {
@@ -5925,9 +5931,12 @@ grn_ts_expr_push(grn_ctx *ctx, grn_ts_expr *expr,
                  const char *str_ptr, size_t str_size) {
   grn_rc rc;
   grn_ts_expr_parser *parser;
-  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE) ||
-      (!str_ptr && str_size)) {
+  if (!ctx) {
     return GRN_INVALID_ARGUMENT;
+  }
+  if (!expr || (expr->type != GRN_TS_EXPR_INCOMPLETE) ||
+      (!str_ptr && str_size)) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
   }
   rc = grn_ts_expr_parser_open(ctx, expr, &parser);
   if (rc != GRN_SUCCESS) {
@@ -5944,9 +5953,12 @@ grn_ts_expr_push_name(grn_ctx *ctx, grn_ts_expr *expr,
   grn_rc rc;
   grn_obj *column;
   grn_ts_str name = { name_ptr, name_size };
-  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE) ||
-      !grn_ts_str_is_name(name)) {
+  if (!ctx) {
     return GRN_INVALID_ARGUMENT;
+  }
+  if (!expr || (expr->type != GRN_TS_EXPR_INCOMPLETE) ||
+      !grn_ts_str_is_name(name)) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
   }
   if (grn_ts_str_is_id_name(name)) {
     return grn_ts_expr_push_id(ctx, expr);
@@ -5963,7 +5975,7 @@ grn_ts_expr_push_name(grn_ctx *ctx, grn_ts_expr *expr,
   /* TODO: Resolve references. */
   column = grn_obj_column(ctx, expr->curr_table, name.ptr, name.size);
   if (!column) {
-    return GRN_INVALID_ARGUMENT;
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "not column");
   }
   rc = grn_ts_expr_push_column(ctx, expr, column);
   grn_obj_unlink(ctx, column);
@@ -6007,7 +6019,7 @@ grn_ts_expr_push_bulk(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj) {
       return grn_ts_expr_push_wgs84_geo_point(ctx, expr, value);
     }
     default: {
-      return GRN_INVALID_ARGUMENT;
+      GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "not bulk");
     }
   }
 }
@@ -6058,14 +6070,15 @@ grn_ts_expr_push_uvector(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj) {
     GRN_TS_EXPR_PUSH_UVECTOR_CASE(TOKYO_GEO_POINT, tokyo_geo_point)
     GRN_TS_EXPR_PUSH_UVECTOR_CASE(WGS84_GEO_POINT, wgs84_geo_point)
     default: {
-      return GRN_INVALID_ARGUMENT;
+      GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data type: %d",
+                        obj->header.domain);
     }
   }
 }
 #undef GRN_TS_EXPR_PUSH_UVECTOR_CASE_WITH_TYPECAST
 #undef GRN_TS_EXPR_PUSH_UVECTOR_CASE
 
-/* grn_ts_expr_push_uvector() pushes an array of texts. */
+/* grn_ts_expr_push_vector() pushes an array of texts. */
 static grn_rc
 grn_ts_expr_push_vector(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj) {
   switch (obj->header.domain) {
@@ -6094,7 +6107,8 @@ grn_ts_expr_push_vector(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj) {
       return rc;
     }
     default: {
-      return GRN_INVALID_ARGUMENT;
+      GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data type: %d",
+                        obj->header.domain);
     }
   }
 }
@@ -6103,7 +6117,8 @@ static grn_rc
 grn_ts_expr_push_accessor(grn_ctx *ctx, grn_ts_expr *expr,
                           grn_accessor *accessor) {
   if (accessor->next) {
-    return GRN_INVALID_ARGUMENT;
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT,
+                      "complex accessor is not supported");
   }
   switch (accessor->action) {
     case GRN_ACCESSOR_GET_ID: {
@@ -6119,15 +6134,19 @@ grn_ts_expr_push_accessor(grn_ctx *ctx, grn_ts_expr *expr,
       return grn_ts_expr_push_value(ctx, expr);
     }
     default: {
-      return GRN_INVALID_ARGUMENT;
+      GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid accessor action: %d",
+                        accessor->action);
     }
   }
 }
 
 grn_rc
 grn_ts_expr_push_obj(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj) {
-  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE) || !obj) {
+  if (!ctx) {
     return GRN_INVALID_ARGUMENT;
+  }
+  if (!expr || (expr->type != GRN_TS_EXPR_INCOMPLETE) || !obj) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
   }
   switch (obj->header.type) {
     case GRN_BULK: {
@@ -6147,7 +6166,8 @@ grn_ts_expr_push_obj(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj) {
       return grn_ts_expr_push_column(ctx, expr, obj);
     }
     default: {
-      return GRN_INVALID_ARGUMENT;
+      GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid object type: %d",
+                        obj->header.type);
     }
   }
 }
@@ -6156,8 +6176,11 @@ grn_rc
 grn_ts_expr_push_id(grn_ctx *ctx, grn_ts_expr *expr) {
   grn_rc rc;
   grn_ts_expr_node *node;
-  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE)) {
+  if (!ctx) {
     return GRN_INVALID_ARGUMENT;
+  }
+  if (!expr || (expr->type != GRN_TS_EXPR_INCOMPLETE)) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
   }
   rc = grn_ts_expr_reserve_stack(ctx, expr);
   if (rc == GRN_SUCCESS) {
@@ -6173,8 +6196,11 @@ grn_rc
 grn_ts_expr_push_score(grn_ctx *ctx, grn_ts_expr *expr) {
   grn_rc rc;
   grn_ts_expr_node *node;
-  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE)) {
+  if (!ctx) {
     return GRN_INVALID_ARGUMENT;
+  }
+  if (!expr || (expr->type != GRN_TS_EXPR_INCOMPLETE)) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
   }
   rc = grn_ts_expr_reserve_stack(ctx, expr);
   if (rc == GRN_SUCCESS) {
@@ -6190,8 +6216,11 @@ grn_rc
 grn_ts_expr_push_key(grn_ctx *ctx, grn_ts_expr *expr) {
   grn_rc rc;
   grn_ts_expr_node *node;
-  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE)) {
+  if (!ctx) {
     return GRN_INVALID_ARGUMENT;
+  }
+  if (!expr || (expr->type != GRN_TS_EXPR_INCOMPLETE)) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
   }
   rc = grn_ts_expr_reserve_stack(ctx, expr);
   if (rc == GRN_SUCCESS) {
@@ -6207,8 +6236,11 @@ grn_rc
 grn_ts_expr_push_value(grn_ctx *ctx, grn_ts_expr *expr) {
   grn_rc rc;
   grn_ts_expr_node *node;
-  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE)) {
+  if (!ctx) {
     return GRN_INVALID_ARGUMENT;
+  }
+  if (!expr || (expr->type != GRN_TS_EXPR_INCOMPLETE)) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
   }
   rc = grn_ts_expr_reserve_stack(ctx, expr);
   if (rc == GRN_SUCCESS) {
@@ -6228,8 +6260,11 @@ grn_ts_expr_push_value(grn_ctx *ctx, grn_ts_expr *expr) {
 grn_rc
 grn_ts_expr_push_const(grn_ctx *ctx, grn_ts_expr *expr,
                        grn_ts_data_kind kind, const void *value) {
-  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE) || !value) {
+  if (!ctx) {
     return GRN_INVALID_ARGUMENT;
+  }
+  if (!expr || (expr->type != GRN_TS_EXPR_INCOMPLETE) || !value) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
   }
   switch (kind) {
     GRN_TS_EXPR_PUSH_CONST_CASE(BOOL, bool)
@@ -6245,7 +6280,7 @@ grn_ts_expr_push_const(grn_ctx *ctx, grn_ts_expr *expr,
     GRN_TS_EXPR_PUSH_CONST_CASE(TEXT_VECTOR, text_vector)
     GRN_TS_EXPR_PUSH_CONST_CASE(GEO_POINT_VECTOR, geo_point_vector)
     default: {
-      return GRN_INVALID_ARGUMENT;
+      GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d", kind);
     }
   }
 }
@@ -6255,10 +6290,13 @@ grn_rc
 grn_ts_expr_push_column(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *column) {
   grn_rc rc;
   grn_ts_expr_node *node;
-  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE) ||
+  if (!ctx) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  if (!expr || (expr->type != GRN_TS_EXPR_INCOMPLETE) ||
       !column || !grn_ts_obj_is_column(ctx, column) ||
       (DB_OBJ(expr->curr_table)->id != column->header.domain)) {
-    return GRN_INVALID_ARGUMENT;
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
   }
   rc = grn_ts_expr_reserve_stack(ctx, expr);
   if (rc == GRN_SUCCESS) {
@@ -6275,15 +6313,19 @@ grn_ts_expr_push_op(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_op_type op_type) {
   grn_rc rc;
   grn_ts_expr_node **args, *node;
   size_t n_args;
-  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE)) {
+  if (!ctx) {
     return GRN_INVALID_ARGUMENT;
+  }
+  if (!expr || (expr->type != GRN_TS_EXPR_INCOMPLETE)) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
   }
   n_args = grn_ts_op_get_n_args(op_type);
   if (!n_args) {
-    return GRN_INVALID_ARGUMENT;
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid #arguments: %zu", n_args);
   }
   if (n_args > expr->stack_depth) {
-    return GRN_INVALID_ARGUMENT;
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid #arguments: %zu, %zu",
+                      n_args, expr->stack_depth);
   }
   /* Arguments are the top n_args nodes in the stack. */
   args = &expr->stack[expr->stack_depth - n_args];
@@ -6298,9 +6340,12 @@ grn_ts_expr_push_op(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_op_type op_type) {
 #define GRN_TS_EXPR_PUSH_CONST(KIND, kind)\
   grn_rc rc;\
   grn_ts_expr_node *node;\
-  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE) ||\
-      !grn_ts_ ## kind ## _is_valid(value)) {\
+  if (!ctx) {\
     return GRN_INVALID_ARGUMENT;\
+  }\
+  if (!expr || (expr->type != GRN_TS_EXPR_INCOMPLETE) ||\
+      !grn_ts_ ## kind ## _is_valid(value)) {\
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");\
   }\
   rc = grn_ts_expr_reserve_stack(ctx, expr);\
   if (rc == GRN_SUCCESS) {\
@@ -6451,23 +6496,27 @@ grn_ts_expr_begin_subexpr(grn_ctx *ctx, grn_ts_expr *expr) {
   grn_obj *obj;
   grn_ts_expr_node *node;
   grn_ts_expr_bridge *bridge;
-  if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE) ||
-      !expr->stack_depth) {
+  if (!ctx) {
     return GRN_INVALID_ARGUMENT;
+  }
+  if (!expr || (expr->type != GRN_TS_EXPR_INCOMPLETE) || !expr->stack_depth) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
   }
 
   /* Check whehter or not the latest node refers to a table. */
   node = expr->stack[expr->stack_depth - 1];
   if ((node->data_kind & ~GRN_TS_VECTOR_FLAG) != GRN_TS_REF) {
-    return GRN_INVALID_ARGUMENT;
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d",
+                      node->data_kind);
   }
   obj = grn_ctx_at(ctx, node->data_type);
   if (!obj) {
-    return GRN_INVALID_ARGUMENT;
+    GRN_TS_ERR_RETURN(GRN_UNKNOWN_ERROR, "grn_ctx_at failed: %d",
+                      node->data_type);
   }
   if (!grn_ts_obj_is_table(ctx, obj)) {
     grn_obj_unlink(ctx, obj);
-    return GRN_INVALID_ARGUMENT;
+    GRN_TS_ERR_RETURN(GRN_UNKNOWN_ERROR, "not table: %d", node->data_type);
   }
 
   /* Creates a bridge to a subexpression. */
@@ -6956,11 +7005,13 @@ grn_ts_writer_output_header(grn_ctx *ctx, grn_ts_writer *writer) {
         size_t name_size;
         grn_obj *obj = grn_ctx_at(ctx, writer->exprs[i]->data_type);
         if (!obj) {
-          return GRN_INVALID_ARGUMENT;
+          GRN_TS_ERR_RETURN(GRN_UNKNOWN_ERROR, "grn_ctx_at failed: %d",
+                            writer->exprs[i]->data_type);
         }
         if (!grn_ts_obj_is_table(ctx, obj)) {
           grn_obj_unlink(ctx, obj);
-          return GRN_INVALID_ARGUMENT;
+          GRN_TS_ERR_RETURN(GRN_UNKNOWN_ERROR, "not table: %d",
+                            writer->exprs[i]->data_type);
         }
         name_size = grn_obj_name(ctx, obj, name_buf, sizeof(name_buf));
         GRN_TEXT_PUT(ctx, ctx->impl->outbuf, name_buf, name_size);
