@@ -430,17 +430,6 @@ typedef struct {
   (e)->code0 = NULL;\
 } while (0)
 
-grn_expr_dfi *
-dfi_value_at(grn_expr *expr, int offset)
-{
-  grn_obj *obj = &expr->dfi;
-  int size = GRN_BULK_VSIZE(obj) / sizeof(grn_expr_dfi);
-  if (offset < 0) { offset = size + offset; }
-  return (0 <= offset && offset < size)
-    ? &(((grn_expr_dfi *)GRN_BULK_HEAD(obj))[offset])
-    : NULL;
-}
-
 grn_obj *
 grn_expr_create(grn_ctx *ctx, const char *name, unsigned int name_size)
 {
