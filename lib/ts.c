@@ -4849,7 +4849,7 @@ grn_ts_expr_parser_tokenize_start(grn_ctx *ctx, grn_ts_expr_parser *parser,
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  *token = new_token;
+  *token = (grn_ts_expr_token *)new_token;
   return GRN_SUCCESS;
 }
 
@@ -4863,7 +4863,7 @@ grn_ts_expr_parser_tokenize_end(grn_ctx *ctx, grn_ts_expr_parser *parser,
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  *token = new_token;
+  *token = (grn_ts_expr_token *)new_token;
   return GRN_SUCCESS;
 }
 
@@ -5011,7 +5011,7 @@ grn_ts_expr_parser_tokenize_bridge(grn_ctx *ctx, grn_ts_expr_parser *parser,
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  *token = new_token;
+  *token = (grn_ts_expr_token *)new_token;
   return GRN_SUCCESS;
 }
 
@@ -5026,7 +5026,7 @@ grn_ts_expr_parser_tokenize_bracket(grn_ctx *ctx, grn_ts_expr_parser *parser,
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  *token = new_token;
+  *token = (grn_ts_expr_token *)new_token;
   return GRN_SUCCESS;
 }
 
@@ -5105,9 +5105,7 @@ grn_ts_expr_parser_tokenize_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
   grn_ts_expr_op_token *new_token;
   switch (str.ptr[0]) {
     case '+': case '-': {
-      // FIXME: Suppress a warning.
-      rc = grn_ts_expr_parser_tokenize_sign(ctx, parser, str, &new_token);
-      break;
+      return grn_ts_expr_parser_tokenize_sign(ctx, parser, str, token);
     }
 #define GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE(label, TYPE, EQUAL_TYPE)\
   case label: {\
@@ -5141,15 +5139,14 @@ grn_ts_expr_parser_tokenize_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
     GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('|', BITWISE_OR, LOGICAL_OR)
 #undef GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE
     case '=': {
-      if ((str.size >= 2) && (str.ptr[1] == '=')) {
-        token_str.size = 2;
-        rc = grn_ts_expr_op_token_open(ctx, token_str, GRN_TS_OP_EQUAL,
-                                       &new_token);
-      } else {
-        GRN_TS_ERR(GRN_INVALID_FORMAT, "single equal not available: =\"%.*s\"",
-                   (int)str.size, str.ptr);
-        rc = ctx->rc;
+      if ((str.size < 2) || (str.ptr[1] != '=')) {
+        GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT,
+                          "single equal not available: =\"%.*s\"",
+                          (int)str.size, str.ptr);
       }
+      token_str.size = 2;
+      rc = grn_ts_expr_op_token_open(ctx, token_str, GRN_TS_OP_EQUAL,
+                                     &new_token);
       break;
     }
 #define GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE(label, TYPE)\
@@ -5166,10 +5163,8 @@ grn_ts_expr_parser_tokenize_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
     GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('%', MODULUS)
 #undef GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE
     default: {
-      GRN_TS_ERR(GRN_INVALID_FORMAT, "invalid character: \"%.*s\"",
-                 (int)str.size, str.ptr);
-      rc = ctx->rc;
-      break;
+      GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT, "invalid character: \"%.*s\"",
+                        (int)str.size, str.ptr);
     }
   }
   if (rc != GRN_SUCCESS) {
