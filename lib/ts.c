@@ -2234,11 +2234,12 @@ grn_ts_expr_value_node_close(grn_ctx *ctx, grn_ts_expr_value_node *node) {
     size_t i;\
     grn_ts_ ## kind *out_ptr = (grn_ts_ ## kind *)out;\
     for (i = 0; i < n_in; i++) {\
-      const grn_ts_ ## kind *value;\
-      value = (const grn_ts_ ## kind *)grn_ts_table_get_value(ctx,\
-                                                              node->table,\
-                                                              in[i].id);\
-      out_ptr[i] = value ? *value : grn_ts_ ## kind ## _zero();\
+      const void *ptr = grn_ts_table_get_value(ctx, node->table, in[i].id);\
+      if (ptr) {\
+        out_ptr[i] = *(const grn_ts_ ## kind *)ptr;\
+      } else {\
+        out_ptr[i] = grn_ts_ ## kind ## _zero();\
+      }\
     }\
     return GRN_SUCCESS;\
   }
@@ -2247,10 +2248,12 @@ grn_ts_expr_value_node_close(grn_ctx *ctx, grn_ts_expr_value_node *node) {
     size_t i;\
     grn_ts_int *out_ptr = (grn_ts_int *)out;\
     for (i = 0; i < n_in; i++) {\
-      const type ## _t *value;\
-      value = (const type ## _t *)grn_ts_table_get_value(ctx, node->table,\
-                                                         in[i].id);\
-      out_ptr[i] = value ? (grn_ts_int)*value : grn_ts_int_zero();\
+      const void *ptr = grn_ts_table_get_value(ctx, node->table, in[i].id);\
+      if (ptr) {\
+        out_ptr[i] = (grn_ts_int)*(const type ## _t *)ptr;\
+      } else {\
+        out_ptr[i] = grn_ts_int_zero();\
+      }\
     }\
     return GRN_SUCCESS;\
   }
@@ -2284,11 +2287,9 @@ grn_ts_expr_value_node_evaluate(grn_ctx *ctx, grn_ts_expr_value_node *node,
       size_t i;
       grn_ts_ref *out_ptr = (grn_ts_ref *)out;
       for (i = 0; i < n_in; i++) {
-        const grn_ts_id *value;
-        value = (const grn_ts_id *)grn_ts_table_get_value(ctx, node->table,
-                                                          in[i].id);
-        if (value) {
-          out_ptr[i].id = *value;
+        const void *ptr = grn_ts_table_get_value(ctx, node->table, in[i].id);
+        if (ptr) {
+          out_ptr[i].id = *(const grn_ts_id *)ptr;
           out_ptr[i].score = in[i].score;
         } else {
           out_ptr[i] = grn_ts_ref_zero();
@@ -2312,10 +2313,8 @@ grn_ts_expr_value_node_filter(grn_ctx *ctx, grn_ts_expr_value_node *node,
                               grn_ts_record *out, size_t *n_out) {
   size_t i, count = 0;
   for (i = 0; i < n_in; i++) {
-    const grn_ts_bool *value;
-    value = (const grn_ts_bool *)grn_ts_table_get_value(ctx, node->table,
-                                                        in[i].id);
-    if (value && *value) {
+    const void *ptr = grn_ts_table_get_value(ctx, node->table, in[i].id);
+    if (ptr && *(const grn_ts_bool *)ptr) {
       out[count++] = in[i];
     }
   }
@@ -2329,11 +2328,9 @@ grn_ts_expr_value_node_adjust(grn_ctx *ctx, grn_ts_expr_value_node *node,
                               grn_ts_record *io, size_t n_io) {
   size_t i;
   for (i = 0; i < n_io; i++) {
-    const grn_ts_float *value;
-    value = (const grn_ts_float *)grn_ts_table_get_value(ctx, node->table,
-                                                         io[i].id);
-    if (value) {
-      io[i].score = (grn_ts_score)*value;
+    const void *ptr = grn_ts_table_get_value(ctx, node->table, io[i].id);
+    if (ptr) {
+      io[i].score = (grn_ts_score)*(const grn_ts_float *)ptr;
     }
   }
   return GRN_SUCCESS;
