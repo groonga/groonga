@@ -10,7 +10,7 @@ module Groonga
         builder = ScanInfoBuilder.new(self, op, record_exist)
         builder.build
       rescue => error
-        Context.instance.record_error(:invalid_argument, error)
+        context.record_error(:invalid_argument, error)
         nil
       end
     end
