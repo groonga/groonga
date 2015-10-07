@@ -27,6 +27,8 @@ extern "C" {
 #endif
 
 void grn_mrb_expr_init(grn_ctx *ctx);
+
+grn_obj *grn_mrb_expr_rewrite(grn_ctx *ctx, grn_obj *expr);
 scan_info **grn_mrb_scan_info_build(grn_ctx *ctx,
                                     grn_obj *expr,
                                     int *n,

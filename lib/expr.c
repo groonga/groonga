@@ -1224,6 +1224,22 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
   return ctx->rc;
 }
 
+grn_obj *
+grn_expr_rewrite(grn_ctx *ctx, grn_obj *expr)
+{
+  grn_obj *rewritten = NULL;
+
+  GRN_API_ENTER;
+
+#ifdef GRN_WITH_MRUBY
+  if (ctx->impl->mrb.state) {
+    rewritten = grn_mrb_expr_rewrite(ctx, expr);
+  }
+#endif
+
+  GRN_API_RETURN(rewritten);
+}
+
 #define WITH_SPSAVE(block) do {\
   ctx->impl->stack_curr = sp - ctx->impl->stack;\
   e->values_curr = vp - e->values;\
@@ -5471,7 +5487,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
     scanner = grn_scanner_open(ctx, expr, op, res_size > 0);
     if (scanner) {
       grn_obj res_stack;
-      grn_expr *e = (grn_expr *)expr;
+      grn_expr *e = (grn_expr *)scanner->expr;
       grn_expr_code *codes = e->codes;
       uint32_t codes_curr = e->codes_curr;
       GRN_PTR_INIT(&res_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);

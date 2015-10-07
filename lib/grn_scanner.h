@@ -27,7 +27,7 @@ extern "C" {
 
 typedef struct _grn_scaner {
   grn_obj *expr;
-  grn_obj *rewritten_expr;
+  grn_obj *source_expr;
   scan_info **sis;
   unsigned int n_sis;
 } grn_scanner;

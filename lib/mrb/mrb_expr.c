@@ -809,6 +809,38 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_expression_append_operator, MRB_ARGS_REQ(2));
 }
 
+grn_obj *
+grn_mrb_expr_rewrite(grn_ctx *ctx, grn_obj *expr)
+{
+  grn_mrb_data *data = &(ctx->impl->mrb);
+  mrb_state *mrb = data->state;
+  mrb_value mrb_expression;
+  mrb_value mrb_rewritten_expression;
+  grn_obj *rewritten_expression = NULL;
+  int arena_index;
+
+  arena_index = mrb_gc_arena_save(mrb);
+
+  mrb_expression = grn_mrb_value_from_grn_obj(mrb, expr);
+  mrb_rewritten_expression = mrb_funcall(mrb, mrb_expression, "rewrite", 0);
+  if (mrb_nil_p(mrb_rewritten_expression)) {
+    goto exit;
+  }
+
+  if (mrb_type(mrb_rewritten_expression) == MRB_TT_EXCEPTION) {
+    mrb->exc = mrb_obj_ptr(mrb_rewritten_expression);
+    mrb_print_error(mrb);
+    goto exit;
+  }
+
+  rewritten_expression = DATA_PTR(mrb_rewritten_expression);
+
+exit:
+  mrb_gc_arena_restore(mrb, arena_index);
+
+  return rewritten_expression;
+}
+
 scan_info **
 grn_mrb_scan_info_build(grn_ctx *ctx,
                         grn_obj *expr,

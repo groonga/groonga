@@ -1,3 +1,6 @@
+require "expression_rewriter"
+require "expression_rewriters"
+
 require "scan_info"
 require "scan_info_builder"
 
@@ -5,6 +8,31 @@ require "expression_size_estimator"
 
 module Groonga
   class Expression
+    def rewrite
+      rewritten = nil
+      begin
+        source = self
+        ExpressionRewriters.classes.each do |rewriter_class|
+          rewriter = rewriter_class.new(source)
+          new_rewritten = rewriter.rewrite
+          if new_rewritten
+            rewritten.close if rewritten
+            rewritten = new_rewritten
+            source = rewritten
+          end
+        end
+      rescue GroongaError => groonga_error
+        context.set_groonga_error(groonga_error)
+        rewritten.close if rewritten
+        rewritten = nil
+      rescue => error
+        context.record_error(:invalid_argument, error)
+        rewritten.close if rewritten
+        rewritten = nil
+      end
+      rewritten
+    end
+
     def build_scan_info(op, record_exist)
       begin
         builder = ScanInfoBuilder.new(self, op, record_exist)

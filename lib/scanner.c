@@ -18,16 +18,6 @@
 
 #include "grn_scanner.h"
 
-static void
-sis_free(grn_ctx *ctx, scan_info **sis, unsigned int n_sis)
-{
-  int i;
-  for (i = 0; i < n_sis; i++) {
-    grn_scan_info_close(ctx, sis[i]);
-  }
-  GRN_FREE(sis);
-}
-
 grn_scanner *
 grn_scanner_open(grn_ctx *ctx,
                  grn_obj *expr,
@@ -35,24 +25,27 @@ grn_scanner_open(grn_ctx *ctx,
                  grn_bool record_exist)
 {
   grn_scanner *scanner;
-  scan_info **sis;
-  unsigned int n_sis;
-
-  sis = grn_scan_info_build(ctx, expr, &n_sis, op, record_exist);
-  if (!sis) {
-    return NULL;
-  }
 
   scanner = GRN_MALLOC(sizeof(grn_scanner));
   if (!scanner) {
-    sis_free(ctx, sis, n_sis);
     return NULL;
   }
 
-  scanner->expr = expr;
-  scanner->rewritten_expr = NULL;
-  scanner->sis = sis;
-  scanner->n_sis = n_sis;
+  scanner->source_expr = expr;
+  scanner->expr = grn_expr_rewrite(ctx, expr);
+  if (!scanner->expr) {
+    scanner->expr = expr;
+  }
+
+  scanner->sis = grn_scan_info_build(ctx,
+                                     scanner->expr,
+                                     &(scanner->n_sis),
+                                     op,
+                                     record_exist);
+  if (!scanner->sis) {
+    grn_scanner_close(ctx, scanner);
+    return NULL;
+  }
 
   return scanner;
 }
@@ -64,12 +57,16 @@ grn_scanner_close(grn_ctx *ctx, grn_scanner *scanner)
     return;
   }
 
-  if (scanner->rewritten_expr) {
-    grn_obj_close(ctx, scanner->rewritten_expr);
+  if (scanner->sis) {
+    int i;
+    for (i = 0; i < scanner->n_sis; i++) {
+      grn_scan_info_close(ctx, scanner->sis[i]);
+    }
+    GRN_FREE(scanner->sis);
   }
 
-  if (scanner->sis) {
-    sis_free(ctx, scanner->sis, scanner->n_sis);
+  if (scanner->expr != scanner->source_expr) {
+    grn_obj_close(ctx, scanner->expr);
   }
 
   GRN_FREE(scanner);
