@@ -6,6 +6,8 @@ RUBY_SCRIPT_FILES =				\
 	error.rb				\
 	eval_context.rb				\
 	expression.rb				\
+	expression_rewriter.rb			\
+	expression_rewriters.rb			\
 	expression_size_estimator.rb		\
 	index_column.rb				\
 	index_cursor.rb				\
