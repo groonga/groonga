@@ -7,7 +7,7 @@ module Groonga
     end
 
     def estimate
-      builder = ScanInfoBuilder.new(@expression, Operator::OR, 0)
+      builder = ScanInfoBuilder.new(@expression, Operator::OR, false)
       data_list = builder.build
       return @table_size if data_list.nil?
 
