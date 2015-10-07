@@ -5637,7 +5637,7 @@ grn_ts_expr_bridge_fin(grn_ctx *ctx, grn_ts_expr_bridge *bridge) {
   if (bridge->dest_table) {
     grn_obj_unlink(ctx, bridge->dest_table);
   }
-  /* Note: bridge->src_count does not increment a reference count. */
+  /* Note: bridge->src_table does not increment a reference count. */
 }
 
 /*-------------------------------------------------------------
