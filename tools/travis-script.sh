@@ -19,7 +19,7 @@ case "${BUILD_TOOL}" in
     test/command/run-test.sh ${command_test_options}
     # TODO: Re-enable me on OS X
     if [ "${TRAVIS_OS_NAME}" = "linux" -a "${ENABLE_MRUBY}" = "yes" ]; then
-      test/query_optimizer/run-test.rb
+      test/mruby/run-test.rb
     fi
     test/command/run-test.sh ${command_test_options} --interface http
     mkdir -p ${prefix}/var/log/groonga/httpd
