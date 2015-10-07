@@ -4880,7 +4880,8 @@ grn_ts_expr_parser_tokenize_number(grn_ctx *ctx, grn_ts_expr_parser *parser,
   int_value = strtol(str.ptr, &end, 0);
   if ((end != str.ptr) && (*end != '.')) {
     if (grn_ts_byte_is_name_char(*end)) {
-      GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT, "unterminated Int literal: %.*s",
+      GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT,
+                        "unterminated Int literal: \"%.*s\"",
                         (int)str.size, str.ptr);
     }
     token_str.ptr = str.ptr;
@@ -4894,10 +4895,12 @@ grn_ts_expr_parser_tokenize_number(grn_ctx *ctx, grn_ts_expr_parser *parser,
   } else {
     grn_ts_float float_value = strtod(str.ptr, &end);
     if (end == str.ptr) {
-      GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT, "invalid number");
+      GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT, "invalid number literal: \"%.*s\"",
+                        (int)str.size, str.ptr);
     }
     if (grn_ts_byte_is_name_char(*end)) {
-      GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT, "unterminated Float literal: %.*s",
+      GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT,
+                        "unterminated Float literal: \"%.*s\"",
                         (int)str.size, str.ptr);
     }
     token_str.ptr = str.ptr;
@@ -4930,8 +4933,8 @@ grn_ts_expr_parser_tokenize_text(grn_ctx *ctx, grn_ts_expr_parser *parser,
     }
   }
   if (i >= str.size) {
-    /* No closing double-quote. */
-    return GRN_INVALID_ARGUMENT;
+    GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT, "no closing double quote: \"%.*s\"",
+                      (int)str.size, str.ptr);
   }
   token_str.ptr = str.ptr;
   token_str.size = i + 1;
@@ -5054,9 +5057,11 @@ grn_ts_expr_parser_tokenize_sign(grn_ctx *ctx, grn_ts_expr_parser *parser,
       break;
     }
     case GRN_TS_EXPR_BRACKET_TOKEN: {
+      grn_ts_str bracket;
       const grn_ts_expr_bracket_token *bracket_token;
       bracket_token = (const grn_ts_expr_bracket_token *)prev_token;
-      switch (bracket_token->src.ptr[0]) {
+      bracket = bracket_token->src;
+      switch (bracket.ptr[0]) {
         case '(': case '[': {
           n_args = 1;
           break;
@@ -5066,13 +5071,15 @@ grn_ts_expr_parser_tokenize_sign(grn_ctx *ctx, grn_ts_expr_parser *parser,
           break;
         }
         default: {
-          return GRN_UNKNOWN_ERROR;
+          GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "undefined bracket: \"%.*s\"",
+                            (int)bracket.size, bracket.ptr);
         }
       }
       break;
     }
     default: {
-      return GRN_INVALID_FORMAT;
+      GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT, "invalid token sequence: %d",
+                        prev_token->type);
     }
   }
   if (token_str.ptr[0] == '+') {
@@ -5098,7 +5105,8 @@ grn_ts_expr_parser_tokenize_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
   grn_ts_expr_op_token *new_token;
   switch (str.ptr[0]) {
     case '+': case '-': {
-      return grn_ts_expr_parser_tokenize_sign(ctx, parser, str, token);
+      rc = grn_ts_expr_parser_tokenize_sign(ctx, parser, str, &new_token);
+      break;
     }
 #define GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE(label, TYPE, EQUAL_TYPE)\
   case label: {\
@@ -5137,7 +5145,9 @@ grn_ts_expr_parser_tokenize_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
         rc = grn_ts_expr_op_token_open(ctx, token_str, GRN_TS_OP_EQUAL,
                                        &new_token);
       } else {
-        rc = GRN_INVALID_ARGUMENT;
+        GRN_TS_ERR(GRN_INVALID_FORMAT, "single equal not available: =\"%.*s\"",
+                   (int)str.size, str.ptr);
+        rc = ctx->rc;
       }
       break;
     }
@@ -5155,7 +5165,9 @@ grn_ts_expr_parser_tokenize_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
     GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('%', MODULUS)
 #undef GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE
     default: {
-      rc = GRN_INVALID_ARGUMENT;
+      GRN_TS_ERR(GRN_INVALID_FORMAT, "invalid character: \"%.*s\"",
+                 (int)str.size, str.ptr);
+      rc = ctx->rc;
       break;
     }
   }
@@ -5275,7 +5287,8 @@ grn_ts_expr_parser_push_const(grn_ctx *ctx, grn_ts_expr_parser *parser,
       return grn_ts_expr_push_text(ctx, parser->expr, token->content.as_text);
     }
     default: {
-      return GRN_OBJECT_CORRUPT;
+      GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "invalid data kind: %d",
+                        token->data_kind);
     }
   }
 }
@@ -5356,7 +5369,6 @@ grn_ts_expr_parser_apply(grn_ctx *ctx, grn_ts_expr_parser *parser,
     depth -= n_args + 1;
     stack[depth++] = dummy_token;
   }
-  parser->stack = stack;
   parser->stack_depth = depth;
   return rc;
 }
