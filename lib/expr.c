@@ -4648,9 +4648,18 @@ grn_inspect_scan_info_list(grn_ctx *ctx, grn_obj *buffer, scan_info **sis, int n
                     "  logical_op: <%s>\n",
                     grn_operator_to_string(si->logical_op));
 
-    GRN_TEXT_PUTS(ctx, buffer, "  query:      <");
-    grn_inspect(ctx, buffer, si->query);
-    GRN_TEXT_PUTS(ctx, buffer, ">\n");
+    if (si->op == GRN_OP_CALL) {
+      int i;
+      for (i = 0; i < si->nargs; i++) {
+        grn_text_printf(ctx, buffer, "  args[%d]:    <", i);
+        grn_inspect(ctx, buffer, si->args[i]);
+        GRN_TEXT_PUTS(ctx, buffer, ">\n");
+      }
+    } else {
+      GRN_TEXT_PUTS(ctx, buffer, "  query:      <");
+      grn_inspect(ctx, buffer, si->query);
+      GRN_TEXT_PUTS(ctx, buffer, ">\n");
+    }
 
     grn_text_printf(ctx, buffer,
                     "  expr:       <%d..%d>\n", si->start, si->end);
