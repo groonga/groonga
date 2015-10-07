@@ -5,9 +5,9 @@ require "expression_size_estimator"
 
 module Groonga
   class Expression
-    def build_scan_info(op, size)
+    def build_scan_info(op, record_exist)
       begin
-        builder = ScanInfoBuilder.new(self, op, size)
+        builder = ScanInfoBuilder.new(self, op, record_exist)
         builder.build
       rescue => error
         Context.instance.record_error(:invalid_argument, error)

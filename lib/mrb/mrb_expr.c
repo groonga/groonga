@@ -810,8 +810,11 @@ grn_mrb_expr_init(grn_ctx *ctx)
 }
 
 scan_info **
-grn_mrb_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
-                        grn_operator op, uint32_t size)
+grn_mrb_scan_info_build(grn_ctx *ctx,
+                        grn_obj *expr,
+                        int *n,
+                        grn_operator op,
+                        grn_bool record_exist)
 {
   grn_mrb_data *data = &(ctx->impl->mrb);
   mrb_state *mrb = data->state;
@@ -826,7 +829,7 @@ grn_mrb_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
   mrb_expression = grn_mrb_value_from_grn_obj(mrb, expr);
   mrb_sis = mrb_funcall(mrb, mrb_expression, "build_scan_info", 2,
                         grn_mrb_value_from_operator(mrb, op),
-                        mrb_fixnum_value(size));
+                        mrb_bool_value(record_exist));
 
   if (mrb_nil_p(mrb_sis)) {
     goto exit;

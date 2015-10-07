@@ -23,6 +23,7 @@
 #include "grn_geo.h"
 #include "grn_expr.h"
 #include "grn_expr_code.h"
+#include "grn_scanner.h"
 #include "grn_util.h"
 #include "grn_report.h"
 #include "grn_mrb.h"
@@ -4379,9 +4380,9 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si)
   }
 }
 
-static scan_info **
-scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
-                grn_operator op, uint32_t size)
+scan_info **
+grn_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
+                    grn_operator op, grn_bool record_exist)
 {
   grn_obj *var;
   scan_stat stat;
@@ -4391,7 +4392,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
   grn_expr *e = (grn_expr *)expr;
 #ifdef GRN_WITH_MRUBY
   if (ctx->impl->mrb.state) {
-    return grn_mrb_scan_info_build(ctx, expr, n, op, size);
+    return grn_mrb_scan_info_build(ctx, expr, n, op, record_exist);
   }
 #endif
   if (!(var = grn_expr_get_var_by_offset(ctx, expr, 0))) { return NULL; }
@@ -4612,7 +4613,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
       break;
     }
   }
-  if (op == GRN_OP_OR && !size) {
+  if (op == GRN_OP_OR && !record_exist) {
     // for debug
     if (!(sis[0]->flags & SCAN_PUSH) || (sis[0]->logical_op != op)) {
       int j;
@@ -5456,16 +5457,17 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
   GRN_API_ENTER;
   res_size = GRN_HASH_SIZE((grn_hash *)res);
   if (op == GRN_OP_OR || res_size) {
-    int i, n;
-    scan_info **sis;
-    if ((sis = scan_info_build(ctx, expr, &n, op, res_size))) {
+    int i;
+    grn_scanner *scanner;
+    scanner = grn_scanner_open(ctx, expr, op, res_size > 0);
+    if (scanner) {
       grn_obj res_stack;
       grn_expr *e = (grn_expr *)expr;
       grn_expr_code *codes = e->codes;
       uint32_t codes_curr = e->codes_curr;
       GRN_PTR_INIT(&res_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
-      for (i = 0; i < n; i++) {
-        scan_info *si = sis[i];
+      for (i = 0; i < scanner->n_sis; i++) {
+        scan_info *si = scanner->sis[i];
         if (si->flags & SCAN_POP) {
           grn_obj *res_;
           GRN_PTR_POP(&res_stack, res_);
@@ -5503,10 +5505,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
           break;
         }
       }
-      for (i = 0; i < n; i++) {
-        scan_info *si = sis[i];
-        SI_FREE(si);
-      }
+
       i = 0;
       if (!res_created) { i++; }
       for (; i < GRN_BULK_VSIZE(&res_stack) / sizeof(grn_obj *); i++) {
@@ -5515,9 +5514,10 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
         grn_obj_close(ctx, stacked_res);
       }
       GRN_OBJ_FIN(ctx, &res_stack);
-      GRN_FREE(sis);
       e->codes = codes;
       e->codes_curr = codes_curr;
+
+      grn_scanner_close(ctx, scanner);
     } else {
       if (!ctx->rc) {
         grn_table_select_sequential(ctx, table, expr, v, res, op);
@@ -6857,7 +6857,7 @@ grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *keywords)
   int i, n;
   scan_info **sis, *si;
   GRN_API_ENTER;
-  if ((sis = scan_info_build(ctx, expr, &n, GRN_OP_OR, 0))) {
+  if ((sis = grn_scan_info_build(ctx, expr, &n, GRN_OP_OR, GRN_FALSE))) {
     int butp = 0, nparens = 0, npbut = 0;
     grn_obj but_stack;
     GRN_UINT32_INIT(&but_stack, GRN_OBJ_VECTOR);
@@ -7063,7 +7063,7 @@ grn_expr_dump_plan(grn_ctx *ctx, grn_obj *expr, grn_obj *buffer)
   scan_info **sis;
 
   GRN_API_ENTER;
-  sis = scan_info_build(ctx, expr, &n, GRN_OP_OR, 0);
+  sis = grn_scan_info_build(ctx, expr, &n, GRN_OP_OR, GRN_FALSE);
   if (sis) {
     int i;
     grn_inspect_scan_info_list(ctx, buffer, sis, n);

@@ -10,11 +10,11 @@ module Groonga
       CONST = 4
     end
 
-    def initialize(expression, operator, size)
+    def initialize(expression, operator, record_exist)
       @data_list = []
       @expression = expression
       @operator = operator
-      @size = size
+      @record_exist = record_exist
     end
 
     RELATION_OPERATORS = [
@@ -120,7 +120,7 @@ module Groonga
         end
       end
 
-      if @operator == Operator::OR and @size == 0
+      if @operator == Operator::OR and !@record_exist
         first_data = @data_list.first
         if (first_data.flags & ScanInfo::Flags::PUSH) == 0 or
             first_data.logical_op != @operator

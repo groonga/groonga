@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2015 Brazil
+  Copyright(C) 2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -16,28 +16,28 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef GRN_MRB_EXPR_H
-#define GRN_MRB_EXPR_H
+#ifndef GRN_SCANNER_H
+#define GRN_SCANNER_H
 
-#include "../grn_ctx.h"
-#include "../grn_expr.h"
+#include "grn_expr.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void grn_mrb_expr_init(grn_ctx *ctx);
-scan_info **grn_mrb_scan_info_build(grn_ctx *ctx,
-                                    grn_obj *expr,
-                                    int *n,
-                                    grn_operator op,
-                                    grn_bool record_exist);
-unsigned int grn_mrb_expr_estimate_size(grn_ctx *ctx,
-                                        grn_obj *expr,
-                                        grn_obj *table);
+typedef struct _grn_scaner {
+  grn_obj *expr;
+  grn_obj *rewritten_expr;
+  scan_info **sis;
+  unsigned int n_sis;
+} grn_scanner;
+
+grn_scanner *grn_scanner_open(grn_ctx *ctx, grn_obj *expr,
+                              grn_operator op, grn_bool record_exist);
+void grn_scanner_close(grn_ctx *ctx, grn_scanner *scanner);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* GRN_MRB_EXPR_H */
+#endif /* GRN_SCANNER_H */
