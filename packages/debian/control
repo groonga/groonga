@@ -36,7 +36,7 @@ Description: Fulltext search engine (metapackage for library use)
  This package depends all Groonga related package for library use.
 
 Package: groonga-server-common
-Architecture: any
+Architecture: all
 Depends:
   ${misc:Depends},
   ${shlibs:Depends},
@@ -49,7 +49,7 @@ Description: Fulltext search engine (metapackage for server use)
  This package provides common settings for server use.
 
 Package: groonga-server-http
-Architecture: any
+Architecture: all
 Replaces: groonga-server (<< 2.0.7-1)
 Breaks: groonga-server (<< 2.0.7-1)
 Section: oldlibs
@@ -68,7 +68,7 @@ Description: Fulltext search engine (metapackage for HTTP server use)
  This is a transitional package to groonga-httpd.
 
 Package: groonga-server-gqtp
-Architecture: any
+Architecture: all
 Replaces: groonga-server (<< 2.0.7-1)
 Breaks: groonga-server (<< 2.0.7-1)
 Depends:
@@ -223,7 +223,7 @@ Description: Examples of Groonga
 
 Package: groonga-munin-plugins
 Section: net
-Architecture: any
+Architecture: all
 Depends:
   ${misc:Depends},
   groonga-bin (= ${binary:Version}),
