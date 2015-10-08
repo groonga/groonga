@@ -332,6 +332,8 @@ grn_db_open(grn_ctx *ctx, const char *path)
     gen_pathname(path, specs_path, 0);
     s->specs = grn_ja_open(ctx, specs_path);
     if (!s->specs) {
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[db][open] failed to open specs: <%s>", specs_path);
       goto exit;
     }
   }
