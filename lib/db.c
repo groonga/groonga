@@ -177,75 +177,97 @@ typedef struct {
 grn_obj *
 grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
 {
-  grn_db *s;
+  grn_db *s = NULL;
+
   GRN_API_ENTER;
-  if (!path || strlen(path) <= PATH_MAX - 14) {
-    if ((s = GRN_MALLOC(sizeof(grn_db)))) {
-      grn_bool use_default_db_key = GRN_TRUE;
-      grn_bool use_pat_as_db_keys = GRN_FALSE;
-      if (grn_db_key[0]) {
-        if (!strcmp(grn_db_key, "pat")) {
-          use_default_db_key = GRN_FALSE;
-          use_pat_as_db_keys = GRN_TRUE;
-        } else if (!strcmp(grn_db_key, "dat")) {
-          use_default_db_key = GRN_FALSE;
-        }
-      }
-      if (use_default_db_key && !strcmp(GRN_DEFAULT_DB_KEY, "pat")) {
-        use_pat_as_db_keys = GRN_TRUE;
-      }
-      grn_tiny_array_init(ctx, &s->values, sizeof(db_value),
-                          GRN_TINY_ARRAY_CLEAR|
-                          GRN_TINY_ARRAY_THREADSAFE|
-                          GRN_TINY_ARRAY_USE_MALLOC);
-      if (use_pat_as_db_keys) {
-        s->keys = (grn_obj *)grn_pat_create(ctx, path, GRN_TABLE_MAX_KEY_SIZE,
-                                            0, GRN_OBJ_KEY_VAR_SIZE);
-      } else {
-        s->keys = (grn_obj *)grn_dat_create(ctx, path, GRN_TABLE_MAX_KEY_SIZE,
-                                            0, GRN_OBJ_KEY_VAR_SIZE);
-      }
-      if (s->keys) {
-        CRITICAL_SECTION_INIT(s->lock);
-        GRN_DB_OBJ_SET_TYPE(s, GRN_DB);
-        s->obj.db = (grn_obj *)s;
-        s->obj.header.domain = GRN_ID_NIL;
-        DB_OBJ(&s->obj)->range = GRN_ID_NIL;
-        // prepare builtin classes and load builtin plugins.
-        if (path) {
-          char specs_path[PATH_MAX];
-          gen_pathname(path, specs_path, 0);
-          if ((s->specs = grn_ja_create(ctx, specs_path, 65536, 0))) {
-            grn_ctx_use(ctx, (grn_obj *)s);
-            grn_db_init_builtin_types(ctx);
-            grn_obj_flush(ctx, (grn_obj *)s);
-            GRN_API_RETURN((grn_obj *)s);
-          } else {
-            ERR(GRN_NO_MEMORY_AVAILABLE,
-                "failed to create specs: <%s>", specs_path);
-          }
-        } else {
-          s->specs = NULL;
-          grn_ctx_use(ctx, (grn_obj *)s);
-          grn_db_init_builtin_types(ctx);
-          GRN_API_RETURN((grn_obj *)s);
-        }
-        if (use_pat_as_db_keys) {
-          grn_pat_close(ctx, (grn_pat *)s->keys);
-          grn_pat_remove(ctx, path);
-        } else {
-          grn_dat_close(ctx, (grn_dat *)s->keys);
-          grn_dat_remove(ctx, path);
-        }
-      }
-      grn_tiny_array_fin(&s->values);
-      GRN_FREE(s);
-    } else {
-      ERR(GRN_NO_MEMORY_AVAILABLE, "grn_db alloc failed");
-    }
-  } else {
+
+  if (path && strlen(path) > PATH_MAX - 14) {
     ERR(GRN_INVALID_ARGUMENT, "too long path");
+    goto exit;
   }
+
+  s = GRN_MALLOC(sizeof(grn_db));
+  if (!s) {
+    ERR(GRN_NO_MEMORY_AVAILABLE, "grn_db alloc failed");
+    goto exit;
+  }
+
+  grn_tiny_array_init(ctx, &s->values, sizeof(db_value),
+                      GRN_TINY_ARRAY_CLEAR|
+                      GRN_TINY_ARRAY_THREADSAFE|
+                      GRN_TINY_ARRAY_USE_MALLOC);
+  s->keys = NULL;
+  s->specs = NULL;
+
+  {
+    grn_bool use_default_db_key = GRN_TRUE;
+    grn_bool use_pat_as_db_keys = GRN_FALSE;
+    if (grn_db_key[0]) {
+      if (!strcmp(grn_db_key, "pat")) {
+        use_default_db_key = GRN_FALSE;
+        use_pat_as_db_keys = GRN_TRUE;
+      } else if (!strcmp(grn_db_key, "dat")) {
+        use_default_db_key = GRN_FALSE;
+      }
+    }
+
+    if (use_default_db_key && !strcmp(GRN_DEFAULT_DB_KEY, "pat")) {
+      use_pat_as_db_keys = GRN_TRUE;
+    }
+    if (use_pat_as_db_keys) {
+      s->keys = (grn_obj *)grn_pat_create(ctx, path, GRN_TABLE_MAX_KEY_SIZE,
+                                          0, GRN_OBJ_KEY_VAR_SIZE);
+    } else {
+      s->keys = (grn_obj *)grn_dat_create(ctx, path, GRN_TABLE_MAX_KEY_SIZE,
+                                          0, GRN_OBJ_KEY_VAR_SIZE);
+    }
+  }
+
+  if (!s->keys) {
+    goto exit;
+  }
+
+  CRITICAL_SECTION_INIT(s->lock);
+  GRN_DB_OBJ_SET_TYPE(s, GRN_DB);
+  s->obj.db = (grn_obj *)s;
+  s->obj.header.domain = GRN_ID_NIL;
+  DB_OBJ(&s->obj)->range = GRN_ID_NIL;
+  // prepare builtin classes and load builtin plugins.
+  if (path) {
+    char specs_path[PATH_MAX];
+    gen_pathname(path, specs_path, 0);
+    s->specs = grn_ja_create(ctx, specs_path, 65536, 0);
+    if (!s->specs) {
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "failed to create specs: <%s>", specs_path);
+      goto exit;
+    }
+    grn_ctx_use(ctx, (grn_obj *)s);
+    grn_db_init_builtin_types(ctx);
+    grn_obj_flush(ctx, (grn_obj *)s);
+    GRN_API_RETURN((grn_obj *)s);
+  } else {
+    s->specs = NULL;
+    grn_ctx_use(ctx, (grn_obj *)s);
+    grn_db_init_builtin_types(ctx);
+    GRN_API_RETURN((grn_obj *)s);
+  }
+
+exit:
+  if (s) {
+    if (s->keys) {
+      if (s->keys->header.type == GRN_TABLE_PAT_KEY) {
+        grn_pat_close(ctx, (grn_pat *)s->keys);
+        grn_pat_remove(ctx, path);
+      } else {
+        grn_dat_close(ctx, (grn_dat *)s->keys);
+        grn_dat_remove(ctx, path);
+      }
+    }
+    grn_tiny_array_fin(&s->values);
+    GRN_FREE(s);
+  }
+
   GRN_API_RETURN(NULL);
 }
 
