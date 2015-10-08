@@ -1,6 +1,6 @@
 module Groonga
   module ExpressionRewriters
-    class Opitmizer < ExpressionRewriter
+    class Optimizer < ExpressionRewriter
       register "optimizer"
 
       def rewrite
