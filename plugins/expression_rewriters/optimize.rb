@@ -22,7 +22,7 @@ module Groonga
 
         return nil if codes[3].value != codes[0].value
 
-        variable = @expression.get_var_by_offset(0)
+        variable = @expression[0]
         rewritten = Expression.create(context[variable.domain])
         rewritten.append_object(Context.instance["between"], Operator::PUSH, 1)
         rewritten.append_object(codes[0].value, Operator::GET_VALUE, 1)

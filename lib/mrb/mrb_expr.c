@@ -485,17 +485,40 @@ mrb_grn_expression_codes(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-mrb_grn_expression_get_var_by_offset(mrb_state *mrb, mrb_value self)
+mrb_grn_expression_array_reference(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_obj *expr;
-  mrb_int offset;
+  mrb_value mrb_key;
   grn_obj *var;
 
-  mrb_get_args(mrb, "i", &offset);
+  mrb_get_args(mrb, "o", &mrb_key);
 
   expr = DATA_PTR(self);
-  var = grn_expr_get_var_by_offset(ctx, expr, offset);
+  switch (mrb_type(mrb_key)) {
+  case MRB_TT_SYMBOL :
+    {
+      const char *name;
+      mrb_int name_length;
+
+      name = mrb_sym2name_len(mrb, mrb_symbol(mrb_key), &name_length);
+      var = grn_expr_get_var(ctx, expr, name, name_length);
+    }
+    break;
+  case MRB_TT_STRING :
+    var = grn_expr_get_var(ctx, expr,
+                           RSTRING_PTR(mrb_key), RSTRING_LEN(mrb_key));
+    break;
+  case MRB_TT_FIXNUM :
+    var = grn_expr_get_var_by_offset(ctx, expr, mrb_fixnum(mrb_key));
+    break;
+  default :
+    mrb_raisef(mrb, E_ARGUMENT_ERROR,
+               "key must be Symbol, String or Fixnum: %S",
+               mrb_key);
+    break;
+  }
+
   return grn_mrb_value_from_grn_obj(mrb, var);
 }
 
@@ -791,8 +814,8 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_expression_initialize, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "codes",
                     mrb_grn_expression_codes, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "get_var_by_offset",
-                    mrb_grn_expression_get_var_by_offset, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "[]",
+                    mrb_grn_expression_array_reference, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "take_object",
                     mrb_grn_expression_take_object, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "allocate_constant",

@@ -61,7 +61,7 @@ module Groonga
       return nil unless valid?
 
       status = Status::START
-      variable = @expression.get_var_by_offset(0)
+      variable = @expression[0]
       data = nil
       codes = @expression.codes
       n_codes = codes.size
@@ -141,7 +141,7 @@ module Groonga
       n_relation_expressions = 0
       n_logical_expressions = 0
       status = Status::START
-      variable = @expression.get_var_by_offset(0)
+      variable = @expression[0]
       codes = @expression.codes
       codes.each do |code|
         case code.op
