@@ -192,6 +192,7 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
     goto exit;
   }
 
+  CRITICAL_SECTION_INIT(s->lock);
   grn_tiny_array_init(ctx, &s->values, sizeof(db_value),
                       GRN_TINY_ARRAY_CLEAR|
                       GRN_TINY_ARRAY_THREADSAFE|
@@ -227,7 +228,6 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
     goto exit;
   }
 
-  CRITICAL_SECTION_INIT(s->lock);
   GRN_DB_OBJ_SET_TYPE(s, GRN_DB);
   s->obj.db = (grn_obj *)s;
   s->obj.header.domain = GRN_ID_NIL;
@@ -265,6 +265,7 @@ exit:
       }
     }
     grn_tiny_array_fin(&s->values);
+    CRITICAL_SECTION_FIN(s->lock);
     GRN_FREE(s);
   }
 
