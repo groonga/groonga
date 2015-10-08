@@ -63,6 +63,7 @@
 # include "mrb/mrb_table_cursor_flags.h"
 # include "mrb/mrb_content_type.h"
 # include "mrb/mrb_writer.h"
+# include "mrb/mrb_conf.h"
 
 # include <mruby/array.h>
 # include <mruby/string.h>
@@ -173,6 +174,7 @@ mrb_groonga_init(mrb_state *mrb, mrb_value self)
   grn_mrb_table_cursor_flags_init(ctx);
   grn_mrb_content_type_init(ctx);
   grn_mrb_writer_init(ctx);
+  grn_mrb_conf_init(ctx);
 
   grn_mrb_load(ctx, "initialize/post.rb");
 
