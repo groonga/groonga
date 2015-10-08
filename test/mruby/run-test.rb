@@ -4,10 +4,9 @@ require "rbconfig"
 require "pathname"
 require "fileutils"
 
-current_dir_path    = Pathname.pwd
 base_dir_path       = Pathname(__FILE__).dirname
 source_top_dir_path = base_dir_path.parent.parent
-build_top_dir_path  = current_dir_path
+build_top_dir_path  = Pathname($0).dirname.parent.parent
 build_base_dir_path = build_top_dir_path + "test/mruby"
 
 Dir.chdir(build_top_dir_path.to_s) do
