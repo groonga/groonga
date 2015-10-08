@@ -232,7 +232,7 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
   s->obj.db = (grn_obj *)s;
   s->obj.header.domain = GRN_ID_NIL;
   DB_OBJ(&s->obj)->range = GRN_ID_NIL;
-  // prepare builtin classes and load builtin plugins.
+  /* prepare builtin classes and load builtin plugins. */
   if (path) {
     char specs_path[PATH_MAX];
     gen_pathname(path, specs_path, 0);
