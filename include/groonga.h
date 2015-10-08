@@ -20,6 +20,7 @@
 
 #include "groonga/portability.h"
 #include "groonga/groonga.h"
+#include "groonga/conf.h"
 #include "groonga/obj.h"
 #include "groonga/ii.h"
 #include "groonga/geo.h"

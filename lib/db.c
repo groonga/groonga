@@ -33,6 +33,7 @@
 #include "grn_report.h"
 #include "grn_util.h"
 #include <string.h>
+#include <sys/stat.h>
 
 typedef struct {
   grn_id id;
@@ -174,6 +175,50 @@ typedef struct {
   uint32_t done;
 } db_value;
 
+static const char *GRN_DB_CONF_PATH_FORMAT = "%s.conf";
+
+static grn_bool
+grn_db_conf_create(grn_ctx *ctx, grn_db *s, const char *path,
+                   const char *context_tag)
+{
+  char conf_path[PATH_MAX];
+  uint32_t flags = GRN_OBJ_KEY_VAR_SIZE;
+
+  grn_snprintf(conf_path, PATH_MAX, PATH_MAX, GRN_DB_CONF_PATH_FORMAT, path);
+  s->conf = grn_hash_create(ctx, conf_path,
+                            GRN_CONF_MAX_KEY_SIZE,
+                            GRN_CONF_VALUE_SPACE_SIZE,
+                            flags);
+  if (!s->conf) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "%s failed to create conf: <%s>",
+        context_tag, conf_path);
+    return GRN_FALSE;
+  }
+
+  return GRN_TRUE;
+}
+
+static grn_bool
+grn_db_conf_open(grn_ctx *ctx, grn_db *s, const char *path)
+{
+  char conf_path[PATH_MAX];
+  struct stat status;
+
+  grn_snprintf(conf_path, PATH_MAX, PATH_MAX, GRN_DB_CONF_PATH_FORMAT, path);
+  if (stat(conf_path, &status) == 0) {
+    s->conf = grn_hash_open(ctx, conf_path);
+    if (!s->conf) {
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[db][open] failed to open conf: <%s>", conf_path);
+      return GRN_FALSE;
+    }
+    return GRN_TRUE;
+  } else {
+    return grn_db_conf_create(ctx, s, path, "[db][open]");
+  }
+}
+
 grn_obj *
 grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
 {
@@ -199,6 +244,7 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
                       GRN_TINY_ARRAY_USE_MALLOC);
   s->keys = NULL;
   s->specs = NULL;
+  s->conf = NULL;
 
   {
     grn_bool use_default_db_key = GRN_TRUE;
@@ -234,12 +280,17 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
   DB_OBJ(&s->obj)->range = GRN_ID_NIL;
   /* prepare builtin classes and load builtin plugins. */
   if (path) {
-    char specs_path[PATH_MAX];
-    gen_pathname(path, specs_path, 0);
-    s->specs = grn_ja_create(ctx, specs_path, 65536, 0);
-    if (!s->specs) {
-      ERR(GRN_NO_MEMORY_AVAILABLE,
-          "failed to create specs: <%s>", specs_path);
+    {
+      char specs_path[PATH_MAX];
+      gen_pathname(path, specs_path, 0);
+      s->specs = grn_ja_create(ctx, specs_path, 65536, 0);
+      if (!s->specs) {
+        ERR(GRN_NO_MEMORY_AVAILABLE,
+            "failed to create specs: <%s>", specs_path);
+        goto exit;
+      }
+    }
+    if (!grn_db_conf_create(ctx, s, path, "[db][create]")) {
       goto exit;
     }
     grn_ctx_use(ctx, (grn_obj *)s);
@@ -247,7 +298,6 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
     grn_obj_flush(ctx, (grn_obj *)s);
     GRN_API_RETURN((grn_obj *)s);
   } else {
-    s->specs = NULL;
     grn_ctx_use(ctx, (grn_obj *)s);
     grn_db_init_builtin_types(ctx);
     GRN_API_RETURN((grn_obj *)s);
@@ -263,6 +313,12 @@ exit:
         grn_dat_close(ctx, (grn_dat *)s->keys);
         grn_dat_remove(ctx, path);
       }
+    }
+    if (s->specs) {
+      const char *specs_path;
+      specs_path = grn_obj_path(ctx, (grn_obj *)(s->specs));
+      grn_ja_close(ctx, s->specs);
+      grn_ja_remove(ctx, specs_path);
     }
     grn_tiny_array_fin(&s->values);
     CRITICAL_SECTION_FIN(s->lock);
@@ -302,6 +358,7 @@ grn_db_open(grn_ctx *ctx, const char *path)
                       GRN_TINY_ARRAY_USE_MALLOC);
   s->keys = NULL;
   s->specs = NULL;
+  s->conf = NULL;
 
   {
     uint32_t type = grn_io_detect_type(ctx, path);
@@ -337,6 +394,9 @@ grn_db_open(grn_ctx *ctx, const char *path)
       goto exit;
     }
   }
+  if (!grn_db_conf_open(ctx, s, path)) {
+    goto exit;
+  }
 
   GRN_DB_OBJ_SET_TYPE(s, GRN_DB);
   s->obj.db = (grn_obj *)s;
@@ -356,6 +416,9 @@ grn_db_open(grn_ctx *ctx, const char *path)
 
 exit:
   if (s) {
+    if (s->specs) {
+      grn_ja_close(ctx, s->specs);
+    }
     if (s->keys) {
       if (s->keys->header.type == GRN_TABLE_PAT_KEY) {
         grn_pat_close(ctx, (grn_pat *)s->keys);
@@ -439,6 +502,7 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   }
   CRITICAL_SECTION_FIN(s->lock);
   if (s->specs) { grn_ja_close(ctx, s->specs); }
+  grn_hash_close(ctx, s->conf);
   GRN_FREE(s);
 
   if (ctx_used_db) {
@@ -10283,6 +10347,9 @@ grn_obj_flush(grn_ctx *ctx, grn_obj *obj)
       rc = grn_obj_flush(ctx, db->keys);
       if (rc == GRN_SUCCESS && db->specs) {
         rc = grn_obj_flush(ctx, (grn_obj *)(db->specs));
+      }
+      if (rc == GRN_SUCCESS) {
+        rc = grn_obj_flush(ctx, (grn_obj *)(db->conf));
       }
     }
     break;

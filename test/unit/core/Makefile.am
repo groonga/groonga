@@ -64,7 +64,8 @@ noinst_LTLIBRARIES =				\
 	test-tokenizer.la			\
 	test-proc.la				\
 	test-uvector.la				\
-	test-operator.la
+	test-operator.la			\
+	test-conf.la
 endif
 
 AM_CPPFLAGS =			\
@@ -154,3 +155,4 @@ test_tokenizer_la_SOURCES		= test-tokenizer.c
 test_proc_la_SOURCES			= test-proc.c
 test_uvector_la_SOURCES			= test-uvector.c
 test_operator_la_SOURCES		= test-operator.c
+test_conf_la_SOURCES			= test-conf.c

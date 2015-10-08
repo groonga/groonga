@@ -47,6 +47,7 @@ struct _grn_db {
   grn_db_obj obj;
   grn_obj *keys;
   grn_ja *specs;
+  grn_hash *conf;
   grn_tiny_array values;
   grn_critical_section lock;
 };
