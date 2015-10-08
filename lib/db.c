@@ -275,68 +275,97 @@ exit:
 grn_obj *
 grn_db_open(grn_ctx *ctx, const char *path)
 {
-  grn_db *s;
+  grn_db *s = NULL;
+
   GRN_API_ENTER;
-  if (path && strlen(path) <= PATH_MAX - 14) {
-    if ((s = GRN_MALLOC(sizeof(grn_db)))) {
-      uint32_t type = grn_io_detect_type(ctx, path);
-      grn_tiny_array_init(ctx, &s->values, sizeof(db_value),
-                          GRN_TINY_ARRAY_CLEAR|
-                          GRN_TINY_ARRAY_THREADSAFE|
-                          GRN_TINY_ARRAY_USE_MALLOC);
-      switch (type) {
-      case GRN_TABLE_PAT_KEY :
-        s->keys = (grn_obj *)grn_pat_open(ctx, path);
-        break;
-      case GRN_TABLE_DAT_KEY :
-        s->keys = (grn_obj *)grn_dat_open(ctx, path);
-        break;
-      default :
-        s->keys = NULL;
-        if (ctx->rc == GRN_SUCCESS) {
-          ERR(GRN_INVALID_ARGUMENT,
-              "[db][open] invalid keys table's type: %#x", type);
-        }
-        break;
-      }
-      if (s->keys) {
-        char specs_path[PATH_MAX];
-        gen_pathname(path, specs_path, 0);
-        if ((s->specs = grn_ja_open(ctx, specs_path))) {
-          CRITICAL_SECTION_INIT(s->lock);
-          GRN_DB_OBJ_SET_TYPE(s, GRN_DB);
-          s->obj.db = (grn_obj *)s;
-          s->obj.header.domain = GRN_ID_NIL;
-          DB_OBJ(&s->obj)->range = GRN_ID_NIL;
-          grn_ctx_use(ctx, (grn_obj *)s);
-#ifdef GRN_WITH_MECAB
-          if (grn_db_init_mecab_tokenizer(ctx)) {
-            ERRCLR(ctx);
-          }
-#endif
-          grn_db_init_builtin_tokenizers(ctx);
-          grn_db_init_builtin_normalizers(ctx);
-          grn_db_init_builtin_scorers(ctx);
-          grn_db_init_builtin_query(ctx);
-          GRN_API_RETURN((grn_obj *)s);
-        }
-        switch (type) {
-        case GRN_TABLE_PAT_KEY :
-          grn_pat_close(ctx, (grn_pat *)s->keys);
-          break;
-        case GRN_TABLE_DAT_KEY :
-          grn_dat_close(ctx, (grn_dat *)s->keys);
-          break;
-        }
-      }
-      grn_tiny_array_fin(&s->values);
-      GRN_FREE(s);
-    } else {
-      ERR(GRN_NO_MEMORY_AVAILABLE, "grn_db alloc failed");
-    }
-  } else {
-    ERR(GRN_INVALID_ARGUMENT, "inappropriate path");
+
+  if (!path) {
+    ERR(GRN_INVALID_ARGUMENT, "[db][open] path is missing");
+    goto exit;
   }
+
+  if (strlen(path) > PATH_MAX - 14) {
+    ERR(GRN_INVALID_ARGUMENT, "inappropriate path");
+    goto exit;
+  }
+
+  s = GRN_MALLOC(sizeof(grn_db));
+  if (!s) {
+    ERR(GRN_NO_MEMORY_AVAILABLE, "grn_db alloc failed");
+    goto exit;
+  }
+
+  CRITICAL_SECTION_INIT(s->lock);
+  grn_tiny_array_init(ctx, &s->values, sizeof(db_value),
+                      GRN_TINY_ARRAY_CLEAR|
+                      GRN_TINY_ARRAY_THREADSAFE|
+                      GRN_TINY_ARRAY_USE_MALLOC);
+  s->keys = NULL;
+  s->specs = NULL;
+
+  {
+    uint32_t type = grn_io_detect_type(ctx, path);
+    switch (type) {
+    case GRN_TABLE_PAT_KEY :
+      s->keys = (grn_obj *)grn_pat_open(ctx, path);
+      break;
+    case GRN_TABLE_DAT_KEY :
+      s->keys = (grn_obj *)grn_dat_open(ctx, path);
+      break;
+    default :
+      s->keys = NULL;
+      if (ctx->rc == GRN_SUCCESS) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "[db][open] invalid keys table's type: %#x", type);
+        goto exit;
+      }
+      break;
+    }
+  }
+
+  if (!s->keys) {
+    goto exit;
+  }
+
+  {
+    char specs_path[PATH_MAX];
+    gen_pathname(path, specs_path, 0);
+    s->specs = grn_ja_open(ctx, specs_path);
+    if (!s->specs) {
+      goto exit;
+    }
+  }
+
+  GRN_DB_OBJ_SET_TYPE(s, GRN_DB);
+  s->obj.db = (grn_obj *)s;
+  s->obj.header.domain = GRN_ID_NIL;
+  DB_OBJ(&s->obj)->range = GRN_ID_NIL;
+  grn_ctx_use(ctx, (grn_obj *)s);
+#ifdef GRN_WITH_MECAB
+  if (grn_db_init_mecab_tokenizer(ctx)) {
+    ERRCLR(ctx);
+  }
+#endif
+  grn_db_init_builtin_tokenizers(ctx);
+  grn_db_init_builtin_normalizers(ctx);
+  grn_db_init_builtin_scorers(ctx);
+  grn_db_init_builtin_query(ctx);
+  GRN_API_RETURN((grn_obj *)s);
+
+exit:
+  if (s) {
+    if (s->keys) {
+      if (s->keys->header.type == GRN_TABLE_PAT_KEY) {
+        grn_pat_close(ctx, (grn_pat *)s->keys);
+      } else {
+        grn_dat_close(ctx, (grn_dat *)s->keys);
+      }
+    }
+    grn_tiny_array_fin(&s->values);
+    CRITICAL_SECTION_FIN(s->lock);
+    GRN_FREE(s);
+  }
+
   GRN_API_RETURN(NULL);
 }
 
