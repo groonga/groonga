@@ -8,7 +8,8 @@ module Groonga
       end
 
       def classes
-        rewriters_table = Context.instance["rewriters"]
+        rewriters_table_name = Conf["expression_rewriter.table"] || "rewriters"
+        rewriters_table = Context.instance[rewriters_table_name]
         return [] if rewriters_table.nil?
 
         rewriters_table.collect do |id|
