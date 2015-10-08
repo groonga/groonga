@@ -13,7 +13,8 @@ class TestBetween < ExpressionRewriterTestCase
     end
 
     @rewriters = Groonga["rewriters"]
-    @rewriters.add("optimize", :plugin_name => "expression_rewriters/optimize")
+    @rewriters.add("optimizer",
+                   :plugin_name => "expression_rewriters/optimizer")
 
     @logs = Groonga["Logs"]
     setup_expression(@logs)

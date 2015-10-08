@@ -1,7 +1,7 @@
 module Groonga
   module ExpressionRewriters
-    class Opitmize < ExpressionRewriter
-      register "optimize"
+    class Opitmizer < ExpressionRewriter
+      register "optimizer"
 
       def rewrite
         codes = @expression.codes
