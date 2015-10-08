@@ -10281,7 +10281,7 @@ grn_obj_flush(grn_ctx *ctx, grn_obj *obj)
     {
       grn_db *db = (grn_db *)obj;
       rc = grn_obj_flush(ctx, db->keys);
-      if (rc == GRN_SUCCESS) {
+      if (rc == GRN_SUCCESS && db->specs) {
         rc = grn_obj_flush(ctx, (grn_obj *)(db->specs));
       }
     }
