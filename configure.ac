@@ -1361,11 +1361,11 @@ AC_SUBST(pluginsdir)
 expanded_pluginsdir="\${libdir}/${expanded_relative_pluginsdir_base}"
 AC_SUBST(expanded_pluginsdir)
 
-tokenizers_pluginsdir="\${pluginsdir}/tokenizers"
-AC_SUBST(tokenizers_pluginsdir)
+tokenizer_pluginsdir="\${pluginsdir}/tokenizers"
+AC_SUBST(tokenizer_pluginsdir)
 
-query_expanders_pluginsdir="\${pluginsdir}/query_expanders"
-AC_SUBST(query_expanders_pluginsdir)
+query_expander_pluginsdir="\${pluginsdir}/query_expanders"
+AC_SUBST(query_expander_pluginsdir)
 
 suggest_pluginsdir="\${pluginsdir}/suggest"
 AC_SUBST(suggest_pluginsdir)
