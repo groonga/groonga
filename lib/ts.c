@@ -801,6 +801,12 @@ grn_ts_op_get_precedence(grn_ts_op_type op_type) {
 
 /* FIXME: The following implementation assumes that NaN values don't appear. */
 
+/* grn_ts_op_logical_not_bool() returns !arg. */
+inline static grn_ts_bool
+grn_ts_op_logical_not_bool(grn_ts_bool arg) {
+  return !arg;
+}
+
 /* grn_ts_op_equal_bool() returns lhs == rhs. */
 inline static grn_ts_bool
 grn_ts_op_equal_bool(grn_ts_bool lhs, grn_ts_bool rhs) {
@@ -3203,18 +3209,24 @@ grn_ts_op_minus_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
 static grn_rc
 grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
   switch (node->op_type) {
-    case GRN_TS_OP_LOGICAL_AND:
-    case GRN_TS_OP_LOGICAL_OR: {
-      if (node->args[1]->data_kind != GRN_TS_BOOL) {
-        GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d",
-                          node->args[1]->data_kind);
-      }
-      /* Fall through. */
-    }
     case GRN_TS_OP_LOGICAL_NOT: {
       if (node->args[0]->data_kind != GRN_TS_BOOL) {
         GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d",
                           node->args[0]->data_kind);
+      }
+      node->data_kind = GRN_TS_BOOL;
+      node->data_type = GRN_DB_BOOL;
+      return GRN_SUCCESS;
+    }
+    case GRN_TS_OP_LOGICAL_AND:
+    case GRN_TS_OP_LOGICAL_OR: {
+      if (node->args[0]->data_kind != GRN_TS_BOOL) {
+        GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d",
+                          node->args[0]->data_kind);
+      }
+      if (node->args[1]->data_kind != GRN_TS_BOOL) {
+        GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d",
+                          node->args[1]->data_kind);
       }
       node->data_kind = GRN_TS_BOOL;
       node->data_type = GRN_DB_BOOL;
@@ -3358,7 +3370,7 @@ grn_ts_op_logical_not_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     return rc;
   }
   for (i = 0; i < n_in; i++) {
-    out_ptr[i] = !out_ptr[i];
+    out_ptr[i] = grn_ts_op_logical_not_bool(out_ptr[i]);
   }
   return GRN_SUCCESS;
 }
@@ -3895,7 +3907,7 @@ grn_ts_op_logical_not_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
     return rc;
   }
   for (i = 0, count = 0; i < n_in; i++) {
-    if (!buf_ptr[i]) {
+    if (grn_ts_op_logical_not_bool(buf_ptr[i])) {
       out[count++] = in[i];
     }
   }
