@@ -807,6 +807,18 @@ grn_ts_op_logical_not_bool(grn_ts_bool arg) {
   return !arg;
 }
 
+/* grn_ts_op_bitwise_not_bool() returns ~arg. */
+inline static grn_ts_bool
+grn_ts_op_bitwise_not_bool(grn_ts_bool arg) {
+  return !arg;
+}
+
+/* grn_ts_op_bitwise_not_int() returns ~arg. */
+inline static grn_ts_int
+grn_ts_op_bitwise_not_int(grn_ts_int arg) {
+  return ~arg;
+}
+
 /* grn_ts_op_equal_bool() returns lhs == rhs. */
 inline static grn_ts_bool
 grn_ts_op_equal_bool(grn_ts_bool lhs, grn_ts_bool rhs) {
@@ -3218,6 +3230,16 @@ grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
       node->data_type = GRN_DB_BOOL;
       return GRN_SUCCESS;
     }
+    case GRN_TS_OP_BITWISE_NOT: {
+      if ((node->args[0]->data_kind != GRN_TS_BOOL) &&
+          (node->args[0]->data_kind != GRN_TS_INT)) {
+        GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d",
+                          node->args[0]->data_kind);
+      }
+      node->data_kind = node->args[0]->data_kind;
+      node->data_type = grn_ts_data_kind_to_type(node->data_kind);
+      return GRN_SUCCESS;
+    }
     case GRN_TS_OP_LOGICAL_AND:
     case GRN_TS_OP_LOGICAL_OR: {
       if (node->args[0]->data_kind != GRN_TS_BOOL) {
@@ -3373,6 +3395,38 @@ grn_ts_op_logical_not_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     out_ptr[i] = grn_ts_op_logical_not_bool(out_ptr[i]);
   }
   return GRN_SUCCESS;
+}
+
+/* grn_ts_op_bitwise_not_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_bitwise_not_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                               const grn_ts_record *in, size_t n_in,
+                               void *out) {
+  size_t i;
+  grn_rc rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, out);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  switch (node->data_kind) {
+    case GRN_TS_BOOL: {
+      grn_ts_bool *out_ptr = (grn_ts_bool *)out;
+      for (i = 0; i < n_in; i++) {
+        out_ptr[i] = grn_ts_op_bitwise_not_bool(out_ptr[i]);
+      }
+      return GRN_SUCCESS;
+    }
+    case GRN_TS_INT: {
+      grn_ts_int *out_ptr = (grn_ts_int *)out;
+      for (i = 0; i < n_in; i++) {
+        out_ptr[i] = grn_ts_op_bitwise_not_int(out_ptr[i]);
+      }
+      return GRN_SUCCESS;
+    }
+    default: {
+      GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "invalid data kind: %d",
+                        node->data_kind);
+    }
+  }
 }
 
 /* grn_ts_op_logical_and_evaluate() evaluates an operator. */
@@ -3842,6 +3896,9 @@ grn_ts_expr_op_node_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     case GRN_TS_OP_LOGICAL_NOT: {
       return grn_ts_op_logical_not_evaluate(ctx, node, in, n_in, out);
     }
+    case GRN_TS_OP_BITWISE_NOT: {
+      return grn_ts_op_bitwise_not_evaluate(ctx, node, in, n_in, out);
+    }
     case GRN_TS_OP_LOGICAL_AND: {
       return grn_ts_op_logical_and_evaluate(ctx, node, in, n_in, out);
     }
@@ -3908,6 +3965,32 @@ grn_ts_op_logical_not_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
   }
   for (i = 0, count = 0; i < n_in; i++) {
     if (grn_ts_op_logical_not_bool(buf_ptr[i])) {
+      out[count++] = in[i];
+    }
+  }
+  *n_out = count;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_op_bitwise_not_filter() filters records. */
+static grn_rc
+grn_ts_op_bitwise_not_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                             grn_ts_record *in, size_t n_in,
+                             grn_ts_record *out, size_t *n_out) {
+  size_t i, count;
+  grn_rc rc;
+  grn_ts_bool *buf_ptr;
+  rc = grn_ts_buf_reserve(ctx, &node->bufs[0], sizeof(grn_ts_bool) * n_in);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  buf_ptr = (grn_ts_bool *)node->bufs[0].ptr;
+  rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, buf_ptr);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  for (i = 0, count = 0; i < n_in; i++) {
+    if (grn_ts_op_bitwise_not_bool(buf_ptr[i])) {
       out[count++] = in[i];
     }
   }
@@ -4122,6 +4205,9 @@ grn_ts_expr_op_node_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
   switch (node->op_type) {
     case GRN_TS_OP_LOGICAL_NOT: {
       return grn_ts_op_logical_not_filter(ctx, node, in, n_in, out, n_out);
+    }
+    case GRN_TS_OP_BITWISE_NOT: {
+      return grn_ts_op_bitwise_not_filter(ctx, node, in, n_in, out, n_out);
     }
     case GRN_TS_OP_LOGICAL_AND: {
       return grn_ts_op_logical_and_filter(ctx, node, in, n_in, out, n_out);
