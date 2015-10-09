@@ -819,6 +819,30 @@ grn_ts_op_bitwise_not_int(grn_ts_int arg) {
   return ~arg;
 }
 
+/* grn_ts_op_positive_int() returns +arg. */
+inline static grn_ts_int
+grn_ts_op_positive_int(grn_ts_int arg) {
+  return arg;
+}
+
+/* grn_ts_op_positive_float() returns +arg. */
+inline static grn_ts_float
+grn_ts_op_positive_float(grn_ts_float arg) {
+  return arg;
+}
+
+/* grn_ts_op_negative_int() returns -arg. */
+inline static grn_ts_int
+grn_ts_op_negative_int(grn_ts_int arg) {
+  return -arg;
+}
+
+/* grn_ts_op_negative_float() returns -arg. */
+inline static grn_ts_float
+grn_ts_op_negative_float(grn_ts_float arg) {
+  return -arg;
+}
+
 /* grn_ts_op_equal_bool() returns lhs == rhs. */
 inline static grn_ts_bool
 grn_ts_op_equal_bool(grn_ts_bool lhs, grn_ts_bool rhs) {
@@ -3240,6 +3264,17 @@ grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
       node->data_type = grn_ts_data_kind_to_type(node->data_kind);
       return GRN_SUCCESS;
     }
+    case GRN_TS_OP_POSITIVE:
+    case GRN_TS_OP_NEGATIVE: {
+      if ((node->args[0]->data_kind != GRN_TS_INT) &&
+          (node->args[0]->data_kind != GRN_TS_FLOAT)) {
+        GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d",
+                          node->args[0]->data_kind);
+      }
+      node->data_kind = node->args[0]->data_kind;
+      node->data_type = grn_ts_data_kind_to_type(node->data_kind);
+      return GRN_SUCCESS;
+    }
     case GRN_TS_OP_LOGICAL_AND:
     case GRN_TS_OP_LOGICAL_OR: {
       if (node->args[0]->data_kind != GRN_TS_BOOL) {
@@ -3419,6 +3454,68 @@ grn_ts_op_bitwise_not_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
       grn_ts_int *out_ptr = (grn_ts_int *)out;
       for (i = 0; i < n_in; i++) {
         out_ptr[i] = grn_ts_op_bitwise_not_int(out_ptr[i]);
+      }
+      return GRN_SUCCESS;
+    }
+    default: {
+      GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "invalid data kind: %d",
+                        node->data_kind);
+    }
+  }
+}
+
+/* grn_ts_op_positive_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_positive_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                            const grn_ts_record *in, size_t n_in, void *out) {
+  size_t i;
+  grn_rc rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, out);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  switch (node->data_kind) {
+    case GRN_TS_INT: {
+      grn_ts_int *out_ptr = (grn_ts_int *)out;
+      for (i = 0; i < n_in; i++) {
+        out_ptr[i] = grn_ts_op_positive_int(out_ptr[i]);
+      }
+      return GRN_SUCCESS;
+    }
+    case GRN_TS_FLOAT: {
+      grn_ts_float *out_ptr = (grn_ts_float *)out;
+      for (i = 0; i < n_in; i++) {
+        out_ptr[i] = grn_ts_op_positive_float(out_ptr[i]);
+      }
+      return GRN_SUCCESS;
+    }
+    default: {
+      GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "invalid data kind: %d",
+                        node->data_kind);
+    }
+  }
+}
+
+/* grn_ts_op_negative_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_negative_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                            const grn_ts_record *in, size_t n_in, void *out) {
+  size_t i;
+  grn_rc rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, out);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  switch (node->data_kind) {
+    case GRN_TS_INT: {
+      grn_ts_int *out_ptr = (grn_ts_int *)out;
+      for (i = 0; i < n_in; i++) {
+        out_ptr[i] = grn_ts_op_negative_int(out_ptr[i]);
+      }
+      return GRN_SUCCESS;
+    }
+    case GRN_TS_FLOAT: {
+      grn_ts_float *out_ptr = (grn_ts_float *)out;
+      for (i = 0; i < n_in; i++) {
+        out_ptr[i] = grn_ts_op_negative_float(out_ptr[i]);
       }
       return GRN_SUCCESS;
     }
@@ -3899,6 +3996,12 @@ grn_ts_expr_op_node_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     case GRN_TS_OP_BITWISE_NOT: {
       return grn_ts_op_bitwise_not_evaluate(ctx, node, in, n_in, out);
     }
+    case GRN_TS_OP_POSITIVE: {
+      return grn_ts_op_positive_evaluate(ctx, node, in, n_in, out);
+    }
+    case GRN_TS_OP_NEGATIVE: {
+      return grn_ts_op_negative_evaluate(ctx, node, in, n_in, out);
+    }
     case GRN_TS_OP_LOGICAL_AND: {
       return grn_ts_op_logical_and_evaluate(ctx, node, in, n_in, out);
     }
@@ -4241,6 +4344,38 @@ grn_ts_expr_op_node_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
   }
 }
 
+/* grn_ts_op_positive_adjust() updates scores. */
+static grn_rc
+grn_ts_op_positive_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                          grn_ts_record *io, size_t n_io) {
+  size_t i, count = 0;
+  grn_rc rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[0], io, n_io,
+                                               &node->bufs[0]);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  grn_ts_float *buf_ptr = (grn_ts_float *)node->bufs[0].ptr;
+  for (i = 0; i < n_io; i++) {
+    io[count++].score = (grn_ts_score)grn_ts_op_positive_float(buf_ptr[i]);
+  }
+}
+
+/* grn_ts_op_negative_adjust() updates scores. */
+static grn_rc
+grn_ts_op_negative_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                          grn_ts_record *io, size_t n_io) {
+  size_t i, count = 0;
+  grn_rc rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[0], io, n_io,
+                                               &node->bufs[0]);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  grn_ts_float *buf_ptr = (grn_ts_float *)node->bufs[0].ptr;
+  for (i = 0; i < n_io; i++) {
+    io[count++].score = (grn_ts_score)grn_ts_op_negative_float(buf_ptr[i]);
+  }
+}
+
 #define GRN_TS_OP_ARITH_ADJUST(type)\
   size_t i, count = 0;\
   for (i = 0; i < 2; i++) {\
@@ -4301,6 +4436,12 @@ static grn_rc
 grn_ts_expr_op_node_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
                            grn_ts_record *io, size_t n_io) {
   switch (node->op_type) {
+    case GRN_TS_OP_POSITIVE: {
+      return grn_ts_op_positive_adjust(ctx, node, io, n_io);
+    }
+    case GRN_TS_OP_NEGATIVE: {
+      return grn_ts_op_negative_adjust(ctx, node, io, n_io);
+    }
     case GRN_TS_OP_PLUS: {
       return grn_ts_op_plus_adjust(ctx, node, io, n_io);
     }
