@@ -703,10 +703,10 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
     if (*lkey && size2) {
       if (pat->header->garbages[0]) {
         r = pat->header->garbages[0];
-        pat->header->n_entries++;
-        pat->header->n_garbages--;
         PAT_AT(pat, r, rn);
         if (!rn) { return 0; }
+        pat->header->n_entries++;
+        pat->header->n_garbages--;
         pat->header->garbages[0] = rn->lr[0];
       } else {
         if (!(rn = pat_node_new(ctx, pat, &r))) { return 0; }
@@ -718,12 +718,12 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
       if (pat->header->garbages[size2]) {
         uint8_t *keybuf;
         r = pat->header->garbages[size2];
-        pat->header->n_entries++;
-        pat->header->n_garbages--;
         PAT_AT(pat, r, rn);
         if (!rn) { return 0; }
-        pat->header->garbages[size2] = rn->lr[0];
         if (!(keybuf = pat_node_get_key(ctx, pat, rn))) { return 0; }
+        pat->header->n_entries++;
+        pat->header->n_garbages--;
+        pat->header->garbages[size2] = rn->lr[0];
         PAT_LEN_SET(rn, size);
         grn_memcpy(keybuf, key, size);
       } else {
