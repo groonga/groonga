@@ -5618,30 +5618,52 @@ grn_ts_expr_parser_tokenize_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
     case '+': case '-': {
       return grn_ts_expr_parser_tokenize_sign(ctx, parser, str, token);
     }
-#define GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE(label, TYPE, EQUAL_TYPE)\
+    case '!': {
+      if ((str.size >= 2) && (str.ptr[1] == '=')) {
+        token_str.size = 2;
+        op_type = GRN_TS_OP_NOT_EQUAL;
+      } else {
+        token_str.size = 1;
+        op_type = GRN_TS_OP_LOGICAL_NOT;
+      }
+      rc = grn_ts_expr_op_token_open(ctx, token_str, op_type, &new_token);
+      break;
+    }
+#define GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE(label, TYPE_1, TYPE_2, TYPE_3,\
+                                            TYPE_EQUAL)\
   case label: {\
     if ((str.size >= 2) && (str.ptr[1] == '=')) {\
       token_str.size = 2;\
-      op_type = GRN_TS_OP_ ## EQUAL_TYPE;\
+      op_type = GRN_TS_OP_ ## TYPE_EQUAL;\
+    } else if ((str.size >= 2) && (str.ptr[1] == label)) {\
+      if ((str.size >= 3) && (str.ptr[2] == label)) {\
+        token_str.size = 3;\
+        op_type = GRN_TS_OP_ ## TYPE_3;\
+      } else {\
+        token_str.size = 2;\
+        op_type = GRN_TS_OP_ ## TYPE_2;\
+      }\
     } else {\
       token_str.size = 1;\
-      op_type = GRN_TS_OP_ ## TYPE;\
+      op_type = GRN_TS_OP_ ## TYPE_1;\
     }\
     rc = grn_ts_expr_op_token_open(ctx, token_str, op_type, &new_token);\
     break;\
   }
-    GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('!', LOGICAL_NOT, NOT_EQUAL)
-    GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('<', LESS, LESS_EQUAL)
-    GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('>', GREATER, GREATER_EQUAL)
+/*    GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('!', LOGICAL_NOT, NOT_EQUAL)*/
+    GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('<', LESS, SHIFT_ARITHMETIC_LEFT,
+                                        SHIFT_LOGICAL_LEFT, LESS_EQUAL)
+    GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('>', GREATER, SHIFT_ARITHMETIC_RIGHT,
+                                        SHIFT_LOGICAL_RIGHT, GREATER_EQUAL)
 #undef GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE
-#define GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE(label, TYPE, DOUBLE_TYPE)\
+#define GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE(label, TYPE_1, TYPE_2)\
   case label: {\
-    if ((str.size >= 2) && (str.ptr[1] == str.ptr[0])) {\
+    if ((str.size >= 2) && (str.ptr[1] == label)) {\
       token_str.size = 2;\
-      op_type = GRN_TS_OP_ ## DOUBLE_TYPE;\
+      op_type = GRN_TS_OP_ ## TYPE_2;\
     } else {\
       token_str.size = 1;\
-      op_type = GRN_TS_OP_ ## TYPE;\
+      op_type = GRN_TS_OP_ ## TYPE_1;\
     }\
     rc = grn_ts_expr_op_token_open(ctx, token_str, op_type, &new_token);\
     break;\
