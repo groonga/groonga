@@ -716,28 +716,32 @@ typedef int grn_ts_op_precedence;
 static size_t
 grn_ts_op_get_n_args(grn_ts_op_type op_type) {
   switch (op_type) {
-    case GRN_TS_OP_LOGICAL_NOT:    /* !X */
-    case GRN_TS_OP_BITWISE_NOT:    /* ~X */
-    case GRN_TS_OP_POSITIVE:       /* +X */
-    case GRN_TS_OP_NEGATIVE: {     /* -X */
+    case GRN_TS_OP_LOGICAL_NOT: /* !X */
+    case GRN_TS_OP_BITWISE_NOT: /* ~X */
+    case GRN_TS_OP_POSITIVE:    /* +X */
+    case GRN_TS_OP_NEGATIVE: {  /* -X */
       return 1;
     }
-    case GRN_TS_OP_LOGICAL_AND:    /* X && Y */
-    case GRN_TS_OP_LOGICAL_OR:     /* X || Y */
-    case GRN_TS_OP_BITWISE_AND:    /* X & Y  */
-    case GRN_TS_OP_BITWISE_OR:     /* X | Y  */
-    case GRN_TS_OP_BITWISE_XOR:    /* X ^ Y  */
-    case GRN_TS_OP_EQUAL:          /* X == Y */
-    case GRN_TS_OP_NOT_EQUAL:      /* X != Y */
-    case GRN_TS_OP_LESS:           /* X < Y  */
-    case GRN_TS_OP_LESS_EQUAL:     /* X <= Y */
-    case GRN_TS_OP_GREATER:        /* X > Y  */
-    case GRN_TS_OP_GREATER_EQUAL:  /* X >= Y */
-    case GRN_TS_OP_PLUS:           /* X + Y  */
-    case GRN_TS_OP_MINUS:          /* X - Y  */
-    case GRN_TS_OP_MULTIPLICATION: /* X * Y  */
-    case GRN_TS_OP_DIVISION:       /* X / Y  */
-    case GRN_TS_OP_MODULUS: {      /* X % Y  */
+    case GRN_TS_OP_LOGICAL_AND:            /* X && Y  */
+    case GRN_TS_OP_LOGICAL_OR:             /* X || Y  */
+    case GRN_TS_OP_BITWISE_AND:            /* X & Y   */
+    case GRN_TS_OP_BITWISE_OR:             /* X | Y   */
+    case GRN_TS_OP_BITWISE_XOR:            /* X ^ Y   */
+    case GRN_TS_OP_EQUAL:                  /* X == Y  */
+    case GRN_TS_OP_NOT_EQUAL:              /* X != Y  */
+    case GRN_TS_OP_LESS:                   /* X < Y   */
+    case GRN_TS_OP_LESS_EQUAL:             /* X <= Y  */
+    case GRN_TS_OP_GREATER:                /* X > Y   */
+    case GRN_TS_OP_GREATER_EQUAL:          /* X >= Y  */
+    case GRN_TS_OP_SHIFT_ARITHMETIC_LEFT:  /* X << Y  */
+    case GRN_TS_OP_SHIFT_ARITHMETIC_RIGHT: /* X >> Y  */
+    case GRN_TS_OP_SHIFT_LOGICAL_LEFT:     /* X <<< Y */
+    case GRN_TS_OP_SHIFT_LOGICAL_RIGHT:    /* X >>> Y */
+    case GRN_TS_OP_PLUS:                   /* X + Y   */
+    case GRN_TS_OP_MINUS:                  /* X - Y   */
+    case GRN_TS_OP_MULTIPLICATION:         /* X * Y   */
+    case GRN_TS_OP_DIVISION:               /* X / Y   */
+    case GRN_TS_OP_MODULUS: {              /* X % Y   */
       return 2;
     }
     default: {
@@ -765,6 +769,15 @@ grn_ts_op_get_precedence(grn_ts_op_type op_type) {
     case GRN_TS_OP_LOGICAL_OR: {
       return 4;
     }
+    case GRN_TS_OP_BITWISE_AND: {
+      return 8;
+    }
+    case GRN_TS_OP_BITWISE_OR: {
+      return 6;
+    }
+    case GRN_TS_OP_BITWISE_XOR: {
+      return 7;
+    }
     case GRN_TS_OP_EQUAL:
     case GRN_TS_OP_NOT_EQUAL: {
       return 9;
@@ -775,14 +788,11 @@ grn_ts_op_get_precedence(grn_ts_op_type op_type) {
     case GRN_TS_OP_GREATER_EQUAL: {
       return 10;
     }
-    case GRN_TS_OP_BITWISE_AND: {
-      return 8;
-    }
-    case GRN_TS_OP_BITWISE_OR: {
-      return 6;
-    }
-    case GRN_TS_OP_BITWISE_XOR: {
-      return 7;
+    case GRN_TS_OP_SHIFT_ARITHMETIC_LEFT:
+    case GRN_TS_OP_SHIFT_ARITHMETIC_RIGHT:
+    case GRN_TS_OP_SHIFT_LOGICAL_LEFT:
+    case GRN_TS_OP_SHIFT_LOGICAL_RIGHT: {
+      return 11;
     }
     case GRN_TS_OP_PLUS:
     case GRN_TS_OP_MINUS: {
@@ -1333,6 +1343,30 @@ grn_ts_op_greater_equal_text_vector(grn_ts_text_vector lhs,
   GRN_TS_OP_GREATER_EQUAL_VECTOR(text)
 }
 #undef GRN_TS_OP_GREATER_EQUAL_VECTOR
+
+/* grn_ts_op_shift_arithmetic_left() returns lhs << rhs. */
+inline static grn_ts_int
+grn_ts_op_shift_arithmetic_left(grn_ts_int lhs, grn_ts_int rhs) {
+  return lhs << rhs;
+}
+
+/* grn_ts_op_shift_arithmetic_right() returns lhs << rhs. */
+inline static grn_ts_int
+grn_ts_op_shift_arithmetic_right(grn_ts_int lhs, grn_ts_int rhs) {
+  return lhs >> rhs;
+}
+
+/* grn_ts_op_shift_logical_left() returns lhs << rhs. */
+inline static grn_ts_int
+grn_ts_op_shift_logical_left(grn_ts_int lhs, grn_ts_int rhs) {
+  return lhs << rhs;
+}
+
+/* grn_ts_op_shift_logical_right() returns lhs << rhs. */
+inline static grn_ts_int
+grn_ts_op_shift_logical_right(grn_ts_int lhs, grn_ts_int rhs) {
+  return (uint64_t)lhs >> rhs;
+}
 
 /* grn_ts_op_plus_int() returns lhs + rhs. */
 inline static grn_ts_int
@@ -3393,6 +3427,20 @@ grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
                             node->args[0]->data_kind);
         }
       }
+      case GRN_TS_OP_SHIFT_ARITHMETIC_LEFT:
+      case GRN_TS_OP_SHIFT_ARITHMETIC_RIGHT:
+      case GRN_TS_OP_SHIFT_LOGICAL_LEFT:
+      case GRN_TS_OP_SHIFT_LOGICAL_RIGHT: {
+        if ((node->args[0]->data_kind != GRN_TS_INT) ||
+            (node->args[1]->data_kind != GRN_TS_INT)) {
+          GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d, %d",
+                            node->args[0]->data_kind,
+                            node->args[1]->data_kind);
+        }
+        node->data_kind = GRN_TS_INT;
+        node->data_type = GRN_DB_INT64;
+        return GRN_SUCCESS;
+      }
       case GRN_TS_OP_PLUS: {
         return grn_ts_op_plus_check_args(ctx, node);
       }
@@ -3873,6 +3921,59 @@ grn_ts_op_greater_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 #undef GRN_TS_OP_CMP_EVALUATE_VECTOR_CASE
 #undef GRN_TS_OP_CMP_EVALUATE_CASE
 
+#define GRN_TS_OP_SHIFT_EVALUATE(type)\
+  size_t i;\
+  grn_rc rc;\
+  grn_ts_int *out_ptr = (grn_ts_int *)out;\
+  rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, out);\
+  if (rc == GRN_SUCCESS) {\
+    rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[1],\
+                                          in, n_in, &node->bufs[0]);\
+    if (rc == GRN_SUCCESS) {\
+      grn_ts_int *buf_ptr = (grn_ts_int *)node->bufs[0].ptr;\
+      for (i = 0; i < n_in; i++) {\
+        out_ptr[i] = grn_ts_op_shift_ ## type(out_ptr[i], buf_ptr[i]);\
+      }\
+    }\
+  }\
+  return rc;
+/* grn_ts_op_shift_arithmetic_left_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_shift_arithmetic_left_evaluate(grn_ctx *ctx,
+                                         grn_ts_expr_op_node *node,
+                                         const grn_ts_record *in, size_t n_in,
+                                         void *out) {
+  GRN_TS_OP_SHIFT_EVALUATE(arithmetic_left)
+}
+
+/* grn_ts_op_shift_arithmetic_right_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_shift_arithmetic_right_evaluate(grn_ctx *ctx,
+                                          grn_ts_expr_op_node *node,
+                                          const grn_ts_record *in, size_t n_in,
+                                          void *out) {
+  GRN_TS_OP_SHIFT_EVALUATE(arithmetic_right)
+}
+
+/* grn_ts_op_shift_logical_left_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_shift_logical_left_evaluate(grn_ctx *ctx,
+                                      grn_ts_expr_op_node *node,
+                                      const grn_ts_record *in, size_t n_in,
+                                      void *out) {
+  GRN_TS_OP_SHIFT_EVALUATE(logical_left)
+}
+
+/* grn_ts_op_shift_logical_right_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_shift_logical_right_evaluate(grn_ctx *ctx,
+                                       grn_ts_expr_op_node *node,
+                                       const grn_ts_record *in, size_t n_in,
+                                       void *out) {
+  GRN_TS_OP_SHIFT_EVALUATE(logical_right)
+}
+#undef GRN_TS_OP_SHIFT_EVALUATE
+
 #define GRN_TS_OP_ARITH_EVALUATE_CASE(type, KIND, kind)\
   case GRN_TS_ ## KIND: {\
     /*
@@ -4139,6 +4240,18 @@ grn_ts_expr_op_node_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     }
     case GRN_TS_OP_GREATER_EQUAL: {
       return grn_ts_op_greater_equal_evaluate(ctx, node, in, n_in, out);
+    }
+    case GRN_TS_OP_SHIFT_ARITHMETIC_LEFT: {
+      return grn_ts_op_shift_arithmetic_left_evaluate(ctx, node, in, n_in, out);
+    }
+    case GRN_TS_OP_SHIFT_ARITHMETIC_RIGHT: {
+      return grn_ts_op_shift_arithmetic_right_evaluate(ctx, node, in, n_in, out);
+    }
+    case GRN_TS_OP_SHIFT_LOGICAL_LEFT: {
+      return grn_ts_op_shift_logical_left_evaluate(ctx, node, in, n_in, out);
+    }
+    case GRN_TS_OP_SHIFT_LOGICAL_RIGHT: {
+      return grn_ts_op_shift_logical_right_evaluate(ctx, node, in, n_in, out);
     }
     case GRN_TS_OP_PLUS: {
       return grn_ts_op_plus_evaluate(ctx, node, in, n_in, out);
