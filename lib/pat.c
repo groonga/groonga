@@ -1679,55 +1679,51 @@ grn_pat_cursor_next(grn_ctx *ctx, grn_pat_cursor *c)
   while ((se = pop(c))) {
     grn_id id = se->id;
     int check = se->check, ch;
-    for (;;) {
-      if (id) {
-        PAT_AT(c->pat, id, node);
-        if (node) {
-          ch = PAT_CHK(node);
-          if (ch > check) {
-            if (c->obj.header.flags & GRN_CURSOR_DESCENDING) {
-              push(c, node->lr[0], ch);
-              id = node->lr[1];
-            } else {
-              push(c, node->lr[1], ch);
-              id = node->lr[0];
-            }
-            check = ch;
-            continue;
+    while (id) {
+      PAT_AT(c->pat, id, node);
+      if (node) {
+        ch = PAT_CHK(node);
+        if (ch > check) {
+          if (c->obj.header.flags & GRN_CURSOR_DESCENDING) {
+            push(c, node->lr[0], ch);
+            id = node->lr[1];
           } else {
-            if (id == c->tail) {
-              c->sp = 0;
-            } else {
-              if (!c->curr_rec && c->tail) {
-                uint32_t lmin, lmax;
-                pat_node *nmin, *nmax;
-                const uint8_t *kmin, *kmax;
-                if (c->obj.header.flags & GRN_CURSOR_DESCENDING) {
-                  PAT_AT(c->pat, c->tail, nmin);
-                  PAT_AT(c->pat, id, nmax);
-                } else {
-                  PAT_AT(c->pat, id, nmin);
-                  PAT_AT(c->pat, c->tail, nmax);
-                }
-                lmin = PAT_LEN(nmin);
-                lmax = PAT_LEN(nmax);
-                kmin = pat_node_get_key(ctx, c->pat, nmin);
-                kmax = pat_node_get_key(ctx, c->pat, nmax);
-                if ((lmin < lmax) ?
-                    (memcmp(kmin, kmax, lmin) > 0) :
-                    (memcmp(kmin, kmax, lmax) >= 0)) {
-                  c->sp = 0;
-                  break;
-                }
+            push(c, node->lr[1], ch);
+            id = node->lr[0];
+          }
+          check = ch;
+          continue;
+        } else {
+          if (id == c->tail) {
+            c->sp = 0;
+          } else {
+            if (!c->curr_rec && c->tail) {
+              uint32_t lmin, lmax;
+              pat_node *nmin, *nmax;
+              const uint8_t *kmin, *kmax;
+              if (c->obj.header.flags & GRN_CURSOR_DESCENDING) {
+                PAT_AT(c->pat, c->tail, nmin);
+                PAT_AT(c->pat, id, nmax);
+              } else {
+                PAT_AT(c->pat, id, nmin);
+                PAT_AT(c->pat, c->tail, nmax);
+              }
+              lmin = PAT_LEN(nmin);
+              lmax = PAT_LEN(nmax);
+              kmin = pat_node_get_key(ctx, c->pat, nmin);
+              kmax = pat_node_get_key(ctx, c->pat, nmax);
+              if ((lmin < lmax) ?
+                  (memcmp(kmin, kmax, lmin) > 0) :
+                  (memcmp(kmin, kmax, lmax) >= 0)) {
+                c->sp = 0;
+                break;
               }
             }
-            c->curr_rec = id;
-            c->rest--;
-            return id;
           }
+          c->curr_rec = id;
+          c->rest--;
+          return id;
         }
-      } else {
-        break;
       }
     }
   }
