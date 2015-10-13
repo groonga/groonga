@@ -610,8 +610,9 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
   grn_id r, r0, *p0, *p1 = NULL;
   pat_node *rn, *rn0;
   int c, c0 = -1, c1 = -1, len;
-
   uint32_t cache_id = 0;
+
+  *new = 0;
   if (pat->cache) {
     const uint8_t *p = key;
     uint32_t length = size;
@@ -628,7 +629,6 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
     }
   }
 
-  *new = 0;
   len = (int)size * 16;
   PAT_AT(pat, 0, rn0);
   p0 = &rn0->lr[1];
