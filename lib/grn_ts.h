@@ -70,6 +70,7 @@ typedef enum {
   /* Binary operators. */
   GRN_TS_OP_LOGICAL_AND,            /* X && Y  */
   GRN_TS_OP_LOGICAL_OR,             /* X || Y  */
+  GRN_TS_OP_LOGICAL_SUB,            /* X &! Y  */
   GRN_TS_OP_BITWISE_AND,            /* X & Y   */
   GRN_TS_OP_BITWISE_OR,             /* X | Y   */
   GRN_TS_OP_BITWISE_XOR,            /* X ^ Y   */

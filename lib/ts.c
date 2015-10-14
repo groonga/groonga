@@ -724,6 +724,7 @@ grn_ts_op_get_n_args(grn_ts_op_type op_type) {
     }
     case GRN_TS_OP_LOGICAL_AND:            /* X && Y  */
     case GRN_TS_OP_LOGICAL_OR:             /* X || Y  */
+    case GRN_TS_OP_LOGICAL_SUB:            /* X &! Y  */
     case GRN_TS_OP_BITWISE_AND:            /* X & Y   */
     case GRN_TS_OP_BITWISE_OR:             /* X | Y   */
     case GRN_TS_OP_BITWISE_XOR:            /* X ^ Y   */
@@ -767,6 +768,9 @@ grn_ts_op_get_precedence(grn_ts_op_type op_type) {
       return 5;
     }
     case GRN_TS_OP_LOGICAL_OR: {
+      return 3;
+    }
+    case GRN_TS_OP_LOGICAL_SUB: {
       return 4;
     }
     case GRN_TS_OP_BITWISE_AND: {
@@ -3350,7 +3354,8 @@ grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
       return GRN_SUCCESS;
     }
     case GRN_TS_OP_LOGICAL_AND:
-    case GRN_TS_OP_LOGICAL_OR: {
+    case GRN_TS_OP_LOGICAL_OR:
+    case GRN_TS_OP_LOGICAL_SUB: {
       if ((node->args[0]->data_kind != GRN_TS_BOOL) ||
           (node->args[1]->data_kind != GRN_TS_BOOL)) {
         GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d, %d",
@@ -3696,6 +3701,52 @@ grn_ts_op_logical_or_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
   count = 0;
   for (i = 0, j = 0; i < n_in; i++) {
     out_ptr[count++] = buf_ptrs[0][i] || buf_ptrs[1][j++];
+  }
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_op_logical_sub_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_logical_sub_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                               const grn_ts_record *in, size_t n_in,
+                               void *out) {
+  size_t i, j, count;
+  grn_rc rc;
+  grn_ts_bool *buf_ptrs[2], *out_ptr = (grn_ts_bool *)out;
+  grn_ts_buf *tmp_in_buf = &node->bufs[2];
+  grn_ts_record *tmp_in;
+
+  /* Evaluate the 1st argument. */
+  rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[0], in, n_in,
+                                        &node->bufs[0]);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  buf_ptrs[0] = (grn_ts_bool *)node->bufs[0].ptr;
+
+  /* Create a list of true records. */
+  rc = grn_ts_buf_reserve(ctx, tmp_in_buf, sizeof(grn_ts_record) * n_in);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  tmp_in = (grn_ts_record *)tmp_in_buf->ptr;
+  count = 0;
+  for (i = 0; i < n_in; i++) {
+    if (buf_ptrs[0][i]) {
+      tmp_in[count++] = in[i];
+    }
+  }
+
+  /* Evaluate the 2nd argument. */
+  rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[1], tmp_in, count,
+                                        &node->bufs[1]);
+  buf_ptrs[1] = (grn_ts_bool *)node->bufs[1].ptr;
+
+  /* Merge the results. */
+  count = 0;
+  for (i = 0, j = 0; i < n_in; i++) {
+    out_ptr[count++] = buf_ptrs[0][i] &&
+                       grn_ts_op_logical_not_bool(buf_ptrs[1][j++]);
   }
   return GRN_SUCCESS;
 }
@@ -4214,6 +4265,9 @@ grn_ts_expr_op_node_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     case GRN_TS_OP_LOGICAL_OR: {
       return grn_ts_op_logical_or_evaluate(ctx, node, in, n_in, out);
     }
+    case GRN_TS_OP_LOGICAL_SUB: {
+      return grn_ts_op_logical_sub_evaluate(ctx, node, in, n_in, out);
+    }
     case GRN_TS_OP_BITWISE_AND: {
       return grn_ts_op_bitwise_and_evaluate(ctx, node, in, n_in, out);
     }
@@ -4383,6 +4437,29 @@ grn_ts_op_logical_or_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
   for (i = 0, j = 0; i < n_in; i++) {
     if (buf_ptrs[0][i] || buf_ptrs[1][j++]) {
       out[count++] = in[i];
+    }
+  }
+  *n_out = count;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_op_logical_sub_filter() filters records. */
+static grn_rc
+grn_ts_op_logical_sub_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                             grn_ts_record *in, size_t n_in,
+                             grn_ts_record *out, size_t *n_out) {
+  size_t i, n, count;
+  grn_ts_bool *buf_ptr;
+  grn_rc rc = grn_ts_expr_node_filter(ctx, node->args[0], in, n_in, out, &n);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[1], out, n,
+                                        &node->bufs[0]);
+  buf_ptr = (grn_ts_bool *)node->bufs[0].ptr;
+  for (i = 0, count = 0; i < n; i++) {
+    if (grn_ts_op_logical_not_bool(buf_ptr[i])) {
+      out[count++] = out[i];
     }
   }
   *n_out = count;
@@ -4587,6 +4664,9 @@ grn_ts_expr_op_node_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
     }
     case GRN_TS_OP_LOGICAL_OR: {
       return grn_ts_op_logical_or_filter(ctx, node, in, n_in, out, n_out);
+    }
+    case GRN_TS_OP_LOGICAL_SUB: {
+      return grn_ts_op_logical_sub_filter(ctx, node, in, n_in, out, n_out);
     }
     case GRN_TS_OP_BITWISE_AND: {
       return grn_ts_op_bitwise_and_filter(ctx, node, in, n_in, out, n_out);
@@ -5656,21 +5736,31 @@ grn_ts_expr_parser_tokenize_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
     GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('>', GREATER, SHIFT_ARITHMETIC_RIGHT,
                                         SHIFT_LOGICAL_RIGHT, GREATER_EQUAL)
 #undef GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE
-#define GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE(label, TYPE_1, TYPE_2)\
-  case label: {\
-    if ((str.size >= 2) && (str.ptr[1] == label)) {\
-      token_str.size = 2;\
-      op_type = GRN_TS_OP_ ## TYPE_2;\
-    } else {\
-      token_str.size = 1;\
-      op_type = GRN_TS_OP_ ## TYPE_1;\
-    }\
-    rc = grn_ts_expr_op_token_open(ctx, token_str, op_type, &new_token);\
-    break;\
-  }
-    GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('&', BITWISE_AND, LOGICAL_AND)
-    GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('|', BITWISE_OR, LOGICAL_OR)
-#undef GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE
+    case '&': {
+      if ((str.size >= 2) && (str.ptr[1] == '&')) {
+        token_str.size = 2;
+        op_type = GRN_TS_OP_LOGICAL_AND;
+      } else if ((str.size >= 2) && (str.ptr[1] == '&')) {
+        token_str.size = 2;
+        op_type = GRN_TS_OP_LOGICAL_SUB;
+      } else {
+        token_str.size = 1;
+        op_type = GRN_TS_OP_BITWISE_AND;
+      }
+      rc = grn_ts_expr_op_token_open(ctx, token_str, op_type, &new_token);
+      break;
+    }
+    case '|': {
+      if ((str.size >= 2) && (str.ptr[1] == '|')) {
+        token_str.size = 2;
+        op_type = GRN_TS_OP_LOGICAL_OR;
+      } else {
+        token_str.size = 1;
+        op_type = GRN_TS_OP_BITWISE_OR;
+      }
+      rc = grn_ts_expr_op_token_open(ctx, token_str, op_type, &new_token);
+      break;
+    }
     case '=': {
       if ((str.size < 2) || (str.ptr[1] != '=')) {
         GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT,
