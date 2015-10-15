@@ -1094,7 +1094,6 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
              grn_table_delete_optarg *optarg)
 {
   grn_pat_delinfo *di;
-  uint8_t direction;
   pat_node *rn, *rn0 = NULL, *rno;
   int c, c0 = -1, ch;
   uint32_t len = key_size * 16;
@@ -1131,8 +1130,7 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
       !optarg->func(ctx, (grn_obj *)pat, r, optarg->func_arg)) {
     return GRN_SUCCESS;
   }
-  direction = (rn0->lr[1] == r);
-  otherside = direction ? rn0->lr[0] : rn0->lr[1];
+  otherside = (rn0->lr[1] == r) ? rn0->lr[0] : rn0->lr[1];
   if (rn == rn0) {
     di->stat = DL_PHASE2;
     di->d = r;
