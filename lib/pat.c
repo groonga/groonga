@@ -1095,14 +1095,24 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
 {
   grn_pat_delinfo *di;
   pat_node *rn, *rn0 = NULL, *rno;
-  int c, c0 = -1, ch;
+  int c = -1, c0 = -1, ch;
   uint32_t len = key_size * 16;
   grn_id r, otherside, *proot, *p, *p0 = NULL;
 
-  di = delinfo_new(ctx, pat); /* must be called before find rn */
+  /* delinfo_new() must be called before searching for rn. */
+  di = delinfo_new(ctx, pat);
   di->shared = shared;
+
+  /*
+   * Search a patricia tree for a given key.
+   * If the key exists, get its associated node.
+   *
+   * rn, rn0: the associated node and its previous node.
+   * rno: the other side of rn (the other destination of rn0).
+   * c, c0: checks of rn0 and its previous node.
+   * p, p0: pointers to transitions (IDs) that refer to rn and rn0.
+   */
   PAT_AT(pat, 0, rn);
-  c = -1;
   proot = p = &rn->lr[1];
   for (;;) {
     if (!(r = *p)) { return GRN_INVALID_ARGUMENT; }
@@ -1115,7 +1125,7 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
       if (!k) { return GRN_INVALID_ARGUMENT; }
       if (key_size == PAT_LEN(rn) && !memcmp(k, key, key_size)) {
         break; /* found */
-      } else {  return GRN_INVALID_ARGUMENT; }
+      } else { return GRN_INVALID_ARGUMENT; }
     }
     c0 = c;
     p0 = p;
@@ -1131,15 +1141,19 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
     return GRN_SUCCESS;
   }
   otherside = (rn0->lr[1] == r) ? rn0->lr[0] : rn0->lr[1];
+
   if (rn == rn0) {
+    /* The last transition is a self-loop. */
     di->stat = DL_PHASE2;
     di->d = r;
     if (otherside) {
       if (otherside == r) {
+        /* rn0->lr[0] == rn0->lr[1]. */
         otherside = 0;
       } else {
         PAT_AT(pat, otherside, rno);
         if (rno && c0 < PAT_CHK(rno) && PAT_CHK(rno) <= c) {
+          /* rno is an output node and will be a non-output node. */
           if (!delinfo_search(pat, otherside)) {
             GRN_LOG(ctx, GRN_LOG_DEBUG, "no delinfo found %d", otherside);
           }
@@ -1150,6 +1164,7 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
     }
     *p0 = otherside;
   } else {
+    /* The last transition is not a self-loop. */
     grn_pat_delinfo *ldi = NULL, *ddi = NULL;
     if (PAT_DEL(rn)) { ldi = delinfo_search(pat, r); }
     if (PAT_DEL(rn0)) { ddi = delinfo_search(pat, *p0); }
@@ -1199,15 +1214,18 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
       }
     }
     if (*p0 == otherside) {
+      /* The previous node is the other side (self-loop). */
       PAT_CHK_SET(rn0, 0);
       if (proot == p0 && !rn0->check) { rn0->lr[0] = rn0->lr[1] = otherside; }
     } else {
       if (otherside) {
         if (otherside == r) {
+          /* rn0->lr[0] == rn0->lr[1]. */
           otherside = 0;
         } else {
           PAT_AT(pat, otherside, rno);
           if (rno && c0 < PAT_CHK(rno) && PAT_CHK(rno) <= c) {
+            /* rno is an output node and will be a non-output node. */
             if (!delinfo_search(pat, otherside)) {
               GRN_LOG(ctx, GRN_LOG_ERROR, "no delinfo found %d", otherside);
             }
