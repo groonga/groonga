@@ -78,14 +78,14 @@ typedef struct _grn_pat_cursor_entry grn_pat_cursor_entry;
 
 struct _grn_pat_cursor {
   grn_db_obj obj;
-  grn_id curr_rec;
+  grn_id curr_rec;   /* ID of the latest record */
   grn_pat *pat;
   grn_ctx *ctx;
-  unsigned int size;
-  unsigned int sp;
-  grn_id tail;
-  unsigned int rest;
-  grn_pat_cursor_entry *ss;
+  unsigned int size; /* stack size (the maximum number of entries) */
+  unsigned int sp;   /* stack pointer (the number of entries) */
+  grn_id tail;       /* sentinel (the end of the traversal) */
+  unsigned int rest; /* limit rest (the number of remaining records) */
+  grn_pat_cursor_entry *ss; /* stack buffer (pointer to entries) */
   uint8_t curr_key[GRN_TABLE_MAX_KEY_SIZE];
 };
 
