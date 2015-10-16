@@ -1,3 +1,4 @@
+# GitHub#415
 table_create pat TABLE_PAT_KEY Int64
 
 load --table pat
