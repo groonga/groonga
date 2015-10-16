@@ -327,6 +327,7 @@ fi
 %dir %{_libdir}/groonga/plugins/token_filters
 %dir %{_libdir}/groonga/plugins/ruby
 %dir %{_libdir}/groonga/plugins/sharding
+%dir %{_libdir}/groonga/plugins/expression_rewriters
 %dir %{_libdir}/groonga/scripts
 %dir %{_libdir}/groonga/scripts/ruby
 %dir %{_libdir}/groonga/scripts/ruby/command_line
@@ -341,6 +342,7 @@ fi
 %{_libdir}/groonga/plugins/ruby/*.so
 %{_libdir}/groonga/plugins/*.rb
 %{_libdir}/groonga/plugins/sharding/*.rb
+%{_libdir}/groonga/plugins/expression_rewriters/*.rb
 %{_libdir}/groonga/scripts/ruby/*.rb
 %{_libdir}/groonga/scripts/ruby/command_line/*.rb
 %{_libdir}/groonga/scripts/ruby/context/*.rb
