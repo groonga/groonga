@@ -1,0 +1,16 @@
+table_create pat TABLE_PAT_KEY Int64
+
+load --table pat
+[
+{"_key": 0},
+{"_key": 1}
+]
+
+delete pat --key 1
+
+load --table pat
+[
+{"_key": 3}
+]
+
+select pat
