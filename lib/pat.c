@@ -1159,7 +1159,12 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
           }
           PAT_CHK_SET(rno, 0);
         }
-        if (proot == p0 && !rno->check) { rno->lr[0] = rno->lr[1] = otherside; }
+        if (proot == p0 && !rno->check) {
+          const uint8_t *k = pat_node_get_key(ctx, pat, rno);
+          int direction = k ? (*k >> 7) : 1;
+          rno->lr[direction] = otherside;
+          rno->lr[!direction] = 0;
+        }
       }
     }
     *p0 = otherside;
@@ -1216,7 +1221,12 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
     if (*p0 == otherside) {
       /* The previous node is the other side (self-loop). */
       PAT_CHK_SET(rn0, 0);
-      if (proot == p0 && !rn0->check) { rn0->lr[0] = rn0->lr[1] = otherside; }
+      if (proot == p0 && !rn0->check) {
+        const uint8_t *k = pat_node_get_key(ctx, pat, rn0);
+        int direction = k ? (*k >> 7) : 1;
+        rn0->lr[direction] = otherside;
+        rn0->lr[!direction] = 0;
+      }
     } else {
       if (otherside) {
         if (otherside == r) {
@@ -1231,7 +1241,12 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
             }
             PAT_CHK_SET(rno, 0);
           }
-          if (proot == p0 && !rno->check) { rno->lr[0] = rno->lr[1] = otherside; }
+          if (proot == p0 && !rno->check) {
+            const uint8_t *k = pat_node_get_key(ctx, pat, rno);
+            int direction = k ? (*k >> 7) : 1;
+            rno->lr[direction] = otherside;
+            rno->lr[!direction] = 0;
+          }
         }
       }
       *p0 = otherside;
