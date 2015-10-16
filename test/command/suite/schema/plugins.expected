@@ -1,0 +1,4 @@
+plugin_register query_expanders/tsv
+[[0,0.0,0.0],true]
+schema
+[[0,0.0,0.0],{"plugins":{"name":"query_expanders/tsv"}}]

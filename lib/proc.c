@@ -2792,7 +2792,7 @@ exit :
 static const size_t DUMP_FLUSH_THRESHOLD_SIZE = 256 * 1024;
 
 static void
-dump_plugins(grn_ctx *ctx, grn_obj *outbuf)
+collect_plugin_names(grn_ctx *ctx, grn_obj *plugin_names)
 {
   grn_obj *db = ctx->impl->db;
   grn_table_cursor *cursor;
@@ -2887,12 +2887,37 @@ dump_plugins(grn_ctx *ctx, grn_obj *outbuf)
                         ruby_plugin_suffix) == 0) {
         name[strlen(name) - strlen(ruby_plugin_suffix)] = '\0';
       }
-      grn_text_printf(ctx, outbuf, "plugin_register %s\n", name);
+      grn_vector_add_element(ctx, plugin_names,
+                             name, strlen(name),
+                             0, GRN_DB_TEXT);
     }
   }
   grn_table_cursor_close(ctx, cursor);
 
   grn_hash_close(ctx, processed_paths);
+}
+
+static void
+dump_plugins(grn_ctx *ctx, grn_obj *outbuf)
+{
+  grn_obj plugin_names;
+  unsigned int i, n;
+
+  GRN_TEXT_INIT(&plugin_names, GRN_OBJ_VECTOR);
+
+  collect_plugin_names(ctx, &plugin_names);
+
+  n = grn_vector_size(ctx, &plugin_names);
+  for (i = 0; i < n; i++) {
+    const char *name;
+    unsigned int name_size;
+
+    name_size = grn_vector_get_element(ctx, &plugin_names, i, &name, NULL, NULL);
+    grn_text_printf(ctx, outbuf, "plugin_register %.*s\n",
+                    (int)name_size, name);
+  }
+
+  GRN_OBJ_FIN(ctx, &plugin_names);
 }
 
 static void
@@ -7267,6 +7292,44 @@ exit :
   return NULL;
 }
 
+static void
+proc_schema_plugins(grn_ctx *ctx)
+{
+  grn_obj plugin_names;
+  unsigned int i, n;
+
+  GRN_TEXT_INIT(&plugin_names, GRN_OBJ_VECTOR);
+
+  collect_plugin_names(ctx, &plugin_names);
+
+  GRN_OUTPUT_CSTR("plugins");
+
+  n = grn_vector_size(ctx, &plugin_names);
+  GRN_OUTPUT_MAP_OPEN("plugin", n);
+  for (i = 0; i < n; i++) {
+    const char *name;
+    unsigned int name_size;
+
+    name_size = grn_vector_get_element(ctx, &plugin_names, i, &name, NULL, NULL);
+    GRN_OUTPUT_CSTR("name");
+    GRN_OUTPUT_STR(name, name_size);
+  }
+  GRN_OUTPUT_MAP_CLOSE();
+
+  GRN_OBJ_FIN(ctx, &plugin_names);
+}
+
+static grn_obj *
+proc_schema(grn_ctx *ctx, int nargs, grn_obj **args,
+            grn_user_data *user_data)
+{
+  GRN_OUTPUT_MAP_OPEN("schema", 1);
+  proc_schema_plugins(ctx);
+  GRN_OUTPUT_MAP_CLOSE();
+
+  return NULL;
+}
+
 #define DEF_VAR(v,name_str) do {\
   (v).name = (name_str);\
   (v).name_size = GRN_STRLEN(name_str);\
@@ -7564,4 +7627,6 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[2], "to_table");
   DEF_VAR(vars[3], "to_name");
   DEF_COMMAND("column_copy", proc_column_copy, 4, vars);
+
+  DEF_COMMAND("schema", proc_schema, 0, vars);
 }
