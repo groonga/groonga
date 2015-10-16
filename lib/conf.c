@@ -60,7 +60,18 @@ grn_conf_set(grn_ctx *ctx,
   }
 
   conf = ((grn_db *)db)->conf;
-  id = grn_hash_add(ctx, conf, key, key_size, &packed_value, NULL);
+  {
+    grn_rc rc;
+    rc = grn_io_lock(ctx, conf->io, grn_lock_timeout);
+    if (rc != GRN_SUCCESS) {
+      if (ctx->rc == GRN_SUCCESS) {
+        ERR(rc, "[conf][set] failed to lock");
+      }
+      GRN_API_RETURN(rc);
+    }
+    id = grn_hash_add(ctx, conf, key, key_size, &packed_value, NULL);
+    grn_io_unlock(conf->io);
+  }
   if (id == GRN_ID_NIL && ctx->rc == GRN_SUCCESS) {
     ERR(GRN_INVALID_ARGUMENT,
         "[conf][set] failed to set: name=<%.*s>: <%d>",
