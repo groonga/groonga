@@ -29,6 +29,7 @@ GRN_API grn_rc grn_normalize_offset_and_limit(grn_ctx *ctx, int size, int *offse
 GRN_API char *grn_path_separator_to_system(char *dest, char *groonga_path);
 
 int grn_mkstemp(char *path_template);
+grn_bool grn_path_exist(const char *path);
 
 #ifdef WIN32
 GRN_API UINT grn_windows_encoding_to_code_page(grn_encoding encoding);

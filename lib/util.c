@@ -1355,6 +1355,13 @@ grn_mkstemp(char *path_template)
 }
 #endif /* WIN32 */
 
+grn_bool
+grn_path_exist(const char *path)
+{
+  struct stat status;
+  return stat(path, &status) == 0;
+}
+
 #ifdef WIN32
 UINT
 grn_windows_encoding_to_code_page(grn_encoding encoding)

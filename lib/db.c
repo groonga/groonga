@@ -33,7 +33,6 @@
 #include "grn_report.h"
 #include "grn_util.h"
 #include <string.h>
-#include <sys/stat.h>
 
 typedef struct {
   grn_id id;
@@ -203,10 +202,9 @@ static grn_bool
 grn_db_conf_open(grn_ctx *ctx, grn_db *s, const char *path)
 {
   char conf_path[PATH_MAX];
-  struct stat status;
 
   grn_snprintf(conf_path, PATH_MAX, PATH_MAX, GRN_DB_CONF_PATH_FORMAT, path);
-  if (stat(conf_path, &status) == 0) {
+  if (grn_path_exist(conf_path) == 0) {
     s->conf = grn_hash_open(ctx, conf_path);
     if (!s->conf) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
