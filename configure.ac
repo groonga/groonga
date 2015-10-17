@@ -951,6 +951,12 @@ fi
 
 # MeCab
 # NOTE: MUST be checked last
+
+BUNDLED_MECAB_VERSION=m4_include([bundled_mecab_version])
+AC_SUBST(BUNDLED_MECAB_VERSION)
+BUNDLED_MECAB_NAIST_JDIC_VERSION=m4_include([bundled_mecab_naist_jdic_version])
+AC_SUBST(BUNDLED_MECAB_NAIST_JDIC_VERSION)
+
 AC_ARG_WITH(mecab,
   [AS_HELP_STRING([--with-mecab],
     [use MeCab for morphological analysis. [default=yes]])],
