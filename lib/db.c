@@ -204,7 +204,7 @@ grn_db_conf_open(grn_ctx *ctx, grn_db *s, const char *path)
   char conf_path[PATH_MAX];
 
   grn_snprintf(conf_path, PATH_MAX, PATH_MAX, GRN_DB_CONF_PATH_FORMAT, path);
-  if (grn_path_exist(conf_path) == 0) {
+  if (grn_path_exist(conf_path)) {
     s->conf = grn_hash_open(ctx, conf_path);
     if (!s->conf) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
