@@ -54,7 +54,7 @@ grn_conf_set(grn_ctx *ctx,
   }
   if (value_size > GRN_CONF_MAX_VALUE_SIZE) {
     ERR(GRN_INVALID_ARGUMENT,
-        "[conf][set] too large value: max=<%lu>: <%d>",
+        "[conf][set] too large value: max=<%" GRN_FMT_SIZE ">: <%d>",
         GRN_CONF_MAX_VALUE_SIZE, value_size);
     GRN_API_RETURN(ctx->rc);
   }
