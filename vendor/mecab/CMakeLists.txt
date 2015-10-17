@@ -13,12 +13,12 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-set(MECAB_VERSION "0.996")
+set(MECAB_VERSION ${GRN_BUNDLED_MECAB_VERSION})
 set(MECAB_DICT_VERSION "102")
 set(MECAB_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../mecab-${MECAB_VERSION}")
 set(MECAB_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/../mecab-${MECAB_VERSION}")
 
-if(EXISTS ${MECAB_SOURCE_DIR})
+if(GRN_WITH_BUNDLED_MECAB)
   include_directories(
     BEFORE
     ${MECAB_BINARY_DIR}
@@ -124,15 +124,19 @@ if(EXISTS ${MECAB_SOURCE_DIR})
     PROPERTIES
     COMPILE_FLAGS "${MECAB_CXX_COMPILE_FLAGS}")
 
-  if(GRN_BUNDLED)
-    add_library(mecab STATIC ${MECAB_SOURCES})
-    set_target_properties(
-      mecab
-      PROPERTIES
-      POSITION_INDEPENDENT_CODE ON)
-  else()
-    add_library(mecab SHARED ${MECAB_SOURCES})
-  endif()
+  add_library(mecab SHARED ${MECAB_SOURCES})
+  install(TARGETS mecab
+    ARCHIVE DESTINATION "${LIB_DIR}"
+    LIBRARY DESTINATION "${LIB_DIR}"
+    RUNTIME DESTINATION "${BIN_DIR}")
+  install(FILES "${MECAB_SOURCE_DIR}/src/mecab.h"
+    DESTINATION "${INCLUDE_DIR}")
+
+  set(prefix "${CMAKE_INSTALL_PREFIX}")
+  configure_file("${MECAB_SOURCE_DIR}/mecabrc.in"
+    "mecabrc")
+  install(FILES "mecabrc"
+    DESTINATION "${CONFIG_DIR}")
 
   configure_file(config.h.cmake "${MECAB_BINARY_DIR}/config.h")
 endif()

@@ -380,38 +380,51 @@ if(NOT ${GRN_WITH_LZ4} STREQUAL "no")
   endif()
 endif()
 
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/mecab_version" GRN_BUNDLED_MECAB_VERSION)
+string(REGEX REPLACE "\n" ""
+  GRN_BUNDLED_MECAB_VERSION
+  "${GRN_BUNDLED_MECAB_VERSION}")
+option(GRN_WITH_BUNDLED_MECAB "use bundled MeCab" OFF)
 set(GRN_WITH_MECAB "auto"
   CACHE STRING "use MeCab for morphological analysis")
 if(NOT ${GRN_WITH_MECAB} STREQUAL "no")
-  set(GRN_MECAB_CONFIG "mecab-config" CACHE FILEPATH "mecab-config path")
-  if(NOT CMAKE_CROSSCOMPILING)
-    find_program(GRN_MECAB_CONFIG_ABSOLUTE_PATH "${GRN_MECAB_CONFIG}")
-  endif()
-  if(EXISTS "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}")
-    execute_process(COMMAND "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}" --inc-dir
-      OUTPUT_VARIABLE MECAB_INCLUDE_DIRS
-      OUTPUT_STRIP_TRAILING_WHITESPACE)
-    execute_process(COMMAND "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}" --libs-only-L
-      OUTPUT_VARIABLE MECAB_LIBRARY_DIRS
-      OUTPUT_STRIP_TRAILING_WHITESPACE)
-    set(MECAB_LIBRARIES "mecab")
-    ac_check_lib(${MECAB_LIBRARIES} mecab_new)
-    if(HAVE_LIBMECAB)
-      set(GRN_WITH_MECAB TRUE)
+  if(GRN_WITH_BUNDLED_MECAB)
+    set(MECAB_INCLUDE_DIRS
+      "${CMAKE_CURRENT_SOURCE_DIR}/vendor/mecab-${GRN_BUNDLED_MECAB_VERSION}/src")
+    set(MECAB_LIBRARY_DIRS
+      "${CMAKE_CURRENT_SOURCE_DIR}/vendor/mecab")
+    set(MECAB_LIBRARIES mecab)
+  else()
+    set(GRN_MECAB_CONFIG "mecab-config" CACHE FILEPATH "mecab-config path")
+    if(NOT CMAKE_CROSSCOMPILING)
+      find_program(GRN_MECAB_CONFIG_ABSOLUTE_PATH "${GRN_MECAB_CONFIG}")
+    endif()
+    if(EXISTS "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}")
+      execute_process(COMMAND "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}" --inc-dir
+	OUTPUT_VARIABLE MECAB_INCLUDE_DIRS
+	OUTPUT_STRIP_TRAILING_WHITESPACE)
+      execute_process(COMMAND "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}" --libs-only-L
+	OUTPUT_VARIABLE MECAB_LIBRARY_DIRS
+	OUTPUT_STRIP_TRAILING_WHITESPACE)
+      set(MECAB_LIBRARIES "mecab")
+      ac_check_lib(${MECAB_LIBRARIES} mecab_new)
+      if(HAVE_LIBMECAB)
+	set(GRN_WITH_MECAB TRUE)
+      else()
+	if(${GRN_WITH_MECAB} STREQUAL "yes")
+	  message(FATAL_ERROR
+	    "No MeCab library found: "
+	    "include directories: <${MECAB_INCLUDE_DIRS}>, "
+	    "library directories: <${MECAB_LIBRARY_DIRS}>")
+	endif()
+	set(GRN_WITH_MECAB FALSE)
+      endif()
     else()
       if(${GRN_WITH_MECAB} STREQUAL "yes")
-	message(FATAL_ERROR
-	  "No MeCab library found: "
-	  "include directories: <${MECAB_INCLUDE_DIRS}>, "
-	  "library directories: <${MECAB_LIBRARY_DIRS}>")
+	message(FATAL_ERROR "No mecab-config found: <${GRN_MECAB_CONFIG}>")
       endif()
       set(GRN_WITH_MECAB FALSE)
     endif()
-  else()
-    if(${GRN_WITH_MECAB} STREQUAL "yes")
-      message(FATAL_ERROR "No mecab-config found: <${GRN_MECAB_CONFIG}>")
-    endif()
-    set(GRN_WITH_MECAB FALSE)
   endif()
 else()
   set(GRN_WITH_MECAB FALSE)

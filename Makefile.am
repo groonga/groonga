@@ -26,7 +26,8 @@ EXTRA_DIST =					\
 	base_version				\
 	gpg_uid					\
 	CMakeLists.txt				\
-	config.h.cmake
+	config.h.cmake				\
+	mecab_version
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = groonga.pc

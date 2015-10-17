@@ -294,11 +294,44 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   if (!sole_mecab) {
     grn_plugin_mutex_lock(ctx, sole_mecab_mutex);
     if (!sole_mecab) {
-      sole_mecab = mecab_new2("-Owakati");
+      int argc = 0;
+      const char *argv[3];
+      argv[argc++] = "-Owakati";
+#ifdef GRN_WITH_BUNDLED_MECAB
+      argv[argc++] = "--rcfile";
+# ifdef WIN32
+      {
+        static char windows_mecab_rc_file[PATH_MAX];
+
+        grn_strcpy(windows_mecab_rc_file,
+                   PATH_MAX,
+                   grn_plugin_windows_base_dir());
+        grn_strcat(windows_mecab_rc_file,
+                   PATH_MAX,
+                   "/");
+        grn_strcat(windows_mecab_rc_file,
+                   PATH_MAX,
+                   GRN_BUNDLED_MECAB_RELATIVE_RC_PATH);
+        argv[argc++] = windows_mecab_rc_file;
+      }
+# else /* WIN32 */
+      argv[argc++] = GRN_BUNDLED_MECAB_RC_PATH;
+# endif /* WIN32 */
+#endif /* GRN_WITH_BUNDLED_MECAB */
+      sole_mecab = mecab_new(argc, (char **)argv);
       if (!sole_mecab) {
         GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                          "[tokenizer][mecab] "
-                         "mecab_new2() failed on mecab_init(): %s",
+                         "mecab_new("
+                         "\"%s\""
+#ifdef GRN_WITH_BUNDLED_MECAB
+                         ", \"%s\", \"%s\""
+#endif /* GRN_WITH_BUNDLED_MECAB */
+                         ") failed on mecab_init(): %s",
+                         argv[0],
+#ifdef GRN_WITH_BUNDLED_MECAB
+                         argv[1], argv[2],
+#endif /* GRN_WITH_BUNDLED_MECAB */
                          mecab_global_error_message());
       } else {
         sole_mecab_encoding = get_mecab_encoding(sole_mecab);

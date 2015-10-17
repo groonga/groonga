@@ -47,6 +47,8 @@
 /vendor/mruby/mruby-io/
 /vendor/mruby/mruby_build.timestamp
 /vendor/mruby-build/
+/vendor/mecab-*
+/vendor/mecab/mecabrc
 /vendor/plugins/*/
 /groonga.spec
 /stamp-h1
