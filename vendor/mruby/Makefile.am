@@ -1,4 +1,5 @@
 EXTRA_DIST =					\
+	CMakeLists.txt				\
 	build_config.rb				\
 	mruby_build.rb				\
 	mruby_build.timestamp
