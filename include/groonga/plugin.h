@@ -146,7 +146,9 @@ GRN_API grn_obj *grn_plugin_proc_get_var_by_offset(grn_ctx *ctx,
                                                    grn_user_data *user_data,
                                                    unsigned int offset);
 
+/* Deprecated since 5.0.9. Use grn_plugin_windows_base_dir() instead. */
 GRN_API const char *grn_plugin_win32_base_dir(void);
+GRN_API const char *grn_plugin_windows_base_dir(void);
 
 GRN_API int grn_plugin_charlen(grn_ctx *ctx, const char *str_ptr,
                                unsigned int str_length, grn_encoding encoding);

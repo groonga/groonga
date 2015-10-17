@@ -492,24 +492,24 @@ grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
 }
 
 #ifdef WIN32
-static char *win32_plugins_dir = NULL;
-static char win32_plugins_dir_buffer[PATH_MAX];
+static char *windows_plugins_dir = NULL;
+static char windows_plugins_dir_buffer[PATH_MAX];
 static const char *
 grn_plugin_get_default_system_plugins_dir(void)
 {
-  if (!win32_plugins_dir) {
+  if (!windows_plugins_dir) {
     const char *base_dir;
     const char *relative_path = GRN_RELATIVE_PLUGINS_DIR;
     size_t base_dir_length;
 
-    base_dir = grn_win32_base_dir();
+    base_dir = grn_windows_base_dir();
     base_dir_length = strlen(base_dir);
-    grn_strcpy(win32_plugins_dir_buffer, PATH_MAX, base_dir);
-    grn_strcat(win32_plugins_dir_buffer, PATH_MAX, "/");
-    grn_strcat(win32_plugins_dir_buffer, PATH_MAX, relative_path);
-    win32_plugins_dir = win32_plugins_dir_buffer;
+    grn_strcpy(windows_plugins_dir_buffer, PATH_MAX, base_dir);
+    grn_strcat(windows_plugins_dir_buffer, PATH_MAX, "/");
+    grn_strcat(windows_plugins_dir_buffer, PATH_MAX, relative_path);
+    windows_plugins_dir = windows_plugins_dir_buffer;
   }
-  return win32_plugins_dir;
+  return windows_plugins_dir;
 }
 
 #else /* WIN32 */
@@ -1024,8 +1024,14 @@ grn_plugin_proc_get_var_by_offset(grn_ctx *ctx, grn_user_data *user_data,
 const char *
 grn_plugin_win32_base_dir(void)
 {
+  return grn_plugin_windows_base_dir();
+}
+
+const char *
+grn_plugin_windows_base_dir(void)
+{
 #ifdef WIN32
-  return grn_win32_base_dir();
+  return grn_windows_base_dir();
 #else /* WIN32 */
   return NULL;
 #endif /* WIN32 */

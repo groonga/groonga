@@ -49,24 +49,24 @@ grn_mrb_init_from_env(void)
 
 #ifdef GRN_WITH_MRUBY
 # ifdef WIN32
-static char *win32_ruby_scripts_dir = NULL;
-static char win32_ruby_scripts_dir_buffer[PATH_MAX];
+static char *windows_ruby_scripts_dir = NULL;
+static char windows_ruby_scripts_dir_buffer[PATH_MAX];
 static const char *
 grn_mrb_get_default_system_ruby_scripts_dir(void)
 {
-  if (!win32_ruby_scripts_dir) {
+  if (!windows_ruby_scripts_dir) {
     const char *base_dir;
     const char *relative_path = GRN_RELATIVE_RUBY_SCRIPTS_DIR;
     size_t base_dir_length;
 
-    base_dir = grn_win32_base_dir();
+    base_dir = grn_windows_base_dir();
     base_dir_length = strlen(base_dir);
-    grn_strcpy(win32_ruby_scripts_dir_buffer, PATH_MAX, base_dir);
-    grn_strcat(win32_ruby_scripts_dir_buffer, PATH_MAX, "/");
-    grn_strcat(win32_ruby_scripts_dir_buffer, PATH_MAX, relative_path);
-    win32_ruby_scripts_dir = win32_ruby_scripts_dir_buffer;
+    grn_strcpy(windows_ruby_scripts_dir_buffer, PATH_MAX, base_dir);
+    grn_strcat(windows_ruby_scripts_dir_buffer, PATH_MAX, "/");
+    grn_strcat(windows_ruby_scripts_dir_buffer, PATH_MAX, relative_path);
+    windows_ruby_scripts_dir = windows_ruby_scripts_dir_buffer;
   }
-  return win32_ruby_scripts_dir;
+  return windows_ruby_scripts_dir;
 }
 
 # else /* WIN32 */

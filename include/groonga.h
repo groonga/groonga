@@ -29,6 +29,7 @@
 #include "groonga/util.h"
 #include "groonga/request_canceler.h"
 #include "groonga/thread.h"
+#include "groonga/windows.h"
 #include "groonga/windows_event_logger.h"
 
 #endif /* GROONGA_H */

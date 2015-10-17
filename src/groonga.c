@@ -2477,17 +2477,19 @@ init_default_settings(void)
 
 #ifdef WIN32
   {
-    static char win32_default_document_root[PATH_MAX];
-    size_t document_root_length = strlen(grn_win32_base_dir()) + 1 +
+    static char windows_default_document_root[PATH_MAX];
+    size_t document_root_length = strlen(grn_windows_base_dir()) + 1 +
         strlen(GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT) + 1;
     if (document_root_length >= PATH_MAX) {
       fprintf(stderr, "can't use default root: too long path\n");
     } else {
-      grn_strcpy(win32_default_document_root, PATH_MAX, grn_win32_base_dir());
-      grn_strcat(win32_default_document_root, PATH_MAX, "/");
-      grn_strcat(win32_default_document_root, PATH_MAX,
+      grn_strcpy(windows_default_document_root, PATH_MAX,
+                 grn_windows_base_dir());
+      grn_strcat(windows_default_document_root, PATH_MAX,
+                 "/");
+      grn_strcat(windows_default_document_root, PATH_MAX,
                  GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT);
-      default_document_root = win32_default_document_root;
+      default_document_root = windows_default_document_root;
     }
   }
 #else
