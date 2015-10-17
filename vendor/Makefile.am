@@ -2,6 +2,7 @@ NGINX_DIR = nginx-$(NGINX_VERSION)
 
 SUBDIRS =					\
 	onigmo					\
+	mecab					\
 	mruby
 
 EXTRA_DIST =					\

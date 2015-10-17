@@ -313,6 +313,7 @@ AC_CONFIG_FILES([
   benchmark/lib/Makefile
   vendor/Makefile
   vendor/onigmo/Makefile
+  vendor/mecab/Makefile
   vendor/mruby/Makefile
 ])
 
