@@ -8025,7 +8025,7 @@ ii_buffer_values_append(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
         value->buf = new_buf;
         value->cap = len;
       }
-      memcpy(value->buf, p, len);
+      grn_memcpy(value->buf, p, len);
       p = value->buf;
     }
     value->sid = sid;
