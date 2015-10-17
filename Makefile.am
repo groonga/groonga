@@ -28,7 +28,8 @@ EXTRA_DIST =					\
 	CMakeLists.txt				\
 	config.h.cmake				\
 	bundled_mecab_version			\
-	bundled_mecab_naist_jdic_version
+	bundled_mecab_naist_jdic_version	\
+	nginx_version
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = groonga.pc
