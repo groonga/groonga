@@ -184,7 +184,7 @@ if(GRN_WITH_BUNDLED_MECAB)
     "--outdir" "${CMAKE_CURRENT_BINARY_DIR}"
     "--dictionary-charset" "EUC-JP"
     "--charset" "utf-8"
-    MAIN_DEPENDENCY mecab-dict-index
+    DEPENDS mecab-dict-index
     COMMENT "Build NAIST Japanese Dictionary for MeCab")
   add_custom_target(mecab-naist-jdic ALL
     DEPENDS ${MECAB_NAIST_JDIC_BUILD_DATA})
