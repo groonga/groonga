@@ -19,4 +19,5 @@ groonga_include_HEADERS =			\
 	nfkc.h					\
 	normalizer.h				\
 	util.h					\
+	windows.h				\
 	windows_event_logger.h
