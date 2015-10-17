@@ -67,11 +67,19 @@ if(GRN_WITH_MRUBY)
     ${MRUBY_BUILT_SOURCES}
     )
   add_library(mruby STATIC ${MRUBY_ALL_SOURCES})
-  set_source_files_properties(${MRUBY_ALL_SOURCES}
-    PROPERTIES
-    COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
   set_target_properties(
     mruby
     PROPERTIES
     POSITION_INDEPENDENT_CODE ON)
+
+  set(MRUBY_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
+  if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANGCC)
+    set(MRUBY_C_COMPILE_FLAGS
+      "${MRUBY_C_COMPILE_FLAGS} -Wno-float-equal")
+    set(MRUBY_C_COMPILE_FLAGS
+      "${MRUBY_C_COMPILE_FLAGS} -Wno-bad-function-cast")
+  endif()
+  set_source_files_properties(${MRUBY_ALL_SOURCES}
+    PROPERTIES
+    COMPILE_FLAGS "${MRUBY_C_COMPILE_FLAGS}")
 endif()
