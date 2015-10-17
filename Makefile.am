@@ -20,16 +20,16 @@ SUBDIRS =					\
 	doc
 #dist_data_DATA =
 EXTRA_DIST =					\
-	README.md				\
-	bindings				\
-	version-gen.sh				\
-	base_version				\
-	gpg_uid					\
 	CMakeLists.txt				\
-	config.h.cmake				\
-	bundled_mecab_version			\
+	README.md				\
+	base_version				\
+	bindings				\
 	bundled_mecab_naist_jdic_version	\
-	nginx_version
+	bundled_mecab_version			\
+	config.h.cmake				\
+	gpg_uid					\
+	nginx_version				\
+	version-gen.sh
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = groonga.pc
