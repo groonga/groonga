@@ -15,8 +15,12 @@
 
 set(MECAB_VERSION ${GRN_BUNDLED_MECAB_VERSION})
 set(MECAB_DICT_VERSION "102")
+set(MECAB_NAIST_JDIC_VERSION "0.6.3b-20111013")
+
 set(MECAB_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../mecab-${MECAB_VERSION}")
 set(MECAB_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/../mecab-${MECAB_VERSION}")
+set(MECAB_NAIST_JDIC_SOURCE_DIR
+  "${CMAKE_CURRENT_SOURCE_DIR}/../mecab-naist-jdic-${MECAB_NAIST_JDIC_VERSION}")
 
 if(GRN_WITH_BUNDLED_MECAB)
   include_directories(
@@ -25,7 +29,21 @@ if(GRN_WITH_BUNDLED_MECAB)
     ${MECAB_SOURCE_DIR}
     )
 
-  set(MECAB_SOURCES
+  set(MECAB_RELATIVE_DICT_DIR "${DATA_DIR}/mecab/dic")
+  set(MECAB_RELATIVE_NAIST_JDIC_DICT_DIR
+    "${MECAB_RELATIVE_DICT_DIR}/naist-jdic")
+  if(WIN32)
+    string(REGEX REPLACE "/" "\\"
+      MECAB_WINDOWS_RELATIVE_NAIST_JDIC_DICT_DIR
+      "${MECAB_RELATIVE_NAIST_JDIC_DICT_DIR}")
+    set(MECAB_NAIST_JDIC_DICT_DIR
+      "$(rcpath)\\..\\${MECAB_WINDOWS_NAIST_JDIC_DICT_DIR}")
+  else()
+    set(MECAB_NAIST_JDIC_DICT_DIR
+      "$(rcpath)/../${MECAB_RELATIVE_NAIST_JDIC_DICT_DIR}")
+  endif()
+
+  set(LIBMECAB_SOURCES
     "${MECAB_SOURCE_DIR}/src/char_property.cpp"
     "${MECAB_SOURCE_DIR}/src/char_property.h"
     "${MECAB_SOURCE_DIR}/src/common.h"
@@ -55,10 +73,8 @@ if(GRN_WITH_BUNDLED_MECAB)
     "${MECAB_SOURCE_DIR}/src/libmecab.cpp"
     # "${MECAB_SOURCE_DIR}/src/mecab-cost-train.cpp"
     # "${MECAB_SOURCE_DIR}/src/mecab-dict-gen.cpp"
-    # "${MECAB_SOURCE_DIR}/src/mecab-dict-index.cpp"
     # "${MECAB_SOURCE_DIR}/src/mecab-system-eval.cpp"
     # "${MECAB_SOURCE_DIR}/src/mecab-test-gen.cpp"
-    "${MECAB_SOURCE_DIR}/src/mecab.cpp"
     "${MECAB_SOURCE_DIR}/src/mecab.h"
     "${MECAB_SOURCE_DIR}/src/mmap.h"
     "${MECAB_SOURCE_DIR}/src/nbest_generator.cpp"
@@ -82,6 +98,12 @@ if(GRN_WITH_BUNDLED_MECAB)
     "${MECAB_SOURCE_DIR}/src/winmain.h"
     "${MECAB_SOURCE_DIR}/src/writer.cpp"
     "${MECAB_SOURCE_DIR}/src/writer.h"
+    )
+  set(MECAB_SOURCES
+    "${MECAB_SOURCE_DIR}/src/mecab.cpp"
+    )
+  set(MECAB_DICT_INDEX_SOURCES
+    "${MECAB_SOURCE_DIR}/src/mecab-dict-index.cpp"
     )
 
   set(MECAB_CXX_COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS}")
@@ -110,9 +132,12 @@ if(GRN_WITH_BUNDLED_MECAB)
     add_definitions(-D_UNICODE)
   else()
     add_definitions(
-      "-DMECAB_DEFAULT_RC=\"${CMAKE_INSTALL_PREFIX}${CONFIG_DIR}/mecab/mecabrc\"")
+      "-DMECAB_DEFAULT_RC=\"${CMAKE_INSTALL_PREFIX}/${CONFIG_DIR}/mecabrc\"")
+    add_definitions(
+      "-DICONV_CONST=")
     add_definitions(-DHAVE_DIRENT_H)
     add_definitions(-DHAVE_FCNTL_H)
+    add_definitions(-DHAVE_ICONV)
     add_definitions(-DHAVE_STDINT_H)
     add_definitions(-DHAVE_STRING_H)
     add_definitions(-DHAVE_SYS_MMAN_H)
@@ -120,21 +145,55 @@ if(GRN_WITH_BUNDLED_MECAB)
     add_definitions(-DHAVE_SYS_TYPES_H)
     add_definitions(-DHAVE_UNISTD_H)
   endif()
-  set_source_files_properties(${MECAB_SOURCES}
+  set_source_files_properties(${LIBMECAB_SOURCES}
     PROPERTIES
     COMPILE_FLAGS "${MECAB_CXX_COMPILE_FLAGS}")
+  set_source_files_properties(${MECAB_SOURCES}
+    PROPERTIES
+    COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS}")
+  set_source_files_properties(${MECAB_DICT_INDEX_SOURCES}
+    PROPERTIES
+    COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS}")
 
-  add_library(mecab SHARED ${MECAB_SOURCES})
-  install(TARGETS mecab
+  add_library(libmecab SHARED ${LIBMECAB_SOURCES})
+  set_target_properties(libmecab PROPERTIES OUTPUT_NAME "mecab")
+  add_executable(mecab ${MECAB_SOURCES})
+  target_link_libraries(mecab libmecab)
+  add_executable(mecab-dict-index ${MECAB_DICT_INDEX_SOURCES})
+  target_link_libraries(mecab-dict-index libmecab)
+  install(TARGETS libmecab
     ARCHIVE DESTINATION "${LIB_DIR}"
     LIBRARY DESTINATION "${LIB_DIR}"
     RUNTIME DESTINATION "${BIN_DIR}")
+  install(TARGETS mecab
+    DESTINATION "${BIN_DIR}")
+  install(TARGETS mecab-dict-index
+    DESTINATION "${BIN_DIR}")
   install(FILES "${MECAB_SOURCE_DIR}/src/mecab.h"
     DESTINATION "${INCLUDE_DIR}")
 
-  set(prefix "${CMAKE_INSTALL_PREFIX}")
-  configure_file("${MECAB_SOURCE_DIR}/mecabrc.in"
-    "mecabrc")
+  set(MECAB_NAIST_JDIC_BUILD_DATA
+    "${CMAKE_CURRENT_BINARY_DIR}/matrix.bin"
+    "${CMAKE_CURRENT_BINARY_DIR}/char.bin"
+    "${CMAKE_CURRENT_BINARY_DIR}/sys.dic"
+    "${CMAKE_CURRENT_BINARY_DIR}/unk.dic")
+  add_custom_command(OUTPUT ${MECAB_NAIST_JDIC_BUILD_DATA}
+    COMMAND
+    "${CMAKE_CURRENT_BINARY_DIR}/mecab-dict-index"
+    "--dicdir" "${MECAB_NAIST_JDIC_SOURCE_DIR}"
+    "--outdir" "${CMAKE_CURRENT_BINARY_DIR}"
+    "--dictionary-charset" "EUC-JP"
+    "--charset" "utf-8"
+    MAIN_DEPENDENCY mecab-dict-index
+    COMMENT "Build NAIST Japanese Dictionary for MeCab")
+  add_custom_target(mecab-naist-jdic ALL
+    DEPENDS ${MECAB_NAIST_JDIC_BUILD_DATA})
+  install(FILES
+    ${MECAB_NAIST_JDIC_BUILD_DATA}
+    "${MECAB_NAIST_JDIC_SOURCE_DIR}/dicrc"
+    DESTINATION "${MECAB_RELATIVE_NAIST_JDIC_DICT_DIR}")
+
+  configure_file("mecabrc.cmake" "mecabrc")
   install(FILES "mecabrc"
     DESTINATION "${CONFIG_DIR}")
 

@@ -48,6 +48,10 @@
 /vendor/mruby/mruby_build.timestamp
 /vendor/mruby-build/
 /vendor/mecab-*
+/vendor/mecab/*.bin
+/vendor/mecab/*.dic
+/vendor/mecab/mecab
+/vendor/mecab/mecab-dict-index
 /vendor/mecab/mecabrc
 /vendor/plugins/*/
 /groonga.spec

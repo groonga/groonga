@@ -393,7 +393,7 @@ if(NOT ${GRN_WITH_MECAB} STREQUAL "no")
       "${CMAKE_CURRENT_SOURCE_DIR}/vendor/mecab-${GRN_BUNDLED_MECAB_VERSION}/src")
     set(MECAB_LIBRARY_DIRS
       "${CMAKE_CURRENT_SOURCE_DIR}/vendor/mecab")
-    set(MECAB_LIBRARIES mecab)
+    set(MECAB_LIBRARIES libmecab)
   else()
     set(GRN_MECAB_CONFIG "mecab-config" CACHE FILEPATH "mecab-config path")
     if(NOT CMAKE_CROSSCOMPILING)
