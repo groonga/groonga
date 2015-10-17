@@ -7,8 +7,7 @@
 *.pyc
 *.gcno
 *.gcda
-*.cmake
-!config.h.cmake
+cmake_install.cmake
 .deps
 .ditz-config
 .gdb_history
