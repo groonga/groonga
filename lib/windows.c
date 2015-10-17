@@ -16,12 +16,9 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <groonga.h>
+#include "grn.h"
 
 #ifdef WIN32
-
-#include <windows.h>
-
 static char *windows_base_dir = NULL;
 const char *
 grn_windows_base_dir(void)
@@ -74,5 +71,4 @@ grn_windows_base_dir(void)
   }
   return windows_base_dir;
 }
-
 #endif
