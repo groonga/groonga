@@ -19,6 +19,9 @@
 #include <groonga.h>
 
 #ifdef WIN32
+
+#include <windows.h>
+
 static char *windows_base_dir = NULL;
 const char *
 grn_windows_base_dir(void)
@@ -71,4 +74,5 @@ grn_windows_base_dir(void)
   }
   return windows_base_dir;
 }
+
 #endif
