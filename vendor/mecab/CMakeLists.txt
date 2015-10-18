@@ -180,9 +180,14 @@ if(GRN_WITH_BUNDLED_MECAB)
     "${CMAKE_CURRENT_BINARY_DIR}/char.bin"
     "${CMAKE_CURRENT_BINARY_DIR}/sys.dic"
     "${CMAKE_CURRENT_BINARY_DIR}/unk.dic")
+  if("${CMAKE_BUILD_TYPE}" STREQUAL "None")
+    set(MECAB_DICT_INDEX_PATH "mecab-dict-index${CMAKE_EXECUTABLE_SUFFIX}")
+  else()
+    set(MECAB_DICT_INDEX_PATH "${CMAKE_BUILD_TYPE}/mecab-dict-index${CMAKE_EXECUTABLE_SUFFIX}")
+  endif()
   add_custom_command(OUTPUT ${MECAB_NAIST_JDIC_BUILD_DATA}
     COMMAND
-    "${CMAKE_CURRENT_BINARY_DIR}/mecab-dict-index${CMAKE_EXECUTABLE_SUFFIX}"
+    "${MECAB_DICT_INDEX_PATH}"
     "--dicdir" "${MECAB_NAIST_JDIC_SOURCE_DIR}"
     "--outdir" "${CMAKE_CURRENT_BINARY_DIR}"
     "--dictionary-charset" "EUC-JP"
