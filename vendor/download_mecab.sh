@@ -13,12 +13,14 @@ mecab_tar_gz=${mecab_base}.tar.gz
 mecab_naist_jdic_base=mecab-naist-jdic-${mecab_naist_jdic_version}
 mecab_naist_jdic_tar_gz=${mecab_naist_jdic_base}.tar.gz
 
+rm -rf ${mecab_tar_gz}
 curl -L -J -O \
   'https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7cENtOXlicTFaRUE'
 rm -rf ${mecab_base}
 tar xzf ${mecab_tar_gz}
 rm -rf ${mecab_tar_gz}
 
+rm -rf ${mecab_naist_jdic_tar_gz}
 curl -L -O \
   "http://osdn.dl.sourceforge.jp/naist-jdic/48487/${mecab_naist_jdic_tar_gz}"
 rm -rf ${mecab_naist_jdic_base}
