@@ -299,7 +299,7 @@ mecab_create(grn_ctx *ctx)
       char *c;
       for (c = windows_mecab_rc_file; *c != '\0'; c++) {
         if (*c == '/') {
-          *c == '\\';
+          *c = '\\';
         }
       }
     }
