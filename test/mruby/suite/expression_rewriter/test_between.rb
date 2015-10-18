@@ -1,7 +1,7 @@
 class TestBetween < ExpressionRewriterTestCase
   def setup
     Groonga::Schema.define do |schema|
-      schema.create_table("rewriters",
+      schema.create_table("expression_rewriters",
                           :type => :hash,
                           :key_type => :short_text) do |table|
         table.text("plugin_name")
@@ -12,7 +12,7 @@ class TestBetween < ExpressionRewriterTestCase
       end
     end
 
-    @rewriters = Groonga["rewriters"]
+    @rewriters = Groonga["expression_rewriters"]
     @rewriters.add("optimizer",
                    :plugin_name => "expression_rewriters/optimizer")
 
