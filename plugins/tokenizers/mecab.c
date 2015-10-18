@@ -307,7 +307,7 @@ mecab_create(grn_ctx *ctx)
 #ifdef GRN_WITH_BUNDLED_MECAB
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                      "[tokenizer][mecab] failed to create mecab_t: %s: "
-                     "mecab_new(\"%s\", \"%s\", \"%s\", \"%s\")"
+                     "mecab_new(\"%s\", \"%s\", \"%s\", \"%s\")",
                      mecab_global_error_message(),
                      argv[0], argv[1], argv[2], argv[3]);
 #else /* GRN_WITH_BUNDLED_MECAB */
