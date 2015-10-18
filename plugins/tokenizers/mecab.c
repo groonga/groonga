@@ -304,19 +304,19 @@ mecab_create(grn_ctx *ctx)
   mecab = mecab_new(argc, (char **)argv);
 
   if (!mecab) {
+#ifdef GRN_WITH_BUNDLED_MECAB
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
-                     "[tokenizer][mecab] "
-                     "failed to create mecab_t: mecab_new("
-                     "\"%s\", \"%s\""
-#ifdef GRN_WITH_BUNDLED_MECAB
-                     ", \"%s\", \"%s\""
+                     "[tokenizer][mecab] failed to create mecab_t: %s: "
+                     "mecab_new(\"%s\", \"%s\", \"%s\", \"%s\")"
+                     mecab_global_error_message(),
+                     argv[0], argv[1], argv[2], argv[3]);
+#else /* GRN_WITH_BUNDLED_MECAB */
+    GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                     "[tokenizer][mecab] failed to create mecab_t: %s: "
+                     "mecab_new(\"%s\", \"%s\")",
+                     mecab_global_error_message(),
+                     argv[0], argv[1]);
 #endif /* GRN_WITH_BUNDLED_MECAB */
-                     "): %s",
-                     argv[0], argv[1],
-#ifdef GRN_WITH_BUNDLED_MECAB
-                     argv[2], argv[3],
-#endif /* GRN_WITH_BUNDLED_MECAB */
-                     mecab_global_error_message());
   }
 
   return mecab;
