@@ -181,7 +181,7 @@ if(GRN_WITH_BUNDLED_MECAB)
     "${CMAKE_CURRENT_BINARY_DIR}/unk.dic")
   add_custom_command(OUTPUT ${MECAB_NAIST_JDIC_BUILD_DATA}
     COMMAND
-    "${CMAKE_CURRENT_BINARY_DIR}/mecab-dict-index"
+    "${CMAKE_CURRENT_BINARY_DIR}/mecab-dict-index${CMAKE_EXECUTABLE_SUFFIX}"
     "--dicdir" "${MECAB_NAIST_JDIC_SOURCE_DIR}"
     "--outdir" "${CMAKE_CURRENT_BINARY_DIR}"
     "--dictionary-charset" "EUC-JP"
