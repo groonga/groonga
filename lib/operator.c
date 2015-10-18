@@ -343,7 +343,7 @@ grn_operator_to_string(grn_operator op)
 grn_bool
 grn_operator_exec_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
 {
-  grn_bool r;
+  grn_bool r = GRN_FALSE;
   GRN_API_ENTER;
   DO_EQ(x, y, r);
   GRN_API_RETURN(r);
@@ -352,7 +352,7 @@ grn_operator_exec_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
 grn_bool
 grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
 {
-  grn_bool r;
+  grn_bool r = GRN_FALSE;
   GRN_API_ENTER;
   DO_EQ(x, y, r);
   GRN_API_RETURN(!r);
@@ -578,7 +578,7 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
 grn_bool
 grn_operator_exec_less(grn_ctx *ctx, grn_obj *x, grn_obj *y)
 {
-  grn_bool r;
+  grn_bool r = GRN_FALSE;
   GRN_API_ENTER;
   DO_COMPARE(x, y, r, <);
   GRN_API_RETURN(r);
@@ -587,7 +587,7 @@ grn_operator_exec_less(grn_ctx *ctx, grn_obj *x, grn_obj *y)
 grn_bool
 grn_operator_exec_greater(grn_ctx *ctx, grn_obj *x, grn_obj *y)
 {
-  grn_bool r;
+  grn_bool r = GRN_FALSE;
   GRN_API_ENTER;
   DO_COMPARE(x, y, r, >);
   GRN_API_RETURN(r);
@@ -596,7 +596,7 @@ grn_operator_exec_greater(grn_ctx *ctx, grn_obj *x, grn_obj *y)
 grn_bool
 grn_operator_exec_less_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
 {
-  grn_bool r;
+  grn_bool r = GRN_FALSE;
   GRN_API_ENTER;
   DO_COMPARE(x, y, r, <=);
   GRN_API_RETURN(r);
@@ -605,7 +605,7 @@ grn_operator_exec_less_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
 grn_bool
 grn_operator_exec_greater_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
 {
-  grn_bool r;
+  grn_bool r = GRN_FALSE;
   GRN_API_ENTER;
   DO_COMPARE(x, y, r, >=);
   GRN_API_RETURN(r);
@@ -1162,7 +1162,7 @@ exec_regexp_vector_bulk(grn_ctx *ctx, grn_obj *vector, grn_obj *pattern)
 grn_bool
 grn_operator_exec_regexp(grn_ctx *ctx, grn_obj *target, grn_obj *pattern)
 {
-  grn_bool matched;
+  grn_bool matched = GRN_FALSE;
   GRN_API_ENTER;
   switch (target->header.type) {
   case GRN_UVECTOR :
