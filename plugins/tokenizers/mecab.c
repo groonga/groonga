@@ -307,14 +307,14 @@ mecab_create(grn_ctx *ctx)
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                      "[tokenizer][mecab] "
                      "failed to create mecab_t: mecab_new("
-                     "\"%s\""
+                     "\"%s\", \"%s\""
 #ifdef GRN_WITH_BUNDLED_MECAB
                      ", \"%s\", \"%s\""
 #endif /* GRN_WITH_BUNDLED_MECAB */
                      "): %s",
-                     argv[0],
+                     argv[0], argv[1],
 #ifdef GRN_WITH_BUNDLED_MECAB
-                     argv[1], argv[2],
+                     argv[2], argv[3],
 #endif /* GRN_WITH_BUNDLED_MECAB */
                      mecab_global_error_message());
   }
