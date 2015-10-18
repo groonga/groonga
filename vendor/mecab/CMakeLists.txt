@@ -123,7 +123,7 @@ if(GRN_WITH_BUNDLED_MECAB)
   add_definitions("-DDIC_VERSION=${MECAB_DICT_VERSION}")
   if(MSVC)
     add_definitions(
-      "-DMECAB_DEFAULT_RC=\"c:\\Program Files\\mecab\\etc\\mecabrc\"")
+      "-DMECAB_DEFAULT_RC=\"c:\\\\Program Files\\\\mecab\\\\etc\\\\mecabrc\"")
     add_definitions(-DMECAB_USE_THREAD)
     add_definitions(-DDLL_EXPORT)
     add_definitions(-DHAVE_GETENV)
