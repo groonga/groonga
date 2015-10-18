@@ -39,7 +39,6 @@ if rroonga_revision != rroonga_built_revision
   pkg_config_path = (ENV["PKG_CONFIG_PATH"] || "").split(File::PATH_SEPARATOR)
   pkg_config_path.unshift(groonga_pc_path.dirname.to_s)
   ENV["PKG_CONFIG_PATH"] = pkg_config_path.join(File::PATH_SEPARATOR)
-  puts ENV["PKG_CONFIG_PATH"]
   Dir.chdir(rroonga_dir_path.to_s) do
     system("make", "clean") if File.exist?("Makefile")
     system(RbConfig.ruby,
