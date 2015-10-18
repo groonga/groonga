@@ -217,6 +217,15 @@ grn_db_conf_open(grn_ctx *ctx, grn_db *s, const char *path)
   }
 }
 
+static grn_rc
+grn_db_conf_remove(grn_ctx *ctx, const char *path)
+{
+  char conf_path[PATH_MAX];
+
+  grn_snprintf(conf_path, PATH_MAX, PATH_MAX, GRN_DB_CONF_PATH_FORMAT, path);
+  return grn_hash_remove(ctx, conf_path);
+}
+
 grn_obj *
 grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
 {
@@ -8612,6 +8621,11 @@ _grn_obj_remove_db(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
     case GRN_TABLE_DAT_KEY :
       rc = grn_dat_remove(ctx, path);
       break;
+    }
+    if (rc == GRN_SUCCESS) {
+      rc = grn_db_conf_remove(ctx, path);
+    } else {
+      grn_db_conf_remove(ctx, path);
     }
   }
 
