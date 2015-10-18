@@ -295,6 +295,14 @@ mecab_create(grn_ctx *ctx)
     grn_strcat(windows_mecab_rc_file,
                PATH_MAX,
                GRN_BUNDLED_MECAB_RELATIVE_RC_PATH);
+    {
+      char *c;
+      for (c = windows_mecab_rc_file; *c != '\0'; c++) {
+        if (*c == '/') {
+          *c == '\\';
+        }
+      }
+    }
     argv[argc++] = windows_mecab_rc_file;
   }
 # else /* WIN32 */
