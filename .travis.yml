@@ -1,7 +1,7 @@
 notifications:
   email:
     recipients:
-      - groonga-commit@lists.sourceforge.jp
+      - groonga-commit@lists.osdn.me
 language: cpp
 matrix:
   include:

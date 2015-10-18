@@ -15,7 +15,7 @@ notifications:
   - provider: Email
     to:
       - kou@clear-code.com
-      - groonga-commit@lists.sourceforge.jp
+      - groonga-commit@lists.osdn.me
     on_build_status_changed: true
 
 test: off
