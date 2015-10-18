@@ -8,11 +8,6 @@ TMP_FILES =						\
 	files/$(PACKAGE)-$(VERSION)$(SUFFIX).tar.gz	\
 	files/$(PACKAGE)-$(VERSION)$(SUFFIX).zip
 
-MECAB_TAR_GZ =					\
-	mecab-$(BUNDLED_MECAB_VERSION).tar.gz
-MECAB_NAIST_JDIC_TAR_GZ =						\
-	mecab-naist-jdic-$(BUNDLED_MECAB_NAIST_JDIC_VERSION).tar.gz
-
 all:
 
 release: upload
@@ -48,13 +43,6 @@ files/$(PACKAGE)-$(VERSION)$(SUFFIX).tar.gz: $(abs_top_builddir)/$(PACKAGE)-$(VE
 files/$(PACKAGE)-$(VERSION)$(SUFFIX).zip: files/$(PACKAGE)-$(VERSION)$(SUFFIX).tar.gz
 	rm -rf $(PACKAGE)-$(VERSION)$(SUFFIX)
 	tar xzf files/$(PACKAGE)-$(VERSION)$(SUFFIX).tar.gz
-	curl -L -J -O 'https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7cENtOXlicTFaRUE'
-	cd $(PACKAGE)-$(VERSION)$(SUFFIX)/vendor && \
-	  tar xzf ../../$(MECAB_TAR_GZ)
-	rm -rf $(MECAB_TAR_GZ)
-	curl -L -O 'http://osdn.dl.sourceforge.jp/naist-jdic/48487/$(MECAB_NAIST_JDIC_TAR_GZ)'
-	cd $(PACKAGE)-$(VERSION)$(SUFFIX)/vendor && \
-	  tar xzf ../../$(MECAB_NAIST_JDIC_TAR_GZ)
-	rm -rf $(MECAB_NAIST_JDIC_TAR_GZ)
+	cd $(PACKAGE)-$(VERSION)$(SUFFIX)/vendor && ./download_mecab.sh
 	zip -r $@ $(PACKAGE)-$(VERSION)$(SUFFIX)
 	rm -rf $(PACKAGE)-$(VERSION)$(SUFFIX)
