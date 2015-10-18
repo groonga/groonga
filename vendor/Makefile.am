@@ -8,7 +8,8 @@ SUBDIRS =					\
 EXTRA_DIST =					\
 	$(NGINX_DIR)				\
 	CMakeLists.txt				\
-	plugins/CMakeLists.txt
+	plugins/CMakeLists.txt			\
+	download_mecab.rb
 
 dist-hook:
 	rm -rf $(distdir)/$(NGINX_DIR)/objs/

@@ -43,6 +43,6 @@ files/$(PACKAGE)-$(VERSION)$(SUFFIX).tar.gz: $(abs_top_builddir)/$(PACKAGE)-$(VE
 files/$(PACKAGE)-$(VERSION)$(SUFFIX).zip: files/$(PACKAGE)-$(VERSION)$(SUFFIX).tar.gz
 	rm -rf $(PACKAGE)-$(VERSION)$(SUFFIX)
 	tar xzf files/$(PACKAGE)-$(VERSION)$(SUFFIX).tar.gz
-	cd $(PACKAGE)-$(VERSION)$(SUFFIX)/vendor && ./download_mecab.sh
+	cd $(PACKAGE)-$(VERSION)$(SUFFIX)/vendor && $(RUBY) download_mecab.rb
 	zip -r $@ $(PACKAGE)-$(VERSION)$(SUFFIX)
 	rm -rf $(PACKAGE)-$(VERSION)$(SUFFIX)
