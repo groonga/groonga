@@ -7334,7 +7334,7 @@ proc_schema_types(grn_ctx *ctx)
   GRN_OUTPUT_CSTR("types");
 
   n = GRN_BULK_VSIZE(&types) / sizeof(grn_obj *);
-  GRN_OUTPUT_ARRAY_OPEN("types", n - 1);
+  GRN_OUTPUT_ARRAY_OPEN("types", n);
   for (i = 0; i < n; i++) {
     grn_obj *type;
 
