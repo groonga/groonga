@@ -7397,6 +7397,40 @@ proc_schema_tokenizers(grn_ctx *ctx)
   GRN_OBJ_FIN(ctx, &tokenizers);
 }
 
+static void
+proc_schema_normalizers(grn_ctx *ctx)
+{
+  grn_obj normalizers;
+  unsigned int i, n;
+
+  GRN_PTR_INIT(&normalizers, GRN_OBJ_VECTOR, GRN_DB_OBJECT);
+
+  grn_ctx_get_all_normalizers(ctx, &normalizers);
+
+  GRN_OUTPUT_CSTR("normalizers");
+
+  n = GRN_BULK_VSIZE(&normalizers) / sizeof(grn_obj *);
+  GRN_OUTPUT_ARRAY_OPEN("normalizers", n);
+  for (i = 0; i < n; i++) {
+    grn_obj *normalizer;
+
+    normalizer = GRN_PTR_VALUE_AT(&normalizers, i);
+
+    GRN_OUTPUT_MAP_OPEN("normalizer", 1);
+    {
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      unsigned int name_size;
+      name_size = grn_obj_name(ctx, normalizer, name, GRN_TABLE_MAX_KEY_SIZE);
+      GRN_OUTPUT_CSTR("name");
+      GRN_OUTPUT_STR(name, name_size);
+    }
+    GRN_OUTPUT_MAP_CLOSE();
+  }
+  GRN_OUTPUT_ARRAY_CLOSE();
+
+  GRN_OBJ_FIN(ctx, &normalizers);
+}
+
 static grn_obj *
 proc_schema(grn_ctx *ctx, int nargs, grn_obj **args,
             grn_user_data *user_data)
@@ -7405,6 +7439,7 @@ proc_schema(grn_ctx *ctx, int nargs, grn_obj **args,
   proc_schema_plugins(ctx);
   proc_schema_types(ctx);
   proc_schema_tokenizers(ctx);
+  proc_schema_normalizers(ctx);
   GRN_OUTPUT_MAP_CLOSE();
 
   return NULL;
