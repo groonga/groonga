@@ -7305,26 +7305,71 @@ proc_schema_plugins(grn_ctx *ctx)
   GRN_OUTPUT_CSTR("plugins");
 
   n = grn_vector_size(ctx, &plugin_names);
-  GRN_OUTPUT_MAP_OPEN("plugin", n);
+  GRN_OUTPUT_ARRAY_OPEN("plugins", n);
   for (i = 0; i < n; i++) {
     const char *name;
     unsigned int name_size;
 
+    GRN_OUTPUT_MAP_OPEN("plugin", 1);
     name_size = grn_vector_get_element(ctx, &plugin_names, i, &name, NULL, NULL);
     GRN_OUTPUT_CSTR("name");
     GRN_OUTPUT_STR(name, name_size);
+    GRN_OUTPUT_MAP_CLOSE();
   }
-  GRN_OUTPUT_MAP_CLOSE();
+  GRN_OUTPUT_ARRAY_CLOSE();
 
   GRN_OBJ_FIN(ctx, &plugin_names);
+}
+
+static void
+proc_schema_types(grn_ctx *ctx)
+{
+  grn_obj types;
+  unsigned int i, n;
+
+  GRN_PTR_INIT(&types, GRN_OBJ_VECTOR, GRN_DB_OBJECT);
+
+  grn_ctx_get_all_types(ctx, &types);
+
+  GRN_OUTPUT_CSTR("types");
+
+  n = GRN_BULK_VSIZE(&types) / sizeof(grn_obj *);
+  GRN_OUTPUT_ARRAY_OPEN("types", n - 1);
+  for (i = 0; i < n; i++) {
+    grn_obj *type;
+
+    type = GRN_PTR_VALUE_AT(&types, i);
+
+    GRN_OUTPUT_MAP_OPEN("type", 3);
+    {
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      unsigned int name_size;
+      name_size = grn_obj_name(ctx, type, name, GRN_TABLE_MAX_KEY_SIZE);
+      GRN_OUTPUT_CSTR("name");
+      GRN_OUTPUT_STR(name, name_size);
+    }
+    {
+      GRN_OUTPUT_CSTR("size");
+      GRN_OUTPUT_INT64(GRN_TYPE_SIZE(DB_OBJ(type)));
+    }
+    {
+      GRN_OUTPUT_CSTR("can_be_key_type");
+      GRN_OUTPUT_BOOL(GRN_TYPE_SIZE(DB_OBJ(type)) <= GRN_TABLE_MAX_KEY_SIZE);
+    }
+    GRN_OUTPUT_MAP_CLOSE();
+  }
+  GRN_OUTPUT_ARRAY_CLOSE();
+
+  GRN_OBJ_FIN(ctx, &types);
 }
 
 static grn_obj *
 proc_schema(grn_ctx *ctx, int nargs, grn_obj **args,
             grn_user_data *user_data)
 {
-  GRN_OUTPUT_MAP_OPEN("schema", 1);
+  GRN_OUTPUT_MAP_OPEN("schema", 2);
   proc_schema_plugins(ctx);
+  proc_schema_types(ctx);
   GRN_OUTPUT_MAP_CLOSE();
 
   return NULL;
