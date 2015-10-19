@@ -198,7 +198,7 @@ if(GRN_WITH_BUNDLED_MECAB)
     DESTINATION "${MECAB_RELATIVE_NAIST_JDIC_DICT_DIR}")
 
   configure_file("mecabrc.cmake" "mecabrc")
-  install(FILES "mecabrc"
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/mecabrc"
     DESTINATION "${CONFIG_DIR}")
 
   configure_file(config.h.cmake "${MECAB_BINARY_DIR}/config.h")
