@@ -1,0 +1,159 @@
+table_create Logs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+schema
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "plugins": [
+
+    ],
+    "types": [
+      {
+        "name": "Bool",
+        "size": 1,
+        "can_be_key_type": true
+      },
+      {
+        "name": "Float",
+        "size": 8,
+        "can_be_key_type": true
+      },
+      {
+        "name": "Int16",
+        "size": 2,
+        "can_be_key_type": true
+      },
+      {
+        "name": "Int32",
+        "size": 4,
+        "can_be_key_type": true
+      },
+      {
+        "name": "Int64",
+        "size": 8,
+        "can_be_key_type": true
+      },
+      {
+        "name": "Int8",
+        "size": 1,
+        "can_be_key_type": true
+      },
+      {
+        "name": "LongText",
+        "size": 2147483648,
+        "can_be_key_type": false
+      },
+      {
+        "name": "Object",
+        "size": 8,
+        "can_be_key_type": true
+      },
+      {
+        "name": "ShortText",
+        "size": 4096,
+        "can_be_key_type": true
+      },
+      {
+        "name": "Text",
+        "size": 65536,
+        "can_be_key_type": false
+      },
+      {
+        "name": "Time",
+        "size": 8,
+        "can_be_key_type": true
+      },
+      {
+        "name": "TokyoGeoPoint",
+        "size": 8,
+        "can_be_key_type": true
+      },
+      {
+        "name": "UInt16",
+        "size": 2,
+        "can_be_key_type": true
+      },
+      {
+        "name": "UInt32",
+        "size": 4,
+        "can_be_key_type": true
+      },
+      {
+        "name": "UInt64",
+        "size": 8,
+        "can_be_key_type": true
+      },
+      {
+        "name": "UInt8",
+        "size": 1,
+        "can_be_key_type": true
+      },
+      {
+        "name": "WGS84GeoPoint",
+        "size": 8,
+        "can_be_key_type": true
+      }
+    ],
+    "tokenizers": [
+      {
+        "name": "TokenBigram"
+      },
+      {
+        "name": "TokenBigramIgnoreBlank"
+      },
+      {
+        "name": "TokenBigramIgnoreBlankSplitSymbol"
+      },
+      {
+        "name": "TokenBigramIgnoreBlankSplitSymbolAlpha"
+      },
+      {
+        "name": "TokenBigramIgnoreBlankSplitSymbolAlphaDigit"
+      },
+      {
+        "name": "TokenBigramSplitSymbol"
+      },
+      {
+        "name": "TokenBigramSplitSymbolAlpha"
+      },
+      {
+        "name": "TokenBigramSplitSymbolAlphaDigit"
+      },
+      {
+        "name": "TokenDelimit"
+      },
+      {
+        "name": "TokenDelimitNull"
+      },
+      {
+        "name": "TokenMecab"
+      },
+      {
+        "name": "TokenRegexp"
+      },
+      {
+        "name": "TokenTrigram"
+      },
+      {
+        "name": "TokenUnigram"
+      }
+    ],
+    "normalizers": [
+      {
+        "name": "NormalizerAuto"
+      },
+      {
+        "name": "NormalizerNFKC51"
+      }
+    ],
+    "tables": {
+      "Logs": {
+        "name": "Logs"
+      }
+    }
+  }
+]

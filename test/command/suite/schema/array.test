@@ -1,0 +1,3 @@
+table_create Logs TABLE_NO_KEY
+
+schema

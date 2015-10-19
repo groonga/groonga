@@ -7431,15 +7431,52 @@ proc_schema_normalizers(grn_ctx *ctx)
   GRN_OBJ_FIN(ctx, &normalizers);
 }
 
+static void
+proc_schema_tables(grn_ctx *ctx)
+{
+  grn_obj tables;
+  unsigned int i, n;
+
+  GRN_PTR_INIT(&tables, GRN_OBJ_VECTOR, GRN_DB_OBJECT);
+
+  grn_ctx_get_all_tables(ctx, &tables);
+
+  GRN_OUTPUT_CSTR("tables");
+
+  n = GRN_BULK_VSIZE(&tables) / sizeof(grn_obj *);
+  GRN_OUTPUT_MAP_OPEN("tables", n);
+  for (i = 0; i < n; i++) {
+    grn_obj *table;
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    unsigned int name_size;
+
+    table = GRN_PTR_VALUE_AT(&tables, i);
+
+    name_size = grn_obj_name(ctx, table, name, GRN_TABLE_MAX_KEY_SIZE);
+    GRN_OUTPUT_STR(name, name_size);
+
+    GRN_OUTPUT_MAP_OPEN("table", 1);
+    {
+      GRN_OUTPUT_CSTR("name");
+      GRN_OUTPUT_STR(name, name_size);
+    }
+    GRN_OUTPUT_MAP_CLOSE();
+  }
+  GRN_OUTPUT_MAP_CLOSE();
+
+  GRN_OBJ_FIN(ctx, &tables);
+}
+
 static grn_obj *
 proc_schema(grn_ctx *ctx, int nargs, grn_obj **args,
             grn_user_data *user_data)
 {
-  GRN_OUTPUT_MAP_OPEN("schema", 3);
+  GRN_OUTPUT_MAP_OPEN("schema", 5);
   proc_schema_plugins(ctx);
   proc_schema_types(ctx);
   proc_schema_tokenizers(ctx);
   proc_schema_normalizers(ctx);
+  proc_schema_tables(ctx);
   GRN_OUTPUT_MAP_CLOSE();
 
   return NULL;
