@@ -13441,7 +13441,8 @@ grn_ctx_get_all_types(grn_ctx *ctx, grn_obj *types_buffer)
 }
 
 grn_rc
-grn_ctx_get_all_tokenizers(grn_ctx *ctx, grn_obj *types_buffer)
+grn_ctx_get_all_tokenizers(grn_ctx *ctx, grn_obj *tokenizers_buffer)
 {
-  return grn_ctx_get_all_objects(ctx, types_buffer, grn_obj_is_tokenizer_proc);
+  return grn_ctx_get_all_objects(ctx, tokenizers_buffer,
+                                 grn_obj_is_tokenizer_proc);
 }
