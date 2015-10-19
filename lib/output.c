@@ -265,7 +265,7 @@ grn_output_int64(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, in
 }
 
 void
-grn_output_uint64(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, int64_t value)
+grn_output_uint64(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, uint64_t value)
 {
   put_delimiter(ctx, outbuf, output_type);
   switch (output_type) {
