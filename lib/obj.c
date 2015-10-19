@@ -57,6 +57,16 @@ grn_obj_is_table(grn_ctx *ctx, grn_obj *obj)
 }
 
 grn_bool
+grn_obj_is_type(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!obj) {
+    return GRN_FALSE;
+  }
+
+  return obj->header.type == GRN_TYPE;
+}
+
+grn_bool
 grn_obj_is_proc(grn_ctx *ctx, grn_obj *obj)
 {
   if (!obj) {
