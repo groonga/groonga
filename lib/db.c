@@ -13446,3 +13446,10 @@ grn_ctx_get_all_tokenizers(grn_ctx *ctx, grn_obj *tokenizers_buffer)
   return grn_ctx_get_all_objects(ctx, tokenizers_buffer,
                                  grn_obj_is_tokenizer_proc);
 }
+
+grn_rc
+grn_ctx_get_all_normalizers(grn_ctx *ctx, grn_obj *normalizers_buffer)
+{
+  return grn_ctx_get_all_objects(ctx, normalizers_buffer,
+                                 grn_obj_is_normalizer_proc);
+}
