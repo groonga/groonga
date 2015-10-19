@@ -43,6 +43,16 @@ def download(url, base)
   FileUtils.rm_rf(tar_gz)
 end
 
+if /mingw/ =~ RUBY_PLATFORM
+  cacert_pem_path = "cacert.pem"
+  open("http://curl.haxx.se/ca/cacert.pem") do |remote_cacert_pem|
+    File.open(cacert_pem_path, "wb") do |local_cacert_pem|
+      local_cacert_pem.print(remote_cacert_pem.read)
+    end
+  end
+  ENV["SSL_CERT_FILE"] = File.expand_path(cacert_pem_path)
+end
+
 download("https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7cENtOXlicTFaRUE",
          mecab_base)
 
