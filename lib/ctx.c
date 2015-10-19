@@ -2762,7 +2762,7 @@ grn_ctx_output_int32(grn_ctx *ctx, int value)
 }
 
 void
-grn_ctx_output_int64(grn_ctx *ctx, long long int value)
+grn_ctx_output_int64(grn_ctx *ctx, int64_t value)
 {
   grn_output_int64(ctx, ctx->impl->outbuf, ctx->impl->output_type, value);
 }
