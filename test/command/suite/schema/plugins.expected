@@ -99,6 +99,50 @@ schema
         "size": 8,
         "can_be_key_type": true
       }
+    ],
+    "tokenizers": [
+      {
+        "name": "TokenBigram"
+      },
+      {
+        "name": "TokenBigramIgnoreBlank"
+      },
+      {
+        "name": "TokenBigramIgnoreBlankSplitSymbol"
+      },
+      {
+        "name": "TokenBigramIgnoreBlankSplitSymbolAlpha"
+      },
+      {
+        "name": "TokenBigramIgnoreBlankSplitSymbolAlphaDigit"
+      },
+      {
+        "name": "TokenBigramSplitSymbol"
+      },
+      {
+        "name": "TokenBigramSplitSymbolAlpha"
+      },
+      {
+        "name": "TokenBigramSplitSymbolAlphaDigit"
+      },
+      {
+        "name": "TokenDelimit"
+      },
+      {
+        "name": "TokenDelimitNull"
+      },
+      {
+        "name": "TokenMecab"
+      },
+      {
+        "name": "TokenRegexp"
+      },
+      {
+        "name": "TokenTrigram"
+      },
+      {
+        "name": "TokenUnigram"
+      }
     ]
   }
 ]

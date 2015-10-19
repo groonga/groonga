@@ -7363,13 +7363,48 @@ proc_schema_types(grn_ctx *ctx)
   GRN_OBJ_FIN(ctx, &types);
 }
 
+static void
+proc_schema_tokenizers(grn_ctx *ctx)
+{
+  grn_obj tokenizers;
+  unsigned int i, n;
+
+  GRN_PTR_INIT(&tokenizers, GRN_OBJ_VECTOR, GRN_DB_OBJECT);
+
+  grn_ctx_get_all_tokenizers(ctx, &tokenizers);
+
+  GRN_OUTPUT_CSTR("tokenizers");
+
+  n = GRN_BULK_VSIZE(&tokenizers) / sizeof(grn_obj *);
+  GRN_OUTPUT_ARRAY_OPEN("tokenizers", n);
+  for (i = 0; i < n; i++) {
+    grn_obj *tokenizer;
+
+    tokenizer = GRN_PTR_VALUE_AT(&tokenizers, i);
+
+    GRN_OUTPUT_MAP_OPEN("tokenizer", 1);
+    {
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      unsigned int name_size;
+      name_size = grn_obj_name(ctx, tokenizer, name, GRN_TABLE_MAX_KEY_SIZE);
+      GRN_OUTPUT_CSTR("name");
+      GRN_OUTPUT_STR(name, name_size);
+    }
+    GRN_OUTPUT_MAP_CLOSE();
+  }
+  GRN_OUTPUT_ARRAY_CLOSE();
+
+  GRN_OBJ_FIN(ctx, &tokenizers);
+}
+
 static grn_obj *
 proc_schema(grn_ctx *ctx, int nargs, grn_obj **args,
             grn_user_data *user_data)
 {
-  GRN_OUTPUT_MAP_OPEN("schema", 2);
+  GRN_OUTPUT_MAP_OPEN("schema", 3);
   proc_schema_plugins(ctx);
   proc_schema_types(ctx);
+  proc_schema_tokenizers(ctx);
   GRN_OUTPUT_MAP_CLOSE();
 
   return NULL;
