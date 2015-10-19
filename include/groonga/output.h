@@ -77,7 +77,7 @@ GRN_API void grn_ctx_output_map_open(grn_ctx *ctx,
                                      const char *name, int nelements);
 GRN_API void grn_ctx_output_map_close(grn_ctx *ctx);
 GRN_API void grn_ctx_output_int32(grn_ctx *ctx, int value);
-GRN_API void grn_ctx_output_int64(grn_ctx *ctx, long long int value);
+GRN_API void grn_ctx_output_int64(grn_ctx *ctx, int64_t value);
 GRN_API void grn_ctx_output_float(grn_ctx *ctx, double value);
 GRN_API void grn_ctx_output_cstr(grn_ctx *ctx, const char *value);
 GRN_API void grn_ctx_output_str(grn_ctx *ctx,
