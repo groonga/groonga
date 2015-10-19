@@ -2063,7 +2063,7 @@ grn_ts_expr_key_node_close(grn_ctx *ctx, grn_ts_expr_key_node *node) {
       rc = grn_ts_ ## table ## _get_ ## kind ## _key(ctx, table, in[i].id,\
                                                      &out_ptr[i]);\
       if (rc != GRN_SUCCESS) {\
-        return rc;\
+        out_ptr[i] = grn_ts_ ## kind ## _zero();\
       }\
     }\
     return GRN_SUCCESS;\
@@ -2075,7 +2075,7 @@ grn_ts_expr_key_node_close(grn_ctx *ctx, grn_ts_expr_key_node *node) {
       rc = grn_ts_ ## table ## _get_ ## type ## _key(ctx, table, in[i].id,\
                                                      &out_ptr[i]);\
       if (rc != GRN_SUCCESS) {\
-        return rc;\
+        out_ptr[i] = grn_ts_int_zero();\
       }\
     }\
     return GRN_SUCCESS;\
@@ -2089,7 +2089,7 @@ grn_ts_expr_key_node_close(grn_ctx *ctx, grn_ts_expr_key_node *node) {
       grn_ts_text key;\
       rc = grn_ts_ ## table ## _get_text_key(ctx, table, in[i].id, &key);\
       if (rc != GRN_SUCCESS) {\
-        return rc;\
+        key = grn_ts_text_zero();\
       }\
       rc = grn_ts_buf_write(ctx, &node->buf, key.ptr, key.size);\
       if (rc != GRN_SUCCESS) {\
@@ -2111,7 +2111,7 @@ grn_ts_expr_key_node_close(grn_ctx *ctx, grn_ts_expr_key_node *node) {
       rc = grn_ts_ ## table ## _get_ref_key(ctx, table, in[i].id,\
                                             &out_ptr[i]);\
       if (rc != GRN_SUCCESS) {\
-        return rc;\
+        out_ptr[i] = grn_ts_ref_zero();\
       }\
       out_ptr[i].score = in[i].score;\
     }\
@@ -2215,7 +2215,7 @@ grn_ts_expr_key_node_filter(grn_ctx *ctx, grn_ts_expr_key_node *node,
       for (i = 0, count = 0; i < n_in; i++) {
         grn_rc rc = grn_ts_hash_get_bool_key(ctx, hash, in[i].id, &key);
         if (rc != GRN_SUCCESS) {
-          return rc;
+          key = grn_ts_bool_zero();
         }
         if (key) {
           out[count++] = in[i];
@@ -2229,7 +2229,7 @@ grn_ts_expr_key_node_filter(grn_ctx *ctx, grn_ts_expr_key_node *node,
       for (i = 0, count = 0; i < n_in; i++) {
         grn_rc rc = grn_ts_pat_get_bool_key(ctx, pat, in[i].id, &key);
         if (rc != GRN_SUCCESS) {
-          return rc;
+          key = grn_ts_bool_zero();
         }
         if (key) {
           out[count++] = in[i];
@@ -2258,7 +2258,7 @@ grn_ts_expr_key_node_adjust(grn_ctx *ctx, grn_ts_expr_key_node *node,
       for (i = 0; i < n_io; i++) {
         grn_rc rc = grn_ts_hash_get_float_key(ctx, hash, io[i].id, &key);
         if (rc != GRN_SUCCESS) {
-          return rc;
+          key = grn_ts_float_zero();
         }
         io[i].score = (grn_ts_score)key;
       }
@@ -2269,7 +2269,7 @@ grn_ts_expr_key_node_adjust(grn_ctx *ctx, grn_ts_expr_key_node *node,
       for (i = 0; i < n_io; i++) {
         grn_rc rc = grn_ts_pat_get_float_key(ctx, pat, io[i].id, &key);
         if (rc != GRN_SUCCESS) {
-          return rc;
+          key = grn_ts_float_zero();
         }
         io[i].score = (grn_ts_score)key;
       }
