@@ -13426,3 +13426,43 @@ grn_ctx_get_all_tables(grn_ctx *ctx, grn_obj *tables_buffer)
 
   GRN_API_RETURN(ctx->rc);
 }
+
+grn_rc
+grn_ctx_get_all_types(grn_ctx *ctx, grn_obj *types_buffer)
+{
+  grn_obj *db;
+  grn_table_cursor *cursor;
+  grn_id id;
+
+  GRN_API_ENTER;
+
+  db = ctx->impl->db;
+  if (!db) {
+    ERR(GRN_INVALID_ARGUMENT, "DB isn't associated");
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  cursor = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1, 0);
+  if (!cursor) {
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+    grn_obj *object;
+
+    if ((object = grn_ctx_at(ctx, id))) {
+      if (grn_obj_is_type(ctx, object)) {
+        GRN_PTR_PUT(ctx, types_buffer, object);
+      } else {
+        grn_obj_unlink(ctx, object);
+      }
+    } else {
+      if (ctx->rc != GRN_SUCCESS) {
+        ERRCLR(ctx);
+      }
+    }
+  }
+  grn_table_cursor_close(ctx, cursor);
+
+  GRN_API_RETURN(ctx->rc);
+}
