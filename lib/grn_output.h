@@ -37,6 +37,9 @@ void grn_output_int32(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_typ
 GRN_API void grn_output_int64(grn_ctx *ctx, grn_obj *outbuf,
                               grn_content_type output_type,
                               int64_t value);
+GRN_API void grn_output_uint64(grn_ctx *ctx, grn_obj *outbuf,
+                               grn_content_type output_type,
+                               uint64_t value);
 void grn_output_float(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                       double value);
 GRN_API void grn_output_cstr(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
@@ -75,6 +78,8 @@ grn_rc grn_output_format_set_columns(grn_ctx *ctx, grn_obj_format *format,
   (grn_ctx_output_int32(ctx, value))
 #define GRN_OUTPUT_INT64(value) \
   (grn_ctx_output_int64(ctx, value))
+#define GRN_OUTPUT_UINT64(value) \
+  (grn_ctx_output_uint64(ctx, value))
 #define GRN_OUTPUT_FLOAT(value) \
   (grn_ctx_output_float(ctx, value))
 #define GRN_OUTPUT_CSTR(value)\

@@ -2768,6 +2768,12 @@ grn_ctx_output_int64(grn_ctx *ctx, int64_t value)
 }
 
 void
+grn_ctx_output_uint64(grn_ctx *ctx, uint64_t value)
+{
+  grn_output_uint64(ctx, ctx->impl->outbuf, ctx->impl->output_type, value);
+}
+
+void
 grn_ctx_output_float(grn_ctx *ctx, double value)
 {
   grn_output_float(ctx, ctx->impl->outbuf, ctx->impl->output_type, value);
