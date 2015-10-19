@@ -3,6 +3,8 @@
 require "pathname"
 require "fileutils"
 require "open-uri"
+require "rubygems/package"
+require "zlib"
 
 base_dir = Pathname.new(__FILE__).expand_path.dirname.parent
 
@@ -11,6 +13,22 @@ mecab_naist_jdic_version = (base_dir + "bundled_mecab_naist_jdic_version").read.
 
 mecab_base = "mecab-#{mecab_version}"
 mecab_naist_jdic_base = "mecab-naist-jdic-#{mecab_naist_jdic_version}"
+
+def extract_tar_gz(tar_gz_path)
+  Zlib::GzipReader.open(tar_gz_path) do |tar_io|
+    Gem::Package::TarReader.new(tar_io) do |tar|
+      tar.each do |entry|
+        if entry.directory?
+          FileUtils.mkdir_p(entry.full_name)
+        elsif entry.file?
+          File.open(entry.full_name, "wb") do |file|
+            file.print(entry.read)
+          end
+        end
+      end
+    end
+  end
+end
 
 def download(url, base)
   tar = "#{base}.tar"
@@ -21,9 +39,7 @@ def download(url, base)
     end
   end
   FileUtils.rm_rf(base)
-  system("7z", "x", tar_gz)
-  system("7z", "x", tar)
-  FileUtils.rm_rf(tar)
+  extract_tar_gz(tar_gz)
   FileUtils.rm_rf(tar_gz)
 end
 
