@@ -7305,18 +7305,20 @@ proc_schema_plugins(grn_ctx *ctx)
   GRN_OUTPUT_CSTR("plugins");
 
   n = grn_vector_size(ctx, &plugin_names);
-  GRN_OUTPUT_ARRAY_OPEN("plugins", n);
+  GRN_OUTPUT_MAP_OPEN("plugins", n);
   for (i = 0; i < n; i++) {
     const char *name;
     unsigned int name_size;
 
-    GRN_OUTPUT_MAP_OPEN("plugin", 1);
     name_size = grn_vector_get_element(ctx, &plugin_names, i, &name, NULL, NULL);
+    GRN_OUTPUT_STR(name, name_size);
+
+    GRN_OUTPUT_MAP_OPEN("plugin", 1);
     GRN_OUTPUT_CSTR("name");
     GRN_OUTPUT_STR(name, name_size);
     GRN_OUTPUT_MAP_CLOSE();
   }
-  GRN_OUTPUT_ARRAY_CLOSE();
+  GRN_OUTPUT_MAP_CLOSE();
 
   GRN_OBJ_FIN(ctx, &plugin_names);
 }
@@ -7334,31 +7336,31 @@ proc_schema_types(grn_ctx *ctx)
   GRN_OUTPUT_CSTR("types");
 
   n = GRN_BULK_VSIZE(&types) / sizeof(grn_obj *);
-  GRN_OUTPUT_ARRAY_OPEN("types", n);
+  GRN_OUTPUT_MAP_OPEN("types", n);
   for (i = 0; i < n; i++) {
     grn_obj *type;
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    unsigned int name_size;
 
     type = GRN_PTR_VALUE_AT(&types, i);
 
+    name_size = grn_obj_name(ctx, type, name, GRN_TABLE_MAX_KEY_SIZE);
+    GRN_OUTPUT_STR(name, name_size);
+
     GRN_OUTPUT_MAP_OPEN("type", 3);
-    {
-      char name[GRN_TABLE_MAX_KEY_SIZE];
-      unsigned int name_size;
-      name_size = grn_obj_name(ctx, type, name, GRN_TABLE_MAX_KEY_SIZE);
-      GRN_OUTPUT_CSTR("name");
-      GRN_OUTPUT_STR(name, name_size);
-    }
-    {
-      GRN_OUTPUT_CSTR("size");
-      GRN_OUTPUT_INT64(GRN_TYPE_SIZE(DB_OBJ(type)));
-    }
-    {
-      GRN_OUTPUT_CSTR("can_be_key_type");
-      GRN_OUTPUT_BOOL(GRN_TYPE_SIZE(DB_OBJ(type)) <= GRN_TABLE_MAX_KEY_SIZE);
-    }
+
+    GRN_OUTPUT_CSTR("name");
+    GRN_OUTPUT_STR(name, name_size);
+
+    GRN_OUTPUT_CSTR("size");
+    GRN_OUTPUT_INT64(GRN_TYPE_SIZE(DB_OBJ(type)));
+
+    GRN_OUTPUT_CSTR("can_be_key_type");
+    GRN_OUTPUT_BOOL(GRN_TYPE_SIZE(DB_OBJ(type)) <= GRN_TABLE_MAX_KEY_SIZE);
+
     GRN_OUTPUT_MAP_CLOSE();
   }
-  GRN_OUTPUT_ARRAY_CLOSE();
+  GRN_OUTPUT_MAP_CLOSE();
 
   GRN_OBJ_FIN(ctx, &types);
 }
@@ -7376,23 +7378,25 @@ proc_schema_tokenizers(grn_ctx *ctx)
   GRN_OUTPUT_CSTR("tokenizers");
 
   n = GRN_BULK_VSIZE(&tokenizers) / sizeof(grn_obj *);
-  GRN_OUTPUT_ARRAY_OPEN("tokenizers", n);
+  GRN_OUTPUT_MAP_OPEN("tokenizers", n);
   for (i = 0; i < n; i++) {
     grn_obj *tokenizer;
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    unsigned int name_size;
 
     tokenizer = GRN_PTR_VALUE_AT(&tokenizers, i);
 
+    name_size = grn_obj_name(ctx, tokenizer, name, GRN_TABLE_MAX_KEY_SIZE);
+    GRN_OUTPUT_STR(name, name_size);
+
     GRN_OUTPUT_MAP_OPEN("tokenizer", 1);
-    {
-      char name[GRN_TABLE_MAX_KEY_SIZE];
-      unsigned int name_size;
-      name_size = grn_obj_name(ctx, tokenizer, name, GRN_TABLE_MAX_KEY_SIZE);
-      GRN_OUTPUT_CSTR("name");
-      GRN_OUTPUT_STR(name, name_size);
-    }
+
+    GRN_OUTPUT_CSTR("name");
+    GRN_OUTPUT_STR(name, name_size);
+
     GRN_OUTPUT_MAP_CLOSE();
   }
-  GRN_OUTPUT_ARRAY_CLOSE();
+  GRN_OUTPUT_MAP_CLOSE();
 
   GRN_OBJ_FIN(ctx, &tokenizers);
 }
@@ -7410,23 +7414,25 @@ proc_schema_normalizers(grn_ctx *ctx)
   GRN_OUTPUT_CSTR("normalizers");
 
   n = GRN_BULK_VSIZE(&normalizers) / sizeof(grn_obj *);
-  GRN_OUTPUT_ARRAY_OPEN("normalizers", n);
+  GRN_OUTPUT_MAP_OPEN("normalizers", n);
   for (i = 0; i < n; i++) {
     grn_obj *normalizer;
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    unsigned int name_size;
 
     normalizer = GRN_PTR_VALUE_AT(&normalizers, i);
 
+    name_size = grn_obj_name(ctx, normalizer, name, GRN_TABLE_MAX_KEY_SIZE);
+    GRN_OUTPUT_STR(name, name_size);
+
     GRN_OUTPUT_MAP_OPEN("normalizer", 1);
-    {
-      char name[GRN_TABLE_MAX_KEY_SIZE];
-      unsigned int name_size;
-      name_size = grn_obj_name(ctx, normalizer, name, GRN_TABLE_MAX_KEY_SIZE);
-      GRN_OUTPUT_CSTR("name");
-      GRN_OUTPUT_STR(name, name_size);
-    }
+
+    GRN_OUTPUT_CSTR("name");
+    GRN_OUTPUT_STR(name, name_size);
+
     GRN_OUTPUT_MAP_CLOSE();
   }
-  GRN_OUTPUT_ARRAY_CLOSE();
+  GRN_OUTPUT_MAP_CLOSE();
 
   GRN_OBJ_FIN(ctx, &normalizers);
 }
@@ -7456,10 +7462,10 @@ proc_schema_tables(grn_ctx *ctx)
     GRN_OUTPUT_STR(name, name_size);
 
     GRN_OUTPUT_MAP_OPEN("table", 1);
-    {
-      GRN_OUTPUT_CSTR("name");
-      GRN_OUTPUT_STR(name, name_size);
-    }
+
+    GRN_OUTPUT_CSTR("name");
+    GRN_OUTPUT_STR(name, name_size);
+
     GRN_OUTPUT_MAP_CLOSE();
   }
   GRN_OUTPUT_MAP_CLOSE();
