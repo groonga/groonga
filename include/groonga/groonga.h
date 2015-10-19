@@ -442,6 +442,8 @@ GRN_API grn_obj *grn_ctx_db(grn_ctx *ctx);
 GRN_API grn_obj *grn_ctx_get(grn_ctx *ctx, const char *name, int name_size);
 GRN_API grn_rc grn_ctx_get_all_tables(grn_ctx *ctx, grn_obj *tables_buffer);
 GRN_API grn_rc grn_ctx_get_all_types(grn_ctx *ctx, grn_obj *types_buffer);
+GRN_API grn_rc grn_ctx_get_all_tokenizers(grn_ctx *ctx,
+                                          grn_obj *tokenizers_buffer);
 
 typedef enum {
   GRN_DB_VOID = 0,
