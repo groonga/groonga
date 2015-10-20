@@ -125,4 +125,10 @@ if(GRN_WITH_ONIGMO)
     POSITION_INDEPENDENT_CODE ON)
 
   configure_file(config.h.cmake "${ONIGMO_BINARY_DIR}/config.h")
+
+  install(FILES
+    "${ONIGMO_SOURCE_DIR}/AUTHORS"
+    "${ONIGMO_SOURCE_DIR}/COPYING"
+    "${ONIGMO_SOURCE_DIR}/README"
+    DESTINATION "${GRN_DATA_DIR}/onigmo")
 endif()

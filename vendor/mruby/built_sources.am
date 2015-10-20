@@ -1,4 +1,5 @@
 BUILT_SOURCES =						\
+	LEGAL						\
 	mrblib.c					\
 	mrbgems_init.c					\
 	mruby-compiler/core/parse.c			\

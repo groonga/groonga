@@ -627,4 +627,9 @@ if(NOT GRN_EMBED)
     DESTINATION "${LIB_DIR}/pkgconfig/")
 endif()
 
+install(FILES
+  "COPYING"
+  "README.md"
+  DESTINATION "${GRN_DATA_DIR}")
+
 add_subdirectory(vendor/plugins)

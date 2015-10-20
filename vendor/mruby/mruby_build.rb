@@ -28,6 +28,8 @@ end
 
 FileUtils.touch(timestamp_file)
 
+FileUtils.cp("#{mruby_build_dir}/host/LEGAL", "./")
+
 FileUtils.cp("#{mruby_build_dir}/host/mrblib/mrblib.c", "./")
 
 File.open("mrbgems_init.c", "w") do |mrbgems_init|

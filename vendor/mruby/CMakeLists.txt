@@ -14,10 +14,12 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 if(GRN_WITH_MRUBY)
+  set(MRUBY_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../mruby-source")
+
   include_directories(
-    "${CMAKE_CURRENT_SOURCE_DIR}/../mruby-source/include"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../mruby-source/src"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../mruby-source/mrbgems/mruby-compiler/core"
+    "${MRUBY_SOURCE_DIR}/include"
+    "${MRUBY_SOURCE_DIR}/src"
+    "${MRUBY_SOURCE_DIR}/mrbgems/mruby-compiler/core"
     "${CMAKE_CURRENT_SOURCE_DIR}/../onigmo-source"
   )
 
@@ -30,6 +32,7 @@ if(GRN_WITH_MRUBY)
   set(mruby_pre_build_timestamp
     "${CMAKE_CURRENT_SOURCE_DIR}/mruby_build.timestamp")
   if(EXISTS "${mruby_pre_build_timestamp}")
+    set(MRUBY_LEGAL_FILE "${CMAKE_CURRENT_SOURCE_DIR}/LEGAL")
     string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_SOURCE_DIR}/\\1"
       MRUBY_BUILT_SOURCES "${MRUBY_BUILT_SOURCES}")
     include_directories(
@@ -44,7 +47,7 @@ if(GRN_WITH_MRUBY)
 	"${RUBY}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/mruby_build.rb"
 	"${CMAKE_CURRENT_SOURCE_DIR}/build_config.rb"
-	"${CMAKE_CURRENT_SOURCE_DIR}/../mruby-source"
+	"${MRUBY_SOURCE_DIR}"
 	"${CMAKE_CURRENT_BINARY_DIR}/../mruby-build"
 	"${CMAKE_CURRENT_SOURCE_DIR}/../onigmo-source"
 	"${mruby_build_timestamp}"
@@ -55,6 +58,7 @@ if(GRN_WITH_MRUBY)
 	message(FATAL_ERROR "Failed to build mruby files")
       endif()
     endif()
+    set(MRUBY_LEGAL_FILE "${CMAKE_CURRENT_BINARY_DIR}/LEGAL")
     string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1"
       MRUBY_BUILT_SOURCES "${MRUBY_BUILT_SOURCES}")
     include_directories(
@@ -82,4 +86,8 @@ if(GRN_WITH_MRUBY)
   set_source_files_properties(${MRUBY_ALL_SOURCES}
     PROPERTIES
     COMPILE_FLAGS "${MRUBY_C_COMPILE_FLAGS}")
+
+  install(FILES
+    "${MRUBY_LEGAL_FILE}"
+    DESTINATION "${GRN_DATA_DIR}/mruby")
 endif()
