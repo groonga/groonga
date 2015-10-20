@@ -7357,7 +7357,7 @@ proc_schema_types(grn_ctx *ctx)
 
     proc_schema_output_name(ctx, type);
 
-    GRN_OUTPUT_MAP_OPEN("type", 3);
+    GRN_OUTPUT_MAP_OPEN("type", 4);
 
     GRN_OUTPUT_CSTR("name");
     proc_schema_output_name(ctx, type);
@@ -7367,6 +7367,9 @@ proc_schema_types(grn_ctx *ctx)
 
     GRN_OUTPUT_CSTR("can_be_key_type");
     GRN_OUTPUT_BOOL(GRN_TYPE_SIZE(DB_OBJ(type)) <= GRN_TABLE_MAX_KEY_SIZE);
+
+    GRN_OUTPUT_CSTR("can_be_value_type");
+    GRN_OUTPUT_BOOL(!(type->header.flags & GRN_OBJ_KEY_VAR_SIZE));
 
     GRN_OUTPUT_MAP_CLOSE();
   }
