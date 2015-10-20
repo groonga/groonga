@@ -397,7 +397,7 @@ grn_output_bool(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, grn
   INCR_LENGTH;
 }
 
-static inline void
+void
 grn_output_null(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type)
 {
   put_delimiter(ctx, outbuf, output_type);

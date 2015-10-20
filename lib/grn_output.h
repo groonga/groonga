@@ -32,6 +32,8 @@ GRN_API void grn_output_array_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_t
 GRN_API void grn_output_map_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                                  const char *name, int nelements);
 GRN_API void grn_output_map_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type);
+GRN_API void grn_output_null(grn_ctx *ctx, grn_obj *outbuf,
+                             grn_content_type output_type);
 void grn_output_int32(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                       int32_t value);
 GRN_API void grn_output_int64(grn_ctx *ctx, grn_obj *outbuf,
@@ -74,6 +76,8 @@ grn_rc grn_output_format_set_columns(grn_ctx *ctx, grn_obj_format *format,
   (grn_ctx_output_map_open(ctx, name, nelements))
 #define GRN_OUTPUT_MAP_CLOSE() \
   (grn_ctx_output_map_close(ctx))
+#define GRN_OUTPUT_NULL() \
+  (grn_ctx_output_null(ctx))
 #define GRN_OUTPUT_INT32(value) \
   (grn_ctx_output_int32(ctx, value))
 #define GRN_OUTPUT_INT64(value) \

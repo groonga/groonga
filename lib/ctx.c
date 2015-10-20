@@ -2756,6 +2756,12 @@ grn_ctx_output_map_close(grn_ctx *ctx)
 }
 
 void
+grn_ctx_output_null(grn_ctx *ctx)
+{
+  grn_output_null(ctx, ctx->impl->outbuf, ctx->impl->output_type);
+}
+
+void
 grn_ctx_output_int32(grn_ctx *ctx, int value)
 {
   grn_output_int32(ctx, ctx->impl->outbuf, ctx->impl->output_type, value);
