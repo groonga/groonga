@@ -56,5 +56,5 @@ end
 download("https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7cENtOXlicTFaRUE",
          mecab_base)
 
-download("http://osdn.dl.sourceforge.jp/naist-jdic/48487/#{mecab_naist_jdic_base}.tar.gz",
+download("http://osdn.dl.sourceforge.jp/naist-jdic/53500/#{mecab_naist_jdic_base}.tar.gz",
          mecab_naist_jdic_base)
