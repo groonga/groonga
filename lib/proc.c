@@ -7467,6 +7467,35 @@ proc_schema_table_type_name(grn_ctx *ctx, grn_obj *table)
 }
 
 static void
+proc_schema_table_output_key_type(grn_ctx *ctx, grn_obj *table)
+{
+  grn_obj *key_type = NULL;
+
+  if (table->header.type != GRN_TABLE_NO_KEY &&
+      table->header.domain != GRN_ID_NIL) {
+    key_type = grn_ctx_at(ctx, table->header.domain);
+  }
+  if (!key_type) {
+    GRN_OUTPUT_NULL();
+    return;
+  }
+
+  GRN_OUTPUT_MAP_OPEN("key_type", 2);
+
+  GRN_OUTPUT_CSTR("name");
+  proc_schema_output_name(ctx, key_type);
+
+  GRN_OUTPUT_CSTR("type");
+  if (grn_obj_is_table(ctx, key_type)) {
+    GRN_OUTPUT_CSTR("reference");
+  } else {
+    GRN_OUTPUT_CSTR("type");
+  }
+
+  GRN_OUTPUT_MAP_CLOSE();
+}
+
+static void
 proc_schema_tables(grn_ctx *ctx)
 {
   grn_obj tables;
@@ -7482,13 +7511,12 @@ proc_schema_tables(grn_ctx *ctx)
   GRN_OUTPUT_MAP_OPEN("tables", n);
   for (i = 0; i < n; i++) {
     grn_obj *table;
-    grn_obj *key_type = NULL;
 
     table = GRN_PTR_VALUE_AT(&tables, i);
 
     proc_schema_output_name(ctx, table);
 
-    GRN_OUTPUT_MAP_OPEN("table", 2);
+    GRN_OUTPUT_MAP_OPEN("table", 3);
 
     GRN_OUTPUT_CSTR("name");
     proc_schema_output_name(ctx, table);
@@ -7497,27 +7525,7 @@ proc_schema_tables(grn_ctx *ctx)
     GRN_OUTPUT_CSTR(proc_schema_table_type_name(ctx, table));
 
     GRN_OUTPUT_CSTR("key_type");
-    if (table->header.type != GRN_TABLE_NO_KEY &&
-        table->header.domain != GRN_ID_NIL) {
-      key_type = grn_ctx_at(ctx, table->header.domain);
-    }
-    if (key_type) {
-      GRN_OUTPUT_MAP_OPEN("key_type", 2);
-
-      GRN_OUTPUT_CSTR("name");
-      proc_schema_output_name(ctx, key_type);
-
-      GRN_OUTPUT_CSTR("type");
-      if (grn_obj_is_table(ctx, key_type)) {
-        GRN_OUTPUT_CSTR("reference");
-      } else {
-        GRN_OUTPUT_CSTR("type");
-      }
-
-      GRN_OUTPUT_MAP_CLOSE();
-    } else {
-      GRN_OUTPUT_NULL();
-    }
+    proc_schema_table_output_key_type(ctx, table);
 
     GRN_OUTPUT_MAP_CLOSE();
   }
