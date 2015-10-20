@@ -41,6 +41,8 @@ void data_is_selector_proc(void);
 void test_is_selector_proc(gconstpointer data);
 void data_is_normalizer_proc(void);
 void test_is_normalizer_proc(gconstpointer data);
+void data_is_token_filter_proc(void);
+void test_is_token_filter_proc(gconstpointer data);
 void data_is_scorer_proc(void);
 void test_is_scorer_proc(gconstpointer data);
 
@@ -360,6 +362,40 @@ test_is_normalizer_proc(gconstpointer data)
     cut_assert_true(grn_obj_is_normalizer_proc(context, object));
   } else {
     cut_assert_false(grn_obj_is_normalizer_proc(context, object));
+  }
+}
+
+void
+data_is_token_filter_proc(void)
+{
+#define ADD_DATUM(expected, name)                                       \
+  gcut_add_datum((expected ?                                            \
+                  "token-filter-proc - " name :                         \
+                  "not token-filter-proc - " name),                     \
+                 "expected", G_TYPE_BOOLEAN, expected,                  \
+                 "name", G_TYPE_STRING, name,                           \
+                 NULL)
+
+  ADD_DATUM(TRUE, "TokenFilterStopWord");
+  ADD_DATUM(FALSE, "TokenBigram");
+
+#undef ADD_DATUM
+}
+
+void
+test_is_token_filter_proc(gconstpointer data)
+{
+  const gchar *name;
+  grn_obj *object;
+
+  assert_send_command("plugin_register token_filters/stop_word");
+
+  name = gcut_data_get_string(data, "name");
+  object = grn_ctx_get(context, name, strlen(name));
+  if (gcut_data_get_string(data, "expected")) {
+    cut_assert_true(grn_obj_is_token_filter_proc(context, object));
+  } else {
+    cut_assert_false(grn_obj_is_token_filter_proc(context, object));
   }
 }
 

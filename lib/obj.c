@@ -142,6 +142,19 @@ grn_obj_is_normalizer_proc(grn_ctx *ctx, grn_obj *obj)
 }
 
 grn_bool
+grn_obj_is_token_filter_proc(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_proc *proc;
+
+  if (!grn_obj_is_proc(ctx, obj)) {
+    return GRN_FALSE;
+  }
+
+  proc = (grn_proc *)obj;
+  return proc->type == GRN_PROC_TOKEN_FILTER;
+}
+
+grn_bool
 grn_obj_is_scorer_proc(grn_ctx *ctx, grn_obj *obj)
 {
   grn_proc *proc;
