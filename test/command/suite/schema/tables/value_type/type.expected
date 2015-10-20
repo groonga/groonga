@@ -166,6 +166,8 @@ schema
         "name": "NormalizerNFKC51"
       }
     },
+    "token_filters": {
+    },
     "tables": {
       "Logs": {
         "name": "Logs",

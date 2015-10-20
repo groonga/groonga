@@ -7444,6 +7444,39 @@ proc_schema_output_normalizers(grn_ctx *ctx)
   GRN_OBJ_FIN(ctx, &normalizers);
 }
 
+static void
+proc_schema_output_token_filters(grn_ctx *ctx)
+{
+  grn_obj token_filters;
+  int i, n;
+
+  GRN_PTR_INIT(&token_filters, GRN_OBJ_VECTOR, GRN_DB_OBJECT);
+
+  grn_ctx_get_all_token_filters(ctx, &token_filters);
+
+  GRN_OUTPUT_CSTR("token_filters");
+
+  n = GRN_BULK_VSIZE(&token_filters) / sizeof(grn_obj *);
+  GRN_OUTPUT_MAP_OPEN("token_filters", n);
+  for (i = 0; i < n; i++) {
+    grn_obj *token_filter;
+
+    token_filter = GRN_PTR_VALUE_AT(&token_filters, i);
+
+    proc_schema_output_name(ctx, token_filter);
+
+    GRN_OUTPUT_MAP_OPEN("token_filter", 1);
+
+    GRN_OUTPUT_CSTR("name");
+    proc_schema_output_name(ctx, token_filter);
+
+    GRN_OUTPUT_MAP_CLOSE();
+  }
+  GRN_OUTPUT_MAP_CLOSE();
+
+  GRN_OBJ_FIN(ctx, &token_filters);
+}
+
 static const char *
 proc_schema_table_type_name(grn_ctx *ctx, grn_obj *table)
 {
@@ -7850,11 +7883,12 @@ static grn_obj *
 proc_schema(grn_ctx *ctx, int nargs, grn_obj **args,
             grn_user_data *user_data)
 {
-  GRN_OUTPUT_MAP_OPEN("schema", 5);
+  GRN_OUTPUT_MAP_OPEN("schema", 6);
   proc_schema_output_plugins(ctx);
   proc_schema_output_types(ctx);
   proc_schema_output_tokenizers(ctx);
   proc_schema_output_normalizers(ctx);
+  proc_schema_output_token_filters(ctx);
   proc_schema_output_tables(ctx);
   GRN_OUTPUT_MAP_CLOSE();
 

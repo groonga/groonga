@@ -150,9 +150,6 @@ schema
       "TokenDelimitNull": {
         "name": "TokenDelimitNull"
       },
-      "TokenFilterStopWord": {
-        "name": "TokenFilterStopWord"
-      },
       "TokenMecab": {
         "name": "TokenMecab"
       },
@@ -172,6 +169,11 @@ schema
       },
       "NormalizerNFKC51": {
         "name": "NormalizerNFKC51"
+      }
+    },
+    "token_filters": {
+      "TokenFilterStopWord": {
+        "name": "TokenFilterStopWord"
       }
     },
     "tables": {
