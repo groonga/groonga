@@ -208,7 +208,9 @@ schema
             "compress": null,
             "section": false,
             "weight": false,
-            "position": false
+            "position": false,
+            "sources": {
+            }
           }
         }
       },

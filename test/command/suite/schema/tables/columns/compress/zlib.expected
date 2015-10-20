@@ -202,7 +202,9 @@ schema
             "compress": "zlib",
             "section": false,
             "weight": false,
-            "position": false
+            "position": false,
+            "sources": {
+            }
           }
         }
       }

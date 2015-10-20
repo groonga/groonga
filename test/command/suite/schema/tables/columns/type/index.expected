@@ -2,11 +2,11 @@ table_create Posts TABLE_HASH_KEY ShortText
 [[0,0.0,0.0],true]
 column_create Posts title COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
-column_create Posts text COLUMN_SCALAR Text
+column_create Posts content COLUMN_SCALAR Text
 [[0,0.0,0.0],true]
 table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
 [[0,0.0,0.0],true]
-column_create Terms index COLUMN_INDEX|WITH_SECTION|WITH_WEIGHT|WITH_POSITION   Posts title,text
+column_create Terms index COLUMN_INDEX|WITH_SECTION|WITH_WEIGHT|WITH_POSITION   Posts _key,title,content
 [[0,0.0,0.0],true]
 schema
 [
@@ -200,10 +200,10 @@ schema
           "command_line": "table_create --name Posts --flags TABLE_HASH_KEY --key_type ShortText"
         },
         "columns": {
-          "text": {
-            "name": "text",
+          "content": {
+            "name": "content",
             "table": "Posts",
-            "full_name": "Posts.text",
+            "full_name": "Posts.content",
             "type": "scalar",
             "value_type": {
               "name": "Text",
@@ -212,7 +212,9 @@ schema
             "compress": null,
             "section": false,
             "weight": false,
-            "position": false
+            "position": false,
+            "sources": {
+            }
           },
           "title": {
             "name": "title",
@@ -226,7 +228,9 @@ schema
             "compress": null,
             "section": false,
             "weight": false,
-            "position": false
+            "position": false,
+            "sources": {
+            }
           }
         }
       },
@@ -271,7 +275,24 @@ schema
             "compress": null,
             "section": true,
             "weight": true,
-            "position": true
+            "position": true,
+            "sources": {
+              "_key": {
+                "name": "_key",
+                "table": "Posts",
+                "full_name": "Posts._key"
+              },
+              "title": {
+                "name": "title",
+                "table": "Posts",
+                "full_name": "Posts.title"
+              },
+              "content": {
+                "name": "content",
+                "table": "Posts",
+                "full_name": "Posts.content"
+              }
+            }
           }
         }
       }

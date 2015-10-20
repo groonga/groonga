@@ -7886,6 +7886,66 @@ proc_schema_column_output_compress(grn_ctx *ctx, grn_obj *column)
 }
 
 static void
+proc_schema_column_output_sources(grn_ctx *ctx, grn_obj *column)
+{
+  grn_obj *source_table;
+  grn_obj source_ids;
+  unsigned int i, n_ids;
+
+  source_table = grn_ctx_at(ctx, grn_obj_get_range(ctx, column));
+
+  GRN_RECORD_INIT(&source_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
+
+  if (column->header.type == GRN_COLUMN_INDEX) {
+    grn_obj_get_info(ctx, column, GRN_INFO_SOURCE, &source_ids);
+  }
+
+  n_ids = GRN_BULK_VSIZE(&source_ids) / sizeof(grn_id);
+  GRN_OUTPUT_MAP_OPEN("sources", n_ids);
+  for (i = 0; i < n_ids; i++) {
+    grn_id source_id;
+    grn_obj *source;
+
+    source_id = GRN_RECORD_VALUE_AT(&source_ids, i);
+    source = grn_ctx_at(ctx, source_id);
+
+    if (grn_obj_is_table(ctx, source)) {
+      GRN_OUTPUT_CSTR("_key");
+    } else {
+      proc_schema_output_column_name(ctx, source);
+    }
+
+    GRN_OUTPUT_MAP_OPEN("source", 3);
+
+    GRN_OUTPUT_CSTR("name");
+    if (grn_obj_is_table(ctx, source)) {
+      GRN_OUTPUT_CSTR("_key");
+    } else {
+      proc_schema_output_column_name(ctx, source);
+    }
+
+    GRN_OUTPUT_CSTR("table");
+    proc_schema_output_name(ctx, source_table);
+
+    GRN_OUTPUT_CSTR("full_name");
+    if (grn_obj_is_table(ctx, source)) {
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      unsigned int name_size;
+      name_size = grn_obj_name(ctx, source, name, GRN_TABLE_MAX_KEY_SIZE);
+      grn_strcat(name, GRN_TABLE_MAX_KEY_SIZE, "._key");
+      GRN_OUTPUT_CSTR(name);
+    } else {
+      proc_schema_output_name(ctx, source);
+    }
+
+    GRN_OUTPUT_MAP_CLOSE();
+  }
+  GRN_OUTPUT_MAP_CLOSE();
+
+  GRN_OBJ_FIN(ctx, &source_ids);
+}
+
+static void
 proc_schema_column_output(grn_ctx *ctx, grn_obj *table, grn_obj *column)
 {
   if (!column) {
@@ -7894,7 +7954,7 @@ proc_schema_column_output(grn_ctx *ctx, grn_obj *table, grn_obj *column)
 
   proc_schema_output_column_name(ctx, column);
 
-  GRN_OUTPUT_MAP_OPEN("column", 10);
+  GRN_OUTPUT_MAP_OPEN("column", 11);
 
   GRN_OUTPUT_CSTR("name");
   proc_schema_output_column_name(ctx, column);
@@ -7922,6 +7982,9 @@ proc_schema_column_output(grn_ctx *ctx, grn_obj *table, grn_obj *column)
 
   GRN_OUTPUT_CSTR("position");
   GRN_OUTPUT_BOOL((column->header.flags & GRN_OBJ_WITH_POSITION) != 0);
+
+  GRN_OUTPUT_CSTR("sources");
+  proc_schema_column_output_sources(ctx, column);
 
   GRN_OUTPUT_MAP_CLOSE();
 }
