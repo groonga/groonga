@@ -72,7 +72,7 @@ typedef struct {
     terminated == 1: key is terminated.
    */
   uint16_t bits;
-  /* length : 13, deleting : 1, immediate : 1 */
+  /* length: 13, immediate: 1, deleting: 1 */
 } pat_node;
 
 #define PAT_DELETING  (1<<1)
