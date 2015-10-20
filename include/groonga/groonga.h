@@ -446,6 +446,8 @@ GRN_API grn_rc grn_ctx_get_all_tokenizers(grn_ctx *ctx,
                                           grn_obj *tokenizers_buffer);
 GRN_API grn_rc grn_ctx_get_all_normalizers(grn_ctx *ctx,
                                            grn_obj *normalizers_buffer);
+GRN_API grn_rc grn_ctx_get_all_token_filters(grn_ctx *ctx,
+                                             grn_obj *token_filters_buffer);
 
 typedef enum {
   GRN_DB_VOID = 0,
