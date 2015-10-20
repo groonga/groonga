@@ -1,0 +1,5 @@
+table_create Users TABLE_HASH_KEY ShortText
+
+table_create Logs TABLE_NO_KEY --value_type Users
+
+schema

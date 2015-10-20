@@ -1,5 +1,7 @@
 table_create Users TABLE_HASH_KEY ShortText
 [[0,0.0,0.0],true]
+table_create Logs TABLE_NO_KEY --value_type Users
+[[0,0.0,0.0],true]
 schema
 [
   [
@@ -150,13 +152,23 @@ schema
       }
     },
     "tables": {
+      "Logs": {
+        "name": "Logs",
+        "type": "array",
+        "key_type": null,
+        "value_type": {
+          "name": "Users",
+          "type": "reference"
+        }
+      },
       "Users": {
         "name": "Users",
         "type": "hash table",
         "key_type": {
           "name": "ShortText",
           "type": "type"
-        }
+        },
+        "value_type": null
       }
     }
   }
