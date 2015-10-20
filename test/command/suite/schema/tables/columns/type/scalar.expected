@@ -194,7 +194,11 @@ schema
             "name": "message",
             "table": "Logs",
             "full_name": "Logs.message",
-            "type": "scalar"
+            "type": "scalar",
+            "value_type": {
+              "name": "Text",
+              "type": "type"
+            }
           }
         }
       }

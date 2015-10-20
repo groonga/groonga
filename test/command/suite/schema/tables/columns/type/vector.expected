@@ -200,7 +200,11 @@ schema
             "name": "tags",
             "table": "Posts",
             "full_name": "Posts.tags",
-            "type": "vector"
+            "type": "vector",
+            "value_type": {
+              "name": "Tags",
+              "type": "reference"
+            }
           }
         }
       },
