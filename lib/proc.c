@@ -7576,7 +7576,7 @@ proc_schema_table_output_token_filters(grn_ctx *ctx, grn_obj *table)
 
   GRN_PTR_INIT(&token_filters, GRN_OBJ_VECTOR, GRN_DB_OBJECT);
   if (table->header.type != GRN_TABLE_NO_KEY) {
-  grn_obj_get_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &token_filters);
+    grn_obj_get_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &token_filters);
   }
 
   n = GRN_BULK_VSIZE(&token_filters) / sizeof(grn_obj *);
