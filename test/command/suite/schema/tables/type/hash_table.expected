@@ -190,6 +190,8 @@ schema
             "key_type": "ShortText"
           },
           "command_line": "table_create --name Users --flags TABLE_HASH_KEY --key_type ShortText"
+        },
+        "columns": {
         }
       }
     }

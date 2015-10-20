@@ -204,6 +204,8 @@ schema
             "token_filters": "TokenFilterStopWord"
           },
           "command_line": "table_create --name Terms --flags TABLE_PAT_KEY --key_type ShortText --default_tokenizer TokenBigram --token_filters TokenFilterStopWord"
+        },
+        "columns": {
         }
       }
     }

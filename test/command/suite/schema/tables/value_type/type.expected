@@ -190,6 +190,8 @@ schema
             "value_type": "Int32"
           },
           "command_line": "table_create --name Logs --flags TABLE_NO_KEY --value_type Int32"
+        },
+        "columns": {
         }
       }
     }

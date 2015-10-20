@@ -186,6 +186,8 @@ schema
             "flags": "TABLE_NO_KEY"
           },
           "command_line": "table_create --name Logs --flags TABLE_NO_KEY"
+        },
+        "columns": {
         }
       }
     }

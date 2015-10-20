@@ -1,4 +1,8 @@
-table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+table_create Tags TABLE_DAT_KEY ShortText --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+table_create Posts TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Posts tags COLUMN_VECTOR Tags
 [[0,0.0,0.0],true]
 schema
 [
@@ -169,17 +173,15 @@ schema
     "token_filters": {
     },
     "tables": {
-      "Terms": {
-        "name": "Terms",
-        "type": "patricia trie",
+      "Posts": {
+        "name": "Posts",
+        "type": "hash table",
         "key_type": {
           "name": "ShortText",
           "type": "type"
         },
         "value_type": null,
-        "tokenizer": {
-          "name": "TokenBigram"
-        },
+        "tokenizer": null,
         "normalizer": null,
         "token_filters": [
 
@@ -187,12 +189,45 @@ schema
         "command": {
           "name": "table_create",
           "arguments": {
-            "name": "Terms",
-            "flags": "TABLE_PAT_KEY",
-            "key_type": "ShortText",
-            "default_tokenizer": "TokenBigram"
+            "name": "Posts",
+            "flags": "TABLE_HASH_KEY",
+            "key_type": "ShortText"
           },
-          "command_line": "table_create --name Terms --flags TABLE_PAT_KEY --key_type ShortText --default_tokenizer TokenBigram"
+          "command_line": "table_create --name Posts --flags TABLE_HASH_KEY --key_type ShortText"
+        },
+        "columns": {
+          "tags": {
+            "name": "tags",
+            "table": "Posts",
+            "full_name": "Posts.tags",
+            "type": "vector"
+          }
+        }
+      },
+      "Tags": {
+        "name": "Tags",
+        "type": "double array trie",
+        "key_type": {
+          "name": "ShortText",
+          "type": "type"
+        },
+        "value_type": null,
+        "tokenizer": null,
+        "normalizer": {
+          "name": "NormalizerAuto"
+        },
+        "token_filters": [
+
+        ],
+        "command": {
+          "name": "table_create",
+          "arguments": {
+            "name": "Tags",
+            "flags": "TABLE_DAT_KEY",
+            "key_type": "ShortText",
+            "normalizer": "NormalizerAuto"
+          },
+          "command_line": "table_create --name Tags --flags TABLE_DAT_KEY --key_type ShortText --normalizer NormalizerAuto"
         },
         "columns": {
         }

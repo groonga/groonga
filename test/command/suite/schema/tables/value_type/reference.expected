@@ -192,6 +192,8 @@ schema
             "value_type": "Users"
           },
           "command_line": "table_create --name Logs --flags TABLE_NO_KEY --value_type Users"
+        },
+        "columns": {
         }
       },
       "Users": {
@@ -215,6 +217,8 @@ schema
             "key_type": "ShortText"
           },
           "command_line": "table_create --name Users --flags TABLE_HASH_KEY --key_type ShortText"
+        },
+        "columns": {
         }
       }
     }
