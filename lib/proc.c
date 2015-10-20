@@ -7729,23 +7729,15 @@ proc_schema_table_command_collect_arguments(grn_ctx *ctx,
 
   ADD_OBJECT_NAME("name", table);
 
-  switch (table->header.type) {
-  case GRN_TABLE_NO_KEY :
-    ADD("flags", "TABLE_NO_KEY");
-    break;
-  case GRN_TABLE_HASH_KEY :
-    ADD("flags", "TABLE_HASH_KEY");
-    break;
-  case GRN_TABLE_PAT_KEY :
-    if (table->header.flags & GRN_OBJ_KEY_WITH_SIS) {
-      ADD("flags", "TABLE_PAT_KEY|KEY_WITH_SIS");
-    } else {
-      ADD("flags", "TABLE_PAT_KEY");
-    }
-    break;
-  case GRN_TABLE_DAT_KEY :
-    ADD("flags", "TABLE_DAT_KEY");
-    break;
+  {
+    grn_obj flags;
+    grn_obj_flags ignored_flags = GRN_OBJ_KEY_NORMALIZE | GRN_OBJ_PERSISTENT;
+    GRN_TEXT_INIT(&flags, 0);
+    grn_table_create_flags_to_text(ctx, &flags,
+                                   table->header.flags & ~ignored_flags);
+    GRN_TEXT_PUTC(ctx, &flags, '\0');
+    ADD("flags", GRN_TEXT_VALUE(&flags));
+    GRN_OBJ_FIN(ctx, &flags);
   }
 
   {
