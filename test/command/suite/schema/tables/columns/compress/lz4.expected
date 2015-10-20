@@ -204,6 +204,16 @@ schema
             "weight": false,
             "position": false,
             "sources": {
+            },
+            "command": {
+              "name": "column_create",
+              "arguments": {
+                "table": "Logs",
+                "name": "message",
+                "flags": "COLUMN_SCALAR|COMPRESS_LZ4",
+                "type": "Text"
+              },
+              "command_line": "column_create --table Logs --name message --flags COLUMN_SCALAR|COMPRESS_LZ4 --type Text"
             }
           }
         }

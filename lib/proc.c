@@ -7349,6 +7349,68 @@ proc_schema_output_value_type(grn_ctx *ctx, grn_obj *value_type)
 }
 
 static void
+proc_schema_output_command(grn_ctx *ctx,
+                           const char *command_name,
+                           grn_obj *arguments)
+{
+  GRN_OUTPUT_MAP_OPEN("command", 3);
+
+  GRN_OUTPUT_CSTR("name");
+  GRN_OUTPUT_CSTR(command_name);
+
+  GRN_OUTPUT_CSTR("arguments");
+  {
+    int i, n;
+
+    n = grn_vector_size(ctx, arguments);
+    GRN_OUTPUT_MAP_OPEN("arguments", n / 2);
+    for (i = 0; i < n; i += 2) {
+      const char *name;
+      unsigned int name_size;
+      const char *value;
+      unsigned int value_size;
+
+      name_size  = grn_vector_get_element(ctx, arguments, i, &name,
+                                          NULL, NULL);
+      value_size = grn_vector_get_element(ctx, arguments, i + 1, &value,
+                                          NULL, NULL);
+      GRN_OUTPUT_STR(name, name_size);
+      GRN_OUTPUT_STR(value, value_size);
+    }
+    GRN_OUTPUT_MAP_CLOSE();
+  }
+
+  GRN_OUTPUT_CSTR("command_line");
+  {
+    int i, n;
+    grn_obj command_line;
+
+    GRN_TEXT_INIT(&command_line, 0);
+    GRN_TEXT_PUTS(ctx, &command_line, command_name);
+    n = grn_vector_size(ctx, arguments);
+    for (i = 0; i < n; i += 2) {
+      const char *name;
+      unsigned int name_size;
+      const char *value;
+      unsigned int value_size;
+
+      name_size  = grn_vector_get_element(ctx, arguments, i, &name,
+                                          NULL, NULL);
+      value_size = grn_vector_get_element(ctx, arguments, i + 1, &value,
+                                          NULL, NULL);
+      grn_text_printf(ctx, &command_line,
+                      " --%.*s %.*s",
+                      name_size, name,
+                      value_size, value);
+    }
+    GRN_OUTPUT_STR(GRN_TEXT_VALUE(&command_line), GRN_TEXT_LEN(&command_line));
+    GRN_OBJ_FIN(ctx, &command_line);
+  }
+
+  GRN_OUTPUT_MAP_CLOSE();
+}
+
+static void
 proc_schema_output_plugins(grn_ctx *ctx)
 {
   grn_obj plugin_names;
@@ -7771,67 +7833,12 @@ proc_schema_table_command_collect_arguments(grn_ctx *ctx,
 static void
 proc_schema_table_output_command(grn_ctx *ctx, grn_obj *table)
 {
-  const char *command_name = "table_create";
   grn_obj arguments;
 
   GRN_TEXT_INIT(&arguments, GRN_OBJ_VECTOR);
   proc_schema_table_command_collect_arguments(ctx, table, &arguments);
 
-  GRN_OUTPUT_MAP_OPEN("command", 3);
-
-  GRN_OUTPUT_CSTR("name");
-  GRN_OUTPUT_CSTR(command_name);
-
-  GRN_OUTPUT_CSTR("arguments");
-  {
-    int i, n;
-
-    n = grn_vector_size(ctx, &arguments);
-    GRN_OUTPUT_MAP_OPEN("arguments", n / 2);
-    for (i = 0; i < n; i += 2) {
-      const char *name;
-      unsigned int name_size;
-      const char *value;
-      unsigned int value_size;
-
-      name_size  = grn_vector_get_element(ctx, &arguments, i, &name,
-                                          NULL, NULL);
-      value_size = grn_vector_get_element(ctx, &arguments, i + 1, &value,
-                                          NULL, NULL);
-      GRN_OUTPUT_STR(name, name_size);
-      GRN_OUTPUT_STR(value, value_size);
-    }
-    GRN_OUTPUT_MAP_CLOSE();
-  }
-
-  GRN_OUTPUT_CSTR("command_line");
-  {
-    int i, n;
-    grn_obj command_line;
-
-    GRN_TEXT_INIT(&command_line, 0);
-    GRN_TEXT_PUTS(ctx, &command_line, command_name);
-    n = grn_vector_size(ctx, &arguments);
-    for (i = 0; i < n; i += 2) {
-      const char *name;
-      unsigned int name_size;
-      const char *value;
-      unsigned int value_size;
-
-      name_size  = grn_vector_get_element(ctx, &arguments, i, &name,
-                                          NULL, NULL);
-      value_size = grn_vector_get_element(ctx, &arguments, i + 1, &value,
-                                          NULL, NULL);
-      grn_text_printf(ctx, &command_line,
-                      " --%.*s %.*s",
-                      name_size, name,
-                      value_size, value);
-    }
-    GRN_OUTPUT_STR(GRN_TEXT_VALUE(&command_line), GRN_TEXT_LEN(&command_line));
-    GRN_OBJ_FIN(ctx, &command_line);
-  }
-
-  GRN_OUTPUT_MAP_CLOSE();
+  proc_schema_output_command(ctx, "table_create", &arguments);
 
   GRN_OBJ_FIN(ctx, &arguments);
 }
@@ -7946,6 +7953,114 @@ proc_schema_column_output_sources(grn_ctx *ctx, grn_obj *column)
 }
 
 static void
+proc_schema_column_command_collect_arguments(grn_ctx *ctx,
+                                             grn_obj *table,
+                                             grn_obj *column,
+                                             grn_obj *arguments)
+{
+#define ADD(name_, value_)                              \
+  grn_vector_add_element(ctx, arguments,                \
+                         name_, strlen(name_),          \
+                         0, GRN_DB_TEXT);               \
+  grn_vector_add_element(ctx, arguments,                \
+                         value_, strlen(value_),        \
+                         0, GRN_DB_TEXT)
+
+#define ADD_OBJECT_NAME(name_, object_) do {                    \
+    char object_name[GRN_TABLE_MAX_KEY_SIZE];                   \
+    unsigned int object_name_size;                              \
+    object_name_size = grn_obj_name(ctx, object_,               \
+                                    object_name,                \
+                                    GRN_TABLE_MAX_KEY_SIZE);    \
+    object_name[object_name_size] = '\0';                       \
+    ADD(name_, object_name);                                    \
+  } while (GRN_FALSE)
+
+  ADD_OBJECT_NAME("table", table);
+  {
+    char column_name[GRN_TABLE_MAX_KEY_SIZE];
+    unsigned int column_name_size;
+    column_name_size = grn_column_name(ctx, column,
+                                       column_name, GRN_TABLE_MAX_KEY_SIZE);
+    column_name[column_name_size] = '\0';
+    ADD("name", column_name);
+  }
+
+  {
+    grn_obj flags;
+    GRN_TEXT_INIT(&flags, 0);
+    grn_column_create_flags_to_text(ctx, &flags,
+                                    column->header.flags & ~GRN_OBJ_PERSISTENT);
+    GRN_TEXT_PUTC(ctx, &flags, '\0');
+    ADD("flags", GRN_TEXT_VALUE(&flags));
+    GRN_OBJ_FIN(ctx, &flags);
+  }
+
+  {
+    grn_obj *value_type;
+
+    value_type = grn_ctx_at(ctx, grn_obj_get_range(ctx, column));
+    ADD_OBJECT_NAME("type", value_type);
+  }
+
+  if (column->header.type == GRN_COLUMN_INDEX) {
+    grn_obj source_ids;
+    unsigned int n_ids;
+
+    GRN_RECORD_INIT(&source_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
+    grn_obj_get_info(ctx, column, GRN_INFO_SOURCE, &source_ids);
+
+    n_ids = GRN_BULK_VSIZE(&source_ids) / sizeof(grn_id);
+    if (n_ids > 0) {
+      grn_obj sources;
+      unsigned int i;
+
+      GRN_TEXT_INIT(&sources, 0);
+      for (i = 0; i < n_ids; i++) {
+        grn_id source_id;
+        grn_obj *source;
+        char name[GRN_TABLE_MAX_KEY_SIZE];
+        unsigned int name_size;
+
+        source_id = GRN_RECORD_VALUE_AT(&source_ids, i);
+        source = grn_ctx_at(ctx, source_id);
+
+        if (grn_obj_is_table(ctx, source)) {
+          grn_strcpy(name, GRN_TABLE_MAX_KEY_SIZE, "_key");
+          name_size = strlen(name);
+        } else {
+          name_size = grn_column_name(ctx, source, name, GRN_TABLE_MAX_KEY_SIZE);
+        }
+        if (i > 0) {
+          GRN_TEXT_PUTC(ctx, &sources, ',');
+        }
+        GRN_TEXT_PUT(ctx, &sources, name, name_size);
+      }
+      GRN_TEXT_PUTC(ctx, &sources, '\0');
+      ADD("sources", GRN_TEXT_VALUE(&sources));
+      GRN_OBJ_FIN(ctx, &sources);
+    }
+    GRN_OBJ_FIN(ctx, &source_ids);
+  }
+
+#undef ADD_OBJECT_NAME
+#undef ADD
+}
+
+static void
+proc_schema_column_output_command(grn_ctx *ctx, grn_obj *table, grn_obj *column)
+{
+  grn_obj arguments;
+
+  GRN_TEXT_INIT(&arguments, GRN_OBJ_VECTOR);
+  proc_schema_column_command_collect_arguments(ctx, table, column, &arguments);
+
+  proc_schema_output_command(ctx, "column_create", &arguments);
+
+  GRN_OBJ_FIN(ctx, &arguments);
+}
+
+static void
 proc_schema_column_output(grn_ctx *ctx, grn_obj *table, grn_obj *column)
 {
   if (!column) {
@@ -7985,6 +8100,9 @@ proc_schema_column_output(grn_ctx *ctx, grn_obj *table, grn_obj *column)
 
   GRN_OUTPUT_CSTR("sources");
   proc_schema_column_output_sources(ctx, column);
+
+  GRN_OUTPUT_CSTR("command");
+  proc_schema_column_output_command(ctx, table, column);
 
   GRN_OUTPUT_MAP_CLOSE();
 }

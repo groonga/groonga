@@ -214,6 +214,16 @@ schema
             "weight": false,
             "position": false,
             "sources": {
+            },
+            "command": {
+              "name": "column_create",
+              "arguments": {
+                "table": "Posts",
+                "name": "content",
+                "flags": "COLUMN_SCALAR",
+                "type": "Text"
+              },
+              "command_line": "column_create --table Posts --name content --flags COLUMN_SCALAR --type Text"
             }
           },
           "title": {
@@ -230,6 +240,16 @@ schema
             "weight": false,
             "position": false,
             "sources": {
+            },
+            "command": {
+              "name": "column_create",
+              "arguments": {
+                "table": "Posts",
+                "name": "title",
+                "flags": "COLUMN_SCALAR",
+                "type": "ShortText"
+              },
+              "command_line": "column_create --table Posts --name title --flags COLUMN_SCALAR --type ShortText"
             }
           }
         }
@@ -292,6 +312,17 @@ schema
                 "table": "Posts",
                 "full_name": "Posts.content"
               }
+            },
+            "command": {
+              "name": "column_create",
+              "arguments": {
+                "table": "Terms",
+                "name": "index",
+                "flags": "COLUMN_INDEX|WITH_SECTION|WITH_WEIGHT|WITH_POSITION",
+                "type": "Posts",
+                "sources": "_key,title,content"
+              },
+              "command_line": "column_create --table Terms --name index --flags COLUMN_INDEX|WITH_SECTION|WITH_WEIGHT|WITH_POSITION --type Posts --sources _key,title,content"
             }
           }
         }

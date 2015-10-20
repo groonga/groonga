@@ -210,6 +210,16 @@ schema
             "weight": false,
             "position": false,
             "sources": {
+            },
+            "command": {
+              "name": "column_create",
+              "arguments": {
+                "table": "Posts",
+                "name": "tags",
+                "flags": "COLUMN_VECTOR",
+                "type": "Tags"
+              },
+              "command_line": "column_create --table Posts --name tags --flags COLUMN_VECTOR --type Tags"
             }
           }
         }
