@@ -1,6 +1,6 @@
 table_create Logs TABLE_NO_KEY
 [[0,0.0,0.0],true]
-column_create Logs message COLUMN_SCALAR Text
+column_create Logs message COLUMN_SCALAR|COMPRESS_LZ4 Text
 [[0,0.0,0.0],true]
 schema
 [
@@ -199,7 +199,7 @@ schema
               "name": "Text",
               "type": "type"
             },
-            "compress": null
+            "compress": "lz4"
           }
         }
       }

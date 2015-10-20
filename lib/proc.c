@@ -7866,6 +7866,26 @@ proc_schema_column_output_value_type(grn_ctx *ctx, grn_obj *column)
 }
 
 static void
+proc_schema_column_output_compress(grn_ctx *ctx, grn_obj *column)
+{
+  const char *compress = NULL;
+
+  if (column->header.type != GRN_COLUMN_INDEX) {
+    if (column->header.flags & GRN_OBJ_COMPRESS_ZLIB) {
+      compress = "zlib";
+    } else if (column->header.flags & GRN_OBJ_COMPRESS_LZ4) {
+      compress = "lz4";
+    }
+  }
+
+  if (compress) {
+    GRN_OUTPUT_CSTR(compress);
+  } else {
+    GRN_OUTPUT_NULL();
+  }
+}
+
+static void
 proc_schema_column_output(grn_ctx *ctx, grn_obj *table, grn_obj *column)
 {
   if (!column) {
@@ -7874,7 +7894,7 @@ proc_schema_column_output(grn_ctx *ctx, grn_obj *table, grn_obj *column)
 
   proc_schema_output_column_name(ctx, column);
 
-  GRN_OUTPUT_MAP_OPEN("column", 6);
+  GRN_OUTPUT_MAP_OPEN("column", 7);
 
   GRN_OUTPUT_CSTR("name");
   proc_schema_output_column_name(ctx, column);
@@ -7890,6 +7910,9 @@ proc_schema_column_output(grn_ctx *ctx, grn_obj *table, grn_obj *column)
 
   GRN_OUTPUT_CSTR("value_type");
   proc_schema_column_output_value_type(ctx, column);
+
+  GRN_OUTPUT_CSTR("compress");
+  proc_schema_column_output_compress(ctx, column);
 
   GRN_OUTPUT_MAP_CLOSE();
 }

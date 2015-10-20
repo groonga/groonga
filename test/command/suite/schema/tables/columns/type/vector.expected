@@ -204,7 +204,8 @@ schema
             "value_type": {
               "name": "Tags",
               "type": "reference"
-            }
+            },
+            "compress": null
           }
         }
       },
