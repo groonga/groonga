@@ -61,6 +61,11 @@ enum { GRN_TS_BATCH_SIZE = 1024 };
  * grn_ts_str.
  */
 
+typedef struct {
+  const char *ptr; /* The starting address. */
+  size_t size;     /* The size in bytes. */
+} grn_ts_str;
+
 /* grn_ts_byte_is_decimal() returns whether or not a byte is decimal. */
 inline static grn_ts_bool
 grn_ts_byte_is_decimal(unsigned char byte) {
@@ -84,12 +89,7 @@ grn_ts_byte_is_name_char(unsigned char byte) {
   return GRN_FALSE;
 }
 
-typedef struct {
-  const char *ptr; /* The starting address. */
-  size_t size;     /* The size in bytes. */
-} grn_ts_str;
-
-/* grn_ts_str_trim_left() removes the leading spaces. */
+/* grn_ts_str_trim_left() returns a string without the leading white-spaces. */
 static grn_ts_str
 grn_ts_str_trim_left(grn_ts_str str) {
   size_t i;
@@ -103,19 +103,19 @@ grn_ts_str_trim_left(grn_ts_str str) {
   return str;
 }
 
-/* grn_ts_str_is_true() returns whether or not a string is true. */
+/* grn_ts_str_is_true() returns str == "true". */
 static grn_ts_bool
 grn_ts_str_is_true(grn_ts_str str) {
   return (str.size == 4) && !memcmp(str.ptr, "true", 4);
 }
 
-/* grn_ts_str_is_false() returns whether or not a string is false. */
+/* grn_ts_str_is_false() returns str == "false". */
 static grn_ts_bool
 grn_ts_str_is_false(grn_ts_str str) {
   return (str.size == 5) && !memcmp(str.ptr, "false", 5);
 }
 
-/* grn_ts_str_is_bool() returns whether or not a string is true or false. */
+/* grn_ts_str_is_bool() returns (str == "true") || (str == "false"). */
 static grn_ts_bool
 grn_ts_str_is_bool(grn_ts_str str) {
   return grn_ts_str_is_true(str) || grn_ts_str_is_false(str);
@@ -123,7 +123,7 @@ grn_ts_str_is_bool(grn_ts_str str) {
 
 /*
  * grn_ts_str_is_name_prefix() returns whether or not a string is valid as a
- * name prefix.
+ * name prefix. Note that an empty string is a name prefix.
  */
 static grn_ts_bool
 grn_ts_str_is_name_prefix(grn_ts_str str) {
@@ -136,7 +136,10 @@ grn_ts_str_is_name_prefix(grn_ts_str str) {
   return GRN_TRUE;
 }
 
-/* grn_ts_str_is_name() returns whether or not a string is valid as a name. */
+/*
+ * grn_ts_str_is_name() returns whether or not a string is valid as a name.
+ * Note that an empty string is invalid as a name.
+ */
 static grn_ts_bool
 grn_ts_str_is_name(grn_ts_str str) {
   if (!str.size) {
@@ -145,28 +148,28 @@ grn_ts_str_is_name(grn_ts_str str) {
   return grn_ts_str_is_name_prefix(str);
 }
 
-/* grn_ts_str_is_id_name() returns whether or not a string is "_id". */
+/* grn_ts_str_is_id_name() returns str == "_id". */
 static grn_ts_bool
 grn_ts_str_is_id_name(grn_ts_str str) {
   return (str.size == GRN_COLUMN_NAME_ID_LEN) &&
          !memcmp(str.ptr, GRN_COLUMN_NAME_ID, GRN_COLUMN_NAME_ID_LEN);
 }
 
-/* grn_ts_str_is_score_name() returns whether or not a string is "_score". */
+/* grn_ts_str_is_score_name() returns str == "_score". */
 static grn_ts_bool
 grn_ts_str_is_score_name(grn_ts_str str) {
   return (str.size == GRN_COLUMN_NAME_SCORE_LEN) &&
          !memcmp(str.ptr, GRN_COLUMN_NAME_SCORE, GRN_COLUMN_NAME_SCORE_LEN);
 }
 
-/* grn_ts_str_is_key_name() returns whether or not a string is "_key". */
+/* grn_ts_str_is_key_name() returns str == "_key". */
 static grn_ts_bool
 grn_ts_str_is_key_name(grn_ts_str str) {
   return (str.size == GRN_COLUMN_NAME_KEY_LEN) &&
          !memcmp(str.ptr, GRN_COLUMN_NAME_KEY, GRN_COLUMN_NAME_KEY_LEN);
 }
 
-/* grn_ts_str_is_value_name() returns whether or not a string is "_value". */
+/* grn_ts_str_is_value_name() returns str == "_value". */
 static grn_ts_bool
 grn_ts_str_is_value_name(grn_ts_str str) {
   return (str.size == GRN_COLUMN_NAME_VALUE_LEN) &&
@@ -214,7 +217,7 @@ grn_ts_str_has_number_prefix(grn_ts_str str) {
 typedef struct {
   void *ptr;   /* The starting address. */
   size_t size; /* The size in bytes. */
-  size_t pos;  /* The current position. */
+  size_t pos;  /* The current position for grn_ts_buf_write(). */
 } grn_ts_buf;
 
 /* grn_ts_buf_init() initializes a buffer. */
@@ -428,8 +431,7 @@ grn_ts_text_vector_is_valid(grn_ts_text_vector value) {
 }
 
 /*
- * grn_ts_geo_point_vector_is_valid() returns whether a value is valid or
- * not.
+ * grn_ts_geo_point_vector_is_valid() returns whether a value is valid or not.
  */
 inline static grn_ts_bool
 grn_ts_geo_point_vector_is_valid(grn_ts_geo_point_vector value) {
@@ -520,8 +522,6 @@ inline static grn_ts_ref_vector
 grn_ts_ref_vector_zero(void) {
   return (grn_ts_ref_vector){ NULL, 0 };
 }
-
-/* TODO: Error handling. */
 
 /* grn_ts_bool_output() outputs a value. */
 static grn_rc
@@ -697,6 +697,13 @@ grn_ts_data_kind_to_type(grn_ts_data_kind kind) {
     }
     case GRN_TS_GEO_POINT: {
       /* GRN_DB_TOKYO_GEO_POINT or GRN_DB_WGS84_GEO_POINT. */
+      return GRN_DB_VOID;
+    }
+    case GRN_TS_REF: {
+      /*
+       * grn_ts_data_kind does not have enough information to get a correct
+       * table ID.
+       */
       return GRN_DB_VOID;
     }
     default: {
@@ -1478,10 +1485,7 @@ grn_ts_op_modulus_float(grn_ts_float lhs, grn_ts_float rhs) {
  * Groonga objects.
  */
 
-/*
- * grn_ts_obj_increment_ref_count() increments the reference count of an
- * object.
- */
+/* grn_ts_obj_increment_ref_count() increments an object reference count. */
 static grn_rc
 grn_ts_obj_increment_ref_count(grn_ctx *ctx, grn_obj *obj) {
   grn_id id = grn_obj_id(ctx, obj);
@@ -1497,13 +1501,13 @@ grn_ts_obj_increment_ref_count(grn_ctx *ctx, grn_obj *obj) {
   return GRN_SUCCESS;
 }
 
-/* grn_ts_obj_is_table() returns whether an object is a column or not */
+/* grn_ts_obj_is_table() returns whether or not an object is a table. */
 static grn_ts_bool
 grn_ts_obj_is_table(grn_ctx *ctx, grn_obj *obj) {
   return grn_obj_is_table(ctx, obj);
 }
 
-/* grn_ts_obj_is_column() returns whether an object is a column or not */
+/* grn_ts_obj_is_column() returns whether or not an object is a column. */
 static grn_ts_bool
 grn_ts_obj_is_column(grn_ctx *ctx, grn_obj *obj) {
   switch (obj->header.type) {
@@ -1518,7 +1522,10 @@ grn_ts_obj_is_column(grn_ctx *ctx, grn_obj *obj) {
   }
 }
 
-/* grn_ts_ja_get_value() appends a value into buf. */
+/*
+ * grn_ts_ja_get_value() gets a value from ja and writes it to buf. Note the a
+ * value is appended to the end of buf.
+ */
 static grn_rc
 grn_ts_ja_get_value(grn_ctx *ctx, grn_ja *ja, grn_ts_id id,
                     grn_ts_buf *buf, size_t *value_size) {
@@ -1827,7 +1834,7 @@ grn_ts_dat_get_text_key(grn_ctx *ctx, grn_dat *dat, grn_ts_id id,
 }
 #undef GRN_TS_TABLE_GET_KEY
 
-/* grn_ts_table_has_key() returns whether a table has _key or not. */
+/* grn_ts_table_has_key() returns whether or not a table has _key. */
 static grn_ts_bool
 grn_ts_table_has_key(grn_ctx *ctx, grn_obj *table) {
   switch (table->header.type) {
@@ -1842,13 +1849,16 @@ grn_ts_table_has_key(grn_ctx *ctx, grn_obj *table) {
   }
 }
 
-/* grn_ts_table_has_value() returns whether a table has _value or not. */
+/* grn_ts_table_has_value() returns whether or not a table has _value. */
 static grn_ts_bool
 grn_ts_table_has_value(grn_ctx *ctx, grn_obj *table) {
   return DB_OBJ(table)->range != GRN_DB_VOID;
 }
 
-/* grn_ts_table_get_value() gets a reference to a value (_value). */
+/*
+ * grn_ts_table_get_value() gets a reference to a value (_value). On failure,
+ * this function returns NULL.
+ */
 static const void *
 grn_ts_table_get_value(grn_ctx *ctx, grn_obj *table, grn_ts_id id) {
   switch (table->header.type) {
@@ -1893,7 +1903,7 @@ grn_ts_expr_id_node_fin(grn_ctx *ctx, grn_ts_expr_id_node *node) {
   /* Nothing to do. */
 }
 
-/* grn_ts_expr_id_node_open() creates a node associated with ID (_id). */
+/* grn_ts_expr_id_node_open() creates a node associated with IDs (_id). */
 static grn_rc
 grn_ts_expr_id_node_open(grn_ctx *ctx, grn_ts_expr_node **node) {
   grn_ts_expr_id_node *new_node = GRN_MALLOCN(grn_ts_expr_id_node, 1);
@@ -1916,8 +1926,7 @@ grn_ts_expr_id_node_close(grn_ctx *ctx, grn_ts_expr_id_node *node) {
 /* grn_ts_expr_id_node_evaluate() outputs IDs. */
 static grn_rc
 grn_ts_expr_id_node_evaluate(grn_ctx *ctx, grn_ts_expr_id_node *node,
-                             const grn_ts_record *in, size_t n_in,
-                             void *out) {
+                             const grn_ts_record *in, size_t n_in, void *out) {
   size_t i;
   grn_ts_int *out_ptr = (grn_ts_int *)out;
   for (i = 0; i < n_in; i++) {
@@ -1950,7 +1959,7 @@ grn_ts_expr_score_node_fin(grn_ctx *ctx, grn_ts_expr_score_node *node) {
 }
 
 /*
- * grn_ts_expr_score_node_open() creates a node associated with score
+ * grn_ts_expr_score_node_open() creates a node associated with scores
  * (_score).
  */
 static grn_rc
@@ -1985,7 +1994,7 @@ grn_ts_expr_score_node_evaluate(grn_ctx *ctx, grn_ts_expr_score_node *node,
   return GRN_SUCCESS;
 }
 
-/* grn_ts_expr_score_node_adjust() updates scores. */
+/* grn_ts_expr_score_node_adjust() does nothing. */
 static grn_rc
 grn_ts_expr_score_node_adjust(grn_ctx *ctx, grn_ts_expr_score_node *node,
                               grn_ts_record *io, size_t n_io) {
@@ -2021,7 +2030,7 @@ grn_ts_expr_key_node_fin(grn_ctx *ctx, grn_ts_expr_key_node *node) {
   }
 }
 
-/* grn_ts_expr_key_node_open() creates a node associated with key (_key). */
+/* grn_ts_expr_key_node_open() creates a node associated with keys (_key). */
 static grn_rc
 grn_ts_expr_key_node_open(grn_ctx *ctx, grn_obj *table,
                           grn_ts_expr_node **node) {
@@ -2309,7 +2318,7 @@ grn_ts_expr_value_node_fin(grn_ctx *ctx, grn_ts_expr_value_node *node) {
 }
 
 /*
- * grn_ts_expr_value_node_open() creates a node associated with value
+ * grn_ts_expr_value_node_open() creates a node associated with values
  * (_value).
  */
 static grn_rc
@@ -2625,7 +2634,7 @@ grn_ts_expr_const_node_close(grn_ctx *ctx, grn_ts_expr_const_node *node) {
   }
 #define GRN_TS_EXPR_CONST_NODE_EVALUATE_VECTOR_CASE(KIND, kind)\
   GRN_TS_EXPR_CONST_NODE_EVALUATE_CASE(KIND ## _VECTOR, kind ## _vector)
-/* grn_ts_expr_const_node_evaluate() outputs consts. */
+/* grn_ts_expr_const_node_evaluate() outputs the stored const. */
 static grn_rc
 grn_ts_expr_const_node_evaluate(grn_ctx *ctx, grn_ts_expr_const_node *node,
                                 const grn_ts_record *in, size_t n_in,
@@ -2658,6 +2667,7 @@ grn_ts_expr_const_node_filter(grn_ctx *ctx, grn_ts_expr_const_node *node,
                               grn_ts_record *in, size_t n_in,
                               grn_ts_record *out, size_t *n_out) {
   if (node->content.as_bool) {
+    /* All the records pass through the filter. */
     if (in != out) {
       size_t i;
       for (i = 0; i < n_in; i++) {
@@ -2666,6 +2676,7 @@ grn_ts_expr_const_node_filter(grn_ctx *ctx, grn_ts_expr_const_node *node,
     }
     *n_out = n_in;
   } else {
+    /* All the records are discarded. */
     *n_out = 0;
   }
   return GRN_SUCCESS;
@@ -3191,7 +3202,10 @@ grn_ts_expr_op_node_fin(grn_ctx *ctx, grn_ts_expr_op_node *node) {
   }
 }
 
-/* grn_ts_op_plus_check_args() checks arguments. */
+/*
+ * grn_ts_op_plus_check_args() checks arguments. Note that arguments are
+ * rearranged in some cases.
+ */
 static grn_rc
 grn_ts_op_plus_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
   switch (node->args[0]->data_kind) {
@@ -3315,7 +3329,10 @@ grn_ts_op_minus_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
   }
 }
 
-/* grn_ts_expr_op_node_check_args() checks arguments. */
+/*
+ * grn_ts_expr_op_node_check_args() checks the combination of an operator and
+ * its arguments.
+ */
 static grn_rc
 grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
   switch (node->op_type) {
@@ -4855,7 +4872,7 @@ grn_ts_expr_bridge_node_fin(grn_ctx *ctx, grn_ts_expr_bridge_node *node) {
   }
 }
 
-/* grn_ts_expr_bridge_node_open() creates a node. */
+/* grn_ts_expr_bridge_node_open() creates a node associated with a bridge. */
 static grn_rc
 grn_ts_expr_bridge_node_open(grn_ctx *ctx, grn_ts_expr_node *src,
                              grn_ts_expr_node *dest, grn_ts_expr_node **node) {
@@ -4980,7 +4997,7 @@ grn_ts_expr_node_close(grn_ctx *ctx, grn_ts_expr_node *node) {
     return grn_ts_expr_ ## type ## _node_evaluate(ctx, type ## _node,\
                                                   in, n_in, out);\
   }
-/* grn_ts_expr_node_evaluate() evaluates a subexpression. */
+/* grn_ts_expr_node_evaluate() evaluates a subtree. */
 static grn_rc
 grn_ts_expr_node_evaluate(grn_ctx *ctx, grn_ts_expr_node *node,
                           const grn_ts_record *in, size_t n_in, void *out) {
@@ -5011,7 +5028,7 @@ grn_ts_expr_node_evaluate(grn_ctx *ctx, grn_ts_expr_node *node,
   }
 #define GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_VECTOR_CASE(KIND, kind)\
   GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_CASE(KIND ## _VECTOR, kind ## _vector)
-/* grn_ts_expr_node_evaluate_to_buf() evaluates a subexpression. */
+/* grn_ts_expr_node_evaluate_to_buf() evaluates a subtree. */
 static grn_rc
 grn_ts_expr_node_evaluate_to_buf(grn_ctx *ctx, grn_ts_expr_node *node,
                                  const grn_ts_record *in, size_t n_in,
@@ -5136,8 +5153,8 @@ typedef grn_ts_expr_token grn_ts_expr_end_token;
 
 typedef struct {
   GRN_TS_EXPR_TOKEN_COMMON_MEMBERS
-  grn_ts_data_kind data_kind;
-  grn_ts_any content;
+  grn_ts_data_kind data_kind; /* The data kind of the const. */
+  grn_ts_any content;         /* The const. */
   grn_ts_buf buf;             /* Buffer for content.as_text. */
 } grn_ts_expr_const_token;
 
@@ -5730,7 +5747,6 @@ grn_ts_expr_parser_tokenize_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
     rc = grn_ts_expr_op_token_open(ctx, token_str, op_type, &new_token);\
     break;\
   }
-/*    GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('!', LOGICAL_NOT, NOT_EQUAL)*/
     GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('<', LESS, SHIFT_ARITHMETIC_LEFT,
                                         SHIFT_LOGICAL_LEFT, LESS_EQUAL)
     GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('>', GREATER, SHIFT_ARITHMETIC_RIGHT,
@@ -6488,7 +6504,7 @@ grn_ts_expr_open_const_node(grn_ctx *ctx, grn_ts_expr *expr,
 }
 
 /*
- * grn_ts_expr_open_column_node() opens and registers a column.
+ * grn_ts_expr_open_column_node() opens and registers a column node.
  * Registered nodes will be closed in grn_ts_expr_fin().
  */
 static grn_rc
@@ -6498,7 +6514,7 @@ grn_ts_expr_open_column_node(grn_ctx *ctx, grn_ts_expr *expr,
 }
 
 /*
- * grn_ts_expr_open_op_node() opens and registers an operator.
+ * grn_ts_expr_open_op_node() opens and registers an operator node.
  * Registered nodes will be closed in grn_ts_expr_fin().
  */
 static grn_rc
@@ -6510,7 +6526,7 @@ grn_ts_expr_open_op_node(grn_ctx *ctx, grn_ts_expr *expr,
 }
 
 /*
- * grn_ts_expr_open_bridge_node() opens and registers a bridge.
+ * grn_ts_expr_open_bridge_node() opens and registers a bridge node.
  * Registered nodes will be closed in grn_ts_expr_fin().
  */
 static grn_rc
@@ -7314,7 +7330,7 @@ grn_ts_writer_init(grn_ctx *ctx, grn_ts_writer *writer) {
   writer->bufs = NULL;
 }
 
-/* grn_ts_writer_fin() initializes a writer. */
+/* grn_ts_writer_fin() finalizes a writer. */
 static void
 grn_ts_writer_fin(grn_ctx *ctx, grn_ts_writer *writer) {
   size_t i;
