@@ -7501,7 +7501,23 @@ proc_schema_tables(grn_ctx *ctx)
         table->header.domain != GRN_ID_NIL) {
       key_type = grn_ctx_at(ctx, table->header.domain);
     }
-    proc_schema_output_name(ctx, key_type);
+    if (key_type) {
+      GRN_OUTPUT_MAP_OPEN("key_type", 2);
+
+      GRN_OUTPUT_CSTR("name");
+      proc_schema_output_name(ctx, key_type);
+
+      GRN_OUTPUT_CSTR("type");
+      if (grn_obj_is_table(ctx, key_type)) {
+        GRN_OUTPUT_CSTR("reference");
+      } else {
+        GRN_OUTPUT_CSTR("type");
+      }
+
+      GRN_OUTPUT_MAP_CLOSE();
+    } else {
+      GRN_OUTPUT_NULL();
+    }
 
     GRN_OUTPUT_MAP_CLOSE();
   }
