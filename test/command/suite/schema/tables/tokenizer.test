@@ -1,0 +1,3 @@
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+
+schema
