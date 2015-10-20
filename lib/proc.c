@@ -7908,19 +7908,13 @@ proc_schema_column_output_sources(grn_ctx *ctx, grn_obj *column)
   }
 
   n_ids = GRN_BULK_VSIZE(&source_ids) / sizeof(grn_id);
-  GRN_OUTPUT_MAP_OPEN("sources", n_ids);
+  GRN_OUTPUT_ARRAY_OPEN("sources", n_ids);
   for (i = 0; i < n_ids; i++) {
     grn_id source_id;
     grn_obj *source;
 
     source_id = GRN_RECORD_VALUE_AT(&source_ids, i);
     source = grn_ctx_at(ctx, source_id);
-
-    if (grn_obj_is_table(ctx, source)) {
-      GRN_OUTPUT_CSTR("_key");
-    } else {
-      proc_schema_output_column_name(ctx, source);
-    }
 
     GRN_OUTPUT_MAP_OPEN("source", 3);
 
@@ -7947,7 +7941,7 @@ proc_schema_column_output_sources(grn_ctx *ctx, grn_obj *column)
 
     GRN_OUTPUT_MAP_CLOSE();
   }
-  GRN_OUTPUT_MAP_CLOSE();
+  GRN_OUTPUT_ARRAY_CLOSE();
 
   GRN_OBJ_FIN(ctx, &source_ids);
 }

@@ -213,8 +213,9 @@ schema
             "section": false,
             "weight": false,
             "position": false,
-            "sources": {
-            },
+            "sources": [
+
+            ],
             "command": {
               "name": "column_create",
               "arguments": {
@@ -239,8 +240,9 @@ schema
             "section": false,
             "weight": false,
             "position": false,
-            "sources": {
-            },
+            "sources": [
+
+            ],
             "command": {
               "name": "column_create",
               "arguments": {
@@ -296,23 +298,23 @@ schema
             "section": true,
             "weight": true,
             "position": true,
-            "sources": {
-              "_key": {
+            "sources": [
+              {
                 "name": "_key",
                 "table": "Posts",
                 "full_name": "Posts._key"
               },
-              "title": {
+              {
                 "name": "title",
                 "table": "Posts",
                 "full_name": "Posts.title"
               },
-              "content": {
+              {
                 "name": "content",
                 "table": "Posts",
                 "full_name": "Posts.content"
               }
-            },
+            ],
             "command": {
               "name": "column_create",
               "arguments": {

@@ -203,8 +203,9 @@ schema
             "section": false,
             "weight": false,
             "position": false,
-            "sources": {
-            },
+            "sources": [
+
+            ],
             "command": {
               "name": "column_create",
               "arguments": {
