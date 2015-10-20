@@ -302,7 +302,7 @@ schema
               {
                 "name": "_key",
                 "table": "Posts",
-                "full_name": "Posts._key"
+                "full_name": "Posts._key"
               },
               {
                 "name": "title",

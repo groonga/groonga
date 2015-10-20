@@ -7925,6 +7925,7 @@ proc_schema_column_output_sources(grn_ctx *ctx, grn_obj *column)
       char name[GRN_TABLE_MAX_KEY_SIZE];
       unsigned int name_size;
       name_size = grn_obj_name(ctx, source, name, GRN_TABLE_MAX_KEY_SIZE);
+      name[name_size] = '\0';
       grn_strcat(name, GRN_TABLE_MAX_KEY_SIZE, "._key");
       GRN_OUTPUT_CSTR(name);
     } else {
