@@ -7835,26 +7835,8 @@ proc_schema_table_output_command(grn_ctx *ctx, grn_obj *table)
 }
 
 static void
-proc_schema_column_output(grn_ctx *ctx, grn_obj *table, grn_obj *column)
+proc_schema_column_output_type(grn_ctx *ctx, grn_obj *column)
 {
-  if (!column) {
-    return;
-  }
-
-  proc_schema_output_column_name(ctx, column);
-
-  GRN_OUTPUT_MAP_OPEN("column", 4);
-
-  GRN_OUTPUT_CSTR("name");
-  proc_schema_output_column_name(ctx, column);
-
-  GRN_OUTPUT_CSTR("table");
-  proc_schema_output_name(ctx, table);
-
-  GRN_OUTPUT_CSTR("full_name");
-  proc_schema_output_name(ctx, column);
-
-  GRN_OUTPUT_CSTR("type");
   switch (column->header.type) {
   case GRN_COLUMN_FIX_SIZE :
   case GRN_COLUMN_VAR_SIZE :
@@ -7871,6 +7853,30 @@ proc_schema_column_output(grn_ctx *ctx, grn_obj *table, grn_obj *column)
     GRN_OUTPUT_CSTR("index");
     break;
   }
+}
+
+static void
+proc_schema_column_output(grn_ctx *ctx, grn_obj *table, grn_obj *column)
+{
+  if (!column) {
+    return;
+  }
+
+  proc_schema_output_column_name(ctx, column);
+
+  GRN_OUTPUT_MAP_OPEN("column", 5);
+
+  GRN_OUTPUT_CSTR("name");
+  proc_schema_output_column_name(ctx, column);
+
+  GRN_OUTPUT_CSTR("table");
+  proc_schema_output_name(ctx, table);
+
+  GRN_OUTPUT_CSTR("full_name");
+  proc_schema_output_name(ctx, column);
+
+  GRN_OUTPUT_CSTR("type");
+  proc_schema_column_output_type(ctx, column);
 
   GRN_OUTPUT_MAP_CLOSE();
 }
