@@ -7599,6 +7599,200 @@ proc_schema_table_output_token_filters(grn_ctx *ctx, grn_obj *table)
 }
 
 static void
+proc_schema_table_command_collect_arguments(grn_ctx *ctx,
+                                            grn_obj *table,
+                                            grn_obj *arguments)
+{
+#define ADD(name_, value_)                              \
+  grn_vector_add_element(ctx, arguments,                \
+                         name_, strlen(name_),          \
+                         0, GRN_DB_TEXT);               \
+  grn_vector_add_element(ctx, arguments,                \
+                         value_, strlen(value_),        \
+                         0, GRN_DB_TEXT)
+
+#define ADD_OBJECT_NAME(name_, object_) do {                    \
+    char object_name[GRN_TABLE_MAX_KEY_SIZE];                   \
+    unsigned int object_name_size;                              \
+    object_name_size = grn_obj_name(ctx, object_,               \
+                                    object_name,                \
+                                    GRN_TABLE_MAX_KEY_SIZE);    \
+    object_name[object_name_size] = '\0';                       \
+    ADD(name_, object_name);                                    \
+  } while (GRN_FALSE)
+
+  ADD_OBJECT_NAME("name", table);
+
+  switch (table->header.type) {
+  case GRN_TABLE_NO_KEY :
+    ADD("flags", "TABLE_NO_KEY");
+    break;
+  case GRN_TABLE_HASH_KEY :
+    ADD("flags", "TABLE_HASH_KEY");
+    break;
+  case GRN_TABLE_PAT_KEY :
+    if (table->header.flags & GRN_OBJ_KEY_WITH_SIS) {
+      ADD("flags", "TABLE_PAT_KEY|KEY_WITH_SIS");
+    } else {
+      ADD("flags", "TABLE_PAT_KEY");
+    }
+    break;
+  case GRN_TABLE_DAT_KEY :
+    ADD("flags", "TABLE_DAT_KEY");
+    break;
+  }
+
+  {
+    grn_obj *key_type = NULL;
+
+    if (table->header.type != GRN_TABLE_NO_KEY &&
+        table->header.domain != GRN_ID_NIL) {
+      key_type = grn_ctx_at(ctx, table->header.domain);
+    }
+    if (key_type) {
+      ADD_OBJECT_NAME("key_type", key_type);
+    }
+  }
+
+  {
+    grn_obj *value_type = NULL;
+    grn_id range = GRN_ID_NIL;
+
+    if (table->header.type != GRN_TABLE_DAT_KEY) {
+      range = grn_obj_get_range(ctx, table);
+    }
+    if (range != GRN_ID_NIL) {
+      value_type = grn_ctx_at(ctx, range);
+    }
+    if (value_type) {
+      ADD_OBJECT_NAME("value_type", value_type);
+    }
+  }
+
+  {
+    grn_obj *tokenizer;
+    tokenizer = grn_obj_get_info(ctx, table, GRN_INFO_DEFAULT_TOKENIZER, NULL);
+    if (tokenizer) {
+      ADD_OBJECT_NAME("default_tokenizer", tokenizer);
+    }
+  }
+
+  {
+    grn_obj *normalizer;
+    normalizer = grn_obj_get_info(ctx, table, GRN_INFO_NORMALIZER, NULL);
+    if (!normalizer && (table->header.flags & GRN_OBJ_KEY_NORMALIZE)) {
+      normalizer = grn_ctx_get(ctx, "NormalizerAuto", -1);
+    }
+    if (normalizer) {
+      ADD_OBJECT_NAME("normalizer", normalizer);
+    }
+  }
+
+  if (table->header.type != GRN_TABLE_NO_KEY) {
+    grn_obj token_filters;
+    int n;
+
+    GRN_PTR_INIT(&token_filters, GRN_OBJ_VECTOR, GRN_DB_OBJECT);
+    grn_obj_get_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &token_filters);
+    n = GRN_BULK_VSIZE(&token_filters) / sizeof(grn_obj *);
+    if (n > 0) {
+      grn_obj token_filter_names;
+      int i;
+
+      GRN_TEXT_INIT(&token_filter_names, 0);
+      for (i = 0; i < n; i++) {
+        grn_obj *token_filter;
+        char name[GRN_TABLE_MAX_KEY_SIZE];
+        int name_size;
+
+        token_filter = GRN_PTR_VALUE_AT(&token_filters, i);
+        name_size = grn_obj_name(ctx, token_filter,
+                                 name, GRN_TABLE_MAX_KEY_SIZE);
+        if (i > 0) {
+          GRN_TEXT_PUTC(ctx, &token_filter_names, ',');
+        }
+        GRN_TEXT_PUT(ctx, &token_filter_names, name, name_size);
+      }
+      GRN_TEXT_PUTC(ctx, &token_filter_names, '\0');
+      ADD("token_filters", GRN_TEXT_VALUE(&token_filter_names));
+      GRN_OBJ_FIN(ctx, &token_filter_names);
+    }
+    GRN_OBJ_FIN(ctx, &token_filters);
+  }
+
+#undef ADD_OBJECT_NAME
+#undef ADD
+}
+
+static void
+proc_schema_table_output_command(grn_ctx *ctx, grn_obj *table)
+{
+  const char *command_name = "table_create";
+  grn_obj arguments;
+
+  GRN_TEXT_INIT(&arguments, GRN_OBJ_VECTOR);
+  proc_schema_table_command_collect_arguments(ctx, table, &arguments);
+
+  GRN_OUTPUT_MAP_OPEN("command", 3);
+
+  GRN_OUTPUT_CSTR("name");
+  GRN_OUTPUT_CSTR(command_name);
+
+  GRN_OUTPUT_CSTR("arguments");
+  {
+    int i, n;
+
+    n = grn_vector_size(ctx, &arguments);
+    GRN_OUTPUT_MAP_OPEN("arguments", n / 2);
+    for (i = 0; i < n; i += 2) {
+      const char *name;
+      unsigned int name_size;
+      const char *value;
+      unsigned int value_size;
+
+      name_size  = grn_vector_get_element(ctx, &arguments, i, &name,
+                                          NULL, NULL);
+      value_size = grn_vector_get_element(ctx, &arguments, i + 1, &value,
+                                          NULL, NULL);
+      GRN_OUTPUT_STR(name, name_size);
+      GRN_OUTPUT_STR(value, value_size);
+    }
+    GRN_OUTPUT_MAP_CLOSE();
+  }
+
+  GRN_OUTPUT_CSTR("command_line");
+  {
+    int i, n;
+    grn_obj command_line;
+
+    GRN_TEXT_INIT(&command_line, 0);
+    GRN_TEXT_PUTS(ctx, &command_line, command_name);
+    n = grn_vector_size(ctx, &arguments);
+    for (i = 0; i < n; i += 2) {
+      const char *name;
+      unsigned int name_size;
+      const char *value;
+      unsigned int value_size;
+
+      name_size  = grn_vector_get_element(ctx, &arguments, i, &name,
+                                          NULL, NULL);
+      value_size = grn_vector_get_element(ctx, &arguments, i + 1, &value,
+                                          NULL, NULL);
+      grn_text_printf(ctx, &command_line,
+                      " --%.*s %.*s",
+                      name_size, name,
+                      value_size, value);
+    }
+    GRN_OUTPUT_STR(GRN_TEXT_VALUE(&command_line), GRN_TEXT_LEN(&command_line));
+    GRN_OBJ_FIN(ctx, &command_line);
+  }
+
+  GRN_OUTPUT_MAP_CLOSE();
+
+  GRN_OBJ_FIN(ctx, &arguments);
+}
+
+static void
 proc_schema_tables(grn_ctx *ctx)
 {
   grn_obj tables;
@@ -7619,7 +7813,7 @@ proc_schema_tables(grn_ctx *ctx)
 
     proc_schema_output_name(ctx, table);
 
-    GRN_OUTPUT_MAP_OPEN("table", 7);
+    GRN_OUTPUT_MAP_OPEN("table", 8);
 
     GRN_OUTPUT_CSTR("name");
     proc_schema_output_name(ctx, table);
@@ -7641,6 +7835,9 @@ proc_schema_tables(grn_ctx *ctx)
 
     GRN_OUTPUT_CSTR("token_filters");
     proc_schema_table_output_token_filters(ctx, table);
+
+    GRN_OUTPUT_CSTR("command");
+    proc_schema_table_output_command(ctx, table);
 
     GRN_OUTPUT_MAP_CLOSE();
   }

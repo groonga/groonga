@@ -181,7 +181,17 @@ schema
         },
         "token_filters": [
 
-        ]
+        ],
+        "command": {
+          "name": "table_create",
+          "arguments": {
+            "name": "Tags",
+            "flags": "TABLE_PAT_KEY",
+            "key_type": "ShortText",
+            "normalizer": "NormalizerAuto"
+          },
+          "command_line": "table_create --name Tags --flags TABLE_PAT_KEY --key_type ShortText --normalizer NormalizerAuto"
+        }
       }
     }
   }

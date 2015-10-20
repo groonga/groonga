@@ -176,7 +176,15 @@ schema
         "normalizer": null,
         "token_filters": [
 
-        ]
+        ],
+        "command": {
+          "name": "table_create",
+          "arguments": {
+            "name": "Logs",
+            "flags": "TABLE_NO_KEY"
+          },
+          "command_line": "table_create --name Logs --flags TABLE_NO_KEY"
+        }
       }
     }
   }

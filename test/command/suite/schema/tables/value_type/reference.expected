@@ -181,7 +181,16 @@ schema
         "normalizer": null,
         "token_filters": [
 
-        ]
+        ],
+        "command": {
+          "name": "table_create",
+          "arguments": {
+            "name": "Logs",
+            "flags": "TABLE_NO_KEY",
+            "value_type": "Users"
+          },
+          "command_line": "table_create --name Logs --flags TABLE_NO_KEY --value_type Users"
+        }
       },
       "Users": {
         "name": "Users",
@@ -195,7 +204,16 @@ schema
         "normalizer": null,
         "token_filters": [
 
-        ]
+        ],
+        "command": {
+          "name": "table_create",
+          "arguments": {
+            "name": "Users",
+            "flags": "TABLE_HASH_KEY",
+            "key_type": "ShortText"
+          },
+          "command_line": "table_create --name Users --flags TABLE_HASH_KEY --key_type ShortText"
+        }
       }
     }
   }
