@@ -151,7 +151,9 @@ schema
     },
     "tables": {
       "Logs": {
-        "name": "Logs"
+        "name": "Logs",
+        "type": "array",
+        "key_type": null
       }
     }
   }

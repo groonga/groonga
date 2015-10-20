@@ -7293,6 +7293,19 @@ exit :
 }
 
 static void
+proc_schema_output_name(grn_ctx *ctx, grn_obj *obj)
+{
+  if (obj) {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    unsigned int name_size;
+    name_size = grn_obj_name(ctx, obj, name, GRN_TABLE_MAX_KEY_SIZE);
+    GRN_OUTPUT_STR(name, name_size);
+  } else {
+    GRN_OUTPUT_NULL();
+  }
+}
+
+static void
 proc_schema_plugins(grn_ctx *ctx)
 {
   grn_obj plugin_names;
@@ -7339,18 +7352,15 @@ proc_schema_types(grn_ctx *ctx)
   GRN_OUTPUT_MAP_OPEN("types", n);
   for (i = 0; i < n; i++) {
     grn_obj *type;
-    char name[GRN_TABLE_MAX_KEY_SIZE];
-    unsigned int name_size;
 
     type = GRN_PTR_VALUE_AT(&types, i);
 
-    name_size = grn_obj_name(ctx, type, name, GRN_TABLE_MAX_KEY_SIZE);
-    GRN_OUTPUT_STR(name, name_size);
+    proc_schema_output_name(ctx, type);
 
     GRN_OUTPUT_MAP_OPEN("type", 3);
 
     GRN_OUTPUT_CSTR("name");
-    GRN_OUTPUT_STR(name, name_size);
+    proc_schema_output_name(ctx, type);
 
     GRN_OUTPUT_CSTR("size");
     GRN_OUTPUT_INT64(GRN_TYPE_SIZE(DB_OBJ(type)));
@@ -7381,18 +7391,15 @@ proc_schema_tokenizers(grn_ctx *ctx)
   GRN_OUTPUT_MAP_OPEN("tokenizers", n);
   for (i = 0; i < n; i++) {
     grn_obj *tokenizer;
-    char name[GRN_TABLE_MAX_KEY_SIZE];
-    unsigned int name_size;
 
     tokenizer = GRN_PTR_VALUE_AT(&tokenizers, i);
 
-    name_size = grn_obj_name(ctx, tokenizer, name, GRN_TABLE_MAX_KEY_SIZE);
-    GRN_OUTPUT_STR(name, name_size);
+    proc_schema_output_name(ctx, tokenizer);
 
     GRN_OUTPUT_MAP_OPEN("tokenizer", 1);
 
     GRN_OUTPUT_CSTR("name");
-    GRN_OUTPUT_STR(name, name_size);
+    proc_schema_output_name(ctx, tokenizer);
 
     GRN_OUTPUT_MAP_CLOSE();
   }
@@ -7417,24 +7424,46 @@ proc_schema_normalizers(grn_ctx *ctx)
   GRN_OUTPUT_MAP_OPEN("normalizers", n);
   for (i = 0; i < n; i++) {
     grn_obj *normalizer;
-    char name[GRN_TABLE_MAX_KEY_SIZE];
-    unsigned int name_size;
 
     normalizer = GRN_PTR_VALUE_AT(&normalizers, i);
 
-    name_size = grn_obj_name(ctx, normalizer, name, GRN_TABLE_MAX_KEY_SIZE);
-    GRN_OUTPUT_STR(name, name_size);
+    proc_schema_output_name(ctx, normalizer);
 
     GRN_OUTPUT_MAP_OPEN("normalizer", 1);
 
     GRN_OUTPUT_CSTR("name");
-    GRN_OUTPUT_STR(name, name_size);
+    proc_schema_output_name(ctx, normalizer);
 
     GRN_OUTPUT_MAP_CLOSE();
   }
   GRN_OUTPUT_MAP_CLOSE();
 
   GRN_OBJ_FIN(ctx, &normalizers);
+}
+
+static const char *
+proc_schema_table_type_name(grn_ctx *ctx, grn_obj *table)
+{
+  const char *name = "unknown";
+
+  switch (table->header.type) {
+  case GRN_TABLE_NO_KEY :
+    name = "array";
+    break;
+  case GRN_TABLE_HASH_KEY :
+    name = "hash table";
+    break;
+  case GRN_TABLE_PAT_KEY :
+    name = "patricia trie";
+    break;
+  case GRN_TABLE_DAT_KEY :
+    name = "double array trie";
+    break;
+  default :
+    break;
+  }
+
+  return name;
 }
 
 static void
@@ -7453,18 +7482,26 @@ proc_schema_tables(grn_ctx *ctx)
   GRN_OUTPUT_MAP_OPEN("tables", n);
   for (i = 0; i < n; i++) {
     grn_obj *table;
-    char name[GRN_TABLE_MAX_KEY_SIZE];
-    unsigned int name_size;
+    grn_obj *key_type = NULL;
 
     table = GRN_PTR_VALUE_AT(&tables, i);
 
-    name_size = grn_obj_name(ctx, table, name, GRN_TABLE_MAX_KEY_SIZE);
-    GRN_OUTPUT_STR(name, name_size);
+    proc_schema_output_name(ctx, table);
 
-    GRN_OUTPUT_MAP_OPEN("table", 1);
+    GRN_OUTPUT_MAP_OPEN("table", 2);
 
     GRN_OUTPUT_CSTR("name");
-    GRN_OUTPUT_STR(name, name_size);
+    proc_schema_output_name(ctx, table);
+
+    GRN_OUTPUT_CSTR("type");
+    GRN_OUTPUT_CSTR(proc_schema_table_type_name(ctx, table));
+
+    GRN_OUTPUT_CSTR("key_type");
+    if (table->header.type != GRN_TABLE_NO_KEY &&
+        table->header.domain != GRN_ID_NIL) {
+      key_type = grn_ctx_at(ctx, table->header.domain);
+    }
+    proc_schema_output_name(ctx, key_type);
 
     GRN_OUTPUT_MAP_CLOSE();
   }
