@@ -173,7 +173,10 @@ schema
         "key_type": null,
         "value_type": null,
         "tokenizer": null,
-        "normalizer": null
+        "normalizer": null,
+        "token_filters": [
+
+        ]
       }
     }
   }

@@ -176,7 +176,10 @@ schema
         },
         "value_type": null,
         "tokenizer": null,
-        "normalizer": "NormalizerAuto"
+        "normalizer": "NormalizerAuto",
+        "token_filters": [
+
+        ]
       }
     }
   }

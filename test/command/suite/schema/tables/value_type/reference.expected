@@ -178,7 +178,10 @@ schema
           "type": "reference"
         },
         "tokenizer": null,
-        "normalizer": null
+        "normalizer": null,
+        "token_filters": [
+
+        ]
       },
       "Users": {
         "name": "Users",
@@ -189,7 +192,10 @@ schema
         },
         "value_type": null,
         "tokenizer": null,
-        "normalizer": null
+        "normalizer": null,
+        "token_filters": [
+
+        ]
       }
     }
   }

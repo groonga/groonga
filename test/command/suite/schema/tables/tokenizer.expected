@@ -176,7 +176,10 @@ schema
         },
         "value_type": null,
         "tokenizer": "TokenBigram",
-        "normalizer": null
+        "normalizer": null,
+        "token_filters": [
+
+        ]
       }
     }
   }
