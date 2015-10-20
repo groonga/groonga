@@ -183,7 +183,9 @@ schema
           "type": "type"
         },
         "value_type": null,
-        "tokenizer": "TokenBigram",
+        "tokenizer": {
+          "name": "TokenBigram"
+        },
         "normalizer": null,
         "token_filters": [
           {

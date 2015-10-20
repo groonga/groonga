@@ -176,7 +176,9 @@ schema
         },
         "value_type": null,
         "tokenizer": null,
-        "normalizer": "NormalizerAuto",
+        "normalizer": {
+          "name": "NormalizerAuto"
+        },
         "token_filters": [
 
         ]

@@ -7534,16 +7534,38 @@ static void
 proc_schema_table_output_tokenizer(grn_ctx *ctx, grn_obj *table)
 {
   grn_obj *tokenizer;
+
   tokenizer = grn_obj_get_info(ctx, table, GRN_INFO_DEFAULT_TOKENIZER, NULL);
+  if (!tokenizer) {
+    GRN_OUTPUT_NULL();
+    return;
+  }
+
+  GRN_OUTPUT_MAP_OPEN("tokenizer", 1);
+
+  GRN_OUTPUT_CSTR("name");
   proc_schema_output_name(ctx, tokenizer);
+
+  GRN_OUTPUT_MAP_CLOSE();
 }
 
 static void
 proc_schema_table_output_normalizer(grn_ctx *ctx, grn_obj *table)
 {
   grn_obj *normalizer;
+
   normalizer = grn_obj_get_info(ctx, table, GRN_INFO_NORMALIZER, NULL);
+  if (!normalizer) {
+    GRN_OUTPUT_NULL();
+    return;
+  }
+
+  GRN_OUTPUT_MAP_OPEN("normalizer", 1);
+
+  GRN_OUTPUT_CSTR("name");
   proc_schema_output_name(ctx, normalizer);
+
+  GRN_OUTPUT_MAP_CLOSE();
 }
 
 static void
