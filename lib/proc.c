@@ -7894,7 +7894,7 @@ proc_schema_column_output(grn_ctx *ctx, grn_obj *table, grn_obj *column)
 
   proc_schema_output_column_name(ctx, column);
 
-  GRN_OUTPUT_MAP_OPEN("column", 7);
+  GRN_OUTPUT_MAP_OPEN("column", 10);
 
   GRN_OUTPUT_CSTR("name");
   proc_schema_output_column_name(ctx, column);
@@ -7913,6 +7913,15 @@ proc_schema_column_output(grn_ctx *ctx, grn_obj *table, grn_obj *column)
 
   GRN_OUTPUT_CSTR("compress");
   proc_schema_column_output_compress(ctx, column);
+
+  GRN_OUTPUT_CSTR("section");
+  GRN_OUTPUT_BOOL((column->header.flags & GRN_OBJ_WITH_SECTION) != 0);
+
+  GRN_OUTPUT_CSTR("weight");
+  GRN_OUTPUT_BOOL((column->header.flags & GRN_OBJ_WITH_WEIGHT) != 0);
+
+  GRN_OUTPUT_CSTR("position");
+  GRN_OUTPUT_BOOL((column->header.flags & GRN_OBJ_WITH_POSITION) != 0);
 
   GRN_OUTPUT_MAP_CLOSE();
 }

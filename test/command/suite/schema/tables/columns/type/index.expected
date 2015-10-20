@@ -1,6 +1,12 @@
-table_create Logs TABLE_NO_KEY
+table_create Posts TABLE_HASH_KEY ShortText
 [[0,0.0,0.0],true]
-column_create Logs message COLUMN_SCALAR|COMPRESS_ZLIB Text
+column_create Posts title COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Posts text COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms index COLUMN_INDEX|WITH_SECTION|WITH_WEIGHT|WITH_POSITION   Posts title,text
 [[0,0.0,0.0],true]
 schema
 [
@@ -171,10 +177,13 @@ schema
     "token_filters": {
     },
     "tables": {
-      "Logs": {
-        "name": "Logs",
-        "type": "array",
-        "key_type": null,
+      "Posts": {
+        "name": "Posts",
+        "type": "hash table",
+        "key_type": {
+          "name": "ShortText",
+          "type": "type"
+        },
         "value_type": null,
         "tokenizer": null,
         "normalizer": null,
@@ -184,25 +193,85 @@ schema
         "command": {
           "name": "table_create",
           "arguments": {
-            "name": "Logs",
-            "flags": "TABLE_NO_KEY"
+            "name": "Posts",
+            "flags": "TABLE_HASH_KEY",
+            "key_type": "ShortText"
           },
-          "command_line": "table_create --name Logs --flags TABLE_NO_KEY"
+          "command_line": "table_create --name Posts --flags TABLE_HASH_KEY --key_type ShortText"
         },
         "columns": {
-          "message": {
-            "name": "message",
-            "table": "Logs",
-            "full_name": "Logs.message",
+          "text": {
+            "name": "text",
+            "table": "Posts",
+            "full_name": "Posts.text",
             "type": "scalar",
             "value_type": {
               "name": "Text",
               "type": "type"
             },
-            "compress": "zlib",
+            "compress": null,
             "section": false,
             "weight": false,
             "position": false
+          },
+          "title": {
+            "name": "title",
+            "table": "Posts",
+            "full_name": "Posts.title",
+            "type": "scalar",
+            "value_type": {
+              "name": "ShortText",
+              "type": "type"
+            },
+            "compress": null,
+            "section": false,
+            "weight": false,
+            "position": false
+          }
+        }
+      },
+      "Terms": {
+        "name": "Terms",
+        "type": "patricia trie",
+        "key_type": {
+          "name": "ShortText",
+          "type": "type"
+        },
+        "value_type": null,
+        "tokenizer": {
+          "name": "TokenBigram"
+        },
+        "normalizer": {
+          "name": "NormalizerAuto"
+        },
+        "token_filters": [
+
+        ],
+        "command": {
+          "name": "table_create",
+          "arguments": {
+            "name": "Terms",
+            "flags": "TABLE_PAT_KEY",
+            "key_type": "ShortText",
+            "default_tokenizer": "TokenBigram",
+            "normalizer": "NormalizerAuto"
+          },
+          "command_line": "table_create --name Terms --flags TABLE_PAT_KEY --key_type ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto"
+        },
+        "columns": {
+          "index": {
+            "name": "index",
+            "table": "Terms",
+            "full_name": "Terms.index",
+            "type": "index",
+            "value_type": {
+              "name": "Posts",
+              "type": "reference"
+            },
+            "compress": null,
+            "section": true,
+            "weight": true,
+            "position": true
           }
         }
       }

@@ -199,7 +199,10 @@ schema
               "name": "Text",
               "type": "type"
             },
-            "compress": "lz4"
+            "compress": "lz4",
+            "section": false,
+            "weight": false,
+            "position": false
           }
         }
       }

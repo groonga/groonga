@@ -205,7 +205,10 @@ schema
               "name": "Tags",
               "type": "reference"
             },
-            "compress": null
+            "compress": null,
+            "section": false,
+            "weight": false,
+            "position": false
           }
         }
       },
