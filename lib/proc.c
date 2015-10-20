@@ -7306,7 +7306,7 @@ proc_schema_output_name(grn_ctx *ctx, grn_obj *obj)
 }
 
 static void
-proc_schema_plugins(grn_ctx *ctx)
+proc_schema_output_plugins(grn_ctx *ctx)
 {
   grn_obj plugin_names;
   unsigned int i, n;
@@ -7337,7 +7337,7 @@ proc_schema_plugins(grn_ctx *ctx)
 }
 
 static void
-proc_schema_types(grn_ctx *ctx)
+proc_schema_output_types(grn_ctx *ctx)
 {
   grn_obj types;
   unsigned int i, n;
@@ -7379,7 +7379,7 @@ proc_schema_types(grn_ctx *ctx)
 }
 
 static void
-proc_schema_tokenizers(grn_ctx *ctx)
+proc_schema_output_tokenizers(grn_ctx *ctx)
 {
   grn_obj tokenizers;
   unsigned int i, n;
@@ -7412,7 +7412,7 @@ proc_schema_tokenizers(grn_ctx *ctx)
 }
 
 static void
-proc_schema_normalizers(grn_ctx *ctx)
+proc_schema_output_normalizers(grn_ctx *ctx)
 {
   grn_obj normalizers;
   unsigned int i, n;
@@ -7793,7 +7793,7 @@ proc_schema_table_output_command(grn_ctx *ctx, grn_obj *table)
 }
 
 static void
-proc_schema_tables(grn_ctx *ctx)
+proc_schema_output_tables(grn_ctx *ctx)
 {
   grn_obj tables;
   unsigned int i, n;
@@ -7851,11 +7851,11 @@ proc_schema(grn_ctx *ctx, int nargs, grn_obj **args,
             grn_user_data *user_data)
 {
   GRN_OUTPUT_MAP_OPEN("schema", 5);
-  proc_schema_plugins(ctx);
-  proc_schema_types(ctx);
-  proc_schema_tokenizers(ctx);
-  proc_schema_normalizers(ctx);
-  proc_schema_tables(ctx);
+  proc_schema_output_plugins(ctx);
+  proc_schema_output_types(ctx);
+  proc_schema_output_tokenizers(ctx);
+  proc_schema_output_normalizers(ctx);
+  proc_schema_output_tables(ctx);
   GRN_OUTPUT_MAP_CLOSE();
 
   return NULL;
