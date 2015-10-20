@@ -176,7 +176,8 @@ schema
         "value_type": {
           "name": "Users",
           "type": "reference"
-        }
+        },
+        "tokenizer": null
       },
       "Users": {
         "name": "Users",
@@ -185,7 +186,8 @@ schema
           "name": "ShortText",
           "type": "type"
         },
-        "value_type": null
+        "value_type": null,
+        "tokenizer": null
       }
     }
   }

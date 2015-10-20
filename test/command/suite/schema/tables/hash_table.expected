@@ -174,7 +174,8 @@ schema
           "name": "ShortText",
           "type": "type"
         },
-        "value_type": null
+        "value_type": null,
+        "tokenizer": null
       }
     }
   }

@@ -171,7 +171,8 @@ schema
         "name": "Logs",
         "type": "array",
         "key_type": null,
-        "value_type": null
+        "value_type": null,
+        "tokenizer": null
       }
     }
   }
