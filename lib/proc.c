@@ -7539,6 +7539,14 @@ proc_schema_table_output_tokenizer(grn_ctx *ctx, grn_obj *table)
 }
 
 static void
+proc_schema_table_output_normalizer(grn_ctx *ctx, grn_obj *table)
+{
+  grn_obj *normalizer;
+  normalizer = grn_obj_get_info(ctx, table, GRN_INFO_NORMALIZER, NULL);
+  proc_schema_output_name(ctx, normalizer);
+}
+
+static void
 proc_schema_tables(grn_ctx *ctx)
 {
   grn_obj tables;
@@ -7559,7 +7567,7 @@ proc_schema_tables(grn_ctx *ctx)
 
     proc_schema_output_name(ctx, table);
 
-    GRN_OUTPUT_MAP_OPEN("table", 5);
+    GRN_OUTPUT_MAP_OPEN("table", 6);
 
     GRN_OUTPUT_CSTR("name");
     proc_schema_output_name(ctx, table);
@@ -7575,6 +7583,9 @@ proc_schema_tables(grn_ctx *ctx)
 
     GRN_OUTPUT_CSTR("tokenizer");
     proc_schema_table_output_tokenizer(ctx, table);
+
+    GRN_OUTPUT_CSTR("normalizer");
+    proc_schema_table_output_normalizer(ctx, table);
 
     GRN_OUTPUT_MAP_CLOSE();
   }

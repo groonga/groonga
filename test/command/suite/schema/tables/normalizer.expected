@@ -1,6 +1,4 @@
-table_create Users TABLE_HASH_KEY ShortText
-[[0,0.0,0.0],true]
-table_create Logs TABLE_NO_KEY --value_type Users
+table_create Tags TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
 [[0,0.0,0.0],true]
 schema
 [
@@ -169,27 +167,16 @@ schema
       }
     },
     "tables": {
-      "Logs": {
-        "name": "Logs",
-        "type": "array",
-        "key_type": null,
-        "value_type": {
-          "name": "Users",
-          "type": "reference"
-        },
-        "tokenizer": null,
-        "normalizer": null
-      },
-      "Users": {
-        "name": "Users",
-        "type": "hash table",
+      "Tags": {
+        "name": "Tags",
+        "type": "patricia trie",
         "key_type": {
           "name": "ShortText",
           "type": "type"
         },
         "value_type": null,
         "tokenizer": null,
-        "normalizer": null
+        "normalizer": "NormalizerAuto"
       }
     }
   }

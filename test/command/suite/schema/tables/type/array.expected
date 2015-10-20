@@ -172,7 +172,8 @@ schema
         "type": "array",
         "key_type": null,
         "value_type": null,
-        "tokenizer": null
+        "tokenizer": null,
+        "normalizer": null
       }
     }
   }

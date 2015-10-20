@@ -175,7 +175,8 @@ schema
           "type": "type"
         },
         "value_type": null,
-        "tokenizer": null
+        "tokenizer": null,
+        "normalizer": null
       }
     }
   }
