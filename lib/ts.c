@@ -6616,7 +6616,6 @@ grn_ts_expr_push(grn_ctx *ctx, grn_ts_expr *expr,
 grn_rc
 grn_ts_expr_push_name(grn_ctx *ctx, grn_ts_expr *expr,
                      const char *name_ptr, size_t name_size) {
-  grn_rc rc;
   grn_obj *column;
   grn_ts_str name = { name_ptr, name_size };
   if (!ctx) {
@@ -6638,14 +6637,13 @@ grn_ts_expr_push_name(grn_ctx *ctx, grn_ts_expr *expr,
   if (grn_ts_str_is_value_name(name)) {
     return grn_ts_expr_push_value(ctx, expr);
   }
-  /* TODO: Resolve references. */
+  /* grn_obj_column() returns a column or accessor. */
   column = grn_obj_column(ctx, expr->curr_table, name.ptr, name.size);
   if (!column) {
-    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "not column");
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "object not found: \"%.*s\"",
+                      (int)name.size, name.ptr);
   }
-  rc = grn_ts_expr_push_column(ctx, expr, column);
-  grn_obj_unlink(ctx, column);
-  return rc;
+  return grn_ts_expr_push_obj(ctx, expr, column);
 }
 
 #define GRN_TS_EXPR_PUSH_BULK_CASE(TYPE, kind)\
@@ -6780,12 +6778,8 @@ grn_ts_expr_push_vector(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj) {
 }
 
 static grn_rc
-grn_ts_expr_push_accessor(grn_ctx *ctx, grn_ts_expr *expr,
-                          grn_accessor *accessor) {
-  if (accessor->next) {
-    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT,
-                      "complex accessor is not supported");
-  }
+grn_ts_expr_push_single_accessor(grn_ctx *ctx, grn_ts_expr *expr,
+                                 grn_accessor *accessor) {
   switch (accessor->action) {
     case GRN_ACCESSOR_GET_ID: {
       return grn_ts_expr_push_id(ctx, expr);
@@ -6794,16 +6788,49 @@ grn_ts_expr_push_accessor(grn_ctx *ctx, grn_ts_expr *expr,
       return grn_ts_expr_push_score(ctx, expr);
     }
     case GRN_ACCESSOR_GET_KEY: {
+      if (accessor->obj != expr->curr_table) {
+        GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "table conflict");
+      }
       return grn_ts_expr_push_key(ctx, expr);
     }
     case GRN_ACCESSOR_GET_VALUE: {
+      if (accessor->obj != expr->curr_table) {
+        GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "table conflict");
+      }
       return grn_ts_expr_push_value(ctx, expr);
+    }
+    case GRN_ACCESSOR_GET_COLUMN_VALUE: {
+      return grn_ts_expr_push_column(ctx, expr, accessor->obj);
     }
     default: {
       GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid accessor action: %d",
                         accessor->action);
     }
   }
+}
+
+static grn_rc
+grn_ts_expr_push_accessor(grn_ctx *ctx, grn_ts_expr *expr,
+                          grn_accessor *accessor) {
+  grn_rc rc = grn_ts_expr_push_single_accessor(ctx, expr, accessor);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  for (accessor = accessor->next; accessor; accessor = accessor->next) {
+    rc = grn_ts_expr_begin_subexpr(ctx, expr);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+    rc = grn_ts_expr_push_single_accessor(ctx, expr, accessor);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+    rc = grn_ts_expr_end_subexpr(ctx, expr);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+  }
+  return GRN_SUCCESS;
 }
 
 grn_rc
