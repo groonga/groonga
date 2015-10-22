@@ -249,11 +249,7 @@ grn_ts_data_type grn_ts_expr_get_data_type(grn_ctx *ctx, grn_ts_expr *expr);
  */
 grn_ts_expr_node *grn_ts_expr_get_root(grn_ctx *ctx, grn_ts_expr *expr);
 
-/*
- * grn_ts_expr_push() pushes an expression node expressed by a string.
- * Note that operators are not supported because some symbols are used as more
- * than one operators, such as '-' (negative and minus).
- */
+/* grn_ts_expr_push() parses a string and pushes the result. */
 grn_rc grn_ts_expr_push(grn_ctx *ctx, grn_ts_expr *expr,
                         const char *str_ptr, size_t str_size);
 
