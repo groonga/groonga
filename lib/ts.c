@@ -6560,6 +6560,38 @@ grn_ts_expr_reserve_stack(grn_ctx *ctx, grn_ts_expr *expr) {
   return GRN_SUCCESS;
 }
 
+/* grn_ts_expr_deref() dereferences a node. */
+static grn_rc
+grn_ts_expr_deref(grn_ctx *ctx, grn_ts_expr *expr,
+                  grn_ts_expr_node **node_ptr) {
+  grn_ts_expr_node *node = *node_ptr;
+  while (node->data_kind == GRN_TS_REF) {
+    grn_rc rc;
+    grn_ts_expr_node *key_node, *bridge_node;
+    grn_id table_id = node->data_type;
+    grn_obj *table = grn_ctx_at(ctx, table_id);
+    if (!table) {
+      return GRN_OBJECT_CORRUPT;
+    }
+    if (!grn_ts_obj_is_table(ctx, table)) {
+      grn_obj_unlink(ctx, table);
+      return GRN_OBJECT_CORRUPT;
+    }
+    rc = grn_ts_expr_key_node_open(ctx, table, &key_node);
+    grn_obj_unlink(ctx, table);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+    rc = grn_ts_expr_bridge_node_open(ctx, node, key_node, &bridge_node);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+    node = bridge_node;
+  }
+  *node_ptr = node;
+  return GRN_SUCCESS;
+}
+
 grn_rc
 grn_ts_expr_push(grn_ctx *ctx, grn_ts_expr *expr,
                  const char *str_ptr, size_t str_size) {
@@ -6946,7 +6978,7 @@ grn_rc
 grn_ts_expr_push_op(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_op_type op_type) {
   grn_rc rc;
   grn_ts_expr_node **args, *node;
-  size_t n_args;
+  size_t i, n_args;
   if (!ctx) {
     return GRN_INVALID_ARGUMENT;
   }
@@ -6963,6 +6995,16 @@ grn_ts_expr_push_op(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_op_type op_type) {
   }
   /* Arguments are the top n_args nodes in the stack. */
   args = &expr->stack[expr->stack_depth - n_args];
+  for (i = 0; i < n_args; i++) {
+    /*
+     * FIXME: Operators "==" and "!=" should compare arguments as references
+     *        if possible.
+     */
+    rc = grn_ts_expr_deref(ctx, expr, &args[i]);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+  }
   rc = grn_ts_expr_open_op_node(ctx, expr, op_type, args, n_args, &node);
   if (rc == GRN_SUCCESS) {
     expr->stack_depth -= n_args;
@@ -7199,12 +7241,17 @@ grn_ts_expr_end_subexpr(grn_ctx *ctx, grn_ts_expr *expr) {
 
 grn_rc
 grn_ts_expr_complete(grn_ctx *ctx, grn_ts_expr *expr) {
+  grn_rc rc;
   grn_ts_expr_node *root;
   if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE)) {
     return GRN_INVALID_ARGUMENT;
   }
   if (expr->stack_depth != 1) {
     return GRN_INVALID_ARGUMENT;
+  }
+  rc = grn_ts_expr_deref(ctx, expr, &expr->stack[0]);
+  if (rc != GRN_SUCCESS) {
+    return rc;
   }
   root = expr->stack[0];
   switch (root->data_kind) {
