@@ -1,4 +1,5 @@
 EXTRA_DIST =					\
+	LEGAL					\
 	CMakeLists.txt				\
 	build_config.rb				\
 	mruby_build.rb				\
@@ -16,6 +17,10 @@ CFLAGS +=					\
 	$(NO_BAD_FUNCTION_CAST_CFLAGS)
 
 if WITH_MRUBY
+mruby_datadir = $(pkgdatadir)/mruby
+mruby_data_DATA =				\
+	LEGAL
+
 noinst_LTLIBRARIES = libmruby.la
 
 AM_CPPFLAGS =					\
@@ -31,6 +36,7 @@ include sources.am
 include built_sources.am
 libmruby_la_SOURCES += $(BUILT_SOURCES)
 
+LEGAL: mruby_build.timestamp
 mrblib.c: mruby_build.timestamp
 mrbgems_init.c: mruby_build.timestamp
 mruby-compiler/core/parse.c: mruby_build.timestamp
