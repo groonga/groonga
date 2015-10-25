@@ -25,19 +25,20 @@ extern "C" {
 
 #define GRN_OBJ_IS_TRUE(ctx, obj, result) do {  \
   grn_obj *obj_ = (obj);                        \
-  switch (obj_->header.type) {                  \
-  case GRN_BULK :                               \
-    switch (obj_->header.domain) {              \
-    case GRN_DB_BOOL :                          \
-      result = GRN_BOOL_VALUE(obj_);            \
-      break;                                    \
-    case GRN_DB_INT32 :                         \
-      result = GRN_INT32_VALUE(obj_) != 0;      \
-      break;                                    \
-    case GRN_DB_UINT32 :                        \
-      result = GRN_UINT32_VALUE(obj_) != 0;     \
-      break;                                    \
-    case GRN_DB_FLOAT :                         \
+  if (obj_) {                                   \
+    switch (obj_->header.type) {                \
+    case GRN_BULK :                             \
+      switch (obj_->header.domain) {            \
+      case GRN_DB_BOOL :                        \
+        result = GRN_BOOL_VALUE(obj_);          \
+        break;                                  \
+      case GRN_DB_INT32 :                       \
+        result = GRN_INT32_VALUE(obj_) != 0;    \
+        break;                                  \
+      case GRN_DB_UINT32 :                      \
+        result = GRN_UINT32_VALUE(obj_) != 0;   \
+        break;                                  \
+      case GRN_DB_FLOAT :                       \
       {                                         \
         double float_value;                     \
         float_value = GRN_FLOAT_VALUE(obj_);    \
@@ -45,22 +46,25 @@ extern "C" {
                   DBL_EPSILON < float_value);   \
       }                                         \
       break;                                    \
-    case GRN_DB_SHORT_TEXT :                    \
-    case GRN_DB_TEXT :                          \
-    case GRN_DB_LONG_TEXT :                     \
-      result = GRN_TEXT_LEN(obj_) != 0;         \
+      case GRN_DB_SHORT_TEXT :                  \
+      case GRN_DB_TEXT :                        \
+      case GRN_DB_LONG_TEXT :                   \
+        result = GRN_TEXT_LEN(obj_) != 0;       \
+        break;                                  \
+      default :                                 \
+        result = GRN_FALSE;                     \
+        break;                                  \
+      }                                         \
+      break;                                    \
+    case GRN_VECTOR :                           \
+      result = GRN_TRUE;                        \
       break;                                    \
     default :                                   \
       result = GRN_FALSE;                       \
       break;                                    \
     }                                           \
-    break;                                      \
-  case GRN_VECTOR :                             \
-    result = GRN_TRUE;                          \
-    break;                                      \
-  default :                                     \
+  } else {                                      \
     result = GRN_FALSE;                         \
-    break;                                      \
   }                                             \
 } while (0)
 
