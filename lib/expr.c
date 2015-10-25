@@ -2735,7 +2735,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           grn_obj *v;
           unsigned int v_boolean;
           POP1(v);
-          GRN_TRUEP(ctx, v, v_boolean);
+          GRN_OBJ_IS_TRUE(ctx, v, v_boolean);
           if (!v_boolean) { code += code->nargs; }
         }
         code++;
@@ -2931,9 +2931,9 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           unsigned int x_boolean, y_boolean;
           grn_obj *result = NULL;
           POP2ALLOC1(x, y, res);
-          GRN_TRUEP(ctx, x, x_boolean);
+          GRN_OBJ_IS_TRUE(ctx, x, x_boolean);
           if (x_boolean) {
-            GRN_TRUEP(ctx, y, y_boolean);
+            GRN_OBJ_IS_TRUE(ctx, y, y_boolean);
             if (y_boolean) {
               result = y;
             }
@@ -2956,11 +2956,11 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           unsigned int x_boolean, y_boolean;
           grn_obj *result;
           POP2ALLOC1(x, y, res);
-          GRN_TRUEP(ctx, x, x_boolean);
+          GRN_OBJ_IS_TRUE(ctx, x, x_boolean);
           if (x_boolean) {
             result = x;
           } else {
-            GRN_TRUEP(ctx, y, y_boolean);
+            GRN_OBJ_IS_TRUE(ctx, y, y_boolean);
             if (y_boolean) {
               result = y;
             } else {
@@ -2984,8 +2984,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           grn_obj *x, *y;
           grn_bool x_boolean, y_boolean;
           POP2ALLOC1(x, y, res);
-          GRN_TRUEP(ctx, x, x_boolean);
-          GRN_TRUEP(ctx, y, y_boolean);
+          GRN_OBJ_IS_TRUE(ctx, x, x_boolean);
+          GRN_OBJ_IS_TRUE(ctx, y, y_boolean);
           grn_obj_reinit(ctx, res, GRN_DB_BOOL, 0);
           if (!x_boolean || y_boolean) {
             GRN_BOOL_SET(ctx, res, GRN_FALSE);
@@ -3519,7 +3519,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           grn_obj *value;
           grn_bool value_boolean;
           POP1ALLOC1(value, res);
-          GRN_TRUEP(ctx, value, value_boolean);
+          GRN_OBJ_IS_TRUE(ctx, value, value_boolean);
           grn_obj_reinit(ctx, res, GRN_DB_BOOL, 0);
           GRN_BOOL_SET(ctx, res, !value_boolean);
         }

@@ -180,7 +180,7 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
         grn_mrb_ctx_check(mrb);
         continue;
       }
-      GRN_TRUEP(ctx, matched, matched_raw);
+      GRN_OBJ_IS_TRUE(ctx, matched, matched_raw);
       if (!matched_raw) {
         continue;
       }

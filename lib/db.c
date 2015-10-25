@@ -12291,7 +12291,7 @@ loader_add(grn_ctx *ctx, grn_obj *key)
     unsigned int result_boolean;
     GRN_RECORD_SET(ctx, v, id);
     result = grn_expr_exec(ctx, loader->ifexists, 0);
-    GRN_TRUEP(ctx, result, result_boolean);
+    GRN_OBJ_IS_TRUE(ctx, result, result_boolean);
     if (!result_boolean) { id = 0; }
   }
   return id;

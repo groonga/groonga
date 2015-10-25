@@ -5727,7 +5727,7 @@ func_between(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   result = grn_expr_exec(ctx, between_expr, 0);
   if (result) {
     grn_bool result_boolean;
-    GRN_TRUEP(ctx, result, result_boolean);
+    GRN_OBJ_IS_TRUE(ctx, result, result_boolean);
     if (result_boolean) {
       GRN_BOOL_SET(ctx, found, GRN_TRUE);
     }
@@ -5921,7 +5921,7 @@ selector_between_sequential_search(grn_ctx *ctx,
       }
       if (result) {
         grn_bool result_boolean;
-        GRN_TRUEP(ctx, result, result_boolean);
+        GRN_OBJ_IS_TRUE(ctx, result, result_boolean);
         if (result_boolean) {
           grn_posting posting;
           posting.rid = record_id;
@@ -6765,7 +6765,7 @@ proc_range_filter(grn_ctx *ctx, int nargs, grn_obj **args,
               break;
             }
             if (result) {
-              GRN_TRUEP(ctx, result, result_boolean);
+              GRN_OBJ_IS_TRUE(ctx, result, result_boolean);
             }
           } else {
             result_boolean = GRN_TRUE;

@@ -369,46 +369,6 @@ grn_rc grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj);
 #define GRN_ACCESSORP(obj) \
   ((obj) && (((grn_obj *)(obj))->header.type == GRN_ACCESSOR))
 
-#define GRN_TRUEP(ctx, v, result) do {\
-  switch (v->header.type) {                             \
-  case GRN_BULK :                                       \
-    switch (v->header.domain) {                         \
-    case GRN_DB_BOOL :                                  \
-      result = GRN_BOOL_VALUE(v);                       \
-      break;                                            \
-    case GRN_DB_INT32 :                                 \
-      result = GRN_INT32_VALUE(v) != 0;                 \
-      break;                                            \
-    case GRN_DB_UINT32 :                                \
-      result = GRN_UINT32_VALUE(v) != 0;                \
-      break;                                            \
-    case GRN_DB_FLOAT :                                 \
-      {                                                 \
-        double float_value;                             \
-        float_value = GRN_FLOAT_VALUE(v);               \
-        result = (float_value < -DBL_EPSILON ||         \
-                  DBL_EPSILON < float_value);           \
-      }                                                 \
-      break;                                            \
-    case GRN_DB_SHORT_TEXT :                            \
-    case GRN_DB_TEXT :                                  \
-    case GRN_DB_LONG_TEXT :                             \
-      result = GRN_TEXT_LEN(v) != 0;                    \
-      break;                                            \
-    default :                                           \
-      result = GRN_FALSE;                               \
-      break;                                            \
-    }                                                   \
-    break;                                              \
-  case GRN_VECTOR :                                     \
-    result = GRN_TRUE;                                  \
-    break;                                              \
-  default :                                             \
-    result = GRN_FALSE;                                 \
-    break;                                              \
-  }                                                     \
-} while (0)
-
 grn_id grn_obj_register(grn_ctx *ctx, grn_obj *db, const char *name, unsigned int name_size);
 int grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj);
 void grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj);
