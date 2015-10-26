@@ -104,11 +104,22 @@ Reference
 
 .. c:function:: const char *grn_plugin_win32_base_dir(void)
 
-   grn_plugin_win32_base_dir() returns the groonga install directory.
-   The install directory is computed from the directory that has
-   `groonga.dll`. You can use the directory to generate install
-   directory aware path.
-   It only works on Windows. It returns `NULL` on other platforms.
+   .. deprecated:: 5.0.9. Use :c:func:`grn_plugin_windows_base_dir()`
+                   instead.
+
+   It returns the Groonga install directory. The install directory is
+   computed from the directory that has ``groonga.dll``. You can use
+   the directory to generate install directory aware path. It only
+   works on Windows. It returns ``NULL`` on other platforms.
+
+.. c:function:: const char *grn_plugin_windows_base_dir(void)
+
+   .. versionadded:: 5.0.9
+
+   It returns the Groonga install directory. The install directory is
+   computed from the directory that has ``groonga.dll``. You can use
+   the directory to generate install directory aware path. It only
+   works on Windows. It returns ``NULL`` on other platforms.
 
 .. c:function:: int grn_plugin_charlen(grn_ctx *ctx, const char *str_ptr, unsigned int str_length, grn_encoding encoding)
 
