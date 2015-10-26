@@ -2609,6 +2609,51 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, buffer_term *bt,
   return rc;
 }
 
+static void
+buffer_merge_dump_datavec(grn_ctx *ctx,
+                          grn_ii *ii,
+                          datavec *dv,
+                          datavec *rdv)
+{
+  int i, j;
+#define BUF_SIZE 255
+  char buf[BUF_SIZE], *bufp, *buf_end;
+  buf_end = buf + BUF_SIZE;
+#undef BUF_SIZE
+
+  for (i = 0; i < ii->n_elements; i++) {
+    GRN_LOG(ctx, GRN_LOG_DEBUG, "rdv[%d] data_size=%d, flags=%d",
+            i, rdv[i].data_size, rdv[i].flags);
+    for (j = 0, bufp = buf; j < rdv[i].data_size;) {
+      bufp += grn_snprintf(bufp,
+                           buf_end - bufp,
+                           buf_end - bufp,
+                           " %d", rdv[i].data[j]);
+      j++;
+      if (!(j % 32) || j == rdv[i].data_size) {
+        GRN_LOG(ctx, GRN_LOG_DEBUG, "rdv[%d].data[%d]%s", i, j, buf);
+        bufp = buf;
+      }
+    }
+  }
+
+  for (i = 0; i < ii->n_elements; i++) {
+    GRN_LOG(ctx, GRN_LOG_DEBUG, "dv[%d] data_size=%d, flags=%d",
+            i, dv[i].data_size, dv[i].flags);
+    for (i = 0, bufp = buf; j < dv[i].data_size;) {
+      bufp += grn_snprintf(bufp,
+                           buf_end - bufp,
+                           buf_end - bufp,
+                           " %d", dv[i].data[j]);
+      j++;
+      if (!(j % 32) || j == dv[i].data_size) {
+        GRN_LOG(ctx, GRN_LOG_DEBUG, "dv[%d].data[%d]%s", i, j, buf);
+        bufp = buf;
+      }
+    }
+  }
+}
+
 static grn_rc
 buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
               buffer *sb, uint8_t *sc, buffer *db, uint8_t *dc)
@@ -2813,48 +2858,20 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
           }
           encsize = grn_p_encv(ctx, dv, ii->n_elements, dcp);
 
-          if (sb->header.chunk_size + S_SEGMENT <= (dcp - dc) + encsize) {
-            int i;
-#define BUF_SIZE 255
-            char buf[BUF_SIZE], *bufp, *buf_end;
-            buf_end = buf + BUF_SIZE;
-#undef BUF_SIZE
-            GRN_LOG(ctx, GRN_LOG_DEBUG,
-                    "cs(%d)+(%d)=(%d)<=(%" GRN_FMT_LLD ")+(%d)=(%" GRN_FMT_LLD ")",
-                    sb->header.chunk_size, S_SEGMENT, sb->header.chunk_size + S_SEGMENT,
-                    (long long int)(dcp - dc), encsize, (long long int)((dcp - dc) + encsize));
-            for (j = 0; j < ii->n_elements; j++) {
-              GRN_LOG(ctx, GRN_LOG_DEBUG, "rdv[%d] data_size=%d, flags=%d",
-                      j, rdv[j].data_size, rdv[j].flags);
-              for (i = 0, bufp = buf; i < rdv[j].data_size;) {
-                bufp += grn_snprintf(bufp,
-                                     buf_end - bufp,
-                                     buf_end - bufp,
-                                     " %d", rdv[j].data[i]);
-                i++;
-                if (!(i % 32) || i == rdv[j].data_size) {
-                  GRN_LOG(ctx, GRN_LOG_DEBUG, "rdv[%d].data[%d]%s", j, i, buf);
-                  bufp = buf;
-                }
-              }
+          if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
+            if (sb->header.chunk_size + S_SEGMENT <= (dcp - dc) + encsize) {
+              GRN_LOG(ctx, GRN_LOG_DEBUG,
+                      "cs(%d)+(%d)=(%d)"
+                      "<=(%" GRN_FMT_LLD ")+(%d)="
+                      "(%" GRN_FMT_LLD ")",
+                      sb->header.chunk_size,
+                      S_SEGMENT,
+                      sb->header.chunk_size + S_SEGMENT,
+                      (long long int)(dcp - dc),
+                      encsize,
+                      (long long int)((dcp - dc) + encsize));
+              buffer_merge_dump_datavec(ctx, ii, dv, rdv);
             }
-
-            for (j = 0; j < ii->n_elements; j++) {
-              GRN_LOG(ctx, GRN_LOG_DEBUG, "dv[%d] data_size=%d, flags=%d",
-                      j, dv[j].data_size, dv[j].flags);
-              for (i = 0, bufp = buf; i < dv[j].data_size;) {
-                bufp += grn_snprintf(bufp,
-                                     buf_end - bufp,
-                                     buf_end - bufp,
-                                     " %d", dv[j].data[i]);
-                i++;
-                if (!(i % 32) || i == dv[j].data_size) {
-                  GRN_LOG(ctx, GRN_LOG_DEBUG, "dv[%d].data[%d]%s", j, i, buf);
-                  bufp = buf;
-                }
-              }
-            }
-
           }
 
           if (encsize > CHUNK_SPLIT_THRESHOLD &&
