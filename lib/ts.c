@@ -18,8 +18,6 @@
 
 /* TS is an acronym for "Turbo Selector". */
 
-#ifdef GRN_WITH_TS
-
 #include "grn_ts.h"
 
 #include <ctype.h>
@@ -7983,5 +7981,3 @@ grn_ts_select(grn_ctx *ctx, grn_obj *table,
   }
   return rc;
 }
-
-#endif /* GRN_WITH_TS */

@@ -26,9 +26,7 @@
 #include "grn_token_cursor.h"
 #include "grn_expr.h"
 
-#ifdef GRN_WITH_TS
-# include "grn_ts.h"
-#endif /* GRN_WITH_TS */
+#include "grn_ts.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -1013,7 +1011,6 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
   }
   if ((table_ = grn_ctx_get(ctx, table, table_len))) {
     // match_columns_ = grn_obj_column(ctx, table_, match_columns, match_columns_len);
-#ifdef GRN_WITH_TS
     if (filter_len && (filter[0] == '?') &&
         (ctx->impl->output_type == GRN_CONTENT_JSON)) {
       ctx->rc = grn_ts_select(ctx, table_, filter + 1, filter_len - 1,
@@ -1025,7 +1022,6 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
       }
       goto exit;
     }
-#endif /* GRN_WITH_TS */
     if (query_len || filter_len) {
       grn_obj *v;
       GRN_EXPR_CREATE_FOR_QUERY(ctx, table_, cond, v);

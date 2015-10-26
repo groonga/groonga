@@ -19,8 +19,6 @@
 #ifndef GRN_TS_H
 #define GRN_TS_H
 
-#ifdef GRN_WITH_TS
-
 #include <stddef.h>
 #include <stdint.h>
 
@@ -392,7 +390,5 @@ grn_rc grn_ts_select(grn_ctx *ctx, grn_obj *table,
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* GRN_WITH_TS */
 
 #endif /* GRN_TS_H */
