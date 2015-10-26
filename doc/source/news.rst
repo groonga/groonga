@@ -15,7 +15,7 @@ Release 5.0.9 - 2015-10-29
 Improvements
 ^^^^^^^^^^^^
 
-* Reduced log levels of logs for developers.
+* [inverted index] Reduced log levels of logs for developers.
 
 * Flushed pending changed on creating new database. It guards database
   from crash.
