@@ -7,6 +7,115 @@
 News
 ====
 
+.. _release-5-0-9:
+
+Release 5.0.9 - 2015-10-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Reduced log levels of logs for developers.
+
+* Flushed pending changed on creating new database. It guards database
+  from crash.
+
+* [``grn_geo_table_sort()``] Added a new API that sorts table by
+  geometry index.
+
+* [experimental] Added expression rewrite mechanism. You can write
+  custom expression rewriter by mruby. Expression rewriter can be used
+  for optimizing an expression, changing conditions in an expression
+  and so on.
+
+* [experimental] Added database global configuration mechanism. You
+  can put configurations (key and value pairs) into database. For
+  example, it will be used in :ref:`token-filter-stop-word` to custom
+  column name from ``is_stop_word``.
+
+* [``grn_conf_set()``] Added a new API that sets a configuration.
+
+* [``grn_conf_get()``] Added a new API that gets a configuration.
+
+* [deb] Changed to ``all`` from ``any`` for
+  ``Architecture`` value.
+  [debian-bugs:799167][Reported by Matthias Klose]
+
+* [Windows][CMake] Supported building bundled MeCab.
+  [groonga-dev,03562][Reported by Sato]
+
+* [``schema``] Added a new command that returns schema. Schema is
+  consists with loaded plugins, loaded tokenizers, loaded normalizers,
+  loaded token filters, defined tables and defined columns.
+
+* [:c:func:`grn_plugin_win32_base_dir()`] Deprecated. Use
+  :c:func:`grn_plugin_windows_base_dir()` instead.
+
+* [:c:func:`grn_plugin_windows_base_dir()`] Renamed from
+  :c:func:`grn_plugin_win32_base_dir()`.
+
+* [``grn_obj_is_type()``] Add a new API that returns true when the
+  passed object is a type object.
+
+* [``grn_obj_is_tokenizer_proc()``] Add a new API that returns true
+  when the passed object is a tokenizer object.
+
+* [``grn_obj_is_normalizer_proc()``] Add a new API that returns true
+  when the passed object is a normalizer object.
+
+* [``grn_obj_is_token_filter_proc()``] Add a new API that returns true
+  when the passed object is a token filter object.
+
+* [``grn_ctx_get_all_types()``] Add a new API that returns all type
+  objects in database.
+
+* [``grn_ctx_get_all_tokenizers()``] Add a new API that returns all
+  tokenizer objects in database.
+
+* [``grn_ctx_get_all_normalizers()``] Add a new API that returns all
+  normalizer objects in database.
+
+* [``grn_ctx_get_all_token_filters()``] Add a new API that returns all
+  token filter objects in database.
+
+* [``grn_ctx_output_uint64()``] Add a new API that outputs 64bit
+  unsigned integer value.
+
+* [``grn_ctx_output_null()``] Add a new API that outputs ``NULL``.
+
+* [``GRN_OBJ_IS_TRUE()``] Add a new API that returns true when the
+  passed object is true value.
+
+* [experimental] Enabled grn_ts by default.
+
+Fixes
+^^^^^
+
+* [patricia trie] Fixed a bug that the number of records may be
+  counted up unexpectedly on adding a new entry. [GitHub#417]
+
+* [patricia trie] Fixed a bug that a variable may be used
+  uninitialized.
+
+* [patricia trie] Fixed a bug that ``grn_pat_cursor_next()`` may enter
+  an infinite loop. [GitHub#419]
+
+* [patricia trie] Fixed a bug that deleting an entry may break
+  patricia trie.
+  [GitHub#415][groonga-dev,03515][Reported by Hiroshi Kagami]
+
+* [patricia trie] Fixed a bug that deleting a nonexistent entry may
+  break patricia trie. [GitHub#420]
+
+* Fixed a bug that wrong proc type is used for token filter objects.
+
+Thanks
+^^^^^^
+
+* Matthias Klose
+* Hiroshi Kagami
+* Sato
+
 .. _release-5-0-8:
 
 Release 5.0.8 - 2015-09-29
