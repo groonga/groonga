@@ -1186,6 +1186,11 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
       !optarg->func(ctx, (grn_obj *)pat, r, optarg->func_arg)) {
     return GRN_SUCCESS;
   }
+  if (rn0->lr[0] == rn0->lr[1]) {
+    GRN_LOG(ctx, GRN_LOG_DEBUG, "*p0 (%d), rn0->lr[0] == rn0->lr[1] (%d)",
+            *p0, rn0->lr[0]);
+    return GRN_FILE_CORRUPT;
+  }
   otherside = (rn0->lr[1] == r) ? rn0->lr[0] : rn0->lr[1];
   if (otherside && r != otherside) {
     PAT_AT(pat, otherside, rno);
@@ -1199,23 +1204,18 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
     di->stat = DL_PHASE2;
     di->d = r;
     if (otherside) {
-      if (otherside == r) {
-        /* rn0->lr[0] == rn0->lr[1]. */
-        otherside = 0;
-      } else {
-        if (c0 < PAT_CHK(rno) && PAT_CHK(rno) <= c) {
-          /* rno is an output node and will be a non-output node. */
-          if (!delinfo_search(pat, otherside)) {
-            GRN_LOG(ctx, GRN_LOG_DEBUG, "no delinfo found %d", otherside);
-          }
-          PAT_CHK_SET(rno, 0);
+      if (c0 < PAT_CHK(rno) && PAT_CHK(rno) <= c) {
+        /* rno is an output node and will be a non-output node. */
+        if (!delinfo_search(pat, otherside)) {
+          GRN_LOG(ctx, GRN_LOG_DEBUG, "no delinfo found %d", otherside);
         }
-        if (proot == p0 && !rno->check) {
-          const uint8_t *k = pat_node_get_key(ctx, pat, rno);
-          int direction = k ? (*k >> 7) : 1;
-          rno->lr[direction] = otherside;
-          rno->lr[!direction] = 0;
-        }
+        PAT_CHK_SET(rno, 0);
+      }
+      if (proot == p0 && !rno->check) {
+        const uint8_t *k = pat_node_get_key(ctx, pat, rno);
+        int direction = k ? (*k >> 7) : 1;
+        rno->lr[direction] = otherside;
+        rno->lr[!direction] = 0;
       }
     }
     *p0 = otherside;
@@ -1284,23 +1284,18 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
       }
     } else {
       if (otherside) {
-        if (otherside == r) {
-          /* rn0->lr[0] == rn0->lr[1]. */
-          otherside = 0;
-        } else {
-          if (c0 < PAT_CHK(rno) && PAT_CHK(rno) <= c) {
-            /* rno is an output node and will be a non-output node. */
-            if (!delinfo_search(pat, otherside)) {
-              GRN_LOG(ctx, GRN_LOG_ERROR, "no delinfo found %d", otherside);
-            }
-            PAT_CHK_SET(rno, 0);
+        if (c0 < PAT_CHK(rno) && PAT_CHK(rno) <= c) {
+          /* rno is an output node and will be a non-output node. */
+          if (!delinfo_search(pat, otherside)) {
+            GRN_LOG(ctx, GRN_LOG_ERROR, "no delinfo found %d", otherside);
           }
-          if (proot == p0 && !rno->check) {
-            const uint8_t *k = pat_node_get_key(ctx, pat, rno);
-            int direction = k ? (*k >> 7) : 1;
-            rno->lr[direction] = otherside;
-            rno->lr[!direction] = 0;
-          }
+          PAT_CHK_SET(rno, 0);
+        }
+        if (proot == p0 && !rno->check) {
+          const uint8_t *k = pat_node_get_key(ctx, pat, rno);
+          int direction = k ? (*k >> 7) : 1;
+          rno->lr[direction] = otherside;
+          rno->lr[!direction] = 0;
         }
       }
       *p0 = otherside;
