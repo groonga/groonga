@@ -415,6 +415,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Thu Oct 29 2015 Kouhei Sutou <kou@clear-code.com> - 5.0.9-1
+- new upstream release.
+
 * Tue Sep 29 2015 Kouhei Sutou <kou@clear-code.com> - 5.0.8-1
 - new upstream release.
 
