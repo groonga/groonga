@@ -1219,6 +1219,12 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
       }
     }
     *p0 = otherside;
+  } else if ((!rn->lr[0] && rn->lr[1] == r) ||
+             (!rn->lr[1] && rn->lr[0] == r)) {
+    /* The output node has only a disabled self-loop. */
+    di->stat = DL_PHASE2;
+    di->d = r;
+    *p = 0;
   } else {
     /* The last transition (p) is not a self-loop. */
     grn_pat_delinfo *ldi = NULL, *ddi = NULL;
