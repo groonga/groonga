@@ -1187,6 +1187,12 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
     return GRN_SUCCESS;
   }
   otherside = (rn0->lr[1] == r) ? rn0->lr[0] : rn0->lr[1];
+  if (otherside && r != otherside) {
+    PAT_AT(pat, otherside, rno);
+    if (!rno) {
+      return GRN_FILE_CORRUPT;
+    }
+  }
 
   if (rn == rn0) {
     /* The last transition (p) is a self-loop. */
@@ -1197,8 +1203,7 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
         /* rn0->lr[0] == rn0->lr[1]. */
         otherside = 0;
       } else {
-        PAT_AT(pat, otherside, rno);
-        if (rno && c0 < PAT_CHK(rno) && PAT_CHK(rno) <= c) {
+        if (c0 < PAT_CHK(rno) && PAT_CHK(rno) <= c) {
           /* rno is an output node and will be a non-output node. */
           if (!delinfo_search(pat, otherside)) {
             GRN_LOG(ctx, GRN_LOG_DEBUG, "no delinfo found %d", otherside);
@@ -1269,13 +1274,13 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
       }
     }
     if (*p0 == otherside) {
-      /* The previous node (*p0) has a self-loop. */
-      PAT_CHK_SET(rn0, 0);
-      if (proot == p0 && !rn0->check) {
-        const uint8_t *k = pat_node_get_key(ctx, pat, rn0);
+      /* The previous node (*p0) has a self-loop (rn0 == rno). */
+      PAT_CHK_SET(rno, 0);
+      if (proot == p0 && !rno->check) {
+        const uint8_t *k = pat_node_get_key(ctx, pat, rno);
         int direction = k ? (*k >> 7) : 1;
-        rn0->lr[direction] = otherside;
-        rn0->lr[!direction] = 0;
+        rno->lr[direction] = otherside;
+        rno->lr[!direction] = 0;
       }
     } else {
       if (otherside) {
@@ -1283,8 +1288,7 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
           /* rn0->lr[0] == rn0->lr[1]. */
           otherside = 0;
         } else {
-          PAT_AT(pat, otherside, rno);
-          if (rno && c0 < PAT_CHK(rno) && PAT_CHK(rno) <= c) {
+          if (c0 < PAT_CHK(rno) && PAT_CHK(rno) <= c) {
             /* rno is an output node and will be a non-output node. */
             if (!delinfo_search(pat, otherside)) {
               GRN_LOG(ctx, GRN_LOG_ERROR, "no delinfo found %d", otherside);
