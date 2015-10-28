@@ -1127,11 +1127,6 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
   uint32_t len = key_size * 16;
   grn_id r, otherside, *proot, *p, *p0 = NULL;
 
-  /* FIXME: This is a quick-fix approach. */
-  if (_grn_pat_get(ctx, pat, key, key_size, NULL) == GRN_ID_NIL) {
-    return GRN_INVALID_ARGUMENT;
-  }
-
   /* delinfo_new() must be called before searching for rn. */
   di = delinfo_new(ctx, pat);
   di->shared = shared;
