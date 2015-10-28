@@ -1038,6 +1038,8 @@ ngx_ssl_create_connection(ngx_ssl_t *ssl, ngx_connection_t *c, ngx_uint_t flags)
     sc->buffer = ((flags & NGX_SSL_BUFFER) != 0);
     sc->buffer_size = ssl->buffer_size;
 
+    sc->session_ctx = ssl->ctx;
+
     sc->connection = SSL_new(ssl->ctx);
 
     if (sc->connection == NULL) {
@@ -1158,6 +1160,7 @@ ngx_ssl_handshake(ngx_connection_t *c)
         c->recv_chain = ngx_ssl_recv_chain;
         c->send_chain = ngx_ssl_send_chain;
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
 #ifdef SSL3_FLAGS_NO_RENEGOTIATE_CIPHERS
 
         /* initial handshake done, disable renegotiation (CVE-2009-3555) */
@@ -1165,6 +1168,7 @@ ngx_ssl_handshake(ngx_connection_t *c)
             c->ssl->connection->s3->flags |= SSL3_FLAGS_NO_RENEGOTIATE_CIPHERS;
         }
 
+#endif
 #endif
 
         return NGX_OK;
@@ -2043,7 +2047,7 @@ ngx_ssl_error(ngx_uint_t level, ngx_log_t *log, ngx_err_t err, char *fmt, ...)
         (void) ERR_get_error();
     }
 
-    ngx_log_error(level, log, err, "%s)", errstr);
+    ngx_log_error(level, log, err, "%*s)", p - errstr, errstr);
 }
 
 
@@ -2303,7 +2307,7 @@ ngx_ssl_new_session(ngx_ssl_conn_t *ssl_conn, ngx_ssl_session_t *sess)
 
     c = ngx_ssl_get_connection(ssl_conn);
 
-    ssl_ctx = SSL_get_SSL_CTX(ssl_conn);
+    ssl_ctx = c->ssl->session_ctx;
     shm_zone = SSL_CTX_get_ex_data(ssl_ctx, ngx_ssl_session_cache_index);
 
     cache = shm_zone->data;
@@ -2441,21 +2445,17 @@ ngx_ssl_get_cached_session(ngx_ssl_conn_t *ssl_conn, u_char *id, int len,
     ngx_ssl_sess_id_t        *sess_id;
     ngx_ssl_session_cache_t  *cache;
     u_char                    buf[NGX_SSL_MAX_SESSION_SIZE];
-#if (NGX_DEBUG)
     ngx_connection_t         *c;
-#endif
 
     hash = ngx_crc32_short(id, (size_t) len);
     *copy = 0;
 
-#if (NGX_DEBUG)
     c = ngx_ssl_get_connection(ssl_conn);
 
     ngx_log_debug2(NGX_LOG_DEBUG_EVENT, c->log, 0,
                    "ssl get session: %08XD:%d", hash, len);
-#endif
 
-    shm_zone = SSL_CTX_get_ex_data(SSL_get_SSL_CTX(ssl_conn),
+    shm_zone = SSL_CTX_get_ex_data(c->ssl->session_ctx,
                                    ngx_ssl_session_cache_index);
 
     cache = shm_zone->data;
@@ -2834,13 +2834,14 @@ ngx_ssl_session_ticket_key_callback(ngx_ssl_conn_t *ssl_conn,
     SSL_CTX                       *ssl_ctx;
     ngx_uint_t                     i;
     ngx_array_t                   *keys;
+    ngx_connection_t              *c;
     ngx_ssl_session_ticket_key_t  *key;
 #if (NGX_DEBUG)
     u_char                         buf[32];
-    ngx_connection_t              *c;
 #endif
 
-    ssl_ctx = SSL_get_SSL_CTX(ssl_conn);
+    c = ngx_ssl_get_connection(ssl_conn);
+    ssl_ctx = c->ssl->session_ctx;
 
     keys = SSL_CTX_get_ex_data(ssl_ctx, ngx_ssl_session_ticket_keys_index);
     if (keys == NULL) {
@@ -2848,10 +2849,6 @@ ngx_ssl_session_ticket_key_callback(ngx_ssl_conn_t *ssl_conn,
     }
 
     key = keys->elts;
-
-#if (NGX_DEBUG)
-    c = ngx_ssl_get_connection(ssl_conn);
-#endif
 
     if (enc == 1) {
         /* encrypt session ticket */
@@ -2861,7 +2858,7 @@ ngx_ssl_session_ticket_key_callback(ngx_ssl_conn_t *ssl_conn,
                        ngx_hex_dump(buf, key[0].name, 16) - buf, buf,
                        SSL_session_reused(ssl_conn) ? "reused" : "new");
 
-        RAND_pseudo_bytes(iv, 16);
+        RAND_bytes(iv, 16);
         EVP_EncryptInit_ex(ectx, EVP_aes_128_cbc(), NULL, key[0].aes_key, iv);
         HMAC_Init_ex(hctx, key[0].hmac_key, 16,
                      ngx_ssl_session_ticket_md(), NULL);

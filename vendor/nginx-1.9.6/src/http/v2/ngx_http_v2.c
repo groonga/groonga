@@ -870,6 +870,8 @@ ngx_http_v2_state_data(ngx_http_v2_connection_t *h2c, u_char *pos, u_char *end)
         return ngx_http_v2_state_skip_padded(h2c, pos, end);
     }
 
+    stream->in_closed = h2c->state.flags & NGX_HTTP_V2_END_STREAM_FLAG;
+
     h2c->state.stream = stream;
 
     return ngx_http_v2_state_read_data(h2c, pos, end);
@@ -897,8 +899,6 @@ ngx_http_v2_state_read_data(ngx_http_v2_connection_t *h2c, u_char *pos,
     }
 
     if (stream->skip_data) {
-        stream->in_closed = h2c->state.flags & NGX_HTTP_V2_END_STREAM_FLAG;
-
         ngx_log_debug1(NGX_LOG_DEBUG_HTTP, h2c->connection->log, 0,
                        "skipping http2 DATA frame, reason: %d",
                        stream->skip_data);
@@ -988,9 +988,7 @@ ngx_http_v2_state_read_data(ngx_http_v2_connection_t *h2c, u_char *pos,
                                       ngx_http_v2_state_read_data);
     }
 
-    if (h2c->state.flags & NGX_HTTP_V2_END_STREAM_FLAG) {
-        stream->in_closed = 1;
-
+    if (stream->in_closed) {
         if (r->headers_in.content_length_n < 0) {
             r->headers_in.content_length_n = rb->rest;
 
@@ -1133,6 +1131,22 @@ ngx_http_v2_state_headers(ngx_http_v2_connection_t *h2c, u_char *pos,
 
     h2c->last_sid = h2c->state.sid;
 
+    if (depend == h2c->state.sid) {
+        ngx_log_error(NGX_LOG_INFO, h2c->connection->log, 0,
+                      "client sent HEADERS frame for stream %ui "
+                      "with incorrect dependency", h2c->state.sid);
+
+        if (ngx_http_v2_send_rst_stream(h2c, h2c->state.sid,
+                                        NGX_HTTP_V2_PROTOCOL_ERROR)
+            != NGX_OK)
+        {
+            return ngx_http_v2_connection_error(h2c,
+                                                NGX_HTTP_V2_INTERNAL_ERROR);
+        }
+
+        return ngx_http_v2_state_skip_headers(h2c, pos, end);
+    }
+
     h2scf = ngx_http_get_module_srv_conf(h2c->http_connection->conf_ctx,
                                          ngx_http_v2_module);
 
@@ -1233,7 +1247,7 @@ ngx_http_v2_state_header_block(ngx_http_v2_connection_t *h2c, u_char *pos,
 
     } else {
         /* literal header field without indexing */
-        prefix = ngx_http_v2_prefix(3);
+        prefix = ngx_http_v2_prefix(4);
     }
 
     value = ngx_http_v2_parse_int(h2c, &pos, end, prefix);
@@ -2361,12 +2375,6 @@ ngx_http_v2_connection_error(ngx_http_v2_connection_t *h2c,
         ngx_debug_point();
     }
 
-    if (h2c->state.stream) {
-        h2c->state.stream->out_closed = 1;
-        h2c->state.pool = NULL;
-        ngx_http_v2_close_stream(h2c->state.stream, NGX_HTTP_BAD_REQUEST);
-    }
-
     ngx_http_v2_finalize_connection(h2c, err);
 
     return NULL;
@@ -2396,8 +2404,8 @@ ngx_http_v2_parse_int(ngx_http_v2_connection_t *h2c, u_char **pos, u_char *end,
         return value;
     }
 
-    if (end - p > NGX_HTTP_V2_INT_OCTETS - 1) {
-        end = p + NGX_HTTP_V2_INT_OCTETS - 1;
+    if (end - start > NGX_HTTP_V2_INT_OCTETS) {
+        end = start + NGX_HTTP_V2_INT_OCTETS;
     }
 
     for (shift = 0; p != end; shift += 7) {
@@ -2417,12 +2425,12 @@ ngx_http_v2_parse_int(ngx_http_v2_connection_t *h2c, u_char **pos, u_char *end,
         }
     }
 
-    if ((size_t) (end - start) >= NGX_HTTP_V2_INT_OCTETS) {
-        return NGX_DECLINED;
-    }
-
     if ((size_t) (end - start) >= h2c->state.length) {
         return NGX_ERROR;
+    }
+
+    if (end == start + NGX_HTTP_V2_INT_OCTETS) {
+        return NGX_DECLINED;
     }
 
     return NGX_AGAIN;
@@ -2762,6 +2770,8 @@ ngx_http_v2_create_stream(ngx_http_v2_connection_t *h2c)
         return NULL;
     }
 
+    ngx_str_set(&r->http_protocol, "HTTP/2.0");
+
     r->http_version = NGX_HTTP_VERSION_20;
     r->valid_location = 1;
 
@@ -2896,19 +2906,20 @@ ngx_http_v2_get_closed_node(ngx_http_v2_connection_t *h2c)
         weight += child->weight;
     }
 
+    parent = node->parent;
+
     for (q = ngx_queue_head(&node->children);
          q != ngx_queue_sentinel(&node->children);
          q = ngx_queue_next(q))
     {
         child = ngx_queue_data(q, ngx_http_v2_node_t, queue);
+        child->parent = parent;
         child->weight = node->weight * child->weight / weight;
 
         if (child->weight == 0) {
             child->weight = 1;
         }
     }
-
-    parent = node->parent;
 
     if (parent == NGX_HTTP_V2_ROOT) {
         node->rank = 0;
@@ -3795,6 +3806,12 @@ ngx_http_v2_finalize_connection(ngx_http_v2_connection_t *h2c,
 
     c = h2c->connection;
 
+    if (h2c->state.stream) {
+        h2c->state.stream->out_closed = 1;
+        h2c->state.pool = NULL;
+        ngx_http_v2_close_stream(h2c->state.stream, NGX_HTTP_BAD_REQUEST);
+    }
+
     h2c->blocked = 1;
 
     if (!c->error && ngx_http_v2_send_goaway(h2c, status) != NGX_ERROR) {
@@ -3922,8 +3939,8 @@ static void
 ngx_http_v2_set_dependency(ngx_http_v2_connection_t *h2c,
     ngx_http_v2_node_t *node, ngx_uint_t depend, ngx_uint_t exclusive)
 {
-    ngx_queue_t         *children;
-    ngx_http_v2_node_t  *parent, *next;
+    ngx_queue_t         *children, *q;
+    ngx_http_v2_node_t  *parent, *child, *next;
 
     parent = depend ? ngx_http_v2_get_node_by_id(h2c, depend, 0) : NULL;
 
@@ -3985,6 +4002,14 @@ ngx_http_v2_set_dependency(ngx_http_v2_connection_t *h2c,
     }
 
     if (exclusive) {
+        for (q = ngx_queue_head(children);
+             q != ngx_queue_sentinel(children);
+             q = ngx_queue_next(q))
+        {
+            child = ngx_queue_data(q, ngx_http_v2_node_t, queue);
+            child->parent = node;
+        }
+
         ngx_queue_add(&node->children, children);
         ngx_queue_init(children);
     }

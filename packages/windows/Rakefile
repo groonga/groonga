@@ -42,7 +42,6 @@ mecab_patches = [
   "mecab-0.98-add-missing-dll-export.diff",
 ]
 nginx_patches = [
-  "nginx-1.9-5-fix-build-error.diff",
 ]
 if groonga_win32_x86_p
   host = "i686-w64-mingw32"
