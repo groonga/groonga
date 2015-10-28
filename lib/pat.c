@@ -1276,7 +1276,7 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
     if (*p0 == otherside) {
       /* The previous node (*p0) has a self-loop (rn0 == rno). */
       PAT_CHK_SET(rno, 0);
-      if (proot == p0 && !rno->check) {
+      if (proot == p0) {
         const uint8_t *k = pat_node_get_key(ctx, pat, rno);
         int direction = k ? (*k >> 7) : 1;
         rno->lr[direction] = otherside;
