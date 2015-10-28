@@ -44,10 +44,11 @@ struct _grn_pat {
 #define GRN_PAT_NDELINFOS 0x100
 
 typedef struct {
-  grn_id d;
-  grn_id ld;
-  uint32_t stat;
-  uint32_t shared;
+  grn_id d;        /* The ID of a deleting node. */
+  grn_id ld;       /* The ID of the parent node of a deleting node. */
+                   /* delinfo->ld is set if required. */
+  uint32_t stat;   /* DL_EMPTY, DL_PHASE1, or DL_PHASE2. */
+  uint32_t shared; /* This flag is used if GRN_OBJ_KEY_WITH_SIS is set. */
 } grn_pat_delinfo;
 
 struct grn_pat_header {
