@@ -2397,11 +2397,14 @@ msgstr ""
 msgid "The offset position of the variable."
 msgstr ""
 
+msgid "Use :c:func:`grn_plugin_windows_base_dir()` instead."
+msgstr ""
+
 msgid ""
-"grn_plugin_win32_base_dir() returns the groonga install directory. The "
-"install directory is computed from the directory that has `groonga.dll`. You "
-"can use the directory to generate install directory aware path. It only "
-"works on Windows. It returns `NULL` on other platforms."
+"It returns the Groonga install directory. The install directory is computed "
+"from the directory that has ``groonga.dll``. You can use the directory to "
+"generate install directory aware path. It only works on Windows. It returns "
+"``NULL`` on other platforms."
 msgstr ""
 
 msgid ""
