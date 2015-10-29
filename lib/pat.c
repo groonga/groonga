@@ -1200,13 +1200,17 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
     di->d = r;
     if (otherside) {
       if (c0 < PAT_CHK(rno) && PAT_CHK(rno) <= c) {
-        /* rno is an output node and will be a non-output node. */
+        /* To keep rno as an output node, its check is set to zero. */
         if (!delinfo_search(pat, otherside)) {
           GRN_LOG(ctx, GRN_LOG_DEBUG, "no delinfo found %d", otherside);
         }
         PAT_CHK_SET(rno, 0);
       }
       if (proot == p0 && !rno->check) {
+        /*
+         * Update rno->lr because the first node, rno becomes the new first
+         * node, is not an output node even if its check is zero.
+         */
         const uint8_t *k = pat_node_get_key(ctx, pat, rno);
         int direction = k ? (*k >> 7) : 1;
         rno->lr[direction] = otherside;
@@ -1278,6 +1282,10 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
       /* The previous node (*p0) has a self-loop (rn0 == rno). */
       PAT_CHK_SET(rno, 0);
       if (proot == p0) {
+        /*
+         * Update rno->lr because the first node, rno becomes the new first
+         * node, is not an output node even if its check is zero.
+         */
         const uint8_t *k = pat_node_get_key(ctx, pat, rno);
         int direction = k ? (*k >> 7) : 1;
         rno->lr[direction] = otherside;
@@ -1286,13 +1294,17 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
     } else {
       if (otherside) {
         if (c0 < PAT_CHK(rno) && PAT_CHK(rno) <= c) {
-          /* rno is an output node and will be a non-output node. */
+          /* To keep rno as an output node, its check is set to zero. */
           if (!delinfo_search(pat, otherside)) {
             GRN_LOG(ctx, GRN_LOG_ERROR, "no delinfo found %d", otherside);
           }
           PAT_CHK_SET(rno, 0);
         }
         if (proot == p0 && !rno->check) {
+          /*
+           * Update rno->lr because the first node, rno becomes the new first
+           * node, is not an output node even if its check is zero.
+           */
           const uint8_t *k = pat_node_get_key(ctx, pat, rno);
           int direction = k ? (*k >> 7) : 1;
           rno->lr[direction] = otherside;
