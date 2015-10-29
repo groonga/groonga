@@ -88,6 +88,8 @@ Improvements
 
 * [experimental] Enabled grn_ts by default.
 
+* [:doc:`/install/ubuntu`] Added Ubuntu 15.10 Wily Werewolf support.
+
 Fixes
 ^^^^^
 
