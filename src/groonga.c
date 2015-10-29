@@ -734,7 +734,7 @@ start_service(grn_ctx *ctx, const char *db_path,
       exit_code = run_server(ctx, db, &ev, dispatcher, handler);
       grn_obj_close(ctx, db);
     } else {
-      fprintf(stderr, "db open failed (%s)\n", db_path);
+      fprintf(stderr, "db open failed (%s): %s\n", db_path, ctx->errbuf);
       exit_code = EXIT_FAILURE;
       send_ready_notify();
     }
