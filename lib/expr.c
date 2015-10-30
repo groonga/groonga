@@ -1782,7 +1782,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
       int y_;                                                           \
       y_ = GRN_UINT8_VALUE(y);                                          \
       ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y_);                     \
-      set(ctx, res, signed_integer_operation(x_, y_));                  \
+      set(ctx, res, unsigned_integer_operation(x_, y_));                \
     }                                                                   \
     break;                                                              \
   case GRN_DB_INT16 :                                                   \
@@ -1798,7 +1798,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
       int y_;                                                           \
       y_ = GRN_UINT16_VALUE(y);                                         \
       ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y_);                     \
-      set(ctx, res, signed_integer_operation(x_, y_));                  \
+      set(ctx, res, unsigned_integer_operation(x_, y_));                \
     }                                                                   \
     break;                                                              \
   case GRN_DB_INT32 :                                                   \
