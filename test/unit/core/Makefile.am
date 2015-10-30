@@ -11,6 +11,7 @@ noinst_LTLIBRARIES =				\
 	test-inverted-index.la			\
 	test-patricia-trie.la			\
 	test-patricia-trie-cursor.la		\
+	test-patricia-trie-delete.la		\
 	test-patricia-trie-search.la		\
 	test-stress.la				\
 	test-public-context.la			\
@@ -101,6 +102,7 @@ test_hash_cursor_la_SOURCES		= test-hash-cursor.c
 test_inverted_index_la_SOURCES		= test-inverted-index.c
 test_patricia_trie_la_SOURCES		= test-patricia-trie.c
 test_patricia_trie_cursor_la_SOURCES	= test-patricia-trie-cursor.c
+test_patricia_trie_delete_la_SOURCES	= test-patricia-trie-delete.c
 test_patricia_trie_search_la_SOURCES	= test-patricia-trie-search.c
 test_stress_la_SOURCES			= test-stress.c
 test_public_context_la_SOURCES		= test-public-context.c
