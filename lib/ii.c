@@ -2640,7 +2640,7 @@ buffer_merge_dump_datavec(grn_ctx *ctx,
   for (i = 0; i < ii->n_elements; i++) {
     GRN_LOG(ctx, GRN_LOG_DEBUG, "dv[%d] data_size=%d, flags=%d",
             i, dv[i].data_size, dv[i].flags);
-    for (i = 0, bufp = buf; j < dv[i].data_size;) {
+    for (j = 0, bufp = buf; j < dv[i].data_size;) {
       bufp += grn_snprintf(bufp,
                            buf_end - bufp,
                            buf_end - bufp,
