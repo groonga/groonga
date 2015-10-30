@@ -7566,7 +7566,7 @@ grn_ts_writer_parse(grn_ctx *ctx, grn_ts_writer *writer,
   grn_rc rc;
   grn_ts_str rest = str;
   for ( ; ; ) {
-    grn_ts_str token;
+    grn_ts_str token = { NULL, 0 };
     rc = grn_ts_writer_tokenize(ctx, writer, rest, &token, &rest);
     if (rc != GRN_SUCCESS) {
       return (rc == GRN_END_OF_DATA) ? GRN_SUCCESS : rc;
