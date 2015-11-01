@@ -1122,7 +1122,7 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
              grn_table_delete_optarg *optarg)
 {
   grn_pat_delinfo *di;
-  pat_node *rn, *rn0 = NULL, *rno;
+  pat_node *rn, *rn0 = NULL, *rno = NULL;
   int c = -1, c0 = -1, ch;
   uint32_t len = key_size * 16;
   grn_id r, otherside, *proot, *p, *p0 = NULL;
