@@ -1187,7 +1187,7 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
     return GRN_FILE_CORRUPT;
   }
   otherside = (rn0->lr[1] == r) ? rn0->lr[0] : rn0->lr[1];
-  if (otherside && r != otherside) {
+  if (otherside) {
     PAT_AT(pat, otherside, rno);
     if (!rno) {
       return GRN_FILE_CORRUPT;
