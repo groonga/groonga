@@ -263,8 +263,10 @@ namespace test_dat_pat
 
     grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
                              grn_pat_delete_by_id(&ctx, NULL, 1, NULL));
+    ctx.rc = GRN_SUCCESS; // TODO: We should use different ctx instead of reset
     grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
                              grn_dat_delete_by_id(&ctx, NULL, 1, NULL));
+    ctx.rc = GRN_SUCCESS; // TODO: We should use different ctx instead of reset
 
     std::vector<std::string> keys;
     create_keys(&keys, 1000, 3, 5);
@@ -308,8 +310,10 @@ namespace test_dat_pat
 
     grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
                              grn_pat_delete(&ctx, NULL, "XYZ", 3, NULL));
+    ctx.rc = GRN_SUCCESS; // TODO: We should use different ctx instead of reset
     grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
                              grn_dat_delete(&ctx, NULL, "XYZ", 3, NULL));
+    ctx.rc = GRN_SUCCESS; // TODO: We should use different ctx instead of reset
 
     std::vector<std::string> keys;
     create_keys(&keys, 1000, 3, 5);
