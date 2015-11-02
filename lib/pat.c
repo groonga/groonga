@@ -108,6 +108,34 @@ enum {
 
 /* patricia array operation */
 
+void
+grn_p_pat_node(grn_ctx *ctx, pat_node *node)
+{
+  if (!node) {
+    printf("#<pat_node:(null)>\n");
+    return;
+  }
+
+  printf("#<pat_node:%p "
+         "left:%p "
+         "right:%p "
+         "deleting:%s "
+         "immediate:%s "
+         "length:%u "
+         "nth-byte:%u "
+         "nth-bit:%u "
+         "terminated:%s"
+         ">\n",
+         node,
+         node->lr[0],
+         node->lr[1],
+         PAT_DEL(node) ? "true" : "false",
+         PAT_IMD(node) ? "true" : "false",
+         PAT_CHK(node) >> 4,
+         (PAT_CHK(node) >> 1) & 0x7,
+         (PAT_CHK(node) & 0x1) ? "true" : "false");
+}
+
 #define PAT_AT(pat,id,n) do {\
   int flags = 0;\
   GRN_IO_ARRAY_AT(pat->io, segment_pat, id, &flags, n);\
