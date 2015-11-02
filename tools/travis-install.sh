@@ -16,6 +16,7 @@ case "${TRAVIS_OS_NAME}" in
     ;;
   osx)
     brew update > /dev/null
+    brew unlink pkg-config
     brew install \
          msgpack \
          libevent \
