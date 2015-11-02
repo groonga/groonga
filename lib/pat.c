@@ -100,6 +100,8 @@ enum {
   segment_sis = 2
 };
 
+void grn_p_pat_node(grn_ctx *ctx, grn_pat *pat, pat_node *node);
+
 /* bit operation */
 
 #define nth_bit(key,n,l) ((((key)[(n)>>4]) >> (7 - (((n)>>1) & 7))) & 1)
@@ -233,47 +235,6 @@ pat_node_set_key(grn_ctx *ctx, grn_pat *pat, pat_node *n, const uint8_t *key, un
     n->key = key_put(ctx, pat, key, len);
   }
   return GRN_SUCCESS;
-}
-
-/* utilities */
-void
-grn_p_pat_node(grn_ctx *ctx, grn_pat *pat, pat_node *node)
-{
-  uint8_t *key = NULL;
-
-  if (!node) {
-    printf("#<pat_node:(null)>\n");
-    return;
-  }
-
-  if (PAT_IMD(node)) {
-    key = (uint8_t *)&(node->key);
-  } else {
-    KEY_AT(pat, node->key, key, 0);
-  }
-
-  printf("#<pat_node:%p "
-         "left:%u "
-         "right:%u "
-         "deleting:%s "
-         "immediate:%s "
-         "length:%u "
-         "nth-byte:%u "
-         "nth-bit:%u "
-         "terminated:%s "
-         "key:<%.*s>"
-         ">\n",
-         node,
-         node->lr[0],
-         node->lr[1],
-         PAT_DEL(node) ? "true" : "false",
-         PAT_IMD(node) ? "true" : "false",
-         PAT_LEN(node),
-         PAT_CHK(node) >> 4,
-         (PAT_CHK(node) >> 1) & 0x7,
-         (PAT_CHK(node) & 0x1) ? "true" : "false",
-         PAT_LEN(node),
-         (char *)key);
 }
 
 /* delinfo operation */
@@ -2467,6 +2428,47 @@ grn_pat_check(grn_ctx *ctx, grn_pat *pat)
   GRN_OUTPUT_INT64(h->n_garbages);
   GRN_OUTPUT_MAP_CLOSE();
   GRN_OUTPUT_ARRAY_CLOSE();
+}
+
+/* utilities */
+void
+grn_p_pat_node(grn_ctx *ctx, grn_pat *pat, pat_node *node)
+{
+  uint8_t *key = NULL;
+
+  if (!node) {
+    printf("#<pat_node:(null)>\n");
+    return;
+  }
+
+  if (PAT_IMD(node)) {
+    key = (uint8_t *)&(node->key);
+  } else {
+    KEY_AT(pat, node->key, key, 0);
+  }
+
+  printf("#<pat_node:%p "
+         "left:%u "
+         "right:%u "
+         "deleting:%s "
+         "immediate:%s "
+         "length:%u "
+         "nth-byte:%u "
+         "nth-bit:%u "
+         "terminated:%s "
+         "key:<%.*s>"
+         ">\n",
+         node,
+         node->lr[0],
+         node->lr[1],
+         PAT_DEL(node) ? "true" : "false",
+         PAT_IMD(node) ? "true" : "false",
+         PAT_LEN(node),
+         PAT_CHK(node) >> 4,
+         (PAT_CHK(node) >> 1) & 0x7,
+         (PAT_CHK(node) & 0x1) ? "true" : "false",
+         PAT_LEN(node),
+         (char *)key);
 }
 
 static void
