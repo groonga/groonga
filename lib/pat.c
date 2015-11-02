@@ -108,35 +108,6 @@ enum {
 
 /* patricia array operation */
 
-void
-grn_p_pat_node(grn_ctx *ctx, pat_node *node)
-{
-  if (!node) {
-    printf("#<pat_node:(null)>\n");
-    return;
-  }
-
-  printf("#<pat_node:%p "
-         "left:%u "
-         "right:%u "
-         "deleting:%s "
-         "immediate:%s "
-         "length:%u "
-         "nth-byte:%u "
-         "nth-bit:%u "
-         "terminated:%s"
-         ">\n",
-         node,
-         node->lr[0],
-         node->lr[1],
-         PAT_DEL(node) ? "true" : "false",
-         PAT_IMD(node) ? "true" : "false",
-         PAT_LEN(node),
-         PAT_CHK(node) >> 4,
-         (PAT_CHK(node) >> 1) & 0x7,
-         (PAT_CHK(node) & 0x1) ? "true" : "false");
-}
-
 #define PAT_AT(pat,id,n) do {\
   int flags = 0;\
   GRN_IO_ARRAY_AT(pat->io, segment_pat, id, &flags, n);\
@@ -262,6 +233,47 @@ pat_node_set_key(grn_ctx *ctx, grn_pat *pat, pat_node *n, const uint8_t *key, un
     n->key = key_put(ctx, pat, key, len);
   }
   return GRN_SUCCESS;
+}
+
+/* utilities */
+void
+grn_p_pat_node(grn_ctx *ctx, grn_pat *pat, pat_node *node)
+{
+  uint8_t *key = NULL;
+
+  if (!node) {
+    printf("#<pat_node:(null)>\n");
+    return;
+  }
+
+  if (PAT_IMD(node)) {
+    key = (uint8_t *)&(node->key);
+  } else {
+    KEY_AT(pat, node->key, key, 0);
+  }
+
+  printf("#<pat_node:%p "
+         "left:%u "
+         "right:%u "
+         "deleting:%s "
+         "immediate:%s "
+         "length:%u "
+         "nth-byte:%u "
+         "nth-bit:%u "
+         "terminated:%s "
+         "key:<%.*s>"
+         ">\n",
+         node,
+         node->lr[0],
+         node->lr[1],
+         PAT_DEL(node) ? "true" : "false",
+         PAT_IMD(node) ? "true" : "false",
+         PAT_LEN(node),
+         PAT_CHK(node) >> 4,
+         (PAT_CHK(node) >> 1) & 0x7,
+         (PAT_CHK(node) & 0x1) ? "true" : "false",
+         PAT_LEN(node),
+         (char *)key);
 }
 
 /* delinfo operation */
