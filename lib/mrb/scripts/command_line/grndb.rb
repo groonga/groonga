@@ -130,6 +130,7 @@ module Groonga
         end
 
         open_cursor(database) do |cursor|
+          context = Context.instance
           cursor.each do |id|
             next if ID.builtin?(id)
             next context[id]
