@@ -810,7 +810,7 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
         r = pat->header->curr_rec + 1;
         rn = pat_get(ctx, pat, r);
         if (!rn) { return 0; }
-        if (!pat_node_set_key(ctx, pat, rn, key, size)) { return 0; }
+        if (pat_node_set_key(ctx, pat, rn, key, size)) { return 0; }
         pat->header->curr_rec = r;
         pat->header->n_entries++;
       }
