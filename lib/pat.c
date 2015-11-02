@@ -37,7 +37,7 @@
 
 #define GRN_PAT_BIN_KEY 0x70000
 
-#define GRN_PAT_MAX_TOTAL_KEY_SIZE UINT32_MAX
+#define GRN_PAT_MAX_TOTAL_KEY_SIZE (UINT32_MAX - 1)
 
 typedef struct {
   grn_id lr[2];
@@ -214,7 +214,8 @@ key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
   uint32_t res, ts;
 //  if (len >= GRN_PAT_SEGMENT_SIZE) { return 0; /* error */ }
   res = pat->header->curr_key;
-  if (len > GRN_PAT_MAX_TOTAL_KEY_SIZE - res) {
+  if (res < GRN_PAT_MAX_TOTAL_KEY_SIZE &&
+      len > GRN_PAT_MAX_TOTAL_KEY_SIZE - res) {
     char name[GRN_TABLE_MAX_KEY_SIZE];
     int name_size;
     name_size = grn_pat_name(ctx, pat, name, GRN_TABLE_MAX_KEY_SIZE);
