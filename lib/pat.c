@@ -268,19 +268,19 @@ pat_node_get_key(grn_ctx *ctx, grn_pat *pat, pat_node *n)
 inline static grn_rc
 pat_node_set_key(grn_ctx *ctx, grn_pat *pat, pat_node *n, const uint8_t *key, uint32_t len)
 {
+  grn_rc rc;
   if (!key || !len) { return GRN_INVALID_ARGUMENT; }
   PAT_LEN_SET(n, len);
   if (len <= sizeof(uint32_t)) {
     PAT_IMD_ON(n);
     grn_memcpy(&n->key, key, len);
+    rc = GRN_SUCCESS;
   } else {
     PAT_IMD_OFF(n);
     n->key = key_put(ctx, pat, key, len);
-    if (n->key == 0) {
-      return ctx->rc;
-    }
+    rc = ctx->rc;
   }
-  return GRN_SUCCESS;
+  return rc;
 }
 
 /* delinfo operation */
