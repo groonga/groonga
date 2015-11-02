@@ -131,6 +131,7 @@ grn_p_pat_node(grn_ctx *ctx, pat_node *node)
          node->lr[1],
          PAT_DEL(node) ? "true" : "false",
          PAT_IMD(node) ? "true" : "false",
+         PAT_LEN(node),
          PAT_CHK(node) >> 4,
          (PAT_CHK(node) >> 1) & 0x7,
          (PAT_CHK(node) & 0x1) ? "true" : "false");
