@@ -223,7 +223,7 @@ pat_node_get_key(grn_ctx *ctx, grn_pat *pat, pat_node *n)
 }
 
 inline static grn_rc
-pat_node_set_key(grn_ctx *ctx, grn_pat *pat, pat_node *n, const uint8_t *key, unsigned int len)
+pat_node_set_key(grn_ctx *ctx, grn_pat *pat, pat_node *n, const uint8_t *key, uint32_t len)
 {
   if (!key || !len) { return GRN_INVALID_ARGUMENT; }
   PAT_LEN_SET(n, len);
