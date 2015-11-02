@@ -133,7 +133,7 @@ module Groonga
           context = Context.instance
           cursor.each do |id|
             next if ID.builtin?(id)
-            next context[id]
+            next if context[id]
             message =
               "[#{cursor.key}] Can't open object. " +
               "It's broken. " +
