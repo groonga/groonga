@@ -715,7 +715,7 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
     const uint8_t *s, *d;
     for (;;) {
       if (!(r0 = *p0)) {
-        if (!(s = pat_node_get_key(ctx, pat, rn0))) { return 0; }
+        if (!(s = pat_node_get_key(ctx, pat, rn0))) { return GRN_ID_NIL; }
         size2 = PAT_LEN(rn0);
         break;
       }
@@ -730,7 +730,7 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
           p0 = &rn0->lr[nth_bit(key, c0, len)];
         }
       } else {
-        if (!(s = pat_node_get_key(ctx, pat, rn0))) { return 0; }
+        if (!(s = pat_node_get_key(ctx, pat, rn0))) { return GRN_ID_NIL; }
         size2 = PAT_LEN(rn0);
         if (size == size2 && !memcmp(s, key, size)) {
           if (pat->cache) { pat->cache[cache_id] = r0; }
@@ -759,7 +759,7 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
           p0 = &rn0->lr[1];
           while ((r0 = *p0)) {
             PAT_AT(pat, r0, rn0);
-            if (!rn0) { return 0; }
+            if (!rn0) { return GRN_ID_NIL; }
             c0 = PAT_CHK(rn0);
             if (c < c0) { break; }
             if (c0 & 1) {
@@ -771,7 +771,7 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
         }
       }
     }
-    if (c >= len) { return 0; }
+    if (c >= len) { return GRN_ID_NIL; }
   } else {
     c = len - 2;
   }
@@ -781,14 +781,14 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
       if (pat->header->garbages[0]) {
         r = pat->header->garbages[0];
         PAT_AT(pat, r, rn);
-        if (!rn) { return 0; }
+        if (!rn) { return GRN_ID_NIL; }
         pat->header->n_entries++;
         pat->header->n_garbages--;
         pat->header->garbages[0] = rn->lr[0];
       } else {
         r = pat->header->curr_rec + 1;
         rn = pat_get(ctx, pat, r);
-        if (!rn) { return 0; }
+        if (!rn) { return GRN_ID_NIL; }
         pat->header->curr_rec = r;
         pat->header->n_entries++;
       }
@@ -800,8 +800,8 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
         uint8_t *keybuf;
         r = pat->header->garbages[size2];
         PAT_AT(pat, r, rn);
-        if (!rn) { return 0; }
-        if (!(keybuf = pat_node_get_key(ctx, pat, rn))) { return 0; }
+        if (!rn) { return GRN_ID_NIL; }
+        if (!(keybuf = pat_node_get_key(ctx, pat, rn))) { return GRN_ID_NIL; }
         pat->header->n_entries++;
         pat->header->n_garbages--;
         pat->header->garbages[size2] = rn->lr[0];
@@ -810,8 +810,8 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
       } else {
         r = pat->header->curr_rec + 1;
         rn = pat_get(ctx, pat, r);
-        if (!rn) { return 0; }
-        if (pat_node_set_key(ctx, pat, rn, key, size)) { return 0; }
+        if (!rn) { return GRN_ID_NIL; }
+        if (pat_node_set_key(ctx, pat, rn, key, size)) { return GRN_ID_NIL; }
         pat->header->curr_rec = r;
         pat->header->n_entries++;
       }
