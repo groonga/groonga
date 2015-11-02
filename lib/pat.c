@@ -922,7 +922,7 @@ grn_pat_add(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
   }
   KEY_ENCODE(pat, keybuf, key, key_size);
   r0 = _grn_pat_add(ctx, pat, (uint8_t *)key, key_size, &new, &lkey);
-  if (ctx->rc) { return GRN_ID_NIL; }
+  if (r0 == GRN_ID_NIL) { return GRN_ID_NIL; }
   if (added) { *added = new; }
   if (r0 && (pat->obj.header.flags & GRN_OBJ_KEY_WITH_SIS) &&
       (*((uint8_t *)key) & 0x80)) { // todo: refine!!
