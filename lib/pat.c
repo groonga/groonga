@@ -191,7 +191,7 @@ sis_collect(grn_ctx *ctx, grn_pat *pat, grn_hash *h, grn_id id, uint32_t level)
 } while (0)
 
 inline static uint32_t
-key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, int len)
+key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
 {
   uint32_t res, ts;
 //  if (len >= GRN_PAT_SEGMENT_SIZE) { return 0; /* error */ }
