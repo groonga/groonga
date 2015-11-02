@@ -9,6 +9,7 @@ RUBY_SCRIPT_FILES =				\
 	expression_rewriter.rb			\
 	expression_rewriters.rb			\
 	expression_size_estimator.rb		\
+	id.rb					\
 	index_column.rb				\
 	index_cursor.rb				\
 	index_info.rb				\

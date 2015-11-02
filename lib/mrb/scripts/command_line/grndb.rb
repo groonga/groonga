@@ -129,6 +129,19 @@ module Groonga
           @succeeded = false
         end
 
+        open_cursor(database) do |cursor|
+          cursor.each do |id|
+            next if ID.builtin?(id)
+            next context[id]
+            message =
+              "[#{cursor.key}] Can't open object. " +
+              "It's broken. " +
+              "Re-create the object or the database."
+            $stdout.puts(message)
+            @succeeded = false
+          end
+        end
+
         database.each do |object|
           case object
           when IndexColumn
@@ -163,6 +176,13 @@ module Groonga
             @succeeded = false
           end
         end
+      end
+
+      def open_cursor(database, &block)
+        flags =
+          TableCursorFlags::ASCENDING |
+          TableCursorFlags::BY_ID
+        TableCursor.open(database, :flags => flags, &block)
       end
     end
   end

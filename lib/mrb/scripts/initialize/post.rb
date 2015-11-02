@@ -4,6 +4,8 @@ require "context"
 
 require "writer"
 
+require "id"
+
 require "object"
 require "database"
 require "table"
