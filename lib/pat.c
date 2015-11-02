@@ -37,6 +37,8 @@
 
 #define GRN_PAT_BIN_KEY 0x70000
 
+#define GRN_PAT_MAX_TOTAL_KEY_SIZE UINT32_MAX
+
 typedef struct {
   grn_id lr[2];
   /*
@@ -101,6 +103,22 @@ enum {
 };
 
 void grn_p_pat_node(grn_ctx *ctx, grn_pat *pat, pat_node *node);
+
+/* error utilities */
+inline static int
+grn_pat_name(grn_ctx *ctx, grn_pat *pat, char *buffer, int buffer_size)
+{
+  int name_size;
+
+  if (DB_OBJ(pat)->id == GRN_ID_NIL) {
+    grn_strcpy(buffer, buffer_size, "(anonymous)");
+    name_size = strlen(buffer);
+  } else {
+    name_size = grn_obj_name(ctx, (grn_obj *)pat, buffer, buffer_size);
+  }
+
+  return name_size;
+}
 
 /* bit operation */
 
@@ -196,6 +214,20 @@ key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
   uint32_t res, ts;
 //  if (len >= GRN_PAT_SEGMENT_SIZE) { return 0; /* error */ }
   res = pat->header->curr_key;
+  if (len > GRN_PAT_MAX_TOTAL_KEY_SIZE - res) {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+    name_size = grn_pat_name(ctx, pat, name, GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_NOT_ENOUGH_SPACE,
+        "[pat][key][put] total key size is over: <%.*s>: "
+        "max=%u: current=%u: new key size=%u",
+        name_size, name,
+        GRN_PAT_MAX_TOTAL_KEY_SIZE,
+        res,
+        len);
+    return 0;
+  }
+
   ts = (res + len) >> W_OF_KEY_IN_A_SEGMENT;
   if (res >> W_OF_KEY_IN_A_SEGMENT != ts) {
     res = pat->header->curr_key = ts << W_OF_KEY_IN_A_SEGMENT;
@@ -203,7 +235,18 @@ key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t len)
   {
     uint8_t *dest;
     KEY_AT(pat, res, dest, GRN_TABLE_ADD);
-    if (!dest) { return 0; }
+    if (!dest) {
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int name_size;
+      name_size = grn_pat_name(ctx, pat, name, GRN_TABLE_MAX_KEY_SIZE);
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[pat][key][put] failed to allocate memory for new key: <%.*s>: "
+          "new offset:%u key size:%u",
+          name_size, name,
+          res,
+          len);
+      return 0;
+    }
     grn_memcpy(dest, key, len);
   }
   pat->header->curr_key += len;
@@ -233,6 +276,9 @@ pat_node_set_key(grn_ctx *ctx, grn_pat *pat, pat_node *n, const uint8_t *key, ui
   } else {
     PAT_IMD_OFF(n);
     n->key = key_put(ctx, pat, key, len);
+    if (n->key == 0) {
+      return ctx->rc;
+    }
   }
   return GRN_SUCCESS;
 }
@@ -739,7 +785,11 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
         pat->header->n_garbages--;
         pat->header->garbages[0] = rn->lr[0];
       } else {
-        if (!(rn = pat_node_new(ctx, pat, &r))) { return 0; }
+        r = pat->header->curr_rec + 1;
+        rn = pat_get(ctx, pat, r);
+        if (!rn) { return 0; }
+        pat->header->curr_rec = r;
+        pat->header->n_entries++;
       }
       PAT_IMD_OFF(rn);
       PAT_LEN_SET(rn, size);
@@ -757,8 +807,12 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
         PAT_LEN_SET(rn, size);
         grn_memcpy(keybuf, key, size);
       } else {
-        if (!(rn = pat_node_new(ctx, pat, &r))) { return 0; }
-        pat_node_set_key(ctx, pat, rn, key, size);
+        r = pat->header->curr_rec + 1;
+        rn = pat_get(ctx, pat, r);
+        if (!rn) { return 0; }
+        if (!pat_node_set_key(ctx, pat, rn, key, size)) { return 0; }
+        pat->header->curr_rec = r;
+        pat->header->n_entries++;
       }
       *lkey = rn->key;
     }
@@ -867,6 +921,7 @@ grn_pat_add(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
   }
   KEY_ENCODE(pat, keybuf, key, key_size);
   r0 = _grn_pat_add(ctx, pat, (uint8_t *)key, key_size, &new, &lkey);
+  if (ctx->rc) { return GRN_ID_NIL; }
   if (added) { *added = new; }
   if (r0 && (pat->obj.header.flags & GRN_OBJ_KEY_WITH_SIS) &&
       (*((uint8_t *)key) & 0x80)) { // todo: refine!!
