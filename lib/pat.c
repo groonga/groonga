@@ -117,8 +117,8 @@ grn_p_pat_node(grn_ctx *ctx, pat_node *node)
   }
 
   printf("#<pat_node:%p "
-         "left:%p "
-         "right:%p "
+         "left:%u "
+         "right:%u "
          "deleting:%s "
          "immediate:%s "
          "length:%u "
