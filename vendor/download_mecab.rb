@@ -14,10 +14,15 @@ mecab_naist_jdic_version = (base_dir + "bundled_mecab_naist_jdic_version").read.
 mecab_base = "mecab-#{mecab_version}"
 mecab_naist_jdic_base = "mecab-naist-jdic-#{mecab_naist_jdic_version}"
 
+def debug?
+  ENV["DEBUG"] == "true"
+end
+
 def extract_tar_gz(tar_gz_path)
   Zlib::GzipReader.open(tar_gz_path) do |tar_io|
     Gem::Package::TarReader.new(tar_io) do |tar|
       tar.each do |entry|
+        p [entry.header.typeflag, entry.full_name] if debug?
         if entry.directory?
           FileUtils.mkdir_p(entry.full_name)
         elsif entry.file?
