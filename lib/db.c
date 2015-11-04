@@ -2425,11 +2425,12 @@ grn_table_cursor_open_by_id(grn_ctx *ctx, grn_obj *table,
 grn_rc
 grn_table_cursor_close(grn_ctx *ctx, grn_table_cursor *tc)
 {
+  const char *tag = "[table][cursor][close]";
   grn_rc rc = GRN_SUCCESS;
   GRN_API_ENTER;
   if (!tc) {
-    ERR(GRN_INVALID_ARGUMENT, "tc is null");
     rc = GRN_INVALID_ARGUMENT;
+    ERR(rc, "%s invalid cursor", tag);
   } else {
     {
       if (DB_OBJ(tc)->finalizer) {
@@ -2461,6 +2462,7 @@ grn_table_cursor_close(grn_ctx *ctx, grn_table_cursor *tc)
       break;
     default :
       rc = GRN_INVALID_ARGUMENT;
+      ERR(rc, "%s invalid type %d", tag, tc->header.type);
       break;
     }
   }
@@ -2470,9 +2472,10 @@ grn_table_cursor_close(grn_ctx *ctx, grn_table_cursor *tc)
 inline static grn_id
 grn_table_cursor_next_inline(grn_ctx *ctx, grn_table_cursor *tc)
 {
+  const char *tag = "[table][cursor][next]";
   grn_id id = GRN_ID_NIL;
   if (!tc) {
-    ERR(GRN_INVALID_ARGUMENT, "tc is null");
+    ERR(GRN_INVALID_ARGUMENT, "%s invalid cursor", tag);
   } else {
     switch (tc->header.type) {
     case GRN_CURSOR_TABLE_PAT_KEY :
@@ -2493,6 +2496,9 @@ grn_table_cursor_next_inline(grn_ctx *ctx, grn_table_cursor *tc)
         if (ip) { id = ip->rid; }
       }
       break;
+    default :
+      ERR(GRN_INVALID_ARGUMENT, "%s invalid type %d", tag, tc->header.type);
+      break;
     }
   }
   return id;
@@ -2510,10 +2516,11 @@ grn_table_cursor_next(grn_ctx *ctx, grn_table_cursor *tc)
 int
 grn_table_cursor_get_key(grn_ctx *ctx, grn_table_cursor *tc, void **key)
 {
+  const char *tag = "[table][cursor][get-key]";
   int len = 0;
   GRN_API_ENTER;
   if (!tc) {
-    ERR(GRN_INVALID_ARGUMENT, "tc is null");
+    ERR(GRN_INVALID_ARGUMENT, "%s invalid cursor", tag);
   } else {
     switch (tc->header.type) {
     case GRN_CURSOR_TABLE_PAT_KEY :
@@ -2526,7 +2533,7 @@ grn_table_cursor_get_key(grn_ctx *ctx, grn_table_cursor *tc, void **key)
       len = grn_hash_cursor_get_key(ctx, (grn_hash_cursor *)tc, key);
       break;
     default :
-      ERR(GRN_INVALID_ARGUMENT, "invalid type %d", tc->header.type);
+      ERR(GRN_INVALID_ARGUMENT, "%s invalid type %d", tag, tc->header.type);
       break;
     }
   }
@@ -2536,9 +2543,10 @@ grn_table_cursor_get_key(grn_ctx *ctx, grn_table_cursor *tc, void **key)
 inline static int
 grn_table_cursor_get_value_inline(grn_ctx *ctx, grn_table_cursor *tc, void **value)
 {
+  const char *tag = "[table][cursor][get-value]";
   int len = 0;
   if (!tc) {
-    ERR(GRN_INVALID_ARGUMENT, "tc is null");
+    ERR(GRN_INVALID_ARGUMENT, "%s invalid cursor", tag);
   } else {
     switch (tc->header.type) {
     case GRN_CURSOR_TABLE_PAT_KEY :
@@ -2555,7 +2563,7 @@ grn_table_cursor_get_value_inline(grn_ctx *ctx, grn_table_cursor *tc, void **val
       len = grn_array_cursor_get_value(ctx, (grn_array_cursor *)tc, value);
       break;
     default :
-      ERR(GRN_INVALID_ARGUMENT, "invalid type %d", tc->header.type);
+      ERR(GRN_INVALID_ARGUMENT, "%s invalid type %d", tag, tc->header.type);
       break;
     }
   }
@@ -2575,10 +2583,11 @@ grn_rc
 grn_table_cursor_set_value(grn_ctx *ctx, grn_table_cursor *tc,
                            const void *value, int flags)
 {
+  const char *tag = "[table][cursor][set-value]";
   grn_rc rc = GRN_INVALID_ARGUMENT;
   GRN_API_ENTER;
   if (!tc) {
-    ERR(GRN_INVALID_ARGUMENT, "tc is null");
+    ERR(GRN_INVALID_ARGUMENT, "%s invalid cursor", tag);
   } else {
     switch (tc->header.type) {
     case GRN_CURSOR_TABLE_PAT_KEY :
@@ -2594,7 +2603,7 @@ grn_table_cursor_set_value(grn_ctx *ctx, grn_table_cursor *tc,
       rc = grn_array_cursor_set_value(ctx, (grn_array_cursor *)tc, value, flags);
       break;
     default :
-      ERR(GRN_INVALID_ARGUMENT, "invalid type %d", tc->header.type);
+      ERR(GRN_INVALID_ARGUMENT, "%s invalid type %d", tag, tc->header.type);
       break;
     }
   }
@@ -2604,10 +2613,11 @@ grn_table_cursor_set_value(grn_ctx *ctx, grn_table_cursor *tc,
 grn_rc
 grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc)
 {
+  const char *tag = "[table][cursor][delete]";
   grn_rc rc = GRN_INVALID_ARGUMENT;
   GRN_API_ENTER;
   if (!tc) {
-    ERR(GRN_INVALID_ARGUMENT, "tc is null");
+    ERR(GRN_INVALID_ARGUMENT, "%s invalid cursor", tag);
   } else {
     grn_id id;
     grn_obj *table;
@@ -2656,7 +2666,7 @@ grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc)
       }
       break;
     default :
-      ERR(GRN_INVALID_ARGUMENT, "invalid type %d", tc->header.type);
+      ERR(GRN_INVALID_ARGUMENT, "%s invalid type %d", tag, tc->header.type);
       break;
     }
   }
@@ -2667,10 +2677,11 @@ exit :
 grn_obj *
 grn_table_cursor_table(grn_ctx *ctx, grn_table_cursor *tc)
 {
+  const char *tag = "[table][cursor][table]";
   grn_obj *obj = NULL;
   GRN_API_ENTER;
   if (!tc) {
-    ERR(GRN_INVALID_ARGUMENT, "tc is null");
+    ERR(GRN_INVALID_ARGUMENT, "%s invalid cursor", tag);
   } else {
     switch (tc->header.type) {
     case GRN_CURSOR_TABLE_PAT_KEY :
@@ -2686,7 +2697,7 @@ grn_table_cursor_table(grn_ctx *ctx, grn_table_cursor *tc)
       obj = (grn_obj *)(((grn_array_cursor *)tc)->array);
       break;
     default :
-      ERR(GRN_INVALID_ARGUMENT, "invalid type %d", tc->header.type);
+      ERR(GRN_INVALID_ARGUMENT, "%s invalid type %d", tag, tc->header.type);
       break;
     }
   }
