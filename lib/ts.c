@@ -4720,12 +4720,13 @@ grn_ts_expr_op_node_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
 
 #define GRN_TS_OP_SIGN_ADJUST(type)\
   size_t i, count = 0;\
+  grn_ts_float *buf_ptr;\
   grn_rc rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[0], io, n_io,\
                                                &node->bufs[0]);\
   if (rc != GRN_SUCCESS) {\
     return rc;\
   }\
-  grn_ts_float *buf_ptr = (grn_ts_float *)node->bufs[0].ptr;\
+  buf_ptr = (grn_ts_float *)node->bufs[0].ptr;\
   for (i = 0; i < n_io; i++) {\
     grn_ts_float result = grn_ts_op_ ## type ## _float(buf_ptr[i]);\
     io[count++].score = (grn_ts_score)result;\
@@ -4748,6 +4749,7 @@ grn_ts_op_negative_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
 
 #define GRN_TS_OP_ARITH_ADJUST(type)\
   size_t i, count = 0;\
+  grn_ts_float *buf_ptrs[2];\
   for (i = 0; i < 2; i++) {\
     grn_rc rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[i], io, n_io,\
                                                  &node->bufs[i]);\
@@ -4755,10 +4757,8 @@ grn_ts_op_negative_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
       return rc;\
     }\
   }\
-  grn_ts_float *buf_ptrs[] = {\
-    (grn_ts_float *)node->bufs[0].ptr,\
-    (grn_ts_float *)node->bufs[1].ptr\
-  };\
+  buf_ptrs[0] = (grn_ts_float *)node->bufs[0].ptr;\
+  buf_ptrs[1] = (grn_ts_float *)node->bufs[1].ptr;\
   for (i = 0; i < n_io; i++) {\
     grn_ts_float result = grn_ts_op_ ## type ## _float(buf_ptrs[0][i],\
                                                        buf_ptrs[1][i]);\
@@ -6195,6 +6195,8 @@ grn_ts_expr_parser_analyze_token(grn_ctx *ctx, grn_ts_expr_parser *parser,
 /* grn_ts_expr_parser_analyze() analyzes tokens. */
 static grn_rc
 grn_ts_expr_parser_analyze(grn_ctx *ctx, grn_ts_expr_parser *parser) {
+  size_t i;
+
   /* Reserve temporary work spaces. */
   parser->dummy_tokens = GRN_MALLOCN(grn_ts_expr_dummy_token,
                                      parser->n_tokens);
@@ -6208,7 +6210,7 @@ grn_ts_expr_parser_analyze(grn_ctx *ctx, grn_ts_expr_parser *parser) {
                       sizeof(grn_ts_expr_token *), parser->n_tokens);
   }
 
-  size_t i;
+  /* Analyze tokens. */
   for (i = 0; i < parser->n_tokens; i++) {
     grn_rc rc;
     rc = grn_ts_expr_parser_analyze_token(ctx, parser, parser->tokens[i]);
@@ -6697,11 +6699,12 @@ grn_ts_expr_push_bulk(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj) {
   case GRN_DB_ ## TYPE: {\
     size_t i;\
     grn_rc rc;\
+    grn_ts_ ## kind *buf;\
     grn_ts_ ## kind ## _vector value = { NULL, grn_uvector_size(ctx, obj) };\
     if (!value.size) {\
       return grn_ts_expr_push_ ## kind ## _vector(ctx, expr, value);\
     }\
-    grn_ts_ ## kind *buf = GRN_MALLOCN(grn_ts_ ## kind, value.size);\
+    buf = GRN_MALLOCN(grn_ts_ ## kind, value.size);\
     if (!buf) {\
       GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,\
                         "GRN_MALLOCN failed: %zu x 1",\
@@ -6749,11 +6752,12 @@ grn_ts_expr_push_vector(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj) {
     case GRN_DB_LONG_TEXT: {
       size_t i;
       grn_rc rc;
+      grn_ts_text *buf;
       grn_ts_text_vector value = { NULL, grn_vector_size(ctx, obj) };
       if (!value.size) {
         return grn_ts_expr_push_text_vector(ctx, expr, value);
       }
-      grn_ts_text *buf = GRN_MALLOCN(grn_ts_text, value.size);
+      buf = GRN_MALLOCN(grn_ts_text, value.size);
       if (!buf) {
         GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
                           "GRN_MALLOCN failed: %zu x %zu",
