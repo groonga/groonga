@@ -86,6 +86,8 @@ GRN_API grn_rc grn_obj_cast(grn_ctx *ctx,
                             grn_obj *dest,
                             grn_bool add_record_if_not_exist);
 
+GRN_API grn_rc grn_obj_reindex(grn_ctx *ctx, grn_obj *obj);
+
 #ifdef __cplusplus
 }
 #endif

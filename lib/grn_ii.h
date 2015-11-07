@@ -164,6 +164,7 @@ grn_rc grn_ii_at(grn_ctx *ctx, grn_ii *ii, grn_id id, grn_hash *s, grn_operator 
 void grn_ii_inspect_values(grn_ctx *ctx, grn_ii *ii, grn_obj *buf);
 void grn_ii_cursor_inspect(grn_ctx *ctx, grn_ii_cursor *c, grn_obj *buf);
 
+grn_rc grn_ii_truncate(grn_ctx *ctx, grn_ii *ii);
 grn_rc grn_ii_build(grn_ctx *ctx, grn_ii *ii, uint64_t sparsity);
 
 #ifdef __cplusplus

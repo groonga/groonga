@@ -27,6 +27,8 @@ libgroonga_la_SOURCES =				\
 	grn_hash.h				\
 	ii.c					\
 	grn_ii.h				\
+	index_column.c				\
+	grn_index_column.h			\
 	io.c					\
 	grn_io.h				\
 	logger.c				\

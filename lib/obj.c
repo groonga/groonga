@@ -17,6 +17,7 @@
 */
 #include "grn.h"
 #include "grn_db.h"
+#include "grn_index_column.h"
 #include <groonga/obj.h>
 
 grn_bool
@@ -165,4 +166,123 @@ grn_obj_is_scorer_proc(grn_ctx *ctx, grn_obj *obj)
 
   proc = (grn_proc *)obj;
   return proc->type == GRN_PROC_SCORER;
+}
+
+static void
+grn_db_reindex(grn_ctx *ctx, grn_obj *db)
+{
+  grn_table_cursor *cursor;
+  grn_id id;
+
+  cursor = grn_table_cursor_open(ctx, db,
+                                 NULL, 0, NULL, 0,
+                                 0, -1,
+                                 GRN_CURSOR_BY_ID);
+  if (!cursor) {
+    return;
+  }
+
+  while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+    grn_obj *object;
+
+    object = grn_ctx_at(ctx, id);
+    if (!object) {
+      ERRCLR(ctx);
+      continue;
+    }
+
+    switch (object->header.type) {
+    case GRN_TABLE_HASH_KEY :
+    case GRN_TABLE_PAT_KEY :
+    case GRN_TABLE_DAT_KEY :
+      grn_obj_reindex(ctx, object);
+      break;
+    default:
+      break;
+    }
+
+    grn_obj_unlink(ctx, object);
+
+    if (ctx->rc != GRN_SUCCESS) {
+      break;
+    }
+  }
+  grn_table_cursor_close(ctx, cursor);
+}
+
+static void
+grn_table_reindex(grn_ctx *ctx, grn_obj *table)
+{
+  grn_hash *columns;
+
+  columns = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                            GRN_OBJ_TABLE_HASH_KEY | GRN_HASH_TINY);
+  if (!columns) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[table][reindex] failed to create a table to store columns");
+    return;
+  }
+
+  if (grn_table_columns(ctx, table, "", 0, (grn_obj *)columns) > 0) {
+    grn_bool have_data_column = GRN_FALSE;
+    grn_id *key;
+    GRN_HASH_EACH(ctx, columns, id, &key, NULL, NULL, {
+      grn_obj *column = grn_ctx_at(ctx, *key);
+      if (column && column->header.type != GRN_COLUMN_INDEX) {
+        have_data_column = GRN_TRUE;
+        break;
+      }
+    });
+    if (!have_data_column) {
+      grn_table_truncate(ctx, table);
+    }
+    GRN_HASH_EACH(ctx, columns, id, &key, NULL, NULL, {
+      grn_obj *column = grn_ctx_at(ctx, *key);
+      if (column && column->header.type == GRN_COLUMN_INDEX) {
+        grn_obj_reindex(ctx, column);
+      }
+    });
+  }
+  grn_hash_close(ctx, columns);
+}
+
+grn_rc
+grn_obj_reindex(grn_ctx *ctx, grn_obj *obj)
+{
+  GRN_API_ENTER;
+
+  if (!obj) {
+    ERR(GRN_INVALID_ARGUMENT, "[object][reindex] object must not be NULL");
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  switch (obj->header.type) {
+  case GRN_DB :
+    grn_db_reindex(ctx, obj);
+    break;
+  case GRN_TABLE_HASH_KEY :
+  case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_DAT_KEY :
+    grn_table_reindex(ctx, obj);
+    break;
+  case GRN_COLUMN_INDEX :
+    grn_index_column_rebuild(ctx, obj);
+    break;
+  default :
+    {
+      grn_obj type_name;
+      GRN_TEXT_INIT(&type_name, 0);
+      grn_inspect_type(ctx, &type_name, obj->header.type);
+      ERR(GRN_INVALID_ARGUMENT,
+          "[object][reindex] object must be TABLE_HASH_KEY, "
+          "TABLE_PAT_KEY, TABLE_DAT_KEY or COLUMN_INDEX: <%.*s>",
+          (int)GRN_TEXT_LEN(&type_name),
+          GRN_TEXT_VALUE(&type_name));
+      GRN_OBJ_FIN(ctx, &type_name);
+      GRN_API_RETURN(ctx->rc);
+    }
+    break;
+  }
+
+  GRN_API_RETURN(ctx->rc);
 }

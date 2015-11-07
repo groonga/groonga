@@ -1,0 +1,19 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Terms index COLUMN_INDEX|WITH_POSITION Memos content
+
+load --table Memos
+[
+{"content": "This is a memo"}
+]
+
+delete Terms --key this
+select Terms --output_columns _key, --sortby _key
+
+reindex Terms
+
+select Terms --output_columns _key, --sortby _key

@@ -23,6 +23,7 @@
 #include "grn_ctx_impl.h"
 #include "grn_ii.h"
 #include "grn_pat.h"
+#include "grn_index_column.h"
 #include "grn_proc.h"
 #include "grn_plugin.h"
 #include "grn_snip.h"
@@ -96,6 +97,7 @@ grn_init_from_env(void)
   grn_io_init_from_env();
   grn_ii_init_from_env();
   grn_db_init_from_env();
+  grn_index_column_init_from_env();
   grn_proc_init_from_env();
   grn_plugin_init_from_env();
 }

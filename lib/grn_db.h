@@ -138,6 +138,12 @@ struct _grn_type {
   (GRN_OBJ_VECTOR_COLUMNP(obj) &&\
    (DB_OBJ(obj)->header.flags & GRN_OBJ_WITH_WEIGHT))
 
+struct _grn_hook {
+  grn_hook *next;
+  grn_proc *proc;
+  uint32_t hld_size;
+};
+
 typedef struct _grn_proc_ctx grn_proc_ctx;
 
 struct _grn_proc_ctx {
@@ -419,6 +425,11 @@ GRN_API grn_rc grn_column_filter(grn_ctx *ctx, grn_obj *column,
 grn_rc grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
                             grn_obj *base_res, grn_obj **res,
                             grn_search_optarg *optarg);
+
+grn_obj *grn_obj_default_set_value_hook(grn_ctx *ctx,
+                                        int nargs,
+                                        grn_obj **args,
+                                        grn_user_data *user_data);
 
 #ifdef __cplusplus
 }

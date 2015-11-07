@@ -1,0 +1,21 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms index COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": "This is a memo"}
+]
+[[0,0.0,0.0],1]
+delete Terms --key this
+[[0,0.0,0.0],true]
+select Terms --output_columns _key, --sortby _key
+[[0,0.0,0.0],[[[3],[["_key","ShortText"]],["a"],["is"],["memo"]]]]
+reindex Terms.index
+[[0,0.0,0.0],true]
+select Terms --output_columns _key, --sortby _key
+[[0,0.0,0.0],[[[4],[["_key","ShortText"]],["a"],["is"],["memo"],["this"]]]]
