@@ -246,6 +246,26 @@ grn_table_reindex(grn_ctx *ctx, grn_obj *table)
   grn_hash_close(ctx, columns);
 }
 
+static void
+grn_data_column_reindex(grn_ctx *ctx, grn_obj *data_column)
+{
+  grn_hook *hooks;
+
+  for (hooks = DB_OBJ(data_column)->hooks[GRN_HOOK_SET];
+       hooks;
+       hooks = hooks->next) {
+    grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
+    grn_obj *target = grn_ctx_at(ctx, data->target);
+    if (target->header.type != GRN_COLUMN_INDEX) {
+      continue;
+    }
+    grn_obj_reindex(ctx, target);
+    if (ctx->rc != GRN_SUCCESS) {
+      break;
+    }
+  }
+}
+
 grn_rc
 grn_obj_reindex(grn_ctx *ctx, grn_obj *obj)
 {
@@ -264,6 +284,10 @@ grn_obj_reindex(grn_ctx *ctx, grn_obj *obj)
   case GRN_TABLE_PAT_KEY :
   case GRN_TABLE_DAT_KEY :
     grn_table_reindex(ctx, obj);
+    break;
+  case GRN_COLUMN_FIX_SIZE :
+  case GRN_COLUMN_VAR_SIZE :
+    grn_data_column_reindex(ctx, obj);
     break;
   case GRN_COLUMN_INDEX :
     grn_index_column_rebuild(ctx, obj);

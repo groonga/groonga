@@ -426,6 +426,11 @@ grn_rc grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
                             grn_obj *base_res, grn_obj **res,
                             grn_search_optarg *optarg);
 
+typedef struct {
+  grn_id target;
+  unsigned int section;
+} grn_obj_default_set_value_hook_data;
+
 grn_obj *grn_obj_default_set_value_hook(grn_ctx *ctx,
                                         int nargs,
                                         grn_obj **args,
