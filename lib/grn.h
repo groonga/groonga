@@ -759,6 +759,8 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
 # endif /* POSIX_HOST_NAME_MAX */
 #endif /* HOST_NAME_MAX */
 
+#define GRN_NEXT_ADDR(p) (((byte *)(p)) + sizeof(*(p)))
+
 GRN_API void grn_sleep(uint32_t seconds);
 GRN_API void grn_nanosleep(uint64_t nanoseconds);
 

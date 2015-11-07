@@ -65,8 +65,6 @@
 #define LPOS(pos) (((pos) & 0xffff) << 2)
 #define SEG2POS(seg,pos) ((((uint32_t)(seg)) << 16) + (((uint32_t)(pos)) >> 2))
 
-#define NEXT_ADDR(p) (((byte *)(p)) + sizeof(*(p)))
-
 #ifndef S_IRUSR
 # define S_IRUSR 0400
 #endif /* S_IRUSR */
@@ -1950,7 +1948,7 @@ buffer_term_dump(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt)
           "bt=(%u %u %u %u %u)", bt->tid, bt->size_in_chunk, bt->pos_in_chunk, bt->size_in_buffer, bt->pos_in_buffer);
   for (pos = bt->pos_in_buffer; pos; pos = r->step) {
     r = BUFFER_REC_AT(b, pos);
-    p = NEXT_ADDR(r);
+    p = GRN_NEXT_ADDR(r);
     GRN_B_DEC(rid, p);
     if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
       GRN_B_DEC(sid, p);
@@ -1969,7 +1967,7 @@ check_jump(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_rec *r, int j)
   buffer_rec *r2;
   docid id, id2;
   if (!j) { return GRN_SUCCESS; }
-  p = NEXT_ADDR(r);
+  p = GRN_NEXT_ADDR(r);
   GRN_B_DEC(id.rid, p);
   if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
     GRN_B_DEC(id.sid, p);
@@ -1981,7 +1979,7 @@ check_jump(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_rec *r, int j)
     return GRN_SUCCESS;
   }
   r2 = BUFFER_REC_AT(b, j);
-  p = NEXT_ADDR(r2);
+  p = GRN_NEXT_ADDR(r2);
   GRN_B_DEC(id2.rid, p);
   if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
     GRN_B_DEC(id2.sid, p);
@@ -2040,7 +2038,7 @@ buffer_put(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt,
   buffer_rec *r_curr, *r_start = NULL;
   uint16_t last = 0, *lastp = &bt->pos_in_buffer, pos = BUFFER_REC_POS(b, rnew);
   int vdelta = 0, delta, delta0 = 0, vhops = 0, nhops = 0, reset = 1;
-  grn_memcpy(NEXT_ADDR(rnew), bs, size - sizeof(buffer_rec));
+  grn_memcpy(GRN_NEXT_ADDR(rnew), bs, size - sizeof(buffer_rec));
   for (;;) {
     if (!*lastp) {
       rnew->step = 0;
@@ -2065,7 +2063,7 @@ buffer_put(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt,
       break;
     }
     r_curr = BUFFER_REC_AT(b, *lastp);
-    p = NEXT_ADDR(r_curr);
+    p = GRN_NEXT_ADDR(r_curr);
     GRN_B_DEC(id_curr.rid, p);
     if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
       GRN_B_DEC(id_curr.sid, p);
@@ -2093,7 +2091,7 @@ buffer_put(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt,
             BUFFER_REC_DEL(r_curr);
             if (!(step = r_curr->step)) { break; }
             r_curr = BUFFER_REC_AT(b, step);
-            p = NEXT_ADDR(r_curr);
+            p = GRN_NEXT_ADDR(r_curr);
             GRN_B_DEC(id_curr.rid, p);
           if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
             GRN_B_DEC(id_curr.sid, p);
@@ -2143,7 +2141,7 @@ buffer_put(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt,
         buffer_rec *rj = BUFFER_REC_AT(b, posj);
         if (!BUFFER_REC_DELETED(rj)) {
           docid idj;
-          p = NEXT_ADDR(rj);
+          p = GRN_NEXT_ADDR(rj);
           GRN_B_DEC(idj.rid, p);
           if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
             GRN_B_DEC(idj.sid, p);
@@ -2418,7 +2416,7 @@ typedef struct {
   if (nextb) {\
     uint32_t lrid = bid.rid, lsid = bid.sid;\
     buffer_rec *br = BUFFER_REC_AT(sb, nextb);\
-    sbp = NEXT_ADDR(br);\
+    sbp = GRN_NEXT_ADDR(br);\
     GRN_B_DEC(bid.rid, sbp);\
     if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {\
       GRN_B_DEC(bid.sid, sbp);\
@@ -3137,7 +3135,7 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
           nviolations++;
         }
         r = BUFFER_REC_AT(sb, pos);
-        p = NEXT_ADDR(r);
+        p = GRN_NEXT_ADDR(r);
         GRN_B_DEC(rid, p);
         if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
           GRN_B_DEC(sid, p);
@@ -4314,7 +4312,7 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
               GRN_LOG(ctx, GRN_LOG_DEBUG, "buffer reused(%d,%d)", c->buffer_pseg, *c->ppseg);
               // todo : rewind;
             }
-            c->bp = NEXT_ADDR(br);
+            c->bp = GRN_NEXT_ADDR(br);
             GRN_B_DEC(c->pb.rid, c->bp);
             if ((c->ii->header->flags & GRN_OBJ_WITH_SECTION)) {
               GRN_B_DEC(c->pb.sid, c->bp);
@@ -4330,7 +4328,7 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
                 buffer_rec *jump_br = BUFFER_REC_AT(c->buf, br->jump);
                 uint8_t *jump_bp;
                 uint32_t jump_rid;
-                jump_bp = NEXT_ADDR(jump_br);
+                jump_bp = GRN_NEXT_ADDR(jump_br);
                 GRN_B_DEC(jump_rid, jump_bp);
                 if (jump_rid < c->min) {
                   c->nextb = br->jump;
@@ -6970,7 +6968,7 @@ grn_ii_cursor_next_all(grn_ctx *ctx, grn_ii_cursor *c)
             GRN_LOG(ctx, GRN_LOG_DEBUG, "buffer reused(%d,%d)", c->buffer_pseg, *c->ppseg);
             // todo : rewind;
           }
-          c->bp = NEXT_ADDR(br);
+          c->bp = GRN_NEXT_ADDR(br);
           GRN_B_DEC(c->pb.rid, c->bp);
           if ((c->ii->header->flags & GRN_OBJ_WITH_SECTION)) {
             GRN_B_DEC(c->pb.sid, c->bp);

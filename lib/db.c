@@ -42,8 +42,6 @@ typedef struct {
 
 #define IS_WEIGHT_UVECTOR(obj) ((obj)->header.flags & GRN_OBJ_WITH_WEIGHT)
 
-#define NEXT_ADDR(p) (((byte *)(p)) + sizeof(*(p)))
-
 #define GRN_TABLE_GROUPED (0x01<<0)
 #define GRN_TABLE_IS_GROUPED(table)\
   ((table)->header.impl_flags & GRN_TABLE_GROUPED)
@@ -1235,11 +1233,6 @@ grn_table_lcp_search(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int
   GRN_API_RETURN(id);
 }
 
-typedef struct {
-  grn_id target;
-  unsigned int section;
-} default_set_value_hook_data;
-
 grn_obj *
 grn_obj_default_set_value_hook(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -1252,7 +1245,7 @@ grn_obj_default_set_value_hook(grn_ctx *ctx, int nargs, grn_obj **args, grn_user
     grn_obj *oldvalue = grn_ctx_pop(ctx);
     grn_obj *id = grn_ctx_pop(ctx);
     grn_hook *h = pctx->currh;
-    default_set_value_hook_data *data = (void *)NEXT_ADDR(h);
+    grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(h);
     grn_obj *target = grn_ctx_at(ctx, data->target);
     int section = data->section;
     if (flags) { /* todo */ }
@@ -2010,7 +2003,7 @@ grn_column_truncate(grn_ctx *ctx, grn_obj *column)
       break;
     case GRN_COLUMN_VAR_SIZE :
       for (hooks = DB_OBJ(column)->hooks[GRN_HOOK_SET]; hooks; hooks = hooks->next) {
-        default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
+        grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
         grn_obj *target = grn_ctx_at(ctx, data->target);
         if (target->header.type != GRN_COLUMN_INDEX) { continue; }
         if ((rc = grn_ii_truncate(ctx, (grn_ii *)target))) { goto exit; }
@@ -2019,7 +2012,7 @@ grn_column_truncate(grn_ctx *ctx, grn_obj *column)
       break;
     case GRN_COLUMN_FIX_SIZE :
       for (hooks = DB_OBJ(column)->hooks[GRN_HOOK_SET]; hooks; hooks = hooks->next) {
-        default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
+        grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
         grn_obj *target = grn_ctx_at(ctx, data->target);
         if (target->header.type != GRN_COLUMN_INDEX) { continue; }
         if ((rc = grn_ii_truncate(ctx, (grn_ii *)target))) { goto exit; }
@@ -2065,7 +2058,7 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
     switch (table->header.type) {
     case GRN_TABLE_PAT_KEY :
       for (hooks = DB_OBJ(table)->hooks[GRN_HOOK_INSERT]; hooks; hooks = hooks->next) {
-        default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
+        grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
         grn_obj *target = grn_ctx_at(ctx, data->target);
         if (target->header.type != GRN_COLUMN_INDEX) { continue; }
         if ((rc = grn_ii_truncate(ctx, (grn_ii *)target))) { goto exit; }
@@ -2074,7 +2067,7 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
       break;
     case GRN_TABLE_DAT_KEY :
       for (hooks = DB_OBJ(table)->hooks[GRN_HOOK_INSERT]; hooks; hooks = hooks->next) {
-        default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
+        grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
         grn_obj *target = grn_ctx_at(ctx, data->target);
         if (target->header.type != GRN_COLUMN_INDEX) { continue; }
         if ((rc = grn_ii_truncate(ctx, (grn_ii *)target))) { goto exit; }
@@ -2083,7 +2076,7 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
       break;
     case GRN_TABLE_HASH_KEY :
       for (hooks = DB_OBJ(table)->hooks[GRN_HOOK_INSERT]; hooks; hooks = hooks->next) {
-        default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
+        grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
         grn_obj *target = grn_ctx_at(ctx, data->target);
         if (target->header.type != GRN_COLUMN_INDEX) { continue; }
         if ((rc = grn_ii_truncate(ctx, (grn_ii *)target))) { goto exit; }
@@ -7580,7 +7573,7 @@ update_source_hook(grn_ctx *ctx, grn_obj *obj)
 {
   grn_id *s = DB_OBJ(obj)->source;
   int i, n = DB_OBJ(obj)->source_size / sizeof(grn_id);
-  default_set_value_hook_data hook_data = { DB_OBJ(obj)->id, 0 };
+  grn_obj_default_set_value_hook_data hook_data = { DB_OBJ(obj)->id, 0 };
   grn_obj *source, data;
   GRN_TEXT_INIT(&data, GRN_OBJ_DO_SHALLOW_COPY);
   GRN_TEXT_SET_REF(&data, &hook_data, sizeof(hook_data));
@@ -7619,7 +7612,7 @@ del_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, grn_obj *hld)
   hld_size = GRN_BULK_VSIZE(hld);
   if (!hld_size) { return; }
   for (i = 0, last = &DB_OBJ(obj)->hooks[entry]; *last; i++, last = &(*last)->next) {
-    if (!memcmp(NEXT_ADDR(*last), hld_value, hld_size)) {
+    if (!memcmp(GRN_NEXT_ADDR(*last), hld_value, hld_size)) {
       grn_obj_delete_hook(ctx, obj, entry, i);
       return;
     }
@@ -7631,7 +7624,7 @@ delete_source_hook(grn_ctx *ctx, grn_obj *obj)
 {
   grn_id *s = DB_OBJ(obj)->source;
   int i, n = DB_OBJ(obj)->source_size / sizeof(grn_id);
-  default_set_value_hook_data hook_data = { DB_OBJ(obj)->id, 0 };
+  grn_obj_default_set_value_hook_data hook_data = { DB_OBJ(obj)->id, 0 };
   grn_obj *source, data;
   GRN_TEXT_INIT(&data, GRN_OBJ_DO_SHALLOW_COPY);
   GRN_TEXT_SET_REF(&data, &hook_data, sizeof(hook_data));
@@ -7671,7 +7664,7 @@ grn_hook_pack(grn_ctx *ctx, grn_db_obj *obj, grn_obj *buf)
       grn_id id = hooks->proc ? hooks->proc->obj.id : 0;
       if ((rc = grn_text_benc(ctx, buf, id + 1))) { goto exit; }
       if ((rc = grn_text_benc(ctx, buf, hooks->hld_size))) { goto exit; }
-      if ((rc = grn_bulk_write(ctx, buf, (char *)NEXT_ADDR(hooks), hooks->hld_size))) { goto exit; }
+      if ((rc = grn_bulk_write(ctx, buf, (char *)GRN_NEXT_ADDR(hooks), hooks->hld_size))) { goto exit; }
     }
     if ((rc = grn_text_benc(ctx, buf, 0))) { goto exit; }
   }
@@ -7707,7 +7700,7 @@ grn_hook_unpack(grn_ctx *ctx, grn_db_obj *obj, const char *buf, uint32_t buf_siz
         new->proc = NULL;
       }
       if ((new->hld_size = hld_size)) {
-        grn_memcpy(NEXT_ADDR(new), p, hld_size);
+        grn_memcpy(GRN_NEXT_ADDR(new), p, hld_size);
         p += hld_size;
       }
       *last = new;
@@ -8166,7 +8159,7 @@ grn_obj_add_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry,
     new->proc = (grn_proc *)proc;
     new->hld_size = hld_size;
     if (hld_size) {
-      grn_memcpy(NEXT_ADDR(new), hld_value, hld_size);
+      grn_memcpy(GRN_NEXT_ADDR(new), hld_value, hld_size);
     }
     for (i = 0; i != offset && *last; i++) { last = &(*last)->next; }
     new->next = *last;
@@ -8206,7 +8199,7 @@ grn_obj_get_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry,
       if (!hook) { return NULL; }
     }
     res = (grn_obj *)hook->proc;
-    grn_bulk_write(ctx, hldbuf, (char *)NEXT_ADDR(hook), hook->hld_size);
+    grn_bulk_write(ctx, hldbuf, (char *)GRN_NEXT_ADDR(hook), hook->hld_size);
   }
   GRN_API_RETURN(res);
 }
@@ -8238,7 +8231,7 @@ remove_index(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry)
   DB_OBJ(obj)->hooks[entry] = NULL; /* avoid mutual recursive call */
   while (hooks) {
     grn_rc sub_rc;
-    default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
+    grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
     grn_obj *target = grn_ctx_at(ctx, data->target);
     if (!target) {
       char name[GRN_TABLE_MAX_KEY_SIZE];
@@ -11285,7 +11278,7 @@ grn_column_find_index_data_column_equal(grn_ctx *ctx, grn_obj *obj,
   grn_hook *hooks;
 
   for (hooks = DB_OBJ(obj)->hooks[GRN_HOOK_SET]; hooks; hooks = hooks->next) {
-    default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
+    grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
     grn_obj *target = grn_ctx_at(ctx, data->target);
     int section;
     if (target->header.type != GRN_COLUMN_INDEX) { continue; }
@@ -11349,7 +11342,7 @@ grn_column_find_index_data_column_match(grn_ctx *ctx, grn_obj *obj,
 
   if (prefer_full_text_search_index) {
     for (hooks = DB_OBJ(obj)->hooks[hook_entry]; hooks; hooks = hooks->next) {
-      default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
+      grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
       grn_obj *target = grn_ctx_at(ctx, data->target);
       int section;
       if (target->header.type != GRN_COLUMN_INDEX) { continue; }
@@ -11368,7 +11361,7 @@ grn_column_find_index_data_column_match(grn_ctx *ctx, grn_obj *obj,
   }
 
   for (hooks = DB_OBJ(obj)->hooks[hook_entry]; hooks; hooks = hooks->next) {
-    default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
+    grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
     grn_obj *target = grn_ctx_at(ctx, data->target);
     int section;
 
@@ -11422,7 +11415,7 @@ grn_column_find_index_data_column_range(grn_ctx *ctx, grn_obj *obj,
   }
 
   for (hooks = DB_OBJ(obj)->hooks[hook_entry]; hooks; hooks = hooks->next) {
-    default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
+    grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
     grn_obj *target = grn_ctx_at(ctx, data->target);
     int section;
     if (target->header.type != GRN_COLUMN_INDEX) { continue; }
@@ -11611,7 +11604,7 @@ grn_column_find_index_data_accessor_match(grn_ctx *ctx, grn_obj *obj,
     }
 
     for (hooks = DB_OBJ(a->obj)->hooks[entry]; hooks; hooks = hooks->next) {
-      default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
+      grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
       grn_obj *target = grn_ctx_at(ctx, data->target);
 
       if (target->header.type != GRN_COLUMN_INDEX) { continue; }
