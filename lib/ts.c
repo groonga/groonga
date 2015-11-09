@@ -35,6 +35,7 @@
 #include "grn_store.h"
 #include "grn_str.h"
 
+#include "ts/ts_buf.h"
 #include "ts/ts_log.h"
 #include "ts/ts_str.h"
 
@@ -43,123 +44,6 @@
  */
 
 enum { GRN_TS_BATCH_SIZE = 1024 };
-
-/*-------------------------------------------------------------
- * grn_ts_buf.
- */
-
-typedef struct {
-  void *ptr;   /* The starting address. */
-  size_t size; /* The size in bytes. */
-  size_t pos;  /* The current position for grn_ts_buf_write(). */
-} grn_ts_buf;
-
-/* grn_ts_buf_init() initializes a buffer. */
-static void
-grn_ts_buf_init(grn_ctx *ctx, grn_ts_buf *buf) {
-  buf->ptr = NULL;
-  buf->size = 0;
-  buf->pos = 0;
-}
-
-/* grn_ts_buf_open() creates a buffer. */
-/*
-static grn_rc
-grn_ts_buf_open(grn_ctx *ctx, grn_ts_buf **buf) {
-  grn_ts_buf *new_buf = GRN_MALLOCN(grn_ts_buf, 1);
-  if (!new_buf) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
-                      sizeof(grn_ts_buf));
-  }
-  grn_ts_buf_init(ctx, new_buf);
-  *buf = new_buf;
-  return GRN_SUCCESS;
-}
-*/
-
-/* grn_ts_buf_fin() finalizes a buffer. */
-static void
-grn_ts_buf_fin(grn_ctx *ctx, grn_ts_buf *buf) {
-  if (buf->ptr) {
-    GRN_FREE(buf->ptr);
-  }
-}
-
-/* grn_ts_buf_close() destroys a buffer. */
-/*
-static void
-grn_ts_buf_close(grn_ctx *ctx, grn_ts_buf *buf) {
-  if (buf) {
-    grn_ts_buf_fin(ctx, buf);
-  }
-}
-*/
-
-/*
- * grn_ts_buf_reserve() reserves enough memory to store new_size bytes.
- * Note that this function never shrinks a buffer and does nothing if new_size
- * is not greater than the current size.
- */
-static grn_rc
-grn_ts_buf_reserve(grn_ctx *ctx, grn_ts_buf *buf, size_t new_size) {
-  void *new_ptr;
-  size_t enough_size;
-  if (new_size <= buf->size) {
-    return GRN_SUCCESS;
-  }
-  enough_size = buf->size ? (buf->size << 1) : 1;
-  while (enough_size < new_size) {
-    enough_size <<= 1;
-  }
-  new_ptr = GRN_REALLOC(buf->ptr, enough_size);
-  if (!new_ptr) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_REALLOC failed: %zu",
-                      enough_size);
-  }
-  buf->ptr = new_ptr;
-  buf->size = enough_size;
-  return GRN_SUCCESS;
-}
-
-/* grn_ts_buf_resize() resizes a buffer. */
-static grn_rc
-grn_ts_buf_resize(grn_ctx *ctx, grn_ts_buf *buf, size_t new_size) {
-  void *new_ptr;
-  if (new_size == buf->size) {
-    return GRN_SUCCESS;
-  }
-  if (!new_size) {
-    if (buf->ptr) {
-      GRN_FREE(buf->ptr);
-      buf->ptr = NULL;
-      buf->size = new_size;
-    }
-    return GRN_SUCCESS;
-  }
-  new_ptr = GRN_REALLOC(buf->ptr, new_size);
-  if (!new_ptr) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_REALLOC failed: %zu",
-                      new_size);
-  }
-  buf->ptr = new_ptr;
-  buf->size = new_size;
-  return GRN_SUCCESS;
-}
-
-/* grn_ts_buf_write() appends data into a buffer. */
-static grn_rc
-grn_ts_buf_write(grn_ctx *ctx, grn_ts_buf *buf, const void *ptr, size_t size) {
-  size_t new_pos = buf->pos + size;
-  if (new_pos > buf->size) {
-    grn_rc rc = grn_ts_buf_reserve(ctx, buf, new_pos);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-  }
-  grn_memcpy((char *)buf->ptr + buf->pos, ptr, size);
-  buf->pos += size;
-  return GRN_SUCCESS;
-}
 
 /*-------------------------------------------------------------
  * Built-in data kinds.
