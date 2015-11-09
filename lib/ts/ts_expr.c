@@ -70,7 +70,7 @@ grn_ts_int_is_valid(grn_ts_int value) {
 /* grn_ts_float_is_valid() returns whether a value is valid or not. */
 inline static grn_ts_bool
 grn_ts_float_is_valid(grn_ts_float value) {
-  return !isnan(value);
+  return isfinite(value);
 }
 
 /* grn_ts_time_is_valid() returns whether a value is valid or not. */
@@ -974,6 +974,137 @@ grn_ts_op_shift_logical_right(grn_ts_int lhs, grn_ts_int rhs) {
   return (uint64_t)lhs >> rhs;
 }
 
+inline static grn_rc
+grn_ts_op_plus_int_int(grn_ctx *ctx, grn_ts_int lhs, grn_ts_int rhs,
+                       grn_ts_int *out) {
+  *out = lhs + rhs;
+  return GRN_SUCCESS;
+}
+
+inline static grn_rc
+grn_ts_op_plus_float_float(grn_ctx *ctx, grn_ts_float lhs, grn_ts_float rhs,
+                           grn_ts_float *out) {
+  *out = lhs + rhs;
+  if (!grn_ts_float_is_valid(*out)) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "%f + %f = %f", lhs, rhs, *out);
+  }
+  return GRN_SUCCESS;
+}
+
+inline static grn_rc
+grn_ts_op_plus_time_int(grn_ctx *ctx, grn_ts_time lhs, grn_ts_int rhs,
+                        grn_ts_time *out) {
+  *out = lhs + (rhs * 1000000);
+  return GRN_SUCCESS;
+}
+
+inline static grn_rc
+grn_ts_op_plus_time_float(grn_ctx *ctx, grn_ts_time lhs, grn_ts_float rhs,
+                          grn_ts_time *out) {
+  *out = (grn_ts_time)(lhs + (rhs * 1000000.0));
+  return GRN_SUCCESS;
+}
+
+inline static grn_rc
+grn_ts_op_minus_int_int(grn_ctx *ctx, grn_ts_int lhs, grn_ts_int rhs,
+                        grn_ts_int *out) {
+  *out = lhs - rhs;
+  return GRN_SUCCESS;
+}
+
+inline static grn_rc
+grn_ts_op_minus_float_float(grn_ctx *ctx, grn_ts_float lhs, grn_ts_float rhs,
+                            grn_ts_float *out) {
+  *out = lhs - rhs;
+  if (!grn_ts_float_is_valid(*out)) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "%f + %f = %f", lhs, rhs, *out);
+  }
+  return GRN_SUCCESS;
+}
+
+inline static grn_rc
+grn_ts_op_minus_time_time(grn_ctx *ctx, grn_ts_time lhs, grn_ts_time rhs,
+                          grn_ts_float *out) {
+  *out = (lhs - rhs) * 0.000001;
+  return GRN_SUCCESS;
+}
+
+inline static grn_rc
+grn_ts_op_minus_time_int(grn_ctx *ctx, grn_ts_time lhs, grn_ts_int rhs,
+                         grn_ts_time *out) {
+  *out = lhs - (rhs * 1000000);
+  return GRN_SUCCESS;
+}
+
+inline static grn_rc
+grn_ts_op_minus_time_float(grn_ctx *ctx, grn_ts_time lhs, grn_ts_float rhs,
+                           grn_ts_time *out) {
+  *out = lhs - (grn_ts_int)(rhs * 1000000.0);
+  return GRN_SUCCESS;
+}
+
+inline static grn_rc
+grn_ts_op_multiplication_int_int(grn_ctx *ctx, grn_ts_int lhs, grn_ts_int rhs,
+                                 grn_ts_int *out) {
+  *out = lhs * rhs;
+  return GRN_SUCCESS;
+}
+
+inline static grn_rc
+grn_ts_op_multiplication_float_float(grn_ctx *ctx, grn_ts_float lhs,
+                                     grn_ts_float rhs, grn_ts_float *out) {
+  *out = lhs * rhs;
+  if (!grn_ts_float_is_valid(*out)) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "%f + %f = %f", lhs, rhs, *out);
+  }
+  return GRN_SUCCESS;
+}
+
+inline static grn_rc
+grn_ts_op_division_int_int(grn_ctx *ctx, grn_ts_int lhs, grn_ts_int rhs,
+                           grn_ts_int *out) {
+  if (!rhs) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT,
+                      "%ld / %ld causes division by zero",
+                      lhs, rhs);
+  }
+  *out = (rhs != -1) ? (lhs / rhs) : -lhs;
+  return GRN_SUCCESS;
+}
+
+inline static grn_rc
+grn_ts_op_division_float_float(grn_ctx *ctx, grn_ts_float lhs,
+                               grn_ts_float rhs, grn_ts_float *out) {
+  *out = lhs / rhs;
+  if (!grn_ts_float_is_valid(*out)) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "%f + %f = %f", lhs, rhs, *out);
+  }
+  return GRN_SUCCESS;
+}
+
+inline static grn_rc
+grn_ts_op_modulus_int_int(grn_ctx *ctx, grn_ts_int lhs, grn_ts_int rhs,
+                          grn_ts_int *out) {
+  if (!rhs) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT,
+                      "%ld %% %ld causes division by zero",
+                      lhs, rhs);
+  }
+  *out = (rhs != -1) ? (lhs % rhs) : -lhs;
+  return GRN_SUCCESS;
+}
+
+inline static grn_rc
+grn_ts_op_modulus_float_float(grn_ctx *ctx, grn_ts_float lhs, grn_ts_float rhs,
+                              grn_ts_float *out) {
+  *out = fmod(lhs, rhs);
+  if (!grn_ts_float_is_valid(*out)) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "%f + %f = %f", lhs, rhs, *out);
+  }
+  return GRN_SUCCESS;
+}
+
+#if 0
 /* grn_ts_op_plus_int() returns lhs + rhs. */
 inline static grn_ts_int
 grn_ts_op_plus_int(grn_ts_int lhs, grn_ts_int rhs) {
@@ -1075,6 +1206,7 @@ inline static grn_ts_float
 grn_ts_op_modulus_float(grn_ts_float lhs, grn_ts_float rhs) {
   return fmod(lhs, rhs);
 }
+#endif
 
 /*-------------------------------------------------------------
  * Groonga objects.
@@ -3637,6 +3769,31 @@ grn_ts_op_shift_logical_right_evaluate(grn_ctx *ctx,
 }
 #undef GRN_TS_OP_SHIFT_EVALUATE
 
+#define GRN_TS_OP_ARITH_EVALUATE(type, lhs_kind, rhs_kind)\
+  /*
+   * Use the output buffer to put evaluation results of the 1st argument,
+   * because the data kind is same.
+   */\
+  size_t i;\
+  grn_rc rc;\
+  grn_ts_ ## lhs_kind *out_ptr = (grn_ts_ ## lhs_kind *)out;\
+  rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, out);\
+  if (rc == GRN_SUCCESS) {\
+    rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[1],\
+                                          in, n_in, &node->bufs[0]);\
+    if (rc == GRN_SUCCESS) {\
+      grn_ts_ ## rhs_kind *buf_ptr = (grn_ts_ ## rhs_kind *)node->bufs[0].ptr;\
+      for (i = 0; i < n_in; i++) {\
+        rc = grn_ts_op_ ## type ## _ ## lhs_kind ## _ ## rhs_kind(\
+          ctx, out_ptr[i], buf_ptr[i], &out_ptr[i]);\
+        if (rc != GRN_SUCCESS) {\
+          return rc;\
+        }\
+      }\
+    }\
+  }\
+  return rc;
+
 #define GRN_TS_OP_ARITH_EVALUATE_CASE(type, KIND, kind)\
   case GRN_TS_ ## KIND: {\
     /*
@@ -3688,12 +3845,20 @@ static grn_rc
 grn_ts_op_plus_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
                         const grn_ts_record *in, size_t n_in, void *out) {
   switch (node->args[0]->data_kind) {
-    GRN_TS_OP_ARITH_EVALUATE_CASE(plus, INT, int)
-    GRN_TS_OP_ARITH_EVALUATE_CASE(plus, FLOAT, float)
+    case GRN_TS_INT: {
+      GRN_TS_OP_ARITH_EVALUATE(plus, int, int)
+    }
+    case GRN_TS_FLOAT: {
+      GRN_TS_OP_ARITH_EVALUATE(plus, float, float)
+    }
     case GRN_TS_TIME: {
       switch (node->args[1]->data_kind) {
-        GRN_TS_OP_ARITH_EVALUATE_TIME_CASE(plus, INT, time, int)
-        GRN_TS_OP_ARITH_EVALUATE_TIME_CASE(plus, FLOAT, time, float)
+        case GRN_TS_INT: {
+          GRN_TS_OP_ARITH_EVALUATE(plus, time, int)
+        }
+        case GRN_TS_FLOAT: {
+          GRN_TS_OP_ARITH_EVALUATE(plus, time, float)
+        }
         default: {
           GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "data kind conflict: %d, %d",
                             node->args[0]->data_kind,
@@ -3713,12 +3878,20 @@ static grn_rc
 grn_ts_op_minus_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
                          const grn_ts_record *in, size_t n_in, void *out) {
   switch (node->args[0]->data_kind) {
-    GRN_TS_OP_ARITH_EVALUATE_CASE(minus, INT, int)
-    GRN_TS_OP_ARITH_EVALUATE_CASE(minus, FLOAT, float)
+    case GRN_TS_INT: {
+      GRN_TS_OP_ARITH_EVALUATE(minus, int, int)
+    }
+    case GRN_TS_FLOAT: {
+      GRN_TS_OP_ARITH_EVALUATE(minus, float, float)
+    }
     case GRN_TS_TIME: {
       switch (node->args[1]->data_kind) {
-        GRN_TS_OP_ARITH_EVALUATE_TIME_CASE(minus, INT, time, int)
-        GRN_TS_OP_ARITH_EVALUATE_TIME_CASE(minus, FLOAT, time, float)
+        case GRN_TS_INT: {
+          GRN_TS_OP_ARITH_EVALUATE(minus, time, int)
+        }
+        case GRN_TS_FLOAT: {
+          GRN_TS_OP_ARITH_EVALUATE(minus, time, float)
+        }
         case GRN_TS_TIME: {
           size_t i;
           grn_rc rc;
@@ -3737,8 +3910,11 @@ grn_ts_op_minus_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
           buf_ptrs[0] = (grn_ts_time *)node->bufs[0].ptr;
           buf_ptrs[1] = (grn_ts_time *)node->bufs[1].ptr;
           for (i = 0; i < n_in; i++) {
-            out_ptr[i] = grn_ts_op_minus_time_time(buf_ptrs[0][i],
-                                                   buf_ptrs[1][i]);
+            rc = grn_ts_op_minus_time_time(ctx, buf_ptrs[0][i], buf_ptrs[1][i],
+                                           &out_ptr[i]);
+            if (rc != GRN_SUCCESS) {
+              return rc;
+            }
           }
           return GRN_SUCCESS;
         }
@@ -3763,8 +3939,12 @@ grn_ts_op_multiplication_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
                                   const grn_ts_record *in, size_t n_in,
                                   void *out) {
   switch (node->data_kind) {
-    GRN_TS_OP_ARITH_EVALUATE_CASE(multiplication, INT, int)
-    GRN_TS_OP_ARITH_EVALUATE_CASE(multiplication, FLOAT, float)
+    case GRN_TS_INT: {
+      GRN_TS_OP_ARITH_EVALUATE(multiplication, int, int)
+    }
+    case GRN_TS_FLOAT: {
+      GRN_TS_OP_ARITH_EVALUATE(multiplication, float, float)
+    }
     default: {
       GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "invalid data kind: %d",
                         node->data_kind);
@@ -3778,33 +3958,11 @@ grn_ts_op_division_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
                             const grn_ts_record *in, size_t n_in, void *out) {
   switch (node->data_kind) {
     case GRN_TS_INT: {
-      /* Specialized to detect a critical error. */
-      size_t i;
-      grn_rc rc;
-      grn_ts_int *out_ptr = (grn_ts_int *)out;
-      rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, out);
-      if (rc == GRN_SUCCESS) {
-        rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[1],
-                                              in, n_in, &node->bufs[0]);
-        if (rc == GRN_SUCCESS) {
-          grn_ts_int *buf_ptr = (grn_ts_int *)node->bufs[0].ptr;
-          for (i = 0; i < n_in; i++) {
-            if (!buf_ptr[i]) {
-              GRN_TS_ERR(GRN_INVALID_ARGUMENT, "integer division by zero");
-              rc = ctx->rc;
-              break;
-            } else if ((out_ptr[i] == INT64_MIN) && (buf_ptr[i] == -1)) {
-              GRN_TS_ERR(GRN_INVALID_ARGUMENT, "integer division overflow");
-              rc = ctx->rc;
-              break;
-            }
-            out_ptr[i] = grn_ts_op_division_int(out_ptr[i], buf_ptr[i]);
-          }
-        }
-      }
-      return rc;
+      GRN_TS_OP_ARITH_EVALUATE(division, int, int)
     }
-    GRN_TS_OP_ARITH_EVALUATE_CASE(division, FLOAT, float)
+    case GRN_TS_FLOAT: {
+      GRN_TS_OP_ARITH_EVALUATE(division, float, float)
+    }
     default: {
       GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "invalid data kind: %d",
                         node->data_kind);
@@ -3818,33 +3976,11 @@ grn_ts_op_modulus_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
                            const grn_ts_record *in, size_t n_in, void *out) {
   switch (node->data_kind) {
     case GRN_TS_INT: {
-      /* Specialized to detect a critical error. */
-      size_t i;
-      grn_rc rc;
-      grn_ts_int *out_ptr = (grn_ts_int *)out;
-      rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, out);
-      if (rc == GRN_SUCCESS) {
-        rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[1],
-                                              in, n_in, &node->bufs[0]);
-        if (rc == GRN_SUCCESS) {
-          grn_ts_int *buf_ptr = (grn_ts_int *)node->bufs[0].ptr;
-          for (i = 0; i < n_in; i++) {
-            if (!buf_ptr[i]) {
-              GRN_TS_ERR(GRN_INVALID_ARGUMENT, "integer division by zero");
-              rc = ctx->rc;
-              break;
-            } else if ((out_ptr[i] == INT64_MIN) && (buf_ptr[i] == -1)) {
-              GRN_TS_ERR(GRN_INVALID_ARGUMENT, "integer division overflow");
-              rc = ctx->rc;
-              break;
-            }
-            out_ptr[i] = grn_ts_op_modulus_int(out_ptr[i], buf_ptr[i]);
-          }
-        }
-      }
-      return rc;
+      GRN_TS_OP_ARITH_EVALUATE(modulus, int, int)
     }
-    GRN_TS_OP_ARITH_EVALUATE_CASE(modulus, FLOAT, float)
+    case GRN_TS_FLOAT: {
+      GRN_TS_OP_ARITH_EVALUATE(modulus, float, float)
+    }
     default: {
       GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "invalid data kind: %d",
                         node->data_kind);
@@ -4345,11 +4481,12 @@ grn_ts_op_negative_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
 #undef GRN_TS_OP_SIGN_ADJUST
 
 #define GRN_TS_OP_ARITH_ADJUST(type)\
+  grn_rc rc;\
   size_t i, count = 0;\
   grn_ts_float *buf_ptrs[2];\
   for (i = 0; i < 2; i++) {\
-    grn_rc rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[i], io, n_io,\
-                                                 &node->bufs[i]);\
+    rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[i], io, n_io,\
+                                          &node->bufs[i]);\
     if (rc != GRN_SUCCESS) {\
       return rc;\
     }\
@@ -4357,9 +4494,14 @@ grn_ts_op_negative_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
   buf_ptrs[0] = (grn_ts_float *)node->bufs[0].ptr;\
   buf_ptrs[1] = (grn_ts_float *)node->bufs[1].ptr;\
   for (i = 0; i < n_io; i++) {\
-    grn_ts_float result = grn_ts_op_ ## type ## _float(buf_ptrs[0][i],\
-                                                       buf_ptrs[1][i]);\
-    io[count++].score = (grn_ts_score)result;\
+    grn_ts_float result;\
+    rc = grn_ts_op_ ## type ## _float_float(ctx, buf_ptrs[0][i],\
+                                            buf_ptrs[1][i], &result);\
+    io[count].score = (grn_ts_score)result;\
+    if (!isfinite(io[count].score)) {\
+      GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid score: %f", result);\
+    }\
+    count++;\
   }\
   return GRN_SUCCESS;
 /* grn_ts_op_plus_adjust() updates scores. */
