@@ -35,6 +35,7 @@
 #include "grn_store.h"
 #include "grn_str.h"
 
+#include "ts/ts_log.h"
 #include "ts/ts_str.h"
 
 /*-------------------------------------------------------------
@@ -42,20 +43,6 @@
  */
 
 enum { GRN_TS_BATCH_SIZE = 1024 };
-
-/* GRN_TS_DEBUG() logs a message that is useful for debug. */
-#define GRN_TS_DEBUG(...) GRN_LOG(ctx, GRN_LOG_DEBUG, __VA_ARGS__)
-
-/* GRN_TS_WARN() logs a warning. */
-#define GRN_TS_WARN(rc, ...) WARN(rc, __VA_ARGS__)
-
-/* GRN_TS_ERR() reports an error. */
-#define GRN_TS_ERR(rc, ...) ERR(rc, __VA_ARGS__)
-/* GRN_TS_ERR_RETURN() reports an error and returns its error code. */
-#define GRN_TS_ERR_RETURN(rc, ...) do {\
-  GRN_TS_ERR(rc, __VA_ARGS__);\
-  return rc;\
-} while (GRN_FALSE)
 
 /*-------------------------------------------------------------
  * grn_ts_buf.
