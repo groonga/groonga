@@ -1,6 +1,7 @@
 SUBDIRS =					\
 	dat					\
-	mrb
+	mrb					\
+	ts
 
 lib_LTLIBRARIES = libgroonga.la
 
@@ -33,6 +34,7 @@ libgroonga_la_LDFLAGS =				\
 libgroonga_la_LIBADD =				\
 	dat/libgrndat.la			\
 	mrb/libgrnmrb.la			\
+	ts/libgrnts.la				\
 	$(MESSAGE_PACK_LIBS)
 
 if WITH_MRUBY

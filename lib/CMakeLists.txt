@@ -32,8 +32,12 @@ string(REGEX REPLACE "([^;]+)" "dat/\\1"
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mrb/sources.am LIBGRNMRB_SOURCES)
 string(REGEX REPLACE "([^;]+)" "mrb/\\1"
   LIBGRNMRB_SOURCES "${LIBGRNMRB_SOURCES}")
+read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/ts/sources.am LIBGRNTS_SOURCES)
+string(REGEX REPLACE "([^;]+)" "ts/\\1"
+  LIBGRNTS_SOURCES "${LIBGRNTS_SOURCES}")
 
-set_source_files_properties(${LIBGROONGA_SOURCES} ${LIBGRNMRB_SOURCES}
+set_source_files_properties(
+  ${LIBGROONGA_SOURCES} ${LIBGRNMRB_SOURCES} ${LIBGRNTS_SOURCES}
   PROPERTIES
   COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 set_source_files_properties(dat.cpp ${LIBGRNDAT_SOURCES}
@@ -43,7 +47,8 @@ set_source_files_properties(dat.cpp ${LIBGRNDAT_SOURCES}
 set(GRN_ALL_SOURCES
   ${LIBGROONGA_SOURCES}
   ${LIBGRNDAT_SOURCES}
-  ${LIBGRNMRB_SOURCES})
+  ${LIBGRNMRB_SOURCES}
+  ${LIBGRNTS_SOURCES})
 if(GRN_EMBED)
   add_library(libgroonga STATIC ${GRN_ALL_SOURCES})
   set_target_properties(
