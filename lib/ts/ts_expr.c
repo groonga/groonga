@@ -415,8 +415,6 @@ grn_ts_op_get_precedence(grn_ts_op_type op_type) {
   }
 }
 
-/* FIXME: The following implementation assumes that NaN values don't appear. */
-
 /* grn_ts_op_logical_not_bool() returns !arg. */
 inline static grn_ts_bool
 grn_ts_op_logical_not_bool(grn_ts_bool arg) {
@@ -1103,110 +1101,6 @@ grn_ts_op_modulus_float_float(grn_ctx *ctx, grn_ts_float lhs, grn_ts_float rhs,
   }
   return GRN_SUCCESS;
 }
-
-#if 0
-/* grn_ts_op_plus_int() returns lhs + rhs. */
-inline static grn_ts_int
-grn_ts_op_plus_int(grn_ts_int lhs, grn_ts_int rhs) {
-  return lhs + rhs;
-}
-
-/* grn_ts_op_plus_float() returns lhs + rhs. */
-inline static grn_ts_float
-grn_ts_op_plus_float(grn_ts_float lhs, grn_ts_float rhs) {
-  return lhs + rhs;
-}
-
-/* grn_ts_op_plus_time_int() returns lhs + rhs (Time + Int = Time). */
-inline static grn_ts_time
-grn_ts_op_plus_time_int(grn_ts_time lhs, grn_ts_int rhs) {
-  return lhs + (rhs * 1000000);
-}
-
-/* grn_ts_op_plus_time_float() returns lhs + rhs (Time + Float = Time). */
-inline static grn_ts_time
-grn_ts_op_plus_time_float(grn_ts_time lhs, grn_ts_float rhs) {
-  return lhs + (grn_ts_int)(rhs * 1000000.0);
-}
-
-/* grn_ts_op_minus_int() returns lhs - rhs. */
-inline static grn_ts_int
-grn_ts_op_minus_int(grn_ts_int lhs, grn_ts_int rhs) {
-  return lhs - rhs;
-}
-
-/* grn_ts_op_minus_float() returns lhs - rhs. */
-inline static grn_ts_float
-grn_ts_op_minus_float(grn_ts_float lhs, grn_ts_float rhs) {
-  return lhs - rhs;
-}
-
-/* grn_ts_op_minus_time_time() returns lhs - rhs (Time - Time = Float). */
-inline static grn_ts_float
-grn_ts_op_minus_time_time(grn_ts_time lhs, grn_ts_time rhs) {
-  return (lhs - rhs) * 0.000001;
-}
-
-/* grn_ts_op_minus_time_int() returns lhs - rhs (Time - Int = Time). */
-inline static grn_ts_time
-grn_ts_op_minus_time_int(grn_ts_time lhs, grn_ts_int rhs) {
-  return lhs - (rhs * 1000000);
-}
-
-/* grn_ts_op_minus_time_float() returns lhs - rhs (Time - Float = Time). */
-inline static grn_ts_time
-grn_ts_op_minus_time_float(grn_ts_time lhs, grn_ts_float rhs) {
-  return lhs - (grn_ts_int)(rhs * 1000000.0);
-}
-
-/* grn_ts_op_multiplication_int() returns lhs * rhs. */
-inline static grn_ts_int
-grn_ts_op_multiplication_int(grn_ts_int lhs, grn_ts_int rhs) {
-  return lhs * rhs;
-}
-
-/* grn_ts_op_multiplication_float() returns lhs * rhs. */
-inline static grn_ts_float
-grn_ts_op_multiplication_float(grn_ts_float lhs, grn_ts_float rhs) {
-  return lhs * rhs;
-}
-
-/*
- * grn_ts_op_division_int() returns lhs / rhs.
- *
- * This function causes a critical error in the following cases:
- * - rhs == 0
- * - (lhs == INT64_MIN) && (rhs == -1)
- */
-inline static grn_ts_int
-grn_ts_op_division_int(grn_ts_int lhs, grn_ts_int rhs) {
-  return lhs / rhs;
-}
-
-/* grn_ts_op_division_float() returns lhs / rhs. */
-inline static grn_ts_float
-grn_ts_op_division_float(grn_ts_float lhs, grn_ts_float rhs) {
-  return lhs / rhs;
-}
-
-/*
- * grn_ts_op_modulus_int() returns lhs % rhs.
- *
- * This function causes a critical error in the following cases:
- * - rhs == 0
- * - (lhs == INT64_MIN) && (rhs == -1)
- */
-inline static grn_ts_int
-grn_ts_op_modulus_int(grn_ts_int lhs, grn_ts_int rhs) {
-  return lhs % rhs;
-}
-
-/* grn_ts_op_modulus_float() returns lhs % rhs. */
-inline static grn_ts_float
-grn_ts_op_modulus_float(grn_ts_float lhs, grn_ts_float rhs) {
-  return fmod(lhs, rhs);
-}
-#endif
 
 /*-------------------------------------------------------------
  * Groonga objects.
