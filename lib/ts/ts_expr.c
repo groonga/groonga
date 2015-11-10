@@ -2778,6 +2778,7 @@ enum {
 };
 
 /* Forward declarations. */
+static void grn_ts_expr_node_close(grn_ctx *ctx, grn_ts_expr_node *node);
 static grn_rc grn_ts_expr_node_evaluate(grn_ctx *ctx, grn_ts_expr_node *node,
                                         const grn_ts_record *in, size_t n_in,
                                         void *out);
@@ -2820,6 +2821,11 @@ grn_ts_expr_op_node_fin(grn_ctx *ctx, grn_ts_expr_op_node *node) {
   size_t i;
   for (i = 0; i < GRN_TS_EXPR_OP_NODE_N_BUFS; i++) {
     grn_ts_buf_fin(ctx, &node->bufs[i]);
+  }
+  for (i = 0; i < GRN_TS_EXPR_OP_NODE_MAX_N_ARGS; i++) {
+    if (node->args[i]) {
+      grn_ts_expr_node_close(ctx, node->args[i]);
+    }
   }
 }
 
@@ -3129,6 +3135,9 @@ grn_ts_expr_op_node_open(grn_ctx *ctx, grn_ts_op_type op_type,
   grn_rc rc;
   grn_ts_expr_op_node *new_node = GRN_MALLOCN(grn_ts_expr_op_node, 1);
   if (!new_node) {
+    for (i = 0; i < n_args; i++) {
+      grn_ts_expr_node_close(ctx, args[i]);
+    }
     GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
                       sizeof(grn_ts_expr_op_node));
   }
@@ -5938,7 +5947,6 @@ grn_ts_expr_init(grn_ctx *ctx, grn_ts_expr *expr) {
   expr->table = NULL;
   expr->curr_table = NULL;
   expr->root = NULL;
-  expr->nodes = NULL;
   expr->stack = NULL;
   expr->bridges = NULL;
 }
@@ -5954,15 +5962,12 @@ grn_ts_expr_fin(grn_ctx *ctx, grn_ts_expr *expr) {
     GRN_FREE(expr->bridges);
   }
   if (expr->stack) {
-    GRN_FREE(expr->stack);
-  }
-  if (expr->nodes) {
-    for (i = 0; i < expr->n_nodes; i++) {
-      if (expr->nodes[i]) {
-        grn_ts_expr_node_close(ctx, expr->nodes[i]);
+    for (i = 0; i < expr->stack_depth; i++) {
+      if (expr->stack[i]) {
+        grn_ts_expr_node_close(ctx, expr->stack[i]);
       }
     }
-    GRN_FREE(expr->nodes);
+    GRN_FREE(expr->stack);
   }
   /* Note: expr->curr_table does not increment a reference count. */
   if (expr->table) {
@@ -6066,129 +6071,6 @@ grn_ts_expr_node *
 grn_ts_expr_get_root(grn_ctx *ctx, grn_ts_expr *expr) {
   return (!ctx || !expr) ? NULL : expr->root;
 }
-
-/* grn_ts_expr_reserve_nodes() extends a node buffer for a new node. */
-static grn_rc
-grn_ts_expr_reserve_nodes(grn_ctx *ctx, grn_ts_expr *expr) {
-  size_t i, n_bytes, new_max_n_nodes;
-  grn_ts_expr_node **new_nodes;
-  if (expr->n_nodes < expr->max_n_nodes) {
-    return GRN_SUCCESS;
-  }
-  new_max_n_nodes = expr->n_nodes * 2;
-  if (!new_max_n_nodes) {
-    new_max_n_nodes = 1;
-  }
-  n_bytes = sizeof(grn_ts_expr_node *) * new_max_n_nodes;
-  new_nodes = (grn_ts_expr_node **)GRN_REALLOC(expr->nodes, n_bytes);
-  if (!new_nodes) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_REALLOC failed: %zu",
-                      n_bytes);
-  }
-  for (i = expr->n_nodes; i < new_max_n_nodes; i++) {
-    new_nodes[i] = NULL;
-  }
-  expr->nodes = new_nodes;
-  expr->max_n_nodes = new_max_n_nodes;
-  return GRN_SUCCESS;
-}
-
-#define GRN_TS_EXPR_OPEN_NODE(call)\
-  grn_rc rc = grn_ts_expr_reserve_nodes(ctx, expr);\
-  if (rc != GRN_SUCCESS) {\
-    return rc;\
-  }\
-  rc = call;\
-  if (rc != GRN_SUCCESS) {\
-    return rc;\
-  }\
-  expr->nodes[expr->n_nodes++] = *node;\
-  return GRN_SUCCESS;
-/*
- * grn_ts_expr_open_id_node() opens and registers an ID node.
- * Registered nodes will be closed in grn_ts_expr_fin().
- */
-static grn_rc
-grn_ts_expr_open_id_node(grn_ctx *ctx, grn_ts_expr *expr,
-                         grn_ts_expr_node **node) {
-  GRN_TS_EXPR_OPEN_NODE(grn_ts_expr_id_node_open(ctx, node))
-}
-
-/*
- * grn_ts_expr_open_score_node() opens and registers a score node.
- * Registered nodes will be closed in grn_ts_expr_fin().
- */
-static grn_rc
-grn_ts_expr_open_score_node(grn_ctx *ctx, grn_ts_expr *expr,
-                            grn_ts_expr_node **node) {
-  GRN_TS_EXPR_OPEN_NODE(grn_ts_expr_score_node_open(ctx, node))
-}
-
-/*
- * grn_ts_expr_open_key_node() opens and registers a key node.
- * Registered nodes will be closed in grn_ts_expr_fin().
- */
-static grn_rc
-grn_ts_expr_open_key_node(grn_ctx *ctx, grn_ts_expr *expr,
-                          grn_ts_expr_node **node) {
-  GRN_TS_EXPR_OPEN_NODE(grn_ts_expr_key_node_open(ctx, expr->curr_table, node))
-}
-
-/*
- * grn_ts_expr_open_value_node() opens and registers a value node.
- * Registered nodes will be closed in grn_ts_expr_fin().
- */
-static grn_rc
-grn_ts_expr_open_value_node(grn_ctx *ctx, grn_ts_expr *expr,
-                            grn_ts_expr_node **node) {
-  GRN_TS_EXPR_OPEN_NODE(grn_ts_expr_value_node_open(ctx, expr->curr_table,
-                                                    node))
-}
-
-/*
- * grn_ts_expr_open_const_node() opens and registers a const node.
- * Registered nodes will be closed in grn_ts_expr_fin().
- */
-static grn_rc
-grn_ts_expr_open_const_node(grn_ctx *ctx, grn_ts_expr *expr,
-                            grn_ts_data_kind kind, const void *value,
-                            grn_ts_expr_node **node) {
-  GRN_TS_EXPR_OPEN_NODE(grn_ts_expr_const_node_open(ctx, kind, value, node))
-}
-
-/*
- * grn_ts_expr_open_column_node() opens and registers a column node.
- * Registered nodes will be closed in grn_ts_expr_fin().
- */
-static grn_rc
-grn_ts_expr_open_column_node(grn_ctx *ctx, grn_ts_expr *expr,
-                             grn_obj *column, grn_ts_expr_node **node) {
-  GRN_TS_EXPR_OPEN_NODE(grn_ts_expr_column_node_open(ctx, column, node))
-}
-
-/*
- * grn_ts_expr_open_op_node() opens and registers an operator node.
- * Registered nodes will be closed in grn_ts_expr_fin().
- */
-static grn_rc
-grn_ts_expr_open_op_node(grn_ctx *ctx, grn_ts_expr *expr,
-                         grn_ts_op_type op_type, grn_ts_expr_node **args,
-                         size_t n_args, grn_ts_expr_node **node) {
-  GRN_TS_EXPR_OPEN_NODE(grn_ts_expr_op_node_open(ctx, op_type, args, n_args,
-                                                 node))
-}
-
-/*
- * grn_ts_expr_open_bridge_node() opens and registers a bridge node.
- * Registered nodes will be closed in grn_ts_expr_fin().
- */
-static grn_rc
-grn_ts_expr_open_bridge_node(grn_ctx *ctx, grn_ts_expr *expr,
-                             grn_ts_expr_node *src, grn_ts_expr_node *dest,
-                             grn_ts_expr_node **node) {
-  GRN_TS_EXPR_OPEN_NODE(grn_ts_expr_bridge_node_open(ctx, src, dest, node))
-}
-#undef GRN_TS_EXPR_OPEN_NODE
 
 /* grn_ts_expr_reserve_stack() extends a stack. */
 static grn_rc
@@ -6532,7 +6414,7 @@ grn_ts_expr_push_id(grn_ctx *ctx, grn_ts_expr *expr) {
   }
   rc = grn_ts_expr_reserve_stack(ctx, expr);
   if (rc == GRN_SUCCESS) {
-    rc = grn_ts_expr_open_id_node(ctx, expr, &node);
+    rc = grn_ts_expr_id_node_open(ctx, &node);
     if (rc == GRN_SUCCESS) {
       expr->stack[expr->stack_depth++] = node;
     }
@@ -6552,7 +6434,7 @@ grn_ts_expr_push_score(grn_ctx *ctx, grn_ts_expr *expr) {
   }
   rc = grn_ts_expr_reserve_stack(ctx, expr);
   if (rc == GRN_SUCCESS) {
-    rc = grn_ts_expr_open_score_node(ctx, expr, &node);
+    rc = grn_ts_expr_score_node_open(ctx, &node);
     if (rc == GRN_SUCCESS) {
       expr->stack[expr->stack_depth++] = node;
     }
@@ -6572,7 +6454,7 @@ grn_ts_expr_push_key(grn_ctx *ctx, grn_ts_expr *expr) {
   }
   rc = grn_ts_expr_reserve_stack(ctx, expr);
   if (rc == GRN_SUCCESS) {
-    rc = grn_ts_expr_open_key_node(ctx, expr, &node);
+    rc = grn_ts_expr_key_node_open(ctx, expr->curr_table, &node);
     if (rc == GRN_SUCCESS) {
       expr->stack[expr->stack_depth++] = node;
     }
@@ -6592,7 +6474,7 @@ grn_ts_expr_push_value(grn_ctx *ctx, grn_ts_expr *expr) {
   }
   rc = grn_ts_expr_reserve_stack(ctx, expr);
   if (rc == GRN_SUCCESS) {
-    rc = grn_ts_expr_open_value_node(ctx, expr, &node);
+    rc = grn_ts_expr_value_node_open(ctx, expr->curr_table, &node);
     if (rc == GRN_SUCCESS) {
       expr->stack[expr->stack_depth++] = node;
     }
@@ -6648,7 +6530,7 @@ grn_ts_expr_push_column(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *column) {
   }
   rc = grn_ts_expr_reserve_stack(ctx, expr);
   if (rc == GRN_SUCCESS) {
-    rc = grn_ts_expr_open_column_node(ctx, expr, column, &node);
+    rc = grn_ts_expr_column_node_open(ctx, column, &node);
     if (rc == GRN_SUCCESS) {
       expr->stack[expr->stack_depth++] = node;
     }
@@ -6687,9 +6569,9 @@ grn_ts_expr_push_op(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_op_type op_type) {
       return rc;
     }
   }
-  rc = grn_ts_expr_open_op_node(ctx, expr, op_type, args, n_args, &node);
+  expr->stack_depth -= n_args;
+  rc = grn_ts_expr_op_node_open(ctx, op_type, args, n_args, &node);
   if (rc == GRN_SUCCESS) {
-    expr->stack_depth -= n_args;
     expr->stack[expr->stack_depth++] = node;
   }
   return rc;
@@ -6707,8 +6589,7 @@ grn_ts_expr_push_op(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_op_type op_type) {
   }\
   rc = grn_ts_expr_reserve_stack(ctx, expr);\
   if (rc == GRN_SUCCESS) {\
-    rc = grn_ts_expr_open_const_node(ctx, expr, GRN_TS_ ## KIND,\
-                                     &value, &node);\
+    rc = grn_ts_expr_const_node_open(ctx, GRN_TS_ ## KIND, &value, &node);\
     if (rc == GRN_SUCCESS) {\
       expr->stack[expr->stack_depth++] = node;\
     }\
@@ -6908,7 +6789,7 @@ grn_ts_expr_end_subexpr(grn_ctx *ctx, grn_ts_expr *expr) {
   }
   /* Creates a bridge node. */
   args = &expr->stack[expr->stack_depth - 2];
-  rc = grn_ts_expr_open_bridge_node(ctx, expr, args[0], args[1], &node);
+  rc = grn_ts_expr_bridge_node_open(ctx, args[0], args[1], &node);
   if (rc != GRN_SUCCESS) {
     return rc;
   }

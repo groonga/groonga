@@ -137,9 +137,6 @@ typedef struct {
   grn_ts_data_kind data_kind;  /* Abstract data type. */
   grn_ts_data_type data_type;  /* Detailed data type. */
   grn_ts_expr_node *root;      /* Root node. */
-  grn_ts_expr_node **nodes;    /* Buffer for a node stack. */
-  size_t n_nodes;              /* Number of nodes. */
-  size_t max_n_nodes;          /* Max. number (capacity) of nodes. */
   grn_ts_expr_node **stack;    /* Node stack. */
   size_t stack_depth;          /* Node stack's current depth. */
   size_t stack_size;           /* Node stack's size (capacity). */
