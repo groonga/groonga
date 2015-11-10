@@ -689,8 +689,24 @@ grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                    grn_obj *result, grn_obj *column, grn_obj *geo_point)
 {
   grn_obj *index;
-  int i = 0, e = offset + limit;
-  grn_bool accessorp = GRN_ACCESSORP(column);
+  int i = 0;
+
+  GRN_API_ENTER;
+
+  if (offset < 0 || limit < 0) {
+    unsigned int size;
+    grn_rc rc;
+    size = grn_table_size(ctx, table);
+    rc = grn_normalize_offset_and_limit(ctx, size, &offset, &limit);
+    if (rc != GRN_SUCCESS) {
+      ERR(rc,
+          "[sort][geo] failed to normalize offset and limit: "
+          "offset:%d limit:%d table-size:%u",
+          offset, limit, size);
+      GRN_API_RETURN(i);
+    }
+  }
+
   if ((index = find_geo_sort_index(ctx, column))) {
     grn_id tid;
     grn_pat *pat = (grn_pat *)grn_ctx_at(ctx, index->header.domain);
@@ -701,6 +717,7 @@ grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                                              0, -1, GRN_CURSOR_PREFIX);
     if (pc) {
       if (domain != GRN_DB_TOKYO_GEO_POINT && domain != GRN_DB_WGS84_GEO_POINT) {
+        int e = offset + limit;
         while (i < e && (tid = grn_pat_cursor_next(ctx, pc))) {
           grn_ii_cursor *ic = grn_ii_cursor_open(ctx, (grn_ii *)index, tid, 0, 0, 1, 0);
           if (ic) {
@@ -719,13 +736,15 @@ grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
       } else {
         grn_geo_point *base_point = (grn_geo_point *)GRN_BULK_HEAD(geo_point);
         i = grn_geo_table_sort_by_distance(ctx, table, index, pat,
-                                           pc, accessorp, base_point,
+                                           pc,
+                                           GRN_ACCESSORP(column),
+                                           base_point,
                                            offset, limit, result);
       }
       grn_pat_cursor_close(ctx, pc);
     }
   }
-  return i;
+  GRN_API_RETURN(i);
 }
 
 grn_rc
