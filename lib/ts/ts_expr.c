@@ -5223,7 +5223,7 @@ grn_ts_expr_parser_tokenize_number(grn_ctx *ctx, grn_ts_expr_parser *parser,
   grn_ts_expr_const_token *new_token;
 
   int_value = strtol(str.ptr, &end, 0);
-  if ((end != str.ptr) && (*end != '.')) {
+  if ((end != str.ptr) && (*end != '.') && (*end != 'e')) {
     if (grn_ts_byte_is_name_char(*end)) {
       GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT,
                         "unterminated Int literal: \"%.*s\"",
