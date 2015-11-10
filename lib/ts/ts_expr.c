@@ -5563,7 +5563,27 @@ grn_ts_expr_parser_tokenize_next(grn_ctx *ctx, grn_ts_expr_parser *parser,
     return grn_ts_expr_parser_tokenize_end(ctx, parser, rest, token);
   }
   if (grn_ts_str_has_number_prefix(rest)) {
-    return grn_ts_expr_parser_tokenize_number(ctx, parser, rest, token);
+    grn_ts_expr_token *prev_token;
+    if ((rest.ptr[0] != '+') && (rest.ptr[0] != '-')) {
+      return grn_ts_expr_parser_tokenize_number(ctx, parser, rest, token);
+    }
+    prev_token = parser->tokens[parser->n_tokens - 1];
+    switch (prev_token->type) {
+      case GRN_TS_EXPR_START_TOKEN:
+      case GRN_TS_EXPR_OP_TOKEN: {
+        return grn_ts_expr_parser_tokenize_number(ctx, parser, rest, token);
+      }
+      case GRN_TS_EXPR_BRACKET_TOKEN: {
+        if ((prev_token->src.ptr[0] == '(') ||
+            (prev_token->src.ptr[0] == '[')) {
+          return grn_ts_expr_parser_tokenize_number(ctx, parser, rest, token);
+        }
+        break;
+      }
+      default: {
+        break;
+      }
+    }
   }
   if (rest.ptr[0] == '"') {
     return grn_ts_expr_parser_tokenize_text(ctx, parser, rest, token);
