@@ -986,7 +986,7 @@ grn_ts_op_plus_float_float(grn_ctx *ctx, grn_ts_float lhs, grn_ts_float rhs,
                            grn_ts_float *out) {
   *out = lhs + rhs;
   if (!grn_ts_float_is_valid(*out)) {
-    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "%f + %f = %f", lhs, rhs, *out);
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "%g + %g = %g", lhs, rhs, *out);
   }
   return GRN_SUCCESS;
 }
@@ -1017,7 +1017,7 @@ grn_ts_op_minus_float_float(grn_ctx *ctx, grn_ts_float lhs, grn_ts_float rhs,
                             grn_ts_float *out) {
   *out = lhs - rhs;
   if (!grn_ts_float_is_valid(*out)) {
-    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "%f - %f = %f", lhs, rhs, *out);
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "%g - %g = %g", lhs, rhs, *out);
   }
   return GRN_SUCCESS;
 }
@@ -1055,7 +1055,7 @@ grn_ts_op_multiplication_float_float(grn_ctx *ctx, grn_ts_float lhs,
                                      grn_ts_float rhs, grn_ts_float *out) {
   *out = lhs * rhs;
   if (!grn_ts_float_is_valid(*out)) {
-    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "%f * %f = %f", lhs, rhs, *out);
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "%g * %g = %g", lhs, rhs, *out);
   }
   return GRN_SUCCESS;
 }
@@ -1077,7 +1077,7 @@ grn_ts_op_division_float_float(grn_ctx *ctx, grn_ts_float lhs,
                                grn_ts_float rhs, grn_ts_float *out) {
   *out = lhs / rhs;
   if (!grn_ts_float_is_valid(*out)) {
-    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "%f / %f = %f", lhs, rhs, *out);
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "%g / %g = %g", lhs, rhs, *out);
   }
   return GRN_SUCCESS;
 }
@@ -1099,7 +1099,7 @@ grn_ts_op_modulus_float_float(grn_ctx *ctx, grn_ts_float lhs, grn_ts_float rhs,
                               grn_ts_float *out) {
   *out = fmod(lhs, rhs);
   if (!grn_ts_float_is_valid(*out)) {
-    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "%f %% %f = %f", lhs, rhs, *out);
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "%g %% %g = %g", lhs, rhs, *out);
   }
   return GRN_SUCCESS;
 }
@@ -4499,7 +4499,7 @@ grn_ts_op_negative_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
                                             buf_ptrs[1][i], &result);\
     io[count].score = (grn_ts_score)result;\
     if (!isfinite(io[count].score)) {\
-      GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid score: %f", result);\
+      GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid score: %g", result);\
     }\
     count++;\
   }\
