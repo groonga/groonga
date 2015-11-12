@@ -69,9 +69,9 @@ grn_ts_text_output(grn_ctx *ctx, grn_ts_text value) {
   return grn_text_esc(ctx, ctx->impl->outbuf, value.ptr, value.size);
 }
 
-/* grn_ts_geo_point_output() outputs a value. */
+/* grn_ts_geo_output() outputs a value. */
 static grn_rc
-grn_ts_geo_point_output(grn_ctx *ctx, grn_ts_geo_point value) {
+grn_ts_geo_output(grn_ctx *ctx, grn_ts_geo value) {
   grn_rc rc = grn_bulk_write(ctx, ctx->impl->outbuf, "\"", 1);
   if (rc != GRN_SUCCESS) {
     return rc;
@@ -140,10 +140,10 @@ grn_ts_text_vector_output(grn_ctx *ctx, grn_ts_text_vector value) {
   GRN_TS_VECTOR_OUTPUT(text)
 }
 
-/* grn_ts_geo_point_vector_output() outputs a value. */
+/* grn_ts_geo_vector_output() outputs a value. */
 static grn_rc
-grn_ts_geo_point_vector_output(grn_ctx *ctx, grn_ts_geo_point_vector value) {
-  GRN_TS_VECTOR_OUTPUT(geo_point)
+grn_ts_geo_vector_output(grn_ctx *ctx, grn_ts_geo_vector value) {
+  GRN_TS_VECTOR_OUTPUT(geo)
 }
 #undef GRN_TS_VECTOR_OUTPUT
 
@@ -472,7 +472,7 @@ grn_ts_writer_output_header(grn_ctx *ctx, grn_ts_writer *writer) {
     GRN_TEXT_PUT(ctx, ctx->impl->outbuf, ",\"", 2);
     switch (writer->exprs[i]->data_type) {
       case GRN_DB_VOID: {
-        if (writer->exprs[i]->data_kind == GRN_TS_GEO_POINT) {
+        if (writer->exprs[i]->data_kind == GRN_TS_GEO) {
           GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "GeoPoint");
         } else {
           GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Void");
@@ -569,13 +569,13 @@ grn_ts_writer_output_body(grn_ctx *ctx, grn_ts_writer *writer,
           GRN_TS_WRITER_OUTPUT_BODY_CASE(FLOAT, float);
           GRN_TS_WRITER_OUTPUT_BODY_CASE(TIME, time);
           GRN_TS_WRITER_OUTPUT_BODY_CASE(TEXT, text);
-          GRN_TS_WRITER_OUTPUT_BODY_CASE(GEO_POINT, geo_point);
+          GRN_TS_WRITER_OUTPUT_BODY_CASE(GEO, geo);
           GRN_TS_WRITER_OUTPUT_BODY_VECTOR_CASE(BOOL, bool);
           GRN_TS_WRITER_OUTPUT_BODY_VECTOR_CASE(INT, int);
           GRN_TS_WRITER_OUTPUT_BODY_VECTOR_CASE(FLOAT, float);
           GRN_TS_WRITER_OUTPUT_BODY_VECTOR_CASE(TIME, time);
           GRN_TS_WRITER_OUTPUT_BODY_VECTOR_CASE(TEXT, text);
-          GRN_TS_WRITER_OUTPUT_BODY_VECTOR_CASE(GEO_POINT, geo_point);
+          GRN_TS_WRITER_OUTPUT_BODY_VECTOR_CASE(GEO, geo);
           default: {
             break;
           }

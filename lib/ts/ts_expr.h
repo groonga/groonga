@@ -217,15 +217,15 @@ grn_rc grn_ts_expr_push_time(grn_ctx *ctx, grn_ts_expr *expr,
 /* grn_ts_expr_push_text() pushes a Text const. */
 grn_rc grn_ts_expr_push_text(grn_ctx *ctx, grn_ts_expr *expr,
                              grn_ts_text value);
-/* grn_ts_expr_push_geo_point() pushes a GeoPoint const. */
-grn_rc grn_ts_expr_push_geo_point(grn_ctx *ctx, grn_ts_expr *expr,
-                                  grn_ts_geo_point value);
-/* grn_ts_expr_push_tokyo_geo_point() pushes a TokyoGeoPoint const. */
-grn_rc grn_ts_expr_push_tokyo_geo_point(grn_ctx *ctx, grn_ts_expr *expr,
-                                        grn_ts_geo_point value);
-/* grn_ts_expr_push_wgs84_geo_point() pushes a WGS84GeoPoint const. */
-grn_rc grn_ts_expr_push_wgs84_geo_point(grn_ctx *ctx, grn_ts_expr *expr,
-                                        grn_ts_geo_point value);
+/* grn_ts_expr_push_geo() pushes a GeoPoint const. */
+grn_rc grn_ts_expr_push_geo(grn_ctx *ctx, grn_ts_expr *expr,
+                            grn_ts_geo value);
+/* grn_ts_expr_push_tokyo_geo() pushes a TokyoGeoPoint const. */
+grn_rc grn_ts_expr_push_tokyo_geo(grn_ctx *ctx, grn_ts_expr *expr,
+                                  grn_ts_geo value);
+/* grn_ts_expr_push_wgs84_geo() pushes a WGS84GeoPoint const. */
+grn_rc grn_ts_expr_push_wgs84_geo(grn_ctx *ctx, grn_ts_expr *expr,
+                                  grn_ts_geo value);
 /* grn_ts_expr_push_bool_vector() pushes a Bool vector const. */
 grn_rc grn_ts_expr_push_bool_vector(grn_ctx *ctx, grn_ts_expr *expr,
                                     grn_ts_bool_vector value);
@@ -241,21 +241,15 @@ grn_rc grn_ts_expr_push_time_vector(grn_ctx *ctx, grn_ts_expr *expr,
 /* grn_ts_expr_push_text_vector() pushes a Text vector const. */
 grn_rc grn_ts_expr_push_text_vector(grn_ctx *ctx, grn_ts_expr *expr,
                                     grn_ts_text_vector value);
-/* grn_ts_expr_push_geo_point_vector() pushes a GeoPoint vector const. */
-grn_rc grn_ts_expr_push_geo_point_vector(grn_ctx *ctx, grn_ts_expr *expr,
-                                         grn_ts_geo_point_vector value);
-/*
- * grn_ts_expr_push_tokyo_geo_point_vector() pushes a TokyoGeoPoint vector
- * const.
- */
-grn_rc grn_ts_expr_push_tokyo_geo_point_vector(grn_ctx *ctx, grn_ts_expr *expr,
-                                               grn_ts_geo_point_vector value);
-/*
- * grn_ts_expr_push_wgs84_geo_point_vector() pushes a WGS84GeoPoint vector
- * const.
- */
-grn_rc grn_ts_expr_push_wgs84_geo_point_vector(grn_ctx *ctx, grn_ts_expr *expr,
-                                               grn_ts_geo_point_vector value);
+/* grn_ts_expr_push_geo_vector() pushes a GeoPoint vector const. */
+grn_rc grn_ts_expr_push_geo_vector(grn_ctx *ctx, grn_ts_expr *expr,
+                                   grn_ts_geo_vector value);
+/* grn_ts_expr_push_tokyo_geo_vector() pushes a TokyoGeoPoint vector const. */
+grn_rc grn_ts_expr_push_tokyo_geo_vector(grn_ctx *ctx, grn_ts_expr *expr,
+                                         grn_ts_geo_vector value);
+/* grn_ts_expr_push_wgs84_geo_vector() pushes a WGS84GeoPoint vector const. */
+grn_rc grn_ts_expr_push_wgs84_geo_vector(grn_ctx *ctx, grn_ts_expr *expr,
+                                         grn_ts_geo_vector value);
 
 /* grn_ts_expr_begin_subexpr() begins a subexpression. */
 grn_rc grn_ts_expr_begin_subexpr(grn_ctx *ctx, grn_ts_expr *expr);

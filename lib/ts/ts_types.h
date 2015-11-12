@@ -51,21 +51,21 @@ typedef struct {
 enum { GRN_TS_VECTOR_FLAG = 1 << 7 };
 
 typedef enum {
-  GRN_TS_VOID             = 0, /* GRN_DB_VOID */
-  GRN_TS_BOOL             = 1, /* GRN_DB_BOOL */
-  GRN_TS_INT              = 2, /* GRN_DB_[U]INT(8/16/32/64) */
-  GRN_TS_FLOAT            = 3, /* GRN_DB_FLOAT */
-  GRN_TS_TIME             = 4, /* GRN_DB_TIME */
-  GRN_TS_TEXT             = 5, /* GRN_DB_[SHORT_/LONG_]TEST */
-  GRN_TS_GEO_POINT        = 6, /* GRN_DB_(TOKYO/WGS84)_GEO_POINT */
-  GRN_TS_REF              = 7, /* Table reference. */
-  GRN_TS_BOOL_VECTOR      = GRN_TS_VECTOR_FLAG | GRN_TS_BOOL,
-  GRN_TS_INT_VECTOR       = GRN_TS_VECTOR_FLAG | GRN_TS_INT,
-  GRN_TS_FLOAT_VECTOR     = GRN_TS_VECTOR_FLAG | GRN_TS_FLOAT,
-  GRN_TS_TIME_VECTOR      = GRN_TS_VECTOR_FLAG | GRN_TS_TIME,
-  GRN_TS_TEXT_VECTOR      = GRN_TS_VECTOR_FLAG | GRN_TS_TEXT,
-  GRN_TS_GEO_POINT_VECTOR = GRN_TS_VECTOR_FLAG | GRN_TS_GEO_POINT,
-  GRN_TS_REF_VECTOR       = GRN_TS_VECTOR_FLAG | GRN_TS_REF
+  GRN_TS_VOID         = 0, /* GRN_DB_VOID */
+  GRN_TS_BOOL         = 1, /* GRN_DB_BOOL */
+  GRN_TS_INT          = 2, /* GRN_DB_[U]INT(8/16/32/64) */
+  GRN_TS_FLOAT        = 3, /* GRN_DB_FLOAT */
+  GRN_TS_TIME         = 4, /* GRN_DB_TIME */
+  GRN_TS_TEXT         = 5, /* GRN_DB_[SHORT_/LONG_]TEST */
+  GRN_TS_GEO          = 6, /* GRN_DB_(TOKYO/WGS84)_GEO_POINT */
+  GRN_TS_REF          = 7, /* Table reference. */
+  GRN_TS_BOOL_VECTOR  = GRN_TS_VECTOR_FLAG | GRN_TS_BOOL,
+  GRN_TS_INT_VECTOR   = GRN_TS_VECTOR_FLAG | GRN_TS_INT,
+  GRN_TS_FLOAT_VECTOR = GRN_TS_VECTOR_FLAG | GRN_TS_FLOAT,
+  GRN_TS_TIME_VECTOR  = GRN_TS_VECTOR_FLAG | GRN_TS_TIME,
+  GRN_TS_TEXT_VECTOR  = GRN_TS_VECTOR_FLAG | GRN_TS_TEXT,
+  GRN_TS_GEO_VECTOR   = GRN_TS_VECTOR_FLAG | GRN_TS_GEO,
+  GRN_TS_REF_VECTOR   = GRN_TS_VECTOR_FLAG | GRN_TS_REF
 } grn_ts_data_kind;
 
 /*-------------------------------------------------------------
@@ -91,9 +91,9 @@ typedef struct {
 } grn_ts_text;
 
 /* GeoPoint. */
-typedef grn_geo_point grn_ts_geo_point;
-typedef grn_geo_point grn_ts_tokyo_geo_point;
-typedef grn_geo_point grn_ts_wgs84_geo_point;
+typedef grn_geo_point grn_ts_geo;
+typedef grn_geo_point grn_ts_tokyo_geo;
+typedef grn_geo_point grn_ts_wgs84_geo;
 
 /* Ref. */
 typedef grn_ts_record grn_ts_ref;
@@ -134,11 +134,11 @@ typedef struct {
 
 /* GeoPointVector. */
 typedef struct {
-  const grn_ts_geo_point *ptr;
+  const grn_ts_geo *ptr;
   size_t size;
-} grn_ts_geo_point_vector;
-typedef grn_ts_geo_point_vector grn_ts_tokyo_geo_point_vector;
-typedef grn_ts_geo_point_vector grn_ts_wgs84_geo_point_vector;
+} grn_ts_geo_vector;
+typedef grn_ts_geo_vector grn_ts_tokyo_geo_vector;
+typedef grn_ts_geo_vector grn_ts_wgs84_geo_vector;
 
 /* RefVector. */
 typedef struct {
