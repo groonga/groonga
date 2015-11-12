@@ -665,79 +665,12 @@ exec_match_vector_bulk(grn_ctx *ctx, grn_obj *vector, grn_obj *query)
   return matched;
 }
 
-static grn_bool
-string_have_sub_text(grn_ctx *ctx,
-                     const char *text, unsigned int text_len,
-                     const char *sub_text, unsigned int sub_text_len)
-{
-  /* TODO: Use more fast algorithm such as Boyer-Moore algorithm that
-   * is used in snip.c. */
-  const char *text_current = text;
-  const char *text_end = text + text_len;
-  const char *sub_text_current = sub_text;
-  const char *sub_text_end = sub_text + sub_text_len;
-  int sub_text_start_char_len;
-  int sub_text_char_len;
-
-  if (sub_text_len == 0) {
-    return GRN_FALSE;
-  }
-
-  if (sub_text_len > text_len) {
-    return GRN_FALSE;
-  }
-
-  sub_text_start_char_len = grn_charlen(ctx, sub_text, sub_text_end);
-  if (sub_text_start_char_len == 0) {
-    return GRN_FALSE;
-  }
-  sub_text_char_len = sub_text_start_char_len;
-
-  while (text_current < text_end) {
-    int text_char_len;
-
-    text_char_len = grn_charlen(ctx, text_current, text_end);
-    if (text_char_len == 0) {
-      return GRN_FALSE;
-    }
-
-    if (text_char_len == sub_text_char_len &&
-        memcmp(text_current, sub_text_current, text_char_len) == 0) {
-      sub_text_current += sub_text_char_len;
-      if (sub_text_current == sub_text_end) {
-        return GRN_TRUE;
-      }
-
-      sub_text_char_len = grn_charlen(ctx, sub_text_current, sub_text_end);
-      if (sub_text_char_len == 0) {
-        return GRN_FALSE;
-      }
-    } else {
-      if (sub_text_current != sub_text) {
-        sub_text_current = sub_text;
-        sub_text_char_len = sub_text_start_char_len;
-        continue;
-      }
-    }
-
-    text_current += text_char_len;
-  }
-
-  return GRN_FALSE;
-}
-
-static grn_bool
-string_have_prefix(grn_ctx *ctx,
-                   const char *target, unsigned int target_len,
-                   const char *prefix, unsigned int prefix_len)
-{
-  return (target_len >= prefix_len &&
-          strncmp(target, prefix, prefix_len) == 0);
-}
-
 #ifdef GRN_SUPPORT_REGEXP
 static OnigRegex
-regexp_compile(grn_ctx *ctx, const char *pattern, unsigned int pattern_len)
+regexp_compile(grn_ctx *ctx,
+               const char *pattern,
+               unsigned int pattern_len,
+               OnigSyntaxType *syntax)
 {
   OnigRegex regex;
   OnigEncoding onig_encoding;
@@ -774,7 +707,7 @@ regexp_compile(grn_ctx *ctx, const char *pattern, unsigned int pattern_len)
                          ONIG_OPTION_ASCII_RANGE |
                          ONIG_OPTION_MULTILINE,
                          onig_encoding,
-                         ONIG_SYNTAX_RUBY,
+                         syntax,
                          &onig_error_info);
   if (onig_result != ONIG_NORMAL) {
     char message[ONIG_MAX_ERROR_MESSAGE_LEN];
@@ -805,7 +738,93 @@ regexp_is_match(grn_ctx *ctx, OnigRegex regex,
                          ONIG_OPTION_NONE);
   return position != ONIG_MISMATCH;
 }
-#endif
+#endif /* GRN_SUPPORT_REGEXP */
+
+static grn_bool
+string_have_sub_text(grn_ctx *ctx,
+                     const char *text, unsigned int text_len,
+                     const char *sub_text, unsigned int sub_text_len)
+{
+  if (sub_text_len == 0) {
+    return GRN_FALSE;
+  }
+
+  if (sub_text_len > text_len) {
+    return GRN_FALSE;
+  }
+
+#ifdef GRN_SUPPORT_REGEXP
+  {
+    OnigRegex regex;
+    grn_bool matched;
+
+    regex = regexp_compile(ctx, sub_text, sub_text_len, ONIG_SYNTAX_ASIS);
+    if (!regex) {
+      return GRN_FALSE;
+    }
+
+    matched = regexp_is_match(ctx, regex, text, text_len);
+    onig_free(regex);
+    return matched;
+  }
+#else /* GRN_SUPPORT_REGEXP */
+  {
+    const char *text_current = text;
+    const char *text_end = text + text_len;
+    const char *sub_text_current = sub_text;
+    const char *sub_text_end = sub_text + sub_text_len;
+    int sub_text_start_char_len;
+    int sub_text_char_len;
+
+    sub_text_start_char_len = grn_charlen(ctx, sub_text, sub_text_end);
+    if (sub_text_start_char_len == 0) {
+      return GRN_FALSE;
+    }
+    sub_text_char_len = sub_text_start_char_len;
+
+    while (text_current < text_end) {
+      int text_char_len;
+
+      text_char_len = grn_charlen(ctx, text_current, text_end);
+      if (text_char_len == 0) {
+        return GRN_FALSE;
+      }
+
+      if (text_char_len == sub_text_char_len &&
+          memcmp(text_current, sub_text_current, text_char_len) == 0) {
+        sub_text_current += sub_text_char_len;
+        if (sub_text_current == sub_text_end) {
+          return GRN_TRUE;
+        }
+
+        sub_text_char_len = grn_charlen(ctx, sub_text_current, sub_text_end);
+        if (sub_text_char_len == 0) {
+          return GRN_FALSE;
+        }
+      } else {
+        if (sub_text_current != sub_text) {
+          sub_text_current = sub_text;
+          sub_text_char_len = sub_text_start_char_len;
+          continue;
+        }
+      }
+
+      text_current += text_char_len;
+    }
+
+    return GRN_FALSE;
+  }
+#endif /* GRN_SUPPORT_REGEXP */
+}
+
+static grn_bool
+string_have_prefix(grn_ctx *ctx,
+                   const char *target, unsigned int target_len,
+                   const char *prefix, unsigned int prefix_len)
+{
+  return (target_len >= prefix_len &&
+          strncmp(target, prefix, prefix_len) == 0);
+}
 
 static grn_bool
 string_match_regexp(grn_ctx *ctx,
@@ -816,7 +835,7 @@ string_match_regexp(grn_ctx *ctx,
   OnigRegex regex;
   grn_bool matched;
 
-  regex = regexp_compile(ctx, pattern, pattern_len);
+  regex = regexp_compile(ctx, pattern, pattern_len, ONIG_SYNTAX_RUBY);
   if (!regex) {
     return GRN_FALSE;
   }
@@ -824,9 +843,9 @@ string_match_regexp(grn_ctx *ctx,
   matched = regexp_is_match(ctx, regex, target, target_len);
   onig_free(regex);
   return matched;
-#else
+#else /* GRN_SUPPORT_REGEXP */
   return GRN_FALSE;
-#endif
+#endif /* GRN_SUPPORT_REGEXP */
 }
 
 static grn_bool
@@ -1071,7 +1090,10 @@ exec_regexp_uvector_bulk(grn_ctx *ctx, grn_obj *uvector, grn_obj *pattern)
     return GRN_FALSE;
   }
 
-  regex = regexp_compile(ctx, GRN_TEXT_VALUE(pattern), GRN_TEXT_LEN(pattern));
+  regex = regexp_compile(ctx,
+                         GRN_TEXT_VALUE(pattern),
+                         GRN_TEXT_LEN(pattern),
+                         ONIG_SYNTAX_RUBY);
   if (!regex) {
     return GRN_FALSE;
   }
@@ -1131,9 +1153,9 @@ exec_regexp_uvector_bulk(grn_ctx *ctx, grn_obj *uvector, grn_obj *pattern)
   onig_free(regex);
 
   return matched;
-#else
+#else /* GRN_SUPPORT_REGEXP */
   return GRN_FALSE;
-#endif
+#endif /* GRN_SUPPORT_REGEXP */
 }
 
 static grn_bool
@@ -1150,7 +1172,10 @@ exec_regexp_vector_bulk(grn_ctx *ctx, grn_obj *vector, grn_obj *pattern)
     return GRN_FALSE;
   }
 
-  regex = regexp_compile(ctx, GRN_TEXT_VALUE(pattern), GRN_TEXT_LEN(pattern));
+  regex = regexp_compile(ctx,
+                         GRN_TEXT_VALUE(pattern),
+                         GRN_TEXT_LEN(pattern),
+                         ONIG_SYNTAX_RUBY);
   if (!regex) {
     return GRN_FALSE;
   }
@@ -1191,9 +1216,9 @@ exec_regexp_vector_bulk(grn_ctx *ctx, grn_obj *vector, grn_obj *pattern)
   onig_free(regex);
 
   return matched;
-#else
+#else /* GRN_SUPPORT_REGEXP */
   return GRN_FALSE;
-#endif
+#endif /* GRN_SUPPORT_REGEXP */
 }
 
 grn_bool
