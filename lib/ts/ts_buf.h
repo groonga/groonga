@@ -19,7 +19,7 @@
 #ifndef GRN_TS_BUF_H
 #define GRN_TS_BUF_H
 
-#include "../grn_ts.h"
+#include "ts_types.h"
 
 #ifdef __cplusplus
 extern "C" {

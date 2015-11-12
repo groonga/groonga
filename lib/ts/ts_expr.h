@@ -19,11 +19,8 @@
 #ifndef GRN_TS_EXPR_H
 #define GRN_TS_EXPR_H
 
-#include <stdint.h>
-
-#include "../grn_ts.h"
-
 #include "ts_buf.h"
+#include "ts_types.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,29 +29,6 @@ extern "C" {
 /*-------------------------------------------------------------
  * Enumeration types.
  */
-
-/* grn_builtin_type or table ID. */
-typedef grn_id grn_ts_data_type;
-
-enum { GRN_TS_VECTOR_FLAG = 1 << 7 };
-
-typedef enum {
-  GRN_TS_VOID             = 0, /* GRN_DB_VOID */
-  GRN_TS_BOOL             = 1, /* GRN_DB_BOOL */
-  GRN_TS_INT              = 2, /* GRN_DB_[U]INT(8/16/32/64) */
-  GRN_TS_FLOAT            = 3, /* GRN_DB_FLOAT */
-  GRN_TS_TIME             = 4, /* GRN_DB_TIME */
-  GRN_TS_TEXT             = 5, /* GRN_DB_[SHORT_/LONG_]TEST */
-  GRN_TS_GEO_POINT        = 6, /* GRN_DB_(TOKYO/WGS84)_GEO_POINT */
-  GRN_TS_REF              = 7, /* Table reference. */
-  GRN_TS_BOOL_VECTOR      = GRN_TS_VECTOR_FLAG | GRN_TS_BOOL,
-  GRN_TS_INT_VECTOR       = GRN_TS_VECTOR_FLAG | GRN_TS_INT,
-  GRN_TS_FLOAT_VECTOR     = GRN_TS_VECTOR_FLAG | GRN_TS_FLOAT,
-  GRN_TS_TIME_VECTOR      = GRN_TS_VECTOR_FLAG | GRN_TS_TIME,
-  GRN_TS_TEXT_VECTOR      = GRN_TS_VECTOR_FLAG | GRN_TS_TEXT,
-  GRN_TS_GEO_POINT_VECTOR = GRN_TS_VECTOR_FLAG | GRN_TS_GEO_POINT,
-  GRN_TS_REF_VECTOR       = GRN_TS_VECTOR_FLAG | GRN_TS_REF
-} grn_ts_data_kind;
 
 typedef enum {
   /* Invalid operator. */

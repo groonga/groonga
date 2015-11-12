@@ -27,6 +27,7 @@
 #include "ts/ts_expr.h"
 #include "ts/ts_log.h"
 #include "ts/ts_str.h"
+#include "ts/ts_types.h"
 
 /*-------------------------------------------------------------
  * Miscellaneous.

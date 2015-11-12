@@ -30,7 +30,6 @@
 #include "../grn_pat.h"
 #include "../grn_store.h"
 
-#include "ts_buf.h"
 #include "ts_log.h"
 #include "ts_str.h"
 

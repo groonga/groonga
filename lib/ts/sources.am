@@ -5,4 +5,5 @@ libgrnts_la_SOURCES =				\
 	ts_expr.h				\
 	ts_log.h				\
 	ts_str.c				\
-	ts_str.h
+	ts_str.h				\
+	ts_types.h
