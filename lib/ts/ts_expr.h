@@ -20,6 +20,7 @@
 #define GRN_TS_EXPR_H
 
 #include "ts_buf.h"
+#include "ts_expr_node.h"
 #include "ts_types.h"
 
 #ifdef __cplusplus
@@ -31,40 +32,6 @@ extern "C" {
  */
 
 typedef enum {
-  /* Invalid operator. */
-  GRN_TS_OP_NOP,
-
-  /* Unary operators. */
-  GRN_TS_OP_LOGICAL_NOT,    /* !X */
-  GRN_TS_OP_BITWISE_NOT,    /* ~X */
-  GRN_TS_OP_POSITIVE,       /* +X */
-  GRN_TS_OP_NEGATIVE,       /* -X */
-
-  /* Binary operators. */
-  GRN_TS_OP_LOGICAL_AND,            /* X && Y  */
-  GRN_TS_OP_LOGICAL_OR,             /* X || Y  */
-  GRN_TS_OP_LOGICAL_SUB,            /* X &! Y  */
-  GRN_TS_OP_BITWISE_AND,            /* X & Y   */
-  GRN_TS_OP_BITWISE_OR,             /* X | Y   */
-  GRN_TS_OP_BITWISE_XOR,            /* X ^ Y   */
-  GRN_TS_OP_EQUAL,                  /* X == Y  */
-  GRN_TS_OP_NOT_EQUAL,              /* X != Y  */
-  GRN_TS_OP_LESS,                   /* X < Y   */
-  GRN_TS_OP_LESS_EQUAL,             /* X <= Y  */
-  GRN_TS_OP_GREATER,                /* X > Y   */
-  GRN_TS_OP_GREATER_EQUAL,          /* X >= Y  */
-  GRN_TS_OP_SHIFT_ARITHMETIC_LEFT,  /* X << Y  */
-  GRN_TS_OP_SHIFT_ARITHMETIC_RIGHT, /* X >> Y  */
-  GRN_TS_OP_SHIFT_LOGICAL_LEFT,     /* X <<< Y */
-  GRN_TS_OP_SHIFT_LOGICAL_RIGHT,    /* X >>> Y */
-  GRN_TS_OP_PLUS,                   /* X + Y   */
-  GRN_TS_OP_MINUS,                  /* X - Y   */
-  GRN_TS_OP_MULTIPLICATION,         /* X * Y   */
-  GRN_TS_OP_DIVISION,               /* X / Y   */
-  GRN_TS_OP_MODULUS                 /* X % Y   */
-} grn_ts_op_type;
-
-typedef enum {
   GRN_TS_EXPR_INCOMPLETE, /* An incomplete expression. */
   GRN_TS_EXPR_BROKEN,     /* A broken expression. */
                           /* Any operation fails for a broken expression. */
@@ -74,29 +41,9 @@ typedef enum {
   GRN_TS_EXPR_VARIABLE    /* An expression that contains a variable. */
 } grn_ts_expr_type;
 
-typedef enum {
-  GRN_TS_EXPR_ID_NODE,     /* Associated with the ID (_id). */
-  GRN_TS_EXPR_SCORE_NODE,  /* Asscoaited with the score (_score). */
-  GRN_TS_EXPR_KEY_NODE,    /* Asscoaited with the key (_key). */
-  GRN_TS_EXPR_VALUE_NODE,  /* Asscoaited with the embedded value (_value). */
-  GRN_TS_EXPR_CONST_NODE,  /* Associated with a const. */
-  GRN_TS_EXPR_COLUMN_NODE, /* Associated with a column. */
-  GRN_TS_EXPR_OP_NODE,     /* Associated with an operator. */
-  GRN_TS_EXPR_BRIDGE_NODE  /* Associated with a bridge to a subexpression. */
-} grn_ts_expr_node_type;
-
 /*-------------------------------------------------------------
  * Expression components.
  */
-
-#define GRN_TS_EXPR_NODE_COMMON_MEMBERS\
-  grn_ts_expr_node_type type; /* Node type. */\
-  grn_ts_data_kind data_kind; /* Abstract data type. */\
-  grn_ts_data_type data_type; /* Detailed data type. */
-
-typedef struct {
-  GRN_TS_EXPR_NODE_COMMON_MEMBERS
-} grn_ts_expr_node;
 
 typedef struct {
   grn_obj *src_table;  /* The source table of a bridge (no ref. count). */

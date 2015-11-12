@@ -26,6 +26,44 @@ extern "C" {
 #endif
 
 /*-------------------------------------------------------------
+ * Enumeration types.
+ */
+
+typedef enum {
+  /* Invalid operator. */
+  GRN_TS_OP_NOP,
+
+  /* Unary operators. */
+  GRN_TS_OP_LOGICAL_NOT, /* !X */
+  GRN_TS_OP_BITWISE_NOT, /* ~X */
+  GRN_TS_OP_POSITIVE,    /* +X */
+  GRN_TS_OP_NEGATIVE,    /* -X */
+
+  /* Binary operators. */
+  GRN_TS_OP_LOGICAL_AND,            /* X && Y  */
+  GRN_TS_OP_LOGICAL_OR,             /* X || Y  */
+  GRN_TS_OP_LOGICAL_SUB,            /* X &! Y  */
+  GRN_TS_OP_BITWISE_AND,            /* X & Y   */
+  GRN_TS_OP_BITWISE_OR,             /* X | Y   */
+  GRN_TS_OP_BITWISE_XOR,            /* X ^ Y   */
+  GRN_TS_OP_EQUAL,                  /* X == Y  */
+  GRN_TS_OP_NOT_EQUAL,              /* X != Y  */
+  GRN_TS_OP_LESS,                   /* X < Y   */
+  GRN_TS_OP_LESS_EQUAL,             /* X <= Y  */
+  GRN_TS_OP_GREATER,                /* X > Y   */
+  GRN_TS_OP_GREATER_EQUAL,          /* X >= Y  */
+  GRN_TS_OP_SHIFT_ARITHMETIC_LEFT,  /* X << Y  */
+  GRN_TS_OP_SHIFT_ARITHMETIC_RIGHT, /* X >> Y  */
+  GRN_TS_OP_SHIFT_LOGICAL_LEFT,     /* X <<< Y */
+  GRN_TS_OP_SHIFT_LOGICAL_RIGHT,    /* X >>> Y */
+  GRN_TS_OP_PLUS,                   /* X + Y   */
+  GRN_TS_OP_MINUS,                  /* X - Y   */
+  GRN_TS_OP_MULTIPLICATION,         /* X * Y   */
+  GRN_TS_OP_DIVISION,               /* X / Y   */
+  GRN_TS_OP_MODULUS                 /* X % Y   */
+} grn_ts_op_type;
+
+/*-------------------------------------------------------------
  * Built-in data types.
  */
 
@@ -43,30 +81,6 @@ typedef struct {
   grn_ts_id id;
   grn_ts_score score;
 } grn_ts_record;
-
-/*-------------------------------------------------------------
- * Built-in data kinds.
- */
-
-enum { GRN_TS_VECTOR_FLAG = 1 << 7 };
-
-typedef enum {
-  GRN_TS_VOID         = 0, /* GRN_DB_VOID */
-  GRN_TS_BOOL         = 1, /* GRN_DB_BOOL */
-  GRN_TS_INT          = 2, /* GRN_DB_[U]INT(8/16/32/64) */
-  GRN_TS_FLOAT        = 3, /* GRN_DB_FLOAT */
-  GRN_TS_TIME         = 4, /* GRN_DB_TIME */
-  GRN_TS_TEXT         = 5, /* GRN_DB_[SHORT_/LONG_]TEST */
-  GRN_TS_GEO          = 6, /* GRN_DB_(TOKYO/WGS84)_GEO_POINT */
-  GRN_TS_REF          = 7, /* Table reference. */
-  GRN_TS_BOOL_VECTOR  = GRN_TS_VECTOR_FLAG | GRN_TS_BOOL,
-  GRN_TS_INT_VECTOR   = GRN_TS_VECTOR_FLAG | GRN_TS_INT,
-  GRN_TS_FLOAT_VECTOR = GRN_TS_VECTOR_FLAG | GRN_TS_FLOAT,
-  GRN_TS_TIME_VECTOR  = GRN_TS_VECTOR_FLAG | GRN_TS_TIME,
-  GRN_TS_TEXT_VECTOR  = GRN_TS_VECTOR_FLAG | GRN_TS_TEXT,
-  GRN_TS_GEO_VECTOR   = GRN_TS_VECTOR_FLAG | GRN_TS_GEO,
-  GRN_TS_REF_VECTOR   = GRN_TS_VECTOR_FLAG | GRN_TS_REF
-} grn_ts_data_kind;
 
 /*-------------------------------------------------------------
  * Built-in scalar data kinds.
@@ -145,6 +159,47 @@ typedef struct {
   const grn_ts_ref *ptr;
   size_t size;
 } grn_ts_ref_vector;
+
+/*-------------------------------------------------------------
+ * Built-in data kinds.
+ */
+
+enum { GRN_TS_VECTOR_FLAG = 1 << 7 };
+
+typedef enum {
+  GRN_TS_VOID         = 0, /* GRN_DB_VOID */
+  GRN_TS_BOOL         = 1, /* GRN_DB_BOOL */
+  GRN_TS_INT          = 2, /* GRN_DB_[U]INT(8/16/32/64) */
+  GRN_TS_FLOAT        = 3, /* GRN_DB_FLOAT */
+  GRN_TS_TIME         = 4, /* GRN_DB_TIME */
+  GRN_TS_TEXT         = 5, /* GRN_DB_[SHORT_/LONG_]TEST */
+  GRN_TS_GEO          = 6, /* GRN_DB_(TOKYO/WGS84)_GEO_POINT */
+  GRN_TS_REF          = 7, /* Table reference. */
+  GRN_TS_BOOL_VECTOR  = GRN_TS_VECTOR_FLAG | GRN_TS_BOOL,
+  GRN_TS_INT_VECTOR   = GRN_TS_VECTOR_FLAG | GRN_TS_INT,
+  GRN_TS_FLOAT_VECTOR = GRN_TS_VECTOR_FLAG | GRN_TS_FLOAT,
+  GRN_TS_TIME_VECTOR  = GRN_TS_VECTOR_FLAG | GRN_TS_TIME,
+  GRN_TS_TEXT_VECTOR  = GRN_TS_VECTOR_FLAG | GRN_TS_TEXT,
+  GRN_TS_GEO_VECTOR   = GRN_TS_VECTOR_FLAG | GRN_TS_GEO,
+  GRN_TS_REF_VECTOR   = GRN_TS_VECTOR_FLAG | GRN_TS_REF
+} grn_ts_data_kind;
+
+typedef union {
+  grn_ts_bool as_bool;
+  grn_ts_int as_int;
+  grn_ts_float as_float;
+  grn_ts_time as_time;
+  grn_ts_text as_text;
+  grn_ts_geo as_geo;
+  grn_ts_ref as_ref;
+  grn_ts_bool_vector as_bool_vector;
+  grn_ts_int_vector as_int_vector;
+  grn_ts_float_vector as_float_vector;
+  grn_ts_time_vector as_time_vector;
+  grn_ts_text_vector as_text_vector;
+  grn_ts_geo_vector as_geo_vector;
+  grn_ts_ref_vector as_ref_vector;
+} grn_ts_any;
 
 #ifdef __cplusplus
 }
