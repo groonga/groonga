@@ -32,7 +32,7 @@
 
 #include "ts_log.h"
 #include "ts_str.h"
-
+#include "ts_util.h"
 
 /*-------------------------------------------------------------
  * Built-in data kinds.
@@ -231,47 +231,6 @@ grn_ts_op_get_precedence(grn_ts_op_type op_type) {
     }
     default: {
       return 0;
-    }
-  }
-}
-
-/*-------------------------------------------------------------
- * Groonga objects.
- */
-
-/* grn_ts_obj_increment_ref_count() increments an object reference count. */
-static grn_rc
-grn_ts_obj_increment_ref_count(grn_ctx *ctx, grn_obj *obj) {
-  grn_id id = grn_obj_id(ctx, obj);
-  grn_obj *obj_clone = grn_ctx_at(ctx, id);
-  if (!obj_clone) {
-    GRN_TS_ERR_RETURN(GRN_UNKNOWN_ERROR, "grn_ctx_at failed: %d", id);
-  }
-  if (obj_clone != obj) {
-    grn_obj_unlink(ctx, obj_clone);
-    GRN_TS_ERR_RETURN(GRN_UNKNOWN_ERROR, "wrong object: %p != %p",
-                      obj, obj_clone);
-  }
-  return GRN_SUCCESS;
-}
-
-/* grn_ts_obj_is_table() returns whether or not an object is a table. */
-static grn_ts_bool
-grn_ts_obj_is_table(grn_ctx *ctx, grn_obj *obj) {
-  return grn_obj_is_table(ctx, obj);
-}
-
-/* grn_ts_obj_is_column() returns whether or not an object is a column. */
-static grn_ts_bool
-grn_ts_obj_is_column(grn_ctx *ctx, grn_obj *obj) {
-  switch (obj->header.type) {
-    case GRN_COLUMN_FIX_SIZE:
-    case GRN_COLUMN_VAR_SIZE: {
-      return GRN_TRUE;
-    }
-    /* GRN_COLUMN_INDEX is not supported. */
-    default: {
-      return GRN_FALSE;
     }
   }
 }

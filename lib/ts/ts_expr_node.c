@@ -32,6 +32,7 @@
 
 #include "ts_log.h"
 #include "ts_str.h"
+#include "ts_util.h"
 
 /*-------------------------------------------------------------
  * Built-in data kinds.
@@ -983,50 +984,6 @@ grn_ts_op_modulus_float_float(grn_ctx *ctx, grn_ts_float lhs, grn_ts_float rhs,
  * Groonga objects.
  */
 
-/* grn_ts_obj_increment_ref_count() increments an object reference count. */
-static grn_rc
-grn_ts_obj_increment_ref_count(grn_ctx *ctx, grn_obj *obj) {
-  grn_id id = grn_obj_id(ctx, obj);
-  grn_obj *obj_clone = grn_ctx_at(ctx, id);
-  if (!obj_clone) {
-    GRN_TS_ERR_RETURN(GRN_UNKNOWN_ERROR, "grn_ctx_at failed: %d", id);
-  }
-  if (obj_clone != obj) {
-    grn_obj_unlink(ctx, obj_clone);
-    GRN_TS_ERR_RETURN(GRN_UNKNOWN_ERROR, "wrong object: %p != %p",
-                      obj, obj_clone);
-  }
-  return GRN_SUCCESS;
-}
-
-/*
- * grn_ts_ja_get_value() gets a value from ja and writes it to buf. Note the a
- * value is appended to the end of buf.
- */
-static grn_rc
-grn_ts_ja_get_value(grn_ctx *ctx, grn_ja *ja, grn_ts_id id,
-                    grn_ts_buf *buf, size_t *value_size) {
-  grn_rc rc;
-  uint32_t size;
-  grn_io_win iw;
-  char *ptr = (char *)grn_ja_ref(ctx, ja, id, &iw, &size);
-  if (!ptr) {
-    if (value_size) {
-      *value_size = 0;
-    }
-    return GRN_SUCCESS;
-  }
-  rc = grn_ts_buf_write(ctx, buf, ptr, size);
-  grn_ja_unref(ctx, &iw);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  if (value_size) {
-    *value_size = size;
-  }
-  return GRN_SUCCESS;
-}
-
 #define GRN_TS_TABLE_GET_KEY(type)\
   uint32_t key_size;\
   const void *key_ptr = _grn_ ## type ## _key(ctx, type, id, &key_size);\
@@ -1310,52 +1267,6 @@ grn_ts_dat_get_text_key(grn_ctx *ctx, grn_dat *dat, grn_ts_id id,
   return GRN_SUCCESS;
 }
 #undef GRN_TS_TABLE_GET_KEY
-
-/* grn_ts_table_has_key() returns whether or not a table has _key. */
-static grn_ts_bool
-grn_ts_table_has_key(grn_ctx *ctx, grn_obj *table) {
-  switch (table->header.type) {
-    case GRN_TABLE_HASH_KEY:
-    case GRN_TABLE_PAT_KEY:
-    case GRN_TABLE_DAT_KEY: {
-      return GRN_TRUE;
-    }
-    default: {
-      return GRN_FALSE;
-    }
-  }
-}
-
-/* grn_ts_table_has_value() returns whether or not a table has _value. */
-static grn_ts_bool
-grn_ts_table_has_value(grn_ctx *ctx, grn_obj *table) {
-  return DB_OBJ(table)->range != GRN_DB_VOID;
-}
-
-/*
- * grn_ts_table_get_value() gets a reference to a value (_value). On failure,
- * this function returns NULL.
- */
-static const void *
-grn_ts_table_get_value(grn_ctx *ctx, grn_obj *table, grn_ts_id id) {
-  switch (table->header.type) {
-    case GRN_TABLE_HASH_KEY: {
-      uint32_t size;
-      return grn_hash_get_value_(ctx, (grn_hash *)table, id, &size);
-    }
-    case GRN_TABLE_PAT_KEY: {
-      uint32_t size;
-      return grn_pat_get_value_(ctx, (grn_pat *)table, id, &size);
-    }
-    /* GRN_TABLE_DAT_KEY does not support _value. */
-    case GRN_TABLE_NO_KEY: {
-      return _grn_array_get_value(ctx, (grn_array *)table, id);
-    }
-    default: {
-      return NULL;
-    }
-  }
-}
 
 /*-------------------------------------------------------------
  * grn_ts_expr_id_node.
@@ -2297,12 +2208,12 @@ grn_ts_expr_column_node_evaluate_scalar(grn_ctx *ctx,
     case GRN_TS_TEXT: {
       size_t i, size;
       char *buf_ptr;
-      grn_ja *ja = (grn_ja *)node->column;
       grn_ts_text *out_ptr = (grn_ts_text *)out;
       /* Read column values into node->buf and save the size of each value. */
       node->buf.pos = 0;
       for (i = 0; i < n_in; i++) {
-        grn_rc rc = grn_ts_ja_get_value(ctx, ja, in[i].id, &node->buf, &size);
+        grn_rc rc = grn_ts_ja_get_value(ctx, node->column, in[i].id,
+                                        &node->buf, &size);
         out_ptr[i].size = (rc == GRN_SUCCESS) ? size : 0;
       }
       buf_ptr = (char *)node->buf.ptr;
@@ -2357,7 +2268,7 @@ grn_ts_expr_column_node_evaluate_text_vector(grn_ctx *ctx,
   node->body_buf.pos = 0;
   for (i = 0; i < n_in; i++) {
     char *ptr;
-    rc = grn_ts_ja_get_value(ctx, (grn_ja *)node->column, in[i].id,
+    rc = grn_ts_ja_get_value(ctx, node->column, in[i].id,
                              &node->body_buf, &n_bytes);
     if (rc == GRN_SUCCESS) {
       ptr = (char *)node->body_buf.ptr + total_n_bytes;
@@ -2416,7 +2327,7 @@ grn_ts_expr_column_node_evaluate_ref_vector(grn_ctx *ctx,
   node->body_buf.pos = 0;
   for (i = 0; i < n_in; i++) {
     size_t size;
-    rc = grn_ts_ja_get_value(ctx, (grn_ja *)node->column, in[i].id,
+    rc = grn_ts_ja_get_value(ctx, node->column, in[i].id,
                              &node->body_buf, &size);
     if (rc == GRN_SUCCESS) {
       out_ptr[i].size = size / sizeof(grn_ts_id);
@@ -2453,7 +2364,7 @@ grn_ts_expr_column_node_evaluate_ref_vector(grn_ctx *ctx,
     node->buf.pos = 0;\
     for (i = 0; i < n_in; i++) {\
       size_t n_bytes;\
-      grn_rc rc = grn_ts_ja_get_value(ctx, (grn_ja *)node->column, in[i].id,\
+      grn_rc rc = grn_ts_ja_get_value(ctx, node->column, in[i].id,\
                                       &node->buf, &n_bytes);\
       if (rc == GRN_SUCCESS) {\
         out_ptr[i].size = n_bytes / sizeof(grn_ts_ ## kind);\
@@ -2483,7 +2394,7 @@ grn_ts_expr_column_node_evaluate_ref_vector(grn_ctx *ctx,
       grn_rc rc;\
       size_t n_bytes, new_n_bytes;\
       node->body_buf.pos = 0;\
-      rc = grn_ts_ja_get_value(ctx, (grn_ja *)node->column, in[i].id,\
+      rc = grn_ts_ja_get_value(ctx, node->column, in[i].id,\
                                &node->body_buf, &n_bytes);\
       if (rc == GRN_SUCCESS) {\
         out_ptr[i].size = n_bytes / sizeof(type ## _t);\
