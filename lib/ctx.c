@@ -36,6 +36,14 @@
 #include <stdarg.h>
 #include <time.h>
 
+#ifdef GRN_WITH_ONIGMO
+# define GRN_SUPPORT_REGEXP
+#endif /* GRN_WITH_ONIGMO */
+
+#ifdef GRN_SUPPORT_REGEXP
+# include <oniguruma.h>
+#endif /* GRN_SUPPORT_REGEXP */
+
 #ifdef WIN32
 # include <share.h>
 #else /* WIN32 */
@@ -100,6 +108,14 @@ grn_init_from_env(void)
   grn_index_column_init_from_env();
   grn_proc_init_from_env();
   grn_plugin_init_from_env();
+}
+
+static void
+grn_init_external_libraries(void)
+{
+#ifdef GRN_SUPPORT_REGEXP
+  onig_init();
+#endif /*  GRN_SUPPORT_REGEXP */
 }
 
 void
@@ -867,6 +883,7 @@ grn_init(void)
   grn_rc rc;
   grn_ctx *ctx = &grn_gctx;
   grn_init_from_env();
+  grn_init_external_libraries();
   grn_logger_init();
   grn_query_logger_init();
   CRITICAL_SECTION_INIT(grn_glock);
@@ -1043,6 +1060,14 @@ grn_set_lock_timeout(int timeout)
 
 static int alloc_count = 0;
 
+static void
+grn_fin_external_libraries(void)
+{
+#ifdef GRN_SUPPORT_REGEXP
+  onig_end();
+#endif /*  GRN_SUPPORT_REGEXP */
+}
+
 grn_rc
 grn_fin(void)
 {
@@ -1068,6 +1093,7 @@ grn_fin(void)
   GRN_LOG(ctx, GRN_LOG_NOTICE, "grn_fin (%d)", alloc_count);
   grn_logger_fin(ctx);
   CRITICAL_SECTION_FIN(grn_glock);
+  grn_fin_external_libraries();
   return GRN_SUCCESS;
 }
 
