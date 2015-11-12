@@ -858,6 +858,10 @@ exec_text_operator(grn_ctx *ctx,
 {
   grn_bool matched = GRN_FALSE;
 
+  if (target_len == 0 || query_len == 0) {
+    return GRN_FALSE;
+  }
+
   switch (op) {
   case GRN_OP_MATCH :
     matched = string_have_sub_text(ctx, target, target_len, query, query_len);
