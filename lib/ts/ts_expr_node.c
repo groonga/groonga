@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../grn_ctx_impl.h"
+#include "../grn_ctx.h"
 #include "../grn_dat.h"
 #include "../grn_db.h"
 #include "../grn_geo.h"
