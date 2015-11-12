@@ -801,7 +801,7 @@ grn_rc
 grn_ts_expr_push_op(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_op_type op_type) {
   grn_rc rc;
   grn_ts_expr_node **args, *node;
-  size_t i, n_args;
+  size_t i, n_args, max_n_args;
   if (!ctx) {
     return GRN_INVALID_ARGUMENT;
   }
@@ -812,7 +812,11 @@ grn_ts_expr_push_op(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_op_type op_type) {
   if (!n_args) {
     GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid #arguments: %zu", n_args);
   }
-  if (n_args > expr->stack_depth) {
+  max_n_args = expr->stack_depth;
+  if (expr->n_bridges) {
+    max_n_args -= expr->bridges[expr->n_bridges - 1].stack_depth;
+  }
+  if (n_args > max_n_args) {
     GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid #arguments: %zu, %zu",
                       n_args, expr->stack_depth);
   }
@@ -988,13 +992,21 @@ grn_ts_expr_reserve_bridges(grn_ctx *ctx, grn_ts_expr *expr) {
 grn_rc
 grn_ts_expr_begin_subexpr(grn_ctx *ctx, grn_ts_expr *expr) {
   grn_rc rc;
+  size_t max_n_args;
   grn_obj *obj;
   grn_ts_expr_node *node;
   grn_ts_expr_bridge *bridge;
   if (!ctx) {
     return GRN_INVALID_ARGUMENT;
   }
-  if (!expr || (expr->type != GRN_TS_EXPR_INCOMPLETE) || !expr->stack_depth) {
+  if (!expr || (expr->type != GRN_TS_EXPR_INCOMPLETE)) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
+  }
+  max_n_args = expr->stack_depth;
+  if (expr->n_bridges) {
+    max_n_args -= expr->bridges[expr->n_bridges - 1].stack_depth;
+  }
+  if (!max_n_args) {
     GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
   }
 
