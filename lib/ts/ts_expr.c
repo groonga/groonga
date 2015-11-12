@@ -36,99 +36,6 @@
 #include "ts_expr_parser.h"
 
 /*-------------------------------------------------------------
- * Built-in data kinds.
- */
-
-/* grn_ts_bool_is_valid() returns whether a value is valid or not. */
-inline static grn_ts_bool
-grn_ts_bool_is_valid(grn_ts_bool value) {
-  return GRN_TRUE;
-}
-
-/* grn_ts_int_is_valid() returns whether a value is valid or not. */
-inline static grn_ts_bool
-grn_ts_int_is_valid(grn_ts_int value) {
-  return GRN_TRUE;
-}
-
-/* grn_ts_float_is_valid() returns whether a value is valid or not. */
-inline static grn_ts_bool
-grn_ts_float_is_valid(grn_ts_float value) {
-  return isfinite(value);
-}
-
-/* grn_ts_time_is_valid() returns whether a value is valid or not. */
-inline static grn_ts_bool
-grn_ts_time_is_valid(grn_ts_time value) {
-  return GRN_TRUE;
-}
-
-/* grn_ts_text_is_valid() returns whether a value is valid or not. */
-inline static grn_ts_bool
-grn_ts_text_is_valid(grn_ts_text value) {
-  return value.ptr || !value.size;
-}
-
-/* grn_ts_geo_is_valid() returns whether a value is valid or not. */
-inline static grn_ts_bool
-grn_ts_geo_is_valid(grn_ts_geo value) {
-  return ((value.latitude >= GRN_GEO_MIN_LATITUDE) &&
-          (value.latitude <= GRN_GEO_MAX_LATITUDE)) &&
-         ((value.longitude >= GRN_GEO_MIN_LONGITUDE) &&
-          (value.longitude <= GRN_GEO_MAX_LONGITUDE));
-}
-
-#define GRN_TS_VECTOR_IS_VALID(type)\
-  if (value.size) {\
-    size_t i;\
-    if (!value.ptr) {\
-      return GRN_FALSE;\
-    }\
-    for (i = 0; i < value.size; i++) {\
-      if (!grn_ts_ ## type ## _is_valid(value.ptr[i])) {\
-        return GRN_FALSE;\
-      }\
-    }\
-  }\
-  return GRN_TRUE;
-/* grn_ts_bool_vector_is_valid() returns whether a value is valid or not. */
-inline static grn_ts_bool
-grn_ts_bool_vector_is_valid(grn_ts_bool_vector value) {
-  GRN_TS_VECTOR_IS_VALID(bool)
-}
-
-/* grn_ts_int_vector_is_valid() returns whether a value is valid or not. */
-inline static grn_ts_bool
-grn_ts_int_vector_is_valid(grn_ts_int_vector value) {
-  GRN_TS_VECTOR_IS_VALID(int)
-}
-
-/* grn_ts_float_vector_is_valid() returns whether a value is valid or not. */
-inline static grn_ts_bool
-grn_ts_float_vector_is_valid(grn_ts_float_vector value) {
-  GRN_TS_VECTOR_IS_VALID(float)
-}
-
-/* grn_ts_time_vector_is_valid() returns whether a value is valid or not. */
-inline static grn_ts_bool
-grn_ts_time_vector_is_valid(grn_ts_time_vector value) {
-  GRN_TS_VECTOR_IS_VALID(time)
-}
-
-/* grn_ts_text_vector_is_valid() returns whether a value is valid or not. */
-inline static grn_ts_bool
-grn_ts_text_vector_is_valid(grn_ts_text_vector value) {
-  GRN_TS_VECTOR_IS_VALID(text)
-}
-
-/* grn_ts_geo_vector_is_valid() returns whether a value is valid or not. */
-inline static grn_ts_bool
-grn_ts_geo_vector_is_valid(grn_ts_geo_vector value) {
-  GRN_TS_VECTOR_IS_VALID(geo)
-}
-#undef GRN_TS_VECTOR_IS_VALID
-
-/*-------------------------------------------------------------
  * grn_ts_expr_bridge.
  */
 
@@ -800,8 +707,7 @@ grn_ts_expr_push_op(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_op_type op_type) {
   if (!ctx) {\
     return GRN_INVALID_ARGUMENT;\
   }\
-  if (!expr || (expr->type != GRN_TS_EXPR_INCOMPLETE) ||\
-      !grn_ts_ ## kind ## _is_valid(value)) {\
+  if (!expr || (expr->type != GRN_TS_EXPR_INCOMPLETE)) {\
     GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");\
   }\
   rc = grn_ts_expr_reserve_stack(ctx, expr);\

@@ -1964,10 +1964,43 @@ grn_ts_expr_const_node_set_vector(grn_ctx *ctx, grn_ts_expr_const_node *node,
 }
 #undef GRN_TS_EXPR_CONST_NODE_SET_VECTOR_CASE
 
+#define GRN_TS_EXPR_CONST_NODE_CHECK_VALUE(KIND, kind)\
+  case GRN_TS_ ## KIND: {\
+    if (!grn_ts_ ## kind ## _is_valid(*(const grn_ts_ ## kind *)value)) {\
+      GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");\
+    }\
+    return GRN_SUCCESS;\
+  }
+static grn_rc
+grn_ts_expr_const_node_check_value(grn_ctx *ctx, grn_ts_data_kind kind,
+                                   const void *value) {
+  switch (kind) {
+    GRN_TS_EXPR_CONST_NODE_CHECK_VALUE(BOOL, bool)
+    GRN_TS_EXPR_CONST_NODE_CHECK_VALUE(INT, int)
+    GRN_TS_EXPR_CONST_NODE_CHECK_VALUE(FLOAT, float)
+    GRN_TS_EXPR_CONST_NODE_CHECK_VALUE(TIME, time)
+    GRN_TS_EXPR_CONST_NODE_CHECK_VALUE(TEXT, text)
+    GRN_TS_EXPR_CONST_NODE_CHECK_VALUE(GEO, geo)
+    GRN_TS_EXPR_CONST_NODE_CHECK_VALUE(BOOL_VECTOR, bool_vector)
+    GRN_TS_EXPR_CONST_NODE_CHECK_VALUE(INT_VECTOR, int_vector)
+    GRN_TS_EXPR_CONST_NODE_CHECK_VALUE(FLOAT_VECTOR, float_vector)
+    GRN_TS_EXPR_CONST_NODE_CHECK_VALUE(TIME_VECTOR, time_vector)
+    GRN_TS_EXPR_CONST_NODE_CHECK_VALUE(TEXT_VECTOR, text_vector)
+    GRN_TS_EXPR_CONST_NODE_CHECK_VALUE(GEO_VECTOR, geo_vector)
+    default: {
+      GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
+    }
+  }
+}
+#undef GRN_TS_EXPR_CONST_NODE_CHECK_VALUE
+
 grn_rc
 grn_ts_expr_const_node_open(grn_ctx *ctx, grn_ts_data_kind kind,
                             const void *value, grn_ts_expr_node **node) {
-  grn_rc rc;
+  grn_rc rc = grn_ts_expr_const_node_check_value(ctx, kind, value);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
   grn_ts_expr_const_node *new_node = GRN_MALLOCN(grn_ts_expr_const_node, 1);
   if (!new_node) {
     GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
