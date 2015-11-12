@@ -1,0 +1,9 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR Text
+
+load --table Memos
+[
+{"content": "こんばんは"}
+]
+
+select Memos --filter 'content @ "んは"'
