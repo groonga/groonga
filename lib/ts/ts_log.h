@@ -19,7 +19,7 @@
 #ifndef GRN_TS_LOG_H
 #define GRN_TS_LOG_H
 
-#include "../grn_ts.h"
+#include "../grn.h"
 
 #ifdef __cplusplus
 extern "C" {
