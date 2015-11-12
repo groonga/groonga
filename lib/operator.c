@@ -672,18 +672,55 @@ string_have_sub_text(grn_ctx *ctx,
 {
   /* TODO: Use more fast algorithm such as Boyer-Moore algorithm that
    * is used in snip.c. */
+  const char *text_current = text;
   const char *text_end = text + text_len;
-  unsigned int sub_text_current = 0;
+  const char *sub_text_current = sub_text;
+  const char *sub_text_end = sub_text + sub_text_len;
+  int sub_text_start_char_len;
+  int sub_text_char_len;
 
-  for (; text < text_end; text++) {
-    if (text[0] == sub_text[sub_text_current]) {
-      sub_text_current++;
-      if (sub_text_current == sub_text_len) {
+  if (sub_text_len == 0) {
+    return GRN_FALSE;
+  }
+
+  if (sub_text_len > text_len) {
+    return GRN_FALSE;
+  }
+
+  sub_text_start_char_len = grn_charlen(ctx, sub_text, sub_text_end);
+  if (sub_text_start_char_len == 0) {
+    return GRN_FALSE;
+  }
+  sub_text_char_len = sub_text_start_char_len;
+
+  while (text_current < text_end) {
+    int text_char_len;
+
+    text_char_len = grn_charlen(ctx, text_current, text_end);
+    if (text_char_len == 0) {
+      return GRN_FALSE;
+    }
+
+    if (text_char_len == sub_text_char_len &&
+        memcmp(text_current, sub_text_current, text_char_len) == 0) {
+      sub_text_current += sub_text_char_len;
+      if (sub_text_current == sub_text_end) {
         return GRN_TRUE;
       }
+
+      sub_text_char_len = grn_charlen(ctx, sub_text_current, sub_text_end);
+      if (sub_text_char_len == 0) {
+        return GRN_FALSE;
+      }
     } else {
-      sub_text_current = 0;
+      if (sub_text_current != sub_text) {
+        sub_text_current = sub_text;
+        sub_text_char_len = sub_text_start_char_len;
+        continue;
+      }
     }
+
+    text_current += text_char_len;
   }
 
   return GRN_FALSE;
