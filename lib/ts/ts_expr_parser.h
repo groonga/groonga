@@ -20,6 +20,7 @@
 #define GRN_TS_EXPR_PARSER_H
 
 #include "ts_expr.h"
+#include "ts_op.h"
 #include "ts_types.h"
 
 #ifdef __cplusplus

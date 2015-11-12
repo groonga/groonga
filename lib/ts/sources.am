@@ -8,6 +8,8 @@ libgrnts_la_SOURCES =				\
 	ts_expr_parser.c			\
 	ts_expr_parser.h			\
 	ts_log.h				\
+	ts_op.c					\
+	ts_op.h					\
 	ts_str.c				\
 	ts_str.h				\
 	ts_types.h				\

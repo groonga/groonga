@@ -292,9 +292,6 @@ grn_ts_data_kind_to_type(grn_ts_data_kind kind) {
  * Operators.
  */
 
-/* Operator precedence. */
-typedef int grn_ts_op_precedence;
-
 /* grn_ts_op_logical_not_bool() returns !arg. */
 inline static grn_ts_bool
 grn_ts_op_logical_not_bool(grn_ts_bool arg) {

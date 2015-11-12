@@ -21,6 +21,7 @@
 
 #include "ts_buf.h"
 #include "ts_expr_node.h"
+#include "ts_op.h"
 #include "ts_types.h"
 
 #ifdef __cplusplus
