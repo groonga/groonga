@@ -53,7 +53,11 @@ grn_rc grn_ts_buf_reserve(grn_ctx *ctx, grn_ts_buf *buf, size_t new_size);
 /* grn_ts_buf_resize() resizes a buffer. */
 grn_rc grn_ts_buf_resize(grn_ctx *ctx, grn_ts_buf *buf, size_t new_size);
 
-/* grn_ts_buf_write() appends data into a buffer. */
+/*
+ * grn_ts_buf_write() writes data into a buffer. buf->pos specifies the
+ * position and it will be modified on success.
+ * Note that this function resizes a buffer if required.
+ */
 grn_rc grn_ts_buf_write(grn_ctx *ctx, grn_ts_buf *buf,
                         const void *ptr, size_t size);
 
