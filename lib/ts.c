@@ -722,7 +722,10 @@ grn_ts_select_filter(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
 static grn_rc
 grn_ts_select_scorer(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
                      grn_ts_record *records, size_t n_records) {
-  grn_ts_str rest = grn_ts_str_trim_left(str);
+  grn_rc rc;
+  grn_ts_str rest;
+  grn_ts_expr *expr;
+  rest = grn_ts_str_trim_left(str);
   if (!rest.size) {
     return GRN_SUCCESS;
   }
@@ -741,8 +744,13 @@ grn_ts_select_scorer(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
       rest = str;
     }
   }
-  // TODO
-  return GRN_SUCCESS;
+  rc = grn_ts_expr_parse(ctx, table, rest.ptr, rest.size, &expr);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  rc = grn_ts_expr_adjust(ctx, expr, records, n_records);
+  grn_ts_expr_close(ctx, expr);
+  return rc;
 }
 
 /* grn_ts_select_output() outputs the results. */
