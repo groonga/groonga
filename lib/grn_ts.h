@@ -38,9 +38,9 @@ extern "C" {
  * `ctx`.
  */
 grn_rc grn_ts_select(grn_ctx *ctx, grn_obj *table,
-                     const char *filter_ptr, size_t filter_size,
-                     const char *output_columns_ptr,
-                     size_t output_columns_size,
+                     const char *filter_ptr, size_t filter_len,
+                     const char *scorer_ptr, size_t scorer_len,
+                     const char *output_columns_ptr, size_t output_columns_len,
                      size_t offset, size_t limit);
 
 #ifdef __cplusplus

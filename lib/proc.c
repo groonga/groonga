@@ -1014,6 +1014,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
     if (filter_len && (filter[0] == '?') &&
         (ctx->impl->output_type == GRN_CONTENT_JSON)) {
       ctx->rc = grn_ts_select(ctx, table_, filter + 1, filter_len - 1,
+                              scorer, scorer_len,
                               output_columns, output_columns_len,
                               offset, limit);
       if (!ctx->rc && cacheable && cache_key_size <= GRN_CACHE_MAX_KEY_SIZE &&

@@ -616,10 +616,6 @@ grn_ts_writer_output(grn_ctx *ctx, grn_ts_writer *writer,
   return GRN_SUCCESS;
 }
 
-/*-------------------------------------------------------------
- * API.
- */
-
 /* grn_ts_select_filter() applies a filter to all the records of a table. */
 static grn_rc
 grn_ts_select_filter(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
@@ -722,6 +718,14 @@ grn_ts_select_filter(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
   return GRN_SUCCESS;
 }
 
+/* grn_ts_select_scorer() adjust scores. */
+static grn_rc
+grn_ts_select_scorer(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
+                     grn_ts_record *records, size_t n_records) {
+  // TODO
+  return GRN_SUCCESS;
+}
+
 /* grn_ts_select_output() outputs the results. */
 static grn_rc
 grn_ts_select_output(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
@@ -736,26 +740,35 @@ grn_ts_select_output(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
   return rc;
 }
 
+/*-------------------------------------------------------------
+ * API.
+ */
+
 grn_rc
 grn_ts_select(grn_ctx *ctx, grn_obj *table,
-              const char *filter_ptr, size_t filter_size,
-              const char *output_columns_ptr, size_t output_columns_size,
+              const char *filter_ptr, size_t filter_len,
+              const char *scorer_ptr, size_t scorer_len,
+              const char *output_columns_ptr, size_t output_columns_len,
               size_t offset, size_t limit) {
   grn_rc rc;
-  grn_ts_str filter = { filter_ptr, filter_size };
-  grn_ts_str output_columns = { output_columns_ptr, output_columns_size };
+  grn_ts_str filter = { filter_ptr, filter_len };
+  grn_ts_str scorer = { scorer_ptr, scorer_len };
+  grn_ts_str output_columns = { output_columns_ptr, output_columns_len };
   grn_ts_record *records = NULL;
   size_t n_records, n_hits;
   if (!ctx || !table || !grn_ts_obj_is_table(ctx, table) ||
-      (!filter_ptr && filter_size) ||
-      (!output_columns_ptr && output_columns_size)) {
+      (!filter_ptr && filter_len) || (!scorer_ptr && scorer_len) ||
+      (!output_columns_ptr && output_columns_len)) {
     return GRN_INVALID_ARGUMENT;
   }
   rc = grn_ts_select_filter(ctx, table, filter, offset, limit,
                             &records, &n_records, &n_hits);
   if (rc == GRN_SUCCESS) {
-    rc = grn_ts_select_output(ctx, table, output_columns,
-                              records, n_records, n_hits);
+    rc = grn_ts_select_scorer(ctx, table, scorer, records, n_records);
+    if (rc == GRN_SUCCESS) {
+      rc = grn_ts_select_output(ctx, table, output_columns,
+                                records, n_records, n_hits);
+    }
   }
   if (records) {
     GRN_FREE(records);
