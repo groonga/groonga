@@ -21,6 +21,10 @@
 #include <ctype.h>
 #include <string.h>
 
+/*-------------------------------------------------------------
+ * Byte.
+ */
+
 grn_ts_bool
 grn_ts_byte_is_decimal(uint8_t byte)
 {
@@ -41,6 +45,19 @@ grn_ts_byte_is_name_char(uint8_t byte)
   return GRN_FALSE;
 }
 
+/*-------------------------------------------------------------
+ * String.
+ */
+
+grn_ts_bool
+grn_ts_str_starts_with(grn_ts_str str, grn_ts_str prefix)
+{
+  if (str.size < prefix.size) {
+    return GRN_FALSE;
+  }
+  return !memcmp(str.ptr, prefix.ptr, prefix.size);
+}
+
 grn_ts_str
 grn_ts_str_trim_left(grn_ts_str str)
 {
@@ -53,73 +70,6 @@ grn_ts_str_trim_left(grn_ts_str str)
   str.ptr += i;
   str.size -= i;
   return str;
-}
-
-grn_ts_bool
-grn_ts_str_is_true(grn_ts_str str)
-{
-  return (str.size == 4) && !memcmp(str.ptr, "true", 4);
-}
-
-grn_ts_bool
-grn_ts_str_is_false(grn_ts_str str)
-{
-  return (str.size == 5) && !memcmp(str.ptr, "false", 5);
-}
-
-grn_ts_bool
-grn_ts_str_is_bool(grn_ts_str str)
-{
-  return grn_ts_str_is_true(str) || grn_ts_str_is_false(str);
-}
-
-grn_ts_bool
-grn_ts_str_is_name_prefix(grn_ts_str str)
-{
-  size_t i;
-  for (i = 0; i < str.size; i++) {
-    if (!grn_ts_byte_is_name_char(str.ptr[i])) {
-      return GRN_FALSE;
-    }
-  }
-  return GRN_TRUE;
-}
-
-grn_ts_bool
-grn_ts_str_is_name(grn_ts_str str)
-{
-  if (!str.size) {
-    return GRN_FALSE;
-  }
-  return grn_ts_str_is_name_prefix(str);
-}
-
-grn_ts_bool
-grn_ts_str_is_id_name(grn_ts_str str)
-{
-  return (str.size == GRN_COLUMN_NAME_ID_LEN) &&
-         !memcmp(str.ptr, GRN_COLUMN_NAME_ID, GRN_COLUMN_NAME_ID_LEN);
-}
-
-grn_ts_bool
-grn_ts_str_is_score_name(grn_ts_str str)
-{
-  return (str.size == GRN_COLUMN_NAME_SCORE_LEN) &&
-         !memcmp(str.ptr, GRN_COLUMN_NAME_SCORE, GRN_COLUMN_NAME_SCORE_LEN);
-}
-
-grn_ts_bool
-grn_ts_str_is_key_name(grn_ts_str str)
-{
-  return (str.size == GRN_COLUMN_NAME_KEY_LEN) &&
-         !memcmp(str.ptr, GRN_COLUMN_NAME_KEY, GRN_COLUMN_NAME_KEY_LEN);
-}
-
-grn_ts_bool
-grn_ts_str_is_value_name(grn_ts_str str)
-{
-  return (str.size == GRN_COLUMN_NAME_VALUE_LEN) &&
-         !memcmp(str.ptr, GRN_COLUMN_NAME_VALUE, GRN_COLUMN_NAME_VALUE_LEN);
 }
 
 grn_ts_bool
@@ -151,4 +101,71 @@ grn_ts_str_has_number_prefix(grn_ts_str str)
       return GRN_FALSE;
     }
   }
+}
+
+grn_ts_bool
+grn_ts_str_is_name_prefix(grn_ts_str str)
+{
+  size_t i;
+  for (i = 0; i < str.size; i++) {
+    if (!grn_ts_byte_is_name_char(str.ptr[i])) {
+      return GRN_FALSE;
+    }
+  }
+  return GRN_TRUE;
+}
+
+grn_ts_bool
+grn_ts_str_is_name(grn_ts_str str)
+{
+  if (!str.size) {
+    return GRN_FALSE;
+  }
+  return grn_ts_str_is_name_prefix(str);
+}
+
+grn_ts_bool
+grn_ts_str_is_true(grn_ts_str str)
+{
+  return (str.size == 4) && !memcmp(str.ptr, "true", 4);
+}
+
+grn_ts_bool
+grn_ts_str_is_false(grn_ts_str str)
+{
+  return (str.size == 5) && !memcmp(str.ptr, "false", 5);
+}
+
+grn_ts_bool
+grn_ts_str_is_bool(grn_ts_str str)
+{
+  return grn_ts_str_is_true(str) || grn_ts_str_is_false(str);
+}
+
+grn_ts_bool
+grn_ts_str_is_id_name(grn_ts_str str)
+{
+  return (str.size == GRN_COLUMN_NAME_ID_LEN) &&
+         !memcmp(str.ptr, GRN_COLUMN_NAME_ID, GRN_COLUMN_NAME_ID_LEN);
+}
+
+grn_ts_bool
+grn_ts_str_is_score_name(grn_ts_str str)
+{
+  return (str.size == GRN_COLUMN_NAME_SCORE_LEN) &&
+         !memcmp(str.ptr, GRN_COLUMN_NAME_SCORE, GRN_COLUMN_NAME_SCORE_LEN);
+}
+
+grn_ts_bool
+grn_ts_str_is_key_name(grn_ts_str str)
+{
+  return (str.size == GRN_COLUMN_NAME_KEY_LEN) &&
+         !memcmp(str.ptr, GRN_COLUMN_NAME_KEY, GRN_COLUMN_NAME_KEY_LEN);
+}
+
+grn_ts_bool
+grn_ts_str_is_value_name(grn_ts_str str)
+{
+  return (str.size == GRN_COLUMN_NAME_VALUE_LEN) &&
+         !memcmp(str.ptr, GRN_COLUMN_NAME_VALUE, GRN_COLUMN_NAME_VALUE_LEN);
 }

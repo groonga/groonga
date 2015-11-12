@@ -25,10 +25,9 @@
 extern "C" {
 #endif
 
-typedef struct {
-  const char *ptr; /* The starting address. */
-  size_t size;     /* The size in bytes. */
-} grn_ts_str;
+/*-------------------------------------------------------------
+ * Byte.
+ */
 
 /* grn_ts_byte_is_decimal() returns whether or not a byte is decimal. */
 grn_ts_bool grn_ts_byte_is_decimal(uint8_t byte);
@@ -39,17 +38,26 @@ grn_ts_bool grn_ts_byte_is_decimal(uint8_t byte);
  */
 grn_ts_bool grn_ts_byte_is_name_char(uint8_t byte);
 
+/*-------------------------------------------------------------
+ * String.
+ */
+
+typedef struct {
+  const char *ptr; /* The starting address. */
+  size_t size;     /* The size in bytes. */
+} grn_ts_str;
+
+/* grn_ts_str_has_prefix() returns whether or not str starts with prefix. */
+grn_ts_bool grn_ts_str_starts_with(grn_ts_str str, grn_ts_str prefix);
+
 /* grn_ts_str_trim_left() returns a string without the leading white-spaces. */
 grn_ts_str grn_ts_str_trim_left(grn_ts_str str);
 
-/* grn_ts_str_is_true() returns str == "true". */
-grn_ts_bool grn_ts_str_is_true(grn_ts_str str);
-
-/* grn_ts_str_is_false() returns str == "false". */
-grn_ts_bool grn_ts_str_is_false(grn_ts_str str);
-
-/* grn_ts_str_is_bool() returns (str == "true") || (str == "false"). */
-grn_ts_bool grn_ts_str_is_bool(grn_ts_str str);
+/*
+ * grn_ts_str_has_number_prefix() returns whether or not a string starts with a
+ * number or not.
+ */
+grn_ts_bool grn_ts_str_has_number_prefix(grn_ts_str str);
 
 /*
  * grn_ts_str_is_name_prefix() returns whether or not a string is valid as a
@@ -63,6 +71,15 @@ grn_ts_bool grn_ts_str_is_name_prefix(grn_ts_str str);
  */
 grn_ts_bool grn_ts_str_is_name(grn_ts_str str);
 
+/* grn_ts_str_is_true() returns str == "true". */
+grn_ts_bool grn_ts_str_is_true(grn_ts_str str);
+
+/* grn_ts_str_is_false() returns str == "false". */
+grn_ts_bool grn_ts_str_is_false(grn_ts_str str);
+
+/* grn_ts_str_is_bool() returns (str == "true") || (str == "false"). */
+grn_ts_bool grn_ts_str_is_bool(grn_ts_str str);
+
 /* grn_ts_str_is_id_name() returns str == "_id". */
 grn_ts_bool grn_ts_str_is_id_name(grn_ts_str str);
 
@@ -74,12 +91,6 @@ grn_ts_bool grn_ts_str_is_key_name(grn_ts_str str);
 
 /* grn_ts_str_is_value_name() returns str == "_value". */
 grn_ts_bool grn_ts_str_is_value_name(grn_ts_str str);
-
-/*
- * grn_ts_str_has_number_prefix() returns whether or not a string starts with a
- * number or not.
- */
-grn_ts_bool grn_ts_str_has_number_prefix(grn_ts_str str);
 
 #ifdef __cplusplus
 }
