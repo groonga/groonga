@@ -140,7 +140,7 @@ grn_rc grn_ts_expr_push_score(grn_ctx *ctx, grn_ts_expr *expr);
 grn_rc grn_ts_expr_push_key(grn_ctx *ctx, grn_ts_expr *expr);
 /* grn_ts_expr_push_key() pushes "_value". */
 grn_rc grn_ts_expr_push_value(grn_ctx *ctx, grn_ts_expr *expr);
-/* grn_ts_expr_push_const() pushes a column. */
+/* grn_ts_expr_push_const() pushes a const. */
 grn_rc grn_ts_expr_push_const(grn_ctx *ctx, grn_ts_expr *expr,
                               grn_ts_data_kind kind, const void *value);
 /* grn_ts_expr_push_column() pushes a column. */
