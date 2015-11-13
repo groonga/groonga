@@ -19,7 +19,6 @@
 #include <fcntl.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <math.h>
 
 #ifdef WIN32
 # include <io.h>
@@ -6726,7 +6725,9 @@ grn_ii_estimate_size_for_query(grn_ctx *ctx, grn_ii *ii,
     if (i == 0) {
       estimated_size = term_estimated_size;
     } else {
-      estimated_size = fmin(estimated_size, term_estimated_size);
+      if (term_estimated_size < estimated_size) {
+        estimated_size = term_estimated_size;
+      }
     }
   }
 
