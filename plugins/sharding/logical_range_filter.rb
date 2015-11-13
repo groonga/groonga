@@ -224,40 +224,7 @@ module Groonga
             range_index = nil
           end
 
-          case @cover_type
-          when :all
-            filter_shard_all(range_index, expression_builder)
-          when :partial_min
-            if range_index
-              filter_by_range(range_index,
-                              @target_range.min, @target_range.min_border,
-                              nil, nil)
-            else
-              filter_table do |expression|
-                expression_builder.build_partial_min(expression)
-              end
-            end
-          when :partial_max
-            if range_index
-              filter_by_range(range_index,
-                              nil, nil,
-                              @target_range.max, @target_range.max_border)
-            else
-              filter_table do |expression|
-                expression_builder.build_partial_max(expression)
-              end
-            end
-          when :partial_min_and_max
-            if range_index
-              filter_by_range(range_index,
-                              @target_range.min, @target_range.min_border,
-                              @target_range.max, @target_range.max_border)
-            else
-              filter_table do |expression|
-                expression_builder.build_partial_min_and_max(expression)
-              end
-            end
-          end
+          execute_filter(range_index, expression_builder)
         end
 
         private
@@ -444,6 +411,43 @@ module Groonga
           nil
         end
 
+        def execute_filter(range_index, expression_builder)
+          case @cover_type
+          when :all
+            filter_shard_all(range_index, expression_builder)
+          when :partial_min
+            if range_index
+              filter_by_range(range_index, expression_builder,
+                              @target_range.min, @target_range.min_border,
+                              nil, nil)
+            else
+              filter_table do |expression|
+                expression_builder.build_partial_min(expression)
+              end
+            end
+          when :partial_max
+            if range_index
+              filter_by_range(range_index, expression_builder,
+                              nil, nil,
+                              @target_range.max, @target_range.max_border)
+            else
+              filter_table do |expression|
+                expression_builder.build_partial_max(expression)
+              end
+            end
+          when :partial_min_and_max
+            if range_index
+              filter_by_range(range_index, expression_builder,
+                              @target_range.min, @target_range.min_border,
+                              @target_range.max, @target_range.max_border)
+            else
+              filter_table do |expression|
+                expression_builder.build_partial_min_and_max(expression)
+              end
+            end
+          end
+        end
+
         def filter_shard_all(range_index, expression_builder)
           table = @shard.table
           if @filter.nil?
@@ -452,7 +456,7 @@ module Groonga
               return
             end
             if range_index
-              filter_by_range(range_index,
+              filter_by_range(range_index, expression_builder,
                               nil, nil,
                               nil, nil)
             else
@@ -460,7 +464,7 @@ module Groonga
             end
           else
             if range_index
-              filter_by_range(range_index,
+              filter_by_range(range_index, expression_builder,
                               nil, nil,
                               nil, nil)
             else
@@ -480,7 +484,7 @@ module Groonga
           end
         end
 
-        def filter_by_range(range_index,
+        def filter_by_range(range_index, expression_builder,
                             min, min_border, max, max_border)
           lexicon = range_index.domain
           data_table = range_index.range
@@ -503,6 +507,7 @@ module Groonga
               else
                 options[:limit] = current_limit
               end
+              options[:max_n_unmatched_records] = options[:limit] * 100
               if @filter
                 create_expression(data_table) do |expression|
                   expression.parse(@filter)
@@ -515,6 +520,11 @@ module Groonga
                 IndexCursor.open(table_cursor, range_index) do |index_cursor|
                   n_matched_records = index_cursor.select(result_set, options)
                 end
+              end
+              if n_matched_records == -1
+                result_set.close
+                execute_filter(nil, expression_builder)
+                return
               end
             end
           rescue

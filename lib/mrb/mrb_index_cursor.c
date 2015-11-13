@@ -123,7 +123,9 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
   grn_obj *expr_variable = NULL;
   int offset = 0;
   int limit = 10;
+  int max_n_unmatched_records = -1;
   int n_matched_records = 0;
+  int n_unmatched_records = 0;
   mrb_value mrb_index;
   grn_obj *index;
   grn_obj *lexicon;
@@ -142,6 +144,7 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
     mrb_value mrb_expr;
     mrb_value mrb_offset;
     mrb_value mrb_limit;
+    mrb_value mrb_max_n_unmatched_records;
 
     mrb_expr = grn_mrb_options_get_lit(mrb, mrb_options, "expression");
     if (!mrb_nil_p(mrb_expr)) {
@@ -158,6 +161,12 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
     if (!mrb_nil_p(mrb_limit)) {
       limit = mrb_fixnum(mrb_limit);
     }
+
+    mrb_max_n_unmatched_records =
+      grn_mrb_options_get_lit(mrb, mrb_options, "max_n_unmatched_records");
+    if (!mrb_nil_p(mrb_max_n_unmatched_records)) {
+      max_n_unmatched_records = mrb_fixnum(mrb_max_n_unmatched_records);
+    }
   }
 
   if (limit <= 0) {
@@ -169,19 +178,27 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
   lexicon = ((grn_ii *)index)->lexicon;
   data_table = grn_ctx_at(ctx, grn_obj_get_range(ctx, index));
 
+  if (max_n_unmatched_records < 0) {
+    max_n_unmatched_records = INT32_MAX;
+  }
   while ((posting = grn_index_cursor_next(ctx, index_cursor, &term_id))) {
     if (expr) {
-      grn_bool matched_raw;
+      grn_bool matched_raw = GRN_FALSE;
       grn_obj *matched;
 
       GRN_RECORD_SET(ctx, expr_variable, posting->rid);
       matched = grn_expr_exec(ctx, expr, 0);
-      if (!matched) {
+      if (matched) {
+        GRN_OBJ_IS_TRUE(ctx, matched, matched_raw);
+      } else {
         grn_mrb_ctx_check(mrb);
-        continue;
       }
-      GRN_OBJ_IS_TRUE(ctx, matched, matched_raw);
+
       if (!matched_raw) {
+        n_unmatched_records++;
+        if (n_unmatched_records > max_n_unmatched_records) {
+          return mrb_fixnum_value(-1);
+        }
         continue;
       }
     }
