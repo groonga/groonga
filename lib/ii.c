@@ -73,6 +73,7 @@
 
 static grn_bool grn_ii_cursor_set_min_enable = GRN_FALSE;
 static double grn_ii_select_too_many_index_match_ratio = -1;
+static double grn_ii_estimate_size_for_query_reduce_ratio = 0.9;
 
 void
 grn_ii_init_from_env(void)
@@ -97,6 +98,17 @@ grn_ii_init_from_env(void)
     if (grn_ii_select_too_many_index_match_ratio_env[0]) {
       grn_ii_select_too_many_index_match_ratio =
         atof(grn_ii_select_too_many_index_match_ratio_env);
+    }
+  }
+
+  {
+    char grn_ii_estimate_size_for_query_reduce_ratio_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_II_ESTIMATE_SIZE_FOR_QUERY_REDUCE_RATIO",
+               grn_ii_estimate_size_for_query_reduce_ratio_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_ii_estimate_size_for_query_reduce_ratio_env[0]) {
+      grn_ii_estimate_size_for_query_reduce_ratio =
+        atof(grn_ii_estimate_size_for_query_reduce_ratio_env);
     }
   }
 }
@@ -6680,6 +6692,7 @@ grn_ii_estimate_size_for_query(grn_ctx *ctx, grn_ii *ii,
   grn_bool only_skip_token = GRN_FALSE;
   grn_operator mode = GRN_OP_EXACT;
   double estimated_size = 0;
+  double normalized_ratio = 1.0;
 
   if (query_len == 0) {
     return 0;
@@ -6728,7 +6741,13 @@ grn_ii_estimate_size_for_query(grn_ctx *ctx, grn_ii *ii,
       if (term_estimated_size < estimated_size) {
         estimated_size = term_estimated_size;
       }
+      normalized_ratio *= grn_ii_estimate_size_for_query_reduce_ratio;
     }
+  }
+
+  estimated_size *= normalized_ratio;
+  if (estimated_size > 0.0 && estimated_size < 1.0) {
+    estimated_size = 1.0;
   }
 
 exit :
