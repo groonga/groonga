@@ -40,37 +40,43 @@
 
 /* grn_ts_bool_is_valid() returns whether a value is valid or not. */
 inline static grn_ts_bool
-grn_ts_bool_is_valid(grn_ts_bool value) {
+grn_ts_bool_is_valid(grn_ts_bool value)
+{
   return GRN_TRUE;
 }
 
 /* grn_ts_int_is_valid() returns whether a value is valid or not. */
 inline static grn_ts_bool
-grn_ts_int_is_valid(grn_ts_int value) {
+grn_ts_int_is_valid(grn_ts_int value)
+{
   return GRN_TRUE;
 }
 
 /* grn_ts_float_is_valid() returns whether a value is valid or not. */
 inline static grn_ts_bool
-grn_ts_float_is_valid(grn_ts_float value) {
+grn_ts_float_is_valid(grn_ts_float value)
+{
   return isfinite(value);
 }
 
 /* grn_ts_time_is_valid() returns whether a value is valid or not. */
 inline static grn_ts_bool
-grn_ts_time_is_valid(grn_ts_time value) {
+grn_ts_time_is_valid(grn_ts_time value)
+{
   return GRN_TRUE;
 }
 
 /* grn_ts_text_is_valid() returns whether a value is valid or not. */
 inline static grn_ts_bool
-grn_ts_text_is_valid(grn_ts_text value) {
+grn_ts_text_is_valid(grn_ts_text value)
+{
   return value.ptr || !value.size;
 }
 
 /* grn_ts_geo_is_valid() returns whether a value is valid or not. */
 inline static grn_ts_bool
-grn_ts_geo_is_valid(grn_ts_geo value) {
+grn_ts_geo_is_valid(grn_ts_geo value)
+{
   return ((value.latitude >= GRN_GEO_MIN_LATITUDE) &&
           (value.latitude <= GRN_GEO_MAX_LATITUDE)) &&
          ((value.longitude >= GRN_GEO_MIN_LONGITUDE) &&
@@ -92,128 +98,149 @@ grn_ts_geo_is_valid(grn_ts_geo value) {
   return GRN_TRUE;
 /* grn_ts_bool_vector_is_valid() returns whether a value is valid or not. */
 inline static grn_ts_bool
-grn_ts_bool_vector_is_valid(grn_ts_bool_vector value) {
+grn_ts_bool_vector_is_valid(grn_ts_bool_vector value)
+{
   GRN_TS_VECTOR_IS_VALID(bool)
 }
 
 /* grn_ts_int_vector_is_valid() returns whether a value is valid or not. */
 inline static grn_ts_bool
-grn_ts_int_vector_is_valid(grn_ts_int_vector value) {
+grn_ts_int_vector_is_valid(grn_ts_int_vector value)
+{
   GRN_TS_VECTOR_IS_VALID(int)
 }
 
 /* grn_ts_float_vector_is_valid() returns whether a value is valid or not. */
 inline static grn_ts_bool
-grn_ts_float_vector_is_valid(grn_ts_float_vector value) {
+grn_ts_float_vector_is_valid(grn_ts_float_vector value)
+{
   GRN_TS_VECTOR_IS_VALID(float)
 }
 
 /* grn_ts_time_vector_is_valid() returns whether a value is valid or not. */
 inline static grn_ts_bool
-grn_ts_time_vector_is_valid(grn_ts_time_vector value) {
+grn_ts_time_vector_is_valid(grn_ts_time_vector value)
+{
   GRN_TS_VECTOR_IS_VALID(time)
 }
 
 /* grn_ts_text_vector_is_valid() returns whether a value is valid or not. */
 inline static grn_ts_bool
-grn_ts_text_vector_is_valid(grn_ts_text_vector value) {
+grn_ts_text_vector_is_valid(grn_ts_text_vector value)
+{
   GRN_TS_VECTOR_IS_VALID(text)
 }
 
 /* grn_ts_geo_vector_is_valid() returns whether a value is valid or not. */
 inline static grn_ts_bool
-grn_ts_geo_vector_is_valid(grn_ts_geo_vector value) {
+grn_ts_geo_vector_is_valid(grn_ts_geo_vector value)
+{
   GRN_TS_VECTOR_IS_VALID(geo)
 }
 #undef GRN_TS_VECTOR_IS_VALID
 
 /* grn_ts_bool_zero() returns a zero. */
 inline static grn_ts_bool
-grn_ts_bool_zero(void) {
+grn_ts_bool_zero(void)
+{
   return GRN_FALSE;
 }
 
 /* grn_ts_int_zero() returns a zero. */
 inline static grn_ts_int
-grn_ts_int_zero(void) {
+grn_ts_int_zero(void)
+{
   return 0;
 }
 
 /* grn_ts_float_zero() returns a zero. */
 inline static grn_ts_float
-grn_ts_float_zero(void) {
+grn_ts_float_zero(void)
+{
   return 0.0;
 }
 
 /* grn_ts_time_zero() returns a zero. */
 inline static grn_ts_time
-grn_ts_time_zero(void) {
+grn_ts_time_zero(void)
+{
   return 0;
 }
 
 /* grn_ts_text_zero() returns a zero. */
 inline static grn_ts_text
-grn_ts_text_zero(void) {
+grn_ts_text_zero(void)
+{
   return (grn_ts_text){ NULL, 0 };
 }
 
 /* grn_ts_geo_zero() returns a zero. */
 inline static grn_ts_geo
-grn_ts_geo_zero(void) {
+grn_ts_geo_zero(void)
+{
   return (grn_ts_geo){ 0, 0 };
 }
 
 /* grn_ts_ref_zero() returns a zero. */
 inline static grn_ts_ref
-grn_ts_ref_zero(void) {
+grn_ts_ref_zero(void)
+{
   return (grn_ts_ref){ 0, 0.0 };
 }
 
 /* grn_ts_bool_vector_zero() returns a zero. */
 inline static grn_ts_bool_vector
-grn_ts_bool_vector_zero(void) {
+grn_ts_bool_vector_zero(void)
+{
   return (grn_ts_bool_vector){ NULL, 0 };
 }
 
 /* grn_ts_int_vector_zero() returns a zero. */
 inline static grn_ts_int_vector
-grn_ts_int_vector_zero(void) {
+grn_ts_int_vector_zero(void)
+{
   return (grn_ts_int_vector){ NULL, 0 };
 }
 
 /* grn_ts_float_vector_zero() returns a zero. */
 inline static grn_ts_float_vector
-grn_ts_float_vector_zero(void) {
+grn_ts_float_vector_zero(void)
+{
   return (grn_ts_float_vector){ NULL, 0 };
 }
 
 /* grn_ts_time_vector_zero() returns a zero. */
 inline static grn_ts_time_vector
-grn_ts_time_vector_zero(void) {
+grn_ts_time_vector_zero(void)
+{
   return (grn_ts_time_vector){ NULL, 0 };
 }
 
 /* grn_ts_text_vector_zero() returns a zero. */
 inline static grn_ts_text_vector
-grn_ts_text_vector_zero(void) {
+grn_ts_text_vector_zero(void)
+{
   return (grn_ts_text_vector){ NULL, 0 };
 }
 
 /* grn_ts_geo_vector_zero() returns a zero. */
 inline static grn_ts_geo_vector
-grn_ts_geo_vector_zero(void) {
+grn_ts_geo_vector_zero(void)
+{
   return (grn_ts_geo_vector){ NULL, 0 };
 }
 
 /* grn_ts_ref_vector_zero() returns a zero. */
 inline static grn_ts_ref_vector
-grn_ts_ref_vector_zero(void) {
+grn_ts_ref_vector_zero(void)
+{
   return (grn_ts_ref_vector){ NULL, 0 };
 }
 
 /* grn_ts_data_type_to_kind() returns a kind associated with a type. */
 static grn_ts_data_kind
-grn_ts_data_type_to_kind(grn_ts_data_type type) {
+grn_ts_data_type_to_kind(grn_ts_data_type type)
+{
   switch (type) {
     case GRN_DB_VOID: {
       return GRN_TS_VOID;
@@ -254,7 +281,8 @@ grn_ts_data_type_to_kind(grn_ts_data_type type) {
 
 /* grn_ts_data_kind_to_type() returns a type associated with a kind. */
 static grn_ts_data_type
-grn_ts_data_kind_to_type(grn_ts_data_kind kind) {
+grn_ts_data_kind_to_type(grn_ts_data_kind kind)
+{
   switch (kind & ~GRN_TS_VECTOR_FLAG) {
     case GRN_TS_BOOL: {
       return GRN_DB_BOOL;
@@ -294,122 +322,142 @@ grn_ts_data_kind_to_type(grn_ts_data_kind kind) {
 
 /* grn_ts_op_logical_not_bool() returns !arg. */
 inline static grn_ts_bool
-grn_ts_op_logical_not_bool(grn_ts_bool arg) {
+grn_ts_op_logical_not_bool(grn_ts_bool arg)
+{
   return !arg;
 }
 
 /* grn_ts_op_bitwise_not_bool() returns ~arg. */
 inline static grn_ts_bool
-grn_ts_op_bitwise_not_bool(grn_ts_bool arg) {
+grn_ts_op_bitwise_not_bool(grn_ts_bool arg)
+{
   return !arg;
 }
 
 /* grn_ts_op_bitwise_not_int() returns ~arg. */
 inline static grn_ts_int
-grn_ts_op_bitwise_not_int(grn_ts_int arg) {
+grn_ts_op_bitwise_not_int(grn_ts_int arg)
+{
   return ~arg;
 }
 
 /* grn_ts_op_positive_int() returns +arg. */
 inline static grn_ts_int
-grn_ts_op_positive_int(grn_ts_int arg) {
+grn_ts_op_positive_int(grn_ts_int arg)
+{
   return arg;
 }
 
 /* grn_ts_op_positive_float() returns +arg. */
 inline static grn_ts_float
-grn_ts_op_positive_float(grn_ts_float arg) {
+grn_ts_op_positive_float(grn_ts_float arg)
+{
   return arg;
 }
 
 /* grn_ts_op_negative_int() returns -arg. */
 inline static grn_ts_int
-grn_ts_op_negative_int(grn_ts_int arg) {
+grn_ts_op_negative_int(grn_ts_int arg)
+{
   return -arg;
 }
 
 /* grn_ts_op_negative_float() returns -arg. */
 inline static grn_ts_float
-grn_ts_op_negative_float(grn_ts_float arg) {
+grn_ts_op_negative_float(grn_ts_float arg)
+{
   return -arg;
 }
 
 /* grn_ts_op_bitwise_and_bool() returns lhs & rhs. */
 inline static grn_ts_bool
-grn_ts_op_bitwise_and_bool(grn_ts_bool lhs, grn_ts_bool rhs) {
+grn_ts_op_bitwise_and_bool(grn_ts_bool lhs, grn_ts_bool rhs)
+{
   return lhs & rhs;
 }
 
 /* grn_ts_op_bitwise_and_int() returns lhs & rhs. */
 inline static grn_ts_int
-grn_ts_op_bitwise_and_int(grn_ts_int lhs, grn_ts_int rhs) {
+grn_ts_op_bitwise_and_int(grn_ts_int lhs, grn_ts_int rhs)
+{
   return lhs & rhs;
 }
 
 /* grn_ts_op_bitwise_or_bool() returns lhs | rhs. */
 inline static grn_ts_bool
-grn_ts_op_bitwise_or_bool(grn_ts_bool lhs, grn_ts_bool rhs) {
+grn_ts_op_bitwise_or_bool(grn_ts_bool lhs, grn_ts_bool rhs)
+{
   return lhs | rhs;
 }
 
 /* grn_ts_op_bitwise_or_int() returns lhs | rhs. */
 inline static grn_ts_int
-grn_ts_op_bitwise_or_int(grn_ts_int lhs, grn_ts_int rhs) {
+grn_ts_op_bitwise_or_int(grn_ts_int lhs, grn_ts_int rhs)
+{
   return lhs | rhs;
 }
 
 /* grn_ts_op_bitwise_xor_bool() returns lhs ^ rhs. */
 inline static grn_ts_bool
-grn_ts_op_bitwise_xor_bool(grn_ts_bool lhs, grn_ts_bool rhs) {
+grn_ts_op_bitwise_xor_bool(grn_ts_bool lhs, grn_ts_bool rhs)
+{
   return lhs ^ rhs;
 }
 
 /* grn_ts_op_bitwise_xor_int() returns lhs ^ rhs. */
 inline static grn_ts_int
-grn_ts_op_bitwise_xor_int(grn_ts_int lhs, grn_ts_int rhs) {
+grn_ts_op_bitwise_xor_int(grn_ts_int lhs, grn_ts_int rhs)
+{
   return lhs ^ rhs;
 }
 
 /* grn_ts_op_equal_bool() returns lhs == rhs. */
 inline static grn_ts_bool
-grn_ts_op_equal_bool(grn_ts_bool lhs, grn_ts_bool rhs) {
+grn_ts_op_equal_bool(grn_ts_bool lhs, grn_ts_bool rhs)
+{
   return lhs == rhs;
 }
 
 /* grn_ts_op_equal_int() returns lhs == rhs. */
 inline static grn_ts_bool
-grn_ts_op_equal_int(grn_ts_int lhs, grn_ts_int rhs) {
+grn_ts_op_equal_int(grn_ts_int lhs, grn_ts_int rhs)
+{
   return lhs == rhs;
 }
 
 /* grn_ts_op_equal_float() returns lhs == rhs. */
 inline static grn_ts_bool
-grn_ts_op_equal_float(grn_ts_float lhs, grn_ts_float rhs) {
+grn_ts_op_equal_float(grn_ts_float lhs, grn_ts_float rhs)
+{
   /* To suppress warnings, "lhs == rhs" is not used. */
   return (lhs <= rhs) && (lhs >= rhs);
 }
 
 /* grn_ts_op_equal_time() returns lhs == rhs. */
 inline static grn_ts_bool
-grn_ts_op_equal_time(grn_ts_time lhs, grn_ts_time rhs) {
+grn_ts_op_equal_time(grn_ts_time lhs, grn_ts_time rhs)
+{
   return lhs == rhs;
 }
 
 /* grn_ts_op_equal_text() returns lhs == rhs. */
 inline static grn_ts_bool
-grn_ts_op_equal_text(grn_ts_text lhs, grn_ts_text rhs) {
+grn_ts_op_equal_text(grn_ts_text lhs, grn_ts_text rhs)
+{
   return (lhs.size == rhs.size) && !memcmp(lhs.ptr, rhs.ptr, lhs.size);
 }
 
 /* grn_ts_op_equal_geo() returns lhs == rhs. */
 inline static grn_ts_bool
-grn_ts_op_equal_geo(grn_ts_geo lhs, grn_ts_geo rhs) {
+grn_ts_op_equal_geo(grn_ts_geo lhs, grn_ts_geo rhs)
+{
   return (lhs.latitude == rhs.latitude) && (lhs.longitude == rhs.longitude);
 }
 
 /* grn_ts_op_equal_ref() returns lhs == rhs. */
 inline static grn_ts_bool
-grn_ts_op_equal_ref(grn_ts_ref lhs, grn_ts_ref rhs) {
+grn_ts_op_equal_ref(grn_ts_ref lhs, grn_ts_ref rhs)
+{
   /* Ignore scores. */
   return lhs.id == rhs.id;
 }
@@ -427,88 +475,101 @@ grn_ts_op_equal_ref(grn_ts_ref lhs, grn_ts_ref rhs) {
   return GRN_TRUE;
 /* grn_ts_op_equal_bool_vector() returns lhs == rhs. */
 inline static grn_ts_bool
-grn_ts_op_equal_bool_vector(grn_ts_bool_vector lhs, grn_ts_bool_vector rhs) {
+grn_ts_op_equal_bool_vector(grn_ts_bool_vector lhs, grn_ts_bool_vector rhs)
+{
   GRN_TS_OP_EQUAL_VECTOR(bool)
 }
 
 /* grn_ts_op_equal_int_vector() returns lhs == rhs. */
 inline static grn_ts_bool
-grn_ts_op_equal_int_vector(grn_ts_int_vector lhs, grn_ts_int_vector rhs) {
+grn_ts_op_equal_int_vector(grn_ts_int_vector lhs, grn_ts_int_vector rhs)
+{
   GRN_TS_OP_EQUAL_VECTOR(int)
 }
 
 /* grn_ts_op_equal_float_vector() returns lhs == rhs. */
 inline static grn_ts_bool
-grn_ts_op_equal_float_vector(grn_ts_float_vector lhs,
-                             grn_ts_float_vector rhs) {
+grn_ts_op_equal_float_vector(grn_ts_float_vector lhs, grn_ts_float_vector rhs)
+{
   GRN_TS_OP_EQUAL_VECTOR(float)
 }
 
 /* grn_ts_op_equal_time_vector() returns lhs == rhs. */
 inline static grn_ts_bool
-grn_ts_op_equal_time_vector(grn_ts_time_vector lhs, grn_ts_time_vector rhs) {
+grn_ts_op_equal_time_vector(grn_ts_time_vector lhs, grn_ts_time_vector rhs)
+{
   GRN_TS_OP_EQUAL_VECTOR(time)
 }
 
 /* grn_ts_op_equal_text_vector() returns lhs == rhs. */
 inline static grn_ts_bool
-grn_ts_op_equal_text_vector(grn_ts_text_vector lhs, grn_ts_text_vector rhs) {
+grn_ts_op_equal_text_vector(grn_ts_text_vector lhs, grn_ts_text_vector rhs)
+{
   GRN_TS_OP_EQUAL_VECTOR(text)
 }
 
 /* grn_ts_op_equal_geo_vector() returns lhs == rhs. */
 inline static grn_ts_bool
-grn_ts_op_equal_geo_vector(grn_ts_geo_vector lhs, grn_ts_geo_vector rhs) {
+grn_ts_op_equal_geo_vector(grn_ts_geo_vector lhs, grn_ts_geo_vector rhs)
+{
   GRN_TS_OP_EQUAL_VECTOR(geo)
 }
 
 /* grn_ts_op_equal_ref_vector() returns lhs == rhs. */
 inline static grn_ts_bool
-grn_ts_op_equal_ref_vector(grn_ts_ref_vector lhs, grn_ts_ref_vector rhs) {
+grn_ts_op_equal_ref_vector(grn_ts_ref_vector lhs, grn_ts_ref_vector rhs)
+{
   GRN_TS_OP_EQUAL_VECTOR(ref)
 }
 #undef GRN_TS_OP_EQUAL_VECTOR
 
 /* grn_ts_op_not_equal_bool() returns lhs != rhs. */
 inline static grn_ts_bool
-grn_ts_op_not_equal_bool(grn_ts_bool lhs, grn_ts_bool rhs) {
+grn_ts_op_not_equal_bool(grn_ts_bool lhs, grn_ts_bool rhs)
+{
   return lhs != rhs;
 }
 
 /* grn_ts_op_not_equal_int() returns lhs != rhs. */
 inline static grn_ts_bool
-grn_ts_op_not_equal_int(grn_ts_int lhs, grn_ts_int rhs) {
+grn_ts_op_not_equal_int(grn_ts_int lhs, grn_ts_int rhs)
+{
   return lhs != rhs;
 }
 
 /* grn_ts_op_not_equal_float() returns lhs != rhs. */
 inline static grn_ts_bool
-grn_ts_op_not_equal_float(grn_ts_float lhs, grn_ts_float rhs) {
+grn_ts_op_not_equal_float(grn_ts_float lhs, grn_ts_float rhs)
+{
   /* To suppress warnings, "lhs != rhs" is not used. */
   return (lhs < rhs) || (lhs > rhs);
 }
 
 /* grn_ts_op_not_equal_time() returns lhs != rhs. */
 inline static grn_ts_bool
-grn_ts_op_not_equal_time(grn_ts_time lhs, grn_ts_time rhs) {
+grn_ts_op_not_equal_time(grn_ts_time lhs, grn_ts_time rhs)
+{
   return lhs != rhs;
 }
 
 /* grn_ts_op_not_equal_text() returns lhs != rhs. */
 inline static grn_ts_bool
-grn_ts_op_not_equal_text(grn_ts_text lhs, grn_ts_text rhs) {
+grn_ts_op_not_equal_text(grn_ts_text lhs, grn_ts_text rhs)
+{
   return (lhs.size != rhs.size) || memcmp(lhs.ptr, rhs.ptr, lhs.size);
 }
 
 /* grn_ts_op_not_equal_geo() returns lhs != rhs. */
 inline static grn_ts_bool
-grn_ts_op_not_equal_geo(grn_ts_geo lhs, grn_ts_geo rhs) {
+grn_ts_op_not_equal_geo(grn_ts_geo lhs, grn_ts_geo rhs)
+{
   return (lhs.latitude != rhs.latitude) || (lhs.longitude != rhs.longitude);
 }
 
 /* grn_ts_op_not_equal_ref() returns lhs != rhs. */
 inline static grn_ts_bool
-grn_ts_op_not_equal_ref(grn_ts_ref lhs, grn_ts_ref rhs) {
+grn_ts_op_not_equal_ref(grn_ts_ref lhs, grn_ts_ref rhs)
+{
   /* Ignore scores. */
   return lhs.id != rhs.id;
 }
@@ -526,72 +587,80 @@ grn_ts_op_not_equal_ref(grn_ts_ref lhs, grn_ts_ref rhs) {
   return GRN_FALSE;
 /* grn_ts_op_not_equal_bool_vector() returns lhs != rhs. */
 inline static grn_ts_bool
-grn_ts_op_not_equal_bool_vector(grn_ts_bool_vector lhs,
-                                grn_ts_bool_vector rhs) {
+grn_ts_op_not_equal_bool_vector(grn_ts_bool_vector lhs, grn_ts_bool_vector rhs)
+{
   GRN_TS_OP_NOT_EQUAL_VECTOR(bool)
 }
 
 /* grn_ts_op_not_equal_int_vector() returns lhs != rhs. */
 inline static grn_ts_bool
-grn_ts_op_not_equal_int_vector(grn_ts_int_vector lhs, grn_ts_int_vector rhs) {
+grn_ts_op_not_equal_int_vector(grn_ts_int_vector lhs, grn_ts_int_vector rhs)
+{
   GRN_TS_OP_NOT_EQUAL_VECTOR(int)
 }
 
 /* grn_ts_op_not_equal_float_vector() returns lhs != rhs. */
 inline static grn_ts_bool
 grn_ts_op_not_equal_float_vector(grn_ts_float_vector lhs,
-                             grn_ts_float_vector rhs) {
+                                 grn_ts_float_vector rhs)
+{
   GRN_TS_OP_NOT_EQUAL_VECTOR(float)
 }
 
 /* grn_ts_op_not_equal_time_vector() returns lhs != rhs. */
 inline static grn_ts_bool
-grn_ts_op_not_equal_time_vector(grn_ts_time_vector lhs,
-                                grn_ts_time_vector rhs) {
+grn_ts_op_not_equal_time_vector(grn_ts_time_vector lhs, grn_ts_time_vector rhs)
+{
   GRN_TS_OP_NOT_EQUAL_VECTOR(time)
 }
 
 /* grn_ts_op_not_equal_text_vector() returns lhs != rhs. */
 inline static grn_ts_bool
-grn_ts_op_not_equal_text_vector(grn_ts_text_vector lhs,
-                                grn_ts_text_vector rhs) {
+grn_ts_op_not_equal_text_vector(grn_ts_text_vector lhs, grn_ts_text_vector rhs)
+{
   GRN_TS_OP_NOT_EQUAL_VECTOR(text)
 }
 
 /* grn_ts_op_not_equal_geo_vector() returns lhs != rhs. */
 inline static grn_ts_bool
-grn_ts_op_not_equal_geo_vector(grn_ts_geo_vector lhs, grn_ts_geo_vector rhs) {
+grn_ts_op_not_equal_geo_vector(grn_ts_geo_vector lhs, grn_ts_geo_vector rhs)
+{
   GRN_TS_OP_NOT_EQUAL_VECTOR(geo)
 }
 
 /* grn_ts_op_not_equal_ref_vector() returns lhs != rhs. */
 inline static grn_ts_bool
-grn_ts_op_not_equal_ref_vector(grn_ts_ref_vector lhs, grn_ts_ref_vector rhs) {
+grn_ts_op_not_equal_ref_vector(grn_ts_ref_vector lhs, grn_ts_ref_vector rhs)
+{
   GRN_TS_OP_NOT_EQUAL_VECTOR(ref)
 }
 #undef GRN_TS_OP_NOT_EQUAL_VECTOR
 
 /* grn_ts_op_less_int() returns lhs < rhs. */
 inline static grn_ts_bool
-grn_ts_op_less_int(grn_ts_int lhs, grn_ts_int rhs) {
+grn_ts_op_less_int(grn_ts_int lhs, grn_ts_int rhs)
+{
   return lhs < rhs;
 }
 
 /* grn_ts_op_less_float() returns lhs < rhs. */
 inline static grn_ts_bool
-grn_ts_op_less_float(grn_ts_float lhs, grn_ts_float rhs) {
+grn_ts_op_less_float(grn_ts_float lhs, grn_ts_float rhs)
+{
   return lhs < rhs;
 }
 
 /* grn_ts_op_less_time() returns lhs < rhs. */
 inline static grn_ts_bool
-grn_ts_op_less_time(grn_ts_time lhs, grn_ts_time rhs) {
+grn_ts_op_less_time(grn_ts_time lhs, grn_ts_time rhs)
+{
   return lhs < rhs;
 }
 
 /* grn_ts_op_less_text() returns lhs < rhs. */
 inline static grn_ts_bool
-grn_ts_op_less_text(grn_ts_text lhs, grn_ts_text rhs) {
+grn_ts_op_less_text(grn_ts_text lhs, grn_ts_text rhs)
+{
   size_t min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;
   int cmp = memcmp(lhs.ptr, rhs.ptr, min_size);
   return cmp ? (cmp < 0) : (lhs.size < rhs.size);
@@ -609,50 +678,58 @@ grn_ts_op_less_text(grn_ts_text lhs, grn_ts_text rhs) {
   return lhs.size < rhs.size;
 /* grn_ts_op_less_int_vector() returns lhs < rhs. */
 inline static grn_ts_bool
-grn_ts_op_less_int_vector(grn_ts_int_vector lhs, grn_ts_int_vector rhs) {
+grn_ts_op_less_int_vector(grn_ts_int_vector lhs, grn_ts_int_vector rhs)
+{
   GRN_TS_OP_LESS_VECTOR(int)
 }
 
 /* grn_ts_op_less_float_vector() returns lhs < rhs. */
 inline static grn_ts_bool
-grn_ts_op_less_float_vector(grn_ts_float_vector lhs, grn_ts_float_vector rhs) {
+grn_ts_op_less_float_vector(grn_ts_float_vector lhs, grn_ts_float_vector rhs)
+{
   GRN_TS_OP_LESS_VECTOR(float)
 }
 
 /* grn_ts_op_less_time_vector() returns lhs < rhs. */
 inline static grn_ts_bool
-grn_ts_op_less_time_vector(grn_ts_time_vector lhs, grn_ts_time_vector rhs) {
+grn_ts_op_less_time_vector(grn_ts_time_vector lhs, grn_ts_time_vector rhs)
+{
   GRN_TS_OP_LESS_VECTOR(time)
 }
 
 /* grn_ts_op_less_text_vector() returns lhs < rhs. */
 inline static grn_ts_bool
-grn_ts_op_less_text_vector(grn_ts_text_vector lhs, grn_ts_text_vector rhs) {
+grn_ts_op_less_text_vector(grn_ts_text_vector lhs, grn_ts_text_vector rhs)
+{
   GRN_TS_OP_LESS_VECTOR(text)
 }
 #undef GRN_TS_OP_LESS_VECTOR
 
 /* grn_ts_op_less_equal_int() returns lhs <= rhs. */
 inline static grn_ts_bool
-grn_ts_op_less_equal_int(grn_ts_int lhs, grn_ts_int rhs) {
+grn_ts_op_less_equal_int(grn_ts_int lhs, grn_ts_int rhs)
+{
   return lhs <= rhs;
 }
 
 /* grn_ts_op_less_equal_float() returns lhs <= rhs. */
 inline static grn_ts_bool
-grn_ts_op_less_equal_float(grn_ts_float lhs, grn_ts_float rhs) {
+grn_ts_op_less_equal_float(grn_ts_float lhs, grn_ts_float rhs)
+{
   return lhs <= rhs;
 }
 
 /* grn_ts_op_less_equal_time() returns lhs <= rhs. */
 inline static grn_ts_bool
-grn_ts_op_less_equal_time(grn_ts_time lhs, grn_ts_time rhs) {
+grn_ts_op_less_equal_time(grn_ts_time lhs, grn_ts_time rhs)
+{
   return lhs <= rhs;
 }
 
 /* grn_ts_op_less_equal_text() returns lhs <= rhs. */
 inline static grn_ts_bool
-grn_ts_op_less_equal_text(grn_ts_text lhs, grn_ts_text rhs) {
+grn_ts_op_less_equal_text(grn_ts_text lhs, grn_ts_text rhs)
+{
   size_t min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;
   int cmp = memcmp(lhs.ptr, rhs.ptr, min_size);
   return cmp ? (cmp < 0) : (lhs.size <= rhs.size);
@@ -670,53 +747,61 @@ grn_ts_op_less_equal_text(grn_ts_text lhs, grn_ts_text rhs) {
   return lhs.size <= rhs.size;
 /* grn_ts_op_less_equal_int_vector() returns lhs <= rhs. */
 inline static grn_ts_bool
-grn_ts_op_less_equal_int_vector(grn_ts_int_vector lhs, grn_ts_int_vector rhs) {
+grn_ts_op_less_equal_int_vector(grn_ts_int_vector lhs, grn_ts_int_vector rhs)
+{
   GRN_TS_OP_LESS_EQUAL_VECTOR(int)
 }
 
 /* grn_ts_op_less_equal_float_vector() returns lhs <= rhs. */
 inline static grn_ts_bool
 grn_ts_op_less_equal_float_vector(grn_ts_float_vector lhs,
-                                  grn_ts_float_vector rhs) {
+                                  grn_ts_float_vector rhs)
+{
   GRN_TS_OP_LESS_EQUAL_VECTOR(float)
 }
 
 /* grn_ts_op_less_equal_time_vector() returns lhs <= rhs. */
 inline static grn_ts_bool
 grn_ts_op_less_equal_time_vector(grn_ts_time_vector lhs,
-                                 grn_ts_time_vector rhs) {
+                                 grn_ts_time_vector rhs)
+{
   GRN_TS_OP_LESS_EQUAL_VECTOR(time)
 }
 
 /* grn_ts_op_less_equal_text_vector() returns lhs <= rhs. */
 inline static grn_ts_bool
 grn_ts_op_less_equal_text_vector(grn_ts_text_vector lhs,
-                                 grn_ts_text_vector rhs) {
+                                 grn_ts_text_vector rhs)
+{
   GRN_TS_OP_LESS_EQUAL_VECTOR(text)
 }
 #undef GRN_TS_OP_LESS_EQUAL_VECTOR
 
 /* grn_ts_op_greater_int() returns lhs > rhs. */
 inline static grn_ts_bool
-grn_ts_op_greater_int(grn_ts_int lhs, grn_ts_int rhs) {
+grn_ts_op_greater_int(grn_ts_int lhs, grn_ts_int rhs)
+{
   return lhs > rhs;
 }
 
 /* grn_ts_op_greater_float() returns lhs > rhs. */
 inline static grn_ts_bool
-grn_ts_op_greater_float(grn_ts_float lhs, grn_ts_float rhs) {
+grn_ts_op_greater_float(grn_ts_float lhs, grn_ts_float rhs)
+{
   return lhs > rhs;
 }
 
 /* grn_ts_op_greater_time() returns lhs > rhs. */
 inline static grn_ts_bool
-grn_ts_op_greater_time(grn_ts_time lhs, grn_ts_time rhs) {
+grn_ts_op_greater_time(grn_ts_time lhs, grn_ts_time rhs)
+{
   return lhs > rhs;
 }
 
 /* grn_ts_op_greater_text() returns lhs > rhs. */
 inline static grn_ts_bool
-grn_ts_op_greater_text(grn_ts_text lhs, grn_ts_text rhs) {
+grn_ts_op_greater_text(grn_ts_text lhs, grn_ts_text rhs)
+{
   size_t min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;
   int cmp = memcmp(lhs.ptr, rhs.ptr, min_size);
   return cmp ? (cmp > 0) : (lhs.size > rhs.size);
@@ -734,51 +819,59 @@ grn_ts_op_greater_text(grn_ts_text lhs, grn_ts_text rhs) {
   return lhs.size > rhs.size;
 /* grn_ts_op_greater_int_vector() returns lhs > rhs. */
 inline static grn_ts_bool
-grn_ts_op_greater_int_vector(grn_ts_int_vector lhs, grn_ts_int_vector rhs) {
+grn_ts_op_greater_int_vector(grn_ts_int_vector lhs, grn_ts_int_vector rhs)
+{
   GRN_TS_OP_GREATER_VECTOR(int)
 }
 
 /* grn_ts_op_greater_float_vector() returns lhs > rhs. */
 inline static grn_ts_bool
 grn_ts_op_greater_float_vector(grn_ts_float_vector lhs,
-                               grn_ts_float_vector rhs) {
+                               grn_ts_float_vector rhs)
+{
   GRN_TS_OP_GREATER_VECTOR(float)
 }
 
 /* grn_ts_op_greater_time_vector() returns lhs > rhs. */
 inline static grn_ts_bool
-grn_ts_op_greater_time_vector(grn_ts_time_vector lhs, grn_ts_time_vector rhs) {
+grn_ts_op_greater_time_vector(grn_ts_time_vector lhs, grn_ts_time_vector rhs)
+{
   GRN_TS_OP_GREATER_VECTOR(time)
 }
 
 /* grn_ts_op_greater_text_vector() returns lhs > rhs. */
 inline static grn_ts_bool
-grn_ts_op_greater_text_vector(grn_ts_text_vector lhs, grn_ts_text_vector rhs) {
+grn_ts_op_greater_text_vector(grn_ts_text_vector lhs, grn_ts_text_vector rhs)
+{
   GRN_TS_OP_GREATER_VECTOR(text)
 }
 #undef GRN_TS_OP_GREATER_VECTOR
 
 /* grn_ts_op_greater_equal_int() returns lhs >= rhs. */
 inline static grn_ts_bool
-grn_ts_op_greater_equal_int(grn_ts_int lhs, grn_ts_int rhs) {
+grn_ts_op_greater_equal_int(grn_ts_int lhs, grn_ts_int rhs)
+{
   return lhs >= rhs;
 }
 
 /* grn_ts_op_greater_equal_float() returns lhs >= rhs. */
 inline static grn_ts_bool
-grn_ts_op_greater_equal_float(grn_ts_float lhs, grn_ts_float rhs) {
+grn_ts_op_greater_equal_float(grn_ts_float lhs, grn_ts_float rhs)
+{
   return lhs >= rhs;
 }
 
 /* grn_ts_op_greater_equal_time() returns lhs >= rhs. */
 inline static grn_ts_bool
-grn_ts_op_greater_equal_time(grn_ts_time lhs, grn_ts_time rhs) {
+grn_ts_op_greater_equal_time(grn_ts_time lhs, grn_ts_time rhs)
+{
   return lhs >= rhs;
 }
 
 /* grn_ts_op_greater_equal_text() returns lhs >= rhs. */
 inline static grn_ts_bool
-grn_ts_op_greater_equal_text(grn_ts_text lhs, grn_ts_text rhs) {
+grn_ts_op_greater_equal_text(grn_ts_text lhs, grn_ts_text rhs)
+{
   size_t min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;
   int cmp = memcmp(lhs.ptr, rhs.ptr, min_size);
   return cmp ? (cmp > 0) : (lhs.size >= rhs.size);
@@ -797,66 +890,76 @@ grn_ts_op_greater_equal_text(grn_ts_text lhs, grn_ts_text rhs) {
 /* grn_ts_op_greater_equal_int_vector() returns lhs >= rhs. */
 inline static grn_ts_bool
 grn_ts_op_greater_equal_int_vector(grn_ts_int_vector lhs,
-                                   grn_ts_int_vector rhs) {
+                                   grn_ts_int_vector rhs)
+{
   GRN_TS_OP_GREATER_EQUAL_VECTOR(int)
 }
 
 /* grn_ts_op_greater_equal_float_vector() returns lhs >= rhs. */
 inline static grn_ts_bool
 grn_ts_op_greater_equal_float_vector(grn_ts_float_vector lhs,
-                                     grn_ts_float_vector rhs) {
+                                     grn_ts_float_vector rhs)
+{
   GRN_TS_OP_GREATER_EQUAL_VECTOR(float)
 }
 
 /* grn_ts_op_greater_equal_time_vector() returns lhs >= rhs. */
 inline static grn_ts_bool
 grn_ts_op_greater_equal_time_vector(grn_ts_time_vector lhs,
-                                    grn_ts_time_vector rhs) {
+                                    grn_ts_time_vector rhs)
+{
   GRN_TS_OP_GREATER_EQUAL_VECTOR(time)
 }
 
 /* grn_ts_op_greater_equal_text_vector() returns lhs >= rhs. */
 inline static grn_ts_bool
 grn_ts_op_greater_equal_text_vector(grn_ts_text_vector lhs,
-                                    grn_ts_text_vector rhs) {
+                                    grn_ts_text_vector rhs)
+{
   GRN_TS_OP_GREATER_EQUAL_VECTOR(text)
 }
 #undef GRN_TS_OP_GREATER_EQUAL_VECTOR
 
 /* grn_ts_op_shift_arithmetic_left() returns lhs << rhs. */
 inline static grn_ts_int
-grn_ts_op_shift_arithmetic_left(grn_ts_int lhs, grn_ts_int rhs) {
+grn_ts_op_shift_arithmetic_left(grn_ts_int lhs, grn_ts_int rhs)
+{
   return lhs << rhs;
 }
 
 /* grn_ts_op_shift_arithmetic_right() returns lhs << rhs. */
 inline static grn_ts_int
-grn_ts_op_shift_arithmetic_right(grn_ts_int lhs, grn_ts_int rhs) {
+grn_ts_op_shift_arithmetic_right(grn_ts_int lhs, grn_ts_int rhs)
+{
   return lhs >> rhs;
 }
 
 /* grn_ts_op_shift_logical_left() returns lhs << rhs. */
 inline static grn_ts_int
-grn_ts_op_shift_logical_left(grn_ts_int lhs, grn_ts_int rhs) {
+grn_ts_op_shift_logical_left(grn_ts_int lhs, grn_ts_int rhs)
+{
   return lhs << rhs;
 }
 
 /* grn_ts_op_shift_logical_right() returns lhs << rhs. */
 inline static grn_ts_int
-grn_ts_op_shift_logical_right(grn_ts_int lhs, grn_ts_int rhs) {
+grn_ts_op_shift_logical_right(grn_ts_int lhs, grn_ts_int rhs)
+{
   return (uint64_t)lhs >> rhs;
 }
 
 inline static grn_rc
 grn_ts_op_plus_int_int(grn_ctx *ctx, grn_ts_int lhs, grn_ts_int rhs,
-                       grn_ts_int *out) {
+                       grn_ts_int *out)
+{
   *out = lhs + rhs;
   return GRN_SUCCESS;
 }
 
 inline static grn_rc
 grn_ts_op_plus_float_float(grn_ctx *ctx, grn_ts_float lhs, grn_ts_float rhs,
-                           grn_ts_float *out) {
+                           grn_ts_float *out)
+{
   *out = lhs + rhs;
   if (!grn_ts_float_is_valid(*out)) {
     GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "%g + %g = %g", lhs, rhs, *out);
@@ -866,28 +969,32 @@ grn_ts_op_plus_float_float(grn_ctx *ctx, grn_ts_float lhs, grn_ts_float rhs,
 
 inline static grn_rc
 grn_ts_op_plus_time_int(grn_ctx *ctx, grn_ts_time lhs, grn_ts_int rhs,
-                        grn_ts_time *out) {
+                        grn_ts_time *out)
+{
   *out = lhs + (rhs * 1000000);
   return GRN_SUCCESS;
 }
 
 inline static grn_rc
 grn_ts_op_plus_time_float(grn_ctx *ctx, grn_ts_time lhs, grn_ts_float rhs,
-                          grn_ts_time *out) {
+                          grn_ts_time *out)
+{
   *out = (grn_ts_time)(lhs + (rhs * 1000000.0));
   return GRN_SUCCESS;
 }
 
 inline static grn_rc
 grn_ts_op_minus_int_int(grn_ctx *ctx, grn_ts_int lhs, grn_ts_int rhs,
-                        grn_ts_int *out) {
+                        grn_ts_int *out)
+{
   *out = lhs - rhs;
   return GRN_SUCCESS;
 }
 
 inline static grn_rc
 grn_ts_op_minus_float_float(grn_ctx *ctx, grn_ts_float lhs, grn_ts_float rhs,
-                            grn_ts_float *out) {
+                            grn_ts_float *out)
+{
   *out = lhs - rhs;
   if (!grn_ts_float_is_valid(*out)) {
     GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "%g - %g = %g", lhs, rhs, *out);
@@ -897,35 +1004,40 @@ grn_ts_op_minus_float_float(grn_ctx *ctx, grn_ts_float lhs, grn_ts_float rhs,
 
 inline static grn_rc
 grn_ts_op_minus_time_time(grn_ctx *ctx, grn_ts_time lhs, grn_ts_time rhs,
-                          grn_ts_float *out) {
+                          grn_ts_float *out)
+{
   *out = (lhs - rhs) * 0.000001;
   return GRN_SUCCESS;
 }
 
 inline static grn_rc
 grn_ts_op_minus_time_int(grn_ctx *ctx, grn_ts_time lhs, grn_ts_int rhs,
-                         grn_ts_time *out) {
+                         grn_ts_time *out)
+{
   *out = lhs - (rhs * 1000000);
   return GRN_SUCCESS;
 }
 
 inline static grn_rc
 grn_ts_op_minus_time_float(grn_ctx *ctx, grn_ts_time lhs, grn_ts_float rhs,
-                           grn_ts_time *out) {
+                           grn_ts_time *out)
+{
   *out = lhs - (grn_ts_int)(rhs * 1000000.0);
   return GRN_SUCCESS;
 }
 
 inline static grn_rc
 grn_ts_op_multiplication_int_int(grn_ctx *ctx, grn_ts_int lhs, grn_ts_int rhs,
-                                 grn_ts_int *out) {
+                                 grn_ts_int *out)
+{
   *out = lhs * rhs;
   return GRN_SUCCESS;
 }
 
 inline static grn_rc
 grn_ts_op_multiplication_float_float(grn_ctx *ctx, grn_ts_float lhs,
-                                     grn_ts_float rhs, grn_ts_float *out) {
+                                     grn_ts_float rhs, grn_ts_float *out)
+{
   *out = lhs * rhs;
   if (!grn_ts_float_is_valid(*out)) {
     GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "%g * %g = %g", lhs, rhs, *out);
@@ -935,7 +1047,8 @@ grn_ts_op_multiplication_float_float(grn_ctx *ctx, grn_ts_float lhs,
 
 inline static grn_rc
 grn_ts_op_division_int_int(grn_ctx *ctx, grn_ts_int lhs, grn_ts_int rhs,
-                           grn_ts_int *out) {
+                           grn_ts_int *out)
+{
   if (!rhs) {
     GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT,
                       "%ld / %ld causes division by zero",
@@ -947,7 +1060,8 @@ grn_ts_op_division_int_int(grn_ctx *ctx, grn_ts_int lhs, grn_ts_int rhs,
 
 inline static grn_rc
 grn_ts_op_division_float_float(grn_ctx *ctx, grn_ts_float lhs,
-                               grn_ts_float rhs, grn_ts_float *out) {
+                               grn_ts_float rhs, grn_ts_float *out)
+{
   *out = lhs / rhs;
   if (!grn_ts_float_is_valid(*out)) {
     GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "%g / %g = %g", lhs, rhs, *out);
@@ -957,7 +1071,8 @@ grn_ts_op_division_float_float(grn_ctx *ctx, grn_ts_float lhs,
 
 inline static grn_rc
 grn_ts_op_modulus_int_int(grn_ctx *ctx, grn_ts_int lhs, grn_ts_int rhs,
-                          grn_ts_int *out) {
+                          grn_ts_int *out)
+{
   if (!rhs) {
     GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT,
                       "%ld %% %ld causes division by zero",
@@ -969,7 +1084,8 @@ grn_ts_op_modulus_int_int(grn_ctx *ctx, grn_ts_int lhs, grn_ts_int rhs,
 
 inline static grn_rc
 grn_ts_op_modulus_float_float(grn_ctx *ctx, grn_ts_float lhs, grn_ts_float rhs,
-                              grn_ts_float *out) {
+                              grn_ts_float *out)
+{
   *out = fmod(lhs, rhs);
   if (!grn_ts_float_is_valid(*out)) {
     GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "%g %% %g = %g", lhs, rhs, *out);
@@ -990,7 +1106,8 @@ grn_ts_op_modulus_float_float(grn_ctx *ctx, grn_ts_float lhs, grn_ts_float rhs,
 /* grn_ts_hash_get_bool_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_hash_get_bool_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
-                         grn_ts_bool *key) {
+                         grn_ts_bool *key)
+{
   GRN_TS_TABLE_GET_KEY(hash)
   *key = *(const grn_ts_bool *)key_ptr;
   return GRN_SUCCESS;
@@ -999,7 +1116,8 @@ grn_ts_hash_get_bool_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 /* grn_ts_hash_get_int8_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_hash_get_int8_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
-                         grn_ts_int *key) {
+                         grn_ts_int *key)
+{
   GRN_TS_TABLE_GET_KEY(hash)
   *key = *(const int8_t *)key_ptr;
   return GRN_SUCCESS;
@@ -1008,7 +1126,8 @@ grn_ts_hash_get_int8_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 /* grn_ts_hash_get_int16_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_hash_get_int16_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
-                          grn_ts_int *key) {
+                          grn_ts_int *key)
+{
   GRN_TS_TABLE_GET_KEY(hash)
   *key = *(const int16_t *)key_ptr;
   return GRN_SUCCESS;
@@ -1017,7 +1136,8 @@ grn_ts_hash_get_int16_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 /* grn_ts_hash_get_int32_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_hash_get_int32_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
-                          grn_ts_int *key) {
+                          grn_ts_int *key)
+{
   GRN_TS_TABLE_GET_KEY(hash)
   *key = *(const int32_t *)key_ptr;
   return GRN_SUCCESS;
@@ -1026,7 +1146,8 @@ grn_ts_hash_get_int32_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 /* grn_ts_hash_get_int64_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_hash_get_int64_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
-                          grn_ts_int *key) {
+                          grn_ts_int *key)
+{
   GRN_TS_TABLE_GET_KEY(hash)
   *key = *(const int64_t *)key_ptr;
   return GRN_SUCCESS;
@@ -1035,7 +1156,8 @@ grn_ts_hash_get_int64_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 /* grn_ts_hash_get_uint8_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_hash_get_uint8_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
-                          grn_ts_int *key) {
+                          grn_ts_int *key)
+{
   GRN_TS_TABLE_GET_KEY(hash)
   *key = *(const uint8_t *)key_ptr;
   return GRN_SUCCESS;
@@ -1044,7 +1166,8 @@ grn_ts_hash_get_uint8_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 /* grn_ts_hash_get_uint16_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_hash_get_uint16_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
-                           grn_ts_int *key) {
+                           grn_ts_int *key)
+{
   GRN_TS_TABLE_GET_KEY(hash)
   *key = *(const uint16_t *)key_ptr;
   return GRN_SUCCESS;
@@ -1053,7 +1176,8 @@ grn_ts_hash_get_uint16_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 /* grn_ts_hash_get_uint32_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_hash_get_uint32_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
-                           grn_ts_int *key) {
+                           grn_ts_int *key)
+{
   GRN_TS_TABLE_GET_KEY(hash)
   *key = *(const uint32_t *)key_ptr;
   return GRN_SUCCESS;
@@ -1062,7 +1186,8 @@ grn_ts_hash_get_uint32_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 /* grn_ts_hash_get_uint64_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_hash_get_uint64_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
-                           grn_ts_int *key) {
+                           grn_ts_int *key)
+{
   GRN_TS_TABLE_GET_KEY(hash)
   *key = (grn_ts_int)*(const uint64_t *)key_ptr;
   return GRN_SUCCESS;
@@ -1071,7 +1196,8 @@ grn_ts_hash_get_uint64_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 /* grn_ts_hash_get_float_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_hash_get_float_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
-                          grn_ts_float *key) {
+                          grn_ts_float *key)
+{
   GRN_TS_TABLE_GET_KEY(hash)
   *key = *(const grn_ts_float *)key_ptr;
   return GRN_SUCCESS;
@@ -1080,7 +1206,8 @@ grn_ts_hash_get_float_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 /* grn_ts_hash_get_time_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_hash_get_time_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
-                         grn_ts_time *key) {
+                         grn_ts_time *key)
+{
   GRN_TS_TABLE_GET_KEY(hash)
   *key = *(const grn_ts_time *)key_ptr;
   return GRN_SUCCESS;
@@ -1089,7 +1216,8 @@ grn_ts_hash_get_time_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 /* grn_ts_hash_get_geo_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_hash_get_geo_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
-                        grn_ts_geo *key) {
+                        grn_ts_geo *key)
+{
   GRN_TS_TABLE_GET_KEY(hash)
   *key = *(const grn_ts_geo *)key_ptr;
   return GRN_SUCCESS;
@@ -1098,7 +1226,8 @@ grn_ts_hash_get_geo_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 /* grn_ts_hash_get_text_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_hash_get_text_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
-                         grn_ts_text *key) {
+                         grn_ts_text *key)
+{
   GRN_TS_TABLE_GET_KEY(hash)
   key->ptr = key_ptr;
   key->size = key_size;
@@ -1108,7 +1237,8 @@ grn_ts_hash_get_text_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 /* grn_ts_hash_get_ref_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_hash_get_ref_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
-                        grn_ts_ref *key) {
+                        grn_ts_ref *key)
+{
   GRN_TS_TABLE_GET_KEY(hash)
   key->id = *(const grn_ts_id *)key_ptr;
   return GRN_SUCCESS;
@@ -1117,7 +1247,8 @@ grn_ts_hash_get_ref_key(grn_ctx *ctx, grn_hash *hash, grn_ts_id id,
 /* grn_ts_pat_get_bool_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_pat_get_bool_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
-                        grn_ts_bool *key) {
+                        grn_ts_bool *key)
+{
   GRN_TS_TABLE_GET_KEY(pat)
   *key = *(const grn_ts_bool *)key_ptr;
   return GRN_SUCCESS;
@@ -1126,7 +1257,8 @@ grn_ts_pat_get_bool_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
 /* grn_ts_pat_get_int8_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_pat_get_int8_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
-                        grn_ts_int *key) {
+                        grn_ts_int *key)
+{
   int8_t tmp;
   GRN_TS_TABLE_GET_KEY(pat)
   grn_ntohi(&tmp, key_ptr, sizeof(tmp));
@@ -1137,7 +1269,8 @@ grn_ts_pat_get_int8_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
 /* grn_ts_pat_get_int16_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_pat_get_int16_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
-                         grn_ts_int *key) {
+                         grn_ts_int *key)
+{
   int16_t tmp;
   GRN_TS_TABLE_GET_KEY(pat)
   grn_ntohi(&tmp, key_ptr, sizeof(tmp));
@@ -1148,7 +1281,8 @@ grn_ts_pat_get_int16_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
 /* grn_ts_pat_get_int32_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_pat_get_int32_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
-                         grn_ts_int *key) {
+                         grn_ts_int *key)
+{
   int32_t tmp;
   GRN_TS_TABLE_GET_KEY(pat)
   grn_ntohi(&tmp, key_ptr, sizeof(tmp));
@@ -1159,7 +1293,8 @@ grn_ts_pat_get_int32_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
 /* grn_ts_pat_get_int64_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_pat_get_int64_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
-                         grn_ts_int *key) {
+                         grn_ts_int *key)
+{
   GRN_TS_TABLE_GET_KEY(pat)
   grn_ntohi(key, key_ptr, sizeof(grn_ts_int));
   return GRN_SUCCESS;
@@ -1168,7 +1303,8 @@ grn_ts_pat_get_int64_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
 /* grn_ts_pat_get_uint8_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_pat_get_uint8_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
-                         grn_ts_int *key) {
+                         grn_ts_int *key)
+{
   GRN_TS_TABLE_GET_KEY(pat)
   *key = *(const uint8_t *)key_ptr;
   return GRN_SUCCESS;
@@ -1177,7 +1313,8 @@ grn_ts_pat_get_uint8_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
 /* grn_ts_pat_get_uint16_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_pat_get_uint16_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
-                          grn_ts_int *key) {
+                          grn_ts_int *key)
+{
   uint16_t tmp;
   GRN_TS_TABLE_GET_KEY(pat)
   grn_ntoh(&tmp, key_ptr, sizeof(tmp));
@@ -1188,7 +1325,8 @@ grn_ts_pat_get_uint16_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
 /* grn_ts_pat_get_uint32_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_pat_get_uint32_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
-                          grn_ts_int *key) {
+                          grn_ts_int *key)
+{
   uint32_t tmp;
   GRN_TS_TABLE_GET_KEY(pat)
   grn_ntoh(&tmp, key_ptr, sizeof(tmp));
@@ -1199,7 +1337,8 @@ grn_ts_pat_get_uint32_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
 /* grn_ts_pat_get_uint64_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_pat_get_uint64_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
-                          grn_ts_int *key) {
+                          grn_ts_int *key)
+{
   GRN_TS_TABLE_GET_KEY(pat)
   grn_ntoh(key, key_ptr, sizeof(grn_ts_int));
   return GRN_SUCCESS;
@@ -1208,7 +1347,8 @@ grn_ts_pat_get_uint64_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
 /* grn_ts_pat_get_float_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_pat_get_float_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
-                         grn_ts_float *key) {
+                         grn_ts_float *key)
+{
   int64_t tmp;
   GRN_TS_TABLE_GET_KEY(pat)
   grn_ntoh(&tmp, key_ptr, sizeof(tmp));
@@ -1220,7 +1360,8 @@ grn_ts_pat_get_float_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
 /* grn_ts_pat_get_time_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_pat_get_time_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
-                        grn_ts_time *key) {
+                        grn_ts_time *key)
+{
   GRN_TS_TABLE_GET_KEY(pat)
   grn_ntohi(key, key_ptr, sizeof(grn_ts_time));
   return GRN_SUCCESS;
@@ -1229,7 +1370,8 @@ grn_ts_pat_get_time_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
 /* grn_ts_pat_get_geo_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_pat_get_geo_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
-                       grn_ts_geo *key) {
+                       grn_ts_geo *key)
+{
   GRN_TS_TABLE_GET_KEY(pat)
   grn_ntog(key, key_ptr, sizeof(grn_ts_geo));
   return GRN_SUCCESS;
@@ -1238,7 +1380,8 @@ grn_ts_pat_get_geo_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
 /* grn_ts_pat_get_text_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_pat_get_text_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
-                        grn_ts_text *key) {
+                        grn_ts_text *key)
+{
   GRN_TS_TABLE_GET_KEY(pat)
   key->ptr = key_ptr;
   key->size = key_size;
@@ -1248,7 +1391,8 @@ grn_ts_pat_get_text_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
 /* grn_ts_pat_get_ref_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_pat_get_ref_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
-                       grn_ts_ref *key) {
+                       grn_ts_ref *key)
+{
   GRN_TS_TABLE_GET_KEY(pat)
   grn_ntoh(&key->id, key_ptr, sizeof(key->id));
   return GRN_SUCCESS;
@@ -1257,7 +1401,8 @@ grn_ts_pat_get_ref_key(grn_ctx *ctx, grn_pat *pat, grn_ts_id id,
 /* grn_ts_dat_get_text_key() gets a reference to a key (_key). */
 static grn_rc
 grn_ts_dat_get_text_key(grn_ctx *ctx, grn_dat *dat, grn_ts_id id,
-                        grn_ts_text *key) {
+                        grn_ts_text *key)
+{
   GRN_TS_TABLE_GET_KEY(dat)
   key->ptr = key_ptr;
   key->size = key_size;
@@ -1275,7 +1420,8 @@ typedef struct {
 
 /* grn_ts_expr_id_node_init() initializes a node. */
 static void
-grn_ts_expr_id_node_init(grn_ctx *ctx, grn_ts_expr_id_node *node) {
+grn_ts_expr_id_node_init(grn_ctx *ctx, grn_ts_expr_id_node *node)
+{
   memset(node, 0, sizeof(*node));
   node->type = GRN_TS_EXPR_ID_NODE;
   node->data_kind = GRN_TS_INT;
@@ -1284,12 +1430,14 @@ grn_ts_expr_id_node_init(grn_ctx *ctx, grn_ts_expr_id_node *node) {
 
 /* grn_ts_expr_id_node_fin() finalizes a node. */
 static void
-grn_ts_expr_id_node_fin(grn_ctx *ctx, grn_ts_expr_id_node *node) {
+grn_ts_expr_id_node_fin(grn_ctx *ctx, grn_ts_expr_id_node *node)
+{
   /* Nothing to do. */
 }
 
 grn_rc
-grn_ts_expr_id_node_open(grn_ctx *ctx, grn_ts_expr_node **node) {
+grn_ts_expr_id_node_open(grn_ctx *ctx, grn_ts_expr_node **node)
+{
   grn_ts_expr_id_node *new_node = GRN_MALLOCN(grn_ts_expr_id_node, 1);
   if (!new_node) {
     GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
@@ -1302,7 +1450,8 @@ grn_ts_expr_id_node_open(grn_ctx *ctx, grn_ts_expr_node **node) {
 
 /* grn_ts_expr_id_node_close() destroys a node. */
 static void
-grn_ts_expr_id_node_close(grn_ctx *ctx, grn_ts_expr_id_node *node) {
+grn_ts_expr_id_node_close(grn_ctx *ctx, grn_ts_expr_id_node *node)
+{
   grn_ts_expr_id_node_fin(ctx, node);
   GRN_FREE(node);
 }
@@ -1310,7 +1459,8 @@ grn_ts_expr_id_node_close(grn_ctx *ctx, grn_ts_expr_id_node *node) {
 /* grn_ts_expr_id_node_evaluate() outputs IDs. */
 static grn_rc
 grn_ts_expr_id_node_evaluate(grn_ctx *ctx, grn_ts_expr_id_node *node,
-                             const grn_ts_record *in, size_t n_in, void *out) {
+                             const grn_ts_record *in, size_t n_in, void *out)
+{
   size_t i;
   grn_ts_int *out_ptr = (grn_ts_int *)out;
   for (i = 0; i < n_in; i++) {
@@ -1329,7 +1479,8 @@ typedef struct {
 
 /* grn_ts_expr_score_node_init() initializes a node. */
 static void
-grn_ts_expr_score_node_init(grn_ctx *ctx, grn_ts_expr_score_node *node) {
+grn_ts_expr_score_node_init(grn_ctx *ctx, grn_ts_expr_score_node *node)
+{
   memset(node, 0, sizeof(*node));
   node->type = GRN_TS_EXPR_SCORE_NODE;
   node->data_kind = GRN_TS_FLOAT;
@@ -1338,12 +1489,14 @@ grn_ts_expr_score_node_init(grn_ctx *ctx, grn_ts_expr_score_node *node) {
 
 /* grn_ts_expr_score_node_fin() finalizes a node. */
 static void
-grn_ts_expr_score_node_fin(grn_ctx *ctx, grn_ts_expr_score_node *node) {
+grn_ts_expr_score_node_fin(grn_ctx *ctx, grn_ts_expr_score_node *node)
+{
   /* Nothing to do. */
 }
 
 grn_rc
-grn_ts_expr_score_node_open(grn_ctx *ctx, grn_ts_expr_node **node) {
+grn_ts_expr_score_node_open(grn_ctx *ctx, grn_ts_expr_node **node)
+{
   grn_ts_expr_score_node *new_node = GRN_MALLOCN(grn_ts_expr_score_node, 1);
   if (!new_node) {
     GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
@@ -1356,7 +1509,8 @@ grn_ts_expr_score_node_open(grn_ctx *ctx, grn_ts_expr_node **node) {
 
 /* grn_ts_expr_score_node_close() destroys a node. */
 static void
-grn_ts_expr_score_node_close(grn_ctx *ctx, grn_ts_expr_score_node *node) {
+grn_ts_expr_score_node_close(grn_ctx *ctx, grn_ts_expr_score_node *node)
+{
   grn_ts_expr_score_node_fin(ctx, node);
   GRN_FREE(node);
 }
@@ -1365,7 +1519,8 @@ grn_ts_expr_score_node_close(grn_ctx *ctx, grn_ts_expr_score_node *node) {
 static grn_rc
 grn_ts_expr_score_node_evaluate(grn_ctx *ctx, grn_ts_expr_score_node *node,
                                 const grn_ts_record *in, size_t n_in,
-                                void *out) {
+                                void *out)
+{
   size_t i;
   grn_ts_float *out_ptr = (grn_ts_float *)out;
   for (i = 0; i < n_in; i++) {
@@ -1377,7 +1532,8 @@ grn_ts_expr_score_node_evaluate(grn_ctx *ctx, grn_ts_expr_score_node *node,
 /* grn_ts_expr_score_node_adjust() does nothing. */
 static grn_rc
 grn_ts_expr_score_node_adjust(grn_ctx *ctx, grn_ts_expr_score_node *node,
-                              grn_ts_record *io, size_t n_io) {
+                              grn_ts_record *io, size_t n_io)
+{
   /* Nothing to do. */
   return GRN_SUCCESS;
 }
@@ -1394,7 +1550,8 @@ typedef struct {
 
 /* grn_ts_expr_key_node_init() initializes a node. */
 static void
-grn_ts_expr_key_node_init(grn_ctx *ctx, grn_ts_expr_key_node *node) {
+grn_ts_expr_key_node_init(grn_ctx *ctx, grn_ts_expr_key_node *node)
+{
   memset(node, 0, sizeof(*node));
   node->type = GRN_TS_EXPR_KEY_NODE;
   node->table = NULL;
@@ -1403,7 +1560,8 @@ grn_ts_expr_key_node_init(grn_ctx *ctx, grn_ts_expr_key_node *node) {
 
 /* grn_ts_expr_key_node_fin() finalizes a node. */
 static void
-grn_ts_expr_key_node_fin(grn_ctx *ctx, grn_ts_expr_key_node *node) {
+grn_ts_expr_key_node_fin(grn_ctx *ctx, grn_ts_expr_key_node *node)
+{
   grn_ts_buf_fin(ctx, &node->buf);
   if (node->table) {
     grn_obj_unlink(ctx, node->table);
@@ -1412,7 +1570,8 @@ grn_ts_expr_key_node_fin(grn_ctx *ctx, grn_ts_expr_key_node *node) {
 
 grn_rc
 grn_ts_expr_key_node_open(grn_ctx *ctx, grn_obj *table,
-                          grn_ts_expr_node **node) {
+                          grn_ts_expr_node **node)
+{
   grn_rc rc;
   grn_ts_expr_key_node *new_node;
   if (!grn_ts_table_has_key(ctx, table)) {
@@ -1439,7 +1598,8 @@ grn_ts_expr_key_node_open(grn_ctx *ctx, grn_obj *table,
 
 /* grn_ts_expr_key_node_close() destroys a node. */
 static void
-grn_ts_expr_key_node_close(grn_ctx *ctx, grn_ts_expr_key_node *node) {
+grn_ts_expr_key_node_close(grn_ctx *ctx, grn_ts_expr_key_node *node)
+{
   grn_ts_expr_key_node_fin(ctx, node);
   GRN_FREE(node);
 }
@@ -1508,8 +1668,8 @@ grn_ts_expr_key_node_close(grn_ctx *ctx, grn_ts_expr_key_node *node) {
 /* grn_ts_expr_key_node_evaluate() outputs keys. */
 static grn_rc
 grn_ts_expr_key_node_evaluate(grn_ctx *ctx, grn_ts_expr_key_node *node,
-                              const grn_ts_record *in, size_t n_in,
-                              void *out) {
+                              const grn_ts_record *in, size_t n_in, void *out)
+{
   size_t i;
   grn_rc rc;
   switch (node->table->header.type) {
@@ -1594,7 +1754,8 @@ grn_ts_expr_key_node_evaluate(grn_ctx *ctx, grn_ts_expr_key_node *node,
 static grn_rc
 grn_ts_expr_key_node_filter(grn_ctx *ctx, grn_ts_expr_key_node *node,
                             grn_ts_record *in, size_t n_in,
-                            grn_ts_record *out, size_t *n_out) {
+                            grn_ts_record *out, size_t *n_out)
+{
   size_t i, count;
   grn_ts_bool key;
   switch (node->table->header.type) {
@@ -1637,7 +1798,8 @@ grn_ts_expr_key_node_filter(grn_ctx *ctx, grn_ts_expr_key_node *node,
 /* grn_ts_expr_key_node_adjust() updates scores. */
 static grn_rc
 grn_ts_expr_key_node_adjust(grn_ctx *ctx, grn_ts_expr_key_node *node,
-                            grn_ts_record *io, size_t n_io) {
+                            grn_ts_record *io, size_t n_io)
+{
   size_t i;
   grn_ts_float key;
   switch (node->table->header.type) {
@@ -1682,7 +1844,8 @@ typedef struct {
 
 /* grn_ts_expr_value_node_init() initializes a node. */
 static void
-grn_ts_expr_value_node_init(grn_ctx *ctx, grn_ts_expr_value_node *node) {
+grn_ts_expr_value_node_init(grn_ctx *ctx, grn_ts_expr_value_node *node)
+{
   memset(node, 0, sizeof(*node));
   node->type = GRN_TS_EXPR_VALUE_NODE;
   node->table = NULL;
@@ -1690,7 +1853,8 @@ grn_ts_expr_value_node_init(grn_ctx *ctx, grn_ts_expr_value_node *node) {
 
 /* grn_ts_expr_value_node_fin() finalizes a node. */
 static void
-grn_ts_expr_value_node_fin(grn_ctx *ctx, grn_ts_expr_value_node *node) {
+grn_ts_expr_value_node_fin(grn_ctx *ctx, grn_ts_expr_value_node *node)
+{
   if (node->table) {
     grn_obj_unlink(ctx, node->table);
   }
@@ -1698,7 +1862,8 @@ grn_ts_expr_value_node_fin(grn_ctx *ctx, grn_ts_expr_value_node *node) {
 
 grn_rc
 grn_ts_expr_value_node_open(grn_ctx *ctx, grn_obj *table,
-                            grn_ts_expr_node **node) {
+                            grn_ts_expr_node **node)
+{
   grn_rc rc;
   grn_ts_expr_value_node *new_node;
   if (!grn_ts_table_has_value(ctx, table)) {
@@ -1724,7 +1889,8 @@ grn_ts_expr_value_node_open(grn_ctx *ctx, grn_obj *table,
 
 /* grn_ts_expr_value_node_close() destroys a node. */
 static void
-grn_ts_expr_value_node_close(grn_ctx *ctx, grn_ts_expr_value_node *node) {
+grn_ts_expr_value_node_close(grn_ctx *ctx, grn_ts_expr_value_node *node)
+{
   grn_ts_expr_value_node_fin(ctx, node);
   GRN_FREE(node);
 }
@@ -1761,7 +1927,8 @@ grn_ts_expr_value_node_close(grn_ctx *ctx, grn_ts_expr_value_node *node) {
 static grn_rc
 grn_ts_expr_value_node_evaluate(grn_ctx *ctx, grn_ts_expr_value_node *node,
                                 const grn_ts_record *in, size_t n_in,
-                                void *out) {
+                                void *out)
+{
   switch (node->data_kind) {
     GRN_TS_EXPR_VALUE_NODE_EVALUATE_CASE(BOOL, bool)
     case GRN_TS_INT: {
@@ -1810,7 +1977,8 @@ grn_ts_expr_value_node_evaluate(grn_ctx *ctx, grn_ts_expr_value_node *node,
 static grn_rc
 grn_ts_expr_value_node_filter(grn_ctx *ctx, grn_ts_expr_value_node *node,
                               grn_ts_record *in, size_t n_in,
-                              grn_ts_record *out, size_t *n_out) {
+                              grn_ts_record *out, size_t *n_out)
+{
   size_t i, count = 0;
   for (i = 0; i < n_in; i++) {
     const void *ptr = grn_ts_table_get_value(ctx, node->table, in[i].id);
@@ -1825,7 +1993,8 @@ grn_ts_expr_value_node_filter(grn_ctx *ctx, grn_ts_expr_value_node *node,
 /* grn_ts_expr_value_node_adjust() updates scores. */
 static grn_rc
 grn_ts_expr_value_node_adjust(grn_ctx *ctx, grn_ts_expr_value_node *node,
-                              grn_ts_record *io, size_t n_io) {
+                              grn_ts_record *io, size_t n_io)
+{
   size_t i;
   for (i = 0; i < n_io; i++) {
     const void *ptr = grn_ts_table_get_value(ctx, node->table, io[i].id);
@@ -1849,7 +2018,8 @@ typedef struct {
 
 /* grn_ts_expr_const_node_init() initializes a node. */
 static void
-grn_ts_expr_const_node_init(grn_ctx *ctx, grn_ts_expr_const_node *node) {
+grn_ts_expr_const_node_init(grn_ctx *ctx, grn_ts_expr_const_node *node)
+{
   memset(node, 0, sizeof(*node));
   node->type = GRN_TS_EXPR_CONST_NODE;
   grn_ts_buf_init(ctx, &node->text_buf);
@@ -1858,7 +2028,8 @@ grn_ts_expr_const_node_init(grn_ctx *ctx, grn_ts_expr_const_node *node) {
 
 /* grn_ts_expr_const_node_fin() finalizes a node. */
 static void
-grn_ts_expr_const_node_fin(grn_ctx *ctx, grn_ts_expr_const_node *node) {
+grn_ts_expr_const_node_fin(grn_ctx *ctx, grn_ts_expr_const_node *node)
+{
   grn_ts_buf_fin(ctx, &node->vector_buf);
   grn_ts_buf_fin(ctx, &node->text_buf);
 }
@@ -1871,7 +2042,8 @@ grn_ts_expr_const_node_fin(grn_ctx *ctx, grn_ts_expr_const_node *node) {
 /* grn_ts_expr_const_node_set_scalar() sets a scalar value. */
 static grn_rc
 grn_ts_expr_const_node_set_scalar(grn_ctx *ctx, grn_ts_expr_const_node *node,
-                                  const void *value) {
+                                  const void *value)
+{
   switch (node->data_kind) {
     GRN_TS_EXPR_CONST_NODE_SET_SCALAR_CASE(BOOL, bool)
     GRN_TS_EXPR_CONST_NODE_SET_SCALAR_CASE(INT, int)
@@ -1917,7 +2089,8 @@ grn_ts_expr_const_node_set_scalar(grn_ctx *ctx, grn_ts_expr_const_node *node,
 /* grn_ts_expr_const_node_set_vector() sets a vector value. */
 static grn_rc
 grn_ts_expr_const_node_set_vector(grn_ctx *ctx, grn_ts_expr_const_node *node,
-                                  const void *value) {
+                                  const void *value)
+{
   switch (node->data_kind) {
     GRN_TS_EXPR_CONST_NODE_SET_VECTOR_CASE(BOOL, bool)
     GRN_TS_EXPR_CONST_NODE_SET_VECTOR_CASE(INT, int)
@@ -1973,7 +2146,8 @@ grn_ts_expr_const_node_set_vector(grn_ctx *ctx, grn_ts_expr_const_node *node,
   }
 static grn_rc
 grn_ts_expr_const_node_check_value(grn_ctx *ctx, grn_ts_data_kind kind,
-                                   const void *value) {
+                                   const void *value)
+{
   switch (kind) {
     GRN_TS_EXPR_CONST_NODE_CHECK_VALUE(BOOL, bool)
     GRN_TS_EXPR_CONST_NODE_CHECK_VALUE(INT, int)
@@ -1996,7 +2170,8 @@ grn_ts_expr_const_node_check_value(grn_ctx *ctx, grn_ts_data_kind kind,
 
 grn_rc
 grn_ts_expr_const_node_open(grn_ctx *ctx, grn_ts_data_kind kind,
-                            const void *value, grn_ts_expr_node **node) {
+                            const void *value, grn_ts_expr_node **node)
+{
   grn_rc rc = grn_ts_expr_const_node_check_value(ctx, kind, value);
   if (rc != GRN_SUCCESS) {
     return rc;
@@ -2025,7 +2200,8 @@ grn_ts_expr_const_node_open(grn_ctx *ctx, grn_ts_data_kind kind,
 
 /* grn_ts_expr_const_node_close() destroys a node. */
 static void
-grn_ts_expr_const_node_close(grn_ctx *ctx, grn_ts_expr_const_node *node) {
+grn_ts_expr_const_node_close(grn_ctx *ctx, grn_ts_expr_const_node *node)
+{
   grn_ts_expr_const_node_fin(ctx, node);
   GRN_FREE(node);
 }
@@ -2045,7 +2221,8 @@ grn_ts_expr_const_node_close(grn_ctx *ctx, grn_ts_expr_const_node *node) {
 static grn_rc
 grn_ts_expr_const_node_evaluate(grn_ctx *ctx, grn_ts_expr_const_node *node,
                                 const grn_ts_record *in, size_t n_in,
-                                void *out) {
+                                void *out)
+{
   switch (node->data_kind) {
     GRN_TS_EXPR_CONST_NODE_EVALUATE_CASE(BOOL, bool)
     GRN_TS_EXPR_CONST_NODE_EVALUATE_CASE(INT, int)
@@ -2072,7 +2249,8 @@ grn_ts_expr_const_node_evaluate(grn_ctx *ctx, grn_ts_expr_const_node *node,
 static grn_rc
 grn_ts_expr_const_node_filter(grn_ctx *ctx, grn_ts_expr_const_node *node,
                               grn_ts_record *in, size_t n_in,
-                              grn_ts_record *out, size_t *n_out) {
+                              grn_ts_record *out, size_t *n_out)
+{
   if (node->content.as_bool) {
     /* All the records pass through the filter. */
     if (in != out) {
@@ -2092,7 +2270,8 @@ grn_ts_expr_const_node_filter(grn_ctx *ctx, grn_ts_expr_const_node *node,
 /* grn_ts_expr_const_node_adjust() updates scores. */
 static grn_rc
 grn_ts_expr_const_node_adjust(grn_ctx *ctx, grn_ts_expr_const_node *node,
-                              grn_ts_record *io, size_t n_io) {
+                              grn_ts_record *io, size_t n_io)
+{
   size_t i;
   grn_ts_score score = (grn_ts_score)node->content.as_float;
   for (i = 0; i < n_io; i++) {
@@ -2114,7 +2293,8 @@ typedef struct {
 
 /* grn_ts_expr_column_node_init() initializes a node. */
 static void
-grn_ts_expr_column_node_init(grn_ctx *ctx, grn_ts_expr_column_node *node) {
+grn_ts_expr_column_node_init(grn_ctx *ctx, grn_ts_expr_column_node *node)
+{
   memset(node, 0, sizeof(*node));
   node->type = GRN_TS_EXPR_COLUMN_NODE;
   node->column = NULL;
@@ -2124,7 +2304,8 @@ grn_ts_expr_column_node_init(grn_ctx *ctx, grn_ts_expr_column_node *node) {
 
 /* grn_ts_expr_column_node_fin() finalizes a node. */
 static void
-grn_ts_expr_column_node_fin(grn_ctx *ctx, grn_ts_expr_column_node *node) {
+grn_ts_expr_column_node_fin(grn_ctx *ctx, grn_ts_expr_column_node *node)
+{
   grn_ts_buf_fin(ctx, &node->body_buf);
   grn_ts_buf_fin(ctx, &node->buf);
   if (node->column) {
@@ -2139,7 +2320,8 @@ grn_ts_expr_column_node_fin(grn_ctx *ctx, grn_ts_expr_column_node *node) {
   }
 grn_rc
 grn_ts_expr_column_node_open(grn_ctx *ctx, grn_obj *column,
-                             grn_ts_expr_node **node) {
+                             grn_ts_expr_node **node)
+{
   grn_rc rc;
   grn_ts_expr_column_node *new_node = GRN_MALLOCN(grn_ts_expr_column_node, 1);
   if (!new_node) {
@@ -2169,7 +2351,8 @@ grn_ts_expr_column_node_open(grn_ctx *ctx, grn_obj *column,
 
 /* grn_ts_expr_column_node_close() destroys a node. */
 static void
-grn_ts_expr_column_node_close(grn_ctx *ctx, grn_ts_expr_column_node *node) {
+grn_ts_expr_column_node_close(grn_ctx *ctx, grn_ts_expr_column_node *node)
+{
   grn_ts_expr_column_node_fin(ctx, node);
   GRN_FREE(node);
 }
@@ -2213,7 +2396,8 @@ static grn_rc
 grn_ts_expr_column_node_evaluate_scalar(grn_ctx *ctx,
                                         grn_ts_expr_column_node *node,
                                         const grn_ts_record *in, size_t n_in,
-                                        void *out) {
+                                        void *out)
+{
   switch (node->data_kind) {
     GRN_TS_EXPR_COLUMN_NODE_EVALUATE_SCALAR_CASE(BOOL, bool)
     case GRN_TS_INT: {
@@ -2288,7 +2472,8 @@ static grn_rc
 grn_ts_expr_column_node_evaluate_text_vector(grn_ctx *ctx,
                                              grn_ts_expr_column_node *node,
                                              const grn_ts_record *in,
-                                             size_t n_in, void *out) {
+                                             size_t n_in, void *out)
+{
   grn_rc rc;
   char *buf_ptr;
   size_t i, j, n_bytes, n_values, total_n_bytes = 0, total_n_values = 0;
@@ -2347,7 +2532,8 @@ static grn_rc
 grn_ts_expr_column_node_evaluate_ref_vector(grn_ctx *ctx,
                                              grn_ts_expr_column_node *node,
                                              const grn_ts_record *in,
-                                             size_t n_in, void *out) {
+                                             size_t n_in, void *out)
+{
   grn_rc rc;
   size_t i, j, n_bytes, offset = 0;
   grn_ts_id *buf_ptr;
@@ -2457,7 +2643,8 @@ static grn_rc
 grn_ts_expr_column_node_evaluate_vector(grn_ctx *ctx,
                                         grn_ts_expr_column_node *node,
                                         const grn_ts_record *in, size_t n_in,
-                                        void *out) {
+                                        void *out)
+{
   switch (node->data_kind) {
     GRN_TS_EXPR_COLUMN_NODE_EVALUATE_VECTOR_CASE(BOOL, bool)
     case GRN_TS_INT_VECTOR: {
@@ -2501,7 +2688,8 @@ grn_ts_expr_column_node_evaluate_vector(grn_ctx *ctx,
 static grn_rc
 grn_ts_expr_column_node_evaluate(grn_ctx *ctx, grn_ts_expr_column_node *node,
                                  const grn_ts_record *in, size_t n_in,
-                                 void *out) {
+                                 void *out)
+{
   if (node->data_kind & GRN_TS_VECTOR_FLAG) {
     return grn_ts_expr_column_node_evaluate_vector(ctx, node, in, n_in, out);
   } else {
@@ -2513,7 +2701,8 @@ grn_ts_expr_column_node_evaluate(grn_ctx *ctx, grn_ts_expr_column_node *node,
 static grn_rc
 grn_ts_expr_column_node_filter(grn_ctx *ctx, grn_ts_expr_column_node *node,
                                grn_ts_record *in, size_t n_in,
-                               grn_ts_record *out, size_t *n_out) {
+                               grn_ts_record *out, size_t *n_out)
+{
   size_t i, count = 0;
   grn_ra *ra = (grn_ra *)node->column;
   grn_ra_cache cache;
@@ -2535,7 +2724,8 @@ grn_ts_expr_column_node_filter(grn_ctx *ctx, grn_ts_expr_column_node *node,
 /* grn_ts_expr_column_node_adjust() updates scores. */
 static grn_rc
 grn_ts_expr_column_node_adjust(grn_ctx *ctx, grn_ts_expr_column_node *node,
-                               grn_ts_record *io, size_t n_io) {
+                               grn_ts_record *io, size_t n_io)
+{
   size_t i;
   grn_ra *ra = (grn_ra *)node->column;
   grn_ra_cache cache;
@@ -2572,7 +2762,8 @@ typedef struct {
 
 /* grn_ts_expr_op_node_init() initializes a node. */
 static void
-grn_ts_expr_op_node_init(grn_ctx *ctx, grn_ts_expr_op_node *node) {
+grn_ts_expr_op_node_init(grn_ctx *ctx, grn_ts_expr_op_node *node)
+{
   size_t i;
   memset(node, 0, sizeof(*node));
   node->type = GRN_TS_EXPR_OP_NODE;
@@ -2586,7 +2777,8 @@ grn_ts_expr_op_node_init(grn_ctx *ctx, grn_ts_expr_op_node *node) {
 
 /* grn_ts_expr_op_node_fin() finalizes a node. */
 static void
-grn_ts_expr_op_node_fin(grn_ctx *ctx, grn_ts_expr_op_node *node) {
+grn_ts_expr_op_node_fin(grn_ctx *ctx, grn_ts_expr_op_node *node)
+{
   size_t i;
   for (i = 0; i < GRN_TS_EXPR_OP_NODE_N_BUFS; i++) {
     grn_ts_buf_fin(ctx, &node->bufs[i]);
@@ -2603,7 +2795,8 @@ grn_ts_expr_op_node_fin(grn_ctx *ctx, grn_ts_expr_op_node *node) {
  * rearranged in some cases.
  */
 static grn_rc
-grn_ts_op_plus_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
+grn_ts_op_plus_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node)
+{
   switch (node->args[0]->data_kind) {
     case GRN_TS_INT: {
       switch (node->args[1]->data_kind) {
@@ -2675,7 +2868,8 @@ grn_ts_op_plus_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
 
 /* grn_ts_op_minus_check_args() checks arguments. */
 static grn_rc
-grn_ts_op_minus_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
+grn_ts_op_minus_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node)
+{
   switch (node->args[0]->data_kind) {
     case GRN_TS_INT: {
       if (node->args[1]->data_kind != GRN_TS_INT) {
@@ -2730,7 +2924,8 @@ grn_ts_op_minus_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
  * its arguments.
  */
 static grn_rc
-grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
+grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node)
+{
   switch (node->op_type) {
     case GRN_TS_OP_LOGICAL_NOT: {
       if (node->args[0]->data_kind != GRN_TS_BOOL) {
@@ -2898,7 +3093,8 @@ grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node) {
 grn_rc
 grn_ts_expr_op_node_open(grn_ctx *ctx, grn_ts_op_type op_type,
                          grn_ts_expr_node **args, size_t n_args,
-                         grn_ts_expr_node **node) {
+                         grn_ts_expr_node **node)
+{
   size_t i;
   grn_rc rc;
   grn_ts_expr_op_node *new_node = GRN_MALLOCN(grn_ts_expr_op_node, 1);
@@ -2938,7 +3134,8 @@ grn_ts_expr_op_node_open(grn_ctx *ctx, grn_ts_op_type op_type,
 
 /* grn_ts_expr_op_node_close() destroys a node. */
 static void
-grn_ts_expr_op_node_close(grn_ctx *ctx, grn_ts_expr_op_node *node) {
+grn_ts_expr_op_node_close(grn_ctx *ctx, grn_ts_expr_op_node *node)
+{
   grn_ts_expr_op_node_fin(ctx, node);
   GRN_FREE(node);
 }
@@ -2946,8 +3143,8 @@ grn_ts_expr_op_node_close(grn_ctx *ctx, grn_ts_expr_op_node *node) {
 /* grn_ts_op_logical_not_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_op_logical_not_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                               const grn_ts_record *in, size_t n_in,
-                               void *out) {
+                               const grn_ts_record *in, size_t n_in, void *out)
+{
   size_t i;
   grn_ts_bool *out_ptr = (grn_ts_bool *)out;
   grn_rc rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, out);
@@ -2963,8 +3160,8 @@ grn_ts_op_logical_not_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 /* grn_ts_op_bitwise_not_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_op_bitwise_not_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                               const grn_ts_record *in, size_t n_in,
-                               void *out) {
+                               const grn_ts_record *in, size_t n_in, void *out)
+{
   size_t i;
   grn_rc rc = grn_ts_expr_node_evaluate(ctx, node->args[0], in, n_in, out);
   if (rc != GRN_SUCCESS) {
@@ -3017,14 +3214,16 @@ grn_ts_op_bitwise_not_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 /* grn_ts_op_positive_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_op_positive_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                            const grn_ts_record *in, size_t n_in, void *out) {
+                            const grn_ts_record *in, size_t n_in, void *out)
+{
   GRN_TS_OP_SIGN_EVALUATE(positive)
 }
 
 /* grn_ts_op_negative_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_op_negative_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                            const grn_ts_record *in, size_t n_in, void *out) {
+                            const grn_ts_record *in, size_t n_in, void *out)
+{
   GRN_TS_OP_SIGN_EVALUATE(negative)
 }
 #undef GRN_TS_OP_SIGN_EVALUATE
@@ -3033,8 +3232,8 @@ grn_ts_op_negative_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 /* grn_ts_op_logical_and_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_op_logical_and_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                               const grn_ts_record *in, size_t n_in,
-                               void *out) {
+                               const grn_ts_record *in, size_t n_in, void *out)
+{
   size_t i, j, count;
   grn_rc rc;
   grn_ts_bool *buf_ptrs[2], *out_ptr = (grn_ts_bool *)out;
@@ -3078,8 +3277,8 @@ grn_ts_op_logical_and_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 /* grn_ts_op_logical_or_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_op_logical_or_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                               const grn_ts_record *in, size_t n_in,
-                               void *out) {
+                               const grn_ts_record *in, size_t n_in, void *out)
+{
   size_t i, j, count;
   grn_rc rc;
   grn_ts_bool *buf_ptrs[2], *out_ptr = (grn_ts_bool *)out;
@@ -3123,8 +3322,8 @@ grn_ts_op_logical_or_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 /* grn_ts_op_logical_sub_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_op_logical_sub_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                               const grn_ts_record *in, size_t n_in,
-                               void *out) {
+                               const grn_ts_record *in, size_t n_in, void *out)
+{
   size_t i, j, count;
   grn_rc rc;
   grn_ts_bool *buf_ptrs[2], *out_ptr = (grn_ts_bool *)out;
@@ -3192,8 +3391,8 @@ grn_ts_op_logical_sub_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 /* grn_ts_op_bitwise_and_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_op_bitwise_and_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                               const grn_ts_record *in, size_t n_in,
-                               void *out) {
+                               const grn_ts_record *in, size_t n_in, void *out)
+{
   switch (node->args[0]->data_kind) {
     GRN_TS_OP_BITWISE_EVALUATE_CASE(and, BOOL, bool)
     GRN_TS_OP_BITWISE_EVALUATE_CASE(and, INT, int)
@@ -3207,8 +3406,8 @@ grn_ts_op_bitwise_and_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 /* grn_ts_op_bitwise_or_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_op_bitwise_or_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                              const grn_ts_record *in, size_t n_in,
-                              void *out) {
+                              const grn_ts_record *in, size_t n_in, void *out)
+{
   switch (node->args[0]->data_kind) {
     GRN_TS_OP_BITWISE_EVALUATE_CASE(or, BOOL, bool)
     GRN_TS_OP_BITWISE_EVALUATE_CASE(or, INT, int)
@@ -3222,8 +3421,8 @@ grn_ts_op_bitwise_or_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 /* grn_ts_op_bitwise_xor_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_op_bitwise_xor_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                               const grn_ts_record *in, size_t n_in,
-                               void *out) {
+                               const grn_ts_record *in, size_t n_in, void *out)
+{
   switch (node->args[0]->data_kind) {
     GRN_TS_OP_BITWISE_EVALUATE_CASE(xor, BOOL, bool)
     GRN_TS_OP_BITWISE_EVALUATE_CASE(xor, INT, int)
@@ -3301,14 +3500,16 @@ grn_ts_op_bitwise_xor_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 /* grn_ts_op_equal_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_op_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                         const grn_ts_record *in, size_t n_in, void *out) {
+                         const grn_ts_record *in, size_t n_in, void *out)
+{
   GRN_TS_OP_CHK_EVALUATE(equal)
 }
 
 /* grn_ts_op_not_equal_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_op_not_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                             const grn_ts_record *in, size_t n_in, void *out) {
+                             const grn_ts_record *in, size_t n_in, void *out)
+{
   GRN_TS_OP_CHK_EVALUATE(not_equal)
 }
 #undef GRN_TS_OP_CHK_EVALUATE
@@ -3357,22 +3558,24 @@ grn_ts_op_not_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 /* grn_ts_op_less_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_op_less_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                        const grn_ts_record *in, size_t n_in, void *out) {
+                        const grn_ts_record *in, size_t n_in, void *out)
+{
   GRN_TS_OP_CMP_EVALUATE(less)
 }
 
 /* grn_ts_op_less_equal_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_op_less_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                              const grn_ts_record *in, size_t n_in,
-                              void *out) {
+                              const grn_ts_record *in, size_t n_in, void *out)
+{
   GRN_TS_OP_CMP_EVALUATE(less_equal)
 }
 
 /* grn_ts_op_greater_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_op_greater_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                           const grn_ts_record *in, size_t n_in, void *out) {
+                           const grn_ts_record *in, size_t n_in, void *out)
+{
   GRN_TS_OP_CMP_EVALUATE(greater)
 }
 
@@ -3380,7 +3583,8 @@ grn_ts_op_greater_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 static grn_rc
 grn_ts_op_greater_equal_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
                                  const grn_ts_record *in, size_t n_in,
-                                 void *out) {
+                                 void *out)
+{
   GRN_TS_OP_CMP_EVALUATE(greater_equal)
 }
 #undef GRN_TS_OP_CMP_EVALUATE
@@ -3408,7 +3612,8 @@ static grn_rc
 grn_ts_op_shift_arithmetic_left_evaluate(grn_ctx *ctx,
                                          grn_ts_expr_op_node *node,
                                          const grn_ts_record *in, size_t n_in,
-                                         void *out) {
+                                         void *out)
+{
   GRN_TS_OP_SHIFT_EVALUATE(arithmetic_left)
 }
 
@@ -3417,7 +3622,8 @@ static grn_rc
 grn_ts_op_shift_arithmetic_right_evaluate(grn_ctx *ctx,
                                           grn_ts_expr_op_node *node,
                                           const grn_ts_record *in, size_t n_in,
-                                          void *out) {
+                                          void *out)
+{
   GRN_TS_OP_SHIFT_EVALUATE(arithmetic_right)
 }
 
@@ -3426,7 +3632,8 @@ static grn_rc
 grn_ts_op_shift_logical_left_evaluate(grn_ctx *ctx,
                                       grn_ts_expr_op_node *node,
                                       const grn_ts_record *in, size_t n_in,
-                                      void *out) {
+                                      void *out)
+{
   GRN_TS_OP_SHIFT_EVALUATE(logical_left)
 }
 
@@ -3435,7 +3642,8 @@ static grn_rc
 grn_ts_op_shift_logical_right_evaluate(grn_ctx *ctx,
                                        grn_ts_expr_op_node *node,
                                        const grn_ts_record *in, size_t n_in,
-                                       void *out) {
+                                       void *out)
+{
   GRN_TS_OP_SHIFT_EVALUATE(logical_right)
 }
 #undef GRN_TS_OP_SHIFT_EVALUATE
@@ -3514,7 +3722,8 @@ grn_ts_op_shift_logical_right_evaluate(grn_ctx *ctx,
 /* grn_ts_op_plus_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_op_plus_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                        const grn_ts_record *in, size_t n_in, void *out) {
+                        const grn_ts_record *in, size_t n_in, void *out)
+{
   switch (node->args[0]->data_kind) {
     case GRN_TS_INT: {
       GRN_TS_OP_ARITH_EVALUATE(plus, int, int)
@@ -3547,7 +3756,8 @@ grn_ts_op_plus_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 /* grn_ts_op_minus_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_op_minus_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                         const grn_ts_record *in, size_t n_in, void *out) {
+                         const grn_ts_record *in, size_t n_in, void *out)
+{
   switch (node->args[0]->data_kind) {
     case GRN_TS_INT: {
       GRN_TS_OP_ARITH_EVALUATE(minus, int, int)
@@ -3608,7 +3818,8 @@ grn_ts_op_minus_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 static grn_rc
 grn_ts_op_multiplication_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
                                   const grn_ts_record *in, size_t n_in,
-                                  void *out) {
+                                  void *out)
+{
   switch (node->data_kind) {
     case GRN_TS_INT: {
       GRN_TS_OP_ARITH_EVALUATE(multiplication, int, int)
@@ -3626,7 +3837,8 @@ grn_ts_op_multiplication_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 /* grn_ts_op_division_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_op_division_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                            const grn_ts_record *in, size_t n_in, void *out) {
+                            const grn_ts_record *in, size_t n_in, void *out)
+{
   switch (node->data_kind) {
     case GRN_TS_INT: {
       GRN_TS_OP_ARITH_EVALUATE(division, int, int)
@@ -3644,7 +3856,8 @@ grn_ts_op_division_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 /* grn_ts_op_modulus_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_op_modulus_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                           const grn_ts_record *in, size_t n_in, void *out) {
+                           const grn_ts_record *in, size_t n_in, void *out)
+{
   switch (node->data_kind) {
     case GRN_TS_INT: {
       GRN_TS_OP_ARITH_EVALUATE(modulus, int, int)
@@ -3663,8 +3876,8 @@ grn_ts_op_modulus_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 /* grn_ts_expr_op_node_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_expr_op_node_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                             const grn_ts_record *in, size_t n_in,
-                             void *out) {
+                             const grn_ts_record *in, size_t n_in, void *out)
+{
   switch (node->op_type) {
     case GRN_TS_OP_LOGICAL_NOT: {
       return grn_ts_op_logical_not_evaluate(ctx, node, in, n_in, out);
@@ -3753,7 +3966,8 @@ grn_ts_expr_op_node_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 static grn_rc
 grn_ts_op_logical_not_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
                              grn_ts_record *in, size_t n_in,
-                             grn_ts_record *out, size_t *n_out) {
+                             grn_ts_record *out, size_t *n_out)
+{
   size_t i, count;
   grn_rc rc;
   grn_ts_bool *buf_ptr;
@@ -3779,7 +3993,8 @@ grn_ts_op_logical_not_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
 static grn_rc
 grn_ts_op_bitwise_not_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
                              grn_ts_record *in, size_t n_in,
-                             grn_ts_record *out, size_t *n_out) {
+                             grn_ts_record *out, size_t *n_out)
+{
   size_t i, count;
   grn_rc rc;
   grn_ts_bool *buf_ptr;
@@ -3805,7 +4020,8 @@ grn_ts_op_bitwise_not_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
 static grn_rc
 grn_ts_op_logical_and_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
                              grn_ts_record *in, size_t n_in,
-                             grn_ts_record *out, size_t *n_out) {
+                             grn_ts_record *out, size_t *n_out)
+{
   grn_rc rc = grn_ts_expr_node_filter(ctx, node->args[0], in, n_in,
                                       out, n_out);
   if (rc != GRN_SUCCESS) {
@@ -3818,7 +4034,8 @@ grn_ts_op_logical_and_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
 static grn_rc
 grn_ts_op_logical_or_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
                             grn_ts_record *in, size_t n_in,
-                            grn_ts_record *out, size_t *n_out) {
+                            grn_ts_record *out, size_t *n_out)
+{
   size_t i, j, count;
   grn_rc rc;
   grn_ts_bool *buf_ptrs[2];
@@ -3866,7 +4083,8 @@ grn_ts_op_logical_or_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
 static grn_rc
 grn_ts_op_logical_sub_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
                              grn_ts_record *in, size_t n_in,
-                             grn_ts_record *out, size_t *n_out) {
+                             grn_ts_record *out, size_t *n_out)
+{
   size_t i, n, count;
   grn_ts_bool *buf_ptr;
   grn_rc rc = grn_ts_expr_node_filter(ctx, node->args[0], in, n_in, out, &n);
@@ -3907,7 +4125,8 @@ grn_ts_op_logical_sub_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
 static grn_rc
 grn_ts_op_bitwise_and_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
                              grn_ts_record *in, size_t n_in,
-                             grn_ts_record *out, size_t *n_out) {
+                             grn_ts_record *out, size_t *n_out)
+{
   GRN_TS_OP_BITWISE_FILTER(and);
 }
 
@@ -3915,7 +4134,8 @@ grn_ts_op_bitwise_and_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
 static grn_rc
 grn_ts_op_bitwise_or_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
                             grn_ts_record *in, size_t n_in,
-                            grn_ts_record *out, size_t *n_out) {
+                            grn_ts_record *out, size_t *n_out)
+{
   GRN_TS_OP_BITWISE_FILTER(or);
 }
 
@@ -3923,7 +4143,8 @@ grn_ts_op_bitwise_or_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
 static grn_rc
 grn_ts_op_bitwise_xor_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
                              grn_ts_record *in, size_t n_in,
-                             grn_ts_record *out, size_t *n_out) {
+                             grn_ts_record *out, size_t *n_out)
+{
   GRN_TS_OP_BITWISE_FILTER(xor);
 }
 #undef GRN_TS_OP_BITWISE_FILTER_CASE
@@ -3977,7 +4198,8 @@ grn_ts_op_bitwise_xor_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
 static grn_rc
 grn_ts_op_equal_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
                        const grn_ts_record *in, size_t n_in,
-                       grn_ts_record *out, size_t *n_out) {
+                       grn_ts_record *out, size_t *n_out)
+{
   GRN_TS_OP_CHK_FILTER(equal)
 }
 
@@ -3985,7 +4207,8 @@ grn_ts_op_equal_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
 static grn_rc
 grn_ts_op_not_equal_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
                            const grn_ts_record *in, size_t n_in,
-                           grn_ts_record *out, size_t *n_out) {
+                           grn_ts_record *out, size_t *n_out)
+{
   GRN_TS_OP_CHK_FILTER(not_equal)
 }
 #undef GRN_TS_OP_CHK_FILTER
@@ -4035,7 +4258,8 @@ grn_ts_op_not_equal_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
 static grn_rc
 grn_ts_op_less_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
                       const grn_ts_record *in, size_t n_in,
-                      grn_ts_record *out, size_t *n_out) {
+                      grn_ts_record *out, size_t *n_out)
+{
   GRN_TS_OP_CMP_FILTER(less)
 }
 
@@ -4043,7 +4267,8 @@ grn_ts_op_less_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
 static grn_rc
 grn_ts_op_less_equal_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
                             const grn_ts_record *in, size_t n_in,
-                            grn_ts_record *out, size_t *n_out) {
+                            grn_ts_record *out, size_t *n_out)
+{
   GRN_TS_OP_CMP_FILTER(less_equal)
 }
 
@@ -4051,7 +4276,8 @@ grn_ts_op_less_equal_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
 static grn_rc
 grn_ts_op_greater_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
                          const grn_ts_record *in, size_t n_in,
-                         grn_ts_record *out, size_t *n_out) {
+                         grn_ts_record *out, size_t *n_out)
+{
   GRN_TS_OP_CMP_FILTER(greater)
 }
 
@@ -4059,7 +4285,8 @@ grn_ts_op_greater_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
 static grn_rc
 grn_ts_op_greater_equal_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
                                const grn_ts_record *in, size_t n_in,
-                               grn_ts_record *out, size_t *n_out) {
+                               grn_ts_record *out, size_t *n_out)
+{
   GRN_TS_OP_CMP_FILTER(greater_equal)
 }
 #undef GRN_TS_OP_CMP_FILTER
@@ -4070,7 +4297,8 @@ grn_ts_op_greater_equal_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
 static grn_rc
 grn_ts_expr_op_node_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
                            grn_ts_record *in, size_t n_in,
-                           grn_ts_record *out, size_t *n_out) {
+                           grn_ts_record *out, size_t *n_out)
+{
   switch (node->op_type) {
     case GRN_TS_OP_LOGICAL_NOT: {
       return grn_ts_op_logical_not_filter(ctx, node, in, n_in, out, n_out);
@@ -4139,14 +4367,16 @@ grn_ts_expr_op_node_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
 /* grn_ts_op_positive_adjust() updates scores. */
 static grn_rc
 grn_ts_op_positive_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                          grn_ts_record *io, size_t n_io) {
+                          grn_ts_record *io, size_t n_io)
+{
   GRN_TS_OP_SIGN_ADJUST(positive)
 }
 
 /* grn_ts_op_negative_adjust() updates scores. */
 static grn_rc
 grn_ts_op_negative_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                          grn_ts_record *io, size_t n_io) {
+                          grn_ts_record *io, size_t n_io)
+{
   GRN_TS_OP_SIGN_ADJUST(negative)
 }
 #undef GRN_TS_OP_SIGN_ADJUST
@@ -4178,35 +4408,40 @@ grn_ts_op_negative_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
 /* grn_ts_op_plus_adjust() updates scores. */
 static grn_rc
 grn_ts_op_plus_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                      grn_ts_record *io, size_t n_io) {
+                      grn_ts_record *io, size_t n_io)
+{
   GRN_TS_OP_ARITH_ADJUST(plus)
 }
 
 /* grn_ts_op_minus_adjust() updates scores. */
 static grn_rc
 grn_ts_op_minus_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                       grn_ts_record *io, size_t n_io) {
+                       grn_ts_record *io, size_t n_io)
+{
   GRN_TS_OP_ARITH_ADJUST(minus)
 }
 
 /* grn_ts_op_multiplication_adjust() updates scores. */
 static grn_rc
 grn_ts_op_multiplication_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                                grn_ts_record *io, size_t n_io) {
+                                grn_ts_record *io, size_t n_io)
+{
   GRN_TS_OP_ARITH_ADJUST(multiplication)
 }
 
 /* grn_ts_op_division_adjust() updates scores. */
 static grn_rc
 grn_ts_op_division_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                          grn_ts_record *io, size_t n_io) {
+                          grn_ts_record *io, size_t n_io)
+{
   GRN_TS_OP_ARITH_ADJUST(division)
 }
 
 /* grn_ts_op_modulus_adjust() updates scores. */
 static grn_rc
 grn_ts_op_modulus_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                         grn_ts_record *io, size_t n_io) {
+                         grn_ts_record *io, size_t n_io)
+{
   GRN_TS_OP_ARITH_ADJUST(modulus)
 }
 #undef GRN_TS_OP_ARITH_ADJUST
@@ -4214,7 +4449,8 @@ grn_ts_op_modulus_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
 /* grn_ts_expr_op_node_adjust() updates scores. */
 static grn_rc
 grn_ts_expr_op_node_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
-                           grn_ts_record *io, size_t n_io) {
+                           grn_ts_record *io, size_t n_io)
+{
   switch (node->op_type) {
     case GRN_TS_OP_POSITIVE: {
       return grn_ts_op_positive_adjust(ctx, node, io, n_io);
@@ -4260,7 +4496,8 @@ typedef struct {
 
 /* grn_ts_expr_bridge_node_init() initializes a node. */
 static void
-grn_ts_expr_bridge_node_init(grn_ctx *ctx, grn_ts_expr_bridge_node *node) {
+grn_ts_expr_bridge_node_init(grn_ctx *ctx, grn_ts_expr_bridge_node *node)
+{
   size_t i;
   memset(node, 0, sizeof(*node));
   node->type = GRN_TS_EXPR_BRIDGE_NODE;
@@ -4273,7 +4510,8 @@ grn_ts_expr_bridge_node_init(grn_ctx *ctx, grn_ts_expr_bridge_node *node) {
 
 /* grn_ts_expr_bridge_node_fin() finalizes a node. */
 static void
-grn_ts_expr_bridge_node_fin(grn_ctx *ctx, grn_ts_expr_bridge_node *node) {
+grn_ts_expr_bridge_node_fin(grn_ctx *ctx, grn_ts_expr_bridge_node *node)
+{
   size_t i;
   for (i = 0; i < GRN_TS_EXPR_BRIDGE_NODE_N_BUFS; i++) {
     grn_ts_buf_fin(ctx, &node->bufs[i]);
@@ -4282,7 +4520,8 @@ grn_ts_expr_bridge_node_fin(grn_ctx *ctx, grn_ts_expr_bridge_node *node) {
 
 grn_rc
 grn_ts_expr_bridge_node_open(grn_ctx *ctx, grn_ts_expr_node *src,
-                             grn_ts_expr_node *dest, grn_ts_expr_node **node) {
+                             grn_ts_expr_node *dest, grn_ts_expr_node **node)
+{
   grn_ts_expr_bridge_node *new_node = GRN_MALLOCN(grn_ts_expr_bridge_node, 1);
   if (!new_node) {
     GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
@@ -4299,7 +4538,8 @@ grn_ts_expr_bridge_node_open(grn_ctx *ctx, grn_ts_expr_node *src,
 
 /* grn_ts_expr_bridge_node_close() destroys a node. */
 static void
-grn_ts_expr_bridge_node_close(grn_ctx *ctx, grn_ts_expr_bridge_node *node) {
+grn_ts_expr_bridge_node_close(grn_ctx *ctx, grn_ts_expr_bridge_node *node)
+{
   grn_ts_expr_bridge_node_fin(ctx, node);
   GRN_FREE(node);
 }
@@ -4308,7 +4548,8 @@ grn_ts_expr_bridge_node_close(grn_ctx *ctx, grn_ts_expr_bridge_node *node) {
 static grn_rc
 grn_ts_expr_bridge_node_evaluate(grn_ctx *ctx, grn_ts_expr_bridge_node *node,
                                  const grn_ts_record *in, size_t n_in,
-                                 void *out) {
+                                 void *out)
+{
   grn_ts_record *tmp;
   grn_rc rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->src, in, n_in,
                                                &node->bufs[0]);
@@ -4323,7 +4564,8 @@ grn_ts_expr_bridge_node_evaluate(grn_ctx *ctx, grn_ts_expr_bridge_node *node,
 static grn_rc
 grn_ts_expr_bridge_node_filter(grn_ctx *ctx, grn_ts_expr_bridge_node *node,
                                grn_ts_record *in, size_t n_in,
-                               grn_ts_record *out, size_t *n_out) {
+                               grn_ts_record *out, size_t *n_out)
+{
   size_t i, count;
   grn_ts_bool *values;
   grn_ts_record *tmp;
@@ -4351,7 +4593,8 @@ grn_ts_expr_bridge_node_filter(grn_ctx *ctx, grn_ts_expr_bridge_node *node,
 /* grn_ts_expr_bridge_node_adjust() updates scores. */
 static grn_rc
 grn_ts_expr_bridge_node_adjust(grn_ctx *ctx, grn_ts_expr_bridge_node *node,
-                               grn_ts_record *io, size_t n_io) {
+                               grn_ts_record *io, size_t n_io)
+{
   size_t i;
   grn_ts_record *tmp;
   grn_rc rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->src, io, n_io,
@@ -4382,7 +4625,8 @@ grn_ts_expr_bridge_node_adjust(grn_ctx *ctx, grn_ts_expr_bridge_node *node,
     return;\
   }
 void
-grn_ts_expr_node_close(grn_ctx *ctx, grn_ts_expr_node *node) {
+grn_ts_expr_node_close(grn_ctx *ctx, grn_ts_expr_node *node)
+{
   switch (node->type) {
     GRN_TS_EXPR_NODE_CLOSE_CASE(ID, id)
     GRN_TS_EXPR_NODE_CLOSE_CASE(SCORE, score)
@@ -4405,7 +4649,8 @@ grn_ts_expr_node_close(grn_ctx *ctx, grn_ts_expr_node *node) {
   }
 grn_rc
 grn_ts_expr_node_evaluate(grn_ctx *ctx, grn_ts_expr_node *node,
-                          const grn_ts_record *in, size_t n_in, void *out) {
+                          const grn_ts_record *in, size_t n_in, void *out)
+{
   switch (node->type) {
     GRN_TS_EXPR_NODE_EVALUATE_CASE(ID, id)
     GRN_TS_EXPR_NODE_EVALUATE_CASE(SCORE, score)
@@ -4436,7 +4681,8 @@ grn_ts_expr_node_evaluate(grn_ctx *ctx, grn_ts_expr_node *node,
 grn_rc
 grn_ts_expr_node_evaluate_to_buf(grn_ctx *ctx, grn_ts_expr_node *node,
                                  const grn_ts_record *in, size_t n_in,
-                                 grn_ts_buf *out) {
+                                 grn_ts_buf *out)
+{
   switch (node->data_kind) {
     GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_CASE(BOOL, bool)
     GRN_TS_EXPR_NODE_EVALUATE_TO_BUF_CASE(INT, int)
@@ -4471,7 +4717,8 @@ grn_ts_expr_node_evaluate_to_buf(grn_ctx *ctx, grn_ts_expr_node *node,
 grn_rc
 grn_ts_expr_node_filter(grn_ctx *ctx, grn_ts_expr_node *node,
                         grn_ts_record *in, size_t n_in,
-                        grn_ts_record *out, size_t *n_out) {
+                        grn_ts_record *out, size_t *n_out)
+{
   if (node->data_kind != GRN_TS_BOOL) {
     GRN_TS_ERR_RETURN(GRN_OPERATION_NOT_SUPPORTED,
                       "invalid data kind: %d", node->data_kind);
@@ -4499,7 +4746,8 @@ grn_ts_expr_node_filter(grn_ctx *ctx, grn_ts_expr_node *node,
   }
 grn_rc
 grn_ts_expr_node_adjust(grn_ctx *ctx, grn_ts_expr_node *node,
-                        grn_ts_record *io, size_t n_io) {
+                        grn_ts_record *io, size_t n_io)
+{
   if (node->data_kind != GRN_TS_FLOAT) {
     GRN_TS_ERR_RETURN(GRN_OPERATION_NOT_SUPPORTED,
                       "invalid data kind: %d", node->data_kind);

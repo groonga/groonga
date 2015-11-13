@@ -41,7 +41,8 @@
 
 /* grn_ts_expr_bridge_init() initializes a bridge. */
 static void
-grn_ts_expr_bridge_init(grn_ctx *ctx, grn_ts_expr_bridge *bridge) {
+grn_ts_expr_bridge_init(grn_ctx *ctx, grn_ts_expr_bridge *bridge)
+{
   memset(bridge, 0, sizeof(*bridge));
   bridge->src_table = NULL;
   bridge->dest_table = NULL;
@@ -49,7 +50,8 @@ grn_ts_expr_bridge_init(grn_ctx *ctx, grn_ts_expr_bridge *bridge) {
 
 /* grn_ts_expr_bridge_fin() finalizes a bridge. */
 static void
-grn_ts_expr_bridge_fin(grn_ctx *ctx, grn_ts_expr_bridge *bridge) {
+grn_ts_expr_bridge_fin(grn_ctx *ctx, grn_ts_expr_bridge *bridge)
+{
   if (bridge->dest_table) {
     grn_obj_unlink(ctx, bridge->dest_table);
   }
@@ -62,7 +64,8 @@ grn_ts_expr_bridge_fin(grn_ctx *ctx, grn_ts_expr_bridge *bridge) {
 
 /* grn_ts_expr_init() initializes an expression. */
 static void
-grn_ts_expr_init(grn_ctx *ctx, grn_ts_expr *expr) {
+grn_ts_expr_init(grn_ctx *ctx, grn_ts_expr *expr)
+{
   memset(expr, 0, sizeof(*expr));
   expr->table = NULL;
   expr->curr_table = NULL;
@@ -73,7 +76,8 @@ grn_ts_expr_init(grn_ctx *ctx, grn_ts_expr *expr) {
 
 /* grn_ts_expr_fin() finalizes an expression. */
 static void
-grn_ts_expr_fin(grn_ctx *ctx, grn_ts_expr *expr) {
+grn_ts_expr_fin(grn_ctx *ctx, grn_ts_expr *expr)
+{
   size_t i;
   if (expr->bridges) {
     for (i = 0; i < expr->n_bridges; i++) {
@@ -96,7 +100,8 @@ grn_ts_expr_fin(grn_ctx *ctx, grn_ts_expr *expr) {
 }
 
 grn_rc
-grn_ts_expr_open(grn_ctx *ctx, grn_obj *table, grn_ts_expr **expr) {
+grn_ts_expr_open(grn_ctx *ctx, grn_obj *table, grn_ts_expr **expr)
+{
   grn_rc rc;
   grn_ts_expr *new_expr;
   if (!ctx) {
@@ -124,7 +129,8 @@ grn_ts_expr_open(grn_ctx *ctx, grn_obj *table, grn_ts_expr **expr) {
 
 grn_rc
 grn_ts_expr_parse(grn_ctx *ctx, grn_obj *table,
-                  const char *str_ptr, size_t str_size, grn_ts_expr **expr) {
+                  const char *str_ptr, size_t str_size, grn_ts_expr **expr)
+{
   grn_rc rc;
   grn_ts_expr *new_expr;
   if (!ctx) {
@@ -151,7 +157,8 @@ grn_ts_expr_parse(grn_ctx *ctx, grn_obj *table,
 }
 
 grn_rc
-grn_ts_expr_close(grn_ctx *ctx, grn_ts_expr *expr) {
+grn_ts_expr_close(grn_ctx *ctx, grn_ts_expr *expr)
+{
   if (!ctx || !expr) {
     return GRN_INVALID_ARGUMENT;
   }
@@ -161,7 +168,8 @@ grn_ts_expr_close(grn_ctx *ctx, grn_ts_expr *expr) {
 }
 
 grn_obj *
-grn_ts_expr_get_table(grn_ctx *ctx, grn_ts_expr *expr) {
+grn_ts_expr_get_table(grn_ctx *ctx, grn_ts_expr *expr)
+{
   if (!ctx || !expr) {
     return NULL;
   }
@@ -173,28 +181,33 @@ grn_ts_expr_get_table(grn_ctx *ctx, grn_ts_expr *expr) {
 }
 
 grn_ts_expr_type
-grn_ts_expr_get_type(grn_ctx *ctx, grn_ts_expr *expr) {
+grn_ts_expr_get_type(grn_ctx *ctx, grn_ts_expr *expr)
+{
   return (!ctx || !expr) ? GRN_TS_EXPR_BROKEN : expr->type;
 }
 
 grn_ts_data_kind
-grn_ts_expr_get_data_kind(grn_ctx *ctx, grn_ts_expr *expr) {
+grn_ts_expr_get_data_kind(grn_ctx *ctx, grn_ts_expr *expr)
+{
   return (!ctx || !expr) ? GRN_TS_VOID : expr->data_kind;
 }
 
 grn_ts_data_type
-grn_ts_expr_get_data_type(grn_ctx *ctx, grn_ts_expr *expr) {
+grn_ts_expr_get_data_type(grn_ctx *ctx, grn_ts_expr *expr)
+{
   return (!ctx || !expr) ? GRN_DB_VOID : expr->data_type;
 }
 
 grn_ts_expr_node *
-grn_ts_expr_get_root(grn_ctx *ctx, grn_ts_expr *expr) {
+grn_ts_expr_get_root(grn_ctx *ctx, grn_ts_expr *expr)
+{
   return (!ctx || !expr) ? NULL : expr->root;
 }
 
 /* grn_ts_expr_reserve_stack() extends a stack. */
 static grn_rc
-grn_ts_expr_reserve_stack(grn_ctx *ctx, grn_ts_expr *expr) {
+grn_ts_expr_reserve_stack(grn_ctx *ctx, grn_ts_expr *expr)
+{
   size_t i, n_bytes, new_size;
   grn_ts_expr_node **new_stack;
   if (expr->stack_depth < expr->stack_size) {
@@ -218,7 +231,8 @@ grn_ts_expr_reserve_stack(grn_ctx *ctx, grn_ts_expr *expr) {
 /* grn_ts_expr_deref() dereferences a node. */
 static grn_rc
 grn_ts_expr_deref(grn_ctx *ctx, grn_ts_expr *expr,
-                  grn_ts_expr_node **node_ptr) {
+                  grn_ts_expr_node **node_ptr)
+{
   grn_ts_expr_node *node = *node_ptr;
   while (node->data_kind == GRN_TS_REF) {
     grn_rc rc;
@@ -249,7 +263,8 @@ grn_ts_expr_deref(grn_ctx *ctx, grn_ts_expr *expr,
 
 grn_rc
 grn_ts_expr_push(grn_ctx *ctx, grn_ts_expr *expr,
-                 const char *str_ptr, size_t str_size) {
+                 const char *str_ptr, size_t str_size)
+{
   grn_rc rc;
   grn_ts_expr_parser *parser;
   if (!ctx) {
@@ -270,7 +285,8 @@ grn_ts_expr_push(grn_ctx *ctx, grn_ts_expr *expr,
 
 grn_rc
 grn_ts_expr_push_name(grn_ctx *ctx, grn_ts_expr *expr,
-                     const char *name_ptr, size_t name_size) {
+                     const char *name_ptr, size_t name_size)
+{
   grn_obj *column;
   grn_ts_str name = { name_ptr, name_size };
   if (!ctx) {
@@ -307,7 +323,8 @@ grn_ts_expr_push_name(grn_ctx *ctx, grn_ts_expr *expr,
   }
 /* grn_ts_expr_push_bulk() pushes a scalar. */
 static grn_rc
-grn_ts_expr_push_bulk(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj) {
+grn_ts_expr_push_bulk(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj)
+{
   switch (obj->header.domain) {
     GRN_TS_EXPR_PUSH_BULK_CASE(BOOL, bool)
     GRN_TS_EXPR_PUSH_BULK_CASE(INT8, int)
@@ -375,7 +392,8 @@ grn_ts_expr_push_bulk(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj) {
   }
 /* grn_ts_expr_push_uvector() pushes an array of fixed-size values. */
 static grn_rc
-grn_ts_expr_push_uvector(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj) {
+grn_ts_expr_push_uvector(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj)
+{
   switch (obj->header.domain) {
     GRN_TS_EXPR_PUSH_UVECTOR_CASE(BOOL, bool)
     GRN_TS_EXPR_PUSH_UVECTOR_CASE_WITH_TYPECAST(INT8, int)
@@ -400,7 +418,8 @@ grn_ts_expr_push_uvector(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj) {
 
 /* grn_ts_expr_push_vector() pushes an array of texts. */
 static grn_rc
-grn_ts_expr_push_vector(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj) {
+grn_ts_expr_push_vector(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj)
+{
   switch (obj->header.domain) {
     case GRN_DB_SHORT_TEXT:
     case GRN_DB_TEXT:
@@ -436,7 +455,8 @@ grn_ts_expr_push_vector(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj) {
 
 static grn_rc
 grn_ts_expr_push_single_accessor(grn_ctx *ctx, grn_ts_expr *expr,
-                                 grn_accessor *accessor) {
+                                 grn_accessor *accessor)
+{
   switch (accessor->action) {
     case GRN_ACCESSOR_GET_ID: {
       return grn_ts_expr_push_id(ctx, expr);
@@ -468,7 +488,8 @@ grn_ts_expr_push_single_accessor(grn_ctx *ctx, grn_ts_expr *expr,
 
 static grn_rc
 grn_ts_expr_push_accessor(grn_ctx *ctx, grn_ts_expr *expr,
-                          grn_accessor *accessor) {
+                          grn_accessor *accessor)
+{
   grn_rc rc = grn_ts_expr_push_single_accessor(ctx, expr, accessor);
   if (rc != GRN_SUCCESS) {
     return rc;
@@ -491,7 +512,8 @@ grn_ts_expr_push_accessor(grn_ctx *ctx, grn_ts_expr *expr,
 }
 
 grn_rc
-grn_ts_expr_push_obj(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj) {
+grn_ts_expr_push_obj(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj)
+{
   if (!ctx) {
     return GRN_INVALID_ARGUMENT;
   }
@@ -523,7 +545,8 @@ grn_ts_expr_push_obj(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj) {
 }
 
 grn_rc
-grn_ts_expr_push_id(grn_ctx *ctx, grn_ts_expr *expr) {
+grn_ts_expr_push_id(grn_ctx *ctx, grn_ts_expr *expr)
+{
   grn_rc rc;
   grn_ts_expr_node *node;
   if (!ctx) {
@@ -543,7 +566,8 @@ grn_ts_expr_push_id(grn_ctx *ctx, grn_ts_expr *expr) {
 }
 
 grn_rc
-grn_ts_expr_push_score(grn_ctx *ctx, grn_ts_expr *expr) {
+grn_ts_expr_push_score(grn_ctx *ctx, grn_ts_expr *expr)
+{
   grn_rc rc;
   grn_ts_expr_node *node;
   if (!ctx) {
@@ -563,7 +587,8 @@ grn_ts_expr_push_score(grn_ctx *ctx, grn_ts_expr *expr) {
 }
 
 grn_rc
-grn_ts_expr_push_key(grn_ctx *ctx, grn_ts_expr *expr) {
+grn_ts_expr_push_key(grn_ctx *ctx, grn_ts_expr *expr)
+{
   grn_rc rc;
   grn_ts_expr_node *node;
   if (!ctx) {
@@ -583,7 +608,8 @@ grn_ts_expr_push_key(grn_ctx *ctx, grn_ts_expr *expr) {
 }
 
 grn_rc
-grn_ts_expr_push_value(grn_ctx *ctx, grn_ts_expr *expr) {
+grn_ts_expr_push_value(grn_ctx *ctx, grn_ts_expr *expr)
+{
   grn_rc rc;
   grn_ts_expr_node *node;
   if (!ctx) {
@@ -604,7 +630,8 @@ grn_ts_expr_push_value(grn_ctx *ctx, grn_ts_expr *expr) {
 
 grn_rc
 grn_ts_expr_push_const(grn_ctx *ctx, grn_ts_expr *expr,
-                       grn_ts_data_kind kind, const void *value) {
+                       grn_ts_data_kind kind, const void *value)
+{
   grn_rc rc;
   grn_ts_expr_node *node;
   if (!ctx) {
@@ -624,7 +651,8 @@ grn_ts_expr_push_const(grn_ctx *ctx, grn_ts_expr *expr,
 }
 
 grn_rc
-grn_ts_expr_push_column(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *column) {
+grn_ts_expr_push_column(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *column)
+{
   grn_rc rc;
   grn_ts_expr_node *node;
   if (!ctx) {
@@ -646,7 +674,8 @@ grn_ts_expr_push_column(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *column) {
 }
 
 grn_rc
-grn_ts_expr_push_op(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_op_type op_type) {
+grn_ts_expr_push_op(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_op_type op_type)
+{
   grn_rc rc;
   grn_ts_expr_node **args, *node;
   size_t i, n_args, max_n_args;
@@ -689,37 +718,44 @@ grn_ts_expr_push_op(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_op_type op_type) {
 }
 
 grn_rc
-grn_ts_expr_push_bool(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_bool value) {
+grn_ts_expr_push_bool(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_bool value)
+{
   return grn_ts_expr_push_const(ctx, expr, GRN_TS_BOOL, &value);
 }
 
 grn_rc
-grn_ts_expr_push_int(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_int value) {
+grn_ts_expr_push_int(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_int value)
+{
   return grn_ts_expr_push_const(ctx, expr, GRN_TS_INT, &value);
 }
 
 grn_rc
-grn_ts_expr_push_float(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_float value) {
+grn_ts_expr_push_float(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_float value)
+{
   return grn_ts_expr_push_const(ctx, expr, GRN_TS_FLOAT, &value);
 }
 
 grn_rc
-grn_ts_expr_push_time(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_time value) {
+grn_ts_expr_push_time(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_time value)
+{
   return grn_ts_expr_push_const(ctx, expr, GRN_TS_TIME, &value);
 }
 
 grn_rc
-grn_ts_expr_push_text(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_text value) {
+grn_ts_expr_push_text(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_text value)
+{
   return grn_ts_expr_push_const(ctx, expr, GRN_TS_TEXT, &value);
 }
 
 grn_rc
-grn_ts_expr_push_geo(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_geo value) {
+grn_ts_expr_push_geo(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_geo value)
+{
   return grn_ts_expr_push_const(ctx, expr, GRN_TS_GEO, &value);
 }
 
 grn_rc
-grn_ts_expr_push_tokyo_geo(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_geo value) {
+grn_ts_expr_push_tokyo_geo(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_geo value)
+{
   grn_rc rc = grn_ts_expr_push_const(ctx, expr, GRN_TS_GEO, &value);
   if (rc != GRN_SUCCESS) {
     return rc;
@@ -729,7 +765,8 @@ grn_ts_expr_push_tokyo_geo(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_geo value) {
 }
 
 grn_rc
-grn_ts_expr_push_wgs84_geo(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_geo value) {
+grn_ts_expr_push_wgs84_geo(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_geo value)
+{
   grn_rc rc = grn_ts_expr_push_const(ctx, expr, GRN_TS_GEO, &value);
   if (rc != GRN_SUCCESS) {
     return rc;
@@ -740,43 +777,50 @@ grn_ts_expr_push_wgs84_geo(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_geo value) {
 
 grn_rc
 grn_ts_expr_push_bool_vector(grn_ctx *ctx, grn_ts_expr *expr,
-                             grn_ts_bool_vector value) {
+                             grn_ts_bool_vector value)
+{
   return grn_ts_expr_push_const(ctx, expr, GRN_TS_BOOL_VECTOR, &value);
 }
 
 grn_rc
 grn_ts_expr_push_int_vector(grn_ctx *ctx, grn_ts_expr *expr,
-                            grn_ts_int_vector value) {
+                            grn_ts_int_vector value)
+{
   return grn_ts_expr_push_const(ctx, expr, GRN_TS_INT_VECTOR, &value);
 }
 
 grn_rc
 grn_ts_expr_push_float_vector(grn_ctx *ctx, grn_ts_expr *expr,
-                              grn_ts_float_vector value) {
+                              grn_ts_float_vector value)
+{
   return grn_ts_expr_push_const(ctx, expr, GRN_TS_FLOAT_VECTOR, &value);
 }
 
 grn_rc
 grn_ts_expr_push_time_vector(grn_ctx *ctx, grn_ts_expr *expr,
-                             grn_ts_time_vector value) {
+                             grn_ts_time_vector value)
+{
   return grn_ts_expr_push_const(ctx, expr, GRN_TS_TIME_VECTOR, &value);
 }
 
 grn_rc
 grn_ts_expr_push_text_vector(grn_ctx *ctx, grn_ts_expr *expr,
-                             grn_ts_text_vector value) {
+                             grn_ts_text_vector value)
+{
   return grn_ts_expr_push_const(ctx, expr, GRN_TS_TEXT_VECTOR, &value);
 }
 
 grn_rc
 grn_ts_expr_push_geo_vector(grn_ctx *ctx, grn_ts_expr *expr,
-                            grn_ts_geo_vector value) {
+                            grn_ts_geo_vector value)
+{
   return grn_ts_expr_push_const(ctx, expr, GRN_TS_GEO_VECTOR, &value);
 }
 
 grn_rc
 grn_ts_expr_push_tokyo_geo_vector(grn_ctx *ctx, grn_ts_expr *expr,
-                                  grn_ts_geo_vector value) {
+                                  grn_ts_geo_vector value)
+{
   grn_rc rc = grn_ts_expr_push_const(ctx, expr, GRN_TS_GEO_VECTOR, &value);
   if (rc != GRN_SUCCESS) {
     return rc;
@@ -787,7 +831,8 @@ grn_ts_expr_push_tokyo_geo_vector(grn_ctx *ctx, grn_ts_expr *expr,
 
 grn_rc
 grn_ts_expr_push_wgs84_geo_vector(grn_ctx *ctx, grn_ts_expr *expr,
-                                  grn_ts_geo_vector value) {
+                                  grn_ts_geo_vector value)
+{
   grn_rc rc = grn_ts_expr_push_const(ctx, expr, GRN_TS_GEO_VECTOR, &value);
   if (rc != GRN_SUCCESS) {
     return rc;
@@ -798,7 +843,8 @@ grn_ts_expr_push_wgs84_geo_vector(grn_ctx *ctx, grn_ts_expr *expr,
 
 /* grn_ts_expr_reserve_bridges() extends a bridge buffer for a new bridge. */
 static grn_rc
-grn_ts_expr_reserve_bridges(grn_ctx *ctx, grn_ts_expr *expr) {
+grn_ts_expr_reserve_bridges(grn_ctx *ctx, grn_ts_expr *expr)
+{
   size_t n_bytes, new_max_n_bridges;
   grn_ts_expr_bridge *new_bridges;
   if (expr->n_bridges < expr->max_n_bridges) {
@@ -820,7 +866,8 @@ grn_ts_expr_reserve_bridges(grn_ctx *ctx, grn_ts_expr *expr) {
 }
 
 grn_rc
-grn_ts_expr_begin_subexpr(grn_ctx *ctx, grn_ts_expr *expr) {
+grn_ts_expr_begin_subexpr(grn_ctx *ctx, grn_ts_expr *expr)
+{
   grn_rc rc;
   size_t max_n_args;
   grn_obj *obj;
@@ -872,7 +919,8 @@ grn_ts_expr_begin_subexpr(grn_ctx *ctx, grn_ts_expr *expr) {
 }
 
 grn_rc
-grn_ts_expr_end_subexpr(grn_ctx *ctx, grn_ts_expr *expr) {
+grn_ts_expr_end_subexpr(grn_ctx *ctx, grn_ts_expr *expr)
+{
   grn_rc rc;
   grn_ts_expr_node **args, *node;
   grn_ts_expr_bridge *bridge;
@@ -901,7 +949,8 @@ grn_ts_expr_end_subexpr(grn_ctx *ctx, grn_ts_expr *expr) {
 }
 
 grn_rc
-grn_ts_expr_complete(grn_ctx *ctx, grn_ts_expr *expr) {
+grn_ts_expr_complete(grn_ctx *ctx, grn_ts_expr *expr)
+{
   grn_rc rc;
   grn_ts_expr_node *root;
   if (!ctx || !expr || (expr->type != GRN_TS_EXPR_INCOMPLETE)) {
@@ -961,7 +1010,8 @@ grn_ts_expr_complete(grn_ctx *ctx, grn_ts_expr *expr) {
 grn_rc
 grn_ts_expr_evaluate_to_buf(grn_ctx *ctx, grn_ts_expr *expr,
                             const grn_ts_record *in, size_t n_in,
-                            grn_ts_buf *out) {
+                            grn_ts_buf *out)
+{
   if (!ctx || !expr || (expr->type == GRN_TS_EXPR_INCOMPLETE) ||
       (expr->type == GRN_TS_EXPR_BROKEN) || (!in && n_in) || !out) {
     return GRN_INVALID_ARGUMENT;
@@ -974,7 +1024,8 @@ grn_ts_expr_evaluate_to_buf(grn_ctx *ctx, grn_ts_expr *expr,
 
 grn_rc
 grn_ts_expr_evaluate(grn_ctx *ctx, grn_ts_expr *expr,
-                     const grn_ts_record *in, size_t n_in, void *out) {
+                     const grn_ts_record *in, size_t n_in, void *out)
+{
   if (!ctx || !expr || (expr->type == GRN_TS_EXPR_INCOMPLETE) ||
       (expr->type == GRN_TS_EXPR_BROKEN) || (!in && n_in) || (n_in && !out)) {
     return GRN_INVALID_ARGUMENT;
@@ -988,7 +1039,8 @@ grn_ts_expr_evaluate(grn_ctx *ctx, grn_ts_expr *expr,
 grn_rc
 grn_ts_expr_filter(grn_ctx *ctx, grn_ts_expr *expr,
                    grn_ts_record *in, size_t n_in,
-                   grn_ts_record *out, size_t *n_out) {
+                   grn_ts_record *out, size_t *n_out)
+{
   if (!ctx || !expr || (expr->type == GRN_TS_EXPR_INCOMPLETE) ||
       (expr->type == GRN_TS_EXPR_BROKEN) || (!in && n_in) ||
       !out || !n_out) {
@@ -1003,7 +1055,8 @@ grn_ts_expr_filter(grn_ctx *ctx, grn_ts_expr *expr,
 
 grn_rc
 grn_ts_expr_adjust(grn_ctx *ctx, grn_ts_expr *expr,
-                   grn_ts_record *io, size_t n_io) {
+                   grn_ts_record *io, size_t n_io)
+{
   if (!ctx || !expr || (expr->type == GRN_TS_EXPR_INCOMPLETE) ||
       (expr->type == GRN_TS_EXPR_BROKEN) || (!io && n_io)) {
     return GRN_INVALID_ARGUMENT;

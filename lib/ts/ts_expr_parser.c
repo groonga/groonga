@@ -94,28 +94,32 @@ struct grn_ts_expr_parser {
 /* grn_ts_expr_dummy_token_init() initializes a token. */
 static void
 grn_ts_expr_dummy_token_init(grn_ctx *ctx, grn_ts_expr_dummy_token *token,
-                             grn_ts_str src) {
+                             grn_ts_str src)
+{
   GRN_TS_EXPR_TOKEN_INIT(DUMMY)
 }
 
 /* grn_ts_expr_start_token_init() initializes a token. */
 static void
 grn_ts_expr_start_token_init(grn_ctx *ctx, grn_ts_expr_start_token *token,
-                             grn_ts_str src) {
+                             grn_ts_str src)
+{
   GRN_TS_EXPR_TOKEN_INIT(START)
 }
 
 /* grn_ts_expr_end_token_init() initializes a token. */
 static void
 grn_ts_expr_end_token_init(grn_ctx *ctx, grn_ts_expr_end_token *token,
-                           grn_ts_str src) {
+                           grn_ts_str src)
+{
   GRN_TS_EXPR_TOKEN_INIT(END)
 }
 
 /* grn_ts_expr_const_token_init() initializes a token. */
 static void
 grn_ts_expr_const_token_init(grn_ctx *ctx, grn_ts_expr_const_token *token,
-                             grn_ts_str src) {
+                             grn_ts_str src)
+{
   GRN_TS_EXPR_TOKEN_INIT(CONST);
   grn_ts_buf_init(ctx, &token->buf);
 }
@@ -123,77 +127,89 @@ grn_ts_expr_const_token_init(grn_ctx *ctx, grn_ts_expr_const_token *token,
 /* grn_ts_expr_name_token_init() initializes a token. */
 static void
 grn_ts_expr_name_token_init(grn_ctx *ctx, grn_ts_expr_name_token *token,
-                            grn_ts_str src) {
+                            grn_ts_str src)
+{
   GRN_TS_EXPR_TOKEN_INIT(NAME);
 }
 
 /* grn_ts_expr_op_token_init() initializes a token. */
 static void
 grn_ts_expr_op_token_init(grn_ctx *ctx, grn_ts_expr_op_token *token,
-                          grn_ts_str src) {
+                          grn_ts_str src)
+{
   GRN_TS_EXPR_TOKEN_INIT(OP);
 }
 
 /* grn_ts_expr_bridge_token_init() initializes a token. */
 static void
 grn_ts_expr_bridge_token_init(grn_ctx *ctx, grn_ts_expr_bridge_token *token,
-                              grn_ts_str src) {
+                              grn_ts_str src)
+{
   GRN_TS_EXPR_TOKEN_INIT(BRIDGE)
 }
 
 /* grn_ts_expr_bracket_token_init() initializes a token. */
 static void
 grn_ts_expr_bracket_token_init(grn_ctx *ctx, grn_ts_expr_bracket_token *token,
-                               grn_ts_str src) {
+                               grn_ts_str src)
+{
   GRN_TS_EXPR_TOKEN_INIT(BRACKET)
 }
 #undef GRN_TS_EXPR_TOKEN_INIT
 
 /* grn_ts_expr_dummy_token_fin() finalizes a token. */
 static void
-grn_ts_expr_dummy_token_fin(grn_ctx *ctx, grn_ts_expr_dummy_token *token) {
+grn_ts_expr_dummy_token_fin(grn_ctx *ctx, grn_ts_expr_dummy_token *token)
+{
   /* Nothing to do. */
 }
 
 /* grn_ts_expr_start_token_fin() finalizes a token. */
 static void
-grn_ts_expr_start_token_fin(grn_ctx *ctx, grn_ts_expr_start_token *token) {
+grn_ts_expr_start_token_fin(grn_ctx *ctx, grn_ts_expr_start_token *token)
+{
   /* Nothing to do. */
 }
 
 /* grn_ts_expr_end_token_fin() finalizes a token. */
 static void
-grn_ts_expr_end_token_fin(grn_ctx *ctx, grn_ts_expr_end_token *token) {
+grn_ts_expr_end_token_fin(grn_ctx *ctx, grn_ts_expr_end_token *token)
+{
   /* Nothing to do. */
 }
 
 /* grn_ts_expr_const_token_fin() finalizes a token. */
 static void
-grn_ts_expr_const_token_fin(grn_ctx *ctx, grn_ts_expr_const_token *token) {
+grn_ts_expr_const_token_fin(grn_ctx *ctx, grn_ts_expr_const_token *token)
+{
   grn_ts_buf_fin(ctx, &token->buf);
 }
 
 /* grn_ts_expr_name_token_fin() finalizes a token. */
 static void
-grn_ts_expr_name_token_fin(grn_ctx *ctx, grn_ts_expr_name_token *token) {
+grn_ts_expr_name_token_fin(grn_ctx *ctx, grn_ts_expr_name_token *token)
+{
   /* Nothing to do. */
 }
 
 /* grn_ts_expr_op_token_fin() finalizes a token. */
 static void
-grn_ts_expr_op_token_fin(grn_ctx *ctx, grn_ts_expr_op_token *token) {
+grn_ts_expr_op_token_fin(grn_ctx *ctx, grn_ts_expr_op_token *token)
+{
   /* Nothing to do. */
 }
 
 /* grn_ts_expr_bridge_token_fin() finalizes a token. */
 static void
-grn_ts_expr_bridge_token_fin(grn_ctx *ctx, grn_ts_expr_bridge_token *token) {
+grn_ts_expr_bridge_token_fin(grn_ctx *ctx, grn_ts_expr_bridge_token *token)
+{
   /* Nothing to do. */
 }
 
 /* grn_ts_expr_bracket_token_fin() finalizes a token. */
 static void
-grn_ts_expr_bracket_token_fin(grn_ctx *ctx, grn_ts_expr_bracket_token *token) {
+grn_ts_expr_bracket_token_fin(grn_ctx *ctx, grn_ts_expr_bracket_token *token)
+{
   /* Nothing to do. */
 }
 
@@ -210,7 +226,8 @@ grn_ts_expr_bracket_token_fin(grn_ctx *ctx, grn_ts_expr_bracket_token *token) {
 /*
 static grn_rc
 grn_ts_expr_dummy_token_open(grn_ctx *ctx, grn_ts_str src,
-                             grn_ts_expr_dummy_token **token) {
+                             grn_ts_expr_dummy_token **token)
+{
   GRN_TS_EXPR_TOKEN_OPEN(DUMMY, dummy)
   return GRN_SUCCESS;
 }
@@ -219,7 +236,8 @@ grn_ts_expr_dummy_token_open(grn_ctx *ctx, grn_ts_str src,
 /* grn_ts_expr_start_token_open() creates a token. */
 static grn_rc
 grn_ts_expr_start_token_open(grn_ctx *ctx, grn_ts_str src,
-                             grn_ts_expr_start_token **token) {
+                             grn_ts_expr_start_token **token)
+{
   GRN_TS_EXPR_TOKEN_OPEN(START, start)
   return GRN_SUCCESS;
 }
@@ -227,7 +245,8 @@ grn_ts_expr_start_token_open(grn_ctx *ctx, grn_ts_str src,
 /* grn_ts_expr_end_token_open() creates a token. */
 static grn_rc
 grn_ts_expr_end_token_open(grn_ctx *ctx, grn_ts_str src,
-                           grn_ts_expr_end_token **token) {
+                           grn_ts_expr_end_token **token)
+{
   GRN_TS_EXPR_TOKEN_OPEN(END, end)
   return GRN_SUCCESS;
 }
@@ -235,7 +254,8 @@ grn_ts_expr_end_token_open(grn_ctx *ctx, grn_ts_str src,
 /* grn_ts_expr_const_token_open() creates a token. */
 static grn_rc
 grn_ts_expr_const_token_open(grn_ctx *ctx, grn_ts_str src,
-                             grn_ts_expr_const_token **token) {
+                             grn_ts_expr_const_token **token)
+                             {
   GRN_TS_EXPR_TOKEN_OPEN(CONST, const)
   return GRN_SUCCESS;
 }
@@ -243,7 +263,8 @@ grn_ts_expr_const_token_open(grn_ctx *ctx, grn_ts_str src,
 /* grn_ts_expr_name_token_open() creates a token. */
 static grn_rc
 grn_ts_expr_name_token_open(grn_ctx *ctx, grn_ts_str src,
-                            grn_ts_expr_name_token **token) {
+                            grn_ts_expr_name_token **token)
+{
   GRN_TS_EXPR_TOKEN_OPEN(NAME, name)
   return GRN_SUCCESS;
 }
@@ -251,7 +272,8 @@ grn_ts_expr_name_token_open(grn_ctx *ctx, grn_ts_str src,
 /* grn_ts_expr_op_token_open() creates a token. */
 static grn_rc
 grn_ts_expr_op_token_open(grn_ctx *ctx, grn_ts_str src, grn_ts_op_type op_type,
-                          grn_ts_expr_op_token **token) {
+                          grn_ts_expr_op_token **token)
+{
   GRN_TS_EXPR_TOKEN_OPEN(OP, op)
   new_token->op_type = op_type;
   return GRN_SUCCESS;
@@ -260,7 +282,8 @@ grn_ts_expr_op_token_open(grn_ctx *ctx, grn_ts_str src, grn_ts_op_type op_type,
 /* grn_ts_expr_bridge_token_open() creates a token. */
 static grn_rc
 grn_ts_expr_bridge_token_open(grn_ctx *ctx, grn_ts_str src,
-                              grn_ts_expr_bridge_token **token) {
+                              grn_ts_expr_bridge_token **token)
+{
   GRN_TS_EXPR_TOKEN_OPEN(BRIDGE, bridge)
   return GRN_SUCCESS;
 }
@@ -268,7 +291,8 @@ grn_ts_expr_bridge_token_open(grn_ctx *ctx, grn_ts_str src,
 /* grn_ts_expr_bracket_token_open() creates a token. */
 static grn_rc
 grn_ts_expr_bracket_token_open(grn_ctx *ctx, grn_ts_str src,
-                               grn_ts_expr_bracket_token **token) {
+                               grn_ts_expr_bracket_token **token)
+{
   GRN_TS_EXPR_TOKEN_OPEN(BRACKET, bracket)
   return GRN_SUCCESS;
 }
@@ -283,7 +307,8 @@ grn_ts_expr_bracket_token_open(grn_ctx *ctx, grn_ts_str src,
   }
 /* grn_ts_expr_token_close() destroys a token. */
 static void
-grn_ts_expr_token_close(grn_ctx *ctx, grn_ts_expr_token *token) {
+grn_ts_expr_token_close(grn_ctx *ctx, grn_ts_expr_token *token)
+{
   switch (token->type) {
     GRN_TS_EXPR_TOKEN_CLOSE_CASE(DUMMY, dummy)
     GRN_TS_EXPR_TOKEN_CLOSE_CASE(START, start)
@@ -301,7 +326,8 @@ grn_ts_expr_token_close(grn_ctx *ctx, grn_ts_expr_token *token) {
 /* grn_ts_expr_parser_init() initializes a parser. */
 static void
 grn_ts_expr_parser_init(grn_ctx *ctx, grn_ts_expr *expr,
-                        grn_ts_expr_parser *parser) {
+                        grn_ts_expr_parser *parser)
+{
   memset(parser, 0, sizeof(*parser));
   parser->expr = expr;
   grn_ts_buf_init(ctx, &parser->str_buf);
@@ -312,7 +338,8 @@ grn_ts_expr_parser_init(grn_ctx *ctx, grn_ts_expr *expr,
 
 /* grn_ts_expr_parser_fin() finalizes a parser. */
 static void
-grn_ts_expr_parser_fin(grn_ctx *ctx, grn_ts_expr_parser *parser) {
+grn_ts_expr_parser_fin(grn_ctx *ctx, grn_ts_expr_parser *parser)
+{
   if (parser->stack) {
     GRN_FREE(parser->stack);
   }
@@ -335,7 +362,8 @@ grn_ts_expr_parser_fin(grn_ctx *ctx, grn_ts_expr_parser *parser) {
 
 grn_rc
 grn_ts_expr_parser_open(grn_ctx *ctx, grn_ts_expr *expr,
-                        grn_ts_expr_parser **parser) {
+                        grn_ts_expr_parser **parser)
+{
   grn_ts_expr_parser *new_parser = GRN_MALLOCN(grn_ts_expr_parser, 1);
   if (!new_parser) {
     GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
@@ -347,7 +375,8 @@ grn_ts_expr_parser_open(grn_ctx *ctx, grn_ts_expr *expr,
 }
 
 void
-grn_ts_expr_parser_close(grn_ctx *ctx, grn_ts_expr_parser *parser) {
+grn_ts_expr_parser_close(grn_ctx *ctx, grn_ts_expr_parser *parser)
+{
   grn_ts_expr_parser_fin(ctx, parser);
   GRN_FREE(parser);
 }
@@ -355,7 +384,8 @@ grn_ts_expr_parser_close(grn_ctx *ctx, grn_ts_expr_parser *parser) {
 /* grn_ts_expr_parser_tokenize_start() creates the start token. */
 static grn_rc
 grn_ts_expr_parser_tokenize_start(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                                  grn_ts_str str, grn_ts_expr_token **token) {
+                                  grn_ts_str str, grn_ts_expr_token **token)
+{
   grn_ts_str token_str = { str.ptr, 0 };
   grn_ts_expr_start_token *new_token;
   grn_rc rc = grn_ts_expr_start_token_open(ctx, token_str, &new_token);
@@ -369,7 +399,8 @@ grn_ts_expr_parser_tokenize_start(grn_ctx *ctx, grn_ts_expr_parser *parser,
 /* grn_ts_expr_parser_tokenize_end() creates the end token. */
 static grn_rc
 grn_ts_expr_parser_tokenize_end(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                                grn_ts_str str, grn_ts_expr_token **token) {
+                                grn_ts_str str, grn_ts_expr_token **token)
+{
   grn_ts_str token_str = { str.ptr, 0 };
   grn_ts_expr_end_token *new_token;
   grn_rc rc = grn_ts_expr_end_token_open(ctx, token_str, &new_token);
@@ -383,7 +414,8 @@ grn_ts_expr_parser_tokenize_end(grn_ctx *ctx, grn_ts_expr_parser *parser,
 /* grn_ts_expr_parser_tokenize_number() tokenizes an Int or Float literal. */
 static grn_rc
 grn_ts_expr_parser_tokenize_number(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                                   grn_ts_str str, grn_ts_expr_token **token) {
+                                   grn_ts_str str, grn_ts_expr_token **token)
+{
   char *end;
   grn_rc rc;
   grn_ts_int int_value;
@@ -432,7 +464,8 @@ grn_ts_expr_parser_tokenize_number(grn_ctx *ctx, grn_ts_expr_parser *parser,
 /* grn_ts_expr_parser_tokenize_text() tokenizes a Text literal. */
 static grn_rc
 grn_ts_expr_parser_tokenize_text(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                                 grn_ts_str str, grn_ts_expr_token **token) {
+                                 grn_ts_str str, grn_ts_expr_token **token)
+{
   size_t i, n_escapes = 0;
   grn_rc rc;
   grn_ts_str token_str;
@@ -485,7 +518,8 @@ grn_ts_expr_parser_tokenize_text(grn_ctx *ctx, grn_ts_expr_parser *parser,
 /* grn_ts_expr_parser_tokenize_name() tokenizes a Bool literal or a name. */
 static grn_rc
 grn_ts_expr_parser_tokenize_name(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                                 grn_ts_str str, grn_ts_expr_token **token) {
+                                 grn_ts_str str, grn_ts_expr_token **token)
+{
   size_t i;
   grn_ts_str token_str;
   for (i = 1; i < str.size; i++) {
@@ -517,7 +551,8 @@ grn_ts_expr_parser_tokenize_name(grn_ctx *ctx, grn_ts_expr_parser *parser,
 /* grn_ts_expr_parser_tokenize_bridge() tokenizes a bridge. */
 static grn_rc
 grn_ts_expr_parser_tokenize_bridge(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                                   grn_ts_str str, grn_ts_expr_token **token) {
+                                   grn_ts_str str, grn_ts_expr_token **token)
+{
   grn_ts_str token_str = { str.ptr, 1 };
   grn_ts_expr_bridge_token *new_token;
   grn_rc rc = grn_ts_expr_bridge_token_open(ctx, token_str, &new_token);
@@ -532,7 +567,8 @@ grn_ts_expr_parser_tokenize_bridge(grn_ctx *ctx, grn_ts_expr_parser *parser,
 static grn_rc
 grn_ts_expr_parser_tokenize_bracket(grn_ctx *ctx, grn_ts_expr_parser *parser,
                                     grn_ts_str str,
-                                    grn_ts_expr_token **token) {
+                                    grn_ts_expr_token **token)
+{
   grn_ts_str token_str = { str.ptr, 1 };
   grn_ts_expr_bracket_token *new_token;
   grn_rc rc = grn_ts_expr_bracket_token_open(ctx, token_str, &new_token);
@@ -551,7 +587,8 @@ grn_ts_expr_parser_tokenize_bracket(grn_ctx *ctx, grn_ts_expr_parser *parser,
  */
 static grn_rc
 grn_ts_expr_parser_tokenize_sign(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                                 grn_ts_str str, grn_ts_expr_token **token) {
+                                 grn_ts_str str, grn_ts_expr_token **token)
+{
   size_t n_args;
   grn_rc rc;
   grn_ts_op_type op_type;
@@ -611,7 +648,8 @@ grn_ts_expr_parser_tokenize_sign(grn_ctx *ctx, grn_ts_expr_parser *parser,
 /* grn_ts_expr_parser_tokenize_op() tokenizes an operator. */
 static grn_rc
 grn_ts_expr_parser_tokenize_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                               grn_ts_str str, grn_ts_expr_token **token) {
+                               grn_ts_str str, grn_ts_expr_token **token)
+{
   grn_rc rc = GRN_SUCCESS;
   grn_ts_str token_str = str;
   grn_ts_op_type op_type;
@@ -721,7 +759,8 @@ grn_ts_expr_parser_tokenize_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
 /* grn_ts_expr_parser_tokenize_next() extracts the next token. */
 static grn_rc
 grn_ts_expr_parser_tokenize_next(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                                 grn_ts_str str, grn_ts_expr_token **token) {
+                                 grn_ts_str str, grn_ts_expr_token **token)
+{
   grn_ts_str rest;
   if (!parser->n_tokens) {
     return grn_ts_expr_parser_tokenize_start(ctx, parser, str, token);
@@ -776,7 +815,8 @@ grn_ts_expr_parser_tokenize_next(grn_ctx *ctx, grn_ts_expr_parser *parser,
  * grn_ts_expr_parser_reserve_tokens() extends a token buffer for a new token.
  */
 static grn_rc
-grn_ts_expr_parser_reserve_tokens(grn_ctx *ctx, grn_ts_expr_parser *parser) {
+grn_ts_expr_parser_reserve_tokens(grn_ctx *ctx, grn_ts_expr_parser *parser)
+{
   size_t i, n_bytes, new_max_n_tokens;
   grn_ts_expr_token **new_tokens;
   if (parser->n_tokens < parser->max_n_tokens) {
@@ -803,7 +843,8 @@ grn_ts_expr_parser_reserve_tokens(grn_ctx *ctx, grn_ts_expr_parser *parser) {
 /* grn_ts_expr_parser_tokenize() tokenizes a string. */
 static grn_rc
 grn_ts_expr_parser_tokenize(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                            grn_ts_str str) {
+                            grn_ts_str str)
+{
   grn_ts_str rest = str;
   const char *end = str.ptr + str.size;
   grn_ts_expr_token *token = NULL;
@@ -831,7 +872,8 @@ grn_ts_expr_parser_tokenize(grn_ctx *ctx, grn_ts_expr_parser *parser,
 /* grn_ts_expr_parser_push_const() pushes a token to an expression. */
 static grn_rc
 grn_ts_expr_parser_push_const(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                              grn_ts_expr_const_token *token) {
+                              grn_ts_expr_const_token *token)
+{
   switch (token->data_kind) {
     case GRN_TS_BOOL: {
       return grn_ts_expr_push_bool(ctx, parser->expr, token->content.as_bool);
@@ -856,7 +898,8 @@ grn_ts_expr_parser_push_const(grn_ctx *ctx, grn_ts_expr_parser *parser,
 /* grn_ts_expr_parser_push_name() pushes a token to an expression. */
 static grn_rc
 grn_ts_expr_parser_push_name(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                             grn_ts_expr_name_token *token) {
+                             grn_ts_expr_name_token *token)
+{
   return grn_ts_expr_push_name(ctx, parser->expr,
                                token->src.ptr, token->src.size);
 }
@@ -864,7 +907,8 @@ grn_ts_expr_parser_push_name(grn_ctx *ctx, grn_ts_expr_parser *parser,
 /* grn_ts_expr_parser_push_op() pushes a token to an expression. */
 static grn_rc
 grn_ts_expr_parser_push_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                           grn_ts_expr_op_token *token) {
+                           grn_ts_expr_op_token *token)
+{
   return grn_ts_expr_push_op(ctx, parser->expr, token->op_type);
 }
 
@@ -875,7 +919,8 @@ grn_ts_expr_parser_push_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
 // FIXME: Support a ternary operator.
 static grn_rc
 grn_ts_expr_parser_apply_one(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                             grn_ts_op_precedence precedence_threshold) {
+                             grn_ts_op_precedence precedence_threshold)
+{
   grn_rc rc;
   grn_ts_str src;
   grn_ts_expr_token **stack = parser->stack;
@@ -951,7 +996,8 @@ grn_ts_expr_parser_apply_one(grn_ctx *ctx, grn_ts_expr_parser *parser,
 /* grn_ts_expr_parser_apply() applies bridges and prior operators. */
 static grn_rc
 grn_ts_expr_parser_apply(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                         grn_ts_op_precedence precedence_threshold) {
+                         grn_ts_op_precedence precedence_threshold)
+{
   for ( ; ; ) {
     grn_rc rc = grn_ts_expr_parser_apply_one(ctx, parser,
                                              precedence_threshold);
@@ -966,7 +1012,8 @@ grn_ts_expr_parser_apply(grn_ctx *ctx, grn_ts_expr_parser *parser,
 /* grn_ts_expr_parser_analyze_op() analyzes a token. */
 static grn_rc
 grn_ts_expr_parser_analyze_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                              grn_ts_expr_op_token *token) {
+                              grn_ts_expr_op_token *token)
+{
   size_t n_args = grn_ts_op_get_n_args(token->op_type);
   grn_ts_expr_token *ex_token = parser->stack[parser->stack_depth - 1];
   if (n_args == 1) {
@@ -987,7 +1034,8 @@ grn_ts_expr_parser_analyze_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
 /* grn_ts_expr_parser_analyze_bridge() analyzes a token. */
 static grn_rc
 grn_ts_expr_parser_analyze_bridge(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                                  grn_ts_expr_bridge_token *token) {
+                                  grn_ts_expr_bridge_token *token)
+{
   grn_rc rc = grn_ts_expr_begin_subexpr(ctx, parser->expr);
   if (rc != GRN_SUCCESS) {
     return rc;
@@ -999,7 +1047,8 @@ grn_ts_expr_parser_analyze_bridge(grn_ctx *ctx, grn_ts_expr_parser *parser,
 /* grn_ts_expr_parser_analyze_bracket() analyzes a token. */
 static grn_rc
 grn_ts_expr_parser_analyze_bracket(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                                   grn_ts_expr_bracket_token *token) {
+                                   grn_ts_expr_bracket_token *token)
+{
   grn_ts_expr_token *ex_token = parser->stack[parser->stack_depth - 1];
   switch (token->src.ptr[0]) {
     case '(': {
@@ -1065,7 +1114,8 @@ grn_ts_expr_parser_analyze_bracket(grn_ctx *ctx, grn_ts_expr_parser *parser,
 /* grn_ts_expr_parser_analyze_token() analyzes a token. */
 static grn_rc
 grn_ts_expr_parser_analyze_token(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                                 grn_ts_expr_token *token) {
+                                 grn_ts_expr_token *token)
+{
   switch (token->type) {
     case GRN_TS_EXPR_START_TOKEN: {
       parser->stack[parser->stack_depth++] = token;
@@ -1121,7 +1171,8 @@ grn_ts_expr_parser_analyze_token(grn_ctx *ctx, grn_ts_expr_parser *parser,
 
 /* grn_ts_expr_parser_analyze() analyzes tokens. */
 static grn_rc
-grn_ts_expr_parser_analyze(grn_ctx *ctx, grn_ts_expr_parser *parser) {
+grn_ts_expr_parser_analyze(grn_ctx *ctx, grn_ts_expr_parser *parser)
+{
   size_t i;
 
   /* Reserve temporary work spaces. */
@@ -1154,7 +1205,8 @@ grn_ts_expr_parser_analyze(grn_ctx *ctx, grn_ts_expr_parser *parser) {
 
 grn_rc
 grn_ts_expr_parser_parse(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                         const char *str_ptr, size_t str_size) {
+                         const char *str_ptr, size_t str_size)
+{
   grn_rc rc;
   grn_ts_str str;
   rc = grn_ts_buf_reserve(ctx, &parser->str_buf, str_size + 1);

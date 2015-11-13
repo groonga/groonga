@@ -26,7 +26,8 @@
 #include "ts_types.h"
 
 grn_rc
-grn_ts_obj_increment_ref_count(grn_ctx *ctx, grn_obj *obj) {
+grn_ts_obj_increment_ref_count(grn_ctx *ctx, grn_obj *obj)
+{
   grn_id id = grn_obj_id(ctx, obj);
   grn_obj *obj_clone = grn_ctx_at(ctx, id);
   if (!obj_clone) {
@@ -41,12 +42,14 @@ grn_ts_obj_increment_ref_count(grn_ctx *ctx, grn_obj *obj) {
 }
 
 grn_ts_bool
-grn_ts_obj_is_table(grn_ctx *ctx, grn_obj *obj) {
+grn_ts_obj_is_table(grn_ctx *ctx, grn_obj *obj)
+{
   return grn_obj_is_table(ctx, obj);
 }
 
 grn_ts_bool
-grn_ts_obj_is_column(grn_ctx *ctx, grn_obj *obj) {
+grn_ts_obj_is_column(grn_ctx *ctx, grn_obj *obj)
+{
   switch (obj->header.type) {
     case GRN_COLUMN_FIX_SIZE:
     case GRN_COLUMN_VAR_SIZE: {
@@ -65,7 +68,8 @@ grn_ts_obj_is_column(grn_ctx *ctx, grn_obj *obj) {
  */
 grn_rc
 grn_ts_ja_get_value(grn_ctx *ctx, grn_obj *ja, grn_ts_id id,
-                    grn_ts_buf *buf, size_t *value_size) {
+                    grn_ts_buf *buf, size_t *value_size)
+{
   grn_rc rc;
   uint32_t size;
   grn_io_win iw;
@@ -88,7 +92,8 @@ grn_ts_ja_get_value(grn_ctx *ctx, grn_obj *ja, grn_ts_id id,
 }
 
 grn_ts_bool
-grn_ts_table_has_key(grn_ctx *ctx, grn_obj *table) {
+grn_ts_table_has_key(grn_ctx *ctx, grn_obj *table)
+{
   switch (table->header.type) {
     case GRN_TABLE_HASH_KEY:
     case GRN_TABLE_PAT_KEY:
@@ -102,12 +107,14 @@ grn_ts_table_has_key(grn_ctx *ctx, grn_obj *table) {
 }
 
 grn_ts_bool
-grn_ts_table_has_value(grn_ctx *ctx, grn_obj *table) {
+grn_ts_table_has_value(grn_ctx *ctx, grn_obj *table)
+{
   return DB_OBJ(table)->range != GRN_DB_VOID;
 }
 
 const void *
-grn_ts_table_get_value(grn_ctx *ctx, grn_obj *table, grn_ts_id id) {
+grn_ts_table_get_value(grn_ctx *ctx, grn_obj *table, grn_ts_id id)
+{
   switch (table->header.type) {
     case GRN_TABLE_HASH_KEY: {
       uint32_t size;

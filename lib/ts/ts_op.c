@@ -19,7 +19,8 @@
 #include "ts_op.h"
 
 size_t
-grn_ts_op_get_n_args(grn_ts_op_type op_type) {
+grn_ts_op_get_n_args(grn_ts_op_type op_type)
+{
   switch (op_type) {
     case GRN_TS_OP_LOGICAL_NOT: /* !X */
     case GRN_TS_OP_BITWISE_NOT: /* ~X */
@@ -57,7 +58,8 @@ grn_ts_op_get_n_args(grn_ts_op_type op_type) {
 }
 
 grn_ts_op_precedence
-grn_ts_op_get_precedence(grn_ts_op_type op_type) {
+grn_ts_op_get_precedence(grn_ts_op_type op_type)
+{
   switch (op_type) {
     case GRN_TS_OP_LOGICAL_NOT:
     case GRN_TS_OP_BITWISE_NOT:

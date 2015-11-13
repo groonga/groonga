@@ -37,7 +37,8 @@ enum { GRN_TS_BATCH_SIZE = 1024 };
 
 /* grn_ts_bool_output() outputs a value. */
 static grn_rc
-grn_ts_bool_output(grn_ctx *ctx, grn_ts_bool value) {
+grn_ts_bool_output(grn_ctx *ctx, grn_ts_bool value)
+{
   if (value) {
     return grn_bulk_write(ctx, ctx->impl->outbuf, "true", 4);
   } else {
@@ -47,31 +48,36 @@ grn_ts_bool_output(grn_ctx *ctx, grn_ts_bool value) {
 
 /* grn_ts_int_output() outputs a value. */
 static grn_rc
-grn_ts_int_output(grn_ctx *ctx, grn_ts_int value) {
+grn_ts_int_output(grn_ctx *ctx, grn_ts_int value)
+{
   return grn_text_lltoa(ctx, ctx->impl->outbuf, value);
 }
 
 /* grn_ts_float_output() outputs a value. */
 static grn_rc
-grn_ts_float_output(grn_ctx *ctx, grn_ts_float value) {
+grn_ts_float_output(grn_ctx *ctx, grn_ts_float value)
+{
   return grn_text_ftoa(ctx, ctx->impl->outbuf, value);
 }
 
 /* grn_ts_time_output() outputs a value. */
 static grn_rc
-grn_ts_time_output(grn_ctx *ctx, grn_ts_time value) {
+grn_ts_time_output(grn_ctx *ctx, grn_ts_time value)
+{
   return grn_text_ftoa(ctx, ctx->impl->outbuf, value * 0.000001);
 }
 
 /* grn_ts_text_output() outputs a value. */
 static grn_rc
-grn_ts_text_output(grn_ctx *ctx, grn_ts_text value) {
+grn_ts_text_output(grn_ctx *ctx, grn_ts_text value)
+{
   return grn_text_esc(ctx, ctx->impl->outbuf, value.ptr, value.size);
 }
 
 /* grn_ts_geo_output() outputs a value. */
 static grn_rc
-grn_ts_geo_output(grn_ctx *ctx, grn_ts_geo value) {
+grn_ts_geo_output(grn_ctx *ctx, grn_ts_geo value)
+{
   grn_rc rc = grn_bulk_write(ctx, ctx->impl->outbuf, "\"", 1);
   if (rc != GRN_SUCCESS) {
     return rc;
@@ -112,44 +118,51 @@ grn_ts_geo_output(grn_ctx *ctx, grn_ts_geo value) {
   return grn_bulk_write(ctx, ctx->impl->outbuf, "]", 1);
 /* grn_ts_bool_vector_output() outputs a value. */
 static grn_rc
-grn_ts_bool_vector_output(grn_ctx *ctx, grn_ts_bool_vector value) {
+grn_ts_bool_vector_output(grn_ctx *ctx, grn_ts_bool_vector value)
+{
   GRN_TS_VECTOR_OUTPUT(bool)
 }
 
 /* grn_ts_int_vector_output() outputs a value. */
 static grn_rc
-grn_ts_int_vector_output(grn_ctx *ctx, grn_ts_int_vector value) {
+grn_ts_int_vector_output(grn_ctx *ctx, grn_ts_int_vector value)
+{
   GRN_TS_VECTOR_OUTPUT(int)
 }
 
 /* grn_ts_float_vector_output() outputs a value. */
 static grn_rc
-grn_ts_float_vector_output(grn_ctx *ctx, grn_ts_float_vector value) {
+grn_ts_float_vector_output(grn_ctx *ctx, grn_ts_float_vector value)
+{
   GRN_TS_VECTOR_OUTPUT(float)
 }
 
 /* grn_ts_time_vector_output() outputs a value. */
 static grn_rc
-grn_ts_time_vector_output(grn_ctx *ctx, grn_ts_time_vector value) {
+grn_ts_time_vector_output(grn_ctx *ctx, grn_ts_time_vector value)
+{
   GRN_TS_VECTOR_OUTPUT(time)
 }
 
 /* grn_ts_text_vector_output() outputs a value. */
 static grn_rc
-grn_ts_text_vector_output(grn_ctx *ctx, grn_ts_text_vector value) {
+grn_ts_text_vector_output(grn_ctx *ctx, grn_ts_text_vector value)
+{
   GRN_TS_VECTOR_OUTPUT(text)
 }
 
 /* grn_ts_geo_vector_output() outputs a value. */
 static grn_rc
-grn_ts_geo_vector_output(grn_ctx *ctx, grn_ts_geo_vector value) {
+grn_ts_geo_vector_output(grn_ctx *ctx, grn_ts_geo_vector value)
+{
   GRN_TS_VECTOR_OUTPUT(geo)
 }
 #undef GRN_TS_VECTOR_OUTPUT
 
 /* grn_ts_table_has_key() returns whether or not a table has _key. */
 static grn_ts_bool
-grn_ts_table_has_key(grn_ctx *ctx, grn_obj *table) {
+grn_ts_table_has_key(grn_ctx *ctx, grn_obj *table)
+{
   switch (table->header.type) {
     case GRN_TABLE_HASH_KEY:
     case GRN_TABLE_PAT_KEY:
@@ -164,7 +177,8 @@ grn_ts_table_has_key(grn_ctx *ctx, grn_obj *table) {
 
 /* grn_ts_obj_is_table() returns whether or not an object is a table. */
 static grn_ts_bool
-grn_ts_obj_is_table(grn_ctx *ctx, grn_obj *obj) {
+grn_ts_obj_is_table(grn_ctx *ctx, grn_obj *obj)
+{
   return grn_obj_is_table(ctx, obj);
 }
 
@@ -183,7 +197,8 @@ typedef struct {
 
 /* grn_ts_writer_init() initializes a writer. */
 static void
-grn_ts_writer_init(grn_ctx *ctx, grn_ts_writer *writer) {
+grn_ts_writer_init(grn_ctx *ctx, grn_ts_writer *writer)
+{
   memset(writer, 0, sizeof(*writer));
   writer->exprs = NULL;
   GRN_TEXT_INIT(&writer->name_buf, GRN_OBJ_VECTOR);
@@ -193,7 +208,8 @@ grn_ts_writer_init(grn_ctx *ctx, grn_ts_writer *writer) {
 
 /* grn_ts_writer_fin() finalizes a writer. */
 static void
-grn_ts_writer_fin(grn_ctx *ctx, grn_ts_writer *writer) {
+grn_ts_writer_fin(grn_ctx *ctx, grn_ts_writer *writer)
+{
   size_t i;
   if (writer->bufs) {
     for (i = 0; i < writer->n_exprs; i++) {
@@ -219,7 +235,8 @@ grn_ts_writer_fin(grn_ctx *ctx, grn_ts_writer *writer) {
  */
 static grn_rc
 grn_ts_writer_tokenize(grn_ctx *ctx, grn_ts_writer *writer,
-                       grn_ts_str in, grn_ts_str *token, grn_ts_str *rest) {
+                       grn_ts_str in, grn_ts_str *token, grn_ts_str *rest)
+{
   size_t i;
   char stack_top;
   grn_rc rc = GRN_SUCCESS;
@@ -304,7 +321,8 @@ grn_ts_writer_tokenize(grn_ctx *ctx, grn_ts_writer *writer,
 /* grn_ts_writer_expand() expands a wildcard. */
 static grn_rc
 grn_ts_writer_expand(grn_ctx *ctx, grn_ts_writer *writer,
-                     grn_obj *table, grn_ts_str str) {
+                     grn_obj *table, grn_ts_str str)
+{
   grn_rc rc = GRN_SUCCESS;
   grn_hash_cursor *cursor;
   grn_hash *hash = grn_hash_create(ctx, NULL, sizeof(grn_ts_id), 0,
@@ -351,7 +369,8 @@ grn_ts_writer_expand(grn_ctx *ctx, grn_ts_writer *writer,
 /* grn_ts_writer_parse() parses output expressions. */
 static grn_rc
 grn_ts_writer_parse(grn_ctx *ctx, grn_ts_writer *writer,
-                    grn_obj *table, grn_ts_str str) {
+                    grn_obj *table, grn_ts_str str)
+{
   grn_rc rc;
   grn_ts_str rest = str;
   for ( ; ; ) {
@@ -386,7 +405,8 @@ grn_ts_writer_parse(grn_ctx *ctx, grn_ts_writer *writer,
 
 /* grn_ts_writer_build() builds output expresions. */
 static grn_rc
-grn_ts_writer_build(grn_ctx *ctx, grn_ts_writer *writer, grn_obj *table) {
+grn_ts_writer_build(grn_ctx *ctx, grn_ts_writer *writer, grn_obj *table)
+{
   size_t i, n_names = grn_vector_size(ctx, &writer->name_buf);
   if (!n_names) {
     return GRN_SUCCESS;
@@ -422,7 +442,8 @@ grn_ts_writer_build(grn_ctx *ctx, grn_ts_writer *writer, grn_obj *table) {
 /* grn_ts_writer_open() creates a writer. */
 static grn_rc
 grn_ts_writer_open(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
-                   grn_ts_writer **writer) {
+                   grn_ts_writer **writer)
+{
   grn_rc rc;
   grn_ts_writer *new_writer = GRN_MALLOCN(grn_ts_writer, 1);
   if (!new_writer) {
@@ -445,7 +466,8 @@ grn_ts_writer_open(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
 
 /* grn_ts_writer_close() destroys a writer. */
 static void
-grn_ts_writer_close(grn_ctx *ctx, grn_ts_writer *writer) {
+grn_ts_writer_close(grn_ctx *ctx, grn_ts_writer *writer)
+{
   grn_ts_writer_fin(ctx, writer);
   GRN_FREE(writer);
 }
@@ -459,7 +481,8 @@ grn_ts_writer_close(grn_ctx *ctx, grn_ts_writer *writer) {
   }
 /* grn_ts_writer_output_header() outputs names and data types. */
 static grn_rc
-grn_ts_writer_output_header(grn_ctx *ctx, grn_ts_writer *writer) {
+grn_ts_writer_output_header(grn_ctx *ctx, grn_ts_writer *writer)
+{
   grn_rc rc;
   GRN_OUTPUT_ARRAY_OPEN("COLUMNS", writer->n_exprs);
   for (size_t i = 0; i < writer->n_exprs; ++i) {
@@ -535,7 +558,8 @@ grn_ts_writer_output_header(grn_ctx *ctx, grn_ts_writer *writer) {
  */
 static grn_rc
 grn_ts_writer_output_body(grn_ctx *ctx, grn_ts_writer *writer,
-                          const grn_ts_record *in, size_t n_in) {
+                          const grn_ts_record *in, size_t n_in)
+{
   size_t i, j, count = 0;
   writer->bufs = GRN_MALLOCN(grn_ts_buf, writer->n_exprs);
   if (!writer->bufs) {
@@ -593,7 +617,8 @@ grn_ts_writer_output_body(grn_ctx *ctx, grn_ts_writer *writer,
 /* grn_ts_writer_output() outputs search results into the output buffer. */
 static grn_rc
 grn_ts_writer_output(grn_ctx *ctx, grn_ts_writer *writer,
-                     const grn_ts_record *in, size_t n_in, size_t n_hits) {
+                     const grn_ts_record *in, size_t n_in, size_t n_hits)
+{
   grn_rc rc;
   GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_ARRAY_OPEN("RESULTSET", 2 + n_in);
@@ -620,7 +645,8 @@ grn_ts_writer_output(grn_ctx *ctx, grn_ts_writer *writer,
 static grn_rc
 grn_ts_select_filter(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
                      size_t offset, size_t limit,
-                     grn_ts_record **out, size_t *n_out, size_t *n_hits) {
+                     grn_ts_record **out, size_t *n_out, size_t *n_hits)
+{
   grn_rc rc;
   grn_table_cursor *cursor;
   grn_ts_expr *expr;
@@ -721,7 +747,8 @@ grn_ts_select_filter(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
 /* grn_ts_select_scorer() adjust scores. */
 static grn_rc
 grn_ts_select_scorer(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
-                     grn_ts_record *records, size_t n_records) {
+                     grn_ts_record *records, size_t n_records)
+{
   grn_rc rc;
   grn_ts_str rest;
   grn_ts_expr *expr;
@@ -756,7 +783,8 @@ grn_ts_select_scorer(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
 /* grn_ts_select_output() outputs the results. */
 static grn_rc
 grn_ts_select_output(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
-                     const grn_ts_record *in, size_t n_in, size_t n_hits) {
+                     const grn_ts_record *in, size_t n_in, size_t n_hits)
+{
   grn_ts_writer *writer;
   grn_rc rc = grn_ts_writer_open(ctx, table, str, &writer);
   if (rc != GRN_SUCCESS) {
@@ -776,7 +804,8 @@ grn_ts_select(grn_ctx *ctx, grn_obj *table,
               const char *filter_ptr, size_t filter_len,
               const char *scorer_ptr, size_t scorer_len,
               const char *output_columns_ptr, size_t output_columns_len,
-              size_t offset, size_t limit) {
+              size_t offset, size_t limit)
+{
   grn_rc rc;
   grn_ts_str filter = { filter_ptr, filter_len };
   grn_ts_str scorer = { scorer_ptr, scorer_len };
