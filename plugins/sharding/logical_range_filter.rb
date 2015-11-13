@@ -396,7 +396,7 @@ module Groonga
             relation = "<"
           end
           reason = "hit ratio "
-          reason << "(#{hit_ratio}=#{estimated_n_records}/#{max_n_records})"
+          reason << "(#{hit_ratio}=#{estimated_n_records}/#{max_n_records}) "
           reason << "#{relation} threshold (#{threshold})"
           decide_use_range_index(use_range_index_by_hit_ratio, reason,
                                  __LINE__, __method__)
