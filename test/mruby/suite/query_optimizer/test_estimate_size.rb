@@ -39,7 +39,7 @@ class TestEstimateSize < QueryOptimizerTestCase
       @logs.add(:message => "Groonga is fast")
       @logs.add(:message => "Rroonga is fast")
       @logs.add(:message => "Mroonga is fast")
-      assert_equal(6, estimate_size("message @ 'roonga'"))
+      assert_equal(3, estimate_size("message @ 'roonga'"))
     end
   end
 
@@ -281,7 +281,7 @@ class TestEstimateSize < QueryOptimizerTestCase
       @logs.add(:timestamp => "2015-02-19 02:19:00")
       @logs.add(:timestamp => "2015-02-19 02:19:00")
 
-      assert_equal(6, estimate_size("message @ 'roonga' && " +
+      assert_equal(3, estimate_size("message @ 'roonga' && " +
                                     "timestamp < '2015-02-19 02:19:00'"))
     end
 
@@ -298,7 +298,7 @@ class TestEstimateSize < QueryOptimizerTestCase
       @logs.add(:timestamp => "2015-02-19 02:19:00", :type => 3)
       @logs.add(:timestamp => "2015-02-19 02:19:00", :type => 3)
 
-      assert_equal(5, estimate_size("message @ 'roonga' && " +
+      assert_equal(3, estimate_size("message @ 'roonga' && " +
                                     "timestamp < '2015-02-19 02:19:00' && " +
                                     "type == 1"))
     end
@@ -478,7 +478,7 @@ class TestEstimateSize < QueryOptimizerTestCase
       @logs.add(:timestamp => "2015-02-19 02:19:00", :type => 3)
       @logs.add(:timestamp => "2015-02-19 02:19:00", :type => 3)
 
-      assert_equal(6, estimate_size("(" +
+      assert_equal(3, estimate_size("(" +
                                     "message @ 'roonga' && " +
                                     "timestamp < '2015-02-19 02:19:00'" +
                                     ") || " +
