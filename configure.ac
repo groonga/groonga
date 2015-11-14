@@ -7,8 +7,8 @@ AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE([foreign tar-pax subdir-objects])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
-PACKAGE_TITLE=Groonga
-AC_SUBST(PACKAGE_TITLE)
+PACKAGE_LABEL=Groonga
+AC_SUBST(PACKAGE_LABEL)
 
 # for Autoconf 2.60 or earlier.
 if test -z "${datarootdir}"; then

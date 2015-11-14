@@ -54,7 +54,7 @@ build-in-vm: source specs env.sh
 build-release-rpm: RPM-GPG-KEY-$(PACKAGE)
 	./build-release-rpm.sh			\
 	  $(PACKAGE)				\
-	  '$(PACKAGE_TITLE)'			\
+	  '$(PACKAGE_LABEL)'			\
 	  $(BASE_URL_PREFIX)			\
 	  $(REPOSITORIES_PATH)/			\
 	  '$(DISTRIBUTIONS)'			\

@@ -3,13 +3,13 @@
 script_base_dir=`dirname $0`
 
 if [ $# != 6 ]; then
-    echo "Usage: $0 PACKAGE PACKAGE_TITLE BASE_URL_PREFIX DESTINATION DISTRIBUTIONS HAVE_DEVELOPMENT_BRANCH"
+    echo "Usage: $0 PACKAGE PACKAGE_LABEL BASE_URL_PREFIX DESTINATION DISTRIBUTIONS HAVE_DEVELOPMENT_BRANCH"
     echo " e.g.: $0 milter-manager 'milter manager' http://downloads.sourceforge.net/milter-manager' repositories/ 'fedora centos' yes"
     exit 1
 fi
 
 PACKAGE=$1
-PACKAGE_TITLE=$2
+PACKAGE_LABEL=$2
 BASE_URL_PREFIX=$3
 DESTINATION=$4
 DISTRIBUTIONS=$5
@@ -53,14 +53,14 @@ for distribution in ${DISTRIBUTIONS}; do
     if test "$HAVE_DEVELOPMENT_BRANCH" = "yes"; then
 	run cat <<EOR > $repo
 [$PACKAGE]
-name=$PACKAGE_TITLE for $distribution_label \$releasever - \$basearch
+name=$PACKAGE_LABEL for $distribution_label \$releasever - \$basearch
 baseurl=$BASE_URL_PREFIX/$distribution/\$releasever/stable/\$basearch/
 gpgcheck=1
 enabled=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-$PACKAGE
 
 [$PACKAGE-development]
-name=$PACKAGE_TITLE for $distribution_label \$releasever - development - \$basearch
+name=$PACKAGE_LABEL for $distribution_label \$releasever - development - \$basearch
 baseurl=$BASE_URL_PREFIX/$distribution/\$releasever/development/\$basearch/
 gpgcheck=1
 enabled=0
@@ -69,7 +69,7 @@ EOR
     else
 	run cat <<EOR > $repo
 [$PACKAGE]
-name=$PACKAGE_TITLE for $distribution_label \$releasever - \$basearch
+name=$PACKAGE_LABEL for $distribution_label \$releasever - \$basearch
 baseurl=$BASE_URL_PREFIX/$distribution/\$releasever/\$basearch/
 gpgcheck=1
 enabled=1
