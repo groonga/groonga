@@ -507,7 +507,9 @@ module Groonga
               else
                 options[:limit] = current_limit
               end
-              max_n_unmatched_records = options[:limit] * 100
+              max_n_unmatched_records =
+                compute_max_n_unmatched_records(data_table.size,
+                                                options[:limit])
               options[:max_n_unmatched_records] = max_n_unmatched_records
               if @filter
                 create_expression(data_table) do |expression|
@@ -575,6 +577,18 @@ module Groonga
             flags |= TableCursorFlags::LT
           end
           flags
+        end
+
+        def compute_max_n_unmatched_records(data_table_size, limit)
+          max_n_unmatched_records = limit * 100
+          max_n_sample_records = data_table_size
+          if max_n_sample_records > 10000
+            max_n_sample_records /= 100
+          end
+          if max_n_unmatched_records > max_n_sample_records
+            max_n_unmatched_records = max_n_sample_records
+          end
+          max_n_unmatched_records
         end
 
         def filter_table
