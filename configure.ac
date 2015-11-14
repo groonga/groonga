@@ -9,6 +9,7 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 PACKAGE_LABEL=Groonga
 AC_SUBST(PACKAGE_LABEL)
+AC_DEFINE_UNQUOTED(PACKAGE_LABEL, ["$PACKAGE_LABEL"], [Label of package])
 
 # for Autoconf 2.60 or earlier.
 if test -z "${datarootdir}"; then
