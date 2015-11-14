@@ -1136,7 +1136,7 @@ ngx_http_groonga_conf_set_query_log_path_slot(ngx_conf_t *cf,
     ngx_conf_open_file(cf->cycle, &(groonga_location_conf->query_log_path));
   if (!groonga_location_conf->query_log_file) {
     ngx_log_error(NGX_LOG_ERR, cf->cycle->log, 0,
-                  "http_groonga: failed to open groonga query log file: <%V>",
+                  "http_groonga: failed to open Groonga query log file: <%V>",
                   &(groonga_location_conf->query_log_path));
     return NGX_CONF_ERROR;
   }
@@ -1198,7 +1198,7 @@ ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
     if (!conf->log_file) {
       ngx_log_error(NGX_LOG_ERR, cf->cycle->log, 0,
                     "http_groonga: "
-                    "failed to open the default groonga log file: <%V>",
+                    "failed to open the default Groonga log file: <%V>",
                     &(conf->log_path));
       return NGX_CONF_ERROR;
     }
@@ -1215,7 +1215,7 @@ ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
     if (!conf->query_log_file) {
       ngx_log_error(NGX_LOG_ERR, cf->cycle->log, 0,
                     "http_groonga: "
-                    "failed to open the default groonga query log file: <%V>",
+                    "failed to open the default Groonga query log file: <%V>",
                     &(conf->query_log_path));
       return NGX_CONF_ERROR;
     }
@@ -1329,7 +1329,7 @@ ngx_http_groonga_create_database(ngx_http_groonga_loc_conf_t *location_conf,
   }
 
   ngx_log_error(NGX_LOG_EMERG, data->log, 0,
-                "failed to create groonga database: %s",
+                "failed to create Groonga database: %s",
                 context->errbuf);
   data->rc = NGX_ERROR;
 }
@@ -1375,7 +1375,7 @@ ngx_http_groonga_open_database_callback(ngx_http_groonga_loc_conf_t *location_co
       ngx_http_groonga_create_database(location_conf, data);
     } else {
       ngx_log_error(NGX_LOG_EMERG, data->log, 0,
-                    "failed to open groonga database: %s",
+                    "failed to open Groonga database: %s",
                     context->errbuf);
       data->rc = NGX_ERROR;
     }
@@ -1387,7 +1387,7 @@ ngx_http_groonga_open_database_callback(ngx_http_groonga_loc_conf_t *location_co
   location_conf->cache = grn_cache_open(context);
   if (!location_conf->cache) {
     ngx_log_error(NGX_LOG_EMERG, data->log, 0,
-                  "failed to open groonga cache: %s",
+                  "failed to open Groonga cache: %s",
                   context->errbuf);
     data->rc = NGX_ERROR;
     return;
