@@ -107,6 +107,7 @@ static grn_command_version default_command_version;
 static int64_t default_match_escalation_threshold;
 static const char *windows_event_source_name = "Groonga";
 static grn_bool use_windows_event_log = GRN_FALSE;
+static grn_obj http_response_server_line;
 
 static int
 grn_rc_to_exit_code(grn_rc rc)
@@ -775,6 +776,9 @@ h_output_set_header(grn_ctx *ctx, grn_obj *header,
     GRN_TEXT_SETS(ctx, header, "HTTP/1.1 500 Internal Server Error\r\n");
     break;
   }
+  GRN_TEXT_PUT(ctx, header,
+               GRN_TEXT_VALUE(&http_response_server_line),
+               GRN_TEXT_LEN(&http_response_server_line));
   GRN_TEXT_PUTS(ctx, header, "Content-Type: ");
   GRN_TEXT_PUTS(ctx, header, grn_ctx_get_mime_type(ctx));
   GRN_TEXT_PUTS(ctx, header, "\r\n");
@@ -2010,7 +2014,14 @@ h_server(char *path)
   GRN_COM_QUEUE_INIT(&ctx_new);
   GRN_COM_QUEUE_INIT(&ctx_old);
   check_rlimit_nofile(ctx);
+  GRN_TEXT_INIT(&http_response_server_line, 0);
+  grn_text_printf(ctx,
+                  &http_response_server_line,
+                  "Server: %s/%s\r\n",
+                  grn_get_package_label(),
+                  grn_get_version());
   exit_code = start_service(ctx, path, NULL, h_handler);
+  GRN_OBJ_FIN(ctx, &http_response_server_line);
   grn_ctx_fin(ctx);
   return exit_code;
 }
