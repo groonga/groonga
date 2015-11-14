@@ -507,7 +507,8 @@ module Groonga
               else
                 options[:limit] = current_limit
               end
-              options[:max_n_unmatched_records] = options[:limit] * 100
+              max_n_unmatched_records = options[:limit] * 100
+              options[:max_n_unmatched_records] = max_n_unmatched_records
               if @filter
                 create_expression(data_table) do |expression|
                   expression.parse(@filter)
@@ -523,6 +524,12 @@ module Groonga
               end
               if n_matched_records == -1
                 result_set.close
+                fallback_message =
+                  "fallback because there are too much unmatched records: "
+                fallback_message << "<#{max_n_unmatched_records}>"
+                decide_use_range_index(false,
+                                       fallback_message,
+                                       __LINE__, __method__)
                 execute_filter(nil, expression_builder)
                 return
               end
