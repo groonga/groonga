@@ -1,3 +1,4 @@
+#@copy-path fixture/query_expander/tsv/expand.tsv tmp/synonyms.tsv
 plugin_register query_expanders/tsv
 
 schema
