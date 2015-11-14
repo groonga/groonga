@@ -250,6 +250,7 @@ GRN_API grn_rc grn_set_default_encoding(grn_encoding encoding);
 
 GRN_API const char *grn_get_version(void);
 GRN_API const char *grn_get_package(void);
+GRN_API const char *grn_get_package_label(void);
 
 GRN_API grn_command_version grn_get_default_command_version(void);
 GRN_API grn_rc grn_set_default_command_version(grn_command_version version);

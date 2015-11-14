@@ -2630,6 +2630,12 @@ grn_get_package(void)
   return PACKAGE;
 }
 
+const char *
+grn_get_package_label(void)
+{
+  return PACKAGE_LABEL;
+}
+
 #if defined(HAVE_SIGNAL_H) && !defined(WIN32)
 static int segv_received = 0;
 static void

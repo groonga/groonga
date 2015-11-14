@@ -9,6 +9,7 @@
 #define VERSION              "${VERSION}"
 #define PACKAGE              "${PROJECT_NAME}"
 #define PACKAGE_NAME         "${PROJECT_NAME}"
+#define PACKAGE_LABEL        "${GRN_PROJECT_LABEL}"
 #define PACKAGE_STRING       "${PROJECT_NAME} ${VERSION}"
 #define PACKAGE_TARNAME      "${PROJECT_NAME}"
 #define PACKAGE_URL          "${PACKAGE_URL}"
