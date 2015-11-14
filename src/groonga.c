@@ -2541,7 +2541,7 @@ static void
 show_version(void)
 {
   printf("%s %s [",
-         grn_get_package(),
+         grn_get_package_label(),
          grn_get_version());
 
   /* FIXME: Should we detect host information dynamically on Windows? */
