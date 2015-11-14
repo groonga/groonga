@@ -3,6 +3,7 @@ groonga_include_HEADERS =			\
 	command.h				\
 	conf.h					\
 	expr.h					\
+	file_reader.h				\
 	geo.h					\
 	groonga.h				\
 	ii.h					\

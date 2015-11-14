@@ -79,4 +79,5 @@ libgroonga_la_SOURCES =				\
 	util.c					\
 	grn_util.h				\
 	windows.c				\
-	windows_event_logger.c
+	windows_event_logger.c			\
+	file_reader.c

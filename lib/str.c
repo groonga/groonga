@@ -16,7 +16,6 @@
 */
 #include "grn.h"
 #include <limits.h>
-#include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
 #include "grn_db.h"
@@ -3221,22 +3220,6 @@ grn_str_url_path_normalize(grn_ctx *ctx, const char *path, size_t path_len,
     }
   }
   *b = '\0';
-}
-
-grn_rc
-grn_text_fgets(grn_ctx *ctx, grn_obj *buf, FILE *fp)
-{
-  size_t len;
-  grn_rc rc = GRN_END_OF_DATA;
-  for (;;) {
-    grn_bulk_reserve(ctx, buf, BUFSIZ);
-    if (!fgets(GRN_BULK_CURR(buf), BUFSIZ, fp)) { break; }
-    if (!(len = strlen(GRN_BULK_CURR(buf)))) { break; }
-    GRN_BULK_INCR_LEN(buf, len);
-    rc = GRN_SUCCESS;
-    if (GRN_BULK_CURR(buf)[-1] == '\n') { break; }
-  }
-  return rc;
 }
 
 grn_bool

@@ -19,14 +19,13 @@
 #  define GRN_PLUGIN_FUNCTION_TAG query_expanders_tsv
 #endif
 
-/* groonga's internal headers */
-/* for grn_text_fgets(): We don't want to require stdio.h for groonga.h.
-   What should we do? Should we split header file such as groonga/stdio.h? */
-#include <grn_str.h>
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif /* HAVE_CONFIG_H */
 
 #include <groonga/plugin.h>
 
-#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #ifdef WIN32
@@ -194,7 +193,7 @@ load_synonyms(grn_ctx *ctx)
 {
   static char path_env[GRN_ENV_BUFFER_SIZE];
   const char *path;
-  FILE *file;
+  grn_file_reader *file_reader;
   int number_of_lines;
   grn_encoding encoding;
   grn_obj line, key, value;
@@ -207,8 +206,8 @@ load_synonyms(grn_ctx *ctx)
   } else {
     path = get_system_synonyms_file();
   }
-  file = grn_fopen(path, "r");
-  if (!file) {
+  file_reader = grn_file_reader_open(ctx, path);
+  if (!file_reader) {
     GRN_LOG(ctx, GRN_LOG_WARNING,
             "[plugin][query-expander][tsv] "
             "synonyms file doesn't exist: <%s>",
@@ -221,7 +220,7 @@ load_synonyms(grn_ctx *ctx)
   GRN_TEXT_INIT(&value, 0);
   grn_bulk_reserve(ctx, &value, MAX_SYNONYM_BYTES);
   number_of_lines = 0;
-  while (grn_text_fgets(ctx, &line, file) == GRN_SUCCESS) {
+  while (grn_file_reader_read_line(ctx, file_reader, &line) == GRN_SUCCESS) {
     const char *line_value = GRN_TEXT_VALUE(&line);
     size_t line_length = GRN_TEXT_LEN(&line);
 
@@ -245,7 +244,7 @@ load_synonyms(grn_ctx *ctx)
   GRN_OBJ_FIN(ctx, &key);
   GRN_OBJ_FIN(ctx, &value);
 
-  fclose(file);
+  grn_file_reader_close(ctx, file_reader);
 }
 
 static grn_obj *

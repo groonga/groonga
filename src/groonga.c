@@ -96,6 +96,7 @@ static int (*do_client)(int argc, char **argv);
 static int (*do_server)(char *path);
 static const char *pid_file_path = NULL;
 static const char *input_path = NULL;
+static grn_file_reader *input_reader = NULL;
 static FILE *output = NULL;
 
 static int ready_notify_pipe[2];
@@ -221,10 +222,10 @@ read_next_line(grn_ctx *ctx, grn_obj *buf)
 #else
     fprintf(stderr, "> ");
     fflush(stderr);
-    rc = grn_text_fgets(ctx, buf, stdin);
+    rc = grn_file_reader_read_line(ctx, input_reader, buf);
 #endif
   } else {
-    rc = grn_text_fgets(ctx, buf, stdin);
+    rc = grn_file_reader_read_line(ctx, input_reader, buf);
     if (rc != GRN_END_OF_DATA) {
       number_of_lines++;
     }
@@ -3033,42 +3034,6 @@ main(int argc, char **argv)
   grn_thread_set_get_limit_func(groonga_get_thread_limit, NULL);
   grn_thread_set_set_limit_func(groonga_set_thread_limit, NULL);
 
-  if (input_path) {
-    if (!freopen(input_path, "r", stdin)) {
-      fprintf(stderr, "can't open input file: %s (%s)\n",
-              input_path, strerror(errno));
-      return EXIT_FAILURE;
-    }
-    batchmode = GRN_TRUE;
-  } else {
-    if (input_fd_arg) {
-      const char * const end = input_fd_arg + strlen(input_fd_arg);
-      const char *rest = NULL;
-      const int input_fd = grn_atoi(input_fd_arg, end, &rest);
-      if (rest != end || input_fd == 0) {
-        fprintf(stderr, "invalid input FD: <%s>\n", input_fd_arg);
-        return EXIT_FAILURE;
-      }
-      if (dup2(input_fd, STDIN_FILENO) == -1) {
-        fprintf(stderr, "can't open input FD: %d (%s)\n",
-                input_fd, strerror(errno));
-        return EXIT_FAILURE;
-      }
-      batchmode = GRN_TRUE;
-    } else {
-      if (argc - i > 1) {
-        batchmode = GRN_TRUE;
-      } else {
-        batchmode = !isatty(0);
-      }
-    }
-  }
-
-  if ((flags & (FLAG_MODE_ALONE | FLAG_MODE_CLIENT)) &&
-      !batchmode) {
-    need_line_editor = GRN_TRUE;
-  }
-
   if (output_fd_arg) {
     const char * const end = output_fd_arg + strlen(output_fd_arg);
     const char *rest = NULL;
@@ -3204,6 +3169,53 @@ main(int argc, char **argv)
   COND_INIT(q_cond);
   CRITICAL_SECTION_INIT(cache_lock);
 
+  if (input_path) {
+    input_reader = grn_file_reader_open(&grn_gctx, input_path);
+    if (!input_reader) {
+      fprintf(stderr, "can't open input file: %s (%s)\n",
+              input_path, strerror(errno));
+      return EXIT_FAILURE;
+    }
+    batchmode = GRN_TRUE;
+  } else {
+    if (input_fd_arg) {
+      const char * const end = input_fd_arg + strlen(input_fd_arg);
+      const char *rest = NULL;
+      const int input_fd = grn_atoi(input_fd_arg, end, &rest);
+      if (rest != end || input_fd == 0) {
+        fprintf(stderr, "invalid input FD: <%s>\n", input_fd_arg);
+        return EXIT_FAILURE;
+      }
+      if (dup2(input_fd, STDIN_FILENO) == -1) {
+        fprintf(stderr, "can't open input FD: %d (%s)\n",
+                input_fd, strerror(errno));
+        return EXIT_FAILURE;
+      }
+      input_reader = grn_file_reader_open(&grn_gctx, "-");
+      if (!input_reader) {
+        fprintf(stderr, "%s", grn_gctx.errbuf);
+        return EXIT_FAILURE;
+      }
+      batchmode = GRN_TRUE;
+    } else {
+      input_reader = grn_file_reader_open(&grn_gctx, "-");
+      if (!input_reader) {
+        fprintf(stderr, "%s", grn_gctx.errbuf);
+        return EXIT_FAILURE;
+      }
+      if (argc - i > 1) {
+        batchmode = GRN_TRUE;
+      } else {
+        batchmode = !isatty(0);
+      }
+    }
+  }
+
+  if ((flags & (FLAG_MODE_ALONE | FLAG_MODE_CLIENT)) &&
+      !batchmode) {
+    need_line_editor = GRN_TRUE;
+  }
+
   newdb = (flags & FLAG_NEW_DB);
   is_daemon_mode = (flags & FLAG_MODE_DAEMON);
   if (flags & FLAG_MODE_CLIENT) {
@@ -3218,6 +3230,9 @@ main(int argc, char **argv)
   COND_FIN(q_cond);
   MUTEX_FIN(q_mutex);
 
+  if (input_reader) {
+    grn_file_reader_close(&grn_gctx, input_reader);
+  }
 #ifdef GRN_WITH_LIBEDIT
   if (need_line_editor) {
     line_editor_fin();

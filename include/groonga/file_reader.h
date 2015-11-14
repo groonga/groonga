@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2014-2015 Brazil
+  Copyright(C) 2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -15,22 +15,26 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef GROONGA_H
-#define GROONGA_H
 
-#include "groonga/portability.h"
-#include "groonga/groonga.h"
-#include "groonga/conf.h"
-#include "groonga/obj.h"
-#include "groonga/ii.h"
-#include "groonga/geo.h"
-#include "groonga/expr.h"
-#include "groonga/output.h"
-#include "groonga/util.h"
-#include "groonga/request_canceler.h"
-#include "groonga/thread.h"
-#include "groonga/windows.h"
-#include "groonga/windows_event_logger.h"
-#include "groonga/file_reader.h"
+#ifndef GROONGA_FILE_READER_H
+#define GROONGA_FILE_READER_H
 
-#endif /* GROONGA_H */
+#ifdef  __cplusplus
+extern "C" {
+#endif
+
+typedef struct _grn_file_reader grn_file_reader;
+
+GRN_API grn_file_reader *grn_file_reader_open(grn_ctx *ctx, const char *path);
+GRN_API void grn_file_reader_close(grn_ctx *ctx,
+                                   grn_file_reader *reader);
+
+GRN_API grn_rc grn_file_reader_read_line(grn_ctx *ctx,
+                                         grn_file_reader *reader,
+                                         grn_obj *buffer);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* GROONGA_FILE_READER_H */
