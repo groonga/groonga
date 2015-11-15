@@ -131,7 +131,7 @@ guess_encoding(grn_ctx *ctx, const char **line, size_t *line_length)
 }
 
 static void
-parse_synonyms_file_line(grn_ctx *ctx, const char *line, int line_length,
+parse_synonyms_file_line(grn_ctx *ctx, const char *line, size_t line_length,
                          grn_obj *key, grn_obj *value)
 {
   size_t i = 0;
