@@ -45,9 +45,9 @@ grn_file_reader_open(grn_ctx *ctx, const char *path)
     file = stdin;
     file_need_close = GRN_FALSE;
   } else {
-    file = fopen(path, "r");
+    file = grn_fopen(path, "r");
     if (!file) {
-      SERR("fopen");
+      SERR("grn_fopen");
       GRN_LOG(ctx, GRN_LOG_ERROR,
               "[file-reader][open] failed to open path: <%s>",
               path);
