@@ -772,7 +772,7 @@ else
       fi
     fi
   else
-    ruby_not_found_warning_message="$RUBY is not found. Disable HTTP test."
+    ruby_not_found_warning_message="$RUBY is not found."
     case "$RUBY" in
     /*)
       AC_CHECK_FILE([$RUBY],
