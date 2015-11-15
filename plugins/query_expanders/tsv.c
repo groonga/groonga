@@ -64,13 +64,13 @@ get_system_synonyms_file(void)
 }
 #endif /* WIN32 */
 
-static inline grn_bool
+static grn_bool
 is_comment_mark(char character)
 {
   return character == '#';
 }
 
-static inline grn_encoding
+static grn_encoding
 detect_coding_part(grn_ctx *ctx, const char *line, size_t line_length)
 {
   grn_encoding encoding = GRN_ENC_NONE;
@@ -111,7 +111,7 @@ detect_coding_part(grn_ctx *ctx, const char *line, size_t line_length)
   return encoding;
 }
 
-static inline grn_encoding
+static grn_encoding
 guess_encoding(grn_ctx *ctx, const char **line, size_t *line_length)
 {
   const char bom[] = {0xef, 0xbb, 0xbf};
