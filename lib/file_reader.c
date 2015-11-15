@@ -22,6 +22,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef WIN32
+# include <share.h>
+#endif /* WIN32 */
+
 typedef struct _grn_file_reader {
   FILE *file;
   grn_bool file_need_close;
