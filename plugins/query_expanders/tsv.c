@@ -29,6 +29,7 @@
 #include <string.h>
 
 #ifdef WIN32
+# include <windows.h>
 # include <share.h>
 #endif /* WIN32 */
 
