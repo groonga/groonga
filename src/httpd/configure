@@ -8,6 +8,7 @@ builddir="."
 is_mingw="no"
 
 for argument in "$@"; do
+  argument="$(echo "${argument}" |sed -e "s/\(^'\|'$\)//g")"
   case "$argument" in
     --srcdir=*)
       srcdir="$(echo "${argument}" | sed -e 's/--srcdir=//')"
