@@ -1440,7 +1440,8 @@ grn_ts_expr_id_node_open(grn_ctx *ctx, grn_ts_expr_node **node)
 {
   grn_ts_expr_id_node *new_node = GRN_MALLOCN(grn_ts_expr_id_node, 1);
   if (!new_node) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_MALLOCN failed: %" GRN_FMT_SIZE " x 1",
                       sizeof(grn_ts_expr_id_node));
   }
   grn_ts_expr_id_node_init(ctx, new_node);
@@ -1499,7 +1500,8 @@ grn_ts_expr_score_node_open(grn_ctx *ctx, grn_ts_expr_node **node)
 {
   grn_ts_expr_score_node *new_node = GRN_MALLOCN(grn_ts_expr_score_node, 1);
   if (!new_node) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_MALLOCN failed: %" GRN_FMT_SIZE " x 1",
                       sizeof(grn_ts_expr_score_node));
   }
   grn_ts_expr_score_node_init(ctx, new_node);
@@ -1579,7 +1581,8 @@ grn_ts_expr_key_node_open(grn_ctx *ctx, grn_obj *table,
   }
   new_node = GRN_MALLOCN(grn_ts_expr_key_node, 1);
   if (!new_node) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_MALLOCN failed: %" GRN_FMT_SIZE " x 1",
                       sizeof(grn_ts_expr_key_node));
   }
   grn_ts_expr_key_node_init(ctx, new_node);
@@ -1871,7 +1874,8 @@ grn_ts_expr_value_node_open(grn_ctx *ctx, grn_obj *table,
   }
   new_node = GRN_MALLOCN(grn_ts_expr_value_node, 1);
   if (!new_node) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_MALLOCN failed: %" GRN_FMT_SIZE " x 1",
                       sizeof(grn_ts_expr_value_node));
   }
   grn_ts_expr_value_node_init(ctx, new_node);
@@ -2178,7 +2182,8 @@ grn_ts_expr_const_node_open(grn_ctx *ctx, grn_ts_data_kind kind,
   }
   grn_ts_expr_const_node *new_node = GRN_MALLOCN(grn_ts_expr_const_node, 1);
   if (!new_node) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_MALLOCN failed: %" GRN_FMT_SIZE " x 1",
                       sizeof(grn_ts_expr_const_node));
   }
   grn_ts_expr_const_node_init(ctx, new_node);
@@ -2325,7 +2330,8 @@ grn_ts_expr_column_node_open(grn_ctx *ctx, grn_obj *column,
   grn_rc rc;
   grn_ts_expr_column_node *new_node = GRN_MALLOCN(grn_ts_expr_column_node, 1);
   if (!new_node) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_MALLOCN failed: %" GRN_FMT_SIZE " x 1",
                       sizeof(grn_ts_expr_column_node));
   }
   grn_ts_expr_column_node_init(ctx, new_node);
@@ -3102,7 +3108,8 @@ grn_ts_expr_op_node_open(grn_ctx *ctx, grn_ts_op_type op_type,
     for (i = 0; i < n_args; i++) {
       grn_ts_expr_node_close(ctx, args[i]);
     }
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_MALLOCN failed: %" GRN_FMT_SIZE " x 1",
                       sizeof(grn_ts_expr_op_node));
   }
   grn_ts_expr_op_node_init(ctx, new_node);
@@ -4524,7 +4531,8 @@ grn_ts_expr_bridge_node_open(grn_ctx *ctx, grn_ts_expr_node *src,
 {
   grn_ts_expr_bridge_node *new_node = GRN_MALLOCN(grn_ts_expr_bridge_node, 1);
   if (!new_node) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_MALLOCN failed: %" GRN_FMT_SIZE " x 1",
                       sizeof(grn_ts_expr_bridge_node));
   }
   grn_ts_expr_bridge_node_init(ctx, new_node);

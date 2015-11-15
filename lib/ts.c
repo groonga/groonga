@@ -413,12 +413,14 @@ grn_ts_writer_build(grn_ctx *ctx, grn_ts_writer *writer, grn_obj *table)
   }
   writer->names = GRN_MALLOCN(grn_ts_str, n_names);
   if (!writer->names) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x %zu",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_MALLOCN failed: %" GRN_FMT_SIZE " x %" GRN_FMT_SIZE,
                       sizeof(grn_ts_str), n_names);
   }
   writer->exprs = GRN_MALLOCN(grn_ts_expr *, n_names);
   if (!writer->exprs) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x %zu",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_MALLOCN failed: %" GRN_FMT_SIZE " x %" GRN_FMT_SIZE,
                       sizeof(grn_ts_expr *), n_names);
   }
   for (i = 0; i < n_names; i++) {
@@ -447,7 +449,8 @@ grn_ts_writer_open(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
   grn_rc rc;
   grn_ts_writer *new_writer = GRN_MALLOCN(grn_ts_writer, 1);
   if (!new_writer) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_MALLOCN failed: %" GRN_FMT_SIZE " x 1",
                       sizeof(grn_ts_writer));
   }
   grn_ts_writer_init(ctx, new_writer);
@@ -563,7 +566,8 @@ grn_ts_writer_output_body(grn_ctx *ctx, grn_ts_writer *writer,
   size_t i, j, count = 0;
   writer->bufs = GRN_MALLOCN(grn_ts_buf, writer->n_exprs);
   if (!writer->bufs) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x %zu",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_MALLOCN failed: %" GRN_FMT_SIZE " x %" GRN_FMT_SIZE,
                       sizeof(grn_ts_buf), writer->n_exprs);
   }
   for (i = 0; i < writer->n_exprs; i++) {
@@ -676,7 +680,8 @@ grn_ts_select_filter(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
         grn_ts_record *new_buf = (grn_ts_record *)GRN_REALLOC(buf, n_bytes);
         if (!new_buf) {
           GRN_TS_ERR(GRN_NO_MEMORY_AVAILABLE,
-                     "GRN_REALLOC failed: %zu", n_bytes);
+                     "GRN_REALLOC failed: %" GRN_FMT_SIZE,
+                     n_bytes);
           rc = ctx->rc;
           break;
         }

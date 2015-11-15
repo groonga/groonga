@@ -112,7 +112,8 @@ grn_ts_expr_open(grn_ctx *ctx, grn_obj *table, grn_ts_expr **expr)
   }
   new_expr = GRN_MALLOCN(grn_ts_expr, 1);
   if (!new_expr) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_MALLOCN failed: %" GRN_FMT_SIZE,
                       sizeof(grn_ts_expr));
   }
   rc = grn_ts_obj_increment_ref_count(ctx, table);
@@ -217,7 +218,8 @@ grn_ts_expr_reserve_stack(grn_ctx *ctx, grn_ts_expr *expr)
   n_bytes = sizeof(grn_ts_expr_node *) * new_size;
   new_stack = GRN_REALLOC(expr->stack, n_bytes);
   if (!new_stack) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_REALLOC failed: %zu",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_REALLOC failed: %" GRN_FMT_SIZE,
                       n_bytes);
   }
   for (i = expr->stack_size; i < new_size; i++) {
@@ -379,7 +381,7 @@ grn_ts_expr_push_bulk(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj)
     buf = GRN_MALLOCN(grn_ts_ ## kind, value.size);\
     if (!buf) {\
       GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,\
-                        "GRN_MALLOCN failed: %zu x 1",\
+                        "GRN_MALLOCN failed: %" GRN_FMT_SIZE " x 1",\
                         sizeof(grn_ts_ ## kind));\
     }\
     for (i = 0; i < value.size; i++) {\
@@ -434,7 +436,8 @@ grn_ts_expr_push_vector(grn_ctx *ctx, grn_ts_expr *expr, grn_obj *obj)
       buf = GRN_MALLOCN(grn_ts_text, value.size);
       if (!buf) {
         GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                          "GRN_MALLOCN failed: %zu x %zu",
+                          "GRN_MALLOCN failed: "
+                          "%" GRN_FMT_SIZE " x %" GRN_FMT_SIZE,
                           sizeof(grn_ts_text), value.size);
       }
       for (i = 0; i < value.size; i++) {
@@ -687,14 +690,17 @@ grn_ts_expr_push_op(grn_ctx *ctx, grn_ts_expr *expr, grn_ts_op_type op_type)
   }
   n_args = grn_ts_op_get_n_args(op_type);
   if (!n_args) {
-    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid #arguments: %zu", n_args);
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT,
+                      "invalid #arguments: %" GRN_FMT_SIZE,
+                      n_args);
   }
   max_n_args = expr->stack_depth;
   if (expr->n_bridges) {
     max_n_args -= expr->bridges[expr->n_bridges - 1].stack_depth;
   }
   if (n_args > max_n_args) {
-    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid #arguments: %zu, %zu",
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT,
+                      "invalid #arguments: %" GRN_FMT_SIZE ", %" GRN_FMT_SIZE,
                       n_args, expr->stack_depth);
   }
   /* Arguments are the top n_args nodes in the stack. */
@@ -857,7 +863,8 @@ grn_ts_expr_reserve_bridges(grn_ctx *ctx, grn_ts_expr *expr)
   n_bytes = sizeof(grn_ts_expr_bridge) * new_max_n_bridges;
   new_bridges = (grn_ts_expr_bridge *)GRN_REALLOC(expr->bridges, n_bytes);
   if (!new_bridges) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_REALLOC failed: %zu",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_REALLOC failed: %" GRN_FMT_SIZE,
                       n_bytes);
   }
   expr->bridges = new_bridges;

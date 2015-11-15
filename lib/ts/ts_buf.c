@@ -36,7 +36,8 @@ grn_ts_buf_open(grn_ctx *ctx, grn_ts_buf **buf)
 {
   grn_ts_buf *new_buf = GRN_MALLOCN(grn_ts_buf, 1);
   if (!new_buf) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_MALLOCN failed: %" GRN_FMT_SIZE " x 1",
                       sizeof(grn_ts_buf));
   }
   grn_ts_buf_init(ctx, new_buf);
@@ -77,7 +78,8 @@ grn_ts_buf_reserve(grn_ctx *ctx, grn_ts_buf *buf, size_t new_size)
   }
   new_ptr = GRN_REALLOC(buf->ptr, enough_size);
   if (!new_ptr) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_REALLOC failed: %zu",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_REALLOC failed: %" GRN_FMT_SIZE,
                       enough_size);
   }
   buf->ptr = new_ptr;
@@ -102,7 +104,8 @@ grn_ts_buf_resize(grn_ctx *ctx, grn_ts_buf *buf, size_t new_size)
   }
   new_ptr = GRN_REALLOC(buf->ptr, new_size);
   if (!new_ptr) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_REALLOC failed: %zu",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_REALLOC failed: %" GRN_FMT_SIZE,
                       new_size);
   }
   buf->ptr = new_ptr;

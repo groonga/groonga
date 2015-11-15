@@ -217,7 +217,8 @@ grn_ts_expr_bracket_token_fin(grn_ctx *ctx, grn_ts_expr_bracket_token *token)
   grn_ts_expr_ ## type ## _token *new_token;\
   new_token = GRN_MALLOCN(grn_ts_expr_ ## type ## _token, 1);\
   if (!new_token) {\
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",\
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,\
+                      "GRN_MALLOCN failed: %" GRN_FMT_SIZE " x 1",\
                       sizeof(grn_ts_expr_ ## type ## _token));\
   }\
   grn_ts_expr_ ## type ## _token_init(ctx, new_token, src);\
@@ -366,7 +367,8 @@ grn_ts_expr_parser_open(grn_ctx *ctx, grn_ts_expr *expr,
 {
   grn_ts_expr_parser *new_parser = GRN_MALLOCN(grn_ts_expr_parser, 1);
   if (!new_parser) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x 1",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_MALLOCN failed: %" GRN_FMT_SIZE " x 1",
                       sizeof(grn_ts_expr_parser));
   }
   grn_ts_expr_parser_init(ctx, expr, new_parser);
@@ -829,7 +831,8 @@ grn_ts_expr_parser_reserve_tokens(grn_ctx *ctx, grn_ts_expr_parser *parser)
   n_bytes = sizeof(grn_ts_expr_token *) * new_max_n_tokens;
   new_tokens = (grn_ts_expr_token **)GRN_REALLOC(parser->tokens, n_bytes);
   if (!new_tokens) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_REALLOC failed: %zu",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_REALLOC failed: %" GRN_FMT_SIZE,
                       n_bytes);
   }
   for (i = parser->n_tokens; i < new_max_n_tokens; i++) {
@@ -979,7 +982,8 @@ grn_ts_expr_parser_apply_one(grn_ctx *ctx, grn_ts_expr_parser *parser,
     }
     default: {
       GRN_TS_ERR_RETURN(GRN_OPERATION_NOT_SUPPORTED,
-                        "invalid #arguments: %zu", n_args);
+                        "invalid #arguments: %" GRN_FMT_SIZE,
+                        n_args);
     }
   }
 
@@ -1179,12 +1183,14 @@ grn_ts_expr_parser_analyze(grn_ctx *ctx, grn_ts_expr_parser *parser)
   parser->dummy_tokens = GRN_MALLOCN(grn_ts_expr_dummy_token,
                                      parser->n_tokens);
   if (!parser->dummy_tokens) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x %zu",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_MALLOCN failed: %" GRN_FMT_SIZE " x %" GRN_FMT_SIZE,
                       sizeof(grn_ts_expr_dummy_token), parser->n_tokens);
   }
   parser->stack = GRN_MALLOCN(grn_ts_expr_token *, parser->n_tokens);
   if (!parser->stack) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE, "GRN_MALLOCN failed: %zu x %zu",
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_MALLOCN failed: %" GRN_FMT_SIZE " x %" GRN_FMT_SIZE,
                       sizeof(grn_ts_expr_token *), parser->n_tokens);
   }
 
@@ -1197,7 +1203,8 @@ grn_ts_expr_parser_analyze(grn_ctx *ctx, grn_ts_expr_parser *parser)
     }
   }
   if (parser->stack_depth != 2) {
-    GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT, "tokens left in stack: %zu",
+    GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT,
+                      "tokens left in stack: %" GRN_FMT_SIZE,
                       parser->stack_depth);
   }
   return GRN_SUCCESS;
