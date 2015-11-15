@@ -761,14 +761,14 @@ if test "x$RUBY" = "xno"; then
 else
   if test "x$RUBY" = "xyes"; then
     AC_PATH_PROGS(RUBY,
-                  [ruby2.1 ruby21 ruby2.0 ruby20 ruby1.9 ruby19 ruby1.9.1 ruby],
+                  [ruby2.2 ruby22 ruby2.1 ruby21 ruby2.0 ruby20 ruby],
                   ruby-not-found)
     if test "$RUBY" != "ruby-not-found"; then
       ruby_version="`$RUBY --version`"
-      if echo "$ruby_version" | grep -q -- 'ruby \(1\.9\|2\.\)'; then
+      if echo "$ruby_version" | grep -q -- 'ruby \(2\.\)'; then
         ac_cv_ruby_available="yes"
       else
-        AC_MSG_WARN([$RUBY isn't Ruby 1.9 or later ($ruby_version)])
+        AC_MSG_WARN([$RUBY isn't Ruby 2.0 or later ($ruby_version)])
       fi
     fi
   else
