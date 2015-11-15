@@ -484,6 +484,9 @@ typedef int grn_cond;
 # define GRN_FMT_OFF64_T "jd"
 #endif /* WIN32 */
 
+#define GRN_FMT_INT64  GRN_FMT_LLD
+#define GRN_FMT_UINT64 GRN_FMT_LLU
+
 #ifdef __GNUC__
 # if (defined(__i386__) || defined(__x86_64__)) /* ATOMIC ADD */
 /*
