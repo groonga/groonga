@@ -7660,18 +7660,21 @@ grn_ii_buffer_fetch(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
         off64_t seeked_position;
         seeked_position = grn_lseek(ii_buffer->tmpfd, block->head, SEEK_SET);
         if (seeked_position != block->head) {
-          ERRNO_ERR("grn_lseek");
-          GRN_LOG(ctx, GRN_LOG_ERROR,
-                  "failed to "
-                  "grn_lseek(%" GRN_FMT_OFF64_T ") -> %" GRN_FMT_OFF64_T,
-                  block->head,
-                  seeked_position);
+          ERRNO_ERR("failed to "
+                    "grn_lseek(%" GRN_FMT_OFF64_T ") -> %" GRN_FMT_OFF64_T,
+                    block->head,
+                    seeked_position);
           return;
         }
       }
-      if (grn_read(ii_buffer->tmpfd, block->buffer, bytesize) != bytesize) {
-        SERR("read");
-        return;
+      {
+        size_t read_bytesize;
+        read_bytesize = grn_read(ii_buffer->tmpfd, block->buffer, bytesize);
+        if (read_bytesize != bytesize) {
+          SERR("failed to grn_read(%" GRN_FMT_SIZE ") -> %" GRN_FMT_SIZE,
+               bytesize, read_bytesize);
+          return;
+        }
       }
       block->head += bytesize;
       block->bufcur = block->buffer;
@@ -7991,7 +7994,8 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
             }
             return ii_buffer;
           } else {
-            SERR("mkostemp");
+            SERR("failed grn_mkstemp(%s)",
+                 ii_buffer->tmpfpath);
           }
           GRN_FREE(ii_buffer->block_buf);
         }
@@ -8128,7 +8132,7 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
            ii_buffer->tmpfpath,
            O_RDONLY | GRN_OPEN_FLAG_BINARY);
   if (ii_buffer->tmpfd == -1) {
-    ERRNO_ERR("oepn");
+    ERRNO_ERR("failed to open path: <%s>", ii_buffer->tmpfpath);
     return ctx->rc;
   }
   {

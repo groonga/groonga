@@ -229,7 +229,7 @@ grn_plugin_initialize(grn_ctx *ctx, grn_plugin *plugin,
   if (!plugin->type ## _func) {                                         \
     const char *label;                                                  \
     label = grn_dl_sym_error_label();                                   \
-    SERR(label);                                                        \
+    SERR("%s", label);                                                  \
   }                                                                     \
 } while (0)
 
@@ -343,7 +343,7 @@ grn_plugin_open(grn_ctx *ctx, const char *filename)
         } else {
           const char *label;
           label = grn_dl_close_error_label();
-          SERR(label);
+          SERR("%s", label);
         }
         id = GRN_ID_NIL;
       } else {
@@ -353,13 +353,13 @@ grn_plugin_open(grn_ctx *ctx, const char *filename)
       if (!grn_dl_close(dl)) {
         const char *label;
         label = grn_dl_close_error_label();
-        SERR(label);
+        SERR("%s", label);
       }
     }
   } else {
     const char *label;
     label = grn_dl_open_error_label();
-    SERR(label);
+    SERR("%s", label);
   }
 
 exit:
@@ -392,7 +392,7 @@ grn_plugin_close(grn_ctx *ctx, grn_id id)
     if (!grn_dl_close(plugin->dl)) {
       const char *label;
       label = grn_dl_close_error_label();
-      SERR(label);
+      SERR("%s", label);
     }
   }
   GRN_GFREE(plugin);
@@ -423,7 +423,7 @@ grn_plugin_sym(grn_ctx *ctx, grn_id id, const char *symbol)
   if (!(func = grn_dl_sym(plugin->dl, symbol))) {
     const char *label;
     label = grn_dl_sym_error_label();
-    SERR(label);
+    SERR("%s", label);
   }
 
 exit:

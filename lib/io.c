@@ -501,10 +501,8 @@ grn_io_detect_type(grn_ctx *ctx, const char *path)
               (int)GRN_IO_IDSTR_LEN, GRN_IO_IDSTR);
         }
       } else {
-        SERR(path);
-        GRN_LOG(ctx, GRN_LOG_ERROR,
-                "failed to read enough data for detecting type: <%s>",
-                path);
+        SERR("failed to read enough data for detecting type: <%s>",
+             path);
       }
     } else {
       ERR(GRN_INVALID_FORMAT, "grn_io_detect_type failed");
@@ -732,10 +730,8 @@ grn_io_size(grn_ctx *ctx, grn_io *io, uint64_t *size)
   for (fno = 0; fno < nfiles; fno++) {
     gen_pathname(io->path, buffer, fno);
     if (stat(buffer, &s)) {
-      SERR(buffer);
-      GRN_LOG(ctx, GRN_LOG_ERROR,
-              "failed to stat path to compute size: <%s>",
-              buffer);
+      SERR("failed to stat path to compute size: <%s>",
+           buffer);
     } else {
       tsize += s.st_size;
     }
@@ -749,13 +745,11 @@ grn_io_remove(grn_ctx *ctx, const char *path)
 {
   struct stat s;
   if (stat(path, &s)) {
-    SERR("stat");
+    SERR("failed to stat: <%s>", path);
     return ctx->rc;
   } else if (grn_unlink(path)) {
-    ERRNO_ERR(path);
-    GRN_LOG(ctx, GRN_LOG_ERROR,
-            "failed to remove path: <%s>",
-            path);
+    ERRNO_ERR("failed to remove path: <%s>",
+              path);
     return ctx->rc;
   } else {
     int fno;
@@ -764,10 +758,8 @@ grn_io_remove(grn_ctx *ctx, const char *path)
       gen_pathname(path, buffer, fno);
       if (!stat(buffer, &s)) {
         if (grn_unlink(buffer)) {
-          ERRNO_ERR(buffer);
-          GRN_LOG(ctx, GRN_LOG_ERROR,
-                  "failed to remove path: <%s>",
-                  buffer);
+          ERRNO_ERR("failed to remove path: <%s>",
+                    buffer);
         }
       } else {
         break;
@@ -782,13 +774,11 @@ grn_io_rename(grn_ctx *ctx, const char *old_name, const char *new_name)
 {
   struct stat s;
   if (stat(old_name, &s)) {
-    SERR("stat");
+    SERR("failed to stat path to be renamed: <%s>", old_name);
     return ctx->rc;
   } else if (rename(old_name, new_name)) {
-    SERR(old_name);
-    GRN_LOG(ctx, GRN_LOG_ERROR,
-            "failed to rename path: <%s> -> <%s>",
-            old_name, new_name);
+    SERR("failed to rename path: <%s> -> <%s>",
+         old_name, new_name);
     return ctx->rc;
   } else {
     int fno;
@@ -799,16 +789,12 @@ grn_io_rename(grn_ctx *ctx, const char *old_name, const char *new_name)
       if (!stat(old_buffer, &s)) {
         gen_pathname(new_name, new_buffer, fno);
         if (rename(old_buffer, new_buffer)) {
-          SERR(old_buffer);
-          GRN_LOG(ctx, GRN_LOG_ERROR,
-                  "failed to rename path: <%s> -> <%s>",
-                  old_buffer, new_buffer);
+          SERR("failed to rename path: <%s> -> <%s>",
+               old_buffer, new_buffer);
         }
       } else {
-        SERR("stat");
-        GRN_LOG(ctx, GRN_LOG_ERROR,
-                "failed to stat path to rename: <%s>",
-                old_buffer);
+        SERR("failed to stat path to be renamed: <%s>",
+             old_buffer);
         return ctx->rc;
       }
     }
@@ -1429,20 +1415,16 @@ grn_mmap_v1(grn_ctx *ctx, HANDLE *fmo, fileinfo *fi, off_t offset, size_t length
   /* try to create fmo */
   *fmo = CreateFileMapping(fi->fh, NULL, PAGE_READWRITE, 0, offset + length, NULL);
   if (!*fmo) {
-    SERR("CreateFileMapping");
-    GRN_LOG(ctx, GRN_LOG_ERROR,
-            "CreateFileMapping(%lu + %" GRN_FMT_SIZE ") failed "
-            "<%" GRN_FMT_SIZE ">",
-            (DWORD)offset, length,
-            mmap_size);
+    SERR("CreateFileMapping(%lu + %" GRN_FMT_SIZE ") failed "
+         "<%" GRN_FMT_SIZE ">",
+         (DWORD)offset, length,
+         mmap_size);
     return NULL;
   }
   res = MapViewOfFile(*fmo, FILE_MAP_WRITE, 0, (DWORD)offset, (SIZE_T)length);
   if (!res) {
-    SERR("MapViewOfFile");
-    GRN_LOG(ctx, GRN_LOG_ERROR,
-            "MapViewOfFile(%lu,%" GRN_FMT_SIZE ") failed <%" GRN_FMT_SIZE ">",
-            (DWORD)offset, length, mmap_size);
+    SERR("MapViewOfFile(%lu,%" GRN_FMT_SIZE ") failed <%" GRN_FMT_SIZE ">",
+         (DWORD)offset, length, mmap_size);
     return NULL;
   }
   /* CRITICAL_SECTION_LEAVE(fi->cs); */
@@ -1470,17 +1452,13 @@ grn_munmap_v1(grn_ctx *ctx, HANDLE *fmo, fileinfo *fi,
     if (UnmapViewOfFile(start)) {
       mmap_size -= length;
     } else {
-      SERR("UnmapViewOfFile");
-      GRN_LOG(ctx, GRN_LOG_ERROR,
-              "UnmapViewOfFile(%p,%" GRN_FMT_SIZE ") failed <%" GRN_FMT_SIZE ">",
-              start, length, mmap_size);
+      SERR("UnmapViewOfFile(%p,%" GRN_FMT_SIZE ") failed <%" GRN_FMT_SIZE ">",
+           start, length, mmap_size);
       r = -1;
     }
     if (!CloseHandle(*fmo)) {
-      SERR("CloseHandle");
-      GRN_LOG(ctx, GRN_LOG_ERROR,
-              "CloseHandle(%p,%" GRN_FMT_SIZE ") failed <%" GRN_FMT_SIZE ">",
-              start, length, mmap_size);
+      SERR("CloseHandle(%p,%" GRN_FMT_SIZE ") failed <%" GRN_FMT_SIZE ">",
+           start, length, mmap_size);
     }
     *fmo = NULL;
   } else {
@@ -1567,10 +1545,8 @@ grn_munmap_v0(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
     mmap_size -= length;
     return 0;
   } else {
-    SERR("UnmapViewOfFile");
-    GRN_LOG(ctx, GRN_LOG_ERROR,
-            "UnmapViewOfFile(%p,%" GRN_FMT_SIZE ") failed <%" GRN_FMT_SIZE ">",
-            start, length, mmap_size);
+    SERR("UnmapViewOfFile(%p,%" GRN_FMT_SIZE ") failed <%" GRN_FMT_SIZE ">",
+         start, length, mmap_size);
     return -1;
   }
 }
@@ -1594,10 +1570,8 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
                         NULL,
                         dwCreationDisposition, FILE_ATTRIBUTE_NORMAL, 0);
     if (fi->fh == INVALID_HANDLE_VALUE) {
-      SERR("CreateFile");
-      GRN_LOG(ctx, GRN_LOG_ERROR,
-              "CreateFile(<%s>, <%s>) failed",
-              path, flags_description);
+      SERR("CreateFile(<%s>, <%s>) failed",
+           path, flags_description);
       goto exit;
     }
 
@@ -1632,10 +1606,8 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
                         NULL,
                         TRUNCATE_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
     if (fi->fh == INVALID_HANDLE_VALUE) {
-      SERR("CreateFile");
-      GRN_LOG(ctx, GRN_LOG_ERROR,
-              "CreateFile(<%s>, <O_RDWR|O_TRUNC>) failed",
-              path);
+      SERR("CreateFile(<%s>, <O_RDWR|O_TRUNC>) failed",
+           path);
       goto exit;
     }
     goto exit;
@@ -1646,10 +1618,8 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
                       NULL,
                       OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
   if (fi->fh == INVALID_HANDLE_VALUE) {
-    SERR("CreateFile");
-    GRN_LOG(ctx, GRN_LOG_ERROR,
-            "CreateFile(<%s>, <O_RDWR>) failed",
-            path);
+    SERR("CreateFile(<%s>, <O_RDWR>) failed",
+         path);
     goto exit;
   }
 
@@ -1774,10 +1744,8 @@ grn_msync(grn_ctx *ctx, void *start, size_t length)
   if (succeeded) {
     return 0;
   } else {
-    SERR("FlushViewOfFile");
-    GRN_LOG(ctx, GRN_LOG_ERROR,
-            "FlushViewOfFile(<%p>, <%" GRN_FMT_SIZE ">) failed",
-            start, length);
+    SERR("FlushViewOfFile(<%p>, <%" GRN_FMT_SIZE ">) failed",
+         start, length);
     return -1;
   }
 }
@@ -1949,9 +1917,10 @@ grn_munmap(grn_ctx *ctx, grn_io *io, fileinfo *fi, void *start, size_t length)
   int res;
   res = munmap(start, length);
   if (res) {
-    SERR("munmap");
-    GRN_LOG(ctx, GRN_LOG_ERROR, "munmap(%p,%" GRN_FMT_LLU ") failed <%" GRN_FMT_LLU ">",
-            start, (unsigned long long int)length, (unsigned long long int)mmap_size);
+    SERR("munmap(%p,%" GRN_FMT_LLU ") failed <%" GRN_FMT_LLU ">",
+         start,
+         (unsigned long long int)length,
+         (unsigned long long int)mmap_size);
   } else {
     mmap_size -= length;
   }
