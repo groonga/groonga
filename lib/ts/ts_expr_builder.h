@@ -66,8 +66,6 @@ grn_rc grn_ts_expr_builder_push_name(grn_ctx *ctx,
                                      grn_ts_str name);
 
 /*
- * TODO: Update the comment.
- *
  * grn_ts_expr_builder_push_obj() pushes an object.
  *
  * Acceptable objects are as follows:
@@ -76,7 +74,7 @@ grn_rc grn_ts_expr_builder_push_name(grn_ctx *ctx,
  *  - GRN_UVECTOR: GRN_DB_* except GRN_DB_[SHORT/LONG_]TEXT.
  *  - GRN_VECTOR: GRN_DB_[SHORT/LONG_]TEXT.
  * - Columns
- *  - GRN_ACCESSOR: _id, _score, _key, and _value.
+ *  - GRN_ACCESSOR: _id, _score, _key, _value, and columns.
  *  - GRN_COLUMN_FIX_SIZE: GRN_DB_* except GRN_DB_[SHORT/LONG_]TEXT.
  *  - GRN_COLUMN_VAR_SIZE: GRN_DB_[SHORT/LONG_]TEXT.
  */
