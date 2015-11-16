@@ -28,6 +28,7 @@
 #include "ts/ts_log.h"
 #include "ts/ts_str.h"
 #include "ts/ts_types.h"
+#include "ts/ts_util.h"
 
 /*-------------------------------------------------------------
  * Miscellaneous.
@@ -158,29 +159,6 @@ grn_ts_geo_vector_output(grn_ctx *ctx, grn_ts_geo_vector value)
   GRN_TS_VECTOR_OUTPUT(geo)
 }
 #undef GRN_TS_VECTOR_OUTPUT
-
-/* grn_ts_table_has_key() returns whether or not a table has _key. */
-static grn_ts_bool
-grn_ts_table_has_key(grn_ctx *ctx, grn_obj *table)
-{
-  switch (table->header.type) {
-    case GRN_TABLE_HASH_KEY:
-    case GRN_TABLE_PAT_KEY:
-    case GRN_TABLE_DAT_KEY: {
-      return GRN_TRUE;
-    }
-    default: {
-      return GRN_FALSE;
-    }
-  }
-}
-
-/* grn_ts_obj_is_table() returns whether or not an object is a table. */
-static grn_ts_bool
-grn_ts_obj_is_table(grn_ctx *ctx, grn_obj *obj)
-{
-  return grn_obj_is_table(ctx, obj);
-}
 
 /*-------------------------------------------------------------
  * grn_ts_writer.
