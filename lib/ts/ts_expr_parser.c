@@ -26,67 +26,15 @@
 #include "ts_str.h"
 #include "ts_util.h"
 
-/*-------------------------------------------------------------
- * grn_ts_expr_parser.
- */
-
 /*
  * FIXME: A grn_ts_expr_parser object is designed to parse one expression
  *        string. grn_ts_expr_parser_parse() should not be called more than
  *        once.
  */
 
-typedef enum {
-  GRN_TS_EXPR_DUMMY_TOKEN,  /* No extra data. */
-  GRN_TS_EXPR_START_TOKEN,  /* No extra data. */
-  GRN_TS_EXPR_END_TOKEN,    /* No extra data. */
-  GRN_TS_EXPR_CONST_TOKEN,  /* +data_kind, content and buf. */
-  GRN_TS_EXPR_NAME_TOKEN,   /* +name. */
-  GRN_TS_EXPR_OP_TOKEN,     /* +op_type. */
-  GRN_TS_EXPR_BRIDGE_TOKEN, /* No extra data. */
-  GRN_TS_EXPR_BRACKET_TOKEN /* No extra data. */
-} grn_ts_expr_token_type;
-
-#define GRN_TS_EXPR_TOKEN_COMMON_MEMBERS\
-  grn_ts_str src;              /* Source string. */\
-  grn_ts_expr_token_type type; /* Token type. */
-
-typedef struct {
-  GRN_TS_EXPR_TOKEN_COMMON_MEMBERS
-} grn_ts_expr_token;
-
-typedef grn_ts_expr_token grn_ts_expr_dummy_token;
-typedef grn_ts_expr_token grn_ts_expr_start_token;
-typedef grn_ts_expr_token grn_ts_expr_end_token;
-
-typedef struct {
-  GRN_TS_EXPR_TOKEN_COMMON_MEMBERS
-  grn_ts_data_kind data_kind; /* The data kind of the const. */
-  grn_ts_any content;         /* The const. */
-  grn_ts_buf buf;             /* Buffer for content.as_text. */
-} grn_ts_expr_const_token;
-
-typedef grn_ts_expr_token grn_ts_expr_name_token;
-
-typedef struct {
-  GRN_TS_EXPR_TOKEN_COMMON_MEMBERS
-  grn_ts_op_type op_type;     /* Operator type. */
-} grn_ts_expr_op_token;
-
-typedef grn_ts_expr_token grn_ts_expr_bridge_token;
-typedef grn_ts_expr_token grn_ts_expr_bracket_token;
-
-struct grn_ts_expr_parser {
-  grn_ts_expr_builder *builder;          /* Builder. */
-  grn_ts_buf str_buf;                    /* Buffer for a source string. */
-  grn_ts_expr_token **tokens;            /* Tokens. */
-  size_t n_tokens;                       /* Number of tokens. */
-  size_t max_n_tokens;                   /* Max. number of tokens. */
-  grn_ts_expr_dummy_token *dummy_tokens; /* Dummy tokens. */
-  size_t n_dummy_tokens;                 /* Number of dummy tokens. */
-  grn_ts_expr_token **stack;             /* Token stack. */
-  size_t stack_depth;                    /* Token stack's current depth. */
-};
+/*-------------------------------------------------------------
+ * grn_ts_expr_token.
+ */
 
 #define GRN_TS_EXPR_TOKEN_INIT(TYPE)\
   memset(token, 0, sizeof(*token));\
@@ -324,6 +272,10 @@ grn_ts_expr_token_close(grn_ctx *ctx, grn_ts_expr_token *token)
   GRN_FREE(token);
 }
 #undef GRN_TS_EXPR_TOKEN_CLOSE_CASE
+
+/*-------------------------------------------------------------
+ * grn_ts_expr_parser.
+ */
 
 /* grn_ts_expr_parser_init() initializes a parser. */
 static void
@@ -1210,18 +1162,29 @@ grn_ts_expr_parser_analyze(grn_ctx *ctx, grn_ts_expr_parser *parser)
   size_t i;
 
   /* Reserve temporary work spaces. */
-  parser->dummy_tokens = GRN_MALLOCN(grn_ts_expr_dummy_token,
-                                     parser->n_tokens);
-  if (!parser->dummy_tokens) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_MALLOCN failed: %" GRN_FMT_SIZE " x %" GRN_FMT_SIZE,
-                      sizeof(grn_ts_expr_dummy_token), parser->n_tokens);
+  if (parser->n_tokens > parser->max_n_dummy_tokens) {
+    size_t n_bytes = sizeof(grn_ts_expr_dummy_token) * parser->n_tokens;
+    grn_ts_expr_dummy_token *dummy_tokens = parser->dummy_tokens;
+    grn_ts_expr_dummy_token *new_dummy_tokens;
+    new_dummy_tokens = (grn_ts_expr_dummy_token *)GRN_REALLOC(dummy_tokens,
+                                                              n_bytes);
+    if (!new_dummy_tokens) {
+      GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                        "GRN_REALLOC failed: %" GRN_FMT_SIZE, n_bytes);
+    }
+    parser->dummy_tokens = new_dummy_tokens;
+    parser->max_n_dummy_tokens = parser->n_tokens;
   }
-  parser->stack = GRN_MALLOCN(grn_ts_expr_token *, parser->n_tokens);
-  if (!parser->stack) {
-    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
-                      "GRN_MALLOCN failed: %" GRN_FMT_SIZE " x %" GRN_FMT_SIZE,
-                      sizeof(grn_ts_expr_token *), parser->n_tokens);
+  if (parser->n_tokens > parser->stack_size) {
+    size_t n_bytes = sizeof(grn_ts_expr_token *) * parser->n_tokens;
+    grn_ts_expr_token **new_stack;
+    new_stack = (grn_ts_expr_token **)GRN_REALLOC(parser->stack, n_bytes);
+    if (!new_stack) {
+      GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                        "GRN_REALLOC failed: %" GRN_FMT_SIZE, n_bytes);
+    }
+    parser->stack = new_stack;
+    parser->stack_size = parser->n_tokens;
   }
 
   /* Analyze tokens. */
@@ -1240,6 +1203,31 @@ grn_ts_expr_parser_analyze(grn_ctx *ctx, grn_ts_expr_parser *parser)
   return GRN_SUCCESS;
 }
 
+/*
+ * grn_ts_expr_parser_clear() clears the internal states for parsing the next
+ * string.
+ */
+static void
+grn_ts_expr_parser_clear(grn_ctx *ctx, grn_ts_expr_parser *parser)
+{
+  parser->stack_depth = 0;
+  if (parser->dummy_tokens) {
+    size_t i;
+    for (i = 0; i < parser->n_dummy_tokens; i++) {
+      grn_ts_expr_dummy_token_fin(ctx, &parser->dummy_tokens[i]);
+    }
+    parser->n_dummy_tokens = 0;
+  }
+  if (parser->tokens) {
+    size_t i;
+    for (i = 0; i < parser->n_tokens; i++) {
+      grn_ts_expr_token_close(ctx, parser->tokens[i]);
+    }
+    parser->n_tokens = 0;
+  }
+  grn_ts_expr_builder_clear(ctx, parser->builder);
+}
+
 grn_rc
 grn_ts_expr_parser_parse(grn_ctx *ctx, grn_ts_expr_parser *parser,
                          grn_ts_str str, grn_ts_expr **expr)
@@ -1251,6 +1239,7 @@ grn_ts_expr_parser_parse(grn_ctx *ctx, grn_ts_expr_parser *parser,
   if (!parser || (!str.ptr && str.size)) {
     GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
   }
+  grn_ts_expr_parser_clear(ctx, parser);
   rc = grn_ts_buf_reserve(ctx, &parser->str_buf, str.size + 1);
   if (rc != GRN_SUCCESS) {
     return rc;

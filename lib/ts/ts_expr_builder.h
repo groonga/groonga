@@ -60,6 +60,9 @@ grn_rc grn_ts_expr_builder_close(grn_ctx *ctx, grn_ts_expr_builder *builder);
 grn_rc grn_ts_expr_builder_complete(grn_ctx *ctx, grn_ts_expr_builder *builder,
                                     grn_ts_expr **expr);
 
+/* grn_ts_expr_builder_clear() clears the internal states. */
+grn_rc grn_ts_expr_builder_clear(grn_ctx *ctx, grn_ts_expr_builder *builder);
+
 /* grn_ts_expr_builder_push_name() pushes a named object. */
 grn_rc grn_ts_expr_builder_push_name(grn_ctx *ctx,
                                      grn_ts_expr_builder *builder,

@@ -191,6 +191,34 @@ grn_ts_expr_builder_complete(grn_ctx *ctx, grn_ts_expr_builder *builder,
   return GRN_SUCCESS;
 }
 
+grn_rc
+grn_ts_expr_builder_clear(grn_ctx *ctx, grn_ts_expr_builder *builder)
+{
+  size_t i;
+  if (!ctx) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  if (!builder) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
+  }
+  if (builder->bridges) {
+    for (i = 0; i < builder->n_bridges; i++) {
+      grn_ts_expr_bridge_fin(ctx, &builder->bridges[i]);
+    }
+    builder->n_bridges = 0;
+  }
+  if (builder->nodes) {
+    for (i = 0; i < builder->n_nodes; i++) {
+      if (builder->nodes[i]) {
+        grn_ts_expr_node_close(ctx, builder->nodes[i]);
+      }
+    }
+    builder->n_nodes = 0;
+  }
+  builder->curr_table = builder->table;
+  return GRN_SUCCESS;
+}
+
 /*
  * grn_ts_expr_builder_push_node() pushes a node.
  * The given node will be closed on failure.
