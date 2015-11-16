@@ -23,7 +23,6 @@
 #include "../grn_pat.h"
 
 #include "ts_log.h"
-#include "ts_types.h"
 
 grn_rc
 grn_ts_obj_increment_ref_count(grn_ctx *ctx, grn_obj *obj)

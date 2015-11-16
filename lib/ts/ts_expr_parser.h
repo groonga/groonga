@@ -20,7 +20,8 @@
 #define GRN_TS_EXPR_PARSER_H
 
 #include "ts_expr.h"
-#include "ts_op.h"
+#include "ts_expr_builder.h"
+#include "ts_str.h"
 #include "ts_types.h"
 
 #ifdef __cplusplus
@@ -30,18 +31,15 @@ extern "C" {
 typedef struct grn_ts_expr_parser grn_ts_expr_parser;
 
 /* grn_ts_expr_parser_open() creates a parser. */
-grn_rc grn_ts_expr_parser_open(grn_ctx *ctx, grn_ts_expr *expr,
+grn_rc grn_ts_expr_parser_open(grn_ctx *ctx, grn_obj *table,
                                grn_ts_expr_parser **parser);
 
 /* grn_ts_expr_parser_close() destroys a parser. */
-void grn_ts_expr_parser_close(grn_ctx *ctx, grn_ts_expr_parser *parser);
+grn_rc grn_ts_expr_parser_close(grn_ctx *ctx, grn_ts_expr_parser *parser);
 
-/*
- * grn_ts_expr_parser_parse() parses a string and pushes nodes into an
- * expression.
- */
+/* grn_ts_expr_parser_parse() parses a string and creates an expression. */
 grn_rc grn_ts_expr_parser_parse(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                                const char *str_ptr, size_t str_size);
+                                grn_ts_str str, grn_ts_expr **expr);
 
 #ifdef __cplusplus
 }

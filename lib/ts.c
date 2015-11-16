@@ -429,7 +429,8 @@ grn_ts_writer_build(grn_ctx *ctx, grn_ts_writer *writer, grn_obj *table)
     const char *name_ptr;
     size_t name_size = grn_vector_get_element(ctx, &writer->name_buf, i,
                                               &name_ptr, NULL, NULL);
-    rc = grn_ts_expr_parse(ctx, table, name_ptr, name_size, &new_expr);
+    rc = grn_ts_expr_parse(ctx, table, (grn_ts_str){ name_ptr, name_size },
+                           &new_expr);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
@@ -667,7 +668,7 @@ grn_ts_select_filter(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
     return (ctx->rc != GRN_SUCCESS) ? ctx->rc : GRN_UNKNOWN_ERROR;
   }
 
-  rc = grn_ts_expr_parse(ctx, table, str.ptr, str.size, &expr);
+  rc = grn_ts_expr_parse(ctx, table, str, &expr);
   if (rc == GRN_SUCCESS) {
     for ( ; ; ) {
       size_t i, batch_size;
@@ -776,7 +777,7 @@ grn_ts_select_scorer(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
       rest = str;
     }
   }
-  rc = grn_ts_expr_parse(ctx, table, rest.ptr, rest.size, &expr);
+  rc = grn_ts_expr_parse(ctx, table, rest, &expr);
   if (rc != GRN_SUCCESS) {
     return rc;
   }

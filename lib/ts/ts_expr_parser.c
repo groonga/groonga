@@ -24,6 +24,7 @@
 
 #include "ts_log.h"
 #include "ts_str.h"
+#include "ts_util.h"
 
 /*-------------------------------------------------------------
  * grn_ts_expr_parser.
@@ -76,7 +77,7 @@ typedef grn_ts_expr_token grn_ts_expr_bridge_token;
 typedef grn_ts_expr_token grn_ts_expr_bracket_token;
 
 struct grn_ts_expr_parser {
-  grn_ts_expr *expr;                     /* Associated expression. */
+  grn_ts_expr_builder *builder;          /* Builder. */
   grn_ts_buf str_buf;                    /* Buffer for a source string. */
   grn_ts_expr_token **tokens;            /* Tokens. */
   size_t n_tokens;                       /* Number of tokens. */
@@ -326,11 +327,10 @@ grn_ts_expr_token_close(grn_ctx *ctx, grn_ts_expr_token *token)
 
 /* grn_ts_expr_parser_init() initializes a parser. */
 static void
-grn_ts_expr_parser_init(grn_ctx *ctx, grn_ts_expr *expr,
-                        grn_ts_expr_parser *parser)
+grn_ts_expr_parser_init(grn_ctx *ctx, grn_ts_expr_parser *parser)
 {
   memset(parser, 0, sizeof(*parser));
-  parser->expr = expr;
+  parser->builder = NULL;
   grn_ts_buf_init(ctx, &parser->str_buf);
   parser->tokens = NULL;
   parser->dummy_tokens = NULL;
@@ -359,28 +359,52 @@ grn_ts_expr_parser_fin(grn_ctx *ctx, grn_ts_expr_parser *parser)
     GRN_FREE(parser->tokens);
   }
   grn_ts_buf_fin(ctx, &parser->str_buf);
+  if (parser->builder) {
+    grn_ts_expr_builder_close(ctx, parser->builder);
+  }
 }
 
 grn_rc
-grn_ts_expr_parser_open(grn_ctx *ctx, grn_ts_expr *expr,
+grn_ts_expr_parser_open(grn_ctx *ctx, grn_obj *table,
                         grn_ts_expr_parser **parser)
 {
-  grn_ts_expr_parser *new_parser = GRN_MALLOCN(grn_ts_expr_parser, 1);
+  grn_rc rc;
+  grn_ts_expr_parser *new_parser;
+  if (!ctx) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  if (!table || !grn_ts_obj_is_table(ctx, table) || !parser) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
+  }
+  new_parser = GRN_MALLOCN(grn_ts_expr_parser, 1);
   if (!new_parser) {
     GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
                       "GRN_MALLOCN failed: %" GRN_FMT_SIZE " x 1",
                       sizeof(grn_ts_expr_parser));
   }
-  grn_ts_expr_parser_init(ctx, expr, new_parser);
+  grn_ts_expr_parser_init(ctx, new_parser);
+  rc = grn_ts_expr_builder_open(ctx, table, &new_parser->builder);
+  if (rc != GRN_SUCCESS) {
+    grn_ts_expr_parser_fin(ctx, new_parser);
+    GRN_FREE(new_parser);
+    return  rc;
+  }
   *parser = new_parser;
   return GRN_SUCCESS;
 }
 
-void
+grn_rc
 grn_ts_expr_parser_close(grn_ctx *ctx, grn_ts_expr_parser *parser)
 {
+  if (!ctx) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  if (!parser) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
+  }
   grn_ts_expr_parser_fin(ctx, parser);
   GRN_FREE(parser);
+  return GRN_SUCCESS;
 }
 
 /* grn_ts_expr_parser_tokenize_start() creates the start token. */
@@ -879,17 +903,24 @@ grn_ts_expr_parser_push_const(grn_ctx *ctx, grn_ts_expr_parser *parser,
 {
   switch (token->data_kind) {
     case GRN_TS_BOOL: {
-      return grn_ts_expr_push_bool(ctx, parser->expr, token->content.as_bool);
+      return grn_ts_expr_builder_push_const(ctx, parser->builder,
+                                            GRN_TS_BOOL, GRN_DB_VOID,
+                                            &token->content.as_bool);
     }
     case GRN_TS_INT: {
-      return grn_ts_expr_push_int(ctx, parser->expr, token->content.as_int);
+      return grn_ts_expr_builder_push_const(ctx, parser->builder,
+                                            GRN_TS_INT, GRN_DB_VOID,
+                                            &token->content.as_int);
     }
     case GRN_TS_FLOAT: {
-      return grn_ts_expr_push_float(ctx, parser->expr,
-                                    token->content.as_float);
+      return grn_ts_expr_builder_push_const(ctx, parser->builder,
+                                            GRN_TS_FLOAT, GRN_DB_VOID,
+                                            &token->content.as_float);
     }
     case GRN_TS_TEXT: {
-      return grn_ts_expr_push_text(ctx, parser->expr, token->content.as_text);
+      return grn_ts_expr_builder_push_const(ctx, parser->builder,
+                                            GRN_TS_TEXT, GRN_DB_VOID,
+                                            &token->content.as_text);
     }
     default: {
       GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "invalid data kind: %d",
@@ -903,8 +934,7 @@ static grn_rc
 grn_ts_expr_parser_push_name(grn_ctx *ctx, grn_ts_expr_parser *parser,
                              grn_ts_expr_name_token *token)
 {
-  return grn_ts_expr_push_name(ctx, parser->expr,
-                               token->src.ptr, token->src.size);
+  return grn_ts_expr_builder_push_name(ctx, parser->builder, token->src);
 }
 
 /* grn_ts_expr_parser_push_op() pushes a token to an expression. */
@@ -912,7 +942,7 @@ static grn_rc
 grn_ts_expr_parser_push_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
                            grn_ts_expr_op_token *token)
 {
-  return grn_ts_expr_push_op(ctx, parser->expr, token->op_type);
+  return grn_ts_expr_builder_push_op(ctx, parser->builder, token->op_type);
 }
 
 /*
@@ -939,7 +969,7 @@ grn_ts_expr_parser_apply_one(grn_ctx *ctx, grn_ts_expr_parser *parser,
   /* Check the number of arguments. */
   switch (stack[depth - 2]->type) {
     case GRN_TS_EXPR_BRIDGE_TOKEN: {
-      rc = grn_ts_expr_end_subexpr(ctx, parser->expr);
+      rc = grn_ts_expr_builder_end_subexpr(ctx, parser->builder);
       if (rc != GRN_SUCCESS) {
         return rc;
       }
@@ -1040,7 +1070,7 @@ static grn_rc
 grn_ts_expr_parser_analyze_bridge(grn_ctx *ctx, grn_ts_expr_parser *parser,
                                   grn_ts_expr_bridge_token *token)
 {
-  grn_rc rc = grn_ts_expr_begin_subexpr(ctx, parser->expr);
+  grn_rc rc = grn_ts_expr_builder_begin_subexpr(ctx, parser->builder);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
@@ -1212,18 +1242,22 @@ grn_ts_expr_parser_analyze(grn_ctx *ctx, grn_ts_expr_parser *parser)
 
 grn_rc
 grn_ts_expr_parser_parse(grn_ctx *ctx, grn_ts_expr_parser *parser,
-                         const char *str_ptr, size_t str_size)
+                         grn_ts_str str, grn_ts_expr **expr)
 {
   grn_rc rc;
-  grn_ts_str str;
-  rc = grn_ts_buf_reserve(ctx, &parser->str_buf, str_size + 1);
+  if (!ctx) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  if (!parser || (!str.ptr && str.size)) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
+  }
+  rc = grn_ts_buf_reserve(ctx, &parser->str_buf, str.size + 1);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  grn_memcpy(parser->str_buf.ptr, str_ptr, str_size);
-  ((char *)parser->str_buf.ptr)[str_size] = '\0';
+  grn_memcpy(parser->str_buf.ptr, str.ptr, str.size);
+  ((char *)parser->str_buf.ptr)[str.size] = '\0';
   str.ptr = (const char *)parser->str_buf.ptr;
-  str.size = str_size;
   rc = grn_ts_expr_parser_tokenize(ctx, parser, str);
   if (rc != GRN_SUCCESS) {
     return rc;
@@ -1232,5 +1266,5 @@ grn_ts_expr_parser_parse(grn_ctx *ctx, grn_ts_expr_parser *parser,
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  return GRN_SUCCESS;
+  return grn_ts_expr_builder_complete(ctx, parser->builder, expr);
 }

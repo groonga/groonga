@@ -19,6 +19,8 @@
 #ifndef GRN_TS_BUF_H
 #define GRN_TS_BUF_H
 
+#include "../grn.h"
+
 #include "ts_types.h"
 
 #ifdef __cplusplus

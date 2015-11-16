@@ -3,6 +3,8 @@ libgrnts_la_SOURCES =				\
 	ts_buf.h				\
 	ts_expr.c				\
 	ts_expr.h				\
+	ts_expr_builder.c			\
+	ts_expr_builder.h			\
 	ts_expr_node.c				\
 	ts_expr_node.h				\
 	ts_expr_parser.c			\

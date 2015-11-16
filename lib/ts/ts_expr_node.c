@@ -2175,10 +2175,11 @@ grn_ts_expr_const_node_check_value(grn_ctx *ctx, grn_ts_data_kind kind,
 #undef GRN_TS_EXPR_CONST_NODE_CHECK_VALUE
 
 grn_rc
-grn_ts_expr_const_node_open(grn_ctx *ctx, grn_ts_data_kind kind,
+grn_ts_expr_const_node_open(grn_ctx *ctx, grn_ts_data_kind data_kind,
+                            grn_ts_data_type data_type,
                             const void *value, grn_ts_expr_node **node)
 {
-  grn_rc rc = grn_ts_expr_const_node_check_value(ctx, kind, value);
+  grn_rc rc = grn_ts_expr_const_node_check_value(ctx, data_kind, value);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
@@ -2189,9 +2190,13 @@ grn_ts_expr_const_node_open(grn_ctx *ctx, grn_ts_data_kind kind,
                       sizeof(grn_ts_expr_const_node));
   }
   grn_ts_expr_const_node_init(ctx, new_node);
-  new_node->data_kind = kind;
-  new_node->data_type = grn_ts_data_kind_to_type(kind);
-  if (kind & GRN_TS_VECTOR_FLAG) {
+  new_node->data_kind = data_kind;
+  if (data_type != GRN_DB_VOID) {
+    new_node->data_type = data_type;
+  } else {
+    new_node->data_type = grn_ts_data_kind_to_type(data_kind);
+  }
+  if (data_kind & GRN_TS_VECTOR_FLAG) {
     rc = grn_ts_expr_const_node_set_vector(ctx, new_node, value);
   } else {
     rc = grn_ts_expr_const_node_set_scalar(ctx, new_node, value);
