@@ -251,16 +251,16 @@ grn_ts_expr_builder_push_name(grn_ctx *ctx, grn_ts_expr_builder *builder,
 
 #define GRN_TS_EXPR_BUILDER_PUSH_BULK_CASE(TYPE, KIND, kind)\
   case GRN_DB_ ## TYPE: {\
-    grn_ts_ ## kind value = (grn_ts_ ## kind)GRN_ ## TYPE ## _VALUE(obj);\
-    return grn_ts_expr_builder_push_const(ctx, builder,\
-                                          GRN_TS_ ## KIND, obj->header.domain,\
-                                          &value);\
+    value.as_ ## kind = (grn_ts_ ## kind)GRN_ ## TYPE ## _VALUE(obj);\
+    return grn_ts_expr_builder_push_const(ctx, builder, GRN_TS_ ## KIND,\
+                                          obj->header.domain, value);\
   }
 /* grn_ts_expr_push_builder_bulk() pushes a scalar const. */
 static grn_rc
 grn_ts_expr_builder_push_bulk(grn_ctx *ctx, grn_ts_expr_builder *builder,
                               grn_obj *obj)
 {
+  grn_ts_any value;
   switch (obj->header.domain) {
     GRN_TS_EXPR_BUILDER_PUSH_BULK_CASE(BOOL, BOOL, bool)
     GRN_TS_EXPR_BUILDER_PUSH_BULK_CASE(INT8, INT, int)
@@ -277,16 +277,16 @@ grn_ts_expr_builder_push_bulk(grn_ctx *ctx, grn_ts_expr_builder *builder,
     case GRN_DB_SHORT_TEXT:
     case GRN_DB_TEXT:
     case GRN_DB_LONG_TEXT: {
-      grn_ts_text value = { GRN_TEXT_VALUE(obj), GRN_TEXT_LEN(obj) };
+      value.as_text.ptr = GRN_TEXT_VALUE(obj);
+      value.as_text.size = GRN_TEXT_LEN(obj);
       return grn_ts_expr_builder_push_const(ctx, builder, GRN_TS_TEXT,
-                                            obj->header.domain, &value);
+                                            obj->header.domain, value);
     }
     case GRN_DB_TOKYO_GEO_POINT:
     case GRN_DB_WGS84_GEO_POINT: {
-      grn_ts_geo value;
-      GRN_GEO_POINT_VALUE(obj, value.latitude, value.longitude);
+      GRN_GEO_POINT_VALUE(obj, value.as_geo.latitude, value.as_geo.longitude);
       return grn_ts_expr_builder_push_const(ctx, builder, GRN_TS_GEO,
-                                            obj->header.domain, &value);
+                                            obj->header.domain, value);
     }
     default: {
       GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "not bulk");
@@ -297,33 +297,35 @@ grn_ts_expr_builder_push_bulk(grn_ctx *ctx, grn_ts_expr_builder *builder,
 
 #define GRN_TS_EXPR_BUILDER_PUSH_UVECTOR_CASE(TYPE, KIND, kind)\
   case GRN_DB_ ## TYPE: {\
-    grn_ts_ ## kind ##_vector value = { (grn_ts_ ## kind *)GRN_BULK_HEAD(obj),\
-                                        grn_uvector_size(ctx, obj) };\
+    value.as_ ## kind ## _vector.ptr = (grn_ts_ ## kind *)GRN_BULK_HEAD(obj);\
+    value.as_ ## kind ## _vector.size = grn_uvector_size(ctx, obj);\
     return grn_ts_expr_builder_push_const(ctx, builder, GRN_TS_ ## KIND,\
-                                          obj->header.domain, &value);\
+                                          obj->header.domain, value);\
   }
 #define GRN_TS_EXPR_BUILDER_PUSH_UVECTOR_CASE_WITH_TYPECAST(TYPE, KIND, kind)\
   case GRN_DB_ ## TYPE: {\
     size_t i;\
     grn_rc rc;\
     grn_ts_ ## kind *buf;\
-    grn_ts_ ## kind ## _vector value = { NULL, grn_uvector_size(ctx, obj) };\
-    if (!value.size) {\
+    grn_ts_ ## kind ## _vector vector = { NULL, grn_uvector_size(ctx, obj) };\
+    if (!vector.size) {\
+      value.as_ ## kind ## _vector = vector;\
       return grn_ts_expr_builder_push_const(ctx, builder, GRN_TS_ ## KIND,\
-                                            obj->header.domain, &value);\
+                                            obj->header.domain, value);\
     }\
-    buf = GRN_MALLOCN(grn_ts_ ## kind, value.size);\
+    buf = GRN_MALLOCN(grn_ts_ ## kind, vector.size);\
     if (!buf) {\
       GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,\
                         "GRN_MALLOCN failed: %" GRN_FMT_SIZE " x 1",\
                         sizeof(grn_ts_ ## kind));\
     }\
-    for (i = 0; i < value.size; i++) {\
+    for (i = 0; i < vector.size; i++) {\
       buf[i] = GRN_ ## TYPE ##_VALUE_AT(obj, i);\
     }\
-    value.ptr = buf;\
+    vector.ptr = buf;\
+    value.as_ ## kind ## _vector = vector;\
     rc = grn_ts_expr_builder_push_const(ctx, builder, GRN_TS_ ## KIND,\
-                                        obj->header.domain, &value);\
+                                        obj->header.domain, value);\
     GRN_FREE(buf);\
     return rc;\
   }
@@ -332,6 +334,7 @@ static grn_rc
 grn_ts_expr_builder_push_uvector(grn_ctx *ctx, grn_ts_expr_builder *builder,
                                  grn_obj *obj)
 {
+  grn_ts_any value;
   switch (obj->header.domain) {
     GRN_TS_EXPR_BUILDER_PUSH_UVECTOR_CASE(BOOL, BOOL, bool)
     GRN_TS_EXPR_BUILDER_PUSH_UVECTOR_CASE_WITH_TYPECAST(INT8, INT, int)
@@ -365,26 +368,29 @@ grn_ts_expr_builder_push_vector(grn_ctx *ctx, grn_ts_expr_builder *builder,
     case GRN_DB_LONG_TEXT: {
       size_t i;
       grn_rc rc;
+      grn_ts_any value;
       grn_ts_text *buf;
-      grn_ts_text_vector value = { NULL, grn_vector_size(ctx, obj) };
-      if (!value.size) {
+      grn_ts_text_vector vector = { NULL, grn_vector_size(ctx, obj) };
+      if (!vector.size) {
+        value.as_text_vector = vector;
         return grn_ts_expr_builder_push_const(ctx, builder, GRN_TS_TEXT_VECTOR,
-                                              obj->header.domain, &value);
+                                              obj->header.domain, value);
       }
-      buf = GRN_MALLOCN(grn_ts_text, value.size);
+      buf = GRN_MALLOCN(grn_ts_text, vector.size);
       if (!buf) {
         GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
                           "GRN_MALLOCN failed: "
                           "%" GRN_FMT_SIZE " x %" GRN_FMT_SIZE,
-                          sizeof(grn_ts_text), value.size);
+                          sizeof(grn_ts_text), vector.size);
       }
-      for (i = 0; i < value.size; i++) {
+      for (i = 0; i < vector.size; i++) {
         buf[i].size = grn_vector_get_element(ctx, obj, i, &buf[i].ptr,
                                              NULL, NULL);
       }
-      value.ptr = buf;
+      vector.ptr = buf;
+      value.as_text_vector = vector;
       rc = grn_ts_expr_builder_push_const(ctx, builder, GRN_TS_TEXT_VECTOR,
-                                          obj->header.domain, &value);
+                                          obj->header.domain, value);
       GRN_FREE(buf);
       return rc;
     }
@@ -564,7 +570,7 @@ grn_ts_expr_builder_push_value(grn_ctx *ctx, grn_ts_expr_builder *builder)
 grn_rc
 grn_ts_expr_builder_push_const(grn_ctx *ctx, grn_ts_expr_builder *builder,
                                grn_ts_data_kind kind, grn_ts_data_type type,
-                               const void *value)
+                               grn_ts_any value)
 {
   grn_rc rc;
   grn_ts_expr_node *node;

@@ -2042,13 +2042,13 @@ grn_ts_expr_const_node_fin(grn_ctx *ctx, grn_ts_expr_const_node *node)
 
 #define GRN_TS_EXPR_CONST_NODE_SET_SCALAR_CASE(KIND, kind)\
   case GRN_TS_ ## KIND: {\
-    node->content.as_ ## kind = *(const grn_ts_ ## kind *)value;\
+    node->content.as_ ## kind = value.as_ ## kind;\
     return GRN_SUCCESS;\
   }
 /* grn_ts_expr_const_node_set_scalar() sets a scalar value. */
 static grn_rc
 grn_ts_expr_const_node_set_scalar(grn_ctx *ctx, grn_ts_expr_const_node *node,
-                                  const void *value)
+                                  grn_ts_any value)
 {
   switch (node->data_kind) {
     GRN_TS_EXPR_CONST_NODE_SET_SCALAR_CASE(BOOL, bool)
@@ -2056,14 +2056,13 @@ grn_ts_expr_const_node_set_scalar(grn_ctx *ctx, grn_ts_expr_const_node *node,
     GRN_TS_EXPR_CONST_NODE_SET_SCALAR_CASE(FLOAT, float)
     GRN_TS_EXPR_CONST_NODE_SET_SCALAR_CASE(TIME, time)
     case GRN_TS_TEXT: {
-      grn_ts_text text_value = *(const grn_ts_text *)value;
       grn_rc rc = grn_ts_buf_write(ctx, &node->text_buf,
-                                   text_value.ptr, text_value.size);
+                                   value.as_text.ptr, value.as_text.size);
       if (rc != GRN_SUCCESS) {
         return rc;
       }
       node->content.as_text.ptr = (const char *)node->text_buf.ptr;
-      node->content.as_text.size = text_value.size;
+      node->content.as_text.size = value.as_text.size;
       return GRN_SUCCESS;
     }
     GRN_TS_EXPR_CONST_NODE_SET_SCALAR_CASE(GEO, geo)
@@ -2081,7 +2080,7 @@ grn_ts_expr_const_node_set_scalar(grn_ctx *ctx, grn_ts_expr_const_node *node,
     size_t n_bytes;\
     const grn_ts_ ## kind *buf_ptr;\
     grn_ts_ ## kind ## _vector vector;\
-    vector = *(const grn_ts_ ## kind ## _vector *)value;\
+    vector = value.as_ ## kind ## _vector;\
     n_bytes = sizeof(grn_ts_ ## kind) * vector.size;\
     rc = grn_ts_buf_write(ctx, &node->vector_buf, vector.ptr, n_bytes);\
     if (rc != GRN_SUCCESS) {\
@@ -2095,7 +2094,7 @@ grn_ts_expr_const_node_set_scalar(grn_ctx *ctx, grn_ts_expr_const_node *node,
 /* grn_ts_expr_const_node_set_vector() sets a vector value. */
 static grn_rc
 grn_ts_expr_const_node_set_vector(grn_ctx *ctx, grn_ts_expr_const_node *node,
-                                  const void *value)
+                                  grn_ts_any value)
 {
   switch (node->data_kind) {
     GRN_TS_EXPR_CONST_NODE_SET_VECTOR_CASE(BOOL, bool)
@@ -2105,7 +2104,7 @@ grn_ts_expr_const_node_set_vector(grn_ctx *ctx, grn_ts_expr_const_node *node,
     case GRN_TS_TEXT_VECTOR: {
       grn_rc rc;
       size_t i, n_bytes, offset, total_size;
-      grn_ts_text_vector vector = *(const grn_ts_text_vector *)value;
+      grn_ts_text_vector vector = value.as_text_vector;
       grn_ts_text *vector_buf;
       char *text_buf;
       n_bytes = sizeof(grn_ts_text) * vector.size;
@@ -2145,14 +2144,14 @@ grn_ts_expr_const_node_set_vector(grn_ctx *ctx, grn_ts_expr_const_node *node,
 
 #define GRN_TS_EXPR_CONST_NODE_CHECK_VALUE(KIND, kind)\
   case GRN_TS_ ## KIND: {\
-    if (!grn_ts_ ## kind ## _is_valid(*(const grn_ts_ ## kind *)value)) {\
+    if (!grn_ts_ ## kind ## _is_valid(value.as_ ## kind)) {\
       GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");\
     }\
     return GRN_SUCCESS;\
   }
 static grn_rc
 grn_ts_expr_const_node_check_value(grn_ctx *ctx, grn_ts_data_kind kind,
-                                   const void *value)
+                                   grn_ts_any value)
 {
   switch (kind) {
     GRN_TS_EXPR_CONST_NODE_CHECK_VALUE(BOOL, bool)
@@ -2177,7 +2176,7 @@ grn_ts_expr_const_node_check_value(grn_ctx *ctx, grn_ts_data_kind kind,
 grn_rc
 grn_ts_expr_const_node_open(grn_ctx *ctx, grn_ts_data_kind data_kind,
                             grn_ts_data_type data_type,
-                            const void *value, grn_ts_expr_node **node)
+                            grn_ts_any value, grn_ts_expr_node **node)
 {
   grn_rc rc = grn_ts_expr_const_node_check_value(ctx, data_kind, value);
   if (rc != GRN_SUCCESS) {

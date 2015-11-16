@@ -103,7 +103,7 @@ grn_rc grn_ts_expr_builder_push_const(grn_ctx *ctx,
                                       grn_ts_expr_builder *builder,
                                       grn_ts_data_kind kind,
                                       grn_ts_data_type type,
-                                      const void *value);
+                                      grn_ts_any value);
 
 /* grn_ts_expr_builder_push_column() pushes a column. */
 grn_rc grn_ts_expr_builder_push_column(grn_ctx *ctx,

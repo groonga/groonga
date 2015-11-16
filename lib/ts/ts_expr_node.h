@@ -72,7 +72,7 @@ grn_rc grn_ts_expr_value_node_open(grn_ctx *ctx, grn_obj *table,
 /* grn_ts_expr_const_node_open() creates a node associated with a const. */
 grn_rc grn_ts_expr_const_node_open(grn_ctx *ctx, grn_ts_data_kind data_kind,
                                    grn_ts_data_type data_type,
-                                   const void *value, grn_ts_expr_node **node);
+                                   grn_ts_any value, grn_ts_expr_node **node);
 
 /* grn_ts_expr_column_node_open() creates a node associated with a column. */
 grn_rc grn_ts_expr_column_node_open(grn_ctx *ctx, grn_obj *column,
