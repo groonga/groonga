@@ -115,7 +115,7 @@ grn_bulk_put_from_file(grn_ctx *ctx, grn_obj *bulk, const char *path)
       break;
 #endif /* WIN32 */
     default :
-      ERR(GRN_UNKNOWN_ERROR, "GRN_OPEN() failed(errno: %d): <%s>", errno, path);
+      ERRNO_ERR("failed to open file: <%s>", path);
       break;
     }
     return 0;
