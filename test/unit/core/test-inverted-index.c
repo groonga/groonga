@@ -268,7 +268,7 @@ test_open_invalid_segment_file(void)
 {
   grn_io *io;
   gchar *id_string;
-  const gchar *expected_error_message = "syscall error";
+  const gchar *expected_error_message = "system call error";
 
   io = grn_io_create(context, path, 10, 10, 10,
                      grn_io_auto, GRN_IO_EXPIRE_SEGMENT);
