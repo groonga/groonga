@@ -134,11 +134,11 @@
 #endif /* WIN32 */
 
 #ifdef WIN32
-# define grn_snprintf(dest, dest_size, n, format, ...)          \
-  _snprintf_s((dest), (dest_size), (n) - 1, (format), __VA_ARGS__)
+# define grn_snprintf(dest, dest_size, n, ...)                  \
+  _snprintf_s((dest), (dest_size), (n) - 1, __VA_ARGS__)
 #else /* WIN32 */
-# define grn_snprintf(dest, dest_size, n, format, ...)          \
-  snprintf((dest), (n), (format), __VA_ARGS__)
+# define grn_snprintf(dest, dest_size, n, ...)  \
+  snprintf((dest), (n), __VA_ARGS__)
 #endif /* WIN32 */
 
 #ifdef WIN32

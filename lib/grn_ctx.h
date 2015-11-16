@@ -151,20 +151,29 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
   GRN_OBJ_FIN(ctx, &inspected);\
 } while (0)
 
+#define USER_MESSAGE_SIZE 1024
+
 #ifdef WIN32
 
-#define SERR(str) do {\
+#define SERR(...) do {\
   grn_rc rc;\
+  int error_code;\
   const char *system_message;\
-  int error_code = GetLastError();\
+  char user_message[USER_MESSAGE_SIZE];\
+  error_code = GetLastError();\
   system_message = grn_current_error_message();\
   rc = grn_windows_error_code_to_rc(error_code);\
-  ERR(rc, "syscall error '%s' (%s)[%d]", str, system_message, error_code);\
+  grn_snprintf(user_message,\
+               USER_MESSAGE_SIZE, USER_MESSAGE_SIZE,\
+               __VA_ARGS__);\
+  ERR(rc, "system error[%d]: %s: %s",\
+      error_code, system_message, user_message);\
 } while (0)
 
-#define SOERR(str) do {\
+#define SOERR(...) do {\
   grn_rc rc;\
   const char *m;\
+  char user_message[USER_MESSAGE_SIZE];\
   int e = WSAGetLastError();\
   switch (e) {\
   case WSANOTINITIALISED :\
@@ -240,14 +249,19 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
     m = "unknown error";\
     break;\
   }\
-  ERR(rc, "socket error '%s' (%s)[%d]", str, m, e);\
+  grn_snprintf(user_message,\
+               USER_MESSAGE_SIZE, USER_MESSAGE_SIZE,\
+               __VA_ARGS__);\
+  ERR(rc, "socket error[%d]: %s: %s",\
+      e, m, user_message);\
 } while (0)
 
-#define ERRNO_ERR(str) do {\
+#define ERRNO_ERR(...) do {\
   grn_rc rc;\
   int errno_keep = errno;\
   grn_bool show_errno = GRN_FALSE;\
   const char *system_message;\
+  char user_message[USER_MESSAGE_SIZE];\
   system_message = grn_strerror(errno);\
   switch (errno_keep) {\
   case EPERM : rc = GRN_OPERATION_NOT_PERMITTED; break;\
@@ -288,19 +302,26 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
     show_errno = GRN_TRUE;\
     break;\
   }\
+  grn_snprintf(user_message,\
+               USER_MESSAGE_SIZE, USER_MESSAGE_SIZE,\
+               __VA_ARGS__);\
   if (show_errno) {\
-    ERR(rc, "syscall error '%s' (%s)[%d]", str, system_message, errno_keep);\
+    ERR(rc, "system call error[%d]: %s: %s",\
+        errno_keep, system_message, user_message);\
   } else {\
-    ERR(rc, "syscall error '%s' (%s)", str, system_message);\
+    ERR(rc, "system call error: %s: %s",\
+        system_message, user_message);\
   }\
 } while (0)
 
 #else /* WIN32 */
-#define SERR(str) do {\
+
+#define SERR(...) do {\
   grn_rc rc;\
   int errno_keep = errno;\
   grn_bool show_errno = GRN_FALSE;\
   const char *system_message = grn_current_error_message();\
+  char user_message[USER_MESSAGE_SIZE];\
   switch (errno_keep) {\
   case ELOOP : rc = GRN_TOO_MANY_SYMBOLIC_LINKS; break;\
   case ENAMETOOLONG : rc = GRN_FILENAME_TOO_LONG; break;\
@@ -352,16 +373,21 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
     show_errno = GRN_TRUE;\
     break;\
   }\
+  grn_snprintf(user_message,\
+               USER_MESSAGE_SIZE, USER_MESSAGE_SIZE,\
+               __VA_ARGS__);\
   if (show_errno) {\
-    ERR(rc, "syscall error '%s' (%s)[%d]", str, system_message, errno_keep);\
+    ERR(rc, "system call error[%d]: %s: %s",\
+        errno_keep, system_message, user_message);\
   } else {\
-    ERR(rc, "syscall error '%s' (%s)", str, system_message);\
+    ERR(rc, "system call error: %s: %s",\
+        system_message, user_message);\
   }\
 } while (0)
 
-#define SOERR(str) SERR(str)
+#define SOERR(...) SERR(__VA_ARGS__)
 
-#define ERRNO_ERR(str) SERR(str)
+#define ERRNO_ERR(...) SERR(__VA_ARGS__)
 
 #endif /* WIN32 */
 
