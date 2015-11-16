@@ -129,6 +129,7 @@ grn_ts_expr_builder_close(grn_ctx *ctx, grn_ts_expr_builder *builder)
     GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
   }
   grn_ts_expr_builder_fin(ctx, builder);
+  GRN_FREE(builder);
   return GRN_SUCCESS;
 }
 
