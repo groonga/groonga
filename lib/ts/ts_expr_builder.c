@@ -628,7 +628,7 @@ grn_ts_expr_builder_push_op(grn_ctx *ctx, grn_ts_expr_builder *builder,
   }
   max_n_args = builder->n_nodes;
   if (builder->n_bridges) {
-    max_n_args -= builder->bridges[builder->n_bridges - 1].stack_depth;
+    max_n_args -= builder->bridges[builder->n_bridges - 1].n_nodes;
   }
   if (n_args > max_n_args) {
     GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT,
@@ -705,7 +705,7 @@ grn_ts_expr_builder_begin_subexpr(grn_ctx *ctx, grn_ts_expr_builder *builder)
   }
   max_n_args = builder->n_nodes;
   if (builder->n_bridges) {
-    max_n_args -= builder->bridges[builder->n_bridges - 1].stack_depth;
+    max_n_args -= builder->bridges[builder->n_bridges - 1].n_nodes;
   }
   if (!max_n_args) {
     GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
@@ -729,7 +729,7 @@ grn_ts_expr_builder_begin_subexpr(grn_ctx *ctx, grn_ts_expr_builder *builder)
   grn_ts_expr_bridge_init(ctx, &bridge);
   bridge.src_table = builder->curr_table;
   bridge.dest_table = obj;
-  bridge.stack_depth = builder->n_nodes;
+  bridge.n_nodes = builder->n_nodes;
   rc = grn_ts_expr_builder_push_bridge(ctx, builder, &bridge);
   if (rc != GRN_SUCCESS) {
     grn_obj_unlink(ctx, obj);
@@ -749,7 +749,7 @@ grn_ts_expr_builder_end_subexpr(grn_ctx *ctx, grn_ts_expr_builder *builder)
   }
   /* Check whehter or not the subexpression is complete.*/
   bridge = &builder->bridges[builder->n_bridges - 1];
-  if (builder->n_nodes != (bridge->stack_depth + 1)) {
+  if (builder->n_nodes != (bridge->n_nodes + 1)) {
     return GRN_INVALID_ARGUMENT;
   }
   /* Creates a bridge node. */

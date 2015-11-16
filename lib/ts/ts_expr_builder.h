@@ -35,7 +35,7 @@ extern "C" {
 typedef struct {
   grn_obj *src_table;  /* The source table of a bridge (no ref. count). */
   grn_obj *dest_table; /* The destination table of a bridge. */
-  size_t stack_depth;  /* The stack depth (position) of a bridge. */
+  size_t n_nodes;      /* The stack depth (position) of a bridge. */
 } grn_ts_expr_bridge;
 
 typedef struct {
