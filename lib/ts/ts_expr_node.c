@@ -1051,7 +1051,7 @@ grn_ts_op_division_int_int(grn_ctx *ctx, grn_ts_int lhs, grn_ts_int rhs,
 {
   if (!rhs) {
     GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT,
-                      "%" GRN_FMT_INT64 " / %" GRN_FMT_INT64
+                      "%" GRN_FMT_INT64D " / %" GRN_FMT_INT64D
                       " causes division by zero",
                       lhs, rhs);
   }
@@ -1076,7 +1076,7 @@ grn_ts_op_modulus_int_int(grn_ctx *ctx, grn_ts_int lhs, grn_ts_int rhs,
 {
   if (!rhs) {
     GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT,
-                      "%" GRN_FMT_INT64 " %% %" GRN_FMT_INT64
+                      "%" GRN_FMT_INT64D " %% %" GRN_FMT_INT64D
                       " causes division by zero",
                       lhs, rhs);
   }
