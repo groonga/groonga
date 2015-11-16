@@ -607,6 +607,20 @@ grn_ts_expr_builder_push_column(grn_ctx *ctx, grn_ts_expr_builder *builder,
   return rc;
 }
 
+/*
+ * grn_ts_expr_builder_get_max_n_args() returns the number of nodes in the
+ * current subexpression.
+ */
+static size_t
+grn_ts_expr_builder_get_max_n_args(grn_ctx *ctx, grn_ts_expr_builder *builder)
+{
+  size_t max_n_args = builder->n_nodes;
+  if (builder->n_bridges) {
+   max_n_args -= builder->bridges[builder->n_bridges - 1].n_nodes;
+  }
+  return max_n_args;
+}
+
 grn_rc
 grn_ts_expr_builder_push_op(grn_ctx *ctx, grn_ts_expr_builder *builder,
                             grn_ts_op_type op_type)
@@ -626,10 +640,7 @@ grn_ts_expr_builder_push_op(grn_ctx *ctx, grn_ts_expr_builder *builder,
                       "invalid #arguments: %" GRN_FMT_SIZE,
                       n_args);
   }
-  max_n_args = builder->n_nodes;
-  if (builder->n_bridges) {
-    max_n_args -= builder->bridges[builder->n_bridges - 1].n_nodes;
-  }
+  max_n_args = grn_ts_expr_builder_get_max_n_args(ctx, builder);
   if (n_args > max_n_args) {
     GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT,
                       "invalid #arguments: %" GRN_FMT_SIZE ", %" GRN_FMT_SIZE,
@@ -703,10 +714,7 @@ grn_ts_expr_builder_begin_subexpr(grn_ctx *ctx, grn_ts_expr_builder *builder)
   if (!builder) {
     GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
   }
-  max_n_args = builder->n_nodes;
-  if (builder->n_bridges) {
-    max_n_args -= builder->bridges[builder->n_bridges - 1].n_nodes;
-  }
+  max_n_args = grn_ts_expr_builder_get_max_n_args(ctx, builder);
   if (!max_n_args) {
     GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
   }
@@ -743,14 +751,12 @@ grn_ts_expr_builder_end_subexpr(grn_ctx *ctx, grn_ts_expr_builder *builder)
 {
   grn_rc rc;
   grn_ts_expr_node **args, *node;
-  grn_ts_expr_bridge *bridge;
   if (!ctx || !builder || (builder->n_nodes < 2) || !builder->n_bridges) {
     return GRN_INVALID_ARGUMENT;
   }
   /* Check whehter or not the subexpression is complete.*/
-  bridge = &builder->bridges[builder->n_bridges - 1];
-  if (builder->n_nodes != (bridge->n_nodes + 1)) {
-    return GRN_INVALID_ARGUMENT;
+  if (grn_ts_expr_builder_get_max_n_args(ctx, builder) != 1) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
   }
   /* Creates a bridge node. */
   args = &builder->nodes[builder->n_nodes - 2];
