@@ -26,12 +26,6 @@
 #include "ts_str.h"
 #include "ts_util.h"
 
-/*
- * FIXME: A grn_ts_expr_parser object is designed to parse one expression
- *        string. grn_ts_expr_parser_parse() should not be called more than
- *        once.
- */
-
 /*-------------------------------------------------------------
  * grn_ts_expr_token.
  */
