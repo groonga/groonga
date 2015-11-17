@@ -583,7 +583,8 @@ module Groonga
           max_n_unmatched_records = limit * 100
           max_n_sample_records = data_table_size
           if max_n_sample_records > 10000
-            max_n_sample_records = (max_n_sample_records / 100).ceil
+            sample_ratio = 1 / (Math.log(data_table_size) ** 2)
+            max_n_sample_records = (max_n_sample_records * sample_ratio).ceil
           end
           if max_n_unmatched_records > max_n_sample_records
             max_n_unmatched_records = max_n_sample_records
