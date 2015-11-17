@@ -133,39 +133,6 @@ grn_ts_expr_builder_close(grn_ctx *ctx, grn_ts_expr_builder *builder)
   return GRN_SUCCESS;
 }
 
-/* grn_ts_expr_deref() dereferences a node. */
-static grn_rc
-grn_ts_expr_builder_deref(grn_ctx *ctx, grn_ts_expr_builder *builder,
-                          grn_ts_expr_node **node_ptr)
-{
-  grn_ts_expr_node *node = *node_ptr;
-  while (node->data_kind == GRN_TS_REF) {
-    grn_rc rc;
-    grn_ts_expr_node *key_node, *bridge_node;
-    grn_id table_id = node->data_type;
-    grn_obj *table = grn_ctx_at(ctx, table_id);
-    if (!table) {
-      return GRN_OBJECT_CORRUPT;
-    }
-    if (!grn_ts_obj_is_table(ctx, table)) {
-      grn_obj_unlink(ctx, table);
-      return GRN_OBJECT_CORRUPT;
-    }
-    rc = grn_ts_expr_key_node_open(ctx, table, &key_node);
-    grn_obj_unlink(ctx, table);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-    rc = grn_ts_expr_bridge_node_open(ctx, node, key_node, &bridge_node);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-    node = bridge_node;
-  }
-  *node_ptr = node;
-  return GRN_SUCCESS;
-}
-
 grn_rc
 grn_ts_expr_builder_complete(grn_ctx *ctx, grn_ts_expr_builder *builder,
                              grn_ts_expr **expr)
@@ -178,7 +145,7 @@ grn_ts_expr_builder_complete(grn_ctx *ctx, grn_ts_expr_builder *builder,
   if (!builder || (builder->n_nodes != 1) || builder->n_bridges || !expr) {
     GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
   }
-  rc = grn_ts_expr_builder_deref(ctx, builder, &builder->nodes[0]);
+  rc = grn_ts_expr_node_deref(ctx, &builder->nodes[0]);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
@@ -681,7 +648,7 @@ grn_ts_expr_builder_push_op(grn_ctx *ctx, grn_ts_expr_builder *builder,
      * FIXME: Operators "==" and "!=" should compare arguments as references
      *        if possible.
      */
-    rc = grn_ts_expr_builder_deref(ctx, builder, &args[i]);
+    rc = grn_ts_expr_node_deref(ctx, &args[i]);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
