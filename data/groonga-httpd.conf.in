@@ -1,6 +1,6 @@
 worker_processes 1;
 
-# Match this to the file owner of groonga database files if groonga-httpd is
+# Match this to the file owner of Groonga database files if groonga-httpd is
 # run as root.
 user groonga groonga;
 
@@ -14,20 +14,20 @@ http {
   sendfile on;
   keepalive_timeout 65;
 
-  # The default groonga database path.
+  # The default Groonga database path.
   groonga_database @GROONGA_HTTPD_DEFAULT_DATABASE_PATH@;
 
-  # Create a groonga database automatically if the groonga database doesn't
+  # Create a Groonga database automatically if the Groonga database doesn't
   # exist.
   #
   # Note that this option is danger when worker_processes is greater than 1.
-  # Because one or more worker processes may create the same groonga database
-  # at the same time. If you can create a groonga database before running
+  # Because one or more worker processes may create the same Groonga database
+  # at the same time. If you can create a Groonga database before running
   # groonga-httpd, you should do it.
   groonga_database_auto_create on;
 
-  # The default groonga cache limit. The cache limit can be set
-  # for each worker. It can't be set for each groonga database.
+  # The default Groonga cache limit. The cache limit can be set
+  # for each worker. It can't be set for each Groonga database.
   # groonga_cache_limit 100;
 
   server {
@@ -36,9 +36,9 @@ http {
 
     location /d/ {
       groonga on;
-      # You can disable log for groonga.
+      # You can disable log for Groonga.
       # groonga_log_path off;
-      # You can disable query log for groonga.
+      # You can disable query log for Groonga.
       # groonga_query_log_path off;
       # You can custom database path.
       # groonga_database /path/to/groonga/db;
