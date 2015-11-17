@@ -25,7 +25,9 @@ grn_ts_op_get_n_args(grn_ts_op_type op_type)
     case GRN_TS_OP_LOGICAL_NOT: /* !X */
     case GRN_TS_OP_BITWISE_NOT: /* ~X */
     case GRN_TS_OP_POSITIVE:    /* +X */
-    case GRN_TS_OP_NEGATIVE: {  /* -X */
+    case GRN_TS_OP_NEGATIVE:    /* -X */
+    case GRN_TS_OP_FLOAT:
+    case GRN_TS_OP_TIME: {
       return 1;
     }
     case GRN_TS_OP_LOGICAL_AND:            /* X && Y  */
@@ -66,6 +68,10 @@ grn_ts_op_get_precedence(grn_ts_op_type op_type)
     case GRN_TS_OP_POSITIVE:
     case GRN_TS_OP_NEGATIVE: {
       return 14;
+    }
+    case GRN_TS_OP_FLOAT:
+    case GRN_TS_OP_TIME: {
+      return 15;
     }
     case GRN_TS_OP_LOGICAL_AND: {
       return 5;

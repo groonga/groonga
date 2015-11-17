@@ -39,6 +39,10 @@ typedef enum {
   GRN_TS_OP_POSITIVE,    /* +X */
   GRN_TS_OP_NEGATIVE,    /* -X */
 
+  /* Typecast operators. */
+  GRN_TS_OP_FLOAT,
+  GRN_TS_OP_TIME,
+
   /* Binary operators. */
   GRN_TS_OP_LOGICAL_AND,            /* X && Y  */
   GRN_TS_OP_LOGICAL_OR,             /* X || Y  */

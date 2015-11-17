@@ -369,6 +369,27 @@ grn_ts_op_negative_float(grn_ts_float arg)
   return -arg;
 }
 
+/* grn_ts_op_float() returns (Float)arg. */
+static grn_rc
+grn_ts_op_float(grn_ctx *ctx, grn_ts_int arg, grn_ts_float *out)
+{
+  *out = (grn_ts_float)arg;
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_op_time() returns (Time)arg. */
+static grn_rc
+grn_ts_op_time(grn_ctx *ctx, grn_ts_text arg, grn_ts_time *out)
+{
+  grn_timeval value;
+  grn_rc rc = grn_str2timeval(arg.ptr, arg.size, &value);
+  if (rc != GRN_SUCCESS) {
+/*    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "grn_str2timeval failed");*/
+  }
+  *out = (grn_ts_time)((value.tv_sec * 1000000) + (value.tv_nsec / 1000));
+  return GRN_SUCCESS;
+}
+
 /* grn_ts_op_bitwise_and_bool() returns lhs & rhs. */
 inline static grn_ts_bool
 grn_ts_op_bitwise_and_bool(grn_ts_bool lhs, grn_ts_bool rhs)
@@ -2803,6 +2824,60 @@ grn_ts_expr_op_node_fin(grn_ctx *ctx, grn_ts_expr_op_node *node)
 }
 
 /*
+ * grn_ts_expr_op_node_deref_args_for_equal() resolves references if required.
+ */
+static grn_rc
+grn_ts_expr_op_node_deref_args_for_equal(grn_ctx *ctx,
+                                         grn_ts_expr_op_node *node)
+{
+  grn_rc rc;
+  if (node->n_args != 2) {
+    GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "invalid #args: %" GRN_FMT_SIZE,
+                      node->n_args);
+  }
+  if ((node->args[0]->data_kind & ~GRN_TS_VECTOR_FLAG) != GRN_TS_REF) {
+    return grn_ts_expr_node_deref(ctx, &node->args[1]);
+  }
+  if ((node->args[1]->data_kind & ~GRN_TS_VECTOR_FLAG) != GRN_TS_REF) {
+    return grn_ts_expr_node_deref(ctx, &node->args[0]);
+  }
+
+  /* FIXME: Arguments should be compared as references if possible. */
+  rc = grn_ts_expr_node_deref(ctx, &node->args[0]);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  rc = grn_ts_expr_node_deref(ctx, &node->args[1]);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_expr_op_node_deref_args() resolves references if required. */
+static grn_rc
+grn_ts_expr_op_node_deref_args(grn_ctx *ctx, grn_ts_expr_op_node *node)
+{
+  switch (node->op_type) {
+    case GRN_TS_OP_EQUAL:
+    case GRN_TS_OP_NOT_EQUAL: {
+      return grn_ts_expr_op_node_deref_args_for_equal(ctx, node);
+    }
+    /* TODO: Add a ternary operator. */
+    default: {
+      size_t i;
+      for (i = 0; i < node->n_args; i++) {
+        grn_rc rc = grn_ts_expr_node_deref(ctx, &node->args[i]);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+      }
+      return GRN_SUCCESS;
+    }
+  }
+}
+
+/*
  * grn_ts_op_plus_check_args() checks arguments. Note that arguments are
  * rearranged in some cases.
  */
@@ -2973,6 +3048,24 @@ grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node)
       node->data_type = grn_ts_data_kind_to_type(node->data_kind);
       return GRN_SUCCESS;
     }
+    case GRN_TS_OP_FLOAT: {
+      if (node->args[0]->data_kind != GRN_TS_INT) {
+        GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d",
+                          node->args[0]->data_kind);
+      }
+      node->data_kind = GRN_TS_FLOAT;
+      node->data_type = GRN_DB_FLOAT;
+      return GRN_SUCCESS;
+    }
+    case GRN_TS_OP_TIME: {
+      if (node->args[0]->data_kind != GRN_TS_TEXT) {
+        GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d",
+                          node->args[0]->data_kind);
+      }
+      node->data_kind = GRN_TS_TIME;
+      node->data_type = GRN_DB_TIME;
+      return GRN_SUCCESS;
+    }
     case GRN_TS_OP_LOGICAL_AND:
     case GRN_TS_OP_LOGICAL_OR:
     case GRN_TS_OP_LOGICAL_SUB: {
@@ -3098,60 +3191,6 @@ grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node)
     default: {
       GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid operator: %d",
                         node->op_type);
-    }
-  }
-}
-
-/*
- * grn_ts_expr_op_node_deref_args_for_equal() resolves references if required.
- */
-static grn_rc
-grn_ts_expr_op_node_deref_args_for_equal(grn_ctx *ctx,
-                                         grn_ts_expr_op_node *node)
-{
-  grn_rc rc;
-  if (node->n_args != 2) {
-    GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "invalid #args: %" GRN_FMT_SIZE,
-                      node->n_args);
-  }
-  if ((node->args[0]->data_kind & ~GRN_TS_VECTOR_FLAG) != GRN_TS_REF) {
-    return grn_ts_expr_node_deref(ctx, &node->args[1]);
-  }
-  if ((node->args[1]->data_kind & ~GRN_TS_VECTOR_FLAG) != GRN_TS_REF) {
-    return grn_ts_expr_node_deref(ctx, &node->args[0]);
-  }
-
-  /* FIXME: Arguments should be compared as references if possible. */
-  rc = grn_ts_expr_node_deref(ctx, &node->args[0]);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  rc = grn_ts_expr_node_deref(ctx, &node->args[1]);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-  return GRN_SUCCESS;
-}
-
-/* grn_ts_expr_op_node_deref_args() resolves references if required. */
-static grn_rc
-grn_ts_expr_op_node_deref_args(grn_ctx *ctx, grn_ts_expr_op_node *node)
-{
-  switch (node->op_type) {
-    case GRN_TS_OP_EQUAL:
-    case GRN_TS_OP_NOT_EQUAL: {
-      return grn_ts_expr_op_node_deref_args_for_equal(ctx, node);
-    }
-    /* TODO: Add a ternary operator. */
-    default: {
-      size_t i;
-      for (i = 0; i < node->n_args; i++) {
-        grn_rc rc = grn_ts_expr_node_deref(ctx, &node->args[i]);
-        if (rc != GRN_SUCCESS) {
-          return rc;
-        }
-      }
-      return GRN_SUCCESS;
     }
   }
 }
@@ -3306,6 +3345,52 @@ grn_ts_op_negative_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 }
 #undef GRN_TS_OP_SIGN_EVALUATE
 #undef GRN_TS_OP_SIGN_EVALUATE_CASE
+
+/* grn_ts_op_float_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_float_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                         const grn_ts_record *in, size_t n_in, void *out)
+{
+  size_t i;
+  grn_ts_int *buf_ptr;
+  grn_ts_float *out_ptr = (grn_ts_float *)out;
+  grn_rc rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[0], in, n_in,
+                                               &node->bufs[0]);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  buf_ptr = (grn_ts_int *)node->bufs[0].ptr;
+  for (i = 0; i < n_in; i++) {
+    rc = grn_ts_op_float(ctx, buf_ptr[i], &out_ptr[i]);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+  }
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_op_time_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_time_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                        const grn_ts_record *in, size_t n_in, void *out)
+{
+  size_t i;
+  grn_ts_text *buf_ptr;
+  grn_ts_time *out_ptr = (grn_ts_time *)out;
+  grn_rc rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[0], in, n_in,
+                                               &node->bufs[0]);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  buf_ptr = (grn_ts_text *)node->bufs[0].ptr;
+  for (i = 0; i < n_in; i++) {
+    rc = grn_ts_op_time(ctx, buf_ptr[i], &out_ptr[i]);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+  }
+  return GRN_SUCCESS;
+}
 
 /* grn_ts_op_logical_and_evaluate() evaluates an operator. */
 static grn_rc
@@ -3969,6 +4054,12 @@ grn_ts_expr_op_node_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     case GRN_TS_OP_NEGATIVE: {
       return grn_ts_op_negative_evaluate(ctx, node, in, n_in, out);
     }
+    case GRN_TS_OP_FLOAT: {
+      return grn_ts_op_float_evaluate(ctx, node, in, n_in, out);
+    }
+    case GRN_TS_OP_TIME: {
+      return grn_ts_op_time_evaluate(ctx, node, in, n_in, out);
+    }
     case GRN_TS_OP_LOGICAL_AND: {
       return grn_ts_op_logical_and_evaluate(ctx, node, in, n_in, out);
     }
@@ -4459,6 +4550,30 @@ grn_ts_op_negative_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
 }
 #undef GRN_TS_OP_SIGN_ADJUST
 
+/* grn_ts_op_float_adjust() updates scores. */
+static grn_rc
+grn_ts_op_float_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                       grn_ts_record *io, size_t n_io)
+{
+  size_t i;
+  grn_ts_int *buf_ptr;
+  grn_rc rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[0], io, n_io,
+                                               &node->bufs[0]);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  buf_ptr = (grn_ts_int *)node->bufs[0].ptr;
+  for (i = 0; i < n_io; i++) {
+    grn_ts_float result;
+    rc = grn_ts_op_float(ctx, buf_ptr[i], &result);
+    io[i].score = (grn_ts_score)result;
+    if (!isfinite(io[i].score)) {
+      GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid score: %g", result);
+    }
+  }
+  return GRN_SUCCESS;
+}
+
 #define GRN_TS_OP_ARITH_ADJUST(type)\
   grn_rc rc;\
   size_t i, count = 0;\
@@ -4535,6 +4650,9 @@ grn_ts_expr_op_node_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
     }
     case GRN_TS_OP_NEGATIVE: {
       return grn_ts_op_negative_adjust(ctx, node, io, n_io);
+    }
+    case GRN_TS_OP_FLOAT: {
+      return grn_ts_op_float_adjust(ctx, node, io, n_io);
     }
     case GRN_TS_OP_PLUS: {
       return grn_ts_op_plus_adjust(ctx, node, io, n_io);
