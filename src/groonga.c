@@ -3134,11 +3134,6 @@ main(int argc, char **argv)
     cache_limit = value;
   }
 
-#ifdef GRN_WITH_LIBEDIT
-  if (need_line_editor) {
-    line_editor_init(argc, argv);
-  }
-#endif
   grn_gctx.errbuf[0] = '\0';
   if (grn_init()) {
     fprintf(stderr, "failed to initialize Groonga: %s\n", grn_gctx.errbuf);
@@ -3215,6 +3210,12 @@ main(int argc, char **argv)
       !batchmode) {
     need_line_editor = GRN_TRUE;
   }
+
+#ifdef GRN_WITH_LIBEDIT
+  if (need_line_editor) {
+    line_editor_init(argc, argv);
+  }
+#endif
 
   newdb = (flags & FLAG_NEW_DB);
   is_daemon_mode = (flags & FLAG_MODE_DAEMON);
