@@ -1,0 +1,13 @@
+table_create Kana TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+
+table_create Items TABLE_HASH_KEY ShortText
+column_create Items kana COLUMN_VECTOR Kana
+
+column_create Kana items COLUMN_INDEX Items kana
+
+load --table Items
+[
+{"_key": "Groonga", "kana": ["グルンガ"]}
+]
+
+select Items --filter 'prefix_rk_search(kana, "グル")'

@@ -8222,6 +8222,98 @@ proc_reindex(grn_ctx *ctx, int nargs, grn_obj **args,
   return NULL;
 }
 
+static grn_rc
+selector_prefix_rk_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
+                          int nargs, grn_obj **args,
+                          grn_obj *res, grn_operator op)
+{
+  grn_rc rc = GRN_SUCCESS;
+  grn_obj *column;
+  grn_obj *query;
+  grn_index_datum index_datum;
+  unsigned int n_indexes;
+  grn_obj *index_lexicon;
+
+  if ((nargs - 1) != 2) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "prefix_rk_serach(): wrong number of arguments (%d for 2)", nargs - 1);
+    rc = ctx->rc;
+    goto exit;
+  }
+
+  column = args[1];
+  query = args[2];
+
+  n_indexes = grn_column_find_index_data(ctx, column, GRN_OP_PREFIX,
+                                         &index_datum, 1);
+  if (n_indexes == 0) {
+    grn_obj inspected_column;
+    GRN_TEXT_INIT(&inspected_column, 0);
+    grn_inspect(ctx, &inspected_column, column);
+    ERR(GRN_INVALID_ARGUMENT,
+        "prefix_rk_serach(): column doesn't have index for prefix search: %.*s",
+        (int)GRN_TEXT_LEN(&inspected_column),
+        GRN_TEXT_VALUE(&inspected_column));
+    rc = ctx->rc;
+    GRN_OBJ_FIN(ctx, &inspected_column);
+    goto exit;
+  }
+
+  index = index_datum.index;
+  index_lexicon = grn_ctx_at(ctx, index->header.domain);
+  if (index_lexicon->header.type != GRN_TABLE_PAT_KEY) {
+    grn_obj inspected_index;
+    grn_obj inspected_column;
+    GRN_TEXT_INIT(&inspected_index, 0);
+    GRN_TEXT_INIT(&inspected_column, 0);
+    grn_inspect(ctx, &inspected_index, index);
+    grn_inspect(ctx, &inspected_column, column);
+    ERR(GRN_INVALID_ARGUMENT,
+        "prefix_rk_serach(): index lexicon must TABLE_PAT_KEY: %.*s: %.*s",
+        (int)GRN_TEXT_LEN(&inspected_index),
+        GRN_TEXT_VALUE(&inspected_index),
+        (int)GRN_TEXT_LEN(&inspected_column),
+        GRN_TEXT_VALUE(&inspected_column));
+    rc = ctx->rc;
+    GRN_OBJ_FIN(ctx, &inspected_index);
+    GRN_OBJ_FIN(ctx, &inspected_column);
+    goto exit;
+  }
+
+  {
+    grn_table_cursor *cursor;
+    const void *max = NULL;
+    unsigned int max_size = 0;
+    int offset = 0;
+    int limit = -1;
+
+    cursor = grn_table_cursor_open(ctx, index_lexicon,
+                                   GRN_TEXT_VALUE(query),
+                                   GRN_TEXT_LEN(query),
+                                   max, max_size,
+                                   offset, limit,
+                                   GRN_CURSOR_PREFIX | GRN_CURSOR_RK);
+    if (!cursor) {
+      rc = ctx->rc;
+      goto exit;
+    }
+    {
+      grn_id record_id;
+      while ((record_id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+        rc = grn_ii_at(ctx, (grn_ii *)index, record_id, (grn_hash *)res, op);
+        if (rc != GRN_SUCCESS) {
+          break;
+        }
+      }
+    }
+    grn_table_cursor_close(ctx, cursor);
+    grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
+  }
+
+exit :
+  return rc;
+}
+
 #define DEF_VAR(v,name_str) do {\
   (v).name = (name_str);\
   (v).name_size = GRN_STRLEN(name_str);\
@@ -8524,4 +8616,13 @@ grn_db_init_builtin_query(grn_ctx *ctx)
 
   DEF_VAR(vars[0], "object");
   DEF_COMMAND("reindex", proc_reindex, 1, vars);
+
+  {
+    grn_obj *selector_proc;
+
+    selector_proc = grn_proc_create(ctx, "prefix_rk_search", -1,
+                                    GRN_PROC_FUNCTION,
+                                    NULL, NULL, NULL, 0, NULL);
+    grn_proc_set_selector(ctx, selector_proc, selector_prefix_rk_search);
+  }
 }
