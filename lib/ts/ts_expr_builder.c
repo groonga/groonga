@@ -145,7 +145,7 @@ grn_ts_expr_builder_complete(grn_ctx *ctx, grn_ts_expr_builder *builder,
   if (!builder || (builder->n_nodes != 1) || builder->n_bridges || !expr) {
     GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
   }
-  rc = grn_ts_expr_node_deref(ctx, &builder->nodes[0]);
+  rc = grn_ts_expr_node_deref(ctx, builder->nodes[0], &builder->nodes[0]);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
@@ -648,7 +648,7 @@ grn_ts_expr_builder_push_op(grn_ctx *ctx, grn_ts_expr_builder *builder,
      * FIXME: Operators "==" and "!=" should compare arguments as references
      *        if possible.
      */
-    rc = grn_ts_expr_node_deref(ctx, &args[i]);
+    rc = grn_ts_expr_node_deref(ctx, args[i], &args[i]);
     if (rc != GRN_SUCCESS) {
       return rc;
     }

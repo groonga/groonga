@@ -4660,34 +4660,63 @@ grn_ts_expr_node_close(grn_ctx *ctx, grn_ts_expr_node *node)
 }
 #undef GRN_TS_EXPR_NODE_CLOSE_CASE
 
-grn_rc
-grn_ts_expr_node_deref(grn_ctx *ctx, grn_ts_expr_node **node_ptr)
+static grn_rc
+grn_ts_expr_node_deref_once(grn_ctx *ctx, grn_ts_expr_node *in,
+                            grn_ts_expr_node **out)
 {
-  grn_ts_expr_node *node = *node_ptr;
-  while (node->data_kind == GRN_TS_REF) {
-    grn_rc rc;
-    grn_ts_expr_node *key_node, *bridge_node;
-    grn_id table_id = node->data_type;
-    grn_obj *table = grn_ctx_at(ctx, table_id);
-    if (!table) {
-      return GRN_OBJECT_CORRUPT;
-    }
-    if (!grn_ts_obj_is_table(ctx, table)) {
-      grn_obj_unlink(ctx, table);
-      return GRN_OBJECT_CORRUPT;
-    }
-    rc = grn_ts_expr_key_node_open(ctx, table, &key_node);
-    grn_obj_unlink(ctx, table);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-    rc = grn_ts_expr_bridge_node_open(ctx, node, key_node, &bridge_node);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-    node = bridge_node;
+  grn_rc rc;
+  grn_id table_id = in->data_type;
+  grn_ts_expr_node *key_node, *bridge_node;
+  grn_obj *table = grn_ctx_at(ctx, table_id);
+  if (!table) {
+    GRN_TS_ERR_RETURN(GRN_UNKNOWN_ERROR, "grn_ctx_at failed: %d", table_id);
   }
-  *node_ptr = node;
+  if (!grn_ts_obj_is_table(ctx, table)) {
+    grn_obj_unlink(ctx, table);
+    GRN_TS_ERR_RETURN(GRN_UNKNOWN_ERROR, "not table: %d", table_id);
+  }
+  rc = grn_ts_expr_key_node_open(ctx, table, &key_node);
+  grn_obj_unlink(ctx, table);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  rc = grn_ts_expr_bridge_node_open(ctx, in, key_node, &bridge_node);
+  if (rc != GRN_SUCCESS) {
+    grn_ts_expr_node_close(ctx, key_node);
+    return rc;
+  }
+  *out = bridge_node;
+  return GRN_SUCCESS;
+}
+
+grn_rc
+grn_ts_expr_node_deref(grn_ctx *ctx, grn_ts_expr_node *in,
+                       grn_ts_expr_node **out)
+{
+  grn_ts_expr_node *node = in, **in_ptr = NULL;
+  while (node->data_kind == GRN_TS_REF) {
+    grn_ts_expr_node *new_node;
+    grn_rc rc = grn_ts_expr_node_deref_once(ctx, node, &new_node);
+    if (rc != GRN_SUCCESS) {
+      if (node != in) {
+        if (in_ptr) {
+          *in_ptr = NULL;
+        }
+        grn_ts_expr_node_close(ctx, node);
+      }
+      return rc;
+    }
+    if (node == in) {
+      grn_ts_expr_bridge_node *bridge_node;
+      bridge_node = (grn_ts_expr_bridge_node *)new_node;
+      if (bridge_node->src != node) {
+        GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "broken bridge node");
+      }
+      in_ptr = &bridge_node->src;
+    }
+    node = new_node;
+  }
+  *out = node;
   return GRN_SUCCESS;
 }
 
