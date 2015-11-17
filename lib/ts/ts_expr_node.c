@@ -3115,18 +3115,18 @@ grn_ts_expr_op_node_deref_args_for_equal(grn_ctx *ctx,
                       node->n_args);
   }
   if ((node->args[0]->data_kind & ~GRN_TS_VECTOR_FLAG) != GRN_TS_REF) {
-    return grn_ts_expr_node_deref(ctx, node->args[1], &node->args[1]);
+    return grn_ts_expr_node_deref(ctx, &node->args[1]);
   }
   if ((node->args[1]->data_kind & ~GRN_TS_VECTOR_FLAG) != GRN_TS_REF) {
-    return grn_ts_expr_node_deref(ctx, node->args[0], &node->args[0]);
+    return grn_ts_expr_node_deref(ctx, &node->args[0]);
   }
 
   /* FIXME: Arguments should be compared as references if possible. */
-  rc = grn_ts_expr_node_deref(ctx, node->args[0], &node->args[0]);
+  rc = grn_ts_expr_node_deref(ctx, &node->args[0]);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = grn_ts_expr_node_deref(ctx, node->args[1], &node->args[1]);
+  rc = grn_ts_expr_node_deref(ctx, &node->args[1]);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
@@ -3146,7 +3146,7 @@ grn_ts_expr_op_node_deref_args(grn_ctx *ctx, grn_ts_expr_op_node *node)
     default: {
       size_t i;
       for (i = 0; i < node->n_args; i++) {
-        grn_rc rc = grn_ts_expr_node_deref(ctx, node->args[i], &node->args[i]);
+        grn_rc rc = grn_ts_expr_node_deref(ctx, &node->args[i]);
         if (rc != GRN_SUCCESS) {
           return rc;
         }
@@ -4756,23 +4756,20 @@ grn_ts_expr_node_deref_once(grn_ctx *ctx, grn_ts_expr_node *in,
 }
 
 grn_rc
-grn_ts_expr_node_deref(grn_ctx *ctx, grn_ts_expr_node *in,
-                       grn_ts_expr_node **out)
+grn_ts_expr_node_deref(grn_ctx *ctx, grn_ts_expr_node **node_ptr)
 {
-  grn_ts_expr_node *node = in, **in_ptr = NULL;
+  grn_ts_expr_node *node = *node_ptr, **in_ptr = NULL;
   while ((node->data_kind & ~GRN_TS_VECTOR_FLAG) == GRN_TS_REF) {
     grn_ts_expr_node *new_node;
     grn_rc rc = grn_ts_expr_node_deref_once(ctx, node, &new_node);
     if (rc != GRN_SUCCESS) {
-      if (node != in) {
-        if (in_ptr) {
-          *in_ptr = NULL;
-        }
+      if (in_ptr) {
+        *in_ptr = NULL;
         grn_ts_expr_node_close(ctx, node);
       }
       return rc;
     }
-    if (node == in) {
+    if (node == *node_ptr) {
       grn_ts_expr_bridge_node *bridge_node;
       bridge_node = (grn_ts_expr_bridge_node *)new_node;
       if (bridge_node->src != node) {
@@ -4782,7 +4779,7 @@ grn_ts_expr_node_deref(grn_ctx *ctx, grn_ts_expr_node *in,
     }
     node = new_node;
   }
-  *out = node;
+  *node_ptr = node;
   return GRN_SUCCESS;
 }
 

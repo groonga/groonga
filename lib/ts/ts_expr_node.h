@@ -97,13 +97,12 @@ void grn_ts_expr_node_close(grn_ctx *ctx, grn_ts_expr_node *node);
 /*
  * grn_ts_expr_node_deref() resolves references.
  *
- * If *in refers to a reference node, grn_ts_expr_node_deref() creates a key
- * node associated with the destination table and creates a bridge node from
- * *in to the key node. If the data kind of the bridge node is GRN_TS_REF,
- * references are recursively resolved.
+ * If *node_ptr refers to a reference node, grn_ts_expr_node_deref() creates a
+ * key node associated with the destination table and creates a bridge node
+ * from *node_ptr to the key node. If the data kind of the bridge node is
+ * GRN_TS_REF, references are recursively resolved.
  */
-grn_rc grn_ts_expr_node_deref(grn_ctx *ctx, grn_ts_expr_node *in,
-                              grn_ts_expr_node **out);
+grn_rc grn_ts_expr_node_deref(grn_ctx *ctx, grn_ts_expr_node **node_ptr);
 
 /* grn_ts_expr_node_evaluate() evaluates a subtree. */
 grn_rc grn_ts_expr_node_evaluate(grn_ctx *ctx, grn_ts_expr_node *node,
