@@ -78,7 +78,10 @@ grn_rc grn_ts_expr_const_node_open(grn_ctx *ctx, grn_ts_data_kind data_kind,
 grn_rc grn_ts_expr_column_node_open(grn_ctx *ctx, grn_obj *column,
                                     grn_ts_expr_node **node);
 
-/* grn_ts_expr_op_node_open() creates a node associated with an operator. */
+/*
+ * grn_ts_expr_op_node_open() creates a node associated with an operator.
+ * Note that argument nodes are destroyed on failure.
+ */
 grn_rc grn_ts_expr_op_node_open(grn_ctx *ctx, grn_ts_op_type op_type,
                                 grn_ts_expr_node **args, size_t n_args,
                                 grn_ts_expr_node **node);

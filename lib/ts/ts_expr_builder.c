@@ -643,16 +643,6 @@ grn_ts_expr_builder_push_op(grn_ctx *ctx, grn_ts_expr_builder *builder,
   }
   /* Arguments are the top n_args nodes in the stack. */
   args = &builder->nodes[builder->n_nodes - n_args];
-  for (i = 0; i < n_args; i++) {
-    /*
-     * FIXME: Operators "==" and "!=" should compare arguments as references
-     *        if possible.
-     */
-    rc = grn_ts_expr_node_deref(ctx, args[i], &args[i]);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-  }
   builder->n_nodes -= n_args;
   rc = grn_ts_expr_op_node_open(ctx, op_type, args, n_args, &node);
   if (rc == GRN_SUCCESS) {

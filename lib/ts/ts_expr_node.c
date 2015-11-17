@@ -3102,6 +3102,37 @@ grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node)
   }
 }
 
+/* grn_ts_expr_op_node_setup() sets up an operator node. */
+static grn_rc
+grn_ts_expr_op_node_setup(grn_ctx *ctx, grn_ts_expr_op_node *node)
+{
+  size_t i;
+  grn_rc rc;
+  for (i = 0; i < node->n_args; i++) {
+    /*
+     * FIXME: Operators "==" and "!=" should compare arguments as references
+     *        if possible.
+     */
+    rc = grn_ts_expr_node_deref(ctx, node->args[i], &node->args[i]);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+  }
+  /* Check arguments. */
+  rc = grn_ts_expr_op_node_check_args(ctx, node);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  if (node->data_kind == GRN_TS_VOID) {
+    GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "invalid data kind: %d",
+                      GRN_TS_VOID);
+  } else if (node->data_type == GRN_DB_VOID) {
+    GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "invalid data type: %d",
+                      GRN_DB_VOID);
+  }
+  return GRN_SUCCESS;
+}
+
 grn_rc
 grn_ts_expr_op_node_open(grn_ctx *ctx, grn_ts_op_type op_type,
                          grn_ts_expr_node **args, size_t n_args,
@@ -3124,18 +3155,7 @@ grn_ts_expr_op_node_open(grn_ctx *ctx, grn_ts_op_type op_type,
     new_node->args[i] = args[i];
   }
   new_node->n_args = n_args;
-
-  /* Check arguments. */
-  rc = grn_ts_expr_op_node_check_args(ctx, new_node);
-  if (rc == GRN_SUCCESS) {
-    if (new_node->data_kind == GRN_TS_VOID) {
-      GRN_TS_ERR(GRN_OBJECT_CORRUPT, "invalid data kind: %d", GRN_TS_VOID);
-      rc = ctx->rc;
-    } else if (new_node->data_type == GRN_DB_VOID) {
-      GRN_TS_ERR(GRN_OBJECT_CORRUPT, "invalid data type: %d", GRN_DB_VOID);
-      rc = ctx->rc;
-    }
-  }
+  rc = grn_ts_expr_op_node_setup(ctx, new_node);
   if (rc != GRN_SUCCESS) {
     grn_ts_expr_op_node_fin(ctx, new_node);
     GRN_FREE(new_node);
