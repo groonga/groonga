@@ -4520,7 +4520,7 @@ grn_ts_expr_op_node_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
 }
 
 #define GRN_TS_OP_SIGN_ADJUST(type)\
-  size_t i, count = 0;\
+  size_t i;\
   grn_ts_float *buf_ptr;\
   grn_rc rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[0], io, n_io,\
                                                &node->bufs[0]);\
@@ -4530,7 +4530,7 @@ grn_ts_expr_op_node_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
   buf_ptr = (grn_ts_float *)node->bufs[0].ptr;\
   for (i = 0; i < n_io; i++) {\
     grn_ts_float result = grn_ts_op_ ## type ## _float(buf_ptr[i]);\
-    io[count++].score = (grn_ts_score)result;\
+    io[i].score = (grn_ts_score)result;\
   }\
   return GRN_SUCCESS;
 /* grn_ts_op_positive_adjust() updates scores. */
@@ -4576,7 +4576,7 @@ grn_ts_op_float_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
 
 #define GRN_TS_OP_ARITH_ADJUST(type)\
   grn_rc rc;\
-  size_t i, count = 0;\
+  size_t i;\
   grn_ts_float *buf_ptrs[2];\
   for (i = 0; i < 2; i++) {\
     rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[i], io, n_io,\
@@ -4591,11 +4591,10 @@ grn_ts_op_float_adjust(grn_ctx *ctx, grn_ts_expr_op_node *node,
     grn_ts_float result;\
     rc = grn_ts_op_ ## type ## _float_float(ctx, buf_ptrs[0][i],\
                                             buf_ptrs[1][i], &result);\
-    io[count].score = (grn_ts_score)result;\
-    if (!isfinite(io[count].score)) {\
+    io[i].score = (grn_ts_score)result;\
+    if (!isfinite(io[i].score)) {\
       GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid score: %g", result);\
     }\
-    count++;\
   }\
   return GRN_SUCCESS;
 /* grn_ts_op_plus_adjust() updates scores. */
