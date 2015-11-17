@@ -3102,23 +3102,68 @@ grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node)
   }
 }
 
+/*
+ * grn_ts_expr_op_node_deref_args_for_equal() resolves references if required.
+ */
+static grn_rc
+grn_ts_expr_op_node_deref_args_for_equal(grn_ctx *ctx,
+                                         grn_ts_expr_op_node *node)
+{
+  grn_rc rc;
+  if (node->n_args != 2) {
+    GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "invalid #args: %" GRN_FMT_SIZE,
+                      node->n_args);
+  }
+  if ((node->args[0]->data_kind & ~GRN_TS_VECTOR_FLAG) != GRN_TS_REF) {
+    return grn_ts_expr_node_deref(ctx, node->args[1], &node->args[1]);
+  }
+  if ((node->args[1]->data_kind & ~GRN_TS_VECTOR_FLAG) != GRN_TS_REF) {
+    return grn_ts_expr_node_deref(ctx, node->args[0], &node->args[0]);
+  }
+
+  /* FIXME: Arguments should be compared as references if possible. */
+  rc = grn_ts_expr_node_deref(ctx, node->args[0], &node->args[0]);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  rc = grn_ts_expr_node_deref(ctx, node->args[1], &node->args[1]);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_expr_op_node_deref_args() resolves references if required. */
+static grn_rc
+grn_ts_expr_op_node_deref_args(grn_ctx *ctx, grn_ts_expr_op_node *node)
+{
+  switch (node->op_type) {
+    case GRN_TS_OP_EQUAL:
+    case GRN_TS_OP_NOT_EQUAL: {
+      return grn_ts_expr_op_node_deref_args_for_equal(ctx, node);
+    }
+    /* TODO: Add a ternary operator. */
+    default: {
+      size_t i;
+      for (i = 0; i < node->n_args; i++) {
+        grn_rc rc = grn_ts_expr_node_deref(ctx, node->args[i], &node->args[i]);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+      }
+      return GRN_SUCCESS;
+    }
+  }
+}
+
 /* grn_ts_expr_op_node_setup() sets up an operator node. */
 static grn_rc
 grn_ts_expr_op_node_setup(grn_ctx *ctx, grn_ts_expr_op_node *node)
 {
-  size_t i;
-  grn_rc rc;
-  for (i = 0; i < node->n_args; i++) {
-    /*
-     * FIXME: Operators "==" and "!=" should compare arguments as references
-     *        if possible.
-     */
-    rc = grn_ts_expr_node_deref(ctx, node->args[i], &node->args[i]);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
+  grn_rc rc = grn_ts_expr_op_node_deref_args(ctx, node);
+  if (rc != GRN_SUCCESS) {
+    return rc;
   }
-  /* Check arguments. */
   rc = grn_ts_expr_op_node_check_args(ctx, node);
   if (rc != GRN_SUCCESS) {
     return rc;
@@ -4680,6 +4725,7 @@ grn_ts_expr_node_close(grn_ctx *ctx, grn_ts_expr_node *node)
 }
 #undef GRN_TS_EXPR_NODE_CLOSE_CASE
 
+/* grn_ts_expr_node_deref_once() resolves a reference. */
 static grn_rc
 grn_ts_expr_node_deref_once(grn_ctx *ctx, grn_ts_expr_node *in,
                             grn_ts_expr_node **out)
@@ -4714,7 +4760,7 @@ grn_ts_expr_node_deref(grn_ctx *ctx, grn_ts_expr_node *in,
                        grn_ts_expr_node **out)
 {
   grn_ts_expr_node *node = in, **in_ptr = NULL;
-  while (node->data_kind == GRN_TS_REF) {
+  while ((node->data_kind & ~GRN_TS_VECTOR_FLAG) == GRN_TS_REF) {
     grn_ts_expr_node *new_node;
     grn_rc rc = grn_ts_expr_node_deref_once(ctx, node, &new_node);
     if (rc != GRN_SUCCESS) {

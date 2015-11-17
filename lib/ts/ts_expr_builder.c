@@ -622,7 +622,7 @@ grn_ts_expr_builder_push_op(grn_ctx *ctx, grn_ts_expr_builder *builder,
 {
   grn_rc rc;
   grn_ts_expr_node **args, *node;
-  size_t i, n_args, max_n_args;
+  size_t n_args, max_n_args;
   if (!ctx) {
     return GRN_INVALID_ARGUMENT;
   }
