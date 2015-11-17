@@ -4529,6 +4529,12 @@ grn_ts_expr_bridge_node_fin(grn_ctx *ctx, grn_ts_expr_bridge_node *node)
   for (i = 0; i < GRN_TS_EXPR_BRIDGE_NODE_N_BUFS; i++) {
     grn_ts_buf_fin(ctx, &node->bufs[i]);
   }
+  if (node->dest) {
+    grn_ts_expr_node_close(ctx, node->dest);
+  }
+  if (node->src) {
+    grn_ts_expr_node_close(ctx, node->src);
+  }
 }
 
 grn_rc
