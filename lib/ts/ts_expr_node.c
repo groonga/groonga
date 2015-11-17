@@ -4531,6 +4531,9 @@ grn_ts_expr_op_node_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
   for (i = 0; i < n_io; i++) {\
     grn_ts_float result = grn_ts_op_ ## type ## _float(buf_ptr[i]);\
     io[i].score = (grn_ts_score)result;\
+    if (!isfinite(io[i].score)) {\
+      GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid score: %g", result);\
+    }\
   }\
   return GRN_SUCCESS;
 /* grn_ts_op_positive_adjust() updates scores. */
