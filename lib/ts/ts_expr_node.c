@@ -3007,6 +3007,56 @@ grn_ts_op_minus_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node)
 }
 
 /*
+ * grn_ts_expr_op_node_typecast_args_for_cmp() inserts a typecast operator for
+ * comparison.
+ */
+static grn_rc
+grn_ts_expr_op_node_typecast_args_for_cmp(grn_ctx *ctx,
+                                          grn_ts_expr_op_node *node)
+{
+  grn_rc rc;
+  if ((node->args[0]->data_kind == GRN_TS_INT) &&
+      (node->args[1]->data_kind == GRN_TS_FLOAT)) {
+    rc = grn_ts_expr_op_node_open(ctx, GRN_TS_OP_FLOAT, &node->args[0],
+                                  1, &node->args[0]);
+    if (rc != GRN_SUCCESS) {
+      node->args[0] = NULL;
+      return rc;
+    }
+  } else if ((node->args[0]->data_kind == GRN_TS_FLOAT) &&
+             (node->args[1]->data_kind == GRN_TS_INT)) {
+    rc = grn_ts_expr_op_node_open(ctx, GRN_TS_OP_FLOAT, &node->args[1],
+                                  1, &node->args[1]);
+    if (rc != GRN_SUCCESS) {
+      node->args[1] = NULL;
+      return rc;
+    }
+  } else if ((node->args[0]->data_kind == GRN_TS_TIME) &&
+             (node->args[1]->data_kind == GRN_TS_TEXT)) {
+    rc = grn_ts_expr_op_node_open(ctx, GRN_TS_OP_TIME, &node->args[1],
+                                  1, &node->args[1]);
+    if (rc != GRN_SUCCESS) {
+      node->args[1] = NULL;
+      return rc;
+    }
+  } else if ((node->args[0]->data_kind == GRN_TS_TEXT) &&
+             (node->args[1]->data_kind == GRN_TS_TIME)) {
+    rc = grn_ts_expr_op_node_open(ctx, GRN_TS_OP_TIME, &node->args[0],
+                                  1, &node->args[0]);
+    if (rc != GRN_SUCCESS) {
+      node->args[0] = NULL;
+      return rc;
+    }
+  } else {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT,
+                      "data kind conflict: %d != %d",
+                      node->args[0]->data_kind,
+                      node->args[1]->data_kind);
+  }
+  return GRN_SUCCESS;
+}
+
+/*
  * grn_ts_expr_op_node_check_args() checks the combination of an operator and
  * its arguments.
  */
@@ -3105,8 +3155,10 @@ grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node)
     case GRN_TS_OP_NOT_EQUAL: {
       grn_ts_data_kind scalar_data_kind;
       if (node->args[0]->data_kind != node->args[1]->data_kind) {
-        GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "data kind conflict: %d != %d",
-                          node->args[0]->data_kind, node->args[1]->data_kind);
+        grn_rc rc = grn_ts_expr_op_node_typecast_args_for_cmp(ctx, node);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
       }
       scalar_data_kind = node->args[0]->data_kind & ~GRN_TS_VECTOR_FLAG;
       if (((scalar_data_kind == GRN_TS_REF) ||
@@ -3124,8 +3176,10 @@ grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node)
     case GRN_TS_OP_GREATER:
     case GRN_TS_OP_GREATER_EQUAL: {
       if (node->args[0]->data_kind != node->args[1]->data_kind) {
-        GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "data kind conflict: %d != %d",
-                          node->args[0]->data_kind, node->args[1]->data_kind);
+        grn_rc rc = grn_ts_expr_op_node_typecast_args_for_cmp(ctx, node);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
       }
       switch (node->args[0]->data_kind) {
         case GRN_TS_INT:
