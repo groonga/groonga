@@ -2884,6 +2884,25 @@ grn_ts_expr_op_node_deref_args(grn_ctx *ctx, grn_ts_expr_op_node *node)
 static grn_rc
 grn_ts_op_plus_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node)
 {
+  grn_rc rc;
+  if ((node->args[0]->data_kind == GRN_TS_INT) &&
+      (node->args[1]->data_kind == GRN_TS_FLOAT)) {
+    rc = grn_ts_expr_op_node_open(ctx, GRN_TS_OP_FLOAT, &node->args[0],
+                                  1, &node->args[0]);
+    if (rc != GRN_SUCCESS) {
+      node->args[0] = NULL;
+      return rc;
+    }
+  } else if ((node->args[0]->data_kind == GRN_TS_FLOAT) &&
+             (node->args[1]->data_kind == GRN_TS_INT)) {
+    rc = grn_ts_expr_op_node_open(ctx, GRN_TS_OP_FLOAT, &node->args[1],
+                                  1, &node->args[1]);
+    if (rc != GRN_SUCCESS) {
+      node->args[1] = NULL;
+      return rc;
+    }
+  }
+
   switch (node->args[0]->data_kind) {
     case GRN_TS_INT: {
       switch (node->args[1]->data_kind) {
@@ -2957,6 +2976,25 @@ grn_ts_op_plus_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node)
 static grn_rc
 grn_ts_op_minus_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node)
 {
+  grn_rc rc;
+  if ((node->args[0]->data_kind == GRN_TS_INT) &&
+      (node->args[1]->data_kind == GRN_TS_FLOAT)) {
+    rc = grn_ts_expr_op_node_open(ctx, GRN_TS_OP_FLOAT, &node->args[0],
+                                  1, &node->args[0]);
+    if (rc != GRN_SUCCESS) {
+      node->args[0] = NULL;
+      return rc;
+    }
+  } else if ((node->args[0]->data_kind == GRN_TS_FLOAT) &&
+             (node->args[1]->data_kind == GRN_TS_INT)) {
+    rc = grn_ts_expr_op_node_open(ctx, GRN_TS_OP_FLOAT, &node->args[1],
+                                  1, &node->args[1]);
+    if (rc != GRN_SUCCESS) {
+      node->args[1] = NULL;
+      return rc;
+    }
+  }
+
   switch (node->args[0]->data_kind) {
     case GRN_TS_INT: {
       if (node->args[1]->data_kind != GRN_TS_INT) {
@@ -3223,10 +3261,29 @@ grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node)
       case GRN_TS_OP_DIVISION:
       case GRN_TS_OP_MODULUS: {
         if (node->args[0]->data_kind != node->args[1]->data_kind) {
-          GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT,
-                            "data kind conflict: %d != %d",
-                            node->args[0]->data_kind,
-                            node->args[1]->data_kind);
+          grn_rc rc;
+          if ((node->args[0]->data_kind == GRN_TS_INT) &&
+              (node->args[1]->data_kind == GRN_TS_FLOAT)) {
+            rc = grn_ts_expr_op_node_open(ctx, GRN_TS_OP_FLOAT, &node->args[0],
+                                          1, &node->args[0]);
+            if (rc != GRN_SUCCESS) {
+              node->args[0] = NULL;
+              return rc;
+            }
+          } else if ((node->args[0]->data_kind == GRN_TS_FLOAT) &&
+                     (node->args[1]->data_kind == GRN_TS_INT)) {
+            rc = grn_ts_expr_op_node_open(ctx, GRN_TS_OP_FLOAT, &node->args[1],
+                                          1, &node->args[1]);
+            if (rc != GRN_SUCCESS) {
+              node->args[1] = NULL;
+              return rc;
+            }
+          } else {
+            GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT,
+                              "data kind conflict: %d != %d",
+                              node->args[0]->data_kind,
+                              node->args[1]->data_kind);
+          }
         }
         switch (node->args[0]->data_kind) {
           case GRN_TS_INT:
