@@ -207,7 +207,7 @@ grn_timeval2tm(grn_ctx *ctx, grn_timeval *tv, struct tm *tm_buffer)
 # endif /* HAVE_LOCALTIME_R */
 #endif /* HAVE__LOCALTIME64_S */
   if (!ltm) {
-    SERR(function_name);
+    SERR("%s", function_name);
   }
   return ltm;
 }
