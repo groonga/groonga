@@ -1,0 +1,16 @@
+table_create Readings TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+
+table_create Items TABLE_HASH_KEY ShortText
+column_create Items readings COLUMN_VECTOR Readings
+
+column_create Readings items_index COLUMN_INDEX Items readings
+
+load --table Items
+[
+{"_key": "Groonga", "readings": ["グルンガ", "Groonga"]}
+]
+
+select Items \
+  --filter 'sub_filter(readings, \
+                       "prefix_rk_search(_key, \\"gro\\") || \
+                          _key @^ \\"gro\\"")'
