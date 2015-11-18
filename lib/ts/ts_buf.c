@@ -74,6 +74,11 @@ grn_ts_buf_reserve(grn_ctx *ctx, grn_ts_buf *buf, size_t new_size)
   }
   enough_size = buf->size ? (buf->size << 1) : 1;
   while (enough_size < new_size) {
+    if ((enough_size << 1) < enough_size) {
+      GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT,
+                        "size overflow: %" GRN_FMT_SIZE,
+                        new_size);
+    }
     enough_size <<= 1;
   }
   new_ptr = GRN_REALLOC(buf->ptr, enough_size);
@@ -117,6 +122,11 @@ grn_rc
 grn_ts_buf_write(grn_ctx *ctx, grn_ts_buf *buf, const void *ptr, size_t size)
 {
   size_t new_pos = buf->pos + size;
+  if (new_pos < buf->pos) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT,
+                      "size overflow: %" GRN_FMT_SIZE " + %" GRN_FMT_SIZE,
+                      buf->pos, size);
+  }
   if (new_pos > buf->size) {
     grn_rc rc = grn_ts_buf_reserve(ctx, buf, new_pos);
     if (rc != GRN_SUCCESS) {
