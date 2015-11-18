@@ -15,10 +15,10 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
 #include "grn.h"
 #include "grn_db.h"
 #include "grn_index_column.h"
-#include <groonga/obj.h>
 
 grn_bool
 grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj)
@@ -55,6 +55,33 @@ grn_obj_is_table(grn_ctx *ctx, grn_obj *obj)
   }
 
   return is_table;
+}
+
+grn_bool
+grn_obj_is_accessor(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!obj) {
+    return GRN_FALSE;
+  }
+
+  return obj->header.type == GRN_ACCESSOR;
+}
+
+grn_bool
+grn_obj_is_key_accessor(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_accessor *accessor;
+
+  if (!grn_obj_is_accessor(ctx, obj)) {
+    return GRN_FALSE;
+  }
+
+  accessor = (grn_accessor *)obj;
+  if (accessor->next) {
+    return GRN_FALSE;
+  }
+
+  return accessor->action == GRN_ACCESSOR_GET_KEY;
 }
 
 grn_bool

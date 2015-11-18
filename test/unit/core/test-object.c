@@ -29,6 +29,10 @@ void data_is_builtin(void);
 void test_is_builtin(gconstpointer data);
 void data_is_table(void);
 void test_is_table(gconstpointer data);
+void data_is_accessor(void);
+void test_is_accessor(gconstpointer data);
+void data_is_key_accessor(void);
+void test_is_key_accessor(gconstpointer data);
 void data_is_type(void);
 void test_is_type(gconstpointer data);
 void data_is_proc(void);
@@ -166,6 +170,81 @@ test_is_table(gconstpointer data)
     cut_assert_true(grn_obj_is_table(context, object));
   } else {
     cut_assert_false(grn_obj_is_table(context, object));
+  }
+}
+
+void
+data_is_accessor(void)
+{
+#define ADD_DATUM(expected, name)                                       \
+  gcut_add_datum((expected ?                                            \
+                  "accessor - " name :                                  \
+                  "not accessor - " name),                              \
+                 "expected", G_TYPE_BOOLEAN, expected,                  \
+                 "name", G_TYPE_STRING, name,                           \
+                 NULL)
+
+  ADD_DATUM(TRUE, "_key");
+  ADD_DATUM(FALSE, "name");
+
+#undef ADD_DATUM
+}
+
+void
+test_is_accessor(gconstpointer data)
+{
+  const gchar *name;
+  grn_obj *table;
+  grn_obj *object;
+
+  assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Users name COLUMN_SCALAR ShortText");
+
+  table = grn_ctx_get(context, "Users", -1);
+  name = gcut_data_get_string(data, "name");
+  object = grn_obj_column(context, table, name, strlen(name));
+  if (gcut_data_get_string(data, "expected")) {
+    cut_assert_true(grn_obj_is_accessor(context, object));
+  } else {
+    cut_assert_false(grn_obj_is_accessor(context, object));
+  }
+}
+
+void
+data_is_key_accessor(void)
+{
+#define ADD_DATUM(expected, name)                                       \
+  gcut_add_datum((expected ?                                            \
+                  "key accessor - " name :                              \
+                  "not key accessor - " name),                          \
+                 "expected", G_TYPE_BOOLEAN, expected,                  \
+                 "name", G_TYPE_STRING, name,                           \
+                 NULL)
+
+  ADD_DATUM(TRUE, "_key");
+  ADD_DATUM(FALSE, "name._key");
+
+#undef ADD_DATUM
+}
+
+void
+test_is_key_accessor(gconstpointer data)
+{
+  const gchar *name;
+  grn_obj *table;
+  grn_obj *object;
+
+  assert_send_command("table_create Names TABLE_HASH_KEY ShortText");
+  assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Users name COLUMN_SCALAR Names");
+
+  table = grn_ctx_get(context, "Users", -1);
+  name = gcut_data_get_string(data, "name");
+  object = grn_obj_column(context, table, name, strlen(name));
+  if (gcut_data_get_string(data, "expected")) {
+    cut_assert_true(grn_obj_is_key_accessor(context, object));
+  } else {
+    cut_assert_false(grn_obj_is_key_accessor(context, object));
   }
 }
 
