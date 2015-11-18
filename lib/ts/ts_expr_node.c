@@ -384,7 +384,7 @@ grn_ts_op_time(grn_ctx *ctx, grn_ts_text arg, grn_ts_time *out)
   grn_timeval value;
   grn_rc rc = grn_str2timeval(arg.ptr, arg.size, &value);
   if (rc != GRN_SUCCESS) {
-/*    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "grn_str2timeval failed");*/
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "grn_str2timeval failed");
   }
   *out = (grn_ts_time)((value.tv_sec * 1000000) + (value.tv_nsec / 1000));
   return GRN_SUCCESS;
