@@ -753,6 +753,10 @@ static grn_rc
 grn_table_keys_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
   grn_table_cursor *tc;
+  int max_n_keys = 10;
+
+  /* TODO */
+  /* max_n_keys = grn_atoi(grn_getenv("GRN_INSPECT_TABLE_MAX_N_KEYS")); */
 
   GRN_TEXT_PUTS(ctx, buf, "keys:[");
   tc = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0,
@@ -763,6 +767,10 @@ grn_table_keys_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     grn_obj key;
     GRN_OBJ_INIT(&key, GRN_BULK, 0, obj->header.domain);
     while ((id = grn_table_cursor_next(ctx, tc))) {
+      if (max_n_keys > 0 && i >= max_n_keys) {
+        GRN_TEXT_PUTS(ctx, buf, ", ...");
+        break;
+      }
       if (i++ > 0) { GRN_TEXT_PUTS(ctx, buf, ", "); }
       grn_table_get_key2(ctx, obj, id, &key);
       grn_inspect(ctx, buf, &key);
