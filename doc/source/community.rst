@@ -23,8 +23,13 @@ For Japanese speakers
 Chat room
 ---------
 
-You can join `groonga/public chat room on Gitter
-<https://gitter.im/groonga/public>`_.
+There are chat rooms for discussion about Groonga.
+
+For English speakers
+  `groonga/en chat room on Gitter <https://gitter.im/groonga/en>`_
+
+For Japanese speakers
+  `groonga/ja chat room on Gitter <https://gitter.im/groonga/ja>`_
 
 Twitter
 -------
