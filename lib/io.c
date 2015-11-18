@@ -509,10 +509,8 @@ grn_io_detect_type(grn_ctx *ctx, const char *path)
     }
     grn_close(fd);
   } else {
-    ERRNO_ERR(path);
-    GRN_LOG(ctx, GRN_LOG_ERROR,
-            "failed to open path for detecting type: <%s>",
-            path);
+    ERRNO_ERR("failed to open path for detecting type: <%s>",
+              path);
   }
   return res;
 }
@@ -532,10 +530,8 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
     int fd;
     grn_open(fd, path, O_RDWR | GRN_OPEN_FLAG_BINARY);
     if (fd == -1) {
-      ERRNO_ERR(path);
-      GRN_LOG(ctx, GRN_LOG_ERROR,
-              "failed to open path: <%s>",
-              path);
+      ERRNO_ERR("failed to open path: <%s>",
+                path);
       return NULL;
     }
     if (fstat(fd, &s) != -1 && s.st_size >= sizeof(struct _grn_io_header)) {
@@ -1802,17 +1798,13 @@ grn_fileinfo_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
   struct stat st;
   grn_open(fi->fd, path, flags);
   if (fi->fd == -1) {
-    ERRNO_ERR(path);
-    GRN_LOG(ctx, GRN_LOG_ERROR,
-            "failed to open file info path: <%s>",
-            path);
+    ERRNO_ERR("failed to open file info path: <%s>",
+              path);
     return ctx->rc;
   }
   if (fstat(fi->fd, &st) == -1) {
-    ERRNO_ERR(path);
-    GRN_LOG(ctx, GRN_LOG_ERROR,
-            "failed to stat file info path: <%s>",
-            path);
+    ERRNO_ERR("failed to stat file info path: <%s>",
+              path);
     return ctx->rc;
   }
   fi->dev = st.st_dev;
