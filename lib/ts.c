@@ -740,7 +740,7 @@ grn_ts_select_scorer(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
   if (!rest.size) {
     return GRN_SUCCESS;
   }
-  /* If a string starts with "_scorer =", skip it. */
+  /* If a string starts with "_score =", skip it. */
   if (grn_ts_str_starts_with(str, (grn_ts_str){ "_score", 6 })) {
     rest = grn_ts_str_trim_left((grn_ts_str){ rest.ptr + 6, rest.size - 6 });
     if (!rest.size) {
