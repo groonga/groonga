@@ -66,7 +66,7 @@ typedef struct {
   size_t size;
 } grn_ts_text;
 
-/* GeoPoint. */
+/* Geo. */
 typedef grn_geo_point grn_ts_geo;
 typedef grn_geo_point grn_ts_tokyo_geo;
 typedef grn_geo_point grn_ts_wgs84_geo;
@@ -108,7 +108,7 @@ typedef struct {
   size_t size;
 } grn_ts_text_vector;
 
-/* GeoPointVector. */
+/* GeoVector. */
 typedef struct {
   const grn_ts_geo *ptr;
   size_t size;

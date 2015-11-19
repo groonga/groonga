@@ -61,10 +61,6 @@ grn_ts_obj_is_column(grn_ctx *ctx, grn_obj *obj)
   }
 }
 
-/*
- * grn_ts_ja_get_value() gets a value from ja and writes it to buf. Note that
- * the value is appended to the end of buf.
- */
 grn_rc
 grn_ts_ja_get_value(grn_ctx *ctx, grn_obj *ja, grn_ts_id id,
                     grn_ts_buf *buf, size_t *value_size)
