@@ -26,10 +26,10 @@
 # include <share.h>
 #endif /* WIN32 */
 
-typedef struct _grn_file_reader {
+struct _grn_file_reader {
   FILE *file;
   grn_bool file_need_close;
-} grn_file_reader;
+};
 
 grn_file_reader *
 grn_file_reader_open(grn_ctx *ctx, const char *path)
