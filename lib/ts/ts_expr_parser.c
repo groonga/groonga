@@ -18,6 +18,7 @@
 
 #include "ts_expr_parser.h"
 
+#include <stdlib.h>
 #include <string.h>
 
 #include "../grn_ctx.h"
