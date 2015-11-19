@@ -30,6 +30,8 @@
 #include "ts/ts_types.h"
 #include "ts/ts_util.h"
 
+#include <string.h>
+
 /*-------------------------------------------------------------
  * Miscellaneous.
  */

@@ -22,6 +22,8 @@
 
 #include "ts_log.h"
 
+#include <string.h>
+
 void
 grn_ts_buf_init(grn_ctx *ctx, grn_ts_buf *buf)
 {
