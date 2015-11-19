@@ -848,32 +848,8 @@ static grn_rc
 grn_ts_expr_parser_push_const(grn_ctx *ctx, grn_ts_expr_parser *parser,
                               grn_ts_expr_const_token *token)
 {
-  switch (token->data_kind) {
-    case GRN_TS_BOOL: {
-      return grn_ts_expr_builder_push_const(ctx, parser->builder,
-                                            GRN_TS_BOOL, GRN_DB_VOID,
-                                            token->content);
-    }
-    case GRN_TS_INT: {
-      return grn_ts_expr_builder_push_const(ctx, parser->builder,
-                                            GRN_TS_INT, GRN_DB_VOID,
-                                            token->content);
-    }
-    case GRN_TS_FLOAT: {
-      return grn_ts_expr_builder_push_const(ctx, parser->builder,
-                                            GRN_TS_FLOAT, GRN_DB_VOID,
-                                            token->content);
-    }
-    case GRN_TS_TEXT: {
-      return grn_ts_expr_builder_push_const(ctx, parser->builder,
-                                            GRN_TS_TEXT, GRN_DB_VOID,
-                                            token->content);
-    }
-    default: {
-      GRN_TS_ERR_RETURN(GRN_OBJECT_CORRUPT, "invalid data kind: %d",
-                        token->data_kind);
-    }
-  }
+  return grn_ts_expr_builder_push_const(ctx, parser->builder, token->data_kind,
+                                        GRN_DB_VOID, token->content);
 }
 
 /* grn_ts_expr_parser_push_name() pushes a token to an expression. */
