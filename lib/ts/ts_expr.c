@@ -18,8 +18,6 @@
 
 #include "ts_expr.h"
 
-#include <math.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "../grn_ctx.h"

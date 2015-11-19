@@ -19,7 +19,6 @@
 #include "ts_expr_node.h"
 
 #include <math.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "../grn_ctx.h"
