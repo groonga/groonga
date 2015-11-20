@@ -1,0 +1,56 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR Tags
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Rroonga", "tags": ["Groonga", "Ruby"]},
+{"_key": "Groonga", "tags": ["Groonga"]},
+{"_key": "Blank", "tags": [""]},
+{"_key": "Nothing"}
+]
+[[0,0.0,0.0],4]
+select Memos --output_columns 'tags'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "tags",
+          "Tags"
+        ]
+      ],
+      [
+        [
+          "Groonga",
+          "Ruby"
+        ]
+      ],
+      [
+        [
+          "Groonga"
+        ]
+      ],
+      [
+        [
+          ""
+        ]
+      ],
+      [
+        [
+
+        ]
+      ]
+    ]
+  ]
+]
