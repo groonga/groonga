@@ -7,6 +7,74 @@
 News
 ====
 
+.. _release-5-1-0:
+
+Release 5.1.0 - 2015-11-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [patiricia trie] Added an error check for the max total key
+  size. See :doc:`/limitations` about the max total key size.
+
+* [:doc:`/reference/executables/grndb`] Added a check for broken
+  object. The check can detect a case that the object can't be opened.
+
+* [``grn_obj_reindex()``] Added a new API that recreates existing
+  indexes.
+
+* [``reindex``] Added a new command that recreates existing indexes.
+
+* [inverted index] Improved estimation precision for query.
+
+* [:ref:`/reference/commands/logical_range_filter`] Added fallback
+  mode for sequential search. If sequential search checked many
+  records but didn't find required the number of records, index search
+  is used as fallback.
+
+* [``grn_get_package_label()``] Added a new API that returns package
+  label. It returns ``Groonga``.
+
+* [:doc:`/reference/executables/groonga-server-http`] Added ``Server:
+  Groonga/VERSION`` response header.
+
+* [:doc:`/reference/executables/groonga-httpd`] Improved performance
+  by reusing ``grn_ctx`` object.
+
+* [``grn_file_reader``] Added a new API that provides ``fgets()``
+  feature. It fixes a crash bug of
+  :doc:`/reference/executables/groonga`. If
+  :doc:`/reference/executables/groonga` is built with static C runtime
+  by Visual Studio, the crash bug is occurred.
+
+* [``prefix_rk_search``] Added a new selector that provides prefix RK
+  search feature.
+
+* [``grn_obj_is_accessor()``] Added a new predicate that checks
+  whether the object is an accessor.
+
+* [``grn_obj_is_key_accessor()``] Added a new predicate that checks
+  whether the object is an accessor for ``_key``
+  :doc:`/reference/columns/pseudo`.
+
+Fixes
+^^^^^
+
+* [inverted index] Fixed a possible infinite loop bug when log level
+  is ``debug``.
+
+* Fixed a bug that ``@`` operator (match operator) may not match
+  record that should be matched in sequential search mode.
+
+* [patricia trie] Fixed a bug that invalid value may be returned for
+  empty string key. [groonga-dev,03632] [Reported by Naoya Murakami]
+
+Thanks
+^^^^^^
+
+* Naoya Murakami
+
 .. _release-5-0-9:
 
 Release 5.0.9 - 2015-10-29
