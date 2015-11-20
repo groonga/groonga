@@ -8,10 +8,9 @@ load --table Memos
 [
 {"_key": "Rroonga", "tags": ["Groonga", "Ruby"]},
 {"_key": "Groonga", "tags": ["Groonga"]},
-{"_key": "Blank", "tags": [""]},
-{"_key": "Nothing"}
+{"_key": "Blank", "tags": [""]}
 ]
-[[0,0.0,0.0],4]
+[[0,0.0,0.0],3]
 select Memos --output_columns 'tags'
 [
   [
@@ -22,7 +21,7 @@ select Memos --output_columns 'tags'
   [
     [
       [
-        4
+        3
       ],
       [
         [
@@ -44,11 +43,6 @@ select Memos --output_columns 'tags'
       [
         [
           ""
-        ]
-      ],
-      [
-        [
-
         ]
       ]
     ]

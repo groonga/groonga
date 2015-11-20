@@ -6,8 +6,7 @@ load --table Memos
 [
 {"_key": "Rroonga", "tags": ["Groonga", "Ruby"]},
 {"_key": "Groonga", "tags": ["Groonga"]},
-{"_key": "Blank", "tags": [""]},
-{"_key": "Nothing"}
+{"_key": "Blank", "tags": [""]}
 ]
 
 select Memos --output_columns 'tags'
