@@ -1446,6 +1446,7 @@ grn_pat_get_key(grn_ctx *ctx, grn_pat *pat, grn_id id, void *keybuf, int bufsize
   uint8_t *key;
   pat_node *node;
   if (!pat) { return GRN_INVALID_ARGUMENT; }
+  if (!id) { return 0; }
   PAT_AT(pat, id, node);
   if (!node) { return 0; }
   if (!(key = pat_node_get_key(ctx, pat, node))) { return 0; }
@@ -1467,6 +1468,7 @@ grn_pat_get_key2(grn_ctx *ctx, grn_pat *pat, grn_id id, grn_obj *bulk)
   uint8_t *key;
   pat_node *node;
   if (!pat) { return GRN_INVALID_ARGUMENT; }
+  if (!id) { return 0; }
   PAT_AT(pat, id, node);
   if (!node) { return 0; }
   if (!(key = pat_node_get_key(ctx, pat, node))) { return 0; }
