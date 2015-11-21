@@ -28,6 +28,7 @@ extern "C" {
 #endif
 
 typedef struct {
+  int REMOVE_ME;
 } grn_ts_sorter_node;
 
 typedef struct {

@@ -31,6 +31,7 @@ extern "C" {
 #endif
 
 typedef struct {
+  int REMOVE_ME;
 } grn_ts_plan_node;
 
 typedef struct {
