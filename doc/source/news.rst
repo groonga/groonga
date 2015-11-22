@@ -1051,7 +1051,7 @@ Improvements
 
 * [doc] Added :ref:`script-syntax-security` about :doc:`/reference/grn_expr/script_syntax`.
 * [experimental] Added sharding plugin. Execute `register sharding` to
-  enable this feature in advance, then use :doc:`/reference/commands/logical_count` to select records.
+  enable this feature in advance, then use :doc:`/reference/commands/logical_count` to get the number of records.
 * [cmake] Supported embedded Groonga with Clang. It fixed compilation failure
   on FreeBSD 10.1. `[MDEV-7293] <https://mariadb.atlassian.net/browse/MDEV-7293>`_
   [Reported by Bernard Spil]
