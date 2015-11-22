@@ -6275,8 +6275,8 @@ msgstr ""
 "の変更により、2048バイトを越えてもエラーメッセージが途中で切られることはあり"
 "ません。"
 
-msgid "groonga-httpd: Supported streaming dump functionality."
-msgstr "groonga-httpd: dumpをストリーム処理できるようになりました。"
+msgid "[:doc:`/reference/commands/dump] Supported streaming output."
+msgstr "[:doc:`/reference/commands/dump`] ストリーム処理できるようになりました。"
 
 msgid ""
 "Fixed mismatch between error code and error message when ``strerror()`` is "
