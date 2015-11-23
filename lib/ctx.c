@@ -1362,12 +1362,12 @@ get_command_version(grn_ctx *ctx, const char *p, const char *pe)
 #define OUTPUT_TYPE         "output_type"
 #define COMMAND_VERSION     "command_version"
 #define REQUEST_ID          "request_id"
-#define PRETTY              "pretty"
+#define OUTPUT_PRETTY       "output_pretty"
 #define EXPR_MISSING        "expr_missing"
 #define OUTPUT_TYPE_LEN     (sizeof(OUTPUT_TYPE) - 1)
 #define COMMAND_VERSION_LEN (sizeof(COMMAND_VERSION) - 1)
 #define REQUEST_ID_LEN      (sizeof(REQUEST_ID) - 1)
-#define PRETTY_LEN          (sizeof(PRETTY) - 1)
+#define OUTPUT_PRETTY_LEN   (sizeof(OUTPUT_PRETTY) - 1)
 
 #define HTTP_QUERY_PAIR_DELIMITER   "="
 #define HTTP_QUERY_PAIRS_DELIMITERS "&;"
@@ -1419,8 +1419,8 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
           p = grn_text_cgidec(ctx, &request_id, p, e,
                               HTTP_QUERY_PAIRS_DELIMITERS);
           if (ctx->rc) { goto exit; }
-        } else if (l == PRETTY_LEN &&
-                   !memcmp(v, PRETTY, PRETTY_LEN)) {
+        } else if (l == OUTPUT_PRETTY_LEN &&
+                   !memcmp(v, OUTPUT_PRETTY, OUTPUT_PRETTY_LEN)) {
           GRN_BULK_REWIND(&buf);
           p = grn_text_cgidec(ctx, &buf, p, e, HTTP_QUERY_PAIRS_DELIMITERS);
           if (GRN_TEXT_LEN(&buf) == strlen("yes") &&
@@ -1508,8 +1508,8 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
           GRN_BULK_REWIND(&request_id);
           p = grn_text_unesc_tok(ctx, &request_id, p, e, &tok_type);
           if (ctx->rc) { goto exit; }
-        } else if (l == PRETTY_LEN &&
-                   !memcmp(v, PRETTY, PRETTY_LEN)) {
+        } else if (l == OUTPUT_PRETTY_LEN &&
+                   !memcmp(v, OUTPUT_PRETTY, OUTPUT_PRETTY_LEN)) {
           GRN_BULK_REWIND(&buf);
           p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
           if (GRN_TEXT_LEN(&buf) == strlen("yes") &&
