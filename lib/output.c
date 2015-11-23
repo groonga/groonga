@@ -49,6 +49,9 @@ put_delimiter(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type)
     if (level < 2) { return; }
     if ((level & 3) == 3) {
       GRN_TEXT_PUTC(ctx, outbuf, ':');
+      if (ctx->impl->output.is_pretty) {
+        GRN_TEXT_PUTC(ctx, outbuf, ' ');
+      }
     } else {
       GRN_TEXT_PUTC(ctx, outbuf, ',');
       if (ctx->impl->output.is_pretty) {
@@ -172,6 +175,10 @@ grn_output_map_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   switch (output_type) {
   case GRN_CONTENT_JSON:
     GRN_TEXT_PUTS(ctx, outbuf, "{");
+    if (ctx->impl->output.is_pretty) {
+      GRN_TEXT_PUTC(ctx, outbuf, '\n');
+      indent(ctx, outbuf, DEPTH + 1);
+    }
     break;
   case GRN_CONTENT_XML:
     GRN_TEXT_PUTC(ctx, outbuf, '<');
@@ -208,6 +215,10 @@ grn_output_map_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type
 {
   switch (output_type) {
   case GRN_CONTENT_JSON:
+    if (ctx->impl->output.is_pretty) {
+      GRN_TEXT_PUTC(ctx, outbuf, '\n');
+      indent(ctx, outbuf, DEPTH - 1);
+    }
     GRN_TEXT_PUTS(ctx, outbuf, "}");
     break;
   case GRN_CONTENT_TSV:
