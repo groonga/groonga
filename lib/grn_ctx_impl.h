@@ -166,6 +166,7 @@ struct _grn_ctx_impl {
     } data;
     grn_content_type type;
     const char *mime_type;
+    grn_bool is_pretty;
     grn_obj names;
     grn_obj levels;
 #ifdef GRN_WITH_MESSAGE_PACK

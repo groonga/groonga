@@ -1362,10 +1362,12 @@ get_command_version(grn_ctx *ctx, const char *p, const char *pe)
 #define OUTPUT_TYPE         "output_type"
 #define COMMAND_VERSION     "command_version"
 #define REQUEST_ID          "request_id"
+#define PRETTY              "pretty"
 #define EXPR_MISSING        "expr_missing"
 #define OUTPUT_TYPE_LEN     (sizeof(OUTPUT_TYPE) - 1)
 #define COMMAND_VERSION_LEN (sizeof(COMMAND_VERSION) - 1)
 #define REQUEST_ID_LEN      (sizeof(REQUEST_ID) - 1)
+#define PRETTY_LEN          (sizeof(PRETTY) - 1)
 
 #define HTTP_QUERY_PAIR_DELIMITER   "="
 #define HTTP_QUERY_PAIRS_DELIMITERS "&;"
@@ -1417,6 +1419,16 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
           p = grn_text_cgidec(ctx, &request_id, p, e,
                               HTTP_QUERY_PAIRS_DELIMITERS);
           if (ctx->rc) { goto exit; }
+        } else if (l == PRETTY_LEN &&
+                   !memcmp(v, PRETTY, PRETTY_LEN)) {
+          GRN_BULK_REWIND(&buf);
+          p = grn_text_cgidec(ctx, &buf, p, e, HTTP_QUERY_PAIRS_DELIMITERS);
+          if (GRN_TEXT_LEN(&buf) == strlen("yes") &&
+              !memcmp(GRN_TEXT_VALUE(&buf), "yes", GRN_TEXT_LEN(&buf))) {
+            ctx->impl->output.is_pretty = GRN_TRUE;
+          } else {
+            ctx->impl->output.is_pretty = GRN_FALSE;
+          }
         } else {
           if (!(val = grn_expr_get_or_add_var(ctx, expr, v, l))) {
             val = &buf;
@@ -1496,6 +1508,16 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
           GRN_BULK_REWIND(&request_id);
           p = grn_text_unesc_tok(ctx, &request_id, p, e, &tok_type);
           if (ctx->rc) { goto exit; }
+        } else if (l == PRETTY_LEN &&
+                   !memcmp(v, PRETTY, PRETTY_LEN)) {
+          GRN_BULK_REWIND(&buf);
+          p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
+          if (GRN_TEXT_LEN(&buf) == strlen("yes") &&
+              !memcmp(GRN_TEXT_VALUE(&buf), "yes", GRN_TEXT_LEN(&buf))) {
+            ctx->impl->output.is_pretty = GRN_TRUE;
+          } else {
+            ctx->impl->output.is_pretty = GRN_FALSE;
+          }
         } else if (expr && (val = grn_expr_get_or_add_var(ctx, expr, v, l))) {
           grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
           p = grn_text_unesc_tok(ctx, val, p, e, &tok_type);
@@ -1619,6 +1641,7 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
         if (comment_command_p(str, str_len)) { goto output; };
         ctx->impl->output.type = GRN_CONTENT_JSON;
         ctx->impl->output.mime_type = "application/json";
+        ctx->impl->output.is_pretty = GRN_FALSE;
         grn_timeval_now(ctx, &ctx->impl->tv);
         GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_COMMAND,
                       ">", "%.*s", str_len, str);

@@ -32,13 +32,30 @@
 #define INCR_LENGTH (DEPTH ? (GRN_UINT32_VALUE_AT(LEVELS, (DEPTH - 1)) += 2) : 0)
 
 static void
+indent(grn_ctx *ctx, grn_obj *outbuf, int level)
+{
+  int i;
+  for (i = 0; i < level; i++) {
+    GRN_TEXT_PUTS(ctx, outbuf, "  ");
+  }
+}
+
+static void
 put_delimiter(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type)
 {
   uint32_t level = CURR_LEVEL;
   switch (output_type) {
   case GRN_CONTENT_JSON:
     if (level < 2) { return; }
-    GRN_TEXT_PUTC(ctx, outbuf, ((level & 3) == 3) ? ':' : ',');
+    if ((level & 3) == 3) {
+      GRN_TEXT_PUTC(ctx, outbuf, ':');
+    } else {
+      GRN_TEXT_PUTC(ctx, outbuf, ',');
+      if (ctx->impl->output.is_pretty) {
+        GRN_TEXT_PUTC(ctx, outbuf, '\n');
+        indent(ctx, outbuf, DEPTH);
+      }
+    }
     // if (DEPTH == 1 && ((level & 3) != 3)) { GRN_TEXT_PUTC(ctx, outbuf, '\n'); }
     break;
   case GRN_CONTENT_XML:
@@ -70,6 +87,10 @@ grn_output_array_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_typ
   switch (output_type) {
   case GRN_CONTENT_JSON:
     GRN_TEXT_PUTC(ctx, outbuf, '[');
+    if (ctx->impl->output.is_pretty) {
+      GRN_TEXT_PUTC(ctx, outbuf, '\n');
+      indent(ctx, outbuf, DEPTH + 1);
+    }
     break;
   case GRN_CONTENT_XML:
     GRN_TEXT_PUTC(ctx, outbuf, '<');
@@ -107,6 +128,10 @@ grn_output_array_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_ty
 {
   switch (output_type) {
   case GRN_CONTENT_JSON:
+    if (ctx->impl->output.is_pretty) {
+      GRN_TEXT_PUTC(ctx, outbuf, '\n');
+      indent(ctx, outbuf, DEPTH - 1);
+    }
     GRN_TEXT_PUTC(ctx, outbuf, ']');
     break;
   case GRN_CONTENT_TSV:
@@ -1848,39 +1873,112 @@ grn_output_envelope(grn_ctx *ctx,
       GRN_TEXT_PUT(ctx, head, GRN_TEXT_VALUE(jsonp_func), GRN_TEXT_LEN(jsonp_func));
       GRN_TEXT_PUTC(ctx, head, '(');
     }
-    GRN_TEXT_PUTS(ctx, head, "[[");
-    grn_text_itoa(ctx, head, rc);
-    GRN_TEXT_PUTC(ctx, head, ',');
-    grn_text_ftoa(ctx, head, started);
-    GRN_TEXT_PUTC(ctx, head, ',');
-    grn_text_ftoa(ctx, head, elapsed);
+    if (ctx->impl->output.is_pretty) {
+      grn_text_printf(ctx, head,
+                      "[\n"
+                      "[\n"
+                      "  %d,\n"
+                      "  %f,\n"
+                      "  %f",
+                      rc, started, elapsed);
+    } else {
+      grn_text_printf(ctx, head,
+                      "[[%d,%f,%f",
+                      rc, started, elapsed);
+    }
     if (rc != GRN_SUCCESS) {
       GRN_TEXT_PUTC(ctx, head, ',');
+      if (ctx->impl->output.is_pretty) {
+        GRN_TEXT_PUTS(ctx, head,
+                      "\n"
+                      "  ");
+      }
       grn_text_esc(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
       if (ctx->errfunc && ctx->errfile) {
         grn_obj *command;
-        /* TODO: output backtrace */
-        GRN_TEXT_PUTS(ctx, head, ",[[");
+        if (ctx->impl->output.is_pretty) {
+          GRN_TEXT_PUTS(ctx, head,
+                        ",\n"
+                        "  [\n"
+                        "    [\n"
+                        "      ");
+        } else {
+          GRN_TEXT_PUTS(ctx, head, ",[[");
+        }
         grn_text_esc(ctx, head, ctx->errfunc, strlen(ctx->errfunc));
         GRN_TEXT_PUTC(ctx, head, ',');
+        if (ctx->impl->output.is_pretty) {
+          GRN_TEXT_PUTS(ctx, head,
+                        "\n"
+                        "      ");
+        }
         grn_text_esc(ctx, head, ctx->errfile, strlen(ctx->errfile));
         GRN_TEXT_PUTC(ctx, head, ',');
+        if (ctx->impl->output.is_pretty) {
+          GRN_TEXT_PUTS(ctx, head,
+                        "\n"
+                        "      ");
+        }
         grn_text_itoa(ctx, head, ctx->errline);
+        if (ctx->impl->output.is_pretty) {
+          GRN_TEXT_PUTS(ctx, head,
+                        "\n"
+                        "    ");
+        }
         GRN_TEXT_PUTS(ctx, head, "]");
         if (file && (command = GRN_CTX_USER_DATA(ctx)->ptr)) {
-          GRN_TEXT_PUTS(ctx, head, ",[");
+          if (ctx->impl->output.is_pretty) {
+            GRN_TEXT_PUTS(ctx, head,
+                          ",\n"
+                          "    [\n"
+                          "      ");
+          } else {
+            GRN_TEXT_PUTS(ctx, head, ",[");
+          }
           grn_text_esc(ctx, head, file, strlen(file));
           GRN_TEXT_PUTC(ctx, head, ',');
+          if (ctx->impl->output.is_pretty) {
+            GRN_TEXT_PUTS(ctx, head,
+                          "\n"
+                          "      ");
+          }
           grn_text_itoa(ctx, head, line);
           GRN_TEXT_PUTC(ctx, head, ',');
+          if (ctx->impl->output.is_pretty) {
+            GRN_TEXT_PUTS(ctx, head,
+                          "\n"
+                          "      ");
+          }
           grn_text_esc(ctx, head, GRN_TEXT_VALUE(command), GRN_TEXT_LEN(command));
+          if (ctx->impl->output.is_pretty) {
+            GRN_TEXT_PUTS(ctx, head,
+                          "\n"
+                          "    ");
+          }
           GRN_TEXT_PUTS(ctx, head, "]");
+        }
+        if (ctx->impl->output.is_pretty) {
+          GRN_TEXT_PUTS(ctx, head,
+                        "\n"
+                        "  ");
         }
         GRN_TEXT_PUTS(ctx, head, "]");
       }
     }
+    if (ctx->impl->output.is_pretty) {
+      GRN_TEXT_PUTC(ctx, head, '\n');
+    }
     GRN_TEXT_PUTC(ctx, head, ']');
-    if (GRN_TEXT_LEN(body)) { GRN_TEXT_PUTC(ctx, head, ','); }
+    if (GRN_TEXT_LEN(body)) {
+      GRN_TEXT_PUTC(ctx, head, ',');
+      if (ctx->impl->output.is_pretty) {
+        GRN_TEXT_PUTC(ctx, head, '\n');
+      }
+    }
+
+    if (ctx->impl->output.is_pretty) {
+      GRN_TEXT_PUTS(ctx, foot, "\n");
+    }
     GRN_TEXT_PUTC(ctx, foot, ']');
     if (jsonp_func && GRN_TEXT_LEN(jsonp_func)) {
       GRN_TEXT_PUTS(ctx, foot, ");");
