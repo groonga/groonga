@@ -898,8 +898,8 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
   uint32_t nkeys, nhits;
   uint16_t cacheable = 1, taintable = 0;
   grn_table_sort_key *keys;
-  grn_obj *outbuf = ctx->impl->outbuf;
-  grn_content_type output_type = ctx->impl->output_type;
+  grn_obj *outbuf = ctx->impl->output.buf;
+  grn_content_type output_type = ctx->impl->output.type;
   grn_obj *table_, *match_columns_ = NULL, *cond = NULL, *scorer_, *res = NULL, *sorted;
   char cache_key[GRN_CACHE_MAX_KEY_SIZE];
   uint32_t cache_key_size;
@@ -1012,7 +1012,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
   if ((table_ = grn_ctx_get(ctx, table, table_len))) {
     // match_columns_ = grn_obj_column(ctx, table_, match_columns, match_columns_len);
     if (filter_len && (filter[0] == '?') &&
-        (ctx->impl->output_type == GRN_CONTENT_JSON)) {
+        (ctx->impl->output.type == GRN_CONTENT_JSON)) {
       ctx->rc = grn_ts_select(ctx, table_, filter + 1, filter_len - 1,
                               scorer, scorer_len,
                               output_columns, output_columns_len,
@@ -2457,7 +2457,7 @@ static grn_obj *
 proc_missing(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   uint32_t plen;
-  grn_obj *outbuf = ctx->impl->outbuf;
+  grn_obj *outbuf = ctx->impl->output.buf;
   static int grn_document_root_len = -1;
   if (!grn_document_root) { return NULL; }
   if (grn_document_root_len < 0) {
@@ -3608,7 +3608,7 @@ bool_option_value(grn_obj *option, grn_bool default_value)
 static grn_obj *
 proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_obj *outbuf = ctx->impl->outbuf;
+  grn_obj *outbuf = ctx->impl->output.buf;
   grn_obj *tables = VAR(0);
   grn_obj *dump_plugins_raw = VAR(1);
   grn_obj *dump_schema_raw = VAR(2);

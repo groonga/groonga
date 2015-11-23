@@ -2117,18 +2117,18 @@ g_output(grn_ctx *ctx, int flags, void *arg)
 {
   grn_edge *edge = arg;
   grn_com *com = edge->com;
-  grn_msg *req = edge->msg, *msg = (grn_msg *)ctx->impl->outbuf;
+  grn_msg *req = edge->msg, *msg = (grn_msg *)ctx->impl->output.buf;
   msg->edge_id = req->edge_id;
   msg->header.proto = req->header.proto == GRN_COM_PROTO_MBREQ
     ? GRN_COM_PROTO_MBRES : req->header.proto;
-  if (ctx->rc != GRN_SUCCESS && GRN_BULK_VSIZE(ctx->impl->outbuf) == 0) {
-    GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, ctx->errbuf);
+  if (ctx->rc != GRN_SUCCESS && GRN_BULK_VSIZE(ctx->impl->output.buf) == 0) {
+    GRN_TEXT_PUTS(ctx, ctx->impl->output.buf, ctx->errbuf);
   }
   if (grn_msg_send(ctx, (grn_obj *)msg,
                    (flags & GRN_CTX_MORE) ? GRN_CTX_MORE : GRN_CTX_TAIL)) {
     edge->stat = EDGE_ABORT;
   }
-  ctx->impl->outbuf = grn_msg_open(ctx, com, &edge->send_old);
+  ctx->impl->output.buf = grn_msg_open(ctx, com, &edge->send_old);
 }
 
 static void
@@ -2160,8 +2160,9 @@ g_handler(grn_ctx *ctx, grn_obj *msg)
       grn_ctx_use(&edge->ctx, (grn_obj *)com->ev->opaque);
       grn_ctx_recv_handler_set(&edge->ctx, g_output, edge);
       com->opaque = edge;
-      grn_obj_close(&edge->ctx, edge->ctx.impl->outbuf);
-      edge->ctx.impl->outbuf = grn_msg_open(&edge->ctx, com, &edge->send_old);
+      grn_obj_close(&edge->ctx, edge->ctx.impl->output.buf);
+      edge->ctx.impl->output.buf =
+        grn_msg_open(&edge->ctx, com, &edge->send_old);
       edge->com = com;
       edge->stat = EDGE_IDLE;
       edge->flags = GRN_EDGE_WORKER;

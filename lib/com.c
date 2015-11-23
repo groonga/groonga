@@ -201,7 +201,7 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
       {
         if ((flags & GRN_CTX_MORE)) { flags |= GRN_CTX_QUIET; }
         if (ctx->stat == GRN_CTX_QUIT) { flags |= GRN_CTX_QUIT; }
-        header->qtype = (uint8_t) ctx->impl->output_type;
+        header->qtype = (uint8_t) ctx->impl->output.type;
         header->keylen = 0;
         header->level = 0;
         header->flags = flags;

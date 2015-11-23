@@ -227,7 +227,7 @@ ctx_get_output(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
 
-  return grn_mrb_value_from_bulk(mrb, ctx->impl->outbuf);
+  return grn_mrb_value_from_bulk(mrb, ctx->impl->output.buf);
 }
 
 static mrb_value
@@ -237,7 +237,7 @@ ctx_set_output(mrb_state *mrb, mrb_value self)
   mrb_value mrb_value_;
 
   mrb_get_args(mrb, "S", &mrb_value_);
-  GRN_TEXT_SET(ctx, ctx->impl->outbuf,
+  GRN_TEXT_SET(ctx, ctx->impl->output.buf,
                RSTRING_PTR(mrb_value_),
                RSTRING_LEN(mrb_value_));
 

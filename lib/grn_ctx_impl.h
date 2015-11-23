@@ -155,10 +155,23 @@ struct _grn_ctx_impl {
   const char *plugin_path;
 
   /* output portion */
-  grn_content_type output_type;
-  const char *mime_type;
-  grn_obj names;
-  grn_obj levels;
+  struct {
+    grn_obj *buf;
+    void (*func)(grn_ctx *, int, void *);
+    union {
+      void *ptr;
+      int fd;
+      uint32_t u32;
+      uint64_t u64;
+    } data;
+    grn_content_type type;
+    const char *mime_type;
+    grn_obj names;
+    grn_obj levels;
+#ifdef GRN_WITH_MESSAGE_PACK
+    msgpack_packer msgpacker;
+#endif
+  } output;
 
   /* command portion */
   grn_command_version command_version;
@@ -173,25 +186,14 @@ struct _grn_ctx_impl {
   grn_array *values;        /* temporary objects */
   grn_pat *temporary_columns;
   grn_hash *ios;        /* IOs */
-  grn_obj *outbuf;
-  void (*output)(grn_ctx *, int, void *);
   grn_com *com;
   unsigned int com_status;
-  union {
-    void *ptr;
-    int fd;
-    uint32_t u32;
-    uint64_t u64;
-  } data;
 
   grn_obj query_log_buf;
 
   char previous_errbuf[GRN_CTX_MSGSIZE];
   unsigned int n_same_error_messages;
 
-#ifdef GRN_WITH_MESSAGE_PACK
-  msgpack_packer msgpacker;
-#endif
 #ifdef GRN_WITH_MRUBY
   grn_mrb_data mrb;
 #endif

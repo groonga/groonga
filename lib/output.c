@@ -24,7 +24,7 @@
 #include "grn_util.h"
 #include "grn_output.h"
 
-#define LEVELS (&ctx->impl->levels)
+#define LEVELS (&ctx->impl->output.levels)
 #define DEPTH (GRN_BULK_VSIZE(LEVELS)>>2)
 #define CURR_LEVEL (DEPTH ? (GRN_UINT32_VALUE_AT(LEVELS, (DEPTH - 1))) : 0)
 #define INCR_DEPTH(i) GRN_UINT32_PUT(ctx, LEVELS, i)
@@ -75,7 +75,10 @@ grn_output_array_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_typ
     GRN_TEXT_PUTC(ctx, outbuf, '<');
     GRN_TEXT_PUTS(ctx, outbuf, name);
     GRN_TEXT_PUTC(ctx, outbuf, '>');
-    grn_vector_add_element(ctx, &ctx->impl->names, name, strlen(name), 0, GRN_DB_SHORT_TEXT);
+    grn_vector_add_element(ctx,
+                           &ctx->impl->output.names,
+                           name, strlen(name),
+                           0, GRN_DB_SHORT_TEXT);
     break;
   case GRN_CONTENT_TSV:
     if (DEPTH > 2) { GRN_TEXT_PUTS(ctx, outbuf, "[\t"); }
@@ -88,7 +91,7 @@ grn_output_array_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_typ
               nelements,
               name);
     }
-    msgpack_pack_array(&ctx->impl->msgpacker, nelements);
+    msgpack_pack_array(&ctx->impl->output.msgpacker, nelements);
 #endif
     break;
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
@@ -115,7 +118,10 @@ grn_output_array_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_ty
   case GRN_CONTENT_XML:
     {
       const char *name;
-      unsigned int name_len = grn_vector_pop_element(ctx, &ctx->impl->names, &name, NULL, NULL);
+      unsigned int name_len;
+      name_len = grn_vector_pop_element(ctx,
+                                        &ctx->impl->output.names,
+                                        &name, NULL, NULL);
       GRN_TEXT_PUTS(ctx, outbuf, "</");
       GRN_TEXT_PUT(ctx, outbuf, name, name_len);
       GRN_TEXT_PUTC(ctx, outbuf, '>');
@@ -146,7 +152,9 @@ grn_output_map_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     GRN_TEXT_PUTC(ctx, outbuf, '<');
     GRN_TEXT_PUTS(ctx, outbuf, name);
     GRN_TEXT_PUTC(ctx, outbuf, '>');
-    grn_vector_add_element(ctx, &ctx->impl->names, name, strlen(name), 0, GRN_DB_SHORT_TEXT);
+    grn_vector_add_element(ctx,
+                           &ctx->impl->output.names,
+                           name, strlen(name), 0, GRN_DB_SHORT_TEXT);
     break;
   case GRN_CONTENT_TSV:
     if (DEPTH > 2) { GRN_TEXT_PUTS(ctx, outbuf, "{\t"); }
@@ -159,7 +167,7 @@ grn_output_map_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
               nelements,
               name);
     }
-    msgpack_pack_map(&ctx->impl->msgpacker, nelements);
+    msgpack_pack_map(&ctx->impl->output.msgpacker, nelements);
 #endif
     break;
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
@@ -186,7 +194,10 @@ grn_output_map_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type
   case GRN_CONTENT_XML:
     {
       const char *name;
-      unsigned int name_len = grn_vector_pop_element(ctx, &ctx->impl->names, &name, NULL, NULL);
+      unsigned int name_len;
+      name_len = grn_vector_pop_element(ctx,
+                                        &ctx->impl->output.names,
+                                        &name, NULL, NULL);
       GRN_TEXT_PUTS(ctx, outbuf, "</");
       GRN_TEXT_PUT(ctx, outbuf, name, name_len);
       GRN_TEXT_PUTC(ctx, outbuf, '>');
@@ -222,7 +233,7 @@ grn_output_int32(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, in
     break;
   case GRN_CONTENT_MSGPACK :
 #ifdef GRN_WITH_MESSAGE_PACK
-    msgpack_pack_int32(&ctx->impl->msgpacker, value);
+    msgpack_pack_int32(&ctx->impl->output.msgpacker, value);
 #endif
     break;
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
@@ -252,7 +263,7 @@ grn_output_int64(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, in
     break;
   case GRN_CONTENT_MSGPACK :
 #ifdef GRN_WITH_MESSAGE_PACK
-    msgpack_pack_int64(&ctx->impl->msgpacker, value);
+    msgpack_pack_int64(&ctx->impl->output.msgpacker, value);
 #endif
     break;
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
@@ -282,7 +293,7 @@ grn_output_uint64(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, u
     break;
   case GRN_CONTENT_MSGPACK :
 #ifdef GRN_WITH_MESSAGE_PACK
-    msgpack_pack_uint64(&ctx->impl->msgpacker, value);
+    msgpack_pack_uint64(&ctx->impl->output.msgpacker, value);
 #endif
     break;
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
@@ -312,7 +323,7 @@ grn_output_float(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, do
     break;
   case GRN_CONTENT_MSGPACK :
 #ifdef GRN_WITH_MESSAGE_PACK
-    msgpack_pack_double(&ctx->impl->msgpacker, value);
+    msgpack_pack_double(&ctx->impl->output.msgpacker, value);
 #endif
     break;
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
@@ -343,8 +354,8 @@ grn_output_str(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     break;
   case GRN_CONTENT_MSGPACK :
 #ifdef GRN_WITH_MESSAGE_PACK
-    msgpack_pack_str(&ctx->impl->msgpacker, value_len);
-    msgpack_pack_str_body(&ctx->impl->msgpacker, value, value_len);
+    msgpack_pack_str(&ctx->impl->output.msgpacker, value_len);
+    msgpack_pack_str_body(&ctx->impl->output.msgpacker, value, value_len);
 #endif
     break;
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
@@ -382,9 +393,9 @@ grn_output_bool(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, grn
   case GRN_CONTENT_MSGPACK :
 #ifdef GRN_WITH_MESSAGE_PACK
     if (value) {
-      msgpack_pack_true(&ctx->impl->msgpacker);
+      msgpack_pack_true(&ctx->impl->output.msgpacker);
     } else {
-      msgpack_pack_false(&ctx->impl->msgpacker);
+      msgpack_pack_false(&ctx->impl->output.msgpacker);
     }
 #endif
     break;
@@ -412,7 +423,7 @@ grn_output_null(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type)
     break;
   case GRN_CONTENT_MSGPACK :
 #ifdef GRN_WITH_MESSAGE_PACK
-    msgpack_pack_nil(&ctx->impl->msgpacker);
+    msgpack_pack_nil(&ctx->impl->output.msgpacker);
 #endif
     break;
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
@@ -454,7 +465,7 @@ grn_output_time(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, int
     break;
   case GRN_CONTENT_MSGPACK :
 #ifdef GRN_WITH_MESSAGE_PACK
-    msgpack_pack_double(&ctx->impl->msgpacker, dv);
+    msgpack_pack_double(&ctx->impl->output.msgpacker, dv);
 #endif
     break;
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
@@ -511,13 +522,13 @@ grn_output_geo_point(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type
       grn_text_itoa(ctx, &buf, value->latitude);
       GRN_TEXT_PUTC(ctx, &buf, 'x');
       grn_text_itoa(ctx, &buf, value->longitude);
-      msgpack_pack_str(&ctx->impl->msgpacker, GRN_TEXT_LEN(&buf));
-      msgpack_pack_str_body(&ctx->impl->msgpacker,
+      msgpack_pack_str(&ctx->impl->output.msgpacker, GRN_TEXT_LEN(&buf));
+      msgpack_pack_str_body(&ctx->impl->output.msgpacker,
                             GRN_TEXT_VALUE(&buf),
                             GRN_TEXT_LEN(&buf));
       grn_obj_close(ctx, &buf);
     } else {
-      msgpack_pack_nil(&ctx->impl->msgpacker);
+      msgpack_pack_nil(&ctx->impl->output.msgpacker);
     }
 #endif
     break;
@@ -1826,7 +1837,7 @@ grn_output_envelope(grn_ctx *ctx,
   finished += tv_now.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
   elapsed = finished - started;
 
-  switch (ctx->impl->output_type) {
+  switch (ctx->impl->output.type) {
   case GRN_CONTENT_JSON:
     expr = ctx->impl->curr_expr;
     if (expr) {

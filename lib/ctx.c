@@ -528,7 +528,7 @@ static int
 grn_msgpack_buffer_write(void *data, const char *buf, msgpack_size_t len)
 {
   grn_ctx *ctx = (grn_ctx *)data;
-  return grn_bulk_write(ctx, ctx->impl->outbuf, buf, len);
+  return grn_bulk_write(ctx, ctx->impl->output.buf, buf, len);
 }
 #endif
 
@@ -585,8 +585,8 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->qe_next = NULL;
   ctx->impl->parser = NULL;
 
-  GRN_TEXT_INIT(&ctx->impl->names, GRN_OBJ_VECTOR);
-  GRN_UINT32_INIT(&ctx->impl->levels, GRN_OBJ_VECTOR);
+  GRN_TEXT_INIT(&ctx->impl->output.names, GRN_OBJ_VECTOR);
+  GRN_UINT32_INIT(&ctx->impl->output.levels, GRN_OBJ_VECTOR);
 
   if (ctx == &grn_gctx) {
     ctx->impl->command_version = GRN_COMMAND_VERSION_STABLE;
@@ -605,9 +605,13 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->finalizer = NULL;
 
   ctx->impl->com = NULL;
-  ctx->impl->outbuf = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_TEXT);
-  ctx->impl->output = NULL;
-  ctx->impl->data.ptr = NULL;
+  ctx->impl->output.buf = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_TEXT);
+  ctx->impl->output.func = NULL;
+  ctx->impl->output.data.ptr = NULL;
+#ifdef GRN_WITH_MESSAGE_PACK
+  msgpack_packer_init(&ctx->impl->output.msgpacker,
+                      ctx, grn_msgpack_buffer_write);
+#endif
   ctx->impl->tv.tv_sec = 0;
   ctx->impl->tv.tv_nsec = 0;
   ctx->impl->edge = NULL;
@@ -618,10 +622,6 @@ grn_ctx_impl_init(grn_ctx *ctx)
 
   ctx->impl->previous_errbuf[0] = '\0';
   ctx->impl->n_same_error_messages = 0;
-
-#ifdef GRN_WITH_MESSAGE_PACK
-  msgpack_packer_init(&ctx->impl->msgpacker, ctx, grn_msgpack_buffer_write);
-#endif
 
   grn_ctx_impl_mrb_init(ctx);
 
@@ -787,10 +787,10 @@ grn_ctx_fin(grn_ctx *ctx)
       grn_ctx_send(ctx, "ACK", 3, GRN_CTX_HEAD);
       rc = grn_com_close(ctx, ctx->impl->com);
     }
-    GRN_OBJ_FIN(ctx, &ctx->impl->names);
-    GRN_OBJ_FIN(ctx, &ctx->impl->levels);
     GRN_OBJ_FIN(ctx, &ctx->impl->query_log_buf);
-    rc = grn_obj_close(ctx, ctx->impl->outbuf);
+    GRN_OBJ_FIN(ctx, &ctx->impl->output.names);
+    GRN_OBJ_FIN(ctx, &ctx->impl->output.levels);
+    rc = grn_obj_close(ctx, ctx->impl->output.buf);
     {
       grn_hash **vp;
       grn_obj *value;
@@ -1154,7 +1154,7 @@ grn_content_type
 grn_ctx_get_output_type(grn_ctx *ctx)
 {
   if (ctx->impl) {
-    return ctx->impl->output_type;
+    return ctx->impl->output.type;
   } else {
     return GRN_CONTENT_NONE;
   }
@@ -1166,25 +1166,25 @@ grn_ctx_set_output_type(grn_ctx *ctx, grn_content_type type)
   grn_rc rc = GRN_SUCCESS;
 
   if (ctx->impl) {
-    ctx->impl->output_type = type;
-    switch (ctx->impl->output_type) {
+    ctx->impl->output.type = type;
+    switch (ctx->impl->output.type) {
     case GRN_CONTENT_NONE :
-      ctx->impl->mime_type = "application/octet-stream";
+      ctx->impl->output.mime_type = "application/octet-stream";
       break;
     case GRN_CONTENT_TSV :
-      ctx->impl->mime_type = "text/tab-separated-values";
+      ctx->impl->output.mime_type = "text/tab-separated-values";
       break;
     case GRN_CONTENT_JSON :
-      ctx->impl->mime_type = "application/json";
+      ctx->impl->output.mime_type = "application/json";
       break;
     case GRN_CONTENT_XML :
-      ctx->impl->mime_type = "text/xml";
+      ctx->impl->output.mime_type = "text/xml";
       break;
     case GRN_CONTENT_MSGPACK :
-      ctx->impl->mime_type = "application/x-msgpack";
+      ctx->impl->output.mime_type = "application/x-msgpack";
       break;
     case GRN_CONTENT_GROONGA_COMMAND_LIST :
-      ctx->impl->mime_type = "text/x-groonga-command-list";
+      ctx->impl->output.mime_type = "text/x-groonga-command-list";
       break;
     }
   } else {
@@ -1198,7 +1198,7 @@ const char *
 grn_ctx_get_mime_type(grn_ctx *ctx)
 {
   if (ctx->impl) {
-    return ctx->impl->mime_type;
+    return ctx->impl->output.mime_type;
   } else {
     return NULL;
   }
@@ -1249,70 +1249,70 @@ grn_get_ctype(grn_obj *var)
 static void
 get_content_mime_type(grn_ctx *ctx, const char *p, const char *pe)
 {
-  ctx->impl->output_type = GRN_CONTENT_NONE;
-  ctx->impl->mime_type = "application/octet-stream";
+  ctx->impl->output.type = GRN_CONTENT_NONE;
+  ctx->impl->output.mime_type = "application/octet-stream";
 
   if (p + 2 <= pe) {
     switch (*p) {
     case 'c' :
       if (p + 3 == pe && !memcmp(p, "css", 3)) {
-        ctx->impl->output_type = GRN_CONTENT_NONE;
-        ctx->impl->mime_type = "text/css";
+        ctx->impl->output.type = GRN_CONTENT_NONE;
+        ctx->impl->output.mime_type = "text/css";
       }
       break;
     case 'g' :
       if (p + 3 == pe && !memcmp(p, "gif", 3)) {
-        ctx->impl->output_type = GRN_CONTENT_NONE;
-        ctx->impl->mime_type = "image/gif";
+        ctx->impl->output.type = GRN_CONTENT_NONE;
+        ctx->impl->output.mime_type = "image/gif";
       }
       break;
     case 'h' :
       if (p + 4 == pe && !memcmp(p, "html", 4)) {
-        ctx->impl->output_type = GRN_CONTENT_NONE;
-        ctx->impl->mime_type = "text/html";
+        ctx->impl->output.type = GRN_CONTENT_NONE;
+        ctx->impl->output.mime_type = "text/html";
       }
       break;
     case 'j' :
       if (!memcmp(p, "js", 2)) {
         if (p + 2 == pe) {
-          ctx->impl->output_type = GRN_CONTENT_NONE;
-          ctx->impl->mime_type = "text/javascript";
+          ctx->impl->output.type = GRN_CONTENT_NONE;
+          ctx->impl->output.mime_type = "text/javascript";
         } else if (p + 4 == pe && !memcmp(p + 2, "on", 2)) {
-          ctx->impl->output_type = GRN_CONTENT_JSON;
-          ctx->impl->mime_type = "application/json";
+          ctx->impl->output.type = GRN_CONTENT_JSON;
+          ctx->impl->output.mime_type = "application/json";
         }
       } else if (p + 3 == pe && !memcmp(p, "jpg", 3)) {
-        ctx->impl->output_type = GRN_CONTENT_NONE;
-        ctx->impl->mime_type = "image/jpeg";
+        ctx->impl->output.type = GRN_CONTENT_NONE;
+        ctx->impl->output.mime_type = "image/jpeg";
       }
       break;
 #ifdef GRN_WITH_MESSAGE_PACK
     case 'm' :
       if (p + 7 == pe && !memcmp(p, "msgpack", 7)) {
-        ctx->impl->output_type = GRN_CONTENT_MSGPACK;
-        ctx->impl->mime_type = "application/x-msgpack";
+        ctx->impl->output.type = GRN_CONTENT_MSGPACK;
+        ctx->impl->output.mime_type = "application/x-msgpack";
       }
       break;
 #endif
     case 'p' :
       if (p + 3 == pe && !memcmp(p, "png", 3)) {
-        ctx->impl->output_type = GRN_CONTENT_NONE;
-        ctx->impl->mime_type = "image/png";
+        ctx->impl->output.type = GRN_CONTENT_NONE;
+        ctx->impl->output.mime_type = "image/png";
       }
       break;
     case 't' :
       if (p + 3 == pe && !memcmp(p, "txt", 3)) {
-        ctx->impl->output_type = GRN_CONTENT_NONE;
-        ctx->impl->mime_type = "text/plain";
+        ctx->impl->output.type = GRN_CONTENT_NONE;
+        ctx->impl->output.mime_type = "text/plain";
       } else if (p + 3 == pe && !memcmp(p, "tsv", 3)) {
-        ctx->impl->output_type = GRN_CONTENT_TSV;
-        ctx->impl->mime_type = "text/tab-separated-values";
+        ctx->impl->output.type = GRN_CONTENT_TSV;
+        ctx->impl->output.mime_type = "text/tab-separated-values";
       }
       break;
     case 'x':
       if (p + 3 == pe && !memcmp(p, "xml", 3)) {
-        ctx->impl->output_type = GRN_CONTENT_XML;
-        ctx->impl->mime_type = "text/xml";
+        ctx->impl->output.type = GRN_CONTENT_XML;
+        ctx->impl->output.mime_type = "text/xml";
       }
       break;
     }
@@ -1617,8 +1617,8 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
         grn_expr_exec(ctx, expr, 0);
       } else {
         if (comment_command_p(str, str_len)) { goto output; };
-        ctx->impl->mime_type = "application/json";
-        ctx->impl->output_type = GRN_CONTENT_JSON;
+        ctx->impl->output.type = GRN_CONTENT_JSON;
+        ctx->impl->output.mime_type = "application/json";
         grn_timeval_now(ctx, &ctx->impl->tv);
         GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_COMMAND,
                       ">", "%.*s", str_len, str);
@@ -1637,8 +1637,8 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
       }
     output :
       if (!ERRP(ctx, GRN_CRIT)) {
-        if (!(flags & GRN_CTX_QUIET) && ctx->impl->output) {
-          ctx->impl->output(ctx, GRN_CTX_TAIL, ctx->impl->data.ptr);
+        if (!(flags & GRN_CTX_QUIET) && ctx->impl->output.func) {
+          ctx->impl->output.func(ctx, GRN_CTX_TAIL, ctx->impl->output.data.ptr);
         }
       }
       if (expr) { grn_expr_clear_vars(ctx, expr); }
@@ -1664,20 +1664,20 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
   if (ctx->impl) {
     if (ctx->impl->com) {
       grn_com_header header;
-      if (grn_com_recv(ctx, ctx->impl->com, &header, ctx->impl->outbuf)) {
+      if (grn_com_recv(ctx, ctx->impl->com, &header, ctx->impl->output.buf)) {
         *str = NULL;
         *str_len = 0;
         *flags = 0;
       } else {
-        *str = GRN_BULK_HEAD(ctx->impl->outbuf);
-        *str_len = GRN_BULK_VSIZE(ctx->impl->outbuf);
+        *str = GRN_BULK_HEAD(ctx->impl->output.buf);
+        *str_len = GRN_BULK_VSIZE(ctx->impl->output.buf);
         if (header.flags & GRN_CTX_QUIT) {
           ctx->stat = GRN_CTX_QUIT;
           *flags = GRN_CTX_QUIT;
         } else {
           *flags = (header.flags & GRN_CTX_TAIL) ? 0 : GRN_CTX_MORE;
         }
-        ctx->impl->output_type = header.qtype;
+        ctx->impl->output.type = header.qtype;
         ctx->rc = (int16_t)ntohs(header.status);
         ctx->errbuf[0] = '\0';
         ctx->errline = 0;
@@ -1686,11 +1686,11 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
       }
       goto exit;
     } else {
-      grn_obj *buf = ctx->impl->outbuf;
+      grn_obj *buf = ctx->impl->output.buf;
       unsigned int head = 0, tail = GRN_BULK_VSIZE(buf);
       *str = GRN_BULK_HEAD(buf) + head;
       *str_len = tail - head;
-      GRN_BULK_REWIND(ctx->impl->outbuf);
+      GRN_BULK_REWIND(ctx->impl->output.buf);
       goto exit;
     }
   }
@@ -1703,7 +1703,7 @@ void
 grn_ctx_stream_out_func(grn_ctx *ctx, int flags, void *stream)
 {
   if (ctx && ctx->impl) {
-    grn_obj *buf = ctx->impl->outbuf;
+    grn_obj *buf = ctx->impl->output.buf;
     uint32_t size = GRN_BULK_VSIZE(buf);
     if (size) {
       if (fwrite(GRN_BULK_HEAD(buf), 1, size, (FILE *)stream)) {
@@ -1719,8 +1719,8 @@ void
 grn_ctx_recv_handler_set(grn_ctx *ctx, void (*func)(grn_ctx *, int, void *), void *func_arg)
 {
   if (ctx && ctx->impl) {
-    ctx->impl->output = func;
-    ctx->impl->data.ptr = func_arg;
+    ctx->impl->output.func = func;
+    ctx->impl->output.data.ptr = func_arg;
   }
 }
 
@@ -1731,12 +1731,12 @@ grn_ctx_info_get(grn_ctx *ctx, grn_ctx_info *info)
   if (ctx->impl->com) {
     info->fd = ctx->impl->com->fd;
     info->com_status = ctx->impl->com_status;
-    info->outbuf = ctx->impl->outbuf;
+    info->outbuf = ctx->impl->output.buf;
     info->stat = ctx->stat;
   } else {
     info->fd = -1;
     info->com_status = 0;
-    info->outbuf = ctx->impl->outbuf;
+    info->outbuf = ctx->impl->output.buf;
     info->stat = ctx->stat;
   }
   return GRN_SUCCESS;
@@ -2757,91 +2757,123 @@ grn_ctx_output_flush(grn_ctx *ctx, int flags)
   if (flags & GRN_CTX_QUIET) {
     return;
   }
-  if (!ctx->impl->output) {
+  if (!ctx->impl->output.func) {
     return;
   }
-  ctx->impl->output(ctx, 0, ctx->impl->data.ptr);
+  ctx->impl->output.func(ctx, 0, ctx->impl->output.data.ptr);
 }
 
 void
 grn_ctx_output_array_open(grn_ctx *ctx, const char *name, int nelements)
 {
-  grn_output_array_open(ctx, ctx->impl->outbuf, ctx->impl->output_type,
+  grn_output_array_open(ctx,
+                        ctx->impl->output.buf,
+                        ctx->impl->output.type,
                         name, nelements);
 }
 
 void
 grn_ctx_output_array_close(grn_ctx *ctx)
 {
-  grn_output_array_close(ctx, ctx->impl->outbuf, ctx->impl->output_type);
+  grn_output_array_close(ctx,
+                         ctx->impl->output.buf,
+                         ctx->impl->output.type);
 }
 
 void
 grn_ctx_output_map_open(grn_ctx *ctx, const char *name, int nelements)
 {
-  grn_output_map_open(ctx, ctx->impl->outbuf, ctx->impl->output_type,
+  grn_output_map_open(ctx,
+                      ctx->impl->output.buf,
+                      ctx->impl->output.type,
                       name, nelements);
 }
 
 void
 grn_ctx_output_map_close(grn_ctx *ctx)
 {
-  grn_output_map_close(ctx, ctx->impl->outbuf, ctx->impl->output_type);
+  grn_output_map_close(ctx,
+                       ctx->impl->output.buf,
+                       ctx->impl->output.type);
 }
 
 void
 grn_ctx_output_null(grn_ctx *ctx)
 {
-  grn_output_null(ctx, ctx->impl->outbuf, ctx->impl->output_type);
+  grn_output_null(ctx,
+                  ctx->impl->output.buf,
+                  ctx->impl->output.type);
 }
 
 void
 grn_ctx_output_int32(grn_ctx *ctx, int value)
 {
-  grn_output_int32(ctx, ctx->impl->outbuf, ctx->impl->output_type, value);
+  grn_output_int32(ctx,
+                   ctx->impl->output.buf,
+                   ctx->impl->output.type,
+                   value);
 }
 
 void
 grn_ctx_output_int64(grn_ctx *ctx, int64_t value)
 {
-  grn_output_int64(ctx, ctx->impl->outbuf, ctx->impl->output_type, value);
+  grn_output_int64(ctx,
+                   ctx->impl->output.buf,
+                   ctx->impl->output.type,
+                   value);
 }
 
 void
 grn_ctx_output_uint64(grn_ctx *ctx, uint64_t value)
 {
-  grn_output_uint64(ctx, ctx->impl->outbuf, ctx->impl->output_type, value);
+  grn_output_uint64(ctx,
+                    ctx->impl->output.buf,
+                    ctx->impl->output.type,
+                    value);
 }
 
 void
 grn_ctx_output_float(grn_ctx *ctx, double value)
 {
-  grn_output_float(ctx, ctx->impl->outbuf, ctx->impl->output_type, value);
+  grn_output_float(ctx,
+                   ctx->impl->output.buf,
+                   ctx->impl->output.type,
+                   value);
 }
 
 void
 grn_ctx_output_cstr(grn_ctx *ctx, const char *value)
 {
-  grn_output_cstr(ctx, ctx->impl->outbuf, ctx->impl->output_type, value);
+  grn_output_cstr(ctx,
+                  ctx->impl->output.buf,
+                  ctx->impl->output.type,
+                  value);
 }
 
 void
 grn_ctx_output_str(grn_ctx *ctx, const char *value, unsigned int value_len)
 {
-  grn_output_str(ctx, ctx->impl->outbuf, ctx->impl->output_type,
+  grn_output_str(ctx,
+                 ctx->impl->output.buf,
+                 ctx->impl->output.type,
                  value, value_len);
 }
 
 void
 grn_ctx_output_bool(grn_ctx *ctx, grn_bool value)
 {
-  grn_output_bool(ctx, ctx->impl->outbuf, ctx->impl->output_type, value);
+  grn_output_bool(ctx,
+                  ctx->impl->output.buf,
+                  ctx->impl->output.type,
+                  value);
 }
 
 void
 grn_ctx_output_obj(grn_ctx *ctx, grn_obj *value, grn_obj_format *format)
 {
-  grn_output_obj(ctx, ctx->impl->outbuf, ctx->impl->output_type,
+  grn_output_obj(ctx,
+                 ctx->impl->output.buf,
+                 ctx->impl->output.type,
                  value, format);
 }
 
@@ -2850,8 +2882,8 @@ grn_ctx_output_table_columns(grn_ctx *ctx, grn_obj *table,
                              grn_obj_format *format)
 {
   grn_output_table_columns(ctx,
-                           ctx->impl->outbuf,
-                           ctx->impl->output_type,
+                           ctx->impl->output.buf,
+                           ctx->impl->output.type,
                            table,
                            format);
 }
@@ -2861,8 +2893,8 @@ grn_ctx_output_table_records(grn_ctx *ctx, grn_obj *table,
                              grn_obj_format *format)
 {
   grn_output_table_records(ctx,
-                           ctx->impl->outbuf,
-                           ctx->impl->output_type,
+                           ctx->impl->output.buf,
+                           ctx->impl->output.type,
                            table,
                            format);
 }

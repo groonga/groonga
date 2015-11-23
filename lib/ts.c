@@ -43,9 +43,9 @@ static grn_rc
 grn_ts_bool_output(grn_ctx *ctx, grn_ts_bool value)
 {
   if (value) {
-    return grn_bulk_write(ctx, ctx->impl->outbuf, "true", 4);
+    return grn_bulk_write(ctx, ctx->impl->output.buf, "true", 4);
   } else {
-    return grn_bulk_write(ctx, ctx->impl->outbuf, "false", 5);
+    return grn_bulk_write(ctx, ctx->impl->output.buf, "false", 5);
   }
 }
 
@@ -53,62 +53,62 @@ grn_ts_bool_output(grn_ctx *ctx, grn_ts_bool value)
 static grn_rc
 grn_ts_int_output(grn_ctx *ctx, grn_ts_int value)
 {
-  return grn_text_lltoa(ctx, ctx->impl->outbuf, value);
+  return grn_text_lltoa(ctx, ctx->impl->output.buf, value);
 }
 
 /* grn_ts_float_output() outputs a value. */
 static grn_rc
 grn_ts_float_output(grn_ctx *ctx, grn_ts_float value)
 {
-  return grn_text_ftoa(ctx, ctx->impl->outbuf, value);
+  return grn_text_ftoa(ctx, ctx->impl->output.buf, value);
 }
 
 /* grn_ts_time_output() outputs a value. */
 static grn_rc
 grn_ts_time_output(grn_ctx *ctx, grn_ts_time value)
 {
-  return grn_text_ftoa(ctx, ctx->impl->outbuf, value * 0.000001);
+  return grn_text_ftoa(ctx, ctx->impl->output.buf, value * 0.000001);
 }
 
 /* grn_ts_text_output() outputs a value. */
 static grn_rc
 grn_ts_text_output(grn_ctx *ctx, grn_ts_text value)
 {
-  return grn_text_esc(ctx, ctx->impl->outbuf, value.ptr, value.size);
+  return grn_text_esc(ctx, ctx->impl->output.buf, value.ptr, value.size);
 }
 
 /* grn_ts_geo_output() outputs a value. */
 static grn_rc
 grn_ts_geo_output(grn_ctx *ctx, grn_ts_geo value)
 {
-  grn_rc rc = grn_bulk_write(ctx, ctx->impl->outbuf, "\"", 1);
+  grn_rc rc = grn_bulk_write(ctx, ctx->impl->output.buf, "\"", 1);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = grn_text_itoa(ctx, ctx->impl->outbuf, value.latitude);
+  rc = grn_text_itoa(ctx, ctx->impl->output.buf, value.latitude);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = grn_bulk_write(ctx, ctx->impl->outbuf, "x", 1);
+  rc = grn_bulk_write(ctx, ctx->impl->output.buf, "x", 1);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  rc = grn_text_itoa(ctx, ctx->impl->outbuf, value.longitude);
+  rc = grn_text_itoa(ctx, ctx->impl->output.buf, value.longitude);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  return grn_bulk_write(ctx, ctx->impl->outbuf, "\"", 1);
+  return grn_bulk_write(ctx, ctx->impl->output.buf, "\"", 1);
 }
 
 #define GRN_TS_VECTOR_OUTPUT(kind)\
   size_t i;\
-  grn_rc rc = grn_bulk_write(ctx, ctx->impl->outbuf, "[", 1);\
+  grn_rc rc = grn_bulk_write(ctx, ctx->impl->output.buf, "[", 1);\
   if (rc != GRN_SUCCESS) {\
     return rc;\
   }\
   for (i = 0; i < value.size; ++i) {\
     if (i) {\
-      rc = grn_bulk_write(ctx, ctx->impl->outbuf, ",", 1);\
+      rc = grn_bulk_write(ctx, ctx->impl->output.buf, ",", 1);\
       if (rc != GRN_SUCCESS) {\
         return rc;\
       }\
@@ -118,7 +118,7 @@ grn_ts_geo_output(grn_ctx *ctx, grn_ts_geo value)
       return rc;\
     }\
   }\
-  return grn_bulk_write(ctx, ctx->impl->outbuf, "]", 1);
+  return grn_bulk_write(ctx, ctx->impl->output.buf, "]", 1);
 /* grn_ts_bool_vector_output() outputs a value. */
 static grn_rc
 grn_ts_bool_vector_output(grn_ctx *ctx, grn_ts_bool_vector value)
@@ -460,7 +460,7 @@ grn_ts_writer_close(grn_ctx *ctx, grn_ts_writer *writer)
 
 #define GRN_TS_WRITER_OUTPUT_HEADER_CASE(TYPE, name)\
   case GRN_DB_ ## TYPE: {\
-    GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, name);\
+    GRN_TEXT_PUTS(ctx, ctx->impl->output.buf, name);\
     break;\
   }
 /* grn_ts_writer_output_header() outputs names and data types. */
@@ -471,18 +471,18 @@ grn_ts_writer_output_header(grn_ctx *ctx, grn_ts_writer *writer)
   GRN_OUTPUT_ARRAY_OPEN("COLUMNS", writer->n_exprs);
   for (size_t i = 0; i < writer->n_exprs; ++i) {
     GRN_OUTPUT_ARRAY_OPEN("COLUMN", 2);
-    rc = grn_text_esc(ctx, ctx->impl->outbuf,
+    rc = grn_text_esc(ctx, ctx->impl->output.buf,
                       writer->names[i].ptr, writer->names[i].size);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
-    GRN_TEXT_PUT(ctx, ctx->impl->outbuf, ",\"", 2);
+    GRN_TEXT_PUT(ctx, ctx->impl->output.buf, ",\"", 2);
     switch (writer->exprs[i]->data_type) {
       case GRN_DB_VOID: {
         if (writer->exprs[i]->data_kind == GRN_TS_GEO) {
-          GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "GeoPoint");
+          GRN_TEXT_PUTS(ctx, ctx->impl->output.buf, "GeoPoint");
         } else {
-          GRN_TEXT_PUTS(ctx, ctx->impl->outbuf, "Void");
+          GRN_TEXT_PUTS(ctx, ctx->impl->output.buf, "Void");
         }
         break;
       }
@@ -516,12 +516,12 @@ grn_ts_writer_output_header(grn_ctx *ctx, grn_ts_writer *writer)
                             writer->exprs[i]->data_type);
         }
         name_size = grn_obj_name(ctx, obj, name_buf, sizeof(name_buf));
-        GRN_TEXT_PUT(ctx, ctx->impl->outbuf, name_buf, name_size);
+        GRN_TEXT_PUT(ctx, ctx->impl->output.buf, name_buf, name_size);
         grn_obj_unlink(ctx, obj);
         break;
       }
     }
-    GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, '"');
+    GRN_TEXT_PUTC(ctx, ctx->impl->output.buf, '"');
     GRN_OUTPUT_ARRAY_CLOSE();
   }
   GRN_OUTPUT_ARRAY_CLOSE(); /* COLUMNS. */
@@ -570,7 +570,7 @@ grn_ts_writer_output_body(grn_ctx *ctx, grn_ts_writer *writer,
       GRN_OUTPUT_ARRAY_OPEN("HIT", writer->n_exprs);
       for (j = 0; j < writer->n_exprs; ++j) {
         if (j) {
-          GRN_TEXT_PUTC(ctx, ctx->impl->outbuf, ',');
+          GRN_TEXT_PUTC(ctx, ctx->impl->output.buf, ',');
         }
         switch (writer->exprs[j]->data_kind) {
           GRN_TS_WRITER_OUTPUT_BODY_CASE(BOOL, bool);
@@ -608,7 +608,7 @@ grn_ts_writer_output(grn_ctx *ctx, grn_ts_writer *writer,
   GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_ARRAY_OPEN("RESULTSET", 2 + n_in);
   GRN_OUTPUT_ARRAY_OPEN("NHITS", 1);
-  rc = grn_text_ulltoa(ctx, ctx->impl->outbuf, n_hits);
+  rc = grn_text_ulltoa(ctx, ctx->impl->output.buf, n_hits);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
@@ -816,7 +816,7 @@ grn_ts_select(grn_ctx *ctx, grn_obj *table,
     GRN_FREE(records);
   }
   if (rc != GRN_SUCCESS) {
-    GRN_BULK_REWIND(ctx->impl->outbuf);
+    GRN_BULK_REWIND(ctx->impl->output.buf);
     if ((ctx->rc == GRN_SUCCESS) || !ctx->errbuf[0]) {
       ERR(rc, "error message is missing");
     } else if (ctx->errlvl < GRN_LOG_ERROR) {
