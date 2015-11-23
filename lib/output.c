@@ -46,7 +46,13 @@ put_delimiter(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type)
   uint32_t level = CURR_LEVEL;
   switch (output_type) {
   case GRN_CONTENT_JSON:
-    if (level < 2) { return; }
+    if (level < 2) {
+      if (DEPTH > 0 && ctx->impl->output.is_pretty) {
+        GRN_TEXT_PUTC(ctx, outbuf, '\n');
+        indent(ctx, outbuf, DEPTH);
+      }
+      return;
+    }
     if ((level & 3) == 3) {
       GRN_TEXT_PUTC(ctx, outbuf, ':');
       if (ctx->impl->output.is_pretty) {
@@ -90,10 +96,6 @@ grn_output_array_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_typ
   switch (output_type) {
   case GRN_CONTENT_JSON:
     GRN_TEXT_PUTC(ctx, outbuf, '[');
-    if (ctx->impl->output.is_pretty) {
-      GRN_TEXT_PUTC(ctx, outbuf, '\n');
-      indent(ctx, outbuf, DEPTH + 1);
-    }
     break;
   case GRN_CONTENT_XML:
     GRN_TEXT_PUTC(ctx, outbuf, '<');
@@ -175,10 +177,6 @@ grn_output_map_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   switch (output_type) {
   case GRN_CONTENT_JSON:
     GRN_TEXT_PUTS(ctx, outbuf, "{");
-    if (ctx->impl->output.is_pretty) {
-      GRN_TEXT_PUTC(ctx, outbuf, '\n');
-      indent(ctx, outbuf, DEPTH + 1);
-    }
     break;
   case GRN_CONTENT_XML:
     GRN_TEXT_PUTC(ctx, outbuf, '<');
