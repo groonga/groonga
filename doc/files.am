@@ -227,6 +227,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/truncate/truncate_table.log \
 	$(top_srcdir)/doc/source/example/reference/executables/groonga-httpd.log \
 	$(top_srcdir)/doc/source/example/reference/functions/between/usage_age.log \
+	$(top_srcdir)/doc/source/example/reference/functions/between/usage_setup.log \
 	$(top_srcdir)/doc/source/example/reference/functions/between/usage_value.log \
 	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_distance_ellipsoid.log \
 	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_distance_rectangle.log \
@@ -997,6 +998,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/truncate/truncate_table.log \
 	source/example/reference/executables/groonga-httpd.log \
 	source/example/reference/functions/between/usage_age.log \
+	source/example/reference/functions/between/usage_setup.log \
 	source/example/reference/functions/between/usage_value.log \
 	source/example/reference/functions/geo_distance_distance_ellipsoid.log \
 	source/example/reference/functions/geo_distance_distance_rectangle.log \

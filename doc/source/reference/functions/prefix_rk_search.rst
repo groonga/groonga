@@ -14,7 +14,7 @@ Summary
 ``prefix_rk_search()`` selects records by
 :doc:`/reference/operations/prefix_rk_search`.
 
-You need to create :ref:`table-pat-key` for prefix RK search.
+You need to create :ref:`table-pat-key` table for prefix RK search.
 
 You can't use ``prefix_rk_search()`` for sequential scan. It's a
 selector only procedure.
@@ -22,14 +22,14 @@ selector only procedure.
 Syntax
 ------
 
-``prefix_rk_search`` requires two arguments. They are ``column`` and
+``prefix_rk_search()`` requires two arguments. They are ``column`` and
 ``query``::
 
   prefix_rk_search(column, query)
 
-The first argument ``column`` must be ``_key`` for now.
+``column`` must be ``_key`` for now.
 
-The first argument ``query`` must be string.
+``query`` must be string.
 
 Usage
 -----
@@ -77,7 +77,7 @@ table. Don't forget define an index column for ``Items.readings`` in
 
 You can find ``日本`` record in ``Items`` table by ``niho``. Because
 prefix RK search with ``niho`` selects ``ニホン`` reading and ``ニホン``
-reading is one of readings of ``ニホン`` record:
+reading is one of readings of ``日本`` record:
 
 .. groonga-command
 .. include:: ../../example/reference/functions/prefix_rk_search/usage_prefix_rk_only_completion.log

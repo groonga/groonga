@@ -49,8 +49,8 @@ Improvements
   :doc:`/reference/executables/groonga` is built with static C runtime
   by Visual Studio, the crash bug is occurred.
 
-* [``prefix_rk_search``] Added a new selector that provides prefix RK
-  search feature.
+* [:doc:`/reference/functions/prefix_rk_search`] Added a new selector
+  that provides prefix RK search feature.
 
 * [``grn_obj_is_accessor()``] Added a new predicate that checks
   whether the object is an accessor.

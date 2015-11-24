@@ -11,7 +11,7 @@ Prefix RK search
 Summary
 -------
 
-Groonga supports prefix RK search. RK means Romaji and Kana.
+Groonga supports prefix RK search. RK means Romaji and Kana (reading).
 Prefix RK search can find registered text in katakana by query in
 romaji, hiragana or katakana. Found registered texts are started with
 query.
@@ -39,7 +39,7 @@ Usage
 
 You need :ref:`table-pat-key` table for using prefix RK search.
 
-You need to put kana in katakana to ``TABLE_PAT_KEY`` as key:
+You need to put reading in katakana to ``TABLE_PAT_KEY`` as key:
 
 .. groonga-command
 .. include:: ../../example/reference/operations/prefix_rk_search/usage_register_kana.log
@@ -57,8 +57,8 @@ You can finds ``ニホン`` and ``ニッポン`` by prefix RK search with
 You can finds ``ローマジ`` by prefix RK search with ``r`` as query
 from the ``Readings`` table.
 
-How to convert romaji to kana
------------------------------
+How to convert romaji to reading
+--------------------------------
 
 Prefix RK search is based on JIS X 4063:2000 specification.
 
