@@ -28,7 +28,7 @@ If you specify an index column as target object, the index column is
 recreated.
 
 This command is a useful when your index column is broken.
-recursively. The target object is one of database, table and column.
+The target object is one of database, table and column.
 
 .. note::
 
