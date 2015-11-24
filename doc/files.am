@@ -117,6 +117,10 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/plugin_register/query_expanders_tsv.log \
 	$(top_srcdir)/doc/source/example/reference/commands/plugin_unregister/query_expanders_tsv.log \
 	$(top_srcdir)/doc/source/example/reference/commands/register/query_expanders_tsv.log \
+	$(top_srcdir)/doc/source/example/reference/commands/reindex/data_column.log \
+	$(top_srcdir)/doc/source/example/reference/commands/reindex/database.log \
+	$(top_srcdir)/doc/source/example/reference/commands/reindex/index_column.log \
+	$(top_srcdir)/doc/source/example/reference/commands/reindex/table.log \
 	$(top_srcdir)/doc/source/example/reference/commands/ruby_eval/calc.log \
 	$(top_srcdir)/doc/source/example/reference/commands/ruby_load/load.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/adjuster_multiple.log \
@@ -600,6 +604,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/command.rst \
 	$(top_srcdir)/doc/source/reference/command/command_version.rst \
 	$(top_srcdir)/doc/source/reference/command/output_format.rst \
+	$(top_srcdir)/doc/source/reference/command/pretty_print.rst \
 	$(top_srcdir)/doc/source/reference/command/request_id.rst \
 	$(top_srcdir)/doc/source/reference/command/return_code.rst \
 	$(top_srcdir)/doc/source/reference/commands/cache_limit.rst \
@@ -635,6 +640,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/quit.rst \
 	$(top_srcdir)/doc/source/reference/commands/range_filter.rst \
 	$(top_srcdir)/doc/source/reference/commands/register.rst \
+	$(top_srcdir)/doc/source/reference/commands/reindex.rst \
 	$(top_srcdir)/doc/source/reference/commands/request_cancel.rst \
 	$(top_srcdir)/doc/source/reference/commands/ruby_eval.rst \
 	$(top_srcdir)/doc/source/reference/commands/ruby_load.rst \
@@ -870,6 +876,10 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/plugin_register/query_expanders_tsv.log \
 	source/example/reference/commands/plugin_unregister/query_expanders_tsv.log \
 	source/example/reference/commands/register/query_expanders_tsv.log \
+	source/example/reference/commands/reindex/data_column.log \
+	source/example/reference/commands/reindex/database.log \
+	source/example/reference/commands/reindex/index_column.log \
+	source/example/reference/commands/reindex/table.log \
 	source/example/reference/commands/ruby_eval/calc.log \
 	source/example/reference/commands/ruby_load/load.log \
 	source/example/reference/commands/select/adjuster_multiple.log \
@@ -1353,6 +1363,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/command.rst \
 	source/reference/command/command_version.rst \
 	source/reference/command/output_format.rst \
+	source/reference/command/pretty_print.rst \
 	source/reference/command/request_id.rst \
 	source/reference/command/return_code.rst \
 	source/reference/commands/cache_limit.rst \
@@ -1388,6 +1399,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/quit.rst \
 	source/reference/commands/range_filter.rst \
 	source/reference/commands/register.rst \
+	source/reference/commands/reindex.rst \
 	source/reference/commands/request_cancel.rst \
 	source/reference/commands/ruby_eval.rst \
 	source/reference/commands/ruby_load.rst \
@@ -1696,6 +1708,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/command.txt \
 	html/_sources/reference/command/command_version.txt \
 	html/_sources/reference/command/output_format.txt \
+	html/_sources/reference/command/pretty_print.txt \
 	html/_sources/reference/command/request_id.txt \
 	html/_sources/reference/command/return_code.txt \
 	html/_sources/reference/commands/cache_limit.txt \
@@ -1731,6 +1744,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/quit.txt \
 	html/_sources/reference/commands/range_filter.txt \
 	html/_sources/reference/commands/register.txt \
+	html/_sources/reference/commands/reindex.txt \
 	html/_sources/reference/commands/request_cancel.txt \
 	html/_sources/reference/commands/ruby_eval.txt \
 	html/_sources/reference/commands/ruby_load.txt \
@@ -1931,6 +1945,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/command.html \
 	html/reference/command/command_version.html \
 	html/reference/command/output_format.html \
+	html/reference/command/pretty_print.html \
 	html/reference/command/request_id.html \
 	html/reference/command/return_code.html \
 	html/reference/commands/cache_limit.html \
@@ -1966,6 +1981,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/quit.html \
 	html/reference/commands/range_filter.html \
 	html/reference/commands/register.html \
+	html/reference/commands/reindex.html \
 	html/reference/commands/request_cancel.html \
 	html/reference/commands/ruby_eval.html \
 	html/reference/commands/ruby_load.html \
