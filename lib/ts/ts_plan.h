@@ -21,6 +21,7 @@
 
 #include "../grn.h"
 
+#include "ts_buf.h"
 #include "ts_cursor.h"
 #include "ts_expr.h"
 #include "ts_sorter.h"
@@ -46,11 +47,9 @@ grn_rc grn_ts_plan_open(grn_ctx *ctx, grn_obj *table, grn_ts_plan_node *root,
 /* grn_ts_plan_close() destroys a plan. */
 grn_rc grn_ts_plan_close(grn_ctx *ctx, grn_ts_plan *plan);
 
-/* TODO: A struct for output should be provided? */
 /* grn_ts_plan_exec() executes a plan. */
 grn_rc grn_ts_plan_exec(grn_ctx *ctx, grn_ts_plan *plan,
-                        grn_ts_record **out, size_t *n_out,
-                        grn_ts_buf *out_buf);
+                        grn_ts_rbuf *rbuf, size_t *n_hits);
 
 typedef struct {
   grn_obj *table;
@@ -62,6 +61,10 @@ grn_rc grn_ts_planner_open(grn_ctx *ctx, grn_obj *table,
 
 /* grn_ts_planner_close() destroys a planner. */
 grn_rc grn_ts_planner_close(grn_ctx *ctx, grn_ts_planner *planner);
+
+/* grn_ts_planner_complete() completes a planner. */
+grn_rc grn_ts_planner_complete(grn_ctx *ctx, grn_ts_planner *planner,
+                               grn_ts_plan **plan);
 
 /* grn_ts_planner_push_cursor() pushes a cursor. */
 grn_rc grn_ts_planner_push_cursor(grn_ctx *ctx, grn_ts_planner *planner,
