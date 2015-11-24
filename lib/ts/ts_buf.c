@@ -71,19 +71,19 @@ grn_ts_buf_close(grn_ctx *ctx, grn_ts_buf *buf)
 */
 
 grn_rc
-grn_ts_buf_reserve(grn_ctx *ctx, grn_ts_buf *buf, size_t new_size)
+grn_ts_buf_reserve(grn_ctx *ctx, grn_ts_buf *buf, size_t min_size)
 {
   void *new_ptr;
   size_t enough_size;
-  if (new_size <= buf->size) {
+  if (min_size <= buf->size) {
     return GRN_SUCCESS;
   }
   enough_size = buf->size ? (buf->size << 1) : 1;
-  while (enough_size < new_size) {
+  while (enough_size < min_size) {
     if ((enough_size << 1) < enough_size) {
       GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT,
                         "size overflow: %" GRN_FMT_SIZE,
-                        new_size);
+                        min_size);
     }
     enough_size <<= 1;
   }

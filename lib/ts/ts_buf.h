@@ -54,17 +54,17 @@ void grn_ts_buf_close(grn_ctx *ctx, grn_ts_buf *buf);
 #endif
 
 /*
- * grn_ts_buf_reserve() reserves enough memory to store new_size bytes.
- * Note that this function never shrinks a buffer and does nothing if new_size
- * is not greater than the current size.
+ * grn_ts_buf_reserve() reserves enough memory to store `min_size` bytes.
+ * Note that this function never shrinks a buffer and does nothing if
+ * `min_size` is not greater than `buf->size`.
  */
-grn_rc grn_ts_buf_reserve(grn_ctx *ctx, grn_ts_buf *buf, size_t new_size);
+grn_rc grn_ts_buf_reserve(grn_ctx *ctx, grn_ts_buf *buf, size_t min_size);
 
 /* grn_ts_buf_resize() resizes a buffer. */
 grn_rc grn_ts_buf_resize(grn_ctx *ctx, grn_ts_buf *buf, size_t new_size);
 
 /*
- * grn_ts_buf_write() writes data into a buffer. buf->pos specifies the
+ * grn_ts_buf_write() writes data into a buffer. `buf->pos` specifies the
  * position and it will be modified on success.
  * Note that this function resizes a buffer if required.
  */
