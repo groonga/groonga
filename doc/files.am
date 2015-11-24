@@ -334,6 +334,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/normalizers/example-table-create.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-auto.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc51.log \
+	$(top_srcdir)/doc/source/example/reference/operations/prefix_rk_search/usage_register_kana.log \
 	$(top_srcdir)/doc/source/example/reference/regular_expression/anchor_z.log \
 	$(top_srcdir)/doc/source/example/reference/regular_expression/character_class_characters.log \
 	$(top_srcdir)/doc/source/example/reference/regular_expression/character_class_range.log \
@@ -686,6 +687,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/html_untag.rst \
 	$(top_srcdir)/doc/source/reference/functions/in_values.rst \
 	$(top_srcdir)/doc/source/reference/functions/now.rst \
+	$(top_srcdir)/doc/source/reference/functions/prefix_rk_search.rst \
 	$(top_srcdir)/doc/source/reference/functions/query.rst \
 	$(top_srcdir)/doc/source/reference/functions/rand.rst \
 	$(top_srcdir)/doc/source/reference/functions/snippet_html.rst \
@@ -699,6 +701,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/normalizers.rst \
 	$(top_srcdir)/doc/source/reference/operations.rst \
 	$(top_srcdir)/doc/source/reference/operations/geolocation_search.rst \
+	$(top_srcdir)/doc/source/reference/operations/prefix_rk_search.rst \
 	$(top_srcdir)/doc/source/reference/output.rst \
 	$(top_srcdir)/doc/source/reference/query_expanders.rst \
 	$(top_srcdir)/doc/source/reference/query_expanders/tsv.rst \
@@ -1093,6 +1096,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/normalizers/example-table-create.log \
 	source/example/reference/normalizers/normalizer-auto.log \
 	source/example/reference/normalizers/normalizer-nfkc51.log \
+	source/example/reference/operations/prefix_rk_search/usage_register_kana.log \
 	source/example/reference/regular_expression/anchor_z.log \
 	source/example/reference/regular_expression/character_class_characters.log \
 	source/example/reference/regular_expression/character_class_range.log \
@@ -1445,6 +1449,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/html_untag.rst \
 	source/reference/functions/in_values.rst \
 	source/reference/functions/now.rst \
+	source/reference/functions/prefix_rk_search.rst \
 	source/reference/functions/query.rst \
 	source/reference/functions/rand.rst \
 	source/reference/functions/snippet_html.rst \
@@ -1458,6 +1463,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/normalizers.rst \
 	source/reference/operations.rst \
 	source/reference/operations/geolocation_search.rst \
+	source/reference/operations/prefix_rk_search.rst \
 	source/reference/output.rst \
 	source/reference/query_expanders.rst \
 	source/reference/query_expanders/tsv.rst \
@@ -1782,6 +1788,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/functions/html_untag.txt \
 	html/_sources/reference/functions/in_values.txt \
 	html/_sources/reference/functions/now.txt \
+	html/_sources/reference/functions/prefix_rk_search.txt \
 	html/_sources/reference/functions/query.txt \
 	html/_sources/reference/functions/rand.txt \
 	html/_sources/reference/functions/snippet_html.txt \
@@ -1795,6 +1802,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/normalizers.txt \
 	html/_sources/reference/operations.txt \
 	html/_sources/reference/operations/geolocation_search.txt \
+	html/_sources/reference/operations/prefix_rk_search.txt \
 	html/_sources/reference/output.txt \
 	html/_sources/reference/query_expanders.txt \
 	html/_sources/reference/query_expanders/tsv.txt \
@@ -2019,6 +2027,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/html_untag.html \
 	html/reference/functions/in_values.html \
 	html/reference/functions/now.html \
+	html/reference/functions/prefix_rk_search.html \
 	html/reference/functions/query.html \
 	html/reference/functions/rand.html \
 	html/reference/functions/snippet_html.html \
@@ -2032,6 +2041,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/normalizers.html \
 	html/reference/operations.html \
 	html/reference/operations/geolocation_search.html \
+	html/reference/operations/prefix_rk_search.html \
 	html/reference/output.html \
 	html/reference/query_expanders.html \
 	html/reference/query_expanders/tsv.html \

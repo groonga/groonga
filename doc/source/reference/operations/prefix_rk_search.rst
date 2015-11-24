@@ -43,7 +43,7 @@ You need to put kana in katakana to ``TABLE_PAT_KEY`` as key:
 
 .. groonga-command
 .. include:: ../../example/reference/operations/prefix_rk_search/usage_register_kana.log
-.. table_create Readings TABLE_PAT_KEY ShortText
+.. table_create Readings TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
 .. load --table Readings
 .. [
 .. {"_key": "ニホン"},

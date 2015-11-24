@@ -1,0 +1,46 @@
+Execution example::
+
+  select Items \
+   --filter 'sub_filter(readings, "prefix_rk_search(_key, \\"niho\\")") || \
+             _key @^ "niho"'
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "readings", 
+  #           "Readings"
+  #         ]
+  #       ], 
+  #       [
+  #         1, 
+  #         "日本", 
+  #         [
+  #           "ニホン", 
+  #           "ニッポン"
+  #         ]
+  #       ], 
+  #       [
+  #         4, 
+  #         "nihon", 
+  #         []
+  #       ]
+  #     ]
+  #   ]
+  # ]
