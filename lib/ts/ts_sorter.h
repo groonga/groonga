@@ -21,11 +21,14 @@
 
 #include "../grn.h"
 
+#include "ts_str.h"
 #include "ts_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/* TODO: Sorting should take into account the order of input records. */
 
 typedef struct {
   int REMOVE_ME;
@@ -38,10 +41,24 @@ typedef struct {
 
 /* grn_ts_sorter_open() creates a sorter. */
 grn_rc grn_ts_sorter_open(grn_ctx *ctx, grn_obj *table,
-                          grn_ts_sorter_node *head, grn_ts_sorter **sorter);
+                          grn_ts_sorter_node *head, grn_ts_int offset,
+                          grn_ts_int limit, grn_ts_sorter **sorter);
+
+/* grn_ts_sorter_parse() parses a string and creates a sorter. */
+grn_rc grn_ts_sorter_parse(grn_ctx *ctx, grn_obj *table,
+                           grn_ts_str str, grn_ts_int offset,
+                           grn_ts_int limit, grn_ts_sorter **sorter);
 
 /* grn_ts_sorter_close() destroys a sorter. */
 grn_rc grn_ts_sorter_close(grn_ctx *ctx, grn_ts_sorter *sorter);
+
+/* grn_ts_sorter_progress() progresses sorting. */
+grn_rc grn_ts_sorter_progress(grn_ctx *ctx, grn_ts_sorter *sorter,
+                              grn_ts_record *recs, size_t n_recs);
+
+/* grn_ts_sorter_complete() completes sorting. */
+grn_rc grn_ts_sorter_complete(grn_ctx *ctx, grn_ts_sorter *sorter,
+                              grn_ts_record *recs, size_t n_recs);
 
 typedef struct {
   grn_obj *table;
