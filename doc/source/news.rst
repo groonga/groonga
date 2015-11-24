@@ -28,7 +28,7 @@ Improvements
 
 * [inverted index] Improved estimation precision for query.
 
-* [:ref:`/reference/commands/logical_range_filter`] Added fallback
+* [:doc:`/reference/commands/logical_range_filter`] Added fallback
   mode for sequential search. If sequential search checked many
   records but didn't find required the number of records, index search
   is used as fallback.

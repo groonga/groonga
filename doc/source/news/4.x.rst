@@ -29,7 +29,7 @@ Improvements
   groonga-httpd uses multi-process model instead of multi-threading.
 * groonga-httpd: Supported long error message over 2048 bytes.
   By this change, long error message (>2048) is not truncated.
-* [:doc:`/reference/commands/dump] Supported streaming output.
+* [:doc:`/reference/commands/dump`] Supported streaming output.
 
 Fixes
 ^^^^^
