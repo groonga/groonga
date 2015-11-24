@@ -24,6 +24,7 @@
 #include "grn_str.h"
 
 #include "ts/ts_buf.h"
+#include "ts/ts_cursor.h"
 #include "ts/ts_expr.h"
 #include "ts/ts_log.h"
 #include "ts/ts_str.h"
@@ -633,7 +634,8 @@ grn_ts_select_filter(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
                      grn_ts_record **out, size_t *n_out, size_t *n_hits)
 {
   grn_rc rc;
-  grn_table_cursor *cursor;
+  grn_table_cursor *cursor_obj;
+  grn_ts_cursor *cursor;
   grn_ts_expr *expr;
   grn_ts_record *buf = NULL;
   size_t buf_size = 0;
@@ -642,16 +644,21 @@ grn_ts_select_filter(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
   *n_out = 0;
   *n_hits = 0;
 
-  cursor = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1,
-                                 GRN_CURSOR_ASCENDING | GRN_CURSOR_BY_ID);
-  if (!cursor) {
+  cursor_obj = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1,
+                                     GRN_CURSOR_ASCENDING | GRN_CURSOR_BY_ID);
+  if (!cursor_obj) {
     return (ctx->rc != GRN_SUCCESS) ? ctx->rc : GRN_UNKNOWN_ERROR;
+  }
+  rc = grn_ts_obj_cursor_open(ctx, cursor_obj, &cursor);
+  if (rc != GRN_SUCCESS) {
+    grn_obj_close(ctx, cursor_obj);
+    return rc;
   }
 
   rc = grn_ts_expr_parse(ctx, table, str, &expr);
   if (rc == GRN_SUCCESS) {
     for ( ; ; ) {
-      size_t i, batch_size;
+      size_t batch_size;
       grn_ts_record *batch;
 
       /* Extend the record buffer. */
@@ -672,15 +679,9 @@ grn_ts_select_filter(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
 
       /* Read records from the cursor. */
       batch = buf + *n_out;
-      for (i = 0; i < GRN_TS_BATCH_SIZE; i++) {
-        batch[i].id = grn_table_cursor_next(ctx, cursor);
-        if (batch[i].id == GRN_ID_NIL) {
-          break;
-        }
-        batch[i].score = 0.0;
-      }
-      batch_size = i;
-      if (!batch_size) {
+      rc = grn_ts_cursor_read(ctx, cursor, batch, GRN_TS_BATCH_SIZE,
+                              &batch_size);
+      if ((rc != GRN_SUCCESS) || !batch_size) {
         break;
       }
 
@@ -716,7 +717,7 @@ grn_ts_select_filter(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
     grn_ts_expr_close(ctx, expr);
   }
   /* Ignore a failure of  destruction. */
-  grn_table_cursor_close(ctx, cursor);
+  grn_ts_cursor_close(ctx, cursor);
 
   if (rc != GRN_SUCCESS) {
     if (buf) {

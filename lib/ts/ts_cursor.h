@@ -28,18 +28,24 @@ extern "C" {
 #endif
 
 typedef enum {
-  GRN_TS_HASH_CURSOR,
-  GRN_TS_PAT_CURSOR,
-  GRN_TS_DAT_CURSOR,
-  GRN_TS_ARRAY_CURSOR
+  GRN_TS_OBJ_CURSOR /* Wrapper cursor. */
 } grn_ts_cursor_type;
 
+#define GRN_TS_CURSOR_COMMON_MEMBERS\
+  grn_ts_cursor_type type; /* Cursor type. */
+
 typedef struct {
-  grn_ts_cursor_type type;
+  GRN_TS_CURSOR_COMMON_MEMBERS
 } grn_ts_cursor;
 
-/* grn_ts_cursor_open() creates a cursor. */
-grn_rc grn_ts_cursor_open(grn_ctx *ctx, grn_ts_cursor **cursor);
+/*
+ * grn_ts_obj_cursor_open() creates a wrapper cursor.
+ * The new cursor will be a wrapper for a Groonga cursor specified by `obj`.
+ * On success, `obj` will be closed in grn_ts_cursor_close().
+ * On failure, `obj` is left as is.
+ */
+grn_rc grn_ts_obj_cursor_open(grn_ctx *ctx, grn_obj *obj,
+                              grn_ts_cursor **cursor);
 
 /* grn_ts_cursor_close() destroys a cursor. */
 grn_rc grn_ts_cursor_close(grn_ctx *ctx, grn_ts_cursor *cursor);
