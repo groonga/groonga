@@ -102,8 +102,7 @@ support no reading completion targets:
 .. groonga-command
 .. include:: ../../example/reference/functions/prefix_rk_search/usage_prefix_search_combined_completion.log
 .. select Items \
-..  --filter 'sub_filter(readings, "prefix_rk_search(_key, \\"niho\\")") || \
-..            _key @^ "niho"'
+..  --filter 'sub_filter(readings, "prefix_rk_search(_key, \\"niho\\")") || _key @^ "niho"'
 
 Normally, you want to use case insensitive search for completion. Use
 ``--normalizer NormalizerAuto`` and ``label`` column for the case:
@@ -129,8 +128,7 @@ Use ``LooseItems.label`` for display:
 .. groonga-command
 .. include:: ../../example/reference/functions/prefix_rk_search/usage_loose_completion.log
 .. select LooseItems \
-..  --filter 'sub_filter(readings, "prefix_rk_search(_key, \\"nIhO\\")") || \
-..            _key @^ "nIhO"' \
+..  --filter 'sub_filter(readings, "prefix_rk_search(_key, \\"nIhO\\")") || _key @^ "nIhO"' \
 ..  --output_columns '_key,label'
 
 Parameters
@@ -157,4 +155,4 @@ See also
 --------
 
 * :doc:`/reference/operations/prefix_rk_search`
-* :doc:`/reference/commands/sub_filter`
+* :doc:`/reference/functions/sub_filter`
