@@ -24,7 +24,8 @@ Improvements
 * [``grn_obj_reindex()``] Added a new API that recreates existing
   indexes.
 
-* [``reindex``] Added a new command that recreates existing indexes.
+* [:doc:`/reference/commands/reindex`] Added a new command that
+  recreates existing indexes.
 
 * [inverted index] Improved estimation precision for query.
 
