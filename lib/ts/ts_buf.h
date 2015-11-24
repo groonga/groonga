@@ -27,6 +27,12 @@
 extern "C" {
 #endif
 
+/*-------------------------------------------------------------
+ * grn_ts_buf
+ */
+
+/* grn_ts_buf works as a buffer for arbitrary data. */
+
 typedef struct {
   void *ptr;   /* The starting address. */
   size_t size; /* The size in bytes. */
@@ -36,14 +42,16 @@ typedef struct {
 /* grn_ts_buf_init() initializes a buffer. */
 void grn_ts_buf_init(grn_ctx *ctx, grn_ts_buf *buf);
 
-/* grn_ts_buf_open() creates a buffer. */
-/*grn_rc grn_ts_buf_open(grn_ctx *ctx, grn_ts_buf **buf);*/
-
 /* grn_ts_buf_fin() finalizes a buffer. */
 void grn_ts_buf_fin(grn_ctx *ctx, grn_ts_buf *buf);
 
+#if 0
+/* grn_ts_buf_open() creates a buffer. */
+grn_rc grn_ts_buf_open(grn_ctx *ctx, grn_ts_buf **buf);
+
 /* grn_ts_buf_close() destroys a buffer. */
-/*void grn_ts_buf_close(grn_ctx *ctx, grn_ts_buf *buf);*/
+void grn_ts_buf_close(grn_ctx *ctx, grn_ts_buf *buf);
+#endif
 
 /*
  * grn_ts_buf_reserve() reserves enough memory to store new_size bytes.
@@ -62,6 +70,41 @@ grn_rc grn_ts_buf_resize(grn_ctx *ctx, grn_ts_buf *buf, size_t new_size);
  */
 grn_rc grn_ts_buf_write(grn_ctx *ctx, grn_ts_buf *buf,
                         const void *ptr, size_t size);
+
+/*-------------------------------------------------------------
+ * grn_ts_rbuf
+ */
+
+/* grn_ts_rbuf works as a buffer for records. */
+
+typedef struct {
+  grn_ts_record *recs; /* Pointer to records. */
+  size_t n_recs;       /* The number of records. */
+  size_t max_n_recs;   /* The maximum number of records. */
+} grn_ts_rbuf;
+
+/* grn_ts_rbuf_init() initializes a buffer. */
+void grn_ts_rbuf_init(grn_ctx *ctx, grn_ts_rbuf *rbuf);
+
+/* grn_ts_rbuf_fin() finalizes a buffer. */
+void grn_ts_rbuf_fin(grn_ctx *ctx, grn_ts_rbuf *rbuf);
+
+/* grn_ts_rbuf_open() creates a buffer. */
+/*grn_rc grn_ts_rbuf_open(grn_ctx *ctx, grn_ts_rbuf **rbuf);*/
+
+/* grn_ts_rbuf_close() destroys a buffer. */
+/*void grn_ts_rbuf_close(grn_ctx *ctx, grn_ts_rbuf *rbuf);*/
+
+/*
+ * grn_ts_rbuf_reserve() reserves enough memory to store `n_recs` records.
+ * Note that this function never shrinks a buffer and does nothing if `n_recs`
+ * is not greater than the `rbuf->max_n_recs`.
+ */
+grn_rc grn_ts_rbuf_reserve(grn_ctx *ctx, grn_ts_rbuf *rbuf, size_t n_recs);
+
+/* grn_ts_rbuf_resize() resizes a buffer. */
+grn_rc grn_ts_rbuf_resize(grn_ctx *ctx, grn_ts_rbuf *rbuf,
+                          size_t new_max_n_recs);
 
 #ifdef __cplusplus
 }

@@ -24,6 +24,10 @@
 
 #include <string.h>
 
+/*-------------------------------------------------------------
+ * grn_ts_buf
+ */
+
 void
 grn_ts_buf_init(grn_ctx *ctx, grn_ts_buf *buf)
 {
@@ -137,5 +141,104 @@ grn_ts_buf_write(grn_ctx *ctx, grn_ts_buf *buf, const void *ptr, size_t size)
   }
   grn_memcpy((char *)buf->ptr + buf->pos, ptr, size);
   buf->pos += size;
+  return GRN_SUCCESS;
+}
+
+/*-------------------------------------------------------------
+ * grn_ts_rbuf
+ */
+
+void
+grn_ts_rbuf_init(grn_ctx *ctx, grn_ts_rbuf *rbuf)
+{
+  rbuf->recs = NULL;
+  rbuf->n_recs = 0;
+  rbuf->max_n_recs = 0;
+}
+
+void
+grn_ts_rbuf_fin(grn_ctx *ctx, grn_ts_rbuf *rbuf)
+{
+  if (rbuf->recs) {
+    GRN_FREE(rbuf->recs);
+  }
+}
+
+grn_rc
+grn_ts_rbuf_open(grn_ctx *ctx, grn_ts_rbuf **rbuf)
+{
+  grn_ts_rbuf *new_rbuf = GRN_MALLOCN(grn_ts_rbuf, 1);
+  if (!new_rbuf) {
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_MALLOCN failed: %" GRN_FMT_SIZE " x 1",
+                      sizeof(grn_ts_rbuf));
+  }
+  grn_ts_rbuf_init(ctx, new_rbuf);
+  *rbuf = new_rbuf;
+  return GRN_SUCCESS;
+}
+
+void
+grn_ts_rbuf_close(grn_ctx *ctx, grn_ts_rbuf *rbuf)
+{
+  if (rbuf) {
+    grn_ts_rbuf_fin(ctx, rbuf);
+  }
+}
+
+grn_rc
+grn_ts_rbuf_reserve(grn_ctx *ctx, grn_ts_rbuf *rbuf, size_t min_max_n_recs)
+{
+  size_t n_bytes, enough_max_n_recs;
+  grn_ts_record *new_recs;
+  if (min_max_n_recs <= rbuf->max_n_recs) {
+    return GRN_SUCCESS;
+  }
+  enough_max_n_recs = rbuf->max_n_recs ? (rbuf->max_n_recs << 1) : 1;
+  while (enough_max_n_recs < min_max_n_recs) {
+    if ((enough_max_n_recs << 1) < enough_max_n_recs) {
+      GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT,
+                        "size overflow: %" GRN_FMT_SIZE,
+                        min_max_n_recs);
+    }
+    enough_max_n_recs <<= 1;
+  }
+  n_bytes = sizeof(grn_ts_record) * enough_max_n_recs;
+  new_recs = GRN_REALLOC(rbuf->recs, n_bytes);
+  if (!new_recs) {
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_REALLOC failed: %" GRN_FMT_SIZE,
+                      n_bytes);
+  }
+  rbuf->recs = new_recs;
+  rbuf->max_n_recs = enough_max_n_recs;
+  return GRN_SUCCESS;
+}
+
+grn_rc
+grn_ts_rbuf_resize(grn_ctx *ctx, grn_ts_rbuf *rbuf, size_t new_max_n_recs)
+{
+  size_t n_bytes;
+  grn_ts_record *new_recs;
+  if (new_max_n_recs == rbuf->max_n_recs) {
+    return GRN_SUCCESS;
+  }
+  if (!new_max_n_recs) {
+    if (rbuf->recs) {
+      GRN_FREE(rbuf->recs);
+      rbuf->recs = NULL;
+      rbuf->max_n_recs = new_max_n_recs;
+    }
+    return GRN_SUCCESS;
+  }
+  n_bytes = sizeof(grn_ts_record) * new_max_n_recs;
+  new_recs = GRN_REALLOC(rbuf->recs, n_bytes);
+  if (!new_recs) {
+    GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
+                      "GRN_REALLOC failed: %" GRN_FMT_SIZE,
+                      new_max_n_recs);
+  }
+  rbuf->recs = new_recs;
+  rbuf->max_n_recs = new_max_n_recs;
   return GRN_SUCCESS;
 }
