@@ -1,9 +1,8 @@
 .. -*- rst -*-
-.. Groonga Project
 
 .. highlightlang:: none
 
-Geolocation Search
+Geolocation search
 ==================
 
 Groonga supports geolocation search. It uses index for
