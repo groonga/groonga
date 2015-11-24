@@ -13,8 +13,8 @@ Summary
 Groonga supports pretty print when you choose JSON for
 :doc:`output_format`.
 
-How to use
-----------
+Usage
+-----
 
 Just specify ``yes`` to ``output_pretty`` parameter::
 
