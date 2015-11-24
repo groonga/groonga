@@ -5722,12 +5722,8 @@ func_between(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   GRN_RECORD_SET(ctx, between_variable, GRN_RECORD_VALUE(variable));
   result = grn_expr_exec(ctx, between_expr, 0);
-  if (result) {
-    grn_bool result_boolean;
-    GRN_OBJ_IS_TRUE(ctx, result, result_boolean);
-    if (result_boolean) {
-      GRN_BOOL_SET(ctx, found, GRN_TRUE);
-    }
+  if (grn_obj_is_true(ctx, result)) {
+    GRN_BOOL_SET(ctx, found, GRN_TRUE);
   }
 
   grn_obj_unlink(ctx, between_expr);
@@ -5916,17 +5912,13 @@ selector_between_sequential_search(grn_ctx *ctx,
       if (ctx->rc) {
         break;
       }
-      if (result) {
-        grn_bool result_boolean;
-        GRN_OBJ_IS_TRUE(ctx, result, result_boolean);
-        if (result_boolean) {
-          grn_posting posting;
-          posting.rid = record_id;
-          posting.sid = 1;
-          posting.pos = 0;
-          posting.weight = 0;
-          grn_ii_posting_add(ctx, &posting, (grn_hash *)res, op);
-        }
+      if (grn_obj_is_true(ctx, result)) {
+        grn_posting posting;
+        posting.rid = record_id;
+        posting.sid = 1;
+        posting.pos = 0;
+        posting.weight = 0;
+        grn_ii_posting_add(ctx, &posting, (grn_hash *)res, op);
       }
     }
     grn_obj_unlink(ctx, expr);
@@ -6761,9 +6753,7 @@ proc_range_filter(grn_ctx *ctx, int nargs, grn_obj **args,
             if (ctx->rc) {
               break;
             }
-            if (result) {
-              GRN_OBJ_IS_TRUE(ctx, result, result_boolean);
-            }
+            result_boolean = grn_obj_is_true(ctx, result);
           } else {
             result_boolean = GRN_TRUE;
           }

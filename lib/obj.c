@@ -21,6 +21,51 @@
 #include "grn_index_column.h"
 
 grn_bool
+grn_obj_is_true(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!obj) {
+    return GRN_FALSE;
+  }
+
+  switch (obj->header.type) {
+  case GRN_BULK :
+    switch (obj->header.domain) {
+    case GRN_DB_BOOL :
+      return GRN_BOOL_VALUE(obj);
+      break;
+    case GRN_DB_INT32 :
+      return GRN_INT32_VALUE(obj) != 0;
+      break;
+    case GRN_DB_UINT32 :
+      return GRN_UINT32_VALUE(obj) != 0;
+      break;
+    case GRN_DB_FLOAT : {
+      double float_value;
+      float_value = GRN_FLOAT_VALUE(obj);
+      return (float_value < -DBL_EPSILON ||
+              DBL_EPSILON < float_value);
+      break;
+    }
+    case GRN_DB_SHORT_TEXT :
+    case GRN_DB_TEXT :
+    case GRN_DB_LONG_TEXT :
+      return GRN_TEXT_LEN(obj) != 0;
+      break;
+    default :
+      return GRN_FALSE;
+      break;
+    }
+    break;
+  case GRN_VECTOR :
+    return GRN_TRUE;
+    break;
+  default :
+    return  GRN_FALSE;
+    break;
+  }
+}
+
+grn_bool
 grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj)
 {
   grn_id id;

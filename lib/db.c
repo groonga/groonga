@@ -12157,11 +12157,11 @@ loader_add(grn_ctx *ctx, grn_obj *key)
   if (!added && loader->ifexists) {
     grn_obj *v = grn_expr_get_var_by_offset(ctx, loader->ifexists, 0);
     grn_obj *result;
-    unsigned int result_boolean;
     GRN_RECORD_SET(ctx, v, id);
     result = grn_expr_exec(ctx, loader->ifexists, 0);
-    GRN_OBJ_IS_TRUE(ctx, result, result_boolean);
-    if (!result_boolean) { id = 0; }
+    if (!grn_obj_is_true(ctx, result)) {
+      id = 0;
+    }
   }
   return id;
 }

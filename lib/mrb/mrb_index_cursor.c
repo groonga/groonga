@@ -189,7 +189,7 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
       GRN_RECORD_SET(ctx, expr_variable, posting->rid);
       matched = grn_expr_exec(ctx, expr, 0);
       if (matched) {
-        GRN_OBJ_IS_TRUE(ctx, matched, matched_raw);
+        matched_raw = grn_obj_is_true(ctx, matched);
       } else {
         grn_mrb_ctx_check(mrb);
       }

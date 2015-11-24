@@ -2733,10 +2733,10 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_CJUMP :
         {
           grn_obj *v;
-          unsigned int v_boolean;
           POP1(v);
-          GRN_OBJ_IS_TRUE(ctx, v, v_boolean);
-          if (!v_boolean) { code += code->nargs; }
+          if (!grn_obj_is_true(ctx, v)) {
+            code += code->nargs;
+          }
         }
         code++;
         break;
@@ -2928,13 +2928,10 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_AND :
         {
           grn_obj *x, *y;
-          unsigned int x_boolean, y_boolean;
           grn_obj *result = NULL;
           POP2ALLOC1(x, y, res);
-          GRN_OBJ_IS_TRUE(ctx, x, x_boolean);
-          if (x_boolean) {
-            GRN_OBJ_IS_TRUE(ctx, y, y_boolean);
-            if (y_boolean) {
+          if (grn_obj_is_true(ctx, x)) {
+            if (grn_obj_is_true(ctx, y)) {
               result = y;
             }
           }
@@ -2953,15 +2950,12 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_OR :
         {
           grn_obj *x, *y;
-          unsigned int x_boolean, y_boolean;
           grn_obj *result;
           POP2ALLOC1(x, y, res);
-          GRN_OBJ_IS_TRUE(ctx, x, x_boolean);
-          if (x_boolean) {
+          if (grn_obj_is_true(ctx, x)) {
             result = x;
           } else {
-            GRN_OBJ_IS_TRUE(ctx, y, y_boolean);
-            if (y_boolean) {
+            if (grn_obj_is_true(ctx, y)) {
               result = y;
             } else {
               result = NULL;
@@ -2982,16 +2976,15 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_AND_NOT :
         {
           grn_obj *x, *y;
-          grn_bool x_boolean, y_boolean;
+          grn_bool is_true;
           POP2ALLOC1(x, y, res);
-          GRN_OBJ_IS_TRUE(ctx, x, x_boolean);
-          GRN_OBJ_IS_TRUE(ctx, y, y_boolean);
-          grn_obj_reinit(ctx, res, GRN_DB_BOOL, 0);
-          if (!x_boolean || y_boolean) {
-            GRN_BOOL_SET(ctx, res, GRN_FALSE);
+          if (!grn_obj_is_true(ctx, x) || grn_obj_is_true(ctx, y)) {
+            is_true = GRN_FALSE;
           } else {
-            GRN_BOOL_SET(ctx, res, GRN_TRUE);
+            is_true = GRN_TRUE;
           }
+          grn_obj_reinit(ctx, res, GRN_DB_BOOL, 0);
+          GRN_BOOL_SET(ctx, res, is_true);
         }
         code++;
         break;
