@@ -3,11 +3,11 @@
 .. highlightlang:: none
 
 .. groonga-command
-.. database: geo_distance
+.. database: functions_geo_distance
 
 
-geo_distance
-============
+``geo_distance``
+================
 
 Summary
 -------
@@ -272,7 +272,7 @@ Here is a sample about calculating the value of distance with column value.
 .. select Cities --output_columns _score --filter 1 --scorer '_score = geo_distance(location, "185428000x-461000", "sphere")'
 
 ``ellipsoid``
-...............
+.............
 
 This parameter require to approximate the geographical features
 by ellipsoid approximation for calculating the distance.

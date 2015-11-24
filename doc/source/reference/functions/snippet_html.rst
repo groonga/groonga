@@ -5,8 +5,8 @@
 .. groonga-command
 .. database: functions_snippet_html
 
-snippet_html
-============
+``snippet_html``
+================
 
 .. caution::
 

@@ -5,8 +5,8 @@
 .. groonga-command
 .. database: vector_size
 
-vector_size
-===========
+``vector_size``
+===============
 
 Summary
 -------
@@ -66,7 +66,7 @@ Parameters
 There is one required parameter, ``target``.
 
 ``target``
-^^^^^^^^^^^^^^^^
+^^^^^^^^^^
 
 Specifies a vector column of table that is specified by ``table`` parameter in ``select``.
 

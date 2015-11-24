@@ -5,8 +5,8 @@
 .. groonga-command
 .. database: functions_query
 
-query
-=====
+``query``
+=========
 
 Summary
 -------

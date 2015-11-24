@@ -5,8 +5,8 @@
 .. groonga-command
 .. database: functions_sub_filter
 
-sub_filter
-==========
+``sub_filter``
+==============
 
 Summary
 -------

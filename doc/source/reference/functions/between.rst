@@ -3,10 +3,10 @@
 .. highlightlang:: none
 
 .. groonga-command
-.. database: between
+.. database: functions_between
 
-between
-=======
+``between``
+===========
 
 Summary
 -------
@@ -40,7 +40,7 @@ Here are a schema definition and sample data to show usage.::
   {"_key": "Eric",   "age": 20}
   {"_key": "Frank",  "age": 21}
   ]
- 
+
 .. groonga-command
 .. table_create Users TABLE_HASH_KEY ShortText
 .. column_create Users age COLUMN_SCALAR Int32
@@ -88,25 +88,25 @@ There are five required parameters, ``column_or_value``, and ``min``, ``min_bord
 Specifies a column of the table or the value.
 
 ``min``
-^^^^^^^^^^^^^^^^^^^
+^^^^^^^
 
 Specifies the minimal border value of the range.
 You can control the behavior that the value of ``max`` is included or excluded by ``max_border`` parameter.
 
 ``min_border``
-^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^
 
 Specifies whether the specified range contains the value of ``min`` or not.
 The value of ``min_border`` are either "include" or "exclude". If it is "include", ``min`` value is included. If it is "exclude", ``min`` value is not included.
 
 ``max``
-^^^^^^^^^^^^^^^^^^^
+^^^^^^^
 
 Specifies the maximum border value of the range.
 You can control the behavior that the value of ``max`` is included or excluded by ``max_border`` parameter.
 
 ``max_border``
-^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^
 
 Specifies whether the specified range contains the value of ``max`` or not.
 The value of ``max_border`` are either "include" or "exclude". If it is "include", ``max`` value is included. If it is "exclude", ``max`` value is not included.

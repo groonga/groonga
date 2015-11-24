@@ -5,8 +5,8 @@
 .. groonga-command
 .. database: functions_highlight_full
 
-highlight_full
-==============
+``highlight_full``
+==================
 
 .. caution::
 

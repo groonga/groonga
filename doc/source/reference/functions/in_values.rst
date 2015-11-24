@@ -3,10 +3,10 @@
 .. highlightlang:: none
 
 .. groonga-command
-.. database: in_values
+.. database: functions_in_values
 
-in_values
-=========
+``in_values``
+=============
 
 Summary
 -------

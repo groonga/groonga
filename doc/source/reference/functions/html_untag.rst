@@ -5,8 +5,8 @@
 .. groonga-command
 .. database: functions_html_untag
 
-html_untag
-==========
+``html_untag``
+==============
 
 Summary
 -------
