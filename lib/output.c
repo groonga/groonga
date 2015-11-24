@@ -32,11 +32,43 @@
 #define INCR_LENGTH (DEPTH ? (GRN_UINT32_VALUE_AT(LEVELS, (DEPTH - 1)) += 2) : 0)
 
 static void
-indent(grn_ctx *ctx, grn_obj *outbuf, int level)
+indent(grn_ctx *ctx, grn_obj *outbuf, size_t level)
 {
-  int i;
+  size_t i;
   for (i = 0; i < level; i++) {
     GRN_TEXT_PUTS(ctx, outbuf, "  ");
+  }
+}
+
+static void
+json_array_open(grn_ctx *ctx, grn_obj *outbuf, size_t *indent_level)
+{
+  GRN_TEXT_PUTC(ctx, outbuf, '[');
+  if (ctx->impl->output.is_pretty) {
+    GRN_TEXT_PUTC(ctx, outbuf, '\n');
+    (*indent_level)++;
+    indent(ctx, outbuf, *indent_level);
+  }
+}
+
+static void
+json_array_close(grn_ctx *ctx, grn_obj *outbuf, size_t *indent_level)
+{
+  if (ctx->impl->output.is_pretty) {
+    GRN_TEXT_PUTC(ctx, outbuf, '\n');
+    (*indent_level)--;
+    indent(ctx, outbuf, *indent_level);
+  }
+  GRN_TEXT_PUTC(ctx, outbuf, ']');
+}
+
+static void
+json_element_end(grn_ctx *ctx, grn_obj *outbuf, size_t indent_level)
+{
+  GRN_TEXT_PUTC(ctx, outbuf, ',');
+  if (ctx->impl->output.is_pretty) {
+    GRN_TEXT_PUTC(ctx, outbuf, '\n');
+    indent(ctx, outbuf, indent_level);
   }
 }
 
@@ -59,11 +91,7 @@ put_delimiter(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type)
         GRN_TEXT_PUTC(ctx, outbuf, ' ');
       }
     } else {
-      GRN_TEXT_PUTC(ctx, outbuf, ',');
-      if (ctx->impl->output.is_pretty) {
-        GRN_TEXT_PUTC(ctx, outbuf, '\n');
-        indent(ctx, outbuf, DEPTH + 1);
-      }
+      json_element_end(ctx, outbuf, DEPTH + 1);
     }
     // if (DEPTH == 1 && ((level & 3) != 3)) { GRN_TEXT_PUTC(ctx, outbuf, '\n'); }
     break;
@@ -1861,8 +1889,7 @@ grn_output_envelope_json(grn_ctx *ctx,
                          const char *file,
                          int line)
 {
-  int indent_level = 0;
-  grn_bool is_pretty = ctx->impl->output.is_pretty;
+  size_t indent_level = 0;
   grn_obj *expr;
   grn_obj *jsonp_func = NULL;
 
@@ -1877,154 +1904,68 @@ grn_output_envelope_json(grn_ctx *ctx,
     GRN_TEXT_PUTC(ctx, head, '(');
   }
 
-  GRN_TEXT_PUTC(ctx, head, '[');
-  if (is_pretty) {
-    GRN_TEXT_PUTC(ctx, head, '\n');
-    indent_level++;
-    indent(ctx, head, indent_level);
-  }
+  json_array_open(ctx, head, &indent_level);
+  {
+    json_array_open(ctx, head, &indent_level);
+    {
+      grn_text_itoa(ctx, head, rc);
 
-  GRN_TEXT_PUTC(ctx, head, '[');
-  if (is_pretty) {
-    GRN_TEXT_PUTC(ctx, head, '\n');
-    indent_level++;
-    indent(ctx, head, indent_level);
-  }
+      json_element_end(ctx, head, indent_level);
+      grn_text_ftoa(ctx, head, started);
 
-  grn_text_itoa(ctx, head, rc);
-  GRN_TEXT_PUTC(ctx, head, ',');
-  if (is_pretty) {
-    GRN_TEXT_PUTC(ctx, head, '\n');
-    indent(ctx, head, indent_level);
-  }
+      json_element_end(ctx, head, indent_level);
+      grn_text_ftoa(ctx, head, elapsed);
 
-  grn_text_ftoa(ctx, head, started);
-  GRN_TEXT_PUTC(ctx, head, ',');
-  if (is_pretty) {
-    GRN_TEXT_PUTC(ctx, head, '\n');
-    indent(ctx, head, indent_level);
-  }
+      if (rc != GRN_SUCCESS) {
+        json_element_end(ctx, head, indent_level);
+        grn_text_esc(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
 
-  grn_text_ftoa(ctx, head, elapsed);
+        if (ctx->errfunc && ctx->errfile) {
+          grn_obj *command;
 
-  if (rc != GRN_SUCCESS) {
-    GRN_TEXT_PUTC(ctx, head, ',');
-    if (is_pretty) {
-      GRN_TEXT_PUTC(ctx, head, '\n');
-      indent(ctx, head, indent_level);
+          json_element_end(ctx, head, indent_level);
+          json_array_open(ctx, head, &indent_level);
+          {
+            json_array_open(ctx, head, &indent_level);
+            {
+              grn_text_esc(ctx, head, ctx->errfunc, strlen(ctx->errfunc));
+
+              json_element_end(ctx, head, indent_level);
+              grn_text_esc(ctx, head, ctx->errfile, strlen(ctx->errfile));
+
+              json_element_end(ctx, head, indent_level);
+              grn_text_itoa(ctx, head, ctx->errline);
+            }
+            json_array_close(ctx, head, &indent_level);
+
+            if (file && (command = GRN_CTX_USER_DATA(ctx)->ptr)) {
+              json_element_end(ctx, head, indent_level);
+              json_array_open(ctx, head, &indent_level);
+              {
+                grn_text_esc(ctx, head, file, strlen(file));
+
+                json_element_end(ctx, head, indent_level);
+                grn_text_itoa(ctx, head, line);
+
+                json_element_end(ctx, head, indent_level);
+                grn_text_esc(ctx, head,
+                             GRN_TEXT_VALUE(command), GRN_TEXT_LEN(command));
+              }
+              json_array_close(ctx, head, &indent_level);
+            }
+          }
+          json_array_close(ctx, head, &indent_level);
+        }
+      }
     }
-
-    grn_text_esc(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
-    if (ctx->errfunc && ctx->errfile) {
-      grn_obj *command;
-
-      GRN_TEXT_PUTC(ctx, head, ',');
-      if (is_pretty) {
-        GRN_TEXT_PUTC(ctx, head, '\n');
-        indent(ctx, head, indent_level);
-      }
-
-      GRN_TEXT_PUTC(ctx, head, '[');
-      if (is_pretty) {
-        GRN_TEXT_PUTC(ctx, head, '\n');
-        indent_level++;
-        indent(ctx, head, indent_level);
-      }
-
-      GRN_TEXT_PUTC(ctx, head, '[');
-      if (is_pretty) {
-        GRN_TEXT_PUTC(ctx, head, '\n');
-        indent_level++;
-        indent(ctx, head, indent_level);
-      }
-
-      grn_text_esc(ctx, head, ctx->errfunc, strlen(ctx->errfunc));
-      GRN_TEXT_PUTC(ctx, head, ',');
-      if (is_pretty) {
-        GRN_TEXT_PUTC(ctx, head, '\n');
-        indent(ctx, head, indent_level);
-      }
-
-      grn_text_esc(ctx, head, ctx->errfile, strlen(ctx->errfile));
-      GRN_TEXT_PUTC(ctx, head, ',');
-      if (is_pretty) {
-        GRN_TEXT_PUTC(ctx, head, '\n');
-        indent(ctx, head, indent_level);
-      }
-
-      grn_text_itoa(ctx, head, ctx->errline);
-      if (is_pretty) {
-        GRN_TEXT_PUTC(ctx, head, '\n');
-        indent_level--;
-        indent(ctx, head, indent_level);
-      }
-      GRN_TEXT_PUTC(ctx, head, ']');
-      if (file && (command = GRN_CTX_USER_DATA(ctx)->ptr)) {
-        GRN_TEXT_PUTC(ctx, head, ',');
-        if (is_pretty) {
-          GRN_TEXT_PUTC(ctx, head, '\n');
-          indent(ctx, head, indent_level);
-        }
-
-        GRN_TEXT_PUTC(ctx, head, '[');
-        if (is_pretty) {
-          GRN_TEXT_PUTC(ctx, head, '\n');
-          indent_level++;
-          indent(ctx, head, indent_level);
-        }
-
-        grn_text_esc(ctx, head, file, strlen(file));
-        GRN_TEXT_PUTC(ctx, head, ',');
-        if (is_pretty) {
-          GRN_TEXT_PUTC(ctx, head, '\n');
-          indent(ctx, head, indent_level);
-        }
-
-        grn_text_itoa(ctx, head, line);
-        GRN_TEXT_PUTC(ctx, head, ',');
-        if (is_pretty) {
-          GRN_TEXT_PUTC(ctx, head, '\n');
-          indent(ctx, head, indent_level);
-        }
-
-        grn_text_esc(ctx, head, GRN_TEXT_VALUE(command), GRN_TEXT_LEN(command));
-        if (is_pretty) {
-          GRN_TEXT_PUTC(ctx, head, '\n');
-          indent_level--;
-          indent(ctx, head, indent_level);
-        }
-        GRN_TEXT_PUTC(ctx, head, ']');
-      }
-
-      if (is_pretty) {
-        GRN_TEXT_PUTC(ctx, head, '\n');
-        indent_level--;
-        indent(ctx, head, indent_level);
-      }
-      GRN_TEXT_PUTC(ctx, head, ']');
-    }
+    json_array_close(ctx, head, &indent_level);
   }
-  if (is_pretty) {
-    GRN_TEXT_PUTC(ctx, head, '\n');
-    indent_level--;
-    indent(ctx, head, indent_level);
-  }
-  GRN_TEXT_PUTC(ctx, head, ']');
 
   if (GRN_TEXT_LEN(body)) {
-    GRN_TEXT_PUTC(ctx, head, ',');
-    if (is_pretty) {
-      GRN_TEXT_PUTC(ctx, head, '\n');
-      indent(ctx, head, indent_level);
-    }
+    json_element_end(ctx, head, indent_level);
   }
 
-  if (is_pretty) {
-    GRN_TEXT_PUTC(ctx, foot, '\n');
-    indent_level--;
-    indent(ctx, head, indent_level);
-  }
-  GRN_TEXT_PUTC(ctx, foot, ']');
+  json_array_close(ctx, foot, &indent_level);
   if (jsonp_func && GRN_TEXT_LEN(jsonp_func)) {
     GRN_TEXT_PUTS(ctx, foot, ");");
   }
