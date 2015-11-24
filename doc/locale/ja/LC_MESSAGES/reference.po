@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-10-06 15:45+0900\n"
+"PO-Revision-Date: 2015-11-24 22:02+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -3214,52 +3214,78 @@ msgid "See also"
 msgstr "参考"
 
 msgid ":doc:`return_code` describes about return code."
+msgstr ":doc:`return_code` はリターンコードについて説明しています。"
+
+msgid "Pretty print"
+msgstr "プリティープリント"
+
+msgid ""
+"Groonga supports pretty print when you choose JSON for :doc:`output_format`."
 msgstr ""
+"Groongaでは :doc:`output_format` にJSONを選んだときはプリティープリント（読み"
+"やすく整形して出力）できます。"
+
+msgid "Just specify ``yes`` to ``output_pretty`` parameter::"
+msgstr "``output_pretty`` パラメーターに ``yes`` を指定するだけです。::"
+
+msgid "Here is a result without ``output_pretty`` parameter::"
+msgstr ""
+"以下は ``output_pretty`` パラメーターを指定しなかったときの結果です。::"
 
 msgid "Request ID"
 msgstr "リクエストID"
 
 # fa33df3be0a649509ae60b55405e9f61
 msgid "You can assign ID to each request."
-msgstr ""
+msgstr "各リクエストにIDを割り当てることができます。"
 
 # f61a2ed3df9d4ab6b6b2b5940f97df94
 msgid ""
 "The ID can be used by canceling the request. See also :doc:`/reference/"
 "commands/request_cancel` for details about canceling a request."
 msgstr ""
+"リクエストをキャンセルするためにこのIDを使うことができます。リクエストをキャ"
+"ンセルする方法の詳細は :doc:`/reference/commands/request_cancel` を参照してく"
+"ださい。"
 
 # 2266126a6fe445c3a3b9a4b3c1b73897
 msgid ""
 "Request ID should be managed by user. If you assign the same ID for some "
 "running requests, you can't cancel the request."
 msgstr ""
+"リクエストIDはユーザーが管理します。もし、実行中の複数のリクエストに同じIDを"
+"割り当てるとそのリクエストはキャンセルできません。"
 
 # 2d7d3cde060f4c5691657164aad61a7b
 msgid ""
 "The simplest ID sequence is incremented numbers such as ``1``, ``2`` , ``..."
 "``."
 msgstr ""
+"もっとも単純なIDの付け方は ``1``, ``2``, ``..`` というように数値をインクリメ"
+"ントしていく付け方です。"
 
 # 340c0204a4c14ca68d177314eee12792
 msgid "A request ID is a string. The maximum request ID size is 4096 byte."
-msgstr ""
+msgstr "リクエストIDは文字列です。リクエストIDの最長サイズは4096バイトです。"
 
 # 606b6840634d468fbd1d82329b7d65a8
 msgid "How to assign ID to request"
-msgstr ""
+msgstr "リクエストにIDを割り当てる方法"
 
 # 09584728ab8241ef8082ca2cdf80d59c
 msgid ""
 "All commands accept ``request_id`` parameter. You can assign ID to request "
 "by adding ``request_id`` parameter."
 msgstr ""
+"すべてのコマンドは ``request_id`` パラメーターを受け付けます。 "
+"``request_id`` パラメーターを追加することでリクエストにIDを割り当てることがで"
+"きます。"
 
 msgid "Here is an example to assign ``id-1`` ID to a request::"
 msgstr "以下は ``id-1`` というIDをリクエストに割り当てる例です::"
 
 msgid ":doc:`/reference/commands/request_cancel`"
-msgstr ":doc:`/reference/commands/request_cancel`"
+msgstr ""
 
 msgid "Return code"
 msgstr "リターンコード"
@@ -5499,6 +5525,8 @@ msgid ""
 "``lock_clear`` command clear the lock of the target object recursively. The "
 "target object is one of database, table and column."
 msgstr ""
+"``lock_clear`` コマンドは対象オブジェクトのロックを再帰的に解除します。対象オ"
+"ブジェクトはデータベース、テーブル、カラムのどれかです。"
 
 # a6a132a774344e82974af7a3f231f43d
 msgid ""
@@ -5506,12 +5534,18 @@ msgid ""
 "process or thread is doing a write operation to the target object. If you do "
 "it, your database may be broken and/or your process may be crashed."
 msgstr ""
+"これは危険なコマンドです。他のプロセスまたは他のスレッドが対象オブジェクトに"
+"書き込み処理を実行している間はこのコマンドを使ってはいけません。もし使ったな"
+"ら、データベースは壊れるかもしれませんし、実行中のプロセスはクラッシュするか"
+"もしれません。"
 
 # 088d6f28963e451aba302359d0045188
 msgid ""
 "If ``target_name`` parameters is omitted, database is used for the target "
 "object. It means that all locks in the database are cleared."
 msgstr ""
+"``target_name`` パラメーターを省略した場合は対象オブジェクトはデータベースに"
+"なります。これはデータベース中のすべてのロックを解除するという意味です。"
 
 msgid "Here is an example to clear all locks in the database:"
 msgstr "以下はデータベースの中のすべてのロックを解放する例です::"
@@ -5531,11 +5565,17 @@ msgstr "テーブル名またはカラム名を指定します。"
 
 # 77498f831b814019afdc5c30be9ab258
 msgid "If you don't specify it, database is used for the target object."
-msgstr ""
+msgstr "指定しなかったら対象オブジェクトはデータベースになります。"
 
 # d870dc0a4ef8426e9867d356c9683e3e
 msgid "The default is none. It means that the target object is database."
 msgstr ""
+"デフォルト値はありません。これは対象オブジェクトはデータベースになるというこ"
+"とです。"
+
+# 4b25ce81f5df407bb2cf675eff672d75
+msgid "``lock_clear`` command returns whether lock is acquired or not::"
+msgstr "``lock_clear`` コマンドはロックを獲得できたかどうかを返します。::"
 
 msgid "``log_level``"
 msgstr ""
@@ -7168,6 +7208,95 @@ msgstr ""
 
 msgid "If ``register`` fails, error details are in ``HEADER``."
 msgstr "``register`` が失敗すると、エラーの詳細は ``HEADER`` に含まれます。"
+
+msgid "``reindex``"
+msgstr ""
+
+msgid "``reindex`` command recreates one or more index columns."
+msgstr "``reindex`` コマンドは1つ以上のインデックスカラムを作り直します。"
+
+# ac81176df271464f82d275c8a39d3188
+msgid ""
+"If you specify a database as target object, all index columns are recreated."
+msgstr ""
+"対象オブジェクトにデータベースを指定するとすべてのインデックスカラムを作り直"
+"します。"
+
+# ac81176df271464f82d275c8a39d3188
+msgid ""
+"If you specify a table as target object, all index columns in the table are "
+"recreated."
+msgstr ""
+"対象オブジェクトにテーブルを指定すると、そのテーブル内のすべてのインデックス"
+"カラムを作り直します。"
+
+msgid ""
+"If you specify a data column as target object, all index columns for the "
+"data column are recreated."
+msgstr ""
+"対象オブジェクトにデータカラムを指定すると、そのデータカラム用のすべてのイン"
+"デックスカラムを作り直します。"
+
+# 891eacf2bde14a24b0077166ecb77f91
+msgid ""
+"If you specify an index column as target object, the index column is "
+"recreated."
+msgstr ""
+"対象オブジェクトにインデックスカラムを指定すると、そのインデックスカラムを作"
+"り直します。"
+
+# 44f5e1766bed4e1ba9ba3ee548cbe231
+msgid ""
+"This command is a useful when your index column is broken. The target object "
+"is one of database, table and column."
+msgstr ""
+"このコマンドはインデックスカラムが壊れたときに便利です。対象オブジェクトは"
+"データベース、テーブル、カラムのどれかです。"
+
+msgid ""
+"You can't use target index columns while ``reindex`` command is running. If "
+"you use the same database from multiple processes, all processes except "
+"running ``reindex`` should reopen the database. You can use :doc:"
+"`database_unmap` for reopening database."
+msgstr ""
+"``reindex`` コマンドを実行している間は対象インデックスカラムを使うことはでき"
+"ません。もし、複数のプロセスから同じデータベースを使っている場合、 "
+"``reindex`` を実行したプロセス以外のすべてのプロセスはデータベースを開き直す"
+"べきです。データベースを開き直すには :doc:`database_unmap` を使えます。"
+
+msgid ""
+"If ``target_name`` parameters is omitted, database is used for the target "
+"object. It means that all index columns in the database are recreated."
+msgstr ""
+"``target_name`` パラメーターを省略した場合は対象オブジェクトはデータベースに"
+"なります。これは、データベース中のすべてのインデックスカラムを作りなおすとい"
+"う意味です。"
+
+msgid "Here is an example to recreate all index columns in the database:"
+msgstr "以下はデータベースの中のすべてのインデックスカラムを作り直す例です。"
+
+msgid ""
+"Here is an example to recreate all index columns (``Lexicon.entry_key`` and "
+"``Lexicon.entry_body``) in ``Lexicon`` table:"
+msgstr ""
+"以下は ``Lexicon`` テーブルの中のすべてのインデックスカラム（ ``Lexicon."
+"entry_key`` と ``Lexicon.entry_body`` ）を作り直す例です。"
+
+msgid ""
+"Here is an example to recreate all index columns (``BigramLexicon."
+"site_title`` and ``RegexpLexicon.site_title``) of ``Site.title`` data column:"
+msgstr ""
+"以下は ``Site.title`` データカラムのすべてのインデックスカラム"
+"（ ``BigramLexicon.site_title`` と ``RegexpLexicon.site_title`` ）を作り直す"
+"例です。"
+
+msgid "Here is an example to recreate an index column (``Timestamp.index``):"
+msgstr ""
+"以下は1つのインデックスカラム（ ``Timestamp.index`` ）を作り直す例です。"
+
+# 4b25ce81f5df407bb2cf675eff672d75
+msgid "``reindex`` command returns whether recreation is succeeded or not::"
+msgstr "``reindex`` コマンドは作り直しが成功したかどうかを返します。::"
 
 # e29b646988824312888c2b9c3b5d49c5
 msgid "``request_cancel``"
@@ -13269,7 +13398,7 @@ msgstr ""
 msgid "TODO: Add documentations about function."
 msgstr ""
 
-msgid "between"
+msgid "``between``"
 msgstr ""
 
 msgid ""
@@ -13418,7 +13547,7 @@ msgstr ""
 msgid "例"
 msgstr ""
 
-msgid "geo_distance"
+msgid "``geo_distance``"
 msgstr ""
 
 msgid ""
@@ -13881,7 +14010,7 @@ msgstr ""
 msgid "pointに指定した座標が矩形の範囲内にあるかどうかをBool型の値で返します。"
 msgstr ""
 
-msgid "highlight_full"
+msgid "``highlight_full``"
 msgstr ""
 
 msgid "This feature is experimental. API will be changed."
@@ -14021,7 +14150,7 @@ msgstr ""
 msgid ":doc:`/reference/functions/highlight_html`"
 msgstr ""
 
-msgid "highlight_html"
+msgid "``highlight_html``"
 msgstr ""
 
 msgid ""
@@ -14097,7 +14226,7 @@ msgstr ""
 msgid ":doc:`/reference/functions/highlight_full`"
 msgstr ""
 
-msgid "html_untag"
+msgid "``html_untag``"
 msgstr ""
 
 msgid "``html_untag`` strips HTML tags from HTML and outputs plain text."
@@ -14162,7 +14291,7 @@ msgstr ""
 "``html_untag`` はHTMLテキストからHTMLタグを除去したタグなしのテキストを返しま"
 "す。"
 
-msgid "in_values"
+msgid "``in_values``"
 msgstr ""
 
 # f45b2a7a711d44d88457d385679182b0
@@ -14415,7 +14544,7 @@ msgstr ""
 msgid "0 と max の間の数を表すInt32型の値を返します。"
 msgstr ""
 
-msgid "snippet_html"
+msgid "``snippet_html``"
 msgstr ""
 
 msgid ""
