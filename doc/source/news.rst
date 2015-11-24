@@ -58,6 +58,8 @@ Improvements
   whether the object is an accessor for ``_key``
   :doc:`/reference/columns/pseudo`.
 
+* Supported :doc:`/reference/command/pretty_print` for JSON output.
+
 Fixes
 ^^^^^
 
