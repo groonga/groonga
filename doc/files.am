@@ -251,6 +251,14 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_only.log \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_setup_schema.log \
+	$(top_srcdir)/doc/source/example/reference/functions/prefix_rk_search/usage_add_no_reading_completion_target.log \
+	$(top_srcdir)/doc/source/example/reference/functions/prefix_rk_search/usage_loose_completion.log \
+	$(top_srcdir)/doc/source/example/reference/functions/prefix_rk_search/usage_prefix_rk_only_completion.log \
+	$(top_srcdir)/doc/source/example/reference/functions/prefix_rk_search/usage_prefix_search_combined_completion.log \
+	$(top_srcdir)/doc/source/example/reference/functions/prefix_rk_search/usage_setup.log \
+	$(top_srcdir)/doc/source/example/reference/functions/prefix_rk_search/usage_setup_completion.log \
+	$(top_srcdir)/doc/source/example/reference/functions/prefix_rk_search/usage_setup_loose_completion.log \
+	$(top_srcdir)/doc/source/example/reference/functions/prefix_rk_search/usage_simple.log \
 	$(top_srcdir)/doc/source/example/reference/functions/query/usage_basic.log \
 	$(top_srcdir)/doc/source/example/reference/functions/query/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/query/usage_setup_schema.log \
@@ -1013,6 +1021,14 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/in_values/usage_only.log \
 	source/example/reference/functions/in_values/usage_setup_data.log \
 	source/example/reference/functions/in_values/usage_setup_schema.log \
+	source/example/reference/functions/prefix_rk_search/usage_add_no_reading_completion_target.log \
+	source/example/reference/functions/prefix_rk_search/usage_loose_completion.log \
+	source/example/reference/functions/prefix_rk_search/usage_prefix_rk_only_completion.log \
+	source/example/reference/functions/prefix_rk_search/usage_prefix_search_combined_completion.log \
+	source/example/reference/functions/prefix_rk_search/usage_setup.log \
+	source/example/reference/functions/prefix_rk_search/usage_setup_completion.log \
+	source/example/reference/functions/prefix_rk_search/usage_setup_loose_completion.log \
+	source/example/reference/functions/prefix_rk_search/usage_simple.log \
 	source/example/reference/functions/query/usage_basic.log \
 	source/example/reference/functions/query/usage_setup_data.log \
 	source/example/reference/functions/query/usage_setup_schema.log \
