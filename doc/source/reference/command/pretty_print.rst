@@ -8,7 +8,7 @@ Pretty print
 Summary
 -------
 
-.. versionadded:: 5.0.9
+.. versionadded:: 5.1.0
 
 Groonga supports pretty print when you choose JSON for
 :doc:`output_format`.
