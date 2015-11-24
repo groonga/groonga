@@ -10,6 +10,7 @@ Groonga has the multiple search operations. This section describes
 about search operations.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
+   :glob:
 
-   operations/geolocation_search
+   operations/*

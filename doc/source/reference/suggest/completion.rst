@@ -29,13 +29,8 @@ completed words:
 Prefix RK search
 ^^^^^^^^^^^^^^^^
 
-RK means Romaji and Katakana. Prefix RK search can find
-registered words that start with user's input by romaji,
-katakana or hiragana. It's useful for searching in Japanese.
-
-For example, there is a registered word "日本". And "ニホン"
-(it must be katakana) is registered as its reading. An user
-can find "日本" by "ni", "二" or "に".
+See :doc:`/reference/operations/prefix_rk_search` for prefix RK
+search.
 
 If you create dataset which is named as ``example`` by
 :doc:`/reference/executables/groonga-suggest-create-dataset`
