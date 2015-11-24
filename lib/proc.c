@@ -8185,27 +8185,27 @@ static grn_obj *
 proc_reindex(grn_ctx *ctx, int nargs, grn_obj **args,
              grn_user_data *user_data)
 {
-  grn_obj *object_name;
-  grn_obj *object;
+  grn_obj *target_name;
+  grn_obj *target;
 
-  object_name = VAR(0);
-  if (GRN_TEXT_LEN(object_name) == 0) {
-    object = grn_ctx_db(ctx);
+  target_name = VAR(0);
+  if (GRN_TEXT_LEN(target_name) == 0) {
+    target = grn_ctx_db(ctx);
   } else {
-    object = grn_ctx_get(ctx,
-                         GRN_TEXT_VALUE(object_name),
-                         GRN_TEXT_LEN(object_name));
-    if (!object) {
+    target = grn_ctx_get(ctx,
+                         GRN_TEXT_VALUE(target_name),
+                         GRN_TEXT_LEN(target_name));
+    if (!target) {
       ERR(GRN_INVALID_ARGUMENT,
-          "[reindex] nonexistent object: <%.*s>",
-          (int)GRN_TEXT_LEN(object_name),
-          GRN_TEXT_VALUE(object_name));
+          "[reindex] nonexistent target: <%.*s>",
+          (int)GRN_TEXT_LEN(target_name),
+          GRN_TEXT_VALUE(target_name));
       GRN_OUTPUT_BOOL(GRN_FALSE);
       return NULL;
     }
   }
 
-  grn_obj_reindex(ctx, object);
+  grn_obj_reindex(ctx, target);
 
   GRN_OUTPUT_BOOL(ctx->rc == GRN_SUCCESS);
 
@@ -8593,7 +8593,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
 
   DEF_COMMAND("schema", proc_schema, 0, vars);
 
-  DEF_VAR(vars[0], "object");
+  DEF_VAR(vars[0], "target_name");
   DEF_COMMAND("reindex", proc_reindex, 1, vars);
 
   {
