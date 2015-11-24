@@ -76,7 +76,7 @@ The default is none. It means that the target object is database.
 Return value
 ------------
 
-::
+``lock_clear`` command returns whether lock is acquired or not::
 
  [HEADER, SUCCEEDED_OR_NOT]
 
