@@ -1228,3 +1228,88 @@ grn_ts_expr_parser_parse(grn_ctx *ctx, grn_ts_expr_parser *parser,
   }
   return grn_ts_expr_builder_complete(ctx, parser->builder, expr);
 }
+
+grn_rc
+grn_ts_expr_parser_split(grn_ctx *ctx, grn_ts_expr_parser *parser,
+                         grn_ts_str str, grn_ts_str *first, grn_ts_str *rest)
+{
+  size_t i;
+  char stack_top;
+  grn_rc rc = GRN_SUCCESS;
+  grn_ts_buf stack;
+
+  // FIXME: `stack` should be a member of `parser`.
+  grn_ts_buf_init(ctx, &stack);
+  for ( ; ; ) {
+    str = grn_ts_str_trim_left(str);
+    if (!str.size) {
+      rc = GRN_END_OF_DATA;
+      break;
+    }
+    for (i = 0; i < str.size; i++) {
+      if (stack.pos) {
+        if (str.ptr[i] == stack_top) {
+          if (--stack.pos) {
+            stack_top = ((char *)stack.ptr)[stack.pos - 1];
+          }
+          continue;
+        }
+        if (stack_top == '"') {
+          /* Skip the next byte of an escape character. */
+          if ((str.ptr[i] == '\\') && (i < (str.size - 1))) {
+            i++;
+          }
+          continue;
+        }
+      } else if (str.ptr[i] == ',') {
+        /* An expression delimiter. */
+        break;
+      }
+      switch (str.ptr[i]) {
+        case '(': {
+          stack_top = ')';
+          rc = grn_ts_buf_write(ctx, &stack, &stack_top, 1);
+          break;
+        }
+        case '[': {
+          stack_top = ']';
+          rc = grn_ts_buf_write(ctx, &stack, &stack_top, 1);
+          break;
+        }
+        case '{': {
+          stack_top = '}';
+          rc = grn_ts_buf_write(ctx, &stack, &stack_top, 1);
+          break;
+        }
+        case '"': {
+          stack_top = '"';
+          rc = grn_ts_buf_write(ctx, &stack, &stack_top, 1);
+          break;
+        }
+      }
+      if (rc != GRN_SUCCESS) {
+        break;
+      }
+    }
+    if (rc != GRN_SUCCESS) {
+      break;
+    }
+    if (i) {
+      /* Set the result. */
+      first->ptr = str.ptr;
+      first->size = i;
+      if (first->size == str.size) {
+        rest->ptr = str.ptr + str.size;
+        rest->size = 0;
+      } else {
+        rest->ptr = str.ptr + first->size + 1;
+        rest->size = str.size - first->size - 1;
+      }
+      break;
+    }
+    str.ptr++;
+    str.size--;
+  }
+  grn_ts_buf_fin(ctx, &stack);
+  return rc;
+}

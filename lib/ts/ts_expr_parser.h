@@ -93,6 +93,15 @@ grn_rc grn_ts_expr_parser_close(grn_ctx *ctx, grn_ts_expr_parser *parser);
 grn_rc grn_ts_expr_parser_parse(grn_ctx *ctx, grn_ts_expr_parser *parser,
                                 grn_ts_str str, grn_ts_expr **expr);
 
+/*
+ * grn_ts_expr_parser_split() splits comma-separated strings into the first
+ * expression and the rest.
+ * Note that if `str` is empty, this function returns GRN_END_OF_DATA.
+ */
+grn_rc grn_ts_expr_parser_split(grn_ctx *ctx, grn_ts_expr_parser *parser,
+                                grn_ts_str str, grn_ts_str *first,
+                                grn_ts_str *rest);
+
 #ifdef __cplusplus
 }
 #endif
