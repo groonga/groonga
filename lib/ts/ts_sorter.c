@@ -20,6 +20,7 @@
 
 #include <string.h>
 
+#include "ts_expr_parser.h"
 #include "ts_log.h"
 #include "ts_util.h"
 
@@ -144,8 +145,56 @@ grn_ts_sorter_parse(grn_ctx *ctx, grn_obj *table,
                     grn_ts_str str, grn_ts_int offset,
                     grn_ts_int limit, grn_ts_sorter **sorter)
 {
-  // TODO
-  return GRN_FUNCTION_NOT_IMPLEMENTED;
+  grn_rc rc;
+  grn_ts_sorter *new_sorter = NULL;
+  grn_ts_expr_parser *parser;
+  if (!ctx) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  if (!table || !grn_ts_obj_is_table(ctx, table) || !str.size || !sorter) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
+  }
+  rc = grn_ts_expr_parser_open(ctx, table, &parser);
+  if (rc == GRN_SUCCESS) {
+    grn_ts_sorter_builder *builder;
+    rc = grn_ts_sorter_builder_open(ctx, table, &builder);
+    if (rc == GRN_SUCCESS) {
+      grn_ts_str first, rest = str;
+      for ( ; ; ) {
+        grn_ts_expr *expr;
+        grn_ts_bool reverse = GRN_FALSE;
+        rc = grn_ts_expr_parser_split(ctx, parser, rest, &first, &rest);
+        if (rc == GRN_END_OF_DATA) {
+          rc = grn_ts_sorter_builder_complete(ctx, builder, offset, limit,
+                                              &new_sorter);
+          break;
+        } else if (rc != GRN_SUCCESS) {
+          break;
+        }
+        if (first.ptr[0] == '-') {
+          reverse = GRN_TRUE;
+          first.ptr++;
+          first.size--;
+        }
+        rc = grn_ts_expr_parser_parse(ctx, parser, first, &expr);
+        if (rc != GRN_SUCCESS) {
+          break;
+        }
+        rc = grn_ts_sorter_builder_push(ctx, builder, expr, reverse);
+        if (rc != GRN_SUCCESS) {
+          grn_ts_expr_close(ctx, expr);
+          break;
+        }
+      }
+      grn_ts_sorter_builder_close(ctx, builder);
+    }
+    grn_ts_expr_parser_close(ctx, parser);
+  }
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  *sorter = new_sorter;
+  return GRN_SUCCESS;
 }
 
 grn_rc
@@ -281,7 +330,7 @@ grn_ts_sorter_builder_push(grn_ctx *ctx, grn_ts_sorter_builder *builder,
   if (!ctx) {
     return GRN_INVALID_ARGUMENT;
   }
-  if (!builder || !expr) {
+  if (!builder || !expr || expr->table != builder->table) {
     GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
   }
   rc = grn_ts_sorter_node_open(ctx, expr, reverse, &new_node);
