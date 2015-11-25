@@ -26,6 +26,7 @@
 #include "ts/ts_buf.h"
 #include "ts/ts_cursor.h"
 #include "ts/ts_expr.h"
+#include "ts/ts_expr_parser.h"
 #include "ts/ts_log.h"
 #include "ts/ts_str.h"
 #include "ts/ts_types.h"
@@ -168,6 +169,7 @@ grn_ts_geo_vector_output(grn_ctx *ctx, grn_ts_geo_vector value)
  */
 
 typedef struct {
+  grn_ts_expr_parser *parser;
   grn_ts_expr **exprs;
   size_t n_exprs;
   size_t max_n_exprs;
@@ -181,6 +183,7 @@ static void
 grn_ts_writer_init(grn_ctx *ctx, grn_ts_writer *writer)
 {
   memset(writer, 0, sizeof(*writer));
+  writer->parser = NULL;
   writer->exprs = NULL;
   GRN_TEXT_INIT(&writer->name_buf, GRN_OBJ_VECTOR);
   writer->names = NULL;
@@ -208,95 +211,9 @@ grn_ts_writer_fin(grn_ctx *ctx, grn_ts_writer *writer)
     }
     GRN_FREE(writer->exprs);
   }
-}
-
-/*
- * grn_ts_writer_tokenize() extracts the first expression string.
- * If the input is empty, this function returns GRN_END_OF_DATA.
- */
-static grn_rc
-grn_ts_writer_tokenize(grn_ctx *ctx, grn_ts_writer *writer,
-                       grn_ts_str in, grn_ts_str *token, grn_ts_str *rest)
-{
-  size_t i;
-  char stack_top;
-  grn_rc rc = GRN_SUCCESS;
-  grn_ts_str str = in;
-  grn_ts_buf stack;
-
-  /* Find a non-empty token. */
-  grn_ts_buf_init(ctx, &stack);
-  for ( ; ; ) {
-    str = grn_ts_str_trim_left(str);
-    if (!str.size) {
-      rc = GRN_END_OF_DATA;
-      break;
-    }
-    for (i = 0; i < str.size; i++) {
-      if (stack.pos) {
-        if (str.ptr[i] == stack_top) {
-          if (--stack.pos) {
-            stack_top = ((char *)stack.ptr)[stack.pos - 1];
-          }
-          continue;
-        }
-        if (stack_top == '"') {
-          /* Skip the next byte of an escape character. */
-          if ((str.ptr[i] == '\\') && (i < (str.size - 1))) {
-            i++;
-          }
-          continue;
-        }
-      } else if (str.ptr[i] == ',') {
-        break;
-      }
-      switch (str.ptr[i]) {
-        case '(': {
-          stack_top = ')';
-          rc = grn_ts_buf_write(ctx, &stack, &stack_top, 1);
-          break;
-        }
-        case '[': {
-          stack_top = ']';
-          rc = grn_ts_buf_write(ctx, &stack, &stack_top, 1);
-          break;
-        }
-        case '{': {
-          stack_top = '}';
-          rc = grn_ts_buf_write(ctx, &stack, &stack_top, 1);
-          break;
-        }
-        case '"': {
-          stack_top = '"';
-          rc = grn_ts_buf_write(ctx, &stack, &stack_top, 1);
-          break;
-        }
-      }
-      if (rc != GRN_SUCCESS) {
-        break;
-      }
-    }
-    if (rc != GRN_SUCCESS) {
-      break;
-    }
-    if (i) {
-      /* Output the result. */
-      token->ptr = str.ptr;
-      token->size = i;
-      if (token->size == str.size) {
-        rest->ptr = str.ptr + str.size;
-        rest->size = 0;
-      } else {
-        rest->ptr = str.ptr + token->size + 1;
-        rest->size = str.size - token->size - 1;
-      }
-      break;
-    }
-    str.ptr++;
-    str.size--;
+  if (writer->parser) {
+    grn_ts_expr_parser_close(ctx, writer->parser);
   }
-  grn_ts_buf_fin(ctx, &stack);
-  return rc;
 }
 
 /* grn_ts_writer_expand() expands a wildcard. */
@@ -354,19 +271,20 @@ grn_ts_writer_parse(grn_ctx *ctx, grn_ts_writer *writer,
 {
   grn_rc rc;
   grn_ts_str rest = str;
+  rc = grn_ts_expr_parser_open(ctx, table, &writer->parser);
   for ( ; ; ) {
-    grn_ts_str token = { NULL, 0 };
-    rc = grn_ts_writer_tokenize(ctx, writer, rest, &token, &rest);
+    grn_ts_str first = { NULL, 0 };
+    rc = grn_ts_expr_parser_split(ctx, writer->parser, rest, &first, &rest);
     if (rc != GRN_SUCCESS) {
       return (rc == GRN_END_OF_DATA) ? GRN_SUCCESS : rc;
     }
-    if ((token.ptr[token.size - 1] == '*') &&
-        grn_ts_str_is_name_prefix((grn_ts_str){ token.ptr, token.size - 1 })) {
-      rc = grn_ts_writer_expand(ctx, writer, table, token);
+    if ((first.ptr[first.size - 1] == '*') &&
+        grn_ts_str_is_name_prefix((grn_ts_str){ first.ptr, first.size - 1 })) {
+      rc = grn_ts_writer_expand(ctx, writer, table, first);
       if (rc != GRN_SUCCESS) {
         return rc;
       }
-    } else if (grn_ts_str_is_key_name(token) &&
+    } else if (grn_ts_str_is_key_name(first) &&
                !grn_ts_table_has_key(ctx, table)) {
       /*
        * Skip _key if the table has no _key, because the default output_columns
@@ -375,7 +293,7 @@ grn_ts_writer_parse(grn_ctx *ctx, grn_ts_writer *writer,
       GRN_TS_DEBUG("skip \"_key\" because the table has no _key");
     } else {
       rc = grn_vector_add_element(ctx, &writer->name_buf,
-                                  token.ptr, token.size, 0, GRN_DB_TEXT);
+                                  first.ptr, first.size, 0, GRN_DB_TEXT);
       if (rc != GRN_SUCCESS) {
         return rc;
       }
@@ -410,8 +328,9 @@ grn_ts_writer_build(grn_ctx *ctx, grn_ts_writer *writer, grn_obj *table)
     const char *name_ptr;
     size_t name_size = grn_vector_get_element(ctx, &writer->name_buf, i,
                                               &name_ptr, NULL, NULL);
-    rc = grn_ts_expr_parse(ctx, table, (grn_ts_str){ name_ptr, name_size },
-                           &new_expr);
+    rc = grn_ts_expr_parser_parse(ctx, writer->parser,
+                                  (grn_ts_str){ name_ptr, name_size },
+                                  &new_expr);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
