@@ -21,6 +21,7 @@
 
 #include "../grn.h"
 
+#include "ts_expr.h"
 #include "ts_str.h"
 #include "ts_types.h"
 
@@ -30,13 +31,17 @@ extern "C" {
 
 /* TODO: Sorting should take into account the order of input records. */
 
-typedef struct {
-  int REMOVE_ME;
+typedef struct grn_ts_sorter_node {
+  grn_ts_expr *expr;               /* Expression. */
+  grn_ts_bool reverse;             /* Reverse order or not. */
+  struct grn_ts_sorter_node *next; /* Next node. */
 } grn_ts_sorter_node;
 
 typedef struct {
-  grn_obj *table;
-  grn_ts_sorter_node *head;
+  grn_obj *table;           /* Table. */
+  grn_ts_sorter_node *head; /* First node. */
+  grn_ts_int offset;        /* Top `offset` records will be discarded. */
+  grn_ts_int limit;         /* At most `limit` records will be left. */
 } grn_ts_sorter;
 
 /* grn_ts_sorter_open() creates a sorter. */
@@ -61,7 +66,9 @@ grn_rc grn_ts_sorter_complete(grn_ctx *ctx, grn_ts_sorter *sorter,
                               grn_ts_record *recs, size_t n_recs);
 
 typedef struct {
-  grn_obj *table;
+  grn_obj *table;           /* Table. */
+  grn_ts_sorter_node *head; /* First node. */
+  grn_ts_sorter_node *tail; /* Last node. */
 } grn_ts_sorter_builder;
 
 /* grn_ts_sorter_builder_open() creates a sorter builder. */
@@ -71,6 +78,16 @@ grn_rc grn_ts_sorter_builder_open(grn_ctx *ctx, grn_obj *table,
 /* grn_ts_sorter_builder_close() destroys a sorter builder. */
 grn_rc grn_ts_sorter_builder_close(grn_ctx *ctx,
                                    grn_ts_sorter_builder *builder);
+
+/* grn_ts_sorter_builder_complete() completes a sorter. */
+grn_rc grn_ts_sorter_builder_complete(grn_ctx *ctx,
+                                      grn_ts_sorter_builder *builder,
+                                      grn_ts_int offset, grn_ts_int limit,
+                                      grn_ts_sorter **sorter);
+
+/* grn_ts_sorter_builder_push() pushes a node. */
+grn_rc grn_ts_sorter_builder_push(grn_ctx *ctx, grn_ts_sorter_builder *builder,
+                                  grn_ts_expr *expr, grn_ts_bool reverse);
 
 #ifdef __cplusplus
 }
