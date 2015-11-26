@@ -52,8 +52,15 @@ typedef struct {
 /* grn_ts_str_has_prefix() returns whether or not str starts with prefix. */
 grn_ts_bool grn_ts_str_starts_with(grn_ts_str str, grn_ts_str prefix);
 
-/* grn_ts_str_trim_left() returns a string without the leading white-spaces. */
+/* grn_ts_str_trim_left() returns a string without leading white-spaces. */
 grn_ts_str grn_ts_str_trim_left(grn_ts_str str);
+
+/*
+ * grn_ts_str_trim_score_assignment() returns a string without leading
+ * white-spaces and an assignment to _score. If `str` does not start with
+ * an assignment, this function returns `grn_ts_str_trim_left(str)`.
+ */
+grn_ts_str grn_ts_str_trim_score_assignment(grn_ts_str str);
 
 /*
  * grn_ts_str_has_number_prefix() returns whether or not a string starts with a

@@ -72,6 +72,26 @@ grn_ts_str_trim_left(grn_ts_str str)
   return str;
 }
 
+grn_ts_str
+grn_ts_str_trim_score_assignment(grn_ts_str str)
+{
+  grn_ts_str rest;
+  str = grn_ts_str_trim_left(str);
+  if (!grn_ts_str_starts_with(str, (grn_ts_str){ "_score", 6 })) {
+    return str;
+  }
+  rest.ptr = str.ptr + 6;
+  rest.size = str.size - 6;
+  rest = grn_ts_str_trim_left(rest);
+  if (!rest.size || (rest.ptr[0] != '=') ||
+      ((rest.size >= 2) && (rest.ptr[1] == '='))) {
+    return str;
+  }
+  rest.ptr++;
+  rest.size--;
+  return grn_ts_str_trim_left(rest);
+}
+
 grn_ts_bool
 grn_ts_str_has_number_prefix(grn_ts_str str)
 {
