@@ -701,28 +701,29 @@ grn_ts_select_output(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
   return rc;
 }
 
-/*-------------------------------------------------------------
- * API.
- */
+/* grn_ts_select_with_sortby() executes a select command with --sortby. */
+static grn_rc
+grn_ts_select_with_sortby(grn_ctx *ctx, grn_obj *table,
+                          grn_ts_str filter, grn_ts_str scorer,
+                          grn_ts_str sortby, grn_ts_str output_columns,
+                          size_t offset, size_t limit)
+{
+  // TODO
+  return GRN_FUNCTION_NOT_IMPLEMENTED;
+}
 
-grn_rc
-grn_ts_select(grn_ctx *ctx, grn_obj *table,
-              const char *filter_ptr, size_t filter_len,
-              const char *scorer_ptr, size_t scorer_len,
-              const char *output_columns_ptr, size_t output_columns_len,
-              size_t offset, size_t limit)
+/*
+ * grn_ts_select_without_sortby() executes a select command without --sortby.
+ */
+static grn_rc
+grn_ts_select_without_sortby(grn_ctx *ctx, grn_obj *table,
+                             grn_ts_str filter, grn_ts_str scorer,
+                             grn_ts_str output_columns,
+                             size_t offset, size_t limit)
 {
   grn_rc rc;
-  grn_ts_str filter = { filter_ptr, filter_len };
-  grn_ts_str scorer = { scorer_ptr, scorer_len };
-  grn_ts_str output_columns = { output_columns_ptr, output_columns_len };
   grn_ts_record *records = NULL;
   size_t n_records, n_hits;
-  if (!ctx || !table || !grn_ts_obj_is_table(ctx, table) ||
-      (!filter_ptr && filter_len) || (!scorer_ptr && scorer_len) ||
-      (!output_columns_ptr && output_columns_len)) {
-    return GRN_INVALID_ARGUMENT;
-  }
   rc = grn_ts_select_filter(ctx, table, filter, offset, limit,
                             &records, &n_records, &n_hits);
   if (rc == GRN_SUCCESS) {
@@ -734,6 +735,42 @@ grn_ts_select(grn_ctx *ctx, grn_obj *table,
   }
   if (records) {
     GRN_FREE(records);
+  }
+  return rc;
+}
+
+/*-------------------------------------------------------------
+ * API.
+ */
+
+grn_rc
+grn_ts_select(grn_ctx *ctx, grn_obj *table,
+              const char *filter_ptr, size_t filter_len,
+              const char *scorer_ptr, size_t scorer_len,
+              const char *sortby_ptr, size_t sortby_len,
+              const char *output_columns_ptr, size_t output_columns_len,
+              size_t offset, size_t limit)
+{
+  grn_rc rc;
+  grn_ts_str filter = { filter_ptr, filter_len };
+  grn_ts_str scorer = { scorer_ptr, scorer_len };
+  grn_ts_str sortby = { sortby_ptr, sortby_len };
+  grn_ts_str output_columns = { output_columns_ptr, output_columns_len };
+  if (!ctx) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  if (!table || !grn_ts_obj_is_table(ctx, table) ||
+      (!filter_ptr && filter_len) || (!scorer_ptr && scorer_len) ||
+      (!sortby_ptr && sortby_len) ||
+      (!output_columns_ptr && output_columns_len)) {
+    GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
+  }
+  if (sortby_len) {
+    rc = grn_ts_select_with_sortby(ctx, table, filter, scorer, sortby,
+                                   output_columns, offset, limit);
+  } else {
+    rc = grn_ts_select_without_sortby(ctx, table, filter, scorer,
+                                      output_columns, offset, limit);
   }
   if (rc != GRN_SUCCESS) {
     GRN_BULK_REWIND(ctx->impl->output.buf);

@@ -40,6 +40,7 @@ extern "C" {
 grn_rc grn_ts_select(grn_ctx *ctx, grn_obj *table,
                      const char *filter_ptr, size_t filter_len,
                      const char *scorer_ptr, size_t scorer_len,
+                     const char *sortby_ptr, size_t sortby_len,
                      const char *output_columns_ptr, size_t output_columns_len,
                      size_t offset, size_t limit);
 
