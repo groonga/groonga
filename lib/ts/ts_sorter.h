@@ -34,6 +34,7 @@ extern "C" {
 typedef struct grn_ts_sorter_node {
   grn_ts_expr *expr;               /* Expression. */
   grn_ts_bool reverse;             /* Reverse order or not. */
+  grn_ts_buf buf;                  /* Buffer for values. */
   struct grn_ts_sorter_node *next; /* Next node. */
 } grn_ts_sorter_node;
 
