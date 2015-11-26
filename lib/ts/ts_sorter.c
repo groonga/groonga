@@ -213,7 +213,7 @@ grn_ts_sorter_close(grn_ctx *ctx, grn_ts_sorter *sorter)
 
 grn_rc
 grn_ts_sorter_progress(grn_ctx *ctx, grn_ts_sorter *sorter,
-                       grn_ts_record *recs, size_t n_recs)
+                       grn_ts_record *recs, size_t n_recs, size_t *n_rest)
 {
   // TODO
   return GRN_FUNCTION_NOT_IMPLEMENTED;
@@ -221,7 +221,7 @@ grn_ts_sorter_progress(grn_ctx *ctx, grn_ts_sorter *sorter,
 
 grn_rc
 grn_ts_sorter_complete(grn_ctx *ctx, grn_ts_sorter *sorter,
-                       grn_ts_record *recs, size_t n_recs)
+                       grn_ts_record *recs, size_t n_recs, size_t *n_rest)
 {
   // TODO
   return GRN_FUNCTION_NOT_IMPLEMENTED;

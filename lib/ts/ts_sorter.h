@@ -59,11 +59,13 @@ grn_rc grn_ts_sorter_close(grn_ctx *ctx, grn_ts_sorter *sorter);
 
 /* grn_ts_sorter_progress() progresses sorting. */
 grn_rc grn_ts_sorter_progress(grn_ctx *ctx, grn_ts_sorter *sorter,
-                              grn_ts_record *recs, size_t n_recs);
+                              grn_ts_record *recs, size_t n_recs,
+                              size_t *n_rest);
 
 /* grn_ts_sorter_complete() completes sorting. */
 grn_rc grn_ts_sorter_complete(grn_ctx *ctx, grn_ts_sorter *sorter,
-                              grn_ts_record *recs, size_t n_recs);
+                              grn_ts_record *recs, size_t n_recs,
+                              size_t *n_rest);
 
 typedef struct {
   grn_obj *table;           /* Table. */

@@ -28,6 +28,7 @@
 #include "ts/ts_expr.h"
 #include "ts/ts_expr_parser.h"
 #include "ts/ts_log.h"
+#include "ts/ts_sorter.h"
 #include "ts/ts_str.h"
 #include "ts/ts_types.h"
 #include "ts/ts_util.h"
@@ -693,8 +694,109 @@ grn_ts_select_with_sortby(grn_ctx *ctx, grn_obj *table,
                           grn_ts_str sortby, grn_ts_str output_columns,
                           size_t offset, size_t limit)
 {
-  // TODO
-  return GRN_FUNCTION_NOT_IMPLEMENTED;
+  grn_rc rc;
+  grn_ts_record *recs = NULL;
+  size_t n_recs = 0, max_n_recs = 0, n_hits = 0;
+  grn_table_cursor *cursor_obj;
+  grn_ts_cursor *cursor = NULL;
+  grn_ts_expr *filter_expr = NULL;
+  grn_ts_expr *scorer_expr = NULL;
+  grn_ts_sorter *sorter = NULL;
+  cursor_obj = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1,
+                                     GRN_CURSOR_ASCENDING | GRN_CURSOR_BY_ID);
+  if (!cursor_obj) {
+    GRN_TS_ERR_RETURN(GRN_UNKNOWN_ERROR, "grn_table_cursor_open failed");
+  }
+  rc = grn_ts_obj_cursor_open(ctx, cursor_obj, &cursor);
+  if (rc != GRN_SUCCESS) {
+    grn_obj_close(ctx, cursor_obj);
+    return rc;
+  }
+  rc = grn_ts_expr_parse(ctx, table, filter, &filter_expr);
+  if (rc == GRN_SUCCESS) {
+    scorer = grn_ts_str_trim_score_assignment(scorer);
+    if (scorer.size) {
+      rc = grn_ts_expr_parse(ctx, table, scorer, &scorer_expr);
+    }
+    if (rc == GRN_SUCCESS) {
+      rc = grn_ts_sorter_parse(ctx, table, sortby, offset, limit, &sorter);
+    }
+  }
+  if (rc == GRN_SUCCESS) {
+    for ( ; ; ) {
+      size_t batch_size;
+      grn_ts_record *batch;
+      /* Extend a buffer for records. */
+      if (max_n_recs < (n_recs + GRN_TS_BATCH_SIZE)) {
+        size_t n_bytes, new_max_n_recs = max_n_recs * 2;
+        grn_ts_record *new_recs;
+        if (!new_max_n_recs) {
+          new_max_n_recs = GRN_TS_BATCH_SIZE;
+        }
+        n_bytes = sizeof(grn_ts_record) * new_max_n_recs;
+        new_recs = (grn_ts_record *)GRN_REALLOC(recs, n_bytes);
+        if (!new_recs) {
+          GRN_TS_ERR(GRN_NO_MEMORY_AVAILABLE,
+                     "GRN_REALLOC failed: %" GRN_FMT_SIZE,
+                     n_bytes);
+          rc = ctx->rc;
+          break;
+        }
+        recs = new_recs;
+        max_n_recs = new_max_n_recs;
+      }
+      /* Read records from a cursor. */
+      batch = recs + n_recs;
+      rc = grn_ts_cursor_read(ctx, cursor, batch, GRN_TS_BATCH_SIZE,
+                              &batch_size);
+      if (rc != GRN_SUCCESS) {
+        break;
+      } else if (!batch_size) {
+        /* Complete sorting. */
+        rc = grn_ts_sorter_complete(ctx, sorter, recs, n_recs, &n_recs);
+        break;
+      }
+      /* Apply a filter and a scorer. */
+      rc = grn_ts_expr_filter(ctx, filter_expr, batch, batch_size,
+                              batch, &batch_size);
+      if (rc != GRN_SUCCESS) {
+        break;
+      }
+      if (scorer_expr) {
+        rc = grn_ts_expr_adjust(ctx, scorer_expr, batch, batch_size);
+        if (rc != GRN_SUCCESS) {
+          break;
+        }
+      }
+      n_hits += batch_size;
+      n_recs += batch_size;
+      /* Progress sorting. */
+      rc = grn_ts_sorter_progress(ctx, sorter, recs, n_recs, &n_recs);
+      if (rc != GRN_SUCCESS) {
+        break;
+      }
+    }
+  }
+  if (rc == GRN_SUCCESS) {
+    rc = grn_ts_select_output(ctx, table, output_columns,
+                              recs, n_recs, n_hits);
+  }
+  if (cursor) {
+    grn_ts_cursor_close(ctx, cursor);
+  }
+  if (recs) {
+    GRN_FREE(recs);
+  }
+  if (sorter) {
+    grn_ts_sorter_close(ctx, sorter);
+  }
+  if (scorer_expr) {
+    grn_ts_expr_close(ctx, scorer_expr);
+  }
+  if (filter_expr) {
+    grn_ts_expr_close(ctx, filter_expr);
+  }
+  return rc;
 }
 
 /*
