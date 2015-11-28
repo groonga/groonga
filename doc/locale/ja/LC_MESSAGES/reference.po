@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-11-24 22:39+0900\n"
+"PO-Revision-Date: 2015-11-28 14:42+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -13413,7 +13413,7 @@ msgstr ""
 msgid "``between`` has five parameters::"
 msgstr "``between`` には引数が5つあります。"
 
-msgid "Here are a schema definition and sample data to show usage.::"
+msgid "Here are a schema definition and sample data to show usage:"
 msgstr "使い方を示すために使うスキーマ定義とサンプルデータは以下の通りです。"
 
 msgid "Here is the query to show the persons to match PG-13 rating (MPAA)."
@@ -14408,9 +14408,6 @@ msgstr "今のところ、 ``column`` は必ず ``_key`` にしなければい�
 
 msgid "``query`` must be string."
 msgstr "``query`` は文字列です。"
-
-msgid "Here are a schema definition and sample data to show usage:"
-msgstr "使い方を示すために使うスキーマ定義とサンプルデータは以下の通りです。"
 
 msgid ""
 "Here is the simple usage of ``prefix_rk_search()`` function which selects ``"
