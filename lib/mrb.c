@@ -159,12 +159,9 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
 
   file = grn_fopen(expanded_path, "r");
   if (!file) {
-    char message[BUFFER_SIZE];
     mrb_value exception;
-    grn_snprintf(message, BUFFER_SIZE, BUFFER_SIZE,
-                 "fopen: failed to open mruby script file: <%s>",
-                 expanded_path);
-    SERR(message);
+    SERR("fopen: failed to open mruby script file: <%s>",
+         expanded_path);
     exception = mrb_exc_new(mrb, E_LOAD_ERROR,
                             ctx->errbuf, strlen(ctx->errbuf));
     mrb->exc = mrb_obj_ptr(exception);
