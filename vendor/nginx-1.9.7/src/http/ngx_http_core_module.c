@@ -3071,6 +3071,7 @@ ngx_http_core_location(ngx_conf_t *cf, ngx_command_t *cmd, void *dummy)
     ngx_http_module_t         *module;
     ngx_http_conf_ctx_t       *ctx, *pctx;
     ngx_http_core_loc_conf_t  *clcf, *pclcf;
+    int outsise_location;
 
     ctx = ngx_pcalloc(cf->pool, sizeof(ngx_http_conf_ctx_t));
     if (ctx == NULL) {
@@ -3222,14 +3223,12 @@ ngx_http_core_location(ngx_conf_t *cf, ngx_command_t *cmd, void *dummy)
         }
 
         len = pclcf->name.len;
-
+	
+        outsise_location = ngx_filename_cmp(clcf->name.data, pclcf->name.data, len) != 0;
 #if (NGX_PCRE)
-        if (clcf->regex == NULL
-            && ngx_filename_cmp(clcf->name.data, pclcf->name.data, len) != 0)
-#else
-        if (ngx_filename_cmp(clcf->name.data, pclcf->name.data, len) != 0)
+        outsise_location = clcf->regex == NULL && outsise_location;
 #endif
-        {
+        if (outsise_location) {
             ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
                                "location \"%V\" is outside location \"%V\"",
                                &clcf->name, &pclcf->name);
