@@ -731,6 +731,7 @@ grn_ts_select_with_sortby(grn_ctx *ctx, grn_obj *table,
     }
   }
   if (rc == GRN_SUCCESS) {
+    size_t n_pending_recs = 0;
     for ( ; ; ) {
       size_t batch_size;
       grn_ts_record *batch;
@@ -761,10 +762,16 @@ grn_ts_select_with_sortby(grn_ctx *ctx, grn_obj *table,
         break;
       } else if (!batch_size) {
         /* Complete sorting. */
+        if (n_pending_recs) {
+          rc = grn_ts_sorter_progress(ctx, sorter, recs, n_recs, &n_recs);
+          if (rc != GRN_SUCCESS) {
+            break;
+          }
+        }
         rc = grn_ts_sorter_complete(ctx, sorter, recs, n_recs, &n_recs);
         break;
       }
-      /* Apply a filter and a scorer. */
+      /* Apply a filter. */
       if (filter_expr) {
         rc = grn_ts_expr_filter(ctx, filter_expr, batch, batch_size,
                                 batch, &batch_size);
@@ -772,18 +779,27 @@ grn_ts_select_with_sortby(grn_ctx *ctx, grn_obj *table,
           break;
         }
       }
-      if (scorer_expr) {
-        rc = grn_ts_expr_adjust(ctx, scorer_expr, batch, batch_size);
+      n_hits += batch_size;
+      n_recs += batch_size;
+      n_pending_recs += batch_size;
+      /*
+       * Apply a scorer and progress sorting if there are enough pending
+       * records.
+       */
+      if (n_pending_recs >= GRN_TS_BATCH_SIZE) {
+        if (scorer_expr) {
+          rc = grn_ts_expr_adjust(ctx, scorer_expr,
+                                  recs + n_recs - n_pending_recs,
+                                  n_pending_recs);
+          if (rc != GRN_SUCCESS) {
+            break;
+          }
+        }
+        rc = grn_ts_sorter_progress(ctx, sorter, recs, n_recs, &n_recs);
         if (rc != GRN_SUCCESS) {
           break;
         }
-      }
-      n_hits += batch_size;
-      n_recs += batch_size;
-      /* Progress sorting. */
-      rc = grn_ts_sorter_progress(ctx, sorter, recs, n_recs, &n_recs);
-      if (rc != GRN_SUCCESS) {
-        break;
+        n_pending_recs = 0;
       }
     }
   }
