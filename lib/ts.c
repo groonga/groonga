@@ -556,7 +556,7 @@ grn_ts_select_filter(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
   grn_rc rc;
   grn_table_cursor *cursor_obj;
   grn_ts_cursor *cursor;
-  grn_ts_expr *expr;
+  grn_ts_expr *expr = NULL;
   grn_ts_record *buf = NULL;
   size_t buf_size = 0;
 
@@ -575,7 +575,9 @@ grn_ts_select_filter(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
     return rc;
   }
 
-  rc = grn_ts_expr_parse(ctx, table, str, &expr);
+  if (str.size) {
+    rc = grn_ts_expr_parse(ctx, table, str, &expr);
+  }
   if (rc == GRN_SUCCESS) {
     for ( ; ; ) {
       size_t batch_size;
@@ -606,10 +608,12 @@ grn_ts_select_filter(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
       }
 
       /* Apply the filter. */
-      rc = grn_ts_expr_filter(ctx, expr, batch, batch_size,
-                              batch, &batch_size);
-      if (rc != GRN_SUCCESS) {
-        break;
+      if (expr) {
+        rc = grn_ts_expr_filter(ctx, expr, batch, batch_size,
+                                batch, &batch_size);
+        if (rc != GRN_SUCCESS) {
+          break;
+        }
       }
       *n_hits += batch_size;
 
@@ -634,7 +638,9 @@ grn_ts_select_filter(grn_ctx *ctx, grn_obj *table, grn_ts_str str,
       *n_out += batch_size;
     }
     /* Ignore a failure of destruction. */
-    grn_ts_expr_close(ctx, expr);
+    if (expr) {
+      grn_ts_expr_close(ctx, expr);
+    }
   }
   /* Ignore a failure of  destruction. */
   grn_ts_cursor_close(ctx, cursor);
@@ -712,7 +718,9 @@ grn_ts_select_with_sortby(grn_ctx *ctx, grn_obj *table,
     grn_obj_close(ctx, cursor_obj);
     return rc;
   }
-  rc = grn_ts_expr_parse(ctx, table, filter, &filter_expr);
+  if (filter.size) {
+    rc = grn_ts_expr_parse(ctx, table, filter, &filter_expr);
+  }
   if (rc == GRN_SUCCESS) {
     scorer = grn_ts_str_trim_score_assignment(scorer);
     if (scorer.size) {
@@ -757,10 +765,12 @@ grn_ts_select_with_sortby(grn_ctx *ctx, grn_obj *table,
         break;
       }
       /* Apply a filter and a scorer. */
-      rc = grn_ts_expr_filter(ctx, filter_expr, batch, batch_size,
-                              batch, &batch_size);
-      if (rc != GRN_SUCCESS) {
-        break;
+      if (filter_expr) {
+        rc = grn_ts_expr_filter(ctx, filter_expr, batch, batch_size,
+                                batch, &batch_size);
+        if (rc != GRN_SUCCESS) {
+          break;
+        }
       }
       if (scorer_expr) {
         rc = grn_ts_expr_adjust(ctx, scorer_expr, batch, batch_size);
@@ -852,6 +862,7 @@ grn_ts_select(grn_ctx *ctx, grn_obj *table,
       (!output_columns_ptr && output_columns_len)) {
     GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid argument");
   }
+  filter = grn_ts_str_trim_left(filter);
   if (sortby_len) {
     rc = grn_ts_select_with_sortby(ctx, table, filter, scorer, sortby,
                                    output_columns, offset, limit);
