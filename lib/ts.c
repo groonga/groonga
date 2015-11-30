@@ -761,7 +761,15 @@ grn_ts_select_with_sortby(grn_ctx *ctx, grn_obj *table,
       if (rc != GRN_SUCCESS) {
         break;
       } else if (!batch_size) {
-        /* Complete sorting. */
+        /* Apply a scorer and complete sorting. */
+        if (scorer_expr) {
+          rc = grn_ts_expr_adjust(ctx, scorer_expr,
+                                  recs + n_recs - n_pending_recs,
+                                  n_pending_recs);
+          if (rc != GRN_SUCCESS) {
+            break;
+          }
+        }
         if (n_pending_recs) {
           rc = grn_ts_sorter_progress(ctx, sorter, recs, n_recs, &n_recs);
           if (rc != GRN_SUCCESS) {
