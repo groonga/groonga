@@ -18,7 +18,7 @@
 
 #include "ts_buf.h"
 
-#include "../grn_ctx_impl.h"
+#include "../grn_ctx.h"
 
 #include "ts_log.h"
 
