@@ -1,0 +1,16 @@
+table_create Logs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs server COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Servers TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Servers logs_server COLUMN_INDEX Logs server
+[[0,0.0,0.0],true]
+load --table Logs
+[
+{"server": "www"},
+{"server": "mail"}
+]
+[[0,0.0,0.0],2]
+select Logs --filter 'Servers.logs_server == "www"'
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["server","ShortText"]],[1,"www"]]]]

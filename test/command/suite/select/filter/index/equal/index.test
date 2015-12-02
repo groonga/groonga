@@ -1,0 +1,13 @@
+table_create Logs TABLE_NO_KEY
+column_create Logs server COLUMN_SCALAR ShortText
+
+table_create Servers TABLE_HASH_KEY ShortText
+column_create Servers logs_server COLUMN_INDEX Logs server
+
+load --table Logs
+[
+{"server": "www"},
+{"server": "mail"}
+]
+
+select Logs --filter 'Servers.logs_server == "www"'

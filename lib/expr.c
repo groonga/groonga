@@ -4333,6 +4333,8 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si)
   for (; p < pe; p++) {
     if ((*p)->header.type == GRN_EXPR) {
       scan_info_build_match_expr(ctx, si, (grn_expr *)(*p));
+    } else if ((*p)->header.type == GRN_COLUMN_INDEX) {
+      scan_info_put_index(ctx, si, *p, 0, 1, NULL, NULL, 0);
     } else if (GRN_DB_OBJP(*p)) {
       grn_index_datum index_datum;
       unsigned int n_index_data;

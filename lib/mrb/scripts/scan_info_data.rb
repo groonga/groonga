@@ -96,6 +96,8 @@ module Groonga
           match_resolve_index_expression(arg)
         when Accessor
           match_resolve_index_accessor(arg)
+        when IndexColumn
+          match_resolve_index_index_column(arg)
         when Object
           match_resolve_index_db_obj(arg)
         else
@@ -256,6 +258,10 @@ module Groonga
       index_info = column.find_index(op)
       return if index_info.nil?
       put_search_index(index_info.index, index_info.section_id, expr_code.weight)
+    end
+
+    def match_resolve_index_index_column(index)
+      put_search_index(index, 0, 1)
     end
 
     def match_resolve_index_db_obj(db_obj)
