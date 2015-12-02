@@ -151,7 +151,7 @@ mrb_grn_scan_info_set_op(mrb_state *mrb, mrb_value self)
   mrb_value mrb_op;
   grn_operator op;
 
-  mrb_get_args(mrb, "o", &mrb_op, &op);
+  mrb_get_args(mrb, "o", &mrb_op);
   si = DATA_PTR(self);
   op = grn_mrb_value_to_operator(mrb, mrb_op);
   grn_scan_info_set_op(si, op);
