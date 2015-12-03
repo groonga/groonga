@@ -2452,21 +2452,33 @@ grn_ts_expr_column_node_evaluate_scalar(grn_ctx *ctx,
     GRN_TS_EXPR_COLUMN_NODE_EVALUATE_SCALAR_CASE(FLOAT, float)
     GRN_TS_EXPR_COLUMN_NODE_EVALUATE_SCALAR_CASE(TIME, time)
     case GRN_TS_TEXT: {
-      size_t i, size;
+      size_t i;
       char *buf_ptr;
       grn_ts_text *out_ptr = (grn_ts_text *)out;
-      /* Read column values into node->buf and save the size of each value. */
+      grn_ja_reader reader;
+      grn_ja_reader_init(ctx, &reader, (grn_ja *)node->column);
       node->buf.pos = 0;
       for (i = 0; i < n_in; i++) {
-        grn_rc rc = grn_ts_ja_get_value(ctx, node->column, in[i].id,
-                                        &node->buf, &size);
-        out_ptr[i].size = (rc == GRN_SUCCESS) ? size : 0;
+        grn_rc rc = grn_ja_reader_seek(ctx, &reader, in[i].id);
+        if (rc == GRN_SUCCESS) {
+          rc = grn_ts_buf_reserve(ctx, &node->buf,
+                                  node->buf.pos + reader.value_size);
+          if (rc == GRN_SUCCESS) {
+            rc = grn_ja_reader_read(ctx, &reader,
+                                    (char *)node->buf.ptr + node->buf.pos);
+            if (rc == GRN_SUCCESS) {
+              node->buf.pos += reader.value_size;
+            }
+          }
+        }
+        out_ptr[i].size = (rc == GRN_SUCCESS) ? reader.value_size : 0;
       }
       buf_ptr = (char *)node->buf.ptr;
       for (i = 0; i < n_in; i++) {
         out_ptr[i].ptr = buf_ptr;
         buf_ptr += out_ptr[i].size;
       }
+      grn_ja_reader_fin(ctx, &reader);
       return GRN_SUCCESS;
     }
     GRN_TS_EXPR_COLUMN_NODE_EVALUATE_SCALAR_CASE(GEO, geo)
