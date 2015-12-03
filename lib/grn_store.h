@@ -103,7 +103,56 @@ GRN_API uint32_t grn_ja_size(grn_ctx *ctx, grn_ja *ja, grn_id id);
 void grn_ja_check(grn_ctx *ctx, grn_ja *ja);
 
 /*
+ * grn_ja_reader is designed to improve the performance of sequential access.
+ * FIXME: Compressed values are not supported yet.
+ */
+typedef struct {
+  grn_ja *ja;
+  uint32_t einfo_seg_id;
+  void *einfo_seg_addr;
+  void *einfo;
+  uint32_t body_seg_id;
+  uint32_t body_seg_offset;
+  void *body_seg_addr;
+  grn_id value_id;
+  uint32_t value_size;
+} grn_ja_reader;
 
+/*
+ * grn_ja_reader_init() initializes a reader.
+ * An initialized reader must be finalized by grn_ja_reader_fin().
+ */
+void grn_ja_reader_init(grn_ctx *ctx, grn_ja_reader *reader, grn_ja *ja);
+
+/* grn_ja_reader_fin() finalizes a reader. */
+void grn_ja_reader_fin(grn_ctx *ctx, grn_ja_reader *reader);
+
+/*
+ * grn_ja_reader_open() creates a reader.
+ * A created reader must be destroyed by grn_ja_reader_close().
+ */
+grn_rc grn_ja_reader_open(grn_ctx *ctx, grn_ja *ja, grn_ja_reader **reader);
+
+/* grn_ja_reader_close() destroys a reader. */
+grn_rc grn_ja_reader_close(grn_ctx *ctx, grn_ja_reader *reader);
+
+/*
+ * grn_ja_reader_seek() prepares to access a value specified by `id`.
+ * On success, `reader->value_size` is set.
+ */
+grn_rc grn_ja_reader_seek(grn_ctx *ctx, grn_ja_reader *reader, grn_id id);
+
+/* grn_ja_reader_read() reads the current value to `buf`. */
+grn_rc grn_ja_reader_read(grn_ctx *ctx, grn_ja_reader *reader, void *buf);
+
+/*
+ * grn_ja_reader_pread() reads a part of the current value to `buf`.
+ * If `offset` and `size` are invalid, the behavior is undefined.
+ */
+grn_rc grn_ja_reader_pread(grn_ctx *ctx, grn_ja_reader *reader,
+                           size_t offset, size_t size, void *buf);
+
+/*
 typedef struct _grn_vgram_vnode
 {
   struct _grn_vgram_vnode *car;

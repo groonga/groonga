@@ -1574,6 +1574,193 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
   GRN_OUTPUT_ARRAY_CLOSE();
 }
 
+/* grn_ja_reader */
+
+void
+grn_ja_reader_init(grn_ctx *ctx, grn_ja_reader *reader, grn_ja *ja)
+{
+  reader->ja = ja;
+  reader->einfo_seg_id = JA_ESEG_VOID;
+  reader->body_seg_id = JA_ESEG_VOID;
+  reader->body_seg_addr = NULL;
+}
+
+void
+grn_ja_reader_fin(grn_ctx *ctx, grn_ja_reader *reader)
+{
+  if (reader->einfo_seg_id != JA_ESEG_VOID) {
+    GRN_IO_SEG_UNREF(reader->ja->io, reader->einfo_seg_id);
+  }
+  if (reader->body_seg_addr) {
+    GRN_IO_SEG_UNREF(reader->ja->io, reader->body_seg_id);
+  }
+}
+
+grn_rc
+grn_ja_reader_open(grn_ctx *ctx, grn_ja *ja, grn_ja_reader **reader)
+{
+  grn_ja_reader *new_reader = GRN_MALLOCN(grn_ja_reader, 1);
+  if (!new_reader) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  grn_ja_reader_init(ctx, new_reader, ja);
+  *reader = new_reader;
+  return GRN_SUCCESS;
+}
+
+grn_rc
+grn_ja_reader_close(grn_ctx *ctx, grn_ja_reader *reader)
+{
+  grn_ja_reader_fin(ctx, reader);
+  GRN_FREE(reader);
+  return GRN_SUCCESS;
+}
+
+grn_rc
+grn_ja_reader_seek(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
+{
+  grn_ja_einfo *einfo;
+  uint32_t seg_id = reader->ja->header->esegs[id >> JA_W_EINFO_IN_A_SEGMENT];
+  if (seg_id == JA_ESEG_VOID) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  if (seg_id != reader->einfo_seg_id) {
+    GRN_IO_SEG_REF(reader->ja->io, seg_id, reader->einfo_seg_addr);
+    if (!reader->einfo_seg_addr) {
+      return GRN_UNKNOWN_ERROR;
+    }
+    if (reader->einfo_seg_id != JA_ESEG_VOID) {
+      GRN_IO_SEG_UNREF(reader->ja->io, reader->einfo_seg_id);
+    }
+    reader->einfo_seg_id = seg_id;
+  }
+  einfo = (grn_ja_einfo *)reader->einfo_seg_addr;
+  einfo += id & JA_M_EINFO_IN_A_SEGMENT;
+  reader->einfo = einfo;
+  if (ETINY_P(einfo)) {
+    ETINY_DEC(einfo, reader->value_size);
+  } else {
+    if (EHUGE_P(einfo)) {
+      EHUGE_DEC(einfo, seg_id, reader->value_size);
+    } else {
+      EINFO_DEC(einfo, seg_id, reader->body_seg_offset, reader->value_size);
+    }
+    if (reader->body_seg_addr) {
+      if (seg_id != reader->body_seg_id) {
+        GRN_IO_SEG_UNREF(reader->ja->io, reader->body_seg_id);
+        reader->body_seg_addr = NULL;
+      }
+    }
+    reader->body_seg_id = seg_id;
+  }
+  return GRN_SUCCESS;
+}
+
+grn_rc
+grn_ja_reader_read(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
+{
+  grn_io *io = reader->ja->io;
+  grn_ja_einfo *einfo = (grn_ja_einfo *)reader->einfo;
+  if (ETINY_P(einfo)) {
+    grn_memcpy(buf, einfo, reader->value_size);
+  } else if (EHUGE_P(einfo)) {
+    char *buf_ptr = (char *)buf;
+    void *seg_addr;
+    uint32_t seg_id = reader->body_seg_id;
+    uint32_t size = reader->value_size;
+    while (size > io->header->segment_size) {
+      GRN_IO_SEG_REF(io, seg_id, seg_addr);
+      if (!seg_addr) {
+        return GRN_UNKNOWN_ERROR;
+      }
+      grn_memcpy(buf_ptr, seg_addr, io->header->segment_size);
+      GRN_IO_SEG_UNREF(io, seg_id);
+      seg_id++;
+      size -= io->header->segment_size;
+      buf_ptr += io->header->segment_size;
+    }
+    GRN_IO_SEG_REF(io, seg_id, seg_addr);
+    if (!seg_addr) {
+      return GRN_UNKNOWN_ERROR;
+    }
+    grn_memcpy(buf_ptr, seg_addr, size);
+    GRN_IO_SEG_UNREF(io, seg_id);
+    seg_id++;
+  } else {
+    if (!reader->body_seg_addr) {
+      GRN_IO_SEG_REF(io, reader->body_seg_id, reader->body_seg_addr);
+      if (!reader->body_seg_addr) {
+        return GRN_UNKNOWN_ERROR;
+      }
+    }
+    grn_memcpy(buf, (char *)reader->body_seg_addr + reader->body_seg_offset,
+               reader->value_size);
+  }
+  return GRN_SUCCESS;
+}
+
+grn_rc
+grn_ja_reader_pread(grn_ctx *ctx, grn_ja_reader *reader,
+                    size_t offset, size_t size, void *buf)
+{
+  grn_io *io = reader->ja->io;
+  grn_ja_einfo *einfo = (grn_ja_einfo *)reader->einfo;
+  if ((offset >= reader->value_size) || !size) {
+    return GRN_SUCCESS;
+  }
+  if (size > (reader->value_size - offset)) {
+    size = reader->value_size - offset;
+  }
+  if (ETINY_P(einfo)) {
+    grn_memcpy(buf, (char *)einfo + offset, size);
+  } else if (EHUGE_P(einfo)) {
+    char *buf_ptr = (char *)buf;
+    void *seg_addr;
+    uint32_t seg_id = reader->body_seg_id;
+    if (offset >= io->header->segment_size) {
+      seg_id += offset / io->header->segment_size;
+      offset %= io->header->segment_size;
+    }
+    GRN_IO_SEG_REF(io, seg_id, seg_addr);
+    if (!seg_addr) {
+      return GRN_UNKNOWN_ERROR;
+    }
+    grn_memcpy(buf_ptr, (char *)seg_addr + offset,
+               io->header->segment_size - offset);
+    GRN_IO_SEG_UNREF(io, seg_id);
+    seg_id++;
+    size -= io->header->segment_size - offset;
+    buf_ptr += io->header->segment_size - offset;
+    while (size > io->header->segment_size) {
+      GRN_IO_SEG_REF(io, seg_id, seg_addr);
+      if (!seg_addr) {
+        return GRN_UNKNOWN_ERROR;
+      }
+      grn_memcpy(buf_ptr, (char *)seg_addr, io->header->segment_size);
+      GRN_IO_SEG_UNREF(io, seg_id);
+      seg_id++;
+      size -= io->header->segment_size;
+      buf_ptr += io->header->segment_size;
+    }
+    GRN_IO_SEG_REF(io, seg_id, seg_addr);
+    if (!seg_addr) {
+      return GRN_UNKNOWN_ERROR;
+    }
+    grn_memcpy(buf_ptr, seg_addr, size);
+    GRN_IO_SEG_UNREF(io, seg_id);
+  } else {
+    if (!reader->body_seg_addr) {
+      GRN_IO_SEG_REF(io, reader->body_seg_id, reader->body_seg_addr);
+      if (!reader->body_seg_addr) {
+        return GRN_UNKNOWN_ERROR;
+      }
+    }
+    offset += reader->body_seg_offset;
+    grn_memcpy(buf, (char *)reader->body_seg_addr + offset, size);
+  }
+  return GRN_SUCCESS;
+}
+
 /**** vgram ****/
 
 /*
