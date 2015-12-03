@@ -41,5 +41,5 @@ Just specify ``yes`` to ``output_pretty`` parameter::
 
 Here is a result without ``output_pretty`` parameter::
 
-  > status --output_pretty yes
+  > status
   [[0,1448344438.43783,5.29289245605469e-05],{"alloc_count":233,"starttime":1448344437,...}]
