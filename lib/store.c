@@ -1616,8 +1616,22 @@ grn_ja_reader_close(grn_ctx *ctx, grn_ja_reader *reader)
   return GRN_SUCCESS;
 }
 
-grn_rc
-grn_ja_reader_seek(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
+static grn_rc
+grn_ja_reader_seek_zlib(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
+{
+  // TODO
+  return GRN_FUNCTION_NOT_IMPLEMENTED;
+}
+
+static grn_rc
+grn_ja_reader_seek_lz4(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
+{
+  // TODO
+  return GRN_FUNCTION_NOT_IMPLEMENTED;
+}
+
+static grn_rc
+grn_ja_reader_seek_raw(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
 {
   grn_ja_einfo *einfo;
   uint32_t seg_id = reader->ja->header->esegs[id >> JA_W_EINFO_IN_A_SEGMENT];
@@ -1657,7 +1671,37 @@ grn_ja_reader_seek(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
 }
 
 grn_rc
-grn_ja_reader_read(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
+grn_ja_reader_seek(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
+{
+#ifdef GRN_WITH_ZLIB
+  if (reader->ja->header->flags & GRN_OBJ_COMPRESS_ZLIB) {
+    return grn_ja_reader_seek_zlib(ctx, reader, id);
+  }
+#endif /* GRN_WITH_ZLIB */
+#ifdef GRN_WITH_LZ4
+  if (reader->ja->header->flags & GRN_OBJ_COMPRESS_LZ4) {
+    return grn_ja_reader_seek_lz4(ctx, reader, id);
+  }
+#endif /* GRN_WITH_LZ4 */
+  return grn_ja_reader_seek_raw(ctx, reader, id);
+}
+
+static grn_rc
+grn_ja_reader_read_zlib(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
+{
+  // TODO
+  return GRN_FUNCTION_NOT_IMPLEMENTED;
+}
+
+static grn_rc
+grn_ja_reader_read_lz4(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
+{
+  // TODO
+  return GRN_FUNCTION_NOT_IMPLEMENTED;
+}
+
+static grn_rc
+grn_ja_reader_read_raw(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
 {
   grn_io *io = reader->ja->io;
   grn_ja_einfo *einfo = (grn_ja_einfo *)reader->einfo;
@@ -1700,8 +1744,40 @@ grn_ja_reader_read(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
 }
 
 grn_rc
-grn_ja_reader_pread(grn_ctx *ctx, grn_ja_reader *reader,
-                    size_t offset, size_t size, void *buf)
+grn_ja_reader_read(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
+{
+#ifdef GRN_WITH_ZLIB
+  if (reader->ja->header->flags & GRN_OBJ_COMPRESS_ZLIB) {
+    return grn_ja_reader_read_zlib(ctx, reader, buf);
+  }
+#endif /* GRN_WITH_ZLIB */
+#ifdef GRN_WITH_LZ4
+  if (reader->ja->header->flags & GRN_OBJ_COMPRESS_LZ4) {
+    return grn_ja_reader_read_lz4(ctx, reader, buf);
+  }
+#endif /* GRN_WITH_LZ4 */
+  return grn_ja_reader_read_raw(ctx, reader, buf);
+}
+
+static grn_rc
+grn_ja_reader_pread_zlib(grn_ctx *ctx, grn_ja_reader *reader,
+                         size_t offset, size_t size, void *buf)
+{
+  // TODO
+  return GRN_FUNCTION_NOT_IMPLEMENTED;
+}
+
+static grn_rc
+grn_ja_reader_pread_lz4(grn_ctx *ctx, grn_ja_reader *reader,
+                        size_t offset, size_t size, void *buf)
+{
+  // TODO
+  return GRN_FUNCTION_NOT_IMPLEMENTED;
+}
+
+static grn_rc
+grn_ja_reader_pread_raw(grn_ctx *ctx, grn_ja_reader *reader,
+                        size_t offset, size_t size, void *buf)
 {
   grn_io *io = reader->ja->io;
   grn_ja_einfo *einfo = (grn_ja_einfo *)reader->einfo;
@@ -1759,6 +1835,23 @@ grn_ja_reader_pread(grn_ctx *ctx, grn_ja_reader *reader,
     grn_memcpy(buf, (char *)reader->body_seg_addr + offset, size);
   }
   return GRN_SUCCESS;
+}
+
+grn_rc
+grn_ja_reader_pread(grn_ctx *ctx, grn_ja_reader *reader,
+                    size_t offset, size_t size, void *buf)
+{
+#ifdef GRN_WITH_ZLIB
+  if (reader->ja->header->flags & GRN_OBJ_COMPRESS_ZLIB) {
+    return grn_ja_reader_pread_zlib(ctx, reader, offset, size, buf);
+  }
+#endif /* GRN_WITH_ZLIB */
+#ifdef GRN_WITH_LZ4
+  if (reader->ja->header->flags & GRN_OBJ_COMPRESS_LZ4) {
+    return grn_ja_reader_pread_lz4(ctx, reader, offset, size, buf);
+  }
+#endif /* GRN_WITH_LZ4 */
+  return grn_ja_reader_pread_raw(ctx, reader, offset, size, buf);
 }
 
 /**** vgram ****/
