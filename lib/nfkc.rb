@@ -347,11 +347,12 @@ template = <<END
 don't edit this file by hand. it generated automatically by nfkc.rb
 */
 
-#include "nfkc.h"
+#include "grn.h"
+#include <groonga/nfkc.h>
 
 #ifdef GRN_WITH_NFKC
 
-unsigned char
+grn_char_type
 grn_nfkc_char_type(const unsigned char *str)
 {
 %  return -1;
