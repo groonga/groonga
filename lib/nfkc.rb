@@ -85,7 +85,7 @@ def generate_blockcode_char_type(file, option)
   bc = {}
   open("|./icudump --#{option}").each{|l|
     src,_,code = l.chomp.split("\t")
-    str = src.split(':').collect{|c| format("%c", c.hex)}.join
+    str = src.split(':').collect(&:hex).pack("c*")
     bc[str] = code
   }
   $lv = 0
