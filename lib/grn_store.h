@@ -114,8 +114,10 @@ typedef struct {
   uint32_t body_seg_id;
   uint32_t body_seg_offset;
   void *body_seg_addr;
-  grn_id value_id;
   uint32_t value_size;
+  uint32_t packed_size;
+  void *packed_buf;
+  uint32_t packed_buf_size;
 } grn_ja_reader;
 
 /*
