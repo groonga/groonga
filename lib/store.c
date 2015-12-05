@@ -1768,7 +1768,7 @@ grn_ja_reader_read_lz4(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
     grn_memcpy(packed_ptr, (char *)reader->body_seg_addr + sizeof(uint64_t),
                io->header->segment_size - sizeof(uint64_t));
     packed_ptr += io->header->segment_size - sizeof(uint64_t);
-    size = reader->value_size - (io->header->segment_size - sizeof(uint64_t));
+    size = reader->packed_size - (io->header->segment_size - sizeof(uint64_t));
     seg_id = reader->body_seg_id + 1;
     while (size > io->header->segment_size) {
       GRN_IO_SEG_REF(io, seg_id, seg_addr);
