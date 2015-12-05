@@ -18,78 +18,298 @@
 
 CUSTOM_RULE_PATH = 'nfkc-custom-rules.txt'
 
-def gen_bc(file, hash, level)
-  bl = ' ' * (level * 2)
-  h2 = {}
-  hash.each{|key,val|
-    key = key.dup
-    key.force_encoding("ASCII-8BIT")
-    head = key.bytes[0]
-    rest = key[1..-1]
-    if h2[head]
-      h2[head][rest] = val
-    else
-      h2[head] = {rest => val}
-    end
-  }
-  if h2.size < 3
-    h2.keys.sort.each{|k|
-      if (0x80 < k)
-        file.printf("#{bl}if (str[#{level}] < 0x%02X) { return #{$lv}; }\n", k)
-      end
-      h = h2[k]
-      if h.keys.join =~ /^\x80*$/n
-        $lv, = h.values
-      else
-        file.printf("#{bl}if (str[#{level}] == 0x%02X) {\n", k)
-        gen_bc(file, h, level + 1)
-        file.puts bl + '}'
-      end
-    }
-    file.puts bl + "return #{$lv};"
-  else
-    file.puts bl + "switch (str[#{level}]) {"
-    lk = 0x80
-    br = true
-    h2.keys.sort.each{|k|
-      if (lk < k)
-        for j in lk..k-1
-          file.printf("#{bl}case 0x%02X :\n", j)
-        end
-        br = false
-      end
-      unless br
-        file.puts bl + "  return #{$lv};"
-        file.puts bl + '  break;'
-      end
-      h = h2[k]
-      file.printf("#{bl}case 0x%02X :\n", k)
-      if h.keys.join =~ /^\x80*$/n
-        $lv, = h.values
-        br = false
-      else
-        gen_bc(file, h, level + 1)
-        file.puts bl + '  break;'
-        br = true
-      end
-      lk = k + 1
-    }
-    file.puts bl + 'default :'
-    file.puts bl + "  return #{$lv};"
-    file.puts bl + '  break;'
-    file.puts bl + '}'
+class SwitchGenerator
+  def initialize(unicode_version, output)
+    @unicode_version = unicode_version
+    @output = output
   end
-end
 
-def generate_blockcode_char_type(file, option)
-  bc = {}
-  open("|./icudump --#{option}").each{|l|
-    src,_,code = l.chomp.split("\t")
-    str = src.split(':').collect(&:hex).pack("c*")
-    bc[str] = code
-  }
-  $lv = 0
-  gen_bc(file, bc, 0)
+  def generate(map1, map2)
+    generate_header
+    STDERR.puts('generating char type code..')
+    generate_blockcode_char_type("gc")
+    STDERR.puts('generating map1 code..')
+    generate_map1(map1)
+    STDERR.puts('generating map2 code..')
+    generate_map2(map2)
+    generate_footer
+  end
+
+  private
+  def generate_header
+    @output.puts(<<-HEADER)
+/* -*- c-basic-offset: 2 -*- */
+/* Copyright(C) 2010-2015 Brazil
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License version 2.1 as published by the Free Software Foundation.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+don't edit this file by hand. it generated automatically by nfkc.rb
+*/
+
+#include "grn.h"
+#include <groonga/nfkc.h>
+
+#ifdef GRN_WITH_NFKC
+
+    HEADER
+  end
+
+  def generate_footer
+    @output.puts(<<-FOOTER)
+#endif /* GRN_WITH_NFKC */
+
+    FOOTER
+  end
+
+  def generate_blockcode_char_type(option)
+    @output.puts(<<-HEADER)
+grn_char_type
+grn_nfkc#{@unicode_version}_char_type(const unsigned char *str)
+{
+    HEADER
+    bc = {}
+    open("|./icudump --#{option}").each{|l|
+      src,_,code = l.chomp.split("\t")
+      str = src.split(':').collect(&:hex).pack("c*")
+      bc[str] = code
+    }
+    @lv = 0
+    gen_bc(bc, 0)
+    @output.puts(<<-FOOTER)
+  return -1;
+}
+
+    FOOTER
+  end
+
+  def gen_bc(hash, level)
+    bl = ' ' * (level * 2)
+    h2 = {}
+    hash.each{|key,val|
+      key = key.dup
+      key.force_encoding("ASCII-8BIT")
+      head = key.bytes[0]
+      rest = key[1..-1]
+      if h2[head]
+        h2[head][rest] = val
+      else
+        h2[head] = {rest => val}
+      end
+    }
+    if h2.size < 3
+      h2.keys.sort.each{|k|
+        if (0x80 < k)
+          @output.printf("#{bl}if (str[#{level}] < 0x%02X) { return #{@lv}; }\n", k)
+        end
+        h = h2[k]
+        if h.keys.join =~ /^\x80*$/n
+          @lv, = h.values
+        else
+          @output.printf("#{bl}if (str[#{level}] == 0x%02X) {\n", k)
+          gen_bc(h, level + 1)
+          @output.puts bl + '}'
+        end
+      }
+      @output.puts bl + "return #{@lv};"
+    else
+      @output.puts bl + "switch (str[#{level}]) {"
+      lk = 0x80
+      br = true
+      h2.keys.sort.each{|k|
+        if (lk < k)
+          for j in lk..k-1
+            @output.printf("#{bl}case 0x%02X :\n", j)
+          end
+          br = false
+        end
+        unless br
+          @output.puts bl + "  return #{@lv};"
+          @output.puts bl + '  break;'
+        end
+        h = h2[k]
+        @output.printf("#{bl}case 0x%02X :\n", k)
+        if h.keys.join =~ /^\x80*$/n
+          @lv, = h.values
+          br = false
+        else
+          gen_bc(h, level + 1)
+          @output.puts bl + '  break;'
+          br = true
+        end
+        lk = k + 1
+      }
+      @output.puts bl + 'default :'
+      @output.puts bl + "  return #{@lv};"
+      @output.puts bl + '  break;'
+      @output.puts bl + '}'
+    end
+  end
+
+  def generate_map1(hash)
+    @output.puts(<<-HEADER)
+const char *
+grn_nfkc#{@unicode_version}_map1(const unsigned char *str)
+{
+    HEADER
+    gen_map1(hash, 0)
+    @output.puts(<<-FOOTER)
+  return 0;
+}
+
+    FOOTER
+  end
+
+  def gen_map1(hash, level)
+    bl = ' ' * ((level + 0) * 2)
+    if hash['']
+      dst = ''
+      hash[''].each_byte{|b| dst << format('\x%02X', b)}
+      @output.puts "#{bl}return \"#{dst}\";"
+      hash.delete('')
+    end
+    return if hash.empty?
+    h2 = {}
+    hash.each{|key,val|
+      key = key.dup
+      key.force_encoding("ASCII-8BIT")
+      head = key.bytes[0]
+      rest = key[1..-1]
+      if h2[head]
+        h2[head][rest] = val
+      else
+        h2[head] = {rest => val}
+      end
+    }
+    if h2.size == 1
+      h2.each{|key,val|
+        @output.printf("#{bl}if (str[#{level}] == 0x%02X) {\n", key)
+        gen_map1(val, level + 1)
+        @output.puts bl + '}'
+      }
+    else
+      @output.puts "#{bl}switch (str[#{level}]) {"
+      h2.keys.sort.each{|k|
+        @output.printf("#{bl}case 0x%02X :\n", k)
+        gen_map1(h2[k], level + 1)
+        @output.puts("#{bl}  break;")
+      }
+      @output.puts bl + '}'
+    end
+  end
+
+  def generate_map2(map2)
+    @output.puts(<<-HEADER)
+const char *
+grn_nfkc#{@unicode_version}_map2(const unsigned char *prefix, const unsigned char *suffix)
+{
+    HEADER
+    suffix = {}
+    map2.each{|src,dst|
+      chars = src.chars
+      if chars.size != 2
+        STDERR.puts "caution: more than two chars in pattern #{chars.join('|')}"
+      end
+      s = chars.pop
+      if suffix[s]
+        suffix[s][chars.join] = dst
+      else
+        suffix[s] = {chars.join=>dst}
+      end
+    }
+    gen_map2_sub(suffix, 0)
+    @output.puts(<<-FOOTER)
+  return 0;
+}
+
+    FOOTER
+  end
+
+  def gen_map2_sub2(hash, level, indent)
+    bl = ' ' * ((level + indent + 0) * 2)
+    if hash['']
+      @output.print "#{bl}return \""
+      hash[''].each_byte{|b| @output.printf('\x%02X', b)}
+      @output.puts "\";"
+      hash.delete('')
+    end
+    return if hash.empty?
+
+    h2 = {}
+    hash.each{|key,val|
+      key = key.dup
+      key.force_encoding("ASCII-8BIT")
+      head = key.bytes[0]
+      rest = key[1..-1]
+      if h2[head]
+        h2[head][rest] = val
+      else
+        h2[head] = {rest => val}
+      end
+    }
+
+    if h2.size == 1
+      h2.each{|key,val|
+        @output.printf("#{bl}if (prefix[#{level}] == 0x%02X) {\n", key)
+        gen_map2_sub2(val, level + 1, indent)
+        @output.puts bl + '}'
+      }
+    else
+      @output.puts "#{bl}switch (prefix[#{level}]) {"
+      h2.keys.sort.each{|k|
+        @output.printf("#{bl}case 0x%02X :\n", k)
+        gen_map2_sub2(h2[k], level + 1, indent)
+        @output.puts("#{bl}  break;")
+      }
+      @output.puts bl + '}'
+    end
+  end
+
+  def gen_map2_sub(hash, level)
+    bl = ' ' * ((level + 0) * 2)
+    if hash['']
+      gen_map2_sub2(hash[''], 0, level)
+      hash.delete('')
+    end
+    return if hash.empty?
+    h2 = {}
+    hash.each{|key,val|
+      key = key.dup
+      key.force_encoding("ASCII-8BIT")
+      head = key.bytes[0]
+      rest = key[1..-1]
+      if h2[head]
+        h2[head][rest] = val
+      else
+        h2[head] = {rest => val}
+      end
+    }
+    if h2.size == 1
+      h2.each{|key,val|
+        @output.printf("#{bl}if (suffix[#{level}] == 0x%02X) {\n", key)
+        gen_map2_sub(val, level + 1)
+        @output.puts bl + '}'
+      }
+    else
+      @output.puts "#{bl}switch (suffix[#{level}]) {"
+      h2.keys.sort.each{|k|
+        @output.printf("#{bl}case 0x%02X :\n", k)
+        gen_map2_sub(h2[k], level + 1)
+        @output.puts("#{bl}  break;")
+      }
+      @output.puts bl + '}'
+    end
+  end
 end
 
 def ccpush(hash, src, dst)
@@ -202,137 +422,6 @@ def create_map2(map1)
   return cc
 end
 
-def generate_map1(file, hash, level)
-  bl = ' ' * ((level + 0) * 2)
-  if hash['']
-    dst = ''
-    hash[''].each_byte{|b| dst << format('\x%02X', b)}
-    file.puts "#{bl}return \"#{dst}\";"
-    hash.delete('')
-  end
-  return if hash.empty?
-  h2 = {}
-  hash.each{|key,val|
-    key = key.dup
-    key.force_encoding("ASCII-8BIT")
-    head = key.bytes[0]
-    rest = key[1..-1]
-    if h2[head]
-      h2[head][rest] = val
-    else
-      h2[head] = {rest => val}
-    end
-  }
-  if h2.size == 1
-    h2.each{|key,val|
-      file.printf("#{bl}if (str[#{level}] == 0x%02X) {\n", key)
-      generate_map1(file, val, level + 1)
-      file.puts bl + '}'
-    }
-  else
-    file.puts "#{bl}switch (str[#{level}]) {"
-    h2.keys.sort.each{|k|
-      file.printf("#{bl}case 0x%02X :\n", k)
-      generate_map1(file, h2[k], level + 1)
-      file.puts("#{bl}  break;")
-    }
-    file.puts bl + '}'
-  end
-end
-
-def gen_map2_sub2(file, hash, level, indent)
-  bl = ' ' * ((level + indent + 0) * 2)
-  if hash['']
-    file.print "#{bl}return \""
-    hash[''].each_byte{|b| file.printf('\x%02X', b)}
-    file.puts "\";"
-    hash.delete('')
-  end
-  return if hash.empty?
-
-  h2 = {}
-  hash.each{|key,val|
-    key = key.dup
-    key.force_encoding("ASCII-8BIT")
-    head = key.bytes[0]
-    rest = key[1..-1]
-    if h2[head]
-      h2[head][rest] = val
-    else
-      h2[head] = {rest => val}
-    end
-  }
-
-  if h2.size == 1
-    h2.each{|key,val|
-      file.printf("#{bl}if (prefix[#{level}] == 0x%02X) {\n", key)
-      gen_map2_sub2(file, val, level + 1, indent)
-      file.puts bl + '}'
-    }
-  else
-    file.puts "#{bl}switch (prefix[#{level}]) {"
-    h2.keys.sort.each{|k|
-      file.printf("#{bl}case 0x%02X :\n", k)
-      gen_map2_sub2(file, h2[k], level + 1, indent)
-      file.puts("#{bl}  break;")
-    }
-    file.puts bl + '}'
-  end
-end
-
-def gen_map2_sub(file, hash, level)
-  bl = ' ' * ((level + 0) * 2)
-  if hash['']
-    gen_map2_sub2(file, hash[''], 0, level)
-    hash.delete('')
-  end
-  return if hash.empty?
-  h2 = {}
-  hash.each{|key,val|
-    key = key.dup
-    key.force_encoding("ASCII-8BIT")
-    head = key.bytes[0]
-    rest = key[1..-1]
-    if h2[head]
-      h2[head][rest] = val
-    else
-      h2[head] = {rest => val}
-    end
-  }
-  if h2.size == 1
-    h2.each{|key,val|
-      file.printf("#{bl}if (suffix[#{level}] == 0x%02X) {\n", key)
-      gen_map2_sub(file, val, level + 1)
-      file.puts bl + '}'
-    }
-  else
-    file.puts "#{bl}switch (suffix[#{level}]) {"
-    h2.keys.sort.each{|k|
-      file.printf("#{bl}case 0x%02X :\n", k)
-      gen_map2_sub(file, h2[k], level + 1)
-      file.puts("#{bl}  break;")
-    }
-    file.puts bl + '}'
-  end
-end
-
-def generate_map2(file, map2)
-  suffix = {}
-  map2.each{|src,dst|
-    chars = src.chars
-    if chars.size != 2
-      STDERR.puts "caution: more than two chars in pattern #{chars.join('|')}"
-    end
-    s = chars.pop
-    if suffix[s]
-      suffix[s][chars.join] = dst
-    else
-      suffix[s] = {chars.join=>dst}
-    end
-  }
-  gen_map2_sub(file, suffix, 0)
-end
-
 ######## main #######
 
 ARGV.each{|arg|
@@ -350,79 +439,13 @@ system('cc -Wall -O3 -o icudump -I/tmp/local/include -L/tmp/local/lib icudump.c 
 STDERR.puts('getting Unicode version')
 unicode_version = `./icudump --version`.strip.gsub(".", "")
 
-template = <<END
-/* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010-2015 Brazil
-
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-
-don't edit this file by hand. it generated automatically by nfkc.rb
-*/
-
-#include "grn.h"
-#include <groonga/nfkc.h>
-
-#ifdef GRN_WITH_NFKC
-
-grn_char_type
-grn_nfkc#{unicode_version}_char_type(const unsigned char *str)
-{
-%  return -1;
-}
-
-const char *
-grn_nfkc#{unicode_version}_map1(const unsigned char *str)
-{
-%  return 0;
-}
-
-const char *
-grn_nfkc#{unicode_version}_map2(const unsigned char *prefix, const unsigned char *suffix)
-{
-%  return 0;
-}
-
-#endif /* GRN_WITH_NFKC */
-
-END
-
 STDERR.puts('creating map1..')
 map1 = create_map1()
 
 STDERR.puts('creating map2..')
 map2 = create_map2(map1)
 
-outf = open("nfkc#{unicode_version}.c", 'w')
-
-tmps = template.split(/%/)
-
-#STDERR.puts('generating block code..')
-#outf.print(tmps.shift)
-#generate_blockcode_char_type(outf, 'bc')
-
-STDERR.puts('generating char type code..')
-outf.print(tmps.shift)
-generate_blockcode_char_type(outf, 'gc')
-
-STDERR.puts('generating map1 code..')
-outf.print(tmps.shift)
-generate_map1(outf, map1, 0)
-
-STDERR.puts('generating map2 code..')
-outf.print(tmps.shift)
-generate_map2(outf, map2)
-
-outf.print(tmps.shift)
-outf.close
-STDERR.puts('done.')
+File.open("nfkc#{unicode_version}.c", "w") do |output|
+  generator = SwitchGenerator.new(unicode_version, output)
+  generator.generate(map1, map2)
+end
