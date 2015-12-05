@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # -*- coding: utf-8 -*-
 #
-# Copyright(C) 2010 Brazil
+# Copyright(C) 2010-2015 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -16,15 +16,15 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-$KCODE = 'u'
-
 CUSTOM_RULE_PATH = 'nfkc-custom-rules.txt'
 
 def gen_bc(file, hash, level)
   bl = ' ' * (level * 2)
   h2 = {}
   hash.each{|key,val|
-    head = key[0]
+    key = key.dup
+    key.force_encoding("ASCII-8BIT")
+    head = key.bytes[0]
     rest = key[1..-1]
     if h2[head]
       h2[head][rest] = val
@@ -38,7 +38,7 @@ def gen_bc(file, hash, level)
         file.printf("#{bl}if (str[#{level}] < 0x%02X) { return #{$lv}; }\n", k)
       end
       h = h2[k]
-      if h.keys.join =~ /^\x80*$/
+      if h.keys.join =~ /^\x80*$/n
         $lv, = h.values
       else
         file.printf("#{bl}if (str[#{level}] == 0x%02X) {\n", k)
@@ -64,7 +64,7 @@ def gen_bc(file, hash, level)
       end
       h = h2[k]
       file.printf("#{bl}case 0x%02X :\n", k)
-      if h.keys.join =~ /^\x80*$/
+      if h.keys.join =~ /^\x80*$/n
         $lv, = h.values
         br = false
       else
@@ -104,7 +104,7 @@ end
 
 def subst(hash, str)
   cand = nil
-  src = str.split(//)
+  src = str.chars
   for i in 0..src.size-1
     h = hash
     for j in i..src.size-1
@@ -112,7 +112,7 @@ def subst(hash, str)
       h = h[head]
       break unless h
       if h[nil]
-        cand = src[0,i].to_s + h[nil] + src[j + 1..-1].to_s
+        cand = src[0,i].join("") + h[nil] + src[j + 1..-1].join("")
       end
     end
     return cand if cand
@@ -140,7 +140,7 @@ def create_map1()
     if cc[src]
       STDERR.puts "caution: ambiguous mapping #{src}|#{cc[src]}|#{dst}" if cc[src] != dst
     end
-    ccpush(cc, src.split(//), dst)
+    ccpush(cc, src.chars, dst)
   }
   map1 = {}
   open('|./icudump --nfkd').each{|l|
@@ -165,7 +165,7 @@ def create_map2(map1)
   cc = {}
   open('|./icudump --cc').each{|l|
     _,src,dst = l.chomp.split("\t")
-    src = src.split(//).collect{|c| map1[c] || c}.join
+    src = src.chars.collect{|c| map1[c] || c}.join
     dst = map1[dst] || dst
     if cc[src] && cc[src] != dst
       STDERR.puts("caution: inconsitent mapping '#{src}' => '#{cc[src]}'|'#{dst}'")
@@ -177,7 +177,7 @@ def create_map2(map1)
     cc2 = {}
     cc.each {|src,dst|
       src2 = src
-      chars = src.split(//)
+      chars = src.chars
       l = chars.size - 1
       for i in 0..l
         for j in i..l
@@ -213,7 +213,9 @@ def generate_map1(file, hash, level)
   return if hash.empty?
   h2 = {}
   hash.each{|key,val|
-    head = key[0]
+    key = key.dup
+    key.force_encoding("ASCII-8BIT")
+    head = key.bytes[0]
     rest = key[1..-1]
     if h2[head]
       h2[head][rest] = val
@@ -250,7 +252,9 @@ def gen_map2_sub2(file, hash, level, indent)
 
   h2 = {}
   hash.each{|key,val|
-    head = key[0]
+    key = key.dup
+    key.force_encoding("ASCII-8BIT")
+    head = key.bytes[0]
     rest = key[1..-1]
     if h2[head]
       h2[head][rest] = val
@@ -285,7 +289,9 @@ def gen_map2_sub(file, hash, level)
   return if hash.empty?
   h2 = {}
   hash.each{|key,val|
-    head = key[0]
+    key = key.dup
+    key.force_encoding("ASCII-8BIT")
+    head = key.bytes[0]
     rest = key[1..-1]
     if h2[head]
       h2[head][rest] = val
@@ -313,7 +319,7 @@ end
 def generate_map2(file, map2)
   suffix = {}
   map2.each{|src,dst|
-    chars = src.split(//)
+    chars = src.chars
     if chars.size != 2
       STDERR.puts "caution: more than two chars in pattern #{chars.join('|')}"
     end
