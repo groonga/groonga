@@ -25,55 +25,18 @@ class SwitchGenerator
   end
 
   def generate(map1, map2)
-    generate_header
     STDERR.puts('generating char type code..')
     generate_blockcode_char_type("gc")
     STDERR.puts('generating map1 code..')
     generate_map1(map1)
     STDERR.puts('generating map2 code..')
     generate_map2(map2)
-    generate_footer
   end
 
   private
-  def generate_header
-    @output.puts(<<-HEADER)
-/* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010-2015 Brazil
-
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-
-don't edit this file by hand. it generated automatically by nfkc.rb
-*/
-
-#include "grn.h"
-#include <groonga/nfkc.h>
-
-#ifdef GRN_WITH_NFKC
-
-    HEADER
-  end
-
-  def generate_footer
-    @output.puts(<<-FOOTER)
-#endif /* GRN_WITH_NFKC */
-
-    FOOTER
-  end
-
   def generate_blockcode_char_type(option)
     @output.puts(<<-HEADER)
+
 grn_char_type
 grn_nfkc#{@unicode_version}_char_type(const unsigned char *str)
 {
@@ -89,7 +52,6 @@ grn_nfkc#{@unicode_version}_char_type(const unsigned char *str)
     @output.puts(<<-FOOTER)
   return -1;
 }
-
     FOOTER
   end
 
@@ -158,15 +120,17 @@ grn_nfkc#{@unicode_version}_char_type(const unsigned char *str)
 
   def generate_map1(hash)
     @output.puts(<<-HEADER)
+
 const char *
 grn_nfkc#{@unicode_version}_map1(const unsigned char *str)
 {
     HEADER
+
     gen_map1(hash, 0)
+
     @output.puts(<<-FOOTER)
   return 0;
 }
-
     FOOTER
   end
 
@@ -210,6 +174,7 @@ grn_nfkc#{@unicode_version}_map1(const unsigned char *str)
 
   def generate_map2(map2)
     @output.puts(<<-HEADER)
+
 const char *
 grn_nfkc#{@unicode_version}_map2(const unsigned char *prefix, const unsigned char *suffix)
 {
@@ -231,7 +196,6 @@ grn_nfkc#{@unicode_version}_map2(const unsigned char *prefix, const unsigned cha
     @output.puts(<<-FOOTER)
   return 0;
 }
-
     FOOTER
   end
 
@@ -446,6 +410,38 @@ STDERR.puts('creating map2..')
 map2 = create_map2(map1)
 
 File.open("nfkc#{unicode_version}.c", "w") do |output|
+  output.puts(<<-HEADER)
+/* -*- c-basic-offset: 2 -*- */
+/* Copyright(C) 2010-2015 Brazil
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License version 2.1 as published by the Free Software Foundation.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+don't edit this file by hand. it generated automatically by nfkc.rb
+*/
+
+#include "grn.h"
+#include <groonga/nfkc.h>
+
+#ifdef GRN_WITH_NFKC
+  HEADER
+
   generator = SwitchGenerator.new(unicode_version, output)
   generator.generate(map1, map2)
+
+  output.puts(<<-FOOTER)
+
+#endif /* GRN_WITH_NFKC */
+
+  FOOTER
 end
