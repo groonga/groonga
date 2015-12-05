@@ -333,9 +333,26 @@ def generate_map2(file, map2)
   gen_map2_sub(file, suffix, 0)
 end
 
+######## main #######
+
+ARGV.each{|arg|
+  case arg
+  when /-*c/i
+    $case_sensitive = true
+  when /-*s/i
+    $keep_space = true
+  end
+}
+
+STDERR.puts('compiling icudump')
+system('cc -Wall -O3 -o icudump -I/tmp/local/include -L/tmp/local/lib icudump.c -licuuc -licui18n')
+
+STDERR.puts('getting Unicode version')
+unicode_version = `./icudump --version`.strip.gsub(".", "")
+
 template = <<END
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010 Brazil
+/* Copyright(C) 2010-2015 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -359,19 +376,19 @@ don't edit this file by hand. it generated automatically by nfkc.rb
 #ifdef GRN_WITH_NFKC
 
 grn_char_type
-grn_nfkc_char_type(const unsigned char *str)
+grn_nfkc#{unicode_version}_char_type(const unsigned char *str)
 {
 %  return -1;
 }
 
 const char *
-grn_nfkc_map1(const unsigned char *str)
+grn_nfkc#{unicode_version}_map1(const unsigned char *str)
 {
 %  return 0;
 }
 
 const char *
-grn_nfkc_map2(const unsigned char *prefix, const unsigned char *suffix)
+grn_nfkc#{unicode_version}_map2(const unsigned char *prefix, const unsigned char *suffix)
 {
 %  return 0;
 }
@@ -380,27 +397,13 @@ grn_nfkc_map2(const unsigned char *prefix, const unsigned char *suffix)
 
 END
 
-######## main #######
-
-ARGV.each{|arg|
-  case arg
-  when /-*c/i
-    $case_sensitive = true
-  when /-*s/i
-    $keep_space = true
-  end
-}
-
-STDERR.puts('compiling icudump')
-system('cc -Wall -O3 -o icudump icudump.c -licui18n')
-
 STDERR.puts('creating map1..')
 map1 = create_map1()
 
 STDERR.puts('creating map2..')
 map2 = create_map2(map1)
 
-outf = open('nfkc.c', 'w')
+outf = open("nfkc#{unicode_version}.c", 'w')
 
 tmps = template.split(/%/)
 

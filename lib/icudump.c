@@ -259,12 +259,13 @@ struct option options[] = {
   {"nfkc", 0, NULL, 'C'},
   {"cc", 0, NULL, 'o'},
   {"gc", 0, NULL, 'g'},
+  {"version", 0, NULL, 'v'},
 };
 
 int
 main(int argc, char **argv)
 {
-  switch (getopt_long(argc, argv, "bdDcCog", options, NULL)) {
+  switch (getopt_long(argc, argv, "bdDcCogv", options, NULL)) {
   case 'b' :
     blockcode();
     break;
@@ -286,8 +287,11 @@ main(int argc, char **argv)
   case 'g' :
     gcdump();
     break;
+  case 'v' :
+    printf("%s\n", U_UNICODE_VERSION);
+    break;
   default :
-    fputs("usage: icudump --[bc|nfd|nfkd|nfc|nfkc|cc|gc]\n", stderr);
+    fputs("usage: icudump --[bc|nfd|nfkd|nfc|nfkc|cc|gc|version]\n", stderr);
     break;
   }
   return 0;
