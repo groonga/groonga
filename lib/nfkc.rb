@@ -24,9 +24,9 @@ class SwitchGenerator
     @output = output
   end
 
-  def generate(map1, map2)
+  def generate(bc, map1, map2)
     STDERR.puts('generating char type code..')
-    generate_blockcode_char_type("gc")
+    generate_blockcode_char_type(bc)
     STDERR.puts('generating map1 code..')
     generate_map1(map1)
     STDERR.puts('generating map2 code..')
@@ -34,21 +34,17 @@ class SwitchGenerator
   end
 
   private
-  def generate_blockcode_char_type(option)
+  def generate_blockcode_char_type(bc)
     @output.puts(<<-HEADER)
 
 grn_char_type
 grn_nfkc#{@unicode_version}_char_type(const unsigned char *str)
 {
     HEADER
-    bc = {}
-    open("|./icudump --#{option}").each{|l|
-      src,_,code = l.chomp.split("\t")
-      str = src.split(':').collect(&:hex).pack("c*")
-      bc[str] = code
-    }
+
     @lv = 0
     gen_bc(bc, 0)
+
     @output.puts(<<-FOOTER)
   return -1;
 }
@@ -447,6 +443,16 @@ static const char *#{decompose_table_name(common_bytes)}[] = {
   end
 end
 
+def create_bc(option)
+  bc = {}
+  open("|./icudump --#{option}").each{|l|
+    src,_,code = l.chomp.split("\t")
+    str = src.split(':').collect(&:hex).pack("c*")
+    bc[str] = code
+  }
+  bc
+end
+
 def ccpush(hash, src, dst)
   head = src.shift
   hash[head] = {} unless hash[head]
@@ -579,6 +585,9 @@ system('cc -Wall -O3 -o icudump -I/tmp/local/include -L/tmp/local/lib icudump.c 
 STDERR.puts('getting Unicode version')
 unicode_version = `./icudump --version`.strip.gsub(".", "")
 
+STDERR.puts('creating bc..')
+bc = create_bc("gc")
+
 STDERR.puts('creating map1..')
 map1 = create_map1()
 
@@ -613,7 +622,7 @@ don't edit this file by hand. it generated automatically by nfkc.rb
   HEADER
 
   generator = generator_class.new(unicode_version, output)
-  generator.generate(map1, map2)
+  generator.generate(bc, map1, map2)
 
   output.puts(<<-FOOTER)
 
