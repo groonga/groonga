@@ -306,7 +306,7 @@ class TableGenerator < SwitchGenerator
     @output.puts(<<-HEADER)
 
 const char *
-grn_nfkc#{@unicode_version}_map1(const unsigned char *str)
+grn_nfkc#{@unicode_version}_map1(const unsigned char *utf8)
 {
     HEADER
 
@@ -320,9 +320,9 @@ grn_nfkc#{@unicode_version}_map1(const unsigned char *str)
       n_common_bytes = 0
       if common_bytes.empty?
         @output.puts(<<-BODY)
-  if (str[0] < 0x80) {
-    if (str[0] >= #{"%#04x" % min} && str[0] <= #{"%#04x" % max}) {
-      return #{decompose_table_name(common_bytes)}[str[0] - #{"%#04x" % min}];
+  if (utf8[0] < 0x80) {
+    if (utf8[0] >= #{"%#04x" % min} && utf8[0] <= #{"%#04x" % max}) {
+      return #{decompose_table_name(common_bytes)}[utf8[0] - #{"%#04x" % min}];
     } else {
       return NULL;
     }
@@ -343,7 +343,7 @@ grn_nfkc#{@unicode_version}_map1(const unsigned char *str)
           if prev_common_bytes[i].nil?
             # p nil
             @output.puts(<<-BODY)
-    #{indent}switch (str[#{i}]) {
+    #{indent}switch (utf8[#{i}]) {
             BODY
           elsif i < prev_n_common_bytes
             # p :prev
@@ -356,7 +356,7 @@ grn_nfkc#{@unicode_version}_map1(const unsigned char *str)
           elsif n_common_bytes < prev_n_common_bytes
             # p :common_prev
             @output.puts(<<-BODY)
-    #{indent}switch (str[#{i}]) {
+    #{indent}switch (utf8[#{i}]) {
             BODY
           end
           @output.puts(<<-BODY)
@@ -367,8 +367,8 @@ grn_nfkc#{@unicode_version}_map1(const unsigned char *str)
         n = froms_bytes.first.size - 1
         indent = "  " * common_bytes.size
         @output.puts(<<-BODY)
-    #{indent}if (str[#{n}] >= #{"%#04x" % min} && str[#{n}] <= #{"%#04x" % max}) {
-    #{indent}  return #{decompose_table_name(common_bytes)}[str[#{n}] - #{"%#04x" % min}];
+    #{indent}if (utf8[#{n}] >= #{"%#04x" % min} && utf8[#{n}] <= #{"%#04x" % max}) {
+    #{indent}  return #{decompose_table_name(common_bytes)}[utf8[#{n}] - #{"%#04x" % min}];
     #{indent}}
     #{indent}break;
         BODY
