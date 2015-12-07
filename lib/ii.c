@@ -2402,8 +2402,22 @@ typedef struct {
   if (cid.rid) {\
     if (cid.tf) {\
       if (lid.rid > cid.rid || (lid.rid == cid.rid && lid.sid >= cid.sid)) {\
-        GRN_LOG(ctx, GRN_LOG_CRIT, "brokenc!! (%d:%d) -> (%d:%d)", lid.rid, lid.sid, cid.rid, cid.sid);\
+        const char *name;\
+        char name_buffer[GRN_TABLE_MAX_KEY_SIZE];\
+        int name_size;\
         rc = GRN_FILE_CORRUPT;\
+        if (DB_OBJ(ii)->id == GRN_ID_NIL) {\
+          name = "(temporary)";\
+          name_size = strlen(name);\
+        } else {\
+          name_size = grn_obj_name(ctx, (grn_obj *)ii,\
+                                   name_buffer, GRN_TABLE_MAX_KEY_SIZE);\
+          name = name_buffer;\
+        }\
+        CRIT(rc,\
+             "[ii][broken] posting in list is larger than posting in chunk: "\
+             "%s: (%d:%d) -> (%d:%d)",\
+             name, lid.rid, lid.sid, cid.rid, cid.sid);\
         break;\
       }\
       PUTNEXT_(cid);\
