@@ -2524,16 +2524,20 @@ typedef struct {
     if (cid.rid) {\
       if (cid.rid < bid.rid) {\
         PUTNEXTC();\
+        if (rc) { break; }\
       } else {\
         if (bid.rid < cid.rid) {\
           PUTNEXTB();\
+          if (rc) { break; }\
         } else {\
           if (bid.sid) {\
             if (cid.sid < bid.sid) {\
               PUTNEXTC();\
+              if (rc) { break; }\
             } else {\
               if (bid.sid == cid.sid) { GETNEXTC(); }\
               PUTNEXTB();\
+              if (rc) { break; }\
             }\
           } else {\
             GETNEXTC();\
@@ -2542,10 +2546,12 @@ typedef struct {
       }\
     } else {\
       PUTNEXTB();\
+      if (rc) { break; }\
     }\
   } else {\
     if (cid.rid) {\
       PUTNEXTC();\
+      if (rc) { break; }\
     } else {\
       break;\
     }\
@@ -2629,11 +2635,13 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, buffer_term *bt,
       }
       GETNEXTC();
       MERGE_BC(bid.rid <= rid || cid.rid);
-      *sbpp = sbp;
-      *nextbp = nextb;
-      *bidp = bid;
-      GRN_ASSERT(posp < dv[ii->n_elements].data);
-      ndf = ridp - dv[0].data;
+      if (!rc) {
+        *sbpp = sbp;
+        *nextbp = nextb;
+        *bidp = bid;
+        GRN_ASSERT(posp < dv[ii->n_elements].data);
+        ndf = ridp - dv[0].data;
+      }
     }
     datavec_fin(ctx, rdv);
     grn_io_win_unmap(&sw);
@@ -2828,6 +2836,11 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
     }
     GETNEXTC();
     MERGE_BC(1);
+    if (rc) {
+      datavec_fin(ctx, dv);
+      datavec_fin(ctx, rdv);
+      return rc;
+    }
     GRN_ASSERT(posp < dv[ii->n_elements].data);
     ndf = ridp - dv[0].data;
     /*
