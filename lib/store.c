@@ -1576,7 +1576,7 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
 
 /* grn_ja_reader */
 
-void
+grn_rc
 grn_ja_reader_init(grn_ctx *ctx, grn_ja_reader *reader, grn_ja *ja)
 {
   reader->ja = ja;
@@ -1585,11 +1585,29 @@ grn_ja_reader_init(grn_ctx *ctx, grn_ja_reader *reader, grn_ja *ja)
   reader->body_seg_addr = NULL;
   reader->packed_buf = NULL;
   reader->packed_buf_size = 0;
+#ifdef GRN_WITH_ZLIB
+  if (reader->ja->header->flags & GRN_OBJ_COMPRESS_ZLIB) {
+    z_stream *new_stream = GRN_MALLOCN(z_stream, 1);
+    if (!new_stream) {
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+    new_stream->zalloc = NULL;
+    new_stream->zfree = NULL;
+    new_stream->opaque = NULL;
+    if (inflateInit2(new_stream, 15) != Z_OK) {
+      GRN_FREE(new_stream);
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+    reader->stream = new_stream;
+  }
+#endif /* GRN_WITH_ZLIB */
+  return GRN_SUCCESS;
 }
 
-void
+grn_rc
 grn_ja_reader_fin(grn_ctx *ctx, grn_ja_reader *reader)
 {
+  grn_rc rc = GRN_SUCCESS;
   if (reader->einfo_seg_id != JA_ESEG_VOID) {
     GRN_IO_SEG_UNREF(reader->ja->io, reader->einfo_seg_id);
   }
@@ -1599,16 +1617,32 @@ grn_ja_reader_fin(grn_ctx *ctx, grn_ja_reader *reader)
   if (reader->packed_buf) {
     GRN_FREE(reader->packed_buf);
   }
+#ifdef GRN_WITH_ZLIB
+  if (reader->ja->header->flags & GRN_OBJ_COMPRESS_ZLIB) {
+    if (reader->stream) {
+      if (inflateEnd((z_stream *)reader->stream) != Z_OK) {
+        rc = GRN_UNKNOWN_ERROR;
+      }
+      GRN_FREE(reader->stream);
+    }
+  }
+#endif /* GRN_WITH_ZLIB */
+  return rc;
 }
 
 grn_rc
 grn_ja_reader_open(grn_ctx *ctx, grn_ja *ja, grn_ja_reader **reader)
 {
+  grn_rc rc;
   grn_ja_reader *new_reader = GRN_MALLOCN(grn_ja_reader, 1);
   if (!new_reader) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
-  grn_ja_reader_init(ctx, new_reader, ja);
+  rc = grn_ja_reader_init(ctx, new_reader, ja);
+  if (rc != GRN_SUCCESS) {
+    GRN_FREE(new_reader);
+    return rc;
+  }
   *reader = new_reader;
   return GRN_SUCCESS;
 }
@@ -1616,9 +1650,9 @@ grn_ja_reader_open(grn_ctx *ctx, grn_ja *ja, grn_ja_reader **reader)
 grn_rc
 grn_ja_reader_close(grn_ctx *ctx, grn_ja_reader *reader)
 {
-  grn_ja_reader_fin(ctx, reader);
+  grn_rc rc = grn_ja_reader_fin(ctx, reader);
   GRN_FREE(reader);
-  return GRN_SUCCESS;
+  return rc;
 }
 
 #if defined(GRN_WITH_ZLIB) || defined(GRN_WITH_LZ4)
@@ -1732,6 +1766,7 @@ static grn_rc
 grn_ja_reader_read_zlib(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
 {
   uLong dest_size = reader->value_size;
+  z_stream *stream = (z_stream *)reader->stream;
   grn_ja_einfo *einfo = (grn_ja_einfo *)reader->einfo;
   if (EHUGE_P(einfo)) {
     /* TODO: Use z_stream to avoid copy. */
@@ -1771,20 +1806,26 @@ grn_ja_reader_read_zlib(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
     grn_memcpy(packed_ptr, seg_addr, size);
     GRN_IO_SEG_UNREF(io, seg_id);
     seg_id++;
-    if (uncompress((Bytef *)buf, &dest_size, (const Bytef *)reader->packed_buf,
+    if (uncompress((Bytef *)buf, &dest_size, (Bytef *)reader->packed_buf,
                    reader->packed_size - sizeof(uint64_t)) != Z_OK) {
+      return GRN_UNKNOWN_ERROR;
+    }
+    if (dest_size != reader->value_size) {
       return GRN_UNKNOWN_ERROR;
     }
   } else {
     char *packed_addr = (char *)reader->body_seg_addr;
     packed_addr += reader->body_seg_offset + sizeof(uint64_t);
-    if (uncompress((Bytef *)buf, &dest_size, (const Bytef *)packed_addr,
-                   reader->packed_size - sizeof(uint64_t)) != Z_OK) {
+    if (inflateReset(stream) != Z_OK) {
       return GRN_UNKNOWN_ERROR;
     }
-  }
-  if (dest_size != reader->value_size) {
-    return GRN_UNKNOWN_ERROR;
+    stream->next_in = (Bytef *)packed_addr;
+    stream->avail_in = reader->packed_size - sizeof(uint64_t);
+    stream->next_out = (Bytef *)buf;
+    stream->avail_out = dest_size;
+    if ((inflate(stream, Z_FINISH) != Z_STREAM_END) || stream->avail_out) {
+      return GRN_UNKNOWN_ERROR;
+    }
   }
   return GRN_SUCCESS;
 }

@@ -117,16 +117,17 @@ typedef struct {
   uint32_t packed_size;
   void *packed_buf;
   uint32_t packed_buf_size;
+  void *stream;
 } grn_ja_reader;
 
 /*
  * grn_ja_reader_init() initializes a reader.
  * An initialized reader must be finalized by grn_ja_reader_fin().
  */
-void grn_ja_reader_init(grn_ctx *ctx, grn_ja_reader *reader, grn_ja *ja);
+grn_rc grn_ja_reader_init(grn_ctx *ctx, grn_ja_reader *reader, grn_ja *ja);
 
 /* grn_ja_reader_fin() finalizes a reader. */
-void grn_ja_reader_fin(grn_ctx *ctx, grn_ja_reader *reader);
+grn_rc grn_ja_reader_fin(grn_ctx *ctx, grn_ja_reader *reader);
 
 /*
  * grn_ja_reader_open() creates a reader.
