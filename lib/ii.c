@@ -2402,7 +2402,7 @@ typedef struct {
   if (cid.rid) {\
     if (cid.tf) {\
       if (lid.rid > cid.rid || (lid.rid == cid.rid && lid.sid >= cid.sid)) {\
-        GRN_LOG(ctx, GRN_LOG_CRIT, "brokenc!! (%d:%d) -> (%d:%d)", lid.rid, lid.sid, bid.rid, bid.sid);\
+        GRN_LOG(ctx, GRN_LOG_CRIT, "brokenc!! (%d:%d) -> (%d:%d)", lid.rid, lid.sid, cid.rid, cid.sid);\
         rc = GRN_FILE_CORRUPT;\
         break;\
       }\
