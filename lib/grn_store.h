@@ -104,7 +104,6 @@ void grn_ja_check(grn_ctx *ctx, grn_ja *ja);
 
 /*
  * grn_ja_reader is designed to improve the performance of sequential access.
- * FIXME: Compressed values are not supported yet.
  */
 typedef struct {
   grn_ja *ja;
@@ -150,6 +149,7 @@ grn_rc grn_ja_reader_read(grn_ctx *ctx, grn_ja_reader *reader, void *buf);
 /*
  * grn_ja_reader_pread() reads a part of the current value to `buf`.
  * If `offset` and `size` are invalid, the behavior is undefined.
+ * FIXME: Compressed values are not supported yet.
  */
 grn_rc grn_ja_reader_pread(grn_ctx *ctx, grn_ja_reader *reader,
                            size_t offset, size_t size, void *buf);
