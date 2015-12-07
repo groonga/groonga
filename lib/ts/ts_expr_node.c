@@ -2454,12 +2454,16 @@ grn_ts_expr_column_node_evaluate_scalar(grn_ctx *ctx,
     case GRN_TS_TEXT: {
       size_t i;
       char *buf_ptr;
+      grn_rc rc;
       grn_ts_text *out_ptr = (grn_ts_text *)out;
       grn_ja_reader reader;
-      grn_ja_reader_init(ctx, &reader, (grn_ja *)node->column);
+      rc = grn_ja_reader_init(ctx, &reader, (grn_ja *)node->column);
+      if (rc != GRN_SUCCESS) {
+        GRN_TS_ERR_RETURN(rc, "grn_ja_reader_init failed");
+      }
       node->buf.pos = 0;
       for (i = 0; i < n_in; i++) {
-        grn_rc rc = grn_ja_reader_seek(ctx, &reader, in[i].id);
+        rc = grn_ja_reader_seek(ctx, &reader, in[i].id);
         if (rc == GRN_SUCCESS) {
           rc = grn_ts_buf_reserve(ctx, &node->buf,
                                   node->buf.pos + reader.value_size);
