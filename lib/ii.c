@@ -2429,8 +2429,21 @@ typedef struct {
         }\
       }\
     } else {\
-      GRN_LOG(ctx, GRN_LOG_CRIT, "invalid chunk(%d,%d)", bt->tid, cid.rid);\
+      const char *name;\
+      char name_buffer[GRN_TABLE_MAX_KEY_SIZE];\
+      int name_size;\
       rc = GRN_FILE_CORRUPT;\
+      if (DB_OBJ(ii)->id == GRN_ID_NIL) {\
+        name = "(temporary)";\
+        name_size = strlen(name);\
+      } else {\
+        name_size = grn_obj_name(ctx, (grn_obj *)ii,\
+                                 name_buffer, GRN_TABLE_MAX_KEY_SIZE);\
+        name = name_buffer;\
+      }\
+      CRIT(rc,\
+           "[ii][broken] invalid posting in chunk: %.*s: (%d,%d)",\
+           name_size, name, bt->tid, cid.rid);\
       break;\
     }\
   }\
