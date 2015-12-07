@@ -1194,7 +1194,7 @@ grn_ja_ref_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *v
     return NULL;
   }
   zstream.next_in = (Bytef *)(((uint64_t *)zvalue) + 1);
-  zstream.avail_in = zvalue_len + sizeof(uint64_t);
+  zstream.avail_in = zvalue_len - sizeof(uint64_t);
   zstream.zalloc = Z_NULL;
   zstream.zfree = Z_NULL;
   if (inflateInit2(&zstream, 15 /* windowBits */) != Z_OK) {
