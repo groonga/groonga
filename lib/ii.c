@@ -2491,8 +2491,22 @@ typedef struct {
     GRN_B_DEC(bid.tf, sbp);\
     if (bid.tf > 0) {\
       if (lid.rid > bid.rid || (lid.rid == bid.rid && lid.sid >= bid.sid)) {\
-        GRN_LOG(ctx, GRN_LOG_CRIT, "brokenb!! (%d:%d) -> (%d:%d)", lid.rid, lid.sid, bid.rid, bid.sid);\
+        const char *name;\
+        char name_buffer[GRN_TABLE_MAX_KEY_SIZE];\
+        int name_size;\
         rc = GRN_FILE_CORRUPT;\
+        if (DB_OBJ(ii)->id == GRN_ID_NIL) {\
+          name = "(temporary)";\
+          name_size = strlen(name);\
+        } else {\
+          name_size = grn_obj_name(ctx, (grn_obj *)ii,\
+                                   name_buffer, GRN_TABLE_MAX_KEY_SIZE);\
+          name = name_buffer;\
+        }\
+        CRIT(rc,\
+             "[ii][broken] posting in list is larger than posting in buffer: "\
+             "%.*s: (%d:%d) -> (%d:%d)",\
+             name_size, name, lid.rid, lid.sid, bid.rid, bid.sid);\
         break;\
       }\
       if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) { GRN_B_DEC(bid.weight, sbp); }\
