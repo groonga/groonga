@@ -2462,8 +2462,22 @@ typedef struct {
       bid.sid = 1;\
     }\
     if (lrid > bid.rid || (lrid == bid.rid && lsid >= bid.sid)) {\
-      GRN_LOG(ctx, GRN_LOG_CRIT, "brokeng!! (%d:%d) -> (%d:%d)", lrid, lsid, bid.rid, bid.sid);\
+      const char *name;\
+      char name_buffer[GRN_TABLE_MAX_KEY_SIZE];\
+      int name_size;\
       rc = GRN_FILE_CORRUPT;\
+      if (DB_OBJ(ii)->id == GRN_ID_NIL) {\
+        name = "(temporary)";\
+        name_size = strlen(name);\
+      } else {\
+        name_size = grn_obj_name(ctx, (grn_obj *)ii,\
+                                 name_buffer, GRN_TABLE_MAX_KEY_SIZE);\
+        name = name_buffer;\
+      }\
+      CRIT(rc,\
+           "[ii][broken] postings in block aren't sorted: "\
+           "%.*s: (%d:%d) -> (%d:%d)",\
+           name_size, name, lrid, lsid, bid.rid, bid.sid);\
       break;\
     }\
     nextb = br->step;\
