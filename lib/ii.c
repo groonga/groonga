@@ -2416,8 +2416,8 @@ typedef struct {
         }\
         CRIT(rc,\
              "[ii][broken] posting in list is larger than posting in chunk: "\
-             "%s: (%d:%d) -> (%d:%d)",\
-             name, lid.rid, lid.sid, cid.rid, cid.sid);\
+             "%.*s: (%d:%d) -> (%d:%d)",\
+             name_size, name, lid.rid, lid.sid, cid.rid, cid.sid);\
         break;\
       }\
       PUTNEXT_(cid);\
