@@ -1791,10 +1791,14 @@ grn_ja_reader_read_zlib(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
 #endif /* GRN_WITH_ZLIB */
 
 #ifdef GRN_WITH_LZ4
+/*
+ * grn_ja_reader_read_lz4() reads a value from a LZ4 compressed jagged array.
+ * NOTE: 
+ */
 static grn_rc
 grn_ja_reader_read_lz4(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
 {
-  int src_size;
+  int src_size, dest_size;
   grn_ja_einfo *einfo = (grn_ja_einfo *)reader->einfo;
   if (EHUGE_P(einfo)) {
     grn_io *io = reader->ja->io;
@@ -1833,20 +1837,17 @@ grn_ja_reader_read_lz4(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
     grn_memcpy(packed_ptr, seg_addr, size);
     GRN_IO_SEG_UNREF(io, seg_id);
     seg_id++;
-    /*
-     * TODO: Compare LZ4_decompress_fast() and LZ4_decompress_safe().
-     *       If the difference is small, LZ4_decompress_safe() should be used
-     *       for safety.
-     */
-    src_size = LZ4_decompress_fast(reader->packed_buf, (char *)buf,
-                                   (int)reader->value_size);
+    src_size = (int)(reader->packed_size - sizeof(uint64_t));
+    dest_size = LZ4_decompress_safe(reader->packed_buf, buf, src_size,
+                                    (int)reader->value_size);
   } else {
     char *packed_addr = (char *)reader->body_seg_addr;
     packed_addr += reader->body_seg_offset + sizeof(uint64_t);
-    src_size = LZ4_decompress_fast(packed_addr, (char *)buf,
-                                   (int)reader->value_size);
+    src_size = (int)(reader->packed_size - sizeof(uint64_t));
+    dest_size = LZ4_decompress_safe(packed_addr, buf, src_size,
+                                    (int)reader->value_size);
   }
-  if (src_size != (reader->packed_size - sizeof(uint64_t))) {
+  if ((uint32_t)dest_size != reader->value_size) {
     return GRN_UNKNOWN_ERROR;
   }
   return GRN_SUCCESS;
