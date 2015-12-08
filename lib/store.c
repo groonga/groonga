@@ -559,11 +559,10 @@ grn_ja_unref(grn_ctx *ctx, grn_io_win *iw)
   if (iw->uncompressed_value) {
     GRN_FREE(iw->uncompressed_value);
     iw->uncompressed_value = NULL;
-  } else {
-    if (!iw->addr) { return GRN_INVALID_ARGUMENT; }
-    GRN_IO_SEG_UNREF(iw->io, iw->pseg);
-    if (!iw->tiny_p) { grn_io_win_unmap(iw); }
   }
+  if (!iw->addr) { return GRN_INVALID_ARGUMENT; }
+  GRN_IO_SEG_UNREF(iw->io, iw->pseg);
+  if (!iw->tiny_p) { grn_io_win_unmap(iw); }
   return GRN_SUCCESS;
 }
 
