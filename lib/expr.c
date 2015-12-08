@@ -738,8 +738,15 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
   grn_expr *e = (grn_expr *)expr;
   GRN_API_ENTER;
   if (e->codes_curr >= e->codes_size) {
-    ERR(GRN_NO_MEMORY_AVAILABLE, "stack is full");
-    goto exit;
+    uint32_t new_codes_size = e->codes_size * 2;
+    size_t n_bytes = sizeof(grn_expr_code) * new_codes_size;
+    grn_expr_code *new_codes = (grn_expr_code *)GRN_REALLOC(e->codes, n_bytes);
+    if (!new_codes) {
+	    ERR(GRN_NO_MEMORY_AVAILABLE, "stack is full");
+	    goto exit;
+    }
+    e->codes = new_codes;
+    e->codes_size = new_codes_size;
   }
   {
     switch (op) {
