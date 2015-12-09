@@ -2000,7 +2000,7 @@ h_handler(grn_ctx *ctx, grn_obj *msg)
     ((grn_msg *)msg)->u.fd = fd;
     MUTEX_LOCK_ENSURE(ctx, q_mutex);
     grn_com_queue_enque(ctx, &ctx_new, (grn_com_queue_entry *)msg);
-    if (!n_floating_threads && n_running_threads < max_n_floating_threads) {
+    if (n_floating_threads == 0 && n_running_threads < max_n_floating_threads) {
       grn_thread thread;
       n_running_threads++;
       if (THREAD_CREATE(thread, h_worker, arg)) {
@@ -2111,7 +2111,7 @@ g_dispatcher(grn_ctx *ctx, grn_edge *edge)
   if (edge->stat == EDGE_IDLE) {
     grn_com_queue_enque(ctx, &ctx_new, (grn_com_queue_entry *)edge);
     edge->stat = EDGE_WAIT;
-    if (!n_floating_threads && n_running_threads < max_n_floating_threads) {
+    if (n_floating_threads == 0 && n_running_threads < max_n_floating_threads) {
       grn_thread thread;
       n_running_threads++;
       if (THREAD_CREATE(thread, g_worker, NULL)) {
