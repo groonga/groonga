@@ -507,6 +507,17 @@ groonga_set_thread_limit(uint32_t new_limit, void *data)
       MUTEX_UNLOCK(q_mutex);
     }
   }
+
+  while (GRN_TRUE) {
+    grn_bool is_reduced;
+    MUTEX_LOCK_ENSURE(&grn_gctx, q_mutex);
+    is_reduced = (n_running_threads <= max_n_floating_threads);
+    MUTEX_UNLOCK(q_mutex);
+    if (is_reduced) {
+      break;
+    }
+    grn_nanosleep(1000000);
+  }
 }
 
 static void
