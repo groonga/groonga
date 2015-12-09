@@ -2003,7 +2003,10 @@ h_handler(grn_ctx *ctx, grn_obj *msg)
     if (!n_floating_threads && n_running_threads < max_n_floating_threads) {
       grn_thread thread;
       n_running_threads++;
-      if (THREAD_CREATE(thread, h_worker, arg)) { SERR("pthread_create"); }
+      if (THREAD_CREATE(thread, h_worker, arg)) {
+        n_running_threads--;
+        SERR("pthread_create");
+      }
     }
     COND_SIGNAL(q_cond);
     MUTEX_UNLOCK(q_mutex);
@@ -2111,7 +2114,10 @@ g_dispatcher(grn_ctx *ctx, grn_edge *edge)
     if (!n_floating_threads && n_running_threads < max_n_floating_threads) {
       grn_thread thread;
       n_running_threads++;
-      if (THREAD_CREATE(thread, g_worker, NULL)) { SERR("pthread_create"); }
+      if (THREAD_CREATE(thread, g_worker, NULL)) {
+        n_running_threads--;
+        SERR("pthread_create");
+      }
     }
     COND_SIGNAL(q_cond);
   }
