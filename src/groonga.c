@@ -80,7 +80,7 @@
 #define DEFAULT_HTTP_PORT 10041
 #define DEFAULT_GQTP_PORT 10043
 #define DEFAULT_DEST "localhost"
-#define DEFAULT_MAX_NFTHREADS 8
+#define DEFAULT_MAX_N_FLOATING_THREADS 8
 #define MAX_CON 0x10000
 
 #define RLIMIT_NOFILE_MINIMUM 4096
@@ -479,27 +479,29 @@ static grn_com_queue ctx_new;
 static grn_com_queue ctx_old;
 static grn_mutex q_mutex;
 static grn_cond q_cond;
-static uint32_t nthreads = 0, nfthreads = 0, max_nfthreads;
+static uint32_t n_running_threads = 0;
+static uint32_t n_floating_threads = 0;
+static uint32_t max_n_floating_threads;
 
 static uint32_t
 groonga_get_thread_limit(void *data)
 {
-  return max_nfthreads;
+  return max_n_floating_threads;
 }
 
 static void
 groonga_set_thread_limit(uint32_t new_limit, void *data)
 {
   uint32_t i;
-  uint32_t current_nfthreads;
+  uint32_t current_n_floating_threads;
 
   MUTEX_LOCK_ENSURE(&grn_gctx, q_mutex);
-  current_nfthreads = nfthreads;
-  max_nfthreads = new_limit;
+  current_n_floating_threads = n_floating_threads;
+  max_n_floating_threads = new_limit;
   MUTEX_UNLOCK(q_mutex);
 
-  if (current_nfthreads > new_limit) {
-    for (i = 0; i < current_nfthreads; i++) {
+  if (current_n_floating_threads > new_limit) {
+    for (i = 0; i < current_n_floating_threads; i++) {
       MUTEX_LOCK_ENSURE(&grn_gctx, q_mutex);
       COND_SIGNAL(q_cond);
       MUTEX_UNLOCK(q_mutex);
@@ -660,7 +662,7 @@ run_server_loop(grn_ctx *ctx, grn_com_event *ev)
   }
   for (;;) {
     MUTEX_LOCK_ENSURE(ctx, q_mutex);
-    if (nthreads == nfthreads) { break; }
+    if (n_running_threads == n_floating_threads) { break; }
     MUTEX_UNLOCK(q_mutex);
     grn_nanosleep(1000000);
   }
@@ -1950,32 +1952,34 @@ h_worker(void *arg)
   grn_ctx_use(ctx, (grn_obj *)arg);
   grn_ctx_recv_handler_set(ctx, h_output, &hc);
   MUTEX_LOCK_ENSURE(ctx, q_mutex);
-  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)", nfthreads, nthreads);
+  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)",
+          n_floating_threads, n_running_threads);
   do {
     grn_obj *msg;
-    nfthreads++;
+    n_floating_threads++;
     while (!(msg = (grn_obj *)grn_com_queue_deque(&grn_gctx, &ctx_new))) {
       COND_WAIT(q_cond, q_mutex);
       if (grn_gctx.stat == GRN_CTX_QUIT) {
-        nfthreads--;
+        n_floating_threads--;
         goto exit;
       }
-      if (nthreads > max_nfthreads) {
-        nfthreads--;
+      if (n_running_threads > max_n_floating_threads) {
+        n_floating_threads--;
         goto exit;
       }
     }
-    nfthreads--;
+    n_floating_threads--;
     MUTEX_UNLOCK(q_mutex);
     hc.msg = (grn_msg *)msg;
     hc.in_body = GRN_FALSE;
     hc.is_chunked = GRN_FALSE;
     do_htreq(ctx, (grn_msg *)msg);
     MUTEX_LOCK_ENSURE(ctx, q_mutex);
-  } while (nfthreads < max_nfthreads && grn_gctx.stat != GRN_CTX_QUIT);
+  } while (n_floating_threads < max_n_floating_threads && grn_gctx.stat != GRN_CTX_QUIT);
 exit :
-  nthreads--;
-  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)", nfthreads, nthreads);
+  n_running_threads--;
+  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)",
+          n_floating_threads, n_running_threads);
   MUTEX_UNLOCK(q_mutex);
   grn_ctx_fin(ctx);
   return GRN_THREAD_FUNC_RETURN_VALUE;
@@ -1996,9 +2000,9 @@ h_handler(grn_ctx *ctx, grn_obj *msg)
     ((grn_msg *)msg)->u.fd = fd;
     MUTEX_LOCK_ENSURE(ctx, q_mutex);
     grn_com_queue_enque(ctx, &ctx_new, (grn_com_queue_entry *)msg);
-    if (!nfthreads && nthreads < max_nfthreads) {
+    if (!n_floating_threads && n_running_threads < max_n_floating_threads) {
       grn_thread thread;
-      nthreads++;
+      n_running_threads++;
       if (THREAD_CREATE(thread, h_worker, arg)) { SERR("pthread_create"); }
     }
     COND_SIGNAL(q_cond);
@@ -2031,24 +2035,25 @@ static grn_thread_func_result CALLBACK
 g_worker(void *arg)
 {
   MUTEX_LOCK_ENSURE(NULL, q_mutex);
-  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)", nfthreads, nthreads);
+  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)",
+          n_floating_threads, n_running_threads);
   do {
     grn_ctx *ctx;
     grn_edge *edge;
-    nfthreads++;
+    n_floating_threads++;
     while (!(edge = (grn_edge *)grn_com_queue_deque(&grn_gctx, &ctx_new))) {
       COND_WAIT(q_cond, q_mutex);
       if (grn_gctx.stat == GRN_CTX_QUIT) {
-        nfthreads--;
+        n_floating_threads--;
         goto exit;
       }
-      if (nthreads > max_nfthreads) {
-        nfthreads--;
+      if (n_running_threads > max_n_floating_threads) {
+        n_floating_threads--;
         goto exit;
       }
     }
     ctx = &edge->ctx;
-    nfthreads--;
+    n_floating_threads--;
     if (edge->stat == EDGE_DOING) { continue; }
     if (edge->stat == EDGE_WAIT) {
       edge->stat = EDGE_DOING;
@@ -2087,10 +2092,11 @@ g_worker(void *arg)
     } else {
       edge->stat = EDGE_IDLE;
     }
-  } while (nfthreads < max_nfthreads && grn_gctx.stat != GRN_CTX_QUIT);
+  } while (n_floating_threads < max_n_floating_threads && grn_gctx.stat != GRN_CTX_QUIT);
 exit :
-  nthreads--;
-  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)", nfthreads, nthreads);
+  n_running_threads--;
+  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)",
+          n_floating_threads, n_running_threads);
   MUTEX_UNLOCK(q_mutex);
   return GRN_THREAD_FUNC_RETURN_VALUE;
 }
@@ -2102,9 +2108,9 @@ g_dispatcher(grn_ctx *ctx, grn_edge *edge)
   if (edge->stat == EDGE_IDLE) {
     grn_com_queue_enque(ctx, &ctx_new, (grn_com_queue_entry *)edge);
     edge->stat = EDGE_WAIT;
-    if (!nfthreads && nthreads < max_nfthreads) {
+    if (!n_floating_threads && n_running_threads < max_n_floating_threads) {
       grn_thread thread;
-      nthreads++;
+      n_running_threads++;
       if (THREAD_CREATE(thread, g_worker, NULL)) { SERR("pthread_create"); }
     }
     COND_SIGNAL(q_cond);
@@ -2424,7 +2430,7 @@ config_file_load(const char *path, const grn_str_getopt_opt *opts, int *flags)
 static const int default_http_port = DEFAULT_HTTP_PORT;
 static const int default_gqtp_port = DEFAULT_GQTP_PORT;
 static grn_encoding default_encoding = GRN_ENC_DEFAULT;
-static uint32_t default_max_n_threads = DEFAULT_MAX_NFTHREADS;
+static uint32_t default_max_n_threads = DEFAULT_MAX_N_FLOATING_THREADS;
 static const grn_log_level default_log_level = GRN_LOG_DEFAULT_LEVEL;
 static const char * const default_protocol = "gqtp";
 static const char *default_hostname = "localhost";
@@ -3023,12 +3029,12 @@ main(int argc, char **argv)
               max_n_threads_arg);
       return EXIT_FAILURE;
     }
-    max_nfthreads = value;
+    max_n_floating_threads = value;
   } else {
     if (flags & FLAG_MODE_ALONE) {
-      max_nfthreads = 1;
+      max_n_floating_threads = 1;
     } else {
-      max_nfthreads = default_max_n_threads;
+      max_n_floating_threads = default_max_n_threads;
     }
   }
 
