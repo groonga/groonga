@@ -1954,7 +1954,8 @@ h_worker(void *arg)
   MUTEX_LOCK_ENSURE(ctx, q_mutex);
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)",
           n_floating_threads, n_running_threads);
-  do {
+  while (n_running_threads <= max_n_floating_threads &&
+         grn_gctx.stat != GRN_CTX_QUIT) {
     grn_obj *msg;
     n_floating_threads++;
     while (!(msg = (grn_obj *)grn_com_queue_deque(&grn_gctx, &ctx_new))) {
@@ -1975,7 +1976,7 @@ h_worker(void *arg)
     hc.is_chunked = GRN_FALSE;
     do_htreq(ctx, (grn_msg *)msg);
     MUTEX_LOCK_ENSURE(ctx, q_mutex);
-  } while (n_floating_threads < max_n_floating_threads && grn_gctx.stat != GRN_CTX_QUIT);
+  };
 exit :
   n_running_threads--;
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)",
@@ -2040,7 +2041,8 @@ g_worker(void *arg)
   MUTEX_LOCK_ENSURE(NULL, q_mutex);
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)",
           n_floating_threads, n_running_threads);
-  do {
+   while (n_running_threads <= max_n_floating_threads &&
+          grn_gctx.stat != GRN_CTX_QUIT) {
     grn_ctx *ctx;
     grn_edge *edge;
     n_floating_threads++;
@@ -2095,7 +2097,7 @@ g_worker(void *arg)
     } else {
       edge->stat = EDGE_IDLE;
     }
-  } while (n_floating_threads < max_n_floating_threads && grn_gctx.stat != GRN_CTX_QUIT);
+  };
 exit :
   n_running_threads--;
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)",
