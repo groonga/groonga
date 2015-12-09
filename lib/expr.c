@@ -201,19 +201,26 @@ grn_obj *
 grn_expr_alloc_const(grn_ctx *ctx, grn_obj *expr)
 {
   grn_expr *e = (grn_expr *)expr;
+  uint32_t id = e->nconsts % GRN_EXPR_CONST_BLK_SIZE;
+  uint32_t blk_id = e->nconsts / GRN_EXPR_CONST_BLK_SIZE;
 
-  if (!e->consts) {
-    if (!(e->consts = GRN_MALLOCN(grn_obj, GRN_STACK_SIZE))) {
+  if (id == 0) {
+    uint32_t nblks = blk_id + 1;
+    grn_obj **blks = (grn_obj **)GRN_REALLOC(e->const_blks,
+                                             sizeof(grn_obj *) * nblks);
+    if (!blks) {
+      ERR(GRN_NO_MEMORY_AVAILABLE, "realloc failed");
+      return NULL;
+    }
+    e->const_blks = blks;
+    blks[blk_id] = GRN_MALLOCN(grn_obj, GRN_EXPR_CONST_BLK_SIZE);
+    if (!blks[blk_id]) {
       ERR(GRN_NO_MEMORY_AVAILABLE, "malloc failed");
       return NULL;
     }
   }
-  if (e->nconsts < GRN_STACK_SIZE) {
-    return e->consts + e->nconsts++;
-  } else {
-    ERR(GRN_STACK_OVER_FLOW, "too many constants.");
-    return NULL;
-  }
+  e->nconsts++;
+  return &e->const_blks[blk_id][id];
 }
 
 void
@@ -359,7 +366,7 @@ grn_expr_open(grn_ctx *ctx, grn_obj_spec *spec, const uint8_t *p, const uint8_t 
   grn_expr *expr = NULL;
   if ((expr = GRN_MALLOCN(grn_expr, 1))) {
     int size = GRN_STACK_SIZE;
-    expr->consts = NULL;
+    expr->const_blks = NULL;
     expr->nconsts = 0;
     GRN_TEXT_INIT(&expr->name_buf, 0);
     GRN_TEXT_INIT(&expr->dfi, 0);
@@ -458,7 +465,7 @@ grn_expr_create(grn_ctx *ctx, const char *name, unsigned int name_size)
   id = grn_obj_register(ctx, db, name, name_size);
   if (id && (expr = GRN_MALLOCN(grn_expr, 1))) {
     int size = GRN_STACK_SIZE;
-    expr->consts = NULL;
+    expr->const_blks = NULL;
     expr->nconsts = 0;
     GRN_TEXT_INIT(&expr->name_buf, 0);
     GRN_TEXT_INIT(&expr->dfi, 0);
@@ -507,7 +514,7 @@ exit :
 grn_rc
 grn_expr_close(grn_ctx *ctx, grn_obj *expr)
 {
-  uint32_t i;
+  uint32_t i, j;
   grn_expr *e = (grn_expr *)expr;
   GRN_API_ENTER;
   /*
@@ -516,10 +523,23 @@ grn_expr_close(grn_ctx *ctx, grn_obj *expr)
   }
   */
   grn_expr_clear_vars(ctx, expr);
-  for (i = 0; i < e->nconsts; i++) {
-    grn_obj_close(ctx, &e->consts[i]);
+  if (e->const_blks) {
+    uint32_t nblks = e->nconsts + GRN_EXPR_CONST_BLK_SIZE - 1;
+    nblks /= GRN_EXPR_CONST_BLK_SIZE;
+    for (i = 0; i < nblks; i++) {
+      uint32_t end;
+      if (i < nblks - 1) {
+        end = GRN_EXPR_CONST_BLK_SIZE;
+      } else {
+        end = ((e->nconsts - 1) % GRN_EXPR_CONST_BLK_SIZE) + 1;
+      }
+      for (j = 0; j < end; j++) {
+        grn_obj_close(ctx, &e->const_blks[i][j]);
+      }
+      GRN_FREE(e->const_blks[i]);
+    }
+    GRN_FREE(e->const_blks);
   }
-  if (e->consts) { GRN_FREE(e->consts);  }
   grn_obj_close(ctx, &e->name_buf);
   grn_obj_close(ctx, &e->dfi);
   for (;;) {

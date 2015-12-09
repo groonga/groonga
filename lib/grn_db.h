@@ -298,6 +298,8 @@ typedef struct {
   int32_t modify;
 } grn_expr_code;
 
+#define GRN_EXPR_CONST_BLK_SIZE GRN_STACK_SIZE
+
 struct _grn_expr {
   grn_db_obj obj;
   grn_obj name_buf;
@@ -307,7 +309,7 @@ struct _grn_expr {
 
   uint16_t cacheable;
   uint16_t taintable;
-  grn_obj *consts;
+  grn_obj **const_blks;
   grn_obj *values;
   grn_expr_code *codes;
   uint32_t nconsts;
