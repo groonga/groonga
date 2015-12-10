@@ -106,18 +106,18 @@ void grn_ja_check(grn_ctx *ctx, grn_ja *ja);
  * grn_ja_reader is designed to improve the performance of sequential access.
  */
 typedef struct {
-  grn_ja *ja;
-  uint32_t einfo_seg_id;
-  void *einfo_seg_addr;
-  void *einfo;
-  uint32_t body_seg_id;
-  uint32_t body_seg_offset;
-  void *body_seg_addr;
-  uint32_t value_size;
-  uint32_t packed_size;
-  void *packed_buf;
-  uint32_t packed_buf_size;
-  void *stream;
+  grn_ja *ja;               /* Target jagged array (without ref. count). */
+  uint32_t einfo_seg_id;    /* ID of the current header segment. */
+  void *einfo_seg_addr;     /* Address of the current header segment. */
+  void *einfo;              /* Header of the current value. */
+  uint32_t body_seg_id;     /* ID of the current body segment. */
+  uint32_t body_seg_offset; /* Offset in the current body segment. */
+  void *body_seg_addr;      /* Address of the current body segment. */
+  uint32_t value_size;      /* Size of the current value. */
+  uint32_t packed_size;     /* Compressed size of the current value. */
+  void *packed_buf;         /* Buffer for decompression. */
+  uint32_t packed_buf_size; /* Size of the buffer for decompression. */
+  void *stream;             /* Stream of a compression library. */
 } grn_ja_reader;
 
 /*
