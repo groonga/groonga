@@ -2320,6 +2320,7 @@ typedef struct {
   grn_obj *column;
   grn_ts_buf buf;
   grn_ts_buf body_buf;
+  grn_ja_reader *reader;
 } grn_ts_expr_column_node;
 
 /* grn_ts_expr_column_node_init() initializes a node. */
@@ -2331,12 +2332,16 @@ grn_ts_expr_column_node_init(grn_ctx *ctx, grn_ts_expr_column_node *node)
   node->column = NULL;
   grn_ts_buf_init(ctx, &node->buf);
   grn_ts_buf_init(ctx, &node->body_buf);
+  node->reader = NULL;
 }
 
 /* grn_ts_expr_column_node_fin() finalizes a node. */
 static void
 grn_ts_expr_column_node_fin(grn_ctx *ctx, grn_ts_expr_column_node *node)
 {
+  if (node->reader) {
+    grn_ja_reader_close(ctx, node->reader);
+  }
   grn_ts_buf_fin(ctx, &node->body_buf);
   grn_ts_buf_fin(ctx, &node->buf);
   if (node->column) {
@@ -2456,33 +2461,51 @@ grn_ts_expr_column_node_evaluate_scalar(grn_ctx *ctx,
       char *buf_ptr;
       grn_rc rc;
       grn_ts_text *out_ptr = (grn_ts_text *)out;
-      grn_ja_reader reader;
-      rc = grn_ja_reader_init(ctx, &reader, (grn_ja *)node->column);
-      if (rc != GRN_SUCCESS) {
-        GRN_TS_ERR_RETURN(rc, "grn_ja_reader_init failed");
+      if (!node->reader) {
+        rc = grn_ja_reader_open(ctx, (grn_ja *)node->column, &node->reader);
+        if (rc != GRN_SUCCESS) {
+          GRN_TS_ERR_RETURN(rc, "grn_ja_reader_open failed");
+        }
+      } else {
+        grn_ja_reader_unref(ctx, node->reader);
       }
       node->buf.pos = 0;
       for (i = 0; i < n_in; i++) {
-        rc = grn_ja_reader_seek(ctx, &reader, in[i].id);
+        rc = grn_ja_reader_seek(ctx, node->reader, in[i].id);
         if (rc == GRN_SUCCESS) {
-          rc = grn_ts_buf_reserve(ctx, &node->buf,
-                                  node->buf.pos + reader.value_size);
-          if (rc == GRN_SUCCESS) {
-            rc = grn_ja_reader_read(ctx, &reader,
-                                    (char *)node->buf.ptr + node->buf.pos);
+          if (node->reader->ref_avail) {
+            void *addr;
+            rc = grn_ja_reader_ref(ctx, node->reader, &addr);
             if (rc == GRN_SUCCESS) {
-              node->buf.pos += reader.value_size;
+              out_ptr[i].ptr = (char *)addr;
+            }
+          } else {
+            rc = grn_ts_buf_reserve(ctx, &node->buf,
+                                    node->buf.pos + node->reader->value_size);
+            if (rc == GRN_SUCCESS) {
+              rc = grn_ja_reader_read(ctx, node->reader,
+                                      (char *)node->buf.ptr + node->buf.pos);
+              if (rc == GRN_SUCCESS) {
+                out_ptr[i].ptr = NULL;
+                node->buf.pos += node->reader->value_size;
+              }
             }
           }
         }
-        out_ptr[i].size = (rc == GRN_SUCCESS) ? reader.value_size : 0;
+        if (rc == GRN_SUCCESS) {
+          out_ptr[i].size = node->reader->value_size;
+        } else {
+          out_ptr[i].ptr = NULL;
+          out_ptr[i].size = 0;
+        }
       }
       buf_ptr = (char *)node->buf.ptr;
       for (i = 0; i < n_in; i++) {
-        out_ptr[i].ptr = buf_ptr;
-        buf_ptr += out_ptr[i].size;
+        if (!out_ptr[i].ptr) {
+          out_ptr[i].ptr = buf_ptr;
+          buf_ptr += out_ptr[i].size;
+        }
       }
-      grn_ja_reader_fin(ctx, &reader);
       return GRN_SUCCESS;
     }
     GRN_TS_EXPR_COLUMN_NODE_EVALUATE_SCALAR_CASE(GEO, geo)
