@@ -1655,6 +1655,7 @@ grn_ja_reader_close(grn_ctx *ctx, grn_ja_reader *reader)
 }
 
 #if defined(GRN_WITH_ZLIB) || defined(GRN_WITH_LZ4)
+/* grn_ja_reader_seek_compressed() prepares to access a compressed value. */
 static grn_rc
 grn_ja_reader_seek_compressed(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
 {
@@ -1702,6 +1703,7 @@ grn_ja_reader_seek_compressed(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
 }
 #endif /* defined(GRN_WITH_ZLIB) || defined(GRN_WITH_LZ4) */
 
+/* grn_ja_reader_seek_raw() prepares to access a value. */
 static grn_rc
 grn_ja_reader_seek_raw(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
 {
@@ -1761,6 +1763,7 @@ grn_ja_reader_seek(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
 }
 
 #ifdef GRN_WITH_ZLIB
+/* grn_ja_reader_read_zlib() reads a value compressed with zlib. */
 static grn_rc
 grn_ja_reader_read_zlib(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
 {
@@ -1831,10 +1834,7 @@ grn_ja_reader_read_zlib(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
 #endif /* GRN_WITH_ZLIB */
 
 #ifdef GRN_WITH_LZ4
-/*
- * grn_ja_reader_read_lz4() reads a value from a LZ4 compressed jagged array.
- * NOTE: 
- */
+/* grn_ja_reader_read_lz4() reads a value compressed with LZ4. */
 static grn_rc
 grn_ja_reader_read_lz4(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
 {
@@ -1894,6 +1894,7 @@ grn_ja_reader_read_lz4(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
 }
 #endif /* GRN_WITH_LZ4 */
 
+/* grn_ja_reader_read_raw() reads a value. */
 static grn_rc
 grn_ja_reader_read_raw(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
 {
@@ -1954,25 +1955,28 @@ grn_ja_reader_read(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
 }
 
 #ifdef GRN_WITH_ZLIB
+/* grn_ja_reader_pread_zlib() reads a part of a value compressed with zlib. */
 static grn_rc
 grn_ja_reader_pread_zlib(grn_ctx *ctx, grn_ja_reader *reader,
                          size_t offset, size_t size, void *buf)
 {
-  // TODO
+  /* TODO: To be supported? */
   return GRN_FUNCTION_NOT_IMPLEMENTED;
 }
 #endif /* GRN_WITH_ZLIB */
 
 #ifdef GRN_WITH_LZ4
+/* grn_ja_reader_pread_lz4() reads a part of a value compressed with LZ4. */
 static grn_rc
 grn_ja_reader_pread_lz4(grn_ctx *ctx, grn_ja_reader *reader,
                         size_t offset, size_t size, void *buf)
 {
-  // TODO
+  /* TODO: To be supported? */
   return GRN_FUNCTION_NOT_IMPLEMENTED;
 }
 #endif /* GRN_WITH_LZ4 */
 
+/* grn_ja_reader_pread_raw() reads a part of a value. */
 static grn_rc
 grn_ja_reader_pread_raw(grn_ctx *ctx, grn_ja_reader *reader,
                         size_t offset, size_t size, void *buf)
