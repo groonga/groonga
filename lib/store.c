@@ -1580,6 +1580,11 @@ grn_ja_reader_init(grn_ctx *ctx, grn_ja_reader *reader, grn_ja *ja)
 {
   reader->ja = ja;
   reader->einfo_seg_id = JA_ESEG_VOID;
+  reader->ref_avail = GRN_FALSE;
+  reader->ref_seg_id = JA_ESEG_VOID;
+  reader->ref_seg_ids = NULL;
+  reader->nref_seg_ids = 0;
+  reader->ref_seg_ids_size = 0;
   reader->body_seg_id = JA_ESEG_VOID;
   reader->body_seg_addr = NULL;
   reader->packed_buf = NULL;
@@ -1609,6 +1614,10 @@ grn_ja_reader_fin(grn_ctx *ctx, grn_ja_reader *reader)
   grn_rc rc = GRN_SUCCESS;
   if (reader->einfo_seg_id != JA_ESEG_VOID) {
     GRN_IO_SEG_UNREF(reader->ja->io, reader->einfo_seg_id);
+  }
+  if (reader->ref_seg_ids) {
+    grn_ja_reader_unref(ctx, reader);
+    GRN_FREE(reader->ref_seg_ids);
   }
   if (reader->body_seg_addr) {
     GRN_IO_SEG_UNREF(reader->ja->io, reader->body_seg_id);
@@ -1729,11 +1738,14 @@ grn_ja_reader_seek_raw(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
   reader->einfo = einfo;
   if (ETINY_P(einfo)) {
     ETINY_DEC(einfo, reader->value_size);
+    reader->ref_avail = GRN_FALSE;
   } else {
     if (EHUGE_P(einfo)) {
       EHUGE_DEC(einfo, seg_id, reader->value_size);
+      reader->ref_avail = GRN_FALSE;
     } else {
       EINFO_DEC(einfo, seg_id, reader->body_seg_offset, reader->value_size);
+      reader->ref_avail = GRN_TRUE;
     }
     if (reader->body_seg_addr) {
       if (seg_id != reader->body_seg_id) {
@@ -1760,6 +1772,52 @@ grn_ja_reader_seek(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
   }
 #endif /* GRN_WITH_LZ4 */
   return grn_ja_reader_seek_raw(ctx, reader, id);
+}
+
+grn_rc grn_ja_reader_ref(grn_ctx *ctx, grn_ja_reader *reader, void **addr)
+{
+  if (!reader->ref_avail) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  if (reader->body_seg_id != reader->ref_seg_id) {
+    void *seg_addr;
+    if (reader->nref_seg_ids == reader->ref_seg_ids_size) {
+      size_t n_bytes;
+      uint32_t new_size, *new_seg_ids;
+      if (reader->ref_seg_ids_size == 0) {
+        new_size = GRN_JA_READER_INITIAL_REF_SEG_IDS_SIZE;
+      } else {
+        new_size = reader->ref_seg_ids_size * 2;
+      }
+      n_bytes = sizeof(uint32_t) * new_size;
+      new_seg_ids = (uint32_t *)GRN_REALLOC(reader->ref_seg_ids, n_bytes);
+      if (!new_seg_ids) {
+        return GRN_NO_MEMORY_AVAILABLE;
+      }
+      reader->ref_seg_ids = new_seg_ids;
+      reader->ref_seg_ids_size = new_size;
+    }
+    GRN_IO_SEG_REF(reader->ja->io, reader->body_seg_id, seg_addr);
+    if (!seg_addr) {
+      return GRN_UNKNOWN_ERROR;
+    }
+    reader->ref_seg_id = reader->body_seg_id;
+    reader->ref_seg_addr = seg_addr;
+    reader->ref_seg_ids[reader->nref_seg_ids++] = reader->body_seg_id;
+  }
+  *addr = (char *)reader->ref_seg_addr + reader->body_seg_offset;
+  return GRN_SUCCESS;
+}
+
+grn_rc grn_ja_reader_unref(grn_ctx *ctx, grn_ja_reader *reader)
+{
+  uint32_t i;
+  for (i = 0; i < reader->nref_seg_ids; i++) {
+    GRN_IO_SEG_UNREF(reader->ja->io, reader->ref_seg_ids[i]);
+  }
+  reader->ref_seg_id = JA_ESEG_VOID;
+  reader->nref_seg_ids = 0;
+  return GRN_FUNCTION_NOT_IMPLEMENTED;
 }
 
 #ifdef GRN_WITH_ZLIB

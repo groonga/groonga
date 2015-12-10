@@ -102,22 +102,30 @@ GRN_API uint32_t grn_ja_size(grn_ctx *ctx, grn_ja *ja, grn_id id);
 
 void grn_ja_check(grn_ctx *ctx, grn_ja *ja);
 
+#define GRN_JA_READER_INITIAL_REF_SEG_IDS_SIZE 16
+
 /*
  * grn_ja_reader is designed to improve the performance of sequential access.
  */
 typedef struct {
-  grn_ja *ja;               /* Target jagged array (without ref. count). */
-  uint32_t einfo_seg_id;    /* ID of the current header segment. */
-  void *einfo_seg_addr;     /* Address of the current header segment. */
-  void *einfo;              /* Header of the current value. */
-  uint32_t body_seg_id;     /* ID of the current body segment. */
-  uint32_t body_seg_offset; /* Offset in the current body segment. */
-  void *body_seg_addr;      /* Address of the current body segment. */
-  uint32_t value_size;      /* Size of the current value. */
-  uint32_t packed_size;     /* Compressed size of the current value. */
-  void *packed_buf;         /* Buffer for decompression. */
-  uint32_t packed_buf_size; /* Size of the buffer for decompression. */
-  void *stream;             /* Stream of a compression library. */
+  grn_ja *ja;                /* Target jagged array (without ref. count). */
+  uint32_t einfo_seg_id;     /* ID of the current header segment. */
+  void *einfo_seg_addr;      /* Address of the current header segment. */
+  void *einfo;               /* Header of the current value. */
+  grn_bool ref_avail;        /* grn_ja_reader_ref() is available or not. */
+  uint32_t ref_seg_id;       /* ID of the current referenced segment. */
+  void *ref_seg_addr;        /* Address of the current referenced segment. */
+  uint32_t *ref_seg_ids;     /* IDs of referenced segments. */
+  uint32_t nref_seg_ids;     /* Number of referenced segments. */
+  uint32_t ref_seg_ids_size; /* Maximum number of referenced segments. */
+  uint32_t body_seg_id;      /* ID of the current body segment. */
+  uint32_t body_seg_offset;  /* Offset in the current body segment. */
+  void *body_seg_addr;       /* Address of the current body segment. */
+  uint32_t value_size;       /* Size of the current value. */
+  uint32_t packed_size;      /* Compressed size of the current value. */
+  void *packed_buf;          /* Buffer for decompression. */
+  uint32_t packed_buf_size;  /* Size of the buffer for decompression. */
+  void *stream;              /* Stream of a compression library. */
 } grn_ja_reader;
 
 /*
@@ -143,6 +151,15 @@ grn_rc grn_ja_reader_close(grn_ctx *ctx, grn_ja_reader *reader);
  * On success, `reader->value_size` is set.
  */
 grn_rc grn_ja_reader_seek(grn_ctx *ctx, grn_ja_reader *reader, grn_id id);
+
+/*
+ * grn_ja_reader_ref() gets the address to the current value.
+ * This function is available if `reader->ref_avail` is true.
+ */
+grn_rc grn_ja_reader_ref(grn_ctx *ctx, grn_ja_reader *reader, void **addr);
+
+/* grn_ja_reader_unref() frees refereces returned by grn_ja_reader_ref(). */
+grn_rc grn_ja_reader_unref(grn_ctx *ctx, grn_ja_reader *reader);
 
 /* grn_ja_reader_read() reads the current value to `buf`. */
 grn_rc grn_ja_reader_read(grn_ctx *ctx, grn_ja_reader *reader, void *buf);
