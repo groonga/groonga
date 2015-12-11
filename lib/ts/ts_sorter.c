@@ -1453,6 +1453,243 @@ grn_ts_qsort_by_text_desc(grn_ctx *ctx, grn_ts_sorter_node *node,
   return GRN_SUCCESS;
 }
 
+/* grn_ts_text_get_label() returns a label. */
+inline static int
+grn_ts_text_get_label(grn_ts_text val, size_t depth)
+{
+  return (depth < val.size) ? (uint8_t)val.ptr[depth] : -1;
+}
+
+/* grn_ts_text_cmp2() compares Text values. */
+inline static int
+grn_ts_text_cmp2(grn_ts_text lhs, grn_ts_text rhs, size_t depth)
+{
+  size_t min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;
+  int result = memcmp(lhs.ptr + depth, rhs.ptr + depth, min_size - depth);
+  if (result != 0) {
+    return result;
+  }
+  if (lhs.size == rhs.size) {
+    return 0;
+  }
+  return (lhs.size < rhs.size) ? -1 : 1;
+}
+
+/* grn_ts_move_pivot_by_text_asc2() moves the pivot to the front. */
+static void
+grn_ts_move_pivot_by_text_asc2(grn_ts_sorter_node *node, grn_ts_text *vals,
+                               grn_ts_record *recs, size_t n_recs, size_t depth)
+{
+  /* Choose the median from recs[1], recs[n_recs / 2], and recs[n_recs - 2]. */
+  size_t first = 1;
+  size_t middle = n_recs / 2;
+  size_t last = n_recs - 2;
+  int first_label = grn_ts_text_get_label(vals[first], depth);
+  int middle_label = grn_ts_text_get_label(vals[middle], depth);
+  int last_label = grn_ts_text_get_label(vals[last], depth);
+  if (first_label < middle_label) {
+    /* first < middle. */
+    if (middle_label < last_label) {
+      /* first < middle < last */
+      grn_ts_rec_swap(&recs[0], &recs[middle]);
+      grn_ts_text_swap(&vals[0], &vals[middle]);
+    } else if (first_label < last_label) {
+      /* first < last < middle. */
+      grn_ts_rec_swap(&recs[0], &recs[last]);
+      grn_ts_text_swap(&vals[0], &vals[last]);
+    } else { /* last < first < middle. */
+      grn_ts_rec_swap(&recs[0], &recs[first]);
+      grn_ts_text_swap(&vals[0], &vals[first]);
+    }
+  } else if (last_label < middle_label) {
+    /* last < middle < first. */
+    grn_ts_rec_swap(&recs[0], &recs[middle]);
+    grn_ts_text_swap(&vals[0], &vals[middle]);
+  } else if (last_label < first_label) {
+    /* middle < last < first. */
+    grn_ts_rec_swap(&recs[0], &recs[last]);
+    grn_ts_text_swap(&vals[0], &vals[last]);
+  } else { /* middle < first < last. */
+    grn_ts_rec_swap(&recs[0], &recs[first]);
+    grn_ts_text_swap(&vals[0], &vals[first]);
+  }
+}
+
+/* grn_ts_isort_by_text_asc2() sorts records. */
+static grn_rc
+grn_ts_isort_by_text_asc2(grn_ctx *ctx, grn_ts_sorter_node *node,
+                          size_t offset, size_t limit, grn_ts_text *vals,
+                          grn_ts_record *recs, size_t n_recs, size_t depth)
+{
+  for (size_t i = 1; i < n_recs; ++i) {
+    for (size_t j = i; j > 0; --j) {
+      if (grn_ts_text_cmp2(vals[j], vals[j - 1], depth) < 0) {
+        grn_ts_rec_swap(&recs[j], &recs[j - 1]);
+        grn_ts_text_swap(&vals[j], &vals[j - 1]);
+      } else {
+        break;
+      }
+    }
+  }
+  /* Apply the next sorting if there are score duplicates. */
+  if (node->next) {
+    grn_rc rc;
+    size_t begin = 0;
+    for (size_t i = 1; i < n_recs; ++i) {
+      if (grn_ts_text_cmp2(vals[i], vals[begin], depth) != 0) {
+        if ((i - begin) >= 2) {
+          rc = grn_ts_sorter_node_sort(ctx, node->next, 0, i - begin,
+                                       recs + begin, i - begin);
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
+        }
+        begin = i;
+      }
+    }
+    if ((n_recs - begin) >= 2) {
+      rc = grn_ts_sorter_node_sort(ctx, node->next, 0, n_recs - begin,
+                                   recs + begin, n_recs - begin);
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+    }
+  }
+  return GRN_SUCCESS;
+}
+
+/* grn_ts_qsort_by_text_asc() sorts records. */
+static grn_rc
+grn_ts_qsort_by_text_asc2(grn_ctx *ctx, grn_ts_sorter_node *node,
+                          size_t offset, size_t limit, grn_ts_text *vals,
+                          grn_ts_record *recs, size_t n_recs, size_t depth)
+{
+  grn_rc rc;
+  /*
+   * FIXME: Currently, the threshold is 16.
+   *        This value should be optimized and replaced with a named constant.
+   */
+  while (n_recs >= 16) {
+    grn_ts_move_pivot_by_text_asc(node, vals, recs, n_recs);
+    int pivot = grn_ts_text_get_label(vals[0], depth);
+    size_t left = 1, right = n_recs;
+    size_t pivot_left = 1, pivot_right = n_recs;
+    for ( ; ; ) {
+      /*
+       * Prior entries are moved to left. Less prior entries are moved to
+       * right. Entries which equal to the pivot are moved to the edges.
+       */
+      while (left < right) {
+        int label = grn_ts_text_get_label(vals[left], depth);
+        if (label > pivot) {
+          break;
+        } else if (label == pivot) {
+          grn_ts_rec_swap(&recs[left], &recs[pivot_left]);
+          grn_ts_text_swap(&vals[left], &vals[pivot_left]);
+          ++pivot_left;
+        }
+        ++left;
+      }
+      while (left < right) {
+        int label;
+        --right;
+        label = grn_ts_text_get_label(vals[right], depth);
+        if (label < pivot) {
+          break;
+        } else if (label == pivot) {
+          --pivot_right;
+          grn_ts_rec_swap(&recs[right], &recs[pivot_right]);
+          grn_ts_text_swap(&vals[right], &vals[pivot_right]);
+        }
+      }
+      if (left >= right) {
+        break;
+      }
+      grn_ts_rec_swap(&recs[left], &recs[right]);
+      grn_ts_text_swap(&vals[left], &vals[right]);
+      ++left;
+    }
+    /* Move left pivot-equivalent entries to the left of the boundary. */
+    while (pivot_left > 0) {
+      --pivot_left;
+      --left;
+      grn_ts_rec_swap(&recs[pivot_left], &recs[left]);
+      grn_ts_text_swap(&vals[pivot_left], &vals[left]);
+    }
+    /* Move right pivot-equivalent entries to the right of the boundary. */
+    while (pivot_right < n_recs) {
+      grn_ts_rec_swap(&recs[pivot_right], &recs[right]);
+      grn_ts_text_swap(&vals[pivot_right], &vals[right]);
+      ++pivot_right;
+      ++right;
+    }
+    /* Apply the next sort condition to the pivot-equivalent recs. */
+    if (((right - left) >= 2) && (offset < right) && (limit > left)) {
+      size_t next_offset = (offset < left) ? 0 : (offset - left);
+      size_t next_limit = ((limit > right) ? right : limit) - left;
+      if (pivot != -1) {
+        rc = grn_ts_qsort_by_text_asc2(ctx, node, next_offset, next_limit,
+                                       vals, recs + left, right - left,
+                                       depth + 1);
+      } else if (node->next) {
+        rc = grn_ts_sorter_node_sort(ctx, node->next, next_offset, next_limit,
+                                     recs + left, right - left);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+      }
+    }
+    /*
+     * Use a recursive call to sort the smaller group so that the recursion
+     * depth is less than log_2(n_recs).
+     */
+    if (left < (n_recs - right)) {
+      if ((offset < left) && (left >= 2)) {
+        size_t next_limit = (limit < left) ? limit : left;
+        rc = grn_ts_qsort_by_text_asc2(ctx, node, offset, next_limit,
+                                       vals, recs, left, depth);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+      }
+      if (limit <= right) {
+        return GRN_SUCCESS;
+      }
+      vals += right;
+      recs += right;
+      n_recs -= right;
+      offset = (offset < right) ? 0 : (offset - right);
+      limit -= right;
+    } else {
+      if ((limit > right) && ((n_recs - right) >= 2)) {
+        size_t next_offset = (offset < right) ? 0 : (offset - right);
+        size_t next_limit = limit - right;
+        rc = grn_ts_qsort_by_text_asc2(ctx, node, next_offset, next_limit,
+                                       vals + right, recs + right,
+                                       n_recs - right, depth);
+        if (rc != GRN_SUCCESS) {
+          return rc;
+        }
+      }
+      if (offset >= left) {
+        return GRN_SUCCESS;
+      }
+      n_recs = left;
+      if (limit > left) {
+        limit = left;
+      }
+    }
+  }
+  if (n_recs >= 2) {
+    rc = grn_ts_isort_by_text_asc2(ctx, node, offset, limit,
+                                   vals, recs, n_recs, depth);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+  }
+  return GRN_SUCCESS;
+}
+
 /* grn_ts_sorter_node_sort_by_var() sorts records. */
 static grn_rc
 grn_ts_sorter_node_sort_by_var(grn_ctx *ctx, grn_ts_sorter_node *node,
@@ -1528,8 +1765,8 @@ grn_ts_sorter_node_sort_by_var(grn_ctx *ctx, grn_ts_sorter_node *node,
         return grn_ts_qsort_by_text_desc(ctx, node, offset, limit,
                                          vals, recs, n_recs);
       } else {
-        return grn_ts_qsort_by_text_asc(ctx, node, offset, limit,
-                                        vals, recs, n_recs);
+        return grn_ts_qsort_by_text_asc2(ctx, node, offset, limit,
+                                         vals, recs, n_recs, 0);
       }
     }
     case GRN_TS_INT_VECTOR:
