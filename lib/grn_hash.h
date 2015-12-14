@@ -257,7 +257,8 @@ struct _grn_hash {
   uint32_t n_garbages;\
   uint32_t lock;\
   grn_id normalizer;\
-  uint32_t reserved[15]
+  uint32_t truncated;\
+  uint32_t reserved[14]
 
 struct _grn_hash_header_common {
   GRN_HASH_HEADER_COMMON_FIELDS;
