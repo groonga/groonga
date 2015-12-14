@@ -397,7 +397,8 @@ struct grn_array_header {
   uint32_t n_garbages;
   grn_id garbages;
   uint32_t lock;
-  uint32_t reserved[9];
+  uint32_t truncated;
+  uint32_t reserved[8];
   grn_table_queue queue;
 };
 
@@ -462,6 +463,7 @@ grn_array_init_tiny_array(grn_ctx *ctx, grn_array *array, const char *path,
   array->n_garbages_buf = 0;
   array->n_entries_buf = 0;
   array->io = NULL;
+  array->header = NULL;
   array->garbages = GRN_ID_NIL;
   grn_tiny_array_init(ctx, &array->array, value_size, GRN_TINY_ARRAY_CLEAR);
   grn_tiny_bitmap_init(ctx, &array->bitmap);
@@ -509,6 +511,7 @@ grn_array_init_io_array(grn_ctx *ctx, grn_array *array, const char *path,
   header->n_entries = 0;
   header->n_garbages = 0;
   header->garbages = GRN_ID_NIL;
+  header->truncated = GRN_FALSE;
   grn_table_queue_init(ctx, &header->queue);
   array->obj.header.flags = flags;
   array->ctx = ctx;
@@ -607,6 +610,57 @@ grn_array_open(grn_ctx *ctx, const char *path)
   return NULL;
 }
 
+/* grn_array_reopen() reopens a grn_io for a truncated grn_array. */
+static grn_rc
+grn_array_reopen(grn_ctx *ctx, grn_array *array)
+{
+  grn_io *new_io;
+  const char *path;
+  struct grn_array_header *new_header;
+  if (!ctx) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  if (!array || !array->io) {
+    ERR(GRN_INVALID_ARGUMENT, "invalid argument");
+    return ctx->rc;
+  }
+  path = grn_io_path(array->io);
+  if (!path || !*path) {
+    ERR(GRN_INVALID_ARGUMENT, "path not available");
+    return ctx->rc;
+  }
+  new_io = grn_io_open(ctx, grn_io_path(array->io), grn_io_auto);
+  if (!new_io) {
+    if (ctx->rc == GRN_SUCCESS) {
+      ERR(GRN_UNKNOWN_ERROR, "grn_io_open failed");
+    }
+    return ctx->rc;
+  }
+  if (grn_io_get_type(new_io) != GRN_TABLE_NO_KEY) {
+    grn_io_close(ctx, new_io);
+    ERR(GRN_INVALID_FORMAT, "file type unmatch");
+    return ctx->rc;
+  }
+  new_header = grn_io_header(new_io);
+  if (new_header->flags & GRN_ARRAY_TINY) {
+    grn_io_close(ctx, new_io);
+    ERR(GRN_INVALID_FORMAT, "invalid array flags");
+    return ctx->rc;
+  }
+  array->obj.header.flags = new_header->flags;
+  array->ctx = ctx;
+  array->value_size = new_header->value_size;
+  array->n_keys = 0;
+  array->keys = NULL;
+  array->n_garbages = &new_header->n_garbages;
+  array->n_entries = &new_header->n_entries;
+  grn_io_close(ctx, array->io);
+  array->io = new_io;
+  array->header = new_header;
+  array->lock = &new_header->lock;
+  return GRN_SUCCESS;
+}
+
 grn_rc
 grn_array_close(grn_ctx *ctx, grn_array *array)
 {
@@ -653,6 +707,10 @@ grn_array_truncate(grn_ctx *ctx, grn_array *array)
   flags = array->obj.header.flags;
 
   if (grn_array_is_io_array(array)) {
+    if (path) {
+      /* Only an I/O array with a valid path uses the `truncated` flag. */
+      array->header->truncated = GRN_TRUE;
+    }
     rc = grn_io_close(ctx, array->io);
     if (!rc) {
       array->io = NULL;
@@ -679,6 +737,12 @@ grn_array_get_value_inline(grn_ctx *ctx, grn_array *array, grn_id id)
 {
   if (!ctx || !array) {
     return NULL;
+  }
+  if (array->header && array->header->truncated) {
+    grn_rc rc = grn_array_reopen(ctx, array);
+    if (rc != GRN_SUCCESS) {
+      return NULL;
+    }
   }
   if (*array->n_garbages) {
     /*
@@ -717,7 +781,14 @@ inline static grn_rc
 grn_array_set_value_inline(grn_ctx *ctx, grn_array *array, grn_id id,
                            const void *value, int flags)
 {
-  void * const entry = grn_array_entry_at(ctx, array, id, 0);
+  void *entry;
+  if (array->header && array->header->truncated) {
+    grn_rc rc = grn_array_reopen(ctx, array);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+  }
+  entry = grn_array_entry_at(ctx, array, id, 0);
   if (!entry) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
@@ -783,6 +854,12 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
 {
   if (!ctx || !array) {
     return GRN_INVALID_ARGUMENT;
+  }
+  if (array->header && array->header->truncated) {
+    grn_rc rc = grn_array_reopen(ctx, array);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
   }
   if (grn_array_bitmap_at(ctx, array, id) != 1) {
     return GRN_INVALID_ARGUMENT;
@@ -881,6 +958,12 @@ grn_array_cursor_open(grn_ctx *ctx, grn_array *array, grn_id min, grn_id max,
 {
   grn_array_cursor *cursor;
   if (!array || !ctx) { return NULL; }
+  if (array->header && array->header->truncated) {
+    grn_rc rc = grn_array_reopen(ctx, array);
+    if (rc != GRN_SUCCESS) {
+      return NULL;
+    }
+  }
 
   cursor = (grn_array_cursor *)GRN_MALLOCN(grn_array_cursor, 1);
   if (!cursor) { return NULL; }
@@ -958,7 +1041,14 @@ grn_array_cursor_next(grn_ctx *ctx, grn_array_cursor *cursor)
 grn_id
 grn_array_next(grn_ctx *ctx, grn_array *array, grn_id id)
 {
-  const grn_id max_id = grn_array_get_max_id(array);
+  grn_id max_id;
+  if (array->header && array->header->truncated) {
+    grn_rc rc = grn_array_reopen(ctx, array);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+  }
+  max_id = grn_array_get_max_id(array);
   while (++id <= max_id) {
     if (!*array->n_garbages ||
         grn_array_bitmap_at(ctx, array, id) == 1) {
@@ -1037,9 +1127,17 @@ grn_array_add_to_tiny_array(grn_ctx *ctx, grn_array *array, void **value)
 inline static grn_id
 grn_array_add_to_io_array(grn_ctx *ctx, grn_array *array, void **value)
 {
-  struct grn_array_header * const header = array->header;
-  grn_id id = header->garbages;
+  grn_id id;
   void *entry;
+  struct grn_array_header *header;
+  if (array->header->truncated) {
+    grn_rc rc = grn_array_reopen(ctx, array);
+    if (rc != GRN_SUCCESS) {
+      return GRN_ID_NIL;
+    }
+  }
+  header = array->header;
+  id = header->garbages;
   if (id) {
     /* These operations fail iff the array is broken. */
     entry = grn_array_io_entry_at(ctx, array, id, GRN_TABLE_ADD);
