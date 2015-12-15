@@ -693,6 +693,12 @@ grn_array_truncate(grn_ctx *ctx, grn_array *array)
   uint32_t value_size, flags;
 
   if (!ctx || !array) { return GRN_INVALID_ARGUMENT; }
+  if (array->header && array->header->truncated) {
+    grn_rc rc = grn_array_reopen(ctx, array);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+  }
   if (grn_array_is_io_array(array)) {
     const char * const io_path = grn_io_path(array->io);
     if (io_path && *io_path) {
@@ -918,6 +924,12 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
 grn_id
 grn_array_at(grn_ctx *ctx, grn_array *array, grn_id id)
 {
+  if (array->header && array->header->truncated) {
+    grn_rc rc = grn_array_reopen(ctx, array);
+    if (rc != GRN_SUCCESS) {
+      return GRN_ID_NIL;
+    }
+  }
   if (*array->n_garbages) {
     /*
      * grn_array_bitmap_at() is a time-consuming function, so it is called only
