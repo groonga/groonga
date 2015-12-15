@@ -664,14 +664,7 @@ grn_pat_reopen(grn_ctx *ctx, grn_pat *pat)
   pat->value_size = new_header->value_size;
   pat->encoding = new_header->encoding;
   pat->tokenizer = grn_ctx_at(ctx, new_header->tokenizer);
-  /* FIXME: This check may not be required. */
-  if (new_header->flags & GRN_OBJ_KEY_NORMALIZE) {
-    new_header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
-    pat->normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
-    new_header->normalizer = grn_obj_id(ctx, pat->normalizer);
-  } else {
-    pat->normalizer = grn_ctx_at(ctx, new_header->normalizer);
-  }
+  pat->normalizer = grn_ctx_at(ctx, new_header->normalizer);
   GRN_OBJ_FIN(ctx, &(pat->token_filters));
   GRN_PTR_INIT(&(pat->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
   pat->obj.header.flags = new_header->flags;

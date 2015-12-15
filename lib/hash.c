@@ -1960,13 +1960,7 @@ grn_hash_reopen(grn_ctx *ctx, grn_hash *hash)
   hash->header.common = new_header;
   hash->lock = &new_header->lock;
   hash->tokenizer = grn_ctx_at(ctx, new_header->tokenizer);
-  if (new_header->flags & GRN_OBJ_KEY_NORMALIZE) {
-    new_header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
-    hash->normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
-    new_header->normalizer = grn_obj_id(ctx, hash->normalizer);
-  } else {
-    hash->normalizer = grn_ctx_at(ctx, new_header->normalizer);
-  }
+  hash->normalizer = grn_ctx_at(ctx, new_header->normalizer);
   GRN_PTR_INIT(&(hash->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
   hash->obj.header.flags = new_header->flags;
   return GRN_SUCCESS;
