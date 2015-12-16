@@ -1600,7 +1600,7 @@ grn_ja_reader_init(grn_ctx *ctx, grn_ja_reader *reader, grn_ja *ja)
     new_stream->opaque = NULL;
     if (inflateInit2(new_stream, 15) != Z_OK) {
       GRN_FREE(new_stream);
-      return GRN_NO_MEMORY_AVAILABLE;
+      return GRN_ZLIB_ERROR;
     }
     reader->stream = new_stream;
   }
@@ -1868,23 +1868,23 @@ grn_ja_reader_read_zlib(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
     seg_id++;
     if (uncompress((Bytef *)buf, &dest_size, (Bytef *)reader->packed_buf,
                    reader->packed_size - sizeof(uint64_t)) != Z_OK) {
-      return GRN_UNKNOWN_ERROR;
+      return GRN_ZLIB_ERROR;
     }
     if (dest_size != reader->value_size) {
-      return GRN_UNKNOWN_ERROR;
+      return GRN_ZLIB_ERROR;
     }
   } else {
     char *packed_addr = (char *)reader->body_seg_addr;
     packed_addr += reader->body_seg_offset + sizeof(uint64_t);
     if (inflateReset(stream) != Z_OK) {
-      return GRN_UNKNOWN_ERROR;
+      return GRN_ZLIB_ERROR;
     }
     stream->next_in = (Bytef *)packed_addr;
     stream->avail_in = reader->packed_size - sizeof(uint64_t);
     stream->next_out = (Bytef *)buf;
     stream->avail_out = dest_size;
     if ((inflate(stream, Z_FINISH) != Z_STREAM_END) || stream->avail_out) {
-      return GRN_UNKNOWN_ERROR;
+      return GRN_ZLIB_ERROR;
     }
   }
   return GRN_SUCCESS;
@@ -1946,7 +1946,7 @@ grn_ja_reader_read_lz4(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
                                     (int)reader->value_size);
   }
   if ((uint32_t)dest_size != reader->value_size) {
-    return GRN_UNKNOWN_ERROR;
+    return GRN_LZ4_ERROR;
   }
   return GRN_SUCCESS;
 }
