@@ -1570,7 +1570,7 @@ grn_ts_qsort_by_text_asc2(grn_ctx *ctx, grn_ts_sorter_node *node,
    *        This value should be optimized and replaced with a named constant.
    */
   while (n_recs >= 16) {
-    grn_ts_move_pivot_by_text_asc(node, vals, recs, n_recs);
+    grn_ts_move_pivot_by_text_asc2(node, vals, recs, n_recs, depth);
     int pivot = grn_ts_text_get_label(vals[0], depth);
     size_t left = 1, right = n_recs;
     size_t pivot_left = 1, pivot_right = n_recs;
