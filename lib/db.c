@@ -2165,10 +2165,10 @@ grn_table_size(grn_ctx *ctx, grn_obj *table)
       n = grn_dat_size(ctx, (grn_dat *)table);
       break;
     case GRN_TABLE_HASH_KEY :
-      n = GRN_HASH_SIZE((grn_hash *)table);
+      n = grn_hash_size(ctx, (grn_hash *)table);
       break;
     case GRN_TABLE_NO_KEY :
-      n = GRN_ARRAY_SIZE((grn_array *)table);
+      n = grn_array_size(ctx, (grn_array *)table);
       break;
     default :
       ERR(GRN_INVALID_ARGUMENT, "not supported");

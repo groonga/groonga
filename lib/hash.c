@@ -610,54 +610,22 @@ grn_array_open(grn_ctx *ctx, const char *path)
   return NULL;
 }
 
-/* grn_array_reopen() reopens a grn_io for a truncated grn_array. */
+/*
+ * grn_array_error_if_truncated() logs an error and returns its error code if
+ * an array is truncated by another process.
+ * Otherwise, this function returns GRN_SUCCESS.
+ * Note that `ctx` and `array` must be valid.
+ *
+ * FIXME: An array should be reopened if possible.
+ */
 static grn_rc
-grn_array_reopen(grn_ctx *ctx, grn_array *array)
+grn_array_error_if_truncated(grn_ctx *ctx, grn_array *array)
 {
-  grn_io *new_io;
-  const char *path;
-  struct grn_array_header *new_header;
-  if (!ctx) {
-    return GRN_INVALID_ARGUMENT;
+  if (array->header && array->header->truncated) {
+    ERR(GRN_FILE_CORRUPT,
+        "array is truncated, please unmap or reopen the database");
+    return GRN_FILE_CORRUPT;
   }
-  if (!array || !array->io) {
-    ERR(GRN_INVALID_ARGUMENT, "invalid argument");
-    return ctx->rc;
-  }
-  path = grn_io_path(array->io);
-  if (!path || !*path) {
-    ERR(GRN_INVALID_ARGUMENT, "path not available");
-    return ctx->rc;
-  }
-  new_io = grn_io_open(ctx, grn_io_path(array->io), grn_io_auto);
-  if (!new_io) {
-    if (ctx->rc == GRN_SUCCESS) {
-      ERR(GRN_UNKNOWN_ERROR, "grn_io_open failed");
-    }
-    return ctx->rc;
-  }
-  if (grn_io_get_type(new_io) != GRN_TABLE_NO_KEY) {
-    grn_io_close(ctx, new_io);
-    ERR(GRN_INVALID_FORMAT, "file type unmatch");
-    return ctx->rc;
-  }
-  new_header = grn_io_header(new_io);
-  if (new_header->flags & GRN_ARRAY_TINY) {
-    grn_io_close(ctx, new_io);
-    ERR(GRN_INVALID_FORMAT, "invalid array flags");
-    return ctx->rc;
-  }
-  array->obj.header.flags = new_header->flags;
-  array->ctx = ctx;
-  array->value_size = new_header->value_size;
-  array->n_keys = 0;
-  array->keys = NULL;
-  array->n_garbages = &new_header->n_garbages;
-  array->n_entries = &new_header->n_entries;
-  grn_io_close(ctx, array->io);
-  array->io = new_io;
-  array->header = new_header;
-  array->lock = &new_header->lock;
   return GRN_SUCCESS;
 }
 
@@ -685,19 +653,26 @@ grn_array_remove(grn_ctx *ctx, const char *path)
   return grn_io_remove(ctx, path);
 }
 
+uint32_t
+grn_array_size(grn_ctx *ctx, grn_array *array)
+{
+  if (grn_array_error_if_truncated(ctx, array) != GRN_SUCCESS) {
+    return 0;
+  }
+  return *array->n_entries;
+}
+
 grn_rc
 grn_array_truncate(grn_ctx *ctx, grn_array *array)
 {
-  grn_rc rc = GRN_SUCCESS;
+  grn_rc rc;
   char *path = NULL;
   uint32_t value_size, flags;
 
   if (!ctx || !array) { return GRN_INVALID_ARGUMENT; }
-  if (array->header && array->header->truncated) {
-    grn_rc rc = grn_array_reopen(ctx, array);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
+  rc = grn_array_error_if_truncated(ctx, array);
+  if (rc != GRN_SUCCESS) {
+    return rc;
   }
   if (grn_array_is_io_array(array)) {
     const char * const io_path = grn_io_path(array->io);
@@ -744,11 +719,8 @@ grn_array_get_value_inline(grn_ctx *ctx, grn_array *array, grn_id id)
   if (!ctx || !array) {
     return NULL;
   }
-  if (array->header && array->header->truncated) {
-    grn_rc rc = grn_array_reopen(ctx, array);
-    if (rc != GRN_SUCCESS) {
-      return NULL;
-    }
+  if (grn_array_error_if_truncated(ctx, array) != GRN_SUCCESS) {
+    return NULL;
   }
   if (*array->n_garbages) {
     /*
@@ -788,12 +760,6 @@ grn_array_set_value_inline(grn_ctx *ctx, grn_array *array, grn_id id,
                            const void *value, int flags)
 {
   void *entry;
-  if (array->header && array->header->truncated) {
-    grn_rc rc = grn_array_reopen(ctx, array);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-  }
   entry = grn_array_entry_at(ctx, array, id, 0);
   if (!entry) {
     return GRN_NO_MEMORY_AVAILABLE;
@@ -840,6 +806,10 @@ grn_array_set_value(grn_ctx *ctx, grn_array *array, grn_id id,
   if (!ctx || !array || !value) {
     return GRN_INVALID_ARGUMENT;
   }
+  grn_rc rc = grn_array_error_if_truncated(ctx, array);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
   if (*array->n_garbages) {
     /*
      * grn_array_bitmap_at() is a time-consuming function, so it is called only
@@ -858,21 +828,20 @@ grn_rc
 grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
                        grn_table_delete_optarg *optarg)
 {
+  grn_rc rc;
   if (!ctx || !array) {
     return GRN_INVALID_ARGUMENT;
   }
-  if (array->header && array->header->truncated) {
-    grn_rc rc = grn_array_reopen(ctx, array);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
+  rc = grn_array_error_if_truncated(ctx, array);
+  if (rc != GRN_SUCCESS) {
+    return rc;
   }
   if (grn_array_bitmap_at(ctx, array, id) != 1) {
     return GRN_INVALID_ARGUMENT;
   }
 
   {
-    grn_rc rc = GRN_SUCCESS;
+    rc = GRN_SUCCESS;
     /* lock */
     if (grn_array_is_io_array(array)) {
       if (array->value_size >= sizeof(grn_id)) {
@@ -924,11 +893,8 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
 grn_id
 grn_array_at(grn_ctx *ctx, grn_array *array, grn_id id)
 {
-  if (array->header && array->header->truncated) {
-    grn_rc rc = grn_array_reopen(ctx, array);
-    if (rc != GRN_SUCCESS) {
-      return GRN_ID_NIL;
-    }
+  if (grn_array_error_if_truncated(ctx, array) != GRN_SUCCESS) {
+    return GRN_ID_NIL;
   }
   if (*array->n_garbages) {
     /*
@@ -970,11 +936,8 @@ grn_array_cursor_open(grn_ctx *ctx, grn_array *array, grn_id min, grn_id max,
 {
   grn_array_cursor *cursor;
   if (!array || !ctx) { return NULL; }
-  if (array->header && array->header->truncated) {
-    grn_rc rc = grn_array_reopen(ctx, array);
-    if (rc != GRN_SUCCESS) {
-      return NULL;
-    }
+  if (grn_array_error_if_truncated(ctx, array) != GRN_SUCCESS) {
+    return NULL;
   }
 
   cursor = (grn_array_cursor *)GRN_MALLOCN(grn_array_cursor, 1);
@@ -1054,11 +1017,8 @@ grn_id
 grn_array_next(grn_ctx *ctx, grn_array *array, grn_id id)
 {
   grn_id max_id;
-  if (array->header && array->header->truncated) {
-    grn_rc rc = grn_array_reopen(ctx, array);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
+  if (grn_array_error_if_truncated(ctx, array) != GRN_SUCCESS) {
+    return GRN_ID_NIL;
   }
   max_id = grn_array_get_max_id(array);
   while (++id <= max_id) {
@@ -1142,11 +1102,8 @@ grn_array_add_to_io_array(grn_ctx *ctx, grn_array *array, void **value)
   grn_id id;
   void *entry;
   struct grn_array_header *header;
-  if (array->header->truncated) {
-    grn_rc rc = grn_array_reopen(ctx, array);
-    if (rc != GRN_SUCCESS) {
-      return GRN_ID_NIL;
-    }
+  if (grn_array_error_if_truncated(ctx, array) != GRN_SUCCESS) {
+    return GRN_ID_NIL;
   }
   header = array->header;
   id = header->garbages;
@@ -1909,60 +1866,22 @@ grn_hash_open(grn_ctx *ctx, const char *path)
   return NULL;
 }
 
-/* grn_hash_reopen() reopens a grn_io for a truncated grn_hash. */
+/*
+ * grn_hash_error_if_truncated() logs an error and returns its error code if
+ * a hash is truncated by another process.
+ * Otherwise, this function returns GRN_SUCCESS.
+ * Note that `ctx` and `hash` must be valid.
+ *
+ * FIXME: A hash should be reopened if possible.
+ */
 static grn_rc
-grn_hash_reopen(grn_ctx *ctx, grn_hash *hash)
+grn_hash_error_if_truncated(grn_ctx *ctx, grn_hash *hash)
 {
-  grn_io *new_io;
-  const char *path;
-  grn_hash_header_common *new_header;
-  if (!ctx) {
-    return GRN_INVALID_ARGUMENT;
+  if (hash->header.common && hash->header.common->truncated) {
+    ERR(GRN_FILE_CORRUPT,
+        "hash is truncated, please unmap or reopen the database");
+    return GRN_FILE_CORRUPT;
   }
-  if (!hash || !hash->io) {
-    ERR(GRN_INVALID_ARGUMENT, "invalid argument");
-    return ctx->rc;
-  }
-  path = grn_io_path(hash->io);
-  if (!path || !*path) {
-    ERR(GRN_INVALID_ARGUMENT, "path not available");
-    return ctx->rc;
-  }
-  new_io = grn_io_open(ctx, grn_io_path(hash->io), grn_io_auto);
-  if (!new_io) {
-    if (ctx->rc == GRN_SUCCESS) {
-      ERR(GRN_UNKNOWN_ERROR, "grn_io_open failed");
-    }
-    return ctx->rc;
-  }
-  if (grn_io_get_type(new_io) != GRN_TABLE_HASH_KEY) {
-    grn_io_close(ctx, new_io);
-    ERR(GRN_INVALID_FORMAT, "file type unmatch");
-    return ctx->rc;
-  }
-  new_header = grn_io_header(new_io);
-  if (new_header->flags & GRN_HASH_TINY) {
-    grn_io_close(ctx, new_io);
-    ERR(GRN_INVALID_FORMAT, "invalid hash flags");
-    return ctx->rc;
-  }
-
-  hash->ctx = ctx;
-  hash->key_size = new_header->key_size;
-  hash->encoding = new_header->encoding;
-  hash->value_size = new_header->value_size;
-  hash->entry_size = new_header->entry_size;
-  hash->n_garbages = &new_header->n_garbages;
-  hash->n_entries = &new_header->n_entries;
-  hash->max_offset = &new_header->max_offset;
-  grn_io_close(ctx, hash->io);
-  hash->io = new_io;
-  hash->header.common = new_header;
-  hash->lock = &new_header->lock;
-  hash->tokenizer = grn_ctx_at(ctx, new_header->tokenizer);
-  hash->normalizer = grn_ctx_at(ctx, new_header->normalizer);
-  GRN_PTR_INIT(&(hash->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
-  hash->obj.header.flags = new_header->flags;
   return GRN_SUCCESS;
 }
 
@@ -2023,18 +1942,16 @@ grn_hash_remove(grn_ctx *ctx, const char *path)
 grn_rc
 grn_hash_truncate(grn_ctx *ctx, grn_hash *hash)
 {
-  grn_rc rc = GRN_SUCCESS;
+  grn_rc rc;
   char *path = NULL;
   uint32_t key_size, value_size, flags;
 
   if (!ctx || !hash) {
     return GRN_INVALID_ARGUMENT;
   }
-  if (hash->header.common && hash->header.common->truncated) {
-    rc = grn_hash_reopen(ctx, hash);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
+  rc = grn_hash_error_if_truncated(ctx, hash);
+  if (rc != GRN_SUCCESS) {
+    return rc;
   }
 
   if (grn_hash_is_io_hash(hash)) {
@@ -2233,6 +2150,15 @@ grn_hash_clear_lock(grn_ctx *ctx, grn_hash *hash)
   return GRN_SUCCESS;
 }
 
+uint32_t
+grn_hash_size(grn_ctx *ctx, grn_hash *hash)
+{
+  if (grn_hash_error_if_truncated(ctx, hash) != GRN_SUCCESS) {
+    return 0;
+  }
+  return *hash->n_entries;
+}
+
 inline static grn_id
 grn_io_hash_add(grn_ctx *ctx, grn_hash *hash, uint32_t hash_value,
                 const void *key, unsigned int key_size, void **value)
@@ -2322,11 +2248,8 @@ grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key,
              unsigned int key_size, void **value, int *added)
 {
   uint32_t hash_value;
-  if (hash->header.common && hash->header.common->truncated) {
-    grn_rc rc = grn_hash_reopen(ctx, hash);
-    if (rc != GRN_SUCCESS) {
-      return GRN_ID_NIL;
-    }
+  if (grn_hash_error_if_truncated(ctx, hash) != GRN_SUCCESS) {
+    return GRN_ID_NIL;
   }
   if (!key || !key_size) {
     return GRN_ID_NIL;
@@ -2420,11 +2343,8 @@ grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key,
              unsigned int key_size, void **value)
 {
   uint32_t hash_value;
-  if (hash->header.common && hash->header.common->truncated) {
-    grn_rc rc = grn_hash_reopen(ctx, hash);
-    if (rc != GRN_SUCCESS) {
-      return GRN_ID_NIL;
-    }
+  if (grn_hash_error_if_truncated(ctx, hash) != GRN_SUCCESS) {
+    return GRN_ID_NIL;
   }
   if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
     if (key_size > hash->key_size) {
@@ -2497,11 +2417,8 @@ grn_hash_get_key(grn_ctx *ctx, grn_hash *hash, grn_id id, void *keybuf, int bufs
 {
   int key_size;
   grn_hash_entry *entry;
-  if (hash->header.common && hash->header.common->truncated) {
-    grn_rc rc = grn_hash_reopen(ctx, hash);
-    if (rc != GRN_SUCCESS) {
-      return 0;
-    }
+  if (grn_hash_error_if_truncated(ctx, hash) != GRN_SUCCESS) {
+    return 0;
   }
   entry = grn_hash_get_entry(ctx, hash, id);
   if (!entry) {
@@ -2520,11 +2437,8 @@ grn_hash_get_key2(grn_ctx *ctx, grn_hash *hash, grn_id id, grn_obj *bulk)
   int key_size;
   char *key;
   grn_hash_entry *entry;
-  if (hash->header.common && hash->header.common->truncated) {
-    grn_rc rc = grn_hash_reopen(ctx, hash);
-    if (rc != GRN_SUCCESS) {
-      return 0;
-    }
+  if (grn_hash_error_if_truncated(ctx, hash) != GRN_SUCCESS) {
+    return 0;
   }
   entry = grn_hash_get_entry(ctx, hash, id);
   if (!entry) {
@@ -2546,11 +2460,8 @@ grn_hash_get_value(grn_ctx *ctx, grn_hash *hash, grn_id id, void *valuebuf)
 {
   void *value;
   grn_hash_entry *entry;
-  if (hash->header.common && hash->header.common->truncated) {
-    grn_rc rc = grn_hash_reopen(ctx, hash);
-    if (rc != GRN_SUCCESS) {
-      return 0;
-    }
+  if (grn_hash_error_if_truncated(ctx, hash) != GRN_SUCCESS) {
+    return 0;
   }
   entry = grn_hash_get_entry(ctx, hash, id);
   if (!entry) {
@@ -2571,11 +2482,8 @@ grn_hash_get_value_(grn_ctx *ctx, grn_hash *hash, grn_id id, uint32_t *size)
 {
   const void *value;
   grn_hash_entry *entry;
-  if (hash->header.common && hash->header.common->truncated) {
-    grn_rc rc = grn_hash_reopen(ctx, hash);
-    if (rc != GRN_SUCCESS) {
-      return NULL;
-    }
+  if (grn_hash_error_if_truncated(ctx, hash) != GRN_SUCCESS) {
+    return NULL;
   }
   entry = grn_hash_get_entry(ctx, hash, id);
   if (!entry) {
@@ -2596,11 +2504,8 @@ grn_hash_get_key_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
   void *value;
   int key_size;
   grn_hash_entry *entry;
-  if (hash->header.common && hash->header.common->truncated) {
-    grn_rc rc = grn_hash_reopen(ctx, hash);
-    if (rc != GRN_SUCCESS) {
-      return 0;
-    }
+  if (grn_hash_error_if_truncated(ctx, hash) != GRN_SUCCESS) {
+    return 0;
   }
   entry = grn_hash_get_entry(ctx, hash, id);
   if (!entry) {
@@ -2626,11 +2531,8 @@ _grn_hash_get_key_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
 {
   int key_size;
   grn_hash_entry *entry;
-  if (hash->header.common && hash->header.common->truncated) {
-    grn_rc rc = grn_hash_reopen(ctx, hash);
-    if (rc != GRN_SUCCESS) {
-      return 0;
-    }
+  if (grn_hash_error_if_truncated(ctx, hash) != GRN_SUCCESS) {
+    return 0;
   }
   entry = grn_hash_get_entry(ctx, hash, id);
   if (!entry) {
@@ -2648,11 +2550,8 @@ grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
 {
   void *entry_value;
   grn_hash_entry *entry;
-  if (hash->header.common && hash->header.common->truncated) {
-    grn_rc rc = grn_hash_reopen(ctx, hash);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
+  if (grn_hash_error_if_truncated(ctx, hash) != GRN_SUCCESS) {
+    return GRN_ID_NIL;
   }
   if (!value) {
     return GRN_INVALID_ARGUMENT;
@@ -2734,11 +2633,9 @@ grn_hash_delete_by_id(grn_ctx *ctx, grn_hash *hash, grn_id id,
   entry_str *ee;
   grn_rc rc;
   if (!hash || !id) { return GRN_INVALID_ARGUMENT; }
-  if (hash->header.common && hash->header.common->truncated) {
-    rc = grn_hash_reopen(ctx, hash);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
+  rc = grn_hash_error_if_truncated(ctx, hash);
+  if (rc != GRN_SUCCESS) {
+    return rc;
   }
   rc = GRN_INVALID_ARGUMENT;
   /* lock */
@@ -2765,12 +2662,9 @@ grn_hash_delete(grn_ctx *ctx, grn_hash *hash, const void *key, uint32_t key_size
                 grn_table_delete_optarg *optarg)
 {
   uint32_t h, i, m, s;
-  grn_rc rc;
-  if (hash->header.common && hash->header.common->truncated) {
-    rc = grn_hash_reopen(ctx, hash);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
+  grn_rc rc = grn_hash_error_if_truncated(ctx, hash);
+  if (rc != GRN_SUCCESS) {
+    return rc;
   }
   rc = GRN_INVALID_ARGUMENT;
   if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
@@ -2834,11 +2728,8 @@ grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
 {
   grn_hash_cursor *c;
   if (!hash || !ctx) { return NULL; }
-  if (hash->header.common && hash->header.common->truncated) {
-    grn_rc rc = grn_hash_reopen(ctx, hash);
-    if (rc != GRN_SUCCESS) {
-      return NULL;
-    }
+  if (grn_hash_error_if_truncated(ctx, hash) != GRN_SUCCESS) {
+    return GRN_ID_NIL;
   }
   if (!(c = GRN_MALLOCN(grn_hash_cursor, 1))) { return NULL; }
   GRN_DB_OBJ_SET_TYPE(c, GRN_CURSOR_TABLE_HASH_KEY);
@@ -3291,11 +3182,8 @@ grn_hash_sort(grn_ctx *ctx, grn_hash *hash,
 {
   entry **res;
   if (!result || !*hash->n_entries) { return 0; }
-  if (hash->header.common && hash->header.common->truncated) {
-    grn_rc rc = grn_hash_reopen(ctx, hash);
-    if (rc != GRN_SUCCESS) {
-      return 0;
-    }
+  if (grn_hash_error_if_truncated(ctx, hash) != GRN_SUCCESS) {
+    return 0;
   }
   if (!(res = GRN_MALLOC(sizeof(entry *) * *hash->n_entries))) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "allocation of entries failed on grn_hash_sort !");
@@ -3361,12 +3249,8 @@ grn_hash_check(grn_ctx *ctx, grn_hash *hash)
 {
   char buf[8];
   grn_hash_header_common *h = hash->header.common;
-  if (h && h->truncated) {
-    grn_rc rc = grn_hash_reopen(ctx, hash);
-    if (rc != GRN_SUCCESS) {
-      return;
-    }
-    h = hash->header.common;
+  if (grn_hash_error_if_truncated(ctx, hash) != GRN_SUCCESS) {
+    return;
   }
   GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_MAP_OPEN("SUMMARY", 25);

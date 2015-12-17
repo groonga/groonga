@@ -156,7 +156,12 @@ struct _grn_array_cursor {
   int dir;
 };
 
-#define GRN_ARRAY_SIZE(array) (*((array)->n_entries))
+/*
+ * grn_array_size() returns the number of entries in an array.
+ * If the array was truncated by another process but `array` still refers to
+ * the old one, this function returns 0.
+ */
+uint32_t grn_array_size(grn_ctx *ctx, grn_array *array);
 
 grn_rc grn_array_truncate(grn_ctx *ctx, grn_array *array);
 grn_rc grn_array_copy_sort_key(grn_ctx *ctx, grn_array *array,
@@ -323,6 +328,13 @@ grn_rc grn_hash_unlock(grn_ctx *ctx, grn_hash *hash);
 grn_rc grn_hash_clear_lock(grn_ctx *ctx, grn_hash *hash);
 
 #define GRN_HASH_SIZE(hash) (*((hash)->n_entries))
+
+/*
+ * grn_hash_size() returns the number of entries in a hash.
+ * Note that grn_hash_size() detects `truncate` by another process and returns
+ * 0 in such a case.
+ */
+uint32_t grn_hash_size(grn_ctx *ctx, grn_hash *hash);
 
 /* private */
 typedef enum {
