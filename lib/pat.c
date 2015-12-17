@@ -625,53 +625,21 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   return pat;
 }
 
-/* grn_pat_reopen() reopens a grn_io for a truncated grn_pat. */
+/*
+ * grn_pat_error_if_truncated() logs an error and returns its error code if
+ * a pat is truncated by another process.
+ * Otherwise, this function returns GRN_SUCCESS.
+ * Note that `ctx` and `pat` must be valid.
+ *
+ * FIXME: A pat should be reopened if possible.
+ */
 static grn_rc
-grn_pat_reopen(grn_ctx *ctx, grn_pat *pat)
+grn_pat_error_if_truncated(grn_ctx *ctx, grn_pat *pat)
 {
-  grn_io *new_io;
-  const char *path;
-  struct grn_pat_header *new_header;
-  if (!ctx) {
-    return GRN_INVALID_ARGUMENT;
-  }
-  if (!pat || !pat->io) {
-    ERR(GRN_INVALID_ARGUMENT, "invalid argument");
-    return ctx->rc;
-  }
-  path = grn_io_path(pat->io);
-  if (!path || !*path) {
-    ERR(GRN_INVALID_ARGUMENT, "path not available");
-    return ctx->rc;
-  }
-  new_io = grn_io_open(ctx, path, grn_io_auto);
-  if (!new_io) {
-    if (ctx->rc == GRN_SUCCESS) {
-      ERR(GRN_UNKNOWN_ERROR, "grn_io_open failed");
-    }
-    return ctx->rc;
-  }
-  if (grn_io_get_type(new_io) != GRN_TABLE_PAT_KEY) {
-    grn_io_close(ctx, new_io);
-    ERR(GRN_INVALID_FORMAT, "file type unmatch");
-    return ctx->rc;
-  }
-  new_header = grn_io_header(new_io);
-
-  pat->io = new_io;
-  pat->header = new_header;
-  pat->key_size = new_header->key_size;
-  pat->value_size = new_header->value_size;
-  pat->encoding = new_header->encoding;
-  pat->tokenizer = grn_ctx_at(ctx, new_header->tokenizer);
-  pat->normalizer = grn_ctx_at(ctx, new_header->normalizer);
-  GRN_OBJ_FIN(ctx, &(pat->token_filters));
-  GRN_PTR_INIT(&(pat->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
-  pat->obj.header.flags = new_header->flags;
-  if (pat->cache) {
-    grn_pat_cache_disable(ctx, pat);
-    pat->cache = NULL;
-    pat->cache_size = 0;
+  if (pat->header->truncated) {
+    ERR(GRN_FILE_CORRUPT,
+        "pat is truncated, please unmap or reopen the database");
+    return GRN_FILE_CORRUPT;
   }
   return GRN_SUCCESS;
 }
@@ -708,11 +676,9 @@ grn_pat_truncate(grn_ctx *ctx, grn_pat *pat)
   char *path;
   uint32_t key_size, value_size, flags;
 
-  if (pat->header->truncated) {
-    rc = grn_pat_reopen(ctx, pat);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
+  rc = grn_pat_error_if_truncated(ctx, pat);
+  if (rc != GRN_SUCCESS) {
+    return rc;
   }
   if ((io_path = grn_io_path(pat->io)) && *io_path != '\0') {
     if (!(path = GRN_STRDUP(io_path))) {
@@ -976,11 +942,8 @@ grn_pat_add(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
   uint32_t new, lkey = 0;
   grn_id r0;
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
-  if (pat->header->truncated) {
-    grn_rc rc = grn_pat_reopen(ctx, pat);
-    if (rc != GRN_SUCCESS) {
-      return GRN_ID_NIL;
-    }
+  if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
+    return GRN_ID_NIL;
   }
   if (!key || !key_size) { return GRN_ID_NIL; }
   if (key_size > GRN_TABLE_MAX_KEY_SIZE) {
@@ -1072,11 +1035,8 @@ grn_id
 grn_pat_get(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size, void **value)
 {
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
-  if (pat->header->truncated) {
-    grn_rc rc = grn_pat_reopen(ctx, pat);
-    if (rc != GRN_SUCCESS) {
-      return GRN_ID_NIL;
-    }
+  if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
+    return GRN_ID_NIL;
   }
   KEY_ENCODE(pat, keybuf, key, key_size);
   return _grn_pat_get(ctx, pat, key, key_size, value);
@@ -1087,11 +1047,8 @@ grn_pat_nextid(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size)
 {
   grn_id r = GRN_ID_NIL;
   if (pat && key) {
-    if (pat->header->truncated) {
-      grn_rc rc = grn_pat_reopen(ctx, pat);
-      if (rc != GRN_SUCCESS) {
-        return GRN_ID_NIL;
-      }
+    if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
+      return GRN_ID_NIL;
     }
     if (!(r = pat->header->garbages[key_size > sizeof(uint32_t) ? key_size : 0])) {
       r = pat->header->curr_rec + 1;
@@ -1139,11 +1096,9 @@ grn_pat_prefix_search(grn_ctx *ctx, grn_pat *pat,
   grn_id r;
   pat_node *rn;
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
-  if (pat->header->truncated) {
-    grn_rc rc = grn_pat_reopen(ctx, pat);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
+  grn_rc rc = grn_pat_error_if_truncated(ctx, pat);
+  if (rc != GRN_SUCCESS) {
+    return rc;
   }
   KEY_ENCODE(pat, keybuf, key, key_size);
   PAT_AT(pat, 0, rn);
@@ -1230,11 +1185,8 @@ grn_pat_lcp_search(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_siz
   if (!pat || !key) {
     return GRN_ID_NIL;
   }
-  if (pat->header->truncated) {
-    grn_rc rc = grn_pat_reopen(ctx, pat);
-    if (rc != GRN_SUCCESS) {
-      return GRN_ID_NIL;
-    }
+  if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
+    return GRN_ID_NIL;
   }
   if (!(pat->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE)) { return GRN_ID_NIL; }
   PAT_AT(pat, 0, rn);
@@ -1489,13 +1441,12 @@ grn_rc
 grn_pat_delete(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
                grn_table_delete_optarg *optarg)
 {
+  grn_rc rc;
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
   if (!pat || !key || !key_size) { return GRN_INVALID_ARGUMENT; }
-  if (pat->header->truncated) {
-    grn_rc rc = grn_pat_reopen(ctx, pat);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
+  rc = grn_pat_error_if_truncated(ctx, pat);
+  if (rc != GRN_SUCCESS) {
+    return rc;
   }
   KEY_ENCODE(pat, keybuf, key, key_size);
   return _grn_pat_delete(ctx, pat, key, key_size, optarg);
@@ -1505,11 +1456,8 @@ uint32_t
 grn_pat_size(grn_ctx *ctx, grn_pat *pat)
 {
   if (!pat) { return GRN_INVALID_ARGUMENT; }
-  if (pat->header->truncated) {
-    grn_rc rc = grn_pat_reopen(ctx, pat);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
+  if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
+    return 0;
   }
   return pat->header->n_entries;
 }
@@ -1519,11 +1467,8 @@ _grn_pat_key(grn_ctx *ctx, grn_pat *pat, grn_id id, uint32_t *key_size)
 {
   pat_node *node;
   uint8_t *key;
-  if (pat->header->truncated) {
-    grn_rc rc = grn_pat_reopen(ctx, pat);
-    if (rc != GRN_SUCCESS) {
-      return NULL;
-    }
+  if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
+    return NULL;
   }
   PAT_AT(pat, id, node);
   if (!node) {
@@ -1543,12 +1488,11 @@ grn_rc
 grn_pat_delete_by_id(grn_ctx *ctx, grn_pat *pat, grn_id id,
                      grn_table_delete_optarg *optarg)
 {
+  grn_rc rc;
   if (!pat || !id) { return GRN_INVALID_ARGUMENT; }
-  if (pat->header->truncated) {
-    grn_rc rc = grn_pat_reopen(ctx, pat);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
+  rc = grn_pat_error_if_truncated(ctx, pat);
+  if (rc != GRN_SUCCESS) {
+    return rc;
   }
   {
     uint32_t key_size;
@@ -1564,11 +1508,8 @@ grn_pat_get_key(grn_ctx *ctx, grn_pat *pat, grn_id id, void *keybuf, int bufsize
   uint8_t *key;
   pat_node *node;
   if (!pat) { return GRN_INVALID_ARGUMENT; }
-  if (pat->header->truncated) {
-    grn_rc rc = grn_pat_reopen(ctx, pat);
-    if (rc != GRN_SUCCESS) {
-      return 0;
-    }
+  if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
+    return 0;
   }
   if (!id) { return 0; }
   PAT_AT(pat, id, node);
@@ -1592,11 +1533,8 @@ grn_pat_get_key2(grn_ctx *ctx, grn_pat *pat, grn_id id, grn_obj *bulk)
   uint8_t *key;
   pat_node *node;
   if (!pat) { return GRN_INVALID_ARGUMENT; }
-  if (pat->header->truncated) {
-    grn_rc rc = grn_pat_reopen(ctx, pat);
-    if (rc != GRN_SUCCESS) {
-      return 0;
-    }
+  if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
+    return 0;
   }
   if (!id) { return 0; }
   PAT_AT(pat, id, node);
@@ -1627,11 +1565,8 @@ int
 grn_pat_get_value(grn_ctx *ctx, grn_pat *pat, grn_id id, void *valuebuf)
 {
   int value_size;
-  if (pat->header->truncated) {
-    grn_rc rc = grn_pat_reopen(ctx, pat);
-    if (rc != GRN_SUCCESS) {
-      return 0;
-    }
+  if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
+    return 0;
   }
   value_size = (int)pat->value_size;
   if (value_size) {
@@ -1654,11 +1589,8 @@ const char *
 grn_pat_get_value_(grn_ctx *ctx, grn_pat *pat, grn_id id, uint32_t *size)
 {
   const char *value = NULL;
-  if (pat->header->truncated) {
-    grn_rc rc = grn_pat_reopen(ctx, pat);
-    if (rc != GRN_SUCCESS) {
-      return NULL;
-    }
+  if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
+    return NULL;
   }
   if ((*size = pat->value_size)) {
     if ((value = (const char *)sis_at(ctx, pat, id))
@@ -1673,11 +1605,9 @@ grn_rc
 grn_pat_set_value(grn_ctx *ctx, grn_pat *pat, grn_id id,
                   const void *value, int flags)
 {
-  if (pat->header->truncated) {
-    grn_rc rc = grn_pat_reopen(ctx, pat);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
+  grn_rc rc = grn_pat_error_if_truncated(ctx, pat);
+  if (rc != GRN_SUCCESS) {
+    return rc;
   }
   if (value) {
     uint32_t value_size = pat->value_size;
@@ -1729,20 +1659,18 @@ grn_rc
 grn_pat_info(grn_ctx *ctx, grn_pat *pat, int *key_size, unsigned int *flags,
              grn_encoding *encoding, unsigned int *n_entries, unsigned int *file_size)
 {
+  grn_rc rc;
   ERRCLR(NULL);
   if (!pat) { return GRN_INVALID_ARGUMENT; }
-  if (pat->header->truncated) {
-    grn_rc rc = grn_pat_reopen(ctx, pat);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
+  rc = grn_pat_error_if_truncated(ctx, pat);
+  if (rc != GRN_SUCCESS) {
+    return rc;
   }
   if (key_size) { *key_size = pat->key_size; }
   if (flags) { *flags = pat->obj.header.flags; }
   if (encoding) { *encoding = pat->encoding; }
   if (n_entries) { *n_entries = pat->header->n_entries; }
   if (file_size) {
-    grn_rc rc;
     uint64_t tmp = 0;
     if ((rc = grn_io_size(ctx, pat->io, &tmp))) {
       return rc;
@@ -1759,11 +1687,8 @@ grn_pat_delete_with_sis(grn_ctx *ctx, grn_pat *pat, grn_id id,
   int level = 0, shared;
   const char *key = NULL, *_key;
   sis_node *sp, *ss = NULL, *si;
-  if (pat->header->truncated) {
-    grn_rc rc = grn_pat_reopen(ctx, pat);
-    if (rc != GRN_SUCCESS) {
-      return 0;
-    }
+  if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
+    return 0;
   }
   si = sis_at(ctx, pat, id);
   while (id) {
@@ -1839,11 +1764,8 @@ grn_pat_delete_with_sis(grn_ctx *ctx, grn_pat *pat, grn_id id,
 grn_id
 grn_pat_next(grn_ctx *ctx, grn_pat *pat, grn_id id)
 {
-  if (pat->header->truncated) {
-    grn_rc rc = grn_pat_reopen(ctx, pat);
-    if (rc != GRN_SUCCESS) {
-      return GRN_ID_NIL;
-    }
+  if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
+    return GRN_ID_NIL;
   }
   while (++id <= pat->header->curr_rec) {
     uint32_t key_size;
@@ -1867,11 +1789,8 @@ grn_pat_at(grn_ctx *ctx, grn_pat *pat, grn_id id)
 grn_id
 grn_pat_curr_id(grn_ctx *ctx, grn_pat *pat)
 {
-  if (pat->header->truncated) {
-    grn_rc rc = grn_pat_reopen(ctx, pat);
-    if (rc != GRN_SUCCESS) {
-      return GRN_ID_NIL;
-    }
+  if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
+    return GRN_ID_NIL;
   }
   return pat->header->curr_rec;
 }
@@ -1882,11 +1801,8 @@ grn_pat_scan(grn_ctx *ctx, grn_pat *pat, const char *str, unsigned int str_len,
 {
   int n = 0;
   grn_id tid;
-  if (pat->header->truncated) {
-    grn_rc rc = grn_pat_reopen(ctx, pat);
-    if (rc != GRN_SUCCESS) {
-      return 0;
-    }
+  if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
+    return 0;
   }
   if (pat->normalizer) {
     grn_obj *nstr = grn_string_open(ctx, str, str_len,
@@ -2474,11 +2390,8 @@ grn_pat_cursor_open(grn_ctx *ctx, grn_pat *pat,
   pat_node *node;
   grn_pat_cursor *c;
   if (!pat || !ctx) { return NULL; }
-  if (pat->header->truncated) {
-    grn_rc rc = grn_pat_reopen(ctx, pat);
-    if (rc != GRN_SUCCESS) {
-      return NULL;
-    }
+  if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
+    return NULL;
   }
   if ((flags & GRN_CURSOR_BY_ID)) {
     return grn_pat_cursor_open_by_id(ctx, pat, min, min_size, max, max_size,
@@ -2643,12 +2556,8 @@ grn_pat_check(grn_ctx *ctx, grn_pat *pat)
 {
   char buf[8];
   struct grn_pat_header *h = pat->header;
-  if (h->truncated) {
-    grn_rc rc = grn_pat_reopen(ctx, pat);
-    if (rc != GRN_SUCCESS) {
-      return;
-    }
-    h = pat->header;
+  if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
+    return;
   }
   GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
   GRN_OUTPUT_MAP_OPEN("SUMMARY", 23);
