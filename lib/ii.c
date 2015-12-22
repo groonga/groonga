@@ -3720,6 +3720,7 @@ grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
   grn_ii *ii;
   char path2[PATH_MAX];
   struct grn_ii_header *header;
+  uint32_t io_type;
   grn_obj_flags lflags;
   grn_encoding encoding;
   grn_obj *tokenizer;
@@ -3738,8 +3739,10 @@ grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
     return NULL;
   }
   header = grn_io_header(seg);
-  if (grn_io_get_type(seg) != GRN_COLUMN_INDEX) {
-    ERR(GRN_INVALID_FORMAT, "file type unmatch");
+  io_type = grn_io_get_type(seg);
+  if (io_type != GRN_COLUMN_INDEX) {
+    ERR(GRN_INVALID_FORMAT, "[column][index] file type must be %#x: <%#x>",
+        GRN_COLUMN_INDEX, io_type);
     grn_io_close(ctx, seg);
     grn_io_close(ctx, chunk);
     return NULL;

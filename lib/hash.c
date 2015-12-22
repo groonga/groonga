@@ -580,7 +580,8 @@ grn_array_open(grn_ctx *ctx, const char *path)
     grn_io * const io = grn_io_open(ctx, path, grn_io_auto);
     if (io) {
       struct grn_array_header * const header = grn_io_header(io);
-      if (grn_io_get_type(io) == GRN_TABLE_NO_KEY) {
+      uint32_t io_type = grn_io_get_type(io);
+      if (io_type == GRN_TABLE_NO_KEY) {
         grn_array * const array = (grn_array *)GRN_MALLOC(sizeof(grn_array));
         if (array) {
           if (!(header->flags & GRN_ARRAY_TINY)) {
@@ -602,7 +603,8 @@ grn_array_open(grn_ctx *ctx, const char *path)
           GRN_FREE(array);
         }
       } else {
-        ERR(GRN_INVALID_FORMAT, "file type unmatch");
+        ERR(GRN_INVALID_FORMAT, "[table][array] file type must be %#x: <%#x>",
+            GRN_TABLE_NO_KEY, io_type);
       }
       grn_io_close(ctx, io);
     }
@@ -1824,7 +1826,8 @@ grn_hash_open(grn_ctx *ctx, const char *path)
     grn_io * const io = grn_io_open(ctx, path, grn_io_auto);
     if (io) {
       grn_hash_header_common * const header = grn_io_header(io);
-      if (grn_io_get_type(io) == GRN_TABLE_HASH_KEY) {
+      uint32_t io_type = grn_io_get_type(io);
+      if (io_type == GRN_TABLE_HASH_KEY) {
         grn_hash * const hash = (grn_hash *)GRN_MALLOC(sizeof(grn_hash));
         if (hash) {
           if (!(header->flags & GRN_HASH_TINY)) {
@@ -1858,7 +1861,8 @@ grn_hash_open(grn_ctx *ctx, const char *path)
           GRN_FREE(hash);
         }
       } else {
-        ERR(GRN_INVALID_FORMAT, "file type unmatch");
+        ERR(GRN_INVALID_FORMAT, "[table][hash] file type must be %#x: <%#x>",
+            GRN_TABLE_HASH_KEY, io_type);
       }
       grn_io_close(ctx, io);
     }

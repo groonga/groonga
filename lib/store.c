@@ -77,11 +77,14 @@ grn_ra_open(grn_ctx *ctx, const char *path)
   int n_elm, w_elm;
   grn_ra *ra = NULL;
   struct grn_ra_header *header;
+  uint32_t io_type;
   io = grn_io_open(ctx, path, grn_io_auto);
   if (!io) { return NULL; }
   header = grn_io_header(io);
-  if (grn_io_get_type(io) != GRN_COLUMN_FIX_SIZE) {
-    ERR(GRN_INVALID_FORMAT, "file type unmatch");
+  io_type = grn_io_get_type(io);
+  if (io_type != GRN_COLUMN_FIX_SIZE) {
+    ERR(GRN_INVALID_FORMAT, "[column][fix-size] file type must be %#x: <%#x>",
+        GRN_COLUMN_FIX_SIZE, io_type);
     grn_io_close(ctx, io);
     return NULL;
   }
@@ -408,11 +411,14 @@ grn_ja_open(grn_ctx *ctx, const char *path)
   grn_ja *ja = NULL;
   struct grn_ja_header *header;
   struct grn_ja_header_v2 *header_v2;
+  uint32_t io_type;
   io = grn_io_open(ctx, path, grn_io_auto);
   if (!io) { return NULL; }
   header_v2 = grn_io_header(io);
-  if (grn_io_get_type(io) != GRN_COLUMN_VAR_SIZE) {
-    ERR(GRN_INVALID_FORMAT, "file type unmatch");
+  io_type = grn_io_get_type(io);
+  if (io_type != GRN_COLUMN_VAR_SIZE) {
+    ERR(GRN_INVALID_FORMAT, "[column][var-size] file type must be %#x: <%#x>",
+        GRN_COLUMN_VAR_SIZE, io_type);
     grn_io_close(ctx, io);
     return NULL;
   }

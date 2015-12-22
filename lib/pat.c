@@ -586,11 +586,14 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   grn_pat *pat;
   pat_node *node0;
   struct grn_pat_header *header;
+  uint32_t io_type;
   io = grn_io_open(ctx, path, grn_io_auto);
   if (!io) { return NULL; }
   header = grn_io_header(io);
-  if (grn_io_get_type(io) != GRN_TABLE_PAT_KEY) {
-    ERR(GRN_INVALID_FORMAT, "file type unmatch");
+  io_type = grn_io_get_type(io);
+  if (io_type != GRN_TABLE_PAT_KEY) {
+    ERR(GRN_INVALID_FORMAT, "[table][pat] file type must be %#x: <%#x>",
+        GRN_TABLE_PAT_KEY, io_type);
     grn_io_close(ctx, io);
     return NULL;
   }
