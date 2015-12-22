@@ -291,7 +291,8 @@ test_open_invalid_chunk_file(void)
 {
   grn_io *io;
   gchar *id_string;
-  gchar expected_error_message[] = "file type unmatch";
+  const gchar *expected_error_message =
+    cut_take_printf("[column][index] file type must be 0x48: <%#04x>", 0);
 
   io = grn_io_create(context, path, 10, 10, 10, grn_io_auto, GRN_IO_EXPIRE_SEGMENT);
   cut_assert_not_null(io);

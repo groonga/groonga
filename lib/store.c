@@ -83,7 +83,8 @@ grn_ra_open(grn_ctx *ctx, const char *path)
   header = grn_io_header(io);
   io_type = grn_io_get_type(io);
   if (io_type != GRN_COLUMN_FIX_SIZE) {
-    ERR(GRN_INVALID_FORMAT, "[column][fix-size] file type must be %#x: <%#x>",
+    ERR(GRN_INVALID_FORMAT,
+        "[column][fix-size] file type must be %#04x: <%#04x>",
         GRN_COLUMN_FIX_SIZE, io_type);
     grn_io_close(ctx, io);
     return NULL;
@@ -417,7 +418,8 @@ grn_ja_open(grn_ctx *ctx, const char *path)
   header_v2 = grn_io_header(io);
   io_type = grn_io_get_type(io);
   if (io_type != GRN_COLUMN_VAR_SIZE) {
-    ERR(GRN_INVALID_FORMAT, "[column][var-size] file type must be %#x: <%#x>",
+    ERR(GRN_INVALID_FORMAT,
+        "[column][var-size] file type must be %#04x: <%#04x>",
         GRN_COLUMN_VAR_SIZE, io_type);
     grn_io_close(ctx, io);
     return NULL;

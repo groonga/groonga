@@ -3741,7 +3741,8 @@ grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
   header = grn_io_header(seg);
   io_type = grn_io_get_type(seg);
   if (io_type != GRN_COLUMN_INDEX) {
-    ERR(GRN_INVALID_FORMAT, "[column][index] file type must be %#x: <%#x>",
+    ERR(GRN_INVALID_FORMAT,
+        "[column][index] file type must be %#04x: <%#04x>",
         GRN_COLUMN_INDEX, io_type);
     grn_io_close(ctx, seg);
     grn_io_close(ctx, chunk);

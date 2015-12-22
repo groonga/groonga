@@ -592,7 +592,7 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   header = grn_io_header(io);
   io_type = grn_io_get_type(io);
   if (io_type != GRN_TABLE_PAT_KEY) {
-    ERR(GRN_INVALID_FORMAT, "[table][pat] file type must be %#x: <%#x>",
+    ERR(GRN_INVALID_FORMAT, "[table][pat] file type must be %#04x: <%#04x>",
         GRN_TABLE_PAT_KEY, io_type);
     grn_io_close(ctx, io);
     return NULL;

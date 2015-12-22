@@ -603,7 +603,8 @@ grn_array_open(grn_ctx *ctx, const char *path)
           GRN_FREE(array);
         }
       } else {
-        ERR(GRN_INVALID_FORMAT, "[table][array] file type must be %#x: <%#x>",
+        ERR(GRN_INVALID_FORMAT,
+            "[table][array] file type must be %#04x: <%#04x>",
             GRN_TABLE_NO_KEY, io_type);
       }
       grn_io_close(ctx, io);
@@ -1861,7 +1862,8 @@ grn_hash_open(grn_ctx *ctx, const char *path)
           GRN_FREE(hash);
         }
       } else {
-        ERR(GRN_INVALID_FORMAT, "[table][hash] file type must be %#x: <%#x>",
+        ERR(GRN_INVALID_FORMAT,
+            "[table][hash] file type must be %#04x: <%#04x>",
             GRN_TABLE_HASH_KEY, io_type);
       }
       grn_io_close(ctx, io);
