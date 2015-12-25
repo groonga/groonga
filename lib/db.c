@@ -13229,7 +13229,9 @@ grn_db_recover(grn_ctx *ctx, grn_obj *db)
       }
       grn_obj_unlink(ctx, object);
     } else {
-      ERRCLR(ctx);
+      if (id < GRN_N_RESERVED_TYPES) {
+        ERRCLR(ctx);
+      }
     }
 
     if (ctx->rc != GRN_SUCCESS) {
