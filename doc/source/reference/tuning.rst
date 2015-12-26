@@ -129,8 +129,7 @@ You can set the configuration by putting a configuration file
 The configuration can be applied by restarting your system or run the
 following command::
 
-  % sudo sysctl -p
-
+  % sudo sysctl --system
 
 .. _tuning-linux-max-map-count:
 
