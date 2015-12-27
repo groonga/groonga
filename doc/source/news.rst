@@ -7,6 +7,54 @@
 News
 ====
 
+.. _release-5-1-1:
+
+Release 5.1.1 - 2015-12-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/grn_expr/script_syntax`] Supported ``INDEX_COLUMN
+  == 'VALUE'`` as index search with an equal supported index.
+
+* Reduced the continuous same messages from inverted index module.
+
+* Supported detecting truncated tables by another process.
+  [GitHub#447] [groonga-dev,03761] [Reported by Yutaro SHIMAMURA]
+
+* [:c:func:`grn_db_recover()`] Supported detecting a broken object.
+
+* Improved performance for sequential scan search by
+  [:doc:`/reference/regular_expression`] match with constant pattern
+  such as ``COLUMN @~ CONSTANT_PATTERN``.
+
+Fixes
+^^^^^
+
+* Fixed build error on MessagePack support build.
+  [groonga-dev,03708] [Reported by Ryo Sugimoto]
+
+* [mruby] Fixed a crash bug on error.
+  mruby exception feature is disabled as workaround for now.
+
+* [:doc:`/reference/commands/thread_limit`] Fixed a bug that
+  ``thread_limit?max=1`` may not reduce the number of current running
+  threads to ``1``.
+
+* [:doc:`/reference/commands/thread_limit`] Fixed a bug that
+  ``thread_limit?max=1`` may not return.
+
+* [:doc:`/reference/tuning`] Fixed wrong ``sysctl`` argument.
+  [GitHub#448] [Reported by Hiroyuki Sato]
+
+Thanks
+^^^^^^
+
+* Ryo Sugimoto
+* Yutaro SHIMAMURA
+* Hiroyuki Sato
+
 .. _release-5-1-0:
 
 Release 5.1.0 - 2015-11-29
