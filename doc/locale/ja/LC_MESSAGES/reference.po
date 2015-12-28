@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-11-28 14:42+0900\n"
+"PO-Revision-Date: 2015-12-28 23:19+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -494,33 +494,33 @@ msgid ""
 "reference/commands/dump` uses the type."
 msgstr ""
 
-msgid "`GRN_CONTENT_NONE`"
+msgid "GRN_CONTENT_NONE"
+msgstr ""
+
+msgid "GRN_CONTENT_TSV"
 msgstr ""
 
 msgid "It means tab separated values format."
 msgstr ""
 
-msgid "`GRN_CONTENT_TSV`"
+msgid "GRN_CONTENT_JSON"
 msgstr ""
 
 msgid "It means JSON format."
 msgstr "JSON形式::"
 
-msgid "`GRN_CONTENT_JSON`"
+msgid "GRN_CONTENT_XML"
 msgstr ""
 
 msgid "It means XML format."
 msgstr ""
 
-msgid "`GRN_CONTENT_XML`"
+msgid "GRN_CONTENT_MSGPACK"
 msgstr ""
 
 msgid ""
 "It means MessagePack format. You need MessagePack library on building "
 "Groonga. If you don't have MessagePack library, you can't use this type."
-msgstr ""
-
-msgid "`GRN_CONTENT_MSGPACK`"
 msgstr ""
 
 msgid "``grn_ctx``"
@@ -4270,19 +4270,19 @@ msgid ""
 "す。"
 msgstr ""
 
-msgid "0, ``COLUMN_SCALAR``"
+msgid "0, COLUMN_SCALAR"
 msgstr ""
 
 msgid "単一の値が格納できるカラムを作成します。"
 msgstr ""
 
-msgid "1, ``COLUMN_VECTOR``"
+msgid "1, COLUMN_VECTOR"
 msgstr ""
 
 msgid "複数の値の配列を格納できるカラムを作成します。"
 msgstr ""
 
-msgid "2, ``COLUMN_INDEX``"
+msgid "2, COLUMN_INDEX"
 msgstr ""
 
 msgid "インデックス型のカラムを作成します。"
@@ -4299,7 +4299,7 @@ msgstr ""
 "問題 `GitHub#6 <https://github.com/groonga/groonga/issues/6>`_ があるためで"
 "す。 この問題はzlib、lzoいずれでも発生します。"
 
-msgid "16, ``COMPRESS_ZLIB``"
+msgid "16, COMPRESS_ZLIB"
 msgstr ""
 
 msgid ""
@@ -4309,7 +4309,7 @@ msgstr ""
 "zlibを使ってカラムの値を圧縮します。このフラグはGroongaを ``--with-zlib`` つ"
 "きでビルドすると有効になります。"
 
-msgid "32, ``COMPRESS_LZO``"
+msgid "32, COMPRESS_LZO"
 msgstr ""
 
 msgid ""
@@ -4324,19 +4324,19 @@ msgid ""
 "加の属 性を指定することができます。"
 msgstr ""
 
-msgid "128, ``WITH_SECTION``"
+msgid "128, WITH_SECTION"
 msgstr ""
 
 msgid "段落情報を格納するインデックスを作成します。"
 msgstr ""
 
-msgid "256, ``WITH_WEIGHT``"
+msgid "256, WITH_WEIGHT"
 msgstr ""
 
 msgid "ウェイト情報を格納するインデックスを作成します。"
 msgstr ""
 
-msgid "512, ``WITH_POSITION``"
+msgid "512, WITH_POSITION"
 msgstr ""
 
 msgid "位置情報を格納するインデックス(完全転置インデックス)を作成します。"
@@ -5423,6 +5423,9 @@ msgstr ""
 "input_typeに指定する形式で登録するレコードの値を表現した文字列を渡します。\n"
 "input_typeがjsonである場合には、以下のいずれかの形式が使用できます。"
 
+msgid "Format 1:"
+msgstr "形式1:"
+
 msgid ""
 "[[COLUMN_NAME1, COLUMN_NAME2,..], [VALUE1, VALUE2,..], [VALUE1, "
 "VALUE2,..],..]"
@@ -5430,8 +5433,8 @@ msgstr ""
 "[[カラム名1, カラム名2,..], [カラム値1, カラム値2,..], [カラム値1, カラム値"
 "2,..],..]"
 
-msgid "``Format 1:``"
-msgstr "``形式1:``"
+msgid "Format 2:"
+msgstr "形式2:"
 
 msgid ""
 "[{COLUMN_NAME1: VALUE1, COLUMN_NAME2: VALUE2}, {COLUMN_NAME1: VALUE1, "
@@ -5439,9 +5442,6 @@ msgid ""
 msgstr ""
 "[{カラム名1: カラム値1, カラム名2: カラム値2}, {カラム名1: カラム値1, カラム"
 "名2: カラム値2},..]"
-
-msgid "``Format 2:``"
-msgstr "``形式2:``"
 
 msgid ""
 "``[COLUMN_NAME1, COLUMN_NAME2,..]`` format in ``Format 1`` is effective only "
@@ -9970,17 +9970,20 @@ msgstr "指定できる種類は以下の通りです。"
 msgid "The suggest command does completion."
 msgstr "補完を実行します。"
 
-msgid "``complete``"
+msgid "complete"
 msgstr ""
 
 msgid "The suggest command does correction."
 msgstr "補正を実行します。"
 
-msgid "``correct``"
+msgid "correct"
 msgstr ""
 
 msgid "The suggest command does suggestion."
 msgstr "提案を実行します。"
+
+msgid "suggest"
+msgstr ""
 
 msgid ""
 "You can specify one or more types separated by ``|``. Here are examples:"
@@ -9997,6 +10000,10 @@ msgstr "補正候補と提案候補を返します::"
 msgid "It returns complete, correction and suggestion::"
 msgstr "補完候補と補正候補と提案候補を返します::"
 
+# 8eafd8e97f1748ab87f1fdfe570aa582
+msgid "types"
+msgstr ""
+
 msgid ""
 "Specifies table name that has ``item_${DATA_SET_NAME}`` format. For example, "
 "``item_query`` is a table name if you created dataset by the following "
@@ -10006,17 +10013,23 @@ msgstr ""
 "ば、以下のコマンドでデータセットを作成した場合はテーブル名として "
 "``item_query`` を指定します::"
 
+msgid "table"
+msgstr ""
+
 msgid ""
 "Specifies a column name that has furigana in Katakana in ``table`` table."
 msgstr ""
 "``table`` で指定したテーブルにあるふりがな情報を含むカラムを指定します。ふり"
 "がなはカタカナで指定します。"
 
-msgid "``column``"
+msgid "column"
 msgstr ""
 
 msgid "Specifies query for completion, correction and/or suggestion."
 msgstr "補完・補正・提案対象のクエリーを指定します。"
+
+msgid "query"
+msgstr ""
 
 msgid "Specifies sort key."
 msgstr "ソートキーを指定します。"
@@ -10027,10 +10040,16 @@ msgstr ""
 msgid "``-_score``"
 msgstr ""
 
+msgid "sortby"
+msgstr ""
+
 msgid "Specifies output columns."
 msgstr "出力するカラムを指定します。"
 
 msgid "``_key,_score``"
+msgstr ""
+
+msgid "output_columns"
 msgstr ""
 
 msgid "Specifies returned records offset."
@@ -10039,10 +10058,16 @@ msgstr "返されるレコードのオフセットを指定します。"
 msgid "``0``"
 msgstr ""
 
+msgid "offset"
+msgstr ""
+
 msgid "Specifies number of returned records."
 msgstr "返されるレコード数を指定します。"
 
 msgid "``10``"
+msgstr ""
+
+msgid "limit"
 msgstr ""
 
 msgid ""
@@ -10055,7 +10080,7 @@ msgstr ""
 msgid "``100``"
 msgstr ""
 
-msgid "``frequency_threshold``"
+msgid "frequency_threshold"
 msgstr ""
 
 msgid "``conditional_probability_threshold``"
@@ -10081,16 +10106,25 @@ msgstr "補完時に前方一致検索を実行するかどうかを指定しま
 msgid "Prefix search is always used."
 msgstr "常に前方一致検索を実行します。"
 
+msgid "yes"
+msgstr "した"
+
 msgid "Prefix search is never used."
 msgstr "前方一致検索を実行しません。"
+
+msgid "no"
+msgstr "していない"
 
 msgid "Prefix search is used only when other search can't find any records."
 msgstr "他の検索でレコードが見つからない場合のみ前方一致検索を実行します。"
 
+msgid "auto"
+msgstr ""
+
 msgid "``auto``"
 msgstr ""
 
-msgid "``prefix_search``"
+msgid "prefix_search"
 msgstr ""
 
 msgid "Specifies whether optional similar search is used or not in correction."
@@ -10105,7 +10139,7 @@ msgstr "類似検索を実行しません。"
 msgid "Similar search is used only when other search can't find any records."
 msgstr "他の検索でレコードが見つからない場合のみ類似検索を実行します。"
 
-msgid "``similar_search``"
+msgid "similar_search"
 msgstr ""
 
 msgid "Here is a returned JSON format::"
@@ -13323,7 +13357,16 @@ msgstr ""
 msgid "groongaプロセスの状態を表示します。"
 msgstr ""
 
+msgid "status"
+msgstr ""
+
 msgid "DBに定義されているテーブルのリストを表示します。"
+msgstr ""
+
+msgid "table_list"
+msgstr ""
+
+msgid "column_list"
 msgstr ""
 
 msgid "テーブルに定義されているカラムのリストを表示します。"
@@ -13332,37 +13375,73 @@ msgstr ""
 msgid "DBにテーブルを追加します。"
 msgstr ""
 
+msgid "table_create"
+msgstr ""
+
+msgid "column_create"
+msgstr ""
+
 msgid "テーブルにカラムを追加します。"
 msgstr ""
 
 msgid "DBに定義されているテーブルを削除します。"
 msgstr ""
 
+msgid "table_remove"
+msgstr ""
+
+msgid "column_remove"
+msgstr ""
+
 msgid "テーブルに定義されているカラムを削除します。"
+msgstr ""
+
+msgid "load"
 msgstr ""
 
 msgid "テーブルにレコードを挿入します。"
 msgstr ""
 
+msgid "select"
+msgstr ""
+
 msgid "テーブルに含まれるレコードを検索して表示します。"
+msgstr ""
+
+msgid "define_selector"
 msgstr ""
 
 msgid "検索条件をカスタマイズした新たな検索コマンドを定義します。"
 msgstr ""
 
+msgid "quit"
+msgstr ""
+
 msgid "データベースとのセッションを終了します。"
+msgstr ""
+
+msgid "shutdown"
 msgstr ""
 
 msgid "サーバ(デーモン)プロセスを停止します。"
 msgstr ""
 
+msgid "log_level"
+msgstr ""
+
 msgid "ログ出力レベルを設定します。"
+msgstr ""
+
+msgid "log_put"
 msgstr ""
 
 msgid "ログ出力を行います。"
 msgstr ""
 
 msgid "ロックを解除します。"
+msgstr ""
+
+msgid "clearlock"
 msgstr ""
 
 msgid "新しいデータベースを作成します。::"
@@ -14092,6 +14171,9 @@ msgstr ""
 "必須引数は3つあります。 ``column`` と ``normalizer_name`` と "
 "``use_html_escape`` です。省略可能引数は3つ以上あります。 ``keywordN`` と "
 "``open_tagN`` と ``end_tagN`` です。"
+
+msgid "``column``"
+msgstr ""
 
 msgid "Specifies a column of the table."
 msgstr "テーブルのカラムを指定します。"
@@ -17182,10 +17264,10 @@ msgstr ""
 msgid "d"
 msgstr ""
 
-msgid "Dump"
+msgid "-"
 msgstr ""
 
-msgid "\\-"
+msgid "Dump"
 msgstr ""
 
 msgid "L"
@@ -19260,9 +19342,6 @@ msgstr "入力"
 msgid "submit"
 msgstr "検索実行"
 
-msgid "no"
-msgstr "していない"
-
 msgid "se"
 msgstr ""
 
@@ -19277,9 +19356,6 @@ msgstr ""
 
 msgid "search"
 msgstr ""
-
-msgid "yes"
-msgstr "した"
 
 msgid "en"
 msgstr ""
@@ -19504,9 +19580,6 @@ msgstr ""
 
 msgid "For example, there are the following user submissions:"
 msgstr "例えば、ユーザが以下のように検索を実行したとします。:"
-
-msgid "query"
-msgstr ""
 
 msgid "time"
 msgstr "時刻"
@@ -19969,6 +20042,9 @@ msgstr "バリューサポート"
 
 msgid "Key -> ID speed"
 msgstr "キー→ID検索速度"
+
+msgid "\\-"
+msgstr ""
 
 msgid "oo"
 msgstr ""
