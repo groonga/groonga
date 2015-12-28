@@ -173,7 +173,7 @@ msgstr ""
 "tmp/local`` ディレクトリーを削除することで「クリーンインストール」を試すこと"
 "ができます。インストール処理をデバッグするときに便利です。"
 
-msgid "``--prefix=/tmp/local``"
+msgid "--prefix=/tmp/local"
 msgstr ""
 
 msgid ""
@@ -183,7 +183,7 @@ msgstr ""
 "C/C++コンパイラーのデバッグオプションを有効にします。GDBやLLDBなどのデバッ"
 "ガーでデバッグするときに便利です。"
 
-msgid "``--enable-debug``"
+msgid "--enable-debug"
 msgstr ""
 
 msgid ""
@@ -193,14 +193,14 @@ msgstr ""
 "mrubyサポートを有効にします。この機能はデフォルトで無効になっていますが、開発"
 "者はこの機能を有効にするべきです。"
 
-msgid "``--eanble-mruby``"
+msgid "--eanble-mruby"
+msgstr ""
+
+msgid "--with-ruby"
 msgstr ""
 
 msgid "It's needed for ``--enable-mruby`` and running functional tests."
 msgstr "``--enable-mruby`` オプションと機能テストの実行に必要です。"
-
-msgid "``--with-ruby``"
-msgstr ""
 
 msgid "Run ``make``"
 msgstr "``make`` を実行"
@@ -1953,7 +1953,7 @@ msgstr ""
 "で好きなエディタで編集できます。以下は.poファイルの編集に特化したエディタのリ"
 "ストです。"
 
-msgid "Emacs's po-mode_"
+msgid "Emacs's po-mode"
 msgstr ""
 
 msgid "It is bundled in gettext."
@@ -1962,7 +1962,7 @@ msgstr "gettextに同梱されています。"
 msgid "It is a .po editor and works on many platform."
 msgstr ".po専用エディタです。たくさんのプラットフォームで動作します。"
 
-msgid "Poedit_"
+msgid "Poedit"
 msgstr ""
 
 msgid "It is also a .po editor and is implemented as Eclipse plugin."
