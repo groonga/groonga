@@ -16,7 +16,7 @@ Improvements
 ^^^^^^^^^^^^
 
 * [:doc:`/reference/grn_expr/script_syntax`] Supported ``INDEX_COLUMN
-  == 'VALUE'`` as index search with an equal supported index.
+  == VALUE`` as index search with an equal supported index.
 
 * Reduced the continuous same messages from inverted index module.
 
@@ -26,8 +26,8 @@ Improvements
 * [:c:func:`grn_db_recover()`] Supported detecting a broken object.
 
 * Improved performance for sequential scan search by
-  [:doc:`/reference/regular_expression`] match with constant pattern
-  such as ``COLUMN @~ CONSTANT_PATTERN``.
+  :doc:`/reference/regular_expression` match with constant pattern
+  such as ``COLUMN @~ "CONSTANT_PATTERN"``.
 
 Fixes
 ^^^^^
