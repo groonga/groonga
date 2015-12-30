@@ -8,9 +8,7 @@ module Groonga
       else
         message = "#{error.class}: #{error.message}"
       end
-      # TODO: Re-enable backtrace after mruby/mruby#2917 has been merged
-      # backtrace = error.backtrace
-      backtrace = []
+      backtrace = error.backtrace
       last_raw_entry = backtrace.last
       if last_raw_entry
         last_entry = BacktraceEntry.parse(last_raw_entry)
