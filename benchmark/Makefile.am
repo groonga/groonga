@@ -16,6 +16,7 @@ noinst_PROGRAMS =		\
 endif
 
 EXTRA_DIST =					\
+	bench-geo-select.sh			\
 	bench-query-optimizer-ddl.grn
 
 AM_CPPFLAGS =			\
