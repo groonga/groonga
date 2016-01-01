@@ -17,7 +17,8 @@ endif
 
 EXTRA_DIST =					\
 	bench-geo-select.sh			\
-	bench-query-optimizer-ddl.grn
+	bench-query-optimizer-ddl.grn		\
+	geo-select-generate-grn.rb
 
 AM_CPPFLAGS =			\
 	-I$(srcdir)		\
