@@ -88,6 +88,10 @@ Files: vendor/mruby-source/*
 Copyright: 2014 mruby devevlopers
 License: MIT
 
+Files: vendor/mruby/*
+Copyright: 2013-2014 Kouhei Sutou <kou@clear-code.com>
+License: LGPL-2.1
+
 Files: vendor/mruby/mruby-compiler/core/parse.c
 Copyright: 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
 License: GPL-3+-WITH-BISON-EXCEPTION
@@ -99,10 +103,6 @@ License: MIT
 Files: vendor/mruby/mruby-io/*
 Copyright: 2013 Internet Initiative Japan Inc.
 License: MIT
-
-Files: vendor/mruby/*
-Copyright: 2013-2014 Kouhei Sutou <kou@clear-code.com>
-License: LGPL-2.1
 
 License: BSD-2-clause
  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
