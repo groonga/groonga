@@ -151,7 +151,7 @@ Bigram tokenize method isn't good for precision because you can find
 texts that includes query in word. For example, you can find ``world``
 by ``or``. This is more sensitive for ASCII only languages rather than
 non-ASCII languages. ``TokenBigram`` has solution for this problem
-described in the bellow.
+described in the below.
 
 ``TokenBigram`` behavior is different when it's worked with any
 :doc:`/reference/normalizers`.
