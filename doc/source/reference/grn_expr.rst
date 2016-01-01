@@ -33,7 +33,7 @@ operations in :doc:`/reference/grn_expr/query_syntax`. You can use
 :doc:`/reference/commands/select`.
 
 :doc:`/reference/grn_expr/script_syntax` is ECMAScript like
-syntax. You can use all condition expresssions and set operations in
+syntax. You can use all condition expressions and set operations in
 :doc:`/reference/grn_expr/script_syntax`. You can use
 :doc:`/reference/grn_expr/script_syntax` with ``filter`` option and
 ``scorer`` option in :doc:`/reference/commands/select`.
