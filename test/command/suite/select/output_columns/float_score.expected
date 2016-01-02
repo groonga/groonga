@@ -1,0 +1,11 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "alice", "name": "Alice"}
+]
+[[0,0.0,0.0],1]
+select Users   --filter 'all_records()'   --output_columns '_key, _score'   --command_version 2
+[[0,0.0,0.0],[[[1],[["_key","ShortText"],["_score","Float"]],["alice",1.0]]]]
