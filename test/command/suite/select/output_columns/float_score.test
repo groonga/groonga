@@ -1,0 +1,12 @@
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users name COLUMN_SCALAR ShortText
+
+load --table Users
+[
+{"_key": "alice", "name": "Alice"}
+]
+
+select Users \
+  --filter 'all_records()' \
+  --output_columns '_key, _score' \
+  --command_version 2
