@@ -109,6 +109,8 @@ Here is an example that uses regular expression in
 .. include:: ../example/reference/regular_expression/usage_filter.log
 .. select Logs --filter 'message @~ "disk (space|full)"'
 
+.. _regular-expression-index:
+
 Index
 -----
 
@@ -196,6 +198,8 @@ require escape between you and Groonga. Here are steps that require
       * ``\Ahost1``
 
     The value is evaluated as regular expression.
+
+.. _regular-expression-syntax:
 
 Syntax
 ------
