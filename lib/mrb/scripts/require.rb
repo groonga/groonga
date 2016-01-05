@@ -19,6 +19,9 @@ class ScriptLoader
       $LOAD_PATH.each do |load_path|
         unless absolute_path?(load_path)
           load_path = File.expand_path(load_path)
+          if File::ALT_SEPARATOR
+            load_path = load_path.gsub(File::ALT_SEPARATOR, "/")
+          end
         end
         loaded = load_once_path(File.join(load_path, @base_path))
         return loaded unless loaded.nil?
@@ -33,7 +36,7 @@ class ScriptLoader
   end
 
   def absolute_path?(path)
-    path.start_with?("/")
+    path.start_with?("/") or (/\A[a-z]:\\/i === path)
   end
 
   def load_once_path(path)
