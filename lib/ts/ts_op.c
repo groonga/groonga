@@ -50,7 +50,10 @@ grn_ts_op_get_n_args(grn_ts_op_type op_type)
     case GRN_TS_OP_MINUS:                  /* X - Y   */
     case GRN_TS_OP_MULTIPLICATION:         /* X * Y   */
     case GRN_TS_OP_DIVISION:               /* X / Y   */
-    case GRN_TS_OP_MODULUS: {              /* X % Y   */
+    case GRN_TS_OP_MODULUS:                /* X % Y   */
+    case GRN_TS_OP_MATCH:                  /* X @ Y   */
+    case GRN_TS_OP_PREFIX_MATCH:           /* X @^ Y  */
+    case GRN_TS_OP_SUFFIX_MATCH: {         /* X @$ Y  */
       return 2;
     }
     default: {
@@ -67,11 +70,11 @@ grn_ts_op_get_precedence(grn_ts_op_type op_type)
     case GRN_TS_OP_BITWISE_NOT:
     case GRN_TS_OP_POSITIVE:
     case GRN_TS_OP_NEGATIVE: {
-      return 14;
+      return 15;
     }
     case GRN_TS_OP_FLOAT:
     case GRN_TS_OP_TIME: {
-      return 15;
+      return 16;
     }
     case GRN_TS_OP_LOGICAL_AND: {
       return 5;
@@ -115,6 +118,11 @@ grn_ts_op_get_precedence(grn_ts_op_type op_type)
     case GRN_TS_OP_DIVISION:
     case GRN_TS_OP_MODULUS: {
       return 13;
+    }
+    case GRN_TS_OP_MATCH:
+    case GRN_TS_OP_PREFIX_MATCH:
+    case GRN_TS_OP_SUFFIX_MATCH: {
+      return 14;
     }
     default: {
       return 0;

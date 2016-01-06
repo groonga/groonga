@@ -717,6 +717,20 @@ grn_ts_expr_parser_tokenize_op(grn_ctx *ctx, grn_ts_expr_parser *parser,
     GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('/', DIVISION)
     GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE('%', MODULUS)
 #undef GRN_TS_EXPR_PARSER_TOKENIZE_OP_CASE
+    case '@': {
+      if ((str.size >= 2) && (str.ptr[1] == '^')) {
+        token_str.size = 2;
+        op_type = GRN_TS_OP_PREFIX_MATCH;
+      } else if ((str.size >= 2) && (str.ptr[1] == '$')) {
+        token_str.size = 2;
+        op_type = GRN_TS_OP_SUFFIX_MATCH;
+      } else {
+        token_str.size = 1;
+        op_type = GRN_TS_OP_MATCH;
+      }
+      rc = grn_ts_expr_op_token_open(ctx, token_str, op_type, &new_token);
+      break;
+    }
     default: {
       GRN_TS_ERR_RETURN(GRN_INVALID_FORMAT, "invalid character: \"%.*s\"",
                         (int)str.size, str.ptr);

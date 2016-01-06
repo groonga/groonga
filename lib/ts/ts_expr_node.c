@@ -1115,6 +1115,60 @@ grn_ts_op_modulus_float_float(grn_ctx *ctx, grn_ts_float lhs, grn_ts_float rhs,
   return GRN_SUCCESS;
 }
 
+static grn_ts_bool
+grn_ts_op_match(grn_ts_text lhs, grn_ts_text rhs)
+{
+  const char *lhs_ptr, *lhs_ptr_last;
+  if (lhs.size < rhs.size) {
+    return GRN_FALSE;
+  }
+  lhs_ptr_last = lhs.ptr + lhs.size - rhs.size;
+  for (lhs_ptr = lhs.ptr; lhs_ptr <= lhs_ptr_last; lhs_ptr++) {
+    size_t i;
+    for (i = 0; i < rhs.size; i++) {
+      if (lhs_ptr[i] != rhs.ptr[i]) {
+        break;
+      }
+    }
+    if (i == rhs.size) {
+      return GRN_TRUE;
+    }
+  }
+  return GRN_FALSE;
+}
+
+static grn_ts_bool
+grn_ts_op_prefix_match(grn_ts_text lhs, grn_ts_text rhs)
+{
+  size_t i;
+  if (lhs.size < rhs.size) {
+    return GRN_FALSE;
+  }
+  for (i = 0; i < rhs.size; i++) {
+    if (lhs.ptr[i] != rhs.ptr[i]) {
+      return GRN_FALSE;
+    }
+  }
+  return GRN_TRUE;
+}
+
+static grn_ts_bool
+grn_ts_op_suffix_match(grn_ts_text lhs, grn_ts_text rhs)
+{
+  size_t i;
+  const char *lhs_ptr;
+  if (lhs.size < rhs.size) {
+    return GRN_FALSE;
+  }
+  lhs_ptr = lhs.ptr + lhs.size - rhs.size;
+  for (i = 0; i < rhs.size; i++) {
+    if (lhs_ptr[i] != rhs.ptr[i]) {
+      return GRN_FALSE;
+    }
+  }
+  return GRN_TRUE;
+}
+
 /*-------------------------------------------------------------
  * Groonga objects.
  */
@@ -3337,6 +3391,19 @@ grn_ts_expr_op_node_check_args(grn_ctx *ctx, grn_ts_expr_op_node *node)
         }
       }
     }
+    case GRN_TS_OP_MATCH:
+    case GRN_TS_OP_PREFIX_MATCH:
+    case GRN_TS_OP_SUFFIX_MATCH: {
+      if ((node->args[0]->data_kind != GRN_TS_TEXT) ||
+          (node->args[1]->data_kind != GRN_TS_TEXT)) {
+        GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid data kind: %d, %d",
+                          node->args[0]->data_kind,
+                          node->args[1]->data_kind);
+      }
+      node->data_kind = GRN_TS_BOOL;
+      node->data_type = GRN_DB_BOOL;
+      return GRN_SUCCESS;
+    }
     default: {
       GRN_TS_ERR_RETURN(GRN_INVALID_ARGUMENT, "invalid operator: %d",
                         node->op_type);
@@ -4185,6 +4252,51 @@ grn_ts_op_modulus_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
 }
 #undef GRN_TS_OP_ARITH_EVALUATE_CASE
 
+#define GRN_TS_OP_MATCH_EVALUATE(type)\
+  size_t i;\
+  grn_rc rc;\
+  grn_ts_bool *out_ptr = (grn_ts_bool *)out;\
+  grn_ts_text *buf_ptrs[2];\
+  for (i = 0; i < 2; i++) {\
+    rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[i], in, n_in,\
+                                          &node->bufs[i]);\
+    if (rc != GRN_SUCCESS) {\
+      return rc;\
+    }\
+  }\
+  buf_ptrs[0] = (grn_ts_text *)node->bufs[0].ptr;\
+  buf_ptrs[1] = (grn_ts_text *)node->bufs[1].ptr;\
+  for (i = 0; i < n_in; i++) {\
+    out_ptr[i] = grn_ts_op_ ## type(buf_ptrs[0][i], buf_ptrs[1][i]);\
+  }\
+  return GRN_SUCCESS;\
+/* grn_ts_op_match_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_match_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                         const grn_ts_record *in, size_t n_in, void *out)
+{
+  GRN_TS_OP_MATCH_EVALUATE(match)
+}
+
+/* grn_ts_op_prefix_match_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_prefix_match_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                                const grn_ts_record *in, size_t n_in,
+                                void *out)
+{
+  GRN_TS_OP_MATCH_EVALUATE(prefix_match)
+}
+
+/* grn_ts_op_suffix_match_evaluate() evaluates an operator. */
+static grn_rc
+grn_ts_op_suffix_match_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                                const grn_ts_record *in, size_t n_in,
+                                void *out)
+{
+  GRN_TS_OP_MATCH_EVALUATE(suffix_match)
+}
+#undef GRN_TS_OP_MATCH_EVALUATE
+
 /* grn_ts_expr_op_node_evaluate() evaluates an operator. */
 static grn_rc
 grn_ts_expr_op_node_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
@@ -4271,6 +4383,15 @@ grn_ts_expr_op_node_evaluate(grn_ctx *ctx, grn_ts_expr_op_node *node,
     }
     case GRN_TS_OP_MODULUS: {
       return grn_ts_op_modulus_evaluate(ctx, node, in, n_in, out);
+    }
+    case GRN_TS_OP_MATCH: {
+      return grn_ts_op_match_evaluate(ctx, node, in, n_in, out);
+    }
+    case GRN_TS_OP_PREFIX_MATCH: {
+      return grn_ts_op_prefix_match_evaluate(ctx, node, in, n_in, out);
+    }
+    case GRN_TS_OP_SUFFIX_MATCH: {
+      return grn_ts_op_suffix_match_evaluate(ctx, node, in, n_in, out);
     }
     // TODO: Add operators.
     default: {
@@ -4611,6 +4732,68 @@ grn_ts_op_greater_equal_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
 #undef GRN_TS_OP_CMP_FILTER_VECTOR_CASE
 #undef GRN_TS_OP_CMP_FILTER_CASE
 
+#define GRN_TS_OP_MATCH_FILTER_CASE(type, KIND, kind)\
+  case GRN_TS_ ## KIND: {\
+    grn_ts_ ## kind *buf_ptrs[] = {\
+      (grn_ts_ ## kind *)node->bufs[0].ptr,\
+      (grn_ts_ ## kind *)node->bufs[1].ptr\
+    };\
+    for (i = 0; i < n_in; i++) {\
+      if (grn_ts_op_ ## type ## _ ## kind(buf_ptrs[0][i], buf_ptrs[1][i])) {\
+        out[count++] = in[i];\
+      }\
+    }\
+    *n_out = count;\
+    return GRN_SUCCESS;\
+  }
+
+#define GRN_TS_OP_MATCH_FILTER(type)\
+  size_t i, count = 0;\
+  grn_ts_text *buf_ptrs[2];\
+  for (i = 0; i < 2; i++) {\
+    grn_rc rc = grn_ts_expr_node_evaluate_to_buf(ctx, node->args[i], in, n_in,\
+                                                 &node->bufs[i]);\
+    if (rc != GRN_SUCCESS) {\
+      return rc;\
+    }\
+  }\
+  buf_ptrs[0] = (grn_ts_text *)node->bufs[0].ptr;\
+  buf_ptrs[1] = (grn_ts_text *)node->bufs[1].ptr;\
+  for (i = 0; i < n_in; i++) {\
+    if (grn_ts_op_ ## type(buf_ptrs[0][i], buf_ptrs[1][i])) {\
+      out[count++] = in[i];\
+    }\
+  }\
+  *n_out = count;\
+  return GRN_SUCCESS;\
+/* grn_ts_op_match_filter() filters records. */
+static grn_rc
+grn_ts_op_match_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                       const grn_ts_record *in, size_t n_in,
+                       grn_ts_record *out, size_t *n_out)
+{
+  GRN_TS_OP_MATCH_FILTER(match)
+}
+
+/* grn_ts_op_prefix_match_filter() filters records. */
+static grn_rc
+grn_ts_op_prefix_match_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                              const grn_ts_record *in, size_t n_in,
+                              grn_ts_record *out, size_t *n_out)
+{
+  GRN_TS_OP_MATCH_FILTER(prefix_match)
+}
+
+/* grn_ts_op_suffix_match_filter() filters records. */
+static grn_rc
+grn_ts_op_suffix_match_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
+                              const grn_ts_record *in, size_t n_in,
+                              grn_ts_record *out, size_t *n_out)
+{
+  GRN_TS_OP_MATCH_FILTER(suffix_match)
+}
+#undef GRN_TS_OP_MATCH_FILTER
+
 /* grn_ts_expr_op_node_filter() filters records. */
 static grn_rc
 grn_ts_expr_op_node_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
@@ -4659,6 +4842,15 @@ grn_ts_expr_op_node_filter(grn_ctx *ctx, grn_ts_expr_op_node *node,
     }
     case GRN_TS_OP_GREATER_EQUAL: {
       return grn_ts_op_greater_equal_filter(ctx, node, in, n_in, out, n_out);
+    }
+    case GRN_TS_OP_MATCH: {
+      return grn_ts_op_match_filter(ctx, node, in, n_in, out, n_out);
+    }
+    case GRN_TS_OP_PREFIX_MATCH: {
+      return grn_ts_op_prefix_match_filter(ctx, node, in, n_in, out, n_out);
+    }
+    case GRN_TS_OP_SUFFIX_MATCH: {
+      return grn_ts_op_suffix_match_filter(ctx, node, in, n_in, out, n_out);
     }
     // TODO: Add operators.
     default: {

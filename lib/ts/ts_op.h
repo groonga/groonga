@@ -64,7 +64,10 @@ typedef enum {
   GRN_TS_OP_MINUS,                  /* X - Y   */
   GRN_TS_OP_MULTIPLICATION,         /* X * Y   */
   GRN_TS_OP_DIVISION,               /* X / Y   */
-  GRN_TS_OP_MODULUS                 /* X % Y   */
+  GRN_TS_OP_MODULUS,                /* X % Y   */
+  GRN_TS_OP_MATCH,                  /* X @ Y   */
+  GRN_TS_OP_PREFIX_MATCH,           /* X @^ Y  */
+  GRN_TS_OP_SUFFIX_MATCH            /* X @$ Y  */
 } grn_ts_op_type;
 
 /* Operator precedence. */
