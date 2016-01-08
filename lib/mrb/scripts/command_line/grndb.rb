@@ -111,13 +111,19 @@ module Groonga
         end
       end
 
+      def failed(*messages)
+        messages.each do |message|
+          $stderr.puts(message)
+        end
+        @succeeded = false
+      end
+
       def recover(database, options, arguments)
         begin
           database.recover
         rescue Error => error
-          $stderr.puts("Failed to recover database: <#{@database_path}>")
-          $stderr.puts(error.message)
-          @succeeded = false
+          failed("Failed to recover database: <#{@database_path}>",
+                 error.message)
         end
       end
 
@@ -127,8 +133,7 @@ module Groonga
             "Database is locked. " +
             "It may be broken. " +
             "Re-create the database."
-          $stdout.puts(message)
-          @succeeded = false
+          failed(message)
         end
 
         target_name = options[:target]
@@ -147,8 +152,7 @@ module Groonga
             "[#{object.name}] Index column is locked. " +
             "It may be broken. " +
             "Re-create index by '#{@command} recover #{@database_path}'."
-          $stdout.puts(message)
-          @succeeded = false
+          failed(message)
         when Column
           return unless object.locked?
           name = object.name
@@ -158,8 +162,7 @@ module Groonga
             "(1) Truncate the column (truncate #{name}) or " +
             "clear lock of the column (lock_clear #{name}) " +
             "and (2) load data again."
-          $stdout.puts(message)
-          @succeeded = false
+          failed(message)
         when Table
           return unless object.locked?
           name = object.name
@@ -169,9 +172,16 @@ module Groonga
             "(1) Truncate the table (truncate #{name}) or " +
             "clear lock of the table (lock_clear #{name}) " +
             "and (2) load data again."
-          $stdout.puts(message)
-          @succeeded = false
+          failed(message)
         end
+      end
+
+      def failed_to_open(name)
+        message =
+          "[#{name}] Can't open object. " +
+          "It's broken. " +
+          "Re-create the object or the database."
+        failed(message)
       end
 
       def check_one(database, target_name, options, arguments)
@@ -185,19 +195,27 @@ module Groonga
             end
           end
           if exist_p
-            message =
-              "[#{target_name}] Can't open object. " +
-              "It's broken. " +
-              "Re-create the object or the database."
+            failed_to_open(target_name)
           else
             message = "[#{target_name}] Not exist."
+            failed(message)
           end
-          $stdout.puts(message)
-          @succeeded = false
           return
         end
 
         check_object(target, options, arguments)
+        case target
+        when Table
+          target.column_ids.each do |column_id|
+            column = context[column_id]
+            if column.nil?
+              record = Record.new(database, column_id)
+              failed_to_open(record.key)
+            else
+              check_object(column, options, arguments)
+            end
+          end
+        end
       end
 
       def check_all(database, options, arguments)
@@ -206,12 +224,7 @@ module Groonga
           cursor.each do |id|
             next if ID.builtin?(id)
             next if context[id]
-            message =
-              "[#{cursor.key}] Can't open object. " +
-              "It's broken. " +
-              "Re-create the object or the database."
-            $stdout.puts(message)
-            @succeeded = false
+            failed_to_open(cursor.key)
           end
         end
 
