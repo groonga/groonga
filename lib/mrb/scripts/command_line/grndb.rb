@@ -46,6 +46,8 @@ module Groonga
           command.description "Check database"
           slop_enable_help(command)
 
+          command.on("--target=", "Check only the target object.")
+
           command.run do |options, arguments|
             run_command(options, arguments) do |database, new_arguments|
               check(database, options, new_arguments)
@@ -129,6 +131,76 @@ module Groonga
           @succeeded = false
         end
 
+        target_name = options[:target]
+        if target_name
+          check_one(database, target_name, options, arguments)
+        else
+          check_all(database, options, arguments)
+        end
+      end
+
+      def check_object(object, options, arguments)
+        case object
+        when IndexColumn
+          return unless object.locked?
+          message =
+            "[#{object.name}] Index column is locked. " +
+            "It may be broken. " +
+            "Re-create index by '#{@command} recover #{@database_path}'."
+          $stdout.puts(message)
+          @succeeded = false
+        when Column
+          return unless object.locked?
+          name = object.name
+          message =
+            "[#{name}] Data column is locked. " +
+            "It may be broken. " +
+            "(1) Truncate the column (truncate #{name}) or " +
+            "clear lock of the column (lock_clear #{name}) " +
+            "and (2) load data again."
+          $stdout.puts(message)
+          @succeeded = false
+        when Table
+          return unless object.locked?
+          name = object.name
+          message =
+            "[#{name}] Table is locked. " +
+            "It may be broken. " +
+            "(1) Truncate the table (truncate #{name}) or " +
+            "clear lock of the table (lock_clear #{name}) " +
+            "and (2) load data again."
+          $stdout.puts(message)
+          @succeeded = false
+        end
+      end
+
+      def check_one(database, target_name, options, arguments)
+        context = Context.instance
+
+        target = context[target_name]
+        if target.nil?
+          exist_p = open_cursor(database) do |cursor|
+            cursor.any? do
+              cursor.key == target_name
+            end
+          end
+          if exist_p
+            message =
+              "[#{target_name}] Can't open object. " +
+              "It's broken. " +
+              "Re-create the object or the database."
+          else
+            message = "[#{target_name}] Not exist."
+          end
+          $stdout.puts(message)
+          @succeeded = false
+          return
+        end
+
+        check_object(target, options, arguments)
+      end
+
+      def check_all(database, options, arguments)
         open_cursor(database) do |cursor|
           context = Context.instance
           cursor.each do |id|
@@ -144,38 +216,7 @@ module Groonga
         end
 
         database.each do |object|
-          case object
-          when IndexColumn
-            next unless object.locked?
-            message =
-              "[#{object.name}] Index column is locked. " +
-              "It may be broken. " +
-              "Re-create index by '#{@command} recover #{@database_path}'."
-            $stdout.puts(message)
-            @succeeded = false
-          when Column
-            next unless object.locked?
-            name = object.name
-            message =
-              "[#{name}] Data column is locked. " +
-              "It may be broken. " +
-              "(1) Truncate the column (truncate #{name}) or " +
-              "clear lock of the column (lock_clear #{name}) " +
-              "and (2) load data again."
-            $stdout.puts(message)
-            @succeeded = false
-          when Table
-            next unless object.locked?
-            name = object.name
-            message =
-              "[#{name}] Table is locked. " +
-              "It may be broken. " +
-              "(1) Truncate the table (truncate #{name}) or " +
-              "clear lock of the table (lock_clear #{name}) " +
-              "and (2) load data again."
-            $stdout.puts(message)
-            @succeeded = false
-          end
+          check_object(object, options, arguments)
         end
       end
 
