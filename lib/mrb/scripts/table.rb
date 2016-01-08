@@ -2,6 +2,13 @@ module Groonga
   class Table
     include Enumerable
 
+    def columns
+      context = Context.instance
+      column_ids.collect do |id|
+        context[id]
+      end
+    end
+
     def each
       flags =
         TableCursorFlags::ASCENDING |
