@@ -1553,6 +1553,9 @@ grn_table_get_key(grn_ctx *ctx, grn_obj *table, grn_id id, void *keybuf, int buf
   int r = 0;
   GRN_API_ENTER;
   if (table) {
+    if (table->header.type == GRN_DB) {
+      table = ((grn_db *)table)->keys;
+    }
     switch (table->header.type) {
     case GRN_TABLE_HASH_KEY :
       r = grn_hash_get_key(ctx, (grn_hash *)table, id, keybuf, buf_size);
@@ -1586,6 +1589,9 @@ grn_table_get_key2(grn_ctx *ctx, grn_obj *table, grn_id id, grn_obj *bulk)
   int r = 0;
   GRN_API_ENTER;
   if (table) {
+    if (table->header.type == GRN_DB) {
+      table = ((grn_db *)table)->keys;
+    }
     switch (table->header.type) {
     case GRN_TABLE_HASH_KEY :
       r = grn_hash_get_key2(ctx, (grn_hash *)table, id, bulk);
