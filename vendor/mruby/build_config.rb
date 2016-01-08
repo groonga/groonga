@@ -39,5 +39,5 @@ MRuby::Build.new do |conf|
   conf.gem :github => "iij/mruby-env"
   conf.gem :github => "iij/mruby-io"
   conf.gem :github => "kou/mruby-pp"
-  conf.gem :github => "kou/mruby-slop"
+  conf.gem :github => "kou/mruby-slop", :branch => "3.6.1"
 end
