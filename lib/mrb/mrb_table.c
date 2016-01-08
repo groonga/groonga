@@ -86,6 +86,38 @@ mrb_grn_table_find_column(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_table_get_column_ids(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *table;
+  grn_hash *columns;
+  int n_columns;
+  mrb_value mrb_column_ids;
+
+  table = DATA_PTR(self);
+  columns = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                            GRN_OBJ_TABLE_HASH_KEY | GRN_HASH_TINY);
+  if (!columns) {
+    grn_mrb_ctx_check(mrb);
+    return mrb_ary_new(mrb);
+  }
+
+  n_columns = grn_table_columns(ctx, table, "", 0, (grn_obj *)columns);
+  mrb_column_ids = mrb_ary_new_capa(mrb, n_columns);
+  {
+    grn_id *key;
+    GRN_HASH_EACH(ctx, columns, id, &key, NULL, NULL, {
+      mrb_ary_push(mrb, mrb_column_ids, mrb_fixnum_value(*key));
+    });
+  }
+  grn_hash_close(ctx, columns);
+
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_column_ids;
+}
+
+static mrb_value
 mrb_grn_table_is_locked(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -313,6 +345,8 @@ grn_mrb_table_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "find_column",
                     mrb_grn_table_find_column, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "column_ids",
+                    mrb_grn_table_get_column_ids, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "locked?",
                     mrb_grn_table_is_locked, MRB_ARGS_NONE());
