@@ -136,3 +136,14 @@ source: $(SOURCE)
 
 $(SOURCE):
 	ln -s $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz ../
+
+diff-mecab:
+	(							\
+	  cd tmp/mecab;						\
+	  diff -u mecab-$(MECAB_VERSION){.orig,}/configure.in;	\
+	  diff -u mecab-$(MECAB_VERSION){.orig,}/src/common.h;	\
+	  diff -u mecab-$(MECAB_VERSION){.orig,}/src/mmap.h;	\
+	  diff -u mecab-$(MECAB_VERSION){.orig,}/src/utils.cpp;	\
+	  diff -u mecab-$(MECAB_VERSION){.orig,}/src/winmain.h;	\
+	  :							\
+	) > patches/mecab-$(MECAB_VERSION).diff

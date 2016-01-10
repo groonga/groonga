@@ -38,8 +38,7 @@ bin_dir = binary_dir + "bin"
 
 patches_dir = (base_dir + "patches").expand_path
 mecab_patches = [
-  "mecab-0.98-not-use-locale-on-mingw.diff",
-  "mecab-0.98-add-missing-dll-export.diff",
+  "mecab-0.996.diff",
 ]
 nginx_patches = [
 ]
@@ -47,7 +46,6 @@ if groonga_win32_x86_p
   host = "i686-w64-mingw32"
 else
   host = "x86_64-w64-mingw32"
-  mecab_patches << "mecab-0.98-mingw-w64.diff"
 end
 
 def download(url, download_dir)
@@ -203,10 +201,10 @@ namespace :build do
     tmp_dir = Pathname.new("tmp/mecab")
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
-    mecab_version = "0.98"
+    mecab_version = "0.996"
     mecab_base = "mecab-#{mecab_version}"
     mecab_tar_gz = "#{mecab_base}.tar.gz"
-    mecab_tar_gz_url = "http://mecab.googlecode.com/files/#{mecab_tar_gz}"
+    mecab_tar_gz_url = "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7cENtOXlicTFaRUE"
     mecab_tar_gz = download(mecab_tar_gz_url, download_dir)
     Dir.chdir(tmp_dir) do
       sh("tar", "xzf", mecab_tar_gz.to_s) or exit(false)
