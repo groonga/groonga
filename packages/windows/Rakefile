@@ -217,7 +217,13 @@ namespace :build do
       sh("./configure",
          "--prefix=#{binary_dir}",
          "--host=#{host}") or exit(false)
-      sh("env", "GREP_OPTIONS=--text", "nice", "make", "-j8") or exit(false)
+      build_parameters = []
+      if debug_build_p
+        build_parameters << "CFLAGS=-O0 -Wall -g3"
+        build_parameters << "CXXFLAGS=-O0 -Wall -g3"
+      end
+      sh("env", "GREP_OPTIONS=--text", "nice",
+         "make", "-j8", *build_parameters) or exit(false)
       sh("env", "GREP_OPTIONS=--text", "make", "install") or exit(false)
 
       mecab_rc_path = binary_dir + "etc" + "mecabrc"
