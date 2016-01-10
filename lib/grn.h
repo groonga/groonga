@@ -80,11 +80,11 @@
 
 #ifdef WIN32
 # define GRN_API __declspec(dllexport)
-#ifdef GROONGA_MAIN
-# define GRN_VAR __declspec(dllimport)
-#else
-# define GRN_VAR __declspec(dllexport) extern
-#endif /* GROONGA_MAIN */
+# ifdef GROONGA_MAIN
+#  define GRN_VAR __declspec(dllimport)
+# else
+#  define GRN_VAR __declspec(dllexport) extern
+# endif /* GROONGA_MAIN */
 #else
 # define GRN_API
 # define GRN_VAR extern
