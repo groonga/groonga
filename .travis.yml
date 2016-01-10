@@ -33,7 +33,8 @@ matrix:
       compiler: clang
       env: BUILD_TOOL=cmake ENABLE_MRUBY=yes
 before_install:
-  - rvm use 2.3.0
+  - rvm use 2.2
+  - gem update bundler
 install:
   - tools/travis-install.sh
 before_script:
