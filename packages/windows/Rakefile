@@ -1,6 +1,6 @@
 # -*- coding: utf-8; mode: ruby -*-
 #
-# Copyright (C) 2011-2015  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2011-2016  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -98,15 +98,21 @@ namespace :build do
       sh("tar", "xzf", zlib_tar_gz.to_s) or exit(false)
     end
     Dir.chdir(tmp_dir + zlib_base) do
-      sh("make", "PREFIX=#{host}-", "-f", "win32/Makefile.gcc") or exit(false)
+      build_parameters = ["PREFIX=#{host}-"]
+      if debug_build_p
+        build_parameters << "LOC=-DDEBUG"
+        build_parameters << "CFLAGS=$(LOC) -g3 -O0"
+      end
+      sh("make",
+         *build_parameters,
+         "-f", "win32/Makefile.gcc") or exit(false)
       sh("make",
          "INCLUDE_PATH=#{include_dir}",
          "LIBRARY_PATH=#{lib_dir}",
          "BINARY_PATH=#{bin_dir}",
          "SHARED_MODE=1",
          "-f",
-         "win32/Makefile.gcc",
-         "install") or exit(false)
+         "win32/Makefile.gcc", "install") or exit(false)
 
       zlib_license_dir = license_dir + "zlib"
       mkdir_p(zlib_license_dir)
