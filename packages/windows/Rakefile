@@ -137,11 +137,15 @@ namespace :build do
       sh("tar", "xzf", lz4_tar_gz.to_s) or exit(false)
     end
     Dir.chdir(tmp_dir + lz4_base) do
+      parameters = [
+        "CC=#{host}-gcc",
+        "EXT=.exe",
+        "SHARED_EXT=dll",
+        "PREFIX=#{binary_dir}",
+      ]
+      parameters << "CFLAGS=-O0 -g3" if debug_build_p
       sh("make",
-         "CC=#{host}-gcc",
-         "EXT=.exe",
-         "SHARED_EXT=dll",
-         "PREFIX=#{binary_dir}",
+         *parameters,
          "install") or exit(false)
 
       lz4_license_dir = license_dir + "lz4"
