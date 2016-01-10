@@ -160,7 +160,7 @@ namespace :build do
     tmp_dir = Pathname.new("tmp/msgpack")
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
-    msgpack_version = "1.0.1"
+    msgpack_version = "1.3.0"
     msgpack_base = "msgpack-#{msgpack_version}"
     msgpack_tar_gz = "#{msgpack_base}.tar.gz"
     msgpack_tar_gz_url_base =
@@ -181,7 +181,12 @@ namespace :build do
 
       msgpack_license_dir = license_dir + "msgpack"
       mkdir_p(msgpack_license_dir)
-      files = ["README", "COPYING", "LICENSE"]
+      files = [
+        "README.md",
+        "COPYING",
+        "NOTICE",
+        "LICENSE_1_0.txt",
+      ]
       cp(files, msgpack_license_dir)
     end
   end
