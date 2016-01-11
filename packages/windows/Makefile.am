@@ -28,16 +28,16 @@ upload-to-tmp:
 	    packages@packages.groonga.org:public/tmp/;			\
 	done
 
-build_options =					\
-	VERSION=$(VERSION)			\
-	SOURCE=$(SOURCE)			\
-	DEBUG_BUILD=$(DEBUG_BUILD)
-
 build: source
-	for architecture in $(ARCHITECTURES); do	\
-	  $(RUBY) -S rake build $(build_options)	\
-	     ARCHITECTURE=$${architecture};		\
-	done
+	vagrant destroy --force
+	@(						\
+	  echo "VERSION='$(VERSION)'";			\
+	  echo "SOURCE='$(SOURCE)'";			\
+	  echo "DEBUG_BUILD='$(DEBUG_BUILD)'";		\
+	  echo "ARCHITECTURES='$(ARCHITECTURES)'";	\
+	) > tmp/env.sh
+	vagrant up
+	vagrant destroy --force
 
 build-groonga: source
 	for architecture in $(ARCHITECTURES); do			\
@@ -130,12 +130,12 @@ package:
 	  rm -rf files/$(PACKAGE)-$(VERSION)-$${architecture}$(SUFFIX);	\
 	done
 
-SOURCE=../$(PACKAGE)-$(VERSION).tar.gz
+SOURCE=tmp/$(PACKAGE)-$(VERSION).tar.gz
 
 source: $(SOURCE)
 
-$(SOURCE):
-	ln -s $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz ../
+$(SOURCE): $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz
+	cp $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz $(SOURCE)
 
 diff-mecab:
 	(							\
