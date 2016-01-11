@@ -409,6 +409,7 @@ namespace :gcc do
   end
 end
 
+task "build:mecab_dict" => "gcc:dll:bundle"
 task "build:post" => "gcc:dll:bundle"
 
 build_dependencies = [
