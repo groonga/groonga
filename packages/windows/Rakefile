@@ -35,6 +35,7 @@ binary_dir = base_dir + dist_dir
 include_dir = binary_dir + "include"
 lib_dir = binary_dir + "lib"
 bin_dir = binary_dir + "bin"
+base_tmp_dir = Pathname.new(ENV["TMP_DIR"] || (base_dir + "tmp")).expand_path
 
 patches_dir = (base_dir + "patches").expand_path
 mecab_patches = [
@@ -66,7 +67,7 @@ def download(url, download_dir)
 end
 
 namespace :build do
-  download_dir = Pathname.new("tmp/download").expand_path
+  download_dir = base_tmp_dir + "download"
 
   task :pkg_config do
     ENV["PKG_CONFIG_PATH"] = nil
@@ -82,7 +83,7 @@ namespace :build do
 
   desc "Build zlib and install it into #{dist_dir}."
   task :zlib => :env do
-    tmp_dir = Pathname.new("tmp/zlib")
+    tmp_dir = base_tmp_dir + "zlib"
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
     zlib_version = "1.2.8"
@@ -121,7 +122,7 @@ namespace :build do
 
   desc "Build LZ4 and install it into #{dist_dir}."
   task :lz4 => :env do
-    tmp_dir = Pathname.new("tmp/lz4")
+    tmp_dir = base_tmp_dir + "lz4"
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
     lz4_version = "r126"
@@ -155,7 +156,7 @@ namespace :build do
 
   desc "Build MessagePack and install it into #{dist_dir}."
   task :msgpack => :env do
-    tmp_dir = Pathname.new("tmp/msgpack")
+    tmp_dir = base_tmp_dir + "msgpack"
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
     msgpack_version = "1.3.0"
@@ -198,7 +199,7 @@ namespace :build do
 
   desc "Build MeCab and install it into #{dist_dir}."
   task :mecab => :env do
-    tmp_dir = Pathname.new("tmp/mecab")
+    tmp_dir = base_tmp_dir + "mecab"
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
     mecab_version = "0.996"
@@ -239,7 +240,7 @@ namespace :build do
 
   desc "Build MeCab dictionary and install it into #{dist_dir}."
   task :mecab_dict => :env do
-    tmp_dir = Pathname.new("tmp/mecab_dict")
+    tmp_dir = base_tmp_dir + "mecab_dict"
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
     naist_jdic_base = "mecab-naist-jdic-0.6.3-20100801"
@@ -272,7 +273,7 @@ namespace :build do
 
   desc "Build Groonga and install it into #{dist_dir}/."
   task :groonga => :env do
-    tmp_dir = Pathname.new("tmp/groonga")
+    tmp_dir = base_tmp_dir + "groonga"
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
     Dir.chdir(tmp_dir) do
@@ -338,7 +339,7 @@ namespace :build do
 
   desc "Install Groonga Admin into #{dist_dir}/."
   task :groonga_admin => :env do
-    tmp_dir = Pathname.new("tmp/groonga-admin")
+    tmp_dir = base_tmp_dir + "groonga-admin"
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
     groonga_admin_version = "0.9.4"
