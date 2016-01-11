@@ -251,10 +251,26 @@ namespace :build do
       sh("tar", "xzf", naist_jdic_tar_gz.to_s) or exit(false)
     end
     Dir.chdir(tmp_dir + naist_jdic_base) do
+      mecab_config = binary_dir + "bin" + "mecab-config"
       sh("./configure",
+         "--with-mecab-config=#{mecab_config}",
          "--with-dicdir=#{binary_dir}/share/mecab/dic/naist-jdic",
          "--with-charset=utf-8") or exit(false)
-      sh("make", "-j8") or exit(false)
+
+      mecab_dict_index_original =
+        binary_dir + "libexec" + "mecab" + "mecab-dict-index.exe"
+      mecab_dict_index_bin = binary_dir + "bin" + "mecab-dict-index.exe"
+      cp(mecab_dict_index_original,
+         mecab_dict_index_bin)
+      if groonga_win32_x86_p
+        mecab_dict_index = "wine32 #{mecab_dict_index_bin}"
+      else
+        mecab_dict_index = "wine64 #{mecab_dict_index_bin}"
+      end
+      rm_rf(File.expand_path("~/.wine"))
+      sh("make", "mecab_dict_index=#{mecab_dict_index}") or exit(false)
+      rm(mecab_dict_index_bin)
+
       sh("make", "install-data") or exit(false)
 
       naist_jdic_license_dir = license_dir + "naist-jdic"
