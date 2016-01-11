@@ -406,5 +406,5 @@ build_dependencies = [
   "build:groonga_admin",
   "build:post",
 ]
-desc "Build MeCab and groonga and install them into #{dist_dir}/."
+desc "Build and install them into #{dist_dir}/."
 task :build => build_dependencies
