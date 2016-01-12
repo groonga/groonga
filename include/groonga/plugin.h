@@ -161,12 +161,12 @@ GRN_API grn_rc grn_plugin_expr_var_init(grn_ctx *ctx,
                                         const char *name,
                                         int name_size);
 
-GRN_API grn_obj * grn_plugin_command_create(grn_ctx *ctx,
-                                            const char *name,
-                                            int name_size,
-                                            grn_proc_func func,
-                                            unsigned int n_vars,
-                                            grn_expr_var *vars);
+GRN_API grn_obj *grn_plugin_command_create(grn_ctx *ctx,
+                                           const char *name,
+                                           int name_size,
+                                           grn_proc_func func,
+                                           unsigned int n_vars,
+                                           grn_expr_var *vars);
 
 
 #ifdef __cplusplus
