@@ -1026,6 +1026,11 @@ GRN_API unsigned int grn_column_find_index_data(grn_ctx *ctx, grn_obj *column,
                                                 grn_operator op,
                                                 grn_index_datum *index_data,
                                                 unsigned int n_index_data);
+/* @since 5.1.2. */
+GRN_API uint32_t grn_column_get_all_index_data(grn_ctx *ctx,
+                                               grn_obj *column,
+                                               grn_index_datum *index_data,
+                                               uint32_t n_index_data);
 
 GRN_API grn_rc grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, grn_bool removep);
 GRN_API grn_rc grn_obj_path_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, char *buffer);
