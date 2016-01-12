@@ -329,11 +329,13 @@ grn_rc grn_expr_parser_close(grn_ctx *ctx);
 
 /**
  * grn_table_open:
- * @name: 開こうとするtableの名前。NULLなら無名tableとなる。
- * @path: 開こうとするtableのファイルパス。
+ * @name: The table name to be opened. `NULL` means anonymous table.
+ * @path: The path of the table to be opened.
  *
- * ctxが使用するdbの中でnameに対応付けて既存のtableを開く。
- * dbに登録されている名前付きの永続テーブルを開く場合はgrn_ctx_get()を使用するのが望ましい。
+ * Opens an existing table. The table is associated with @name in DB
+ * that is used by @ctx. grn_ctx_get() is better rather than this
+ * function when you want to open a permanent named table that is
+ * registered in DB.
  **/
 GRN_API grn_obj *grn_table_open(grn_ctx *ctx,
                                 const char *name, unsigned int name_size,
@@ -341,13 +343,14 @@ GRN_API grn_obj *grn_table_open(grn_ctx *ctx,
 
 /**
  * grn_column_open:
- * @table: 対象table
- * @name: カラム名
- * @path: カラムを格納するファイルパス。
- * @type: カラム値の型。
+ * @table: The table for the opened column.
+ * @name: The column name to be opened.
+ * @path: The path of the column to be opened.
+ * @type: The type of the column value.
  *
- * 既存の永続的なcolumnを、tableのnameに対応するcolumnとして開く
- * 永続dbに登録されている永続テーブルのカラムを開く場合はgrn_ctx_get()を使用するのが望ましい。
+ * Opens an existing permanent column. The column is associated with
+ * @name in @table. grn_ctx_get() is better rather than this function
+ * when you want to open a column of an permanent table in DB.
  **/
 grn_obj *grn_column_open(grn_ctx *ctx, grn_obj *table,
                          const char *name, unsigned int name_size,
@@ -355,10 +358,10 @@ grn_obj *grn_column_open(grn_ctx *ctx, grn_obj *table,
 
 /**
  * grn_obj_path_rename:
- * @old_path: 旧ファイルパス
- * @new_path: 新ファイルパス
+ * @old_path: The current file path.
+ * @new_path: The new file path.
  *
- * old_pathに該当するオブジェクトのファイル名をnew_pathに変更する。
+ * It renames object's path that is stored in @old_path to @new_path.
  **/
 grn_rc grn_obj_path_rename(grn_ctx *ctx, const char *old_path, const char *new_path);
 
