@@ -1529,35 +1529,6 @@ grn_parse_column_create_flags(grn_ctx *ctx, const char *nptr, const char *end)
 }
 
 static void
-grn_table_create_flags_to_text(grn_ctx *ctx, grn_obj *buf, grn_obj_flags flags)
-{
-  GRN_BULK_REWIND(buf);
-  switch (flags & GRN_OBJ_TABLE_TYPE_MASK) {
-  case GRN_OBJ_TABLE_HASH_KEY:
-    GRN_TEXT_PUTS(ctx, buf, "TABLE_HASH_KEY");
-    break;
-  case GRN_OBJ_TABLE_PAT_KEY:
-    GRN_TEXT_PUTS(ctx, buf, "TABLE_PAT_KEY");
-    break;
-  case GRN_OBJ_TABLE_DAT_KEY:
-    GRN_TEXT_PUTS(ctx, buf, "TABLE_DAT_KEY");
-    break;
-  case GRN_OBJ_TABLE_NO_KEY:
-    GRN_TEXT_PUTS(ctx, buf, "TABLE_NO_KEY");
-    break;
-  }
-  if (flags & GRN_OBJ_KEY_WITH_SIS) {
-    GRN_TEXT_PUTS(ctx, buf, "|KEY_WITH_SIS");
-  }
-  if (flags & GRN_OBJ_KEY_NORMALIZE) {
-    GRN_TEXT_PUTS(ctx, buf, "|KEY_NORMALIZE");
-  }
-  if (flags & GRN_OBJ_PERSISTENT) {
-    GRN_TEXT_PUTS(ctx, buf, "|PERSISTENT");
-  }
-}
-
-static void
 grn_column_create_flags_to_text(grn_ctx *ctx, grn_obj *buf, grn_obj_flags flags)
 {
   GRN_BULK_REWIND(buf);
@@ -2315,7 +2286,8 @@ output_table_info(grn_ctx *ctx, grn_obj *table)
   GRN_OUTPUT_INT64(id);
   output_object_id_name(ctx, id);
   GRN_OUTPUT_CSTR(path);
-  grn_table_create_flags_to_text(ctx, &o, table->header.flags);
+  GRN_BULK_REWIND(&o);
+  grn_dump_table_create_flags(ctx, table->header.flags, &o);
   GRN_OUTPUT_OBJ(&o, NULL);
   output_object_id_name(ctx, table->header.domain);
   output_object_id_name(ctx, grn_obj_get_range(ctx, table));
@@ -3302,7 +3274,6 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
   grn_obj_flags default_flags = GRN_OBJ_PERSISTENT;
   grn_obj *default_tokenizer;
   grn_obj *normalizer;
-  grn_obj buf;
 
   switch (table->header.type) {
   case GRN_TABLE_HASH_KEY:
@@ -3322,10 +3293,9 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
   GRN_TEXT_PUTS(ctx, outbuf, "table_create ");
   dump_obj_name(ctx, outbuf, table);
   GRN_TEXT_PUTC(ctx, outbuf, ' ');
-  GRN_TEXT_INIT(&buf, 0);
-  grn_table_create_flags_to_text(ctx, &buf, table->header.flags & ~default_flags);
-  GRN_TEXT_PUT(ctx, outbuf, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
-  GRN_OBJ_FIN(ctx, &buf);
+  grn_dump_table_create_flags(ctx,
+                              table->header.flags & ~default_flags,
+                              outbuf);
   if (domain) {
     GRN_TEXT_PUTC(ctx, outbuf, ' ');
     dump_obj_name(ctx, outbuf, domain);

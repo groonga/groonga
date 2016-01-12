@@ -12,6 +12,7 @@ libgroonga_la_SOURCES =				\
 	grn_dat.h				\
 	db.c					\
 	grn_db.h				\
+	dump.c					\
 	ts.c					\
 	grn_ts.h				\
 	type.c					\
