@@ -181,6 +181,9 @@ schema
         "token_filters": [
 
         ],
+        "indexes": [
+
+        ],
         "command": {
           "name": "table_create",
           "arguments": {
@@ -204,6 +207,9 @@ schema
             "weight": false,
             "position": false,
             "sources": [
+
+            ],
+            "indexes": [
 
             ],
             "command": {

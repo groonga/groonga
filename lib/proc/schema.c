@@ -671,6 +671,55 @@ command_schema_column_output_sources(grn_ctx *ctx, grn_obj *column)
 }
 
 static void
+command_schema_column_output_indexes(grn_ctx *ctx, grn_obj *column)
+{
+  uint32_t i;
+  grn_index_datum *index_data = NULL;
+  uint32_t n_index_data = 0;
+
+  if (column) {
+    n_index_data = grn_column_get_all_index_data(ctx, column, NULL, 0);
+    if (n_index_data > 0) {
+      index_data = GRN_PLUGIN_MALLOC(ctx,
+                                     sizeof(grn_index_datum) * n_index_data);
+      if (!index_data) {
+        GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
+                         "[schema] failed to allocate memory for indexes");
+        return;
+      }
+      grn_column_get_all_index_data(ctx, column, index_data, n_index_data);
+    }
+  }
+
+  grn_ctx_output_array_open(ctx, "indexes", n_index_data);
+  for (i = 0; i < n_index_data; i++) {
+    grn_obj *lexicon;
+
+    grn_ctx_output_map_open(ctx, "index", 4);
+
+    grn_ctx_output_cstr(ctx, "full_name");
+    command_schema_output_name(ctx, index_data[i].index);
+
+    grn_ctx_output_cstr(ctx, "table");
+    lexicon = grn_ctx_at(ctx, index_data[i].index->header.domain);
+    command_schema_output_name(ctx, lexicon);
+
+    grn_ctx_output_cstr(ctx, "name");
+    command_schema_output_column_name(ctx, index_data[i].index);
+
+    grn_ctx_output_cstr(ctx, "section");
+    grn_ctx_output_uint64(ctx, index_data[i].section);
+
+    grn_ctx_output_map_close(ctx);
+  }
+  grn_ctx_output_array_close(ctx);
+
+  if (index_data) {
+    GRN_PLUGIN_FREE(ctx, index_data);
+  }
+}
+
+static void
 command_schema_column_command_collect_arguments(grn_ctx *ctx,
                                              grn_obj *table,
                                              grn_obj *column,
@@ -788,7 +837,7 @@ command_schema_column_output(grn_ctx *ctx, grn_obj *table, grn_obj *column)
 
   command_schema_output_column_name(ctx, column);
 
-  grn_ctx_output_map_open(ctx, "column", 11);
+  grn_ctx_output_map_open(ctx, "column", 12);
 
   grn_ctx_output_cstr(ctx, "name");
   command_schema_output_column_name(ctx, column);
@@ -819,6 +868,9 @@ command_schema_column_output(grn_ctx *ctx, grn_obj *table, grn_obj *column)
 
   grn_ctx_output_cstr(ctx, "sources");
   command_schema_column_output_sources(ctx, column);
+
+  grn_ctx_output_cstr(ctx, "indexes");
+  command_schema_column_output_indexes(ctx, column);
 
   grn_ctx_output_cstr(ctx, "command");
   command_schema_column_output_command(ctx, table, column);
@@ -874,7 +926,7 @@ command_schema_output_tables(grn_ctx *ctx)
 
     command_schema_output_name(ctx, table);
 
-    grn_ctx_output_map_open(ctx, "table", 9);
+    grn_ctx_output_map_open(ctx, "table", 10);
 
     grn_ctx_output_cstr(ctx, "name");
     command_schema_output_name(ctx, table);
@@ -896,6 +948,18 @@ command_schema_output_tables(grn_ctx *ctx)
 
     grn_ctx_output_cstr(ctx, "token_filters");
     command_schema_table_output_token_filters(ctx, table);
+
+    grn_ctx_output_cstr(ctx, "indexes");
+    if (table->header.type == GRN_TABLE_NO_KEY) {
+      command_schema_column_output_indexes(ctx, NULL);
+    } else {
+      grn_obj *key_column;
+      key_column = grn_obj_column(ctx, table,
+                                  GRN_COLUMN_NAME_KEY,
+                                  GRN_COLUMN_NAME_KEY_LEN);
+      command_schema_column_output_indexes(ctx, key_column);
+      grn_obj_unlink(ctx, key_column);
+    }
 
     grn_ctx_output_cstr(ctx, "command");
     command_schema_table_output_command(ctx, table);

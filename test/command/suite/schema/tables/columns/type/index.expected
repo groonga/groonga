@@ -190,6 +190,14 @@ schema
         "token_filters": [
 
         ],
+        "indexes": [
+          {
+            "full_name": "Terms.index",
+            "table": "Terms",
+            "name": "index",
+            "section": 1
+          }
+        ],
         "command": {
           "name": "table_create",
           "arguments": {
@@ -215,6 +223,14 @@ schema
             "position": false,
             "sources": [
 
+            ],
+            "indexes": [
+              {
+                "full_name": "Terms.index",
+                "table": "Terms",
+                "name": "index",
+                "section": 3
+              }
             ],
             "command": {
               "name": "column_create",
@@ -242,6 +258,14 @@ schema
             "position": false,
             "sources": [
 
+            ],
+            "indexes": [
+              {
+                "full_name": "Terms.index",
+                "table": "Terms",
+                "name": "index",
+                "section": 2
+              }
             ],
             "command": {
               "name": "column_create",
@@ -271,6 +295,9 @@ schema
           "name": "NormalizerAuto"
         },
         "token_filters": [
+
+        ],
+        "indexes": [
 
         ],
         "command": {
@@ -314,6 +341,9 @@ schema
                 "table": "Posts",
                 "full_name": "Posts.content"
               }
+            ],
+            "indexes": [
+
             ],
             "command": {
               "name": "column_create",

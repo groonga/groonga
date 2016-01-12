@@ -194,6 +194,9 @@ schema
             "name": "TokenFilterStopWord"
           }
         ],
+        "indexes": [
+
+        ],
         "command": {
           "name": "table_create",
           "arguments": {
