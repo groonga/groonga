@@ -51,3 +51,50 @@ grn_dump_table_create_flags(grn_ctx *ctx,
 
   GRN_API_RETURN(ctx->rc);
 }
+
+grn_rc
+grn_dump_column_create_flags(grn_ctx *ctx,
+                            grn_obj_flags flags,
+                            grn_obj *buffer)
+{
+  GRN_API_ENTER;
+
+  switch (flags & GRN_OBJ_COLUMN_TYPE_MASK) {
+  case GRN_OBJ_COLUMN_SCALAR:
+    GRN_TEXT_PUTS(ctx, buffer, "COLUMN_SCALAR");
+    break;
+  case GRN_OBJ_COLUMN_VECTOR:
+    GRN_TEXT_PUTS(ctx, buffer, "COLUMN_VECTOR");
+    if (flags & GRN_OBJ_WITH_WEIGHT) {
+      GRN_TEXT_PUTS(ctx, buffer, "|WITH_WEIGHT");
+    }
+    break;
+  case GRN_OBJ_COLUMN_INDEX:
+    GRN_TEXT_PUTS(ctx, buffer, "COLUMN_INDEX");
+    if (flags & GRN_OBJ_WITH_SECTION) {
+      GRN_TEXT_PUTS(ctx, buffer, "|WITH_SECTION");
+    }
+    if (flags & GRN_OBJ_WITH_WEIGHT) {
+      GRN_TEXT_PUTS(ctx, buffer, "|WITH_WEIGHT");
+    }
+    if (flags & GRN_OBJ_WITH_POSITION) {
+      GRN_TEXT_PUTS(ctx, buffer, "|WITH_POSITION");
+    }
+    break;
+  }
+  switch (flags & GRN_OBJ_COMPRESS_MASK) {
+  case GRN_OBJ_COMPRESS_NONE:
+    break;
+  case GRN_OBJ_COMPRESS_ZLIB:
+    GRN_TEXT_PUTS(ctx, buffer, "|COMPRESS_ZLIB");
+    break;
+  case GRN_OBJ_COMPRESS_LZ4:
+    GRN_TEXT_PUTS(ctx, buffer, "|COMPRESS_LZ4");
+    break;
+  }
+  if (flags & GRN_OBJ_PERSISTENT) {
+    GRN_TEXT_PUTS(ctx, buffer, "|PERSISTENT");
+  }
+
+  GRN_API_RETURN(ctx->rc);
+}

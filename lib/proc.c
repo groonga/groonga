@@ -1528,48 +1528,6 @@ grn_parse_column_create_flags(grn_ctx *ctx, const char *nptr, const char *end)
   return flags;
 }
 
-static void
-grn_column_create_flags_to_text(grn_ctx *ctx, grn_obj *buf, grn_obj_flags flags)
-{
-  GRN_BULK_REWIND(buf);
-  switch (flags & GRN_OBJ_COLUMN_TYPE_MASK) {
-  case GRN_OBJ_COLUMN_SCALAR:
-    GRN_TEXT_PUTS(ctx, buf, "COLUMN_SCALAR");
-    break;
-  case GRN_OBJ_COLUMN_VECTOR:
-    GRN_TEXT_PUTS(ctx, buf, "COLUMN_VECTOR");
-    if (flags & GRN_OBJ_WITH_WEIGHT) {
-      GRN_TEXT_PUTS(ctx, buf, "|WITH_WEIGHT");
-    }
-    break;
-  case GRN_OBJ_COLUMN_INDEX:
-    GRN_TEXT_PUTS(ctx, buf, "COLUMN_INDEX");
-    if (flags & GRN_OBJ_WITH_SECTION) {
-      GRN_TEXT_PUTS(ctx, buf, "|WITH_SECTION");
-    }
-    if (flags & GRN_OBJ_WITH_WEIGHT) {
-      GRN_TEXT_PUTS(ctx, buf, "|WITH_WEIGHT");
-    }
-    if (flags & GRN_OBJ_WITH_POSITION) {
-      GRN_TEXT_PUTS(ctx, buf, "|WITH_POSITION");
-    }
-    break;
-  }
-  switch (flags & GRN_OBJ_COMPRESS_MASK) {
-  case GRN_OBJ_COMPRESS_NONE:
-    break;
-  case GRN_OBJ_COMPRESS_ZLIB:
-    GRN_TEXT_PUTS(ctx, buf, "|COMPRESS_ZLIB");
-    break;
-  case GRN_OBJ_COMPRESS_LZ4:
-    GRN_TEXT_PUTS(ctx, buf, "|COMPRESS_LZ4");
-    break;
-  }
-  if (flags & GRN_OBJ_PERSISTENT) {
-    GRN_TEXT_PUTS(ctx, buf, "|PERSISTENT");
-  }
-}
-
 static grn_bool
 proc_table_create_set_token_filters_put(grn_ctx *ctx,
                                         grn_obj *token_filters,
@@ -2142,7 +2100,7 @@ output_column_info(grn_ctx *ctx, grn_obj *column)
   output_column_name(ctx, column);
   GRN_OUTPUT_CSTR(path);
   GRN_OUTPUT_CSTR(type);
-  grn_column_create_flags_to_text(ctx, &o, column->header.flags);
+  grn_dump_column_create_flags(ctx, column->header.flags, &o);
   GRN_OUTPUT_OBJ(&o, NULL);
   output_object_id_name(ctx, column->header.domain);
   output_object_id_name(ctx, grn_obj_get_range(ctx, column));
@@ -2238,7 +2196,7 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
         GRN_OUTPUT_CSTR(GRN_COLUMN_NAME_KEY);
         GRN_OUTPUT_CSTR("");
         GRN_OUTPUT_CSTR("");
-        grn_column_create_flags_to_text(ctx, &buf, 0);
+        grn_dump_column_create_flags(ctx, 0, &buf);
         GRN_OUTPUT_OBJ(&buf, NULL);
         name_len = grn_obj_name(ctx, table, name_buf, GRN_TABLE_MAX_KEY_SIZE);
         GRN_OUTPUT_STR(name_buf, name_len);
@@ -2965,7 +2923,6 @@ dump_column(grn_ctx *ctx, grn_obj *outbuf , grn_obj *table, grn_obj *column)
 {
   grn_obj *type;
   grn_obj_flags default_flags = GRN_OBJ_PERSISTENT;
-  grn_obj buf;
 
   type = grn_ctx_at(ctx, ((grn_db_obj *)column)->range);
   if (!type) {
@@ -2981,10 +2938,9 @@ dump_column(grn_ctx *ctx, grn_obj *outbuf , grn_obj *table, grn_obj *column)
   if (type->header.type == GRN_TYPE) {
     default_flags |= type->header.flags;
   }
-  GRN_TEXT_INIT(&buf, 0);
-  grn_column_create_flags_to_text(ctx, &buf, column->header.flags & ~default_flags);
-  GRN_TEXT_PUT(ctx, outbuf, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
-  GRN_OBJ_FIN(ctx, &buf);
+  grn_dump_column_create_flags(ctx,
+                               column->header.flags & ~default_flags,
+                               outbuf);
   GRN_TEXT_PUTC(ctx, outbuf, ' ');
   dump_obj_name(ctx, outbuf, type);
   if (column->header.flags & GRN_OBJ_COLUMN_INDEX) {
