@@ -49,6 +49,8 @@ GRN_API grn_rc grn_hash_delete(grn_ctx *ctx, grn_hash *hash,
                                const void *key, unsigned int key_size,
                                grn_table_delete_optarg *optarg);
 
+GRN_API uint32_t grn_hash_size(grn_ctx *ctx, grn_hash *hash);
+
 GRN_API grn_hash_cursor *grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
                                               const void *min, unsigned int min_size,
                                               const void *max, unsigned int max_size,
