@@ -491,6 +491,7 @@ GRN_API grn_rc grn_plugin_unregister_by_path(grn_ctx *ctx, const char *path);
 GRN_API const char *grn_plugin_get_system_plugins_dir(void);
 GRN_API const char *grn_plugin_get_suffix(void);
 GRN_API const char *grn_plugin_get_ruby_suffix(void);
+GRN_API grn_rc grn_plugin_get_names(grn_ctx *ctx, grn_obj *names);
 
 typedef struct {
   const char *name;
