@@ -14,6 +14,7 @@ libgroonga_la_SOURCES =				\
 	grn_db.h				\
 	ts.c					\
 	grn_ts.h				\
+	type.c					\
 	error.c					\
 	grn_error.h				\
 	expr.c					\
