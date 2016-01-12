@@ -54,3 +54,17 @@ grn_type_create(grn_ctx *ctx, const char *name, unsigned int name_size,
   GRN_API_RETURN((grn_obj *)res);
 }
 
+uint32_t
+grn_type_size(grn_ctx *ctx, grn_obj *type)
+{
+  uint32_t size;
+
+  GRN_API_ENTER;
+  if (!type) {
+    ERR(GRN_INVALID_ARGUMENT, "[type][size] type is NULL");
+    GRN_API_RETURN(0);
+  }
+  size = GRN_TYPE_SIZE(DB_OBJ(type));
+  GRN_API_RETURN(size);
+}
+
