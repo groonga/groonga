@@ -1,4 +1,4 @@
-# Copyright(C) 2012-2013 Brazil
+# Copyright(C) 2012-2016 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -32,12 +32,18 @@ string(REGEX REPLACE "([^;]+)" "dat/\\1"
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mrb/sources.am LIBGRNMRB_SOURCES)
 string(REGEX REPLACE "([^;]+)" "mrb/\\1"
   LIBGRNMRB_SOURCES "${LIBGRNMRB_SOURCES}")
+read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/proc/sources.am LIBGRNPROC_SOURCES)
+string(REGEX REPLACE "([^;]+)" "proc/\\1"
+  LIBGRNPROC_SOURCES "${LIBGRNPROC_SOURCES}")
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/ts/sources.am LIBGRNTS_SOURCES)
 string(REGEX REPLACE "([^;]+)" "ts/\\1"
   LIBGRNTS_SOURCES "${LIBGRNTS_SOURCES}")
 
 set_source_files_properties(
-  ${LIBGROONGA_SOURCES} ${LIBGRNMRB_SOURCES} ${LIBGRNTS_SOURCES}
+  ${LIBGROONGA_SOURCES}
+  ${LIBGRNMRB_SOURCES}
+  ${LIBGRNPROC_SOURCES}
+  ${LIBGRNTS_SOURCES}
   PROPERTIES
   COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 set_source_files_properties(dat.cpp ${LIBGRNDAT_SOURCES}
@@ -48,6 +54,7 @@ set(GRN_ALL_SOURCES
   ${LIBGROONGA_SOURCES}
   ${LIBGRNDAT_SOURCES}
   ${LIBGRNMRB_SOURCES}
+  ${LIBGRNPROC_SOURCES}
   ${LIBGRNTS_SOURCES})
 if(GRN_EMBED)
   add_library(libgroonga STATIC ${GRN_ALL_SOURCES})

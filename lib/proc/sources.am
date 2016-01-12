@@ -1,0 +1,2 @@
+libgrnproc_la_SOURCES =				\
+	schema.c

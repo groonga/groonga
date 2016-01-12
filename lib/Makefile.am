@@ -1,6 +1,7 @@
 SUBDIRS =					\
 	dat					\
 	mrb					\
+	proc					\
 	ts
 
 lib_LTLIBRARIES = libgroonga.la
@@ -34,6 +35,7 @@ libgroonga_la_LDFLAGS =				\
 libgroonga_la_LIBADD =				\
 	dat/libgrndat.la			\
 	mrb/libgrnmrb.la			\
+	proc/libgrnproc.la			\
 	ts/libgrnts.la				\
 	$(MESSAGE_PACK_LIBS)
 
