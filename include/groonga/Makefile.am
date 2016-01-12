@@ -17,6 +17,7 @@ groonga_include_HEADERS =			\
 	token.h					\
 	tokenizer.h				\
 	token_filter.h				\
+	type.h					\
 	nfkc.h					\
 	normalizer.h				\
 	util.h					\
