@@ -192,7 +192,6 @@ GRN_API grn_id grn_table_queue_tail(grn_table_queue *queue);
 
 /**** grn_hash ****/
 
-#define GRN_HASH_TINY         (0x01<<6)
 #define GRN_HASH_MAX_KEY_SIZE_NORMAL GRN_TABLE_MAX_KEY_SIZE
 #define GRN_HASH_MAX_KEY_SIZE_LARGE  (0xffff)
 

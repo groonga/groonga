@@ -22,6 +22,8 @@
 extern "C" {
 #endif
 
+#define GRN_HASH_TINY         (0x01<<6)
+
 typedef struct _grn_hash grn_hash;
 typedef struct _grn_hash_cursor grn_hash_cursor;
 
