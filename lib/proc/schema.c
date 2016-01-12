@@ -131,7 +131,9 @@ command_schema_output_command(grn_ctx *ctx,
                       name_size, name,
                       value_size, value);
     }
-    grn_ctx_output_str(ctx, GRN_TEXT_VALUE(&command_line), GRN_TEXT_LEN(&command_line));
+    grn_ctx_output_str(ctx,
+                       GRN_TEXT_VALUE(&command_line),
+                       GRN_TEXT_LEN(&command_line));
     GRN_OBJ_FIN(ctx, &command_line);
   }
 
