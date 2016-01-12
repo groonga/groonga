@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2014 Brazil
+  Copyright(C) 2014-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -16,8 +16,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef GROONGA_REQUEST_CANCELER_H
-#define GROONGA_REQUEST_CANCELER_H
+#pragma once
 
 #ifdef  __cplusplus
 extern "C" {
@@ -35,5 +34,3 @@ GRN_API grn_bool grn_request_canceler_cancel(const char *request_id,
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* GROONGA_REQUEST_CANCELER_H */

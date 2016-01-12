@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2015 Brazil
+  Copyright(C) 2009-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -15,8 +15,8 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef GRN_CTX_IMPL_H
-#define GRN_CTX_IMPL_H
+
+#pragma once
 
 #ifndef GRN_CTX_H
 # include "grn_ctx.h"
@@ -203,5 +203,3 @@ struct _grn_ctx_impl {
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* GRN_CTX_IMPL_H */

@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013 Brazil
+  Copyright(C) 2013-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -15,12 +15,10 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef GRN_ERROR_H
-#define GRN_ERROR_H
 
-#ifndef GRN_H
+#pragma once
+
 #include "grn.h"
-#endif /* GRN_H */
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,5 +32,3 @@ GRN_API grn_rc grn_windows_error_code_to_rc(int error_code);
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* GRN_ERROR_H */

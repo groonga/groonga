@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013 Brazil
+  Copyright(C) 2013-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -16,8 +16,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef GRN_MRB_CONVERTER_H
-#define GRN_MRB_CONVERTER_H
+#pragma once
 
 #include "../grn_ctx.h"
 
@@ -60,5 +59,3 @@ grn_id grn_mrb_value_to_grn_type(mrb_state *mrb, mrb_value value);
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* GRN_MRB_CONVERTER_H */

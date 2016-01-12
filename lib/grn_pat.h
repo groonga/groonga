@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2015 Brazil
+/*
+  Copyright(C) 2009-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -14,8 +15,8 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef GRN_PAT_H
-#define GRN_PAT_H
+
+#pragma once
 
 #include "grn.h"
 #include "grn_db.h"
@@ -109,5 +110,3 @@ void grn_pat_cache_disable(grn_ctx *ctx, grn_pat *pat);
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* GRN_PAT_H */

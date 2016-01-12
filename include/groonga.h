@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2014-2015 Brazil
+  Copyright(C) 2014-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -15,8 +15,8 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef GROONGA_H
-#define GROONGA_H
+
+#pragma once
 
 #include "groonga/portability.h"
 #include "groonga/groonga.h"
@@ -32,5 +32,3 @@
 #include "groonga/windows.h"
 #include "groonga/windows_event_logger.h"
 #include "groonga/file_reader.h"
-
-#endif /* GROONGA_H */

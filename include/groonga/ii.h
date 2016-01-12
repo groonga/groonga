@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2009-2014 Brazil
+  Copyright(C) 2009-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -15,8 +15,8 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef GROONGA_II_H
-#define GROONGA_II_H
+
+#pragma once
 
 #ifdef  __cplusplus
 extern "C" {
@@ -57,5 +57,3 @@ GRN_API grn_rc grn_ii_cursor_close(grn_ctx *ctx, grn_ii_cursor *c);
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* GROONGA_II_H */

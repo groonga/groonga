@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2015 Brazil
+  Copyright(C) 2009-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -15,8 +15,8 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef GRN_CTX_H
-#define GRN_CTX_H
+
+#pragma once
 
 #include "grn.h"
 #include "grn_error.h"
@@ -614,5 +614,3 @@ grn_rc grn_db_init_builtin_procs(grn_ctx *ctx);
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* GRN_CTX_H */

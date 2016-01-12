@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2015 Brazil
+  Copyright(C) 2015-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -15,8 +15,8 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef GROONGA_PORTABILITY_H
-#define GROONGA_PORTABILITY_H
+
+#pragma once
 
 #ifdef WIN32
 # ifdef __cplusplus
@@ -170,5 +170,3 @@
 #else /* WIN32 */
 # define grn_close(fd) close((fd))
 #endif /* WIN32 */
-
-#endif /* GROONGA_PORTABILITY_H */

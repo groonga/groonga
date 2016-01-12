@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2009-2015 Brazil
+  Copyright(C) 2009-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -15,8 +15,8 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef GROONGA_GROONGA_H
-#define GROONGA_GROONGA_H
+
+#pragma once
 
 #include <stdarg.h>
 #include <sys/types.h>
@@ -2044,5 +2044,3 @@ GRN_API grn_rc grn_dat_cursor_delete(grn_ctx *ctx, grn_dat_cursor *c,
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* GROONGA_GROONGA_H */

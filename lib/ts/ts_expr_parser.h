@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015 Brazil
+  Copyright(C) 2015-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -16,8 +16,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef GRN_TS_EXPR_PARSER_H
-#define GRN_TS_EXPR_PARSER_H
+#pragma once
 
 #include "ts_expr.h"
 #include "ts_expr_builder.h"
@@ -106,4 +105,3 @@ grn_rc grn_ts_expr_parser_split(grn_ctx *ctx, grn_ts_expr_parser *parser,
 }
 #endif
 
-#endif /* GRN_TS_EXPR_PARSER_H */

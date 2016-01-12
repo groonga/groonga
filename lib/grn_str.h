@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2012 Brazil
+/*
+  Copyright(C) 2009-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -14,8 +15,8 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef GRN_STR_H
-#define GRN_STR_H
+
+#pragma once
 
 #include "grn.h"
 #include <groonga/nfkc.h>
@@ -121,5 +122,3 @@ grn_bool grn_bulk_is_zero(grn_ctx *ctx, grn_obj *obj);
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* GRN_STR_H */

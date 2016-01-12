@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2015 Brazil
+  Copyright(C) 2013-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -16,8 +16,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef GRN_MRB_EXPR_H
-#define GRN_MRB_EXPR_H
+#pragma once
 
 #include "../grn_ctx.h"
 #include "../grn_expr.h"
@@ -42,4 +41,3 @@ unsigned int grn_mrb_expr_estimate_size(grn_ctx *ctx,
 }
 #endif
 
-#endif /* GRN_MRB_EXPR_H */

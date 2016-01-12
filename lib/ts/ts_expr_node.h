@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015 Brazil
+  Copyright(C) 2015-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -16,8 +16,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef GRN_TS_EXPR_NODE_H
-#define GRN_TS_EXPR_NODE_H
+#pragma once
 
 #include "../grn.h"
 
@@ -127,4 +126,3 @@ grn_rc grn_ts_expr_node_adjust(grn_ctx *ctx, grn_ts_expr_node *node,
 }
 #endif
 
-#endif /* GRN_TS_EXPR_NODE_H */

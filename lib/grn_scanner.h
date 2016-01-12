@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015 Brazil
+  Copyright(C) 2015-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -16,8 +16,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef GRN_SCANNER_H
-#define GRN_SCANNER_H
+#pragma once
 
 #include "grn_expr.h"
 
@@ -39,5 +38,3 @@ void grn_scanner_close(grn_ctx *ctx, grn_scanner *scanner);
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* GRN_SCANNER_H */

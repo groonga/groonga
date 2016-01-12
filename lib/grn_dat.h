@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2011-2015 Brazil
+/*
+  Copyright(C) 2011-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -14,13 +15,10 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef GRN_DAT_H
-#define GRN_DAT_H
 
-#ifndef GRN_H
-# include "grn.h"
-#endif /* GRN_H */
+#pragma once
 
+#include "grn.h"
 #include "grn_db.h"
 
 #ifdef __cplusplus
@@ -84,5 +82,3 @@ GRN_API grn_rc grn_dat_flush(grn_ctx *ctx, grn_dat *dat);
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* GRN_DAT_H */

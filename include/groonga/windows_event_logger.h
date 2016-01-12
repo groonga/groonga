@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2015 Brazil
+  Copyright(C) 2015-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -16,8 +16,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef GROONGA_WINDOWS_EVENT_LOGGER_H
-#define GROONGA_WINDOWS_EVENT_LOGGER_H
+#pragma once
 
 #ifdef  __cplusplus
 extern "C" {
@@ -29,5 +28,3 @@ GRN_API grn_rc grn_windows_event_logger_set(grn_ctx *ctx,
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* GROONGA_WINDOWS_EVENT_LOGGER_H */
