@@ -1,0 +1,22 @@
+conf_set alias.column Aliases.real_name
+
+table_create Aliases TABLE_HASH_KEY ShortText
+column_create Aliases real_name COLUMN_SCALAR ShortText
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos title COLUMN_SCALAR Text
+
+load --table Memos
+[
+{"_key": "groonga", "title": "Groonga"}
+]
+
+select Memos --filter 'caption == "Groonga"'
+
+load --table Aliases
+[
+{"_key": "Memos.caption", "real_name": "Memos.subject"},
+{"_key": "Memos.subject", "real_name": "Memos.title"}
+]
+
+select Memos --filter 'caption == "Groonga"'

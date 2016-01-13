@@ -1,0 +1,57 @@
+conf_set alias.column Aliases.real_name
+[[0,0.0,0.0],true]
+table_create Aliases TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Aliases real_name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos title COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "groonga", "title": "Groonga"}
+]
+[[0,0.0,0.0],1]
+select Memos --filter 'caption == "Groonga"'
+[[[-63,0.0,0.0],"Syntax error: <caption| |== \"Groonga\">"],[]]
+#|e| Syntax error: <caption| |== "Groonga">
+load --table Aliases
+[
+{"_key": "Memos.caption", "real_name": "Memos.title"}
+]
+[[0,0.0,0.0],1]
+select Memos --filter 'caption == "Groonga"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "title",
+          "Text"
+        ]
+      ],
+      [
+        1,
+        "groonga",
+        "Groonga"
+      ]
+    ]
+  ]
+]

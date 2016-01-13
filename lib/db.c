@@ -510,7 +510,6 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
 grn_obj *
 grn_ctx_get(grn_ctx *ctx, const char *name, int name_size)
 {
-  grn_id id;
   grn_obj *obj = NULL;
   grn_obj *db;
   if (!ctx || !ctx->impl || !(db = ctx->impl->db)) {
@@ -519,12 +518,70 @@ grn_ctx_get(grn_ctx *ctx, const char *name, int name_size)
   GRN_API_ENTER;
   if (GRN_DB_P(db)) {
     grn_db *s = (grn_db *)db;
+    grn_obj *alias_table = NULL;
+    grn_obj *alias_column = NULL;
+    grn_obj alias_name_buffer;
+
     if (name_size < 0) {
       name_size = strlen(name);
     }
-    if ((id = grn_table_get(ctx, s->keys, name, name_size))) {
-      obj = grn_ctx_at(ctx, id);
+    GRN_TEXT_INIT(&alias_name_buffer, 0);
+    while (GRN_TRUE) {
+      grn_id id;
+
+      id = grn_table_get(ctx, s->keys, name, name_size);
+      if (id) {
+        obj = grn_ctx_at(ctx, id);
+        break;
+      }
+
+      if (!alias_column) {
+        grn_id alias_column_id;
+        const char *alias_column_name;
+        uint32_t alias_column_name_size;
+
+        grn_conf_get(ctx,
+                     "alias.column", -1,
+                     &alias_column_name, &alias_column_name_size);
+        if (!alias_column_name) {
+          break;
+        }
+        alias_column_id = grn_table_get(ctx,
+                                        s->keys,
+                                        alias_column_name,
+                                        alias_column_name_size);
+        if (!alias_column_id) {
+          break;
+        }
+        alias_column = grn_ctx_at(ctx, alias_column_id);
+        if (alias_column->header.type != GRN_COLUMN_VAR_SIZE) {
+          break;
+        }
+        if (alias_column->header.flags & GRN_OBJ_VECTOR) {
+          break;
+        }
+        if (DB_OBJ(alias_column)->range != GRN_DB_SHORT_TEXT) {
+          break;
+        }
+        alias_table = grn_ctx_at(ctx, alias_column->header.domain);
+        if (alias_table->header.type == GRN_TABLE_NO_KEY) {
+          break;
+        }
+      }
+
+      {
+        grn_id alias_id;
+        alias_id = grn_table_get(ctx, alias_table, name, name_size);
+        if (!alias_id) {
+          break;
+        }
+        GRN_BULK_REWIND(&alias_name_buffer);
+        grn_obj_get_value(ctx, alias_column, alias_id, &alias_name_buffer);
+        name = GRN_TEXT_VALUE(&alias_name_buffer);
+        name_size = GRN_TEXT_LEN(&alias_name_buffer);
+      }
     }
+    GRN_OBJ_FIN(ctx, &alias_name_buffer);
   }
   GRN_API_RETURN(obj);
 }
