@@ -30,6 +30,9 @@ GRN_VAR const char *grn_document_root;
 void grn_db_init_builtin_query(grn_ctx *ctx);
 
 void grn_proc_init_schema(grn_ctx *ctx);
+void grn_proc_init_conf_get(grn_ctx *ctx);
+void grn_proc_init_conf_set(grn_ctx *ctx);
+void grn_proc_init_conf_delete(grn_ctx *ctx);
 
 #ifdef __cplusplus
 }

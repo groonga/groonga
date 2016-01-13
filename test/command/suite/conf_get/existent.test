@@ -1,0 +1,2 @@
+conf_set key value
+conf_get key

@@ -7523,4 +7523,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
                                     NULL, NULL, NULL, 0, NULL);
     grn_proc_set_selector(ctx, selector_proc, selector_prefix_rk_search);
   }
+
+  grn_proc_init_conf_get(ctx);
+  grn_proc_init_conf_set(ctx);
+  grn_proc_init_conf_delete(ctx);
 }
