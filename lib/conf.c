@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015 Brazil
+  Copyright(C) 2015-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -124,4 +124,50 @@ grn_conf_get(grn_ctx *ctx,
   *value = (char *)packed_value + sizeof(uint32_t);
   *value_size = *((uint32_t *)packed_value);
   GRN_API_RETURN(GRN_SUCCESS);
+}
+
+grn_rc
+grn_conf_delete(grn_ctx *ctx,
+                const char *key, int key_size)
+{
+  grn_obj *db;
+  grn_hash *conf;
+
+  GRN_API_ENTER;
+
+  if (!ctx || !ctx->impl || !(db = ctx->impl->db)) {
+    ERR(GRN_INVALID_ARGUMENT, "[conf][delete] DB isn't initialized");
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  if (key_size == -1) {
+    key_size = strlen(key);
+  }
+  if (key_size > GRN_CONF_MAX_KEY_SIZE) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[conf][delete] too large key: max=<%d>: <%d>",
+        GRN_CONF_MAX_KEY_SIZE, key_size);
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  conf = ((grn_db *)db)->conf;
+  {
+    grn_rc rc;
+    rc = grn_io_lock(ctx, conf->io, grn_lock_timeout);
+    if (rc != GRN_SUCCESS) {
+      if (ctx->rc == GRN_SUCCESS) {
+        ERR(rc, "[conf][delete] failed to lock");
+      }
+      GRN_API_RETURN(rc);
+    }
+    rc = grn_hash_delete(ctx, conf, key, key_size, NULL);
+    grn_io_unlock(conf->io);
+    if (rc != GRN_SUCCESS) {
+      if (ctx->rc == GRN_SUCCESS) {
+        ERR(rc, "[conf][delete] failed to delete");
+      }
+    }
+  }
+
+  GRN_API_RETURN(ctx->rc);
 }

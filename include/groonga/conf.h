@@ -33,6 +33,8 @@ GRN_API grn_rc grn_conf_set(grn_ctx *ctx,
 GRN_API grn_rc grn_conf_get(grn_ctx *ctx,
                             const char *key, int key_size,
                             const char **value, uint32_t *value_size);
+GRN_API grn_rc grn_conf_delete(grn_ctx *ctx,
+                               const char *key, int key_size);
 
 #ifdef __cplusplus
 }

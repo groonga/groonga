@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2015  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2015-2016  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -30,6 +30,7 @@ static grn_obj *database;
 
 void test_set_and_get(void);
 void test_get_nonexistent(void);
+void test_delete(void);
 
 void
 cut_startup(void)
@@ -91,3 +92,19 @@ test_get_nonexistent(void)
                           value, value_size);
 }
 
+void
+test_delete(void)
+{
+  const char *value;
+  uint32_t value_size;
+
+  grn_test_assert(grn_conf_set(&context, "key", -1, "value", -1));
+  grn_test_assert(grn_conf_get(&context, "key", -1, &value, &value_size));
+  cut_assert_equal_memory("value", strlen("value"),
+                          value, value_size);
+
+  grn_test_assert(grn_conf_delete(&context, "key", -1));
+  grn_test_assert(grn_conf_get(&context, "key", -1, &value, &value_size));
+  cut_assert_equal_memory(NULL, 0,
+                          value, value_size);
+}
