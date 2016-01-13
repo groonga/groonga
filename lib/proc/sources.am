@@ -1,2 +1,2 @@
 libgrnproc_la_SOURCES =				\
-	schema.c
+	proc_schema.c
