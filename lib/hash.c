@@ -1245,6 +1245,8 @@ grn_array_unblock(grn_ctx *ctx, grn_array *array)
 #define GRN_HASH_SEGMENT_SIZE 0x400000
 #define GRN_HASH_KEY_MAX_N_SEGMENTS 0x400
 #define W_OF_KEY_IN_A_SEGMENT 22
+#define GRN_HASH_KEY_MAX_TOTAL_SIZE\
+  ((1ULL << W_OF_KEY_IN_A_SEGMENT) * GRN_HASH_KEY_MAX_N_SEGMENTS - 1)
 #define IDX_MASK_IN_A_SEGMENT 0xfffff
 
 typedef struct {
@@ -1326,6 +1328,21 @@ enum {
   GRN_HASH_INDEX_SEGMENT  = 2,
   GRN_HASH_BITMAP_SEGMENT = 3
 };
+
+inline static int
+grn_hash_name(grn_ctx *ctx, grn_hash *hash, char *buffer, int buffer_size)
+{
+  int name_size;
+
+  if (DB_OBJ(hash)->id == GRN_ID_NIL) {
+    grn_strcpy(buffer, buffer_size, "(anonymous)");
+    name_size = strlen(buffer);
+  } else {
+    name_size = grn_obj_name(ctx, (grn_obj *)hash, buffer, buffer_size);
+  }
+
+  return name_size;
+}
 
 inline static grn_bool
 grn_hash_is_io_hash(grn_hash *hash)
@@ -1458,6 +1475,19 @@ grn_io_hash_entry_put_key(grn_ctx *ctx, grn_hash *hash,
     header = hash->header.common;
     if (key_size >= GRN_HASH_SEGMENT_SIZE) {
       return GRN_INVALID_ARGUMENT;
+    }
+    if (key_size > (GRN_HASH_KEY_MAX_TOTAL_SIZE - header->curr_key)) {
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int name_size;
+      name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+      ERR(GRN_NOT_ENOUGH_SPACE,
+          "[hash][key][put] total key size is over: <%.*s>: "
+          "max=%" GRN_FMT_INT64U ": current=%u: new key size=%u",
+          name_size, name,
+          GRN_HASH_KEY_MAX_TOTAL_SIZE,
+          header->curr_key,
+          key_size);
+      return ctx->rc;
     }
     key_offset = header->curr_key;
     segment_id = (key_offset + key_size) >> W_OF_KEY_IN_A_SEGMENT;
@@ -2206,7 +2236,8 @@ grn_io_hash_add(grn_ctx *ctx, grn_hash *hash, uint32_t hash_value,
   }
 
   if (grn_hash_entry_put_key(ctx, hash, entry, hash_value, key, key_size)) {
-    /* TODO: error handling. */
+    grn_hash_delete_by_id(ctx, hash, entry_id, NULL);
+    return GRN_ID_NIL;
   }
 
   if (value) {
