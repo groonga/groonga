@@ -1246,7 +1246,7 @@ grn_array_unblock(grn_ctx *ctx, grn_array *array)
 #define GRN_HASH_KEY_MAX_N_SEGMENTS 0x400
 #define W_OF_KEY_IN_A_SEGMENT 22
 #define GRN_HASH_KEY_MAX_TOTAL_SIZE\
-  ((1ULL << W_OF_KEY_IN_A_SEGMENT) * GRN_HASH_KEY_MAX_N_SEGMENTS - 1)
+  ((1UL << W_OF_KEY_IN_A_SEGMENT) * GRN_HASH_KEY_MAX_N_SEGMENTS - 1)
 #define IDX_MASK_IN_A_SEGMENT 0xfffff
 
 typedef struct {
