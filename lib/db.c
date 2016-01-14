@@ -165,10 +165,17 @@ static grn_bool
 grn_db_conf_create(grn_ctx *ctx, grn_db *s, const char *path,
                    const char *context_tag)
 {
-  char conf_path[PATH_MAX];
+  char *conf_path;
+  char conf_path_buffer[PATH_MAX];
   uint32_t flags = GRN_OBJ_KEY_VAR_SIZE;
 
-  grn_snprintf(conf_path, PATH_MAX, PATH_MAX, GRN_DB_CONF_PATH_FORMAT, path);
+  if (path) {
+    grn_snprintf(conf_path_buffer, PATH_MAX, PATH_MAX,
+                 GRN_DB_CONF_PATH_FORMAT, path);
+    conf_path = conf_path_buffer;
+  } else {
+    conf_path = NULL;
+  }
   s->conf = grn_hash_create(ctx, conf_path,
                             GRN_CONF_MAX_KEY_SIZE,
                             GRN_CONF_VALUE_SPACE_SIZE,
@@ -176,7 +183,8 @@ grn_db_conf_create(grn_ctx *ctx, grn_db *s, const char *path,
   if (!s->conf) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "%s failed to create conf: <%s>",
-        context_tag, conf_path);
+        context_tag,
+        conf_path ? conf_path : "(temporary)");
     return GRN_FALSE;
   }
 
