@@ -2782,7 +2782,7 @@ grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
   grn_hash_cursor *c;
   if (!hash || !ctx) { return NULL; }
   if (grn_hash_error_if_truncated(ctx, hash) != GRN_SUCCESS) {
-    return GRN_ID_NIL;
+    return NULL;
   }
   if (!(c = GRN_MALLOCN(grn_hash_cursor, 1))) { return NULL; }
   GRN_DB_OBJ_SET_TYPE(c, GRN_CURSOR_TABLE_HASH_KEY);
