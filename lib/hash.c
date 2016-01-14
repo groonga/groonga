@@ -1319,8 +1319,6 @@ typedef struct {
   uint8_t dummy[1];
 } entry_astr;
 
-#define LOGICAL_MAX_SEGMENT ((GRN_HASH_MAX_SEGMENT) * 4)
-
 enum {
   GRN_HASH_KEY_SEGMENT    = 0,
   GRN_HASH_ENTRY_SEGMENT  = 1,
