@@ -17,8 +17,7 @@
 */
 
 #include "grn_ctx_impl.h"
-#include "grn_hash.h"
-#include "grn_db.h"
+#include "grn_conf.h"
 
 #include <string.h>
 
@@ -170,4 +169,103 @@ grn_conf_delete(grn_ctx *ctx,
   }
 
   GRN_API_RETURN(ctx->rc);
+}
+
+grn_obj *
+grn_conf_cursor_open(grn_ctx *ctx)
+{
+  grn_obj *db;
+  grn_hash *conf;
+  grn_conf_cursor *cursor;
+  grn_id id;
+
+  GRN_API_ENTER;
+
+  if (!ctx || !ctx->impl || !(db = ctx->impl->db)) {
+    ERR(GRN_INVALID_ARGUMENT, "[conf][cursor][open] DB isn't initialized");
+    GRN_API_RETURN(NULL);
+  }
+  conf = ((grn_db *)db)->conf;
+
+  cursor = GRN_MALLOCN(grn_conf_cursor, 1);
+  if (!cursor) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[conf][cursor][open] failed to allocate memory for conf cursor");
+    GRN_API_RETURN(NULL);
+  }
+
+  GRN_DB_OBJ_SET_TYPE(cursor, GRN_CURSOR_CONF);
+  cursor->hash_cursor = grn_hash_cursor_open(ctx, conf,
+                                             NULL, -1,
+                                             NULL, -1,
+                                             0, -1, 0);
+  if (!cursor->hash_cursor) {
+    GRN_FREE(cursor);
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[conf][cursor][open] failed to allocate memory for hash cursor");
+    GRN_API_RETURN(NULL);
+  }
+
+  id = grn_obj_register(ctx, ctx->impl->db, NULL, 0);
+  DB_OBJ(cursor)->header.domain = GRN_ID_NIL;
+  DB_OBJ(cursor)->range = GRN_ID_NIL;
+  grn_db_obj_init(ctx, ctx->impl->db, id, DB_OBJ(cursor));
+
+  GRN_API_RETURN((grn_obj *)cursor);
+}
+
+grn_rc
+grn_conf_cursor_close(grn_ctx *ctx, grn_conf_cursor *cursor)
+{
+  grn_hash_cursor_close(ctx, cursor->hash_cursor);
+  GRN_FREE(cursor);
+
+  return GRN_SUCCESS;
+}
+
+grn_bool
+grn_conf_cursor_next(grn_ctx *ctx, grn_obj *cursor)
+{
+  grn_bool have_next;
+  grn_conf_cursor *conf_cursor = (grn_conf_cursor *)cursor;
+
+  GRN_API_ENTER;
+
+  have_next = grn_hash_cursor_next(ctx, conf_cursor->hash_cursor) != GRN_ID_NIL;
+
+  GRN_API_RETURN(have_next);
+}
+
+uint32_t
+grn_conf_cursor_get_key(grn_ctx *ctx, grn_obj *cursor, const char **key)
+{
+  void *key_raw;
+  uint32_t key_size;
+  grn_conf_cursor *conf_cursor = (grn_conf_cursor *)cursor;
+
+  GRN_API_ENTER;
+
+  key_size = grn_hash_cursor_get_key(ctx, conf_cursor->hash_cursor, &key_raw);
+  *key = key_raw;
+
+  GRN_API_RETURN(key_size);
+}
+
+uint32_t
+grn_conf_cursor_get_value(grn_ctx *ctx, grn_obj *cursor, const char **value)
+{
+  void *value_raw;
+  uint32_t value_size;
+  uint32_t value_size_raw;
+  grn_conf_cursor *conf_cursor = (grn_conf_cursor *)cursor;
+
+  GRN_API_ENTER;
+
+  value_size_raw = grn_hash_cursor_get_value(ctx,
+                                             conf_cursor->hash_cursor,
+                                             &value_raw);
+  *value = (char *)value_raw + sizeof(uint32_t);
+  value_size = *((uint32_t *)value_raw);
+
+  GRN_API_RETURN(value_size);
 }
