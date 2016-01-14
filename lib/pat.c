@@ -2670,7 +2670,7 @@ grn_pat_inspect_node(grn_ctx *ctx, grn_pat *pat, grn_id id, int check,
     GRN_TEXT_PUTS(ctx, buf, "\n");
     grn_pat_inspect_node(ctx, pat, node->lr[1], c, key_buf,
                          indent + 2, "R:", buf);
-  } else {
+  } else if (id) {
     int key_size;
     uint8_t *key;
 
