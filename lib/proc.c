@@ -2720,6 +2720,50 @@ exit :
 static const size_t DUMP_FLUSH_THRESHOLD_SIZE = 256 * 1024;
 
 static void
+dump_value(grn_ctx *ctx, grn_obj *outbuf, const char *value, int value_len)
+{
+  grn_obj escaped_value;
+  GRN_TEXT_INIT(&escaped_value, 0);
+  grn_text_esc(ctx, &escaped_value, value, value_len);
+  /* is no character escaped? */
+  /* TODO false positive with spaces inside values */
+  if (GRN_TEXT_LEN(&escaped_value) == value_len + 2) {
+    GRN_TEXT_PUT(ctx, outbuf, value, value_len);
+  } else {
+    GRN_TEXT_PUT(ctx, outbuf,
+                 GRN_TEXT_VALUE(&escaped_value), GRN_TEXT_LEN(&escaped_value));
+  }
+  grn_obj_close(ctx, &escaped_value);
+}
+
+static void
+dump_confs(grn_ctx *ctx, grn_obj *outbuf)
+{
+  grn_obj *conf_cursor;
+
+  conf_cursor = grn_conf_cursor_open(ctx);
+  if (!conf_cursor)
+    return;
+
+  while (grn_conf_cursor_next(ctx, conf_cursor)) {
+    const char *key;
+    uint32_t key_size;
+    const char *value;
+    uint32_t value_size;
+
+    key_size = grn_conf_cursor_get_key(ctx, conf_cursor, &key);
+    value_size = grn_conf_cursor_get_value(ctx, conf_cursor, &value);
+
+    GRN_TEXT_PUTS(ctx, outbuf, "conf_set ");
+    dump_value(ctx, outbuf, key, key_size);
+    GRN_TEXT_PUTS(ctx, outbuf, " ");
+    dump_value(ctx, outbuf, value, value_size);
+    GRN_TEXT_PUTC(ctx, outbuf, '\n');
+  }
+  grn_obj_close(ctx, conf_cursor);
+}
+
+static void
 dump_plugins(grn_ctx *ctx, grn_obj *outbuf)
 {
   grn_obj plugin_names;
@@ -2730,6 +2774,15 @@ dump_plugins(grn_ctx *ctx, grn_obj *outbuf)
   grn_plugin_get_names(ctx, &plugin_names);
 
   n = grn_vector_size(ctx, &plugin_names);
+  if (n == 0) {
+    GRN_OBJ_FIN(ctx, &plugin_names);
+    return;
+  }
+
+  if (GRN_TEXT_LEN(outbuf) > 0) {
+    GRN_TEXT_PUTC(ctx, outbuf, '\n');
+    grn_ctx_output_flush(ctx, 0);
+  }
   for (i = 0; i < n; i++) {
     const char *name;
     unsigned int name_size;
@@ -2743,29 +2796,12 @@ dump_plugins(grn_ctx *ctx, grn_obj *outbuf)
 }
 
 static void
-dump_name(grn_ctx *ctx, grn_obj *outbuf, const char *name, int name_len)
-{
-  grn_obj escaped_name;
-  GRN_TEXT_INIT(&escaped_name, 0);
-  grn_text_esc(ctx, &escaped_name, name, name_len);
-  /* is no character escaped? */
-  /* TODO false positive with spaces inside names */
-  if (GRN_TEXT_LEN(&escaped_name) == name_len + 2) {
-    GRN_TEXT_PUT(ctx, outbuf, name, name_len);
-  } else {
-    GRN_TEXT_PUT(ctx, outbuf,
-                 GRN_TEXT_VALUE(&escaped_name), GRN_TEXT_LEN(&escaped_name));
-  }
-  grn_obj_close(ctx, &escaped_name);
-}
-
-static void
 dump_obj_name(grn_ctx *ctx, grn_obj *outbuf, grn_obj *obj)
 {
   char name[GRN_TABLE_MAX_KEY_SIZE];
   int name_len;
   name_len = grn_obj_name(ctx, obj, name, GRN_TABLE_MAX_KEY_SIZE);
-  dump_name(ctx, outbuf, name, name_len);
+  dump_value(ctx, outbuf, name, name_len);
 }
 
 static void
@@ -2774,7 +2810,7 @@ dump_column_name(grn_ctx *ctx, grn_obj *outbuf, grn_obj *column)
   char name[GRN_TABLE_MAX_KEY_SIZE];
   int name_len;
   name_len = grn_column_name(ctx, column, name, GRN_TABLE_MAX_KEY_SIZE);
-  dump_name(ctx, outbuf, name, name_len);
+  dump_value(ctx, outbuf, name, name_len);
 }
 
 static void
@@ -3435,10 +3471,12 @@ proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *dump_schema_raw = VAR(2);
   grn_obj *dump_records_raw = VAR(3);
   grn_obj *dump_indexes_raw = VAR(4);
+  grn_obj *dump_confs_raw = VAR(5);
   grn_bool is_dump_plugins;
   grn_bool is_dump_schema;
   grn_bool is_dump_records;
   grn_bool is_dump_indexes;
+  grn_bool is_dump_confs;
 
   grn_ctx_set_output_type(ctx, GRN_CONTENT_GROONGA_COMMAND_LIST);
 
@@ -3446,7 +3484,11 @@ proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   is_dump_schema = bool_option_value(dump_schema_raw, GRN_TRUE);
   is_dump_records = bool_option_value(dump_records_raw, GRN_TRUE);
   is_dump_indexes = bool_option_value(dump_indexes_raw, GRN_TRUE);
+  is_dump_confs = bool_option_value(dump_confs_raw, GRN_TRUE);
 
+  if (is_dump_confs) {
+    dump_confs(ctx, outbuf);
+  }
   if (is_dump_plugins) {
     dump_plugins(ctx, outbuf);
   }
@@ -7343,7 +7385,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[2], "dump_schema");
   DEF_VAR(vars[3], "dump_records");
   DEF_VAR(vars[4], "dump_indexes");
-  DEF_COMMAND("dump", proc_dump, 5, vars);
+  DEF_VAR(vars[5], "dump_confs");
+  DEF_COMMAND("dump", proc_dump, 6, vars);
 
   /* Deprecated. Use "plugin_register" instead. */
   DEF_VAR(vars[0], "path");

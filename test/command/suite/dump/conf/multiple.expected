@@ -1,0 +1,10 @@
+conf_set key1 value1
+[[0,0.0,0.0],true]
+conf_set key2 value2
+[[0,0.0,0.0],true]
+conf_set key3 value3
+[[0,0.0,0.0],true]
+dump
+conf_set key1 value1
+conf_set key2 value2
+conf_set key3 value3
