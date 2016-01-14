@@ -1243,6 +1243,7 @@ grn_array_unblock(grn_ctx *ctx, grn_array *array)
    (sizeof(grn_id) *\
     (GRN_HASH_MAX_KEY_SIZE_LARGE - GRN_HASH_MAX_KEY_SIZE_NORMAL)))
 #define GRN_HASH_SEGMENT_SIZE 0x400000
+#define GRN_HASH_KEY_MAX_N_SEGMENTS 0x400
 #define W_OF_KEY_IN_A_SEGMENT 22
 #define IDX_MASK_IN_A_SEGMENT 0xfffff
 
@@ -1623,7 +1624,7 @@ grn_io_hash_create_io(grn_ctx *ctx, const char *path,
   }
 
   array_spec[GRN_HASH_KEY_SEGMENT].w_of_element = 0;
-  array_spec[GRN_HASH_KEY_SEGMENT].max_n_segments = 0x400;
+  array_spec[GRN_HASH_KEY_SEGMENT].max_n_segments = GRN_HASH_KEY_MAX_N_SEGMENTS;
   array_spec[GRN_HASH_ENTRY_SEGMENT].w_of_element = w_of_element;
   array_spec[GRN_HASH_ENTRY_SEGMENT].max_n_segments =
       1U << (30 - (22 - w_of_element));
