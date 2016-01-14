@@ -28,13 +28,13 @@ extern "C" {
 #define GRN_CONF_VALUE_SPACE_SIZE (4 * 1024)
 
 GRN_API grn_rc grn_conf_set(grn_ctx *ctx,
-                            const char *key, int key_size,
-                            const char *value, int value_size);
+                            const char *key, int32_t key_size,
+                            const char *value, int32_t value_size);
 GRN_API grn_rc grn_conf_get(grn_ctx *ctx,
-                            const char *key, int key_size,
+                            const char *key, int32_t key_size,
                             const char **value, uint32_t *value_size);
 GRN_API grn_rc grn_conf_delete(grn_ctx *ctx,
-                               const char *key, int key_size);
+                               const char *key, int32_t key_size);
 
 #ifdef __cplusplus
 }
