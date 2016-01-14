@@ -1474,7 +1474,15 @@ grn_io_hash_entry_put_key(grn_ctx *ctx, grn_hash *hash,
 
     header = hash->header.common;
     if (key_size >= GRN_HASH_SEGMENT_SIZE) {
-      return GRN_INVALID_ARGUMENT;
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int name_size;
+      name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+      ERR(GRN_INVALID_ARGUMENT,
+          "[hash][key][put] too long key: <%.*s>: max=%u: key size=%u",
+          name_size, name,
+          GRN_HASH_SEGMENT_SIZE,
+          key_size);
+      return ctx->rc;
     }
     if (key_size > (GRN_HASH_KEY_MAX_TOTAL_SIZE - header->curr_key)) {
       char name[GRN_TABLE_MAX_KEY_SIZE];
@@ -1501,7 +1509,16 @@ grn_io_hash_entry_put_key(grn_ctx *ctx, grn_hash *hash,
   {
     void * const key_ptr = grn_io_hash_key_at(ctx, hash, key_offset);
     if (!key_ptr) {
-      return GRN_NO_MEMORY_AVAILABLE;
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int name_size;
+      name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[hash][key][put] failed to allocate for new key: <%.*s>: "
+          "new offset:%u key size=%u",
+          name_size, name,
+          key_offset,
+          key_size);
+      return ctx->rc;
     }
     grn_memcpy(key_ptr, key, key_size);
   }
