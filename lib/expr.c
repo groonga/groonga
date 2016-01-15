@@ -4773,6 +4773,14 @@ typedef union {
     grn_obj *normalizer;
 #endif /* GRN_SUPPORT_REGEXP */
   } simple_regexp;
+  struct {
+    grn_obj *expr;
+    grn_obj *variable;
+    grn_obj value_buffer;
+    grn_obj constant_buffer;
+    int32_t score;
+    grn_bool (*exec)(grn_ctx *ctx, grn_obj *x, grn_obj *y);
+  } simple_condition;
 } grn_table_select_sequential_data;
 
 typedef void (*grn_table_select_sequential_init_func)(grn_ctx *ctx,
@@ -5060,6 +5068,185 @@ grn_table_select_sequential_fin_simple_regexp(grn_ctx *ctx,
 }
 #endif /* GRN_SUPPORT_REGEXP */
 
+static grn_bool
+grn_table_select_sequential_is_simple_condition(grn_ctx *ctx, grn_obj *expr)
+{
+  grn_expr *e = (grn_expr *)expr;
+  grn_expr_code *target;
+  grn_expr_code *constant;
+  grn_expr_code *operator;
+
+  if (e->codes_curr != 3) {
+    return GRN_FALSE;
+  }
+
+  target = &(e->codes[0]);
+  constant = &(e->codes[1]);
+  operator = &(e->codes[2]);
+
+  switch (operator->op) {
+  case GRN_OP_EQUAL :
+  case GRN_OP_NOT_EQUAL :
+  case GRN_OP_LESS :
+  case GRN_OP_GREATER :
+  case GRN_OP_LESS_EQUAL :
+  case GRN_OP_GREATER_EQUAL :
+    break;
+  default :
+    return GRN_FALSE;
+  }
+  if (operator->nargs != 2) {
+    return GRN_FALSE;
+  }
+
+  if (target->op != GRN_OP_GET_VALUE) {
+    return GRN_FALSE;
+  }
+  if (target->nargs != 1) {
+    return GRN_FALSE;
+  }
+  if (!target->value) {
+    return GRN_FALSE;
+  }
+  if ((target->value->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) !=
+      GRN_OBJ_COLUMN_SCALAR) {
+    return GRN_FALSE;
+  }
+
+  if (constant->op != GRN_OP_PUSH) {
+    return GRN_FALSE;
+  }
+  if (constant->nargs != 1) {
+    return GRN_FALSE;
+  }
+  if (!constant->value) {
+    return GRN_FALSE;
+  }
+  if (constant->value->header.type != GRN_BULK) {
+    return GRN_FALSE;
+  }
+
+  return GRN_TRUE;
+}
+
+static void
+grn_table_select_sequential_init_simple_condition(
+  grn_ctx *ctx,
+  grn_table_select_sequential_data *data)
+{
+  grn_expr *e = (grn_expr *)(data->simple_condition.expr);
+  grn_obj *target;
+  grn_obj *constant;
+  grn_operator op;
+  grn_obj *value_buffer;
+  grn_obj *constant_buffer;
+  grn_rc rc;
+
+  target = e->codes[0].value;
+  constant = e->codes[1].value;
+  op = e->codes[2].op;
+
+  data->simple_condition.score = 0;
+
+  value_buffer = &(data->simple_condition.value_buffer);
+  GRN_VOID_INIT(value_buffer);
+  grn_obj_reinit_for(ctx, value_buffer, target);
+
+  switch (op) {
+  case GRN_OP_EQUAL :
+    data->simple_condition.exec = grn_operator_exec_equal;
+    break;
+  case GRN_OP_NOT_EQUAL :
+    data->simple_condition.exec = grn_operator_exec_not_equal;
+    break;
+  case GRN_OP_LESS :
+    data->simple_condition.exec = grn_operator_exec_less;
+    break;
+  case GRN_OP_GREATER :
+    data->simple_condition.exec = grn_operator_exec_greater;
+    break;
+  case GRN_OP_LESS_EQUAL :
+    data->simple_condition.exec = grn_operator_exec_less_equal;
+    break;
+  case GRN_OP_GREATER_EQUAL :
+    data->simple_condition.exec = grn_operator_exec_greater_equal;
+    break;
+  default :
+    break;
+  }
+
+  constant_buffer = &(data->simple_condition.constant_buffer);
+  GRN_VOID_INIT(constant_buffer);
+  grn_obj_reinit_for(ctx, constant_buffer, target);
+  rc = grn_obj_cast(ctx, constant, constant_buffer, GRN_FALSE);
+  if (rc != GRN_SUCCESS) {
+    grn_obj *type;
+
+    type = grn_ctx_at(ctx, constant_buffer->header.domain);
+    if (grn_obj_is_table(ctx, type)) {
+      if (op == GRN_OP_NOT_EQUAL) {
+        data->simple_condition.score = 1;
+      } else {
+        data->simple_condition.score = -1;
+      }
+    } else {
+      int type_name_size;
+      char type_name[GRN_TABLE_MAX_KEY_SIZE];
+      grn_obj inspected;
+
+      type_name_size = grn_obj_name(ctx, type, type_name,
+                                    GRN_TABLE_MAX_KEY_SIZE);
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, constant);
+      ERR(rc,
+          "[table][select][sequential][condition] "
+          "failed to cast to <%.*s>: <%.*s>",
+          type_name_size, type_name,
+          (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+    }
+    return;
+  }
+}
+
+static int32_t
+grn_table_select_sequential_exec_simple_condition(
+  grn_ctx *ctx,
+  grn_id id,
+  grn_table_select_sequential_data *data)
+{
+  grn_expr *e = (grn_expr *)(data->simple_condition.expr);
+  grn_obj *target;
+  grn_obj *value_buffer = &(data->simple_condition.value_buffer);
+  grn_obj *constant_buffer = &(data->simple_condition.constant_buffer);
+
+  if (ctx->rc) {
+    return -1;
+  }
+
+  if (data->simple_condition.score != 0) {
+    return data->simple_condition.score;
+  }
+
+  target = e->codes[0].value;
+  GRN_BULK_REWIND(value_buffer);
+  grn_obj_get_value(ctx, target, id, value_buffer);
+
+  if (data->simple_condition.exec(ctx, value_buffer, constant_buffer)) {
+    return 1;
+  } else {
+    return -1;
+  }
+}
+
+static void
+grn_table_select_sequential_fin_simple_condition(
+  grn_ctx *ctx,
+  grn_table_select_sequential_data *data)
+{
+  GRN_OBJ_FIN(ctx, &(data->simple_condition.value_buffer));
+  GRN_OBJ_FIN(ctx, &(data->simple_condition.constant_buffer));
+}
+
 static void
 grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                             grn_obj *v, grn_obj *res, grn_operator op)
@@ -5089,6 +5276,10 @@ grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
     exec = grn_table_select_sequential_exec_simple_regexp;
     fin = grn_table_select_sequential_fin_simple_regexp;
 #endif /* GRN_SUPPORT_REGEXP */
+  } else if (grn_table_select_sequential_is_simple_condition(ctx, expr)) {
+    init = grn_table_select_sequential_init_simple_condition;
+    exec = grn_table_select_sequential_exec_simple_condition;
+    fin = grn_table_select_sequential_fin_simple_condition;
   }
 
   init(ctx, &data);
