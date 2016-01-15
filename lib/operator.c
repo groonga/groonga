@@ -396,7 +396,7 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
   }\
 } while (0)
 
-#define DO_COMPARE_SUB(op) do {\
+#define DO_COMPARE_SUB_BUILTIN(op) do {\
   switch (y->header.domain) {\
   case GRN_DB_SHORT_TEXT :\
   case GRN_DB_TEXT :\
@@ -415,6 +415,40 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
   default :\
     DO_COMPARE_SUB_NUMERIC(y,op);\
     break;\
+  }\
+} while (0)
+
+#define DO_COMPARE_SUB(op) do {\
+  if (y->header.domain >= GRN_N_RESERVED_TYPES) {\
+    grn_obj *y_table;\
+    y_table = grn_ctx_at(ctx, y->header.domain);\
+    switch (y_table->header.type) {\
+    case GRN_TABLE_HASH_KEY :\
+    case GRN_TABLE_PAT_KEY :\
+    case GRN_TABLE_DAT_KEY :\
+      {\
+        grn_obj y_key;\
+        int length;\
+        GRN_OBJ_INIT(&y_key, GRN_BULK, 0, y_table->header.domain);\
+        length = grn_table_get_key2(ctx, y_table, GRN_RECORD_VALUE(y), &y_key);\
+        if (length > 0) {\
+          grn_obj *y_original = y;\
+          y = &y_key;\
+          DO_COMPARE_SUB_BUILTIN(op);\
+          y = y_original;\
+        } else {\
+          r = GRN_FALSE;\
+        }\
+        GRN_OBJ_FIN(ctx, &y_key);\
+      }\
+      break;\
+    default :\
+      r = GRN_FALSE;\
+      break;\
+    }\
+    grn_obj_unlink(ctx, y_table);\
+  } else {\
+    DO_COMPARE_SUB_BUILTIN(op);\
   }\
 } while (0)
 
@@ -544,32 +578,33 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
 
 #define DO_COMPARE(x, y, r, op) do {\
   if (x->header.domain >= GRN_N_RESERVED_TYPES) {\
-    grn_obj *table;\
-    table = grn_ctx_at(ctx, x->header.domain);\
-    switch (table->header.type) {\
+    grn_obj *x_table;\
+    x_table = grn_ctx_at(ctx, x->header.domain);\
+    switch (x_table->header.type) {\
     case GRN_TABLE_HASH_KEY :\
     case GRN_TABLE_PAT_KEY :\
+    case GRN_TABLE_DAT_KEY :\
       {\
-        grn_obj key;\
+        grn_obj x_key;\
         int length;\
-        GRN_OBJ_INIT(&key, GRN_BULK, 0, table->header.domain);\
-        length = grn_table_get_key2(ctx, table, GRN_RECORD_VALUE(x), &key);\
+        GRN_OBJ_INIT(&x_key, GRN_BULK, 0, x_table->header.domain);\
+        length = grn_table_get_key2(ctx, x_table, GRN_RECORD_VALUE(x), &x_key);\
         if (length > 0) {\
           grn_obj *x_original = x;\
-          x = &key;\
-          DO_COMPARE_BUILTIN((&key), y, r, op);\
+          x = &x_key;\
+          DO_COMPARE_BUILTIN((&x_key), y, r, op);\
           x = x_original;\
         } else {\
           r = GRN_FALSE;\
         }\
-        GRN_OBJ_FIN(ctx, &key);\
+        GRN_OBJ_FIN(ctx, &x_key);\
       }\
       break;\
     default :\
       r = GRN_FALSE;\
       break;\
     }\
-    grn_obj_unlink(ctx, table);\
+    grn_obj_unlink(ctx, x_table);\
   } else {\
     DO_COMPARE_BUILTIN(x, y, r, op);\
   }\
