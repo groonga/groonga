@@ -6139,7 +6139,27 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest,
     rc = grn_obj_reinit(ctx, dest, dest->header.domain, dest->header.flags);
     break;
   default :
-    rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+    if (src->header.domain >= GRN_N_RESERVED_TYPES) {
+      grn_obj *table;
+      table = grn_ctx_at(ctx, src->header.domain);
+      switch (table->header.type) {
+      case GRN_TABLE_HASH_KEY :
+      case GRN_TABLE_PAT_KEY :
+      case GRN_TABLE_DAT_KEY :
+      case GRN_TABLE_NO_KEY :
+        if (src->header.domain == dest->header.domain) {
+          GRN_RECORD_SET(ctx, dest, GRN_RECORD_VALUE(src));
+        } else {
+          rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+        }
+        break;
+      default :
+        rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+        break;
+      }
+    } else {
+      rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+    }
     break;
   }
   return rc;
