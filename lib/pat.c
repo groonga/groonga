@@ -2664,6 +2664,13 @@ grn_pat_inspect_node(grn_ctx *ctx, grn_pat *pat, grn_id id, int check,
   grn_text_lltoa(ctx, buf, id);
 
   if (c > check) {
+    GRN_TEXT_PUTS(ctx, buf, "\n");
+    grn_pat_inspect_node(ctx, pat, node->lr[0], c, key_buf,
+                         indent + 2, "L:", buf);
+    GRN_TEXT_PUTS(ctx, buf, "\n");
+    grn_pat_inspect_node(ctx, pat, node->lr[1], c, key_buf,
+                         indent + 2, "R:", buf);
+  } else if (id) {
     int key_size;
     uint8_t *key;
 
@@ -2690,15 +2697,6 @@ grn_pat_inspect_node(grn_ctx *ctx, grn_pat *pat, grn_id id, int check,
       }
     }
     GRN_TEXT_PUTS(ctx, buf, "]");
-  }
-
-  if (c > check) {
-    GRN_TEXT_PUTS(ctx, buf, "\n");
-    grn_pat_inspect_node(ctx, pat, node->lr[0], c, key_buf,
-                         indent + 2, "L:", buf);
-    GRN_TEXT_PUTS(ctx, buf, "\n");
-    grn_pat_inspect_node(ctx, pat, node->lr[1], c, key_buf,
-                         indent + 2, "R:", buf);
   }
 }
 
