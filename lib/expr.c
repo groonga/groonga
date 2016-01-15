@@ -5049,7 +5049,7 @@ grn_table_select_sequential_exec_simple_regexp(grn_ctx *ctx,
 
 static void
 grn_table_select_sequential_fin_simple_regexp(grn_ctx *ctx,
-                                        grn_table_select_sequential_data *data)
+                                              grn_table_select_sequential_data *data)
 {
   if (!data->simple_regexp.regex) {
     return;
