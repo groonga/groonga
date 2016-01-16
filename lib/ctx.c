@@ -2011,8 +2011,7 @@ void
 grn_cache_fin(void)
 {
   grn_cache_current_set(&grn_gctx, NULL);
-  if (grn_cache_default)
-    grn_cache_close(&grn_gctx, grn_cache_default);
+  grn_cache_close(&grn_gctx, grn_cache_default);
 }
 
 /**** memory allocation ****/
