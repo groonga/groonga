@@ -67,23 +67,30 @@ benchmarks =					\
 
 run-bench-table-factory: bench-table-factory
 	@echo $@:
-	./bench-table-factory
+	env							\
+	  GRN_RUBY_SCRIPTS_DIR="$(top_srcdir)/lib/mrb/scripts"	\
+	  ./bench-table-factory
 
 run-bench-geo-distance: bench-geo-distance
 	@echo $@:
-	./bench-geo-distance
+	env							\
+	  GRN_RUBY_SCRIPTS_DIR="$(top_srcdir)/lib/mrb/scripts"	\
+	  ./bench-geo-distance
 
 run-bench-geo-select: bench-geo-select
 	@echo $@:
-	env					\
-	  RUBY="$(RUBY)"			\
-	  GROONGA="$(GROONGA)"			\
-	  srcdir="$(srcdir)"			\
+	env							\
+	  RUBY="$(RUBY)"					\
+	  GROONGA="$(GROONGA)"					\
+	  GRN_RUBY_SCRIPTS_DIR="$(top_srcdir)/lib/mrb/scripts"	\
+	  srcdir="$(srcdir)"					\
 	  $(srcdir)/bench-geo-select.sh
 
 run-bench-ctx-create: bench-ctx-create
 	@echo $@:
-	./bench-ctx-create
+	env							\
+	  GRN_RUBY_SCRIPTS_DIR="$(top_srcdir)/lib/mrb/scripts"	\
+	  ./bench-ctx-create
 
 run-bench-query-optimizer: bench-query-optimizer
 	@echo $@:
@@ -108,6 +115,8 @@ run-bench-range-select: bench-range-select
 
 run-bench-result-set: bench-result-set
 	@echo $@:
-	./bench-result-set
+	env							\
+	  GRN_RUBY_SCRIPTS_DIR="$(top_srcdir)/lib/mrb/scripts"	\
+	  ./bench-result-set
 
 benchmark: $(benchmarks)
