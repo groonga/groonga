@@ -116,6 +116,9 @@ grn_request_canceler_fin(void)
 {
   grn_ctx *ctx = &grn_gctx;
 
+  if (!grn_the_request_canceler)
+    return;
+
   grn_hash_close(ctx, grn_the_request_canceler->entries);
   MUTEX_FIN(grn_the_request_canceler->mutex);
   GRN_FREE(grn_the_request_canceler);
