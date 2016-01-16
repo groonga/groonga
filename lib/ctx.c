@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2015 Brazil
+  Copyright(C) 2009-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -115,6 +115,14 @@ grn_init_external_libraries(void)
 {
 #ifdef GRN_SUPPORT_REGEXP
   onig_init();
+#endif /*  GRN_SUPPORT_REGEXP */
+}
+
+static void
+grn_fin_external_libraries(void)
+{
+#ifdef GRN_SUPPORT_REGEXP
+  onig_end();
 #endif /*  GRN_SUPPORT_REGEXP */
 }
 
@@ -890,9 +898,15 @@ grn_init(void)
   grn_gtick = 0;
   ctx->next = ctx;
   ctx->prev = ctx;
-  grn_ctx_init_internal(ctx, 0);
+  rc = grn_ctx_init_internal(ctx, 0);
+  if (rc) {
+    goto fail_ctx_init_internal;
+  }
   ctx->encoding = grn_encoding_parse(GRN_DEFAULT_ENCODING);
-  grn_timeval_now(ctx, &grn_starttime);
+  rc = grn_timeval_now(ctx, &grn_starttime);
+  if (rc) {
+    goto fail_start_time;
+  }
 #ifdef WIN32
   {
     SYSTEM_INFO si;
@@ -902,7 +916,8 @@ grn_init(void)
 #else /* WIN32 */
   if ((grn_pagesize = sysconf(_SC_PAGESIZE)) == -1) {
     SERR("_SC_PAGESIZE");
-    return ctx->rc;
+    rc = ctx->rc;
+    goto fail_page_size;
   }
 #endif /* WIN32 */
   if (grn_pagesize & (grn_pagesize - 1)) {
@@ -958,40 +973,54 @@ grn_init(void)
 #endif /* USE_FAIL_MALLOC */
   if ((rc = grn_com_init())) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_com_init failed (%d)", rc);
-    return rc;
+    goto fail_com;
   }
   if ((rc = grn_ctx_impl_init(ctx))) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_ctx_impl_init failed (%d)", rc);
-    return rc;
+    goto fail_ctx_impl;
   }
   if ((rc = grn_plugins_init())) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_plugins_init failed (%d)", rc);
-    return rc;
+    goto fail_plugins;
   }
   if ((rc = grn_normalizer_init())) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_normalizer_init failed (%d)", rc);
-    return rc;
+    goto fail_normalizer;
   }
   if ((rc = grn_tokenizers_init())) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_tokenizers_init failed (%d)", rc);
-    return rc;
+    goto fail_tokenizer;
   }
-  /*
-  if ((rc = grn_index_init())) {
-    GRN_LOG(ctx, GRN_LOG_ALERT, "index initialize failed (%d)", rc);
-    return rc;
-  }
-  */
   grn_cache_init();
   if (!grn_request_canceler_init()) {
     rc = ctx->rc;
-    grn_cache_fin();
     GRN_LOG(ctx, GRN_LOG_ALERT,
             "failed to initialize request canceler (%d)", rc);
-    return rc;
+    goto fail_request_canceler;
   }
   GRN_LOG(ctx, GRN_LOG_NOTICE, "grn_init: <%s>", grn_get_version());
   check_overcommit_memory(ctx);
+  return rc;
+
+fail_request_canceler:
+  grn_cache_fin();
+fail_tokenizer:
+  grn_normalizer_fin();
+fail_normalizer:
+  grn_plugins_fin();
+fail_plugins:
+  grn_ctx_fin(ctx);
+fail_ctx_impl:
+  grn_com_fin();
+fail_com:
+fail_page_size:
+fail_start_time:
+fail_ctx_init_internal:
+  GRN_LOG(ctx, GRN_LOG_NOTICE, "grn_init: <%s>: failed", grn_get_version());
+  grn_query_logger_fin(ctx);
+  grn_logger_fin(ctx);
+  CRITICAL_SECTION_FIN(grn_glock);
+  grn_fin_external_libraries();
   return rc;
 }
 
@@ -1059,14 +1088,6 @@ grn_set_lock_timeout(int timeout)
 }
 
 static int alloc_count = 0;
-
-static void
-grn_fin_external_libraries(void)
-{
-#ifdef GRN_SUPPORT_REGEXP
-  onig_end();
-#endif /*  GRN_SUPPORT_REGEXP */
-}
 
 grn_rc
 grn_fin(void)
