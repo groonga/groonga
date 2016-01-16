@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2015  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2015-2016  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,7 @@
 */
 
 #include <string.h>
+#include <stdlib.h>
 
 #include <groonga.h>
 
@@ -90,13 +91,19 @@ bench_teardown(gpointer user_data)
 int
 main(int argc, gchar **argv)
 {
+  grn_rc rc;
   BenchmarkData data;
   BenchReporter *reporter;
   gchar *base_dir;
   grn_ctx ctx;
   gint n = 100;
 
-  grn_init();
+  rc = grn_init();
+  if (rc != GRN_SUCCESS) {
+    g_print("failed to initialize Groonga: <%d>: %s\n",
+            rc, grn_get_global_error_message());
+    return EXIT_FAILURE;
+  }
   bench_init(&argc, &argv);
 
   data.context = &ctx;
@@ -140,5 +147,5 @@ main(int argc, gchar **argv)
   bench_quit();
   grn_fin();
 
-  return 0;
+  return EXIT_SUCCESS;
 }
