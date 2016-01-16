@@ -1,0 +1,4 @@
+config_set key value
+config_get key
+config_delete key
+config_get key

@@ -1,4 +1,4 @@
-conf_set alias.column Aliases.real_name
+config_set alias.column Aliases.real_name
 
 table_create Aliases TABLE_HASH_KEY ShortText
 column_create Aliases real_name COLUMN_SCALAR ShortText

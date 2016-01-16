@@ -1,0 +1,5 @@
+config_set key1 value1
+config_set key2 value2
+config_set key3 value3
+
+dump

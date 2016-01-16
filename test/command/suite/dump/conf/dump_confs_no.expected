@@ -1,3 +1,0 @@
-conf_set key value
-[[0,0.0,0.0],true]
-dump --dump_confs no

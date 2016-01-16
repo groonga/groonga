@@ -363,7 +363,7 @@ typedef unsigned short int grn_obj_flags;
 #define GRN_CURSOR_TABLE_NO_KEY        (0x13)
 #define GRN_CURSOR_COLUMN_INDEX        (0x18)
 #define GRN_CURSOR_COLUMN_GEO_INDEX    (0x1a)
-#define GRN_CURSOR_CONF                (0x1f)
+#define GRN_CURSOR_CONFIG              (0x1f)
 #define GRN_TYPE                       (0x20)
 #define GRN_PROC                       (0x21)
 #define GRN_EXPR                       (0x22)

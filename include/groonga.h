@@ -22,7 +22,7 @@
 #include "groonga/groonga.h"
 
 #include "groonga/array.h"
-#include "groonga/conf.h"
+#include "groonga/config.h"
 #include "groonga/dat.h"
 #include "groonga/dump.h"
 #include "groonga/expr.h"

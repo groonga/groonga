@@ -9,7 +9,7 @@ module Groonga
 
       def classes
         rewriters_table_name =
-          Conf["expression_rewriter.table"] || "expression_rewriters"
+          Config["expression_rewriter.table"] || "expression_rewriters"
         rewriters_table = Context.instance[rewriters_table_name]
         return [] if rewriters_table.nil?
 

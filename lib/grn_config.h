@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -18,21 +18,19 @@
 
 #pragma once
 
-#include "grn.h"
+#include "grn_db.h"
+#include "grn_hash.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void grn_proc_init_from_env(void);
+typedef struct {
+  grn_db_obj obj;
+  grn_hash_cursor *hash_cursor;
+} grn_config_cursor;
 
-GRN_VAR const char *grn_document_root;
-void grn_db_init_builtin_query(grn_ctx *ctx);
-
-void grn_proc_init_schema(grn_ctx *ctx);
-void grn_proc_init_config_get(grn_ctx *ctx);
-void grn_proc_init_config_set(grn_ctx *ctx);
-void grn_proc_init_config_delete(grn_ctx *ctx);
+grn_rc grn_config_cursor_close(grn_ctx *ctx, grn_config_cursor *cursor);
 
 #ifdef __cplusplus
 }

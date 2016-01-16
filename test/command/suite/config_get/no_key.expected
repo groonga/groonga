@@ -1,0 +1,3 @@
+config_get
+[[[-22,0.0,0.0],"[config][get] key is missing"]]
+#|e| [config][get] key is missing

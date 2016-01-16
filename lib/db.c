@@ -16,7 +16,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "grn.h"
-#include "grn_conf.h"
+#include "grn_config.h"
 #include "grn_db.h"
 #include "grn_hash.h"
 #include "grn_pat.h"
@@ -159,32 +159,32 @@ typedef struct {
   uint32_t done;
 } db_value;
 
-static const char *GRN_DB_CONF_PATH_FORMAT = "%s.conf";
+static const char *GRN_DB_CONFIG_PATH_FORMAT = "%s.conf";
 
 static grn_bool
-grn_db_conf_create(grn_ctx *ctx, grn_db *s, const char *path,
-                   const char *context_tag)
+grn_db_config_create(grn_ctx *ctx, grn_db *s, const char *path,
+                     const char *context_tag)
 {
-  char *conf_path;
-  char conf_path_buffer[PATH_MAX];
+  char *config_path;
+  char config_path_buffer[PATH_MAX];
   uint32_t flags = GRN_OBJ_KEY_VAR_SIZE;
 
   if (path) {
-    grn_snprintf(conf_path_buffer, PATH_MAX, PATH_MAX,
-                 GRN_DB_CONF_PATH_FORMAT, path);
-    conf_path = conf_path_buffer;
+    grn_snprintf(config_path_buffer, PATH_MAX, PATH_MAX,
+                 GRN_DB_CONFIG_PATH_FORMAT, path);
+    config_path = config_path_buffer;
   } else {
-    conf_path = NULL;
+    config_path = NULL;
   }
-  s->conf = grn_hash_create(ctx, conf_path,
-                            GRN_CONF_MAX_KEY_SIZE,
-                            GRN_CONF_VALUE_SPACE_SIZE,
-                            flags);
-  if (!s->conf) {
+  s->config = grn_hash_create(ctx, config_path,
+                              GRN_CONFIG_MAX_KEY_SIZE,
+                              GRN_CONFIG_VALUE_SPACE_SIZE,
+                              flags);
+  if (!s->config) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
-        "%s failed to create conf: <%s>",
+        "%s failed to create data store for configuration: <%s>",
         context_tag,
-        conf_path ? conf_path : "(temporary)");
+        config_path ? config_path : "(temporary)");
     return GRN_FALSE;
   }
 
@@ -192,31 +192,32 @@ grn_db_conf_create(grn_ctx *ctx, grn_db *s, const char *path,
 }
 
 static grn_bool
-grn_db_conf_open(grn_ctx *ctx, grn_db *s, const char *path)
+grn_db_config_open(grn_ctx *ctx, grn_db *s, const char *path)
 {
-  char conf_path[PATH_MAX];
+  char config_path[PATH_MAX];
 
-  grn_snprintf(conf_path, PATH_MAX, PATH_MAX, GRN_DB_CONF_PATH_FORMAT, path);
-  if (grn_path_exist(conf_path)) {
-    s->conf = grn_hash_open(ctx, conf_path);
-    if (!s->conf) {
+  grn_snprintf(config_path, PATH_MAX, PATH_MAX, GRN_DB_CONFIG_PATH_FORMAT, path);
+  if (grn_path_exist(config_path)) {
+    s->config = grn_hash_open(ctx, config_path);
+    if (!s->config) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[db][open] failed to open conf: <%s>", conf_path);
+          "[db][open] failed to open data store for configuration: <%s>",
+          config_path);
       return GRN_FALSE;
     }
     return GRN_TRUE;
   } else {
-    return grn_db_conf_create(ctx, s, path, "[db][open]");
+    return grn_db_config_create(ctx, s, path, "[db][open]");
   }
 }
 
 static grn_rc
-grn_db_conf_remove(grn_ctx *ctx, const char *path)
+grn_db_config_remove(grn_ctx *ctx, const char *path)
 {
-  char conf_path[PATH_MAX];
+  char config_path[PATH_MAX];
 
-  grn_snprintf(conf_path, PATH_MAX, PATH_MAX, GRN_DB_CONF_PATH_FORMAT, path);
-  return grn_hash_remove(ctx, conf_path);
+  grn_snprintf(config_path, PATH_MAX, PATH_MAX, GRN_DB_CONFIG_PATH_FORMAT, path);
+  return grn_hash_remove(ctx, config_path);
 }
 
 grn_obj *
@@ -244,7 +245,7 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
                       GRN_TINY_ARRAY_USE_MALLOC);
   s->keys = NULL;
   s->specs = NULL;
-  s->conf = NULL;
+  s->config = NULL;
 
   {
     grn_bool use_default_db_key = GRN_TRUE;
@@ -290,7 +291,7 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
         goto exit;
       }
     }
-    if (!grn_db_conf_create(ctx, s, path, "[db][create]")) {
+    if (!grn_db_config_create(ctx, s, path, "[db][create]")) {
       goto exit;
     }
     grn_ctx_use(ctx, (grn_obj *)s);
@@ -298,7 +299,7 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
     grn_obj_flush(ctx, (grn_obj *)s);
     GRN_API_RETURN((grn_obj *)s);
   } else {
-    if (!grn_db_conf_create(ctx, s, NULL, "[db][create]")) {
+    if (!grn_db_config_create(ctx, s, NULL, "[db][create]")) {
       goto exit;
     }
     grn_ctx_use(ctx, (grn_obj *)s);
@@ -361,7 +362,7 @@ grn_db_open(grn_ctx *ctx, const char *path)
                       GRN_TINY_ARRAY_USE_MALLOC);
   s->keys = NULL;
   s->specs = NULL;
-  s->conf = NULL;
+  s->config = NULL;
 
   {
     uint32_t type = grn_io_detect_type(ctx, path);
@@ -397,7 +398,7 @@ grn_db_open(grn_ctx *ctx, const char *path)
       goto exit;
     }
   }
-  if (!grn_db_conf_open(ctx, s, path)) {
+  if (!grn_db_config_open(ctx, s, path)) {
     goto exit;
   }
 
@@ -505,7 +506,7 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   }
   CRITICAL_SECTION_FIN(s->lock);
   if (s->specs) { grn_ja_close(ctx, s->specs); }
-  grn_hash_close(ctx, s->conf);
+  grn_hash_close(ctx, s->config);
   GRN_FREE(s);
 
   if (ctx_used_db) {
@@ -553,9 +554,9 @@ grn_ctx_get(grn_ctx *ctx, const char *name, int name_size)
         const char *alias_column_name;
         uint32_t alias_column_name_size;
 
-        grn_conf_get(ctx,
-                     "alias.column", -1,
-                     &alias_column_name, &alias_column_name_size);
+        grn_config_get(ctx,
+                       "alias.column", -1,
+                       &alias_column_name, &alias_column_name_size);
         if (!alias_column_name) {
           break;
         }
@@ -8575,9 +8576,9 @@ _grn_obj_remove_db(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
       break;
     }
     if (rc == GRN_SUCCESS) {
-      rc = grn_db_conf_remove(ctx, path);
+      rc = grn_db_config_remove(ctx, path);
     } else {
-      grn_db_conf_remove(ctx, path);
+      grn_db_config_remove(ctx, path);
     }
   }
 
@@ -9721,8 +9722,8 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
     case GRN_CURSOR_COLUMN_GEO_INDEX :
       grn_geo_cursor_close(ctx, obj);
       break;
-    case GRN_CURSOR_CONF :
-      grn_conf_cursor_close(ctx, (grn_conf_cursor *)obj);
+    case GRN_CURSOR_CONFIG :
+      grn_config_cursor_close(ctx, (grn_config_cursor *)obj);
       break;
     case GRN_TYPE :
       GRN_FREE(obj);
@@ -10316,7 +10317,7 @@ grn_obj_flush(grn_ctx *ctx, grn_obj *obj)
         rc = grn_obj_flush(ctx, (grn_obj *)(db->specs));
       }
       if (rc == GRN_SUCCESS) {
-        rc = grn_obj_flush(ctx, (grn_obj *)(db->conf));
+        rc = grn_obj_flush(ctx, (grn_obj *)(db->config));
       }
     }
     break;

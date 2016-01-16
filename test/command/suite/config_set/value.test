@@ -1,0 +1,2 @@
+config_set key value
+config_get key

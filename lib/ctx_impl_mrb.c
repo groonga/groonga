@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2015 Brazil
+  Copyright(C) 2013-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -63,7 +63,7 @@
 # include "mrb/mrb_table_cursor_flags.h"
 # include "mrb/mrb_content_type.h"
 # include "mrb/mrb_writer.h"
-# include "mrb/mrb_conf.h"
+# include "mrb/mrb_config.h"
 
 # include <mruby/array.h>
 # include <mruby/string.h>
@@ -174,7 +174,7 @@ mrb_groonga_init(mrb_state *mrb, mrb_value self)
   grn_mrb_table_cursor_flags_init(ctx);
   grn_mrb_content_type_init(ctx);
   grn_mrb_writer_init(ctx);
-  grn_mrb_conf_init(ctx);
+  grn_mrb_config_init(ctx);
 
   grn_mrb_load(ctx, "initialize/post.rb");
 

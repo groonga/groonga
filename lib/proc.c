@@ -2737,30 +2737,30 @@ dump_value(grn_ctx *ctx, grn_obj *outbuf, const char *value, int value_len)
 }
 
 static void
-dump_confs(grn_ctx *ctx, grn_obj *outbuf)
+dump_configs(grn_ctx *ctx, grn_obj *outbuf)
 {
-  grn_obj *conf_cursor;
+  grn_obj *config_cursor;
 
-  conf_cursor = grn_conf_cursor_open(ctx);
-  if (!conf_cursor)
+  config_cursor = grn_config_cursor_open(ctx);
+  if (!config_cursor)
     return;
 
-  while (grn_conf_cursor_next(ctx, conf_cursor)) {
+  while (grn_config_cursor_next(ctx, config_cursor)) {
     const char *key;
     uint32_t key_size;
     const char *value;
     uint32_t value_size;
 
-    key_size = grn_conf_cursor_get_key(ctx, conf_cursor, &key);
-    value_size = grn_conf_cursor_get_value(ctx, conf_cursor, &value);
+    key_size = grn_config_cursor_get_key(ctx, config_cursor, &key);
+    value_size = grn_config_cursor_get_value(ctx, config_cursor, &value);
 
-    GRN_TEXT_PUTS(ctx, outbuf, "conf_set ");
+    GRN_TEXT_PUTS(ctx, outbuf, "config_set ");
     dump_value(ctx, outbuf, key, key_size);
     GRN_TEXT_PUTS(ctx, outbuf, " ");
     dump_value(ctx, outbuf, value, value_size);
     GRN_TEXT_PUTC(ctx, outbuf, '\n');
   }
-  grn_obj_close(ctx, conf_cursor);
+  grn_obj_close(ctx, config_cursor);
 }
 
 static void
@@ -3471,12 +3471,12 @@ proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *dump_schema_raw = VAR(2);
   grn_obj *dump_records_raw = VAR(3);
   grn_obj *dump_indexes_raw = VAR(4);
-  grn_obj *dump_confs_raw = VAR(5);
+  grn_obj *dump_configs_raw = VAR(5);
   grn_bool is_dump_plugins;
   grn_bool is_dump_schema;
   grn_bool is_dump_records;
   grn_bool is_dump_indexes;
-  grn_bool is_dump_confs;
+  grn_bool is_dump_configs;
 
   grn_ctx_set_output_type(ctx, GRN_CONTENT_GROONGA_COMMAND_LIST);
 
@@ -3484,10 +3484,10 @@ proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   is_dump_schema = bool_option_value(dump_schema_raw, GRN_TRUE);
   is_dump_records = bool_option_value(dump_records_raw, GRN_TRUE);
   is_dump_indexes = bool_option_value(dump_indexes_raw, GRN_TRUE);
-  is_dump_confs = bool_option_value(dump_confs_raw, GRN_TRUE);
+  is_dump_configs = bool_option_value(dump_configs_raw, GRN_TRUE);
 
-  if (is_dump_confs) {
-    dump_confs(ctx, outbuf);
+  if (is_dump_configs) {
+    dump_configs(ctx, outbuf);
   }
   if (is_dump_plugins) {
     dump_plugins(ctx, outbuf);
@@ -7385,7 +7385,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[2], "dump_schema");
   DEF_VAR(vars[3], "dump_records");
   DEF_VAR(vars[4], "dump_indexes");
-  DEF_VAR(vars[5], "dump_confs");
+  DEF_VAR(vars[5], "dump_configs");
   DEF_COMMAND("dump", proc_dump, 6, vars);
 
   /* Deprecated. Use "plugin_register" instead. */
@@ -7567,7 +7567,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
     grn_proc_set_selector(ctx, selector_proc, selector_prefix_rk_search);
   }
 
-  grn_proc_init_conf_get(ctx);
-  grn_proc_init_conf_set(ctx);
-  grn_proc_init_conf_delete(ctx);
+  grn_proc_init_config_get(ctx);
+  grn_proc_init_config_set(ctx);
+  grn_proc_init_config_delete(ctx);
 }
