@@ -295,6 +295,12 @@ grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv)
   return GRN_SUCCESS;
 }
 
+const char *
+grn_get_global_error_message(void)
+{
+  return grn_gctx.errbuf;
+}
+
 #ifdef USE_MEMORY_DEBUG
 inline static void
 grn_alloc_info_set_backtrace(char *buffer, size_t size)

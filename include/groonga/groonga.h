@@ -130,6 +130,8 @@ typedef enum {
 GRN_API grn_rc grn_init(void);
 GRN_API grn_rc grn_fin(void);
 
+GRN_API const char *grn_get_global_error_message(void);
+
 typedef enum {
   GRN_ENC_DEFAULT = 0,
   GRN_ENC_NONE,
