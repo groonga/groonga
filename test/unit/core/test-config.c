@@ -36,7 +36,7 @@ void
 cut_startup(void)
 {
   tmp_directory = g_build_filename(grn_test_get_tmp_dir(),
-                                   "test-conf",
+                                   "test-config",
                                    NULL);
 }
 
@@ -51,7 +51,7 @@ cut_setup(void)
 {
   cut_remove_path(tmp_directory, NULL);
   g_mkdir_with_parents(tmp_directory, 0700);
-  path = g_build_filename(tmp_directory, "text-conf", NULL);
+  path = g_build_filename(tmp_directory, "text-config", NULL);
   grn_ctx_init(&context, 0);
   database = grn_db_create(&context, path, NULL);
 }
@@ -71,8 +71,8 @@ test_set_and_get(void)
   const char *value;
   uint32_t value_size;
 
-  grn_test_assert(grn_conf_set(&context, "key", -1, "value", -1));
-  grn_test_assert(grn_conf_get(&context, "key", -1, &value, &value_size));
+  grn_test_assert(grn_config_set(&context, "key", -1, "value", -1));
+  grn_test_assert(grn_config_get(&context, "key", -1, &value, &value_size));
 
   cut_assert_equal_memory("value", strlen("value"),
                           value, value_size);
@@ -84,9 +84,9 @@ test_get_nonexistent(void)
   const char *value;
   uint32_t value_size;
 
-  grn_test_assert(grn_conf_get(&context,
-                               "noneixstent", -1,
-                               &value, &value_size));
+  grn_test_assert(grn_config_get(&context,
+                                 "noneixstent", -1,
+                                 &value, &value_size));
 
   cut_assert_equal_memory(NULL, 0,
                           value, value_size);
@@ -98,13 +98,13 @@ test_delete(void)
   const char *value;
   uint32_t value_size;
 
-  grn_test_assert(grn_conf_set(&context, "key", -1, "value", -1));
-  grn_test_assert(grn_conf_get(&context, "key", -1, &value, &value_size));
+  grn_test_assert(grn_config_set(&context, "key", -1, "value", -1));
+  grn_test_assert(grn_config_get(&context, "key", -1, &value, &value_size));
   cut_assert_equal_memory("value", strlen("value"),
                           value, value_size);
 
-  grn_test_assert(grn_conf_delete(&context, "key", -1));
-  grn_test_assert(grn_conf_get(&context, "key", -1, &value, &value_size));
+  grn_test_assert(grn_config_delete(&context, "key", -1));
+  grn_test_assert(grn_config_get(&context, "key", -1, &value, &value_size));
   cut_assert_equal_memory(NULL, 0,
                           value, value_size);
 }
