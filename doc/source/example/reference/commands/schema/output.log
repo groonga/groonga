@@ -1,0 +1,292 @@
+Execution example::
+
+  schema
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   {
+  #     "tables": {
+  #       "Terms": {
+  #         "normalizer": {
+  #           "name": "NormalizerAuto"
+  #         }, 
+  #         "name": "Terms", 
+  #         "tokenizer": {
+  #           "name": "TokenBigram"
+  #         }, 
+  #         "command": {
+  #           "command_line": "table_create --name Terms --flags TABLE_PAT_KEY --key_type ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto", 
+  #           "name": "table_create", 
+  #           "arguments": {
+  #             "key_type": "ShortText", 
+  #             "default_tokenizer": "TokenBigram", 
+  #             "normalizer": "NormalizerAuto", 
+  #             "flags": "TABLE_PAT_KEY", 
+  #             "name": "Terms"
+  #           }
+  #         }, 
+  #         "indexes": [], 
+  #         "key_type": {
+  #           "type": "type", 
+  #           "name": "ShortText"
+  #         }, 
+  #         "value_type": null, 
+  #         "token_filters": [], 
+  #         "type": "patricia trie", 
+  #         "columns": {
+  #           "memos_content_index": {
+  #             "name": "memos_content_index", 
+  #             "weight": false, 
+  #             "section": false, 
+  #             "compress": null, 
+  #             "command": {
+  #               "command_line": "column_create --table Terms --name memos_content_index --flags COLUMN_INDEX|WITH_POSITION --type Memos --sources content", 
+  #               "name": "column_create", 
+  #               "arguments": {
+  #                 "table": "Terms", 
+  #                 "flags": "COLUMN_INDEX|WITH_POSITION", 
+  #                 "name": "memos_content_index", 
+  #                 "sources": "content", 
+  #                 "type": "Memos"
+  #               }
+  #             }, 
+  #             "indexes": [], 
+  #             "sources": [
+  #               {
+  #                 "table": "Memos", 
+  #                 "name": "content", 
+  #                 "full_name": "Memos.content"
+  #               }
+  #             ], 
+  #             "value_type": {
+  #               "type": "reference", 
+  #               "name": "Memos"
+  #             }, 
+  #             "full_name": "Terms.memos_content_index", 
+  #             "position": true, 
+  #             "table": "Terms", 
+  #             "type": "index"
+  #           }
+  #         }
+  #       }, 
+  #       "Memos": {
+  #         "normalizer": null, 
+  #         "name": "Memos", 
+  #         "tokenizer": null, 
+  #         "command": {
+  #           "command_line": "table_create --name Memos --flags TABLE_HASH_KEY --key_type ShortText", 
+  #           "name": "table_create", 
+  #           "arguments": {
+  #             "key_type": "ShortText", 
+  #             "flags": "TABLE_HASH_KEY", 
+  #             "name": "Memos"
+  #           }
+  #         }, 
+  #         "indexes": [], 
+  #         "key_type": {
+  #           "type": "type", 
+  #           "name": "ShortText"
+  #         }, 
+  #         "value_type": null, 
+  #         "token_filters": [], 
+  #         "type": "hash table", 
+  #         "columns": {
+  #           "content": {
+  #             "name": "content", 
+  #             "weight": false, 
+  #             "section": false, 
+  #             "compress": null, 
+  #             "command": {
+  #               "command_line": "column_create --table Memos --name content --flags COLUMN_SCALAR --type Text", 
+  #               "name": "column_create", 
+  #               "arguments": {
+  #                 "table": "Memos", 
+  #                 "flags": "COLUMN_SCALAR", 
+  #                 "name": "content", 
+  #                 "type": "Text"
+  #               }
+  #             }, 
+  #             "indexes": [
+  #               {
+  #                 "table": "Terms", 
+  #                 "section": 0, 
+  #                 "name": "memos_content_index", 
+  #                 "full_name": "Terms.memos_content_index"
+  #               }
+  #             ], 
+  #             "sources": [], 
+  #             "value_type": {
+  #               "type": "type", 
+  #               "name": "Text"
+  #             }, 
+  #             "full_name": "Memos.content", 
+  #             "position": false, 
+  #             "table": "Memos", 
+  #             "type": "scalar"
+  #           }
+  #         }
+  #       }
+  #     }, 
+  #     "normalizers": {
+  #       "NormalizerNFKC51": {
+  #         "name": "NormalizerNFKC51"
+  #       }, 
+  #       "NormalizerAuto": {
+  #         "name": "NormalizerAuto"
+  #       }
+  #     }, 
+  #     "token_filters": {}, 
+  #     "tokenizers": {
+  #       "TokenBigramSplitSymbolAlphaDigit": {
+  #         "name": "TokenBigramSplitSymbolAlphaDigit"
+  #       }, 
+  #       "TokenRegexp": {
+  #         "name": "TokenRegexp"
+  #       }, 
+  #       "TokenBigramIgnoreBlankSplitSymbolAlphaDigit": {
+  #         "name": "TokenBigramIgnoreBlankSplitSymbolAlphaDigit"
+  #       }, 
+  #       "TokenBigram": {
+  #         "name": "TokenBigram"
+  #       }, 
+  #       "TokenDelimit": {
+  #         "name": "TokenDelimit"
+  #       }, 
+  #       "TokenUnigram": {
+  #         "name": "TokenUnigram"
+  #       }, 
+  #       "TokenBigramSplitSymbol": {
+  #         "name": "TokenBigramSplitSymbol"
+  #       }, 
+  #       "TokenDelimitNull": {
+  #         "name": "TokenDelimitNull"
+  #       }, 
+  #       "TokenBigramIgnoreBlankSplitSymbolAlpha": {
+  #         "name": "TokenBigramIgnoreBlankSplitSymbolAlpha"
+  #       }, 
+  #       "TokenBigramSplitSymbolAlpha": {
+  #         "name": "TokenBigramSplitSymbolAlpha"
+  #       }, 
+  #       "TokenTrigram": {
+  #         "name": "TokenTrigram"
+  #       }, 
+  #       "TokenMecab": {
+  #         "name": "TokenMecab"
+  #       }, 
+  #       "TokenBigramIgnoreBlankSplitSymbol": {
+  #         "name": "TokenBigramIgnoreBlankSplitSymbol"
+  #       }, 
+  #       "TokenBigramIgnoreBlank": {
+  #         "name": "TokenBigramIgnoreBlank"
+  #       }
+  #     }, 
+  #     "plugins": {}, 
+  #     "types": {
+  #       "UInt64": {
+  #         "can_be_key_type": true, 
+  #         "name": "UInt64", 
+  #         "can_be_value_type": true, 
+  #         "size": 8
+  #       }, 
+  #       "Int32": {
+  #         "can_be_key_type": true, 
+  #         "name": "Int32", 
+  #         "can_be_value_type": true, 
+  #         "size": 4
+  #       }, 
+  #       "Int16": {
+  #         "can_be_key_type": true, 
+  #         "name": "Int16", 
+  #         "can_be_value_type": true, 
+  #         "size": 2
+  #       }, 
+  #       "LongText": {
+  #         "can_be_key_type": false, 
+  #         "name": "LongText", 
+  #         "can_be_value_type": false, 
+  #         "size": 2147483648
+  #       }, 
+  #       "TokyoGeoPoint": {
+  #         "can_be_key_type": true, 
+  #         "name": "TokyoGeoPoint", 
+  #         "can_be_value_type": true, 
+  #         "size": 8
+  #       }, 
+  #       "Text": {
+  #         "can_be_key_type": false, 
+  #         "name": "Text", 
+  #         "can_be_value_type": false, 
+  #         "size": 65536
+  #       }, 
+  #       "ShortText": {
+  #         "can_be_key_type": true, 
+  #         "name": "ShortText", 
+  #         "can_be_value_type": false, 
+  #         "size": 4096
+  #       }, 
+  #       "Float": {
+  #         "can_be_key_type": true, 
+  #         "name": "Float", 
+  #         "can_be_value_type": true, 
+  #         "size": 8
+  #       }, 
+  #       "UInt8": {
+  #         "can_be_key_type": true, 
+  #         "name": "UInt8", 
+  #         "can_be_value_type": true, 
+  #         "size": 1
+  #       }, 
+  #       "UInt32": {
+  #         "can_be_key_type": true, 
+  #         "name": "UInt32", 
+  #         "can_be_value_type": true, 
+  #         "size": 4
+  #       }, 
+  #       "Object": {
+  #         "can_be_key_type": true, 
+  #         "name": "Object", 
+  #         "can_be_value_type": true, 
+  #         "size": 8
+  #       }, 
+  #       "UInt16": {
+  #         "can_be_key_type": true, 
+  #         "name": "UInt16", 
+  #         "can_be_value_type": true, 
+  #         "size": 2
+  #       }, 
+  #       "Int64": {
+  #         "can_be_key_type": true, 
+  #         "name": "Int64", 
+  #         "can_be_value_type": true, 
+  #         "size": 8
+  #       }, 
+  #       "Time": {
+  #         "can_be_key_type": true, 
+  #         "name": "Time", 
+  #         "can_be_value_type": true, 
+  #         "size": 8
+  #       }, 
+  #       "Bool": {
+  #         "can_be_key_type": true, 
+  #         "name": "Bool", 
+  #         "can_be_value_type": true, 
+  #         "size": 1
+  #       }, 
+  #       "WGS84GeoPoint": {
+  #         "can_be_key_type": true, 
+  #         "name": "WGS84GeoPoint", 
+  #         "can_be_value_type": true, 
+  #         "size": 8
+  #       }, 
+  #       "Int8": {
+  #         "can_be_key_type": true, 
+  #         "name": "Int8", 
+  #         "can_be_value_type": true, 
+  #         "size": 1
+  #       }
+  #     }
+  #   }
+  # ]
