@@ -29,7 +29,7 @@ This command takes no parameters::
 Usage
 -----
 
-Here is an example schema that to show output:
+Here is an example schema to show example output:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/schema/sample.log
@@ -43,7 +43,7 @@ Here is an example schema that to show output:
 ..   COLUMN_INDEX|WITH_POSITION \
 ..   Memos content
 
-Here is an example of ``schema`` command against this example schema:
+Here is an output of ``schema`` command against this example schema:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/schema/output.log
@@ -420,7 +420,8 @@ Here are properties of ``INDEX``:
 ``COMMAND``
 ^^^^^^^^^^^
 
-``COMMAND`` is an object that describes how to create the object::
+``COMMAND`` is an object that describes how to create the table or
+column::
 
   {
     "name": COMMAND_NAME,
@@ -441,15 +442,15 @@ Here are properties of ``COMMAND``:
    * - Name
      - Description
    * - ``name``
-     - The Groonga command name to create the object.
+     - The Groonga command name to create the table or column.
    * - ``arguments``
      - The arguments of the Groonga command to create the
-       object.
+       table or column.
 
        This is an object that its key is argument name and its value
        is argument value.
    * - ``command_line``
-     - The Groonga command line to create the object.
+     - The Groonga command line to create the table or column.
 
        This is a string that can be evaluated by Groonga.
 
@@ -500,7 +501,7 @@ Here are properties of ``COLUMN``:
 
        For example, ``age``.
    * - ``table``
-     - The table name of the column name.
+     - The table name of the column.
 
        For example, ``Users``.
    * - ``full_name``
