@@ -7247,7 +7247,7 @@ msgstr ""
 
 # 44f5e1766bed4e1ba9ba3ee548cbe231
 msgid ""
-"This command is a useful when your index column is broken. The target object "
+"This command is useful when your index column is broken. The target object "
 "is one of database, table and column."
 msgstr ""
 "このコマンドはインデックスカラムが壊れたときに便利です。対象オブジェクトは"
