@@ -13,3 +13,4 @@ Form::
 
 The `--protocol` option and its argument specify the protocol of the server. "memcached" specifies to use the memcached binary protocol.
 
+You don't need to create table.  When groonga receive request, it create table automatically.  The table name is `Memcache` .
