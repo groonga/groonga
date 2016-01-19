@@ -12864,7 +12864,7 @@ msgid ""
 "Groonga's built-in query cache feature."
 msgstr ""
 "まとめると、Groonga組み込みのクエリーキャッシュ機能の代わりにnginxのリバース"
-"プロ機とキャッシュの仕組みを使うこともできます。"
+"プロキシとキャッシュの仕組みを使うこともできます。"
 
 msgid "Query cache"
 msgstr "クエリーキャッシュ"
