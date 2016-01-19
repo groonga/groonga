@@ -87,6 +87,22 @@ mrb_grn_command_run_wrapper(grn_ctx *ctx,
     mrb_input = mrb_obj_new(mrb, command_input_class, 1, mrb_arguments);
   }
   mrb_funcall(mrb, mrb_command, "run_internal", 1, mrb_input);
+  if (ctx->rc == GRN_SUCCESS && mrb->exc) {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+    name_size = grn_obj_name(ctx, command, name, GRN_TABLE_MAX_KEY_SIZE);
+    if (mrb->exc == mrb->nomem_err) {
+      MERR("failed to allocate memory in mruby: <%.*s>",
+           name_size, name);
+    } else {
+      mrb_value reason;
+      reason = mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0);
+      ERR(GRN_COMMAND_ERROR,
+          "failed to run command: <%*.s>: %.*s",
+          name_size, name,
+          RSTRING_LEN(reason), RSTRING_PTR(reason));
+    }
+  }
   mrb_gc_arena_restore(mrb, arena_index);
 }
 
