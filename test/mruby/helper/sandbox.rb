@@ -22,7 +22,7 @@ module Sandbox
       FileUtils.mkdir_p(@base_tmp_dir.to_s)
     end
 
-    @tmp_dir = @base_tmp_dir + "groonga-query-optimizer"
+    @tmp_dir = @base_tmp_dir + "groonga-mruby"
     FileUtils.rm_rf(@tmp_dir.to_s)
     FileUtils.mkdir_p(@tmp_dir.to_s)
   end
