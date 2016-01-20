@@ -8085,7 +8085,7 @@ msgid "For example, ``content``."
 msgstr "例： ``content``"
 
 msgid "This may be a ``_key`` pseudo column."
-msgstr "``_key`` 擬似カラムに<なるかもしれません。"
+msgstr "``_key`` 擬似カラムになるかもしれません。"
 
 msgid "The table name of the source column."
 msgstr "ソースカラムのテーブル名。"
@@ -16193,7 +16193,7 @@ msgid ""
 "In most cases, regular expression is evaluated sequentially. So it may be "
 "slow against many records."
 msgstr ""
-"多くの場合、各レコードの対して順に正規表現を評価します。そのため、多くのレ"
+"多くの場合、各レコードに対して順に正規表現を評価します。そのため、多くのレ"
 "コードがある場合は遅くなるかもしれません。"
 
 # 77e8c70ae8fd4340a023faec67292814
@@ -18093,7 +18093,7 @@ msgid "You list McDonald's around a station."
 msgstr "駅の近くにあるマクドナルドをリストする。"
 
 msgid ""
-"You list KFS around the current location sort by distance from the current "
+"You list KFC around the current location sort by distance from the current "
 "location in ascending order with distance."
 msgstr ""
 "現在地から近い順にケンタッキーをソートし、現在地からの距離付きでリストする。"
