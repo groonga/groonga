@@ -11328,7 +11328,7 @@ grn_db_init_builtin_types(grn_ctx *ctx)
 
 #define MULTI_COLUMN_INDEXP(i) (DB_OBJ(i)->source_size > sizeof(grn_id))
 
-static inline grn_obj *
+static grn_obj *
 grn_index_column_get_tokenizer(grn_ctx *ctx, grn_obj *index_column)
 {
   grn_obj *tokenizer;
@@ -11343,7 +11343,7 @@ grn_index_column_get_tokenizer(grn_ctx *ctx, grn_obj *index_column)
   return tokenizer;
 }
 
-static inline grn_bool
+static grn_bool
 is_full_text_searchable_index(grn_ctx *ctx, grn_obj *index_column)
 {
   grn_obj *tokenizer;
@@ -11352,7 +11352,7 @@ is_full_text_searchable_index(grn_ctx *ctx, grn_obj *index_column)
   return tokenizer != NULL;
 }
 
-static inline int
+static int
 grn_column_find_index_data_column_equal(grn_ctx *ctx, grn_obj *obj,
                                         grn_operator op,
                                         grn_index_datum *index_data,
@@ -11387,7 +11387,7 @@ grn_column_find_index_data_column_equal(grn_ctx *ctx, grn_obj *obj,
   return n;
 }
 
-static inline grn_bool
+static grn_bool
 is_valid_regexp_index(grn_ctx *ctx, grn_obj *index_column)
 {
   grn_obj *tokenizer;
@@ -11397,7 +11397,7 @@ is_valid_regexp_index(grn_ctx *ctx, grn_obj *index_column)
   return tokenizer != NULL;
 }
 
-static inline int
+static int
 grn_column_find_index_data_column_match(grn_ctx *ctx, grn_obj *obj,
                                         grn_operator op,
                                         grn_index_datum *index_data,
@@ -11476,7 +11476,7 @@ grn_column_find_index_data_column_match(grn_ctx *ctx, grn_obj *obj,
   return n;
 }
 
-static inline int
+static int
 grn_column_find_index_data_column_range(grn_ctx *ctx, grn_obj *obj,
                                         grn_operator op,
                                         grn_index_datum *index_data,
@@ -11529,13 +11529,13 @@ grn_column_find_index_data_column_range(grn_ctx *ctx, grn_obj *obj,
   return n;
 }
 
-static inline grn_bool
+static grn_bool
 is_valid_match_index(grn_ctx *ctx, grn_obj *index_column)
 {
   return GRN_TRUE;
 }
 
-static inline grn_bool
+static grn_bool
 is_valid_range_index(grn_ctx *ctx, grn_obj *index_column)
 {
   grn_obj *tokenizer;
@@ -11648,7 +11648,7 @@ grn_column_find_index_data_accessor_index_column(grn_ctx *ctx, grn_accessor *a,
   return 1;
 }
 
-static inline int
+static int
 grn_column_find_index_data_accessor_match(grn_ctx *ctx, grn_obj *obj,
                                           grn_operator op,
                                           grn_index_datum *index_data,
@@ -11728,7 +11728,7 @@ grn_column_find_index_data_accessor_match(grn_ctx *ctx, grn_obj *obj,
   return n;
 }
 
-static inline int
+static int
 grn_column_find_index_data_accessor(grn_ctx *ctx, grn_obj *obj,
                                     grn_operator op,
                                     grn_index_datum *index_data,
@@ -11748,7 +11748,7 @@ grn_column_find_index_data_accessor(grn_ctx *ctx, grn_obj *obj,
       index_buf[n] = obj;
     }
     if (n_index_data > 0) {
-      index_data[n].index = obj;
+      index_data[n].index   = obj;
       index_data[n].section = 0;
     }
     n++;
@@ -11762,7 +11762,7 @@ grn_column_find_index_data_accessor(grn_ctx *ctx, grn_obj *obj,
             index_buf[n] = obj;
           }
           if (n_index_data > 0) {
-            index_data[n].index = obj;
+            index_data[n].index   = obj;
             index_data[n].section = 0;
           }
           n++;
@@ -11778,10 +11778,10 @@ grn_column_find_index_data_accessor(grn_ctx *ctx, grn_obj *obj,
         if (a->obj->header.type == GRN_TABLE_PAT_KEY &&
             a->obj->header.flags & GRN_OBJ_KEY_WITH_SIS) {
           if (buf_size > 0) {
-            index_buf[n] = obj;
+            index_buf[n]         = obj;
           }
           if (n_index_data > 0) {
-            index_data[n].index = obj;
+            index_data[n].index   = obj;
             index_data[n].section = 0;
           }
           n++;
