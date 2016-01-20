@@ -2662,6 +2662,7 @@ grn_pat_inspect_node(grn_ctx *ctx, grn_pat *pat, grn_id id, int check,
   }
   GRN_TEXT_PUTS(ctx, buf, prefix);
   grn_text_lltoa(ctx, buf, id);
+  grn_pat_inspect_check(ctx, buf, c);
 
   if (c > check) {
     GRN_TEXT_PUTS(ctx, buf, "\n");
@@ -2681,8 +2682,6 @@ grn_pat_inspect_node(grn_ctx *ctx, grn_pat *pat, grn_id id, int check,
     GRN_TEXT_PUTS(ctx, buf, "(");
     grn_inspect(ctx, buf, key_buf);
     GRN_TEXT_PUTS(ctx, buf, ")");
-
-    grn_pat_inspect_check(ctx, buf, c);
 
     GRN_TEXT_PUTS(ctx, buf, "[");
     key = pat_node_get_key(ctx, pat, node);
