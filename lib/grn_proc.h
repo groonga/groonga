@@ -29,10 +29,22 @@ void grn_proc_init_from_env(void);
 GRN_VAR const char *grn_document_root;
 void grn_db_init_builtin_query(grn_ctx *ctx);
 
-void grn_proc_init_schema(grn_ctx *ctx);
 void grn_proc_init_config_get(grn_ctx *ctx);
 void grn_proc_init_config_set(grn_ctx *ctx);
 void grn_proc_init_config_delete(grn_ctx *ctx);
+void grn_proc_init_schema(grn_ctx *ctx);
+void grn_proc_init_table_create(grn_ctx *ctx);
+void grn_proc_init_table_list(grn_ctx *ctx);
+void grn_proc_init_table_remove(grn_ctx *ctx);
+void grn_proc_init_table_rename(grn_ctx *ctx);
+
+void grn_proc_output_object_name(grn_ctx *ctx, grn_obj *obj);
+void grn_proc_output_object_id_name(grn_ctx *ctx, grn_id id);
+
+void grn_proc_table_set_token_filters(grn_ctx *ctx,
+                                      grn_obj *table,
+                                      grn_obj *token_filter_names);
+
 
 #ifdef __cplusplus
 }

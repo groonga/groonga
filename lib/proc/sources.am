@@ -1,3 +1,4 @@
 libgrnproc_la_SOURCES =				\
 	proc_config.c				\
-	proc_schema.c
+	proc_schema.c				\
+	proc_table.c
