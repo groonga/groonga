@@ -449,6 +449,13 @@ msgstr ""
 "`--protocol` オプションとその引数により、サーバのプロトコルを指定することがで"
 "きます。\"memcached\"はmemcachedバイナリプロトコルを示しています。"
 
+msgid ""
+"You don't need to create a table. When Groonga receives a request, "
+"it creates a table automatically. The table name will be `Memcache` ."
+msgstr ""
+"テーブルの作成は不要です。Groongaは要求を受けつけると自動的にテーブルを作成す"
+"るからです。テーブルの名前は `Memcache` になります。"
+
 msgid "Server packages"
 msgstr "サーバーパッケージ"
 
