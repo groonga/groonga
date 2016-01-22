@@ -25,7 +25,7 @@ so on aren't supported yet. Here is a feature list:
 Here are use cases for Groonga's geolocation search:
 
 * You list McDonald's around a station.
-* You list KFS around the current location sort by distance
+* You list KFC around the current location sort by distance
   from the current location in ascending order with distance.
 
 Here are not use cases:
