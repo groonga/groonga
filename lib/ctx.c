@@ -1409,9 +1409,13 @@ command_proc_p(grn_obj *expr)
 grn_obj *
 grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
 {
+  grn_command_version command_version;
   grn_obj buf, *expr, *val;
   grn_obj request_id;
   const char *p = path, *e = path + path_len, *v, *key_end, *filename_end;
+
+  command_version = grn_ctx_get_command_version(ctx);
+
   GRN_TEXT_INIT(&buf, 0);
   GRN_TEXT_INIT(&request_id, 0);
   p = grn_text_urldec(ctx, &buf, p, e, '?');
@@ -1492,17 +1496,22 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
 exit :
   GRN_OBJ_FIN(ctx, &request_id);
   GRN_OBJ_FIN(ctx, &buf);
+
+  grn_ctx_set_command_version(ctx, command_version);
+
   return expr;
 }
 
 grn_obj *
 grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
 {
+  grn_command_version command_version;
   char tok_type;
   int offset = 0;
   grn_obj buf, *expr = NULL, *val = NULL;
   grn_obj request_id;
   const char *p = str, *e = str + str_len, *v;
+  command_version = grn_ctx_get_command_version(ctx);
   GRN_TEXT_INIT(&buf, 0);
   GRN_TEXT_INIT(&request_id, 0);
   p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
@@ -1589,6 +1598,9 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
 exit :
   GRN_OBJ_FIN(ctx, &request_id);
   GRN_OBJ_FIN(ctx, &buf);
+
+  grn_ctx_set_command_version(ctx, command_version);
+
   return expr;
 }
 
