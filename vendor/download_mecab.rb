@@ -34,9 +34,22 @@ def extract_tar_gz(tar_gz_path)
 end
 
 def download(url, base)
+  ssl_ca_cert = nil
+  if /mingw/ =~ RUBY_PLATFORM
+    cacert_pem_path = "cacert.pem"
+    unless File.exist?(cacert_pem_path)
+      open("http://curl.haxx.se/ca/cacert.pem") do |remote_cacert_pem|
+        File.open(cacert_pem_path, "wb") do |local_cacert_pem|
+          local_cacert_pem.print(remote_cacert_pem.read)
+        end
+      end
+    end
+    ssl_ca_cert = File.expand_path(cacert_pem_path)
+  end
+
   tar = "#{base}.tar"
   tar_gz = "#{tar}.gz"
-  open(url) do |remote_tar_gz|
+  open(url, :ssl_ca_cert => ssl_ca_cert) do |remote_tar_gz|
     File.open(tar_gz, "wb") do |local_tar_gz|
       local_tar_gz.print(remote_tar_gz.read)
     end
@@ -44,16 +57,6 @@ def download(url, base)
   FileUtils.rm_rf(base)
   extract_tar_gz(tar_gz)
   FileUtils.rm_rf(tar_gz)
-end
-
-if /mingw/ =~ RUBY_PLATFORM
-  cacert_pem_path = "cacert.pem"
-  open("http://curl.haxx.se/ca/cacert.pem") do |remote_cacert_pem|
-    File.open(cacert_pem_path, "wb") do |local_cacert_pem|
-      local_cacert_pem.print(remote_cacert_pem.read)
-    end
-  end
-  ENV["SSL_CERT_FILE"] = File.expand_path(cacert_pem_path)
 end
 
 download("https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7cENtOXlicTFaRUE",
