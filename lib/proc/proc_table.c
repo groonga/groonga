@@ -570,6 +570,6 @@ grn_proc_init_table_rename(grn_ctx *ctx)
   grn_plugin_command_create(ctx,
                             "table_rename", -1,
                             command_table_rename,
-                            1,
+                            2,
                             vars);
 }
