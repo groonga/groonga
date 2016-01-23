@@ -29,7 +29,7 @@ if [ "$GROONGA_MASTER" = "yes" ]; then
   sudo make install > /dev/null
   cd ..
 else
-  if dpkg -l libzmq3 > /dev/null 2&>1; then
+  if dpkg -l libzmq3 > /dev/null 2>&1; then
     sudo apt-get purge libzmq3
   fi
 
