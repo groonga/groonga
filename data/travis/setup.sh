@@ -29,7 +29,9 @@ if [ "$GROONGA_MASTER" = "yes" ]; then
   sudo make install > /dev/null
   cd ..
 else
-  sudo apt-get purge libzmq3
+  if dpkg -l libzmq3 > /dev/null 2&>1; then
+    sudo apt-get purge libzmq3
+  fi
 
   distribution=$(lsb_release --short --id | tr 'A-Z' 'a-z')
   case $distribution in
