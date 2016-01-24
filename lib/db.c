@@ -8950,7 +8950,9 @@ _grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
   if (ctx->impl && ctx->impl->db) {
     uint32_t s = 0;
     const char *n = _grn_table_key(ctx, ctx->impl->db, DB_OBJ(obj)->id, &s);
-    GRN_LOG(ctx, GRN_LOG_NOTICE, "DDL:obj_remove %.*s", s, n);
+    if (s > 0) {
+      GRN_LOG(ctx, GRN_LOG_NOTICE, "DDL:obj_remove %.*s", s, n);
+    }
   }
   if (obj->header.type != GRN_PROC &&
       (io_path = grn_obj_path(ctx, obj)) && *io_path != '\0') {
