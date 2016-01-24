@@ -681,7 +681,6 @@ grn_table_columns_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
           if (col) {
             if (i++ > 0) { GRN_TEXT_PUTS(ctx, buf, ", "); }
             grn_column_name_(ctx, col, buf);
-            grn_obj_unlink(ctx, col);
           }
         });
     }
