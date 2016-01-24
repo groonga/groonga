@@ -6796,7 +6796,9 @@ done :
     unsigned int name_size = s - q->cur;
     if (name_resolve_context) {
       if ((obj = grn_obj_column(ctx, name_resolve_context, name, name_size))) {
-        grn_expr_take_obj(ctx, q->e, obj);
+        if (obj->header.type == GRN_ACCESSOR) {
+          grn_expr_take_obj(ctx, q->e, obj);
+        }
         PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
         grn_expr_append_obj(ctx, q->e, obj, GRN_OP_GET_VALUE, 2);
         goto exit;
@@ -6808,13 +6810,17 @@ done :
       goto exit;
     }
     if ((obj = grn_obj_column(ctx, q->table, name, name_size))) {
-      grn_expr_take_obj(ctx, q->e, obj);
+      if (obj->header.type == GRN_ACCESSOR) {
+        grn_expr_take_obj(ctx, q->e, obj);
+      }
       PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
       grn_expr_append_obj(ctx, q->e, obj, GRN_OP_GET_VALUE, 1);
       goto exit;
     }
     if ((obj = resolve_top_level_name(ctx, name, name_size))) {
-      grn_expr_take_obj(ctx, q->e, obj);
+      if (obj->header.type == GRN_ACCESSOR) {
+        grn_expr_take_obj(ctx, q->e, obj);
+      }
       PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
       grn_expr_append_obj(ctx, q->e, obj, GRN_OP_PUSH, 1);
       goto exit;
