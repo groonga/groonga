@@ -1874,11 +1874,9 @@ delete_reference_records(grn_ctx *ctx, grn_obj *table, grn_id id)
       continue;
     }
     if (col->header.type != GRN_COLUMN_INDEX) {
-      grn_obj_unlink(ctx, col);
       continue;
     }
     delete_reference_records_in_index(ctx, table, id, col);
-    grn_obj_unlink(ctx, col);
     if (ctx->rc != GRN_SUCCESS) {
       break;
     }
