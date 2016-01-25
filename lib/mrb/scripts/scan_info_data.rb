@@ -54,11 +54,11 @@ module Groonga
         match_resolve_index_expression(arg)
       when Accessor
         match_resolve_index_accessor(arg)
-      when Object
-        match_resolve_index_db_obj(arg)
+      when Indexable
+        match_resolve_index_indexable(arg)
       else
         message =
-          "The first argument of NEAR/NEAR2 must be Expression, Accessor or Object: #{arg.class}"
+          "The first argument of NEAR/NEAR2 must be Expression, Accessor or Indexable: #{arg.class}"
         raise ErrorMessage, message
       end
 
@@ -77,11 +77,11 @@ module Groonga
         match_resolve_index_expression(arg)
       when Accessor
         match_resolve_index_accessor(arg)
-      when Object
-        match_resolve_index_db_obj(arg)
+      when Indexable
+        match_resolve_index_indexable(arg)
       else
         message =
-          "The first argument of SIMILAR must be Expression, Accessor or Object: #{arg.class}"
+          "The first argument of SIMILAR must be Expression, Accessor or Indexable: #{arg.class}"
         raise ErrorMesesage, message
       end
 
@@ -98,8 +98,8 @@ module Groonga
           match_resolve_index_accessor(arg)
         when IndexColumn
           match_resolve_index_index_column(arg)
-        when Object
-          match_resolve_index_db_obj(arg)
+        when Indexable
+          match_resolve_index_indexable(arg)
         else
           self.query = arg
         end
@@ -264,8 +264,8 @@ module Groonga
       put_search_index(index, 0, 1)
     end
 
-    def match_resolve_index_db_obj(db_obj)
-      index_info = db_obj.find_index(op)
+    def match_resolve_index_indexable(indexable)
+      index_info = indexable.find_index(op)
       return if index_info.nil?
       put_search_index(index_info.index, index_info.section_id, 1)
     end
@@ -287,15 +287,13 @@ module Groonga
         call_relational_resolve_index_accessor(object)
       when Bulk
         self.query = object
-      when Procedure
-        nil
-      else
-        call_relational_resolve_index_db_obj(object)
+      when Indexable
+        call_relational_resolve_index_indexable(object)
       end
     end
 
-    def call_relational_resolve_index_db_obj(db_obj)
-      index_info = db_obj.find_index(op)
+    def call_relational_resolve_index_indexable(indexable)
+      index_info = indexable.find_index(op)
       return if index_info.nil?
       put_search_index(index_info.index, index_info.section_id, 1)
     end
