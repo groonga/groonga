@@ -9,6 +9,15 @@ module CommandRunner
     end
   end
 
+  class Result
+    attr_reader :output
+    attr_reader :error_output
+    def initialize(output, error_output)
+      @output = output
+      @error_output = error_output
+    end
+  end
+
   def run_command(*command_line)
     env = {}
     options = {
@@ -30,7 +39,7 @@ failed to run: #{command_line.join(" ")}
       MESSAGE
       raise Error.new(output, error_output, message)
     end
-    [output, error_output]
+    Result.new(output, error_output)
   end
 
   def groonga(command, *arguments)
