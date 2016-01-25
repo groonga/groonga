@@ -22,4 +22,16 @@ Database is locked. It may be broken. Re-create the database.
 [Users] Table is locked. It may be broken. (1) Truncate the table (truncate Users) or clear lock of the table (lock_clear Users) and (2) load data again.
     MESSAGE
   end
+
+  def test_locked_data_column
+    groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+    groonga("column_create", "Users", "age", "COLUMN_SCALAR", "UInt8")
+    groonga("lock_acquire", "Users.age")
+    error = assert_raise(CommandRunner::Error) do
+      grndb("check")
+    end
+    assert_equal(<<-MESSAGE, error.error_output)
+[Users.age] Data column is locked. It may be broken. (1) Truncate the column (truncate Users.age) or clear lock of the column (lock_clear Users.age) and (2) load data again.
+    MESSAGE
+  end
 end
