@@ -22,4 +22,6 @@ ENV["GRN_RUBY_SCRIPTS_DIR"] = (build_top_dir_path + "lib/mrb/scripts").to_s
 
 require_relative "helper"
 
+ARGV.unshift("--max-diff-target-string-size=5000")
+
 exit(Test::Unit::AutoRunner.run(true, (base_dir_path + "suite").to_s))

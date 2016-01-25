@@ -109,142 +109,182 @@ module Groonga
           failed(message)
         end
 
+        checker = Checker.new
+        checker.program_path = @program_path
+        checker.database_path = @database_path
+        checker.database = database
+        checker.on_failure = lambda do |message|
+          failed(message)
+        end
+
         target_name = options[:target]
         if target_name
-          check_one(database, target_name, options, arguments)
+          checker.check_one(target_name)
         else
-          check_all(database, options, arguments)
+          checker.check_all
         end
       end
 
-      def check_object(object, options, arguments)
-        case object
-        when IndexColumn
-          return unless object.locked?
-          message =
-            "[#{object.name}] Index column is locked. " +
-            "It may be broken. " +
-            "Re-create index by '#{@program_path} recover #{@database_path}'."
-          failed(message)
-        when Column
-          return unless object.locked?
-          name = object.name
-          message =
-            "[#{name}] Data column is locked. " +
-            "It may be broken. " +
-            "(1) Truncate the column (truncate #{name}) or " +
-            "clear lock of the column (lock_clear #{name}) " +
-            "and (2) load data again."
-          failed(message)
-        when Table
-          return unless object.locked?
-          name = object.name
-          message =
-            "[#{name}] Table is locked. " +
-            "It may be broken. " +
-            "(1) Truncate the table (truncate #{name}) or " +
-            "clear lock of the table (lock_clear #{name}) " +
-            "and (2) load data again."
-          failed(message)
+      class Checker
+        attr_writer :program_path
+        attr_writer :database_path
+        attr_writer :database
+        attr_writer :on_failure
+
+        def initialize
+          @context = Context.instance
+          @checked = {}
         end
-      end
 
-      def failed_to_open(name)
-        message =
-          "[#{name}] Can't open object. " +
-          "It's broken. " +
-          "Re-create the object or the database."
-        failed(message)
-      end
-
-      def check_one(database, target_name, options, arguments)
-        context = Context.instance
-
-        target = context[target_name]
-        if target.nil?
-          exist_p = open_cursor(database) do |cursor|
-            cursor.any? do
-              cursor.key == target_name
+        def check_one(target_name)
+          target = @context[target_name]
+          if target.nil?
+            exist_p = open_database_(database) do |cursor|
+              cursor.any? do
+                cursor.key == target_name
+              end
             end
-          end
-          if exist_p
-            failed_to_open(target_name)
-          else
-            message = "[#{target_name}] Not exist."
-            failed(message)
-          end
-          return
-        end
-
-        check_object_recursive(database, target, options, arguments)
-      end
-
-      def check_object_recursive(database, target, options, arguments)
-        context = Context.instance
-
-        check_object(target, options, arguments)
-        case target
-        when Table
-          target.column_ids.each do |column_id|
-            column = context[column_id]
-            if column.nil?
-              record = Record.new(database, column_id)
-              failed_to_open(record.key)
+            if exist_p
+              failed_to_open(target_name)
             else
-              check_object_recursive(database, column, options, arguments)
+              message = "[#{target_name}] Not exist."
+              failed(message)
             end
-          end
-        when FixedSizeColumn, VariableSizeColumn
-          range_id = target.range_id
-          range = context[range_id]
-          if range.nil?
-            record = Record.new(database, range_id)
-            failed_to_open(record.key)
-          elsif range.is_a?(Table)
-            check_object_recursive(database, range, options, arguments)
-          end
-        when IndexColumn
-          range_id = target.range_id
-          range = context[range_id]
-          if range.nil?
-            record = Record.new(database, range_id)
-            failed_to_open(record.key)
             return
           end
-          check_object(range, options, arguments)
 
-          target.source_ids.each do |source_id|
-            source = context[source_id]
-            if source.nil?
-              record = Record.new(database, source_id)
+          check_object_recursive(target)
+        end
+
+        def check_all
+          open_database_cursor do |cursor|
+            context = Context.instance
+            cursor.each do |id|
+              next if ID.builtin?(id)
+              next if context[id]
+              failed_to_open(cursor.key)
+            end
+          end
+
+          @database.each do |object|
+            check_object(object)
+          end
+        end
+
+        private
+        def check_object(object)
+          return if @checked.key?(object.id)
+          @checked[object.id] = true
+
+          case object
+          when IndexColumn
+            return unless object.locked?
+            message =
+              "[#{object.name}] Index column is locked. " +
+              "It may be broken. " +
+              "Re-create index by '#{@program_path} recover #{@database_path}'."
+            failed(message)
+          when Column
+            return unless object.locked?
+            name = object.name
+            message =
+              "[#{name}] Data column is locked. " +
+              "It may be broken. " +
+              "(1) Truncate the column (truncate #{name}) or " +
+              "clear lock of the column (lock_clear #{name}) " +
+              "and (2) load data again."
+            failed(message)
+          when Table
+            return unless object.locked?
+            name = object.name
+            message =
+              "[#{name}] Table is locked. " +
+              "It may be broken. " +
+              "(1) Truncate the table (truncate #{name}) or " +
+              "clear lock of the table (lock_clear #{name}) " +
+              "and (2) load data again."
+            failed(message)
+          end
+        end
+
+        def check_object_recursive(target)
+          check_object(target)
+          case target
+          when Table
+            target.column_ids.each do |column_id|
+              column = @context[column_id]
+              if column.nil?
+                record = Record.new(@database, column_id)
+                failed_to_open(record.key)
+              else
+                check_object_recursive(column)
+              end
+            end
+          when FixedSizeColumn, VariableSizeColumn
+            range_id = target.range_id
+            range = @context[range_id]
+            if range.nil?
+              record = Record.new(@database, range_id)
               failed_to_open(record.key)
-            elsif source.is_a?(Column)
-              check_object_recursive(database, source, options, arguments)
+            elsif range.is_a?(Table)
+              check_object_recursive(range)
+            end
+
+            lexicon_ids = []
+            target.indexes.each do |index_info|
+              index = index_info.index
+              lexicon_ids << index.domain_id
+              check_object(index)
+            end
+            lexicon_ids.uniq.each do |lexicon_id|
+              lexicon = @context[lexicon_id]
+              if lexicon.nil?
+                record = Record.new(@database, lexicon_id)
+                failed_to_open(record.key)
+              else
+                check_object(lexicon)
+              end
+            end
+          when IndexColumn
+            range_id = target.range_id
+            range = @context[range_id]
+            if range.nil?
+              record = Record.new(@database, range_id)
+              failed_to_open(record.key)
+              return
+            end
+            check_object(range)
+
+            target.source_ids.each do |source_id|
+              source = @context[source_id]
+              if source.nil?
+                record = Record.new(database, source_id)
+                failed_to_open(record.key)
+              elsif source.is_a?(Column)
+                check_object_recursive(source)
+              end
             end
           end
         end
-      end
 
-      def check_all(database, options, arguments)
-        open_cursor(database) do |cursor|
-          context = Context.instance
-          cursor.each do |id|
-            next if ID.builtin?(id)
-            next if context[id]
-            failed_to_open(cursor.key)
-          end
+        def open_database_cursor(&block)
+          flags =
+            TableCursorFlags::ASCENDING |
+            TableCursorFlags::BY_ID
+          TableCursor.open(@database, :flags => flags, &block)
         end
 
-        database.each do |object|
-          check_object(object, options, arguments)
+        def failed(message)
+          @on_failure.call(message)
         end
-      end
 
-      def open_cursor(database, &block)
-        flags =
-          TableCursorFlags::ASCENDING |
-          TableCursorFlags::BY_ID
-        TableCursor.open(database, :flags => flags, &block)
+        def failed_to_open(name)
+          message =
+            "[#{name}] Can't open object. " +
+            "It's broken. " +
+            "Re-create the object or the database."
+          failed(message)
+        end
       end
     end
   end

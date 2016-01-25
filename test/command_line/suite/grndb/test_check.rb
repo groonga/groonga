@@ -191,6 +191,10 @@ Database is locked. It may be broken. Re-create the database.
       end
       assert_equal(<<-MESSAGE, error.error_output)
 [Users.name] Data column is locked. It may be broken. (1) Truncate the column (truncate Users.name) or clear lock of the column (lock_clear Users.name) and (2) load data again.
+[NormalizedNames.users_name] Index column is locked. It may be broken. Re-create index by '#{grndb_path} recover #{@database_path}'.
+[Names.users_name] Index column is locked. It may be broken. Re-create index by '#{grndb_path} recover #{@database_path}'.
+[NormalizedNames] Table is locked. It may be broken. (1) Truncate the table (truncate NormalizedNames) or clear lock of the table (lock_clear NormalizedNames) and (2) load data again.
+[Names] Table is locked. It may be broken. (1) Truncate the table (truncate Names) or clear lock of the table (lock_clear Names) and (2) load data again.
       MESSAGE
     end
   end
