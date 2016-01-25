@@ -55,4 +55,20 @@ failed to run: #{command_line.join(" ")}
     command_line.concat(arguments)
     run_command(*command_line)
   end
+
+  def find_program(name)
+    ENV["PATH"].split(File::PATH_SEPARATOR).each do |path|
+      lt_program_path = File.join(path, ".libs", "lt-#{name}")
+      return lt_program_path if File.exist?(lt_program_path)
+
+      program_path = File.join(path, name)
+      return program_path if File.exist?(program_path)
+    end
+
+    nil
+  end
+
+  def grndb_path
+    find_program("grndb")
+  end
 end
