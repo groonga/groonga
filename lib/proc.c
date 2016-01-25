@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2015 Brazil
+  Copyright(C) 2009-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -2008,33 +2008,6 @@ proc_shutdown(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_gctx.stat = GRN_CTX_QUIT;
   ctx->stat = GRN_CTX_QUITTING;
-  GRN_OUTPUT_BOOL(!ctx->rc);
-  return NULL;
-}
-
-static grn_obj *
-proc_lock_clear(grn_ctx *ctx, int nargs, grn_obj **args,
-                grn_user_data *user_data)
-{
-  int target_name_len;
-  grn_obj *target_name;
-  grn_obj *obj;
-
-  target_name = VAR(0);
-  target_name_len = GRN_TEXT_LEN(target_name);
-
-  if (target_name_len) {
-    obj = grn_ctx_get(ctx, GRN_TEXT_VALUE(target_name), target_name_len);
-  } else {
-    obj = ctx->impl->db;
-  }
-
-  if (obj) {
-    grn_obj_clear_lock(ctx, obj);
-  } else {
-    ERR(GRN_INVALID_ARGUMENT, "[lock_clear] target object not found: <%.*s>",
-        target_name_len, GRN_TEXT_VALUE(target_name));
-  }
   GRN_OUTPUT_BOOL(!ctx->rc);
   return NULL;
 }
@@ -6915,12 +6888,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
 
   DEF_COMMAND("shutdown", proc_shutdown, 0, vars);
 
-  /* Deprecated. Use "lock_clear" instead. */
-  DEF_VAR(vars[0], "target_name");
-  DEF_COMMAND("clearlock", proc_lock_clear, 1, vars);
-
-  DEF_VAR(vars[0], "target_name");
-  DEF_COMMAND("lock_clear", proc_lock_clear, 1, vars);
+  grn_proc_init_clearlock(ctx);
+  grn_proc_init_lock_clear(ctx);
 
   DEF_VAR(vars[0], "target_name");
   DEF_VAR(vars[1], "threshold");
