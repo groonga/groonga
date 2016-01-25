@@ -7103,4 +7103,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   grn_proc_init_config_get(ctx);
   grn_proc_init_config_set(ctx);
   grn_proc_init_config_delete(ctx);
+
+  grn_proc_init_lock_acquire(ctx);
+  grn_proc_init_lock_release(ctx);
 }
