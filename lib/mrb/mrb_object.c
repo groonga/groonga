@@ -99,10 +99,10 @@ object_find_index(mrb_state *mrb, mrb_value self)
   object = DATA_PTR(self);
   operator = grn_mrb_value_to_operator(mrb, mrb_operator);
   n_index_data = grn_column_find_index_data(ctx,
-                                         object,
-                                         operator,
-                                         &index_datum,
-                                         1);
+                                            object,
+                                            operator,
+                                            &index_datum,
+                                            1);
   if (n_index_data == 0) {
     return mrb_nil_value();
   } else {
