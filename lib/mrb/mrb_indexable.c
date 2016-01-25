@@ -20,6 +20,7 @@
 
 #ifdef GRN_WITH_MRUBY
 #include <mruby.h>
+#include <mruby/array.h>
 #include <mruby/data.h>
 
 #include "mrb_ctx.h"
@@ -60,6 +61,52 @@ indexable_find_index(mrb_state *mrb, mrb_value self)
   }
 }
 
+static mrb_value
+indexable_indexes(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *object;
+  grn_index_datum index_datum;
+  grn_index_datum *index_data;
+  int i, n_index_data;
+  mrb_value mrb_indexes;
+
+  object = DATA_PTR(self);
+  n_index_data = grn_column_get_all_index_data(ctx, object, &index_datum, 1);
+  if (n_index_data == 0) {
+    return mrb_ary_new(mrb);
+  }
+
+  if (n_index_data == 1) {
+    index_data = &index_datum;
+  } else {
+    index_data = GRN_MALLOCN(grn_index_datum, n_index_data);
+    n_index_data = grn_column_get_all_index_data(ctx,
+                                                 object,
+                                                 index_data,
+                                                 n_index_data);
+  }
+
+  mrb_indexes = mrb_ary_new_capa(mrb, n_index_data);
+  for (i = 0; i < n_index_data; i++) {
+    grn_mrb_data *data;
+    struct RClass *klass;
+    mrb_value args[2];
+
+    data = &(ctx->impl->mrb);
+    klass = mrb_class_get_under(mrb, data->module, "IndexInfo");
+    args[0] = grn_mrb_value_from_grn_obj(mrb, index_data[i].index);
+    args[1] = mrb_fixnum_value(index_data[i].section);
+    mrb_ary_push(mrb, mrb_indexes, mrb_obj_new(mrb, klass, 2, args));
+  }
+
+  if (index_data != &index_datum) {
+    GRN_FREE(index_data);
+  }
+
+  return mrb_indexes;
+}
+
 void
 grn_mrb_indexable_init(grn_ctx *ctx)
 {
@@ -71,5 +118,7 @@ grn_mrb_indexable_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, module, "find_index",
                     indexable_find_index, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, module, "indexes",
+                    indexable_indexes, MRB_ARGS_NONE());
 }
 #endif
