@@ -191,7 +191,7 @@ module Groonga
               record = Record.new(database, column_id)
               failed_to_open(record.key)
             else
-              check_object(column, options, arguments)
+              check_object_recursive(database, column, options, arguments)
             end
           end
         when FixedSizeColumn, VariableSizeColumn
@@ -202,6 +202,25 @@ module Groonga
             failed_to_open(record.key)
           elsif range.is_a?(Table)
             check_object_recursive(database, range, options, arguments)
+          end
+        when IndexColumn
+          range_id = target.range_id
+          range = context[range_id]
+          if range.nil?
+            record = Record.new(database, range_id)
+            failed_to_open(record.key)
+            return
+          end
+          check_object(range, options, arguments)
+
+          target.source_ids.each do |source_id|
+            source = context[source_id]
+            if source.nil?
+              record = Record.new(database, source_id)
+              failed_to_open(record.key)
+            elsif source.is_a?(Column)
+              check_object_recursive(database, source, options, arguments)
+            end
           end
         end
       end

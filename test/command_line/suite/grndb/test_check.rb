@@ -111,5 +111,57 @@ Database is locked. It may be broken. Re-create the database.
 [Users.age] Data column is locked. It may be broken. (1) Truncate the column (truncate Users.age) or clear lock of the column (lock_clear Users.age) and (2) load data again.
       MESSAGE
     end
+
+    def test_locked_index_column
+      groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+      groonga("column_create", "Users", "age", "COLUMN_SCALAR", "UInt8")
+      groonga("column_create", "Users", "name", "COLUMN_SCALAR", "ShortText")
+
+      groonga("table_create", "Ages", "TABLE_PAT_KEY", "UInt8")
+      groonga("column_create", "Ages", "users_age", "COLUMN_INDEX",
+              "Users", "age")
+
+      groonga("lock_acquire", "Users")
+      groonga("lock_acquire", "Users.age")
+      groonga("lock_acquire", "Users.name")
+      groonga("lock_acquire", "Ages")
+      groonga("lock_acquire", "Ages.users_age")
+
+      error = assert_raise(CommandRunner::Error) do
+        grndb("check", "--target", "Ages")
+      end
+      assert_equal(<<-MESSAGE, error.error_output)
+[Ages] Table is locked. It may be broken. (1) Truncate the table (truncate Ages) or clear lock of the table (lock_clear Ages) and (2) load data again.
+[Ages.users_age] Index column is locked. It may be broken. Re-create index by '#{grndb_path} recover #{@database_path}'.
+[Users] Table is locked. It may be broken. (1) Truncate the table (truncate Users) or clear lock of the table (lock_clear Users) and (2) load data again.
+[Users.age] Data column is locked. It may be broken. (1) Truncate the column (truncate Users.age) or clear lock of the column (lock_clear Users.age) and (2) load data again.
+      MESSAGE
+    end
+
+    def test_indexed_table
+      groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+      groonga("column_create", "Users", "age", "COLUMN_SCALAR", "UInt8")
+      groonga("column_create", "Users", "name", "COLUMN_SCALAR", "ShortText")
+
+      groonga("table_create", "Names", "TABLE_PAT_KEY", "ShortText")
+      groonga("column_create", "Names", "users_names",
+              "COLUMN_INDEX|WITH_SECTION", "Users", "_key,name")
+
+      groonga("lock_acquire", "Users")
+      groonga("lock_acquire", "Users.age")
+      groonga("lock_acquire", "Users.name")
+      groonga("lock_acquire", "Names")
+      groonga("lock_acquire", "Names.users_names")
+
+      error = assert_raise(CommandRunner::Error) do
+        grndb("check", "--target", "Names")
+      end
+      assert_equal(<<-MESSAGE, error.error_output)
+[Names] Table is locked. It may be broken. (1) Truncate the table (truncate Names) or clear lock of the table (lock_clear Names) and (2) load data again.
+[Names.users_names] Index column is locked. It may be broken. Re-create index by '/home/kou/work/c/groonga.mruby/src/.libs/lt-grndb recover /home/kou/work/c/groonga.mruby/test/command_line/helper/tmp/groonga-command-line/test_indexed_table-TestGrnDBCheck::--target-.db'.
+[Users] Table is locked. It may be broken. (1) Truncate the table (truncate Users) or clear lock of the table (lock_clear Users) and (2) load data again.
+[Users.name] Data column is locked. It may be broken. (1) Truncate the column (truncate Users.name) or clear lock of the column (lock_clear Users.name) and (2) load data again.
+      MESSAGE
+    end
   end
 end
