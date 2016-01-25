@@ -176,6 +176,12 @@ module Groonga
           return
         end
 
+        check_object_recursive(database, target, options, arguments)
+      end
+
+      def check_object_recursive(database, target, options, arguments)
+        context = Context.instance
+
         check_object(target, options, arguments)
         case target
         when Table
@@ -187,6 +193,15 @@ module Groonga
             else
               check_object(column, options, arguments)
             end
+          end
+        when FixedSizeColumn, VariableSizeColumn
+          range_id = target.range_id
+          range = context[range_id]
+          if range.nil?
+            record = Record.new(database, range_id)
+            failed_to_open(record.key)
+          elsif range.is_a?(Table)
+            check_object_recursive(database, range, options, arguments)
           end
         end
       end
