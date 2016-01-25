@@ -1,6 +1,7 @@
 RUBY_SCRIPT_FILES =				\
 	backtrace_entry.rb			\
 	command.rb				\
+	command_line_parser.rb			\
 	context.rb				\
 	database.rb				\
 	error.rb				\

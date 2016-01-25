@@ -20,3 +20,5 @@ require "expression"
 require "plugin_loader"
 
 require "eval_context"
+
+require "command_line_parser"

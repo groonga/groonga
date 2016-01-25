@@ -2,80 +2,66 @@ module Groonga
   module CommandLine
     class Grndb
       def initialize(argv)
-        @command, *@arguments = argv
+        @program_path, *@arguments = argv
         @succeeded = true
-        @executed = false
         @database_path = nil
       end
 
       def run
-        slop = create_slop
-        rest = nil
+        command_line_parser = create_command_line_parser
+        options = nil
         begin
-          rest = slop.parse(@arguments)
-        rescue Slop::Error
-          $stderr.puts($!.message)
+          options = command_line_parser.parse(@arguments)
+        rescue Slop::Error => error
+          $stderr.puts(error.message)
+          $stderr.puts
+          $stderr.puts(command_line_parser.help_message)
           return false
         end
-
-        if slop.help?
-          $stdout.puts(slop.help)
-          return true
-        end
-
-        unless @executed
-          if rest.empty?
-            $stderr.puts("No command is specified.")
-          else
-            $stderr.puts("Unknown command: <#{rest.first}>")
-          end
-          return false
-        end
-
         @succeeded
       end
 
       private
-      def create_slop
-        slop = Slop.new
-        command_name = File.basename(@command)
-        slop.banner = "Usage: #{command_name} COMMAND [OPTIONS] DB_PATH"
-        slop_enable_help(slop)
+      def create_command_line_parser
+        program_name = File.basename(@program_path)
+        parser = CommandLineParser.new(program_name)
 
-        slop.command "check" do |command|
-          command.description "Check database"
-          slop_enable_help(command)
+        parser.add_command("check") do |command|
+          command.description = "Check database"
 
-          command.on("--target=", "Check only the target object.")
+          options = command.options
+          options.banner += " DB_PATH"
+          options.string("--target", "Check only the target object.")
 
-          command.run do |options, arguments|
-            run_command(options, arguments) do |database, new_arguments|
-              check(database, options, new_arguments)
+          command.add_action do |options|
+            open_database(command, options) do |database, rest_arguments|
+              check(database, options, rest_arguments)
             end
           end
         end
 
-        slop.command "recover" do |command|
-          command.description "Recover database"
-          slop_enable_help(command)
+        parser.add_command("recover") do |command|
+          command.description = "Recover database"
 
-          command.run do |options, arguments|
-            run_command(options, arguments) do |database, new_arguments|
-              recover(database, options, new_arguments)
+          options = command.options
+          options.banner += " DB_PATH"
+
+          command.add_action do |options|
+            open_database(command, options) do |database, rest_arguments|
+              recover(database, options, rest_arguments)
             end
           end
         end
 
-        slop
+        parser
       end
 
-      def slop_enable_help(slop)
-        slop.on("-h", "--help", "Display this help message.", :tail => true)
-      end
-
-      def open_database(arguments)
+      def open_database(command, options)
+        arguments = options.arguments
         if arguments.empty?
           $stderr.puts("Database path is missing")
+          $stderr.puts
+          $stderr.puts(command.help_message)
           @succeesed = false
           return
         end
@@ -95,19 +81,6 @@ module Groonga
           yield(database, rest_arguments)
         ensure
           database.close
-        end
-      end
-
-      def run_command(options, arguments)
-        @executed = true
-
-        if options.help?
-          $stdout.puts(options.help)
-          return
-        end
-
-        open_database(arguments) do |database|
-          yield(database)
         end
       end
 
@@ -151,7 +124,7 @@ module Groonga
           message =
             "[#{object.name}] Index column is locked. " +
             "It may be broken. " +
-            "Re-create index by '#{@command} recover #{@database_path}'."
+            "Re-create index by '#{@program_path} recover #{@database_path}'."
           failed(message)
         when Column
           return unless object.locked?
