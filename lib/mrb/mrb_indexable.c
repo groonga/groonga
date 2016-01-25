@@ -1,0 +1,75 @@
+/* -*- c-basic-offset: 2 -*- */
+/*
+  Copyright(C) 2013-2016 Brazil
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License version 2.1 as published by the Free Software Foundation.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+#include "../grn_ctx_impl.h"
+
+#ifdef GRN_WITH_MRUBY
+#include <mruby.h>
+#include <mruby/data.h>
+
+#include "mrb_ctx.h"
+#include "mrb_indexable.h"
+#include "mrb_operator.h"
+#include "mrb_converter.h"
+
+static mrb_value
+indexable_find_index(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *object;
+  mrb_value mrb_operator;
+  grn_operator operator;
+  grn_index_datum index_datum;
+  int n_index_data;
+
+  mrb_get_args(mrb, "o", &mrb_operator);
+  object = DATA_PTR(self);
+  operator = grn_mrb_value_to_operator(mrb, mrb_operator);
+  n_index_data = grn_column_find_index_data(ctx,
+                                            object,
+                                            operator,
+                                            &index_datum,
+                                            1);
+  if (n_index_data == 0) {
+    return mrb_nil_value();
+  } else {
+    grn_mrb_data *data;
+    struct RClass *klass;
+    mrb_value args[2];
+
+    data = &(ctx->impl->mrb);
+    klass = mrb_class_get_under(mrb, data->module, "IndexInfo");
+    args[0] = grn_mrb_value_from_grn_obj(mrb, index_datum.index);
+    args[1] = mrb_fixnum_value(index_datum.section);
+    return mrb_obj_new(mrb, klass, 2, args);
+  }
+}
+
+void
+grn_mrb_indexable_init(grn_ctx *ctx)
+{
+  grn_mrb_data *data = &(ctx->impl->mrb);
+  mrb_state *mrb = data->state;
+  struct RClass *module;
+
+  module = mrb_define_module_under(mrb, data->module, "Indexable");
+
+  mrb_define_method(mrb, module, "find_index",
+                    indexable_find_index, MRB_ARGS_REQ(1));
+}
+#endif

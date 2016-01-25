@@ -1,6 +1,7 @@
 module Groonga
   class Table
     include Enumerable
+    include Indexable
 
     def columns
       context = Context.instance

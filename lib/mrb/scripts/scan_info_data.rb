@@ -287,6 +287,8 @@ module Groonga
         call_relational_resolve_index_accessor(object)
       when Bulk
         self.query = object
+      when Procedure
+        nil
       else
         call_relational_resolve_index_db_obj(object)
       end

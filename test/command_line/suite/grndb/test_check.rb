@@ -163,5 +163,35 @@ Database is locked. It may be broken. Re-create the database.
 [Users.name] Data column is locked. It may be broken. (1) Truncate the column (truncate Users.name) or clear lock of the column (lock_clear Users.name) and (2) load data again.
       MESSAGE
     end
+
+    def test_indexed_data_column
+      groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+      groonga("column_create", "Users", "age", "COLUMN_SCALAR", "UInt8")
+      groonga("column_create", "Users", "name", "COLUMN_SCALAR", "ShortText")
+
+      groonga("table_create", "Names", "TABLE_PAT_KEY", "ShortText")
+      groonga("column_create", "Names", "users_name",
+              "COLUMN_INDEX", "Users", "name")
+
+      groonga("table_create", "NormalizedNames", "TABLE_PAT_KEY", "ShortText",
+              "--normalizer", "NormalizerAuto")
+      groonga("column_create", "NormalizedNames", "users_name",
+              "COLUMN_INDEX", "Users", "name")
+
+      groonga("lock_acquire", "Users")
+      groonga("lock_acquire", "Users.age")
+      groonga("lock_acquire", "Users.name")
+      groonga("lock_acquire", "Names")
+      groonga("lock_acquire", "Names.users_name")
+      groonga("lock_acquire", "NormalizedNames")
+      groonga("lock_acquire", "NormalizedNames.users_name")
+
+      error = assert_raise(CommandRunner::Error) do
+        grndb("check", "--target", "Users.name")
+      end
+      assert_equal(<<-MESSAGE, error.error_output)
+[Users.name] Data column is locked. It may be broken. (1) Truncate the column (truncate Users.name) or clear lock of the column (lock_clear Users.name) and (2) load data again.
+      MESSAGE
+    end
   end
 end

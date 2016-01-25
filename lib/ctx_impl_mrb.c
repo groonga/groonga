@@ -38,6 +38,7 @@
 # include "mrb/mrb_object.h"
 # include "mrb/mrb_object_flags.h"
 # include "mrb/mrb_database.h"
+# include "mrb/mrb_indexable.h"
 # include "mrb/mrb_table.h"
 # include "mrb/mrb_array.h"
 # include "mrb/mrb_hash_table.h"
@@ -149,6 +150,7 @@ mrb_groonga_init(mrb_state *mrb, mrb_value self)
   grn_mrb_object_init(ctx);
   grn_mrb_object_flags_init(ctx);
   grn_mrb_database_init(ctx);
+  grn_mrb_indexable_init(ctx);
   grn_mrb_table_init(ctx);
   grn_mrb_array_init(ctx);
   grn_mrb_hash_table_init(ctx);

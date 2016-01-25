@@ -1,4 +1,5 @@
 RUBY_SCRIPT_FILES =				\
+	accessor.rb				\
 	backtrace_entry.rb			\
 	command.rb				\
 	command_line_parser.rb			\
@@ -10,6 +11,7 @@ RUBY_SCRIPT_FILES =				\
 	expression_rewriter.rb			\
 	expression_rewriters.rb			\
 	expression_size_estimator.rb		\
+	fixed_size_column.rb			\
 	id.rb					\
 	index_column.rb				\
 	index_cursor.rb				\
@@ -27,4 +29,5 @@ RUBY_SCRIPT_FILES =				\
 	scan_info_search_index.rb		\
 	table.rb				\
 	table_cursor.rb				\
+	variable_size_column.rb			\
 	writer.rb

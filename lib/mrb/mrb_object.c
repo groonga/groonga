@@ -86,39 +86,6 @@ object_get_name(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-object_find_index(mrb_state *mrb, mrb_value self)
-{
-  grn_ctx *ctx = (grn_ctx *)mrb->ud;
-  grn_obj *object;
-  mrb_value mrb_operator;
-  grn_operator operator;
-  grn_index_datum index_datum;
-  int n_index_data;
-
-  mrb_get_args(mrb, "o", &mrb_operator);
-  object = DATA_PTR(self);
-  operator = grn_mrb_value_to_operator(mrb, mrb_operator);
-  n_index_data = grn_column_find_index_data(ctx,
-                                            object,
-                                            operator,
-                                            &index_datum,
-                                            1);
-  if (n_index_data == 0) {
-    return mrb_nil_value();
-  } else {
-    grn_mrb_data *data;
-    struct RClass *klass;
-    mrb_value args[2];
-
-    data = &(ctx->impl->mrb);
-    klass = mrb_class_get_under(mrb, data->module, "IndexInfo");
-    args[0] = grn_mrb_value_from_grn_obj(mrb, index_datum.index);
-    args[1] = mrb_fixnum_value(index_datum.section);
-    return mrb_obj_new(mrb, klass, 2, args);
-  }
-}
-
-static mrb_value
 object_grn_inspect(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -257,8 +224,6 @@ grn_mrb_object_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "id", object_get_id, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "name", object_get_name, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "find_index",
-                    object_find_index, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "grn_inspect",
                     object_grn_inspect, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "==", object_equal, MRB_ARGS_REQ(1));

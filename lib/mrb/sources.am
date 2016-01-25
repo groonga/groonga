@@ -37,6 +37,8 @@ libgrnmrb_la_SOURCES =				\
 	mrb_hash_table.h			\
 	mrb_id.c				\
 	mrb_id.h				\
+	mrb_indexable.c				\
+	mrb_indexable.h				\
 	mrb_index_column.c			\
 	mrb_index_column.h			\
 	mrb_index_cursor.c			\
