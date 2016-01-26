@@ -56,8 +56,11 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/column_copy/to_table_setup.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_list/column_list.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_rename/column_rename.log \
+	$(top_srcdir)/doc/source/example/reference/commands/config_delete/existent.log \
+	$(top_srcdir)/doc/source/example/reference/commands/config_delete/nonexistent.log \
 	$(top_srcdir)/doc/source/example/reference/commands/config_get/existent.log \
 	$(top_srcdir)/doc/source/example/reference/commands/config_get/nonexistent.log \
+	$(top_srcdir)/doc/source/example/reference/commands/config_set/set_and_get.log \
 	$(top_srcdir)/doc/source/example/reference/commands/database_unmap/usage_failure.log \
 	$(top_srcdir)/doc/source/example/reference/commands/database_unmap/usage_success.log \
 	$(top_srcdir)/doc/source/example/reference/commands/delete/cascade.log \
@@ -629,7 +632,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/column_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/column_remove.rst \
 	$(top_srcdir)/doc/source/reference/commands/column_rename.rst \
+	$(top_srcdir)/doc/source/reference/commands/config_delete.rst \
 	$(top_srcdir)/doc/source/reference/commands/config_get.rst \
+	$(top_srcdir)/doc/source/reference/commands/config_set.rst \
 	$(top_srcdir)/doc/source/reference/commands/database_unmap.rst \
 	$(top_srcdir)/doc/source/reference/commands/define_selector.rst \
 	$(top_srcdir)/doc/source/reference/commands/defrag.rst \
@@ -834,8 +839,11 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/column_copy/to_table_setup.log \
 	source/example/reference/commands/column_list/column_list.log \
 	source/example/reference/commands/column_rename/column_rename.log \
+	source/example/reference/commands/config_delete/existent.log \
+	source/example/reference/commands/config_delete/nonexistent.log \
 	source/example/reference/commands/config_get/existent.log \
 	source/example/reference/commands/config_get/nonexistent.log \
+	source/example/reference/commands/config_set/set_and_get.log \
 	source/example/reference/commands/database_unmap/usage_failure.log \
 	source/example/reference/commands/database_unmap/usage_success.log \
 	source/example/reference/commands/delete/cascade.log \
@@ -1407,7 +1415,9 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/column_list.rst \
 	source/reference/commands/column_remove.rst \
 	source/reference/commands/column_rename.rst \
+	source/reference/commands/config_delete.rst \
 	source/reference/commands/config_get.rst \
+	source/reference/commands/config_set.rst \
 	source/reference/commands/database_unmap.rst \
 	source/reference/commands/define_selector.rst \
 	source/reference/commands/defrag.rst \
@@ -1757,7 +1767,9 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/column_list.txt \
 	html/_sources/reference/commands/column_remove.txt \
 	html/_sources/reference/commands/column_rename.txt \
+	html/_sources/reference/commands/config_delete.txt \
 	html/_sources/reference/commands/config_get.txt \
+	html/_sources/reference/commands/config_set.txt \
 	html/_sources/reference/commands/database_unmap.txt \
 	html/_sources/reference/commands/define_selector.txt \
 	html/_sources/reference/commands/defrag.txt \
@@ -1999,7 +2011,9 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/column_list.html \
 	html/reference/commands/column_remove.html \
 	html/reference/commands/column_rename.html \
+	html/reference/commands/config_delete.html \
 	html/reference/commands/config_get.html \
+	html/reference/commands/config_set.html \
 	html/reference/commands/database_unmap.html \
 	html/reference/commands/define_selector.html \
 	html/reference/commands/defrag.html \
