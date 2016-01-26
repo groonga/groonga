@@ -73,9 +73,17 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/io_flush/target_name_column.log \
 	$(top_srcdir)/doc/source/example/reference/commands/io_flush/target_name_database.log \
 	$(top_srcdir)/doc/source/example/reference/commands/io_flush/target_name_table.log \
+	$(top_srcdir)/doc/source/example/reference/commands/lock_acquire/column.log \
+	$(top_srcdir)/doc/source/example/reference/commands/lock_acquire/database.log \
+	$(top_srcdir)/doc/source/example/reference/commands/lock_acquire/database_release.log \
+	$(top_srcdir)/doc/source/example/reference/commands/lock_acquire/table.log \
 	$(top_srcdir)/doc/source/example/reference/commands/lock_clear/column.log \
 	$(top_srcdir)/doc/source/example/reference/commands/lock_clear/database.log \
 	$(top_srcdir)/doc/source/example/reference/commands/lock_clear/table.log \
+	$(top_srcdir)/doc/source/example/reference/commands/lock_release/column.log \
+	$(top_srcdir)/doc/source/example/reference/commands/lock_release/database.log \
+	$(top_srcdir)/doc/source/example/reference/commands/lock_release/database_release.log \
+	$(top_srcdir)/doc/source/example/reference/commands/lock_release/table.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_count/count_shutdown.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_count/setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_count/setup_schema.log \
@@ -586,6 +594,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/news/4.x.rst \
 	$(top_srcdir)/doc/source/news/senna.rst \
 	$(top_srcdir)/doc/source/reference.rst \
+	$(top_srcdir)/doc/source/reference/alias.rst \
 	$(top_srcdir)/doc/source/reference/api.rst \
 	$(top_srcdir)/doc/source/reference/api/global_configurations.rst \
 	$(top_srcdir)/doc/source/reference/api/grn_cache.rst \
@@ -642,7 +651,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/dump.rst \
 	$(top_srcdir)/doc/source/reference/commands/io_flush.rst \
 	$(top_srcdir)/doc/source/reference/commands/load.rst \
+	$(top_srcdir)/doc/source/reference/commands/lock_acquire.rst \
 	$(top_srcdir)/doc/source/reference/commands/lock_clear.rst \
+	$(top_srcdir)/doc/source/reference/commands/lock_release.rst \
 	$(top_srcdir)/doc/source/reference/commands/log_level.rst \
 	$(top_srcdir)/doc/source/reference/commands/log_put.rst \
 	$(top_srcdir)/doc/source/reference/commands/log_reopen.rst \
@@ -856,9 +867,17 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/io_flush/target_name_column.log \
 	source/example/reference/commands/io_flush/target_name_database.log \
 	source/example/reference/commands/io_flush/target_name_table.log \
+	source/example/reference/commands/lock_acquire/column.log \
+	source/example/reference/commands/lock_acquire/database.log \
+	source/example/reference/commands/lock_acquire/database_release.log \
+	source/example/reference/commands/lock_acquire/table.log \
 	source/example/reference/commands/lock_clear/column.log \
 	source/example/reference/commands/lock_clear/database.log \
 	source/example/reference/commands/lock_clear/table.log \
+	source/example/reference/commands/lock_release/column.log \
+	source/example/reference/commands/lock_release/database.log \
+	source/example/reference/commands/lock_release/database_release.log \
+	source/example/reference/commands/lock_release/table.log \
 	source/example/reference/commands/logical_count/count_shutdown.log \
 	source/example/reference/commands/logical_count/setup_data.log \
 	source/example/reference/commands/logical_count/setup_schema.log \
@@ -1369,6 +1388,7 @@ source_files_relative_from_doc_dir = \
 	source/news/4.x.rst \
 	source/news/senna.rst \
 	source/reference.rst \
+	source/reference/alias.rst \
 	source/reference/api.rst \
 	source/reference/api/global_configurations.rst \
 	source/reference/api/grn_cache.rst \
@@ -1425,7 +1445,9 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/dump.rst \
 	source/reference/commands/io_flush.rst \
 	source/reference/commands/load.rst \
+	source/reference/commands/lock_acquire.rst \
 	source/reference/commands/lock_clear.rst \
+	source/reference/commands/lock_release.rst \
 	source/reference/commands/log_level.rst \
 	source/reference/commands/log_put.rst \
 	source/reference/commands/log_reopen.rst \
@@ -1721,6 +1743,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/news/4.x.txt \
 	html/_sources/news/senna.txt \
 	html/_sources/reference.txt \
+	html/_sources/reference/alias.txt \
 	html/_sources/reference/api.txt \
 	html/_sources/reference/api/global_configurations.txt \
 	html/_sources/reference/api/grn_cache.txt \
@@ -1777,7 +1800,9 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/dump.txt \
 	html/_sources/reference/commands/io_flush.txt \
 	html/_sources/reference/commands/load.txt \
+	html/_sources/reference/commands/lock_acquire.txt \
 	html/_sources/reference/commands/lock_clear.txt \
+	html/_sources/reference/commands/lock_release.txt \
 	html/_sources/reference/commands/log_level.txt \
 	html/_sources/reference/commands/log_put.txt \
 	html/_sources/reference/commands/log_reopen.txt \
@@ -1965,6 +1990,7 @@ html_files_relative_from_locale_dir = \
 	html/news/senna.html \
 	html/objects.inv \
 	html/reference.html \
+	html/reference/alias.html \
 	html/reference/api.html \
 	html/reference/api/global_configurations.html \
 	html/reference/api/grn_cache.html \
@@ -2021,7 +2047,9 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/dump.html \
 	html/reference/commands/io_flush.html \
 	html/reference/commands/load.html \
+	html/reference/commands/lock_acquire.html \
 	html/reference/commands/lock_clear.html \
+	html/reference/commands/lock_release.html \
 	html/reference/commands/log_level.html \
 	html/reference/commands/log_put.html \
 	html/reference/commands/log_reopen.html \
