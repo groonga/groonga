@@ -49,6 +49,21 @@ Here is an output of ``schema`` command against this example schema:
 .. include:: ../../example/reference/commands/schema/output.log
 .. schema
 
+Parameters
+----------
+
+This section describes all parameters.
+
+Required parameters
+^^^^^^^^^^^^^^^^^^^
+
+There is no required parameters.
+
+Optional parameters
+^^^^^^^^^^^^^^^^^^^
+
+There is no optional parameters.
+
 Return value
 ------------
 
