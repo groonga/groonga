@@ -19,6 +19,7 @@
 set -e
 
 if [ "$GROONGA_MASTER" = "yes" ]; then
+  sudo apt-get update -qq
   sudo apt-get install -qq -y -V autotools-dev pkg-config libmecab-dev \
        libmsgpack-dev libevent-dev
   git clone --recursive --depth 1 --branch master https://github.com/groonga/groonga.git
