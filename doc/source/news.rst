@@ -7,6 +7,117 @@
 News
 ====
 
+.. _release-5-1-2:
+
+Release 5.1.2 - 2016-01-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Improved performance for sequential search against constant value
+  such as ``true`` and ``29``.
+
+* Improved performance for sequential search against binary operation
+  with constant value such as ``x == 29`` and ``x < 29``.
+
+* [:doc:`/reference/commands/select`] Changed score type to ``Float``
+  from ``Int32`` when :doc:`/reference/command/command_version` is 2.
+  The current default command version is 1. Command version 2 is
+  experimental. So this change isn't affected to normal users.
+  [GitHub#450][Patch by Naoya Murakami]
+
+* [grn_ts] Supported match operator.
+
+* [:doc:`/reference/executables/grndb`] Added ``--target`` option to
+  ``check`` command. It reduces check target.
+
+* [Windows] Updated bundled msgpack to 1.3.0 from 1.0.1.
+
+* [Windows] Updated bundled MeCab to 0.996 from 0.98.
+
+* [``grn_hash_size()``] Exported.
+
+* [``GRN_HASH_TINY``] Exported.
+
+* [``grn_dump_table_create_flags()``] Added.
+
+* [``grn_dump_column_create_flags()``] Added.
+
+* [``grn_plugin_get_names()``] Added.
+
+* [``grn_column_get_all_index_data()``] Added.
+
+* [:doc:`/reference/commands/schema`] Added indexes information to
+  indexed tables and data columns.
+
+* [``grn_config_get()``] Renamed from ``grn_conf_get()``.
+
+* [``grn_config_set()``] Renamed from ``grn_conf_set()``.
+
+* [``grn_config_delete()``] Added.
+
+* [:doc:`/reference/commands/config_set`] Added.
+
+* [:doc:`/reference/commands/config_get`] Added.
+
+* [:doc:`/reference/commands/config_delete`] Added.
+
+* [``grn_config_cursor_open()``] Added.
+
+* [``grn_config_cursor_next()``] Added.
+
+* [``grn_config_cursor_get_key()``] Added.
+
+* [``grn_config_cursor_get_value()``] Added.
+
+* [:doc:`/reference/alias`] Supported aliasing table and column names.
+
+* [hash table] Added total key size overflow check.
+
+* [:doc:`/reference/commands/dump`] Supported dumping configurations
+  set by :doc:`/reference/commands/config_set`.
+
+* [patricia trie] Improved inspection.
+  [GitHub#452][GitHub#457][Patch by Naoya Murakami]
+
+* [``grn_get_global_error_message()``] Added.
+
+Fixes
+^^^^^
+
+* Fixed mruby related crash bugs.
+
+* [Windows] Fixed label in installer.
+  [groonga-dev,03825][Reported by Atsushi Shinoda]
+
+* [doc] Fixed typos.
+  [GitHub#456][GitHub#458][Patch by tSU_RooT]
+
+* [:doc:`/server/memcached`] Added more description.
+  [GitHub#454][Patch by Hiroyuki Sato]
+
+* Fixed a bug that :doc:`/reference/command/command_version` specified
+  by ``command_version`` parameter in a request isn't reset.
+
+* [:doc:`/reference/commands/lock_acquire`] Added.
+
+* [:doc:`/reference/commands/lock_release`] Added.
+
+* [:doc:`/reference/executables/groonga-httpd`] Updated bundled nginx
+  version to 1.9.9 from 1.9.7.
+
+Thanks
+^^^^^^
+
+* Naoya Murakami
+
+* Atsushi Shinoda
+
+* tSU_RooT
+
+* Hiroyuki Sato
+
 .. _release-5-1-1:
 
 Release 5.1.1 - 2015-12-29
@@ -163,9 +274,10 @@ Improvements
 * [Windows][CMake] Supported building bundled MeCab.
   [groonga-dev,03562][Reported by Sato]
 
-* [``schema``] Added a new command that returns schema. Schema is
-  consists with loaded plugins, loaded tokenizers, loaded normalizers,
-  loaded token filters, defined tables and defined columns.
+* [:doc:`/reference/commands/schema`] Added a new command that returns
+  schema. Schema is consists with loaded plugins, loaded tokenizers,
+  loaded normalizers, loaded token filters, defined tables and defined
+  columns.
 
 * [:c:func:`grn_plugin_win32_base_dir()`] Deprecated. Use
   :c:func:`grn_plugin_windows_base_dir()` instead.
