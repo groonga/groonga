@@ -3,9 +3,9 @@
 .. highlightlang:: none
 
 .. groonga-command
-.. database: config_get
+.. database: config_set
 
-``config_get``
+``config_set``
 ==============
 
 Summary
@@ -13,35 +13,26 @@ Summary
 
 .. versionadded:: 5.1.2
 
-``config_get`` command returns the value of the specified
+``config_set`` command returns the value of the specified
 configuration item.
 
 Syntax
 ------
 
-This command takes one parameter::
+This command takes two parameters::
 
-  config_get key
+  config_set key value
 
 Usage
 -----
 
 Here is an example to set a value to ``alias.column_name``
-configuration item and get the value:
+configuration item and confirm the set value:
 
 .. groonga-command
-.. include:: ../../example/reference/commands/config_get/existent.log
+.. include:: ../../example/reference/commands/config_set/set_and_get.log
 .. config_set alias.column_name Aliases.real_name
 .. config_get alias.column_name
-
-Here is an example to get nonexistent configuration item value:
-
-.. groonga-command
-.. include:: ../../example/reference/commands/config_get/nonexistent.log
-.. config_get nonexistent
-
-``config_get`` returns an empty string for nonexistent configuration
-item key.
 
 Parameters
 ----------
@@ -51,9 +42,9 @@ This section describes all parameters.
 Required parameters
 ^^^^^^^^^^^^^^^^^^^
 
-There is one required parameter.
+There are required parameters.
 
-.. _config-get-key:
+.. _config-set-key:
 
 ``key``
 """""""
@@ -64,6 +55,16 @@ The max key size is 4KiB.
 
 You can't use an empty string as key.
 
+.. _config-set-value:
+
+``value``
+"""""""""
+
+Specifies the value of the target configuration item specified by
+``key``.
+
+The max value size is 4091B (= 4KiB - 5B).
+
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^
 
@@ -72,25 +73,24 @@ There is no optional parameters.
 Return value
 ------------
 
-``config_get`` command returns the value of the specified
-configuration item::
+``config_set`` command returns whether setting a configuration item
+value is succeeded or not::
 
-  [HEADER, VALUE]
+  [HEADER, SUCCEEDED_OR_NOT]
 
 ``HEADER``
 ^^^^^^^^^^
 
 See :doc:`/reference/command/output_format` about ``HEADER``.
 
-``VALUE``
-^^^^^^^^^^
+``SUCCEEDED_OR_NOT``
+^^^^^^^^^^^^^^^^^^^^
 
-``VALUE`` is the value of the configuration item specified by
-``key``. It's a string.
+If command succeeded, it returns true, otherwise it returns false on error.
 
 See also
 --------
 
   * :doc:`/reference/configuration`
-  * :doc:`config_set`
+  * :doc:`config_get`
   * :doc:`config_delete`
