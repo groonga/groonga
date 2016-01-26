@@ -24,6 +24,8 @@ Reference manual
    reference/regular_expression
    reference/function
    reference/operations
+   reference/configuration
+   reference/alias
    reference/suggest
    reference/indexing
    reference/sharding
