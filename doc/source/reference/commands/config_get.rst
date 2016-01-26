@@ -43,6 +43,32 @@ Here is an example to get nonexistent configuration item value:
 ``config_get`` returns an empty string for nonexistent configuration
 item key.
 
+Parameters
+----------
+
+This section describes all parameters.
+
+Required parameters
+^^^^^^^^^^^^^^^^^^^
+
+There is one required parameter.
+
+.. _config-get-key:
+
+``key``
+"""""""
+
+Specifies the key of target configuration item.
+
+The max key size is 4KiB.
+
+You can't use an empty string as key.
+
+Optional parameters
+^^^^^^^^^^^^^^^^^^^
+
+There is no optional parameters.
+
 Return value
 ------------
 
