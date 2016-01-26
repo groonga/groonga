@@ -2,8 +2,8 @@
 
 .. highlightlang:: none
 
-コマンドバージョン
-==================
+Command version
+===============
 
 概要
 ----
