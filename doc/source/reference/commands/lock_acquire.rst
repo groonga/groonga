@@ -16,6 +16,13 @@ Summary
 ``lock_acquire`` command acquires the lock of the target object. The
 target object is one of database, table and column.
 
+.. note::
+
+   This is a dangerous command. You must release locks by
+   :doc:`lock_release` that you acquire when these locks are no longer
+   needed. If you forget to release these locks, your database may be
+   broken.
+
 Syntax
 ------
 
