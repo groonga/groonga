@@ -153,6 +153,8 @@ Here is an example that Shift_JIS is used as the default encoding::
 
   % ./configure --with-default-encoding=sjis
 
+.. _install-configure-with-match-escalation-threshold:
+
 ``--with-match-escalation-threshold=NUMBER``
 ++++++++++++++++++++++++++++++++++++++++++++
 
