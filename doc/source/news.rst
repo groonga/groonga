@@ -36,17 +36,24 @@ Improvements
 
 * [Windows] Updated bundled MeCab to 0.996 from 0.98.
 
-* [``grn_hash_size()``] Exported.
+* [``grn_hash_size()``] Added a new API that returns the number of
+  records in the hash table.
 
-* [``GRN_HASH_TINY``] Exported.
+* [``GRN_HASH_TINY``] Added a new flag to create tiny hash table.
 
-* [``grn_dump_table_create_flags()``] Added.
+* [``grn_dump_table_create_flags()``] Added a new API that converts
+  ``flags`` value of a table to ``flags`` parameter format of
+  :doc:`/reference/command/table_create`.
 
-* [``grn_dump_column_create_flags()``] Added.
+* [``grn_dump_column_create_flags()``] Added a new API that converts
+  ``flags`` value of a column to ``flags`` parameter format of
+  :doc:`/reference/command/column_create`.
 
-* [``grn_plugin_get_names()``] Added.
+* [``grn_plugin_get_names()``] Added a new API that returns all plugin
+  names in a database.
 
-* [``grn_column_get_all_index_data()``] Added.
+* [``grn_column_get_all_index_data()``] Added a new API that returns
+  all index data for a table and data column.
 
 * [:doc:`/reference/commands/schema`] Added indexes information to
   indexed tables and data columns.
@@ -55,21 +62,29 @@ Improvements
 
 * [``grn_config_set()``] Renamed from ``grn_conf_set()``.
 
-* [``grn_config_delete()``] Added.
+* [``grn_config_delete()``] Added a new API that deletes a
+  configuration item.
 
-* [:doc:`/reference/commands/config_set`] Added.
+* [:doc:`/reference/commands/config_set`] Added a new command that
+  sets a configuration item.
 
-* [:doc:`/reference/commands/config_get`] Added.
+* [:doc:`/reference/commands/config_get`] Added a new command that
+  gets a configuration item value.
 
-* [:doc:`/reference/commands/config_delete`] Added.
+* [:doc:`/reference/commands/config_delete`] Added a new command that
+  deletes a configuration item.
 
-* [``grn_config_cursor_open()``] Added.
+* [``grn_config_cursor_open()``] Added a new API that opens a new
+  cursor that iterates all configuration items.
 
-* [``grn_config_cursor_next()``] Added.
+* [``grn_config_cursor_next()``] Added a new API that moves to the
+  next configuration item in the cursor.
 
-* [``grn_config_cursor_get_key()``] Added.
+* [``grn_config_cursor_get_key()``] Added a new API that gets the
+  key of the current configuration item.
 
-* [``grn_config_cursor_get_value()``] Added.
+* [``grn_config_cursor_get_value()``] Added a new API that gets the
+  value of the current configuration item.
 
 * [:doc:`/reference/alias`] Supported aliasing table and column names.
 
@@ -81,7 +96,20 @@ Improvements
 * [patricia trie] Improved inspection.
   [GitHub#452][GitHub#457][Patch by Naoya Murakami]
 
-* [``grn_get_global_error_message()``] Added.
+* [``grn_get_global_error_message()``] Added a new API that gets the
+  current error message in the process.
+
+* Fixed a bug that :doc:`/reference/command/command_version` specified
+  by ``command_version`` parameter in a request isn't reset.
+
+* [:doc:`/reference/commands/lock_acquire`] Added a new command that
+  acquires a lock of a database, table or column.
+
+* [:doc:`/reference/commands/lock_release`] Added a new command that
+  releases a lock of a database, table or column.
+
+* [:doc:`/reference/executables/groonga-httpd`] Updated bundled nginx
+  version to 1.9.9 from 1.9.7.
 
 Fixes
 ^^^^^
@@ -96,16 +124,6 @@ Fixes
 
 * [:doc:`/server/memcached`] Added more description.
   [GitHub#454][Patch by Hiroyuki Sato]
-
-* Fixed a bug that :doc:`/reference/command/command_version` specified
-  by ``command_version`` parameter in a request isn't reset.
-
-* [:doc:`/reference/commands/lock_acquire`] Added.
-
-* [:doc:`/reference/commands/lock_release`] Added.
-
-* [:doc:`/reference/executables/groonga-httpd`] Updated bundled nginx
-  version to 1.9.9 from 1.9.7.
 
 Thanks
 ^^^^^^
