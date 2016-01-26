@@ -56,6 +56,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/column_copy/to_table_setup.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_list/column_list.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_rename/column_rename.log \
+	$(top_srcdir)/doc/source/example/reference/commands/config_get/existent.log \
+	$(top_srcdir)/doc/source/example/reference/commands/config_get/nonexistent.log \
 	$(top_srcdir)/doc/source/example/reference/commands/database_unmap/usage_failure.log \
 	$(top_srcdir)/doc/source/example/reference/commands/database_unmap/usage_success.log \
 	$(top_srcdir)/doc/source/example/reference/commands/delete/cascade.log \
@@ -627,6 +629,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/column_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/column_remove.rst \
 	$(top_srcdir)/doc/source/reference/commands/column_rename.rst \
+	$(top_srcdir)/doc/source/reference/commands/config_get.rst \
 	$(top_srcdir)/doc/source/reference/commands/database_unmap.rst \
 	$(top_srcdir)/doc/source/reference/commands/define_selector.rst \
 	$(top_srcdir)/doc/source/reference/commands/defrag.rst \
@@ -670,6 +673,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/tokenize.rst \
 	$(top_srcdir)/doc/source/reference/commands/tokenizer_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/truncate.rst \
+	$(top_srcdir)/doc/source/reference/configuration.rst \
 	$(top_srcdir)/doc/source/reference/example/reference/executables/groonga-suggest-httpd-launch.log \
 	$(top_srcdir)/doc/source/reference/example/reference/executables/groonga-suggest-httpd-setup.log \
 	$(top_srcdir)/doc/source/reference/example/reference/scorers/scorer_tf_at_most/usage_no_weight.log \
@@ -830,6 +834,8 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/column_copy/to_table_setup.log \
 	source/example/reference/commands/column_list/column_list.log \
 	source/example/reference/commands/column_rename/column_rename.log \
+	source/example/reference/commands/config_get/existent.log \
+	source/example/reference/commands/config_get/nonexistent.log \
 	source/example/reference/commands/database_unmap/usage_failure.log \
 	source/example/reference/commands/database_unmap/usage_success.log \
 	source/example/reference/commands/delete/cascade.log \
@@ -1401,6 +1407,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/column_list.rst \
 	source/reference/commands/column_remove.rst \
 	source/reference/commands/column_rename.rst \
+	source/reference/commands/config_get.rst \
 	source/reference/commands/database_unmap.rst \
 	source/reference/commands/define_selector.rst \
 	source/reference/commands/defrag.rst \
@@ -1444,6 +1451,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/tokenize.rst \
 	source/reference/commands/tokenizer_list.rst \
 	source/reference/commands/truncate.rst \
+	source/reference/configuration.rst \
 	source/reference/example/reference/executables/groonga-suggest-httpd-launch.log \
 	source/reference/example/reference/executables/groonga-suggest-httpd-setup.log \
 	source/reference/example/reference/scorers/scorer_tf_at_most/usage_no_weight.log \
@@ -1749,6 +1757,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/column_list.txt \
 	html/_sources/reference/commands/column_remove.txt \
 	html/_sources/reference/commands/column_rename.txt \
+	html/_sources/reference/commands/config_get.txt \
 	html/_sources/reference/commands/database_unmap.txt \
 	html/_sources/reference/commands/define_selector.txt \
 	html/_sources/reference/commands/defrag.txt \
@@ -1792,6 +1801,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/tokenize.txt \
 	html/_sources/reference/commands/tokenizer_list.txt \
 	html/_sources/reference/commands/truncate.txt \
+	html/_sources/reference/configuration.txt \
 	html/_sources/reference/executables.txt \
 	html/_sources/reference/executables/grndb.txt \
 	html/_sources/reference/executables/grnslap.txt \
@@ -1989,6 +1999,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/column_list.html \
 	html/reference/commands/column_remove.html \
 	html/reference/commands/column_rename.html \
+	html/reference/commands/config_get.html \
 	html/reference/commands/database_unmap.html \
 	html/reference/commands/define_selector.html \
 	html/reference/commands/defrag.html \
@@ -2032,6 +2043,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/tokenize.html \
 	html/reference/commands/tokenizer_list.html \
 	html/reference/commands/truncate.html \
+	html/reference/configuration.html \
 	html/reference/executables.html \
 	html/reference/executables/grndb.html \
 	html/reference/executables/grnslap.html \
