@@ -53,7 +53,7 @@ Improvements
   names in a database.
 
 * [``grn_column_get_all_index_data()``] Added a new API that returns
-  all index data for a table and data column.
+  all index data for a table or data column.
 
 * [:doc:`/reference/commands/schema`] Added indexes information to
   indexed tables and data columns.
