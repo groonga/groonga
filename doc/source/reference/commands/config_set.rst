@@ -13,13 +13,13 @@ Summary
 
 .. versionadded:: 5.1.2
 
-``config_set`` command returns the value of the specified
+``config_set`` command sets a value to the specified
 configuration item.
 
 Syntax
 ------
 
-This command takes two parameters::
+This command takes two required parameters::
 
   config_set key value
 
