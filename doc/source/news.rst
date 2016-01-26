@@ -43,11 +43,11 @@ Improvements
 
 * [``grn_dump_table_create_flags()``] Added a new API that converts
   ``flags`` value of a table to ``flags`` parameter format of
-  :doc:`/reference/command/table_create`.
+  :doc:`/reference/commands/table_create`.
 
 * [``grn_dump_column_create_flags()``] Added a new API that converts
   ``flags`` value of a column to ``flags`` parameter format of
-  :doc:`/reference/command/column_create`.
+  :doc:`/reference/commands/column_create`.
 
 * [``grn_plugin_get_names()``] Added a new API that returns all plugin
   names in a database.
