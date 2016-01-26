@@ -158,7 +158,7 @@ Database is locked. It may be broken. Re-create the database.
       end
       assert_equal(<<-MESSAGE, error.error_output)
 [Names] Table is locked. It may be broken. (1) Truncate the table (truncate Names) or clear lock of the table (lock_clear Names) and (2) load data again.
-[Names.users_names] Index column is locked. It may be broken. Re-create index by '/home/kou/work/c/groonga.mruby/src/.libs/lt-grndb recover /home/kou/work/c/groonga.mruby/test/command_line/helper/tmp/groonga-command-line/test_indexed_table-TestGrnDBCheck::--target-.db'.
+[Names.users_names] Index column is locked. It may be broken. Re-create index by '#{grndb_path} recover #{@database_path}'.
 [Users] Table is locked. It may be broken. (1) Truncate the table (truncate Users) or clear lock of the table (lock_clear Users) and (2) load data again.
 [Users.name] Data column is locked. It may be broken. (1) Truncate the column (truncate Users.name) or clear lock of the column (lock_clear Users.name) and (2) load data again.
       MESSAGE
