@@ -42,22 +42,22 @@ Here is an example to release the lock of the database:
 .. lock_acquire
 .. lock_release
 
-Here is an example to release the lock of ``Entry`` table:
+Here is an example to release the lock of ``Entries`` table:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/lock_release/table.log
-.. table_create Entry TABLE_NO_KEY
-.. lock_acquire Entry
-.. lock_release Entry
+.. table_create Entries TABLE_NO_KEY
+.. lock_acquire Entries
+.. lock_release Entries
 
-Here is an example to release the lock of ``Site.title`` column:
+Here is an example to release the lock of ``Sites.title`` column:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/lock_release/column.log
-.. table_create Site TABLE_HASH_KEY ShortText
-.. column_create Site title COLUMN_SCALAR ShortText
-.. lock_acquire Site.title
-.. lock_release Site.title
+.. table_create Sites TABLE_HASH_KEY ShortText
+.. column_create Sites title COLUMN_SCALAR ShortText
+.. lock_acquire Sites.title
+.. lock_release Sites.title
 
 Parameters
 ----------
