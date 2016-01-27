@@ -3,7 +3,7 @@
 .. highlightlang:: none
 
 .. groonga-command
-.. database: commands_select
+.. database: commands_copy
 
 ``column_copy``
 ===============
