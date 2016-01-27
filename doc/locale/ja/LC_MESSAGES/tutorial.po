@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-12-28 23:21+0900\n"
+"PO-Revision-Date: 2016-01-27 15:00+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -823,43 +823,43 @@ msgstr ""
 msgid "Basic commands"
 msgstr "主なコマンド"
 
-msgid "/reference/commands/status"
+msgid ":doc:`/reference/commands/status`"
 msgstr ""
 
 msgid "shows status of a Groonga process."
 msgstr "Groongaプロセスの状態を表示します。"
 
-msgid "/reference/commands/table_list"
+msgid ":doc:`/reference/commands/table_list`"
 msgstr ""
 
 msgid "shows a list of tables in a database."
 msgstr "データベースに定義されているテーブルのリストを表示します。"
 
-msgid "/reference/commands/column_list"
+msgid ":doc:`/reference/commands/column_list`"
 msgstr ""
 
 msgid "shows a list of columns in a table."
 msgstr "テーブルに定義されているカラムのリストを表示します。"
 
-msgid "/reference/commands/table_create"
+msgid ":doc:`/reference/commands/table_create`"
 msgstr ""
 
 msgid "adds a table to a database."
 msgstr "データベースにテーブルを追加します。"
 
-msgid "/reference/commands/column_create"
+msgid ":doc:`/reference/commands/column_create`"
 msgstr ""
 
 msgid "adds a column to a table."
 msgstr "テーブルにカラムを追加します。"
 
-msgid "/reference/commands/select"
+msgid ":doc:`/reference/commands/select`"
 msgstr ""
 
 msgid "searches records from a table and shows the result."
 msgstr "テーブルに含まれるレコードを検索して表示します。"
 
-msgid "/reference/commands/load"
+msgid ":doc:`/reference/commands/load`"
 msgstr ""
 
 msgid "inserts records to a table."
@@ -1540,43 +1540,43 @@ msgstr ""
 msgid "User ID"
 msgstr "ユーザーID"
 
-msgid "_key"
+msgid "``_key``"
 msgstr ""
 
 msgid "User name"
 msgstr "ユーザー名"
 
-msgid "name"
+msgid "``name``"
 msgstr ""
 
 msgid "List of following users"
 msgstr "フォローしているユーザーの一覧"
 
-msgid "follower"
+msgid "``follower``"
 msgstr ""
 
 msgid "List of favorite comments"
 msgstr "お気に入りのコメント一覧"
 
-msgid "favorites"
+msgid "``favorites``"
 msgstr ""
 
 msgid "Current location of user (geolocation)"
 msgstr "ユーザーの現在地（緯度経度座標）"
 
-msgid "location"
+msgid "``location``"
 msgstr ""
 
 msgid "Current location of user (string)"
 msgstr "ユーザーの現在地（文字列）"
 
-msgid "location_str"
+msgid "``location_str``"
 msgstr ""
 
 msgid "User profile"
 msgstr "ユーザーの自己紹介"
 
-msgid "description"
+msgid "``description``"
 msgstr ""
 
 msgid ""
@@ -1587,7 +1587,7 @@ msgstr ""
 "スを作ることで、あるユーザーをフォローしているユーザーを検索できるようになり"
 "ます。"
 
-msgid "followee"
+msgid "``followee``"
 msgstr ""
 
 msgid "Comments table"
@@ -1606,31 +1606,31 @@ msgstr "コメントID"
 msgid "Content of comment"
 msgstr "コメント内容"
 
-msgid "comment"
+msgid "``comment``"
 msgstr ""
 
 msgid "Posted date"
 msgstr "投稿日時"
 
-msgid "last_modified"
+msgid "``last_modified``"
 msgstr ""
 
 msgid "Comment which you reply to someone"
 msgstr "返信元のコメント内容"
 
-msgid "replied_to"
+msgid "``replied_to``"
 msgstr ""
 
 msgid "List of users who you reply to"
 msgstr "返信先のユーザーの一覧"
 
-msgid "replied_users"
+msgid "``replied_users``"
 msgstr ""
 
 msgid "List of hash tags about comment"
 msgstr "コメントのハッシュタグの一覧"
 
-msgid "hash_tags"
+msgid "``hash_tags``"
 msgstr ""
 
 msgid "Posted place (for geolocation)"
@@ -1639,7 +1639,7 @@ msgstr "投稿場所(緯度経度座標のため)"
 msgid "Person who write comment"
 msgstr "コメントを書いたユーザー"
 
-msgid "posted_by"
+msgid "``posted_by``"
 msgstr ""
 
 msgid ""
@@ -1650,7 +1650,7 @@ msgstr ""
 "クスを作ることで、指定したコメントを誰がお気に入りに入れているのかを検索でき"
 "るようになります。"
 
-msgid "favorited_by"
+msgid "``favorited_by``"
 msgstr ""
 
 msgid "HashTags table"
@@ -1669,7 +1669,7 @@ msgstr ""
 "「Comments.hash_tags」のインデックス。 このインデックスを作ることで、指定した"
 "ハッシュタグのついているコメントの一覧を出すことが出来るようになります。"
 
-msgid "hash_index"
+msgid "``hash_index``"
 msgstr ""
 
 msgid "Bigram table"
@@ -1694,13 +1694,13 @@ msgstr ""
 "「Users.location_str」、自己紹介文「Users.description」のインデックスになって"
 "います。"
 
-msgid "users_index"
+msgid "``users_index``"
 msgstr ""
 
 msgid "Indexes about content of comments (``Comments.comment``)."
 msgstr "コメント内容「Comments.comment」のインデックス"
 
-msgid "comment_index"
+msgid "``comment_index``"
 msgstr ""
 
 msgid "GeoIndex table"
@@ -1716,13 +1716,13 @@ msgstr ""
 msgid "Indexes of location column for Users table"
 msgstr "Usersテーブルのlocationカラムに対するインデックス"
 
-msgid "users_location"
+msgid "``users_location``"
 msgstr ""
 
 msgid "Indexes of location column for Comments table"
 msgstr "Commentsテーブルのlocationカラムに対するインデックス"
 
-msgid "comments_location"
+msgid "``comments_location``"
 msgstr ""
 
 msgid "Loading data"
