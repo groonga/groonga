@@ -135,7 +135,7 @@ Here is the syntax to run Groonga daemon with existing database::
 
   groonga [options] --protocol http -d DB_PATH
 
-:option:`--pid-file` option will be useful for daemon mode.
+:option:`--pid-path` option will be useful for daemon mode.
 
 .. _groonga-executable-file-client-mode:
 
@@ -282,10 +282,10 @@ Options
      ; ';'以降もコメント。
 
      # 'キー = 値'でオプションを指定。
-     pid-file = /var/run/groonga.pid
+     pid-path = /var/run/groonga.pid
 
      # '='の前後の空白はは無視される。↓は↑と同じ意味。
-     pid-file=/var/run/groonga.pid
+     pid-path=/var/run/groonga.pid
 
      # 'キー'は'--XXX'スタイルのオプション名と同じものが使える。
      # 例えば、'--pid-path'に対応するキーは'pid-path'。
