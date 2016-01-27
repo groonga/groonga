@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-01-26 11:56+0900\n"
+"PO-Revision-Date: 2016-01-27 17:27+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -24,6 +24,195 @@ msgstr "実行例::"
 msgid "Reference manual"
 msgstr "リファレンスマニュアル"
 
+msgid "Alias"
+msgstr "エイリアス"
+
+msgid ""
+"You can refer a table and column by multiple names by using alias feature."
+msgstr ""
+"エイリアス機能を使うと複数の名前で1つのテーブル・カラムを参照できます。"
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "The alias feature is useful for the following cases:"
+msgstr "このエイリアス機能は次のケースで有用です。"
+
+msgid ""
+"You want to rename a table but you can't change some Groonga clients that "
+"uses the current table name."
+msgstr ""
+"テーブルをリネームしたいが現在のテーブル名を使っているGroongaクライアントがい"
+"てそれらは変更できない。"
+
+msgid "You want to change column type without downtime."
+msgstr "ダウンタイムなしでカラムの型を変更したい。"
+
+msgid ""
+"In the former case, some Groonga clients can use the current table name "
+"after you rename a table. Because the alias feature maps the current table "
+"name to the renamed new table name."
+msgstr ""
+"前者のケースでは、テーブルをリネームした後も既存のGroongaクライアントは現在の"
+"テーブル名（リネーム前のテーブル名）でアクセスできます。なぜなら、エイリアス"
+"機能は現在のテーブル名を新しいリネーム後のテーブル名に対応づけるからです。"
+
+msgid ""
+"In the latter case, all Groonga clients access the column by aliased name "
+"such as ``aliased_column``. ``aliased_column`` refers ``current_column``. "
+"You create a new column ``new_column`` with new type and copy data from "
+"``current_column`` by :doc:`/reference/commands/column_copy`. You change "
+"``aliased_column`` to refer ``new_column`` from ``current_column``. Now, all "
+"Groonga clients access ``new_column`` by ``aliased_column`` without stopping "
+"search requests."
+msgstr ""
+"後者のケースでは、前提として、すべてのGroongaクライアントは "
+"``aliased_column`` のようなエイリアスされた名前でアクセスするようにしておきま"
+"す。 ``aliased_column`` は ``current_column`` （現在のテーブル）を参照するよ"
+"うにします。この状態で、 ``new_column`` という新しいカラムを新しい型で作成"
+"し、 :doc:`/reference/commands/column_copy` を使ってそのカラムに "
+"``current_column`` からデータをコピーします。その後、 ``aliased_column`` の参"
+"照先を ``current_column`` から ``new_column`` に変更します。これですべての"
+"Groongaクライアントは ``aliased_column`` で ``new_column`` を参照するようにな"
+"ります。検索リクエストを止める必要はありません。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid ""
+"You manage alias to real name mapping by a normal table and a normal column."
+msgstr "エイリアスと実際の名前の対応は通常のテーブルとカラムで管理します。"
+
+msgid ""
+"You can use any table type except :ref:`table-no-key` for the table. :ref:"
+"`table-hash-key` is recommended because exact key match search is only used "
+"for the alias feature. :ref:`table-hash-key` is the fastest table type for "
+"exact key match search."
+msgstr ""
+"エイリアス管理テーブルには :ref:`table-no-key` 以外であればどの種類でも使えま"
+"す。オススメは :ref:`table-hash-key` です。なぜなら、エイリアス機能ではキーの"
+"完全一致検索しか使わないからです。キーの完全一致検索が一番速いのは :ref:"
+"`table-hash-key` です。"
+
+msgid ""
+"The column must be :doc:`/reference/columns/scalar` and type is "
+"``ShortText``. You can also use ``Text`` and ``LongText`` types but they are "
+"meaningless. Because the max table/column name size is 4KiB. ``ShortText`` "
+"can store 4KiB data."
+msgstr ""
+"カラムは、種類を :doc:`/reference/columns/scalar` 、型を ``ShortText`` にしま"
+"す。 ``Text`` または ``LongText`` 型も使えますが、意味がありません。なぜな"
+"ら、テーブル・カラム名の最大サイズは4KiBだからです。 ``ShortText`` は4KiBの"
+"データを格納できます。"
+
+msgid "Here are example definitions of table and column for managing aliases:"
+msgstr "以下はエイリアス管理用のテーブル・カラムの定義例です。"
+
+msgid ""
+"You need to register the table and column by :doc:`configuration`. The alias "
+"feature uses ``alias.column`` configuration item. You can register the table "
+"and column by the following :doc:`/reference/commands/config_set`:"
+msgstr ""
+":doc:`configuration` を使ってこのテーブルとカラムを登録する必要があります。エ"
+"イリアス機能は設定項目 ``alias.column`` を使います。次のように :doc:`/"
+"reference/commands/config_set` を使ってこのテーブルとカラムを登録します。"
+
+msgid "Here are schema and data to show how to use alias:"
+msgstr "エイリアスの使い方を示すためのスキーマとデータは次の通りです。"
+
+msgid "You can use ``Users.age`` in :doc:`/reference/commands/select`:"
+msgstr ":doc:`/reference/commands/select` で ``Users.age`` を使えます。"
+
+msgid ""
+"You can't use ``Users.age`` when you rename ``Users.age`` to ``Users.years`` "
+"by :doc:`/reference/commands/column_rename`:"
+msgstr ""
+":doc:`/reference/commands/column_rename` で ``Users.age`` を ``Users.years`` "
+"にリネームすると ``Users.age`` にはアクセスできなくなります。"
+
+msgid ""
+"But you can use ``Users.age`` by registering ``Users.age`` to ``Users."
+"years`` mapping to ``Aliases``."
+msgstr ""
+"``Aliases`` テーブルに ``Users.age`` から ``Users.years`` の対応を追加すると "
+"``Users.age`` を使うことができます。"
+
+msgid "Now, you can use ``Users.age`` as alias of ``Users.years``."
+msgstr ""
+"これで、 ``Users.years`` のエイリアスとして ``Users.age`` を使うことができま"
+"す。"
+
+msgid "How to resolve alias"
+msgstr "エイリアスの解決方法"
+
+msgid "This section describes how to resolve alias."
+msgstr "このセクションではエイリアスの解決方法について説明します。"
+
+msgid ""
+"Groonga uses the alias feature when nonexistent table/column name is "
+"referred. It means that you can't override existing table/column by the "
+"alias feature."
+msgstr ""
+"Groongaは存在しない名前（テーブル名、カラム名、コマンド名、関数名など）が参照"
+"されたときにエイリアス機能を使います。エイリアス機能で既存のオブジェクト"
+"（テーブル、カラム、コマンド、関数など）を置き換えることはできません。"
+
+# 7d90f47a66e74d26aef99a911e2c102a
+msgid ""
+"For example, alias isn't resolved in the following example because ``Users."
+"years`` exists:"
+msgstr ""
+"たとえば、以下の例ではエイリアスは解決されません。なぜなら ``Users.years`` が"
+"存在するからです。"
+
+msgid ""
+"Alias is resolved recursively. If you rename ``Users.years`` to ``Users."
+"years_old`` and you refer ``Users.age``, Groonga replaces ``Users.age`` with "
+"``Users.years`` and then ``Users.years`` with ``Users.years_old``. Because "
+"``Aliases`` table has the following records:"
+msgstr ""
+"Groongaはエイリアスを再帰的に解決します。 ``Users.years`` を ``Users."
+"years_old`` にリネームし、 ``Users.age`` を参照したとします。Groongaは "
+"``Users.age`` を ``Users.years`` に置き換え、その後、 ``Users.years`` を "
+"``Users.years_old`` に置き換えます。なぜなら、 ``Aliases`` テーブルには次のレ"
+"コードがあるからです。"
+
+msgid "``_key``"
+msgstr ""
+
+msgid "``real_name``"
+msgstr ""
+
+msgid "``Users.age``"
+msgstr ""
+
+msgid "``Users.years``"
+msgstr ""
+
+msgid "``Users.years_old``"
+msgstr ""
+
+msgid "Here is an example to ``Users.age`` is resolved recursively:"
+msgstr "以下は ``Users.age`` が再帰的に解決される例です。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`/reference/configuration`"
+msgstr ""
+
+msgid ":doc:`/reference/commands/config_set`"
+msgstr ""
+
+msgid ":doc:`/reference/commands/table_create`"
+msgstr ""
+
+msgid ":doc:`/reference/commands/column_create`"
+msgstr ""
+
+msgid ":doc:`/reference/commands/select`"
+msgstr ""
+
 msgid "API"
 msgstr "API"
 
@@ -36,9 +225,6 @@ msgstr ""
 
 msgid "Global configurations"
 msgstr "全体設定"
-
-msgid "Summary"
-msgstr "概要"
 
 msgid "Groonga has the global configurations. You can access them by API."
 msgstr ""
@@ -494,33 +680,33 @@ msgid ""
 "reference/commands/dump` uses the type."
 msgstr ""
 
-msgid "GRN_CONTENT_NONE"
-msgstr ""
-
-msgid "GRN_CONTENT_TSV"
+msgid "`GRN_CONTENT_NONE`"
 msgstr ""
 
 msgid "It means tab separated values format."
 msgstr ""
 
-msgid "GRN_CONTENT_JSON"
+msgid "`GRN_CONTENT_TSV`"
 msgstr ""
 
 msgid "It means JSON format."
 msgstr "JSON形式::"
 
-msgid "GRN_CONTENT_XML"
+msgid "`GRN_CONTENT_JSON`"
 msgstr ""
 
 msgid "It means XML format."
 msgstr ""
 
-msgid "GRN_CONTENT_MSGPACK"
+msgid "`GRN_CONTENT_XML`"
 msgstr ""
 
 msgid ""
 "It means MessagePack format. You need MessagePack library on building "
 "Groonga. If you don't have MessagePack library, you can't use this type."
+msgstr ""
+
+msgid "`GRN_CONTENT_MSGPACK`"
 msgstr ""
 
 msgid "``grn_ctx``"
@@ -2488,9 +2674,6 @@ msgstr "インデックスカラム"
 msgid "TODO"
 msgstr ""
 
-msgid "Usage"
-msgstr "使い方"
-
 msgid "Pseudo column"
 msgstr "擬似カラム"
 
@@ -2521,9 +2704,6 @@ msgid ""
 "1〜1073741824の整数で、通常はレコードを追加した順に1ずつ加算されます。_idの値"
 "は不変で、レコードが存在する限り変更することはできません。ただし、削除された"
 "レコードの_idの値は再利用されます。"
-msgstr ""
-
-msgid "``_key``"
 msgstr ""
 
 msgid ""
@@ -3209,9 +3389,6 @@ msgstr "XML"
 
 msgid "TSV"
 msgstr ""
-
-msgid "See also"
-msgstr "参考"
 
 msgid ":doc:`return_code` describes about return code."
 msgstr ":doc:`return_code` はリターンコードについて説明しています。"
@@ -4270,19 +4447,19 @@ msgid ""
 "す。"
 msgstr ""
 
-msgid "0, COLUMN_SCALAR"
+msgid "0, ``COLUMN_SCALAR``"
 msgstr ""
 
 msgid "単一の値が格納できるカラムを作成します。"
 msgstr ""
 
-msgid "1, COLUMN_VECTOR"
+msgid "1, ``COLUMN_VECTOR``"
 msgstr ""
 
 msgid "複数の値の配列を格納できるカラムを作成します。"
 msgstr ""
 
-msgid "2, COLUMN_INDEX"
+msgid "2, ``COLUMN_INDEX``"
 msgstr ""
 
 msgid "インデックス型のカラムを作成します。"
@@ -4299,7 +4476,7 @@ msgstr ""
 "問題 `GitHub#6 <https://github.com/groonga/groonga/issues/6>`_ があるためで"
 "す。 この問題はzlib、lzoいずれでも発生します。"
 
-msgid "16, COMPRESS_ZLIB"
+msgid "16, ``COMPRESS_ZLIB``"
 msgstr ""
 
 msgid ""
@@ -4309,7 +4486,7 @@ msgstr ""
 "zlibを使ってカラムの値を圧縮します。このフラグはGroongaを ``--with-zlib`` つ"
 "きでビルドすると有効になります。"
 
-msgid "32, COMPRESS_LZO"
+msgid "32, ``COMPRESS_LZO``"
 msgstr ""
 
 msgid ""
@@ -4324,19 +4501,19 @@ msgid ""
 "加の属 性を指定することができます。"
 msgstr ""
 
-msgid "128, WITH_SECTION"
+msgid "128, ``WITH_SECTION``"
 msgstr ""
 
 msgid "段落情報を格納するインデックスを作成します。"
 msgstr ""
 
-msgid "256, WITH_WEIGHT"
+msgid "256, ``WITH_WEIGHT``"
 msgstr ""
 
 msgid "ウェイト情報を格納するインデックスを作成します。"
 msgstr ""
 
-msgid "512, WITH_POSITION"
+msgid "512, ``WITH_POSITION``"
 msgstr ""
 
 msgid "位置情報を格納するインデックス(完全転置インデックス)を作成します。"
@@ -4602,9 +4779,6 @@ msgid ""
 "It is always an empty array for ``COLUMN_SCALAR`` and ``COLUMN_VECTOR``."
 msgstr "``COLUMN_SCALAR`` と ``COLUMN_VECTOR`` では常に空の配列です。"
 
-msgid ":doc:`/reference/commands/column_create`"
-msgstr ""
-
 msgid ":doc:`/reference/column`"
 msgstr ""
 
@@ -4708,6 +4882,137 @@ msgstr ""
 
 msgid "It is ``true`` on success, ``false`` otherwise."
 msgstr "コマンドの実行が成功するとtrueを返します。失敗するとfalseを返します。"
+
+msgid "``config_delete``"
+msgstr ""
+
+msgid "``config_delete`` command deletes the specified configuration item."
+msgstr "``config_delete`` コマンドは指定した設定項目を削除します。"
+
+msgid "This command takes one parameter::"
+msgstr "このコマンドの引数は1つです。::"
+
+msgid "Here is an example to delete ``alias.column`` configuration item:"
+msgstr "以下は ``alias.column`` 設定項目を削除する例です。"
+
+msgid "Here is an example to delete nonexistent configuration item:"
+msgstr "以下は存在しない設定項目を削除する例です。"
+
+msgid ""
+"``config_delete`` returns an error when you try to delete nonexistent "
+"configuration item."
+msgstr ""
+"``config_delete`` は存在しない設定項目を削除しようとするとエラーを返します。"
+
+msgid "There is one required parameter."
+msgstr "必須の引数が1つあります。"
+
+msgid "``key``"
+msgstr ""
+
+msgid "Specifies the key of target configuration item."
+msgstr "対象設定項目のキーを指定します。"
+
+msgid "The max key size is 4KiB."
+msgstr "最大キーサイズは4KiBです。"
+
+msgid "You can't use an empty string as key."
+msgstr "キーには空文字列を使うことはできません。"
+
+# 4b25ce81f5df407bb2cf675eff672d75
+msgid ""
+"``config_delete`` command returns whether deleting a configuration item is "
+"succeeded or not::"
+msgstr ""
+"``config_delete`` コマンドは設定項目の削除に成功したかどうかを返します。::"
+
+msgid ""
+"If command succeeded, it returns true, otherwise it returns false on error."
+msgstr ""
+"コマンドの実行が成功するとtrueを返します。失敗するとエラーとしてfalseを返しま"
+"す。"
+
+msgid ":doc:`config_get`"
+msgstr ""
+
+msgid ":doc:`config_set`"
+msgstr ""
+
+msgid "``config_get``"
+msgstr ""
+
+# d4b3e106cec44fd08aaf0ca3cb468095
+msgid ""
+"``config_get`` command returns the value of the specified configuration item."
+msgstr "``config_get`` コマンドは指定した設定項目の値を返します。"
+
+msgid ""
+"Here is an example to set a value to ``alias.column`` configuration item and "
+"get the value:"
+msgstr ""
+"以下は ``alias.column`` 設定項目に値を設定して、設定した値を取得する例です。"
+
+msgid "Here is an example to get nonexistent configuration item value:"
+msgstr "以下は存在しない設定項目の値を取得する例です。"
+
+msgid ""
+"``config_get`` returns an empty string for nonexistent configuration item "
+"key."
+msgstr "``config_get`` は存在しない設定項目の場合は空文字列を返します。"
+
+# d4b3e106cec44fd08aaf0ca3cb468095
+msgid ""
+"``config_get`` command returns the value of the specified configuration "
+"item::"
+msgstr "``config_get`` コマンドは指定した設定項目の値を返します。::"
+
+msgid "``VALUE``"
+msgstr ""
+
+msgid ""
+"``VALUE`` is the value of the configuration item specified by ``key``. It's "
+"a string."
+msgstr "``VALUE`` は ``key`` で指定した設定項目の値です。文字列です。"
+
+# 27816899eef343bdb616f430bfeb8432
+msgid ":doc:`config_delete`"
+msgstr ""
+
+msgid "``config_set``"
+msgstr ""
+
+msgid ""
+"``config_set`` command sets a value to the specified configuration item."
+msgstr "``config_set`` コマンドは指定した設定項目に値を設定します。"
+
+msgid "This command takes two required parameters::"
+msgstr "このコマンドの引数は2つで必須です。::"
+
+msgid ""
+"Here is an example to set a value to ``alias.column`` configuration item and "
+"confirm the set value:"
+msgstr ""
+"以下は ``alias.column`` 設定項目に値を設定して、設定した値を確認する例です。"
+
+msgid "There are required parameters."
+msgstr "いくつか必須の引数があります。"
+
+msgid "``value``"
+msgstr ""
+
+msgid ""
+"Specifies the value of the target configuration item specified by ``key``."
+msgstr "``key`` で指定した対象設定項目の値を指定します。"
+
+msgid "The max value size is 4091B (= 4KiB - 5B)."
+msgstr "値の最大サイズは4091B（= 4KiB - 5B）です。"
+
+# 4b25ce81f5df407bb2cf675eff672d75
+msgid ""
+"``config_set`` command returns whether setting a configuration item value is "
+"succeeded or not::"
+msgstr ""
+"``config_set`` コマンドは設定項目に値を設定できたかどうかを返します。::"
 
 # 47c8d2319f114fb48ecaca97dd0da365
 msgid "``database_unmap``"
@@ -4955,9 +5260,6 @@ msgstr ""
 msgid "Specifies the name of table to delete the records."
 msgstr "レコードを削除するテーブルの名前を指定します。"
 
-msgid "``key``"
-msgstr ""
-
 msgid ""
 "Specifies the key of record to delete. If you use the table with "
 "TABLE_NO_KEY, the key is just ignored. (Use ``id`` parameter in such a case)"
@@ -4982,12 +5284,6 @@ msgid ""
 msgstr ""
 "レコードを特定するためのgrn_exprの式を指定します。引数 ``filter`` を指定する"
 "なら、引数 ``key`` や ``id`` を指定してはいけません。"
-
-msgid ""
-"If command succeeded, it returns true, otherwise it returns false on error."
-msgstr ""
-"コマンドの実行が成功するとtrueを返します。失敗するとエラーとしてfalseを返しま"
-"す。"
 
 msgid "``dump``"
 msgstr ""
@@ -5423,9 +5719,6 @@ msgstr ""
 "input_typeに指定する形式で登録するレコードの値を表現した文字列を渡します。\n"
 "input_typeがjsonである場合には、以下のいずれかの形式が使用できます。"
 
-msgid "Format 1:"
-msgstr "形式1:"
-
 msgid ""
 "[[COLUMN_NAME1, COLUMN_NAME2,..], [VALUE1, VALUE2,..], [VALUE1, "
 "VALUE2,..],..]"
@@ -5433,8 +5726,8 @@ msgstr ""
 "[[カラム名1, カラム名2,..], [カラム値1, カラム値2,..], [カラム値1, カラム値"
 "2,..],..]"
 
-msgid "Format 2:"
-msgstr "形式2:"
+msgid "``Format 1:``"
+msgstr ""
 
 msgid ""
 "[{COLUMN_NAME1: VALUE1, COLUMN_NAME2: VALUE2}, {COLUMN_NAME1: VALUE1, "
@@ -5442,6 +5735,9 @@ msgid ""
 msgstr ""
 "[{カラム名1: カラム値1, カラム名2: カラム値2}, {カラム名1: カラム値1, カラム"
 "名2: カラム値2},..]"
+
+msgid "``Format 2:``"
+msgstr ""
 
 msgid ""
 "``[COLUMN_NAME1, COLUMN_NAME2,..]`` format in ``Format 1`` is effective only "
@@ -5516,6 +5812,73 @@ msgstr "JSON形式"
 msgid "``load`` returns the number of added records such as ::"
 msgstr "テーブルに登録されたレコードの件数が返されます。"
 
+msgid "``lock_acquire``"
+msgstr ""
+
+# 631c1b112fed405f9f5bd1c63ba3344d
+msgid ""
+"``lock_acquire`` command acquires the lock of the target object. The target "
+"object is one of database, table and column."
+msgstr ""
+"``lock_acquire`` コマンドは対象オブジェクトのロックを獲得します。対象オブジェ"
+"クトはデータベース、テーブル、カラムのどれかです。"
+
+msgid ""
+"This is a dangerous command. You must release locks by :doc:`lock_release` "
+"that you acquire when these locks are no longer needed. If you forget to "
+"release these locks, your database may be broken."
+msgstr ""
+"これは危険なコマンドです。獲得したロックはロックが必要なくなったときに :doc:"
+"`lock_release` で解放してください。もし、解放し忘れるとデータベースが壊れるか"
+"もしれません。"
+
+# 088d6f28963e451aba302359d0045188
+msgid ""
+"If ``target_name`` parameters is omitted, database is used for the target "
+"object."
+msgstr ""
+"``target_name`` パラメーターを省略した場合は対象オブジェクトはデータベースに"
+"なります。"
+
+msgid "Here is an example to acquire the lock of the database:"
+msgstr "以下はデータベースのロックを獲得する例です。"
+
+msgid ""
+"If the database is locked, you can't create a new table and column. Release "
+"the lock of the database to show another examples."
+msgstr ""
+"もし、データベースがロックされていると、新しいテーブル・カラムを作れなくなり"
+"ます。ここでは、他の例を示すためにデータベースのロックを解放します。"
+
+msgid "Here is an example to acquire the lock of ``Entries`` table:"
+msgstr "以下は ``Entries`` テーブルのロックを獲得する例です。"
+
+msgid "Here is an example to acquire the lock of ``Sites.title`` column:"
+msgstr "以下は ``Sites.title`` カラムのロックを獲得する例です。"
+
+msgid "Specifies the name of table or column."
+msgstr "テーブル名またはカラム名を指定します。"
+
+# 77498f831b814019afdc5c30be9ab258
+msgid "If you don't specify it, database is used for the target object."
+msgstr "指定しなかったら対象オブジェクトはデータベースになります。"
+
+# d870dc0a4ef8426e9867d356c9683e3e
+msgid "The default is none. It means that the target object is database."
+msgstr ""
+"デフォルト値はありません。これは対象オブジェクトはデータベースになるというこ"
+"とです。"
+
+# 4b25ce81f5df407bb2cf675eff672d75
+msgid "``lock_acquire`` command returns whether lock is acquired or not::"
+msgstr "``lock_acquire`` コマンドはロックを獲得できたかどうかを返します。::"
+
+msgid ":doc:`lock_release`"
+msgstr ""
+
+msgid ":doc:`lock_clear`"
+msgstr ""
+
 # f90346e27a3b4d50aedc56498f73fc47
 msgid "``lock_clear``"
 msgstr ""
@@ -5548,34 +5911,60 @@ msgstr ""
 "なります。これはデータベース中のすべてのロックを解除するという意味です。"
 
 msgid "Here is an example to clear all locks in the database:"
-msgstr "以下はデータベースの中のすべてのロックを解放する例です::"
+msgstr "以下はデータベースの中のすべてのロックを解除する例です。"
 
 msgid ""
-"Here is an example to clear locks of ``Entry`` table and ``Entry`` table "
+"Here is an example to clear locks of ``Entries`` table and ``Entries`` table "
 "columns:"
 msgstr ""
-"以下は ``Entry`` テーブルと ``Entry`` テーブルのカラムのロックを解放する例で"
-"す::"
+"以下は ``Entries`` テーブルと ``Entries`` テーブルのカラムのロックを解除する"
+"例です。"
 
-msgid "Here is an example to clear the lock of ``Site.title`` column:"
-msgstr "以下は ``Site.title`` カラムのロックを解放する例です::"
-
-msgid "Specifies the name of table or column."
-msgstr "テーブル名またはカラム名を指定します。"
-
-# 77498f831b814019afdc5c30be9ab258
-msgid "If you don't specify it, database is used for the target object."
-msgstr "指定しなかったら対象オブジェクトはデータベースになります。"
-
-# d870dc0a4ef8426e9867d356c9683e3e
-msgid "The default is none. It means that the target object is database."
-msgstr ""
-"デフォルト値はありません。これは対象オブジェクトはデータベースになるというこ"
-"とです。"
+msgid "Here is an example to clear the lock of ``Sites.title`` column:"
+msgstr "以下は ``Sites.title`` カラムのロックを解除する例です。"
 
 # 4b25ce81f5df407bb2cf675eff672d75
-msgid "``lock_clear`` command returns whether lock is acquired or not::"
-msgstr "``lock_clear`` コマンドはロックを獲得できたかどうかを返します。::"
+msgid ""
+"``lock_clear`` command returns whether lock is cleared successfully or not::"
+msgstr "``lock_clear`` コマンドはロックを解除できたかどうかを返します。::"
+
+msgid "``lock_release``"
+msgstr ""
+
+# 631c1b112fed405f9f5bd1c63ba3344d
+msgid ""
+"``lock_release`` command releases the lock of the target object. The target "
+"object is one of database, table and column."
+msgstr ""
+"``lock_release`` コマンドは対象オブジェクトのロックを解放します。対象オブジェ"
+"クトはデータベース、テーブル、カラムのどれかです。"
+
+msgid ""
+"This is a dangerous command. You must only release locks that you acquire "
+"by :doc:`lock_acquire`. If you release locks without :doc:`lock_acquire`, "
+"your database may be broken."
+msgstr ""
+"これは危険なコマンドです。 :doc:`lock_acquire` で獲得したロックだけを解放して"
+"ください。もし、 :doc:`lock_acquire` せずにロックを解放すると、データベースが"
+"壊れる可能性があります。"
+
+msgid "Here is an example to release the lock of the database:"
+msgstr "以下はデータベースのロックを解放する例です。"
+
+msgid "Here is an example to release the lock of ``Entries`` table:"
+msgstr "以下は ``Entries`` テーブルのロックを解放する例です。"
+
+msgid "Here is an example to release the lock of ``Sites.title`` column:"
+msgstr "以下は ``Sites.title`` カラムのロックを解放する例です。"
+
+# 4b25ce81f5df407bb2cf675eff672d75
+msgid ""
+"``lock_release`` command returns whether lock is released successfully or "
+"not::"
+msgstr "``lock_release`` コマンドはロックを開放できたかどうかを返します。::"
+
+msgid ":doc:`lock_acquire`"
+msgstr ""
 
 msgid "``log_level``"
 msgstr ""
@@ -6766,9 +7155,6 @@ msgstr ""
 "論理テーブル名として ``Logs`` を指定すると昇順ですべてのシャード名を取得でき"
 "ます。"
 
-msgid "There is one required parameter."
-msgstr "必須の引数が1つあります。"
-
 # 960a2abfffe2408280e0adbfdcdcb5ca
 msgid ""
 "Specifies the logical table name. ``logical_shard_list`` returns a list of "
@@ -7159,9 +7545,6 @@ msgid "``range_filter``"
 msgstr ""
 
 msgid "TODO: write me"
-msgstr ""
-
-msgid ":doc:`/reference/commands/select`"
 msgstr ""
 
 msgid "``register``"
@@ -10517,20 +10900,17 @@ msgstr "指定できる種類は以下の通りです。"
 msgid "The suggest command does completion."
 msgstr "補完を実行します。"
 
-msgid "complete"
+msgid "``complete``"
 msgstr ""
 
 msgid "The suggest command does correction."
 msgstr "補正を実行します。"
 
-msgid "correct"
+msgid "``correct``"
 msgstr ""
 
 msgid "The suggest command does suggestion."
 msgstr "提案を実行します。"
-
-msgid "suggest"
-msgstr ""
 
 msgid ""
 "You can specify one or more types separated by ``|``. Here are examples:"
@@ -10547,10 +10927,6 @@ msgstr "補正候補と提案候補を返します::"
 msgid "It returns complete, correction and suggestion::"
 msgstr "補完候補と補正候補と提案候補を返します::"
 
-# 8eafd8e97f1748ab87f1fdfe570aa582
-msgid "types"
-msgstr ""
-
 msgid ""
 "Specifies table name that has ``item_${DATA_SET_NAME}`` format. For example, "
 "``item_query`` is a table name if you created dataset by the following "
@@ -10560,23 +10936,17 @@ msgstr ""
 "ば、以下のコマンドでデータセットを作成した場合はテーブル名として "
 "``item_query`` を指定します::"
 
-msgid "table"
-msgstr ""
-
 msgid ""
 "Specifies a column name that has furigana in Katakana in ``table`` table."
 msgstr ""
 "``table`` で指定したテーブルにあるふりがな情報を含むカラムを指定します。ふり"
 "がなはカタカナで指定します。"
 
-msgid "column"
+msgid "``column``"
 msgstr ""
 
 msgid "Specifies query for completion, correction and/or suggestion."
 msgstr "補完・補正・提案対象のクエリーを指定します。"
-
-msgid "query"
-msgstr ""
 
 msgid "Specifies sort key."
 msgstr "ソートキーを指定します。"
@@ -10587,16 +10957,10 @@ msgstr ""
 msgid "``-_score``"
 msgstr ""
 
-msgid "sortby"
-msgstr ""
-
 msgid "Specifies output columns."
 msgstr "出力するカラムを指定します。"
 
 msgid "``_key,_score``"
-msgstr ""
-
-msgid "output_columns"
 msgstr ""
 
 msgid "Specifies returned records offset."
@@ -10605,16 +10969,10 @@ msgstr "返されるレコードのオフセットを指定します。"
 msgid "``0``"
 msgstr ""
 
-msgid "offset"
-msgstr ""
-
 msgid "Specifies number of returned records."
 msgstr "返されるレコード数を指定します。"
 
 msgid "``10``"
-msgstr ""
-
-msgid "limit"
 msgstr ""
 
 msgid ""
@@ -10627,7 +10985,7 @@ msgstr ""
 msgid "``100``"
 msgstr ""
 
-msgid "frequency_threshold"
+msgid "``frequency_threshold``"
 msgstr ""
 
 msgid "``conditional_probability_threshold``"
@@ -10653,25 +11011,16 @@ msgstr "補完時に前方一致検索を実行するかどうかを指定しま
 msgid "Prefix search is always used."
 msgstr "常に前方一致検索を実行します。"
 
-msgid "yes"
-msgstr "した"
-
 msgid "Prefix search is never used."
 msgstr "前方一致検索を実行しません。"
-
-msgid "no"
-msgstr "していない"
 
 msgid "Prefix search is used only when other search can't find any records."
 msgstr "他の検索でレコードが見つからない場合のみ前方一致検索を実行します。"
 
-msgid "auto"
-msgstr ""
-
 msgid "``auto``"
 msgstr ""
 
-msgid "prefix_search"
+msgid "``prefix_search``"
 msgstr ""
 
 msgid "Specifies whether optional similar search is used or not in correction."
@@ -10686,7 +11035,7 @@ msgstr "類似検索を実行しません。"
 msgid "Similar search is used only when other search can't find any records."
 msgstr "他の検索でレコードが見つからない場合のみ類似検索を実行します。"
 
-msgid "similar_search"
+msgid "``similar_search``"
 msgstr ""
 
 msgid "Here is a returned JSON format::"
@@ -11900,9 +12249,6 @@ msgstr ""
 "``tokens`` はトークンの配列です。トークンは以下の属性を持ったオブジェクトで"
 "す。"
 
-msgid "``value``"
-msgstr ""
-
 msgid "Token itself."
 msgstr "トークン自身"
 
@@ -11978,7 +12324,64 @@ msgstr "``target_name`` だけが必須の引数です。"
 
 # 89e4f7f7796f4f7784127f63364b6657
 msgid "``truncate`` command returns whether truncation is succeeded or not::"
+msgstr "``truncate`` コマンドは全削除が成功したかどうかを返します。::"
+
+msgid "Configuration"
+msgstr "設定"
+
+msgid ""
+"Groonga can manage configuration items in each database. These configuration "
+"items are persistent. It means that these configuration items are usable "
+"after a Groonga process exits."
 msgstr ""
+"Groongaはデータベース単位で設定項目を管理できます。これらの設定項目は永続化さ"
+"れます。つまり、Groongaプロセスが終了した後も設定項目を利用できるということで"
+"す。"
+
+msgid ""
+"You can change some Groonga behaviors such as :doc:`/spec/search` by some "
+"ways such as request parameter (:ref:`select-match-escalation-threshold`) "
+"and build parameter (:ref:`install-configure-with-match-escalation-"
+"threshold`)."
+msgstr ""
+":doc:`/spec/search` のようにGroongaのいくつか挙動はリクエストパラメーター（ :"
+"ref:`select-match-escalation-threshold` ）やビルドパラメーター（ :ref:"
+"`install-configure-with-match-escalation-threshold` ）などいくつかの方法で変"
+"更できます。"
+
+msgid ""
+"Configuration is one of these ways. You can change some Groonga behaviors "
+"per database by configuration."
+msgstr ""
+"設定はそれらの方法のうちの1つです。設定を使うことでデータベース単位でGroonga"
+"の挙動を変更できます。"
+
+msgid ""
+"A configuration item consists of key and value. Both of key and value are "
+"string. The max key size is 4KiB. The max value size is 4091B (= 4KiB - 5B)."
+msgstr ""
+"1つの設定項目はキーと値のペアです。キーも値も文字列です。キーの最大サイズは"
+"4KiBです。値の最大サイズは4091B（= 4KiB - 5B）です。"
+
+msgid ""
+"You can set a configuration item by :doc:`/reference/commands/config_set`."
+msgstr "設定項目は :doc:`/reference/commands/config_set` で設定できます。"
+
+msgid ""
+"You can get a configuration item by :doc:`/reference/commands/config_get`."
+msgstr "設定項目の値は :doc:`/reference/commands/config_get` で取得できます。"
+
+msgid ""
+"You can delete a configuration item by :doc:`/reference/commands/"
+"config_delete`."
+msgstr "設定項目は :doc:`/reference/commands/config_delete` で削除できます。"
+
+msgid ""
+"You can confirm all configuration items by :doc:`/reference/commands/dump`."
+msgstr ":doc:`/reference/commands/dump` ですべての設定項目を確認できます。"
+
+msgid "Commands"
+msgstr "コマンド一覧"
 
 msgid "Executables"
 msgstr "実行ファイル"
@@ -12031,9 +12434,6 @@ msgstr ""
 msgid ""
 "Here is an example to recover the database at ``/var/lib/groonga/db/db``::"
 msgstr "以下は ``/var/lib/groonga/db/db`` にあるデータベースを復旧する例です::"
-
-msgid "Commands"
-msgstr "コマンド一覧"
 
 msgid "This section describes available commands."
 msgstr "このセクションでは利用可能なコマンドについて説明します。"
@@ -13613,8 +14013,7 @@ msgstr ""
 msgid "Here is the syntax to run Groonga daemon with existing database::"
 msgstr ""
 
-# e581db12b7ef4a7f8c7b086ce421e126
-msgid ":option:`--pid-file` option will be useful for daemon mode."
+msgid ":option:`--pid-path` option will be useful for daemon mode."
 msgstr ""
 
 # 859f27405e4d4346be06dfc575603987
@@ -13889,16 +14288,7 @@ msgstr ""
 msgid "groongaプロセスの状態を表示します。"
 msgstr ""
 
-msgid "status"
-msgstr ""
-
 msgid "DBに定義されているテーブルのリストを表示します。"
-msgstr ""
-
-msgid "table_list"
-msgstr ""
-
-msgid "column_list"
 msgstr ""
 
 msgid "テーブルに定義されているカラムのリストを表示します。"
@@ -13907,73 +14297,37 @@ msgstr ""
 msgid "DBにテーブルを追加します。"
 msgstr ""
 
-msgid "table_create"
-msgstr ""
-
-msgid "column_create"
-msgstr ""
-
 msgid "テーブルにカラムを追加します。"
 msgstr ""
 
 msgid "DBに定義されているテーブルを削除します。"
 msgstr ""
 
-msgid "table_remove"
-msgstr ""
-
-msgid "column_remove"
-msgstr ""
-
 msgid "テーブルに定義されているカラムを削除します。"
-msgstr ""
-
-msgid "load"
 msgstr ""
 
 msgid "テーブルにレコードを挿入します。"
 msgstr ""
 
-msgid "select"
-msgstr ""
-
 msgid "テーブルに含まれるレコードを検索して表示します。"
-msgstr ""
-
-msgid "define_selector"
 msgstr ""
 
 msgid "検索条件をカスタマイズした新たな検索コマンドを定義します。"
 msgstr ""
 
-msgid "quit"
-msgstr ""
-
 msgid "データベースとのセッションを終了します。"
-msgstr ""
-
-msgid "shutdown"
 msgstr ""
 
 msgid "サーバ(デーモン)プロセスを停止します。"
 msgstr ""
 
-msgid "log_level"
-msgstr ""
-
 msgid "ログ出力レベルを設定します。"
-msgstr ""
-
-msgid "log_put"
 msgstr ""
 
 msgid "ログ出力を行います。"
 msgstr ""
 
 msgid "ロックを解除します。"
-msgstr ""
-
-msgid "clearlock"
 msgstr ""
 
 msgid "新しいデータベースを作成します。::"
@@ -14703,9 +15057,6 @@ msgstr ""
 "必須引数は3つあります。 ``column`` と ``normalizer_name`` と "
 "``use_html_escape`` です。省略可能引数は3つ以上あります。 ``keywordN`` と "
 "``open_tagN`` と ``end_tagN`` です。"
-
-msgid "``column``"
-msgstr ""
 
 msgid "Specifies a column of the table."
 msgstr "テーブルのカラムを指定します。"
@@ -17796,10 +18147,10 @@ msgstr ""
 msgid "d"
 msgstr ""
 
-msgid "-"
+msgid "Dump"
 msgstr ""
 
-msgid "Dump"
+msgid "\\-"
 msgstr ""
 
 msgid "L"
@@ -18033,9 +18384,6 @@ msgstr "いくつか追加のノーマライザーがあります。"
 msgid ""
 "`groonga-normalizer-mysql <https://github.com/groonga/groonga-normalizer-"
 "mysql>`_"
-msgstr ""
-
-msgid ":doc:`/reference/commands/table_create`"
 msgstr ""
 
 msgid "Operations"
@@ -19874,6 +20222,9 @@ msgstr "入力"
 msgid "submit"
 msgstr "検索実行"
 
+msgid "no"
+msgstr "していない"
+
 msgid "se"
 msgstr ""
 
@@ -19888,6 +20239,9 @@ msgstr ""
 
 msgid "search"
 msgstr ""
+
+msgid "yes"
+msgstr "した"
 
 msgid "en"
 msgstr ""
@@ -20112,6 +20466,9 @@ msgstr ""
 
 msgid "For example, there are the following user submissions:"
 msgstr "例えば、ユーザが以下のように検索を実行したとします。:"
+
+msgid "query"
+msgstr ""
 
 msgid "time"
 msgstr "時刻"
@@ -20574,9 +20931,6 @@ msgstr "バリューサポート"
 
 msgid "Key -> ID speed"
 msgstr "キー→ID検索速度"
-
-msgid "\\-"
-msgstr ""
 
 msgid "oo"
 msgstr ""

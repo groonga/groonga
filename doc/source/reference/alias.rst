@@ -39,8 +39,8 @@ search requests.
 Usage
 -----
 
-You manage aliased name to real name mapping by a normal table and a
-normal column.
+You manage alias to real name mapping by a normal table and a normal
+column.
 
 You can use any table type except :ref:`table-no-key` for the
 table. :ref:`table-hash-key` is recommended because exact key match
@@ -114,9 +114,10 @@ How to resolve alias
 
 This section describes how to resolve alias.
 
-Groonga uses the alias feature when nonexistent table/column name is
-referred. It means that you can't override existing table/column by
-the alias feature.
+Groonga uses the alias feature when nonexistent object name (table
+name, column name, command name, function name and so on) is
+referred. It means that you can't override existing object (table,
+column, command, function and so on) by the alias feature.
 
 For example, alias isn't resolved in the following example because
 ``Users.years`` exists:

@@ -49,20 +49,20 @@ column. Release the lock of the database to show another examples.
 .. include:: ../../example/reference/commands/lock_acquire/database_release.log
 .. lock_release
 
-Here is an example to acquire the lock of ``Entry`` table:
+Here is an example to acquire the lock of ``Entries`` table:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/lock_acquire/table.log
-.. table_create Entry TABLE_NO_KEY
-.. lock_acquire Entry
+.. table_create Entries TABLE_NO_KEY
+.. lock_acquire Entries
 
-Here is an example to acquire the lock of ``Site.title`` column:
+Here is an example to acquire the lock of ``Sites.title`` column:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/lock_acquire/column.log
-.. table_create Site TABLE_HASH_KEY ShortText
-.. column_create Site title COLUMN_SCALAR ShortText
-.. lock_acquire Site.title
+.. table_create Sites TABLE_HASH_KEY ShortText
+.. column_create Sites title COLUMN_SCALAR ShortText
+.. lock_acquire Sites.title
 
 Parameters
 ----------

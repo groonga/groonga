@@ -25,14 +25,14 @@ This command takes one parameter::
 Usage
 -----
 
-Here is an example to delete ``alias.column_name`` configuration item:
+Here is an example to delete ``alias.column`` configuration item:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/config_delete/existent.log
-.. config_set alias.column_name Aliases.real_name
-.. config_get alias.column_name
-.. config_delete alias.column_name
-.. config_get alias.column_name
+.. config_set alias.column Aliases.real_name
+.. config_get alias.column
+.. config_delete alias.column
+.. config_get alias.column
 
 Here is an example to delete nonexistent configuration item:
 

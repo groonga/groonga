@@ -26,13 +26,13 @@ This command takes one parameter::
 Usage
 -----
 
-Here is an example to set a value to ``alias.column_name``
+Here is an example to set a value to ``alias.column``
 configuration item and get the value:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/config_get/existent.log
-.. config_set alias.column_name Aliases.real_name
-.. config_get alias.column_name
+.. config_set alias.column Aliases.real_name
+.. config_get alias.column
 
 Here is an example to get nonexistent configuration item value:
 

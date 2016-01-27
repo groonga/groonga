@@ -42,22 +42,22 @@ Here is an example to clear all locks in the database:
 .. include:: ../../example/reference/commands/lock_clear/database.log
 .. lock_clear
 
-Here is an example to clear locks of ``Entry`` table and ``Entry``
+Here is an example to clear locks of ``Entries`` table and ``Entries``
 table columns:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/lock_clear/table.log
-.. table_create Entry TABLE_NO_KEY
-.. column_create Entry body COLUMN_SCALAR Text
-.. lock_clear Entry
+.. table_create Entries TABLE_NO_KEY
+.. column_create Entries body COLUMN_SCALAR Text
+.. lock_clear Entries
 
-Here is an example to clear the lock of ``Site.title`` column:
+Here is an example to clear the lock of ``Sites.title`` column:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/lock_clear/column.log
-.. table_create Site TABLE_HASH_KEY ShortText
-.. column_create Site title COLUMN_SCALAR ShortText
-.. lock_clear Site.title
+.. table_create Sites TABLE_HASH_KEY ShortText
+.. column_create Sites title COLUMN_SCALAR ShortText
+.. lock_clear Sites.title
 
 Parameters
 ----------

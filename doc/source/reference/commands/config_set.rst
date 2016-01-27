@@ -26,13 +26,13 @@ This command takes two required parameters::
 Usage
 -----
 
-Here is an example to set a value to ``alias.column_name``
+Here is an example to set a value to ``alias.column``
 configuration item and confirm the set value:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/config_set/set_and_get.log
-.. config_set alias.column_name Aliases.real_name
-.. config_get alias.column_name
+.. config_set alias.column Aliases.real_name
+.. config_get alias.column
 
 Parameters
 ----------
