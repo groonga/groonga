@@ -2,6 +2,9 @@
 
 .. highlightlang:: none
 
+.. groonga-command
+.. database: table_list
+
 ``table_list``
 ==============
 
