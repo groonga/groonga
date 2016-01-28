@@ -90,7 +90,27 @@ Database is locked. It may be broken. Re-create the database.
       MESSAGE
     end
 
-    def test_referenced_table
+    def test_referenced_table_by_table
+      groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+      groonga("column_create", "Users", "age", "COLUMN_SCALAR", "UInt8")
+
+      groonga("table_create", "Admins", "TABLE_HASH_KEY", "Users")
+
+      groonga("lock_acquire", "Users")
+      groonga("lock_acquire", "Users.age")
+      groonga("lock_acquire", "Admins")
+
+      error = assert_raise(CommandRunner::Error) do
+        grndb("check", "--target", "Admins")
+      end
+      assert_equal(<<-MESSAGE, error.error_output)
+[Admins] Table is locked. It may be broken. (1) Truncate the table (truncate Admins) or clear lock of the table (lock_clear Admins) and (2) load data again.
+[Users] Table is locked. It may be broken. (1) Truncate the table (truncate Users) or clear lock of the table (lock_clear Users) and (2) load data again.
+[Users.age] Data column is locked. It may be broken. (1) Truncate the column (truncate Users.age) or clear lock of the column (lock_clear Users.age) and (2) load data again.
+      MESSAGE
+    end
+
+    def test_referenced_table_by_column
       groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
       groonga("column_create", "Users", "age", "COLUMN_SCALAR", "UInt8")
 

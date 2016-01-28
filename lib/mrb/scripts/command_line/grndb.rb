@@ -211,6 +211,17 @@ module Groonga
           check_object(target)
           case target
           when Table
+            unless target.is_a?(Groonga::Array)
+              domain_id = target.domain_id
+              domain = @context[domain_id]
+              if domain.nil?
+                record = Record.new(@database, domain_id)
+                failed_to_open(record.key)
+              elsif domain.is_a?(Table)
+                check_object_recursive(domain)
+              end
+            end
+
             target.column_ids.each do |column_id|
               column = @context[column_id]
               if column.nil?
