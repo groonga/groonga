@@ -11,6 +11,8 @@ run()
   fi
 }
 
+run sudo sed -i'' -e 's/httpredir/ftp.jp/g' /etc/apt/sources.list
+
 run sudo dpkg --add-architecture i386
 run sudo apt update
 run sudo apt install -V -y \
