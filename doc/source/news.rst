@@ -109,7 +109,7 @@ Improvements
   releases a lock of a database, table or column.
 
 * [:doc:`/reference/executables/groonga-httpd`] Updated bundled nginx
-  version to 1.9.9 from 1.9.7.
+  version to 1.9.10 from 1.9.7.
 
 Fixes
 ^^^^^
