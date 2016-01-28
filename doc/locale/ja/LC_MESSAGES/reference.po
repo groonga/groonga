@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-01-27 17:45+0900\n"
+"PO-Revision-Date: 2016-01-28 17:37+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -12456,6 +12456,69 @@ msgstr ""
 "ん。もし、データベースが他のプロセスから開かれていると、このコマンドは間違っ"
 "た結果を報告する可能性があります。"
 
+# 2145331209cc44d3af543c4e5e3fd5c5
+# c0ad302ffb28489c89f91a52efdb8306
+msgid "``check`` has some options."
+msgstr "``check`` にはいくつかオプションがあります。"
+
+msgid "``--target``"
+msgstr ""
+
+msgid "It specifies a check target object."
+msgstr "チェック対象のオブジェクトを指定します。"
+
+msgid ""
+"If your database is large and you know an unreliable object, this option "
+"will help you. ``check`` need more time for large database. You can reduce "
+"check time by ``--target`` option to reduce check target."
+msgstr ""
+"もし、データベースが大きく、かつ、信頼できないオブジェクトがわかっているな"
+"ら、このオプションが役に立つでしょう。 ``check`` は大きなデータベースほど処理"
+"に時間がかかります。 ``--target`` オプションでチェック対象を限定することで"
+"チェック時間を削減できます。"
+
+msgid ""
+"The check target is checked recursive. Because related objects of unreliable "
+"object will be unreliable."
+msgstr ""
+"``check`` はチェック対象を再帰的にチェックします。なぜなら、信頼できないオブ"
+"ジェクトに関連するオブジェクトも信頼できないことが多いからです。"
+
+# ac81176df271464f82d275c8a39d3188
+msgid ""
+"If the check target is a table, all columns of the table are also checked "
+"recursive."
+msgstr ""
+"チェック対象がテーブルの場合、そのテーブルのすべてのカラムも再帰的にチェック"
+"します。"
+
+msgid ""
+"If the check target is a table and its key type is another table, the "
+"another table is also checked recursive."
+msgstr ""
+"チェック対象がテーブルでテーブルのキーの型が他のテーブルの場合、他のテーブル"
+"も再帰的にチェックします。"
+
+msgid ""
+"If the check target is a column and its value type is a table, the table is "
+"also checked recursive."
+msgstr ""
+"チェック対象がカラムで値の型がテーブルの場合、そのテーブルも再帰的にチェック"
+"します。"
+
+msgid ""
+"If the check target is an index column, the table specified as value type "
+"and all sources are also checked recursive."
+msgstr ""
+"チェック対象がインデックスカラムの場合、値の型に指定したテーブルとすべての"
+"ソースも再帰的にチェックします。"
+
+msgid "Here is an example that checks only ``Entries`` table and its columns::"
+msgstr "以下は ``Entries`` テーブルとそのカラムだけをチェックする例です。::"
+
+msgid "Here is an example that checks only ``Entries.name`` column::"
+msgstr "以下は ``Entries.name`` カラムだけをチェックする例です。::"
+
 # dc616dd61e0f4b249cc48a8cde423863
 msgid "``recover``"
 msgstr ""
@@ -12463,7 +12526,6 @@ msgstr ""
 msgid "It recovers an existing broken Groonga database."
 msgstr "既存の壊れたGroongaデータベースを復旧します。"
 
-# b6ff9a964a764755be5843942ecadab2
 msgid ""
 "If the database is not broken, ``grndb`` does nothing and exits with ``0`` "
 "exit status."
