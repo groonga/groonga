@@ -564,7 +564,11 @@ grn_select_output_columns(grn_ctx *ctx, grn_obj *res,
     GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
     GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET;
   rc = grn_output_format_set_columns(ctx, &format, res, columns, columns_len);
-  /* TODO: check rc */
+  if (rc != GRN_SUCCESS) {
+    GRN_OBJ_FORMAT_FIN(ctx, &format);
+    return;
+  }
+
   if (format.expression) {
     grn_obj *condition_ptr;
     condition_ptr =
