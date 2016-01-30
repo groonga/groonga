@@ -40,7 +40,7 @@ Reference
 
 .. c:function:: grn_obj *grn_geo_cursor_open_in_rectangle(grn_ctx *ctx, grn_obj *index, grn_obj *top_left_point, grn_obj *bottom_right_point, int offset, int limit)
 
-   It opens a cursor to get records in the rectangle specfied by top_left_point parameter and bottom_right_point parameter.
+   It opens a cursor to get records in the rectangle specified by top_left_point parameter and bottom_right_point parameter.
 
    :param index: the index column for TokyoGeoPoint or WGS84GeoPpoint type.
    :param top_left_point: the top left point of the target rectangle. (ShortText, Text, LongText, TokyoGeoPoint or WGS84GeoPoint)
