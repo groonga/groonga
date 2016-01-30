@@ -5,7 +5,7 @@
 Server packages
 ===============
 
-The package ``groonga`` is the mininum set of fulltext search engine.
+The package ``groonga`` is the minimum set of fulltext search engine.
 If you want to use groonga for server use, you can install
 additional preconfigured packages.
 
