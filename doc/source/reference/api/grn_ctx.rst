@@ -9,7 +9,7 @@ Summary
 -------
 
 :c:type:`grn_ctx` is the most important object. :c:type:`grn_ctx`
-keeps the current infomation such as:
+keeps the current information such as:
 
 * The last occurred error.
 * The current encoding.
