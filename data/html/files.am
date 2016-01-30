@@ -28,7 +28,7 @@ nobase_dist_html_DATA = \
 	admin/js/groonga-admin.js \
 	admin/js/jquery-1.7.2.js \
 	admin/js/jquery-ui-1.8.18.custom.js \
-	admin/js/jquery.flot-0.7.js \
+	admin/js/jquery.flot-0.8.3.js \
 	admin/js/jquery.flot.license.txt \
 	$(NULL)
 
