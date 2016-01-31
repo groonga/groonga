@@ -24,8 +24,8 @@ void data_prefix_search(void);
 void test_prefix_search(gconstpointer data);
 void data_suffix_search(void);
 void test_suffix_search(gconstpointer data);
-void data_fussy_search(void);
-void test_fussy_search(gconstpointer data);
+void data_fuzzy_search(void);
+void test_fuzzy_search(gconstpointer data);
 
 static GList *keys;
 
@@ -389,7 +389,7 @@ test_suffix_search(gconstpointer data)
 }
 
 void
-data_fussy_search(void)
+data_fuzzy_search(void)
 {
   cut_add_data("nonexistence",
                xfix_test_data_new(GRN_END_OF_DATA, NULL, "cccc", NULL, NULL),
@@ -417,7 +417,7 @@ data_fussy_search(void)
 }
 
 void
-test_fussy_search(gconstpointer data)
+test_fuzzy_search(gconstpointer data)
 {
   const grn_trie_test_data *test_data = data;
   const gchar key1[]  = "あ";
@@ -440,11 +440,11 @@ test_fussy_search(gconstpointer data)
 
   cut_assert_create_hash();
   grn_test_assert_equal_rc(test_data->expected_rc,
-                           grn_pat_fussy_search(context, trie,
-                                                 test_data->search_key,
-                                                 strlen(test_data->search_key),
-                                                 0, 1, 1,
-                                                 hash));
+                           grn_pat_fuzzy_search(context, trie,
+                                                test_data->search_key,
+                                                strlen(test_data->search_key),
+                                                0, 1, 1,
+                                                hash));
   gcut_assert_equal_list_string(test_data->expected_strings,
                                 retrieve_all_keys());
 }

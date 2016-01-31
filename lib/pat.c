@@ -1290,13 +1290,13 @@ typedef struct {
   const char *key;
   int key_length;
   grn_bool can_transition;
-} fussy_node;
+} fuzzy_node;
 
 inline static void
-_grn_pat_fussy_search(grn_ctx *ctx, grn_pat *pat, grn_id id,
+_grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat, grn_id id,
                       const char *key, uint32_t key_size,
                       uint16_t *dists, uint32_t lx,
-                      int last_check, fussy_node *last_node,
+                      int last_check, fuzzy_node *last_node,
                       uint32_t max_distance, int flags, grn_hash *h)
 {
   pat_node *node = NULL;
@@ -1319,12 +1319,12 @@ _grn_pat_fussy_search(grn_ctx *ctx, grn_pat *pat, grn_id id,
         return;
       }
     }
-    _grn_pat_fussy_search(ctx, pat, node->lr[0],
+    _grn_pat_fuzzy_search(ctx, pat, node->lr[0],
                           key, key_size, dists, lx,
                           check, last_node,
                           max_distance, flags, h);
 
-    _grn_pat_fussy_search(ctx, pat, node->lr[1],
+    _grn_pat_fuzzy_search(ctx, pat, node->lr[1],
                           key, key_size, dists, lx,
                           check, last_node,
                           max_distance, flags, h);
@@ -1384,7 +1384,7 @@ _grn_pat_fussy_search(grn_ctx *ctx, grn_pat *pat, grn_id id,
 }
 
 grn_rc
-grn_pat_fussy_search(grn_ctx *ctx, grn_pat *pat,
+grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat,
                      const void *key, uint32_t key_size, uint32_t max_size,
                      uint32_t max_distance, int flags, grn_hash *h)
 {
@@ -1394,7 +1394,7 @@ grn_pat_fussy_search(grn_ctx *ctx, grn_pat *pat,
   uint32_t lx, len, x, y;
   const char *s = key;
   const char *e = (const char *)key + key_size;
-  fussy_node last_node;
+  fuzzy_node last_node;
   PAT_AT(pat, GRN_ID_NIL, node);
   id = node->lr[1];
 
@@ -1429,7 +1429,7 @@ grn_pat_fussy_search(grn_ctx *ctx, grn_pat *pat,
   last_node.key = NULL;
   last_node.key_length = 0;
   last_node.can_transition = GRN_TRUE;
-  _grn_pat_fussy_search(ctx, pat, id,
+  _grn_pat_fuzzy_search(ctx, pat, id,
                         key, key_size, dists, lx,
                         -1, &last_node, max_distance, flags, h);
   GRN_FREE(dists);
