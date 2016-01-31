@@ -100,6 +100,8 @@ module Groonga
           match_resolve_index_index_column(arg)
         when Indexable
           match_resolve_index_indexable(arg)
+        when Procedure
+          break
         else
           self.query = arg
         end

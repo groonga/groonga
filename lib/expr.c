@@ -4371,6 +4371,8 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si)
       scan_info_build_match_expr(ctx, si, (grn_expr *)(*p));
     } else if ((*p)->header.type == GRN_COLUMN_INDEX) {
       scan_info_put_index(ctx, si, *p, 0, 1, NULL, NULL, 0);
+    } else if (grn_obj_is_proc(ctx, *p)) {
+      break;
     } else if (GRN_DB_OBJP(*p)) {
       grn_index_datum index_datum;
       unsigned int n_index_data;

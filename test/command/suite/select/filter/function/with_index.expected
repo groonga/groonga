@@ -1,0 +1,18 @@
+plugin_register functions/vector
+[[0,0.0,0.0],true]
+table_create Users TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Users names COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+table_create Names TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Names users COLUMN_INDEX Users names
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"names": ["Alice", "Bob"]},
+{"names": ["Tom"]}
+]
+[[0,0.0,0.0],2]
+select Users --filter 'vector_size(names) == 1'
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["names","ShortText"]],[2,["Tom"]]]]]
