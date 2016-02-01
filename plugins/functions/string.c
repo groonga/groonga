@@ -38,18 +38,7 @@ func_string_length(grn_ctx *ctx, int n_args, grn_obj **args,
   }
 
   target = args[0];
-  switch (target->header.type) {
-  case GRN_BULK :
-    {
-      const char *s = GRN_TEXT_VALUE(target);
-      const char *e = GRN_TEXT_VALUE(target) + GRN_TEXT_LEN(target);
-      const char *p;
-      unsigned int cl = 0;
-      for (p = s; p < e && (cl = grn_charlen(ctx, p, e)); p += cl, length++);
-    }
-    break;
-  default :
-    {
+  if (target->header.type != GRN_BULK) {
       grn_obj inspected;
 
       GRN_TEXT_INIT(&inspected, 0);
@@ -60,8 +49,14 @@ func_string_length(grn_ctx *ctx, int n_args, grn_obj **args,
                        GRN_TEXT_VALUE(&inspected));
       GRN_OBJ_FIN(ctx, &inspected);
       return NULL;
-    }
-    break;
+  }
+
+  {
+    const char *s = GRN_TEXT_VALUE(target);
+    const char *e = GRN_TEXT_VALUE(target) + GRN_TEXT_LEN(target);
+    const char *p;
+    unsigned int cl = 0;
+    for (p = s; p < e && (cl = grn_charlen(ctx, p, e)); p += cl, length++);
   }
 
   grn_length = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_UINT32, 0);
