@@ -1396,17 +1396,19 @@ grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat,
   const char *s = key;
   const char *e = (const char *)key + key_size;
   fuzzy_node last_node;
-  PAT_AT(pat, GRN_ID_NIL, node);
-  id = node->lr[1];
-
+  grn_rc rc = grn_pat_error_if_truncated(ctx, pat);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
   if (key_size > GRN_TABLE_MAX_KEY_SIZE ||
       max_distance > GRN_TABLE_MAX_KEY_SIZE ||
       prefix_match_size > key_size) {
     return GRN_INVALID_ARGUMENT;
   }
-  if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
-    return GRN_ID_NIL;
-  }
+
+  PAT_AT(pat, GRN_ID_NIL, node);
+  id = node->lr[1];
+
   if (prefix_match_size) {
     grn_pat_cursor *cur;
     if ((cur = grn_pat_cursor_open(ctx, pat, key, prefix_match_size,
