@@ -15,6 +15,7 @@ LIBS =						\
 	$(top_builddir)/lib/libgroonga.la
 
 function_plugins_LTLIBRARIES =
-function_plugins_LTLIBRARIES += vector.la
+function_plugins_LTLIBRARIES += vector.la string.la
 
 include vector_sources.am
+include string_sources.am

@@ -38,3 +38,23 @@ else()
   install(TARGETS vector_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
 endif()
 target_link_libraries(vector_functions libgroonga)
+
+read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/string_sources.am
+  VECTOR_SOURCES)
+set_source_files_properties(${VECTOR_SOURCES}
+  PROPERTIES
+  COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
+if(GRN_EMBED)
+  add_library(string_functions STATIC ${VECTOR_SOURCES})
+  set_target_properties(
+    string_functions
+    PROPERTIES
+    POSITION_INDEPENDENT_CODE ON)
+else()
+  add_library(string_functions MODULE ${VECTOR_SOURCES})
+  set_target_properties(string_functions PROPERTIES
+    PREFIX ""
+    OUTPUT_NAME "string")
+  install(TARGETS string_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
+endif()
+target_link_libraries(string_functions libgroonga)
