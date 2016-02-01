@@ -1423,6 +1423,9 @@ grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat,
   }
   for (lx = 0; s < e && (len = grn_charlen(ctx, s, e)); s += len, lx++);
   dists = GRN_MALLOC((lx + 1) * (lx + max_distance + 1) * sizeof(uint16_t));
+  if (!dists) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
 
   for (x = 0; x <= lx; x++) { DIST(x, 0) = x; }
   for (y = 0; y <= lx + max_distance ; y++) { DIST(0, y) = y; }
