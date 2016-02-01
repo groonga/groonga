@@ -110,7 +110,8 @@ void grn_pat_cache_disable(grn_ctx *ctx, grn_pat *pat);
 #define WITH_TRANSPOSITION                  (0x01)
 
 GRN_API grn_rc grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat,
-                                    const void *key, unsigned int key_size, unsigned int max_size,
+                                    const void *key, unsigned int key_size,
+                                    unsigned int prefix_match_size,
                                     unsigned int max_distance, int flags, grn_hash *h);
 
 #ifdef __cplusplus

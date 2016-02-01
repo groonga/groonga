@@ -1385,7 +1385,8 @@ _grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat, grn_id id,
 
 grn_rc
 grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat,
-                     const void *key, uint32_t key_size, uint32_t max_size,
+                     const void *key, uint32_t key_size,
+                     uint32_t prefix_match_size,
                      uint32_t max_distance, int flags, grn_hash *h)
 {
   pat_node *node;
@@ -1400,15 +1401,15 @@ grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat,
 
   if (key_size > GRN_TABLE_MAX_KEY_SIZE ||
       max_distance > GRN_TABLE_MAX_KEY_SIZE ||
-      max_size > key_size) {
+      prefix_match_size > key_size) {
     return GRN_INVALID_ARGUMENT;
   }
   if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
     return GRN_ID_NIL;
   }
-  if (max_size) {
+  if (prefix_match_size) {
     grn_pat_cursor *cur;
-    if ((cur = grn_pat_cursor_open(ctx, pat, key, max_size,
+    if ((cur = grn_pat_cursor_open(ctx, pat, key, prefix_match_size,
                                    NULL, 0, 0, -1, GRN_CURSOR_PREFIX))) {
       grn_id tid;
       tid = grn_pat_cursor_next(ctx, cur);
