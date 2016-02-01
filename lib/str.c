@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2015 Brazil
+/* Copyright(C) 2009-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -94,7 +94,6 @@ grn_str_charlen(grn_ctx *ctx, const char *str, grn_encoding encoding)
       }
     }
     return 1;
-    break;
   case GRN_ENC_UTF8 :
     if (*p & 0x80) {
       int b, w;
@@ -114,7 +113,6 @@ grn_str_charlen(grn_ctx *ctx, const char *str, grn_encoding encoding)
     } else {
       return 1;
     }
-    break;
   case GRN_ENC_SJIS :
     if (*p & 0x80) {
       /* we regard 0xa0 as JIS X 0201 KANA. adjusted to other tools. */
@@ -131,10 +129,8 @@ grn_str_charlen(grn_ctx *ctx, const char *str, grn_encoding encoding)
     } else {
       return 1;
     }
-    break;
   default :
     return 1;
-    break;
   }
   return 0;
 }
@@ -158,10 +154,8 @@ grn_charlen_(grn_ctx *ctx, const char *str, const char *end, grn_encoding encodi
       }
     }
     return 1;
-    break;
   case GRN_ENC_UTF8 :
     return grn_str_charlen_utf8(ctx, p, (unsigned char *)end);
-    break;
   case GRN_ENC_SJIS :
     if (*p & 0x80) {
       /* we regard 0xa0 as JIS X 0201 KANA. adjusted to other tools. */
@@ -178,10 +172,8 @@ grn_charlen_(grn_ctx *ctx, const char *str, const char *end, grn_encoding encodi
     } else {
       return 1;
     }
-    break;
   default :
     return 1;
-    break;
   }
   return 0;
 }
@@ -1793,7 +1785,6 @@ grn_aton(grn_ctx *ctx, const char *p, const char *end, const char **rest,
     break;
   default :
     return GRN_INVALID_ARGUMENT;
-    break;
   }
 
   return GRN_SUCCESS;
