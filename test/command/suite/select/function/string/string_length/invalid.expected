@@ -1,0 +1,42 @@
+plugin_register functions/string
+[[0,0.0,0.0],true]
+table_create Ages TABLE_HASH_KEY UInt8
+[[0,0.0,0.0],true]
+load --table Ages
+[
+{"_key": 29}
+]
+[[0,0.0,0.0],1]
+select Ages   --output_columns '_key, string_length(_key)'   --command_version 2
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "string_length(): target object must be a text bulk: <29>"
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_key",
+          "UInt8"
+        ],
+        [
+          "string_length",
+          "Object"
+        ]
+      ],
+      [
+        29,
+        "string_length(): target object must be a text bulk: <29>"
+      ]
+    ]
+  ]
+]
+#|e| string_length(): target object must be a text bulk: <29>

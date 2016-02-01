@@ -38,13 +38,17 @@ func_string_length(grn_ctx *ctx, int n_args, grn_obj **args,
   }
 
   target = args[0];
-  if (target->header.type != GRN_BULK) {
+  if (!(target->header.type == GRN_BULK &&
+        ((target->header.domain == GRN_DB_SHORT_TEXT) ||
+         (target->header.domain == GRN_DB_TEXT) ||
+         (target->header.domain == GRN_DB_LONG_TEXT)))) {
     grn_obj inspected;
 
     GRN_TEXT_INIT(&inspected, 0);
-    grn_inspect(ctx, target, &inspected);
+    grn_inspect(ctx, &inspected, target);
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                     "string_length(): target object must be bulk: <%.*s>",
+                     "string_length(): target object must be a text bulk: "
+                     "<%.*s>",
                      (int)GRN_TEXT_LEN(&inspected),
                      GRN_TEXT_VALUE(&inspected));
     GRN_OBJ_FIN(ctx, &inspected);

@@ -1,0 +1,12 @@
+plugin_register functions/string
+
+table_create Ages TABLE_HASH_KEY UInt8
+
+load --table Ages
+[
+{"_key": 29}
+]
+
+select Ages \
+  --output_columns '_key, string_length(_key)' \
+  --command_version 2
