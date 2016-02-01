@@ -1224,6 +1224,230 @@ grn_pat_lcp_search(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_siz
   return r2;
 }
 
+#define DIST(ox,oy) (dists[((lx + 1) * (oy)) + (ox)])
+
+inline static uint16_t
+calc_edit_distance_by_offset(grn_ctx *ctx,
+                             const char *sx, const char *ex,
+                             const char *sy, const char *ey,
+                             uint16_t *dists, uint32_t lx,
+                             uint32_t offset, uint32_t max_distance,
+                             grn_bool *can_transition, int flags)
+{
+  uint32_t cx, cy, x, y;
+  const char *px, *py;
+
+  /* Skip already calculated rows */
+  for (py = sy, y = 1; py < ey && (cy = grn_charlen(ctx, py, ey)); py += cy, y++) {
+    if (py - sy >= offset) {
+      break;
+    }
+  }
+  for (; py < ey && (cy = grn_charlen(ctx, py, ey)); py += cy, y++) {
+    /* children nodes will be no longer smaller than max distance
+     * with only insertion costs.
+     * This is end of row on allocated memory. */
+    if (y > lx + max_distance) {
+      *can_transition = GRN_FALSE;
+      return max_distance + 1;
+    }
+
+    for (px = sx, x = 1; px < ex && (cx = grn_charlen(ctx, px, ex)); px += cx, x++) {
+      if (cx == cy && !memcmp(px, py, cx)) {
+        DIST(x, y) = DIST(x - 1, y - 1);
+      } else {
+        uint32_t a, b, c;
+        a = DIST(x - 1, y) + 1;
+        b = DIST(x, y - 1) + 1;
+        c = DIST(x - 1, y - 1) + 1;
+        DIST(x, y) = ((a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c));
+        if (flags == GRN_PAT_FUZZY_WITH_TRANSPOSITION
+            && x > 1 && y > 1
+            && cx == cy
+            && memcmp(px, py - cy, cx) == 0
+            && memcmp(px - cx, py, cx) == 0) {
+          uint32_t t = DIST(x - 2, y - 2) + 1;
+          DIST(x, y) = ((DIST(x, y) < t) ? DIST(x, y) : t);
+        }
+      }
+    }
+  }
+  if (lx) {
+    /* If there is no cell which is smaller than equal to max distance on end of row,
+     * children nodes will be no longer smaller than max distance */
+    *can_transition = GRN_FALSE;
+    for (x = 1; x <= lx; x++) {
+      if (DIST(x, y - 1) <= max_distance) {
+        *can_transition = GRN_TRUE;
+        break;
+      }
+    }
+  }
+  return DIST(lx, y - 1);
+}
+
+typedef struct {
+  const char *key;
+  int key_length;
+  grn_bool can_transition;
+} fuzzy_node;
+
+inline static void
+_grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat, grn_id id,
+                      const char *key, uint32_t key_size,
+                      uint16_t *dists, uint32_t lx,
+                      int last_check, fuzzy_node *last_node,
+                      uint32_t max_distance, int flags, grn_hash *h)
+{
+  pat_node *node = NULL;
+  int check, len;
+  const char *k;
+  uint32_t offset = 0;
+
+  PAT_AT(pat, id, node);
+  if (!node) {
+    return;
+  }
+  check = PAT_CHK(node);
+  len = PAT_LEN(node);
+  k = pat_node_get_key(ctx, pat, node);
+
+  if (check > last_check) {
+    if (len >= last_node->key_length &&
+        !memcmp(k, last_node->key, last_node->key_length)) {
+      if (last_node->can_transition == GRN_FALSE) {
+        return;
+      }
+    }
+    _grn_pat_fuzzy_search(ctx, pat, node->lr[0],
+                          key, key_size, dists, lx,
+                          check, last_node,
+                          max_distance, flags, h);
+
+    _grn_pat_fuzzy_search(ctx, pat, node->lr[1],
+                          key, key_size, dists, lx,
+                          check, last_node,
+                          max_distance, flags, h);
+  } else {
+    if (id) {
+      /* Set already calculated common prefix length */
+      if (len >= last_node->key_length &&
+          !memcmp(k, last_node->key, last_node->key_length)) {
+        if (last_node->can_transition == GRN_FALSE) {
+          return;
+        }
+        offset = last_node->key_length;
+      } else {
+        if (last_node->can_transition == GRN_FALSE) {
+          last_node->can_transition = GRN_TRUE;
+        }
+        if (last_node->key_length) {
+          const char *kp = k;
+          const char *ke = k + len;
+          const char *p = last_node->key;
+          const char *e = last_node->key + last_node->key_length;
+          int lp;
+          for (;p < e && kp < ke && (lp = grn_charlen(ctx, p, e));
+               p += lp, kp += lp) {
+            if (p + lp <= e && kp + lp <= ke && memcmp(p, kp, lp)) {
+              break;
+            }
+          }
+          offset = kp - k;
+        }
+      }
+      if (len - offset) {
+        uint16_t distance;
+        distance =
+          calc_edit_distance_by_offset(ctx,
+                                       key, key + key_size,
+                                       k, k + len,
+                                       dists, lx,
+                                       offset, max_distance,
+                                       &(last_node->can_transition), flags);
+        if (distance <= max_distance) {
+          if (DB_OBJ(h)->header.flags & GRN_OBJ_WITH_SUBREC) {
+            grn_rset_recinfo *ri;
+            if (grn_hash_add(ctx, h, &id, sizeof(grn_id), (void **)&ri, NULL)) {
+              ri->score = distance;
+            }
+          } else {
+            grn_hash_add(ctx, h, &id, sizeof(grn_id), NULL, NULL);
+          }
+        }
+      }
+      last_node->key = k;
+      last_node->key_length = len;
+    }
+  }
+  return;
+}
+
+grn_rc
+grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat,
+                     const void *key, uint32_t key_size,
+                     uint32_t prefix_match_size,
+                     uint32_t max_distance, int flags, grn_hash *h)
+{
+  pat_node *node;
+  grn_id id;
+  uint16_t *dists;
+  uint32_t lx, len, x, y;
+  const char *s = key;
+  const char *e = (const char *)key + key_size;
+  fuzzy_node last_node;
+  grn_rc rc = grn_pat_error_if_truncated(ctx, pat);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  if (key_size > GRN_TABLE_MAX_KEY_SIZE ||
+      max_distance > GRN_TABLE_MAX_KEY_SIZE ||
+      prefix_match_size > key_size) {
+    return GRN_INVALID_ARGUMENT;
+  }
+
+  PAT_AT(pat, GRN_ID_NIL, node);
+  id = node->lr[1];
+
+  if (prefix_match_size) {
+    grn_pat_cursor *cur;
+    if ((cur = grn_pat_cursor_open(ctx, pat, key, prefix_match_size,
+                                   NULL, 0, 0, -1, GRN_CURSOR_PREFIX))) {
+      grn_id tid;
+      tid = grn_pat_cursor_next(ctx, cur);
+      grn_pat_cursor_close(ctx, cur);
+      if (tid) {
+        id = tid;
+      } else {
+        return GRN_END_OF_DATA;
+      }
+    }
+  }
+  for (lx = 0; s < e && (len = grn_charlen(ctx, s, e)); s += len) {
+    lx++;
+  }
+  dists = GRN_MALLOC((lx + 1) * (lx + max_distance + 1) * sizeof(uint16_t));
+  if (!dists) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+
+  for (x = 0; x <= lx; x++) { DIST(x, 0) = x; }
+  for (y = 0; y <= lx + max_distance ; y++) { DIST(0, y) = y; }
+
+  last_node.key = NULL;
+  last_node.key_length = 0;
+  last_node.can_transition = GRN_TRUE;
+  _grn_pat_fuzzy_search(ctx, pat, id,
+                        key, key_size, dists, lx,
+                        -1, &last_node, max_distance, flags, h);
+  GRN_FREE(dists);
+  if (grn_hash_size(ctx, h)) {
+    return GRN_SUCCESS;
+  } else {
+    return GRN_END_OF_DATA;
+  }
+}
+
 inline static grn_rc
 _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int shared,
              grn_table_delete_optarg *optarg)

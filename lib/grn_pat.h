@@ -107,6 +107,13 @@ void grn_pat_cursor_inspect(grn_ctx *ctx, grn_pat_cursor *c, grn_obj *buf);
 grn_rc grn_pat_cache_enable(grn_ctx *ctx, grn_pat *pat, uint32_t cache_size);
 void grn_pat_cache_disable(grn_ctx *ctx, grn_pat *pat);
 
+#define GRN_PAT_FUZZY_WITH_TRANSPOSITION                  (0x01)
+
+GRN_API grn_rc grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat,
+                                    const void *key, unsigned int key_size,
+                                    unsigned int prefix_match_size,
+                                    unsigned int max_distance, int flags, grn_hash *h);
+
 #ifdef __cplusplus
 }
 #endif

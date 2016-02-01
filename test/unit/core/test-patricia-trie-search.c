@@ -24,6 +24,8 @@ void data_prefix_search(void);
 void test_prefix_search(gconstpointer data);
 void data_suffix_search(void);
 void test_suffix_search(gconstpointer data);
+void data_fuzzy_search(void);
+void test_fuzzy_search(gconstpointer data);
 
 static GList *keys;
 
@@ -382,6 +384,67 @@ test_suffix_search(gconstpointer data)
                                                  test_data->search_key,
                                                  strlen(test_data->search_key),
                                                  hash));
+  gcut_assert_equal_list_string(test_data->expected_strings,
+                                retrieve_all_keys());
+}
+
+void
+data_fuzzy_search(void)
+{
+  cut_add_data("nonexistence",
+               xfix_test_data_new(GRN_END_OF_DATA, NULL, "cccc", NULL, NULL),
+               xfix_test_data_free,
+               "insertion",
+               xfix_test_data_new(GRN_SUCCESS,
+                                  gcut_list_string_new("ああ", "あ", NULL),
+               "あ", NULL, NULL),
+               xfix_test_data_free,
+               "deletion",
+               xfix_test_data_new(GRN_SUCCESS,
+                                  gcut_list_string_new("bbbbb", NULL),
+               "bbbbbb", NULL, NULL),
+               xfix_test_data_free,
+               "substitution",
+               xfix_test_data_new(GRN_SUCCESS,
+                                  gcut_list_string_new("cdefg", NULL),
+               "cdefh", NULL, NULL),
+               xfix_test_data_free,
+               "transposition",
+               xfix_test_data_new(GRN_SUCCESS,
+                                  gcut_list_string_new("cdefg", NULL),
+               "cdegf", NULL, NULL),
+               xfix_test_data_free);
+}
+
+void
+test_fuzzy_search(gconstpointer data)
+{
+  const grn_trie_test_data *test_data = data;
+  const gchar key1[]  = "あ";
+  const gchar key2[]  = "ああ";
+  const gchar key3[]  = "あああ";
+  const gchar key4[]  = "bbbb";
+  const gchar key5[]  = "bbbbb";
+  const gchar key6[]  = "cdefg";
+
+  trie_test_data_set_parameters(test_data);
+
+  cut_assert_create_trie();
+
+  cut_assert_lookup_add(key1);
+  cut_assert_lookup_add(key2);
+  cut_assert_lookup_add(key3);
+  cut_assert_lookup_add(key4);
+  cut_assert_lookup_add(key5);
+  cut_assert_lookup_add(key6);
+
+  cut_assert_create_hash();
+  grn_test_assert_equal_rc(test_data->expected_rc,
+                           grn_pat_fuzzy_search(context, trie,
+                                                test_data->search_key,
+                                                strlen(test_data->search_key),
+                                                0, 1, 1,
+                                                hash));
   gcut_assert_equal_list_string(test_data->expected_strings,
                                 retrieve_all_keys());
 }
