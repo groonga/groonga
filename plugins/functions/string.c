@@ -60,7 +60,9 @@ func_string_length(grn_ctx *ctx, int n_args, grn_obj **args,
     const char *e = GRN_TEXT_VALUE(target) + GRN_TEXT_LEN(target);
     const char *p;
     unsigned int cl = 0;
-    for (p = s; p < e && (cl = grn_charlen(ctx, p, e)); p += cl, length++);
+    for (p = s; p < e && (cl = grn_charlen(ctx, p, e)); p += cl) {
+      length++;
+    }
   }
 
   grn_length = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_UINT32, 0);
