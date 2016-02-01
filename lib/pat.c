@@ -1234,7 +1234,7 @@ calc_edit_distance_by_offset(grn_ctx *ctx,
                              uint32_t offset, uint32_t max_distance,
                              grn_bool *can_transition, int flags)
 {
-  uint32_t cx, cy, x = 1, y = 1;
+  uint32_t cx, cy, x, y;
   const char *px, *py;
 
   /* Skip already calculated rows */
@@ -1357,7 +1357,7 @@ _grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat, grn_id id,
         }
       }
       if (len - offset) {
-        uint16_t distance = 0;
+        uint16_t distance;
         distance =
           calc_edit_distance_by_offset(ctx,
                                        key, key + key_size,
