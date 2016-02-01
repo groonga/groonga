@@ -22,6 +22,11 @@
 
 #include <groonga/plugin.h>
 
+/*
+ * func_string_length() returns the number of characters in a string.
+ * If the string contains an invalid byte sequence, this function returns the
+ * number of characters before the invalid byte sequence.
+ */
 static grn_obj *
 func_string_length(grn_ctx *ctx, int n_args, grn_obj **args,
                    grn_user_data *user_data)
