@@ -39,16 +39,16 @@ func_string_length(grn_ctx *ctx, int n_args, grn_obj **args,
 
   target = args[0];
   if (target->header.type != GRN_BULK) {
-      grn_obj inspected;
+    grn_obj inspected;
 
-      GRN_TEXT_INIT(&inspected, 0);
-      grn_inspect(ctx, target, &inspected);
-      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                       "string_length(): target object must be bulk: <%.*s>",
-                       (int)GRN_TEXT_LEN(&inspected),
-                       GRN_TEXT_VALUE(&inspected));
-      GRN_OBJ_FIN(ctx, &inspected);
-      return NULL;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, target, &inspected);
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "string_length(): target object must be bulk: <%.*s>",
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return NULL;
   }
 
   {
