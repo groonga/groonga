@@ -4,8 +4,7 @@ table_create Memos TABLE_HASH_KEY ShortText
 
 load --table Memos
 [
-{"_key": "Groonga"},
-{"_key": "Rroonga"}
+{"_key": "Groonga"}
 ]
 
 select Memos \
