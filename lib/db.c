@@ -2913,6 +2913,33 @@ grn_table_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t key_siz
   GRN_API_RETURN(rc);
 }
 
+grn_rc
+grn_table_fuzzy_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t key_size,
+                       uint32_t prefix_match_size, uint32_t max_distance, int flags,
+                       grn_obj *res)
+{
+  grn_rc rc = GRN_SUCCESS;
+  GRN_API_ENTER;
+  switch (table->header.type) {
+  case GRN_TABLE_PAT_KEY :
+    {
+      grn_pat *pat = (grn_pat *)table;
+      WITH_NORMALIZE(pat, key, key_size, {
+        rc = grn_pat_fuzzy_search(ctx, pat, key, key_size,
+                                  prefix_match_size,
+                                  max_distance,
+                                  flags,
+                                  (grn_hash *)res);
+      });
+    }
+    break;
+  default :
+    rc = GRN_OPERATION_NOT_SUPPORTED;
+    break;
+  }
+  GRN_API_RETURN(rc);
+}
+
 grn_id
 grn_table_next(grn_ctx *ctx, grn_obj *table, grn_id id)
 {
