@@ -3365,6 +3365,9 @@ grn_obj_search_column_index_by_key(grn_ctx *ctx, grn_obj *obj,
         case GRN_OP_REGEXP :
           tag = "[key][regexp]";
           break;
+        case GRN_OP_FUZZY :
+          tag = "[key][fuzzy]";
+          break;
         default :
           tag = "[key][unknown]";
           break;
