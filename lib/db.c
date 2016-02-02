@@ -3449,6 +3449,9 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
               case GRN_OP_TERM_EXTRACT :
                 tag = "[table][term-extract]";
                 break;
+              case GRN_OP_FUZZY :
+                tag = "[table][fuzzy]";
+                break;
               default :
                 tag = "[table][unknown]";
                 break;
@@ -3458,7 +3461,14 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
             }
             grn_obj_search_index_report(ctx, tag, obj);
           }
-          rc = grn_table_search(ctx, obj, key, key_size, mode, res, op);
+          if (optarg && optarg->mode == GRN_OP_FUZZY) {
+            rc = grn_table_fuzzy_search(ctx, obj, key, key_size,
+                                        optarg->fuzzy_prefix_match_size,
+                                        optarg->fuzzy_max_distance,
+                                        optarg->fuzzy_flags, res);
+          } else {
+            rc = grn_table_search(ctx, obj, key, key_size, mode, res, op);
+          }
         }
       }
       break;
