@@ -37,8 +37,6 @@
 
 #define GRN_PAT_BIN_KEY 0x70000
 
-#define GRN_PAT_MAX_TOTAL_KEY_SIZE (UINT32_MAX - 1)
-
 typedef struct {
   grn_id lr[2];
   /*
