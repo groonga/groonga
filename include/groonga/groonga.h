@@ -733,7 +733,8 @@ typedef enum {
   GRN_OP_TABLE_GROUP,
   GRN_OP_JSON_PUT,
   GRN_OP_GET_MEMBER,
-  GRN_OP_REGEXP
+  GRN_OP_REGEXP,
+  GRN_OP_FUZZY
 } grn_operator;
 
 GRN_API const char *grn_operator_to_string(grn_operator op);
@@ -932,6 +933,8 @@ GRN_API grn_obj *grn_obj_db(grn_ctx *ctx, grn_obj *obj);
 
 GRN_API grn_id grn_obj_id(grn_ctx *ctx, grn_obj *obj);
 
+#define GRN_TABLE_FUZZY_WITH_TRANSPOSITION                  (0x01)
+
 typedef struct _grn_search_optarg grn_search_optarg;
 
 struct _grn_search_optarg {
@@ -945,6 +948,9 @@ struct _grn_search_optarg {
   grn_obj *scorer;
   grn_obj *scorer_args_expr;
   unsigned int scorer_args_expr_offset;
+  unsigned int fuzzy_prefix_match_size;
+  unsigned int fuzzy_max_distance;
+  int fuzzy_flags;
 };
 
 GRN_API grn_rc grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,

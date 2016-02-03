@@ -36,7 +36,8 @@ extern "C" {
 typedef enum {
   GRN_TOKENIZE_GET = 0,
   GRN_TOKENIZE_ADD,
-  GRN_TOKENIZE_DELETE
+  GRN_TOKENIZE_DELETE,
+  GRN_TOKENIZE_ONLY
 } grn_tokenize_mode;
 
 /*

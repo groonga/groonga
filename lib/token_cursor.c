@@ -290,7 +290,7 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
         }
         break;
       }
-    } else {
+    } else if (token_cursor->mode != GRN_TOKENIZE_ONLY) {
       switch (table->header.type) {
       case GRN_TABLE_PAT_KEY :
         tid = grn_pat_get(ctx, (grn_pat *)table, token_cursor->curr, token_cursor->curr_size, NULL);
@@ -310,7 +310,8 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
         break;
       }
     }
-    if (tid == GRN_ID_NIL && token_cursor->status != GRN_TOKEN_CURSOR_DONE) {
+    if (token_cursor->mode != GRN_TOKENIZE_ONLY &&
+        tid == GRN_ID_NIL && token_cursor->status != GRN_TOKEN_CURSOR_DONE) {
       token_cursor->status = GRN_TOKEN_CURSOR_NOT_FOUND;
     }
     token_cursor->pos++;
