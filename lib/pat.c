@@ -3437,3 +3437,9 @@ set_cursor_rk(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
   }
   return ctx->rc;
 }
+
+uint32_t
+grn_pat_total_key_size(grn_ctx *ctx, grn_pat *pat)
+{
+  return pat->header->curr_key;
+}

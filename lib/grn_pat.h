@@ -112,6 +112,7 @@ GRN_API grn_rc grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat,
                                     const void *key, unsigned int key_size,
                                     unsigned int prefix_match_size,
                                     unsigned int max_distance, int flags, grn_hash *h);
+uint32_t grn_pat_total_key_size(grn_ctx *ctx, grn_pat *pat);
 
 #ifdef __cplusplus
 }
