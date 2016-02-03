@@ -33,6 +33,7 @@ void grn_proc_init_clearlock(grn_ctx *ctx);
 void grn_proc_init_config_get(grn_ctx *ctx);
 void grn_proc_init_config_set(grn_ctx *ctx);
 void grn_proc_init_config_delete(grn_ctx *ctx);
+void grn_proc_init_inspect(grn_ctx *ctx);
 void grn_proc_init_lock_acquire(grn_ctx *ctx);
 void grn_proc_init_lock_clear(grn_ctx *ctx);
 void grn_proc_init_lock_release(grn_ctx *ctx);
