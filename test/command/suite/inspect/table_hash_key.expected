@@ -1,0 +1,36 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "alice"},
+{"_key": "bob"}
+]
+[[0,0.0,0.0],2]
+inspect Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "name": "Users",
+    "type": {
+      "id": 48,
+      "name": "table:hash_key"
+    },
+    "key": {
+      "type": {
+        "id": 14,
+        "name": "ShortText",
+        "type": {
+          "id": 32,
+          "name": "type"
+        },
+        "size": 4096
+      },
+      "total_size": 5,
+      "max_total_size": 4294967295
+    }
+  }
+]
