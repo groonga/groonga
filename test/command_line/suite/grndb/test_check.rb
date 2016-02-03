@@ -12,6 +12,18 @@ Database is locked. It may be broken. Re-create the database.
     MESSAGE
   end
 
+  def test_nonexistent_table
+    groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+    _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
+    FileUtils.rm(path)
+    error = assert_raise(CommandRunner::Error) do
+      grndb("check")
+    end
+    assert_equal(<<-MESSAGE, error.error_output)
+[Users] Can't open object. It's broken. Re-create the object or the database.
+    MESSAGE
+  end
+
   def test_locked_table
     groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
     groonga("lock_acquire", "Users")
@@ -53,6 +65,18 @@ Database is locked. It may be broken. Re-create the database.
   end
 
   sub_test_case "--target" do
+    def test_nonexistent_table
+      groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+      _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
+      FileUtils.rm(path)
+      error = assert_raise(CommandRunner::Error) do
+        grndb("check", "--target", "Users")
+      end
+      assert_equal(<<-MESSAGE, error.error_output)
+[Users] Can't open object. It's broken. Re-create the object or the database.
+      MESSAGE
+    end
+
     def test_locked_table
       groonga("table_create", "Bookmarks", "TABLE_HASH_KEY", "ShortText")
       groonga("column_create", "Bookmarks", "title",
@@ -87,6 +111,25 @@ Database is locked. It may be broken. Re-create the database.
       end
       assert_equal(<<-MESSAGE, error.error_output)
 [Users.age] Data column is locked. It may be broken. (1) Truncate the column (truncate Users.age) or clear lock of the column (lock_clear Users.age) and (2) load data again.
+      MESSAGE
+    end
+
+    def test_nonexistent_referenced_table
+      groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+      groonga("column_create", "Users", "age", "COLUMN_SCALAR", "UInt8")
+
+      groonga("table_create", "Bookmarks", "TABLE_HASH_KEY", "ShortText")
+      groonga("column_create", "Bookmarks", "user", "COLUMN_SCALAR", "Users")
+
+      JSON.parse(groonga("table_list").output)[1].each do |table|
+        _id, name, path, *_ = table
+        FileUtils.rm(path) if name == "Users"
+      end
+      error = assert_raise(CommandRunner::Error) do
+        grndb("check", "--target", "Bookmarks")
+      end
+      assert_equal(<<-MESSAGE, error.error_output)
+[Users] Can't open object. It's broken. Re-create the object or the database.
       MESSAGE
     end
 

@@ -1,4 +1,5 @@
 require "fileutils"
+require "json"
 
 require "test-unit"
 
