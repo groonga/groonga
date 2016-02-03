@@ -139,7 +139,7 @@ module Groonga
         def check_one(target_name)
           target = @context[target_name]
           if target.nil?
-            exist_p = open_database_(database) do |cursor|
+            exist_p = open_database_cursor do |cursor|
               cursor.any? do
                 cursor.key == target_name
               end
