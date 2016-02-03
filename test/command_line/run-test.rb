@@ -20,6 +20,8 @@ ENV["PATH"] = [
 ENV["GRN_PLUGINS_DIR"]      = (build_top_dir_path + "plugins").to_s
 ENV["GRN_RUBY_SCRIPTS_DIR"] = (build_top_dir_path + "lib/mrb/scripts").to_s
 
+$VERBOSE = true
+
 require_relative "helper"
 
 ARGV.unshift("--max-diff-target-string-size=5000")
