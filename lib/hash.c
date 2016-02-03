@@ -3589,3 +3589,15 @@ grn_rhash_subrec_info(grn_hash *s, grn_id rh, int index,
   return GRN_SUCCESS;
 }
 #endif /* USE_GRN_INDEX2 */
+
+uint64_t
+grn_hash_total_key_size(grn_ctx *ctx, grn_hash *hash)
+{
+  return hash->header.common->curr_key;
+}
+
+uint64_t
+grn_hash_max_total_key_size(grn_ctx *ctx, grn_hash *hash)
+{
+  return GRN_HASH_KEY_MAX_TOTAL_SIZE;
+}

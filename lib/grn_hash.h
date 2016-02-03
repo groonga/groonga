@@ -365,6 +365,9 @@ grn_id grn_array_at(grn_ctx *ctx, grn_array *array, grn_id id);
 
 void grn_hash_check(grn_ctx *ctx, grn_hash *hash);
 
+uint64_t grn_hash_total_key_size(grn_ctx *ctx, grn_hash *hash);
+uint64_t grn_hash_max_total_key_size(grn_ctx *ctx, grn_hash *hash);
+
 #ifdef __cplusplus
 }
 #endif
