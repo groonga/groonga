@@ -49,6 +49,8 @@ void data_is_token_filter_proc(void);
 void test_is_token_filter_proc(gconstpointer data);
 void data_is_scorer_proc(void);
 void test_is_scorer_proc(gconstpointer data);
+void data_type_to_string(void);
+void test_type_to_string(gconstpointer data);
 
 static gchar *tmp_directory;
 static const gchar *database_path;
@@ -508,4 +510,59 @@ test_is_scorer_proc(gconstpointer data)
   } else {
     cut_assert_false(grn_obj_is_scorer_proc(context, object));
   }
+}
+
+void
+data_type_to_string(void)
+{
+#define ADD_DATUM(expected, type)                                      \
+  gcut_add_datum(G_STRINGIFY(type),                                    \
+                 "expected", G_TYPE_STRING, expected,                  \
+                 "type", G_TYPE_UINT, type,                            \
+                 NULL)
+
+  ADD_DATUM("void", GRN_VOID);
+  ADD_DATUM("bulk", GRN_BULK);
+  ADD_DATUM("ptr", GRN_PTR);
+  ADD_DATUM("uvector", GRN_UVECTOR);
+  ADD_DATUM("pvector", GRN_PVECTOR);
+  ADD_DATUM("vector", GRN_VECTOR);
+  ADD_DATUM("msg", GRN_MSG);
+  ADD_DATUM("query", GRN_QUERY);
+  ADD_DATUM("accessor", GRN_ACCESSOR);
+  ADD_DATUM("snip", GRN_SNIP);
+  ADD_DATUM("patsnip", GRN_PATSNIP);
+  ADD_DATUM("string", GRN_STRING);
+  ADD_DATUM("cursor:table:hash_key", GRN_CURSOR_TABLE_HASH_KEY);
+  ADD_DATUM("cursor:table:pat_key", GRN_CURSOR_TABLE_PAT_KEY);
+  ADD_DATUM("cursor:table:dat_key", GRN_CURSOR_TABLE_DAT_KEY);
+  ADD_DATUM("cursor:table:no_key", GRN_CURSOR_TABLE_NO_KEY);
+  ADD_DATUM("cursor:column:index", GRN_CURSOR_COLUMN_INDEX);
+  ADD_DATUM("cursor:column:geo_index", GRN_CURSOR_COLUMN_GEO_INDEX);
+  ADD_DATUM("cursor:config", GRN_CURSOR_CONFIG);
+  ADD_DATUM("type", GRN_TYPE);
+  ADD_DATUM("proc", GRN_PROC);
+  ADD_DATUM("expr", GRN_EXPR);
+  ADD_DATUM("table:hash_key", GRN_TABLE_HASH_KEY);
+  ADD_DATUM("table:pat_key", GRN_TABLE_PAT_KEY);
+  ADD_DATUM("table:dat_key", GRN_TABLE_DAT_KEY);
+  ADD_DATUM("table:no_key", GRN_TABLE_NO_KEY);
+  ADD_DATUM("db", GRN_DB);
+  ADD_DATUM("column:fix_size", GRN_COLUMN_FIX_SIZE);
+  ADD_DATUM("column:var_size", GRN_COLUMN_VAR_SIZE);
+  ADD_DATUM("column:index", GRN_COLUMN_INDEX);
+
+#undef ADD_DATUM
+}
+
+void
+test_type_to_string(gconstpointer data)
+{
+  const gchar *expected;
+  guint type;
+
+  expected = gcut_data_get_string(data, "expected");
+  type = gcut_data_get_uint(data, "type");
+  cut_assert_equal_string(expected,
+                          grn_obj_type_to_string(type));
 }

@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015 Brazil
+  Copyright(C) 2015-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -381,4 +381,73 @@ grn_obj_reindex(grn_ctx *ctx, grn_obj *obj)
   }
 
   GRN_API_RETURN(ctx->rc);
+}
+
+const char *
+grn_obj_type_to_string(uint8_t type)
+{
+  switch (type) {
+  case GRN_VOID :
+    return "void";
+  case GRN_BULK :
+    return "bulk";
+  case GRN_PTR :
+    return "ptr";
+  case GRN_UVECTOR :
+    return "uvector";
+  case GRN_PVECTOR :
+    return "pvector";
+  case GRN_VECTOR :
+    return "vector";
+  case GRN_MSG :
+    return "msg";
+  case GRN_QUERY :
+    return "query";
+  case GRN_ACCESSOR :
+    return "accessor";
+  case GRN_SNIP :
+    return "snip";
+  case GRN_PATSNIP :
+    return "patsnip";
+  case GRN_STRING :
+    return "string";
+  case GRN_CURSOR_TABLE_HASH_KEY :
+    return "cursor:table:hash_key";
+  case GRN_CURSOR_TABLE_PAT_KEY :
+    return "cursor:table:pat_key";
+  case GRN_CURSOR_TABLE_DAT_KEY :
+    return "cursor:table:dat_key";
+  case GRN_CURSOR_TABLE_NO_KEY :
+    return "cursor:table:no_key";
+  case GRN_CURSOR_COLUMN_INDEX :
+    return "cursor:column:index";
+  case GRN_CURSOR_COLUMN_GEO_INDEX :
+    return "cursor:column:geo_index";
+  case GRN_CURSOR_CONFIG :
+    return "cursor:config";
+  case GRN_TYPE :
+    return "type";
+  case GRN_PROC :
+    return "proc";
+  case GRN_EXPR :
+    return "expr";
+  case GRN_TABLE_HASH_KEY :
+    return "table:hash_key";
+  case GRN_TABLE_PAT_KEY :
+    return "table:pat_key";
+  case GRN_TABLE_DAT_KEY :
+    return "table:dat_key";
+  case GRN_TABLE_NO_KEY :
+    return "table:no_key";
+  case GRN_DB :
+    return "db";
+  case GRN_COLUMN_FIX_SIZE :
+    return "column:fix_size";
+  case GRN_COLUMN_VAR_SIZE :
+    return "column:var_size";
+  case GRN_COLUMN_INDEX :
+    return "column:index";
+  default :
+    return "unknown";
+  }
 }

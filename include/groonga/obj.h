@@ -51,6 +51,8 @@ GRN_API grn_rc grn_obj_cast(grn_ctx *ctx,
 
 GRN_API grn_rc grn_obj_reindex(grn_ctx *ctx, grn_obj *obj);
 
+GRN_API const char *grn_obj_type_to_string(uint8_t type);
+
 #ifdef __cplusplus
 }
 #endif
