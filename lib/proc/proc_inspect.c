@@ -90,8 +90,10 @@ command_inspect_table_hash_key(grn_ctx *ctx, grn_obj *obj)
 {
   grn_hash *hash = (grn_hash *)obj;
 
-  grn_ctx_output_map_open(ctx, "object", 3);
+  grn_ctx_output_map_open(ctx, "object", 4);
   {
+    grn_ctx_output_cstr(ctx, "id");
+    grn_ctx_output_uint64(ctx, grn_obj_id(ctx, obj));
     grn_ctx_output_cstr(ctx, "name");
     command_inspect_obj_name(ctx, obj);
     grn_ctx_output_cstr(ctx, "type");
@@ -122,8 +124,10 @@ command_inspect_table_pat_key(grn_ctx *ctx, grn_obj *obj)
 {
   grn_pat *pat = (grn_pat *)obj;
 
-  grn_ctx_output_map_open(ctx, "object", 3);
+  grn_ctx_output_map_open(ctx, "object", 4);
   {
+    grn_ctx_output_cstr(ctx, "id");
+    grn_ctx_output_uint64(ctx, grn_obj_id(ctx, obj));
     grn_ctx_output_cstr(ctx, "name");
     command_inspect_obj_name(ctx, obj);
     grn_ctx_output_cstr(ctx, "type");
