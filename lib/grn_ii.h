@@ -143,9 +143,11 @@ struct _grn_select_optarg {
   grn_obj *scorer;
   grn_obj *scorer_args_expr;
   unsigned int scorer_args_expr_offset;
-  unsigned int fuzzy_prefix_match_size;
-  unsigned int fuzzy_max_distance;
-  int fuzzy_flags;
+  struct {
+    unsigned int prefix_match_size;
+    unsigned int max_distance;
+    int flags;
+  } fuzzy;
 };
 
 GRN_API grn_rc grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id id,
