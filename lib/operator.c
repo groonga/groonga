@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014-2015 Brazil
+  Copyright(C) 2014-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -358,7 +358,7 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
   GRN_API_RETURN(!r);
 }
 
-#define DO_COMPARE_SUB_NUMERIC(y,op) do {\
+#define DO_COMPARE_SCALAR_SUB_NUMERIC(y,op) do {\
   switch ((y)->header.domain) {\
   case GRN_DB_INT8 :\
     r = (x_ op GRN_INT8_VALUE(y));\
@@ -396,7 +396,7 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
   }\
 } while (0)
 
-#define DO_COMPARE_SUB_BUILTIN(op) do {\
+#define DO_COMPARE_SCALAR_SUB_BUILTIN(op) do {\
   switch (y->header.domain) {\
   case GRN_DB_SHORT_TEXT :\
   case GRN_DB_TEXT :\
@@ -407,18 +407,18 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
       if (grn_obj_cast(ctx, y, &y_, GRN_FALSE)) {\
         r = GRN_FALSE;\
       } else {\
-        DO_COMPARE_SUB_NUMERIC(&y_, op);\
+        DO_COMPARE_SCALAR_SUB_NUMERIC(&y_, op);\
       }\
       GRN_OBJ_FIN(ctx, &y_);\
     }\
     break;\
   default :\
-    DO_COMPARE_SUB_NUMERIC(y,op);\
+    DO_COMPARE_SCALAR_SUB_NUMERIC(y,op);\
     break;\
   }\
 } while (0)
 
-#define DO_COMPARE_SUB(op) do {\
+#define DO_COMPARE_SCALAR_SUB(op) do {\
   if (y->header.domain >= GRN_N_RESERVED_TYPES) {\
     grn_obj *y_table;\
     y_table = grn_ctx_at(ctx, y->header.domain);\
@@ -434,7 +434,7 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
         if (length > 0) {\
           grn_obj *y_original = y;\
           y = &y_key;\
-          DO_COMPARE_SUB_BUILTIN(op);\
+          DO_COMPARE_SCALAR_SUB_BUILTIN(op);\
           y = y_original;\
         } else {\
           r = GRN_FALSE;\
@@ -448,46 +448,46 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
     }\
     grn_obj_unlink(ctx, y_table);\
   } else {\
-    DO_COMPARE_SUB_BUILTIN(op);\
+    DO_COMPARE_SCALAR_SUB_BUILTIN(op);\
   }\
 } while (0)
 
-#define DO_COMPARE_BUILTIN(x,y,r,op) do {\
+#define DO_COMPARE_SCALAR_BUILTIN(x,y,r,op) do {\
   switch (x->header.domain) {\
   case GRN_DB_INT8 :\
     {\
       int8_t x_ = GRN_INT8_VALUE(x);\
-      DO_COMPARE_SUB(op);\
+      DO_COMPARE_SCALAR_SUB(op);\
     }\
     break;\
   case GRN_DB_UINT8 :\
     {\
       uint8_t x_ = GRN_UINT8_VALUE(x);\
-      DO_COMPARE_SUB(op);\
+      DO_COMPARE_SCALAR_SUB(op);\
     }\
     break;\
   case GRN_DB_INT16 :\
     {\
       int16_t x_ = GRN_INT16_VALUE(x);\
-      DO_COMPARE_SUB(op);\
+      DO_COMPARE_SCALAR_SUB(op);\
     }\
     break;\
   case GRN_DB_UINT16 :\
     {\
       uint16_t x_ = GRN_UINT16_VALUE(x);\
-      DO_COMPARE_SUB(op);\
+      DO_COMPARE_SCALAR_SUB(op);\
     }\
     break;\
   case GRN_DB_INT32 :\
     {\
       int32_t x_ = GRN_INT32_VALUE(x);\
-      DO_COMPARE_SUB(op);\
+      DO_COMPARE_SCALAR_SUB(op);\
     }\
     break;\
   case GRN_DB_UINT32 :\
     {\
       uint32_t x_ = GRN_UINT32_VALUE(x);\
-      DO_COMPARE_SUB(op);\
+      DO_COMPARE_SCALAR_SUB(op);\
     }\
     break;\
   case GRN_DB_TIME :\
@@ -533,19 +533,19 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
   case GRN_DB_INT64 :\
     {\
       int64_t x_ = GRN_INT64_VALUE(x);\
-      DO_COMPARE_SUB(op);\
+      DO_COMPARE_SCALAR_SUB(op);\
     }\
     break;\
   case GRN_DB_UINT64 :\
     {\
       uint64_t x_ = GRN_UINT64_VALUE(x);\
-      DO_COMPARE_SUB(op);\
+      DO_COMPARE_SCALAR_SUB(op);\
     }\
     break;\
   case GRN_DB_FLOAT :\
     {\
       double x_ = GRN_FLOAT_VALUE(x);\
-      DO_COMPARE_SUB(op);\
+      DO_COMPARE_SCALAR_SUB(op);\
     }\
     break;\
   case GRN_DB_SHORT_TEXT :\
@@ -567,7 +567,7 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
     } else {\
       const char *q_ = GRN_TEXT_VALUE(x);\
       int x_ = grn_atoi(q_, q_ + GRN_TEXT_LEN(x), NULL);\
-      DO_COMPARE_SUB(op);\
+      DO_COMPARE_SCALAR_SUB(op);\
     }\
     break;\
   default :\
@@ -576,7 +576,7 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
   }\
 } while (0)
 
-#define DO_COMPARE(x, y, r, op) do {\
+#define DO_COMPARE_SCALAR(x, y, r, op) do {\
   if (x->header.domain >= GRN_N_RESERVED_TYPES) {\
     grn_obj *x_table;\
     x_table = grn_ctx_at(ctx, x->header.domain);\
@@ -592,7 +592,7 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
         if (length > 0) {\
           grn_obj *x_original = x;\
           x = &x_key;\
-          DO_COMPARE_BUILTIN((&x_key), y, r, op);\
+          DO_COMPARE_SCALAR_BUILTIN((&x_key), y, r, op);\
           x = x_original;\
         } else {\
           r = GRN_FALSE;\
@@ -606,7 +606,32 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
     }\
     grn_obj_unlink(ctx, x_table);\
   } else {\
-    DO_COMPARE_BUILTIN(x, y, r, op);\
+    DO_COMPARE_SCALAR_BUILTIN(x, y, r, op);\
+  }\
+} while (0)
+
+#define DO_COMPARE(x, y, r, op) do {\
+  if (x->header.type == GRN_UVECTOR) {\
+    grn_obj element_buffer;\
+    unsigned int i, n;\
+    unsigned int element_size;\
+    GRN_VALUE_FIX_SIZE_INIT(&element_buffer, 0, x->header.domain);\
+    n = grn_uvector_size(ctx, x);\
+    element_size = grn_uvector_element_size(ctx, x);\
+    for (i = 0; i < n; i++) {\
+      grn_obj *element = &element_buffer;\
+      GRN_BULK_REWIND(element);\
+      grn_bulk_write(ctx, element,\
+                     ((uint8_t *)GRN_BULK_HEAD(x)) + (element_size * i),\
+                     element_size);\
+      DO_COMPARE_SCALAR(element, y, r, op);\
+      if (r) {\
+        break;\
+      }\
+    }\
+    GRN_OBJ_FIN(ctx, &element_buffer);\
+  } else {\
+    DO_COMPARE_SCALAR(x, y, r, op);\
   }\
 } while (0)
 
