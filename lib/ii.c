@@ -6535,7 +6535,8 @@ grn_ii_select_sequential_search(grn_ctx *ctx,
 #endif
 
 grn_rc
-grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len,
+grn_ii_select(grn_ctx *ctx, grn_ii *ii,
+              const char *string, unsigned int string_len,
               grn_hash *s, grn_operator op, grn_select_optarg *optarg)
 {
   btr *bt = NULL;
