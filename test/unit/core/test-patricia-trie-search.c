@@ -429,6 +429,7 @@ test_fuzzy_search(gconstpointer data)
   grn_fuzzy_optarg args;
   args.prefix_match_size = 0;
   args.max_distance = 1;
+  args.max_expansion = 0;
   args.flags = GRN_TABLE_FUZZY_WITH_TRANSPOSITION;
 
   trie_test_data_set_parameters(test_data);

@@ -939,6 +939,7 @@ typedef struct _grn_fuzzy_optarg grn_fuzzy_optarg;
 
 struct _grn_fuzzy_optarg {
   unsigned int max_distance;
+  unsigned int max_expansion;
   unsigned int prefix_match_size;
   int flags;
 };
