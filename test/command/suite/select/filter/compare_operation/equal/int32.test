@@ -1,0 +1,13 @@
+table_create Values TABLE_NO_KEY
+column_create Values number COLUMN_SCALAR Int32
+
+load --table Values
+[
+{"number": 1},
+{"number": 3},
+{"number": -1}
+]
+
+select Values \
+  --filter 'number == -1' \
+  --output_columns 'number'
