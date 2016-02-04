@@ -2915,8 +2915,7 @@ grn_table_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t key_siz
 
 grn_rc
 grn_table_fuzzy_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t key_size,
-                       uint32_t prefix_match_size, uint32_t max_distance, int flags,
-                       grn_obj *res)
+                       grn_fuzzy_optarg *args, grn_obj *res)
 {
   grn_rc rc = GRN_SUCCESS;
   GRN_API_ENTER;
@@ -2926,10 +2925,7 @@ grn_table_fuzzy_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t k
       grn_pat *pat = (grn_pat *)table;
       WITH_NORMALIZE(pat, key, key_size, {
         rc = grn_pat_fuzzy_search(ctx, pat, key, key_size,
-                                  prefix_match_size,
-                                  max_distance,
-                                  flags,
-                                  (grn_hash *)res);
+                                  args, (grn_hash *)res);
       });
     }
     break;
@@ -3466,10 +3462,7 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
           }
           if (optarg && optarg->mode == GRN_OP_FUZZY) {
             rc = grn_table_fuzzy_search(ctx, obj, key, key_size,
-                                        optarg->fuzzy.prefix_match_size,
-                                        optarg->fuzzy.max_distance,
-                                        optarg->fuzzy.flags,
-                                        res);
+                                        optarg->fuzzy_args, res);
           } else {
             rc = grn_table_search(ctx, obj, key, key_size, mode, res, op);
           }

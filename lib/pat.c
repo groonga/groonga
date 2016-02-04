@@ -1384,8 +1384,7 @@ _grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat, grn_id id,
 grn_rc
 grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat,
                      const void *key, uint32_t key_size,
-                     uint32_t prefix_match_size,
-                     uint32_t max_distance, int flags, grn_hash *h)
+                     grn_fuzzy_optarg *args, grn_hash *h)
 {
   pat_node *node;
   grn_id id;
@@ -1394,9 +1393,17 @@ grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat,
   const char *s = key;
   const char *e = (const char *)key + key_size;
   fuzzy_node last_node;
+  uint32_t max_distance = 1;
+  uint32_t prefix_match_size = 0;
+  int flags = 0;
   grn_rc rc = grn_pat_error_if_truncated(ctx, pat);
   if (rc != GRN_SUCCESS) {
     return rc;
+  }
+  if (args) {
+    max_distance = args->max_distance;
+    prefix_match_size = args->prefix_match_size;
+    flags = args->flags;
   }
   if (key_size > GRN_TABLE_MAX_KEY_SIZE ||
       max_distance > GRN_TABLE_MAX_KEY_SIZE ||

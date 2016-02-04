@@ -426,6 +426,10 @@ test_fuzzy_search(gconstpointer data)
   const gchar key4[]  = "bbbb";
   const gchar key5[]  = "bbbbb";
   const gchar key6[]  = "cdefg";
+  grn_fuzzy_optarg args;
+  args.prefix_match_size = 0;
+  args.max_distance = 1;
+  args.flags = GRN_TABLE_FUZZY_WITH_TRANSPOSITION;
 
   trie_test_data_set_parameters(test_data);
 
@@ -443,8 +447,7 @@ test_fuzzy_search(gconstpointer data)
                            grn_pat_fuzzy_search(context, trie,
                                                 test_data->search_key,
                                                 strlen(test_data->search_key),
-                                                0, 1, 1,
-                                                hash));
+                                                &args, hash));
   gcut_assert_equal_list_string(test_data->expected_strings,
                                 retrieve_all_keys());
 }

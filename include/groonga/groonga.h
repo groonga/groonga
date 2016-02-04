@@ -935,6 +935,14 @@ GRN_API grn_id grn_obj_id(grn_ctx *ctx, grn_obj *obj);
 
 #define GRN_TABLE_FUZZY_WITH_TRANSPOSITION                  (0x01)
 
+typedef struct _grn_fuzzy_optarg grn_fuzzy_optarg;
+
+struct _grn_fuzzy_optarg {
+  unsigned int max_distance;
+  unsigned int prefix_match_size;
+  int flags;
+};
+
 typedef struct _grn_search_optarg grn_search_optarg;
 
 struct _grn_search_optarg {
@@ -948,11 +956,7 @@ struct _grn_search_optarg {
   grn_obj *scorer;
   grn_obj *scorer_args_expr;
   unsigned int scorer_args_expr_offset;
-  struct {
-    unsigned int prefix_match_size;
-    unsigned int max_distance;
-    int flags;
-  } fuzzy;
+  grn_fuzzy_optarg *fuzzy_args;
 };
 
 GRN_API grn_rc grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
