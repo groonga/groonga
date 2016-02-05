@@ -1,0 +1,52 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Users TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_VECTOR Tags
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"name": ["Tom", "Tomy"]},
+{"name": ["Tomy", "Tomas"]},
+{"name": ["Ken"]}
+]
+[[0,0.0,0.0],3]
+select Users --filter 'fuzzy_search(name, "Tom", 2)'   --output_columns 'name, _score'   --match_escalation_threshold -1
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "name",
+          "Tags"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        [
+          "Tom",
+          "Tomy"
+        ],
+        0
+      ],
+      [
+        [
+          "Tomy",
+          "Tomas"
+        ],
+        1
+      ]
+    ]
+  ]
+]

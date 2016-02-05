@@ -4318,38 +4318,46 @@ func_geo_distance3(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
 
 #define DIST(ox,oy) (dists[((lx + 1) * (oy)) + (ox)])
 
+static uint32_t
+calc_edit_distance(grn_ctx *ctx, char *sx, char *ex, char *sy, char *ey)
+{
+  int d = 0;
+  uint32_t cx, lx, cy, ly, *dists;
+  char *px, *py;
+  for (px = sx, lx = 0; px < ex && (cx = grn_charlen(ctx, px, ex)); px += cx, lx++);
+  for (py = sy, ly = 0; py < ey && (cy = grn_charlen(ctx, py, ey)); py += cy, ly++);
+  if ((dists = GRN_MALLOC((lx + 1) * (ly + 1) * sizeof(uint32_t)))) {
+    uint32_t x, y;
+    for (x = 0; x <= lx; x++) { DIST(x, 0) = x; }
+    for (y = 0; y <= ly; y++) { DIST(0, y) = y; }
+    for (x = 1, px = sx; x <= lx; x++, px += cx) {
+      cx = grn_charlen(ctx, px, ex);
+      for (y = 1, py = sy; y <= ly; y++, py += cy) {
+        cy = grn_charlen(ctx, py, ey);
+        if (cx == cy && !memcmp(px, py, cx)) {
+          DIST(x, y) = DIST(x - 1, y - 1);
+        } else {
+          uint32_t a = DIST(x - 1, y) + 1;
+          uint32_t b = DIST(x, y - 1) + 1;
+          uint32_t c = DIST(x - 1, y - 1) + 1;
+          DIST(x, y) = ((a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c));
+        }
+      }
+    }
+    d = DIST(lx, ly);
+    GRN_FREE(dists);
+  }
+  return d;
+}
+
 static grn_obj *
 func_edit_distance(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   int d = 0;
   grn_obj *obj;
   if (nargs == 2) {
-    uint32_t cx, lx, cy, ly, *dists;
-    char *px, *sx = GRN_TEXT_VALUE(args[0]), *ex = GRN_BULK_CURR(args[0]);
-    char *py, *sy = GRN_TEXT_VALUE(args[1]), *ey = GRN_BULK_CURR(args[1]);
-    for (px = sx, lx = 0; px < ex && (cx = grn_charlen(ctx, px, ex)); px += cx, lx++);
-    for (py = sy, ly = 0; py < ey && (cy = grn_charlen(ctx, py, ey)); py += cy, ly++);
-    if ((dists = GRN_MALLOC((lx + 1) * (ly + 1) * sizeof(uint32_t)))) {
-      uint32_t x, y;
-      for (x = 0; x <= lx; x++) { DIST(x, 0) = x; }
-      for (y = 0; y <= ly; y++) { DIST(0, y) = y; }
-      for (x = 1, px = sx; x <= lx; x++, px += cx) {
-        cx = grn_charlen(ctx, px, ex);
-        for (y = 1, py = sy; y <= ly; y++, py += cy) {
-          cy = grn_charlen(ctx, py, ey);
-          if (cx == cy && !memcmp(px, py, cx)) {
-            DIST(x, y) = DIST(x - 1, y - 1);
-          } else {
-            uint32_t a = DIST(x - 1, y) + 1;
-            uint32_t b = DIST(x, y - 1) + 1;
-            uint32_t c = DIST(x - 1, y - 1) + 1;
-            DIST(x, y) = ((a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c));
-          }
-        }
-      }
-      d = DIST(lx, ly);
-      GRN_FREE(dists);
-    }
+    d = calc_edit_distance(ctx, GRN_TEXT_VALUE(args[0]), GRN_BULK_CURR(args[0]),
+                           GRN_TEXT_VALUE(args[1]), GRN_BULK_CURR(args[1]));
   }
   if ((obj = GRN_PROC_ALLOC(GRN_DB_UINT32, 0))) {
     GRN_UINT32_SET(ctx, obj, d);
@@ -6806,6 +6814,185 @@ exit :
   return rc;
 }
 
+#define SCORE_HEAP_SIZE 256
+
+typedef struct {
+  grn_id id;
+  uint32_t score;
+} score_heap_node;
+
+typedef struct {
+  int n_entries;
+  int limit;
+  score_heap_node *nodes;
+} score_heap;
+
+static inline score_heap *
+score_heap_open(grn_ctx *ctx, int max)
+{
+  score_heap *h = GRN_MALLOC(sizeof(score_heap));
+  if (!h) { return NULL; }
+  h->nodes = GRN_MALLOC(sizeof(score_heap_node) * max);
+  if (!h->nodes) {
+    GRN_FREE(h);
+    return NULL;
+  }
+  h->n_entries = 0;
+  h->limit = max;
+  return h;
+}
+
+static inline grn_bool
+score_heap_push(grn_ctx *ctx, score_heap *h, grn_id id, uint32_t score)
+{
+  int n, n2;
+  score_heap_node node = {id, score};
+  score_heap_node node2;
+  if (h->n_entries >= h->limit) {
+    int max = h->limit * 2;
+    score_heap_node *nodes = GRN_REALLOC(h->nodes, sizeof(score_heap) * max);
+    if (!h) {
+      return GRN_FALSE;
+    }
+    h->limit = max;
+    h->nodes = nodes;
+  }
+  h->nodes[h->n_entries] = node;
+  n = h->n_entries++;
+  while (n) {
+    n2 = (n - 1) >> 1;
+    if (h->nodes[n2].score <= h->nodes[n].score) { break; }
+    node2 = h->nodes[n];
+    h->nodes[n] = h->nodes[n2];
+    h->nodes[n2] = node2;
+    n = n2;
+  }
+  return GRN_TRUE;
+}
+
+static inline void
+score_heap_close(grn_ctx *ctx, score_heap *h)
+{
+  GRN_FREE(h->nodes);
+  GRN_FREE(h);
+}
+
+static grn_rc
+sequential_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_obj *query,
+                        uint32_t max_distance, uint32_t prefix_match_size,
+                        uint32_t max_expansion, int flags, grn_obj *hash)
+{
+  grn_table_cursor *tc;
+  char *sx = GRN_TEXT_VALUE(query);
+  char *ex = GRN_BULK_CURR(query);
+
+  if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, GRN_CURSOR_BY_ID))) {
+    grn_id id;
+    grn_obj value;
+    score_heap *heap;
+    int i, n;
+    GRN_TEXT_INIT(&value, 0);
+
+    heap = score_heap_open(ctx, SCORE_HEAP_SIZE);
+    if (!heap) {
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+
+    while ((id = grn_table_cursor_next(ctx, tc))) {
+      unsigned int distance = 0;
+      grn_obj *domain;
+      GRN_BULK_REWIND(&value);
+      grn_obj_get_value(ctx, column, id, &value);
+      domain = grn_ctx_at(ctx, ((&value))->header.domain);
+      if ((&(value))->header.type == GRN_VECTOR) {
+        n = grn_vector_size(ctx, &value);
+        for (i = 0; i < n; i++) {
+          unsigned int length;
+          const char *vector_value = NULL;
+          length = grn_vector_get_element(ctx, &value, i, &vector_value, NULL, NULL);
+
+          if (!prefix_match_size ||
+              (prefix_match_size > 0 && length >= prefix_match_size &&
+               !memcmp(sx, vector_value, prefix_match_size))) {
+            distance = calc_edit_distance(ctx, sx, ex,
+                                          (char *)vector_value,
+                                          (char *)vector_value + length);
+            if (distance <= max_distance) {
+              score_heap_push(ctx, heap, id, distance);
+              break;
+            }
+          }
+        }
+      } else if ((&(value))->header.type == GRN_UVECTOR &&
+                  grn_obj_is_table(ctx, domain)) {
+        n = grn_vector_size(ctx, &value);
+        for (i = 0; i < n; i++) {
+          grn_id rid;
+          char key_name[GRN_TABLE_MAX_KEY_SIZE];
+          int key_length;
+          rid = grn_uvector_get_element(ctx, &value, i, NULL);
+          key_length = grn_table_get_key(ctx, domain, rid, key_name, GRN_TABLE_MAX_KEY_SIZE);
+
+          if (!prefix_match_size ||
+              (prefix_match_size > 0 && key_length >= prefix_match_size &&
+               !memcmp(sx, key_name, prefix_match_size))) {
+            distance = calc_edit_distance(ctx, sx, ex,
+                                          key_name, key_name + key_length);
+            if (distance <= max_distance) {
+              score_heap_push(ctx, heap, id, distance);
+              break;
+            }
+          }
+        }
+      } else {
+        if (reference_column_p(ctx, column)) {
+          grn_id rid;
+          char key_name[GRN_TABLE_MAX_KEY_SIZE];
+          int key_length;
+          rid = GRN_RECORD_VALUE(&value);
+          key_length = grn_table_get_key(ctx, domain, rid, key_name, GRN_TABLE_MAX_KEY_SIZE);
+          if (!prefix_match_size ||
+              (prefix_match_size > 0 && key_length >= prefix_match_size &&
+               !memcmp(sx, key_name, prefix_match_size))) {
+            distance = calc_edit_distance(ctx, sx, ex,
+                                          key_name, key_name + key_length);
+            if (distance <= max_distance) {
+              score_heap_push(ctx, heap, id, distance);
+            }
+          }
+        } else {
+          if (!prefix_match_size ||
+              (prefix_match_size > 0 && GRN_TEXT_LEN(&value) >= prefix_match_size &&
+               !memcmp(sx, GRN_TEXT_VALUE(&value), prefix_match_size))) {
+            distance = calc_edit_distance(ctx, sx, ex,
+                                          GRN_TEXT_VALUE(&value),
+                                          GRN_BULK_CURR(&value));
+            if (distance <= max_distance) {
+              score_heap_push(ctx, heap, id, distance);
+            }
+          }
+        }
+      }
+      grn_obj_unlink(ctx, domain);
+    }
+    grn_table_cursor_close(ctx, tc);
+    grn_obj_unlink(ctx, &value);
+
+    for (i = 0; i < heap->n_entries; i++) {
+      if (max_expansion > 0 && i >= max_expansion) {
+        break;
+      }
+      grn_rset_recinfo *ri;
+      if (grn_hash_add(ctx, (grn_hash *)hash, &(heap->nodes[i].id), sizeof(grn_id), (void **)&ri, NULL)) {
+        ri->score = heap->nodes[i].score;
+      }
+    }
+    score_heap_close(ctx, heap);
+  }
+
+  return GRN_SUCCESS;
+}
+
 static grn_rc
 selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                       int nargs, grn_obj **args,
@@ -6819,6 +7006,7 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   uint32_t prefix_match_size = 0;
   uint32_t max_expansion = 0;
   int flags = 0;
+  grn_bool use_sequential_search = GRN_FALSE;
 
   if ((nargs - 1) < 2) {
     ERR(GRN_INVALID_ARGUMENT,
@@ -6856,9 +7044,28 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
       if (grn_obj_is_key_accessor(ctx, obj) &&
           table->header.type == GRN_TABLE_PAT_KEY) {
          target = table;
+      } else {
+        use_sequential_search = GRN_TRUE;
       }
-      /* TODO: support sequential fuzzy search */
     }
+  }
+
+  if (use_sequential_search) {
+    grn_obj *hash;
+    hash = grn_table_create(ctx, NULL, 0, NULL,
+                            GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                            table, NULL);
+    if (!hash) {
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+    rc = sequential_fuzzy_search(ctx, table, obj, query,
+                                 max_distance, prefix_match_size,
+                                 max_expansion, flags, hash);
+    if (rc == GRN_SUCCESS) {
+      rc = grn_table_setoperation(ctx, res, hash, res, op);
+    }
+    grn_obj_unlink(ctx, hash);
+    goto exit;
   }
 
   if (!target) {
@@ -6866,8 +7073,7 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     GRN_TEXT_INIT(&inspected, 0);
     grn_inspect(ctx, &inspected, target);
     ERR(GRN_INVALID_ARGUMENT,
-        "fuzzy_search(): column must be associated index"
-        " or column mast be COLUMN_INDEX or TABLE_PAT_KEY: <%.*s>",
+        "fuzzy_search(): column mast be COLUMN_INDEX or TABLE_PAT_KEY: <%.*s>",
         (int)GRN_TEXT_LEN(&inspected),
         GRN_TEXT_VALUE(&inspected));
     rc = ctx->rc;

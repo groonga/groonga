@@ -12,15 +12,33 @@ load --table Users
 select Users --filter 'fuzzy_search(name, "Tom", 1)'   --output_columns 'name, _score'   --match_escalation_threshold -1
 [
   [
-    [
-      -22,
-      0.0,
-      0.0
-    ],
-    "fuzzy_search(): column must be associated index or column mast be COLUMN_INDEX or TABLE_PAT_KEY: <(NULL)>"
+    0,
+    0.0,
+    0.0
   ],
   [
-
+    [
+      [
+        2
+      ],
+      [
+        [
+          "name",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "Tom",
+        0
+      ],
+      [
+        "Tomy",
+        1
+      ]
+    ]
   ]
 ]
-#|e| fuzzy_search(): column must be associated index or column mast be COLUMN_INDEX or TABLE_PAT_KEY: <(NULL)>
