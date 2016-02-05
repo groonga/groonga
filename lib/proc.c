@@ -6806,6 +6806,96 @@ exit :
   return rc;
 }
 
+static grn_rc
+selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
+                      int nargs, grn_obj **args,
+                      grn_obj *res, grn_operator op)
+{
+  grn_rc rc = GRN_SUCCESS;
+  grn_obj *target = NULL;
+  grn_obj *obj;
+  grn_obj *query;
+  uint32_t max_distance = 1;
+  uint32_t prefix_match_size = 0;
+  uint32_t max_expansion = 0;
+  int flags = 0;
+
+  if ((nargs - 1) < 2) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "fuzzy_serach(): wrong number of arguments (%d ...)", nargs - 1);
+    rc = ctx->rc;
+    goto exit;
+  }
+  obj = args[1];
+  query = args[2];
+
+  if (nargs >= 4) {
+    max_distance = GRN_UINT32_VALUE(args[3]);
+  }
+  if (nargs >= 5) {
+    prefix_match_size = GRN_UINT32_VALUE(args[4]);
+  }
+  if (nargs >= 6) {
+    max_expansion = GRN_UINT32_VALUE(args[5]);
+  }
+  if (nargs == 7) {
+    if (GRN_BOOL_VALUE(args[6])) {
+      flags = GRN_TABLE_FUZZY_WITH_TRANSPOSITION;
+    }
+  }
+
+  if (index) {
+    target = index;
+  } else {
+    if (obj->header.type == GRN_COLUMN_INDEX) {
+      target = obj;
+    } else {
+      grn_column_index(ctx, obj, GRN_OP_FUZZY, &target, 1, NULL);
+    }
+    if (!target) {
+      if (grn_obj_is_key_accessor(ctx, obj) &&
+          table->header.type == GRN_TABLE_PAT_KEY) {
+         target = table;
+      }
+      /* TODO: support sequential fuzzy search */
+    }
+  }
+
+  if (!target) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, target);
+    ERR(GRN_INVALID_ARGUMENT,
+        "fuzzy_search(): column must be associated index"
+        " or column mast be COLUMN_INDEX or TABLE_PAT_KEY: <%.*s>",
+        (int)GRN_TEXT_LEN(&inspected),
+        GRN_TEXT_VALUE(&inspected));
+    rc = ctx->rc;
+    GRN_OBJ_FIN(ctx, &inspected);
+    goto exit;
+  } else {
+    grn_search_optarg options;
+    grn_fuzzy_optarg args;
+    options.mode = GRN_OP_FUZZY;
+    options.similarity_threshold = 0;
+    options.max_interval = 0;
+    options.weight_vector = NULL;
+    options.vector_size = 0;
+    options.proc = NULL;
+    options.max_size = 0;
+    options.scorer = NULL;
+    args.prefix_match_size = prefix_match_size;
+    args.max_distance = max_distance;
+    args.max_expansion = max_expansion;
+    args.flags = flags;
+    options.fuzzy_args = &args;
+    grn_obj_search(ctx, target, query, res, op, &options);
+  }
+
+exit :
+  return rc;
+}
+
 #define DEF_VAR(v,name_str) do {\
   (v).name = (name_str);\
   (v).name_size = GRN_STRLEN(name_str);\
@@ -7102,6 +7192,15 @@ grn_db_init_builtin_query(grn_ctx *ctx)
                                     GRN_PROC_FUNCTION,
                                     NULL, NULL, NULL, 0, NULL);
     grn_proc_set_selector(ctx, selector_proc, selector_prefix_rk_search);
+  }
+
+  {
+    grn_obj *selector_proc;
+
+    selector_proc = grn_proc_create(ctx, "fuzzy_search", -1,
+                                    GRN_PROC_FUNCTION,
+                                    NULL, NULL, NULL, 0, NULL);
+    grn_proc_set_selector(ctx, selector_proc, selector_fuzzy_search);
   }
 
   grn_proc_init_config_get(ctx);
