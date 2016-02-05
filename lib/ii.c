@@ -5140,9 +5140,12 @@ grn_uvector2updspecs_data(grn_ctx *ctx, grn_ii *ii, grn_id rid,
   n = grn_uvector_size(ctx, in);
   element_size = grn_uvector_element_size(ctx, in);
   for (i = 0; i < n; i++) {
+    grn_obj *tokenizer;
     grn_token_cursor *token_cursor;
     unsigned int token_flags = 0;
     const char *element;
+
+    tokenizer = grn_obj_get_info(ctx, lexicon, GRN_INFO_DEFAULT_TOKENIZER, NULL);
 
     element = GRN_BULK_HEAD(in) + (element_size * i);
     token_cursor = grn_token_cursor_open(ctx, lexicon,
@@ -5156,6 +5159,7 @@ grn_uvector2updspecs_data(grn_ctx *ctx, grn_ii *ii, grn_id rid,
       grn_id tid;
       if ((tid = grn_token_cursor_next(ctx, token_cursor))) {
         grn_ii_updspec **u;
+        int pos;
 
         if (posting) { GRN_RECORD_PUT(ctx, posting, tid); }
         if (!grn_hash_add(ctx, h, &tid, sizeof(grn_id), (void **)&u, NULL)) {
@@ -5169,7 +5173,12 @@ grn_uvector2updspecs_data(grn_ctx *ctx, grn_ii *ii, grn_id rid,
             return GRN_NO_MEMORY_AVAILABLE;
           }
         }
-        if (grn_ii_updspec_add(ctx, *u, token_cursor->pos, 0)) {
+        if (tokenizer) {
+          pos = token_cursor->pos;
+        } else {
+          pos = i;
+        }
+        if (grn_ii_updspec_add(ctx, *u, pos, 0)) {
           GRN_LOG(ctx, GRN_LOG_ALERT,
                   "grn_ii_updspec_add on grn_uvector2updspecs failed!");
           grn_token_cursor_close(ctx, token_cursor);
