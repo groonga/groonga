@@ -7126,15 +7126,8 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     GRN_OBJ_FIN(ctx, &inspected);
     goto exit;
   } else {
-    grn_search_optarg options;
+    grn_search_optarg options = {0};
     options.mode = GRN_OP_FUZZY;
-    options.similarity_threshold = 0;
-    options.max_interval = 0;
-    options.weight_vector = NULL;
-    options.vector_size = 0;
-    options.proc = NULL;
-    options.max_size = 0;
-    options.scorer = NULL;
     options.fuzzy.prefix_match_size = prefix_match_size;
     options.fuzzy.max_distance = max_distance;
     options.fuzzy.max_expansion = max_expansion;
