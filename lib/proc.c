@@ -7056,15 +7056,23 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     } else {
       grn_column_index(ctx, obj, GRN_OP_FUZZY, &target, 1, NULL);
     }
-    if (!target) {
-      if (grn_obj_is_key_accessor(ctx, obj) &&
-          table->header.type == GRN_TABLE_PAT_KEY) {
-         target = table;
-      } else {
-        use_sequential_search = GRN_TRUE;
-      }
+  }
+
+  if (target) {
+    grn_obj *lexicon;
+    lexicon = grn_ctx_at(ctx, target->header.domain);
+    if (lexicon->header.type != GRN_TABLE_PAT_KEY) {
+      use_sequential_search = GRN_TRUE;
+    }
+  } else {
+    if (grn_obj_is_key_accessor(ctx, obj) &&
+        table->header.type == GRN_TABLE_PAT_KEY) {
+       target = table;
+    } else {
+      use_sequential_search = GRN_TRUE;
     }
   }
+
   if (prefix_length) {
     const char *s = GRN_TEXT_VALUE(query);
     const char *e = GRN_BULK_CURR(query);
