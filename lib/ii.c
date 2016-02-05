@@ -5804,6 +5804,7 @@ token_info_build_fuzzy(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
                          args);
     break;
   default :
+    ti = NULL;
     break;
   }
   if (!ti) {
