@@ -12,6 +12,7 @@ module Groonga
     attr_accessor :flags
     attr_accessor :max_interval
     attr_accessor :similarity_threshold
+    attr_accessor :start_position
     def initialize(start)
       @start = start
       @end = 0
@@ -23,6 +24,7 @@ module Groonga
       @flags = ScanInfo::Flags::PUSH
       @max_interval = nil
       @similarity_threshold = nil
+      @start_position = nil
     end
 
     def match_resolve_index

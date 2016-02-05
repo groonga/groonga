@@ -117,6 +117,18 @@ module Groonga
           else
             status = Status::COL2
           end
+        when Operator::GET_REF
+          data ||= ScanInfoData.new(i)
+          case status
+          when Status::START
+            data ||= ScanInfoData.new(i)
+            status = Status::COL1
+            data.args << code.value
+          end
+        when Operator::GET_MEMBER
+          index = data.args.pop
+          data.start_position = index.value
+          status = Status::COL1
         end
       end
 
@@ -143,7 +155,7 @@ module Groonga
       status = Status::START
       variable = @expression[0]
       codes = @expression.codes
-      codes.each do |code|
+      codes.each_with_index do |code, i|
         case code.op
         when *RELATION_OPERATORS
           return false if status < Status::COL1
@@ -183,6 +195,21 @@ module Groonga
             n_relation_expressions += 1
           else
             status = Status::COL2
+          end
+        when Operator::GET_REF
+          case status
+          when Status::START
+            status = Status::COL1
+          else
+            return false
+          end
+        when Operator::GET_MEMBER
+          case status
+          when Status::CONST
+            return false unless codes[i - 1].value.value.is_a?(Integer)
+            status = Status::COL1
+          else
+            return false
           end
         else
           return false

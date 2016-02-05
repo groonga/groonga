@@ -4544,6 +4544,33 @@ grn_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
         stat = SCAN_COL2;
       }
       break;
+    case GRN_OP_GET_REF :
+      switch (stat) {
+      case SCAN_START :
+        stat = SCAN_COL1;
+        break;
+      default :
+        return NULL;
+        break;
+      }
+      break;
+    case GRN_OP_GET_MEMBER :
+      switch (stat) {
+      case SCAN_CONST :
+        {
+          grn_expr_code *prev_c = c - 1;
+          if (prev_c->value->header.domain < GRN_DB_INT8 &&
+              prev_c->value->header.domain > GRN_DB_UINT64) {
+            return NULL;
+          }
+        }
+        stat = SCAN_COL1;
+        break;
+      default :
+        return NULL;
+        break;
+      }
+      break;
     default :
       return NULL;
       break;
@@ -4682,6 +4709,31 @@ grn_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
       } else {
         stat = SCAN_COL2;
       }
+      break;
+    case GRN_OP_GET_REF :
+      switch (stat) {
+      case SCAN_START :
+        if (!si) { SI_ALLOC(si, i, c - e->codes); }
+        stat = SCAN_COL1;
+        if (si->nargs < GRN_SCAN_INFO_MAX_N_ARGS) {
+          si->args[si->nargs++] = c->value;
+        }
+        break;
+      default :
+        break;
+      }
+      break;
+    case GRN_OP_GET_MEMBER :
+      {
+        grn_obj *start_position;
+        grn_obj buffer;
+        start_position = si->args[--si->nargs];
+        GRN_INT32_INIT(&buffer, 0);
+        grn_obj_cast(ctx, start_position, &buffer, GRN_FALSE);
+        grn_scan_info_set_start_position(si, GRN_INT32_VALUE(&buffer));
+        GRN_OBJ_FIN(ctx, &buffer);
+      }
+      stat = SCAN_COL1;
       break;
     default :
       break;
@@ -5759,12 +5811,27 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
             if (ii_cursor) {
               grn_posting *posting;
               while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
-                if (sid == 0 || posting->sid == sid) {
-                  grn_posting new_posting = *posting;
-                  new_posting.weight *= weight;
-                  grn_ii_posting_add(ctx, &new_posting, (grn_hash *)res,
-                                     si->logical_op);
+                grn_posting new_posting;
+
+                if (!(sid == 0 || posting->sid == sid)) {
+                  continue;
                 }
+
+                if (si->position.specified) {
+                  while ((posting = grn_ii_cursor_next_pos(ctx, ii_cursor))) {
+                    if (posting->pos == si->position.start) {
+                      break;
+                    }
+                  }
+                  if (!posting) {
+                    continue;
+                  }
+                }
+
+                new_posting = *posting;
+                new_posting.weight *= weight;
+                grn_ii_posting_add(ctx, &new_posting, (grn_hash *)res,
+                                   si->logical_op);
               }
               grn_ii_cursor_close(ctx, ii_cursor);
               processed = GRN_TRUE;
