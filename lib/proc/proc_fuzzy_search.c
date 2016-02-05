@@ -263,6 +263,7 @@ sequential_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_obj *
       if (max_expansion > 0 && i >= max_expansion) {
         break;
       }
+      /* TODO: use grn_ii_posting_add() */
       grn_rset_recinfo *ri;
       if (grn_hash_add(ctx, (grn_hash *)hash, &(heap->nodes[i].id), sizeof(grn_id), (void **)&ri, NULL)) {
         ri->score = heap->nodes[i].score;
@@ -364,6 +365,8 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
       return GRN_NO_MEMORY_AVAILABLE;
     }
 
+    /* TODO: use grn_ii_posting_add() in sequential_fuzzy_search() and
+       grn_ii_resolve_sel_and(). */
     if (op == GRN_OP_AND) {
       rc = sequential_fuzzy_search(ctx, res, obj, query,
                                    max_distance, prefix_match_size,
