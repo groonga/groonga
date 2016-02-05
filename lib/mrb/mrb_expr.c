@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2015 Brazil
+  Copyright(C) 2013-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -309,6 +309,39 @@ mrb_grn_scan_info_push_arg(mrb_state *mrb, mrb_value self)
   success = grn_scan_info_push_arg(si, DATA_PTR(mrb_arg));
 
   return mrb_bool_value(success);
+}
+
+static mrb_value
+mrb_grn_scan_info_get_start_position(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  int start_position;
+
+  si = DATA_PTR(self);
+  start_position = grn_scan_info_get_start_position(si);
+  return mrb_fixnum_value(start_position);
+}
+
+static mrb_value
+mrb_grn_scan_info_set_start_position(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  int start_position;
+
+  mrb_get_args(mrb, "i", &start_position);
+  si = DATA_PTR(self);
+  grn_scan_info_set_start_position(si, start_position);
+  return self;
+}
+
+static mrb_value
+mrb_grn_scan_info_reset_position(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+
+  si = DATA_PTR(self);
+  grn_scan_info_reset_position(si);
+  return self;
 }
 
 static mrb_value
@@ -778,6 +811,12 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_scan_info_get_arg, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "push_arg",
                     mrb_grn_scan_info_push_arg, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "start_position",
+                    mrb_grn_scan_info_get_start_position, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "start_position=",
+                    mrb_grn_scan_info_set_start_position, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "reset_position",
+                    mrb_grn_scan_info_reset_position, MRB_ARGS_NONE());
 
   klass = mrb_define_class_under(mrb, module,
                                  "ExpressionCode", mrb->object_class);

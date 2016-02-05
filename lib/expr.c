@@ -3642,6 +3642,10 @@ struct _grn_scan_info {
   grn_obj scorers;
   grn_obj scorer_args_exprs;
   grn_obj scorer_args_expr_offsets;
+  struct {
+    grn_bool specified;
+    int start;
+  } position;
 };
 
 #define SI_FREE(si) do {\
@@ -3976,6 +3980,8 @@ grn_scan_info_open(grn_ctx *ctx, int start)
   GRN_PTR_INIT(&si->scorers, GRN_OBJ_VECTOR, GRN_ID_NIL);
   GRN_PTR_INIT(&si->scorer_args_exprs, GRN_OBJ_VECTOR, GRN_ID_NIL);
   GRN_UINT32_INIT(&si->scorer_args_expr_offsets, GRN_OBJ_VECTOR);
+  si->position.specified = GRN_FALSE;
+  si->position.start = 0;
 
   return si;
 }
@@ -4102,6 +4108,25 @@ grn_scan_info_get_arg(grn_ctx *ctx, scan_info *si, int i)
     return NULL;
   }
   return si->args[i];
+}
+
+int
+grn_scan_info_get_start_position(scan_info *si)
+{
+  return si->position.start;
+}
+
+void
+grn_scan_info_set_start_position(scan_info *si, int start)
+{
+  si->position.specified = GRN_TRUE;
+  si->position.start = start;
+}
+
+void
+grn_scan_info_reset_position(scan_info *si)
+{
+  si->position.specified = GRN_FALSE;
 }
 
 static uint32_t
