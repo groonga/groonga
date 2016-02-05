@@ -16,9 +16,9 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "grn_pat.h"
+#include "../grn_pat.h"
 
-#include "grn_proc.h"
+#include "../grn_proc.h"
 
 #include <groonga/plugin.h>
 
