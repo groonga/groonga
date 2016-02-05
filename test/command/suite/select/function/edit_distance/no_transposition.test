@@ -1,0 +1,11 @@
+table_create Tags TABLE_PAT_KEY ShortText UInt32
+
+load --table Tags
+[
+{"_key": "Groonga"}
+]
+
+select Tags \
+  --filter 'all_records()' \
+  --output_columns '_key, _score' \
+  --scorer '_score = edit_distance(_key, "Goronga")'

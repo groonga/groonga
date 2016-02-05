@@ -1222,6 +1222,67 @@ grn_pat_lcp_search(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_siz
   return r2;
 }
 
+typedef struct {
+  grn_id id;
+  uint16_t distance;
+} fuzzy_heap_node;
+
+typedef struct {
+  int n_entries;
+  int limit;
+  fuzzy_heap_node *nodes;
+} fuzzy_heap;
+
+static inline fuzzy_heap *
+fuzzy_heap_open(grn_ctx *ctx, int max)
+{
+  fuzzy_heap *h = GRN_MALLOC(sizeof(fuzzy_heap));
+  if (!h) { return NULL; }
+  h->nodes = GRN_MALLOC(sizeof(fuzzy_heap_node) * max);
+  if (!h->nodes) {
+    GRN_FREE(h);
+    return NULL;
+  }
+  h->n_entries = 0;
+  h->limit = max;
+  return h;
+}
+
+static inline grn_bool
+fuzzy_heap_push(grn_ctx *ctx, fuzzy_heap *h, grn_id id, uint16_t distance)
+{
+  int n, n2;
+  fuzzy_heap_node node = {id, distance};
+  fuzzy_heap_node node2;
+  if (h->n_entries >= h->limit) {
+    int max = h->limit * 2;
+    fuzzy_heap_node *nodes = GRN_REALLOC(h->nodes, sizeof(fuzzy_heap) * max);
+    if (!h) {
+      return GRN_FALSE;
+    }
+    h->limit = max;
+    h->nodes = nodes;
+  }
+  h->nodes[h->n_entries] = node;
+  n = h->n_entries++;
+  while (n) {
+    n2 = (n - 1) >> 1;
+    if (h->nodes[n2].distance <= h->nodes[n].distance) { break; }
+    node2 = h->nodes[n];
+    h->nodes[n] = h->nodes[n2];
+    h->nodes[n2] = node2;
+    n = n2;
+  }
+  return GRN_TRUE;
+}
+
+static inline void
+fuzzy_heap_close(grn_ctx *ctx, fuzzy_heap *h)
+{
+  GRN_FREE(h->nodes);
+  GRN_FREE(h);
+}
+
 #define DIST(ox,oy) (dists[((lx + 1) * (oy)) + (ox)])
 
 inline static uint16_t
@@ -1295,7 +1356,7 @@ _grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat, grn_id id,
                       const char *key, uint32_t key_size,
                       uint16_t *dists, uint32_t lx,
                       int last_check, fuzzy_node *last_node,
-                      uint32_t max_distance, int flags, grn_hash *h)
+                      uint32_t max_distance, int flags, fuzzy_heap *heap)
 {
   pat_node *node = NULL;
   int check, len;
@@ -1320,12 +1381,12 @@ _grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat, grn_id id,
     _grn_pat_fuzzy_search(ctx, pat, node->lr[0],
                           key, key_size, dists, lx,
                           check, last_node,
-                          max_distance, flags, h);
+                          max_distance, flags, heap);
 
     _grn_pat_fuzzy_search(ctx, pat, node->lr[1],
                           key, key_size, dists, lx,
                           check, last_node,
-                          max_distance, flags, h);
+                          max_distance, flags, heap);
   } else {
     if (id) {
       /* Set already calculated common prefix length */
@@ -1364,14 +1425,7 @@ _grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat, grn_id id,
                                        offset, max_distance,
                                        &(last_node->can_transition), flags);
         if (distance <= max_distance) {
-          if (DB_OBJ(h)->header.flags & GRN_OBJ_WITH_SUBREC) {
-            grn_rset_recinfo *ri;
-            if (grn_hash_add(ctx, h, &id, sizeof(grn_id), (void **)&ri, NULL)) {
-              ri->score = distance;
-            }
-          } else {
-            grn_hash_add(ctx, h, &id, sizeof(grn_id), NULL, NULL);
-          }
+          fuzzy_heap_push(ctx, heap, id, distance);
         }
       }
       last_node->key = k;
@@ -1381,27 +1435,44 @@ _grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat, grn_id id,
   return;
 }
 
+#define HEAP_SIZE 256
+
 grn_rc
 grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat,
                      const void *key, uint32_t key_size,
-                     uint32_t prefix_match_size,
-                     uint32_t max_distance, int flags, grn_hash *h)
+                     grn_fuzzy_optarg *args, grn_hash *h)
 {
   pat_node *node;
   grn_id id;
   uint16_t *dists;
-  uint32_t lx, len, x, y;
+  uint32_t lx, len, x, y, i;
   const char *s = key;
   const char *e = (const char *)key + key_size;
   fuzzy_node last_node;
+  fuzzy_heap *heap;
+  uint32_t max_distance = 1;
+  uint32_t max_expansion = 0;
+  uint32_t prefix_match_size = 0;
+  int flags = 0;
   grn_rc rc = grn_pat_error_if_truncated(ctx, pat);
   if (rc != GRN_SUCCESS) {
     return rc;
+  }
+  if (args) {
+    max_distance = args->max_distance;
+    max_expansion = args->max_expansion;
+    prefix_match_size = args->prefix_match_size;
+    flags = args->flags;
   }
   if (key_size > GRN_TABLE_MAX_KEY_SIZE ||
       max_distance > GRN_TABLE_MAX_KEY_SIZE ||
       prefix_match_size > key_size) {
     return GRN_INVALID_ARGUMENT;
+  }
+
+  heap = fuzzy_heap_open(ctx, HEAP_SIZE);
+  if (!heap) {
+    return GRN_NO_MEMORY_AVAILABLE;
   }
 
   PAT_AT(pat, GRN_ID_NIL, node);
@@ -1437,8 +1508,22 @@ grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat,
   last_node.can_transition = GRN_TRUE;
   _grn_pat_fuzzy_search(ctx, pat, id,
                         key, key_size, dists, lx,
-                        -1, &last_node, max_distance, flags, h);
+                        -1, &last_node, max_distance, flags, heap);
   GRN_FREE(dists);
+  for (i = 0; i < heap->n_entries; i++) {
+    if (max_expansion > 0 && i >= max_expansion) {
+      break;
+    }
+    if (DB_OBJ(h)->header.flags & GRN_OBJ_WITH_SUBREC) {
+      grn_rset_recinfo *ri;
+      if (grn_hash_add(ctx, h, &(heap->nodes[i].id), sizeof(grn_id), (void **)&ri, NULL)) {
+        ri->score = heap->nodes[i].distance;
+      }
+    } else {
+      grn_hash_add(ctx, h, &(heap->nodes[i].id), sizeof(grn_id), NULL, NULL);
+    }
+  }
+  fuzzy_heap_close(ctx, heap);
   if (grn_hash_size(ctx, h)) {
     return GRN_SUCCESS;
   } else {

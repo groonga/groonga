@@ -85,8 +85,7 @@ grn_rc grn_table_search(grn_ctx *ctx, grn_obj *table,
 
 grn_rc grn_table_fuzzy_search(grn_ctx *ctx, grn_obj *table,
                               const void *key, uint32_t key_size,
-                              uint32_t prefix_match_size,
-                              uint32_t max_distance, int flags, grn_obj *res);
+                              grn_fuzzy_optarg *args, grn_obj *res);
 
 grn_id grn_table_next(grn_ctx *ctx, grn_obj *table, grn_id id);
 
