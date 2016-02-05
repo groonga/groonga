@@ -7437,15 +7437,6 @@ grn_db_init_builtin_query(grn_ctx *ctx)
     grn_proc_set_selector(ctx, selector_proc, selector_prefix_rk_search);
   }
 
-  {
-    grn_obj *selector_proc;
-
-    selector_proc = grn_proc_create(ctx, "fuzzy_search", -1,
-                                    GRN_PROC_FUNCTION,
-                                    NULL, NULL, NULL, 0, NULL);
-    grn_proc_set_selector(ctx, selector_proc, selector_fuzzy_search);
-  }
-
   grn_proc_init_config_get(ctx);
   grn_proc_init_config_set(ctx);
   grn_proc_init_config_delete(ctx);
@@ -7454,4 +7445,13 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   grn_proc_init_lock_release(ctx);
 
   grn_proc_init_inspect(ctx);
+
+  {
+    grn_obj *selector_proc;
+
+    selector_proc = grn_proc_create(ctx, "fuzzy_search", -1,
+                                    GRN_PROC_FUNCTION,
+                                    NULL, NULL, NULL, 0, NULL);
+    grn_proc_set_selector(ctx, selector_proc, selector_fuzzy_search);
+  }
 }
