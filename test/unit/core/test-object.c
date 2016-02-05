@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2011-2015  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2011-2016  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -29,6 +29,10 @@ void data_is_builtin(void);
 void test_is_builtin(gconstpointer data);
 void data_is_table(void);
 void test_is_table(gconstpointer data);
+void data_is_column(void);
+void test_is_column(gconstpointer data);
+void data_is_reference_column(void);
+void test_is_reference_column(gconstpointer data);
 void data_is_accessor(void);
 void test_is_accessor(gconstpointer data);
 void data_is_key_accessor(void);
@@ -172,6 +176,80 @@ test_is_table(gconstpointer data)
     cut_assert_true(grn_obj_is_table(context, object));
   } else {
     cut_assert_false(grn_obj_is_table(context, object));
+  }
+}
+
+void
+data_is_column(void)
+{
+#define ADD_DATUM(label, expected, name)                                \
+  gcut_add_datum(label,                                                 \
+                 "expected", G_TYPE_BOOLEAN, expected,                  \
+                 "name", G_TYPE_STRING, name,                           \
+                 NULL)
+
+  ADD_DATUM("table",           FALSE, "Users");
+  ADD_DATUM("fix size column", TRUE,  "Users.age");
+  ADD_DATUM("var size column", TRUE,  "Users.name");
+  ADD_DATUM("index column",    TRUE,  "Names.users");
+
+#undef ADD_DATUM
+}
+
+void
+test_is_column(gconstpointer data)
+{
+  const gchar *name;
+  grn_obj *object;
+
+  assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Users age COLUMN_SCALAR UInt8");
+  assert_send_command("column_create Users name COLUMN_SCALAR ShortText");
+  assert_send_command("table_create Names TABLE_PAT_KEY ShortText");
+  assert_send_command("column_create Names users COLUMN_INDEX Users name");
+
+  name = gcut_data_get_string(data, "name");
+  object = grn_ctx_get(context, name, strlen(name));
+  if (gcut_data_get_string(data, "expected")) {
+    cut_assert_true(grn_obj_is_column(context, object));
+  } else {
+    cut_assert_false(grn_obj_is_column(context, object));
+  }
+}
+
+void
+data_is_reference_column(void)
+{
+#define ADD_DATUM(label, expected, name)                                \
+  gcut_add_datum(label,                                                 \
+                 "expected", G_TYPE_BOOLEAN, expected,                  \
+                 "name", G_TYPE_STRING, name,                           \
+                 NULL)
+
+  ADD_DATUM("table",            FALSE, "Users");
+  ADD_DATUM("value column",     TRUE,  "Users.age");
+  ADD_DATUM("reference column", TRUE,  "Users.name");
+
+#undef ADD_DATUM
+}
+
+void
+test_is_reference_column(gconstpointer data)
+{
+  const gchar *name;
+  grn_obj *object;
+
+  assert_send_command("table_create Names TABLE_PAT_KEY ShortText");
+  assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Users age COLUMN_SCALAR UInt8");
+  assert_send_command("column_create Users name COLUMN_SCALAR Names");
+
+  name = gcut_data_get_string(data, "name");
+  object = grn_ctx_get(context, name, strlen(name));
+  if (gcut_data_get_string(data, "expected")) {
+    cut_assert_true(grn_obj_is_reference_column(context, object));
+  } else {
+    cut_assert_false(grn_obj_is_reference_column(context, object));
   }
 }
 
