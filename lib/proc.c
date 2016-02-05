@@ -4319,7 +4319,7 @@ func_geo_distance3(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
 #define DIST(ox,oy) (dists[((lx + 1) * (oy)) + (ox)])
 
 static uint32_t
-calc_edit_distance(grn_ctx *ctx, char *sx, char *ex, char *sy, char *ey)
+calc_edit_distance(grn_ctx *ctx, char *sx, char *ex, char *sy, char *ey, int flags)
 {
   int d = 0;
   uint32_t cx, lx, cy, ly, *dists;
@@ -4341,6 +4341,13 @@ calc_edit_distance(grn_ctx *ctx, char *sx, char *ex, char *sy, char *ey)
           uint32_t b = DIST(x, y - 1) + 1;
           uint32_t c = DIST(x - 1, y - 1) + 1;
           DIST(x, y) = ((a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c));
+          if (flags == GRN_TABLE_FUZZY_WITH_TRANSPOSITION
+              && x > 1 && y > 1 && cx == cy
+              && memcmp(px, py - cy, cx) == 0
+              && memcmp(px - cx, py, cx) == 0) {
+            uint32_t t = DIST(x - 2, y - 2) + 1;
+            DIST(x, y) = ((DIST(x, y) < t) ? DIST(x, y) : t);
+          }
         }
       }
     }
@@ -4353,16 +4360,24 @@ calc_edit_distance(grn_ctx *ctx, char *sx, char *ex, char *sy, char *ey)
 static grn_obj *
 func_edit_distance(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
+#define N_REQUIRED_ARGS 2
+#define MAX_ARGS 3
   int d = 0;
+  int flags = 0;
   grn_obj *obj;
-  if (nargs == 2) {
+  if (nargs >= N_REQUIRED_ARGS && nargs <= MAX_ARGS) {
+    if (nargs == MAX_ARGS && GRN_BOOL_VALUE(args[2])) {
+      flags = GRN_TABLE_FUZZY_WITH_TRANSPOSITION;
+    }
     d = calc_edit_distance(ctx, GRN_TEXT_VALUE(args[0]), GRN_BULK_CURR(args[0]),
-                           GRN_TEXT_VALUE(args[1]), GRN_BULK_CURR(args[1]));
+                           GRN_TEXT_VALUE(args[1]), GRN_BULK_CURR(args[1]), flags);
   }
   if ((obj = GRN_PROC_ALLOC(GRN_DB_UINT32, 0))) {
     GRN_UINT32_SET(ctx, obj, d);
   }
   return obj;
+#undef N_REQUIRED_ARGS
+#undef MAX_ARGS
 }
 
 static grn_obj *
@@ -6916,7 +6931,7 @@ sequential_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_obj *
                !memcmp(sx, vector_value, prefix_match_size))) {
             distance = calc_edit_distance(ctx, sx, ex,
                                           (char *)vector_value,
-                                          (char *)vector_value + length);
+                                          (char *)vector_value + length, flags);
             if (distance <= max_distance) {
               score_heap_push(ctx, heap, id, distance);
               break;
@@ -6937,7 +6952,7 @@ sequential_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_obj *
               (prefix_match_size > 0 && key_length >= prefix_match_size &&
                !memcmp(sx, key_name, prefix_match_size))) {
             distance = calc_edit_distance(ctx, sx, ex,
-                                          key_name, key_name + key_length);
+                                          key_name, key_name + key_length, flags);
             if (distance <= max_distance) {
               score_heap_push(ctx, heap, id, distance);
               break;
@@ -6955,7 +6970,7 @@ sequential_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_obj *
               (prefix_match_size > 0 && key_length >= prefix_match_size &&
                !memcmp(sx, key_name, prefix_match_size))) {
             distance = calc_edit_distance(ctx, sx, ex,
-                                          key_name, key_name + key_length);
+                                          key_name, key_name + key_length, flags);
             if (distance <= max_distance) {
               score_heap_push(ctx, heap, id, distance);
             }
@@ -6966,7 +6981,7 @@ sequential_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_obj *
                !memcmp(sx, GRN_TEXT_VALUE(&value), prefix_match_size))) {
             distance = calc_edit_distance(ctx, sx, ex,
                                           GRN_TEXT_VALUE(&value),
-                                          GRN_BULK_CURR(&value));
+                                          GRN_BULK_CURR(&value), flags);
             if (distance <= max_distance) {
               score_heap_push(ctx, heap, id, distance);
             }
