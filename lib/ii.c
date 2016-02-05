@@ -6572,7 +6572,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
     return GRN_NO_MEMORY_AVAILABLE;
   }
   if (mode == GRN_OP_FUZZY) {
-    if (token_info_build_fuzzy(ctx, lexicon, ii, string, string_len, tis, &n, &only_skip_token, mode, optarg->fuzzy_args) || !n) { goto exit; }
+    if (token_info_build_fuzzy(ctx, lexicon, ii, string, string_len, tis, &n, &only_skip_token, mode, optarg->fuzzy) || !n) { goto exit; }
   } else {
     if (token_info_build(ctx, lexicon, ii, string, string_len, tis, &n, &only_skip_token, mode) || !n) { goto exit; }
   }
@@ -6883,7 +6883,8 @@ grn_ii_estimate_size_for_query(grn_ctx *ctx, grn_ii *ii,
   switch (mode) {
   case GRN_OP_FUZZY :
     rc = token_info_build_fuzzy(ctx, lexicon, ii, query, query_len,
-                                tis, &n_tis, &only_skip_token, mode, optarg->fuzzy_args);
+                                tis, &n_tis, &only_skip_token, mode,
+                                optarg->fuzzy);
     break;
   default :
     rc = token_info_build(ctx, lexicon, ii, query, query_len,
@@ -6969,7 +6970,7 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
         break;
       case GRN_OP_FUZZY :
         arg.mode = optarg->mode;
-        arg.fuzzy_args = optarg->fuzzy_args;
+        arg.fuzzy = optarg->fuzzy;
         break;
       default :
         break;

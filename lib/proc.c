@@ -7140,7 +7140,7 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     args.max_distance = max_distance;
     args.max_expansion = max_expansion;
     args.flags = flags;
-    options.fuzzy_args = &args;
+    options.fuzzy = &args;
     grn_obj_search(ctx, target, query, res, op, &options);
   }
 

@@ -3462,7 +3462,7 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
           }
           if (optarg && optarg->mode == GRN_OP_FUZZY) {
             rc = grn_table_fuzzy_search(ctx, obj, key, key_size,
-                                        optarg->fuzzy_args, res);
+                                        optarg->fuzzy, res);
           } else {
             rc = grn_table_search(ctx, obj, key, key_size, mode, res, op);
           }
