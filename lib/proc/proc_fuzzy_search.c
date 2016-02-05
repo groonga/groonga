@@ -18,6 +18,7 @@
 
 #include "../grn_proc.h"
 #include "../grn_rset.h"
+#include "../grn_ii.h"
 
 #include <groonga/plugin.h>
 
@@ -161,7 +162,7 @@ score_heap_close(grn_ctx *ctx, score_heap *h)
 static grn_rc
 sequential_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_obj *query,
                         uint32_t max_distance, uint32_t prefix_match_size,
-                        uint32_t max_expansion, int flags, grn_obj *hash)
+                        uint32_t max_expansion, int flags, grn_obj *hash, grn_operator op)
 {
   grn_table_cursor *tc;
   char *sx = GRN_TEXT_VALUE(query);
@@ -263,12 +264,16 @@ sequential_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_obj *
       if (max_expansion > 0 && i >= max_expansion) {
         break;
       }
-      /* TODO: use grn_ii_posting_add() */
-      grn_rset_recinfo *ri;
-      if (grn_hash_add(ctx, (grn_hash *)hash, &(heap->nodes[i].id), sizeof(grn_id), (void **)&ri, NULL)) {
-        ri->score = heap->nodes[i].score;
+      if (grn_hash_add(ctx, (grn_hash *)hash, &(heap->nodes[i].id),sizeof(grn_id), NULL, NULL)) {
+        grn_posting posting;
+        posting.rid = heap->nodes[i].id;
+        posting.sid = 1;
+        posting.pos = 0;
+        posting.weight = 0;
+        grn_ii_posting_add(ctx, &posting, (grn_hash *)hash, op);
       }
     }
+    grn_ii_resolve_sel_and(ctx, (grn_hash *)hash, op);
     score_heap_close(ctx, heap);
   }
 
@@ -293,7 +298,7 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
 
   if ((nargs - 1) < 2) {
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                     "fuzzy_serach(): wrong number of arguments (%d ...)",
+                     "fuzzy_search(): wrong number of arguments (%d ...)",
                      nargs - 1);
     rc = ctx->rc;
     goto exit;
@@ -332,6 +337,9 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     if (lexicon->header.type != GRN_TABLE_PAT_KEY) {
       use_sequential_search = GRN_TRUE;
     }
+    if (lexicon) {
+      grn_obj_unlink(ctx, lexicon);
+    }
   } else {
     if (grn_obj_is_key_accessor(ctx, obj) &&
         table->header.type == GRN_TABLE_PAT_KEY) {
@@ -365,16 +373,14 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
       return GRN_NO_MEMORY_AVAILABLE;
     }
 
-    /* TODO: use grn_ii_posting_add() in sequential_fuzzy_search() and
-       grn_ii_resolve_sel_and(). */
     if (op == GRN_OP_AND) {
       rc = sequential_fuzzy_search(ctx, res, obj, query,
                                    max_distance, prefix_match_size,
-                                   max_expansion, flags, hash);
+                                   max_expansion, flags, hash, op);
     } else {
       rc = sequential_fuzzy_search(ctx, table, obj, query,
                                    max_distance, prefix_match_size,
-                                   max_expansion, flags, hash);
+                                   max_expansion, flags, hash, op);
     }
 
     if (rc == GRN_SUCCESS) {
@@ -395,7 +401,6 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                      GRN_TEXT_VALUE(&inspected));
     rc = ctx->rc;
     GRN_OBJ_FIN(ctx, &inspected);
-    goto exit;
   } else {
     grn_search_optarg options = {0};
     options.mode = GRN_OP_FUZZY;

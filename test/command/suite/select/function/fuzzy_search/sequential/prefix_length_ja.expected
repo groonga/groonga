@@ -33,11 +33,11 @@ select Users --filter 'fuzzy_search(name, "とむ", 5, 1)'   --output_columns 'n
       ],
       [
         "とむ",
-        0
+        1
       ],
       [
         "とみー",
-        2
+        1
       ]
     ]
   ]
