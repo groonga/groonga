@@ -227,7 +227,7 @@ data_is_reference_column(void)
                  NULL)
 
   ADD_DATUM("table",            FALSE, "Users");
-  ADD_DATUM("value column",     TRUE,  "Users.age");
+  ADD_DATUM("value column",     FALSE, "Users.age");
   ADD_DATUM("reference column", TRUE,  "Users.name");
 
 #undef ADD_DATUM
