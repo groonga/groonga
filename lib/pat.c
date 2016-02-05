@@ -1320,11 +1320,11 @@ calc_edit_distance_by_offset(grn_ctx *ctx,
         b = DIST(x, y - 1) + 1;
         c = DIST(x - 1, y - 1) + 1;
         DIST(x, y) = ((a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c));
-        if (flags & GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION
-            && x > 1 && y > 1
-            && cx == cy
-            && memcmp(px, py - cy, cx) == 0
-            && memcmp(px - cx, py, cx) == 0) {
+        if (flags & GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION &&
+            x > 1 && y > 1 &&
+            cx == cy &&
+            memcmp(px, py - cy, cx) == 0 &&
+            memcmp(px - cx, py, cx) == 0) {
           uint32_t t = DIST(x - 2, y - 2) + 1;
           DIST(x, y) = ((DIST(x, y) < t) ? DIST(x, y) : t);
         }

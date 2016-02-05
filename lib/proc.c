@@ -4341,10 +4341,10 @@ calc_edit_distance(grn_ctx *ctx, char *sx, char *ex, char *sy, char *ey, int fla
           uint32_t b = DIST(x, y - 1) + 1;
           uint32_t c = DIST(x - 1, y - 1) + 1;
           DIST(x, y) = ((a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c));
-          if (flags & GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION
-              && x > 1 && y > 1 && cx == cy
-              && memcmp(px, py - cy, cx) == 0
-              && memcmp(px - cx, py, cx) == 0) {
+          if (flags & GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION &&
+              x > 1 && y > 1 && cx == cy &&
+              memcmp(px, py - cy, cx) == 0 &&
+              memcmp(px - cx, py, cx) == 0) {
             uint32_t t = DIST(x - 2, y - 2) + 1;
             DIST(x, y) = ((DIST(x, y) < t) ? DIST(x, y) : t);
           }
