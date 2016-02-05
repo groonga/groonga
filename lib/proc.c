@@ -4341,7 +4341,7 @@ calc_edit_distance(grn_ctx *ctx, char *sx, char *ex, char *sy, char *ey, int fla
           uint32_t b = DIST(x, y - 1) + 1;
           uint32_t c = DIST(x - 1, y - 1) + 1;
           DIST(x, y) = ((a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c));
-          if (flags == GRN_TABLE_FUZZY_WITH_TRANSPOSITION
+          if (flags == GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION
               && x > 1 && y > 1 && cx == cy
               && memcmp(px, py - cy, cx) == 0
               && memcmp(px - cx, py, cx) == 0) {
@@ -4367,7 +4367,7 @@ func_edit_distance(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   grn_obj *obj;
   if (nargs >= N_REQUIRED_ARGS && nargs <= MAX_ARGS) {
     if (nargs == MAX_ARGS && GRN_BOOL_VALUE(args[2])) {
-      flags = GRN_TABLE_FUZZY_WITH_TRANSPOSITION;
+      flags = GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION;
     }
     d = calc_edit_distance(ctx, GRN_TEXT_VALUE(args[0]), GRN_BULK_CURR(args[0]),
                            GRN_TEXT_VALUE(args[1]), GRN_BULK_CURR(args[1]), flags);
@@ -7044,7 +7044,7 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   }
   if (nargs == 7) {
     if (GRN_BOOL_VALUE(args[6])) {
-      flags = GRN_TABLE_FUZZY_WITH_TRANSPOSITION;
+      flags = GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION;
     }
   }
 

@@ -933,7 +933,8 @@ GRN_API grn_obj *grn_obj_db(grn_ctx *ctx, grn_obj *obj);
 
 GRN_API grn_id grn_obj_id(grn_ctx *ctx, grn_obj *obj);
 
-#define GRN_TABLE_FUZZY_WITH_TRANSPOSITION                  (0x01)
+/* Flags for grn_fuzzy_search_optarg::flags. */
+#define GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION                  (0x01)
 
 typedef struct _grn_fuzzy_search_optarg grn_fuzzy_search_optarg;
 
