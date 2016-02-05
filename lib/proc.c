@@ -7018,6 +7018,7 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   grn_obj *obj;
   grn_obj *query;
   uint32_t max_distance = 1;
+  uint32_t prefix_length = 0;
   uint32_t prefix_match_size = 0;
   uint32_t max_expansion = 0;
   int flags = 0;
@@ -7036,7 +7037,7 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     max_distance = GRN_UINT32_VALUE(args[3]);
   }
   if (nargs >= 5) {
-    prefix_match_size = GRN_UINT32_VALUE(args[4]);
+    prefix_length = GRN_UINT32_VALUE(args[4]);
   }
   if (nargs >= 6) {
     max_expansion = GRN_UINT32_VALUE(args[5]);
@@ -7063,6 +7064,20 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
         use_sequential_search = GRN_TRUE;
       }
     }
+  }
+  if (prefix_length) {
+    const char *s = GRN_TEXT_VALUE(query);
+    const char *e = GRN_BULK_CURR(query);
+    const char *p;
+    unsigned int cl = 0;
+    unsigned int length = 0;
+    for (p = s; p < e && (cl = grn_charlen(ctx, p, e)); p += cl) {
+      length++;
+      if (length > prefix_length) {
+        break;
+      }
+    }
+    prefix_match_size = p - s;
   }
 
   if (use_sequential_search) {
