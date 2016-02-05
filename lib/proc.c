@@ -7096,9 +7096,17 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     if (!hash) {
       return GRN_NO_MEMORY_AVAILABLE;
     }
-    rc = sequential_fuzzy_search(ctx, table, obj, query,
-                                 max_distance, prefix_match_size,
-                                 max_expansion, flags, hash);
+
+    if (op == GRN_OP_AND) {
+      rc = sequential_fuzzy_search(ctx, res, obj, query,
+                                   max_distance, prefix_match_size,
+                                   max_expansion, flags, hash);
+    } else {
+      rc = sequential_fuzzy_search(ctx, table, obj, query,
+                                   max_distance, prefix_match_size,
+                                   max_expansion, flags, hash);
+    }
+
     if (rc == GRN_SUCCESS) {
       rc = grn_table_setoperation(ctx, res, hash, res, op);
     }
