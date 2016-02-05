@@ -1440,7 +1440,7 @@ _grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat, grn_id id,
 grn_rc
 grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat,
                      const void *key, uint32_t key_size,
-                     grn_fuzzy_optarg *args, grn_hash *h)
+                     grn_fuzzy_search_optarg *args, grn_hash *h)
 {
   pat_node *node;
   grn_id id;

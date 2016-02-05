@@ -426,7 +426,7 @@ test_fuzzy_search(gconstpointer data)
   const gchar key4[]  = "bbbb";
   const gchar key5[]  = "bbbbb";
   const gchar key6[]  = "cdefg";
-  grn_fuzzy_optarg args;
+  grn_fuzzy_search_optarg args;
   args.prefix_match_size = 0;
   args.max_distance = 1;
   args.max_expansion = 0;

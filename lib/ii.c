@@ -5528,7 +5528,7 @@ token_info_close(grn_ctx *ctx, token_info *ti)
 inline static token_info *
 token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
                 const char *key, unsigned int key_size, uint32_t offset, int mode,
-                grn_fuzzy_optarg *args)
+                grn_fuzzy_search_optarg *args)
 {
   int s = 0;
   grn_hash *h;
@@ -5772,7 +5772,7 @@ inline static grn_rc
 token_info_build_fuzzy(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
                        const char *string, unsigned int string_len,
                        token_info **tis, uint32_t *n, grn_bool *only_skip_token,
-                       grn_operator mode, grn_fuzzy_optarg *args)
+                       grn_operator mode, grn_fuzzy_search_optarg *args)
 {
   token_info *ti;
   grn_rc rc = GRN_END_OF_DATA;

@@ -2915,7 +2915,7 @@ grn_table_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t key_siz
 
 grn_rc
 grn_table_fuzzy_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t key_size,
-                       grn_fuzzy_optarg *args, grn_obj *res)
+                       grn_fuzzy_search_optarg *args, grn_obj *res)
 {
   grn_rc rc = GRN_SUCCESS;
   GRN_API_ENTER;
