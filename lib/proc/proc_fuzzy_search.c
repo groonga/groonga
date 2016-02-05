@@ -328,9 +328,13 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
 
   if (target) {
     grn_obj *lexicon;
+    use_sequential_search = GRN_TRUE;
     lexicon = grn_ctx_at(ctx, target->header.domain);
-    if (lexicon->header.type != GRN_TABLE_PAT_KEY) {
-      use_sequential_search = GRN_TRUE;
+    if (lexicon) {
+      if (lexicon->header.type == GRN_TABLE_PAT_KEY) {
+        use_sequential_search = GRN_FALSE;
+      }
+      grn_obj_unlink(ctx, lexicon);
     }
   } else {
     if (grn_obj_is_key_accessor(ctx, obj) &&
