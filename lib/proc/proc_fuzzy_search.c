@@ -398,7 +398,6 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                      GRN_TEXT_VALUE(&inspected));
     rc = ctx->rc;
     GRN_OBJ_FIN(ctx, &inspected);
-    goto exit;
   } else {
     grn_search_optarg options = {0};
     options.mode = GRN_OP_FUZZY;
