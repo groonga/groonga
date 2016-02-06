@@ -446,6 +446,8 @@ grn_obj *grn_obj_default_set_value_hook(grn_ctx *ctx,
                                         grn_obj **args,
                                         grn_user_data *user_data);
 
+void grn_obj_touch(grn_ctx *ctx, grn_obj *obj, grn_timeval *tv);
+
 #ifdef __cplusplus
 }
 #endif

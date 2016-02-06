@@ -142,6 +142,7 @@ grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
           }
         }
         GRN_FREE(col);
+        grn_obj_touch(ctx, index_column, NULL);
       }
     } else {
       ERR(GRN_INVALID_ARGUMENT, "invalid target");
