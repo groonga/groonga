@@ -336,6 +336,7 @@ fi
 %dir %{_libdir}/groonga/scripts/ruby/logger
 %dir %{_libdir}/groonga/scripts/ruby/query_logger
 %{_libdir}/groonga/plugins/functions/vector.so
+%{_libdir}/groonga/plugins/functions/string.so
 %{_libdir}/groonga/plugins/table/table.so
 %{_libdir}/groonga/plugins/query_expanders/tsv.so
 %{_libdir}/groonga/plugins/token_filters/stop_word.so
@@ -415,6 +416,10 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Tue Feb 09 2016 HAYASHI Kentaro <hayashi@clear-code.com> - 6.0.0-1
+- new upstream release.
+- add functions/string plugin GitHub#459
+
 * Fri Jan 29 2016 Kouhei Sutou <kou@clear-code.com> - 5.1.2-1
 - new upstream release.
 
