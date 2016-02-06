@@ -293,7 +293,7 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
 
   if ((nargs - 1) < 2) {
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                     "fuzzy_serach(): wrong number of arguments (%d ...)",
+                     "fuzzy_search(): wrong number of arguments (%d ...)",
                      nargs - 1);
     rc = ctx->rc;
     goto exit;
