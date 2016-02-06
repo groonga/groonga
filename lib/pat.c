@@ -1517,7 +1517,7 @@ grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat,
     if (DB_OBJ(h)->header.flags & GRN_OBJ_WITH_SUBREC) {
       grn_rset_recinfo *ri;
       if (grn_hash_add(ctx, h, &(heap->nodes[i].id), sizeof(grn_id), (void **)&ri, NULL)) {
-        ri->score = heap->nodes[i].distance;
+        ri->score = max_distance - heap->nodes[i].distance + 1;
       }
     } else {
       grn_hash_add(ctx, h, &(heap->nodes[i].id), sizeof(grn_id), NULL, NULL);

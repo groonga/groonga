@@ -37,11 +37,11 @@ select Tags --filter 'fuzzy_search(_key, "とむ", 5, 1)'   --output_columns '_k
       ],
       [
         "とむ",
-        0
+        6
       ],
       [
         "とみー",
-        2
+        4
       ]
     ]
   ]

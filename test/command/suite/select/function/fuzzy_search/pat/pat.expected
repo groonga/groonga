@@ -37,7 +37,7 @@ select Tags --filter 'fuzzy_search(_key, "Tom", 1)'   --output_columns '_key, _s
       ],
       [
         "Tom",
-        0
+        2
       ],
       [
         "Tomy",
