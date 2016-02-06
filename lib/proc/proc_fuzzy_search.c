@@ -339,7 +339,7 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   } else {
     if (grn_obj_is_key_accessor(ctx, obj) &&
         table->header.type == GRN_TABLE_PAT_KEY) {
-       target = table;
+      target = table;
     } else {
       use_sequential_search = GRN_TRUE;
     }
