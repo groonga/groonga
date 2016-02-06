@@ -5601,21 +5601,27 @@ token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
     }
     break;
   case EX_FUZZY :
-    if ((h = grn_hash_create(ctx, NULL, sizeof(grn_id), 0, 0))) {
+    if ((h = (grn_hash *)grn_table_create(ctx, NULL, 0, NULL,
+        GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+        grn_ctx_at(ctx, GRN_DB_UINT32), NULL))) {
       grn_table_fuzzy_search(ctx, lexicon, key, key_size,
                              args, (grn_obj *)h);
       if (GRN_HASH_SIZE(h)) {
         if ((ti->cursors = cursor_heap_open(ctx, GRN_HASH_SIZE(h)))) {
-          GRN_HASH_EACH(ctx, h, id, &tp, NULL, NULL, {
+          grn_rset_recinfo *ri;
+          GRN_HASH_EACH(ctx, h, id, &tp, NULL, (void **)&ri, {
             if ((s = grn_ii_estimate_size(ctx, ii, *tp))) {
+              grn_ii_cursor *ic;
               cursor_heap_push(ctx, ti->cursors, ii, *tp, 0);
+              ic = ti->cursors->bins[ti->cursors->n_entries - 1];
+              ic->post->weight += ri->score - 1;
               ti->ntoken++;
               ti->size += s;
             }
           });
         }
       }
-      grn_hash_close(ctx, h);
+      grn_obj_close(ctx, (grn_obj *)h);
     }
     break;
   }
