@@ -1000,6 +1000,13 @@ grn_plugin_malloc(grn_ctx *ctx, size_t size, const char *file, int line,
 }
 
 void *
+grn_plugin_calloc(grn_ctx *ctx, size_t size, const char *file, int line,
+                  const char *func)
+{
+  return grn_calloc(ctx, size, file, line, func);
+}
+
+void *
 grn_plugin_realloc(grn_ctx *ctx, void *ptr, size_t size,
                    const char *file, int line, const char *func)
 {
