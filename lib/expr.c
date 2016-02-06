@@ -5618,25 +5618,55 @@ grn_table_select_index_range_column(grn_ctx *ctx, grn_obj *table,
                                    min, min_size, max, max_size,
                                    offset, limit, flags);
     if (cursor) {
+      grn_id tid;
       uint32_t sid;
       int32_t weight;
-      grn_obj *index_cursor;
+      grn_ii *ii = (grn_ii *)index;
+      int ii_cursor_flags;
 
       sid = GRN_UINT32_VALUE_AT(&(si->wv), 0);
       weight = GRN_INT32_VALUE_AT(&(si->wv), 1);
-      index_cursor = grn_index_cursor_open(ctx, cursor, index,
-                                           GRN_ID_NIL, GRN_ID_MAX, 0);
-      if (index_cursor) {
-        grn_posting *posting;
-        while ((posting = grn_index_cursor_next(ctx, index_cursor, NULL))) {
-          if (sid == 0 || posting->sid == sid) {
-            grn_posting new_posting = *posting;
+      ii_cursor_flags = GRN_OBJ_WITH_WEIGHT;
+      if (sid != 0) {
+        ii_cursor_flags |= GRN_OBJ_WITH_SECTION;
+      }
+      if (si->position.specified) {
+        ii_cursor_flags |= GRN_OBJ_WITH_POSITION;
+      }
+      while ((tid = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+        grn_ii_cursor *ii_cursor;
+
+        ii_cursor = grn_ii_cursor_open(ctx, ii, tid,
+                                       GRN_ID_NIL, GRN_ID_MAX,
+                                       ii->n_elements,
+                                       ii_cursor_flags);
+        if (ii_cursor) {
+          grn_posting *posting;
+          while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
+            grn_posting new_posting;
+
+            if (!(sid == 0 || posting->sid == sid)) {
+              continue;
+            }
+
+            if (si->position.specified) {
+              while ((posting = grn_ii_cursor_next_pos(ctx, ii_cursor))) {
+                if (posting->pos == si->position.start) {
+                  break;
+                }
+              }
+              if (!posting) {
+                continue;
+              }
+            }
+
+            new_posting = *posting;
             new_posting.weight *= weight;
             grn_ii_posting_add(ctx, &new_posting, (grn_hash *)res, logical_op);
           }
         }
         processed = GRN_TRUE;
-        grn_obj_unlink(ctx, index_cursor);
+        grn_ii_cursor_close(ctx, ii_cursor);
       }
       grn_table_cursor_close(ctx, cursor);
     }

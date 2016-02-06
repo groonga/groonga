@@ -1,0 +1,17 @@
+table_create Values TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Values numbers COLUMN_VECTOR Int32
+[[0,0.0,0.0],true]
+table_create Numbers TABLE_PAT_KEY Int32
+[[0,0.0,0.0],true]
+column_create Numbers values_numbers COLUMN_INDEX|WITH_POSITION Values numbers
+[[0,0.0,0.0],true]
+load --table Values
+[
+{"numbers": [2, 3, 9]},
+{"numbers": [2, 4, 3]},
+{"numbers": [8, 5, -1]}
+]
+[[0,0.0,0.0],3]
+select Values   --filter 'numbers[1] >= 4'   --output_columns 'numbers'
+[[0,0.0,0.0],[[[2],[["numbers","Int32"]],[[2,4,3]],[[8,5,-1]]]]]
