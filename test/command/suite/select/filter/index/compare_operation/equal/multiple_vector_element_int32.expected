@@ -1,0 +1,19 @@
+table_create Values TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Values numbers1 COLUMN_VECTOR Int32
+[[0,0.0,0.0],true]
+column_create Values numbers2 COLUMN_VECTOR Int32
+[[0,0.0,0.0],true]
+table_create Numbers TABLE_PAT_KEY Int32
+[[0,0.0,0.0],true]
+column_create Numbers values_numbers   COLUMN_INDEX|WITH_POSITION|WITH_SECTION   Values numbers1,numbers2
+[[0,0.0,0.0],true]
+load --table Values
+[
+{"numbers1": [4, 3, 2], "numbers2": [2, 1, 3]},
+{"numbers1": [4, 3, 2], "numbers2": [2, 3, 4]},
+{"numbers1": [4, 3, 2], "numbers2": [3, 9, -1]}
+]
+[[0,0.0,0.0],3]
+select Values   --filter 'numbers2[1] == 3'   --output_columns 'numbers2'
+[[0,0.0,0.0],[[[1],[["numbers2","Int32"]],[[2,3,4]]]]]
