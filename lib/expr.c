@@ -4559,7 +4559,7 @@ grn_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
       case SCAN_CONST :
         {
           grn_expr_code *prev_c = c - 1;
-          if (prev_c->value->header.domain < GRN_DB_INT8 &&
+          if (prev_c->value->header.domain < GRN_DB_INT8 ||
               prev_c->value->header.domain > GRN_DB_UINT64) {
             return NULL;
           }
