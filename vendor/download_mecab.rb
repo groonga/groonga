@@ -3,6 +3,7 @@
 require "pathname"
 require "fileutils"
 require "open-uri"
+require "openssl"
 require "rubygems/package"
 require "zlib"
 
@@ -34,22 +35,14 @@ def extract_tar_gz(tar_gz_path)
 end
 
 def download(url, base)
-  ssl_ca_cert = nil
+  ssl_verify_mode = nil
   if /mingw/ =~ RUBY_PLATFORM
-    cacert_pem_path = "cacert.pem"
-    unless File.exist?(cacert_pem_path)
-      open("http://curl.haxx.se/ca/cacert.pem") do |remote_cacert_pem|
-        File.open(cacert_pem_path, "wb") do |local_cacert_pem|
-          local_cacert_pem.print(remote_cacert_pem.read)
-        end
-      end
-    end
-    ssl_ca_cert = File.expand_path(cacert_pem_path)
+    ssl_verify_mode = OpenSSL::SSL::VERIFY_NONE
   end
 
   tar = "#{base}.tar"
   tar_gz = "#{tar}.gz"
-  open(url, :ssl_ca_cert => ssl_ca_cert) do |remote_tar_gz|
+  open(url, :ssl_verify_mode => ssl_verify_mode) do |remote_tar_gz|
     File.open(tar_gz, "wb") do |local_tar_gz|
       local_tar_gz.print(remote_tar_gz.read)
     end
