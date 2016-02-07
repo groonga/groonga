@@ -1782,7 +1782,8 @@ grn_ja_reader_seek(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
   return grn_ja_reader_seek_raw(ctx, reader, id);
 }
 
-grn_rc grn_ja_reader_ref(grn_ctx *ctx, grn_ja_reader *reader, void **addr)
+grn_rc
+grn_ja_reader_ref(grn_ctx *ctx, grn_ja_reader *reader, void **addr)
 {
   if (!reader->ref_avail) {
     return GRN_INVALID_ARGUMENT;
@@ -1817,7 +1818,8 @@ grn_rc grn_ja_reader_ref(grn_ctx *ctx, grn_ja_reader *reader, void **addr)
   return GRN_SUCCESS;
 }
 
-grn_rc grn_ja_reader_unref(grn_ctx *ctx, grn_ja_reader *reader)
+grn_rc
+grn_ja_reader_unref(grn_ctx *ctx, grn_ja_reader *reader)
 {
   uint32_t i;
   for (i = 0; i < reader->nref_seg_ids; i++) {
