@@ -74,6 +74,19 @@ case "$host_os" in
 esac
 AC_MSG_RESULT([$solaris])
 
+AC_MSG_CHECKING([for platform which requires libatomic])
+case "$host" in
+  mips-*|mipsel-*)
+    platform_use_libatomic=yes
+    ATOMIC_LIBS="-latomic"
+    ;;
+  *)
+    platform_use_libatomic=no
+    ;;
+esac
+AC_MSG_RESULT([$platform_use_libatomic])
+AC_SUBST(ATOMIC_LIBS)
+
 AC_C_BIGENDIAN
 AC_PROG_CXX
 AC_PROG_CC
