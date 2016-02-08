@@ -16,6 +16,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "grn.h"
+#include "grn_proc.h"
 #include <groonga/plugin.h>
 
 #include <stdarg.h>
@@ -1134,6 +1135,19 @@ grn_plugin_proc_get_var(grn_ctx *ctx, grn_user_data *user_data,
 {
   name_size = compute_name_size(name, name_size);
   return grn_proc_get_var(ctx, user_data, name, name_size);
+}
+
+grn_bool
+grn_plugin_proc_get_var_bool(grn_ctx *ctx,
+                             grn_user_data *user_data,
+                             const char *name,
+                             int name_size,
+                             grn_bool default_value)
+{
+  grn_obj *var;
+
+  var = grn_plugin_proc_get_var(ctx, user_data, name, name_size);
+  return grn_proc_option_value_bool(ctx, var, default_value);
 }
 
 grn_obj *

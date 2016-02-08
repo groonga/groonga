@@ -145,6 +145,11 @@ GRN_API grn_obj *grn_plugin_proc_get_vars(grn_ctx *ctx, grn_user_data *user_data
 
 GRN_API grn_obj *grn_plugin_proc_get_var(grn_ctx *ctx, grn_user_data *user_data,
                                          const char *name, int name_size);
+GRN_API grn_bool grn_plugin_proc_get_var_bool(grn_ctx *ctx,
+                                              grn_user_data *user_data,
+                                              const char *name,
+                                              int name_size,
+                                              grn_bool default_value);
 
 GRN_API grn_obj *grn_plugin_proc_get_var_by_offset(grn_ctx *ctx,
                                                    grn_user_data *user_data,
