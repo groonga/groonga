@@ -1,0 +1,13 @@
+object_remove nonexistent
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[object][remove] target object doesn't exist: <nonexistent>"
+  ],
+  false
+]
+#|e| [object][remove] target object doesn't exist: <nonexistent>

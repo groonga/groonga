@@ -17,6 +17,7 @@
 */
 
 #include "../grn_proc.h"
+#include "../grn_io.h"
 
 #include <groonga/plugin.h>
 
@@ -56,5 +57,83 @@ grn_proc_init_object_exist(grn_ctx *ctx)
                             "object_exist", -1,
                             command_object_exist,
                             1,
+                            vars);
+}
+
+static grn_obj *
+command_object_remove(grn_ctx *ctx,
+                      int nargs,
+                      grn_obj **args,
+                      grn_user_data *user_data)
+{
+  grn_obj *db;
+  grn_obj *name;
+  grn_bool force;
+  grn_obj *target;
+  grn_bool failed_to_open;
+
+  db = grn_ctx_db(ctx);
+  name = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
+  force = grn_plugin_proc_get_var_bool(ctx, user_data, "force", -1, GRN_FALSE);
+
+  if (GRN_TEXT_LEN(name) == 0) {
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "[object][remove] name is missing");
+    grn_ctx_output_bool(ctx, GRN_FALSE);
+    return NULL;
+  }
+
+  target = grn_ctx_get(ctx,
+                       GRN_TEXT_VALUE(name),
+                       GRN_TEXT_LEN(name));
+  if (target) {
+    grn_obj_remove(ctx, target);
+    grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
+    return NULL;
+  }
+
+  failed_to_open = (ctx->rc != GRN_SUCCESS);
+
+  if (force) {
+    grn_id id;
+    id = grn_table_get(ctx, db,
+                       GRN_TEXT_VALUE(name),
+                       GRN_TEXT_LEN(name));
+    if (id != GRN_ID_NIL) {
+      char path[PATH_MAX];
+      grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
+      grn_obj_path_by_id(ctx, db, id, path);
+      grn_io_remove(ctx, path);
+      grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
+      return NULL;
+    }
+  }
+
+  if (failed_to_open) {
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "[object][remove] failed to open the target object: <%.*s>",
+                     (int)GRN_TEXT_LEN(name),
+                     GRN_TEXT_VALUE(name));
+  } else {
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "[object][remove] target object doesn't exist: <%.*s>",
+                     (int)GRN_TEXT_LEN(name),
+                     GRN_TEXT_VALUE(name));
+  }
+  grn_ctx_output_bool(ctx, GRN_FALSE);
+  return NULL;
+}
+
+void
+grn_proc_init_object_remove(grn_ctx *ctx)
+{
+  grn_expr_var vars[2];
+
+  grn_plugin_expr_var_init(ctx, &(vars[0]), "name", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[1]), "force", -1);
+  grn_plugin_command_create(ctx,
+                            "object_remove", -1,
+                            command_object_remove,
+                            2,
                             vars);
 }
