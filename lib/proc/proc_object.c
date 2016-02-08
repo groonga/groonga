@@ -31,12 +31,6 @@ command_object_exist(grn_ctx *ctx,
   grn_id id;
 
   db = grn_ctx_db(ctx);
-  if (!db) {
-    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                     "[object_exist] DB isn't opened");
-    return NULL;
-  }
-
   name = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
   if (GRN_TEXT_LEN(name) == 0) {
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
