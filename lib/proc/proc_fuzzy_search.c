@@ -182,6 +182,8 @@ sequential_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_obj *
 
     heap = score_heap_open(ctx, SCORE_HEAP_SIZE);
     if (!heap) {
+      grn_table_cursor_close(ctx, tc);
+      grn_obj_unlink(ctx, &value);
       return GRN_NO_MEMORY_AVAILABLE;
     }
 
