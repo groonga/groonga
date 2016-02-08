@@ -6257,34 +6257,6 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 }
 
 static grn_obj *
-proc_object_exist(grn_ctx *ctx, int nargs, grn_obj **args,
-                  grn_user_data *user_data)
-{
-  grn_obj *db;
-  grn_obj *name;
-  grn_id id;
-
-  db = grn_ctx_db(ctx);
-  if (!db) {
-    ERR(GRN_INVALID_ARGUMENT, "[object_exist] DB isn't opened");
-    return NULL;
-  }
-
-  name = VAR(0);
-  if (GRN_TEXT_LEN(name) == 0) {
-    ERR(GRN_INVALID_ARGUMENT, "[object_exist] name is missing");
-    GRN_OUTPUT_BOOL(GRN_FALSE);
-    return NULL;
-  }
-
-  id = grn_table_get(ctx, db,
-                     GRN_TEXT_VALUE(name),
-                     GRN_TEXT_LEN(name));
-  GRN_OUTPUT_BOOL(id != GRN_ID_NIL);
-  return NULL;
-}
-
-static grn_obj *
 proc_thread_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *max_bulk;
@@ -7013,8 +6985,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[1], "recursive");
   DEF_COMMAND("io_flush", proc_io_flush, 2, vars);
 
-  DEF_VAR(vars[0], "name");
-  DEF_COMMAND("object_exist", proc_object_exist, 1, vars);
+  grn_proc_init_object_exist(ctx);
 
   DEF_VAR(vars[0], "max");
   DEF_COMMAND("thread_limit", proc_thread_limit, 1, vars);
