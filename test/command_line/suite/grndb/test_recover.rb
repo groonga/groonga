@@ -50,4 +50,63 @@ object corrupt: <[db][recover] column may be broken: <Users.age>: please truncat
     result = grndb("recover")
     assert_equal("", result.error_output)
   end
+
+  def test_empty_file
+    groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+    _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
+    FileUtils.rm(path)
+    FileUtils.touch(path)
+    error = assert_raise(CommandRunner::Error) do
+      grndb("recover")
+    end
+    assert_equal(<<-MESSAGE, error.error_output)
+Failed to recover database: <#{@database_path}>
+incompatible file format: <[io][open] file size is too small: <0>(required: >= 64): <#{path[0..68]}>(-65)
+    MESSAGE
+  end
+
+  def test_broken_id
+    groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+    _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
+    data = File.binread(path)
+    data[0] = "X"
+    File.binwrite(path, data)
+    error = assert_raise(CommandRunner::Error) do
+      grndb("recover")
+    end
+    assert_equal(<<-MESSAGE, error.error_output)
+Failed to recover database: <#{@database_path}>
+incompatible file format: <failed to open: format ID is different: <#{path[0..85]}>(-65)
+    MESSAGE
+  end
+
+  def test_broken_type_hash
+    groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+    _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
+    data = File.binread(path)
+    data[16] = "\0"
+    File.binwrite(path, data)
+    error = assert_raise(CommandRunner::Error) do
+      grndb("recover")
+    end
+    assert_equal(<<-MESSAGE, error.error_output)
+Failed to recover database: <#{@database_path}>
+invalid format: <[table][hash] file type must be 0x30: <0000>>(-54)
+    MESSAGE
+  end
+
+  def test_broken_type_array
+    groonga("table_create", "Logs", "TABLE_NO_KEY")
+    _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
+    data = File.binread(path)
+    data[16] = "\0"
+    File.binwrite(path, data)
+    error = assert_raise(CommandRunner::Error) do
+      grndb("recover")
+    end
+    assert_equal(<<-MESSAGE, error.error_output)
+Failed to recover database: <#{@database_path}>
+invalid format: <[table][array] file type must be 0x33: <0000>>(-54)
+    MESSAGE
+  end
 end

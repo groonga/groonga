@@ -518,36 +518,74 @@ grn_io_detect_type(grn_ctx *ctx, const char *path)
 grn_io *
 grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
 {
+  size_t max_path_len = PATH_MAX - 4;
   grn_io *io;
   struct stat s;
   fileinfo fi;
   uint32_t flags = 0;
   uint32_t b;
   uint32_t header_size = 0, segment_size = 0, max_segment = 0, bs;
-  if (!path || !*path || (strlen(path) > PATH_MAX - 4)) { return NULL; }
+  if (!path || !*path) {
+    ERR(GRN_INVALID_ARGUMENT, "[io][open] path is missing");
+    return NULL;
+  }
+  if ((strlen(path) > max_path_len)) {
+    int truncate_length = 10;
+    ERR(GRN_INVALID_ARGUMENT,
+        "[io][open] path is too long: "
+        "<%" GRN_FMT_SIZE ">(max: %" GRN_FMT_SIZE "): <%.*s...>",
+        strlen(path),
+        max_path_len,
+        truncate_length,
+        path);
+    return NULL;
+  }
   {
     struct _grn_io_header h;
     int fd;
+    ssize_t read_bytes;
     grn_open(fd, path, O_RDWR | GRN_OPEN_FLAG_BINARY);
     if (fd == -1) {
       ERRNO_ERR("failed to open path: <%s>",
                 path);
       return NULL;
     }
-    if (fstat(fd, &s) != -1 && s.st_size >= sizeof(struct _grn_io_header)) {
-      if (grn_read(fd, &h, sizeof(struct _grn_io_header)) == sizeof(struct _grn_io_header)) {
-        if (!memcmp(h.idstr, GRN_IO_IDSTR, GRN_IO_IDSTR_LEN)) {
-          header_size = h.header_size;
-          segment_size = h.segment_size;
-          max_segment = h.max_segment;
-          flags = h.flags;
-        } else {
-          ERR(GRN_INCOMPATIBLE_FILE_FORMAT,
-              "failed to open: format ID is different: <%s>: <%.*s>",
-              path,
-              (int)GRN_IO_IDSTR_LEN, GRN_IO_IDSTR);
-        }
-      }
+    if (fstat(fd, &s) == -1) {
+      ERRNO_ERR("[io][open] failed to file status: <%s>",
+                path);
+      grn_close(fd);
+      return NULL;
+    }
+    if (s.st_size < sizeof(struct _grn_io_header)) {
+      ERR(GRN_INCOMPATIBLE_FILE_FORMAT,
+          "[io][open] file size is too small: "
+          "<%" GRN_FMT_SIZE ">(required: >= %" GRN_FMT_SIZE "): <%s>",
+          s.st_size,
+          sizeof(struct _grn_io_header),
+          path);
+      grn_close(fd);
+      return NULL;
+    }
+    read_bytes = grn_read(fd, &h, sizeof(struct _grn_io_header));
+    if (read_bytes != sizeof(struct _grn_io_header)) {
+      ERRNO_ERR("[io][open] failed to read header data: "
+                "<%" GRN_FMT_SSIZE ">(expected: %" GRN_FMT_SSIZE "): <%s>",
+                read_bytes,
+                sizeof(struct _grn_io_header),
+                path);
+      grn_close(fd);
+      return NULL;
+    }
+    if (!memcmp(h.idstr, GRN_IO_IDSTR, GRN_IO_IDSTR_LEN)) {
+      header_size = h.header_size;
+      segment_size = h.segment_size;
+      max_segment = h.max_segment;
+      flags = h.flags;
+    } else {
+      ERR(GRN_INCOMPATIBLE_FILE_FORMAT,
+          "failed to open: format ID is different: <%s>: <%.*s>",
+          path,
+          (int)GRN_IO_IDSTR_LEN, GRN_IO_IDSTR);
     }
     grn_close(fd);
     if (!segment_size) { return NULL; }
