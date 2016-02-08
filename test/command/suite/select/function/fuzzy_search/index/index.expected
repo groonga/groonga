@@ -10,9 +10,10 @@ load --table Users
 [
 {"name": "Tom"},
 {"name": "Tomy"},
-{"name": "Ken"}
+{"name": "Ken"},
+{"name": "Tom"}
 ]
-[[0,0.0,0.0],3]
+[[0,0.0,0.0],4]
 select Users --filter 'fuzzy_search(name, "Tom", 1)'   --output_columns 'name, _score'   --match_escalation_threshold -1
 [
   [
@@ -23,7 +24,7 @@ select Users --filter 'fuzzy_search(name, "Tom", 1)'   --output_columns 'name, _
   [
     [
       [
-        2
+        3
       ],
       [
         [
@@ -42,6 +43,10 @@ select Users --filter 'fuzzy_search(name, "Tom", 1)'   --output_columns 'name, _
       [
         "Tomy",
         1
+      ],
+      [
+        "Tom",
+        2
       ]
     ]
   ]

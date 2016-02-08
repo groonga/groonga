@@ -8,7 +8,8 @@ load --table Users
 [
 {"name": "Tom Yamada"},
 {"name": "Tomy Yamada"},
-{"name": "Ken Yamada"}
+{"name": "Ken Yamada"},
+{"name": "Tom Yamad"}
 ]
 
 select Users --filter 'fuzzy_search(name, "Tom Yamad", 1)' \
