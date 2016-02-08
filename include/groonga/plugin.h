@@ -62,9 +62,11 @@ GRN_PLUGIN_EXPORT grn_rc GRN_PLUGIN_FIN(grn_ctx *ctx);
 
 /*
   Don't call these functions directly. Use GRN_PLUGIN_MALLOC(),
-  GRN_PLUGIN_REALLOC() and GRN_PLUGIN_FREE() instead.
+  GRN_PLUGIN_CALLOC(), GRN_PLUGIN_REALLOC() and GRN_PLUGIN_FREE() instead.
  */
 GRN_API void *grn_plugin_malloc(grn_ctx *ctx, size_t size, const char *file,
+                                int line, const char *func);
+GRN_API void *grn_plugin_calloc(grn_ctx *ctx, size_t size, const char *file,
                                 int line, const char *func);
 GRN_API void *grn_plugin_realloc(grn_ctx *ctx, void *ptr, size_t size,
                                  const char *file, int line, const char *func);
@@ -73,6 +75,8 @@ GRN_API void grn_plugin_free(grn_ctx *ctx, void *ptr, const char *file,
 
 #define GRN_PLUGIN_MALLOC(ctx, size) \
   grn_plugin_malloc((ctx), (size), __FILE__, __LINE__, __FUNCTION__)
+#define GRN_PLUGIN_CALLOC(ctx, size) \
+  grn_plugin_calloc((ctx), (size), __FILE__, __LINE__, __FUNCTION__)
 #define GRN_PLUGIN_REALLOC(ctx, ptr, size) \
   grn_plugin_realloc((ctx), (ptr), (size), __FILE__, __LINE__, __FUNCTION__)
 #define GRN_PLUGIN_FREE(ctx, ptr) \
