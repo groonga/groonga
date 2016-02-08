@@ -46,6 +46,10 @@ void grn_proc_init_table_list(grn_ctx *ctx);
 void grn_proc_init_table_remove(grn_ctx *ctx);
 void grn_proc_init_table_rename(grn_ctx *ctx);
 
+grn_bool grn_proc_option_value_bool(grn_ctx *ctx,
+                                    grn_obj *option,
+                                    grn_bool default_value);
+
 void grn_proc_output_object_name(grn_ctx *ctx, grn_obj *obj);
 void grn_proc_output_object_id_name(grn_ctx *ctx, grn_id id);
 

@@ -2969,8 +2969,10 @@ dump_indexes(grn_ctx *ctx, grn_obj *outbuf)
   grn_table_cursor_close(ctx, cursor);
 }
 
-static grn_bool
-bool_option_value(grn_obj *option, grn_bool default_value)
+grn_bool
+grn_proc_option_value_bool(grn_ctx *ctx,
+                           grn_obj *option,
+                           grn_bool default_value)
 {
   const char *value;
   size_t value_length;
@@ -3011,11 +3013,11 @@ proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   grn_ctx_set_output_type(ctx, GRN_CONTENT_GROONGA_COMMAND_LIST);
 
-  is_dump_plugins = bool_option_value(dump_plugins_raw, GRN_TRUE);
-  is_dump_schema = bool_option_value(dump_schema_raw, GRN_TRUE);
-  is_dump_records = bool_option_value(dump_records_raw, GRN_TRUE);
-  is_dump_indexes = bool_option_value(dump_indexes_raw, GRN_TRUE);
-  is_dump_configs = bool_option_value(dump_configs_raw, GRN_TRUE);
+  is_dump_plugins = grn_proc_option_value_bool(ctx, dump_plugins_raw, GRN_TRUE);
+  is_dump_schema = grn_proc_option_value_bool(ctx, dump_schema_raw, GRN_TRUE);
+  is_dump_records = grn_proc_option_value_bool(ctx, dump_records_raw, GRN_TRUE);
+  is_dump_indexes = grn_proc_option_value_bool(ctx, dump_indexes_raw, GRN_TRUE);
+  is_dump_configs = grn_proc_option_value_bool(ctx, dump_configs_raw, GRN_TRUE);
 
   if (is_dump_configs) {
     dump_configs(ctx, outbuf);
@@ -6241,7 +6243,7 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     target = grn_ctx_db(ctx);
   }
 
-  is_recursive = bool_option_value(recursive, GRN_TRUE);
+  is_recursive = grn_proc_option_value_bool(ctx, recursive, GRN_TRUE);
   {
     grn_rc rc;
     if (is_recursive) {
@@ -7022,4 +7024,6 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   grn_proc_init_inspect(ctx);
 
   grn_proc_init_fuzzy_search(ctx);
+
+  grn_proc_init_object_remove(ctx);
 }
