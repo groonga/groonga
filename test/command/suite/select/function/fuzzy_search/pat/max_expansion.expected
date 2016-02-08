@@ -14,4 +14,4 @@ load --table Users
 ]
 [[0,0.0,0.0],3]
 select Tags --filter 'fuzzy_search(_key, "To", 2, 0, 1)'   --output_columns '_key, _score'   --match_escalation_threshold -1
-[[0,0.0,0.0],[[[1],[["_key","ShortText"],["_score","Int32"]],["Tom",1]]]]
+[[0,0.0,0.0],[[[1],[["_key","ShortText"],["_score","Int32"]],["Tom",2]]]]

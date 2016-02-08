@@ -37,7 +37,7 @@ select Users --filter 'fuzzy_search(Tags.tag, "Tom", 1)'   --output_columns 'nam
       ],
       [
         "Tom",
-        1
+        2
       ],
       [
         "Tomy",

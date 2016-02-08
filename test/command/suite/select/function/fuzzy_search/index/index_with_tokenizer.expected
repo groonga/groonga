@@ -37,7 +37,7 @@ select Users --filter 'fuzzy_search(name, "Tom Yamad", 1)'   --output_columns 'n
       ],
       [
         "Tom Yamada",
-        1
+        2
       ],
       [
         "Tomy Yamada",
