@@ -1035,6 +1035,7 @@ grn_ts_text_swap(grn_ts_text *lhs, grn_ts_text *rhs)
   *rhs = tmp;
 }
 
+#if 0
 /* grn_ts_move_pivot_by_text_asc() moves the pivot to the front. */
 static void
 grn_ts_move_pivot_by_text_asc(grn_ts_sorter_node *node, grn_ts_text *vals,
@@ -1242,6 +1243,7 @@ grn_ts_qsort_by_text_asc(grn_ctx *ctx, grn_ts_sorter_node *node,
   }
   return GRN_SUCCESS;
 }
+#endif
 
 /* grn_ts_move_pivot_by_text_desc() moves the pivot to the front. */
 static void
