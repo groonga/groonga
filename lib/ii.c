@@ -4103,6 +4103,8 @@ struct _grn_ii_cursor {
   uint32_t buffer_pseg;
   int flags;
   uint32_t *ppseg;
+
+  int weight;
 };
 
 static int
@@ -4176,6 +4178,7 @@ grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
     c->max = max;
     c->nelements = nelements;
     c->flags = flags;
+    c->weight = 0;
     if (pos & 1) {
       c->stat = 0;
       if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
@@ -4680,7 +4683,8 @@ cursor_heap_open(grn_ctx *ctx, int max)
 }
 
 static inline grn_rc
-cursor_heap_push(grn_ctx *ctx, cursor_heap *h, grn_ii *ii, grn_id tid, uint32_t offset2)
+cursor_heap_push(grn_ctx *ctx, cursor_heap *h, grn_ii *ii, grn_id tid, uint32_t offset2,
+                 int weight)
 {
   int n, n2;
   grn_ii_cursor *c, *c2;
@@ -4706,6 +4710,9 @@ cursor_heap_push(grn_ctx *ctx, cursor_heap *h, grn_ii *ii, grn_id tid, uint32_t 
       GRN_LOG(ctx, GRN_LOG_ERROR, "invalid ii_cursor b");
       grn_ii_cursor_close(ctx, c);
       return GRN_END_OF_DATA;
+    }
+    if (weight) {
+      c->weight = weight;
     }
     n = h->n_entries++;
     while (n) {
@@ -5500,7 +5507,7 @@ token_info_expand_both(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
                 !(lexicon->header.flags & GRN_OBJ_KEY_WITH_SIS) ||
                 key2_size <= 2) { // todo: refine
               if ((s = grn_ii_estimate_size(ctx, ii, *tp))) {
-                cursor_heap_push(ctx, ti->cursors, ii, *tp, 0);
+                cursor_heap_push(ctx, ti->cursors, ii, *tp, 0, 0);
                 ti->ntoken++;
                 ti->size += s;
               }
@@ -5509,7 +5516,7 @@ token_info_expand_both(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
                 grn_pat_suffix_search(ctx, (grn_pat *)lexicon, key2, key2_size, g);
                 GRN_HASH_EACH(ctx, g, id, &tq, NULL, &offset2, {
                   if ((s = grn_ii_estimate_size(ctx, ii, *tq))) {
-                    cursor_heap_push(ctx, ti->cursors, ii, *tq, /* *offset2 */ 0);
+                    cursor_heap_push(ctx, ti->cursors, ii, *tq, /* *offset2 */ 0, 0);
                     ti->ntoken++;
                     ti->size += s;
                   }
@@ -5558,7 +5565,7 @@ token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
     if ((tid = grn_table_get(ctx, lexicon, key, key_size)) &&
         (s = grn_ii_estimate_size(ctx, ii, tid)) &&
         (ti->cursors = cursor_heap_open(ctx, 1))) {
-      cursor_heap_push(ctx, ti->cursors, ii, tid, 0);
+      cursor_heap_push(ctx, ti->cursors, ii, tid, 0, 0);
       ti->ntoken++;
       ti->size = s;
     }
@@ -5571,7 +5578,7 @@ token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
         if ((ti->cursors = cursor_heap_open(ctx, GRN_HASH_SIZE(h)))) {
           GRN_HASH_EACH(ctx, h, id, &tp, NULL, NULL, {
             if ((s = grn_ii_estimate_size(ctx, ii, *tp))) {
-              cursor_heap_push(ctx, ti->cursors, ii, *tp, 0);
+              cursor_heap_push(ctx, ti->cursors, ii, *tp, 0, 0);
               ti->ntoken++;
               ti->size += s;
             }
@@ -5590,7 +5597,7 @@ token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
           uint32_t *offset2;
           GRN_HASH_EACH(ctx, h, id, &tp, NULL, &offset2, {
             if ((s = grn_ii_estimate_size(ctx, ii, *tp))) {
-              cursor_heap_push(ctx, ti->cursors, ii, *tp, /* *offset2 */ 0);
+              cursor_heap_push(ctx, ti->cursors, ii, *tp, /* *offset2 */ 0, 0);
               ti->ntoken++;
               ti->size += s;
             }
@@ -5611,10 +5618,7 @@ token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
           grn_rset_recinfo *ri;
           GRN_HASH_EACH(ctx, h, id, &tp, NULL, (void **)&ri, {
             if ((s = grn_ii_estimate_size(ctx, ii, *tp))) {
-              grn_ii_cursor *ic;
-              cursor_heap_push(ctx, ti->cursors, ii, *tp, 0);
-              ic = ti->cursors->bins[ti->cursors->n_entries - 1];
-              ic->post->weight += ri->score - 1;
+              cursor_heap_push(ctx, ti->cursors, ii, *tp, 0, ri->score - 1);
               ti->ntoken++;
               ti->size += s;
             }
@@ -6703,7 +6707,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
 }
         if (n == 1 && !rep) {
           noccur = (*tis)->p->tf;
-          tscore = (*tis)->p->weight;
+          tscore = (*tis)->p->weight + (*tis)->cursors->bins[0]->weight;
           if (score_func) {
             GRN_RECORD_PUT(ctx, &(record.terms), (*tis)->cursors->bins[0]->id);
             GRN_UINT32_PUT(ctx, &(record.term_weights), tscore);
@@ -6758,9 +6762,9 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
             ti = *tip;
             SKIP_OR_BREAK(pos);
             if (ti->pos == pos) {
-              score += ti->p->weight; count++;
+              score += ti->p->weight + ti->cursors->bins[0]->weight; count++;
             } else {
-              score = ti->p->weight; count = 1; pos = ti->pos;
+              score = ti->p->weight + ti->cursors->bins[0]->weight; count = 1; pos = ti->pos;
               if (noccur == 0 && score_func) {
                 GRN_BULK_REWIND(&(record.terms));
                 GRN_BULK_REWIND(&(record.term_weights));
@@ -6770,7 +6774,8 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
             }
             if (noccur == 0 && score_func) {
               GRN_RECORD_PUT(ctx, &(record.terms), ti->cursors->bins[0]->id);
-              GRN_UINT32_PUT(ctx, &(record.term_weights), ti->p->weight);
+              GRN_UINT32_PUT(ctx, &(record.term_weights),
+                             ti->p->weight + ti->cursors->bins[0]->weight);
               record.n_candidates += ti->size;
               record.n_tokens += ti->ntoken;
             }
