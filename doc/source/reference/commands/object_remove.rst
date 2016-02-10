@@ -23,7 +23,7 @@ should use ``object_remove`` carefully.
 
 ``object_remove`` has "force mode". You can remove a broken object by
 "force mode". "Force mode" is useful to resolve problems reported by
-:doc:`/reference/executable/grndb`.
+:doc:`/reference/executables/grndb`.
 
 Syntax
 ------
@@ -110,7 +110,7 @@ There is one optional parameter.
 
 Specifies whether removing the object in "force mode".
 
-Normally, you can't remove a broken object. But you can remove a
+You can't remove a broken object by default. But you can remove a
 broken object in "force mode".
 
 ``force`` value must be ``yes`` or ``no``. ``yes`` means that "force
