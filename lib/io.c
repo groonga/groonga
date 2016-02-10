@@ -576,19 +576,23 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
       grn_close(fd);
       return NULL;
     }
-    if (!memcmp(h.idstr, GRN_IO_IDSTR, GRN_IO_IDSTR_LEN)) {
-      header_size = h.header_size;
-      segment_size = h.segment_size;
-      max_segment = h.max_segment;
-      flags = h.flags;
-    } else {
+    if (memcmp(h.idstr, GRN_IO_IDSTR, GRN_IO_IDSTR_LEN) != 0) {
       ERR(GRN_INCOMPATIBLE_FILE_FORMAT,
           "failed to open: format ID is different: <%s>: <%.*s>",
           path,
           (int)GRN_IO_IDSTR_LEN, GRN_IO_IDSTR);
+      grn_close(fd);
+      return NULL;
     }
+    header_size = h.header_size;
+    segment_size = h.segment_size;
+    max_segment = h.max_segment;
+    flags = h.flags;
     grn_close(fd);
-    if (!segment_size) { return NULL; }
+    if (segment_size == 0) {
+      ERR(GRN_INCOMPATIBLE_FILE_FORMAT, "failed to open: segment size is 0");
+      return NULL;
+    }
   }
   b = grn_io_compute_base(header_size);
   bs = grn_io_compute_base_segment(b, segment_size);
