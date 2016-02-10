@@ -45,6 +45,7 @@ include $(srcdir)/version.sh
 
 dist-hook:
 	echo "$(GRN_VERSION)" > $(distdir)/version
+	cd $(distdir) && autoreconf --install --force
 
 benchmark:
 	cd test/benchmark && $(MAKE) benchmark
