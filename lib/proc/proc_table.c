@@ -480,7 +480,7 @@ command_table_remove(grn_ctx *ctx,
                       GRN_TEXT_VALUE(name),
                       GRN_TEXT_LEN(name));
   if (table) {
-    grn_obj_remove(ctx,table);
+    grn_obj_remove(ctx, table);
   } else {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
