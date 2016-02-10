@@ -127,6 +127,10 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/normalizer_list/simple_example.log \
 	$(top_srcdir)/doc/source/example/reference/commands/object_exist/name_column.log \
 	$(top_srcdir)/doc/source/example/reference/commands/object_exist/usage.log \
+	$(top_srcdir)/doc/source/example/reference/commands/object_remove/name_column.log \
+	$(top_srcdir)/doc/source/example/reference/commands/object_remove/usage.log \
+	$(top_srcdir)/doc/source/example/reference/commands/object_remove/usage_broken_with_force.log \
+	$(top_srcdir)/doc/source/example/reference/commands/object_remove/usage_broken_without_force.log \
 	$(top_srcdir)/doc/source/example/reference/commands/plugin_register/query_expanders_tsv.log \
 	$(top_srcdir)/doc/source/example/reference/commands/plugin_unregister/query_expanders_tsv.log \
 	$(top_srcdir)/doc/source/example/reference/commands/register/query_expanders_tsv.log \
@@ -666,6 +670,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/normalize.rst \
 	$(top_srcdir)/doc/source/reference/commands/normalizer_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/object_exist.rst \
+	$(top_srcdir)/doc/source/reference/commands/object_remove.rst \
 	$(top_srcdir)/doc/source/reference/commands/plugin_register.rst \
 	$(top_srcdir)/doc/source/reference/commands/plugin_unregister.rst \
 	$(top_srcdir)/doc/source/reference/commands/quit.rst \
@@ -921,6 +926,10 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/normalizer_list/simple_example.log \
 	source/example/reference/commands/object_exist/name_column.log \
 	source/example/reference/commands/object_exist/usage.log \
+	source/example/reference/commands/object_remove/name_column.log \
+	source/example/reference/commands/object_remove/usage.log \
+	source/example/reference/commands/object_remove/usage_broken_with_force.log \
+	source/example/reference/commands/object_remove/usage_broken_without_force.log \
 	source/example/reference/commands/plugin_register/query_expanders_tsv.log \
 	source/example/reference/commands/plugin_unregister/query_expanders_tsv.log \
 	source/example/reference/commands/register/query_expanders_tsv.log \
@@ -1460,6 +1469,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/normalize.rst \
 	source/reference/commands/normalizer_list.rst \
 	source/reference/commands/object_exist.rst \
+	source/reference/commands/object_remove.rst \
 	source/reference/commands/plugin_register.rst \
 	source/reference/commands/plugin_unregister.rst \
 	source/reference/commands/quit.rst \
@@ -1815,6 +1825,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/normalize.txt \
 	html/_sources/reference/commands/normalizer_list.txt \
 	html/_sources/reference/commands/object_exist.txt \
+	html/_sources/reference/commands/object_remove.txt \
 	html/_sources/reference/commands/plugin_register.txt \
 	html/_sources/reference/commands/plugin_unregister.txt \
 	html/_sources/reference/commands/quit.txt \
@@ -2062,6 +2073,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/normalize.html \
 	html/reference/commands/normalizer_list.html \
 	html/reference/commands/object_exist.html \
+	html/reference/commands/object_remove.html \
 	html/reference/commands/plugin_register.html \
 	html/reference/commands/plugin_unregister.html \
 	html/reference/commands/quit.html \
