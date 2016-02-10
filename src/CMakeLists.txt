@@ -27,6 +27,16 @@ set_source_files_properties(${GROONGA_SOURCES}
 target_link_libraries(groonga libgroonga)
 install(TARGETS groonga DESTINATION ${BIN_DIR})
 
+if(GRN_WITH_MRUBY)
+  read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/grndb_sources.am GRNDB_SOURCES)
+  add_executable(grndb ${GRNDB_SOURCES})
+  set_source_files_properties(${GRN_SOURCES}
+    PROPERTIES
+    COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
+  target_link_libraries(grndb libgroonga)
+  install(TARGETS grndb DESTINATION ${BIN_DIR})
+endif()
+
 if(NOT WIN32)
   read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/grnslap_sources.am GRNSLAP_SOURCES)
   add_executable(grnslap ${GRNSLAP_SOURCES})
