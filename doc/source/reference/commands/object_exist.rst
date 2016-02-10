@@ -40,10 +40,10 @@ You can check whether the name is already used in database:
 .. table_create Users TABLE_HASH_KEY ShortText
 .. object_exist Users
 
-The ``object_exist Users`` returns ``false`` before we create
+The ``object_exist Users`` returns ``false`` before you create
 ``Users`` table.
 
-The ``object_exist Users`` returns ``true`` after we create ``Users``
+The ``object_exist Users`` returns ``true`` after you create ``Users``
 table.
 
 Parameters
@@ -74,6 +74,11 @@ If you want to check existence of a column, use
 
 ``Logs`` is table name and ``timestamp`` is column name in
 ``Logs.timestamp``.
+
+Optional parameters
+^^^^^^^^^^^^^^^^^^^
+
+There is no optional parameters.
 
 Return value
 ------------
