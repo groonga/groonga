@@ -479,6 +479,7 @@ command_table_remove(grn_ctx *ctx,
   table = grn_ctx_get(ctx,
                       GRN_TEXT_VALUE(name),
                       GRN_TEXT_LEN(name));
+  /* TODO: Add a check whether the object is really a table. */
   if (table) {
     grn_obj_remove(ctx, table);
   } else {
