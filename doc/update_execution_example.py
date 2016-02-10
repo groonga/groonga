@@ -25,15 +25,24 @@ def close_groonga():
     groonga_process = None
     print '###<<< database: close'
 
+current_db_path = None
 def reconnect(name):
   global groonga_process
+  global current_db_path
   close_groonga()
-  db_path = os.path.join(DB_DIRECTORY, name)
-  if os.path.exists(db_path):
-    groonga_process = Popen(["groonga", db_path], stdin=PIPE, stdout=PIPE)
+  current_db_path = os.path.join(DB_DIRECTORY, name)
+  if os.path.exists(current_db_path):
+    groonga_process = Popen(["groonga", current_db_path],
+                            stdin=PIPE,
+                            stdout=PIPE)
   else:
-    groonga_process = Popen(["groonga", "-n", db_path], stdin=PIPE, stdout=PIPE)
-  print '###>>> database: open <%s>' % db_path
+    groonga_process = Popen(["groonga", "-n", current_db_path],
+                            stdin=PIPE,
+                            stdout=PIPE)
+  print '###>>> database: open <%s>' % current_db_path
+
+def expand_command_line(command_line):
+  return command_line.replace('${DB_PATH}', current_db_path)
 
 fout = None
 
@@ -172,7 +181,7 @@ def readfile(fname, outflag):
           if fout:
             fout.write("  " + command_line + "\n")
           print command_line
-          os.system(command_line)
+          os.system(expand_command_line(command_line))
         elif cmd.startswith('.. .. '):
           command_line = cmd[6:]
           if fout:
