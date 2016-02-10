@@ -1,0 +1,5 @@
+object_remove object_remove
+[[0,0.0,0.0],true]
+object_remove
+[[[-22,0.0,0.0],"invalid command name: object_remove"]]
+#|e| invalid command name: object_remove
