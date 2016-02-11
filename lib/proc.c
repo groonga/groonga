@@ -1437,10 +1437,13 @@ proc_column_remove(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
     if (col) {
       grn_obj_remove(ctx, col);
     } else {
-      ERR(GRN_INVALID_ARGUMENT, "column not found.");
+      ERR(GRN_INVALID_ARGUMENT, "[column][remove] column isn't found: <%.*s.%.*s>",
+          (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)),
+          (int)GRN_TEXT_LEN(VAR(1)), GRN_TEXT_VALUE(VAR(1)));
     }
   } else {
-    ERR(GRN_INVALID_ARGUMENT, "table not found.");
+    ERR(GRN_INVALID_ARGUMENT, "[column][remove] table isn't found: <%.*s>",
+        (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
   }
   GRN_OUTPUT_BOOL(!ctx->rc);
   return NULL;

@@ -1,0 +1,8 @@
+column_remove Users name
+[[[-22,0.0,0.0],"[column][remove] table isn't found: <Users>"],false]
+#|e| [column][remove] table isn't found: <Users>
+table_create Users TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_remove Users name
+[[[-22,0.0,0.0],"[column][remove] column isn't found: <Users.name>"],false]
+#|e| [column][remove] column isn't found: <Users.name>
