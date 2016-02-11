@@ -7555,6 +7555,290 @@ grn_expr_parser_close(grn_ctx *ctx)
   return ctx->rc;
 }
 
+typedef grn_rc (*grn_expr_syntax_expand_term_func)(grn_ctx *ctx,
+                                                   const char *term,
+                                                   unsigned int term_len,
+                                                   grn_obj *substituted_term,
+                                                   grn_user_data *user_data);
+typedef struct {
+  grn_obj *table;
+  grn_obj *column;
+} grn_expr_syntax_expand_term_by_column_data;
+
+static grn_rc
+grn_expr_syntax_expand_term_by_func(grn_ctx *ctx,
+                                    const char *term, unsigned int term_len,
+                                    grn_obj *expanded_term,
+                                    grn_user_data *user_data)
+{
+  grn_rc rc;
+  grn_obj *expander = user_data->ptr;
+  grn_obj grn_term;
+  grn_obj *caller;
+  grn_obj *rc_object;
+  int nargs = 0;
+
+  GRN_TEXT_INIT(&grn_term, GRN_OBJ_DO_SHALLOW_COPY);
+  GRN_TEXT_SET(ctx, &grn_term, term, term_len);
+  grn_ctx_push(ctx, &grn_term);
+  nargs++;
+  grn_ctx_push(ctx, expanded_term);
+  nargs++;
+
+  caller = grn_expr_create(ctx, NULL, 0);
+  rc = grn_proc_call(ctx, expander, nargs, caller);
+  GRN_OBJ_FIN(ctx, &grn_term);
+  rc_object = grn_ctx_pop(ctx);
+  rc = GRN_INT32_VALUE(rc_object);
+  grn_obj_unlink(ctx, caller);
+
+  return rc;
+}
+
+static grn_rc
+grn_expr_syntax_expand_term_by_column(grn_ctx *ctx,
+                                      const char *term, unsigned int term_len,
+                                      grn_obj *expanded_term,
+                                      grn_user_data *user_data)
+{
+  grn_rc rc = GRN_END_OF_DATA;
+  grn_id id;
+  grn_expr_syntax_expand_term_by_column_data *data = user_data->ptr;
+  grn_obj *table, *column;
+
+  table = data->table;
+  column = data->column;
+  if ((id = grn_table_get(ctx, table, term, term_len))) {
+    if ((column->header.type == GRN_COLUMN_VAR_SIZE) &&
+        ((column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_VECTOR)) {
+      unsigned int i, n;
+      grn_obj values;
+      GRN_TEXT_INIT(&values, GRN_OBJ_VECTOR);
+      grn_obj_get_value(ctx, column, id, &values);
+      n = grn_vector_size(ctx, &values);
+      if (n > 1) { GRN_TEXT_PUTC(ctx, expanded_term, '('); }
+      for (i = 0; i < n; i++) {
+        const char *value;
+        unsigned int length;
+        if (i > 0) {
+          GRN_TEXT_PUTS(ctx, expanded_term, " OR ");
+        }
+        if (n > 1) { GRN_TEXT_PUTC(ctx, expanded_term, '('); }
+        length = grn_vector_get_element(ctx, &values, i, &value, NULL, NULL);
+        GRN_TEXT_PUT(ctx, expanded_term, value, length);
+        if (n > 1) { GRN_TEXT_PUTC(ctx, expanded_term, ')'); }
+      }
+      if (n > 1) { GRN_TEXT_PUTC(ctx, expanded_term, ')'); }
+      GRN_OBJ_FIN(ctx, &values);
+    } else {
+      grn_obj_get_value(ctx, column, id, expanded_term);
+    }
+    rc = GRN_SUCCESS;
+  }
+  return rc;
+}
+
+static grn_rc
+grn_expr_syntax_expand_query_terms(grn_ctx *ctx,
+                                   const char *query, unsigned int query_size,
+                                   grn_expr_flags flags,
+                                   grn_obj *expanded_query,
+                                   grn_expr_syntax_expand_term_func expand_term_func,
+                                   grn_user_data *user_data)
+{
+  grn_obj buf;
+  unsigned int len;
+  const char *start, *cur = query, *query_end = query + (size_t)query_size;
+  GRN_TEXT_INIT(&buf, 0);
+  for (;;) {
+    while (cur < query_end && grn_isspace(cur, ctx->encoding)) {
+      if (!(len = grn_charlen(ctx, cur, query_end))) { goto exit; }
+      GRN_TEXT_PUT(ctx, expanded_query, cur, len);
+      cur += len;
+    }
+    if (query_end <= cur) { break; }
+    switch (*cur) {
+    case '\0' :
+      goto exit;
+      break;
+    case GRN_QUERY_AND :
+    case GRN_QUERY_ADJ_INC :
+    case GRN_QUERY_ADJ_DEC :
+    case GRN_QUERY_ADJ_NEG :
+    case GRN_QUERY_AND_NOT :
+    case GRN_QUERY_PARENL :
+    case GRN_QUERY_PARENR :
+    case GRN_QUERY_PREFIX :
+      GRN_TEXT_PUTC(ctx, expanded_query, *cur);
+      cur++;
+      break;
+    case GRN_QUERY_QUOTEL :
+      GRN_BULK_REWIND(&buf);
+      for (start = cur++; cur < query_end; cur += len) {
+        if (!(len = grn_charlen(ctx, cur, query_end))) {
+          goto exit;
+        } else if (len == 1) {
+          if (*cur == GRN_QUERY_QUOTER) {
+            cur++;
+            break;
+          } else if (cur + 1 < query_end && *cur == GRN_QUERY_ESCAPE) {
+            cur++;
+            len = grn_charlen(ctx, cur, query_end);
+          }
+        }
+        GRN_TEXT_PUT(ctx, &buf, cur, len);
+      }
+      if (expand_term_func(ctx, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf),
+                           expanded_query, user_data)) {
+        GRN_TEXT_PUT(ctx, expanded_query, start, cur - start);
+      }
+      break;
+    case 'O' :
+      if (cur + 2 <= query_end && cur[1] == 'R' &&
+          (cur + 2 == query_end || grn_isspace(cur + 2, ctx->encoding))) {
+        GRN_TEXT_PUT(ctx, expanded_query, cur, 2);
+        cur += 2;
+        break;
+      }
+      /* fallthru */
+    default :
+      for (start = cur; cur < query_end; cur += len) {
+        if (!(len = grn_charlen(ctx, cur, query_end))) {
+          goto exit;
+        } else if (grn_isspace(cur, ctx->encoding)) {
+          break;
+        } else if (len == 1) {
+          if (*cur == GRN_QUERY_PARENL ||
+              *cur == GRN_QUERY_PARENR ||
+              *cur == GRN_QUERY_PREFIX) {
+            break;
+          } else if (flags & GRN_EXPR_ALLOW_COLUMN && *cur == GRN_QUERY_COLUMN) {
+            if (cur + 1 < query_end) {
+              switch (cur[1]) {
+              case '!' :
+              case '@' :
+              case '^' :
+              case '$' :
+                cur += 2;
+                break;
+              case '=' :
+                cur += (flags & GRN_EXPR_ALLOW_UPDATE) ? 2 : 1;
+                break;
+              case '<' :
+              case '>' :
+                cur += (cur + 2 < query_end && cur[2] == '=') ? 3 : 2;
+                break;
+              default :
+                cur += 1;
+                break;
+              }
+            } else {
+              cur += 1;
+            }
+            GRN_TEXT_PUT(ctx, expanded_query, start, cur - start);
+            start = cur;
+            break;
+          }
+        }
+      }
+      if (start < cur) {
+        if (expand_term_func(ctx, start, cur - start,
+                             expanded_query, user_data)) {
+          GRN_TEXT_PUT(ctx, expanded_query, start, cur - start);
+        }
+      }
+      break;
+    }
+  }
+exit :
+  GRN_OBJ_FIN(ctx, &buf);
+  return GRN_SUCCESS;
+}
+
+grn_rc
+grn_expr_syntax_expand_query(grn_ctx *ctx,
+                             const char *query, int query_size,
+                             grn_expr_flags flags,
+                             grn_obj *expander,
+                             grn_obj *expanded_query)
+{
+  GRN_API_ENTER;
+
+  if (query_size < 0) {
+    query_size = strlen(query);
+  }
+
+  switch (expander->header.type) {
+  case GRN_PROC :
+    if (((grn_proc *)expander)->type == GRN_PROC_FUNCTION) {
+      grn_user_data user_data;
+      user_data.ptr = expander;
+      grn_expr_syntax_expand_query_terms(ctx,
+                                         query, query_size,
+                                         flags,
+                                         expanded_query,
+                                         grn_expr_syntax_expand_term_by_func,
+                                         &user_data);
+    } else {
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int name_size;
+      name_size = grn_obj_name(ctx, expander, name, GRN_TABLE_MAX_KEY_SIZE);
+      ERR(GRN_INVALID_ARGUMENT,
+          "[query][expand] "
+          "proc query expander must be a function proc: <%.*s>",
+          name_size, name);
+    }
+    break;
+  case GRN_COLUMN_FIX_SIZE :
+  case GRN_COLUMN_VAR_SIZE :
+    {
+      grn_obj *expansion_table;
+      expansion_table = grn_column_table(ctx, expander);
+      if (expansion_table) {
+        grn_user_data user_data;
+        grn_expr_syntax_expand_term_by_column_data data;
+        user_data.ptr = &data;
+        data.table = expansion_table;
+        data.column = expander;
+        grn_expr_syntax_expand_query_terms(ctx,
+                                           query, query_size,
+                                           flags,
+                                           expanded_query,
+                                           grn_expr_syntax_expand_term_by_column,
+                                           &user_data);
+      } else {
+        char name[GRN_TABLE_MAX_KEY_SIZE];
+        int name_size;
+        name_size = grn_obj_name(ctx, expander, name, GRN_TABLE_MAX_KEY_SIZE);
+        ERR(GRN_INVALID_ARGUMENT,
+            "[query][expand] "
+            "failed to get table of query expansion column: <%.*s>",
+            name_size, name);
+      }
+    }
+    break;
+  default :
+    {
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int name_size;
+      grn_obj type_name;
+
+      name_size = grn_obj_name(ctx, expander, name, GRN_TABLE_MAX_KEY_SIZE);
+      GRN_TEXT_INIT(&type_name, 0);
+      grn_inspect_type(ctx, &type_name, expander->header.type);
+      ERR(GRN_INVALID_ARGUMENT,
+          "[query][expand] "
+          "query expander must be a data column or function proc: <%.*s>(%.*s)",
+          name_size, name,
+          (int)GRN_TEXT_LEN(&type_name), GRN_TEXT_VALUE(&type_name));
+      GRN_OBJ_FIN(ctx, &type_name);
+    }
+    break;
+  }
+
+  GRN_API_RETURN(ctx->rc);
+}
+
 grn_rc
 grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *keywords)
 {

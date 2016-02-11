@@ -22,6 +22,17 @@
 extern "C" {
 #endif
 
+typedef unsigned int grn_expr_flags;
+
+#define GRN_EXPR_SYNTAX_QUERY          (0x00)
+#define GRN_EXPR_SYNTAX_SCRIPT         (0x01)
+#define GRN_EXPR_SYNTAX_OUTPUT_COLUMNS (0x20)
+#define GRN_EXPR_SYNTAX_ADJUSTER       (0x40)
+#define GRN_EXPR_ALLOW_PRAGMA          (0x02)
+#define GRN_EXPR_ALLOW_COLUMN          (0x04)
+#define GRN_EXPR_ALLOW_UPDATE          (0x08)
+#define GRN_EXPR_ALLOW_LEADING_NOT     (0x10)
+
 GRN_API grn_obj *grn_expr_create(grn_ctx *ctx, const char *name, unsigned int name_size);
 GRN_API grn_rc grn_expr_close(grn_ctx *ctx, grn_obj *expr);
 GRN_API grn_obj *grn_expr_add_var(grn_ctx *ctx, grn_obj *expr,
@@ -53,6 +64,11 @@ GRN_API grn_rc grn_expr_syntax_escape(grn_ctx *ctx,
 GRN_API grn_rc grn_expr_syntax_escape_query(grn_ctx *ctx,
                                             const char *query, int query_size,
                                             grn_obj *escaped_query);
+GRN_API grn_rc grn_expr_syntax_expand_query(grn_ctx *ctx,
+                                            const char *query, int query_size,
+                                            grn_expr_flags flags,
+                                            grn_obj *expander,
+                                            grn_obj *expanded_query);
 
 GRN_API grn_rc grn_expr_compile(grn_ctx *ctx, grn_obj *expr);
 GRN_API grn_obj *grn_expr_rewrite(grn_ctx *ctx, grn_obj *expr);
@@ -70,17 +86,6 @@ GRN_API grn_obj *grn_expr_alloc(grn_ctx *ctx, grn_obj *expr,
     (var) = NULL;\
   }\
 } while (0)
-
-typedef unsigned int grn_expr_flags;
-
-#define GRN_EXPR_SYNTAX_QUERY          (0x00)
-#define GRN_EXPR_SYNTAX_SCRIPT         (0x01)
-#define GRN_EXPR_SYNTAX_OUTPUT_COLUMNS (0x20)
-#define GRN_EXPR_SYNTAX_ADJUSTER       (0x40)
-#define GRN_EXPR_ALLOW_PRAGMA          (0x02)
-#define GRN_EXPR_ALLOW_COLUMN          (0x04)
-#define GRN_EXPR_ALLOW_UPDATE          (0x08)
-#define GRN_EXPR_ALLOW_LEADING_NOT     (0x10)
 
 GRN_API grn_rc grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
                               const char *str, unsigned int str_size,
