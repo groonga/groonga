@@ -1,0 +1,4 @@
+column_remove Users name
+
+table_create Users TABLE_PAT_KEY ShortText
+column_remove Users name
