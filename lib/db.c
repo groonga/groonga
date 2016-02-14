@@ -11091,6 +11091,31 @@ is_sub_record_accessor(grn_ctx *ctx, grn_obj *obj)
   return GRN_FALSE;
 }
 
+static grn_bool
+is_encoded_pat_key_accessor(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_accessor *accessor;
+
+  if (!grn_obj_is_accessor(ctx, obj)) {
+    return GRN_FALSE;
+  }
+
+  accessor = (grn_accessor *)obj;
+  while (accessor->next) {
+    accessor = accessor->next;
+  }
+
+  if (accessor->action != GRN_ACCESSOR_GET_KEY) {
+    return GRN_FALSE;
+  }
+
+  if (accessor->obj->header.type != GRN_TABLE_PAT_KEY) {
+    return GRN_FALSE;
+  }
+
+  return grn_pat_is_key_encoded(ctx, (grn_pat *)(accessor->obj));
+}
+
 static int
 range_is_idp(grn_obj *obj)
 {
@@ -11171,6 +11196,7 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     int j;
     grn_bool have_compressed_column = GRN_FALSE;
     grn_bool have_sub_record_accessor = GRN_FALSE;
+    grn_bool have_encoded_pat_key_accessor = GRN_FALSE;
     grn_bool have_index_value_get = GRN_FALSE;
     grn_table_sort_key *kp;
     for (kp = keys, j = n_keys; j; kp++, j--) {
@@ -11179,6 +11205,9 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
       }
       if (is_sub_record_accessor(ctx, kp->key)) {
         have_sub_record_accessor = GRN_TRUE;
+      }
+      if (is_encoded_pat_key_accessor(ctx, kp->key)) {
+        have_encoded_pat_key_accessor = GRN_TRUE;
       }
       if (range_is_idp(kp->key)) {
         kp->offset = KEY_ID;
@@ -11254,6 +11283,7 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     }
     if (have_compressed_column ||
         have_sub_record_accessor ||
+        have_encoded_pat_key_accessor ||
         have_index_value_get) {
       i = grn_table_sort_value(ctx, table, offset, limit, result,
                                keys, n_keys);

@@ -3528,3 +3528,19 @@ grn_pat_total_key_size(grn_ctx *ctx, grn_pat *pat)
 {
   return pat->header->curr_key;
 }
+
+grn_bool
+grn_pat_is_key_encoded(grn_ctx *ctx, grn_pat *pat)
+{
+  grn_obj *domain;
+  uint32_t key_size;
+
+  domain = grn_ctx_at(ctx, pat->obj.header.domain);
+  if (grn_obj_is_type(ctx, domain)) {
+    key_size = grn_type_size(ctx, domain);
+  } else {
+    key_size = sizeof(grn_id);
+  }
+
+  return KEY_NEEDS_CONVERT(pat, key_size);
+}

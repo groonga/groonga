@@ -114,6 +114,8 @@ GRN_API grn_rc grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat,
 
 uint32_t grn_pat_total_key_size(grn_ctx *ctx, grn_pat *pat);
 
+grn_bool grn_pat_is_key_encoded(grn_ctx *ctx, grn_pat *pat);
+
 #ifdef __cplusplus
 }
 #endif
