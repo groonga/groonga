@@ -1,0 +1,12 @@
+table_create Users TABLE_PAT_KEY ShortText
+
+load --table Users
+[
+{"_key": "Tom"},
+{"_key": "Tomy"},
+{"_key": "Ken"}
+]
+
+select Users --filter '_key @^ "T" || fuzzy_search(_key, "Ke", 1)' \
+  --output_columns '_key, _score' \
+  --match_escalation_threshold -1
