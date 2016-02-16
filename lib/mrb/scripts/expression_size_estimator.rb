@@ -61,7 +61,8 @@ module Groonga
 
       size = nil
       case data.op
-      when Operator::MATCH
+      when Operator::MATCH,
+           Operator::FUZZY
         size = estimate_match(data, index_column)
       when Operator::REGEXP
         size = estimate_regexp(data, index_column)

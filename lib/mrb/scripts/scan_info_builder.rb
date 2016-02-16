@@ -35,6 +35,7 @@ module Groonga
       Operator::GEO_WITHINP8,
       Operator::TERM_EXTRACT,
       Operator::REGEXP,
+      Operator::FUZZY,
     ]
 
     ARITHMETIC_OPERATORS = [
