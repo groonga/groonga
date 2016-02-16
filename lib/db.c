@@ -2923,18 +2923,25 @@ grn_table_fuzzy_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t k
   case GRN_TABLE_PAT_KEY :
     {
       grn_pat *pat = (grn_pat *)table;
-      grn_obj *hash;
-      hash = grn_table_create(ctx, NULL, 0, NULL,
-                              GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
-                              table, NULL);
-      WITH_NORMALIZE(pat, key, key_size, {
-        rc = grn_pat_fuzzy_search(ctx, pat, key, key_size,
-                                  args, (grn_hash *)hash);
-      });
-      if (rc == GRN_SUCCESS) {
-        rc = grn_table_setoperation(ctx, res, hash, res, op);
+      if (!grn_table_size(ctx, res) && op == GRN_OP_OR) {
+        WITH_NORMALIZE(pat, key, key_size, {
+          rc = grn_pat_fuzzy_search(ctx, pat, key, key_size,
+                                    args, (grn_hash *)res);
+        });
+      } else {
+        grn_obj *hash;
+        hash = grn_table_create(ctx, NULL, 0, NULL,
+                                GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                table, NULL);
+        WITH_NORMALIZE(pat, key, key_size, {
+          rc = grn_pat_fuzzy_search(ctx, pat, key, key_size,
+                                    args, (grn_hash *)hash);
+        });
+        if (rc == GRN_SUCCESS) {
+          rc = grn_table_setoperation(ctx, res, hash, res, op);
+        }
+        grn_obj_unlink(ctx, hash);
       }
-      grn_obj_unlink(ctx, hash);
     }
     break;
   default :
