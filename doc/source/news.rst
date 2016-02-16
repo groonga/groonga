@@ -99,9 +99,6 @@ Improvements
 * [``grn_get_global_error_message()``] Added a new API that gets the
   current error message in the process.
 
-* Fixed a bug that :doc:`/reference/command/command_version` specified
-  by ``command_version`` parameter in a request isn't reset.
-
 * [:doc:`/reference/commands/lock_acquire`] Added a new command that
   acquires a lock of a database, table or column.
 
@@ -124,6 +121,9 @@ Fixes
 
 * [:doc:`/server/memcached`] Added more description.
   [GitHub#454][Patch by Hiroyuki Sato]
+
+* Fixed a bug that :doc:`/reference/command/command_version` specified
+  by ``command_version`` parameter in a request isn't reset.
 
 Thanks
 ^^^^^^
