@@ -385,7 +385,7 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     grn_inspect(ctx, &inspected, target);
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
                      "fuzzy_search(): "
-                     "column mast be COLUMN_INDEX or TABLE_PAT_KEY: <%.*s>",
+                     "column must be COLUMN_INDEX or TABLE_PAT_KEY: <%.*s>",
                      (int)GRN_TEXT_LEN(&inspected),
                      GRN_TEXT_VALUE(&inspected));
     rc = ctx->rc;
