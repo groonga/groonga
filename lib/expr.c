@@ -1246,6 +1246,21 @@ grn_expr_append_const_int(grn_ctx *ctx, grn_obj *expr, int i,
   GRN_API_RETURN(res);
 }
 
+grn_obj *
+grn_expr_append_const_ptr(grn_ctx *ctx, grn_obj *expr, grn_obj *ptr,
+                          grn_operator op, int nargs)
+{
+  grn_obj *res = NULL;
+  GRN_API_ENTER;
+  if ((res = grn_expr_alloc_const(ctx, expr))) {
+    GRN_PTR_INIT(res, GRN_OBJ_OWN, GRN_DB_OBJECT);
+    GRN_PTR_SET(ctx, res, ptr);
+    res->header.impl_flags |= GRN_OBJ_EXPRCONST;
+  }
+  grn_expr_append_obj(ctx, expr, res, op, nargs);
+  GRN_API_RETURN(res);
+}
+
 grn_rc
 grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_operator op, int nargs)
 {
@@ -6283,6 +6298,7 @@ typedef struct {
   int weight_offset;
   grn_hash *weight_set;
   snip_cond *snip_conds;
+  grn_hash *hash_args;
 } efs_info;
 
 typedef struct {
@@ -7497,6 +7513,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     efsi.weight_offset = 0;
     efsi.opt.weight_vector = NULL;
     efsi.weight_set = NULL;
+    efsi.hash_args = NULL;
 
     if (flags & (GRN_EXPR_SYNTAX_SCRIPT |
                  GRN_EXPR_SYNTAX_OUTPUT_COLUMNS |
