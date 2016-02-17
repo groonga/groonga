@@ -11,6 +11,6 @@ load --table Users
 {"name": "Ken"}
 ]
 
-select Users --filter 'fuzzy_search(Tags.tag, "Tom", 1)' \
+select Users --filter 'fuzzy_search(Tags.tag, "Tom")' \
   --output_columns 'name, _score' \
   --match_escalation_threshold -1

@@ -8,6 +8,6 @@ load --table Users
 {"name": "Ken"}
 ]
 
-select Users --filter 'fuzzy_search(name, "Toym", 1, 0, 0, true)' \
+select Users --filter 'fuzzy_search(name, "Toym", {"with_transposition": true})' \
   --output_columns 'name, _score' \
   --match_escalation_threshold -1

@@ -14,7 +14,7 @@ load --table Users
 {"name": "Tom Yamad"}
 ]
 [[0,0.0,0.0],4]
-select Users --filter 'fuzzy_search(name, "Tom Yamad", 1)'   --output_columns 'name, _score'   --match_escalation_threshold -1
+select Users --filter 'fuzzy_search(name, "Tom Yamad")'   --output_columns 'name, _score'   --match_escalation_threshold -1
 [
   [
     0,

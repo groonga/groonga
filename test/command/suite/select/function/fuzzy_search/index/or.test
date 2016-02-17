@@ -11,6 +11,6 @@ load --table Users
 {"name": "Ken"}
 ]
 
-select Users --filter 'name @^ "T" || fuzzy_search(name, "Ke", 1)' \
+select Users --filter 'name @^ "T" || fuzzy_search(name, "Ke")' \
   --output_columns 'name, _score' \
   --match_escalation_threshold -1
