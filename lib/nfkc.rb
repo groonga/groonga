@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # -*- coding: utf-8 -*-
 #
-# Copyright(C) 2010-2015 Brazil
+# Copyright(C) 2010-2016 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -274,40 +274,79 @@ end
 
 class TableGenerator < SwitchGenerator
   private
-  def generate_map1(hash)
-    generate_decompose(hash)
+  def table_name(type, common_bytes)
+    suffix = common_bytes.collect {|byte| "%02x" % byte}.join("")
+    "grn_nfkc#{@unicode_version}_#{type}_table_#{suffix}"
   end
 
-  def generate_decompose(char_map)
+  def generate_char_convert_tables(type, char_map, return_type, byte_size_groups)
+    if return_type.end_with?("*")
+      space = ""
+    else
+      space = " "
+    end
+    byte_size_groups.keys.sort.each do |common_bytes|
+      chars = byte_size_groups[common_bytes]
+      @output.puts(<<-TABLE_HEADER)
+
+static #{return_type}#{space}#{table_name(type, common_bytes)}[] = {
+      TABLE_HEADER
+
+      lines = []
+      last_bytes = chars.collect {|char| char.bytes.last}
+      last_bytes.min.step(last_bytes.max).each_slice(8) do |slice|
+        values = slice.collect do |last_byte|
+          yield((common_bytes + [last_byte]).pack("c*"))
+        end
+        lines << ("  " + values.join(", "))
+      end
+      @output.puts(lines.join(",\n"))
+
+      @output.puts(<<-TABLE_FOOTER)
+};
+      TABLE_FOOTER
+    end
+  end
+
+  def generate_char_converter(type,
+                              function_type,
+                              char_map,
+                              default,
+                              return_type,
+                              &converter)
     byte_size_groups = char_map.keys.group_by do |from|
       bytes = from.bytes
       bytes[0..-2]
     end
 
-    generate_decompose_tables(char_map, byte_size_groups)
+    generate_char_convert_tables(type,
+                                 char_map,
+                                 return_type,
+                                 byte_size_groups,
+                                 &converter)
 
     @output.puts(<<-HEADER)
 
-const char *
-grn_nfkc#{@unicode_version}_map1(const unsigned char *utf8)
+#{return_type}
+grn_nfkc#{@unicode_version}_#{function_type}(const unsigned char *utf8)
 {
     HEADER
 
     prev_common_bytes = []
     prev_n_common_bytes = 0
     byte_size_groups.keys.sort.each do |common_bytes|
-      froms = byte_size_groups[common_bytes]
-      froms_bytes = froms.collect(&:bytes).sort
-      min = froms_bytes.first.last
-      max = froms_bytes.last.last
+      chars = byte_size_groups[common_bytes]
+      chars_bytes = chars.collect(&:bytes).sort
+      min = chars_bytes.first.last
+      max = chars_bytes.last.last
       n_common_bytes = 0
       if common_bytes.empty?
         @output.puts(<<-BODY)
   if (utf8[0] < 0x80) {
     if (utf8[0] >= #{"%#04x" % min} && utf8[0] <= #{"%#04x" % max}) {
-      return #{decompose_table_name(common_bytes)}[utf8[0] - #{"%#04x" % min}];
+      return #{table_name(type, common_bytes)}[utf8[0] - #{"%#04x" % min}];
     } else {
-      return NULL;
+      return #{default};
     }
   } else {
         BODY
@@ -347,11 +386,11 @@ grn_nfkc#{@unicode_version}_map1(const unsigned char *utf8)
           BODY
         end
 
-        n = froms_bytes.first.size - 1
+        n = chars_bytes.first.size - 1
         indent = "  " * common_bytes.size
         @output.puts(<<-BODY)
     #{indent}if (utf8[#{n}] >= #{"%#04x" % min} && utf8[#{n}] <= #{"%#04x" % max}) {
-    #{indent}  return #{decompose_table_name(common_bytes)}[utf8[#{n}] - #{"%#04x" % min}];
+    #{indent}  return #{table_name(type, common_bytes)}[utf8[#{n}] - #{"%#04x" % min}];
     #{indent}}
     #{indent}break;
         BODY
@@ -375,9 +414,42 @@ grn_nfkc#{@unicode_version}_map1(const unsigned char *utf8)
     @output.puts(<<-FOOTER)
   }
 
-  return NULL;
+  return #{default};
 }
     FOOTER
+  end
+
+  def generate_blockcode_char_type(block_codes)
+    default = "GRN_CHAR_OTHERS"
+    generate_char_converter("char_type",
+                            "char_type",
+                            block_codes,
+                            default,
+                            "grn_char_type") do |char|
+      block_codes[char] || default
+    end
+  end
+
+  def generate_map1(hash)
+    generate_decompose(hash)
+  end
+
+  def generate_decompose(char_map)
+    default = "NULL"
+    generate_char_converter("decompose",
+                            "map1",
+                            char_map,
+                            default,
+                            "const char *") do |from|
+      from.force_encoding("UTF-8")
+      to = char_map[from]
+      if to
+        escaped_value = to.bytes.collect {|char| "\\x%02x" % char}.join("")
+        "\"#{escaped_value}\""
+      else
+        default
+      end
+    end
   end
 
   def to_bytes_map(char_map)
@@ -391,42 +463,6 @@ grn_nfkc#{@unicode_version}_map1(const unsigned char *utf8)
       parent[from.bytes.last] = char_map[from]
     end
     bytes_map
-  end
-
-  def decompose_table_name(common_bytes)
-    suffix = common_bytes.collect {|byte| "%02x" % byte}.join("")
-    "grn_nfkc#{@unicode_version}_decompose_table_#{suffix}"
-  end
-
-  def generate_decompose_tables(char_map, byte_size_groups)
-    byte_size_groups.keys.sort.each do |common_bytes|
-      froms = byte_size_groups[common_bytes]
-      @output.puts(<<-TABLE_HEADER)
-
-static const char *#{decompose_table_name(common_bytes)}[] = {
-      TABLE_HEADER
-
-      lines = []
-      last_bytes = froms.collect {|from| from.bytes.last}
-      last_bytes.min.step(last_bytes.max).each_slice(8) do |slice|
-        values = slice.collect do |last_byte|
-          from = (common_bytes + [last_byte]).pack("c*").force_encoding("UTF-8")
-          to = char_map[from]
-          if to
-            escaped_value = to.bytes.collect {|char| "\\x%02x" % char}.join("")
-            "\"#{escaped_value}\""
-          else
-            "NULL"
-          end
-        end
-        lines << ("  " + values.join(", "))
-      end
-      @output.puts(lines.join(",\n"))
-
-      @output.puts(<<-TABLE_FOOTER)
-};
-      TABLE_FOOTER
-    end
   end
 end
 
@@ -584,7 +620,7 @@ map2 = create_map2(map1)
 File.open("nfkc#{unicode_version}.c", "w") do |output|
   output.puts(<<-HEADER)
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010-2015 Brazil
+/* Copyright(C) 2010-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
