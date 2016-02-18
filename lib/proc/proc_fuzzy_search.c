@@ -317,7 +317,8 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   if (nargs == 4) {
     grn_obj *hash;
     grn_hash_cursor *cursor;
-    void *key, *value;
+    void *key;
+    grn_obj *value;
     int key_size, value_size;
     hash_args_ptr = args[3];
     if (hash_args_ptr->header.type == GRN_PTR) {
@@ -337,16 +338,16 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
       goto exit;
     }
     while (grn_hash_cursor_next(ctx, cursor) != GRN_ID_NIL) {
-      value_size = grn_hash_cursor_get_key_value(ctx, cursor, &key, &key_size, &value);
+      value_size = grn_hash_cursor_get_key_value(ctx, cursor, &key, &key_size, (void **)&value);
 
       if (key_size == 12 && !memcmp(key, "max_distance", 12)) {
-        max_distance = *(uint32_t *)value;
+        max_distance = GRN_UINT32_VALUE(value);
       } else if (key_size == 13 && !memcmp(key, "prefix_length", 13)) {
-        prefix_length = *(uint32_t *)value;
+        prefix_length = GRN_UINT32_VALUE(value);
       } else if (key_size == 13 && !memcmp(key, "max_expansion", 13)) {
-        max_expansion = *(uint32_t *)value;
+        max_expansion = GRN_UINT32_VALUE(value);
       } else if (key_size == 18 && !memcmp(key, "with_transposition", 18)) {
-        if (*(grn_bool *)value) {
+        if (GRN_BOOL_VALUE(value)) {
           flags |= GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION;
         }
       } else {
