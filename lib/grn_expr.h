@@ -29,6 +29,8 @@ extern "C" {
 #define SCAN_POP                       (0x04)
 #define SCAN_PRE_CONST                 (0x08)
 
+#define GRN_EXPR_OBJECT_LITERAL_MAX_VALUE_SIZE        (4 * 1024)
+
 typedef enum {
   SCAN_START = 0,
   SCAN_VAR,
