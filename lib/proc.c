@@ -47,9 +47,7 @@ const char *grn_document_root = NULL;
 
 #define VAR GRN_PROC_GET_VAR_BY_OFFSET
 
-#define GRN_SELECT_INTERNAL_VAR_CONDITION     "$condition"
 #define GRN_SELECT_INTERNAL_VAR_MATCH_COLUMNS "$match_columns"
-#define GRN_FUNC_SNIPPET_HTML_CACHE_NAME      "$snippet_html"
 #define GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME    "$highlight_html"
 
 
@@ -4077,123 +4075,6 @@ selector_all_records(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   return ctx->rc;
 }
 
-static grn_obj *
-snippet_exec(grn_ctx *ctx, grn_obj *snip, grn_obj *text,
-             grn_user_data *user_data)
-{
-  grn_rc rc;
-  unsigned int i, n_results, max_tagged_length;
-  grn_obj snippet_buffer;
-  grn_obj *snippets;
-
-  if (GRN_TEXT_LEN(text) == 0) {
-    return NULL;
-  }
-
-  rc = grn_snip_exec(ctx, snip,
-                     GRN_TEXT_VALUE(text), GRN_TEXT_LEN(text),
-                     &n_results, &max_tagged_length);
-  if (rc != GRN_SUCCESS) {
-    return NULL;
-  }
-
-  if (n_results == 0) {
-    return GRN_PROC_ALLOC(GRN_DB_VOID, 0);
-  }
-
-  snippets = GRN_PROC_ALLOC(GRN_DB_SHORT_TEXT, GRN_OBJ_VECTOR);
-  if (!snippets) {
-    return NULL;
-  }
-
-  GRN_TEXT_INIT(&snippet_buffer, 0);
-  grn_bulk_space(ctx, &snippet_buffer, max_tagged_length);
-  for (i = 0; i < n_results; i++) {
-    unsigned int snippet_length;
-
-    GRN_BULK_REWIND(&snippet_buffer);
-    rc = grn_snip_get_result(ctx, snip, i,
-                             GRN_TEXT_VALUE(&snippet_buffer),
-                             &snippet_length);
-    if (rc == GRN_SUCCESS) {
-      grn_vector_add_element(ctx, snippets,
-                             GRN_TEXT_VALUE(&snippet_buffer), snippet_length,
-                             0, GRN_DB_SHORT_TEXT);
-    }
-  }
-  GRN_OBJ_FIN(ctx, &snippet_buffer);
-
-  return snippets;
-}
-
-static grn_obj *
-func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
-                  grn_user_data *user_data)
-{
-  grn_obj *snippets = NULL;
-
-  /* TODO: support parameters */
-  if (nargs == 1) {
-    grn_obj *text = args[0];
-    grn_obj *expression = NULL;
-    grn_obj *condition_ptr = NULL;
-    grn_obj *condition = NULL;
-    grn_obj *snip = NULL;
-    int flags = GRN_SNIP_SKIP_LEADING_SPACES;
-    unsigned int width = 200;
-    unsigned int max_n_results = 3;
-    const char *open_tag = "<span class=\"keyword\">";
-    const char *close_tag = "</span>";
-    grn_snip_mapping *mapping = GRN_SNIP_MAPPING_HTML_ESCAPE;
-
-    grn_proc_get_info(ctx, user_data, NULL, NULL, &expression);
-    condition_ptr = grn_expr_get_var(ctx, expression,
-                                     GRN_SELECT_INTERNAL_VAR_CONDITION,
-                                     strlen(GRN_SELECT_INTERNAL_VAR_CONDITION));
-    if (condition_ptr) {
-      condition = GRN_PTR_VALUE(condition_ptr);
-    }
-
-    if (condition) {
-      grn_obj *snip_ptr;
-      snip_ptr = grn_expr_get_var(ctx, expression,
-                                  GRN_FUNC_SNIPPET_HTML_CACHE_NAME,
-                                  strlen(GRN_FUNC_SNIPPET_HTML_CACHE_NAME));
-      if (snip_ptr) {
-        snip = GRN_PTR_VALUE(snip_ptr);
-      } else {
-        snip_ptr =
-          grn_expr_get_or_add_var(ctx, expression,
-                                  GRN_FUNC_SNIPPET_HTML_CACHE_NAME,
-                                  strlen(GRN_FUNC_SNIPPET_HTML_CACHE_NAME));
-        GRN_OBJ_FIN(ctx, snip_ptr);
-        GRN_PTR_INIT(snip_ptr, GRN_OBJ_OWN, GRN_DB_OBJECT);
-
-        snip = grn_snip_open(ctx, flags, width, max_n_results,
-                             open_tag, strlen(open_tag),
-                             close_tag, strlen(close_tag),
-                             mapping);
-        if (snip) {
-          grn_snip_set_normalizer(ctx, snip, GRN_NORMALIZER_AUTO);
-          grn_expr_snip_add_conditions(ctx, condition, snip,
-                                       0, NULL, NULL, NULL, NULL);
-          GRN_PTR_SET(ctx, snip_ptr, snip);
-        }
-      }
-    }
-
-    if (snip) {
-      snippets = snippet_exec(ctx, snip, text, user_data);
-    }
-  }
-
-  if (!snippets) {
-    snippets = GRN_PROC_ALLOC(GRN_DB_VOID, 0);
-  }
-
-  return snippets;
-}
-
 typedef struct {
   grn_obj *found;
   grn_obj *table;
@@ -6671,8 +6552,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   }
 
   /* experimental */
-  grn_proc_create(ctx, "snippet_html", -1, GRN_PROC_FUNCTION,
-                  func_snippet_html, NULL, NULL, 0, NULL);
+  grn_proc_init_snippet_html(ctx);
 
   {
     grn_obj *selector_proc;

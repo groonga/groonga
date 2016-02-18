@@ -5,4 +5,5 @@ libgrnproc_la_SOURCES =				\
 	proc_lock.c				\
 	proc_object.c				\
 	proc_schema.c				\
+	proc_snippet.c				\
 	proc_table.c
