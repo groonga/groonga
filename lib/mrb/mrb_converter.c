@@ -206,6 +206,9 @@ grn_mrb_class_from_grn_obj(mrb_state *mrb, grn_obj *object)
   case GRN_BULK :
     klass = mrb_class_get_under(mrb, data->module, "Bulk");
     break;
+  case GRN_PTR :
+    klass = mrb_class_get_under(mrb, data->module, "Pointer");
+    break;
   case GRN_ACCESSOR :
     klass = mrb_class_get_under(mrb, data->module, "Accessor");
     break;
