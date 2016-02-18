@@ -172,7 +172,7 @@ func_snippet_full(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
     int default_open_tag_length = 0;
     const char *default_close_tag = NULL;
     int default_close_tag_length = 0;
-    grn_obj *hash;
+    grn_obj *hash = NULL;
 
     if (hash_args_ptr->header.type == GRN_PTR) {
       hash = GRN_PTR_VALUE(hash_args_ptr);
@@ -182,16 +182,12 @@ func_snippet_full(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
       grn_hash_cursor *cursor;
       void *key, *value;
       int key_size;
-      if (hash_args_ptr->header.type == GRN_PTR) {
-        hash = GRN_PTR_VALUE(hash_args_ptr);
-      }
       if (hash->header.type != GRN_TABLE_HASH_KEY) {
         GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
                          "snippet_full(): 2nd argument must be object literal: <%.*s>",
                          (int)GRN_TEXT_LEN(args[1]), GRN_TEXT_VALUE(args[1]));
         goto exit;
       }
-      hash = GRN_PTR_VALUE(hash_args_ptr);
 
       if (!(cursor = grn_hash_cursor_open(ctx, (grn_hash *)hash, NULL, 0, NULL, 0, 0, -1, 0))) {
         GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
