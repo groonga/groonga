@@ -1857,7 +1857,8 @@ static void yy_reduce(
 
   if (!efsi->hash_args) {
      efsi->hash_args =
-       grn_hash_create(ctx, NULL, GRN_TABLE_MAX_KEY_SIZE, sizeof(grn_obj),
+       grn_hash_create(ctx, NULL, GRN_TABLE_MAX_KEY_SIZE,
+                       GRN_EXPR_OBJECT_LITERAL_MAX_VALUE_SIZE,
                        GRN_OBJ_KEY_VAR_SIZE|GRN_OBJ_TEMPORARY|GRN_HASH_TINY);
   }
 
@@ -1866,53 +1867,65 @@ static void yy_reduce(
         "couldn't create hash table for parsing object literal arguments (%.*s)",
         (int)(efsi->str_end - efsi->str), efsi->str);
   } else {
-    void *buf;
-    if (grn_hash_add(ctx, efsi->hash_args,
-                     GRN_BULK_HEAD(property), GRN_BULK_VSIZE(property),
-                     (void **)&buf, NULL)) {
-      grn_memcpy(buf, GRN_BULK_HEAD(value), GRN_BULK_VSIZE(value));
+    if (GRN_BULK_VSIZE(value) + 1 > GRN_EXPR_OBJECT_LITERAL_MAX_VALUE_SIZE) {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, value);
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "value must be less than or equal to %d :(%.*s)",
+          GRN_EXPR_OBJECT_LITERAL_MAX_VALUE_SIZE,
+          (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+    } else {
+      void *buf;
+      if (grn_hash_add(ctx, (grn_hash *)efsi->hash_args,
+                       GRN_BULK_HEAD(property), GRN_BULK_VSIZE(property),
+                       (void **)&buf, NULL)) {
+        grn_memcpy(buf, GRN_BULK_HEAD(value), GRN_BULK_VSIZE(value));
+        ((char *)buf)[GRN_BULK_VSIZE(value)] = '\0';
+      }
+      e->codes_curr -= 3;
     }
-    e->codes_curr -= 3;
   }
 }
-#line 1879 "grn_ecmascript.c"
+#line 1892 "grn_ecmascript.c"
         break;
       case 117: /* member_expression_part ::= BRACKETL expression BRACKETR */
-#line 431 "grn_ecmascript.lemon"
+#line 444 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_GET_MEMBER, 2);
 }
-#line 1886 "grn_ecmascript.c"
+#line 1899 "grn_ecmascript.c"
         break;
       case 119: /* arguments ::= PARENL argument_list PARENR */
-#line 436 "grn_ecmascript.lemon"
+#line 449 "grn_ecmascript.lemon"
 { yygotominor.yy0 = yymsp[-1].minor.yy0; }
-#line 1891 "grn_ecmascript.c"
+#line 1904 "grn_ecmascript.c"
         break;
       case 120: /* argument_list ::= */
-#line 437 "grn_ecmascript.lemon"
+#line 450 "grn_ecmascript.lemon"
 { yygotominor.yy0 = 0; }
-#line 1896 "grn_ecmascript.c"
+#line 1909 "grn_ecmascript.c"
         break;
       case 121: /* argument_list ::= assignment_expression */
-#line 438 "grn_ecmascript.lemon"
+#line 451 "grn_ecmascript.lemon"
 { yygotominor.yy0 = 1; }
-#line 1901 "grn_ecmascript.c"
+#line 1914 "grn_ecmascript.c"
         break;
       case 122: /* argument_list ::= argument_list COMMA assignment_expression */
-#line 439 "grn_ecmascript.lemon"
+#line 452 "grn_ecmascript.lemon"
 { yygotominor.yy0 = yymsp[-2].minor.yy0 + 1; }
-#line 1906 "grn_ecmascript.c"
+#line 1919 "grn_ecmascript.c"
         break;
       case 123: /* output_columns ::= */
-#line 441 "grn_ecmascript.lemon"
+#line 454 "grn_ecmascript.lemon"
 {
   yygotominor.yy0 = 0;
 }
-#line 1913 "grn_ecmascript.c"
+#line 1926 "grn_ecmascript.c"
         break;
       case 124: /* output_columns ::= output_column */
-#line 444 "grn_ecmascript.lemon"
+#line 457 "grn_ecmascript.lemon"
 {
   if (yymsp[0].minor.yy0) {
     yygotominor.yy0 = 0;
@@ -1920,10 +1933,10 @@ static void yy_reduce(
     yygotominor.yy0 = 1;
   }
 }
-#line 1924 "grn_ecmascript.c"
+#line 1937 "grn_ecmascript.c"
         break;
       case 125: /* output_columns ::= output_columns COMMA output_column */
-#line 452 "grn_ecmascript.lemon"
+#line 465 "grn_ecmascript.lemon"
 {
   if (yymsp[0].minor.yy0) {
     yygotominor.yy0 = yymsp[-2].minor.yy0;
@@ -1934,10 +1947,10 @@ static void yy_reduce(
     yygotominor.yy0 = 1;
   }
 }
-#line 1938 "grn_ecmascript.c"
+#line 1951 "grn_ecmascript.c"
         break;
       case 126: /* output_column ::= STAR */
-#line 463 "grn_ecmascript.lemon"
+#line 476 "grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   grn_obj *expr = efsi->e;
@@ -1975,21 +1988,21 @@ static void yy_reduce(
     yygotominor.yy0 = GRN_TRUE;
   }
 }
-#line 1979 "grn_ecmascript.c"
+#line 1992 "grn_ecmascript.c"
         break;
       case 127: /* output_column ::= NONEXISTENT_COLUMN */
-#line 500 "grn_ecmascript.lemon"
+#line 513 "grn_ecmascript.lemon"
 {
   yygotominor.yy0 = GRN_TRUE;
 }
-#line 1986 "grn_ecmascript.c"
+#line 1999 "grn_ecmascript.c"
         break;
       case 128: /* output_column ::= assignment_expression */
-#line 503 "grn_ecmascript.lemon"
+#line 516 "grn_ecmascript.lemon"
 {
   yygotominor.yy0 = GRN_FALSE;
 }
-#line 1993 "grn_ecmascript.c"
+#line 2006 "grn_ecmascript.c"
         break;
       default:
       /* (0) input ::= query */ yytestcase(yyruleno==0);
@@ -2129,7 +2142,7 @@ static void yy_syntax_error(
       GRN_OBJ_FIN(ctx, &message);
     }
   }
-#line 2133 "grn_ecmascript.c"
+#line 2146 "grn_ecmascript.c"
   grn_expr_parserARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 
