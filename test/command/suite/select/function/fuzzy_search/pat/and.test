@@ -7,6 +7,6 @@ load --table Users
 {"_key": "Ken"}
 ]
 
-select Users --filter '_key @^ "T" && fuzzy_search(_key, "To", 1)' \
+select Users --filter '_key @^ "T" && fuzzy_search(_key, "To")' \
   --output_columns '_key, _score' \
   --match_escalation_threshold -1
