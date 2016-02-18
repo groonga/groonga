@@ -3,13 +3,13 @@ column_create Entries content COLUMN_SCALAR ShortText
 
 load --table Entries
 [
-{"content": "groonga and MySQL and PosrgreSQL"}
+{"content": "<p>groonga and MySQL</p>"}
 ]
 
 select Entries \
   --output_columns ' \
   snippet_full(content, \
-  "SQL", "<span class=\\"w1\\">", "</span>", \
-  {"prefix": "..."} \
+  "Groonga", "<span class=\\"keyword\\">", "</span>", \
+  {} \
   )' \
   --command_version 2

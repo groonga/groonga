@@ -8,7 +8,8 @@ load --table Entries
 
 select Entries \
   --output_columns ' \
-  snippet_full(content, {"normalizer": "NormalizerAuto"}, \
-  "sql", "<span class=\\"keyword\\">", "</span>" \
+  snippet_full(content, \
+  "sql", "<span class=\\"keyword\\">", "</span>", \
+  {"normalizer": "NormalizerAuto"} \
   )' \
   --command_version 2
