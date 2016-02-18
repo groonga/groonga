@@ -149,10 +149,10 @@ static grn_obj *
 func_snippet_full(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *snippets = NULL;
+  int n_required_args = 2;
 
-#define N_REQUIRED_ARGS 2
 #define KEYWORD_SET_SIZE 3
-  if (nargs > N_REQUIRED_ARGS) {
+  if (nargs >= n_required_args) {
     grn_obj *text = args[0];
     grn_obj *hash_args_ptr = args[1];
     grn_obj *expression = NULL;
@@ -172,63 +172,64 @@ func_snippet_full(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
     int default_open_tag_length = 0;
     const char *default_close_tag = NULL;
     int default_close_tag_length = 0;
-    grn_obj *hash = NULL;
 
-    if (hash_args_ptr->header.type == GRN_PTR) {
+    if (hash_args_ptr->header.type != GRN_PTR) {
+      n_required_args--;
+    } else {
+      grn_obj *hash;
       hash = GRN_PTR_VALUE(hash_args_ptr);
-    }
-
-    if (hash) {
-      grn_hash_cursor *cursor;
-      void *key, *value;
-      int key_size;
-      if (hash->header.type != GRN_TABLE_HASH_KEY) {
-        GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                         "snippet_full(): 2nd argument must be object literal: <%.*s>",
-                         (int)GRN_TEXT_LEN(args[1]), GRN_TEXT_VALUE(args[1]));
-        goto exit;
-      }
-
-      if (!(cursor = grn_hash_cursor_open(ctx, (grn_hash *)hash, NULL, 0, NULL, 0, 0, -1, 0))) {
-        GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
-                         "snippet_full(): couldn't open cursor");
-        goto exit;
-      }
-      while (grn_hash_cursor_next(ctx, cursor) != GRN_ID_NIL) {
-        grn_hash_cursor_get_key_value(ctx, cursor, &key, &key_size, &value);
-        if (key_size == 5 && !memcmp(key, "width", 5)) {
-          width = *(unsigned int *)value;
-        } else if (key_size == 13 && !memcmp(key, "max_n_results", 13)) {
-          max_n_results = *(unsigned int *)value;
-        } else if (key_size == 19 && !memcmp(key, "skip_leading_spaces", 19)) {
-          if (!*(grn_bool *)value) {
-            flags &= ~GRN_SNIP_SKIP_LEADING_SPACES;
-          }
-        } else if (key_size == 11 && !memcmp(key, "html_escape", 11)) {
-          mapping = GRN_SNIP_MAPPING_HTML_ESCAPE;
-        } else if (key_size == 6 && !memcmp(key, "prefix", 6)) {
-          prefix = (const char *)value;
-          prefix_length = strlen(prefix);
-        } else if (key_size == 6 && !memcmp(key, "suffix", 6)) {
-          suffix = (const char *)value;
-          suffix_length = strlen(suffix);
-        } else if (key_size == 10 && !memcmp(key, "normalizer", 10)) {
-          normalizer_name = (const char *)value;
-          normalizer_name_length = strlen(normalizer_name);
-        } else if (key_size == 16 && !memcmp(key, "default_open_tag", 16)) {
-          default_open_tag = (const char *)value;
-          default_open_tag_length = strlen(default_open_tag);
-        } else if (key_size == 17 && !memcmp(key, "default_close_tag", 17)) {
-          default_close_tag = (const char *)value;
-          default_close_tag_length = strlen(default_close_tag);
-        } else {
-          GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT, "invalid option name: %.*s",
-                           key_size, (char *)key);
-          grn_hash_cursor_close(ctx, cursor);
+      if (hash) {
+        grn_hash_cursor *cursor;
+        void *key, *value;
+        int key_size;
+        if (hash->header.type != GRN_TABLE_HASH_KEY) {
+          GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                           "snippet_full(): 2nd argument must be object literal: <%.*s>",
+                           (int)GRN_TEXT_LEN(args[1]), GRN_TEXT_VALUE(args[1]));
           goto exit;
         }
+
+        if (!(cursor = grn_hash_cursor_open(ctx, (grn_hash *)hash, NULL, 0, NULL, 0, 0, -1, 0))) {
+          GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
+                           "snippet_full(): couldn't open cursor");
+          goto exit;
+        }
+        while (grn_hash_cursor_next(ctx, cursor) != GRN_ID_NIL) {
+          grn_hash_cursor_get_key_value(ctx, cursor, &key, &key_size, &value);
+          if (key_size == 5 && !memcmp(key, "width", 5)) {
+            width = *(unsigned int *)value;
+          } else if (key_size == 13 && !memcmp(key, "max_n_results", 13)) {
+            max_n_results = *(unsigned int *)value;
+          } else if (key_size == 19 && !memcmp(key, "skip_leading_spaces", 19)) {
+            if (!*(grn_bool *)value) {
+              flags &= ~GRN_SNIP_SKIP_LEADING_SPACES;
+            }
+          } else if (key_size == 11 && !memcmp(key, "html_escape", 11)) {
+            mapping = GRN_SNIP_MAPPING_HTML_ESCAPE;
+          } else if (key_size == 6 && !memcmp(key, "prefix", 6)) {
+            prefix = (const char *)value;
+            prefix_length = strlen(prefix);
+          } else if (key_size == 6 && !memcmp(key, "suffix", 6)) {
+            suffix = (const char *)value;
+            suffix_length = strlen(suffix);
+          } else if (key_size == 10 && !memcmp(key, "normalizer", 10)) {
+            normalizer_name = (const char *)value;
+            normalizer_name_length = strlen(normalizer_name);
+          } else if (key_size == 16 && !memcmp(key, "default_open_tag", 16)) {
+            default_open_tag = (const char *)value;
+            default_open_tag_length = strlen(default_open_tag);
+          } else if (key_size == 17 && !memcmp(key, "default_close_tag", 17)) {
+            default_close_tag = (const char *)value;
+            default_close_tag_length = strlen(default_close_tag);
+          } else {
+            GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT, "invalid option name: %.*s",
+                             key_size, (char *)key);
+            grn_hash_cursor_close(ctx, cursor);
+            goto exit;
+          }
+        }
+        grn_hash_cursor_close(ctx, cursor);
       }
-      grn_hash_cursor_close(ctx, cursor);
     }
 
     grn_proc_get_info(ctx, user_data, NULL, NULL, &expression);
@@ -274,8 +275,8 @@ func_snippet_full(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
           grn_obj_unlink(ctx, normalizer);
         }
         if (!default_open_tag_length && !default_close_tag_length) {
-          unsigned int n_keyword_sets = (nargs - N_REQUIRED_ARGS) / KEYWORD_SET_SIZE;
-          grn_obj **keyword_set_args = args + N_REQUIRED_ARGS;
+          unsigned int n_keyword_sets = (nargs - n_required_args) / KEYWORD_SET_SIZE;
+          grn_obj **keyword_set_args = args + n_required_args;
           for (i = 0; i < n_keyword_sets; i++) {
             rc = grn_snip_add_cond(ctx, snip,
                                    GRN_TEXT_VALUE(keyword_set_args[i * KEYWORD_SET_SIZE]),
@@ -286,8 +287,8 @@ func_snippet_full(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
                                    GRN_TEXT_LEN(keyword_set_args[i * KEYWORD_SET_SIZE + 2]));
           }
         } else {
-          unsigned int n_keywords = nargs - N_REQUIRED_ARGS;
-          grn_obj **keyword_args = args + N_REQUIRED_ARGS;
+          unsigned int n_keywords = nargs - n_required_args;
+          grn_obj **keyword_args = args + n_required_args;
           for (i = 0; i < n_keywords; i++) {
             rc = grn_snip_add_cond(ctx, snip,
                                    GRN_TEXT_VALUE(keyword_args[i]),
@@ -305,7 +306,6 @@ func_snippet_full(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
                               suffix, suffix_length);
     }
   }
-#undef N_REQUIRED_ARGS
 #undef KEYWORD_SET_SIZE
 
 exit :

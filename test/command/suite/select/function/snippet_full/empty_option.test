@@ -8,7 +8,7 @@ load --table Entries
 
 select Entries \
   --output_columns ' \
-  snippet_full(content, \
+  snippet_full(content, {}, \
   "Groonga", "<span class=\\"keyword\\">", "</span>" \
   )' \
   --command_version 2
