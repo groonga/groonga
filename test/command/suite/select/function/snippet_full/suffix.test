@@ -8,7 +8,8 @@ load --table Entries
 
 select Entries \
   --output_columns ' \
-  snippet_full(content, {"suffix": "..."}, \
-  "SQL", "<span class=\\"keyword\\">", "</span>" \
+  snippet_full(content, \
+  "SQL", "<span class=\\"keyword\\">", "</span>", \
+  {"suffix": "..."}  \
   )' \
   --command_version 2
