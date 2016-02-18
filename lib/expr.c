@@ -552,7 +552,17 @@ grn_expr_close(grn_ctx *ctx, grn_obj *expr)
         end = ((e->nconsts - 1) % GRN_EXPR_CONST_BLK_SIZE) + 1;
       }
       for (j = 0; j < end; j++) {
-        grn_obj_close(ctx, &e->const_blks[i][j]);
+        grn_obj *const_obj = &e->const_blks[i][j];
+        if (const_obj->header.type == GRN_PTR) {
+          grn_obj *ref_obj = GRN_PTR_VALUE(const_obj);
+          if (ref_obj && ref_obj->header.type == GRN_TABLE_HASH_KEY) {
+            grn_obj *value;
+            GRN_HASH_EACH(ctx, (grn_hash *)ref_obj, i, NULL, NULL, (void **)&value, {
+              GRN_OBJ_FIN(ctx, value);
+            });
+          }
+        }
+        grn_obj_close(ctx, const_obj);
       }
       GRN_FREE(e->const_blks[i]);
     }
