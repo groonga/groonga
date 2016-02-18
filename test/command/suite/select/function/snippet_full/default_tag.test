@@ -1,0 +1,14 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries content COLUMN_SCALAR ShortText
+
+load --table Entries
+[
+{"content": "<p>groonga and MySQL</p>"}
+]
+
+select Entries \
+  --output_columns ' \
+  snippet_full(content, {"default_open_tag": "<span>", "default_close_tag": "</span>"}, \
+  "Groonga", "MySQL" \
+  )' \
+  --command_version 2

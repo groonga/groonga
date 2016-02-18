@@ -24,6 +24,8 @@
 extern "C" {
 #endif
 
+#define GRN_SELECT_INTERNAL_VAR_CONDITION     "$condition"
+
 void grn_proc_init_from_env(void);
 
 GRN_VAR const char *grn_document_root;
@@ -42,6 +44,8 @@ void grn_proc_init_lock_release(grn_ctx *ctx);
 void grn_proc_init_object_exist(grn_ctx *ctx);
 void grn_proc_init_object_remove(grn_ctx *ctx);
 void grn_proc_init_schema(grn_ctx *ctx);
+void grn_proc_init_snippet_full(grn_ctx *ctx);
+void grn_proc_init_snippet_html(grn_ctx *ctx);
 void grn_proc_init_table_create(grn_ctx *ctx);
 void grn_proc_init_table_list(grn_ctx *ctx);
 void grn_proc_init_table_remove(grn_ctx *ctx);

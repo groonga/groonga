@@ -1,0 +1,35 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"content": "groonga and MySQL"}
+]
+[[0,0.0,0.0],1]
+select Entries   --output_columns '   snippet_full(content, {"skip_leading_spaces": false},   "MySQL", "<span class=\\"keyword\\">", "</span>"   )'   --command_version 2
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "snippet_full",
+          "null"
+        ]
+      ],
+      [
+        [
+          "groonga and<span class=\"keyword\"> MySQL</span>"
+        ]
+      ]
+    ]
+  ]
+]
