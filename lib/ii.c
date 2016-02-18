@@ -5612,7 +5612,7 @@ token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
         GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
         grn_ctx_at(ctx, GRN_DB_UINT32), NULL))) {
       grn_table_fuzzy_search(ctx, lexicon, key, key_size,
-                             args, (grn_obj *)h);
+                             args, (grn_obj *)h, GRN_OP_OR);
       if (GRN_HASH_SIZE(h)) {
         if ((ti->cursors = cursor_heap_open(ctx, GRN_HASH_SIZE(h)))) {
           grn_rset_recinfo *ri;
