@@ -6659,4 +6659,6 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   grn_proc_init_fuzzy_search(ctx);
 
   grn_proc_init_object_remove(ctx);
+
+  grn_proc_init_snippet_full(ctx);
 }

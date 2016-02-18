@@ -1,0 +1,15 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries content COLUMN_SCALAR ShortText
+
+load --table Entries
+[
+{"content": "groonga and MySQL and PosrgreSQL"}
+]
+
+select Entries \
+  --output_columns ' \
+  snippet_full(content, {"prefix": "..."}, \
+  "SQL", "<span class=\\"keyword1\\">", "</span>", \
+  "groonga", "<span class=\\"keyword2\\">", "</span>" \
+  )' \
+  --command_version 2
