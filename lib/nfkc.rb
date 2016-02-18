@@ -281,20 +281,7 @@ class TableGenerator < SwitchGenerator
   def generate_decompose(char_map)
     byte_size_groups = char_map.keys.group_by do |from|
       bytes = from.bytes
-      first_byte = bytes[0]
-      if first_byte < 0x80
-        []
-      elsif first_byte < 0xe0
-        bytes[0, 1]
-      elsif first_byte < 0xf0
-        bytes[0, 2]
-      elsif first_byte < 0xf8
-        bytes[0, 3]
-      elsif first_byte < 0xfc
-        bytes[0, 4]
-      elsif first_byte < 0xfe
-        bytes[0, 5]
-      end
+      bytes[0..-2]
     end
 
     generate_decompose_tables(char_map, byte_size_groups)
