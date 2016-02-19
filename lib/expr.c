@@ -427,7 +427,8 @@ typedef struct {
 } grn_expr_dfi;
 
 static grn_expr_dfi *
-grn_expr_dfi_pop(grn_expr *expr) {
+grn_expr_dfi_pop(grn_expr *expr)
+{
   if (GRN_BULK_VSIZE(&expr->dfi) >= sizeof(grn_expr_dfi)) {
     grn_expr_dfi *dfi;
     GRN_BULK_INCR_LEN(&expr->dfi, -sizeof(grn_expr_dfi));
@@ -442,7 +443,8 @@ grn_expr_dfi_pop(grn_expr *expr) {
 
 static void
 grn_expr_dfi_put(grn_ctx *ctx, grn_expr *expr, uint8_t type, grn_id domain,
-                 grn_expr_code *code) {
+                 grn_expr_code *code)
+{
   grn_expr_dfi dfi;
   dfi.type = type;
   dfi.domain = domain;
