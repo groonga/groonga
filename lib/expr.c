@@ -426,26 +426,33 @@ typedef struct {
   unsigned char type;
 } grn_expr_dfi;
 
-#define DFI_POP(e,d) do {\
-  if (GRN_BULK_VSIZE(&(e)->dfi) >= sizeof(grn_expr_dfi)) {\
-    GRN_BULK_INCR_LEN((&(e)->dfi), -(sizeof(grn_expr_dfi)));\
-    (d) = (grn_expr_dfi *)(GRN_BULK_CURR(&(e)->dfi));\
-    (e)->code0 = (d)->code;\
-  } else {\
-    (d) = NULL;\
-    (e)->code0 = NULL;\
-  }\
-} while (0)
+static grn_expr_dfi *
+grn_expr_dfi_pop(grn_expr *expr) {
+  if (GRN_BULK_VSIZE(&expr->dfi) >= sizeof(grn_expr_dfi)) {
+    grn_expr_dfi *dfi;
+    GRN_BULK_INCR_LEN(&expr->dfi, -sizeof(grn_expr_dfi));
+    dfi = (grn_expr_dfi *)GRN_BULK_CURR(&expr->dfi);
+    expr->code0 = dfi->code;
+    return dfi;
+  } else {
+    expr->code0 = NULL;
+    return NULL;
+  }
+}
 
-#define DFI_PUT(e,t,d,c) do {\
-  grn_expr_dfi dfi;\
-  dfi.type = (t);\
-  dfi.domain = (d);\
-  dfi.code = (c);\
-  if ((e)->code0) { (e)->code0->modify = (c) ? ((c) - (e)->code0) : 0; }\
-  grn_bulk_write(ctx, &(e)->dfi, (char *)&dfi, sizeof(grn_expr_dfi));\
-  (e)->code0 = NULL;\
-} while (0)
+static void
+grn_expr_dfi_put(grn_ctx *ctx, grn_expr *expr, uint8_t type, grn_id domain,
+                 grn_expr_code *code) {
+  grn_expr_dfi dfi;
+  dfi.type = type;
+  dfi.domain = domain;
+  dfi.code = code;
+  if (expr->code0) {
+    expr->code0->modify = code ? (code - expr->code0) : 0;
+  }
+  grn_bulk_write(ctx, &expr->dfi, (char *)&dfi, sizeof(grn_expr_dfi));
+  expr->code0 = NULL;
+}
 
 grn_obj *
 grn_expr_create(grn_ctx *ctx, const char *name, unsigned int name_size)
@@ -679,7 +686,7 @@ grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
   grn_id domain;                                                \
   unsigned char type;                                           \
   grn_obj *x;                                                   \
-  DFI_POP(e, dfi);                                              \
+  dfi = grn_expr_dfi_pop(e);                                    \
   code_ = dfi->code;                                            \
   domain = dfi->domain;                                         \
   type = dfi->type;                                             \
@@ -727,7 +734,7 @@ grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
   } else {                                                      \
     PUSH_CODE(e, op, obj, nargs, code);                         \
   }                                                             \
-  DFI_PUT(e, type, domain, code_);                              \
+  grn_expr_dfi_put(ctx, e, type, domain, code_);                \
 } while (0)
 
 #define PUSH_N_ARGS_ARITHMETIC_OP(e, op, obj, nargs, code) do { \
@@ -735,10 +742,10 @@ grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
   {                                                             \
     int i = nargs;                                              \
     while (i--) {                                               \
-      DFI_POP(e, dfi);                                          \
+      dfi = grn_expr_dfi_pop(e);                                \
     }                                                           \
   }                                                             \
-  DFI_PUT(e, type, domain, code);                               \
+  grn_expr_dfi_put(ctx, e, type, domain, code);                 \
 } while (0)
 
 static void
@@ -782,7 +789,8 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_PUSH :
       if (obj) {
         PUSH_CODE(e, op, obj, nargs, code);
-        DFI_PUT(e, obj->header.type, GRN_OBJ_GET_DOMAIN(obj), code);
+        grn_expr_dfi_put(ctx, e, obj->header.type, GRN_OBJ_GET_DOMAIN(obj),
+                         code);
       } else {
         ERR(GRN_INVALID_ARGUMENT, "obj not assigned for GRN_OP_PUSH");
         goto exit;
@@ -797,7 +805,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
         goto exit;
       } else {
         PUSH_CODE(e, op, obj, nargs, code);
-        DFI_POP(e, dfi);
+        dfi = grn_expr_dfi_pop(e);
       }
       break;
     case GRN_OP_CALL :
@@ -851,11 +859,12 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       PUSH_CODE(e, op, obj, nargs, code);
       {
         int i = nargs;
-        while (i--) { DFI_POP(e, dfi); }
+        while (i--) { dfi = grn_expr_dfi_pop(e); }
       }
-      if (!obj) { DFI_POP(e, dfi); }
+      if (!obj) { dfi = grn_expr_dfi_pop(e); }
       // todo : increment e->values_tail.
-      DFI_PUT(e, type, domain, code); /* cannot identify type of return value */
+      /* cannot identify type of return value */
+      grn_expr_dfi_put(ctx, e, type, domain, code);
       e->cacheable = 0;
       break;
     case GRN_OP_INTERN :
@@ -871,7 +880,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
         }
       }
       PUSH_CODE(e, op, obj, nargs, code);
-      DFI_PUT(e, type, domain, code);
+      grn_expr_dfi_put(ctx, e, type, domain, code);
       break;
     case GRN_OP_EQUAL :
       PUSH_CODE(e, op, obj, nargs, code);
@@ -883,12 +892,12 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
           xd = GRN_OBJ_GET_DOMAIN(obj);
           x = obj;
         } else {
-          DFI_POP(e, dfi);
+          dfi = grn_expr_dfi_pop(e);
           x = dfi->code->value;
           xd = dfi->domain;
         }
         while (i--) {
-          DFI_POP(e, dfi);
+          dfi = grn_expr_dfi_pop(e);
           y = dfi->code->value;
           yd = dfi->domain;
         }
@@ -908,7 +917,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
           }
         }
       }
-      DFI_PUT(e, type, domain, code);
+      grn_expr_dfi_put(ctx, e, type, domain, code);
       break;
     case GRN_OP_TABLE_CREATE :
     case GRN_OP_EXPR_GET_VAR :
@@ -942,10 +951,10 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       PUSH_CODE(e, op, obj, nargs, code);
       if (nargs) {
         int i = nargs - 1;
-        if (!obj) { DFI_POP(e, dfi); }
-        while (i--) { DFI_POP(e, dfi); }
+        if (!obj) { dfi = grn_expr_dfi_pop(e); }
+        while (i--) { dfi = grn_expr_dfi_pop(e); }
       }
-      DFI_PUT(e, type, domain, code);
+      grn_expr_dfi_put(ctx, e, type, domain, code);
       break;
     case GRN_OP_AND :
     case GRN_OP_OR :
@@ -960,7 +969,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       {
         int i = nargs;
         while (i--) {
-          DFI_POP(e, dfi);
+          dfi = grn_expr_dfi_pop(e);
           if (dfi) {
             dfi->code->flags |= GRN_EXPR_CODE_RELATIONAL_EXPRESSION;
           } else {
@@ -968,7 +977,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
           }
         }
       }
-      DFI_PUT(e, type, domain, code);
+      grn_expr_dfi_put(ctx, e, type, domain, code);
       break;
     case GRN_OP_NOT :
       if (nargs == 1) {
@@ -988,7 +997,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       }
       break;
     case GRN_OP_BITWISE_NOT :
-      DFI_POP(e, dfi);
+      dfi = grn_expr_dfi_pop(e);
       if (dfi) {
         type = dfi->type;
         domain = dfi->domain;
@@ -1006,7 +1015,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
         }
       }
       PUSH_CODE(e, op, obj, nargs, code);
-      DFI_PUT(e, type, domain, code);
+      grn_expr_dfi_put(ctx, e, type, domain, code);
       break;
     case GRN_OP_STAR :
     case GRN_OP_SLASH :
@@ -1024,7 +1033,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_INCR_POST :
     case GRN_OP_DECR_POST :
       {
-        DFI_POP(e, dfi);
+        dfi = grn_expr_dfi_pop(e);
         if (dfi) {
           type = dfi->type;
           domain = dfi->domain;
@@ -1040,7 +1049,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
         }
         PUSH_CODE(e, op, obj, nargs, code);
       }
-      DFI_PUT(e, type, domain, code);
+      grn_expr_dfi_put(ctx, e, type, domain, code);
       break;
     case GRN_OP_GET_VALUE :
       {
@@ -1050,7 +1059,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
             grn_obj *v = grn_expr_get_var_by_offset(ctx, expr, 0);
             if (v) { vdomain = GRN_OBJ_GET_DOMAIN(v); }
           } else {
-            DFI_POP(e, dfi);
+            dfi = grn_expr_dfi_pop(e);
             vdomain = dfi->domain;
           }
           if (vdomain && CONSTP(obj) && obj->header.type == GRN_BULK) {
@@ -1068,12 +1077,12 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
           PUSH_CODE(e, op, obj, nargs, code);
         } else {
           grn_expr_dfi *dfi0;
-          DFI_POP(e, dfi0);
+          dfi0 = grn_expr_dfi_pop(e);
           if (nargs == 1) {
             grn_obj *v = grn_expr_get_var_by_offset(ctx, expr, 0);
             if (v) { vdomain = GRN_OBJ_GET_DOMAIN(v); }
           } else {
-            DFI_POP(e, dfi);
+            dfi = grn_expr_dfi_pop(e);
             vdomain = dfi->domain;
           }
           if (dfi0->code->op == GRN_OP_PUSH) {
@@ -1098,7 +1107,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
           }
         }
       }
-      DFI_PUT(e, type, domain, code);
+      grn_expr_dfi_put(ctx, e, type, domain, code);
       break;
     case GRN_OP_ASSIGN :
     case GRN_OP_STAR_ASSIGN :
@@ -1117,13 +1126,13 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
           type = obj->header.type;
           domain = GRN_OBJ_GET_DOMAIN(obj);
         } else {
-          DFI_POP(e, dfi);
+          dfi = grn_expr_dfi_pop(e);
           if (dfi) {
             type = dfi->type;
             domain = dfi->domain;
           }
         }
-        DFI_POP(e, dfi);
+        dfi = grn_expr_dfi_pop(e);
         if (dfi && (dfi->code)) {
           if (dfi->code->op == GRN_OP_GET_VALUE) {
             dfi->code->op = GRN_OP_GET_REF;
@@ -1135,22 +1144,22 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
         }
         PUSH_CODE(e, op, obj, nargs, code);
       }
-      DFI_PUT(e, type, domain, code);
+      grn_expr_dfi_put(ctx, e, type, domain, code);
       break;
     case GRN_OP_JUMP :
-      DFI_POP(e, dfi);
+      dfi = grn_expr_dfi_pop(e);
       PUSH_CODE(e, op, obj, nargs, code);
       break;
     case GRN_OP_CJUMP :
-      DFI_POP(e, dfi);
+      dfi = grn_expr_dfi_pop(e);
       PUSH_CODE(e, op, obj, nargs, code);
       break;
     case GRN_OP_COMMA :
       PUSH_CODE(e, op, obj, nargs, code);
       break;
     case GRN_OP_GET_MEMBER :
-      DFI_POP(e, dfi);
-      DFI_POP(e, dfi);
+      dfi = grn_expr_dfi_pop(e);
+      dfi = grn_expr_dfi_pop(e);
       if (dfi) {
         type = dfi->type;
         domain = dfi->domain;
@@ -1161,7 +1170,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
         }
       }
       PUSH_CODE(e, op, obj, nargs, code);
-      DFI_PUT(e, type, domain, code);
+      grn_expr_dfi_put(ctx, e, type, domain, code);
       break;
     default :
       break;

@@ -266,9 +266,9 @@ unary_expression ::= INCR unary_expression. {
   grn_expr_dfi *dfi_;
   unsigned int const_p;
 
-  DFI_POP(e, dfi_);
+  dfi_ = grn_expr_dfi_pop(e);
   const_p = CONSTP(dfi_->code->value);
-  DFI_PUT(e, dfi_->type, dfi_->domain, dfi_->code);
+  grn_expr_dfi_put(ctx, e, dfi_->type, dfi_->domain, dfi_->code);
   if (const_p) {
     ERR(GRN_SYNTAX_ERROR,
         "constant can't be incremented (%.*s)",
@@ -283,9 +283,9 @@ unary_expression ::= DECR unary_expression. {
   grn_expr_dfi *dfi_;
   unsigned int const_p;
 
-  DFI_POP(e, dfi_);
+  dfi_ = grn_expr_dfi_pop(e);
   const_p = CONSTP(dfi_->code->value);
-  DFI_PUT(e, dfi_->type, dfi_->domain, dfi_->code);
+  grn_expr_dfi_put(ctx, e, dfi_->type, dfi_->domain, dfi_->code);
   if (const_p) {
     ERR(GRN_SYNTAX_ERROR,
         "constant can't be decremented (%.*s)",
@@ -326,9 +326,9 @@ postfix_expression ::= lefthand_side_expression INCR. {
   grn_expr_dfi *dfi_;
   unsigned int const_p;
 
-  DFI_POP(e, dfi_);
+  dfi_ = grn_expr_dfi_pop(e);
   const_p = CONSTP(dfi_->code->value);
-  DFI_PUT(e, dfi_->type, dfi_->domain, dfi_->code);
+  grn_expr_dfi_put(ctx, e, dfi_->type, dfi_->domain, dfi_->code);
   if (const_p) {
     ERR(GRN_SYNTAX_ERROR,
         "constant can't be incremented (%.*s)",
@@ -343,9 +343,9 @@ postfix_expression ::= lefthand_side_expression DECR. {
   grn_expr_dfi *dfi_;
   unsigned int const_p;
 
-  DFI_POP(e, dfi_);
+  dfi_ = grn_expr_dfi_pop(e);
   const_p = CONSTP(dfi_->code->value);
-  DFI_PUT(e, dfi_->type, dfi_->domain, dfi_->code);
+  grn_expr_dfi_put(ctx, e, dfi_->type, dfi_->domain, dfi_->code);
   if (const_p) {
     ERR(GRN_SYNTAX_ERROR,
         "constant can't be decremented (%.*s)",
