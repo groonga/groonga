@@ -776,13 +776,25 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
   grn_expr *e = (grn_expr *)expr;
   GRN_API_ENTER;
   if (e->codes_curr >= e->codes_size) {
+    grn_expr_dfi *dfis = (grn_expr_dfi *)GRN_BULK_HEAD(&e->dfi);
+    size_t i, n_dfis = GRN_BULK_VSIZE(&e->dfi) / sizeof(grn_expr_dfi);
     uint32_t new_codes_size = e->codes_size * 2;
     size_t n_bytes = sizeof(grn_expr_code) * new_codes_size;
-    grn_expr_code *new_codes = (grn_expr_code *)GRN_REALLOC(e->codes, n_bytes);
+    grn_expr_code *new_codes = (grn_expr_code *)GRN_MALLOC(n_bytes);
     if (!new_codes) {
       ERR(GRN_NO_MEMORY_AVAILABLE, "stack is full");
       goto exit;
     }
+    grn_memcpy(new_codes, e->codes, sizeof(grn_expr_code) * e->codes_size);
+    if (e->code0 >= e->codes && e->code0 < e->codes + e->codes_size) {
+      e->code0 = new_codes + (e->code0 - e->codes);
+    }
+    for (i = 0; i < n_dfis; i++) {
+      if (dfis[i].code >= e->codes && dfis[i].code < e->codes + e->codes_size) {
+        dfis[i].code = new_codes + (dfis[i].code - e->codes);
+      }
+    }
+    GRN_FREE(e->codes);
     e->codes = new_codes;
     e->codes_size = new_codes_size;
   }
