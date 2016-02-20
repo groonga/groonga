@@ -423,20 +423,17 @@ property_name_and_value ::= property_name COLON assignment_expression. {
     grn_obj *buf;
     int added;
     if (grn_hash_add(ctx, (grn_hash *)efsi->hash_args,
-                     GRN_BULK_HEAD(property), GRN_BULK_VSIZE(property),
+                     GRN_TEXT_VALUE(property), GRN_TEXT_LEN(property),
                      (void **)&buf, &added)) {
       if (added) {
         GRN_OBJ_INIT(buf, value->header.type, 0, value->header.domain);
         GRN_TEXT_PUT(ctx, buf, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
       } else {
-        grn_obj inspected;
         grn_obj *obj;
-        GRN_TEXT_INIT(&inspected, 0);
-        grn_inspect(ctx, &inspected, property);
         ERR(GRN_INVALID_ARGUMENT,
-            "same property has already been specified: <%.*s>",
-            (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
-        GRN_OBJ_FIN(ctx, &inspected);
+            "duplicated property name: <%.*s>",
+            (int)GRN_TEXT_LEN(property),
+            GRN_TEXT_VALUE(property));
         GRN_HASH_EACH(ctx, efsi->hash_args, i, NULL, NULL, (void **)&obj, {
           GRN_OBJ_FIN(ctx, obj);
         });
@@ -444,14 +441,11 @@ property_name_and_value ::= property_name COLON assignment_expression. {
       }
       e->codes_curr -= 3;
     } else {
-      grn_obj inspected;
       grn_obj *obj;
-      GRN_TEXT_INIT(&inspected, 0);
-      grn_inspect(ctx, &inspected, value);
       ERR(GRN_NO_MEMORY_AVAILABLE,
-          "failed parse object literal arguments: <%.*s>",
-          (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
-      GRN_OBJ_FIN(ctx, &inspected);
+          "failed to add a property to object literal: <%.*s>",
+          (int)GRN_TEXT_LEN(property),
+          GRN_TEXT_VALUE(property));
       GRN_HASH_EACH(ctx, efsi->hash_args, i, NULL, NULL, (void **)&obj, {
         GRN_OBJ_FIN(ctx, obj);
       });
