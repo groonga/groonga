@@ -409,8 +409,7 @@ property_name_and_value ::= property_name COLON assignment_expression. {
 
   if (!efsi->hash_args) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
-        "couldn't create hash table for parsing object literal arguments: "
-        "<%.*s>",
+        "couldn't create hash table for parsing object literal: <%.*s>",
         (int)(efsi->str_end - efsi->str), efsi->str);
   } else {
     grn_obj *buf;
