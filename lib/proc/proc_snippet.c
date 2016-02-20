@@ -184,19 +184,26 @@ func_snippet_full(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
         grn_obj *value;
         if (hash->header.type != GRN_TABLE_HASH_KEY) {
           GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                           "snippet_full(): end argument must be object literal: <%.*s>",
-                           (int)GRN_TEXT_LEN(args[nargs - 1]), GRN_TEXT_VALUE(args[nargs - 1]));
+                           "snippet_full(): "
+                           "end argument must be object literal: <%.*s>",
+                           (int)GRN_TEXT_LEN(args[nargs - 1]),
+                           GRN_TEXT_VALUE(args[nargs - 1]));
           goto exit;
         }
         n_args_without_option--;
 
-        if (!(cursor = grn_hash_cursor_open(ctx, (grn_hash *)hash, NULL, 0, NULL, 0, 0, -1, 0))) {
+        cursor = grn_hash_cursor_open(ctx, (grn_hash *)hash,
+                                      NULL, 0, NULL, 0,
+                                      0, -1, 0);
+        if (!cursor) {
           GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
                            "snippet_full(): couldn't open cursor");
           goto exit;
         }
         while (grn_hash_cursor_next(ctx, cursor) != GRN_ID_NIL) {
-          grn_hash_cursor_get_key_value(ctx, cursor, &key, &key_size, (void **)&value);
+          grn_hash_cursor_get_key_value(ctx, cursor,
+                                        &key, &key_size,
+                                        (void **)&value);
           if (key_size == 5 && !memcmp(key, "width", 5)) {
             width = GRN_UINT32_VALUE(value);
           } else if (key_size == 13 && !memcmp(key, "max_n_results", 13)) {
@@ -278,7 +285,8 @@ func_snippet_full(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
           grn_obj_unlink(ctx, normalizer);
         }
         if (!default_open_tag_length && !default_close_tag_length) {
-          unsigned int n_keyword_sets = (n_args_without_option - N_REQUIRED_ARGS) / KEYWORD_SET_SIZE;
+          unsigned int n_keyword_sets =
+            (n_args_without_option - N_REQUIRED_ARGS) / KEYWORD_SET_SIZE;
           grn_obj **keyword_set_args = args + N_REQUIRED_ARGS;
           for (i = 0; i < n_keyword_sets; i++) {
             rc = grn_snip_add_cond(ctx, snip,
