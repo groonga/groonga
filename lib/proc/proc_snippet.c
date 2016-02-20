@@ -261,6 +261,13 @@ exit :
   return snippets;
 }
 
+void
+grn_proc_init_snippet(grn_ctx *ctx)
+{
+  grn_proc_create(ctx, "snippet", -1, GRN_PROC_FUNCTION,
+                  func_snippet, NULL, NULL, 0, NULL);
+}
+
 static grn_obj *
 func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
                   grn_user_data *user_data)
@@ -327,13 +334,6 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
   }
 
   return snippets;
-}
-
-void
-grn_proc_init_snippet(grn_ctx *ctx)
-{
-  grn_proc_create(ctx, "snippet", -1, GRN_PROC_FUNCTION,
-                  func_snippet, NULL, NULL, 0, NULL);
 }
 
 void
