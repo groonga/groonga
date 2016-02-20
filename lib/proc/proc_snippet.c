@@ -78,74 +78,6 @@ snippet_exec(grn_ctx *ctx, grn_obj *snip, grn_obj *text,
 }
 
 static grn_obj *
-func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
-                  grn_user_data *user_data)
-{
-  grn_obj *snippets = NULL;
-
-  /* TODO: support parameters */
-  if (nargs == 1) {
-    grn_obj *text = args[0];
-    grn_obj *expression = NULL;
-    grn_obj *condition_ptr = NULL;
-    grn_obj *condition = NULL;
-    grn_obj *snip = NULL;
-    int flags = GRN_SNIP_SKIP_LEADING_SPACES;
-    unsigned int width = 200;
-    unsigned int max_n_results = 3;
-    const char *open_tag = "<span class=\"keyword\">";
-    const char *close_tag = "</span>";
-    grn_snip_mapping *mapping = GRN_SNIP_MAPPING_HTML_ESCAPE;
-
-    grn_proc_get_info(ctx, user_data, NULL, NULL, &expression);
-    condition_ptr = grn_expr_get_var(ctx, expression,
-                                     GRN_SELECT_INTERNAL_VAR_CONDITION,
-                                     strlen(GRN_SELECT_INTERNAL_VAR_CONDITION));
-    if (condition_ptr) {
-      condition = GRN_PTR_VALUE(condition_ptr);
-    }
-
-    if (condition) {
-      grn_obj *snip_ptr;
-      snip_ptr = grn_expr_get_var(ctx, expression,
-                                  GRN_FUNC_SNIPPET_HTML_CACHE_NAME,
-                                  strlen(GRN_FUNC_SNIPPET_HTML_CACHE_NAME));
-      if (snip_ptr) {
-        snip = GRN_PTR_VALUE(snip_ptr);
-      } else {
-        snip_ptr =
-          grn_expr_get_or_add_var(ctx, expression,
-                                  GRN_FUNC_SNIPPET_HTML_CACHE_NAME,
-                                  strlen(GRN_FUNC_SNIPPET_HTML_CACHE_NAME));
-        GRN_OBJ_FIN(ctx, snip_ptr);
-        GRN_PTR_INIT(snip_ptr, GRN_OBJ_OWN, GRN_DB_OBJECT);
-
-        snip = grn_snip_open(ctx, flags, width, max_n_results,
-                             open_tag, strlen(open_tag),
-                             close_tag, strlen(close_tag),
-                             mapping);
-        if (snip) {
-          grn_snip_set_normalizer(ctx, snip, GRN_NORMALIZER_AUTO);
-          grn_expr_snip_add_conditions(ctx, condition, snip,
-                                       0, NULL, NULL, NULL, NULL);
-          GRN_PTR_SET(ctx, snip_ptr, snip);
-        }
-      }
-    }
-
-    if (snip) {
-      snippets = snippet_exec(ctx, snip, text, user_data, NULL, 0, NULL, 0);
-    }
-  }
-
-  if (!snippets) {
-    snippets = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_VOID, 0);
-  }
-
-  return snippets;
-}
-
-static grn_obj *
 func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *snippets = NULL;
@@ -329,6 +261,73 @@ exit :
   return snippets;
 }
 
+static grn_obj *
+func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
+                  grn_user_data *user_data)
+{
+  grn_obj *snippets = NULL;
+
+  /* TODO: support parameters */
+  if (nargs == 1) {
+    grn_obj *text = args[0];
+    grn_obj *expression = NULL;
+    grn_obj *condition_ptr = NULL;
+    grn_obj *condition = NULL;
+    grn_obj *snip = NULL;
+    int flags = GRN_SNIP_SKIP_LEADING_SPACES;
+    unsigned int width = 200;
+    unsigned int max_n_results = 3;
+    const char *open_tag = "<span class=\"keyword\">";
+    const char *close_tag = "</span>";
+    grn_snip_mapping *mapping = GRN_SNIP_MAPPING_HTML_ESCAPE;
+
+    grn_proc_get_info(ctx, user_data, NULL, NULL, &expression);
+    condition_ptr = grn_expr_get_var(ctx, expression,
+                                     GRN_SELECT_INTERNAL_VAR_CONDITION,
+                                     strlen(GRN_SELECT_INTERNAL_VAR_CONDITION));
+    if (condition_ptr) {
+      condition = GRN_PTR_VALUE(condition_ptr);
+    }
+
+    if (condition) {
+      grn_obj *snip_ptr;
+      snip_ptr = grn_expr_get_var(ctx, expression,
+                                  GRN_FUNC_SNIPPET_HTML_CACHE_NAME,
+                                  strlen(GRN_FUNC_SNIPPET_HTML_CACHE_NAME));
+      if (snip_ptr) {
+        snip = GRN_PTR_VALUE(snip_ptr);
+      } else {
+        snip_ptr =
+          grn_expr_get_or_add_var(ctx, expression,
+                                  GRN_FUNC_SNIPPET_HTML_CACHE_NAME,
+                                  strlen(GRN_FUNC_SNIPPET_HTML_CACHE_NAME));
+        GRN_OBJ_FIN(ctx, snip_ptr);
+        GRN_PTR_INIT(snip_ptr, GRN_OBJ_OWN, GRN_DB_OBJECT);
+
+        snip = grn_snip_open(ctx, flags, width, max_n_results,
+                             open_tag, strlen(open_tag),
+                             close_tag, strlen(close_tag),
+                             mapping);
+        if (snip) {
+          grn_snip_set_normalizer(ctx, snip, GRN_NORMALIZER_AUTO);
+          grn_expr_snip_add_conditions(ctx, condition, snip,
+                                       0, NULL, NULL, NULL, NULL);
+          GRN_PTR_SET(ctx, snip_ptr, snip);
+        }
+      }
+    }
+
+    if (snip) {
+      snippets = snippet_exec(ctx, snip, text, user_data, NULL, 0, NULL, 0);
+    }
+  }
+
+  if (!snippets) {
+    snippets = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_VOID, 0);
+  }
+
+  return snippets;
+}
 
 void
 grn_proc_init_snippet(grn_ctx *ctx)
