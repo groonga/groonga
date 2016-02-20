@@ -275,7 +275,7 @@ unary_expression ::= INCR unary_expression. {
   grn_expr_dfi_put(ctx, e, dfi_->type, dfi_->domain, dfi_->code);
   if (const_p) {
     ERR(GRN_SYNTAX_ERROR,
-        "constant can't be incremented (%.*s)",
+        "constant can't be incremented: <%.*s>",
         (int)(efsi->str_end - efsi->str), efsi->str);
   } else {
     grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_INCR, 1);
@@ -292,7 +292,7 @@ unary_expression ::= DECR unary_expression. {
   grn_expr_dfi_put(ctx, e, dfi_->type, dfi_->domain, dfi_->code);
   if (const_p) {
     ERR(GRN_SYNTAX_ERROR,
-        "constant can't be decremented (%.*s)",
+        "constant can't be decremented: <%.*s>",
         (int)(efsi->str_end - efsi->str), efsi->str);
   } else {
     grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DECR, 1);
@@ -335,7 +335,7 @@ postfix_expression ::= lefthand_side_expression INCR. {
   grn_expr_dfi_put(ctx, e, dfi_->type, dfi_->domain, dfi_->code);
   if (const_p) {
     ERR(GRN_SYNTAX_ERROR,
-        "constant can't be incremented (%.*s)",
+        "constant can't be incremented: <%.*s>",
         (int)(efsi->str_end - efsi->str), efsi->str);
   } else {
     grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_INCR_POST, 1);
@@ -352,7 +352,7 @@ postfix_expression ::= lefthand_side_expression DECR. {
   grn_expr_dfi_put(ctx, e, dfi_->type, dfi_->domain, dfi_->code);
   if (const_p) {
     ERR(GRN_SYNTAX_ERROR,
-        "constant can't be decremented (%.*s)",
+        "constant can't be decremented: <%.*s>",
         (int)(efsi->str_end - efsi->str), efsi->str);
   } else {
     grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DECR_POST, 1);
@@ -416,7 +416,8 @@ property_name_and_value ::= property_name COLON assignment_expression. {
 
   if (!efsi->hash_args) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
-        "couldn't create hash table for parsing object literal arguments (%.*s)",
+        "couldn't create hash table for parsing object literal arguments: "
+        "<%.*s>",
         (int)(efsi->str_end - efsi->str), efsi->str);
   } else {
     grn_obj *buf;
@@ -433,8 +434,8 @@ property_name_and_value ::= property_name COLON assignment_expression. {
         GRN_TEXT_INIT(&inspected, 0);
         grn_inspect(ctx, &inspected, property);
         ERR(GRN_INVALID_ARGUMENT,
-          "same property has already been specified (%.*s)",
-          (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+            "same property has already been specified: <%.*s>",
+            (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
         GRN_OBJ_FIN(ctx, &inspected);
         GRN_HASH_EACH(ctx, efsi->hash_args, i, NULL, NULL, (void **)&obj, {
           GRN_OBJ_FIN(ctx, obj);
@@ -448,7 +449,7 @@ property_name_and_value ::= property_name COLON assignment_expression. {
       GRN_TEXT_INIT(&inspected, 0);
       grn_inspect(ctx, &inspected, value);
       ERR(GRN_NO_MEMORY_AVAILABLE,
-          "failed parse object literal arguments (%.*s)",
+          "failed parse object literal arguments: <%.*s>",
           (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
       GRN_OBJ_FIN(ctx, &inspected);
       GRN_HASH_EACH(ctx, efsi->hash_args, i, NULL, NULL, (void **)&obj, {
