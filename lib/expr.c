@@ -6331,7 +6331,7 @@ typedef struct {
   int weight_offset;
   grn_hash *weight_set;
   snip_cond *snip_conds;
-  grn_hash *hash_args;
+  grn_hash *object_literal;
 } efs_info;
 
 typedef struct {
@@ -7546,7 +7546,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     efsi.weight_offset = 0;
     efsi.opt.weight_vector = NULL;
     efsi.weight_set = NULL;
-    efsi.hash_args = NULL;
+    efsi.object_literal = NULL;
 
     if (flags & (GRN_EXPR_SYNTAX_SCRIPT |
                  GRN_EXPR_SYNTAX_OUTPUT_COLUMNS |
@@ -7584,12 +7584,12 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     GRN_OBJ_FIN(ctx, &efsi.column_stack);
     GRN_OBJ_FIN(ctx, &efsi.token_stack);
     GRN_OBJ_FIN(ctx, &efsi.buf);
-    if (efsi.hash_args) {
+    if (efsi.object_literal) {
       grn_obj *value;
-      GRN_HASH_EACH(ctx, efsi.hash_args, i, NULL, NULL, (void **)&value, {
+      GRN_HASH_EACH(ctx, efsi.object_literal, i, NULL, NULL, (void **)&value, {
         GRN_OBJ_FIN(ctx, value);
       });
-      grn_hash_close(ctx, efsi.hash_args);
+      grn_hash_close(ctx, efsi.object_literal);
     }
   } else {
     ERR(GRN_INVALID_ARGUMENT, "variable is not defined correctly");
