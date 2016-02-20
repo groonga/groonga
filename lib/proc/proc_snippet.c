@@ -179,8 +179,9 @@ func_snippet_full(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
       hash = GRN_PTR_VALUE(end_arg);
       if (hash) {
         grn_hash_cursor *cursor;
-        void *key, *value;
+        void *key;
         int key_size;
+        grn_obj *value;
         if (hash->header.type != GRN_TABLE_HASH_KEY) {
           GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
                            "snippet_full(): end argument must be object literal: <%.*s>",
@@ -195,32 +196,34 @@ func_snippet_full(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
           goto exit;
         }
         while (grn_hash_cursor_next(ctx, cursor) != GRN_ID_NIL) {
-          grn_hash_cursor_get_key_value(ctx, cursor, &key, &key_size, &value);
+          grn_hash_cursor_get_key_value(ctx, cursor, &key, &key_size, (void **)&value);
           if (key_size == 5 && !memcmp(key, "width", 5)) {
-            width = *(unsigned int *)value;
+            width = GRN_UINT32_VALUE(value);
           } else if (key_size == 13 && !memcmp(key, "max_n_results", 13)) {
-            max_n_results = *(unsigned int *)value;
+            max_n_results = GRN_UINT32_VALUE(value);
           } else if (key_size == 19 && !memcmp(key, "skip_leading_spaces", 19)) {
-            if (!*(grn_bool *)value) {
+            if (GRN_BOOL_VALUE(value) == GRN_FALSE) {
               flags &= ~GRN_SNIP_SKIP_LEADING_SPACES;
             }
           } else if (key_size == 11 && !memcmp(key, "html_escape", 11)) {
-            mapping = GRN_SNIP_MAPPING_HTML_ESCAPE;
+            if (GRN_BOOL_VALUE(value)) {
+              mapping = GRN_SNIP_MAPPING_HTML_ESCAPE;
+            }
           } else if (key_size == 6 && !memcmp(key, "prefix", 6)) {
-            prefix = (const char *)value;
-            prefix_length = strlen(prefix);
+            prefix = GRN_TEXT_VALUE(value);
+            prefix_length = GRN_TEXT_LEN(value);
           } else if (key_size == 6 && !memcmp(key, "suffix", 6)) {
-            suffix = (const char *)value;
-            suffix_length = strlen(suffix);
+            suffix = GRN_TEXT_VALUE(value);
+            suffix_length = GRN_TEXT_LEN(value);
           } else if (key_size == 10 && !memcmp(key, "normalizer", 10)) {
-            normalizer_name = (const char *)value;
-            normalizer_name_length = strlen(normalizer_name);
+            normalizer_name = GRN_TEXT_VALUE(value);
+            normalizer_name_length = GRN_TEXT_LEN(value);
           } else if (key_size == 16 && !memcmp(key, "default_open_tag", 16)) {
-            default_open_tag = (const char *)value;
-            default_open_tag_length = strlen(default_open_tag);
+            default_open_tag = GRN_TEXT_VALUE(value);
+            default_open_tag_length = GRN_TEXT_LEN(value);
           } else if (key_size == 17 && !memcmp(key, "default_close_tag", 17)) {
-            default_close_tag = (const char *)value;
-            default_close_tag_length = strlen(default_close_tag);
+            default_close_tag = GRN_TEXT_VALUE(value);
+            default_close_tag_length = GRN_TEXT_LEN(value);
           } else {
             GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT, "invalid option name: %.*s",
                              key_size, (char *)key);
