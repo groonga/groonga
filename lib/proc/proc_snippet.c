@@ -267,7 +267,7 @@ func_snippet_full(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
         unsigned int i;
         if (!normalizer_name) {
           grn_snip_set_normalizer(ctx, snip, GRN_NORMALIZER_AUTO);
-        } else if (normalizer_name_length) {
+        } else if (normalizer_name_length > 0) {
           grn_obj *normalizer;
           normalizer = grn_ctx_get(ctx, normalizer_name, normalizer_name_length);
           if (!grn_obj_is_normalizer_proc(ctx, normalizer)) {
@@ -285,7 +285,7 @@ func_snippet_full(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
           grn_snip_set_normalizer(ctx, snip, normalizer);
           grn_obj_unlink(ctx, normalizer);
         }
-        if (!default_open_tag_length && !default_close_tag_length) {
+        if (default_open_tag_length == 0 && default_close_tag_length == 0) {
           unsigned int n_keyword_sets =
             (n_args_without_option - N_REQUIRED_ARGS) / KEYWORD_SET_SIZE;
           grn_obj **keyword_set_args = args + N_REQUIRED_ARGS;
