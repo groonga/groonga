@@ -395,6 +395,7 @@ object_literal ::= BRACEL property_name_and_value_list BRACER. {
   grn_expr *e = (grn_expr *)(efsi->e);
   grn_expr_append_const_ptr(ctx, (grn_obj *)e, (grn_obj *)efsi->hash_args,
                             GRN_OP_PUSH, 1);
+  efsi->hash_args = NULL;
 }
 
 property_name_and_value_list ::= .
