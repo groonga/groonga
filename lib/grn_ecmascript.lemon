@@ -420,13 +420,13 @@ property_name_and_value ::= property_name COLON assignment_expression. {
       if (added) {
         GRN_OBJ_INIT(buf, value->header.type, 0, value->header.domain);
         GRN_TEXT_PUT(ctx, buf, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
+        e->codes_curr -= 3;
       } else {
         ERR(GRN_INVALID_ARGUMENT,
             "duplicated property name: <%.*s>",
             (int)GRN_TEXT_LEN(property),
             GRN_TEXT_VALUE(property));
       }
-      e->codes_curr -= 3;
     } else {
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "failed to add a property to object literal: <%.*s>",
