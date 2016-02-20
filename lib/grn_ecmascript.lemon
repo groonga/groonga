@@ -458,9 +458,7 @@ property_name_and_value ::= property_name COLON assignment_expression. {
   }
 }
 
-property_name ::= IDENTIFIER.
 property_name ::= STRING.
-property_name ::= DECIMAL.
 
 member_expression_part ::= BRACKETL expression BRACKETR. {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_GET_MEMBER, 2);
