@@ -265,9 +265,9 @@ func_snippet_full(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
       if (snip) {
         grn_rc rc;
         unsigned int i;
-        if (!normalizer_name_length) {
+        if (!normalizer_name) {
           grn_snip_set_normalizer(ctx, snip, GRN_NORMALIZER_AUTO);
-        } else {
+        } else if (normalizer_name_length) {
           grn_obj *normalizer;
           normalizer = grn_ctx_get(ctx, normalizer_name, normalizer_name_length);
           if (!grn_obj_is_normalizer_proc(ctx, normalizer)) {
