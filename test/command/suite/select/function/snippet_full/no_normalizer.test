@@ -1,0 +1,15 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries content COLUMN_SCALAR ShortText
+
+load --table Entries
+[
+{"content": "MySQL is a kind of sql database server"}
+]
+
+select Entries \
+  --output_columns ' \
+  snippet_full(content, \
+  "sql", "<span class=\\"keyword\\">", "</span>", \
+  {"normalizer": ""} \
+  )' \
+  --command_version 2
