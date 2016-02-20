@@ -15,7 +15,7 @@ select Entries --output_columns   'highlight_full(body, "TokenBigram", true,   "
       0.0,
       0.0
     ],
-    "[highlight_full] not normalizer: #<proc:tokenizer TokenBigram arguments:[$1, $2, $3]>"
+    "highlight_full() not normalizer: <#<proc:tokenizer TokenBigram arguments:[$1, $2, $3]>>"
   ],
   [
     [
@@ -29,9 +29,9 @@ select Entries --output_columns   'highlight_full(body, "TokenBigram", true,   "
         ]
       ],
       [
-        "[highlight_full] not normalizer: #<proc:tokenizer TokenBigram arguments:[$1, $2, $3]>"
+        "highlight_full() not normalizer: <#<proc:tokenizer TokenBigram arguments:[$1, $2, $3]>>"
       ]
     ]
   ]
 ]
-#|e| [highlight_full] not normalizer: #<proc:tokenizer TokenBigram arguments:[$1, $2, $3]>
+#|e| highlight_full() not normalizer: <#<proc:tokenizer TokenBigram arguments:[$1, $2, $3]>>

@@ -89,58 +89,66 @@ grn_pat_tag_keys(grn_ctx *ctx, grn_obj *keywords,
 }
 
 static grn_obj *
-func_highlight_full(grn_ctx *ctx, int nargs, grn_obj **args,
-                    grn_user_data *user_data)
+func_highlight_create_keywords_table(grn_ctx *ctx,
+                                     grn_user_data *user_data,
+                                     const char *normalizer_name,
+                                     unsigned int normalizer_name_length)
+{
+  grn_obj *keywords;
+
+  keywords = grn_table_create(ctx, NULL, 0, NULL,
+                              GRN_OBJ_TABLE_PAT_KEY,
+                              grn_ctx_at(ctx, GRN_DB_SHORT_TEXT),
+                              NULL);
+
+  if (normalizer_name_length > 0) {
+    grn_obj *normalizer;
+    normalizer = grn_ctx_get(ctx,
+                             normalizer_name,
+                             normalizer_name_length);
+    if (!grn_obj_is_normalizer_proc(ctx, normalizer)) {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, normalizer);
+      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                       "highlight_full() not normalizer: <%.*s>",
+                       (int)GRN_TEXT_LEN(&inspected),
+                       GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      grn_obj_unlink(ctx, normalizer);
+      grn_obj_unlink(ctx, keywords);
+      return NULL;
+    }
+    grn_obj_set_info(ctx, keywords, GRN_INFO_NORMALIZER, normalizer);
+    grn_obj_unlink(ctx, normalizer);
+  }
+
+  return keywords;
+}
+
+static grn_obj *
+highlight_keyword_sets(grn_ctx *ctx, grn_user_data *user_data,
+                       grn_obj **keyword_set_args, unsigned int n_keyword_args,
+                       grn_obj *string, grn_obj *keywords,
+                       grn_bool use_html_escape)
 {
   grn_obj *highlighted = NULL;
-
-#define N_REQUIRED_ARGS 3
 #define KEYWORD_SET_SIZE 3
-  if ((nargs >= (N_REQUIRED_ARGS + KEYWORD_SET_SIZE) &&
-      (nargs - N_REQUIRED_ARGS) % KEYWORD_SET_SIZE == 0)) {
-    grn_obj *string = args[0];
-    grn_obj *normalizer_name = args[1];
-    grn_obj *use_html_escape = args[2];
-    grn_obj **keyword_set_args = args + N_REQUIRED_ARGS;
-    unsigned int n_keyword_sets = (nargs - N_REQUIRED_ARGS) / KEYWORD_SET_SIZE;
+  {
     unsigned int i;
+    unsigned int n_keyword_sets;
     grn_obj open_tags;
     grn_obj open_tag_lengths;
     grn_obj close_tags;
     grn_obj close_tag_lengths;
-    grn_obj *keywords;
 
-    keywords = grn_table_create(ctx, NULL, 0, NULL,
-                                GRN_OBJ_TABLE_PAT_KEY,
-                                grn_ctx_at(ctx, GRN_DB_SHORT_TEXT),
-                                NULL);
-
-    if (GRN_TEXT_LEN(normalizer_name)) {
-      grn_obj *normalizer;
-      normalizer = grn_ctx_get(ctx,
-                               GRN_TEXT_VALUE(normalizer_name),
-                               GRN_TEXT_LEN(normalizer_name));
-      if (!grn_obj_is_normalizer_proc(ctx, normalizer)) {
-        grn_obj inspected;
-        GRN_TEXT_INIT(&inspected, 0);
-        grn_inspect(ctx, &inspected, normalizer);
-        GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-            "highlight_full(): not normalizer: <%.*s>",
-            (int)GRN_TEXT_LEN(&inspected),
-            GRN_TEXT_VALUE(&inspected));
-        GRN_OBJ_FIN(ctx, &inspected);
-        grn_obj_unlink(ctx, normalizer);
-        grn_obj_unlink(ctx, keywords);
-        return NULL;
-      }
-      grn_obj_set_info(ctx, keywords, GRN_INFO_NORMALIZER, normalizer);
-      grn_obj_unlink(ctx, normalizer);
-    }
+    n_keyword_sets = n_keyword_args / KEYWORD_SET_SIZE;
 
     GRN_OBJ_INIT(&open_tags, GRN_BULK, 0, GRN_DB_VOID);
     GRN_OBJ_INIT(&open_tag_lengths, GRN_BULK, 0, GRN_DB_VOID);
     GRN_OBJ_INIT(&close_tags, GRN_BULK, 0, GRN_DB_VOID);
     GRN_OBJ_INIT(&close_tag_lengths, GRN_BULK, 0, GRN_DB_VOID);
+
     for (i = 0; i < n_keyword_sets; i++) {
       grn_obj *keyword   = keyword_set_args[i * KEYWORD_SET_SIZE + 0];
       grn_obj *open_tag  = keyword_set_args[i * KEYWORD_SET_SIZE + 1];
@@ -150,7 +158,6 @@ func_highlight_full(grn_ctx *ctx, int nargs, grn_obj **args,
                     GRN_TEXT_VALUE(keyword),
                     GRN_TEXT_LEN(keyword),
                     NULL);
-
       {
         const char *open_tag_content = GRN_TEXT_VALUE(open_tag);
         grn_bulk_write(ctx, &open_tags,
@@ -186,20 +193,82 @@ func_highlight_full(grn_ctx *ctx, int nargs, grn_obj **args,
                      (unsigned int *)GRN_BULK_HEAD(&close_tag_lengths),
                      n_keyword_sets,
                      highlighted,
-                     GRN_BOOL_VALUE(use_html_escape));
-
-    grn_obj_unlink(ctx, keywords);
+                     use_html_escape);
     grn_obj_unlink(ctx, &open_tags);
     grn_obj_unlink(ctx, &open_tag_lengths);
     grn_obj_unlink(ctx, &close_tags);
     grn_obj_unlink(ctx, &close_tag_lengths);
   }
-#undef N_REQUIRED_ARGS
 #undef KEYWORD_SET_SIZE
+  return highlighted;
+}
+
+static grn_obj *
+highlight_keywords(grn_ctx *ctx, grn_user_data *user_data,
+                   grn_obj *string, grn_obj *keywords, grn_bool use_html_escape,
+                   const char *default_open_tag, unsigned int default_open_tag_length,
+                   const char *default_close_tag, unsigned int default_close_tag_length)
+{
+  grn_obj *highlighted = NULL;
+  const char *open_tags[1];
+  unsigned int open_tag_lengths[1];
+  const char *close_tags[1];
+  unsigned int close_tag_lengths[1];
+  unsigned int n_keyword_sets = 1;
+
+  open_tags[0] = default_open_tag;
+  open_tag_lengths[0] = default_open_tag_length;
+  close_tags[0] = default_close_tag;
+  close_tag_lengths[0] = default_close_tag_length;
+
+  highlighted = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_TEXT, 0);
+  grn_pat_tag_keys(ctx, keywords,
+                   GRN_TEXT_VALUE(string), GRN_TEXT_LEN(string),
+                   open_tags,
+                   open_tag_lengths,
+                   close_tags,
+                   close_tag_lengths,
+                   n_keyword_sets,
+                   highlighted,
+                   use_html_escape);
+
+  return highlighted;
+}
+
+static grn_obj *
+func_highlight_full(grn_ctx *ctx, int nargs, grn_obj **args,
+                    grn_user_data *user_data)
+{
+  grn_obj *highlighted = NULL;
+
+#define N_REQUIRED_ARGS 3
+#define KEYWORD_SET_SIZE 3
+  if ((nargs >= (N_REQUIRED_ARGS + KEYWORD_SET_SIZE) &&
+      (nargs - N_REQUIRED_ARGS) % KEYWORD_SET_SIZE == 0)) {
+    grn_obj *string = args[0];
+    grn_obj *keywords;
+    const char *normalizer_name = GRN_TEXT_VALUE(args[1]);
+    unsigned int normalizer_name_length = GRN_TEXT_LEN(args[1]);
+    grn_bool use_html_escape = GRN_BOOL_VALUE(args[2]);
+
+    keywords =
+      func_highlight_create_keywords_table(ctx, user_data,
+                                           normalizer_name,
+                                           normalizer_name_length);
+    if (keywords) {
+      highlighted = highlight_keyword_sets(ctx, user_data,
+                                           args + N_REQUIRED_ARGS,
+                                           nargs - N_REQUIRED_ARGS,
+                                           string, keywords,
+                                           use_html_escape);
+    }
+  }
 
   if (!highlighted) {
     highlighted = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_VOID, 0);
   }
+#undef KEYWORD_SET_SIZE
+#undef N_REQUIRED_ARGS
 
   return highlighted;
 }
@@ -271,11 +340,6 @@ func_highlight_html(grn_ctx *ctx, int nargs, grn_obj **args,
     grn_obj *keywords;
     grn_obj *keywords_ptr;
     grn_bool use_html_escape = GRN_TRUE;
-    unsigned int n_keyword_sets = 1;
-    const char *open_tags[1];
-    unsigned int open_tag_lengths[1];
-    const char *close_tags[1];
-    unsigned int close_tag_lengths[1];
 
     grn_proc_get_info(ctx, user_data, NULL, NULL, &expression);
 
@@ -296,23 +360,12 @@ func_highlight_html(grn_ctx *ctx, int nargs, grn_obj **args,
       GRN_PTR_SET(ctx, keywords_ptr, keywords);
     }
 
-    open_tags[0] = "<span class=\"keyword\">";
-    open_tag_lengths[0] = strlen("<span class=\"keyword\">");
-    close_tags[0]  = "</span>";
-    close_tag_lengths[0] = strlen("</span>");
-
-    highlighted = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_TEXT, 0);
-
-    grn_pat_tag_keys(ctx, keywords,
-                     GRN_TEXT_VALUE(string), GRN_TEXT_LEN(string),
-                     open_tags,
-                     open_tag_lengths,
-                     close_tags,
-                     close_tag_lengths,
-                     n_keyword_sets,
-                     highlighted,
-                     use_html_escape);
-
+    highlighted = highlight_keywords(ctx, user_data,
+                                     string, keywords, use_html_escape,
+                                     "<span class=\"keyword\">",
+                                     strlen("<span class=\"keyword\">"),
+                                     "</span>",
+                                     strlen("</span>"));
   }
 #undef N_REQUIRED_ARGS
 
