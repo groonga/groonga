@@ -1,3 +1,4 @@
+# TODO: cache isn't implemented yet.
 table_create Entries TABLE_NO_KEY
 column_create Entries content COLUMN_SCALAR ShortText
 
