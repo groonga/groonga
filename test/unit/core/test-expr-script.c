@@ -1348,16 +1348,16 @@ data_arithmetic_operator_syntax_error(void)
                  NULL)
 
   ADD_DATUM("++constant",
-            cut_take_printf("constant can't be incremented (++8 <= 9)"),
+            cut_take_printf("constant can't be incremented: <++8 <= 9>"),
             "++8 <= 9");
   ADD_DATUM("--constant",
-            cut_take_printf("constant can't be decremented (--10 <= 9)"),
+            cut_take_printf("constant can't be decremented: <--10 <= 9>"),
             "--10 <= 9");
   ADD_DATUM("constant++",
-            cut_take_printf("constant can't be incremented (8++ <= 9)"),
+            cut_take_printf("constant can't be incremented: <8++ <= 9>"),
             "8++ <= 9");
   ADD_DATUM("constant--",
-            cut_take_printf("constant can't be decremented (10-- <= 9)"),
+            cut_take_printf("constant can't be decremented: <10-- <= 9>"),
             "10-- <= 9");
 
 #undef ADD_DATUM
