@@ -275,7 +275,7 @@ func_snippet_full(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
             GRN_TEXT_INIT(&inspected, 0);
             grn_inspect(ctx, &inspected, normalizer);
             GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                "[snippet_full] not normalizer: <%.*s>",
+                "snippet_full(): not normalizer: <%.*s>",
                 (int)GRN_TEXT_LEN(&inspected),
                 GRN_TEXT_VALUE(&inspected));
                 GRN_OBJ_FIN(ctx, &inspected);
