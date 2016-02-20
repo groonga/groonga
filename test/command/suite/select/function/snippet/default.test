@@ -8,8 +8,7 @@ load --table Entries
 
 select Entries \
   --output_columns ' \
-  snippet_full(content, \
-  "Groonga", "MySQL", \
-  {"default_open_tag": "<span>", "default_close_tag": "</span>"} \
+  snippet(content, \
+  "Groonga", "<span class=\\"keyword\\">", "</span>" \
   )' \
   --command_version 2

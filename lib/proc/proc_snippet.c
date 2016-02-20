@@ -19,8 +19,8 @@
 #include <groonga/plugin.h>
 #include <string.h>
 
-#define GRN_FUNC_SNIPPET_HTML_CACHE_NAME      "$snippet_html"
-#define GRN_FUNC_SNIPPET_FULL_CACHE_NAME      "$snippet_full"
+#define GRN_FUNC_SNIPPET_CACHE_NAME      "$snippet"
+#define GRN_FUNC_SNIPPET_HTML_CACHE_NAME "$snippet_html"
 
 static grn_obj *
 snippet_exec(grn_ctx *ctx, grn_obj *snip, grn_obj *text,
@@ -146,7 +146,7 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
 }
 
 static grn_obj *
-func_snippet_full(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *snippets = NULL;
 
@@ -184,7 +184,7 @@ func_snippet_full(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
         grn_obj *value;
         if (hash->header.type != GRN_TABLE_HASH_KEY) {
           GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                           "snippet_full(): "
+                           "snippet(): "
                            "end argument must be object literal: <%.*s>",
                            (int)GRN_TEXT_LEN(args[nargs - 1]),
                            GRN_TEXT_VALUE(args[nargs - 1]));
@@ -197,7 +197,7 @@ func_snippet_full(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
                                       0, -1, 0);
         if (!cursor) {
           GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
-                           "snippet_full(): couldn't open cursor");
+                           "snippet(): couldn't open cursor");
           goto exit;
         }
         while (grn_hash_cursor_next(ctx, cursor) != GRN_ID_NIL) {
@@ -246,15 +246,15 @@ func_snippet_full(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
     grn_proc_get_info(ctx, user_data, NULL, NULL, &expression);
 
     snip_ptr = grn_expr_get_var(ctx, expression,
-                                GRN_FUNC_SNIPPET_FULL_CACHE_NAME,
-                                strlen(GRN_FUNC_SNIPPET_FULL_CACHE_NAME));
+                                GRN_FUNC_SNIPPET_CACHE_NAME,
+                                strlen(GRN_FUNC_SNIPPET_CACHE_NAME));
     if (snip_ptr) {
       snip = GRN_PTR_VALUE(snip_ptr);
     } else {
       snip_ptr =
         grn_expr_get_or_add_var(ctx, expression,
-                                GRN_FUNC_SNIPPET_FULL_CACHE_NAME,
-                                strlen(GRN_FUNC_SNIPPET_FULL_CACHE_NAME));
+                                GRN_FUNC_SNIPPET_CACHE_NAME,
+                                strlen(GRN_FUNC_SNIPPET_CACHE_NAME));
       GRN_OBJ_FIN(ctx, snip_ptr);
       GRN_PTR_INIT(snip_ptr, GRN_OBJ_OWN, GRN_DB_OBJECT);
 
@@ -275,7 +275,7 @@ func_snippet_full(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
             GRN_TEXT_INIT(&inspected, 0);
             grn_inspect(ctx, &inspected, normalizer);
             GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                "snippet_full(): not normalizer: <%.*s>",
+                "snippet(): not normalizer: <%.*s>",
                 (int)GRN_TEXT_LEN(&inspected),
                 GRN_TEXT_VALUE(&inspected));
                 GRN_OBJ_FIN(ctx, &inspected);
@@ -331,10 +331,10 @@ exit :
 
 
 void
-grn_proc_init_snippet_full(grn_ctx *ctx)
+grn_proc_init_snippet(grn_ctx *ctx)
 {
-  grn_proc_create(ctx, "snippet_full", -1, GRN_PROC_FUNCTION,
-                  func_snippet_full, NULL, NULL, 0, NULL);
+  grn_proc_create(ctx, "snippet", -1, GRN_PROC_FUNCTION,
+                  func_snippet, NULL, NULL, 0, NULL);
 }
 
 void

@@ -4,10 +4,10 @@ column_create Entries content COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
 load --table Entries
 [
-{"content": "groonga and MySQL and PosrgreSQL"}
+{"content": "MySQL is a kind of sql database server"}
 ]
 [[0,0.0,0.0],1]
-select Entries   --output_columns '   snippet_full(content,   "SQL", "<span class=\\"w1\\">", "</span>",   {"prefix": "..."}   )'   --command_version 2
+select Entries   --output_columns '   snippet(content,   "sql", "<span class=\\"keyword\\">", "</span>",   {"normalizer": ""}   )'   --command_version 2
 [
   [
     0,
@@ -21,13 +21,13 @@ select Entries   --output_columns '   snippet_full(content,   "SQL", "<span clas
       ],
       [
         [
-          "snippet_full",
+          "snippet",
           "null"
         ]
       ],
       [
         [
-          "...groonga and My<span class=\"w1\">SQL</span> and Posrgre<span class=\"w1\">SQL</span>"
+          "MySQL is a kind of <span class=\"keyword\">sql</span> database server"
         ]
       ]
     ]

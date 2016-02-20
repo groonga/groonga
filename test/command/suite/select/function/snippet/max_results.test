@@ -8,9 +8,8 @@ load --table Entries
 
 select Entries \
   --output_columns ' \
-  snippet_full(content, \
-  "SQL", "<span class=\\"keyword1\\">", "</span>", \
-  "groonga", "<span class=\\"keyword2\\">", "</span>", \
-  {"prefix": "..."} \
+  snippet(content, \
+  "SQL", "<span class=\\"keyword\\">", "</span>", \
+  {"width": 10, "max_n_results": 2} \
   )' \
   --command_version 2

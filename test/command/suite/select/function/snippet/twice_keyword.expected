@@ -7,7 +7,7 @@ load --table Entries
 {"content": "groonga and MySQL and PosrgreSQL"}
 ]
 [[0,0.0,0.0],1]
-select Entries   --output_columns '   snippet_full(content,   "sql", "<span class=\\"keyword\\">", "</span>",   {"normalizer": "NormalizerAuto"}   )'   --command_version 2
+select Entries   --output_columns '   snippet(content,   "SQL", "<span class=\\"keyword1\\">", "</span>",   "groonga", "<span class=\\"keyword2\\">", "</span>",   {"prefix": "..."}   )'   --command_version 2
 [
   [
     0,
@@ -21,13 +21,13 @@ select Entries   --output_columns '   snippet_full(content,   "sql", "<span clas
       ],
       [
         [
-          "snippet_full",
+          "snippet",
           "null"
         ]
       ],
       [
         [
-          "groonga and My<span class=\"keyword\">SQL</span> and Posrgre<span class=\"keyword\">SQL</span>"
+          "...<span class=\"keyword2\">groonga</span> and My<span class=\"keyword1\">SQL</span> and Posrgre<span class=\"keyword1\">SQL</span>"
         ]
       ]
     ]

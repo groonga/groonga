@@ -4,10 +4,10 @@ column_create Entries content COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
 load --table Entries
 [
-{"content": "<p>groonga and MySQL</p>"}
+{"content": "groonga and MySQL and PosrgreSQL"}
 ]
 [[0,0.0,0.0],1]
-select Entries   --output_columns '   snippet_full(content,   "Groonga", "<span class=\\"keyword\\">", "</span>"   )'   --command_version 2
+select Entries   --output_columns '   snippet(content,   "SQL", "<span class=\\"keyword\\">", "</span>",   {"suffix": "..."}    )'   --command_version 2
 [
   [
     0,
@@ -21,13 +21,13 @@ select Entries   --output_columns '   snippet_full(content,   "Groonga", "<span 
       ],
       [
         [
-          "snippet_full",
+          "snippet",
           "null"
         ]
       ],
       [
         [
-          "<p><span class=\"keyword\">groonga</span> and MySQL</p>"
+          "groonga and My<span class=\"keyword\">SQL</span> and Posrgre<span class=\"keyword\">SQL</span>..."
         ]
       ]
     ]
