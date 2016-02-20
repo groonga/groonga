@@ -236,6 +236,123 @@ highlight_keywords(grn_ctx *ctx, grn_user_data *user_data,
 }
 
 static grn_obj *
+func_highlight(grn_ctx *ctx, int nargs, grn_obj **args,
+               grn_user_data *user_data)
+{
+  grn_obj *highlighted = NULL;
+
+#define N_REQUIRED_ARGS 1
+  if (nargs > N_REQUIRED_ARGS) {
+    grn_obj *string = args[0];
+    grn_bool use_html_escape = GRN_FALSE;
+    grn_obj *keywords;
+    const char *normalizer_name = "NormalizerAuto";
+    unsigned int normalizer_name_length = 14;
+    const char *default_open_tag = NULL;
+    unsigned int default_open_tag_length = 0;
+    const char *default_close_tag = NULL;
+    unsigned int default_close_tag_length = 0;
+    grn_obj *end_arg = args[nargs - 1];
+    int n_args_without_option = nargs;
+
+    if (end_arg->header.type == GRN_PTR) {
+      grn_obj *hash;
+      hash = GRN_PTR_VALUE(end_arg);
+
+      if (hash) {
+        grn_hash_cursor *cursor;
+        void *key;
+        grn_obj *value;
+        int key_size;
+        if (hash->header.type != GRN_TABLE_HASH_KEY) {
+          GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                           "highlight(): "
+                           "end argument must be object literal: <%.*s>",
+                           (int)GRN_TEXT_LEN(end_arg),
+                           GRN_TEXT_VALUE(end_arg));
+          goto exit;
+        }
+        n_args_without_option--;
+
+        cursor = grn_hash_cursor_open(ctx, (grn_hash *)hash,
+                                      NULL, 0, NULL, 0,
+                                      0, -1, 0);
+        if (!cursor) {
+          GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
+                           "highlight(): couldn't open cursor");
+          goto exit;
+        }
+        while (grn_hash_cursor_next(ctx, cursor) != GRN_ID_NIL) {
+          grn_hash_cursor_get_key_value(ctx, cursor, &key, &key_size, (void **)&value);
+          if (key_size == 10 && !memcmp(key, "normalizer", 10)) {
+            normalizer_name = GRN_TEXT_VALUE(value);
+            normalizer_name_length = GRN_TEXT_LEN(value);
+          } else if (key_size == 11 && !memcmp(key, "html_escape", 11)) {
+            if (GRN_BOOL_VALUE(value)) {
+              use_html_escape = GRN_TRUE;
+            }
+          } else if (key_size == 16 && !memcmp(key, "default_open_tag", 16)) {
+            default_open_tag = GRN_TEXT_VALUE(value);
+            default_open_tag_length = GRN_TEXT_LEN(value);
+          } else if (key_size == 17 && !memcmp(key, "default_close_tag", 17)) {
+            default_close_tag = GRN_TEXT_VALUE(value);
+            default_close_tag_length = GRN_TEXT_LEN(value);
+          } else {
+            GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT, "invalid option name: %.*s",
+                             key_size, (char *)key);
+            grn_hash_cursor_close(ctx, cursor);
+            goto exit;
+          }
+        }
+        grn_hash_cursor_close(ctx, cursor);
+      }
+    }
+
+    keywords =
+      func_highlight_create_keywords_table(ctx, user_data,
+                                           normalizer_name,
+                                           normalizer_name_length);
+
+    if (keywords) {
+      grn_obj **keyword_args = args + N_REQUIRED_ARGS;
+      unsigned int n_keyword_args = n_args_without_option - N_REQUIRED_ARGS;
+      if (default_open_tag_length == 0 && default_close_tag_length == 0) {
+        highlighted = highlight_keyword_sets(ctx, user_data,
+                                             keyword_args, n_keyword_args,
+                                             string, keywords, use_html_escape);
+      } else {
+        unsigned int i;
+        for (i = 0; i < n_keyword_args; i++) {
+          grn_table_add(ctx, keywords,
+                        GRN_TEXT_VALUE(keyword_args[i]),
+                        GRN_TEXT_LEN(keyword_args[i]),
+                        NULL);
+        }
+        highlighted = highlight_keywords(ctx, user_data,
+                                         string, keywords, use_html_escape,
+                                         default_open_tag, default_open_tag_length,
+                                         default_close_tag, default_close_tag_length);
+      }
+    }
+  }
+#undef N_REQUIRED_ARGS
+
+exit :
+  if (!highlighted) {
+    highlighted = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_VOID, 0);
+  }
+
+  return highlighted;
+}
+
+void
+grn_proc_init_highlight(grn_ctx *ctx)
+{
+  grn_proc_create(ctx, "highlight", -1, GRN_PROC_FUNCTION,
+                  func_highlight, NULL, NULL, 0, NULL);
+}
+
+static grn_obj *
 func_highlight_full(grn_ctx *ctx, int nargs, grn_obj **args,
                     grn_user_data *user_data)
 {
