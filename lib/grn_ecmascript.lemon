@@ -30,13 +30,6 @@
       } else {
         GRN_TEXT_PUTC(ctx, &message, '|');
       }
-      if (efsi->hash_args) {
-        grn_obj *value;
-        GRN_HASH_EACH(ctx, efsi->hash_args, i, NULL, NULL, (void **)&value, {
-          GRN_OBJ_FIN(ctx, value);
-        });
-        grn_hash_close(efsi->ctx, efsi->hash_args);
-      }
       ERR(GRN_SYNTAX_ERROR, "Syntax error: <%.*s>",
           (int)GRN_TEXT_LEN(&message), GRN_TEXT_VALUE(&message));
       GRN_OBJ_FIN(ctx, &message);
@@ -429,27 +422,17 @@ property_name_and_value ::= property_name COLON assignment_expression. {
         GRN_OBJ_INIT(buf, value->header.type, 0, value->header.domain);
         GRN_TEXT_PUT(ctx, buf, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
       } else {
-        grn_obj *obj;
         ERR(GRN_INVALID_ARGUMENT,
             "duplicated property name: <%.*s>",
             (int)GRN_TEXT_LEN(property),
             GRN_TEXT_VALUE(property));
-        GRN_HASH_EACH(ctx, efsi->hash_args, i, NULL, NULL, (void **)&obj, {
-          GRN_OBJ_FIN(ctx, obj);
-        });
-        grn_hash_close(efsi->ctx, efsi->hash_args);
       }
       e->codes_curr -= 3;
     } else {
-      grn_obj *obj;
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "failed to add a property to object literal: <%.*s>",
           (int)GRN_TEXT_LEN(property),
           GRN_TEXT_VALUE(property));
-      GRN_HASH_EACH(ctx, efsi->hash_args, i, NULL, NULL, (void **)&obj, {
-        GRN_OBJ_FIN(ctx, obj);
-      });
-      grn_hash_close(efsi->ctx, efsi->hash_args);
     }
   }
 }

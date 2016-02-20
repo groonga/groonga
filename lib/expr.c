@@ -7584,6 +7584,13 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     GRN_OBJ_FIN(ctx, &efsi.column_stack);
     GRN_OBJ_FIN(ctx, &efsi.token_stack);
     GRN_OBJ_FIN(ctx, &efsi.buf);
+    if (efsi.hash_args) {
+      grn_obj *value;
+      GRN_HASH_EACH(ctx, efsi.hash_args, i, NULL, NULL, (void **)&value, {
+        GRN_OBJ_FIN(ctx, value);
+      });
+      grn_hash_close(ctx, efsi.hash_args);
+    }
   } else {
     ERR(GRN_INVALID_ARGUMENT, "variable is not defined correctly");
   }
