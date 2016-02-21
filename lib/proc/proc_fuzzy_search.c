@@ -315,49 +315,48 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   query = args[2];
 
   if (nargs == 4) {
-    grn_obj *hash;
     grn_hash_cursor *cursor;
     void *key;
     grn_obj *value;
     int key_size, value_size;
     hash_args_ptr = args[3];
     if (hash_args_ptr->header.type == GRN_PTR) {
+      grn_obj *hash;
       hash = GRN_PTR_VALUE(hash_args_ptr);
-    }
-    if (hash->header.type != GRN_TABLE_HASH_KEY) {
-      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                       "fuzzy_search(): 3rd argument must be object literal: <%.*s>",
-                       (int)GRN_TEXT_LEN(args[3]), GRN_TEXT_VALUE(args[3]));
-      goto exit;
-    }
-    hash = GRN_PTR_VALUE(hash_args_ptr);
-
-    if (!(cursor = grn_hash_cursor_open(ctx, (grn_hash *)hash, NULL, 0, NULL, 0, 0, -1, 0))) {
-      GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
-                       "fuzzy_search(): couldn't open cursor");
-      goto exit;
-    }
-    while (grn_hash_cursor_next(ctx, cursor) != GRN_ID_NIL) {
-      value_size = grn_hash_cursor_get_key_value(ctx, cursor, &key, &key_size, (void **)&value);
-
-      if (key_size == 12 && !memcmp(key, "max_distance", 12)) {
-        max_distance = GRN_UINT32_VALUE(value);
-      } else if (key_size == 13 && !memcmp(key, "prefix_length", 13)) {
-        prefix_length = GRN_UINT32_VALUE(value);
-      } else if (key_size == 13 && !memcmp(key, "max_expansion", 13)) {
-        max_expansion = GRN_UINT32_VALUE(value);
-      } else if (key_size == 18 && !memcmp(key, "with_transposition", 18)) {
-        if (GRN_BOOL_VALUE(value)) {
-          flags |= GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION;
-        }
-      } else {
-        GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT, "invalid option name: %.*s",
-                         key_size, (char *)key);
-        grn_hash_cursor_close(ctx, cursor);
+      if (hash->header.type != GRN_TABLE_HASH_KEY) {
+        GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                         "fuzzy_search(): 3rd argument must be object literal: <%.*s>",
+                         (int)GRN_TEXT_LEN(args[3]), GRN_TEXT_VALUE(args[3]));
         goto exit;
       }
+
+      if (!(cursor = grn_hash_cursor_open(ctx, (grn_hash *)hash, NULL, 0, NULL, 0, 0, -1, 0))) {
+        GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
+                         "fuzzy_search(): couldn't open cursor");
+        goto exit;
+      }
+      while (grn_hash_cursor_next(ctx, cursor) != GRN_ID_NIL) {
+        value_size = grn_hash_cursor_get_key_value(ctx, cursor, &key, &key_size, (void **)&value);
+
+        if (key_size == 12 && !memcmp(key, "max_distance", 12)) {
+          max_distance = GRN_UINT32_VALUE(value);
+        } else if (key_size == 13 && !memcmp(key, "prefix_length", 13)) {
+          prefix_length = GRN_UINT32_VALUE(value);
+        } else if (key_size == 13 && !memcmp(key, "max_expansion", 13)) {
+          max_expansion = GRN_UINT32_VALUE(value);
+        } else if (key_size == 18 && !memcmp(key, "with_transposition", 18)) {
+          if (GRN_BOOL_VALUE(value)) {
+            flags |= GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION;
+          }
+        } else {
+          GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT, "invalid option name: %.*s",
+                           key_size, (char *)key);
+          grn_hash_cursor_close(ctx, cursor);
+          goto exit;
+        }
+      }
+      grn_hash_cursor_close(ctx, cursor);
     }
-    grn_hash_cursor_close(ctx, cursor);
   }
 
   if (index) {
