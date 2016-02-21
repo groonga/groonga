@@ -296,7 +296,7 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   grn_obj *target = NULL;
   grn_obj *obj;
   grn_obj *query;
-  grn_obj *hash_args_ptr;
+  grn_obj *option_ptr;
   uint32_t max_distance = 1;
   uint32_t prefix_length = 0;
   uint32_t prefix_match_size = 0;
@@ -319,11 +319,11 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     void *key;
     grn_obj *value;
     int key_size;
-    hash_args_ptr = args[3];
-    if (hash_args_ptr->header.type == GRN_PTR) {
-      grn_obj *hash;
-      hash = GRN_PTR_VALUE(hash_args_ptr);
-      if (hash->header.type != GRN_TABLE_HASH_KEY) {
+    option_ptr = args[3];
+    if (option_ptr->header.type == GRN_PTR) {
+      grn_obj *option;
+      option = GRN_PTR_VALUE(option_ptr);
+      if (option->header.type != GRN_TABLE_HASH_KEY) {
         GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
                          "fuzzy_search(): "
                          "3rd argument must be object literal: <%.*s>",
@@ -331,7 +331,7 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
         goto exit;
       }
 
-      cursor = grn_hash_cursor_open(ctx, (grn_hash *)hash,
+      cursor = grn_hash_cursor_open(ctx, (grn_hash *)option,
                                     NULL, 0, NULL, 0,
                                     0, -1, 0);
       if (!cursor) {
