@@ -21,6 +21,9 @@
 
 #include <groonga/plugin.h>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+
 static grn_obj *
 command_object_exist(grn_ctx *ctx,
                      int nargs,
@@ -101,11 +104,14 @@ command_object_remove(grn_ctx *ctx,
                        GRN_TEXT_LEN(name));
     if (id != GRN_ID_NIL) {
       char path[PATH_MAX];
+      struct stat stat_buffer;
       grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
       grn_obj_path_by_id(ctx, db, id, path);
       grn_io_remove(ctx, path);
       grn_strcat(path, PATH_MAX, ".c");
-      grn_io_remove(ctx, path);
+      if (stat(path, &stat_buffer) == 0) {
+        grn_io_remove(ctx, path);
+      }
       grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
       return NULL;
     }
