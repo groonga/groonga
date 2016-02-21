@@ -91,11 +91,15 @@ command_object_remove(grn_ctx *ctx,
                        GRN_TEXT_LEN(name));
   if (target) {
     grn_obj_remove(ctx, target);
-    grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
-    return NULL;
+    if (!force || ctx->rc == GRN_SUCCESS) {
+      grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
+      return NULL;
+    }
+    grn_obj_close(ctx, target);
+    failed_to_open = GRN_TRUE;
+  } else {
+    failed_to_open = (ctx->rc != GRN_SUCCESS);
   }
-
-  failed_to_open = (ctx->rc != GRN_SUCCESS);
 
   if (force) {
     grn_id id;

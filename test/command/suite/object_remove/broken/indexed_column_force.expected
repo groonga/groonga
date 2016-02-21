@@ -1,0 +1,26 @@
+table_create Users TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms index COLUMN_INDEX|WITH_POSITION Users name
+[[0,0.0,0.0],true]
+database_unmap
+[[0,0.0,0.0],true]
+object_remove Users.name --force yes
+[
+  [
+    [
+      -1,
+      0.0,
+      0.0
+    ],
+    "[column][remove][index] hook has a dangling reference: Users.name"
+  ],
+  false
+]
+#|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.0000103>
+#|e| [column][remove][index] hook has a dangling reference: Users.name
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
