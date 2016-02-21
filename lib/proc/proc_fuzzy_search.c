@@ -353,7 +353,7 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
             flags |= GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION;
           }
         } else {
-          GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT, "invalid option name: %.*s",
+          GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT, "invalid option name: <%.*s>",
                            key_size, (char *)key);
           grn_hash_cursor_close(ctx, cursor);
           goto exit;

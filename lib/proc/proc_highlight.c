@@ -298,7 +298,7 @@ func_highlight(grn_ctx *ctx, int nargs, grn_obj **args,
             default_close_tag = GRN_TEXT_VALUE(value);
             default_close_tag_length = GRN_TEXT_LEN(value);
           } else {
-            GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT, "invalid option name: %.*s",
+            GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT, "invalid option name: <%.*s>",
                              key_size, (char *)key);
             grn_hash_cursor_close(ctx, cursor);
             goto exit;
