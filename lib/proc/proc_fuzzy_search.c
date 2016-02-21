@@ -318,7 +318,7 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     grn_hash_cursor *cursor;
     void *key;
     grn_obj *value;
-    int key_size, value_size;
+    int key_size;
     hash_args_ptr = args[3];
     if (hash_args_ptr->header.type == GRN_PTR) {
       grn_obj *hash;
@@ -340,7 +340,7 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
         goto exit;
       }
       while (grn_hash_cursor_next(ctx, cursor) != GRN_ID_NIL) {
-        value_size = grn_hash_cursor_get_key_value(ctx, cursor, &key, &key_size, (void **)&value);
+        grn_hash_cursor_get_key_value(ctx, cursor, &key, &key_size, (void **)&value);
 
         if (key_size == 12 && !memcmp(key, "max_distance", 12)) {
           max_distance = GRN_UINT32_VALUE(value);
