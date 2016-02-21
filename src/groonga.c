@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2015 Brazil
+  Copyright(C) 2009-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -98,6 +98,8 @@ static const char *pid_file_path = NULL;
 static const char *input_path = NULL;
 static grn_file_reader *input_reader = NULL;
 static FILE *output = NULL;
+static grn_bool is_memcached_mode = GRN_FALSE;
+static const char *memcached_column_name = NULL;
 
 static int ready_notify_pipe[2];
 #define PIPE_READ  0
@@ -729,6 +731,8 @@ run_server(grn_ctx *ctx, grn_obj *db, grn_com_event *ev,
   return exit_code;
 }
 
+static grn_bool memcached_init(grn_ctx *ctx);
+
 static int
 start_service(grn_ctx *ctx, const char *db_path,
               grn_edge_dispatcher_func dispatcher, grn_handler_func handler)
@@ -749,7 +753,17 @@ start_service(grn_ctx *ctx, const char *db_path,
     grn_obj *db;
     db = (newdb || !db_path) ? grn_db_create(ctx, db_path, NULL) : grn_db_open(ctx, db_path);
     if (db) {
-      exit_code = run_server(ctx, db, &ev, dispatcher, handler);
+      if (is_memcached_mode) {
+        if (!memcached_init(ctx)) {
+          fprintf(stderr, "failed to initialize memcached mode: %s\n",
+                  ctx->errbuf);
+          exit_code = EXIT_FAILURE;
+          send_ready_notify();
+        }
+      }
+      if (exit_code == EXIT_SUCCESS) {
+        exit_code = run_server(ctx, db, &ev, dispatcher, handler);
+      }
       grn_obj_close(ctx, db);
     } else {
       fprintf(stderr, "db open failed (%s): %s\n", db_path, ctx->errbuf);
@@ -1414,7 +1428,6 @@ enum {
   MBCMD_PREPENDQ = 0x1a
 };
 
-static grn_critical_section cache_lock;
 static grn_obj *cache_table = NULL;
 static grn_obj *cache_value = NULL;
 static grn_obj *cache_flags = NULL;
@@ -1423,39 +1436,189 @@ static grn_obj *cache_cas = NULL;
 
 #define CTX_GET(name) (grn_ctx_get(ctx, (name), strlen(name)))
 
-static grn_obj *
-cache_init(grn_ctx *ctx)
+static grn_bool
+memcached_setup_flags_column(grn_ctx *ctx, const char *name)
 {
-  if (cache_cas) { return cache_cas; }
-  CRITICAL_SECTION_ENTER(cache_lock);
+  cache_flags = grn_obj_column(ctx, cache_table, name, strlen(name));
+  if (cache_flags) {
+    return GRN_TRUE;
+  }
+
+  cache_flags = grn_column_create(ctx, cache_table, name, strlen(name), NULL,
+                                  GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
+                                  grn_ctx_at(ctx, GRN_DB_UINT32));
+  if (!cache_flags) {
+    return GRN_FALSE;
+  }
+
+  return GRN_TRUE;
+}
+
+static grn_bool
+memcached_setup_expire_column(grn_ctx *ctx, const char *name)
+{
+  cache_expire = grn_obj_column(ctx, cache_table, name, strlen(name));
+  if (cache_expire) {
+    return GRN_TRUE;
+  }
+
+  cache_expire = grn_column_create(ctx, cache_table, name, strlen(name), NULL,
+                                   GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
+                                   grn_ctx_at(ctx, GRN_DB_UINT32));
+  if (!cache_expire) {
+    return GRN_FALSE;
+  }
+
+  return GRN_TRUE;
+}
+
+static grn_bool
+memcached_setup_cas_column(grn_ctx *ctx, const char *name)
+{
+  cache_cas = grn_obj_column(ctx, cache_table, name, strlen(name));
+  if (cache_cas) {
+    return GRN_TRUE;
+  }
+
+  cache_cas = grn_column_create(ctx, cache_table, name, strlen(name), NULL,
+                                GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
+                                grn_ctx_at(ctx, GRN_DB_UINT64));
   if (!cache_cas) {
-    if ((cache_table = CTX_GET("Memcache"))) {
-      cache_value = CTX_GET("Memcache.value");
-      cache_flags = CTX_GET("Memcache.flags");
-      cache_expire = CTX_GET("Memcache.expire");
-      cache_cas = CTX_GET("Memcache.cas");
-    } else {
-      if (!cache_table) {
-        grn_obj *uint32_type = grn_ctx_at(ctx, GRN_DB_UINT32);
-        grn_obj *uint64_type = grn_ctx_at(ctx, GRN_DB_UINT64);
-        grn_obj *shorttext_type = grn_ctx_at(ctx, GRN_DB_SHORT_TEXT);
-        if ((cache_table = grn_table_create(ctx, "Memcache", 8, NULL,
-                                            GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
-                                            shorttext_type, NULL))) {
-          cache_value = grn_column_create(ctx, cache_table, "value", 5, NULL,
-                                          GRN_OBJ_PERSISTENT, shorttext_type);
-          cache_flags = grn_column_create(ctx, cache_table, "flags", 5, NULL,
-                                          GRN_OBJ_PERSISTENT, uint32_type);
-          cache_expire = grn_column_create(ctx, cache_table, "expire", 6, NULL,
-                                           GRN_OBJ_PERSISTENT, uint32_type);
-          cache_cas = grn_column_create(ctx, cache_table, "cas", 3, NULL,
-                                        GRN_OBJ_PERSISTENT, uint64_type);
-        }
+    return GRN_FALSE;
+  }
+
+  return GRN_TRUE;
+}
+
+static grn_bool
+memcached_init(grn_ctx *ctx)
+{
+  if (memcached_column_name) {
+    cache_value = CTX_GET(memcached_column_name);
+    if (!cache_value) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "memcached column doesn't exist: <%s>",
+          memcached_column_name);
+      return GRN_FALSE;
+    }
+    if (!(grn_obj_is_column(ctx, cache_value) &&
+          ((cache_value->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) ==
+           GRN_OBJ_COLUMN_SCALAR))) {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, cache_value);
+      ERR(GRN_INVALID_ARGUMENT,
+          "memcached column must be scalar column: <%.*s>",
+          (int)GRN_TEXT_LEN(&inspected),
+          GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      return GRN_FALSE;
+    }
+    if (!(GRN_DB_SHORT_TEXT <= grn_obj_get_range(ctx, cache_value) &&
+          grn_obj_get_range(ctx, cache_value) <= GRN_DB_LONG_TEXT)) {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, cache_value);
+      ERR(GRN_INVALID_ARGUMENT,
+          "memcached column must be text column: <%.*s>",
+          (int)GRN_TEXT_LEN(&inspected),
+          GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      return GRN_FALSE;
+    }
+
+    cache_table = grn_ctx_at(ctx, cache_value->header.domain);
+    if (cache_table->header.type == GRN_TABLE_NO_KEY) {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, cache_table);
+      ERR(GRN_INVALID_ARGUMENT,
+          "memcached column's table must be HASH_KEY, PAT_KEY or DAT_KEY table: "
+          "<%.*s>",
+          (int)GRN_TEXT_LEN(&inspected),
+          GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      return GRN_FALSE;
+    }
+
+    {
+      char column_name[GRN_TABLE_MAX_KEY_SIZE];
+      char value_column_name[GRN_TABLE_MAX_KEY_SIZE];
+      int value_column_name_size;
+
+      value_column_name_size = grn_column_name(ctx, cache_value,
+                                               value_column_name,
+                                               GRN_TABLE_MAX_KEY_SIZE);
+      grn_snprintf(column_name,
+                   GRN_TABLE_MAX_KEY_SIZE,
+                   GRN_TABLE_MAX_KEY_SIZE,
+                   "%.*s_memcached_flags",
+                   value_column_name_size,
+                   value_column_name);
+      if (!memcached_setup_flags_column(ctx, column_name)) {
+        return GRN_FALSE;
+      }
+      grn_snprintf(column_name,
+                   GRN_TABLE_MAX_KEY_SIZE,
+                   GRN_TABLE_MAX_KEY_SIZE,
+                   "%.*s_memcached_expire",
+                   value_column_name_size,
+                   value_column_name);
+      if (!memcached_setup_expire_column(ctx, column_name)) {
+        return GRN_FALSE;
+      }
+      grn_snprintf(column_name,
+                   GRN_TABLE_MAX_KEY_SIZE,
+                   GRN_TABLE_MAX_KEY_SIZE,
+                   "%.*s_memcached_cas",
+                   value_column_name_size,
+                   value_column_name);
+      if (!memcached_setup_cas_column(ctx, column_name)) {
+        return GRN_FALSE;
       }
     }
+  } else {
+    const char *table_name = "Memcache";
+    const char *value_column_name = "value";
+
+    cache_table = CTX_GET(table_name);
+    if (!cache_table) {
+      cache_table = grn_table_create(ctx, table_name, strlen(table_name), NULL,
+                                     GRN_OBJ_TABLE_PAT_KEY|GRN_OBJ_PERSISTENT,
+                                     grn_ctx_at(ctx, GRN_DB_SHORT_TEXT),
+                                     NULL);
+      if (!cache_table) {
+        return GRN_FALSE;
+      }
+    }
+
+    cache_value = grn_obj_column(ctx, cache_table,
+                                 value_column_name,
+                                 strlen(value_column_name));
+    if (!cache_value) {
+      cache_value = grn_column_create(ctx, cache_table,
+                                      value_column_name,
+                                      strlen(value_column_name),
+                                      NULL,
+                                      GRN_OBJ_COLUMN_SCALAR|GRN_OBJ_PERSISTENT,
+                                      grn_ctx_at(ctx, GRN_DB_SHORT_TEXT));
+      if (!cache_value) {
+        return GRN_FALSE;
+      }
+    }
+
+    if (!memcached_setup_flags_column(ctx, "flags")) {
+      return GRN_FALSE;
+    }
+    if (!memcached_setup_expire_column(ctx, "expire")) {
+      return GRN_FALSE;
+    }
+    if (!memcached_setup_cas_column(ctx, "cas")) {
+      return GRN_FALSE;
+    }
   }
-  CRITICAL_SECTION_LEAVE(cache_lock);
-  return cache_cas;
+
+  return GRN_TRUE;
 }
 
 #define RELATIVE_TIME_THRESH 1000000000
@@ -1498,7 +1661,6 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       grn_id rid;
       uint16_t keylen = ntohs(header->keylen);
       char *key = GRN_BULK_HEAD((grn_obj *)msg);
-      cache_init(ctx);
       rid = grn_table_get(ctx, cache_table, key, keylen);
       if (!rid) {
         GRN_MSG_MBRES({
@@ -1558,7 +1720,6 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       int f = (header->qtype == MBCMD_REPLACE ||
                header->qtype == MBCMD_REPLACEQ) ? 0 : GRN_TABLE_ADD;
       GRN_ASSERT(extralen == 8);
-      cache_init(ctx);
       if (header->qtype == MBCMD_REPLACE || header->qtype == MBCMD_REPLACEQ) {
         rid = grn_table_get(ctx, cache_table, key, keylen);
       } else {
@@ -1682,7 +1843,6 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       grn_id rid;
       uint16_t keylen = ntohs(header->keylen);
       char *key = GRN_BULK_HEAD((grn_obj *)msg);
-      cache_init(ctx);
       rid = grn_table_get(ctx, cache_table, key, keylen);
       if (!rid) {
         /* GRN_LOG(ctx, GRN_LOG_NOTICE, "GET k=%d not found", keylen); */
@@ -1714,7 +1874,6 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       grn_ntoh(&delta, body, 8);
       grn_ntoh(&init, body + 8, 8);
       GRN_ASSERT(header->level == 20); /* extralen */
-      cache_init(ctx);
       if (expire == 0xffffffff) {
         rid = grn_table_get(ctx, cache_table, key, keylen);
       } else {
@@ -1836,7 +1995,6 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       grn_id rid;
       uint16_t keylen = ntohs(header->keylen);
       char *key = GRN_BULK_HEAD((grn_obj *)msg);
-      cache_init(ctx);
       rid = grn_table_get(ctx, cache_table, key, keylen);
       if (!rid) {
         GRN_MSG_MBRES({
@@ -1883,7 +2041,6 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       char *key = GRN_BULK_HEAD((grn_obj *)msg);
       char *value = key + keylen;
       uint32_t valuelen = size - keylen;
-      cache_init(ctx);
       rid = grn_table_add(ctx, cache_table, key, keylen, NULL);
       if (!rid) {
         GRN_MSG_MBRES({
@@ -2681,6 +2838,12 @@ show_usage(FILE *output)
           "      --pid-path <path>:        specify file to write process ID to\n"
           "                                (daemon mode only)\n"
           "\n"
+          "Memcached options:\n"
+          "      --memcached-column <column>:\n"
+          "                                specify column to access by memcached protocol\n"
+          "                                The column must be text type column and\n"
+          "                                its table must be not NO_KEY table\n"
+          "\n"
           "Logging options:\n"
           "  -l, --log-level <log level>:\n"
           "                           specify log level\n"
@@ -2799,6 +2962,7 @@ main(int argc, char **argv)
     {'\0', "working-directory", NULL, 0, GETOPT_OP_NONE},
     {'\0', "use-windows-event-log", NULL,
      FLAG_USE_WINDOWS_EVENT_LOG, GETOPT_OP_ON},
+    {'\0', "memcached-column", NULL, 0, GETOPT_OP_NONE},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &port_arg;
@@ -2822,6 +2986,7 @@ main(int argc, char **argv)
   opts[25].arg = &input_fd_arg;
   opts[26].arg = &output_fd_arg;
   opts[27].arg = &working_directory_arg;
+  opts[29].arg = &memcached_column_name;
 
   reset_ready_notify_pipe();
 
@@ -2958,6 +3123,7 @@ main(int argc, char **argv)
       break;
     case 'm' :
     case 'M' :
+      is_memcached_mode = GRN_TRUE;
       do_client = g_client;
       do_server = g_server;
       break;
@@ -3191,7 +3357,6 @@ main(int argc, char **argv)
 
   MUTEX_INIT(q_mutex);
   COND_INIT(q_cond);
-  CRITICAL_SECTION_INIT(cache_lock);
 
   if (input_path) {
     input_reader = grn_file_reader_open(&grn_gctx, input_path);
@@ -3256,7 +3421,6 @@ main(int argc, char **argv)
     exit_code = do_alone(argc - i, argv + i);
   }
 
-  CRITICAL_SECTION_FIN(cache_lock);
   COND_FIN(q_cond);
   MUTEX_FIN(q_mutex);
 
