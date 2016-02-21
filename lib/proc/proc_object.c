@@ -104,6 +104,8 @@ command_object_remove(grn_ctx *ctx,
       grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
       grn_obj_path_by_id(ctx, db, id, path);
       grn_io_remove(ctx, path);
+      grn_strcat(path, PATH_MAX, ".c");
+      grn_io_remove(ctx, path);
       grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
       return NULL;
     }
