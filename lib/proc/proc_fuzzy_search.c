@@ -325,12 +325,16 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
       hash = GRN_PTR_VALUE(hash_args_ptr);
       if (hash->header.type != GRN_TABLE_HASH_KEY) {
         GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                         "fuzzy_search(): 3rd argument must be object literal: <%.*s>",
+                         "fuzzy_search(): "
+                         "3rd argument must be object literal: <%.*s>",
                          (int)GRN_TEXT_LEN(args[3]), GRN_TEXT_VALUE(args[3]));
         goto exit;
       }
 
-      if (!(cursor = grn_hash_cursor_open(ctx, (grn_hash *)hash, NULL, 0, NULL, 0, 0, -1, 0))) {
+      cursor = grn_hash_cursor_open(ctx, (grn_hash *)hash,
+                                    NULL, 0, NULL, 0,
+                                    0, -1, 0);
+      if (!cursor) {
         GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
                          "fuzzy_search(): couldn't open cursor");
         goto exit;
