@@ -11822,6 +11822,7 @@ grn_column_find_index_data_accessor(grn_ctx *ctx, grn_obj *obj,
   }
   switch (op) {
   case GRN_OP_EQUAL :
+  case GRN_OP_NOT_EQUAL :
   case GRN_OP_TERM_EXTRACT :
     if (buf_size > 0) {
       index_buf[n] = obj;
@@ -11899,6 +11900,7 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
   if (GRN_DB_OBJP(obj)) {
     switch (op) {
     case GRN_OP_EQUAL :
+    case GRN_OP_NOT_EQUAL :
       n = grn_column_find_index_data_column_equal(ctx, obj, op,
                                                   NULL, 0,
                                                   index_buf, buf_size,
@@ -11949,6 +11951,7 @@ grn_column_find_index_data(grn_ctx *ctx, grn_obj *obj, grn_operator op,
   if (GRN_DB_OBJP(obj)) {
     switch (op) {
     case GRN_OP_EQUAL :
+    case GRN_OP_NOT_EQUAL :
       n = grn_column_find_index_data_column_equal(ctx, obj, op,
                                                   index_data, n_index_data,
                                                   NULL, 0, NULL);
