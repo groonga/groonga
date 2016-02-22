@@ -63,6 +63,7 @@ if [ "${is_mingw}" = "yes" ]; then
   configure_args="${configure_args} --with-cpp=${host}-c++"
   GROONGA_HTTPD_WITH_PCRE="no"
   GROONGA_HTTPD_WITH_ZLIB="no"
+  GROONGA_HTTPD_WITH_SSL="no"
 fi
 if [ "${GROONGA_HTTPD_DEBUG}" = "yes" ]; then
   configure_args="${configure_args} --with-debug"
@@ -78,6 +79,13 @@ else
 fi
 if [ "${GROONGA_HTTPD_WITH_ZLIB}" != "yes" ]; then
   configure_args="${configure_args} --without-http_gzip_module"
+fi
+if [ "${GROONGA_HTTPD_WITH_SSL}" = "yes" ]; then
+  cc_opt="${cc_opt} ${GROONGA_HTTPD_SSL_CFLAGS}"
+  ld_opt="${ld_opt} ${GROONGA_HTTPD_SSL_LIBS_ONLY_L}"
+  configure_args="${configure_args} --with-http_ssl_module"
+else
+  configure_args="${configure_args} --without-http_ssl_module"
 fi
 
 
@@ -96,7 +104,6 @@ auto/configure \
   --with-ld-opt="${ld_opt}" \
   --with-http_stub_status_module \
   --with-http_v2_module \
-  --with-http_ssl_module \
   ${configure_args}
 exit_code=$?
 set -e
