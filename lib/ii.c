@@ -7563,19 +7563,26 @@ typedef struct {
   uint32_t cap;        /* Buffer size */
 } ii_buffer_value;
 
+/* ii_buffer_counter is associated with a block. */
 typedef struct {
-  uint32_t nrecs;
-  uint32_t nposts;
-  grn_id last_rid;
-  uint32_t last_sid;
-  uint32_t last_tf;
-  uint32_t last_weight;
-  uint32_t last_pos;
-  uint32_t offset_rid;
-  uint32_t offset_sid;
-  uint32_t offset_tf;
-  uint32_t offset_weight;
-  uint32_t offset_pos;
+  uint32_t nrecs;  /* Number of values */
+  uint32_t nposts; /* Number of values */
+
+  /* Information of the last value */
+  grn_id last_rid;      /* Record ID */
+  uint32_t last_sid;    /* Section ID */
+  uint32_t last_tf;     /* Term frequency */
+  uint32_t last_weight; /* Total weight */
+  uint32_t last_pos;    /* Token position */
+
+  /* Meaning of offset_* is different before/after encoding. */
+  /* Before encoding: size in encoded sequence */
+  /* After encoding: Offset in encoded sequence */
+  uint32_t offset_rid;    /* Record ID */
+  uint32_t offset_sid;    /* Section ID */
+  uint32_t offset_tf;     /* Term frequency */
+  uint32_t offset_weight; /* Weight */
+  uint32_t offset_pos;    /* Token position */
 } ii_buffer_counter;
 
 typedef struct {
@@ -7595,26 +7602,28 @@ typedef struct {
 } ii_buffer_block;
 
 struct _grn_ii_buffer {
-  grn_obj *lexicon;
-  grn_obj *tmp_lexicon;
-  ii_buffer_block *blocks;
-  uint32_t nblocks;
-  int tmpfd;
-  char tmpfpath[PATH_MAX];
+  grn_obj *lexicon;            /* Global lexicon */
+  grn_obj *tmp_lexicon;        /* Temporary lexicon for each block */
+  ii_buffer_block *blocks;     /* Blocks */
+  uint32_t nblocks;            /* Number of blocks */
+  int tmpfd;                   /* Descriptor of temporary file */
+  char tmpfpath[PATH_MAX];     /* Path of temporary file */
   uint64_t update_buffer_size;
+
   // stuff for parsing
-  off64_t filepos;
-  grn_id *block_buf;
-  size_t block_buf_size;
-  size_t block_pos;
-  ii_buffer_counter *counters;
-  uint32_t ncounters;
+  off64_t filepos;             /* Write position of temporary file */
+  grn_id *block_buf;           /* Buffer for the current block */
+  size_t block_buf_size;       /* Size of block_buf */
+  size_t block_pos;            /* Write position of block_buf */
+  ii_buffer_counter *counters; /* Status of terms */
+  uint32_t ncounters;          /* Number of counters */
   size_t total_size;
   size_t curr_size;
-  ii_buffer_value *values;
-  unsigned int nvalues;
-  unsigned int max_nvalues;
+  ii_buffer_value *values;     /* Values in block */
+  unsigned int nvalues;        /* Number of values in block */
+  unsigned int max_nvalues;    /* Size of values */
   grn_id last_rid;
+
   // stuff for merging
   grn_ii *ii;
   uint32_t lseg;
@@ -7685,6 +7694,27 @@ allocate_outbuf(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   return (uint8_t *)GRN_MALLOC(bufsize);
 }
 
+/*
+ * The temporary file format is roughly as follows:
+ *
+ * File  = Block...
+ * Block = Unit...
+ * Unit  = TermChunk (key order)
+ *         NextUnitSize (The first unit size is kept on memory)
+ * Chunk = Term...
+ * Term  = ID (gtid)
+ *         NumSections (nrecs), NumValues (nposts)
+ *         RecordID... (rid, diff)
+ *         [SectionID... (sid, diff)]
+ *         TermFrequency... (tf, diff)
+ *         [Weight... (weight, diff)]
+ *         [Position... (pos, diff)]
+ */
+
+/*
+ * encode_terms encodes terms in ii_buffer->tmp_lexicon and returns the
+ * expected temporary file size.
+ */
 static size_t
 encode_terms(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
              uint8_t *outbuf, ii_buffer_block *block)
@@ -7693,6 +7723,7 @@ encode_terms(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
   uint8_t *outbufp = outbuf;
   uint8_t *outbufp_ = outbuf;
   grn_table_cursor  *tc;
+  /* The first size is written into block->nextsize. */
   uint8_t *pnext = (uint8_t *)&block->nextsize;
   uint32_t flags = ii_buffer->ii->header->flags;
   tc = grn_table_cursor_open(ctx, ii_buffer->tmp_lexicon,
@@ -7701,6 +7732,7 @@ encode_terms(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
     char key[GRN_TABLE_MAX_KEY_SIZE];
     int key_size = grn_table_get_key(ctx, ii_buffer->tmp_lexicon, tid,
                                      key, GRN_TABLE_MAX_KEY_SIZE);
+    /* gtid is a global term ID, not in a temporary lexicon. */
     grn_id gtid = grn_table_add(ctx, ii_buffer->lexicon, key, key_size, NULL);
     ii_buffer_counter *counter = &ii_buffer->counters[tid - 1];
     if (counter->nrecs) {
@@ -7746,6 +7778,7 @@ encode_terms(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
   return outbufp - outbuf;
 }
 
+/* encode_postings encodes data in ii_buffer->block_buf. */
 static void
 encode_postings(grn_ctx *ctx, grn_ii_buffer *ii_buffer, uint8_t *outbuf)
 {
@@ -7822,6 +7855,7 @@ encode_postings(grn_ctx *ctx, grn_ii_buffer *ii_buffer, uint8_t *outbuf)
   }
 }
 
+/* encode_last_tf encodes last_tf and last_weight in counters. */
 static void
 encode_last_tf(grn_ctx *ctx, grn_ii_buffer *ii_buffer, uint8_t *outbuf)
 {
@@ -7840,8 +7874,8 @@ encode_last_tf(grn_ctx *ctx, grn_ii_buffer *ii_buffer, uint8_t *outbuf)
 }
 
 /*
- * grn_ii_buffer_flush flushes the current block (ii_buffer->buffer, counters
- * and tmp_lexicon) to a temporary file (ii_buffer->tmpfd).
+ * grn_ii_buffer_flush flushes the current block (ii_buffer->block_buf,
+ * counters and tmp_lexicon) to a temporary file (ii_buffer->tmpfd).
  * Also, block information is stored into ii_buffer->blocks.
  */
 static void
@@ -8059,11 +8093,13 @@ grn_ii_buffer_tokenize(grn_ctx *ctx, grn_ii_buffer *ii_buffer, grn_id rid)
   ii_buffer->nvalues = 0;
 }
 
+/* grn_ii_buffer_fetch fetches the next term. */
 static void
 grn_ii_buffer_fetch(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
                     ii_buffer_block *block)
 {
   if (!block->rest) {
+    /* Read the next unit. */
     if (block->head < block->tail) {
       size_t bytesize = block->nextsize;
       if (block->buffersize < block->nextsize) {
@@ -8517,9 +8553,14 @@ grn_ii_buffer_append(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
   return ctx->rc;
 }
 
+/*
+ * grn_ii_buffer_commit completes tokenization and builds an inverted index
+ * from data in a temporary file.
+ */
 grn_rc
 grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
 {
+  /* Tokenize the remaining values and free resources. */
   if (ii_buffer->last_rid && ii_buffer->nvalues) {
     grn_ii_buffer_tokenize(ctx, ii_buffer, ii_buffer->last_rid);
   }
@@ -8562,6 +8603,7 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
     return ctx->rc;
   }
   {
+    /* Fetch the first term of each block. */
     uint32_t i;
     for (i = 0; i < ii_buffer->nblocks; i++) {
       grn_ii_buffer_fetch(ctx, ii_buffer, &ii_buffer->blocks[i]);
