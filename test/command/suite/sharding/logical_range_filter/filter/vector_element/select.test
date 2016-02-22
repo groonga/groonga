@@ -1,0 +1,49 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create UserIDs TABLE_PAT_KEY UInt32
+
+table_create Logs_20150205 TABLE_NO_KEY
+column_create Logs_20150205 timestamp COLUMN_SCALAR Time
+column_create Logs_20150205 memo COLUMN_SCALAR ShortText
+column_create Logs_20150205 user_ids COLUMN_VECTOR UserIDs
+
+table_create Timestamp_20150205 TABLE_PAT_KEY Time
+column_create Timestamp_20150205 index COLUMN_INDEX Logs_20150205 timestamp
+
+column_create UserIDs index_20150205 COLUMN_INDEX|WITH_POSITION \
+  Logs_20150205 user_ids
+
+
+load --table Logs_20150205
+[
+{
+  "timestamp": "2015-02-05 13:49:00",
+       "memo": "2015-02-05 13:49:00",
+   "user_ids": [1, 3, 5]
+},
+{
+  "timestamp": "2015-02-05 13:50:00",
+       "memo": "2015-02-05 13:50:00",
+   "user_ids": [2, 4, 6]
+},
+{
+  "timestamp": "2015-02-05 13:51:00",
+       "memo": "2015-02-05 13:51:00",
+   "user_ids": [2, 8, 14]
+},
+{
+  "timestamp": "2015-02-05 13:52:00",
+       "memo": "2015-02-05 13:52:00",
+   "user_ids": [3, 5, 7]
+}
+]
+
+#@add-important-log-levels debug
+log_level --level debug
+logical_range_filter Logs timestamp \
+  --limit -1 \
+  --filter 'user_ids[1] < 5'
+log_level --level notice
+#@remove-important-log-levels debug
