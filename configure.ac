@@ -1574,6 +1574,30 @@ AC_SUBST(GRN_WITH_PCRE)
 AC_SUBST(PCRE_CFLAGS)
 AC_SUBST(PCRE_LIBS_ONLY_L)
 
+# SSL
+GRN_WITH_SSL=no
+AC_ARG_WITH(ssl,
+  [AS_HELP_STRING([--without-ssl],
+    [Don't use SSL module for groonga-httpd. [default=auto-detect]])],
+  [with_ssl="$withval"],
+  [with_ssl="auto"])
+if test "x$with_ssl" != "xno"; then
+  m4_ifdef([PKG_CHECK_MODULES], [
+    PKG_CHECK_MODULES([SSL], [libssl],
+      [_PKG_CONFIG(SSL_LIBS_ONLY_L, [libs-only-L], [libssl])
+       SSL_LIBS_ONLY_L="$pkg_cv_SSL_LIBS_ONLY_L"
+       GRN_WITH_SSL=yes],
+      [GRN_WITH_SSL=no])
+    ],
+    [GRN_WITH_SSL=no])
+  if test "x$with_ssl" = "xyes" -a "$GRN_WITH_SSL" != "yes"; then
+    AC_MSG_ERROR("No SSL found")
+  fi
+fi
+AC_SUBST(GRN_WITH_SSL)
+AC_SUBST(SSL_CFLAGS)
+AC_SUBST(SSL_LIBS_ONLY_L)
+
 # For package
 AC_ARG_WITH(rsync-path,
             [AS_HELP_STRING([--with-rsync-path=PATH],
