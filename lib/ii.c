@@ -2888,6 +2888,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
             rc = chunk_merge(ctx, ii, sb, bt, &cinfo[i], crid, dv,
                              &nextb, &sbp, &bid, &balance);
             if (rc) {
+              if (cinfo) { GRN_FREE(cinfo); }
               datavec_fin(ctx, dv);
               datavec_fin(ctx, rdv);
               return rc;
@@ -2914,6 +2915,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
           snp = rdv[j].data;
         }
         if ((rc = datavec_reset(ctx, dv, ii->n_elements, sdf + S_SEGMENT, size))) {
+          if (cinfo) { GRN_FREE(cinfo); }
           datavec_fin(ctx, dv);
           datavec_fin(ctx, rdv);
           return rc;
@@ -2931,7 +2933,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
     GETNEXTC();
     MERGE_BC(1);
     if (rc) {
-      // FIXME: cinfo may not be freed.
+      if (cinfo) { GRN_FREE(cinfo); }
       datavec_fin(ctx, dv);
       datavec_fin(ctx, rdv);
       return rc;
@@ -7861,7 +7863,7 @@ grn_ii_buffer_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
       ERR(GRN_INPUT_OUTPUT_ERROR,
           "write returned %" GRN_FMT_LLD " != %" GRN_FMT_LLU,
           (long long int)r, (unsigned long long int)encsize);
-      // FIXME: outbuf may not be freed.
+      GRN_FREE(outbuf);
       return;
     }
     ii_buffer->filepos += r;
