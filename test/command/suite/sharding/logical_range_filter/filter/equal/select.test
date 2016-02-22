@@ -12,7 +12,7 @@ column_create Logs_20150205 user_id COLUMN_SCALAR UserIDs
 table_create Timestamp_20150205 TABLE_PAT_KEY Time
 column_create Timestamp_20150205 index COLUMN_INDEX Logs_20150205 timestamp
 
-column_create UserIDs index_20150205 COLUMN_INDEX Logs_20140205 user_id
+column_create UserIDs index_20150205 COLUMN_INDEX Logs_20150205 user_id
 
 
 load --table Logs_20150205

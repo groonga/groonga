@@ -14,9 +14,8 @@ table_create Timestamp_20150205 TABLE_PAT_KEY Time
 [[0,0.0,0.0],true]
 column_create Timestamp_20150205 index COLUMN_INDEX Logs_20150205 timestamp
 [[0,0.0,0.0],true]
-column_create UserIDs index_20150205 COLUMN_INDEX Logs_20140205 user_id
-[[[-22,0.0,0.0],"[column][create] type doesn't exist: <Logs_20140205>"],false]
-#|e| [column][create] type doesn't exist: <Logs_20140205>
+column_create UserIDs index_20150205 COLUMN_INDEX Logs_20150205 user_id
+[[0,0.0,0.0],true]
 load --table Logs_20150205
 [
 {
