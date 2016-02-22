@@ -17,7 +17,8 @@ Build-Depends:
   libmecab-dev,
   libpcre3-dev,
   libstemmer-dev,
-  libjemalloc-dev
+  libjemalloc-dev,
+  libssl-dev
 Standards-Version: 3.9.5
 Homepage: http://groonga.org/
 
