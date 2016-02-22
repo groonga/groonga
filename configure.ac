@@ -1719,6 +1719,11 @@ if test "$enable_groonga_httpd" = "yes"; then
     echo "    CFLAGS:              $PCRE_CFLAGS"
     echo "    LIBS only -L:        $PCRE_LIBS_ONLY_L"
   fi
+  echo "   SSL:                  $GRN_WITH_SSL"
+  if test "$GRN_WITH_SSL" = "yes"; then
+    echo "    CFLAGS:              $SSL_CFLAGS"
+    echo "    LIBS only -L:        $SSL_LIBS_ONLY_L"
+  fi
 fi
 echo
 
