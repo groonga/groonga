@@ -2931,6 +2931,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
     GETNEXTC();
     MERGE_BC(1);
     if (rc) {
+      // FIXME: cinfo may not be freed.
       datavec_fin(ctx, dv);
       datavec_fin(ctx, rdv);
       return rc;
@@ -7624,6 +7625,7 @@ struct _grn_ii_buffer {
   size_t total_chunk_size;
 };
 
+/* block_new returns a new ii_buffer_block to store block information. */
 static ii_buffer_block *
 block_new(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
 {
@@ -7645,6 +7647,7 @@ block_new(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   return block;
 }
 
+/* allocate_outbuf allocates memory to flush a block. */
 static uint8_t *
 allocate_outbuf(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
 {
@@ -7834,6 +7837,11 @@ encode_last_tf(grn_ctx *ctx, grn_ii_buffer *ii_buffer, uint8_t *outbuf)
   }
 }
 
+/*
+ * grn_ii_buffer_flush flushes the current block (ii_buffer->buffer, counters
+ * and tmp_lexicon) to a temporary file (ii_buffer->tmpfd).
+ * Also, block information is stored into ii_buffer->blocks.
+ */
 static void
 grn_ii_buffer_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
 {
@@ -7853,6 +7861,7 @@ grn_ii_buffer_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
       ERR(GRN_INPUT_OUTPUT_ERROR,
           "write returned %" GRN_FMT_LLD " != %" GRN_FMT_LLU,
           (long long int)r, (unsigned long long int)encsize);
+      // FIXME: outbuf may not be freed.
       return;
     }
     ii_buffer->filepos += r;
@@ -7872,6 +7881,12 @@ grn_ii_buffer_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
 
 const uint32_t PAT_CACHE_SIZE = 1<<20;
 
+/*
+ * get_tmp_lexicon returns a temporary lexicon.
+ *
+ * Note that a lexicon is created for each block and ii_buffer->tmp_lexicon is
+ * closed in grn_ii_buffer_flush.
+ */
 static grn_obj *
 get_tmp_lexicon(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
 {
@@ -7903,6 +7918,7 @@ get_tmp_lexicon(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   return tmp_lexicon;
 }
 
+/* get_buffer_counter returns a counter associated with tid. */
 static ii_buffer_counter *
 get_buffer_counter(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
                    grn_obj *tmp_lexicon, grn_id tid)
@@ -7922,6 +7938,12 @@ get_buffer_counter(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
   return &ii_buffer->counters[tid - 1];
 }
 
+/*
+ * grn_ii_buffer_tokenize_value tokenizes a value.
+ *
+ * The result is written into the current block (ii_buffer->tmp_lexicon,
+ * ii_buffer->block_buf, ii_buffer->counters, etc.).
+ */
 static void
 grn_ii_buffer_tokenize_value(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
                              grn_id rid, const ii_buffer_value *value)
@@ -7995,11 +8017,17 @@ grn_ii_buffer_tokenize_value(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
   }
 }
 
+/*
+ * grn_ii_buffer_tokenize tokenizes ii_buffer->values.
+ *
+ * grn_ii_buffer_tokenize estimates the size of tokenized values.
+ * If the remaining space of the current block is not enough to store the new
+ * tokenized values, the current block is flushed.
+ * Then, grn_ii_buffer_tokenize tokenizes values.
+ */
 static void
 grn_ii_buffer_tokenize(grn_ctx *ctx, grn_ii_buffer *ii_buffer, grn_id rid)
 {
-  // Estimate the size of tokenized values and resize the internal buffer if
-  // the buffer size is not enough.
   unsigned int i;
   uint32_t est_len = 0;
   for (i = 0; i < ii_buffer->nvalues; i++) {
@@ -8016,7 +8044,7 @@ grn_ii_buffer_tokenize(grn_ctx *ctx, grn_ii_buffer *ii_buffer, grn_id rid)
       ii_buffer->block_buf_size = est_len;
     }
   }
-  // Tokenize values.
+
   for (i = 0; i < ii_buffer->nvalues; i++) {
     const ii_buffer_value *value = &ii_buffer->values[i];
     if (value->len) {
