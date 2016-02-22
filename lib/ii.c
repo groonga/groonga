@@ -209,8 +209,12 @@ buffer_segment_reserve(grn_ctx *ctx, grn_ii *ii,
     if (ii->header->binfo[i] == NOT_ASSIGNED) { break; }
   }
   *lseg1 = i;
-  if ((*pseg0 = segment_get(ctx, ii)) == MAX_PSEG) { return GRN_NO_MEMORY_AVAILABLE; }
-  if ((*pseg1 = segment_get(ctx, ii)) == MAX_PSEG) { return GRN_NO_MEMORY_AVAILABLE; }
+  if ((*pseg0 = segment_get(ctx, ii)) == MAX_PSEG) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  if ((*pseg1 = segment_get(ctx, ii)) == MAX_PSEG) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
   /*
   {
     uint32_t pseg;
@@ -288,7 +292,7 @@ typedef struct {
   grn_io_win_map(chunk, ctx, iw,\
                  ((seg) >> GRN_II_N_CHUNK_VARIATION),\
                  (((seg) & ((1 << GRN_II_N_CHUNK_VARIATION) - 1)) << GRN_II_W_LEAST_CHUNK) + (pos),\
-                 size,mode)
+                 size, mode)
 /*
 static int new_histogram[32];
 static int free_histogram[32];
@@ -383,7 +387,8 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
 }
 
 static grn_rc
-chunk_free(grn_ctx *ctx, grn_ii *ii, uint32_t offset, uint32_t dummy, uint32_t size)
+chunk_free(grn_ctx *ctx, grn_ii *ii,
+           uint32_t offset, uint32_t dummy, uint32_t size)
 {
   /*
   if (size) {
@@ -979,10 +984,12 @@ unpack_19(uint32_t *p, uint8_t *dp)
   uint32_t v;
   v = *dp++ << 11; v += *dp++ << 3; *p++ = v + (*dp >> 5);
   v = ((*dp++ << 14) & 0x7ffff); v += *dp++ << 6; *p++ = v + (*dp >> 2);
-  v = ((*dp++ << 17) & 0x7ffff); v += *dp++ << 9; v += *dp++ << 1; *p++ = v + (*dp >> 7);
+  v = ((*dp++ << 17) & 0x7ffff); v += *dp++ << 9; v += *dp++ << 1;
+  *p++ = v + (*dp >> 7);
   v = ((*dp++ << 12) & 0x7ffff); v += *dp++ << 4; *p++ = v + (*dp >> 4);
   v = ((*dp++ << 15) & 0x7ffff); v += *dp++ << 7; *p++ = v + (*dp >> 1);
-  v = ((*dp++ << 18) & 0x7ffff); v += *dp++ << 10; v += *dp++ << 2; *p++ = v + (*dp >> 6);
+  v = ((*dp++ << 18) & 0x7ffff); v += *dp++ << 10; v += *dp++ << 2;
+  *p++ = v + (*dp >> 6);
   v = ((*dp++ << 13) & 0x7ffff); v += *dp++ << 5; *p++ = v + (*dp >> 3);
   v = ((*dp++ << 16) & 0x7ffff); v += *dp++ << 8; *p++ = v + *dp++;
   return dp;
@@ -1034,12 +1041,16 @@ unpack_21(uint32_t *p, uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 13; v += *dp++ << 5; *p++ = v + (*dp >> 3);
-  v = ((*dp++ << 18) & 0x1fffff); v += *dp++ << 10; v += *dp++ << 2; *p++ = v + (*dp >> 6);
+  v = ((*dp++ << 18) & 0x1fffff); v += *dp++ << 10; v += *dp++ << 2;
+  *p++ = v + (*dp >> 6);
   v = ((*dp++ << 15) & 0x1fffff); v += *dp++ << 7; *p++ = v + (*dp >> 1);
-  v = ((*dp++ << 20) & 0x1fffff); v += *dp++ << 12; v += *dp++ << 4; *p++ = v + (*dp >> 4);
-  v = ((*dp++ << 17) & 0x1fffff); v += *dp++ << 9; v += *dp++ << 1; *p++ = v + (*dp >> 7);
+  v = ((*dp++ << 20) & 0x1fffff); v += *dp++ << 12; v += *dp++ << 4;
+  *p++ = v + (*dp >> 4);
+  v = ((*dp++ << 17) & 0x1fffff); v += *dp++ << 9; v += *dp++ << 1;
+  *p++ = v + (*dp >> 7);
   v = ((*dp++ << 14) & 0x1fffff); v += *dp++ << 6; *p++ = v + (*dp >> 2);
-  v = ((*dp++ << 19) & 0x1fffff); v += *dp++ << 11; v += *dp++ << 3; *p++ = v + (*dp >> 5);
+  v = ((*dp++ << 19) & 0x1fffff); v += *dp++ << 11; v += *dp++ << 3;
+  *p++ = v + (*dp >> 5);
   v = ((*dp++ << 16) & 0x1fffff); v += *dp++ << 8; *p++ = v + *dp++;
   return dp;
 }
@@ -1062,12 +1073,16 @@ unpack_22(uint32_t *p, uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 14; v += *dp++ << 6; *p++ = v + (*dp >> 2);
-  v = ((*dp++ << 20) & 0x3fffff); v += *dp++ << 12; v += *dp++ << 4; *p++ = v + (*dp >> 4);
-  v = ((*dp++ << 18) & 0x3fffff); v += *dp++ << 10; v += *dp++ << 2; *p++ = v + (*dp >> 6);
+  v = ((*dp++ << 20) & 0x3fffff); v += *dp++ << 12; v += *dp++ << 4;
+  *p++ = v + (*dp >> 4);
+  v = ((*dp++ << 18) & 0x3fffff); v += *dp++ << 10; v += *dp++ << 2;
+  *p++ = v + (*dp >> 6);
   v = ((*dp++ << 16) & 0x3fffff); v += *dp++ << 8; *p++ = v + *dp++;
   v = *dp++ << 14; v += *dp++ << 6; *p++ = v + (*dp >> 2);
-  v = ((*dp++ << 20) & 0x3fffff); v += *dp++ << 12; v += *dp++ << 4; *p++ = v + (*dp >> 4);
-  v = ((*dp++ << 18) & 0x3fffff); v += *dp++ << 10; v += *dp++ << 2; *p++ = v + (*dp >> 6);
+  v = ((*dp++ << 20) & 0x3fffff); v += *dp++ << 12; v += *dp++ << 4;
+  *p++ = v + (*dp >> 4);
+  v = ((*dp++ << 18) & 0x3fffff); v += *dp++ << 10; v += *dp++ << 2;
+  *p++ = v + (*dp >> 6);
   v = ((*dp++ << 16) & 0x3fffff); v += *dp++ << 8; *p++ = v + *dp++;
   return dp;
 }
@@ -1090,12 +1105,18 @@ unpack_23(uint32_t *p, uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 15; v += *dp++ << 7; *p++ = v + (*dp >> 1);
-  v = ((*dp++ << 22) & 0x7fffff); v += *dp++ << 14; v += *dp++ << 6; *p++ = v + (*dp >> 2);
-  v = ((*dp++ << 21) & 0x7fffff); v += *dp++ << 13; v += *dp++ << 5; *p++ = v + (*dp >> 3);
-  v = ((*dp++ << 20) & 0x7fffff); v += *dp++ << 12; v += *dp++ << 4; *p++ = v + (*dp >> 4);
-  v = ((*dp++ << 19) & 0x7fffff); v += *dp++ << 11; v += *dp++ << 3; *p++ = v + (*dp >> 5);
-  v = ((*dp++ << 18) & 0x7fffff); v += *dp++ << 10; v += *dp++ << 2; *p++ = v + (*dp >> 6);
-  v = ((*dp++ << 17) & 0x7fffff); v += *dp++ << 9; v += *dp++ << 1; *p++ = v + (*dp >> 7);
+  v = ((*dp++ << 22) & 0x7fffff); v += *dp++ << 14; v += *dp++ << 6;
+  *p++ = v + (*dp >> 2);
+  v = ((*dp++ << 21) & 0x7fffff); v += *dp++ << 13; v += *dp++ << 5;
+  *p++ = v + (*dp >> 3);
+  v = ((*dp++ << 20) & 0x7fffff); v += *dp++ << 12; v += *dp++ << 4;
+  *p++ = v + (*dp >> 4);
+  v = ((*dp++ << 19) & 0x7fffff); v += *dp++ << 11; v += *dp++ << 3;
+  *p++ = v + (*dp >> 5);
+  v = ((*dp++ << 18) & 0x7fffff); v += *dp++ << 10; v += *dp++ << 2;
+  *p++ = v + (*dp >> 6);
+  v = ((*dp++ << 17) & 0x7fffff); v += *dp++ << 9; v += *dp++ << 1;
+  *p++ = v + (*dp >> 7);
   v = ((*dp++ << 16) & 0x7fffff); v += *dp++ << 8; *p++ = v + *dp++;
   return dp;
 }
@@ -1145,13 +1166,20 @@ unpack_25(uint32_t *p, uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 17; v += *dp++ << 9; v += *dp++ << 1; *p++ = v + (*dp >> 7);
-  v = ((*dp++ << 18) & 0x1ffffff); v += *dp++ << 10; v += *dp++ << 2; *p++ = v + (*dp >> 6);
-  v = ((*dp++ << 19) & 0x1ffffff); v += *dp++ << 11; v += *dp++ << 3; *p++ = v + (*dp >> 5);
-  v = ((*dp++ << 20) & 0x1ffffff); v += *dp++ << 12; v += *dp++ << 4; *p++ = v + (*dp >> 4);
-  v = ((*dp++ << 21) & 0x1ffffff); v += *dp++ << 13; v += *dp++ << 5; *p++ = v + (*dp >> 3);
-  v = ((*dp++ << 22) & 0x1ffffff); v += *dp++ << 14; v += *dp++ << 6; *p++ = v + (*dp >> 2);
-  v = ((*dp++ << 23) & 0x1ffffff); v += *dp++ << 15; v += *dp++ << 7; *p++ = v + (*dp >> 1);
-  v = ((*dp++ << 24) & 0x1ffffff); v += *dp++ << 16; v += *dp++ << 8; *p++ = v + *dp++;
+  v = ((*dp++ << 18) & 0x1ffffff); v += *dp++ << 10; v += *dp++ << 2;
+  *p++ = v + (*dp >> 6);
+  v = ((*dp++ << 19) & 0x1ffffff); v += *dp++ << 11; v += *dp++ << 3;
+  *p++ = v + (*dp >> 5);
+  v = ((*dp++ << 20) & 0x1ffffff); v += *dp++ << 12; v += *dp++ << 4;
+  *p++ = v + (*dp >> 4);
+  v = ((*dp++ << 21) & 0x1ffffff); v += *dp++ << 13; v += *dp++ << 5;
+  *p++ = v + (*dp >> 3);
+  v = ((*dp++ << 22) & 0x1ffffff); v += *dp++ << 14; v += *dp++ << 6;
+  *p++ = v + (*dp >> 2);
+  v = ((*dp++ << 23) & 0x1ffffff); v += *dp++ << 15; v += *dp++ << 7;
+  *p++ = v + (*dp >> 1);
+  v = ((*dp++ << 24) & 0x1ffffff); v += *dp++ << 16; v += *dp++ << 8;
+  *p++ = v + *dp++;
   return dp;
 }
 static uint8_t *
@@ -1173,13 +1201,19 @@ unpack_26(uint32_t *p, uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 18; v += *dp++ << 10; v += *dp++ << 2; *p++ = v + (*dp >> 6);
-  v = ((*dp++ << 20) & 0x3ffffff); v += *dp++ << 12; v += *dp++ << 4; *p++ = v + (*dp >> 4);
-  v = ((*dp++ << 22) & 0x3ffffff); v += *dp++ << 14; v += *dp++ << 6; *p++ = v + (*dp >> 2);
-  v = ((*dp++ << 24) & 0x3ffffff); v += *dp++ << 16; v += *dp++ << 8; *p++ = v + *dp++;
+  v = ((*dp++ << 20) & 0x3ffffff); v += *dp++ << 12; v += *dp++ << 4;
+  *p++ = v + (*dp >> 4);
+  v = ((*dp++ << 22) & 0x3ffffff); v += *dp++ << 14; v += *dp++ << 6;
+  *p++ = v + (*dp >> 2);
+  v = ((*dp++ << 24) & 0x3ffffff); v += *dp++ << 16; v += *dp++ << 8;
+  *p++ = v + *dp++;
   v = *dp++ << 18; v += *dp++ << 10; v += *dp++ << 2; *p++ = v + (*dp >> 6);
-  v = ((*dp++ << 20) & 0x3ffffff); v += *dp++ << 12; v += *dp++ << 4; *p++ = v + (*dp >> 4);
-  v = ((*dp++ << 22) & 0x3ffffff); v += *dp++ << 14; v += *dp++ << 6; *p++ = v + (*dp >> 2);
-  v = ((*dp++ << 24) & 0x3ffffff); v += *dp++ << 16; v += *dp++ << 8; *p++ = v + *dp++;
+  v = ((*dp++ << 20) & 0x3ffffff); v += *dp++ << 12; v += *dp++ << 4;
+  *p++ = v + (*dp >> 4);
+  v = ((*dp++ << 22) & 0x3ffffff); v += *dp++ << 14; v += *dp++ << 6;
+  *p++ = v + (*dp >> 2);
+  v = ((*dp++ << 24) & 0x3ffffff); v += *dp++ << 16; v += *dp++ << 8;
+  *p++ = v + *dp++;
   return dp;
 }
 static uint8_t *
@@ -1188,10 +1222,12 @@ pack_27(uint32_t *p, uint8_t *rp)
   uint8_t v;
   *rp++ = (*p >> 19); *rp++ = (*p >> 11); *rp++ = (*p >> 3); v = *p++ << 5;
   *rp++ = v + (*p >> 22); *rp++ = (*p >> 14); *rp++ = (*p >> 6); v = *p++ << 2;
-  *rp++ = v + (*p >> 25); *rp++ = (*p >> 17); *rp++ = (*p >> 9); *rp++ = (*p >> 1); v = *p++ << 7;
+  *rp++ = v + (*p >> 25); *rp++ = (*p >> 17); *rp++ = (*p >> 9);
+  *rp++ = (*p >> 1); v = *p++ << 7;
   *rp++ = v + (*p >> 20); *rp++ = (*p >> 12); *rp++ = (*p >> 4); v = *p++ << 4;
   *rp++ = v + (*p >> 23); *rp++ = (*p >> 15); *rp++ = (*p >> 7); v = *p++ << 1;
-  *rp++ = v + (*p >> 26); *rp++ = (*p >> 18); *rp++ = (*p >> 10); *rp++ = (*p >> 2); v = *p++ << 6;
+  *rp++ = v + (*p >> 26); *rp++ = (*p >> 18); *rp++ = (*p >> 10);
+  *rp++ = (*p >> 2); v = *p++ << 6;
   *rp++ = v + (*p >> 21); *rp++ = (*p >> 13); *rp++ = (*p >> 5); v = *p++ << 3;
   *rp++ = v + (*p >> 24); *rp++ = (*p >> 16); *rp++ = (*p >> 8); *rp++ = *p++;
   return rp;
@@ -1201,13 +1237,20 @@ unpack_27(uint32_t *p, uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 19; v += *dp++ << 11; v += *dp++ << 3; *p++ = v + (*dp >> 5);
-  v = ((*dp++ << 22) & 0x7ffffff); v += *dp++ << 14; v += *dp++ << 6; *p++ = v + (*dp >> 2);
-  v = ((*dp++ << 25) & 0x7ffffff); v += *dp++ << 17; v += *dp++ << 9; v += *dp++ << 1; *p++ = v + (*dp >> 7);
-  v = ((*dp++ << 20) & 0x7ffffff); v += *dp++ << 12; v += *dp++ << 4; *p++ = v + (*dp >> 4);
-  v = ((*dp++ << 23) & 0x7ffffff); v += *dp++ << 15; v += *dp++ << 7; *p++ = v + (*dp >> 1);
-  v = ((*dp++ << 26) & 0x7ffffff); v += *dp++ << 18; v += *dp++ << 10; v += *dp++ << 2; *p++ = v + (*dp >> 6);
-  v = ((*dp++ << 21) & 0x7ffffff); v += *dp++ << 13; v += *dp++ << 5; *p++ = v + (*dp >> 3);
-  v = ((*dp++ << 24) & 0x7ffffff); v += *dp++ << 16; v += *dp++ << 8; *p++ = v + *dp++;
+  v = ((*dp++ << 22) & 0x7ffffff); v += *dp++ << 14; v += *dp++ << 6;
+  *p++ = v + (*dp >> 2);
+  v = ((*dp++ << 25) & 0x7ffffff); v += *dp++ << 17; v += *dp++ << 9;
+  v += *dp++ << 1; *p++ = v + (*dp >> 7);
+  v = ((*dp++ << 20) & 0x7ffffff); v += *dp++ << 12; v += *dp++ << 4;
+  *p++ = v + (*dp >> 4);
+  v = ((*dp++ << 23) & 0x7ffffff); v += *dp++ << 15; v += *dp++ << 7;
+  *p++ = v + (*dp >> 1);
+  v = ((*dp++ << 26) & 0x7ffffff); v += *dp++ << 18; v += *dp++ << 10;
+  v += *dp++ << 2; *p++ = v + (*dp >> 6);
+  v = ((*dp++ << 21) & 0x7ffffff); v += *dp++ << 13; v += *dp++ << 5;
+  *p++ = v + (*dp >> 3);
+  v = ((*dp++ << 24) & 0x7ffffff); v += *dp++ << 16; v += *dp++ << 8;
+  *p++ = v + *dp++;
   return dp;
 }
 static uint8_t *
@@ -1229,13 +1272,17 @@ unpack_28(uint32_t *p, uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 20; v += *dp++ << 12; v += *dp++ << 4; *p++ = v + (*dp >> 4);
-  v = ((*dp++ << 24) & 0xfffffff); v += *dp++ << 16; v += *dp++ << 8; *p++ = v + *dp++;
+  v = ((*dp++ << 24) & 0xfffffff); v += *dp++ << 16; v += *dp++ << 8;
+  *p++ = v + *dp++;
   v = *dp++ << 20; v += *dp++ << 12; v += *dp++ << 4; *p++ = v + (*dp >> 4);
-  v = ((*dp++ << 24) & 0xfffffff); v += *dp++ << 16; v += *dp++ << 8; *p++ = v + *dp++;
+  v = ((*dp++ << 24) & 0xfffffff); v += *dp++ << 16; v += *dp++ << 8;
+  *p++ = v + *dp++;
   v = *dp++ << 20; v += *dp++ << 12; v += *dp++ << 4; *p++ = v + (*dp >> 4);
-  v = ((*dp++ << 24) & 0xfffffff); v += *dp++ << 16; v += *dp++ << 8; *p++ = v + *dp++;
+  v = ((*dp++ << 24) & 0xfffffff); v += *dp++ << 16; v += *dp++ << 8;
+  *p++ = v + *dp++;
   v = *dp++ << 20; v += *dp++ << 12; v += *dp++ << 4; *p++ = v + (*dp >> 4);
-  v = ((*dp++ << 24) & 0xfffffff); v += *dp++ << 16; v += *dp++ << 8; *p++ = v + *dp++;
+  v = ((*dp++ << 24) & 0xfffffff); v += *dp++ << 16; v += *dp++ << 8;
+  *p++ = v + *dp++;
   return dp;
 }
 static uint8_t *
@@ -1243,12 +1290,16 @@ pack_29(uint32_t *p, uint8_t *rp)
 {
   uint8_t v;
   *rp++ = (*p >> 21); *rp++ = (*p >> 13); *rp++ = (*p >> 5); v = *p++ << 3;
-  *rp++ = v + (*p >> 26); *rp++ = (*p >> 18); *rp++ = (*p >> 10); *rp++ = (*p >> 2); v = *p++ << 6;
+  *rp++ = v + (*p >> 26); *rp++ = (*p >> 18); *rp++ = (*p >> 10);
+  *rp++ = (*p >> 2); v = *p++ << 6;
   *rp++ = v + (*p >> 23); *rp++ = (*p >> 15); *rp++ = (*p >> 7); v = *p++ << 1;
-  *rp++ = v + (*p >> 28); *rp++ = (*p >> 20); *rp++ = (*p >> 12); *rp++ = (*p >> 4); v = *p++ << 4;
-  *rp++ = v + (*p >> 25); *rp++ = (*p >> 17); *rp++ = (*p >> 9); *rp++ = (*p >> 1); v = *p++ << 7;
+  *rp++ = v + (*p >> 28); *rp++ = (*p >> 20); *rp++ = (*p >> 12);
+  *rp++ = (*p >> 4); v = *p++ << 4;
+  *rp++ = v + (*p >> 25); *rp++ = (*p >> 17); *rp++ = (*p >> 9);
+  *rp++ = (*p >> 1); v = *p++ << 7;
   *rp++ = v + (*p >> 22); *rp++ = (*p >> 14); *rp++ = (*p >> 6); v = *p++ << 2;
-  *rp++ = v + (*p >> 27); *rp++ = (*p >> 19); *rp++ = (*p >> 11); *rp++ = (*p >> 3); v = *p++ << 5;
+  *rp++ = v + (*p >> 27); *rp++ = (*p >> 19); *rp++ = (*p >> 11);
+  *rp++ = (*p >> 3); v = *p++ << 5;
   *rp++ = v + (*p >> 24); *rp++ = (*p >> 16); *rp++ = (*p >> 8); *rp++ = *p++;
   return rp;
 }
@@ -1257,13 +1308,20 @@ unpack_29(uint32_t *p, uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 21; v += *dp++ << 13; v += *dp++ << 5; *p++ = v + (*dp >> 3);
-  v = ((*dp++ << 26) & 0x1fffffff); v += *dp++ << 18; v += *dp++ << 10; v += *dp++ << 2; *p++ = v + (*dp >> 6);
-  v = ((*dp++ << 23) & 0x1fffffff); v += *dp++ << 15; v += *dp++ << 7; *p++ = v + (*dp >> 1);
-  v = ((*dp++ << 28) & 0x1fffffff); v += *dp++ << 20; v += *dp++ << 12; v += *dp++ << 4; *p++ = v + (*dp >> 4);
-  v = ((*dp++ << 25) & 0x1fffffff); v += *dp++ << 17; v += *dp++ << 9; v += *dp++ << 1; *p++ = v + (*dp >> 7);
-  v = ((*dp++ << 22) & 0x1fffffff); v += *dp++ << 14; v += *dp++ << 6; *p++ = v + (*dp >> 2);
-  v = ((*dp++ << 27) & 0x1fffffff); v += *dp++ << 19; v += *dp++ << 11; v += *dp++ << 3; *p++ = v + (*dp >> 5);
-  v = ((*dp++ << 24) & 0x1fffffff); v += *dp++ << 16; v += *dp++ << 8; *p++ = v + *dp++;
+  v = ((*dp++ << 26) & 0x1fffffff); v += *dp++ << 18; v += *dp++ << 10;
+  v += *dp++ << 2; *p++ = v + (*dp >> 6);
+  v = ((*dp++ << 23) & 0x1fffffff); v += *dp++ << 15; v += *dp++ << 7;
+  *p++ = v + (*dp >> 1);
+  v = ((*dp++ << 28) & 0x1fffffff); v += *dp++ << 20; v += *dp++ << 12;
+  v += *dp++ << 4; *p++ = v + (*dp >> 4);
+  v = ((*dp++ << 25) & 0x1fffffff); v += *dp++ << 17; v += *dp++ << 9;
+  v += *dp++ << 1; *p++ = v + (*dp >> 7);
+  v = ((*dp++ << 22) & 0x1fffffff); v += *dp++ << 14; v += *dp++ << 6;
+  *p++ = v + (*dp >> 2);
+  v = ((*dp++ << 27) & 0x1fffffff); v += *dp++ << 19; v += *dp++ << 11;
+  v += *dp++ << 3; *p++ = v + (*dp >> 5);
+  v = ((*dp++ << 24) & 0x1fffffff); v += *dp++ << 16; v += *dp++ << 8;
+  *p++ = v + *dp++;
   return dp;
 }
 static uint8_t *
@@ -1271,13 +1329,18 @@ pack_30(uint32_t *p, uint8_t *rp)
 {
   uint8_t v;
   *rp++ = (*p >> 22); *rp++ = (*p >> 14); *rp++ = (*p >> 6); v = *p++ << 2;
-  *rp++ = v + (*p >> 28); *rp++ = (*p >> 20); *rp++ = (*p >> 12); *rp++ = (*p >> 4); v = *p++ << 4;
-  *rp++ = v + (*p >> 26); *rp++ = (*p >> 18); *rp++ = (*p >> 10); *rp++ = (*p >> 2); v = *p++ << 6;
+  *rp++ = v + (*p >> 28); *rp++ = (*p >> 20); *rp++ = (*p >> 12);
+  *rp++ = (*p >> 4); v = *p++ << 4;
+  *rp++ = v + (*p >> 26); *rp++ = (*p >> 18); *rp++ = (*p >> 10);
+  *rp++ = (*p >> 2); v = *p++ << 6;
   *rp++ = v + (*p >> 24); *rp++ = (*p >> 16); *rp++ = (*p >> 8); *rp++ = *p++;
   *rp++ = (*p >> 22); *rp++ = (*p >> 14); *rp++ = (*p >> 6); v = *p++ << 2;
-  *rp++ = v + (*p >> 28); *rp++ = (*p >> 20); *rp++ = (*p >> 12); *rp++ = (*p >> 4); v = *p++ << 4;
-  *rp++ = v + (*p >> 26); *rp++ = (*p >> 18); *rp++ = (*p >> 10); *rp++ = (*p >> 2); v = *p++ << 6;
-  *rp++ = v + (*p >> 24); *rp++ = (*p >> 16); *rp++ = (*p >> 8); *rp++ = *p++;
+  *rp++ = v + (*p >> 28); *rp++ = (*p >> 20); *rp++ = (*p >> 12);
+  *rp++ = (*p >> 4); v = *p++ << 4;
+  *rp++ = v + (*p >> 26); *rp++ = (*p >> 18); *rp++ = (*p >> 10);
+  *rp++ = (*p >> 2); v = *p++ << 6;
+  *rp++ = v + (*p >> 24); *rp++ = (*p >> 16); *rp++ = (*p >> 8);
+  *rp++ = *p++;
   return rp;
 }
 static uint8_t *
@@ -1285,13 +1348,19 @@ unpack_30(uint32_t *p, uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 22; v += *dp++ << 14; v += *dp++ << 6; *p++ = v + (*dp >> 2);
-  v = ((*dp++ << 28) & 0x3fffffff); v += *dp++ << 20; v += *dp++ << 12; v += *dp++ << 4; *p++ = v + (*dp >> 4);
-  v = ((*dp++ << 26) & 0x3fffffff); v += *dp++ << 18; v += *dp++ << 10; v += *dp++ << 2; *p++ = v + (*dp >> 6);
-  v = ((*dp++ << 24) & 0x3fffffff); v += *dp++ << 16; v += *dp++ << 8; *p++ = v + *dp++;
+  v = ((*dp++ << 28) & 0x3fffffff); v += *dp++ << 20; v += *dp++ << 12;
+  v += *dp++ << 4; *p++ = v + (*dp >> 4);
+  v = ((*dp++ << 26) & 0x3fffffff); v += *dp++ << 18; v += *dp++ << 10;
+  v += *dp++ << 2; *p++ = v + (*dp >> 6);
+  v = ((*dp++ << 24) & 0x3fffffff); v += *dp++ << 16; v += *dp++ << 8;
+  *p++ = v + *dp++;
   v = *dp++ << 22; v += *dp++ << 14; v += *dp++ << 6; *p++ = v + (*dp >> 2);
-  v = ((*dp++ << 28) & 0x3fffffff); v += *dp++ << 20; v += *dp++ << 12; v += *dp++ << 4; *p++ = v + (*dp >> 4);
-  v = ((*dp++ << 26) & 0x3fffffff); v += *dp++ << 18; v += *dp++ << 10; v += *dp++ << 2; *p++ = v + (*dp >> 6);
-  v = ((*dp++ << 24) & 0x3fffffff); v += *dp++ << 16; v += *dp++ << 8; *p++ = v + *dp++;
+  v = ((*dp++ << 28) & 0x3fffffff); v += *dp++ << 20; v += *dp++ << 12;
+  v += *dp++ << 4; *p++ = v + (*dp >> 4);
+  v = ((*dp++ << 26) & 0x3fffffff); v += *dp++ << 18; v += *dp++ << 10;
+  v += *dp++ << 2; *p++ = v + (*dp >> 6);
+  v = ((*dp++ << 24) & 0x3fffffff); v += *dp++ << 16; v += *dp++ << 8;
+  *p++ = v + *dp++;
   return dp;
 }
 static uint8_t *
@@ -1299,13 +1368,20 @@ pack_31(uint32_t *p, uint8_t *rp)
 {
   uint8_t v;
   *rp++ = (*p >> 23); *rp++ = (*p >> 15); *rp++ = (*p >> 7); v = *p++ << 1;
-  *rp++ = v + (*p >> 30); *rp++ = (*p >> 22); *rp++ = (*p >> 14); *rp++ = (*p >> 6); v = *p++ << 2;
-  *rp++ = v + (*p >> 29); *rp++ = (*p >> 21); *rp++ = (*p >> 13); *rp++ = (*p >> 5); v = *p++ << 3;
-  *rp++ = v + (*p >> 28); *rp++ = (*p >> 20); *rp++ = (*p >> 12); *rp++ = (*p >> 4); v = *p++ << 4;
-  *rp++ = v + (*p >> 27); *rp++ = (*p >> 19); *rp++ = (*p >> 11); *rp++ = (*p >> 3); v = *p++ << 5;
-  *rp++ = v + (*p >> 26); *rp++ = (*p >> 18); *rp++ = (*p >> 10); *rp++ = (*p >> 2); v = *p++ << 6;
-  *rp++ = v + (*p >> 25); *rp++ = (*p >> 17); *rp++ = (*p >> 9); *rp++ = (*p >> 1); v = *p++ << 7;
-  *rp++ = v + (*p >> 24); *rp++ = (*p >> 16); *rp++ = (*p >> 8); *rp++ = *p++;
+  *rp++ = v + (*p >> 30); *rp++ = (*p >> 22); *rp++ = (*p >> 14);
+  *rp++ = (*p >> 6); v = *p++ << 2;
+  *rp++ = v + (*p >> 29); *rp++ = (*p >> 21); *rp++ = (*p >> 13);
+  *rp++ = (*p >> 5); v = *p++ << 3;
+  *rp++ = v + (*p >> 28); *rp++ = (*p >> 20); *rp++ = (*p >> 12);
+  *rp++ = (*p >> 4); v = *p++ << 4;
+  *rp++ = v + (*p >> 27); *rp++ = (*p >> 19); *rp++ = (*p >> 11);
+  *rp++ = (*p >> 3); v = *p++ << 5;
+  *rp++ = v + (*p >> 26); *rp++ = (*p >> 18); *rp++ = (*p >> 10);
+  *rp++ = (*p >> 2); v = *p++ << 6;
+  *rp++ = v + (*p >> 25); *rp++ = (*p >> 17); *rp++ = (*p >> 9);
+  *rp++ = (*p >> 1); v = *p++ << 7;
+  *rp++ = v + (*p >> 24); *rp++ = (*p >> 16); *rp++ = (*p >> 8);
+  *rp++ = *p++;
   return rp;
 }
 static uint8_t *
@@ -1313,13 +1389,20 @@ unpack_31(uint32_t *p, uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 23; v += *dp++ << 15; v += *dp++ << 7; *p++ = v + (*dp >> 1);
-  v = ((*dp++ << 30) & 0x7fffffff); v += *dp++ << 22; v += *dp++ << 14; v += *dp++ << 6; *p++ = v + (*dp >> 2);
-  v = ((*dp++ << 29) & 0x7fffffff); v += *dp++ << 21; v += *dp++ << 13; v += *dp++ << 5; *p++ = v + (*dp >> 3);
-  v = ((*dp++ << 28) & 0x7fffffff); v += *dp++ << 20; v += *dp++ << 12; v += *dp++ << 4; *p++ = v + (*dp >> 4);
-  v = ((*dp++ << 27) & 0x7fffffff); v += *dp++ << 19; v += *dp++ << 11; v += *dp++ << 3; *p++ = v + (*dp >> 5);
-  v = ((*dp++ << 26) & 0x7fffffff); v += *dp++ << 18; v += *dp++ << 10; v += *dp++ << 2; *p++ = v + (*dp >> 6);
-  v = ((*dp++ << 25) & 0x7fffffff); v += *dp++ << 17; v += *dp++ << 9; v += *dp++ << 1; *p++ = v + (*dp >> 7);
-  v = ((*dp++ << 24) & 0x7fffffff); v += *dp++ << 16; v += *dp++ << 8; *p++ = v + *dp++;
+  v = ((*dp++ << 30) & 0x7fffffff); v += *dp++ << 22; v += *dp++ << 14;
+  v += *dp++ << 6; *p++ = v + (*dp >> 2);
+  v = ((*dp++ << 29) & 0x7fffffff); v += *dp++ << 21; v += *dp++ << 13;
+  v += *dp++ << 5; *p++ = v + (*dp >> 3);
+  v = ((*dp++ << 28) & 0x7fffffff); v += *dp++ << 20; v += *dp++ << 12;
+  v += *dp++ << 4; *p++ = v + (*dp >> 4);
+  v = ((*dp++ << 27) & 0x7fffffff); v += *dp++ << 19; v += *dp++ << 11;
+  v += *dp++ << 3; *p++ = v + (*dp >> 5);
+  v = ((*dp++ << 26) & 0x7fffffff); v += *dp++ << 18; v += *dp++ << 10;
+  v += *dp++ << 2; *p++ = v + (*dp >> 6);
+  v = ((*dp++ << 25) & 0x7fffffff); v += *dp++ << 17; v += *dp++ << 9;
+  v += *dp++ << 1; *p++ = v + (*dp >> 7);
+  v = ((*dp++ << 24) & 0x7fffffff); v += *dp++ << 16; v += *dp++ << 8;
+  *p++ = v + *dp++;
   return dp;
 }
 static uint8_t *
@@ -1954,9 +2037,11 @@ buffer_term_dump(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt)
   uint8_t *p;
   buffer_rec *r;
   GRN_LOG(ctx, GRN_LOG_DEBUG,
-          "b=(%x %u %u %u)", b->header.chunk, b->header.chunk_size, b->header.buffer_free, b->header.nterms);
+          "b=(%x %u %u %u)", b->header.chunk, b->header.chunk_size,
+          b->header.buffer_free, b->header.nterms);
   GRN_LOG(ctx, GRN_LOG_DEBUG,
-          "bt=(%u %u %u %u %u)", bt->tid, bt->size_in_chunk, bt->pos_in_chunk, bt->size_in_buffer, bt->pos_in_buffer);
+          "bt=(%u %u %u %u %u)", bt->tid, bt->size_in_chunk, bt->pos_in_chunk,
+          bt->size_in_buffer, bt->pos_in_buffer);
   for (pos = bt->pos_in_buffer; pos; pos = r->step) {
     r = BUFFER_REC_AT(b, pos);
     p = GRN_NEXT_ADDR(r);
@@ -1966,7 +2051,8 @@ buffer_term_dump(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt)
     } else {
       sid = 1;
     }
-    GRN_LOG(ctx, GRN_LOG_DEBUG, "%d=(%d:%d),(%d:%d)", pos, r->jump, r->step, rid, sid);
+    GRN_LOG(ctx, GRN_LOG_DEBUG,
+            "%d=(%d:%d),(%d:%d)", pos, r->jump, r->step, rid, sid);
   }
 }
 
@@ -1998,11 +2084,15 @@ check_jump(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_rec *r, int j)
     id2.sid = 1;
   }
   if (r2->step == i) {
-    GRN_LOG(ctx, GRN_LOG_EMERG, "cycle! %d(%d:%d)<->%d(%d:%d)", i, id.rid, id.sid, j, id2.rid, id2.sid);
+    GRN_LOG(ctx, GRN_LOG_EMERG, "cycle! %d(%d:%d)<->%d(%d:%d)",
+            i, id.rid, id.sid, j, id2.rid, id2.sid);
     return GRN_FILE_CORRUPT;
   }
   if (id2.rid < id.rid || (id2.rid == id.rid && id2.sid <= id.sid)) {
-    GRN_LOG(ctx, GRN_LOG_CRIT, "invalid jump! %d(%d:%d)(%d:%d)->%d(%d:%d)(%d:%d)", i, r->jump, r->step, id.rid, id.sid, j, r2->jump, r2->step, id2.rid, id2.sid);
+    GRN_LOG(ctx, GRN_LOG_CRIT,
+            "invalid jump! %d(%d:%d)(%d:%d)->%d(%d:%d)(%d:%d)",
+            i, r->jump, r->step, id.rid, id.sid, j, r2->jump, r2->step,
+            id2.rid, id2.sid);
     return GRN_FILE_CORRUPT;
   }
   return GRN_SUCCESS;
@@ -2131,7 +2221,9 @@ buffer_put(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt,
       vhops = 1;
       vdelta = delta0 >> 1;
     } else {
-      if (!(delta = id_curr.rid - id_start.rid)) { delta = id_curr.sid - id_start.sid; }
+      if (!(delta = id_curr.rid - id_start.rid)) {
+        delta = id_curr.sid - id_start.sid;
+      }
       if (vdelta < delta) {
         vdelta += (delta0 >> ++vhops);
         r_start = r_curr;
@@ -2509,7 +2601,9 @@ typedef struct {
              name_size, name, lid.rid, lid.sid, bid.rid, bid.sid);\
         break;\
       }\
-      if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) { GRN_B_DEC(bid.weight, sbp); }\
+      if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {\
+        GRN_B_DEC(bid.weight, sbp);\
+      }\
       PUTNEXT_(bid);\
       if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {\
         while (bid.tf--) { GRN_B_DEC(*posp, sbp); spos += *posp++; }\
@@ -3034,10 +3128,12 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
           if (!(rc = buffer_merge(ctx, ii, seg, h, sb, sc, db, dc))) {
             actual_chunk_size = db->header.chunk_size;
             if (actual_chunk_size >= max_dest_chunk_size) {
-              GRN_LOG(ctx, GRN_LOG_WARNING, "actual_chunk_size(%d) >= max_dest_chunk_size(%d)",
+              GRN_LOG(ctx, GRN_LOG_WARNING,
+                      "actual_chunk_size(%d) >= max_dest_chunk_size(%d)",
                       actual_chunk_size, max_dest_chunk_size);
             }
-            if (!actual_chunk_size || !(rc = chunk_new(ctx, ii, &dcn, actual_chunk_size))) {
+            if (!actual_chunk_size ||
+                !(rc = chunk_new(ctx, ii, &dcn, actual_chunk_size))) {
               db->header.chunk = actual_chunk_size ? dcn : NOT_ASSIGNED;
               fake_map(ctx, ii->chunk, &dw, dc, dcn, actual_chunk_size);
               if (!(rc = grn_io_win_unmap(&dw))) {
@@ -3122,7 +3218,8 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
     GRN_OUTPUT_CSTR("void chunk size");
     GRN_OUTPUT_INT64(sb->header.chunk_size);
   } else {
-    if ((sc = WIN_MAP(ii->chunk, ctx, &sw, scn, 0, sb->header.chunk_size, grn_io_rdonly))) {
+    if ((sc = WIN_MAP(ii->chunk, ctx, &sw, scn, 0, sb->header.chunk_size,
+                      grn_io_rdonly))) {
       GRN_OUTPUT_CSTR("chunk size");
       GRN_OUTPUT_INT64(sb->header.chunk_size);
     } else {
@@ -3151,7 +3248,8 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
     }
     GRN_OUTPUT_ARRAY_OPEN("TERM", -1);
     tid = (bt->tid & GRN_ID_MAX);
-    key_size = grn_table_get_key(ctx, ii->lexicon, tid, key, GRN_TABLE_MAX_KEY_SIZE);
+    key_size = grn_table_get_key(ctx, ii->lexicon, tid, key,
+                                 GRN_TABLE_MAX_KEY_SIZE);
     tid_ = grn_table_get(ctx, ii->lexicon, key, key_size);
     GRN_TEXT_SET(ctx, &buf, key, key_size);
     GRN_OUTPUT_OBJ(&buf, NULL);
@@ -3280,9 +3378,11 @@ term_compar(const void *t1, const void *t2)
   int r;
   const term_sort *x = (term_sort *)t1, *y = (term_sort *)t2;
   if (x->key_size > y->key_size) {
-    return (r = memcmp(x->key, y->key, y->key_size)) ? r : x->key_size - y->key_size;
+    r = memcmp(x->key, y->key, y->key_size);
+    return r ? r : x->key_size - y->key_size;
   } else {
-    return (r = memcmp(x->key, y->key, x->key_size)) ? r : x->key_size - y->key_size;
+    r = memcmp(x->key, y->key, x->key_size);
+    return r ? r : x->key_size - y->key_size;
   }
 }
 
@@ -3319,7 +3419,8 @@ term_split(grn_ctx *ctx, grn_obj *lexicon, buffer *sb, buffer *db0, buffer *db1)
     (*nt)++;
   }
   GRN_FREE(ts);
-  GRN_LOG(ctx, GRN_LOG_DEBUG, "d0=%d d1=%d", db0->header.nterms, db1->header.nterms);
+  GRN_LOG(ctx, GRN_LOG_DEBUG, "d0=%d d1=%d",
+          db0->header.nterms, db1->header.nterms);
   return GRN_SUCCESS;
 }
 
@@ -3391,7 +3492,8 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                       }
                       if (!actual_db1_chunk_size ||
                           !(rc = chunk_new(ctx, ii, &dcn1, actual_db1_chunk_size))) {
-                        fake_map(ctx, ii->chunk, &dw1, dc1, dcn1, actual_db1_chunk_size);
+                        fake_map(ctx, ii->chunk, &dw1, dc1, dcn1,
+                                 actual_db1_chunk_size);
                         if (!(rc = grn_io_win_unmap(&dw1))) {
                           db1->header.chunk = actual_db1_chunk_size ? dcn1 : NOT_ASSIGNED;
                           buffer_segment_update(ii, dls0, dps0);
@@ -3491,7 +3593,8 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
   char key[GRN_TABLE_MAX_KEY_SIZE];
   // unsigned int key_size;
   // const char *key = _grn_table_key(ctx, ii->lexicon, id, &key_size);
-  int key_size = grn_table_get_key(ctx, ii->lexicon, id, key, GRN_TABLE_MAX_KEY_SIZE);
+  int key_size = grn_table_get_key(ctx, ii->lexicon, id, key,
+                                   GRN_TABLE_MAX_KEY_SIZE);
   uint32_t *a, lseg = NOT_ASSIGNED, pseg = NOT_ASSIGNED;
   grn_table_cursor *tc = NULL;
   if (S_SEGMENT - sizeof(buffer_header) < size + sizeof(buffer_term)) {
@@ -3516,7 +3619,8 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
         for (;;) {
           uint32_t pos = a[0];
           if (!pos || (pos & 1)) { break; }
-          if ((pseg = buffer_open(ctx, ii, pos, NULL, &b)) == NOT_ASSIGNED) { break; }
+          pseg = buffer_open(ctx, ii, pos, NULL, &b);
+          if (pseg == NOT_ASSIGNED) { break; }
           if (b->header.buffer_free >= size + sizeof(buffer_term)) {
             lseg = LSEG(pos);
             break;
@@ -3877,7 +3981,8 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
           }
           if ((rc = buffer_flush(ctx, ii, LSEG(pos), h))) { goto exit; }
           if (a[0] != pos) {
-            GRN_LOG(ctx, GRN_LOG_DEBUG, "grn_ii_update_one: a[0] changed %d->%d", a[0], pos);
+            GRN_LOG(ctx, GRN_LOG_DEBUG,
+                    "grn_ii_update_one: a[0] changed %d->%d", a[0], pos);
             continue;
           }
           if ((pseg = buffer_open(ctx, ii, pos, &bt, &b)) == NOT_ASSIGNED) {
@@ -3885,12 +3990,14 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
             rc = GRN_NO_MEMORY_AVAILABLE;
             goto exit;
           }
-          GRN_LOG(ctx, GRN_LOG_DEBUG, "flushed  a[0]=%d seg=%d(%p) free=%d->%d nterms=%d v=%d",
+          GRN_LOG(ctx, GRN_LOG_DEBUG,
+                  "flushed  a[0]=%d seg=%d(%p) free=%d->%d nterms=%d v=%d",
                   a[0], LSEG(a[0]), b, bfb, b->header.buffer_free,
                   b->header.nterms, b->header.nterms_void);
           if (b->header.buffer_free < size) {
             buffer_close(ctx, ii, pseg);
-            GRN_LOG(ctx, GRN_LOG_CRIT, "buffer(%d) is full (%d < %d) in grn_ii_update_one",
+            GRN_LOG(ctx, GRN_LOG_CRIT,
+                    "buffer(%d) is full (%d < %d) in grn_ii_update_one",
                     a[0], b->header.buffer_free, size);
             /* todo: direct merge */
             rc = GRN_NO_MEMORY_AVAILABLE;
@@ -3919,7 +4026,8 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
         if (u2.rid != u->rid || u2.sid != u->sid) {
           uint8_t *bs2 = encode_rec(ctx, ii, &u2, &size2, 0);
           if (!bs2) {
-            GRN_LOG(ctx, GRN_LOG_ALERT, "encode_rec on grn_ii_update_one failed !");
+            GRN_LOG(ctx, GRN_LOG_ALERT,
+                    "encode_rec on grn_ii_update_one failed !");
             rc = GRN_NO_MEMORY_AVAILABLE;
             goto exit;
           }
@@ -4028,20 +4136,24 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
     }
     if (b->header.buffer_free < size) {
       uint32_t _a = a[0];
-      GRN_LOG(ctx, GRN_LOG_DEBUG, "flushing! b=%p free=%d, seg(%d)", b, b->header.buffer_free, LSEG(a[0]));
+      GRN_LOG(ctx, GRN_LOG_DEBUG, "flushing! b=%p free=%d, seg(%d)",
+              b, b->header.buffer_free, LSEG(a[0]));
       buffer_close(ctx, ii, pseg);
       if ((rc = buffer_flush(ctx, ii, LSEG(a[0]), h))) { goto exit; }
       if (a[0] != _a) {
-        GRN_LOG(ctx, GRN_LOG_DEBUG, "grn_ii_delete_one: a[0] changed %d->%d)", a[0], _a);
+        GRN_LOG(ctx, GRN_LOG_DEBUG, "grn_ii_delete_one: a[0] changed %d->%d)",
+                a[0], _a);
         continue;
       }
       if ((pseg = buffer_open(ctx, ii, a[0], &bt, &b)) == NOT_ASSIGNED) {
         rc = GRN_NO_MEMORY_AVAILABLE;
         goto exit;
       }
-      GRN_LOG(ctx, GRN_LOG_DEBUG, "flushed!  b=%p free=%d, seg(%d)", b, b->header.buffer_free, LSEG(a[0]));
+      GRN_LOG(ctx, GRN_LOG_DEBUG, "flushed!  b=%p free=%d, seg(%d)",
+              b, b->header.buffer_free, LSEG(a[0]));
       if (b->header.buffer_free < size) {
-        GRN_LOG(ctx, GRN_LOG_CRIT, "buffer(%d) is full (%d < %d) in grn_ii_delete_one",
+        GRN_LOG(ctx, GRN_LOG_CRIT,
+                "buffer(%d) is full (%d < %d) in grn_ii_delete_one",
                 a[0], b->header.buffer_free, size);
         rc = GRN_NO_MEMORY_AVAILABLE;
         buffer_close(ctx, ii, pseg);
@@ -4112,7 +4224,8 @@ buffer_is_reused(grn_ctx *ctx, grn_ii *ii, grn_ii_cursor *c)
 {
   if (*c->ppseg != c->buffer_pseg) {
     uint32_t i;
-    for (i = ii->header->bgqtail; i != ii->header->bgqhead; i = (i + 1) & (GRN_II_BGQSIZE - 1)) {
+    for (i = ii->header->bgqtail; i != ii->header->bgqhead;
+         i = (i + 1) & (GRN_II_BGQSIZE - 1)) {
       if (ii->header->bgqbody[i] == c->buffer_pseg) { return 0; }
     }
     return 1;
@@ -4136,7 +4249,8 @@ chunk_is_reused(grn_ctx *ctx, grn_ii *ii, grn_ii_cursor *c, uint32_t offset, uin
     gseg = ii->header->garbages[m - GRN_II_W_LEAST_CHUNK];
     while (gseg != NOT_ASSIGNED) {
       grn_io_win iw;
-      grn_ii_ginfo *ginfo = WIN_MAP(ii->chunk, ctx, &iw, gseg, 0, S_GARBAGE, grn_io_rdwr);
+      grn_ii_ginfo *ginfo = WIN_MAP(ii->chunk, ctx, &iw, gseg, 0, S_GARBAGE,
+                                    grn_io_rdwr);
       if (!ginfo) { break; }
       for (i = 0; i < ginfo->nrecs; i++) {
         if (ginfo->recs[i] == offset) {
@@ -4194,7 +4308,8 @@ grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
     } else {
       uint32_t chunk;
       buffer_term *bt;
-      if ((c->buffer_pseg = buffer_open(ctx, ii, pos, &bt, &c->buf)) == NOT_ASSIGNED) {
+      c->buffer_pseg = buffer_open(ctx, ii, pos, &bt, &c->buf);
+      if (c->buffer_pseg == NOT_ASSIGNED) {
         GRN_FREE(c);
         c = NULL;
         goto exit;
@@ -4395,7 +4510,8 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
             uint32_t lrid = c->pb.rid, lsid = c->pb.sid; /* for check */
             buffer_rec *br = BUFFER_REC_AT(c->buf, c->nextb);
             if (buffer_is_reused(ctx, c->ii, c)) {
-              GRN_LOG(ctx, GRN_LOG_DEBUG, "buffer reused(%d,%d)", c->buffer_pseg, *c->ppseg);
+              GRN_LOG(ctx, GRN_LOG_DEBUG, "buffer reused(%d,%d)",
+                      c->buffer_pseg, *c->ppseg);
               // todo : rewind;
             }
             c->bp = GRN_NEXT_ADDR(br);
@@ -4406,7 +4522,8 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
               c->pb.sid = 1;
             }
             if (lrid > c->pb.rid || (lrid == c->pb.rid && lsid >= c->pb.sid)) {
-              ERR(GRN_FILE_CORRUPT, "brokend!! (%d:%d) -> (%d:%d) (%d->%d)", lrid, lsid, c->pb.rid, c->pb.sid, c->buffer_pseg, *c->ppseg);
+              ERR(GRN_FILE_CORRUPT, "brokend!! (%d:%d) -> (%d:%d) (%d->%d)",
+                  lrid, lsid, c->pb.rid, c->pb.sid, c->buffer_pseg, *c->ppseg);
             }
             if (c->pb.rid < c->min) {
               c->pb.rid = 0;
@@ -4511,7 +4628,8 @@ grn_ii_cursor_next_pos(grn_ctx *ctx, grn_ii_cursor *c)
           }
         } else if (c->post == &c->pb) {
           if (buffer_is_reused(ctx, c->ii, c)) {
-            GRN_LOG(ctx, GRN_LOG_DEBUG, "buffer reused(%d,%d)", c->buffer_pseg, *c->ppseg);
+            GRN_LOG(ctx, GRN_LOG_DEBUG, "buffer reused(%d,%d)",
+                    c->buffer_pseg, *c->ppseg);
             // todo : rewind;
           }
           if (c->pb.rest) {
@@ -4610,8 +4728,10 @@ grn_ii_estimate_size(grn_ctx *ctx, grn_ii *ii, grn_id tid)
 
 int
 grn_ii_entry_info(grn_ctx *ctx, grn_ii *ii, grn_id tid, unsigned int *a,
-                   unsigned int *chunk, unsigned int *chunk_size, unsigned int *buffer_free,
-                   unsigned int *nterms, unsigned int *nterms_void, unsigned int *bt_tid,
+                   unsigned int *chunk, unsigned int *chunk_size,
+                   unsigned int *buffer_free,
+                   unsigned int *nterms, unsigned int *nterms_void,
+                   unsigned int *bt_tid,
                    unsigned int *size_in_chunk, unsigned int *pos_in_chunk,
                    unsigned int *size_in_buffer, unsigned int *pos_in_buffer)
 {
@@ -4839,7 +4959,8 @@ index_add(grn_ctx *ctx, grn_id rid, grn_obj *lexicon, grn_ii *ii, grn_vgram *vgr
     return GRN_NO_MEMORY_AVAILABLE;
   }
   if (vgram) { sbuf = grn_vgram_buf_open(value_len); }
-  h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *), GRN_HASH_TINY);
+  h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *),
+                      GRN_HASH_TINY);
   if (!h) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create on index_add failed !");
     grn_token_cursor_close(ctx, token_cursor);
@@ -4849,15 +4970,19 @@ index_add(grn_ctx *ctx, grn_id rid, grn_obj *lexicon, grn_ii *ii, grn_vgram *vgr
   while (!token_cursor->status) {
     (tid = grn_token_cursor_next(ctx, token_cursor));
     if (tid) {
-      if (!grn_hash_add(ctx, h, &tid, sizeof(grn_id), (void **) &u, NULL)) { break; }
+      if (!grn_hash_add(ctx, h, &tid, sizeof(grn_id), (void **) &u, NULL)) {
+        break;
+      }
       if (!*u) {
         if (!(*u = grn_ii_updspec_open(ctx, rid, 1))) {
-          GRN_LOG(ctx, GRN_LOG_ERROR, "grn_ii_updspec_open on index_add failed!");
+          GRN_LOG(ctx, GRN_LOG_ERROR,
+                  "grn_ii_updspec_open on index_add failed!");
           goto exit;
         }
       }
       if (grn_ii_updspec_add(ctx, *u, token_cursor->pos, 0)) {
-        GRN_LOG(ctx, GRN_LOG_ERROR, "grn_ii_updspec_add on index_add failed!");
+        GRN_LOG(ctx, GRN_LOG_ERROR,
+                "grn_ii_updspec_add on index_add failed!");
         goto exit;
       }
       if (sbuf) { grn_vgram_buf_add(sbuf, tid); }
@@ -4895,7 +5020,8 @@ index_del(grn_ctx *ctx, grn_id rid, grn_obj *lexicon, grn_ii *ii, grn_vgram *vgr
                                              GRN_TOKEN_DEL, token_flags))) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
-  h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *), GRN_HASH_TINY);
+  h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *),
+                      GRN_HASH_TINY);
   if (!h) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create on index_del failed !");
     grn_token_cursor_close(ctx, token_cursor);
@@ -4903,10 +5029,13 @@ index_del(grn_ctx *ctx, grn_id rid, grn_obj *lexicon, grn_ii *ii, grn_vgram *vgr
   }
   while (!token_cursor->status) {
     if ((tid = grn_token_cursor_next(ctx, token_cursor))) {
-      if (!grn_hash_add(ctx, h, &tid, sizeof(grn_id), (void **) &u, NULL)) { break; }
+      if (!grn_hash_add(ctx, h, &tid, sizeof(grn_id), (void **) &u, NULL)) {
+        break;
+      }
       if (!*u) {
         if (!(*u = grn_ii_updspec_open(ctx, rid, 0))) {
-          GRN_LOG(ctx, GRN_LOG_ALERT, "grn_ii_updspec_open on index_del failed !");
+          GRN_LOG(ctx, GRN_LOG_ALERT,
+                  "grn_ii_updspec_open on index_del failed !");
           grn_hash_close(ctx, h);
           grn_token_cursor_close(ctx, token_cursor);
           return GRN_NO_MEMORY_AVAILABLE;
@@ -4968,23 +5097,27 @@ grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram, unsigned i
     return GRN_INVALID_ARGUMENT;
   }
   if (newvalues) {
-    new = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *), GRN_HASH_TINY);
+    new = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *),
+                          GRN_HASH_TINY);
     if (!new) {
       GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create on grn_ii_update failed !");
       rc = GRN_NO_MEMORY_AVAILABLE;
       goto exit;
     }
     for (j = newvalues->n_values, v = newvalues->values; j; j--, v++) {
-      if ((token_cursor = grn_token_cursor_open(ctx, lexicon, v->str, v->str_len,
-                                                GRN_TOKEN_ADD, token_flags))) {
+      if ((token_cursor = grn_token_cursor_open(ctx, lexicon, v->str,
+                                                v->str_len, GRN_TOKEN_ADD,
+                                                token_flags))) {
         while (!token_cursor->status) {
           if ((tid = grn_token_cursor_next(ctx, token_cursor))) {
-            if (!grn_hash_add(ctx, new, &tid, sizeof(grn_id), (void **) &u, NULL)) {
+            if (!grn_hash_add(ctx, new, &tid, sizeof(grn_id), (void **) &u,
+                              NULL)) {
               break;
             }
             if (!*u) {
               if (!(*u = grn_ii_updspec_open(ctx, rid, section))) {
-                GRN_LOG(ctx, GRN_LOG_ALERT, "grn_ii_updspec_open on grn_ii_update failed!");
+                GRN_LOG(ctx, GRN_LOG_ALERT,
+                        "grn_ii_updspec_open on grn_ii_update failed!");
                 grn_token_cursor_close(ctx, token_cursor);
                 grn_hash_close(ctx, new);
                 rc = GRN_NO_MEMORY_AVAILABLE;
@@ -4992,7 +5125,8 @@ grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram, unsigned i
               }
             }
             if (grn_ii_updspec_add(ctx, *u, token_cursor->pos, v->weight)) {
-              GRN_LOG(ctx, GRN_LOG_ALERT, "grn_ii_updspec_add on grn_ii_update failed!");
+              GRN_LOG(ctx, GRN_LOG_ALERT,
+                      "grn_ii_updspec_add on grn_ii_update failed!");
               grn_token_cursor_close(ctx, token_cursor);
               grn_hash_close(ctx, new);
               rc = GRN_NO_MEMORY_AVAILABLE;
@@ -5011,24 +5145,29 @@ grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram, unsigned i
     new = NULL;
   }
   if (oldvalues) {
-    old = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *), GRN_HASH_TINY);
+    old = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *),
+                          GRN_HASH_TINY);
     if (!old) {
-      GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create(ctx, NULL, old) on grn_ii_update failed!");
+      GRN_LOG(ctx, GRN_LOG_ALERT,
+              "grn_hash_create(ctx, NULL, old) on grn_ii_update failed!");
       if (new) { grn_hash_close(ctx, new); }
       rc = GRN_NO_MEMORY_AVAILABLE;
       goto exit;
     }
     for (j = oldvalues->n_values, v = oldvalues->values; j; j--, v++) {
-      if ((token_cursor = grn_token_cursor_open(ctx, lexicon, v->str, v->str_len,
-                                                GRN_TOKEN_DEL, token_flags))) {
+      if ((token_cursor = grn_token_cursor_open(ctx, lexicon, v->str,
+                                                v->str_len, GRN_TOKEN_DEL,
+                                                token_flags))) {
         while (!token_cursor->status) {
           if ((tid = grn_token_cursor_next(ctx, token_cursor))) {
-            if (!grn_hash_add(ctx, old, &tid, sizeof(grn_id), (void **) &u, NULL)) {
+            if (!grn_hash_add(ctx, old, &tid, sizeof(grn_id), (void **) &u,
+                              NULL)) {
               break;
             }
             if (!*u) {
               if (!(*u = grn_ii_updspec_open(ctx, rid, section))) {
-                GRN_LOG(ctx, GRN_LOG_ALERT, "grn_ii_updspec_open on grn_ii_update failed!");
+                GRN_LOG(ctx, GRN_LOG_ALERT,
+                        "grn_ii_updspec_open on grn_ii_update failed!");
                 grn_token_cursor_close(ctx, token_cursor);
                 if (new) { grn_hash_close(ctx, new); };
                 grn_hash_close(ctx, old);
@@ -5037,7 +5176,8 @@ grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram, unsigned i
               }
             }
             if (grn_ii_updspec_add(ctx, *u, token_cursor->pos, v->weight)) {
-              GRN_LOG(ctx, GRN_LOG_ALERT, "grn_ii_updspec_add on grn_ii_update failed!");
+              GRN_LOG(ctx, GRN_LOG_ALERT,
+                      "grn_ii_updspec_add on grn_ii_update failed!");
               grn_token_cursor_close(ctx, token_cursor);
               if (new) { grn_hash_close(ctx, new); };
               grn_hash_close(ctx, old);
@@ -5055,7 +5195,8 @@ grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram, unsigned i
   if (old) {
     grn_id eid;
     GRN_HASH_EACH(ctx, old, id, &tp, NULL, &u, {
-      if (new && (eid = grn_hash_get(ctx, new, tp, sizeof(grn_id), (void **) &un))) {
+      if (new && (eid = grn_hash_get(ctx, new, tp, sizeof(grn_id),
+                                     (void **) &un))) {
         if (!grn_ii_updspec_cmp(*u, *un)) {
           grn_ii_updspec_close(ctx, *un);
           grn_hash_delete_by_id(ctx, new, eid, NULL);
@@ -5105,23 +5246,27 @@ grn_vector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     for (j = in->u.v.n_sections, v = in->u.v.sections; j; j--, v++) {
       unsigned int token_flags = 0;
       if (v->length &&
-          (token_cursor = grn_token_cursor_open(ctx, lexicon, head + v->offset, v->length,
-                                                mode, token_flags))) {
+          (token_cursor = grn_token_cursor_open(ctx, lexicon, head + v->offset,
+                                                v->length, mode,
+                                                token_flags))) {
         while (!token_cursor->status) {
           if ((tid = grn_token_cursor_next(ctx, token_cursor))) {
             if (posting) { GRN_RECORD_PUT(ctx, posting, tid); }
-            if (!grn_hash_add(ctx, h, &tid, sizeof(grn_id), (void **) &u, NULL)) {
+            if (!grn_hash_add(ctx, h, &tid, sizeof(grn_id), (void **) &u,
+                              NULL)) {
               break;
             }
             if (!*u) {
               if (!(*u = grn_ii_updspec_open(ctx, rid, section))) {
-                GRN_LOG(ctx, GRN_LOG_ALERT, "grn_ii_updspec_open on grn_ii_update failed!");
+                GRN_LOG(ctx, GRN_LOG_ALERT,
+                        "grn_ii_updspec_open on grn_ii_update failed!");
                 grn_token_cursor_close(ctx, token_cursor);
                 return GRN_NO_MEMORY_AVAILABLE;
               }
             }
             if (grn_ii_updspec_add(ctx, *u, token_cursor->pos, v->weight)) {
-              GRN_LOG(ctx, GRN_LOG_ALERT, "grn_ii_updspec_add on grn_ii_update failed!");
+              GRN_LOG(ctx, GRN_LOG_ALERT,
+                      "grn_ii_updspec_add on grn_ii_update failed!");
               grn_token_cursor_close(ctx, token_cursor);
               return GRN_NO_MEMORY_AVAILABLE;
             }
@@ -5152,7 +5297,8 @@ grn_uvector2updspecs_data(grn_ctx *ctx, grn_ii *ii, grn_id rid,
     unsigned int token_flags = 0;
     const char *element;
 
-    tokenizer = grn_obj_get_info(ctx, lexicon, GRN_INFO_DEFAULT_TOKENIZER, NULL);
+    tokenizer = grn_obj_get_info(ctx, lexicon, GRN_INFO_DEFAULT_TOKENIZER,
+                                 NULL);
 
     element = GRN_BULK_HEAD(in) + (element_size * i);
     token_cursor = grn_token_cursor_open(ctx, lexicon,
@@ -5219,12 +5365,14 @@ grn_uvector2updspecs_id(grn_ctx *ctx, grn_ii *ii, grn_id rid,
     }
     if (!*u) {
       if (!(*u = grn_ii_updspec_open(ctx, rid, section))) {
-        GRN_LOG(ctx, GRN_LOG_ALERT, "grn_ii_updspec_open on grn_ii_update failed!");
+        GRN_LOG(ctx, GRN_LOG_ALERT,
+                "grn_ii_updspec_open on grn_ii_update failed!");
         return GRN_NO_MEMORY_AVAILABLE;
       }
     }
     if (grn_ii_updspec_add(ctx, *u, i, weight)) {
-      GRN_LOG(ctx, GRN_LOG_ALERT, "grn_ii_updspec_add on grn_ii_update failed!");
+      GRN_LOG(ctx, GRN_LOG_ALERT,
+              "grn_ii_updspec_add on grn_ii_update failed!");
       return GRN_NO_MEMORY_AVAILABLE;
     }
   }
@@ -5252,7 +5400,8 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
   grn_bool do_grn_ii_updspec_cmp = GRN_TRUE;
   grn_rc rc = GRN_SUCCESS;
   grn_ii_updspec **u, **un;
-  grn_obj *old_, *old = oldvalue, *new_, *new = newvalue, oldv, newv, buf, *post = NULL;
+  grn_obj *old_, *old = oldvalue, *new_, *new = newvalue, oldv, newv;
+  grn_obj buf, *post = NULL;
   if (!ii || !ii->lexicon || !rid) {
     ERR(GRN_INVALID_ARGUMENT, "grn_ii_column_update: invalid argument");
     return GRN_INVALID_ARGUMENT;
@@ -5286,10 +5435,12 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
                                        sizeof(grn_ii_updspec *),
                                        GRN_HASH_TINY);
       if (!new) {
-        GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create on grn_ii_update failed !");
+        GRN_LOG(ctx, GRN_LOG_ALERT,
+                "grn_hash_create on grn_ii_update failed !");
         rc = GRN_NO_MEMORY_AVAILABLE;
       } else {
-        rc = grn_vector2updspecs(ctx, ii, rid, section, new_, new, GRN_TOKEN_ADD, post);
+        rc = grn_vector2updspecs(ctx, ii, rid, section, new_, new,
+                                 GRN_TOKEN_ADD, post);
       }
       if (new_ != newvalue) { grn_obj_close(ctx, new_); }
       if (rc) { goto exit; }
@@ -5300,7 +5451,8 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
                                        sizeof(grn_ii_updspec *),
                                        GRN_HASH_TINY);
       if (!new) {
-        GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create on grn_ii_update failed !");
+        GRN_LOG(ctx, GRN_LOG_ALERT,
+                "grn_hash_create on grn_ii_update failed !");
         rc = GRN_NO_MEMORY_AVAILABLE;
       } else {
         if (new_->header.type == GRN_UVECTOR) {
@@ -5309,11 +5461,13 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
         } else {
           grn_obj uvector;
           unsigned int weight = 0;
-          GRN_VALUE_FIX_SIZE_INIT(&uvector, GRN_OBJ_VECTOR, new_->header.domain);
+          GRN_VALUE_FIX_SIZE_INIT(&uvector, GRN_OBJ_VECTOR,
+                                  new_->header.domain);
           if (new_->header.impl_flags & GRN_OBJ_WITH_WEIGHT) {
             uvector.header.impl_flags |= GRN_OBJ_WITH_WEIGHT;
           }
-          grn_uvector_add_element(ctx, &uvector, GRN_RECORD_VALUE(new_), weight);
+          grn_uvector_add_element(ctx, &uvector, GRN_RECORD_VALUE(new_),
+                                  weight);
           rc = grn_uvector2updspecs(ctx, ii, rid, section, &uvector, new,
                                     GRN_TOKEN_ADD, post);
           GRN_OBJ_FIN(ctx, &uvector);
@@ -5352,7 +5506,8 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     });
     tpe = (grn_id *)GRN_BULK_CURR(post);
     for (tp = (grn_id *)GRN_BULK_HEAD(post); tp < tpe; tp++) {
-      grn_hash_get(ctx, (grn_hash *)new, (void *)tp, sizeof(grn_id), (void **)&u);
+      grn_hash_get(ctx, (grn_hash *)new, (void *)tp, sizeof(grn_id),
+                   (void **)&u);
       GRN_TEXT_PUT(ctx, posting, &(*u)->offset, sizeof(int32_t));
     }
     GRN_OBJ_FIN(ctx, post);
@@ -5382,10 +5537,12 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
                                        sizeof(grn_ii_updspec *),
                                        GRN_HASH_TINY);
       if (!old) {
-        GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create(ctx, NULL, old) on grn_ii_update failed!");
+        GRN_LOG(ctx, GRN_LOG_ALERT,
+                "grn_hash_create(ctx, NULL, old) on grn_ii_update failed!");
         rc = GRN_NO_MEMORY_AVAILABLE;
       } else {
-        rc = grn_vector2updspecs(ctx, ii, rid, section, old_, old, GRN_TOKEN_DEL, NULL);
+        rc = grn_vector2updspecs(ctx, ii, rid, section, old_, old,
+                                 GRN_TOKEN_DEL, NULL);
       }
       if (old_ != oldvalue) { grn_obj_close(ctx, old_); }
       if (rc) { goto exit; }
@@ -5396,7 +5553,8 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
                                        sizeof(grn_ii_updspec *),
                                        GRN_HASH_TINY);
       if (!old) {
-        GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create(ctx, NULL, old) on grn_ii_update failed!");
+        GRN_LOG(ctx, GRN_LOG_ALERT,
+                "grn_hash_create(ctx, NULL, old) on grn_ii_update failed!");
         rc = GRN_NO_MEMORY_AVAILABLE;
       } else {
         if (old_->header.type == GRN_UVECTOR) {
@@ -5405,11 +5563,13 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
         } else {
           grn_obj uvector;
           unsigned int weight = 0;
-          GRN_VALUE_FIX_SIZE_INIT(&uvector, GRN_OBJ_VECTOR, old_->header.domain);
+          GRN_VALUE_FIX_SIZE_INIT(&uvector, GRN_OBJ_VECTOR,
+                                  old_->header.domain);
           if (old_->header.impl_flags & GRN_OBJ_WITH_WEIGHT) {
             uvector.header.impl_flags |= GRN_OBJ_WITH_WEIGHT;
           }
-          grn_uvector_add_element(ctx, &uvector, GRN_RECORD_VALUE(old_), weight);
+          grn_uvector_add_element(ctx, &uvector, GRN_RECORD_VALUE(old_),
+                                  weight);
           rc = grn_uvector2updspecs(ctx, ii, rid, section, &uvector, old,
                                     GRN_TOKEN_DEL, NULL);
           GRN_OBJ_FIN(ctx, &uvector);
@@ -5431,7 +5591,8 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     grn_hash *o = (grn_hash *)old;
     grn_hash *n = (grn_hash *)new;
     GRN_HASH_EACH(ctx, o, id, &tp, NULL, &u, {
-      if (n && (eid = grn_hash_get(ctx, n, tp, sizeof(grn_id), (void **) &un))) {
+      if (n && (eid = grn_hash_get(ctx, n, tp, sizeof(grn_id),
+                                   (void **) &un))) {
         if (do_grn_ii_updspec_cmp && !grn_ii_updspec_cmp(*u, *un)) {
           grn_ii_updspec_close(ctx, *un);
           grn_hash_delete_by_id(ctx, n, eid, NULL);
@@ -5512,11 +5673,14 @@ token_info_expand_both(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
                 ti->size += s;
               }
             } else {
-              if ((g = grn_hash_create(ctx, NULL, sizeof(grn_id), 0, GRN_HASH_TINY))) {
-                grn_pat_suffix_search(ctx, (grn_pat *)lexicon, key2, key2_size, g);
+              if ((g = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                                       GRN_HASH_TINY))) {
+                grn_pat_suffix_search(ctx, (grn_pat *)lexicon, key2, key2_size,
+                                      g);
                 GRN_HASH_EACH(ctx, g, id, &tq, NULL, &offset2, {
                   if ((s = grn_ii_estimate_size(ctx, ii, *tq))) {
-                    cursor_heap_push(ctx, ti->cursors, ii, *tq, /* *offset2 */ 0, 0);
+                    cursor_heap_push(ctx, ti->cursors, ii, *tq,
+                                     /* *offset2 */ 0, 0);
                     ti->ntoken++;
                     ti->size += s;
                   }
@@ -5543,8 +5707,8 @@ token_info_close(grn_ctx *ctx, token_info *ti)
 
 inline static token_info *
 token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
-                const char *key, unsigned int key_size, uint32_t offset, int mode,
-                grn_fuzzy_search_optarg *args)
+                const char *key, unsigned int key_size, uint32_t offset,
+                int mode, grn_fuzzy_search_optarg *args)
 {
   int s = 0;
   grn_hash *h;
@@ -5704,7 +5868,8 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
   *only_skip_token = GRN_FALSE;
   if (!token_cursor) { return GRN_NO_MEMORY_AVAILABLE; }
   if (mode == GRN_OP_UNSPLIT) {
-    if ((ti = token_info_open(ctx, lexicon, ii, (char *)token_cursor->orig, token_cursor->orig_blen, 0, EX_BOTH, NULL))) {
+    if ((ti = token_info_open(ctx, lexicon, ii, (char *)token_cursor->orig,
+                              token_cursor->orig_blen, 0, EX_BOTH, NULL))) {
       tis[(*n)++] = ti;
       rc = GRN_SUCCESS;
     }
@@ -5730,7 +5895,8 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
     switch (token_cursor->status) {
     case GRN_TOKEN_CURSOR_DOING :
       key = _grn_table_key(ctx, lexicon, tid, &size);
-      ti = token_info_open(ctx, lexicon, ii, key, size, token_cursor->pos, ef & EX_SUFFIX, NULL);
+      ti = token_info_open(ctx, lexicon, ii, key, size, token_cursor->pos,
+                           ef & EX_SUFFIX, NULL);
       break;
     case GRN_TOKEN_CURSOR_DONE :
       ti = token_info_open(ctx, lexicon, ii, (const char *)token_cursor->curr,
@@ -5762,17 +5928,20 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
         continue;
       case GRN_TOKEN_CURSOR_DOING :
         key = _grn_table_key(ctx, lexicon, tid, &size);
-        ti = token_info_open(ctx, lexicon, ii, key, size, token_cursor->pos, EX_NONE, NULL);
+        ti = token_info_open(ctx, lexicon, ii, key, size, token_cursor->pos,
+                             EX_NONE, NULL);
         break;
       case GRN_TOKEN_CURSOR_DONE :
         if (tid) {
           key = _grn_table_key(ctx, lexicon, tid, &size);
-          ti = token_info_open(ctx, lexicon, ii, key, size, token_cursor->pos, ef & EX_PREFIX, NULL);
+          ti = token_info_open(ctx, lexicon, ii, key, size, token_cursor->pos,
+                               ef & EX_PREFIX, NULL);
           break;
         } /* else fallthru */
       default :
         ti = token_info_open(ctx, lexicon, ii, (char *)token_cursor->curr,
-                             token_cursor->curr_size, token_cursor->pos, ef & EX_PREFIX, NULL);
+                             token_cursor->curr_size, token_cursor->pos,
+                             ef & EX_PREFIX, NULL);
         break;
       }
       if (!ti) {
@@ -6034,7 +6203,8 @@ get_weight(grn_ctx *ctx, grn_hash *s, grn_id rid, int sid,
     }
     */
     /* todo : cast */
-    return optarg->func(ctx, (void *)s, (void *)(intptr_t)rid, sid, optarg->func_arg);
+    return optarg->func(ctx, (void *)s, (void *)(intptr_t)rid, sid,
+                        optarg->func_arg);
   case grn_wv_constant :
     return optarg->vector_size;
   default :
@@ -6054,7 +6224,9 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
   grn_token_cursor *token_cursor;
   unsigned int token_flags = GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER;
   grn_obj *lexicon = ii->lexicon;
-  if (!lexicon || !ii || !string || !string_len || !s || !optarg) { return GRN_INVALID_ARGUMENT; }
+  if (!lexicon || !ii || !string || !string_len || !s || !optarg) {
+    return GRN_INVALID_ARGUMENT;
+  }
   if (!(h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(int), 0))) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
@@ -6067,24 +6239,30 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
   while (token_cursor->status != GRN_TOKEN_CURSOR_DONE &&
          token_cursor->status != GRN_TOKEN_CURSOR_DONE_SKIP) {
     if ((tid = grn_token_cursor_next(ctx, token_cursor))) {
-      if (grn_hash_add(ctx, h, &tid, sizeof(grn_id), (void **)&w1, NULL)) { (*w1)++; }
+      if (grn_hash_add(ctx, h, &tid, sizeof(grn_id), (void **)&w1, NULL)) {
+        (*w1)++;
+      }
     }
     if (tid && token_cursor->curr_size) {
       if (optarg->max_interval == GRN_OP_UNSPLIT) {
-        grn_table_search(ctx, lexicon, token_cursor->curr, token_cursor->curr_size,
+        grn_table_search(ctx, lexicon, token_cursor->curr,
+                         token_cursor->curr_size,
                          GRN_OP_PREFIX, (grn_obj *)h, GRN_OP_OR);
       }
       if (optarg->max_interval == GRN_OP_PARTIAL) {
-        grn_table_search(ctx, lexicon, token_cursor->curr, token_cursor->curr_size,
+        grn_table_search(ctx, lexicon, token_cursor->curr,
+                         token_cursor->curr_size,
                          GRN_OP_SUFFIX, (grn_obj *)h, GRN_OP_OR);
       }
     }
   }
   grn_token_cursor_close(ctx, token_cursor);
   {
-    grn_hash_cursor *c = grn_hash_cursor_open(ctx, h, NULL, 0, NULL, 0, 0, -1, 0);
+    grn_hash_cursor *c = grn_hash_cursor_open(ctx, h, NULL, 0, NULL, 0,
+                                              0, -1, 0);
     if (!c) {
-      GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_cursor_open on grn_ii_similar_search failed !");
+      GRN_LOG(ctx, GRN_LOG_ALERT,
+              "grn_hash_cursor_open on grn_ii_similar_search failed !");
       grn_hash_close(ctx, h);
       return GRN_NO_MEMORY_AVAILABLE;
     }
@@ -6118,7 +6296,8 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
     };
     grn_array *sorted = grn_array_create(ctx, NULL, sizeof(grn_id), 0);
     if (!sorted) {
-      GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_sort on grn_ii_similar_search failed !");
+      GRN_LOG(ctx, GRN_LOG_ALERT,
+              "grn_hash_sort on grn_ii_similar_search failed !");
       grn_hash_close(ctx, h);
       return GRN_NO_MEMORY_AVAILABLE;
     }
@@ -6147,7 +6326,8 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
           pos = c->post;
           if ((w2 = get_weight(ctx, s, pos->rid, pos->sid, wvm, optarg)) > 0) {
             while (grn_ii_cursor_next_pos(ctx, c)) {
-              res_add(ctx, s, (grn_rset_posinfo *) pos, *w1 * w2 * (1 + pos->weight), op);
+              res_add(ctx, s, (grn_rset_posinfo *) pos,
+                      *w1 * w2 * (1 + pos->weight), op);
             }
           }
         }
@@ -6155,7 +6335,8 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
         while (grn_ii_cursor_next(ctx, c)) {
           pos = c->post;
           if ((w2 = get_weight(ctx, s, pos->rid, pos->sid, wvm, optarg)) > 0) {
-            res_add(ctx, s, (grn_rset_posinfo *) pos, *w1 * w2 * (pos->tf + pos->weight), op);
+            res_add(ctx, s, (grn_rset_posinfo *) pos,
+                    *w1 * w2 * (pos->tf + pos->weight), op);
           }
         }
       }
@@ -6764,7 +6945,8 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
             if (ti->pos == pos) {
               score += ti->p->weight + ti->cursors->bins[0]->weight; count++;
             } else {
-              score = ti->p->weight + ti->cursors->bins[0]->weight; count = 1; pos = ti->pos;
+              score = ti->p->weight + ti->cursors->bins[0]->weight; count = 1;
+              pos = ti->pos;
               if (noccur == 0 && score_func) {
                 GRN_BULK_REWIND(&(record.terms));
                 GRN_BULK_REWIND(&(record.term_weights));
@@ -6780,7 +6962,9 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
               record.n_tokens += ti->ntoken;
             }
             if (count == n) {
-              if (rep) { pi.pos = pos; res_add(ctx, s, &pi, (score + 1) * weight, op); }
+              if (rep) {
+                pi.pos = pos; res_add(ctx, s, &pi, (score + 1) * weight, op);
+              }
               tscore += score;
               score = 0; count = 0; pos++;
               noccur++;
@@ -7027,7 +7211,8 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
       if ((int64_t)GRN_HASH_SIZE(s) <= ctx->impl->match_escalation_threshold) {
         arg.mode = GRN_OP_UNSPLIT;
         if (grn_ii_select(ctx, ii, string, string_len, s, op, &arg)) {
-          GRN_LOG(ctx, GRN_LOG_ERROR, "grn_ii_select on grn_ii_sel(2) failed !");
+          GRN_LOG(ctx, GRN_LOG_ERROR,
+                  "grn_ii_select on grn_ii_sel(2) failed !");
           return ctx->rc;
         }
         GRN_LOG(ctx, GRN_LOG_INFO, "unsplit: %d", GRN_HASH_SIZE(s));
@@ -7035,7 +7220,8 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
       if ((int64_t)GRN_HASH_SIZE(s) <= ctx->impl->match_escalation_threshold) {
         arg.mode = GRN_OP_PARTIAL;
         if (grn_ii_select(ctx, ii, string, string_len, s, op, &arg)) {
-          GRN_LOG(ctx, GRN_LOG_ERROR, "grn_ii_select on grn_ii_sel(3) failed !");
+          GRN_LOG(ctx, GRN_LOG_ERROR,
+                  "grn_ii_select on grn_ii_sel(3) failed !");
           return ctx->rc;
         }
         GRN_LOG(ctx, GRN_LOG_INFO, "partial: %d", GRN_HASH_SIZE(s));
@@ -7069,7 +7255,8 @@ grn_ii_resolve_sel_and(grn_ctx *ctx, grn_hash *s, grn_operator op)
       && !(ctx->flags & GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND)) {
     grn_id eid;
     grn_rset_recinfo *ri;
-    grn_hash_cursor *c = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0, -1, 0);
+    grn_hash_cursor *c = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0,
+                                              0, -1, 0);
     if (c) {
       while ((eid = grn_hash_cursor_next(ctx, c))) {
         grn_hash_cursor_get_value(ctx, c, (void **) &ri);
@@ -7186,7 +7373,8 @@ grn_ii_cursor_next_all(grn_ctx *ctx, grn_ii_cursor *c)
           uint32_t lrid = c->pb.rid, lsid = c->pb.sid; /* for check */
           buffer_rec *br = BUFFER_REC_AT(c->buf, c->nextb);
           if (buffer_is_reused(ctx, c->ii, c)) {
-            GRN_LOG(ctx, GRN_LOG_DEBUG, "buffer reused(%d,%d)", c->buffer_pseg, *c->ppseg);
+            GRN_LOG(ctx, GRN_LOG_DEBUG, "buffer reused(%d,%d)",
+                    c->buffer_pseg, *c->ppseg);
             // todo : rewind;
           }
           c->bp = GRN_NEXT_ADDR(br);
@@ -7197,7 +7385,8 @@ grn_ii_cursor_next_all(grn_ctx *ctx, grn_ii_cursor *c)
             c->pb.sid = 1;
           }
           if (lrid > c->pb.rid || (lrid == c->pb.rid && lsid >= c->pb.sid)) {
-            ERR(GRN_FILE_CORRUPT, "brokend!! (%d:%d) -> (%d:%d) (%d->%d)", lrid, lsid, c->pb.rid, c->pb.sid, c->buffer_pseg, *c->ppseg);
+            ERR(GRN_FILE_CORRUPT, "brokend!! (%d:%d) -> (%d:%d) (%d->%d)",
+                lrid, lsid, c->pb.rid, c->pb.sid, c->buffer_pseg, *c->ppseg);
           }
           c->nextb = br->step;
           GRN_B_DEC(c->pb.tf, c->bp);
@@ -7661,7 +7850,8 @@ grn_ii_buffer_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   {
     ssize_t r = grn_write(ii_buffer->tmpfd, outbuf, encsize);
     if (r != encsize) {
-      ERR(GRN_INPUT_OUTPUT_ERROR, "write returned %" GRN_FMT_LLD " != %" GRN_FMT_LLU,
+      ERR(GRN_INPUT_OUTPUT_ERROR,
+          "write returned %" GRN_FMT_LLD " != %" GRN_FMT_LLU,
           (long long int)r, (unsigned long long int)encsize);
       return;
     }
@@ -8188,7 +8378,8 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
           ii_buffer->tmpfd = grn_mkstemp(ii_buffer->tmpfpath);
           if (ii_buffer->tmpfd != -1) {
             grn_obj_flags flags;
-            grn_table_get_info(ctx, ii->lexicon, &flags, NULL, NULL, NULL, NULL);
+            grn_table_get_info(ctx, ii->lexicon, &flags, NULL, NULL, NULL,
+                               NULL);
             if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_PAT_KEY) {
               grn_pat_cache_enable(ctx, (grn_pat *)ii->lexicon,
                                    PAT_CACHE_SIZE);
@@ -8386,7 +8577,8 @@ grn_ii_buffer_close(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
 {
   uint32_t i;
   grn_obj_flags flags;
-  grn_table_get_info(ctx, ii_buffer->ii->lexicon, &flags, NULL, NULL, NULL, NULL);
+  grn_table_get_info(ctx, ii_buffer->ii->lexicon, &flags, NULL, NULL, NULL,
+                     NULL);
   if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_PAT_KEY) {
     grn_pat_cache_disable(ctx, (grn_pat *)ii_buffer->ii->lexicon);
   }
