@@ -8712,14 +8712,14 @@ grn_ii_build(grn_ctx *ctx, grn_ii *ii, uint64_t sparsity)
 
   ii_buffer = grn_ii_buffer_open(ctx, ii, sparsity);
   if (ii_buffer) {
-    grn_id *s = ii->obj.source;
-    if ((ii->obj.source_size) && s) {
+    grn_id *source = (grn_id *)ii->obj.source;
+    if (ii->obj.source_size && ii->obj.source) {
       int ncols = ii->obj.source_size / sizeof(grn_id);
       grn_obj **cols = GRN_MALLOCN(grn_obj *, ncols);
       if (cols) {
         int i;
         for (i = 0; i < ncols; i++) {
-          if (!(cols[i] = grn_ctx_at(ctx, s[i]))) { break; }
+          if (!(cols[i] = grn_ctx_at(ctx, source[i]))) { break; }
         }
         if (i == ncols) {
           grn_obj *target = cols[0];
