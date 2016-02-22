@@ -7552,12 +7552,12 @@ const size_t II_BUFFER_BLOCK_SIZE = 0x1000000;
 const uint32_t II_BUFFER_BLOCK_READ_UNIT_SIZE = 0x200000;
 
 typedef struct {
-  unsigned int sid;
-  unsigned int weight;
-  const char *p;
-  uint32_t len;
-  char *buf;
-  uint32_t cap;
+  unsigned int sid;    /* Section ID */
+  unsigned int weight; /* Weight */
+  const char *p;       /* Value address */
+  uint32_t len;        /* Value length */
+  char *buf;           /* Buffer address */
+  uint32_t cap;        /* Buffer size */
 } ii_buffer_value;
 
 typedef struct {
@@ -8420,6 +8420,10 @@ ii_buffer_value_fin(grn_ctx *ctx, ii_buffer_value *value)
   }
 }
 
+/*
+ * ii_buffer_values_append appends a value to ii_buffer.
+ * This function deep-copies the value if need_copy == GRN_TRUE.
+ */
 static void
 ii_buffer_values_append(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
                         unsigned int sid, unsigned weight,
@@ -8613,6 +8617,14 @@ grn_ii_buffer_close(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   return ctx->rc;
 }
 
+/*
+ * grn_ii_buffer_parse tokenizes values to be indexed.
+ *
+ * For each record of the target table, grn_ii_buffer_parse makes a list of
+ * target values and calls grn_ii_buffer_tokenize. To make a list of target
+ * values, ii_buffer_values_append is called for each value. Note that
+ * ii_buffer_values_append is called for each element for a vector.
+ */
 static void
 grn_ii_buffer_parse(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
                     grn_obj *target, int ncols, grn_obj **cols)
@@ -8699,9 +8711,8 @@ grn_ii_build(grn_ctx *ctx, grn_ii *ii, uint64_t sparsity)
   grn_ii_buffer *ii_buffer;
 
   {
-    grn_obj *data_table;
-
-    data_table = grn_ctx_at(ctx, DB_OBJ(ii)->range);
+    /* Do nothing if there are no targets. */
+    grn_obj *data_table = grn_ctx_at(ctx, DB_OBJ(ii)->range);
     if (!data_table) {
       return ctx->rc;
     }
@@ -8721,7 +8732,7 @@ grn_ii_build(grn_ctx *ctx, grn_ii *ii, uint64_t sparsity)
         for (i = 0; i < ncols; i++) {
           if (!(cols[i] = grn_ctx_at(ctx, source[i]))) { break; }
         }
-        if (i == ncols) {
+        if (i == ncols) { /* All the source columns are available. */
           grn_obj *target = cols[0];
           if (!GRN_OBJ_TABLEP(target)) {
             target = grn_ctx_at(ctx, target->header.domain);
