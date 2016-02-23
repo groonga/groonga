@@ -36,7 +36,8 @@ struct _grn_ii {
   grn_obj *lexicon;
   grn_obj_flags lflags;
   grn_encoding encoding;
-  uint32_t n_elements;
+  uint32_t n_elements; /* Number of elements in postings */
+                       /* rid, tf, [sid], [weight] and [pos] */
   struct grn_ii_header *header;
 };
 

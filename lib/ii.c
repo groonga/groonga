@@ -7563,10 +7563,10 @@ typedef struct {
   uint32_t cap;        /* Buffer size */
 } ii_buffer_value;
 
-/* ii_buffer_counter is associated with a block. */
+/* ii_buffer_counter is associated with a combination of a block an a term. */
 typedef struct {
-  uint32_t nrecs;  /* Number of values */
-  uint32_t nposts; /* Number of values */
+  uint32_t nrecs;  /* Number of records or sections */
+  uint32_t nposts; /* Number of occurrences */
 
   /* Information of the last value */
   grn_id last_rid;      /* Record ID */
@@ -7703,7 +7703,7 @@ allocate_outbuf(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
  *         NextUnitSize (The first unit size is kept on memory)
  * Chunk = Term...
  * Term  = ID (gtid)
- *         NumSections (nrecs), NumValues (nposts)
+ *         NumRecordsOrSections (nrecs), NumOccurrences (nposts)
  *         RecordID... (rid, diff)
  *         [SectionID... (sid, diff)]
  *         TermFrequency... (tf, diff)
@@ -8162,6 +8162,7 @@ grn_ii_buffer_fetch(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
   }
 }
 
+/* grn_ii_buffer_chunk_flush flushes the current buffer for packed postings. */
 static void
 grn_ii_buffer_chunk_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
 {
@@ -8194,6 +8195,10 @@ grn_ii_buffer_chunk_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   ii_buffer->curr_size = 0;
 }
 
+/*
+ * merge_hit_blocks merges hit blocks into ii_buffer->data_vectors.
+ * merge_hit_blocks returns the estimated maximum size in bytes.
+ */
 static size_t
 merge_hit_blocks(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
                  ii_buffer_block *hits[], int nhits)
@@ -8215,10 +8220,11 @@ merge_hit_blocks(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
                 ii_buffer->ii->n_elements, nrecs, max_size);
   {
     int i;
-    uint32_t lr = 0;
+    uint32_t lr = 0; /* Last rid */
     uint64_t spos = 0;
     uint32_t *ridp, *sidp = NULL, *tfp, *weightp = NULL, *posp = NULL;
     {
+      /* Get write positions in datavec. */
       int j = 0;
       ridp = ii_buffer->data_vectors[j++].data;
       if (flags & GRN_OBJ_WITH_SECTION) {
@@ -8233,6 +8239,7 @@ merge_hit_blocks(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
       }
     }
     for (i = 0; i < nhits; i++) {
+      /* Read postings from hit blocks and join the postings into datavec. */
       ii_buffer_block *block = hits[i];
       uint8_t *p = block->bufcur;
       uint32_t n = block->nrecs;
@@ -8269,6 +8276,7 @@ merge_hit_blocks(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
       grn_ii_buffer_fetch(ctx, ii_buffer, block);
     }
     {
+      /* Set size and flags of datavec. */
       int j = 0;
       uint32_t f_s = (nrecs < 3) ? 0 : USE_P_ENC;
       uint32_t f_d = ((nrecs < 16) || (nrecs <= (lr >> 8))) ? 0 : USE_P_ENC;
@@ -8316,6 +8324,15 @@ get_term_buffer(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   return ii_buffer->term_buffer;
 }
 
+/*
+ * try_in_place_packing tries to pack a posting in an array element.
+ *
+ * The requirements are as follows:
+ *  - nposts == 1
+ *   - nhits == 1 && nrecs == 1 && tf == 0
+ *  - weight == 0
+ *  - !(flags & GRN_OBJ_WITH_SECTION) || (rid < 0x100000 && sid < 0x800)
+ */
 static grn_bool
 try_in_place_packing(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
                      grn_id tid, ii_buffer_block *hits[], int nhits)
@@ -8358,11 +8375,13 @@ try_in_place_packing(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
   return GRN_FALSE;
 }
 
+/* grn_ii_buffer_merge merges hit blocks and pack it. */
 static void
 grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
                     grn_id tid, ii_buffer_block *hits[], int nhits)
 {
   if (!try_in_place_packing(ctx, ii_buffer, tid, hits, nhits)) {
+    /* Merge hit blocks and reserve a buffer for packed data. */
     size_t max_size = merge_hit_blocks(ctx, ii_buffer, hits, nhits);
     if (ii_buffer->packed_buf &&
         ii_buffer->packed_buf_size < ii_buffer->packed_len + max_size) {
@@ -8376,6 +8395,7 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
       }
     }
     {
+      /* Pack postings into the current buffer. */
       uint16_t nterm;
       size_t packed_len;
       buffer_term *bt;
@@ -8618,6 +8638,10 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
                                  NULL, 0, NULL, 0, 0, -1, II_BUFFER_ORDER);
       if (tc) {
         while ((tid = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
+          /*
+           * Find blocks which contain the current term.
+           * Then, merge the postings.
+           */
           int nrests = 0;
           int nhits = 0;
           uint32_t i;
