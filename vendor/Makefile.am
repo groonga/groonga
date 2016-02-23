@@ -1,6 +1,7 @@
 NGINX_DIR = nginx-$(NGINX_VERSION)
 
 SUBDIRS =					\
+	lz4					\
 	onigmo					\
 	mecab					\
 	mruby
@@ -9,6 +10,7 @@ EXTRA_DIST =					\
 	$(NGINX_DIR)				\
 	CMakeLists.txt				\
 	plugins/CMakeLists.txt			\
+	download_lz4.rb				\
 	download_mecab.rb
 
 dist-hook:

@@ -365,19 +365,34 @@ if(NOT ${GRN_WITH_ZLIB} STREQUAL "no")
   endif()
 endif()
 
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_lz4_version"
+  GRN_BUNDLED_LZ4_VERSION)
+string(STRIP
+  "${GRN_BUNDLED_LZ4_VERSION}"
+  GRN_BUNDLED_LZ4_VERSION)
+option(GRN_WITH_BUNDLED_LZ4 "use bundled LZ4" OFF)
+
 set(GRN_WITH_LZ4 "auto"
   CACHE STRING "Support data compression by LZ4.")
 if(NOT ${GRN_WITH_LZ4} STREQUAL "no")
-  if(NOT DEFINED LIBLZ4_FOUND)
-    pkg_check_modules(LIBLZ4 liblz4)
-  endif()
-  if(LIBLZ4_FOUND)
-    set(GRN_WITH_LZ4 TRUE)
+  if(GRN_WITH_BUNDLED_LZ4)
+    set(LIBLZ4_INCLUDE_DIRS
+      "${CMAKE_CURRENT_SOURCE_DIR}/vendor/lz4-${GRN_BUNDLED_LZ4_VERSION}/lib")
+    set(LIBLZ4_LIBRARY_DIRS
+      "${CMAKE_CURRENT_SOURCE_DIR}/vendor/lz4")
+    set(LIBLZ4_LIBRARIES liblz4)
   else()
-    if(${GRN_WITH_LZ4} STREQUAL "yes")
-      message(FATAL_ERROR "No LZ4 found")
+    if(NOT DEFINED LIBLZ4_FOUND)
+      pkg_check_modules(LIBLZ4 liblz4)
     endif()
-    set(GRN_WITH_LZ4 FALSE)
+    if(LIBLZ4_FOUND)
+      set(GRN_WITH_LZ4 TRUE)
+    else()
+      if(${GRN_WITH_LZ4} STREQUAL "yes")
+	message(FATAL_ERROR "No LZ4 found")
+      endif()
+      set(GRN_WITH_LZ4 FALSE)
+    endif()
   endif()
 endif()
 

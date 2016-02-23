@@ -53,6 +53,7 @@ cmake_install.cmake
 /vendor/mecab/mecab
 /vendor/mecab/mecab-dict-index
 /vendor/mecab/mecabrc
+/vendor/lz4-*
 /vendor/plugins/*/
 /groonga.spec
 /stamp-h1
