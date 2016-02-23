@@ -44,5 +44,6 @@ files/$(PACKAGE)-$(VERSION)$(SUFFIX).zip: files/$(PACKAGE)-$(VERSION)$(SUFFIX).t
 	rm -rf $(PACKAGE)-$(VERSION)$(SUFFIX)
 	tar xzf files/$(PACKAGE)-$(VERSION)$(SUFFIX).tar.gz
 	cd $(PACKAGE)-$(VERSION)$(SUFFIX)/vendor && $(RUBY) download_mecab.rb
+	cd $(PACKAGE)-$(VERSION)$(SUFFIX)/vendor && $(RUBY) download_lz4.rb
 	zip -r $@ $(PACKAGE)-$(VERSION)$(SUFFIX)
 	rm -rf $(PACKAGE)-$(VERSION)$(SUFFIX)
