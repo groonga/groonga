@@ -84,8 +84,6 @@ if [ "${GROONGA_HTTPD_WITH_SSL}" = "yes" ]; then
   cc_opt="${cc_opt} ${GROONGA_HTTPD_SSL_CFLAGS}"
   ld_opt="${ld_opt} ${GROONGA_HTTPD_SSL_LIBS_ONLY_L}"
   configure_args="${configure_args} --with-http_ssl_module"
-else
-  configure_args="${configure_args} --without-http_ssl_module"
 fi
 
 
