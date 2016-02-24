@@ -1565,9 +1565,9 @@ grn_p_enc(grn_ctx *ctx, uint32_t *data, uint32_t data_size, uint8_t **res)
   return rp - *res;
 }
 
-#define USE_P_ENC (1<<0)
-#define CUT_OFF   (1<<1)
-#define ODD       (1<<2)
+#define USE_P_ENC (1<<0) /* Use PForDelta */
+#define CUT_OFF   (1<<1) /* Deprecated */
+#define ODD       (1<<2) /* Variable size data */
 
 typedef struct {
   uint32_t *data;
@@ -4186,18 +4186,18 @@ struct _grn_ii_cursor {
   grn_id id;
   grn_posting *post;
 
-  grn_id min;
+  grn_id min; /* Minimum record ID */
   grn_id max;
   grn_posting pc;
   grn_posting pb;
 
-  uint32_t cdf;
+  uint32_t cdf;  /* Document frequency */
   uint32_t *cdp;
-  uint32_t *crp;
-  uint32_t *csp;
-  uint32_t *ctp;
-  uint32_t *cwp;
-  uint32_t *cpp;
+  uint32_t *crp; /* Record ID */
+  uint32_t *csp; /* Section ID */
+  uint32_t *ctp; /* Term frequency */
+  uint32_t *cwp; /* Weight */
+  uint32_t *cpp; /* Position */
 
   uint8_t *bp;
 

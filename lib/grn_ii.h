@@ -31,13 +31,14 @@ extern "C" {
 
 struct _grn_ii {
   grn_db_obj obj;
-  grn_io *seg;
-  grn_io *chunk;
-  grn_obj *lexicon;
+  grn_io *seg;           /* I/O for a variety of segments */
+  grn_io *chunk;         /* I/O for posting chunks */
+  grn_obj *lexicon;      /* Lexicon table */
   grn_obj_flags lflags;
-  grn_encoding encoding;
-  uint32_t n_elements; /* Number of elements in postings */
-                       /* rid, tf, [sid], [weight] and [pos] */
+  grn_encoding encoding; /* Character encoding */
+                         /* This member is used for matching */
+  uint32_t n_elements;   /* Number of elements in postings */
+                         /* rid, [sid], tf, [weight] and [pos] */
   struct grn_ii_header *header;
 };
 
