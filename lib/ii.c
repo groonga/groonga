@@ -8356,6 +8356,7 @@ try_in_place_packing(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
           uint32_t *a = array_get(ctx, ii_buffer->ii, tid);
           a[0] = (rid << 12) + (sid << 1) + 1;
           a[1] = pos;
+          array_unref(ii_buffer->ii, tid);
         } else {
           return GRN_FALSE;
         }
@@ -8363,6 +8364,7 @@ try_in_place_packing(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
         uint32_t *a = array_get(ctx, ii_buffer->ii, tid);
         a[0] = (rid << 1) + 1;
         a[1] = pos;
+        array_unref(ii_buffer->ii, tid);
       }
       block->rest -= (p - block->bufcur);
       block->bufcur = p;
@@ -8420,6 +8422,7 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
           (ii_buffer->total_size * II_BUFFER_NTERMS_PER_BUFFER * 16)) {
         grn_ii_buffer_chunk_flush(ctx, ii_buffer);
       }
+      array_unref(ii_buffer->ii, tid);
     }
   }
 }
