@@ -7540,11 +7540,7 @@ const grn_id II_BUFFER_TYPE_MASK = 0xc0000000;
 #define II_BUFFER_TYPE(id)          (((id) & II_BUFFER_TYPE_MASK))
 #define II_BUFFER_PACK(value, type) ((value) | (type))
 #define II_BUFFER_UNPACK(id, type)  ((id) & ~(type))
-#ifdef II_BUFFER_ORDER_BY_ID
-const int II_BUFFER_ORDER = GRN_CURSOR_BY_ID;
-#else /* II_BUFFER_ORDER_BY_ID */
-const int II_BUFFER_ORDER = GRN_CURSOR_BY_KEY;
-#endif /* II_BUFFER_ORDER_BY_ID */
+#define II_BUFFER_ORDER             GRN_CURSOR_BY_KEY
 const uint16_t II_BUFFER_NTERMS_PER_BUFFER = 16380;
 const uint32_t II_BUFFER_PACKED_BUF_SIZE = 0x4000000;
 const char *TMPFILE_PATH = "grn_ii_buffer_tmp";
