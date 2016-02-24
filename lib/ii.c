@@ -3629,16 +3629,15 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
             break;
           }
           buffer_close(ctx, ii, pseg);
-          if (SPLIT_COND)
+          if (SPLIT_COND) {
             /* ((S_SEGMENT - sizeof(buffer_header) + ii->header->bmax -
                b->header.nterms * sizeof(buffer_term)) * 4 <
                b->header.chunk_size) */
-            {
-              GRN_LOG(ctx, GRN_LOG_DEBUG,
-                      "nterms=%d chunk=%d total=%" GRN_FMT_INT64U,
-                      b->header.nterms,
-                      b->header.chunk_size,
-                      ii->header->total_chunk_size >> 10);
+            GRN_LOG(ctx, GRN_LOG_DEBUG,
+                    "nterms=%d chunk=%d total=%" GRN_FMT_INT64U,
+                    b->header.nterms,
+                    b->header.chunk_size,
+                    ii->header->total_chunk_size >> 10);
             if (buffer_split(ctx, ii, LSEG(pos), h)) { break; }
           } else {
             if (S_SEGMENT - sizeof(buffer_header)
@@ -3969,16 +3968,15 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
           GRN_LOG(ctx, GRN_LOG_DEBUG, "flushing a[0]=%d seg=%d(%p) free=%d",
                   a[0], LSEG(a[0]), b, b->header.buffer_free);
           buffer_close(ctx, ii, pseg);
-          if (SPLIT_COND)
+          if (SPLIT_COND) {
             /*((S_SEGMENT - sizeof(buffer_header) + ii->header->bmax -
                b->header.nterms * sizeof(buffer_term)) * 4 <
                b->header.chunk_size)*/
-            {
-              GRN_LOG(ctx, GRN_LOG_DEBUG,
-                      "nterms=%d chunk=%d total=%" GRN_FMT_INT64U,
-                      b->header.nterms,
-                      b->header.chunk_size,
-                      ii->header->total_chunk_size >> 10);
+            GRN_LOG(ctx, GRN_LOG_DEBUG,
+                    "nterms=%d chunk=%d total=%" GRN_FMT_INT64U,
+                    b->header.nterms,
+                    b->header.chunk_size,
+                    ii->header->total_chunk_size >> 10);
             if ((rc = buffer_split(ctx, ii, LSEG(pos), h))) { goto exit; }
             continue;
           }
