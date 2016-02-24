@@ -46,8 +46,7 @@ endif
 
 libgroonga_la_LIBADD +=				\
 	$(ONIGMO_LIBS)				\
-	$(LIBLZ4_LIBS)				\
-	$(ATOMIC_LIBS)
+	$(LIBLZ4_LIBS)
 
 if WITH_LEMON
 BUILT_SOURCES =					\
