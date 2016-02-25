@@ -24,6 +24,9 @@
 extern "C" {
 #endif
 
+#define GRN_SELECT_DEFAULT_LIMIT           10
+#define GRN_SELECT_DEFAULT_OUTPUT_COLUMNS  "_id, _key, *"
+
 #define GRN_SELECT_INTERNAL_VAR_CONDITION     "$condition"
 
 void grn_proc_init_from_env(void);
@@ -35,6 +38,7 @@ void grn_proc_init_clearlock(grn_ctx *ctx);
 void grn_proc_init_config_get(grn_ctx *ctx);
 void grn_proc_init_config_set(grn_ctx *ctx);
 void grn_proc_init_config_delete(grn_ctx *ctx);
+void grn_proc_init_define_selector(grn_ctx *ctx);
 void grn_proc_init_edit_distance(grn_ctx *ctx);
 void grn_proc_init_fuzzy_search(grn_ctx *ctx);
 void grn_proc_init_highlight(grn_ctx *ctx);
@@ -47,6 +51,7 @@ void grn_proc_init_lock_release(grn_ctx *ctx);
 void grn_proc_init_object_exist(grn_ctx *ctx);
 void grn_proc_init_object_remove(grn_ctx *ctx);
 void grn_proc_init_schema(grn_ctx *ctx);
+void grn_proc_init_select(grn_ctx *ctx);
 void grn_proc_init_snippet(grn_ctx *ctx);
 void grn_proc_init_snippet_html(grn_ctx *ctx);
 void grn_proc_init_table_create(grn_ctx *ctx);
@@ -71,6 +76,19 @@ void grn_proc_table_set_token_filters(grn_ctx *ctx,
                                       grn_obj *table,
                                       grn_obj *token_filter_names);
 
+void grn_proc_select_output_columns(grn_ctx *ctx,
+                                    grn_obj *res,
+                                    int n_hits, int offset, int limit,
+                                    const char *columns, int columns_len,
+                                    grn_obj *condition);
+
+grn_rc grn_proc_syntax_expand_query(grn_ctx *ctx,
+                                    const char *query,
+                                    unsigned int query_len,
+                                    grn_expr_flags flags,
+                                    const char *query_expander_name,
+                                    unsigned int query_expander_name_len,
+                                    grn_obj *expanded_query);
 
 #ifdef __cplusplus
 }
