@@ -1243,8 +1243,15 @@ AM_CONDITIONAL([ENABLE_SUGGEST_LEARNER],
                      "$message_pack_available" = "yes"])
 
 # Check built-in atomic
-AC_CHECK_LIB(atomic, __atomic_store_8, [ATOMIC_LIBS="-latomic"])
-AC_SUBST(ATOMIC_LIBS)
+case "$host" in
+  i*86*|x86_64*)
+    ;;
+  *)
+    AC_MSG_CHECKING([for platform which requires libatomic])
+    AC_CHECK_LIB(atomic, __atomic_store_8, [ATOMIC_LIBS="-latomic"])
+    AC_SUBST(ATOMIC_LIBS)
+    ;;
+esac
 
 # Document
 AC_MSG_CHECKING([whether enable document])
