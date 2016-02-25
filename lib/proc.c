@@ -2770,6 +2770,28 @@ grn_proc_option_value_int32(grn_ctx *ctx,
   }
 }
 
+const char *
+grn_proc_option_value_string(grn_ctx *ctx,
+                             grn_obj *option,
+                             size_t *size)
+{
+  const char *value;
+  size_t value_length;
+
+  value = GRN_TEXT_VALUE(option);
+  value_length = GRN_TEXT_LEN(option);
+
+  if (size) {
+    *size = value_length;
+  }
+
+  if (value_length == 0) {
+    return NULL;
+  } else {
+    return value;
+  }
+}
+
 static grn_obj *
 proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
