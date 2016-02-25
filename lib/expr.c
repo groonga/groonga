@@ -5561,9 +5561,7 @@ grn_table_select_index_equal(grn_ctx *ctx,
                             GRN_BULK_HEAD(si->query),
                             GRN_BULK_VSIZE(si->query));
       }
-      if (tid == GRN_ID_NIL) {
-        processed = GRN_TRUE;
-      } else {
+      if (tid != GRN_ID_NIL) {
         uint32_t sid;
         int32_t weight;
         grn_ii *ii = (grn_ii *)index;
@@ -5602,9 +5600,9 @@ grn_table_select_index_equal(grn_ctx *ctx,
                                si->logical_op);
           }
           grn_ii_cursor_close(ctx, ii_cursor);
-          processed = GRN_TRUE;
         }
       }
+      processed = GRN_TRUE;
     }
     if (processed) {
       grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
