@@ -1155,7 +1155,7 @@ grn_plugin_proc_get_var_int32(grn_ctx *ctx,
                               grn_user_data *user_data,
                               const char *name,
                               int name_size,
-                              grn_int32 default_value)
+                              int32_t default_value)
 {
   grn_obj *var;
 
