@@ -3723,6 +3723,8 @@ struct _grn_scan_info {
   GRN_PTR_INIT(&(si)->scorers, GRN_OBJ_VECTOR, GRN_ID_NIL);\
   GRN_PTR_INIT(&(si)->scorer_args_exprs, GRN_OBJ_VECTOR, GRN_ID_NIL);\
   GRN_UINT32_INIT(&(si)->scorer_args_expr_offsets, GRN_OBJ_VECTOR);\
+  (si)->position.specified = GRN_FALSE;\
+  (si)->position.start = 0;\
 } while (0)
 
 static scan_info **
