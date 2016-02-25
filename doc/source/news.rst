@@ -41,8 +41,8 @@ Improvements
 * [``GRN_TABLE_FUZZY_WITH_TRANSPOSITION``] Added a flag for
   ``grn_table_fuzzy_search()``. [GitHub#463][Patch by Naoya Murakami]
 
-* [``GRN_TOKENIZE_ONLY``] Added a new tokenize mode that returns all
-  tokens even if the token doesn't exist in
+* [``GRN_TOKENIZE_ONLY``] Added a new tokenization mode that returns
+  all tokens even if the token doesn't exist in
   lexicon. [GitHub#463][Patch by Naoya Murakami]
 
 * [``grn_obj_type_to_string()``] Add a new function that stringify
