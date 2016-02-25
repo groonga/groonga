@@ -7,6 +7,150 @@
 News
 ====
 
+.. _release-6-0-0:
+
+Release 6.0.0 - 2016-02-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/executables/grndb`] Supported check against table
+  specified as table domain in ``--target`` mode.
+
+* [``grn_pat_fuzzy_search()``] Added a new API that provides fuzzy
+  search feature by patricia trie. [GitHub#460][Patch by Naoya
+  Murakami]
+
+* [``functions/string``] Added a new plugin that provides string
+  related functions. [GitHub#459][Patch by Naoya Murakami]
+
+* [``string_length()``] Added a new function that returns the number
+  of characters in the specified string. It's contained in
+  ``functions/string`` plugin. [GitHub#459][Patch by Naoya Murakami]
+
+* [``grn_table_fuzzy_search()``] Added a new DB API that provides
+  fuzzy search feature. [GitHub#463][Patch by Naoya Murakami]
+
+* [``GRN_OP_FUZZY``] Added a new operator. [GitHub#463][Patch by Naoya
+  Murakami]
+
+* [``grn_obj_search()``] Supported ``GRN_OP_FUZZY``
+  operator. [GitHub#463][Patch by Naoya Murakami]
+
+* [``GRN_TABLE_FUZZY_WITH_TRANSPOSITION``] Added a flag for
+  ``grn_table_fuzzy_search()``. [GitHub#463][Patch by Naoya Murakami]
+
+* [``GRN_TOKENIZE_ONLY``] Added a new tokenize mode that returns all
+  tokens even if the token doesn't exist in
+  lexicon. [GitHub#463][Patch by Naoya Murakami]
+
+* [``grn_obj_type_to_string()``] Add a new function that stringify
+  type ID such ad ``GRN_VOID`` and ``GRN_BULK``.
+
+* [:doc:`/reference/commands/inspect`] Added a new command that
+  returns information of the target object.
+
+* Supported compare operations against vector. If left hand side
+  vector includes any element that satisfies ``left_hand_side_element
+  OP right_hand_side``, it returns true.
+
+  Example::
+
+    [1, 2, 3] < 2 # -> true because 1 is less than 2
+    [1, 2, 3] > 4 # -> false because all elements are less than 4
+
+* [``fuzzy_search()``] Added a new function that provides fuzzy search
+  feature. [GitHub#464][Patch by Naoya Murakami]
+
+* [``edit_distance()``] Supported transposition flag.
+  [GitHub#464][Patch by Naoya Murakami]
+
+* Supported index search for ``vector_column[2] == 29``.
+
+* [``GRN_PLUGIN_CALLOC()``] Added a new API for plugin that provides
+  ``calloc()`` feature. [GitHub#472][Patch by Naoya Murakami]
+
+* Supported index search for compare operations against vector element
+  such as ``vector_column[2] < 29``.
+
+* [``grn_plugin_proc_get_var_bool()``] Add a new API for plugin that
+  provides getting boolean argument value feature.
+
+* [:doc:`/reference/commands/object_remove`] Added a new command that
+  removes an object. ``object_remove`` can also remove a broken object.
+
+* Supported mips/mpisel. [debian-bugs:770243][Reported by Nobuhiro
+  Iwamatsu][Reported by Thorsten Glaser][Reported by YunQiang
+  Su][Reported by Dejan Latinovic][Reported by Steve Langasek]
+
+* [:doc:`/reference/executables/grndb`][CMake] Supported.
+
+* [``grn_expr_syntax_expand_query()``] Added a new API that provides
+  query expansion feature.
+
+* [``snippet()``] Add a new function that provides snippet feature.
+  [GitHub#481][Patch by Naoya Murakami]
+
+* [``highlight()``] Add a new function that provides highlight feature.
+  [GitHub#487][Patch by Naoya Murakami]
+
+* Added ``XXX && column != xxx`` optimization. It's converted to ``XXX
+  &! column == xxx`` internally.
+
+* [:doc:`/server/memcached`] Supported ``--memcached-column``. You can
+  access existing column by memcached protocol.
+
+* [:doc:`/reference/executables/groonga-httpd`] Supported TLS.
+  [groonga-dev,03948][Reported by KITAITI Makoto]
+
+* [:doc:`/reference/executables/groonga-httpd`] Updated bundled nginx
+  version to 1.9.11 from 1.9.10.
+
+* [Windows][CMake] Supported LZ4. LZ4 is bundled.
+
+Fixes
+^^^^^
+
+* [:doc:`/reference/commands/select`] Added a missing error check for
+  outputting column. [GitHub#332][Reported by Masafumi Yokoyama]
+
+* Fixed a bug that ``function(column_with_index) == 29`` ignores
+  ``function()``. [groonga-dev,03884][Reported by Naoya Murakami]
+
+* [:doc:`/reference/commands/reindex`] Fixed a bug that ``reindex``
+  doesn't clear query cache.
+
+* [patricia trie] Fixed a bug that sorting by integer patricia trie
+  key returns unsorted result. [GitHub#476][Reported by Ryunosuke SATO]
+
+* [:doc:`/reference/commands/select`] Fixed a crash bug that is
+  occurred when too many keywords is specified into ``--query``.
+  [GitHub#484][Reported by Hiroyuki Sato]
+
+Thanks
+^^^^^^
+
+* Masafumi Yokoyama
+
+* Naoya Murakami
+
+* Nobuhiro Iwamatsu
+
+* Thorsten Glaser
+
+* YunQiang Su
+
+* Dejan Latinovic
+
+* Steve Langasek
+
+* Ryunosuke SATO
+
+* Hiroyuki Sato
+
+* KITAITI Makoto
+
 .. _release-5-1-2:
 
 Release 5.1.2 - 2016-01-29
