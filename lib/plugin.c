@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2012-2015 Brazil
+  Copyright(C) 2012-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1148,6 +1148,19 @@ grn_plugin_proc_get_var_bool(grn_ctx *ctx,
 
   var = grn_plugin_proc_get_var(ctx, user_data, name, name_size);
   return grn_proc_option_value_bool(ctx, var, default_value);
+}
+
+int32_t
+grn_plugin_proc_get_var_int32(grn_ctx *ctx,
+                              grn_user_data *user_data,
+                              const char *name,
+                              int name_size,
+                              grn_int32 default_value)
+{
+  grn_obj *var;
+
+  var = grn_plugin_proc_get_var(ctx, user_data, name, name_size);
+  return grn_proc_option_value_int32(ctx, var, default_value);
 }
 
 grn_obj *

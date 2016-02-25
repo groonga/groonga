@@ -2745,6 +2745,31 @@ grn_proc_option_value_bool(grn_ctx *ctx,
   }
 }
 
+int32_t
+grn_proc_option_value_int32(grn_ctx *ctx,
+                            grn_obj *option,
+                            int32_t default_value)
+{
+  const char *value;
+  size_t value_length;
+  int32_t int32_value;
+  const char *rest;
+
+  value = GRN_TEXT_VALUE(option);
+  value_length = GRN_TEXT_LEN(option);
+
+  if (value_length == 0) {
+    return default_value;
+  }
+
+  int32_value = grn_atoi(value, value + value_length, &rest);
+  if (rest == value + value_length) {
+    return int32_value;
+  } else {
+    return default_value;
+  }
+}
+
 static grn_obj *
 proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {

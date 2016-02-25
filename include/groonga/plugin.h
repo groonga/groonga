@@ -150,6 +150,11 @@ GRN_API grn_bool grn_plugin_proc_get_var_bool(grn_ctx *ctx,
                                               const char *name,
                                               int name_size,
                                               grn_bool default_value);
+GRN_API int32_t grn_plugin_proc_get_var_int32(grn_ctx *ctx,
+                                              grn_user_data *user_data,
+                                              const char *name,
+                                              int name_size,
+                                              grn_int32 default_value);
 
 GRN_API grn_obj *grn_plugin_proc_get_var_by_offset(grn_ctx *ctx,
                                                    grn_user_data *user_data,
