@@ -118,7 +118,7 @@ Database inspection returns the following information::
       "id": DATABASE_TYPE_ID,
       "name": DATABASE_TYPE_NAME
     },
-    "keys": OBJECT_NAME_MANAGEMENT_TABLE
+    "name_table": DATABASE_NAME_TABLE
   }
 
 .. _object-inspect-return-value-database-type-id:
@@ -135,12 +135,13 @@ Database inspection returns the following information::
 
 ``DATABASE_TYPE_NAME`` is always ``"db"``.
 
-.. _object-inspect-return-value-database-object-name-management-table:
+.. _object-inspect-return-value-database-name-table:
 
-``OBJECT_NAME_MANAGEMENT_TABLE``
-""""""""""""""""""""""""""""""""
+``DATABASE_NAME_TABLE``
+"""""""""""""""""""""""
 
-``OBJECT_NAME_MANAGEMENT_TABLE`` is :ref:`table-pat-key` or
+``DATABASE_NAME_TABLE`` is a table for managing object names in the
+database. The table is :ref:`table-pat-key` or
 :ref:`table-dat-key`. Normally, it's :ref:`table-dat-key`.
 
 See :ref:`object-inspect-return-value-table` for format details.

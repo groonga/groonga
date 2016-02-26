@@ -8,7 +8,7 @@ Execution example::
   #     0.000355720520019531
   #   ], 
   #   {
-  #     "keys": {
+  #     "name_table": {
   #       "type": {
   #         "id": 50, 
   #         "name": "table:dat_key"
