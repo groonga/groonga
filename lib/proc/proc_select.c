@@ -572,7 +572,8 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
     filter_len + 1 + scorer_len + 1 + sortby_len + 1 + output_columns_len + 1 +
     match_escalation_threshold_len + 1 +
     query_expander_len + 1 + query_flags_len + 1 + adjuster_len + 1 +
-    sizeof(grn_content_type) + sizeof(int) * 2;
+    sizeof(grn_content_type) + sizeof(int) * 2 +
+    sizeof(grn_command_version);
   {
     unsigned int i;
     for (i = 0; i < n_drilldowns; i++) {
@@ -627,6 +628,8 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
     cp += sizeof(int);
     grn_memcpy(cp, &limit, sizeof(int));
     cp += sizeof(int);
+    grn_memcpy(cp, &(ctx->impl->command_version), sizeof(grn_command_version));
+    cp += sizeof(grn_command_version);
     {
       unsigned int i;
       for (i = 0; i < n_drilldowns; i++) {

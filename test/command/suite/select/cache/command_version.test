@@ -1,0 +1,18 @@
+table_create Memos TABLE_HASH_KEY ShortText
+
+load --table Memos
+[
+{"_key": "Hello Groonga!"}
+]
+
+# For use cache
+#@sleep 1
+
+select Memos \
+  --query '_key:@Groonga' \
+  --output_columns 'snippet_html(_key)'
+
+select Memos \
+  --query '_key:@Groonga' \
+  --output_columns 'snippet_html(_key)' \
+  --command_version 2
