@@ -48,7 +48,7 @@ Improvements
 * [``grn_obj_type_to_string()``] Add a new function that stringify
   type ID such ad ``GRN_VOID`` and ``GRN_BULK``.
 
-* [:doc:`/reference/commands/inspect`] Added a new command that
+* [:doc:`/reference/commands/object_inspect`] Added a new command that
   returns information of the target object.
 
 * Supported compare operations against vector. If left hand side
