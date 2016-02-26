@@ -144,22 +144,22 @@ command_object_inspect(grn_ctx *ctx,
                        grn_obj **args,
                        grn_user_data *user_data)
 {
-  grn_obj *target_name;
+  grn_obj *name;
   grn_obj *target;
 
-  target_name = grn_plugin_proc_get_var(ctx, user_data, "target_name", -1);
-  if (GRN_TEXT_LEN(target_name) == 0) {
+  name = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
+  if (GRN_TEXT_LEN(name) == 0) {
     target = grn_ctx_db(ctx);
   } else {
     target = grn_ctx_get(ctx,
-                         GRN_TEXT_VALUE(target_name),
-                         GRN_TEXT_LEN(target_name));
+                         GRN_TEXT_VALUE(name),
+                         GRN_TEXT_LEN(name));
     if (!target) {
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
                        "[inspect] nonexistent target: <%.*s>",
-                       (int)GRN_TEXT_LEN(target_name),
-                       GRN_TEXT_VALUE(target_name));
+                       (int)GRN_TEXT_LEN(name),
+                       GRN_TEXT_VALUE(name));
       grn_ctx_output_null(ctx);
       return NULL;
     }
@@ -192,7 +192,7 @@ grn_proc_init_object_inspect(grn_ctx *ctx)
 {
   grn_expr_var vars[1];
 
-  grn_plugin_expr_var_init(ctx, &(vars[0]), "target_name", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[0]), "name", -1);
   grn_plugin_command_create(ctx,
                             "object_inspect", -1,
                             command_object_inspect,
