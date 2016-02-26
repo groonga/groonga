@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-02-10 18:12+0900\n"
+"PO-Revision-Date: 2016-02-26 17:55+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -4890,9 +4890,6 @@ msgstr ""
 msgid "``config_delete`` command deletes the specified configuration item."
 msgstr "``config_delete`` コマンドは指定した設定項目を削除します。"
 
-msgid "This command takes one parameter::"
-msgstr "このコマンドの引数は1つです。::"
-
 msgid "Here is an example to delete ``alias.column`` configuration item:"
 msgstr "以下は ``alias.column`` 設定項目を削除する例です。"
 
@@ -7437,6 +7434,383 @@ msgstr ""
 
 msgid "The command returns ``false`` otherwise such as::"
 msgstr "そうでない場合は ``false`` を返します::"
+
+msgid "``object_inspect``"
+msgstr ""
+
+msgid ""
+"``object_inspect`` inspects an object. You can confirm details of an object."
+msgstr ""
+"``object_inspect`` はオブジェクトを調査します。オブジェクトの詳細を確認するこ"
+"とができます。"
+
+msgid "For example:"
+msgstr "例："
+
+msgid ""
+"If the object is a table, you can confirm the number of records in the table."
+msgstr "オブジェクトがテーブルの場合、テーブル内のレコード数を確認できます。"
+
+msgid ""
+"If the object is a column, you can confirm the type of value of the column."
+msgstr "オブジェクトがカラムの場合、値の型を確認できます。"
+
+msgid "You can inspect an object in the database specified by ``name``:"
+msgstr "``name`` で指定したデータベース内のオブジェクトを調査できます。"
+
+msgid "The ``object_inspect Users`` returns the following information:"
+msgstr "``object_inspect Users`` は以下の情報を返します。"
+
+msgid "The name of the table: ``\"name\": Users``"
+msgstr "テーブル名： ``\"name\": Users``"
+
+msgid ""
+"The total used key size: ``\"key\": {\"total_size\": 5}`` (``\"Alice\"`` is "
+"5 byte data)"
+msgstr ""
+"総キーサイズ： ``\"key\": {\"total_size\": 5}`` （ ``\"Alice\"`` は5バイトの"
+"データです。）"
+
+msgid ""
+"The maximum total key size: ``\"key\": {\"max_total_size\": 4294967295}``"
+msgstr "最大総キーサイズ： ``\"key\": {\"max_total_size\": 4294967295}``"
+
+msgid "and so on."
+msgstr "などなど。"
+
+msgid "You can inspect the database by not specifying ``name``:"
+msgstr "``name`` を指定しないとデータベースを調査できます。"
+
+msgid "The ``object_inspect`` returns the following information:"
+msgstr "``object_inspect`` は以下の情報を返します。"
+
+msgid ""
+"The table type for object name management: ``\"key\": {\"type\": {\"name\": "
+"\"table:dat_key\"}}``"
+msgstr ""
+"オブジェクトの名前管理をしているテーブルの種類： ``\"key\": {\"type\": "
+"{\"name\": \"table:dat_key\"}}``"
+
+msgid "There is only one optional parameter."
+msgstr "省略可能な引数が1つあります。"
+
+msgid "Specifies the object name to be inspected."
+msgstr "調査対象のオブジェクト名を指定してください。"
+
+msgid "If ``name`` isn't specified, the database is inspected."
+msgstr "``name`` を指定しないとデータベースを調査します。"
+
+msgid ""
+"The command returns an object (nested key and value pairs) that includes "
+"details of the object (such as table) as body::"
+msgstr ""
+"このコマンドはボディとしてオブジェクト（たとえばテーブル）の詳細を含んだオブ"
+"ジェクト（ネストしたキーと値のペア）を返します。::"
+
+msgid ""
+"The format of the details is depends on object type. For example, table has "
+"key information but function doesn't have key information."
+msgstr ""
+"オブジェクトの詳細のフォーマットはオブジェクトの種類に依存します。たとえば、"
+"テーブルはキーの情報を含みますが、関数はキーの情報を含みません。"
+
+# 9478ec95d89c45bcbc61b8f57e9b48cf
+# 2d24db9cc66f425e886dec7fa4950429
+# 8e31d5b5207b473fb6458d19d1abc994
+msgid "Database"
+msgstr "データベース"
+
+msgid "Database inspection returns the following information::"
+msgstr "データベースを調査すると次の情報を返します。::"
+
+msgid "``DATABASE_TYPE_ID``"
+msgstr ""
+
+msgid "``DATABASE_TYPE_ID`` is always ``55``."
+msgstr "``DATABASE_TYPE_ID`` は常に ``55`` です。"
+
+msgid "``DATABASE_TYPE_NAME``"
+msgstr ""
+
+msgid "``DATABASE_TYPE_NAME`` is always ``\"db\"``."
+msgstr "``DATABASE_TYPE_NAME`` は常に ``\"db\"`` です。"
+
+msgid "``DATABASE_NAME_TABLE``"
+msgstr ""
+
+msgid ""
+"``DATABASE_NAME_TABLE`` is a table for managing object names in the "
+"database. The table is :ref:`table-pat-key` or :ref:`table-dat-key`. "
+"Normally, it's :ref:`table-dat-key`."
+msgstr ""
+"``DATABASE_NAME_TABLE`` はデータベース内のオブジェクト名を管理するテーブルで"
+"す。このテーブルは :ref:`table-pat-key` または :ref:`table-dat-key` です。通"
+"常、 :ref:`table-dat-key` です。"
+
+msgid "See :ref:`object-inspect-return-value-table` for format details."
+msgstr ""
+"フォーマットの詳細は :ref:`object-inspect-return-value-table` を参照してくだ"
+"さい。"
+
+msgid "Table"
+msgstr "テーブル"
+
+msgid "Table inspection returns the following information::"
+msgstr "テーブルを調査すると次の情報を返します。::"
+
+msgid "There are some exceptions:"
+msgstr "いくつか例外があります。"
+
+msgid ""
+":ref:`table-no-key` doesn't return key information because it doesn't have "
+"key."
+msgstr ""
+":ref:`table-no-key` はキーの情報を返しません。なぜならキーを持っていないから"
+"です。"
+
+msgid ""
+":ref:`table-dat-key` doesn't return value information because it doesn't "
+"have value."
+msgstr ""
+":ref:`table-dat-key` は値の情報を返しません。なぜなら値を持っていないからで"
+"す。"
+
+msgid "``TABLE_NAME``"
+msgstr ""
+
+msgid "The name of the inspected table."
+msgstr "調査対象のテーブルの名前。"
+
+msgid "``TABLE_TYPE_ID``"
+msgstr ""
+
+# ffd0b4bc386f467c938842ebb3a98758
+msgid "The type ID of the inspected table."
+msgstr "調査対象のテーブルの種類のID"
+
+msgid "Here is a list of type IDs:"
+msgstr "以下は種類のIDのリストです。"
+
+msgid "Table type"
+msgstr "テーブルの種類"
+
+msgid "ID"
+msgstr ""
+
+msgid ":ref:`table-hash-key`"
+msgstr ""
+
+msgid "``48``"
+msgstr ""
+
+# c71c4c4c7c6d4b04a00700077c938600
+msgid ":ref:`table-pat-key`"
+msgstr ""
+
+msgid "``49``"
+msgstr ""
+
+# c71c4c4c7c6d4b04a00700077c938600
+msgid ":ref:`table-dat-key`"
+msgstr ""
+
+msgid "``50``"
+msgstr ""
+
+msgid ":ref:`table-no-key`"
+msgstr ""
+
+msgid "``51``"
+msgstr ""
+
+msgid "``TABLE_TYPE_NAME``"
+msgstr ""
+
+msgid "The type name of the inspected table."
+msgstr "調査対象のテーブルの種類の名前。"
+
+msgid "Here is a list of type names:"
+msgstr "以下は種類の名前のリストです。"
+
+msgid "``\"table:hash_key\"``"
+msgstr ""
+
+msgid "``\"table:pat_key\"``"
+msgstr ""
+
+msgid "``\"table:dat_key\"``"
+msgstr ""
+
+msgid "``\"table:no_key\"``"
+msgstr ""
+
+msgid "``TABLE_KEY_TYPE``"
+msgstr ""
+
+# ffd0b4bc386f467c938842ebb3a98758
+msgid "The type of key of the inspected table."
+msgstr "調査対象のテーブルのキーの型。"
+
+msgid "See :ref:`object-inspect-return-value-type` for format details."
+msgstr ""
+"フォーマットの詳細は :ref:`object-inspect-return-value-type` を参照してくださ"
+"い。"
+
+msgid "``TABLE_KEY_TOTAL_SIZE``"
+msgstr ""
+
+msgid "The total key size of the inspected table in bytes."
+msgstr "調査対象のテーブルの総キーサイズ。単位はバイト。"
+
+msgid "``TABLE_KEY_MAX_TOTAL_SIZE``"
+msgstr ""
+
+msgid "The maximum total key size of the inspected table in bytes."
+msgstr "調査対象のテーブルの最大総キーサイズ。単位はバイト。"
+
+# da469f75baa647908401693d50786018
+msgid "Type"
+msgstr "型"
+
+msgid "Type inspection returns the following information::"
+msgstr "型を調査すると次の情報を返します。"
+
+msgid "``TYPE_ID``"
+msgstr ""
+
+# ffd0b4bc386f467c938842ebb3a98758
+msgid "The ID of the inspected type."
+msgstr "対象の型のIDです。"
+
+msgid "Here is an ID list of builtin types:"
+msgstr "以下は組み込みの型のIDのリストです。"
+
+msgid ":ref:`builtin-type-bool`"
+msgstr ""
+
+msgid "``3``"
+msgstr ""
+
+msgid ":ref:`builtin-type-int8`"
+msgstr ""
+
+msgid "``4``"
+msgstr ""
+
+msgid ":ref:`builtin-type-uint8`"
+msgstr ""
+
+msgid "``5``"
+msgstr ""
+
+msgid ":ref:`builtin-type-int16`"
+msgstr ""
+
+msgid "``6``"
+msgstr ""
+
+msgid ":ref:`builtin-type-uint16`"
+msgstr ""
+
+msgid "``7``"
+msgstr ""
+
+msgid ":ref:`builtin-type-int32`"
+msgstr ""
+
+msgid "``8``"
+msgstr ""
+
+msgid ":ref:`builtin-type-uint32`"
+msgstr ""
+
+msgid "``9``"
+msgstr ""
+
+msgid ":ref:`builtin-type-int64`"
+msgstr ""
+
+msgid "``10``"
+msgstr ""
+
+msgid ":ref:`builtin-type-uint64`"
+msgstr ""
+
+msgid "``11``"
+msgstr ""
+
+msgid ":ref:`builtin-type-float`"
+msgstr ""
+
+msgid "``12``"
+msgstr ""
+
+msgid ":ref:`builtin-type-time`"
+msgstr ""
+
+msgid "``13``"
+msgstr ""
+
+msgid ":ref:`builtin-type-short-text`"
+msgstr ""
+
+msgid "``14``"
+msgstr ""
+
+msgid ":ref:`builtin-type-text`"
+msgstr ""
+
+msgid "``15``"
+msgstr ""
+
+msgid ":ref:`builtin-type-long-text`"
+msgstr ""
+
+msgid "``16``"
+msgstr ""
+
+msgid ":ref:`builtin-type-tokyo-geo-point`"
+msgstr ""
+
+msgid "``17``"
+msgstr ""
+
+msgid ":ref:`builtin-type-wgs84-geo-point`"
+msgstr ""
+
+msgid "``18``"
+msgstr ""
+
+msgid "``TYPE_NAME``"
+msgstr ""
+
+msgid "The name of the inspected type."
+msgstr "調査対象の型の名前。"
+
+msgid "Here is a name list of builtin types:"
+msgstr "以下は組み込みの型の名前のリストです。"
+
+msgid "``TYPE_ID_OF_TYPE``"
+msgstr ""
+
+msgid "``TYPE_ID_OF_TYPE`` is always ``32``."
+msgstr "``TYPE_ID_OF_TYPE`` は常に ``32`` です。"
+
+msgid "``TYPE_NAME_OF_TYPE``"
+msgstr ""
+
+msgid "``TYPE_NAME_OF_TYPE`` is always ``type``."
+msgstr "``TYPE_NAME_OF_TYPE`` は常に ``type`` です。"
+
+msgid "``TYPE_SIZE``"
+msgstr ""
+
+msgid ""
+"``TYPE_SIZE`` is the size of the inspected type in bytes. If the inspected "
+"type is variable size type, the size means the maximum size."
+msgstr ""
+"``TYPE_SIZE`` は調査対象の型のサイズです。単位はバイトです。調査対象の型が可"
+"変長型の場合は、サイズは最大サイズという意味です。"
 
 msgid "``object_remove``"
 msgstr ""
@@ -11101,9 +11475,6 @@ msgstr ""
 
 msgid "Specifies number of returned records."
 msgstr "返されるレコード数を指定します。"
-
-msgid "``10``"
-msgstr ""
 
 msgid ""
 "Specifies threshold for item frequency. Returned records must have "
@@ -18369,9 +18740,6 @@ msgid ""
 "ID of a thread. Groonga process creates threads to process requests "
 "concurrently. Each thread outputs some logs for a request. This ID can be "
 "used to extract a log sequence by a thread."
-msgstr ""
-
-msgid "ID"
 msgstr ""
 
 msgid ">"

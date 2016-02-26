@@ -77,12 +77,12 @@ This section describes all parameters.
 Required parameters
 ^^^^^^^^^^^^^^^^^^^
 
-There is no optional parameter.
+There is no required parameters.
 
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^
 
-There is only one optional parameters.
+There is only one optional parameter.
 
 .. _object-inspect-name:
 
@@ -188,7 +188,7 @@ The name of the inspected table.
 
 The type ID of the inspected table.
 
-Here are list of type IDs:
+Here is a list of type IDs:
 
 .. list-table::
    :header-rows: 1
@@ -211,21 +211,21 @@ Here are list of type IDs:
 
 The type name of the inspected table.
 
-Here are list of type names:
+Here is a list of type names:
 
 .. list-table::
    :header-rows: 1
 
    * - Table type
-     - name
+     - Name
    * - :ref:`table-hash-key`
-     - ``"table:hash_key``
+     - ``"table:hash_key"``
    * - :ref:`table-pat-key`
-     - ``"table:pat_key``
+     - ``"table:pat_key"``
    * - :ref:`table-dat-key`
-     - ``"table:dat_key``
+     - ``"table:dat_key"``
    * - :ref:`table-no-key`
-     - ``"table:no_key``
+     - ``"table:no_key"``
 
 .. _object-inspect-return-value-table-key-type:
 
@@ -274,7 +274,7 @@ Type inspection returns the following information::
 
 The ID of the inspected type.
 
-Here are ID list of builtin types:
+Here is an ID list of builtin types:
 
 .. list-table::
    :header-rows: 1
@@ -321,7 +321,7 @@ Here are ID list of builtin types:
 
 The name of the inspected type.
 
-Here are name list of builtin types:
+Here is a name list of builtin types:
 
   * :ref:`builtin-type-bool`
   * :ref:`builtin-type-int8`
