@@ -1,4 +1,4 @@
-table_create Users TABLE_PAT_KEY ShortText
+table_create Users TABLE_HASH_KEY ShortText
 [[0,0.0,0.0],true]
 load --table Users
 [
@@ -6,7 +6,7 @@ load --table Users
 {"_key": "bob"}
 ]
 [[0,0.0,0.0],2]
-inspect Users
+object_inspect Users
 [
   [
     0,
@@ -17,8 +17,8 @@ inspect Users
     "id": 256,
     "name": "Users",
     "type": {
-      "id": 49,
-      "name": "table:pat_key"
+      "id": 48,
+      "name": "table:hash_key"
     },
     "key": {
       "type": {
@@ -31,7 +31,7 @@ inspect Users
         "size": 4096
       },
       "total_size": 5,
-      "max_total_size": 4294967294
+      "max_total_size": 4294967295
     }
   }
 ]

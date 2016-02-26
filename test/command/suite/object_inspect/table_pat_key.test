@@ -6,4 +6,4 @@ load --table Users
 {"_key": "bob"}
 ]
 
-inspect Users
+object_inspect Users

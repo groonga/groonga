@@ -5376,7 +5376,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   grn_proc_init_lock_acquire(ctx);
   grn_proc_init_lock_release(ctx);
 
-  grn_proc_init_inspect(ctx);
+  grn_proc_init_object_inspect(ctx);
 
   grn_proc_init_fuzzy_search(ctx);
 

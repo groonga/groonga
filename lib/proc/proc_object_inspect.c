@@ -23,7 +23,7 @@
 #include <groonga/plugin.h>
 
 static void
-command_inspect_obj_name(grn_ctx *ctx, grn_obj *obj)
+command_object_inspect_obj_name(grn_ctx *ctx, grn_obj *obj)
 {
   char name[GRN_TABLE_MAX_KEY_SIZE];
   int name_size;
@@ -33,7 +33,7 @@ command_inspect_obj_name(grn_ctx *ctx, grn_obj *obj)
 }
 
 static void
-command_inspect_obj_type(grn_ctx *ctx, uint8_t type)
+command_object_inspect_obj_type(grn_ctx *ctx, uint8_t type)
 {
   grn_ctx_output_map_open(ctx, "type", 2);
   {
@@ -46,7 +46,7 @@ command_inspect_obj_type(grn_ctx *ctx, uint8_t type)
 }
 
 static void
-command_inspect_type(grn_ctx *ctx, grn_obj *type)
+command_object_inspect_type(grn_ctx *ctx, grn_obj *type)
 {
   if (!type) {
     grn_ctx_output_null(ctx);
@@ -57,9 +57,9 @@ command_inspect_type(grn_ctx *ctx, grn_obj *type)
     grn_ctx_output_cstr(ctx, "id");
     grn_ctx_output_uint64(ctx, grn_obj_id(ctx, type));
     grn_ctx_output_cstr(ctx, "name");
-    command_inspect_obj_name(ctx, type);
+    command_object_inspect_obj_name(ctx, type);
     grn_ctx_output_cstr(ctx, "type");
-    command_inspect_obj_type(ctx, type->header.type);
+    command_object_inspect_obj_type(ctx, type->header.type);
     grn_ctx_output_cstr(ctx, "size");
     if (type->header.type == GRN_TYPE) {
       grn_ctx_output_uint64(ctx, grn_type_size(ctx, type));
@@ -71,12 +71,12 @@ command_inspect_type(grn_ctx *ctx, grn_obj *type)
 }
 
 static void
-command_inspect_table_hash_key_key(grn_ctx *ctx, grn_hash *hash)
+command_object_inspect_table_hash_key_key(grn_ctx *ctx, grn_hash *hash)
 {
   grn_ctx_output_map_open(ctx, "key", 3);
   {
     grn_ctx_output_cstr(ctx, "type");
-    command_inspect_type(ctx, grn_ctx_at(ctx, hash->obj.header.domain));
+    command_object_inspect_type(ctx, grn_ctx_at(ctx, hash->obj.header.domain));
     grn_ctx_output_cstr(ctx, "total_size");
     grn_ctx_output_uint64(ctx, grn_hash_total_key_size(ctx, hash));
     grn_ctx_output_cstr(ctx, "max_total_size");
@@ -86,7 +86,7 @@ command_inspect_table_hash_key_key(grn_ctx *ctx, grn_hash *hash)
 }
 
 static void
-command_inspect_table_hash_key(grn_ctx *ctx, grn_obj *obj)
+command_object_inspect_table_hash_key(grn_ctx *ctx, grn_obj *obj)
 {
   grn_hash *hash = (grn_hash *)obj;
 
@@ -95,22 +95,22 @@ command_inspect_table_hash_key(grn_ctx *ctx, grn_obj *obj)
     grn_ctx_output_cstr(ctx, "id");
     grn_ctx_output_uint64(ctx, grn_obj_id(ctx, obj));
     grn_ctx_output_cstr(ctx, "name");
-    command_inspect_obj_name(ctx, obj);
+    command_object_inspect_obj_name(ctx, obj);
     grn_ctx_output_cstr(ctx, "type");
-    command_inspect_obj_type(ctx, obj->header.type);
+    command_object_inspect_obj_type(ctx, obj->header.type);
     grn_ctx_output_cstr(ctx, "key");
-    command_inspect_table_hash_key_key(ctx, hash);
+    command_object_inspect_table_hash_key_key(ctx, hash);
   }
   grn_ctx_output_map_close(ctx);
 }
 
 static void
-command_inspect_table_pat_key_key(grn_ctx *ctx, grn_pat *pat)
+command_object_inspect_table_pat_key_key(grn_ctx *ctx, grn_pat *pat)
 {
   grn_ctx_output_map_open(ctx, "key", 3);
   {
     grn_ctx_output_cstr(ctx, "type");
-    command_inspect_type(ctx, grn_ctx_at(ctx, pat->obj.header.domain));
+    command_object_inspect_type(ctx, grn_ctx_at(ctx, pat->obj.header.domain));
     grn_ctx_output_cstr(ctx, "total_size");
     grn_ctx_output_uint64(ctx, grn_pat_total_key_size(ctx, pat));
     grn_ctx_output_cstr(ctx, "max_total_size");
@@ -120,7 +120,7 @@ command_inspect_table_pat_key_key(grn_ctx *ctx, grn_pat *pat)
 }
 
 static void
-command_inspect_table_pat_key(grn_ctx *ctx, grn_obj *obj)
+command_object_inspect_table_pat_key(grn_ctx *ctx, grn_obj *obj)
 {
   grn_pat *pat = (grn_pat *)obj;
 
@@ -129,20 +129,20 @@ command_inspect_table_pat_key(grn_ctx *ctx, grn_obj *obj)
     grn_ctx_output_cstr(ctx, "id");
     grn_ctx_output_uint64(ctx, grn_obj_id(ctx, obj));
     grn_ctx_output_cstr(ctx, "name");
-    command_inspect_obj_name(ctx, obj);
+    command_object_inspect_obj_name(ctx, obj);
     grn_ctx_output_cstr(ctx, "type");
-    command_inspect_obj_type(ctx, obj->header.type);
+    command_object_inspect_obj_type(ctx, obj->header.type);
     grn_ctx_output_cstr(ctx, "key");
-    command_inspect_table_pat_key_key(ctx, pat);
+    command_object_inspect_table_pat_key_key(ctx, pat);
   }
   grn_ctx_output_map_close(ctx);
 }
 
 static grn_obj *
-command_inspect(grn_ctx *ctx,
-                int nargs,
-                grn_obj **args,
-                grn_user_data *user_data)
+command_object_inspect(grn_ctx *ctx,
+                       int nargs,
+                       grn_obj **args,
+                       grn_user_data *user_data)
 {
   grn_obj *target_name;
   grn_obj *target;
@@ -167,16 +167,16 @@ command_inspect(grn_ctx *ctx,
 
   switch (target->header.type) {
   case GRN_TABLE_HASH_KEY :
-    command_inspect_table_hash_key(ctx, target);
+    command_object_inspect_table_hash_key(ctx, target);
     break;
   case GRN_TABLE_PAT_KEY :
-    command_inspect_table_pat_key(ctx, target);
+    command_object_inspect_table_pat_key(ctx, target);
     break;
   default :
     {
       GRN_PLUGIN_ERROR(ctx,
                        GRN_FUNCTION_NOT_IMPLEMENTED,
-                       "[inspect] unsupported type: <%s>(%#x)",
+                       "[object][inspect] unsupported type: <%s>(%#x)",
                        grn_obj_type_to_string(target->header.type),
                        target->header.type);
       grn_ctx_output_null(ctx);
@@ -188,14 +188,14 @@ command_inspect(grn_ctx *ctx,
 }
 
 void
-grn_proc_init_inspect(grn_ctx *ctx)
+grn_proc_init_object_inspect(grn_ctx *ctx)
 {
   grn_expr_var vars[1];
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "target_name", -1);
   grn_plugin_command_create(ctx,
-                            "inspect", -1,
-                            command_inspect,
+                            "object_inspect", -1,
+                            command_object_inspect,
                             1,
                             vars);
 }
