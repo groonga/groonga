@@ -10,7 +10,7 @@ object_inspect
       "id": 55,
       "name": "db"
     },
-    "keys": {
+    "name_table": {
       "id": 0,
       "name": "",
       "type": {

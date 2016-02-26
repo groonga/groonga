@@ -181,7 +181,7 @@ command_object_inspect_db(grn_ctx *ctx, grn_obj *obj)
   {
     grn_ctx_output_cstr(ctx, "type");
     command_object_inspect_obj_type(ctx, obj->header.type);
-    grn_ctx_output_cstr(ctx, "keys");
+    grn_ctx_output_cstr(ctx, "name_table");
     command_object_inspect_dispatch(ctx, db->keys);
   }
   grn_ctx_output_map_close(ctx);
