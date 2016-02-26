@@ -166,6 +166,9 @@ command_object_inspect(grn_ctx *ctx,
   }
 
   switch (target->header.type) {
+  case GRN_TYPE :
+    command_object_inspect_type(ctx, target);
+    break;
   case GRN_TABLE_HASH_KEY :
     command_object_inspect_table_hash_key(ctx, target);
     break;
