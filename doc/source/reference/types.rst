@@ -145,7 +145,7 @@ String of 2,147,483,647 or less bytes. (default: "")
 
 測地系の詳細については、 `測地系 - Wikipedia <http://ja.wikipedia.org/wiki/%E6%B8%AC%E5%9C%B0%E7%B3%BB>`_ を参照してください。
 
-.. _builtin-type-wgs84-geo-pointer:
+.. _builtin-type-wgs84-geo-point:
 
 ``WGS84GeoPoint``
 ^^^^^^^^^^^^^^^^^
