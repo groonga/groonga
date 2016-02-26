@@ -77,6 +77,12 @@ Improvements
 * [``grn_plugin_proc_get_var_bool()``] Add a new API for plugin that
   provides getting boolean argument value feature.
 
+* [``grn_plugin_proc_get_var_int32()``] Add a new API for plugin that
+  provides getting 32bit integer argument value feature.
+
+* [``grn_plugin_proc_get_var_string()``] Add a new API for plugin that
+  provides getting string argument value feature.
+
 * [:doc:`/reference/commands/object_remove`] Added a new command that
   removes an object. ``object_remove`` can also remove a broken object.
 
@@ -127,6 +133,11 @@ Fixes
 * [:doc:`/reference/commands/select`] Fixed a crash bug that is
   occurred when too many keywords is specified into ``--query``.
   [GitHub#484][Reported by Hiroyuki Sato]
+
+* [:doc:`/reference/commands/select`] Fixed a bug that wrong cache is
+  used when :doc:`/reference/command/command_version` or
+  :doc:`/reference/command/pretty_print` is
+  used. [GitHub#490][Reported by KITAITI Makoto]
 
 Thanks
 ^^^^^^
