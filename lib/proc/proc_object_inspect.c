@@ -53,6 +53,7 @@ command_object_inspect_type(grn_ctx *ctx, grn_obj *type)
 {
   if (!type) {
     grn_ctx_output_null(ctx);
+    return;
   }
 
   grn_ctx_output_map_open(ctx, "type", 4);
@@ -172,6 +173,21 @@ command_object_inspect_table_dat_key(grn_ctx *ctx, grn_obj *obj)
 }
 
 static void
+command_object_inspect_db(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_db *db = (grn_db *)obj;
+
+  grn_ctx_output_map_open(ctx, "database", 2);
+  {
+    grn_ctx_output_cstr(ctx, "type");
+    command_object_inspect_obj_type(ctx, obj->header.type);
+    grn_ctx_output_cstr(ctx, "keys");
+    command_object_inspect_dispatch(ctx, db->keys);
+  }
+  grn_ctx_output_map_close(ctx);
+}
+
+static void
 command_object_inspect_dispatch(grn_ctx *ctx, grn_obj *obj)
 {
   switch (obj->header.type) {
@@ -186,6 +202,9 @@ command_object_inspect_dispatch(grn_ctx *ctx, grn_obj *obj)
     break;
   case GRN_TABLE_DAT_KEY :
     command_object_inspect_table_dat_key(ctx, obj);
+    break;
+  case GRN_DB :
+    command_object_inspect_db(ctx, obj);
     break;
   default :
     {

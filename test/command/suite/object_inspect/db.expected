@@ -1,0 +1,25 @@
+object_inspect
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "type": {
+      "id": 55,
+      "name": "db"
+    },
+    "keys": {
+      "id": 0,
+      "name": "",
+      "type": {
+        "id": 50,
+        "name": "table:dat_key"
+      },
+      "key": {
+        "type": null
+      }
+    }
+  }
+]
