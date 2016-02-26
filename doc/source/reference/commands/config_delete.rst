@@ -18,7 +18,7 @@ Summary
 Syntax
 ------
 
-This command takes one parameter::
+This command takes only one required parameter::
 
   config_delete key
 
