@@ -157,7 +157,7 @@ command_object_inspect(grn_ctx *ctx,
     if (!target) {
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
-                       "[inspect] nonexistent target: <%.*s>",
+                       "[object][inspect] nonexistent target: <%.*s>",
                        (int)GRN_TEXT_LEN(name),
                        GRN_TEXT_VALUE(name));
       grn_ctx_output_null(ctx);
