@@ -1,0 +1,27 @@
+Execution example::
+
+  object_inspect
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   {
+  #     "keys": {
+  #       "type": {
+  #         "id": 50, 
+  #         "name": "table:dat_key"
+  #       }, 
+  #       "id": 0, 
+  #       "key": {
+  #         "type": null
+  #       }, 
+  #       "name": ""
+  #     }, 
+  #     "type": {
+  #       "id": 55, 
+  #       "name": "db"
+  #     }
+  #   }
+  # ]
