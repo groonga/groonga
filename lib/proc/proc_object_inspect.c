@@ -17,10 +17,13 @@
 */
 
 #include "../grn_pat.h"
+#include "../grn_dat.h"
 
 #include "../grn_proc.h"
 
 #include <groonga/plugin.h>
+
+static void command_object_inspect_dispatch(grn_ctx *ctx, grn_obj *obj);
 
 static void
 command_object_inspect_obj_name(grn_ctx *ctx, grn_obj *obj)
@@ -138,6 +141,65 @@ command_object_inspect_table_pat_key(grn_ctx *ctx, grn_obj *obj)
   grn_ctx_output_map_close(ctx);
 }
 
+static void
+command_object_inspect_table_dat_key_key(grn_ctx *ctx, grn_dat *dat)
+{
+  grn_ctx_output_map_open(ctx, "key", 1);
+  {
+    grn_ctx_output_cstr(ctx, "type");
+    command_object_inspect_type(ctx, grn_ctx_at(ctx, dat->obj.header.domain));
+  }
+  grn_ctx_output_map_close(ctx);
+}
+
+static void
+command_object_inspect_table_dat_key(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_dat *dat = (grn_dat *)obj;
+
+  grn_ctx_output_map_open(ctx, "table", 4);
+  {
+    grn_ctx_output_cstr(ctx, "id");
+    grn_ctx_output_uint64(ctx, grn_obj_id(ctx, obj));
+    grn_ctx_output_cstr(ctx, "name");
+    command_object_inspect_obj_name(ctx, obj);
+    grn_ctx_output_cstr(ctx, "type");
+    command_object_inspect_obj_type(ctx, obj->header.type);
+    grn_ctx_output_cstr(ctx, "key");
+    command_object_inspect_table_dat_key_key(ctx, dat);
+  }
+  grn_ctx_output_map_close(ctx);
+}
+
+static void
+command_object_inspect_dispatch(grn_ctx *ctx, grn_obj *obj)
+{
+  switch (obj->header.type) {
+  case GRN_TYPE :
+    command_object_inspect_type(ctx, obj);
+    break;
+  case GRN_TABLE_HASH_KEY :
+    command_object_inspect_table_hash_key(ctx, obj);
+    break;
+  case GRN_TABLE_PAT_KEY :
+    command_object_inspect_table_pat_key(ctx, obj);
+    break;
+  case GRN_TABLE_DAT_KEY :
+    command_object_inspect_table_dat_key(ctx, obj);
+    break;
+  default :
+    {
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_FUNCTION_NOT_IMPLEMENTED,
+                       "[object][inspect] unsupported type: <%s>(%#x)",
+                       grn_obj_type_to_string(obj->header.type),
+                       obj->header.type);
+      grn_ctx_output_null(ctx);
+      break;
+    }
+  }
+}
+
 static grn_obj *
 command_object_inspect(grn_ctx *ctx,
                        int nargs,
@@ -165,27 +227,7 @@ command_object_inspect(grn_ctx *ctx,
     }
   }
 
-  switch (target->header.type) {
-  case GRN_TYPE :
-    command_object_inspect_type(ctx, target);
-    break;
-  case GRN_TABLE_HASH_KEY :
-    command_object_inspect_table_hash_key(ctx, target);
-    break;
-  case GRN_TABLE_PAT_KEY :
-    command_object_inspect_table_pat_key(ctx, target);
-    break;
-  default :
-    {
-      GRN_PLUGIN_ERROR(ctx,
-                       GRN_FUNCTION_NOT_IMPLEMENTED,
-                       "[object][inspect] unsupported type: <%s>(%#x)",
-                       grn_obj_type_to_string(target->header.type),
-                       target->header.type);
-      grn_ctx_output_null(ctx);
-      break;
-    }
-  }
+  command_object_inspect_dispatch(ctx, target);
 
   return NULL;
 }
