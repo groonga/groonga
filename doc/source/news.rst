@@ -46,7 +46,7 @@ Improvements
   lexicon. [GitHub#463][Patch by Naoya Murakami]
 
 * [``grn_obj_type_to_string()``] Add a new function that stringify
-  type ID such ad ``GRN_VOID`` and ``GRN_BULK``.
+  type ID such as ``GRN_VOID`` and ``GRN_BULK``.
 
 * [:doc:`/reference/commands/object_inspect`] Added a new command that
   returns information of the target object.
@@ -63,8 +63,8 @@ Improvements
 * [``fuzzy_search()``] Added a new function that provides fuzzy search
   feature. [GitHub#464][Patch by Naoya Murakami]
 
-* [``edit_distance()``] Supported transposition flag.
-  [GitHub#464][Patch by Naoya Murakami]
+* [:doc:`/reference/functions/edit_distance`] Supported transposition
+  flag. [GitHub#464][Patch by Naoya Murakami]
 
 * Supported index search for ``vector_column[2] == 29``.
 
@@ -98,7 +98,7 @@ Improvements
 * Added ``XXX && column != xxx`` optimization. It's converted to ``XXX
   &! column == xxx`` internally.
 
-* [:doc:`/server/memcached`] Supported ``--memcached-column``. You can
+* [:doc:`/server/memcached`] Added ``--memcached-column``. You can
   access existing column by memcached protocol.
 
 * [:doc:`/reference/executables/groonga-httpd`] Supported TLS.
