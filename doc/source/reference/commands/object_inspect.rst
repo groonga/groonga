@@ -163,7 +163,11 @@ Table inspection returns the following information::
       "type": TABLE_KEY_TYPE,
       "total_size": TABLE_KEY_TOTAL_SIZE
       "max_total_size": TABLE_KEY_MAX_TOTAL_SIZE
-    }
+    },
+    "value": {
+      "type": TABLE_VALUE_TYPE,
+    },
+    "n_records": TABLE_N_RECORDS
   }
 
 There are some exceptions:
@@ -249,6 +253,24 @@ The total key size of the inspected table in bytes.
 """"""""""""""""""""""""""""
 
 The maximum total key size of the inspected table in bytes.
+
+.. _object-inspect-return-value-table-value-type:
+
+``TABLE_VALUE_TYPE``
+""""""""""""""""""""
+
+The type of value of the inspected table.
+
+See :ref:`object-inspect-return-value-type` for format details.
+
+.. _object-inspect-return-value-table-n-records:
+
+``TABLE_N_RECORDS``
+"""""""""""""""""""
+
+The number of records of the inspected table.
+
+It's a 64bit unsigned integer value.
 
 .. _object-inspect-return-value-type:
 

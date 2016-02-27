@@ -15,11 +15,11 @@ Execution example::
   #     0.000355720520019531
   #   ], 
   #   {
-  #     "type": {
-  #       "id": 48, 
-  #       "name": "table:hash_key"
+  #     "name": "Users", 
+  #     "n_records": 1, 
+  #     "value": {
+  #       "type": null
   #     }, 
-  #     "id": 256, 
   #     "key": {
   #       "total_size": 5, 
   #       "max_total_size": 4294967295, 
@@ -33,6 +33,10 @@ Execution example::
   #         "name": "ShortText"
   #       }
   #     }, 
-  #     "name": "Users"
+  #     "type": {
+  #       "id": 48, 
+  #       "name": "table:hash_key"
+  #     }, 
+  #     "id": 256
   #   }
   # ]

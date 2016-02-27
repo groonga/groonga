@@ -9,15 +9,17 @@ Execution example::
   #   ], 
   #   {
   #     "name_table": {
+  #       "name": "", 
+  #       "n_records": 256, 
+  #       "value": null, 
+  #       "key": {
+  #         "type": null
+  #       }, 
   #       "type": {
   #         "id": 50, 
   #         "name": "table:dat_key"
   #       }, 
-  #       "id": 0, 
-  #       "key": {
-  #         "type": null
-  #       }, 
-  #       "name": ""
+  #       "id": 0
   #     }, 
   #     "type": {
   #       "id": 55, 
