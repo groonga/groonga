@@ -167,6 +167,8 @@ command_object_inspect_table(grn_ctx *ctx, grn_obj *obj)
     command_object_inspect_table_key(ctx, obj);
     grn_ctx_output_cstr(ctx, "value");
     command_object_inspect_table_value(ctx, obj);
+    grn_ctx_output_cstr(ctx, "n_records");
+    grn_ctx_output_uint64(ctx, grn_table_size(ctx, obj));
   }
   grn_ctx_output_map_close(ctx);
 }

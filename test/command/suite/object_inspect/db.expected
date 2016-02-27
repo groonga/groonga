@@ -20,7 +20,8 @@ object_inspect
       "key": {
         "type": null
       },
-      "value": null
+      "value": null,
+      "n_records": 255
     }
   }
 ]

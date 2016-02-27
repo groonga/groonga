@@ -31,6 +31,7 @@ object_inspect Users
         "size": 4096
       }
     },
-    "value": null
+    "value": null,
+    "n_records": 2
   }
 ]
