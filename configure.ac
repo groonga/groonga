@@ -315,6 +315,7 @@ AC_CONFIG_FILES([
   benchmark/fixtures/geo-select/Makefile
   benchmark/lib/Makefile
   vendor/Makefile
+  vendor/lz4/Makefile
   vendor/onigmo/Makefile
   vendor/mecab/Makefile
   vendor/mruby/Makefile
