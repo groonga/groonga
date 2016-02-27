@@ -1,0 +1,60 @@
+table_create Logs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs server COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Servers TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Servers logs_server COLUMN_INDEX Logs server
+[[0,0.0,0.0],true]
+load --table Logs
+[
+{"server": "www"},
+{"server": "www3"},
+{"server": "mail"},
+{"server": "www1"},
+{"server": "www2"}
+]
+[[0,0.0,0.0],5]
+log_level --level info
+[[0,0.0,0.0],true]
+select Logs --filter 'server @^ "www" && server != "www2"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "server",
+          "ShortText"
+        ]
+      ],
+      [
+        2,
+        "www3"
+      ],
+      [
+        4,
+        "www1"
+      ],
+      [
+        1,
+        "www"
+      ]
+    ]
+  ]
+]
+#|i| [table][select][index][prefix] <Servers.logs_server>
+#|i| [table][select][index][not-equal] <Servers.logs_server>
+log_level --level notice
+[[0,0.0,0.0],true]

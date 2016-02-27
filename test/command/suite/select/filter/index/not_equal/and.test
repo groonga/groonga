@@ -1,0 +1,20 @@
+table_create Logs TABLE_NO_KEY
+column_create Logs server COLUMN_SCALAR ShortText
+
+table_create Servers TABLE_PAT_KEY ShortText
+column_create Servers logs_server COLUMN_INDEX Logs server
+
+load --table Logs
+[
+{"server": "www"},
+{"server": "www3"},
+{"server": "mail"},
+{"server": "www1"},
+{"server": "www2"}
+]
+
+log_level --level info
+#@add-important-log-levels info
+select Logs --filter 'server @^ "www" && server != "www2"'
+#@remove-important-log-levels info
+log_level --level notice
