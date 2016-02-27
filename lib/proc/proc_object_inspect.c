@@ -116,9 +116,30 @@ command_object_inspect_table_dat_key_key(grn_ctx *ctx, grn_dat *dat)
 }
 
 static void
+command_object_inspect_table_key(grn_ctx *ctx, grn_obj *table)
+{
+  switch (table->header.type) {
+  case GRN_TABLE_HASH_KEY :
+    command_object_inspect_table_hash_key_key(ctx, (grn_hash *)table);
+    break;
+  case GRN_TABLE_PAT_KEY :
+    command_object_inspect_table_pat_key_key(ctx, (grn_pat *)table);
+    break;
+  case GRN_TABLE_DAT_KEY :
+    command_object_inspect_table_dat_key_key(ctx, (grn_dat *)table);
+    break;
+  case GRN_TABLE_NO_KEY :
+    grn_ctx_output_null(ctx);
+    break;
+  default :
+    break;
+  }
+}
+
+static void
 command_object_inspect_table(grn_ctx *ctx, grn_obj *obj)
 {
-  grn_ctx_output_map_open(ctx, "table", 5);
+  grn_ctx_output_map_open(ctx, "table", 6);
   {
     grn_ctx_output_cstr(ctx, "id");
     grn_ctx_output_uint64(ctx, grn_obj_id(ctx, obj));
@@ -127,22 +148,7 @@ command_object_inspect_table(grn_ctx *ctx, grn_obj *obj)
     grn_ctx_output_cstr(ctx, "type");
     command_object_inspect_obj_type(ctx, obj->header.type);
     grn_ctx_output_cstr(ctx, "key");
-    switch (obj->header.type) {
-    case GRN_TABLE_HASH_KEY :
-      command_object_inspect_table_hash_key_key(ctx, (grn_hash *)obj);
-      break;
-    case GRN_TABLE_PAT_KEY :
-      command_object_inspect_table_pat_key_key(ctx, (grn_pat *)obj);
-      break;
-          case GRN_TABLE_DAT_KEY :
-      command_object_inspect_table_dat_key_key(ctx, (grn_dat *)obj);
-      break;
-    case GRN_TABLE_NO_KEY :
-      grn_ctx_output_null(ctx);
-      break;
-    default :
-      break;
-    }
+    command_object_inspect_table_key(ctx, obj);
   }
   grn_ctx_output_map_close(ctx);
 }
