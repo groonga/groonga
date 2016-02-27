@@ -18,6 +18,8 @@ run sudo dd if=/dev/zero of="$swap_file" bs=1024 count=4096K
 run sudo mkswap "$swap_file"
 run sudo swapon "$swap_file"
 
+run sudo sed -i'' -e 's/httpredir/ftp.jp/g' /etc/apt/sources.list
+
 run sudo apt-get update
 run sudo apt-get install -y lsb-release
 
