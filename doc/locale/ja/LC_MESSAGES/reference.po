@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-02-26 17:55+0900\n"
+"PO-Revision-Date: 2016-02-27 17:10+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -7667,6 +7667,23 @@ msgstr ""
 
 msgid "The maximum total key size of the inspected table in bytes."
 msgstr "調査対象のテーブルの最大総キーサイズ。単位はバイト。"
+
+msgid "``TABLE_VALUE_TYPE``"
+msgstr ""
+
+# ffd0b4bc386f467c938842ebb3a98758
+msgid "The type of value of the inspected table."
+msgstr "調査対象のテーブルの値の型。"
+
+msgid "``TABLE_N_RECORDS``"
+msgstr ""
+
+# ffd0b4bc386f467c938842ebb3a98758
+msgid "The number of records of the inspected table."
+msgstr "調査対象のテーブルのレコード数。"
+
+msgid "It's a 64bit unsigned integer value."
+msgstr "64bitの正の整数です。"
 
 # da469f75baa647908401693d50786018
 msgid "Type"
