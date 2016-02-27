@@ -24,6 +24,7 @@ EXTRA_DIST =					\
 	README.md				\
 	base_version				\
 	bindings				\
+	bundled_lz4_version			\
 	bundled_mecab_naist_jdic_version	\
 	bundled_mecab_version			\
 	config.h.cmake				\
