@@ -90,25 +90,6 @@ command_object_inspect_table_hash_key_key(grn_ctx *ctx, grn_hash *hash)
 }
 
 static void
-command_object_inspect_table_hash_key(grn_ctx *ctx, grn_obj *obj)
-{
-  grn_hash *hash = (grn_hash *)obj;
-
-  grn_ctx_output_map_open(ctx, "table", 4);
-  {
-    grn_ctx_output_cstr(ctx, "id");
-    grn_ctx_output_uint64(ctx, grn_obj_id(ctx, obj));
-    grn_ctx_output_cstr(ctx, "name");
-    command_object_inspect_obj_name(ctx, obj);
-    grn_ctx_output_cstr(ctx, "type");
-    command_object_inspect_obj_type(ctx, obj->header.type);
-    grn_ctx_output_cstr(ctx, "key");
-    command_object_inspect_table_hash_key_key(ctx, hash);
-  }
-  grn_ctx_output_map_close(ctx);
-}
-
-static void
 command_object_inspect_table_pat_key_key(grn_ctx *ctx, grn_pat *pat)
 {
   grn_ctx_output_map_open(ctx, "key", 3);
@@ -119,25 +100,6 @@ command_object_inspect_table_pat_key_key(grn_ctx *ctx, grn_pat *pat)
     grn_ctx_output_uint64(ctx, grn_pat_total_key_size(ctx, pat));
     grn_ctx_output_cstr(ctx, "max_total_size");
     grn_ctx_output_uint64(ctx, GRN_PAT_MAX_TOTAL_KEY_SIZE);
-  }
-  grn_ctx_output_map_close(ctx);
-}
-
-static void
-command_object_inspect_table_pat_key(grn_ctx *ctx, grn_obj *obj)
-{
-  grn_pat *pat = (grn_pat *)obj;
-
-  grn_ctx_output_map_open(ctx, "table", 4);
-  {
-    grn_ctx_output_cstr(ctx, "id");
-    grn_ctx_output_uint64(ctx, grn_obj_id(ctx, obj));
-    grn_ctx_output_cstr(ctx, "name");
-    command_object_inspect_obj_name(ctx, obj);
-    grn_ctx_output_cstr(ctx, "type");
-    command_object_inspect_obj_type(ctx, obj->header.type);
-    grn_ctx_output_cstr(ctx, "key");
-    command_object_inspect_table_pat_key_key(ctx, pat);
   }
   grn_ctx_output_map_close(ctx);
 }
@@ -154,11 +116,9 @@ command_object_inspect_table_dat_key_key(grn_ctx *ctx, grn_dat *dat)
 }
 
 static void
-command_object_inspect_table_dat_key(grn_ctx *ctx, grn_obj *obj)
+command_object_inspect_table(grn_ctx *ctx, grn_obj *obj)
 {
-  grn_dat *dat = (grn_dat *)obj;
-
-  grn_ctx_output_map_open(ctx, "table", 4);
+  grn_ctx_output_map_open(ctx, "table", 5);
   {
     grn_ctx_output_cstr(ctx, "id");
     grn_ctx_output_uint64(ctx, grn_obj_id(ctx, obj));
@@ -167,7 +127,22 @@ command_object_inspect_table_dat_key(grn_ctx *ctx, grn_obj *obj)
     grn_ctx_output_cstr(ctx, "type");
     command_object_inspect_obj_type(ctx, obj->header.type);
     grn_ctx_output_cstr(ctx, "key");
-    command_object_inspect_table_dat_key_key(ctx, dat);
+    switch (obj->header.type) {
+    case GRN_TABLE_HASH_KEY :
+      command_object_inspect_table_hash_key_key(ctx, (grn_hash *)obj);
+      break;
+    case GRN_TABLE_PAT_KEY :
+      command_object_inspect_table_pat_key_key(ctx, (grn_pat *)obj);
+      break;
+          case GRN_TABLE_DAT_KEY :
+      command_object_inspect_table_dat_key_key(ctx, (grn_dat *)obj);
+      break;
+    case GRN_TABLE_NO_KEY :
+      grn_ctx_output_null(ctx);
+      break;
+    default :
+      break;
+    }
   }
   grn_ctx_output_map_close(ctx);
 }
@@ -195,13 +170,10 @@ command_object_inspect_dispatch(grn_ctx *ctx, grn_obj *obj)
     command_object_inspect_type(ctx, obj);
     break;
   case GRN_TABLE_HASH_KEY :
-    command_object_inspect_table_hash_key(ctx, obj);
-    break;
   case GRN_TABLE_PAT_KEY :
-    command_object_inspect_table_pat_key(ctx, obj);
-    break;
   case GRN_TABLE_DAT_KEY :
-    command_object_inspect_table_dat_key(ctx, obj);
+  case GRN_TABLE_NO_KEY :
+    command_object_inspect_table(ctx, obj);
     break;
   case GRN_DB :
     command_object_inspect_db(ctx, obj);

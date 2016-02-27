@@ -1,0 +1,9 @@
+table_create Users TABLE_NO_KEY
+
+load --table Users
+[
+{},
+{}
+]
+
+object_inspect Users

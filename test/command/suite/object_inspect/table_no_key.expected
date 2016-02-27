@@ -1,0 +1,25 @@
+table_create Users TABLE_NO_KEY
+[[0,0.0,0.0],true]
+load --table Users
+[
+{},
+{}
+]
+[[0,0.0,0.0],2]
+object_inspect Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "id": 256,
+    "name": "Users",
+    "type": {
+      "id": 51,
+      "name": "table:no_key"
+    },
+    "key": null
+  }
+]
