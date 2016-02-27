@@ -1,4 +1,4 @@
-table_create Users TABLE_PAT_KEY ShortText
+table_create Users TABLE_PAT_KEY ShortText Time
 [[0,0.0,0.0],true]
 load --table Users
 [
@@ -32,6 +32,17 @@ object_inspect Users
       },
       "total_size": 5,
       "max_total_size": 4294967294
+    },
+    "value": {
+      "type": {
+        "id": 13,
+        "name": "Time",
+        "type": {
+          "id": 32,
+          "name": "type"
+        },
+        "size": 8
+      }
     }
   }
 ]

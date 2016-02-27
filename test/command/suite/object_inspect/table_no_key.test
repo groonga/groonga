@@ -1,9 +1,9 @@
-table_create Users TABLE_NO_KEY
+table_create Points TABLE_NO_KEY --value_type WGS84GeoPoint
 
-load --table Users
+load --table Points
 [
 {},
 {}
 ]
 
-object_inspect Users
+object_inspect Points

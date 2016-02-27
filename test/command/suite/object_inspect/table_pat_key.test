@@ -1,4 +1,4 @@
-table_create Users TABLE_PAT_KEY ShortText
+table_create Users TABLE_PAT_KEY ShortText Time
 
 load --table Users
 [

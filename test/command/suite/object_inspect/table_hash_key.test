@@ -1,4 +1,4 @@
-table_create Users TABLE_HASH_KEY ShortText
+table_create Users TABLE_HASH_KEY ShortText Int32
 
 load --table Users
 [

@@ -137,6 +137,22 @@ command_object_inspect_table_key(grn_ctx *ctx, grn_obj *table)
 }
 
 static void
+command_object_inspect_table_value(grn_ctx *ctx, grn_obj *table)
+{
+  if (table->header.type == GRN_TABLE_DAT_KEY) {
+    grn_ctx_output_null(ctx);
+  } else {
+    grn_ctx_output_map_open(ctx, "value", 1);
+    {
+      grn_id range_id = grn_obj_get_range(ctx, table);
+      grn_ctx_output_cstr(ctx, "type");
+      command_object_inspect_type(ctx, grn_ctx_at(ctx, range_id));
+    }
+    grn_ctx_output_map_close(ctx);
+  }
+}
+
+static void
 command_object_inspect_table(grn_ctx *ctx, grn_obj *obj)
 {
   grn_ctx_output_map_open(ctx, "table", 6);
@@ -149,6 +165,8 @@ command_object_inspect_table(grn_ctx *ctx, grn_obj *obj)
     command_object_inspect_obj_type(ctx, obj->header.type);
     grn_ctx_output_cstr(ctx, "key");
     command_object_inspect_table_key(ctx, obj);
+    grn_ctx_output_cstr(ctx, "value");
+    command_object_inspect_table_value(ctx, obj);
   }
   grn_ctx_output_map_close(ctx);
 }

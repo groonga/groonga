@@ -19,7 +19,8 @@ object_inspect
       },
       "key": {
         "type": null
-      }
+      },
+      "value": null
     }
   }
 ]
