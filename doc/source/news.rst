@@ -38,7 +38,7 @@ Improvements
 * [``grn_obj_search()``] Supported ``GRN_OP_FUZZY``
   operator. [GitHub#463][Patch by Naoya Murakami]
 
-* [``GRN_TABLE_FUZZY_WITH_TRANSPOSITION``] Added a flag for
+* [``GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION``] Added a flag for
   ``grn_table_fuzzy_search()``. [GitHub#463][Patch by Naoya Murakami]
 
 * [``GRN_TOKENIZE_ONLY``] Added a new tokenization mode that returns
