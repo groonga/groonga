@@ -15,7 +15,7 @@ Description
 
 Groonga identifies data types to store.
 
-A primary key of table and column value belong to some kind of data types in Groonga database. And normaly, column values become in common with all records in one table.
+A primary key of table and column value belong to some kind of data types in Groonga database. And normally, column values become in common with all records in one table.
 
 A primary key type and column type can be specified Groonga defined types, user defined types or user defined table.
 
