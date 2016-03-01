@@ -677,7 +677,7 @@ Addition assignment operator
 
 Its syntax is ``column1 += column2``.
 
-The operator performs addition assginment operation on column1 by column2.
+The operator performs addition assignment operation on column1 by column2.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_addition_assignment_operator.log
@@ -696,7 +696,7 @@ Subtraction assignment operator
 
 Its syntax is ``column1 -= column2``.
 
-The operator performs subtraction assginment operation on column1 by column2.
+The operator performs subtraction assignment operation on column1 by column2.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_subtraction_assignment_operator.log
@@ -715,7 +715,7 @@ Multiplication assignment operator
 
 Its syntax is ``column1 *= column2``.
 
-The operator performs multiplication assginment operation on column1 by column2.
+The operator performs multiplication assignment operation on column1 by column2.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_multiplication_assignment_operator.log
@@ -734,7 +734,7 @@ Division assignment operator
 
 Its syntax is ``column1 /= column2``.
 
-The operator performs division assginment operation on column1 by column2.
+The operator performs division assignment operation on column1 by column2.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_division_assignment_operator.log
@@ -753,7 +753,7 @@ Modulo assignment operator
 
 Its syntax is ``column1 %= column2``.
 
-The operator performs modulo assginment operation on column1 by column2.
+The operator performs modulo assignment operation on column1 by column2.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_modulo_assignment_operator.log
@@ -772,7 +772,7 @@ Bitwise left shift assignment operator
 
 Its syntax is ``column1 <<= column2``.
 
-The operator performs left shift assginment operation on column1 by column2.
+The operator performs left shift assignment operation on column1 by column2.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_left_shift_assignment_operator.log
@@ -791,14 +791,14 @@ Bitwise signed right shift assignment operator
 
 Its syntax is ``column2 >>= column2``.
 
-The operator performs signed right shift assginment operation on column1 by column2.
+The operator performs signed right shift assignment operation on column1 by column2.
 
 Bitwise unsigned right shift assignment operator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Its syntax is ``column1 >>>= column2``.
 
-The operator performs unsigned right shift assginment operation on column1 by column2.
+The operator performs unsigned right shift assignment operation on column1 by column2.
 
 Bitwise AND assignment operator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -845,7 +845,7 @@ Bitwise XOR assignment operator
 
 Its syntax is ``column1 ^= column2``.
 
-The operator performs bitwise XOR assginment operation on column1 by column2.
+The operator performs bitwise XOR assignment operation on column1 by column2.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_xor_assignment_operator.log
