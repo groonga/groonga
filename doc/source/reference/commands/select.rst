@@ -471,7 +471,7 @@ logical and. It means that matched records should be matched against
 both ``filter`` and ``query``.
 
 ``filter`` parameter is designed for complex conditions. A filter text
-should be formated in :doc:`/reference/grn_expr/script_syntax`. The syntax is
+should be formatted in :doc:`/reference/grn_expr/script_syntax`. The syntax is
 similar to ECMAScript. For example, ``column == "value"`` means that
 the value of ``column`` column is equal to ``"value"``. ``column <
 value`` means that the value of ``column`` column is less than
