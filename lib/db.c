@@ -12663,146 +12663,166 @@ report_set_column_value_failure(grn_ctx *ctx,
 static void
 bracket_close(grn_ctx *ctx, grn_loader *loader)
 {
-  grn_obj *value, *col, *ve;
   grn_id id = GRN_ID_NIL;
-  grn_obj *key_value = NULL;
-  grn_obj **cols = (grn_obj **)GRN_BULK_HEAD(&loader->columns);
-  uint32_t begin, ndata, ncols = GRN_BULK_VSIZE(&loader->columns) / sizeof(grn_obj *);
+  grn_obj *value, *value_end, *key_value = NULL;
+  grn_obj *col, **cols; /* Columns except _id and _key. */
+  uint32_t i, begin;
+  uint32_t ncols;   /* Number of columns except _id and _key. */
+  uint32_t nvalues; /* Number of values in brackets. */
+
+  cols = (grn_obj **)GRN_BULK_HEAD(&loader->columns);
+  ncols = GRN_BULK_VSIZE(&loader->columns) / sizeof(grn_obj *);
   GRN_UINT32_POP(&loader->level, begin);
-  value = ((grn_obj *)(GRN_TEXT_VALUE(&loader->values))) + begin;
-  ve = ((grn_obj *)(GRN_TEXT_VALUE(&loader->values))) + loader->values_size;
+  value = (grn_obj *)GRN_TEXT_VALUE(&loader->values) + begin;
+  value_end = (grn_obj *)GRN_TEXT_VALUE(&loader->values) + loader->values_size;
   GRN_ASSERT(value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET);
   GRN_UINT32_SET(ctx, value, loader->values_size - begin - 1);
   value++;
-  if (GRN_BULK_VSIZE(&loader->level) <= sizeof(uint32_t) * loader->emit_level) {
-    ndata = values_len(ctx, value, ve);
-    if (loader->table) {
-      switch (loader->table->header.type) {
-      case GRN_TABLE_HASH_KEY :
-      case GRN_TABLE_PAT_KEY :
-      case GRN_TABLE_DAT_KEY :
-        if (loader->key_offset != -1 && ndata == ncols + 1) {
-          key_value = value + loader->key_offset;
-          id = loader_add(ctx, key_value);
-        } else if (loader->key_offset == -1) {
-          int i = 0;
-          grn_obj *key_column_name = NULL;
-          while (ndata--) {
-            char *column_name = GRN_TEXT_VALUE(value);
-            unsigned int column_name_size = GRN_TEXT_LEN(value);
-            if (value->header.domain == GRN_DB_TEXT &&
-                (name_equal(column_name, column_name_size,
-                            GRN_COLUMN_NAME_KEY) ||
-                 name_equal(column_name, column_name_size,
-                            GRN_COLUMN_NAME_ID))) {
-              if (loader->key_offset != -1) {
-                GRN_LOG(ctx, GRN_LOG_ERROR,
-                        "duplicated key columns: <%.*s> at %d and <%.*s> at %i",
-                        (int)GRN_TEXT_LEN(key_column_name),
-                        GRN_TEXT_VALUE(key_column_name),
-                        loader->key_offset,
-                        column_name_size, column_name, i);
-                return;
-              }
-              key_column_name = value;
-              loader->key_offset = i;
-            } else {
-              col = grn_obj_column(ctx, loader->table,
-                                   column_name, column_name_size);
-              if (!col) {
-                ERR(GRN_INVALID_ARGUMENT,
-                    "nonexistent column: <%.*s>",
-                    column_name_size, column_name);
-                return;
-              }
-              GRN_PTR_PUT(ctx, &loader->columns, col);
-            }
-            value++;
-            i++;
-          }
-        }
-        break;
-      case GRN_TABLE_NO_KEY :
-        if ((GRN_BULK_VSIZE(&loader->level)) > 0 &&
-            (ndata == 0 || ndata == ncols)) {
-          id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
-        } else if (!ncols) {
-          while (ndata--) {
-            if (value->header.domain == GRN_DB_TEXT) {
-              char *column_name = GRN_TEXT_VALUE(value);
-              unsigned int column_name_size = GRN_TEXT_LEN(value);
-              col = grn_obj_column(ctx, loader->table,
-                                   column_name, column_name_size);
-              if (!col) {
-                ERR(GRN_INVALID_ARGUMENT,
-                    "nonexistent column: <%.*s>",
-                    column_name_size, column_name);
-                return;
-              }
-              GRN_PTR_PUT(ctx, &loader->columns, col);
-              value++;
-            } else {
-              grn_obj buffer;
-              GRN_TEXT_INIT(&buffer, 0);
-              grn_inspect(ctx, &buffer, value);
-              ERR(GRN_INVALID_ARGUMENT,
-                  "column name must be string: <%.*s>",
-                  (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
-              GRN_OBJ_FIN(ctx, &buffer);
-              return;
-            }
-          }
-        }
-        break;
-      default :
-        break;
-      }
-      if (id) {
-        int i = 0;
-        while (ndata--) {
-          grn_obj *column;
-          if ((loader->table->header.type == GRN_TABLE_HASH_KEY ||
-               loader->table->header.type == GRN_TABLE_PAT_KEY ||
-               loader->table->header.type == GRN_TABLE_DAT_KEY) &&
-              i == loader->key_offset) {
-              /* skip this value, because it's already used as key value */
-             value = values_next(ctx, value);
-             i++;
-             continue;
-          }
-
-          column = *cols;
-          if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
-            set_vector(ctx, column, id, value);
-          } else if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACE) {
-            set_weight_vector(ctx, column, id, value);
-          } else {
-            grn_obj_set_value(ctx, column, id, value, GRN_OBJ_SET);
-          }
-          if (ctx->rc != GRN_SUCCESS) {
-            char column_name[GRN_TABLE_MAX_KEY_SIZE];
-            unsigned int column_name_size;
-            column_name_size = grn_obj_name(ctx, column, column_name,
-                                            GRN_TABLE_MAX_KEY_SIZE);
-            report_set_column_value_failure(ctx, key_value,
-                                            column_name, column_name_size,
-                                            value);
-            ERRCLR(ctx);
-          }
-          value = values_next(ctx, value);
-          cols++;
-          i++;
-        }
-        if (loader->each) {
-          grn_obj *v = grn_expr_get_var_by_offset(ctx, loader->each, 0);
-          GRN_RECORD_SET(ctx, v, id);
-          grn_expr_exec(ctx, loader->each, 0);
-        }
-        loader->nrecords++;
-      }
-    }
-    loader->values_size = begin;
+  if (GRN_BULK_VSIZE(&loader->level) > sizeof(uint32_t) * loader->emit_level) {
+    return;
   }
+  nvalues = values_len(ctx, value, value_end);
+  if (!loader->table) {
+    loader->values_size = begin;
+    return;
+  }
+
+  switch (loader->table->header.type) {
+  case GRN_TABLE_HASH_KEY :
+  case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_DAT_KEY :
+    if (loader->key_offset != -1 && nvalues == ncols + 1) {
+      /*
+       * Target columns and _id or _key are already specified and the number of
+       * values is OK.
+       */
+      key_value = value + loader->key_offset;
+      id = loader_add(ctx, key_value);
+    } else if (loader->key_offset == -1) {
+      /*
+       * Target columns and _id or _key are not specified yet and values are
+       * handled as column names and "_id" or "_key".
+       */
+      grn_obj *key_column_name = NULL;
+      for (i = 0; i < nvalues; i++) {
+        char *column_name = GRN_TEXT_VALUE(value);
+        unsigned int column_name_size = GRN_TEXT_LEN(value);
+        if (value->header.domain == GRN_DB_TEXT &&
+            (name_equal(column_name, column_name_size, GRN_COLUMN_NAME_KEY) ||
+             name_equal(column_name, column_name_size, GRN_COLUMN_NAME_ID))) {
+          /* _id or _key must appear just once. */
+          if (loader->key_offset != -1) {
+            GRN_LOG(ctx, GRN_LOG_ERROR,
+                    "duplicated key columns: <%.*s> at %d and <%.*s> at %d",
+                    (int)GRN_TEXT_LEN(key_column_name),
+                    GRN_TEXT_VALUE(key_column_name),
+                    loader->key_offset,
+                    column_name_size, column_name, i);
+            return;
+          }
+          key_column_name = value;
+          loader->key_offset = i;
+        } else {
+          col = grn_obj_column(ctx, loader->table,
+                               column_name, column_name_size);
+          if (!col) {
+            ERR(GRN_INVALID_ARGUMENT,
+                "nonexistent column: <%.*s>",
+                column_name_size, column_name);
+            return;
+          }
+          GRN_PTR_PUT(ctx, &loader->columns, col);
+        }
+        value++;
+      }
+      nvalues = 0;
+    }
+    break;
+  case GRN_TABLE_NO_KEY :
+    if (GRN_BULK_VSIZE(&loader->level) > 0 &&
+        (nvalues == 0 || nvalues == ncols)) {
+      /*
+       * Target columns are already specified and the number of values is OK.
+       */
+      id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
+    } else if (!ncols) {
+      /*
+       * Target columns are not specified yet and values are handled as column
+       * names.
+       */
+      for (i = 0; i < nvalues; i++) {
+        if (value->header.domain == GRN_DB_TEXT) {
+          char *column_name = GRN_TEXT_VALUE(value);
+          unsigned int column_name_size = GRN_TEXT_LEN(value);
+          col = grn_obj_column(ctx, loader->table,
+                               column_name, column_name_size);
+          if (!col) {
+            ERR(GRN_INVALID_ARGUMENT,
+                "nonexistent column: <%.*s>",
+                column_name_size, column_name);
+            return;
+          }
+          GRN_PTR_PUT(ctx, &loader->columns, col);
+          value++;
+        } else {
+          grn_obj buffer;
+          GRN_TEXT_INIT(&buffer, 0);
+          grn_inspect(ctx, &buffer, value);
+          ERR(GRN_INVALID_ARGUMENT,
+              "column name must be string: <%.*s>",
+              (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
+          GRN_OBJ_FIN(ctx, &buffer);
+          return;
+        }
+      }
+      nvalues = 0;
+    }
+    break;
+  default :
+    break;
+  }
+
+  if (id == GRN_ID_NIL) {
+    /* Target record is not available. */
+    loader->values_size = begin;
+    return;
+  }
+
+  for (i = 0; i < nvalues; i++, value = values_next(ctx, value)) {
+    if ((loader->table->header.type == GRN_TABLE_HASH_KEY ||
+         loader->table->header.type == GRN_TABLE_PAT_KEY ||
+         loader->table->header.type == GRN_TABLE_DAT_KEY) &&
+        i == loader->key_offset) {
+       /* Skip this value, because it's already used as key value. */
+       continue;
+    }
+    col = *cols;
+    if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
+      set_vector(ctx, col, id, value);
+    } else if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACE) {
+      set_weight_vector(ctx, col, id, value);
+    } else {
+      grn_obj_set_value(ctx, col, id, value, GRN_OBJ_SET);
+    }
+    if (ctx->rc != GRN_SUCCESS) {
+      char column_name[GRN_TABLE_MAX_KEY_SIZE];
+      unsigned int column_name_size;
+      column_name_size = grn_obj_name(ctx, col, column_name,
+                                      GRN_TABLE_MAX_KEY_SIZE);
+      report_set_column_value_failure(ctx, key_value,
+                                      column_name, column_name_size,
+                                      value);
+      ERRCLR(ctx);
+    }
+    cols++;
+  }
+  if (loader->each) {
+    grn_obj *v = grn_expr_get_var_by_offset(ctx, loader->each, 0);
+    GRN_RECORD_SET(ctx, v, id);
+    grn_expr_exec(ctx, loader->each, 0);
+  }
+  loader->nrecords++;
+  loader->values_size = begin;
 }
 
 static void
