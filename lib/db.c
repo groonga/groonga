@@ -12676,6 +12676,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
   uint32_t i, begin;
   uint32_t ncols;   /* Number of columns except _id and _key. */
   uint32_t nvalues; /* Number of values in brackets. */
+  uint32_t depth;
 
   cols = (grn_obj **)GRN_BULK_HEAD(&loader->columns);
   ncols = GRN_BULK_VSIZE(&loader->columns) / sizeof(grn_obj *);
@@ -12685,11 +12686,12 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
   GRN_ASSERT(value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET);
   GRN_UINT32_SET(ctx, value, loader->values_size - begin - 1);
   value++;
-  if (GRN_BULK_VSIZE(&loader->level) > sizeof(uint32_t) * loader->emit_level) {
+  depth = GRN_BULK_VSIZE(&loader->level);
+  if (depth > sizeof(uint32_t) * loader->emit_level) {
     return;
   }
   nvalues = values_len(ctx, value, value_end);
-  if (!loader->table || loader->rc != GRN_SUCCESS) {
+  if (depth == 0 || !loader->table || loader->rc != GRN_SUCCESS) {
     goto exit;
   }
 
@@ -12697,14 +12699,19 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
   case GRN_TABLE_HASH_KEY :
   case GRN_TABLE_PAT_KEY :
   case GRN_TABLE_DAT_KEY :
-    if (loader->key_offset != -1 && nvalues == ncols + 1) {
-      /*
-       * Target columns and _id or _key are already specified and the number of
-       * values is OK.
-       */
-      key_value = value + loader->key_offset;
-      id = loader_add(ctx, key_value);
-    } else if (loader->key_offset == -1) {
+    if (loader->key_offset != -1) {
+      /* Target columns and _id or _key are already specified. */
+      if (nvalues == ncols + 1) {
+        /* The number of values is OK. */
+        key_value = value + loader->key_offset;
+        id = loader_add(ctx, key_value);
+      } else {
+        ERR(GRN_INVALID_ARGUMENT,
+            "unexpected #values: expected:%u, actual:%u",
+            ncols + 1, nvalues);
+        goto exit;
+      }
+    } else {
       /*
        * Target columns and _id or _key are not specified yet and values are
        * handled as column names and "_id" or "_key".
@@ -12743,12 +12750,16 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
         }
         value++;
       }
+      if (loader->key_offset == -1) {
+        ERR(GRN_INVALID_ARGUMENT, "missing key column");
+        grn_loader_save_error(ctx, loader);
+        goto exit;
+      }
       nvalues = 0;
     }
     break;
   case GRN_TABLE_NO_KEY :
-    if (GRN_BULK_VSIZE(&loader->level) > 0 &&
-        (nvalues == 0 || nvalues == ncols)) {
+    if (nvalues == 0 || nvalues == ncols) {
       /*
        * Target columns are already specified and the number of values is OK.
        */
