@@ -142,6 +142,10 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   if (ctx->impl->loader.stat != GRN_LOADER_END) {
     grn_ctx_set_next_expr(ctx, grn_proc_get_info(ctx, user_data, NULL, NULL, NULL));
   } else {
+    if (ctx->impl->loader.rc != GRN_SUCCESS) {
+      ctx->rc = ctx->impl->loader.rc;
+      strcpy(ctx->errbuf, ctx->impl->loader.errbuf);
+    }
     GRN_OUTPUT_INT64(ctx->impl->loader.nrecords);
     if (ctx->impl->loader.table) {
       grn_db_touch(ctx, DB_OBJ(ctx->impl->loader.table)->db);

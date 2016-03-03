@@ -12661,6 +12661,13 @@ report_set_column_value_failure(grn_ctx *ctx,
 }
 
 static void
+grn_loader_save_error(grn_ctx *ctx, grn_loader *loader)
+{
+  loader->rc = ctx->rc;
+  strcpy(loader->errbuf, ctx->errbuf);
+}
+
+static void
 bracket_close(grn_ctx *ctx, grn_loader *loader)
 {
   grn_id id = GRN_ID_NIL;
@@ -12682,7 +12689,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
     return;
   }
   nvalues = values_len(ctx, value, value_end);
-  if (!loader->table) {
+  if (!loader->table || loader->rc != GRN_SUCCESS) {
     goto exit;
   }
 
@@ -12711,12 +12718,13 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
              name_equal(column_name, column_name_size, GRN_COLUMN_NAME_ID))) {
           /* _id or _key must appear just once. */
           if (loader->key_offset != -1) {
-            GRN_LOG(ctx, GRN_LOG_ERROR,
-                    "duplicated key columns: <%.*s> at %d and <%.*s> at %d",
-                    (int)GRN_TEXT_LEN(key_column_name),
-                    GRN_TEXT_VALUE(key_column_name),
-                    loader->key_offset,
-                    column_name_size, column_name, i);
+            ERR(GRN_INVALID_ARGUMENT,
+                "duplicated key columns: <%.*s> at %d and <%.*s> at %d",
+                (int)GRN_TEXT_LEN(key_column_name),
+                GRN_TEXT_VALUE(key_column_name),
+                loader->key_offset,
+                column_name_size, column_name, i);
+            grn_loader_save_error(ctx, loader);
             goto exit;
           }
           key_column_name = value;
@@ -12728,6 +12736,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
             ERR(GRN_INVALID_ARGUMENT,
                 "nonexistent column: <%.*s>",
                 column_name_size, column_name);
+            grn_loader_save_error(ctx, loader);
             goto exit;
           }
           GRN_PTR_PUT(ctx, &loader->columns, col);
@@ -12759,7 +12768,8 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
             ERR(GRN_INVALID_ARGUMENT,
                 "nonexistent column: <%.*s>",
                 column_name_size, column_name);
-            return;
+            grn_loader_save_error(ctx, loader);
+            goto exit;
           }
           GRN_PTR_PUT(ctx, &loader->columns, col);
           value++;
@@ -12770,8 +12780,9 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
           ERR(GRN_INVALID_ARGUMENT,
               "column name must be string: <%.*s>",
               (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
+          grn_loader_save_error(ctx, loader);
           GRN_OBJ_FIN(ctx, &buffer);
-          return;
+          goto exit;
         }
       }
       nvalues = 0;

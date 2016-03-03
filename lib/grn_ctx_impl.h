@@ -74,6 +74,8 @@ typedef struct {
   uint32_t nrecords;
   grn_loader_stat stat;
   grn_content_type input_type;
+  grn_rc rc;
+  char errbuf[GRN_CTX_MSGSIZE];
 } grn_loader;
 
 #define GRN_CTX_N_SEGMENTS 512
