@@ -12683,8 +12683,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
   }
   nvalues = values_len(ctx, value, value_end);
   if (!loader->table) {
-    loader->values_size = begin;
-    return;
+    goto exit;
   }
 
   switch (loader->table->header.type) {
@@ -12718,7 +12717,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
                     GRN_TEXT_VALUE(key_column_name),
                     loader->key_offset,
                     column_name_size, column_name, i);
-            return;
+            goto exit;
           }
           key_column_name = value;
           loader->key_offset = i;
@@ -12729,7 +12728,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
             ERR(GRN_INVALID_ARGUMENT,
                 "nonexistent column: <%.*s>",
                 column_name_size, column_name);
-            return;
+            goto exit;
           }
           GRN_PTR_PUT(ctx, &loader->columns, col);
         }
@@ -12784,8 +12783,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
 
   if (id == GRN_ID_NIL) {
     /* Target record is not available. */
-    loader->values_size = begin;
-    return;
+    goto exit;
   }
 
   for (i = 0; i < nvalues; i++, value = values_next(ctx, value)) {
@@ -12822,6 +12820,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
     grn_expr_exec(ctx, loader->each, 0);
   }
   loader->nrecords++;
+exit:
   loader->values_size = begin;
 }
 
