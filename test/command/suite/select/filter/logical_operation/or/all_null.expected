@@ -2,6 +2,7 @@ table_create Records TABLE_NO_KEY
 [[0,0.0,0.0],true]
 load --table Records
 [
+[],
 []
 ]
 [[0,0.0,0.0],1]
