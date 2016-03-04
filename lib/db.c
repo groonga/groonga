@@ -13382,8 +13382,7 @@ grn_load_(grn_ctx *ctx, grn_content_type input_type,
           const char *each, unsigned int each_len,
           uint32_t emit_level)
 {
-  grn_loader *loader;
-  loader = &ctx->impl->loader;
+  grn_loader *loader = &ctx->impl->loader;
   loader->emit_level = emit_level;
   if (ctx->impl->edge) {
     grn_edge *edge = grn_edges_add_communicator(ctx, addr);
@@ -13405,21 +13404,19 @@ grn_load_(grn_ctx *ctx, grn_content_type input_type,
       loader->stat = GRN_LOADER_END;
       return;
     }
-    if (loader->table && columns && columns_len) {
+    if (columns && columns_len) {
       int i, n_columns;
       grn_obj parsed_columns;
-
       GRN_PTR_INIT(&parsed_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
       if (parse_load_columns(ctx, loader->table, columns, columns_len,
-                             &parsed_columns)) {
+                             &parsed_columns) != GRN_SUCCESS) {
         loader->stat = GRN_LOADER_END;
         GRN_OBJ_FIN(ctx, &parsed_columns);
         return;
       }
       n_columns = GRN_BULK_VSIZE(&parsed_columns) / sizeof(grn_obj *);
       for (i = 0; i < n_columns; i++) {
-        grn_obj *column;
-        column = GRN_PTR_VALUE_AT(&parsed_columns, i);
+        grn_obj *column = GRN_PTR_VALUE_AT(&parsed_columns, i);
         if (column->header.type == GRN_ACCESSOR &&
             ((grn_accessor *)column)->action == GRN_ACCESSOR_GET_KEY) {
           loader->key_offset = i;
