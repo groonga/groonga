@@ -515,6 +515,7 @@ grn_loader_init(grn_loader *loader)
   loader->values_size = 0;
   loader->nrecords = 0;
   loader->stat = GRN_LOADER_BEGIN;
+  loader->columns_status = GRN_LOADER_COLUMNS_UNSET;
   loader->rc = GRN_SUCCESS;
   loader->errbuf[0] = '\0';
 }

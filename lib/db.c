@@ -12698,7 +12698,8 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
     return;
   }
   nvalues = values_len(ctx, value, value_end);
-  if (depth == 0 || !loader->table || loader->rc != GRN_SUCCESS) {
+  if (depth == 0 || !loader->table ||
+      loader->columns_status == GRN_LOADER_COLUMNS_BROKEN) {
     goto exit;
   }
 
@@ -12706,7 +12707,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
   case GRN_TABLE_HASH_KEY :
   case GRN_TABLE_PAT_KEY :
   case GRN_TABLE_DAT_KEY :
-    if (loader->key_offset != -1) {
+    if (loader->columns_status == GRN_LOADER_COLUMNS_SET) {
       /* Target columns and _id or _key are already specified. */
       if (nvalues == ncols + 1) {
         /* The number of values is OK. */
@@ -12739,6 +12740,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
                 loader->key_offset,
                 column_name_size, column_name, i);
             grn_loader_save_error(ctx, loader);
+            loader->columns_status = GRN_LOADER_COLUMNS_BROKEN;
             goto exit;
           }
           key_column_name = value;
@@ -12751,6 +12753,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
                 "nonexistent column: <%.*s>",
                 column_name_size, column_name);
             grn_loader_save_error(ctx, loader);
+            loader->columns_status = GRN_LOADER_COLUMNS_BROKEN;
             goto exit;
           }
           GRN_PTR_PUT(ctx, &loader->columns, col);
@@ -12760,18 +12763,21 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
       if (loader->key_offset == -1) {
         ERR(GRN_INVALID_ARGUMENT, "missing key column");
         grn_loader_save_error(ctx, loader);
+        loader->columns_status = GRN_LOADER_COLUMNS_BROKEN;
         goto exit;
       }
       nvalues = 0;
+      loader->columns_status = GRN_LOADER_COLUMNS_SET;
     }
     break;
   case GRN_TABLE_NO_KEY :
-    if (nvalues == 0 || nvalues == ncols) {
-      /*
-       * Target columns are already specified and the number of values is OK.
-       */
-      id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
-    } else if (!ncols) {
+    if (loader->columns_status == GRN_LOADER_COLUMNS_SET) {
+      /* Target columns are already specified. */
+/*    if (nvalues == 0 || nvalues == ncols) {*/
+      if (nvalues == ncols) {
+        id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
+      }
+    } else {
       /*
        * Target columns are not specified yet and values are handled as column
        * names.
@@ -12787,6 +12793,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
                 "nonexistent column: <%.*s>",
                 column_name_size, column_name);
             grn_loader_save_error(ctx, loader);
+            loader->columns_status = GRN_LOADER_COLUMNS_BROKEN;
             goto exit;
           }
           GRN_PTR_PUT(ctx, &loader->columns, col);
@@ -12800,10 +12807,12 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
               (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
           grn_loader_save_error(ctx, loader);
           GRN_OBJ_FIN(ctx, &buffer);
+          loader->columns_status = GRN_LOADER_COLUMNS_BROKEN;
           goto exit;
         }
       }
       nvalues = 0;
+      loader->columns_status = GRN_LOADER_COLUMNS_SET;
     }
     break;
   default :
@@ -13426,6 +13435,7 @@ grn_load_(grn_ctx *ctx, grn_content_type input_type,
         }
       }
       GRN_OBJ_FIN(ctx, &parsed_columns);
+      loader->columns_status = GRN_LOADER_COLUMNS_SET;
     }
     if (ifexists && ifexists_len) {
       grn_obj *v;

@@ -59,6 +59,17 @@ typedef enum {
   GRN_LOADER_END
 } grn_loader_stat;
 
+/*
+ * Status of target columns used in Format 1.
+ * Target columns are specified via --columns or the first array in a Format 1
+ * JSON object.
+ */
+typedef enum {
+  GRN_LOADER_COLUMNS_UNSET = 0, /* Columns are not available. */
+  GRN_LOADER_COLUMNS_SET,       /* Columns are available. */
+  GRN_LOADER_COLUMNS_BROKEN     /* Columns are specified but broken. */
+} grn_loader_columns_status;
+
 typedef struct {
   grn_obj values;
   grn_obj level;
@@ -74,6 +85,7 @@ typedef struct {
   uint32_t nrecords;
   grn_loader_stat stat;
   grn_content_type input_type;
+  grn_loader_columns_status columns_status;
   grn_rc rc;
   char errbuf[GRN_CTX_MSGSIZE];
 } grn_loader;
