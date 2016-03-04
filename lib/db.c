@@ -12715,7 +12715,6 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
   uint32_t i, begin;
   uint32_t ncols;   /* Number of columns except _id and _key. */
   uint32_t nvalues; /* Number of values in brackets. */
-  uint32_t expected_nvalues;
   uint32_t depth;
 
   cols = (grn_obj **)GRN_BULK_HEAD(&loader->columns);
@@ -12826,27 +12825,35 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
   }
 
   /* Target columns and _id or _key are already specified. */
-  expected_nvalues = ncols;
-  if (loader->id_offset != -1 || loader->key_offset != -1) {
-    expected_nvalues++;
-  }
-  if (nvalues != expected_nvalues) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "unexpected #values: expected:%u, actual:%u",
-        expected_nvalues, nvalues);
-    goto exit;
-  }
-  if (loader->id_offset != -1) {
-    id_value = value + loader->id_offset;
-    id = parse_id_value(ctx, id_value);
-    if (grn_table_at(ctx, loader->table, id) == GRN_ID_NIL) {
+  if (!nvalues) {
+    /*
+     * Accept empty arrays because a dump command may output a load command
+     * which contains empty arrays for a table with deleted records.
+     */
+    id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
+  } else {
+    uint32_t expected_nvalues = ncols;
+    if (loader->id_offset != -1 || loader->key_offset != -1) {
+      expected_nvalues++;
+    }
+    if (nvalues != expected_nvalues) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "unexpected #values: expected:%u, actual:%u",
+          expected_nvalues, nvalues);
+      goto exit;
+    }
+    if (loader->id_offset != -1) {
+      id_value = value + loader->id_offset;
+      id = parse_id_value(ctx, id_value);
+      if (grn_table_at(ctx, loader->table, id) == GRN_ID_NIL) {
+        id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
+      }
+    } else if (loader->key_offset != -1) {
+      key_value = value + loader->key_offset;
+      id = loader_add(ctx, key_value);
+    } else {
       id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
     }
-  } else if (loader->key_offset != -1) {
-    key_value = value + loader->key_offset;
-    id = loader_add(ctx, key_value);
-  } else {
-    id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
   }
   if (id == GRN_ID_NIL) {
     /* Target record is not available. */
