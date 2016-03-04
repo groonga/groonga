@@ -12761,7 +12761,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
         value++;
       }
       if (loader->key_offset == -1) {
-        ERR(GRN_INVALID_ARGUMENT, "missing key column");
+        ERR(GRN_INVALID_ARGUMENT, "missing id or key column");
         grn_loader_save_error(ctx, loader);
         loader->columns_status = GRN_LOADER_COLUMNS_BROKEN;
         goto exit;
@@ -13350,33 +13350,83 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned int str_le
 #undef JSON_READ_OPEN_BRACE
 
 /*
- * parse_load_columns parses a columns parameter of load. Columns are appended
- * to res.
+ * grn_loader_parse_columns parses a columns parameter.
+ * Columns except _id and _key are appended to loader->columns.
+ * If it contains _id or _key, loader->id_offset or loader->key_offset is set.
  */
 static grn_rc
-parse_load_columns(grn_ctx *ctx, grn_obj *table,
-                   const char *str, unsigned int str_size, grn_obj *res)
+grn_loader_parse_columns(grn_ctx *ctx, grn_loader *loader,
+                         const char *str, unsigned int str_size)
 {
-  const char *p = str, *pe = p + str_size, *rest;
-  const char *tokbuf[256], *tok;
-  while (p < pe) {
-    int i, n = tokenize(p, pe - p, tokbuf, 256, &rest);
+  const char *ptr = str, *ptr_end = ptr + str_size, *rest;
+  const char *tokens[256], *token_end;
+  while (ptr < ptr_end) {
+    int i, n = tokenize(ptr, ptr_end - ptr, tokens, 256, &rest);
     for (i = 0; i < n; i++) {
-      grn_obj *col;
-      tok = tokbuf[i];
-      while (p < tok && (' ' == *p || ',' == *p)) { p++; }
-      col = grn_obj_column(ctx, table, p, tok - p);
-      if (!col) {
-        ERR(GRN_INVALID_ARGUMENT, "nonexistent column: <%.*s>",
-            (int)(tok - p), p);
-        goto exit;
+      grn_obj *column;
+      token_end = tokens[i];
+      while (ptr < token_end && (' ' == *ptr || ',' == *ptr)) {
+        ptr++;
       }
-      GRN_PTR_PUT(ctx, res, col);
-      p = tok;
+      column = grn_obj_column(ctx, loader->table, ptr, token_end - ptr);
+      if (!column) {
+        ERR(GRN_INVALID_ARGUMENT, "nonexistent column: <%.*s>",
+            (int)(token_end - ptr), ptr);
+        return ctx->rc;
+      }
+      if (name_equal(ptr, token_end - ptr, GRN_COLUMN_NAME_ID)) {
+        grn_obj_unlink(ctx, column);
+        if (loader->id_offset != -1 || loader->key_offset != -1) {
+          /* _id and _key must not appear more than once. */
+          if (loader->id_offset != -1) {
+            ERR(GRN_INVALID_ARGUMENT,
+                "duplicated id and key columns: <%s> at %d and <%s> at %d",
+                GRN_COLUMN_NAME_ID, i,
+                GRN_COLUMN_NAME_ID, loader->id_offset);
+          } else {
+            ERR(GRN_INVALID_ARGUMENT,
+                "duplicated id and key columns: <%s> at %d and <%s> at %d",
+                GRN_COLUMN_NAME_ID, i,
+                GRN_COLUMN_NAME_KEY, loader->key_offset);
+          }
+          return ctx->rc;
+        }
+        loader->id_offset = i;
+      } else if (name_equal(ptr, token_end - ptr, GRN_COLUMN_NAME_KEY)) {
+        grn_obj_unlink(ctx, column);
+        if (loader->id_offset != -1 || loader->key_offset != -1) {
+          /* _id and _key must not appear more than once. */
+          if (loader->id_offset != -1) {
+            ERR(GRN_INVALID_ARGUMENT,
+                "duplicated id and key columns: <%s> at %d and <%s> at %d",
+                GRN_COLUMN_NAME_KEY, i,
+                GRN_COLUMN_NAME_ID, loader->id_offset);
+          } else {
+            ERR(GRN_INVALID_ARGUMENT,
+                "duplicated id and key columns: <%s> at %d and <%s> at %d",
+                GRN_COLUMN_NAME_KEY, i,
+                GRN_COLUMN_NAME_KEY, loader->key_offset);
+          }
+          return ctx->rc;
+        }
+        loader->key_offset = i;
+      } else {
+        GRN_PTR_PUT(ctx, &loader->columns, column);
+      }
+      ptr = token_end;
     }
-    p = rest;
+    ptr = rest;
   }
-exit:
+  switch (loader->table->header.type) {
+  case GRN_TABLE_HASH_KEY :
+  case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_DAT_KEY :
+    if (loader->id_offset == -1 && loader->key_offset == -1) {
+      ERR(GRN_INVALID_ARGUMENT, "missing id or key column");
+      return ctx->rc;
+    }
+    break;
+  }
   return ctx->rc;
 }
 
@@ -13414,27 +13464,12 @@ grn_load_(grn_ctx *ctx, grn_content_type input_type,
       return;
     }
     if (columns && columns_len) {
-      int i, n_columns;
-      grn_obj parsed_columns;
-      GRN_PTR_INIT(&parsed_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
-      if (parse_load_columns(ctx, loader->table, columns, columns_len,
-                             &parsed_columns) != GRN_SUCCESS) {
+      grn_rc rc = grn_loader_parse_columns(ctx, loader, columns, columns_len);
+      if (rc != GRN_SUCCESS) {
+        loader->columns_status = GRN_LOADER_COLUMNS_BROKEN;
         loader->stat = GRN_LOADER_END;
-        GRN_OBJ_FIN(ctx, &parsed_columns);
         return;
       }
-      n_columns = GRN_BULK_VSIZE(&parsed_columns) / sizeof(grn_obj *);
-      for (i = 0; i < n_columns; i++) {
-        grn_obj *column = GRN_PTR_VALUE_AT(&parsed_columns, i);
-        if (column->header.type == GRN_ACCESSOR &&
-            ((grn_accessor *)column)->action == GRN_ACCESSOR_GET_KEY) {
-          loader->key_offset = i;
-          grn_obj_unlink(ctx, column);
-        } else {
-          GRN_PTR_PUT(ctx, &loader->columns, column);
-        }
-      }
-      GRN_OBJ_FIN(ctx, &parsed_columns);
       loader->columns_status = GRN_LOADER_COLUMNS_SET;
     }
     if (ifexists && ifexists_len) {

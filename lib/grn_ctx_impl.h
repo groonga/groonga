@@ -75,7 +75,8 @@ typedef struct {
   grn_obj level;
   grn_obj columns;
   uint32_t emit_level;
-  int32_t key_offset;
+  int32_t id_offset;  /* Position of _id in values or -1 if _id is N/A. */
+  int32_t key_offset; /* Position of _key in values or -1 if _key is N/A. */
   grn_obj *table;
   grn_obj *last;
   grn_obj *ifexists;
