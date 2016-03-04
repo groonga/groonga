@@ -13400,6 +13400,7 @@ grn_load_(grn_ctx *ctx, grn_content_type input_type,
       if (parse_load_columns(ctx, loader->table, columns, columns_len,
                              &parsed_columns)) {
         loader->stat = GRN_LOADER_END;
+        GRN_OBJ_FIN(ctx, &parsed_columns);
         return;
       }
       n_columns = GRN_BULK_VSIZE(&parsed_columns) / sizeof(grn_obj *);
