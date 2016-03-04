@@ -12147,8 +12147,15 @@ grn_column_get_all_index_data(grn_ctx *ctx,
 }
 
 /* todo : refine */
+/*
+ * tokenize splits a string into at most buf_size tokens and returns the number
+ * of tokens. The ending address of each token is written into tokbuf.
+ * Delimiters are ' ' and ','.
+ * Then, the address to the remaining is set to rest.
+ */
 static int
-tokenize(const char *str, size_t str_len, const char **tokbuf, int buf_size, const char **rest)
+tokenize(const char *str, size_t str_len,
+         const char **tokbuf, int buf_size, const char **rest)
 {
   const char **tok = tokbuf, **tok_end = tokbuf + buf_size;
   if (buf_size > 0) {
