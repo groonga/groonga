@@ -37,7 +37,7 @@ This section describes all parameters.
   ``Format 2:``
     [{COLUMN_NAME1: VALUE1, COLUMN_NAME2: VALUE2}, {COLUMN_NAME1: VALUE1, COLUMN_NAME2: VALUE2},..]
 
-  ``[COLUMN_NAME1, COLUMN_NAME2,..]`` format in ``Format 1`` is effective only when ``column`` parameter isn't specified.
+  ``[COLUMN_NAME1, COLUMN_NAME2,..]`` format in ``Format 1`` is effective only when ``columns`` parameter isn't specified.
 
   When a target table contains primary key, you must specify ``_key`` column (pseudo column associated primary key) as the one of ``COLUMN_NAME``.
 
