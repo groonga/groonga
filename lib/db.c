@@ -12729,11 +12729,11 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
   if (depth > sizeof(uint32_t) * loader->emit_level) {
     return;
   }
-  nvalues = values_len(ctx, value, value_end);
   if (depth == 0 || !loader->table ||
       loader->columns_status == GRN_LOADER_COLUMNS_BROKEN) {
     goto exit;
   }
+  nvalues = values_len(ctx, value, value_end);
 
   if (loader->columns_status == GRN_LOADER_COLUMNS_UNSET) {
     /*
