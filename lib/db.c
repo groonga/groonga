@@ -13340,26 +13340,32 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned int str_le
 #undef JSON_READ_OPEN_BRACKET
 #undef JSON_READ_OPEN_BRACE
 
+/*
+ * parse_load_columns parses a columns parameter of load. Columns are appended
+ * to res.
+ */
 static grn_rc
 parse_load_columns(grn_ctx *ctx, grn_obj *table,
                    const char *str, unsigned int str_size, grn_obj *res)
 {
-  const char *p = (char *)str, *q, *r, *pe = p + str_size, *tokbuf[256];
+  const char *p = str, *pe = p + str_size, *rest;
+  const char *tokbuf[256], *tok;
   while (p < pe) {
-    int i, n = tokenize(p, pe - p, tokbuf, 256, &q);
+    int i, n = tokenize(p, pe - p, tokbuf, 256, &rest);
     for (i = 0; i < n; i++) {
       grn_obj *col;
-      r = tokbuf[i];
-      while (p < r && (' ' == *p || ',' == *p)) { p++; }
-      col = grn_obj_column(ctx, table, p, r - p);
+      tok = tokbuf[i];
+      while (p < tok && (' ' == *p || ',' == *p)) { p++; }
+      col = grn_obj_column(ctx, table, p, tok - p);
       if (!col) {
-        ERR(GRN_INVALID_ARGUMENT, "nonexistent column: <%.*s>", (int)(r - p), p);
+        ERR(GRN_INVALID_ARGUMENT, "nonexistent column: <%.*s>",
+            (int)(tok - p), p);
         goto exit;
       }
       GRN_PTR_PUT(ctx, res, col);
-      p = r;
+      p = tok;
     }
-    p = q;
+    p = rest;
   }
 exit:
   return ctx->rc;
