@@ -2473,7 +2473,11 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
     }
   } else {
     grn_expr *e = (grn_expr *)expr;
-    register grn_obj **s_ = ctx->impl->stack, *s0 = NULL, *s1 = NULL, **sp, *vp = e->values;
+    register grn_obj **s_ = ctx->impl->stack;
+    register grn_obj *s0 = NULL;
+    register grn_obj *s1 = NULL;
+    register grn_obj **sp;
+    register grn_obj *vp = e->values;
     grn_obj *res = NULL, *v0 = grn_expr_get_var_by_offset(ctx, expr, 0);
     grn_expr_code *code = e->codes, *ce = &e->codes[e->codes_curr];
     sp = s_ + stack_curr;
