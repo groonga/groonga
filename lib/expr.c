@@ -553,15 +553,6 @@ grn_expr_close(grn_ctx *ctx, grn_obj *expr)
       }
       for (j = 0; j < end; j++) {
         grn_obj *const_obj = &e->const_blks[i][j];
-        if (const_obj->header.type == GRN_PTR) {
-          grn_obj *ref_obj = GRN_PTR_VALUE(const_obj);
-          if (ref_obj && ref_obj->header.type == GRN_TABLE_HASH_KEY) {
-            grn_obj *value;
-            GRN_HASH_EACH(ctx, (grn_hash *)ref_obj, i, NULL, NULL, (void **)&value, {
-              GRN_OBJ_FIN(ctx, value);
-            });
-          }
-        }
         grn_obj_close(ctx, const_obj);
       }
       GRN_FREE(e->const_blks[i]);
@@ -578,6 +569,13 @@ grn_expr_close(grn_ctx *ctx, grn_obj *expr)
       grn_obj_unlink(ctx, obj);
 #else
       if (obj->header.type) {
+        if (obj->header.type == GRN_TABLE_HASH_KEY &&
+            ((grn_hash *)obj)->value_size == sizeof(grn_obj)) {
+          grn_obj *value;
+          GRN_HASH_EACH(ctx, (grn_hash *)obj, id, NULL, NULL, (void **)&value, {
+            GRN_OBJ_FIN(ctx, value);
+          });
+        }
         grn_obj_unlink(ctx, obj);
       } else {
         GRN_LOG(ctx, GRN_LOG_WARNING, "GRN_VOID object is tried to be unlinked");
@@ -1276,21 +1274,6 @@ grn_expr_append_const_int(grn_ctx *ctx, grn_obj *expr, int i,
     res->header.impl_flags |= GRN_OBJ_EXPRCONST;
   }
   grn_expr_append_obj(ctx, expr, res, op, nargs); /* constant */
-  GRN_API_RETURN(res);
-}
-
-grn_obj *
-grn_expr_append_const_ptr(grn_ctx *ctx, grn_obj *expr, grn_obj *ptr,
-                          grn_operator op, int nargs)
-{
-  grn_obj *res = NULL;
-  GRN_API_ENTER;
-  if ((res = grn_expr_alloc_const(ctx, expr))) {
-    GRN_PTR_INIT(res, GRN_OBJ_OWN, GRN_DB_OBJECT);
-    GRN_PTR_SET(ctx, res, ptr);
-    res->header.impl_flags |= GRN_OBJ_EXPRCONST;
-  }
-  grn_expr_append_obj(ctx, expr, res, op, nargs);
   GRN_API_RETURN(res);
 }
 

@@ -320,9 +320,8 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     grn_obj *value;
     int key_size;
     option_ptr = args[3];
-    if (option_ptr->header.type == GRN_PTR) {
-      grn_obj *option;
-      option = GRN_PTR_VALUE(option_ptr);
+    if (option_ptr->header.type == GRN_TABLE_HASH_KEY) {
+      grn_obj *option = option_ptr;
       if (option->header.type != GRN_TABLE_HASH_KEY) {
         GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
                          "fuzzy_search(): "

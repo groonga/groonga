@@ -104,9 +104,8 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     int default_close_tag_length = 0;
     int n_args_without_option = nargs;
 
-    if (end_arg->header.type == GRN_PTR) {
-      grn_obj *hash;
-      hash = GRN_PTR_VALUE(end_arg);
+    if (end_arg->header.type == GRN_TABLE_HASH_KEY) {
+      grn_obj *hash = end_arg;
       if (hash) {
         grn_hash_cursor *cursor;
         void *key;
