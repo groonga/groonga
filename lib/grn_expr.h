@@ -77,7 +77,6 @@ grn_rc grn_expr_code_inspect_indented(grn_ctx *ctx,
                                       const char *indent);
 void grn_p_expr_code(grn_ctx *ctx, grn_expr_code *code);
 
-void grn_expr_take_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj);
 grn_obj *grn_expr_alloc_const(grn_ctx *ctx, grn_obj *expr);
 
 #ifdef __cplusplus
