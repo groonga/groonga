@@ -90,7 +90,7 @@ test_invalid_char(void)
   assert_send_command("column_create Users desc COLUMN_SCALAR ShortText");
   grn_collect_logger_clear_messages(logger);
   assert_send_command("load --table Users --input_type json\n"
-                      "{\"name\": \"groonga\" @ \"desc\" \"search engine\"}\n"
+                      "{\"name\": \"groonga\" @ \"desc\": \"search engine\"}\n"
                       "");
   log = (GList *)grn_collect_logger_get_messages(logger);
   cut_assert_equal_string("ignored invalid char('@') at",
@@ -110,7 +110,7 @@ test_no_key(void)
   assert_send_command("column_create Users desc COLUMN_SCALAR ShortText");
   grn_collect_logger_clear_messages(logger);
   assert_send_command("load --table Users --input_type json\n"
-                      "{\"info\" \"search engine\"}\n"
+                      "{\"info\": \"search engine\"}\n"
                       "");
   log = (GList *)grn_collect_logger_get_messages(logger);
   cut_assert_equal_string("neither _key nor _id is assigned",
@@ -142,7 +142,7 @@ test_invalid_column(void)
   assert_send_command("column_create Users desc COLUMN_SCALAR ShortText");
   grn_collect_logger_clear_messages(logger);
   assert_send_command("load --table Users --input_type json\n"
-                      "{\"_key\": \"groonga\", \"info\" \"search engine\"}\n"
+                      "{\"_key\": \"groonga\", \"info\": \"search engine\"}\n"
                       "");
   log = (GList *)grn_collect_logger_get_messages(logger);
   cut_assert_equal_string("invalid column('info')", g_list_nth_data(log, 0));
