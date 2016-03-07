@@ -90,8 +90,9 @@ test_invalid_char(void)
   assert_send_command("column_create Users desc COLUMN_SCALAR ShortText");
   grn_collect_logger_clear_messages(logger);
   assert_send_command("load --table Users --input_type json\n"
+                      "[\n"
                       "{\"name\": \"groonga\" @ \"desc\": \"search engine\"}\n"
-                      "");
+                      "]\n");
   log = (GList *)grn_collect_logger_get_messages(logger);
   cut_assert_equal_string("ignored invalid char('@') at",
                           g_list_nth_data(log, 0));
@@ -110,8 +111,9 @@ test_no_key(void)
   assert_send_command("column_create Users desc COLUMN_SCALAR ShortText");
   grn_collect_logger_clear_messages(logger);
   assert_send_command("load --table Users --input_type json\n"
+                      "[\n"
                       "{\"info\": \"search engine\"}\n"
-                      "");
+                      "]\n");
   log = (GList *)grn_collect_logger_get_messages(logger);
   cut_assert_equal_string("neither _key nor _id is assigned",
                           g_list_nth_data(log, 0));
@@ -126,8 +128,9 @@ test_duplicated_key(void)
   assert_send_command("column_create Users desc COLUMN_SCALAR ShortText");
   grn_collect_logger_clear_messages(logger);
   assert_send_command("load --table Users --input_type json\n"
+                      "[\n"
                       "{\"_key\": \"groonga\", \"_id\": 1}\n"
-                      "");
+                      "]\n");
   log = (GList *)grn_collect_logger_get_messages(logger);
   cut_assert_equal_string("duplicated key columns: _key and _id",
                           g_list_nth_data(log, 0));
@@ -142,8 +145,9 @@ test_invalid_column(void)
   assert_send_command("column_create Users desc COLUMN_SCALAR ShortText");
   grn_collect_logger_clear_messages(logger);
   assert_send_command("load --table Users --input_type json\n"
+                      "[\n"
                       "{\"_key\": \"groonga\", \"info\": \"search engine\"}\n"
-                      "");
+                      "]\n");
   log = (GList *)grn_collect_logger_get_messages(logger);
   cut_assert_equal_string("invalid column('info')", g_list_nth_data(log, 0));
 }
