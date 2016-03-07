@@ -116,8 +116,8 @@ test_unmatched_output_columns(void)
   assert_send_command("load '"
                       "["
                       "[\"_key\",\"answer\"],"
-                      "[\"universe\",\"ultimate\"]"
-                      "[\"mankind\",\"\"],"
+                      "[\"universe\",\"ultimate\"],"
+                      "[\"mankind\",\"\"]"
                       "]' "
                       "Question");
   cut_assert_equal_string("[["
@@ -349,7 +349,7 @@ test_bigram_split_symbol_tokenizer(void)
                        "[\n"
                        "[\"_key\", \"comment\"],\n"
                        "[\"groonga\", \"うむ上々な仕上がりだね。\"],\n"
-                       "[\"Cutter\", \"使いやすいじゃないか。\"]\n"
+                       "[\"Cutter\", \"使いやすいじゃないか。\"],\n"
                        "[\"Senna\", \"悪くないね。上々だよ。\"]\n"
                        "]");
   cut_assert_equal_string("[[[2],"
