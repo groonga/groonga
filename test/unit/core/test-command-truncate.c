@@ -84,8 +84,8 @@ test_no_columns(void)
   assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
   assert_send_command("load --table Users\n"
                       "[\n"
-                      "{\"_key\":\"mori\"}\n"
-                      "{\"_key\":\"gunyara-kun\"}\n"
+                      "{\"_key\":\"mori\"},\n"
+                      "{\"_key\":\"gunyara-kun\"},\n"
                       "{\"_key\":\"yu\"}\n"
                       "]");
   cut_assert_equal_string(
