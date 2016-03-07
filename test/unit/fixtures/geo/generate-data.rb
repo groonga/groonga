@@ -65,3 +65,4 @@ points.each do |latitude, longitude|
   print("\"#{latitude}x#{longitude}\"")
   puts("],")
 end
+puts("]")
