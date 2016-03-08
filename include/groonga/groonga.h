@@ -290,7 +290,7 @@ GRN_API grn_encoding grn_encoding_parse(const char *name);
 
 /* obj */
 
-typedef unsigned short int grn_obj_flags;
+typedef uint16_t grn_obj_flags;
 
 #define GRN_OBJ_TABLE_TYPE_MASK        (0x07)
 #define GRN_OBJ_TABLE_HASH_KEY         (0x00)
