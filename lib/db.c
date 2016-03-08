@@ -879,42 +879,60 @@ grn_table_create_validate(grn_ctx *ctx, const char *name, unsigned int name_size
                           const char *path, grn_obj_flags flags,
                           grn_obj *key_type, grn_obj *value_type)
 {
-  switch (flags & GRN_OBJ_TABLE_TYPE_MASK) {
+  grn_obj_flags table_type;
+  const char *table_type_name = NULL;
+
+  table_type = (flags & GRN_OBJ_TABLE_TYPE_MASK);
+  switch (table_type) {
   case GRN_OBJ_TABLE_HASH_KEY :
-    if (flags & GRN_OBJ_KEY_WITH_SIS) {
-      ERR(GRN_INVALID_ARGUMENT,
-          "[table][create] "
-          "key with SIS isn't available for hash table: <%.*s>",
-          name_size, name);
-    }
+    table_type_name = "TABLE_HASH_KEY";
     break;
   case GRN_OBJ_TABLE_PAT_KEY :
+    table_type_name = "TABLE_PAT_KEY";
     break;
   case GRN_OBJ_TABLE_DAT_KEY :
+    table_type_name = "TABLE_DAT_KEY";
     break;
   case GRN_OBJ_TABLE_NO_KEY :
-    if (key_type) {
-      int key_name_size;
-      char key_name[GRN_TABLE_MAX_KEY_SIZE];
-      key_name_size = grn_obj_name(ctx, key_type, key_name,
-                                   GRN_TABLE_MAX_KEY_SIZE);
-      ERR(GRN_INVALID_ARGUMENT,
-          "[table][create] "
-          "key isn't available for no key table: <%.*s> (%.*s)",
-          name_size, name, key_name_size, key_name);
-    } else if (flags & GRN_OBJ_KEY_WITH_SIS) {
-      ERR(GRN_INVALID_ARGUMENT,
-          "[table][create] "
-          "key with SIS isn't available for no key table: <%.*s>",
-          name_size, name);
-    } else if (flags & GRN_OBJ_KEY_NORMALIZE) {
-      ERR(GRN_INVALID_ARGUMENT,
-          "[table][create] "
-          "key normalization isn't available for no key table: <%.*s>",
-          name_size, name);
-    }
+    table_type_name = "TABLE_NO_KEY";
+    break;
+  default :
+    table_type_name = "unknown";
     break;
   }
+
+  if (key_type && table_type == GRN_OBJ_TABLE_NO_KEY) {
+    int key_name_size;
+    char key_name[GRN_TABLE_MAX_KEY_SIZE];
+    key_name_size = grn_obj_name(ctx, key_type, key_name,
+                                 GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_INVALID_ARGUMENT,
+        "[table][create] "
+        "key isn't available for no key table: <%.*s> (%.*s)",
+        name_size, name, key_name_size, key_name);
+    return ctx->rc;
+  }
+
+  if ((flags & GRN_OBJ_KEY_WITH_SIS) &&
+      table_type != GRN_OBJ_TABLE_PAT_KEY) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[table][create] "
+        "key with SIS is available only for TABLE_PAT_KEY table: "
+        "<%.*s>(%s)",
+        name_size, name,
+        table_type_name);
+    return ctx->rc;
+  }
+
+  if ((flags & GRN_OBJ_KEY_NORMALIZE) &&
+      table_type == GRN_OBJ_TABLE_NO_KEY) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[table][create] "
+        "key normalization isn't available for no key table: <%.*s>",
+        name_size, name);
+    return ctx->rc;
+  }
+
   return ctx->rc;
 }
 
