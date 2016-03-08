@@ -254,7 +254,7 @@ struct _grn_hash {
   uint32_t value_size;\
   grn_id tokenizer;\
   uint32_t curr_rec;\
-  int32_t curr_key;\
+  uint32_t curr_key;\
   uint32_t idx_offset;\
   uint32_t entry_size;\
   uint32_t max_offset;\
@@ -263,7 +263,8 @@ struct _grn_hash {
   uint32_t lock;\
   grn_id normalizer;\
   uint32_t truncated;\
-  uint32_t reserved[14]
+  uint64_t curr_key_large;\
+  uint32_t reserved[12]
 
 struct _grn_hash_header_common {
   GRN_HASH_HEADER_COMMON_FIELDS;
@@ -364,6 +365,8 @@ grn_id grn_hash_at(grn_ctx *ctx, grn_hash *hash, grn_id id);
 grn_id grn_array_at(grn_ctx *ctx, grn_array *array, grn_id id);
 
 void grn_hash_check(grn_ctx *ctx, grn_hash *hash);
+
+grn_bool grn_hash_is_large_total_key_size(grn_ctx *ctx, grn_hash *hash);
 
 uint64_t grn_hash_total_key_size(grn_ctx *ctx, grn_hash *hash);
 uint64_t grn_hash_max_total_key_size(grn_ctx *ctx, grn_hash *hash);

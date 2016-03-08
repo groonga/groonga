@@ -39,6 +39,9 @@ grn_dump_table_create_flags(grn_ctx *ctx,
     GRN_TEXT_PUTS(ctx, buffer, "TABLE_NO_KEY");
     break;
   }
+  if (flags & GRN_OBJ_KEY_LARGE) {
+    GRN_TEXT_PUTS(ctx, buffer, "|KEY_LARGE");
+  }
   if (flags & GRN_OBJ_KEY_WITH_SIS) {
     GRN_TEXT_PUTS(ctx, buffer, "|KEY_WITH_SIS");
   }
