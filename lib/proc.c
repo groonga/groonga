@@ -201,42 +201,37 @@ grn_parse_column_create_flags(grn_ctx *ctx, const char *nptr, const char *end)
 {
   grn_obj_flags flags = 0;
   while (nptr < end) {
+    size_t name_size;
+
     if (*nptr == '|' || *nptr == ' ') {
       nptr += 1;
       continue;
     }
-    if (!memcmp(nptr, "COLUMN_SCALAR", 13)) {
-      flags |= GRN_OBJ_COLUMN_SCALAR;
-      nptr += 13;
-    } else if (!memcmp(nptr, "COLUMN_VECTOR", 13)) {
-      flags |= GRN_OBJ_COLUMN_VECTOR;
-      nptr += 13;
-    } else if (!memcmp(nptr, "COLUMN_INDEX", 12)) {
-      flags |= GRN_OBJ_COLUMN_INDEX;
-      nptr += 12;
-    } else if (!memcmp(nptr, "COMPRESS_ZLIB", 13)) {
-      flags |= GRN_OBJ_COMPRESS_ZLIB;
-      nptr += 13;
-    } else if (!memcmp(nptr, "COMPRESS_LZ4", 12)) {
-      flags |= GRN_OBJ_COMPRESS_LZ4;
-      nptr += 12;
-    } else if (!memcmp(nptr, "WITH_SECTION", 12)) {
-      flags |= GRN_OBJ_WITH_SECTION;
-      nptr += 12;
-    } else if (!memcmp(nptr, "WITH_WEIGHT", 11)) {
-      flags |= GRN_OBJ_WITH_WEIGHT;
-      nptr += 11;
-    } else if (!memcmp(nptr, "WITH_POSITION", 13)) {
-      flags |= GRN_OBJ_WITH_POSITION;
-      nptr += 13;
-    } else if (!memcmp(nptr, "RING_BUFFER", 11)) {
-      flags |= GRN_OBJ_RING_BUFFER;
-      nptr += 11;
-    } else {
-      ERR(GRN_INVALID_ARGUMENT, "invalid flags option: %.*s",
-          (int)(end - nptr), nptr);
-      return 0;
+
+#define CHECK_FLAG(name)                                                \
+    name_size = strlen(#name);                                          \
+    if ((end - nptr) >= name_size &&                                    \
+        memcmp(nptr, #name, name_size) == 0) {                          \
+      flags |= GRN_OBJ_ ## name;                                        \
+      nptr += name_size;                                                \
+      continue;                                                         \
     }
+
+    CHECK_FLAG(COLUMN_SCALAR);
+    CHECK_FLAG(COLUMN_VECTOR);
+    CHECK_FLAG(COLUMN_INDEX);
+    CHECK_FLAG(COMPRESS_ZLIB);
+    CHECK_FLAG(COMPRESS_LZ4);
+    CHECK_FLAG(WITH_SECTION);
+    CHECK_FLAG(WITH_WEIGHT);
+    CHECK_FLAG(WITH_POSITION);
+    CHECK_FLAG(RING_BUFFER);
+
+    ERR(GRN_INVALID_ARGUMENT,
+        "[column][create] invalid flag: <%.*s>",
+        (int)(end - nptr), nptr);
+    return 0;
+#undef CHECK_FLAG
   }
   return flags;
 }
