@@ -1,0 +1,13 @@
+table_create Users TABLE_PAT_KEY|KEY_LARGE ShortText
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[table][create] large key support is available only for TABLE_HASH_KEY key table: <Users>(TABLE_PAT_KEY)"
+  ],
+  false
+]
+#|e| [table][create] large key support is available only for TABLE_HASH_KEY key table: <Users>(TABLE_PAT_KEY)

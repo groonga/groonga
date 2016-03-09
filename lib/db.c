@@ -933,6 +933,17 @@ grn_table_create_validate(grn_ctx *ctx, const char *name, unsigned int name_size
     return ctx->rc;
   }
 
+  if ((flags & GRN_OBJ_KEY_LARGE) &&
+      table_type != GRN_OBJ_TABLE_HASH_KEY) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[table][create] "
+        "large key support is available only for TABLE_HASH_KEY key table: "
+        "<%.*s>(%s)",
+        name_size, name,
+        table_type_name);
+    return ctx->rc;
+  }
+
   return ctx->rc;
 }
 

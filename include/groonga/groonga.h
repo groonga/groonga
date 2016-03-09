@@ -335,6 +335,8 @@ typedef uint16_t grn_obj_flags;
 #define GRN_OBJ_UNIT_USERDEF_SECTION   (0x07<<8)
 #define GRN_OBJ_UNIT_USERDEF_POSITION  (0x08<<8)
 
+#define GRN_OBJ_KEY_LARGE              (0x01<<12)
+
 #define GRN_OBJ_NO_SUBREC              (0x00<<13)
 #define GRN_OBJ_WITH_SUBREC            (0x01<<13)
 

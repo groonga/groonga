@@ -52,6 +52,9 @@ command_table_create_parse_flags(grn_ctx *ctx,
     } else if (!memcmp(nptr, "KEY_WITH_SIS", 12)) {
       flags |= GRN_OBJ_KEY_WITH_SIS;
       nptr += 12;
+    } else if (!memcmp(nptr, "KEY_LARGE", 9)) {
+      flags |= GRN_OBJ_KEY_LARGE;
+      nptr += 9;
     } else {
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
