@@ -601,6 +601,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->stack_curr = 0;
   ctx->impl->curr_expr = NULL;
   ctx->impl->qe_next = NULL;
+  GRN_TEXT_INIT(&ctx->impl->current_request_id, 0);
   ctx->impl->parser = NULL;
 
   GRN_TEXT_INIT(&ctx->impl->output.names, GRN_OBJ_VECTOR);
@@ -773,6 +774,7 @@ grn_ctx_fin(grn_ctx *ctx)
     if (ctx->impl->parser) {
       grn_expr_parser_close(ctx);
     }
+    GRN_OBJ_FIN(ctx, &ctx->impl->current_request_id);
     if (ctx->impl->values) {
 #ifndef USE_MEMORY_DEBUG
       grn_db_obj *o;
@@ -1473,17 +1475,15 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
         }
       }
       if (GRN_TEXT_LEN(&request_id) > 0) {
+        GRN_TEXT_SET(ctx, &ctx->impl->current_request_id,
+                     GRN_TEXT_VALUE(&request_id),
+                     GRN_TEXT_LEN(&request_id));
         grn_request_canceler_register(ctx,
                                       GRN_TEXT_VALUE(&request_id),
                                       GRN_TEXT_LEN(&request_id));
       }
       ctx->impl->curr_expr = expr;
       grn_expr_exec(ctx, expr, 0);
-      if (GRN_TEXT_LEN(&request_id) > 0) {
-        grn_request_canceler_unregister(ctx,
-                                        GRN_TEXT_VALUE(&request_id),
-                                        GRN_TEXT_LEN(&request_id));
-      }
     } else {
       ERR(GRN_INVALID_ARGUMENT, "invalid command name: %.*s",
           command_name_size, command_name);
@@ -1579,6 +1579,9 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
     }
   }
   if (GRN_TEXT_LEN(&request_id) > 0) {
+    GRN_TEXT_SET(ctx, &ctx->impl->current_request_id,
+                 GRN_TEXT_VALUE(&request_id),
+                 GRN_TEXT_LEN(&request_id));
     grn_request_canceler_register(ctx,
                                   GRN_TEXT_VALUE(&request_id),
                                   GRN_TEXT_LEN(&request_id));
@@ -1698,6 +1701,13 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
       if (ctx->impl->qe_next) {
         ERRCLR(ctx);
       } else {
+        if (GRN_TEXT_LEN(&ctx->impl->current_request_id) > 0) {
+          grn_obj *request_id = &ctx->impl->current_request_id;
+          grn_request_canceler_unregister(ctx,
+                                          GRN_TEXT_VALUE(request_id),
+                                          GRN_TEXT_LEN(request_id));
+          GRN_BULK_REWIND(&ctx->impl->current_request_id);
+        }
         GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_RESULT_CODE,
                       "<", "rc=%d", ctx->rc);
       }

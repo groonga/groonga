@@ -159,6 +159,7 @@ struct _grn_ctx_impl {
   grn_hash *expr_vars;
   grn_obj *curr_expr;
   grn_obj *qe_next;
+  grn_obj current_request_id;
   void *parser;
   grn_timeval tv;
 
