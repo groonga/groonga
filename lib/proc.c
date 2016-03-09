@@ -230,7 +230,7 @@ grn_parse_column_create_flags(grn_ctx *ctx, const char *nptr, const char *end)
 #undef CHECK_FLAG
 
     ERR(GRN_INVALID_ARGUMENT,
-        "[column][create] invalid flag: <%.*s>",
+        "[column][create][flags] unknown flag: <%.*s>",
         (int)(end - nptr), nptr);
     return 0;
   }
