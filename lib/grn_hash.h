@@ -254,7 +254,7 @@ struct _grn_hash {
   uint32_t value_size;\
   grn_id tokenizer;\
   uint32_t curr_rec;\
-  uint32_t curr_key;\
+  uint32_t curr_key_normal;\
   uint32_t idx_offset;\
   uint32_t entry_size;\
   uint32_t max_offset;\
