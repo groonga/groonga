@@ -30,38 +30,37 @@ command_table_create_parse_flags(grn_ctx *ctx,
 {
   grn_obj_flags flags = 0;
   while (nptr < end) {
+    size_t name_size;
+
     if (*nptr == '|' || *nptr == ' ') {
       nptr += 1;
       continue;
     }
-    if (!memcmp(nptr, "TABLE_HASH_KEY", 14)) {
-      flags |= GRN_OBJ_TABLE_HASH_KEY;
-      nptr += 14;
-    } else if (!memcmp(nptr, "TABLE_PAT_KEY", 13)) {
-      flags |= GRN_OBJ_TABLE_PAT_KEY;
-      nptr += 13;
-    } else if (!memcmp(nptr, "TABLE_DAT_KEY", 13)) {
-      flags |= GRN_OBJ_TABLE_DAT_KEY;
-      nptr += 13;
-    } else if (!memcmp(nptr, "TABLE_NO_KEY", 12)) {
-      flags |= GRN_OBJ_TABLE_NO_KEY;
-      nptr += 12;
-    } else if (!memcmp(nptr, "KEY_NORMALIZE", 13)) {
-      flags |= GRN_OBJ_KEY_NORMALIZE;
-      nptr += 13;
-    } else if (!memcmp(nptr, "KEY_WITH_SIS", 12)) {
-      flags |= GRN_OBJ_KEY_WITH_SIS;
-      nptr += 12;
-    } else if (!memcmp(nptr, "KEY_LARGE", 9)) {
-      flags |= GRN_OBJ_KEY_LARGE;
-      nptr += 9;
-    } else {
-      GRN_PLUGIN_ERROR(ctx,
-                       GRN_INVALID_ARGUMENT,
-                       "[table][create][flags] unknown flag: <%.*s>",
-                       (int)(end - nptr), nptr);
-      return 0;
+
+#define CHECK_FLAG(name)                                                \
+    name_size = strlen(#name);                                          \
+    if ((end - nptr) >= name_size &&                                    \
+        memcmp(nptr, #name, name_size) == 0) {                          \
+      flags |= GRN_OBJ_ ## name;                                        \
+      nptr += name_size;                                                \
+      continue;                                                         \
     }
+
+    CHECK_FLAG(TABLE_HASH_KEY);
+    CHECK_FLAG(TABLE_PAT_KEY);
+    CHECK_FLAG(TABLE_DAT_KEY);
+    CHECK_FLAG(TABLE_NO_KEY);
+    CHECK_FLAG(KEY_NORMALIZE);
+    CHECK_FLAG(KEY_WITH_SIS);
+    CHECK_FLAG(KEY_LARGE);
+
+#undef CHECK_FLAG
+
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "[table][create][flags] unknown flag: <%.*s>",
+                     (int)(end - nptr), nptr);
+    return 0;
   }
   return flags;
 }
