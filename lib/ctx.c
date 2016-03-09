@@ -1699,7 +1699,9 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
       }
       if (ctx->stat == GRN_CTX_QUITTING) { ctx->stat = GRN_CTX_QUIT; }
       if (ctx->impl->qe_next) {
-        ERRCLR(ctx);
+        if (ctx->rc != GRN_INTERRUPTED_FUNCTION_CALL) {
+          ERRCLR(ctx);
+        }
       } else {
         if (GRN_TEXT_LEN(&ctx->impl->current_request_id) > 0) {
           grn_obj *request_id = &ctx->impl->current_request_id;
