@@ -754,9 +754,33 @@ proc_quit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 static grn_obj *
 proc_shutdown(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_gctx.stat = GRN_CTX_QUIT;
-  ctx->stat = GRN_CTX_QUITTING;
+  const char *mode;
+  size_t mode_size;
+
+  mode = grn_plugin_proc_get_var_string(ctx, user_data, "mode", -1, &mode_size);
+#define MODE_EQUAL(name)                                                \
+  (mode_size == strlen(name) && memcmp(mode, name, mode_size) == 0)
+  if (mode_size == 0 || MODE_EQUAL("graceful")) {
+    /* Do nothing. This is the default. */
+  } else if (MODE_EQUAL("immediate")) {
+    grn_request_canceler_cancel_all();
+    if (ctx->rc == GRN_INTERRUPTED_FUNCTION_CALL) {
+      ctx->rc = GRN_SUCCESS;
+    }
+  } else {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[shutdown] mode must be <graceful> or <immediate>: <%.*s>",
+        (int)mode_size, mode);
+  }
+#undef MODE_EQUAL
+
+  if (ctx->rc == GRN_SUCCESS) {
+    grn_gctx.stat = GRN_CTX_QUIT;
+    ctx->stat = GRN_CTX_QUITTING;
+  }
+
   GRN_OUTPUT_BOOL(!ctx->rc);
+
   return NULL;
 }
 
@@ -5161,7 +5185,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
 
   DEF_COMMAND("quit", proc_quit, 0, vars);
 
-  DEF_COMMAND("shutdown", proc_shutdown, 0, vars);
+  DEF_VAR(vars[0], "mode");
+  DEF_COMMAND("shutdown", proc_shutdown, 1, vars);
 
   grn_proc_init_clearlock(ctx);
   grn_proc_init_lock_clear(ctx);
