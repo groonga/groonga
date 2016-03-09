@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014 Brazil
+  Copyright(C) 2014-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -105,6 +105,37 @@ grn_request_canceler_cancel(const char *request_id, unsigned int size)
         entry->ctx->rc = GRN_INTERRUPTED_FUNCTION_CALL;
         canceled = GRN_TRUE;
       }
+    }
+  }
+  MUTEX_UNLOCK(grn_the_request_canceler->mutex);
+  return canceled;
+}
+
+grn_bool
+grn_request_canceler_cancel_all(void)
+{
+  grn_bool canceled = GRN_FALSE;
+  MUTEX_LOCK(grn_the_request_canceler->mutex);
+  {
+    grn_ctx *ctx = &grn_gctx;
+    grn_hash *entries = grn_the_request_canceler->entries;
+    grn_hash_cursor *cursor;
+
+    cursor = grn_hash_cursor_open(ctx, entries,
+                                  NULL, 0, NULL, 0,
+                                  0, -1, 0);
+    if (cursor) {
+      while (grn_hash_cursor_next(ctx, cursor) != GRN_ID_NIL) {
+        void *value;
+        if (grn_hash_cursor_get_value(ctx, cursor, &value) > 0) {
+          grn_request_canceler_entry *entry = value;
+          if (entry->ctx->rc == GRN_SUCCESS) {
+            entry->ctx->rc = GRN_INTERRUPTED_FUNCTION_CALL;
+            canceled = GRN_TRUE;
+          }
+        }
+      }
+      grn_hash_cursor_close(ctx, cursor);
     }
   }
   MUTEX_UNLOCK(grn_the_request_canceler->mutex);

@@ -30,6 +30,7 @@ GRN_API void grn_request_canceler_unregister(grn_ctx *ctx,
                                              unsigned int size);
 GRN_API grn_bool grn_request_canceler_cancel(const char *request_id,
                                              unsigned int size);
+GRN_API grn_bool grn_request_canceler_cancel_all(void);
 
 #ifdef __cplusplus
 }
