@@ -86,7 +86,7 @@ Improvements
 * [:doc:`/reference/commands/object_remove`] Added a new command that
   removes an object. ``object_remove`` can also remove a broken object.
 
-* Supported mips/mpisel. [debian-bugs:770243][Reported by Nobuhiro
+* Supported mips/mipsel. [debian-bugs:770243][Reported by Nobuhiro
   Iwamatsu][Reported by Thorsten Glaser][Reported by YunQiang
   Su][Reported by Dejan Latinovic][Reported by Steve Langasek]
 
