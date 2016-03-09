@@ -1604,32 +1604,38 @@ grn_hash_entry_put_key(grn_ctx *ctx, grn_hash *hash,
 {
   if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
     if (grn_hash_is_io_hash(hash)) {
-      if (grn_hash_is_large_total_key_size(ctx, hash)) {
-        if (key_size <= sizeof(entry->io_entry_large.key.buf)) {
-          grn_memcpy(entry->io_entry_large.key.buf, key, key_size);
-          entry->io_entry_large.flag = HASH_IMMEDIATE;
-        } else {
-          const grn_rc rc =
-            grn_io_hash_entry_put_key(ctx, hash, entry, key, key_size);
-          if (rc) {
-            return rc;
-          }
-          entry->io_entry_large.flag = 0;
+      grn_bool is_large_mode;
+      uint8_t *buffer;
+      size_t buffer_size;
+      uint16_t flag;
+
+      is_large_mode = grn_hash_is_large_total_key_size(ctx, hash);
+      if (is_large_mode) {
+        buffer = entry->io_entry_large.key.buf;
+        buffer_size = sizeof(entry->io_entry_large.key.buf);
+      } else {
+        buffer = entry->io_entry_normal.key.buf;
+        buffer_size = sizeof(entry->io_entry_normal.key.buf);
+      }
+
+      if (key_size <= buffer_size) {
+        grn_memcpy(buffer, key, key_size);
+        flag = HASH_IMMEDIATE;
+      } else {
+        const grn_rc rc =
+          grn_io_hash_entry_put_key(ctx, hash, entry, key, key_size);
+        if (rc) {
+          return rc;
         }
+        flag = 0;
+      }
+
+      if (is_large_mode) {
+        entry->io_entry_large.flag = flag;
         entry->io_entry_large.hash_value = hash_value;
         entry->io_entry_large.key_size = key_size;
       } else {
-        if (key_size <= sizeof(entry->io_entry_normal.key.buf)) {
-          grn_memcpy(entry->io_entry_normal.key.buf, key, key_size);
-          entry->io_entry_normal.flag = HASH_IMMEDIATE;
-        } else {
-          const grn_rc rc =
-            grn_io_hash_entry_put_key(ctx, hash, entry, key, key_size);
-          if (rc) {
-            return rc;
-          }
-          entry->io_entry_normal.flag = 0;
-        }
+        entry->io_entry_normal.flag = flag;
         entry->io_entry_normal.hash_value = hash_value;
         entry->io_entry_normal.key_size = key_size;
       }
