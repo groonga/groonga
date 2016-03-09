@@ -227,11 +227,12 @@ grn_parse_column_create_flags(grn_ctx *ctx, const char *nptr, const char *end)
     CHECK_FLAG(WITH_POSITION);
     CHECK_FLAG(RING_BUFFER);
 
+#undef CHECK_FLAG
+
     ERR(GRN_INVALID_ARGUMENT,
         "[column][create] invalid flag: <%.*s>",
         (int)(end - nptr), nptr);
     return 0;
-#undef CHECK_FLAG
   }
   return flags;
 }
