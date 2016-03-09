@@ -1353,9 +1353,13 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
                      buffer_start, buffer_end - buffer_start);
       }
 #undef POST_BUFFER_SIZE
+
+      if (ctx->rc != GRN_SUCCESS) {
+        break;
+      }
     }
 
-    if (GRN_TEXT_LEN(&chunk_buffer) > 0) {
+    if (ctx->rc == GRN_SUCCESS && GRN_TEXT_LEN(&chunk_buffer) > 0) {
       grn_ctx_send(ctx,
                    GRN_TEXT_VALUE(&chunk_buffer),
                    GRN_TEXT_LEN(&chunk_buffer),
