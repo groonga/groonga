@@ -32,6 +32,16 @@ tokenizer, specify ``--with-mecab`` option::
 
   % brew install groonga --with-mecab
 
+Then install and configure MeCab dictionary.
+
+Install::
+
+  % brew install mecab-ipadic
+
+Configure::
+
+  % sed -i '' -e 's,dicrc.*=.*,dicrc = /usr/local/lib/mecab/dic/ipadic,g' /usr/local/etc/mecabrc
+
 Build from source
 -----------------
 
