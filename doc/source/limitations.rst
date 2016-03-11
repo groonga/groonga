@@ -14,7 +14,8 @@ Limitations of table
 A table has the following limitations.
 
 * The maximum one key size: 4KiB
-* The maximum total size of keys: 4GiB
+* The maximum total size of keys: 4GiB or 1TiB (by specifying
+  ``KEY_LARGE`` flag to :ref:`table-create-flags`)
 * The maximum number of records: 268,435,455 (more than 268 million)
 
 Keep in mind that these limitations may vary depending on conditions.
