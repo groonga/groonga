@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-03-09 13:46+0900\n"
+"PO-Revision-Date: 2016-03-11 16:34+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -11859,41 +11859,36 @@ msgstr "テーブルの型とテーブルをカスタマイズするオプショ
 msgid "Here are available flags:"
 msgstr "指定可能なフラグは以下の通りです。"
 
-msgid "description"
-msgstr "説明"
-
-msgid "flags"
-msgstr "フラグ"
-
-msgid "Array table."
-msgstr "配列テーブル。"
-
 msgid "``TABLE_NO_KEY``"
 msgstr ""
 
-msgid "Hash table."
-msgstr "ハッシュテーブル。"
+msgid "Array table. See also :ref:`table-no-key`."
+msgstr "配列テーブル。 :ref:`table-no-key` 参照。"
 
 msgid "``TABLE_HASH_KEY``"
 msgstr ""
 
-msgid "Patricia trie."
-msgstr "パトリシアトライ。"
+msgid "Hash table. See also :ref:`table-hash-key`."
+msgstr "ハッシュテーブル。 :ref:`table-hash-key` 参照。"
 
 msgid "``TABLE_PAT_KEY``"
 msgstr ""
 
-msgid "Double Array trie."
-msgstr "ダブル配列トライ。"
+# c71c4c4c7c6d4b04a00700077c938600
+msgid "Patricia trie. See also :ref:`table-pat-key`."
+msgstr "パトリシアトライ。 :ref:`table-pat-key` 参照。"
 
 msgid "``TABLE_DAT_KEY``"
 msgstr ""
 
-msgid "Enable Semi Infinite String. Require ``TABLE_PAT_KEY``."
-msgstr "半無限文字列を有効にします。 ``TABLE_PAT_KEY`` を使う必要があります。"
+msgid "Double array trie. See also :ref:`table-dat-key`."
+msgstr "ダブル配列トライ。 :ref:`table-dat-key` 参照。"
 
 msgid "``KEY_WITH_SIS``"
 msgstr ""
+
+msgid "Enable Semi Infinite String. Require ``TABLE_PAT_KEY``."
+msgstr "半無限文字列を有効にします。 ``TABLE_PAT_KEY`` を使う必要があります。"
 
 msgid ""
 "Since Groonga 2.1.0 ``KEY_NORMALIZE`` flag is deprecated. Use ``normalizer`` "
@@ -14659,6 +14654,9 @@ msgstr ""
 # c50cb4e657204d20847f83f61b37bce0
 msgid "log level"
 msgstr ""
+
+msgid "description"
+msgstr "説明"
 
 # f8a460e9209c4f9785a7ed9f4e2ca066
 msgid "0"

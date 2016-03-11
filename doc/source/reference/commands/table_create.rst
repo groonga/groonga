@@ -200,7 +200,7 @@ Here are available flags:
    * - ``TABLE_PAT_KEY``
      - Patricia trie. See also :ref:`table-pat-key`.
    * - ``TABLE_DAT_KEY``
-     - Double Array trie. See also :ref:`table-dat-key`.
+     - Double array trie. See also :ref:`table-dat-key`.
    * - ``KEY_WITH_SIS``
      - Enable Semi Infinite String. Require ``TABLE_PAT_KEY``.
 
