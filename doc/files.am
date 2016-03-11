@@ -212,6 +212,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/suggest-mixed.log \
 	$(top_srcdir)/doc/source/example/reference/commands/suggest-suggestion.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_create/data_store_table_no_key.log \
+	$(top_srcdir)/doc/source/example/reference/commands/table_create/large_data_store_table.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_create/lexicon_table_pat_key.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_create/range_index_table_dat_key.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_create/tag_index_table_hash_key.log \
@@ -1014,6 +1015,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/suggest-mixed.log \
 	source/example/reference/commands/suggest-suggestion.log \
 	source/example/reference/commands/table_create/data_store_table_no_key.log \
+	source/example/reference/commands/table_create/large_data_store_table.log \
 	source/example/reference/commands/table_create/lexicon_table_pat_key.log \
 	source/example/reference/commands/table_create/range_index_table_dat_key.log \
 	source/example/reference/commands/table_create/tag_index_table_hash_key.log \
