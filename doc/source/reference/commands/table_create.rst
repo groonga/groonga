@@ -63,9 +63,9 @@ search is the case.
 Create large data store table
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you want to store many large keys, your table can't store them. If
-total key data is larger than 4GiB, you can't store all key data into
-your table by default.
+If you want to store many large keys, your table may not be able to
+store them. If total key data is larger than 4GiB, you can't store all
+key data into your table by default.
 
 You can expand the maximum total key size to 1TiB from 4GiB by
 ``KEY_LARGE`` flag. ``KEY_LARGE`` flag can be used with only
