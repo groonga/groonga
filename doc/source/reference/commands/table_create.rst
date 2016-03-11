@@ -60,6 +60,28 @@ If your records are searched by key or referenced by one or more
 columns, ``TABLE_NO_KEY`` type isn't suitable. Lexicon for fulltext
 search is the case.
 
+Create large data store table
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you want to store many large keys, your table can't store them. If
+total key data is larger than 4GiB, you can't store all key data into
+your table by default.
+
+You can expand the maximum total key size to 1TiB from 4GiB by
+``KEY_LARGE`` flag. ``KEY_LARGE`` flag can be used with only
+``TABLE_HASH_KEY``. You can't use ``KEY_LARGE`` flag with
+``TABLE_NO_KEY``, ``TABLE_PAT_KEY`` nor ``TABLE_DAT_KEY``.
+
+Here is an example to create a table that can store many large keys:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/table_create/large_data_store_table.log
+.. table_create Paths TABLE_HASH_KEY|KEY_LARGE ShortText
+
+The ``table_create`` command creates a table that is named ``Paths``
+and is ``TABLE_HASH_KEY`` type. The ``Paths`` table can store many
+large keys.
+
 Create lexicon table
 ^^^^^^^^^^^^^^^^^^^^
 
@@ -203,6 +225,9 @@ Here are available flags:
      - Double array trie. See also :ref:`table-dat-key`.
    * - ``KEY_WITH_SIS``
      - Enable Semi Infinite String. Require ``TABLE_PAT_KEY``.
+   * - ``KEY_LARGE``
+     - Expand the maximum total key size to 1TiB from 4GiB. Require
+       ``TABLE_HASH_KEY``.
 
 .. note::
    Since Groonga 2.1.0 ``KEY_NORMALIZE`` flag is deprecated. Use
