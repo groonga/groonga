@@ -188,20 +188,21 @@ Specifies a table type and table customize options.
 
 Here are available flags:
 
-+--------------------+------------------------------+
-|      flags         | description                  |
-+--------------------+------------------------------+
-| ``TABLE_NO_KEY``   | Array table.                 |
-+--------------------+------------------------------+
-| ``TABLE_HASH_KEY`` | Hash table.                  |
-+--------------------+------------------------------+
-| ``TABLE_PAT_KEY``  | Patricia trie.               |
-+--------------------+------------------------------+
-| ``TABLE_DAT_KEY``  | Double Array trie.           |
-+--------------------+------------------------------+
-| ``KEY_WITH_SIS``   | Enable Semi Infinite String. |
-|                    | Require ``TABLE_PAT_KEY``.   |
-+--------------------+------------------------------+
+.. list-table::
+   :header-rows: 1
+
+   * - Flag
+     - Description
+   * - ``TABLE_NO_KEY``
+     - Array table. See also :ref:`table-no-key`.
+   * - ``TABLE_HASH_KEY``
+     - Hash table. See also :ref:`table-hash-key`.
+   * - ``TABLE_PAT_KEY``
+     - Patricia trie. See also :ref:`table-pat-key`.
+   * - ``TABLE_DAT_KEY``
+     - Double Array trie. See also :ref:`table-dat-key`.
+   * - ``KEY_WITH_SIS``
+     - Enable Semi Infinite String. Require ``TABLE_PAT_KEY``.
 
 .. note::
    Since Groonga 2.1.0 ``KEY_NORMALIZE`` flag is deprecated. Use
