@@ -115,7 +115,7 @@ You need to create an index to search normal vector column:
 .. table_create Tags TABLE_PAT_KEY ShortText
 .. column_create Tags bookmark_index COLUMN_INDEX Bookmarks tags
 
-There are no vector column specific way. You can create an index like
+There is no vector column specific way. You can create an index like
 a scalar column.
 
 You can search an element in ``tags`` like full text search syntax.
@@ -272,7 +272,7 @@ forget to specify ``WITH_WEIGHT`` flag to ``column_create``:
 .. table_create Tags TABLE_PAT_KEY ShortText
 .. column_create Tags bookmark_index COLUMN_INDEX|WITH_WEIGHT Bookmarks tags
 
-There are no weight vector column specific way except ``WITH_WEIGHT``
+There is no weight vector column specific way except ``WITH_WEIGHT``
 flag. You can create an index like a scalar column.
 
 You can search an element in ``tags`` like full text search syntax.
