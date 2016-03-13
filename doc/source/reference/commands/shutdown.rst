@@ -2,38 +2,103 @@
 
 .. highlightlang:: none
 
+.. groonga-command
+.. database: commands_table_shutdown
+
 ``shutdown``
 ============
 
 Summary
 -------
 
-shutdown - サーバプロセスの停止
+``shutdown`` stops the Groonga server process.
 
-Groonga組込コマンドの一つであるshutdownについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入
-力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
+``shutdown`` uses graceful shutdown by default. If there are some
+running commands, the Groonga server process stops after these running
+commands are finished. New command requests aren't processed after
+``shutdown`` command is executed.
 
-shutdownは、接続しているgroongaサーバプロセスを停止します。
+``shutdown`` uses immediate shutdown by specifying ``immediate`` to
+``mode`` parameter. The Groonga server process stops immediately even
+when there are some running commands.
+
 
 Syntax
 ------
-::
 
- shutdown
+This command takes only one optional parameter::
+
+  shutdown [mode=graceful]
 
 Usage
 -----
-::
 
- shutdown
+``shutdown`` use graceful shutdown by default::
+
+.. groonga-command
+.. include:: ../../example/reference/commands/shutdown/default.log
+.. shutdown
+
+You can specify ``graceful`` to ``mode`` parameter explicitly::
+
+.. groonga-command
+.. database: commands_table_shutdown
+.. include:: ../../example/reference/commands/shutdown/graceful.log
+.. shutdown --mode graceful
+
+You can choose immediate shutdown by specifying ``immediate`` to
+``mode`` parameter::
+
+.. groonga-command
+.. database: commands_table_shutdown
+.. include:: ../../example/reference/commands/shutdown/immediate.log
+.. shutdown --mode immediate
+
+Immediate shutdown is useful when you don't have time for graceful
+shutdown. For example, Windows kills service that takes long time to
+stop on Windows shutdown.
 
 Parameters
 ----------
 
-ありません。
+This section describes parameters of this command.
+
+Required parameters
+^^^^^^^^^^^^^^^^^^^
+
+There is no required parameter.
+
+Optional parameters
+^^^^^^^^^^^^^^^^^^^
+
+There are optional parameters.
+
+``mode``
+""""""""
+
+Specifies shutdown mode. Here are available shutdown modes:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Value
+     - Description
+   * - ``graceful``
+     - Stops after running commands are finished.
+
+       This is the default.
+   * - ``immediate``
+     - Stops immediately even if there are some running commands.
 
 Return value
 ------------
 
-ありません。
+``shutdown`` returns ``true`` as body when shutdown is
+accepted::
 
+  [HEADER, true]
+
+If ``shutdown`` doesn't accept shutdown, error details are in
+``HEADER``.
+
+See :doc:`/reference/command/output_format` for ``HEADER``.

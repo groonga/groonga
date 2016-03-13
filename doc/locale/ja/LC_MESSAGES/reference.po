@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-03-11 17:55+0900\n"
+"PO-Revision-Date: 2016-03-13 12:55+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -11184,17 +11184,87 @@ msgstr ""
 msgid "``shutdown``"
 msgstr ""
 
-msgid "shutdown - サーバプロセスの停止"
-msgstr ""
+msgid "``shutdown`` stops the Groonga server process."
+msgstr "``shutdown`` はGroongaサーバープロセスを終了します。"
 
 msgid ""
-"Groonga組込コマンドの一つであるshutdownについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入 力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
+"``shutdown`` uses graceful shutdown by default. If there are some running "
+"commands, the Groonga server process stops after these running commands are "
+"finished. New command requests aren't processed after ``shutdown`` command "
+"is executed."
+msgstr ""
+"``shutdown`` はデフォルトではgraceful shutdownを使います。もし、実行中のコマ"
+"ンドがあるならそれらのコマンドが終了してからGroongaサーバープロセスを終了しま"
+"す。 ``shutdown`` コマンドを実行した後は新しいコマンドを実行されません。"
+
+msgid ""
+"``shutdown`` uses immediate shutdown by specifying ``immediate`` to ``mode`` "
+"parameter. The Groonga server process stops immediately even when there are "
+"some running commands."
+msgstr ""
+"``shutdown`` は ``mode`` パラメーターに ``immediate`` を指定するとimmediate "
+"shutdownを使います。たとえ実行中のコマンドがあってもGroongaサーバープロセスを"
+"すぐに終了します。"
+
+msgid "``shutdown`` use graceful shutdown by default::"
+msgstr "``shutdown`` はデフォルトではgraceful shutdownを使います。::"
+
+msgid "You can specify ``graceful`` to ``mode`` parameter explicitly::"
+msgstr ""
+"明示的に ``mode`` パラメーターに ``graceful`` を指定することもできます。::"
+
+msgid ""
+"You can choose immediate shutdown by specifying ``immediate`` to ``mode`` "
+"parameter::"
+msgstr ""
+"``mode`` パラメーターに ``immediate`` を指定することでimmediate shutdownを使"
+"うことができます。::"
+
+msgid ""
+"Immediate shutdown is useful when you don't have time for graceful shutdown. "
+"For example, Windows kills service that takes long time to stop on Windows "
+"shutdown."
+msgstr ""
+"immediate shutdownはgraceful shutdownする時間がないときに便利です。たとえば、"
+"WindowsはWindowsをシャットダウンするときに時間内に終了しないサービスを強制終"
+"了します。"
+
+msgid "This section describes parameters of this command."
+msgstr "このセクションではこのコマンドのパラメーターを説明します。"
+
+msgid "``mode``"
 msgstr ""
 
-msgid "shutdownは、接続しているgroongaサーバプロセスを停止します。"
+msgid "Specifies shutdown mode. Here are available shutdown modes:"
+msgstr "シャットダウンのモードを指定します。利用可能なモードは次の通りです。"
+
+msgid "``graceful``"
 msgstr ""
+
+msgid "Stops after running commands are finished."
+msgstr "実行中のコマンドが終了してから終了します。"
+
+# 41e90985794c4559baf962d155c3630d
+msgid "This is the default."
+msgstr "これがデフォルトです。"
+
+msgid "``immediate``"
+msgstr ""
+
+msgid "Stops immediately even if there are some running commands."
+msgstr "実行中のコマンドがあってもすぐに終了します。"
+
+# 89e4f7f7796f4f7784127f63364b6657
+msgid "``shutdown`` returns ``true`` as body when shutdown is accepted::"
+msgstr ""
+"``shutdown`` はシャットダウンを受け付けたときは以下のようにボディが ``true`` "
+"になります。::"
+
+msgid ""
+"If ``shutdown`` doesn't accept shutdown, error details are in ``HEADER``."
+msgstr ""
+"``shutdown`` がシャットダウンを受け付けなかったら ``HEADER`` にエラーの詳細が"
+"含まれます。"
 
 msgid "``status``"
 msgstr ""
@@ -12479,9 +12549,6 @@ msgid ""
 msgstr ""
 "詳細は、 :doc:`/reference/commands/tokenize` の :ref:`tokenize-flags` オプ"
 "ションを参照してください。"
-
-msgid "``mode``"
-msgstr ""
 
 msgid "Specifies a tokenize mode."
 msgstr "トークナイズモードを指定します。"
