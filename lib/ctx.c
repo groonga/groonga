@@ -1732,12 +1732,26 @@ unsigned int
 grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
 {
   if (!ctx) { return GRN_INVALID_ARGUMENT; }
+
+  *flags = 0;
+
   if (ctx->stat == GRN_CTX_QUIT) {
-    *str = NULL;
-    *str_len = 0;
-    *flags = GRN_CTX_QUIT;
-    return 0;
+    grn_bool have_buffer = GRN_FALSE;
+
+    if (ctx->impl &&
+        !ctx->impl->com &&
+        GRN_TEXT_LEN(ctx->impl->output.buf) > 0) {
+      have_buffer = GRN_TRUE;
+    }
+
+    *flags |= GRN_CTX_QUIT;
+    if (!have_buffer) {
+      *str = NULL;
+      *str_len = 0;
+      return 0;
+    }
   }
+
   GRN_API_ENTER;
   if (ctx->impl) {
     if (ctx->impl->com) {
@@ -1751,9 +1765,11 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
         *str_len = GRN_BULK_VSIZE(ctx->impl->output.buf);
         if (header.flags & GRN_CTX_QUIT) {
           ctx->stat = GRN_CTX_QUIT;
-          *flags = GRN_CTX_QUIT;
+          *flags |= GRN_CTX_QUIT;
         } else {
-          *flags = (header.flags & GRN_CTX_TAIL) ? 0 : GRN_CTX_MORE;
+          if (!(header.flags & GRN_CTX_TAIL)) {
+            *flags |= GRN_CTX_MORE;
+          }
         }
         ctx->impl->output.type = header.qtype;
         ctx->rc = (int16_t)ntohs(header.status);
