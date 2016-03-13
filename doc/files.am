@@ -203,6 +203,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/select/usage_drilldown.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/usage_drilldown_only_query.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/usage_setup.log \
+	$(top_srcdir)/doc/source/example/reference/commands/shutdown/default.log \
+	$(top_srcdir)/doc/source/example/reference/commands/shutdown/graceful.log \
+	$(top_srcdir)/doc/source/example/reference/commands/shutdown/immediate.log \
 	$(top_srcdir)/doc/source/example/reference/commands/status.log \
 	$(top_srcdir)/doc/source/example/reference/commands/suggest-completion.log \
 	$(top_srcdir)/doc/source/example/reference/commands/suggest-correction.log \
@@ -1006,6 +1009,9 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/select/usage_drilldown.log \
 	source/example/reference/commands/select/usage_drilldown_only_query.log \
 	source/example/reference/commands/select/usage_setup.log \
+	source/example/reference/commands/shutdown/default.log \
+	source/example/reference/commands/shutdown/graceful.log \
+	source/example/reference/commands/shutdown/immediate.log \
 	source/example/reference/commands/status.log \
 	source/example/reference/commands/suggest-completion.log \
 	source/example/reference/commands/suggest-correction.log \
