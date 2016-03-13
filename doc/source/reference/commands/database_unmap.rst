@@ -66,7 +66,7 @@ This section describes all parameters.
 Required parameters
 ^^^^^^^^^^^^^^^^^^^
 
-There is no required parameters.
+There is no required parameter.
 
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^

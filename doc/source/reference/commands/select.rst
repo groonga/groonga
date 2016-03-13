@@ -291,8 +291,8 @@ Parameters
 
 This section describes all parameters. Parameters are categorized.
 
-Required parameter
-^^^^^^^^^^^^^^^^^^
+Required parameters
+^^^^^^^^^^^^^^^^^^^
 
 There is a required parameter, ``table``.
 

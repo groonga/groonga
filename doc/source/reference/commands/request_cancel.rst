@@ -88,8 +88,8 @@ Parameters
 
 This section describes parameters of ``request_cancel``.
 
-Required parameter
-^^^^^^^^^^^^^^^^^^
+Required parameters
+^^^^^^^^^^^^^^^^^^^
 
 There is required parameter, ``id``.
 

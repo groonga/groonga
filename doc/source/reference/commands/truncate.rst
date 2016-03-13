@@ -68,8 +68,8 @@ Parameters
 
 This section describes parameters of ``truncate``.
 
-Required parameter
-^^^^^^^^^^^^^^^^^^
+Required parameters
+^^^^^^^^^^^^^^^^^^^
 
 There is required parameter, ``target_name``.
 

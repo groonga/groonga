@@ -118,8 +118,8 @@ Parameters
 
 This section describes parameters of ``logical_count``.
 
-Required parameter
-^^^^^^^^^^^^^^^^^^
+Required parameters
+^^^^^^^^^^^^^^^^^^^
 
 There are required parameters, ``logical_table`` and ``shard_key``.
 

@@ -47,8 +47,8 @@ Parameters
 
 This section describes parameters of ``normalizer``.
 
-Required parameter
-^^^^^^^^^^^^^^^^^^
+Required parameters
+^^^^^^^^^^^^^^^^^^^
 
 There are required parameters, ``normalizer`` and ``string``.
 

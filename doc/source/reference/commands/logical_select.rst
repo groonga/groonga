@@ -210,8 +210,8 @@ Parameters
 
 This section describes parameters of ``logical_select``.
 
-Required parameter
-^^^^^^^^^^^^^^^^^^
+Required parameters
+^^^^^^^^^^^^^^^^^^^
 
 There are required parameters, ``logical_table`` and ``shard_key``.
 

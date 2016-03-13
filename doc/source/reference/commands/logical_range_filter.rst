@@ -63,8 +63,8 @@ Parameters
 
 This section describes parameters of ``logical_range_filter``.
 
-Required parameter
-^^^^^^^^^^^^^^^^^^
+Required parameters
+^^^^^^^^^^^^^^^^^^^
 
 There are required parameters, ``logical_table`` and ``shard_key``.
 
