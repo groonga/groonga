@@ -5063,7 +5063,7 @@ msgid ""
 msgstr ""
 "最大スレッド数が ``1`` より大きい場合は ``database_unmap`` は失敗します。"
 
-msgid "There is no required parameters."
+msgid "There is no required parameter."
 msgstr "必須の引数はありません。"
 
 msgid "``define_selector``"
@@ -6171,9 +6171,6 @@ msgstr ""
 
 msgid "This section describes parameters of ``logical_count``."
 msgstr "このセクションでは ``logical_count`` の引数について説明します。"
-
-msgid "Required parameter"
-msgstr "必須引数"
 
 msgid "There are required parameters, ``logical_table`` and ``shard_key``."
 msgstr "必須引数は二つあります。 ``logical_table`` と ``shard_key`` です。"

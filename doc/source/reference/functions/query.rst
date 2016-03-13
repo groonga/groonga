@@ -106,8 +106,8 @@ keywords on your purpose.
 Parameters
 ----------
 
-Required parameter
-^^^^^^^^^^^^^^^^^^
+Required parameters
+^^^^^^^^^^^^^^^^^^^
 
 There are two required parameter, ``match_columns`` and ``query_string``.
 

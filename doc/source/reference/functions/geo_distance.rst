@@ -145,8 +145,8 @@ and the coordinate of New York to calculate distance.
 Parameters
 ----------
 
-Required parameter
-^^^^^^^^^^^^^^^^^^
+Required parameters
+^^^^^^^^^^^^^^^^^^^
 
 There are two required parameter, ``point1`` and ``point2``.
 
