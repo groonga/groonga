@@ -367,7 +367,7 @@ See :ref:`column-copy-to-table` for example.
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^
 
-There is no optional parameters.
+There is no optional parameter.
 
 Return value
 ------------

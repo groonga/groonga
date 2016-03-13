@@ -82,7 +82,7 @@ The list is sorted by shard name in ascending order.
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^
 
-There is no optional parameters.
+There is no optional parameter.
 
 Return value
 ------------

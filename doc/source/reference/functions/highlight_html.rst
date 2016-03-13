@@ -94,7 +94,7 @@ The text to be highlighted in HTML.
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^
 
-There is no optional parameters.
+There is no optional parameter.
 
 Return value
 ------------

@@ -117,7 +117,7 @@ The index column to be used for search.
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^
 
-There is no optional parameters.
+There is no optional parameter.
 
 Return value
 ------------

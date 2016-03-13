@@ -68,7 +68,7 @@ The max value size is 4091B (= 4KiB - 5B).
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^
 
-There is no optional parameters.
+There is no optional parameter.
 
 Return value
 ------------

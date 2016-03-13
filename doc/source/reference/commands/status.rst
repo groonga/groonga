@@ -51,7 +51,7 @@ There is no required parameter.
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^
 
-There is no optional parameters.
+There is no optional parameter.
 
 .. _status-return-value:
 

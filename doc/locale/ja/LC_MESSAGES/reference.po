@@ -4385,7 +4385,7 @@ msgstr "具体例は :ref:`column-copy-to-table` を見てください。"
 msgid "Optional parameters"
 msgstr "省略可能引数"
 
-msgid "There is no optional parameters."
+msgid "There is no optional parameter."
 msgstr "省略可能な引数はありません。"
 
 msgid "The command returns ``true`` as body on success such as::"

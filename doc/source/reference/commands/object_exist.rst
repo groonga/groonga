@@ -78,7 +78,7 @@ If you want to check existence of a column, use
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^
 
-There is no optional parameters.
+There is no optional parameter.
 
 Return value
 ------------
