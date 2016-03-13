@@ -100,10 +100,11 @@ def execmd(command, fout):
     timeout = rest_timeout
     if len(out[0]):
       char = groonga_process.stdout.read(1)
-      if char is None:
+      if char is None or char == '':
         stdout.write(output_buffer)
         if fout:
           fout.write(output_buffer)
+        break
       else:
         output_buffer += char
         if char == '\n':
