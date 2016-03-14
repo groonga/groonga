@@ -1149,8 +1149,10 @@ grn_rc
 grn_ctx_close(grn_ctx *ctx)
 {
   grn_rc rc = grn_ctx_fin(ctx);
+  CRITICAL_SECTION_ENTER(grn_glock);
   ctx->next->prev = ctx->prev;
   ctx->prev->next = ctx->next;
+  CRITICAL_SECTION_LEAVE(grn_glock);
   GRN_GFREE(ctx);
   return rc;
 }
