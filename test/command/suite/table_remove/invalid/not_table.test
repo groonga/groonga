@@ -1,0 +1,4 @@
+table_create Users TABLE_NO_KEY
+column_create Users age COLUMN_SCALAR UInt8
+
+table_remove Users.age

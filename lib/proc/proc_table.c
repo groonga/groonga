@@ -481,7 +481,18 @@ command_table_remove(grn_ctx *ctx,
   table = grn_ctx_get(ctx,
                       GRN_TEXT_VALUE(name),
                       GRN_TEXT_LEN(name));
-  /* TODO: Add a check whether the object is really a table. */
+
+  if (!grn_obj_is_table(ctx, table)) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "[table][remove] not table: <%.*s>: <%s>",
+                     (int)GRN_TEXT_LEN(name),
+                     GRN_TEXT_VALUE(name),
+                     grn_obj_type_to_string(table->header.type));
+    grn_ctx_output_bool(ctx, GRN_FALSE);
+    return NULL;
+  }
+
   if (table) {
     grn_obj_remove(ctx, table);
   } else {
