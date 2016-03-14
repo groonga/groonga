@@ -483,12 +483,15 @@ command_table_remove(grn_ctx *ctx,
                       GRN_TEXT_LEN(name));
 
   if (!grn_obj_is_table(ctx, table)) {
+    const char *type_name;
+    type_name = grn_obj_type_to_string(table->header.type);
+    grn_obj_unlink(ctx, table);
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
                      "[table][remove] not table: <%.*s>: <%s>",
                      (int)GRN_TEXT_LEN(name),
                      GRN_TEXT_VALUE(name),
-                     grn_obj_type_to_string(table->header.type));
+                     type_name);
     grn_ctx_output_bool(ctx, GRN_FALSE);
     return NULL;
   }
