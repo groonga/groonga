@@ -35,6 +35,11 @@ GRN_VAR const char *grn_document_root;
 void grn_db_init_builtin_query(grn_ctx *ctx);
 
 void grn_proc_init_clearlock(grn_ctx *ctx);
+void grn_proc_init_column_copy(grn_ctx *ctx);
+void grn_proc_init_column_create(grn_ctx *ctx);
+void grn_proc_init_column_list(grn_ctx *ctx);
+void grn_proc_init_column_remove(grn_ctx *ctx);
+void grn_proc_init_column_rename(grn_ctx *ctx);
 void grn_proc_init_config_get(grn_ctx *ctx);
 void grn_proc_init_config_set(grn_ctx *ctx);
 void grn_proc_init_config_delete(grn_ctx *ctx);

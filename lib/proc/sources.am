@@ -1,4 +1,5 @@
 libgrnproc_la_SOURCES =				\
+	proc_column.c				\
 	proc_config.c				\
 	proc_fuzzy_search.c			\
 	proc_lock.c				\
