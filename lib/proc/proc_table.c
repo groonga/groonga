@@ -476,8 +476,11 @@ command_table_remove(grn_ctx *ctx,
 {
   grn_obj *name;
   grn_obj *table;
+  grn_bool recursive;
 
   name = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
+  recursive = grn_plugin_proc_get_var_bool(ctx, user_data, "recursive", -1,
+                                           GRN_FALSE);
   table = grn_ctx_get(ctx,
                       GRN_TEXT_VALUE(name),
                       GRN_TEXT_LEN(name));
@@ -497,7 +500,11 @@ command_table_remove(grn_ctx *ctx,
   }
 
   if (table) {
-    grn_obj_remove(ctx, table);
+    if (recursive) {
+      grn_obj_remove_recursive(ctx, table);
+    } else {
+      grn_obj_remove(ctx, table);
+    }
   } else {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
@@ -512,13 +519,14 @@ command_table_remove(grn_ctx *ctx,
 void
 grn_proc_init_table_remove(grn_ctx *ctx)
 {
-  grn_expr_var vars[1];
+  grn_expr_var vars[2];
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "name", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[1]), "recursive", -1);
   grn_plugin_command_create(ctx,
                             "table_remove", -1,
                             command_table_remove,
-                            1,
+                            2,
                             vars);
 }
 
