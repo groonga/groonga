@@ -1,0 +1,8 @@
+table_create Names TABLE_DAT_KEY ShortText
+table_create Users TABLE_PAT_KEY Names
+table_create Administrators TABLE_PAT_KEY Names
+table_create Machines TABLE_PAT_KEY ShortText
+
+table_remove Names --recursive yes
+
+dump
