@@ -150,7 +150,7 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     if (ctx->impl->loader.table) {
       grn_db_touch(ctx, DB_OBJ(ctx->impl->loader.table)->db);
     }
-    /* maybe necessary : grn_ctx_loader_clear(ctx); */
+    grn_ctx_loader_clear(ctx);
   }
   return NULL;
 }

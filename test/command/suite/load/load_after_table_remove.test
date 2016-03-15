@@ -1,0 +1,16 @@
+table_create Users TABLE_NO_KEY
+column_create Users age COLUMN_SCALAR Int32
+table_create AnotherUsers TABLE_NO_KEY
+column_create AnotherUsers age COLUMN_SCALAR Int32
+
+load --table Users --columns "age"
+[
+[1]
+]
+
+table_remove Users
+
+load --table AnotherUsers --columns "age"
+[
+[1]
+]
