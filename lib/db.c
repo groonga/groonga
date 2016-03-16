@@ -4399,6 +4399,11 @@ grn_table_columns(grn_ctx *ctx, grn_obj *table, const char *name, unsigned int n
   }
 
   id = DB_OBJ(table)->id;
+
+  if (id == GRN_ID_NIL) {
+    GRN_API_RETURN(n);
+  }
+
   if (id & GRN_OBJ_TMP_OBJECT) {
     char search_key[GRN_TABLE_MAX_KEY_SIZE];
     grn_pat_cursor *cursor;
