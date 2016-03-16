@@ -2135,6 +2135,7 @@ h_worker(void *arg)
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)",
           n_floating_threads, n_running_threads);
   while (n_running_threads <= max_n_floating_threads &&
+         ctx->stat != GRN_CTX_QUIT &&
          grn_gctx.stat != GRN_CTX_QUIT) {
     grn_obj *msg;
     n_floating_threads++;
