@@ -139,6 +139,10 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
            GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)),
            GRN_TEXT_VALUE(VAR(3)), GRN_TEXT_LEN(VAR(3)),
            GRN_TEXT_VALUE(VAR(5)), GRN_TEXT_LEN(VAR(5)));
+  if (ctx->rc == GRN_CANCEL) {
+    ctx->impl->loader.stat = GRN_LOADER_END;
+    ctx->impl->loader.rc = GRN_SUCCESS;
+  }
   if (ctx->impl->loader.stat != GRN_LOADER_END) {
     grn_ctx_set_next_expr(ctx, grn_proc_get_info(ctx, user_data, NULL, NULL, NULL));
   } else {
