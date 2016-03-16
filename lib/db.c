@@ -13306,11 +13306,17 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned int str_le
       case ']' :
         bracket_close(ctx, loader);
         loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_END;
+        if (ctx->rc == GRN_CANCEL) {
+          loader->stat = GRN_LOADER_END;
+        }
         str++;
         break;
       case '}' :
         brace_close(ctx, loader);
         loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_END;
+        if (ctx->rc == GRN_CANCEL) {
+          loader->stat = GRN_LOADER_END;
+        }
         str++;
         break;
       case '+' : case '-' : case '0' : case '1' : case '2' : case '3' :
