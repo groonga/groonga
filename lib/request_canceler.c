@@ -84,7 +84,7 @@ grn_request_canceler_unregister(grn_ctx *ctx,
   }
   MUTEX_UNLOCK(grn_the_request_canceler->mutex);
 
-  if (ctx->rc == GRN_INTERRUPTED_FUNCTION_CALL) {
+  if (ctx->rc == GRN_CANCEL) {
     ERRSET(ctx, GRN_LOG_NOTICE, ctx->rc,
            "[request-canceler] a request is canceled: <%.*s>",
            size, request_id);
@@ -102,7 +102,7 @@ grn_request_canceler_cancel(const char *request_id, unsigned int size)
     if (grn_hash_get(&grn_gctx, entries, request_id, size, &value)) {
       grn_request_canceler_entry *entry = value;
       if (entry->ctx->rc == GRN_SUCCESS) {
-        entry->ctx->rc = GRN_INTERRUPTED_FUNCTION_CALL;
+        entry->ctx->rc = GRN_CANCEL;
         canceled = GRN_TRUE;
       }
     }
@@ -130,7 +130,7 @@ grn_request_canceler_cancel_all(void)
         if (grn_hash_cursor_get_value(ctx, cursor, &value) > 0) {
           grn_request_canceler_entry *entry = value;
           if (entry->ctx->rc == GRN_SUCCESS) {
-            entry->ctx->rc = GRN_INTERRUPTED_FUNCTION_CALL;
+            entry->ctx->rc = GRN_CANCEL;
             canceled = GRN_TRUE;
           }
         }

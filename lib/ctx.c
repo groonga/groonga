@@ -1701,7 +1701,7 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
       }
       if (ctx->stat == GRN_CTX_QUITTING) { ctx->stat = GRN_CTX_QUIT; }
       if (ctx->impl->qe_next) {
-        if (ctx->rc != GRN_INTERRUPTED_FUNCTION_CALL) {
+        if (ctx->rc != GRN_CANCEL) {
           ERRCLR(ctx);
         }
       } else {

@@ -124,7 +124,8 @@ typedef enum {
   GRN_TOKEN_FILTER_ERROR = -73,
   GRN_COMMAND_ERROR = -74,
   GRN_PLUGIN_ERROR = -75,
-  GRN_SCORER_ERROR = -76
+  GRN_SCORER_ERROR = -76,
+  GRN_CANCEL = -77
 } grn_rc;
 
 GRN_API grn_rc grn_init(void);

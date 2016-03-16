@@ -45,7 +45,7 @@ extern "C" {
     (ctx)->subno++;\
   } else {\
     (ctx)->errlvl = GRN_OK;\
-    if ((ctx)->rc != GRN_INTERRUPTED_FUNCTION_CALL) {\
+    if ((ctx)->rc != GRN_CANCEL) {\
       (ctx)->rc = GRN_SUCCESS;\
     }\
     (ctx)->seqno++;\
