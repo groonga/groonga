@@ -1040,8 +1040,9 @@ h_output(grn_ctx *ctx, int flags, void *arg)
 }
 
 static void
-do_htreq_get(grn_ctx *ctx, grn_msg *msg)
+do_htreq_get(grn_ctx *ctx, ht_context *hc)
 {
+  grn_msg *msg = hc->msg;
   char *path = NULL;
   char *pathe = GRN_BULK_HEAD((grn_obj *)msg);
   char *e = GRN_BULK_CURR((grn_obj *)msg);
@@ -1242,8 +1243,9 @@ do_htreq_post_parse_header(grn_ctx *ctx,
 }
 
 static void
-do_htreq_post(grn_ctx *ctx, grn_msg *msg)
+do_htreq_post(grn_ctx *ctx, ht_context *hc)
 {
+  grn_msg *msg = hc->msg;
   grn_sock fd = msg->u.fd;
   const char *end;
   h_post_header header;
@@ -1359,7 +1361,9 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
       }
     }
 
-    if (ctx->rc == GRN_SUCCESS && GRN_TEXT_LEN(&chunk_buffer) > 0) {
+    if (ctx->rc == GRN_CANCEL) {
+      h_output(ctx, GRN_CTX_TAIL, hc);
+    } else if (ctx->rc == GRN_SUCCESS && GRN_TEXT_LEN(&chunk_buffer) > 0) {
       grn_ctx_send(ctx,
                    GRN_TEXT_VALUE(&chunk_buffer),
                    GRN_TEXT_LEN(&chunk_buffer),
@@ -1371,16 +1375,17 @@ do_htreq_post(grn_ctx *ctx, grn_msg *msg)
 }
 
 static void
-do_htreq(grn_ctx *ctx, grn_msg *msg)
+do_htreq(grn_ctx *ctx, ht_context *hc)
 {
+  grn_msg *msg = hc->msg;
   grn_com_header *header = &msg->header;
   switch (header->qtype) {
   case 'G' : /* GET */
   case 'H' : /* HEAD */
-    do_htreq_get(ctx, msg);
+    do_htreq_get(ctx, hc);
     break;
   case 'P' : /* POST */
-    do_htreq_post(ctx, msg);
+    do_htreq_post(ctx, hc);
     break;
   }
   grn_ctx_set_next_expr(ctx, NULL);
@@ -2149,7 +2154,7 @@ h_worker(void *arg)
     hc.msg = (grn_msg *)msg;
     hc.in_body = GRN_FALSE;
     hc.is_chunked = GRN_FALSE;
-    do_htreq(ctx, (grn_msg *)msg);
+    do_htreq(ctx, &hc);
     MUTEX_LOCK_ENSURE(ctx, q_mutex);
   };
 exit :
