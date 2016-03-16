@@ -76,7 +76,9 @@ extern "C" {
 #define ERRCLR(ctx) do {\
   if (ctx) {\
     ((grn_ctx *)ctx)->errlvl = GRN_OK;\
-    ((grn_ctx *)ctx)->rc = GRN_SUCCESS;\
+    if (((grn_ctx *)ctx)->rc != GRN_CANCEL) {\
+      ((grn_ctx *)ctx)->rc = GRN_SUCCESS;\
+    }\
   }\
   errno = 0;\
   grn_gctx.errlvl = GRN_OK;\
@@ -110,7 +112,9 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
 #define ERRSET(ctx,lvl,r,...) do {\
   grn_ctx *ctx_ = (grn_ctx *)ctx;\
   ctx_->errlvl = (lvl);\
-  ctx_->rc = (r);\
+  if (ctx_->rc != GRN_CANCEL) {\
+    ctx_->rc = (r);\
+  }\
   ctx_->errfile = __FILE__;\
   ctx_->errline = __LINE__;\
   ctx_->errfunc = __FUNCTION__;\
