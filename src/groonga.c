@@ -2216,8 +2216,8 @@ g_worker(void *arg)
   MUTEX_LOCK_ENSURE(NULL, q_mutex);
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)",
           n_floating_threads, n_running_threads);
-   while (n_running_threads <= max_n_floating_threads &&
-          grn_gctx.stat != GRN_CTX_QUIT) {
+  while (n_running_threads <= max_n_floating_threads &&
+         grn_gctx.stat != GRN_CTX_QUIT) {
     grn_ctx *ctx;
     grn_edge *edge;
     n_floating_threads++;
