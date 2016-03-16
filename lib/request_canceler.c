@@ -91,6 +91,17 @@ grn_request_canceler_unregister(grn_ctx *ctx,
   }
 }
 
+static grn_bool
+grn_request_canceler_cancel_entry(grn_request_canceler_entry *entry)
+{
+  if (entry->ctx->rc == GRN_SUCCESS) {
+    entry->ctx->rc = GRN_CANCEL;
+    return GRN_TRUE;
+  } else {
+    return GRN_FALSE;
+  }
+}
+
 grn_bool
 grn_request_canceler_cancel(const char *request_id, unsigned int size)
 {
@@ -101,8 +112,7 @@ grn_request_canceler_cancel(const char *request_id, unsigned int size)
     void *value;
     if (grn_hash_get(&grn_gctx, entries, request_id, size, &value)) {
       grn_request_canceler_entry *entry = value;
-      if (entry->ctx->rc == GRN_SUCCESS) {
-        entry->ctx->rc = GRN_CANCEL;
+      if (grn_request_canceler_cancel_entry(entry)) {
         canceled = GRN_TRUE;
       }
     }
@@ -129,8 +139,7 @@ grn_request_canceler_cancel_all(void)
         void *value;
         if (grn_hash_cursor_get_value(ctx, cursor, &value) > 0) {
           grn_request_canceler_entry *entry = value;
-          if (entry->ctx->rc == GRN_SUCCESS) {
-            entry->ctx->rc = GRN_CANCEL;
+          if (grn_request_canceler_cancel_entry(entry)) {
             canceled = GRN_TRUE;
           }
         }
