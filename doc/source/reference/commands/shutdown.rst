@@ -33,13 +33,13 @@ This command takes only one optional parameter::
 Usage
 -----
 
-``shutdown`` use graceful shutdown by default::
+``shutdown`` use graceful shutdown by default:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/shutdown/default.log
 .. shutdown
 
-You can specify ``graceful`` to ``mode`` parameter explicitly::
+You can specify ``graceful`` to ``mode`` parameter explicitly:
 
 .. groonga-command
 .. database: commands_table_shutdown
@@ -47,7 +47,7 @@ You can specify ``graceful`` to ``mode`` parameter explicitly::
 .. shutdown --mode graceful
 
 You can choose immediate shutdown by specifying ``immediate`` to
-``mode`` parameter::
+``mode`` parameter:
 
 .. groonga-command
 .. database: commands_table_shutdown
