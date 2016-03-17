@@ -31,7 +31,7 @@ Set up
 First you need to set up database for suggestion.
 
 .. groonga-command
-.. include:: ../example/reference/executables/groonga-suggest-httpd-setup.log
+.. include:: ../../example/reference/executables/groonga-suggest-httpd-setup.log
 .. .. % groonga-suggest-create-dataset /tmp/groonga-databases/groonga-suggest-httpd query
 
 Launch groonga-suggest-httpd
@@ -40,7 +40,7 @@ Launch groonga-suggest-httpd
 Execute groonga-suggest-httpd command:
 
 .. groonga-command
-.. include:: ../example/reference/executables/groonga-suggest-httpd-launch.log
+.. include:: ../../example/reference/executables/groonga-suggest-httpd-launch.log
 .. .. % groonga-suggest-httpd /tmp/groonga-databases/groonga-suggest-httpd
 
 After executing above command, groonga-suggest-httpd accepts HTTP request on 8080 port.

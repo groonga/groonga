@@ -399,6 +399,12 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/scorer/usage_one_one_argument_no_weight.log \
 	$(top_srcdir)/doc/source/example/reference/scorer/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/scorer/usage_setup_schema.log \
+	$(top_srcdir)/doc/source/example/reference/scorers/scorer_tf_at_most/usage_no_weight.log \
+	$(top_srcdir)/doc/source/example/reference/scorers/scorer_tf_at_most/usage_setup_data.log \
+	$(top_srcdir)/doc/source/example/reference/scorers/scorer_tf_at_most/usage_setup_schema.log \
+	$(top_srcdir)/doc/source/example/reference/scorers/scorer_tf_idf/usage_no_weight.log \
+	$(top_srcdir)/doc/source/example/reference/scorers/scorer_tf_idf/usage_setup_data.log \
+	$(top_srcdir)/doc/source/example/reference/scorers/scorer_tf_idf/usage_setup_schema.log \
 	$(top_srcdir)/doc/source/example/reference/suggest/complete/registered-word-japan.log \
 	$(top_srcdir)/doc/source/example/reference/suggest/complete/registered-word-japanese.log \
 	$(top_srcdir)/doc/source/example/reference/suggest/complete/rk-search-nihon.log \
@@ -712,14 +718,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/tokenizer_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/truncate.rst \
 	$(top_srcdir)/doc/source/reference/configuration.rst \
-	$(top_srcdir)/doc/source/reference/example/reference/executables/groonga-suggest-httpd-launch.log \
-	$(top_srcdir)/doc/source/reference/example/reference/executables/groonga-suggest-httpd-setup.log \
-	$(top_srcdir)/doc/source/reference/example/reference/scorers/scorer_tf_at_most/usage_no_weight.log \
-	$(top_srcdir)/doc/source/reference/example/reference/scorers/scorer_tf_at_most/usage_setup_data.log \
-	$(top_srcdir)/doc/source/reference/example/reference/scorers/scorer_tf_at_most/usage_setup_schema.log \
-	$(top_srcdir)/doc/source/reference/example/reference/scorers/scorer_tf_idf/usage_no_weight.log \
-	$(top_srcdir)/doc/source/reference/example/reference/scorers/scorer_tf_idf/usage_setup_data.log \
-	$(top_srcdir)/doc/source/reference/example/reference/scorers/scorer_tf_idf/usage_setup_schema.log \
 	$(top_srcdir)/doc/source/reference/executables.rst \
 	$(top_srcdir)/doc/source/reference/executables/grndb.rst \
 	$(top_srcdir)/doc/source/reference/executables/grnslap.rst \
@@ -1215,6 +1213,12 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/scorer/usage_one_one_argument_no_weight.log \
 	source/example/reference/scorer/usage_setup_data.log \
 	source/example/reference/scorer/usage_setup_schema.log \
+	source/example/reference/scorers/scorer_tf_at_most/usage_no_weight.log \
+	source/example/reference/scorers/scorer_tf_at_most/usage_setup_data.log \
+	source/example/reference/scorers/scorer_tf_at_most/usage_setup_schema.log \
+	source/example/reference/scorers/scorer_tf_idf/usage_no_weight.log \
+	source/example/reference/scorers/scorer_tf_idf/usage_setup_data.log \
+	source/example/reference/scorers/scorer_tf_idf/usage_setup_schema.log \
 	source/example/reference/suggest/complete/registered-word-japan.log \
 	source/example/reference/suggest/complete/registered-word-japanese.log \
 	source/example/reference/suggest/complete/rk-search-nihon.log \
@@ -1528,14 +1532,6 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/tokenizer_list.rst \
 	source/reference/commands/truncate.rst \
 	source/reference/configuration.rst \
-	source/reference/example/reference/executables/groonga-suggest-httpd-launch.log \
-	source/reference/example/reference/executables/groonga-suggest-httpd-setup.log \
-	source/reference/example/reference/scorers/scorer_tf_at_most/usage_no_weight.log \
-	source/reference/example/reference/scorers/scorer_tf_at_most/usage_setup_data.log \
-	source/reference/example/reference/scorers/scorer_tf_at_most/usage_setup_schema.log \
-	source/reference/example/reference/scorers/scorer_tf_idf/usage_no_weight.log \
-	source/reference/example/reference/scorers/scorer_tf_idf/usage_setup_data.log \
-	source/reference/example/reference/scorers/scorer_tf_idf/usage_setup_schema.log \
 	source/reference/executables.rst \
 	source/reference/executables/grndb.rst \
 	source/reference/executables/grnslap.rst \

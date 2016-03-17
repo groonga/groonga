@@ -66,7 +66,7 @@ Here are a schema definition and sample data to show usage.
 Sample schema:
 
 .. groonga-command
-.. include:: ../example/reference/scorers/scorer_tf_idf/usage_setup_schema.log
+.. include:: ../../example/reference/scorers/scorer_tf_idf/usage_setup_schema.log
 .. table_create Logs TABLE_NO_KEY
 .. column_create Logs message COLUMN_SCALAR Text
 ..
@@ -78,7 +78,7 @@ Sample schema:
 Sample data:
 
 .. groonga-command
-.. include:: ../example/reference/scorers/scorer_tf_idf/usage_setup_data.log
+.. include:: ../../example/reference/scorers/scorer_tf_idf/usage_setup_data.log
 .. load --table Logs
 .. [
 .. {"message": "Error"},
@@ -100,7 +100,7 @@ You specify ``scorer_tf_idf`` in :ref:`select-match-columns` like the
 following:
 
 .. groonga-command
-.. include:: ../example/reference/scorers/scorer_tf_idf/usage_no_weight.log
+.. include:: ../../example/reference/scorers/scorer_tf_idf/usage_no_weight.log
 .. select Logs \
 ..   --match_columns "scorer_tf_idf(message)" \
 ..   --query "Error OR Info" \
