@@ -1,0 +1,12 @@
+table_create Names TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Users TABLE_DAT_KEY Names
+[[0,0.0,0.0],true]
+table_create Administrators TABLE_DAT_KEY Names
+[[0,0.0,0.0],true]
+table_create Machines TABLE_DAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_remove Names --dependent yes
+[[0,0.0,0.0],true]
+dump
+table_create Machines TABLE_DAT_KEY ShortText

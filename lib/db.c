@@ -872,7 +872,7 @@ calc_rec_size(grn_obj_flags flags, uint32_t max_n_subrecs, uint32_t range_size,
   *value_size += additional_value_size;
 }
 
-static grn_rc _grn_obj_remove(grn_ctx *ctx, grn_obj *obj, grn_bool recursive);
+static grn_rc _grn_obj_remove(grn_ctx *ctx, grn_obj *obj, grn_bool dependent);
 
 static grn_rc
 grn_table_create_validate(grn_ctx *ctx, const char *name, unsigned int name_size,
@@ -8898,11 +8898,11 @@ is_removable_table(grn_ctx *ctx, grn_obj *table, grn_obj *db)
 
 static grn_rc
 _grn_obj_remove_pat(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
-                    const char *path, grn_bool recursive)
+                    const char *path, grn_bool dependent)
 {
   grn_rc rc = GRN_SUCCESS;
 
-  if (recursive) {
+  if (dependent) {
     rc = remove_reference_tables(ctx, obj, db);
     if (rc != GRN_SUCCESS) {
       return rc;
@@ -8937,11 +8937,11 @@ _grn_obj_remove_pat(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
 
 static grn_rc
 _grn_obj_remove_dat(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
-                    const char *path, grn_bool recursive)
+                    const char *path, grn_bool dependent)
 {
   grn_rc rc = GRN_SUCCESS;
 
-  if (recursive) {
+  if (dependent) {
     rc = remove_reference_tables(ctx, obj, db);
     if (rc != GRN_SUCCESS) {
       return rc;
@@ -8976,11 +8976,11 @@ _grn_obj_remove_dat(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
 
 static grn_rc
 _grn_obj_remove_hash(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
-                     const char *path, grn_bool recursive)
+                     const char *path, grn_bool dependent)
 {
   grn_rc rc = GRN_SUCCESS;
 
-  if (recursive) {
+  if (dependent) {
     rc = remove_reference_tables(ctx, obj, db);
     if (rc != GRN_SUCCESS) {
       return rc;
@@ -9015,11 +9015,11 @@ _grn_obj_remove_hash(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
 
 static grn_rc
 _grn_obj_remove_array(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
-                      const char *path, grn_bool recursive)
+                      const char *path, grn_bool dependent)
 {
   grn_rc rc = GRN_SUCCESS;
 
-  if (recursive) {
+  if (dependent) {
     rc = remove_reference_tables(ctx, obj, db);
     if (rc != GRN_SUCCESS) {
       return rc;
@@ -9157,7 +9157,7 @@ _grn_obj_remove_other(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
 }
 
 static grn_rc
-_grn_obj_remove(grn_ctx *ctx, grn_obj *obj, grn_bool recursive)
+_grn_obj_remove(grn_ctx *ctx, grn_obj *obj, grn_bool dependent)
 {
   grn_rc rc = GRN_SUCCESS;
   grn_id id = GRN_ID_NIL;
@@ -9189,16 +9189,16 @@ _grn_obj_remove(grn_ctx *ctx, grn_obj *obj, grn_bool recursive)
     rc = _grn_obj_remove_db(ctx, obj, db, id, path);
     break;
   case GRN_TABLE_PAT_KEY :
-    rc = _grn_obj_remove_pat(ctx, obj, db, id, path, recursive);
+    rc = _grn_obj_remove_pat(ctx, obj, db, id, path, dependent);
     break;
   case GRN_TABLE_DAT_KEY :
-    rc = _grn_obj_remove_dat(ctx, obj, db, id, path, recursive);
+    rc = _grn_obj_remove_dat(ctx, obj, db, id, path, dependent);
     break;
   case GRN_TABLE_HASH_KEY :
-    rc = _grn_obj_remove_hash(ctx, obj, db, id, path, recursive);
+    rc = _grn_obj_remove_hash(ctx, obj, db, id, path, dependent);
     break;
   case GRN_TABLE_NO_KEY :
-    rc = _grn_obj_remove_array(ctx, obj, db, id, path, recursive);
+    rc = _grn_obj_remove_array(ctx, obj, db, id, path, dependent);
     break;
   case GRN_COLUMN_VAR_SIZE :
     rc = _grn_obj_remove_ja(ctx, obj, db, id, path);
@@ -9239,7 +9239,7 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
 }
 
 grn_rc
-grn_obj_remove_recursive(grn_ctx *ctx, grn_obj *obj)
+grn_obj_remove_dependent(grn_ctx *ctx, grn_obj *obj)
 {
   grn_rc rc = GRN_SUCCESS;
   GRN_API_ENTER;
