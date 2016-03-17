@@ -227,6 +227,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/table_remove/basic_usage_dump_before_table_remove.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_remove/basic_usage_table_remove.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_remove/decreases_used_resources_close_temporary_opened_objects.log \
+	$(top_srcdir)/doc/source/example/reference/commands/table_remove/unremovable_cases_dependent_no.log \
+	$(top_srcdir)/doc/source/example/reference/commands/table_remove/unremovable_cases_dependent_schema.log \
+	$(top_srcdir)/doc/source/example/reference/commands/table_remove/unremovable_cases_dependent_yes.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_remove/unremovable_cases_key_type_create.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_remove/unremovable_cases_key_type_remove_fail.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_remove/unremovable_cases_key_type_remove_success.log \
@@ -1033,6 +1036,9 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/table_remove/basic_usage_dump_before_table_remove.log \
 	source/example/reference/commands/table_remove/basic_usage_table_remove.log \
 	source/example/reference/commands/table_remove/decreases_used_resources_close_temporary_opened_objects.log \
+	source/example/reference/commands/table_remove/unremovable_cases_dependent_no.log \
+	source/example/reference/commands/table_remove/unremovable_cases_dependent_schema.log \
+	source/example/reference/commands/table_remove/unremovable_cases_dependent_yes.log \
 	source/example/reference/commands/table_remove/unremovable_cases_key_type_create.log \
 	source/example/reference/commands/table_remove/unremovable_cases_key_type_remove_fail.log \
 	source/example/reference/commands/table_remove/unremovable_cases_key_type_remove_success.log \
