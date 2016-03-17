@@ -18,9 +18,10 @@ removed.
 Syntax
 ------
 
-This command takes only one required parameter::
+This command takes two parameters::
 
   table_remove name
+               [dependent=no]
 
 .. _table-remove-usage:
 
@@ -173,6 +174,35 @@ You need to remove ``Table.reference_column`` before you remove
 .. column_remove Table reference_column
 .. table_remove ReferencedByColumn
 
+If you understand what you'll do, you can also remove tables and
+columns that reference the target table with one ``table_remove``
+command by using ``--dependent yes`` parameter.
+
+``ReferencedTable`` in the following schema is referenced from a table
+and a column:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/table_remove/unremovable_cases_dependent_schema.log
+.. table_create ReferencedTable TABLE_HASH_KEY ShortText
+.. table_create Table1 TABLE_HASH_KEY ReferencedTable
+.. table_create Table2 TABLE_NO_KEY
+.. column_create Table2 reference_column COLUMN_SCALAR ReferencedTable
+
+You can't remove ``ReferencedTable`` by default:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/table_remove/unremovable_cases_dependent_no.log
+.. table_remove ReferencedTable
+
+You can remove ``ReferencedTable``, ``Table1`` and
+``Table2.reference_column`` by using ``--dependent yes``
+parameter. ``Table1`` and ``Table2.reference_column`` reference
+``ReferencedTable``:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/table_remove/unremovable_cases_dependent_yes.log
+.. table_remove ReferencedTable --dependent yes
+
 Decreases used resources
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -225,6 +255,30 @@ There is only one required parameter.
 Specifies the table name to be removed.
 
 See :ref:`table-remove-usage` how to use this parameter.
+
+Optional parameters
+^^^^^^^^^^^^^^^^^^^
+
+There is only one optional parameter.
+
+.. _table-remove-dependent:
+
+``dependent``
+"""""""""""""
+
+Specifies whether tables and columns that reference the target table
+are also removed or not.
+
+If this value is ``yes``, tables and columns that reference the target
+table are also removed. Otherwise, they aren't removed and an error is
+returned.
+
+In other words, if there are any tables and columns that reference the
+target table, the target table isn't removed by default.
+
+You should use this parameter carefully. This is a danger parameter.
+
+See :ref:`table-remove-unremovable-cases` how to use this parameter.
 
 Return value
 ------------
