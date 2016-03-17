@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-03-17 16:43+0900\n"
+"PO-Revision-Date: 2016-03-17 16:58+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -12266,6 +12266,10 @@ msgstr "基本的な使い方"
 msgid "Unremovable cases"
 msgstr "削除できないケース"
 
+# 10e63c2a9052442fbfca25373f30d1db
+msgid "Removes a table with tables and columns that reference the target table"
+msgstr "対象テーブルを参照しているテーブル・カラムも一緒に削除"
+
 msgid "Decreases used resources"
 msgstr "利用リソースの削減"
 
@@ -12496,9 +12500,9 @@ msgstr ""
 msgid "You should use this parameter carefully. This is a danger parameter."
 msgstr "このパラメーターは注意して使ってください。危険なパラメーターです。"
 
-msgid "See :ref:`table-remove-unremovable-cases` how to use this parameter."
+msgid "See :ref:`table-remove-remove-dependents` how to use this parameter."
 msgstr ""
-"このパラメーターの使い方は :ref:`table-remove-unremovable-cases` を参照してく"
+"このパラメーターの使い方は :ref:`table-remove-remove-dependents` を参照してく"
 "ださい。"
 
 msgid "``table_rename``"
