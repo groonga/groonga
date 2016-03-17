@@ -18,9 +18,11 @@ running commands, the Groonga server process stops after these running
 commands are finished. New command requests aren't processed after
 ``shutdown`` command is executed.
 
-``shutdown`` uses immediate shutdown by specifying ``immediate`` to
-``mode`` parameter. The Groonga server process stops immediately even
-when there are some running commands.
+.. versionadded:: 6.0.1
+
+   ``shutdown`` uses immediate shutdown by specifying ``immediate`` to
+   ``mode`` parameter. The Groonga server process stops immediately
+   even when there are some running commands.
 
 
 Syntax
@@ -88,7 +90,9 @@ Specifies shutdown mode. Here are available shutdown modes:
 
        This is the default.
    * - ``immediate``
-     - Stops immediately even if there are some running commands.
+     - .. versionadded:: 6.0.1
+
+          Stops immediately even if there are some running commands.
 
 Return value
 ------------
