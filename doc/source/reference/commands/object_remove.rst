@@ -79,7 +79,7 @@ This section describes all parameters.
 Required parameters
 ^^^^^^^^^^^^^^^^^^^
 
-There is only one required parameters.
+There is only one required parameter.
 
 .. _object-remove-name:
 
