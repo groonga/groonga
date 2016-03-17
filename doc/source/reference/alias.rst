@@ -55,7 +55,7 @@ they are meaningless. Because the max table/column name size is
 Here are example definitions of table and column for managing aliases:
 
 .. groonga-command
-.. include:: ../../example/reference/alias/table_and_column.log
+.. include:: ../example/reference/alias/table_and_column.log
 .. table_create Aliases TABLE_HASH_KEY ShortText
 .. column_create Aliases real_name COLUMN_SCALAR ShortText
 
@@ -65,13 +65,13 @@ register the table and column by the following
 :doc:`/reference/commands/config_set`:
 
 .. groonga-command
-.. include:: ../../example/reference/alias/register.log
+.. include:: ../example/reference/alias/register.log
 .. config_set alias.column Aliases.real_name
 
 Here are schema and data to show how to use alias:
 
 .. groonga-command
-.. include:: ../../example/reference/alias/schema.log
+.. include:: ../example/reference/alias/schema.log
 .. table_create Users TABLE_HASH_KEY ShortText
 .. column_create Users age COLUMN_SCALAR UInt8
 ..
@@ -84,14 +84,14 @@ Here are schema and data to show how to use alias:
 You can use ``Users.age`` in :doc:`/reference/commands/select`:
 
 .. groonga-command
-.. include:: ../../example/reference/alias/select_age.log
+.. include:: ../example/reference/alias/select_age.log
 .. select Users --filter 'age < 20'
 
 You can't use ``Users.age`` when you rename ``Users.age`` to
 ``Users.years`` by :doc:`/reference/commands/column_rename`:
 
 .. groonga-command
-.. include:: ../../example/reference/alias/select_age_after_rename.log
+.. include:: ../example/reference/alias/select_age_after_rename.log
 .. column_rename Users age years
 .. select Users --filter 'age < 20'
 
@@ -99,7 +99,7 @@ But you can use ``Users.age`` by registering ``Users.age`` to
 ``Users.years`` mapping to ``Aliases``.
 
 .. groonga-command
-.. include:: ../../example/reference/alias/select_age_by_alias.log
+.. include:: ../example/reference/alias/select_age_by_alias.log
 .. load --table Aliases
 .. [
 .. {"_key": "Users.age", "real_name": "Users.years"}
@@ -123,7 +123,7 @@ For example, alias isn't resolved in the following example because
 ``Users.years`` exists:
 
 .. groonga-command
-.. include:: ../../example/reference/alias/existing_name.log
+.. include:: ../example/reference/alias/existing_name.log
 .. load --table Aliases
 .. [
 .. {"_key": "Users.years", "real_name": "Users.years_old"}
@@ -150,7 +150,7 @@ records:
 Here is an example to ``Users.age`` is resolved recursively:
 
 .. groonga-command
-.. include:: ../../example/reference/alias/existing_name.log
+.. include:: ../example/reference/alias/existing_name.log
 .. column_rename Users years years_old
 .. select Users --filter 'age < 20'
 

@@ -23,6 +23,13 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/contribution/report.rst \
 	$(top_srcdir)/doc/source/development.rst \
 	$(top_srcdir)/doc/source/development/travis-ci.rst \
+	$(top_srcdir)/doc/source/example/reference/alias/existing_name.log \
+	$(top_srcdir)/doc/source/example/reference/alias/register.log \
+	$(top_srcdir)/doc/source/example/reference/alias/schema.log \
+	$(top_srcdir)/doc/source/example/reference/alias/select_age.log \
+	$(top_srcdir)/doc/source/example/reference/alias/select_age_after_rename.log \
+	$(top_srcdir)/doc/source/example/reference/alias/select_age_by_alias.log \
+	$(top_srcdir)/doc/source/example/reference/alias/table_and_column.log \
 	$(top_srcdir)/doc/source/example/reference/columns/vector/usage_adjuster_weight.log \
 	$(top_srcdir)/doc/source/example/reference/columns/vector/usage_create_normal.log \
 	$(top_srcdir)/doc/source/example/reference/columns/vector/usage_create_weight.log \
@@ -832,6 +839,13 @@ source_files_relative_from_doc_dir = \
 	source/contribution/report.rst \
 	source/development.rst \
 	source/development/travis-ci.rst \
+	source/example/reference/alias/existing_name.log \
+	source/example/reference/alias/register.log \
+	source/example/reference/alias/schema.log \
+	source/example/reference/alias/select_age.log \
+	source/example/reference/alias/select_age_after_rename.log \
+	source/example/reference/alias/select_age_by_alias.log \
+	source/example/reference/alias/table_and_column.log \
 	source/example/reference/columns/vector/usage_adjuster_weight.log \
 	source/example/reference/columns/vector/usage_create_normal.log \
 	source/example/reference/columns/vector/usage_create_weight.log \
