@@ -237,6 +237,7 @@ command_column_create(grn_ctx *ctx, int nargs, grn_obj **args,
                              NULL, flags, type);
   if (!column) {
     succeeded = GRN_FALSE;
+    goto exit;
   }
 
   if (GRN_TEXT_LEN(source_raw) > 0) {
