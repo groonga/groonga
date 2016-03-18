@@ -14,11 +14,11 @@ module Groonga
       def run_body(input)
         enumerator = LogicalEnumerator.new("logical_table_remove", input)
 
-        succeess = true
+        success = true
         enumerator.each do |shard, shard_range|
           remove_table(shard, shard_range, enumerator.target_range)
         end
-        writer.write(succeess)
+        writer.write(success)
       end
 
       private
