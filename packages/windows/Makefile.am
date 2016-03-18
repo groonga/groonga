@@ -30,11 +30,12 @@ upload-to-tmp:
 
 build: source
 	vagrant destroy --force
-	@(						\
-	  echo "VERSION='$(VERSION)'";			\
-	  echo "SOURCE='$(SOURCE)'";			\
-	  echo "DEBUG_BUILD='$(DEBUG_BUILD)'";		\
-	  echo "ARCHITECTURES='$(ARCHITECTURES)'";	\
+	@(							\
+	  echo "VERSION='$(VERSION)'";				\
+	  echo "SOURCE='$(SOURCE)'";				\
+	  echo "DEBUG_BUILD='$(DEBUG_BUILD)'";			\
+	  echo "MEMORY_DEBUG_BUILD='$(MEMORY_DEBUG_BUILD)'";	\
+	  echo "ARCHITECTURES='$(ARCHITECTURES)'";		\
 	) > tmp/env.sh
 	vagrant up
 	vagrant destroy --force
