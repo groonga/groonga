@@ -481,6 +481,12 @@ grn_alloc_info_free(grn_ctx *ctx)
 #  define grn_alloc_info_free(ctx)
 #endif /* USE_MEMORY_DEBUG */
 
+void
+grn_debug_dump_alloc_info(grn_ctx *ctx)
+{
+  grn_alloc_info_dump(ctx);
+}
+
 #ifdef USE_FAIL_MALLOC
 int grn_fmalloc_prob = 0;
 char *grn_fmalloc_func = NULL;

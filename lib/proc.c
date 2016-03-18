@@ -17,6 +17,7 @@
 */
 
 #include "grn_proc.h"
+#include "grn_ctx.h"
 #include "grn_ii.h"
 #include "grn_db.h"
 #include "grn_util.h"
@@ -197,6 +198,11 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   GRN_OUTPUT_CSTR("max_command_version");
   GRN_OUTPUT_INT32(GRN_COMMAND_VERSION_MAX);
   GRN_OUTPUT_MAP_CLOSE();
+
+#ifdef USE_MEMORY_DEBUG
+  grn_debug_dump_alloc_info(&grn_gctx);
+#endif /* USE_MEMORY_DEBUG */
+
   return NULL;
 }
 

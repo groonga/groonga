@@ -537,6 +537,8 @@ GRN_API void grn_ctx_set_next_expr(grn_ctx *ctx, grn_obj *expr);
 
 int grn_alloc_count(void);
 
+void grn_debug_dump_alloc_info(grn_ctx *ctx);
+
 grn_content_type grn_get_ctype(grn_obj *var);
 
 /**** db_obj ****/
