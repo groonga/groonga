@@ -15,6 +15,11 @@ Summary
 more indexes against key of the table and its columns, they are also
 removed.
 
+.. versionadded:: 6.0.1
+
+   You can also remove tables and columns that reference the target
+   table by using ``dependent`` parameter.
+
 Syntax
 ------
 
