@@ -24,6 +24,7 @@ groonga_win32_x86_p = ENV["ARCHITECTURE"] == "x86"
 groonga_version = ENV["VERSION"]
 groonga_source = Pathname.new(ENV["SOURCE"]).expand_path
 debug_build_p = ENV["DEBUG_BUILD"] == "yes"
+memory_debug_build_p = ENV["MEMORY_DEBUG_BUILD"] == "yes"
 
 if groonga_win32_x86_p
   dist_dir = Pathname.new("dist-x86").expand_path
@@ -323,6 +324,7 @@ namespace :build do
         options << "--without-mecab"
       end
       options << "--enable-debug" if debug_build_p
+      options << "--enable-memory-debug" if memory_debug_build_p
       sh("./configure", *options) or exit(false)
       sh("env", "GREP_OPTIONS=--text", "nice", "make", "-j8") or exit(false)
       sh("env", "GREP_OPTIONS=--text", "make", "install") or exit(false)
