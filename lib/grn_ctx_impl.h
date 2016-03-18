@@ -99,6 +99,7 @@ struct _grn_alloc_info
 {
   void *address;
   int freed;
+  size_t size;
   char alloc_backtrace[4096];
   char free_backtrace[4096];
   char *file;

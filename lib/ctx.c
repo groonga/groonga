@@ -338,7 +338,8 @@ grn_alloc_info_set_backtrace(char *buffer, size_t size)
 }
 
 inline static void
-grn_alloc_info_add(void *address, const char *file, int line, const char *func)
+grn_alloc_info_add(void *address, size_t size,
+                   const char *file, int line, const char *func)
 {
   grn_ctx *ctx;
   grn_alloc_info *new_alloc_info;
@@ -348,6 +349,7 @@ grn_alloc_info_add(void *address, const char *file, int line, const char *func)
 
   new_alloc_info = malloc(sizeof(grn_alloc_info));
   new_alloc_info->address = address;
+  new_alloc_info->size = size;
   new_alloc_info->freed = GRN_FALSE;
   grn_alloc_info_set_backtrace(new_alloc_info->alloc_backtrace,
                                sizeof(new_alloc_info->alloc_backtrace));
@@ -367,7 +369,7 @@ grn_alloc_info_add(void *address, const char *file, int line, const char *func)
 }
 
 inline static void
-grn_alloc_info_change(void *old_address, void *new_address)
+grn_alloc_info_change(void *old_address, void *new_address, size_t size)
 {
   grn_ctx *ctx;
   grn_alloc_info *alloc_info;
@@ -379,6 +381,7 @@ grn_alloc_info_change(void *old_address, void *new_address)
   for (; alloc_info; alloc_info = alloc_info->next) {
     if (alloc_info->address == old_address) {
       alloc_info->address = new_address;
+      alloc_info->size = size;
       grn_alloc_info_set_backtrace(alloc_info->alloc_backtrace,
                                    sizeof(alloc_info->alloc_backtrace));
     }
@@ -397,11 +400,13 @@ grn_alloc_info_dump(grn_ctx *ctx)
   alloc_info = ctx->impl->alloc_info;
   for (; alloc_info; alloc_info = alloc_info->next) {
     if (alloc_info->freed) {
-      printf("address[%d][freed]: %p\n", i, alloc_info->address);
+      printf("address[%d][freed]: %p(%" GRN_FMT_SIZE ")\n",
+             i, alloc_info->address, alloc_info->size);
     } else {
-      printf("address[%d][not-freed]: %p: %s:%d: %s()\n%s",
+      printf("address[%d][not-freed]: %p(%" GRN_FMT_SIZE "): %s:%d: %s()\n%s",
              i,
              alloc_info->address,
+             alloc_info->size,
              alloc_info->file ? alloc_info->file : "(unknown)",
              alloc_info->line,
              alloc_info->func ? alloc_info->func : "(unknown)",
@@ -426,8 +431,12 @@ grn_alloc_info_check(void *address)
     if (alloc_info->address == address) {
       if (alloc_info->freed) {
         GRN_LOG(ctx, GRN_LOG_WARNING,
-                "double free: (%p):\nalloc backtrace:\n%sfree backtrace:\n%s",
+                "double free: %p(%" GRN_FMT_SIZE "):\n"
+                "alloc backtrace:\n"
+                "%sfree backtrace:\n"
+                "%s",
                 alloc_info->address,
+                alloc_info->size,
                 alloc_info->alloc_backtrace,
                 alloc_info->free_backtrace);
       } else {
@@ -461,8 +470,8 @@ grn_alloc_info_free(grn_ctx *ctx)
 }
 
 #else /* USE_MEMORY_DEBUG */
-#  define grn_alloc_info_add(address, file, line, func)
-#  define grn_alloc_info_change(old_address, new_address)
+#  define grn_alloc_info_add(address, size, file, line, func)
+#  define grn_alloc_info_change(old_address, new_address, size)
 #  define grn_alloc_info_check(address)
 #  define grn_alloc_info_dump(ctx)
 #  define grn_alloc_info_free(ctx)
@@ -2522,14 +2531,14 @@ grn_malloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const 
     void *res = malloc(size);
     if (res) {
       GRN_ADD_ALLOC_COUNT(1);
-      grn_alloc_info_add(res, file, line, func);
+      grn_alloc_info_add(res, size, file, line, func);
     } else {
       if (!(res = malloc(size))) {
         MERR("malloc fail (%" GRN_FMT_SIZE ")=%p (%s:%d) <%d>",
              size, res, file, line, alloc_count);
       } else {
         GRN_ADD_ALLOC_COUNT(1);
-        grn_alloc_info_add(res, file, line, func);
+        grn_alloc_info_add(res, size, file, line, func);
       }
     }
     return res;
@@ -2544,14 +2553,14 @@ grn_calloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const 
     void *res = calloc(size, 1);
     if (res) {
       GRN_ADD_ALLOC_COUNT(1);
-      grn_alloc_info_add(res, file, line, func);
+      grn_alloc_info_add(res, size, file, line, func);
     } else {
       if (!(res = calloc(size, 1))) {
         MERR("calloc fail (%" GRN_FMT_SIZE ")=%p (%s:%d) <%d>",
              size, res, file, line, alloc_count);
       } else {
         GRN_ADD_ALLOC_COUNT(1);
-        grn_alloc_info_add(res, file, line, func);
+        grn_alloc_info_add(res, size, file, line, func);
       }
     }
     return res;
@@ -2587,10 +2596,10 @@ grn_realloc_default(grn_ctx *ctx, void *ptr, size_t size, const char* file, int 
       }
     }
     if (ptr) {
-      grn_alloc_info_change(ptr, res);
+      grn_alloc_info_change(ptr, res, size);
     } else {
       GRN_ADD_ALLOC_COUNT(1);
-      grn_alloc_info_add(res, file, line, func);
+      grn_alloc_info_add(res, size, file, line, func);
     }
   } else {
     if (!ptr) { return NULL; }
@@ -2616,13 +2625,13 @@ grn_strdup_default(grn_ctx *ctx, const char *s, const char* file, int line, cons
     char *res = grn_strdup_raw(s);
     if (res) {
       GRN_ADD_ALLOC_COUNT(1);
-      grn_alloc_info_add(res, file, line, func);
+      grn_alloc_info_add(res, strlen(res) + 1, file, line, func);
     } else {
       if (!(res = grn_strdup_raw(s))) {
         MERR("strdup(%p)=%p (%s:%d) <%d>", s, res, file, line, alloc_count);
       } else {
         GRN_ADD_ALLOC_COUNT(1);
-        grn_alloc_info_add(res, file, line, func);
+        grn_alloc_info_add(res, strlen(res) + 1, file, line, func);
       }
     }
     return res;
