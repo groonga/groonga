@@ -216,6 +216,8 @@ parameter. ``Table1`` and ``Table2.reference_column`` reference
 .. include:: ../../example/reference/commands/table_remove/remove_dependents_yes.log
 .. table_remove ReferencedTable --dependent yes
 
+.. _table-remove-decreases-used-resources:
+
 Decreases used resources
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
