@@ -1,0 +1,13 @@
+Execution example::
+
+  dump
+  # plugin_register sharding
+  # 
+  # table_create Logs_20160318 TABLE_NO_KEY
+  # column_create Logs_20160318 timestamp COLUMN_SCALAR Time
+  # 
+  # load --table Logs_20160318
+  # [
+  # ["_id","timestamp"],
+  # [1,1458228600.0]
+  # ]

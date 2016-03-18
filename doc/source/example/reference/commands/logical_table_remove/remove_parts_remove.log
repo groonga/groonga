@@ -1,0 +1,10 @@
+Execution example::
+
+  logical_table_remove \
+    --logical_table Logs \
+    --shard_key timestamp \
+    --min "2016-03-18 01:00:00" \
+    --min_border "include" \
+    --max "2016-03-19 01:30:00" \
+    --max_border "include"
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
