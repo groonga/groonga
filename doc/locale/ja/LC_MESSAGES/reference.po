@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-03-17 16:58+0900\n"
+"PO-Revision-Date: 2016-03-18 18:22+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -6751,7 +6751,7 @@ msgstr ""
 
 # 4e29f7d070594734bd7f42f2b2a1951f
 msgid ""
-"Specifies whether the minimum value is include or not. Here is available "
+"Specifies whether the minimum value is included or not. Here is available "
 "values."
 msgstr "最小値を含めるかどうかを指定します。指定可能な値は次の通りです。"
 
@@ -6812,7 +6812,7 @@ msgstr ""
 
 # a475a66f07f34738b25d1f0d71deb232
 msgid ""
-"Specifies whether the maximum value is include or not. Here is available "
+"Specifies whether the maximum value is included or not. Here is available "
 "values."
 msgstr "最大値を含めるかどうかを指定します。指定可能な値は次の通りです。"
 

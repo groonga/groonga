@@ -283,7 +283,7 @@ table. ``Entry_20150708`` isn't used.
 ``min_border``
 """"""""""""""
 
-Specifies whether the minimum value is include or not. Here is
+Specifies whether the minimum value is included or not. Here is
 available values.
 
 .. list-table::
@@ -335,7 +335,7 @@ table. ``Entry_20150709`` isn't used.
 ``max_border``
 """"""""""""""
 
-Specifies whether the maximum value is include or not. Here is
+Specifies whether the maximum value is included or not. Here is
 available values.
 
 .. list-table::
