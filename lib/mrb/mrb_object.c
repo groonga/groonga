@@ -142,11 +142,11 @@ static mrb_value
 object_remove(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
-  mrb_value mrb_options;
+  mrb_value mrb_options = mrb_nil_value();
   grn_bool dependent = GRN_FALSE;
   grn_obj *object;
 
-  mrb_get_args(mrb, "o", &mrb_options);
+  mrb_get_args(mrb, "|H", &mrb_options);
   if (!mrb_nil_p(mrb_options)) {
     mrb_value mrb_dependent;
     mrb_dependent = grn_mrb_options_get_lit(mrb, mrb_options, "dependent");
