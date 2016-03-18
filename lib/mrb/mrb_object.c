@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2015 Brazil
+  Copyright(C) 2013-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -29,6 +29,7 @@
 #include "mrb_ctx.h"
 #include "mrb_object.h"
 #include "mrb_operator.h"
+#include "mrb_options.h"
 #include "mrb_converter.h"
 
 mrb_value
@@ -141,10 +142,23 @@ static mrb_value
 object_remove(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_value mrb_options;
+  grn_bool dependent = GRN_FALSE;
   grn_obj *object;
 
+  mrb_get_args(mrb, "o", &mrb_options);
+  if (!mrb_nil_p(mrb_options)) {
+    mrb_value mrb_dependent;
+    mrb_dependent = grn_mrb_options_get_lit(mrb, mrb_options, "dependent");
+    dependent = mrb_test(mrb_dependent);
+  }
+
   object = DATA_PTR(self);
-  grn_obj_remove(ctx, object);
+  if (dependent) {
+    grn_obj_remove_dependent(ctx, object);
+  } else {
+    grn_obj_remove(ctx, object);
+  }
   grn_mrb_ctx_check(mrb);
 
   DATA_PTR(self) = NULL;
@@ -228,7 +242,7 @@ grn_mrb_object_init(grn_ctx *ctx)
                     object_grn_inspect, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "==", object_equal, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "close", object_close, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "remove", object_remove, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "remove", object_remove, MRB_ARGS_OPT(1));
 
   mrb_define_method(mrb, klass, "domain_id", object_get_domain_id,
                     MRB_ARGS_NONE());
