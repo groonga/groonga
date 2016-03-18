@@ -305,7 +305,8 @@ grn_get_global_error_message(void)
 inline static void
 grn_alloc_info_set_backtrace(char *buffer, size_t size)
 {
-#  define N_TRACE_LEVEL 100
+#  ifdef HAVE_BACKTRACE
+#    define N_TRACE_LEVEL 100
   static void *trace[N_TRACE_LEVEL];
   char **symbols;
   int i, n, rest;
@@ -334,7 +335,10 @@ grn_alloc_info_set_backtrace(char *buffer, size_t size)
   } else {
     buffer[0] = '\0';
   }
-#  undef N_TRACE_LEVEL
+#    undef N_TRACE_LEVEL
+#  else /* HAVE_BACKTRACE */
+  buffer[0] = '\0';
+#  endif /* HAVE_BACKTRACE */
 }
 
 inline static void
