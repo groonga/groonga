@@ -143,6 +143,14 @@ module Groonga
           @month = month
           @day = day
         end
+
+        def to_suffix
+          if @day.nil?
+            "_%02d%02d" % [@year, @month]
+          else
+            "_%02d%02d%02d" % [@year, @month, @day]
+          end
+        end
       end
 
       class DayShardRange
