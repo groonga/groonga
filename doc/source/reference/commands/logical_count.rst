@@ -11,10 +11,6 @@
 Summary
 -------
 
-.. note::
-
-   This command is an experimental feature.
-
 .. versionadded:: 5.0.0
 
 ``logical_count`` is a command to count matched records even though actual records are stored into parted tables. It is useful for users because there is less need to care about maximum records of table :doc:`/limitations`.

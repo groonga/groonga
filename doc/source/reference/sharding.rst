@@ -5,10 +5,6 @@
 Sharding
 ========
 
-.. note::
-
-   This command is an experimental feature.
-
 .. versionadded:: 5.0.0
 
 Groonga has :doc:`/limitations` against table size. You can't add

@@ -11,10 +11,6 @@
 Summary
 -------
 
-.. note::
-
-   This command is an experimental feature.
-
 .. versionadded:: 5.0.5
 
 ``logical_table_remove`` removes tables and their columns for the

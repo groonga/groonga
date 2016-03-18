@@ -11,10 +11,6 @@
 Summary
 -------
 
-.. note::
-
-   This command is an experimental feature.
-
 .. versionadded:: 5.0.0
 
 TODO: Write summary

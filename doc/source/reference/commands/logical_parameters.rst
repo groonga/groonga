@@ -11,10 +11,6 @@
 Summary
 -------
 
-.. note::
-
-   This command is an experimental feature.
-
 .. versionadded:: 5.0.6
 
 ``logical_parameters`` is a command for test. Normally, you don't need
