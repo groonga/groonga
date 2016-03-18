@@ -180,7 +180,7 @@ You need to remove ``Table.reference_column`` before you remove
 .. column_remove Table reference_column
 .. table_remove ReferencedByColumn
 
-.. _table-remove-remove-dependents
+.. _table-remove-remove-dependents:
 
 Removes a table with tables and columns that reference the target table
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
