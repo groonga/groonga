@@ -197,6 +197,7 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "init", 0);
 }
 
+#ifndef USE_MEMORY_DEBUG
 static void *
 grn_ctx_impl_mrb_allocf(mrb_state *mrb, void *ptr, size_t size, void *ud)
 {
@@ -215,6 +216,7 @@ grn_ctx_impl_mrb_allocf(mrb_state *mrb, void *ptr, size_t size, void *ud)
     }
   }
 }
+#endif /* USE_MEMORY_DEBUG */
 
 void
 grn_ctx_impl_mrb_init(grn_ctx *ctx)
@@ -230,7 +232,11 @@ grn_ctx_impl_mrb_init(grn_ctx *ctx)
     ctx->impl->mrb.groonga.operator_class = NULL;
   } else {
     mrb_state *mrb;
+#ifdef USE_MEMORY_DEBUG
+    mrb = mrb_open();
+#else /* USE_MEMORY_DEBUG */
     mrb = mrb_open_allocf(grn_ctx_impl_mrb_allocf, ctx);
+#endif /* USE_MEMORY_DEBUG */
     ctx->impl->mrb.state = mrb;
     ctx->impl->mrb.base_directory[0] = '\0';
     grn_ctx_impl_mrb_init_bindings(ctx);
