@@ -97,7 +97,8 @@ puts("%10s(%10s:%10s:%10s): %s(%s)" % [
        "Location",
        "N allocations",
      ])
-statistics.sort_by_size.reverse[0, 10].each do |group|
+top_allocated_groups = statistics.sort_by_size.reverse_each.take(10)
+top_allocated_groups.each do |group|
   puts("%10s(%10s:%10s:%10s): %s(%d)" % [
          format_size(group.total_size),
          format_size(group.average_size),
@@ -105,5 +106,22 @@ statistics.sort_by_size.reverse[0, 10].each do |group|
          format_size(group.min_size),
          group.location,
          group.memories.size,
+       ])
+end
+
+puts
+puts("Top allocated location's details")
+top_allocated_group = top_allocated_groups.first
+target_memories = top_allocated_group.memories
+size_width = Math.log10(target_memories.size).floor + 1
+target_memories.group_by(&:size).sort_by do |size, memories|
+  size * memories.size
+end.reverse_each do |size, memories|
+  total_size = memories.inject(0) {|sum, memory| sum + memory.size}
+  puts("%10s(%10s * %#{size_width}d): %s" % [
+         format_size(total_size),
+         format_size(size),
+         memories.size,
+         memories.first.location,
        ])
 end
