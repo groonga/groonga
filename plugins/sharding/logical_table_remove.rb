@@ -70,7 +70,12 @@ module Groonga
         if @dependent
           table.columns.each do |column|
             range = column.range
-            referenced_table_ids << range.id if range.is_a?(Table)
+            if range.is_a?(Table)
+              referenced_table_ids << range.id
+              range.indexes.each do |index_info|
+                referenced_table_ids << index_info.index.domain.id
+              end
+            end
             column.indexes.each do |index_info|
               referenced_table_ids << index_info.index.domain.id
             end
