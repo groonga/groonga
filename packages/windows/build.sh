@@ -34,10 +34,11 @@ run rsync -avz tmp/download/ /tmp/download/
 . tmp/env.sh
 
 for architecture in ${ARCHITECTURES}; do
-  run rake build                                \
-      TMP_DIR="/tmp"                            \
-      VERSION="${VERSION}"                      \
-      SOURCE="${SOURCE}"                        \
-      DEBUG_BUILD="${DEBUG_BUILD}"              \
+  run rake build                                        \
+      TMP_DIR="/tmp"                                    \
+      VERSION="${VERSION}"                              \
+      SOURCE="${SOURCE}"                                \
+      DEBUG_BUILD="${DEBUG_BUILD}"                      \
+      MEMORY_DEBUG_BUILD="${MEMORY_DEBUG_BUILD}"        \
       ARCHITECTURE="${architecture}"
 done
