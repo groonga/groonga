@@ -27,6 +27,14 @@ class LocationGroup
   def average_size
     total_size / @memories.size.to_f
   end
+
+  def max_size
+    @memories.collect(&:size).max
+  end
+
+  def min_size
+    @memories.collect(&:size).min
+  end
 end
 
 class Statistics
@@ -81,10 +89,20 @@ def format_size(size)
   end
 end
 
+puts("%10s(%10s:%10s:%10s): %s(%s)" % [
+       "Total",
+       "Average",
+       "Max",
+       "Min",
+       "Location",
+       "N allocations",
+     ])
 statistics.sort_by_size.reverse[0, 10].each do |group|
-  puts("%10s(%10s): %s(%d)" % [
+  puts("%10s(%10s:%10s:%10s): %s(%d)" % [
          format_size(group.total_size),
          format_size(group.average_size),
+         format_size(group.max_size),
+         format_size(group.min_size),
          group.location,
          group.memories.size,
        ])
