@@ -2126,22 +2126,19 @@ check_rlimit_nofile(grn_ctx *ctx)
 static void
 break_accept_event_loop(grn_ctx *ctx)
 {
-  grn_com_event ev;
-  if (!grn_com_event_init(ctx, &ev, 1, sizeof(grn_com))) {
-    grn_com *client;
-    const char *address;
-    if (strcmp(bind_address, "0.0.0.0") == 0) {
-      address = "127.0.0.1";
-    } else if (strcmp(bind_address, "::") == 0) {
-      address = "::1";
+  grn_com *client;
+  const char *address;
+
+  if (strcmp(bind_address, "0.0.0.0") == 0) {
+    address = "127.0.0.1";
+  } else if (strcmp(bind_address, "::") == 0) {
+    address = "::1";
     } else {
-      address = bind_address;
-    }
-    client = grn_com_copen(ctx, &ev, address, port);
-    if (client) {
-      grn_com_close(ctx, client);
-    }
-    grn_com_event_fin(ctx, &ev);
+    address = bind_address;
+  }
+  client = grn_com_copen(ctx, NULL, address, port);
+  if (client) {
+    grn_com_close(ctx, client);
   }
 }
 
