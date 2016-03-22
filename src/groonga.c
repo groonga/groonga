@@ -2181,11 +2181,11 @@ exit :
   n_running_threads--;
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)",
           n_floating_threads, n_running_threads);
-  MUTEX_UNLOCK(q_mutex);
   if (grn_gctx.stat == GRN_CTX_QUIT) {
     break_accept_event_loop(ctx);
   }
   grn_ctx_fin(ctx);
+  MUTEX_UNLOCK(q_mutex);
   return GRN_THREAD_FUNC_RETURN_VALUE;
 }
 
