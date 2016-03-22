@@ -2123,6 +2123,28 @@ check_rlimit_nofile(grn_ctx *ctx)
 #endif /* WIN32 */
 }
 
+static void
+break_accept_event_loop(grn_ctx *ctx)
+{
+  grn_com_event ev;
+  if (!grn_com_event_init(ctx, &ev, 1, sizeof(grn_com))) {
+    grn_com *client;
+    const char *address;
+    if (strcmp(bind_address, "0.0.0.0") == 0) {
+      address = "127.0.0.1";
+    } else if (strcmp(bind_address, "::") == 0) {
+      address = "::1";
+    } else {
+      address = bind_address;
+    }
+    client = grn_com_copen(ctx, &ev, address, port);
+    if (client) {
+      grn_com_close(ctx, client);
+    }
+    grn_com_event_fin(ctx, &ev);
+  }
+}
+
 static grn_thread_func_result CALLBACK
 h_worker(void *arg)
 {
@@ -2163,6 +2185,9 @@ exit :
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)",
           n_floating_threads, n_running_threads);
   MUTEX_UNLOCK(q_mutex);
+  if (grn_gctx.stat == GRN_CTX_QUIT) {
+    break_accept_event_loop(ctx);
+  }
   grn_ctx_fin(ctx);
   return GRN_THREAD_FUNC_RETURN_VALUE;
 }
