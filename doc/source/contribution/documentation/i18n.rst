@@ -66,7 +66,7 @@ Then you need to configure your cloned repository::
 
   % cd groonga
   % ./autogen.sh
-  % ./configure
+  % ./configure --enable-document
 
 The above steps are just needed at the first setup.
 
