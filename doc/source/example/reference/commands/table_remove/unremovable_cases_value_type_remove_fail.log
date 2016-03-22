@@ -6,7 +6,7 @@ Execution example::
   #     -2, 
   #     1337566253.89858, 
   #     0.000355720520019531, 
-  #     "[table][remove] a column that references the table exists: <GeneralUser.id> -> <ReferencedByColumn>", 
+  #     "[table][remove] a column that references the table exists: <GeneralUser.id> -> <UserId>", 
   #     [
   #       [
   #         "is_removable_table", 
