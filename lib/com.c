@@ -277,6 +277,10 @@ grn_com_event_init(grn_ctx *ctx, grn_com_event *ev, int max_nevents, int data_si
     MUTEX_INIT(ev->mutex);
     COND_INIT(ev->cond);
     GRN_COM_QUEUE_INIT(&ev->recv_old);
+    ev->msg_handler = NULL;
+    memset(&(ev->curr_edge_id), 0, sizeof(grn_com_addr));
+    ev->acceptor = NULL;
+    ev->opaque = NULL;
 #ifndef USE_SELECT
 # ifdef USE_EPOLL
     if ((ev->events = GRN_MALLOC(sizeof(struct epoll_event) * max_nevents))) {
