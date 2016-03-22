@@ -17,10 +17,10 @@ removed.
 
 .. versionadded:: 6.0.1
 
-   This command removes tables and columns recursively, with the
+   This command removes depending tables and columns, with the
    ``dependent`` parameter. If you specify ``--dependent yes``,
    then other tables and columns depending on the disappearing table
-   are also removed recursively.
+   are also removed automatically.
 
 Syntax
 ------
@@ -44,7 +44,7 @@ This section describes about the followings:
 
   * Basic usage
   * Unremovable cases
-  * Recursive removing of tables and columns
+  * Automatic removing of depending tables and columns
   * Decreases used resources
 
 .. _table-remove-basic-usage:
@@ -182,8 +182,8 @@ You need to remove ``GeneralUser.id`` before ``UserId``:
 
 .. _table-remove-remove-dependents:
 
-Recursive removing of tables and columns
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Automatic removing of depending tables and columns
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. versionadded:: 6.0.1
 
