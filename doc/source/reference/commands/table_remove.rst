@@ -129,7 +129,7 @@ any table satisfying one or more following conditions is unremovable:
 ``table_remove`` fails for such referenced tables, to avoid breaking
 of left tables with missing references.
 
-Here is an example for a table which is used as key type.
+Here is an example for a table which is used as a key type.
 
 The following commands create a table ``User`` going to be removed
 and another table ``AdminUser` depending on the first table via its key
@@ -153,7 +153,7 @@ You need to remove ``AdminUser`` before ``User``:
 .. table_remove AdminUser
 .. table_remove User
 
-Here is another example for a table which is used as value type.
+Here is another example for a table which is used as a value type.
 
 The following commands create a table ``User`` going to be removed
 and another table ``GeneralUser`` with a column depending on the first
