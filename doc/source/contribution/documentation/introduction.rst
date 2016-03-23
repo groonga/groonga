@@ -33,6 +33,14 @@ OS X::
   % export PATH=`brew --prefix gettext`/bin:$PATH
   % pip install sphinx
 
+If the version of Python on your platform is too old, you'll need to
+install a newer version of Python 2.7 by your hand. For example,
+installation steps based on `pyenv <https://github.com/yyuu/pyenv>`_  are::
+
+  % pyenv install 2.7.11
+  % pyenv global 2.7.11
+  % pip install sphinx
+
 Run ``configure`` with ``--enable-document``
 --------------------------------------------
 
