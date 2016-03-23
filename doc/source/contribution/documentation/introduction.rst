@@ -34,8 +34,9 @@ OS X::
   % pip install sphinx
 
 If the version of Python on your platform is too old, you'll need to
-install a newer version of Python 2.7 by your hand. For example,
-installation steps based on `pyenv <https://github.com/yyuu/pyenv>`_  are::
+install a newer version of Python 2.7 by your hand. For example, here
+are installation steps based on `pyenv
+<https://github.com/yyuu/pyenv>`_::
 
   % pyenv install 2.7.11
   % pyenv global 2.7.11
