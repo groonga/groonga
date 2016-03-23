@@ -27,13 +27,13 @@ After doc/source/\*.txt are updated, we can start translation.
 Here is a translation flow:
 
 1. Install Sphinx, if it is not installed.
-1. Clone groonga repository.
-2. Update .po files.
-3. Edit .po files.
-4. Generate HTML files.
-5. Confirm HTML output.
-6. Repeat 2.-4. until you get good result.
-7. Send your works to us!
+2. Clone groonga repository.
+3. Update .po files.
+4. Edit .po files.
+5. Generate HTML files.
+6. Confirm HTML output.
+7. Repeat 2.-4. until you get good result.
+8. Send your works to us!
 
 Here are command lines to do the above flow. Following
 sections describes details.
