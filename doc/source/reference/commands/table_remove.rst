@@ -121,7 +121,8 @@ Unremovable cases
 ^^^^^^^^^^^^^^^^^
 
 You cannot remove a table, if there is any dependency. In other words,
-any table satisfying one or more following conditions is unremovable:
+any table which satisfies one or more following conditions is
+unremovable:
 
   * One or more tables use the table as their key type.
   * One or more columns use the table as their value type.
