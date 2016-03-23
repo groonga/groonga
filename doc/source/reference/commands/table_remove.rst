@@ -132,52 +132,52 @@ of left tables with missing references.
 
 Here is an example for a table which is used as key type.
 
-The following commands create a table ``UserId`` going to be removed
+The following commands create a table ``User`` going to be removed
 and another table ``AdminUser` depending on the first table via its key
 type:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_key_type_create.log
-.. table_create UserId TABLE_HASH_KEY ShortText
-.. table_create AdminUser TABLE_HASH_KEY UserId
+.. table_create User TABLE_HASH_KEY ShortText
+.. table_create AdminUser TABLE_HASH_KEY User
 
-``table_remove`` against ``UserId`` fails:
+``table_remove`` against ``User`` fails:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_key_type_remove_fail.log
-.. table_remove UserId
+.. table_remove User
 
-You need to remove ``AdminUser`` before ``UserId``:
+You need to remove ``AdminUser`` before ``User``:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_key_type_remove_success.log
 .. table_remove AdminUser
-.. table_remove UserId
+.. table_remove User
 
 Here is another example for a table which is used as value type.
 
-The following commands create a table ``UserId`` going to be removed
+The following commands create a table ``User`` going to be removed
 and another table ``GeneralUser`` with a column depending on the first
 table via its value type:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_value_type_create.log
-.. table_create UserId TABLE_HASH_KEY ShortText
+.. table_create User TABLE_HASH_KEY ShortText
 .. table_create GeneralUser TABLE_NO_KEY
-.. column_create GeneralUser id COLUMN_SCALAR UserId
+.. column_create GeneralUser id COLUMN_SCALAR User
 
-``table_remove`` against ``UserId`` fails:
+``table_remove`` against ``User`` fails:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_value_type_remove_fail.log
-.. table_remove UserId
+.. table_remove User
 
-You need to remove ``GeneralUser.id`` before ``UserId``:
+You need to remove ``GeneralUser.id`` before ``User``:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_value_type_remove_success.log
 .. column_remove GeneralUser id
-.. table_remove UserId
+.. table_remove User
 
 .. _table-remove-remove-dependents:
 
@@ -190,30 +190,30 @@ If you understand what you'll do, you can remove a table and other
 tables depending on it together at a time, by the ``--dependent yes``
 parameter.
 
-``UserId`` in the following schema is referenced from a table
+``User`` in the following schema is referenced from a table
 and a column:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/remove_dependents_schema.log
-.. table_create UserId TABLE_HASH_KEY ShortText
-.. table_create AdminUser TABLE_HASH_KEY UserId
+.. table_create User TABLE_HASH_KEY ShortText
+.. table_create AdminUser TABLE_HASH_KEY User
 .. table_create GeneralUser TABLE_NO_KEY
-.. column_create GeneralUser id COLUMN_SCALAR UserId
+.. column_create GeneralUser id COLUMN_SCALAR User
 
-You can't remove ``UserId`` by default:
+You can't remove ``User`` by default:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/remove_dependents_default.log
-.. table_remove UserId
+.. table_remove User
 
 Additional parameter ``--dependent yes`` for the command line allows
-you to remove the ``UserId`` table, then both ``AdminUser`` and
-``GeneralUser.id`` depending on the ``UserId`` are also removed at a
+you to remove the ``User`` table, then both ``AdminUser`` and
+``GeneralUser.id`` depending on the ``User`` are also removed at a
 time:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/remove_dependents_yes.log
-.. table_remove UserId --dependent yes
+.. table_remove User --dependent yes
 
 After all, only the independent ``GeneralUser`` table is left.
 
