@@ -2,8 +2,6 @@
 
 .. highlightlang:: none
 
-.. _contribution-documentation-introduction:
-
 Introduction
 ============
 

@@ -57,7 +57,7 @@ sections describes details.
 How to install Sphinx
 ---------------------
 
-See the :ref:`contribution-documentation-introduction`.
+See the :doc:`introduction`.
 
 How to clone groonga repository
 -------------------------------
