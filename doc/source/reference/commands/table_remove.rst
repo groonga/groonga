@@ -43,7 +43,7 @@ This section describes about the followings:
 
   * Basic usage
   * Unremovable cases
-  * Automatic removing of depending tables and columns
+  * Removing a table and its dependencies at a time
   * Decreases used resources
 
 .. _table-remove-basic-usage:
@@ -180,17 +180,16 @@ You need to remove ``GeneralUser.id`` before ``User``:
 
 .. _table-remove-remove-dependents:
 
-Automatic removing of depending tables and columns
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Removing a table and its dependencies at a time
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. versionadded:: 6.0.1
 
-If you understand what you'll do, you can remove a table and other
-tables depending on it together at a time, by the ``--dependent yes``
-parameter.
+If you understand what you'll do, you can remove a table and its all
+dependencies together at a time, by the ``--dependent yes`` parameter.
 
-``User`` in the following schema is referenced from a table
-and a column:
+``User`` in the following schema is referenced from other tables as a
+key type and as a value type:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/remove_dependents_schema.log
@@ -199,7 +198,7 @@ and a column:
 .. table_create GeneralUser TABLE_NO_KEY
 .. column_create GeneralUser id COLUMN_SCALAR User
 
-You can't remove ``User`` by default:
+You can't remove ``User`` by default, because it has dependencies:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/remove_dependents_default.log
@@ -207,8 +206,7 @@ You can't remove ``User`` by default:
 
 Additional parameter ``--dependent yes`` for the command line allows
 you to remove the ``User`` table, then both ``AdminUser`` and
-``GeneralUser.id`` depending on the ``User`` are also removed at a
-time:
+``GeneralUser.id`` referencing the ``User`` are also removed at a time:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/remove_dependents_yes.log
