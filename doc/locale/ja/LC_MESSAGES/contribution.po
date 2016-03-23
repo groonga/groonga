@@ -1877,6 +1877,9 @@ msgstr "doc/source/\\*.txtを更新したら、翻訳を始めます。"
 msgid "Here is a translation flow:"
 msgstr "これが翻訳の流れです:"
 
+msgid "Install Sphinx, if it is not installed."
+msgstr "Sphinxをインストールします。（インストールされていない場合）"
+
 msgid "Clone groonga repository."
 msgstr "Groongaのリポジトリをcloneします。"
 
@@ -1903,6 +1906,12 @@ msgid ""
 "details."
 msgstr ""
 "上記の流れを実行するコマンドラインです。詳細は以降のセクションで説明します。"
+
+msgid "How to install Sphinx"
+msgstr "Sphinxのインストール方法"
+
+msgid "See the :ref:`contribution-documentation-introduction`."
+msgstr ":ref:`contribution-documentation-introduction` を参照してください。"
 
 msgid "How to clone groonga repository"
 msgstr "Groongaリポジトリのcloneの仕方"
@@ -2104,6 +2113,13 @@ msgstr ""
 
 msgid "OS X::"
 msgstr ""
+
+msgid ""
+"If the version of Python on your platform is too old, you'll need to install "
+"a newer version of Python 2.7 by your hand. For example, installation steps "
+"based on `pyenv <https://github.com/yyuu/pyenv>`_  are::"
+msgstr ""
+"プラットフォームに存在するPythonのバージョンが古すぎる場合は、Python 2.7のより新しいバージョンを手動でインストールする必要があります。例えば、 `pyenv <https://github.com/yyuu/pyenv>`_ を使ったインストール手順は以下の通りです::"
 
 msgid "Run ``configure`` with ``--enable-document``"
 msgstr ""
