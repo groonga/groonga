@@ -35,10 +35,9 @@ This command takes two parameters::
 Usage
 -----
 
-You just specify table name that you want to remove. ``table_remove``
-removes the specified table and its columns. If the table and its
-columns are indexed, all index columns for the table and its columns
-are also removed.
+This command requires a name of a table you want to remove. The
+specified table and its all columns will be removed. All index columns
+for the table and its columns are also removed, if they are indexed.
 
 This section describes about the followings:
 
