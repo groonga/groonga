@@ -27,7 +27,7 @@ After doc/source/\*.txt are updated, we can start translation.
 Here is a translation flow:
 
 1. Install Sphinx, if it is not installed.
-2. Clone groonga repository.
+2. Clone Groonga repository.
 3. Update .po files.
 4. Edit .po files.
 5. Generate HTML files.
@@ -57,14 +57,14 @@ sections describes details.
 How to install Sphinx
 ---------------------
 
-See the :ref:`contribution-documentation-introduction`.
+See the :doc:`introduction`.
 
-How to clone groonga repository
+How to clone Groonga repository
 -------------------------------
 
-First, please fork groonga repository on GitHub. You
+First, please fork Groonga repository on GitHub. You
 just access https://github.com/groonga/groonga and press
-`Fork` button. Now you can clone your groonga repository::
+`Fork` button. Now you can clone your Groonga repository::
 
   % git clone https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga.git
 
@@ -182,7 +182,7 @@ How to send .po files
 Please archive doc/locale/${LANGUAGE}/LC_MESSAGES/ (Please
 substitute `${LANGUAGE}` with your language code such as
 'ja'.) and send it to us! We extract and merge them to the
-groonga repository.
+Groonga repository.
 
 .. seealso:: :doc:`/community` describes our contact information.
 

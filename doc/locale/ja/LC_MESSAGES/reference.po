@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-03-18 19:20+0900\n"
+"PO-Revision-Date: 2016-03-23 13:56+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -7522,8 +7522,8 @@ msgid "Specifies column name which is treated as shared key."
 msgstr "シャードキーとして使うカラム名を指定します。"
 
 # 6fabf6b56acb42afaf75505e2836d4c6
-msgid "See also :ref:`logical-select-logical-shard-key`."
-msgstr ":ref:`logical-select-logical-shard-key` も参照してください。"
+msgid "See also :ref:`logical-select-shard-key`."
+msgstr ":ref:`logical-select-shard-key` も参照してください。"
 
 # e72f9592d753446bb1e45421a97439ca
 msgid "Specifies the minimum value of ``shard_key`` column."

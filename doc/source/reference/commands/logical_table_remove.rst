@@ -370,7 +370,7 @@ See also :ref:`logical-select-logical-table`.
 
 Specifies column name which is treated as shared key.
 
-See also :ref:`logical-select-logical-shard-key`.
+See also :ref:`logical-select-shard-key`.
 
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^
