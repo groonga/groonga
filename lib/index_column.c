@@ -23,20 +23,35 @@
 #include <string.h>
 
 static uint64_t grn_index_sparsity = 10;
+static grn_bool grn_index_chunk_split_enable = GRN_FALSE;
 
 void
 grn_index_column_init_from_env(void)
 {
-  char grn_index_sparsity_env[GRN_ENV_BUFFER_SIZE];
-  grn_getenv("GRN_INDEX_SPARSITY",
-             grn_index_sparsity_env,
-             GRN_ENV_BUFFER_SIZE);
-  if (grn_index_sparsity_env[0]) {
-    uint64_t sparsity;
-    errno = 0;
-    sparsity = strtoull(grn_index_sparsity_env, NULL, 0);
-    if (errno == 0) {
-      grn_index_sparsity = sparsity;
+  {
+    char grn_index_sparsity_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_INDEX_SPARSITY",
+               grn_index_sparsity_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_index_sparsity_env[0]) {
+      uint64_t sparsity;
+      errno = 0;
+      sparsity = strtoull(grn_index_sparsity_env, NULL, 0);
+      if (errno == 0) {
+        grn_index_sparsity = sparsity;
+      }
+    }
+  }
+
+  {
+    char grn_index_chunk_split_enable_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_INDEX_CHUNK_SPLIT_ENABLE",
+               grn_index_chunk_split_enable_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_index_chunk_split_enable_env[0]) {
+      grn_index_chunk_split_enable = GRN_TRUE;
+    } else {
+      grn_index_chunk_split_enable = GRN_FALSE;
     }
   }
 }
@@ -118,7 +133,11 @@ grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
           }
         }
         if (use_grn_ii_build) {
-          grn_ii_build(ctx, ii, grn_index_sparsity);
+          if (grn_index_chunk_split_enable) {
+            grn_ii_build2(ctx, ii, NULL);
+          } else {
+            grn_ii_build(ctx, ii, grn_index_sparsity);
+          }
         } else {
           grn_table_cursor  *tc;
           if ((tc = grn_table_cursor_open(ctx, target, NULL, 0, NULL, 0,

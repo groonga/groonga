@@ -171,6 +171,11 @@ void grn_ii_cursor_inspect(grn_ctx *ctx, grn_ii_cursor *c, grn_obj *buf);
 grn_rc grn_ii_truncate(grn_ctx *ctx, grn_ii *ii);
 grn_rc grn_ii_build(grn_ctx *ctx, grn_ii *ii, uint64_t sparsity);
 
+typedef struct grn_ii_builder_options grn_ii_builder_options;
+
+grn_rc grn_ii_build2(grn_ctx *ctx, grn_ii *ii,
+                     const grn_ii_builder_options *options);
+
 #ifdef __cplusplus
 }
 #endif
