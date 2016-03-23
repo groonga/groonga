@@ -3440,7 +3440,7 @@ grn_hash_check(grn_ctx *ctx, grn_hash *hash)
   GRN_OUTPUT_CSTR("curr_rec");
   GRN_OUTPUT_INT64(h->curr_rec);
   GRN_OUTPUT_CSTR("curr_key_normal");
-  GRN_OUTPUT_INT64(h->curr_key_normal);
+  GRN_OUTPUT_UINT64(h->curr_key_normal);
   GRN_OUTPUT_CSTR("curr_key_large");
   GRN_OUTPUT_UINT64(h->curr_key_large);
   GRN_OUTPUT_CSTR("idx_offset");
