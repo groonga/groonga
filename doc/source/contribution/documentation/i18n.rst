@@ -43,7 +43,7 @@ sections describes details.
   # Please fork https://github.com/groonga/groonga on GitHub
   % git clone https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga.git
   % ./autogen.sh
-  % ./configure
+  % ./configure --enable-document
   % cd doc/locale/${LANGUAGE}/LC_MESSAGES # ${LANGUAGE} is language code such as 'ja'.
   % make update # *.po are updated
   % editor *.po # translate *.po # you can use your favorite editor
