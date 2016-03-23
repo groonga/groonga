@@ -54,6 +54,11 @@ sections describes details.
   % git commit
   % git push
 
+How to install Sphinx
+---------------------
+
+See the :ref:`contribution-documentation-introduction`.
+
 How to clone groonga repository
 -------------------------------
 
