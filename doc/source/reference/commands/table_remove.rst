@@ -132,9 +132,8 @@ of left tables with missing references.
 
 Here is an example for a table which is used as a key type.
 
-The following commands create a table ``User`` going to be removed
-and another table ``AdminUser` depending on the first table via its key
-type:
+The following commands create a table named as ``User`` and another
+table named as ``AdminUser` referencing the ``User`` as its key type:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_key_type_create.log
@@ -156,9 +155,9 @@ You need to remove ``AdminUser`` before ``User``:
 
 Here is another example for a table which is used as a value type.
 
-The following commands create a table ``User`` going to be removed
-and another table ``GeneralUser`` with a column depending on the first
-table via its value type:
+The following commands create a table named as ``User`` and another
+table named as ``GeneralUser` with a column referencing the ``User``
+as its value type:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_value_type_create.log
