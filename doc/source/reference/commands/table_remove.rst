@@ -17,10 +17,10 @@ removed.
 
 .. versionadded:: 6.0.1
 
-   This command removes depending tables and columns, with the
-   ``dependent`` parameter. If you specify ``--dependent yes``,
-   then other tables and columns depending on the disappearing table
-   are also removed automatically.
+   This removes the specified table and its all dependencies, if you
+   specify the ``--dependent yes`` parameter. Then all other tables
+   and columns referencing the disappearing table itself are also
+   removed together at a time.
 
 Syntax
 ------
@@ -121,15 +121,14 @@ Here is schema after ``table_remove``. Only ``EntryKeys`` and
 Unremovable cases
 ^^^^^^^^^^^^^^^^^
 
-You cannot remove a table, if there is any other table or column
-depending on it. In other words, any table satisfying one or more
-following conditions is unremovable.
+You cannot remove a table, if there is any dependency. In other words,
+any table satisfying one or more following conditions is unremovable:
 
   * One or more tables use the table as their key type.
   * One or more columns use the table as their value type.
 
-To avoid breaking of left tables with missing references,
-``table_remove`` fails for such a depended (referenced) table.
+``table_remove`` fails for such referenced tables, to avoid breaking
+of left tables with missing references.
 
 Here is an example for a table which is used as key type.
 
