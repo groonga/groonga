@@ -8860,9 +8860,6 @@ grn_ii_build(grn_ctx *ctx, grn_ii *ii, uint64_t sparsity)
 
 #define GRN_II_BUILDER_MAX_LEXICON_CACHE_SIZE (1 << 24)
 
-#define GRN_II_BUILDER_MIN_BASE_TERMS_SIZE    1
-#define GRN_II_BUILDER_MAX_BASE_TERMS_SIZE    (1 << 20)
-
 #define GRN_II_BUILDER_MIN_BLOCK_THRESHOLD    1
 #define GRN_II_BUILDER_MAX_BLOCK_THRESHOLD    (1 << 28)
 
@@ -8881,7 +8878,6 @@ grn_ii_build(grn_ctx *ctx, grn_ii *ii, uint64_t sparsity)
 
 struct grn_ii_builder_options {
   uint32_t lexicon_cache_size; /* Cache size of temporary lexicon */
-  uint32_t base_terms_size;    /* Base size of buffer for terms */
   /* A block is flushed if builder->n reaches this value. */
   uint32_t block_threshold;
   uint32_t file_buf_size;      /* Buffer size for buffered output */
@@ -8893,7 +8889,6 @@ struct grn_ii_builder_options {
 
 static const grn_ii_builder_options grn_ii_builder_default_options = {
   0x80000,   /* lexicon_cache_size */
-  0x100,     /* base_terms_size */
   0x4000000, /* block_threshold */
   0x10000,   /* file_buf_size */
   0x10000,   /* block_buf_size */
@@ -8914,13 +8909,6 @@ grn_ii_builder_options_fix(grn_ii_builder_options *options)
 {
   if (options->lexicon_cache_size > GRN_II_BUILDER_MAX_LEXICON_CACHE_SIZE) {
     options->lexicon_cache_size = GRN_II_BUILDER_MAX_LEXICON_CACHE_SIZE;
-  }
-
-  if (options->base_terms_size < GRN_II_BUILDER_MIN_BASE_TERMS_SIZE) {
-    options->base_terms_size = GRN_II_BUILDER_MIN_BASE_TERMS_SIZE;
-  }
-  if (options->base_terms_size > GRN_II_BUILDER_MAX_BASE_TERMS_SIZE) {
-    options->base_terms_size = GRN_II_BUILDER_MAX_BASE_TERMS_SIZE;
   }
 
   if (options->block_threshold < GRN_II_BUILDER_MIN_BLOCK_THRESHOLD) {
@@ -9886,7 +9874,7 @@ grn_ii_builder_extend_terms(grn_ctx *ctx, grn_ii_builder *builder,
     if (n_terms > builder->terms_size) {
       /* Resize builder->terms for new terms. */
       size_t n_bytes;
-      uint32_t terms_size = builder->options.base_terms_size;
+      uint32_t terms_size = builder->terms_size ? builder->terms_size * 2 : 1;
       grn_ii_builder_term *terms;
       while (terms_size < n_terms) {
         terms_size *= 2;
