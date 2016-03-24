@@ -484,6 +484,15 @@ command_table_remove(grn_ctx *ctx,
   table = grn_ctx_get(ctx,
                       GRN_TEXT_VALUE(name),
                       GRN_TEXT_LEN(name));
+  if (!table) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "[table][remove] table isn't found: <%.*s>",
+                     (int)GRN_TEXT_LEN(name),
+                     GRN_TEXT_VALUE(name));
+    grn_ctx_output_bool(ctx, GRN_FALSE);
+    return NULL;
+  }
 
   if (!grn_obj_is_table(ctx, table)) {
     const char *type_name;
@@ -499,18 +508,10 @@ command_table_remove(grn_ctx *ctx,
     return NULL;
   }
 
-  if (table) {
-    if (dependent) {
-      grn_obj_remove_dependent(ctx, table);
-    } else {
-      grn_obj_remove(ctx, table);
-    }
+  if (dependent) {
+    grn_obj_remove_dependent(ctx, table);
   } else {
-    GRN_PLUGIN_ERROR(ctx,
-                     GRN_INVALID_ARGUMENT,
-                     "[table][remove] table isn't found: <%.*s>",
-                     (int)GRN_TEXT_LEN(name),
-                     GRN_TEXT_VALUE(name));
+    grn_obj_remove(ctx, table);
   }
   grn_ctx_output_bool(ctx, !ctx->rc);
   return NULL;
