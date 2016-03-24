@@ -192,7 +192,7 @@ grn_obj_is_text_family_type(grn_ctx *ctx, grn_obj *obj)
     return GRN_FALSE;
   }
 
-  return GRN_TYPE_IS_TEXT_FAMILY(obj->header.type);
+  return GRN_TYPE_IS_TEXT_FAMILY(grn_obj_id(ctx, obj));
 }
 
 grn_bool
