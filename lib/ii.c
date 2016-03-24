@@ -9754,12 +9754,6 @@ grn_ii_builder_fin(grn_ctx *ctx, grn_ii_builder *builder)
   if (builder->srcs) {
     GRN_FREE(builder->srcs);
   }
-{
-  grn_obj_flags flags;
-  grn_table_get_info(ctx, builder->ii->lexicon, &flags, NULL,
-                     NULL, NULL, NULL);
-  grn_pat_cache_disable(ctx, (grn_pat *)builder->ii->lexicon);
-}
   return GRN_SUCCESS;
 }
 
@@ -9841,11 +9835,6 @@ grn_ii_builder_create_lexicon(grn_ctx *ctx, grn_ii_builder *builder)
   if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_PAT_KEY) {
     if (builder->options.lexicon_cache_size) {
       rc = grn_pat_cache_enable(ctx, (grn_pat *)builder->lexicon,
-                                builder->options.lexicon_cache_size);
-      if (rc != GRN_SUCCESS) {
-        return rc;
-      }
-      rc = grn_pat_cache_enable(ctx, (grn_pat *)builder->ii->lexicon,
                                 builder->options.lexicon_cache_size);
       if (rc != GRN_SUCCESS) {
         return rc;
