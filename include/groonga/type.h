@@ -22,6 +22,9 @@
 extern "C" {
 #endif
 
+#define GRN_TYPE_IS_TEXT_FAMILY(type)                           \
+  (GRN_DB_SHORT_TEXT <= (type) && (type) <= GRN_DB_LONG_TEXT)
+
 GRN_API grn_obj *grn_type_create(grn_ctx *ctx, const char *name, unsigned int name_size,
                                  grn_obj_flags flags, unsigned int size);
 GRN_API uint32_t grn_type_size(grn_ctx *ctx, grn_obj *type);

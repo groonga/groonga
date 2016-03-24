@@ -1,0 +1,14 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries numbers COLUMN_VECTOR Int32
+
+load --table Entries
+[
+["numbers"],
+[[18, 19, 20]],
+[[100, 200]]
+]
+
+table_create Numbers TABLE_PAT_KEY Int32
+column_create Numbers entries_numbers COLUMN_INDEX|WITH_POSITION Entries numbers
+
+select Entries --filter 'numbers[1] > 19'
