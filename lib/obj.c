@@ -186,6 +186,16 @@ grn_obj_is_type(grn_ctx *ctx, grn_obj *obj)
 }
 
 grn_bool
+grn_obj_is_text_family_type(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_obj_is_type(ctx, obj)) {
+    return GRN_FALSE;
+  }
+
+  return GRN_TYPE_IS_TEXT_FAMILY(obj->header.type);
+}
+
+grn_bool
 grn_obj_is_proc(grn_ctx *ctx, grn_obj *obj)
 {
   if (!obj) {

@@ -39,6 +39,8 @@ void data_is_key_accessor(void);
 void test_is_key_accessor(gconstpointer data);
 void data_is_type(void);
 void test_is_type(gconstpointer data);
+void data_is_text_family_type(void);
+void test_is_text_family_type(gconstpointer data);
 void data_is_proc(void);
 void test_is_proc(gconstpointer data);
 void data_is_tokenizer_proc(void);
@@ -359,6 +361,41 @@ test_is_type(gconstpointer data)
     cut_assert_true(grn_obj_is_type(context, object));
   } else {
     cut_assert_false(grn_obj_is_type(context, object));
+  }
+}
+
+void
+data_is_text_family_type(void)
+{
+#define ADD_DATUM(expected, name)                                       \
+  gcut_add_datum((expected ?                                            \
+                  "type - " name :                                      \
+                  "not type - " name),                                  \
+                 "expected", G_TYPE_BOOLEAN, expected,                  \
+                 "name", G_TYPE_STRING, name,                           \
+                 NULL)
+
+  ADD_DATUM(FALSE, "Time");
+  ADD_DATUM(TRUE, "ShortText");
+  ADD_DATUM(TRUE, "Text");
+  ADD_DATUM(TRUE, "LongText");
+  ADD_DATUM(FALSE, "TokyoGeoPoint");
+
+#undef ADD_DATUM
+}
+
+void
+test_is_text_family_type(gconstpointer data)
+{
+  const gchar *name;
+  grn_obj *object;
+
+  name = gcut_data_get_string(data, "name");
+  object = grn_ctx_get(context, name, strlen(name));
+  if (gcut_data_get_string(data, "expected")) {
+    cut_assert_true(grn_obj_is_text_family_type(context, object));
+  } else {
+    cut_assert_false(grn_obj_is_text_family_type(context, object));
   }
 }
 
