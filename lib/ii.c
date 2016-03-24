@@ -8953,10 +8953,8 @@ grn_ii_builder_options_fix(grn_ii_builder_options *options)
 typedef struct {
   grn_id   rid;    /* Last record ID */
   uint32_t sid;    /* Last section ID */
-  union {
-    uint32_t pos;  /* Last position (GRN_OBJ_WITH_POSITION) */
-    uint32_t freq; /* Frequency */
-  };
+  /* Last position (GRN_OBJ_WITH_POSITION) or frequency. */
+  uint32_t pos_or_freq;
   uint32_t offset; /* Buffer write offset */
   uint32_t size;   /* Buffer size */
   uint32_t dummy;  /* Padding */
@@ -8990,7 +8988,7 @@ grn_ii_builder_term_init(grn_ctx *ctx, grn_ii_builder_term *term)
 {
   term->rid = GRN_ID_NIL;
   term->sid = 0;
-  term->pos = 0;
+  term->pos_or_freq = 0;
   term->offset = 0;
   term->size = GRN_II_BUILDER_TERM_INPLACE_SIZE;
 }
@@ -9947,7 +9945,7 @@ grn_ii_builder_flush_term(grn_ctx *ctx, grn_ii_builder *builder,
     if (builder->ii->header->flags & GRN_OBJ_WITH_POSITION) {
       rc = grn_ii_builder_term_append(ctx, term, 0);
     } else {
-      rc = grn_ii_builder_term_append(ctx, term, term->freq);
+      rc = grn_ii_builder_term_append(ctx, term, term->pos_or_freq);
     }
     if (rc != GRN_SUCCESS) {
       return rc;
@@ -10196,7 +10194,7 @@ grn_ii_builder_append_token(grn_ctx *ctx, grn_ii_builder *builder,
         builder->n++;
       } else {
         /* Append a frequency if positions are not available. */
-        rc = grn_ii_builder_term_append(ctx, term, term->freq);
+        rc = grn_ii_builder_term_append(ctx, term, term->pos_or_freq);
         if (rc != GRN_SUCCESS) {
           return rc;
         }
@@ -10218,17 +10216,17 @@ grn_ii_builder_append_token(grn_ctx *ctx, grn_ii_builder *builder,
     }
     term->rid = rid;
     term->sid = sid;
-    term->pos = 0;
+    term->pos_or_freq = 0;
   }
   if (ii_flags & GRN_OBJ_WITH_POSITION) {
-    rc = grn_ii_builder_term_append(ctx, term, pos - term->pos);
+    rc = grn_ii_builder_term_append(ctx, term, pos - term->pos_or_freq);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
     builder->n++;
-    term->pos = pos;
+    term->pos_or_freq = pos;
   } else {
-    term->freq++;
+    term->pos_or_freq++;
   }
   return GRN_SUCCESS;
 }
