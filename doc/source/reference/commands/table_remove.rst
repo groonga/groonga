@@ -17,8 +17,10 @@ removed.
 
 .. versionadded:: 6.0.1
 
-   You can also remove tables and columns that reference the target
-   table by using ``dependent`` parameter.
+   This removes the specified table and its all dependencies, if you
+   specify the ``--dependent yes`` parameter. Then all other tables
+   and columns referencing the disappearing table itself are also
+   removed together.
 
 Syntax
 ------
@@ -33,16 +35,15 @@ This command takes two parameters::
 Usage
 -----
 
-You just specify table name that you want to remove. ``table_remove``
-removes the table and its columns. If the table and its columns are
-indexed, all index columns for the table and its columns are also
-removed.
+This command requires a name of a table you want to remove. The
+specified table and its all columns will be removed. All index columns
+for the table and its columns are also removed, if they are indexed.
 
 This section describes about the followings:
 
   * Basic usage
   * Unremovable cases
-  * Removes a table with tables and columns that reference the target table
+  * Removing a table and its dependencies together
   * Decreases used resources
 
 .. _table-remove-basic-usage:
@@ -87,8 +88,8 @@ Let's confirm the current schema before running ``table_remove``:
 .. include:: ../../example/reference/commands/table_remove/basic_usage_dump_before_table_remove.log
 .. dump
 
-If you remove ``Entries`` table, the following tables and columns are
-removed:
+If you remove the ``Entries`` table, the following tables and columns
+are removed:
 
   * ``Entries``
   * ``Entries.title``
@@ -96,7 +97,7 @@ removed:
   * ``EntryKeys.key_index``
   * ``Terms.content_index``
 
-The following tables (lexicons) aren't removed:
+The following tables (lexicons) are left:
 
   * ``EntryKeys``
   * ``Terms``
@@ -119,102 +120,99 @@ Here is schema after ``table_remove``. Only ``EntryKeys`` and
 Unremovable cases
 ^^^^^^^^^^^^^^^^^
 
-There are some unremovable cases:
+You cannot remove a table, if there is any dependency. In other words,
+any table which satisfies one or more following conditions is
+unremovable:
 
-  * One or more tables use the table as key type.
-  * One or more columns use the table as value type.
+  * One or more tables use the table as their key type.
+  * One or more columns use the table as their value type.
 
-Both cases blocks dangling references. If the table is referenced as
-type and the table is removed, tables and columns that refer the table
-are broken.
+``table_remove`` fails for such referenced tables, to avoid breaking
+of left tables with missing references.
 
-If the target table satisfies one of them, ``table_remove`` is
-failed. The target table and its columns aren't removed.
+Here is an example for a table which is used as a key type.
 
-Here is an example for the table is used as key type case.
-
-The following commands create a table to be removed and a table that
-uses the table to be removed as key type:
+The following commands create a table named as ``User`` and another
+table named as ``AdminUser` referencing the ``User`` as its key type:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_key_type_create.log
-.. table_create ReferencedByTable TABLE_HASH_KEY ShortText
-.. table_create ReferenceTable TABLE_HASH_KEY ReferencedByTable
+.. table_create User TABLE_HASH_KEY ShortText
+.. table_create AdminUser TABLE_HASH_KEY User
 
-``table_remove`` against ``ReferencedByTable`` is failed:
+``table_remove`` against ``User`` fails:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_key_type_remove_fail.log
-.. table_remove ReferencedByTable
+.. table_remove User
 
-You need to remove ``ReferenceTable`` before you remove
-``ReferencedByTable``:
+You need to remove ``AdminUser`` before ``User``:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_key_type_remove_success.log
-.. table_remove ReferenceTable
-.. table_remove ReferencedByTable
+.. table_remove AdminUser
+.. table_remove User
 
-Here is an example for the table is used as value type case.
+Here is another example for a table which is used as a value type.
 
-The following commands create a table to be removed and a column that
-uses the table to be removed as value type:
+The following commands create a table named as ``User`` and another
+table named as ``GeneralUser` with a column referencing the ``User``
+as its value type:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_value_type_create.log
-.. table_create ReferencedByColumn TABLE_HASH_KEY ShortText
-.. table_create Table TABLE_NO_KEY
-.. column_create Table reference_column COLUMN_SCALAR ReferencedByColumn
+.. table_create User TABLE_HASH_KEY ShortText
+.. table_create GeneralUser TABLE_NO_KEY
+.. column_create GeneralUser id COLUMN_SCALAR User
 
-``table_remove`` against ``ReferencedByColumn`` is failed:
+``table_remove`` against ``User`` fails:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_value_type_remove_fail.log
-.. table_remove ReferencedByColumn
+.. table_remove User
 
-You need to remove ``Table.reference_column`` before you remove
-``ReferencedByColumn``:
+You need to remove ``GeneralUser.id`` before ``User``:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_value_type_remove_success.log
-.. column_remove Table reference_column
-.. table_remove ReferencedByColumn
+.. column_remove GeneralUser id
+.. table_remove User
 
 .. _table-remove-remove-dependents:
 
-Removes a table with tables and columns that reference the target table
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Removing a table and its dependencies together
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. versionadded:: 6.0.1
 
-If you understand what you'll do, you can also remove tables and
-columns that reference the target table with one ``table_remove``
-command by using ``--dependent yes`` parameter.
+If you understand what you'll do, you can remove a table and its all
+dependencies together, by the ``--dependent yes`` parameter.
 
-``ReferencedTable`` in the following schema is referenced from a table
-and a column:
+``User`` in the following schema is referenced from other tables as a
+key type and as a value type:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/remove_dependents_schema.log
-.. table_create ReferencedTable TABLE_HASH_KEY ShortText
-.. table_create Table1 TABLE_HASH_KEY ReferencedTable
-.. table_create Table2 TABLE_NO_KEY
-.. column_create Table2 reference_column COLUMN_SCALAR ReferencedTable
+.. table_create User TABLE_HASH_KEY ShortText
+.. table_create AdminUser TABLE_HASH_KEY User
+.. table_create GeneralUser TABLE_NO_KEY
+.. column_create GeneralUser id COLUMN_SCALAR User
 
-You can't remove ``ReferencedTable`` by default:
+You can't remove ``User`` by default, because it has dependencies:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/remove_dependents_default.log
-.. table_remove ReferencedTable
+.. table_remove User
 
-You can remove ``ReferencedTable``, ``Table1`` and
-``Table2.reference_column`` by using ``--dependent yes``
-parameter. ``Table1`` and ``Table2.reference_column`` reference
-``ReferencedTable``:
+Additional parameter ``--dependent yes`` for the command line allows
+you to remove the ``User`` table, then both ``AdminUser`` and
+``GeneralUser.id`` referencing the ``User`` are also removed together:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/remove_dependents_yes.log
-.. table_remove ReferencedTable --dependent yes
+.. table_remove User --dependent yes
+
+After all, only the independent ``GeneralUser`` table is left.
 
 .. _table-remove-decreases-used-resources:
 
