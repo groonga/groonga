@@ -197,7 +197,7 @@ Here are available characters:
 * ``_`` (underscore) (NOTE: Underscore can't be used as the first
   character.)
 
-You need to create a name with one or more the above chracters. Note
+You need to create a name with one or more the above characters. Note
 that you cannot use ``_`` as the first character such as
 ``_name``.
 

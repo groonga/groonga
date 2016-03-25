@@ -94,7 +94,7 @@ For example, half-width katakana (such as U+FF76 HALFWIDTH KATAKANA
 LETTER KA) + half-width katakana voiced sound mark (U+FF9E HALFWIDTH
 KATAKANA VOICED SOUND MARK) is normalized to full-width katakana with
 voiced sound mark (U+30AC KATAKANA LETTER GA). The former is two
-chracters but the latter is one character.
+characters but the latter is one character.
 
 Here is an example that uses ``NormalizerAuto`` normalizer:
 
