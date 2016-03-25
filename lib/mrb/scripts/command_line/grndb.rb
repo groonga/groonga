@@ -208,6 +208,8 @@ module Groonga
         end
 
         def check_object_recursive(target)
+          return if @checked.key?(target.id)
+
           check_object(target)
           case target
           when Table

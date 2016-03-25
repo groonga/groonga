@@ -260,5 +260,30 @@ Database is locked. It may be broken. Re-create the database.
 [Names] Table is locked. It may be broken. (1) Truncate the table (truncate Names) or clear lock of the table (lock_clear Names) and (2) load data again.
       MESSAGE
     end
+
+    def test_cycle_reference
+      groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+
+      groonga("table_create", "Logs", "TABLE_PAT_KEY", "ShortText")
+      groonga("column_create", "Logs", "user", "COLUMN_SCALAR", "Users")
+
+      groonga("column_create", "Users", "logs_user", "COLUMN_INDEX",
+              "Logs", "user")
+
+      groonga("lock_acquire", "Logs")
+      groonga("lock_acquire", "Logs.user")
+      groonga("lock_acquire", "Users")
+      groonga("lock_acquire", "Users.logs_user")
+
+      error = assert_raise(CommandRunner::Error) do
+        grndb("check", "--target", "Users")
+      end
+      assert_equal(<<-MESSAGE, error.error_output)
+[Users] Table is locked. It may be broken. (1) Truncate the table (truncate Users) or clear lock of the table (lock_clear Users) and (2) load data again.
+[Users.logs_user] Index column is locked. It may be broken. Re-create index by '#{grndb_path} recover #{@database_path}'.
+[Logs] Table is locked. It may be broken. (1) Truncate the table (truncate Logs) or clear lock of the table (lock_clear Logs) and (2) load data again.
+[Logs.user] Data column is locked. It may be broken. (1) Truncate the column (truncate Logs.user) or clear lock of the column (lock_clear Logs.user) and (2) load data again.
+      MESSAGE
+    end
   end
 end
