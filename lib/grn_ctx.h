@@ -126,7 +126,6 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
   if (grn_ctx_impl_should_log(ctx)) {\
     grn_ctx_impl_set_current_error_message(ctx);\
     GRN_LOG(ctx, lvl, __VA_ARGS__);\
-    BACKTRACE(ctx);\
     if (lvl <= GRN_LOG_ERROR) { LOGTRACE(ctx, lvl); }\
   }\
 } while (0)
