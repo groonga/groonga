@@ -100,10 +100,14 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
   char **p;\
   BACKTRACE(ctx);\
   p = backtrace_symbols((ctx)->trace, (ctx)->ntrace);\
-  for (i = 0; i < (ctx)->ntrace; i++) {\
-    GRN_LOG((ctx), lvl, "%s", p[i]);\
+  if (!p) {\
+    GRN_LOG((ctx), lvl, "backtrace_symbols failed");\
+  } else {\
+    for (i = 0; i < (ctx)->ntrace; i++) {\
+      GRN_LOG((ctx), lvl, "%s", p[i]);\
+    }\
+    free(p);\
   }\
-  free(p);\
 } while (0)
 #else  /* HAVE_BACKTRACE */
 #define LOGTRACE(ctx,msg)
