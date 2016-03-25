@@ -750,6 +750,15 @@ grn_ctx_init(grn_ctx *ctx, int flags)
   if (rc == GRN_SUCCESS) {
     grn_ctx_impl_init(ctx);
     rc = ctx->rc;
+    if (rc != GRN_SUCCESS) {
+      grn_ctx_fin(ctx);
+      if (flags & GRN_CTX_ALLOCATED) {
+        CRITICAL_SECTION_ENTER(grn_glock);
+        ctx->next->prev = ctx->prev;
+        ctx->prev->next = ctx->next;
+        CRITICAL_SECTION_LEAVE(grn_glock);
+      }
+    }
   }
 
   return rc;
@@ -762,7 +771,6 @@ grn_ctx_open(int flags)
   if (ctx) {
     grn_ctx_init(ctx, flags|GRN_CTX_ALLOCATED);
     if (ERRP(ctx, GRN_ERROR)) {
-      grn_ctx_fin(ctx);
       GRN_GFREE(ctx);
       ctx = NULL;
     }
