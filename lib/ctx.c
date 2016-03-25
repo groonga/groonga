@@ -720,7 +720,6 @@ grn_ctx_init_internal(grn_ctx *ctx, int flags)
   if (grn_ctx_per_db) {
     ctx->flags |= GRN_CTX_PER_DB;
   }
-  if (ERRP(ctx, GRN_ERROR)) { return ctx->rc; }
   ctx->stat = GRN_CTX_INITED;
   ctx->encoding = grn_gctx.encoding;
   ctx->seqno = 0;
@@ -739,7 +738,7 @@ grn_ctx_init_internal(grn_ctx *ctx, int flags)
   ctx->errfunc = "";
   ctx->trace[0] = NULL;
   ctx->errbuf[0] = '\0';
-  return ctx->rc;
+  return GRN_SUCCESS;
 }
 
 grn_rc
