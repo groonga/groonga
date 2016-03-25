@@ -417,6 +417,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Tue Mar 29 2016 HAYASHI Kentaro <hayashi@clear-code.com> - 6.0.1-1
+- new upstream release.
+
 * Mon Feb 29 2016 HAYASHI Kentaro <hayashi@clear-code.com> - 6.0.0-1
 - new upstream release.
 - add functions/string plugin GitHub#459
