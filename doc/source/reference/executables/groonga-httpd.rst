@@ -106,7 +106,7 @@ Finally, to terminate the running groonga-httpd daemon, run this::
 Configuration directives
 ------------------------
 
-This section decribes only important directives. They are
+This section describes only important directives. They are
 groonga-httpd specific directives and performance related directives.
 
 The following directives can be used in the groonga-httpd configuration file.
