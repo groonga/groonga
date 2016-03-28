@@ -7,6 +7,102 @@
 News
 ====
 
+.. _release-6-0-1:
+
+Release 6.0.1 - 2016-03-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [mruby] Updated bundled mruby to fix a crash bug related to GC and
+  backtrace.
+
+* Exported following the API
+
+  * grn_expr_take_obj()
+  * grn_request_canceler_cancel_all()
+  * grn_obj_remove_dependent()
+  * grn_obj_is_text_family_type()
+
+* [hash] Supported 4GiB over total key size when `KEY_LARGE` flag is set
+  to a table::
+
+    table_create Users TABLE_HASH_KEY|KEY_LARGE ShortText
+
+* [:doc:`/reference/commands/load`] Support request ID with raw JSON input case::
+
+    POST /d/load?table=XXX&request_id=x
+    
+    load --table XXX --request_id x
+    [
+      ...
+    ]
+
+* [:doc:`/reference/commands/shutdown`] Added `mode` argument to
+  shutdown immediately. Use "shutdown --mode immediate" in such a purpose.
+
+* [:doc:`/install/mac_os_x`] Added a instruction to setup MeCab dictionary for Homebrew.
+
+* [:doc:`/reference/commands/load`] Supported to stop load when cancel
+  is requested.
+
+* [:doc:`/reference/commands/table_remove`] Supported to remove
+  dependant tables. Use "--dependant yes" for it.
+
+* [:doc:`/reference/commands/logical_table_remove`] Supported to
+  remove dependant tables.
+
+* [Windows] Supported memory debug mode on Windows.
+
+* Supported to dump allocation information by status on memory debug mode
+
+* [:doc:`/contribution/documentation/i18n`] Added installation step for Sphinx.
+
+* [experimental] Supported to split chunks in static indexing.
+  Use `GRN_INDEX_CHUNK_SPLIT_ENABLE=yes` to enable it. [GitHub#479]
+
+Fixes
+^^^^^
+
+* [:doc:`/reference/commands/load`] Fixed a crash bug when
+  nonexistent column is specified. [GitHub#493]
+
+* [:doc:`/reference/commands/load`] Fixed a bug that load command does
+  not return error code correctly. [GitHub#495]
+
+* [:doc:`/reference/commands/load`] Fixed a memory leak when parsing
+  columns parameter in load command.
+
+* [:doc:`/reference/commands/load`] Fixed a bug that only the first
+  array in `--values` is handled as a list of column names if `--columns` is not
+  specified. [GitHub#497]
+
+* [:doc:`/reference/commands/load`] Fixed to check `--columns` more precisely
+  [GitHub#496]
+
+* Fixed a insufficient critical section handling for
+  thread-safety.
+
+* [:doc:`/reference/commands/column_create`] Fixed a crash bug when
+  failed to create a column.
+
+* [:doc:`/reference/commands/table_remove`] Fixed a crash bug to
+  remove nonexistent table. [GitHub#504]
+
+* Fixed a bug that offline index construction against WITH_POSITION +
+  non-text VECTOR column ignores position.  
+
+* [:doc:`/reference/executables/grndb`] Fixed a bug that cycle
+  reference causes stack over flow.
+
+* [deb] Dropped support for Ubuntu 15.04 (Vivid Vervet)
+
+Thanks
+^^^^^^
+
+* YUKI Hiroshi
+
 .. _release-6-0-0:
 
 Release 6.0.0 - 2016-02-29
