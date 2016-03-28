@@ -25,7 +25,7 @@ Improvements
   * grn_obj_remove_dependent()
   * grn_obj_is_text_family_type()
 
-* [hash] Supported 4GiB over total key size when `KEY_LARGE` flag is set
+* [hash] Supported 4GiB over total key size when ``KEY_LARGE`` flag is set
   to a table::
 
     table_create Users TABLE_HASH_KEY|KEY_LARGE ShortText
@@ -39,7 +39,7 @@ Improvements
       ...
     ]
 
-* [:doc:`/reference/commands/shutdown`] Added `mode` argument to
+* [:doc:`/reference/commands/shutdown`] Added ``mode`` argument to
   shutdown immediately. Use "shutdown --mode immediate" in such a purpose.
 
 * [:doc:`/install/mac_os_x`] Added a instruction to setup MeCab dictionary for Homebrew.
@@ -60,7 +60,7 @@ Improvements
 * [:doc:`/contribution/documentation/i18n`] Added installation step for Sphinx.
 
 * [experimental] Supported to split chunks in static indexing.
-  Use `GRN_INDEX_CHUNK_SPLIT_ENABLE=yes` to enable it. [GitHub#479]
+  Use ``GRN_INDEX_CHUNK_SPLIT_ENABLE=yes`` to enable it. [GitHub#479]
 
 Fixes
 ^^^^^
@@ -75,10 +75,10 @@ Fixes
   columns parameter in load command.
 
 * [:doc:`/reference/commands/load`] Fixed a bug that only the first
-  array in `--values` is handled as a list of column names if `--columns` is not
+  array in `--values` is handled as a list of column names if ``--columns`` is not
   specified. [GitHub#497]
 
-* [:doc:`/reference/commands/load`] Fixed to check `--columns` more precisely
+* [:doc:`/reference/commands/load`] Fixed to check ``--columns`` more precisely
   [GitHub#496]
 
 * Fixed a insufficient critical section handling for
@@ -90,8 +90,8 @@ Fixes
 * [:doc:`/reference/commands/table_remove`] Fixed a crash bug to
   remove nonexistent table. [GitHub#504]
 
-* Fixed a bug that offline index construction against WITH_POSITION +
-  non-text VECTOR column ignores position.  
+* Fixed a bug that offline index construction against ``WITH_POSITION`` +
+  non-text ``VECTOR`` column ignores position.
 
 * [:doc:`/reference/executables/grndb`] Fixed a bug that cycle
   reference causes stack over flow.
