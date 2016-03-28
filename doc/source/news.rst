@@ -18,7 +18,7 @@ Improvements
 * [mruby] Updated bundled mruby to fix a crash bug related to GC and
   backtrace.
 
-* Exported following the API
+* Exported the following API
 
   * grn_expr_take_obj()
   * grn_request_canceler_cancel_all()
