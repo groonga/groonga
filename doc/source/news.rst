@@ -48,10 +48,10 @@ Improvements
   is requested.
 
 * [:doc:`/reference/commands/table_remove`] Supported to remove
-  dependant tables. Use "--dependant yes" for it.
+  dependent tables. Use "--dependent yes" for it.
 
 * [:doc:`/reference/commands/logical_table_remove`] Supported to
-  remove dependant tables.
+  remove dependent tables.
 
 * [Windows] Supported memory debug mode on Windows.
 
