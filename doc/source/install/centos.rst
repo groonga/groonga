@@ -121,7 +121,7 @@ CentOS 7
 
 Install::
 
-  % sudo yum -y http://packages.groonga.org/centos/groonga-release-1.1.0-1.noarch.rpm
+  % sudo yum install -y http://packages.groonga.org/centos/groonga-release-1.1.0-1.noarch.rpm
   % sudo yum install -y groonga
 
 .. include:: server-use.inc
