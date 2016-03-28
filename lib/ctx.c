@@ -78,6 +78,7 @@
 grn_ctx grn_gctx = GRN_CTX_INITIALIZER(GRN_ENC_DEFAULT);
 int grn_pagesize;
 grn_critical_section grn_glock;
+grn_critical_section grn_glock_backtrace;
 uint32_t grn_gtick;
 int grn_lock_timeout = GRN_LOCK_TIMEOUT;
 
@@ -933,6 +934,7 @@ grn_init(void)
   grn_logger_init();
   grn_query_logger_init();
   CRITICAL_SECTION_INIT(grn_glock);
+  CRITICAL_SECTION_INIT(grn_glock_backtrace);
   grn_gtick = 0;
   ctx->next = ctx;
   ctx->prev = ctx;
@@ -1057,6 +1059,7 @@ fail_ctx_init_internal:
   GRN_LOG(ctx, GRN_LOG_NOTICE, "grn_init: <%s>: failed", grn_get_version());
   grn_query_logger_fin(ctx);
   grn_logger_fin(ctx);
+  CRITICAL_SECTION_FIN(grn_glock_backtrace);
   CRITICAL_SECTION_FIN(grn_glock);
   grn_fin_external_libraries();
   return rc;
@@ -1151,6 +1154,7 @@ grn_fin(void)
   grn_com_fin();
   GRN_LOG(ctx, GRN_LOG_NOTICE, "grn_fin (%d)", alloc_count);
   grn_logger_fin(ctx);
+  CRITICAL_SECTION_FIN(grn_glock_backtrace);
   CRITICAL_SECTION_FIN(grn_glock);
   grn_fin_external_libraries();
   return GRN_SUCCESS;

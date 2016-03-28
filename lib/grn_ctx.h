@@ -98,6 +98,9 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
 #define LOGTRACE(ctx,lvl) do {\
   int i;\
   char **p;\
+  if (ctx == &grn_gctx) {\
+    CRITICAL_SECTION_ENTER(grn_glock_backtrace);\
+  }\
   BACKTRACE(ctx);\
   p = backtrace_symbols((ctx)->trace, (ctx)->ntrace);\
   if (!p) {\
@@ -107,6 +110,9 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
       GRN_LOG((ctx), lvl, "%s", p[i]);\
     }\
     free(p);\
+  }\
+  if (ctx == &grn_gctx) {\
+    CRITICAL_SECTION_LEAVE(grn_glock_backtrace);\
   }\
 } while (0)
 #else  /* HAVE_BACKTRACE */
@@ -501,6 +507,7 @@ void grn_assert(grn_ctx *ctx, int cond, const char* file, int line, const char* 
 GRN_VAR grn_ctx grn_gctx;
 extern int grn_pagesize;
 extern grn_critical_section grn_glock;
+extern grn_critical_section grn_glock_backtrace;
 extern uint32_t grn_gtick;
 extern int grn_lock_timeout;
 
