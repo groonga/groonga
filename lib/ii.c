@@ -10242,27 +10242,29 @@ grn_ii_builder_append_value(grn_ctx *ctx, grn_ii_builder *builder,
     /* Insert a space between values. */
     builder->pos++;
   }
-  cursor = grn_token_cursor_open(ctx, builder->lexicon, value, value_size,
-                                 GRN_TOKEN_ADD, 0);
-  if (!cursor) {
-    if (ctx->rc == GRN_SUCCESS) {
-      ERR(GRN_UNKNOWN_ERROR,
-          "grn_token_cursor_open failed: value = <%.*s>", value_size, value);
+  if (value_size) {
+    cursor = grn_token_cursor_open(ctx, builder->lexicon, value, value_size,
+                                   GRN_TOKEN_ADD, 0);
+    if (!cursor) {
+      if (ctx->rc == GRN_SUCCESS) {
+        ERR(GRN_UNKNOWN_ERROR,
+            "grn_token_cursor_open failed: value = <%.*s>", value_size, value);
+      }
+      return ctx->rc;
     }
-    return ctx->rc;
-  }
-  while (cursor->status == GRN_TOKEN_CURSOR_DOING) {
-    grn_id tid = grn_token_cursor_next(ctx, cursor);
-    if (tid != GRN_ID_NIL) {
-      pos = builder->pos + cursor->pos;
-      grn_rc rc = grn_ii_builder_append_token(ctx, builder, rid, sid, weight,
-                                              tid, pos);
-      if (rc != GRN_SUCCESS) {
-        break;
+    while (cursor->status == GRN_TOKEN_CURSOR_DOING) {
+      grn_id tid = grn_token_cursor_next(ctx, cursor);
+      if (tid != GRN_ID_NIL) {
+        pos = builder->pos + cursor->pos;
+        grn_rc rc = grn_ii_builder_append_token(ctx, builder, rid, sid, weight,
+                                                tid, pos);
+        if (rc != GRN_SUCCESS) {
+          break;
+        }
       }
     }
+    grn_token_cursor_close(ctx, cursor);
   }
-  grn_token_cursor_close(ctx, cursor);
   builder->pos = pos + 1;
   return ctx->rc;
 }
