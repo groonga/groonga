@@ -30,12 +30,15 @@ struct _grn_request_canceler_entry {
   grn_ctx *ctx;
 };
 
+static grn_ctx grn_the_request_canceler_ctx;
 static grn_request_canceler *grn_the_request_canceler = NULL;
 
 grn_bool
 grn_request_canceler_init(void)
 {
-  grn_ctx *ctx = &grn_gctx;
+  grn_ctx *ctx = &grn_the_request_canceler_ctx;
+
+  grn_ctx_init(ctx, 0);
 
   grn_the_request_canceler = GRN_MALLOC(sizeof(grn_request_canceler));
   if (!grn_the_request_canceler) {
@@ -64,7 +67,8 @@ grn_request_canceler_register(grn_ctx *ctx,
     grn_hash *entries = grn_the_request_canceler->entries;
     grn_id id;
     void *value;
-    id = grn_hash_add(&grn_gctx, entries, request_id, size, &value, NULL);
+    id = grn_hash_add(&grn_the_request_canceler_ctx,
+                      entries, request_id, size, &value, NULL);
     if (id) {
       grn_request_canceler_entry *entry = value;
       entry->ctx = ctx;
@@ -80,7 +84,8 @@ grn_request_canceler_unregister(grn_ctx *ctx,
   MUTEX_LOCK(grn_the_request_canceler->mutex);
   {
     grn_hash *entries = grn_the_request_canceler->entries;
-    grn_hash_delete(&grn_gctx, entries, request_id, size, NULL);
+    grn_hash_delete(&grn_the_request_canceler_ctx,
+                    entries, request_id, size, NULL);
   }
   MUTEX_UNLOCK(grn_the_request_canceler->mutex);
 
@@ -109,9 +114,10 @@ grn_request_canceler_cancel(const char *request_id, unsigned int size)
   grn_bool canceled = GRN_FALSE;
   MUTEX_LOCK(grn_the_request_canceler->mutex);
   {
+    grn_ctx *ctx = &grn_the_request_canceler_ctx;
     grn_hash *entries = grn_the_request_canceler->entries;
     void *value;
-    if (grn_hash_get(&grn_gctx, entries, request_id, size, &value)) {
+    if (grn_hash_get(ctx, entries, request_id, size, &value)) {
       grn_request_canceler_entry *entry = value;
       if (grn_request_canceler_cancel_entry(entry)) {
         canceled = GRN_TRUE;
@@ -128,7 +134,7 @@ grn_request_canceler_cancel_all(void)
   grn_bool canceled = GRN_FALSE;
   MUTEX_LOCK(grn_the_request_canceler->mutex);
   {
-    grn_ctx *ctx = &grn_gctx;
+    grn_ctx *ctx = &grn_the_request_canceler_ctx;
     grn_hash *entries = grn_the_request_canceler->entries;
     grn_hash_cursor *cursor;
 
@@ -155,10 +161,11 @@ grn_request_canceler_cancel_all(void)
 void
 grn_request_canceler_fin(void)
 {
-  grn_ctx *ctx = &grn_gctx;
+  grn_ctx *ctx = &grn_the_request_canceler_ctx;
 
   grn_hash_close(ctx, grn_the_request_canceler->entries);
   MUTEX_FIN(grn_the_request_canceler->mutex);
   GRN_FREE(grn_the_request_canceler);
   grn_the_request_canceler = NULL;
+  grn_ctx_fin(ctx);
 }
