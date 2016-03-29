@@ -190,5 +190,9 @@ grn_mrb_error_init(grn_ctx *ctx)
                          groonga_error_class);
   mrb_define_class_under(mrb, module, "PluginError",
                          groonga_error_class);
+  mrb_define_class_under(mrb, module, "ScorerError",
+                         groonga_error_class);
+  mrb_define_class_under(mrb, module, "Cancel",
+                         groonga_error_class);
 }
 #endif

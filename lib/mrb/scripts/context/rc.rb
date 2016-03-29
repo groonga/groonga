@@ -182,6 +182,10 @@ module Groonga
         register(:command_error, -74, CommandError)
       PLUGIN_ERROR =
         register(:plugin_error, -75, PluginError)
+      SCORER_ERROR =
+        register(:scorer_error, -76, ScorerError)
+      CANCEL =
+        register(:cancel, -77, Cancel)
 
       GroongaError.rc = UNKNOWN_ERROR
     end
