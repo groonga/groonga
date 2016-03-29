@@ -58,8 +58,11 @@ _grn_ra_create(grn_ctx *ctx, grn_ra *ra, const char *path, unsigned int element_
 grn_ra *
 grn_ra_create(grn_ctx *ctx, const char *path, unsigned int element_size)
 {
-  grn_ra *ra = NULL;
-  if (!(ra = GRN_GMALLOC(sizeof(grn_ra)))) {
+  grn_ra *ra;
+  CRITICAL_SECTION_ENTER(grn_glock);
+  ra = GRN_GMALLOC(sizeof(grn_ra));
+  CRITICAL_SECTION_LEAVE(grn_glock);
+  if (!ra) {
     return NULL;
   }
   GRN_DB_OBJ_SET_TYPE(ra, GRN_COLUMN_FIX_SIZE);
@@ -89,7 +92,10 @@ grn_ra_open(grn_ctx *ctx, const char *path)
     grn_io_close(ctx, io);
     return NULL;
   }
-  if (!(ra = GRN_GMALLOC(sizeof(grn_ra)))) {
+  CRITICAL_SECTION_ENTER(grn_glock);
+  ra = GRN_GMALLOC(sizeof(grn_ra));
+  CRITICAL_SECTION_LEAVE(grn_glock);
+  if (!ra) {
     grn_io_close(ctx, io);
     return NULL;
   }
@@ -117,7 +123,9 @@ grn_ra_close(grn_ctx *ctx, grn_ra *ra)
   grn_rc rc;
   if (!ra) { return GRN_INVALID_ARGUMENT; }
   rc = grn_io_close(ctx, ra->io);
+  CRITICAL_SECTION_ENTER(grn_glock);
   GRN_GFREE(ra);
+  CRITICAL_SECTION_LEAVE(grn_glock);
   return rc;
 }
 
@@ -366,7 +374,9 @@ _grn_ja_create(grn_ctx *ctx, grn_ja *ja, const char *path,
   header_v2->segregate_threshold = GRN_JA_W_SEGREGATE_THRESH_V2;
   header_v2->n_element_variation = JA_N_ELEMENT_VARIATION_V2;
 
+  CRITICAL_SECTION_ENTER(grn_glock);
   header = GRN_GMALLOC(sizeof(struct grn_ja_header));
+  CRITICAL_SECTION_LEAVE(grn_glock);
   if (!header) {
     grn_io_close(ctx, io);
     return NULL;
@@ -394,7 +404,10 @@ grn_ja *
 grn_ja_create(grn_ctx *ctx, const char *path, unsigned int max_element_size, uint32_t flags)
 {
   grn_ja *ja = NULL;
-  if (!(ja = GRN_GMALLOC(sizeof(grn_ja)))) {
+  CRITICAL_SECTION_ENTER(grn_glock);
+  ja = GRN_GMALLOC(sizeof(grn_ja));
+  CRITICAL_SECTION_LEAVE(grn_glock);
+  if (!ja) {
     return NULL;
   }
   GRN_DB_OBJ_SET_TYPE(ja, GRN_COLUMN_VAR_SIZE);
@@ -430,14 +443,22 @@ grn_ja_open(grn_ctx *ctx, const char *path)
   if (header_v2->n_element_variation == 0) {
     header_v2->n_element_variation = JA_N_ELEMENT_VARIATION_V1;
   }
-  if (!(ja = GRN_GMALLOC(sizeof(grn_ja)))) {
+  CRITICAL_SECTION_ENTER(grn_glock);
+  ja = GRN_GMALLOC(sizeof(grn_ja));
+  CRITICAL_SECTION_LEAVE(grn_glock);
+  if (!ja) {
     grn_io_close(ctx, io);
     return NULL;
   }
   GRN_DB_OBJ_SET_TYPE(ja, GRN_COLUMN_VAR_SIZE);
-  if (!(header = GRN_GMALLOC(sizeof(struct grn_ja_header)))) {
+  CRITICAL_SECTION_ENTER(grn_glock);
+  header = GRN_GMALLOC(sizeof(struct grn_ja_header));
+  CRITICAL_SECTION_LEAVE(grn_glock);
+  if (!header) {
     grn_io_close(ctx, io);
+    CRITICAL_SECTION_ENTER(grn_glock);
     GRN_GFREE(ja);
+    CRITICAL_SECTION_LEAVE(grn_glock);
     return NULL;
   }
 
@@ -482,8 +503,10 @@ grn_ja_close(grn_ctx *ctx, grn_ja *ja)
   grn_rc rc;
   if (!ja) { return GRN_INVALID_ARGUMENT; }
   rc = grn_io_close(ctx, ja->io);
+  CRITICAL_SECTION_ENTER(grn_glock);
   GRN_GFREE(ja->header);
   GRN_GFREE(ja);
+  CRITICAL_SECTION_LEAVE(grn_glock);
   return rc;
 }
 
@@ -515,7 +538,9 @@ grn_ja_truncate(grn_ctx *ctx, grn_ja *ja)
   if ((rc = grn_io_close(ctx, ja->io))) { goto exit; }
   ja->io = NULL;
   if (path && (rc = grn_io_remove(ctx, path))) { goto exit; }
+  CRITICAL_SECTION_ENTER(grn_glock);
   GRN_GFREE(ja->header);
+  CRITICAL_SECTION_LEAVE(grn_glock);
   if (!_grn_ja_create(ctx, ja, path, max_element_size, flags)) {
     rc = GRN_UNKNOWN_ERROR;
   }
