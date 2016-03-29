@@ -191,6 +191,7 @@ grn_io_create_tmp(uint32_t header_size, uint32_t segment_size,
   uint32_t b;
   struct _grn_io_header *header;
   b = grn_io_compute_base(header_size);
+  CRITICAL_SECTION_ENTER(grn_glock);
   header = (struct _grn_io_header *)GRN_MMAP(&grn_gctx, NULL, NULL, NULL, 0, b);
   if (header) {
     header->version = grn_io_version_default;
@@ -219,27 +220,28 @@ grn_io_create_tmp(uint32_t header_size, uint32_t segment_size,
         io->flags = GRN_IO_TEMPORARY;
         io->lock = &header->lock;
         io->path[0] = '\0';
+        CRITICAL_SECTION_LEAVE(grn_glock);
         return io;
       }
       GRN_GFREE(io);
     }
     GRN_MUNMAP(&grn_gctx, NULL, NULL, NULL, header, b);
   }
+  CRITICAL_SECTION_LEAVE(grn_glock);
   return NULL;
 }
 
+/* grn_io_register should be called in a critical section using grn_glock. */
 static void
 grn_io_register(grn_io *io)
 {
   if (io->fis && (io->flags & (GRN_IO_EXPIRE_GTICK|GRN_IO_EXPIRE_SEGMENT))) {
     grn_bool succeeded = GRN_FALSE;
-    CRITICAL_SECTION_ENTER(grn_glock);
     if (grn_gctx.impl && grn_gctx.impl->ios &&
         grn_hash_add(&grn_gctx, grn_gctx.impl->ios, io->path, strlen(io->path),
                      (void **)&io, NULL)) {
       succeeded = GRN_TRUE;
     }
-    CRITICAL_SECTION_LEAVE(grn_glock);
     if (!succeeded) {
       GRN_LOG(&grn_gctx, GRN_LOG_WARNING,
               "grn_io_register(%s) failed", io->path);
@@ -247,18 +249,17 @@ grn_io_register(grn_io *io)
   }
 }
 
+/* grn_io_unregister should be called in a critical section using grn_glock. */
 static void
 grn_io_unregister(grn_io *io)
 {
   if (io->fis && (io->flags & (GRN_IO_EXPIRE_GTICK|GRN_IO_EXPIRE_SEGMENT))) {
     grn_bool succeeded = GRN_FALSE;
-    CRITICAL_SECTION_ENTER(grn_glock);
     if (grn_gctx.impl && grn_gctx.impl->ios) {
       grn_hash_delete(&grn_gctx, grn_gctx.impl->ios,
                       io->path, strlen(io->path), NULL);
       succeeded = GRN_TRUE;
     }
-    CRITICAL_SECTION_LEAVE(grn_glock);
     if (!succeeded) {
       GRN_LOG(&grn_gctx, GRN_LOG_WARNING,
               "grn_io_unregister(%s) failed", io->path);
@@ -287,6 +288,7 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t seg
   file_size = grn_io_compute_file_size(version);
   max_nfiles = grn_io_compute_max_n_files(segment_size, max_segment,
                                           bs, file_size);
+  CRITICAL_SECTION_ENTER(grn_glock);
   if ((fis = GRN_GMALLOCN(fileinfo, max_nfiles))) {
     grn_fileinfo_init(fis, max_nfiles);
     if (!grn_fileinfo_open(ctx, fis, path, O_RDWR|O_CREAT|O_EXCL)) {
@@ -321,6 +323,7 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t seg
             io->flags = flags;
             io->lock = &header->lock;
             grn_io_register(io);
+            CRITICAL_SECTION_LEAVE(grn_glock);
             return io;
           }
           GRN_GFREE(io);
@@ -337,9 +340,11 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t seg
     }
     GRN_GFREE(fis);
   }
+  CRITICAL_SECTION_LEAVE(grn_glock);
   return NULL;
 }
 
+/* array_init_ should be called in a critical section using grn_glock. */
 static grn_rc
 array_init_(grn_io *io, int n_arrays, size_t hsize, size_t msize)
 {
@@ -370,6 +375,7 @@ array_init_(grn_io *io, int n_arrays, size_t hsize, size_t msize)
   return GRN_SUCCESS;
 }
 
+/* array_init should be called in a critical section using grn_glock. */
 static grn_rc
 array_init(grn_io *io, int n_arrays)
 {
@@ -406,11 +412,15 @@ grn_io_create_with_array(grn_ctx *ctx, const char *path,
     }
     if ((io = grn_io_create(ctx, path, header_size + hsize,
                             segment_size, nsegs, mode, GRN_IO_EXPIRE_GTICK))) {
+      grn_rc rc;
       hp = io->user_header;
       grn_memcpy(hp, array_specs, sizeof(grn_io_array_spec) * n_arrays);
       io->header->n_arrays = n_arrays;
       io->header->segment_tail = 1;
-      if (!array_init_(io, n_arrays, hsize, msize)) {
+      CRITICAL_SECTION_ENTER(grn_glock);
+      rc = array_init_(io, n_arrays, hsize, msize);
+      CRITICAL_SECTION_LEAVE(grn_glock);
+      if (rc == GRN_SUCCESS) {
         return io;
       }
       ERR(GRN_NO_MEMORY_AVAILABLE, "grn_io_create_with_array failed");
@@ -432,7 +442,9 @@ segment_alloc(grn_io *io)
       s = io->header->segment_tail++;
     }
   } else {
+    CRITICAL_SECTION_ENTER(grn_glock);
     char *used = GRN_GCALLOC(io->header->max_segment + 1);
+    CRITICAL_SECTION_LEAVE(grn_glock);
     if (!used) { return 0; }
     for (n = io->header->n_arrays, ai = io->ainfo; n; n--, ai++) {
       for (s = 0; s < ai->max_n_segments; s++) {
@@ -450,7 +462,9 @@ segment_alloc(grn_io *io)
         break;
       }
     }
+    CRITICAL_SECTION_ENTER(grn_glock);
     GRN_GFREE(used);
+    CRITICAL_SECTION_LEAVE(grn_glock);
   }
   return s;
 }
@@ -599,6 +613,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
   grn_fileinfo_init(&fi, 1);
   if (!grn_fileinfo_open(ctx, &fi, path, O_RDWR)) {
     struct _grn_io_header *header;
+    CRITICAL_SECTION_ENTER(grn_glock);
     header = GRN_MMAP(&grn_gctx, NULL, &(fi.fmo), &fi, 0, b);
     if (header) {
       unsigned long file_size;
@@ -611,6 +626,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
       fis = GRN_GMALLOCN(fileinfo, max_nfiles);
       if (!fis) {
         GRN_MUNMAP(&grn_gctx, NULL, &(fi.fmo), &fi, header, b);
+        CRITICAL_SECTION_LEAVE(grn_glock);
         grn_fileinfo_close(ctx, &fi);
         return NULL;
       }
@@ -636,6 +652,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
             io->lock = &header->lock;
             if (!array_init(io, io->header->n_arrays)) {
               grn_io_register(io);
+              CRITICAL_SECTION_LEAVE(grn_glock);
               return io;
             }
           }
@@ -646,6 +663,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
       GRN_GFREE(fis);
       GRN_MUNMAP(&grn_gctx, NULL, &(fi.fmo), &fi, header, b);
     }
+    CRITICAL_SECTION_LEAVE(grn_glock);
     grn_fileinfo_close(ctx, &fi);
   }
   return NULL;
@@ -657,6 +675,7 @@ grn_io_close(grn_ctx *ctx, grn_io *io)
   uint32_t max_nfiles;
 
   max_nfiles = grn_io_max_n_files(io);
+  CRITICAL_SECTION_ENTER(grn_glock);
   grn_io_unregister(io);
   if (io->ainfo) { GRN_GFREE(io->ainfo); }
   if (io->maps) {
@@ -697,6 +716,7 @@ grn_io_close(grn_ctx *ctx, grn_io *io)
     GRN_GFREE(io->fis);
   }
   GRN_GFREE(io);
+  CRITICAL_SECTION_LEAVE(grn_glock);
   return GRN_SUCCESS;
 }
 
@@ -1118,7 +1138,10 @@ grn_io_win_unmap(grn_io_win *iw)
 }
 
 #define DO_MAP(io,fmo,fi,pos,size,segno,res) do {\
-  if (((res) = GRN_MMAP(&grn_gctx, (io), (fmo), (fi), (pos), (size)))) {\
+  CRITICAL_SECTION_ENTER(grn_glock);\
+  (res) = GRN_MMAP(&grn_gctx, (io), (fmo), (fi), (pos), (size));\
+  CRITICAL_SECTION_LEAVE(grn_glock);\
+  if ((res)) {\
     uint32_t nmaps;\
     if (io->max_map_seg < segno) { io->max_map_seg = segno; }\
     GRN_ATOMIC_ADD_EX(&io->nmaps, 1, nmaps);\
@@ -1186,8 +1209,10 @@ grn_io_seg_expire(grn_ctx *ctx, grn_io *io, uint32_t segno, uint32_t nretry)
       } else {
         uint32_t nmaps;
         fileinfo *fi = &(io->fis[segno]);
+        CRITICAL_SECTION_ENTER(grn_glock);
         GRN_MUNMAP(&grn_gctx, io, &info->fmo, fi,
                    info->map, io->header->segment_size);
+        CRITICAL_SECTION_LEAVE(grn_glock);
         info->map = NULL;
         GRN_ATOMIC_ADD_EX(pnref, -(GRN_IO_MAX_REF + 1), nref);
         GRN_ATOMIC_ADD_EX(&io->nmaps, -1, nmaps);
@@ -1223,8 +1248,10 @@ grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limit)
             grn_io_mapinfo *info = &(io->maps[fno]);
             if (info->map) {
               fileinfo *fi = &(io->fis[fno]);
+              CRITICAL_SECTION_ENTER(grn_glock);
               GRN_MUNMAP(&grn_gctx, io, &info->fmo, fi,
                          info->map, io->header->segment_size);
+              CRITICAL_SECTION_LEAVE(grn_glock);
               info->map = NULL;
               info->nref = 0;
               info->count = grn_gtick;
@@ -1250,8 +1277,10 @@ grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limit)
           uint32_t nmaps, nref, *pnref = &info->nref;
           GRN_ATOMIC_ADD_EX(pnref, 1, nref);
           if (!nref && info->map && (grn_gtick - info->count) > count_thresh) {
+            CRITICAL_SECTION_ENTER(grn_glock);
             GRN_MUNMAP(&grn_gctx, io, &info->fmo, NULL,
                        info->map, io->header->segment_size);
+            CRITICAL_SECTION_LEAVE(grn_glock);
             GRN_ATOMIC_ADD_EX(&io->nmaps, -1, nmaps);
             info->map = NULL;
             info->count = grn_gtick;
