@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-03-28 14:12+0900\n"
+"PO-Revision-Date: 2016-03-29 10:27+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -33,7 +33,7 @@ msgstr ""
 "[mruby] GCとバックトレースに関連してクラッシュするバグを修正するため、バンド"
 "ルしているmrubyを更新しました。"
 
-msgid "Exported following the API"
+msgid "Exported the following API"
 msgstr "以下のAPIを公開しました。"
 
 msgid "grn_expr_take_obj()"
@@ -200,7 +200,6 @@ msgid "Thanks"
 msgstr "感謝"
 
 # 4b55093c1ebb42a08ec540563cf90c04
-#, fuzzy
 msgid "YUKI Hiroshi"
 msgstr "結城洋志（Piro）さん"
 
