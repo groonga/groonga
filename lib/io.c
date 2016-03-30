@@ -1299,42 +1299,6 @@ grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limit)
   return n;
 }
 
-static uint32_t
-grn_expire_(grn_ctx *ctx, int count_thresh, uint32_t limit)
-{
-  uint32_t n = 0;
-  grn_io *io;
-  GRN_HASH_EACH(ctx, grn_gctx.impl->ios, id, NULL, NULL, (void **)&io, {
-    grn_plugin_close(ctx, id);
-    n += grn_io_expire(ctx, io, count_thresh, limit);
-    if (n >= limit) { break; }
-  });
-  return n;
-}
-
-uint32_t
-grn_expire(grn_ctx *ctx, int count_thresh, uint32_t limit)
-{
-  grn_ctx *c;
-  uint32_t n = 0;
-  CRITICAL_SECTION_ENTER(grn_glock);
-  if (grn_gtick) {
-    for (c = grn_gctx.next;; c = ctx->next) {
-      if (c == &grn_gctx) {
-        CRITICAL_SECTION_LEAVE(grn_glock);
-        n = grn_expire_(ctx, count_thresh, limit);
-        CRITICAL_SECTION_ENTER(grn_glock);
-        break;
-      }
-      if ((c->seqno & 1) && (c->seqno == c->seqno2)) { break; }
-    }
-  }
-  grn_gtick++;
-  for (c = grn_gctx.next; c != &grn_gctx; c = ctx->next) { c->seqno2 = c->seqno; }
-  CRITICAL_SECTION_LEAVE(grn_glock);
-  return n;
-}
-
 void *
 grn_io_anon_map(grn_ctx *ctx, grn_io_mapinfo *mi, size_t length)
 {
