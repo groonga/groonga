@@ -1,5 +1,0 @@
-#@on-error omit
-register ruby/load
-#@on-error default
-
-ruby_load "test/empty.rb"

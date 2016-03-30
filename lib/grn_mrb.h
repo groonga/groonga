@@ -32,9 +32,7 @@ extern "C" {
 void grn_mrb_init_from_env(void);
 
 #ifdef GRN_WITH_MRUBY
-GRN_API mrb_value grn_mrb_eval(grn_ctx *ctx, const char *script, int script_length);
 GRN_API mrb_value grn_mrb_load(grn_ctx *ctx, const char *path);
-GRN_API grn_rc grn_mrb_to_grn(grn_ctx *ctx, mrb_value mrb_object, grn_obj *grn_object);
 GRN_API const char *grn_mrb_get_system_ruby_scripts_dir(grn_ctx *ctx);
 #endif
 
