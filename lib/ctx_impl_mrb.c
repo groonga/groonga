@@ -220,8 +220,8 @@ grn_ctx_impl_mrb_allocf(mrb_state *mrb, void *ptr, size_t size, void *ud)
 }
 #endif /* USE_MEMORY_DEBUG */
 
-void
-grn_ctx_impl_mrb_init(grn_ctx *ctx)
+static void
+grn_ctx_impl_mrb_init_lazy(grn_ctx *ctx)
 {
   if (!grn_ctx_impl_mrb_mruby_enabled) {
     ctx->impl->mrb.state = NULL;
@@ -262,8 +262,8 @@ grn_ctx_impl_mrb_init(grn_ctx *ctx)
   }
 }
 
-void
-grn_ctx_impl_mrb_fin(grn_ctx *ctx)
+static void
+grn_ctx_impl_mrb_fin_real(grn_ctx *ctx)
 {
   if (ctx->impl->mrb.state) {
     mrb_close(ctx->impl->mrb.state);
@@ -275,13 +275,39 @@ grn_ctx_impl_mrb_fin(grn_ctx *ctx)
   }
 }
 #else /* GRN_WITH_MRUBY */
+static void
+grn_ctx_impl_mrb_init_lazy(grn_ctx *ctx)
+{
+}
+
+static void
+grn_ctx_impl_mrb_fin_real(grn_ctx *ctx)
+{
+}
+#endif /* GRN_WITH_MRUBY */
+
 void
 grn_ctx_impl_mrb_init(grn_ctx *ctx)
 {
+  ctx->impl->mrb.initialized = GRN_FALSE;
 }
 
 void
 grn_ctx_impl_mrb_fin(grn_ctx *ctx)
 {
+  if (!ctx->impl->mrb.initialized) {
+    return;
+  }
+
+  ctx->impl->mrb.initialized = GRN_FALSE;
+  grn_ctx_impl_mrb_fin_real(ctx);
 }
-#endif /* GRN_WITH_MRUBY */
+
+void
+grn_ctx_impl_mrb_ensure_init(grn_ctx *ctx)
+{
+  if (!ctx->impl->mrb.initialized) {
+    ctx->impl->mrb.initialized = GRN_TRUE;
+    grn_ctx_impl_mrb_init_lazy(ctx);
+  }
+}

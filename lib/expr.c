@@ -18,6 +18,7 @@
 #include "grn.h"
 #include "grn_db.h"
 #include "grn_ctx_impl.h"
+#include "grn_ctx_impl_mrb.h"
 #include <string.h>
 #include "grn_ii.h"
 #include "grn_geo.h"
@@ -1299,6 +1300,10 @@ grn_expr_rewrite(grn_ctx *ctx, grn_obj *expr)
   GRN_API_ENTER;
 
 #ifdef GRN_WITH_MRUBY
+  grn_ctx_impl_mrb_ensure_init(ctx);
+  if (ctx->rc != GRN_SUCCESS) {
+    GRN_API_RETURN(NULL);
+  }
   if (ctx->impl->mrb.state) {
     rewritten = grn_mrb_expr_rewrite(ctx, expr);
   }
@@ -4502,6 +4507,10 @@ grn_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
   grn_expr_code *c, *ce;
   grn_expr *e = (grn_expr *)expr;
 #ifdef GRN_WITH_MRUBY
+  grn_ctx_impl_mrb_ensure_init(ctx);
+  if (ctx->rc != GRN_SUCCESS) {
+    return NULL;
+  }
   if (ctx->impl->mrb.state) {
     return grn_mrb_scan_info_build(ctx, expr, n, op, record_exist);
   }
@@ -8253,6 +8262,10 @@ grn_expr_estimate_size(grn_ctx *ctx, grn_obj *expr)
 
   GRN_API_ENTER;
 #ifdef GRN_WITH_MRUBY
+  grn_ctx_impl_mrb_ensure_init(ctx);
+  if (ctx->rc != GRN_SUCCESS) {
+    GRN_API_RETURN(0);
+  }
   if (ctx->impl->mrb.state) {
     size = grn_mrb_expr_estimate_size(ctx, expr, table);
   } else {

@@ -16,6 +16,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "grn.h"
+#include "grn_ctx_impl_mrb.h"
 #include "grn_proc.h"
 #include <groonga/plugin.h>
 
@@ -265,6 +266,11 @@ grn_plugin_open_mrb(grn_ctx *ctx, const char *filename, size_t filename_size)
 {
   grn_id id = GRN_ID_NIL;
   grn_plugin **plugin = NULL;
+
+  grn_ctx_impl_mrb_ensure_init(ctx);
+  if (ctx->rc != GRN_SUCCESS) {
+    return GRN_ID_NIL;
+  }
 
   if (!ctx->impl->mrb.state) {
     ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "mruby support isn't enabled");
@@ -555,11 +561,16 @@ grn_plugin_find_path_mrb(grn_ctx *ctx, const char *path, size_t path_len)
   const char *mrb_suffix;
   size_t mrb_path_len;
 
-  mrb_suffix = grn_plugin_get_ruby_suffix();
+  grn_ctx_impl_mrb_ensure_init(ctx);
+  if (ctx->rc != GRN_SUCCESS) {
+    return NULL;
+  }
+
   if (!ctx->impl->mrb.state) {
     return NULL;
   }
 
+  mrb_suffix = grn_plugin_get_ruby_suffix();
   mrb_path_len = path_len + strlen(mrb_suffix);
   if (mrb_path_len >= PATH_MAX) {
     ERR(GRN_FILENAME_TOO_LONG,
@@ -676,13 +687,6 @@ grn_plugin_find_path(grn_ctx *ctx, const char *name)
   }
 
   path_len = strlen(path);
-  found_path = grn_plugin_find_path_mrb(ctx, path, path_len);
-  if (found_path) {
-    goto exit;
-  }
-  if (ctx->rc) {
-    goto exit;
-  }
 
   found_path = grn_plugin_find_path_so(ctx, path, path_len);
   if (found_path) {
@@ -693,6 +697,14 @@ grn_plugin_find_path(grn_ctx *ctx, const char *name)
   }
 
   found_path = grn_plugin_find_path_libs_so(ctx, path, path_len);
+  if (found_path) {
+    goto exit;
+  }
+  if (ctx->rc) {
+    goto exit;
+  }
+
+  found_path = grn_plugin_find_path_mrb(ctx, path, path_len);
   if (found_path) {
     goto exit;
   }
@@ -832,16 +844,38 @@ grn_plugin_ensure_registered(grn_ctx *ctx, grn_obj *proc)
 {
 #ifdef GRN_WITH_MRUBY
   grn_id plugin_id;
-  const char *plugin_path;
-  uint32_t key_size;
-  grn_plugin *plugin;
-  int value_size;
+  grn_plugin *plugin = NULL;
 
-  if (!ctx->impl->mrb.state) {
+  if (!(proc->header.flags & GRN_OBJ_CUSTOM_NAME)) {
     return;
   }
 
-  if (!(proc->header.flags & GRN_OBJ_CUSTOM_NAME)) {
+  plugin_id = DB_OBJ(proc)->range;
+  CRITICAL_SECTION_ENTER(grn_plugins_lock);
+  {
+    const char *value;
+    uint32_t value_size;
+    value = grn_hash_get_value_(&grn_gctx, grn_plugins, plugin_id, &value_size);
+    if (value) {
+      plugin = *((grn_plugin **)value);
+    }
+  }
+  CRITICAL_SECTION_LEAVE(grn_plugins_lock);
+
+  if (!plugin) {
+    return;
+  }
+
+  if (plugin->dl) {
+    return;
+  }
+
+  grn_ctx_impl_mrb_ensure_init(ctx);
+  if (ctx->rc != GRN_SUCCESS) {
+    return;
+  }
+
+  if (!ctx->impl->mrb.state) {
     return;
   }
 
@@ -856,23 +890,7 @@ grn_plugin_ensure_registered(grn_ctx *ctx, grn_obj *proc)
     }
   }
 
-  plugin_id = DB_OBJ(proc)->range;
-  CRITICAL_SECTION_ENTER(grn_plugins_lock);
-  plugin_path = _grn_hash_key(&grn_gctx, grn_plugins, plugin_id, &key_size);
-  if (plugin_path) {
-    value_size = grn_hash_get_value(&grn_gctx, grn_plugins, plugin_id, &plugin);
-  }
-  CRITICAL_SECTION_LEAVE(grn_plugins_lock);
-
-  if (!plugin_path) {
-    return;
-  }
-
-  if (plugin->dl) {
-    return;
-  }
-
-  ctx->impl->plugin_path = plugin_path;
+  ctx->impl->plugin_path = plugin->path;
   grn_plugin_call_register_mrb(ctx, plugin_id, plugin);
   ctx->impl->plugin_path = NULL;
 #endif /* GRN_WITH_MRUBY */

@@ -109,9 +109,10 @@ struct _grn_alloc_info
 };
 #endif
 
-#ifdef GRN_WITH_MRUBY
 typedef struct _grn_mrb_data grn_mrb_data;
 struct _grn_mrb_data {
+  grn_bool initialized;
+#ifdef GRN_WITH_MRUBY
   mrb_state *state;
   char base_directory[PATH_MAX];
   struct RClass *module;
@@ -128,8 +129,8 @@ struct _grn_mrb_data {
   struct {
     struct RClass *operator_class;
   } groonga;
-};
 #endif
+};
 
 struct _grn_ctx_impl {
   grn_encoding encoding;
@@ -212,9 +213,7 @@ struct _grn_ctx_impl {
   char previous_errbuf[GRN_CTX_MSGSIZE];
   unsigned int n_same_error_messages;
 
-#ifdef GRN_WITH_MRUBY
   grn_mrb_data mrb;
-#endif
 };
 
 #ifdef __cplusplus
