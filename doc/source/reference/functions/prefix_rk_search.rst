@@ -5,24 +5,24 @@
 .. groonga-command
 .. database: functions_prefix_rk_search
 
-``prefix_rk_search()``
-======================
+``prefix_rk_search``
+====================
 
 Summary
 -------
 
-``prefix_rk_search()`` selects records by
+``prefix_rk_search`` selects records by
 :doc:`/reference/operations/prefix_rk_search`.
 
 You need to create :ref:`table-pat-key` table for prefix RK search.
 
-You can't use ``prefix_rk_search()`` for sequential scan. It's a
+You can't use ``prefix_rk_search`` for sequential scan. It's a
 selector only procedure.
 
 Syntax
 ------
 
-``prefix_rk_search()`` requires two arguments. They are ``column`` and
+``prefix_rk_search`` requires two arguments. They are ``column`` and
 ``query``::
 
   prefix_rk_search(column, query)
@@ -149,7 +149,7 @@ Specifies a query in romaji, katakana or hiragana as string.
 Return value
 ------------
 
-``prefix_rk_search()`` function returns matched records.
+``prefix_rk_search`` function returns matched records.
 
 See also
 --------
