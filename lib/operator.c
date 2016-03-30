@@ -361,6 +361,9 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
 
 #define DO_COMPARE_SCALAR_SUB_NUMERIC(y,op) do {\
   switch ((y)->header.domain) {\
+  case GRN_DB_BOOL :\
+    r = (x_ op (uint8_t)(GRN_BOOL_VALUE(y) ? 1 : 0));\
+    break;\
   case GRN_DB_INT8 :\
     r = (x_ op GRN_INT8_VALUE(y));\
     break;\
@@ -455,6 +458,12 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
 
 #define DO_COMPARE_SCALAR_BUILTIN(x,y,r,op) do {\
   switch (x->header.domain) {\
+  case GRN_DB_BOOL :\
+    {\
+      uint8_t x_ = GRN_BOOL_VALUE(x) ? 1 : 0;\
+      DO_COMPARE_SCALAR_SUB(op);\
+    }\
+    break;\
   case GRN_DB_INT8 :\
     {\
       int8_t x_ = GRN_INT8_VALUE(x);\
