@@ -574,7 +574,6 @@ grn_ctx_impl_init(grn_ctx *ctx)
 {
   grn_io_mapinfo mi;
   if (!(ctx->impl = grn_io_anon_map(ctx, &mi, IMPL_SIZE))) {
-    ctx->impl = NULL;
     return ctx->rc;
   }
 #ifdef USE_DYNAMIC_MALLOC_CHANGE
