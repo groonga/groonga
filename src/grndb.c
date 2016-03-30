@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014 Brazil
+  Copyright(C) 2014-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@
 
 #include <grn_mrb.h>
 #include <grn_ctx_impl.h>
+#include <grn_ctx_impl_mrb.h>
 
 #include <mruby/variable.h>
 #include <mruby/array.h>
@@ -129,7 +130,12 @@ main(int argc, char **argv)
   {
     grn_ctx ctx;
     grn_ctx_init(&ctx, 0);
-    exit_code = run(&ctx, argc, argv);
+    grn_ctx_impl_mrb_ensure_init(&ctx);
+    if (ctx.rc == GRN_SUCCESS) {
+      exit_code = run(&ctx, argc, argv);
+    } else {
+      exit_code = EXIT_FAILURE;
+    }
     grn_ctx_fin(&ctx);
   }
 
