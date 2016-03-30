@@ -2556,7 +2556,7 @@ static grn_obj *
 func_geo_in_circle(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *obj;
-  unsigned char r = GRN_FALSE;
+  grn_bool r = GRN_FALSE;
   grn_geo_approximate_type type = GRN_GEO_APPROXIMATE_RECTANGLE;
   switch (nargs) {
   case 4 :
@@ -2570,8 +2570,8 @@ func_geo_in_circle(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   default :
     break;
   }
-  if ((obj = GRN_PROC_ALLOC(GRN_DB_UINT32, 0))) {
-    GRN_UINT32_SET(ctx, obj, r);
+  if ((obj = GRN_PROC_ALLOC(GRN_DB_BOOL, 0))) {
+    GRN_BOOL_SET(ctx, obj, r);
   }
   return obj;
 }
@@ -2580,12 +2580,12 @@ static grn_obj *
 func_geo_in_rectangle(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *obj;
-  unsigned char r = GRN_FALSE;
+  grn_bool r = GRN_FALSE;
   if (nargs == 3) {
     r = grn_geo_in_rectangle(ctx, args[0], args[1], args[2]);
   }
-  if ((obj = GRN_PROC_ALLOC(GRN_DB_UINT32, 0))) {
-    GRN_UINT32_SET(ctx, obj, r);
+  if ((obj = GRN_PROC_ALLOC(GRN_DB_BOOL, 0))) {
+    GRN_BOOL_SET(ctx, obj, r);
   }
   return obj;
 }
