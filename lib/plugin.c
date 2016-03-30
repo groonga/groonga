@@ -154,10 +154,7 @@ grn_plugin_call_init(grn_ctx *ctx, grn_id id)
   grn_plugin *plugin;
   int size;
 
-  CRITICAL_SECTION_ENTER(grn_plugins_lock);
   size = grn_hash_get_value(&grn_plugins_ctx, grn_plugins, id, &plugin);
-  CRITICAL_SECTION_LEAVE(grn_plugins_lock);
-
   if (size == 0) {
     return GRN_INVALID_ARGUMENT;
   }
@@ -230,10 +227,7 @@ grn_plugin_call_fin(grn_ctx *ctx, grn_id id)
   grn_plugin *plugin;
   int size;
 
-  CRITICAL_SECTION_ENTER(grn_plugins_lock);
   size = grn_hash_get_value(&grn_plugins_ctx, grn_plugins, id, &plugin);
-  CRITICAL_SECTION_LEAVE(grn_plugins_lock);
-
   if (size == 0) {
     return GRN_INVALID_ARGUMENT;
   }
