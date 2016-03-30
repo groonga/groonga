@@ -41,13 +41,6 @@ if parse_version(sphinx.__version__) < parse_version(SPHINX_VERSION_REQUIRED):
 extensions = []
 # extensions.append("source.rdoc")
 # extensions.append("source.textile")
-try:
-  import rst2pdf
-  if parse_version(rst2pdf.version) >= parse_version(RST2PDF_VERSION_REQUIRED):
-    extensions.append('sphinx.ext.autodoc')
-    extensions.append('rst2pdf.pdfbuilder')
-except:
-  pass
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['templates']
@@ -211,57 +204,3 @@ html_show_sphinx = False
 
 # If nonempty, this is the file name suffix for HTML files (e.g. ".xhtml").
 #html_file_suffix = ''
-
-# Output file base name for HTML help builder.
-htmlhelp_basename = 'groongadoc'
-
-
-# -- Options for LaTeX output --------------------------------------------------
-
-# The paper size ('letter' or 'a4').
-#latex_paper_size = 'letter'
-
-# The font size ('10pt', '11pt' or '12pt').
-#latex_font_size = '10pt'
-
-# Grouping the document tree into LaTeX files. List of tuples
-# (source start file, target name, title, author, documentclass [howto/manual]).
-latex_documents = [
-  ('index', 'groonga.tex', unicode(_('Groonga documentation'), "utf-8"),
-   u'Brazil, Inc', 'manual'),
-]
-
-# The name of an image file (relative to this directory) to place at the top of
-# the title page.
-#latex_logo = None
-
-# For "manual" documents, if this is true, then toplevel headings are parts,
-# not chapters.
-#latex_use_parts = False
-
-# Additional stuff for the LaTeX preamble.
-#latex_preamble = ''
-
-# Documents to append as an appendix to all manuals.
-#latex_appendices = []
-
-# If false, no module index is generated.
-#latex_use_modindex = True
-
-# -- Options for rst2pdf output --------------------------------------------------
-pdf_documents = [
-  ('index',
-   u'Groonga-%s' % (release,),
-   html_title,
-   unicode(_('Groonga Project'), "utf-8"))
-]
-pdf_stylesheets = ['sphinx', 'kerning', 'a4']
-if 'language' in dir():
-  pdf_language = language
-  pdf_stylesheets += ['styles/pdf/%s' % pdf_language]
-pdf_font_path = []
-for root, dirs, files in os.walk('/usr/share/fonts'):
-  pdf_font_path += map(lambda(dir): os.path.join(root, dir), dirs)
-pdf_fit_mode = "shrink"
-pdf_inline_footnotes = True
-pdf_break_level = 2
