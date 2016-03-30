@@ -16,11 +16,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     },
     {
       :id => "debian-jessie-i386",
-      :box_url => "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_debian-8.2-i386_chef-provisionerless.box",
+      :box_url => "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_debian-8.3-i386_chef-provisionerless.box",
     },
     {
       :id => "debian-jessie-amd64",
-      :box_url => "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_debian-8.2_chef-provisionerless.box",
+      :box_url => "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_debian-8.3_chef-provisionerless.box",
     },
   ]
 
