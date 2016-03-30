@@ -40,7 +40,11 @@ writer_write(mrb_state *mrb, mrb_value self)
 
   switch (mrb_type(target)) {
   case MRB_TT_FALSE :
-    GRN_OUTPUT_BOOL(GRN_FALSE);
+    if (mrb_nil_p(target)) {
+      GRN_OUTPUT_NULL();
+    } else {
+      GRN_OUTPUT_BOOL(GRN_FALSE);
+    }
     break;
   case MRB_TT_TRUE :
     GRN_OUTPUT_BOOL(GRN_TRUE);
@@ -65,7 +69,9 @@ writer_write(mrb_state *mrb, mrb_value self)
     break;
   default :
     mrb_raisef(mrb, E_ARGUMENT_ERROR,
-               "must be true, false, number, float or string: %S", target);
+               "must be nil, true, false, number, float, symbol or string: "
+               "%S",
+               target);
     break;
   }
 
