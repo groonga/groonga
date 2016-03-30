@@ -421,7 +421,7 @@ grntestを実行するためにはGroongaのテストデータとgrntestのソ�
 grntestの実行方法
 ~~~~~~~~~~~~~~~~~
 
-grntestではGroongaコマンドを明示的にしていすることができます。
+grntestではGroongaコマンドを明示的に指定することができます。
 後述のパッケージごとのgrntestによる動作確認では以下のようにして実行します。::
 
     % GROONGA=(groongaのパス指定) test/function/run-test.sh
