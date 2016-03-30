@@ -46,6 +46,7 @@
 
 static grn_hash *grn_plugins = NULL;
 static grn_critical_section grn_plugins_lock;
+static grn_ctx grn_plugins_ctx;
 
 #ifdef HAVE_DLFCN_H
 #  include <dlfcn.h>
@@ -98,7 +99,7 @@ grn_plugin_reference(grn_ctx *ctx, const char *filename)
   grn_plugin **plugin = NULL;
 
   CRITICAL_SECTION_ENTER(grn_plugins_lock);
-  id = grn_hash_get(&grn_gctx, grn_plugins,
+  id = grn_hash_get(&grn_plugins_ctx, grn_plugins,
                     filename, GRN_PLUGIN_KEY_SIZE(filename),
                     (void **)&plugin);
   if (plugin) {
@@ -123,7 +124,7 @@ grn_plugin_path(grn_ctx *ctx, grn_id id)
   }
 
   CRITICAL_SECTION_ENTER(grn_plugins_lock);
-  value_size = grn_hash_get_value(&grn_gctx, grn_plugins, id, &plugin);
+  value_size = grn_hash_get_value(&grn_plugins_ctx, grn_plugins, id, &plugin);
   CRITICAL_SECTION_LEAVE(grn_plugins_lock);
 
   if (!plugin) {
@@ -151,12 +152,20 @@ static grn_rc
 grn_plugin_call_init(grn_ctx *ctx, grn_id id)
 {
   grn_plugin *plugin;
-  if (!grn_hash_get_value(&grn_gctx, grn_plugins, id, &plugin)) {
+  int size;
+
+  CRITICAL_SECTION_ENTER(grn_plugins_lock);
+  size = grn_hash_get_value(&grn_plugins_ctx, grn_plugins, id, &plugin);
+  CRITICAL_SECTION_LEAVE(grn_plugins_lock);
+
+  if (size == 0) {
     return GRN_INVALID_ARGUMENT;
   }
+
   if (plugin->init_func) {
     return plugin->init_func(ctx);
   }
+
   return GRN_SUCCESS;
 }
 
@@ -192,17 +201,26 @@ static grn_rc
 grn_plugin_call_register(grn_ctx *ctx, grn_id id)
 {
   grn_plugin *plugin;
-  if (!grn_hash_get_value(&grn_gctx, grn_plugins, id, &plugin)) {
+  int size;
+
+  CRITICAL_SECTION_ENTER(grn_plugins_lock);
+  size = grn_hash_get_value(&grn_plugins_ctx, grn_plugins, id, &plugin);
+  CRITICAL_SECTION_LEAVE(grn_plugins_lock);
+
+  if (size == 0) {
     return GRN_INVALID_ARGUMENT;
   }
+
 #ifdef GRN_WITH_MRUBY
   if (!plugin->dl) {
     return grn_plugin_call_register_mrb(ctx, id, plugin);
   }
 #endif /* GRN_WITH_MRUBY */
+
   if (plugin->register_func) {
     return plugin->register_func(ctx);
   }
+
   return GRN_SUCCESS;
 }
 
@@ -210,12 +228,20 @@ static grn_rc
 grn_plugin_call_fin(grn_ctx *ctx, grn_id id)
 {
   grn_plugin *plugin;
-  if (!grn_hash_get_value(&grn_gctx, grn_plugins, id, &plugin)) {
+  int size;
+
+  CRITICAL_SECTION_ENTER(grn_plugins_lock);
+  size = grn_hash_get_value(&grn_plugins_ctx, grn_plugins, id, &plugin);
+  CRITICAL_SECTION_LEAVE(grn_plugins_lock);
+
+  if (size == 0) {
     return GRN_INVALID_ARGUMENT;
   }
+
   if (plugin->fin_func) {
     return plugin->fin_func(ctx);
   }
+
   return GRN_SUCCESS;
 }
 
@@ -264,6 +290,7 @@ grn_plugin_initialize(grn_ctx *ctx, grn_plugin *plugin,
 static grn_id
 grn_plugin_open_mrb(grn_ctx *ctx, const char *filename, size_t filename_size)
 {
+  grn_ctx *plugins_ctx = &grn_plugins_ctx;
   grn_id id = GRN_ID_NIL;
   grn_plugin **plugin = NULL;
 
@@ -277,15 +304,18 @@ grn_plugin_open_mrb(grn_ctx *ctx, const char *filename, size_t filename_size)
     return GRN_ID_NIL;
   }
 
-  id = grn_hash_add(&grn_gctx, grn_plugins, filename, filename_size,
+  id = grn_hash_add(plugins_ctx, grn_plugins, filename, filename_size,
                     (void **)&plugin, NULL);
   if (!id) {
     return id;
   }
 
-  *plugin = GRN_GMALLOCN(grn_plugin, 1);
+  {
+    grn_ctx *ctx = plugins_ctx;
+    *plugin = GRN_MALLOCN(grn_plugin, 1);
+  }
   if (!*plugin) {
-    grn_hash_delete_by_id(&grn_gctx, grn_plugins, id, NULL);
+    grn_hash_delete_by_id(plugins_ctx, grn_plugins, id, NULL);
     return GRN_ID_NIL;
   }
 
@@ -303,6 +333,7 @@ grn_plugin_open_mrb(grn_ctx *ctx, const char *filename, size_t filename_size)
 grn_id
 grn_plugin_open(grn_ctx *ctx, const char *filename)
 {
+  grn_ctx *plugins_ctx = &grn_plugins_ctx;
   grn_id id = GRN_ID_NIL;
   grn_dl dl;
   grn_plugin **plugin = NULL;
@@ -311,7 +342,7 @@ grn_plugin_open(grn_ctx *ctx, const char *filename)
   filename_size = GRN_PLUGIN_KEY_SIZE(filename);
 
   CRITICAL_SECTION_ENTER(grn_plugins_lock);
-  if ((id = grn_hash_get(&grn_gctx, grn_plugins, filename, filename_size,
+  if ((id = grn_hash_get(plugins_ctx, grn_plugins, filename, filename_size,
                          (void **)&plugin))) {
     (*plugin)->refcount++;
     goto exit;
@@ -331,18 +362,24 @@ grn_plugin_open(grn_ctx *ctx, const char *filename)
 #endif /* GRN_WITH_MRUBY */
 
   if ((dl = grn_dl_open(filename))) {
-    if ((id = grn_hash_add(&grn_gctx, grn_plugins, filename, filename_size,
+    if ((id = grn_hash_add(plugins_ctx, grn_plugins, filename, filename_size,
                            (void **)&plugin, NULL))) {
-      *plugin = GRN_GMALLOCN(grn_plugin, 1);
+      {
+        grn_ctx *ctx = plugins_ctx;
+        *plugin = GRN_MALLOCN(grn_plugin, 1);
+      }
       if (*plugin) {
         grn_memcpy((*plugin)->path, filename, filename_size);
         if (grn_plugin_initialize(ctx, *plugin, dl, id, filename)) {
-          GRN_GFREE(*plugin);
+          {
+            grn_ctx *ctx = plugins_ctx;
+            GRN_FREE(*plugin);
+          }
           *plugin = NULL;
         }
       }
       if (!*plugin) {
-        grn_hash_delete_by_id(&grn_gctx, grn_plugins, id, NULL);
+        grn_hash_delete_by_id(plugins_ctx, grn_plugins, id, NULL);
         if (grn_dl_close(dl)) {
           /* Now, __FILE__ set in plugin is invalid. */
           ctx->errline = 0;
@@ -378,6 +415,7 @@ exit:
 grn_rc
 grn_plugin_close(grn_ctx *ctx, grn_id id)
 {
+  grn_ctx *plugins_ctx = &grn_plugins_ctx;
   grn_rc rc;
   grn_plugin *plugin;
 
@@ -386,7 +424,7 @@ grn_plugin_close(grn_ctx *ctx, grn_id id)
   }
 
   CRITICAL_SECTION_ENTER(grn_plugins_lock);
-  if (!grn_hash_get_value(&grn_gctx, grn_plugins, id, &plugin)) {
+  if (!grn_hash_get_value(plugins_ctx, grn_plugins, id, &plugin)) {
     rc = GRN_INVALID_ARGUMENT;
     goto exit;
   }
@@ -402,8 +440,11 @@ grn_plugin_close(grn_ctx *ctx, grn_id id)
       SERR("%s", label);
     }
   }
-  GRN_GFREE(plugin);
-  rc = grn_hash_delete_by_id(&grn_gctx, grn_plugins, id, NULL);
+  {
+    grn_ctx *ctx = plugins_ctx;
+    GRN_FREE(plugin);
+  }
+  rc = grn_hash_delete_by_id(plugins_ctx, grn_plugins, id, NULL);
 
 exit:
   CRITICAL_SECTION_LEAVE(grn_plugins_lock);
@@ -422,7 +463,7 @@ grn_plugin_sym(grn_ctx *ctx, grn_id id, const char *symbol)
   }
 
   CRITICAL_SECTION_ENTER(grn_plugins_lock);
-  if (!grn_hash_get_value(&grn_gctx, grn_plugins, id, &plugin)) {
+  if (!grn_hash_get_value(&grn_plugins_ctx, grn_plugins, id, &plugin)) {
     func = NULL;
     goto exit;
   }
@@ -443,9 +484,14 @@ grn_rc
 grn_plugins_init(void)
 {
   CRITICAL_SECTION_INIT(grn_plugins_lock);
-  grn_plugins = grn_hash_create(&grn_gctx, NULL, PATH_MAX, sizeof(grn_plugin *),
+  grn_ctx_init(&grn_plugins_ctx, 0);
+  grn_plugins = grn_hash_create(&grn_plugins_ctx, NULL,
+                                PATH_MAX, sizeof(grn_plugin *),
                                 GRN_OBJ_KEY_VAR_SIZE);
-  if (!grn_plugins) { return GRN_NO_MEMORY_AVAILABLE; }
+  if (!grn_plugins) {
+    grn_ctx_fin(&grn_plugins_ctx);
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
   return GRN_SUCCESS;
 }
 
@@ -454,10 +500,11 @@ grn_plugins_fin(void)
 {
   grn_rc rc;
   if (!grn_plugins) { return GRN_INVALID_ARGUMENT; }
-  GRN_HASH_EACH(&grn_gctx, grn_plugins, id, NULL, NULL, NULL, {
-    grn_plugin_close(&grn_gctx, id);
+  GRN_HASH_EACH(&grn_plugins_ctx, grn_plugins, id, NULL, NULL, NULL, {
+    grn_plugin_close(&grn_plugins_ctx, id);
   });
-  rc = grn_hash_close(&grn_gctx, grn_plugins);
+  rc = grn_hash_close(&grn_plugins_ctx, grn_plugins);
+  grn_ctx_fin(&grn_plugins_ctx);
   CRITICAL_SECTION_FIN(grn_plugins_lock);
   return rc;
 }
@@ -780,7 +827,7 @@ grn_plugin_unregister_by_path(grn_ctx *ctx, const char *path)
   GRN_API_ENTER;
 
   CRITICAL_SECTION_ENTER(grn_plugins_lock);
-  plugin_id = grn_hash_get(&grn_gctx, grn_plugins,
+  plugin_id = grn_hash_get(&grn_plugins_ctx, grn_plugins,
                            path, GRN_PLUGIN_KEY_SIZE(path),
                            NULL);
   CRITICAL_SECTION_LEAVE(grn_plugins_lock);
@@ -855,7 +902,8 @@ grn_plugin_ensure_registered(grn_ctx *ctx, grn_obj *proc)
   {
     const char *value;
     uint32_t value_size;
-    value = grn_hash_get_value_(&grn_gctx, grn_plugins, plugin_id, &value_size);
+    value = grn_hash_get_value_(&grn_plugins_ctx, grn_plugins, plugin_id,
+                                &value_size);
     if (value) {
       plugin = *((grn_plugin **)value);
     }
