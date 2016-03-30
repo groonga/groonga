@@ -3,7 +3,6 @@ include $(top_srcdir)/build/makefiles/sphinx-build.am
 
 $(html_files): html-build-stamp
 $(html_files_relative_from_locale_dir): html-build-stamp
-$(man_files): man-build-stamp
 
 am__nobase_dist_doc_locale_DATA_DIST =
 if DOCUMENT_AVAILABLE
@@ -22,20 +21,14 @@ document_source_files =				\
 
 required_build_stamps =				\
 	html-build-stamp			\
-	man-build-stamp				\
 	mo-build-stamp
 
 if DOCUMENT_BUILDABLE
 EXTRA_DIST += $(required_build_stamps)
 endif
 
-man_files =					\
-	man/$(PACKAGE_NAME).1
-
 generated_files =				\
 	$(DOCTREES_BASE)			\
-	man					\
-	man-build-stamp				\
 	html					\
 	html-build-stamp			\
 	pdf					\
@@ -75,7 +68,6 @@ maintainer-clean-local:
 endif
 
 .PHONY: help
-.PHONY: man clean-man
 .PHONY: html clean-html
 .PHONY: pdf
 .PHONY: dirhtml
@@ -91,7 +83,6 @@ endif
 if DOCUMENT_BUILDABLE
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
-	@echo "  man       to make man files"
 	@echo "  html      to make standalone HTML files"
 	@echo "  dirhtml   to make HTML files named index.html in directories"
 	@echo "  pickle    to make pickle files"
@@ -105,7 +96,6 @@ help:
 	@echo "  linkcheck to check all external links for integrity"
 	@echo "  doctest   to run all doctests embedded in the documentation (if enabled)"
 
-man: man-build-stamp
 html: html-recursive html-build-stamp
 dirhtml: dirhtml-build-stamp
 pickle: pickle-build-stamp
@@ -120,7 +110,6 @@ linkcheck: linkcheck-build-stamp
 doctest: doctest-build-stamp
 
 clean_targets =					\
-	clean-man				\
 	clean-html				\
 	clean-dirhtml				\
 	clean-pickle				\
@@ -139,7 +128,6 @@ $(clean_targets):
 	  rm -rf $${target}-build-stamp $${target}
 
 build_stamps =					\
-	man-build-stamp				\
 	html-build-stamp			\
 	dirhtml-build-stamp			\
 	pickle-build-stamp			\
