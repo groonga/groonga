@@ -240,7 +240,7 @@ grn_io_create_tmp(grn_ctx *ctx, uint32_t header_size, uint32_t segment_size,
 
 /* grn_io_register should be called in a critical section using grn_glock. */
 static void
-grn_io_register(grn_io *io)
+grn_io_register(grn_ctx *ctx, grn_io *io)
 {
   if (io->fis && (io->flags & (GRN_IO_EXPIRE_GTICK|GRN_IO_EXPIRE_SEGMENT))) {
     grn_bool succeeded = GRN_FALSE;
@@ -250,7 +250,7 @@ grn_io_register(grn_io *io)
       succeeded = GRN_TRUE;
     }
     if (!succeeded) {
-      GRN_LOG(&grn_gctx, GRN_LOG_WARNING,
+      GRN_LOG(ctx, GRN_LOG_WARNING,
               "grn_io_register(%s) failed", io->path);
     }
   }
@@ -258,7 +258,7 @@ grn_io_register(grn_io *io)
 
 /* grn_io_unregister should be called in a critical section using grn_glock. */
 static void
-grn_io_unregister(grn_io *io)
+grn_io_unregister(grn_ctx *ctx, grn_io *io)
 {
   if (io->fis && (io->flags & (GRN_IO_EXPIRE_GTICK|GRN_IO_EXPIRE_SEGMENT))) {
     grn_bool succeeded = GRN_FALSE;
@@ -268,7 +268,7 @@ grn_io_unregister(grn_io *io)
       succeeded = GRN_TRUE;
     }
     if (!succeeded) {
-      GRN_LOG(&grn_gctx, GRN_LOG_WARNING,
+      GRN_LOG(ctx, GRN_LOG_WARNING,
               "grn_io_unregister(%s) failed", io->path);
     }
   }
@@ -331,7 +331,7 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size,
             io->count = 0;
             io->flags = flags;
             io->lock = &header->lock;
-            grn_io_register(io);
+            grn_io_register(ctx, io);
             CRITICAL_SECTION_LEAVE(grn_glock);
             return io;
           }
@@ -663,7 +663,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
             io->flags = header->flags;
             io->lock = &header->lock;
             if (!array_init(io, io->header->n_arrays)) {
-              grn_io_register(io);
+              grn_io_register(ctx, io);
               CRITICAL_SECTION_LEAVE(grn_glock);
               return io;
             }
@@ -688,7 +688,7 @@ grn_io_close(grn_ctx *ctx, grn_io *io)
 
   max_nfiles = grn_io_max_n_files(io);
   CRITICAL_SECTION_ENTER(grn_glock);
-  grn_io_unregister(io);
+  grn_io_unregister(ctx, io);
   if (io->ainfo) { GRN_GFREE(io->ainfo); }
   if (io->maps) {
     int i;
