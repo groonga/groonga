@@ -1379,7 +1379,7 @@ grn_io_flush(grn_ctx *ctx, grn_io *io)
   struct _grn_io_header *header;
   uint32_t aligned_header_size;
 
-  if (!io->path) {
+  if (io->path[0] == '\0') {
     return GRN_SUCCESS;
   }
 
