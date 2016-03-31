@@ -175,7 +175,8 @@ void grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *i
         if (nref) {\
           GRN_ATOMIC_ADD_EX(pnref, -1, nref);\
           if (retry >= GRN_IO_MAX_RETRY) {\
-            GRN_LOG(ctx, GRN_LOG_CRIT, "deadlock detected! in GRN_IO_SEG_REF(%p, %u)", io, segno);\
+            GRN_LOG(ctx, GRN_LOG_CRIT,\
+                    "deadlock detected! in GRN_IO_SEG_REF(%p, %u)", io, segno);\
             break;\
           }\
           GRN_FUTEX_WAIT(pnref);\
@@ -200,7 +201,9 @@ void grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *i
         if (nref >= GRN_IO_MAX_REF) {\
           GRN_ATOMIC_ADD_EX(pnref, -1, nref);\
           if (retry >= GRN_IO_MAX_RETRY) {\
-            GRN_LOG(ctx, GRN_LOG_CRIT, "deadlock detected!! in GRN_IO_SEG_REF(%p, %u, %u)", io, segno, nref);\
+            GRN_LOG(ctx, GRN_LOG_CRIT,\
+                    "deadlock detected!! in GRN_IO_SEG_REF(%p, %u, %u)",\
+                    io, segno, nref);\
             *pnref = 0; /* force reset */ \
             break;\
           }\
@@ -208,13 +211,16 @@ void grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *i
           continue;\
         }\
         if (nref >= 0x40000000) {\
-          ALERT("strange nref value!! in GRN_IO_SEG_REF(%p, %u, %u)", io, segno, nref); \
+          ALERT("strange nref value!! in GRN_IO_SEG_REF(%p, %u, %u)",\
+                io, segno, nref); \
         }\
         if (!info->map) {\
           if (nref) {\
             GRN_ATOMIC_ADD_EX(pnref, -1, nref);\
             if (retry >= GRN_IO_MAX_RETRY) {\
-              GRN_LOG(ctx, GRN_LOG_CRIT, "deadlock detected!!! in GRN_IO_SEG_REF(%p, %u, %u)", io, segno, nref);\
+              GRN_LOG(ctx, GRN_LOG_CRIT,\
+                      "deadlock detected!!! in GRN_IO_SEG_REF(%p, %u, %u)",\
+                      io, segno, nref);\
               break;\
             }\
             GRN_FUTEX_WAIT(pnref);\
@@ -241,7 +247,9 @@ void grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *i
       if (nref) {\
         GRN_ATOMIC_ADD_EX(pnref, -1, nref);\
         if (retry >= GRN_IO_MAX_RETRY) {\
-          GRN_LOG(ctx, GRN_LOG_CRIT, "deadlock detected!!!! in GRN_IO_SEG_REF(%p, %u)", io, segno);\
+          GRN_LOG(ctx, GRN_LOG_CRIT,\
+                  "deadlock detected!!!! in GRN_IO_SEG_REF(%p, %u)",\
+                  io, segno);\
           break;\
         }\
         GRN_FUTEX_WAIT(pnref);\
