@@ -652,7 +652,7 @@ grn_pat_close(grn_ctx *ctx, grn_pat *pat)
   if ((rc = grn_io_close(ctx, pat->io))) {
     ERR(rc, "grn_io_close failed");
   } else {
-    GRN_OBJ_FIN(ctx, &(pat->token_filters));
+    grn_pvector_fin(ctx, &pat->token_filters);
     if (pat->cache) { grn_pat_cache_disable(ctx, pat); }
     GRN_FREE(pat);
   }
