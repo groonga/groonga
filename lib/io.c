@@ -70,33 +70,36 @@ inline static void grn_fileinfo_init(fileinfo *fis, int nfis);
 inline static int grn_fileinfo_opened(fileinfo *fi);
 inline static grn_rc grn_fileinfo_close(grn_ctx *ctx, fileinfo *fi);
 #ifdef WIN32
-inline static void * grn_mmap(grn_ctx *ctx, grn_io *io,
-                              HANDLE *fmo, fileinfo *fi,
+inline static void * grn_mmap(grn_ctx *ctx, grn_ctx *owner_ctx,
+                              grn_io *io, HANDLE *fmo, fileinfo *fi,
                               off_t offset, size_t length);
-inline static int grn_munmap(grn_ctx *ctx, grn_io *io,
-                             HANDLE *fmo, fileinfo *fi,
+inline static int grn_munmap(grn_ctx *ctx, grn_ctx *owner_ctx,
+                             grn_io *io, HANDLE *fmo, fileinfo *fi,
                              void *start, size_t length);
-# define GRN_MMAP(ctx,io,fmo,fi,offset,length)\
-  (grn_mmap((ctx), (io), (fmo), (fi), (offset), (length)))
-# define GRN_MUNMAP(ctx,io,fmo,fi,start,length)\
-  (grn_munmap((ctx), (io), (fmo), (fi), (start), (length)))
+# define GRN_MMAP(ctx,owner_ctx,io,fmo,fi,offset,length)\
+  (grn_mmap((ctx), (owner_ctx), (io), (fmo), (fi), (offset), (length)))
+# define GRN_MUNMAP(ctx,owner_ctx,io,fmo,fi,start,length)\
+  (grn_munmap((ctx), (owner_ctx), (io), (fmo), (fi), (start), (length)))
 #else /* WIN32 */
-inline static void * grn_mmap(grn_ctx *ctx, grn_io *io, fileinfo *fi,
+inline static void * grn_mmap(grn_ctx *ctx, grn_ctx *owner_ctx,
+                              grn_io *io, fileinfo *fi,
                               off_t offset, size_t length);
-inline static int grn_munmap(grn_ctx *ctx, grn_io *io, fileinfo *fi,
+inline static int grn_munmap(grn_ctx *ctx, grn_ctx *owner_ctx,
+                             grn_io *io, fileinfo *fi,
                              void *start, size_t length);
-# define GRN_MUNMAP(ctx,io,fmo,fi,start,length) \
-  (grn_munmap((ctx), (io), (fi), (start), (length)))
+# define GRN_MUNMAP(ctx,owner_ctx,io,fmo,fi,start,length) \
+  (grn_munmap((ctx), (owner_ctx), (io), (fi), (start), (length)))
 # ifdef USE_FAIL_MALLOC
-inline static void * grn_fail_mmap(grn_ctx *ctx, grn_io *io, fileinfo *fi,
+inline static void * grn_fail_mmap(grn_ctx *ctx, grn_ctx *owner_ctx,
+                                   grn_io *io, fileinfo *fi,
                                    off_t offset, size_t length,
                                    const char* file, int line, const char *func);
-#  define GRN_MMAP(ctx,io,fmo,fi,offset,length)\
-  (grn_fail_mmap((ctx), (io), (fi), (offset), (length),\
+#  define GRN_MMAP(ctx,owner_ctx,io,fmo,fi,offset,length)\
+  (grn_fail_mmap((ctx), (owner_ctx), (io), (fi), (offset), (length),\
                  __FILE__, __LINE__, __FUNCTION__))
 # else /* USE_FAIL_MALLOC */
-#  define GRN_MMAP(ctx,io,fmo,fi,offset,length)\
-  (grn_mmap((ctx), (io), (fi), (offset), (length)))
+#  define GRN_MMAP(ctx,owner_ctx,io,fmo,fi,offset,length)\
+  (grn_mmap((ctx), (owner_ctx), (io), (fi), (offset), (length)))
 # endif /* USE_FAIL_MALLOC */
 #endif  /* WIN32 */
 inline static int grn_msync(grn_ctx *ctx, void *start, size_t length);
@@ -186,8 +189,8 @@ grn_io_max_n_files(grn_io *io)
                                     file_size);
 }
 
-grn_io *
-grn_io_create_tmp(uint32_t header_size, uint32_t segment_size,
+static grn_io *
+grn_io_create_tmp(grn_ctx *ctx, uint32_t header_size, uint32_t segment_size,
                   uint32_t max_segment, grn_io_mode mode, uint32_t flags)
 {
   grn_io *io;
@@ -195,7 +198,8 @@ grn_io_create_tmp(uint32_t header_size, uint32_t segment_size,
   struct _grn_io_header *header;
   b = grn_io_compute_base(header_size);
   CRITICAL_SECTION_ENTER(grn_glock);
-  header = (struct _grn_io_header *)GRN_MMAP(&grn_gctx, NULL, NULL, NULL, 0, b);
+  header = (struct _grn_io_header *)GRN_MMAP(ctx, &grn_gctx, NULL, NULL, NULL,
+                                             0, b);
   if (header) {
     header->version = grn_io_version_default;
     header->header_size = header_size;
@@ -228,7 +232,7 @@ grn_io_create_tmp(uint32_t header_size, uint32_t segment_size,
       }
       GRN_GFREE(io);
     }
-    GRN_MUNMAP(&grn_gctx, NULL, NULL, NULL, header, b);
+    GRN_MUNMAP(ctx, &grn_gctx, NULL, NULL, NULL, header, b);
   }
   CRITICAL_SECTION_LEAVE(grn_glock);
   return NULL;
@@ -271,8 +275,9 @@ grn_io_unregister(grn_io *io)
 }
 
 grn_io *
-grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t segment_size,
-              uint32_t max_segment, grn_io_mode mode, uint32_t flags)
+grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size,
+              uint32_t segment_size, uint32_t max_segment, grn_io_mode mode,
+              uint32_t flags)
 {
   grn_io *io;
   fileinfo *fis;
@@ -283,7 +288,8 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t seg
   unsigned long file_size;
 
   if (!path) {
-    return grn_io_create_tmp(header_size, segment_size, max_segment, mode, flags);
+    return grn_io_create_tmp(ctx, header_size, segment_size, max_segment,
+                             mode, flags);
   }
   if (!*path || (strlen(path) > PATH_MAX - 4)) { return NULL; }
   b = grn_io_compute_base(header_size);
@@ -295,7 +301,7 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t seg
   if ((fis = GRN_GMALLOCN(fileinfo, max_nfiles))) {
     grn_fileinfo_init(fis, max_nfiles);
     if (!grn_fileinfo_open(ctx, fis, path, O_RDWR|O_CREAT|O_EXCL)) {
-      header = (struct _grn_io_header *)GRN_MMAP(&grn_gctx, NULL,
+      header = (struct _grn_io_header *)GRN_MMAP(ctx, &grn_gctx, NULL,
                                                  &fis->fmo, fis, 0, b);
       if (header) {
         header->version = version;
@@ -331,7 +337,7 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t seg
           }
           GRN_GFREE(io);
         }
-        GRN_MUNMAP(&grn_gctx, NULL, &fis->fmo, fis, header, b);
+        GRN_MUNMAP(ctx, &grn_gctx, NULL, &fis->fmo, fis, header, b);
       }
       grn_fileinfo_close(ctx, fis);
       if (grn_unlink(path) == -1) {
@@ -620,7 +626,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
   if (!grn_fileinfo_open(ctx, &fi, path, O_RDWR)) {
     struct _grn_io_header *header;
     CRITICAL_SECTION_ENTER(grn_glock);
-    header = GRN_MMAP(&grn_gctx, NULL, &(fi.fmo), &fi, 0, b);
+    header = GRN_MMAP(ctx, &grn_gctx, NULL, &(fi.fmo), &fi, 0, b);
     if (header) {
       unsigned long file_size;
       unsigned int max_nfiles;
@@ -631,7 +637,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
                                               bs, file_size);
       fis = GRN_GMALLOCN(fileinfo, max_nfiles);
       if (!fis) {
-        GRN_MUNMAP(&grn_gctx, NULL, &(fi.fmo), &fi, header, b);
+        GRN_MUNMAP(ctx, &grn_gctx, NULL, &(fi.fmo), &fi, header, b);
         CRITICAL_SECTION_LEAVE(grn_glock);
         grn_fileinfo_close(ctx, &fi);
         return NULL;
@@ -667,7 +673,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
         GRN_GFREE(io);
       }
       GRN_GFREE(fis);
-      GRN_MUNMAP(&grn_gctx, NULL, &(fi.fmo), &fi, header, b);
+      GRN_MUNMAP(ctx, &grn_gctx, NULL, &(fi.fmo), &fi, header, b);
     }
     CRITICAL_SECTION_LEAVE(grn_glock);
     grn_fileinfo_close(ctx, &fi);
@@ -706,12 +712,12 @@ grn_io_close(grn_ctx *ctx, grn_io *io)
           uint32_t fno = bseg / segments_per_file;
           fi = &io->fis[fno];
         }
-        GRN_MUNMAP(&grn_gctx, io, &mi->fmo, fi, mi->map, segment_size);
+        GRN_MUNMAP(ctx, &grn_gctx, io, &mi->fmo, fi, mi->map, segment_size);
       }
     }
     GRN_GFREE(io->maps);
   }
-  GRN_MUNMAP(&grn_gctx, io, (io->fis ? &io->fis->fmo : NULL),
+  GRN_MUNMAP(ctx, &grn_gctx, io, (io->fis ? &io->fis->fmo : NULL),
              io->fis, io->header, io->base);
   if (io->fis) {
     int i;
@@ -1157,9 +1163,7 @@ grn_io_win_unmap(grn_io_win *iw)
 }
 
 #define DO_MAP(io,fmo,fi,pos,size,segno,res) do {\
-  CRITICAL_SECTION_ENTER(grn_glock);\
-  (res) = GRN_MMAP(&grn_gctx, (io), (fmo), (fi), (pos), (size));\
-  CRITICAL_SECTION_LEAVE(grn_glock);\
+  (res) = GRN_MMAP(ctx, &grn_gctx, (io), (fmo), (fi), (pos), (size));\
   if ((res)) {\
     uint32_t nmaps;\
     if (io->max_map_seg < segno) { io->max_map_seg = segno; }\
@@ -1232,7 +1236,7 @@ grn_io_seg_expire(grn_ctx *ctx, grn_io *io, uint32_t segno, uint32_t nretry)
         uint32_t nmaps;
         fileinfo *fi = &(io->fis[segno]);
         CRITICAL_SECTION_ENTER(grn_glock);
-        GRN_MUNMAP(&grn_gctx, io, &info->fmo, fi,
+        GRN_MUNMAP(ctx, &grn_gctx, io, &info->fmo, fi,
                    info->map, io->header->segment_size);
         CRITICAL_SECTION_LEAVE(grn_glock);
         info->map = NULL;
@@ -1272,7 +1276,7 @@ grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limit)
             if (info->map) {
               fileinfo *fi = &(io->fis[fno]);
               CRITICAL_SECTION_ENTER(grn_glock);
-              GRN_MUNMAP(&grn_gctx, io, &info->fmo, fi,
+              GRN_MUNMAP(ctx, &grn_gctx, io, &info->fmo, fi,
                          info->map, io->header->segment_size);
               CRITICAL_SECTION_LEAVE(grn_glock);
               info->map = NULL;
@@ -1301,7 +1305,7 @@ grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limit)
           GRN_ATOMIC_ADD_EX(pnref, 1, nref);
           if (!nref && info->map && (grn_gtick - info->count) > count_thresh) {
             CRITICAL_SECTION_ENTER(grn_glock);
-            GRN_MUNMAP(&grn_gctx, io, &info->fmo, NULL,
+            GRN_MUNMAP(ctx, &grn_gctx, io, &info->fmo, NULL,
                        info->map, io->header->segment_size);
             CRITICAL_SECTION_LEAVE(grn_glock);
             GRN_ATOMIC_ADD_EX(&io->nmaps, -1, nmaps);
@@ -1325,13 +1329,13 @@ grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limit)
 void *
 grn_io_anon_map(grn_ctx *ctx, grn_io_mapinfo *mi, size_t length)
 {
-  return (mi->map = GRN_MMAP(ctx, NULL, &mi->fmo, NULL, 0, length));
+  return (mi->map = GRN_MMAP(ctx, ctx, NULL, &mi->fmo, NULL, 0, length));
 }
 
 void
 grn_io_anon_unmap(grn_ctx *ctx, grn_io_mapinfo *mi, size_t length)
 {
-  GRN_MUNMAP(ctx, NULL, &mi->fmo, NULL, mi->map, length);
+  GRN_MUNMAP(ctx, ctx, NULL, &mi->fmo, NULL, mi->map, length);
 }
 
 grn_rc
@@ -1452,7 +1456,8 @@ grn_fileinfo_open_v1(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 }
 
 inline static void *
-grn_mmap_v1(grn_ctx *ctx, HANDLE *fmo, fileinfo *fi, off_t offset, size_t length)
+grn_mmap_v1(grn_ctx *ctx, grn_ctx *owner_ctx, HANDLE *fmo, fileinfo *fi,
+            off_t offset, size_t length)
 {
   void *res;
   if (!fi) {
@@ -1487,7 +1492,7 @@ grn_mmap_v1(grn_ctx *ctx, HANDLE *fmo, fileinfo *fi, off_t offset, size_t length
 }
 
 inline static int
-grn_munmap_v1(grn_ctx *ctx, HANDLE *fmo, fileinfo *fi,
+grn_munmap_v1(grn_ctx *ctx, grn_ctx *owner_ctx, HANDLE *fmo, fileinfo *fi,
               void *start, size_t length)
 {
   int r = 0;
@@ -1559,7 +1564,8 @@ grn_fileinfo_open_v0(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 }
 
 inline static void *
-grn_mmap_v0(grn_ctx *ctx, fileinfo *fi, off_t offset, size_t length)
+grn_mmap_v0(grn_ctx *ctx, grn_ctx *owner_ctx, fileinfo *fi, off_t offset,
+            size_t length)
 {
   void *res;
   if (!fi) { return GRN_GCALLOC(length); }
@@ -1590,7 +1596,8 @@ grn_mmap_v0(grn_ctx *ctx, fileinfo *fi, off_t offset, size_t length)
 }
 
 inline static int
-grn_munmap_v0(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
+grn_munmap_v0(grn_ctx *ctx, grn_ctx *owner_ctx, fileinfo *fi, void *start,
+              size_t length)
 {
   if (!fi) {
     GRN_GFREE(start);
@@ -1732,7 +1739,7 @@ grn_guess_io_version(grn_ctx *ctx, grn_io *io, fileinfo *fi)
 }
 
 inline static void *
-grn_mmap(grn_ctx *ctx, grn_io *io, HANDLE *fmo,
+grn_mmap(grn_ctx *ctx, grn_ctx *owner_ctx, grn_io *io, HANDLE *fmo,
          fileinfo *fi, off_t offset, size_t length)
 {
   int version;
@@ -1740,14 +1747,14 @@ grn_mmap(grn_ctx *ctx, grn_io *io, HANDLE *fmo,
   version = grn_guess_io_version(ctx, io, fi);
 
   if (version == 0) {
-    return grn_mmap_v0(ctx, fi, offset, length);
+    return grn_mmap_v0(ctx, owner_ctx, fi, offset, length);
   } else {
-    return grn_mmap_v1(ctx, fmo, fi, offset, length);
+    return grn_mmap_v1(ctx, owner_ctx, fmo, fi, offset, length);
   }
 }
 
 inline static int
-grn_munmap(grn_ctx *ctx, grn_io *io,
+grn_munmap(grn_ctx *ctx, grn_ctx *owner_ctx, grn_io *io,
            HANDLE *fmo, fileinfo *fi, void *start, size_t length)
 {
   int version;
@@ -1755,9 +1762,9 @@ grn_munmap(grn_ctx *ctx, grn_io *io,
   version = grn_guess_io_version(ctx, io, fi);
 
   if (version == 0) {
-    return grn_munmap_v0(ctx, fi, start, length);
+    return grn_munmap_v0(ctx, owner_ctx, fi, start, length);
   } else {
-    return grn_munmap_v1(ctx, fmo, fi, start, length);
+    return grn_munmap_v1(ctx, owner_ctx, fmo, fi, start, length);
   }
 }
 
@@ -1904,7 +1911,8 @@ grn_fileinfo_close(grn_ctx *ctx, fileinfo *fi)
 #include <sys/mman.h>
 
 inline static void *
-grn_mmap(grn_ctx *ctx, grn_io *io, fileinfo *fi, off_t offset, size_t length)
+grn_mmap(grn_ctx *ctx, grn_ctx *owner_ctx, grn_io *io, fileinfo *fi,
+         off_t offset, size_t length)
 {
   void *res;
   int fd, flags;
@@ -1934,7 +1942,7 @@ grn_mmap(grn_ctx *ctx, grn_io *io, fileinfo *fi, off_t offset, size_t length)
 
 #ifdef USE_FAIL_MALLOC
 inline static void *
-grn_fail_mmap(grn_ctx *ctx, grn_io *io, fileinfo *fi,
+grn_fail_mmap(grn_ctx *ctx, grn_ctx *owner_ctx, grn_io *io, fileinfo *fi,
               off_t offset, size_t length,
               const char* file, int line, const char *func)
 {
@@ -1964,7 +1972,8 @@ grn_msync(grn_ctx *ctx, void *start, size_t length)
 }
 
 inline static int
-grn_munmap(grn_ctx *ctx, grn_io *io, fileinfo *fi, void *start, size_t length)
+grn_munmap(grn_ctx *ctx, grn_ctx *owner_ctx, grn_io *io, fileinfo *fi,
+           void *start, size_t length)
 {
   int res;
   res = munmap(start, length);
