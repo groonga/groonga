@@ -9863,6 +9863,30 @@ grn_obj_graft(grn_ctx *ctx, grn_obj *obj)
 }
 
 grn_rc
+grn_pvector_fin(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_rc rc;
+  if (obj->header.impl_flags & GRN_OBJ_OWN) {
+    /*
+     * Note that GRN_OBJ_OWN should not be used outside the DB API function
+     * because grn_obj_close is a DB API function.
+     */
+    unsigned int i, n_elements;
+    n_elements = GRN_BULK_VSIZE(obj) / sizeof(grn_obj *);
+    for (i = 0; i < n_elements; i++) {
+      grn_obj *element = GRN_PTR_VALUE_AT(obj, i);
+      grn_obj_close(ctx, element);
+    }
+  }
+  obj->header.type = GRN_VOID;
+  rc = grn_bulk_fin(ctx, obj);
+  if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) {
+    GRN_FREE(obj);
+  }
+  return rc;
+}
+
+grn_rc
 grn_obj_close(grn_ctx *ctx, grn_obj *obj)
 {
   grn_rc rc = GRN_INVALID_ARGUMENT;
@@ -9909,17 +9933,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) { GRN_FREE(obj); }
       break;
     case GRN_PVECTOR :
-      if (obj->header.impl_flags & GRN_OBJ_OWN) {
-        unsigned int i, n_elements;
-        n_elements = GRN_BULK_VSIZE(obj) / sizeof(grn_obj *);
-        for (i = 0; i < n_elements; i++) {
-          grn_obj *element = GRN_PTR_VALUE_AT(obj, i);
-          grn_obj_close(ctx, element);
-        }
-      }
-      obj->header.type = GRN_VOID;
-      rc = grn_bulk_fin(ctx, obj);
-      if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) { GRN_FREE(obj); }
+      rc = grn_pvector_fin(ctx, obj);
       break;
     case GRN_ACCESSOR :
       {
