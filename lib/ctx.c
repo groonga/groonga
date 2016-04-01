@@ -1482,7 +1482,6 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
           GRN_BULK_REWIND(&request_id);
           p = grn_text_cgidec(ctx, &request_id, p, e,
                               HTTP_QUERY_PAIRS_DELIMITERS);
-          if (ctx->rc) { goto exit; }
         } else if (l == OUTPUT_PRETTY_LEN &&
                    !memcmp(v, OUTPUT_PRETTY, OUTPUT_PRETTY_LEN)) {
           GRN_BULK_REWIND(&buf);
