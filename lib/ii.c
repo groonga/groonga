@@ -9872,7 +9872,7 @@ grn_ii_builder_extend_terms(grn_ctx *ctx, grn_ii_builder *builder,
     builder->max_n_terms = n_terms;
   }
 
-  builder->n = n_terms - builder->n_terms;
+  builder->n += n_terms - builder->n_terms;
   builder->n_terms = n_terms;
   return GRN_SUCCESS;
 }
