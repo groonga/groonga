@@ -1,0 +1,50 @@
+/*
+  Copyright(C) 2016 Brazil
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+#pragma once
+
+#ifdef  __cplusplus
+extern "C" {
+#endif
+
+typedef struct _grn_request_timer {
+  void *user_data;
+  void *(*register_func)(grn_ctx *ctx,
+                         const char *request_id,
+                         unsigned int request_id_size,
+                         double timeout,
+                         void *user_data);
+  void (*unregister_func)(grn_ctx *ctx,
+                          void *timer_id,
+                          void *user_data);
+  void (*fin_func)(grn_ctx *ctx,
+                   void *user_data);
+} grn_request_timer;
+
+GRN_API void grn_request_timer_set(grn_ctx *ctx, grn_request_timer *timer);
+
+GRN_API void *grn_request_timer_register(grn_ctx *ctx,
+                                         const char *request_id,
+                                         unsigned int request_id_size,
+                                         double timeout);
+GRN_API void grn_request_timer_unregister(grn_ctx *ctx, void *timer_id);
+
+
+#ifdef __cplusplus
+}
+#endif
