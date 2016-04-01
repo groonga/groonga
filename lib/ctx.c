@@ -1573,7 +1573,6 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
                    !memcmp(v, REQUEST_ID, REQUEST_ID_LEN)) {
           GRN_BULK_REWIND(&request_id);
           p = grn_text_unesc_tok(ctx, &request_id, p, e, &tok_type);
-          if (ctx->rc) { goto exit; }
         } else if (l == OUTPUT_PRETTY_LEN &&
                    !memcmp(v, OUTPUT_PRETTY, OUTPUT_PRETTY_LEN)) {
           GRN_BULK_REWIND(&buf);
