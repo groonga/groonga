@@ -2820,6 +2820,9 @@ buffer_merge_dump_datavec(grn_ctx *ctx,
   }
 }
 
+/* If dc doesn't have enough space, program may be crashed.
+ * TODO: Support auto space extension or max size check.
+ */
 static grn_rc
 buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
               buffer *sb, uint8_t *sc, buffer *db, uint8_t *dc)
@@ -3130,11 +3133,6 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
           db->header.nterms = n;
           if (!(rc = buffer_merge(ctx, ii, seg, h, sb, sc, db, dc))) {
             actual_chunk_size = db->header.chunk_size;
-            if (actual_chunk_size >= max_dest_chunk_size) {
-              GRN_LOG(ctx, GRN_LOG_WARNING,
-                      "actual_chunk_size(%d) >= max_dest_chunk_size(%d)",
-                      actual_chunk_size, max_dest_chunk_size);
-            }
             if (!actual_chunk_size ||
                 !(rc = chunk_new(ctx, ii, &dcn, actual_chunk_size))) {
               db->header.chunk = actual_chunk_size ? dcn : NOT_ASSIGNED;
@@ -3476,11 +3474,6 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
               term_split(ctx, ii->lexicon, sb, db0, db1);
               if (!(rc = buffer_merge(ctx, ii, seg, h, sb, sc, db0, dc0))) {
                 actual_db0_chunk_size = db0->header.chunk_size;
-                if (actual_db0_chunk_size >= max_dest_chunk_size) {
-                  GRN_LOG(ctx, GRN_LOG_WARNING,
-                          "actual_db0_chunk_size(%d) >= max_dest_chunk_size(%d)",
-                          actual_db0_chunk_size, max_dest_chunk_size);
-                }
                 if (!actual_db0_chunk_size ||
                     !(rc = chunk_new(ctx, ii, &dcn0, actual_db0_chunk_size))) {
                   db0->header.chunk = actual_db0_chunk_size ? dcn0 : NOT_ASSIGNED;
@@ -3488,11 +3481,6 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                   if (!(rc = grn_io_win_unmap(&dw0))) {
                     if (!(rc = buffer_merge(ctx, ii, seg, h, sb, sc, db1, dc1))) {
                       actual_db1_chunk_size = db1->header.chunk_size;
-                      if (actual_db1_chunk_size >= max_dest_chunk_size) {
-                        GRN_LOG(ctx, GRN_LOG_WARNING,
-                                "actual_db1_chunk_size(%d) >= max_dest_chunk_size(%d)",
-                                actual_db1_chunk_size, max_dest_chunk_size);
-                      }
                       if (!actual_db1_chunk_size ||
                           !(rc = chunk_new(ctx, ii, &dcn1, actual_db1_chunk_size))) {
                         fake_map(ctx, ii->chunk, &dw1, dc1, dcn1,
