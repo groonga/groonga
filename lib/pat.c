@@ -1817,7 +1817,7 @@ grn_pat_get_key(grn_ctx *ctx, grn_pat *pat, grn_id id, void *keybuf, int bufsize
   int len;
   uint8_t *key;
   pat_node *node;
-  if (!pat) { return GRN_INVALID_ARGUMENT; }
+  if (!pat) { return 0; }
   if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
     return 0;
   }
