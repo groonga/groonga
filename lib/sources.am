@@ -56,6 +56,8 @@ libgroonga_la_SOURCES =				\
 	grn_report.h				\
 	request_canceler.c			\
 	grn_request_canceler.h			\
+	request_timer.c				\
+	grn_request_timer.h			\
 	rset.c					\
 	grn_rset.h				\
 	scanner.c				\

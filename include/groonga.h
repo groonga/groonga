@@ -34,6 +34,7 @@
 #include "groonga/output.h"
 #include "groonga/pat.h"
 #include "groonga/request_canceler.h"
+#include "groonga/request_timer.h"
 #include "groonga/thread.h"
 #include "groonga/type.h"
 #include "groonga/util.h"
