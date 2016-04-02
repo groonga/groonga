@@ -620,6 +620,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->curr_expr = NULL;
   ctx->impl->qe_next = NULL;
   GRN_TEXT_INIT(&ctx->impl->current_request_id, 0);
+  ctx->impl->current_request_timer_id = NULL;
   ctx->impl->parser = NULL;
 
   GRN_TEXT_INIT(&ctx->impl->output.names, GRN_OBJ_VECTOR);
@@ -1422,11 +1423,13 @@ get_command_version(grn_ctx *ctx, const char *p, const char *pe)
 #define OUTPUT_TYPE         "output_type"
 #define COMMAND_VERSION     "command_version"
 #define REQUEST_ID          "request_id"
+#define REQUEST_TIMEOUT     "request_timeout"
 #define OUTPUT_PRETTY       "output_pretty"
 #define EXPR_MISSING        "expr_missing"
 #define OUTPUT_TYPE_LEN     (sizeof(OUTPUT_TYPE) - 1)
 #define COMMAND_VERSION_LEN (sizeof(COMMAND_VERSION) - 1)
 #define REQUEST_ID_LEN      (sizeof(REQUEST_ID) - 1)
+#define REQUEST_TIMEOUT_LEN (sizeof(REQUEST_TIMEOUT) - 1)
 #define OUTPUT_PRETTY_LEN   (sizeof(OUTPUT_PRETTY) - 1)
 
 #define HTTP_QUERY_PAIR_DELIMITER   "="
@@ -1445,6 +1448,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
   grn_command_version command_version;
   grn_obj buf, *expr, *val;
   grn_obj request_id;
+  double request_timeout = 0.0;
   const char *p = path, *e = path + path_len, *v, *key_end, *filename_end;
 
   command_version = grn_ctx_get_command_version(ctx);
@@ -1482,6 +1486,12 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
           GRN_BULK_REWIND(&request_id);
           p = grn_text_cgidec(ctx, &request_id, p, e,
                               HTTP_QUERY_PAIRS_DELIMITERS);
+        } else if (l == REQUEST_TIMEOUT_LEN &&
+                   !memcmp(v, REQUEST_TIMEOUT, REQUEST_TIMEOUT_LEN)) {
+          GRN_BULK_REWIND(&buf);
+          p = grn_text_cgidec(ctx, &buf, p, e, HTTP_QUERY_PAIRS_DELIMITERS);
+          GRN_TEXT_PUTC(ctx, &buf, '\0');
+          request_timeout = strtod(GRN_TEXT_VALUE(&buf), NULL);
         } else if (l == OUTPUT_PRETTY_LEN &&
                    !memcmp(v, OUTPUT_PRETTY, OUTPUT_PRETTY_LEN)) {
           GRN_BULK_REWIND(&buf);
@@ -1507,6 +1517,13 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
         grn_request_canceler_register(ctx,
                                       GRN_TEXT_VALUE(&request_id),
                                       GRN_TEXT_LEN(&request_id));
+        if (request_timeout > 0) {
+          ctx->impl->current_request_timer_id =
+            grn_request_timer_register(ctx,
+                                       GRN_TEXT_VALUE(&request_id),
+                                       GRN_TEXT_LEN(&request_id),
+                                       request_timeout);
+        }
       }
       ctx->impl->curr_expr = expr;
       grn_expr_exec(ctx, expr, 0);
@@ -1540,6 +1557,7 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
   int offset = 0;
   grn_obj buf, *expr = NULL, *val = NULL;
   grn_obj request_id;
+  double request_timeout = 0.0;
   const char *p = str, *e = str + str_len, *v;
   command_version = grn_ctx_get_command_version(ctx);
   GRN_TEXT_INIT(&buf, 0);
@@ -1573,6 +1591,12 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
                    !memcmp(v, REQUEST_ID, REQUEST_ID_LEN)) {
           GRN_BULK_REWIND(&request_id);
           p = grn_text_unesc_tok(ctx, &request_id, p, e, &tok_type);
+        } else if (l == REQUEST_TIMEOUT_LEN &&
+                   !memcmp(v, REQUEST_TIMEOUT, REQUEST_TIMEOUT_LEN)) {
+          GRN_BULK_REWIND(&buf);
+          p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
+          GRN_TEXT_PUTC(ctx, &buf, '\0');
+          request_timeout = strtod(GRN_TEXT_VALUE(&buf), NULL);
         } else if (l == OUTPUT_PRETTY_LEN &&
                    !memcmp(v, OUTPUT_PRETTY, OUTPUT_PRETTY_LEN)) {
           GRN_BULK_REWIND(&buf);
@@ -1610,6 +1634,13 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
     grn_request_canceler_register(ctx,
                                   GRN_TEXT_VALUE(&request_id),
                                   GRN_TEXT_LEN(&request_id));
+    if (request_timeout > 0.0) {
+      ctx->impl->current_request_timer_id =
+        grn_request_timer_register(ctx,
+                                   GRN_TEXT_VALUE(&request_id),
+                                   GRN_TEXT_LEN(&request_id),
+                                   request_timeout);
+    }
   }
   ctx->impl->curr_expr = expr;
   if (expr && command_proc_p(expr)) {
@@ -1721,6 +1752,10 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
       if (ctx->impl->qe_next) {
         ERRCLR(ctx);
       } else {
+        if (ctx->impl->current_request_timer_id) {
+          grn_request_timer_unregister(ctx, ctx->impl->current_request_timer_id);
+          ctx->impl->current_request_timer_id = NULL;
+        }
         if (GRN_TEXT_LEN(&ctx->impl->current_request_id) > 0) {
           grn_obj *request_id = &ctx->impl->current_request_id;
           grn_request_canceler_unregister(ctx,
