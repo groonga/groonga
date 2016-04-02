@@ -17,6 +17,7 @@
 */
 
 #include "grn_ctx.h"
+#include "grn_ctx_impl.h"
 #include "grn_request_canceler.h"
 
 typedef struct _grn_request_canceler grn_request_canceler;
@@ -101,6 +102,11 @@ grn_request_canceler_cancel_entry(grn_request_canceler_entry *entry)
 {
   if (entry->ctx->rc == GRN_SUCCESS) {
     entry->ctx->rc = GRN_CANCEL;
+    if (entry->ctx->impl->current_request_timer_id) {
+      void *timer_id = entry->ctx->impl->current_request_timer_id;
+      entry->ctx->impl->current_request_timer_id = NULL;
+      grn_request_timer_unregister(timer_id);
+    }
     return GRN_TRUE;
   } else {
     return GRN_FALSE;
