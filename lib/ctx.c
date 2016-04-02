@@ -1510,6 +1510,9 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
           p = grn_text_cgidec(ctx, val, p, e, HTTP_QUERY_PAIRS_DELIMITERS);
         }
       }
+      if (request_timeout > 0 && GRN_TEXT_LEN(&request_id) == 0) {
+        grn_text_printf(ctx, &request_id, "%p", ctx);
+      }
       if (GRN_TEXT_LEN(&request_id) > 0) {
         GRN_TEXT_SET(ctx, &ctx->impl->current_request_id,
                      GRN_TEXT_VALUE(&request_id),
@@ -1626,6 +1629,9 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
       }
       break;
     }
+  }
+  if (request_timeout > 0 && GRN_TEXT_LEN(&request_id) == 0) {
+    grn_text_printf(ctx, &request_id, "%p", ctx);
   }
   if (GRN_TEXT_LEN(&request_id) > 0) {
     GRN_TEXT_SET(ctx, &ctx->impl->current_request_id,
