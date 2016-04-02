@@ -24,13 +24,11 @@ extern "C" {
 
 typedef struct _grn_request_timer {
   void *user_data;
-  void *(*register_func)(grn_ctx *ctx,
-                         const char *request_id,
+  void *(*register_func)(const char *request_id,
                          unsigned int request_id_size,
                          double timeout,
                          void *user_data);
-  void (*unregister_func)(grn_ctx *ctx,
-                          void *timer_id,
+  void (*unregister_func)(void *timer_id,
                           void *user_data);
   void (*fin_func)(void *user_data);
 } grn_request_timer;
@@ -39,12 +37,11 @@ typedef struct _grn_request_timer {
 GRN_API void grn_request_timer_set(grn_request_timer *timer);
 
 /* Multithreading safety is depends on grn_request_timer. */
-GRN_API void *grn_request_timer_register(grn_ctx *ctx,
-                                         const char *request_id,
+GRN_API void *grn_request_timer_register(const char *request_id,
                                          unsigned int request_id_size,
                                          double timeout);
 /* Multithreading safety is depends on grn_request_timer. */
-GRN_API void grn_request_timer_unregister(grn_ctx *ctx, void *timer_id);
+GRN_API void grn_request_timer_unregister(void *timer_id);
 
 
 #ifdef __cplusplus

@@ -1522,8 +1522,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
                                       GRN_TEXT_LEN(&request_id));
         if (request_timeout > 0) {
           ctx->impl->current_request_timer_id =
-            grn_request_timer_register(ctx,
-                                       GRN_TEXT_VALUE(&request_id),
+            grn_request_timer_register(GRN_TEXT_VALUE(&request_id),
                                        GRN_TEXT_LEN(&request_id),
                                        request_timeout);
         }
@@ -1642,8 +1641,7 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
                                   GRN_TEXT_LEN(&request_id));
     if (request_timeout > 0.0) {
       ctx->impl->current_request_timer_id =
-        grn_request_timer_register(ctx,
-                                   GRN_TEXT_VALUE(&request_id),
+        grn_request_timer_register(GRN_TEXT_VALUE(&request_id),
                                    GRN_TEXT_LEN(&request_id),
                                    request_timeout);
     }
@@ -1759,8 +1757,9 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
         ERRCLR(ctx);
       } else {
         if (ctx->impl->current_request_timer_id) {
-          grn_request_timer_unregister(ctx, ctx->impl->current_request_timer_id);
+          void *timer_id = ctx->impl->current_request_timer_id;
           ctx->impl->current_request_timer_id = NULL;
+          grn_request_timer_unregister(timer_id);
         }
         if (GRN_TEXT_LEN(&ctx->impl->current_request_id) > 0) {
           grn_obj *request_id = &ctx->impl->current_request_id;

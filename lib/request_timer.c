@@ -28,8 +28,7 @@ grn_request_timer_init(void)
 }
 
 void *
-grn_request_timer_register(grn_ctx *ctx,
-                           const char *request_id,
+grn_request_timer_register(const char *request_id,
                            unsigned int request_id_size,
                            double timeout)
 {
@@ -37,8 +36,7 @@ grn_request_timer_register(grn_ctx *ctx,
 
   if (grn_current_request_timer.register_func) {
     void *user_data = grn_current_request_timer.user_data;
-    timer_id = grn_current_request_timer.register_func(ctx,
-                                                       request_id,
+    timer_id = grn_current_request_timer.register_func(request_id,
                                                        request_id_size,
                                                        timeout,
                                                        user_data);
@@ -48,11 +46,11 @@ grn_request_timer_register(grn_ctx *ctx,
 }
 
 void
-grn_request_timer_unregister(grn_ctx *ctx, void *timer_id)
+grn_request_timer_unregister(void *timer_id)
 {
   if (grn_current_request_timer.unregister_func) {
     void *user_data = grn_current_request_timer.user_data;
-    grn_current_request_timer.unregister_func(ctx, timer_id, user_data);
+    grn_current_request_timer.unregister_func(timer_id, user_data);
   }
 }
 
