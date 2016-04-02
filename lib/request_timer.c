@@ -19,14 +19,11 @@
 #include "grn_ctx.h"
 #include "grn_request_timer.h"
 
-static grn_mutex grn_request_timer_mutex;
 static grn_request_timer grn_current_request_timer = { 0 };
 
 grn_bool
 grn_request_timer_init(void)
 {
-  MUTEX_INIT(grn_request_timer_mutex);
-
   return GRN_TRUE;
 }
 
@@ -38,7 +35,6 @@ grn_request_timer_register(grn_ctx *ctx,
 {
   void *timer_id = NULL;
 
-  MUTEX_LOCK(grn_request_timer_mutex);
   if (grn_current_request_timer.register_func) {
     void *user_data = grn_current_request_timer.user_data;
     timer_id = grn_current_request_timer.register_func(ctx,
@@ -47,7 +43,6 @@ grn_request_timer_register(grn_ctx *ctx,
                                                        timeout,
                                                        user_data);
   }
-  MUTEX_UNLOCK(grn_request_timer_mutex);
 
   return timer_id;
 }
@@ -55,18 +50,15 @@ grn_request_timer_register(grn_ctx *ctx,
 void
 grn_request_timer_unregister(grn_ctx *ctx, void *timer_id)
 {
-  MUTEX_LOCK(grn_request_timer_mutex);
   if (grn_current_request_timer.unregister_func) {
     void *user_data = grn_current_request_timer.user_data;
     grn_current_request_timer.unregister_func(ctx, timer_id, user_data);
   }
-  MUTEX_UNLOCK(grn_request_timer_mutex);
 }
 
 void
 grn_request_timer_set(grn_request_timer *timer)
 {
-  MUTEX_LOCK(grn_request_timer_mutex);
   if (grn_current_request_timer.fin_func) {
     void *user_data = grn_current_request_timer.user_data;
     grn_current_request_timer.fin_func(user_data);
@@ -76,12 +68,10 @@ grn_request_timer_set(grn_request_timer *timer)
   } else {
     memset(&grn_current_request_timer, 0, sizeof(grn_request_timer));
   }
-  MUTEX_UNLOCK(grn_request_timer_mutex);
 }
 
 void
 grn_request_timer_fin(void)
 {
   grn_request_timer_set(NULL);
-  MUTEX_FIN(grn_request_timer_mutex);
 }
