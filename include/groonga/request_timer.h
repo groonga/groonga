@@ -32,11 +32,10 @@ typedef struct _grn_request_timer {
   void (*unregister_func)(grn_ctx *ctx,
                           void *timer_id,
                           void *user_data);
-  void (*fin_func)(grn_ctx *ctx,
-                   void *user_data);
+  void (*fin_func)(void *user_data);
 } grn_request_timer;
 
-GRN_API void grn_request_timer_set(grn_ctx *ctx, grn_request_timer *timer);
+GRN_API void grn_request_timer_set(grn_request_timer *timer);
 
 GRN_API void *grn_request_timer_register(grn_ctx *ctx,
                                          const char *request_id,
