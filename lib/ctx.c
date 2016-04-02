@@ -1520,7 +1520,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
         grn_request_canceler_register(ctx,
                                       GRN_TEXT_VALUE(&request_id),
                                       GRN_TEXT_LEN(&request_id));
-        if (request_timeout > 0) {
+        if (request_timeout > 0.0) {
           ctx->impl->current_request_timer_id =
             grn_request_timer_register(GRN_TEXT_VALUE(&request_id),
                                        GRN_TEXT_LEN(&request_id),
