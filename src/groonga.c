@@ -2157,9 +2157,11 @@ h_worker(void *arg)
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)",
           n_floating_threads, n_running_threads);
   while (n_running_threads <= max_n_floating_threads &&
-         ctx->stat != GRN_CTX_QUIT &&
          grn_gctx.stat != GRN_CTX_QUIT) {
     grn_obj *msg;
+    if (ctx->rc == GRN_CANCEL) {
+      ctx->rc = GRN_SUCCESS;
+    }
     n_floating_threads++;
     while (!(msg = (grn_obj *)grn_com_queue_deque(&grn_gctx, &ctx_new))) {
       COND_WAIT(q_cond, q_mutex);
@@ -2283,6 +2285,9 @@ g_worker(void *arg)
           case GRN_COM_PROTO_GQTP :
             grn_ctx_send(ctx, GRN_BULK_HEAD(msg), GRN_BULK_VSIZE(msg), header->flags);
             ERRCLR(ctx);
+            if (ctx->rc == GRN_CANCEL) {
+              ctx->rc = GRN_SUCCESS;
+            }
             break;
           default :
             ctx->stat = GRN_CTX_QUIT;

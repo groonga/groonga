@@ -101,7 +101,6 @@ grn_request_canceler_cancel_entry(grn_request_canceler_entry *entry)
 {
   if (entry->ctx->rc == GRN_SUCCESS) {
     entry->ctx->rc = GRN_CANCEL;
-    entry->ctx->stat = GRN_CTX_QUIT;
     return GRN_TRUE;
   } else {
     return GRN_FALSE;
