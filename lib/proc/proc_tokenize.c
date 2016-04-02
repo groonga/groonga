@@ -69,11 +69,19 @@ typedef struct {
 } tokenize_token;
 
 static void
-output_tokens(grn_ctx *ctx, grn_obj *tokens, grn_obj *lexicon)
+output_tokens(grn_ctx *ctx, grn_obj *tokens, grn_obj *lexicon, grn_obj *index_column)
 {
-  int i, n_tokens;
+  int i, n_tokens, n_elements;
+  grn_obj estimate_size;
 
   n_tokens = GRN_BULK_VSIZE(tokens) / sizeof(tokenize_token);
+  if (index_column) {
+    n_elements = 4;
+    GRN_UINT32_INIT(&estimate_size, 0);
+  } else {
+    n_elements = 3;
+  }
+
   grn_ctx_output_array_open(ctx, "TOKENS", n_tokens);
   for (i = 0; i < n_tokens; i++) {
     tokenize_token *token;
@@ -82,7 +90,7 @@ output_tokens(grn_ctx *ctx, grn_obj *tokens, grn_obj *lexicon)
 
     token = ((tokenize_token *)(GRN_BULK_HEAD(tokens))) + i;
 
-    grn_ctx_output_map_open(ctx, "TOKEN", 3);
+    grn_ctx_output_map_open(ctx, "TOKEN", n_elements);
 
     grn_ctx_output_cstr(ctx, "value");
     value_size = grn_table_get_key(ctx, lexicon, token->id,
@@ -95,8 +103,20 @@ output_tokens(grn_ctx *ctx, grn_obj *tokens, grn_obj *lexicon)
     grn_ctx_output_cstr(ctx, "force_prefix");
     grn_ctx_output_bool(ctx, token->force_prefix);
 
+    if (index_column) {
+      GRN_BULK_REWIND(&estimate_size);
+      grn_obj_get_value(ctx, index_column, token->id, &estimate_size);
+      grn_ctx_output_cstr(ctx, "estimate_size");
+      grn_ctx_output_int64(ctx, GRN_UINT32_VALUE(&estimate_size));
+    }
+
     grn_ctx_output_map_close(ctx);
   }
+
+  if (index_column) {
+    grn_obj_unlink(ctx, &estimate_size);
+  }
+
   grn_ctx_output_array_close(ctx);
 }
 
@@ -216,11 +236,13 @@ command_table_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *u
   grn_obj *string;
   grn_obj *flag_names;
   grn_obj *mode_name;
+  grn_obj *index_column_name;
 
   table_name = grn_plugin_proc_get_var(ctx, user_data, "table", -1);
   string = grn_plugin_proc_get_var(ctx, user_data, "string", -1);
   flag_names = grn_plugin_proc_get_var(ctx, user_data, "flags", -1);
   mode_name = grn_plugin_proc_get_var(ctx, user_data, "mode", -1);
+  index_column_name = grn_plugin_proc_get_var(ctx, user_data, "index_column", -1);
 
   if (GRN_TEXT_LEN(table_name) == 0) {
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT, "[table_tokenize] table name is missing");
@@ -235,6 +257,7 @@ command_table_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *u
   {
     unsigned int flags;
     grn_obj *lexicon;
+    grn_obj *index_column = NULL;
 
     flags = parse_tokenize_flags(ctx, flag_names);
     if (ctx->rc != GRN_SUCCESS) {
@@ -251,15 +274,35 @@ command_table_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *u
     (GRN_TEXT_LEN(mode_name) == strlen(name) &&\
      memcmp(GRN_TEXT_VALUE(mode_name), name, strlen(name)) == 0)
 
+    if (GRN_TEXT_LEN(index_column_name) > 0) {
+      index_column = grn_obj_column(ctx, lexicon,
+                                    GRN_TEXT_VALUE(index_column_name),
+                                    GRN_TEXT_LEN(index_column_name));
+      if (!index_column) {
+        GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                         "[table_tokenize] nonexistent index column: <%.*s>",
+                         (int)GRN_TEXT_LEN(index_column_name),
+                         GRN_TEXT_VALUE(index_column_name));
+        goto exit;
+      }
+      if (index_column->header.type != GRN_COLUMN_INDEX) {
+        GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                         "[table_tokenize] index column must be COLUMN_INDEX: <%.*s>",
+                         (int)GRN_TEXT_LEN(index_column_name),
+                         GRN_TEXT_VALUE(index_column_name));
+        goto exit;
+      }
+    }
+
     {
       grn_obj tokens;
       GRN_VALUE_FIX_SIZE_INIT(&tokens, GRN_OBJ_VECTOR, GRN_ID_NIL);
     if (GRN_TEXT_LEN(mode_name) == 0 || MODE_NAME_EQUAL("GET")) {
       tokenize(ctx, lexicon, string, GRN_TOKEN_GET, flags, &tokens);
-      output_tokens(ctx, &tokens, lexicon);
+      output_tokens(ctx, &tokens, lexicon, index_column);
     } else if (MODE_NAME_EQUAL("ADD")) {
       tokenize(ctx, lexicon, string, GRN_TOKEN_ADD, flags, &tokens);
-      output_tokens(ctx, &tokens, lexicon);
+      output_tokens(ctx, &tokens, lexicon, index_column);
     } else {
       GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
                        "[table_tokenize] invalid mode: <%.*s>",
@@ -269,7 +312,11 @@ command_table_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *u
     }
 #undef MODE_NAME_EQUAL
 
+exit:
     grn_obj_unlink(ctx, lexicon);
+    if (index_column) {
+      grn_obj_unlink(ctx, index_column);
+    }
   }
 
   return NULL;
@@ -278,16 +325,17 @@ command_table_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *u
 void
 grn_proc_init_table_tokenize(grn_ctx *ctx)
 {
-  grn_expr_var vars[4];
+  grn_expr_var vars[5];
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "table", -1);
   grn_plugin_expr_var_init(ctx, &(vars[1]), "string", -1);
   grn_plugin_expr_var_init(ctx, &(vars[2]), "flags", -1);
   grn_plugin_expr_var_init(ctx, &(vars[3]), "mode", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[4]), "index_column", -1);
   grn_plugin_command_create(ctx,
                             "table_tokenize", -1,
                             command_table_tokenize,
-                            4,
+                            5,
                             vars);
 }
 
@@ -343,12 +391,12 @@ command_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
       GRN_VALUE_FIX_SIZE_INIT(&tokens, GRN_OBJ_VECTOR, GRN_ID_NIL);
       if (GRN_TEXT_LEN(mode_name) == 0 || MODE_NAME_EQUAL("ADD")) {
         tokenize(ctx, lexicon, string, GRN_TOKEN_ADD, flags, &tokens);
-        output_tokens(ctx, &tokens, lexicon);
+        output_tokens(ctx, &tokens, lexicon, NULL);
       } else if (MODE_NAME_EQUAL("GET")) {
         tokenize(ctx, lexicon, string, GRN_TOKEN_ADD, flags, &tokens);
         GRN_BULK_REWIND(&tokens);
         tokenize(ctx, lexicon, string, GRN_TOKEN_GET, flags, &tokens);
-        output_tokens(ctx, &tokens, lexicon);
+        output_tokens(ctx, &tokens, lexicon, NULL);
       } else {
         GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
                          "[tokenize] invalid mode: <%.*s>",

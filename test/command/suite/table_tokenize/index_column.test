@@ -1,0 +1,17 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries body COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenDelimit \
+  --normalizer NormalizerAuto
+
+load --table Entries
+[
+{"body": "Groonga is a full text search engine"},
+{"body": "Mroonga is a MySQL storage engine based on Groonga"},
+{"body": "Rroonga is a ruby bindings of Groonga"}
+]
+
+column_create Terms index COLUMN_INDEX Entries body
+
+table_tokenize Terms "a ruby bindings of Groonga" --mode GET --index_column index
