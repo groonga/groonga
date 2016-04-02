@@ -2179,7 +2179,7 @@ h_worker(void *arg)
     hc.is_chunked = GRN_FALSE;
     do_htreq(ctx, &hc);
     MUTEX_LOCK_ENSURE(ctx, q_mutex);
-  };
+  }
 exit :
   n_running_threads--;
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)",
