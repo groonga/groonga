@@ -803,6 +803,9 @@ h_output_set_header(grn_ctx *ctx, grn_obj *header,
   case GRN_NO_SUCH_FILE_OR_DIRECTORY :
     GRN_TEXT_SETS(ctx, header, "HTTP/1.1 404 Not Found\r\n");
     break;
+  case GRN_CANCEL :
+    GRN_TEXT_SETS(ctx, header, "HTTP/1.1 408 Request Timeout\r\n");
+    break;
   default :
     GRN_TEXT_SETS(ctx, header, "HTTP/1.1 500 Internal Server Error\r\n");
     break;
