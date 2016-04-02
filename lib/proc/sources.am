@@ -9,4 +9,5 @@ libgrnproc_la_SOURCES =				\
 	proc_select.c				\
 	proc_snippet.c				\
 	proc_highlight.c			\
-	proc_table.c
+	proc_table.c				\
+	proc_tokenize.c
