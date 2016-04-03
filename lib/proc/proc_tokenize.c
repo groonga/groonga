@@ -72,13 +72,13 @@ static void
 output_tokens(grn_ctx *ctx, grn_obj *tokens, grn_obj *lexicon, grn_obj *index_column)
 {
   int i, n_tokens, n_elements;
-  grn_obj estimate_size;
+  grn_obj estimated_size;
 
   n_tokens = GRN_BULK_VSIZE(tokens) / sizeof(tokenize_token);
   n_elements = 3;
   if (index_column) {
     n_elements++;
-    GRN_UINT32_INIT(&estimate_size, 0);
+    GRN_UINT32_INIT(&estimated_size, 0);
   }
 
   grn_ctx_output_array_open(ctx, "TOKENS", n_tokens);
@@ -103,17 +103,17 @@ output_tokens(grn_ctx *ctx, grn_obj *tokens, grn_obj *lexicon, grn_obj *index_co
     grn_ctx_output_bool(ctx, token->force_prefix);
 
     if (index_column) {
-      GRN_BULK_REWIND(&estimate_size);
-      grn_obj_get_value(ctx, index_column, token->id, &estimate_size);
-      grn_ctx_output_cstr(ctx, "estimate_size");
-      grn_ctx_output_int64(ctx, GRN_UINT32_VALUE(&estimate_size));
+      GRN_BULK_REWIND(&estimated_size);
+      grn_obj_get_value(ctx, index_column, token->id, &estimated_size);
+      grn_ctx_output_cstr(ctx, "estimated_size");
+      grn_ctx_output_int64(ctx, GRN_UINT32_VALUE(&estimated_size));
     }
 
     grn_ctx_output_map_close(ctx);
   }
 
   if (index_column) {
-    GRN_OBJ_FIN(ctx, &estimate_size);
+    GRN_OBJ_FIN(ctx, &estimated_size);
   }
 
   grn_ctx_output_array_close(ctx);
