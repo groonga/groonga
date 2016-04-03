@@ -75,11 +75,10 @@ output_tokens(grn_ctx *ctx, grn_obj *tokens, grn_obj *lexicon, grn_obj *index_co
   grn_obj estimate_size;
 
   n_tokens = GRN_BULK_VSIZE(tokens) / sizeof(tokenize_token);
+  n_elements = 3;
   if (index_column) {
-    n_elements = 4;
+    n_elements++;
     GRN_UINT32_INIT(&estimate_size, 0);
-  } else {
-    n_elements = 3;
   }
 
   grn_ctx_output_array_open(ctx, "TOKENS", n_tokens);
