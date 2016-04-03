@@ -114,7 +114,7 @@ output_tokens(grn_ctx *ctx, grn_obj *tokens, grn_obj *lexicon, grn_obj *index_co
   }
 
   if (index_column) {
-    grn_obj_unlink(ctx, &estimate_size);
+    GRN_OBJ_FIN(ctx, &estimate_size);
   }
 
   grn_ctx_output_array_close(ctx);
