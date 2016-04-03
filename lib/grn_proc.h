@@ -63,6 +63,8 @@ void grn_proc_init_table_create(grn_ctx *ctx);
 void grn_proc_init_table_list(grn_ctx *ctx);
 void grn_proc_init_table_remove(grn_ctx *ctx);
 void grn_proc_init_table_rename(grn_ctx *ctx);
+void grn_proc_init_table_tokenize(grn_ctx *ctx);
+void grn_proc_init_tokenize(grn_ctx *ctx);
 
 grn_bool grn_proc_option_value_bool(grn_ctx *ctx,
                                     grn_obj *option,

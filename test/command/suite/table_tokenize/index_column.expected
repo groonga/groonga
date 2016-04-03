@@ -1,0 +1,55 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries body COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenDelimit   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"body": "Groonga is a full text search engine"},
+{"body": "Mroonga is a MySQL storage engine based on Groonga"},
+{"body": "Rroonga is a ruby bindings of Groonga"}
+]
+[[0,0.0,0.0],3]
+column_create Terms index COLUMN_INDEX Entries body
+[[0,0.0,0.0],true]
+table_tokenize Terms "a ruby bindings of Groonga" --mode GET --index_column index
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "a",
+      "position": 0,
+      "force_prefix": false,
+      "estimate_size": 5
+    },
+    {
+      "value": "ruby",
+      "position": 1,
+      "force_prefix": false,
+      "estimate_size": 1
+    },
+    {
+      "value": "bindings",
+      "position": 2,
+      "force_prefix": false,
+      "estimate_size": 1
+    },
+    {
+      "value": "of",
+      "position": 3,
+      "force_prefix": false,
+      "estimate_size": 1
+    },
+    {
+      "value": "groonga",
+      "position": 4,
+      "force_prefix": false,
+      "estimate_size": 5
+    }
+  ]
+]
