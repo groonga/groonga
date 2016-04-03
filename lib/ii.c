@@ -4207,7 +4207,7 @@ struct _grn_ii_cursor {
 
   int weight;
 
-  uint32_t curr_chunk_rid;
+  uint32_t prev_chunk_rid;
 };
 
 static int
@@ -4339,10 +4339,7 @@ grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
             GRN_B_DEC(c->cinfo[i].size, c->cp);
             GRN_B_DEC(c->cinfo[i].dgap, c->cp);
             crid += c->cinfo[i].dgap;
-            if (crid < min) {
-              c->curr_chunk = i + 1;
-              c->curr_chunk_rid = crid;
-            }
+            if (crid < min) { c->curr_chunk = i + 1; }
           }
           if (chunk_is_reused(ctx, ii, c, chunk, c->buf->header.chunk_size)) {
             grn_ii_cursor_close(ctx, c);
@@ -4373,11 +4370,11 @@ grn_ii_cursor_set_min(grn_ctx *ctx, grn_ii_cursor *c, grn_id min)
 
   if (grn_ii_cursor_set_min_enable) {
     c->min = min;
-    if (c->buf && c->pc.rid < c->min && c->curr_chunk_rid < c-> min && c->curr_chunk < c->nchunks) {
+    if (c->buf && c->pc.rid < c->min && c->prev_chunk_rid < c-> min && c->curr_chunk < c->nchunks) {
       uint32_t i, skip_chunk = c->curr_chunk - 1;
       grn_id rid;
       
-      for (i = skip_chunk, rid = c->curr_chunk_rid; i < c->nchunks; i++) {
+      for (i = skip_chunk, rid = c->prev_chunk_rid; i < c->nchunks; i++) {
         rid += c->cinfo[i].dgap;
         if (rid < c->min) {
           skip_chunk = i + 1;
@@ -4390,7 +4387,6 @@ grn_ii_cursor_set_min(grn_ctx *ctx, grn_ii_cursor *c, grn_id min)
         c->pc.rid = rid;
         c->curr_chunk = skip_chunk;
         c->crp = c->cdp + c->cdf;
-        c->curr_chunk_rid = rid;
       }
     }
   }
@@ -4488,7 +4484,7 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
                 }
                 c->cpp = c->rdv[j].data;
               }
-              c->curr_chunk_rid = c->pc.rid;
+              c->prev_chunk_rid = c->pc.rid;
               c->pc.rid = 0;
               c->pc.sid = 0;
               c->pc.rest = 0;
@@ -7353,7 +7349,7 @@ grn_ii_cursor_next_all(grn_ctx *ctx, grn_ii_cursor *c)
                 }
                 c->cpp = c->rdv[j].data;
               }
-              c->curr_chunk_rid = c->pc.rid;
+              c->prev_chunk_rid = c->pc.rid;
               c->pc.rid = 0;
               c->pc.sid = 0;
               c->pc.rest = 0;
