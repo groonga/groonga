@@ -1262,7 +1262,8 @@ in_rectangle_data_prepare(grn_ctx *ctx, grn_obj *index,
                           in_rectangle_data *data)
 {
   if (!index) {
-    ERR(GRN_INVALID_ARGUMENT, "%s: index column is missing", process_name);
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+        "%s: index column is missing", process_name);
     goto exit;
   }
 
