@@ -6276,7 +6276,11 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
         rc = proc->selector(ctx, table, NULL, si->nargs, si->args,
                             res, si->logical_op);
         if (rc) {
-          /* TODO: report error */
+          if (rc == GRN_FUNCTION_NOT_IMPLEMENTED) {
+            ERRCLR(ctx);
+          } else {
+            /* TODO: report error */
+          }
         } else {
           processed = GRN_TRUE;
         }

@@ -1,4 +1,6 @@
 #@include fixture/geo/in_circle/north_east.grn
 
+table_remove Points
+
 select LandMarks --sortby '_id' --output_columns 'point' --limit -1 \
-  --filter 'geo_in_circle(point, "11x11", "11x1") > 0'
+  --filter 'geo_in_circle(point, "11x11", "11x1")'

@@ -808,7 +808,7 @@ grn_selector_geo_in_circle(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     point_column = args[1];
     column_name_size = grn_obj_name(ctx, point_column,
                                     column_name, GRN_TABLE_MAX_KEY_SIZE);
-    ERR(GRN_INVALID_ARGUMENT,
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
         "geo_in_circle(): index for <%.*s> is missing",
         column_name_size, column_name);
     return ctx->rc;

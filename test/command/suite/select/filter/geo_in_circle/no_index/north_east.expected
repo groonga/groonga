@@ -1,4 +1,6 @@
-select LandMarks --sortby '_id' --output_columns 'point' --limit -1   --filter 'geo_in_circle(point, "11x11", "11x1") > 0'
+table_remove Points
+[[0,0.0,0.0],true]
+select LandMarks --sortby '_id' --output_columns 'point' --limit -1   --filter 'geo_in_circle(point, "11x11", "11x1")'
 [
   [
     0,
@@ -946,3 +948,4 @@ select LandMarks --sortby '_id' --output_columns 'point' --limit -1   --filter '
     ]
   ]
 ]
+#|e| geo_in_circle(): index for <LandMarks.point> is missing
