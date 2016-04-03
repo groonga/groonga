@@ -19,6 +19,7 @@
 #include "grn.h"
 #include <string.h>
 #include "grn_request_canceler.h"
+#include "grn_request_timer.h"
 #include "grn_tokenizers.h"
 #include "grn_ctx_impl.h"
 #include "grn_ii.h"
@@ -1036,10 +1037,18 @@ grn_init(void)
             "failed to initialize request canceler (%d)", rc);
     goto fail_request_canceler;
   }
+  if (!grn_request_timer_init()) {
+    rc = ctx->rc;
+    GRN_LOG(ctx, GRN_LOG_ALERT,
+            "failed to initialize request timer (%d)", rc);
+    goto fail_request_timer;
+  }
   GRN_LOG(ctx, GRN_LOG_NOTICE, "grn_init: <%s>", grn_get_version());
   check_overcommit_memory(ctx);
   return rc;
 
+fail_request_timer:
+  grn_request_canceler_fin();
 fail_request_canceler:
   grn_cache_fin();
 fail_tokenizer:
@@ -1142,6 +1151,7 @@ grn_fin(void)
     }
   }
   grn_query_logger_fin(ctx);
+  grn_request_timer_fin();
   grn_request_canceler_fin();
   grn_cache_fin();
   grn_tokenizers_fin();
