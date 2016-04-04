@@ -4378,7 +4378,12 @@ grn_ii_cursor_set_min(grn_ctx *ctx, grn_ii_cursor *c, grn_id min)
       uint32_t skip_chunk = 0;
       grn_id rid = c->prev_chunk_rid;
 
-      for (i = c->curr_chunk - 1; i < c->nchunks; i++) {
+      if (c->curr_chunk > 0) {
+        i = c->curr_chunk - 1;
+      } else {
+        i = 0;
+      }
+      for (; i < c->nchunks; i++) {
         rid += c->cinfo[i].dgap;
         if (rid < c->min) {
           skip_chunk = i + 1;
