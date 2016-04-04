@@ -4370,7 +4370,10 @@ grn_ii_cursor_set_min(grn_ctx *ctx, grn_ii_cursor *c, grn_id min)
 
   if (grn_ii_cursor_set_min_enable) {
     c->min = min;
-    if (c->buf && c->pc.rid < c->min && c->prev_chunk_rid < c-> min && c->curr_chunk < c->nchunks) {
+    if (c->buf &&
+        c->pc.rid < c->min &&
+        c->prev_chunk_rid < c->min &&
+        c->curr_chunk < c->nchunks) {
       uint32_t i;
       uint32_t skip_chunk = 0;
       grn_id rid;
