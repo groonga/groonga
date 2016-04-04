@@ -4206,6 +4206,8 @@ struct _grn_ii_cursor {
   uint32_t *ppseg;
 
   int weight;
+
+  uint32_t prev_chunk_rid;
 };
 
 static int
@@ -4368,10 +4370,11 @@ grn_ii_cursor_set_min(grn_ctx *ctx, grn_ii_cursor *c, grn_id min)
 
   if (grn_ii_cursor_set_min_enable) {
     c->min = min;
-    if (c->buf && c->pc.rid < c->min && c->curr_chunk < c->nchunks) {
-      uint32_t i, skip_chunk = 0;
+    if (c->buf && c->pc.rid < c->min && c->prev_chunk_rid < c-> min && c->curr_chunk < c->nchunks) {
+      uint32_t i, skip_chunk = c->curr_chunk - 1;
       grn_id rid;
-      for (i = 0, rid = GRN_ID_NIL; i < c->nchunks; i++) {
+      
+      for (i = skip_chunk, rid = c->prev_chunk_rid; i < c->nchunks; i++) {
         rid += c->cinfo[i].dgap;
         if (rid < c->min) {
           skip_chunk = i + 1;
@@ -4481,6 +4484,7 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
                 }
                 c->cpp = c->rdv[j].data;
               }
+              c->prev_chunk_rid = c->pc.rid;
               c->pc.rid = 0;
               c->pc.sid = 0;
               c->pc.rest = 0;
@@ -7345,6 +7349,7 @@ grn_ii_cursor_next_all(grn_ctx *ctx, grn_ii_cursor *c)
                 }
                 c->cpp = c->rdv[j].data;
               }
+              c->prev_chunk_rid = c->pc.rid;
               c->pc.rid = 0;
               c->pc.sid = 0;
               c->pc.rest = 0;
