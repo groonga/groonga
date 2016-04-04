@@ -2092,12 +2092,13 @@ msgstr ""
 "php/English_list.php>`_."
 
 msgid "Introduction"
-msgstr ""
+msgstr "導入"
 
 msgid ""
 "This documentation describes about how to write, generate and manage Groonga "
 "documentation."
 msgstr ""
+"この文書では、Groongaドキュメントの執筆・生成・管理の方法について説明します。"
 
 msgid "Groonga uses Sphinx_ as documentation tool."
 msgstr "Groongaはドキュメントツールとして Sphinx_ を使います。"
@@ -2124,45 +2125,54 @@ msgstr ""
 "<https://github.com/yyuu/pyenv>`_ を使ったインストール手順は以下の通りです::"
 
 msgid "Run ``configure`` with ``--enable-document``"
-msgstr ""
+msgstr "``configure`` を ``--enable-document`` 付きで実行"
 
 msgid ""
 "Groonga disables documentation generation by default. You need to enable it "
 "explicitly by adding ``--enable-document`` option to ``configure``::"
 msgstr ""
+"Groonga は、デフォルトではドキュメントの生成を無効化しています。 "
+"``configure`` に ``--enable-document`` オプションを追加して明示的に有効にする"
+"必要があります。::"
 
 msgid "Now, your Groonga build is documentation ready."
-msgstr ""
+msgstr "これで、 Groonga ドキュメントをビルドする準備が出来ました。"
 
 msgid "Generate HTML"
 msgstr "HTMLファイルを生成"
 
 msgid "You can generate HTML by the following command::"
-msgstr ""
+msgstr "以下のコマンドでHTMLファイルを生成できます。::"
 
 msgid "You can find generated HTML documentation at ``doc/locale/en/html/``."
-msgstr ""
+msgstr "生成されたHTMLドキュメントは ``doc/locale/ja/html/`` にあります。"
 
 msgid "Update"
-msgstr ""
+msgstr "更新"
 
 msgid ""
 "You can find sources of documentation at ``doc/source/``. The sources should "
 "be written in English. See :doc:`i18n` about how to translate documentation."
 msgstr ""
+"ドキュメントのソースは ``doc/source/`` にあります。ソースは英語で書かれている"
+"はずです。ドキュメントの翻訳方法については、 :doc:`i18n` をご覧ください。"
 
 msgid ""
 "You can update the target file when you update the existing documentation "
 "file."
 msgstr ""
+"既に存在するドキュメントのファイルを更新すると、翻訳対象のファイルを更新でき"
+"ます。"
 
 msgid ""
 "You need to update file list after you add a new file, change file path and "
 "delete existing file. You can update file list by the following command::"
 msgstr ""
+"新規ファイル追加・ファイル位置変更・ファイル削除の後は、ファイル一覧を更新す"
+"る必要があります。以下のコマンドでファイル一覧を更新できます。::"
 
 msgid "The command updates ``doc/files.am``."
-msgstr ""
+msgstr "このコマンドは ``doc/files.am`` を更新します。"
 
 msgid "How to report a bug"
 msgstr "バグレポートの送り方"
