@@ -3741,7 +3741,7 @@ grn_ii *
 grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon, uint32_t flags)
 {
   grn_ii *ii = NULL;
-  if (!(ii = GRN_GMALLOC(sizeof(grn_ii)))) {
+  if (!(ii = GRN_MALLOCN(grn_ii, 1))) {
     return NULL;
   }
   GRN_DB_OBJ_SET_TYPE(ii, GRN_COLUMN_INDEX);
@@ -3842,7 +3842,7 @@ grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
     grn_io_close(ctx, chunk);
     return NULL;
   }
-  if (!(ii = GRN_GMALLOC(sizeof(grn_ii)))) {
+  if (!(ii = GRN_MALLOCN(grn_ii, 1))) {
     grn_io_close(ctx, seg);
     grn_io_close(ctx, chunk);
     return NULL;
@@ -3868,7 +3868,7 @@ grn_ii_close(grn_ctx *ctx, grn_ii *ii)
   if (!ii) { return GRN_INVALID_ARGUMENT; }
   if ((rc = grn_io_close(ctx, ii->seg))) { return rc; }
   if ((rc = grn_io_close(ctx, ii->chunk))) { return rc; }
-  GRN_GFREE(ii);
+  GRN_FREE(ii);
   /*
   {
     int i;
