@@ -675,6 +675,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/command/output_format.rst \
 	$(top_srcdir)/doc/source/reference/command/pretty_print.rst \
 	$(top_srcdir)/doc/source/reference/command/request_id.rst \
+	$(top_srcdir)/doc/source/reference/command/request_timeout.rst \
 	$(top_srcdir)/doc/source/reference/command/return_code.rst \
 	$(top_srcdir)/doc/source/reference/commands/cache_limit.rst \
 	$(top_srcdir)/doc/source/reference/commands/check.rst \
@@ -1506,6 +1507,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/command/output_format.rst \
 	source/reference/command/pretty_print.rst \
 	source/reference/command/request_id.rst \
+	source/reference/command/request_timeout.rst \
 	source/reference/command/return_code.rst \
 	source/reference/commands/cache_limit.rst \
 	source/reference/commands/check.rst \
@@ -1855,6 +1857,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/command/output_format.txt \
 	html/_sources/reference/command/pretty_print.txt \
 	html/_sources/reference/command/request_id.txt \
+	html/_sources/reference/command/request_timeout.txt \
 	html/_sources/reference/command/return_code.txt \
 	html/_sources/reference/commands/cache_limit.txt \
 	html/_sources/reference/commands/check.txt \
@@ -2104,6 +2107,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/command/output_format.html \
 	html/reference/command/pretty_print.html \
 	html/reference/command/request_id.html \
+	html/reference/command/request_timeout.html \
 	html/reference/command/return_code.html \
 	html/reference/commands/cache_limit.html \
 	html/reference/commands/check.html \

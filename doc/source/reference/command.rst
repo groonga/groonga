@@ -18,5 +18,6 @@ This section describes about command and built-in commands.
    command/output_format
    command/pretty_print
    command/request_id
+   command/request_timeout
    command/return_code
    commands/*

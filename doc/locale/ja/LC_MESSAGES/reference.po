@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-03-30 21:54+0900\n"
+"PO-Revision-Date: 2016-04-05 18:09+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -3465,6 +3465,82 @@ msgstr "以下は ``id-1`` というIDをリクエストに割り当てる例で
 msgid ":doc:`/reference/commands/request_cancel`"
 msgstr ""
 
+msgid "Request timeout"
+msgstr "リクエストタイムアウト"
+
+# fa33df3be0a649509ae60b55405e9f61
+msgid "You can set timeout to each request."
+msgstr "各リクエストにタイムアウトを設定できます。"
+
+msgid ""
+"If a request isn't completed until the specified timeout, the request is "
+"canceled. If you don't set timeout, the request is processed until the "
+"request is completed."
+msgstr ""
+"指定したタイムアウトまでにリクエストが完了しなかった場合、そのリクエストは"
+"キャンセルされます。タイムアウトを設定しない場合、そのリクエストが完了するま"
+"で処理をします。"
+
+msgid ""
+"Request timeout feature is useful when you implement timeout on client side. "
+"If you only implement timeout only on client side, the request keeps "
+"processing after client stops waiting response. It uses needless resources. "
+"If you set timeout to the request, the request will be canceled soon."
+msgstr ""
+"リクエストタイムアウト機能はクライアントサイドでタイムアウトを実装していると"
+"きに有用です。もし、クライアントサイドだけでタイムアウトを実装していると、ク"
+"ライアントがレスポンスを待つことをやめたあともリクエストを処理し続けます。こ"
+"れは不必要にリソースを消費しています。このリクエストにタイムアウトを設定して"
+"いれば、じきにこのリクエストはキャンセルされます。"
+
+# fa33df3be0a649509ae60b55405e9f61
+msgid "How to set timeout to request"
+msgstr "リクエストにタイムアウトを設定する方法"
+
+# 09584728ab8241ef8082ca2cdf80d59c
+msgid ""
+"All commands accept ``request_timeout`` parameter. You can set timeout to "
+"request by adding ``request_timeout`` parameter."
+msgstr ""
+"すべてのコマンドは ``request_timeout`` パラメーターを受け付けます。 "
+"``request_timeout`` パラメーターを追加することでリクエストにタイムアウトを設"
+"定できます。"
+
+msgid ""
+"Unit of timeout out value is second. You can set timeout less than 1 second "
+"by using decimal such as ``0.1``. ``0.1`` means 100 milliseconds."
+msgstr ""
+"タイムアウト値の単位は秒です。 ``0.1`` のように小数で指定することで1秒未満の"
+"タイムアウトを設定できます。 ``0.1`` は100ミリ秒のタイムアウトという意味で"
+"す。"
+
+msgid "Here is an example to set ``5.5`` seconds timeout to a request::"
+msgstr "以下はリクエストに ``5.5`` 秒のタイムアウトを設定する例です。::"
+
+msgid "Return code on timeout"
+msgstr "タイムアウト時のリターンコード"
+
+msgid ""
+"If the request is timed out, ``GRN_CANCEL`` (``-77``) :doc:`return_code` is "
+"returned in response header."
+msgstr ""
+"リクエストがタイムアウトすると、レスポンスヘッダーの :doc:`return_code` は "
+"``GRN_CANCEL`` （ ``-77`` ）になります。"
+
+msgid "Here is an example response on timeout::"
+msgstr "以下はタイムアウト時にレスポンス例です。::"
+
+msgid "See :doc:`/reference/command/output_format` for response header."
+msgstr ""
+"レスポンスヘッダーについては :doc:`/reference/command/output_format` を参照し"
+"てください。"
+
+msgid ":doc:`/reference/command/return_code`"
+msgstr ""
+
+msgid ":doc:`/reference/command/output_format`"
+msgstr ""
+
 msgid "Return code"
 msgstr "リターンコード"
 
@@ -3717,6 +3793,24 @@ msgid "-70: ``GRN_CAS_ERROR``"
 msgstr ""
 
 msgid "-71: ``GRN_UNSUPPORTED_COMMAND_VERSION``"
+msgstr ""
+
+msgid "-72: ``GRN_NORMALIZER_ERROR``"
+msgstr ""
+
+msgid "-73: ``GRN_TOKEN_FILTER_ERROR``"
+msgstr ""
+
+msgid "-74: ``GRN_COMMAND_ERROR``"
+msgstr ""
+
+msgid "-75: ``GRN_PLUGIN_ERROR``"
+msgstr ""
+
+msgid "-76: ``GRN_SCORER_ERROR``"
+msgstr ""
+
+msgid "-77: ``GRN_CANCEL``"
 msgstr ""
 
 msgid ""
@@ -12591,9 +12685,6 @@ msgstr ""
 msgid ":doc:`/reference/tokenizers`"
 msgstr ""
 
-msgid ":doc:`/reference/command/output_format`"
-msgstr ""
-
 msgid "``table_list``"
 msgstr ""
 
@@ -16521,19 +16612,19 @@ msgid ""
 "``prefix_rk_search`` selects records by :doc:`/reference/operations/"
 "prefix_rk_search`."
 msgstr ""
-"``prefix_rk_search`` は :doc:`/reference/operations/prefix_rk_search` を"
-"使ってレコードを選択します。"
+"``prefix_rk_search`` は :doc:`/reference/operations/prefix_rk_search` を使っ"
+"てレコードを選択します。"
 
 msgid "You need to create :ref:`table-pat-key` table for prefix RK search."
 msgstr ""
 "前方一致RK検索を使うには :ref:`table-pat-key` テーブルを作る必要があります。"
 
 msgid ""
-"You can't use ``prefix_rk_search`` for sequential scan. It's a selector "
-"only procedure."
+"You can't use ``prefix_rk_search`` for sequential scan. It's a selector only "
+"procedure."
 msgstr ""
-"シーケンシャルスキャンでは ``prefix_rk_search`` を使うことはできません。こ"
-"れはセレクターのみのプロシージャです。"
+"シーケンシャルスキャンでは ``prefix_rk_search`` を使うことはできません。これ"
+"はセレクターのみのプロシージャです。"
 
 msgid ""
 "``prefix_rk_search`` requires two arguments. They are ``column`` and "
@@ -16548,10 +16639,10 @@ msgid "``query`` must be string."
 msgstr "``query`` は文字列です。"
 
 msgid ""
-"Here is the simple usage of ``prefix_rk_search`` function which selects ``"
+"Here is the simple usage of ``prefix_rk_search()`` function which selects ``"
 "ニホン`` and ``ニッポン`` by ``ni``:"
 msgstr ""
-"以下は簡単な ``prefix_rk_search`` 関数の使い方です。この使い方では ``ni`` "
+"以下は簡単な ``prefix_rk_search()`` 関数の使い方です。この使い方では ``ni`` "
 "で ``ニホン`` と ``ニッポン`` を検索しています。"
 
 msgid ""
