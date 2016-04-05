@@ -97,6 +97,12 @@ only C API. It is not showen in query API.
 * -69: ``GRN_TOO_SMALL_LIMIT``
 * -70: ``GRN_CAS_ERROR``
 * -71: ``GRN_UNSUPPORTED_COMMAND_VERSION``
+* -72: ``GRN_NORMALIZER_ERROR``
+* -73: ``GRN_TOKEN_FILTER_ERROR``
+* -74: ``GRN_COMMAND_ERROR``
+* -75: ``GRN_PLUGIN_ERROR``
+* -76: ``GRN_SCORER_ERROR``
+* -77: ``GRN_CANCEL``
 
 See also
 --------
