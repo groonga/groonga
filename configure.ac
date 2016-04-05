@@ -763,7 +763,12 @@ if test "x$RUBY" = "xno"; then
 else
   if test "x$RUBY" = "xyes"; then
     AC_PATH_PROGS(RUBY,
-                  [ruby2.2 ruby22 ruby2.1 ruby21 ruby2.0 ruby20 ruby],
+                  [ dnl
+                    ruby2.3 ruby23 dnl
+                    ruby2.2 ruby22 dnl
+                    ruby2.1 ruby21 dnl
+                    ruby dnl
+                  ],
                   ruby-not-found)
     if test "$RUBY" != "ruby-not-found"; then
       ruby_version="`$RUBY --version`"
