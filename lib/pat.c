@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2015 Brazil
+/* Copyright(C) 2009-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -618,7 +618,7 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   PAT_AT(pat, 0, node0);
   if (!node0) {
     grn_io_close(ctx, io);
-    GRN_GFREE(pat);
+    GRN_FREE(pat);
     return NULL;
   }
   pat->cache = NULL;
