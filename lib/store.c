@@ -58,10 +58,7 @@ _grn_ra_create(grn_ctx *ctx, grn_ra *ra, const char *path, unsigned int element_
 grn_ra *
 grn_ra_create(grn_ctx *ctx, const char *path, unsigned int element_size)
 {
-  grn_ra *ra;
-  CRITICAL_SECTION_ENTER(grn_glock);
-  ra = GRN_GMALLOC(sizeof(grn_ra));
-  CRITICAL_SECTION_LEAVE(grn_glock);
+  grn_ra *ra = GRN_MALLOCN(grn_ra, 1);
   if (!ra) {
     return NULL;
   }
@@ -92,9 +89,7 @@ grn_ra_open(grn_ctx *ctx, const char *path)
     grn_io_close(ctx, io);
     return NULL;
   }
-  CRITICAL_SECTION_ENTER(grn_glock);
-  ra = GRN_GMALLOC(sizeof(grn_ra));
-  CRITICAL_SECTION_LEAVE(grn_glock);
+  ra = GRN_MALLOCN(grn_ra, 1);
   if (!ra) {
     grn_io_close(ctx, io);
     return NULL;
@@ -123,9 +118,7 @@ grn_ra_close(grn_ctx *ctx, grn_ra *ra)
   grn_rc rc;
   if (!ra) { return GRN_INVALID_ARGUMENT; }
   rc = grn_io_close(ctx, ra->io);
-  CRITICAL_SECTION_ENTER(grn_glock);
-  GRN_GFREE(ra);
-  CRITICAL_SECTION_LEAVE(grn_glock);
+  GRN_FREE(ra);
   return rc;
 }
 
@@ -374,9 +367,7 @@ _grn_ja_create(grn_ctx *ctx, grn_ja *ja, const char *path,
   header_v2->segregate_threshold = GRN_JA_W_SEGREGATE_THRESH_V2;
   header_v2->n_element_variation = JA_N_ELEMENT_VARIATION_V2;
 
-  CRITICAL_SECTION_ENTER(grn_glock);
-  header = GRN_GMALLOC(sizeof(struct grn_ja_header));
-  CRITICAL_SECTION_LEAVE(grn_glock);
+  header = GRN_MALLOCN(struct grn_ja_header, 1);
   if (!header) {
     grn_io_close(ctx, io);
     return NULL;
@@ -404,9 +395,7 @@ grn_ja *
 grn_ja_create(grn_ctx *ctx, const char *path, unsigned int max_element_size, uint32_t flags)
 {
   grn_ja *ja = NULL;
-  CRITICAL_SECTION_ENTER(grn_glock);
-  ja = GRN_GMALLOC(sizeof(grn_ja));
-  CRITICAL_SECTION_LEAVE(grn_glock);
+  ja = GRN_MALLOCN(grn_ja, 1);
   if (!ja) {
     return NULL;
   }
@@ -443,22 +432,16 @@ grn_ja_open(grn_ctx *ctx, const char *path)
   if (header_v2->n_element_variation == 0) {
     header_v2->n_element_variation = JA_N_ELEMENT_VARIATION_V1;
   }
-  CRITICAL_SECTION_ENTER(grn_glock);
-  ja = GRN_GMALLOC(sizeof(grn_ja));
-  CRITICAL_SECTION_LEAVE(grn_glock);
+  ja = GRN_MALLOCN(grn_ja, 1);
   if (!ja) {
     grn_io_close(ctx, io);
     return NULL;
   }
   GRN_DB_OBJ_SET_TYPE(ja, GRN_COLUMN_VAR_SIZE);
-  CRITICAL_SECTION_ENTER(grn_glock);
-  header = GRN_GMALLOC(sizeof(struct grn_ja_header));
-  CRITICAL_SECTION_LEAVE(grn_glock);
+  header = GRN_MALLOCN(struct grn_ja_header, 1);
   if (!header) {
     grn_io_close(ctx, io);
-    CRITICAL_SECTION_ENTER(grn_glock);
-    GRN_GFREE(ja);
-    CRITICAL_SECTION_LEAVE(grn_glock);
+    GRN_FREE(ja);
     return NULL;
   }
 
@@ -503,10 +486,8 @@ grn_ja_close(grn_ctx *ctx, grn_ja *ja)
   grn_rc rc;
   if (!ja) { return GRN_INVALID_ARGUMENT; }
   rc = grn_io_close(ctx, ja->io);
-  CRITICAL_SECTION_ENTER(grn_glock);
-  GRN_GFREE(ja->header);
-  GRN_GFREE(ja);
-  CRITICAL_SECTION_LEAVE(grn_glock);
+  GRN_FREE(ja->header);
+  GRN_FREE(ja);
   return rc;
 }
 
@@ -538,9 +519,7 @@ grn_ja_truncate(grn_ctx *ctx, grn_ja *ja)
   if ((rc = grn_io_close(ctx, ja->io))) { goto exit; }
   ja->io = NULL;
   if (path && (rc = grn_io_remove(ctx, path))) { goto exit; }
-  CRITICAL_SECTION_ENTER(grn_glock);
-  GRN_GFREE(ja->header);
-  CRITICAL_SECTION_LEAVE(grn_glock);
+  GRN_FREE(ja->header);
   if (!_grn_ja_create(ctx, ja, path, max_element_size, flags)) {
     rc = GRN_UNKNOWN_ERROR;
   }
@@ -2162,10 +2141,10 @@ grn_vgram *
 grn_vgram_create(const char *path)
 {
   grn_vgram *s;
-  if (!(s = GRN_GMALLOC(sizeof(grn_vgram)))) { return NULL; }
+  if (!(s = GRN_MALLOCN(grn_vgram, 1))) { return NULL; }
   s->vgram = grn_sym_create(path, sizeof(grn_id) * 2, 0, GRN_ENC_NONE);
   if (!s->vgram) {
-    GRN_GFREE(s);
+    GRN_FREE(s);
     return NULL;
   }
   return s;
@@ -2175,10 +2154,10 @@ grn_vgram *
 grn_vgram_open(const char *path)
 {
   grn_vgram *s;
-  if (!(s = GRN_GMALLOC(sizeof(grn_vgram)))) { return NULL; }
+  if (!(s = GRN_MALLOCN(grn_vgram, 1))) { return NULL; }
   s->vgram = grn_sym_open(path);
   if (!s->vgram) {
-    GRN_GFREE(s);
+    GRN_FREE(s);
     return NULL;
   }
   return s;
@@ -2188,13 +2167,13 @@ grn_vgram_buf *
 grn_vgram_buf_open(size_t len)
 {
   grn_vgram_buf *b;
-  if (!(b = GRN_GMALLOC(sizeof(grn_vgram_buf)))) { return NULL; }
+  if (!(b = GRN_MALLOCN(grn_vgram_buf, 1))) { return NULL; }
   b->len = len;
-  b->tvs = b->tvp = GRN_GMALLOC(sizeof(grn_id) * len);
-  if (!b->tvp) { GRN_GFREE(b); return NULL; }
+  b->tvs = b->tvp = GRN_MALLOCN(grn_id, len);
+  if (!b->tvp) { GRN_FREE(b); return NULL; }
   b->tve = b->tvs + len;
-  b->vps = b->vpp = GRN_GMALLOC(sizeof(grn_vgram_vnode) * len * 2);
-  if (!b->vpp) { GRN_GFREE(b->tvp); GRN_GFREE(b); return NULL; }
+  b->vps = b->vpp = GRN_MALLOCN(grn_vgram_vnode, len * 2);
+  if (!b->vpp) { GRN_FREE(b->tvp); GRN_FREE(b); return NULL; }
   b->vpe = b->vps + len;
   return b;
 }
@@ -2314,7 +2293,7 @@ grn_vgram_update(grn_vgram *vgram, grn_id rid, grn_vgram_buf *b, grn_hash *terms
         int skip = 0;
         grn_set_eh *ehs, *ehp, *ehe;
         grn_set_sort_optarg arg;
-        uint8_t *ps = GRN_GMALLOC(b->len * 2), *pp, *pe;
+        uint8_t *ps = GRN_MALLOC(b->len * 2), *pp, *pe;
         if (!ps) {
           grn_set_close(th);
           return GRN_NO_MEMORY_AVAILABLE;
@@ -2326,7 +2305,7 @@ grn_vgram_update(grn_vgram *vgram, grn_id rid, grn_vgram_buf *b, grn_hash *terms
         arg.compar_arg = (void *)(intptr_t)sizeof(grn_id);
         ehs = grn_set_sort(th, 0, &arg);
         if (!ehs) {
-          GRN_GFREE(ps);
+          GRN_FREE(ps);
           grn_set_close(th);
           return GRN_NO_MEMORY_AVAILABLE;
         }
@@ -2350,8 +2329,8 @@ grn_vgram_update(grn_vgram *vgram, grn_id rid, grn_vgram_buf *b, grn_hash *terms
         len_sum += b->len;
         img_sum += pp - ps;
         skip_sum += skip;
-        GRN_GFREE(ehs);
-        GRN_GFREE(ps);
+        GRN_FREE(ehs);
+        GRN_FREE(ps);
       }
       grn_set_close(th);
     }
@@ -2363,9 +2342,9 @@ grn_rc
 grn_vgram_buf_close(grn_vgram_buf *b)
 {
   if (!b) { return GRN_INVALID_ARGUMENT; }
-  if (b->tvs) { GRN_GFREE(b->tvs); }
-  if (b->vps) { GRN_GFREE(b->vps); }
-  GRN_GFREE(b);
+  if (b->tvs) { GRN_FREE(b->tvs); }
+  if (b->vps) { GRN_FREE(b->vps); }
+  GRN_FREE(b);
   return GRN_SUCCESS;
 }
 
@@ -2375,7 +2354,7 @@ grn_vgram_close(grn_vgram *vgram)
   if (!vgram) { return GRN_INVALID_ARGUMENT; }
   GRN_LOG(ctx, GRN_LOG_DEBUG, "len=%d img=%d skip=%d simple=%d", len_sum, img_sum, skip_sum, simple_sum);
   grn_sym_close(vgram->vgram);
-  GRN_GFREE(vgram);
+  GRN_FREE(vgram);
   return GRN_SUCCESS;
 }
 */
