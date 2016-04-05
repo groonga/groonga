@@ -1,12 +1,12 @@
 Execution example::
 
-  table_remove User
+  table_remove Users
   # [
   #   [
   #     -2, 
   #     1337566253.89858, 
   #     0.000355720520019531, 
-  #     "[table][remove] a column that references the table exists: <UserAction.user_id> -> <User>", 
+  #     "[table][remove] a column that references the table exists: <UserActions.user_id> -> <Users>", 
   #     [
   #       [
   #         "is_removable_table", 

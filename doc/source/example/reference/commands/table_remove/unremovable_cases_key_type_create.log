@@ -1,6 +1,6 @@
 Execution example::
 
-  table_create User TABLE_HASH_KEY ShortText
+  table_create Users TABLE_HASH_KEY ShortText
   # [[0, 1337566253.89858, 0.000355720520019531], true]
-  table_create AdminUser TABLE_HASH_KEY User
+  table_create AdminUsers TABLE_HASH_KEY Users
   # [[0, 1337566253.89858, 0.000355720520019531], true]
