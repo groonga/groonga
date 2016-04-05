@@ -138,22 +138,22 @@ uses the table to be removed as key type:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_key_type_create.log
-.. table_create ReferencedByTable TABLE_HASH_KEY ShortText
-.. table_create ReferenceTable TABLE_HASH_KEY ReferencedByTable
+.. table_create User TABLE_HASH_KEY ShortText
+.. table_create AdminUser TABLE_HASH_KEY User
 
-``table_remove`` against ``ReferencedByTable`` is failed:
+``table_remove`` against ``User`` is failed:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_key_type_remove_fail.log
-.. table_remove ReferencedByTable
+.. table_remove User
 
-You need to remove ``ReferenceTable`` before you remove
-``ReferencedByTable``:
+You need to remove ``AdminUser`` before you remove
+``User``:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_key_type_remove_success.log
-.. table_remove ReferenceTable
-.. table_remove ReferencedByTable
+.. table_remove AdminUser
+.. table_remove User
 
 Here is an example for the table is used as value type case.
 
@@ -162,23 +162,23 @@ uses the table to be removed as value type:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_value_type_create.log
-.. table_create ReferencedByColumn TABLE_HASH_KEY ShortText
-.. table_create Table TABLE_NO_KEY
-.. column_create Table reference_column COLUMN_SCALAR ReferencedByColumn
+.. table_create User TABLE_HASH_KEY ShortText
+.. table_create UserAction TABLE_NO_KEY
+.. column_create UserAction user_id COLUMN_SCALAR User
 
-``table_remove`` against ``ReferencedByColumn`` is failed:
+``table_remove`` against ``User`` is failed:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_value_type_remove_fail.log
-.. table_remove ReferencedByColumn
+.. table_remove User
 
-You need to remove ``Table.reference_column`` before you remove
-``ReferencedByColumn``:
+You need to remove ``UserAction.user_id`` before you remove
+``User``:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_value_type_remove_success.log
-.. column_remove Table reference_column
-.. table_remove ReferencedByColumn
+.. column_remove UserAction user_id
+.. table_remove User
 
 .. _table-remove-remove-dependents:
 
@@ -191,30 +191,30 @@ If you understand what you'll do, you can also remove tables and
 columns that reference the target table with one ``table_remove``
 command by using ``--dependent yes`` parameter.
 
-``ReferencedTable`` in the following schema is referenced from a table
+``User`` in the following schema is referenced from a table
 and a column:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/remove_dependents_schema.log
-.. table_create ReferencedTable TABLE_HASH_KEY ShortText
-.. table_create Table1 TABLE_HASH_KEY ReferencedTable
-.. table_create Table2 TABLE_NO_KEY
-.. column_create Table2 reference_column COLUMN_SCALAR ReferencedTable
+.. table_create User TABLE_HASH_KEY ShortText
+.. table_create AdminUser TABLE_HASH_KEY User
+.. table_create UserAction TABLE_NO_KEY
+.. column_create UserAction user_id COLUMN_SCALAR User
 
-You can't remove ``ReferencedTable`` by default:
+You can't remove ``User`` by default:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/remove_dependents_default.log
-.. table_remove ReferencedTable
+.. table_remove User
 
-You can remove ``ReferencedTable``, ``Table1`` and
-``Table2.reference_column`` by using ``--dependent yes``
-parameter. ``Table1`` and ``Table2.reference_column`` reference
-``ReferencedTable``:
+You can remove ``User``, ``AdminUser`` and
+``UserAction.user_id`` by using ``--dependent yes``
+parameter. ``AdminUser`` and ``UserAction.user_id`` reference
+``User``:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/remove_dependents_yes.log
-.. table_remove ReferencedTable --dependent yes
+.. table_remove User --dependent yes
 
 .. _table-remove-decreases-used-resources:
 
