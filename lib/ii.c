@@ -8875,7 +8875,7 @@ grn_ii_builder_term_extend(grn_ctx *ctx, grn_ii_builder_term *term)
           "failed to allocate memory for term buffer: size = %u", size);
       return ctx->rc;
     }
-    memcpy(buf, &term->dummy, term->offset);
+    grn_memcpy(buf, &term->dummy, term->offset);
   } else {
     buf = (uint8_t *)GRN_REALLOC(term->buf, size);
     if (!buf) {
