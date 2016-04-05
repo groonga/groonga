@@ -2,9 +2,9 @@ Execution example::
 
   table_create Users TABLE_HASH_KEY ShortText
   # [[0, 1337566253.89858, 0.000355720520019531], true]
-  table_create AdminUsers TABLE_HASH_KEY Users
+  table_create Admins TABLE_HASH_KEY Users
   # [[0, 1337566253.89858, 0.000355720520019531], true]
-  table_create UserActions TABLE_NO_KEY
+  table_create Actions TABLE_NO_KEY
   # [[0, 1337566253.89858, 0.000355720520019531], true]
-  column_create UserActions user_id COLUMN_SCALAR Users
+  column_create Actions user COLUMN_SCALAR Users
   # [[0, 1337566253.89858, 0.000355720520019531], true]

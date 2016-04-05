@@ -139,7 +139,7 @@ uses the table to be removed as key type:
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_key_type_create.log
 .. table_create Users TABLE_HASH_KEY ShortText
-.. table_create AdminUsers TABLE_HASH_KEY Users
+.. table_create Admins TABLE_HASH_KEY Users
 
 ``table_remove`` against ``Users`` is failed:
 
@@ -147,12 +147,12 @@ uses the table to be removed as key type:
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_key_type_remove_fail.log
 .. table_remove Users
 
-You need to remove ``AdminUsers`` before you remove
+You need to remove ``Admins`` before you remove
 ``Users``:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_key_type_remove_success.log
-.. table_remove AdminUsers
+.. table_remove Admins
 .. table_remove Users
 
 Here is an example for the table is used as value type case.
@@ -163,8 +163,8 @@ uses the table to be removed as value type:
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_value_type_create.log
 .. table_create Users TABLE_HASH_KEY ShortText
-.. table_create UserActions TABLE_NO_KEY
-.. column_create UserActions user_id COLUMN_SCALAR Users
+.. table_create Actions TABLE_NO_KEY
+.. column_create Actions user COLUMN_SCALAR Users
 
 ``table_remove`` against ``Users`` is failed:
 
@@ -172,12 +172,12 @@ uses the table to be removed as value type:
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_value_type_remove_fail.log
 .. table_remove Users
 
-You need to remove ``UserActions.user_id`` before you remove
+You need to remove ``Actions.user`` before you remove
 ``Users``:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/unremovable_cases_value_type_remove_success.log
-.. column_remove UserActions user_id
+.. column_remove Actions user
 .. table_remove Users
 
 .. _table-remove-remove-dependents:
@@ -197,9 +197,9 @@ and a column:
 .. groonga-command
 .. include:: ../../example/reference/commands/table_remove/remove_dependents_schema.log
 .. table_create Users TABLE_HASH_KEY ShortText
-.. table_create AdminUsers TABLE_HASH_KEY Users
-.. table_create UserActions TABLE_NO_KEY
-.. column_create UserActions user_id COLUMN_SCALAR Users
+.. table_create Admins TABLE_HASH_KEY Users
+.. table_create Actions TABLE_NO_KEY
+.. column_create Actions user COLUMN_SCALAR Users
 
 You can't remove ``Users`` by default:
 
@@ -207,9 +207,9 @@ You can't remove ``Users`` by default:
 .. include:: ../../example/reference/commands/table_remove/remove_dependents_default.log
 .. table_remove Users
 
-You can remove ``Users``, ``AdminUsers`` and
-``UserActions.user_id`` by using ``--dependent yes``
-parameter. ``AdminUsers`` and ``UserActions.user_id`` reference
+You can remove ``Users``, ``Admins`` and
+``Actions.user`` by using ``--dependent yes``
+parameter. ``Admins`` and ``Actions.user`` reference
 ``Users``:
 
 .. groonga-command
