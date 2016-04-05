@@ -50,7 +50,7 @@ mruby-io/src/mruby_io_gem.c: mruby_build.timestamp
 
 MRUBY_CONFIG = $(abs_srcdir)/build_config.rb
 MRUBY_BUILD_DIR = $(abs_top_builddir)/vendor/mruby-build
-mruby_build.timestamp: build_config.rb
+mruby_build.timestamp: build_config.rb version
 	$(RUBY) "$(srcdir)/mruby_build.rb"	\
 	  "$(srcdir)/build_config.rb"		\
 	  "$(srcdir)/../mruby-source"		\
@@ -65,5 +65,6 @@ endif
 update:
 	cd "$(srcdir)/../mruby-source" && \
 	  (git checkout master && git pull --rebase)
+	(cd "$(srcdir)/../mruby-source" && git describe) > version
 	cd "$(srcdir)" && \
 	  ./update.rb build_config.rb ../mruby-source > sources.am
