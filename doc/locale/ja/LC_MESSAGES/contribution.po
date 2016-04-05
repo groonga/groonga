@@ -1268,8 +1268,8 @@ msgid "grntestの実行方法"
 msgstr ""
 
 msgid ""
-"grntestではGroongaコマンドを明示的にしていすることができます。 後述のパッケー"
-"ジごとのgrntestによる動作確認では以下のようにして実行します。::"
+"grntestではGroongaコマンドを明示的に指定することができます。 後述のパッケージ"
+"ごとのgrntestによる動作確認では以下のようにして実行します。::"
 msgstr ""
 
 msgid "最後にgrntestによる実行結果が以下のようにまとめて表示されます。::"
@@ -1573,6 +1573,18 @@ msgstr ""
 msgid ""
 "この作業はblogroongaの英語版、日本語版それぞれで行います。 あらかじめgroonga"
 "アカウントでログインしておくとアナウンスを円滑に行うことができます。"
+msgstr ""
+
+msgid "Facebookでリリースアナウンスをする"
+msgstr ""
+
+msgid "FacebookにGroongaグループがあります。 https://www.facebook.com/groonga/"
+msgstr ""
+
+msgid ""
+"Groongaグループのメンバーになると、個人のアカウントではなく、Groongaグループ"
+"のメンバーとして投稿できます。 ブログエントリなどをもとに、リリースアナウンス"
+"を投稿します。"
 msgstr ""
 
 msgid "以上でリリース作業は終了です。"
