@@ -368,14 +368,14 @@ AC_LINK_IFELSE(
   [
     AC_LINK_IFELSE(
       [AC_LANG_PROGRAM(
-	[#define _ISOC99_SOURCE
+        [#define _ISOC99_SOURCE
          #include <math.h>],
-	[if (fpclassify(0.0)) {return 0;}]
+        [if (fpclassify(0.0)) {return 0;}]
        )],
       [
         AC_DEFINE(_ISOC99_SOURCE, [1], [Define to 1 for fpclassify])
-	AC_DEFINE(HAVE_FPCLASSIFY, [1], [use fpclassify with _ISOC99_SOURCE])
-	AC_MSG_RESULT(yes)
+        AC_DEFINE(HAVE_FPCLASSIFY, [1], [use fpclassify with _ISOC99_SOURCE])
+        AC_MSG_RESULT(yes)
       ],
       [
         AC_MSG_RESULT(no)
@@ -630,7 +630,7 @@ if test "x$have_epoll" != "xyes"; then
     ])
     if test "x$have_poll" != "xyes"; then
       if test "$os_win32" = "yes"; then
-	AC_CHECK_HEADER(winsock2.h, [have_select="yes"])
+        AC_CHECK_HEADER(winsock2.h, [have_select="yes"])
       else
         AC_CHECK_FUNC(select, [
           have_select="yes"
@@ -827,8 +827,8 @@ else
     fi
   else
     AC_CHECK_FILE([$INKSCAPE],
-		  [inkscape_available="yes"],
-		  [AC_MSG_WARN([$INKSCAPE is not found.
+                  [inkscape_available="yes"],
+                  [AC_MSG_WARN([$INKSCAPE is not found.
                                 Disable PNG image generation.])])
   fi
 fi
@@ -841,7 +841,7 @@ AC_ARG_WITH([lemon],
             AS_HELP_STRING([--with-lemon=PATH],
                            [Lemon path (default: auto)]),
             [LEMON="$withval"],
-	    [: ${LEMON:=auto}])
+            [: ${LEMON:=auto}])
 
 if test "$LEMON" = "no"; then
   LEMON=
@@ -860,8 +860,8 @@ else
     fi
   else
     AC_CHECK_FILE([$LEMON],
-		  [lemon_available="yes"],
-		  [AC_MSG_WARN([$LEMON is not found. Disable .y compilation.])])
+                  [lemon_available="yes"],
+                  [AC_MSG_WARN([$LEMON is not found. Disable .y compilation.])])
   fi
 fi
 AC_SUBST(LEMON)
@@ -1282,7 +1282,7 @@ if test x"$enable_document" != x"no"; then
     if test -n "$SPHINX_BUILD"; then
       sphinx_build_version=`"$SPHINX_BUILD" --version`
       if ! echo "$sphinx_build_version" | grep -q ' 1\.[[34]]'; then
-	AC_MSG_ERROR([
+        AC_MSG_ERROR([
 sphinx-build is old: $sphinx_build_version
 Sphinx 1.3 or later is required.])
       fi
@@ -1316,8 +1316,8 @@ fi
 AC_ARG_WITH([cutter-source-path],
             AS_HELP_STRING([--with-cutter-source-path=PATH],
                            [Specify Cutter source path for
-			    groonga's release manager.]),
-			   [CUTTER_SOURCE_PATH="$withval"])
+                            groonga's release manager.]),
+                           [CUTTER_SOURCE_PATH="$withval"])
 case "$CUTTER_SOURCE_PATH" in
   ""|/*)
     : # do nothing
