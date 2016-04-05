@@ -28,7 +28,7 @@ extern "C" {
 void grn_ctx_impl_mrb_init_from_env(void);
 void grn_ctx_impl_mrb_init(grn_ctx *ctx);
 void grn_ctx_impl_mrb_fin(grn_ctx *ctx);
-void grn_ctx_impl_mrb_ensure_init(grn_ctx *ctx);
+GRN_API void grn_ctx_impl_mrb_ensure_init(grn_ctx *ctx);
 
 #ifdef __cplusplus
 }
