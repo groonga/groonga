@@ -20,6 +20,7 @@
 #include "grn_request_timer.h"
 
 static grn_request_timer grn_current_request_timer = { 0 };
+static double grn_request_timer_default_timeout = 0.0;
 
 grn_bool
 grn_request_timer_init(void)
@@ -66,6 +67,18 @@ grn_request_timer_set(grn_request_timer *timer)
   } else {
     memset(&grn_current_request_timer, 0, sizeof(grn_request_timer));
   }
+}
+
+double
+grn_get_default_request_timeout(void)
+{
+  return grn_request_timer_default_timeout;
+}
+
+void
+grn_set_default_request_timeout(double timeout)
+{
+  grn_request_timer_default_timeout = timeout;
 }
 
 void

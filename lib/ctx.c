@@ -1459,10 +1459,11 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
   grn_command_version command_version;
   grn_obj buf, *expr, *val;
   grn_obj request_id;
-  double request_timeout = 0.0;
+  double request_timeout;
   const char *p = path, *e = path + path_len, *v, *key_end, *filename_end;
 
   command_version = grn_ctx_get_command_version(ctx);
+  request_timeout = grn_get_default_request_timeout();
 
   GRN_TEXT_INIT(&buf, 0);
   GRN_TEXT_INIT(&request_id, 0);
@@ -1570,9 +1571,12 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
   int offset = 0;
   grn_obj buf, *expr = NULL, *val = NULL;
   grn_obj request_id;
-  double request_timeout = 0.0;
+  double request_timeout;
   const char *p = str, *e = str + str_len, *v;
+
   command_version = grn_ctx_get_command_version(ctx);
+  request_timeout = grn_get_default_request_timeout();
+
   GRN_TEXT_INIT(&buf, 0);
   GRN_TEXT_INIT(&request_id, 0);
   p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);

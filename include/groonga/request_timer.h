@@ -44,6 +44,10 @@ GRN_API void *grn_request_timer_register(const char *request_id,
 GRN_API void grn_request_timer_unregister(void *timer_id);
 
 
+GRN_API double grn_get_default_request_timeout(void);
+GRN_API void grn_set_default_request_timeout(double timeout);
+
+
 #ifdef __cplusplus
 }
 #endif
