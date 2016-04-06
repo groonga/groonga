@@ -27,6 +27,7 @@ typedef struct _grn_cache_entry grn_cache_entry;
 struct _grn_cache {
   grn_cache_entry *next;
   grn_cache_entry *prev;
+  grn_ctx *ctx;
   grn_hash *hash;
   grn_mutex mutex;
   uint32_t max_nentries;
@@ -60,8 +61,14 @@ grn_cache_open(grn_ctx *ctx)
 
   cache->next = (grn_cache_entry *)cache;
   cache->prev = (grn_cache_entry *)cache;
-  cache->hash = grn_hash_create(&grn_gctx, NULL, GRN_CACHE_MAX_KEY_SIZE,
+  cache->ctx = ctx;
+  cache->hash = grn_hash_create(cache->ctx, NULL, GRN_CACHE_MAX_KEY_SIZE,
                                 sizeof(grn_cache_entry), GRN_OBJ_KEY_VAR_SIZE);
+  if (!cache->hash) {
+    ERR(GRN_NO_MEMORY_AVAILABLE, "[cache] failed to create hash table");
+    GRN_FREE(cache);
+    goto exit;
+  }
   MUTEX_INIT(cache->mutex);
   cache->max_nentries = GRN_CACHE_DEFAULT_MAX_N_ENTRIES;
   cache->nfetches = 0;
@@ -72,20 +79,18 @@ exit :
 }
 
 grn_rc
-grn_cache_close(grn_ctx *ctx, grn_cache *cache)
+grn_cache_close(grn_ctx *ctx_not_used, grn_cache *cache)
 {
-  grn_ctx *ctx_original = ctx;
+  grn_ctx *ctx = cache->ctx;
   grn_cache_entry *vp;
 
   GRN_API_ENTER;
 
-  ctx = &grn_gctx;
   GRN_HASH_EACH(ctx, cache->hash, id, NULL, NULL, &vp, {
     grn_obj_close(ctx, vp->value);
   });
   grn_hash_close(ctx, cache->hash);
   MUTEX_FIN(cache->mutex);
-  ctx = ctx_original;
   GRN_FREE(cache);
 
   GRN_API_RETURN(ctx->rc);
@@ -156,8 +161,8 @@ grn_cache_expire_entry(grn_cache *cache, grn_cache_entry *ce)
   if (!ce->nref) {
     ce->prev->next = ce->next;
     ce->next->prev = ce->prev;
-    grn_obj_close(&grn_gctx, ce->value);
-    grn_hash_delete_by_id(&grn_gctx, cache->hash, ce->id, NULL);
+    grn_obj_close(cache->ctx, ce->value);
+    grn_hash_delete_by_id(cache->ctx, cache->hash, ce->id, NULL);
   }
 }
 
@@ -170,7 +175,7 @@ grn_cache_fetch(grn_ctx *ctx, grn_cache *cache,
   if (!ctx->impl || !ctx->impl->db) { return obj; }
   MUTEX_LOCK(cache->mutex);
   cache->nfetches++;
-  if (grn_hash_get(&grn_gctx, cache->hash, str, str_len, (void **)&ce)) {
+  if (grn_hash_get(cache->ctx, cache->hash, str, str_len, (void **)&ce)) {
     if (ce->tv.tv_sec <= grn_db_lastmod(ctx->impl->db)) {
       grn_cache_expire_entry(cache, ce);
       goto exit;
@@ -214,12 +219,19 @@ grn_cache_update(grn_ctx *ctx, grn_cache *cache,
   int added = 0;
   grn_cache_entry *ce;
   grn_rc rc = GRN_SUCCESS;
-  grn_obj *old = NULL, *obj;
+  grn_obj *old = NULL;
+  grn_obj *obj = NULL;
+
   if (!ctx->impl || !cache->max_nentries) { return; }
-  if (!(obj = grn_obj_open(&grn_gctx, GRN_BULK, 0, GRN_DB_TEXT))) { return; }
-  GRN_TEXT_PUT(&grn_gctx, obj, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
+
   MUTEX_LOCK(cache->mutex);
-  if ((id = grn_hash_add(&grn_gctx, cache->hash, str, str_len, (void **)&ce, &added))) {
+  obj = grn_obj_open(cache->ctx, GRN_BULK, 0, GRN_DB_TEXT);
+  if (!obj) {
+    goto exit;
+  }
+  GRN_TEXT_PUT(cache->ctx, obj, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
+  id = grn_hash_add(cache->ctx, cache->hash, str, str_len, (void **)&ce, &added);
+  if (id) {
     if (!added) {
       if (ce->nref) {
         rc = GRN_RESOURCE_BUSY;
@@ -247,9 +259,9 @@ grn_cache_update(grn_ctx *ctx, grn_cache *cache,
     rc = GRN_NO_MEMORY_AVAILABLE;
   }
 exit :
+  if (rc) { grn_obj_close(cache->ctx, obj); }
+  if (old) { grn_obj_close(cache->ctx, old); }
   MUTEX_UNLOCK(cache->mutex);
-  if (rc) { grn_obj_close(&grn_gctx, obj); }
-  if (old) { grn_obj_close(&grn_gctx, old); }
 }
 
 void
