@@ -455,6 +455,15 @@ mrb_grn_expr_code_get_flags(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_expr_code_get_modify(mrb_state *mrb, mrb_value self)
+{
+  grn_expr_code *expr_code;
+
+  expr_code = DATA_PTR(self);
+  return mrb_fixnum_value(expr_code->modify);
+}
+
+static mrb_value
 mrb_grn_expression_class_create(mrb_state *mrb, mrb_value klass)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -833,6 +842,8 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_expr_code_get_op, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "flags",
                     mrb_grn_expr_code_get_flags, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "modify",
+                    mrb_grn_expr_code_get_modify, MRB_ARGS_NONE());
 
   {
     struct RClass *expression_code_class = klass;
