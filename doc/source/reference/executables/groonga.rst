@@ -186,31 +186,45 @@ Options
 
 .. cmdoption:: -l, --log-level <log level>
 
-   Specifies log level. A integer value between 0 and 8. The meaning of value is:
+   Specifies log level. Log level must be a log level name or an
+   integer value. Here are available log levels:
 
 .. list-table::
    :header-rows: 1
 
-   * - log level
-     - description
-   * - 0
-     - Nothing
-   * - 1
-     - Emergency
-   * - 2
-     - Alert
-   * - 3
-     - Critical
-   * - 4
-     - Error
-   * - 5
-     - Warning
-   * - 6
-     - Notice
-   * - 7
-     - Info
-   * - 8
-     - Debug
+   * - Log level
+     - Name
+     - Integer value
+   * - None
+     - ``none``
+     - ``0``
+   * - Emergency
+     - ``E``, ``emerge`` or ``emergency``
+     - ``1``
+   * - Alert
+     - ``A`` or ``alert``
+     - ``2``
+   * - Critical
+     - ``C``, ``crit`` or ``critical``
+     - ``3``
+   * - Error
+     - ``e`` or ``error``
+     - ``4``
+   * - Warning
+     - ``w``, ``warn`` or ``warning``
+     - ``5``
+   * - Notice
+     - ``n`` or ``notice``
+     - ``6``
+   * - Information
+     - ``i`` or ``info``
+     - ``7``
+   * - Debug
+     - ``d`` or ``debug``
+     - ``8``
+   * - Dump
+     - ``-`` or ``dump``
+     - ``9``
 
 .. cmdoption:: -a, --address <ip/hostname>
 
