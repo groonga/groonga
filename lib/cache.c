@@ -203,9 +203,8 @@ grn_cache_unref(grn_ctx *ctx, grn_cache *cache,
                 const char *str, uint32_t str_len)
 {
   grn_cache_entry *ce;
-  ctx = &grn_gctx;
   MUTEX_LOCK(cache->mutex);
-  if (grn_hash_get(ctx, cache->hash, str, str_len, (void **)&ce)) {
+  if (grn_hash_get(cache->ctx, cache->hash, str, str_len, (void **)&ce)) {
     if (ce->nref) { ce->nref--; }
   }
   MUTEX_UNLOCK(cache->mutex);
