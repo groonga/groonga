@@ -44,6 +44,7 @@ struct _grn_cache_entry {
   uint32_t nref;
 };
 
+static grn_ctx grn_cache_ctx;
 static grn_cache *grn_cache_current = NULL;
 static grn_cache *grn_cache_default = NULL;
 
@@ -112,8 +113,12 @@ grn_cache_current_get(grn_ctx *ctx)
 void
 grn_cache_init(void)
 {
-  grn_cache_default = grn_cache_open(&grn_gctx);
-  grn_cache_current_set(&grn_gctx, grn_cache_default);
+  grn_ctx *ctx = &grn_cache_ctx;
+
+  grn_ctx_init(ctx, 0);
+
+  grn_cache_default = grn_cache_open(ctx);
+  grn_cache_current_set(ctx, grn_cache_default);
 }
 
 grn_rc
@@ -277,6 +282,12 @@ grn_cache_expire(grn_cache *cache, int32_t size)
 void
 grn_cache_fin(void)
 {
-  grn_cache_current_set(&grn_gctx, NULL);
-  grn_cache_close(&grn_gctx, grn_cache_default);
+  grn_ctx *ctx = &grn_cache_ctx;
+
+  grn_cache_current_set(ctx, NULL);
+
+  grn_cache_close(ctx, grn_cache_default);
+  grn_cache_default = NULL;
+
+  grn_ctx_fin(ctx);
 }
