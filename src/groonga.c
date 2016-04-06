@@ -2962,7 +2962,7 @@ init_default_settings(void)
 
   default_default_command_version = grn_get_default_command_version();
   default_default_match_escalation_threshold =
-      grn_get_default_match_escalation_threshold();
+    grn_get_default_match_escalation_threshold();
 }
 
 static void
