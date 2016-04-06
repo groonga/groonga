@@ -96,6 +96,7 @@ CMakeFiles
 /doc/sphinx/
 /lib/icudump
 /lib/grn_ecmascript.out
+/lib/metadata.rc
 /coverage
 /coverage.info
 /test/unit/lib/*-*.*.*/

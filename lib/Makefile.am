@@ -59,6 +59,17 @@ SUFFIXES = .lemon .c
 	$(LEMON) $<
 endif
 
+if PLATFORM_WIN32
+libgroonga_la_SOURCES +=			\
+	metadata.rc
+
+.rc.lo:
+	$(LIBTOOL) $(AM_V_lt) --tag=RC		\
+	  $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS)	\
+	  --mode=compile			\
+	  $(RC) $(RCFLAGS) -o $@ $<
+endif
+
 EXTRA_DIST =					\
 	grn_ecmascript.c			\
 	grn_ecmascript.h			\

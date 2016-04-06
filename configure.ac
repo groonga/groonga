@@ -4,6 +4,9 @@ AC_INIT([groonga], groonga_version, [groonga@razil.jp])
 AC_CONFIG_MACRO_DIR([m4])
 AM_CONFIG_HEADER(config.h)
 
+GRN_VERSION_RC=`echo groonga_version | sed -e 's/\./,/g'`
+AC_SUBST(GRN_VERSION_RC)
+
 AM_INIT_AUTOMAKE([foreign tar-pax subdir-objects])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
@@ -205,9 +208,9 @@ AC_SUBST(NO_STRICT_ALIASING_CFLAGS)
 AC_SUBST(NO_FLOAT_EQUAL_CFLAGS)
 AC_SUBST(NO_BAD_FUNCTION_CAST_CFLAGS)
 
-AC_LIBTOOL_WIN32_DLL
-AM_PROG_LIBTOOL
-m4_ifdef([LT_OUTPUT], [LT_OUTPUT])
+LT_INIT([dlopen win32-dll])
+LT_LANG([Windows Resource])
+LT_OUTPUT
 
 LT_CURRENT=0
 LT_REVISION=0
@@ -1643,6 +1646,7 @@ GROONGA_HTTPD_DEFAULT_DATABASE_PATH="`
 AC_SUBST(GROONGA_HTTPD_DEFAULT_DATABASE_PATH)
 
 AC_OUTPUT([
+  lib/metadata.rc
   packages/rpm/centos/groonga.spec
   packages/apt/debian/groonga-keyring.postrm
   packages/apt/env.sh
