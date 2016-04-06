@@ -47,7 +47,7 @@ update-images:
 	  $(MAKE) -f $(abs_srcdir)/images.mk update-images
 
 if DOCUMENT_BUILDABLE
-dist-hook: html man
+dist-hook: html
 	@touch $(distdir)/build-stamp
 
 CLEANFILES += build-stamp
