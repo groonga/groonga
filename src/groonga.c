@@ -106,7 +106,6 @@ static int ready_notify_pipe[2];
 #define PIPE_WRITE 1
 
 static grn_encoding encoding;
-static grn_command_version default_command_version;
 static const char *windows_event_source_name = "Groonga";
 static grn_bool use_windows_event_log = GRN_FALSE;
 static grn_obj http_response_server_line;
@@ -3195,6 +3194,7 @@ main(int argc, char **argv)
   int i;
   int flags = 0;
   uint32_t cache_limit = 0;
+  grn_command_version default_command_version;
   int64_t default_match_escalation_threshold = 0;
   grn_bool need_line_editor = GRN_FALSE;
   static grn_str_getopt_opt opts[] = {
