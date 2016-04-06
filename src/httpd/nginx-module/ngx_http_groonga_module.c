@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2012-2015 Brazil
+  Copyright(C) 2012-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -47,6 +47,7 @@ typedef struct {
   ngx_str_t query_log_path;
   ngx_open_file_t *query_log_file;
   size_t cache_limit;
+  ngx_msec_t default_request_timeout_msec;
   char *config_file;
   int config_line;
   char *name;
@@ -338,6 +339,16 @@ ngx_http_groonga_context_init(ngx_http_groonga_loc_conf_t *location_conf,
 
   grn_ctx_use(context, location_conf->database);
   grn_cache_current_set(context, location_conf->cache);
+
+  /* TODO: It doesn't work yet. We need to implement request timeout
+   * handler. */
+  if (location_conf->default_request_timeout_msec == NGX_CONF_UNSET_MSEC) {
+    grn_set_default_request_timeout(0.0);
+  } else {
+    double timeout;
+    timeout = location_conf->default_request_timeout_msec / 1000.0;
+    grn_set_default_request_timeout(timeout);
+  }
 
   ngx_http_groonga_current_location_conf = location_conf;
 
@@ -1536,6 +1547,13 @@ static ngx_command_t ngx_http_groonga_commands[] = {
     ngx_conf_set_size_slot,
     NGX_HTTP_LOC_CONF_OFFSET,
     offsetof(ngx_http_groonga_loc_conf_t, cache_limit),
+    NULL },
+
+  { ngx_string("groonga_default_request_timeout"),
+    NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+    ngx_conf_set_msec_slot,
+    NGX_HTTP_LOC_CONF_OFFSET,
+    offsetof(ngx_http_groonga_loc_conf_t, default_request_timeout_msec),
     NULL },
 
   ngx_null_command
