@@ -25,6 +25,7 @@
 #include "grn_pat.h"
 #include "grn_geo.h"
 #include "grn_expr.h"
+#include "grn_cache.h"
 
 #include <string.h>
 #include <stdlib.h>

@@ -21,6 +21,7 @@
 #include "../grn_str.h"
 #include "../grn_output.h"
 #include "../grn_util.h"
+#include "../grn_cache.h"
 
 #include "../grn_ts.h"
 

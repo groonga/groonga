@@ -1,4 +1,6 @@
 libgroonga_la_SOURCES =				\
+	cache.c					\
+	grn_cache.h				\
 	com.c					\
 	grn_com.h				\
 	command.c				\

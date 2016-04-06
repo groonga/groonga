@@ -24,6 +24,7 @@
 #include <mruby/data.h>
 
 #include "../grn_db.h"
+#include "../grn_cache.h"
 #include "mrb_bulk.h"
 #include "mrb_cache.h"
 

@@ -35,6 +35,7 @@
 #include "grn_normalizer.h"
 #include "grn_report.h"
 #include "grn_util.h"
+#include "grn_cache.h"
 #include <string.h>
 
 typedef struct {
