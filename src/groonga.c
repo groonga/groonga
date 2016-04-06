@@ -2886,6 +2886,7 @@ static grn_command_version default_default_command_version =
     GRN_COMMAND_VERSION_DEFAULT;
 static int64_t default_default_match_escalation_threshold = 0;
 static const char * const default_bind_address = "0.0.0.0";
+static double default_default_request_timeout = 0.0;
 
 static void
 init_default_hostname(void)
@@ -2961,6 +2962,7 @@ init_default_settings(void)
   default_default_command_version = grn_get_default_command_version();
   default_default_match_escalation_threshold =
     grn_get_default_match_escalation_threshold();
+  default_default_request_timeout = grn_get_default_request_timeout();
 }
 
 static void
@@ -3101,6 +3103,9 @@ show_usage(FILE *output)
           "                                specify max number of threads (default: %u)\n"
           "      --pid-path <path>:        specify file to write process ID to\n"
           "                                (daemon mode only)\n"
+          "      --default-request-timeout <timeout>:\n"
+          "                                specify the default request timeout in seconds\n"
+          "                                (default: %f)\n"
           "\n"
           "Memcached options:\n"
           "      --memcached-column <column>:\n"
@@ -3161,6 +3166,7 @@ show_usage(FILE *output)
           default_gqtp_port, default_bind_address,
           default_http_port, default_gqtp_port, default_hostname, default_protocol,
           default_document_root, default_cache_limit, default_max_n_threads,
+          default_default_request_timeout,
           grn_log_level_to_string(default_log_level),
           default_log_path, default_query_log_path,
           default_config_path, default_default_command_version,
@@ -3190,12 +3196,14 @@ main(int argc, char **argv)
   const char *output_fd_arg = NULL;
   const char *working_directory_arg = NULL;
   const char *config_path = NULL;
+  const char *default_request_timeout_arg = NULL;
   int exit_code = EXIT_SUCCESS;
   int i;
   int flags = 0;
   uint32_t cache_limit = 0;
   grn_command_version default_command_version;
   int64_t default_match_escalation_threshold = 0;
+  double default_request_timeout = 0.0;
   grn_bool need_line_editor = GRN_FALSE;
   static grn_str_getopt_opt opts[] = {
     {'p', "port", NULL, 0, GETOPT_OP_NONE},
@@ -3229,6 +3237,7 @@ main(int argc, char **argv)
     {'\0', "use-windows-event-log", NULL,
      FLAG_USE_WINDOWS_EVENT_LOG, GETOPT_OP_ON},
     {'\0', "memcached-column", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "default-request-timeout", NULL, 0, GETOPT_OP_NONE},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &port_arg;
@@ -3253,6 +3262,7 @@ main(int argc, char **argv)
   opts[26].arg = &output_fd_arg;
   opts[27].arg = &working_directory_arg;
   opts[29].arg = &memcached_column_name;
+  opts[30].arg = &default_request_timeout_arg;
 
   reset_ready_notify_pipe();
 
@@ -3595,6 +3605,22 @@ main(int argc, char **argv)
     cache_limit = value;
   }
 
+  if (default_request_timeout_arg) {
+    const char * const end =
+      default_request_timeout_arg + strlen(default_request_timeout_arg);
+    char *rest = NULL;
+    double value;
+    value = strtod(default_request_timeout_arg, &rest);
+    if (end != rest) {
+      fprintf(stderr, "invalid default request timeout: <%s>\n",
+              default_request_timeout_arg);
+      return EXIT_FAILURE;
+    }
+    default_request_timeout = value;
+  } else {
+    default_request_timeout = default_default_request_timeout;
+  }
+
   grn_gctx.errbuf[0] = '\0';
   if (grn_init()) {
     fprintf(stderr, "failed to initialize Groonga: %s\n", grn_gctx.errbuf);
@@ -3609,6 +3635,10 @@ main(int argc, char **argv)
 
   if (default_match_escalation_threshold_arg) {
     grn_set_default_match_escalation_threshold(default_match_escalation_threshold);
+  }
+
+  if (default_request_timeout_arg) {
+    grn_set_default_request_timeout(default_request_timeout);
   }
 
   grn_set_segv_handler();
