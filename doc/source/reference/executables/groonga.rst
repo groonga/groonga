@@ -313,6 +313,20 @@ Options
 
    検索の挙動をエスカレーションする閾値を指定します。(デフォルトは0です)
 
+.. cmdoption:: --default-request-timeout <timeout>
+
+   Specifies the default request timeout in seconds.
+
+   You can specify timeout less than 1 second by decimal such as
+   ``0.1``. ``0.1`` means that 100 milliseconds.
+
+   If you specify ``0`` or less value, request timeout is disabled by
+   default.
+
+   The default value is ``0``.
+
+   .. seealso:: :doc:`/reference/command/request_timeout`
+
 Command line parameters
 -----------------------
 

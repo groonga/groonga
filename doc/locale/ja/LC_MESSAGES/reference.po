@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-04-05 18:09+0900\n"
+"PO-Revision-Date: 2016-04-06 16:16+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -3534,6 +3534,36 @@ msgid "See :doc:`/reference/command/output_format` for response header."
 msgstr ""
 "レスポンスヘッダーについては :doc:`/reference/command/output_format` を参照し"
 "てください。"
+
+msgid "Enable request timeout by default"
+msgstr "デフォルトでリクエストタイムアウトを有効にする"
+
+msgid ""
+":doc:`/reference/executables/groonga` supports enabling request timeout by "
+"default. You can specify the default request timeout by :option:`--default-"
+"request-timeout`."
+msgstr ""
+":doc:`/reference/executables/groonga` はデフォルトのリクエストタイムアウトを"
+"設定する機能があります。デフォルトのリクエストタイムアウトは :option:`--"
+"default-request-timeout` で指定します。"
+
+msgid ""
+"If the default request timeout is larger than 0 second, the default request "
+"timeout is used as request timeout for all requests."
+msgstr ""
+"デフォルトのリクエストタイムアウトが0より大きい場合、すべてのリクエストはその"
+"値をリクエストタイムアウトに使います。"
+
+msgid ""
+"You can overwrite the default request timeout by specifying "
+"``request_timeout`` parameter to request. If the default request timeout is "
+"3 seconds and ``request_timeout`` parameter is 1 second, the request is "
+"canceled after 1 second."
+msgstr ""
+"リクエストに ``request_timeout`` パラメーターを指定するとデフォルトのリクエス"
+"トタイムアウトを上書きできます。もし、デフォルトのリクエストタイムアウトが3秒"
+"で ``request_timeout`` パラメーターが1秒なら、そのリクエストは1秒後にキャンセ"
+"ルされます。"
 
 msgid ":doc:`/reference/command/return_code`"
 msgstr ""
@@ -15331,83 +15361,79 @@ msgid ""
 "``latin`` or ``koi8r``."
 msgstr ""
 
-# 4167a7e2ae2a4063ba9dc0879b0d0739
 msgid ""
-"Specifies log level. A integer value between 0 and 8. The meaning of value "
-"is:"
+"Specifies log level. Log level must be a log level name or an integer value. "
+"Here are available log levels:"
 msgstr ""
+"ログレベルを指定します。ログレベルはログレベル名または整数値です。利用可能な"
+"ログレベルは以下の通りです。"
 
-# c50cb4e657204d20847f83f61b37bce0
-msgid "log level"
-msgstr ""
+msgid "Log level"
+msgstr "ログレベル"
 
-msgid "description"
-msgstr "説明"
+msgid "Integer value"
+msgstr "整数値"
 
-# f8a460e9209c4f9785a7ed9f4e2ca066
-msgid "0"
-msgstr ""
-
-msgid "Nothing"
+msgid "None"
 msgstr "なし"
 
-# 523cc130a3c0484592083688d0009b43
-msgid "1"
+msgid "``none``"
 msgstr ""
 
 msgid "Emergency"
-msgstr ""
+msgstr "緊急"
 
-# dffc8f7ce6384e96af0df63c4f28f9e9
-msgid "2"
-msgstr ""
+msgid "``E``, ``emerge`` or ``emergency``"
+msgstr "``E``, ``emerge``, ``emergency`` のどれか"
 
 msgid "Alert"
-msgstr ""
+msgstr "アラート"
 
-# 85191cfcb3b64910aeb14ceb38076a4b
-msgid "3"
-msgstr ""
+msgid "``A`` or ``alert``"
+msgstr "``A``, ``alert`` のどれか<"
 
 msgid "Critical"
-msgstr ""
+msgstr "危機的"
 
-# 3dcb8a64437045ec9742e0a3e19a7693
-msgid "4"
-msgstr ""
+msgid "``C``, ``crit`` or ``critical``"
+msgstr "``C``, ``crit``, ``critical`` のどれか"
 
 msgid "Error"
-msgstr ""
+msgstr "エラー"
 
-# 03a41be5b08845229486b0c3d382e728
-msgid "5"
-msgstr ""
+msgid "``e`` or ``error``"
+msgstr "``e``, ``error`` のどれか"
 
 msgid "Warning"
-msgstr ""
+msgstr "警告"
 
-# 8a43e627de4741c0ae4a5edd4869eff7
-msgid "6"
-msgstr ""
+msgid "``w``, ``warn`` or ``warning``"
+msgstr "``w``, ``warn``, ``warning`` のどれか"
 
 # 51f30be91efd41d98fd71994e7ba525d
 msgid "Notice"
-msgstr ""
+msgstr "通知"
 
-# b4778e15adc64f999a522b46617ad7ac
-msgid "7"
-msgstr ""
+msgid "``n`` or ``notice``"
+msgstr "``n``, ``notice`` のどれか"
 
-# f3e41c1ec551411d91bb1cf671538595
-msgid "Info"
-msgstr ""
+msgid "Information"
+msgstr "情報"
 
-# 351a362992be4b6e8a3eff51fef8de22
-msgid "8"
-msgstr ""
+msgid "``i`` or ``info``"
+msgstr "``i``, ``info`` のどれか"
 
 msgid "Debug"
-msgstr ""
+msgstr "デバッグ"
+
+msgid "``d`` or ``debug``"
+msgstr "``d``, ``debug`` のどれか"
+
+msgid "Dump"
+msgstr "ダンプ"
+
+msgid "``-`` or ``dump``"
+msgstr "``-``, ``dump`` のどれか"
 
 msgid "Use :option:`--bind-address` instead."
 msgstr ""
@@ -15492,6 +15518,25 @@ msgid "キャッシュ数の最大値を指定します。(デフォルトは100
 msgstr ""
 
 msgid "検索の挙動をエスカレーションする閾値を指定します。(デフォルトは0です)"
+msgstr ""
+
+msgid "Specifies the default request timeout in seconds."
+msgstr "デフォルトのリクエストタイムアウトを指定します。単位は秒です。"
+
+msgid ""
+"You can specify timeout less than 1 second by decimal such as ``0.1``. "
+"``0.1`` means that 100 milliseconds."
+msgstr ""
+"``0.1`` のように小数で指定することで1秒未満のタイムアウトを設定できます。 "
+"``0.1`` は100ミリ秒のタイムアウトという意味です。"
+
+msgid ""
+"If you specify ``0`` or less value, request timeout is disabled by default."
+msgstr ""
+"``0`` 未満の値を指定するとデフォルトでリクエストタイムアウトは無効になりま"
+"す。"
+
+msgid ":doc:`/reference/command/request_timeout`"
 msgstr ""
 
 msgid "使用するデータベースのパス名を指定します。"
@@ -19405,13 +19450,7 @@ msgstr ""
 msgid "Notification"
 msgstr ""
 
-msgid "Information"
-msgstr ""
-
 msgid "d"
-msgstr ""
-
-msgid "Dump"
 msgstr ""
 
 msgid "\\-"

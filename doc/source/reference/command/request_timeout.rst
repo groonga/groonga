@@ -55,6 +55,21 @@ Here is an example response on timeout::
 
 See :doc:`/reference/command/output_format` for response header.
 
+Enable request timeout by default
+---------------------------------
+
+:doc:`/reference/executables/groonga` supports enabling request
+timeout by default. You can specify the default request timeout by
+:option:`--default-request-timeout`.
+
+If the default request timeout is larger than 0 second, the default
+request timeout is used as request timeout for all requests.
+
+You can overwrite the default request timeout by specifying
+``request_timeout`` parameter to request. If the default request
+timeout is 3 seconds and ``request_timeout`` parameter is 1 second,
+the request is canceled after 1 second.
+
 See also
 --------
 
