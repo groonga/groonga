@@ -68,6 +68,7 @@ grn_cache_open(grn_ctx *ctx)
   if (!cache->hash) {
     ERR(GRN_NO_MEMORY_AVAILABLE, "[cache] failed to create hash table");
     GRN_FREE(cache);
+    cache = NULL;
     goto exit;
   }
   MUTEX_INIT(cache->mutex);
