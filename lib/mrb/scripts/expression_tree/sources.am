@@ -1,4 +1,6 @@
 RUBY_SCRIPT_FILES =				\
 	binary_operation.rb			\
+	constant.rb				\
+	function_call.rb			\
 	logical_operation.rb			\
-	value.rb
+	variable.rb

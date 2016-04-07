@@ -9,6 +9,12 @@ module Groonga
         @left = left
         @right = right
       end
+
+      def build(expression)
+        @left.build(expression)
+        @right.build(expression)
+        expression.append_operator(@operator, 2)
+      end
     end
   end
 end

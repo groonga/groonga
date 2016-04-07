@@ -66,8 +66,11 @@ module Groonga
           left = stack.pop
           node = ExpressionTree::BinaryOperation.new(code.op, left, right)
           stack.push(node)
-        when Operator::GET_VALUE, Operator::PUSH
-          node = ExpressionTree::Value.new(code)
+        when Operator::GET_VALUE
+          node = ExpressionTree::Variable.new(code.value)
+          stack.push(node)
+        when Operator::PUSH
+          node = ExpressionTree::Constant.new(code.value.value)
           stack.push(node)
         else
           raise "unknown operator: #{code.inspect}"
