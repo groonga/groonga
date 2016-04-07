@@ -14,6 +14,20 @@ module Groonga
           expression.append_operator(@operator, 2) if i > 0
         end
       end
+
+      def estimate_size(table)
+        estimated_sizes = @nodes.collect do |node|
+          node.estimate_size(table)
+        end
+        case @operator
+        when Operator::AND
+          estimated_sizes.min
+        when Operator::OR
+          estimated_sizes.max
+        else
+          estimated_sizes.first
+        end
+      end
     end
   end
 end

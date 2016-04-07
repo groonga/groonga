@@ -7,30 +7,32 @@ module Groonga
         builder = ExpressionTreeBuilder.new(@expression)
         root_node = builder.build
 
-        optimized_root_node = optimize_node(root_node)
-
         variable = @expression[0]
-        rewritten = Expression.create(context[variable.domain])
+        table = context[variable.domain]
+        optimized_root_node = optimize_node(table, root_node)
+
+        rewritten = Expression.create(table)
         optimized_root_node.build(rewritten)
         rewritten
       end
 
       private
-      def optimize_node(node)
+      def optimize_node(table, node)
         case node
         when ExpressionTree::LogicalOperation
           optimized_sub_nodes = node.nodes.collect do |sub_node|
-            optimize_node(sub_node)
+            optimize_node(table, sub_node)
           end
           case node.operator
           when Operator::AND
-            optimized_sub_nodes = optimize_and_sub_nodes(optimized_sub_nodes)
+            optimized_sub_nodes =
+              optimize_and_sub_nodes(table, optimized_sub_nodes)
           end
           ExpressionTree::LogicalOperation.new(node.operator,
                                                optimized_sub_nodes)
         when ExpressionTree::BinaryOperation
-          optimized_left = optimize_node(node.left)
-          optimized_right = optimize_node(node.right)
+          optimized_left = optimize_node(table, node.left)
+          optimized_right = optimize_node(table, node.right)
           if optimized_left.is_a?(ExpressionTree::Constant) and
               optimized_right.is_a?(ExpressionTree::Variable)
             ExpressionTree::BinaryOperation.new(node.operator,
@@ -48,7 +50,7 @@ module Groonga
         end
       end
 
-      def optimize_and_sub_nodes(sub_nodes)
+      def optimize_and_sub_nodes(table, sub_nodes)
         grouped_sub_nodes = sub_nodes.group_by do |sub_node|
           case sub_node
           when ExpressionTree::BinaryOperation
@@ -70,11 +72,9 @@ module Groonga
           optimized_nodes.concat(grouped_nodes)
         end
 
-        optimized_nodes
-        # TODO
-        # optimized_nodes.sort_by do |node|
-        #   node.estimate_size
-        # end
+        optimized_nodes.sort_by do |node|
+          node.estimate_size(table)
+        end
       end
 
       COMPARISON_OPERATORS = [
