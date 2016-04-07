@@ -39,11 +39,23 @@ read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/ts/sources.am LIBGRNTS_SOURCES)
 string(REGEX REPLACE "([^;]+)" "ts/\\1"
   LIBGRNTS_SOURCES "${LIBGRNTS_SOURCES}")
 
+if(WIN32)
+  configure_file(
+    "metadata.rc.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/metadata.rc"
+    @ONLY)
+  set(LIBGROONGA_METADATA_SOURCES
+    "${CMAKE_CURRENT_BINARY_DIR}/metadata.rc")
+else()
+  set(LIBGROONGA_METADATA_SOURCES)
+endif()
+
 set_source_files_properties(
   ${LIBGROONGA_SOURCES}
   ${LIBGRNMRB_SOURCES}
   ${LIBGRNPROC_SOURCES}
   ${LIBGRNTS_SOURCES}
+  ${LIBGROONGA_METADATA_SOURCES}
   PROPERTIES
   COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 set_source_files_properties(dat.cpp ${LIBGRNDAT_SOURCES}
@@ -55,7 +67,8 @@ set(GRN_ALL_SOURCES
   ${LIBGRNDAT_SOURCES}
   ${LIBGRNMRB_SOURCES}
   ${LIBGRNPROC_SOURCES}
-  ${LIBGRNTS_SOURCES})
+  ${LIBGRNTS_SOURCES}
+  ${LIBGROONGA_METADATA_SOURCES})
 if(GRN_EMBED)
   add_library(libgroonga STATIC ${GRN_ALL_SOURCES})
   set_target_properties(

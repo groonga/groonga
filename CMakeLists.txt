@@ -1,4 +1,4 @@
-# Copyright(C) 2012-2015 Brazil
+# Copyright(C) 2012-2016 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -60,6 +60,7 @@ else()
   endif()
 endif()
 string(REGEX REPLACE "(^.*=|\n)" "" GRN_VERSION "${GRN_VERSION}")
+string(REGEX REPLACE "\." "," GRN_VERSION_RC "${GRN_VERSION}")
 
 include(CheckIncludeFile)
 include(CheckFunctionExists)
