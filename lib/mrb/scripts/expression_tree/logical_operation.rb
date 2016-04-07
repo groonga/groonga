@@ -11,7 +11,7 @@ module Groonga
       def build(expression)
         @nodes.each_with_index do |node, i|
           node.build(expression)
-          expression.append_operator(@operator, 2) if i > 1
+          expression.append_operator(@operator, 2) if i > 0
         end
       end
     end
