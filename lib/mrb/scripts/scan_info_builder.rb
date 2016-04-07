@@ -76,6 +76,12 @@ module Groonga
           @data_list << data
           data = nil
         when *LOGICAL_OPERATORS
+          if status == Status::CONST
+            data.op = Operator::PUSH
+            data.end = data.start
+            @data_list << data
+            data = nil
+          end
           put_logical_op(code.op, i)
           # TODO: rescue and return nil
           status = Status::START
@@ -89,6 +95,14 @@ module Groonga
               data.flags |= ScanInfo::Flags::PRE_CONST
             end
             status = Status::CONST
+          end
+          if code.modify > 0 and
+              LOGICAL_OPERATORS.include?(codes[i + code.modify].op)
+            data.op = Operator::PUSH
+            data.end = data.start
+            @data_list << data
+            data = nil
+            status = Status::START
           end
         when Operator::GET_VALUE
           case status
@@ -169,14 +183,29 @@ module Groonga
           status = Status::START
           return false if n_relation_expressions != (n_logical_expressions + 1)
         when *LOGICAL_OPERATORS
-          return false if status != Status::START
-          n_logical_expressions += 1
-          return false if n_logical_expressions >= n_relation_expressions
-        when Operator::PUSH
-          if code.value == variable
-            status = Status::VAR
+          case status
+          when Status::START
+            n_logical_expressions += 1
+            return false if n_logical_expressions >= n_relation_expressions
+          when Status::CONST
+            n_logical_expressions += 1
+            n_relation_expressions += 1
+            return false if n_logical_expressions >= n_relation_expressions
+            status = Status::START
           else
-            status = Status::CONST
+            return false
+          end
+        when Operator::PUSH
+          if code.modify > 0 and
+              LOGICAL_OPERATORS.include?(codes[i + code.modify].op)
+            n_relation_expressions += 1
+            status = Status::START
+          else
+            if code.value == variable
+              status = Status::VAR
+            else
+              status = Status::CONST
+            end
           end
         when Operator::GET_VALUE
           case status

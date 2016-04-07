@@ -4558,12 +4558,45 @@ grn_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
     case GRN_OP_OR :
     case GRN_OP_AND_NOT :
     case GRN_OP_ADJUST :
-      if (stat != SCAN_START) { return NULL; }
-      o++;
-      if (o >= m) { return NULL; }
+      switch (stat) {
+      case SCAN_START :
+        o++;
+        if (o >= m) { return NULL; }
+        break;
+      case SCAN_CONST :
+        o++;
+        m++;
+        if (o >= m) { return NULL; }
+        stat = SCAN_START;
+        break;
+      default :
+        return NULL;
+        break;
+      }
       break;
     case GRN_OP_PUSH :
-      stat = (c->value == var) ? SCAN_VAR : SCAN_CONST;
+      {
+        grn_bool is_completed_term = GRN_FALSE;
+        if (c->modify > 0) {
+          switch ((c + c->modify)->op) {
+          case GRN_OP_AND :
+          case GRN_OP_OR :
+          case GRN_OP_AND_NOT :
+          case GRN_OP_ADJUST :
+            is_completed_term = GRN_TRUE;
+            break;
+          default :
+            is_completed_term = GRN_FALSE;
+            break;
+          }
+        }
+        if (is_completed_term) {
+          m++;
+          stat = SCAN_START;
+        } else {
+          stat = (c->value == var) ? SCAN_VAR : SCAN_CONST;
+        }
+      }
       break;
     case GRN_OP_GET_VALUE :
       switch (stat) {
@@ -4660,6 +4693,12 @@ grn_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
     case GRN_OP_OR :
     case GRN_OP_AND_NOT :
     case GRN_OP_ADJUST :
+      if (stat == SCAN_CONST) {
+        si->op = GRN_OP_PUSH;
+        si->end = si->start;
+        sis[i++] = si;
+        si = NULL;
+      }
       if (!put_logical_op(ctx, sis, &i, c->op, c - e->codes)) { return NULL; }
       stat = SCAN_START;
       break;
@@ -4673,6 +4712,27 @@ grn_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
         }
         if (stat == SCAN_START) { si->flags |= SCAN_PRE_CONST; }
         stat = SCAN_CONST;
+      }
+      if (c->modify > 0) {
+        grn_bool is_completed_term = GRN_FALSE;
+        switch ((c + c->modify)->op) {
+        case GRN_OP_AND :
+        case GRN_OP_OR :
+        case GRN_OP_AND_NOT :
+        case GRN_OP_ADJUST :
+          is_completed_term = GRN_TRUE;
+          break;
+        default :
+          is_completed_term = GRN_FALSE;
+          break;
+        }
+        if (is_completed_term) {
+          si->op = GRN_OP_PUSH;
+          si->end = si->start;
+          sis[i++] = si;
+          si = NULL;
+          stat = SCAN_START;
+        }
       }
       break;
     case GRN_OP_GET_VALUE :

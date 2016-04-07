@@ -1,0 +1,20 @@
+table_create Values TABLE_NO_KEY
+column_create Values number COLUMN_SCALAR Int32
+
+table_create Numbers TABLE_PAT_KEY Int32
+column_create Numbers values_number COLUMN_INDEX Values number
+
+load --table Values
+[
+{"number": 1},
+{"number": 3},
+{"number": -1}
+]
+
+log_level --level info
+#@add-important-log-levels info
+select Values \
+  --filter 'true || number == -1' \
+  --output_columns 'number'
+#@remove-important-log-levels info
+log_level --level notice
