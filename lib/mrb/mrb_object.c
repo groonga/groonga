@@ -114,11 +114,7 @@ object_equal(mrb_state *mrb, mrb_value self)
 
   object = DATA_PTR(self);
   other_object = DATA_PTR(mrb_other);
-  if (object == other_object) {
-    return mrb_true_value();
-  } else {
-    return mrb_false_value();
-  }
+  return mrb_bool_value(object == other_object);
 }
 
 static mrb_value
