@@ -74,10 +74,7 @@ module Groonga
            Operator::GREATER_EQUAL
         size = estimate_range(data, index_column)
       when Operator::CALL
-        procedure = data.args.first
-        if procedure.is_a?(Procedure) and procedure.name == "between"
-          size = estimate_between(data, index_column)
-        end
+        size = estimate_call(data, index_column)
       end
       size || @table_size
     end
@@ -137,28 +134,17 @@ module Groonga
       end
     end
 
-    def estimate_between(data, index_column)
-      lexicon = index_column.lexicon
-      _, _, min, min_border, max, max_border = data.args
-      options = {
-        :min => min,
-        :max => max,
-        :flags => 0,
-      }
-      if min_border == "include"
-        options[:flags] |= TableCursorFlags::LT
-      else
-        options[:flags] |= TableCursorFlags::LE
+    def estimate_call(data, index_column)
+      procedure = data.args[0]
+      arguments = data.args[1..-1].collect do |arg|
+        if arg.is_a?(::Groonga::Object)
+          ExpressionTree::Variable.new(arg)
+        else
+          ExpressionTree::Constant.new(arg)
+        end
       end
-      if max_border == "include"
-        options[:flags] |= TableCursorFlags::GT
-      else
-        options[:flags] |= TableCursorFlags::GE
-      end
-
-      TableCursor.open(lexicon, options) do |cursor|
-        index_column.estimate_size(:lexicon_cursor => cursor)
-      end
+      node = ExpressionTree::FunctionCall.new(procedure, arguments)
+      node.estimate_size(@table)
     end
   end
 end
