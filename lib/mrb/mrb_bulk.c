@@ -73,7 +73,8 @@ grn_mrb_value_to_bulk(mrb_state *mrb, mrb_value mrb_value_, grn_obj *bulk)
     GRN_FLOAT_SET(ctx, bulk, mrb_float(mrb_value_));
     break;
   case MRB_TT_STRING :
-    grn_obj_reinit(ctx, bulk, GRN_DB_TEXT, 0);
+    grn_obj_reinit(ctx, bulk, GRN_DB_TEXT,
+                   bulk->header.impl_flags & GRN_OBJ_DO_SHALLOW_COPY);
     GRN_TEXT_SET(ctx, bulk, RSTRING_PTR(mrb_value_), RSTRING_LEN(mrb_value_));
     break;
   default :
@@ -216,6 +217,24 @@ grn_mrb_bulk_cast(mrb_state *mrb, grn_obj *from, grn_obj *to, grn_id domain_id)
 }
 
 static mrb_value
+mrb_grn_bulk_s_is_true(mrb_state *mrb, mrb_value klass)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_value mrb_value_;
+  grn_obj bulk;
+  grn_bool is_true;
+
+  mrb_get_args(mrb, "o", &mrb_value_);
+
+  GRN_TEXT_INIT(&bulk, GRN_OBJ_DO_SHALLOW_COPY);
+  grn_mrb_value_to_bulk(mrb, mrb_value_, &bulk);
+  is_true = grn_obj_is_true(ctx, &bulk);
+  GRN_OBJ_FIN(ctx, &bulk);
+
+  return mrb_bool_value(is_true);
+}
+
+static mrb_value
 mrb_grn_bulk_initialize(mrb_state *mrb, mrb_value self)
 {
   mrb_value mrb_bulk_ptr;
@@ -265,6 +284,10 @@ grn_mrb_bulk_init(grn_ctx *ctx)
 
   klass = mrb_define_class_under(mrb, module, "Bulk", mrb->object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
+
+  mrb_define_singleton_method(mrb, (struct RObject *)klass, "true?",
+                              mrb_grn_bulk_s_is_true, MRB_ARGS_REQ(1));
+
   mrb_define_method(mrb, klass, "initialize",
                     mrb_grn_bulk_initialize, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "domain",
