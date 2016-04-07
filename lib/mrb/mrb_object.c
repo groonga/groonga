@@ -226,6 +226,16 @@ object_is_persistent(mrb_state *mrb, mrb_value self)
   return mrb_bool_value((flags & GRN_OBJ_PERSISTENT) == GRN_OBJ_PERSISTENT);
 }
 
+static mrb_value
+object_is_true(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *object;
+
+  object = DATA_PTR(self);
+  return mrb_bool_value(grn_obj_is_true(ctx, object));
+}
+
 void
 grn_mrb_object_init(grn_ctx *ctx)
 {
@@ -260,6 +270,8 @@ grn_mrb_object_init(grn_ctx *ctx)
                     MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "persistent?", object_is_persistent,
                     MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, klass, "true?", object_is_true, MRB_ARGS_NONE());
 
   grn_mrb_load(ctx, "index_info.rb");
 }
