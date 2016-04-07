@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014-2015 Brazil
+  Copyright(C) 2014-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -97,6 +97,12 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
   }
 
   switch (bulk->header.domain) {
+  case GRN_DB_BOOL :
+    {
+      grn_bool value;
+      value = GRN_BOOL_VALUE(bulk);
+      mrb_value_ = mrb_bool_value(value);
+    }
   case GRN_DB_INT32 :
     {
       int32_t value;
