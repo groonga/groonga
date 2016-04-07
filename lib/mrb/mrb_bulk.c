@@ -103,6 +103,7 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
       value = GRN_BOOL_VALUE(bulk);
       mrb_value_ = mrb_bool_value(value);
     }
+    break;
   case GRN_DB_INT32 :
     {
       int32_t value;
