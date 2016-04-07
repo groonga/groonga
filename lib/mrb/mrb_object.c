@@ -122,6 +122,15 @@ object_equal(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+object_hash(mrb_state *mrb, mrb_value self)
+{
+  grn_obj *object;
+
+  object = DATA_PTR(self);
+  return mrb_fixnum_value((mrb_int)((uint64_t)object));
+}
+
+static mrb_value
 object_close(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -241,6 +250,8 @@ grn_mrb_object_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "grn_inspect",
                     object_grn_inspect, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "==", object_equal, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "eql?", object_equal, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "hash", object_hash, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "close", object_close, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "remove", object_remove, MRB_ARGS_OPT(1));
 
