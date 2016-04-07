@@ -11,6 +11,8 @@ RUBY_SCRIPT_FILES =				\
 	expression_rewriter.rb			\
 	expression_rewriters.rb			\
 	expression_size_estimator.rb		\
+	expression_tree.rb			\
+	expression_tree_builder.rb		\
 	fixed_size_column.rb			\
 	id.rb					\
 	index_column.rb				\

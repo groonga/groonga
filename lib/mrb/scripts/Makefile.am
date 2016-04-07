@@ -1,6 +1,7 @@
 SUBDIRS =					\
 	command_line				\
 	context					\
+	expression_tree				\
 	initialize				\
 	logger					\
 	query_logger

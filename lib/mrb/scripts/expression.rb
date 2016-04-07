@@ -1,6 +1,8 @@
 require "expression_rewriter"
 require "expression_rewriters"
 
+require "expression_tree_builder"
+
 require "scan_info"
 require "scan_info_builder"
 

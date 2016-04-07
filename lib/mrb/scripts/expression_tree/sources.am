@@ -1,0 +1,4 @@
+RUBY_SCRIPT_FILES =				\
+	binary_operation.rb			\
+	logical_operation.rb			\
+	value.rb

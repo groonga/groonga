@@ -243,6 +243,7 @@ AC_CONFIG_FILES([
   lib/mrb/scripts/Makefile
   lib/mrb/scripts/command_line/Makefile
   lib/mrb/scripts/context/Makefile
+  lib/mrb/scripts/expression_tree/Makefile
   lib/mrb/scripts/initialize/Makefile
   lib/mrb/scripts/logger/Makefile
   lib/mrb/scripts/query_logger/Makefile
