@@ -1,0 +1,9 @@
+table_create Logs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+load --table Logs
+[
+{}
+]
+[[0,0.0,0.0],1]
+select Logs --filter true
+[[0,0.0,0.0],[[[1],[["_id","UInt32"]],[1]]]]

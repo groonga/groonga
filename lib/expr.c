@@ -4856,20 +4856,95 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
   return sis;
 }
 
+static scan_info **
+grn_scan_info_build_simple_open(grn_ctx *ctx, int *n, grn_operator logical_op)
+{
+  scan_info **sis;
+  scan_info *si;
+
+  sis = GRN_MALLOCN(scan_info *, 1);
+  if (!sis) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[scan_info][build] failed to allocate memory for scan_info **");
+    return NULL;
+  }
+
+  si = grn_scan_info_open(ctx, 0);
+  if (!si) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[scan_info][build] failed to allocate memory for scan_info *");
+    GRN_FREE(sis);
+    return NULL;
+  }
+
+  si->logical_op = logical_op;
+
+  sis[0] = si;
+  *n = 1;
+
+  return sis;
+}
+
+static scan_info **
+grn_scan_info_build_simple(grn_ctx *ctx, grn_obj *expr, int *n,
+                           grn_operator logical_op, grn_bool record_exist)
+{
+  grn_expr *e = (grn_expr *)expr;
+  grn_expr_code *code;
+  grn_expr_code *code_end;
+
+  code = e->codes;
+  code_end = e->codes + e->codes_curr;
+
+  if (e->codes_curr == 1) {
+    scan_info **sis;
+    scan_info *si;
+
+    switch (code->op) {
+    case GRN_OP_PUSH :
+    case GRN_OP_GET_VALUE :
+      break;
+    default :
+      return NULL;
+      break;
+    }
+
+    sis = grn_scan_info_build_simple_open(ctx, n, logical_op);
+    if (!sis) {
+      return NULL;
+    }
+
+    si = sis[0];
+    si->end = 0;
+    si->op = code->op;
+    return sis;
+  }
+
+  return NULL;
+}
+
 scan_info **
 grn_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                     grn_operator op, grn_bool record_exist)
 {
+  scan_info **sis;
+
+  sis = grn_scan_info_build_simple(ctx, expr, n, op, record_exist);
 #ifdef GRN_WITH_MRUBY
-  grn_ctx_impl_mrb_ensure_init(ctx);
-  if (ctx->rc != GRN_SUCCESS) {
-    return NULL;
-  }
-  if (ctx->impl->mrb.state) {
-    return grn_mrb_scan_info_build(ctx, expr, n, op, record_exist);
+  if (!sis) {
+    grn_ctx_impl_mrb_ensure_init(ctx);
+    if (ctx->rc != GRN_SUCCESS) {
+      return NULL;
+    }
+    if (ctx->impl->mrb.state) {
+      return grn_mrb_scan_info_build(ctx, expr, n, op, record_exist);
+    }
   }
 #endif
-  return grn_scan_info_build_full(ctx, expr, n, op, record_exist);
+  if (!sis) {
+    sis = grn_scan_info_build_full(ctx, expr, n, op, record_exist);
+  }
+  return sis;
 }
 
 void

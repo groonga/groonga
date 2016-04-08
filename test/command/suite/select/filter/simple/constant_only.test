@@ -1,0 +1,8 @@
+table_create Logs TABLE_NO_KEY
+
+load --table Logs
+[
+{}
+]
+
+select Logs --filter true
