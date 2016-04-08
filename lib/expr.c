@@ -4496,9 +4496,9 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si)
   }
 }
 
-scan_info **
-grn_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
-                    grn_operator op, grn_bool record_exist)
+static scan_info **
+grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
+                         grn_operator op, grn_bool record_exist)
 {
   grn_obj *var;
   scan_stat stat;
@@ -4506,15 +4506,7 @@ grn_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
   scan_info **sis, *si = NULL;
   grn_expr_code *c, *ce;
   grn_expr *e = (grn_expr *)expr;
-#ifdef GRN_WITH_MRUBY
-  grn_ctx_impl_mrb_ensure_init(ctx);
-  if (ctx->rc != GRN_SUCCESS) {
-    return NULL;
-  }
-  if (ctx->impl->mrb.state) {
-    return grn_mrb_scan_info_build(ctx, expr, n, op, record_exist);
-  }
-#endif
+
   if (!(var = grn_expr_get_var_by_offset(ctx, expr, 0))) { return NULL; }
   for (stat = SCAN_START, c = e->codes, ce = &e->codes[e->codes_curr]; c < ce; c++) {
     switch (c->op) {
@@ -4862,6 +4854,22 @@ grn_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
   }
   *n = i;
   return sis;
+}
+
+scan_info **
+grn_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
+                    grn_operator op, grn_bool record_exist)
+{
+#ifdef GRN_WITH_MRUBY
+  grn_ctx_impl_mrb_ensure_init(ctx);
+  if (ctx->rc != GRN_SUCCESS) {
+    return NULL;
+  }
+  if (ctx->impl->mrb.state) {
+    return grn_mrb_scan_info_build(ctx, expr, n, op, record_exist);
+  }
+#endif
+  return grn_scan_info_build_full(ctx, expr, n, op, record_exist);
 }
 
 void
