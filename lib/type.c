@@ -31,6 +31,12 @@ grn_type_id_is_number_family(grn_ctx *ctx, grn_id id)
   return GRN_DB_INT8 <= id && id <= GRN_DB_FLOAT;
 }
 
+grn_bool
+grn_type_id_is_text_family(grn_ctx *ctx, grn_id id)
+{
+  return GRN_DB_SHORT_TEXT <= id && id <= GRN_DB_LONG_TEXT;
+}
+
 grn_obj *
 grn_type_create(grn_ctx *ctx, const char *name, unsigned int name_size,
                 grn_obj_flags flags, unsigned int size)

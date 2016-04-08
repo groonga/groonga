@@ -22,11 +22,14 @@
 extern "C" {
 #endif
 
+/* Just for backward compatibility.
+   Use grn_type_id_is_text_family() instead. */
 #define GRN_TYPE_IS_TEXT_FAMILY(type)                           \
-  (GRN_DB_SHORT_TEXT <= (type) && (type) <= GRN_DB_LONG_TEXT)
+  grn_type_id_is_text_family(NULL, (type))
 
 GRN_API grn_bool grn_type_id_is_builtin(grn_ctx *ctx, grn_id id);
 GRN_API grn_bool grn_type_id_is_number_family(grn_ctx *ctx, grn_id id);
+GRN_API grn_bool grn_type_id_is_text_family(grn_ctx *ctx, grn_id id);
 
 GRN_API grn_obj *grn_type_create(grn_ctx *ctx, const char *name, unsigned int name_size,
                                  grn_obj_flags flags, unsigned int size);

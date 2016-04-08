@@ -29,6 +29,8 @@ void data_id_is_builtin(void);
 void test_id_is_builtin(gconstpointer data);
 void data_id_is_number_family(void);
 void test_id_is_number_family(gconstpointer data);
+void data_id_is_text_family(void);
+void test_id_is_text_family(gconstpointer data);
 
 static gchar *tmp_directory;
 static const gchar *database_path;
@@ -155,5 +157,40 @@ test_id_is_number_family(gconstpointer data)
     cut_assert_true(grn_type_id_is_number_family(context, id));
   } else {
     cut_assert_false(grn_type_id_is_number_family(context, id));
+  }
+}
+
+void
+data_id_is_text_family(void)
+{
+#define ADD_DATUM(expected, name)                                       \
+  gcut_add_datum((expected ? "text-family - " name : "column - " name), \
+                 "expected", G_TYPE_BOOLEAN, expected,                  \
+                 "name", G_TYPE_STRING, name,                           \
+                 NULL)
+
+  ADD_DATUM(TRUE, "ShortText");
+  ADD_DATUM(TRUE, "Text");
+  ADD_DATUM(TRUE, "LongText");
+  ADD_DATUM(FALSE, "Time");
+  ADD_DATUM(FALSE, "TokyoGeoPoint");
+
+#undef ADD_DATUM
+}
+
+void
+test_id_is_text_family(gconstpointer data)
+{
+  const gchar *name;
+  grn_obj *object;
+  grn_id id;
+
+  name = gcut_data_get_string(data, "name");
+  object = grn_ctx_get(context, name, strlen(name));
+  id = grn_obj_id(context, object);
+  if (gcut_data_get_string(data, "expected")) {
+    cut_assert_true(grn_type_id_is_text_family(context, id));
+  } else {
+    cut_assert_false(grn_type_id_is_text_family(context, id));
   }
 }
