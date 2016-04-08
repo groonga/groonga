@@ -4877,6 +4877,7 @@ grn_scan_info_build_simple_open(grn_ctx *ctx, int *n, grn_operator logical_op)
     return NULL;
   }
 
+  si->flags &= ~SCAN_PUSH;
   si->logical_op = logical_op;
 
   sis[0] = si;
