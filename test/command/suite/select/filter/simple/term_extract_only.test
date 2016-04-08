@@ -1,0 +1,15 @@
+table_create Tags TABLE_PAT_KEY ShortText \
+  --normalizer NormalizerAuto
+
+load --table Tags
+[
+{"_key": "shutdown"},
+{"_key": "start"},
+{"_key": "boot"}
+]
+
+log_level --level info
+#@add-important-log-levels info
+select Tags --filter '_key *T "start and shutdown this site"'
+#@remove-important-log-levels info
+log_level --level notice

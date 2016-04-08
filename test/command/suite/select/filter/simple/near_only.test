@@ -1,0 +1,20 @@
+table_create Logs TABLE_NO_KEY
+column_create Logs message COLUMN_SCALAR Text
+
+load --table Logs
+[
+{"message": "a     b c d e f g h i j k"},
+{"message": "a x   b c d e f g h i j k"},
+{"message": "a x x b c d e f g h i j k"}
+]
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Terms index COLUMN_INDEX|WITH_POSITION Logs message
+
+log_level --level info
+#@add-important-log-levels info
+select Logs --filter 'message *N "a k"'
+#@remove-important-log-levels info
+log_level --level notice

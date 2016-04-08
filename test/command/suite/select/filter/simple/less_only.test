@@ -1,0 +1,18 @@
+table_create Logs TABLE_NO_KEY
+column_create Logs timestamp COLUMN_SCALAR Time
+
+load --table Logs
+[
+{"timestamp": "2016-04-08 00:00:00"},
+{"timestamp": "2016-04-08 00:00:01"},
+{"timestamp": "2016-04-08 00:00:02"}
+]
+
+table_create Timestamps TABLE_PAT_KEY Time
+column_create Timestamps index COLUMN_INDEX Logs timestamp
+
+log_level --level info
+#@add-important-log-levels info
+select Logs --filter 'timestamp < "2016-04-08 00:00:01"'
+#@remove-important-log-levels info
+log_level --level notice

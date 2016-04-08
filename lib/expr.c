@@ -4890,17 +4890,13 @@ grn_scan_info_build_simple(grn_ctx *ctx, grn_obj *expr, int *n,
                            grn_operator logical_op, grn_bool record_exist)
 {
   grn_expr *e = (grn_expr *)expr;
-  grn_expr_code *code;
-  grn_expr_code *code_end;
-
-  code = e->codes;
-  code_end = e->codes + e->codes_curr;
 
   if (e->codes_curr == 1) {
     scan_info **sis;
     scan_info *si;
+    grn_expr_code *target = e->codes;
 
-    switch (code->op) {
+    switch (target->op) {
     case GRN_OP_PUSH :
     case GRN_OP_GET_VALUE :
       break;
@@ -4916,7 +4912,73 @@ grn_scan_info_build_simple(grn_ctx *ctx, grn_obj *expr, int *n,
 
     si = sis[0];
     si->end = 0;
-    si->op = code->op;
+    si->op = target->op;
+    return sis;
+  } else if (e->codes_curr == 3) {
+    grn_expr_code *target;
+    grn_expr_code *constant;
+    grn_expr_code *operator;
+    scan_info **sis;
+    scan_info *si;
+
+    target   = e->codes + 0;
+    constant = e->codes + 1;
+    operator = e->codes + 2;
+
+    if (target->op != GRN_OP_GET_VALUE) {
+      return NULL;
+    }
+    if (target->nargs != 1) {
+      return NULL;
+    }
+    if (!target->value) {
+      return NULL;
+    }
+
+    if (constant->op != GRN_OP_PUSH) {
+      return NULL;
+    }
+    if (constant->nargs != 1) {
+      return NULL;
+    }
+    if (!constant->value) {
+      return NULL;
+    }
+
+    if (operator->nargs != 2) {
+      return NULL;
+    }
+    switch (operator->op) {
+    case GRN_OP_MATCH :
+    case GRN_OP_NEAR :
+    case GRN_OP_SIMILAR :
+    case GRN_OP_PREFIX :
+    case GRN_OP_SUFFIX :
+    case GRN_OP_EQUAL :
+    case GRN_OP_NOT_EQUAL :
+    case GRN_OP_LESS :
+    case GRN_OP_GREATER :
+    case GRN_OP_LESS_EQUAL :
+    case GRN_OP_GREATER_EQUAL :
+    case GRN_OP_TERM_EXTRACT :
+    case GRN_OP_REGEXP :
+      break;
+    default :
+      return NULL;
+      break;
+    }
+
+    sis = grn_scan_info_build_simple_open(ctx, n, logical_op);
+    if (!sis) {
+      return NULL;
+    }
+
+    si = sis[0];
+    si->end = 2;
+    si->op = operator->op;
+    si->args[si->nargs++] = target->value;
+    si->args[si->nargs++] = constant->value;
+    scan_info_build_match(ctx, si);
     return sis;
   }
 

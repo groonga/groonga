@@ -1,0 +1,53 @@
+table_create Logs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs message COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+load --table Logs
+[
+{"message": "This host is shutting down"},
+{"message": "Start processing..."},
+{"message": "Boot this host"}
+]
+[[0,0.0,0.0],3]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenRegexp   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms index COLUMN_INDEX|WITH_POSITION Logs message
+[[0,0.0,0.0],true]
+log_level --level info
+[[0,0.0,0.0],true]
+select Logs --filter 'message @~ "\\\\Athis"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "message",
+          "Text"
+        ]
+      ],
+      [
+        1,
+        "This host is shutting down"
+      ]
+    ]
+  ]
+]
+#|i| [object][search][index][key][regexp] <Terms.index>
+#|i| grn_ii_sel > (\Athis)
+#|i| n=3 (￯this)
+#|i| exact: 1
+#|i| hits=1
+log_level --level notice
+[[0,0.0,0.0],true]

@@ -1,0 +1,20 @@
+table_create Logs TABLE_NO_KEY
+column_create Logs message COLUMN_SCALAR Text
+
+load --table Logs
+[
+{"message": "This host is shutting down"},
+{"message": "Start processing..."},
+{"message": "Boot this host"}
+]
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenRegexp \
+  --normalizer NormalizerAuto
+column_create Terms index COLUMN_INDEX|WITH_POSITION Logs message
+
+log_level --level info
+#@add-important-log-levels info
+select Logs --filter 'message @~ "\\\\Athis"'
+#@remove-important-log-levels info
+log_level --level notice

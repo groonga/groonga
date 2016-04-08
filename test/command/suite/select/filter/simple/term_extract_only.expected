@@ -1,0 +1,47 @@
+table_create Tags TABLE_PAT_KEY ShortText   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+load --table Tags
+[
+{"_key": "shutdown"},
+{"_key": "start"},
+{"_key": "boot"}
+]
+[[0,0.0,0.0],3]
+log_level --level info
+[[0,0.0,0.0],true]
+select Tags --filter '_key *T "start and shutdown this site"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        2,
+        "start"
+      ],
+      [
+        1,
+        "shutdown"
+      ]
+    ]
+  ]
+]
+#|i| [table][select][index][term-extract][accessor][key] <Tags>
+log_level --level notice
+[[0,0.0,0.0],true]
