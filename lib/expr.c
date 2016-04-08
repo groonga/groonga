@@ -5035,6 +5035,13 @@ typedef union {
   struct {
     grn_obj *expr;
     grn_obj *variable;
+    grn_obj *column;
+    grn_obj value_buffer;
+    grn_obj score_buffer;
+  } value;
+  struct {
+    grn_obj *expr;
+    grn_obj *variable;
 #ifdef GRN_SUPPORT_REGEXP
     OnigRegex regex;
     grn_obj value_buffer;
@@ -5138,6 +5145,64 @@ static void
 grn_table_select_sequential_fin_constant(grn_ctx *ctx,
                                          grn_table_select_sequential_data *data)
 {
+}
+
+static grn_bool
+grn_table_select_sequential_is_value(grn_ctx *ctx, grn_obj *expr)
+{
+  grn_expr *e = (grn_expr *)expr;
+  grn_expr_code *target;
+
+  if (e->codes_curr != 1) {
+    return GRN_FALSE;
+  }
+
+  target = &(e->codes[0]);
+
+  if (target->op != GRN_OP_GET_VALUE) {
+    return GRN_FALSE;
+  }
+  if (!target->value) {
+    return GRN_FALSE;
+  }
+
+  return GRN_TRUE;
+}
+
+static void
+grn_table_select_sequential_init_value(grn_ctx *ctx,
+                                       grn_table_select_sequential_data *data)
+{
+  grn_expr *e = (grn_expr *)(data->value.expr);
+
+  data->value.column = e->codes[0].value;
+  GRN_VOID_INIT(&(data->value.value_buffer));
+  GRN_INT32_INIT(&(data->value.score_buffer), 0);
+}
+
+static int32_t
+grn_table_select_sequential_exec_value(grn_ctx *ctx,
+                                       grn_id id,
+                                       grn_table_select_sequential_data *data)
+{
+  grn_obj *value_buffer = &(data->value.value_buffer);
+  grn_obj *score_buffer = &(data->value.score_buffer);
+  int32_t score;
+
+  GRN_BULK_REWIND(value_buffer);
+  grn_obj_get_value(ctx, data->value.column, id, value_buffer);
+  GRN_BULK_REWIND(score_buffer);
+  score = exec_result_to_score(ctx, value_buffer, score_buffer);
+
+  return score;
+}
+
+static void
+grn_table_select_sequential_fin_value(grn_ctx *ctx,
+                                      grn_table_select_sequential_data *data)
+{
+  GRN_OBJ_FIN(ctx, &(data->value.score_buffer));
+  GRN_OBJ_FIN(ctx, &(data->value.value_buffer));
 }
 
 #ifdef GRN_SUPPORT_REGEXP
@@ -5538,6 +5603,10 @@ grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
     init = grn_table_select_sequential_init_constant;
     exec = grn_table_select_sequential_exec_constant;
     fin = grn_table_select_sequential_fin_constant;
+  } else if (grn_table_select_sequential_is_value(ctx, expr)) {
+    init = grn_table_select_sequential_init_value;
+    exec = grn_table_select_sequential_exec_value;
+    fin = grn_table_select_sequential_fin_value;
 #ifdef GRN_SUPPORT_REGEXP
   } else if (grn_table_select_sequential_is_simple_regexp(ctx, expr)) {
     init = grn_table_select_sequential_init_simple_regexp;
