@@ -19,6 +19,18 @@
 #include "grn_ctx_impl.h"
 #include "grn_db.h"
 
+grn_bool
+grn_type_id_is_builtin(grn_ctx *ctx, grn_id id)
+{
+  return id < GRN_N_RESERVED_TYPES;
+}
+
+grn_bool
+grn_type_id_is_number_family(grn_ctx *ctx, grn_id id)
+{
+  return GRN_DB_INT8 <= id && id <= GRN_DB_FLOAT;
+}
+
 grn_obj *
 grn_type_create(grn_ctx *ctx, const char *name, unsigned int name_size,
                 grn_obj_flags flags, unsigned int size)
@@ -67,4 +79,3 @@ grn_type_size(grn_ctx *ctx, grn_obj *type)
   size = GRN_TYPE_SIZE(DB_OBJ(type));
   GRN_API_RETURN(size);
 }
-
