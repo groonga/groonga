@@ -441,19 +441,22 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
                       grn_obj *condition)
 {
   unsigned int i;
+  grn_table_group_result *results;
+
+  results = GRN_PLUGIN_MALLOC(ctx, n_drilldowns * sizeof(grn_table_group_result));
 
   /* TODO: Remove invalid key drilldowns from the count. */
-  GRN_OUTPUT_MAP_OPEN("DRILLDOWNS", n_drilldowns);
   for (i = 0; i < n_drilldowns; i++) {
     drilldown_info *drilldown = &(drilldowns[i]);
     grn_table_sort_key *keys = NULL;
     unsigned int n_keys;
-    uint32_t n_hits;
-    int offset;
-    int limit;
-    grn_table_group_result result = {
-      NULL, 0, 0, 1, GRN_TABLE_GROUP_CALC_COUNT, 0, 0, NULL
-    };
+
+    results[i].table = NULL;
+    results[i].limit = 1;
+    results[i].flags = GRN_TABLE_GROUP_CALC_COUNT;
+    results[i].op = 0;
+    results[i].max_n_subrecs = 0;
+    results[i].calc_target = NULL;
 
     keys = grn_table_sort_key_from_str(ctx,
                                        drilldown->keys,
@@ -463,24 +466,39 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
       continue;
     }
 
-    GRN_OUTPUT_STR(drilldown->label, drilldown->label_len);
-
-    result.key_begin = 0;
-    result.key_end = n_keys - 1;
+    results[i].key_begin = 0;
+    results[i].key_end = n_keys - 1;
     if (n_keys > 1) {
-      result.max_n_subrecs = 1;
+      results[i].max_n_subrecs = 1;
     }
     if (drilldown->calc_target_name) {
-      result.calc_target = grn_obj_column(ctx, table,
-                                          drilldown->calc_target_name,
-                                          drilldown->calc_target_name_len);
+      results[i].calc_target = grn_obj_column(ctx, table,
+                                              drilldown->calc_target_name,
+                                              drilldown->calc_target_name_len);
     }
-    if (result.calc_target) {
-      result.flags |= drilldown->calc_types;
+    if (results[i].calc_target) {
+      results[i].flags |= drilldown->calc_types;
     }
 
-    grn_table_group(ctx, table, keys, n_keys, &result, 1);
-    n_hits = grn_table_size(ctx, result.table);
+    grn_table_group(ctx, table, keys, n_keys, &(results[i]), 1);
+
+    grn_table_sort_key_close(ctx, keys, n_keys);
+  }
+
+  GRN_OUTPUT_MAP_OPEN("DRILLDOWNS", n_drilldowns);
+  for (i = 0; i < n_drilldowns; i++) {
+    drilldown_info *drilldown = &(drilldowns[i]);
+    uint32_t n_hits;
+    int offset;
+    int limit;
+
+    if (!results[i].table) {
+      continue;
+    }
+
+    GRN_OUTPUT_STR(drilldown->label, drilldown->label_len);
+
+    n_hits = grn_table_size(ctx, results[i].table);
 
     offset = drilldown->offset;
     limit = drilldown->limit;
@@ -492,13 +510,13 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
       sort_keys = grn_table_sort_key_from_str(ctx,
                                               drilldown->sortby,
                                               drilldown->sortby_len,
-                                              result.table, &n_sort_keys);
+                                              results[i].table, &n_sort_keys);
       if (sort_keys) {
         grn_obj *sorted;
         sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
-                                  NULL, result.table);
+                                  NULL, results[i].table);
         if (sorted) {
-          grn_table_sort(ctx, result.table, offset, limit,
+          grn_table_sort(ctx, results[i].table, offset, limit,
                          sorted, sort_keys, n_sort_keys);
           grn_proc_select_output_columns(ctx, sorted, n_hits, 0, limit,
                                          drilldown->output_columns,
@@ -509,23 +527,25 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
         grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
       }
     } else {
-      grn_proc_select_output_columns(ctx, result.table, n_hits, offset, limit,
+      grn_proc_select_output_columns(ctx, results[i].table, n_hits, offset, limit,
                                      drilldown->output_columns,
                                      drilldown->output_columns_len,
                                      condition);
     }
 
-    grn_table_sort_key_close(ctx, keys, n_keys);
-    if (result.calc_target) {
-      grn_obj_unlink(ctx, result.calc_target);
+    if (results[i].calc_target) {
+      grn_obj_unlink(ctx, results[i].calc_target);
     }
-    grn_obj_unlink(ctx, result.table);
+    if (results[i].table) {
+      grn_obj_unlink(ctx, results[i].table);
+    }
 
     GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                   ":", "drilldown(%d)[%.*s]", n_hits,
                   (int)(drilldown->label_len), drilldown->label);
   }
   GRN_OUTPUT_MAP_CLOSE();
+  GRN_PLUGIN_FREE(ctx, results);
 }
 
 static grn_rc
