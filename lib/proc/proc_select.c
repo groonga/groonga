@@ -582,7 +582,9 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
   if (!drilldown_info_tsort(ctx, labels,
                             drilldowns, n_drilldowns, &tsorted_indexes)) {
     /* cyclic */
-    goto exit;
+    GRN_OBJ_FIN(ctx, &tsorted_indexes);
+    grn_obj_close(ctx, labels);
+    return;
   }
 
   results = GRN_PLUGIN_MALLOCN(ctx, grn_table_group_result, n_drilldowns);
@@ -636,6 +638,8 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
     grn_table_group(ctx, target_table, keys, n_keys, &(results[j]), 1);
     grn_table_sort_key_close(ctx, keys, n_keys);
   }
+  GRN_OBJ_FIN(ctx, &tsorted_indexes);
+  grn_obj_close(ctx, labels);
 
   GRN_OUTPUT_MAP_OPEN("DRILLDOWNS", n_drilldowns);
   for (i = 0; i < n_drilldowns; i++) {
@@ -698,10 +702,6 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
   }
   GRN_OUTPUT_MAP_CLOSE();
   GRN_PLUGIN_FREE(ctx, results);
-
-exit :
-  GRN_OBJ_FIN(ctx, &tsorted_indexes);
-  grn_obj_unlink(ctx, labels);
 }
 
 static grn_rc
