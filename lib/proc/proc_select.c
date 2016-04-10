@@ -540,7 +540,7 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
   if (!labels) {
     return;
   }
-  visits = GRN_PLUGIN_MALLOC(ctx, n_drilldowns * sizeof(drilldown_info_status));
+  visits = GRN_PLUGIN_MALLOCN(ctx, drilldown_info_status, n_drilldowns);
 
   drilldown_info_tsort_init(ctx, labels, visits, drilldowns, n_drilldowns);
   GRN_UINT32_INIT(&tsorted_ids, GRN_OBJ_VECTOR);
@@ -550,7 +550,7 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
     goto exit;
   }
 
-  results = GRN_PLUGIN_MALLOC(ctx, n_drilldowns * sizeof(grn_table_group_result));
+  results = GRN_PLUGIN_MALLOCN(ctx, grn_table_group_result, n_drilldowns);
 
   /* TODO: Remove invalid key drilldowns from the count. */
   for (i = 0; i < n_drilldowns; i++) {
