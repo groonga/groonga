@@ -447,9 +447,9 @@ grn_select_drilldown(grn_ctx *ctx, grn_obj *table,
 }
 
 typedef enum {
-  NONE = 0,
-  JUST,
-  VISITED
+  TSORT_STATUS_NOT_VISITED,
+  TSORT_STATUS_VISITING,
+  TSORT_STATUS_VISITED
 } tsort_status;
 
 static grn_bool
@@ -459,12 +459,12 @@ drilldown_info_visit(grn_ctx *ctx, grn_obj *labels,
                      grn_id to, grn_obj *ids)
 {
   switch (visits[to - 1]) {
-  case JUST:
+  case TSORT_STATUS_VISITING:
     return GRN_TRUE;
-  case VISITED:
+  case TSORT_STATUS_VISITED:
     return GRN_FALSE;
-  default:
-    visits[to - 1] = JUST;
+  case TSORT_STATUS_NOT_VISITED:
+    visits[to - 1] = TSORT_STATUS_VISITING;
     {
       drilldown_info *drilldown = &(drilldowns[to - 1]);
       if (drilldown->table_name) {
@@ -478,7 +478,7 @@ drilldown_info_visit(grn_ctx *ctx, grn_obj *labels,
         }
       }
     }
-    visits[to - 1] = VISITED;
+    visits[to - 1] = TSORT_STATUS_VISITED;
     grn_uvector_add_element(ctx, ids, to - 1, 0);
     return GRN_FALSE;
   }
@@ -517,7 +517,7 @@ drilldown_info_tsort_init(grn_ctx *ctx, grn_obj *labels,
     grn_id id;
     id = grn_table_add(ctx, labels, drilldown->label, drilldown->label_len, &added);
     if (added) {
-      visits[id - 1] = NONE;
+      visits[id - 1] = TSORT_STATUS_NOT_VISITED;
     }
   }
 }
