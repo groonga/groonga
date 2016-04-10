@@ -304,6 +304,18 @@ grn_get_global_error_message(void)
 }
 
 #ifdef USE_MEMORY_DEBUG
+static grn_critical_section grn_alloc_info_lock;
+
+static void grn_alloc_info_init(void)
+{
+  CRITICAL_SECTION_INIT(grn_alloc_info_lock);
+}
+
+static void grn_alloc_info_fin(void)
+{
+  CRITICAL_SECTION_FIN(grn_alloc_info_lock);
+}
+
 inline static void
 grn_alloc_info_set_backtrace(char *buffer, size_t size)
 {
@@ -353,6 +365,7 @@ grn_alloc_info_add(void *address, size_t size,
   ctx = &grn_gctx;
   if (!ctx->impl) { return; }
 
+  CRITICAL_SECTION_ENTER(grn_alloc_info_lock);
   new_alloc_info = malloc(sizeof(grn_alloc_info));
   new_alloc_info->address = address;
   new_alloc_info->size = size;
@@ -372,6 +385,7 @@ grn_alloc_info_add(void *address, size_t size,
   }
   new_alloc_info->next = ctx->impl->alloc_info;
   ctx->impl->alloc_info = new_alloc_info;
+  CRITICAL_SECTION_LEAVE(grn_alloc_info_lock);
 }
 
 inline static void
@@ -383,6 +397,7 @@ grn_alloc_info_change(void *old_address, void *new_address, size_t size)
   ctx = &grn_gctx;
   if (!ctx->impl) { return; }
 
+  CRITICAL_SECTION_ENTER(grn_alloc_info_lock);
   alloc_info = ctx->impl->alloc_info;
   for (; alloc_info; alloc_info = alloc_info->next) {
     if (alloc_info->address == old_address) {
@@ -392,6 +407,7 @@ grn_alloc_info_change(void *old_address, void *new_address, size_t size)
                                    sizeof(alloc_info->alloc_backtrace));
     }
   }
+  CRITICAL_SECTION_LEAVE(grn_alloc_info_lock);
 }
 
 inline static void
@@ -423,16 +439,15 @@ grn_alloc_info_dump(grn_ctx *ctx)
 }
 
 inline static void
-grn_alloc_info_check(void *address)
+grn_alloc_info_check(grn_ctx *ctx, void *address)
 {
-  grn_ctx *ctx;
   grn_alloc_info *alloc_info;
 
-  ctx = &grn_gctx;
-  if (!ctx->impl) { return; }
+  if (!grn_gctx.impl) { return; }
   /* grn_alloc_info_dump(ctx); */
 
-  alloc_info = ctx->impl->alloc_info;
+  CRITICAL_SECTION_ENTER(grn_alloc_info_lock);
+  alloc_info = grn_gctx.impl->alloc_info;
   for (; alloc_info; alloc_info = alloc_info->next) {
     if (alloc_info->address == address) {
       if (alloc_info->freed) {
@@ -450,9 +465,10 @@ grn_alloc_info_check(void *address)
         grn_alloc_info_set_backtrace(alloc_info->free_backtrace,
                                      sizeof(alloc_info->free_backtrace));
       }
-      return;
+      break;
     }
   }
+  CRITICAL_SECTION_LEAVE(grn_alloc_info_lock);
 }
 
 inline static void
@@ -476,9 +492,11 @@ grn_alloc_info_free(grn_ctx *ctx)
 }
 
 #else /* USE_MEMORY_DEBUG */
+#  define grn_alloc_info_init()
+#  define grn_alloc_info_fin()
 #  define grn_alloc_info_add(address, size, file, line, func)
 #  define grn_alloc_info_change(old_address, new_address, size)
-#  define grn_alloc_info_check(address)
+#  define grn_alloc_info_check(ctx, address)
 #  define grn_alloc_info_dump(ctx)
 #  define grn_alloc_info_free(ctx)
 #endif /* USE_MEMORY_DEBUG */
@@ -932,6 +950,7 @@ grn_init(void)
   grn_ctx *ctx = &grn_gctx;
   grn_init_from_env();
   grn_init_external_libraries();
+  grn_alloc_info_init();
   grn_logger_init();
   grn_query_logger_init();
   CRITICAL_SECTION_INIT(grn_glock);
@@ -1068,6 +1087,7 @@ fail_ctx_init_internal:
   grn_query_logger_fin(ctx);
   grn_logger_fin(ctx);
   CRITICAL_SECTION_FIN(grn_glock);
+  grn_alloc_info_fin();
   grn_fin_external_libraries();
   return rc;
 }
@@ -1163,6 +1183,7 @@ grn_fin(void)
   GRN_LOG(ctx, GRN_LOG_NOTICE, "grn_fin (%d)", alloc_count);
   grn_logger_fin(ctx);
   CRITICAL_SECTION_FIN(grn_glock);
+  grn_alloc_info_fin();
   grn_fin_external_libraries();
   return GRN_SUCCESS;
 }
@@ -2387,7 +2408,7 @@ void
 grn_free_default(grn_ctx *ctx, void *ptr, const char* file, int line, const char *func)
 {
   if (!ctx) { return; }
-  grn_alloc_info_check(ptr);
+  grn_alloc_info_check(ctx, ptr);
   {
     free(ptr);
     if (ptr) {
@@ -2419,7 +2440,7 @@ grn_realloc_default(grn_ctx *ctx, void *ptr, size_t size, const char* file, int 
     }
   } else {
     if (!ptr) { return NULL; }
-    grn_alloc_info_check(ptr);
+    grn_alloc_info_check(ctx, ptr);
     GRN_ADD_ALLOC_COUNT(-1);
     free(ptr);
     res = NULL;
