@@ -588,27 +588,34 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
 
   results = GRN_PLUGIN_MALLOCN(ctx, grn_table_group_result, n_drilldowns);
 
-  /* TODO: Remove invalid key drilldowns from the count. */
   for (i = 0; i < n_drilldowns; i++) {
     grn_table_sort_key *keys = NULL;
     unsigned int n_keys;
     grn_obj *target_table = table;
-    unsigned int j = GRN_UINT32_VALUE_AT(&tsorted_indexes, i);
-    drilldown_info *drilldown = &(drilldowns[j]);
+    unsigned int index;
+    drilldown_info *drilldown;
+    grn_table_group_result *result;
 
-    results[j].table = NULL;
-    results[j].limit = 1;
-    results[j].flags = GRN_TABLE_GROUP_CALC_COUNT;
-    results[j].op = 0;
-    results[j].max_n_subrecs = 0;
-    results[j].calc_target = NULL;
+    index = GRN_UINT32_VALUE_AT(&tsorted_indexes, i);
+    drilldown = drilldowns + index;
+    result = results + index;
+
+    result->table = NULL;
+    result->limit = 1;
+    result->flags = GRN_TABLE_GROUP_CALC_COUNT;
+    result->op = 0;
+    result->max_n_subrecs = 0;
+    result->calc_target = NULL;
 
     if (drilldown->table_name) {
-      grn_id id;
-      id = grn_table_get(ctx, labels,
-                        drilldown->table_name, drilldown->table_name_len);
-      if (id) {
-        target_table = results[id - 1].table;
+      grn_id dependent_id;
+      dependent_id = grn_table_get(ctx,
+                                   labels,
+                                   drilldown->table_name,
+                                   drilldown->table_name_len);
+      if (dependent_id != GRN_ID_NIL) {
+        uint32_t dependent_index = dependent_id - 1;
+        target_table = results[dependent_index].table;
       }
     }
 
@@ -620,21 +627,21 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
       continue;
     }
 
-    results[j].key_begin = 0;
-    results[j].key_end = n_keys - 1;
+    result->key_begin = 0;
+    result->key_end = n_keys - 1;
     if (n_keys > 1) {
-      results[j].max_n_subrecs = 1;
+      result->max_n_subrecs = 1;
     }
     if (drilldown->calc_target_name) {
-      results[j].calc_target = grn_obj_column(ctx, target_table,
-                                              drilldown->calc_target_name,
-                                              drilldown->calc_target_name_len);
+      result->calc_target = grn_obj_column(ctx, target_table,
+                                           drilldown->calc_target_name,
+                                           drilldown->calc_target_name_len);
     }
-    if (results[j].calc_target) {
-      results[j].flags |= drilldown->calc_types;
+    if (result->calc_target) {
+      result->flags |= drilldown->calc_types;
     }
 
-    grn_table_group(ctx, target_table, keys, n_keys, &(results[j]), 1);
+    grn_table_group(ctx, target_table, keys, n_keys, result, 1);
     grn_table_sort_key_close(ctx, keys, n_keys);
   }
 
