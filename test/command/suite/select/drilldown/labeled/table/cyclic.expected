@@ -1,0 +1,82 @@
+table_create Categories TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Categories sub_category COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Tags category COLUMN_SCALAR Categories
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is fast!", "tag": "Groonga"},
+{"_key": "Mroonga is fast!", "tag": "Mroonga"},
+{"_key": "Groonga sticker!", "tag": "Groonga"},
+{"_key": "Rroonga is fast!", "tag": "Rroonga"}
+]
+[[0,0.0,0.0],4]
+load --table Tags
+[
+{"_key": "Groonga", "category": "C/C++"},
+{"_key": "Mroonga", "category": "C/C++"},
+{"_key": "Rroonga", "category": "Ruby"}
+]
+[[0,0.0,0.0],3]
+load --table Categories
+[
+{"_key": "C/C++", "sub_category": "Programming language"},
+{"_key": "Ruby", "sub_category": "Programming language"}
+]
+[[0,0.0,0.0],2]
+select Memos   --drilldown[tag].keys tag   --drilldown[tag].output_columns _key,_nsubrecs,category   --drilldown[category].table sub_category   --drilldown[category].keys _key   --drilldown[category].output_columns _key,_nsubrecs   --drilldown[sub_category].table category   --drilldown[sub_category].keys sub_category   --drilldown[sub_category].output_columns _key,_nsubrecs
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tag",
+          "Tags"
+        ]
+      ],
+      [
+        1,
+        "Groonga is fast!",
+        "Groonga"
+      ],
+      [
+        2,
+        "Mroonga is fast!",
+        "Mroonga"
+      ],
+      [
+        3,
+        "Groonga sticker!",
+        "Groonga"
+      ],
+      [
+        4,
+        "Rroonga is fast!",
+        "Rroonga"
+      ]
+    ]
+  ]
+]
