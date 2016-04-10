@@ -24,12 +24,9 @@ load --table Tags
 select Memos   --drilldown[category].table ''   --drilldown[category].keys category   --drilldown[category].output_columns _key,_nsubrecs   --drilldown[tag].keys tag   --drilldown[tag].output_columns _key,_nsubrecs,category
 [
   [
-    [
-      -22,
-      0.0,
-      0.0
-    ],
-    "invalid sort key: <category>(<category>)"
+    0,
+    0.0,
+    0.0
   ],
   [
     [
@@ -72,6 +69,40 @@ select Memos   --drilldown[category].table ''   --drilldown[category].keys categ
       ]
     ],
     {
+      "tag": [
+        [
+          3
+        ],
+        [
+          [
+            "_key",
+            "ShortText"
+          ],
+          [
+            "_nsubrecs",
+            "Int32"
+          ],
+          [
+            "category",
+            "ShortText"
+          ]
+        ],
+        [
+          "Groonga",
+          2,
+          "C/C++"
+        ],
+        [
+          "Mroonga",
+          1,
+          "C/C++"
+        ],
+        [
+          "Rroonga",
+          1,
+          "Ruby"
+        ]
+      ]
     }
   ]
 ]

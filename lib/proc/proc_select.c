@@ -637,6 +637,7 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
                                        drilldown->keys_len,
                                        target_table, &n_keys);
     if (!keys) {
+      GRN_PLUGIN_CLEAR_ERROR(ctx);
       continue;
     }
 
