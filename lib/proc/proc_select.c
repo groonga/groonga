@@ -454,13 +454,13 @@ typedef enum {
 
 static grn_bool
 drilldown_info_visit(grn_ctx *ctx, grn_obj *labels,
-                     tsort_status *visits,
+                     tsort_status *statuses,
                      drilldown_info *drilldowns,
                      grn_id to, grn_obj *ids)
 {
   grn_bool cycled = GRN_TRUE;
 
-  switch (visits[to - 1]) {
+  switch (statuses[to - 1]) {
   case TSORT_STATUS_VISITING :
     cycled = GRN_TRUE;
     break;
@@ -469,7 +469,7 @@ drilldown_info_visit(grn_ctx *ctx, grn_obj *labels,
     break;
   case TSORT_STATUS_NOT_VISITED :
     cycled = GRN_FALSE;
-    visits[to - 1] = TSORT_STATUS_VISITING;
+    statuses[to - 1] = TSORT_STATUS_VISITING;
     {
       drilldown_info *drilldown = &(drilldowns[to - 1]);
       if (drilldown->table_name) {
@@ -477,12 +477,12 @@ drilldown_info_visit(grn_ctx *ctx, grn_obj *labels,
         id = grn_table_get(ctx, labels,
                            drilldown->table_name, drilldown->table_name_len);
         if (id) {
-          cycled = drilldown_info_visit(ctx, labels, visits, drilldowns, id, ids);
+          cycled = drilldown_info_visit(ctx, labels, statuses, drilldowns, id, ids);
         }
       }
     }
     if (!cycled) {
-      visits[to - 1] = TSORT_STATUS_VISITED;
+      statuses[to - 1] = TSORT_STATUS_VISITED;
       GRN_UINT32_PUT(ctx, ids, to - 1);
     }
     break;
@@ -493,7 +493,7 @@ drilldown_info_visit(grn_ctx *ctx, grn_obj *labels,
 
 static grn_bool
 drilldown_info_tsort(grn_ctx *ctx, grn_obj *labels,
-                     tsort_status *visits,
+                     tsort_status *statuses,
                      drilldown_info *drilldowns, unsigned int n_drilldowns,
                      grn_obj *ids)
 {
@@ -505,7 +505,7 @@ drilldown_info_tsort(grn_ctx *ctx, grn_obj *labels,
     id = grn_table_get(ctx, labels,
                        drilldown->label, drilldown->label_len);
     if (id) {
-      if (drilldown_info_visit(ctx, labels, visits, drilldowns, id, ids)) {
+      if (drilldown_info_visit(ctx, labels, statuses, drilldowns, id, ids)) {
         succeeded = GRN_FALSE;
         break;
       }
@@ -516,7 +516,7 @@ drilldown_info_tsort(grn_ctx *ctx, grn_obj *labels,
 
 static void
 drilldown_info_tsort_init(grn_ctx *ctx, grn_obj *labels,
-                          tsort_status *visits,
+                          tsort_status *statuses,
                           drilldown_info *drilldowns, unsigned int n_drilldowns)
 {
   unsigned int i;
@@ -526,7 +526,7 @@ drilldown_info_tsort_init(grn_ctx *ctx, grn_obj *labels,
     grn_id id;
     id = grn_table_add(ctx, labels, drilldown->label, drilldown->label_len, &added);
     if (added) {
-      visits[id - 1] = TSORT_STATUS_NOT_VISITED;
+      statuses[id - 1] = TSORT_STATUS_NOT_VISITED;
     }
   }
 }
@@ -552,14 +552,14 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
   GRN_UINT32_INIT(&tsorted_ids, GRN_OBJ_VECTOR);
 
   {
-    tsort_status *visits;
+    tsort_status *statuses;
     grn_bool succeeded;
 
-    visits = GRN_PLUGIN_MALLOCN(ctx, tsort_status, n_drilldowns);
-    drilldown_info_tsort_init(ctx, labels, visits, drilldowns, n_drilldowns);
-    succeeded = drilldown_info_tsort(ctx, labels, visits,
+    statuses = GRN_PLUGIN_MALLOCN(ctx, tsort_status, n_drilldowns);
+    drilldown_info_tsort_init(ctx, labels, statuses, drilldowns, n_drilldowns);
+    succeeded = drilldown_info_tsort(ctx, labels, statuses,
                                      drilldowns, n_drilldowns, &tsorted_ids);
-    GRN_PLUGIN_FREE(ctx, visits);
+    GRN_PLUGIN_FREE(ctx, statuses);
     if (!succeeded) {
       /* cyclic */
       goto exit;
