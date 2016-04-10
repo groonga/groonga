@@ -456,11 +456,11 @@ static grn_bool
 drilldown_info_visit(grn_ctx *ctx, grn_obj *labels,
                      tsort_status *statuses,
                      drilldown_info *drilldowns,
-                     grn_id to, grn_obj *indexes)
+                     uint32_t index, grn_obj *indexes)
 {
   grn_bool cycled = GRN_TRUE;
 
-  switch (statuses[to - 1]) {
+  switch (statuses[index]) {
   case TSORT_STATUS_VISITING :
     cycled = GRN_TRUE;
     break;
@@ -469,22 +469,24 @@ drilldown_info_visit(grn_ctx *ctx, grn_obj *labels,
     break;
   case TSORT_STATUS_NOT_VISITED :
     cycled = GRN_FALSE;
-    statuses[to - 1] = TSORT_STATUS_VISITING;
+    statuses[index] = TSORT_STATUS_VISITING;
     {
-      drilldown_info *drilldown = &(drilldowns[to - 1]);
+      drilldown_info *drilldown = &(drilldowns[index]);
       if (drilldown->table_name) {
-        grn_id id;
-        id = grn_table_get(ctx, labels,
-                           drilldown->table_name, drilldown->table_name_len);
-        if (id) {
+        grn_id dependent_id;
+        dependent_id = grn_table_get(ctx, labels,
+                                     drilldown->table_name,
+                                     drilldown->table_name_len);
+        if (dependent_id != GRN_ID_NIL) {
+          uint32_t dependent_index = dependent_id - 1;
           cycled = drilldown_info_visit(ctx, labels, statuses, drilldowns,
-                                        id, indexes);
+                                        dependent_index, indexes);
         }
       }
     }
     if (!cycled) {
-      statuses[to - 1] = TSORT_STATUS_VISITED;
-      GRN_UINT32_PUT(ctx, indexes, to - 1);
+      statuses[index] = TSORT_STATUS_VISITED;
+      GRN_UINT32_PUT(ctx, indexes, index);
     }
     break;
   }
@@ -505,8 +507,10 @@ drilldown_info_tsort(grn_ctx *ctx, grn_obj *labels,
     grn_id id;
     id = grn_table_get(ctx, labels,
                        drilldown->label, drilldown->label_len);
-    if (id) {
-      if (drilldown_info_visit(ctx, labels, statuses, drilldowns, id, indexes)) {
+    if (id != GRN_ID_NIL) {
+      uint32_t index = id - 1;
+      if (drilldown_info_visit(ctx, labels, statuses, drilldowns,
+                               index, indexes)) {
         succeeded = GRN_FALSE;
         break;
       }
@@ -529,7 +533,8 @@ drilldown_info_tsort_init(grn_ctx *ctx, grn_obj *labels,
                        drilldown->label, drilldown->label_len,
                        &added);
     if (added) {
-      statuses[id - 1] = TSORT_STATUS_NOT_VISITED;
+      uint32_t index = id - 1;
+      statuses[index] = TSORT_STATUS_NOT_VISITED;
     }
   }
 }
