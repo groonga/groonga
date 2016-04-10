@@ -461,13 +461,13 @@ drilldown_info_visit(grn_ctx *ctx, grn_obj *labels,
   grn_bool cycled = GRN_TRUE;
 
   switch (visits[to - 1]) {
-  case TSORT_STATUS_VISITING:
+  case TSORT_STATUS_VISITING :
     cycled = GRN_TRUE;
     break;
-  case TSORT_STATUS_VISITED:
+  case TSORT_STATUS_VISITED :
     cycled = GRN_FALSE;
     break;
-  case TSORT_STATUS_NOT_VISITED:
+  case TSORT_STATUS_NOT_VISITED :
     cycled = GRN_FALSE;
     visits[to - 1] = TSORT_STATUS_VISITING;
     {
@@ -673,7 +673,7 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
   GRN_OUTPUT_MAP_CLOSE();
   GRN_PLUGIN_FREE(ctx, results);
 
-exit: 
+exit :
   GRN_PLUGIN_FREE(ctx, visits);
   GRN_OBJ_FIN(ctx, &tsorted_ids);
   grn_obj_unlink(ctx, labels);
