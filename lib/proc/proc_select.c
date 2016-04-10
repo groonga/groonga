@@ -559,32 +559,31 @@ drilldown_info_tsort(grn_ctx *ctx, grn_obj *labels,
   return succeeded;
 }
 
-
-static void
-grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
-                      drilldown_info *drilldowns, unsigned int n_drilldowns,
-                      grn_obj *condition)
+static grn_table_group_result *
+grn_select_drilldowns_execute(grn_ctx *ctx,
+                              grn_obj *table,
+                              drilldown_info *drilldowns,
+                              unsigned int n_drilldowns,
+                              grn_obj *condition)
 {
-  unsigned int i;
-  grn_table_group_result *results;
+  grn_table_group_result *results = NULL;
   grn_obj *labels = NULL;
   grn_obj tsorted_indexes;
+  unsigned int i;
 
   labels = grn_table_create(ctx, NULL, 0, NULL,
                             GRN_OBJ_TABLE_HASH_KEY,
                             grn_ctx_at(ctx, GRN_DB_SHORT_TEXT),
                             NULL);
   if (!labels) {
-    return;
+    return NULL;
   }
 
   GRN_UINT32_INIT(&tsorted_indexes, GRN_OBJ_VECTOR);
   if (!drilldown_info_tsort(ctx, labels,
                             drilldowns, n_drilldowns, &tsorted_indexes)) {
     /* cyclic */
-    GRN_OBJ_FIN(ctx, &tsorted_indexes);
-    grn_obj_close(ctx, labels);
-    return;
+    goto exit;
   }
 
   results = GRN_PLUGIN_MALLOCN(ctx, grn_table_group_result, n_drilldowns);
@@ -638,8 +637,30 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
     grn_table_group(ctx, target_table, keys, n_keys, &(results[j]), 1);
     grn_table_sort_key_close(ctx, keys, n_keys);
   }
+
+exit :
   GRN_OBJ_FIN(ctx, &tsorted_indexes);
   grn_obj_close(ctx, labels);
+
+  return results;
+}
+
+static void
+grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
+                      drilldown_info *drilldowns, unsigned int n_drilldowns,
+                      grn_obj *condition)
+{
+  unsigned int i;
+  grn_table_group_result *results;
+
+  results = grn_select_drilldowns_execute(ctx,
+                                          table,
+                                          drilldowns,
+                                          n_drilldowns,
+                                          condition);
+  if (!results) {
+    return;
+  }
 
   GRN_OUTPUT_MAP_OPEN("DRILLDOWNS", n_drilldowns);
   for (i = 0; i < n_drilldowns; i++) {
