@@ -589,6 +589,11 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
   results = GRN_PLUGIN_MALLOCN(ctx, grn_table_group_result, n_drilldowns);
 
   for (i = 0; i < n_drilldowns; i++) {
+    grn_table_group_result *result = results + i;
+    result->table = NULL;
+  }
+
+  for (i = 0; i < n_drilldowns; i++) {
     grn_table_sort_key *keys = NULL;
     unsigned int n_keys;
     grn_obj *target_table = table;
@@ -600,7 +605,6 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
     drilldown = drilldowns + index;
     result = results + index;
 
-    result->table = NULL;
     result->limit = 1;
     result->flags = GRN_TABLE_GROUP_CALC_COUNT;
     result->op = 0;
@@ -613,7 +617,16 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
                                    labels,
                                    drilldown->table_name,
                                    drilldown->table_name_len);
-      if (dependent_id != GRN_ID_NIL) {
+      if (dependent_id == GRN_ID_NIL) {
+        GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                         "[select][drilldown][%.*s][table] "
+                         "nonexistent label: <%.*s>",
+                         (int)(drilldown->label_len),
+                         drilldown->label,
+                         (int)(drilldown->table_name_len),
+                         drilldown->table_name);
+        break;
+      } else {
         uint32_t dependent_index = dependent_id - 1;
         target_table = results[dependent_index].table;
       }
@@ -720,13 +733,6 @@ grn_select_drilldowns_output(grn_ctx *ctx,
                                      condition);
     }
 
-    if (result->calc_target) {
-      grn_obj_unlink(ctx, result->calc_target);
-    }
-    if (result->table) {
-      grn_obj_unlink(ctx, result->table);
-    }
-
     GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                   ":", "drilldown(%d)[%.*s]", n_hits,
                   (int)(drilldown->label_len), drilldown->label);
@@ -757,6 +763,25 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
                                condition,
                                results);
 
+  {
+    unsigned int i;
+
+    for (i = 0; i < n_drilldowns; i++) {
+      grn_table_group_result *result = results + i;
+
+      if (!result->table) {
+        continue;
+      }
+
+      if (result->calc_target) {
+        grn_obj_unlink(ctx, result->calc_target);
+      }
+      if (result->table) {
+        grn_obj_close(ctx, result->table);
+      }
+
+    }
+  }
   GRN_PLUGIN_FREE(ctx, results);
 }
 
