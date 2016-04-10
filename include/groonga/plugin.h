@@ -96,6 +96,8 @@ GRN_API void grn_plugin_set_error(grn_ctx *ctx, grn_log_level level,
                                   grn_rc error_code,
                                   const char *file, int line, const char *func,
                                   const char *format, ...) GRN_ATTRIBUTE_PRINTF(7);
+GRN_API void grn_plugin_clear_error(grn_ctx *ctx);
+
 
 /*
   Don't call these functions directly. grn_plugin_backtrace() and
@@ -118,6 +120,10 @@ GRN_API void grn_plugin_logtrace(grn_ctx *ctx, grn_log_level level);
 
 #define GRN_PLUGIN_ERROR(ctx, error_code, ...) \
   GRN_PLUGIN_SET_ERROR(ctx, GRN_LOG_ERROR, error_code, __VA_ARGS__)
+
+#define GRN_PLUGIN_CLEAR_ERROR(ctx) do { \
+  grn_plugin_clear_error((ctx)); \
+} while (0)
 
 typedef struct _grn_plugin_mutex grn_plugin_mutex;
 

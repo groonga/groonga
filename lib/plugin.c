@@ -1111,6 +1111,12 @@ grn_plugin_set_error(grn_ctx *ctx, grn_log_level level, grn_rc error_code,
 }
 
 void
+grn_plugin_clear_error(grn_ctx *ctx)
+{
+  ERRCLR(ctx);
+}
+
+void
 grn_plugin_backtrace(grn_ctx *ctx)
 {
   BACKTRACE(ctx);
