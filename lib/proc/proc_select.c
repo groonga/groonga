@@ -458,12 +458,17 @@ drilldown_info_visit(grn_ctx *ctx, grn_obj *labels,
                      drilldown_info *drilldowns,
                      grn_id to, grn_obj *ids)
 {
+  grn_bool cycled = GRN_TRUE;
+
   switch (visits[to - 1]) {
   case TSORT_STATUS_VISITING:
-    return GRN_TRUE;
+    cycled = GRN_TRUE;
+    break;
   case TSORT_STATUS_VISITED:
-    return GRN_FALSE;
+    cycled = GRN_FALSE;
+    break;
   case TSORT_STATUS_NOT_VISITED:
+    cycled = GRN_FALSE;
     visits[to - 1] = TSORT_STATUS_VISITING;
     {
       drilldown_info *drilldown = &(drilldowns[to - 1]);
@@ -472,16 +477,18 @@ drilldown_info_visit(grn_ctx *ctx, grn_obj *labels,
         id = grn_table_get(ctx, labels,
                            drilldown->table_name, drilldown->table_name_len);
         if (id) {
-          if (drilldown_info_visit(ctx, labels, visits, drilldowns, id, ids)) {
-            return GRN_TRUE;
-          }
+          cycled = drilldown_info_visit(ctx, labels, visits, drilldowns, id, ids);
         }
       }
     }
-    visits[to - 1] = TSORT_STATUS_VISITED;
-    grn_uvector_add_element(ctx, ids, to - 1, 0);
-    return GRN_FALSE;
+    if (!cycled) {
+      visits[to - 1] = TSORT_STATUS_VISITED;
+      grn_uvector_add_element(ctx, ids, to - 1, 0);
+    }
+    break;
   }
+
+  return cycled;
 }
 
 static grn_bool
@@ -490,6 +497,7 @@ drilldown_info_tsort(grn_ctx *ctx, grn_obj *labels,
                      drilldown_info *drilldowns, unsigned int n_drilldowns,
                      grn_obj *ids)
 {
+  grn_bool succeeded = GRN_TRUE;
   unsigned int i;
   for (i = 0; i < n_drilldowns; i++) {
     drilldown_info *drilldown = &(drilldowns[i]);
@@ -498,11 +506,12 @@ drilldown_info_tsort(grn_ctx *ctx, grn_obj *labels,
                        drilldown->label, drilldown->label_len);
     if (id) {
       if (drilldown_info_visit(ctx, labels, visits, drilldowns, id, ids)) {
-        return GRN_FALSE;
+        succeeded = GRN_FALSE;
+        break;
       }
     }
   }
-  return GRN_TRUE;
+  return succeeded;
 }
 
 static void
