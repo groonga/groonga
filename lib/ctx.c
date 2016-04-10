@@ -367,24 +367,26 @@ grn_alloc_info_add(void *address, size_t size,
 
   CRITICAL_SECTION_ENTER(grn_alloc_info_lock);
   new_alloc_info = malloc(sizeof(grn_alloc_info));
-  new_alloc_info->address = address;
-  new_alloc_info->size = size;
-  new_alloc_info->freed = GRN_FALSE;
-  grn_alloc_info_set_backtrace(new_alloc_info->alloc_backtrace,
-                               sizeof(new_alloc_info->alloc_backtrace));
-  if (file) {
-    new_alloc_info->file = strdup(file);
-  } else {
-    new_alloc_info->file = NULL;
+  if (new_alloc_info) {
+    new_alloc_info->address = address;
+    new_alloc_info->size = size;
+    new_alloc_info->freed = GRN_FALSE;
+    grn_alloc_info_set_backtrace(new_alloc_info->alloc_backtrace,
+                                 sizeof(new_alloc_info->alloc_backtrace));
+    if (file) {
+      new_alloc_info->file = strdup(file);
+    } else {
+      new_alloc_info->file = NULL;
+    }
+    new_alloc_info->line = line;
+    if (func) {
+      new_alloc_info->func = strdup(func);
+    } else {
+      new_alloc_info->func = NULL;
+    }
+    new_alloc_info->next = ctx->impl->alloc_info;
+    ctx->impl->alloc_info = new_alloc_info;
   }
-  new_alloc_info->line = line;
-  if (func) {
-    new_alloc_info->func = strdup(func);
-  } else {
-    new_alloc_info->func = NULL;
-  }
-  new_alloc_info->next = ctx->impl->alloc_info;
-  ctx->impl->alloc_info = new_alloc_info;
   CRITICAL_SECTION_LEAVE(grn_alloc_info_lock);
 }
 
