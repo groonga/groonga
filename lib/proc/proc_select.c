@@ -646,21 +646,14 @@ exit :
 }
 
 static void
-grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
-                      drilldown_info *drilldowns, unsigned int n_drilldowns,
-                      grn_obj *condition)
+grn_select_drilldowns_output(grn_ctx *ctx,
+                             grn_obj *table,
+                             drilldown_info *drilldowns,
+                             unsigned int n_drilldowns,
+                             grn_obj *condition,
+                             grn_table_group_result *results)
 {
   unsigned int i;
-  grn_table_group_result *results;
-
-  results = grn_select_drilldowns_execute(ctx,
-                                          table,
-                                          drilldowns,
-                                          n_drilldowns,
-                                          condition);
-  if (!results) {
-    return;
-  }
 
   GRN_OUTPUT_MAP_OPEN("DRILLDOWNS", n_drilldowns);
   for (i = 0; i < n_drilldowns; i++) {
@@ -722,6 +715,31 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
                   (int)(drilldown->label_len), drilldown->label);
   }
   GRN_OUTPUT_MAP_CLOSE();
+}
+
+static void
+grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
+                      drilldown_info *drilldowns, unsigned int n_drilldowns,
+                      grn_obj *condition)
+{
+  grn_table_group_result *results;
+
+  results = grn_select_drilldowns_execute(ctx,
+                                          table,
+                                          drilldowns,
+                                          n_drilldowns,
+                                          condition);
+  if (!results) {
+    return;
+  }
+
+  grn_select_drilldowns_output(ctx,
+                               table,
+                               drilldowns,
+                               n_drilldowns,
+                               condition,
+                               results);
+
   GRN_PLUGIN_FREE(ctx, results);
 }
 
