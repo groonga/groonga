@@ -21,12 +21,15 @@ load --table Tags
 {"_key": "Rroonga", "category": "Ruby"}
 ]
 [[0,0.0,0.0],3]
-select Memos   --drilldown[tag].keys tag   --drilldown[tag].output_columns _key,_nsubrecs,category   --drilldown[category].table   --drilldown[category].keys category   --drilldown[category].output_columns _key,_nsubrecs
+select Memos   --drilldown[category].table ''   --drilldown[category].keys category   --drilldown[category].output_columns _key,_nsubrecs   --drilldown[tag].keys tag   --drilldown[tag].output_columns _key,_nsubrecs,category
 [
   [
-    0,
-    0.0,
-    0.0
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "invalid sort key: <category>(<category>)"
   ],
   [
     [
@@ -69,40 +72,7 @@ select Memos   --drilldown[tag].keys tag   --drilldown[tag].output_columns _key,
       ]
     ],
     {
-      "tag": [
-        [
-          3
-        ],
-        [
-          [
-            "_key",
-            "ShortText"
-          ],
-          [
-            "_nsubrecs",
-            "Int32"
-          ],
-          [
-            "category",
-            "ShortText"
-          ]
-        ],
-        [
-          "Groonga",
-          2,
-          "C/C++"
-        ],
-        [
-          "Mroonga",
-          1,
-          "C/C++"
-        ],
-        [
-          "Rroonga",
-          1,
-          "Ruby"
-        ]
-      ]
     }
   ]
 ]
+#|w| invalid sort key: <category>(<category>)
