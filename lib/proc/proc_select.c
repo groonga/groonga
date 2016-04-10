@@ -456,7 +456,7 @@ static grn_bool
 drilldown_info_visit(grn_ctx *ctx, grn_obj *labels,
                      tsort_status *statuses,
                      drilldown_info *drilldowns,
-                     grn_id to, grn_obj *ids)
+                     grn_id to, grn_obj *indexes)
 {
   grn_bool cycled = GRN_TRUE;
 
@@ -478,13 +478,13 @@ drilldown_info_visit(grn_ctx *ctx, grn_obj *labels,
                            drilldown->table_name, drilldown->table_name_len);
         if (id) {
           cycled = drilldown_info_visit(ctx, labels, statuses, drilldowns,
-                                        id, ids);
+                                        id, indexes);
         }
       }
     }
     if (!cycled) {
       statuses[to - 1] = TSORT_STATUS_VISITED;
-      GRN_UINT32_PUT(ctx, ids, to - 1);
+      GRN_UINT32_PUT(ctx, indexes, to - 1);
     }
     break;
   }
@@ -496,7 +496,7 @@ static grn_bool
 drilldown_info_tsort(grn_ctx *ctx, grn_obj *labels,
                      tsort_status *statuses,
                      drilldown_info *drilldowns, unsigned int n_drilldowns,
-                     grn_obj *ids)
+                     grn_obj *indexes)
 {
   grn_bool succeeded = GRN_TRUE;
   unsigned int i;
@@ -506,7 +506,7 @@ drilldown_info_tsort(grn_ctx *ctx, grn_obj *labels,
     id = grn_table_get(ctx, labels,
                        drilldown->label, drilldown->label_len);
     if (id) {
-      if (drilldown_info_visit(ctx, labels, statuses, drilldowns, id, ids)) {
+      if (drilldown_info_visit(ctx, labels, statuses, drilldowns, id, indexes)) {
         succeeded = GRN_FALSE;
         break;
       }
@@ -542,7 +542,7 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
   unsigned int i;
   grn_table_group_result *results;
   grn_obj *labels = NULL;
-  grn_obj tsorted_ids;
+  grn_obj tsorted_indexes;
 
   labels = grn_table_create(ctx, NULL, 0, NULL,
                             GRN_OBJ_TABLE_HASH_KEY,
@@ -552,7 +552,7 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
     return;
   }
 
-  GRN_UINT32_INIT(&tsorted_ids, GRN_OBJ_VECTOR);
+  GRN_UINT32_INIT(&tsorted_indexes, GRN_OBJ_VECTOR);
 
   {
     tsort_status *statuses;
@@ -561,7 +561,7 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
     statuses = GRN_PLUGIN_MALLOCN(ctx, tsort_status, n_drilldowns);
     drilldown_info_tsort_init(ctx, labels, statuses, drilldowns, n_drilldowns);
     succeeded = drilldown_info_tsort(ctx, labels, statuses,
-                                     drilldowns, n_drilldowns, &tsorted_ids);
+                                     drilldowns, n_drilldowns, &tsorted_indexes);
     GRN_PLUGIN_FREE(ctx, statuses);
     if (!succeeded) {
       /* cyclic */
@@ -576,7 +576,7 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
     grn_table_sort_key *keys = NULL;
     unsigned int n_keys;
     grn_obj *target_table = table;
-    unsigned int j = GRN_UINT32_VALUE_AT(&tsorted_ids, i);
+    unsigned int j = GRN_UINT32_VALUE_AT(&tsorted_indexes, i);
     drilldown_info *drilldown = &(drilldowns[j]);
 
     results[j].table = NULL;
@@ -684,7 +684,7 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
   GRN_PLUGIN_FREE(ctx, results);
 
 exit :
-  GRN_OBJ_FIN(ctx, &tsorted_ids);
+  GRN_OBJ_FIN(ctx, &tsorted_indexes);
   grn_obj_unlink(ctx, labels);
 }
 
