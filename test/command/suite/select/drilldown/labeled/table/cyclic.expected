@@ -34,9 +34,12 @@ load --table Categories
 select Memos   --drilldown[category].table sub_category   --drilldown[category].keys _key   --drilldown[category].output_columns _key,_nsubrecs   --drilldown[sub_category].table category   --drilldown[sub_category].keys sub_category   --drilldown[sub_category].output_columns _key,_nsubrecs   --drilldown[tag].keys tag   --drilldown[tag].output_columns _key,_nsubrecs,category
 [
   [
-    0,
-    0.0,
-    0.0
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[select][drilldown][category][table] cycled dependency: <sub_category>"
   ],
   [
     [
@@ -80,3 +83,5 @@ select Memos   --drilldown[category].table sub_category   --drilldown[category].
     ]
   ]
 ]
+#|e| [select][drilldown][sub_category][table] cycled dependency: <category>
+#|e| [select][drilldown][category][table] cycled dependency: <sub_category>

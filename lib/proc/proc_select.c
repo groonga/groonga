@@ -481,6 +481,15 @@ drilldown_info_tsort_visit(grn_ctx *ctx, grn_obj *labels,
           uint32_t dependent_index = dependent_id - 1;
           cycled = drilldown_info_tsort_visit(ctx, labels, statuses, drilldowns,
                                               dependent_index, indexes);
+          if (cycled) {
+            GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                             "[select][drilldown][%.*s][table] "
+                             "cycled dependency: <%.*s>",
+                             (int)(drilldown->label_len),
+                             drilldown->label,
+                             (int)(drilldown->table_name_len),
+                             drilldown->table_name);
+          }
         }
       }
     }
