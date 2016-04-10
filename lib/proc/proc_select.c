@@ -483,7 +483,7 @@ drilldown_info_visit(grn_ctx *ctx, grn_obj *labels,
     }
     if (!cycled) {
       visits[to - 1] = TSORT_STATUS_VISITED;
-      grn_uvector_add_element(ctx, ids, to - 1, 0);
+      GRN_UINT32_PUT(ctx, ids, to - 1);
     }
     break;
   }
