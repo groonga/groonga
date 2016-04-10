@@ -661,10 +661,19 @@ grn_select_drilldowns_output(grn_ctx *ctx,
                              grn_table_group_result *results)
 {
   unsigned int i;
+  unsigned int n_available_results = 0;
 
-  GRN_OUTPUT_MAP_OPEN("DRILLDOWNS", n_drilldowns);
   for (i = 0; i < n_drilldowns; i++) {
-    drilldown_info *drilldown = &(drilldowns[i]);
+    grn_table_group_result *result = results + i;
+
+    if (result->table) {
+      n_available_results++;
+    }
+  }
+
+  GRN_OUTPUT_MAP_OPEN("DRILLDOWNS", n_available_results);
+  for (i = 0; i < n_drilldowns; i++) {
+    drilldown_info *drilldown = drilldowns + i;
     uint32_t n_hits;
     int offset;
     int limit;
