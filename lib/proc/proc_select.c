@@ -450,11 +450,11 @@ typedef enum {
   NONE = 0,
   JUST,
   VISITED
-} drilldown_info_status;
+} tsort_status;
 
 static grn_bool
 drilldown_info_visit(grn_ctx *ctx, grn_obj *labels,
-                     drilldown_info_status *visits,
+                     tsort_status *visits,
                      drilldown_info *drilldowns,
                      grn_id to, grn_obj *ids)
 {
@@ -486,7 +486,7 @@ drilldown_info_visit(grn_ctx *ctx, grn_obj *labels,
 
 static grn_bool
 drilldown_info_tsort(grn_ctx *ctx, grn_obj *labels,
-                     drilldown_info_status *visits,
+                     tsort_status *visits,
                      drilldown_info *drilldowns, unsigned int n_drilldowns,
                      grn_obj *ids)
 {
@@ -507,7 +507,7 @@ drilldown_info_tsort(grn_ctx *ctx, grn_obj *labels,
 
 static void
 drilldown_info_tsort_init(grn_ctx *ctx, grn_obj *labels,
-                          drilldown_info_status *visits,
+                          tsort_status *visits,
                           drilldown_info *drilldowns, unsigned int n_drilldowns)
 {
   unsigned int i;
@@ -531,7 +531,7 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
   grn_table_group_result *results;
   grn_obj *labels = NULL;
   grn_obj tsorted_ids;
-  drilldown_info_status *visits;
+  tsort_status *visits;
 
   labels = grn_table_create(ctx, NULL, 0, NULL,
                             GRN_OBJ_TABLE_HASH_KEY,
@@ -540,7 +540,7 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
   if (!labels) {
     return;
   }
-  visits = GRN_PLUGIN_MALLOCN(ctx, drilldown_info_status, n_drilldowns);
+  visits = GRN_PLUGIN_MALLOCN(ctx, tsort_status, n_drilldowns);
 
   drilldown_info_tsort_init(ctx, labels, visits, drilldowns, n_drilldowns);
   GRN_UINT32_INIT(&tsorted_ids, GRN_OBJ_VECTOR);
