@@ -75,6 +75,9 @@ GRN_API void grn_plugin_free(grn_ctx *ctx, void *ptr, const char *file,
 
 #define GRN_PLUGIN_MALLOC(ctx, size) \
   grn_plugin_malloc((ctx), (size), __FILE__, __LINE__, __FUNCTION__)
+#define GRN_PLUGIN_MALLOCN(ctx, type, n) \
+  ((type *)(grn_plugin_malloc((ctx), sizeof(type) * (n), \
+                              __FILE__, __LINE__, __FUNCTION__)))
 #define GRN_PLUGIN_CALLOC(ctx, size) \
   grn_plugin_calloc((ctx), (size), __FILE__, __LINE__, __FUNCTION__)
 #define GRN_PLUGIN_REALLOC(ctx, ptr, size) \
