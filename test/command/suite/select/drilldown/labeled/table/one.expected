@@ -21,7 +21,7 @@ load --table Tags
 {"_key": "Rroonga", "category": "Ruby"}
 ]
 [[0,0.0,0.0],3]
-select Memos   --drilldown[tag].keys tag   --drilldown[tag].output_columns _key,_nsubrecs,category   --drilldown[category].table tag   --drilldown[category].keys category   --drilldown[category].output_columns _key,_nsubrecs
+select Memos   --drilldown[category].table tag   --drilldown[category].keys category   --drilldown[category].output_columns _key,_nsubrecs   --drilldown[tag].keys tag   --drilldown[tag].output_columns _key,_nsubrecs,category
 [
   [
     0,
@@ -69,6 +69,29 @@ select Memos   --drilldown[tag].keys tag   --drilldown[tag].output_columns _key,
       ]
     ],
     {
+      "category": [
+        [
+          2
+        ],
+        [
+          [
+            "_key",
+            "ShortText"
+          ],
+          [
+            "_nsubrecs",
+            "Int32"
+          ]
+        ],
+        [
+          "C/C++",
+          2
+        ],
+        [
+          "Ruby",
+          1
+        ]
+      ],
       "tag": [
         [
           3
@@ -101,29 +124,6 @@ select Memos   --drilldown[tag].keys tag   --drilldown[tag].output_columns _key,
           "Rroonga",
           1,
           "Ruby"
-        ]
-      ],
-      "category": [
-        [
-          2
-        ],
-        [
-          [
-            "_key",
-            "ShortText"
-          ],
-          [
-            "_nsubrecs",
-            "Int32"
-          ]
-        ],
-        [
-          "C/C++",
-          2
-        ],
-        [
-          "Ruby",
-          1
         ]
       ]
     }

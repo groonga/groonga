@@ -20,8 +20,8 @@ load --table Tags
 ]
 
 select Memos \
-  --drilldown[tag].keys tag \
-  --drilldown[tag].output_columns _key,_nsubrecs,category \
   --drilldown[category].table tag \
   --drilldown[category].keys category \
-  --drilldown[category].output_columns _key,_nsubrecs
+  --drilldown[category].output_columns _key,_nsubrecs \
+  --drilldown[tag].keys tag \
+  --drilldown[tag].output_columns _key,_nsubrecs,category

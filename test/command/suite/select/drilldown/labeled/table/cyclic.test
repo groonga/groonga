@@ -29,11 +29,11 @@ load --table Categories
 ]
 
 select Memos \
-  --drilldown[tag].keys tag \
-  --drilldown[tag].output_columns _key,_nsubrecs,category \
   --drilldown[category].table sub_category \
   --drilldown[category].keys _key \
   --drilldown[category].output_columns _key,_nsubrecs \
   --drilldown[sub_category].table category \
   --drilldown[sub_category].keys sub_category \
-  --drilldown[sub_category].output_columns _key,_nsubrecs
+  --drilldown[sub_category].output_columns _key,_nsubrecs \
+  --drilldown[tag].keys tag \
+  --drilldown[tag].output_columns _key,_nsubrecs,category
