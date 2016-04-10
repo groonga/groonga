@@ -477,7 +477,8 @@ drilldown_info_visit(grn_ctx *ctx, grn_obj *labels,
         id = grn_table_get(ctx, labels,
                            drilldown->table_name, drilldown->table_name_len);
         if (id) {
-          cycled = drilldown_info_visit(ctx, labels, statuses, drilldowns, id, ids);
+          cycled = drilldown_info_visit(ctx, labels, statuses, drilldowns,
+                                        id, ids);
         }
       }
     }
@@ -524,7 +525,9 @@ drilldown_info_tsort_init(grn_ctx *ctx, grn_obj *labels,
     drilldown_info *drilldown = &(drilldowns[i]);
     int added;
     grn_id id;
-    id = grn_table_add(ctx, labels, drilldown->label, drilldown->label_len, &added);
+    id = grn_table_add(ctx, labels,
+                       drilldown->label, drilldown->label_len,
+                       &added);
     if (added) {
       statuses[id - 1] = TSORT_STATUS_NOT_VISITED;
     }
