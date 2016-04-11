@@ -3749,6 +3749,43 @@ grn_table_group_single_key_records(grn_ctx *ctx, grn_obj *table,
   GRN_OBJ_FIN(ctx, &bulk);
 }
 
+#define GRN_TABLE_GROUP_ALL_RECORDS_NAME     "all_records"
+#define GRN_TABLE_GROUP_ALL_RECORDS_NAME_LEN (sizeof(GRN_TABLE_GROUP_ALL_RECORDS_NAME) - 1)
+
+static void
+grn_table_group_all_records(grn_ctx *ctx, grn_obj *table,
+                            grn_table_group_result *result)
+{
+  grn_obj value_buffer;
+  grn_table_cursor *tc;
+  grn_obj *res = result->table;
+  grn_obj *calc_target = result->calc_target;
+
+  GRN_VOID_INIT(&value_buffer);
+  if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0))) {
+    grn_id id;
+    void *value;
+    if (grn_table_add_v_inline(ctx, res,
+                               GRN_TABLE_GROUP_ALL_RECORDS_NAME,
+                               GRN_TABLE_GROUP_ALL_RECORDS_NAME_LEN,
+                               &value, NULL)) {
+      while ((id = grn_table_cursor_next_inline(ctx, tc))) {
+        grn_rset_recinfo *ri = NULL;
+        if (DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC) {
+          grn_table_cursor_get_value_inline(ctx, tc, (void **)&ri);
+        }
+        grn_table_group_add_subrec(ctx, res, value,
+                                   ri ? ri->score : 0,
+                                   (grn_rset_posinfo *)&id, 0,
+                                   calc_target,
+                                   &value_buffer);
+      }
+    }
+    grn_table_cursor_close(ctx, tc);
+  }
+  GRN_OBJ_FIN(ctx, &value_buffer);
+}
+
 grn_rc
 grn_table_group_with_range_gap(grn_ctx *ctx, grn_obj *table,
                                grn_table_sort_key *group_key,
@@ -4115,7 +4152,10 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
                 grn_table_group_result *results, int n_results)
 {
   grn_rc rc = GRN_SUCCESS;
-  if (!table || !n_keys || !n_results) {
+  grn_bool group_by_all_records = GRN_FALSE;
+  if (n_keys == 0 && n_results == 1 && results[0].calc_target) {
+    group_by_all_records = GRN_TRUE;
+  } else if (!table || !n_keys || !n_results) {
     ERR(GRN_INVALID_ARGUMENT, "table or n_keys or n_results is void");
     return GRN_INVALID_ARGUMENT;
   }
@@ -4141,6 +4181,8 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
           GRN_OBJ_UNIT_USERDEF_DOCUMENT;
         if (n_keys == 1) {
           key_type = grn_ctx_at(ctx, grn_obj_get_range(ctx, keys[0].key));
+        } else if (group_by_all_records) {
+          key_type = grn_ctx_at(ctx, GRN_DB_SHORT_TEXT);
         } else {
           flags |= GRN_OBJ_KEY_VAR_SIZE;
         }
@@ -4164,6 +4206,8 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
       if (!accelerated_table_group(ctx, table, keys->key, results)) {
         grn_table_group_single_key_records(ctx, table, keys->key, results);
       }
+    } else if (group_by_all_records) {
+      grn_table_group_all_records(ctx, table, results);
     } else {
       grn_bool have_vector = GRN_FALSE;
       for (k = 0, kp = keys; k < n_keys; k++, kp++) {
