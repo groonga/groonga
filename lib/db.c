@@ -3745,6 +3745,7 @@ grn_table_group_single_key_records(grn_ctx *ctx, grn_obj *table,
     }
     grn_table_cursor_close(ctx, tc);
   }
+  GRN_OBJ_FIN(ctx, &value_buffer);
   grn_obj_close(ctx, &bulk);
 }
 
