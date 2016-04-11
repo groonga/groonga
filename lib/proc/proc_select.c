@@ -606,7 +606,7 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
 
   for (i = 0; i < n_drilldowns; i++) {
     grn_table_sort_key *keys = NULL;
-    unsigned int n_keys;
+    unsigned int n_keys = 0;
     grn_obj *target_table = table;
     unsigned int index;
     drilldown_info *drilldown;
@@ -647,15 +647,16 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
                                        drilldown->keys,
                                        drilldown->keys_len,
                                        target_table, &n_keys);
-    if (!keys) {
+
+    if (!keys && !drilldown->table_name) {
       GRN_PLUGIN_CLEAR_ERROR(ctx);
       continue;
     }
 
-    result->key_begin = 0;
-    result->key_end = n_keys - 1;
     if (n_keys > 1) {
       result->max_n_subrecs = 1;
+      result->key_begin = 0;
+      result->key_end = n_keys - 1;
     }
     if (drilldown->calc_target_name) {
       result->calc_target = grn_obj_column(ctx, target_table,
@@ -1166,31 +1167,43 @@ proc_select_find_all_drilldown_labels(grn_ctx *ctx, grn_user_data *user_data,
 {
   grn_obj *vars = GRN_PROC_GET_VARS();
   grn_table_cursor *cursor;
+  if (!labels) {
+    return;
+  }
   cursor = grn_table_cursor_open(ctx, vars, NULL, 0, NULL, 0, 0, -1, 0);
   if (cursor) {
     const char *prefix = "drilldown[";
     int prefix_len = strlen(prefix);
-    const char *suffix = "].keys";
-    int suffix_len = strlen(suffix);
+    const char *suffix_key = "].keys";
+    int suffix_key_len = strlen(suffix_key);
+    const char *suffix_table = "].table";
+    int suffix_table_len = strlen(suffix_table);
+    int suffix_len;
     while (grn_table_cursor_next(ctx, cursor)) {
       void *key;
       char *name;
       int name_len;
       name_len = grn_table_cursor_get_key(ctx, cursor, &key);
       name = key;
-      if (name_len < (prefix_len + 1 + suffix_len)) {
-        continue;
+      suffix_len = 0;
+      if (name_len >= prefix_len &&
+          strncmp(prefix, name, prefix_len) == 0) {
+        if (name_len >= (prefix_len + 1 + suffix_key_len) &&
+            strncmp(suffix_key, name + name_len - suffix_key_len,
+                    suffix_key_len) == 0) {
+          suffix_len = suffix_key_len;
+        } else if (name_len >= (prefix_len + 1 + suffix_table_len) &&
+                   strncmp(suffix_table, name + name_len - suffix_table_len,
+                   suffix_table_len) == 0) {
+          suffix_len = suffix_table_len;
+        }
+        if (suffix_len > 0) {
+          grn_table_add(ctx, labels,
+                        name + prefix_len,
+                        name_len - prefix_len - suffix_len,
+                        NULL);
+        }
       }
-      if (strncmp(prefix, name, prefix_len) != 0) {
-        continue;
-      }
-      if (strncmp(suffix, name + name_len - suffix_len, suffix_len) != 0) {
-        continue;
-      }
-      grn_vector_add_element(ctx, labels,
-                             name + prefix_len,
-                             name_len - prefix_len - suffix_len,
-                             0, GRN_ID_NIL);
     }
     grn_table_cursor_close(ctx, cursor);
   }
@@ -1219,7 +1232,7 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   grn_obj *drilldown;
   drilldown_info drilldowns[MAX_N_DRILLDOWNS];
   unsigned int n_drilldowns = 0;
-  grn_obj drilldown_labels;
+  grn_obj *drilldown_labels = NULL;
   const char *cache;
   size_t cache_len;
   const char *match_escalation_threshold;
@@ -1286,7 +1299,6 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
                                             "adjuster", -1,
                                             &adjuster_len);
 
-  GRN_TEXT_INIT(&drilldown_labels, GRN_OBJ_VECTOR);
   drilldown = grn_plugin_proc_get_var(ctx, user_data,
                                       "drilldown", -1);
   if (GRN_TEXT_LEN(drilldown) > 0) {
@@ -1312,9 +1324,18 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     n_drilldowns++;
   } else {
     unsigned int i;
-    proc_select_find_all_drilldown_labels(ctx, user_data, &drilldown_labels);
-    n_drilldowns = grn_vector_size(ctx, &drilldown_labels);
-    for (i = 0; i < n_drilldowns; i++) {
+    grn_table_cursor *cursor;
+    drilldown_labels = grn_table_create(ctx, NULL, 0, NULL,
+                                        GRN_OBJ_TABLE_HASH_KEY,
+                                        grn_ctx_at(ctx, GRN_DB_SHORT_TEXT),
+                                        NULL);
+    proc_select_find_all_drilldown_labels(ctx, user_data, drilldown_labels);
+    cursor = grn_table_cursor_open(ctx, drilldown_labels,
+                                   NULL, 0, NULL, 0, 0, -1, 0);
+    if (cursor) {
+      i = 0;
+      n_drilldowns = grn_table_size(ctx, drilldown_labels);
+      while (grn_table_cursor_next(ctx, cursor)) {
       drilldown_info *drilldown = &(drilldowns[i]);
       const char *label;
       int label_len;
@@ -1328,8 +1349,7 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
       grn_obj *calc_target;
       grn_obj *table;
 
-      label_len = grn_vector_get_element(ctx, &drilldown_labels, i,
-                                         &label, NULL, NULL);
+      label_len = grn_table_cursor_get_key(ctx, cursor, (void **)&label);
       drilldown->label = label;
       drilldown->label_len = label_len;
 
@@ -1354,6 +1374,9 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
       drilldown_info_fill(ctx, drilldown,
                           keys, sortby, output_columns, offset, limit,
                           calc_types, calc_target, table);
+        i++;
+      }
+      grn_table_cursor_close(ctx, cursor);
     }
   }
   if (grn_select(ctx,
@@ -1373,7 +1396,9 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
                  query_flags, query_flags_len,
                  adjuster, adjuster_len)) {
   }
-  GRN_OBJ_FIN(ctx, &drilldown_labels);
+  if (drilldown_labels) {
+    grn_obj_unlink(ctx, drilldown_labels);
+  }
 #undef MAX_N_DRILLDOWNS
 
   return NULL;
