@@ -1336,44 +1336,44 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
       i = 0;
       n_drilldowns = grn_table_size(ctx, drilldown_labels);
       while (grn_table_cursor_next(ctx, cursor)) {
-      drilldown_info *drilldown = &(drilldowns[i]);
-      const char *label;
-      int label_len;
-      char key_name[GRN_TABLE_MAX_KEY_SIZE];
-      grn_obj *keys;
-      grn_obj *sortby;
-      grn_obj *output_columns;
-      grn_obj *offset;
-      grn_obj *limit;
-      grn_obj *calc_types;
-      grn_obj *calc_target;
-      grn_obj *table;
+        drilldown_info *drilldown = &(drilldowns[i]);
+        const char *label;
+        int label_len;
+        char key_name[GRN_TABLE_MAX_KEY_SIZE];
+        grn_obj *keys;
+        grn_obj *sortby;
+        grn_obj *output_columns;
+        grn_obj *offset;
+        grn_obj *limit;
+        grn_obj *calc_types;
+        grn_obj *calc_target;
+        grn_obj *table;
 
-      label_len = grn_table_cursor_get_key(ctx, cursor, (void **)&label);
-      drilldown->label = label;
-      drilldown->label_len = label_len;
+        label_len = grn_table_cursor_get_key(ctx, cursor, (void **)&label);
+        drilldown->label = label;
+        drilldown->label_len = label_len;
 
 #define GET_VAR(name)\
-      grn_snprintf(key_name,                                            \
-                   GRN_TABLE_MAX_KEY_SIZE,                              \
-                   GRN_TABLE_MAX_KEY_SIZE,                              \
-                   "drilldown[%.*s]." # name, label_len, label);        \
-      name = grn_plugin_proc_get_var(ctx, user_data, key_name, -1);
+        grn_snprintf(key_name,                                            \
+                     GRN_TABLE_MAX_KEY_SIZE,                              \
+                     GRN_TABLE_MAX_KEY_SIZE,                              \
+                     "drilldown[%.*s]." # name, label_len, label);        \
+        name = grn_plugin_proc_get_var(ctx, user_data, key_name, -1);
 
-      GET_VAR(keys);
-      GET_VAR(sortby);
-      GET_VAR(output_columns);
-      GET_VAR(offset);
-      GET_VAR(limit);
-      GET_VAR(calc_types);
-      GET_VAR(calc_target);
-      GET_VAR(table);
+        GET_VAR(keys);
+        GET_VAR(sortby);
+        GET_VAR(output_columns);
+        GET_VAR(offset);
+        GET_VAR(limit);
+        GET_VAR(calc_types);
+        GET_VAR(calc_target);
+        GET_VAR(table);
 
 #undef GET_VAR
 
-      drilldown_info_fill(ctx, drilldown,
-                          keys, sortby, output_columns, offset, limit,
-                          calc_types, calc_target, table);
+        drilldown_info_fill(ctx, drilldown,
+                            keys, sortby, output_columns, offset, limit,
+                            calc_types, calc_target, table);
         i++;
       }
       grn_table_cursor_close(ctx, cursor);
