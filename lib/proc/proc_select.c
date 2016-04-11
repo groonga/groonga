@@ -591,7 +591,6 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
   GRN_UINT32_INIT(&tsorted_indexes, GRN_OBJ_VECTOR);
   if (!drilldown_info_tsort(ctx, labels,
                             drilldowns, n_drilldowns, &tsorted_indexes)) {
-    /* cyclic */
     goto exit;
   }
 
