@@ -596,6 +596,9 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
   }
 
   results = GRN_PLUGIN_MALLOCN(ctx, grn_table_group_result, n_drilldowns);
+  if (!results) {
+    goto exit;
+  }
 
   for (i = 0; i < n_drilldowns; i++) {
     grn_table_group_result *result = results + i;
