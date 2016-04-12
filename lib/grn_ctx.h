@@ -33,6 +33,7 @@
 #endif /* HAVE_EXECINFO_H */
 
 #include "grn_io.h"
+#include "grn_alloc.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -404,94 +405,10 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
 #define GERR(rc,...) ERRSET(&grn_gctx, GRN_ERROR, (rc),  __VA_ARGS__)
 #define GMERR(...)   ERRSET(&grn_gctx, GRN_ALERT, GRN_NO_MEMORY_AVAILABLE,  __VA_ARGS__)
 
-#define GRN_MALLOC(s)     grn_malloc(ctx,s,__FILE__,__LINE__,__FUNCTION__)
-#define GRN_CALLOC(s)     grn_calloc(ctx,s,__FILE__,__LINE__,__FUNCTION__)
-#define GRN_REALLOC(p,s)  grn_realloc(ctx,p,s,__FILE__,__LINE__,__FUNCTION__)
-#define GRN_STRDUP(s)     grn_strdup(ctx,s,__FILE__,__LINE__,__FUNCTION__)
-#define GRN_GMALLOC(s)    grn_malloc(&grn_gctx,s,__FILE__,__LINE__,__FUNCTION__)
-#define GRN_GCALLOC(s)    grn_calloc(&grn_gctx,s,__FILE__,__LINE__,__FUNCTION__)
-#define GRN_GREALLOC(p,s) grn_realloc(&grn_gctx,p,s,__FILE__,__LINE__,__FUNCTION__)
-#define GRN_GSTRDUP(s)    grn_strdup(&grn_gctx,s,__FILE__,__LINE__,__FUNCTION__)
-#define GRN_FREE(p)       grn_free(ctx,p,__FILE__,__LINE__,__FUNCTION__)
-#define GRN_MALLOCN(t,n)  ((t *)(GRN_MALLOC(sizeof(t) * (n))))
-#define GRN_GFREE(p)      grn_free(&grn_gctx,p,__FILE__,__LINE__,__FUNCTION__)
-#define GRN_GMALLOCN(t,n) ((t *)(GRN_GMALLOC(sizeof(t) * (n))))
-
 #ifdef DEBUG
 #define GRN_ASSERT(s) grn_assert(ctx,(s),__FILE__,__LINE__,__FUNCTION__)
 #else
 #define GRN_ASSERT(s)
-#endif
-
-#define GRN_CTX_ALLOC(ctx,s)   grn_ctx_calloc(ctx,s,__FILE__,__LINE__,__FUNCTION__)
-#define GRN_CTX_FREE(ctx,p)    grn_ctx_free(ctx,p,__FILE__,__LINE__,__FUNCTION__)
-#define GRN_CTX_ALLOC_L(ctx,s) grn_ctx_alloc_lifo(ctx,s,f,__FILE__,__LINE__,__FUNCTION__)
-#define GRN_CTX_FREE_L(ctx,p)  grn_ctx_free_lifo(ctx,p,__FILE__,__LINE__,__FUNCTION__)
-
-void *grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
-                    const char* file, int line, const char *func);
-void *grn_ctx_malloc(grn_ctx *ctx, size_t size,
-                    const char* file, int line, const char *func);
-void *grn_ctx_calloc(grn_ctx *ctx, size_t size,
-                    const char* file, int line, const char *func);
-void *grn_ctx_realloc(grn_ctx *ctx, void *ptr, size_t size,
-                      const char* file, int line, const char *func);
-char *grn_ctx_strdup(grn_ctx *ctx, const char *s,
-                     const char* file, int line, const char *func);
-void grn_ctx_free(grn_ctx *ctx, void *ptr,
-                  const char* file, int line, const char *func);
-void *grn_ctx_alloc_lifo(grn_ctx *ctx, size_t size,
-                         const char* file, int line, const char *func);
-void grn_ctx_free_lifo(grn_ctx *ctx, void *ptr,
-                       const char* file, int line, const char *func);
-
-#ifdef USE_DYNAMIC_MALLOC_CHANGE
-typedef void *(*grn_malloc_func) (grn_ctx *ctx, size_t size,
-                                  const char *file, int line, const char *func);
-typedef void *(*grn_calloc_func) (grn_ctx *ctx, size_t size,
-                                  const char *file, int line, const char *func);
-typedef void *(*grn_realloc_func) (grn_ctx *ctx, void *ptr, size_t size,
-                                   const char *file, int line, const char *func);
-typedef char *(*grn_strdup_func) (grn_ctx *ctx, const char *string,
-                                  const char *file, int line, const char *func);
-typedef void (*grn_free_func) (grn_ctx *ctx, void *ptr,
-                               const char *file, int line, const char *func);
-grn_malloc_func grn_ctx_get_malloc(grn_ctx *ctx);
-void grn_ctx_set_malloc(grn_ctx *ctx, grn_malloc_func malloc_func);
-grn_calloc_func grn_ctx_get_calloc(grn_ctx *ctx);
-void grn_ctx_set_calloc(grn_ctx *ctx, grn_calloc_func calloc_func);
-grn_realloc_func grn_ctx_get_realloc(grn_ctx *ctx);
-void grn_ctx_set_realloc(grn_ctx *ctx, grn_realloc_func realloc_func);
-grn_strdup_func grn_ctx_get_strdup(grn_ctx *ctx);
-void grn_ctx_set_strdup(grn_ctx *ctx, grn_strdup_func strdup_func);
-grn_free_func grn_ctx_get_free(grn_ctx *ctx);
-void grn_ctx_set_free(grn_ctx *ctx, grn_free_func free_func);
-
-void *grn_malloc(grn_ctx *ctx, size_t size, const char* file, int line, const char *func);
-void *grn_calloc(grn_ctx *ctx, size_t size, const char* file, int line, const char *func);
-void *grn_realloc(grn_ctx *ctx, void *ptr, size_t size, const char* file, int line, const char *func);
-char *grn_strdup(grn_ctx *ctx, const char *s, const char* file, int line, const char *func);
-void grn_free(grn_ctx *ctx, void *ptr, const char *file, int line, const char *func);
-#else
-#  define grn_malloc  grn_malloc_default
-#  define grn_calloc  grn_calloc_default
-#  define grn_realloc grn_realloc_default
-#  define grn_strdup  grn_strdup_default
-#  define grn_free    grn_free_default
-#endif
-
-GRN_API void *grn_malloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const char *func);
-void *grn_calloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const char *func);
-void *grn_realloc_default(grn_ctx *ctx, void *ptr, size_t size, const char* file, int line, const char *func);
-GRN_API char *grn_strdup_default(grn_ctx *ctx, const char *s, const char* file, int line, const char *func);
-GRN_API void grn_free_default(grn_ctx *ctx, void *ptr, const char* file, int line, const char *func);
-
-#ifdef USE_FAIL_MALLOC
-int grn_fail_malloc_check(size_t size, const char *file, int line, const char *func);
-void *grn_malloc_fail(grn_ctx *ctx, size_t size, const char* file, int line, const char *func);
-void *grn_calloc_fail(grn_ctx *ctx, size_t size, const char* file, int line, const char *func);
-void *grn_realloc_fail(grn_ctx *ctx, void *ptr, size_t size, const char* file, int line, const char *func);
-char *grn_strdup_fail(grn_ctx *ctx, const char *s, const char* file, int line, const char *func);
 #endif
 
 void grn_assert(grn_ctx *ctx, int cond, const char* file, int line, const char* func);
@@ -542,10 +459,6 @@ void grn_log_reopen(grn_ctx *ctx);
 
 GRN_API grn_rc grn_ctx_sendv(grn_ctx *ctx, int argc, char **argv, int flags);
 GRN_API void grn_ctx_set_next_expr(grn_ctx *ctx, grn_obj *expr);
-
-int grn_alloc_count(void);
-
-void grn_debug_dump_alloc_info(grn_ctx *ctx);
 
 grn_content_type grn_get_ctype(grn_obj *var);
 

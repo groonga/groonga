@@ -200,7 +200,7 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   GRN_OUTPUT_MAP_CLOSE();
 
 #ifdef USE_MEMORY_DEBUG
-  grn_debug_dump_alloc_info(&grn_gctx);
+  grn_alloc_info_dump(&grn_gctx);
 #endif /* USE_MEMORY_DEBUG */
 
   return NULL;
