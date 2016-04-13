@@ -3686,20 +3686,36 @@ grn_table_group_single_key_records(grn_ctx *ctx, grn_obj *table,
       switch (bulk.header.type) {
       case GRN_UVECTOR :
         {
-          // todo : support objects except grn_id
-          grn_id *v = (grn_id *)GRN_BULK_HEAD(&bulk);
-          grn_id *ve = (grn_id *)GRN_BULK_CURR(&bulk);
-          while (v < ve) {
-            if ((*v != GRN_ID_NIL) &&
-                grn_table_add_v_inline(ctx, res,
-                                       v, sizeof(grn_id), &value, NULL)) {
-              grn_table_group_add_subrec(ctx, res, value,
-                                         ri ? ri->score : 0,
-                                         (grn_rset_posinfo *)&id, 0,
-                                         calc_target,
-                                         &value_buffer);
+          grn_bool is_reference;
+          unsigned int element_size;
+          uint8_t *elements;
+          int i, n_elements;
+
+          is_reference = !grn_type_id_is_builtin(ctx, bulk.header.type);
+
+          element_size = grn_uvector_element_size(ctx, &bulk);
+          elements = GRN_BULK_HEAD(&bulk);
+          n_elements = GRN_BULK_VSIZE(&bulk) / element_size;
+          for (i = 0; i < n_elements; i++) {
+            uint8_t *element = elements + (element_size * i);
+
+            if (is_reference) {
+              grn_id id = *((grn_id *)element);
+              if (id == GRN_ID_NIL) {
+                continue;
+              }
             }
-            v++;
+
+            if (!grn_table_add_v_inline(ctx, res, element, element_size,
+                                        &value, NULL)) {
+              continue;
+            }
+
+            grn_table_group_add_subrec(ctx, res, value,
+                                       ri ? ri->score : 0,
+                                       (grn_rset_posinfo *)&id, 0,
+                                       calc_target,
+                                       &value_buffer);
           }
         }
         break;

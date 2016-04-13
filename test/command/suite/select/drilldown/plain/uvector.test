@@ -1,0 +1,16 @@
+table_create Games TABLE_HASH_KEY ShortText
+column_create Games scores COLUMN_VECTOR UInt64
+
+load --table Games
+[
+{"_key": "Game1", "scores": [100, 200, 300]},
+{"_key": "Game2", "scores": [100, 200, 400]},
+{"_key": "Game3", "scores": [100, 400, 800, 1600]}
+]
+
+select Games \
+  --limit 0 \
+  --output_columns _id \
+  --drilldown scores \
+  --drilldown_output_columns _key,_nsubrecs \
+  --drilldown_sortby -_nsubrecs,_id
