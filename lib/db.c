@@ -4179,10 +4179,10 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
         flags = GRN_TABLE_HASH_KEY|
           GRN_OBJ_WITH_SUBREC|
           GRN_OBJ_UNIT_USERDEF_DOCUMENT;
-        if (n_keys == 1) {
-          key_type = grn_ctx_at(ctx, grn_obj_get_range(ctx, keys[0].key));
-        } else if (group_by_all_records) {
+        if (group_by_all_records) {
           key_type = grn_ctx_at(ctx, GRN_DB_SHORT_TEXT);
+        } else if (n_keys == 1) {
+          key_type = grn_ctx_at(ctx, grn_obj_get_range(ctx, keys[0].key));
         } else {
           flags |= GRN_OBJ_KEY_VAR_SIZE;
         }
@@ -4202,12 +4202,12 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
         DB_OBJ(rp->table)->flags.group = rp->flags;
       }
     }
-    if (n_keys == 1 && n_results == 1) {
+    if (group_by_all_records) {
+      grn_table_group_all_records(ctx, table, results);
+    } else if (n_keys == 1 && n_results == 1) {
       if (!accelerated_table_group(ctx, table, keys->key, results)) {
         grn_table_group_single_key_records(ctx, table, keys->key, results);
       }
-    } else if (group_by_all_records) {
-      grn_table_group_all_records(ctx, table, results);
     } else {
       grn_bool have_vector = GRN_FALSE;
       for (k = 0, kp = keys; k < n_keys; k++, kp++) {
