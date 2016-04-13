@@ -1,0 +1,3 @@
+table_create Points TABLE_NO_KEY --value_type WGS84GeoPoint
+
+object_inspect Points

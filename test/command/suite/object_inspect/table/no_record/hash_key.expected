@@ -1,0 +1,43 @@
+table_create Users TABLE_HASH_KEY ShortText Int32
+[[0,0.0,0.0],true]
+object_inspect Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "id": 256,
+    "name": "Users",
+    "type": {
+      "id": 48,
+      "name": "table:hash_key"
+    },
+    "key": {
+      "type": {
+        "id": 14,
+        "name": "ShortText",
+        "type": {
+          "id": 32,
+          "name": "type"
+        },
+        "size": 4096
+      },
+      "total_size": 0,
+      "max_total_size": 4294967295
+    },
+    "value": {
+      "type": {
+        "id": 8,
+        "name": "Int32",
+        "type": {
+          "id": 32,
+          "name": "type"
+        },
+        "size": 4
+      }
+    },
+    "n_records": 0
+  }
+]

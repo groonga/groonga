@@ -1,0 +1,3 @@
+table_create Users TABLE_HASH_KEY ShortText Int32
+
+object_inspect Users

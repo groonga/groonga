@@ -1,0 +1,31 @@
+table_create Points TABLE_NO_KEY --value_type WGS84GeoPoint
+[[0,0.0,0.0],true]
+object_inspect Points
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "id": 256,
+    "name": "Points",
+    "type": {
+      "id": 51,
+      "name": "table:no_key"
+    },
+    "key": null,
+    "value": {
+      "type": {
+        "id": 18,
+        "name": "WGS84GeoPoint",
+        "type": {
+          "id": 32,
+          "name": "type"
+        },
+        "size": 8
+      }
+    },
+    "n_records": 0
+  }
+]

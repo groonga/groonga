@@ -1,0 +1,31 @@
+table_create Users TABLE_DAT_KEY ShortText
+[[0,0.0,0.0],true]
+object_inspect Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "id": 256,
+    "name": "Users",
+    "type": {
+      "id": 50,
+      "name": "table:dat_key"
+    },
+    "key": {
+      "type": {
+        "id": 14,
+        "name": "ShortText",
+        "type": {
+          "id": 32,
+          "name": "type"
+        },
+        "size": 4096
+      }
+    },
+    "value": null,
+    "n_records": 0
+  }
+]
