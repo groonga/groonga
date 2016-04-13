@@ -4169,7 +4169,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
 {
   grn_rc rc = GRN_SUCCESS;
   grn_bool group_by_all_records = GRN_FALSE;
-  if (n_keys == 0 && n_results == 1 && results[0].calc_target) {
+  if (n_keys == 0 && n_results == 1) {
     group_by_all_records = GRN_TRUE;
   } else if (!table || !n_keys || !n_results) {
     ERR(GRN_INVALID_ARGUMENT, "table or n_keys or n_results is void");

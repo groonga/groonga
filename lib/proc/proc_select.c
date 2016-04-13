@@ -607,6 +607,8 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
     result->flags = GRN_TABLE_GROUP_CALC_COUNT;
     result->op = 0;
     result->max_n_subrecs = 0;
+    result->key_begin = 0;
+    result->key_end = 0;
     result->calc_target = NULL;
 
     if (drilldown->table_name) {
@@ -630,21 +632,22 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
       }
     }
 
-    keys = grn_table_sort_key_from_str(ctx,
-                                       drilldown->keys,
-                                       drilldown->keys_len,
-                                       target_table, &n_keys);
+    if (drilldown->keys_len > 0) {
+      keys = grn_table_sort_key_from_str(ctx,
+                                         drilldown->keys,
+                                         drilldown->keys_len,
+                                         target_table, &n_keys);
+      if (!keys) {
+        GRN_PLUGIN_CLEAR_ERROR(ctx);
+        continue;
+      }
 
-    if (!keys && !drilldown->calc_target_name) {
-      GRN_PLUGIN_CLEAR_ERROR(ctx);
-      continue;
-    }
-
-    if (n_keys > 1) {
-      result->max_n_subrecs = 1;
-      result->key_begin = 0;
       result->key_end = n_keys - 1;
+      if (n_keys > 1) {
+        result->max_n_subrecs = 1;
+      }
     }
+
     if (drilldown->calc_target_name) {
       result->calc_target = grn_obj_column(ctx, target_table,
                                            drilldown->calc_target_name,
@@ -655,7 +658,9 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
     }
 
     grn_table_group(ctx, target_table, keys, n_keys, result, 1);
-    grn_table_sort_key_close(ctx, keys, n_keys);
+    if (keys) {
+      grn_table_sort_key_close(ctx, keys, n_keys);
+    }
   }
 
 exit :
@@ -1158,37 +1163,30 @@ proc_select_find_all_drilldown_labels(grn_ctx *ctx, grn_user_data *user_data,
   grn_table_cursor *cursor;
   cursor = grn_table_cursor_open(ctx, vars, NULL, 0, NULL, 0, 0, -1, 0);
   if (cursor) {
-#define N_SUFFIXES 3
     const char *prefix = "drilldown[";
     int prefix_len = strlen(prefix);
-    const char *suffixes[N_SUFFIXES] = {"].keys", "].table", "].calc_target"};
-    int suffix_len;
     while (grn_table_cursor_next(ctx, cursor)) {
       void *key;
       char *name;
       int name_len;
       name_len = grn_table_cursor_get_key(ctx, cursor, &key);
       name = key;
-      suffix_len = 0;
-      if (name_len >= prefix_len &&
+      if (name_len > prefix_len + 1 &&
           strncmp(prefix, name, prefix_len) == 0) {
-        int i;
-        for (i = 0; i < N_SUFFIXES; i++) {
-          int len = strlen(suffixes[i]);
-          if (name_len >= (prefix_len + 1 + len) &&
-              strncmp(suffixes[i], name + name_len - len, len) == 0) {
-            suffix_len = len;
-            break;
-          }
+        const char *label_end;
+        size_t label_len;
+        label_end = memchr(name + prefix_len + 1,
+                           ']',
+                           name_len - prefix_len - 1);
+        if (!label_end) {
+          continue;
         }
-        if (suffix_len > 0) {
-          grn_table_add(ctx, labels,
-                        name + prefix_len,
-                        name_len - prefix_len - suffix_len,
-                        NULL);
-        }
+        label_len = (label_end - name) - prefix_len;
+        grn_table_add(ctx, labels,
+                      name + prefix_len,
+                      label_len,
+                      NULL);
       }
-#undef N_SUFFIXES
     }
     grn_table_cursor_close(ctx, cursor);
   }
