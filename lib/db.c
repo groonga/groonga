@@ -12621,13 +12621,37 @@ grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned int str_size
           } else {
             if (r - p == GRN_COLUMN_NAME_SCORE_LEN &&
                 memcmp(p, GRN_COLUMN_NAME_SCORE, GRN_COLUMN_NAME_SCORE_LEN) == 0) {
+              char table_name[GRN_TABLE_MAX_KEY_SIZE];
+              int table_name_size;
+              table_name_size = grn_obj_name(ctx, table,
+                                             table_name,
+                                             GRN_TABLE_MAX_KEY_SIZE);
+              if (table_name_size == 0) {
+                grn_strcpy(table_name, GRN_TABLE_MAX_KEY_SIZE, "(anonymous)");
+                table_name_size = strlen(table_name);
+              }
               GRN_LOG(ctx, GRN_WARN,
-                      "ignore invalid sort key: <%.*s>(<%.*s>)",
-                      (int)(r - p), p, str_size, str);
+                      "ignore invalid sort key: <%.*s>: "
+                      "table:<%*.s> keys:<%.*s>",
+                      (int)(r - p), p,
+                      table_name_size, table_name,
+                      str_size, str);
             } else {
+              char table_name[GRN_TABLE_MAX_KEY_SIZE];
+              int table_name_size;
+              table_name_size = grn_obj_name(ctx, table,
+                                             table_name,
+                                             GRN_TABLE_MAX_KEY_SIZE);
+              if (table_name_size == 0) {
+                grn_strcpy(table_name, GRN_TABLE_MAX_KEY_SIZE, "(anonymous)");
+                table_name_size = strlen(table_name);
+              }
               WARN(GRN_INVALID_ARGUMENT,
-                   "invalid sort key: <%.*s>(<%.*s>)",
-                   (int)(r - p), p, str_size, str);
+                   "invalid sort key: <%.*s>: "
+                   "table:<%.*s> keys:<%.*s>",
+                   (int)(r - p), p,
+                   table_name_size, table_name,
+                   str_size, str);
               break;
             }
           }
