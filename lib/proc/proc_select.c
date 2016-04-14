@@ -847,7 +847,11 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
         drilldown->keys_len + 1 +
         drilldown->sortby_len + 1 +
         drilldown->output_columns_len + 1 +
-        sizeof(int) * 2;
+        drilldown->label_len + 1 +
+        drilldown->calc_target_name_len + 1 +
+        drilldown->table_name_len + 1 +
+        sizeof(int) * 2 +
+        sizeof(grn_table_group_flags);
     }
   }
   if (cache_key_size <= GRN_CACHE_MAX_KEY_SIZE) {
@@ -877,6 +881,12 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
         cp += drilldown->sortby_len; *cp++ = '\0';
         grn_memcpy(cp, drilldown->output_columns, drilldown->output_columns_len);
         cp += drilldown->output_columns_len; *cp++ = '\0';
+        grn_memcpy(cp, drilldown->label, drilldown->label_len);
+        cp += drilldown->label_len; *cp++ = '\0';
+        grn_memcpy(cp, drilldown->calc_target_name, drilldown->calc_target_name_len);
+        cp += drilldown->calc_target_name_len; *cp++ = '\0';
+        grn_memcpy(cp, drilldown->table_name, drilldown->table_name_len);
+        cp += drilldown->table_name_len; *cp++ = '\0';
       }
     }
     grn_memcpy(cp, match_escalation_threshold, match_escalation_threshold_len);
@@ -905,6 +915,8 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
         cp += sizeof(int);
         grn_memcpy(cp, &(drilldown->limit), sizeof(int));
         cp += sizeof(int);
+        grn_memcpy(cp, &(drilldown->calc_types), sizeof(grn_table_group_flags));
+        cp += sizeof(grn_table_group_flags);
       }
     }
     cache_value = grn_cache_fetch(ctx, cache_obj, cache_key, cache_key_size);
