@@ -29,7 +29,17 @@ Syntax
 ------
 ::
 
- suggest types table column query [sortby [output_columns [offset [limit [frequency_threshold [conditional_probability_threshold [prefix_search]]]]]]]
+ suggest types
+         table
+         column
+         query
+         [sortby=-_score]
+         [output_columns=_key,_score]
+         [offset=0]
+         [limit=10]
+         [frequency_threshold=100]
+         [conditional_probability_threshold=0.2]
+         [prefix_search=auto]
 
 Usage
 -----
