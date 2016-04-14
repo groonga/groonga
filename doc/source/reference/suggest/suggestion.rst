@@ -3,7 +3,7 @@
 .. highlightlang:: none
 
 .. groonga-command
-.. % groonga-suggest-create-dataset /tmp/groonga-databases/suggestion query
+.. % groonga-suggest-create-dataset /tmp/groonga-databases/suggestion example
 .. database: suggestion
 
 Suggestion

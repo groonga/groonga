@@ -3,7 +3,7 @@
 .. highlightlang:: none
 
 .. groonga-command
-.. % groonga-suggest-create-dataset /tmp/groonga-databases/completion query
+.. % groonga-suggest-create-dataset /tmp/groonga-databases/completion example
 .. database: completion
 
 Completion
@@ -144,7 +144,7 @@ How to use
 ----------
 
 .. groonga-command
-.. load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
+.. load --table event_example --each 'suggest_preparer(_id, type, item, sequence, time, pair_example)'
 .. [
 .. {"sequence": "1", "time": 1312950803.86057, "item": "e"},
 .. {"sequence": "1", "time": 1312950803.96857, "item": "en"},
@@ -162,7 +162,7 @@ For example, here is an command to get completion results by
 
 .. groonga-command
 .. include:: ../../example/reference/suggest/complete/select.log
-.. suggest --table item_query --column kana --types complete --frequency_threshold 1 --query en
+.. suggest --table item_example --column kana --types complete --frequency_threshold 1 --query en
 
 How it learns
 -------------
@@ -185,7 +185,7 @@ inputs the query with the following sequence:
 Groonga can be learned from the input sequence by the
 following command::
 
-  load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
+  load --table event_example --each 'suggest_preparer(_id, type, item, sequence, time, pair_example)'
   [
   {"sequence": "1", "time": 1312950803.86057, "item": "e"},
   {"sequence": "1", "time": 1312950803.96857, "item": "en"},
@@ -205,7 +205,7 @@ Here is an example to register "日本" which means Japan in English:
 
 .. groonga-command
 .. include:: ../../example/reference/suggest/complete/registered-word-japan.log
-.. load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
+.. load --table event_example --each 'suggest_preparer(_id, type, item, sequence, time, pair_example)'
 .. [
 .. {"sequence": "1", "time": 1312950805.86058, "item": "日本", "type": "submit"}
 .. ]
@@ -215,7 +215,7 @@ Here is an example to update reading data to complete "日本":
 
 .. groonga-command
 .. include:: ../../example/reference/suggest/complete/update-rk-data.log
-.. load --table item_query
+.. load --table item_example
 .. [
 .. {"_key":"日本", "kana":["ニホン", "ニッポン"]}
 .. ]
@@ -225,13 +225,13 @@ Then you can complete registered word "日本" by Romaji input -
 
 .. groonga-command
 .. include:: ../../example/reference/suggest/complete/rk-search-nihon.log
-.. suggest --table item_query --column kana --types complete --frequency_threshold 1 --query nihon
+.. suggest --table item_example --column kana --types complete --frequency_threshold 1 --query nihon
 
 Without loading above reading data, you can't complete registered word
 "日本" by query - "nihon".
 
 You can register multiple readings for a registered word because
-``kana`` column in ``item_query`` table is defined as a
+``kana`` column in ``item_example`` table is defined as a
 :doc:`/reference/columns/vector`.
 
 This is the reason that you can also complete the registered word "日本"
@@ -239,33 +239,33 @@ by query - "nippon".
 
 .. groonga-command
 .. include:: ../../example/reference/suggest/complete/rk-search-nippon.log
-.. suggest --table item_query --column kana --types complete --frequency_threshold 1 --query nippon
+.. suggest --table item_example --column kana --types complete --frequency_threshold 1 --query nippon
 
 This feature is very convenient because you can search registered word
 even though Japanese input method is disabled.
 
 If there are multiple candidates as completed result, you can
 customize priority to set the value of ``boost`` column in
-``item_query`` table.
+``item_example`` table.
 
 Here is an example to customize priority for prefix RK search:
 
 .. groonga-command
 .. include:: ../../example/reference/suggest/complete/registered-word-japanese.log
-.. load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
+.. load --table event_example --each 'suggest_preparer(_id, type, item, sequence, time, pair_example)'
 .. [
 .. {"sequence": "1", "time": 1312950805.86059, "item": "日本語", "type": "submit"}
 .. {"sequence": "1", "time": 1312950805.86060, "item": "日本人", "type": "submit"}
 .. ]
-.. load --table item_query
+.. load --table item_example
 .. [
 .. {"_key":"日本語", "kana":"ニホンゴ"}
 .. {"_key":"日本人", "kana":"ニホンジン"}
 .. ]
-.. suggest --table item_query --column kana --types complete --frequency_threshold 1 --query nihon
-.. load --table item_query
+.. suggest --table item_example --column kana --types complete --frequency_threshold 1 --query nihon
+.. load --table item_example
 .. [
 .. {"_key":"日本人", "boost": 100},
 .. ]
-.. suggest --table item_query --column kana --types complete --frequency_threshold 1 --query nihon
+.. suggest --table item_example --column kana --types complete --frequency_threshold 1 --query nihon
 
