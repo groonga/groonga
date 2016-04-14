@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8; -*-　
 
-from subprocess import *
+import subprocess
 from select import select
 from sys import argv,stdout
 import os
@@ -32,13 +32,16 @@ def reconnect(name):
   close_groonga()
   current_db_path = os.path.join(DB_DIRECTORY, name)
   if os.path.exists(current_db_path):
-    groonga_process = Popen(["groonga", current_db_path],
-                            stdin=PIPE,
-                            stdout=PIPE)
+    groonga_process = subprocess.Popen(["groonga", current_db_path],
+                                       stdin=subprocess.PIPE,
+                                       stdout=subprocess.PIPE)
   else:
-    groonga_process = Popen(["groonga", "-n", current_db_path],
-                            stdin=PIPE,
-                            stdout=PIPE)
+    groonga_process = subprocess.Popen(["groonga", "-n", current_db_path],
+                                       stdin=subprocess.PIPE,
+                                       stdout=subprocess.PIPE)
+  groonga_process.stdin.write("status\n")
+  groonga_process.stdin.flush()
+  groonga_process.stdout.readline()
   print '###>>> database: open <%s>' % current_db_path
 
 def expand_command_line(command_line):
@@ -180,9 +183,17 @@ def readfile(fname, outflag):
         elif cmd.startswith('.. % '):
           command_line = cmd[5:]
           if fout:
-            fout.write("  " + command_line + "\n")
+            fout.write("  % " + command_line + "\n")
           print command_line
-          os.system(expand_command_line(command_line))
+          expanded_command_line = expand_command_line(command_line)
+          command_output = subprocess.check_output(expanded_command_line,
+                                                   shell=True)
+          if fout:
+            first_lines_re = re.compile("^", re.M)
+            fout.write(first_lines_re.sub("  ", command_output.strip()))
+            fout.write("\n")
+          else:
+            print command_output
         elif cmd.startswith('.. .. '):
           command_line = cmd[6:]
           if fout:
