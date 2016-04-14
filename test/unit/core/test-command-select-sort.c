@@ -258,7 +258,7 @@ test_nonexistent(void)
   grn_test_assert_send_command_error(
     context,
     GRN_INVALID_ARGUMENT,
-    "invalid sort key: <nonexistent>(<_score,nonexistent>)",
+    "invalid sort key: <nonexistent>: table:<Sites> keys:<_score,nonexistent>",
     "select Sites "
     "--sortby \"_score,nonexistent\" "
     "--output_columns \"_key\"");
