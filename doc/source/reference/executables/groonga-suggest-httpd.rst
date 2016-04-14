@@ -5,173 +5,318 @@
 .. groonga-command
 .. database: groonga-suggest-httpd
 
-groonga-suggest-httpd
-=====================
+``groonga-suggest-httpd``
+=========================
 
 Summary
 -------
 
-groonga-suggest-httpd is a program to provide interface which accepts HTTP request and returns suggestion dataset, then saves logs for learning.
-groonga-suggest-httpd behaves similar in point of view of suggestion functionality, but the name of parameter is different.
+``groonga-suggest-httpd`` is a program that provides HTTP interface
+for the following features:
+
+  * Returning :doc:`/reference/suggest` execution result
+  * Saving logs for learning
+
+``groonga-suggest-httpd`` provides suggest feature like
+:doc:`/reference/commands/suggest` command. Note that some parameter
+names are different of them.
 
 Syntax
 ------
 
 ``groonga-suggest-httpd`` requires database path::
 
-  groonga-suggest-httpd [options] database_path
+  groonga-suggest-httpd [options] DATABASE_PATH
 
 Usage
 -----
 
-Set up
-^^^^^^
+You need to create one or more datasets to use
+``groonga-suggest-httpd``. A dataset consists of tables and
+columns. You can define them by :doc:`groonga-suggest-create-dataset`.
 
-First you need to set up database for suggestion.
+You need to use :doc:`groonga-suggest-learner` to learn suggestion
+data from user inputs. You doesn't need to use
+:doc:`groonga-suggest-learner` when you create suggestion data by
+hand. See :doc:`/reference/suggest` and sub documents about creating
+suggestion data by hand.
+
+You can use ``groonga-suggest-httpd`` via HTTP after you create one or
+more datasets.
+
+The following sections describes the followings:
+
+  * How to set up a dataset
+  * How to use ``groonga-suggest-httpd`` with :doc:`groonga-suggest-learner`
+  * How to use ``groonga-suggest-httpd`` for retrieving suggestions.
+
+Setup
+^^^^^
+
+You need to create a dataset by :doc:`groonga-suggest-create-dataset`.
+
+Here is an example that creates ``query`` dataset:
 
 .. groonga-command
 .. include:: ../../example/reference/executables/groonga-suggest-httpd-setup.log
-.. .. % groonga-suggest-create-dataset /tmp/groonga-databases/groonga-suggest-httpd query
+.. % groonga-suggest-create-dataset ${DB_PATH} query
 
-Launch groonga-suggest-httpd
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+:doc:`groonga-suggest-create-dataset` outputs executed commands. You
+can confirm that what tables and columns are created for the new
+dataset.
 
-Execute groonga-suggest-httpd command:
+Launch ``groonga-suggest-learner``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can choose whether you use learned suggestion data immediately or
+not.
+
+There are two ways to use learned suggestion data immediately:
+
+  * Both of ``groonga-suggest-httpd`` and
+    :doc:`groonga-suggest-learner` use the same database
+  * ``groonga-suggest-httpd`` receives learned suggestion data from
+    :doc:`groonga-suggest-learner`
+
+In the former case, you must run both ``groonga-suggest-httpd`` and
+:doc:`groonga-suggest-learner` on the same host.
+
+In the latter case, you can run ``groonga-suggest-httpd`` and
+:doc:`groonga-suggest-learner` on different hosts.
+
+If you don't need to use learned suggestion data immediately, you need
+to apply learned suggestion data from database that is used by
+:doc:`groonga-suggest-learner` to database that is used by
+``groonga-suggest-httpd`` by hand. Normally, this usage is
+recommended. Because learned suggestion data may have garbage data by
+inputs from evil users.
+
+In this document, learned suggestion data are used immediately by
+receiving learned suggestion data from
+:doc:`groonga-suggest-learner`. Both ``groonga-suggest-httpd`` and
+:doc:`groonga-suggest-learner` are running on the same host. Because
+it's easy to explain.
+
+Here is an example that launches :doc:`groonga-suggest-learner`. You
+need to specify database that has ``query`` dataset. This document
+omits the instruction for creating ``query`` dataset:
+
+.. groonga-command
+.. database: groonga-suggest-httpd-learner
+.. % groonga-suggest-create-dataset ${DB_PATH} query
+
+.. groonga-command
+.. include:: ../../example/reference/executables/groonga-suggest-httpd-launch-lerner.log
+.. % groonga-suggest-learner --daemon ${DB_PATH}
+
+The ``groonga-suggest-learner`` process opens two endpoints at
+``1234`` port and ``1235`` port:
+
+  * ``1234`` port: Endpoint that accepts user input data from
+    ``groogna-suggest-httpd``
+  * ``1235`` port: Endpoint that sends learned suggestion data to
+    ``groogna-suggest-httpd``
+
+Launch ``groonga-suggest-httpd``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You need to launch ``groonga-suggest-httpd`` for the following proposes:
+
+  * Learning suggestion data from user inputs
+  * Providing suggestion result to clients
+
+Here is an example that launches ``groonga-suggest-httpd`` that
+communicates :doc:`groonga-suggest-learner`:
+
+.. groonga-command
+.. database: groonga-suggest-httpd
 
 .. groonga-command
 .. include:: ../../example/reference/executables/groonga-suggest-httpd-launch.log
-.. .. % groonga-suggest-httpd /tmp/groonga-databases/groonga-suggest-httpd
+.. % groonga-suggest-httpd --send-endpoint 'tcp://127.0.0.1:1234' --receive-endpoint 'tcp://127.0.0.1:1235' --daemon ${DB_PATH}
 
-After executing above command, groonga-suggest-httpd accepts HTTP request on 8080 port.
+TODO: httpd and learner communication doesn't work...
 
-If you just want to save requests into log file, use ``-l`` option.
+The ``groonga-suggest-httpd`` process accepts HTTP requests on
+``8080`` port.
 
-Here is the example to save log files under ``logs`` directory with ``log`` prefix for each file.::
+If you want to save requests into log file, use
+:option:`--log-base-path` option.
 
-  % groonga-suggest-httpd -l logs/log /tmp/groonga-databases/groonga-suggest-httpd
+Here is an example to save log files under ``logs`` directory with
+``log`` prefix for each file::
 
-Under ``logs`` directory, log files such as ``logYYYYmmddHHMMSS-00`` are created.
+  % groonga-suggest-httpd --log-base-path logs/log ${DB_PATH}
 
-Request to groonga-suggest-httpd
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``groonga-suggest-httpd`` create log files such as
+``logYYYYmmddHHMMSS-00`` under ``logs`` directory.
 
-Here is the sample requests to learn ``groonga`` for ``query`` dataset::
+Learn from user inputs
+^^^^^^^^^^^^^^^^^^^^^^
 
-  % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=92619&t=complete&q=g'
-  % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=93850&t=complete&q=gr'
-  % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=94293&t=complete&q=gro'
-  % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=94734&t=complete&q=groo'
-  % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95147&t=complete&q=grooon'
-  % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95553&t=complete&q=groonga'
-  % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95959&t=submit&q=groonga
+Here are example requests to learn user input "Groonga" in ``query``
+dataset::
 
-Options
--------
+.. groonga-command
+.. include:: ../../example/reference/executables/groonga-suggest-httpd-learn.log
+.. % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=92619&t=complete&q=G'
+.. % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=93850&t=complete&q=Gr'
+.. % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=94293&t=complete&q=Gro'
+.. % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=94734&t=complete&q=Groo'
+.. % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95147&t=complete&q=Grooon'
+.. % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95553&t=complete&q=Groonga'
+.. % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95959&t=submit&q=Groonga'
 
-.. cmdoption:: -p, --port
+Inputting data must use ``t=complete`` parameter.
 
-   Specify HTTP server port number. The default value is 8080.
+Submitted data must use ``t=submit`` parameter.
 
-.. cmdoption:: -t, --n-threads
+Use suggested response
+^^^^^^^^^^^^^^^^^^^^^^
 
-   Specify number of threads. The default value is the number of CPU cores.
-   This option accepts 128 as the max value, but use the number of CPU cores for
-   performance.
-
-.. cmdoption:: -s, --send-endpoint
-
-   Specify endpoint for sender.
-
-.. cmdoption:: -r, --receive-endpoint
-
-   Specify endpoint for receiver.
-
-.. cmdoption:: -l, --log-base-path
-
-   Specify path prefix of log.
-
-.. cmdoption:: --n-lines-per-log-file
-
-   Specify the max number of lines in a log file. The default value is 1,000,000.
-
-.. cmdoption:: -d, --daemon
-
-   Specify this option to daemonize.
-
-.. cmdoption:: --disable-max-fd-check
-
-   Specify this option to disable checking max fd on start.
+TODO
 
 Command line parameters
 -----------------------
 
-There is one required parameter - ``database_path``.
+Required parameters
+^^^^^^^^^^^^^^^^^^^
 
-``database_path``
-^^^^^^^^^^^^^^^^^
+There is one required parameter.
 
-Specifies the path to a Groonga database. This database must be
-created by :doc:`groonga-suggest-create-dataset` command because it
-executes required initialization for suggestion.
+``DATABASE_PATH``
+"""""""""""""""""
 
+Specifies the path to a Groonga database. This database must have one
+or more datasets. Each dataset must be created by
+:doc:`groonga-suggest-create-dataset`.
+
+Optional parameters
+^^^^^^^^^^^^^^^^^^^
+
+.. option:: -p, --port
+
+   Specify HTTP server port number.
+
+   The default port number is ``8080``.
+
+.. option:: -t, --n-threads
+
+   Specify number of threads.
+
+   This option accepts ``128`` as the max value, but use the number of
+   CPU cores for performance.
+
+   The default value is the number of CPU cores.
+
+.. option:: -s, --send-endpoint
+
+   Specify endpoint URI of learner for sending learning data.
+
+   The format is ``tcp://${HOST}:${PORT}`` such as
+   ``tcp://192.168.0.1:2929``.
+
+   The default value is none.
+
+.. option:: -r, --receive-endpoint
+
+   Specify endpoint URI of learner for receiving learning data.
+
+   The format is ``tcp://${HOST}:${PORT}`` such as
+   ``tcp://192.168.0.1:2929``.
+
+   The default value is none.
+
+.. option:: -l, --log-base-path
+
+   Specify path prefix of log.
+
+   The default value is none.
+
+.. option:: --n-lines-per-log-file
+
+   Specify the max number of lines in a log file.
+
+   The default value is ``1000000``.
+
+.. option:: -d, --daemon
+
+   Specify this option to daemonize.
+
+   Don't daemonize by default.
+
+.. option:: --disable-max-fd-check
+
+   Specify this option to disable checking the max number of file
+   descriptors on start.
+
+   Check by default.
 
 GET parameters
 --------------
 
-groonga-suggest-httpd accepts following GET parameters.
+``groonga-suggest-httpd`` accepts some GET parameters.
 
-There are required parameters which depends on type of query.
+There are required parameters which depend on query type.
+
+In ``complete``, ``correct`` or ``suggest`` query type, unhandled
+parameters are passed through :doc:`/reference/commands/suggest`. It
+means that you can use parameters of
+:doc:`/reference/commands/suggest`.
 
 Required parameters
 ^^^^^^^^^^^^^^^^^^^
 
+You must specify the following parameters.
+
 .. list-table::
    :header-rows: 1
 
    * - Key
      - Description
      - Note
-   * - q
-     - UTF-8 encoded string which user fills in form
-     - 
-   * - t
-     - The type of query. The value of type must be complete, correct, suggest or submit. It also accepts multiple type of query which is concatinated by ``|``. Note that ``submit`` is invalid value when you specify multiple type of query.
-     - 
+   * - ``q``
+     - Input by user. It must be UTF-8 encoded string.
+     -
+   * - ``t``
+     - The query type.
+
+       Available values are ``complete``, ``correct``, ``suggest`` and
+       ``submit``.
+     - You can specify multiple types except ``submit``. You need to
+       use ``|`` as separator such as ``complete|correct``. ``submit``
+       is a valid value but ``complete|submit`` is invalid value.
 
 Required parameters for learning
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+You must specify the following parameters when you specify
+:option:`--send-endpoint`.
+
 .. list-table::
    :header-rows: 1
 
    * - Key
      - Description
      - Note
-   * - s
-     - Elapsed time from 0:00 January 1, 1970
-     - Note that you need specify the value of ``s`` in milliseconds
-   * - i
-     - Unique ID to distinct user
-     - Use session ID or IP address for example
-   * - l
-     - Specify the name of dataset for learning. It also accepts multiple dataset name which is concatinated by ``|``
-     - Note that dataset name must be matched to following regular expression ``[A-Za-z ][A-Za-z0-9 ]{0,15}``
+   * - ``s``
+     - Elapsed time since ``1970-01-01T00:00:00Z``.
+     - The unit is millisecond.
+   * - ``i``
+     - Unique ID to distinct each user
+     - Session ID, IP address and so on will be usable
+       for this value.
+   * - ``l``
+     - One or more learn target dataset names. You need to use ``|``
+       as separator such as ``dataset1|dataset2|dataset3``.
+     - Dataset name is the name that you specify to
+       :doc:`groonga-suggest-create-dataset`.
 
 Required parameters for suggestion
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. list-table::
-   :header-rows: 1
-
-   * - Key
-     - Description
-     - Note
-   * - n
-     - Specify the name of dataset for suggestion
-     - This dataset name is used to calculate suggestion results
-
-Optional parameter
-^^^^^^^^^^^^^^^^^^
+You must specify the following parameters when you specify one of
+``complete``, ``correct`` and ``suggest`` to ``t`` parameter.
 
 .. list-table::
    :header-rows: 1
@@ -179,33 +324,73 @@ Optional parameter
    * - Key
      - Description
      - Note
-   * - callback
-     - Specify the name of function if you prefer JSONP as response format
-     - The name of function must be matched to reqular expression ``[A-Za-z ][A-Za-z0-9 ]{0,15}``
+   * - ``n``
+     - The dataset name to use computing suggestion result
+     - Dataset name is the name that you specify to
+       :doc:`groonga-suggest-create-dataset`.
+
+Optional parameters
+^^^^^^^^^^^^^^^^^^^
+
+Here are optional parameters.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Key
+     - Description
+     - Note
+   * - ``callback``
+     - Function name for JSONP
+     -
 
 Return value
 ------------
 
-``groonga-suggest-httpd`` command returns following response in JSON or JSONP format.
+``groonga-suggest-httpd`` returns the following format response. It's
+the same format as body of :doc:`/reference/commands/suggest`::
 
-In JSON format::
+  {
+    TYPE1: [
+      [CANDIDATE_1, SCORE_1],
+      [CANDIDATE_2, SCORE_2],
+      ...,
+      [CANDIDATE_N, SCORE_N]
+    ],
+    TYPE2: [
+      [CANDIDATE_1, SCORE_1],
+      [CANDIDATE_2, SCORE_2],
+      ...,
+      [CANDIDATE_N, SCORE_N]
+    ],
+    ...
+  }
 
-  {TYPE: [[CANDIDATE_1, SCORE_1], [CANDIDATE_2, SCORE_2], ... [CANDIDATE_N, SCORE_N]]}
+Here is the response when ``t`` is ``submit``::
 
-In JSONP format::
-
-  FUNCTION({TYPE: [[CANDIDATE_1, SCORE_1], [CANDIDATE_2, SCORE_2], ... [CANDIDATE_N, SCORE_N]]})
-
+  {}
 
 ``TYPE``
+^^^^^^^^
 
-  One of ``complete``, ``correct`` and ``suggest``.
+One of ``complete``, ``correct`` and ``suggest``.
 
 ``CANDIDATE_N``
+^^^^^^^^^^^^^^^
 
-  The string of candidate (UTF-8).
+The string of candidate in UTF-8.
 
 ``SCORE_N``
+^^^^^^^^^^^
 
-  The score.
+The score of the candidate.
 
+Candidates are sorted by score descendant.
+
+See also
+--------
+
+  * :doc:`/reference/commands/suggest`
+
+.. groonga-command
+.. % killall lt-groonga-suggest-learner lt-groonga-suggest-httpd

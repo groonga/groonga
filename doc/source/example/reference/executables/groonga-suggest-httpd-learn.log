@@ -1,0 +1,16 @@
+Execution example::
+
+  % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=92619&t=complete&q=G'
+  {}
+  % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=93850&t=complete&q=Gr'
+  {}
+  % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=94293&t=complete&q=Gro'
+  {}
+  % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=94734&t=complete&q=Groo'
+  {}
+  % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95147&t=complete&q=Grooon'
+  {}
+  % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95553&t=complete&q=Groonga'
+  {}
+  % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95959&t=submit&q=Groonga'
+  {}

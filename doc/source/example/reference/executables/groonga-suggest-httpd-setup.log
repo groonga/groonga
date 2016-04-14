@@ -1,3 +1,66 @@
 Execution example::
 
-  % groonga-suggest-create-dataset /tmp/groonga-databases/groonga-suggest-httpd query
+  % groonga-suggest-create-dataset ${DB_PATH} query
+  > register suggest/suggest
+  true
+  > table_create event_type TABLE_HASH_KEY ShortText
+  true
+  > table_create bigram TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+  true
+  > table_create kana TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+  true
+  > table_create item_query TABLE_PAT_KEY ShortText --default_tokenizer TokenDelimit --normalizer NormalizerAuto
+  true
+  > column_create bigram item_query_key COLUMN_INDEX|WITH_POSITION item_query _key
+  true
+  > column_create item_query kana COLUMN_VECTOR kana
+  true
+  > column_create kana item_query_kana COLUMN_INDEX item_query kana
+  true
+  > column_create item_query freq COLUMN_SCALAR Int32
+  true
+  > column_create item_query last COLUMN_SCALAR Time
+  true
+  > column_create item_query boost COLUMN_SCALAR Int32
+  true
+  > column_create item_query freq2 COLUMN_SCALAR Int32
+  true
+  > column_create item_query buzz COLUMN_SCALAR Int32
+  true
+  > table_create pair_query TABLE_HASH_KEY UInt64
+  true
+  > column_create pair_query pre COLUMN_SCALAR item_query
+  true
+  > column_create pair_query post COLUMN_SCALAR item_query
+  true
+  > column_create pair_query freq0 COLUMN_SCALAR Int32
+  true
+  > column_create pair_query freq1 COLUMN_SCALAR Int32
+  true
+  > column_create pair_query freq2 COLUMN_SCALAR Int32
+  true
+  > column_create item_query co COLUMN_INDEX pair_query pre
+  true
+  > table_create sequence_query TABLE_HASH_KEY ShortText
+  true
+  > table_create event_query TABLE_NO_KEY
+  true
+  > column_create sequence_query events COLUMN_VECTOR|RING_BUFFER event_query
+  true
+  > column_create event_query type COLUMN_SCALAR event_type
+  true
+  > column_create event_query time COLUMN_SCALAR Time
+  true
+  > column_create event_query item COLUMN_SCALAR item_query
+  true
+  > column_create event_query sequence COLUMN_SCALAR sequence_query
+  true
+  > table_create configuration TABLE_HASH_KEY ShortText
+  true
+  > column_create configuration weight COLUMN_SCALAR UInt32
+  true
+  > load --table configuration
+  > [
+  > {"_key": "query", "weight": 1}
+  > ]
+  1
