@@ -14,16 +14,15 @@ Summary
 groonga-suggest-httpd is a program to provide interface which accepts HTTP request and returns suggestion dataset, then saves logs for learning.
 groonga-suggest-httpd behaves similar in point of view of suggestion functionality, but the name of parameter is different.
 
-Synopsis
---------
+Syntax
+------
 
-::
+``groonga-suggest-httpd`` requires database path::
 
   groonga-suggest-httpd [options] database_path
 
 Usage
 -----
-
 
 Set up
 ^^^^^^
@@ -71,11 +70,11 @@ Options
 
 .. cmdoption:: -p, --port
 
-   Specify http server port number. The default value is 8080.
+   Specify HTTP server port number. The default value is 8080.
 
 .. cmdoption:: -t, --n-threads
 
-   Specify number of threads. The default value is 8.
+   Specify number of threads. The default value is the number of CPU cores.
    This option accepts 128 as the max value, but use the number of CPU cores for
    performance.
 
@@ -93,7 +92,7 @@ Options
 
 .. cmdoption:: --n-lines-per-log-file
 
-   Specify the number of lines in a log file. The default value is 1,000,000.
+   Specify the max number of lines in a log file. The default value is 1,000,000.
 
 .. cmdoption:: -d, --daemon
 
@@ -109,9 +108,11 @@ Command line parameters
 There is one required parameter - ``database_path``.
 
 ``database_path``
-^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^
 
-Specifies the path to a Groonga database. This database must be created by :doc:`groonga-suggest-create-dataset` command because it executes required initialization for suggestion.
+Specifies the path to a Groonga database. This database must be
+created by :doc:`groonga-suggest-create-dataset` command because it
+executes required initialization for suggestion.
 
 
 GET parameters
