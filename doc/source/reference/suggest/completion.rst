@@ -32,11 +32,11 @@ Prefix RK search
 See :doc:`/reference/operations/prefix_rk_search` for prefix RK
 search.
 
-If you create dataset which is named as ``example`` by
+If you create dataset which is named as ``query`` by
 :doc:`/reference/executables/groonga-suggest-create-dataset`
 executable file, you can update pairs of registered word and its
 reading by loading data to ``_key`` and ``kana`` column of
-``item_example`` table explicitly for prefix RK search.
+``item_query`` table explicitly for prefix RK search.
 
 Cooccurrence search
 ^^^^^^^^^^^^^^^^^^^
