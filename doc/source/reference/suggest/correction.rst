@@ -3,7 +3,7 @@
 .. highlightlang:: none
 
 .. groonga-command
-.. % groonga-suggest-create-dataset /tmp/groonga-databases/correction example
+.. % groonga-suggest-create-dataset /tmp/groonga-databases/correction query
 .. database: correction
 
 Correction
@@ -89,7 +89,7 @@ How to use
 ----------
 
 .. groonga-command
-.. load --table event_example --each 'suggest_preparer(_id, type, item, sequence, time, pair_example)'
+.. load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
 .. [
 .. {"sequence": "1", "time": 1312950803.86057, "item": "s"},
 .. {"sequence": "1", "time": 1312950803.96857, "item": "sa"},
@@ -109,7 +109,7 @@ For example, here is an command to get correction results by
 
 .. groonga-command
 .. include:: ../../example/reference/suggest/correction/select.log
-.. suggest --table item_example --column kana --types correction --frequency_threshold 1 --query saerch
+.. suggest --table item_query --column kana --types correction --frequency_threshold 1 --query saerch
 
 How it learns
 -------------
@@ -134,7 +134,7 @@ user inputs the query with the following sequence:
 Groonga can be learned from the input sequence by the
 following command::
 
-  load --table event_example --each 'suggest_preparer(_id, type, item, sequence, time, pair_example)'
+  load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
   [
   {"sequence": "1", "time": 1312950803.86057, "item": "s"},
   {"sequence": "1", "time": 1312950803.96857, "item": "sa"},
