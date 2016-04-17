@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2015 Brazil
+/*
+  Copyright(C) 2009-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -599,6 +600,11 @@ GRN_PLUGIN_INIT(grn_ctx *ctx)
   }
 
   check_mecab_dictionary_encoding(ctx);
+  if (ctx->rc != GRN_SUCCESS) {
+    grn_plugin_mutex_close(ctx, sole_mecab_mutex);
+    sole_mecab_mutex = NULL;
+  }
+
   return ctx->rc;
 }
 
