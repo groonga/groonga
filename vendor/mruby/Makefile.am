@@ -3,7 +3,8 @@ EXTRA_DIST =					\
 	CMakeLists.txt				\
 	build_config.rb				\
 	mruby_build.rb				\
-	mruby_build.timestamp
+	mruby_build.timestamp			\
+	version
 
 DEFAULT_INCLUDES =						\
 	-I$(srcdir)/../mruby-source/include			\
