@@ -161,6 +161,7 @@ module Groonga
             context = Context.instance
             cursor.each do |id|
               next if ID.builtin?(id)
+              next if builtin_object_name?(cursor.key)
               next if context[id]
               failed_to_open(cursor.key)
             end
@@ -285,6 +286,17 @@ module Groonga
             TableCursorFlags::ASCENDING |
             TableCursorFlags::BY_ID
           TableCursor.open(@database, :flags => flags, &block)
+        end
+
+        def builtin_object_name?(name)
+          case name
+          when "inspect"
+            # Just for compatibility. It's needed for users who used
+            # Groonga master at between 2016-02-03 and 2016-02-26.
+            true
+          else
+            false
+          end
         end
 
         def failed(message)

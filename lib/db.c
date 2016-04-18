@@ -13908,6 +13908,27 @@ grn_db_recover_index_column(grn_ctx *ctx, grn_obj *index_column)
   grn_index_column_rebuild(ctx, index_column);
 }
 
+static grn_bool
+grn_db_recover_is_builtin(grn_ctx *ctx, grn_id id, grn_table_cursor *cursor)
+{
+  char name[GRN_TABLE_MAX_KEY_SIZE];
+  int name_size;
+
+  if (id < GRN_N_RESERVED_TYPES) {
+    return GRN_TRUE;
+  }
+
+  name_size = grn_table_cursor_get_key(ctx, cursor, (void **)&name);
+  name[name_size] = '\0';
+  if (strcmp(name, "inspect") == 0) {
+    /* Just for compatibility. It's needed for users who used
+       Groonga master at between 2016-02-03 and 2016-02-26. */
+    return GRN_TRUE;
+  }
+
+  return GRN_FALSE;
+}
+
 grn_rc
 grn_db_recover(grn_ctx *ctx, grn_obj *db)
 {
@@ -13952,7 +13973,7 @@ grn_db_recover(grn_ctx *ctx, grn_obj *db)
       }
       grn_obj_unlink(ctx, object);
     } else {
-      if (id < GRN_N_RESERVED_TYPES) {
+      if (grn_db_recover_is_builtin(ctx, id, cursor)) {
         ERRCLR(ctx);
       }
     }
