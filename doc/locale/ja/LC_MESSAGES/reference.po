@@ -15161,20 +15161,20 @@ msgstr ""
 
 # 39316c645a5741fb8a165d2ddc234f52
 msgid "``groonga`` executable file"
-msgstr ""
+msgstr "``groonga`` 実行ファイル"
 
 msgid "``groonga`` executable file provides the following features:"
 msgstr "``groonga`` 実行ファイルは以下の機能を提供します。:"
 
 msgid "Fulltext search server"
-msgstr "全文検索(サーバー)"
+msgstr "全文検索サーバー"
 
 msgid "Fulltext search shell"
-msgstr "全文検索(シェル)"
+msgstr "全文検索シェル"
 
 # 40a324b2bae14edbbac98fc36333dd35
 msgid "Client for Groonga fulltext search server"
-msgstr ""
+msgstr "Groonga全文検索サーバーのクライアント"
 
 # 90e04f516f4d454fa6e3cc597ee85824
 msgid ""
@@ -15183,10 +15183,15 @@ msgid ""
 "embedding fulltext search feature to your application, but it's not easy to "
 "use."
 msgstr ""
+"Groongaはライブラリーとして使えます。Groongaをライブラリーとして使う場合、C、"
+"C++などの言語でプログラムを書く必要があります。ライブラリーとして使う使い方は"
+"アプリケーションに全文検索機能を組み込む場合に便利です。しかし、全文検索サー"
+"バーや全文検索シェルほどは使いやすい使い方ではありません。"
 
 # de84a793cab3446a8246cf6e63b4a78d
 msgid "You can use ``groonga`` executable file to get fulltext search feature."
 msgstr ""
+"全文検索機能を使うために ``groonga`` 実行ファイルを使うことができます。"
 
 # 66e3128729b04ef0ae2e003c91300b01
 msgid ""
@@ -15194,6 +15199,9 @@ msgid ""
 "need any server and client. You just need one terminal. You can try Groonga "
 "like the following::"
 msgstr ""
+"Groongaを試したいときは全文検索シェルの使い方が便利です。サーバーもクライアン"
+"トも必要ありません。ターミナルが1つあれば十分です。次のようにしてGroongaを試"
+"すことができます。::"
 
 # f438800a168f436cb75befdd5c05f979
 msgid ""
@@ -15202,10 +15210,15 @@ msgid ""
 "RDBMS (Relational DataBase Management System). Client-server model is a "
 "popular architecture."
 msgstr ""
+"全文検索機能を持ったアプリケーションを作る場合は全文検索サーバーとして使う使"
+"い方が便利です。RDBMS（リレーショナル・データベース管理システム）のように"
+"Groongaをサーバーとして使うことができます。クライアント・サーバーモデルはよく"
+"あるアーキテクチャーです。"
 
 # 629bf9b2aeac4628a4328238a13d190e
 msgid "Normally, client for Groonga fulltext server usage isn't used."
 msgstr ""
+"Groonga全文検索サーバーのクライアントとして使う使い方はあまり使いません。"
 
 msgid "``groonga`` executable file has the following four modes:"
 msgstr "``groonga`` 実行ファイルには以下の4つのモードがあります。"
