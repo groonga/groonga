@@ -42,7 +42,7 @@ Improvements
     ]
 
 * [:doc:`/reference/commands/shutdown`] Added ``mode`` argument to
-  shutdown immediately. Use "shutdown --mode immediate" in such a purpose.
+  shutdown immediately. Use ``shutdown --mode immediate`` in such a purpose.
 
 * [:doc:`/install/mac_os_x`] Added a instruction to setup MeCab dictionary for Homebrew.
 
@@ -50,7 +50,7 @@ Improvements
   is requested.
 
 * [:doc:`/reference/commands/table_remove`] Supported to remove
-  dependent tables. Use "--dependent yes" for it.
+  dependent tables. Use ``--dependent yes`` for it.
 
 * [:doc:`/reference/commands/logical_table_remove`] Supported to
   remove dependent tables.
@@ -77,7 +77,7 @@ Fixes
   columns parameter in load command.
 
 * [:doc:`/reference/commands/load`] Fixed a bug that only the first
-  array in `--values` is handled as a list of column names if ``--columns`` is not
+  array in ``--values`` is handled as a list of column names if ``--columns`` is not
   specified. [GitHub#497]
 
 * [:doc:`/reference/commands/load`] Fixed to check ``--columns`` more precisely
