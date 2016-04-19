@@ -61,6 +61,7 @@ else()
 endif()
 string(REGEX REPLACE "(^.*=|\n)" "" GRN_VERSION "${GRN_VERSION}")
 string(REGEX REPLACE "\\." "," GRN_VERSION_RC "${GRN_VERSION}")
+string(REGEX REPLACE "-.*$" "" GRN_VERSION_RC "${GRN_VERSION_RC}")
 
 include(CheckIncludeFile)
 include(CheckFunctionExists)
