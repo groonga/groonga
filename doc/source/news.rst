@@ -30,7 +30,9 @@ Improvements
 
     table_create Users TABLE_HASH_KEY|KEY_LARGE ShortText
 
-* [:doc:`/reference/commands/load`] Support request ID with raw JSON input case::
+* [:doc:`/reference/commands/load`] Supported
+  :doc:`/reference/command/request_id` when you specify input data as
+  raw JSON instead of parameter value::
 
     POST /d/load?table=XXX&request_id=x
     
