@@ -63,7 +63,7 @@ select Memos   --drilldown[n_records].output_columns _key,_nsubrecs
           ]
         ],
         [
-          "all_records",
+          "_all",
           4
         ]
       ]

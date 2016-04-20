@@ -73,7 +73,7 @@ select Memos   --drilldown[sum].calc_types SUM   --drilldown[sum].calc_target va
           ]
         ],
         [
-          "all_records",
+          "_all",
           19
         ]
       ]

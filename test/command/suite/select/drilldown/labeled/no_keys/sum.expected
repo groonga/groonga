@@ -102,7 +102,7 @@ select Memos   --drilldown[tag].keys tag   --drilldown[tag_sum].table tag   --dr
           ]
         ],
         [
-          "all_records",
+          "_all",
           4
         ]
       ]

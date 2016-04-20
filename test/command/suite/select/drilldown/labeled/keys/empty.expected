@@ -55,7 +55,7 @@ select Memos --limit 0 --drilldown[tag].keys ''
           ]
         ],
         [
-          "all_records",
+          "_all",
           4
         ]
       ]

@@ -3765,8 +3765,8 @@ grn_table_group_single_key_records(grn_ctx *ctx, grn_obj *table,
   GRN_OBJ_FIN(ctx, &bulk);
 }
 
-#define GRN_TABLE_GROUP_ALL_RECORDS_NAME     "all_records"
-#define GRN_TABLE_GROUP_ALL_RECORDS_NAME_LEN (sizeof(GRN_TABLE_GROUP_ALL_RECORDS_NAME) - 1)
+#define GRN_TABLE_GROUP_ALL_NAME     "_all"
+#define GRN_TABLE_GROUP_ALL_NAME_LEN (sizeof(GRN_TABLE_GROUP_ALL_NAME) - 1)
 
 static void
 grn_table_group_all_records(grn_ctx *ctx, grn_obj *table,
@@ -3782,8 +3782,8 @@ grn_table_group_all_records(grn_ctx *ctx, grn_obj *table,
     grn_id id;
     void *value;
     if (grn_table_add_v_inline(ctx, res,
-                               GRN_TABLE_GROUP_ALL_RECORDS_NAME,
-                               GRN_TABLE_GROUP_ALL_RECORDS_NAME_LEN,
+                               GRN_TABLE_GROUP_ALL_NAME,
+                               GRN_TABLE_GROUP_ALL_NAME_LEN,
                                &value, NULL)) {
       while ((id = grn_table_cursor_next_inline(ctx, tc))) {
         grn_rset_recinfo *ri = NULL;
