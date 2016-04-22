@@ -289,8 +289,8 @@ AC_CONFIG_FILES([
   data/logrotate.d/Makefile
   data/logrotate.d/centos/Makefile
   data/systemd/Makefile
-  data/systemd/fedora/Makefile
-  data/systemd/fedora/sysconfig/Makefile
+  data/systemd/centos/Makefile
+  data/systemd/centos/sysconfig/Makefile
   data/scripts/Makefile
   tools/Makefile
   doc/Makefile
