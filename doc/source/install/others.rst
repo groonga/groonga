@@ -224,16 +224,18 @@ Here is an example that installs Munin plugins for Groonga::
 ++++++++++++++++++++++++++++++++++++
 
 Installs platform specific system management files such as init
-script. Available platforms are ``redhat`` and ``fedora``. ``redhat``
-is for Red Hat and Red Hat clone distributions such as
-CentOS. ``fedora`` is for Fedora.
+script. Available platforms are ``centos``, ``centos5``, ``centos6``,
+``centos7`` and ``fedora``. Platform starts with ``centos`` are for
+Red Hat and Red Hat clone distributions such as CentOS. If ``centos``
+is specified, distribution version is guessed. ``fedora`` is for
+Fedora.
 
 Those system management files are not installed by default.
 
 Here is an example that installs CentOS specific system management
 files::
 
-  % ./configure --with-package-platform=redhat
+  % ./configure --with-package-platform=centos
 
 ``--help``
 ++++++++++
