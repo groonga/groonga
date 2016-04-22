@@ -1,4 +1,5 @@
 worker_processes 1;
+pid @GROONGA_HTTPD_PID_PATH@;
 
 # Match this to the file owner of Groonga database files if groonga-httpd is
 # run as root.
