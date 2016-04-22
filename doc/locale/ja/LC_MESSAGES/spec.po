@@ -509,11 +509,9 @@ msgstr ""
 msgid "Example"
 msgstr "例"
 
-# 5736b1d07ed84c639f562f86c1f2cf4c
 msgid "How to run a GQTP server"
 msgstr "GQTPサーバの起動"
 
-# be403c8a33364ae7af348c1b22383dcf
 msgid ""
 "Groonga has a special protocol, named Groonga Query Transfer Protocol "
 "(GQTP), for remote access to a database. The following form shows how to run "
@@ -523,13 +521,9 @@ msgstr ""
 "データベースへとリモートアクセスすることができます。以下の書式はGQTPサーバの"
 "起動方法を示しています。"
 
-# 838d93b14cf944eba08dc691cacf68df
-# 1d700a54cfa8454b974fb6baa5196fd2
-# 0c93629daa3446df985c4ffbd8ab6e9b
 msgid "Form::"
 msgstr ""
 
-# 531c3e4f3d724c80a3115db17a4481aa
 msgid ""
 "The `-s` option specifies to run Groonga as a server. DB_PATH specifies the "
 "path of the existing database to be hosted. The `-p` option and its "
@@ -541,7 +535,6 @@ msgstr ""
 "サーバのポート番号を指定することができます。ポート番号を省略した場合は10043が"
 "使用されます。"
 
-# 19c88e032b9a4e43bbb20f8c48af06dc
 msgid ""
 "The following command runs a server that listens on the default port number. "
 "The server accepts operations to the specified database."
@@ -549,11 +542,9 @@ msgstr ""
 "以下のコマンドにより、デフォルトのポート番号で待ち受けるサーバを起動すること"
 "ができます。サーバは指定されたデータベースへの操作を受け付けます。"
 
-# 39d8da9b731b414faf80025c3b73b79e
 msgid "How to run a GQTP daemon"
 msgstr "GQTPデーモンの起動"
 
-# 160381e1a4054a5ea907e31eed212759
 msgid ""
 "You can also run a GQTP server as a daemon by using the `-d` option, instead "
 "of the `-s` option."
@@ -561,7 +552,6 @@ msgstr ""
 "GQTPサーバはデーモンとして起動することができます。オプションとして、 `-s` の"
 "代わりに `-d` を与えてください。"
 
-# 97903ab658614863b4585dc39f991300
 msgid ""
 "A Groonga daemon prints its process ID as follows. In this example, the "
 "process ID is 12345. Then, the daemon opens a specified database and accepts "
@@ -571,15 +561,12 @@ msgstr ""
 "下の例では、12345というプロセスIDが表示されています。サーバとして起動した場合"
 "と同様に、指定されたデータベースへの操作を受け付けます。"
 
-# 54f5ec01c1654cd995b79ae830a277b2
 msgid "How to run a GQTP client"
 msgstr "GQTPサーバへの接続"
 
-# 1be8277e07294c299ace11a7f4330266
 msgid "You can run Groonga as a GQTP client as follows:"
 msgstr "GQTPサーバに接続するクライアントは、以下のように起動します。"
 
-# 3cd166348f0a4ea0a71ac1853998d95b
 msgid ""
 "This command establishes a connection with a GQTP server and then enters "
 "into interactive mode. HOST_NAME_OR_IP_ADDRESS specifies the hostname or the "
@@ -595,17 +582,14 @@ msgstr ""
 "サーバのポート番号を指定することができます。ポート番号を省略した場合は10043が"
 "使用されます。"
 
-# 7d0d1a6eaf124cd6b4c55d3f0b796185
 msgid ""
 "In interactive mode, Groonga reads commands from the standard input and "
 "executes them one by one."
 msgstr "対話モードでは、標準入力からコマンドを読み込んで順次実行します。"
 
-# 69bae006200d4e9f87de0843a76b26e0
 msgid "How to terminate a GQTP server"
 msgstr "GQTPサーバの終了"
 
-# f9560b4367d64c5586135e61c419165b
 msgid ""
 "You can terminate a GQTP server with a :doc:`/reference/commands/shutdown` "
 "command."
@@ -616,11 +600,9 @@ msgstr ""
 msgid "See also"
 msgstr "参照"
 
-# b6ef8381a7d04bfb99f7cec0736dad08
 msgid ":doc:`/reference/executables/groonga`"
 msgstr ""
 
-# 3f097349883044c88c95f53790e47939
 msgid ":doc:`/server/gqtp`"
 msgstr ""
 
@@ -812,7 +794,6 @@ msgstr ""
 msgid "検索の使い分け"
 msgstr ""
 
-# bce261dd0ff04bb28abc5bec966665e2
 msgid ""
 "Groongaは基本的に完全一致検索のみを行います。完全一致検索でのヒット件数が所定"
 "の閾値以下の場合に限り、非わかち書き検索を行い、それでもヒット件数が閾値以下"

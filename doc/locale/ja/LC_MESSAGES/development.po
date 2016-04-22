@@ -85,7 +85,6 @@ msgid ""
 msgstr ""
 "以下の ``sudo`` と ``before_install`` の設定を ``.travis.yml`` に加えます::"
 
-# e5f8b6b2440a4432a85c4a08ff761494
 msgid ""
 "``sudo: required`` configuration is required because ``sudo`` command is "
 "used in the setup script."

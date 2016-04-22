@@ -178,7 +178,6 @@ msgstr ""
 msgid "Install groonga-token-filter-stem package::"
 msgstr "groonga-token-filter-stemパッケージのインストール::"
 
-# e45d71db3c2a4880ae1abd7fd910f908
 msgid "jessie"
 msgstr ""
 
@@ -204,7 +203,6 @@ msgstr ""
 "使います。ただ、いくつか例外があって、MeCabの辞書（ ``mecab-ipadic`` や "
 "``mecab-jumandic`` ）パッケージを使うにはGroongaのyumリポジトリを使います。"
 
-# 28c060d2aecd4e77b9822cae3ec97012
 msgid "Fedora 21"
 msgstr ""
 
@@ -748,7 +746,6 @@ msgstr ""
 msgid "14.04 LTS Trusty Tahr"
 msgstr ""
 
-# bc490415a4254a4ab803ffb0a09ae9f7
 msgid "15.04 Vivid Vervet"
 msgstr ""
 
@@ -783,7 +780,6 @@ msgstr ""
 "32-bit環境の場合は、x86のバイナリをpackages.groonga.orgからダウンロードしてく"
 "ださい。"
 
-# 7ffb594084f74ae08672e26a05e88d55
 msgid "http://packages.groonga.org/windows/groonga/groonga-6.0.1-x86.exe"
 msgstr ""
 
@@ -797,7 +793,6 @@ msgstr ""
 "64-bit環境の場合は、x64のバイナリをpackages.groonga.orgからダウンロードしてく"
 "ださい。"
 
-# a6aeedf8d19c4574b6b38bed1ef1a746
 msgid "http://packages.groonga.org/windows/groonga/groonga-6.0.1-x64.exe"
 msgstr ""
 
@@ -817,7 +812,6 @@ msgstr ""
 "32-bit環境の場合は、x86のzipアーカイブをpackages.groonga.orgからダウンロード"
 "してください。"
 
-# 75b67811539f40e8a154db1d7231c6ef
 msgid "http://packages.groonga.org/windows/groonga/groonga-6.0.1-x86.zip"
 msgstr ""
 
@@ -830,7 +824,6 @@ msgstr ""
 "64-bit環境の場合は、x64のzipアーカイブをpackages.groonga.orgからダウンロード"
 "してください。"
 
-# d52fa0683aa24499b85e73f325c8b654
 msgid "http://packages.groonga.org/windows/groonga/groonga-6.0.1-x64.zip"
 msgstr ""
 
@@ -857,7 +850,6 @@ msgstr ""
 msgid "Download zipped source from packages.groonga.org:"
 msgstr "zipアーカイブをpackages.groonga.orgからダウンロードしてください。"
 
-# f5cdbb4226bf441db65967ae25105095
 msgid "http://packages.groonga.org/source/groonga/groonga-6.0.1.zip"
 msgstr ""
 
