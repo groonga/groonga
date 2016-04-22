@@ -1,7 +1,7 @@
 [Unit]
 Description=Groonga HTTP Server
 After=network.target
-Conflicts=groonga.service
+Conflicts=groonga-server-http.service
 
 [Service]
 Type=forking
