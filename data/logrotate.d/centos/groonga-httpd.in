@@ -8,7 +8,7 @@
     sharedscripts
     postrotate
         if [ -f /var/lock/subsys/groonga-httpd ]; then
-            /bin/kill -USR1 $(cat /var/run/groonga/groonga-httpd.pid)
+            /bin/kill -USR1 $(cat @GROONGA_HTTPD_PID_PATH@)
         fi
     endscript
 }

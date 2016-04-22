@@ -36,6 +36,7 @@ cmake_install.cmake
 /groonga.pc
 /groonga-httpd-conf.sh
 /data/groonga-httpd.conf
+/data/logrotate.d/centos/groonga-httpd
 /data/scripts/groonga-httpd-restart
 /vendor/nginx-*/objs
 /vendor/mruby/LEGAL

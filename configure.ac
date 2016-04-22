@@ -1673,6 +1673,7 @@ AC_OUTPUT([
   config.sh
   groonga-httpd-conf.sh
   data/groonga-httpd.conf
+  data/logrotate.d/centos/groonga-httpd
   data/scripts/groonga-httpd-restart
   ])
 
