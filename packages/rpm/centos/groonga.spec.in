@@ -429,7 +429,7 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/groonga-server-gqtp
 %config(noreplace) %{_sysconfdir}/logrotate.d/groonga-server-gqtp
 %if %{_use_systemd}
-%{_unittir}/groonga-server-gqtp.service
+%{_unitdir}/groonga-server-gqtp.service
 %else
 %{_initddir}/groonga-server-gqtp
 %endif
@@ -443,7 +443,7 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/groonga-server-http
 %config(noreplace) %{_sysconfdir}/logrotate.d/groonga-server-http
 %if %{_use_systemd}
-%{_unittir}/groonga-server-http.service
+%{_unitdir}/groonga-server-http.service
 %else
 %{_initddir}/groonga-server-http
 %endif
@@ -457,7 +457,7 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/groonga-httpd
 %config(noreplace) %{_sysconfdir}/logrotate.d/groonga-httpd
 %if %{_use_systemd}
-%{_unittir}/groonga-httpd.service
+%{_unitdir}/groonga-httpd.service
 %else
 %{_initddir}/groonga-httpd
 %endif
