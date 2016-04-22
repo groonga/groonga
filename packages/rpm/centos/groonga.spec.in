@@ -177,7 +177,7 @@ Munin plugins for Groonga
 %build
 %configure \
   --disable-static \
-  --with-package-platform=redhat \
+  --with-package-platform=centos \
 %if %{!use_lz4}
   --without-lz4 \
 %endif

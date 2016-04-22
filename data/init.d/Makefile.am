@@ -1,1 +1,1 @@
-SUBDIRS = redhat
+SUBDIRS = centos

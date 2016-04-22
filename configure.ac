@@ -284,10 +284,10 @@ AC_CONFIG_FILES([
   data/html/Makefile
   data/munin/Makefile
   data/init.d/Makefile
-  data/init.d/redhat/Makefile
-  data/init.d/redhat/sysconfig/Makefile
+  data/init.d/centos/Makefile
+  data/init.d/centos/sysconfig/Makefile
   data/logrotate.d/Makefile
-  data/logrotate.d/redhat/Makefile
+  data/logrotate.d/centos/Makefile
   data/systemd/Makefile
   data/systemd/fedora/Makefile
   data/systemd/fedora/sysconfig/Makefile
@@ -1369,13 +1369,13 @@ AC_MSG_CHECKING([whether package platform])
 AC_ARG_WITH(package-platform,
   [AS_HELP_STRING([--with-package-platform=PLATFORM],
     [install package platform related files. [default=no]
-     (supported package platforms: redhat, fedora)])],
+     (supported package platforms: centos, fedora)])],
   [package_platform="$withval"],
   [package_platform="no"])
 AC_MSG_RESULT($package_platform)
 
-AM_CONDITIONAL([REDHAT_PLATFORM],
-               [test "${package_platform}" = "redhat"])
+AM_CONDITIONAL([CENTOS_PLATFORM],
+               [test "${package_platform}" = "centos"])
 AM_CONDITIONAL([FEDORA_PLATFORM],
                [test "${package_platform}" = "fedora"])
 
