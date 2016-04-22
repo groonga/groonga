@@ -1384,6 +1384,8 @@ if test "$package_platform" = "centos"; then
 fi
 AC_MSG_RESULT($package_platform)
 
+AM_CONDITIONAL([CENTOS_PLATFORM],
+               [test "${package_platform}" != "no"])
 AM_CONDITIONAL([CENTOS_INIT_PLATFORM],
                [test "${package_platform}" = "centos5" ||
                 test "${package_platform}" = "centos6"])
