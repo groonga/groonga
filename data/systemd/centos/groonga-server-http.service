@@ -1,6 +1,7 @@
 [Unit]
 Description=Groonga Text Searching Engine
 After=network.target
+Conflicts=groonga-httpd.service
 
 [Service]
 Type=forking
