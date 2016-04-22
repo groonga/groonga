@@ -4,6 +4,13 @@
 %{!?use_mecab:%define use_mecab 1}
 %{!?use_jemalloc:%define use_jemalloc 0}
 %{!?use_msgpack:%define use_msgpack 0}
+
+%if %{centos_ver} >= 7
+%{!?use_systemd:%define use_systemd 1}
+%else
+%{!?use_systemd:%define use_systemd 0}
+%endif
+
 %{?additional_configure_options:%define use_additional_configure_options 1}
 %{!?additional_configure_options:%define use_additional_configure_options 0}
 
@@ -38,6 +45,9 @@ BuildRequires:	pkgconfig
 BuildRequires:	openssl-devel
 #BuildRequires:	zeromq-devel
 #BuildRequires:	libevent-devel
+%if %{use_systemd}
+BuildRequires:	systemd
+%endif
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	%{name}-plugin-suggest = %{version}-%{release}
 Obsoletes:	%{name} < 1.2.2-0
@@ -84,10 +94,16 @@ Group:		Applications/Text
 License:	LGPLv2
 Requires:	%{name}-server-common = %{version}-%{release}
 Requires(pre):	shadow-utils
+%if %{use_systemd}
+Requires(post):	systemd
+Requires(preun):	systemd
+Requires(postun):	systemd
+%else
 Requires(post):	/sbin/chkconfig
 Requires(preun):	/sbin/chkconfig
 Requires(preun):	/sbin/service
 Requires(postun):	/sbin/service
+%endif
 Obsoletes:	%{name} < 1.2.2-0
 Obsoletes:	%{name}-server < 2.0.7-0
 
@@ -102,10 +118,16 @@ Requires:	%{name}-server-common = %{version}-%{release}
 Requires:	curl
 Requires:	%{name}-httpd = %{version}-%{release}
 Requires(pre):	shadow-utils
+%if %{use_systemd}
+Requires(post):	systemd
+Requires(preun):	systemd
+Requires(postun):	systemd
+%else
 Requires(post):	/sbin/chkconfig
 Requires(preun):	/sbin/chkconfig
 Requires(preun):	/sbin/service
 Requires(postun):	/sbin/service
+%endif
 Obsoletes:	%{name} < 1.2.2-0
 Obsoletes:	%{name}-server < 2.0.7-0
 
@@ -117,6 +139,16 @@ Summary:	Groonga HTTP server
 Group:		Applications/Text
 License:	LGPLv2 and BSD
 Requires:	%{name}-server-common = %{version}-%{release}
+%if %{use_systemd}
+Requires(post):	systemd
+Requires(preun):	systemd
+Requires(postun):	systemd
+%else
+Requires(post):	/sbin/chkconfig
+Requires(preun):	/sbin/chkconfig
+Requires(preun):	/sbin/service
+Requires(postun):	/sbin/service
+%endif
 Provides:	%{name}-server-http = %{version}-%{release}
 Obsoletes:	%{name}-server-http <= 4.0.7-2
 
@@ -258,17 +290,30 @@ fi
 exit 0
 
 %post server-gqtp
+%if %{use_systemd}
+%systemd_post groonga-server-gqtp.service
+%else
 /sbin/chkconfig --add groonga-server-gqtp
+%endif
 
 %post server-http
+%if %{use_systemd}
+%systemd_post groonga-server-http.service
+%else
 /sbin/chkconfig --add groonga-server-http
+%endif
 
 %post httpd
 if [ $1 = 1 ] ; then
 	mkdir -p %{_localstatedir}/log/groonga/httpd
 	chown -R groonga:groonga %{_localstatedir}/log/groonga/httpd
+%if %{use_systemd}
+%systemd_post groonga-httpd.service
+%else
+	/sbin/chkconfig --add groonga-httpd
+%endif
 elif [ $1 = 2 ] ; then
-	/sbin/service groonga-httpd restart >/dev/null 2>&1 || :
+	/usr/sbin/groonga-httpd-restart > /dev/null 2>&1 || :
 fi
 
 %post libs -p /sbin/ldconfig
@@ -280,26 +325,61 @@ fi
 :
 
 %preun server-http
+%if %{use_systemd}
+%systemd_preun groonga-server-http.service
+%else
 if [ $1 = 0 ] ; then
 	/sbin/service groonga-server-http stop >/dev/null 2>&1 || :
 	/sbin/chkconfig --del groonga-server-http
 fi
+%endif
 
 %postun server-http
+%if %{use_systemd}
+%systemd_postun groonga-server-http.service
+%else
 if [ $1 -ge 1 ] ; then
 	/sbin/service groonga-server-http condrestart >/dev/null 2>&1 || :
 fi
+%endif
 
 %preun server-gqtp
+%if %{use_systemd}
+%systemd_preun groonga-server-gqtp.service
+%else
 if [ $1 = 0 ] ; then
 	/sbin/service groonga-server-http stop >/dev/null 2>&1 || :
 	/sbin/chkconfig --del groonga-server-gqtp
 fi
+%endif
 
 %postun server-gqtp
+%if %{use_systemd}
+%systemd_postun groonga-server-gqtp.service
+%else
 if [ $1 -ge 1 ] ; then
 	/sbin/service groonga-server-gqtp condrestart >/dev/null 2>&1 || :
 fi
+%endif
+
+%preun httpd
+%if %{use_systemd}
+%systemd_preun groonga-server-http.service
+%else
+if [ $1 = 0 ] ; then
+	/sbin/service groonga-httpd stop >/dev/null 2>&1 || :
+	/sbin/chkconfig --del groonga-httpd
+fi
+%endif
+
+%postun httpd
+%if %{use_systemd}
+%systemd_postun groonga-server-http.service
+%else
+if [ $1 -ge 1 ] ; then
+	/sbin/service groonga-httpd condrestart >/dev/null 2>&1 || :
+fi
+%endif
 
 %postun libs -p /sbin/ldconfig
 
@@ -363,7 +443,11 @@ fi
 %config(noreplace) %{_sysconfdir}/groonga/
 %config(noreplace) %{_sysconfdir}/sysconfig/groonga-server-gqtp
 %config(noreplace) %{_sysconfdir}/logrotate.d/groonga-server-gqtp
+%if %{use_systemd}
+%{_unittir}/groonga-server-gqtp.service
+%else
 %{_initddir}/groonga-server-gqtp
+%endif
 %ghost %dir %{_localstatedir}/run/%{name}
 %attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}
 %attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}/db
@@ -373,7 +457,11 @@ fi
 %config(noreplace) %{_sysconfdir}/groonga/
 %config(noreplace) %{_sysconfdir}/sysconfig/groonga-server-http
 %config(noreplace) %{_sysconfdir}/logrotate.d/groonga-server-http
+%if %{use_systemd}
+%{_unittir}/groonga-server-http.service
+%else
 %{_initddir}/groonga-server-http
+%endif
 %ghost %dir %{_localstatedir}/run/%{name}
 %attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}
 %attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}/db
@@ -383,7 +471,11 @@ fi
 %config(noreplace) %{_sysconfdir}/groonga/httpd/*
 %config(noreplace) %{_sysconfdir}/sysconfig/groonga-httpd
 %config(noreplace) %{_sysconfdir}/logrotate.d/groonga-httpd
+%if %{use_systemd}
+%{_unittir}/groonga-httpd.service
+%else
 %{_initddir}/groonga-httpd
+%endif
 %{_sbindir}/groonga-httpd
 %{_sbindir}/groonga-httpd-restart
 %ghost %dir %{_localstatedir}/run/%{name}
