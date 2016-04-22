@@ -23,21 +23,17 @@ msgstr "サーバー"
 msgid "GQTP"
 msgstr ""
 
-# aa200c43a51341e495893cedba28d325
 msgid "Summary"
 msgstr ""
 
-# eac7420667ce494abd9786b4d6c179d1
 msgid "GQTP is the acronym standing for \"Groonga Query Transfer Protocol\"."
 msgstr ""
 
-# d6ae5575ccbc4cd7b5aa6674775037cb
 msgid ""
 "GQTP is a protocol designed for Groonga. It's a stateful protocol. You can "
 "send multiple commands in one session."
 msgstr ""
 
-# cd95cd8c61694ef0a1672d17038be134
 msgid ""
 "GQTP will be faster rather than :doc:`/server/http` when you send many light "
 "commands like :doc:`/reference/commands/status`. GQTP will be almost same "
@@ -45,33 +41,26 @@ msgid ""
 "commands/select`."
 msgstr ""
 
-# bb12df24190f4524afbd27357d0f2fea
 msgid ""
 "We recommend that you use HTTP for many cases. Because there are many HTTP "
 "client libraries."
 msgstr ""
 
-# b7d498dfff8e4da38ae268e1656913d4
 msgid "If you want to use GQTP, you can use the following libraries:"
 msgstr ""
 
-# d48006283b4241d382793174810b7c70
 msgid "Ruby: `groonga-client <https://github.com/ranguba/groonga-client>`_"
 msgstr ""
 
-# 674cbff52d1e418bb9c9637b1ee8a088
 msgid "Python: `poyonga <https://github.com/hhatto/poyonga>`_"
 msgstr ""
 
-# 059379ffb7364ac7acf64571b1a4240d
 msgid "Go: `goroo <https://github.com/hhatto/goroo>`_"
 msgstr ""
 
-# 8dc6f5f783254aa8afd65409de2963e0
 msgid "PHP: `proonga <https://github.com/Yujiro3/proonga>`_"
 msgstr ""
 
-# e0034875a64a415ebc6c1d9c7c37dcef
 msgid "C/C++: Groonga (Groonga can be also used as library)"
 msgstr ""
 
@@ -82,17 +71,14 @@ msgstr ""
 "ライブラリではありませんが、:doc:`/reference/executables/groonga` をGQTPクラ"
 "イアントとして使えます。"
 
-# 447a501ec2394e989ff1229d81955d34
 msgid "How to run"
 msgstr ""
 
-# c8bd69f132ff4d00868659745c794fb3
 msgid ""
 ":doc:`/reference/executables/groonga` is a GQTP server implementation. You "
 "can run a Groonga server by the following command line::"
 msgstr ""
 
-# b0360ec18eba42878ce2acab7a81bbab
 msgid ""
 "You can run a Groonga server as a daemon by the following command line::"
 msgstr ""
@@ -424,11 +410,9 @@ msgstr ""
 msgid "TODO"
 msgstr ""
 
-# 5bfb89af5da346f5ab229f94045f4aab
 msgid "Memcached binary protocol"
 msgstr "Memcachedバイナリプロトコル"
 
-# 649ab3e4b8b543f8b6011a69a10524b0
 msgid ""
 "Groonga supports the memcached binary protocol. The following form shows how "
 "to run Groonga as a memcached binary protocol server daemon."
@@ -437,11 +421,9 @@ msgstr ""
 "memcachedバイナリプロトコルのサーバをデーモンとして起動する方法を示していま"
 "す。"
 
-# afcbda4917d64e51a439ef6574296168
 msgid "Form::"
 msgstr ""
 
-# 3f47253e4cf54eaa9ac53e1c7c440c4d
 msgid ""
 "The `--protocol` option and its argument specify the protocol of the server. "
 "\"memcached\" specifies to use the memcached binary protocol."

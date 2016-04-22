@@ -44,7 +44,6 @@ msgstr ""
 msgid "For Japanese speakers"
 msgstr "日本語"
 
-# 632aabf6869b4d06994c3d6c9237b003
 msgid ""
 "`groonga-dev@lists.osdn.me <http://lists.osdn.me/mailman/listinfo/groonga-"
 "dev>`_"

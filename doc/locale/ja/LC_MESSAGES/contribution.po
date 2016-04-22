@@ -721,7 +721,6 @@ msgstr ""
 msgid "リリース手順の前提条件は以下の通りです。"
 msgstr ""
 
-# b87cfa8718d645c9a94b620b081ec8b6
 msgid "ビルド環境は Debian GNU/Linux (sid)"
 msgstr ""
 
@@ -737,7 +736,6 @@ msgstr ""
 msgid "GROONGA_CLONE_DIR=$HOME/work/groonga/groonga.clean"
 msgstr ""
 
-# ec9c89403a7145299c6245d5cb49e743
 msgid "GROONGA_ORG_PATH=$HOME/work/groonga/groonga.org"
 msgstr ""
 
@@ -755,13 +753,11 @@ msgid ""
 "ケージを示します。"
 msgstr ""
 
-# 5f045f035e9f427d8f1deac621ace9c0
 msgid ""
 "なお、ビルド環境としては Debian GNU/Linux (sid)を前提として説明しているため、"
 "その他の環境では適宜読み替えて下さい。::"
 msgstr ""
 
-# 48ed11882cf94e39a701120a20060787
 msgid ""
 "Debian系（.deb）やRed Hat系（.rpm）パッケージのビルドには `Vagrant <https://"
 "www.vagrantup.com/>`_ を使用します。apt-getでインストールできるのは古いバー"
@@ -769,7 +765,6 @@ msgid ""
 "すめします。"
 msgstr ""
 
-# 12d36103eb43481892e74a4e0c583290
 msgid ""
 "Vagrantで使用する仮想化ソフトウェア（VirtualBox、VMwareなど）がない場合、合わ"
 "せてインストールしてください。なお、VirtualBoxはsources.listにcontribセクショ"
@@ -884,13 +879,11 @@ msgid ""
 "のバージョンを置き換えることができるようになっています。"
 msgstr ""
 
-# 5c3309ece166484f9cb0f7c50f7549c6
 msgid ""
 "Groongaのウェブサイトのソースコードを$GROONGA_ORG_PATHとして取得するために"
 "は、$GROONGA_DIRにて以下のコマンドを実行します。::"
 msgstr ""
 
-# 03b5a266842748d78ca1f92f5c0f82a5
 msgid "これで、$GROONGA_ORG_PATHにgroonga.orgのソースを取得できます。"
 msgstr ""
 
@@ -933,7 +926,6 @@ msgid ""
 "す。::"
 msgstr ""
 
-# bd841512912340a18628038f055af15b
 msgid ""
 "configureオプションである--with-groonga-org-pathにはGroongaのウェブサイトのリ"
 "ポジトリをcloneした場所を指定します。"
@@ -1021,7 +1013,6 @@ msgstr ""
 msgid "リリース用のタグを打つには以下のコマンドを実行します。::"
 msgstr ""
 
-# 5ff076781dea4e2a83b8d8ab88e60eca
 msgid ""
 "タグを打った後にconfigureを実行することで、ドキュメント生成時のバージョン番号"
 "に反映されます。"
@@ -1127,14 +1118,12 @@ msgstr ""
 msgid "現在サポートされているのは以下の通りです。"
 msgstr ""
 
-# 68abb7cc42a54eab8b2577bed4970689
 msgid "Debian GNU/Linux"
 msgstr ""
 
 msgid "wheezy i386/amd64"
 msgstr ""
 
-# afd38fcbd8ca4ecca5c2213bd2aa2159
 msgid "jessie i386/amd64"
 msgstr ""
 
@@ -1174,7 +1163,6 @@ msgstr ""
 msgid "centos-6 i386/x86_64"
 msgstr ""
 
-# d4827cd271d640699519f55a1ce9b1e6
 msgid "centos-7 i386/x86_64"
 msgstr ""
 
@@ -1195,11 +1183,9 @@ msgstr ""
 msgid "repositories/yum/centos/6/x86_64/Packages"
 msgstr ""
 
-# 52fb09bd131e426e8887f8a4b7135e00
 msgid "repositories/yum/centos/7/i386/Packages"
 msgstr ""
 
-# 70275578d5e34063a0f7341a3909533f
 msgid "repositories/yum/centos/7/x86_64/Packages"
 msgstr ""
 
@@ -1385,7 +1371,6 @@ msgstr ""
 msgid "[groonga-dev,00794] [ANN] Groonga 2.0.2"
 msgstr ""
 
-# 1ccdab7f94284244b5d9c57d471e01c1
 msgid ""
 "http://osdn.jp/projects/groonga/lists/archive/dev/2012-April/000794.html"
 msgstr ""
@@ -1415,11 +1400,9 @@ msgid ""
 "アーカイブ等がpackages.groonga.orgへと反映されます。"
 msgstr ""
 
-# ddf96a837faa4faa96be2c2b0c3e05a2
 msgid "Ubuntu用パッケージのアップロード"
 msgstr ""
 
-# 39b0089a164246d0b3dbd8c35a39b1cb
 msgid "Ubuntu向けのパッケージのアップロードには以下のコマンドを実行します。::"
 msgstr ""
 
@@ -1429,11 +1412,9 @@ msgstr ""
 msgid "trusty i386/amd64"
 msgstr ""
 
-# 18fb46d6fbc3483bb079db3c1a76d878
 msgid "vivid i386/amd64"
 msgstr ""
 
-# e10d3e6597db4840b2c03e59f2f2c87f
 msgid ""
 "アップロードが正常終了すると、launchpad.net上でビルドが実行され、ビルド結果が"
 "メールで通知されます。ビルドに成功すると、リリース対象のパッケージが"
@@ -1441,7 +1422,6 @@ msgid ""
 "以下のURLで確認できます。"
 msgstr ""
 
-# 19588d171d894cde9eff27d3e19de25b
 msgid "https://launchpad.net/~groonga/+archive/ubuntu/ppa"
 msgstr ""
 
@@ -1459,15 +1439,12 @@ msgstr ""
 msgid "cloneしたWebサイトのソースに対して以下のファイルを新規追加します。"
 msgstr ""
 
-# 0677f71ae5e045aa931b1801dbfb00e0
 msgid "groonga.org/en/_post/(リリース日)-release.md"
 msgstr ""
 
-# b13d96eab044470db65dc5931cf868f9
 msgid "groonga.org/ja/_post/(リリース日)-release.md"
 msgstr ""
 
-# a262188284df43fea070b59b24918b97
 msgid ""
 "編集した内容をpushする前に確認したい場合にはJekyllおよびRedCloth（Textileパー"
 "サー）、RDiscount（Markdownパーサー）、JavaScript interpreter（therubyracer、"
@@ -1484,7 +1461,6 @@ msgid ""
 "します。"
 msgstr ""
 
-# 837f1adfbf4942e081dca8ba7978478e
 msgid ""
 "記事を非公開の状態でアップロードするには.mdファイルのpublished:をfalseに設定"
 "します。::"
@@ -1501,7 +1477,6 @@ msgstr ""
 msgid "そのためにはまず以下のコマンドを実行します。::"
 msgstr ""
 
-# 7f4f8a2185724165a5bae365d4568a2c
 msgid ""
 "これによりcloneしておいたgroonga.orgのdoc/locale以下に更新したドキュメントが"
 "コピーされます。"
@@ -1549,7 +1524,6 @@ msgstr ""
 msgid "作成したリリースアナウンスをメーリングリストへと流します。"
 msgstr ""
 
-# 85344d1acf86445fad4b86a85463b95a
 msgid "groonga-dev groonga-dev@lists.osdn.me"
 msgstr ""
 
@@ -1627,7 +1601,6 @@ msgstr ""
 msgid "ビルドを並列化したい"
 msgstr ""
 
-# 541875d77b9f44b48231abb54fe9a62a
 msgid ""
 "make build PALALLEL=yesを指定するとchroot環境で並列にビルドを 実行できます。"
 msgstr ""
