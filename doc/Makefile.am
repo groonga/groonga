@@ -24,7 +24,7 @@ update-files: $(BUILT_SOURCES)
 	cd locale/en && $(MAKE) clean html
 	cd $(srcdir); ./update-files.sh > files.am
 
-man pdf clean-html update-po:
+clean-html update-po:
 	for dir in $(SUBDIRS); do		\
 	  (cd $${dir} && $(MAKE) $@);		\
 	done

@@ -2,13 +2,10 @@
 DOCTREES_BASE = doctrees
 
 SPHINXOPTS    =
-PAPER         =
 
 # Internal variables.
 SOURCE_DIR      = $(abs_top_srcdir)/doc/source
-PAPEROPT_a4     = -D latex_paper_size=a4
-PAPEROPT_letter = -D latex_paper_size=letter
-ALLSPHINXOPTS   = $(PAPEROPT_$(PAPER)) -E $(SPHINXOPTS) $(SOURCE_DIR)
+ALLSPHINXOPTS   = -E $(SPHINXOPTS) $(SOURCE_DIR)
 
 SPHINX_BUILD_COMMAND =						\
 	DOCUMENT_VERSION="$(DOCUMENT_VERSION)"			\
