@@ -13911,20 +13911,27 @@ grn_db_recover_index_column(grn_ctx *ctx, grn_obj *index_column)
 static grn_bool
 grn_db_recover_is_builtin(grn_ctx *ctx, grn_id id, grn_table_cursor *cursor)
 {
-  char name[GRN_TABLE_MAX_KEY_SIZE];
+  void *key;
+  const char *name;
   int name_size;
 
   if (id < GRN_N_RESERVED_TYPES) {
     return GRN_TRUE;
   }
 
-  name_size = grn_table_cursor_get_key(ctx, cursor, (void **)&name);
-  name[name_size] = '\0';
-  if (strcmp(name, "inspect") == 0) {
+  name_size = grn_table_cursor_get_key(ctx, cursor, &key);
+  name = key;
+
+#define NAME_EQUAL(value)                       \
+  (name_size == strlen(value) && memcmp(name, value, strlen(value)) == 0)
+
+  if (NAME_EQUAL("inspect")) {
     /* Just for compatibility. It's needed for users who used
        Groonga master at between 2016-02-03 and 2016-02-26. */
     return GRN_TRUE;
   }
+
+#undef NAME_EQUAL
 
   return GRN_FALSE;
 }
