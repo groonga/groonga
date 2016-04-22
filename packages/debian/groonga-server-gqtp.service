@@ -1,5 +1,5 @@
 [Unit]
-Description=Groonga GQTP Server
+Description=Groonga full text search GQTP server
 Wants=network-online.target
 After=network-online.target
 

@@ -1,5 +1,5 @@
 [Unit]
-Description=Groonga HTTP Server
+Description=Groonga full text search HTTP server
 Wants=network-online.target
 After=network-online.target
 Conflicts=groonga.service
