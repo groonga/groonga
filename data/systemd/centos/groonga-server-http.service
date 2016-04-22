@@ -1,5 +1,5 @@
 [Unit]
-Description=Groonga Text Searching Engine
+Description=Groonga full text search HTTP server (naive version)
 After=network.target
 Conflicts=groonga-httpd.service
 
