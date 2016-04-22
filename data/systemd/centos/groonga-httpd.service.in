@@ -5,6 +5,7 @@ Conflicts=groonga.service
 
 [Service]
 Type=forking
+PIDFile=@GROONGA_HTTPD_PID_PATH@
 User=root
 Group=root
 EnvironmentFile=-/etc/sysconfig/groonga-httpd

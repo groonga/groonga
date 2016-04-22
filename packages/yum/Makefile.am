@@ -47,7 +47,7 @@ build-in-vm: source specs env.sh
 	    fi;							\
 	    id=centos-$$version-$$architecture;			\
 	    vagrant up $$id;					\
-	    vagrant destroy --force $$id;			\
+	    : vagrant destroy --force $$id;			\
 	  done;							\
 	done
 

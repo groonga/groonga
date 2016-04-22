@@ -1675,6 +1675,7 @@ AC_OUTPUT([
   data/groonga-httpd.conf
   data/logrotate.d/centos/groonga-httpd
   data/scripts/groonga-httpd-restart
+  data/systemd/centos/groonga-httpd.service
   ])
 
 echo "$PACKAGE_NAME $PACKAGE_VERSION configuration:"
