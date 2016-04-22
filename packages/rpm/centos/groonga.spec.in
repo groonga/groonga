@@ -1,3 +1,5 @@
+%{!?centos_ver:%define centos_ver 7}
+
 %{!?use_lz4:%define use_lz4 0}
 %{!?use_mecab:%define use_mecab 1}
 %{!?use_jemalloc:%define use_jemalloc 0}
@@ -177,7 +179,7 @@ Munin plugins for Groonga
 %build
 %configure \
   --disable-static \
-  --with-package-platform=centos \
+  --with-package-platform=centos%{?centos_ver} \
 %if %{!use_lz4}
   --without-lz4 \
 %endif

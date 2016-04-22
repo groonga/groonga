@@ -1,6 +1,6 @@
 data = groonga-server-gqtp groonga-server-http groonga-httpd
 
-if CENTOS_PLATFORM
+if CENTOS_INIT_PLATFORM
 sysconfigdir = $(sysconfdir)/sysconfig
 dist_sysconfig_DATA = $(data)
 else

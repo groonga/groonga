@@ -1369,15 +1369,27 @@ AC_MSG_CHECKING([whether package platform])
 AC_ARG_WITH(package-platform,
   [AS_HELP_STRING([--with-package-platform=PLATFORM],
     [install package platform related files. [default=no]
-     (supported package platforms: centos, fedora)])],
+     (supported package platforms: centos, centos5, centos6, centos7, fedora)])],
   [package_platform="$withval"],
   [package_platform="no"])
+if test "$package_platform" = "centos"; then
+  distribution=$(cut -d " " -f 1 /etc/redhat-release | tr "A-Z" "a-z")
+  if grep -q Linux /etc/redhat-release; then
+    distribution_version=$(cut -d " " -f 4 /etc/redhat-release)
+  else
+    distribution_version=$(cut -d " " -f 3 /etc/redhat-release)
+  fi
+  distribution_version=$(echo ${distribution_version} | sed -e 's/\..*$//g')
+  package_platform="${package_platform}${distribution_version}"
+fi
 AC_MSG_RESULT($package_platform)
 
-AM_CONDITIONAL([CENTOS_PLATFORM],
-               [test "${package_platform}" = "centos"])
-AM_CONDITIONAL([FEDORA_PLATFORM],
-               [test "${package_platform}" = "fedora"])
+AM_CONDITIONAL([CENTOS_INIT_PLATFORM],
+               [test "${package_platform}" = "centos5" ||
+                test "${package_platform}" = "centos6"])
+AM_CONDITIONAL([CENTOS_SYSTEMD_PLATFORM],
+               [test "${package_platform}" = "centos7" ||
+                test "${package_platform}" = "fedora"])
 
 # plugins check
 relative_pluginsdir_base="\$(PACKAGE)/plugins"

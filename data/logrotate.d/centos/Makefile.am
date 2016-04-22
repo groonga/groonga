@@ -1,6 +1,6 @@
 logrotate_conf = groonga-server-gqtp groonga-server-http groonga-httpd
 
-if CENTOS_PLATFORM
+if CENTOS_INIT_PLATFORM
 logrotatedir = $(sysconfdir)/logrotate.d
 dist_logrotate_DATA = $(logrotate_conf)
 else
