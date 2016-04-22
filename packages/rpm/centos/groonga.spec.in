@@ -1,10 +1,10 @@
 %define _centos_ver   %{?centos_ver:%{centos_ver}}%{!?centos_ver:7}
 
-%define _use_lz4      %{?use_lz4:1}%{!?use_lz4:0}
-%define _use_mecab    %{?use_mecab:1}%{!?use_mecab:0}
-%define _use_jemalloc %{?use_jemalloc:1}%{!?use_jemalloc:0}
-%define _use_msgpack  %{?use_msgpack:1}%{!?use_msgpack:0}
-%define _use_systemd  %{?use_systemd:1}%{!?use_systemd:%{_centos_ver} >= 7}
+%define _use_lz4      %{?use_lz4:%{use_lz4}}%{!?use_lz4:0}
+%define _use_mecab    %{?use_mecab:%{use_mecab}}%{!?use_mecab:1}
+%define _use_jemalloc %{?use_jemalloc:%{use_jemalloc}}%{!?use_jemalloc:0}
+%define _use_msgpack  %{?use_msgpack:%{use_msgpack}}%{!?use_msgpack:0}
+%define _use_systemd  %{?use_systemd:%{use_systemd}}%{!?use_systemd:%{_centos_ver} >= 7}
 
 %define _additional_configure_options \
   %{?additional_configure_options:%{additional_configure_options}}
