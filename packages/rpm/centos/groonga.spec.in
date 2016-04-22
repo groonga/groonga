@@ -95,9 +95,7 @@ License:	LGPLv2
 Requires:	%{name}-server-common = %{version}-%{release}
 Requires(pre):	shadow-utils
 %if %{use_systemd}
-Requires(post):	systemd
-Requires(preun):	systemd
-Requires(postun):	systemd
+%systemd_requires
 %else
 Requires(post):	/sbin/chkconfig
 Requires(preun):	/sbin/chkconfig
@@ -119,9 +117,7 @@ Requires:	curl
 Requires:	%{name}-httpd = %{version}-%{release}
 Requires(pre):	shadow-utils
 %if %{use_systemd}
-Requires(post):	systemd
-Requires(preun):	systemd
-Requires(postun):	systemd
+%systemd_requires
 %else
 Requires(post):	/sbin/chkconfig
 Requires(preun):	/sbin/chkconfig
@@ -140,9 +136,7 @@ Group:		Applications/Text
 License:	LGPLv2 and BSD
 Requires:	%{name}-server-common = %{version}-%{release}
 %if %{use_systemd}
-Requires(post):	systemd
-Requires(preun):	systemd
-Requires(postun):	systemd
+%systemd_requires
 %else
 Requires(post):	/sbin/chkconfig
 Requires(preun):	/sbin/chkconfig
