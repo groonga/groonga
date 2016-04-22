@@ -1,18 +1,13 @@
-%{!?centos_ver:%define centos_ver 7}
+%define _centos_ver   %{?centos_ver:%{centos_ver}}%{!?centos_ver:7}
 
-%{!?use_lz4:%define use_lz4 0}
-%{!?use_mecab:%define use_mecab 1}
-%{!?use_jemalloc:%define use_jemalloc 0}
-%{!?use_msgpack:%define use_msgpack 0}
+%define _use_lz4      %{?use_lz4:1}%{!?use_lz4:0}
+%define _use_mecab    %{?use_mecab:1}%{!?use_mecab:0}
+%define _use_jemalloc %{?use_jemalloc:1}%{!?use_jemalloc:0}
+%define _use_msgpack  %{?use_msgpack:1}%{!?use_msgpack:0}
+%define _use_systemd  %{?use_systemd:1}%{!?use_systemd:%{_centos_ver} >= 7}
 
-%if %{centos_ver} >= 7
-%{!?use_systemd:%define use_systemd 1}
-%else
-%{!?use_systemd:%define use_systemd 0}
-%endif
-
-%{?additional_configure_options:%define use_additional_configure_options 1}
-%{!?additional_configure_options:%define use_additional_configure_options 0}
+%define _additional_configure_options \
+  %{?additional_configure_options:%{additional_configure_options}}
 
 %global _initddir %{_sysconfdir}/init.d/
 
@@ -27,17 +22,17 @@ URL:		http://groonga.org/
 Source0:	http://packages.groonga.org/source/groonga/groonga-%{version}.tar.gz
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
-%if %{use_mecab}
+%if %{_use_mecab}
 BuildRequires:	mecab-devel
 %endif
 BuildRequires:	zlib-devel
-%if %{use_lz4}
+%if %{_use_lz4}
 BuildRequires:	lz4-devel
 %endif
-%if %{use_jemalloc}
+%if %{_use_jemalloc}
 BuildRequires:	jemalloc-devel
 %endif
-%if %{use_msgpack}
+%if %{_use_msgpack}
 BuildRequires:	msgpack-devel
 %endif
 BuildRequires:	pcre-devel
@@ -45,7 +40,7 @@ BuildRequires:	pkgconfig
 BuildRequires:	openssl-devel
 #BuildRequires:	zeromq-devel
 #BuildRequires:	libevent-devel
-%if %{use_systemd}
+%if %{_use_systemd}
 BuildRequires:	systemd
 %endif
 Requires:	%{name}-libs = %{version}-%{release}
@@ -63,13 +58,13 @@ Summary:	Runtime libraries for Groonga
 Group:		System Environment/Libraries
 License:	LGPLv2 and (MIT or GPLv2)
 Requires:	zlib
-%if %{use_lz4}
+%if %{_use_lz4}
 Requires:	lz4
 %endif
-%if %{use_jemalloc}
+%if %{_use_jemalloc}
 Requires:	jemalloc
 %endif
-%if %{use_msgpack}
+%if %{_use_msgpack}
 Requires:	msgpack
 %endif
 Requires(post):	/sbin/ldconfig
@@ -94,7 +89,7 @@ Group:		Applications/Text
 License:	LGPLv2
 Requires:	%{name}-server-common = %{version}-%{release}
 Requires(pre):	shadow-utils
-%if %{use_systemd}
+%if %{_use_systemd}
 %systemd_requires
 %else
 Requires(post):	/sbin/chkconfig
@@ -116,7 +111,7 @@ Requires:	%{name}-server-common = %{version}-%{release}
 Requires:	curl
 Requires:	%{name}-httpd = %{version}-%{release}
 Requires(pre):	shadow-utils
-%if %{use_systemd}
+%if %{_use_systemd}
 %systemd_requires
 %else
 Requires(post):	/sbin/chkconfig
@@ -135,7 +130,7 @@ Summary:	Groonga HTTP server
 Group:		Applications/Text
 License:	LGPLv2 and BSD
 Requires:	%{name}-server-common = %{version}-%{release}
-%if %{use_systemd}
+%if %{_use_systemd}
 %systemd_requires
 %else
 Requires(post):	/sbin/chkconfig
@@ -166,7 +161,7 @@ Requires:	%{name}-libs = %{version}-%{release}
 %description devel
 Libraries and header files for Groonga
 
-%if %{use_mecab}
+%if %{_use_mecab}
 %package tokenizer-mecab
 Summary:	MeCab tokenizer for Groonga
 Group:		Applications/Text
@@ -206,19 +201,17 @@ Munin plugins for Groonga
 %configure \
   --disable-static \
   --with-package-platform=centos%{?centos_ver} \
-%if %{!use_lz4}
+%if %{!_use_lz4}
   --without-lz4 \
 %endif
-%if %{use_mecab}
+%if %{_use_mecab}
   --with-mecab \
 %else
   --without-mecab \
 %endif
   --with-munin-plugins \
   --enable-mruby \
-%if %{use_additional_configure_options}
-  %{additional_configure_options}
-%endif
+  %{_additional_configure_options:%{additional_configure_options}}
 
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
 sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
@@ -284,14 +277,14 @@ fi
 exit 0
 
 %post server-gqtp
-%if %{use_systemd}
+%if %{_use_systemd}
 %systemd_post groonga-server-gqtp.service
 %else
 /sbin/chkconfig --add groonga-server-gqtp
 %endif
 
 %post server-http
-%if %{use_systemd}
+%if %{_use_systemd}
 %systemd_post groonga-server-http.service
 %else
 /sbin/chkconfig --add groonga-server-http
@@ -301,7 +294,7 @@ exit 0
 if [ $1 = 1 ] ; then
 	mkdir -p %{_localstatedir}/log/groonga/httpd
 	chown -R groonga:groonga %{_localstatedir}/log/groonga/httpd
-%if %{use_systemd}
+%if %{_use_systemd}
 %systemd_post groonga-httpd.service
 %else
 	/sbin/chkconfig --add groonga-httpd
@@ -319,7 +312,7 @@ fi
 :
 
 %preun server-http
-%if %{use_systemd}
+%if %{_use_systemd}
 %systemd_preun groonga-server-http.service
 %else
 if [ $1 = 0 ] ; then
@@ -329,7 +322,7 @@ fi
 %endif
 
 %postun server-http
-%if %{use_systemd}
+%if %{_use_systemd}
 %systemd_postun groonga-server-http.service
 %else
 if [ $1 -ge 1 ] ; then
@@ -338,7 +331,7 @@ fi
 %endif
 
 %preun server-gqtp
-%if %{use_systemd}
+%if %{_use_systemd}
 %systemd_preun groonga-server-gqtp.service
 %else
 if [ $1 = 0 ] ; then
@@ -348,7 +341,7 @@ fi
 %endif
 
 %postun server-gqtp
-%if %{use_systemd}
+%if %{_use_systemd}
 %systemd_postun groonga-server-gqtp.service
 %else
 if [ $1 -ge 1 ] ; then
@@ -357,7 +350,7 @@ fi
 %endif
 
 %preun httpd
-%if %{use_systemd}
+%if %{_use_systemd}
 %systemd_preun groonga-server-http.service
 %else
 if [ $1 = 0 ] ; then
@@ -367,7 +360,7 @@ fi
 %endif
 
 %postun httpd
-%if %{use_systemd}
+%if %{_use_systemd}
 %systemd_postun groonga-server-http.service
 %else
 if [ $1 -ge 1 ] ; then
@@ -437,7 +430,7 @@ fi
 %config(noreplace) %{_sysconfdir}/groonga/
 %config(noreplace) %{_sysconfdir}/sysconfig/groonga-server-gqtp
 %config(noreplace) %{_sysconfdir}/logrotate.d/groonga-server-gqtp
-%if %{use_systemd}
+%if %{_use_systemd}
 %{_unittir}/groonga-server-gqtp.service
 %else
 %{_initddir}/groonga-server-gqtp
@@ -451,7 +444,7 @@ fi
 %config(noreplace) %{_sysconfdir}/groonga/
 %config(noreplace) %{_sysconfdir}/sysconfig/groonga-server-http
 %config(noreplace) %{_sysconfdir}/logrotate.d/groonga-server-http
-%if %{use_systemd}
+%if %{_use_systemd}
 %{_unittir}/groonga-server-http.service
 %else
 %{_initddir}/groonga-server-http
@@ -465,7 +458,7 @@ fi
 %config(noreplace) %{_sysconfdir}/groonga/httpd/*
 %config(noreplace) %{_sysconfdir}/sysconfig/groonga-httpd
 %config(noreplace) %{_sysconfdir}/logrotate.d/groonga-httpd
-%if %{use_systemd}
+%if %{_use_systemd}
 %{_unittir}/groonga-httpd.service
 %else
 %{_initddir}/groonga-httpd
@@ -493,7 +486,7 @@ fi
 %dir %{_libdir}/groonga/plugins
 %{_libdir}/groonga/plugins/suggest/suggest.so
 
-%if %{use_mecab}
+%if %{_use_mecab}
 %files tokenizer-mecab
 %defattr(-,root,root,-)
 %{_libdir}/groonga/plugins/tokenizers/mecab.so
