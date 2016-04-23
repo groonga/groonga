@@ -48,6 +48,7 @@ grn_pat_tag_keys(grn_ctx *ctx, grn_obj *keywords,
     const char *rest;
     unsigned int i, n_hits;
     unsigned int previous = 0;
+    size_t chunk_length;
 
     n_hits = grn_pat_scan(ctx, (grn_pat *)keywords,
                           string, string_length,
@@ -73,14 +74,16 @@ grn_pat_tag_keys(grn_ctx *ctx, grn_obj *keywords,
                    close_tags[nth_tag], close_tag_lengths[nth_tag]);
       previous = hits[i].offset + hits[i].length;
     }
-    if (string_length - previous > 0) {
+
+    chunk_length = rest - string;
+    if (chunk_length - previous > 0) {
       grn_pat_tag_keys_put_original_text(ctx,
                                          highlighted,
                                          string + previous,
                                          string_length - previous,
                                          use_html_escape);
     }
-    string_length -= rest - string;
+    string_length -= chunk_length;
     string = rest;
 #undef MAX_N_HITS
   }
