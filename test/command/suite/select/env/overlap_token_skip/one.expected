@@ -1,0 +1,36 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries body COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"body": "HongKong"}
+]
+[[0,0.0,0.0],1]
+column_create Terms index COLUMN_INDEX|WITH_POSITION Entries body
+[[0,0.0,0.0],true]
+table_tokenize Terms "HongKong" --index_column index
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "hongkong",
+      "position": 0,
+      "force_prefix": false,
+      "estimated_size": 1
+    }
+  ]
+]
+log_level --level debug
+[[0,0.0,0.0],true]
+select Entries --filter 'body @ "HongKong"'
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["body","ShortText"]],[1,"HongKong"]]]]
+#|d| [ii][overlap_token_skip] tid=1 pos=0 estimated_size=1
+log_level --level notice
+[[0,0.0,0.0],true]

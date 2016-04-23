@@ -1,0 +1,80 @@
+plugin_register token_filters/stop_word
+[[0,0.0,0.0],true]
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries body COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto   --token_filters TokenFilterStopWord
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"body": "This is a pen"}
+]
+[[0,0.0,0.0],1]
+column_create Terms index COLUMN_INDEX|WITH_POSITION Entries body
+[[0,0.0,0.0],true]
+column_create Terms is_stop_word COLUMN_SCALAR Bool
+[[0,0.0,0.0],true]
+load --table Terms
+[
+{"_key": "is", "is_stop_word": true},
+{"_key": "a", "is_stop_word": true}
+]
+[[0,0.0,0.0],2]
+table_tokenize Terms "This is a pen" --index_column index
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "this",
+      "position": 0,
+      "force_prefix": false,
+      "estimated_size": 1
+    },
+    {
+      "value": "pen",
+      "position": 3,
+      "force_prefix": false,
+      "estimated_size": 1
+    }
+  ]
+]
+log_level --level debug
+[[0,0.0,0.0],true]
+select Entries --filter 'body @ "This is a pen"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "body",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "This is a pen"
+      ]
+    ]
+  ]
+]
+#|d| [ii][overlap_token_skip] tid=4 pos=0 estimated_size=1
+#|d| [ii][overlap_token_skip] tid=3 pos=3 estimated_size=1
+log_level --level notice
+[[0,0.0,0.0],true]

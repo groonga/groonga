@@ -1,0 +1,32 @@
+#@omit "need enable `GRN_II_OVERLAP_TOKEN_SKIP_ENABLE` environment variable."
+plugin_register token_filters/stop_word
+
+table_create Entries TABLE_NO_KEY
+column_create Entries body COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto \
+  --token_filters TokenFilterStopWord
+
+load --table Entries
+[
+{"body": "This is a pen"}
+]
+
+column_create Terms index COLUMN_INDEX|WITH_POSITION Entries body
+column_create Terms is_stop_word COLUMN_SCALAR Bool
+
+load --table Terms
+[
+{"_key": "is", "is_stop_word": true},
+{"_key": "a", "is_stop_word": true}
+]
+
+table_tokenize Terms "This is a pen" --index_column index
+
+log_level --level debug
+#@add-important-log-levels debug
+select Entries --filter 'body @ "This is a pen"'
+#@remove-important-log-levels debug
+log_level --level notice
