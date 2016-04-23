@@ -43,7 +43,7 @@ grn_pat_tag_keys(grn_ctx *ctx, grn_obj *keywords,
                  grn_bool use_html_escape)
 {
   while (string_length > 0) {
-#define MAX_N_HITS 1024
+#define MAX_N_HITS 16
     grn_pat_scan_hit hits[MAX_N_HITS];
     const char *rest;
     unsigned int i, n_hits;
