@@ -18,10 +18,16 @@ ensure-rsync-path:
 	  false;							\
 	fi
 
+ensure-signed-archive: $(FILES)
+	for file in $(notdir $(FILES)); do				\
+	  (cd files &&							\
+	    gpg2 --local-user $(GPG_UID) --armor --detach-sign $$file);	\
+	done
+
 download: ensure-rsync-path
 	rsync -avz --progress --delete $(RSYNC_PATH)/source/groonga/ files
 
-upload: ensure-rsync-path $(FILES)
+upload: ensure-rsync-path $(FILES) ensure-signed-archive
 	rsync -avz --progress --delete files/ $(RSYNC_PATH)/source/groonga
 
 upload-to-tmp: $(TMP_FILES)
