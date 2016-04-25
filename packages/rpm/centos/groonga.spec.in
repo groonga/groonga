@@ -1,4 +1,4 @@
-%define _centos_ver   %{?centos_ver:%{centos_ver}}%{!?centos_ver:7}
+%define _centos_ver   %{?centos_ver:%{centos_ver}}%{!?centos_ver:5}
 
 %define _use_lz4      %{?use_lz4:%{use_lz4}}%{!?use_lz4:0}
 %define _use_mecab    %{?use_mecab:%{use_mecab}}%{!?use_mecab:1}
