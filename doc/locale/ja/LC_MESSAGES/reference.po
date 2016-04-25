@@ -12665,6 +12665,19 @@ msgstr ""
 "詳細は、 :doc:`/reference/commands/tokenize` の :ref:`tokenize-mode` オプショ"
 "ンを参照してください。"
 
+msgid "``index_column``"
+msgstr "``index_column``"
+
+msgid "Specifies an index column."
+msgstr "インデックスカラム名を指定します。"
+
+msgid "Return value includes ``estimated_size`` of the index."
+msgstr "戻り値にインデックスの ``estimated_size`` が含まれます。"
+
+msgid ""
+"The ``estimated_size`` is useful for checking estimated frequency of tokens."
+msgstr "``estimated_size`` はトークンの概算の出現頻度を調べるのに便利です。"
+
 msgid "``table_tokenize`` command returns tokenized tokens."
 msgstr "``table_tokenize`` コマンドはトークナイズしたトークンを返します。"
 

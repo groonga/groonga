@@ -25,6 +25,7 @@ optional::
                  string
                  [flags=NONE]
                  [mode=GET]
+                 [index_column=null]
 
 Usage
 -----
@@ -95,6 +96,15 @@ Specifies a tokenize mode.
 The default value is ``GET``.
 
 See :ref:`tokenize-mode` option in :doc:`/reference/commands/tokenize` about details.
+
+``index_column``
+""""""""""""""""
+
+Specifies an index column.
+
+Return value includes ``estimated_size`` of the index.
+
+The ``estimated_size`` is useful for checking estimated frequency of tokens.
 
 Return value
 ------------
