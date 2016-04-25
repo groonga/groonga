@@ -648,7 +648,7 @@ GRN_API int grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                            grn_obj *result, grn_table_sort_key *keys, int n_keys);
 
 typedef struct _grn_table_group_result grn_table_group_result;
-typedef unsigned int grn_table_group_flags;
+typedef uint32_t grn_table_group_flags;
 
 #define GRN_TABLE_GROUP_CALC_COUNT     (0x01<<3)
 #define GRN_TABLE_GROUP_CALC_MAX       (0x01<<4)
