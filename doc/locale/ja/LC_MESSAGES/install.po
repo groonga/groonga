@@ -159,7 +159,7 @@ msgstr ""
 "このセクションではDebian GNU/Linux上でGroonga関連のdebパッケージをインストー"
 "ルする方法を説明します。これらのパッケージは ``apt`` でインストールできます。"
 
-msgid "wheezy"
+msgid "jessie"
 msgstr ""
 
 msgid "Add the Groonga apt repository."
@@ -177,9 +177,6 @@ msgstr ""
 
 msgid "Install groonga-token-filter-stem package::"
 msgstr "groonga-token-filter-stemパッケージのインストール::"
-
-msgid "jessie"
-msgstr ""
 
 msgid "Fedora"
 msgstr ""
