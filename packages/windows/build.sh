@@ -30,7 +30,6 @@ run sudo apt install -V -y \
 run sudo gem install rake
 
 run cd /vagrant
-run rsync -avz tmp/download/ /tmp/download/
 . tmp/env.sh
 
 for architecture in ${ARCHITECTURES}; do
