@@ -136,6 +136,7 @@ SOURCE=tmp/$(PACKAGE)-$(VERSION).tar.gz
 source: $(SOURCE)
 
 $(SOURCE): $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz
+	mkdir -p tmp
 	cp $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz $(SOURCE)
 
 diff-mecab:
