@@ -105,7 +105,7 @@ grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
     target = GRN_OBJ_TABLEP(src) ? src : grn_ctx_at(ctx, src->header.domain);
     if (target) {
       int i, ncol = DB_OBJ(index_column)->source_size / sizeof(grn_id);
-      grn_obj_flags flags;
+      grn_table_flags flags;
       grn_ii *ii = (grn_ii *)index_column;
       grn_bool use_grn_ii_build;
       grn_obj *tokenizer = NULL;

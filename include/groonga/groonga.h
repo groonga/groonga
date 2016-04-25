@@ -292,6 +292,11 @@ GRN_API grn_encoding grn_encoding_parse(const char *name);
 /* obj */
 
 typedef uint16_t grn_obj_flags;
+typedef uint32_t grn_table_flags;
+
+/* flags for grn_obj_flags and grn_table_flags */
+
+#define GRN_OBJ_FLAGS_MASK             (0xffff)
 
 #define GRN_OBJ_TABLE_TYPE_MASK        (0x07)
 #define GRN_OBJ_TABLE_HASH_KEY         (0x00)
@@ -336,7 +341,7 @@ typedef uint16_t grn_obj_flags;
 #define GRN_OBJ_UNIT_USERDEF_SECTION   (0x07<<8)
 #define GRN_OBJ_UNIT_USERDEF_POSITION  (0x08<<8)
 
-#define GRN_OBJ_KEY_LARGE              (0x01<<12)
+/* Don't use (0x01<<12) because it's used internally. */
 
 #define GRN_OBJ_NO_SUBREC              (0x00<<13)
 #define GRN_OBJ_WITH_SUBREC            (0x01<<13)
@@ -345,6 +350,10 @@ typedef uint16_t grn_obj_flags;
 
 #define GRN_OBJ_TEMPORARY              (0x00<<15)
 #define GRN_OBJ_PERSISTENT             (0x01<<15)
+
+/* flags only for grn_table_flags */
+
+#define GRN_OBJ_KEY_LARGE              (0x01<<16)
 
 /* obj types */
 
@@ -534,7 +543,7 @@ GRN_API grn_proc_type grn_proc_get_type(grn_ctx *ctx, grn_obj *proc);
 
 GRN_API grn_obj *grn_table_create(grn_ctx *ctx,
                                   const char *name, unsigned int name_size,
-                                  const char *path, grn_obj_flags flags,
+                                  const char *path, grn_table_flags flags,
                                   grn_obj *key_type, grn_obj *value_type);
 
 #define GRN_TABLE_OPEN_OR_CREATE(ctx,name,name_size,path,flags,key_type,value_type,table) \

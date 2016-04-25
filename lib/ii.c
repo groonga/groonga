@@ -3683,7 +3683,7 @@ _grn_ii_create(grn_ctx *ctx, grn_ii *ii, const char *path, grn_obj *lexicon, uin
   grn_io *seg, *chunk;
   char path2[PATH_MAX];
   struct grn_ii_header *header;
-  grn_obj_flags lflags;
+  grn_table_flags lflags;
   grn_encoding encoding;
   grn_obj *tokenizer;
   /*
@@ -3815,7 +3815,7 @@ grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
   char path2[PATH_MAX];
   struct grn_ii_header *header;
   uint32_t io_type;
-  grn_obj_flags lflags;
+  grn_table_flags lflags;
   grn_encoding encoding;
   grn_obj *tokenizer;
   if (grn_table_get_info(ctx, lexicon, &lflags, &encoding, &tokenizer,
@@ -7779,7 +7779,7 @@ get_tmp_lexicon(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
     grn_obj *tokenizer;
     grn_obj *normalizer;
     grn_obj *token_filters;
-    grn_obj_flags flags;
+    grn_table_flags flags;
     grn_table_get_info(ctx, ii_buffer->lexicon, &flags, NULL,
                        &tokenizer, &normalizer, &token_filters);
     flags &= ~GRN_OBJ_PERSISTENT;
@@ -8312,7 +8312,7 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
           ii_buffer->block_buf_size = II_BUFFER_BLOCK_SIZE;
           ii_buffer->tmpfd = grn_mkstemp(ii_buffer->tmpfpath);
           if (ii_buffer->tmpfd != -1) {
-            grn_obj_flags flags;
+            grn_table_flags flags;
             grn_table_get_info(ctx, ii->lexicon, &flags, NULL, NULL, NULL,
                                NULL);
             if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_PAT_KEY) {
@@ -8525,7 +8525,7 @@ grn_rc
 grn_ii_buffer_close(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
 {
   uint32_t i;
-  grn_obj_flags flags;
+  grn_table_flags flags;
   grn_table_get_info(ctx, ii_buffer->ii->lexicon, &flags, NULL, NULL, NULL,
                      NULL);
   if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_PAT_KEY) {
@@ -9653,7 +9653,7 @@ grn_ii_builder_close(grn_ctx *ctx, grn_ii_builder *builder)
 static grn_rc
 grn_ii_builder_create_lexicon(grn_ctx *ctx, grn_ii_builder *builder)
 {
-  grn_obj_flags flags;
+  grn_table_flags flags;
   grn_obj *domain = grn_ctx_at(ctx, builder->ii->lexicon->header.domain);
   grn_obj *range = grn_ctx_at(ctx, DB_OBJ(builder->ii->lexicon)->range);
   grn_obj *tokenizer, *normalizer, *token_filters;

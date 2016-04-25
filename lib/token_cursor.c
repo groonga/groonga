@@ -54,7 +54,7 @@ grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
   grn_obj *tokenizer;
   grn_obj *normalizer;
   grn_obj *token_filters;
-  grn_obj_flags table_flags;
+  grn_table_flags table_flags;
   if (grn_table_get_info(ctx, table, &table_flags, &encoding, &tokenizer,
                          &normalizer, &token_filters)) {
     return NULL;

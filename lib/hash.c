@@ -665,6 +665,12 @@ grn_array_size(grn_ctx *ctx, grn_array *array)
   return *array->n_entries;
 }
 
+uint32_t
+grn_array_get_flags(grn_ctx *ctx, grn_array *array)
+{
+  return array->header->flags;
+}
+
 grn_rc
 grn_array_truncate(grn_ctx *ctx, grn_array *array)
 {
@@ -1867,7 +1873,7 @@ grn_io_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
     grn_table_queue_init(ctx, queue);
   }
 
-  hash->obj.header.flags = header->flags;
+  hash->obj.header.flags = (header->flags & GRN_OBJ_FLAGS_MASK);
   hash->ctx = ctx;
   hash->encoding = encoding;
   hash->value_size = value_size;

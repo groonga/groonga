@@ -20,15 +20,16 @@
 
 #include "../grn_ctx.h"
 #include "../grn_str.h"
+#include "../grn_db.h"
 
 #include <groonga/plugin.h>
 
-static grn_obj_flags
+static grn_table_flags
 command_table_create_parse_flags(grn_ctx *ctx,
                                  const char *nptr,
                                  const char *end)
 {
-  grn_obj_flags flags = 0;
+  grn_table_flags flags = 0;
   while (nptr < end) {
     size_t name_size;
 
@@ -193,7 +194,7 @@ command_table_create(grn_ctx *ctx,
   grn_obj *token_filters;
   grn_obj *table;
   const char *rest;
-  grn_obj_flags flags;
+  grn_table_flags flags;
 
   name = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
   flags_raw = grn_plugin_proc_get_var(ctx, user_data, "flags", -1);
@@ -308,8 +309,10 @@ output_table_info(grn_ctx *ctx, grn_obj *table)
   grn_id id;
   grn_obj o;
   const char *path;
+  grn_table_flags flags;
   grn_obj *default_tokenizer;
   grn_obj *normalizer;
+  grn_obj *token_filters;
 
   id = grn_obj_id(ctx, table);
   path = grn_obj_path(ctx, table);
@@ -319,16 +322,19 @@ output_table_info(grn_ctx *ctx, grn_obj *table)
   grn_proc_output_object_id_name(ctx, id);
   grn_ctx_output_cstr(ctx, path);
   GRN_BULK_REWIND(&o);
-  grn_dump_table_create_flags(ctx, table->header.flags, &o);
+
+  grn_table_get_info(ctx, table,
+                     &flags,
+                     NULL,
+                     &default_tokenizer,
+                     &normalizer,
+                     &token_filters);
+  grn_dump_table_create_flags(ctx, flags, &o);
   grn_ctx_output_obj(ctx, &o, NULL);
   grn_proc_output_object_id_name(ctx, table->header.domain);
   grn_proc_output_object_id_name(ctx, grn_obj_get_range(ctx, table));
-  default_tokenizer = grn_obj_get_info(ctx, table, GRN_INFO_DEFAULT_TOKENIZER,
-                                       NULL);
   grn_proc_output_object_name(ctx, default_tokenizer);
-  normalizer = grn_obj_get_info(ctx, table, GRN_INFO_NORMALIZER, NULL);
   grn_proc_output_object_name(ctx, normalizer);
-  grn_obj_unlink(ctx, normalizer);
   grn_ctx_output_array_close(ctx);
   GRN_OBJ_FIN(ctx, &o);
   return 1;

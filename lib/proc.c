@@ -988,9 +988,11 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
            grn_obj *pending_reference_columns)
 {
   grn_obj *domain = NULL, *range = NULL;
-  grn_obj_flags default_flags = GRN_OBJ_PERSISTENT;
+  grn_table_flags flags;
+  grn_table_flags default_flags = GRN_OBJ_PERSISTENT;
   grn_obj *default_tokenizer;
   grn_obj *normalizer;
+  grn_obj *token_filters;
 
   switch (table->header.type) {
   case GRN_TABLE_HASH_KEY:
@@ -1007,11 +1009,18 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
     grn_ctx_output_flush(ctx, 0);
   }
 
+  grn_table_get_info(ctx, table,
+                     &flags,
+                     NULL,
+                     &default_tokenizer,
+                     &normalizer,
+                     &token_filters);
+
   GRN_TEXT_PUTS(ctx, outbuf, "table_create ");
   dump_obj_name(ctx, outbuf, table);
   GRN_TEXT_PUTC(ctx, outbuf, ' ');
   grn_dump_table_create_flags(ctx,
-                              table->header.flags & ~default_flags,
+                              flags & ~default_flags,
                               outbuf);
   if (domain) {
     GRN_TEXT_PUTC(ctx, outbuf, ' ');
@@ -1031,36 +1040,29 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
     dump_obj_name(ctx, outbuf, range);
     grn_obj_unlink(ctx, range);
   }
-  default_tokenizer = grn_obj_get_info(ctx, table, GRN_INFO_DEFAULT_TOKENIZER,
-                                       NULL);
   if (default_tokenizer) {
     GRN_TEXT_PUTS(ctx, outbuf, " --default_tokenizer ");
     dump_obj_name(ctx, outbuf, default_tokenizer);
   }
-  normalizer = grn_obj_get_info(ctx, table, GRN_INFO_NORMALIZER, NULL);
   if (normalizer) {
     GRN_TEXT_PUTS(ctx, outbuf, " --normalizer ");
     dump_obj_name(ctx, outbuf, normalizer);
   }
   if (table->header.type != GRN_TABLE_NO_KEY) {
-    grn_obj token_filters;
     int n_token_filters;
 
-    GRN_PTR_INIT(&token_filters, GRN_OBJ_VECTOR, GRN_ID_NIL);
-    grn_obj_get_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &token_filters);
-    n_token_filters = GRN_BULK_VSIZE(&token_filters) / sizeof(grn_obj *);
+    n_token_filters = GRN_BULK_VSIZE(token_filters) / sizeof(grn_obj *);
     if (n_token_filters > 0) {
       int i;
       GRN_TEXT_PUTS(ctx, outbuf, " --token_filters ");
       for (i = 0; i < n_token_filters; i++) {
-        grn_obj *token_filter = GRN_PTR_VALUE_AT(&token_filters, i);
+        grn_obj *token_filter = GRN_PTR_VALUE_AT(token_filters, i);
         if (i > 0) {
           GRN_TEXT_PUTC(ctx, outbuf, ',');
         }
         dump_obj_name(ctx, outbuf, token_filter);
       }
     }
-    GRN_OBJ_FIN(ctx, &token_filters);
   }
 
   GRN_TEXT_PUTC(ctx, outbuf, '\n');

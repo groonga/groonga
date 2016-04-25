@@ -461,10 +461,12 @@ command_schema_table_command_collect_arguments(grn_ctx *ctx,
 
   {
     grn_obj flags;
-    grn_obj_flags ignored_flags = GRN_OBJ_KEY_NORMALIZE | GRN_OBJ_PERSISTENT;
+    grn_table_flags table_flags;
+    grn_table_flags ignored_flags = GRN_OBJ_KEY_NORMALIZE | GRN_OBJ_PERSISTENT;
     GRN_TEXT_INIT(&flags, 0);
+    grn_table_get_info(ctx, table, &table_flags, NULL, NULL, NULL, NULL);
     grn_dump_table_create_flags(ctx,
-                                table->header.flags & ~ignored_flags,
+                                table_flags & ~ignored_flags,
                                 &flags);
     GRN_TEXT_PUTC(ctx, &flags, '\0');
     ADD("flags", GRN_TEXT_VALUE(&flags));

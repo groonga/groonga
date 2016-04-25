@@ -825,7 +825,7 @@ grn_proc_create(grn_ctx *ctx, const char *name, int name_size, grn_proc_type typ
 /* grn_table */
 
 static void
-calc_rec_size(grn_obj_flags flags, uint32_t max_n_subrecs, uint32_t range_size,
+calc_rec_size(grn_table_flags flags, uint32_t max_n_subrecs, uint32_t range_size,
               uint32_t additional_value_size,
               uint8_t *subrec_size, uint8_t *subrec_offset,
               uint32_t *key_size, uint32_t *value_size)
@@ -877,10 +877,10 @@ static grn_rc _grn_obj_remove(grn_ctx *ctx, grn_obj *obj, grn_bool dependent);
 
 static grn_rc
 grn_table_create_validate(grn_ctx *ctx, const char *name, unsigned int name_size,
-                          const char *path, grn_obj_flags flags,
+                          const char *path, grn_table_flags flags,
                           grn_obj *key_type, grn_obj *value_type)
 {
-  grn_obj_flags table_type;
+  grn_table_flags table_type;
   const char *table_type_name = NULL;
 
   table_type = (flags & GRN_OBJ_TABLE_TYPE_MASK);
@@ -951,7 +951,7 @@ grn_table_create_validate(grn_ctx *ctx, const char *name, unsigned int name_size
 static grn_obj *
 grn_table_create_with_max_n_subrecs(grn_ctx *ctx, const char *name,
                                     unsigned int name_size, const char *path,
-                                    grn_obj_flags flags, grn_obj *key_type,
+                                    grn_table_flags flags, grn_obj *key_type,
                                     grn_obj *value_type,
                                     uint32_t max_n_subrecs,
                                     uint32_t additional_value_size)
@@ -1128,7 +1128,7 @@ grn_table_create_with_max_n_subrecs(grn_ctx *ctx, const char *name,
 
 grn_obj *
 grn_table_create(grn_ctx *ctx, const char *name, unsigned int name_size,
-                 const char *path, grn_obj_flags flags,
+                 const char *path, grn_table_flags flags,
                  grn_obj *key_type, grn_obj *value_type)
 {
   grn_obj *res;
@@ -2172,7 +2172,7 @@ exit :
 }
 
 grn_rc
-grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_obj_flags *flags,
+grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_table_flags *flags,
                    grn_encoding *encoding, grn_obj **tokenizer,
                    grn_obj **normalizer,
                    grn_obj **token_filters)
@@ -2182,7 +2182,7 @@ grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_obj_flags *flags,
   if (table) {
     switch (table->header.type) {
     case GRN_TABLE_PAT_KEY :
-      if (flags) { *flags = ((grn_pat *)table)->obj.header.flags; }
+      if (flags) { *flags = ((grn_pat *)table)->header->flags; }
       if (encoding) { *encoding = ((grn_pat *)table)->encoding; }
       if (tokenizer) { *tokenizer = ((grn_pat *)table)->tokenizer; }
       if (normalizer) { *normalizer = ((grn_pat *)table)->normalizer; }
@@ -2190,7 +2190,7 @@ grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_obj_flags *flags,
       rc = GRN_SUCCESS;
       break;
     case GRN_TABLE_DAT_KEY :
-      if (flags) { *flags = ((grn_dat *)table)->obj.header.flags; }
+      if (flags) { *flags = ((grn_dat *)table)->header->flags; }
       if (encoding) { *encoding = ((grn_dat *)table)->encoding; }
       if (tokenizer) { *tokenizer = ((grn_dat *)table)->tokenizer; }
       if (normalizer) { *normalizer = ((grn_dat *)table)->normalizer; }
@@ -2198,7 +2198,7 @@ grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_obj_flags *flags,
       rc = GRN_SUCCESS;
       break;
     case GRN_TABLE_HASH_KEY :
-      if (flags) { *flags = ((grn_hash *)table)->obj.header.flags; }
+      if (flags) { *flags = ((grn_hash *)table)->header.common->flags; }
       if (encoding) { *encoding = ((grn_hash *)table)->encoding; }
       if (tokenizer) { *tokenizer = ((grn_hash *)table)->tokenizer; }
       if (normalizer) { *normalizer = ((grn_hash *)table)->normalizer; }
@@ -2206,9 +2206,9 @@ grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_obj_flags *flags,
       rc = GRN_SUCCESS;
       break;
     case GRN_TABLE_NO_KEY :
-      if (flags) { *flags = 0; }
+      if (flags) { *flags = grn_array_get_flags(ctx, ((grn_array *)table)); }
       if (encoding) { *encoding = GRN_ENC_NONE; }
-      if (tokenizer) { *tokenizer = grn_tokenizer_uvector; }
+      if (tokenizer) { *tokenizer = NULL; }
       if (normalizer) { *normalizer = NULL; }
       if (token_filters) { *token_filters = NULL; }
       rc = GRN_SUCCESS;
@@ -4188,7 +4188,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
     }
     for (r = 0, rp = results; r < n_results; r++, rp++) {
       if (!rp->table) {
-        grn_obj_flags flags;
+        grn_table_flags flags;
         grn_obj *key_type = NULL;
         uint32_t additional_value_size;
 

@@ -164,6 +164,8 @@ struct _grn_array_cursor {
  */
 uint32_t grn_array_size(grn_ctx *ctx, grn_array *array);
 
+uint32_t grn_array_get_flags(grn_ctx *ctx, grn_array *array);
+
 grn_rc grn_array_truncate(grn_ctx *ctx, grn_array *array);
 grn_rc grn_array_copy_sort_key(grn_ctx *ctx, grn_array *array,
                                grn_table_sort_key *keys, int n_keys);

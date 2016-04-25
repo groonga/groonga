@@ -20,7 +20,7 @@
 
 grn_rc
 grn_dump_table_create_flags(grn_ctx *ctx,
-                            grn_obj_flags flags,
+                            grn_table_flags flags,
                             grn_obj *buffer)
 {
   GRN_API_ENTER;
