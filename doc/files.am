@@ -276,8 +276,10 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/truncate/truncate_column.log \
 	$(top_srcdir)/doc/source/example/reference/commands/truncate/truncate_table.log \
 	$(top_srcdir)/doc/source/example/reference/executables/groonga-httpd.log \
+	$(top_srcdir)/doc/source/example/reference/executables/groonga-suggest-httpd/complete.log \
 	$(top_srcdir)/doc/source/example/reference/executables/groonga-suggest-httpd/launch-lerner.log \
 	$(top_srcdir)/doc/source/example/reference/executables/groonga-suggest-httpd/launch.log \
+	$(top_srcdir)/doc/source/example/reference/executables/groonga-suggest-httpd/learn-and-complete.log \
 	$(top_srcdir)/doc/source/example/reference/executables/groonga-suggest-httpd/learn.log \
 	$(top_srcdir)/doc/source/example/reference/executables/groonga-suggest-httpd/setup.log \
 	$(top_srcdir)/doc/source/example/reference/functions/between/usage_age.log \
@@ -1110,8 +1112,10 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/truncate/truncate_column.log \
 	source/example/reference/commands/truncate/truncate_table.log \
 	source/example/reference/executables/groonga-httpd.log \
+	source/example/reference/executables/groonga-suggest-httpd/complete.log \
 	source/example/reference/executables/groonga-suggest-httpd/launch-lerner.log \
 	source/example/reference/executables/groonga-suggest-httpd/launch.log \
+	source/example/reference/executables/groonga-suggest-httpd/learn-and-complete.log \
 	source/example/reference/executables/groonga-suggest-httpd/learn.log \
 	source/example/reference/executables/groonga-suggest-httpd/setup.log \
 	source/example/reference/functions/between/usage_age.log \

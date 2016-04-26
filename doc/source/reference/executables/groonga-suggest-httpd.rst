@@ -137,8 +137,6 @@ communicates :doc:`groonga-suggest-learner`:
 .. include:: ../../example/reference/executables/groonga-suggest-httpd/launch.log
 .. % groonga-suggest-httpd --send-endpoint 'tcp://127.0.0.1:1234' --receive-endpoint 'tcp://127.0.0.1:1235' --daemon ${DB_PATH}
 
-TODO: httpd and learner communication doesn't work...
-
 The ``groonga-suggest-httpd`` process accepts HTTP requests on
 ``8080`` port.
 
@@ -156,27 +154,57 @@ Here is an example to save log files under ``logs`` directory with
 Learn from user inputs
 ^^^^^^^^^^^^^^^^^^^^^^
 
+You can learn suggestion data from user inputs.
+
+You need to specify the following parameters to learn suggestion data:
+
+  * ``i``: The ID of the user (You may use IP address of client)
+  * ``l``: The dataset name
+  * ``s``: The timestamp of the input in seconds
+  * ``t``: The query type (It's optional. You must specify ``submit`` only when the user input is submitted.)
+  * ``q``: The user input
+
 Here are example requests to learn user input "Groonga" in ``query``
 dataset::
 
 .. groonga-command
 .. include:: ../../example/reference/executables/groonga-suggest-httpd/learn.log
-.. % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=92619&t=complete&q=G'
-.. % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=93850&t=complete&q=Gr'
-.. % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=94293&t=complete&q=Gro'
-.. % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=94734&t=complete&q=Groo'
-.. % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95147&t=complete&q=Grooon'
-.. % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95553&t=complete&q=Groonga'
+.. % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=92619&q=G'
+.. % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=93850&q=Gr'
+.. % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=94293&q=Gro'
+.. % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=94734&q=Groo'
+.. % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95147&q=Grooon'
+.. % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95553&q=Groonga'
 .. % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=95959&t=submit&q=Groonga'
 
-Inputting data must use ``t=complete`` parameter.
+Inputting data must not use ``t=submit`` parameter. In the above example, you just learn user inputs but you can learn and get complete candidates at once. It's described at the next section.
 
 Submitted data must use ``t=submit`` parameter.
 
 Use suggested response
 ^^^^^^^^^^^^^^^^^^^^^^
 
-TODO
+You can get suggested result from ``groonga-suggest-httpd``.
+
+You need to specify the following parameters to get suggested result:
+
+  * ``n``: The dataset name
+  * ``t``: The query type (``complete``, ``correct`` and/or ``suggest``)
+  * ``q``: The user input
+
+You can also specify parameters for :doc:`/reference/commands/suggest` as option.
+
+Here is an example that gets :doc:`/reference/suggest/completion` result. The result is computed by using learned data at the previous section. ``frequency_threshold=1`` parameter is used because this is an example. The parameter enables input data that are occurred one or more times. Normally, you should not use the parameter for production. The parameter will increase noises:
+
+.. groonga-command
+.. include:: ../../example/reference/executables/groonga-suggest-httpd/complete.log
+.. % curl 'http://localhost:8080/?n=query&t=complete&q=G&frequency_threshold=1'
+
+You can combine completion and learning by specifying parameters for both:
+
+.. groonga-command
+.. include:: ../../example/reference/executables/groonga-suggest-httpd/learn-and-complete.log
+.. % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=96000&q=G&n=query&t=complete&frequency_threshold=1'
 
 Command line parameters
 -----------------------
@@ -266,6 +294,8 @@ parameters are passed through :doc:`/reference/commands/suggest`. It
 means that you can use parameters of
 :doc:`/reference/commands/suggest`.
 
+.. _groonga-suggest-httpd-required-parameters:
+
 Required parameters
 ^^^^^^^^^^^^^^^^^^^
 
@@ -280,14 +310,8 @@ You must specify the following parameters.
    * - ``q``
      - Input by user. It must be UTF-8 encoded string.
      -
-   * - ``t``
-     - The query type.
 
-       Available values are ``complete``, ``correct``, ``suggest`` and
-       ``submit``.
-     - You can specify multiple types except ``submit``. You need to
-       use ``|`` as separator such as ``complete|correct``. ``submit``
-       is a valid value but ``complete|submit`` is invalid value.
+.. _groonga-suggest-httpd-required-parameters-learning:
 
 Required parameters for learning
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -314,6 +338,8 @@ You must specify the following parameters when you specify
      - Dataset name is the name that you specify to
        :doc:`groonga-suggest-create-dataset`.
 
+.. _groonga-suggest-httpd-required-parameters-suggestion:
+
 Required parameters for suggestion
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -330,6 +356,15 @@ You must specify the following parameters when you specify one of
      - The dataset name to use computing suggestion result
      - Dataset name is the name that you specify to
        :doc:`groonga-suggest-create-dataset`.
+   * - ``t``
+     - The query type.
+
+       Available values are ``complete``, ``correct``, ``suggest``.
+
+     - You can specify multiple types. You need to use ``|`` as
+       separator such as ``complete|correct``.
+
+.. _groonga-suggest-httpd-optional-parameters:
 
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^
@@ -345,6 +380,36 @@ Here are optional parameters.
    * - ``callback``
      - Function name for JSONP
      -
+
+.. _groonga-suggest-httpd-optional-parameters-learning:
+
+Optional parameters for learning
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Here are optional parameters when you specify
+:option:`--send-endpoint`.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Key
+     - Description
+     - Note
+   * - ``t``
+     - The query type.
+
+       Available value is only ``submit``.
+
+     - You must specify ``submit`` when user submits the input
+       specified as ``q``.
+
+       You must not specify ``submit`` for user inputs that aren't
+       submitted yet. You can use suggestion by specifying
+       ``complete``, ``correct`` and/or ``suggest`` to ``t`` when you
+       doesn't specify ``submit``. See
+       :ref:`groonga-suggest-httpd-required-parameters-suggestion` for
+       details about these values.
+
 
 Return value
 ------------
