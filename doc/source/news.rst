@@ -7,6 +7,130 @@
 News
 ====
 
+.. _release-6-0-2:
+
+Release 6.0.2 - 2016-04-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Supported bool in comparison operators (``>``, ``>=``, ``<``, ``<=``).
+  TRUE is casted to 1. FALSE is casted to 0. Thus you specify function
+  which returns boolean value in comparison.
+
+* [groonga-http][:doc:`/reference/command/request_timeout`] Supported
+  ``request_timeout`` parameter. Canceled request returns
+  ``HTTP/1.1 408 Request Timeout`` status code.
+
+* [:doc:`/reference/commands/table_tokenize`] Added ``index_column`` option.
+  [GitHub#534] [Patch by Naoya Murakami]
+
+* [:doc:`/reference/commands/table_tokenize`] Supported to output ``estimated_size``.
+  [GitHub#518] [Patch by Naoya Murakami]
+
+* [geo_in_rectangle] Supported to work without index. In this case, sequential search
+  is executed as a fallback.
+
+* Reduced needless internal loops. It improves phrase search performance.
+  [GitHub#519] [Patch by Naoya Murakami]
+
+* [:doc:`/contribution`] Updated documentation about contribution.
+  [GitHub#522] [Patch by Hiroshi Ohkubo]
+
+* [:doc:`/reference/command/return_code`] Updated documentation about return code list.
+
+* [:doc:`/reference/executables/groonga`] Added ``--default-request-timeout`` option.
+
+* [windows] Supported DLL version.
+
+* Supported index used search even if value only term exists.
+  For example, ``true || column > 0`` doesn't use index even if ``column`` has
+  index. In this release, above issue is resolved.
+
+* [:doc:`/reference/commands/select`] Supported specifying grouped table
+  [GitHub#524,#526,#527,#528,#529] [Patch by Naoya Murakami]
+
+* Supported grouping by ``Int{8,16,64}/UInt{8,16,64}`` value.
+  In the previous versions, only 32bit fixed size value was supported.
+
+* Added table name to error message for invalid sort key.
+
+* [:doc:`/reference/executables/groonga-suggest-httpd`] Updated documentation.
+
+* [:doc:`/reference/suggest/completion`] Fixed a typo about example.
+  [groonga-dev,04008] [Reported by Tachikawa Hiroaki]
+
+* [:doc:`/reference/executables/grndb`] Added a workaround to keep
+  backward compatibility. use ``object_inspect`` instead of ``inspect``.
+
+* [groonga-httpd] Updated bundled nginx version to 1.9.15.
+
+* [centos] Supported systemd.
+
+* [doc] Supported only HTML output. [GitHub#532] [Patch by Hiroshi Ohkubo]
+
+* [:doc:`/reference/executables/groonga-httpd`][centos] Supported to customize
+  environment variables.
+
+* [:doc:`/install/others`] Updated documentation about ``--with-package-platorm`` option.
+
+* [ubuntu] Supported Ubuntu 16.04 (Xenial Xerus)
+
+Fixes
+^^^^^
+
+* Fixed a bug that tokenization of zero-length values are failed.
+  For example, if ``description`` column is indexed column, tokenizer reports an error.
+  [GitHub#508] [Reported by Naoya Murakami]::
+
+    load --table docs
+    [
+    ["_key","description"],
+    [2,""]
+    ]
+
+* Fixed a crash bug because of invalid critical section handling. [GitHub#507]
+
+* [:doc:`/contribution/development/release`] Fixed a typo about grntest howto.
+  [GitHub#511] [Patch by Hiroshi Ohkubo]
+
+* [doc] Removed man support.
+
+* Removed invalid debug log messages which make user confused.
+
+* Fixed a bug that data is not correctly flushed because internal counter is wrongly cleared.
+  In the previous version, when size of data exceeds specific one, it was failed to create indexes.
+  [GitHub#517] [Reported by Naoya Murakami]
+
+* Fixed a bug that a process can't use more than one caches in parallel.
+  [GitHub#515]
+
+* Fixed a bug that internally used ``alloc_info`` structure which is used to find memory leaks is
+  not exclusively accessed. Without this fix, it may causes a crash. [GitHub#523]
+
+* [tokenizer mecab] Fixed a memory leak on dictionary encoding mismatch error.
+  [groonga-dev,04012] [Reported by Naoya Murakami]
+
+* Fixed a bug that combination of [:doc:`/reference/executables/groonga-suggest-httpd`] and
+  [:doc:`/reference/executables/groonga-suggest-leaner`] didn't work.
+
+* [doc] Removed needless uuid from \*.po [GitHub#531] [Patch by Hiroshi Ohkubo]
+
+* [:doc:`/reference/functions/highlight_html`] Fixed a bug that duplicated text
+  is returned. This bug occurs when highlighted keyword occurred 1024 or more times.
+
+* Fixed a bug that ``KEY_LARGE`` conflicts with existing flag.
+  If you use ``TABLE_HASH_KEY|KEY_LARGE`` in the previous version,
+  there is a possibility to break database. Please recreate the table.
+
+Thanks
+^^^^^^
+
+* Naoya Murakami
+* Hiroshi Ohkubo
+* Tachikawa Hiroaki
+
 .. _release-6-0-1:
 
 Release 6.0.1 - 2016-03-29
