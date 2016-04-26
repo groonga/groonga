@@ -4,6 +4,8 @@
 
 .. groonga-command
 .. database: groonga-suggest-httpd
+.. % killall lt-groonga-suggest-learner || :
+.. % killall lt-groonga-suggest-httpd || :
 
 ``groonga-suggest-httpd``
 =========================
@@ -58,7 +60,7 @@ You need to create a dataset by :doc:`groonga-suggest-create-dataset`.
 Here is an example that creates ``query`` dataset:
 
 .. groonga-command
-.. include:: ../../example/reference/executables/groonga-suggest-httpd-setup.log
+.. include:: ../../example/reference/executables/groonga-suggest-httpd/setup.log
 .. % groonga-suggest-create-dataset ${DB_PATH} query
 
 :doc:`groonga-suggest-create-dataset` outputs executed commands. You
@@ -106,7 +108,7 @@ omits the instruction for creating ``query`` dataset:
 .. % groonga-suggest-create-dataset ${DB_PATH} query
 
 .. groonga-command
-.. include:: ../../example/reference/executables/groonga-suggest-httpd-launch-lerner.log
+.. include:: ../../example/reference/executables/groonga-suggest-httpd/launch-lerner.log
 .. % groonga-suggest-learner --daemon ${DB_PATH}
 
 The ``groonga-suggest-learner`` process opens two endpoints at
@@ -132,7 +134,7 @@ communicates :doc:`groonga-suggest-learner`:
 .. database: groonga-suggest-httpd
 
 .. groonga-command
-.. include:: ../../example/reference/executables/groonga-suggest-httpd-launch.log
+.. include:: ../../example/reference/executables/groonga-suggest-httpd/launch.log
 .. % groonga-suggest-httpd --send-endpoint 'tcp://127.0.0.1:1234' --receive-endpoint 'tcp://127.0.0.1:1235' --daemon ${DB_PATH}
 
 TODO: httpd and learner communication doesn't work...
@@ -158,7 +160,7 @@ Here are example requests to learn user input "Groonga" in ``query``
 dataset::
 
 .. groonga-command
-.. include:: ../../example/reference/executables/groonga-suggest-httpd-learn.log
+.. include:: ../../example/reference/executables/groonga-suggest-httpd/learn.log
 .. % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=92619&t=complete&q=G'
 .. % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=93850&t=complete&q=Gr'
 .. % curl 'http://localhost:8080/?i=127.0.0.1&l=query&s=94293&t=complete&q=Gro'
@@ -393,4 +395,7 @@ See also
   * :doc:`/reference/commands/suggest`
 
 .. groonga-command
-.. % killall lt-groonga-suggest-learner lt-groonga-suggest-httpd
+.. % killall lt-groonga-suggest-learner || :
+.. % killall lt-groonga-suggest-httpd || :
+.. % killall -KILL lt-groonga-suggest-learner || :
+.. % killall -KILL lt-groonga-suggest-httpd || :
