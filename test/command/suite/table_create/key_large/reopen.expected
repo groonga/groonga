@@ -1,0 +1,21 @@
+table_create Users TABLE_HASH_KEY|KEY_LARGE ShortText
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "Alice"},
+{"_key": "Bob"},
+{"_key": "Charlie"}
+]
+[[0,0.0,0.0],3]
+database_unmap
+[[0,0.0,0.0],true]
+dump
+table_create Users TABLE_HASH_KEY|KEY_LARGE ShortText
+
+load --table Users
+[
+["_key"],
+["Alice"],
+["Bob"],
+["Charlie"]
+]
