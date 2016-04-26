@@ -1646,7 +1646,7 @@ grn_ctx_log(grn_ctx *ctx, const char *fmt, ...)
 {
   va_list argp;
   va_start(argp, fmt);
-  vsnprintf(ctx->errbuf, GRN_CTX_MSGSIZE, fmt, argp);
+  grn_vsnprintf(ctx->errbuf, GRN_CTX_MSGSIZE, fmt, argp);
   va_end(argp);
 }
 

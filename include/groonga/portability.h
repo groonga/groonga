@@ -142,6 +142,14 @@
 #endif /* WIN32 */
 
 #ifdef WIN32
+# define grn_vsnprintf(dest, dest_size, format, args)           \
+  vsnprintf((dest), (dest_size) - 1, (format), (args))
+#else /* WIN32 */
+# define grn_vsnprintf(dest, dest_size, format, args)           \
+  vsnprintf((dest), (dest_size), (format), (args))
+#endif /* WIN32 */
+
+#ifdef WIN32
 # define grn_write(fd, buf, count) _write((fd), (buf), (count))
 #else /* WIN32 */
 # define grn_write(fd, buf, count) write((fd), (buf), (count))
