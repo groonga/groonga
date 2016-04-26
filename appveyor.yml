@@ -1,16 +1,22 @@
 version: "{build}"
 clone_depth: 10
 
-environment:
-  matrix:
-    - CMAKE_GENERATOR_NAME: "Visual Studio 12 2013"
-    - CMAKE_GENERATOR_NAME: "Visual Studio 12 2013 Win64"
+platform:
+  - x86
+  - x64
 
 install:
   - SET PATH=C:\Ruby22-x64\bin;%PATH%
 
 build_script:
   - git submodule update --init
+  - set
+  - |
+    if "%PROCESSOR_ARCHITECTURE%" == "x86" (
+      set CMAKE_GENERATOR_NAME=Visual Studio 12 2013
+    ) else (
+      set CMAKE_GENERATOR_NAME=Visual Studio 12 2013 Win64
+    )
   - cmake . -G "%CMAKE_GENERATOR_NAME%"
   - cmake --build . --config Debug
 
