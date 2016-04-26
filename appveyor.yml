@@ -12,6 +12,9 @@ notifications:
       - groonga-commit@lists.osdn.me
     on_build_status_changed: true
 
+install:
+  - tzutil /s "Tokyo Standard Time"
+
 build_script:
   - ps: |
       if ($Env:PLATFORM -eq "x86")
