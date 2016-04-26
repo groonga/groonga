@@ -747,10 +747,10 @@ msgstr ""
 msgid "14.04 LTS Trusty Tahr"
 msgstr ""
 
-msgid "15.04 Vivid Vervet"
+msgid "15.10 Wily Werewolf"
 msgstr ""
 
-msgid "15.10 Wily Werewolf"
+msgid "16.04 Xenial Xerus"
 msgstr ""
 
 msgid "Enable the universe repository to install Groonga::"
