@@ -18,6 +18,8 @@
 
 #include "../grn_proc.h"
 
+#include "../grn_db.h"
+
 #include <groonga/plugin.h>
 
 static void
