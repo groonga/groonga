@@ -369,7 +369,7 @@ grn_logger_put(grn_ctx *ctx, grn_log_level level,
     if (current_logger.flags & GRN_LOG_MESSAGE) {
       va_list argp;
       va_start(argp, fmt);
-      vsnprintf(mbuf, MBUFSIZE - 1, fmt, argp);
+      grn_vsnprintf(mbuf, MBUFSIZE - 1, fmt, argp);
       va_end(argp);
       mbuf[MBUFSIZE - 1] = '\0';
     } else {
