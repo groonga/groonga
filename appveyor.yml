@@ -9,14 +9,16 @@ install:
   - SET PATH=C:\Ruby22-x64\bin;%PATH%
 
 build_script:
-  - git submodule update --init
-  - set
-  - |
-    if "%PROCESSOR_ARCHITECTURE%" == "x86" (
-      set CMAKE_GENERATOR_NAME=Visual Studio 12 2013
+  - ps: |
+    if ($env:PLATFORM -eq "x86") (
+      $env:PATH = "C:\Ruby22\bin;$env:PATH"
+      $env:CMAKE_GENERATOR_NAME = "Visual Studio 12 2013"
     ) else (
-      set CMAKE_GENERATOR_NAME=Visual Studio 12 2013 Win64
+      $env:PATH = "C:\Ruby22-x64\bin;$env:PATH"
+      $env:CMAKE_GENERATOR_NAME = "Visual Studio 12 2013 Win64"
     )
+  - set
+  - git submodule update --init
   - cmake . -G "%CMAKE_GENERATOR_NAME%"
   - cmake --build . --config Debug
 
@@ -27,7 +29,6 @@ notifications:
       - groonga-commit@lists.osdn.me
     on_build_status_changed: true
 
-test: off
 before_test:
   - gem install grntest
 test_script:
