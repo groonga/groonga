@@ -24,7 +24,6 @@ build_script:
         $Env:PATH = "C:\Ruby22-x64\bin;$Env:PATH"
         $Env:CMAKE_GENERATOR_NAME = "Visual Studio 12 2013 Win64"
       }
-  - set
   - git submodule update --init
   - cmake . -G "%CMAKE_GENERATOR_NAME%"
   - cmake --build . --config Debug
@@ -32,4 +31,5 @@ build_script:
 before_test:
   - gem install grntest
 test_script:
+  - SET GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE=%APPVEYOR_BUILD_FOLDER%\test\command\tmp\synonyms.tsv
   - grntest --groonga src\groonga.exe --base-directory test\command test\command\suite
