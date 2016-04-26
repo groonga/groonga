@@ -10,16 +10,16 @@ install:
 
 build_script:
   - ps: |
-    if ($env:PLATFORM -eq "x86")
-    {
-      $env:PATH = "C:\Ruby22\bin;$env:PATH"
-      $env:CMAKE_GENERATOR_NAME = "Visual Studio 12 2013"
-    }
-    else
-    {
-      $env:PATH = "C:\Ruby22-x64\bin;$env:PATH"
-      $env:CMAKE_GENERATOR_NAME = "Visual Studio 12 2013 Win64"
-    }
+      if ($env:PLATFORM -eq "x86")
+      {
+        $env:PATH = "C:\Ruby22\bin;$env:PATH"
+        $env:CMAKE_GENERATOR_NAME = "Visual Studio 12 2013"
+      }
+      else
+      {
+        $env:PATH = "C:\Ruby22-x64\bin;$env:PATH"
+        $env:CMAKE_GENERATOR_NAME = "Visual Studio 12 2013 Win64"
+      }
   - set
   - git submodule update --init
   - cmake . -G "%CMAKE_GENERATOR_NAME%"
