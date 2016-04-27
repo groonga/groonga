@@ -148,7 +148,7 @@ Here is an example to save log files under ``logs`` directory with
 
   % groonga-suggest-httpd --log-base-path logs/log ${DB_PATH}
 
-``groonga-suggest-httpd`` create log files such as
+``groonga-suggest-httpd`` creates log files such as
 ``logYYYYmmddHHMMSS-00`` under ``logs`` directory.
 
 Learn from user inputs
@@ -241,7 +241,8 @@ Optional parameters
 
 .. option:: -s, --send-endpoint
 
-   Specify endpoint URI of learner for sending learning data.
+   Specify endpoint URI of :doc:`groonga-suggest-learner` for sending
+   user inputs.
 
    The format is ``tcp://${HOST}:${PORT}`` such as
    ``tcp://192.168.0.1:2929``.
@@ -250,7 +251,8 @@ Optional parameters
 
 .. option:: -r, --receive-endpoint
 
-   Specify endpoint URI of learner for receiving learning data.
+   Specify endpoint URI of :doc:`groonga-suggest-learner` for
+   receiving learned suggestion data.
 
    The format is ``tcp://${HOST}:${PORT}`` such as
    ``tcp://192.168.0.1:2929``.
@@ -353,7 +355,7 @@ You must specify the following parameters when you specify one of
      - Description
      - Note
    * - ``n``
-     - The dataset name to use computing suggestion result
+     - The dataset name to use computing suggestion result.
      - Dataset name is the name that you specify to
        :doc:`groonga-suggest-create-dataset`.
    * - ``t``
