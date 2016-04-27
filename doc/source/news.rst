@@ -113,7 +113,7 @@ Fixes
   [groonga-dev,04012] [Reported by Naoya Murakami]
 
 * Fixed a bug that combination of [:doc:`/reference/executables/groonga-suggest-httpd`] and
-  [:doc:`/reference/executables/groonga-suggest-leaner`] didn't work.
+  [:doc:`/reference/executables/groonga-suggest-learner`] didn't work.
 
 * [doc] Removed needless uuid from \*.po [GitHub#531] [Patch by Hiroshi Ohkubo]
 
