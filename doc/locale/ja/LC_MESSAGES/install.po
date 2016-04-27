@@ -178,6 +178,28 @@ msgstr ""
 msgid "Install groonga-token-filter-stem package::"
 msgstr "groonga-token-filter-stemパッケージのインストール::"
 
+msgid ""
+"If you use systemd as init, current version of Groonga does not support to "
+"register start-up service automatically during installation. If you want to "
+"register groonga-httpd/groonga-server-gqtp as a automatic start-up service, "
+"please execute the following commands:"
+msgstr ""
+"Systemdをinitとして使っている場合、現在のバージョンのGroongaは自動起動サービス"
+"としてインストール時に登録できません。groonga-httpdやgroonga-server-gqtpを"
+"自動起動サービスとして登録するには以下のコマンドを実行してください:"
+
+msgid "For groonga-httpd:"
+msgstr "groonga-httpd向け:"
+
+msgid "% sudo systemctl enable groonga-httpd"
+msgstr ""
+
+msgid "For groonga-server-gqtp:"
+msgstr "groonga-server-gtqp向け:"
+
+msgid "% sudo systemctl enable groonga-server-gqtp"
+msgstr ""
+
 msgid "Fedora"
 msgstr ""
 
