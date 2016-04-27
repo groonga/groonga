@@ -6074,7 +6074,9 @@ token_candidate_score(grn_ctx *ctx, token_candidate_node *nodes, uint32_t candid
   for (i = 0; i <= last; i++) {
     if (candidate & (1 << i)) {
       token_candidate_node *node = nodes + i + offset;
-      score += max_estimated_size / node->estimated_size;
+      if (node->estimated_size > 0) {
+        score += max_estimated_size / node->estimated_size;
+      }
     }
   }
   return score;
