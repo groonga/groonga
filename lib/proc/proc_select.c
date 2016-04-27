@@ -40,21 +40,15 @@ typedef struct {
 } grn_select_string;
 
 typedef struct {
-  const char *label;
-  unsigned int label_len;
-  const char *keys;
-  unsigned int keys_len;
-  const char *sortby;
-  unsigned int sortby_len;
-  const char *output_columns;
-  unsigned int output_columns_len;
+  grn_select_string label;
+  grn_select_string keys;
+  grn_select_string sortby;
+  grn_select_string output_columns;
   int offset;
   int limit;
   grn_table_group_flags calc_types;
-  const char *calc_target_name;
-  unsigned int calc_target_name_len;
-  const char *table_name;
-  unsigned int table_name_len;
+  grn_select_string calc_target_name;
+  grn_select_string table_name;
 } drilldown_info;
 
 typedef struct {
@@ -326,32 +320,23 @@ drilldown_info_fill(grn_ctx *ctx,
                     grn_obj *calc_target,
                     grn_obj *table)
 {
-  if (keys) {
-    drilldown->keys = GRN_TEXT_VALUE(keys);
-    drilldown->keys_len = GRN_TEXT_LEN(keys);
-  } else {
-    drilldown->keys = NULL;
-    drilldown->keys_len = 0;
-  }
+#define FILL_STRING(string, bulk)                \
+  if (bulk && GRN_TEXT_LEN(bulk) > 0) {          \
+    string.value = GRN_TEXT_VALUE(bulk);         \
+    string.length = GRN_TEXT_LEN(bulk);          \
+  } else {                                       \
+    string.value = NULL;                         \
+    string.length = 0;                           \
+  }                                              \
 
-  if (sortby) {
-    drilldown->sortby = GRN_TEXT_VALUE(sortby);
-    drilldown->sortby_len = GRN_TEXT_LEN(sortby);
-  } else {
-    drilldown->sortby = NULL;
-    drilldown->sortby_len = 0;
-  }
+  FILL_STRING(drilldown->keys, keys);
 
-  if (output_columns) {
-    drilldown->output_columns = GRN_TEXT_VALUE(output_columns);
-    drilldown->output_columns_len = GRN_TEXT_LEN(output_columns);
-  } else {
-    drilldown->output_columns = NULL;
-    drilldown->output_columns_len = 0;
-  }
-  if (!drilldown->output_columns_len) {
-    drilldown->output_columns = DEFAULT_DRILLDOWN_OUTPUT_COLUMNS;
-    drilldown->output_columns_len = strlen(DEFAULT_DRILLDOWN_OUTPUT_COLUMNS);
+  FILL_STRING(drilldown->sortby, sortby);
+
+  FILL_STRING(drilldown->output_columns, output_columns);
+  if (drilldown->output_columns.length == 0) {
+    drilldown->output_columns.value = DEFAULT_DRILLDOWN_OUTPUT_COLUMNS;
+    drilldown->output_columns.length = strlen(DEFAULT_DRILLDOWN_OUTPUT_COLUMNS);
   }
 
   if (offset && GRN_TEXT_LEN(offset)) {
@@ -377,21 +362,9 @@ drilldown_info_fill(grn_ctx *ctx,
     drilldown->calc_types = 0;
   }
 
-  if (calc_target && GRN_TEXT_LEN(calc_target)) {
-    drilldown->calc_target_name = GRN_TEXT_VALUE(calc_target);
-    drilldown->calc_target_name_len = GRN_TEXT_LEN(calc_target);
-  } else {
-    drilldown->calc_target_name = NULL;
-    drilldown->calc_target_name_len = 0;
-  }
+  FILL_STRING(drilldown->calc_target_name, calc_target);
 
-  if (table && GRN_TEXT_LEN(table)) {
-    drilldown->table_name = GRN_TEXT_VALUE(table);
-    drilldown->table_name_len = GRN_TEXT_LEN(table);
-  } else {
-    drilldown->table_name = NULL;
-    drilldown->table_name_len = 0;
-  }
+  FILL_STRING(drilldown->table_name, table);
 }
 
 static void
@@ -406,10 +379,10 @@ grn_select_drilldown(grn_ctx *ctx, grn_obj *table,
     int offset;
     int limit;
 
-    if (drilldown->calc_target_name) {
+    if (drilldown->calc_target_name.length > 0) {
       g.calc_target = grn_obj_column(ctx, table,
-                                     drilldown->calc_target_name,
-                                     drilldown->calc_target_name_len);
+                                     drilldown->calc_target_name.value,
+                                     drilldown->calc_target_name.length);
     }
     if (g.calc_target) {
       g.flags |= drilldown->calc_types;
@@ -425,12 +398,12 @@ grn_select_drilldown(grn_ctx *ctx, grn_obj *table,
     limit = drilldown->limit;
     grn_normalize_offset_and_limit(ctx, n_hits, &offset, &limit);
 
-    if (drilldown->sortby_len) {
+    if (drilldown->sortby.length > 0) {
       grn_table_sort_key *sort_keys;
       uint32_t n_sort_keys;
       sort_keys = grn_table_sort_key_from_str(ctx,
-                                              drilldown->sortby,
-                                              drilldown->sortby_len,
+                                              drilldown->sortby.value,
+                                              drilldown->sortby.length,
                                               g.table, &n_sort_keys);
       if (sort_keys) {
         grn_obj *sorted;
@@ -445,8 +418,8 @@ grn_select_drilldown(grn_ctx *ctx, grn_obj *table,
             GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
             GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY;
           grn_obj_columns(ctx, sorted,
-                          drilldown->output_columns,
-                          drilldown->output_columns_len,
+                          drilldown->output_columns.value,
+                          drilldown->output_columns.length,
                           &format.columns);
           GRN_OUTPUT_OBJ(sorted, &format);
           GRN_OBJ_FORMAT_FIN(ctx, &format);
@@ -461,8 +434,8 @@ grn_select_drilldown(grn_ctx *ctx, grn_obj *table,
         GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
         GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY;
       grn_obj_columns(ctx, g.table,
-                      drilldown->output_columns,
-                      drilldown->output_columns_len,
+                      drilldown->output_columns.value,
+                      drilldown->output_columns.length,
                       &format.columns);
       GRN_OUTPUT_OBJ(g.table, &format);
       GRN_OBJ_FORMAT_FIN(ctx, &format);
@@ -499,11 +472,11 @@ drilldown_info_tsort_visit(grn_ctx *ctx, grn_obj *labels,
     statuses[index] = TSORT_STATUS_VISITING;
     {
       drilldown_info *drilldown = &(drilldowns[index]);
-      if (drilldown->table_name) {
+      if (drilldown->table_name.length > 0) {
         grn_id dependent_id;
         dependent_id = grn_table_get(ctx, labels,
-                                     drilldown->table_name,
-                                     drilldown->table_name_len);
+                                     drilldown->table_name.value,
+                                     drilldown->table_name.length);
         if (dependent_id != GRN_ID_NIL) {
           uint32_t dependent_index = dependent_id - 1;
           cycled = drilldown_info_tsort_visit(ctx, labels, statuses, drilldowns,
@@ -512,10 +485,10 @@ drilldown_info_tsort_visit(grn_ctx *ctx, grn_obj *labels,
             GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
                              "[select][drilldown][%.*s][table] "
                              "cycled dependency: <%.*s>",
-                             (int)(drilldown->label_len),
-                             drilldown->label,
-                             (int)(drilldown->table_name_len),
-                             drilldown->table_name);
+                             (int)(drilldown->label.length),
+                             drilldown->label.value,
+                             (int)(drilldown->table_name.length),
+                             drilldown->table_name.value);
           }
         }
       }
@@ -542,7 +515,8 @@ drilldown_info_tsort_body(grn_ctx *ctx, grn_obj *labels,
     drilldown_info *drilldown = &(drilldowns[i]);
     grn_id id;
     id = grn_table_get(ctx, labels,
-                       drilldown->label, drilldown->label_len);
+                       drilldown->label.value,
+                       drilldown->label.length);
     if (id != GRN_ID_NIL) {
       uint32_t index = id - 1;
       if (drilldown_info_tsort_visit(ctx, labels, statuses, drilldowns,
@@ -638,20 +612,20 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
     result->key_end = 0;
     result->calc_target = NULL;
 
-    if (drilldown->table_name) {
+    if (drilldown->table_name.length > 0) {
       grn_id dependent_id;
       dependent_id = grn_table_get(ctx,
                                    labels,
-                                   drilldown->table_name,
-                                   drilldown->table_name_len);
+                                   drilldown->table_name.value,
+                                   drilldown->table_name.length);
       if (dependent_id == GRN_ID_NIL) {
         GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
                          "[select][drilldown][%.*s][table] "
                          "nonexistent label: <%.*s>",
-                         (int)(drilldown->label_len),
-                         drilldown->label,
-                         (int)(drilldown->table_name_len),
-                         drilldown->table_name);
+                         (int)(drilldown->label.length),
+                         drilldown->label.value,
+                         (int)(drilldown->table_name.length),
+                         drilldown->table_name.value);
         break;
       } else {
         uint32_t dependent_index = dependent_id - 1;
@@ -659,10 +633,10 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
       }
     }
 
-    if (drilldown->keys_len > 0) {
+    if (drilldown->keys.length > 0) {
       keys = grn_table_sort_key_from_str(ctx,
-                                         drilldown->keys,
-                                         drilldown->keys_len,
+                                         drilldown->keys.value,
+                                         drilldown->keys.length,
                                          target_table, &n_keys);
       if (!keys) {
         GRN_PLUGIN_CLEAR_ERROR(ctx);
@@ -675,10 +649,10 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
       }
     }
 
-    if (drilldown->calc_target_name) {
+    if (drilldown->calc_target_name.length > 0) {
       result->calc_target = grn_obj_column(ctx, target_table,
-                                           drilldown->calc_target_name,
-                                           drilldown->calc_target_name_len);
+                                           drilldown->calc_target_name.value,
+                                           drilldown->calc_target_name.length);
     }
     if (result->calc_target) {
       result->flags |= drilldown->calc_types;
@@ -727,7 +701,7 @@ grn_select_drilldowns_output(grn_ctx *ctx,
       continue;
     }
 
-    GRN_OUTPUT_STR(drilldown->label, drilldown->label_len);
+    GRN_OUTPUT_STR(drilldown->label.value, drilldown->label.length);
 
     n_hits = grn_table_size(ctx, result->table);
 
@@ -735,12 +709,12 @@ grn_select_drilldowns_output(grn_ctx *ctx,
     limit = drilldown->limit;
     grn_normalize_offset_and_limit(ctx, n_hits, &offset, &limit);
 
-    if (drilldown->sortby_len) {
+    if (drilldown->sortby.length > 0) {
       grn_table_sort_key *sort_keys;
       uint32_t n_sort_keys;
       sort_keys = grn_table_sort_key_from_str(ctx,
-                                              drilldown->sortby,
-                                              drilldown->sortby_len,
+                                              drilldown->sortby.value,
+                                              drilldown->sortby.length,
                                               result->table, &n_sort_keys);
       if (sort_keys) {
         grn_obj *sorted;
@@ -750,8 +724,8 @@ grn_select_drilldowns_output(grn_ctx *ctx,
           grn_table_sort(ctx, result->table, offset, limit,
                          sorted, sort_keys, n_sort_keys);
           grn_proc_select_output_columns(ctx, sorted, n_hits, 0, limit,
-                                         drilldown->output_columns,
-                                         drilldown->output_columns_len,
+                                         drilldown->output_columns.value,
+                                         drilldown->output_columns.length,
                                          condition);
           grn_obj_unlink(ctx, sorted);
         }
@@ -759,14 +733,16 @@ grn_select_drilldowns_output(grn_ctx *ctx,
       }
     } else {
       grn_proc_select_output_columns(ctx, result->table, n_hits, offset, limit,
-                                     drilldown->output_columns,
-                                     drilldown->output_columns_len,
+                                     drilldown->output_columns.value,
+                                     drilldown->output_columns.length,
                                      condition);
     }
 
     GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                  ":", "drilldown(%d)[%.*s]", n_hits,
-                  (int)(drilldown->label_len), drilldown->label);
+                  ":", "drilldown(%d)[%.*s]",
+                  n_hits,
+                  (int)(drilldown->label.length),
+                  drilldown->label.value);
   }
   GRN_OUTPUT_MAP_CLOSE();
 }
@@ -870,12 +846,12 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     for (i = 0; i < data->n_drilldowns; i++) {
       drilldown_info *drilldown = &(data->drilldowns[i]);
       cache_key_size +=
-        drilldown->keys_len + 1 +
-        drilldown->sortby_len + 1 +
-        drilldown->output_columns_len + 1 +
-        drilldown->label_len + 1 +
-        drilldown->calc_target_name_len + 1 +
-        drilldown->table_name_len + 1 +
+        drilldown->keys.length + 1 +
+        drilldown->sortby.length + 1 +
+        drilldown->output_columns.length + 1 +
+        drilldown->label.length + 1 +
+        drilldown->calc_target_name.length + 1 +
+        drilldown->table_name.length + 1 +
         sizeof(int) * 2 +
         sizeof(grn_table_group_flags);
     }
@@ -900,18 +876,12 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
       unsigned int i;
       for (i = 0; i < data->n_drilldowns; i++) {
         drilldown_info *drilldown = &(data->drilldowns[i]);
-        grn_memcpy(cp, drilldown->keys, drilldown->keys_len);
-        cp += drilldown->keys_len; *cp++ = '\0';
-        grn_memcpy(cp, drilldown->sortby, drilldown->sortby_len);
-        cp += drilldown->sortby_len; *cp++ = '\0';
-        grn_memcpy(cp, drilldown->output_columns, drilldown->output_columns_len);
-        cp += drilldown->output_columns_len; *cp++ = '\0';
-        grn_memcpy(cp, drilldown->label, drilldown->label_len);
-        cp += drilldown->label_len; *cp++ = '\0';
-        grn_memcpy(cp, drilldown->calc_target_name, drilldown->calc_target_name_len);
-        cp += drilldown->calc_target_name_len; *cp++ = '\0';
-        grn_memcpy(cp, drilldown->table_name, drilldown->table_name_len);
-        cp += drilldown->table_name_len; *cp++ = '\0';
+        PUT_CACHE_KEY(drilldown->keys);
+        PUT_CACHE_KEY(drilldown->sortby);
+        PUT_CACHE_KEY(drilldown->output_columns);
+        PUT_CACHE_KEY(drilldown->label);
+        PUT_CACHE_KEY(drilldown->calc_target_name);
+        PUT_CACHE_KEY(drilldown->table_name);
       }
     }
     PUT_CACHE_KEY(data->match_escalation_threshold);
@@ -1083,10 +1053,10 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
       grn_table_sort_key *gkeys = NULL;
       int result_size = 1;
       if (!ctx->rc && data->n_drilldowns > 0) {
-        if (data->n_drilldowns == 1 && !data->drilldowns[0].label) {
+        if (data->n_drilldowns == 1 && data->drilldowns[0].label.length == 0) {
           gkeys = grn_table_sort_key_from_str(ctx,
-                                              data->drilldowns[0].keys,
-                                              data->drilldowns[0].keys_len,
+                                              data->drilldowns[0].keys.value,
+                                              data->drilldowns[0].keys.length,
                                               res, &ngkeys);
           if (gkeys) {
             result_size += ngkeys;
@@ -1348,8 +1318,8 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
                                       "drilldown", -1);
   if (GRN_TEXT_LEN(drilldown) > 0) {
     drilldown_info *drilldown_info = &(data.drilldowns[0]);
-    drilldown_info->label = NULL;
-    drilldown_info->label_len = 0;
+    drilldown_info->label.value = NULL;
+    drilldown_info->label.length = 0;
     drilldown_info_fill(ctx,
                         drilldown_info,
                         drilldown,
@@ -1398,14 +1368,14 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
         grn_obj *table;
 
         label_len = grn_table_cursor_get_key(ctx, cursor, (void **)&label);
-        drilldown->label = label;
-        drilldown->label_len = label_len;
+        drilldown->label.value = label;
+        drilldown->label.length = label_len;
 
 #define GET_VAR(name)                                                   \
-        grn_snprintf(key_name,                                            \
-                     GRN_TABLE_MAX_KEY_SIZE,                              \
-                     GRN_TABLE_MAX_KEY_SIZE,                              \
-                     "drilldown[%.*s]." # name, label_len, label);        \
+        grn_snprintf(key_name,                                          \
+                     GRN_TABLE_MAX_KEY_SIZE,                            \
+                     GRN_TABLE_MAX_KEY_SIZE,                            \
+                     "drilldown[%.*s]." # name, label_len, label);      \
         name = grn_plugin_proc_get_var(ctx, user_data, key_name, -1);
 
         GET_VAR(keys);
