@@ -2194,11 +2194,11 @@ buffer_put(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt,
             r_curr = BUFFER_REC_AT(b, step);
             p = GRN_NEXT_ADDR(r_curr);
             GRN_B_DEC(id_curr.rid, p);
-          if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
-            GRN_B_DEC(id_curr.sid, p);
-          } else {
-            id_curr.sid = 1;
-          }
+            if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
+              GRN_B_DEC(id_curr.sid, p);
+            } else {
+              id_curr.sid = 1;
+            }
           }
         } else if (u->sid == id_curr.sid) {
           BUFFER_REC_DEL(r_curr);
