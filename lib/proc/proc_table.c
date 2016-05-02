@@ -189,9 +189,9 @@ command_table_create(grn_ctx *ctx,
   grn_obj *flags_raw;
   grn_obj *key_type_name;
   grn_obj *value_type_name;
-  grn_obj *default_tokenizer;
-  grn_obj *normalizer;
-  grn_obj *token_filters;
+  grn_obj *default_tokenizer_name;
+  grn_obj *normalizer_name;
+  grn_obj *token_filters_name;
   grn_obj *table;
   const char *rest;
   grn_table_flags flags;
@@ -200,11 +200,11 @@ command_table_create(grn_ctx *ctx,
   flags_raw = grn_plugin_proc_get_var(ctx, user_data, "flags", -1);
   key_type_name = grn_plugin_proc_get_var(ctx, user_data, "key_type", -1);
   value_type_name = grn_plugin_proc_get_var(ctx, user_data, "value_type", -1);
-  default_tokenizer =
+  default_tokenizer_name =
     grn_plugin_proc_get_var(ctx, user_data, "default_tokenizer", -1);
-  normalizer =
+  normalizer_name =
     grn_plugin_proc_get_var(ctx, user_data, "normalizer", -1);
-  token_filters =
+  token_filters_name =
     grn_plugin_proc_get_var(ctx, user_data, "token_filters", -1);
 
   flags = grn_atoi(GRN_TEXT_VALUE(flags_raw),
@@ -274,22 +274,39 @@ command_table_create(grn_ctx *ctx,
       goto exit;
     }
 
-    {
+    if (GRN_TEXT_LEN(default_tokenizer_name) > 0) {
+      grn_obj *default_tokenizer;
+
+      default_tokenizer =
+        grn_ctx_get(ctx,
+                    GRN_TEXT_VALUE(default_tokenizer_name),
+                    GRN_TEXT_LEN(default_tokenizer_name));
+      if (!default_tokenizer) {
+        GRN_PLUGIN_ERROR(ctx,
+                         GRN_INVALID_ARGUMENT,
+                         "[table][create][%.*s] unknown tokenizer: <%.*s>",
+                         (int)GRN_TEXT_LEN(name),
+                         GRN_TEXT_VALUE(name),
+                         (int)GRN_TEXT_LEN(default_tokenizer_name),
+                         GRN_TEXT_VALUE(default_tokenizer_name));
+        grn_obj_remove(ctx, table);
+        goto exit;
+      }
       grn_obj_set_info(ctx, table,
                        GRN_INFO_DEFAULT_TOKENIZER,
-                       grn_ctx_get(ctx,
-                                   GRN_TEXT_VALUE(default_tokenizer),
-                                   GRN_TEXT_LEN(default_tokenizer)));
-      if (GRN_TEXT_LEN(normalizer) > 0) {
+                       default_tokenizer);
+    }
+
+    if (GRN_TEXT_LEN(normalizer_name) > 0) {
         grn_obj_set_info(ctx, table,
                          GRN_INFO_NORMALIZER,
                          grn_ctx_get(ctx,
-                                     GRN_TEXT_VALUE(normalizer),
-                                     GRN_TEXT_LEN(normalizer)));
-      }
-      grn_proc_table_set_token_filters(ctx, table, token_filters);
-      grn_obj_unlink(ctx, table);
+                                     GRN_TEXT_VALUE(normalizer_name),
+                                     GRN_TEXT_LEN(normalizer_name)));
     }
+
+    grn_proc_table_set_token_filters(ctx, table, token_filters_name);
+    grn_obj_unlink(ctx, table);
   }
 
 exit :
