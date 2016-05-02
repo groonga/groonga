@@ -210,15 +210,25 @@ command_table_create(grn_ctx *ctx,
   flags = grn_atoi(GRN_TEXT_VALUE(flags_raw),
                    GRN_BULK_CURR(flags_raw),
                    &rest);
+
   if (GRN_TEXT_VALUE(flags_raw) == rest) {
     flags = command_table_create_parse_flags(ctx,
                                              GRN_TEXT_VALUE(flags_raw),
                                              GRN_BULK_CURR(flags_raw));
     if (ctx->rc) { goto exit; }
   }
-  if (GRN_TEXT_LEN(name)) {
+
+  if (GRN_TEXT_LEN(name) == 0) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "[table][create] should not create anonymous table");
+    goto exit;
+  }
+
+  {
     grn_obj *key_type = NULL;
     grn_obj *value_type = NULL;
+
     if (GRN_TEXT_LEN(key_type_name) > 0) {
       key_type = grn_ctx_get(ctx,
                              GRN_TEXT_VALUE(key_type_name),
@@ -235,6 +245,7 @@ command_table_create(grn_ctx *ctx,
         goto exit;
       }
     }
+
     if (GRN_TEXT_LEN(value_type_name) > 0) {
       value_type = grn_ctx_get(ctx,
                                GRN_TEXT_VALUE(value_type_name),
@@ -251,6 +262,7 @@ command_table_create(grn_ctx *ctx,
         goto exit;
       }
     }
+
     flags |= GRN_OBJ_PERSISTENT;
     table = grn_table_create(ctx,
                              GRN_TEXT_VALUE(name),
@@ -274,11 +286,8 @@ command_table_create(grn_ctx *ctx,
       grn_proc_table_set_token_filters(ctx, table, token_filters);
       grn_obj_unlink(ctx, table);
     }
-  } else {
-    GRN_PLUGIN_ERROR(ctx,
-                     GRN_INVALID_ARGUMENT,
-                     "[table][create] should not create anonymous table");
   }
+
 exit :
   grn_ctx_output_bool(ctx, !ctx->rc);
   return NULL;
