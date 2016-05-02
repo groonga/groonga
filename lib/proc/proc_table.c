@@ -232,7 +232,7 @@ command_table_create(grn_ctx *ctx,
                          GRN_TEXT_VALUE(name),
                          (int)GRN_TEXT_LEN(key_type_name),
                          GRN_TEXT_VALUE(key_type_name));
-        return NULL;
+        goto exit;
       }
     }
     if (GRN_TEXT_LEN(value_type_name) > 0) {
@@ -248,7 +248,7 @@ command_table_create(grn_ctx *ctx,
                          GRN_TEXT_VALUE(name),
                          (int)GRN_TEXT_LEN(value_type_name),
                          GRN_TEXT_VALUE(value_type_name));
-        return NULL;
+        goto exit;
       }
     }
     flags |= GRN_OBJ_PERSISTENT;
