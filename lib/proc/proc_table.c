@@ -289,7 +289,7 @@ command_table_create(grn_ctx *ctx,
   }
 
 exit :
-  grn_ctx_output_bool(ctx, !ctx->rc);
+  grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
   return NULL;
 }
 
