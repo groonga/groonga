@@ -79,9 +79,9 @@ const char *grn_proc_option_value_string(grn_ctx *ctx,
 void grn_proc_output_object_name(grn_ctx *ctx, grn_obj *obj);
 void grn_proc_output_object_id_name(grn_ctx *ctx, grn_id id);
 
-void grn_proc_table_set_token_filters(grn_ctx *ctx,
-                                      grn_obj *table,
-                                      grn_obj *token_filter_names);
+grn_bool grn_proc_table_set_token_filters(grn_ctx *ctx,
+                                          grn_obj *table,
+                                          grn_obj *token_filter_names);
 
 void grn_proc_select_output_columns(grn_ctx *ctx,
                                     grn_obj *res,

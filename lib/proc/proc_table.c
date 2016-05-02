@@ -119,10 +119,12 @@ grn_proc_table_set_token_filters_fill(grn_ctx *ctx,
       if (!name_end) {
         name_end = current;
       }
-      grn_proc_table_set_token_filters_put(ctx,
-                                           token_filters,
-                                           name_start,
-                                           name_end - name_start);
+      if (!grn_proc_table_set_token_filters_put(ctx,
+                                                token_filters,
+                                                name_start,
+                                                name_end - name_start)) {
+        return GRN_FALSE;
+      }
       last_name_end = name_end + 1;
       name_start = NULL;
       name_end = NULL;
@@ -159,24 +161,28 @@ break_loop:
   return GRN_TRUE;
 }
 
-void
+grn_bool
 grn_proc_table_set_token_filters(grn_ctx *ctx,
                                  grn_obj *table,
                                  grn_obj *token_filter_names)
 {
+  grn_bool succeeded = GRN_FALSE;
   grn_obj token_filters;
 
   if (GRN_TEXT_LEN(token_filter_names) == 0) {
-    return;
+    return GRN_TRUE;
   }
 
   GRN_PTR_INIT(&token_filters, GRN_OBJ_VECTOR, 0);
-  if (grn_proc_table_set_token_filters_fill(ctx,
-                                            &token_filters,
-                                            token_filter_names)) {
+  succeeded = grn_proc_table_set_token_filters_fill(ctx,
+                                                    &token_filters,
+                                                    token_filter_names);
+  if (succeeded) {
     grn_obj_set_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &token_filters);
   }
   grn_obj_unlink(ctx, &token_filters);
+
+  return succeeded;
 }
 
 static grn_obj *
@@ -318,7 +324,11 @@ command_table_create(grn_ctx *ctx,
       grn_obj_set_info(ctx, table, GRN_INFO_NORMALIZER, normalizer);
     }
 
-    grn_proc_table_set_token_filters(ctx, table, token_filters_name);
+    if (!grn_proc_table_set_token_filters(ctx, table, token_filters_name)) {
+      grn_obj_remove(ctx, table);
+      goto exit;
+    }
+
     grn_obj_unlink(ctx, table);
   }
 
