@@ -298,11 +298,24 @@ command_table_create(grn_ctx *ctx,
     }
 
     if (GRN_TEXT_LEN(normalizer_name) > 0) {
-        grn_obj_set_info(ctx, table,
-                         GRN_INFO_NORMALIZER,
-                         grn_ctx_get(ctx,
-                                     GRN_TEXT_VALUE(normalizer_name),
-                                     GRN_TEXT_LEN(normalizer_name)));
+      grn_obj *normalizer;
+
+      normalizer =
+        grn_ctx_get(ctx,
+                    GRN_TEXT_VALUE(normalizer_name),
+                    GRN_TEXT_LEN(normalizer_name));
+      if (!normalizer) {
+        GRN_PLUGIN_ERROR(ctx,
+                         GRN_INVALID_ARGUMENT,
+                         "[table][create][%.*s] unknown normalizer: <%.*s>",
+                         (int)GRN_TEXT_LEN(name),
+                         GRN_TEXT_VALUE(name),
+                         (int)GRN_TEXT_LEN(normalizer_name),
+                         GRN_TEXT_VALUE(normalizer_name));
+        grn_obj_remove(ctx, table);
+        goto exit;
+      }
+      grn_obj_set_info(ctx, table, GRN_INFO_NORMALIZER, normalizer);
     }
 
     grn_proc_table_set_token_filters(ctx, table, token_filters_name);
