@@ -2,7 +2,7 @@ table_create Memos TABLE_NO_KEY
 [[0,0.0,0.0],true]
 column_create Memos content COLUMN_SCALAR Text
 [[0,0.0,0.0],true]
-table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NomralizerAuto
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
 [[0,0.0,0.0],true]
 column_create Terms memos_index COLUMN_INDEX|WITH_POSITION Memos _id
 [
@@ -21,4 +21,4 @@ dump
 table_create Memos TABLE_NO_KEY
 column_create Memos content COLUMN_SCALAR Text
 
-table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
