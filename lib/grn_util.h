@@ -29,6 +29,8 @@ GRN_API grn_rc grn_normalize_offset_and_limit(grn_ctx *ctx, int size, int *offse
 
 GRN_API char *grn_path_separator_to_system(char *dest, char *groonga_path);
 
+void grn_p_record(grn_ctx *ctx, grn_obj *table, grn_id id);
+
 /*
  * grn_mkstemp generates a unique filename from path_template, creates a
  * file with permissions 0600 and returns a open file desciptor for the file.

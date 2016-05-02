@@ -1324,6 +1324,17 @@ grn_p_expr_code(grn_ctx *ctx, grn_expr_code *code)
   grn_obj_unlink(ctx, &buffer);
 }
 
+void
+grn_p_record(grn_ctx *ctx, grn_obj *table, grn_id id)
+{
+  grn_obj record;
+
+  GRN_RECORD_INIT(&record, 0, grn_obj_id(ctx, table));
+  GRN_RECORD_SET(ctx, &record, id);
+  grn_p(ctx, &record);
+  GRN_OBJ_FIN(ctx, &record);
+}
+
 #ifdef WIN32
 int
 grn_mkstemp(char *path_template)
