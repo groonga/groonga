@@ -270,7 +270,11 @@ command_table_create(grn_ctx *ctx,
                              NULL, flags,
                              key_type,
                              value_type);
-    if (table) {
+    if (!table) {
+      goto exit;
+    }
+
+    {
       grn_obj_set_info(ctx, table,
                        GRN_INFO_DEFAULT_TOKENIZER,
                        grn_ctx_get(ctx,
