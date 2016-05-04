@@ -5,9 +5,7 @@ load --table Memos
 {"_key": "Hello Groonga!"}
 ]
 [[0,0.0,0.0],1]
-select Memos   --query '_key:@Groonga'   --output_columns 'snippet_html(_key)'
-[[0,0.0,0.0],[[[1],[],[]]]]
-select Memos   --query '_key:@Groonga'   --output_columns 'snippet_html(_key)'   --command_version 2
+select Memos   --filter 'true'   --output_columns '_key,_score'
 [
   [
     0,
@@ -21,14 +19,46 @@ select Memos   --query '_key:@Groonga'   --output_columns 'snippet_html(_key)'  
       ],
       [
         [
-          "snippet_html",
-          "null"
+          "_key",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
         ]
       ],
       [
+        "Hello Groonga!",
+        1
+      ]
+    ]
+  ]
+]
+select Memos   --filter 'true'   --output_columns '_key,_score'   --command_version 2
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
         [
-          "Hello <span class=\"keyword\">Groonga</span>!"
+          "_key",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Float"
         ]
+      ],
+      [
+        "Hello Groonga!",
+        1.0
       ]
     ]
   ]

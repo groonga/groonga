@@ -9,10 +9,10 @@ load --table Memos
 #@sleep 1
 
 select Memos \
-  --query '_key:@Groonga' \
-  --output_columns 'snippet_html(_key)'
+  --filter 'true' \
+  --output_columns '_key,_score'
 
 select Memos \
-  --query '_key:@Groonga' \
-  --output_columns 'snippet_html(_key)' \
+  --filter 'true' \
+  --output_columns '_key,_score' \
   --command_version 2
