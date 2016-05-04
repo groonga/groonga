@@ -32,8 +32,6 @@
 #define DEFAULT_DRILLDOWN_LIMIT           10
 #define DEFAULT_DRILLDOWN_OUTPUT_COLUMNS  "_key, _nsubrecs"
 
-#define MAX_N_DRILLDOWNS 10
-
 typedef struct {
   const char *value;
   size_t length;
@@ -61,7 +59,7 @@ typedef struct {
   grn_select_string output_columns;
   int offset;
   int limit;
-  grn_drilldown_data drilldowns[MAX_N_DRILLDOWNS];
+  grn_drilldown_data *drilldowns;
   unsigned int n_drilldowns;
   grn_obj *drilldown_labels;
   grn_select_string cache;
@@ -1261,6 +1259,7 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   grn_select_data data;
   grn_obj *drilldown;
 
+  data.drilldowns = NULL;
   data.n_drilldowns = 0;
   data.drilldown_labels = NULL;
 
@@ -1332,7 +1331,15 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   drilldown = grn_plugin_proc_get_var(ctx, user_data,
                                       "drilldown", -1);
   if (GRN_TEXT_LEN(drilldown) > 0) {
-    grn_drilldown_data *drilldown_data = &(data.drilldowns[0]);
+    grn_drilldown_data *drilldown_data;
+    data.n_drilldowns = 1;
+    data.drilldowns = GRN_PLUGIN_MALLOCN(ctx,
+                                         grn_drilldown_data,
+                                         data.n_drilldowns);
+    if (!data.drilldowns) {
+      goto exit;
+    }
+    drilldown_data = &(data.drilldowns[0]);
     drilldown_data->label.value = NULL;
     drilldown_data->label.length = 0;
     grn_drilldown_data_fill(ctx,
@@ -1351,7 +1358,6 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
                             grn_plugin_proc_get_var(ctx, user_data,
                                                     "drilldown_calc_target", -1),
                             NULL);
-    data.n_drilldowns++;
   } else {
     unsigned int i;
     grn_table_cursor *cursor = NULL;
@@ -1368,6 +1374,13 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     if (cursor) {
       i = 0;
       data.n_drilldowns = grn_table_size(ctx, data.drilldown_labels);
+      data.drilldowns = GRN_PLUGIN_MALLOCN(ctx,
+                                           grn_drilldown_data,
+                                           data.n_drilldowns);
+      if (!data.drilldowns) {
+        grn_table_cursor_close(ctx, cursor);
+        goto exit;
+      }
       while (grn_table_cursor_next(ctx, cursor)) {
         grn_drilldown_data *drilldown = &(data.drilldowns[i]);
         const char *label;
@@ -1415,6 +1428,10 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
 
   grn_select(ctx, &data);
 
+exit :
+  if (data.drilldowns) {
+    GRN_PLUGIN_FREE(ctx, data.drilldowns);
+  }
   if (data.drilldown_labels) {
     grn_obj_unlink(ctx, data.drilldown_labels);
   }
