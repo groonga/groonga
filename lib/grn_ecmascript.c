@@ -2029,7 +2029,7 @@ static void yy_reduce(
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 76: /* output_columns ::= output_columns COMMA */
-#line 469 "grn_ecmascript.lemon"
+#line 470 "grn_ecmascript.lemon"
 {
   yylhsminor.yy0 = yymsp[-1].minor.yy0;
 }
@@ -2037,7 +2037,7 @@ static void yy_reduce(
   yymsp[-1].minor.yy0 = yylhsminor.yy0;
         break;
       case 77: /* output_columns ::= output_columns COMMA output_column */
-#line 474 "grn_ecmascript.lemon"
+#line 475 "grn_ecmascript.lemon"
 {
   if (yymsp[0].minor.yy0 == 0) {
     yylhsminor.yy0 = yymsp[-2].minor.yy0;
@@ -2052,7 +2052,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy0 = yylhsminor.yy0;
         break;
       case 78: /* output_column ::= STAR */
-#line 485 "grn_ecmascript.lemon"
+#line 486 "grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   grn_obj *expr = efsi->e;
@@ -2106,14 +2106,14 @@ static void yy_reduce(
 #line 2107 "grn_ecmascript.c"
         break;
       case 79: /* output_column ::= NONEXISTENT_COLUMN */
-#line 535 "grn_ecmascript.lemon"
+#line 536 "grn_ecmascript.lemon"
 {
   yymsp[0].minor.yy0 = 0;
 }
 #line 2114 "grn_ecmascript.c"
         break;
       case 80: /* output_column ::= assignment_expression */
-#line 538 "grn_ecmascript.lemon"
+#line 539 "grn_ecmascript.lemon"
 {
   yymsp[0].minor.yy0 = 1;
 }
