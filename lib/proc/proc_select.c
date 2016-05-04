@@ -1216,41 +1216,57 @@ exit :
   return ctx->rc;
 }
 
-static void
-proc_select_find_all_drilldown_labels(grn_ctx *ctx, grn_user_data *user_data,
-                                      grn_obj *labels)
+static grn_bool
+grn_select_data_fill_drilldown_labels(grn_ctx *ctx,
+                                      grn_user_data *user_data,
+                                      grn_select_data *data)
 {
   grn_obj *vars = GRN_PROC_GET_VARS();
   grn_table_cursor *cursor;
-  cursor = grn_table_cursor_open(ctx, vars, NULL, 0, NULL, 0, 0, -1, 0);
-  if (cursor) {
-    const char *prefix = "drilldown[";
-    int prefix_len = strlen(prefix);
-    while (grn_table_cursor_next(ctx, cursor)) {
-      void *key;
-      char *name;
-      int name_len;
-      name_len = grn_table_cursor_get_key(ctx, cursor, &key);
-      name = key;
-      if (name_len > prefix_len + 1 &&
-          strncmp(prefix, name, prefix_len) == 0) {
-        const char *label_end;
-        size_t label_len;
-        label_end = memchr(name + prefix_len + 1,
-                           ']',
-                           name_len - prefix_len - 1);
-        if (!label_end) {
-          continue;
-        }
-        label_len = (label_end - name) - prefix_len;
-        grn_table_add(ctx, labels,
-                      name + prefix_len,
-                      label_len,
-                      NULL);
-      }
-    }
-    grn_table_cursor_close(ctx, cursor);
+  const char *prefix = "drilldown[";
+  int prefix_len;
+
+  data->drilldown_labels = grn_table_create(ctx, NULL, 0, NULL,
+                                            GRN_OBJ_TABLE_HASH_KEY,
+                                            grn_ctx_at(ctx, GRN_DB_SHORT_TEXT),
+                                            NULL);
+  if (!data->drilldown_labels) {
+    return GRN_FALSE;
   }
+
+  cursor = grn_table_cursor_open(ctx, vars, NULL, 0, NULL, 0, 0, -1, 0);
+  if (!cursor) {
+    return GRN_FALSE;
+  }
+
+  prefix_len = strlen(prefix);
+  while (grn_table_cursor_next(ctx, cursor)) {
+    void *key;
+    char *name;
+    int name_len;
+    name_len = grn_table_cursor_get_key(ctx, cursor, &key);
+    name = key;
+    if (name_len > prefix_len + 1 &&
+        strncmp(prefix, name, prefix_len) == 0) {
+      const char *label_end;
+      size_t label_len;
+      label_end = memchr(name + prefix_len + 1,
+                         ']',
+                         name_len - prefix_len - 1);
+      if (!label_end) {
+        continue;
+      }
+      label_len = (label_end - name) - prefix_len;
+      grn_table_add(ctx,
+                    data->drilldown_labels,
+                    name + prefix_len,
+                    label_len,
+                    NULL);
+    }
+  }
+  grn_table_cursor_close(ctx, cursor);
+
+  return GRN_TRUE;
 }
 
 static grn_bool
@@ -1293,16 +1309,10 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
     unsigned int i;
     grn_table_cursor *cursor = NULL;
 
-    data->drilldown_labels = grn_table_create(ctx, NULL, 0, NULL,
-                                              GRN_OBJ_TABLE_HASH_KEY,
-                                              grn_ctx_at(ctx, GRN_DB_SHORT_TEXT),
-                                              NULL);
-    if (!data->drilldown_labels) {
+    if (!grn_select_data_fill_drilldown_labels(ctx, user_data, data)) {
       return GRN_FALSE;
     }
 
-    proc_select_find_all_drilldown_labels(ctx, user_data,
-                                          data->drilldown_labels);
     cursor = grn_table_cursor_open(ctx, data->drilldown_labels,
                                    NULL, 0, NULL, 0, 0, -1, 0);
     if (!cursor) {
