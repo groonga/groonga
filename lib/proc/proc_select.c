@@ -1221,11 +1221,12 @@ grn_select_data_fill_drilldown_labels(grn_ctx *ctx,
                                       grn_user_data *user_data,
                                       grn_select_data *data)
 {
-  grn_obj *vars = GRN_PROC_GET_VARS();
+  grn_obj *vars;
   grn_table_cursor *cursor;
   const char *prefix = "drilldown[";
   int prefix_len;
 
+  vars = grn_plugin_proc_get_vars(ctx, user_data);
   data->drilldown_labels = grn_table_create(ctx, NULL, 0, NULL,
                                             GRN_OBJ_TABLE_HASH_KEY,
                                             grn_ctx_at(ctx, GRN_DB_SHORT_TEXT),
