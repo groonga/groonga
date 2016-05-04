@@ -60,7 +60,7 @@ typedef struct {
   int offset;
   int limit;
   grn_drilldown_data *drilldowns;
-  unsigned int n_drilldowns;
+  size_t n_drilldowns;
   grn_obj *drilldown_labels;
   grn_select_string cache;
   grn_select_string match_escalation_threshold;
@@ -512,11 +512,11 @@ drilldown_tsort_body(grn_ctx *ctx,
                      grn_obj *labels,
                      tsort_status *statuses,
                      grn_drilldown_data *drilldowns,
-                     unsigned int n_drilldowns,
+                     size_t n_drilldowns,
                      grn_obj *indexes)
 {
   grn_bool succeeded = GRN_TRUE;
-  unsigned int i;
+  size_t i;
   for (i = 0; i < n_drilldowns; i++) {
     grn_drilldown_data *drilldown = &(drilldowns[i]);
     grn_id id;
@@ -540,9 +540,9 @@ drilldown_tsort_init(grn_ctx *ctx,
                      grn_obj *labels,
                      tsort_status *statuses,
                      grn_drilldown_data *drilldowns,
-                     unsigned int n_drilldowns)
+                     size_t n_drilldowns)
 {
-  unsigned int i;
+  size_t i;
   for (i = 0; i < n_drilldowns; i++) {
     statuses[i] = TSORT_STATUS_NOT_VISITED;
   }
@@ -552,7 +552,7 @@ static grn_bool
 drilldown_tsort(grn_ctx *ctx,
                 grn_obj *labels,
                 grn_drilldown_data *drilldowns,
-                unsigned int n_drilldowns,
+                size_t n_drilldowns,
                 grn_obj *indexes)
 {
   tsort_status *statuses;
@@ -578,13 +578,13 @@ static grn_table_group_result *
 grn_select_drilldowns_execute(grn_ctx *ctx,
                               grn_obj *table,
                               grn_drilldown_data *drilldowns,
-                              unsigned int n_drilldowns,
+                              size_t n_drilldowns,
                               grn_obj *labels,
                               grn_obj *condition)
 {
   grn_table_group_result *results = NULL;
   grn_obj tsorted_indexes;
-  unsigned int i;
+  size_t i;
 
   if (!labels) {
     return NULL;
@@ -687,11 +687,11 @@ static void
 grn_select_drilldowns_output(grn_ctx *ctx,
                              grn_obj *table,
                              grn_drilldown_data *drilldowns,
-                             unsigned int n_drilldowns,
+                             size_t n_drilldowns,
                              grn_obj *condition,
                              grn_table_group_result *results)
 {
-  unsigned int i;
+  size_t i;
   unsigned int n_available_results = 0;
 
   for (i = 0; i < n_drilldowns; i++) {
@@ -762,7 +762,7 @@ grn_select_drilldowns_output(grn_ctx *ctx,
 
 static void
 grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
-                      grn_drilldown_data *drilldowns, unsigned int n_drilldowns,
+                      grn_drilldown_data *drilldowns, size_t n_drilldowns,
                       grn_obj *drilldown_labels, grn_obj *condition)
 {
   grn_table_group_result *results;
@@ -785,7 +785,7 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
                                results);
 
   {
-    unsigned int i;
+    size_t i;
 
     for (i = 0; i < n_drilldowns; i++) {
       grn_table_group_result *result = results + i;
@@ -855,7 +855,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     sizeof(grn_command_version) +
     sizeof(grn_bool);
   {
-    unsigned int i;
+    size_t i;
     for (i = 0; i < data->n_drilldowns; i++) {
       grn_drilldown_data *drilldown = &(data->drilldowns[i]);
       cache_key_size +=
@@ -886,7 +886,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     PUT_CACHE_KEY(data->sortby);
     PUT_CACHE_KEY(data->output_columns);
     {
-      unsigned int i;
+      size_t i;
       for (i = 0; i < data->n_drilldowns; i++) {
         grn_drilldown_data *drilldown = &(data->drilldowns[i]);
         PUT_CACHE_KEY(drilldown->keys);
@@ -912,7 +912,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     grn_memcpy(cp, &(ctx->impl->output.is_pretty), sizeof(grn_bool));
     cp += sizeof(grn_bool);
     {
-      unsigned int i;
+      size_t i;
       for (i = 0; i < data->n_drilldowns; i++) {
         grn_drilldown_data *drilldown = &(data->drilldowns[i]);
         grn_memcpy(cp, &(drilldown->offset), sizeof(int));
