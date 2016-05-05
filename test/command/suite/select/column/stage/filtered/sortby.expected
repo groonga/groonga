@@ -1,0 +1,55 @@
+plugin_register functions/string
+[[0,0.0,0.0],true]
+table_create Products TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+load --table Products
+[
+{"_key": "Groonga"},
+{"_key": "PGroonga"},
+{"_key": "Ruby"}
+]
+[[0,0.0,0.0],3]
+select Products   --column[key_length].stage filtered   --column[key_length].type UInt32   --column[key_length].flags COLUMN_SCALAR   --column[key_length].value 'string_length(_key)'   --sortby key_length
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "key_length",
+          "UInt32"
+        ]
+      ],
+      [
+        3,
+        "Ruby",
+        4
+      ],
+      [
+        1,
+        "Groonga",
+        7
+      ],
+      [
+        2,
+        "PGroonga",
+        8
+      ]
+    ]
+  ]
+]
