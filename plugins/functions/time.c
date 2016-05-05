@@ -24,9 +24,18 @@
 
 #include <math.h>
 
+typedef enum {
+  GRN_TIME_CLASSIFY_UNIT_SECOND,
+  GRN_TIME_CLASSIFY_UNIT_MINUTE
+} grn_time_classify_unit;
+
 static grn_obj *
-func_time_classify_second(grn_ctx *ctx, int n_args, grn_obj **args,
-                          grn_user_data *user_data)
+func_time_classify_raw(grn_ctx *ctx,
+                       int n_args,
+                       grn_obj **args,
+                       grn_user_data *user_data,
+                       const char *function_name,
+                       grn_time_classify_unit unit)
 {
   grn_obj *time;
   uint32_t interval_raw = 1;
@@ -34,8 +43,9 @@ func_time_classify_second(grn_ctx *ctx, int n_args, grn_obj **args,
 
   if (!(n_args == 1 || n_args == 2)) {
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                     "time_classify_second(): "
-                     "wrong time of arguments (%d for 1..2)",
+                     "%s(): "
+                     "wrong number of arguments (%d for 1..2)",
+                     function_name,
                      n_args);
     return NULL;
   }
@@ -48,9 +58,10 @@ func_time_classify_second(grn_ctx *ctx, int n_args, grn_obj **args,
     GRN_TEXT_INIT(&inspected, 0);
     grn_inspect(ctx, &inspected, time);
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                     "time_classify_second(): "
+                     "%s(): "
                      "the first argument must be a time: "
                      "<%.*s>",
+                     function_name,
                      (int)GRN_TEXT_LEN(&inspected),
                      GRN_TEXT_VALUE(&inspected));
     GRN_OBJ_FIN(ctx, &inspected);
@@ -69,9 +80,10 @@ func_time_classify_second(grn_ctx *ctx, int n_args, grn_obj **args,
       GRN_TEXT_INIT(&inspected, 0);
       grn_inspect(ctx, &inspected, interval);
       GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                       "time_classify_second(): "
+                       "%s(): "
                        "the second argument must be a number: "
                        "<%.*s>",
+                       function_name,
                        (int)GRN_TEXT_LEN(&inspected),
                        GRN_TEXT_VALUE(&inspected));
       GRN_OBJ_FIN(ctx, &inspected);
@@ -87,7 +99,6 @@ func_time_classify_second(grn_ctx *ctx, int n_args, grn_obj **args,
   {
     int64_t time_raw;
     struct tm tm;
-    int classed_second;
     int64_t classed_time_raw;
 
     time_raw = GRN_TIME_VALUE(time);
@@ -95,8 +106,15 @@ func_time_classify_second(grn_ctx *ctx, int n_args, grn_obj **args,
       return NULL;
     }
 
-    classed_second = (tm.tm_sec / interval_raw) * interval_raw;
-    tm.tm_sec = classed_second;
+    switch (unit) {
+    case GRN_TIME_CLASSIFY_UNIT_SECOND :
+      tm.tm_sec = (tm.tm_sec / interval_raw) * interval_raw;
+      break;
+    case GRN_TIME_CLASSIFY_UNIT_MINUTE :
+      tm.tm_min = (tm.tm_min / interval_raw) * interval_raw;
+      tm.tm_sec = 0;
+      break;
+    }
 
     if (!grn_time_from_tm(ctx, &classed_time_raw, &tm)) {
       return NULL;
@@ -115,6 +133,30 @@ func_time_classify_second(grn_ctx *ctx, int n_args, grn_obj **args,
   }
 }
 
+static grn_obj *
+func_time_classify_second(grn_ctx *ctx, int n_args, grn_obj **args,
+                          grn_user_data *user_data)
+{
+  return func_time_classify_raw(ctx,
+                                n_args,
+                                args,
+                                user_data,
+                                "time_classify_second",
+                                GRN_TIME_CLASSIFY_UNIT_SECOND);
+}
+
+static grn_obj *
+func_time_classify_minute(grn_ctx *ctx, int n_args, grn_obj **args,
+                          grn_user_data *user_data)
+{
+  return func_time_classify_raw(ctx,
+                                n_args,
+                                args,
+                                user_data,
+                                "time_classify_minute",
+                                GRN_TIME_CLASSIFY_UNIT_MINUTE);
+}
+
 grn_rc
 GRN_PLUGIN_INIT(grn_ctx *ctx)
 {
@@ -130,6 +172,11 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
                   "time_classify_second", -1,
                   GRN_PROC_FUNCTION,
                   func_time_classify_second,
+                  NULL, NULL, 0, NULL);
+  grn_proc_create(ctx,
+                  "time_classify_minute", -1,
+                  GRN_PROC_FUNCTION,
+                  func_time_classify_minute,
                   NULL, NULL, 0, NULL);
 
   return rc;
