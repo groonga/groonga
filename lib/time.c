@@ -46,7 +46,7 @@ grn_timeval_now(grn_ctx *ctx, grn_timeval *tv)
   }
   return ctx->rc;
 #else /* HAVE_CLOCK_GETTIME */
-#ifdef WIN32
+# ifdef WIN32
   time_t t;
   struct _timeb tb;
   time(&t);
@@ -54,7 +54,7 @@ grn_timeval_now(grn_ctx *ctx, grn_timeval *tv)
   tv->tv_sec = t;
   tv->tv_nsec = tb.millitm * (GRN_TIME_NSEC_PER_SEC / 1000);
   return GRN_SUCCESS;
-#else /* WIN32 */
+# else /* WIN32 */
   struct timeval t;
   if (gettimeofday(&t, NULL)) {
     SERR("gettimeofday");
@@ -63,7 +63,7 @@ grn_timeval_now(grn_ctx *ctx, grn_timeval *tv)
     tv->tv_nsec = GRN_TIME_USEC_TO_NSEC(t.tv_usec);
   }
   return ctx->rc;
-#endif /* WIN32 */
+# endif /* WIN32 */
 #endif /* HAVE_CLOCK_GETTIME */
 }
 
