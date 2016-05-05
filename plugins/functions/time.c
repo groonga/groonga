@@ -26,7 +26,8 @@
 
 typedef enum {
   GRN_TIME_CLASSIFY_UNIT_SECOND,
-  GRN_TIME_CLASSIFY_UNIT_MINUTE
+  GRN_TIME_CLASSIFY_UNIT_MINUTE,
+  GRN_TIME_CLASSIFY_UNIT_HOUR
 } grn_time_classify_unit;
 
 static grn_obj *
@@ -114,6 +115,11 @@ func_time_classify_raw(grn_ctx *ctx,
       tm.tm_min = (tm.tm_min / interval_raw) * interval_raw;
       tm.tm_sec = 0;
       break;
+    case GRN_TIME_CLASSIFY_UNIT_HOUR :
+      tm.tm_hour = (tm.tm_hour / interval_raw) * interval_raw;
+      tm.tm_min = 0;
+      tm.tm_sec = 0;
+      break;
     }
 
     if (!grn_time_from_tm(ctx, &classed_time_raw, &tm)) {
@@ -157,6 +163,18 @@ func_time_classify_minute(grn_ctx *ctx, int n_args, grn_obj **args,
                                 GRN_TIME_CLASSIFY_UNIT_MINUTE);
 }
 
+static grn_obj *
+func_time_classify_hour(grn_ctx *ctx, int n_args, grn_obj **args,
+                        grn_user_data *user_data)
+{
+  return func_time_classify_raw(ctx,
+                                n_args,
+                                args,
+                                user_data,
+                                "time_classify_hour",
+                                GRN_TIME_CLASSIFY_UNIT_HOUR);
+}
+
 grn_rc
 GRN_PLUGIN_INIT(grn_ctx *ctx)
 {
@@ -177,6 +195,11 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
                   "time_classify_minute", -1,
                   GRN_PROC_FUNCTION,
                   func_time_classify_minute,
+                  NULL, NULL, 0, NULL);
+  grn_proc_create(ctx,
+                  "time_classify_hour", -1,
+                  GRN_PROC_FUNCTION,
+                  func_time_classify_hour,
                   NULL, NULL, 0, NULL);
 
   return rc;
