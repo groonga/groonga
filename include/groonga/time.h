@@ -25,7 +25,7 @@ extern "C" {
 #endif
 
 #define GRN_TIME_USEC_PER_SEC 1000000
-#define GRN_TIME_PACK(sec, usec) ((long long int)(sec) * GRN_TIME_USEC_PER_SEC + (usec))
+#define GRN_TIME_PACK(sec, usec) ((int64_t)(sec) * GRN_TIME_USEC_PER_SEC + (usec))
 #define GRN_TIME_UNPACK(time_value, sec, usec) do {\
   sec = (time_value) / GRN_TIME_USEC_PER_SEC;\
   usec = (time_value) % GRN_TIME_USEC_PER_SEC;\
