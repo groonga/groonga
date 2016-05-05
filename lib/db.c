@@ -12516,19 +12516,24 @@ grn_obj_columns(grn_ctx *ctx, grn_obj *table,
                                            GRN_COLUMN_NAME_ID_LEN);
               if (ai) {
                 if (ai->header.type == GRN_ACCESSOR) {
-                  cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
-                                         GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
-                  if (cols) {
-                    grn_id *key;
-                    grn_accessor *a, *ac;
-                    grn_obj *target_table = table;
-                    for (a = (grn_accessor *)ai; a; a = a->next) {
-                      target_table = a->obj;
+                  grn_id *key;
+                  grn_accessor *id_accessor;
+                  for (id_accessor = ((grn_accessor *)ai)->next;
+                       id_accessor;
+                       id_accessor = id_accessor->next) {
+                    grn_obj *target_table = id_accessor->obj;
+
+                    cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                                           GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
+                    if (!cols) {
+                      continue;
                     }
                     grn_table_columns(ctx, target_table,
                                       p, r - p - 1, (grn_obj *)cols);
                     GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
                       if ((col = grn_ctx_at(ctx, *key))) {
+                        grn_accessor *a;
+                        grn_accessor *ac;
                         ac = accessor_new(ctx);
                         GRN_PTR_PUT(ctx, res, (grn_obj *)ac);
                         for (a = (grn_accessor *)ai; a; a = a->next) {
