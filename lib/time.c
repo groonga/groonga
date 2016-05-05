@@ -76,30 +76,58 @@ grn_time_now(grn_ctx *ctx, grn_obj *obj)
                                        GRN_TIME_NSEC_TO_USEC(tv.tv_nsec)));
 }
 
-struct tm *
-grn_timeval2tm(grn_ctx *ctx, grn_timeval *tv, struct tm *tm_buffer)
+static grn_bool
+grn_time_t_to_tm(grn_ctx *ctx, const time_t time, struct tm *tm)
 {
-  struct tm *ltm;
+  grn_bool success;
   const char *function_name;
 #ifdef HAVE__LOCALTIME64_S
-  time_t t = tv->tv_sec;
   function_name = "localtime_s";
-  ltm = (localtime_s(tm_buffer, &t) == 0) ? tm_buffer : NULL;
+  success = (localtime_s(tm, &time) == 0);
 #else /* HAVE__LOCALTIME64_S */
 # ifdef HAVE_LOCALTIME_R
-  time_t t = tv->tv_sec;
   function_name = "localtime_r";
-  ltm = localtime_r(&t, tm_buffer);
+  success = (localtime_r(&time, tm) != NULL);
 # else /* HAVE_LOCALTIME_R */
-  time_t tvsec = (time_t) tv->tv_sec;
   function_name = "localtime";
-  ltm = localtime(&tvsec);
+  {
+    struct tm *local_tm;
+    local_tm = localtime(&time);
+    if (local_tm) {
+      success = GRN_TRUE;
+      memcpy(tm, local_tm, sizeof(struct tm));
+    } else {
+      success = GRN_FALSE;
+    }
+  }
 # endif /* HAVE_LOCALTIME_R */
 #endif /* HAVE__LOCALTIME64_S */
-  if (!ltm) {
-    SERR("%s", function_name);
+  if (!success) {
+    SERR("%s: failed to convert time_t to struct tm: <%" GRN_FMT_INT64D ">",
+         function_name,
+         (int64_t)time);
   }
-  return ltm;
+  return success;
+}
+
+struct tm *
+grn_timeval2tm(grn_ctx *ctx, grn_timeval *tv, struct tm *tm)
+{
+  if (grn_time_t_to_tm(ctx, tv->tv_sec, tm)) {
+    return tm;
+  } else {
+    return NULL;
+  }
+}
+
+grn_bool
+grn_time_to_tm(grn_ctx *ctx, int64_t time, struct tm *tm)
+{
+  int64_t sec;
+  int32_t usec;
+
+  GRN_TIME_UNPACK(time, sec, usec);
+  return grn_time_t_to_tm(ctx, sec, tm);
 }
 
 grn_rc

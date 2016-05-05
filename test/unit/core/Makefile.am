@@ -67,7 +67,8 @@ noinst_LTLIBRARIES =				\
 	test-uvector.la				\
 	test-operator.la			\
 	test-config.la				\
-	test-type.la
+	test-type.la				\
+	test-time.la
 endif
 
 AM_CPPFLAGS =			\
@@ -160,3 +161,4 @@ test_uvector_la_SOURCES			= test-uvector.c
 test_operator_la_SOURCES		= test-operator.c
 test_config_la_SOURCES			= test-config.c
 test_type_la_SOURCES			= test-type.c
+test_time_la_SOURCES			= test-time.c

@@ -20,6 +20,7 @@ groonga_include_HEADERS =			\
 	request_timer.h				\
 	scorer.h				\
 	thread.h				\
+	time.h					\
 	token.h					\
 	tokenizer.h				\
 	token_filter.h				\

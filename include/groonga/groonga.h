@@ -1566,17 +1566,6 @@ GRN_API void grn_ctx_recv_handler_set(grn_ctx *,
                       (offset) * sizeof(grn_obj *), sizeof(grn_obj *));\
 } while (0)
 
-#define GRN_TIME_USEC_PER_SEC 1000000
-#define GRN_TIME_PACK(sec, usec) ((long long int)(sec) * GRN_TIME_USEC_PER_SEC + (usec))
-#define GRN_TIME_UNPACK(time_value, sec, usec) do {\
-  sec = (time_value) / GRN_TIME_USEC_PER_SEC;\
-  usec = (time_value) % GRN_TIME_USEC_PER_SEC;\
-} while (0)
-
-GRN_API void grn_time_now(grn_ctx *ctx, grn_obj *obj);
-
-#define GRN_TIME_NOW(ctx,obj) (grn_time_now((ctx), (obj)))
-
 #define GRN_BOOL_VALUE(obj) (*((unsigned char *)GRN_BULK_HEAD(obj)))
 #define GRN_INT8_VALUE(obj) (*((signed char *)GRN_BULK_HEAD(obj)))
 #define GRN_UINT8_VALUE(obj) (*((unsigned char *)GRN_BULK_HEAD(obj)))
