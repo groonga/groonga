@@ -2087,12 +2087,15 @@ static void yy_reduce(
     }
 
     for (i = 0; i < n_columns; i++) {
+      grn_obj *column = columns[i];
       if (n_output_columns > 1 && i > 0) {
         grn_expr_append_op(ctx, expr, GRN_OP_COMMA, 2);
       }
-      grn_expr_append_const(ctx, expr, columns[i], GRN_OP_GET_VALUE, 1);
+      grn_expr_append_const(ctx, expr, column, GRN_OP_GET_VALUE, 1);
       n_output_columns++;
-      GRN_PTR_PUT(ctx, &e->objs, columns[i]);
+      if (column->header.type == GRN_ACCESSOR) {
+        grn_expr_take_obj(ctx, expr, column);
+      }
     }
 
     GRN_OBJ_FIN(ctx, &columns_buffer);
@@ -2103,21 +2106,21 @@ static void yy_reduce(
     yymsp[0].minor.yy0 = 0;
   }
 }
-#line 2107 "grn_ecmascript.c"
+#line 2110 "grn_ecmascript.c"
         break;
       case 79: /* output_column ::= NONEXISTENT_COLUMN */
-#line 536 "grn_ecmascript.lemon"
+#line 539 "grn_ecmascript.lemon"
 {
   yymsp[0].minor.yy0 = 0;
 }
-#line 2114 "grn_ecmascript.c"
+#line 2117 "grn_ecmascript.c"
         break;
       case 80: /* output_column ::= assignment_expression */
-#line 539 "grn_ecmascript.lemon"
+#line 542 "grn_ecmascript.lemon"
 {
   yymsp[0].minor.yy0 = 1;
 }
-#line 2121 "grn_ecmascript.c"
+#line 2124 "grn_ecmascript.c"
         break;
       default:
       /* (84) input ::= query */ yytestcase(yyruleno==84);
@@ -2246,7 +2249,7 @@ static void yy_syntax_error(
       GRN_OBJ_FIN(ctx, &message);
     }
   }
-#line 2250 "grn_ecmascript.c"
+#line 2253 "grn_ecmascript.c"
 /************ End %syntax_error code ******************************************/
   grn_expr_parserARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }

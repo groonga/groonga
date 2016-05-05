@@ -517,12 +517,15 @@ output_column(N_STACKED_COLUMNS) ::= STAR. {
     }
 
     for (i = 0; i < n_columns; i++) {
+      grn_obj *column = columns[i];
       if (n_output_columns > 1 && i > 0) {
         grn_expr_append_op(ctx, expr, GRN_OP_COMMA, 2);
       }
-      grn_expr_append_const(ctx, expr, columns[i], GRN_OP_GET_VALUE, 1);
+      grn_expr_append_const(ctx, expr, column, GRN_OP_GET_VALUE, 1);
       n_output_columns++;
-      GRN_PTR_PUT(ctx, &e->objs, columns[i]);
+      if (column->header.type == GRN_ACCESSOR) {
+        grn_expr_take_obj(ctx, expr, column);
+      }
     }
 
     GRN_OBJ_FIN(ctx, &columns_buffer);
