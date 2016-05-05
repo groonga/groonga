@@ -2084,7 +2084,7 @@ ftoa_(grn_ctx *ctx, grn_obj *buf, double d)
   char *start;
   size_t before_size;
   size_t len;
-#define DIGIT_NUMBER 15
+#define DIGIT_NUMBER 16
 #define FIRST_BUFFER_SIZE (DIGIT_NUMBER + 4)
   before_size = GRN_BULK_VSIZE(buf);
   grn_bulk_reserve(ctx, buf, FIRST_BUFFER_SIZE);
