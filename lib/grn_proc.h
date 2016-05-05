@@ -83,6 +83,11 @@ grn_bool grn_proc_table_set_token_filters(grn_ctx *ctx,
                                           grn_obj *table,
                                           grn_obj *token_filter_names);
 
+grn_obj_flags grn_proc_column_parse_flags(grn_ctx *ctx,
+                                          const char *error_message_tag,
+                                          const char *text,
+                                          const char *end);
+
 void grn_proc_select_output_columns(grn_ctx *ctx,
                                     grn_obj *res,
                                     int n_hits, int offset, int limit,

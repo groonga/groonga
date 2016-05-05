@@ -24,26 +24,27 @@
 
 #include <groonga/plugin.h>
 
-static grn_obj_flags
-command_column_create_parse_flags(grn_ctx *ctx,
-                                  const char *nptr,
-                                  const char *end)
+grn_obj_flags
+grn_proc_column_parse_flags(grn_ctx *ctx,
+                            const char *error_message_tag,
+                            const char *text,
+                            const char *end)
 {
   grn_obj_flags flags = 0;
-  while (nptr < end) {
+  while (text < end) {
     size_t name_size;
 
-    if (*nptr == '|' || *nptr == ' ') {
-      nptr += 1;
+    if (*text == '|' || *text == ' ') {
+      text += 1;
       continue;
     }
 
 #define CHECK_FLAG(name)                                                \
     name_size = strlen(#name);                                          \
-    if ((end - nptr) >= name_size &&                                    \
-        memcmp(nptr, #name, name_size) == 0) {                          \
+    if ((end - text) >= name_size &&                                    \
+        memcmp(text, #name, name_size) == 0) {                          \
       flags |= GRN_OBJ_ ## name;                                        \
-      nptr += name_size;                                                \
+      text += name_size;                                                \
       continue;                                                         \
     }
 
@@ -60,8 +61,9 @@ command_column_create_parse_flags(grn_ctx *ctx,
 #undef CHECK_FLAG
 
     ERR(GRN_INVALID_ARGUMENT,
-        "[column][create][flags] unknown flag: <%.*s>",
-        (int)(end - nptr), nptr);
+        "%s unknown flag: <%.*s>",
+        error_message_tag,
+        (int)(end - text), text);
     return 0;
   }
   return flags;
@@ -199,9 +201,10 @@ command_column_create(grn_ctx *ctx, int nargs, grn_obj **args,
                      GRN_BULK_CURR(flags_raw),
                      &rest);
     if (GRN_TEXT_VALUE(flags_raw) == rest) {
-      flags = command_column_create_parse_flags(ctx,
-                                                GRN_TEXT_VALUE(flags_raw),
-                                                GRN_BULK_CURR(flags_raw));
+      flags = grn_proc_column_parse_flags(ctx,
+                                          "[column][create][flags]",
+                                          GRN_TEXT_VALUE(flags_raw),
+                                          GRN_BULK_CURR(flags_raw));
       if (ctx->rc) {
         succeeded = GRN_FALSE;
         goto exit;
