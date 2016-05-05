@@ -1,0 +1,73 @@
+plugin_register functions/number
+[[0,0.0,0.0],true]
+table_create Prices TABLE_PAT_KEY UInt32
+[[0,0.0,0.0],true]
+load --table Prices
+[
+{"_key": 0},
+{"_key": 1},
+{"_key": 99},
+{"_key": 100},
+{"_key": 101},
+{"_key": 199},
+{"_key": 200},
+{"_key": 201}
+]
+[[0,0.0,0.0],8]
+select Prices   --sortby _id   --limit -1   --output_columns '_key, number_classify(_key, 100)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        8
+      ],
+      [
+        [
+          "_key",
+          "UInt32"
+        ],
+        [
+          "number_classify",
+          "null"
+        ]
+      ],
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        99,
+        0
+      ],
+      [
+        100,
+        100
+      ],
+      [
+        101,
+        100
+      ],
+      [
+        199,
+        100
+      ],
+      [
+        200,
+        200
+      ],
+      [
+        201,
+        200
+      ]
+    ]
+  ]
+]

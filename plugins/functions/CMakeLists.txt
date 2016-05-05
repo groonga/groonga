@@ -1,4 +1,4 @@
-# Copyright(C) 2015 Brazil
+# Copyright(C) 2015-2016 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -58,3 +58,23 @@ else()
   install(TARGETS string_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
 endif()
 target_link_libraries(string_functions libgroonga)
+
+read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/number_sources.am
+  VECTOR_SOURCES)
+set_source_files_properties(${VECTOR_SOURCES}
+  PROPERTIES
+  COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
+if(GRN_EMBED)
+  add_library(number_functions STATIC ${VECTOR_SOURCES})
+  set_target_properties(
+    number_functions
+    PROPERTIES
+    POSITION_INDEPENDENT_CODE ON)
+else()
+  add_library(number_functions MODULE ${VECTOR_SOURCES})
+  set_target_properties(number_functions PROPERTIES
+    PREFIX ""
+    OUTPUT_NAME "number")
+  install(TARGETS number_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
+endif()
+target_link_libraries(number_functions libgroonga)

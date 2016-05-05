@@ -1,0 +1,27 @@
+plugin_register functions/number
+
+table_create Prices TABLE_PAT_KEY Float
+
+load --table Prices
+[
+{"_key": -200.5},
+{"_key": -200},
+{"_key": -199.5},
+{"_key": -100.5},
+{"_key": -100},
+{"_key": -99.5},
+{"_key": -0.5},
+{"_key": 0.0},
+{"_key": 0.5},
+{"_key": 99.5},
+{"_key": 100},
+{"_key": 100.5},
+{"_key": 199.5},
+{"_key": 200},
+{"_key": 200.5}
+]
+
+select Prices \
+  --sortby _id \
+  --limit -1 \
+  --output_columns '_key, number_classify(_key, 100)'

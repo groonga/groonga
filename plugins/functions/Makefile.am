@@ -17,6 +17,8 @@ LIBS =						\
 function_plugins_LTLIBRARIES =
 function_plugins_LTLIBRARIES += vector.la
 function_plugins_LTLIBRARIES += string.la
+function_plugins_LTLIBRARIES += number.la
 
 include vector_sources.am
 include string_sources.am
+include number_sources.am
