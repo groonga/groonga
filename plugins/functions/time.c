@@ -29,7 +29,8 @@ typedef enum {
   GRN_TIME_CLASSIFY_UNIT_MINUTE,
   GRN_TIME_CLASSIFY_UNIT_HOUR,
   GRN_TIME_CLASSIFY_UNIT_DAY,
-  GRN_TIME_CLASSIFY_UNIT_WEEK
+  GRN_TIME_CLASSIFY_UNIT_WEEK,
+  GRN_TIME_CLASSIFY_UNIT_MONTH
 } grn_time_classify_unit;
 
 static grn_obj *
@@ -54,6 +55,9 @@ func_time_classify_raw(grn_ctx *ctx,
   case GRN_TIME_CLASSIFY_UNIT_DAY :
   case GRN_TIME_CLASSIFY_UNIT_WEEK :
     accept_interval = GRN_FALSE;
+    break;
+  case GRN_TIME_CLASSIFY_UNIT_MONTH :
+    accept_interval = GRN_TRUE;
     break;
   }
 
@@ -179,6 +183,13 @@ func_time_classify_raw(grn_ctx *ctx,
       tm.tm_min = 0;
       tm.tm_sec = 0;
       break;
+    case GRN_TIME_CLASSIFY_UNIT_MONTH :
+      tm.tm_mon = (tm.tm_mon / interval_raw) * interval_raw;
+      tm.tm_mday = 1;
+      tm.tm_hour = 0;
+      tm.tm_min = 0;
+      tm.tm_sec = 0;
+      break;
     }
 
     if (!grn_time_from_tm(ctx, &classed_time_raw, &tm)) {
@@ -258,6 +269,18 @@ func_time_classify_week(grn_ctx *ctx, int n_args, grn_obj **args,
                                 GRN_TIME_CLASSIFY_UNIT_WEEK);
 }
 
+static grn_obj *
+func_time_classify_month(grn_ctx *ctx, int n_args, grn_obj **args,
+                         grn_user_data *user_data)
+{
+  return func_time_classify_raw(ctx,
+                                n_args,
+                                args,
+                                user_data,
+                                "time_classify_month",
+                                GRN_TIME_CLASSIFY_UNIT_MONTH);
+}
+
 grn_rc
 GRN_PLUGIN_INIT(grn_ctx *ctx)
 {
@@ -293,6 +316,11 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
                   "time_classify_week", -1,
                   GRN_PROC_FUNCTION,
                   func_time_classify_week,
+                  NULL, NULL, 0, NULL);
+  grn_proc_create(ctx,
+                  "time_classify_month", -1,
+                  GRN_PROC_FUNCTION,
+                  func_time_classify_month,
                   NULL, NULL, 0, NULL);
 
   return rc;
