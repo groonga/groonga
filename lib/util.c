@@ -904,6 +904,22 @@ grn_db_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 }
 
 static grn_rc
+grn_time_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
+{
+  int64_t time_raw;
+  int64_t sec;
+  int32_t usec;
+
+  time_raw = GRN_TIME_VALUE(obj);
+  GRN_TIME_UNPACK(time_raw, sec, usec);
+  grn_text_printf(ctx, buffer,
+                  "%" GRN_FMT_INT64D ".%d",
+                  sec, usec);
+
+  return GRN_SUCCESS;
+}
+
+static grn_rc
 grn_geo_point_inspect_point(grn_ctx *ctx, grn_obj *buf, int point)
 {
   GRN_TEXT_PUTS(ctx, buf, "(");
@@ -1130,17 +1146,7 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
   case GRN_BULK :
     switch (obj->header.domain) {
     case GRN_DB_TIME :
-      {
-        int64_t time_raw;
-        int64_t sec;
-        int32_t usec;
-
-        time_raw = GRN_TIME_VALUE(obj);
-        GRN_TIME_UNPACK(time_raw, sec, usec);
-        grn_text_printf(ctx, buffer,
-                        "%" GRN_FMT_INT64D ".%d",
-                        sec, usec);
-      }
+      grn_time_inspect(ctx, buffer, obj);
       return buffer;
     case GRN_DB_TOKYO_GEO_POINT :
     case GRN_DB_WGS84_GEO_POINT :
