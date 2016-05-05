@@ -9948,12 +9948,50 @@ grn_pvector_fin(grn_ctx *ctx, grn_obj *obj)
   return rc;
 }
 
+static void
+grn_table_close_columns(grn_ctx *ctx, grn_obj *table)
+{
+  grn_hash *columns;
+  int n_columns;
+
+  columns = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                            GRN_OBJ_TABLE_HASH_KEY | GRN_HASH_TINY);
+  if (!columns) {
+    return;
+  }
+
+  n_columns = grn_table_columns(ctx, table, "", 0, (grn_obj *)columns);
+  if (n_columns > 0) {
+    grn_hash_cursor *cursor;
+    cursor = grn_hash_cursor_open(ctx, columns, NULL, 0, NULL, 0, 0, -1, 0);
+    if (cursor) {
+      while (grn_hash_cursor_next(ctx, cursor) != GRN_ID_NIL) {
+        grn_id *id;
+        grn_obj *column;
+
+        grn_hash_cursor_get_key(ctx, cursor, (void **)&id);
+        column = grn_ctx_at(ctx, *id);
+        if (column) {
+          grn_obj_close(ctx, column);
+        }
+      }
+      grn_hash_cursor_close(ctx, cursor);
+    }
+  }
+
+  grn_hash_close(ctx, columns);
+}
+
 grn_rc
 grn_obj_close(grn_ctx *ctx, grn_obj *obj)
 {
   grn_rc rc = GRN_INVALID_ARGUMENT;
   GRN_API_ENTER;
   if (obj) {
+    if (grn_obj_is_table(ctx, obj) &&
+        (DB_OBJ(obj)->id & GRN_OBJ_TMP_OBJECT)) {
+      grn_table_close_columns(ctx, obj);
+    }
     if (GRN_DB_OBJP(obj)) {
       grn_hook_entry entry;
       if (DB_OBJ(obj)->finalizer) {
