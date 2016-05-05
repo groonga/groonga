@@ -40,18 +40,18 @@ endif()
 target_link_libraries(vector_functions libgroonga)
 
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/string_sources.am
-  VECTOR_SOURCES)
-set_source_files_properties(${VECTOR_SOURCES}
+  STRING_SOURCES)
+set_source_files_properties(${STRING_SOURCES}
   PROPERTIES
   COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 if(GRN_EMBED)
-  add_library(string_functions STATIC ${VECTOR_SOURCES})
+  add_library(string_functions STATIC ${STRING_SOURCES})
   set_target_properties(
     string_functions
     PROPERTIES
     POSITION_INDEPENDENT_CODE ON)
 else()
-  add_library(string_functions MODULE ${VECTOR_SOURCES})
+  add_library(string_functions MODULE ${STRING_SOURCES})
   set_target_properties(string_functions PROPERTIES
     PREFIX ""
     OUTPUT_NAME "string")
@@ -60,18 +60,18 @@ endif()
 target_link_libraries(string_functions libgroonga)
 
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/number_sources.am
-  VECTOR_SOURCES)
-set_source_files_properties(${VECTOR_SOURCES}
+  NUMBER_SOURCES)
+set_source_files_properties(${NUMBER_SOURCES}
   PROPERTIES
   COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 if(GRN_EMBED)
-  add_library(number_functions STATIC ${VECTOR_SOURCES})
+  add_library(number_functions STATIC ${NUMBER_SOURCES})
   set_target_properties(
     number_functions
     PROPERTIES
     POSITION_INDEPENDENT_CODE ON)
 else()
-  add_library(number_functions MODULE ${VECTOR_SOURCES})
+  add_library(number_functions MODULE ${NUMBER_SOURCES})
   set_target_properties(number_functions PROPERTIES
     PREFIX ""
     OUTPUT_NAME "number")
