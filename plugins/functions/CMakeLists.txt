@@ -78,3 +78,23 @@ else()
   install(TARGETS number_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
 endif()
 target_link_libraries(number_functions libgroonga "${M_LIBS}")
+
+read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/time_sources.am
+  TIME_SOURCES)
+set_source_files_properties(${TIME_SOURCES}
+  PROPERTIES
+  COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
+if(GRN_EMBED)
+  add_library(time_functions STATIC ${TIME_SOURCES})
+  set_target_properties(
+    time_functions
+    PROPERTIES
+    POSITION_INDEPENDENT_CODE ON)
+else()
+  add_library(time_functions MODULE ${TIME_SOURCES})
+  set_target_properties(time_functions PROPERTIES
+    PREFIX ""
+    OUTPUT_NAME "time")
+  install(TARGETS time_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
+endif()
+target_link_libraries(time_functions libgroonga)
