@@ -22,3 +22,5 @@ function_plugins_LTLIBRARIES += number.la
 include vector_sources.am
 include string_sources.am
 include number_sources.am
+
+number_la_LIBADD = -lm
