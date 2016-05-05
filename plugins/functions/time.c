@@ -28,7 +28,8 @@ typedef enum {
   GRN_TIME_CLASSIFY_UNIT_SECOND,
   GRN_TIME_CLASSIFY_UNIT_MINUTE,
   GRN_TIME_CLASSIFY_UNIT_HOUR,
-  GRN_TIME_CLASSIFY_UNIT_DAY
+  GRN_TIME_CLASSIFY_UNIT_DAY,
+  GRN_TIME_CLASSIFY_UNIT_WEEK
 } grn_time_classify_unit;
 
 static grn_obj *
@@ -51,6 +52,7 @@ func_time_classify_raw(grn_ctx *ctx,
     accept_interval = GRN_TRUE;
     break;
   case GRN_TIME_CLASSIFY_UNIT_DAY :
+  case GRN_TIME_CLASSIFY_UNIT_WEEK :
     accept_interval = GRN_FALSE;
     break;
   }
@@ -149,6 +151,34 @@ func_time_classify_raw(grn_ctx *ctx,
       tm.tm_min = 0;
       tm.tm_sec = 0;
       break;
+    case GRN_TIME_CLASSIFY_UNIT_WEEK :
+      if ((tm.tm_mday - tm.tm_wday) >= 0) {
+        tm.tm_mday -= tm.tm_wday;
+      } else {
+        int n_underflowed_mday = -(tm.tm_mday - tm.tm_wday);
+        int mday;
+        int max_mday = 31;
+
+        if (tm.tm_mon == 0) {
+          tm.tm_year--;
+          tm.tm_mon = 11;
+        } else {
+          tm.tm_mon--;
+        }
+
+        for (mday = max_mday; mday > n_underflowed_mday; mday--) {
+          int64_t unused;
+          tm.tm_mday = mday;
+          if (grn_time_from_tm(ctx, &unused, &tm)) {
+            break;
+          }
+        }
+        tm.tm_mday -= n_underflowed_mday;
+      }
+      tm.tm_hour = 0;
+      tm.tm_min = 0;
+      tm.tm_sec = 0;
+      break;
     }
 
     if (!grn_time_from_tm(ctx, &classed_time_raw, &tm)) {
@@ -216,6 +246,18 @@ func_time_classify_day(grn_ctx *ctx, int n_args, grn_obj **args,
                                 GRN_TIME_CLASSIFY_UNIT_DAY);
 }
 
+static grn_obj *
+func_time_classify_week(grn_ctx *ctx, int n_args, grn_obj **args,
+                        grn_user_data *user_data)
+{
+  return func_time_classify_raw(ctx,
+                                n_args,
+                                args,
+                                user_data,
+                                "time_classify_week",
+                                GRN_TIME_CLASSIFY_UNIT_WEEK);
+}
+
 grn_rc
 GRN_PLUGIN_INIT(grn_ctx *ctx)
 {
@@ -246,6 +288,11 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
                   "time_classify_day", -1,
                   GRN_PROC_FUNCTION,
                   func_time_classify_day,
+                  NULL, NULL, 0, NULL);
+  grn_proc_create(ctx,
+                  "time_classify_week", -1,
+                  GRN_PROC_FUNCTION,
+                  func_time_classify_week,
                   NULL, NULL, 0, NULL);
 
   return rc;
