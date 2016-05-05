@@ -130,6 +130,45 @@ grn_time_to_tm(grn_ctx *ctx, int64_t time, struct tm *tm)
   return grn_time_t_to_tm(ctx, sec, tm);
 }
 
+static grn_bool
+grn_time_t_from_tm(grn_ctx *ctx, time_t *time, struct tm *tm)
+{
+  grn_bool success;
+
+  tm->tm_yday = -1;
+  *time = mktime(tm);
+  success = (tm->tm_yday != -1);
+  if (!success) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "mktime: failed to convert struct tm to time_t: "
+        "<%04d-%02d-%02dT%02d:%02d:%02d>(%d)",
+        1900 + tm->tm_year,
+        tm->tm_mon + 1,
+        tm->tm_mday,
+        tm->tm_hour,
+        tm->tm_min,
+        tm->tm_sec,
+        tm->tm_isdst);
+  }
+  return success;
+}
+
+grn_bool
+grn_time_from_tm(grn_ctx *ctx, int64_t *time, struct tm *tm)
+{
+  time_t sec_time_t;
+  int64_t sec;
+  int32_t usec = 0;
+
+  if (!grn_time_t_from_tm(ctx, &sec_time_t, tm)) {
+    return GRN_FALSE;
+  }
+
+  sec = sec_time_t;
+  *time = GRN_TIME_PACK(sec, usec);
+  return GRN_TRUE;
+}
+
 grn_rc
 grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf, size_t buf_size)
 {

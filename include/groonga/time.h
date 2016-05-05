@@ -38,6 +38,9 @@ GRN_API void grn_time_now(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_time_to_tm(grn_ctx *ctx,
                                 int64_t time,
                                 struct tm *tm);
+GRN_API grn_bool grn_time_from_tm(grn_ctx *ctx,
+                                  int64_t *time,
+                                  struct tm *tm);
 
 #ifdef __cplusplus
 }

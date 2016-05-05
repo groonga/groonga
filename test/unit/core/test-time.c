@@ -26,6 +26,7 @@
 #include "../lib/grn-assertions.h"
 
 void test_to_tm(void);
+void test_from_tm(void);
 
 static grn_ctx *context;
 
@@ -61,4 +62,23 @@ test_to_tm(void)
                                           tm.tm_hour,
                                           tm.tm_min,
                                           tm.tm_sec));
+}
+
+void
+test_from_tm(void)
+{
+  int64_t time;
+  struct tm tm;
+
+  tm.tm_year = 116;
+  tm.tm_mon = 4;
+  tm.tm_mday = 5;
+  tm.tm_hour = 21;
+  tm.tm_min = 58;
+  tm.tm_sec = 49;
+  tm.tm_isdst = -1;
+
+  cut_assert_true(grn_time_from_tm(context, &time, &tm));
+  gcut_assert_equal_int64(1462453129000000,
+                          time);
 }
