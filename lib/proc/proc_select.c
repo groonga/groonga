@@ -32,6 +32,15 @@
 #define DEFAULT_DRILLDOWN_LIMIT           10
 #define DEFAULT_DRILLDOWN_OUTPUT_COLUMNS  "_key, _nsubrecs"
 
+#define GRN_SELECT_FILL_STRING(string, bulk)     \
+  if (bulk && GRN_TEXT_LEN(bulk) > 0) {          \
+    string.value = GRN_TEXT_VALUE(bulk);         \
+    string.length = GRN_TEXT_LEN(bulk);          \
+  } else {                                       \
+    string.value = NULL;                         \
+    string.length = 0;                           \
+  }                                              \
+
 typedef struct {
   const char *value;
   size_t length;
@@ -329,20 +338,11 @@ grn_drilldown_data_fill(grn_ctx *ctx,
                         grn_obj *calc_target,
                         grn_obj *table)
 {
-#define FILL_STRING(string, bulk)                \
-  if (bulk && GRN_TEXT_LEN(bulk) > 0) {          \
-    string.value = GRN_TEXT_VALUE(bulk);         \
-    string.length = GRN_TEXT_LEN(bulk);          \
-  } else {                                       \
-    string.value = NULL;                         \
-    string.length = 0;                           \
-  }                                              \
+  GRN_SELECT_FILL_STRING(drilldown->keys, keys);
 
-  FILL_STRING(drilldown->keys, keys);
+  GRN_SELECT_FILL_STRING(drilldown->sortby, sortby);
 
-  FILL_STRING(drilldown->sortby, sortby);
-
-  FILL_STRING(drilldown->output_columns, output_columns);
+  GRN_SELECT_FILL_STRING(drilldown->output_columns, output_columns);
   if (drilldown->output_columns.length == 0) {
     drilldown->output_columns.value = DEFAULT_DRILLDOWN_OUTPUT_COLUMNS;
     drilldown->output_columns.length = strlen(DEFAULT_DRILLDOWN_OUTPUT_COLUMNS);
@@ -371,9 +371,9 @@ grn_drilldown_data_fill(grn_ctx *ctx,
     drilldown->calc_types = 0;
   }
 
-  FILL_STRING(drilldown->calc_target_name, calc_target);
+  GRN_SELECT_FILL_STRING(drilldown->calc_target_name, calc_target);
 
-  FILL_STRING(drilldown->table_name, table);
+  GRN_SELECT_FILL_STRING(drilldown->table_name, table);
 }
 
 static void
