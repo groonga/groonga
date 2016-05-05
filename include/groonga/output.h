@@ -58,7 +58,13 @@ struct _grn_obj_format {
 #define GRN_OBJ_FORMAT_FIN(ctx,format) do {\
   int ncolumns = GRN_BULK_VSIZE(&(format)->columns) / sizeof(grn_obj *);\
   grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&(format)->columns);\
-  while (ncolumns--) { grn_obj_unlink((ctx), *columns++); }\
+  while (ncolumns--) {\
+    grn_obj *column = *columns;\
+    columns++;\
+    if (grn_obj_is_accessor((ctx), column)) {\
+      grn_obj_close((ctx), column);\
+    }\
+  }\
   GRN_OBJ_FIN((ctx), &(format)->columns);\
   if ((format)->expression) { GRN_OBJ_FIN((ctx), (format)->expression); } \
 } while (0)
