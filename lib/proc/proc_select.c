@@ -233,6 +233,25 @@ grn_select_apply_adjuster(grn_ctx *ctx, grn_obj *table, grn_obj *res,
   }
 }
 
+static void
+grn_select_expression_set_condition(grn_ctx *ctx,
+                                    grn_obj *expression,
+                                    grn_obj *condition)
+{
+  grn_obj *condition_ptr;
+
+  if (!expression) {
+    return;
+  }
+
+  condition_ptr =
+    grn_expr_get_or_add_var(ctx, expression,
+                            GRN_SELECT_INTERNAL_VAR_CONDITION,
+                            strlen(GRN_SELECT_INTERNAL_VAR_CONDITION));
+  GRN_PTR_INIT(condition_ptr, 0, GRN_DB_OBJECT);
+  GRN_PTR_SET(ctx, condition_ptr, condition);
+}
+
 void
 grn_proc_select_output_columns(grn_ctx *ctx, grn_obj *res,
                                int n_hits, int offset, int limit,
@@ -252,15 +271,7 @@ grn_proc_select_output_columns(grn_ctx *ctx, grn_obj *res,
     return;
   }
 
-  if (format.expression) {
-    grn_obj *condition_ptr;
-    condition_ptr =
-      grn_expr_get_or_add_var(ctx, format.expression,
-                              GRN_SELECT_INTERNAL_VAR_CONDITION,
-                              strlen(GRN_SELECT_INTERNAL_VAR_CONDITION));
-    GRN_PTR_INIT(condition_ptr, 0, GRN_DB_OBJECT);
-    GRN_PTR_SET(ctx, condition_ptr, condition);
-  }
+  grn_select_expression_set_condition(ctx, format.expression, condition);
   GRN_OUTPUT_OBJ(res, &format);
   GRN_OBJ_FORMAT_FIN(ctx, &format);
 }
