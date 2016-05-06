@@ -655,9 +655,7 @@ grn_db_lastmod(grn_obj *s)
 void
 grn_db_touch(grn_ctx *ctx, grn_obj *s)
 {
-  grn_timeval tv;
-  grn_timeval_now(ctx, &tv);
-  grn_obj_io(s)->header->lastmod = tv.tv_sec;
+  grn_obj_touch(ctx, s, NULL);
 }
 
 #define IS_TEMP(obj) (DB_OBJ(obj)->id & GRN_OBJ_TMP_OBJECT)
@@ -683,7 +681,7 @@ grn_obj_touch(grn_ctx *ctx, grn_obj *obj, grn_timeval *tv)
     case GRN_COLUMN_FIX_SIZE :
     case GRN_COLUMN_INDEX :
       if (!IS_TEMP(obj)) {
-        grn_obj_io(DB_OBJ(obj)->db)->header->lastmod = tv->tv_sec;
+        grn_obj_touch(ctx, DB_OBJ(obj)->db, tv);
       }
       break;
     }
