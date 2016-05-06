@@ -39,6 +39,35 @@
 # include <oniguruma.h>
 #endif
 
+static double grn_table_select_enough_filtered_ratio = 0.0;
+static int grn_table_select_max_n_enough_filtered_records = 1000;
+
+void
+grn_expr_init_from_env(void)
+{
+  {
+    char grn_table_select_enough_filtered_ratio_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_TABLE_SELECT_ENOUGH_FILTERED_RATIO",
+               grn_table_select_enough_filtered_ratio_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_table_select_enough_filtered_ratio_env[0]) {
+      grn_table_select_enough_filtered_ratio =
+        atof(grn_table_select_enough_filtered_ratio_env);
+    }
+  }
+
+  {
+    char grn_table_select_max_n_enough_filtered_records_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_TABLE_SELECT_MAX_N_ENOUGH_FILTERED_RECORDS",
+               grn_table_select_max_n_enough_filtered_records_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_table_select_max_n_enough_filtered_records_env[0]) {
+      grn_table_select_max_n_enough_filtered_records =
+        atoi(grn_table_select_max_n_enough_filtered_records_env);
+    }
+  }
+}
+
 grn_obj *
 grn_expr_alloc(grn_ctx *ctx, grn_obj *expr, grn_id domain, grn_obj_flags flags)
 {
@@ -5765,6 +5794,66 @@ grn_table_select_index_report(grn_ctx *ctx, const char *tag, grn_obj *index)
   grn_report_index(ctx, "[table][select]", tag, index);
 }
 
+static inline void
+grn_table_select_index_not_used_report(grn_ctx *ctx,
+                                       const char *tag,
+                                       grn_obj *index,
+                                       const char *reason)
+{
+  grn_report_index_not_used(ctx, "[table][select]", tag, index, reason);
+}
+
+static inline grn_bool
+grn_table_select_index_use_sequential_search(grn_ctx *ctx,
+                                             grn_obj *table,
+                                             grn_obj *res,
+                                             grn_operator logical_op,
+                                             const char *tag,
+                                             grn_obj *index)
+{
+  int n_records;
+  int n_filtered_records;
+  double filtered_ratio;
+  grn_obj reason;
+
+  if (logical_op != GRN_OP_AND) {
+    return GRN_FALSE;
+  }
+
+  n_records = grn_table_size(ctx, table);
+  n_filtered_records = grn_table_size(ctx, res);
+  if (n_records == 0) {
+    filtered_ratio = 1.0;
+  } else {
+    filtered_ratio = (double)n_filtered_records / (double)n_records;
+  }
+
+  if (filtered_ratio >= grn_table_select_enough_filtered_ratio) {
+    return GRN_FALSE;
+  }
+
+  if (n_filtered_records > grn_table_select_max_n_enough_filtered_records) {
+    return GRN_FALSE;
+  }
+
+  GRN_TEXT_INIT(&reason, 0);
+  grn_text_printf(ctx, &reason,
+                  "enough filtered: %.2f%%(%d/%d) < %.2f%% && %d <= %d",
+                  filtered_ratio * 100,
+                  n_filtered_records,
+                  n_records,
+                  grn_table_select_enough_filtered_ratio * 100,
+                  n_filtered_records,
+                  grn_table_select_max_n_enough_filtered_records);
+  GRN_TEXT_PUTC(ctx, &reason, '\0');
+  grn_table_select_index_not_used_report(ctx,
+                                         tag,
+                                         index,
+                                         GRN_TEXT_VALUE(&reason));
+  GRN_OBJ_FIN(ctx, &reason);
+  return GRN_TRUE;
+}
+
 static inline grn_bool
 grn_table_select_index_equal(grn_ctx *ctx,
                              grn_obj *table,
@@ -6002,12 +6091,23 @@ grn_table_select_index_range_column(grn_ctx *ctx, grn_obj *table,
                                     scan_info *si, grn_operator logical_op,
                                     grn_obj *res)
 {
+  const char *tag = "[range]";
   grn_bool processed = GRN_FALSE;
   grn_obj *index_table;
   grn_obj range;
 
   index_table = grn_ctx_at(ctx, index->header.domain);
   if (!index_table) {
+    return GRN_FALSE;
+  }
+
+  if (grn_table_select_index_use_sequential_search(ctx,
+                                                   table,
+                                                   res,
+                                                   logical_op,
+                                                   tag,
+                                                   index_table)) {
+    grn_obj_unlink(ctx, index_table);
     return GRN_FALSE;
   }
 

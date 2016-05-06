@@ -40,6 +40,8 @@ typedef enum {
 typedef struct _grn_scan_info scan_info;
 typedef grn_bool (*grn_scan_info_each_arg_callback)(grn_ctx *ctx, grn_obj *obj, void *user_data);
 
+void grn_expr_init_from_env(void);
+
 scan_info **grn_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                                 grn_operator op, grn_bool record_exist);
 

@@ -34,6 +34,7 @@
 #include "grn_ctx_impl_mrb.h"
 #include "grn_logger.h"
 #include "grn_cache.h"
+#include "grn_expr.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <time.h>
@@ -89,6 +90,7 @@ grn_init_from_env(void)
   grn_io_init_from_env();
   grn_ii_init_from_env();
   grn_db_init_from_env();
+  grn_expr_init_from_env();
   grn_index_column_init_from_env();
   grn_proc_init_from_env();
   grn_plugin_init_from_env();
