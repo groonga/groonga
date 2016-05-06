@@ -5,4 +5,5 @@ dump
 
 table_remove Users
 
+#@timeout 0.1
 dump

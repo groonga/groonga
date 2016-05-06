@@ -4,4 +4,5 @@ dump
 
 table_remove Names
 
+#@timeout 0.1
 dump
