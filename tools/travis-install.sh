@@ -1,6 +1,7 @@
 #!/bin/sh
 
 set -e
+set -u
 
 case "${TRAVIS_OS_NAME}" in
   linux)

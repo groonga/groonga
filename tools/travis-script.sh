@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -u
 
 prefix=/tmp/local
 

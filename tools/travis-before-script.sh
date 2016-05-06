@@ -1,6 +1,7 @@
 #!/bin/sh
 
 set -e
+set -u
 
 git submodule update --init --depth 1
 
