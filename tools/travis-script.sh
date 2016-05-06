@@ -3,6 +3,8 @@
 set -e
 set -u
 
+: ${ENABLE_MRUBY:=no}
+
 prefix=/tmp/local
 
 command_test_options="--n-workers=4 --reporter=mark"

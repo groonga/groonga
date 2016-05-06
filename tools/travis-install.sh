@@ -3,6 +3,8 @@
 set -e
 set -u
 
+: ${ENABLE_MRUBY:=no}
+
 case "${TRAVIS_OS_NAME}" in
   linux)
     curl --silent --location https://raw.github.com/clear-code/cutter/master/data/travis/setup.sh | sh
