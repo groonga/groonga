@@ -5885,10 +5885,10 @@ grn_table_select_index_equal(grn_ctx *ctx,
 
 static inline grn_bool
 grn_table_select_index_not_equal(grn_ctx *ctx,
-                             grn_obj *table,
-                             grn_obj *index,
-                             scan_info *si,
-                             grn_obj *res)
+                                 grn_obj *table,
+                                 grn_obj *index,
+                                 scan_info *si,
+                                 grn_obj *res)
 {
   grn_bool processed = GRN_FALSE;
 
