@@ -170,11 +170,20 @@ grn_plugin_call_init(grn_ctx *ctx, grn_id id)
 static grn_rc
 grn_plugin_call_register_mrb(grn_ctx *ctx, grn_id id, grn_plugin *plugin)
 {
-  grn_mrb_data *data = &(ctx->impl->mrb);
-  mrb_state *mrb = data->state;
-  struct RClass *module = data->module;
+  grn_mrb_data *data;
+  mrb_state *mrb;
+  struct RClass *module;
   struct RClass *plugin_loader_class;
   int arena_index;
+
+  grn_ctx_impl_mrb_ensure_init(ctx);
+  if (ctx->rc != GRN_SUCCESS) {
+    return ctx->rc;
+  }
+
+  data = &(ctx->impl->mrb);
+  mrb = data->state;
+  module = data->module;
 
   {
     int added;
