@@ -69,8 +69,12 @@ snippet_exec(grn_ctx *ctx, grn_obj *snip, grn_obj *text,
                              GRN_TEXT_VALUE(&snippet_buffer) + prefix_length,
                              &snippet_length);
     if (rc == GRN_SUCCESS) {
+      grn_strncat(GRN_TEXT_VALUE(&snippet_buffer),
+                  GRN_BULK_WSIZE(&snippet_buffer),
+                  suffix,
+                  suffix_length);
       grn_vector_add_element(ctx, snippets,
-                             strncat(GRN_TEXT_VALUE(&snippet_buffer), suffix, suffix_length),
+                             GRN_TEXT_VALUE(&snippet_buffer),
                              prefix_length + snippet_length + suffix_length,
                              0, GRN_DB_SHORT_TEXT);
     }
