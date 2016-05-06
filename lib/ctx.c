@@ -616,7 +616,9 @@ fail_plugins:
 fail_ctx_impl:
   grn_com_fin();
 fail_com:
+#ifndef WIN32
 fail_page_size:
+#endif /* WIN32 */
 fail_start_time:
 fail_ctx_init_internal:
   GRN_LOG(ctx, GRN_LOG_NOTICE, "grn_init: <%s>: failed", grn_get_version());
