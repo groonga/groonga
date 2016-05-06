@@ -56,7 +56,8 @@ snippet_exec(grn_ctx *ctx, grn_obj *snip, grn_obj *text,
   }
 
   GRN_TEXT_INIT(&snippet_buffer, 0);
-  grn_bulk_space(ctx, &snippet_buffer, prefix_length + max_tagged_length + suffix_length);
+  grn_bulk_space(ctx, &snippet_buffer,
+                 prefix_length + max_tagged_length + suffix_length);
   for (i = 0; i < n_results; i++) {
     unsigned int snippet_length;
 
