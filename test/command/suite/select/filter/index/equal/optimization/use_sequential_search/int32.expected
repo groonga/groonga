@@ -1,0 +1,151 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users age COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+table_create Ages TABLE_PAT_KEY Int32
+[[0,0.0,0.0],true]
+column_create Ages users_age COLUMN_INDEX Users age
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "user00", "age":  0},
+{"_key": "user01", "age":  1},
+{"_key": "user02", "age":  2},
+{"_key": "user03", "age":  3},
+{"_key": "user04", "age":  4},
+{"_key": "user05", "age":  5},
+{"_key": "user06", "age":  6},
+{"_key": "user07", "age":  7},
+{"_key": "user08", "age":  8},
+{"_key": "user09", "age":  9},
+{"_key": "user10", "age": 10},
+{"_key": "user11", "age": 11},
+{"_key": "user12", "age": 12},
+{"_key": "user13", "age": 13},
+{"_key": "user14", "age": 14},
+{"_key": "user15", "age": 15},
+{"_key": "user16", "age": 16},
+{"_key": "user17", "age": 17},
+{"_key": "user18", "age": 18},
+{"_key": "user19", "age": 19},
+{"_key": "user20", "age": 20},
+{"_key": "user21", "age": 21},
+{"_key": "user22", "age": 22},
+{"_key": "user23", "age": 23},
+{"_key": "user24", "age": 24},
+{"_key": "user25", "age": 25},
+{"_key": "user26", "age": 26},
+{"_key": "user27", "age": 27},
+{"_key": "user28", "age": 28},
+{"_key": "user29", "age": 29},
+{"_key": "user30", "age": 30},
+{"_key": "user31", "age": 31},
+{"_key": "user32", "age": 32},
+{"_key": "user33", "age": 33},
+{"_key": "user34", "age": 34},
+{"_key": "user35", "age": 35},
+{"_key": "user36", "age": 36},
+{"_key": "user37", "age": 37},
+{"_key": "user38", "age": 38},
+{"_key": "user39", "age": 39},
+{"_key": "user40", "age": 40},
+{"_key": "user41", "age": 41},
+{"_key": "user42", "age": 42},
+{"_key": "user43", "age": 43},
+{"_key": "user44", "age": 44},
+{"_key": "user45", "age": 45},
+{"_key": "user46", "age": 46},
+{"_key": "user47", "age": 47},
+{"_key": "user48", "age": 48},
+{"_key": "user49", "age": 49},
+{"_key": "user50", "age": 50},
+{"_key": "user51", "age": 51},
+{"_key": "user52", "age": 52},
+{"_key": "user53", "age": 53},
+{"_key": "user54", "age": 54},
+{"_key": "user55", "age": 55},
+{"_key": "user56", "age": 56},
+{"_key": "user57", "age": 57},
+{"_key": "user58", "age": 58},
+{"_key": "user59", "age": 59},
+{"_key": "user60", "age": 60},
+{"_key": "user61", "age": 61},
+{"_key": "user62", "age": 62},
+{"_key": "user63", "age": 63},
+{"_key": "user64", "age": 64},
+{"_key": "user65", "age": 65},
+{"_key": "user66", "age": 66},
+{"_key": "user67", "age": 67},
+{"_key": "user68", "age": 68},
+{"_key": "user69", "age": 69},
+{"_key": "user70", "age": 70},
+{"_key": "user71", "age": 71},
+{"_key": "user72", "age": 72},
+{"_key": "user73", "age": 73},
+{"_key": "user74", "age": 74},
+{"_key": "user75", "age": 75},
+{"_key": "user76", "age": 76},
+{"_key": "user77", "age": 77},
+{"_key": "user78", "age": 78},
+{"_key": "user79", "age": 79},
+{"_key": "user80", "age": 80},
+{"_key": "user81", "age": 81},
+{"_key": "user82", "age": 82},
+{"_key": "user83", "age": 83},
+{"_key": "user84", "age": 84},
+{"_key": "user85", "age": 85},
+{"_key": "user86", "age": 86},
+{"_key": "user87", "age": 87},
+{"_key": "user88", "age": 88},
+{"_key": "user89", "age": 89},
+{"_key": "user90", "age": 90},
+{"_key": "user91", "age": 91},
+{"_key": "user92", "age": 92},
+{"_key": "user93", "age": 93},
+{"_key": "user94", "age": 94},
+{"_key": "user95", "age": 95},
+{"_key": "user96", "age": 96},
+{"_key": "user97", "age": 97},
+{"_key": "user98", "age": 98},
+{"_key": "user99", "age": 99}
+]
+[[0,0.0,0.0],100]
+log_level --level info
+[[0,0.0,0.0],true]
+select Users --filter '_key @^ "user0" && age == 5'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "age",
+          "Int32"
+        ]
+      ],
+      [
+        6,
+        "user05",
+        5
+      ]
+    ]
+  ]
+]
+#|i| [table][select][index-not-used][equal] <Ages.users_age>: enough filtered: 10.00%(10/100) < 11.00% && 10 <= 1000
+log_level --level notice
+[[0,0.0,0.0],true]

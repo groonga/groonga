@@ -5911,7 +5911,32 @@ grn_table_select_index_equal(grn_ctx *ctx,
       }
     }
   } else {
+    const char *tag = "[equal]";
     grn_obj *domain = grn_ctx_at(ctx, index->header.domain);
+
+    if (domain) {
+      grn_bool optimizable = GRN_FALSE;
+
+      if (domain->header.domain == GRN_DB_SHORT_TEXT) {
+        grn_obj *normalizer = NULL;
+        grn_table_get_info(ctx, domain, NULL, NULL, NULL, &normalizer, NULL);
+        if (normalizer == grn_ctx_get(ctx, "NormalizerAuto", -1)) {
+          optimizable = GRN_TRUE;
+        }
+      } else {
+        optimizable = GRN_TRUE;
+      }
+      if (optimizable &&
+          grn_table_select_index_use_sequential_search(ctx,
+                                                       table,
+                                                       res,
+                                                       si->logical_op,
+                                                       tag,
+                                                       index)) {
+        domain = NULL;
+      }
+    }
+
     if (domain) {
       grn_id tid;
       if (GRN_OBJ_GET_DOMAIN(si->query) == DB_OBJ(domain)->id) {
@@ -5927,7 +5952,7 @@ grn_table_select_index_equal(grn_ctx *ctx,
         grn_ii *ii = (grn_ii *)index;
         grn_ii_cursor *ii_cursor;
 
-        grn_table_select_index_report(ctx, "[equal]", index);
+        grn_table_select_index_report(ctx, tag, index);
 
         sid = GRN_UINT32_VALUE_AT(&(si->wv), 0);
         weight = GRN_INT32_VALUE_AT(&(si->wv), 1);
