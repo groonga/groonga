@@ -31,6 +31,12 @@ void grn_report_index(grn_ctx *ctx,
                       const char *tag,
                       grn_obj *index);
 
+void grn_report_index_not_used(grn_ctx *ctx,
+                               const char *action,
+                               const char *tag,
+                               grn_obj *index,
+                               const char *reason);
+
 #ifdef __cplusplus
 }
 #endif

@@ -38,3 +38,23 @@ grn_report_index(grn_ctx *ctx,
           "%s[index]%s <%.*s>",
           action, tag, index_name_size, index_name);
 }
+
+void
+grn_report_index_not_used(grn_ctx *ctx,
+                          const char *action,
+                          const char *tag,
+                          grn_obj *index,
+                          const char *reason)
+{
+  char index_name[GRN_TABLE_MAX_KEY_SIZE];
+  int index_name_size;
+
+  if (!grn_logger_pass(ctx, GRN_REPORT_INDEX_LOG_LEVEL)) {
+    return;
+  }
+
+  index_name_size = grn_obj_name(ctx, index, index_name, GRN_TABLE_MAX_KEY_SIZE);
+  GRN_LOG(ctx, GRN_REPORT_INDEX_LOG_LEVEL,
+          "%s[index-not-used]%s <%.*s>: %s",
+          action, tag, index_name_size, index_name, reason);
+}
