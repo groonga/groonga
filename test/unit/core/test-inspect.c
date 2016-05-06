@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2010-2014  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2010-2016  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -314,7 +314,7 @@ test_time(void)
                (gint64)g_time_value.tv_sec * G_USEC_PER_SEC +
                g_time_value.tv_usec);
   inspected = grn_inspect(context, NULL, time_value);
-  cut_assert_equal_string(cut_take_printf("%ld.29", g_time_value.tv_sec),
+  cut_assert_equal_string(cut_take_printf("%ld.290000", g_time_value.tv_sec),
                           inspected_string());
 }
 

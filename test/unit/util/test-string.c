@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2015  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2008-2016  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -714,7 +714,7 @@ data_text_otoj(void)
   ADD_DATUM("Float", cut_take_printf("%g", 2.9), GRN_DB_FLOAT,
             "value", G_TYPE_DOUBLE, 2.9,
             NULL);
-  ADD_DATUM("Time", "1271053050.21148", GRN_DB_TIME,
+  ADD_DATUM("Time", "1271053050.211479", GRN_DB_TIME,
             "value", G_TYPE_INT64, GRN_TIME_PACK(1271053050, 211479),
             NULL);
   ADD_DATUM("ShortText",
