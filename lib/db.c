@@ -649,7 +649,7 @@ grn_obj_io(grn_obj *obj)
 uint32_t
 grn_db_lastmod(grn_obj *s)
 {
-  return grn_obj_io(((grn_db *)s)->keys)->header->lastmod;
+  return grn_obj_io(s)->header->lastmod;
 }
 
 void
