@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
@@ -15,6 +15,15 @@ case "${BUILD_TOOL}" in
     # TODO: Re-enable me on OS X
     if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
       test/unit/run-test.sh
+    fi
+    if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
+      memory_fs_size=$[1024 * 1024] # 1MiB
+      byte_per_sector=512
+      n_sectors=$[${memory_fs_size} / ${byte_per_sesctor}]
+      memory_fs_device_path=$(hdid -nomount ram://${n_sectors})
+      newfs_hfs ${memory_fs_device_path}
+      mkdir -p test/command/tmp
+      mount -t hfs ${memory_fs_device_path} test/command/tmp
     fi
     test/command/run-test.sh ${command_test_options}
     # TODO: Re-enable me on OS X
