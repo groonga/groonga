@@ -98,3 +98,23 @@ else()
   install(TARGETS time_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
 endif()
 target_link_libraries(time_functions libgroonga)
+
+read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/rank_sources.am
+  RANK_SOURCES)
+set_source_files_properties(${RANK_SOURCES}
+  PROPERTIES
+  COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
+if(GRN_EMBED)
+  add_library(rank_functions STATIC ${RANK_SOURCES})
+  set_target_properties(
+    rank_functions
+    PROPERTIES
+    POSITION_INDEPENDENT_CODE ON)
+else()
+  add_library(rank_functions MODULE ${RANK_SOURCES})
+  set_target_properties(rank_functions PROPERTIES
+    PREFIX ""
+    OUTPUT_NAME "rank")
+  install(TARGETS rank_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
+endif()
+target_link_libraries(rank_functions libgroonga)
