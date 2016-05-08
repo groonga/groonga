@@ -306,6 +306,199 @@ grn_proc_select_output_columns(grn_ctx *ctx, grn_obj *res,
   GRN_OBJ_FORMAT_FIN(ctx, &format);
 }
 
+static const char *
+grn_column_stage_name(grn_column_stage stage)
+{
+  switch (stage) {
+  case GRN_COLUMN_STAGE_FILTERED :
+    return "filtered";
+  default :
+    return "unknown";
+  }
+}
+
+static void
+grn_select_apply_columns(grn_ctx *ctx,
+                         grn_obj *table,
+                         grn_hash *columns,
+                         grn_obj *condition)
+{
+  grn_hash_cursor *columns_cursor;
+
+  columns_cursor = grn_hash_cursor_open(ctx, columns,
+                                        NULL, 0, NULL, 0, 0, -1, 0);
+  if (!columns_cursor) {
+    return;
+  }
+
+  while (grn_hash_cursor_next(ctx, columns_cursor) != GRN_ID_NIL) {
+    grn_column_data *column_data;
+    grn_obj *target_table = table;
+    grn_obj *column;
+    grn_obj *expression;
+    grn_obj *record;
+    grn_table_cursor *table_cursor;
+    grn_id id;
+
+    grn_hash_cursor_get_value(ctx, columns_cursor, (void **)&column_data);
+
+    column = grn_column_create(ctx,
+                               table,
+                               column_data->label.value,
+                               column_data->label.length,
+                               NULL,
+                               column_data->flags,
+                               column_data->type);
+    if (!column) {
+      char error_message[GRN_CTX_MSGSIZE];
+      grn_memcpy(error_message, ctx->errbuf, GRN_CTX_MSGSIZE);
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "[select][column][%s][%.*s] failed to create column: %s",
+                       grn_column_stage_name(column_data->stage),
+                       (int)(column_data->label.length),
+                       column_data->label.value,
+                       error_message);
+      break;
+    }
+
+    if (column_data->sortby.length > 0) {
+      grn_table_sort_key *sort_keys;
+      uint32_t n_sort_keys;
+      sort_keys = grn_table_sort_key_from_str(ctx,
+                                              column_data->sortby.value,
+                                              column_data->sortby.length,
+                                              table, &n_sort_keys);
+      if (!sort_keys) {
+        char error_message[GRN_CTX_MSGSIZE];
+        grn_memcpy(error_message, ctx->errbuf, GRN_CTX_MSGSIZE);
+        grn_obj_close(ctx, column);
+        GRN_PLUGIN_ERROR(ctx,
+                         GRN_INVALID_ARGUMENT,
+                         "[select][column][%s][%.*s] failed to parse sort key: %s",
+                         grn_column_stage_name(column_data->stage),
+                         (int)(column_data->label.length),
+                         column_data->label.value,
+                         error_message);
+        break;
+      }
+
+      target_table = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
+                                      NULL, table);
+      if (!target_table) {
+        char error_message[GRN_CTX_MSGSIZE];
+        grn_memcpy(error_message, ctx->errbuf, GRN_CTX_MSGSIZE);
+        grn_obj_close(ctx, column);
+        grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
+        GRN_PLUGIN_ERROR(ctx,
+                         GRN_INVALID_ARGUMENT,
+                         "[select][column][%s][%.*s] failed to create sorted table: %s",
+                         grn_column_stage_name(column_data->stage),
+                         (int)(column_data->label.length),
+                         column_data->label.value,
+                         error_message);
+        break;
+      }
+      grn_table_sort(ctx, table, 0, -1,
+                     target_table, sort_keys, n_sort_keys);
+      grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
+    }
+
+    GRN_EXPR_CREATE_FOR_QUERY(ctx, target_table, expression, record);
+    if (!expression) {
+      char error_message[GRN_CTX_MSGSIZE];
+      grn_memcpy(error_message, ctx->errbuf, GRN_CTX_MSGSIZE);
+      grn_obj_close(ctx, column);
+      if (column_data->sortby.length > 0) {
+        grn_obj_unlink(ctx, target_table);
+      }
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "[select][column][%s][%.*s] "
+                       "failed to create expression to compute value: %s",
+                       grn_column_stage_name(column_data->stage),
+                       (int)(column_data->label.length),
+                       column_data->label.value,
+                       error_message);
+      break;
+    }
+    grn_expr_parse(ctx,
+                   expression,
+                   column_data->value.value,
+                   column_data->value.length,
+                   NULL,
+                   GRN_OP_MATCH,
+                   GRN_OP_AND,
+                   GRN_EXPR_SYNTAX_SCRIPT);
+    if (ctx->rc != GRN_SUCCESS) {
+      char error_message[GRN_CTX_MSGSIZE];
+      grn_memcpy(error_message, ctx->errbuf, GRN_CTX_MSGSIZE);
+      grn_obj_close(ctx, expression);
+      grn_obj_close(ctx, column);
+      if (column_data->sortby.length > 0) {
+        grn_obj_unlink(ctx, target_table);
+      }
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "[select][column][%s][%.*s] "
+                       "failed to parse value: <%.*s>: %s",
+                       grn_column_stage_name(column_data->stage),
+                       (int)(column_data->label.length),
+                       column_data->label.value,
+                       (int)(column_data->value.length),
+                       column_data->value.value,
+                       error_message);
+      break;
+    }
+    grn_select_expression_set_condition(ctx, expression, condition);
+
+    table_cursor = grn_table_cursor_open(ctx, target_table,
+                                         NULL, 0,
+                                         NULL, 0,
+                                         0, -1, GRN_CURSOR_BY_ID);
+    if (!table_cursor) {
+      char error_message[GRN_CTX_MSGSIZE];
+      grn_memcpy(error_message, ctx->errbuf, GRN_CTX_MSGSIZE);
+      grn_obj_close(ctx, expression);
+      grn_obj_close(ctx, column);
+      if (column_data->sortby.length > 0) {
+        grn_obj_unlink(ctx, target_table);
+      }
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "[select][column][%s][%.*s] "
+                       "failed to create cursor for getting records: %s",
+                       grn_column_stage_name(column_data->stage),
+                       (int)(column_data->label.length),
+                       column_data->label.value,
+                       error_message);
+      break;
+    }
+
+    while ((id = grn_table_cursor_next(ctx, table_cursor)) != GRN_ID_NIL) {
+      grn_obj *value;
+
+      GRN_RECORD_SET(ctx, record, id);
+      value = grn_expr_exec(ctx, expression, 0);
+      if (column_data->sortby.length > 0) {
+        void *buf;
+        grn_table_cursor_get_value(ctx, table_cursor, &buf);
+        id = *((grn_id *)buf);
+      }
+      if (value) {
+        grn_obj_set_value(ctx, column, id, value, GRN_OBJ_SET);
+      }
+    }
+
+    if (column_data->sortby.length > 0) {
+      grn_obj_unlink(ctx, target_table);
+    }
+    grn_obj_close(ctx, expression);
+  }
+
+  grn_hash_cursor_close(ctx, columns_cursor);
+}
+
 static grn_table_group_flags
 grn_parse_table_group_calc_types(grn_ctx *ctx,
                                  const char *calc_types,
@@ -838,199 +1031,6 @@ grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
   GRN_PLUGIN_FREE(ctx, results);
 }
 
-static const char *
-grn_column_stage_name(grn_column_stage stage)
-{
-  switch (stage) {
-  case GRN_COLUMN_STAGE_FILTERED :
-    return "filtered";
-  default :
-    return "unknown";
-  }
-}
-
-static void
-grn_select_apply_columns(grn_ctx *ctx,
-                         grn_obj *table,
-                         grn_hash *columns,
-                         grn_obj *condition)
-{
-  grn_hash_cursor *columns_cursor;
-
-  columns_cursor = grn_hash_cursor_open(ctx, columns,
-                                        NULL, 0, NULL, 0, 0, -1, 0);
-  if (!columns_cursor) {
-    return;
-  }
-
-  while (grn_hash_cursor_next(ctx, columns_cursor) != GRN_ID_NIL) {
-    grn_column_data *column_data;
-    grn_obj *target_table = table;
-    grn_obj *column;
-    grn_obj *expression;
-    grn_obj *record;
-    grn_table_cursor *table_cursor;
-    grn_id id;
-
-    grn_hash_cursor_get_value(ctx, columns_cursor, (void **)&column_data);
-
-    column = grn_column_create(ctx,
-                               table,
-                               column_data->label.value,
-                               column_data->label.length,
-                               NULL,
-                               column_data->flags,
-                               column_data->type);
-    if (!column) {
-      char error_message[GRN_CTX_MSGSIZE];
-      grn_memcpy(error_message, ctx->errbuf, GRN_CTX_MSGSIZE);
-      GRN_PLUGIN_ERROR(ctx,
-                       GRN_INVALID_ARGUMENT,
-                       "[select][column][%s][%.*s] failed to create column: %s",
-                       grn_column_stage_name(column_data->stage),
-                       (int)(column_data->label.length),
-                       column_data->label.value,
-                       error_message);
-      break;
-    }
-
-    if (column_data->sortby.length > 0) {
-      grn_table_sort_key *sort_keys;
-      uint32_t n_sort_keys;
-      sort_keys = grn_table_sort_key_from_str(ctx,
-                                              column_data->sortby.value,
-                                              column_data->sortby.length,
-                                              table, &n_sort_keys);
-      if (!sort_keys) {
-        char error_message[GRN_CTX_MSGSIZE];
-        grn_memcpy(error_message, ctx->errbuf, GRN_CTX_MSGSIZE);
-        grn_obj_close(ctx, column);
-        GRN_PLUGIN_ERROR(ctx,
-                         GRN_INVALID_ARGUMENT,
-                         "[select][column][%s][%.*s] failed to parse sort key: %s",
-                         grn_column_stage_name(column_data->stage),
-                         (int)(column_data->label.length),
-                         column_data->label.value,
-                         error_message);
-        break;
-      }
-
-      target_table = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
-                                      NULL, table);
-      if (!target_table) {
-        char error_message[GRN_CTX_MSGSIZE];
-        grn_memcpy(error_message, ctx->errbuf, GRN_CTX_MSGSIZE);
-        grn_obj_close(ctx, column);
-        grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
-        GRN_PLUGIN_ERROR(ctx,
-                         GRN_INVALID_ARGUMENT,
-                         "[select][column][%s][%.*s] failed to create sorted table: %s",
-                         grn_column_stage_name(column_data->stage),
-                         (int)(column_data->label.length),
-                         column_data->label.value,
-                         error_message);
-        break;
-      }
-      grn_table_sort(ctx, table, 0, -1,
-                     target_table, sort_keys, n_sort_keys);
-      grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
-    }
-
-    GRN_EXPR_CREATE_FOR_QUERY(ctx, target_table, expression, record);
-    if (!expression) {
-      char error_message[GRN_CTX_MSGSIZE];
-      grn_memcpy(error_message, ctx->errbuf, GRN_CTX_MSGSIZE);
-      grn_obj_close(ctx, column);
-      if (column_data->sortby.length > 0) {
-        grn_obj_unlink(ctx, target_table);
-      }
-      GRN_PLUGIN_ERROR(ctx,
-                       GRN_INVALID_ARGUMENT,
-                       "[select][column][%s][%.*s] "
-                       "failed to create expression to compute value: %s",
-                       grn_column_stage_name(column_data->stage),
-                       (int)(column_data->label.length),
-                       column_data->label.value,
-                       error_message);
-      break;
-    }
-    grn_expr_parse(ctx,
-                   expression,
-                   column_data->value.value,
-                   column_data->value.length,
-                   NULL,
-                   GRN_OP_MATCH,
-                   GRN_OP_AND,
-                   GRN_EXPR_SYNTAX_SCRIPT);
-    if (ctx->rc != GRN_SUCCESS) {
-      char error_message[GRN_CTX_MSGSIZE];
-      grn_memcpy(error_message, ctx->errbuf, GRN_CTX_MSGSIZE);
-      grn_obj_close(ctx, expression);
-      grn_obj_close(ctx, column);
-      if (column_data->sortby.length > 0) {
-        grn_obj_unlink(ctx, target_table);
-      }
-      GRN_PLUGIN_ERROR(ctx,
-                       GRN_INVALID_ARGUMENT,
-                       "[select][column][%s][%.*s] "
-                       "failed to parse value: <%.*s>: %s",
-                       grn_column_stage_name(column_data->stage),
-                       (int)(column_data->label.length),
-                       column_data->label.value,
-                       (int)(column_data->value.length),
-                       column_data->value.value,
-                       error_message);
-      break;
-    }
-    grn_select_expression_set_condition(ctx, expression, condition);
-
-    table_cursor = grn_table_cursor_open(ctx, target_table,
-                                         NULL, 0,
-                                         NULL, 0,
-                                         0, -1, GRN_CURSOR_BY_ID);
-    if (!table_cursor) {
-      char error_message[GRN_CTX_MSGSIZE];
-      grn_memcpy(error_message, ctx->errbuf, GRN_CTX_MSGSIZE);
-      grn_obj_close(ctx, expression);
-      grn_obj_close(ctx, column);
-      if (column_data->sortby.length > 0) {
-        grn_obj_unlink(ctx, target_table);
-      }
-      GRN_PLUGIN_ERROR(ctx,
-                       GRN_INVALID_ARGUMENT,
-                       "[select][column][%s][%.*s] "
-                       "failed to create cursor for getting records: %s",
-                       grn_column_stage_name(column_data->stage),
-                       (int)(column_data->label.length),
-                       column_data->label.value,
-                       error_message);
-      break;
-    }
-
-    while ((id = grn_table_cursor_next(ctx, table_cursor)) != GRN_ID_NIL) {
-      grn_obj *value;
-
-      GRN_RECORD_SET(ctx, record, id);
-      value = grn_expr_exec(ctx, expression, 0);
-      if (column_data->sortby.length > 0) {
-        void *buf;
-        grn_table_cursor_get_value(ctx, table_cursor, &buf);
-        id = *((grn_id *)buf);
-      }
-      if (value) {
-        grn_obj_set_value(ctx, column, id, value, GRN_OBJ_SET);
-      }
-    }
-
-    if (column_data->sortby.length > 0) {
-      grn_obj_unlink(ctx, target_table);
-    }
-    grn_obj_close(ctx, expression);
-  }
-
-  grn_hash_cursor_close(ctx, columns_cursor);
-}
-
 static grn_rc
 grn_select(grn_ctx *ctx, grn_select_data *data)
 {
@@ -1458,6 +1458,74 @@ exit :
 }
 
 static grn_bool
+grn_column_data_fill(grn_ctx *ctx,
+                     grn_column_data *column,
+                     grn_obj *type_raw,
+                     grn_obj *flags,
+                     grn_obj *value,
+                     grn_obj *sortby)
+{
+  if (type_raw && GRN_TEXT_LEN(type_raw) > 0) {
+    grn_obj *type;
+
+    type = grn_ctx_get(ctx, GRN_TEXT_VALUE(type_raw), GRN_TEXT_LEN(type_raw));
+    if (!type) {
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "[select][column][%s][%.*s] unknown type: <%.*s>",
+                       grn_column_stage_name(column->stage),
+                       (int)(column->label.length),
+                       column->label.value,
+                       (int)(GRN_TEXT_LEN(type_raw)),
+                       GRN_TEXT_VALUE(type_raw));
+      return GRN_FALSE;
+    }
+    if (!(grn_obj_is_type(ctx, type) || grn_obj_is_table(ctx, type))) {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, type);
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "[select][column][%s][%.*s] invalid type: %.*s",
+                       grn_column_stage_name(column->stage),
+                       (int)(column->label.length),
+                       column->label.value,
+                       (int)(GRN_TEXT_LEN(&inspected)),
+                       GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      grn_obj_unlink(ctx, type);
+      return GRN_FALSE;
+    }
+    column->type = type;
+  }
+
+  if (flags && GRN_TEXT_LEN(flags) > 0) {
+    char error_message_tag[GRN_TABLE_MAX_KEY_SIZE];
+
+    grn_snprintf(error_message_tag,
+                 GRN_TABLE_MAX_KEY_SIZE,
+                 GRN_TABLE_MAX_KEY_SIZE,
+                 "[select][column][%s][%.*s]",
+                 grn_column_stage_name(column->stage),
+                 (int)(column->label.length),
+                 column->label.value);
+    column->flags =
+      grn_proc_column_parse_flags(ctx,
+                                  error_message_tag,
+                                  GRN_TEXT_VALUE(flags),
+                                  GRN_TEXT_VALUE(flags) + GRN_TEXT_LEN(flags));
+    if (ctx->rc != GRN_SUCCESS) {
+      return GRN_FALSE;
+    }
+  }
+
+  GRN_SELECT_FILL_STRING(column->value, value);
+  GRN_SELECT_FILL_STRING(column->sortby, sortby);
+
+  return GRN_TRUE;
+}
+
+static grn_bool
 grn_select_data_fill_columns_collect(grn_ctx *ctx,
                                      grn_user_data *user_data,
                                      grn_select_data *data)
@@ -1539,74 +1607,6 @@ grn_select_data_fill_columns_collect(grn_ctx *ctx,
     }
   }
   grn_table_cursor_close(ctx, cursor);
-
-  return GRN_TRUE;
-}
-
-static grn_bool
-grn_column_data_fill(grn_ctx *ctx,
-                     grn_column_data *column,
-                     grn_obj *type_raw,
-                     grn_obj *flags,
-                     grn_obj *value,
-                     grn_obj *sortby)
-{
-  if (type_raw && GRN_TEXT_LEN(type_raw) > 0) {
-    grn_obj *type;
-
-    type = grn_ctx_get(ctx, GRN_TEXT_VALUE(type_raw), GRN_TEXT_LEN(type_raw));
-    if (!type) {
-      GRN_PLUGIN_ERROR(ctx,
-                       GRN_INVALID_ARGUMENT,
-                       "[select][column][%s][%.*s] unknown type: <%.*s>",
-                       grn_column_stage_name(column->stage),
-                       (int)(column->label.length),
-                       column->label.value,
-                       (int)(GRN_TEXT_LEN(type_raw)),
-                       GRN_TEXT_VALUE(type_raw));
-      return GRN_FALSE;
-    }
-    if (!(grn_obj_is_type(ctx, type) || grn_obj_is_table(ctx, type))) {
-      grn_obj inspected;
-      GRN_TEXT_INIT(&inspected, 0);
-      grn_inspect(ctx, &inspected, type);
-      GRN_PLUGIN_ERROR(ctx,
-                       GRN_INVALID_ARGUMENT,
-                       "[select][column][%s][%.*s] invalid type: %.*s",
-                       grn_column_stage_name(column->stage),
-                       (int)(column->label.length),
-                       column->label.value,
-                       (int)(GRN_TEXT_LEN(&inspected)),
-                       GRN_TEXT_VALUE(&inspected));
-      GRN_OBJ_FIN(ctx, &inspected);
-      grn_obj_unlink(ctx, type);
-      return GRN_FALSE;
-    }
-    column->type = type;
-  }
-
-  if (flags && GRN_TEXT_LEN(flags) > 0) {
-    char error_message_tag[GRN_TABLE_MAX_KEY_SIZE];
-
-    grn_snprintf(error_message_tag,
-                 GRN_TABLE_MAX_KEY_SIZE,
-                 GRN_TABLE_MAX_KEY_SIZE,
-                 "[select][column][%s][%.*s]",
-                 grn_column_stage_name(column->stage),
-                 (int)(column->label.length),
-                 column->label.value);
-    column->flags =
-      grn_proc_column_parse_flags(ctx,
-                                  error_message_tag,
-                                  GRN_TEXT_VALUE(flags),
-                                  GRN_TEXT_VALUE(flags) + GRN_TEXT_LEN(flags));
-    if (ctx->rc != GRN_SUCCESS) {
-      return GRN_FALSE;
-    }
-  }
-
-  GRN_SELECT_FILL_STRING(column->value, value);
-  GRN_SELECT_FILL_STRING(column->sortby, sortby);
 
   return GRN_TRUE;
 }
