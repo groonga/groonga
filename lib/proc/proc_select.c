@@ -868,6 +868,7 @@ grn_select_apply_columns(grn_ctx *ctx,
     grn_obj *expression;
     grn_obj *record;
     grn_table_cursor *table_cursor;
+    grn_id id;
 
     grn_hash_cursor_get_value(ctx, columns_cursor, (void **)&column_data);
 
@@ -953,13 +954,9 @@ grn_select_apply_columns(grn_ctx *ctx,
       break;
     }
 
-    while (grn_table_cursor_next(ctx, table_cursor) != GRN_ID_NIL) {
-      grn_id id;
-      void *key;
+    while ((id = grn_table_cursor_next(ctx, table_cursor)) != GRN_ID_NIL) {
       grn_obj *value;
 
-      grn_table_cursor_get_key(ctx, table_cursor, &key);
-      id = *((grn_id *)key);
       GRN_RECORD_SET(ctx, record, id);
       value = grn_expr_exec(ctx, expression, 0);
       if (value) {
