@@ -61,10 +61,14 @@ typedef struct {
   grn_table_group_flags calc_types;
   grn_select_string calc_target_name;
   grn_select_string table_name;
+  struct {
+    grn_hash *initial;
+  } columns;
 } grn_drilldown_data;
 
 typedef enum {
   GRN_COLUMN_STAGE_UNKNOWN,
+  GRN_COLUMN_STAGE_INITIAL,
   GRN_COLUMN_STAGE_FILTERED
 } grn_column_stage;
 
@@ -311,6 +315,8 @@ static const char *
 grn_column_stage_name(grn_column_stage stage)
 {
   switch (stage) {
+  case GRN_COLUMN_STAGE_INITIAL :
+    return "initial";
   case GRN_COLUMN_STAGE_FILTERED :
     return "filtered";
   default :
@@ -901,6 +907,10 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
     if (keys) {
       grn_table_sort_key_close(ctx, keys, n_keys);
     }
+    if (drilldown->columns.initial) {
+      grn_select_apply_columns(ctx, result->table, drilldown->columns.initial,
+                               condition);
+    }
   }
 
 exit :
@@ -1466,6 +1476,8 @@ grn_column_data_init(grn_ctx *ctx, const char *label, size_t label_len,
 
   if (GRN_BULK_EQUAL_STRING(value, "filtered")) {
     stage = GRN_COLUMN_STAGE_FILTERED;
+  } else if (GRN_BULK_EQUAL_STRING(value, "initial")) {
+    stage = GRN_COLUMN_STAGE_INITIAL;
   } else {
     stage = GRN_COLUMN_STAGE_UNKNOWN;
   }
@@ -1575,7 +1587,9 @@ grn_column_data_fill(grn_ctx *ctx,
 static grn_bool
 grn_column_data_collect(grn_ctx *ctx,
                         grn_user_data *user_data,
-                        grn_hash *columns)
+                        grn_hash *columns,
+                        const char *prefix_label,
+                        size_t prefix_label_len)
 {
   grn_hash_cursor *cursor = NULL;
   cursor = grn_hash_cursor_open(ctx, columns,
@@ -1598,7 +1612,9 @@ grn_column_data_collect(grn_ctx *ctx,
     grn_snprintf(key_name,                                              \
                  GRN_TABLE_MAX_KEY_SIZE,                                \
                  GRN_TABLE_MAX_KEY_SIZE,                                \
-                 "column[%.*s]." # name,                                \
+                 "%.*scolumn[%.*s]." # name,                            \
+                 (int)prefix_label_len,                                 \
+                 prefix_label,                                          \
                  (int)(column->label.length),                           \
                  column->label.value);                                  \
     name = grn_plugin_proc_get_var(ctx, user_data, key_name, -1);
@@ -1686,7 +1702,93 @@ grn_select_data_fill_columns(grn_ctx *ctx,
     return GRN_TRUE;
   }
 
-  if (!grn_column_data_collect(ctx, user_data, data->columns.filtered)) {
+  if (!grn_column_data_collect(ctx, user_data, data->columns.filtered, NULL, 0)) {
+    return GRN_FALSE;
+  }
+
+  return GRN_TRUE;
+}
+
+static grn_bool
+grn_drilldown_data_fill_columns_collect(grn_ctx *ctx,
+                                        grn_user_data *user_data,
+                                        grn_drilldown_data *data,
+                                        const char *drilldown_label)
+{
+  grn_obj *vars;
+  grn_table_cursor *cursor;
+  const char *prefix = "column[";
+  size_t prefix_len;
+  const char *suffix = "].stage";
+  size_t suffix_len;
+  size_t drilldown_label_len = strlen(drilldown_label);
+
+  vars = grn_plugin_proc_get_vars(ctx, user_data);
+  cursor = grn_table_cursor_open(ctx, vars, NULL, 0, NULL, 0, 0, -1, 0);
+  if (!cursor) {
+    return GRN_FALSE;
+  }
+
+  prefix_len = strlen(prefix);
+  suffix_len = strlen(suffix);
+  while (grn_table_cursor_next(ctx, cursor)) {
+    void *key;
+    char *name;
+    int name_len;
+    void *value_raw;
+    grn_obj *value;
+
+    name_len = grn_table_cursor_get_key(ctx, cursor, &key);
+    name = key;
+
+    name += drilldown_label_len;
+    name_len -= drilldown_label_len;
+
+    if (name_len < prefix_len + suffix_len + 1) {
+      continue;
+    }
+
+    if (memcmp(prefix, name, prefix_len) != 0) {
+      continue;
+    }
+
+    if (memcmp(suffix, name + (name_len - suffix_len), suffix_len) != 0) {
+      continue;
+    }
+
+    grn_table_cursor_get_value(ctx, cursor, &value_raw);
+    value = value_raw;
+
+    if (!grn_column_data_init(ctx,
+                              name + prefix_len,
+                              name_len - prefix_len - suffix_len,
+                              value, &(data->columns.initial))) {
+      grn_table_cursor_close(ctx, cursor);
+      return GRN_FALSE;
+    }
+  }
+  grn_table_cursor_close(ctx, cursor);
+
+  return GRN_TRUE;
+}
+
+static grn_bool
+grn_drilldown_data_fill_columns(grn_ctx *ctx,
+                                grn_user_data *user_data,
+                                grn_drilldown_data *data,
+                                const char *drilldown_label)
+{
+  if (!grn_drilldown_data_fill_columns_collect(ctx, user_data, data,
+                                               drilldown_label)) {
+    return GRN_FALSE;
+  }
+
+  if (!data->columns.initial) {
+    return GRN_TRUE;
+  }
+
+  if (!grn_column_data_collect(ctx, user_data, data->columns.initial,
+                               drilldown_label, strlen(drilldown_label))) {
     return GRN_FALSE;
   }
 
@@ -1767,6 +1869,7 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
     drilldown_data = &(data->drilldowns[0]);
     drilldown_data->label.value = NULL;
     drilldown_data->label.length = 0;
+    drilldown_data->columns.initial = NULL;
     grn_drilldown_data_fill(ctx,
                             drilldown_data,
                             drilldown,
@@ -1811,6 +1914,7 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
       grn_drilldown_data *drilldown = &(data->drilldowns[i]);
         const char *label;
         int label_len;
+        char drilldown_label[GRN_TABLE_MAX_KEY_SIZE];
         char key_name[GRN_TABLE_MAX_KEY_SIZE];
         grn_obj *keys;
         grn_obj *sortby;
@@ -1824,12 +1928,16 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
         label_len = grn_table_cursor_get_key(ctx, cursor, (void **)&label);
         drilldown->label.value = label;
         drilldown->label.length = label_len;
+        grn_snprintf(drilldown_label,
+                     GRN_TABLE_MAX_KEY_SIZE,
+                     GRN_TABLE_MAX_KEY_SIZE,
+                     "drilldown[%.*s].", label_len, label);
 
 #define GET_VAR(name)                                                   \
         grn_snprintf(key_name,                                          \
                      GRN_TABLE_MAX_KEY_SIZE,                            \
                      GRN_TABLE_MAX_KEY_SIZE,                            \
-                     "drilldown[%.*s]." # name, label_len, label);      \
+                     "%s" # name, drilldown_label);                     \
         name = grn_plugin_proc_get_var(ctx, user_data, key_name, -1);
 
         GET_VAR(keys);
@@ -1843,6 +1951,7 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
 
 #undef GET_VAR
 
+        grn_drilldown_data_fill_columns(ctx, user_data, drilldown, drilldown_label);
         grn_drilldown_data_fill(ctx, drilldown,
                                 keys, sortby, output_columns, offset, limit,
                                 calc_types, calc_target, table);
@@ -1946,6 +2055,13 @@ exit :
   }
 
   if (data.drilldowns) {
+    int i;
+    for (i = 0; i < data.n_drilldowns; i++) {
+      grn_drilldown_data *drilldown = &(data.drilldowns[i]);
+      if (drilldown->columns.initial) {
+        grn_hash_close(ctx, drilldown->columns.initial);
+      }
+    }
     GRN_PLUGIN_FREE(ctx, data.drilldowns);
   }
   if (data.drilldown_labels) {
