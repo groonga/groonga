@@ -1,0 +1,87 @@
+plugin_register functions/rank
+[[0,0.0,0.0],true]
+table_create Prices TABLE_PAT_KEY Int32
+[[0,0.0,0.0],true]
+load --table Prices
+[
+{"_key": -201},
+{"_key": -200},
+{"_key": -199},
+{"_key": -101},
+{"_key": -100},
+{"_key": -99},
+{"_key": -1},
+{"_key": 0},
+{"_key": 1},
+{"_key": 99},
+{"_key": 100},
+{"_key": 101},
+{"_key": 199},
+{"_key": 200},
+{"_key": 201}
+]
+[[0,0.0,0.0],15]
+select Prices   --filter '_key > 0'   --sortby -_id   --limit -1   --output_columns '_id, _key, rank()'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        7
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "Int32"
+        ],
+        [
+          "rank",
+          "null"
+        ]
+      ],
+      [
+        15,
+        201,
+        1
+      ],
+      [
+        14,
+        200,
+        2
+      ],
+      [
+        13,
+        199,
+        3
+      ],
+      [
+        12,
+        101,
+        4
+      ],
+      [
+        11,
+        100,
+        5
+      ],
+      [
+        10,
+        99,
+        6
+      ],
+      [
+        9,
+        1,
+        7
+      ]
+    ]
+  ]
+]

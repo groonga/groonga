@@ -1,0 +1,58 @@
+plugin_register functions/rank
+[[0,0.0,0.0],true]
+table_create Items TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Items price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Items
+[
+{"_key": "Book",  "price": 1498},
+{"_key": "Food",  "price": 1198},
+{"_key": "Drink", "price": 600}
+]
+[[0,0.0,0.0],3]
+select Items   --filter 'price < 1200'   --sortby price_rank   --output_columns _id,_key,price,price_rank   --column[price_rank].stage filtered   --column[price_rank].type UInt32   --column[price_rank].flags COLUMN_SCALAR   --column[price_rank].value 'rank()'   --column[price_rank].sortby -price
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "price",
+          "UInt32"
+        ],
+        [
+          "price_rank",
+          "UInt32"
+        ]
+      ],
+      [
+        2,
+        "Food",
+        1198,
+        1
+      ],
+      [
+        3,
+        "Drink",
+        600,
+        2
+      ]
+    ]
+  ]
+]

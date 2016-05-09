@@ -1,0 +1,2 @@
+rank_la_SOURCES =				\
+	rank.c
