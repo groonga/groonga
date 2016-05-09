@@ -7,7 +7,7 @@ set -u
 
 prefix=/tmp/local
 
-command_test_options="--n-workers=4 --reporter=mark --timeout=10"
+command_test_options="--n-workers=4 --reporter=mark --timeout=60"
 
 set -x
 
