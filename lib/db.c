@@ -664,7 +664,18 @@ grn_db_touch(grn_ctx *ctx, grn_obj *s)
 static inline void
 grn_obj_touch_db(grn_ctx *ctx, grn_obj *obj, grn_timeval *tv)
 {
+  grn_db *db = (grn_db *)obj;
+
   grn_obj_io(obj)->header->lastmod = tv->tv_sec;
+
+  switch (db->keys->header.type) {
+  case GRN_TABLE_PAT_KEY :
+    grn_pat_dirty(ctx, (grn_pat *)(db->keys));
+    break;
+  case GRN_TABLE_DAT_KEY :
+    grn_dat_dirty(ctx, (grn_dat *)(db->keys));
+    break;
+  }
 }
 
 void

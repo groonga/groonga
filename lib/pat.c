@@ -541,6 +541,8 @@ grn_pat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
   }
   pat->cache = NULL;
   pat->cache_size = 0;
+  pat->is_dirty = GRN_FALSE;
+  CRITICAL_SECTION_INIT(pat->lock);
   return pat;
 }
 
@@ -623,6 +625,8 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   }
   pat->cache = NULL;
   pat->cache_size = 0;
+  pat->is_dirty = GRN_FALSE;
+  CRITICAL_SECTION_INIT(pat->lock);
   return pat;
 }
 
@@ -649,6 +653,14 @@ grn_rc
 grn_pat_close(grn_ctx *ctx, grn_pat *pat)
 {
   grn_rc rc;
+
+  CRITICAL_SECTION_FIN(pat->lock);
+
+  if (pat->is_dirty) {
+    uint32_t n_dirty_opens;
+    GRN_ATOMIC_ADD_EX(&(pat->header->n_dirty_opens), -1, n_dirty_opens);
+  }
+
   if ((rc = grn_io_close(ctx, pat->io))) {
     ERR(rc, "grn_io_close failed");
   } else {
@@ -656,6 +668,7 @@ grn_pat_close(grn_ctx *ctx, grn_pat *pat)
     if (pat->cache) { grn_pat_cache_disable(ctx, pat); }
     GRN_FREE(pat);
   }
+
   return rc;
 }
 
@@ -3543,4 +3556,21 @@ grn_pat_is_key_encoded(grn_ctx *ctx, grn_pat *pat)
   }
 
   return KEY_NEEDS_CONVERT(pat, key_size);
+}
+
+grn_rc
+grn_pat_dirty(grn_ctx *ctx, grn_pat *pat)
+{
+  grn_rc rc = GRN_SUCCESS;
+
+  CRITICAL_SECTION_ENTER(pat->lock);
+  if (!pat->is_dirty) {
+    uint32_t n_dirty_opens;
+    pat->is_dirty = GRN_TRUE;
+    GRN_ATOMIC_ADD_EX(&(pat->header->n_dirty_opens), 1, n_dirty_opens);
+    rc = grn_io_flush(ctx, pat->io);
+  }
+  CRITICAL_SECTION_LEAVE(pat->lock);
+
+  return rc;
 }
