@@ -22,12 +22,12 @@ load --table Items
 ]
 
 select Shops \
-  --drilldown[label].keys items \
-  --drilldown[label].sortby price \
-  --drilldown[label].output_columns _key,_nsubrecs,price,price_with_tax \
-  --drilldown[label].column[price_with_tax].stage initial \
-  --drilldown[label].column[price_with_tax].type UInt32 \
-  --drilldown[label].column[price_with_tax].flags COLUMN_SCALAR \
-  --drilldown[label].column[price_with_tax].value 'price * 1.08' \
-  --drilldown[label2].table label \
-  --drilldown[label2].keys price_with_tax
+  --drilldown[item].keys items \
+  --drilldown[item].sortby price \
+  --drilldown[item].output_columns _key,_nsubrecs,price,price_with_tax \
+  --drilldown[item].column[price_with_tax].stage initial \
+  --drilldown[item].column[price_with_tax].type UInt32 \
+  --drilldown[item].column[price_with_tax].flags COLUMN_SCALAR \
+  --drilldown[item].column[price_with_tax].value 'price * 1.08' \
+  --drilldown[real_price].table item \
+  --drilldown[real_price].keys price_with_tax
