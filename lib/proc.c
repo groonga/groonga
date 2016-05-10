@@ -2616,7 +2616,7 @@ run_sub_filter(grn_ctx *ctx, grn_obj *table,
                                 scope_domain, NULL);
     grn_table_select(ctx, scope_domain, sub_filter, base_res, GRN_OP_OR);
     if (scope->header.type == GRN_ACCESSOR) {
-      rc = grn_accessor_resolve(ctx, scope, -1, base_res, &resolve_res, NULL);
+      rc = grn_accessor_resolve(ctx, scope, -1, base_res, &resolve_res);
     } else {
       grn_accessor accessor;
       accessor.header.type = GRN_ACCESSOR;
@@ -2624,7 +2624,7 @@ run_sub_filter(grn_ctx *ctx, grn_obj *table,
       accessor.action = GRN_ACCESSOR_GET_COLUMN_VALUE;
       accessor.next = NULL;
       rc = grn_accessor_resolve(ctx, (grn_obj *)&accessor, -1, base_res,
-                                &resolve_res, NULL);
+                                &resolve_res);
     }
     if (resolve_res) {
       rc = grn_table_setoperation(ctx, res, resolve_res, res, op);

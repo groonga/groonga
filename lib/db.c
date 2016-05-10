@@ -3006,8 +3006,7 @@ grn_table_next(grn_ctx *ctx, grn_obj *table, grn_id id)
 
 static grn_rc
 grn_accessor_resolve_one_index_column(grn_ctx *ctx, grn_accessor *accessor,
-                                      grn_obj *current_res, grn_obj **next_res,
-                                      grn_search_optarg *optarg)
+                                      grn_obj *current_res, grn_obj **next_res)
 {
   grn_rc rc = GRN_SUCCESS;
   grn_obj *column = NULL;
@@ -3110,8 +3109,7 @@ grn_accessor_resolve_one_index_column(grn_ctx *ctx, grn_accessor *accessor,
 
 static grn_rc
 grn_accessor_resolve_one_table(grn_ctx *ctx, grn_accessor *accessor,
-                               grn_obj *current_res, grn_obj **next_res,
-                               grn_search_optarg *optarg)
+                               grn_obj *current_res, grn_obj **next_res)
 {
   grn_rc rc = GRN_SUCCESS;
   grn_obj *table;
@@ -3165,8 +3163,7 @@ grn_accessor_resolve_one_table(grn_ctx *ctx, grn_accessor *accessor,
 
 static grn_rc
 grn_accessor_resolve_one_data_column(grn_ctx *ctx, grn_accessor *accessor,
-                                     grn_obj *current_res, grn_obj **next_res,
-                                     grn_search_optarg *optarg)
+                                     grn_obj *current_res, grn_obj **next_res)
 {
   grn_rc rc = GRN_SUCCESS;
   grn_obj *index = NULL;
@@ -3236,8 +3233,7 @@ grn_accessor_resolve_one_data_column(grn_ctx *ctx, grn_accessor *accessor,
 
 grn_rc
 grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
-                     grn_obj *base_res, grn_obj **res,
-                     grn_search_optarg *optarg)
+                     grn_obj *base_res, grn_obj **res)
 {
   grn_rc rc = GRN_SUCCESS;
   grn_accessor *a;
@@ -3261,16 +3257,13 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
     a = (grn_accessor *)GRN_PTR_VALUE_AT(&accessor_stack, i - 1);
     if (a->obj->header.type == GRN_COLUMN_INDEX) {
       rc = grn_accessor_resolve_one_index_column(ctx, a,
-                                                 current_res, &next_res,
-                                                 optarg);
+                                                 current_res, &next_res);
     } else if (grn_obj_is_table(ctx, a->obj)) {
       rc = grn_accessor_resolve_one_table(ctx, a,
-                                          current_res, &next_res,
-                                          optarg);
+                                          current_res, &next_res);
     } else {
       rc = grn_accessor_resolve_one_data_column(ctx, a,
-                                                current_res, &next_res,
-                                                optarg);
+                                                current_res, &next_res);
     }
 
     if (current_res != base_res) {
@@ -3357,7 +3350,7 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
         goto exit;
       }
       rc = grn_accessor_resolve(ctx, obj, n_accessors - 1, base_res,
-                                &resolve_res, optarg);
+                                &resolve_res);
       if (resolve_res) {
         grn_id *record_id;
         grn_rset_recinfo *recinfo;
