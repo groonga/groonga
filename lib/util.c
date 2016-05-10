@@ -1296,7 +1296,7 @@ grn_p(grn_ctx *ctx, grn_obj *obj)
   GRN_TEXT_INIT(&buffer, 0);
   grn_inspect(ctx, &buffer, obj);
   printf("%.*s\n", (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
-  grn_obj_unlink(ctx, &buffer);
+  GRN_OBJ_FIN(ctx, &buffer);
 }
 
 void
@@ -1307,7 +1307,7 @@ grn_p_geo_point(grn_ctx *ctx, grn_geo_point *point)
   GRN_WGS84_GEO_POINT_INIT(&obj, 0);
   GRN_GEO_POINT_SET(ctx, &obj, point->latitude, point->longitude);
   grn_p(ctx, &obj);
-  grn_obj_unlink(ctx, &obj);
+  GRN_OBJ_FIN(ctx, &obj);
 }
 
 void
@@ -1318,7 +1318,7 @@ grn_p_ii_values(grn_ctx *ctx, grn_obj *ii)
   GRN_TEXT_INIT(&buffer, 0);
   grn_ii_inspect_values(ctx, (grn_ii *)ii, &buffer);
   printf("%.*s\n", (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
-  grn_obj_unlink(ctx, &buffer);
+  GRN_OBJ_FIN(ctx, &buffer);
 }
 
 void
@@ -1329,7 +1329,7 @@ grn_p_expr_code(grn_ctx *ctx, grn_expr_code *code)
   GRN_TEXT_INIT(&buffer, 0);
   grn_expr_code_inspect_indented(ctx, &buffer, code, "");
   printf("%.*s\n", (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
-  grn_obj_unlink(ctx, &buffer);
+  GRN_OBJ_FIN(ctx, &buffer);
 }
 
 void
