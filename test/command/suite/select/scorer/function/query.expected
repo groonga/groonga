@@ -12,4 +12,4 @@ load --table Users
 ]
 [[0,0.0,0.0],1]
 select Users   --filter true   --scorer '_score = query("name", "Alice")'   --output_columns _key,_score
-[[0,0.0,0.0],[[[1],[["_key","ShortText"],["_score","Int32"]],["alice",0]]]]
+[[0,0.0,0.0],[[[1],[["_key","ShortText"],["_score","Int32"]],["alice",1]]]]

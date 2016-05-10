@@ -12159,6 +12159,27 @@ grn_column_find_index_data_accessor_match(grn_ctx *ctx, grn_obj *obj,
       }
     }
 
+    if (!found &&
+        a->next &&
+        grn_obj_is_table(ctx, a->obj) &&
+        a->obj->header.domain == a->next->obj->header.domain) {
+      grn_obj *index = (grn_obj *)a;
+      int section = 0;
+
+      found = GRN_TRUE;
+      if (section_buf) {
+        *section_buf = section;
+      }
+      if (n < buf_size) {
+        *ip++ = index;
+      }
+      if (n < n_index_data) {
+        index_data[n].index = index;
+        index_data[n].section = section;
+      }
+      n++;
+    }
+
     if (!found) {
       break;
     }
