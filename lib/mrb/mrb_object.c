@@ -87,6 +87,23 @@ object_get_name(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+object_get_path(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *object;
+  const char *path;
+
+  object = DATA_PTR(self);
+  path = grn_obj_path(ctx, object);
+
+  if (path) {
+    return mrb_str_new_cstr(mrb, path);
+  } else {
+    return mrb_nil_value();
+  }
+}
+
+static mrb_value
 object_grn_inspect(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -253,6 +270,7 @@ grn_mrb_object_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "id", object_get_id, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "name", object_get_name, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "path", object_get_path, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "grn_inspect",
                     object_grn_inspect, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "==", object_equal, MRB_ARGS_REQ(1));
