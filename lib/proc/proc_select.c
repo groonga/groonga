@@ -1859,6 +1859,7 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
                      GRN_TABLE_MAX_KEY_SIZE,
                      "drilldown[%.*s].", label_len, label);
 
+        grn_columns_init(ctx, &(drilldown->columns));
         /* TODO: Check return value. */
         grn_columns_fill(ctx,
                          user_data,
