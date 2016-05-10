@@ -3233,7 +3233,8 @@ grn_accessor_resolve_one_data_column(grn_ctx *ctx, grn_accessor *accessor,
 
 grn_rc
 grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
-                     grn_obj *base_res, grn_obj **res)
+                     grn_obj *base_res, grn_obj *res,
+                     grn_operator op)
 {
   grn_rc rc = GRN_SUCCESS;
   grn_accessor *a;
@@ -3278,9 +3279,19 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
   }
 
   if (rc == GRN_SUCCESS && current_res != base_res) {
-    *res = current_res;
+    grn_id *record_id;
+    grn_rset_recinfo *recinfo;
+    GRN_HASH_EACH(ctx, (grn_hash *)current_res, id, &record_id, NULL, &recinfo, {
+      grn_posting posting;
+      posting.rid = *record_id;
+      posting.sid = 1;
+      posting.pos = 0;
+      posting.weight = recinfo->score - 1;
+      grn_ii_posting_add(ctx, &posting, (grn_hash *)res, op);
+    });
+    grn_obj_unlink(ctx, current_res);
+    grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
   } else {
-    *res = NULL;
     if (rc == GRN_SUCCESS) {
       rc = GRN_INVALID_ARGUMENT;
     }
@@ -3333,7 +3344,6 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
       rc = grn_obj_search(ctx, index, query, res, op, optarg);
     } else {
       grn_obj *base_res;
-      grn_obj *resolve_res = NULL;
       grn_obj *range = grn_ctx_at(ctx, DB_OBJ(index)->range);
       base_res = grn_table_create(ctx, NULL, 0, NULL,
                                   GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
@@ -3349,23 +3359,7 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
         grn_obj_unlink(ctx, base_res);
         goto exit;
       }
-      rc = grn_accessor_resolve(ctx, obj, n_accessors - 1, base_res,
-                                &resolve_res);
-      if (resolve_res) {
-        grn_id *record_id;
-        grn_rset_recinfo *recinfo;
-        GRN_HASH_EACH(ctx, (grn_hash *)resolve_res, id, &record_id, NULL,
-                      &recinfo, {
-          grn_posting posting;
-          posting.rid = *record_id;
-          posting.sid = 1;
-          posting.pos = 0;
-          posting.weight = recinfo->score - 1;
-          grn_ii_posting_add(ctx, &posting, (grn_hash *)res, op);
-        });
-        grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
-        grn_obj_unlink(ctx, resolve_res);
-      }
+      rc = grn_accessor_resolve(ctx, obj, n_accessors - 1, base_res, res, op);
       grn_obj_unlink(ctx, base_res);
     }
   }
