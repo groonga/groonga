@@ -83,7 +83,11 @@ object_get_name(mrb_state *mrb, mrb_value self)
   object = DATA_PTR(self);
   name_length = grn_obj_name(ctx, object, name, GRN_TABLE_MAX_KEY_SIZE);
 
-  return mrb_str_new(mrb, name, name_length);
+  if (name_length == 0) {
+    return mrb_nil_value();
+  } else {
+    return mrb_str_new(mrb, name, name_length);
+  }
 }
 
 static mrb_value
