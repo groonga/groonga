@@ -130,6 +130,15 @@ void FileImpl::flush() {
 
   BOOL succeeded = ::FlushViewOfFile(addr_, size_);
   GRN_DAT_THROW_IF(IO_ERROR, !succeeded);
+
+  SYSTEMTIME system_time;
+  GetSystemTime(&system_time);
+  FILETIME file_time;
+  succeeded = SystemTimeToFileTime(&system_time, &file_time);
+  GRN_DAT_THROW_IF(IO_ERROR, !succeeded);
+
+  succeeded = SetFileTime(file_, NULL, NULL, &file_time);
+  GRN_DAT_THROW_IF(IO_ERROR, !succeeded);
 }
 
 void FileImpl::create_(const char *path, UInt64 size) {
