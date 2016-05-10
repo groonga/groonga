@@ -1,4 +1,4 @@
-# Copyright(C) 2013-2015 Brazil
+# Copyright(C) 2013-2016 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -65,6 +65,9 @@ if(GRN_WITH_MRUBY)
       "${CMAKE_CURRENT_BINARY_DIR}/mruby-io/include"
       )
   endif()
+  file(WRITE
+    "${CMAKE_CURRENT_BINARY_DIR}/mruby-file-stat/src/extconf.h"
+    "")
 
   set(MRUBY_ALL_SOURCES
     ${MRUBY_SOURCES}
