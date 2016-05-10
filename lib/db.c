@@ -3109,6 +3109,61 @@ grn_accessor_resolve_one_index_column(grn_ctx *ctx, grn_accessor *accessor,
 }
 
 static grn_rc
+grn_accessor_resolve_one_table(grn_ctx *ctx, grn_accessor *accessor,
+                               grn_obj *current_res, grn_obj **next_res,
+                               grn_search_optarg *optarg)
+{
+  grn_rc rc = GRN_SUCCESS;
+  grn_obj *table;
+  grn_id next_res_domain_id = GRN_ID_NIL;
+
+  table = accessor->obj;
+  {
+    grn_rc rc;
+    grn_obj *next_res_domain = grn_ctx_at(ctx, next_res_domain_id);
+    *next_res = grn_table_create(ctx, NULL, 0, NULL,
+                                 GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                 table, NULL);
+    rc = ctx->rc;
+    grn_obj_unlink(ctx, next_res_domain);
+    if (!*next_res) {
+      return rc;
+    }
+  }
+
+  {
+    grn_id *record_id;
+    grn_posting posting;
+    grn_rset_recinfo *recinfo;
+
+    memset(&posting, 0, sizeof(posting));
+    GRN_HASH_EACH(ctx, (grn_hash *)current_res, id, &record_id, NULL, &recinfo, {
+      grn_id next_record_id;
+
+      next_record_id = grn_table_get(ctx,
+                                     table,
+                                     record_id,
+                                     sizeof(grn_id));
+      posting.rid = next_record_id;
+      posting.weight = recinfo->score;
+      rc = grn_ii_posting_add(ctx,
+                              &posting,
+                              (grn_hash *)*next_res,
+                              GRN_OP_OR);
+      if (rc != GRN_SUCCESS) {
+        break;
+      }
+    });
+  }
+
+  if (rc != GRN_SUCCESS) {
+    grn_obj_unlink(ctx, *next_res);
+  }
+
+  return rc;
+}
+
+static grn_rc
 grn_accessor_resolve_one_data_column(grn_ctx *ctx, grn_accessor *accessor,
                                      grn_obj *current_res, grn_obj **next_res,
                                      grn_search_optarg *optarg)
@@ -3208,6 +3263,10 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
       rc = grn_accessor_resolve_one_index_column(ctx, a,
                                                  current_res, &next_res,
                                                  optarg);
+    } else if (grn_obj_is_table(ctx, a->obj)) {
+      rc = grn_accessor_resolve_one_table(ctx, a,
+                                          current_res, &next_res,
+                                          optarg);
     } else {
       rc = grn_accessor_resolve_one_data_column(ctx, a,
                                                 current_res, &next_res,
