@@ -3166,14 +3166,19 @@ grn_accessor_resolve_one_data_column(grn_ctx *ctx, grn_accessor *accessor,
                                      grn_obj *current_res, grn_obj **next_res)
 {
   grn_rc rc = GRN_SUCCESS;
-  grn_obj *index = NULL;
-  grn_operator index_op = GRN_OP_MATCH;
+  grn_index_datum index_datum;
+  unsigned int n_index_data;
   grn_id next_res_domain_id = GRN_ID_NIL;
 
-  if (grn_column_index(ctx, accessor->obj, index_op, &index, 1, NULL) == 0) {
+  n_index_data = grn_column_find_index_data(ctx,
+                                            accessor->obj,
+                                            GRN_OP_EQUAL,
+                                            &index_datum,
+                                            1);
+  if (n_index_data == 0) {
     return GRN_INVALID_ARGUMENT;
   }
-  next_res_domain_id = DB_OBJ(index)->range;
+  next_res_domain_id = DB_OBJ(index_datum.index)->range;
 
   {
     grn_rc rc;
@@ -3193,7 +3198,7 @@ grn_accessor_resolve_one_data_column(grn_ctx *ctx, grn_accessor *accessor,
     grn_rset_recinfo *recinfo;
 
     GRN_HASH_EACH(ctx, (grn_hash *)current_res, id, &tid, NULL, &recinfo, {
-      grn_ii *ii = (grn_ii *)index;
+      grn_ii *ii = (grn_ii *)(index_datum.index);
       grn_ii_cursor *ii_cursor;
       grn_posting *posting;
 
@@ -3206,7 +3211,13 @@ grn_accessor_resolve_one_data_column(grn_ctx *ctx, grn_accessor *accessor,
       }
 
       while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
-        grn_posting add_posting = *posting;
+        grn_posting add_posting;
+
+        if (index_datum.section > 0 && posting->sid != index_datum.section) {
+          continue;
+        }
+
+        add_posting = *posting;
         add_posting.weight += recinfo->score - 1;
         rc = grn_ii_posting_add(ctx,
                                 &add_posting,
