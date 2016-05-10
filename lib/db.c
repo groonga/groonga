@@ -661,6 +661,12 @@ grn_db_touch(grn_ctx *ctx, grn_obj *s)
 
 #define IS_TEMP(obj) (DB_OBJ(obj)->id & GRN_OBJ_TMP_OBJECT)
 
+static inline void
+grn_obj_touch_db(grn_ctx *ctx, grn_obj *obj, grn_timeval *tv)
+{
+  grn_obj_io(obj)->header->lastmod = tv->tv_sec;
+}
+
 void
 grn_obj_touch(grn_ctx *ctx, grn_obj *obj, grn_timeval *tv)
 {
@@ -672,7 +678,7 @@ grn_obj_touch(grn_ctx *ctx, grn_obj *obj, grn_timeval *tv)
   if (obj) {
     switch (obj->header.type) {
     case GRN_DB :
-      grn_obj_io(obj)->header->lastmod = tv->tv_sec;
+      grn_obj_touch_db(ctx, obj, tv);
       break;
     case GRN_TABLE_HASH_KEY :
     case GRN_TABLE_PAT_KEY :
