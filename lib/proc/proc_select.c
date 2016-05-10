@@ -1124,6 +1124,8 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     }
   }
   if ((table = grn_ctx_get(ctx, data->table.value, data->table.length))) {
+    grn_obj *initial_table = table;
+
     if (data->filter.length > 0 && (data->filter.value[0] == '?') &&
         (ctx->impl->output.type == GRN_CONTENT_JSON)) {
       ctx->rc = grn_ts_select(ctx, table,
@@ -1146,12 +1148,27 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
       }
       goto exit;
     }
+
+    if (data->columns.initial) {
+      grn_posting posting;
+
+      memset(&posting, 0, sizeof(grn_posting));
+      initial_table = grn_table_create(ctx, NULL, 0, NULL,
+                                       GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                       table, NULL);
+      GRN_TABLE_EACH(ctx, table, 0, 0, id, NULL, NULL, NULL, {
+        posting.rid = id;
+        grn_ii_posting_add(ctx, &posting, (grn_hash *)initial_table, GRN_OP_OR);
+      });
+      grn_select_apply_columns(ctx, initial_table, data->columns.initial, NULL);
+    }
+
     if (data->query.length > 0 || data->filter.length > 0) {
       grn_obj *v;
-      GRN_EXPR_CREATE_FOR_QUERY(ctx, table, cond, v);
+      GRN_EXPR_CREATE_FOR_QUERY(ctx, initial_table, cond, v);
       if (cond) {
         if (data->match_columns.length) {
-          GRN_EXPR_CREATE_FOR_QUERY(ctx, table, match_columns, v);
+          GRN_EXPR_CREATE_FOR_QUERY(ctx, initial_table, match_columns, v);
           if (match_columns) {
             grn_expr_parse(ctx, match_columns,
                            data->match_columns.value,
@@ -1224,13 +1241,15 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
         GRN_LOG(ctx, GRN_LOG_NOTICE, "query=(%s)", GRN_TEXT_VALUE(&strbuf));
         GRN_OBJ_FIN(ctx, &strbuf);
         */
-        if (!ctx->rc) { res = grn_table_select(ctx, table, cond, NULL, GRN_OP_OR); }
+        if (!ctx->rc) {
+          res = grn_table_select(ctx, initial_table, cond, NULL, GRN_OP_OR);
+        }
       } else {
         /* todo */
         ERRCLR(ctx);
       }
     } else {
-      res = table;
+      res = initial_table;
     }
     nhits = res ? grn_table_size(ctx, res) : 0;
     GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
@@ -1373,7 +1392,12 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
       if (gkeys) {
         grn_table_sort_key_close(ctx, gkeys, ngkeys);
       }
-      if (res != table) { grn_obj_unlink(ctx, res); }
+      if (res != table && res != initial_table) {
+        grn_obj_unlink(ctx, res);
+      }
+      if (initial_table != table) {
+        grn_obj_unlink(ctx, initial_table);
+      }
     } else {
       GRN_OUTPUT_ARRAY_OPEN("RESULT", 0);
     }
