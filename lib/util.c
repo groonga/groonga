@@ -504,7 +504,6 @@ grn_column_inspect_common(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     GRN_TEXT_PUTS(ctx, buf, " range:");
     if (range) {
       grn_inspect_name(ctx, buf, range);
-      grn_obj_unlink(ctx, range);
     } else {
       grn_text_lltoa(ctx, buf, range_id);
     }
@@ -655,7 +654,6 @@ grn_table_key_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   domain = grn_ctx_at(ctx, domain_id);
   if (domain) {
     grn_inspect_name(ctx, buf, domain);
-    grn_obj_unlink(ctx, domain);
   } else if (domain_id) {
     grn_text_lltoa(ctx, buf, domain_id);
   } else {
@@ -723,7 +721,6 @@ grn_table_default_tokenizer_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
                                        GRN_INFO_DEFAULT_TOKENIZER, NULL);
   if (default_tokenizer) {
     grn_inspect_name(ctx, buf, default_tokenizer);
-    grn_obj_unlink(ctx, default_tokenizer);
   } else {
     GRN_TEXT_PUTS(ctx, buf, "(nil)");
   }
@@ -740,7 +737,6 @@ grn_table_normalizer_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   normalizer = grn_obj_get_info(ctx, obj, GRN_INFO_NORMALIZER, NULL);
   if (normalizer) {
     grn_inspect_name(ctx, buf, normalizer);
-    grn_obj_unlink(ctx, normalizer);
   } else {
     GRN_TEXT_PUTS(ctx, buf, "(nil)");
   }
@@ -1076,7 +1072,6 @@ grn_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
               grn_obj_get_value(ctx, col, id, &value);
               grn_inspect(ctx, buf, &value);
               GRN_OBJ_FIN(ctx, &value);
-              grn_obj_unlink(ctx, col);
             }
           });
       }
@@ -1088,10 +1083,6 @@ grn_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   }
 
   GRN_TEXT_PUTS(ctx, buf, ">");
-
-  if (table) {
-    grn_obj_unlink(ctx, table);
-  }
 
   return GRN_SUCCESS;
 }
@@ -1162,7 +1153,6 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
       domain = grn_ctx_at(ctx, obj->header.domain);
       if (domain) {
         grn_id type = domain->header.type;
-        grn_obj_unlink(ctx, domain);
         switch (type) {
         case GRN_TABLE_HASH_KEY :
         case GRN_TABLE_PAT_KEY :
@@ -1182,7 +1172,6 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
     domain = grn_ctx_at(ctx, obj->header.domain);
     if (domain) {
       grn_id type = domain->header.type;
-      grn_obj_unlink(ctx, domain);
       switch (type) {
       case GRN_TABLE_HASH_KEY :
       case GRN_TABLE_PAT_KEY :
