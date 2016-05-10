@@ -37,6 +37,7 @@ struct _grn_dat {
   grn_obj *normalizer;
   grn_obj token_filters;
   grn_critical_section lock;
+  grn_bool is_dirty;
 };
 
 struct grn_dat_header {
@@ -45,7 +46,8 @@ struct grn_dat_header {
   grn_id tokenizer;
   uint32_t file_id;
   grn_id normalizer;
-  uint32_t reserved[235];
+  uint32_t n_dirty_opens;
+  uint32_t reserved[234];
 };
 
 struct _grn_dat_cursor {
@@ -78,6 +80,8 @@ GRN_API grn_rc grn_dat_clear_status_flags(grn_ctx *ctx, grn_dat *dat);
 GRN_API grn_rc grn_dat_repair(grn_ctx *ctx, grn_dat *dat);
 
 GRN_API grn_rc grn_dat_flush(grn_ctx *ctx, grn_dat *dat);
+
+grn_rc grn_dat_dirty(grn_ctx *ctx, grn_dat *dat);
 
 #ifdef __cplusplus
 }

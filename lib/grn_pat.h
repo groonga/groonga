@@ -41,6 +41,8 @@ struct _grn_pat {
   grn_obj token_filters;
   grn_id *cache;
   uint32_t cache_size;
+  grn_bool is_dirty;
+  grn_critical_section lock;
 };
 
 #define GRN_PAT_NDELINFOS 0x100
@@ -68,7 +70,8 @@ struct grn_pat_header {
   uint32_t n_garbages;
   grn_id normalizer;
   uint32_t truncated;
-  uint32_t reserved[1003];
+  uint32_t n_dirty_opens;
+  uint32_t reserved[1002];
   grn_pat_delinfo delinfos[GRN_PAT_NDELINFOS];
   grn_id garbages[GRN_PAT_MAX_KEY_SIZE + 1];
 };
@@ -115,6 +118,8 @@ GRN_API grn_rc grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat,
 uint32_t grn_pat_total_key_size(grn_ctx *ctx, grn_pat *pat);
 
 grn_bool grn_pat_is_key_encoded(grn_ctx *ctx, grn_pat *pat);
+
+grn_rc grn_pat_dirty(grn_ctx *ctx, grn_pat *pat);
 
 #ifdef __cplusplus
 }
