@@ -112,6 +112,17 @@ mrb_grn_database_get_last_modified(mrb_state *mrb, mrb_value self)
                      mrb_float_value(mrb, last_modified));
 }
 
+static mrb_value
+mrb_grn_database_is_dirty(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_bool is_dirty;
+
+  is_dirty = grn_db_is_dirty(ctx, DATA_PTR(self));
+
+  return mrb_bool_value(is_dirty);
+}
+
 void
 grn_mrb_database_init(grn_ctx *ctx)
 {
@@ -139,5 +150,7 @@ grn_mrb_database_init(grn_ctx *ctx)
                     mrb_grn_database_is_locked, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "last_modified",
                     mrb_grn_database_get_last_modified, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "dirty?",
+                    mrb_grn_database_is_dirty, MRB_ARGS_NONE());
 }
 #endif
