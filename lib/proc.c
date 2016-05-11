@@ -4039,7 +4039,7 @@ exit :
                    GRN_PROC_COMMAND, (func), NULL, NULL, (nvars), (vars)))
 
 void
-grn_db_init_builtin_query(grn_ctx *ctx)
+grn_db_init_builtin_commands(grn_ctx *ctx)
 {
   grn_expr_var vars[10];
 
