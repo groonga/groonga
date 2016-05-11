@@ -22,6 +22,7 @@ if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
   mkdir -p test/command/tmp
   mount -t hfs ${memory_fs_device_path} test/command/tmp
   df -h
+  top -l 1
 fi
 
 case "${BUILD_TOOL}" in
