@@ -650,6 +650,10 @@ grn_obj_io(grn_obj *obj)
 uint32_t
 grn_db_get_last_modified(grn_ctx *ctx, grn_obj *db)
 {
+  if (!db) {
+    return 0;
+  }
+
   return grn_obj_io(db)->header->last_modified;
 }
 
