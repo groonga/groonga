@@ -543,7 +543,7 @@ typedef int grn_cond;
 #elif (defined(WIN32) || defined (_WIN64)) /* __GNUC__ */
 
 # define GRN_ATOMIC_ADD_EX(p,i,r) \
-  ((r) = (uint32_t)InterlockedExchangeAdd((int32_t *)(p), (int32_t)(i)))
+  ((r) = InterlockedExchangeAdd((p), (i)))
 # if defined(_WIN64) /* ATOMIC 64BIT SET */
 #  define GRN_SET_64BIT(p,v) \
   (*(p) = (v))
