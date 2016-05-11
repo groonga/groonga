@@ -121,6 +121,7 @@ grn_bool grn_pat_is_key_encoded(grn_ctx *ctx, grn_pat *pat);
 
 grn_rc grn_pat_dirty(grn_ctx *ctx, grn_pat *pat);
 grn_bool grn_pat_is_dirty(grn_ctx *ctx, grn_pat *pat);
+grn_rc grn_pat_clean(grn_ctx *ctx, grn_pat *pat);
 
 #ifdef __cplusplus
 }

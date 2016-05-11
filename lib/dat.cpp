@@ -1180,4 +1180,25 @@ grn_dat_is_dirty(grn_ctx *ctx, grn_dat *dat)
   return dat->header->n_dirty_opens > 0;
 }
 
+grn_rc
+grn_dat_clean(grn_ctx *ctx, grn_dat *dat)
+{
+  if (!dat->io) {
+  }
+
+  grn_rc rc = GRN_SUCCESS;
+
+  {
+    CriticalSection critical_section(&dat->lock);
+    if (dat->is_dirty) {
+      uint32_t n_dirty_opens;
+      dat->is_dirty = GRN_FALSE;
+      GRN_ATOMIC_ADD_EX(&(dat->header->n_dirty_opens), -1, n_dirty_opens);
+      rc = grn_io_flush(ctx, dat->io);
+    }
+  }
+
+  return rc;
+}
+
 }  // extern "C"

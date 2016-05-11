@@ -677,6 +677,46 @@ grn_db_is_dirty(grn_ctx *ctx, grn_obj *db)
   }
 }
 
+static grn_rc
+grn_db_dirty(grn_ctx *ctx, grn_obj *db)
+{
+  grn_obj *keys;
+
+  if (!db) {
+    return GRN_SUCCESS;
+  }
+
+  keys = ((grn_db *)db)->keys;
+  switch (keys->header.type) {
+  case GRN_TABLE_PAT_KEY :
+    return grn_pat_dirty(ctx, (grn_pat *)keys);
+  case GRN_TABLE_DAT_KEY :
+    return grn_dat_dirty(ctx, (grn_dat *)keys);
+  default :
+    return GRN_SUCCESS;
+  }
+}
+
+static grn_rc
+grn_db_clean(grn_ctx *ctx, grn_obj *db)
+{
+  grn_obj *keys;
+
+  if (!db) {
+    return GRN_SUCCESS;
+  }
+
+  keys = ((grn_db *)db)->keys;
+  switch (keys->header.type) {
+  case GRN_TABLE_PAT_KEY :
+    return grn_pat_clean(ctx, (grn_pat *)keys);
+  case GRN_TABLE_DAT_KEY :
+    return grn_dat_clean(ctx, (grn_dat *)keys);
+  default :
+    return GRN_SUCCESS;
+  }
+}
+
 void
 grn_db_touch(grn_ctx *ctx, grn_obj *s)
 {
@@ -688,18 +728,8 @@ grn_db_touch(grn_ctx *ctx, grn_obj *s)
 static inline void
 grn_obj_touch_db(grn_ctx *ctx, grn_obj *obj, grn_timeval *tv)
 {
-  grn_db *db = (grn_db *)obj;
-
   grn_obj_io(obj)->header->last_modified = tv->tv_sec;
-
-  switch (db->keys->header.type) {
-  case GRN_TABLE_PAT_KEY :
-    grn_pat_dirty(ctx, (grn_pat *)(db->keys));
-    break;
-  case GRN_TABLE_DAT_KEY :
-    grn_dat_dirty(ctx, (grn_dat *)(db->keys));
-    break;
-  }
+  grn_db_dirty(ctx, obj);
 }
 
 void
@@ -10757,7 +10787,9 @@ grn_rc
 grn_obj_flush(grn_ctx *ctx, grn_obj *obj)
 {
   grn_rc rc = GRN_SUCCESS;
+
   GRN_API_ENTER;
+
   switch (obj->header.type) {
   case GRN_DB :
     {
@@ -10781,6 +10813,14 @@ grn_obj_flush(grn_ctx *ctx, grn_obj *obj)
     rc = grn_io_flush(ctx, grn_obj_io(obj));
     break;
   }
+
+  if (rc == GRN_SUCCESS &&
+      GRN_DB_OBJP(obj) &&
+      DB_OBJ(obj)->id != GRN_ID_NIL &&
+      !IS_TEMP(obj)) {
+    rc = grn_db_clean(ctx, DB_OBJ(obj)->db);
+  }
+
   GRN_API_RETURN(rc);
 }
 

@@ -3580,3 +3580,20 @@ grn_pat_is_dirty(grn_ctx *ctx, grn_pat *pat)
 {
   return pat->header->n_dirty_opens > 0;
 }
+
+grn_rc
+grn_pat_clean(grn_ctx *ctx, grn_pat *pat)
+{
+  grn_rc rc = GRN_SUCCESS;
+
+  CRITICAL_SECTION_ENTER(pat->lock);
+  if (pat->is_dirty) {
+    uint32_t n_dirty_opens;
+    pat->is_dirty = GRN_FALSE;
+    GRN_ATOMIC_ADD_EX(&(pat->header->n_dirty_opens), -1, n_dirty_opens);
+    rc = grn_io_flush(ctx, pat->io);
+  }
+  CRITICAL_SECTION_LEAVE(pat->lock);
+
+  return rc;
+}
