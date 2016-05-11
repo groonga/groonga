@@ -128,7 +128,7 @@ void FileImpl::flush() {
     return;
   }
 
-  BOOL succeeded = ::FlushViewOfFile(addr_, size_);
+  BOOL succeeded = ::FlushViewOfFile(addr_, static_cast<SIZE_T>(size_));
   GRN_DAT_THROW_IF(IO_ERROR, !succeeded);
 
   SYSTEMTIME system_time;
