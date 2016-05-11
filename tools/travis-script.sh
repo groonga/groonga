@@ -19,10 +19,8 @@ if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
   n_sectors=$[${memory_fs_size} / ${byte_per_sector}]
   memory_fs_device_path=$(hdid -nomount ram://${n_sectors})
   newfs_hfs ${memory_fs_device_path}
-  mkdir -p test/command/tmp
-  mount -t hfs ${memory_fs_device_path} test/command/tmp
-  df -h
-  top -l 1
+  mkdir -p tmp
+  mount -t hfs ${memory_fs_device_path} tmp
 fi
 
 case "${BUILD_TOOL}" in
