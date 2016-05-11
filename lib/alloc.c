@@ -378,6 +378,7 @@ grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
     size = ((size + ALIGN_MASK) & ~ALIGN_MASK) + ALIGN_SIZE;
     if (size > GRN_CTX_SEGMENT_SIZE) {
       uint64_t npages = (size + (grn_pagesize - 1)) / grn_pagesize;
+      size_t aligned_size;
       if (npages >= (1LL<<32)) {
         MERR("too long request size=%" GRN_FMT_SIZE, size);
         goto exit;
@@ -389,7 +390,8 @@ grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
         }
         if (!mi->map) { break; }
       }
-      if (!grn_io_anon_map(ctx, mi, npages * grn_pagesize)) { goto exit; }
+      aligned_size = grn_pagesize * ((size_t)npages);
+      if (!grn_io_anon_map(ctx, mi, aligned_size)) { goto exit; }
       /* GRN_LOG(ctx, GRN_LOG_NOTICE, "map i=%d (%d)", i, npages * grn_pagesize); */
       mi->nref = (uint32_t) npages;
       mi->count = GRN_CTX_SEGMENT_VLEN;
@@ -559,6 +561,7 @@ grn_ctx_alloc_lifo(grn_ctx *ctx, size_t size,
     grn_io_mapinfo *mi = &ctx->impl->segs[i];
     if (size > GRN_CTX_SEGMENT_SIZE) {
       uint64_t npages = (size + (grn_pagesize - 1)) / grn_pagesize;
+      size_t aligned_size;
       if (npages >= (1LL<<32)) {
         MERR("too long request size=%" GRN_FMT_SIZE, size);
         return NULL;
@@ -571,7 +574,8 @@ grn_ctx_alloc_lifo(grn_ctx *ctx, size_t size,
         mi++;
         if (!mi->map) { break; }
       }
-      if (!grn_io_anon_map(ctx, mi, npages * grn_pagesize)) { return NULL; }
+      aligned_size = grn_pagesize * ((size_t)npages);
+      if (!grn_io_anon_map(ctx, mi, aligned_size)) { return NULL; }
       mi->nref = (uint32_t) npages;
       mi->count = GRN_CTX_SEGMENT_VLEN|GRN_CTX_SEGMENT_LIFO;
       ctx->impl->lifoseg = i;
