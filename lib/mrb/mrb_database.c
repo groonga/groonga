@@ -95,6 +95,23 @@ mrb_grn_database_is_locked(mrb_state *mrb, mrb_value self)
   return mrb_bool_value(is_locked != 0);
 }
 
+static mrb_value
+mrb_grn_database_get_last_modified(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  uint32_t last_modified;
+  struct RClass *time_class;
+
+  last_modified = grn_db_get_last_modified(ctx, DATA_PTR(self));
+
+  time_class = mrb_class_get(mrb, "Time");
+  return mrb_funcall(mrb,
+                     mrb_obj_value(time_class),
+                     "at",
+                     1,
+                     mrb_float_value(mrb, last_modified));
+}
+
 void
 grn_mrb_database_init(grn_ctx *ctx)
 {
@@ -120,5 +137,7 @@ grn_mrb_database_init(grn_ctx *ctx)
                     mrb_grn_database_recover, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "locked?",
                     mrb_grn_database_is_locked, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "last_modified",
+                    mrb_grn_database_get_last_modified, MRB_ARGS_NONE());
 }
 #endif
