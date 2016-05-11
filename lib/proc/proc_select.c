@@ -487,13 +487,14 @@ grn_select_apply_columns(grn_ctx *ctx,
 
       GRN_RECORD_SET(ctx, record, id);
       value = grn_expr_exec(ctx, expression, 0);
-      if (column_data->sortby.length > 0) {
-        void *buf;
-        grn_table_cursor_get_value(ctx, table_cursor, &buf);
-        id = *((grn_id *)buf);
-      }
       if (value) {
-        grn_obj_set_value(ctx, column, id, value, GRN_OBJ_SET);
+        grn_id target_record_id = id;
+        if (column_data->sortby.length > 0) {
+          void *sorted_table_value;
+          grn_table_cursor_get_value(ctx, table_cursor, &sorted_table_value);
+          target_record_id = *((grn_id *)sorted_table_value);
+        }
+        grn_obj_set_value(ctx, column, target_record_id, value, GRN_OBJ_SET);
       }
     }
 
