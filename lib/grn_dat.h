@@ -38,7 +38,6 @@ struct _grn_dat {
   grn_obj token_filters;
   grn_critical_section lock;
   grn_bool is_dirty;
-  uint32_t *n_dirty_opens;
 };
 
 struct grn_dat_header {

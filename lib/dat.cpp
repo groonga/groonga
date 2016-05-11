@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2011-2015 Brazil
+/*
+  Copyright(C) 2011-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -116,7 +117,6 @@ grn_dat_init(grn_ctx *, grn_dat *dat)
   GRN_PTR_INIT(&(dat->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
   CRITICAL_SECTION_INIT(dat->lock);
   dat->is_dirty = GRN_FALSE;
-  dat->n_dirty_opens = NULL;
 }
 
 void
@@ -130,7 +130,7 @@ grn_dat_fin(grn_ctx *ctx, grn_dat *dat)
   if (dat->io) {
     if (dat->is_dirty) {
       uint32_t n_dirty_opens;
-      GRN_ATOMIC_ADD_EX(dat->n_dirty_opens, -1, n_dirty_opens);
+      GRN_ATOMIC_ADD_EX(&(dat->header->n_dirty_opens), -1, n_dirty_opens);
     }
     grn_io_close(ctx, dat->io);
     dat->io = NULL;
@@ -322,7 +322,6 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t,
   dat->encoding = encoding;
   dat->tokenizer = NULL;
   GRN_PTR_INIT(&(dat->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
-  dat->n_dirty_opens = &(dat->header->n_dirty_opens);
 
   dat->obj.header.flags = dat->header->flags;
 
@@ -366,7 +365,6 @@ grn_dat_open(grn_ctx *ctx, const char *path)
     dat->normalizer = grn_ctx_at(ctx, dat->header->normalizer);
   }
   GRN_PTR_INIT(&(dat->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
-  dat->n_dirty_opens = &(dat->header->n_dirty_opens);
   dat->obj.header.flags = dat->header->flags;
   return dat;
 }
@@ -1164,7 +1162,7 @@ grn_dat_dirty(grn_ctx *ctx, grn_dat *dat)
     if (!dat->is_dirty) {
       uint32_t n_dirty_opens;
       dat->is_dirty = GRN_TRUE;
-      GRN_ATOMIC_ADD_EX(dat->n_dirty_opens, 1, n_dirty_opens);
+      GRN_ATOMIC_ADD_EX(&(dat->header->n_dirty_opens), 1, n_dirty_opens);
       rc = grn_io_flush(ctx, dat->io);
     }
   }
@@ -1175,11 +1173,11 @@ grn_dat_dirty(grn_ctx *ctx, grn_dat *dat)
 grn_bool
 grn_dat_is_dirty(grn_ctx *ctx, grn_dat *dat)
 {
-  if (!dat->n_dirty_opens) {
+  if (!dat->header) {
     return GRN_FALSE;
   }
 
-  return *(dat->n_dirty_opens) > 0;
+  return dat->header->n_dirty_opens > 0;
 }
 
 }  // extern "C"
