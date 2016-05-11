@@ -39,6 +39,7 @@ GRN_API void grn_db_touch(grn_ctx *ctx, grn_obj *db);
 GRN_API grn_rc grn_db_recover(grn_ctx *ctx, grn_obj *db);
 GRN_API grn_rc grn_db_unmap(grn_ctx *ctx, grn_obj *db);
 GRN_API uint32_t grn_db_get_last_modified(grn_ctx *ctx, grn_obj *db);
+GRN_API grn_bool grn_db_is_dirty(grn_ctx *ctx, grn_obj *db);
 
 #ifdef __cplusplus
 }

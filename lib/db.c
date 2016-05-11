@@ -657,6 +657,26 @@ grn_db_get_last_modified(grn_ctx *ctx, grn_obj *db)
   return grn_obj_io(db)->header->last_modified;
 }
 
+grn_bool
+grn_db_is_dirty(grn_ctx *ctx, grn_obj *db)
+{
+  grn_obj *keys;
+
+  if (!db) {
+    return GRN_FALSE;
+  }
+
+  keys = ((grn_db *)db)->keys;
+  switch (keys->header.type) {
+  case GRN_TABLE_PAT_KEY :
+    return grn_pat_is_dirty(ctx, (grn_pat *)keys);
+  case GRN_TABLE_DAT_KEY :
+    return grn_dat_is_dirty(ctx, (grn_dat *)keys);
+  default :
+    return GRN_FALSE;
+  }
+}
+
 void
 grn_db_touch(grn_ctx *ctx, grn_obj *s)
 {

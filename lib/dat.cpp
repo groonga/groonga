@@ -1172,4 +1172,14 @@ grn_dat_dirty(grn_ctx *ctx, grn_dat *dat)
   return rc;
 }
 
+grn_bool
+grn_dat_is_dirty(grn_ctx *ctx, grn_dat *dat)
+{
+  if (!dat->n_dirty_opens) {
+    return GRN_FALSE;
+  }
+
+  return *(dat->n_dirty_opens) > 0;
+}
+
 }  // extern "C"
