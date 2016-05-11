@@ -648,9 +648,9 @@ grn_obj_io(grn_obj *obj)
 }
 
 uint32_t
-grn_db_lastmod(grn_obj *s)
+grn_db_get_last_modified(grn_ctx *ctx, grn_obj *db)
 {
-  return grn_obj_io(s)->header->lastmod;
+  return grn_obj_io(db)->header->lastmod;
 }
 
 void

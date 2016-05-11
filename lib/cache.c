@@ -182,7 +182,7 @@ grn_cache_fetch(grn_ctx *ctx, grn_cache *cache,
   MUTEX_LOCK(cache->mutex);
   cache->nfetches++;
   if (grn_hash_get(cache->ctx, cache->hash, str, str_len, (void **)&ce)) {
-    if (ce->tv.tv_sec <= grn_db_lastmod(ctx->impl->db)) {
+    if (ce->tv.tv_sec <= grn_db_get_last_modified(ctx, ctx->impl->db)) {
       grn_cache_expire_entry(cache, ce);
       goto exit;
     }
