@@ -212,7 +212,7 @@ GRN_API grn_obj *grn_proc_get_or_add_var(grn_ctx *ctx, grn_user_data *user_data,
                                          const char *name, unsigned int name_size);
 
 GRN_API grn_obj *grn_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
-                                grn_id domain, grn_obj_flags flags);
+                                grn_id domain, unsigned char flags);
 
 GRN_API grn_rc grn_proc_call(grn_ctx *ctx, grn_obj *proc,
                              int nargs, grn_obj *caller);

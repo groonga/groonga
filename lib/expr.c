@@ -69,7 +69,7 @@ grn_expr_init_from_env(void)
 }
 
 grn_obj *
-grn_expr_alloc(grn_ctx *ctx, grn_obj *expr, grn_id domain, grn_obj_flags flags)
+grn_expr_alloc(grn_ctx *ctx, grn_obj *expr, grn_id domain, unsigned char flags)
 {
   grn_obj *res = NULL;
   grn_expr *e = (grn_expr *)expr;
@@ -191,7 +191,7 @@ grn_proc_get_or_add_var(grn_ctx *ctx, grn_user_data *user_data,
 }
 
 grn_obj *
-grn_proc_alloc(grn_ctx *ctx, grn_user_data *user_data, grn_id domain, grn_obj_flags flags)
+grn_proc_alloc(grn_ctx *ctx, grn_user_data *user_data, grn_id domain, unsigned char flags)
 {
   grn_proc_ctx *pctx = (grn_proc_ctx *)user_data;
   return pctx->caller ? grn_expr_alloc(ctx, (grn_obj *)pctx->caller, domain, flags) : NULL;

@@ -148,7 +148,7 @@ GRN_API void grn_plugin_mutex_lock(grn_ctx *ctx, grn_plugin_mutex *mutex);
 GRN_API void grn_plugin_mutex_unlock(grn_ctx *ctx, grn_plugin_mutex *mutex);
 
 GRN_API grn_obj *grn_plugin_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
-                                       grn_id domain, grn_obj_flags flags);
+                                       grn_id domain, unsigned char flags);
 
 GRN_API grn_obj *grn_plugin_proc_get_vars(grn_ctx *ctx, grn_user_data *user_data);
 
