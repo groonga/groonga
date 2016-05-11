@@ -3211,11 +3211,10 @@ grn_accessor_resolve_one_data_column(grn_ctx *ctx, grn_accessor *accessor,
   unsigned int n_index_data;
   grn_id next_res_domain_id = GRN_ID_NIL;
 
-  n_index_data = grn_column_find_index_data(ctx,
-                                            accessor->obj,
-                                            GRN_OP_EQUAL,
-                                            &index_datum,
-                                            1);
+  n_index_data = grn_column_get_all_index_data(ctx,
+                                               accessor->obj,
+                                               &index_datum,
+                                               1);
   if (n_index_data == 0) {
     return GRN_INVALID_ARGUMENT;
   }
