@@ -408,16 +408,24 @@ grn_db_open(grn_ctx *ctx, const char *path)
   s->obj.header.domain = GRN_ID_NIL;
   DB_OBJ(&s->obj)->range = GRN_ID_NIL;
   grn_ctx_use(ctx, (grn_obj *)s);
+  {
+    unsigned int n_records;
+
+    n_records = grn_table_size(ctx, (grn_obj *)s);
 #ifdef GRN_WITH_MECAB
-  if (grn_db_init_mecab_tokenizer(ctx)) {
-    ERRCLR(ctx);
-  }
+    if (grn_db_init_mecab_tokenizer(ctx)) {
+      ERRCLR(ctx);
+    }
 #endif
-  grn_db_init_builtin_tokenizers(ctx);
-  grn_db_init_builtin_normalizers(ctx);
-  grn_db_init_builtin_scorers(ctx);
-  grn_db_init_builtin_commands(ctx);
-  grn_obj_flush(ctx, (grn_obj *)s);
+    grn_db_init_builtin_tokenizers(ctx);
+    grn_db_init_builtin_normalizers(ctx);
+    grn_db_init_builtin_scorers(ctx);
+    grn_db_init_builtin_commands(ctx);
+
+    if (grn_table_size(ctx, (grn_obj *)s) > n_records) {
+      grn_obj_flush(ctx, (grn_obj *)s);
+    }
+  }
   GRN_API_RETURN((grn_obj *)s);
 
 exit:
