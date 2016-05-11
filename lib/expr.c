@@ -461,7 +461,7 @@ grn_expr_dfi_pop(grn_expr *expr)
 {
   if (GRN_BULK_VSIZE(&expr->dfi) >= sizeof(grn_expr_dfi)) {
     grn_expr_dfi *dfi;
-    GRN_BULK_INCR_LEN(&expr->dfi, -sizeof(grn_expr_dfi));
+    GRN_BULK_INCR_LEN(&expr->dfi, -((ssize_t)(sizeof(grn_expr_dfi))));
     dfi = (grn_expr_dfi *)GRN_BULK_CURR(&expr->dfi);
     expr->code0 = dfi->code;
     return dfi;
@@ -552,7 +552,7 @@ exit :
 
 #define GRN_PTR_POP(obj,value) do {\
   if (GRN_BULK_VSIZE(obj) >= sizeof(grn_obj *)) {\
-    GRN_BULK_INCR_LEN((obj), -(sizeof(grn_obj *)));\
+    GRN_BULK_INCR_LEN((obj), -((ssize_t)(sizeof(grn_obj *))));\
     value = *(grn_obj **)(GRN_BULK_CURR(obj));\
   } else {\
     value = NULL;\
