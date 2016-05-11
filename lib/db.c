@@ -650,7 +650,7 @@ grn_obj_io(grn_obj *obj)
 uint32_t
 grn_db_get_last_modified(grn_ctx *ctx, grn_obj *db)
 {
-  return grn_obj_io(db)->header->lastmod;
+  return grn_obj_io(db)->header->last_modified;
 }
 
 void
@@ -666,7 +666,7 @@ grn_obj_touch_db(grn_ctx *ctx, grn_obj *obj, grn_timeval *tv)
 {
   grn_db *db = (grn_db *)obj;
 
-  grn_obj_io(obj)->header->lastmod = tv->tv_sec;
+  grn_obj_io(obj)->header->last_modified = tv->tv_sec;
 
   switch (db->keys->header.type) {
   case GRN_TABLE_PAT_KEY :

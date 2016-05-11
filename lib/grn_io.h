@@ -89,7 +89,7 @@ struct _grn_io_header {
   uint32_t lock;
   uint64_t curr_size;
   uint32_t segment_tail;
-  uint32_t lastmod;
+  uint32_t last_modified;
 };
 
 struct _grn_io {
