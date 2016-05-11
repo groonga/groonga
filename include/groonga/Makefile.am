@@ -4,6 +4,7 @@ groonga_include_HEADERS =			\
 	command.h				\
 	config.h				\
 	dat.h					\
+	db.h					\
 	dump.h					\
 	expr.h					\
 	file_reader.h				\
