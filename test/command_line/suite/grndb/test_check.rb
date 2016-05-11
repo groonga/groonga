@@ -14,23 +14,14 @@ Database is locked. It may be broken. Re-create the database.
 
   def test_dirty_database
     groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
-    IO.pipe do |to_groonga_read, to_groonga_write|
-      IO.pipe do |from_groonga_read, from_groonga_write|
-        pid = spawn("groonga", @database_path.to_s,
-                    :in => to_groonga_read,
-                    :out => from_groonga_write)
-        to_groonga_read.close
-        from_groonga_write.close
-        to_groonga_write.puts(<<-COMMAND)
+    groonga do |process|
+      process.run_command(<<-COMMAND)
 load --table Users
 [
 {"_key": "Alice"}
 ]
-        COMMAND
-        to_groonga_write.flush
-        from_groonga_read.gets
-        Process.kill(:KILL, pid)
-      end
+      COMMAND
+      Process.kill(:KILL, process.pid)
     end
     error = assert_raise(CommandRunner::Error) do
       grndb("check")
@@ -42,26 +33,15 @@ Database wasn't closed successfully. It may be broken. Re-create the database.
 
   def test_cleaned_database
     groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
-    IO.pipe do |to_groonga_read, to_groonga_write|
-      IO.pipe do |from_groonga_read, from_groonga_write|
-        pid = spawn("groonga", @database_path.to_s,
-                    :in => to_groonga_read,
-                    :out => from_groonga_write)
-        to_groonga_read.close
-        from_groonga_write.close
-        to_groonga_write.puts(<<-COMMAND)
+    groonga do |process|
+      process.run_command(<<-COMMAND)
 load --table Users
 [
 {"_key": "Alice"}
 ]
-        COMMAND
-        to_groonga_write.flush
-        from_groonga_read.gets
-        to_groonga_write.puts("io_flush Users")
-        to_groonga_write.flush
-        from_groonga_read.gets
-        Process.kill(:KILL, pid)
-      end
+      COMMAND
+      process.run_command("io_flush Users")
+      Process.kill(:KILL, process.pid)
     end
     result = grndb("check")
     assert_equal(["", ""],

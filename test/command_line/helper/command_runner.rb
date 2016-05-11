@@ -18,31 +18,37 @@ module CommandRunner
     end
   end
 
-  def run_command(*command_line)
-    env = {}
-    options = {
-      :out => @output_log_path.to_s,
-      :err => @error_output_log_path.to_s,
-    }
-    succeeded = system(env, *command_line, options)
-    output = @output_log_path.read
-    error_output = @error_output_log_path.read
-    unless succeeded
-      message = <<-MESSAGE.chomp
-failed to run: #{command_line.join(" ")}
--- output start --
-#{output.chomp}
--- output end --
--- error output start --
-#{error_output.chomp}
--- error output end --
-      MESSAGE
-      raise Error.new(output, error_output, message)
+  class ExternalProcess
+    attr_reader :pid
+    attr_reader :input
+    attr_reader :output
+    def initialize(pid, input, output)
+      @pid = pid
+      @input = input
+      @output = output
     end
-    Result.new(output, error_output)
+
+    def run_command(command)
+      @input.puts(command)
+      @input.flush
+      @output.gets
+    end
+
+    def close
+      @input.close unless @input.closed?
+      @output.close unless @output.closed?
+    end
   end
 
-  def groonga(command, *arguments)
+  def run_command(*command_line, &block)
+    if block_given?
+      run_command_interactive(*command_line, &block)
+    else
+      run_command_sync(*command_line)
+    end
+  end
+
+  def groonga(*groonga_command_line, &block)
     command_line = [
       "groonga",
       "--log-path", @log_path.to_s,
@@ -50,9 +56,8 @@ failed to run: #{command_line.join(" ")}
     ]
     command_line << "-n" unless @database_path.exist?
     command_line << @database_path.to_s
-    command_line << command
-    command_line.concat(arguments)
-    run_command(*command_line)
+    command_line.concat(groonga_command_line)
+    run_command(*command_line, &block)
   end
 
   def grndb(command, *arguments)
@@ -79,5 +84,58 @@ failed to run: #{command_line.join(" ")}
 
   def grndb_path
     find_program("grndb")
+  end
+
+  private
+  def run_command_interactive(*command_line)
+    env = {}
+    IO.pipe do |input_read, input_write|
+      IO.pipe do |output_read, output_write|
+        options = {
+          :in  => input_read,
+          :out => output_write,
+          :err => @error_output_log_path.to_s,
+        }
+        pid = spawn(env, *command_line, options)
+        input_read.close
+        output_write.close
+        external_process = ExternalProcess.new(pid, input_write, output_read)
+        begin
+          yield(external_process)
+        ensure
+          begin
+            external_process.close
+            Process.waitpid(pid)
+          rescue SystemCallError
+          end
+        end
+        error_output = @error_output_log_path.read
+        Result.new("", error_output)
+      end
+    end
+  end
+
+  def run_command_sync(*command_line)
+    env = {}
+    options = {
+      :out => @output_log_path.to_s,
+      :err => @error_output_log_path.to_s,
+    }
+    succeeded = system(env, *command_line, options)
+    output = @output_log_path.read
+    error_output = @error_output_log_path.read
+    unless succeeded
+      message = <<-MESSAGE.chomp
+failed to run: #{command_line.join(" ")}
+-- output start --
+#{output.chomp}
+-- output end --
+-- error output start --
+#{error_output.chomp}
+-- error output end --
+      MESSAGE
+      raise Error.new(output, error_output, message)
+    end
+    Result.new(output, error_output)
   end
 end
