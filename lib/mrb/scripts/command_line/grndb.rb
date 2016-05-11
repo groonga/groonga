@@ -101,14 +101,6 @@ module Groonga
       end
 
       def check(database, options, arguments)
-        if database.locked?
-          message =
-            "Database is locked. " +
-            "It may be broken. " +
-            "Re-create the database."
-          failed(message)
-        end
-
         checker = Checker.new
         checker.program_path = @program_path
         checker.database_path = @database_path
@@ -116,6 +108,8 @@ module Groonga
         checker.on_failure = lambda do |message|
           failed(message)
         end
+
+        checker.check_database
 
         target_name = options[:target]
         if target_name
@@ -134,6 +128,11 @@ module Groonga
         def initialize
           @context = Context.instance
           @checked = {}
+        end
+
+        def check_database
+          check_database_locked
+          check_database_dirty
         end
 
         def check_one(target_name)
@@ -172,6 +171,39 @@ module Groonga
         end
 
         private
+        def check_database_locked
+          return unless @database.locked?
+
+          message =
+            "Database is locked. " +
+            "It may be broken. " +
+            "Re-create the database."
+          failed(message)
+        end
+
+        def check_database_dirty
+          return unless @database.dirty?
+
+          last_modified = @database.last_modified
+          if File.stat(@database.path).mtime > last_modified
+            return
+          end
+
+          open_database_cursor do |cursor|
+            cursor.each do |id|
+              next if ID.builtin?(id)
+              path = "%s.%07x" % [@database.path, id]
+              return if File.stat(path).mtime > last_modified
+            end
+          end
+
+          message =
+            "Database wasn't closed successfully. " +
+            "It may be broken. " +
+            "Re-create the database."
+          failed(message)
+        end
+
         def check_object(object)
           return if @checked.key?(object.id)
           @checked[object.id] = true

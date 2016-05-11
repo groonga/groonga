@@ -12,6 +12,34 @@ Database is locked. It may be broken. Re-create the database.
     MESSAGE
   end
 
+  def test_dirty_database
+    groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+    IO.pipe do |to_groonga_read, to_groonga_write|
+      IO.pipe do |from_groonga_read, from_groonga_write|
+        pid = spawn("groonga", @database_path.to_s,
+                    :in => to_groonga_read,
+                    :out => from_groonga_write)
+        to_groonga_read.close
+        from_groonga_write.close
+        to_groonga_write.puts(<<-COMMAND)
+load --table Users
+[
+{"_key": "Alice"}
+]
+        COMMAND
+        to_groonga_write.flush
+        from_groonga_read.gets
+        Process.kill(:KILL, pid)
+      end
+    end
+    error = assert_raise(CommandRunner::Error) do
+      grndb("check")
+    end
+    assert_equal(<<-MESSAGE, error.error_output)
+Database wasn't closed successfully. It may be broken. Re-create the database.
+    MESSAGE
+  end
+
   def test_nonexistent_table
     groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
     _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
