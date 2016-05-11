@@ -158,11 +158,10 @@ module Groonga
 
         def check_all
           open_database_cursor do |cursor|
-            context = Context.instance
             cursor.each do |id|
               next if ID.builtin?(id)
               next if builtin_object_name?(cursor.key)
-              next if context[id]
+              next if @context[id]
               failed_to_open(cursor.key)
             end
           end
