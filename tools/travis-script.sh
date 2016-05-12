@@ -7,7 +7,7 @@ set -u
 
 prefix=/tmp/local
 
-command_test_options="--n-workers=4 --reporter=mark --timeout=60"
+command_test_options="--reporter=mark --timeout=60"
 
 set -x
 
@@ -21,6 +21,9 @@ if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
   newfs_hfs ${memory_fs_device_path}
   mkdir -p tmp
   mount -t hfs ${memory_fs_device_path} tmp
+  command_test_options="${command_test_options} --n-workers=1"
+else
+  command_test_options="${command_test_options} --n-workers=4"
 fi
 
 case "${BUILD_TOOL}" in
