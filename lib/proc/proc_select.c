@@ -82,6 +82,7 @@ typedef struct {
   grn_select_string filter;
   grn_select_string table_name;
   grn_columns columns;
+  grn_table_group_result result;
 } grn_drilldown_data;
 
 typedef struct {
@@ -94,9 +95,7 @@ typedef struct {
   grn_select_string output_columns;
   int offset;
   int limit;
-  grn_drilldown_data *drilldowns;
-  size_t n_drilldowns;
-  grn_obj *drilldown_labels;
+  grn_hash *drilldowns;
   grn_select_string cache;
   grn_select_string match_escalation_threshold;
   grn_select_string query_expander;
@@ -591,11 +590,24 @@ grn_drilldown_data_fill(grn_ctx *ctx,
 }
 
 static void
-grn_select_drilldown(grn_ctx *ctx, grn_obj *table,
-                     grn_table_sort_key *keys, uint32_t n_keys,
-                     grn_drilldown_data *drilldown)
+grn_select_drilldown(grn_ctx *ctx,
+                     grn_obj *table,
+                     grn_table_sort_key *keys,
+                     uint32_t n_keys,
+                     grn_hash *drilldowns,
+                     grn_obj *condition)
 {
+  grn_id first_id = 1;
+  grn_drilldown_data *drilldown = NULL;
+  uint32_t size;
   uint32_t i;
+
+  drilldown =
+    (grn_drilldown_data *)grn_hash_get_value_(ctx, drilldowns, first_id, &size);
+  if (!drilldown) {
+    return;
+  }
+
   for (i = 0; i < n_keys; i++) {
     grn_table_group_result g = {NULL, 0, 0, 1, GRN_TABLE_GROUP_CALC_COUNT, 0};
     grn_obj *target_table;
@@ -735,13 +747,13 @@ typedef enum {
 
 static grn_bool
 drilldown_tsort_visit(grn_ctx *ctx,
-                      grn_obj *labels,
+                      grn_hash *drilldowns,
                       tsort_status *statuses,
-                      grn_drilldown_data *drilldowns,
-                      uint32_t index,
-                      grn_obj *indexes)
+                      grn_obj *ids,
+                      grn_id id)
 {
   grn_bool cycled = GRN_TRUE;
+  uint32_t index = id - 1;
 
   switch (statuses[index]) {
   case TSORT_STATUS_VISITING :
@@ -754,20 +766,22 @@ drilldown_tsort_visit(grn_ctx *ctx,
     cycled = GRN_FALSE;
     statuses[index] = TSORT_STATUS_VISITING;
     {
-      grn_drilldown_data *drilldown = &(drilldowns[index]);
+      grn_drilldown_data *drilldown;
+      uint32_t size;
+      drilldown =
+        (grn_drilldown_data *)grn_hash_get_value_(ctx, drilldowns, id, &size);
       if (drilldown->table_name.length > 0) {
         grn_id dependent_id;
-        dependent_id = grn_table_get(ctx, labels,
-                                     drilldown->table_name.value,
-                                     drilldown->table_name.length);
+        dependent_id = grn_hash_get(ctx, drilldowns,
+                                    drilldown->table_name.value,
+                                    drilldown->table_name.length,
+                                    NULL);
         if (dependent_id != GRN_ID_NIL) {
-          uint32_t dependent_index = dependent_id - 1;
           cycled = drilldown_tsort_visit(ctx,
-                                         labels,
-                                         statuses,
                                          drilldowns,
-                                         dependent_index,
-                                         indexes);
+                                         statuses,
+                                         ids,
+                                         dependent_id);
           if (cycled) {
             GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
                              "[select][drilldown][%.*s][table] "
@@ -782,7 +796,7 @@ drilldown_tsort_visit(grn_ctx *ctx,
     }
     if (!cycled) {
       statuses[index] = TSORT_STATUS_VISITED;
-      GRN_UINT32_PUT(ctx, indexes, index);
+      GRN_RECORD_PUT(ctx, ids, id);
     }
     break;
   }
@@ -792,113 +806,83 @@ drilldown_tsort_visit(grn_ctx *ctx,
 
 static grn_bool
 drilldown_tsort_body(grn_ctx *ctx,
-                     grn_obj *labels,
+                     grn_hash *drilldowns,
                      tsort_status *statuses,
-                     grn_drilldown_data *drilldowns,
-                     size_t n_drilldowns,
-                     grn_obj *indexes)
+                     grn_obj *ids)
 {
   grn_bool succeeded = GRN_TRUE;
-  size_t i;
-  for (i = 0; i < n_drilldowns; i++) {
-    grn_drilldown_data *drilldown = &(drilldowns[i]);
-    grn_id id;
-    id = grn_table_get(ctx, labels,
-                       drilldown->label.value,
-                       drilldown->label.length);
-    if (id != GRN_ID_NIL) {
-      uint32_t index = id - 1;
-      if (drilldown_tsort_visit(ctx, labels, statuses, drilldowns,
-                                index, indexes)) {
-        succeeded = GRN_FALSE;
-        break;
-      }
+
+  GRN_HASH_EACH_BEGIN(ctx, drilldowns, cursor, id) {
+    if (drilldown_tsort_visit(ctx, drilldowns, statuses, ids, id)) {
+      succeeded = GRN_FALSE;
+      break;
     }
-  }
+  } GRN_HASH_EACH_END(ctx, cursor);
+
   return succeeded;
 }
 
 static void
 drilldown_tsort_init(grn_ctx *ctx,
-                     grn_obj *labels,
                      tsort_status *statuses,
-                     grn_drilldown_data *drilldowns,
-                     size_t n_drilldowns)
+                     size_t n_statuses)
 {
   size_t i;
-  for (i = 0; i < n_drilldowns; i++) {
+  for (i = 0; i < n_statuses; i++) {
     statuses[i] = TSORT_STATUS_NOT_VISITED;
   }
 }
 
 static grn_bool
 drilldown_tsort(grn_ctx *ctx,
-                grn_obj *labels,
-                grn_drilldown_data *drilldowns,
-                size_t n_drilldowns,
-                grn_obj *indexes)
+                grn_hash *drilldowns,
+                grn_obj *ids)
 {
   tsort_status *statuses;
+  size_t n_statuses;
   grn_bool succeeded;
 
-  statuses = GRN_PLUGIN_MALLOCN(ctx, tsort_status, n_drilldowns);
+  n_statuses = grn_hash_size(ctx, drilldowns);
+  statuses = GRN_PLUGIN_MALLOCN(ctx, tsort_status, n_statuses);
   if (!statuses) {
     return GRN_FALSE;
   }
 
-  drilldown_tsort_init(ctx, labels, statuses, drilldowns, n_drilldowns);
-  succeeded = drilldown_tsort_body(ctx,
-                                   labels,
-                                   statuses,
-                                   drilldowns,
-                                   n_drilldowns,
-                                   indexes);
+  drilldown_tsort_init(ctx, statuses, n_statuses);
+  succeeded = drilldown_tsort_body(ctx, drilldowns, statuses, ids);
   GRN_PLUGIN_FREE(ctx, statuses);
   return succeeded;
 }
 
-static grn_table_group_result *
+static void
 grn_select_drilldowns_execute(grn_ctx *ctx,
                               grn_obj *table,
-                              grn_drilldown_data *drilldowns,
-                              size_t n_drilldowns,
-                              grn_obj *labels,
+                              grn_hash *drilldowns,
                               grn_obj *condition)
 {
-  grn_table_group_result *results = NULL;
-  grn_obj tsorted_indexes;
+  grn_obj tsorted_ids;
   size_t i;
+  size_t n_drilldowns;
 
-  if (!labels) {
-    return NULL;
-  }
-
-  GRN_UINT32_INIT(&tsorted_indexes, GRN_OBJ_VECTOR);
-  if (!drilldown_tsort(ctx, labels, drilldowns, n_drilldowns, &tsorted_indexes)) {
+  GRN_RECORD_INIT(&tsorted_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  if (!drilldown_tsort(ctx, drilldowns, &tsorted_ids)) {
     goto exit;
   }
 
-  results = GRN_PLUGIN_MALLOCN(ctx, grn_table_group_result, n_drilldowns);
-  if (!results) {
-    goto exit;
-  }
-
-  for (i = 0; i < n_drilldowns; i++) {
-    grn_table_group_result *result = results + i;
-    result->table = NULL;
-  }
-
+  n_drilldowns = GRN_BULK_VSIZE(&tsorted_ids) / sizeof(grn_id);
   for (i = 0; i < n_drilldowns; i++) {
     grn_table_sort_key *keys = NULL;
     unsigned int n_keys = 0;
     grn_obj *target_table = table;
-    unsigned int index;
+    grn_id id;
     grn_drilldown_data *drilldown;
+    uint32_t size;
     grn_table_group_result *result;
 
-    index = GRN_UINT32_VALUE_AT(&tsorted_indexes, i);
-    drilldown = drilldowns + index;
-    result = results + index;
+    id = GRN_RECORD_VALUE_AT(&tsorted_ids, i);
+    drilldown =
+      (grn_drilldown_data *)grn_hash_get_value_(ctx, drilldowns, id, &size);
+    result = &(drilldown->result);
 
     result->limit = 1;
     result->flags = GRN_TABLE_GROUP_CALC_COUNT;
@@ -910,10 +894,11 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
 
     if (drilldown->table_name.length > 0) {
       grn_id dependent_id;
-      dependent_id = grn_table_get(ctx,
-                                   labels,
-                                   drilldown->table_name.value,
-                                   drilldown->table_name.length);
+      dependent_id = grn_hash_get(ctx,
+                                  drilldowns,
+                                  drilldown->table_name.value,
+                                  drilldown->table_name.length,
+                                  NULL);
       if (dependent_id == GRN_ID_NIL) {
         GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
                          "[select][drilldown][%.*s][table] "
@@ -924,8 +909,16 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
                          drilldown->table_name.value);
         break;
       } else {
-        uint32_t dependent_index = dependent_id - 1;
-        target_table = results[dependent_index].table;
+        grn_drilldown_data *dependent_drilldown;
+        grn_table_group_result *dependent_result;
+
+        dependent_drilldown =
+          (grn_drilldown_data *)grn_hash_get_value_(ctx,
+                                                    drilldowns,
+                                                    dependent_id,
+                                                    &size);
+        dependent_result = &(dependent_drilldown->result);
+        target_table = dependent_result->table;
       }
     }
 
@@ -965,37 +958,38 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
   }
 
 exit :
-  GRN_OBJ_FIN(ctx, &tsorted_indexes);
-
-  return results;
+  GRN_OBJ_FIN(ctx, &tsorted_ids);
 }
 
 static void
 grn_select_drilldowns_output(grn_ctx *ctx,
                              grn_obj *table,
-                             grn_drilldown_data *drilldowns,
-                             size_t n_drilldowns,
-                             grn_obj *condition,
-                             grn_table_group_result *results)
+                             grn_hash *drilldowns,
+                             grn_obj *condition)
 {
-  size_t i;
   unsigned int n_available_results = 0;
 
-  for (i = 0; i < n_drilldowns; i++) {
-    grn_table_group_result *result = results + i;
+  GRN_HASH_EACH_BEGIN(ctx, drilldowns, cursor, id) {
+    grn_drilldown_data *drilldown;
+    grn_table_group_result *result;
 
+    grn_hash_cursor_get_value(ctx, cursor, (void **)&drilldown);
+    result = &(drilldown->result);
     if (result->table) {
       n_available_results++;
     }
-  }
+  } GRN_HASH_EACH_END(ctx, cursor);
 
   GRN_OUTPUT_MAP_OPEN("DRILLDOWNS", n_available_results);
-  for (i = 0; i < n_drilldowns; i++) {
-    grn_drilldown_data *drilldown = drilldowns + i;
-    grn_table_group_result *result = results + i;
+  GRN_HASH_EACH_BEGIN(ctx, drilldowns, cursor, id) {
+    grn_drilldown_data *drilldown;
+    grn_table_group_result *result;
     uint32_t n_hits;
     int offset;
     int limit;
+
+    grn_hash_cursor_get_value(ctx, cursor, (void **)&drilldown);
+    result = &(drilldown->result);
 
     if (!result->table) {
       continue;
@@ -1043,54 +1037,43 @@ grn_select_drilldowns_output(grn_ctx *ctx,
                   n_hits,
                   (int)(drilldown->label.length),
                   drilldown->label.value);
-  }
+  } GRN_HASH_EACH_END(ctx, cursor);
   GRN_OUTPUT_MAP_CLOSE();
 }
 
 static void
-grn_select_drilldowns(grn_ctx *ctx, grn_obj *table,
-                      grn_drilldown_data *drilldowns, size_t n_drilldowns,
-                      grn_obj *drilldown_labels, grn_obj *condition)
+grn_select_drilldowns(grn_ctx *ctx,
+                      grn_obj *table,
+                      grn_hash *drilldowns,
+                      grn_obj *condition)
 {
-  grn_table_group_result *results;
-
-  results = grn_select_drilldowns_execute(ctx,
-                                          table,
-                                          drilldowns,
-                                          n_drilldowns,
-                                          drilldown_labels,
-                                          condition);
-  if (!results) {
-    return;
-  }
-
+  grn_select_drilldowns_execute(ctx,
+                                table,
+                                drilldowns,
+                                condition);
   grn_select_drilldowns_output(ctx,
                                table,
                                drilldowns,
-                               n_drilldowns,
-                               condition,
-                               results);
+                               condition);
 
-  {
-    size_t i;
+  GRN_HASH_EACH_BEGIN(ctx, drilldowns, cursor, id) {
+    grn_drilldown_data *drilldown;
+    grn_table_group_result *result;
 
-    for (i = 0; i < n_drilldowns; i++) {
-      grn_table_group_result *result = results + i;
+    grn_hash_cursor_get_value(ctx, cursor, (void **)&drilldown);
+    result = &(drilldown->result);
 
-      if (!result->table) {
-        continue;
-      }
-
-      if (result->calc_target) {
-        grn_obj_unlink(ctx, result->calc_target);
-      }
-      if (result->table) {
-        grn_obj_close(ctx, result->table);
-      }
-
+    if (!result->table) {
+      continue;
     }
-  }
-  GRN_PLUGIN_FREE(ctx, results);
+
+    if (result->calc_target) {
+      grn_obj_unlink(ctx, result->calc_target);
+    }
+    if (result->table) {
+      grn_obj_close(ctx, result->table);
+    }
+  } GRN_HASH_EACH_END(ctx, cursor);
 }
 
 static grn_rc
@@ -1141,20 +1124,21 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     sizeof(int) * 2 +
     sizeof(grn_command_version) +
     sizeof(grn_bool);
-  {
-    size_t i;
-    for (i = 0; i < data->n_drilldowns; i++) {
-      grn_drilldown_data *drilldown = &(data->drilldowns[i]);
+  if (data->drilldowns) {
+    GRN_HASH_EACH_BEGIN(ctx, data->drilldowns, cursor, id) {
+      grn_drilldown_data *drilldown;
+      grn_hash_cursor_get_value(ctx, cursor, (void **)&drilldown);
       cache_key_size +=
         drilldown->keys.length + 1 +
         drilldown->sortby.length + 1 +
         drilldown->output_columns.length + 1 +
         drilldown->label.length + 1 +
         drilldown->calc_target_name.length + 1 +
+        drilldown->filter.length + 1 +
         drilldown->table_name.length + 1 +
         sizeof(int) * 2 +
         sizeof(grn_table_group_flags);
-    }
+    } GRN_HASH_EACH_END(ctx, cursor);
   }
   if (cache_key_size <= GRN_CACHE_MAX_KEY_SIZE) {
     grn_obj *cache_value;
@@ -1172,17 +1156,26 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     PUT_CACHE_KEY(data->scorer);
     PUT_CACHE_KEY(data->sortby);
     PUT_CACHE_KEY(data->output_columns);
-    {
-      size_t i;
-      for (i = 0; i < data->n_drilldowns; i++) {
-        grn_drilldown_data *drilldown = &(data->drilldowns[i]);
+    if (data->drilldowns) {
+      GRN_HASH_EACH_BEGIN(ctx, data->drilldowns, cursor, id) {
+        grn_drilldown_data *drilldown;
+        grn_hash_cursor_get_value(ctx, cursor, (void **)&drilldown);
         PUT_CACHE_KEY(drilldown->keys);
         PUT_CACHE_KEY(drilldown->sortby);
         PUT_CACHE_KEY(drilldown->output_columns);
         PUT_CACHE_KEY(drilldown->label);
         PUT_CACHE_KEY(drilldown->calc_target_name);
+        PUT_CACHE_KEY(drilldown->filter);
         PUT_CACHE_KEY(drilldown->table_name);
-      }
+        grn_memcpy(cp, &(drilldown->offset), sizeof(int));
+        cp += sizeof(int);
+        grn_memcpy(cp, &(drilldown->limit), sizeof(int));
+        cp += sizeof(int);
+        grn_memcpy(cp,
+                   &(drilldown->calc_types),
+                   sizeof(grn_table_group_flags));
+        cp += sizeof(grn_table_group_flags);
+      } GRN_HASH_EACH_END(ctx, cursor);
     }
     PUT_CACHE_KEY(data->match_escalation_threshold);
     PUT_CACHE_KEY(data->query_expander);
@@ -1198,18 +1191,6 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     cp += sizeof(grn_command_version);
     grn_memcpy(cp, &(ctx->impl->output.is_pretty), sizeof(grn_bool));
     cp += sizeof(grn_bool);
-    {
-      size_t i;
-      for (i = 0; i < data->n_drilldowns; i++) {
-        grn_drilldown_data *drilldown = &(data->drilldowns[i]);
-        grn_memcpy(cp, &(drilldown->offset), sizeof(int));
-        cp += sizeof(int);
-        grn_memcpy(cp, &(drilldown->limit), sizeof(int));
-        cp += sizeof(int);
-        grn_memcpy(cp, &(drilldown->calc_types), sizeof(grn_table_group_flags));
-        cp += sizeof(grn_table_group_flags);
-      }
-    }
 #undef PUT_CACHE_KEY
 
     cache_value = grn_cache_fetch(ctx, cache_obj, cache_key, cache_key_size);
@@ -1387,11 +1368,26 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
       uint32_t ngkeys;
       grn_table_sort_key *gkeys = NULL;
       int result_size = 1;
-      if (!ctx->rc && data->n_drilldowns > 0) {
-        if (data->n_drilldowns == 1 && data->drilldowns[0].label.length == 0) {
+      if (!ctx->rc && data->drilldowns) {
+        grn_drilldown_data *anonymous_drilldown = NULL;
+        if (grn_hash_size(ctx, data->drilldowns) == 1) {
+          grn_id first_id = 1;
+          uint32_t size;
+          anonymous_drilldown =
+            (grn_drilldown_data *)grn_hash_get_value_(ctx,
+                                                      data->drilldowns,
+                                                      first_id,
+                                                      &size);
+          if (anonymous_drilldown) {
+            if (anonymous_drilldown->label.length > 0) {
+              anonymous_drilldown = NULL;
+            }
+          }
+        }
+        if (anonymous_drilldown) {
           gkeys = grn_table_sort_key_from_str(ctx,
-                                              data->drilldowns[0].keys.value,
-                                              data->drilldowns[0].keys.length,
+                                              anonymous_drilldown->keys.value,
+                                              anonymous_drilldown->keys.length,
                                               res, &ngkeys);
           if (gkeys) {
             result_size += ngkeys;
@@ -1491,14 +1487,9 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
                     ":", "output(%d)", data->limit);
       if (!ctx->rc) {
         if (gkeys) {
-          grn_drilldown_data *drilldown = &(data->drilldowns[0]);
-          grn_select_drilldown(ctx, res, gkeys, ngkeys, drilldown);
-        } else if (data->n_drilldowns > 0) {
-          grn_select_drilldowns(ctx, res,
-                                data->drilldowns,
-                                data->n_drilldowns,
-                                data->drilldown_labels,
-                                cond);
+          grn_select_drilldown(ctx, res, gkeys, ngkeys, data->drilldowns, cond);
+        } else if (data->drilldowns) {
+          grn_select_drilldowns(ctx, res, data->drilldowns, cond);
         }
       }
       if (gkeys) {
@@ -1838,6 +1829,49 @@ grn_columns_fill(grn_ctx *ctx,
   return GRN_TRUE;
 }
 
+static grn_drilldown_data *
+grn_select_data_drilldowns_add(grn_ctx *ctx,
+                               grn_select_data *data,
+                               const char *label,
+                               size_t label_len)
+{
+  grn_drilldown_data *drilldown = NULL;
+  int added;
+
+  if (!data->drilldowns) {
+    data->drilldowns = grn_hash_create(ctx,
+                                       NULL,
+                                       GRN_TABLE_MAX_KEY_SIZE,
+                                       sizeof(grn_drilldown_data),
+                                       GRN_OBJ_TABLE_HASH_KEY |
+                                       GRN_OBJ_KEY_VAR_SIZE |
+                                       GRN_HASH_TINY);
+    if (!data->drilldowns) {
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "[select][drilldown] "
+                       "failed to allocate drilldowns data: %s",
+                       ctx->errbuf);
+      return NULL;
+    }
+  }
+
+  grn_hash_add(ctx,
+               data->drilldowns,
+               label,
+               label_len,
+               (void **)&drilldown,
+               &added);
+  if (added) {
+    drilldown->label.value = label;
+    drilldown->label.length = label_len;
+    grn_columns_init(ctx, &(drilldown->columns));
+    drilldown->result.table = NULL;
+  }
+
+  return drilldown;
+}
+
 static grn_bool
 grn_select_data_fill_drilldown_labels(grn_ctx *ctx,
                                       grn_user_data *user_data,
@@ -1849,13 +1883,6 @@ grn_select_data_fill_drilldown_labels(grn_ctx *ctx,
   int prefix_len;
 
   vars = grn_plugin_proc_get_vars(ctx, user_data);
-  data->drilldown_labels = grn_table_create(ctx, NULL, 0, NULL,
-                                            GRN_OBJ_TABLE_HASH_KEY,
-                                            grn_ctx_at(ctx, GRN_DB_SHORT_TEXT),
-                                            NULL);
-  if (!data->drilldown_labels) {
-    return GRN_FALSE;
-  }
 
   cursor = grn_table_cursor_open(ctx, vars, NULL, 0, NULL, 0, 0, -1, 0);
   if (!cursor) {
@@ -1880,11 +1907,10 @@ grn_select_data_fill_drilldown_labels(grn_ctx *ctx,
         continue;
       }
       label_len = (label_end - name) - prefix_len;
-      grn_table_add(ctx,
-                    data->drilldown_labels,
-                    name + prefix_len,
-                    label_len,
-                    NULL);
+      grn_select_data_drilldowns_add(ctx,
+                                     data,
+                                     name + prefix_len,
+                                     label_len);
     }
   }
   grn_table_cursor_close(ctx, cursor);
@@ -1902,24 +1928,25 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
   drilldown = grn_plugin_proc_get_var(ctx, user_data, "drilldown", -1);
   if (GRN_TEXT_LEN(drilldown) > 0) {
     grn_drilldown_data *drilldown_data;
-    data->n_drilldowns = 1;
-    data->drilldowns = GRN_PLUGIN_MALLOCN(ctx,
-                                          grn_drilldown_data,
-                                          data->n_drilldowns);
-    if (!data->drilldowns) {
+    const char *anonymous_label = "_anonymous";
+
+    drilldown_data = grn_select_data_drilldowns_add(ctx,
+                                                    data,
+                                                    anonymous_label,
+                                                    strlen(anonymous_label));
+    if (!drilldown_data) {
       return GRN_FALSE;
     }
-    drilldown_data = &(data->drilldowns[0]);
     drilldown_data->label.value = NULL;
     drilldown_data->label.length = 0;
-    grn_columns_init(ctx, &(drilldown_data->columns));
     grn_drilldown_data_fill(ctx,
                             drilldown_data,
                             drilldown,
                             grn_plugin_proc_get_var(ctx, user_data,
                                                     "drilldown_sortby", -1),
                             grn_plugin_proc_get_var(ctx, user_data,
-                                                    "drilldown_output_columns", -1),
+                                                    "drilldown_output_columns",
+                                                    -1),
                             grn_plugin_proc_get_var(ctx, user_data,
                                                     "drilldown_offset", -1),
                             grn_plugin_proc_get_var(ctx, user_data,
@@ -1933,32 +1960,13 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
                             NULL);
   } else {
     unsigned int i;
-    grn_table_cursor *cursor = NULL;
 
     if (!grn_select_data_fill_drilldown_labels(ctx, user_data, data)) {
       return GRN_FALSE;
     }
 
-    cursor = grn_table_cursor_open(ctx, data->drilldown_labels,
-                                   NULL, 0, NULL, 0, 0, -1, 0);
-    if (!cursor) {
-      return GRN_FALSE;
-    }
-
-    data->n_drilldowns = grn_table_size(ctx, data->drilldown_labels);
-    data->drilldowns = GRN_PLUGIN_MALLOCN(ctx,
-                                          grn_drilldown_data,
-                                          data->n_drilldowns);
-    if (!data->drilldowns) {
-      grn_table_cursor_close(ctx, cursor);
-      return GRN_FALSE;
-    }
-
-    i = 0;
-    while (grn_table_cursor_next(ctx, cursor)) {
-      grn_drilldown_data *drilldown = &(data->drilldowns[i]);
-      const char *label;
-      int label_len;
+    GRN_HASH_EACH_BEGIN(ctx, data->drilldowns, cursor, id) {
+      grn_drilldown_data *drilldown;
       char drilldown_label[GRN_TABLE_MAX_KEY_SIZE];
       char key_name[GRN_TABLE_MAX_KEY_SIZE];
       grn_obj *keys;
@@ -1970,16 +1978,15 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
       grn_obj *calc_target;
       grn_obj *table;
 
-      label_len = grn_table_cursor_get_key(ctx, cursor, (void **)&label);
-      drilldown->label.value = label;
-      drilldown->label.length = label_len;
+      grn_hash_cursor_get_value(ctx, cursor, (void **)&drilldown);
 
       grn_snprintf(drilldown_label,
                    GRN_TABLE_MAX_KEY_SIZE,
                    GRN_TABLE_MAX_KEY_SIZE,
-                   "drilldown[%.*s].", label_len, label);
+                   "drilldown[%.*s].",
+                   (int)(drilldown->label.length),
+                   drilldown->label.value);
 
-      grn_columns_init(ctx, &(drilldown->columns));
       /* TODO: Check return value. */
       grn_columns_fill(ctx,
                        user_data,
@@ -1991,7 +1998,7 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
       grn_snprintf(key_name,                                            \
                    GRN_TABLE_MAX_KEY_SIZE,                              \
                    GRN_TABLE_MAX_KEY_SIZE,                              \
-                   "%s" # name, drilldown_label);                       \
+                   "%s%s", drilldown_label, #name);                     \
       name = grn_plugin_proc_get_var(ctx, user_data, key_name, -1);
 
       GET_VAR(keys);
@@ -2005,7 +2012,8 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
 
 #undef GET_VAR
 
-      grn_drilldown_data_fill(ctx, drilldown,
+      grn_drilldown_data_fill(ctx,
+                              drilldown,
                               keys,
                               sortby,
                               output_columns,
@@ -2016,8 +2024,7 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
                               NULL,
                               table);
       i++;
-    }
-    grn_table_cursor_close(ctx, cursor);
+    } GRN_HASH_EACH_END(ctx, cursor);
   }
 
   return GRN_TRUE;
@@ -2029,8 +2036,6 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   grn_select_data data;
 
   data.drilldowns = NULL;
-  data.n_drilldowns = 0;
-  data.drilldown_labels = NULL;
   grn_columns_init(ctx, &(data.columns));
 
   data.table.value = grn_plugin_proc_get_var_string(ctx, user_data,
@@ -2112,15 +2117,12 @@ exit :
   grn_columns_fin(ctx, &(data.columns));
 
   if (data.drilldowns) {
-    int i;
-    for (i = 0; i < data.n_drilldowns; i++) {
-      grn_drilldown_data *drilldown = &(data.drilldowns[i]);
+    GRN_HASH_EACH_BEGIN(ctx, data.drilldowns, cursor, id) {
+      grn_drilldown_data *drilldown;
+      grn_hash_cursor_get_value(ctx, cursor, (void **)&drilldown);
       grn_columns_fin(ctx, &(drilldown->columns));
-    }
-    GRN_PLUGIN_FREE(ctx, data.drilldowns);
-  }
-  if (data.drilldown_labels) {
-    grn_obj_unlink(ctx, data.drilldown_labels);
+    } GRN_HASH_EACH_END(ctx, cursor);
+    grn_hash_close(ctx, data.drilldowns);
   }
 
   return NULL;
