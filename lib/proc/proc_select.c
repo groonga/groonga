@@ -480,6 +480,36 @@ grn_columns_fill(grn_ctx *ctx,
 }
 
 static void
+grn_drilldown_data_init(grn_ctx *ctx,
+                        grn_drilldown_data *drilldown,
+                        const char *label,
+                        size_t label_len)
+{
+  drilldown->label.value = label;
+  drilldown->label.length = label_len;
+  grn_columns_init(ctx, &(drilldown->columns));
+  drilldown->result.table = NULL;
+}
+
+static void
+grn_drilldown_data_fin(grn_ctx *ctx, grn_drilldown_data *drilldown)
+{
+  grn_table_group_result *result;
+
+  grn_columns_fin(ctx, &(drilldown->columns));
+
+  result = &(drilldown->result);
+  if (result->table) {
+    if (result->calc_target) {
+      grn_obj_unlink(ctx, result->calc_target);
+    }
+    if (result->table) {
+      grn_obj_close(ctx, result->table);
+    }
+  }
+}
+
+static void
 grn_drilldown_data_fill(grn_ctx *ctx,
                         grn_drilldown_data *drilldown,
                         grn_obj *keys,
@@ -1350,25 +1380,6 @@ grn_select_drilldowns(grn_ctx *ctx,
                                table,
                                drilldowns,
                                condition);
-
-  GRN_HASH_EACH_BEGIN(ctx, drilldowns, cursor, id) {
-    grn_drilldown_data *drilldown;
-    grn_table_group_result *result;
-
-    grn_hash_cursor_get_value(ctx, cursor, (void **)&drilldown);
-    result = &(drilldown->result);
-
-    if (!result->table) {
-      continue;
-    }
-
-    if (result->calc_target) {
-      grn_obj_unlink(ctx, result->calc_target);
-    }
-    if (result->table) {
-      grn_obj_close(ctx, result->table);
-    }
-  } GRN_HASH_EACH_END(ctx, cursor);
 }
 
 static grn_rc
@@ -1863,10 +1874,7 @@ grn_select_data_drilldowns_add(grn_ctx *ctx,
                (void **)&drilldown,
                &added);
   if (added) {
-    drilldown->label.value = label;
-    drilldown->label.length = label_len;
-    grn_columns_init(ctx, &(drilldown->columns));
-    drilldown->result.table = NULL;
+    grn_drilldown_data_init(ctx, drilldown, label, label_len);
   }
 
   return drilldown;
@@ -2120,7 +2128,7 @@ exit :
     GRN_HASH_EACH_BEGIN(ctx, data.drilldowns, cursor, id) {
       grn_drilldown_data *drilldown;
       grn_hash_cursor_get_value(ctx, cursor, (void **)&drilldown);
-      grn_columns_fin(ctx, &(drilldown->columns));
+      grn_drilldown_data_fin(ctx, drilldown);
     } GRN_HASH_EACH_END(ctx, cursor);
     grn_hash_close(ctx, data.drilldowns);
   }
