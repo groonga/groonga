@@ -13173,7 +13173,7 @@ static void
 grn_loader_save_error(grn_ctx *ctx, grn_loader *loader)
 {
   loader->rc = ctx->rc;
-  strcpy(loader->errbuf, ctx->errbuf);
+  grn_strcpy(loader->errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
 }
 
 static grn_id

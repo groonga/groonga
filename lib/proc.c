@@ -149,7 +149,7 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   } else {
     if (ctx->impl->loader.rc != GRN_SUCCESS) {
       ctx->rc = ctx->impl->loader.rc;
-      strcpy(ctx->errbuf, ctx->impl->loader.errbuf);
+      grn_strcpy(ctx->errbuf, GRN_CTX_MSGSIZE, ctx->impl->loader.errbuf);
     }
     GRN_OUTPUT_INT64(ctx->impl->loader.nrecords);
     if (ctx->impl->loader.table) {
