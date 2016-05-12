@@ -84,6 +84,20 @@ GRN_API grn_rc grn_hash_cursor_delete(grn_ctx *ctx, grn_hash_cursor *c,
   }\
 } while (0)
 
+#define GRN_HASH_EACH_BEGIN(ctx, hash, cursor, id) do {\
+  grn_hash_cursor *cursor;\
+  cursor = grn_hash_cursor_open((ctx), (hash),\
+                                NULL, 0, NULL, 0,\
+                                0, -1, GRN_CURSOR_BY_ID);\
+  if (cursor) {\
+    grn_id id;\
+    while ((id = grn_hash_cursor_next((ctx), cursor)) != GRN_ID_NIL)\
+
+#define GRN_HASH_EACH_END(ctx, cursor)\
+    grn_hash_cursor_close((ctx), cursor);\
+  }\
+} while(0)
+
 #ifdef __cplusplus
 }
 #endif
