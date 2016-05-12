@@ -1494,10 +1494,16 @@ grn_ctx_use(grn_ctx *ctx, grn_obj *db)
 void
 grn_ctx_log(grn_ctx *ctx, const char *fmt, ...)
 {
-  va_list argp;
-  va_start(argp, fmt);
-  grn_vsnprintf(ctx->errbuf, GRN_CTX_MSGSIZE, fmt, argp);
-  va_end(argp);
+  va_list ap;
+  va_start(ap, fmt);
+  grn_ctx_logv(ctx, fmt, ap);
+  va_end(ap);
+}
+
+void
+grn_ctx_logv(grn_ctx *ctx, const char *fmt, va_list ap)
+{
+  grn_vsnprintf(ctx->errbuf, GRN_CTX_MSGSIZE, fmt, ap);
 }
 
 void

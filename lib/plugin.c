@@ -1090,16 +1090,6 @@ grn_plugin_free(grn_ctx *ctx, void *ptr, const char *file, int line,
   grn_free(ctx, ptr, file, line, func);
 }
 
-/*
-  grn_plugin_ctx_log() is a clone of grn_ctx_log() in ctx.c. The only
-  difference is that grn_plugin_ctx_log() uses va_list instead of `...'.
- */
-static void
-grn_plugin_ctx_log(grn_ctx *ctx, const char *format, va_list ap)
-{
-  vsnprintf(ctx->errbuf, GRN_CTX_MSGSIZE, format, ap);
-}
-
 void
 grn_plugin_set_error(grn_ctx *ctx, grn_log_level level, grn_rc error_code,
                      const char *file, int line, const char *func,
@@ -1114,7 +1104,7 @@ grn_plugin_set_error(grn_ctx *ctx, grn_log_level level, grn_rc error_code,
   {
     va_list ap;
     va_start(ap, format);
-    grn_plugin_ctx_log(ctx, format, ap);
+    grn_ctx_logv(ctx, format, ap);
     va_end(ap);
   }
 }
