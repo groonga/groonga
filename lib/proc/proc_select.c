@@ -83,6 +83,7 @@ typedef struct {
   grn_select_string table_name;
   grn_columns columns;
   grn_table_group_result result;
+  grn_obj *filtered_result;
 } grn_drilldown_data;
 
 typedef struct {
@@ -489,6 +490,7 @@ grn_drilldown_data_init(grn_ctx *ctx,
   drilldown->label.length = label_len;
   grn_columns_init(ctx, &(drilldown->columns));
   drilldown->result.table = NULL;
+  drilldown->filtered_result = NULL;
 }
 
 static void
@@ -497,6 +499,10 @@ grn_drilldown_data_fin(grn_ctx *ctx, grn_drilldown_data *drilldown)
   grn_table_group_result *result;
 
   grn_columns_fin(ctx, &(drilldown->columns));
+
+  if (drilldown->filtered_result) {
+    grn_obj_close(ctx, drilldown->filtered_result);
+  }
 
   result = &(drilldown->result);
   if (result->table) {
@@ -1020,6 +1026,72 @@ grn_select_drilldown_execute(grn_ctx *ctx,
                              condition);
   }
 
+  if (drilldown->filter.length > 0) {
+    grn_obj *expression;
+    grn_obj *record;
+    GRN_EXPR_CREATE_FOR_QUERY(ctx, result->table, expression, record);
+    if (!expression) {
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "[select][drilldown]%s%.*s%s[filter] "
+                       "failed to create expression for filter: %s",
+                       drilldown->label.length > 0 ? "[" : "",
+                       (int)(drilldown->label.length),
+                       drilldown->label.value,
+                       drilldown->label.length > 0 ? "]" : "",
+                       ctx->errbuf);
+      return GRN_FALSE;
+    }
+    grn_expr_parse(ctx,
+                   expression,
+                   drilldown->filter.value,
+                   drilldown->filter.length,
+                   NULL,
+                   GRN_OP_MATCH,
+                   GRN_OP_AND,
+                   GRN_EXPR_SYNTAX_SCRIPT);
+    if (ctx->rc != GRN_SUCCESS) {
+      grn_obj_close(ctx, expression);
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "[select][drilldown]%s%.*s%s[filter] "
+                       "failed to parse filter: <%.*s>: %s",
+                       drilldown->label.length > 0 ? "[" : "",
+                       (int)(drilldown->label.length),
+                       drilldown->label.value,
+                       drilldown->label.length > 0 ? "]" : "",
+                       (int)(drilldown->filter.length),
+                       drilldown->filter.value,
+                       ctx->errbuf);
+      return GRN_FALSE;
+    }
+    drilldown->filtered_result = grn_table_select(ctx,
+                                                  result->table,
+                                                  expression,
+                                                  NULL,
+                                                  GRN_OP_OR);
+    if (ctx->rc != GRN_SUCCESS) {
+      grn_obj_close(ctx, expression);
+      if (drilldown->filtered_result) {
+        grn_obj_close(ctx, drilldown->filtered_result);
+        drilldown->filtered_result = NULL;
+      }
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "[select][drilldown]%s%.*s%s[filter] "
+                       "failed to execute filter: <%.*s>: %s",
+                       drilldown->label.length > 0 ? "[" : "",
+                       (int)(drilldown->label.length),
+                       drilldown->label.value,
+                       drilldown->label.length > 0 ? "]" : "",
+                       (int)(drilldown->filter.length),
+                       drilldown->filter.value,
+                       ctx->errbuf);
+      return GRN_FALSE;
+    }
+    grn_obj_close(ctx, expression);
+  }
+
   return GRN_TRUE;
 }
 
@@ -1060,56 +1132,8 @@ grn_select_drilldown(grn_ctx *ctx,
       break;
     }
 
-    if (drilldown->filter.length > 0) {
-      grn_obj *expression;
-      grn_obj *record;
-      GRN_EXPR_CREATE_FOR_QUERY(ctx, result->table, expression, record);
-      if (!expression) {
-        GRN_PLUGIN_ERROR(ctx,
-                         GRN_INVALID_ARGUMENT,
-                         "[select][drilldown][filter] "
-                         "failed to create expression for filter: %s",
-                         ctx->errbuf);
-        break;
-      }
-      grn_expr_parse(ctx,
-                     expression,
-                     drilldown->filter.value,
-                     drilldown->filter.length,
-                     NULL,
-                     GRN_OP_MATCH,
-                     GRN_OP_AND,
-                     GRN_EXPR_SYNTAX_SCRIPT);
-      if (ctx->rc != GRN_SUCCESS) {
-        grn_obj_close(ctx, expression);
-        GRN_PLUGIN_ERROR(ctx,
-                         GRN_INVALID_ARGUMENT,
-                         "[select][drilldown][filter] "
-                         "failed to parse filter: <%.*s>: %s",
-                         (int)(drilldown->filter.length),
-                         drilldown->filter.value,
-                         ctx->errbuf);
-        break;
-      }
-      target_table = grn_table_select(ctx,
-                                      result->table,
-                                      expression,
-                                      NULL,
-                                      GRN_OP_OR);
-      if (ctx->rc != GRN_SUCCESS) {
-        grn_obj_close(ctx, expression);
-        if (target_table) {
-          grn_obj_close(ctx, target_table);
-        }
-        GRN_PLUGIN_ERROR(ctx,
-                         GRN_INVALID_ARGUMENT,
-                         "[select][drilldown][filter] "
-                         "failed to execute filter: <%.*s>: %s",
-                         (int)(drilldown->filter.length),
-                         drilldown->filter.value,
-                         ctx->errbuf);
-        break;
-      }
+    if (drilldown->filtered_result) {
+      target_table = drilldown->filtered_result;
     } else {
       target_table = result->table;
     }
@@ -1162,8 +1186,9 @@ grn_select_drilldown(grn_ctx *ctx,
       GRN_OUTPUT_OBJ(target_table, &format);
       GRN_OBJ_FORMAT_FIN(ctx, &format);
     }
-    if (target_table != result->table) {
-      grn_obj_close(ctx, target_table);
+    if (drilldown->filtered_result) {
+      grn_obj_close(ctx, drilldown->filtered_result);
+      drilldown->filtered_result = NULL;
     }
     if (result->calc_target) {
       grn_obj_unlink(ctx, result->calc_target);
@@ -1349,6 +1374,7 @@ grn_select_drilldowns_output(grn_ctx *ctx,
   GRN_HASH_EACH_BEGIN(ctx, drilldowns, cursor, id) {
     grn_drilldown_data *drilldown;
     grn_table_group_result *result;
+    grn_obj *target_table;
     uint32_t n_hits;
     int offset;
     int limit;
@@ -1360,9 +1386,15 @@ grn_select_drilldowns_output(grn_ctx *ctx,
       continue;
     }
 
+    if (drilldown->filtered_result) {
+      target_table = drilldown->filtered_result;
+    } else {
+      target_table = result->table;
+    }
+
     GRN_OUTPUT_STR(drilldown->label.value, drilldown->label.length);
 
-    n_hits = grn_table_size(ctx, result->table);
+    n_hits = grn_table_size(ctx, target_table);
 
     offset = drilldown->offset;
     limit = drilldown->limit;
@@ -1374,13 +1406,13 @@ grn_select_drilldowns_output(grn_ctx *ctx,
       sort_keys = grn_table_sort_key_from_str(ctx,
                                               drilldown->sortby.value,
                                               drilldown->sortby.length,
-                                              result->table, &n_sort_keys);
+                                              target_table, &n_sort_keys);
       if (sort_keys) {
         grn_obj *sorted;
         sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
-                                  NULL, result->table);
+                                  NULL, target_table);
         if (sorted) {
-          grn_table_sort(ctx, result->table, offset, limit,
+          grn_table_sort(ctx, target_table, offset, limit,
                          sorted, sort_keys, n_sort_keys);
           grn_proc_select_output_columns(ctx, sorted, n_hits, 0, limit,
                                          drilldown->output_columns.value,
@@ -1391,7 +1423,7 @@ grn_select_drilldowns_output(grn_ctx *ctx,
         grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
       }
     } else {
-      grn_proc_select_output_columns(ctx, result->table, n_hits, offset, limit,
+      grn_proc_select_output_columns(ctx, target_table, n_hits, offset, limit,
                                      drilldown->output_columns.value,
                                      drilldown->output_columns.length,
                                      condition);
@@ -2024,6 +2056,7 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
       grn_obj *limit;
       grn_obj *calc_types;
       grn_obj *calc_target;
+      grn_obj *filter;
       grn_obj *table;
 
       grn_hash_cursor_get_value(ctx, cursor, (void **)&drilldown);
@@ -2056,6 +2089,7 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
       GET_VAR(limit);
       GET_VAR(calc_types);
       GET_VAR(calc_target);
+      GET_VAR(filter);
       GET_VAR(table);
 
 #undef GET_VAR
@@ -2069,7 +2103,7 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
                               limit,
                               calc_types,
                               calc_target,
-                              NULL,
+                              filter,
                               table);
       i++;
     } GRN_HASH_EACH_END(ctx, cursor);
