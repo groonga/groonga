@@ -1503,7 +1503,9 @@ grn_ctx_log(grn_ctx *ctx, const char *fmt, ...)
 void
 grn_ctx_logv(grn_ctx *ctx, const char *fmt, va_list ap)
 {
-  grn_vsnprintf(ctx->errbuf, GRN_CTX_MSGSIZE, fmt, ap);
+  char buffer[GRN_CTX_MSGSIZE];
+  grn_vsnprintf(buffer, GRN_CTX_MSGSIZE, fmt, ap);
+  grn_strcpy(ctx->errbuf, GRN_CTX_MSGSIZE, buffer);
 }
 
 void

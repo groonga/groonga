@@ -358,15 +358,13 @@ grn_select_apply_columns(grn_ctx *ctx,
                                column_data->flags,
                                column_data->type);
     if (!column) {
-      char error_message[GRN_CTX_MSGSIZE];
-      grn_memcpy(error_message, ctx->errbuf, GRN_CTX_MSGSIZE);
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
                        "[select][column][%s][%.*s] failed to create column: %s",
                        grn_column_stage_name(column_data->stage),
                        (int)(column_data->label.length),
                        column_data->label.value,
-                       error_message);
+                       ctx->errbuf);
       break;
     }
 
@@ -378,8 +376,6 @@ grn_select_apply_columns(grn_ctx *ctx,
                                               column_data->sortby.length,
                                               table, &n_sort_keys);
       if (!sort_keys) {
-        char error_message[GRN_CTX_MSGSIZE];
-        grn_memcpy(error_message, ctx->errbuf, GRN_CTX_MSGSIZE);
         grn_obj_close(ctx, column);
         GRN_PLUGIN_ERROR(ctx,
                          GRN_INVALID_ARGUMENT,
@@ -387,15 +383,13 @@ grn_select_apply_columns(grn_ctx *ctx,
                          grn_column_stage_name(column_data->stage),
                          (int)(column_data->label.length),
                          column_data->label.value,
-                         error_message);
+                         ctx->errbuf);
         break;
       }
 
       target_table = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
                                       NULL, table);
       if (!target_table) {
-        char error_message[GRN_CTX_MSGSIZE];
-        grn_memcpy(error_message, ctx->errbuf, GRN_CTX_MSGSIZE);
         grn_obj_close(ctx, column);
         grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
         GRN_PLUGIN_ERROR(ctx,
@@ -404,7 +398,7 @@ grn_select_apply_columns(grn_ctx *ctx,
                          grn_column_stage_name(column_data->stage),
                          (int)(column_data->label.length),
                          column_data->label.value,
-                         error_message);
+                         ctx->errbuf);
         break;
       }
       grn_table_sort(ctx, table, 0, -1,
@@ -414,8 +408,6 @@ grn_select_apply_columns(grn_ctx *ctx,
 
     GRN_EXPR_CREATE_FOR_QUERY(ctx, target_table, expression, record);
     if (!expression) {
-      char error_message[GRN_CTX_MSGSIZE];
-      grn_memcpy(error_message, ctx->errbuf, GRN_CTX_MSGSIZE);
       grn_obj_close(ctx, column);
       if (column_data->sortby.length > 0) {
         grn_obj_unlink(ctx, target_table);
@@ -427,7 +419,7 @@ grn_select_apply_columns(grn_ctx *ctx,
                        grn_column_stage_name(column_data->stage),
                        (int)(column_data->label.length),
                        column_data->label.value,
-                       error_message);
+                       ctx->errbuf);
       break;
     }
     grn_expr_parse(ctx,
@@ -439,8 +431,6 @@ grn_select_apply_columns(grn_ctx *ctx,
                    GRN_OP_AND,
                    GRN_EXPR_SYNTAX_SCRIPT);
     if (ctx->rc != GRN_SUCCESS) {
-      char error_message[GRN_CTX_MSGSIZE];
-      grn_memcpy(error_message, ctx->errbuf, GRN_CTX_MSGSIZE);
       grn_obj_close(ctx, expression);
       grn_obj_close(ctx, column);
       if (column_data->sortby.length > 0) {
@@ -455,7 +445,7 @@ grn_select_apply_columns(grn_ctx *ctx,
                        column_data->label.value,
                        (int)(column_data->value.length),
                        column_data->value.value,
-                       error_message);
+                       ctx->errbuf);
       break;
     }
     grn_select_expression_set_condition(ctx, expression, condition);
@@ -465,8 +455,6 @@ grn_select_apply_columns(grn_ctx *ctx,
                                          NULL, 0,
                                          0, -1, GRN_CURSOR_BY_ID);
     if (!table_cursor) {
-      char error_message[GRN_CTX_MSGSIZE];
-      grn_memcpy(error_message, ctx->errbuf, GRN_CTX_MSGSIZE);
       grn_obj_close(ctx, expression);
       grn_obj_close(ctx, column);
       if (column_data->sortby.length > 0) {
@@ -479,7 +467,7 @@ grn_select_apply_columns(grn_ctx *ctx,
                        grn_column_stage_name(column_data->stage),
                        (int)(column_data->label.length),
                        column_data->label.value,
-                       error_message);
+                       ctx->errbuf);
       break;
     }
 
@@ -634,14 +622,12 @@ grn_select_drilldown(grn_ctx *ctx, grn_obj *table,
       grn_obj *record;
       GRN_EXPR_CREATE_FOR_QUERY(ctx, g.table, expression, record);
       if (!expression) {
-        char error_message[GRN_CTX_MSGSIZE];
-        grn_memcpy(error_message, ctx->errbuf, GRN_CTX_MSGSIZE);
         grn_obj_close(ctx, g.table);
         GRN_PLUGIN_ERROR(ctx,
                          GRN_INVALID_ARGUMENT,
                          "[select][drilldown][filter] "
                          "failed to create expression for filter: %s",
-                         error_message);
+                         ctx->errbuf);
         break;
       }
       grn_expr_parse(ctx,
@@ -653,8 +639,6 @@ grn_select_drilldown(grn_ctx *ctx, grn_obj *table,
                      GRN_OP_AND,
                      GRN_EXPR_SYNTAX_SCRIPT);
       if (ctx->rc != GRN_SUCCESS) {
-        char error_message[GRN_CTX_MSGSIZE];
-        grn_memcpy(error_message, ctx->errbuf, GRN_CTX_MSGSIZE);
         grn_obj_close(ctx, expression);
         grn_obj_close(ctx, g.table);
         GRN_PLUGIN_ERROR(ctx,
@@ -663,13 +647,11 @@ grn_select_drilldown(grn_ctx *ctx, grn_obj *table,
                          "failed to parse filter: <%.*s>: %s",
                          (int)(drilldown->filter.length),
                          drilldown->filter.value,
-                         error_message);
+                         ctx->errbuf);
         break;
       }
       target_table = grn_table_select(ctx, g.table, expression, NULL, GRN_OP_OR);
       if (ctx->rc != GRN_SUCCESS) {
-        char error_message[GRN_CTX_MSGSIZE];
-        grn_memcpy(error_message, ctx->errbuf, GRN_CTX_MSGSIZE);
         grn_obj_close(ctx, expression);
         if (target_table) {
           grn_obj_close(ctx, target_table);
@@ -681,7 +663,7 @@ grn_select_drilldown(grn_ctx *ctx, grn_obj *table,
                          "failed to execute filter: <%.*s>: %s",
                          (int)(drilldown->filter.length),
                          drilldown->filter.value,
-                         error_message);
+                         ctx->errbuf);
         break;
       }
     } else {
