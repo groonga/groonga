@@ -130,6 +130,47 @@ grn_proc_syntax_expand_query(grn_ctx *ctx,
                                       query_expander, expanded_query);
 }
 
+static grn_table_group_flags
+grn_parse_table_group_calc_types(grn_ctx *ctx,
+                                 const char *calc_types,
+                                 unsigned int calc_types_len)
+{
+  grn_table_group_flags flags = 0;
+  const char *calc_types_end = calc_types + calc_types_len;
+
+  while (calc_types < calc_types_end) {
+    if (*calc_types == ',' || *calc_types == ' ') {
+      calc_types += 1;
+      continue;
+    }
+
+#define CHECK_TABLE_GROUP_CALC_TYPE(name)\
+  if (((calc_types_end - calc_types) >= (sizeof(#name) - 1)) &&\
+      (!memcmp(calc_types, #name, sizeof(#name) - 1))) {\
+    flags |= GRN_TABLE_GROUP_CALC_ ## name;\
+    calc_types += sizeof(#name) - 1;\
+    continue;\
+  }
+
+    CHECK_TABLE_GROUP_CALC_TYPE(COUNT);
+    CHECK_TABLE_GROUP_CALC_TYPE(MAX);
+    CHECK_TABLE_GROUP_CALC_TYPE(MIN);
+    CHECK_TABLE_GROUP_CALC_TYPE(SUM);
+    CHECK_TABLE_GROUP_CALC_TYPE(AVG);
+
+#define GRN_TABLE_GROUP_CALC_NONE 0
+    CHECK_TABLE_GROUP_CALC_TYPE(NONE);
+#undef GRN_TABLE_GROUP_CALC_NONE
+
+    ERR(GRN_INVALID_ARGUMENT, "invalid table group calc type: <%.*s>",
+        (int)(calc_types_end - calc_types), calc_types);
+    return 0;
+#undef CHECK_TABLE_GROUP_CALC_TYPE
+  }
+
+  return flags;
+}
+
 static const char *
 grn_column_stage_name(grn_column_stage stage)
 {
@@ -841,47 +882,6 @@ grn_select_apply_columns(grn_ctx *ctx,
   }
 
   grn_hash_cursor_close(ctx, columns_cursor);
-}
-
-static grn_table_group_flags
-grn_parse_table_group_calc_types(grn_ctx *ctx,
-                                 const char *calc_types,
-                                 unsigned int calc_types_len)
-{
-  grn_table_group_flags flags = 0;
-  const char *calc_types_end = calc_types + calc_types_len;
-
-  while (calc_types < calc_types_end) {
-    if (*calc_types == ',' || *calc_types == ' ') {
-      calc_types += 1;
-      continue;
-    }
-
-#define CHECK_TABLE_GROUP_CALC_TYPE(name)\
-  if (((calc_types_end - calc_types) >= (sizeof(#name) - 1)) &&\
-      (!memcmp(calc_types, #name, sizeof(#name) - 1))) {\
-    flags |= GRN_TABLE_GROUP_CALC_ ## name;\
-    calc_types += sizeof(#name) - 1;\
-    continue;\
-  }
-
-    CHECK_TABLE_GROUP_CALC_TYPE(COUNT);
-    CHECK_TABLE_GROUP_CALC_TYPE(MAX);
-    CHECK_TABLE_GROUP_CALC_TYPE(MIN);
-    CHECK_TABLE_GROUP_CALC_TYPE(SUM);
-    CHECK_TABLE_GROUP_CALC_TYPE(AVG);
-
-#define GRN_TABLE_GROUP_CALC_NONE 0
-    CHECK_TABLE_GROUP_CALC_TYPE(NONE);
-#undef GRN_TABLE_GROUP_CALC_NONE
-
-    ERR(GRN_INVALID_ARGUMENT, "invalid table group calc type: <%.*s>",
-        (int)(calc_types_end - calc_types), calc_types);
-    return 0;
-#undef CHECK_TABLE_GROUP_CALC_TYPE
-  }
-
-  return flags;
 }
 
 static void
