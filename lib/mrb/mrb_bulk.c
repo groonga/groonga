@@ -105,6 +105,34 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
       mrb_value_ = mrb_bool_value(value);
     }
     break;
+  case GRN_DB_INT8 :
+    {
+      int8_t value;
+      value = GRN_INT8_VALUE(bulk);
+      mrb_value_ = mrb_fixnum_value(value);
+    }
+    break;
+  case GRN_DB_UINT8 :
+    {
+      uint8_t value;
+      value = GRN_UINT8_VALUE(bulk);
+      mrb_value_ = mrb_fixnum_value(value);
+    }
+    break;
+  case GRN_DB_INT16 :
+    {
+      int16_t value;
+      value = GRN_INT16_VALUE(bulk);
+      mrb_value_ = mrb_fixnum_value(value);
+    }
+    break;
+  case GRN_DB_UINT16 :
+    {
+      uint16_t value;
+      value = GRN_UINT16_VALUE(bulk);
+      mrb_value_ = mrb_fixnum_value(value);
+    }
+    break;
   case GRN_DB_INT32 :
     {
       int32_t value;
@@ -116,13 +144,33 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
     {
       int64_t value;
       value = GRN_UINT32_VALUE(bulk);
-      if (!FIXABLE(value)) {
-        mrb_raisef(mrb, E_RANGE_ERROR,
-                   "can't handle large number: <%S>: max: <%S>",
-                   mrb_fixnum_value(value), /* TODO: This will cause overflow */
-                   mrb_fixnum_value(MRB_INT_MAX));
+      if (FIXABLE(value)) {
+        mrb_value_ = mrb_fixnum_value(value);
+      } else {
+        mrb_value_ = mrb_float_value(mrb, value);
       }
-      mrb_value_ = mrb_fixnum_value(value);
+    }
+    break;
+  case GRN_DB_INT64 :
+    {
+      int64_t value;
+      value = GRN_INT64_VALUE(bulk);
+      if (FIXABLE(value)) {
+        mrb_value_ = mrb_fixnum_value(value);
+      } else {
+        mrb_value_ = mrb_float_value(mrb, value);
+      }
+    }
+    break;
+  case GRN_DB_UINT64 :
+    {
+      uint64_t value;
+      value = GRN_UINT64_VALUE(bulk);
+      if (FIXABLE(value)) {
+        mrb_value_ = mrb_fixnum_value(value);
+      } else {
+        mrb_value_ = mrb_float_value(mrb, value);
+      }
     }
     break;
   case GRN_DB_TIME :
