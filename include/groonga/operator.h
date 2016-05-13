@@ -22,6 +22,10 @@
 extern "C" {
 #endif
 
+typedef grn_bool grn_operator_exec_func(grn_ctx *ctx,
+                                        grn_obj *x,
+                                        grn_obj *y);
+
 GRN_API const char *grn_operator_to_string(grn_operator op);
 GRN_API grn_bool grn_operator_exec_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y);
 GRN_API grn_bool grn_operator_exec_not_equal(grn_ctx *ctx,

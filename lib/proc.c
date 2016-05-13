@@ -3108,55 +3108,72 @@ selector_between_sequential_search_should_use(grn_ctx *ctx,
   return GRN_TRUE;
 }
 
-static grn_bool
+static grn_rc
 selector_between_sequential_search(grn_ctx *ctx,
                                    grn_obj *table,
-                                   grn_obj *index, grn_obj *index_table,
                                    between_data *data,
-                                   grn_obj *res, grn_operator op)
+                                   grn_obj *res,
+                                   grn_operator op)
 {
-  if (!selector_between_sequential_search_should_use(
-        ctx, table, index, index_table, data, res, op,
-        grn_between_too_many_index_match_ratio)) {
-    return GRN_FALSE;
-  }
-
   {
     int offset = 0;
     int limit = -1;
     int flags = 0;
+    grn_obj *target_table;
+    grn_obj *target_column;
+    grn_operator_exec_func *greater;
+    grn_operator_exec_func *less;
     grn_table_cursor *cursor;
-    grn_obj *expr;
-    grn_obj *variable;
     grn_id id;
+    grn_obj value;
 
-    if (!between_create_expr(ctx, table, data, &expr, &variable)) {
-      return GRN_FALSE;
+    if (op == GRN_OP_AND) {
+      target_table = res;
+    } else {
+      target_table = table;
     }
-
-    cursor = grn_table_cursor_open(ctx, res,
+    cursor = grn_table_cursor_open(ctx, target_table,
                                    NULL, 0,
                                    NULL, 0,
                                    offset, limit, flags);
     if (!cursor) {
-      grn_obj_unlink(ctx, expr);
-      return GRN_FALSE;
+      return ctx->rc;
     }
 
+    if (data->value->header.type == GRN_BULK) {
+      target_column = grn_obj_column(ctx,
+                                     table,
+                                     GRN_TEXT_VALUE(data->value),
+                                     GRN_TEXT_LEN(data->value));
+    } else {
+      target_column = data->value;
+    }
+    if (data->min_border_type == BETWEEN_BORDER_INCLUDE) {
+      greater = grn_operator_exec_greater_equal;
+    } else {
+      greater = grn_operator_exec_greater;
+    }
+    if (data->max_border_type == BETWEEN_BORDER_INCLUDE) {
+      less = grn_operator_exec_less_equal;
+    } else {
+      less = grn_operator_exec_less;
+    }
+
+    GRN_VOID_INIT(&value);
     while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
       grn_id record_id;
-      grn_obj *result;
-      {
+
+      if (target_table == res) {
         grn_id *key;
         grn_table_cursor_get_key(ctx, cursor, (void **)&key);
         record_id = *key;
+      } else {
+        record_id = id;
       }
-      GRN_RECORD_SET(ctx, variable, record_id);
-      result = grn_expr_exec(ctx, expr, 0);
-      if (ctx->rc) {
-        break;
-      }
-      if (grn_obj_is_true(ctx, result)) {
+
+      GRN_BULK_REWIND(&value);
+      grn_obj_get_value(ctx, target_column, record_id, &value);
+      if (greater(ctx, &value, data->min) && less(ctx, &value, data->max)) {
         grn_posting posting;
         posting.rid = record_id;
         posting.sid = 1;
@@ -3165,13 +3182,20 @@ selector_between_sequential_search(grn_ctx *ctx,
         grn_ii_posting_add(ctx, &posting, (grn_hash *)res, op);
       }
     }
-    grn_obj_unlink(ctx, expr);
+
+    GRN_OBJ_FIN(ctx, &value);
+
+    if (target_column != data->value &&
+        target_column->header.type == GRN_ACCESSOR) {
+      grn_obj_unlink(ctx, target_column);
+    }
+
     grn_table_cursor_close(ctx, cursor);
 
     grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
   }
 
-  return GRN_TRUE;
+  return GRN_SUCCESS;
 }
 
 static grn_rc
@@ -3184,13 +3208,10 @@ selector_between(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   int limit = -1;
   int flags = GRN_CURSOR_ASCENDING | GRN_CURSOR_BY_KEY;
   between_data data;
+  grn_bool use_sequential_search;
   grn_obj *index_table = NULL;
   grn_table_cursor *cursor;
   grn_id id;
-
-  if (!index) {
-    return GRN_INVALID_ARGUMENT;
-  }
 
   between_data_init(ctx, &data);
   rc = between_parse_args(ctx, nargs - 1, args + 1, &data);
@@ -3205,9 +3226,23 @@ selector_between(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     flags |= GRN_CURSOR_LT;
   }
 
-  index_table = grn_ctx_at(ctx, index->header.domain);
-  if (selector_between_sequential_search(ctx, table, index, index_table,
-                                         &data, res, op)) {
+  if (index) {
+    double ratio = grn_between_too_many_index_match_ratio;
+    index_table = grn_ctx_at(ctx, index->header.domain);
+    use_sequential_search =
+      selector_between_sequential_search_should_use(ctx,
+                                                    table,
+                                                    index,
+                                                    index_table,
+                                                    &data,
+                                                    res,
+                                                    op,
+                                                    ratio);
+  } else {
+    use_sequential_search = GRN_TRUE;
+  }
+  if (use_sequential_search) {
+    rc = selector_between_sequential_search(ctx, table, &data, res, op);
     goto exit;
   }
 
