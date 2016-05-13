@@ -6633,7 +6633,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
             if (ctx->rc) { break; }
             e->codes = codes + si->start;
             e->codes_curr = si->end - si->start + 1;
-            grn_table_select_sequential(ctx, table, expr, v,
+            grn_table_select_sequential(ctx, table, (grn_obj *)e, v,
                                         res, si->logical_op);
           }
         }
