@@ -86,6 +86,12 @@ if(GRN_WITH_MRUBY)
     set(MRUBY_C_COMPILE_FLAGS
       "${MRUBY_C_COMPILE_FLAGS} -Wno-bad-function-cast")
   endif()
+  if(WIN32)
+    add_definitions(
+      "-DMRB_BUILD_AS_DLL"
+      "-DMRB_CORE"
+      )
+  endif()
   set_source_files_properties(${MRUBY_ALL_SOURCES}
     PROPERTIES
     COMPILE_FLAGS "${MRUBY_C_COMPILE_FLAGS}")
