@@ -150,22 +150,34 @@ main(int argc, gchar **argv)
   reporter = bench_reporter_new();
 
   {
-    BenchmarkData data_small;
-    BenchmarkData data_medium;
-    BenchmarkData data_large;
-    BenchmarkData data_very_large;
+    BenchmarkData data_small_between;
+    BenchmarkData data_small_range;
+    BenchmarkData data_medium_between;
+    BenchmarkData data_medium_range;
+    BenchmarkData data_large_between;
+    BenchmarkData data_large_range;
+    BenchmarkData data_very_large_between;
+    BenchmarkData data_very_large_range;
 
-#define REGISTER(data, n_records_, min, max)                    \
+#define REGISTER(data, n_records_, min, max, is_between)        \
     do {                                                        \
       gchar *label;                                             \
-      label = g_strdup_printf("(%6d, %6d] (%7d)",               \
-                              min, max, n_records_);            \
+      label =                                                   \
+        g_strdup_printf("(%6d, %6d] (%7d): %7s",                \
+                        min, max, n_records_,                   \
+                        is_between ? "between" : "range");      \
       data.n_records = n_records_;                              \
-      data.command =                                            \
-        "select Entries --cache no "                            \
-        "--filter "                                             \
-        "'between(rank, " #min ", \"exclude\","                 \
-                      " " #max ", \"include\")'";               \
+      if (is_between) {                                         \
+        data.command =                                          \
+          "select Entries --cache no "                          \
+          "--filter "                                           \
+          "'between(rank, " #min ", \"exclude\","               \
+                         " " #max ", \"include\")'";            \
+      } else {                                                  \
+        data.command =                                          \
+          "select Entries --cache no "                          \
+          "--filter 'rank > " #min " &&  rank <= " #max "'";    \
+      }                                                         \
       bench_startup(&data);                                     \
       bench_reporter_register(reporter, label,                  \
                               n,                                \
@@ -176,27 +188,51 @@ main(int argc, gchar **argv)
       g_free(label);                                            \
     } while(FALSE)
 
-    REGISTER(data_small,
+    REGISTER(data_small_between,
              1000,
-             500, 600);
-    REGISTER(data_medium,
+             500, 600,
+             TRUE);
+    REGISTER(data_small_range,
+             1000,
+             500, 600,
+             FALSE);
+    REGISTER(data_medium_between,
              10000,
-             5000, 5100);
-    REGISTER(data_large,
+             5000, 5100,
+             TRUE);
+    REGISTER(data_medium_range,
+             10000,
+             5000, 5100,
+             FALSE);
+    REGISTER(data_large_between,
              100000,
-             50000, 50100);
-    REGISTER(data_very_large,
+             50000, 50100,
+             TRUE);
+    REGISTER(data_large_range,
+             100000,
+             50000, 50100,
+             FALSE);
+    REGISTER(data_very_large_between,
              1000000,
-             500000, 500100);
+             500000, 500100,
+             TRUE);
+    REGISTER(data_very_large_range,
+             1000000,
+             500000, 500100,
+             FALSE);
 
 #undef REGISTER
 
     bench_reporter_run(reporter);
 
-    bench_shutdown(&data_small);
-    bench_shutdown(&data_medium);
-    bench_shutdown(&data_large);
-    bench_shutdown(&data_very_large);
+    bench_shutdown(&data_small_between);
+    bench_shutdown(&data_small_range);
+    bench_shutdown(&data_medium_between);
+    bench_shutdown(&data_medium_range);
+    bench_shutdown(&data_large_between);
+    bench_shutdown(&data_large_range);
+    bench_shutdown(&data_very_large_between);
+    bench_shutdown(&data_very_large_range);
   }
   g_object_unref(reporter);
 
