@@ -16,6 +16,40 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+/*
+  Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz
+
+  CFLAGS: -O2 -g
+
+  Groonga: e2971d9a555a90724b76964cc8c8805373500b4a
+  % make --quiet -C benchmark run-bench-between-sequential
+  run-bench-between-sequential:
+  Process 10 times in each pattern
+                                         (total)    (average)  (median)
+    (   500,    600] (   1000): between: (0.0528s)  (0.0053s)  (0.0043s)
+    (   500,    600] (   1000):   range: (0.0120s)  (0.0012s)  (0.2500ms)
+    (  5000,   5100] (  10000): between: (0.4052s)  (0.0405s)  (0.0395s)
+    (  5000,   5100] (  10000):   range: (0.0197s)  (0.0020s)  (0.0010s)
+    ( 50000,  50100] ( 100000): between: (3.9343s)  (0.3934s)  (0.3900s)
+    ( 50000,  50100] ( 100000):   range: (0.0969s)  (0.0097s)  (0.0088s)
+    (500000, 500100] (1000000): between: (38.2969s)  (3.8297s)  (3.7983s)
+    (500000, 500100] (1000000):   range: (0.9158s)  (0.0916s)  (0.0900s)
+
+  Groonga: 35e4e431bb7660b3170e98c329f7219bd6723f05
+  % make --quiet -C benchmark run-bench-between-sequential
+  run-bench-between-sequential:
+  Process 10 times in each pattern
+                                         (total)    (average)  (median)
+    (   500,    600] (   1000): between: (0.0130s)  (0.0013s)  (0.2590ms)
+    (   500,    600] (   1000):   range: (0.0124s)  (0.0012s)  (0.2530ms)
+    (  5000,   5100] (  10000): between: (0.0163s)  (0.0016s)  (0.6440ms)
+    (  5000,   5100] (  10000):   range: (0.0205s)  (0.0021s)  (0.0011s)
+    ( 50000,  50100] ( 100000): between: (0.0611s)  (0.0061s)  (0.0051s)
+    ( 50000,  50100] ( 100000):   range: (0.1004s)  (0.0100s)  (0.0091s)
+    (500000, 500100] (1000000): between: (0.4518s)  (0.0452s)  (0.0442s)
+    (500000, 500100] (1000000):   range: (0.8866s)  (0.0887s)  (0.0878s)
+*/
+
 #include <stdio.h>
 #include <string.h>
 
