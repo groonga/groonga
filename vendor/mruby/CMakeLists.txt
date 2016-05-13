@@ -86,18 +86,16 @@ if(GRN_WITH_MRUBY)
     set(MRUBY_C_COMPILE_FLAGS
       "${MRUBY_C_COMPILE_FLAGS} -Wno-bad-function-cast")
   endif()
-  add_definitions(
-    ${MRUBY_DEFINITIONS}
-    )
   if(WIN32)
-    add_definitions(
-      "-DMRB_BUILD_AS_DLL"
-      "-DMRB_CORE"
-      )
+    set(MRUBY_DEFINITIONS_WIN32
+      "MRB_BUILD_AS_DLL MRB_CORE")
+  else()
+    set(MRUBY_DEFINITIONS_WIN32 "")
   endif()
   set_source_files_properties(${MRUBY_ALL_SOURCES}
     PROPERTIES
-    COMPILE_FLAGS "${MRUBY_C_COMPILE_FLAGS}")
+    COMPILE_FLAGS "${MRUBY_C_COMPILE_FLAGS}"
+    COMPILE_DEFINITIONS "${MRUBY_DEFINITIONS} ${MRUBY_DEFINITIONS_WIN32}")
 
   install(FILES
     "${MRUBY_LEGAL_FILE}"
