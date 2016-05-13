@@ -112,8 +112,7 @@ grn_ts_table_get_value(grn_ctx *ctx, grn_obj *table, grn_ts_id id)
 {
   switch (table->header.type) {
     case GRN_TABLE_HASH_KEY: {
-      uint32_t size;
-      return grn_hash_get_value_(ctx, (grn_hash *)table, id, &size);
+      return grn_hash_get_value_(ctx, (grn_hash *)table, id, NULL);
     }
     case GRN_TABLE_PAT_KEY: {
       uint32_t size;

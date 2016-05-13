@@ -932,11 +932,10 @@ grn_select_drilldown_execute(grn_ctx *ctx,
   unsigned int n_keys = 0;
   grn_obj *target_table = table;
   grn_drilldown_data *drilldown;
-  uint32_t size;
   grn_table_group_result *result;
 
   drilldown =
-    (grn_drilldown_data *)grn_hash_get_value_(ctx, drilldowns, id, &size);
+    (grn_drilldown_data *)grn_hash_get_value_(ctx, drilldowns, id, NULL);
   result = &(drilldown->result);
 
   result->limit = 1;
@@ -974,7 +973,7 @@ grn_select_drilldown_execute(grn_ctx *ctx,
         (grn_drilldown_data *)grn_hash_get_value_(ctx,
                                                   drilldowns,
                                                   dependent_id,
-                                                  &size);
+                                                  NULL);
       dependent_result = &(dependent_drilldown->result);
       target_table = dependent_result->table;
     }
@@ -1105,12 +1104,11 @@ grn_select_drilldown(grn_ctx *ctx,
 {
   grn_id first_id = 1;
   grn_drilldown_data *drilldown;
-  uint32_t size;
   grn_table_group_result *result;
   uint32_t i;
 
   drilldown =
-    (grn_drilldown_data *)grn_hash_get_value_(ctx, drilldowns, first_id, &size);
+    (grn_drilldown_data *)grn_hash_get_value_(ctx, drilldowns, first_id, NULL);
   if (!drilldown) {
     return;
   }
@@ -1228,9 +1226,8 @@ drilldown_tsort_visit(grn_ctx *ctx,
     statuses[index] = TSORT_STATUS_VISITING;
     {
       grn_drilldown_data *drilldown;
-      uint32_t size;
       drilldown =
-        (grn_drilldown_data *)grn_hash_get_value_(ctx, drilldowns, id, &size);
+        (grn_drilldown_data *)grn_hash_get_value_(ctx, drilldowns, id, NULL);
       if (drilldown->table_name.length > 0) {
         grn_id dependent_id;
         dependent_id = grn_hash_get(ctx, drilldowns,
@@ -1750,12 +1747,11 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
         grn_drilldown_data *anonymous_drilldown = NULL;
         if (grn_hash_size(ctx, data->drilldowns) == 1) {
           grn_id first_id = 1;
-          uint32_t size;
           anonymous_drilldown =
             (grn_drilldown_data *)grn_hash_get_value_(ctx,
                                                       data->drilldowns,
                                                       first_id,
-                                                      &size);
+                                                      NULL);
           if (anonymous_drilldown) {
             if (anonymous_drilldown->label.length > 0) {
               anonymous_drilldown = NULL;

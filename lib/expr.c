@@ -704,7 +704,7 @@ grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
   uint32_t n;
   grn_obj *res = NULL;
   grn_hash *vars = grn_expr_get_vars(ctx, expr, &n);
-  if (vars) { res = (grn_obj *)grn_hash_get_value_(ctx, vars, offset + 1, &n); }
+  if (vars) { res = (grn_obj *)grn_hash_get_value_(ctx, vars, offset + 1, NULL); }
   return res;
 }
 

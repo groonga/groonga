@@ -904,9 +904,7 @@ grn_plugin_ensure_registered(grn_ctx *ctx, grn_obj *proc)
   CRITICAL_SECTION_ENTER(grn_plugins_lock);
   {
     const char *value;
-    uint32_t value_size;
-    value = grn_hash_get_value_(&grn_plugins_ctx, grn_plugins, plugin_id,
-                                &value_size);
+    value = grn_hash_get_value_(&grn_plugins_ctx, grn_plugins, plugin_id, NULL);
     if (value) {
       plugin = *((grn_plugin **)value);
     }

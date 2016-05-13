@@ -2671,7 +2671,9 @@ grn_hash_get_value_(grn_ctx *ctx, grn_hash *hash, grn_id id, uint32_t *size)
   if (!value) {
     return NULL;
   }
-  *size = hash->value_size;
+  if (size) {
+    *size = hash->value_size;
+  }
   return (const char *)value;
 }
 
