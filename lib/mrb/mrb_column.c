@@ -33,7 +33,7 @@ mrb_grn_column_array_reference(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_obj *column;
-  grn_id record_id;
+  mrb_int record_id;
   grn_obj *column_value;
 
   column = DATA_PTR(self);

@@ -52,7 +52,8 @@ logger_log(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "izizs",
                &level, &file, &line, &method, &message, &message_size);
-  grn_logger_put(ctx, level, file, line, method, "%.*s", message_size, message);
+  grn_logger_put(ctx, level, file, line, method,
+                 "%.*s", (int)message_size, message);
 
   return self;
 }

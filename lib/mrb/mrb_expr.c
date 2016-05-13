@@ -104,11 +104,11 @@ mrb_grn_scan_info_put_index(mrb_state *mrb, mrb_value self)
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   scan_info *si;
   mrb_value mrb_index;
-  int sid;
-  int32_t weight;
+  mrb_int sid;
+  mrb_int weight;
   mrb_value mrb_scorer;
   mrb_value mrb_scorer_args_expr;
-  int32_t scorer_args_expr_offset;
+  mrb_int scorer_args_expr_offset;
   grn_obj *index;
   grn_obj *scorer = NULL;
   grn_obj *scorer_args_expr = NULL;
@@ -162,7 +162,7 @@ static mrb_value
 mrb_grn_scan_info_set_end(mrb_state *mrb, mrb_value self)
 {
   scan_info *si;
-  int end;
+  mrb_int end;
 
   mrb_get_args(mrb, "i", &end);
   si = DATA_PTR(self);
@@ -190,7 +190,7 @@ static mrb_value
 mrb_grn_scan_info_set_flags(mrb_state *mrb, mrb_value self)
 {
   scan_info *si;
-  int flags;
+  mrb_int flags;
 
   mrb_get_args(mrb, "i", &flags);
   si = DATA_PTR(self);
@@ -238,7 +238,7 @@ static mrb_value
 mrb_grn_scan_info_set_max_interval(mrb_state *mrb, mrb_value self)
 {
   scan_info *si;
-  int max_interval;
+  mrb_int max_interval;
 
   mrb_get_args(mrb, "i", &max_interval);
   si = DATA_PTR(self);
@@ -261,7 +261,7 @@ static mrb_value
 mrb_grn_scan_info_set_similarity_threshold(mrb_state *mrb, mrb_value self)
 {
   scan_info *si;
-  int similarity_threshold;
+  mrb_int similarity_threshold;
 
   mrb_get_args(mrb, "i", &similarity_threshold);
   si = DATA_PTR(self);
@@ -285,7 +285,7 @@ mrb_grn_scan_info_get_arg(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   scan_info *si;
-  int index;
+  mrb_int index;
   grn_obj *arg;
 
   mrb_get_args(mrb, "i", &index);
@@ -326,7 +326,7 @@ static mrb_value
 mrb_grn_scan_info_set_start_position(mrb_state *mrb, mrb_value self)
 {
   scan_info *si;
-  int start_position;
+  mrb_int start_position;
 
   mrb_get_args(mrb, "i", &start_position);
   si = DATA_PTR(self);
@@ -650,7 +650,7 @@ mrb_grn_expression_append_object(mrb_state *mrb, mrb_value self)
   grn_obj *object;
   mrb_value mrb_op;
   grn_operator op;
-  int n_args;
+  mrb_int n_args;
 
   expr = DATA_PTR(self);
   mrb_get_args(mrb, "ooi", &mrb_object, &mrb_op, &n_args);
@@ -671,7 +671,7 @@ mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
   mrb_value mrb_constant;
   mrb_value mrb_op;
   grn_operator op;
-  int n_args;
+  mrb_int n_args;
 
   expr = DATA_PTR(self);
   mrb_get_args(mrb, "ooi", &mrb_constant, &mrb_op, &n_args);
@@ -765,7 +765,7 @@ mrb_grn_expression_append_operator(mrb_state *mrb, mrb_value self)
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_obj *expr;
   mrb_value mrb_op;
-  int n_args;
+  mrb_int n_args;
   grn_operator op;
 
   expr = DATA_PTR(self);

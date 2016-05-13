@@ -49,7 +49,8 @@ query_logger_log_raw(mrb_state *mrb, mrb_value self)
   mrb_int message_size;
 
   mrb_get_args(mrb, "izs", &flag, &mark, &message, &message_size);
-  grn_query_logger_put(ctx, flag, mark, "%.*s", message_size, message);
+  grn_query_logger_put(ctx, flag, mark,
+                       "%.*s", (int)message_size, message);
 
   return self;
 }

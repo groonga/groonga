@@ -87,7 +87,7 @@ if(GRN_WITH_MRUBY)
       "${MRUBY_C_COMPILE_FLAGS} -Wno-bad-function-cast")
   endif()
   add_definitions(
-    "-DMRB_INT64"
+    ${MRUBY_DEFINITIONS}
     )
   if(WIN32)
     add_definitions(

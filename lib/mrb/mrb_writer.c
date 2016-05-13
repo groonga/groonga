@@ -213,7 +213,7 @@ static mrb_value
 writer_set_content_type(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
-  grn_content_type content_type;
+  mrb_int content_type;
 
   mrb_get_args(mrb, "i", &content_type);
 

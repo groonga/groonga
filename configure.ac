@@ -1556,6 +1556,9 @@ fi
 AC_SUBST(MRUBY_CFLAGS)
 AM_CONDITIONAL(WITH_MRUBY, test "$enable_mruby" = "yes")
 
+MRUBY_CPPFLAGS="-DMRB_INT64"
+AC_SUBST(MRUBY_CPPFLAGS)
+
 # This option is used in vendor/onigmo/configure
 AC_ARG_ENABLE(shared-onigmo,
   [AS_HELP_STRING([--enable-shared-onigmo],

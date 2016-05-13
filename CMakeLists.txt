@@ -600,6 +600,7 @@ else()
   set(MRUBY_INCLUDE_DIRS "")
   set(MRUBY_LIBS "")
 endif()
+set(MRUBY_DEFINITIONS "-DMRB_INT64")
 
 # TODO: Support using system Onigmo instead of bundled Onigmo.
 set(GRN_WITH_ONIGMO ON)

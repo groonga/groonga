@@ -100,7 +100,7 @@ mrb_grn_command_run_wrapper(grn_ctx *ctx,
       ERR(GRN_COMMAND_ERROR,
           "failed to run command: <%*.s>: %.*s",
           name_size, name,
-          RSTRING_LEN(reason), RSTRING_PTR(reason));
+          (int)RSTRING_LEN(reason), RSTRING_PTR(reason));
     }
   }
   mrb_gc_arena_restore(mrb, arena_index);

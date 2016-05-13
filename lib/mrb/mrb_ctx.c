@@ -196,7 +196,7 @@ ctx_set_error_message(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "S", &error_message);
   grn_ctx_log(ctx, "%.*s",
-              RSTRING_LEN(error_message),
+              (int)RSTRING_LEN(error_message),
               RSTRING_PTR(error_message));
 
   return error_message;

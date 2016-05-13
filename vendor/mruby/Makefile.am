@@ -26,7 +26,7 @@ noinst_LTLIBRARIES = libmruby.la
 
 AM_CPPFLAGS =					\
 	-I$(srcdir)/../onigmo-source		\
-	-DMRB_INT64
+	$(MRUBY_CPPFLAGS)
 
 if PLATFORM_WIN32
 AM_CPPFLAGS +=					\
