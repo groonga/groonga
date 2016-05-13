@@ -25,7 +25,8 @@ mruby_data_DATA =				\
 noinst_LTLIBRARIES = libmruby.la
 
 AM_CPPFLAGS =					\
-	-I$(srcdir)/../onigmo-source
+	-I$(srcdir)/../onigmo-source		\
+	-DMRB_INT64
 
 if PLATFORM_WIN32
 AM_CPPFLAGS +=					\

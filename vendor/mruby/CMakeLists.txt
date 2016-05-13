@@ -86,6 +86,9 @@ if(GRN_WITH_MRUBY)
     set(MRUBY_C_COMPILE_FLAGS
       "${MRUBY_C_COMPILE_FLAGS} -Wno-bad-function-cast")
   endif()
+  add_definitions(
+    "-DMRB_INT64"
+    )
   if(WIN32)
     add_definitions(
       "-DMRB_BUILD_AS_DLL"
