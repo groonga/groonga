@@ -104,6 +104,7 @@ CMakeFiles
 /benchmark/bench-query-optimizer
 /benchmark/bench-range-select
 /benchmark/bench-result-set
+/benchmark/bench-between-sequential
 /packages/*/*.log
 /packages/apt/env.sh
 /packages/apt/debian/groonga-keyring.postrm

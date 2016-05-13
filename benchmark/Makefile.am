@@ -5,14 +5,15 @@ SUBDIRS =					\
 NONEXISTENT_CXX_SOURCE = nonexistent.cpp
 
 if WITH_BENCHMARK
-noinst_PROGRAMS =		\
-	bench-table-factory	\
-	bench-geo-distance	\
-	bench-geo-select	\
-	bench-ctx-create	\
-	bench-query-optimizer	\
-	bench-range-select	\
-	bench-result-set
+noinst_PROGRAMS =				\
+	bench-table-factory			\
+	bench-geo-distance			\
+	bench-geo-select			\
+	bench-ctx-create			\
+	bench-query-optimizer			\
+	bench-range-select			\
+	bench-result-set			\
+	bench-between-sequential
 endif
 
 EXTRA_DIST =					\
@@ -56,6 +57,9 @@ nodist_EXTRA_bench_range_select_SOURCES = $(NONEXISTENT_CXX_SOURCE)
 bench_result_set_SOURCES = bench-result-set.c
 nodist_EXTRA_bench_result_set_SOURCES = $(NONEXISTENT_CXX_SOURCE)
 
+bench_between_sequential_SOURCES = bench-between-sequential.c
+nodist_EXTRA_bench_between_sequential_SOURCES = $(NONEXISTENT_CXX_SOURCE)
+
 benchmarks =					\
 	run-bench-table-factory			\
 	run-bench-geo-distance			\
@@ -63,7 +67,8 @@ benchmarks =					\
 	run-bench-ctx-create			\
 	run-bench-query-optimizer		\
 	run-bench-range-select			\
-	run-bench-result-set
+	run-bench-result-set			\
+	run-bench-between-sequential
 
 run-bench-table-factory: bench-table-factory
 	@echo $@:
@@ -118,5 +123,13 @@ run-bench-result-set: bench-result-set
 	env							\
 	  GRN_RUBY_SCRIPTS_DIR="$(top_srcdir)/lib/mrb/scripts"	\
 	  ./bench-result-set
+
+run-bench-between-sequential: bench-between-sequential
+	@echo $@:
+	@[ ! -e tmp ] && ln -s /dev/shm tmp || :
+	@mkdir -p tmp/between-sequential
+	env							\
+	  GRN_RUBY_SCRIPTS_DIR="$(top_srcdir)/lib/mrb/scripts"	\
+	  ./bench-between-sequential
 
 benchmark: $(benchmarks)
