@@ -14,6 +14,8 @@ notifications:
 
 install:
   - tzutil /s "Tokyo Standard Time"
+  - choco install -y imdisk-toolkit
+  - imdisk /?
 
 build_script:
   - ps: |
