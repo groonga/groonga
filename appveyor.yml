@@ -15,7 +15,10 @@ notifications:
 install:
   - tzutil /s "Tokyo Standard Time"
   - choco install -y imdisk-toolkit
-  - imdisk /?
+  - mkdir tmp
+  - imdisk -a -t file -m tmp -o awe -s 512M -p "/fs:ntfs /q /y"
+  - imdisk -l
+  - imdisk -l -m tmp
 
 build_script:
   - ps: |
