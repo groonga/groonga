@@ -17,7 +17,6 @@ install:
   - choco install -y imdisk-toolkit
   - mkdir tmp
   - imdisk -a -t file -m tmp -o awe -s 512M -p "/fs:ntfs /q /y"
-  - imdisk -l
   - imdisk -l -m tmp
 
 build_script:
