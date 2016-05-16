@@ -7,6 +7,10 @@ SUBDIRS =					\
 lib_LTLIBRARIES = libgroonga.la
 
 include $(top_srcdir)/version.sh
+
+AM_CPPFLAGS =					\
+	$(MRUBY_CPPFLAGS)
+
 AM_CFLAGS =					\
 	$(NO_STRICT_ALIASING_CFLAGS)		\
 	$(COVERAGE_CFLAGS)			\
