@@ -59,6 +59,7 @@ set_source_files_properties(
   PROPERTIES
   COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 set_source_files_properties(
+  ${LIBGROONGA_SOURCES}
   ${LIBGRNMRB_SOURCES}
   PROPERTIES
   COMPILE_DEFINITIONS "${MRUBY_DEFINITIONS}")
