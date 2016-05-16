@@ -17,7 +17,6 @@ install:
   - choco install -y imdisk-toolkit
   - mkdir tmp
   - imdisk -a -t file -m tmp -o awe -s 512M -p "/fs:ntfs /q /y"
-  - imdisk -l -m tmp
 
 build_script:
   - ps: |
@@ -40,4 +39,4 @@ before_test:
   - gem install grntest
 test_script:
   - SET GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE=%APPVEYOR_BUILD_FOLDER%\test\command\tmp\synonyms.tsv
-  #- grntest --groonga c:\groonga\bin\groonga.exe --base-directory test\command --reporter mark --n-workers 4 test\command\suite
+  - grntest --groonga c:\groonga\bin\groonga.exe --base-directory test\command --reporter mark test\command\suite
