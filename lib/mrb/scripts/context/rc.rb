@@ -186,6 +186,8 @@ module Groonga
         register(:scorer_error, -76, ScorerError)
       CANCEL =
         register(:cancel, -77, Cancel)
+      WINDOW_FUNCTION_ERROR =
+        register(:window_function_error, -78, WindowFunctionError)
 
       GroongaError.rc = UNKNOWN_ERROR
     end

@@ -271,6 +271,9 @@ grn_proc_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   case GRN_PROC_SCORER :
     GRN_TEXT_PUTS(ctx, buf, "scorer");
     break;
+  case GRN_PROC_WINDOW_FUNCTION :
+    GRN_TEXT_PUTS(ctx, buf, "window-function");
+    break;
   }
   GRN_TEXT_PUTS(ctx, buf, " ");
 

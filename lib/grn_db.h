@@ -185,6 +185,7 @@ struct _grn_proc {
     struct {
       grn_scorer_score_func *score;
     } scorer;
+    grn_window_function_func *window_function;
   } callbacks;
 
   void *user_data;

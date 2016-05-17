@@ -36,6 +36,7 @@
 #include "grn_report.h"
 #include "grn_util.h"
 #include "grn_cache.h"
+#include "grn_window_functions.h"
 #include <string.h>
 
 typedef struct {
@@ -421,6 +422,7 @@ grn_db_open(grn_ctx *ctx, const char *path)
     grn_db_init_builtin_normalizers(ctx);
     grn_db_init_builtin_scorers(ctx);
     grn_db_init_builtin_commands(ctx);
+    grn_db_init_builtin_window_functions(ctx);
 
     if (grn_table_size(ctx, (grn_obj *)s) > n_records) {
       grn_obj_flush(ctx, (grn_obj *)s);
@@ -11847,6 +11849,7 @@ grn_db_init_builtin_types(grn_ctx *ctx)
     grn_obj_register(ctx, db, buf, 5);
   }
   grn_db_init_builtin_commands(ctx);
+  grn_db_init_builtin_window_functions(ctx);
   for (id = grn_db_curr_id(ctx, db) + 1; id < GRN_N_RESERVED_TYPES; id++) {
     grn_itoh(id, buf + 3, 2);
     grn_obj_register(ctx, db, buf, 5);

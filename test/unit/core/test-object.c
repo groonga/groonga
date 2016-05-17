@@ -55,6 +55,8 @@ void data_is_token_filter_proc(void);
 void test_is_token_filter_proc(gconstpointer data);
 void data_is_scorer_proc(void);
 void test_is_scorer_proc(gconstpointer data);
+void data_is_window_function_proc(void);
+void test_is_window_function_proc(gconstpointer data);
 void data_type_to_string(void);
 void test_type_to_string(gconstpointer data);
 
@@ -624,6 +626,38 @@ test_is_scorer_proc(gconstpointer data)
     cut_assert_true(grn_obj_is_scorer_proc(context, object));
   } else {
     cut_assert_false(grn_obj_is_scorer_proc(context, object));
+  }
+}
+
+void
+data_is_window_function_proc(void)
+{
+#define ADD_DATUM(expected, name)                                       \
+  gcut_add_datum((expected ?                                            \
+                  "window-function-proc - " name :                      \
+                  "not window-function-proc - " name),                  \
+                 "expected", G_TYPE_BOOLEAN, expected,                  \
+                 "name", G_TYPE_STRING, name,                           \
+                 NULL)
+
+  ADD_DATUM(TRUE, "row_number");
+  ADD_DATUM(FALSE, "geo_in_circle");
+
+#undef ADD_DATUM
+}
+
+void
+test_is_window_function_proc(gconstpointer data)
+{
+  const gchar *name;
+  grn_obj *object;
+
+  name = gcut_data_get_string(data, "name");
+  object = grn_ctx_get(context, name, strlen(name));
+  if (gcut_data_get_string(data, "expected")) {
+    cut_assert_true(grn_obj_is_window_function_proc(context, object));
+  } else {
+    cut_assert_false(grn_obj_is_window_function_proc(context, object));
   }
 }
 

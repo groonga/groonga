@@ -735,6 +735,12 @@ grn_mrb_ctx_check(mrb_state *mrb)
                  "cancel: <%s>(%d)",
                  ctx->errbuf, ctx->rc);
     break;
+  case GRN_WINDOW_FUNCTION_ERROR:
+    error_class = mrb_class_get_under(mrb, module, "WindowFunctionError");
+    grn_snprintf(message, MESSAGE_SIZE, MESSAGE_SIZE,
+                 "window function error: <%s>(%d)",
+                 ctx->errbuf, ctx->rc);
+    break;
   }
 
   if (!error_class) {

@@ -62,7 +62,9 @@ typedef struct {
   grn_obj *type;
   grn_obj_flags flags;
   grn_select_string value;
-  grn_select_string sortby;
+  struct {
+    grn_select_string sort_keys;
+  } window;
 } grn_column_data;
 
 typedef struct {
@@ -221,8 +223,8 @@ grn_column_data_init(grn_ctx *ctx,
   column->flags = GRN_OBJ_COLUMN_SCALAR;
   column->value.value = NULL;
   column->value.length = 0;
-  column->sortby.value = NULL;
-  column->sortby.length = 0;
+  column->window.sort_keys.value = NULL;
+  column->window.sort_keys.length = 0;
   return GRN_TRUE;
 }
 
@@ -232,7 +234,7 @@ grn_column_data_fill(grn_ctx *ctx,
                      grn_obj *type_raw,
                      grn_obj *flags,
                      grn_obj *value,
-                     grn_obj *sortby)
+                     grn_obj *window_sort_keys)
 {
   if (type_raw && GRN_TEXT_LEN(type_raw) > 0) {
     grn_obj *type;
@@ -289,7 +291,7 @@ grn_column_data_fill(grn_ctx *ctx,
   }
 
   GRN_SELECT_FILL_STRING(column->value, value);
-  GRN_SELECT_FILL_STRING(column->sortby, sortby);
+  GRN_SELECT_FILL_STRING(column->window.sort_keys, window_sort_keys);
 
   return GRN_TRUE;
 }
@@ -314,7 +316,9 @@ grn_column_data_collect(grn_ctx *ctx,
     grn_obj *type;
     grn_obj *flags;
     grn_obj *value;
-    grn_obj *sortby;
+    struct {
+      grn_obj *sort_keys;
+    } window;
 
     grn_hash_cursor_get_value(ctx, cursor, (void **)&column);
 
@@ -332,12 +336,12 @@ grn_column_data_collect(grn_ctx *ctx,
     GET_VAR(type);
     GET_VAR(flags);
     GET_VAR(value);
-    GET_VAR(sortby);
+    GET_VAR(window.sort_keys);
 
 #undef GET_VAR
 
     grn_column_data_fill(ctx, column,
-                         type, flags, value, sortby);
+                         type, flags, value, window.sort_keys);
   }
   grn_hash_cursor_close(ctx, cursor);
   return GRN_TRUE;
@@ -766,11 +770,6 @@ grn_select_apply_columns(grn_ctx *ctx,
   while (grn_hash_cursor_next(ctx, columns_cursor) != GRN_ID_NIL) {
     grn_column_data *column_data;
     grn_obj *column;
-    grn_obj *expression;
-    grn_obj *record;
-    grn_table_cursor *table_cursor;
-    grn_id id;
-    grn_obj *target_table = table;
 
     grn_hash_cursor_get_value(ctx, columns_cursor, (void **)&column_data);
 
@@ -792,50 +791,11 @@ grn_select_apply_columns(grn_ctx *ctx,
       break;
     }
 
-    if (column_data->sortby.length > 0) {
-      grn_table_sort_key *sort_keys;
-      uint32_t n_sort_keys;
-      sort_keys = grn_table_sort_key_from_str(ctx,
-                                              column_data->sortby.value,
-                                              column_data->sortby.length,
-                                              table, &n_sort_keys);
-      if (!sort_keys) {
-        grn_obj_close(ctx, column);
-        GRN_PLUGIN_ERROR(ctx,
-                         GRN_INVALID_ARGUMENT,
-                         "[select][column][%s][%.*s] failed to parse sort key: %s",
-                         grn_column_stage_name(column_data->stage),
-                         (int)(column_data->label.length),
-                         column_data->label.value,
-                         ctx->errbuf);
-        break;
-      }
-
-      target_table = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
-                                      NULL, table);
-      if (!target_table) {
-        grn_obj_close(ctx, column);
-        grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
-        GRN_PLUGIN_ERROR(ctx,
-                         GRN_INVALID_ARGUMENT,
-                         "[select][column][%s][%.*s] failed to create sorted table: %s",
-                         grn_column_stage_name(column_data->stage),
-                         (int)(column_data->label.length),
-                         column_data->label.value,
-                         ctx->errbuf);
-        break;
-      }
-      grn_table_sort(ctx, table, 0, -1,
-                     target_table, sort_keys, n_sort_keys);
-      grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
-    }
-
-    GRN_EXPR_CREATE_FOR_QUERY(ctx, target_table, expression, record);
+    grn_obj *expression;
+    grn_obj *record;
+    GRN_EXPR_CREATE_FOR_QUERY(ctx, table, expression, record);
     if (!expression) {
       grn_obj_close(ctx, column);
-      if (column_data->sortby.length > 0) {
-        grn_obj_unlink(ctx, target_table);
-      }
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
                        "[select][column][%s][%.*s] "
@@ -857,9 +817,6 @@ grn_select_apply_columns(grn_ctx *ctx,
     if (ctx->rc != GRN_SUCCESS) {
       grn_obj_close(ctx, expression);
       grn_obj_close(ctx, column);
-      if (column_data->sortby.length > 0) {
-        grn_obj_unlink(ctx, target_table);
-      }
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
                        "[select][column][%s][%.*s] "
@@ -874,46 +831,77 @@ grn_select_apply_columns(grn_ctx *ctx,
     }
     grn_select_expression_set_condition(ctx, expression, condition);
 
-    table_cursor = grn_table_cursor_open(ctx, target_table,
-                                         NULL, 0,
-                                         NULL, 0,
-                                         0, -1, GRN_CURSOR_BY_ID);
-    if (!table_cursor) {
-      grn_obj_close(ctx, expression);
-      grn_obj_close(ctx, column);
-      if (column_data->sortby.length > 0) {
-        grn_obj_unlink(ctx, target_table);
+    if (column_data->window.sort_keys.length > 0) {
+      grn_window_definition definition;
+      int n_sort_keys;
+      grn_rc rc;
+
+      definition.sort_keys =
+        grn_table_sort_key_from_str(ctx,
+                                    column_data->window.sort_keys.value,
+                                    column_data->window.sort_keys.length,
+                                    table, &n_sort_keys);
+      definition.n_sort_keys = n_sort_keys;
+      if (!definition.sort_keys) {
+        grn_obj_close(ctx, expression);
+        grn_obj_close(ctx, column);
+        GRN_PLUGIN_ERROR(ctx,
+                         GRN_INVALID_ARGUMENT,
+                         "[select][column][%s][%.*s] "
+                         "failed to parse sort keys: %s",
+                         grn_column_stage_name(column_data->stage),
+                         (int)(column_data->label.length),
+                         column_data->label.value,
+                         ctx->errbuf);
+        break;
       }
-      GRN_PLUGIN_ERROR(ctx,
-                       GRN_INVALID_ARGUMENT,
-                       "[select][column][%s][%.*s] "
-                       "failed to create cursor for getting records: %s",
-                       grn_column_stage_name(column_data->stage),
-                       (int)(column_data->label.length),
-                       column_data->label.value,
-                       ctx->errbuf);
-      break;
-    }
 
-    while ((id = grn_table_cursor_next(ctx, table_cursor)) != GRN_ID_NIL) {
-      grn_obj *value;
+      rc = grn_table_apply_window_function(ctx,
+                                           table,
+                                           column,
+                                           &definition,
+                                           expression);
+      grn_table_sort_key_close(ctx,
+                               definition.sort_keys,
+                               definition.n_sort_keys);
+      if (rc != GRN_SUCCESS) {
+        grn_obj_close(ctx, expression);
+        grn_obj_close(ctx, column);
+        break;
+      }
+    } else {
+      grn_table_cursor *table_cursor;
+      grn_id id;
 
-      GRN_RECORD_SET(ctx, record, id);
-      value = grn_expr_exec(ctx, expression, 0);
-      if (value) {
-        grn_id target_record_id = id;
-        if (column_data->sortby.length > 0) {
-          void *sorted_table_value;
-          grn_table_cursor_get_value(ctx, table_cursor, &sorted_table_value);
-          target_record_id = *((grn_id *)sorted_table_value);
+      table_cursor = grn_table_cursor_open(ctx, table,
+                                           NULL, 0,
+                                           NULL, 0,
+                                           0, -1, GRN_CURSOR_BY_ID);
+      if (!table_cursor) {
+        grn_obj_close(ctx, expression);
+        grn_obj_close(ctx, column);
+        GRN_PLUGIN_ERROR(ctx,
+                         GRN_INVALID_ARGUMENT,
+                         "[select][column][%s][%.*s] "
+                         "failed to create cursor for getting records: %s",
+                         grn_column_stage_name(column_data->stage),
+                         (int)(column_data->label.length),
+                         column_data->label.value,
+                         ctx->errbuf);
+        break;
+      }
+
+      while ((id = grn_table_cursor_next(ctx, table_cursor)) != GRN_ID_NIL) {
+        grn_obj *value;
+
+        GRN_RECORD_SET(ctx, record, id);
+        value = grn_expr_exec(ctx, expression, 0);
+        if (value) {
+          grn_obj_set_value(ctx, column, id, value, GRN_OBJ_SET);
         }
-        grn_obj_set_value(ctx, column, target_record_id, value, GRN_OBJ_SET);
       }
     }
 
-    if (column_data->sortby.length > 0) {
-      grn_obj_unlink(ctx, target_table);
-    }
     grn_obj_close(ctx, expression);
   }
 
