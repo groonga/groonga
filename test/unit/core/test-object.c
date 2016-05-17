@@ -640,7 +640,7 @@ data_is_window_function_proc(void)
                  "name", G_TYPE_STRING, name,                           \
                  NULL)
 
-  ADD_DATUM(TRUE, "row_number");
+  ADD_DATUM(TRUE, "record_number");
   ADD_DATUM(FALSE, "geo_in_circle");
 
 #undef ADD_DATUM
