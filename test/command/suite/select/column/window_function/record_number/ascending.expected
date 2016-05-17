@@ -12,7 +12,7 @@ load --table Items
 {"_key": "item6", "price": 222}
 ]
 [[0,0.0,0.0],6]
-select Items   --column[nth_row].stage initial   --column[nth_row].value 'row_number()'   --column[nth_row].type UInt32   --column[nth_row].window.sort_keys price   --output_columns '_key, price, nth_row'
+select Items   --column[nth_record].stage initial   --column[nth_record].value 'record_number()'   --column[nth_record].type UInt32   --column[nth_record].window.sort_keys price   --output_columns '_key, price, nth_record'
 [
   [
     0,
@@ -34,7 +34,7 @@ select Items   --column[nth_row].stage initial   --column[nth_row].value 'row_nu
           "UInt32"
         ],
         [
-          "nth_row",
+          "nth_record",
           "UInt32"
         ]
       ],
