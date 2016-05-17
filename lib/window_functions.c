@@ -27,14 +27,14 @@ window_function_record_number(grn_ctx *ctx,
                               int n_args)
 {
   grn_id id;
-  uint32_t i = 1;
+  uint32_t nth_record = 1;
   grn_obj value;
 
   GRN_UINT32_INIT(&value, 0);
   while ((id = grn_window_next(ctx, window))) {
-    GRN_UINT32_SET(ctx, &value, i);
+    GRN_UINT32_SET(ctx, &value, nth_record);
     grn_obj_set_value(ctx, output_column, id, &value, GRN_OBJ_SET);
-    i++;
+    nth_record++;
   }
   GRN_OBJ_FIN(ctx, &value);
 
