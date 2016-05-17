@@ -247,7 +247,8 @@ grn_ctx_impl_mrb_init_lazy(grn_ctx *ctx)
       reason = mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0);
       ERR(GRN_UNKNOWN_ERROR,
           "failed to initialize mruby: %.*s",
-          RSTRING_LEN(reason), RSTRING_PTR(reason));
+          (int)RSTRING_LEN(reason),
+          RSTRING_PTR(reason));
       mrb_close(ctx->impl->mrb.state);
       ctx->impl->mrb.state = NULL;
     } else {
