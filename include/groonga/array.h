@@ -71,6 +71,19 @@ GRN_API void *_grn_array_get_value(grn_ctx *ctx, grn_array *array, grn_id id);
   }\
 } while (0)
 
+#define GRN_ARRAY_EACH_BEGIN(ctx, array, cursor, head, tail, id) do {\
+  grn_array_cursor *cursor;\
+  cursor = grn_array_cursor_open((ctx), (array), (head), (tail), 0, -1, 0);\
+  if (cursor) {\
+    grn_id id;\
+    while ((id = grn_array_cursor_next(ctx, cursor))) {
+
+#define GRN_ARRAY_EACH_END(ctx, cursor)\
+    }\
+    grn_array_cursor_close(ctx, cursor);\
+  }\
+} while (0)
+
 #ifdef __cplusplus
 }
 #endif
