@@ -113,6 +113,24 @@ GRN_API grn_posting *grn_index_cursor_next(grn_ctx *ctx, grn_obj *ic, grn_id *ti
   }\
 } while (0)
 
+#define GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id) do {\
+  if (table) {\
+    grn_table_cursor *cursor;\
+    cursor = grn_table_cursor_open((ctx), (table),\
+                                   NULL, 0,\
+                                   NULL, 0,\
+                                   0, -1, GRN_CURSOR_ASCENDING);\
+    if (cursor) {\
+      grn_id id;\
+      while ((id = grn_table_cursor_next((ctx), cursor))) {
+
+#define GRN_TABLE_EACH_END(ctx, cursor)\
+      }\
+      grn_table_cursor_close((ctx), cursor);\
+    }\
+  }\
+} while (0)
+
 typedef struct _grn_table_sort_key grn_table_sort_key;
 typedef unsigned char grn_table_sort_flags;
 
