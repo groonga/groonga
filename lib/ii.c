@@ -9033,6 +9033,7 @@ typedef struct {
   uint32_t chunk_seg_id; /* Chunk segment ID */
   uint8_t  *chunk;       /* Chunk (to be unreferenced) */
   uint32_t chunk_offset; /* Chunk write position */
+  uint32_t chunk_size;   /* Chunk size */
 } grn_ii_builder_buffer;
 
 /*
@@ -9051,6 +9052,7 @@ grn_ii_builder_buffer_init(grn_ctx *ctx, grn_ii_builder_buffer *buf,
   buf->chunk_seg_id = 0;
   buf->chunk = NULL;
   buf->chunk_offset = 0;
+  buf->chunk_size = 0;
 }
 
 /* grn_ii_builder_buffer_fin finalizes a buffer. */
@@ -9074,9 +9076,11 @@ grn_ii_builder_buffer_is_assigned(grn_ctx *ctx, grn_ii_builder_buffer *buf)
 
 /* grn_ii_builder_buffer_assign assigns a buffer. */
 static grn_rc
-grn_ii_builder_buffer_assign(grn_ctx *ctx, grn_ii_builder_buffer *buf)
+grn_ii_builder_buffer_assign(grn_ctx *ctx, grn_ii_builder_buffer *buf,
+                             size_t min_chunk_size)
 {
   void *seg;
+  size_t chunk_size;
   grn_rc rc;
 
   /* Create a buffer. */
@@ -9101,8 +9105,11 @@ grn_ii_builder_buffer_assign(grn_ctx *ctx, grn_ii_builder_buffer *buf)
   buf->buf = (buffer *)seg;
 
   /* Create a chunk. */
-  rc = chunk_new(ctx, buf->ii, &buf->chunk_id,
-                 GRN_II_BUILDER_BUFFER_CHUNK_SIZE);
+  chunk_size = GRN_II_BUILDER_BUFFER_CHUNK_SIZE;
+  while (chunk_size < min_chunk_size) {
+    chunk_size *= 2;
+  }
+  rc = chunk_new(ctx, buf->ii, &buf->chunk_id, chunk_size);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
@@ -9120,13 +9127,14 @@ grn_ii_builder_buffer_assign(grn_ctx *ctx, grn_ii_builder_buffer *buf)
   buf->chunk += (buf->chunk_id & ((1 << GRN_II_N_CHUNK_VARIATION) - 1)) <<
                 GRN_II_W_LEAST_CHUNK;
   buf->chunk_offset = 0;
+  buf->chunk_size = chunk_size;
 
   buf->buf->header.chunk = buf->chunk_id;
-  buf->buf->header.chunk_size = GRN_II_BUILDER_BUFFER_CHUNK_SIZE;
+  buf->buf->header.chunk_size = chunk_size;
   buf->buf->header.buffer_free = S_SEGMENT - sizeof(buffer_header);
   buf->buf->header.nterms = 0;
   buf->buf->header.nterms_void = 0;
-  buf->ii->header->total_chunk_size += GRN_II_BUILDER_BUFFER_CHUNK_SIZE;
+  buf->ii->header->total_chunk_size += chunk_size;
   return GRN_SUCCESS;
 }
 
@@ -10699,20 +10707,22 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn_ii_builder *builder)
   }
 
   if (!grn_ii_builder_buffer_is_assigned(ctx, &builder->buf)) {
-    rc = grn_ii_builder_buffer_assign(ctx, &builder->buf);
+    rc = grn_ii_builder_buffer_assign(ctx, &builder->buf,
+                                      builder->chunk.enc_offset);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
   }
   buf_tid = builder->buf.buf->header.nterms;
   if (buf_tid >= builder->options.buffer_max_n_terms ||
-      GRN_II_BUILDER_BUFFER_CHUNK_SIZE - builder->buf.chunk_offset <
+      builder->buf.chunk_size - builder->buf.chunk_offset <
       builder->chunk.enc_offset) {
     rc = grn_ii_builder_buffer_flush(ctx, &builder->buf);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
-    rc = grn_ii_builder_buffer_assign(ctx, &builder->buf);
+    rc = grn_ii_builder_buffer_assign(ctx, &builder->buf,
+                                      builder->chunk.enc_offset);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
