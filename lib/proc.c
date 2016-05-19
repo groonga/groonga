@@ -1277,6 +1277,10 @@ grn_proc_option_value_bool(grn_ctx *ctx,
   const char *value;
   size_t value_length;
 
+  if (!option) {
+    return default_value;
+  }
+
   value = GRN_TEXT_VALUE(option);
   value_length = GRN_TEXT_LEN(option);
 
@@ -1305,6 +1309,10 @@ grn_proc_option_value_int32(grn_ctx *ctx,
   int32_t int32_value;
   const char *rest;
 
+  if (!option) {
+    return default_value;
+  }
+
   value = GRN_TEXT_VALUE(option);
   value_length = GRN_TEXT_LEN(option);
 
@@ -1327,6 +1335,13 @@ grn_proc_option_value_string(grn_ctx *ctx,
 {
   const char *value;
   size_t value_length;
+
+  if (!option) {
+    if (size) {
+      *size = 0;
+    }
+    return NULL;
+  }
 
   value = GRN_TEXT_VALUE(option);
   value_length = GRN_TEXT_LEN(option);
