@@ -74,6 +74,16 @@ typedef struct {
 
 typedef struct {
   grn_select_string label;
+  grn_select_string filter;
+  grn_select_string sort_keys;
+  grn_select_string output_columns;
+  int offset;
+  int limit;
+  grn_obj *table;
+} grn_slice_data;
+
+typedef struct {
+  grn_select_string label;
   grn_select_string keys;
   grn_select_string sortby;
   grn_select_string output_columns;
@@ -98,6 +108,7 @@ typedef struct {
   grn_select_string output_columns;
   int offset;
   int limit;
+  grn_hash *slices;
   grn_hash *drilldowns;
   grn_select_string cache;
   grn_select_string match_escalation_threshold;
@@ -482,6 +493,50 @@ grn_columns_fill(grn_ctx *ctx,
   }
 
   return GRN_TRUE;
+}
+
+static void
+grn_slice_data_init(grn_ctx *ctx,
+                    grn_slice_data *slice,
+                    const char *label,
+                    size_t label_len)
+{
+  slice->label.value = label;
+  slice->label.length = label_len;
+  slice->table = NULL;
+}
+
+static void
+grn_slice_data_fin(grn_ctx *ctx, grn_slice_data *slice)
+{
+  if (slice->table) {
+    grn_obj_unlink(ctx, slice->table);
+  }
+}
+
+static void
+grn_slice_data_fill(grn_ctx *ctx,
+                    grn_slice_data *slice,
+                    grn_obj *filter,
+                    grn_obj *sort_keys,
+                    grn_obj *output_columns,
+                    grn_obj *offset,
+                    grn_obj *limit)
+{
+  GRN_SELECT_FILL_STRING(slice->filter, filter);
+
+  GRN_SELECT_FILL_STRING(slice->sort_keys, sort_keys);
+
+  GRN_SELECT_FILL_STRING(slice->output_columns, output_columns);
+  if (slice->output_columns.length == 0) {
+    slice->output_columns.value = GRN_SELECT_DEFAULT_OUTPUT_COLUMNS;
+    slice->output_columns.length = strlen(GRN_SELECT_DEFAULT_OUTPUT_COLUMNS);
+  }
+
+  slice->offset = grn_proc_option_value_int32(ctx, offset, 0);
+  slice->limit = grn_proc_option_value_int32(ctx,
+                                             limit,
+                                             GRN_SELECT_DEFAULT_LIMIT);
 }
 
 static void
@@ -906,6 +961,180 @@ grn_select_apply_columns(grn_ctx *ctx,
   }
 
   grn_hash_cursor_close(ctx, columns_cursor);
+}
+
+static grn_bool
+grn_select_slice_execute(grn_ctx *ctx,
+                         grn_obj *table,
+                         grn_slice_data *slice,
+                         grn_obj *condition)
+{
+  if (slice->filter.length > 0) {
+    grn_obj *expression;
+    grn_obj *record;
+    GRN_EXPR_CREATE_FOR_QUERY(ctx, table, expression, record);
+    if (!expression) {
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "[select][slices][%.*s][filter] "
+                       "failed to create expression for filter: %s",
+                       (int)(slice->label.length),
+                       slice->label.value,
+                       ctx->errbuf);
+      return GRN_FALSE;
+    }
+    grn_expr_parse(ctx,
+                   expression,
+                   slice->filter.value,
+                   slice->filter.length,
+                   NULL,
+                   GRN_OP_MATCH,
+                   GRN_OP_AND,
+                   GRN_EXPR_SYNTAX_SCRIPT);
+    if (ctx->rc != GRN_SUCCESS) {
+      grn_obj_close(ctx, expression);
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "[select][slices][%.*s][filter] "
+                       "failed to parse filter: <%.*s>: %s",
+                       (int)(slice->label.length),
+                       slice->label.value,
+                       (int)(slice->filter.length),
+                       slice->filter.value,
+                       ctx->errbuf);
+      return GRN_FALSE;
+    }
+    slice->table = grn_table_select(ctx,
+                                    table,
+                                    expression,
+                                    NULL,
+                                    GRN_OP_OR);
+    if (ctx->rc != GRN_SUCCESS) {
+      grn_obj_close(ctx, expression);
+      if (slice->table) {
+        grn_obj_close(ctx, slice->table);
+        slice->table = NULL;
+      }
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "[select][slices][%.*s][filter] "
+                       "failed to execute filter: <%.*s>: %s",
+                       (int)(slice->label.length),
+                       slice->label.value,
+                       (int)(slice->filter.length),
+                       slice->filter.value,
+                       ctx->errbuf);
+      return GRN_FALSE;
+    }
+    grn_obj_close(ctx, expression);
+  }
+
+  return GRN_TRUE;
+}
+
+static void
+grn_select_slices_execute(grn_ctx *ctx,
+                          grn_obj *table,
+                          grn_hash *slices,
+                          grn_obj *condition)
+{
+  GRN_HASH_EACH_BEGIN(ctx, slices, cursor, id) {
+    grn_slice_data *slice;
+
+    grn_hash_cursor_get_value(ctx, cursor, (void **)&slice);
+    grn_select_slice_execute(ctx, table, slice, condition);
+  } GRN_HASH_EACH_END(ctx, cursor);
+}
+
+static void
+grn_select_slices_output(grn_ctx *ctx,
+                         grn_obj *table,
+                         grn_hash *slices,
+                         grn_obj *condition)
+{
+  unsigned int n_available_results = 0;
+
+  GRN_HASH_EACH_BEGIN(ctx, slices, cursor, id) {
+    grn_slice_data *slice;
+
+    grn_hash_cursor_get_value(ctx, cursor, (void **)&slice);
+    if (slice->table) {
+      n_available_results++;
+    }
+  } GRN_HASH_EACH_END(ctx, cursor);
+
+  GRN_OUTPUT_MAP_OPEN("SLICES", n_available_results);
+  GRN_HASH_EACH_BEGIN(ctx, slices, cursor, id) {
+    grn_slice_data *slice;
+    uint32_t n_hits;
+    int offset;
+    int limit;
+
+    grn_hash_cursor_get_value(ctx, cursor, (void **)&slice);
+    if (!slice->table) {
+      continue;
+    }
+
+    GRN_OUTPUT_STR(slice->label.value, slice->label.length);
+
+    n_hits = grn_table_size(ctx, slice->table);
+
+    offset = slice->offset;
+    limit = slice->limit;
+    grn_normalize_offset_and_limit(ctx, n_hits, &offset, &limit);
+
+    if (slice->sort_keys.length > 0) {
+      grn_table_sort_key *sort_keys;
+      uint32_t n_sort_keys;
+      sort_keys = grn_table_sort_key_from_str(ctx,
+                                              slice->sort_keys.value,
+                                              slice->sort_keys.length,
+                                              slice->table, &n_sort_keys);
+      if (sort_keys) {
+        grn_obj *sorted;
+        sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
+                                  NULL, slice->table);
+        if (sorted) {
+          grn_table_sort(ctx, slice->table, offset, limit,
+                         sorted, sort_keys, n_sort_keys);
+          grn_proc_select_output_columns(ctx, sorted, n_hits, 0, limit,
+                                         slice->output_columns.value,
+                                         slice->output_columns.length,
+                                         condition);
+          grn_obj_unlink(ctx, sorted);
+        }
+        grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
+      }
+    } else {
+      grn_proc_select_output_columns(ctx, slice->table, n_hits, offset, limit,
+                                     slice->output_columns.value,
+                                     slice->output_columns.length,
+                                     condition);
+    }
+
+    GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                  ":", "slice(%d)[%.*s]",
+                  n_hits,
+                  (int)(slice->label.length),
+                  slice->label.value);
+  } GRN_HASH_EACH_END(ctx, cursor);
+  GRN_OUTPUT_MAP_CLOSE();
+}
+
+static void
+grn_select_slices(grn_ctx *ctx,
+                  grn_obj *table,
+                  grn_hash *slices,
+                  grn_obj *condition)
+{
+  grn_select_slices_execute(ctx,
+                            table,
+                            slices,
+                            condition);
+  grn_select_slices_output(ctx,
+                           table,
+                           slices,
+                           condition);
 }
 
 static grn_bool
@@ -1487,6 +1716,18 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     sizeof(int) * 2 +
     sizeof(grn_command_version) +
     sizeof(grn_bool);
+  if (data->slices) {
+    GRN_HASH_EACH_BEGIN(ctx, data->slices, cursor, id) {
+      grn_slice_data *slice;
+      grn_hash_cursor_get_value(ctx, cursor, (void **)&slice);
+      cache_key_size +=
+        slice->filter.length + 1 +
+        slice->sort_keys.length + 1 +
+        slice->output_columns.length + 1 +
+        slice->label.length + 1 +
+        sizeof(int) * 2;
+    } GRN_HASH_EACH_END(ctx, cursor);
+  }
   if (data->drilldowns) {
     GRN_HASH_EACH_BEGIN(ctx, data->drilldowns, cursor, id) {
       grn_drilldown_data *drilldown;
@@ -1519,6 +1760,20 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     PUT_CACHE_KEY(data->scorer);
     PUT_CACHE_KEY(data->sortby);
     PUT_CACHE_KEY(data->output_columns);
+    if (data->slices) {
+      GRN_HASH_EACH_BEGIN(ctx, data->slices, cursor, id) {
+        grn_slice_data *slice;
+        grn_hash_cursor_get_value(ctx, cursor, (void **)&slice);
+        PUT_CACHE_KEY(slice->filter);
+        PUT_CACHE_KEY(slice->sort_keys);
+        PUT_CACHE_KEY(slice->output_columns);
+        PUT_CACHE_KEY(slice->label);
+        grn_memcpy(cp, &(slice->offset), sizeof(int));
+        cp += sizeof(int);
+        grn_memcpy(cp, &(slice->limit), sizeof(int));
+        cp += sizeof(int);
+      } GRN_HASH_EACH_END(ctx, cursor);
+    }
     if (data->drilldowns) {
       GRN_HASH_EACH_BEGIN(ctx, data->drilldowns, cursor, id) {
         grn_drilldown_data *drilldown;
@@ -1731,6 +1986,11 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
       uint32_t ngkeys;
       grn_table_sort_key *gkeys = NULL;
       int result_size = 1;
+
+      if (data->slices) {
+        result_size += 1;
+      }
+
       if (!ctx->rc && data->drilldowns) {
         grn_drilldown_data *anonymous_drilldown = NULL;
         if (grn_hash_size(ctx, data->drilldowns) == 1) {
@@ -1848,6 +2108,9 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
       GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                     ":", "output(%d)", data->limit);
       if (!ctx->rc) {
+        if (data->slices) {
+          grn_select_slices(ctx, res, data->slices, cond);
+        }
         if (gkeys) {
           grn_select_drilldown(ctx, res, gkeys, ngkeys, data->drilldowns, cond);
         } else if (data->drilldowns) {
@@ -1894,6 +2157,150 @@ exit :
   }
   /* GRN_LOG(ctx, GRN_LOG_NONE, "%d", ctx->seqno); */
   return ctx->rc;
+}
+
+static grn_slice_data *
+grn_select_data_slices_add(grn_ctx *ctx,
+                           grn_select_data *data,
+                           const char *label,
+                           size_t label_len)
+{
+  grn_slice_data *slice = NULL;
+  int added;
+
+  if (!data->slices) {
+    data->slices = grn_hash_create(ctx,
+                                   NULL,
+                                   GRN_TABLE_MAX_KEY_SIZE,
+                                   sizeof(grn_slice_data),
+                                   GRN_OBJ_TABLE_HASH_KEY |
+                                   GRN_OBJ_KEY_VAR_SIZE |
+                                   GRN_HASH_TINY);
+    if (!data->slices) {
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "[select][slices] "
+                       "failed to allocate slices data: %s",
+                       ctx->errbuf);
+      return NULL;
+    }
+  }
+
+  grn_hash_add(ctx,
+               data->slices,
+               label,
+               label_len,
+               (void **)&slice,
+               &added);
+  if (added) {
+    grn_slice_data_init(ctx, slice, label, label_len);
+  }
+
+  return slice;
+}
+
+static grn_bool
+grn_select_data_fill_slice_labels(grn_ctx *ctx,
+                                  grn_user_data *user_data,
+                                  grn_select_data *data)
+{
+  grn_obj *vars;
+  grn_table_cursor *cursor;
+  const char *prefix = "slices[";
+  int prefix_len;
+
+  vars = grn_plugin_proc_get_vars(ctx, user_data);
+
+  cursor = grn_table_cursor_open(ctx, vars, NULL, 0, NULL, 0, 0, -1, 0);
+  if (!cursor) {
+    return GRN_FALSE;
+  }
+
+  prefix_len = strlen(prefix);
+  while (grn_table_cursor_next(ctx, cursor)) {
+    void *key;
+    char *name;
+    int name_len;
+    name_len = grn_table_cursor_get_key(ctx, cursor, &key);
+    name = key;
+    if (name_len > prefix_len + 1 &&
+        strncmp(prefix, name, prefix_len) == 0) {
+      const char *label_end;
+      size_t label_len;
+      label_end = memchr(name + prefix_len + 1,
+                         ']',
+                         name_len - prefix_len - 1);
+      if (!label_end) {
+        continue;
+      }
+      label_len = (label_end - name) - prefix_len;
+      grn_select_data_slices_add(ctx,
+                                 data,
+                                 name + prefix_len,
+                                 label_len);
+    }
+  }
+  grn_table_cursor_close(ctx, cursor);
+
+  return GRN_TRUE;
+}
+
+static grn_bool
+grn_select_data_fill_slices(grn_ctx *ctx,
+                            grn_user_data *user_data,
+                            grn_select_data *data)
+{
+  unsigned int i;
+
+  if (!grn_select_data_fill_slice_labels(ctx, user_data, data)) {
+    return GRN_FALSE;
+  }
+
+  GRN_HASH_EACH_BEGIN(ctx, data->slices, cursor, id) {
+    grn_slice_data *slice;
+    char slice_label[GRN_TABLE_MAX_KEY_SIZE];
+    char key_name[GRN_TABLE_MAX_KEY_SIZE];
+    grn_obj *filter;
+    grn_obj *sort_keys;
+    grn_obj *output_columns;
+    grn_obj *offset;
+    grn_obj *limit;
+
+    grn_hash_cursor_get_value(ctx, cursor, (void **)&slice);
+
+    grn_snprintf(slice_label,
+                 GRN_TABLE_MAX_KEY_SIZE,
+                 GRN_TABLE_MAX_KEY_SIZE,
+                 "slices[%.*s].",
+                 (int)(slice->label.length),
+                 slice->label.value);
+
+#define GET_VAR(name)                                                   \
+      grn_snprintf(key_name,                                            \
+                   GRN_TABLE_MAX_KEY_SIZE,                              \
+                   GRN_TABLE_MAX_KEY_SIZE,                              \
+                   "%s%s", slice_label, #name);                         \
+      name = grn_plugin_proc_get_var(ctx, user_data, key_name, -1);
+
+      GET_VAR(filter);
+      GET_VAR(sort_keys);
+      GET_VAR(output_columns);
+      GET_VAR(offset);
+      GET_VAR(limit);
+
+#undef GET_VAR
+
+      grn_slice_data_fill(ctx,
+                          slice,
+                          filter,
+                          sort_keys,
+                          output_columns,
+                          offset,
+                          limit);
+      i++;
+  } GRN_HASH_EACH_END(ctx, cursor);
+
+  return GRN_TRUE;
 }
 
 static grn_drilldown_data *
@@ -2101,6 +2508,7 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
 {
   grn_select_data data;
 
+  data.slices = NULL;
   data.drilldowns = NULL;
   grn_columns_init(ctx, &(data.columns));
 
@@ -2169,6 +2577,10 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
                                    "adjuster", -1,
                                    &(data.adjuster.length));
 
+  if (!grn_select_data_fill_slices(ctx, user_data, &data)) {
+    goto exit;
+  }
+
   if (!grn_select_data_fill_drilldowns(ctx, user_data, &data)) {
     goto exit;
   }
@@ -2189,6 +2601,15 @@ exit :
       grn_drilldown_data_fin(ctx, drilldown);
     } GRN_HASH_EACH_END(ctx, cursor);
     grn_hash_close(ctx, data.drilldowns);
+  }
+
+  if (data.slices) {
+    GRN_HASH_EACH_BEGIN(ctx, data.slices, cursor, id) {
+      grn_slice_data *slice;
+      grn_hash_cursor_get_value(ctx, cursor, (void **)&slice);
+      grn_slice_data_fin(ctx, slice);
+    } GRN_HASH_EACH_END(ctx, cursor);
+    grn_hash_close(ctx, data.slices);
   }
 
   return NULL;
