@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-05-02 10:25+0900\n"
+"PO-Revision-Date: 2016-05-19 10:51+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -19145,71 +19145,79 @@ msgid "We can also get newly registered records by searching:"
 msgstr "検索すると新しく登録されたレコードもヒットします:"
 
 msgid "Log"
-msgstr ""
+msgstr "ログ"
 
 msgid ""
 "Groonga has two log files. They are process log and query log. Process log "
 "is for all of :doc:`executables/groonga` works. Query log is just for query "
 "processing."
 msgstr ""
+"Groongaには2つのログファイルがあります。プロセスログとクエリーログです。プロ"
+"セスログは :doc:`executables/groonga` の動作すべてに関することのログです。ク"
+"エリーログはクエリー処理に関することだけのログです。"
 
 msgid "Process log"
-msgstr ""
+msgstr "プロセスログ"
 
 msgid ""
 "Process log is enabled by default. Log path can be customized by :option:`--"
-"log-path` option.  Each log has its log level. If a log is smaller than "
-"groonga process' log level, it's not logged. Log level can be customized by :"
+"log-path` option. Each log has its log level. If a log is smaller than "
+"Groonga process' log level, it's not logged. Log level can be customized by :"
 "option:`-l` or :doc:`commands/log_level`."
 msgstr ""
+"プロセスログはデフォルトで有効になっています。プロセスログは :option:`--log-"
+"path` オプションでカスタマイズできます。各ログにはログレベルがあります。ログ"
+"のレベルがGroongaプロセスのログレベルより小さいときはそのログは記録されませ"
+"ん。ログレベルは :option:`-l` または :doc:`commands/log_level` でカスタマイズ"
+"できます。"
 
 msgid "Format"
 msgstr "フォーマット"
 
 msgid "Process log uses the following format::"
-msgstr ""
+msgstr "プロセスログのフォーマットは以下の通りです。::"
 
 msgid "It's time stamp uses the following format::"
-msgstr ""
+msgstr "タイムスタンプのフォーマットは次の通りです。::"
 
 msgid "YYYY"
 msgstr ""
 
 msgid "Year with four digits."
-msgstr ""
+msgstr "年（4桁）"
 
 msgid "MM"
 msgstr ""
 
 msgid "Month with two digits."
-msgstr ""
+msgstr "月（2桁）"
 
 msgid "DD"
 msgstr ""
 
 msgid "Day with two digits."
-msgstr ""
+msgstr "日（2桁）"
 
 msgid "Hour with two digits."
-msgstr ""
+msgstr "時（2桁）"
 
 msgid "hh"
 msgstr ""
 
 msgid "Minute with two digits."
-msgstr ""
+msgstr "分（2桁）"
 
 msgid "mm"
 msgstr ""
 
 msgid "Second with two digits."
-msgstr ""
+msgstr "秒（2桁）"
 
 msgid "ss"
 msgstr ""
 
 msgid "Microsecond with six digits."
-msgstr ""
+msgstr "マイクロ秒（6桁）"
 
 msgid "SSSSSS"
 msgstr ""
@@ -19221,7 +19229,7 @@ msgid "TIME_STAMP"
 msgstr ""
 
 msgid "Log level with a character. Here is a character and log level map."
-msgstr ""
+msgstr "ログレベル（1文字）。文字がどのログレベルに対応するかは次の通りです。"
 
 msgid "E"
 msgstr ""
@@ -19239,7 +19247,7 @@ msgid "w"
 msgstr ""
 
 msgid "Notification"
-msgstr ""
+msgstr "通知"
 
 msgid "n"
 msgstr ""
@@ -19257,69 +19265,74 @@ msgid "L"
 msgstr ""
 
 msgid "Details about the log with free format."
-msgstr ""
+msgstr "自由形式でのログの詳細。"
 
 msgid "MESSAGE"
 msgstr ""
 
 msgid "Query log"
-msgstr ""
+msgstr "クエリーログ"
 
 msgid ""
 "Query log is disabled by default. It can be enabled by :option:`--query-log-"
 "path` option."
 msgstr ""
+"クエリーログはデフォルトでは無効になっています。 :option:`--query-log-path` "
+"オプションで有効にできます。"
 
 msgid "Query log uses the following formats::"
-msgstr ""
+msgstr "クエリーログのフォーマットは次の通りです。::"
 
 msgid ""
 "ID of a thread. Groonga process creates threads to process requests "
 "concurrently. Each thread outputs some logs for a request. This ID can be "
 "used to extract a log sequence by a thread."
 msgstr ""
+"スレッドのID。Groongaプロセスは並列に複数のリクエストを処理するためにスレッド"
+"を作ります。各スレッドは1つのリクエストにつき複数のログを出力します。このIDを"
+"使うとスレッド毎の一連のログを抽出できます。"
 
 msgid ">"
 msgstr ""
 
 msgid "A character that indicates query is started."
-msgstr ""
+msgstr "クエリーが始まったことを示す文字。"
 
 msgid ":"
 msgstr ""
 
 msgid "A character that indicates query is processing."
-msgstr ""
+msgstr "クエリーが処理中であることを示す文字。"
 
 msgid "<"
 msgstr ""
 
 msgid "A character that indicates query is finished."
-msgstr ""
+msgstr "クエリーが完了したことを示す文字。"
 
 msgid "A query to be processed."
-msgstr ""
+msgstr "処理対象のクエリー。"
 
 msgid "QUERY"
 msgstr ""
 
 msgid "Elapsed time in nanoseconds since query is started."
-msgstr ""
+msgstr "クエリーの処理を開始してからの時間。単位はマイクロ秒。"
 
 msgid "ELAPSED_TIME"
 msgstr ""
 
 msgid "A processed work at the time."
-msgstr ""
+msgstr "このときに処理した内容。"
 
 msgid "PROGRESS"
 msgstr ""
 
 msgid "A return code for the query."
-msgstr ""
+msgstr "クエリーのリターンコード。"
 
 msgid "RETURN_CODE"
-msgstr "RETURN_CODE"
+msgstr ""
 
 msgid "Normalizers"
 msgstr "ノーマライザー"

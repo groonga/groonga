@@ -15,8 +15,8 @@ Process log
 -----------
 
 Process log is enabled by default. Log path can be
-customized by :option:`--log-path` option.  Each log has its
-log level. If a log is smaller than groonga process' log
+customized by :option:`--log-path` option. Each log has its
+log level. If a log is smaller than Groonga process' log
 level, it's not logged. Log level can be customized by
 :option:`-l` or :doc:`commands/log_level`.
 
