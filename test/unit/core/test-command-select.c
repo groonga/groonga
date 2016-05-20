@@ -369,7 +369,7 @@ test_nonexistent_table(void)
 
   grn_ctx_send(context, command, strlen(command), 0);
   grn_test_assert_error(GRN_INVALID_ARGUMENT,
-                        "invalid table name: <nonexistent>",
+                        "[select][table] invalid name: <nonexistent>",
                         context);
 }
 
@@ -581,13 +581,13 @@ data_not_tokenize_by_full_width_space(void)
                  NULL)
 
   ADD_DATA("separator",
-           "invalid table name: <Sites　--output_columns>",
+           "[select][table] invalid name: <Sites　--output_columns>",
            "select Sites"
            "　"
            "--output_columns _key");
 
   ADD_DATA("prepend",
-           "invalid table name: <　Sites>",
+           "[select][table] invalid name: <　Sites>",
            "select "
            " 　Sites"
            " "

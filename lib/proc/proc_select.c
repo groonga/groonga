@@ -1880,7 +1880,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
   table = grn_ctx_get(ctx, data->table.value, data->table.length);
   if (!table) {
     ERR(GRN_INVALID_ARGUMENT,
-        "[select] invalid table name: <%.*s>",
+        "[select][table] invalid name: <%.*s>",
         (int)(data->table.length),
         data->table.value);
     goto exit;
