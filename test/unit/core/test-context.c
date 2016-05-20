@@ -115,11 +115,11 @@ test_dynamic_malloc_change(void)
 void
 test_command_version(void)
 {
-  cut_assert_equal_int(GRN_COMMAND_VERSION_MAX - 1,
+  cut_assert_equal_int(GRN_COMMAND_VERSION_STABLE,
                        grn_get_default_command_version());
 
   cut_assert_ensure_context();
-  cut_assert_equal_int(GRN_COMMAND_VERSION_MAX - 1,
+  cut_assert_equal_int(GRN_COMMAND_VERSION_STABLE,
                        grn_ctx_get_command_version(context));
 }
 
