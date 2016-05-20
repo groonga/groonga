@@ -73,6 +73,54 @@ json_element_end(grn_ctx *ctx, grn_obj *outbuf, size_t indent_level)
 }
 
 static void
+json_map_open(grn_ctx *ctx, grn_obj *outbuf, size_t *indent_level)
+{
+  GRN_TEXT_PUTC(ctx, outbuf, '{');
+  if (ctx->impl->output.is_pretty) {
+    GRN_TEXT_PUTC(ctx, outbuf, '\n');
+    (*indent_level)++;
+    indent(ctx, outbuf, *indent_level);
+  }
+}
+
+static void
+json_map_close(grn_ctx *ctx, grn_obj *outbuf, size_t *indent_level)
+{
+  if (ctx->impl->output.is_pretty) {
+    GRN_TEXT_PUTC(ctx, outbuf, '\n');
+    (*indent_level)--;
+    indent(ctx, outbuf, *indent_level);
+  }
+  GRN_TEXT_PUTC(ctx, outbuf, '}');
+}
+
+static void
+json_key_end(grn_ctx *ctx, grn_obj *outbuf)
+{
+  GRN_TEXT_PUTC(ctx, outbuf, ':');
+  if (ctx->impl->output.is_pretty) {
+    GRN_TEXT_PUTC(ctx, outbuf, ' ');
+  }
+}
+
+static void
+json_key(grn_ctx *ctx, grn_obj *outbuf, const char *key)
+{
+  grn_text_esc(ctx, outbuf, key, strlen(key));
+  json_key_end(ctx, outbuf);
+}
+
+static void
+json_value_end(grn_ctx *ctx, grn_obj *outbuf, size_t indent_level)
+{
+  GRN_TEXT_PUTC(ctx, outbuf, ',');
+  if (ctx->impl->output.is_pretty) {
+    GRN_TEXT_PUTC(ctx, outbuf, '\n');
+    indent(ctx, outbuf, indent_level);
+  }
+}
+
+static void
 put_delimiter(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type)
 {
   uint32_t level = CURR_LEVEL;
@@ -1926,30 +1974,17 @@ msgpack_buffer_writer(void* data, const char* buf, msgpack_size_t len)
 #define JSON_CALLBACK_PARAM "callback"
 
 static void
-grn_output_envelope_json(grn_ctx *ctx,
-                         grn_rc rc,
-                         grn_obj *head,
-                         grn_obj *body,
-                         grn_obj *foot,
-                         double started,
-                         double elapsed,
-                         const char *file,
-                         int line)
+grn_output_envelope_json_v1(grn_ctx *ctx,
+                            grn_rc rc,
+                            grn_obj *head,
+                            grn_obj *body,
+                            grn_obj *foot,
+                            double started,
+                            double elapsed,
+                            const char *file,
+                            int line)
 {
   size_t indent_level = 0;
-  grn_obj *expr;
-  grn_obj *jsonp_func = NULL;
-
-  expr = ctx->impl->curr_expr;
-  if (expr) {
-    jsonp_func = grn_expr_get_var(ctx, expr, JSON_CALLBACK_PARAM,
-                                  strlen(JSON_CALLBACK_PARAM));
-  }
-  if (jsonp_func && GRN_TEXT_LEN(jsonp_func)) {
-    GRN_TEXT_PUT(ctx, head,
-                 GRN_TEXT_VALUE(jsonp_func), GRN_TEXT_LEN(jsonp_func));
-    GRN_TEXT_PUTC(ctx, head, '(');
-  }
 
   json_array_open(ctx, head, &indent_level);
   {
@@ -2013,8 +2048,95 @@ grn_output_envelope_json(grn_ctx *ctx,
   }
 
   json_array_close(ctx, foot, &indent_level);
-  if (jsonp_func && GRN_TEXT_LEN(jsonp_func)) {
-    GRN_TEXT_PUTS(ctx, foot, ");");
+}
+
+static void
+grn_output_envelope_json(grn_ctx *ctx,
+                         grn_rc rc,
+                         grn_obj *head,
+                         grn_obj *body,
+                         grn_obj *foot,
+                         double started,
+                         double elapsed,
+                         const char *file,
+                         int line)
+{
+  size_t indent_level = 0;
+
+  json_map_open(ctx, head, &indent_level);
+  {
+    json_key(ctx, head, "header");
+    json_map_open(ctx, head, &indent_level);
+    {
+      json_key(ctx, head, "return_code");
+      grn_text_itoa(ctx, head, rc);
+
+      json_value_end(ctx, head, indent_level);
+      json_key(ctx, head, "start_time");
+      grn_text_ftoa(ctx, head, started);
+
+      json_value_end(ctx, head, indent_level);
+      json_key(ctx, head, "elapsed_time");
+      grn_text_ftoa(ctx, head, elapsed);
+
+      if (rc != GRN_SUCCESS) {
+        json_value_end(ctx, head, indent_level);
+        json_key(ctx, head, "error");
+        json_map_open(ctx, head, &indent_level);
+        {
+          json_key(ctx, head, "message");
+          grn_text_esc(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
+
+          if (ctx->errfunc && ctx->errfile) {
+            json_value_end(ctx, head, indent_level);
+            json_key(ctx, head, "function");
+            grn_text_esc(ctx, head, ctx->errfunc, strlen(ctx->errfunc));
+
+            json_value_end(ctx, head, indent_level);
+            json_key(ctx, head, "file");
+            grn_text_esc(ctx, head, ctx->errfile, strlen(ctx->errfile));
+
+            json_value_end(ctx, head, indent_level);
+            json_key(ctx, head, "line");
+            grn_text_itoa(ctx, head, ctx->errline);
+          }
+
+          if (file) {
+            grn_obj *command;
+
+            command = GRN_CTX_USER_DATA(ctx)->ptr;
+            if (command) {
+              json_value_end(ctx, head, indent_level);
+              json_key(ctx, head, "input");
+              json_map_open(ctx, head, &indent_level);
+              {
+                json_key(ctx, head, "file");
+                grn_text_esc(ctx, head, file, strlen(file));
+
+                json_value_end(ctx, head, indent_level);
+                json_key(ctx, head, "line");
+                grn_text_itoa(ctx, head, line);
+
+                json_value_end(ctx, head, indent_level);
+                json_key(ctx, head, "command");
+                grn_text_esc(ctx, head,
+                             GRN_TEXT_VALUE(command), GRN_TEXT_LEN(command));
+              }
+              json_map_close(ctx, head, &indent_level);
+            }
+          }
+        }
+        json_map_close(ctx, head, &indent_level);
+      }
+    }
+    json_map_close(ctx, head, &indent_level);
+
+    if (GRN_TEXT_LEN(body)) {
+      json_value_end(ctx, head, indent_level);
+      json_key(ctx, head, "body");
+    }
+
+    json_map_close(ctx, foot, &indent_level);
   }
 }
 
@@ -2039,10 +2161,37 @@ grn_output_envelope(grn_ctx *ctx,
 
   switch (ctx->impl->output.type) {
   case GRN_CONTENT_JSON:
-    grn_output_envelope_json(ctx, rc,
-                             head, body, foot,
-                             started, elapsed,
-                             file, line);
+    {
+      grn_obj *expr;
+      grn_obj *jsonp_func = NULL;
+
+      expr = ctx->impl->curr_expr;
+      if (expr) {
+        jsonp_func = grn_expr_get_var(ctx, expr, JSON_CALLBACK_PARAM,
+                                      strlen(JSON_CALLBACK_PARAM));
+      }
+      if (jsonp_func && GRN_TEXT_LEN(jsonp_func)) {
+        GRN_TEXT_PUT(ctx, head,
+                     GRN_TEXT_VALUE(jsonp_func), GRN_TEXT_LEN(jsonp_func));
+        GRN_TEXT_PUTC(ctx, head, '(');
+      }
+
+      if (grn_ctx_get_command_version(ctx) <= GRN_COMMAND_VERSION_2) {
+        grn_output_envelope_json_v1(ctx, rc,
+                                    head, body, foot,
+                                    started, elapsed,
+                                    file, line);
+      } else {
+        grn_output_envelope_json(ctx, rc,
+                                 head, body, foot,
+                                 started, elapsed,
+                                 file, line);
+      }
+
+      if (jsonp_func && GRN_TEXT_LEN(jsonp_func)) {
+        GRN_TEXT_PUTS(ctx, foot, ");");
+      }
+    }
     break;
   case GRN_CONTENT_TSV:
     grn_text_itoa(ctx, head, rc);

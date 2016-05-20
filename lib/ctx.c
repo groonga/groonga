@@ -1013,13 +1013,11 @@ command_proc_p(grn_obj *expr)
 grn_obj *
 grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
 {
-  grn_command_version command_version;
   grn_obj buf, *expr, *val;
   grn_obj request_id;
   double request_timeout;
   const char *p = path, *e = path + path_len, *v, *key_end, *filename_end;
 
-  command_version = grn_ctx_get_command_version(ctx);
   request_timeout = grn_get_default_request_timeout();
 
   GRN_TEXT_INIT(&buf, 0);
@@ -1115,15 +1113,12 @@ exit :
   GRN_OBJ_FIN(ctx, &request_id);
   GRN_OBJ_FIN(ctx, &buf);
 
-  grn_ctx_set_command_version(ctx, command_version);
-
   return expr;
 }
 
 grn_obj *
 grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
 {
-  grn_command_version command_version;
   char tok_type;
   int offset = 0;
   grn_obj buf, *expr = NULL, *val = NULL;
@@ -1131,7 +1126,6 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
   double request_timeout;
   const char *p = str, *e = str + str_len, *v;
 
-  command_version = grn_ctx_get_command_version(ctx);
   request_timeout = grn_get_default_request_timeout();
 
   GRN_TEXT_INIT(&buf, 0);
@@ -1233,8 +1227,6 @@ exit :
   GRN_OBJ_FIN(ctx, &request_id);
   GRN_OBJ_FIN(ctx, &buf);
 
-  grn_ctx_set_command_version(ctx, command_version);
-
   return expr;
 }
 
@@ -1300,7 +1292,10 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
       }
       goto exit;
     } else {
+      grn_command_version command_version;
       grn_obj *expr = NULL;
+
+      command_version = grn_ctx_get_command_version(ctx);
       if (ctx->impl->qe_next) {
         grn_obj *val;
         expr = ctx->impl->qe_next;
@@ -1350,6 +1345,7 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
         }
       }
       if (expr) { grn_expr_clear_vars(ctx, expr); }
+      grn_ctx_set_command_version(ctx, command_version);
       goto exit;
     }
   }
