@@ -1,0 +1,171 @@
+table_create Items TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Items price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+table_create Shops TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Shops items COLUMN_VECTOR Items
+[[0,0.0,0.0],true]
+load --table Shops
+[
+{"_key": "Stationery store",  "items": ["Book", "Note", "Box", "Pen"]},
+{"_key": "Supermarket",       "items": ["Food", "Drink", "Pen"]},
+{"_key": "Convenience store", "items": ["Pen", "Note","Food", "Drink"]}
+]
+[[0,0.0,0.0],3]
+load --table Items
+[
+{"_key": "Book",  "price": 1000},
+{"_key": "Note",  "price": 1000},
+{"_key": "Box",   "price": 500},
+{"_key": "Pen",   "price": 500},
+{"_key": "Food",  "price": 500},
+{"_key": "Drink", "price": 300}
+]
+[[0,0.0,0.0],6]
+select Shops   --drilldowns[item].keys items   --drilldowns[item].sortby price   --drilldowns[item].output_columns _key,_nsubrecs,price,price_with_tax   --drilldowns[item].columns[price_with_tax].stage initial   --drilldowns[item].columns[price_with_tax].type UInt32   --drilldowns[item].columns[price_with_tax].flags COLUMN_SCALAR   --drilldowns[item].columns[price_with_tax].value 'price * 1.08'   --drilldowns[real_price].table item   --drilldowns[real_price].keys price_with_tax
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "items",
+          "Items"
+        ]
+      ],
+      [
+        1,
+        "Stationery store",
+        [
+          "Book",
+          "Note",
+          "Box",
+          "Pen"
+        ]
+      ],
+      [
+        2,
+        "Supermarket",
+        [
+          "Food",
+          "Drink",
+          "Pen"
+        ]
+      ],
+      [
+        3,
+        "Convenience store",
+        [
+          "Pen",
+          "Note",
+          "Food",
+          "Drink"
+        ]
+      ]
+    ],
+    {
+      "item": [
+        [
+          6
+        ],
+        [
+          [
+            "_key",
+            "ShortText"
+          ],
+          [
+            "_nsubrecs",
+            "Int32"
+          ],
+          [
+            "price",
+            "UInt32"
+          ],
+          [
+            "price_with_tax",
+            "UInt32"
+          ]
+        ],
+        [
+          "Drink",
+          2,
+          300,
+          324
+        ],
+        [
+          "Food",
+          2,
+          500,
+          540
+        ],
+        [
+          "Pen",
+          3,
+          500,
+          540
+        ],
+        [
+          "Box",
+          1,
+          500,
+          540
+        ],
+        [
+          "Book",
+          1,
+          1000,
+          1080
+        ],
+        [
+          "Note",
+          2,
+          1000,
+          1080
+        ]
+      ],
+      "real_price": [
+        [
+          3
+        ],
+        [
+          [
+            "_key",
+            "UInt32"
+          ],
+          [
+            "_nsubrecs",
+            "Int32"
+          ]
+        ],
+        [
+          1080,
+          2
+        ],
+        [
+          540,
+          3
+        ],
+        [
+          324,
+          1
+        ]
+      ]
+    }
+  ]
+]

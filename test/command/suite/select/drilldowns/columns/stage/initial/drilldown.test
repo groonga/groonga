@@ -1,0 +1,33 @@
+table_create Items TABLE_HASH_KEY ShortText
+column_create Items price COLUMN_SCALAR UInt32
+
+table_create Shops TABLE_HASH_KEY ShortText
+column_create Shops items COLUMN_VECTOR Items
+
+load --table Shops
+[
+{"_key": "Stationery store",  "items": ["Book", "Note", "Box", "Pen"]},
+{"_key": "Supermarket",       "items": ["Food", "Drink", "Pen"]},
+{"_key": "Convenience store", "items": ["Pen", "Note","Food", "Drink"]}
+]
+
+load --table Items
+[
+{"_key": "Book",  "price": 1000},
+{"_key": "Note",  "price": 1000},
+{"_key": "Box",   "price": 500},
+{"_key": "Pen",   "price": 500},
+{"_key": "Food",  "price": 500},
+{"_key": "Drink", "price": 300}
+]
+
+select Shops \
+  --drilldowns[item].keys items \
+  --drilldowns[item].sortby price \
+  --drilldowns[item].output_columns _key,_nsubrecs,price,price_with_tax \
+  --drilldowns[item].columns[price_with_tax].stage initial \
+  --drilldowns[item].columns[price_with_tax].type UInt32 \
+  --drilldowns[item].columns[price_with_tax].flags COLUMN_SCALAR \
+  --drilldowns[item].columns[price_with_tax].value 'price * 1.08' \
+  --drilldowns[real_price].table item \
+  --drilldowns[real_price].keys price_with_tax

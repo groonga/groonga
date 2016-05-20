@@ -1,0 +1,109 @@
+table_create Items TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Items price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Items
+[
+{"_key": "Book",  "price": 1000},
+{"_key": "Note",  "price": 1000},
+{"_key": "Box",   "price": 500},
+{"_key": "Pen",   "price": 500},
+{"_key": "Food",  "price": 500},
+{"_key": "Drink", "price": 300}
+]
+[[0,0.0,0.0],6]
+select Items   --drilldowns[label].keys price   --drilldowns[label].output_columns _key,_nsubrecs,tax_included   --drilldowns[label].columns[tax_included].stage initial   --drilldowns[label].columns[tax_included].type UInt32   --drilldowns[label].columns[tax_included].flags COLUMN_SCALAR   --drilldowns[label].columns[tax_included].value '_key * 1.08'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        6
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "price",
+          "UInt32"
+        ]
+      ],
+      [
+        1,
+        "Book",
+        1000
+      ],
+      [
+        2,
+        "Note",
+        1000
+      ],
+      [
+        3,
+        "Box",
+        500
+      ],
+      [
+        4,
+        "Pen",
+        500
+      ],
+      [
+        5,
+        "Food",
+        500
+      ],
+      [
+        6,
+        "Drink",
+        300
+      ]
+    ],
+    {
+      "label": [
+        [
+          3
+        ],
+        [
+          [
+            "_key",
+            "UInt32"
+          ],
+          [
+            "_nsubrecs",
+            "Int32"
+          ],
+          [
+            "tax_included",
+            "UInt32"
+          ]
+        ],
+        [
+          1000,
+          2,
+          1080
+        ],
+        [
+          500,
+          3,
+          540
+        ],
+        [
+          300,
+          1,
+          324
+        ]
+      ]
+    }
+  ]
+]

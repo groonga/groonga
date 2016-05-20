@@ -1,0 +1,104 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+column_create Memos user COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Memos priority COLUMN_SCALAR Int64
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga1", "tag": "Groonga", "user": "user1", "priority": 10},
+{"_key": "Groonga2", "tag": "Groonga", "user": "user1", "priority": 20},
+{"_key": "Groonga3", "tag": "Groonga", "user": "user1", "priority": 60},
+{"_key": "Groonga4", "tag": "Groonga", "user": "user2", "priority": 61},
+{"_key": "Groonga5", "tag": "Groonga", "user": "user2", "priority": 24},
+{"_key": "Groonga6", "tag": "Groonga", "user": "user2", "priority": 8},
+{"_key": "Mroonga1", "tag": "Mroonga", "user": "user3", "priority": 7},
+{"_key": "Mroonga2", "tag": "Mroonga", "user": "user3", "priority": 3},
+{"_key": "Mroonga3", "tag": "Mroonga", "user": "user3", "priority": -4},
+{"_key": "Mroonga4", "tag": "Mroonga", "user": "user4", "priority": -1},
+{"_key": "Mroonga5", "tag": "Mroonga", "user": "user4", "priority": -2},
+{"_key": "Mroonga6", "tag": "Mroonga", "user": "user4", "priority": -3}
+]
+[[0,0.0,0.0],12]
+select Memos   --limit 0   --drilldowns[tag].keys tag,user   --drilldowns[tag].calc_types AVG   --drilldowns[tag].calc_target priority   --drilldowns[tag].output_columns _value.tag,_value.user,_avg
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        12
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "priority",
+          "Int64"
+        ],
+        [
+          "tag",
+          "Tags"
+        ],
+        [
+          "user",
+          "ShortText"
+        ]
+      ]
+    ],
+    {
+      "tag": [
+        [
+          4
+        ],
+        [
+          [
+            "tag",
+            "Tags"
+          ],
+          [
+            "user",
+            "ShortText"
+          ],
+          [
+            "_avg",
+            "Float"
+          ]
+        ],
+        [
+          "Groonga",
+          "user1",
+          30.0
+        ],
+        [
+          "Groonga",
+          "user2",
+          31.0
+        ],
+        [
+          "Mroonga",
+          "user3",
+          2.0
+        ],
+        [
+          "Mroonga",
+          "user4",
+          -2.0
+        ]
+      ]
+    }
+  ]
+]

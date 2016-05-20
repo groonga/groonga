@@ -39,7 +39,7 @@ select Memos   --drilldown[category].table sub_category   --drilldown[category].
       0.0,
       0.0
     ],
-    "[select][drilldown][category][table] cycled dependency: <sub_category>"
+    "[select][drilldowns][category][table] cycled dependency: <sub_category>"
   ],
   [
     [
@@ -85,5 +85,5 @@ select Memos   --drilldown[category].table sub_category   --drilldown[category].
     }
   ]
 ]
-#|e| [select][drilldown][sub_category][table] cycled dependency: <category>
-#|e| [select][drilldown][category][table] cycled dependency: <sub_category>
+#|e| [select][drilldowns][sub_category][table] cycled dependency: <category>
+#|e| [select][drilldowns][category][table] cycled dependency: <sub_category>

@@ -1,7 +1,5 @@
 table_create Tags TABLE_PAT_KEY ShortText
 [[0,0.0,0.0],true]
-column_create Tags category COLUMN_SCALAR ShortText
-[[0,0.0,0.0],true]
 table_create Memos TABLE_HASH_KEY ShortText
 [[0,0.0,0.0],true]
 column_create Memos tag COLUMN_SCALAR Tags
@@ -14,22 +12,12 @@ load --table Memos
 {"_key": "Rroonga is fast!", "tag": "Rroonga"}
 ]
 [[0,0.0,0.0],4]
-load --table Tags
-[
-{"_key": "Groonga", "category": "C/C++"},
-{"_key": "Mroonga", "category": "C/C++"},
-{"_key": "Rroonga", "category": "Ruby"}
-]
-[[0,0.0,0.0],3]
-select Memos   --drilldown[category].table nonexistent   --drilldown[category].keys category   --drilldown[category].output_columns _key,_nsubrecs   --drilldown[tag].keys tag   --drilldown[tag].output_columns _key,_nsubrecs,category
+select Memos   --drilldowns[tag].keys tag   --drilldowns[tag].filter '_key != "Groonga"'
 [
   [
-    [
-      -22,
-      0.0,
-      0.0
-    ],
-    "[select][drilldowns][category][table] nonexistent label: <nonexistent>"
+    0,
+    0.0,
+    0.0
   ],
   [
     [
@@ -72,7 +60,29 @@ select Memos   --drilldown[category].table nonexistent   --drilldown[category].k
       ]
     ],
     {
+      "tag": [
+        [
+          2
+        ],
+        [
+          [
+            "_key",
+            "ShortText"
+          ],
+          [
+            "_nsubrecs",
+            "Int32"
+          ]
+        ],
+        [
+          "Mroonga",
+          1
+        ],
+        [
+          "Rroonga",
+          1
+        ]
+      ]
     }
   ]
 ]
-#|e| [select][drilldowns][category][table] nonexistent label: <nonexistent>

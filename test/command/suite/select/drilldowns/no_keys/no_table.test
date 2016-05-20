@@ -1,0 +1,15 @@
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos value COLUMN_SCALAR Int64
+
+load --table Memos
+[
+{"_key": "Groonga is fast!", "value": 10},
+{"_key": "Mroonga is fast!", "value": 2},
+{"_key": "Groonga sticker!", "value": 3},
+{"_key": "Rroonga is fast!", "value": 4}
+]
+
+select Memos \
+  --drilldowns[sum].calc_types SUM \
+  --drilldowns[sum].calc_target value \
+  --drilldowns[sum].output_columns _key,_sum

@@ -1,0 +1,123 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+column_create Memos date COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is fast!", "tag": "Groonga", "date": "2014-11-16 00:00:00"},
+{"_key": "Groonga sticker!", "tag": "Groonga", "date": "2014-11-16 00:00:00"},
+{"_key": "Rroonga is fast!", "tag": "Rroonga", "date": "2014-11-17 00:00:00"},
+{"_key": "Rroonga is good!", "tag": "Rroonga", "date": "2014-11-17 00:00:00"},
+{"_key": "Rroonga!!!!!!!!!", "tag": "Rroonga", "date": "2014-11-17 00:00:00"},
+{"_key": "Groonga is good!", "tag": "Groonga", "date": "2014-11-17 00:00:00"}
+]
+[[0,0.0,0.0],6]
+select Memos   --filter true   --drilldowns[tag].keys tag,date   --drilldowns[tag].output_columns _value.tag,_value.date,_nsubrecs   --drilldowns[tag].sortby _nsubrecs
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        6
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "date",
+          "Time"
+        ],
+        [
+          "tag",
+          "Tags"
+        ]
+      ],
+      [
+        1,
+        "Groonga is fast!",
+        1416063600.0,
+        "Groonga"
+      ],
+      [
+        2,
+        "Groonga sticker!",
+        1416063600.0,
+        "Groonga"
+      ],
+      [
+        3,
+        "Rroonga is fast!",
+        1416150000.0,
+        "Rroonga"
+      ],
+      [
+        4,
+        "Rroonga is good!",
+        1416150000.0,
+        "Rroonga"
+      ],
+      [
+        5,
+        "Rroonga!!!!!!!!!",
+        1416150000.0,
+        "Rroonga"
+      ],
+      [
+        6,
+        "Groonga is good!",
+        1416150000.0,
+        "Groonga"
+      ]
+    ],
+    {
+      "tag": [
+        [
+          3
+        ],
+        [
+          [
+            "tag",
+            "Tags"
+          ],
+          [
+            "date",
+            "Time"
+          ],
+          [
+            "_nsubrecs",
+            "Int32"
+          ]
+        ],
+        [
+          "Groonga",
+          1416150000.0,
+          1
+        ],
+        [
+          "Groonga",
+          1416063600.0,
+          2
+        ],
+        [
+          "Rroonga",
+          1416150000.0,
+          3
+        ]
+      ]
+    }
+  ]
+]

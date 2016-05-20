@@ -1,0 +1,12 @@
+table_create Memos TABLE_HASH_KEY ShortText
+
+load --table Memos
+[
+{"_key": "Groonga is fast!"},
+{"_key": "Mroonga is fast!"},
+{"_key": "Groonga sticker!"},
+{"_key": "Rroonga is fast!"}
+]
+
+select Memos \
+  --drilldowns[n_records].output_columns _key,_nsubrecs

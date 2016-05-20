@@ -1217,7 +1217,7 @@ grn_select_drilldown_execute(grn_ctx *ctx,
                                 NULL);
     if (dependent_id == GRN_ID_NIL) {
       GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                       "[select][drilldown][%.*s][table] "
+                       "[select][drilldowns][%.*s][table] "
                        "nonexistent label: <%.*s>",
                        (int)(drilldown->label.length),
                        drilldown->label.value,
@@ -1291,7 +1291,7 @@ grn_select_drilldown_execute(grn_ctx *ctx,
     if (!expression) {
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
-                       "[select][drilldown]%s%.*s%s[filter] "
+                       "[select][drilldowns]%s%.*s%s[filter] "
                        "failed to create expression for filter: %s",
                        drilldown->label.length > 0 ? "[" : "",
                        (int)(drilldown->label.length),
@@ -1312,7 +1312,7 @@ grn_select_drilldown_execute(grn_ctx *ctx,
       grn_obj_close(ctx, expression);
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
-                       "[select][drilldown]%s%.*s%s[filter] "
+                       "[select][drilldowns]%s%.*s%s[filter] "
                        "failed to parse filter: <%.*s>: %s",
                        drilldown->label.length > 0 ? "[" : "",
                        (int)(drilldown->label.length),
@@ -1336,7 +1336,7 @@ grn_select_drilldown_execute(grn_ctx *ctx,
       }
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
-                       "[select][drilldown]%s%.*s%s[filter] "
+                       "[select][drilldowns]%s%.*s%s[filter] "
                        "failed to execute filter: <%.*s>: %s",
                        drilldown->label.length > 0 ? "[" : "",
                        (int)(drilldown->label.length),
@@ -1501,7 +1501,7 @@ drilldown_tsort_visit(grn_ctx *ctx,
                                          dependent_id);
           if (cycled) {
             GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                             "[select][drilldown][%.*s][table] "
+                             "[select][drilldowns][%.*s][table] "
                              "cycled dependency: <%.*s>",
                              (int)(drilldown->label.length),
                              drilldown->label.value,
@@ -2365,7 +2365,7 @@ grn_select_data_drilldowns_add(grn_ctx *ctx,
     if (!data->drilldowns) {
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
-                       "[select][drilldown] "
+                       "[select][drilldowns] "
                        "failed to allocate drilldowns data: %s",
                        ctx->errbuf);
       return NULL;
@@ -2388,11 +2388,11 @@ grn_select_data_drilldowns_add(grn_ctx *ctx,
 static grn_bool
 grn_select_data_fill_drilldown_labels(grn_ctx *ctx,
                                       grn_user_data *user_data,
-                                      grn_select_data *data)
+                                      grn_select_data *data,
+                                      const char *prefix)
 {
   grn_obj *vars;
   grn_table_cursor *cursor;
-  const char *prefix = "drilldown[";
   int prefix_len;
 
   vars = grn_plugin_proc_get_vars(ctx, user_data);
@@ -2429,6 +2429,28 @@ grn_select_data_fill_drilldown_labels(grn_ctx *ctx,
   grn_table_cursor_close(ctx, cursor);
 
   return GRN_TRUE;
+}
+
+static grn_bool
+grn_select_data_fill_drilldown_columns(grn_ctx *ctx,
+                                       grn_user_data *user_data,
+                                       grn_drilldown_data *drilldown,
+                                       const char *parameter_key)
+{
+  char prefix[GRN_TABLE_MAX_KEY_SIZE];
+
+  grn_snprintf(prefix,
+               GRN_TABLE_MAX_KEY_SIZE,
+               GRN_TABLE_MAX_KEY_SIZE,
+               "%s[%.*s].",
+               parameter_key,
+               (int)(drilldown->label.length),
+               drilldown->label.value);
+  return grn_columns_fill(ctx,
+                          user_data,
+                          &(drilldown->columns),
+                          prefix,
+                          strlen(prefix));
 }
 
 static grn_bool
@@ -2479,57 +2501,78 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
                             grn_plugin_proc_get_var(ctx, user_data,
                                                     "drilldown_filter", -1),
                             NULL);
+    return GRN_TRUE;
   } else {
     grn_bool succeeded = GRN_TRUE;
     unsigned int i;
 
-    if (!grn_select_data_fill_drilldown_labels(ctx, user_data, data)) {
+    if (!grn_select_data_fill_drilldown_labels(ctx, user_data, data,
+                                               "drilldowns[")) {
+      return GRN_FALSE;
+    }
+
+    /* For backward compatibility */
+    if (!grn_select_data_fill_drilldown_labels(ctx, user_data, data,
+                                               "drilldown[")) {
       return GRN_FALSE;
     }
 
     GRN_HASH_EACH_BEGIN(ctx, data->drilldowns, cursor, id) {
       grn_drilldown_data *drilldown;
-      char drilldown_label[GRN_TABLE_MAX_KEY_SIZE];
-      char key_name[GRN_TABLE_MAX_KEY_SIZE];
-      grn_obj *keys;
-      grn_obj *sort_keys;
-      grn_obj *output_columns;
-      grn_obj *offset;
-      grn_obj *limit;
-      grn_obj *calc_types;
-      grn_obj *calc_target;
-      grn_obj *filter;
-      grn_obj *table;
+      grn_obj *keys = NULL;
+      grn_obj *sort_keys = NULL;
+      grn_obj *output_columns = NULL;
+      grn_obj *offset = NULL;
+      grn_obj *limit = NULL;
+      grn_obj *calc_types = NULL;
+      grn_obj *calc_target = NULL;
+      grn_obj *filter = NULL;
+      grn_obj *table = NULL;
 
       grn_hash_cursor_get_value(ctx, cursor, (void **)&drilldown);
 
-      grn_snprintf(drilldown_label,
-                   GRN_TABLE_MAX_KEY_SIZE,
-                   GRN_TABLE_MAX_KEY_SIZE,
-                   "drilldown[%.*s].",
-                   (int)(drilldown->label.length),
-                   drilldown->label.value);
-
-      succeeded = grn_columns_fill(ctx,
-                                   user_data,
-                                   &(drilldown->columns),
-                                   drilldown_label,
-                                   strlen(drilldown_label));
+      succeeded = grn_select_data_fill_drilldown_columns(ctx,
+                                                         user_data,
+                                                         drilldown,
+                                                         "drilldowns");
       if (!succeeded) {
         break;
       }
 
-#define GET_VAR(name)                                                   \
-      grn_snprintf(key_name,                                            \
-                   GRN_TABLE_MAX_KEY_SIZE,                              \
-                   GRN_TABLE_MAX_KEY_SIZE,                              \
-                   "%s%s", drilldown_label, #name);                     \
-      name = grn_plugin_proc_get_var(ctx, user_data, key_name, -1);
+      /* For backward compatibility */
+      succeeded = grn_select_data_fill_drilldown_columns(ctx,
+                                                         user_data,
+                                                         drilldown,
+                                                         "drilldown");
+      if (!succeeded) {
+        break;
+      }
+
+#define GET_VAR_RAW(parameter_key, name) do {                           \
+        if (!name) {                                                    \
+          char key_name[GRN_TABLE_MAX_KEY_SIZE];                        \
+          grn_snprintf(key_name,                                        \
+                       GRN_TABLE_MAX_KEY_SIZE,                          \
+                       GRN_TABLE_MAX_KEY_SIZE,                          \
+                       "%s[%.*s].%s",                                   \
+                       (parameter_key),                                 \
+                       (int)(drilldown->label.length),                  \
+                       drilldown->label.value,                          \
+                       #name);                                          \
+          name = grn_plugin_proc_get_var(ctx, user_data, key_name, -1); \
+        }                                                               \
+      } while (GRN_FALSE)
+
+#define GET_VAR(name) do {                                              \
+        GET_VAR_RAW("drilldowns", name);                                \
+        /* For backward compatibility */                                \
+        GET_VAR_RAW("drilldown", name);                                 \
+      } while (GRN_FALSE)
 
       GET_VAR(keys);
       GET_VAR(sort_keys);
       if (!sort_keys) {
-        grn_obj *sortby;
+        grn_obj *sortby = NULL;
         GET_VAR(sortby);
         sort_keys = sortby;
       }
@@ -2542,6 +2585,8 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
       GET_VAR(table);
 
 #undef GET_VAR
+
+#undef GET_VAR_RAW
 
       grn_drilldown_data_fill(ctx,
                               drilldown,

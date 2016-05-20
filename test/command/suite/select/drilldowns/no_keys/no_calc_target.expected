@@ -1,0 +1,72 @@
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is fast!"},
+{"_key": "Mroonga is fast!"},
+{"_key": "Groonga sticker!"},
+{"_key": "Rroonga is fast!"}
+]
+[[0,0.0,0.0],4]
+select Memos   --drilldowns[n_records].output_columns _key,_nsubrecs
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "Groonga is fast!"
+      ],
+      [
+        2,
+        "Mroonga is fast!"
+      ],
+      [
+        3,
+        "Groonga sticker!"
+      ],
+      [
+        4,
+        "Rroonga is fast!"
+      ]
+    ],
+    {
+      "n_records": [
+        [
+          1
+        ],
+        [
+          [
+            "_key",
+            "ShortText"
+          ],
+          [
+            "_nsubrecs",
+            "Int32"
+          ]
+        ],
+        [
+          "_all",
+          4
+        ]
+      ]
+    }
+  ]
+]
