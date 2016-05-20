@@ -85,7 +85,7 @@ typedef struct {
 typedef struct {
   grn_select_string label;
   grn_select_string keys;
-  grn_select_string sortby;
+  grn_select_string sort_keys;
   grn_select_string output_columns;
   int offset;
   int limit;
@@ -104,7 +104,7 @@ typedef struct {
   grn_select_string query;
   grn_select_string filter;
   grn_select_string scorer;
-  grn_select_string sortby;
+  grn_select_string sort_keys;
   grn_select_string output_columns;
   int offset;
   int limit;
@@ -606,7 +606,7 @@ static void
 grn_drilldown_data_fill(grn_ctx *ctx,
                         grn_drilldown_data *drilldown,
                         grn_obj *keys,
-                        grn_obj *sortby,
+                        grn_obj *sort_keys,
                         grn_obj *output_columns,
                         grn_obj *offset,
                         grn_obj *limit,
@@ -617,7 +617,7 @@ grn_drilldown_data_fill(grn_ctx *ctx,
 {
   GRN_SELECT_FILL_STRING(drilldown->keys, keys);
 
-  GRN_SELECT_FILL_STRING(drilldown->sortby, sortby);
+  GRN_SELECT_FILL_STRING(drilldown->sort_keys, sort_keys);
 
   GRN_SELECT_FILL_STRING(drilldown->output_columns, output_columns);
   if (drilldown->output_columns.length == 0) {
@@ -1387,12 +1387,12 @@ grn_select_drilldown(grn_ctx *ctx,
     limit = drilldown->limit;
     grn_normalize_offset_and_limit(ctx, n_hits, &offset, &limit);
 
-    if (drilldown->sortby.length > 0) {
+    if (drilldown->sort_keys.length > 0) {
       grn_table_sort_key *sort_keys;
       uint32_t n_sort_keys;
       sort_keys = grn_table_sort_key_from_str(ctx,
-                                              drilldown->sortby.value,
-                                              drilldown->sortby.length,
+                                              drilldown->sort_keys.value,
+                                              drilldown->sort_keys.length,
                                               target_table, &n_sort_keys);
       if (sort_keys) {
         grn_obj *sorted;
@@ -1642,12 +1642,12 @@ grn_select_drilldowns_output(grn_ctx *ctx,
     limit = drilldown->limit;
     grn_normalize_offset_and_limit(ctx, n_hits, &offset, &limit);
 
-    if (drilldown->sortby.length > 0) {
+    if (drilldown->sort_keys.length > 0) {
       grn_table_sort_key *sort_keys;
       uint32_t n_sort_keys;
       sort_keys = grn_table_sort_key_from_str(ctx,
-                                              drilldown->sortby.value,
-                                              drilldown->sortby.length,
+                                              drilldown->sort_keys.value,
+                                              drilldown->sort_keys.length,
                                               target_table, &n_sort_keys);
       if (sort_keys) {
         grn_obj *sorted;
@@ -1734,7 +1734,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     data->query.length + 1 +
     data->filter.length + 1 +
     data->scorer.length + 1 +
-    data->sortby.length + 1 +
+    data->sort_keys.length + 1 +
     data->output_columns.length + 1 +
     data->match_escalation_threshold.length + 1 +
     data->query_expander.length + 1 +
@@ -1762,7 +1762,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
       grn_hash_cursor_get_value(ctx, cursor, (void **)&drilldown);
       cache_key_size +=
         drilldown->keys.length + 1 +
-        drilldown->sortby.length + 1 +
+        drilldown->sort_keys.length + 1 +
         drilldown->output_columns.length + 1 +
         drilldown->label.length + 1 +
         drilldown->calc_target_name.length + 1 +
@@ -1786,7 +1786,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     PUT_CACHE_KEY(data->query);
     PUT_CACHE_KEY(data->filter);
     PUT_CACHE_KEY(data->scorer);
-    PUT_CACHE_KEY(data->sortby);
+    PUT_CACHE_KEY(data->sort_keys);
     PUT_CACHE_KEY(data->output_columns);
     if (data->slices) {
       GRN_HASH_EACH_BEGIN(ctx, data->slices, cursor, id) {
@@ -1807,7 +1807,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
         grn_drilldown_data *drilldown;
         grn_hash_cursor_get_value(ctx, cursor, (void **)&drilldown);
         PUT_CACHE_KEY(drilldown->keys);
-        PUT_CACHE_KEY(drilldown->sortby);
+        PUT_CACHE_KEY(drilldown->sort_keys);
         PUT_CACHE_KEY(drilldown->output_columns);
         PUT_CACHE_KEY(drilldown->label);
         PUT_CACHE_KEY(drilldown->calc_target_name);
@@ -1872,8 +1872,8 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
                               data->filter.length - 1,
                               data->scorer.value,
                               data->scorer.length,
-                              data->sortby.value,
-                              data->sortby.length,
+                              data->sort_keys.value,
+                              data->sort_keys.length,
                               data->output_columns.value,
                               data->output_columns.length,
                               data->offset,
@@ -2105,10 +2105,10 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
       grn_normalize_offset_and_limit(ctx, nhits,
                                      &(data->offset), &(data->limit));
 
-      if (data->sortby.length > 0 &&
+      if (data->sort_keys.length > 0 &&
           (keys = grn_table_sort_key_from_str(ctx,
-                                              data->sortby.value,
-                                              data->sortby.length,
+                                              data->sort_keys.value,
+                                              data->sort_keys.length,
                                               res,
                                               &nkeys))) {
         if ((sorted = grn_table_create(ctx, NULL, 0, NULL,
@@ -2428,6 +2428,7 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
   if (GRN_TEXT_LEN(drilldown) > 0) {
     grn_drilldown_data *drilldown_data;
     const char *anonymous_label = "_anonymous";
+    grn_obj *sort_keys;
 
     drilldown_data = grn_select_data_drilldowns_add(ctx,
                                                     data,
@@ -2438,11 +2439,18 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
     }
     drilldown_data->label.value = NULL;
     drilldown_data->label.length = 0;
+
+    sort_keys = grn_plugin_proc_get_var(ctx, user_data,
+                                        "drilldown_sort_keys", -1);
+    if (GRN_TEXT_LEN(sort_keys) == 0) {
+      /* For backward compatibility */
+      sort_keys = grn_plugin_proc_get_var(ctx, user_data,
+                                          "drilldown_sortby", -1);
+    }
     grn_drilldown_data_fill(ctx,
                             drilldown_data,
                             drilldown,
-                            grn_plugin_proc_get_var(ctx, user_data,
-                                                    "drilldown_sortby", -1),
+                            sort_keys,
                             grn_plugin_proc_get_var(ctx, user_data,
                                                     "drilldown_output_columns",
                                                     -1),
@@ -2469,7 +2477,7 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
       char drilldown_label[GRN_TABLE_MAX_KEY_SIZE];
       char key_name[GRN_TABLE_MAX_KEY_SIZE];
       grn_obj *keys;
-      grn_obj *sortby;
+      grn_obj *sort_keys;
       grn_obj *output_columns;
       grn_obj *offset;
       grn_obj *limit;
@@ -2502,7 +2510,12 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
       name = grn_plugin_proc_get_var(ctx, user_data, key_name, -1);
 
       GET_VAR(keys);
-      GET_VAR(sortby);
+      GET_VAR(sort_keys);
+      if (!sort_keys) {
+        grn_obj *sortby;
+        GET_VAR(sortby);
+        sort_keys = sortby;
+      }
       GET_VAR(output_columns);
       GET_VAR(offset);
       GET_VAR(limit);
@@ -2516,7 +2529,7 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
       grn_drilldown_data_fill(ctx,
                               drilldown,
                               keys,
-                              sortby,
+                              sort_keys,
                               output_columns,
                               offset,
                               limit,
@@ -2559,10 +2572,17 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     grn_plugin_proc_get_var_string(ctx, user_data,
                                    "scorer", -1,
                                    &(data.scorer.length));
-  data.sortby.value =
+  data.sort_keys.value =
     grn_plugin_proc_get_var_string(ctx, user_data,
-                                   "sortby", -1,
-                                   &(data.sortby.length));
+                                   "sort_keys", -1,
+                                   &(data.sort_keys.length));
+  if (data.sort_keys.length == 0) {
+    /* For backward compatibility */
+    data.sort_keys.value =
+      grn_plugin_proc_get_var_string(ctx, user_data,
+                                     "sortby", -1,
+                                     &(data.sort_keys.length));
+  }
   data.output_columns.value =
     grn_plugin_proc_get_var_string(ctx, user_data,
                                    "output_columns", -1,
@@ -2643,7 +2663,7 @@ exit :
   return NULL;
 }
 
-#define N_VARS 24
+#define N_VARS 26
 #define DEFINE_VARS grn_expr_var vars[N_VARS]
 
 static void
@@ -2655,11 +2675,13 @@ init_vars(grn_ctx *ctx, grn_expr_var *vars)
   grn_plugin_expr_var_init(ctx, &(vars[3]), "query", -1);
   grn_plugin_expr_var_init(ctx, &(vars[4]), "filter", -1);
   grn_plugin_expr_var_init(ctx, &(vars[5]), "scorer", -1);
+  /* Deprecated since 6.0.3. Use sort_keys instead. */
   grn_plugin_expr_var_init(ctx, &(vars[6]), "sortby", -1);
   grn_plugin_expr_var_init(ctx, &(vars[7]), "output_columns", -1);
   grn_plugin_expr_var_init(ctx, &(vars[8]), "offset", -1);
   grn_plugin_expr_var_init(ctx, &(vars[9]), "limit", -1);
   grn_plugin_expr_var_init(ctx, &(vars[10]), "drilldown", -1);
+  /* Deprecated since 6.0.3. Use drilldown_sort_keys instead. */
   grn_plugin_expr_var_init(ctx, &(vars[11]), "drilldown_sortby", -1);
   grn_plugin_expr_var_init(ctx, &(vars[12]), "drilldown_output_columns", -1);
   grn_plugin_expr_var_init(ctx, &(vars[13]), "drilldown_offset", -1);
@@ -2674,6 +2696,8 @@ init_vars(grn_ctx *ctx, grn_expr_var *vars)
   grn_plugin_expr_var_init(ctx, &(vars[21]), "drilldown_calc_types", -1);
   grn_plugin_expr_var_init(ctx, &(vars[22]), "drilldown_calc_target", -1);
   grn_plugin_expr_var_init(ctx, &(vars[23]), "drilldown_filter", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[24]), "sort_keys", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[25]), "drilldown_sort_keys", -1);
 }
 
 void

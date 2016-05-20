@@ -1,0 +1,10 @@
+table_create Numbers TABLE_DAT_KEY Int32
+
+load --table Numbers
+[
+{"_key": 127},
+{"_key": 256},
+{"_key": -255}
+]
+
+select Numbers --sort_keys _key

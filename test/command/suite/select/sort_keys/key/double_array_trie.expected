@@ -1,0 +1,46 @@
+table_create Numbers TABLE_DAT_KEY Int32
+[[0,0.0,0.0],true]
+load --table Numbers
+[
+{"_key": 127},
+{"_key": 256},
+{"_key": -255}
+]
+[[0,0.0,0.0],3]
+select Numbers --sort_keys _key
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "Int32"
+        ]
+      ],
+      [
+        3,
+        -255
+      ],
+      [
+        1,
+        127
+      ],
+      [
+        2,
+        256
+      ]
+    ]
+  ]
+]

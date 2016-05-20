@@ -1,0 +1,17 @@
+table_create Logs TABLE_NO_KEY
+column_create Logs message COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Terms index COLUMN_INDEX|WITH_SECTION Logs message
+
+load --table Logs
+[
+["message"],
+["Error: no such file."],
+["Critical: disk full."],
+["Error: invalid argument."]
+]
+
+select Terms --sort_keys -index
