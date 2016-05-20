@@ -33,13 +33,15 @@
 #define DEFAULT_DRILLDOWN_LIMIT           10
 #define DEFAULT_DRILLDOWN_OUTPUT_COLUMNS  "_key, _nsubrecs"
 
+#define GRN_SELECT_INIT_STRING(string) do {     \
+    string.value = NULL;                        \
+    string.length = 0;                          \
+  } while (GRN_FALSE)
+
 #define GRN_SELECT_FILL_STRING(string, bulk)     \
   if (bulk && GRN_TEXT_LEN(bulk) > 0) {          \
     string.value = GRN_TEXT_VALUE(bulk);         \
     string.length = GRN_TEXT_LEN(bulk);          \
-  } else {                                       \
-    string.value = NULL;                         \
-    string.length = 0;                           \
   }                                              \
 
 #define GRN_BULK_EQUAL_STRING(bulk, string)                             \
@@ -238,10 +240,8 @@ grn_column_data_init(grn_ctx *ctx,
   column->stage = stage;
   column->type = grn_ctx_at(ctx, GRN_DB_TEXT);
   column->flags = GRN_OBJ_COLUMN_SCALAR;
-  column->value.value = NULL;
-  column->value.length = 0;
-  column->window.sort_keys.value = NULL;
-  column->window.sort_keys.length = 0;
+  GRN_SELECT_INIT_STRING(column->value);
+  GRN_SELECT_INIT_STRING(column->window.sort_keys);
 
   return GRN_TRUE;
 }
@@ -531,6 +531,11 @@ grn_slice_data_init(grn_ctx *ctx,
 {
   slice->label.value = label;
   slice->label.length = label_len;
+  GRN_SELECT_INIT_STRING(slice->filter);
+  GRN_SELECT_INIT_STRING(slice->sort_keys);
+  GRN_SELECT_INIT_STRING(slice->output_columns);
+  slice->offset = 0;
+  slice->limit = GRN_SELECT_DEFAULT_LIMIT;
   slice->table = NULL;
 }
 
@@ -575,6 +580,15 @@ grn_drilldown_data_init(grn_ctx *ctx,
 {
   drilldown->label.value = label;
   drilldown->label.length = label_len;
+  GRN_SELECT_INIT_STRING(drilldown->keys);
+  GRN_SELECT_INIT_STRING(drilldown->sort_keys);
+  GRN_SELECT_INIT_STRING(drilldown->output_columns);
+  drilldown->offset = 0;
+  drilldown->limit = DEFAULT_DRILLDOWN_LIMIT;
+  drilldown->calc_types = 0;
+  GRN_SELECT_INIT_STRING(drilldown->calc_target_name);
+  GRN_SELECT_INIT_STRING(drilldown->filter);
+  GRN_SELECT_INIT_STRING(drilldown->table_name);
   grn_columns_init(ctx, &(drilldown->columns));
   drilldown->result.table = NULL;
   drilldown->filtered_result = NULL;
