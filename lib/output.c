@@ -638,7 +638,8 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         break;
       case GRN_ACCESSOR_GET_SCORE :
         {
-          grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
+          grn_rset_recinfo *ri =
+            (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
           if (grn_ctx_get_command_version(ctx) == GRN_COMMAND_VERSION_1) {
             int32_t int32_score = ri->score;
             GRN_INT32_PUT(ctx, &buf, int32_score);
