@@ -136,6 +136,9 @@ typedef struct {
     grn_table_sort_key *keys;
     uint32_t n_keys;
   } drilldown;
+  struct {
+    int n_elements;
+  } output;
 } grn_select_data;
 
 grn_rc
@@ -1969,6 +1972,8 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
   data->drilldown.keys = NULL;
   data->drilldown.n_keys = 0;
 
+  data->output.n_elements = 0;
+
   {
     const char *query_end = data->query.value + data->query.length;
     int space_len;
@@ -2170,13 +2175,13 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     }
 
     {
-      int result_size = 1;
+      data->output.n_elements = 1;
 
       if (data->slices) {
-        result_size += 1;
+        data->output.n_elements += 1;
       }
 
-      if (!ctx->rc && data->drilldowns) {
+      if (data->drilldowns) {
         grn_drilldown_data *anonymous_drilldown = NULL;
         if (grn_hash_size(ctx, data->drilldowns) == 1) {
           grn_id first_id = 1;
@@ -2199,10 +2204,10 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
                                         data->tables.result,
                                         &(data->drilldown.n_keys));
           if (data->drilldown.keys) {
-            result_size += data->drilldown.n_keys;
+            data->output.n_elements += data->drilldown.n_keys;
           }
         } else {
-          result_size += 1;
+          data->output.n_elements += 1;
         }
       }
 
@@ -2255,7 +2260,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
                       ":", "score(%d)", nhits);
       }
 
-      GRN_OUTPUT_ARRAY_OPEN("RESULT", result_size);
+      GRN_OUTPUT_ARRAY_OPEN("RESULT", data->output.n_elements);
 
       grn_normalize_offset_and_limit(ctx, nhits,
                                      &(data->offset), &(data->limit));
