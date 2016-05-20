@@ -2198,17 +2198,40 @@ is_output_columns_format_v1(grn_ctx *ctx,
                             const char *output_columns,
                             unsigned int output_columns_len)
 {
-  unsigned int i;
+  const char *current;
+  const char *end;
 
-  for (i = 0; i < output_columns_len; i++) {
-    switch (output_columns[i]) {
-    case ',' :
-    case '(' :
-    case '[' :
+  current = output_columns;
+  end = current + output_columns_len;
+  while (current < end) {
+    int char_length;
+
+    char_length = grn_charlen(ctx, current, end);
+    if (char_length != 1) {
       return GRN_FALSE;
-    default :
-      break;
     }
+
+    switch (current[0]) {
+    case ' ' :
+    case '.' :
+    case '_' :
+    case '-' :
+    case '#' :
+    case '@' :
+      break;
+    default :
+      if ('a' <= current[0] && current[0] <= 'z') {
+        break;
+      } else if ('A' <= current[0] && current[0] <= 'Z') {
+        break;
+      } else if ('0' <= current[0] && current[0] <= '9') {
+        break;
+      } else {
+        return GRN_FALSE;
+      }
+    }
+
+    current += char_length;
   }
 
   return GRN_TRUE;
