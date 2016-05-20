@@ -1876,7 +1876,17 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
       grn_ctx_set_match_escalation_threshold(ctx, threshold);
     }
   }
-  if ((table = grn_ctx_get(ctx, data->table.value, data->table.length))) {
+
+  table = grn_ctx_get(ctx, data->table.value, data->table.length);
+  if (!table) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[select] invalid table name: <%.*s>",
+        (int)(data->table.length),
+        data->table.value);
+    goto exit;
+  }
+
+  {
     grn_obj *initial_table = table;
 
     if (data->filter.length > 0 && (data->filter.value[0] == '?') &&
@@ -2181,12 +2191,8 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     }
     if (taintable) { grn_db_touch(ctx, DB_OBJ(table)->db); }
     grn_obj_unlink(ctx, table);
-  } else {
-    ERR(GRN_INVALID_ARGUMENT,
-        "invalid table name: <%.*s>",
-        (int)(data->table.length),
-        data->table.value);
   }
+
 exit :
   if (data->match_escalation_threshold.length > 0) {
     grn_ctx_set_match_escalation_threshold(ctx, original_threshold);
