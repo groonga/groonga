@@ -23,9 +23,6 @@ select Memos   --filter 'tags + "groonga"'   --output_columns _key,_score
       0.0
     ],
     "<+> doesn't support vector: <[{\"value\":\"groonga\", \"weight\":0}]> + <\"groonga\">"
-  ],
-  [
-
   ]
 ]
 #|e| <+> doesn't support vector: <[{"value":"groonga", "weight":0}]> + <"groonga">

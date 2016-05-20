@@ -7,9 +7,6 @@ select LandMarks --filter 'geo_in_rectangle(point, "-90.0x0", "0x0")'
       0.0
     ],
     "geo_in_rectangle(): top left point's latitude is too small: <-324000000>(min:-324000000): (-324000000,0) (0,0)"
-  ],
-  [
-
   ]
 ]
 #|e| geo_in_rectangle(): top left point's latitude is too small: <-324000000>(min:-324000000): (-324000000,0) (0,0)

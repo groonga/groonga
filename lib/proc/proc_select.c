@@ -127,6 +127,8 @@ typedef struct {
     grn_obj *match_columns;
     grn_obj *expression;
   } condition;
+  uint16_t cacheable;
+  uint16_t taintable;
 } grn_select_data;
 
 grn_rc
@@ -1045,6 +1047,152 @@ grn_select_apply_initial_columns(grn_ctx *ctx,
 }
 
 static grn_bool
+grn_select_filter(grn_ctx *ctx,
+                  grn_select_data *data)
+{
+  grn_obj *v;
+
+  if (data->query.length == 0 && data->filter.length == 0) {
+    data->tables.result = data->tables.initial;
+    return TRUE;
+  }
+
+  GRN_EXPR_CREATE_FOR_QUERY(ctx,
+                            data->tables.initial,
+                            data->condition.expression,
+                            v);
+  if (!data->condition.expression) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[select][condition] "
+        "failed to create expression for condition: %s",
+        ctx->errbuf);
+    return GRN_FALSE;
+  }
+
+  if (data->match_columns.length > 0) {
+    GRN_EXPR_CREATE_FOR_QUERY(ctx,
+                              data->tables.initial,
+                              data->condition.match_columns,
+                              v);
+    if (!data->condition.match_columns) {
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[select][match_columns] "
+          "failed to create expression for match columns: <%.*s>: %s",
+          (int)(data->match_columns.length),
+          data->match_columns.value,
+          ctx->errbuf);
+      return GRN_FALSE;
+    }
+
+    grn_expr_parse(ctx,
+                   data->condition.match_columns,
+                   data->match_columns.value,
+                   data->match_columns.length,
+                   NULL, GRN_OP_MATCH, GRN_OP_AND,
+                   GRN_EXPR_SYNTAX_SCRIPT);
+    if (ctx->rc) {
+      return GRN_FALSE;
+    }
+  }
+
+  if (data->query.length > 0) {
+    grn_expr_flags flags;
+    grn_obj query_expander_buf;
+    const char *query = data->query.value;
+    unsigned int query_len = data->query.length;
+
+    flags = GRN_EXPR_SYNTAX_QUERY;
+    if (data->query_flags.length) {
+      flags |= grn_parse_query_flags(ctx,
+                                     data->query_flags.value,
+                                     data->query_flags.length);
+      if (ctx->rc) {
+        return GRN_FALSE;
+      }
+    } else {
+      flags |= GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN;
+    }
+
+    GRN_TEXT_INIT(&query_expander_buf, 0);
+    if (data->query_expander.length > 0) {
+      grn_rc rc;
+      rc = grn_proc_syntax_expand_query(ctx,
+                                        data->query.value,
+                                        data->query.length,
+                                        flags,
+                                        data->query_expander.value,
+                                        data->query_expander.length,
+                                        &query_expander_buf);
+      if (rc == GRN_SUCCESS) {
+        query = GRN_TEXT_VALUE(&query_expander_buf);
+        query_len = GRN_TEXT_LEN(&query_expander_buf);
+      } else {
+        GRN_OBJ_FIN(ctx, &query_expander_buf);
+        return GRN_FALSE;
+      }
+    }
+
+    grn_expr_parse(ctx,
+                   data->condition.expression,
+                   query,
+                   query_len,
+                   data->condition.match_columns,
+                   GRN_OP_MATCH,
+                   GRN_OP_AND,
+                   flags);
+    GRN_OBJ_FIN(ctx, &query_expander_buf);
+
+    if (ctx->rc != GRN_SUCCESS) {
+      return GRN_FALSE;
+    }
+  }
+
+  if (data->filter.length > 0) {
+    grn_expr_parse(ctx,
+                   data->condition.expression,
+                   data->filter.value,
+                   data->filter.length,
+                   data->condition.match_columns,
+                   GRN_OP_MATCH,
+                   GRN_OP_AND,
+                   GRN_EXPR_SYNTAX_SCRIPT);
+    if (ctx->rc != GRN_SUCCESS) {
+      return GRN_FALSE;
+    }
+
+    if (data->query.length > 0) {
+      grn_expr_append_op(ctx, data->condition.expression, GRN_OP_AND, 2);
+    }
+
+    if (ctx->rc != GRN_SUCCESS) {
+      return GRN_FALSE;
+    }
+  }
+
+  data->cacheable *= ((grn_expr *)(data->condition.expression))->cacheable;
+  data->taintable += ((grn_expr *)(data->condition.expression))->taintable;
+  /*
+    grn_obj strbuf;
+    GRN_TEXT_INIT(&strbuf, 0);
+    grn_expr_inspect(ctx, &strbuf, cond);
+    GRN_TEXT_PUTC(ctx, &strbuf, '\0');
+    GRN_LOG(ctx, GRN_LOG_NOTICE, "query=(%s)", GRN_TEXT_VALUE(&strbuf));
+    GRN_OBJ_FIN(ctx, &strbuf);
+  */
+  if (ctx->rc != GRN_SUCCESS) {
+    return GRN_FALSE;
+  }
+
+  data->tables.result = grn_table_select(ctx,
+                                         data->tables.initial,
+                                         data->condition.expression,
+                                         NULL,
+                                         GRN_OP_OR);
+
+  return ctx->rc == GRN_SUCCESS;
+}
+
+static grn_bool
 grn_select_slice_execute(grn_ctx *ctx,
                          grn_select_data *data,
                          grn_obj *table,
@@ -1749,7 +1897,6 @@ static grn_rc
 grn_select(grn_ctx *ctx, grn_select_data *data)
 {
   uint32_t nkeys, nhits;
-  uint16_t cacheable = 1, taintable = 0;
   grn_table_sort_key *keys;
   grn_obj *outbuf = ctx->impl->output.buf;
   grn_content_type output_type = ctx->impl->output.type;
@@ -1764,6 +1911,9 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
 
   data->condition.match_columns = NULL;
   data->condition.expression = NULL;
+
+  data->cacheable = 1;
+  data->taintable = 0;
 
   {
     const char *query_end = data->query.value + data->query.length;
@@ -1936,7 +2086,9 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
                               data->output_columns.length,
                               data->offset,
                               data->limit);
-      if (!ctx->rc && cacheable && cache_key_size <= GRN_CACHE_MAX_KEY_SIZE &&
+      if (!ctx->rc &&
+          data->cacheable > 0 &&
+          cache_key_size <= GRN_CACHE_MAX_KEY_SIZE &&
           (!data->cache.value ||
            data->cache.length != 2 ||
            data->cache.value[0] != 'n' ||
@@ -1948,124 +2100,10 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
 
     data->tables.initial = data->tables.target;
     grn_select_apply_initial_columns(ctx, data);
-
-    if (data->query.length > 0 || data->filter.length > 0) {
-      grn_obj *v;
-      GRN_EXPR_CREATE_FOR_QUERY(ctx,
-                                data->tables.initial,
-                                data->condition.expression,
-                                v);
-      if (data->condition.expression) {
-        if (data->match_columns.length) {
-          GRN_EXPR_CREATE_FOR_QUERY(ctx,
-                                    data->tables.initial,
-                                    data->condition.match_columns,
-                                    v);
-          if (data->condition.match_columns) {
-            grn_expr_parse(ctx,
-                           data->condition.match_columns,
-                           data->match_columns.value,
-                           data->match_columns.length,
-                           NULL, GRN_OP_MATCH, GRN_OP_AND,
-                           GRN_EXPR_SYNTAX_SCRIPT);
-            if (ctx->rc) {
-              goto exit;
-            }
-          } else {
-            /* todo */
-          }
-        }
-        if (data->query.length > 0) {
-          grn_expr_flags flags;
-          grn_obj query_expander_buf;
-          const char *query = data->query.value;
-          unsigned int query_len = data->query.length;
-
-          flags = GRN_EXPR_SYNTAX_QUERY;
-          if (data->query_flags.length) {
-            flags |= grn_parse_query_flags(ctx,
-                                           data->query_flags.value,
-                                           data->query_flags.length);
-            if (ctx->rc) {
-              goto exit;
-            }
-          } else {
-            flags |= GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN;
-          }
-          GRN_TEXT_INIT(&query_expander_buf, 0);
-          if (data->query_expander.length) {
-            grn_rc rc;
-            rc = grn_proc_syntax_expand_query(ctx,
-                                              data->query.value,
-                                              data->query.length,
-                                              flags,
-                                              data->query_expander.value,
-                                              data->query_expander.length,
-                                              &query_expander_buf);
-            if (rc == GRN_SUCCESS) {
-              query = GRN_TEXT_VALUE(&query_expander_buf);
-              query_len = GRN_TEXT_LEN(&query_expander_buf);
-            } else {
-              GRN_OBJ_FIN(ctx, &query_expander_buf);
-              goto exit;
-            }
-          }
-          grn_expr_parse(ctx,
-                         data->condition.expression,
-                         query,
-                         query_len,
-                         data->condition.match_columns,
-                         GRN_OP_MATCH,
-                         GRN_OP_AND,
-                         flags);
-          GRN_OBJ_FIN(ctx, &query_expander_buf);
-          if (!ctx->rc && data->filter.length > 0) {
-            grn_expr_parse(ctx,
-                           data->condition.expression,
-                           data->filter.value,
-                           data->filter.length,
-                           data->condition.match_columns,
-                           GRN_OP_MATCH,
-                           GRN_OP_AND,
-                           GRN_EXPR_SYNTAX_SCRIPT);
-            if (!ctx->rc) {
-              grn_expr_append_op(ctx, data->condition.expression, GRN_OP_AND, 2);
-            }
-          }
-        } else {
-          grn_expr_parse(ctx,
-                         data->condition.expression,
-                         data->filter.value,
-                         data->filter.length,
-                         data->condition.match_columns,
-                         GRN_OP_MATCH,
-                         GRN_OP_AND,
-                         GRN_EXPR_SYNTAX_SCRIPT);
-        }
-        cacheable *= ((grn_expr *)(data->condition.expression))->cacheable;
-        taintable += ((grn_expr *)(data->condition.expression))->taintable;
-        /*
-        grn_obj strbuf;
-        GRN_TEXT_INIT(&strbuf, 0);
-        grn_expr_inspect(ctx, &strbuf, cond);
-        GRN_TEXT_PUTC(ctx, &strbuf, '\0');
-        GRN_LOG(ctx, GRN_LOG_NOTICE, "query=(%s)", GRN_TEXT_VALUE(&strbuf));
-        GRN_OBJ_FIN(ctx, &strbuf);
-        */
-        if (!ctx->rc) {
-          data->tables.result = grn_table_select(ctx,
-                                                 data->tables.initial,
-                                                 data->condition.expression,
-                                                 NULL,
-                                                 GRN_OP_OR);
-        }
-      } else {
-        /* todo */
-        ERRCLR(ctx);
-      }
-    } else {
-      data->tables.result = data->tables.initial;
+    if (!grn_select_filter(ctx, data)) {
+      goto exit;
     }
+
     if (data->tables.result) {
       nhits = grn_table_size(ctx, data->tables.result);
     } else {
@@ -2151,8 +2189,8 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
             grn_obj_unlink(ctx, adjuster);
             goto exit;
           }
-          cacheable *= ((grn_expr *)adjuster)->cacheable;
-          taintable += ((grn_expr *)adjuster)->taintable;
+          data->cacheable *= ((grn_expr *)adjuster)->cacheable;
+          data->taintable += ((grn_expr *)adjuster)->taintable;
           grn_select_apply_adjuster(ctx, data->tables.result, adjuster);
           grn_obj_unlink(ctx, adjuster);
         }
@@ -2169,8 +2207,8 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
                          data->scorer.value,
                          data->scorer.length, NULL, GRN_OP_MATCH, GRN_OP_AND,
                          GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
-          cacheable *= ((grn_expr *)scorer)->cacheable;
-          taintable += ((grn_expr *)scorer)->taintable;
+          data->cacheable *= ((grn_expr *)scorer)->cacheable;
+          data->taintable += ((grn_expr *)scorer)->taintable;
           GRN_TABLE_EACH_BEGIN(ctx, data->tables.result, cursor, id) {
             GRN_RECORD_SET(ctx, v, id);
             grn_expr_exec(ctx, scorer, 0);
@@ -2248,14 +2286,16 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
       GRN_OUTPUT_ARRAY_OPEN("RESULT", 0);
     }
     GRN_OUTPUT_ARRAY_CLOSE();
-    if (!ctx->rc && cacheable && cache_key_size <= GRN_CACHE_MAX_KEY_SIZE &&
+    if (!ctx->rc &&
+        data->cacheable &&
+        cache_key_size <= GRN_CACHE_MAX_KEY_SIZE &&
         (!data->cache.value ||
          data->cache.length != 2 ||
          data->cache.value[0] != 'n' ||
          data->cache.value[1] != 'o')) {
       grn_cache_update(ctx, cache_obj, cache_key, cache_key_size, outbuf);
     }
-    if (taintable) {
+    if (data->taintable > 0) {
       grn_db_touch(ctx, DB_OBJ(data->tables.target)->db);
     }
   }

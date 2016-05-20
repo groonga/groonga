@@ -16,5 +16,5 @@ load --table Users
 ]
 [[0,0.0,0.0],5]
 select Users --filter 'between(age, "XXX", "include", 20, "include")'
-[[[-22,0.0,0.0],"between(): failed to cast min: <\"XXX\"> -> <Int32>"],[]]
+[[[-22,0.0,0.0],"between(): failed to cast min: <\"XXX\"> -> <Int32>"]]
 #|e| between(): failed to cast min: <"XXX"> -> <Int32>

@@ -7,9 +7,6 @@ select Shops   --output_columns 'name'   --limit 0   --filter 'geo_in_rectangle(
       0.0
     ],
     "geo_in_rectangle(): failed to cast to WGS84GeoPoint: <90.0x180.0>"
-  ],
-  [
-
   ]
 ]
 #|e| geo_in_rectangle(): failed to cast to WGS84GeoPoint: <90.0x180.0>

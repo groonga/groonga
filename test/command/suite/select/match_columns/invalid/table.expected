@@ -13,5 +13,5 @@ load --table Memos
 ]
 [[0,0.0,0.0],1]
 select Memos   --match_columns Memos   --query Groonga
-[[[-22,0.0,0.0],"invalid match target: <Memos>"],[]]
+[[[-22,0.0,0.0],"invalid match target: <Memos>"]]
 #|e| invalid match target: <Memos>

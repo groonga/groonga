@@ -14,7 +14,7 @@ load --table Memos
 ]
 [[0,0.0,0.0],1]
 select Memos --filter 'caption == "Groonga"'
-[[[-63,0.0,0.0],"Syntax error: <caption| |== \"Groonga\">"],[]]
+[[[-63,0.0,0.0],"Syntax error: <caption| |== \"Groonga\">"]]
 #|e| Syntax error: <caption| |== "Groonga">
 load --table Aliases
 [
