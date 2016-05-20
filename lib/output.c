@@ -2140,6 +2140,244 @@ grn_output_envelope_json(grn_ctx *ctx,
   }
 }
 
+static void
+msgpack_pack_cstr(msgpack_packer *packer,
+                  const char *string)
+{
+  size_t size;
+
+  size = strlen(string);
+  msgpack_pack_str(packer, size);
+  msgpack_pack_str_body(packer, string, size);
+}
+
+static void
+grn_output_envelope_msgpack_v1(grn_ctx *ctx,
+                               grn_rc rc,
+                               grn_obj *head,
+                               grn_obj *body,
+                               grn_obj *foot,
+                               double started,
+                               double elapsed,
+                               const char *file,
+                               int line)
+{
+  msgpack_writer_ctx head_writer_ctx;
+  msgpack_packer header_packer;
+  int header_size;
+
+  head_writer_ctx.ctx    = ctx;
+  head_writer_ctx.buffer = head;
+  msgpack_packer_init(&header_packer, &head_writer_ctx, msgpack_buffer_writer);
+
+  /* [HEADER, (BODY)] */
+  if (GRN_TEXT_LEN(body) > 0) {
+    msgpack_pack_array(&header_packer, 2);
+  } else {
+    msgpack_pack_array(&header_packer, 1);
+  }
+
+  /* HEADER := [rc, started, elapsed, (error, (ERROR DETAIL))] */
+  header_size = 3;
+  if (rc != GRN_SUCCESS) {
+    header_size++;
+    if (ctx->errfunc && ctx->errfile) {
+      header_size++;
+    }
+  }
+  msgpack_pack_array(&header_packer, header_size);
+  msgpack_pack_int(&header_packer, rc);
+
+  msgpack_pack_double(&header_packer, started);
+  msgpack_pack_double(&header_packer, elapsed);
+
+  if (rc != GRN_SUCCESS) {
+    msgpack_pack_str(&header_packer, strlen(ctx->errbuf));
+    msgpack_pack_str_body(&header_packer, ctx->errbuf, strlen(ctx->errbuf));
+    if (ctx->errfunc && ctx->errfile) {
+      grn_obj *command = GRN_CTX_USER_DATA(ctx)->ptr;
+      int      error_detail_size;
+
+      /* ERROR DETAIL :    = [[errfunc, errfile, errline,
+         (file, line, command)]] */
+      /* TODO: output backtrace */
+      msgpack_pack_array(&header_packer, 1);
+      error_detail_size    = 3;
+      if (command) {
+        error_detail_size += 3;
+      }
+      msgpack_pack_array(&header_packer, error_detail_size);
+
+      msgpack_pack_str(&header_packer, strlen(ctx->errfunc));
+      msgpack_pack_str_body(&header_packer, ctx->errfunc, strlen(ctx->errfunc));
+
+      msgpack_pack_str(&header_packer, strlen(ctx->errfile));
+      msgpack_pack_str_body(&header_packer, ctx->errfile, strlen(ctx->errfile));
+
+      msgpack_pack_int(&header_packer, ctx->errline);
+
+      if (command) {
+        if (file) {
+          msgpack_pack_str(&header_packer, strlen(file));
+          msgpack_pack_str_body(&header_packer, file, strlen(file));
+        } else {
+          msgpack_pack_str(&header_packer, 7);
+          msgpack_pack_str_body(&header_packer, "(stdin)", 7);
+        }
+
+        msgpack_pack_int(&header_packer, line);
+
+        msgpack_pack_str(&header_packer, GRN_TEXT_LEN(command));
+        msgpack_pack_str_body(&header_packer, GRN_TEXT_VALUE(command), GRN_TEXT_LEN(command));
+      }
+    }
+  }
+}
+
+static void
+grn_output_envelope_msgpack(grn_ctx    *ctx,
+                            grn_rc      rc,
+                            grn_obj    *head,
+                            grn_obj    *body,
+                            grn_obj    *foot,
+                            double      started,
+                            double      elapsed,
+                            const char *file,
+                            int         line)
+{
+  msgpack_writer_ctx writer_ctx;
+  msgpack_packer packer;
+  int n_elements;
+
+  writer_ctx.ctx = ctx;
+  writer_ctx.buffer = head;
+  msgpack_packer_init(&packer, &writer_ctx, msgpack_buffer_writer);
+
+  /*
+   * ENVELOPE := {
+   *   "header": HEADER,
+   *   "body":   BODY    (optional)
+   * }
+   */
+  if (GRN_TEXT_LEN(body) > 0) {
+    n_elements = 2;
+  } else {
+    n_elements = 1;
+  }
+
+  msgpack_pack_map(&packer, n_elements);
+  {
+    int n_header_elements = 3;
+
+    /*
+     * HEADER := {
+     *   "return_code":  rc,
+     *   "start_time":   started,
+     *   "elapsed_time": elapsed,
+     "   "error": {                   (optional)
+     *      "message":  errbuf,
+     *      "function": errfunc,
+     *      "file":     errfile,
+     *      "line":     errline,
+     *      "input": {                (optional)
+     *        "file":    input_file,
+     *        "line":    line,
+     *        "command": command
+     *      }
+     *   }
+     * }
+     */
+
+    if (rc != GRN_SUCCESS) {
+      n_header_elements++;
+    }
+
+    msgpack_pack_cstr(&packer, "header");
+    msgpack_pack_map(&packer, n_header_elements);
+    {
+      msgpack_pack_cstr(&packer, "return_code");
+      msgpack_pack_int(&packer, rc);
+
+      msgpack_pack_cstr(&packer, "start_time");
+      msgpack_pack_double(&packer, started);
+
+      msgpack_pack_cstr(&packer, "elapsed_time");
+      msgpack_pack_double(&packer, elapsed);
+
+      if (rc != GRN_SUCCESS) {
+        int n_error_elements = 1;
+        grn_obj *command;
+
+        if (ctx->errfunc) {
+          n_error_elements++;
+        }
+        if (ctx->errfile) {
+          n_error_elements += 2;
+        }
+
+        command = GRN_CTX_USER_DATA(ctx)->ptr;
+        if (file || command) {
+          n_error_elements++;
+        }
+
+        msgpack_pack_cstr(&packer, "error");
+        msgpack_pack_map(&packer, n_error_elements);
+        {
+          msgpack_pack_cstr(&packer, "message");
+          msgpack_pack_cstr(&packer, ctx->errbuf);
+
+          if (ctx->errfunc) {
+            msgpack_pack_cstr(&packer, "function");
+            msgpack_pack_cstr(&packer, ctx->errfunc);
+          }
+
+          if (ctx->errfile) {
+            msgpack_pack_cstr(&packer, "file");
+            msgpack_pack_cstr(&packer, ctx->errfile);
+
+            msgpack_pack_cstr(&packer, "line");
+            msgpack_pack_int(&packer, ctx->errline);
+          }
+
+          if (file || command) {
+            int n_input_elements = 0;
+
+            if (file) {
+              n_input_elements += 2;
+            }
+            if (command) {
+              n_input_elements++;
+            }
+
+            msgpack_pack_cstr(&packer, "input");
+            msgpack_pack_map(&packer, n_input_elements);
+
+            if (file) {
+              msgpack_pack_cstr(&packer, "file");
+              msgpack_pack_cstr(&packer, file);
+
+              msgpack_pack_cstr(&packer, "line");
+              msgpack_pack_int(&packer, line);
+            }
+
+            if (command) {
+              msgpack_pack_cstr(&packer, "command");
+              msgpack_pack_str(&packer, GRN_TEXT_LEN(command));
+              msgpack_pack_str_body(&packer,
+                                    GRN_TEXT_VALUE(command),
+                                    GRN_TEXT_LEN(command));
+            }
+          }
+        }
+      }
+    }
+
+    if (GRN_TEXT_LEN(body) > 0) {
+      msgpack_pack_cstr(&packer, "body");
+    }
+  }
+}
+
 void
 grn_output_envelope(grn_ctx *ctx,
                     grn_rc rc,
@@ -2261,77 +2499,16 @@ grn_output_envelope(grn_ctx *ctx,
     break;
   case GRN_CONTENT_MSGPACK:
 #ifdef GRN_WITH_MESSAGE_PACK
-    {
-      msgpack_writer_ctx head_writer_ctx;
-      msgpack_packer header_packer;
-      int header_size;
-
-      head_writer_ctx.ctx = ctx;
-      head_writer_ctx.buffer = head;
-      msgpack_packer_init(&header_packer, &head_writer_ctx, msgpack_buffer_writer);
-
-       /* [HEAD, (BODY)] */
-      if (GRN_TEXT_LEN(body) > 0) {
-        msgpack_pack_array(&header_packer, 2);
-      } else {
-        msgpack_pack_array(&header_packer, 1);
-      }
-
-      /* HEAD := [rc, started, elapsed, (error, (ERROR DETAIL))] */
-      header_size = 3;
-      if (rc != GRN_SUCCESS) {
-        header_size++;
-        if (ctx->errfunc && ctx->errfile) {
-          header_size++;
-        }
-      }
-      msgpack_pack_array(&header_packer, header_size);
-      msgpack_pack_int(&header_packer, rc);
-
-      msgpack_pack_double(&header_packer, started);
-      msgpack_pack_double(&header_packer, elapsed);
-
-      if (rc != GRN_SUCCESS) {
-        msgpack_pack_str(&header_packer, strlen(ctx->errbuf));
-        msgpack_pack_str_body(&header_packer, ctx->errbuf, strlen(ctx->errbuf));
-        if (ctx->errfunc && ctx->errfile) {
-          grn_obj *command = GRN_CTX_USER_DATA(ctx)->ptr;
-          int error_detail_size;
-
-          /* ERROR DETAIL := [[errfunc, errfile, errline,
-                               (file, line, command)]] */
-          /* TODO: output backtrace */
-          msgpack_pack_array(&header_packer, 1);
-          error_detail_size = 3;
-          if (command) {
-            error_detail_size += 3;
-          }
-          msgpack_pack_array(&header_packer, error_detail_size);
-
-          msgpack_pack_str(&header_packer, strlen(ctx->errfunc));
-          msgpack_pack_str_body(&header_packer, ctx->errfunc, strlen(ctx->errfunc));
-
-          msgpack_pack_str(&header_packer, strlen(ctx->errfile));
-          msgpack_pack_str_body(&header_packer, ctx->errfile, strlen(ctx->errfile));
-
-          msgpack_pack_int(&header_packer, ctx->errline);
-
-          if (command) {
-            if (file) {
-              msgpack_pack_str(&header_packer, strlen(file));
-              msgpack_pack_str_body(&header_packer, file, strlen(file));
-            } else {
-              msgpack_pack_str(&header_packer, 7);
-              msgpack_pack_str_body(&header_packer, "(stdin)", 7);
-            }
-
-            msgpack_pack_int(&header_packer, line);
-
-            msgpack_pack_str(&header_packer, GRN_TEXT_LEN(command));
-            msgpack_pack_str_body(&header_packer, GRN_TEXT_VALUE(command), GRN_TEXT_LEN(command));
-          }
-        }
-      }
+    if (grn_ctx_get_command_version(ctx) <= GRN_COMMAND_VERSION_2) {
+      grn_output_envelope_msgpack_v1(ctx, rc,
+                                     head, body, foot,
+                                     started, elapsed,
+                                     file, line);
+    } else {
+      grn_output_envelope_msgpack(ctx, rc,
+                                  head, body, foot,
+                                  started, elapsed,
+                                  file, line);
     }
 #endif
     break;

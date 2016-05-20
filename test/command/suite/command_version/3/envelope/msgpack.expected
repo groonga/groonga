@@ -1,0 +1,2 @@
+cache_limit --command_version 3 --output_type msgpack
+{"header":{"return_code":0,"start_time":0.0,"elapsed_time":0.0},"body":100}
