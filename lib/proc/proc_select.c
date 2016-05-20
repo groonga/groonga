@@ -2104,15 +2104,11 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
       goto exit;
     }
 
-    if (data->tables.result) {
-      nhits = grn_table_size(ctx, data->tables.result);
-    } else {
-      nhits = 0;
-    }
+    nhits = grn_table_size(ctx, data->tables.result);
     GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                   ":", "select(%d)", nhits);
 
-    if (data->tables.result && data->columns.filtered) {
+    if (data->columns.filtered) {
       if (data->tables.result == data->tables.initial) {
         grn_posting posting;
 
@@ -2135,7 +2131,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
                                data->columns.filtered);
     }
 
-    if (data->tables.result) {
+    {
       uint32_t ngkeys;
       grn_table_sort_key *gkeys = NULL;
       int result_size = 1;
@@ -2282,8 +2278,6 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
       if (gkeys) {
         grn_table_sort_key_close(ctx, gkeys, ngkeys);
       }
-    } else {
-      GRN_OUTPUT_ARRAY_OPEN("RESULT", 0);
     }
     GRN_OUTPUT_ARRAY_CLOSE();
     if (!ctx->rc &&
