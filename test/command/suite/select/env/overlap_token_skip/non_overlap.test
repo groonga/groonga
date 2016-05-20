@@ -1,0 +1,23 @@
+#@omit "need enable `GRN_II_OVERLAP_TOKEN_SKIP_ENABLE` environment variable."
+
+table_create Entries TABLE_NO_KEY
+column_create Entries body COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+
+load --table Entries
+[
+{"body": "Hong Kong"}
+]
+
+column_create Terms index COLUMN_INDEX|WITH_POSITION Entries body
+
+table_tokenize Terms "Hong Kong" --index_column index
+
+log_level --level debug
+#@add-important-log-levels debug
+select Entries --filter 'body @ "Hong Kong"'
+#@remove-important-log-levels debug
+log_level --level notice

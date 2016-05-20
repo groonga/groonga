@@ -1,0 +1,228 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries body COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigramIgnoreBlankSplitSymbolAlpha   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"body": "This is very very long sentence."}
+]
+[[0,0.0,0.0],1]
+column_create Terms index COLUMN_INDEX|WITH_POSITION Entries body
+[[0,0.0,0.0],true]
+table_tokenize Terms "This is very very long sentence." --index_column index
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "th",
+      "position": 0,
+      "force_prefix": false,
+      "estimated_size": 1
+    },
+    {
+      "value": "hi",
+      "position": 1,
+      "force_prefix": false,
+      "estimated_size": 1
+    },
+    {
+      "value": "is",
+      "position": 2,
+      "force_prefix": false,
+      "estimated_size": 3
+    },
+    {
+      "value": "si",
+      "position": 3,
+      "force_prefix": false,
+      "estimated_size": 1
+    },
+    {
+      "value": "is",
+      "position": 4,
+      "force_prefix": false,
+      "estimated_size": 3
+    },
+    {
+      "value": "sv",
+      "position": 5,
+      "force_prefix": false,
+      "estimated_size": 1
+    },
+    {
+      "value": "ve",
+      "position": 6,
+      "force_prefix": false,
+      "estimated_size": 3
+    },
+    {
+      "value": "er",
+      "position": 7,
+      "force_prefix": false,
+      "estimated_size": 3
+    },
+    {
+      "value": "ry",
+      "position": 8,
+      "force_prefix": false,
+      "estimated_size": 3
+    },
+    {
+      "value": "yv",
+      "position": 9,
+      "force_prefix": false,
+      "estimated_size": 1
+    },
+    {
+      "value": "ve",
+      "position": 10,
+      "force_prefix": false,
+      "estimated_size": 3
+    },
+    {
+      "value": "er",
+      "position": 11,
+      "force_prefix": false,
+      "estimated_size": 3
+    },
+    {
+      "value": "ry",
+      "position": 12,
+      "force_prefix": false,
+      "estimated_size": 3
+    },
+    {
+      "value": "yl",
+      "position": 13,
+      "force_prefix": false,
+      "estimated_size": 1
+    },
+    {
+      "value": "lo",
+      "position": 14,
+      "force_prefix": false,
+      "estimated_size": 1
+    },
+    {
+      "value": "on",
+      "position": 15,
+      "force_prefix": false,
+      "estimated_size": 1
+    },
+    {
+      "value": "ng",
+      "position": 16,
+      "force_prefix": false,
+      "estimated_size": 1
+    },
+    {
+      "value": "gs",
+      "position": 17,
+      "force_prefix": false,
+      "estimated_size": 1
+    },
+    {
+      "value": "se",
+      "position": 18,
+      "force_prefix": false,
+      "estimated_size": 1
+    },
+    {
+      "value": "en",
+      "position": 19,
+      "force_prefix": false,
+      "estimated_size": 3
+    },
+    {
+      "value": "nt",
+      "position": 20,
+      "force_prefix": false,
+      "estimated_size": 1
+    },
+    {
+      "value": "te",
+      "position": 21,
+      "force_prefix": false,
+      "estimated_size": 1
+    },
+    {
+      "value": "en",
+      "position": 22,
+      "force_prefix": false,
+      "estimated_size": 3
+    },
+    {
+      "value": "nc",
+      "position": 23,
+      "force_prefix": false,
+      "estimated_size": 1
+    },
+    {
+      "value": "ce",
+      "position": 24,
+      "force_prefix": false,
+      "estimated_size": 1
+    },
+    {
+      "value": "e.",
+      "position": 25,
+      "force_prefix": false,
+      "estimated_size": 1
+    }
+  ]
+]
+log_level --level debug
+[[0,0.0,0.0],true]
+select Entries --filter 'body @ "This is very very long sentence."'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "body",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "This is very very long sentence."
+      ]
+    ]
+  ]
+]
+#|d| [ii][overlap_token_skip] tid=19 pos=0 estimated_size=1
+#|d| [ii][overlap_token_skip] tid=7 pos=1 estimated_size=1
+#|d| [ii][overlap_token_skip] tid=16 pos=3 estimated_size=1
+#|d| [ii][overlap_token_skip] tid=17 pos=5 estimated_size=1
+#|d| [ii][overlap_token_skip] tid=5 pos=7 estimated_size=3
+#|d| [ii][overlap_token_skip] tid=22 pos=9 estimated_size=1
+#|d| [ii][overlap_token_skip] tid=5 pos=11 estimated_size=3
+#|d| [ii][overlap_token_skip] tid=21 pos=13 estimated_size=1
+#|d| [ii][overlap_token_skip] tid=9 pos=14 estimated_size=1
+#|d| [ii][overlap_token_skip] tid=13 pos=15 estimated_size=1
+#|d| [ii][overlap_token_skip] tid=11 pos=16 estimated_size=1
+#|d| [ii][overlap_token_skip] tid=15 pos=18 estimated_size=1
+#|d| [ii][overlap_token_skip] tid=12 pos=20 estimated_size=1
+#|d| [ii][overlap_token_skip] tid=18 pos=21 estimated_size=1
+#|d| [ii][overlap_token_skip] tid=10 pos=23 estimated_size=1
+#|d| [ii][overlap_token_skip] tid=3 pos=25 estimated_size=1
+log_level --level notice
+[[0,0.0,0.0],true]

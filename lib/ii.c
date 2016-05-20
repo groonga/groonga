@@ -74,6 +74,7 @@
 static grn_bool grn_ii_cursor_set_min_enable = GRN_FALSE;
 static double grn_ii_select_too_many_index_match_ratio = -1;
 static double grn_ii_estimate_size_for_query_reduce_ratio = 0.9;
+static grn_bool grn_ii_overlap_token_skip_enable = GRN_FALSE;
 
 void
 grn_ii_init_from_env(void)
@@ -109,6 +110,18 @@ grn_ii_init_from_env(void)
     if (grn_ii_estimate_size_for_query_reduce_ratio_env[0]) {
       grn_ii_estimate_size_for_query_reduce_ratio =
         atof(grn_ii_estimate_size_for_query_reduce_ratio_env);
+    }
+  }
+
+  {
+    char grn_ii_overlap_token_skip_enable_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_II_OVERLAP_TOKEN_SKIP_ENABLE",
+               grn_ii_overlap_token_skip_enable_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_ii_overlap_token_skip_enable_env[0]) {
+      grn_ii_overlap_token_skip_enable = GRN_TRUE;
+    } else {
+      grn_ii_overlap_token_skip_enable = GRN_FALSE;
     }
   }
 }
@@ -5887,6 +5900,333 @@ token_compare(const void *a, const void *b)
   return t1->size - t2->size;
 }
 
+#define TOKEN_CANDIDATE_NODE_SIZE 32
+#define TOKEN_CANDIDATE_ADJACENT_MAX_SIZE 16
+#define TOKEN_CANDIDATE_QUEUE_SIZE 64
+#define TOKEN_CANDIDATE_SIZE 16
+
+typedef struct {
+  grn_id tid;
+  const unsigned char *token;
+  uint32_t token_size;
+  int32_t pos;
+  grn_token_cursor_status status;
+  int ef;
+  uint32_t estimated_size;
+  uint8_t adjacent[TOKEN_CANDIDATE_ADJACENT_MAX_SIZE]; /* Index of adjacent node from top */
+  uint8_t n_adjacent;
+} token_candidate_node;
+
+typedef struct {
+  uint32_t *candidates; /* Standing bits indicate index of token_candidate_node */
+  int top;
+  int rear;
+  int size;
+} token_candidate_queue;
+
+inline static void
+token_candidate_adjacent_set(grn_ctx *ctx, grn_token_cursor *token_cursor,
+                             token_candidate_node *top, token_candidate_node *curr)
+{
+  grn_bool exists_adjacent = GRN_FALSE;
+  token_candidate_node *adj;
+  for (adj = top; adj < curr; adj++) {
+    if (token_cursor->curr <= adj->token + adj->token_size) {
+      if (adj->n_adjacent < TOKEN_CANDIDATE_ADJACENT_MAX_SIZE) {
+        adj->adjacent[adj->n_adjacent] = curr - top;
+        adj->n_adjacent++;
+        exists_adjacent = GRN_TRUE;
+      }
+    }
+  }
+  if (!exists_adjacent) {
+    adj = curr - 1;
+    if (adj->n_adjacent < TOKEN_CANDIDATE_ADJACENT_MAX_SIZE) {
+      adj->adjacent[adj->n_adjacent] = curr - top;
+      adj->n_adjacent++;
+    }
+  }
+}
+
+inline static grn_rc
+token_candidate_init(grn_ctx *ctx, grn_ii *ii, grn_token_cursor *token_cursor,
+                     grn_id tid, int ef, token_candidate_node **nodes, int *n_nodes,
+                     uint32_t *max_estimated_size)
+{
+  grn_rc rc;
+  token_candidate_node *top, *curr;
+  int size = TOKEN_CANDIDATE_NODE_SIZE;
+
+  *nodes = GRN_MALLOC(TOKEN_CANDIDATE_NODE_SIZE * sizeof(token_candidate_node));
+  if (!*nodes) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  top = *nodes;
+  curr = top;
+
+#define TOKEN_CANDIDATE_NODE_SET() { \
+  curr->tid = tid; \
+  curr->token = token_cursor->curr; \
+  curr->token_size = token_cursor->curr_size; \
+  curr->pos = token_cursor->pos; \
+  curr->status = token_cursor->status; \
+  curr->ef = ef; \
+  curr->estimated_size = grn_ii_estimate_size(ctx, ii, tid); \
+  curr->n_adjacent = 0; \
+}
+  TOKEN_CANDIDATE_NODE_SET();
+  GRN_LOG(ctx, GRN_LOG_DEBUG, "[ii][overlap_token_skip] tid=%u pos=%d estimated_size=%u",
+          curr->tid, curr->pos, curr->estimated_size);
+  *max_estimated_size = curr->estimated_size;
+  curr++;
+
+  while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
+    if (curr - top >= size) {
+      if (!(*nodes = GRN_REALLOC(*nodes,
+          (curr - top + TOKEN_CANDIDATE_NODE_SIZE) * sizeof(token_candidate_node)))) {
+        return GRN_NO_MEMORY_AVAILABLE;
+      }
+      top = *nodes;
+      curr = top + size;
+      size += TOKEN_CANDIDATE_NODE_SIZE;
+    }
+    tid = grn_token_cursor_next(ctx, token_cursor);
+    if (token_cursor->status != GRN_TOKEN_CURSOR_DONE_SKIP) {
+      if (token_cursor->force_prefix) { ef |= EX_PREFIX; }
+      TOKEN_CANDIDATE_NODE_SET();
+      token_candidate_adjacent_set(ctx, token_cursor, top, curr);
+      if (curr->estimated_size > *max_estimated_size) {
+        *max_estimated_size = curr->estimated_size;
+      }
+      curr++;
+    }
+  }
+  *n_nodes = curr - top;
+  rc = GRN_SUCCESS;
+  return rc;
+#undef TOKEN_CANDIDATE_NODE_SET
+}
+
+inline static grn_rc
+token_candidate_queue_init(grn_ctx *ctx, token_candidate_queue *q)
+{
+  q->top = 0;
+  q->rear = 0;
+  q->size = TOKEN_CANDIDATE_QUEUE_SIZE;
+
+  q->candidates = GRN_MALLOC(TOKEN_CANDIDATE_QUEUE_SIZE * sizeof(uint32_t));
+  if (!q->candidates) {
+    q->size = 0;
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  return GRN_SUCCESS;
+}
+
+inline static grn_rc
+token_candidate_enqueue(grn_ctx *ctx, token_candidate_queue *q, uint32_t candidate)
+{
+  if (q->rear >= q->size) {
+    if (!(q->candidates =
+        GRN_REALLOC(q->candidates,
+        (q->rear + TOKEN_CANDIDATE_QUEUE_SIZE) * sizeof(uint32_t)))) {
+      q->size = 0;
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+    q->size += TOKEN_CANDIDATE_QUEUE_SIZE;
+  }
+  *(q->candidates + q->rear) = candidate;
+  q->rear++;
+  return GRN_SUCCESS;
+}
+
+inline static grn_rc
+token_candidate_dequeue(grn_ctx *ctx, token_candidate_queue *q, uint32_t *candidate)
+{
+  if (q->top == q->rear) {
+    return GRN_END_OF_DATA;
+  }
+  *candidate = *(q->candidates + q->top);
+  q->top++;
+  return GRN_SUCCESS;
+}
+
+inline static void
+token_candidate_queue_fin(grn_ctx *ctx, token_candidate_queue *q)
+{
+  GRN_FREE(q->candidates);
+}
+
+inline static token_candidate_node*
+token_candidate_last_node(grn_ctx *ctx, token_candidate_node *nodes, uint32_t candidate, int offset)
+{
+  int i;
+  GRN_BIT_SCAN_REV(candidate, i);
+  return nodes + i + offset;
+}
+
+inline static uint64_t
+token_candidate_score(grn_ctx *ctx, token_candidate_node *nodes, uint32_t candidate,
+                      int offset, uint32_t max_estimated_size)
+{
+  int i, last;
+  uint64_t score = 0;
+  GRN_BIT_SCAN_REV(candidate, last);
+  for (i = 0; i <= last; i++) {
+    if (candidate & (1 << i)) {
+      token_candidate_node *node = nodes + i + offset;
+      if (node->estimated_size > 0) {
+        score += max_estimated_size / node->estimated_size;
+      }
+    }
+  }
+  return score;
+}
+
+inline static grn_rc
+token_candidate_select(grn_ctx *ctx, token_candidate_node *nodes,
+                       int offset, int limit, int end,
+                       uint32_t *selected_candidate, uint32_t max_estimated_size)
+{
+  grn_rc rc;
+  token_candidate_queue q;
+  uint32_t candidate;
+  uint64_t max_score = 0;
+  int i, min_n_nodes = 0;
+
+  if (offset + limit > end) {
+    limit = end - offset;
+  }
+  rc = token_candidate_queue_init(ctx, &q);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  rc = token_candidate_enqueue(ctx, &q, 1);
+  if (rc != GRN_SUCCESS) {
+    goto exit;
+  }
+  while (token_candidate_dequeue(ctx, &q, &candidate) != GRN_END_OF_DATA) {
+    token_candidate_node *candidate_last_node =
+      token_candidate_last_node(ctx, nodes, candidate, offset);
+    for (i = 0; i < candidate_last_node->n_adjacent; i++) {
+      int adjacent, n_nodes = 0;
+      uint32_t new_candidate;
+      adjacent = candidate_last_node->adjacent[i] - offset;
+      if (adjacent > limit) {
+        break;
+      }
+      new_candidate = candidate | (1 << adjacent);
+      GET_NUM_BITS(new_candidate, n_nodes);
+      if (min_n_nodes > 0 && n_nodes > min_n_nodes + 1) {
+        goto exit;
+      }
+      rc = token_candidate_enqueue(ctx, &q, new_candidate);
+      if (rc != GRN_SUCCESS) {
+        goto exit;
+      }
+      if (adjacent == limit) {
+        if (min_n_nodes == 0) {
+          min_n_nodes = n_nodes;
+        }
+        if (n_nodes >= min_n_nodes && n_nodes <= min_n_nodes + 1) {
+          uint64_t score;
+          score = token_candidate_score(ctx, nodes, new_candidate, offset, max_estimated_size);
+          if (score > max_score) {
+            max_score = score;
+            *selected_candidate = new_candidate;
+          }
+        }
+      }
+    }
+  }
+  rc = GRN_SUCCESS;
+exit :
+  token_candidate_queue_fin(ctx, &q);
+  return rc;
+}
+
+inline static grn_rc
+token_candidate_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
+                      token_info **tis, uint32_t *n,
+                      token_candidate_node *nodes, uint32_t selected_candidate,
+                      int offset)
+{
+  grn_rc rc = GRN_END_OF_DATA;
+  token_info *ti;
+  const char *key;
+  uint32_t size;
+  int i, last = 0;
+  GRN_BIT_SCAN_REV(selected_candidate, last);
+  for (i = 1; i <= last; i++) {
+    if (selected_candidate & (1 << i)) {
+      token_candidate_node *node = nodes + i + offset;
+      switch (node->status) {
+      case GRN_TOKEN_CURSOR_DOING :
+        key = _grn_table_key(ctx, lexicon, node->tid, &size);
+        ti = token_info_open(ctx, lexicon, ii, key, size, node->pos,
+                             EX_NONE, NULL);
+        break;
+      case GRN_TOKEN_CURSOR_DONE :
+        if (node->tid) {
+          key = _grn_table_key(ctx, lexicon, node->tid, &size);
+          ti = token_info_open(ctx, lexicon, ii, key, size, node->pos,
+                               node->ef & EX_PREFIX, NULL);
+          break;
+        } /* else fallthru */
+      default :
+        ti = token_info_open(ctx, lexicon, ii, (char *)node->token,
+                             node->token_size, node->pos,
+                             node->ef & EX_PREFIX, NULL);
+        break;
+      }
+      if (!ti) {
+        goto exit;
+      }
+      tis[(*n)++] = ti;
+      GRN_LOG(ctx, GRN_LOG_DEBUG, "[ii][overlap_token_skip] tid=%u pos=%d estimated_size=%u",
+              node->tid, node->pos, node->estimated_size);
+    }
+  }
+  rc = GRN_SUCCESS;
+exit :
+  return rc;
+}
+
+inline static grn_rc
+token_info_build_skipping_overlap(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
+                                  token_info **tis, uint32_t *n,
+                                  grn_token_cursor *token_cursor,
+                                  grn_id tid, int ef)
+{
+  grn_rc rc;
+  token_candidate_node *nodes = NULL;
+  int n_nodes = 0, offset = 0, limit = TOKEN_CANDIDATE_SIZE - 1;
+  uint32_t max_estimated_size;
+
+  rc = token_candidate_init(ctx, ii, token_cursor, tid, ef, &nodes, &n_nodes, &max_estimated_size);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  while (offset < n_nodes - 1) {
+    uint32_t selected_candidate = 0;
+    rc = token_candidate_select(ctx, nodes, offset, limit, n_nodes - 1,
+                                &selected_candidate, max_estimated_size);
+    if (rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    rc = token_candidate_build(ctx, lexicon, ii, tis, n, nodes, selected_candidate, offset);
+    if (rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    offset += limit;
+  }
+  rc = GRN_SUCCESS;
+exit :
+  if (nodes) {
+    GRN_FREE(nodes);
+  }
+  return rc;
+}
+
 inline static grn_rc
 token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string, unsigned int string_len,
                  token_info **tis, uint32_t *n, grn_bool *only_skip_token,
@@ -5956,6 +6296,12 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
     }
     if (!ti) { goto exit ; }
     tis[(*n)++] = ti;
+
+    if (grn_ii_overlap_token_skip_enable) {
+      rc = token_info_build_skipping_overlap(ctx, lexicon, ii, tis, n, token_cursor, tid, ef);
+      goto exit;
+    }
+
     while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
       tid = grn_token_cursor_next(ctx, token_cursor);
       if (token_cursor->force_prefix) { ef |= EX_PREFIX; }
