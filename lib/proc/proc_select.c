@@ -2329,6 +2329,14 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
   }
 
 exit :
+  if (data->condition.expression) {
+    grn_obj_unlink(ctx, data->condition.expression);
+  }
+
+  if (data->condition.match_columns) {
+    grn_obj_unlink(ctx, data->condition.match_columns);
+  }
+
   if (data->drilldown.keys) {
     grn_table_sort_key_close(ctx,
                              data->drilldown.keys,
@@ -2351,14 +2359,6 @@ exit :
 
   if (data->match_escalation_threshold.length > 0) {
     grn_ctx_set_match_escalation_threshold(ctx, original_threshold);
-  }
-
-  if (data->condition.match_columns) {
-    grn_obj_unlink(ctx, data->condition.match_columns);
-  }
-
-  if (data->condition.expression) {
-    grn_obj_unlink(ctx, data->condition.expression);
   }
 
   /* GRN_LOG(ctx, GRN_LOG_NONE, "%d", ctx->seqno); */
