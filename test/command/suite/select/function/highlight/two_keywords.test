@@ -10,4 +10,4 @@ select Entries --output_columns \
   'highlight(body, \
   "Groonga", "<span class=\\"keyword1\\">", "</span>", \
   "mysql", "<span class=\\"keyword2\\">", "</span>" \
-)' --command_version 2
+)'

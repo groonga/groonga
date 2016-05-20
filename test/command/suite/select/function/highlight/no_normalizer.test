@@ -10,4 +10,4 @@ select Entries --output_columns \
   'highlight(body, \
   "groonga", "<span class=\\"keyword1\\">", "</span>", \
   {"normalizer": ""} \
-)' --command_version 2
+)'

@@ -11,4 +11,4 @@ load --table Entries
 
 select Entries --output_columns \
   --match_columns body --query 'groonga mysql' \
-  --output_columns 'highlight_html(body)' --command_version 2
+  --output_columns 'highlight_html(body)'

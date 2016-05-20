@@ -13,7 +13,7 @@ load --table Memos
 {"_key": "Nothing"}
 ]
 [[0,0.0,0.0],3]
-select Memos   --output_columns 'tags, vector_size(tags)'   --command_version 2
+select Memos   --output_columns 'tags, vector_size(tags)'
 [
   [
     0,

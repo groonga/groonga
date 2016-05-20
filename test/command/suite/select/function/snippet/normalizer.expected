@@ -7,7 +7,7 @@ load --table Entries
 {"content": "groonga and MySQL and PosrgreSQL"}
 ]
 [[0,0.0,0.0],1]
-select Entries   --output_columns '   snippet(content,   "sql", "<span class=\\"keyword\\">", "</span>",   {"normalizer": "NormalizerAuto"}   )'   --command_version 2
+select Entries   --output_columns '   snippet(content,   "sql", "<span class=\\"keyword\\">", "</span>",   {"normalizer": "NormalizerAuto"}   )'
 [
   [
     0,

@@ -11,5 +11,4 @@ select Entries \
   snippet(content, \
   "SQL", "<span class=\\"w1\\">", "</span>", \
   {"prefix": "..."} \
-  )' \
-  --command_version 2
+  )'

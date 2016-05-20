@@ -11,5 +11,4 @@ select Entries \
   snippet(content, \
   "sql", "<span class=\\"keyword\\">", "</span>", \
   {"normalizer": "NormalizerAuto"} \
-  )' \
-  --command_version 2
+  )'

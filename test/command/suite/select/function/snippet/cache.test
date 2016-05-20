@@ -12,5 +12,4 @@ select Entries \
   --output_columns ' \
   snippet(content, \
   "SQL", "<span class=\\"keyword\\">", "</span>" \
-  )' \
-  --command_version 2
+  )'

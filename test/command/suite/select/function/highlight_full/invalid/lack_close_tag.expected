@@ -7,5 +7,5 @@ load --table Entries
 {"body": "Mroonga is a ＭｙＳＱＬ storage engine based on Groonga. <b>Rroonga</b> is a Ruby binding of Groonga."}
 ]
 [[0,0.0,0.0],1]
-select Entries --output_columns   'highlight_full(body, "NormalizerAuto", true,   "Groonga", "<span class=\\"keyword1\\">", "</span>",   "mysql", "<span class=\\"keyword2\\">")' --command_version 2
+select Entries --output_columns   'highlight_full(body, "NormalizerAuto", true,   "Groonga", "<span class=\\"keyword1\\">", "</span>",   "mysql", "<span class=\\"keyword2\\">")'
 [[0,0.0,0.0],[[[1],[["highlight_full","null"]],[null]]]]

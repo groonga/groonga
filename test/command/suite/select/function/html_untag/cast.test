@@ -7,5 +7,4 @@ load --table Entries
 ]
 
 select Entries \
-  --output_columns "html_untag(id)" \
-  --command_version 2
+  --output_columns "html_untag(id)"

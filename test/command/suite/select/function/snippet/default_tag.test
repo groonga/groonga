@@ -11,5 +11,4 @@ select Entries \
   snippet(content, \
   "Groonga", "MySQL", \
   {"default_open_tag": "<span>", "default_close_tag": "</span>"} \
-  )' \
-  --command_version 2
+  )'

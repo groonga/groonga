@@ -8,4 +8,4 @@ load --table Sites
 ["razil","http://razil.jp/"]
 ]
 
-select Sites --output_columns 'uri, nonexistent1.nested' --command_version 2
+select Sites --output_columns 'uri, nonexistent1.nested'

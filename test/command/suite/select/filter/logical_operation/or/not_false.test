@@ -7,5 +7,4 @@ load --table Users
 ]
 
 select Users \
-  --output_columns '_id, null || name || "unknown"' \
-  --command_version 2
+  --output_columns '_id, null || name || "unknown"'

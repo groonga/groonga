@@ -7,5 +7,4 @@ load --table Records
 ]
 
 select Records \
-  --output_columns '_id, null || null || null' \
-  --command_version 2
+  --output_columns '_id, null || null || null'

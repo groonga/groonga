@@ -9,4 +9,4 @@ load --table Entries
 select Entries --output_columns \
   'highlight_full(body, "TokenBigram", true, \
   "Groonga", "<span class=\\"keyword1\\">", "</span>", \
-  "mysql", "<span class=\\"keyword2\\">", "</span>")' --command_version 2
+  "mysql", "<span class=\\"keyword2\\">", "</span>")'

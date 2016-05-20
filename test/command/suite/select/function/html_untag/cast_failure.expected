@@ -9,7 +9,7 @@ load --table Entries
 {"keyword": "groonga-<em>mroonga</em>-developers"}
 ]
 [[0,0.0,0.0],1]
-select Entries   --output_columns "html_untag(keyword)"   --command_version 2
+select Entries   --output_columns "html_untag(keyword)"
 [
   [
     [

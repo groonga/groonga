@@ -7,7 +7,7 @@ load --table Entries
 {"content": "groonga and MySQL and PosrgreSQL"}
 ]
 [[0,0.0,0.0],1]
-select Entries   --output_columns '   snippet(content,   "SQL", "<span class=\\"keyword1\\">", "</span>",   "groonga", "<span class=\\"keyword2\\">", "</span>",   {"prefix": "..."}   )'   --command_version 2
+select Entries   --output_columns '   snippet(content,   "SQL", "<span class=\\"keyword1\\">", "</span>",   "groonga", "<span class=\\"keyword2\\">", "</span>",   {"prefix": "..."}   )'
 [
   [
     0,

@@ -7,7 +7,7 @@ load --table Ages
 {"_key": 29}
 ]
 [[0,0.0,0.0],1]
-select Ages   --output_columns '_key, string_length(_key)'   --command_version 2
+select Ages   --output_columns '_key, string_length(_key)'
 [
   [
     [

@@ -7,7 +7,7 @@ load --table Entries
 {"content": "<p>groonga and MySQL</p>"}
 ]
 [[0,0.0,0.0],1]
-select Entries   --output_columns '   snippet(content,   "groonga", "<span class=\\"keyword\\">", "</span>",   {"html_escape": true})'   --command_version 2
+select Entries   --output_columns '   snippet(content,   "groonga", "<span class=\\"keyword\\">", "</span>",   {"html_escape": true})'
 [
   [
     0,

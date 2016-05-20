@@ -20,5 +20,4 @@ load --table Documents
 
 select Documents \
   --match_columns content --query 'groonga' \
-  --output_columns '_key, snippet_html(content)' \
-  --command_version 2
+  --output_columns '_key, snippet_html(content)'

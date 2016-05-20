@@ -10,5 +10,4 @@ select Entries \
   --output_columns ' \
   snippet(content, \
   "Groonga", "<span class=\\"keyword\\">", "</span>" \
-  )' \
-  --command_version 2
+  )'

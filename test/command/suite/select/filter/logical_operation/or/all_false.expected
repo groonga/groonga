@@ -6,5 +6,5 @@ load --table Records
 []
 ]
 [[0,0.0,0.0],1]
-select Records   --output_columns '_id, false || false || false'   --command_version 2
+select Records   --output_columns '_id, false || false || false'
 [[0,0.0,0.0],[[[1],[["_id","UInt32"],["","null"]],[1,false]]]]

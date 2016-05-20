@@ -15,7 +15,7 @@ load --table Entries
 {"title": "groonga and MySQL", "content": "groonga + MySQL = mroonga."}
 ]
 [[0,0.0,0.0],1]
-select Entries   --output_columns 'title, content, snippet_html(title)'   --command_version 2   --match_columns 'title'   --query groonga
+select Entries   --output_columns 'title, content, snippet_html(title)'   --match_columns 'title'   --query groonga
 [
   [
     0,

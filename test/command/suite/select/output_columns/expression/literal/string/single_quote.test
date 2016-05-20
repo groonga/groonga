@@ -7,5 +7,4 @@ load --table Entries
 ]
 
 select Entries \
-  --output_columns "_id, 'single quoted' + ' ' + 'string value'" \
-  --command_version 2
+  --output_columns "_id, 'single quoted' + ' ' + 'string value'"

@@ -8,4 +8,4 @@ load --table Entries
 
 select Entries --output_columns \
   'highlight_full(body, "NormalizerAuto", true, \
-  "Groonga", "<span class=\\"keyword1\\">", "</span>")' --command_version 2
+  "Groonga", "<span class=\\"keyword1\\">", "</span>")'

@@ -7,5 +7,5 @@ load --table Entries
 {"title": "groonga and MySQL"}
 ]
 [[0,0.0,0.0],1]
-select Entries   --output_columns '_id, "<" + title + ">"'   --command_version 2
+select Entries   --output_columns '_id, "<" + title + ">"'
 [[0,0.0,0.0],[[[1],[["_id","UInt32"],["","null"]],[1,"<groonga and MySQL>"]]]]

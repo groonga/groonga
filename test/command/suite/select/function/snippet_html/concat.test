@@ -19,5 +19,4 @@ load --table Documents
 
 select Documents \
   --match_columns title||content --query 'groonga' \
-  --output_columns '_id, snippet_html(title + " " + content)' \
-  --command_version 2
+  --output_columns '_id, snippet_html(title + " " + content)'

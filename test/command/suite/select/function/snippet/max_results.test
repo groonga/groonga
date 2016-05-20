@@ -11,5 +11,4 @@ select Entries \
   snippet(content, \
   "SQL", "<span class=\\"keyword\\">", "</span>", \
   {"width": 10, "max_n_results": 2} \
-  )' \
-  --command_version 2
+  )'

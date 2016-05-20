@@ -20,7 +20,7 @@ load --table Memos
  "tags": ["Groonga"]}
 ]
 [[0,0.0,0.0],5]
-select Memos   --limit 0   --output_columns _id   --command_version 2   --drilldowns[vector].keys date,tags   --drilldowns[vector].output_columns _key[0],_key[1],_nsubrecs   --drilldowns[vector].sortby -_nsubrecs,_id
+select Memos   --limit 0   --output_columns _id   --drilldowns[vector].keys date,tags   --drilldowns[vector].output_columns _key[0],_key[1],_nsubrecs   --drilldowns[vector].sortby -_nsubrecs,_id
 [
   [
     0,

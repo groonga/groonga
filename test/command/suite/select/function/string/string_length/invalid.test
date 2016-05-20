@@ -8,5 +8,4 @@ load --table Ages
 ]
 
 select Ages \
-  --output_columns '_key, string_length(_key)' \
-  --command_version 2
+  --output_columns '_key, string_length(_key)'

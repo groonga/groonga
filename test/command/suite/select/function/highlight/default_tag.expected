@@ -7,7 +7,7 @@ load --table Entries
 {"body": "Mroonga is a ＭｙＳＱＬ storage engine based on Groonga."}
 ]
 [[0,0.0,0.0],1]
-select Entries --output_columns   'highlight(body,   "Groonga", "Mroonga",   {"default_open_tag": "<span>", "default_close_tag": "</span>"} )' --command_version 2
+select Entries --output_columns   'highlight(body,   "Groonga", "Mroonga",   {"default_open_tag": "<span>", "default_close_tag": "</span>"} )'
 [
   [
     0,

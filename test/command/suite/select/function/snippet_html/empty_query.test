@@ -12,5 +12,4 @@ load --table Documents
 
 select Documents \
   --match_columns content --query '' \
-  --output_columns 'snippet_html(content)' \
-  --command_version 2
+  --output_columns 'snippet_html(content)'

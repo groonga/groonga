@@ -14,6 +14,5 @@ load --table Memos
 ]
 
 select Memos \
-  --command_version 2 \
   --drilldowns[tag].keys tag,date \
   --drilldowns[tag].output_columns _key[0],_key[1],_nsubrecs

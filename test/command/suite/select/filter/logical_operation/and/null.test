@@ -7,5 +7,4 @@ load --table Records
 ]
 
 select Records \
-  --output_columns '_id, null && "not false"' \
-  --command_version 2
+  --output_columns '_id, null && "not false"'

@@ -12,5 +12,4 @@ load --table Documents
 
 select Documents \
   --match_columns content --query 'MySQL' \
-  --output_columns '_key, snippet_html(_key)' \
-  --command_version 2
+  --output_columns '_key, snippet_html(_key)'

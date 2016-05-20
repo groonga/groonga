@@ -7,5 +7,5 @@ load --table Entries
 {"content": "I <em class=\"important\">am</em> a boy."}
 ]
 [[0,0.0,0.0],1]
-select Entries   --output_columns "html_untag(content)"   --command_version 2
+select Entries   --output_columns "html_untag(content)"
 [[0,0.0,0.0],[[[1],[["html_untag","null"]],["I am a boy."]]]]

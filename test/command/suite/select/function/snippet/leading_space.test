@@ -11,5 +11,4 @@ select Entries \
   snippet(content, \
   "MySQL", "<span class=\\"keyword\\">", "</span>", \
   {"skip_leading_spaces": false} \
-  )' \
-  --command_version 2
+  )'

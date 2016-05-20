@@ -15,7 +15,7 @@ load --table Memos
 {"_key": "Groonga is good!", "tag": "Groonga", "date": "2014-11-17 00:00:00"}
 ]
 [[0,0.0,0.0],5]
-select Memos   --command_version 2   --filter true   --drilldowns[tag].keys tag,date   --drilldowns[tag].output_columns _key[0],_key[1],_nsubrecs   --drilldowns[tag].sortby _value.tag._key,_value.date
+select Memos   --filter true   --drilldowns[tag].keys tag,date   --drilldowns[tag].output_columns _key[0],_key[1],_nsubrecs   --drilldowns[tag].sortby _value.tag._key,_value.date
 [
   [
     0,

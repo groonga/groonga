@@ -7,7 +7,7 @@ load --table Values
 {"value": -2147483648}
 ]
 [[0,0.0,0.0],1]
-select Values   --output_columns 'value, value / -1'   --command_version 2
+select Values   --output_columns 'value, value / -1'
 [
   [
     0,

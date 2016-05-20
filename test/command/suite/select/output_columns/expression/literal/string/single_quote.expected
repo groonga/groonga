@@ -7,7 +7,7 @@ load --table Entries
 {"title": "groonga and MySQL"}
 ]
 [[0,0.0,0.0],1]
-select Entries   --output_columns "_id, 'single quoted' + ' ' + 'string value'"   --command_version 2
+select Entries   --output_columns "_id, 'single quoted' + ' ' + 'string value'"
 [
   [
     0,

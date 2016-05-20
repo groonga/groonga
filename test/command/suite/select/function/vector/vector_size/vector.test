@@ -11,5 +11,4 @@ load --table Memos
 ]
 
 select Memos \
-  --output_columns 'tags, vector_size(tags)' \
-  --command_version 2
+  --output_columns 'tags, vector_size(tags)'

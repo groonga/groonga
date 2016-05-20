@@ -11,5 +11,5 @@ load --table Entries
 {"body": ""}
 ]
 [[0,0.0,0.0],1]
-select Entries --output_columns   --query 'body:@groonga OR _id:1'   --output_columns 'highlight_html(body)' --command_version 2
+select Entries --output_columns   --query 'body:@groonga OR _id:1'   --output_columns 'highlight_html(body)'
 [[0,0.0,0.0],[[[1],[["highlight_html","null"]],[""]]]]

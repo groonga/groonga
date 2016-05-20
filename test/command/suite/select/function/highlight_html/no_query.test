@@ -10,4 +10,4 @@ load --table Entries
 ]
 
 select Entries \
-  --output_columns 'highlight_html(body)' --command_version 2
+  --output_columns 'highlight_html(body)'

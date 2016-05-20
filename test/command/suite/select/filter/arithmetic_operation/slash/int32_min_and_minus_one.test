@@ -7,5 +7,4 @@ load --table Values
 ]
 
 select Values \
-  --output_columns 'value, value / -1' \
-  --command_version 2
+  --output_columns 'value, value / -1'

@@ -7,7 +7,7 @@ load --table Entries
 {"content": "MySQL is a kind of sql database server"}
 ]
 [[0,0.0,0.0],1]
-select Entries   --output_columns '   snippet(content,   "sql", "<span class=\\"keyword\\">", "</span>",   {"normalizer": ""}   )'   --command_version 2
+select Entries   --output_columns '   snippet(content,   "sql", "<span class=\\"keyword\\">", "</span>",   {"normalizer": ""}   )'
 [
   [
     0,

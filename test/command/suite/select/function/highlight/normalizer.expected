@@ -7,7 +7,7 @@ load --table Entries
 {"body": "PGroonga is a PostgreSQL plugin to use groonga as index."}
 ]
 [[0,0.0,0.0],1]
-select Entries --output_columns   'highlight(body,   "groonga", "<span class=\\"keyword1\\">", "</span>",   {"normalizer": "NormalizerAuto"} )' --command_version 2
+select Entries --output_columns   'highlight(body,   "groonga", "<span class=\\"keyword1\\">", "</span>",   {"normalizer": "NormalizerAuto"} )'
 [
   [
     0,
