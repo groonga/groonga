@@ -1,0 +1,87 @@
+plugin_register functions/number
+[[0,0.0,0.0],true]
+table_create Items TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Items price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Items
+[
+{"_key": "Book",  "price": 1498},
+{"_key": "Food",  "price": 898},
+{"_key": "Drink", "price": 600}
+]
+[[0,0.0,0.0],3]
+select Items   --columns[price_range].stage filtered   --columns[price_range].type UInt32   --columns[price_range].flags COLUMN_SCALAR   --columns[price_range].value 'number_classify(price, 500)'   --drilldown price_range
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "price_range",
+          "UInt32"
+        ],
+        [
+          "price",
+          "UInt32"
+        ]
+      ],
+      [
+        1,
+        "Book",
+        1000,
+        1498
+      ],
+      [
+        2,
+        "Food",
+        500,
+        898
+      ],
+      [
+        3,
+        "Drink",
+        500,
+        600
+      ]
+    ],
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_key",
+          "UInt32"
+        ],
+        [
+          "_nsubrecs",
+          "Int32"
+        ]
+      ],
+      [
+        1000,
+        1
+      ],
+      [
+        500,
+        2
+      ]
+    ]
+  ]
+]

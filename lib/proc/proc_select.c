@@ -207,6 +207,7 @@ grn_column_data_init(grn_ctx *ctx,
 {
   void *column_raw;
   grn_column_data *column;
+  int added;
 
   if (!*columns) {
     *columns = grn_hash_create(ctx,
@@ -220,12 +221,17 @@ grn_column_data_init(grn_ctx *ctx,
   if (!*columns) {
     return GRN_FALSE;
   }
+
   grn_hash_add(ctx,
                *columns,
                label,
                label_len,
                &column_raw,
-               NULL);
+               &added);
+  if (!added) {
+    return GRN_TRUE;
+  }
+
   column = column_raw;
   column->label.value = label;
   column->label.length = label_len;
@@ -236,6 +242,7 @@ grn_column_data_init(grn_ctx *ctx,
   column->value.length = 0;
   column->window.sort_keys.value = NULL;
   column->window.sort_keys.length = 0;
+
   return GRN_TRUE;
 }
 
@@ -254,7 +261,7 @@ grn_column_data_fill(grn_ctx *ctx,
     if (!type) {
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
-                       "[select][column][%s][%.*s] unknown type: <%.*s>",
+                       "[select][columns][%s][%.*s] unknown type: <%.*s>",
                        grn_column_stage_name(column->stage),
                        (int)(column->label.length),
                        column->label.value,
@@ -268,7 +275,7 @@ grn_column_data_fill(grn_ctx *ctx,
       grn_inspect(ctx, &inspected, type);
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
-                       "[select][column][%s][%.*s] invalid type: %.*s",
+                       "[select][columns][%s][%.*s] invalid type: %.*s",
                        grn_column_stage_name(column->stage),
                        (int)(column->label.length),
                        column->label.value,
@@ -287,7 +294,7 @@ grn_column_data_fill(grn_ctx *ctx,
     grn_snprintf(error_message_tag,
                  GRN_TABLE_MAX_KEY_SIZE,
                  GRN_TABLE_MAX_KEY_SIZE,
-                 "[select][column][%s][%.*s]",
+                 "[select][columns][%s][%.*s]",
                  grn_column_stage_name(column->stage),
                  (int)(column->label.length),
                  column->label.value);
@@ -315,6 +322,7 @@ grn_column_data_collect(grn_ctx *ctx,
                         size_t prefix_label_len)
 {
   grn_hash_cursor *cursor = NULL;
+
   cursor = grn_hash_cursor_open(ctx, columns,
                                 NULL, 0, NULL, 0, 0, -1, 0);
   if (!cursor) {
@@ -324,25 +332,36 @@ grn_column_data_collect(grn_ctx *ctx,
   while (grn_hash_cursor_next(ctx, cursor)) {
     grn_column_data *column;
     char key_name[GRN_TABLE_MAX_KEY_SIZE];
-    grn_obj *type;
-    grn_obj *flags;
-    grn_obj *value;
+    grn_obj *type = NULL;
+    grn_obj *flags = NULL;
+    grn_obj *value = NULL;
     struct {
       grn_obj *sort_keys;
     } window;
 
+    window.sort_keys = NULL;
+
     grn_hash_cursor_get_value(ctx, cursor, (void **)&column);
 
-#define GET_VAR(name)                                                   \
-    grn_snprintf(key_name,                                              \
-                 GRN_TABLE_MAX_KEY_SIZE,                                \
-                 GRN_TABLE_MAX_KEY_SIZE,                                \
-                 "%.*scolumn[%.*s]." # name,                            \
-                 (int)prefix_label_len,                                 \
-                 prefix_label,                                          \
-                 (int)(column->label.length),                           \
-                 column->label.value);                                  \
-    name = grn_plugin_proc_get_var(ctx, user_data, key_name, -1);
+#define GET_VAR_RAW(parameter_key, name)                                \
+    if (!name) {                                                        \
+      grn_snprintf(key_name,                                            \
+                   GRN_TABLE_MAX_KEY_SIZE,                              \
+                   GRN_TABLE_MAX_KEY_SIZE,                              \
+                   "%.*s%s[%.*s]." # name,                              \
+                   (int)prefix_label_len,                               \
+                   prefix_label,                                        \
+                   parameter_key,                                       \
+                   (int)(column->label.length),                         \
+                   column->label.value);                                \
+      name = grn_plugin_proc_get_var(ctx, user_data, key_name, -1);     \
+    }
+
+#define GET_VAR(name) do {                      \
+      GET_VAR_RAW("columns", name);             \
+      /* For backward compatibility */          \
+      GET_VAR_RAW("column", name);              \
+    } while (GRN_FALSE)
 
     GET_VAR(type);
     GET_VAR(flags);
@@ -350,6 +369,8 @@ grn_column_data_collect(grn_ctx *ctx,
     GET_VAR(window.sort_keys);
 
 #undef GET_VAR
+
+#undef GET_VAR_RAW
 
     grn_column_data_fill(ctx, column,
                          type, flags, value, window.sort_keys);
@@ -381,12 +402,12 @@ static grn_bool
 grn_columns_collect(grn_ctx *ctx,
                     grn_user_data *user_data,
                     grn_columns *columns,
+                    const char *prefix,
                     const char *base_prefix,
                     size_t base_prefix_len)
 {
   grn_obj *vars;
   grn_table_cursor *cursor;
-  const char *prefix = "column[";
   size_t prefix_len;
   const char *suffix = "].stage";
   size_t suffix_len;
@@ -468,7 +489,14 @@ grn_columns_fill(grn_ctx *ctx,
                  const char *prefix,
                  size_t prefix_length)
 {
-  if (!grn_columns_collect(ctx, user_data, columns, prefix, prefix_length)) {
+  if (!grn_columns_collect(ctx, user_data, columns,
+                           "columns[", prefix, prefix_length)) {
+    return GRN_FALSE;
+  }
+
+  /* For backward compatibility */
+  if (!grn_columns_collect(ctx, user_data, columns,
+                           "column[", prefix, prefix_length)) {
     return GRN_FALSE;
   }
 
