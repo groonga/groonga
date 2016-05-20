@@ -118,6 +118,11 @@ typedef struct {
   grn_select_string query_flags;
   grn_select_string adjuster;
   grn_columns columns;
+  struct {
+    grn_obj *target;
+    grn_obj *initial;
+    grn_obj *result;
+  } tables;
 } grn_select_data;
 
 grn_rc
@@ -735,7 +740,7 @@ grn_select_apply_adjuster_ensure_factor(grn_ctx *ctx, grn_obj *factor_object)
 }
 
 static void
-grn_select_apply_adjuster_adjust(grn_ctx *ctx, grn_obj *table, grn_obj *res,
+grn_select_apply_adjuster_adjust(grn_ctx *ctx, grn_obj *table,
                                  grn_obj *column, grn_obj *value,
                                  grn_obj *factor)
 {
@@ -770,12 +775,12 @@ grn_select_apply_adjuster_adjust(grn_ctx *ctx, grn_obj *table, grn_obj *res,
     options.max_size = 0;
     options.scorer = NULL;
 
-    grn_obj_search(ctx, index, value, res, GRN_OP_ADJUST, &options);
+    grn_obj_search(ctx, index, value, table, GRN_OP_ADJUST, &options);
   }
 }
 
 static void
-grn_select_apply_adjuster(grn_ctx *ctx, grn_obj *table, grn_obj *res,
+grn_select_apply_adjuster(grn_ctx *ctx, grn_obj *table,
                           grn_obj *adjuster)
 {
   grn_expr *expr = (grn_expr *)adjuster;
@@ -803,7 +808,7 @@ grn_select_apply_adjuster(grn_ctx *ctx, grn_obj *table, grn_obj *res,
     } else {
       factor = NULL;
     }
-    grn_select_apply_adjuster_adjust(ctx, table, res, column, value, factor);
+    grn_select_apply_adjuster_adjust(ctx, table, column, value, factor);
   }
 }
 
@@ -1003,6 +1008,34 @@ grn_select_apply_columns(grn_ctx *ctx,
   }
 
   grn_hash_cursor_close(ctx, columns_cursor);
+}
+
+static void
+grn_select_apply_initial_columns(grn_ctx *ctx,
+                                 grn_select_data *data)
+{
+  grn_posting posting;
+
+  if (!data->columns.initial) {
+    return;
+  }
+
+  memset(&posting, 0, sizeof(grn_posting));
+  data->tables.initial =
+    grn_table_create(ctx, NULL, 0, NULL,
+                     GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                     data->tables.target, NULL);
+  GRN_TABLE_EACH_BEGIN(ctx, data->tables.target, cursor, id) {
+    posting.rid = id;
+    grn_ii_posting_add(ctx,
+                       &posting,
+                       (grn_hash *)(data->tables.initial),
+                       GRN_OP_OR);
+  } GRN_TABLE_EACH_END(ctx, cursor);
+  grn_select_apply_columns(ctx,
+                           data->tables.initial,
+                           data->columns.initial,
+                           NULL);
 }
 
 static grn_bool
@@ -1718,16 +1751,17 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
   grn_table_sort_key *keys;
   grn_obj *outbuf = ctx->impl->output.buf;
   grn_content_type output_type = ctx->impl->output.type;
-  grn_obj *table;
   grn_obj *match_columns = NULL;
   grn_obj *cond = NULL;
   grn_obj *scorer;
-  grn_obj *res = NULL;
-  grn_obj *sorted;
   char cache_key[GRN_CACHE_MAX_KEY_SIZE];
   uint32_t cache_key_size;
   long long int threshold, original_threshold = 0;
   grn_cache *cache_obj = grn_cache_current_get(ctx);
+
+  data->tables.target = NULL;
+  data->tables.initial = NULL;
+  data->tables.result = NULL;
 
   {
     const char *query_end = data->query.value + data->query.length;
@@ -1877,8 +1911,8 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     }
   }
 
-  table = grn_ctx_get(ctx, data->table.value, data->table.length);
-  if (!table) {
+  data->tables.target = grn_ctx_get(ctx, data->table.value, data->table.length);
+  if (!data->tables.target) {
     ERR(GRN_INVALID_ARGUMENT,
         "[select][table] invalid name: <%.*s>",
         (int)(data->table.length),
@@ -1887,11 +1921,9 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
   }
 
   {
-    grn_obj *initial_table = table;
-
     if (data->filter.length > 0 && (data->filter.value[0] == '?') &&
         (ctx->impl->output.type == GRN_CONTENT_JSON)) {
-      ctx->rc = grn_ts_select(ctx, table,
+      ctx->rc = grn_ts_select(ctx, data->tables.target,
                               data->filter.value + 1,
                               data->filter.length - 1,
                               data->scorer.value,
@@ -1912,26 +1944,15 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
       goto exit;
     }
 
-    if (data->columns.initial) {
-      grn_posting posting;
-
-      memset(&posting, 0, sizeof(grn_posting));
-      initial_table = grn_table_create(ctx, NULL, 0, NULL,
-                                       GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
-                                       table, NULL);
-      GRN_TABLE_EACH(ctx, table, 0, 0, id, NULL, NULL, NULL, {
-        posting.rid = id;
-        grn_ii_posting_add(ctx, &posting, (grn_hash *)initial_table, GRN_OP_OR);
-      });
-      grn_select_apply_columns(ctx, initial_table, data->columns.initial, NULL);
-    }
+    data->tables.initial = data->tables.target;
+    grn_select_apply_initial_columns(ctx, data);
 
     if (data->query.length > 0 || data->filter.length > 0) {
       grn_obj *v;
-      GRN_EXPR_CREATE_FOR_QUERY(ctx, initial_table, cond, v);
+      GRN_EXPR_CREATE_FOR_QUERY(ctx, data->tables.initial, cond, v);
       if (cond) {
         if (data->match_columns.length) {
-          GRN_EXPR_CREATE_FOR_QUERY(ctx, initial_table, match_columns, v);
+          GRN_EXPR_CREATE_FOR_QUERY(ctx, data->tables.initial, match_columns, v);
           if (match_columns) {
             grn_expr_parse(ctx, match_columns,
                            data->match_columns.value,
@@ -2005,36 +2026,51 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
         GRN_OBJ_FIN(ctx, &strbuf);
         */
         if (!ctx->rc) {
-          res = grn_table_select(ctx, initial_table, cond, NULL, GRN_OP_OR);
+          data->tables.result = grn_table_select(ctx,
+                                                 data->tables.initial,
+                                                 cond,
+                                                 NULL,
+                                                 GRN_OP_OR);
         }
       } else {
         /* todo */
         ERRCLR(ctx);
       }
     } else {
-      res = initial_table;
+      data->tables.result = data->tables.initial;
     }
-    nhits = res ? grn_table_size(ctx, res) : 0;
+    if (data->tables.result) {
+      nhits = grn_table_size(ctx, data->tables.result);
+    } else {
+      nhits = 0;
+    }
     GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                   ":", "select(%d)", nhits);
 
-    if (res && data->columns.filtered) {
-      if (res == table) {
+    if (data->tables.result && data->columns.filtered) {
+      if (data->tables.result == data->tables.initial) {
         grn_posting posting;
 
         memset(&posting, 0, sizeof(grn_posting));
-        res = grn_table_create(ctx, NULL, 0, NULL,
-                               GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
-                               table, NULL);
-        GRN_TABLE_EACH(ctx, table, 0, 0, id, NULL, NULL, NULL, {
+        data->tables.result =
+          grn_table_create(ctx, NULL, 0, NULL,
+                           GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                           data->tables.initial, NULL);
+        GRN_TABLE_EACH_BEGIN(ctx, data->tables.initial, cursor, id) {
           posting.rid = id;
-          grn_ii_posting_add(ctx, &posting, (grn_hash *)res, GRN_OP_OR);
-        });
+          grn_ii_posting_add(ctx,
+                             &posting,
+                             (grn_hash *)data->tables.result,
+                             GRN_OP_OR);
+        } GRN_TABLE_EACH_END(ctx, cursor);
       }
-      grn_select_apply_columns(ctx, res, data->columns.filtered, cond);
+      grn_select_apply_columns(ctx,
+                               data->tables.result,
+                               data->columns.filtered,
+                               cond);
     }
 
-    if (res) {
+    if (data->tables.result) {
       uint32_t ngkeys;
       grn_table_sort_key *gkeys = NULL;
       int result_size = 1;
@@ -2062,7 +2098,8 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
           gkeys = grn_table_sort_key_from_str(ctx,
                                               anonymous_drilldown->keys.value,
                                               anonymous_drilldown->keys.length,
-                                              res, &ngkeys);
+                                              data->tables.result,
+                                              &ngkeys);
           if (gkeys) {
             result_size += ngkeys;
           }
@@ -2074,7 +2111,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
       if (data->adjuster.length > 0) {
         grn_obj *adjuster;
         grn_obj *v;
-        GRN_EXPR_CREATE_FOR_QUERY(ctx, table, adjuster, v);
+        GRN_EXPR_CREATE_FOR_QUERY(ctx, data->tables.target, adjuster, v);
         if (adjuster && v) {
           grn_rc rc;
           rc = grn_expr_parse(ctx, adjuster,
@@ -2089,7 +2126,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
           }
           cacheable *= ((grn_expr *)adjuster)->cacheable;
           taintable += ((grn_expr *)adjuster)->taintable;
-          grn_select_apply_adjuster(ctx, table, res, adjuster);
+          grn_select_apply_adjuster(ctx, data->tables.result, adjuster);
           grn_obj_unlink(ctx, adjuster);
         }
         GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
@@ -2098,26 +2135,21 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
 
       if (data->scorer.length > 0) {
         grn_obj *v;
-        GRN_EXPR_CREATE_FOR_QUERY(ctx, res, scorer, v);
+        GRN_EXPR_CREATE_FOR_QUERY(ctx, data->tables.result, scorer, v);
         if (scorer && v) {
-          grn_table_cursor *tc;
           grn_expr_parse(ctx, scorer,
                          data->scorer.value,
                          data->scorer.length, NULL, GRN_OP_MATCH, GRN_OP_AND,
                          GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
           cacheable *= ((grn_expr *)scorer)->cacheable;
           taintable += ((grn_expr *)scorer)->taintable;
-          if ((tc = grn_table_cursor_open(ctx, res, NULL, 0, NULL, 0, 0, -1, 0))) {
-            grn_id id;
-            while ((id = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
-              GRN_RECORD_SET(ctx, v, id);
-              grn_expr_exec(ctx, scorer, 0);
-              if (ctx->rc) {
-                break;
-              }
+          GRN_TABLE_EACH_BEGIN(ctx, data->tables.result, cursor, id) {
+            GRN_RECORD_SET(ctx, v, id);
+            grn_expr_exec(ctx, scorer, 0);
+            if (ctx->rc) {
+              break;
             }
-            grn_table_cursor_close(ctx, tc);
-          }
+          } GRN_TABLE_EACH_END(ctx, cursor);
           grn_obj_unlink(ctx, scorer);
         }
         GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
@@ -2133,11 +2165,15 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
           (keys = grn_table_sort_key_from_str(ctx,
                                               data->sort_keys.value,
                                               data->sort_keys.length,
-                                              res,
+                                              data->tables.result,
                                               &nkeys))) {
-        if ((sorted = grn_table_create(ctx, NULL, 0, NULL,
-                                       GRN_OBJ_TABLE_NO_KEY, NULL, res))) {
-          grn_table_sort(ctx, res, data->offset, data->limit,
+        grn_obj *sorted;
+        sorted = grn_table_create(ctx, NULL, 0, NULL,
+                                  GRN_OBJ_TABLE_NO_KEY,
+                                  NULL,
+                                  data->tables.result);
+        if (sorted) {
+          grn_table_sort(ctx, data->tables.result, data->offset, data->limit,
                          sorted, keys, nkeys);
           GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                         ":", "sort(%d)", data->limit);
@@ -2150,7 +2186,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
         grn_table_sort_key_close(ctx, keys, nkeys);
       } else {
         if (!ctx->rc) {
-          grn_proc_select_output_columns(ctx, res, nhits,
+          grn_proc_select_output_columns(ctx, data->tables.result, nhits,
                                          data->offset, data->limit,
                                          data->output_columns.value,
                                          data->output_columns.length,
@@ -2161,22 +2197,24 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
                     ":", "output(%d)", data->limit);
       if (!ctx->rc) {
         if (data->slices) {
-          grn_select_slices(ctx, res, data->slices, cond);
+          grn_select_slices(ctx, data->tables.result, data->slices, cond);
         }
         if (gkeys) {
-          grn_select_drilldown(ctx, res, gkeys, ngkeys, data->drilldowns, cond);
+          grn_select_drilldown(ctx,
+                               data->tables.result,
+                               gkeys,
+                               ngkeys,
+                               data->drilldowns,
+                               cond);
         } else if (data->drilldowns) {
-          grn_select_drilldowns(ctx, res, data->drilldowns, cond);
+          grn_select_drilldowns(ctx,
+                                data->tables.result,
+                                data->drilldowns,
+                                cond);
         }
       }
       if (gkeys) {
         grn_table_sort_key_close(ctx, gkeys, ngkeys);
-      }
-      if (res != table && res != initial_table) {
-        grn_obj_unlink(ctx, res);
-      }
-      if (initial_table != table) {
-        grn_obj_unlink(ctx, initial_table);
       }
     } else {
       GRN_OUTPUT_ARRAY_OPEN("RESULT", 0);
@@ -2189,11 +2227,26 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
          data->cache.value[1] != 'o')) {
       grn_cache_update(ctx, cache_obj, cache_key, cache_key_size, outbuf);
     }
-    if (taintable) { grn_db_touch(ctx, DB_OBJ(table)->db); }
-    grn_obj_unlink(ctx, table);
+    if (taintable) {
+      grn_db_touch(ctx, DB_OBJ(data->tables.target)->db);
+    }
   }
 
 exit :
+  if (data->tables.result &&
+      data->tables.result != data->tables.initial &&
+      data->tables.result != data->tables.target) {
+    grn_obj_unlink(ctx, data->tables.result);
+  }
+
+  if (data->tables.initial && data->tables.initial != data->tables.target) {
+    grn_obj_unlink(ctx, data->tables.initial);
+  }
+
+  if (data->tables.target) {
+    grn_obj_unlink(ctx, data->tables.target);
+  }
+
   if (data->match_escalation_threshold.length > 0) {
     grn_ctx_set_match_escalation_threshold(ctx, original_threshold);
   }
