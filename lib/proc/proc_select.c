@@ -101,6 +101,7 @@ typedef struct {
 } grn_drilldown_data;
 
 typedef struct {
+  /* inputs */
   grn_select_string table;
   grn_select_string match_columns;
   grn_select_string query;
@@ -118,6 +119,8 @@ typedef struct {
   grn_select_string query_flags;
   grn_select_string adjuster;
   grn_columns columns;
+
+  /* for processing */
   struct {
     grn_obj *target;
     grn_obj *initial;
@@ -129,6 +132,10 @@ typedef struct {
   } condition;
   uint16_t cacheable;
   uint16_t taintable;
+  struct {
+    grn_table_sort_key *keys;
+    uint32_t n_keys;
+  } drilldown;
 } grn_select_data;
 
 grn_rc
@@ -1959,6 +1966,9 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
   data->cacheable = 1;
   data->taintable = 0;
 
+  data->drilldown.keys = NULL;
+  data->drilldown.n_keys = 0;
+
   {
     const char *query_end = data->query.value + data->query.length;
     int space_len;
@@ -2160,8 +2170,6 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     }
 
     {
-      uint32_t ngkeys;
-      grn_table_sort_key *gkeys = NULL;
       int result_size = 1;
 
       if (data->slices) {
@@ -2184,13 +2192,14 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
           }
         }
         if (anonymous_drilldown) {
-          gkeys = grn_table_sort_key_from_str(ctx,
-                                              anonymous_drilldown->keys.value,
-                                              anonymous_drilldown->keys.length,
-                                              data->tables.result,
-                                              &ngkeys);
-          if (gkeys) {
-            result_size += ngkeys;
+          data->drilldown.keys =
+            grn_table_sort_key_from_str(ctx,
+                                        anonymous_drilldown->keys.value,
+                                        anonymous_drilldown->keys.length,
+                                        data->tables.result,
+                                        &(data->drilldown.n_keys));
+          if (data->drilldown.keys) {
+            result_size += data->drilldown.n_keys;
           }
         } else {
           result_size += 1;
@@ -2289,12 +2298,12 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
         if (data->slices) {
           grn_select_slices(ctx, data, data->tables.result, data->slices);
         }
-        if (gkeys) {
+        if (data->drilldown.keys) {
           grn_select_drilldown(ctx,
                                data,
                                data->tables.result,
-                               gkeys,
-                               ngkeys,
+                               data->drilldown.keys,
+                               data->drilldown.n_keys,
                                data->drilldowns);
         } else if (data->drilldowns) {
           grn_select_drilldowns(ctx,
@@ -2302,9 +2311,6 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
                                 data->tables.result,
                                 data->drilldowns);
         }
-      }
-      if (gkeys) {
-        grn_table_sort_key_close(ctx, gkeys, ngkeys);
       }
     }
     GRN_OUTPUT_ARRAY_CLOSE();
@@ -2323,6 +2329,12 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
   }
 
 exit :
+  if (data->drilldown.keys) {
+    grn_table_sort_key_close(ctx,
+                             data->drilldown.keys,
+                             data->drilldown.n_keys);
+  }
+
   if (data->tables.result &&
       data->tables.result != data->tables.initial &&
       data->tables.result != data->tables.target) {
