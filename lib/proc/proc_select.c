@@ -1753,7 +1753,6 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
   grn_content_type output_type = ctx->impl->output.type;
   grn_obj *match_columns = NULL;
   grn_obj *cond = NULL;
-  grn_obj *scorer;
   char cache_key[GRN_CACHE_MAX_KEY_SIZE];
   uint32_t cache_key_size;
   long long int threshold, original_threshold = 0;
@@ -2134,6 +2133,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
       }
 
       if (data->scorer.length > 0) {
+        grn_obj *scorer;
         grn_obj *v;
         GRN_EXPR_CREATE_FOR_QUERY(ctx, data->tables.result, scorer, v);
         if (scorer && v) {
