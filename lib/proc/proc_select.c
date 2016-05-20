@@ -2466,6 +2466,7 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
                                                     "drilldown_filter", -1),
                             NULL);
   } else {
+    grn_bool succeeded = GRN_TRUE;
     unsigned int i;
 
     if (!grn_select_data_fill_drilldown_labels(ctx, user_data, data)) {
@@ -2495,12 +2496,14 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
                    (int)(drilldown->label.length),
                    drilldown->label.value);
 
-      /* TODO: Check return value. */
-      grn_columns_fill(ctx,
-                       user_data,
-                       &(drilldown->columns),
-                       drilldown_label,
-                       strlen(drilldown_label));
+      succeeded = grn_columns_fill(ctx,
+                                   user_data,
+                                   &(drilldown->columns),
+                                   drilldown_label,
+                                   strlen(drilldown_label));
+      if (!succeeded) {
+        break;
+      }
 
 #define GET_VAR(name)                                                   \
       grn_snprintf(key_name,                                            \
@@ -2539,9 +2542,9 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
                               table);
       i++;
     } GRN_HASH_EACH_END(ctx, cursor);
-  }
 
-  return GRN_TRUE;
+    return succeeded;
+  }
 }
 
 static grn_obj *
