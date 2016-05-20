@@ -1018,14 +1018,14 @@ grn_select_apply_columns(grn_ctx *ctx,
   grn_hash_cursor_close(ctx, columns_cursor);
 }
 
-static void
+static grn_bool
 grn_select_apply_initial_columns(grn_ctx *ctx,
                                  grn_select_data *data)
 {
   grn_posting posting;
 
   if (!data->columns.initial) {
-    return;
+    return GRN_TRUE;
   }
 
   memset(&posting, 0, sizeof(grn_posting));
@@ -1040,10 +1040,13 @@ grn_select_apply_initial_columns(grn_ctx *ctx,
                        (grn_hash *)(data->tables.initial),
                        GRN_OP_OR);
   } GRN_TABLE_EACH_END(ctx, cursor);
+
   grn_select_apply_columns(ctx,
                            data,
                            data->tables.initial,
                            data->columns.initial);
+
+  return ctx->rc == GRN_SUCCESS;
 }
 
 static grn_bool
@@ -1188,6 +1191,39 @@ grn_select_filter(grn_ctx *ctx,
                                          data->condition.expression,
                                          NULL,
                                          GRN_OP_OR);
+
+  return ctx->rc == GRN_SUCCESS;
+}
+
+static grn_bool
+grn_select_apply_filtered_columns(grn_ctx *ctx,
+                                  grn_select_data *data)
+{
+  if (!data->columns.filtered) {
+    return GRN_TRUE;
+  }
+
+  if (data->tables.result == data->tables.initial) {
+    grn_posting posting;
+
+    memset(&posting, 0, sizeof(grn_posting));
+    data->tables.result =
+      grn_table_create(ctx, NULL, 0, NULL,
+                       GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                       data->tables.initial, NULL);
+    GRN_TABLE_EACH_BEGIN(ctx, data->tables.initial, cursor, id) {
+      posting.rid = id;
+      grn_ii_posting_add(ctx,
+                         &posting,
+                         (grn_hash *)data->tables.result,
+                         GRN_OP_OR);
+    } GRN_TABLE_EACH_END(ctx, cursor);
+  }
+
+  grn_select_apply_columns(ctx,
+                           data,
+                           data->tables.result,
+                           data->columns.filtered);
 
   return ctx->rc == GRN_SUCCESS;
 }
@@ -2099,7 +2135,10 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     }
 
     data->tables.initial = data->tables.target;
-    grn_select_apply_initial_columns(ctx, data);
+    if (!grn_select_apply_initial_columns(ctx, data)) {
+      goto exit;
+    }
+
     if (!grn_select_filter(ctx, data)) {
       goto exit;
     }
@@ -2108,27 +2147,8 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                   ":", "select(%d)", nhits);
 
-    if (data->columns.filtered) {
-      if (data->tables.result == data->tables.initial) {
-        grn_posting posting;
-
-        memset(&posting, 0, sizeof(grn_posting));
-        data->tables.result =
-          grn_table_create(ctx, NULL, 0, NULL,
-                           GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
-                           data->tables.initial, NULL);
-        GRN_TABLE_EACH_BEGIN(ctx, data->tables.initial, cursor, id) {
-          posting.rid = id;
-          grn_ii_posting_add(ctx,
-                             &posting,
-                             (grn_hash *)data->tables.result,
-                             GRN_OP_OR);
-        } GRN_TABLE_EACH_END(ctx, cursor);
-      }
-      grn_select_apply_columns(ctx,
-                               data,
-                               data->tables.result,
-                               data->columns.filtered);
+    if (!grn_select_apply_filtered_columns(ctx, data)) {
+      goto exit;
     }
 
     {
