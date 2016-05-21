@@ -31,7 +31,14 @@ build_script:
         $Env:CMAKE_GENERATOR_NAME = "Visual Studio 12 2013 Win64"
       }
   - git submodule update --init
-  - cmake . -G "%CMAKE_GENERATOR_NAME%" -DCMAKE_INSTALL_PREFIX=c:\groonga
+  - cd vendor
+  - ruby download_mecab.rb
+  - cd ..
+  - |
+      cmake . ^
+        -G "%CMAKE_GENERATOR_NAME%" ^
+        -DCMAKE_INSTALL_PREFIX=c:\groonga ^
+        -DGRN_WITH_BUNDLED_MECAB=yes
   - cmake --build . --config Debug
   - cmake --build . --config Debug --target Install
 
