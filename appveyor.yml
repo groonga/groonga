@@ -42,4 +42,4 @@ before_test:
   - gem install grntest
 test_script:
   - SET GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE=%APPVEYOR_BUILD_FOLDER%\test\command\tmp\synonyms.tsv
-  - grntest --groonga c:\groonga\bin\groonga.exe --base-directory test\command --reporter stream --debug test\command\suite\schema
+  - grntest --groonga c:\groonga\bin\groonga.exe --base-directory test\command --reporter stream --debug --stop-on-failure test\command\suite
