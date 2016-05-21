@@ -322,6 +322,7 @@ AC_CONFIG_FILES([
   vendor/lz4/Makefile
   vendor/onigmo/Makefile
   vendor/mecab/Makefile
+  vendor/message_pack/Makefile
   vendor/mruby/Makefile
 ])
 
@@ -1198,6 +1199,9 @@ AC_SUBST(LIBEVENT_CFLAGS)
 AC_SUBST(LIBEVENT_LIBS)
 
 # MessagePack
+BUNDLED_MESSAGE_PACK_VERSION=m4_include([bundled_message_pack_version])
+AC_SUBST(BUNDLED_MESSAGE_PACK_VERSION)
+
 AC_ARG_ENABLE(message-pack,
   [AS_HELP_STRING([--disable-message-pack],
     [Disable MessagePack support. [default=auto-detect]])],

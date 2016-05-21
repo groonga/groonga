@@ -4,6 +4,7 @@ SUBDIRS =					\
 	lz4					\
 	onigmo					\
 	mecab					\
+	message_pack				\
 	mruby
 
 EXTRA_DIST =					\
@@ -11,6 +12,7 @@ EXTRA_DIST =					\
 	CMakeLists.txt				\
 	plugins/CMakeLists.txt			\
 	download_lz4.rb				\
+	download_message_pack.rb		\
 	download_mecab.rb
 
 dist-hook:
