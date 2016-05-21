@@ -731,106 +731,6 @@ grn_parse_query_flags(grn_ctx *ctx, const char *query_flags,
   return flags;
 }
 
-static int
-grn_select_apply_adjuster_ensure_factor(grn_ctx *ctx, grn_obj *factor_object)
-{
-  if (!factor_object) {
-    return 1;
-  } else if (factor_object->header.domain == GRN_DB_INT32) {
-    return GRN_INT32_VALUE(factor_object);
-  } else {
-    grn_rc rc;
-    grn_obj int32_object;
-    int factor;
-    GRN_INT32_INIT(&int32_object, 0);
-    rc = grn_obj_cast(ctx, factor_object, &int32_object, GRN_FALSE);
-    if (rc == GRN_SUCCESS) {
-      factor = GRN_INT32_VALUE(&int32_object);
-    } else {
-      /* TODO: Log or return error? */
-      factor = 1;
-    }
-    GRN_OBJ_FIN(ctx, &int32_object);
-    return factor;
-  }
-}
-
-static void
-grn_select_apply_adjuster_execute_adjust(grn_ctx *ctx,
-                                         grn_obj *table,
-                                         grn_obj *column,
-                                         grn_obj *value,
-                                         grn_obj *factor)
-{
-  grn_obj *index;
-  unsigned int n_indexes;
-  int factor_value;
-
-  n_indexes = grn_column_index(ctx, column, GRN_OP_MATCH, &index, 1, NULL);
-  if (n_indexes == 0) {
-    char column_name[GRN_TABLE_MAX_KEY_SIZE];
-    int column_name_size;
-    column_name_size = grn_obj_name(ctx, column,
-                                    column_name, GRN_TABLE_MAX_KEY_SIZE);
-    ERR(GRN_INVALID_ARGUMENT,
-        "adjuster requires index column for the target column: <%.*s>",
-        column_name_size, column_name);
-    return;
-  }
-
-  factor_value = grn_select_apply_adjuster_ensure_factor(ctx, factor);
-
-  {
-    grn_search_optarg options;
-    memset(&options, 0, sizeof(grn_search_optarg));
-
-    options.mode = GRN_OP_EXACT;
-    options.similarity_threshold = 0;
-    options.max_interval = 0;
-    options.weight_vector = NULL;
-    options.vector_size = factor_value;
-    options.proc = NULL;
-    options.max_size = 0;
-    options.scorer = NULL;
-
-    grn_obj_search(ctx, index, value, table, GRN_OP_ADJUST, &options);
-  }
-}
-
-static void
-grn_select_apply_adjuster_execute(grn_ctx *ctx,
-                                  grn_obj *table,
-                                  grn_obj *adjuster)
-{
-  grn_expr *expr = (grn_expr *)adjuster;
-  grn_expr_code *code, *code_end;
-
-  code = expr->codes;
-  code_end = expr->codes + expr->codes_curr;
-  while (code < code_end) {
-    grn_obj *column, *value, *factor;
-
-    if (code->op == GRN_OP_PLUS) {
-      code++;
-      continue;
-    }
-
-    column = code->value;
-    code++;
-    value = code->value;
-    code++;
-    code++; /* op == GRN_OP_MATCH */
-    if ((code_end - code) >= 2 && code[1].op == GRN_OP_STAR) {
-      factor = code->value;
-      code++;
-      code++; /* op == GRN_OP_STAR */
-    } else {
-      factor = NULL;
-    }
-    grn_select_apply_adjuster_execute_adjust(ctx, table, column, value, factor);
-  }
-}
-
 static void
 grn_select_expression_set_condition(grn_ctx *ctx,
                                     grn_obj *expression,
@@ -1247,6 +1147,107 @@ grn_select_apply_filtered_columns(grn_ctx *ctx,
                            data->columns.filtered);
 
   return ctx->rc == GRN_SUCCESS;
+}
+
+static int
+grn_select_apply_adjuster_execute_ensure_factor(grn_ctx *ctx,
+                                                grn_obj *factor_object)
+{
+  if (!factor_object) {
+    return 1;
+  } else if (factor_object->header.domain == GRN_DB_INT32) {
+    return GRN_INT32_VALUE(factor_object);
+  } else {
+    grn_rc rc;
+    grn_obj int32_object;
+    int factor;
+    GRN_INT32_INIT(&int32_object, 0);
+    rc = grn_obj_cast(ctx, factor_object, &int32_object, GRN_FALSE);
+    if (rc == GRN_SUCCESS) {
+      factor = GRN_INT32_VALUE(&int32_object);
+    } else {
+      /* TODO: Log or return error? */
+      factor = 1;
+    }
+    GRN_OBJ_FIN(ctx, &int32_object);
+    return factor;
+  }
+}
+
+static void
+grn_select_apply_adjuster_execute_adjust(grn_ctx *ctx,
+                                         grn_obj *table,
+                                         grn_obj *column,
+                                         grn_obj *value,
+                                         grn_obj *factor)
+{
+  grn_obj *index;
+  unsigned int n_indexes;
+  int factor_value;
+
+  n_indexes = grn_column_index(ctx, column, GRN_OP_MATCH, &index, 1, NULL);
+  if (n_indexes == 0) {
+    char column_name[GRN_TABLE_MAX_KEY_SIZE];
+    int column_name_size;
+    column_name_size = grn_obj_name(ctx, column,
+                                    column_name, GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_INVALID_ARGUMENT,
+        "adjuster requires index column for the target column: <%.*s>",
+        column_name_size, column_name);
+    return;
+  }
+
+  factor_value = grn_select_apply_adjuster_execute_ensure_factor(ctx, factor);
+
+  {
+    grn_search_optarg options;
+    memset(&options, 0, sizeof(grn_search_optarg));
+
+    options.mode = GRN_OP_EXACT;
+    options.similarity_threshold = 0;
+    options.max_interval = 0;
+    options.weight_vector = NULL;
+    options.vector_size = factor_value;
+    options.proc = NULL;
+    options.max_size = 0;
+    options.scorer = NULL;
+
+    grn_obj_search(ctx, index, value, table, GRN_OP_ADJUST, &options);
+  }
+}
+
+static void
+grn_select_apply_adjuster_execute(grn_ctx *ctx,
+                                  grn_obj *table,
+                                  grn_obj *adjuster)
+{
+  grn_expr *expr = (grn_expr *)adjuster;
+  grn_expr_code *code, *code_end;
+
+  code = expr->codes;
+  code_end = expr->codes + expr->codes_curr;
+  while (code < code_end) {
+    grn_obj *column, *value, *factor;
+
+    if (code->op == GRN_OP_PLUS) {
+      code++;
+      continue;
+    }
+
+    column = code->value;
+    code++;
+    value = code->value;
+    code++;
+    code++; /* op == GRN_OP_MATCH */
+    if ((code_end - code) >= 2 && code[1].op == GRN_OP_STAR) {
+      factor = code->value;
+      code++;
+      code++; /* op == GRN_OP_STAR */
+    } else {
+      factor = NULL;
+    }
+    grn_select_apply_adjuster_execute_adjust(ctx, table, column, value, factor);
+  }
 }
 
 static grn_bool
