@@ -17,10 +17,8 @@ select Values   --scorer 'output = -value'   --output_columns 'value, output'
       0.0,
       0.0
     ],
-    "too large UInt64 value to inverse sign: <9223372036854775808>"
-  ],
-  [
-
+    "[select][scorer] failed to execute: <output = -value>: too large UInt64 value to inverse sign: <9223372036854775808>"
   ]
 ]
 #|e| too large UInt64 value to inverse sign: <9223372036854775808>
+#|e| [select][scorer] failed to execute: <output = -value>: too large UInt64 value to inverse sign: <9223372036854775808>

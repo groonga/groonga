@@ -1295,6 +1295,71 @@ grn_select_apply_adjuster(grn_ctx *ctx,
 }
 
 static grn_bool
+grn_select_apply_scorer(grn_ctx *ctx,
+                        grn_select_data *data)
+{
+  grn_obj *scorer;
+  grn_obj *record;
+  grn_rc rc = GRN_SUCCESS;
+
+  if (data->scorer.length == 0) {
+    return GRN_TRUE;
+  }
+
+  GRN_EXPR_CREATE_FOR_QUERY(ctx, data->tables.result, scorer, record);
+  if (!scorer) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "[select][scorer] "
+                     "failed to create expression: %s",
+                     ctx->errbuf);
+    return GRN_FALSE;
+  }
+
+  rc = grn_expr_parse(ctx,
+                      scorer,
+                      data->scorer.value,
+                      data->scorer.length,
+                      NULL,
+                      GRN_OP_MATCH,
+                      GRN_OP_AND,
+                      GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
+  if (rc != GRN_SUCCESS) {
+    grn_obj_unlink(ctx, scorer);
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "[select][scorer] "
+                     "failed to parse: %s",
+                     ctx->errbuf);
+    return GRN_FALSE;
+  }
+
+  data->cacheable *= ((grn_expr *)scorer)->cacheable;
+  data->taintable += ((grn_expr *)scorer)->taintable;
+  GRN_TABLE_EACH_BEGIN(ctx, data->tables.result, cursor, id) {
+    GRN_RECORD_SET(ctx, record, id);
+    grn_expr_exec(ctx, scorer, 0);
+    if (ctx->rc) {
+      rc = ctx->rc;
+      GRN_PLUGIN_ERROR(ctx,
+                       rc,
+                       "[select][scorer] "
+                       "failed to execute: <%.*s>: %s",
+                       (int)(data->scorer.length),
+                       data->scorer.value,
+                       ctx->errbuf);
+      break;
+    }
+  } GRN_TABLE_EACH_END(ctx, cursor);
+  grn_obj_unlink(ctx, scorer);
+
+  GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                ":", "score(%d)", grn_table_size(ctx, data->tables.result));
+
+  return rc == GRN_SUCCESS;
+}
+
+static grn_bool
 grn_select_prepare_slices(grn_ctx *ctx,
                           grn_select_data *data)
 {
@@ -2290,28 +2355,8 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
         goto exit;
       }
 
-      if (data->scorer.length > 0) {
-        grn_obj *scorer;
-        grn_obj *v;
-        GRN_EXPR_CREATE_FOR_QUERY(ctx, data->tables.result, scorer, v);
-        if (scorer && v) {
-          grn_expr_parse(ctx, scorer,
-                         data->scorer.value,
-                         data->scorer.length, NULL, GRN_OP_MATCH, GRN_OP_AND,
-                         GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
-          data->cacheable *= ((grn_expr *)scorer)->cacheable;
-          data->taintable += ((grn_expr *)scorer)->taintable;
-          GRN_TABLE_EACH_BEGIN(ctx, data->tables.result, cursor, id) {
-            GRN_RECORD_SET(ctx, v, id);
-            grn_expr_exec(ctx, scorer, 0);
-            if (ctx->rc) {
-              break;
-            }
-          } GRN_TABLE_EACH_END(ctx, cursor);
-          grn_obj_unlink(ctx, scorer);
-        }
-        GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                      ":", "score(%d)", nhits);
+      if (!grn_select_apply_scorer(ctx, data)) {
+        goto exit;
       }
 
       GRN_OUTPUT_ARRAY_OPEN("RESULT", data->output.n_elements);
