@@ -1093,17 +1093,40 @@ grn_plugin_set_error(grn_ctx *ctx, grn_log_level level, grn_rc error_code,
                      const char *file, int line, const char *func,
                      const char *format, ...)
 {
+  char old_error_message[GRN_CTX_MSGSIZE];
+
   ctx->errlvl = level;
   ctx->rc = error_code;
   ctx->errfile = file;
   ctx->errline = line;
   ctx->errfunc = func;
 
+  grn_strcpy(old_error_message, GRN_CTX_MSGSIZE, ctx->errbuf);
+
   {
     va_list ap;
     va_start(ap, format);
     grn_ctx_logv(ctx, format, ap);
     va_end(ap);
+  }
+
+  if (grn_ctx_impl_should_log(ctx)) {
+    grn_ctx_impl_set_current_error_message(ctx);
+    if (grn_logger_pass(ctx, level)) {
+      char new_error_message[GRN_CTX_MSGSIZE];
+      grn_strcpy(new_error_message, GRN_CTX_MSGSIZE, ctx->errbuf);
+      grn_strcpy(ctx->errbuf, GRN_CTX_MSGSIZE, old_error_message);
+      {
+        va_list ap;
+        va_start(ap, format);
+        grn_logger_putv(ctx, level, file, line, func, format, ap);
+        va_end(ap);
+      }
+      grn_strcpy(ctx->errbuf, GRN_CTX_MSGSIZE, new_error_message);
+    }
+    if (level <= GRN_LOG_ERROR) {
+      grn_plugin_logtrace(ctx, level);
+    }
   }
 }
 
@@ -1123,6 +1146,7 @@ void
 grn_plugin_logtrace(grn_ctx *ctx, grn_log_level level)
 {
   if (level <= GRN_LOG_ERROR) {
+    grn_plugin_backtrace(ctx);
     LOGTRACE(ctx, level);
   }
 }

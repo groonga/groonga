@@ -113,9 +113,6 @@ GRN_API void grn_plugin_logtrace(grn_ctx *ctx, grn_log_level level);
 #define GRN_PLUGIN_SET_ERROR(ctx, level, error_code, ...) do { \
   grn_plugin_set_error(ctx, level, error_code, \
                        __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__); \
-  GRN_LOG(ctx, level, __VA_ARGS__); \
-  grn_plugin_backtrace(ctx); \
-  grn_plugin_logtrace(ctx, level); \
 } while (0)
 
 #define GRN_PLUGIN_ERROR(ctx, error_code, ...) \
