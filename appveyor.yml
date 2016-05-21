@@ -34,11 +34,7 @@ build_script:
   - cd vendor
   - ruby download_mecab.rb
   - cd ..
-  - |
-      cmake .
-        -G "%CMAKE_GENERATOR_NAME%"
-        -DCMAKE_INSTALL_PREFIX=c:\groonga
-        -DGRN_WITH_BUNDLED_MECAB=yes
+  - cmake . -G "%CMAKE_GENERATOR_NAME%" -DCMAKE_INSTALL_PREFIX=c:\groonga -DGRN_WITH_BUNDLED_MECAB=yes
   - cmake --build . --config Debug
   - cmake --build . --config Debug --target Install
 
